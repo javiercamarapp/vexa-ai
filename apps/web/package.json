@@ -10,12 +10,16 @@
     "lint": "eslint . --max-warnings=0",
     "typecheck": "next typegen && tsc --noEmit",
     "build": "next build --webpack",
-    "start": "next start"
+    "start": "next start",
+    "test:auth": "node --import tsx --test tests/auth-http.test.ts"
   },
   "dependencies": {
     "next": "16.3.5",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.116.0",
+    "@vexa/platform": "0.0.1"
   },
   "devDependencies": {
     "@types/node": "24.10.1",
@@ -23,6 +27,7 @@
     "@types/react-dom": "19.2.3",
     "eslint": "9.39.4",
     "eslint-config-next": "16.3.5",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "tsx": "4.23.13"
   }
 }

@@ -1,9 +1,9 @@
 {
   "version": 1,
   "authorization": "User requested autonomous local construction and periodic real merges/pushes; no new spend approved",
-  "max_minutes": 150,
-  "max_cycles": 55,
-  "max_model_calls": 215,
+  "max_minutes": 120,
+  "max_cycles": 54,
+  "max_model_calls": 212,
   "local_task_ids": [
     "F01-01",
     "F01-02",

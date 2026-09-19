@@ -23,7 +23,7 @@ python3 orchestration/autoloop.py run
 `run` devuelve2 al detenerse con recibo parcial: revisar `reason`, no interpretarlo como producto terminado. El proceso puede ejecutarse desacoplado de la terminal; sólo un PID vivo y el recibo lo acreditan. No es un servicio que sobreviva garantizadamente a suspensión/reinicio/SIGKILL.
 
 ## Límites de esta tanda
-- Política `orchestration/auto-policy.json`:42 IDs locales F01–F07, **150min**,55ciclos,215llamadas Codex como máximo, después de5llamadas bootstrap/revisión.
+- Política `orchestration/auto-policy.json`:42 IDs locales F01–F07, **120min**,54ciclos,212llamadas Codex como máximo en la reanudación, después de8llamadas usadas (5bootstrap,2en primer gate y1revisión de recuperación).
 - Dos intentos por tarea; agotamiento persiste entre relanzamientos. Un solo escritor: supervisor mantiene tanto su lock como el del runner.
 - Login ChatGPT comprobado antes de cada llamada, timeout15s; cada modelo hasta15min. Sin fallback a API key/OpenRouter para desarrollar.
 - Sin gasto incremental autorizado. GitHub privado ya creado; **Actions desactivadas temporalmente** hasta aprobar uso/presupuesto. YAML o tests locales no se llaman CI remoto verde.
@@ -45,10 +45,15 @@ python3 orchestration/autoloop.py retry --task ID --approval-note 'causa revisad
 ```
 4. `retry` conserva STOP y evidencia. Revisar antes de retirar la pausa y reanudar. No se renuevan ciclos agotados por simple relanzamiento.
 
+## Ampliaciones y primera parada
+Push/correos profesionales solicitados: [propuesta pendiente de destinatarios](docs/superpowers/specs/2026-09-19-notificaciones-propuesta.md). No son funcionalidades implementadas ni se añadieron silenciosamente al grafo.
+
+Primera tanda se detuvo por rechazo del gate F01-02: redirect tras éxito, control positivo de replay y demostración de oráculos sobre defectos. Se conserva el rechazo. Antes de reautoría leer [correcciones](construccion/correcciones/F01-02-gate.md). No se aceptó código de Auth. La renovación requiere nota y STOP explícitos, incluso si la tarea aún no tiene fila de producto.
+
 ## Evidencia
 - Scaffold F01-01 aceptado en `9e0010a`: Next.js real, instalación offline/lint/typecheck/build en copia temporal; revisión independiente del código. No Auth ni producto completo.
 - Correcciones revisadas: login persistido, lock compartido, presupuesto persistente y publicación de main adelantada; esta última bloqueada antes de enviar, con refspec SHA inmutable.
-- `python3 -W error::ResourceWarning -m unittest discover -s tests/controller`: **107tests OK** en repos canónico. Git real, CLI Codex simulado y remotos bare en tests; no demuestra autonomía prolongada ni cloud.
+- `python3 -W error::ResourceWarning -m unittest discover -s tests/controller`: **108tests OK** en repos canónico. La regresión adicional permite recuperación explícita si el gate fue rechazado antes de que existiera candidato; no crea un estado de producto ficticio. Git real, CLI Codex simulado y remotos bare en tests; no demuestra autonomía prolongada ni cloud.
 - `npm test`:24tests kernel/preparación. `node --test tests/tooling/scaffold-copy.test.mjs`:3tests de copia/entorno; el filtro relativo conserva candidatos dentro de `.runtime`. El build usa whitelist de entorno y npm config vacía para evitar EALLOWSCRIPTS al invocarlo desde npm run y no heredar claves/preloads.
 - Informes privados `automation-review-result.json`, `automation-recheck-result.json`, `publisher-final-review-result.json`; informes adversos preservados, no reescritos como aprobaciones. Última revisión:6tests publisher OK, sin P0/P1/P2 en ese alcance.
 

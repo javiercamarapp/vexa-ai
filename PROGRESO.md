@@ -1,6 +1,12 @@
 # Progreso verificable
 Actualizado: 2026-09-19 local. Los apartados anteriores conservados abajo son cortes históricos, no inventario vigente.
 
+## Primera parada y ampliaciones — 19-sep
+- Supervisor terminó su primera tanda porque el revisor rechazó el gate F01-02: no probaba redirect exitoso, confundía posible CSRF con autorización y sólo había ejercitado ausencia de archivo. Estado:7/55 aceptadas, Auth sin implementar. Informe original conservado; correcciones públicas en construccion/correcciones/F01-02-gate.md.
+- Se corrigió y reprodujo una limitación de recuperación: tarea cuyo gate falla antes de prepare aún no tiene fila de estado. Renovar explícitamente su presupuesto ahora reconoce pending por defecto, sin crear fila falsa ni permitir recuperar accepted/prepared/verified. **108tests generales OK**, revisión independiente22tests del supervisor OK. No se redujeron oráculos de Auth.
+- Usuario añadió push y correos profesionales. Referencias Likida/Atiende inspeccionadas selectivamente read-only; propuesta en docs/superpowers/specs/2026-09-19-notificaciones-propuesta.md. Destinatarios pendientes de confirmar; sin proveedor contratado ni envío externo.
+- Política de reanudación:120min,54ciclos,212llamadas adicionales;8ya usadas. El estado real se consulta en el recibo, no se infiere de esta planificación.
+
 ## Construcción efectiva y automatización — 19-sep
 - Relectura íntegra solicitada: seis audios en ambas transcripciones, DOCX extraído completo y PRD de35secciones; [alcance confirmado](construccion/ALCANCE-CONFIRMADO.md). No reconocimiento auditivo humano palabra por palabra.
 - F01-01 implementado por Astra/Codex, revisado independientemente y aceptado (`9e0010a`): Next.js/TS/npm workspace, página honesta y health/version. Instalación offline, lint/typecheck/build reales. Primer intento falló por filtro absoluto del gate; se corrigió externamente y verificó de nuevo sin cambiar fuentes del candidato. **7/55 aceptadas al arrancar supervisor.**

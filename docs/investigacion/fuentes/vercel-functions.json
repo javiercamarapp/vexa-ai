@@ -1,0 +1,44 @@
+{
+  "retrieved_at": "2026-09-19T01:53:59.749806+00:00",
+  "query": "Vercel functions duration payload size limits streaming background jobs",
+  "endpoint": "keyless developer search",
+  "sha256": "20614272fae646af10ce739c484ce295276bed10733e9c7a155860f164ad4d15",
+  "response": {
+    "success": true,
+    "partial": false,
+    "results": [
+      {
+        "id": "pull_request:vercel/vercel-plugin#177",
+        "url": "https://github.com/vercel/vercel-plugin/issues/177",
+        "title": "The `vercel-functions` skill had no coverage of long-duration functions, large functions, or Docker/container images, an",
+        "passages": [
+          {
+            "text": "## New sections\n**Plan Limits at a Glance** — one table, plus a \"What changed for Hobby\" note: duration went **60s → 300s for both default and maximum**, and the Basic CPU instance was replaced by Standard (1 vCPU / 2 GB).\n\n## Corrections to existing content\n| Was | Now |\n|-|-|\n| \"Max duration: 10s (Hobby)\" | 300s default **and** max |\n| \"5 GB package size on Fluid Compute\" | 250 MB standard; 5 GB requires the opt-in beta |\n| \"Edge Functions have 25s hard limit\" | 25s to _first byte_, then up to 300s streaming |"
+          }
+        ],
+        "license": "NOASSERTION"
+      },
+      {
+        "id": "web:https://vercel.com/docs/functions",
+        "url": "https://vercel.com/docs/functions",
+        "title": "Vercel Functions",
+        "passages": [
+          {
+            "text": "Stream responses to deliver content as it's generated. Limits. Review function limits including duration, payload size, and memory."
+          }
+        ]
+      },
+      {
+        "id": "doc:https://github.com/vercel/workflow/blob/20ad2b358240819c6e590fd4752b97da1c64b390/docs/content/docs/v5/comparisons/workflow-sdk-vs-aws-step-functions.mdx",
+        "url": "https://github.com/vercel/workflow/blob/20ad2b358240819c6e590fd4752b97da1c64b390/docs/content/docs/v5/comparisons/workflow-sdk-vs-aws-step-functions.mdx",
+        "title": "Workflow SDK vs AWS Step Functions",
+        "passages": [
+          {
+            "text": "## At a glance\n|  | Workflow SDK | AWS Step Functions |\n|-|-|-|\n| **Streaming** | Native durable, resumable streaming to clients | No native client streaming |\n| **Limits** | 50 MB payload; 2 GB/run; no duration cap (Vercel World limits) | 256 KB payload between states; Standard 25K history events / 1 year; Express 5 minutes |\n\n**What the limits mean in practice:** The 256 KB cap on payloads between states is the binding constraint for AI workloads. The Vercel World limits are 50 MB per payload and 2 GB of state per run."
+          }
+        ],
+        "license": "Apache-2.0"
+      }
+    ]
+  }
+}

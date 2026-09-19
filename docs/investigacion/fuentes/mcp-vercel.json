@@ -1,0 +1,50 @@
+{
+  "retrieved_at": "2026-09-19T01:54:11.516456+00:00",
+  "query": "Vercel MCP server OAuth endpoint security deployment",
+  "endpoint": "keyless developer search",
+  "sha256": "d3dc2419d51ce5afbf574c01d7a30f58bf88c63f9eca6565a6bcb163bcd2f138",
+  "response": {
+    "success": true,
+    "partial": false,
+    "results": [
+      {
+        "id": "pull_request:koala73/worldmonitor#2418",
+        "url": "https://github.com/koala73/worldmonitor/issues/2418",
+        "title": "koala73/worldmonitor#2418",
+        "passages": [
+          {
+            "text": "## Summary\n- Implements spec-compliant MCP OAuth 2.0 so claude.ai's remote connector (Client ID + Secret UI) can authenticate with WorldMonitor's MCP server\n\n## Post-Deploy Monitoring & Validation\nThis PR implements a spec-compliant OAuth 2.0 Client Credentials authorization server for WorldMonitor's MCP endpoint, enabling the claude.ai remote connector (which only accepts OAuth credentials) to authenticate.\n\n- **`public/.well-known/oauth-authorization-server`**: RFC 8414 discovery document, consistent with the `/oauth/token` rewrite in `vercel.json`\n\n### Important Files Changed\n| Filename | Overview |\n|-|-|\n| api/oauth/token.js | New OAuth 2.0 token endpoint implementing client_credentials grant; missing rate limiting (P1 security gap), WWW-Authenticate header on 401 (P2 RFC compliance), and raw API keys stored in Redis |\n| public/.well-known/oauth-authorization-server | RFC 8414 discovery document; token_endpoint URL is consistent with vercel.json rewrite, content is correct |"
+          }
+        ],
+        "license": "AGPL-3.0"
+      },
+      {
+        "id": "doc:https://vercel.com/docs/llms-full.txt",
+        "url": "https://vercel.com/docs/llms-full.txt",
+        "title": "Access tokens",
+        "passages": [
+          {
+            "text": "\"mcpServers\": {\n    \"server-name\": {\n      \"url\": \"https://my-mcp-server.vercel.app/api/mcp\"\n    }\n  }\n}\n… (156 more lines)",
+            "truncated": true,
+            "full_tokens_est": 2040
+          },
+          {
+            "text": "| **Data model**           | Relational (Postgres) for structured data, key-value (Redis) for caching, NoSQL for flexible schemas, vector for AI embeddings                                                                                                                                                                                                                                                                                                                                                                                               |\n| **Common use cases**     | Postgres for ACID transactions, complex queries, and foreign keys. Redis for session storage, rate limiting, and leaderboards. Vector for semantic search and recommendations. NoSQL for document storage, high write throughput, and horizontal scaling |\n| **Latency requirements** | Choose providers with regions close to your Functions                                                                                                                                                                                                                                                                                                                                                                                                                        |\n| **Scale**                | Evaluate pricing tiers and scaling capabilities for your expected workload                                                                                                                                                                                                                                                                                                                                                                                                                                                   |\n| **Features**             | Compare provider-specific features like branching, point-in-time recovery, or real-time subscriptions                                                                                                                                                                                                                                                                                                                                                                                                                        |\n\n## Best practices\n\n- **Locate data close to your Functions:** Deploy databases in regions near your Functions to minimize latency.\n- **Use connection pooling:** In serverless environments, use connection pooling (e.g., built-in pooling or PgBouncer) to manage database connections efficiently.\n- **Implement caching strategies:**\n  - Data Cache to cache fetch responses and reduce load\n  - Global Config for low-latency reads of config data\n  - Redis for frequently accessed, periodically changing data\n  - CDN caching with cache headers for static content\n- **Secure your connections:**\n  - Store credentials only in environment variables, never in code\n  - Use SSL/TLS connections when available\n\n## More resources\n\n- Add a Native Integration\n- Integrations Overview\n- Environment Variables\n- Functions Regions\n\n--------------------------------------------------------------------------------\ntitle: \"Deploy MCP servers to Vercel\"\ndescription: \"Learn how to deploy Model Context Protocol (MCP) servers on Vercel with OAuth authentication and efficient scaling.\"\nlast_updated: \"2018-10-20T01:46:40.000Z\"\nsource: \"https://vercel.com/docs/mcp/deploy-mcp-servers-to-vercel\"\n--------------------------------------------------------------------------------\n\n# Deploy MCP servers to Vercel\n\nDeploy your Model Context Protocol (MCP) servers on Vercel to take advantage of features like Vercel Functions, OAuth, and efficient scaling for AI applications.\n\n- Get started with deploying MCP servers on Vercel\n- Learn how to enable authorization to secure your MCP server\n… (90 more lines)",
+            "truncated": true,
+            "full_tokens_est": 2045
+          }
+        ]
+      },
+      {
+        "id": "web:https://nhimg.org/articles/vercel-oauth-breach-exposes-the-governance-gap-in-mcp-security/",
+        "url": "https://nhimg.org/articles/vercel-oauth-breach-exposes-the-governance-gap-in-mcp-security/",
+        "title": "Vercel OAuth breach exposes the governance gap in MCP security",
+        "passages": [
+          {
+            "text": "Key takeaways · The Vercel incident shows that a compromised AI productivity tool can turn one OAuth grant into a broad internal access path."
+          }
+        ]
+      }
+    ]
+  }
+}

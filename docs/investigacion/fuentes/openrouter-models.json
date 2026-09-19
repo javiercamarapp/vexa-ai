@@ -1,0 +1,53 @@
+{
+  "retrieved_at": "2026-09-19T01:54:04.877898+00:00",
+  "query": "OpenRouter models API pricing supported_parameters embeddings model context length",
+  "endpoint": "keyless developer search",
+  "sha256": "351c644b73adb19776dd73e42cb53f0b22018f871294d0365f419a0266eca984",
+  "response": {
+    "success": true,
+    "partial": false,
+    "results": [
+      {
+        "id": "doc:https://openrouter.ai/docs/guides/overview/models",
+        "url": "https://openrouter.ai/docs/guides/overview/models",
+        "title": "Models",
+        "passages": [
+          {
+            "text": "# Models\nOne API for hundreds of models\n\nExplore and browse 400+ models and providers on our website, or with our API.\n\n## Query Parameters\n### `supported_parameters`\n\n### `sort`\n| Value | Description |\n|-|-|\n| `pricing-low-to-high` | Cheapest models first (weighted average of prompt, completion, request, and web_search pricing) |\n| `pricing-high-to-low` | Most expensive models first |\n| `context-high-to-low` | Largest context window first |\n| `throughput-high-to-low` | Highest tokens/second first (p50 throughput from routing heuristics) |\n| `latency-low-to-high` | Lowest time-to-first-token first (p50 latency) |\n| `newest` | Most recently added to OpenRouter |\n\n## Models API Standard\n### API Response Schema\n#### Model Object Schema\n| Field | Type | Description |\n|-|-|-|\n| `context_length` | `number` | Maximum context window size in tokens |\n| `pricing` | `Pricing` | Pricing from the top provider for this model |\n| `supported_parameters` | `string[]` | Array of supported API parameters for this model |\n\n#### Pricing Object\n##### Pricing Overrides\n\n#### Supported Parameters\nThe `supported_parameters` array indicates which OpenAI-compatible parameters work with each model:\n\nSome models break up text into chunks of multiple characters (GPT, Claude, Llama, etc), while others tokenize by character (PaLM). This means that token counts (and therefore costs) will vary between models, even when inputs and outputs are the same. Costs are displayed and billed according to the tokenizer for the model in use. You can use the `usage` field in the response to get the token counts for the input and output. </Note>\n\nIf there are models or providers you are interested in that OpenRouter doesn't have, please tell us about them in our Discord channel."
+          }
+        ]
+      },
+      {
+        "id": "doc:https://github.com/prism-php/prism/blob/5d6cc65b80b19cf3f22744703ac0c727b68cdca8/docs/providers/openrouter.md",
+        "url": "https://github.com/prism-php/prism/blob/5d6cc65b80b19cf3f22744703ac0c727b68cdca8/docs/providers/openrouter.md",
+        "title": "OpenRouter",
+        "passages": [
+          {
+            "text": "# OpenRouter\nOpenRouter provides access to multiple AI models through a single API.\n\n## Usage\n### Videos\n[! NOTE] Video support varies by model.\n\n### Provider Routing & Advanced Options\n[! IMPORTANT]\n\nBecause metadata is centralized, you can double-check `supported_parameters`, context length, and per-request limits via the Models API before rolling out changes.\n\n## Available Models\nOpenRouter supports many models from different providers. The Models API returns structured metadata—`supported_parameters`, context length, pricing, and more—so you can verify capabilities programmatically before issuing requests. Some popular options include:\n\n- `x-ai/grok-code-fast-1`\n- `anthropic/claude-sonnet-4.5`\n- `google/gemini-2.5-flash`\n- `deepseek/deepseek-chat-v3-0324`\n- `z-ai/glm-4.6`\n- `tngtech/deepseek-r1t2-chimera:free`\n- `qwen/qwen3-coder-30b-a3b-instruct`\n- `mistralai/mistral-nemo`\n\n## Features\n- ✅ Multiple Model Support\n- ❌ Embeddings (not yet implemented)"
+          },
+          {
+            "text": "#### Reasoning Effort\n\nControl how much reasoning the model performs before generating a response using the `reasoning` parameter. The way this is structured depends on the underlying model you are calling:\n\n```php\n$response = Prism::text()\n    ->using(Provider::OpenRouter, 'openai/gpt-5-mini')\n    ->withPrompt('Write a PHP function to implement a binary search algorithm with proper error handling')\n    ->withProviderOptions([\n        'reasoning' => [\n            'effort' => 'high',  // Can be \"high\", \"medium\", or \"low\" (OpenAI-style)\n            'max_tokens' =>  2000, // Specific token limit (Gemini / Anthropic-style)\n\n            // Optional: Default is false. All models support this.\n            'exclude' => false, // Set to true to exclude reasoning tokens from response\n            // Or enable reasoning with the default parameters:\n            'enabled' => true // Default: inferred from `effort` or `max_tokens`\n        ]\n    ])\n    ->asText();\n```\n\n### Provider Routing & Advanced Options\n\nUse `withProviderOptions()` to forward OpenRouter-specific controls such as model preferences or sampling parameters. Prism automatically forwards the native request values for `temperature`, `top_p`, and `max_tokens`, so you can continue tuning them through the usual Prism API without duplicating them in `withProviderOptions()`. For transform pipelines, OpenRouter currently documents `\"middle-out\"` as the primary example—consult the parameter reference for additional context.\n… (26 more lines)",
+            "truncated": true,
+            "full_tokens_est": 809
+          }
+        ]
+      },
+      {
+        "id": "doc:https://github.com/corsairdev/corsair/blob/07b361c10f693d20d6c45fe3a63f139e4dd08400/docs/plugins/openrouter/api.mdx",
+        "url": "https://github.com/corsairdev/corsair/blob/07b361c10f693d20d6c45fe3a63f139e4dd08400/docs/plugins/openrouter/api.mdx",
+        "title": "API",
+        "passages": [
+          {
+            "text": "**New to Corsair?**\n\n## Embeddings\n### create\n\n## Models\n### count\n`models.count`\n\n**Risk:** `read`\n\n### list\nList all models available on OpenRouter, including pricing, context length, and supported parameters\n\n**Risk:** `read`\n\n### listEmbeddings\n`models.listEmbeddings`\n\n**Risk:** `read`\n\n| Name | Type | Required | Description |\n|-|-|-|-|\n| `offset` | `number` | No | — |\n| `limit` | `number` | No | — |"
+          },
+          {
+            "text": "### listEmbeddings\n\n`models.listEmbeddings`\n\nList all embedding models available on OpenRouter\n\n**Risk:** `read`\n\n```ts\nawait corsair.openrouter.api.models.listEmbeddings({});\n```\n\n**Input**\n\n| Name | Type | Required | Description |\n|------|------|----------|-------------|\n| `offset` | `number` | No | — |\n| `limit` | `number` | No | — |\n\n**Output**\n\n| Name | Type | Required | Description |\n|------|------|----------|-------------|\n| `data` | `object[]` | Yes | — |\n| `links` | `object` | No | — |\n| `total_count` | `number` | No | — |\n… (99 more lines)",
+            "truncated": true,
+            "full_tokens_est": 596
+          }
+        ],
+        "license": "NOASSERTION"
+      }
+    ]
+  }
+}

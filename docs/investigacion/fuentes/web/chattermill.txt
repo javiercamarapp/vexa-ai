@@ -1,0 +1,471 @@
+{"url": "https://chattermill.com/", "final_url": "https://chattermill.com/", "status": 200, "retrieved_at": "2026-09-19T02:12:26.333878+00:00", "sha256": "9bfd620bf51c0588f5d50eb22e4d1b84359f6487b1dcb66fcf12f5ad47f0a461"}
+
+Chattermill: Customer Intelligence & Voice of Customer Platform
+Platform
+PLATFORM
+Platform Overview
+How Chattermill works
+Integrations
+Unify feedback across every source
+Insights Engine: Lyra AI
+Analyze feedback with AI
+XLG Acceleration
+Connect CX to business outcomes
+Security & Privacy
+Protect customer data
+AGENTS
+Lyra Agent
+Agentic AI for customer feedback
+Proactive Insights
+An agent that's proactive by design
+Why Lyra Agent
+See what makes Lyra Agent perform best
+MCP & Skills
+Connect to your AI agents
+Agentic CXI Architecture
+Infrastructure for agentic work
+ANALYTICS
+Precision Insights
+Identify precise issues
+Impact Analysis
+Understand impact on your metrics
+Reports & Dashboards
+Collaborate across teams
+Anomaly Detection
+Trigger alerts
+Workflows & Automations
+Share insights with the right people
+See Chattermill in action
+Take a product tour
+Customer Stories
+CUSTOMER STORIES
+Uber
+400+ users, 8 year partnership
+HelloFresh
+30% increase in average order values
+Qonto
+80+ hours of manual work saved
+E.On Next
+144% increase in NPS
+All customer stories →
+FEATURED CUSTOMER STORIES
+How Uber scaled CX intelligence with Chattermill over 8 years
+Read more →
+How HelloFresh increased average order values by 30% using feedback insights
+Read more →
+Resources
+GUIDES
+Guides & Playbooks
+Explore CX intelligence trends, expert insights, and industry best practices.
+BLOG
+Chattermill
+Blog
+Explore CX & Product strategies, market trends and latest product insights.
+CX INTELLIGENCE ACADEMY
+CX Intelligence Academy
+Get certified and become an expert in how to prove the value of CX for the business.
+MORE
+Help Center
+API Docs
+Book a demo
+Sign in
+Sign in
+Book a demo
+Meet Lyra Agent, the AI agent for customer feedback analysis, built to think like a seasoned analyst.
+Learn more
+AI-Native Customer Intelligence & Voice of Customer platform
+CX intelligence and context for teams and agents
+Book a demo
+Chattermill unifies all your siloed feedback in one platform, surfaces emerging issues before they escalate, and delivers customer insights straight to your teams and AI agents.
+Agent
+Data
+Intelligence
+Program
+Analyze customer feedback with an AI agent for CX
+Ask a question and get analyst-quality answers, backed by quantified evidence, built-in charts and reports, and direct access to customer quotes.
+Learn more
+Get proactive insights, delivered on autopilot
+Get agentic customer insights delivered automatically to your team. Lyra Agent scans and analyzes your feedback, turning raw text into prioritized signals.
+Learn more
+Bring customer intelligence into your AI agents
+Plug verified CX intelligence straight into the AI agents you already use. Query Chattermill data and get reliable insights, instantly.
+Learn more
+Give your agents a trusted foundation to work from
+Connect any agent to our CXI agentic architecture for accuracy and reliability. Purpose-built by leading CX experts.
+Learn more
+Lyra Agent
+Proactive Insights
+MCP & Skills
+Agentic Infrastructure
+Consolidate all your feedback in one powerful platform
+Centralize feedback from every single channel. Get a unified view of your entire customer experience and understand the voice of the customer.
+Learn more
+Bring structure and clarity at scale
+Organize your feedback with new levels of precision. Work with AI models that tag and categorize every signal.
+Learn more
+Add context to every customer signal
+Enrich each signal with context – customer ID, channel, location, and more.
+Learn more
+Get enterprise-grade security
+Built for reliability and trust. Designed to meet the world's highest standards in data protection.
+Learn more
+Integrations
+Taxonomy
+Data Enrichment
+Security & Privacy
+Surface AI-powered insights across every touchpoint
+See how Lyra AI turns raw feedback from any channel into insights you can trust, at scale.
+Learn more
+Get a clear view of every customer issue
+Spot precise problems so you know what to fix, and why.
+Learn more
+Know the big drivers and opportunities
+Identify what's driving your key metrics. Understand why they move up or down.
+Learn more
+Go directly from insights to action
+Create custom reports with advanced filters and visualizations. Add them to dashboards built for every use case.
+Learn more
+Spot critical issues as they emerge
+Make sure no issues go undetected. Get real-time alerts routed to Slack, email, Jira and more.
+Learn more
+Lyra AI
+Precision Insights
+Impact Analysis
+Reports & Dashboards
+Anomaly Detection
+Track the impact of CX on retention, churn, and revenue
+Work with a dedicated team of experts to link customer signals directly to business outcomes.
+Learn more
+XLG Acceleration
+Trusted every day by world-leading enterprises to understand their customers at scale
+AGENTIC AI FOR CX
+AI agent for customer feedback analysis
+Meet Lyra – the AI agent thinks and acts like a specialist CX analyst. It automates customer feedback analysis and voice of customer insights, and provides quality answers, backed by real customer quotes.
+Learn more
+AI agent for CX
+Bring agentic insights into your workflow with an agent that surfaces feedback trends and signals, and turns them into answers you can act on.
+Answers any question
+Diagnose NPS or CSAT shifts, spot churn signals, and understand why customers return products — Lyra Agent has the context to answer it all.
+Proactive customer insights
+Lyra Agent monitors your voice of customer data, automatically surfacing what you weren't looking for — spikes, bugs, big opportunities.
+AI TECHNOLOGY
+Proprietary AI technology, purpose-built for CX
+Most AI models are generalists, not specialists. Lyra, our proprietary AI model, is different - trained specifically for customer experience intelligence.
+Built for strategic & precision insights
+AI that sees the big picture and the finest detail — from high-level trends to precise root causes hiding beneath them.
+Powered by AI agents
+Our flexible, modular tech stack is built for the agentic era — ready for your team and your agents.
+Contextually intelligent
+Every feedback signal, layered with your CRM, ops, transactional, and competitive data — so every insight reflects the full context of your business.
+Learn more
+MCP & SKILLS
+Ask any question, get analyst-quality answers
+Plug verified CX intelligence straight into the AI agents you already use via MCP. Chattermill feeds your agents with quantified customer feedback, so every answer they give you is steeped in fact, and years of expertise.
+Learn more
+Connects with any agent
+Works with Claude, ChatGPT, and any MCP-compatible agent.
+Answers you can trust
+Pull from robust data that's instantly-verifiable through customer quotes.
+Master-crafted skills
+Ensure every analysis your agent runs is accurate, reliable, and top-tier.
+Streamlined tech stack
+Create Linear tickets, Notion docs, or slides enriched with customer intelligence.
+Secure by design
+Rely on technology that meets the highest standards in data protection and information security.
+CXI AGENTIC ARCHITECTURE
+Designed for better insights and agentic work
+Specifically engineered for feedback analysis, Chattermill is optimized at every layer for accuracy, trust, and reliability. It’s the foundation AI agents need to get it right, every time.
+Learn more
+Chattermill Agentic CX Intelligence Architecture
+Data Layer
+Surveys
+Reviews
+Contact Center
+Support
+Social
+Business Context
+AI Insights Engine
+CX Context Engine
+Purpose Tuned LLMs
+Frontier LLMs for open-ended reasoning, and fine-tuned specialist models for precision tasks.
+Strategic & Precision Insights
+Strategic insights track trends, precision insights pinpoint specific issues.
+CX Analytical Engine
+Every signal, structured into intelligence agents can act on.
+Workflows & Alerting
+Triggered reports and dashboards, anomaly detection, real-time alerting.
+Insight Governance
+Ensures the highest accuracy, precision, and reliability of every insight.
+Skills & Evals
+A skills library teaching agents how to use the insights engine, evaluated continuously.
+Knowledge & Memory
+Coming Soon
+A knowledge layer agents consult automatically, with a memory system built on top.
+Governance
+Multi-layer controls across the agentic stack — so every output can be trusted.
+Collaboration & Audit
+Coming Soon
+All activity logged — data access, configuration changes, user actions.
+CX Context Graph
+Coming Soon
+A structured, queryable record of every insight path an organization produces, helping agents get smarter.
+Agent Layer
+AI Agents
+Lyra Agent
+A Chattermill-native agent, purpose-built for CX
+intelligence workflows.
+Custom Agents
+Teams
+Purpose-built for AI-native teams
+We don’t just power CX teams. Our world-class platform gives every team across the business one trusted view of your entire customer experience.
+CX
+Product & UX
+Insights & VoC
+Customer Support
+“Chattermill’s impact permeates all levels of the company. It plays a crucial role in shaping UX decisions, payment method launches, and feature introductions.”
+Renata Vasconcellos de Sa
+Group Product Ops Lead
+See more customer stories
+"The return on investment with Chattermill is exceptional. It’s incredibly cost-effective compared to the resources and effort required to achieve the same results manually."
+James McGhee
+Director of CX
+See more customer stories
+"With Chattermill, we took a more proactive approach to customer feedback, fixing recurring issues. As a result, complaints have decreased and our NPS score has risen. We have seen significant increases in retention and customer lifetime value.”
+Megan Wood
+Head of Customer Performance
+See more customer stories
+"The return on investment has been pretty immediate, and it's been pretty obvious. Our NPS went from plus 9 last year to plus 22 this year, which is an incredible 144% increase.”
+Abdul Khaled
+Head of Customer Experience & Digital Products
+See more customer stories
+USE CASES
+Intelligence shaped around your business
+Chattermill connects customer signals to business outcomes, telling you precisely what’s driving your metrics, retention and revenue.
+NPS & CSAT intelligence
+What's driving our NPS & CSAT up or down?
+What will boost our NPS & CSAT?
+What's the ROI of improving our scores?
+Digital experience intelligence
+What defects are trending within our product or app?
+How are customers reacting to the new feature?
+What are quick wins to improve digital experience?
+Retention intelligence
+Which customers are at risk of switching brands?
+What are the leading indicators of churn?
+Are retention and win-back efforts working?
+Frontline intelligence
+Which agents, teams, or centers are outperforming?
+What agent behaviors drive positive or negative CSAT?
+What can we shift to self-serve?
+Customer contacts intelligence
+Why do people contact us?
+Which issues take the longest to resolve?
+What can we deflect to self-serve, chatbot, or FAQs?
+Product returns intelligence
+Why do customers return products?
+What do customers think of our returns policy?
+Which carriers get the most complaints?
+Competitive intelligence
+What are competitors doing better than us?
+Do they have any product or service gaps?
+How do we benchmark on value, ease of use, or customer service?
+Acquisition intelligence
+Where are we losing customers in the funnel — and why?
+What's causing the most friction at sign-up?
+What quick fixes would boost conversion?
+NPS & CSAT
+Digital Experience
+Retention
+Frontline
+Contact Reasons
+Product Returns
+Competitors
+Acquisition
+OUR CUSTOMERS
+How teams like yours are seeing real success
+See how world-leading teams use Chattermill to cut through the noise and spot their biggest opportunities — delivering results their CEOs actually care about.
+Learn more
+TRAVEL & TRANSPORTATION
+400+
+users enabled across CX, Product & Operations
+Read more
+UTILITIES
+144%
+increase in NPS
+Read more
+CONSUMER SERVICES
+42.8%
+decrease in contacts per transaction
+Read more
+XLG ACCELERATION
+A true partner with deep domain expertise.
+The most sophisticated technology still requires human expertise to translate into business outcomes.
+We partner with you to turn customer signals into business decisions, operating changes, and financial outcomes — with deep domain expertise, proven frameworks, and the education to make it stick.
+Learn more
+01
+Feature one
+01
+Collect
+Gather signals from surveys, calls, chats, reviews, social media, and more.
+02
+Feature two
+02
+Understand
+Answer your most critical business questions.
+03
+Feature three
+03
+Act
+Know where to invest with high-impact insights.
+04
+Feature four
+04
+Measure
+Track against lead metrics and experience benchmarks.
+05
+Feature four
+05
+Prove ROI
+Connect directly to revenue, retention, and churn.
+XLG ACCELERATION
+Connecting customer feedback to real business outcomes takes exceptional tech, coupled with deep domain expertise. Work with a dedicated team that’s fully committed to getting you results.
+Step 1
+Collect
+Gather signals from surveys, calls, chats, reviews, social media, and more.
+Read More
+Step 2
+Understand
+Answer your most critical business questions.
+Read More
+Step 3
+Act
+Know where to invest with high-impact insights.
+Read More
+Step 4
+Measure
+Track against lead metrics and experience benchmarks.
+Read More
+Step 5
+Prove ROI
+Connect directly to revenue, retention, and churn.
+Read More
+SECURITY & COMPLIANCE
+Enterprise-grade platform built for trust
+Enterprise-ready by design. Manage multiple teams, control access, and ensure PII compliance within an interface built for the modern enterprise organization.
+Learn more
+SOC 2 Type II
+GDPR & CCPA COMPLIANCE
+ISO 27001 CERTIFIED
+SSO
+ACCESS CONTROLS
+PII REDACTION
+Integrations
+All your feedback data in one place
+Easily integrate with any feedback channel and data source to get a unified view of your customers.
+View all integrations
+CX intelligence, AI by design
+Book a demo
+Frequently asked questions
+What is Chattermill?
+Chattermill is the AI-native CX intelligence and Voice of Customer platform that helps you unify and analyze feedback across every channel including surveys, online reviews, social media, support conversations, and voice calls.
+Using powerful AI analytics, Chattermill extract insights from unstructured text feedback to uncover clear, actionable insights that can drive smarter decisions across your business.
+From identifying pain points to spotting emerging trends and improving loyalty, Chattermill gives your teams the clarity and insights you need to guide strategic decisions, improve products and services, and increase customer satisfaction.
+Who is Chattermill for?
+Chattermill is built for CX-focused teams that want to go beyond surface-level metrics and truly understand their customers. It helps:
+Customer Experience and Voice of Customer teams pinpoint what's impacting satisfaction and loyalty
+Product and UX teams prioritize improvements based on real customer needs
+Support and Operations teams identify recurring issues before they escalate
+Whether you're a fast-growing brand or an established enterprise, Chattermill makes it easy to align your entire organization around what matters most to customers.
+Can Chattermill integrate with Claude, ChatGPT, Jira, Linear, Notion and other tools?
+Yes. Chattermill connects to AI assistants, support platforms, CRMs, ticketing systems, and feedback channels through 50+ native integrations and an MCP server.
+What teams do with it:
+Query feedback from Claude, ChatGPT, or any AI agent via Chattermill MCP
+Get Slack alerts when NPS drops, sentiment shifts, or a theme spikes
+Turn top issues into Jira tickets with the customer quotes attached
+Pull Salesforce or other CRM data in so feedback sits next to account, deal, and segment context
+Connect feedback from Zendesk, Intercom, Qualtrics, Trustpilot, surveys, reviews, and call transcripts
+If a tool's missing, the API, MCP or a secure data feed handles the rest.
+Can I integrate Chattermill with my current stack?
+Chattermill lets you integrate and analyze feedback from various sources like survey tools, online review sites, social media, and customer service platforms (including support calls).
+You can check out the full list of integrations
+here
+.
+We can also integrate with any custom data source through our API or a secure data upload, so if you're looking to connect your favorite tools, just reach out – we'd love to help!
+Who isn't Chattermill a good fit for?
+You are looking for a feedback collection tool to send out surveys
+You're not consistently collecting more than 5,000 pieces of customer feedback every month
+You are a student, higher education institution or are looking for one-off analysis
+You're only looking for basic survey tools, not deep customer experience insights
+Chattermill empowers CX, Product, and Insights teams to unify and analyze customer feedback at scale—from surveys, support tickets, reviews, and more—using AI to uncover what truly drives customer satisfaction and churn.
+Most customer-centric organizations benefit from our platform, but if you're not actively collecting or acting on feedback, Chattermill might not be the right fit, and we wouldn't want to waste your time.
+Do you charge extra for additional users?
+We believe that customer feedback insights should be available to everyone in any organization so we do not charge a per user fee - you can add as many users as you need.
+Does Chattermill comply with GDPR and CCPA?
+Yes, Chattermill is fully compliant with GDPR and CCPA regulations, ensuring that all personal data is handled securely and responsibly.
+We are also SOC2 Type II and ISO 27001:2022 certified, meeting the highest security and confidentiality standards.
+You can read more about our approach to data and security on our
+Trust Center
+.
+What makes Chattermill different?
+Most tools give you data. Chattermill gives you clear customer understanding at the click of a button.
+Instead of siloed dashboards or superficial insights, Chattermill brings all your customer data into one place - and applies deep AI-powered analysis to reveal the "why" behind the numbers.
+Our cutting-edge
+Lyra AI
+delivers strategic and precision insights with unmatched accuracy and precision.
+We also work with you to link insights to your business goals, train your teams on CX best practices, and give you ongoing access to a network of CX and VoC experts at your disposal.
+Chattermill is the single source of customer truth for businesses who want to turn every piece of feedback into insights that can influence their most important metrics.
+PLATFORM
+Platform Overview
+Product Tour
+Integrations
+Insights Engine: Lyra AI
+Security & Privacy
+ANALYTICS
+Precision Insights
+Impact Analysis
+Reports & Dashboards
+Anomaly Detection
+Workflows & Automations
+AGENTS
+Lyra Agent
+Proactive Insights
+Why Lyra Agent
+MCP & Skills
+Agentic CXI Architecture
+CUSTOMERS
+Uber
+HelloFresh
+Qonto
+E.ON Next
+Customer Stories
+COMPARISONS
+Alternatives
+Chattermill vs Thematic
+Chattermill vs Enterpret
+Chattermill vs Unwrap
+Chattermill vs Caplena
+Chattermill vs TextiQ
+Chattermill vs Medallia
+Chattermill vs UnitQ
+Chattermill vs Qualtrics
+RESOURCES
+Customer Stories
+Chattermill Blog
+CX Intelligence Academy
+Help Center
+API Docs
+AI Labs
+COMPANY
+About Us
+Contact Us
+Careers
+Security
+Trust Center
+Chattermill Analytics Limited
+68 Hanbury St, London, E1 5JL,
+United Kingdom
+© Chattermill 2015-2026 All Rights Reserved
+Terms and conditions
+Cookies
+Privacy Policy
+Legal

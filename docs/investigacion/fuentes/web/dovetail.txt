@@ -1,0 +1,350 @@
+{"url": "https://dovetail.com/", "final_url": "https://dovetail.com/", "status": 200, "retrieved_at": "2026-09-19T02:12:30.989678+00:00", "sha256": "7fcdda1289fd229c007ff4a5ffd6448507427d818eeecbfdc2e71435b1f93f75"}
+
+Dovetail | Customer Intelligence Platform
+Ask. Never guess.
+Introducing Digital Twins →
+Product
+Analyze
+AI Projects
+Automatic analysis to turn feedback into structured intelligence
+AI Channels 2.0
+Beta
+Classify raw data into ideas and identify emerging issues
+AI Dashboards
+Beta
+Visualize customer trends alongside key business metrics
+Query
+Digital Twins
+New
+Talk with a replica of your customer segments, built from real data
+AI Chat
+Get instant answers and discover anything across customer data
+Act
+AI Agents
+Transform customer signals into intelligent, automated action
+AI Docs
+Create shareable AI outputs to drive decisions and action
+Introducing: Digital Twins
+Ask.
+Never guess.
+API and Integrations
+Connect your stack end-to-end: data in, intelligence out
+Solutions
+Roles
+Design
+Surface real user signals to back every design decision
+Product Management
+Prioritize with confidence using quantified customer evidence
+Research
+Scale research impact and share insights across your org
+Customer Experience
+Act on support tickets, NPS, and renewals before they escalate
+Sales & Customer Success
+Win more deals and reduce churn with revenue intelligence
+Marketing
+Build campaigns on real customer language, not assumptions
+Use cases
+Voice of Customer
+Connect every feedback channel into one intelligence layer
+Product Research
+Ground prioritization and tradeoffs in customer evidence
+Research Repository
+Turn studies and transcripts into shared customer intelligence
+Resources
+Resources
+Blog
+Breaking news, opinions, and product thinking from Dovetail
+Live demos
+Learn the workflows and features that help teams move faster
+Outlier
+Latest insights from leaders in AI and customer intelligence
+Help
+Help center
+Find answers to common product and workflow issues
+Academy
+Learn best practices and sharpen your skills with guided training
+Changelog
+See the latest releases, improvements, and updates
+Company
+Events
+Live and virtual events that connect the global Dovetail community
+Careers
+Join a fast-growing team shaping the future of customer intelligence
+Enterprise
+Customers
+Pricing
+Go to app
+Log in
+Contact sales
+Menu
+G2
+Capterra
+TrustRadius
+B
+u
+i
+l
+d
+w
+i
+t
+h
+f
+a
+c
+t
+s
+,
+n
+o
+t
+v
+i
+b
+e
+s
+One platform for every customer signal. Dovetail’s AI turns sales calls, support tickets, and research into answers your whole organization can act on.
+Contact sales
+Try Dovetail free
+Dovetail transforms
+fragmented
+customer feedback into decision-ready
+intelligence automatically, across your whole organization.
+2.3x
+Return on investment
+More than double your ROI. Payback in under six months.
+30hrs
+Weekly time saved per user
+A full workweek back, every week. Powered by AI analysis.
+66%
+Faster shipping
+Faster from discovery to delivery—without sacrificing quality.
+Faster decisions. Less guesswork. Verified by Forrester.
+Download the Forrester Total Economic Impact™ Study →
+Equip
+every team with customer
+insights
+Customer feedback lives across dozens of tools, belongs to different teams, and takes weeks to make sense of. Dovetail is the Customer Intelligence Platform that unifies it all—turning fragmented signals into strategic alignment, across every team.
+Contact sales
+Try Dovetail free
+Centralize
+01
+38 native integrations plus API, MCP, and CLI tools
+Every signal, in context—who said it, when, and why it matters. Dovetail connects every customer-facing tool and touchpoint, enriching feedback with account metadata automatically.
+Discover all integrations →
+Analyze
+02
+AI analysis grounded in evidence
+What once took weeks happens in minutes. Dovetail’s AI automatically surfaces trends, themes, and signals across thousands of customer touchpoints—so your team spends time on decisions, not synthesis.
+Contact sales
+Try Dovetail free
+AI Projects
+Transform calls, documents, and surveys into clear, concise reports with highlights featuring the real customer voice.
+Learn more →
+AI Channels 2.0
+Beta
+Automatically classify tickets, reviews, and user feedback into product opportunities, and keep track of trends over time.
+Learn more →
+AI Dashboards
+Beta
+Turn unstructured, qualitative data into quantitative charts to track themes and customer sentiment over time.
+Learn more →
+Read customer story
+“Dovetail enables us to access all of Breville’s insights gathered from around the globe—all in one place. This is incredibly valuable and saves us from losing or repeating invaluable information about our customers.”
+Constance Docos
+Senior UX Designer, Breville
+Query
+03
+Chat, search, and explore customer insights
+Chat with your data like you’d message the expert on your team. Ask what’s driving churn, what objections sales are hearing, or what your EMEA customers actually want. Patterns that no single team could see on their own, answered instantly.
+Contact sales
+Try Dovetail free
+AI Chat
+Find answers in your customer data with AI-powered chat. Get insights without digging through notes or tickets.
+Learn more →
+More ways to query your data
+Search
+Lighting fast keyword and semantic search with RAG enables your team to find insights in seconds.
+Explore
+Visual results, smart summaries, and advanced segmentation—for teams that need the full picture.
+Chat in Slack & Teams
+Simply @Dovetail for instant answers pulled from your data—customer intelligence across every team.
+Read customer story
+“I want to literally chat with nine hours of the footage that we have—like, “What do they think about this? What do they think about that?” I want to really test my own assumptions very quickly.”
+Martin Jerkovic
+Lead Product Designer, Atlassian
+Act
+04
+Customer context in every tool, across every team
+From discovery to delivery, the customer’s in the room. Dovetail plugs directly into your existing infrastructure, so every team works with customer context, not around it.
+Contact sales
+Try Dovetail free
+AI Agents
+Automatically spot changes, generate docs, and alert your team to risks and opportunities. Act on intelligence, not instinct.
+Learn more →
+AI Docs
+Generate documents from your data that combine structured insights with customer clips and highlights.
+Learn more →
+MORE WAYS TO ACT on your data
+MCP
+Connect Dovetail to Claude, ChatGPT, Copilot, and other AI tools for instant access to your insights, wherever you work.
+API and CLI
+Build custom integrations, sync data between tools, and migrate from legacy vendors with our powerful API and CLI tool.
+AI coding support
+Go from feedback to code in seconds with native connectors for Figma Make and Alloy, and support for AI coding tools.
+“We’re able to bring customer intelligence to decision-makers and product leaders really quickly, and then share it across our design community. Dovetail has been a real game-changer for us.”
+Simone Ellis
+Loyalty CX Lead, Qantas
+Dovetail for
+Product Management
+Stop guessing what to build next. Dovetail surfaces themes and trends across every customer touchpoint so PMs can prioritize with confidence, write briefs grounded in evidence, and ship what customers actually need.
+Learn more →
+Product Design
+User Research
+Customer Experience
+Sales and CS
+Marketing
+Your
+AI native customer intelligence platform— secure, compliant, and ready to scale
+org-wide
+Dovetail is built for organizations where security, privacy, and control aren’t optional. SOC 2 Type II, ISO 27001, HIPAA, and GDPR compliance are table stakes—but what sets Dovetail apart is how it lets your team move fast without trading away governance.
+Built for trust at scale
+SSO, automated provisioning, and custom data retention give IT and security full control—without slowing teams down.
+Drive consistency
+Global fields, tags, templates, and workspace governance mean every team works from the same source of truth.
+Privacy without friction
+Role-based permissions keep sensitive data protected while ensuring the right people always have the context they need.
+Automatic PII redaction
+Names, faces, and voices are automatically redacted across text, audio, and video—compliance built in, not bolted on.
+AI you can trust
+Every AI-generated insight links back to its source. No black-box answers—your team can interrogate any finding with confidence.
+Private AI
+Dovetail runs Gen AI on AWS Bedrock in a secure, private environment. Your data never trains models and never leaves your control.
+The best
+[
+]
+never guess
+See how the world’s leading product teams replaced gut feel with customer intelligence—and what they built because of it.
+Discover all customer stories →
+“
+For us, the value of Dovetail is efficiency. And with the AI features, it means we can extract more value from the existing customer data that we already have. It’s very powerful and has changed the way we work.
+”
+Renato Cerqueira Leite
+Head of research Operations
+How Itaú Unibanco delivers better banking experiences with Dovetail
+↘
+“
+I want to literally chat with nine hours of the footage that we have: ‘What do they think about this? What do they think about that?’ I want to really test my own assumptions very quickly.
+”
+Martin Jerkovic
+Lead Product Designer
+How Atlassian turns customer signals into confident product decisions
+↘
+“
+One of my favorite things is seeing people not behave the way we expect them to behave.
+”
+Craig Boustred
+Design Researcher
+Dovetail helps Canva turn millions of design moments into product decisions that shape how the world designs
+↘
+“
+For us, the value of Dovetail is efficiency. And with the AI features, it means we can extract more value from the existing customer data that we already have. It’s very powerful and has changed the way we work.
+”
+Renato Cerqueira Leite
+Head of research Operations
+How Itaú Unibanco delivers better banking experiences with Dovetail
+↘
+“
+I want to literally chat with nine hours of the footage that we have: ‘What do they think about this? What do they think about that?’ I want to really test my own assumptions very quickly.
+”
+Martin Jerkovic
+Lead Product Designer
+How Atlassian turns customer signals into confident product decisions
+↘
+“
+One of my favorite things is seeing people not behave the way we expect them to behave.
+”
+Craig Boustred
+Design Researcher
+Dovetail helps Canva turn millions of design moments into product decisions that shape how the world designs
+↘
+Turn
+feedback
+into
+product innovation
+Contact sales
+Try Dovetail free
+Platform
+AI Projects
+AI Channels 2.0
+beta
+AI Dashboards
+beta
+Digital Twins
+new
+AI Chat
+AI Docs
+AI Agents
+Deploy
+Enterprise
+Customers
+Pricing
+Roles
+Designer
+Researcher
+Product Manager
+Customer Experience
+Sales & CS
+Marketing
+Use Cases
+Voice of Customer
+Product Research
+Research Repository
+Comparisons
+Marvin
+Condens
+Looppanel
+Maze
+UserTesting
+Notably
+Aurelius
+Lookback
+Great Question
+Insight7
+Enterpret
+Qualtrics
+Pendo
+Chattermill
+Thematic
+Resources
+Blog
+Outlier
+Changelog
+Community
+Events
+Help centre
+Academy
+Live Demos
+Customers
+Breville
+Okta
+Atlassian
+Canva
+Itaú Unibanco
+Zapier
+AWS
+CNH
+Contact
+Request a demo
+Contact sales
+Company
+Careers
+Trust center
+Log in
+Try Dovetail free
+©
+2026
+Dovetail Research Pty. Ltd.
+COOKIE PREFERENCES
+Legal & Privacy
+FOLLOW US

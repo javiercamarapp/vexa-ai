@@ -1,0 +1,48 @@
+{
+  "retrieved_at": "2026-09-19T01:54:03.908532+00:00",
+  "query": "OpenRouter provider routing zero data retention zdr data_collection deny privacy",
+  "endpoint": "keyless developer search",
+  "sha256": "848adf104fd8efe011bf5d139883048677e6faf84df5c5416435688cf258be5f",
+  "response": {
+    "success": true,
+    "partial": false,
+    "results": [
+      {
+        "id": "doc:https://github.com/cultivatelabs/raif/blob/0c5c025a8ba23bbc643ae8f983d55e43a43d5b54/docs/_learn_more/provider_data_retention.md",
+        "url": "https://github.com/cultivatelabs/raif/blob/0c5c025a8ba23bbc643ae8f983d55e43a43d5b54/docs/_learn_more/provider_data_retention.md",
+        "title": "Provider Data Retention",
+        "passages": [
+          {
+            "text": "# Provider Data Retention\n| Setting | Default | Sends | Applies to |\n|-|-|-|-|\n| `open_router_data_collection` | `\"deny\"` | `provider.data_collection` | `Raif::Llms::OpenRouter` |\n| `open_router_zdr` | `false` | `provider.zdr` | `Raif::Llms::OpenRouter` |\n\nNeither provider's parameter amounts to zero retention on its own.\n\n## OpenAI Responses API\n\n## OpenRouter\nOpenRouter defaults `data_collection` to `\"allow\"`, which filters nothing, so without an explicit preference the only thing narrowing the routing is the account-level privacy setting on openrouter.ai, which the host app cannot read from its own code.\n\nRaif sends `provider: { data_collection: \"deny\" }`, which routes only to providers that do not collect user data.\n\n`\"deny\"` narrows the set of endpoints OpenRouter will route to.\n\nRequest preferences narrow within it rather than override it, so an account that denies data collection stays denied whatever a request asks for.\n\n### Zero data retention\n`data_collection` is about training and non-transient storage, not retention. OpenRouter states it has no routing rules based on providers' data retention policies, so a provider that holds prompts for a fixed window without training on them still satisfies `\"deny\"`.\n\n`provider: { zdr: true }` is the control that restricts routing to endpoints with a Zero Data Retention policy. Raif sends it only when `open_router_zdr` is true:\n\nIt defaults to `false` because it is a far narrower filter than `data_collection`. Many models have no ZDR endpoint at all and will return a no-endpoints error once it is on.\n\nThe parameter is omitted rather than sent as `false`, since OpenRouter treats `false` and absent alike. A per-request `zdr` is OR'd with the account-wide and guardrail ZDR settings, so it can only add enforcement, never remove it."
+          },
+          {
+            "text": "### Zero data retention\n\n`data_collection` is about training and non-transient storage, not retention. OpenRouter states it has no routing rules based on providers' data retention policies, so a provider that holds prompts for a fixed window without training on them still satisfies `\"deny\"`.\n\n`provider: { zdr: true }` is the control that restricts routing to endpoints with a Zero Data Retention policy. Raif sends it only when `open_router_zdr` is true:\n\n```ruby\nRaif.configure do |config|\n  config.open_router_zdr = true\nend\n```\n\nIt defaults to `false` because it is a far narrower filter than `data_collection`. Many models have no ZDR endpoint at all and will return a no-endpoints error once it is on. Check the models you use before enabling it.\n\nThe parameter is omitted rather than sent as `false`, since OpenRouter treats `false` and absent alike. A per-request `zdr` is OR'd with the account-wide and guardrail ZDR settings, so it can only add enforcement, never remove it.\n\n## Overriding a setting\n\nA `Raif::Task`, `Raif::Conversation` or `Raif::Agent` subclass can override either setting for every request it makes:\n\n```ruby\nclass Raif::Tasks::PublicSummary < Raif::Task\n  self.open_ai_store_responses = true\n\n  def build_prompt\n    \"Summarize the following press release: ...\"\n  end\nend\n```\n\n`Raif::Llm#chat` takes the same three keywords for a one-off override:\n\n```ruby\nRaif.llm(:open_ai_responses_gpt_4o).chat(\n  message: \"Summarize the following press release: ...\",\n  open_ai_store_responses: true\n)\n```\n… (4 more lines)",
+            "truncated": true,
+            "full_tokens_est": 504
+          }
+        ],
+        "license": "MIT"
+      },
+      {
+        "id": "doc:https://openrouter.ai/docs/guides/features/sovereign-ai",
+        "url": "https://openrouter.ai/docs/guides/features/sovereign-ai",
+        "title": "Sovereign AI",
+        "passages": [
+          {
+            "text": "# Sovereign AI\n## How OpenRouter Enables Sovereign AI\n### In-Region Routing\n\n### Zero Data Retention (ZDR)\n\n### Data Collection Controls\n\nWhen set to `\"deny\"`, your requests are only routed to providers that do not collect user data.\n\n## Building a Sovereign AI Stack with OpenRouter\n3. **Deny data collection** to prevent training on your data"
+          }
+        ]
+      },
+      {
+        "id": "doc:https://openrouter.ai/docs/guides/routing/provider-selection",
+        "url": "https://openrouter.ai/docs/guides/routing/provider-selection",
+        "title": "Provider Routing",
+        "passages": [
+          {
+            "text": "# Provider Routing\n## Requiring Providers to Comply with Data Policies\n| Field | Type | Default | Description |\n|-|-|-|-|\n| `data_collection` | \"allow\" | \"deny\" | \"allow\" | Control whether to use providers that may store data. |\n\n## Zero Data Retention Enforcement\nYou can enforce Zero Data Retention (ZDR) on a per-request basis using the `zdr` parameter, ensuring your request only routes to endpoints that do not retain prompts.\n\nWhen `zdr` is set to `true`, the request will only be routed to endpoints that have a Zero Data Retention policy. When `zdr` is `false` or not provided, it has no effect on routing.\n\nThe per-request `zdr` parameter"
+          }
+        ]
+      }
+    ]
+  }
+}

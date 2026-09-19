@@ -1,0 +1,20 @@
+# Hallazgos
+
+## 2026-09-18/19 — fuentes, investigación y verificación
+- Audio: la transición HubSpot→Zendesk es central para el pitch. Adaptadores read-only comparten modelo canónico y preservan aliases/historia; mock no acredita conexión real.
+- La separación VEXA/Convexia y propuesta 70/30 son declaraciones del audio; documentos firmados/IP/vesting/control siguen pendientes.
+- El DOCX y PRD discrepan en pantallas, campos obligatorios y cronómetros. Decisión propuesta: ocho vistas, campos de enlace nullable con coverage, latencia de procesamiento distinta de comprensión ejecutiva.
+- Competidores Thematic/Chattermill/unitQ/SentiSum/Enterpret ya presentan prioridades/economía/acciones. Veredicto CAMBIAR posicionamiento; no declarar categoría sin competencia.
+- Dinero requiere evitar sumas no aditivas y distinguir observado/modelado/inferido. No convertir refunds alegados o probabilidades LLM en dinero observado.
+- Supabase Queues vs Vercel Workflow sigue spike abierto. Cola durable sin consumidor verificado no procesa nada por sí sola.
+- OpenRouter data_collection deny no equivale a ZDR/residencia. Catálogo público no acredita política del endpoint.
+- Catálogo consultado incluye Astra $10/$50 por millón entrada/salida: no conviene inferir cada ticket con modelo premium sin medir COGS. Construcción Codex y consumo SaaS son economías diferentes.
+- Kernel: 12 tests pasan. Controlador: 22 tests pasan, incluyendo Git real con CLI Codex simulado. Revisión independiente encontró P2 de límites temporales, reproducido y corregido.
+- Grafo: 55 tareas, 54 gates no escritos. Esta carencia bloquea construcción automática; no equivale a software entregado.
+
+## 2026-09-18 — reinicio desde fuentes
+- La exploración anterior no produjo transcripciones ni software. No constituye una investigación finalizada.
+- ~/likida tiene commit 47db3c29 (2026-09-16); ~/likida.ai es una copia anterior en da535834 (2026-09-02). Priorizar likida para patrones vigentes.
+- ~/atiende-fusion commit 75632c9; ~/atiende-landing commit 92872bc. No asumir que landing es producto completo.
+- Whisper CPP tiene modelos locales ~/.cache/whisper-cpp/ggml-small.bin y ggml-tiny.bin. Evitar búsqueda global de / que anteriormente fue interrumpida.
+- No se requiere ElevenLabs para estas notas: transcripción local protege contenido y evita API pagada.

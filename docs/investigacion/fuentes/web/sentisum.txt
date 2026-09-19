@@ -1,0 +1,411 @@
+{"url": "https://www.sentisum.com/", "final_url": "https://www.sentisum.com/", "status": 200, "retrieved_at": "2026-09-19T02:12:27.940493+00:00", "sha256": "d72991b62bf120c970b484eaee0004a2fff11e4b04dc2cf3be0500ddd1f26678"}
+
+AI-native CX Intelligence Software | SentiSum
+Join the Retention Voices live webinar: CX Culture The Missing Engine of Retention
+Product
+Early Warning Agent
+New
+Insights Agent
+Quality Agent
+Unified Signals
+New
+Kyo AI Engine
+New
+Product Overview
+Explainer Video
+See how the dashboard works and what kind of insights it could provide your business
+Dig In
+Dig In to customer conversations with ease. Our AI helps you to scan through plethora of conversations within few seconds
+Pricing
+Integrations
+Zendesk
+Freshdesk
+Intercom
+Dixa
+Gorgias
+Survey Monkey
+All Integrations
+Resources
+Customer Stories
+Blog
+Podcast
+Support Webinars
+Books & Guides
+Company
+About us
+Our team
+Contact us
+Login
+Pricing
+Product
+Early Warning Agent
+Insights Agent
+Quality Agent
+Unified Signals
+Kyo AI Engine
+Auto-routing
+Auto-prioritisation
+New
+Product Overview
+Explainer Video
+See how the dashboard works and what kind of insights it could provide your business
+Dig In
+Dig In to customer conversations with ease. Our AI helps you to scan through plethora of conversations within few seconds
+Integrations
+Zendesk
+Freshdesk
+Intercom
+Dixa
+Gorgias
+Survey Monkey
+All Integrations
+Resources
+Customer Stories
+Podcast
+Blog
+Support Webinars
+Books & guides
+Company
+About us
+Our team
+Contact us
+Privacy
+Security
+Book a demo
+CX Intelligence Software
+CX intelligence to
+cut contacts.
+cut complaints.
+cut cost.
+lift CSAT.
+lift LTV.
+SentiSum reads and scores every customer conversation in full, human or AI, no sampling, and tells you what to fix, where you're leaking, and what each fix is worth in dollars. Custom-built on your data, never a generic AI.
+Start Free Trial
+Start Free Trial
+Book a Demo
+Book a Demo
+No   taxonomy   setup   ·   SOC   2   Type   2   ·   GDPR   ·   EU   residency   ·   PII   redaction
+Typing + Answer Reveal Animation
+Kyo · ask anything
+answered in 3.2s
+Tickets
+Calls
+Chats
+NPS
+CSAT
+Reviews
+Bot   transcripts
+Trusted by teams at
+YOUR VoC PROGRAM ISN’T WORKING. AND IT’S
+COSTING YOU CUSTOMERS.
+Feedback Is Siloed Across Tools and Teams
+Surveys, tickets, reviews, social posts & CRM notes live in different platforms owned by different teams.
+SentiSum brings it all together, so everyone sees the full picture.
+Insights Arrive Too Late
+Most VoC tools surface problems only after NPS drops or complaints pile up.
+SentiSum flags issues before customers feel the pain.
+It’s Hard to Use. So No One Uses It.
+Most VoC tools are clunky, buried in dashboards, or require a data team.
+SentiSum makes insights instant, simple, and accessible to everyone.
+AI answered the ticket. It never told you
+why
+the ticket exists.
+Deflection made each contact cheaper. It did nothing about the failures generating the contacts.
+SentiSum · The CX Intelligence Layer
+EVERY CHANNEL
+Tickets
+Zendesk
+Calls
+NICE
+Chats
+Intercom
+AI agents
+bot + voice
+Kyo
+READS EVERYTHING
+taxonomy
+cost impact
+escalation risk
+root cause
+THE WHY, DELIVERED
+Root cause
+why every ticket exists
+Priced
+what each failure costs
+Routed
+to the team that fixes it
+Specialised AI Agents
+One intelligence layer.
+Unlimited AI agents.
+Kyo is the CX intelligence layer.
+One AI brain reading every customer conversation across your CX, powering three specialised agents — Early Warning, Insights, Quality. Extensible to new agents as your team's questions evolve.
+AGENT 01
+Early Warning Agent
+Spot anomalies the moment they start — before they compound.
+Explore Early Warning
+AGENT 02
+Insights Agent
+Plain-English questions. Root cause + $ impact in seconds.
+Explore Insights
+AGENT 03
+Quality Agent
+Score every conversation. CSAT, AHT, BPO scoring without surveys.
+Explore Auto QA
+AGENT 04
+Your own agent
+Built on the same brain: your use case, your workflow.
+Talk to us
+Want to go deeper on the AI brain behind these agents?
+Meet Kyo
+Meet Kyo
+Four weeks of conversations. Forty-eight hours.
+$1.8m found.
+Every engagement starts the same way: we read a sample of your real conversations and come back with a priced list. This is a live example, redacted.
+· Kyo audit
+US home retailer
+· 4-week sample
+Delivered in 48 hours · drillable to source ticket
+AUDIT SUMMARY
+Annual recovery, identified.
+$1,820,000
+Total recoverable opportunity
+across
+Cost & Process, Automation,
+and
+Conversation Quality—
+annualised at
+$151k a month,
+drillable to every source conversation.
+SPLIT ACROSS THE THREE PILLARs
+01
+Cost & Process
+$820,000
+Fulfilment + communication breakdowns.
+18,256 delivery contacts
+cascading into 'bad journey' projects (8+ tickets each). Compensation costs included.
+02
+Automation
+$400,000
+"Where's my order?"
++ status checks. 23,940 pure-lookup calls/yr the bot handed to humans.
+03
+Conversation Quality
+$480,000
+Agent + BPO quality gaps.
+AHT up 47% on returns flow
+. BPO Partner X scoring 22% below in-house CSAT. Compounds into low FCR and repeat contacts.
++ 78 other findings ·
+long-tail drivers, drillable to source
+$120,000
+Where Kyo Lives
+Kyo comes to you.
+Not the other way around.
+Slack alerts when something breaks. Claude or ChatGPT queries via MCP. A weekly email brief your CFO can read in 90 seconds. Built AI-native, the dashboard exists if you want it, but the answer arrives where you already work.
+Slack · Push
+Claude · ChatGPT via MCP
+Email · Weekly
+When something breaks,
+Slack tells you.
+Kyo pings the right channel the moment an anomaly surfaces — with the dollar impact, source tickets, and one-click drilldown attached.
+Ask Kyo
+from your AI.
+Query your support op directly from Claude or ChatGPT via MCP. Plain-English questions in. Cited, drillable answers out.
+The Monday brief,
+in your inbox.
+A 90-second digest your CFO can read over coffee. Last week's findings, ranked by dollar impact, in plain English — no app required.
+AGENT 01   •  Early Warning
+Early Warning Agent
+Most tools alert you after the damage is done
+Kyo spots delivery delays, bot failures, complaint spikes as they happen
+Explains exactly 'why' with clear root-cause insights
+Flags churn risks and SLA breaches before they compound
+Pushed to Slack — not buried in another dashboard
+Explore Early Warning Agent
+AGENT 02   •  INSIGHTS
+Insights Agent
+Ask in plain English. Get root cause and $ impact in seconds.
+Across every channel — tickets, calls, chats, reviews, social
+Unified taxonomy with no manual setup or tagging required
+Available where your team works — Slack, Teams, MCP, dashboard
+Defendable to your CFO — every claim drillable to the source
+Explore Insights Agent
+AGENT 03   •  QUALITY
+Quality Agent
+Score 100% of conversations — no survey gaps, no sampling
+Predictive CSAT for both bot and agent conversations
+BPO partner scoring against your in-house benchmarks
+AHT analysis with churn-risk correlation, in real time
+Surface low-CSAT outliers and agent script drift the moment they appear
+Explore Quality Agent
+Real story.
+Real results.
+What The Best CX Teams Are Doing Differently
+“With SentiSum in place, we quickly spotted an issue affecting dozens of drivers daily - a missed tech fix that was costing us thousands in revenue”
+Steven Burt
+Sr. Director Global CX
+“With SentiSum, we now ingest all conversational data across channels and use it to drive meaningful change throughout the business.”
+Joe Quinlivan
+Head of Customer Care
+“We’re excited about Kyo. The root causes summary looks like a real game changer for how we analyze data with SentiSum.”
+Julia Farrell
+Retail Coordinator
+“With SentiSum in place, we quickly spotted an issue affecting dozens of drivers daily - a missed tech fix that was costing us thousands in revenue”
+Steven Burt
+Sr. Director Global CX
+“With SentiSum, we now ingest all conversational data across channels and use it to drive meaningful change throughout the business.”
+Joe Quinlivan
+Head of Customer Care
+“We’re excited about Kyo. The root causes summary looks like a real game changer for how we analyze data with SentiSum.”
+Julia Farrell
+Retail Coordinator
+01
+/
+04
+50+
+CX teams running on SentiSum
+4.8★
+G2 average across reviews
+24h
+From discovery call to dashboard
+$M+
+Recovery identified per audit
+Plus, everything you need from an AI-native
+CX Intelligence Software
+No more dashboards. No more noise. Just the CX essentials every modern team needs to drive retention action, not reporting.
+Action Tracker
+Assign issues as actions to teams. Creates accountability, tracks fixes, and closes the loop.
+Personalized Insights
+Tailored to each role - Support, Product, Marketing, or Leadership. Everyone sees what drives outcomes for them.
+Works Where You Work
+Insights flow into Slack, Teams, or Copilot - no more chasing dashboards.
+No Manual Taxonomy
+Forget rigid categories. Sentisum adapts to your business context and evolves automatically.
+Frequently
+asked questions
+Answers to common questions about SentiSum's capabilities, set up, and how we help reduce churn
+Frequently
+asked questions
+Answers to common questions about SentiSum's capabilities, set up, and how we help reduce churn
+Product & Capabilities
+Use Cases & Value
+Getting Started
+Setup & Security
+Products & Capabilities
+What is SentiSum?
+SentiSum is an AI-native CX intelligence software that tells you what's breaking, what it's costing, and what to fix.
+‍
+It unifies every customer conversation, ticket, chat, call, review and survey into one continuously updated picture.
+Every issue is classified by cause, ranked by impact, routed to the named team that can fix it, tracked through to resolution, and queryable in plain English through Kyo by anyone — Product, Ops, Risk, Leadership, the founders.
+What is the Kyo AI Engine?
+Kyo is SentiSum’s brain behind the platform. Kyo unifies all your customer feedback into one brain and instantly detects what’s breaking and why.
+‍
+It powers our AI Agents that:
+Alert you early when risk appears
+Explain the why behind churn or low sentiment
+Recommend and trigger the next best action
+Use Cases & Value
+What makes SentiSum different from other VoC or Insights tools?
+Most VoC platforms were built for reporting - dashboards, NPS charts, and monthly summaries. SentiSum is built for retention.
+‍
+We go beyond data aggregation. Our AI Agents (powered by Kyo) deliver clarity and direction in real time. So instead of looking at lagging metrics, teams fix issues before they impact churn.
+‍
+It’s not another dashboard. It’s a living, learning AI system that unifies feedback and drives action across Support, Product, and Marketing.
+How does SentiSum help in reducing churn?
+Churn starts small. Frustrated emails, broken checkouts, delayed deliveries. Kyo spots these signals early and explains why they’re happening.
+SentiSum helps teams:
+●  Detect churn risk before KPIs drop
+●  Prioritize fixes that matter most for revenue
+●  Turn feedback into preventive action
+●  Align teams around one customer truth
+Instead of reacting to churn, you prevent it.
+Can different teams use SentiSum in different ways?
+Yes and that’s exactly how our customers get the most value. The same unified insight powers different, high-impact actions across the business:
+‍
+Support & CX teams
+: Improve service quality, protect CSAT, and reduce avoidable contacts by tackling recurring issues at the source. Early alerts flag churn risk and customer frustration before it escalates, so teams can prevent repeat problems instead of firefighting them.
+‍
+Product teams:
+Spot bugs, UX blockers, and adoption gaps straight from customer language without waiting for release retros or survey cycles. Prioritize the fixes that have the biggest impact on loyalty and retention.
+‍
+Marketing & Retention teams:
+Understand the real reasons customers hesitate, drop off, or cancel. Track sentiment by cohort, or channel, and act on churn signals in time to keep customers. The data is consistent across all teams, but SentiSum tailors the view, alerts, and context so each team sees what matters most to them and can act fast.
+Getting Started
+Who is SentiSum for?
+SentiSum is built for teams that care deeply about retaining customers and  not just measuring satisfaction.
+●  Whether you’re in CX, Insights, or Retention, if you're:
+●  Getting lots of feedback but struggling to make sense of it
+●  Tired of tagging and dashboards that don’t tell you why
+●  Always hearing about churn after it happens
+●  Trying to unify feedback across chat, email, surveys, and reviews
+●  Working across support, product, and lifecycle but missing a unified view of the customer
+...then SentiSum is likely a strong fit.
+We work with both high-growth brands and mature enterprises  and in nearly every case, the core need is the same: Turning scattered feedback into real-time signals and action.
+Do we need to clean or tag our data before using SentiSum?
+No. SentiSum is built to work with messy, unstructured feedback. You don’t need to create taxonomies or clean up tags in advance.
+Our AI is trained to recognise patterns, root causes and themes from raw language—so you get fast, accurate insights with minimal setup.
+Does SentiSum integrate with my support, survey tools and other existing data sources?
+We have native integrations with Zendesk, Intercom, Freshdesk, Gorgias, Dixa, Salesforce, Trustpilot, Microsoft Fabric, Snowflake and 100+ such systems.
+Where a native integration isn’t available, we can usually ingest data via API, file transfer, or middleware platforms. Our team handles setup and works with you to ensure clean data mapping from day one.
+Setup & Security
+What does onboarding and support look like?
+We provide hands-on support from day one. A dedicated customer success manager will guide the setup, configure your taxonomy, and tailor the platform to your needs.
+‍
+Most customers see value within days. Post-launch, we stay close with:
+●  Regular check-ins
+●  Continuous optimisation
+●  Early access to features
+●  Help embed insight across teams
+How fast can we get started?
+Most teams are live and seeing actionable insights within 2–3 weeks of connecting their data. We handle integrations, setup, and configuration — so there’s no heavy lift on your side.
+During onboarding, we also analyse 6–12 months of your historic feedback and customize our AI for your business. That means you start day one with a system already tuned to your customers, surfacing the insights and early churn signals that matter most.
+From there, you’re moving from raw feedback to clear actions in days, not months.
+How is SentiSum priced?
+Our pricing scales based on channels, users, and ticket volume. We offer flexible plans for mid-market and enterprise teams. For details, visit
+sentisum.com/pricing
+.
+How do you handle data privacy and compliance?
+SentiSum is GDPR-compliant and SOC 2 Type 2 certified. We follow best-in-class data security practices, including:
+●  Encryption at rest and in transit
+●  Role-based access control and MFA
+●  Regular third-party penetration testing
+●  Customisable data retention
+Our Trust Centre includes full documentation. We're happy to support procurement and InfoSec reviews directly.
+The AI-native CX Intelligence Software
+Company
+About
+Our Team
+Careers
+We’re hiring
+Contact Us
+Privacy
+Security
+Product
+Early Warning Agent
+Insights Agent
+Quality Agent
+Unified Signals
+Kyo AI Engine
+Customer Feedback Analytics
+What's New
+Resources
+Customer Stories
+Blog
+Podcast
+Support Webinars
+Books & Guides
+Integrations
+Zendesk
+Freshdesk
+Intercom
+Dixa
+Gorgias
+Survey Monkey
+Other
+Customers
+JustPark
+Gousto
+Schuh
+Butternut Box
+MakesYouLocal
+Case Studies
+Copyright © 2026. All rights reserved.

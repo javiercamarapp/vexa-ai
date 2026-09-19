@@ -1,0 +1,12 @@
+{
+  "name": "vexa",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "engines": {"node": ">=22"},
+  "scripts": {
+    "test": "node --test tests/acceptance/*.test.mjs",
+    "test:controller": "python3 -m unittest discover -s tests/controller -v",
+    "graph:check": "python3 orchestration/runner.py status"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "retrieved_at": "2026-09-19T01:53:55.198528+00:00",
+  "query": "Zendesk incremental export tickets cursor ticket comments rate limits OAuth scopes",
+  "endpoint": "keyless developer search",
+  "sha256": "02dcd5e9d0bf28e6ad4a9f56b6a4bf6ea153d00c7d78e12ac933523977abd149",
+  "response": {
+    "success": true,
+    "partial": false,
+    "results": [
+      {
+        "id": "doc:https://github.com/airbytehq/airbyte/blob/6b952b3172970315a0f8ca552171ae137c7550d5/docs/integrations/sources/zendesk-support.md",
+        "url": "https://github.com/airbytehq/airbyte/blob/6b952b3172970315a0f8ca552171ae137c7550d5/docs/integrations/sources/zendesk-support.md",
+        "title": "Zendesk Support",
+        "passages": [
+          {
+            "text": "# Zendesk Support\n## Setup guide\n### Set up the Zendesk Support connector in Airbyte\n#### For Airbyte Open Source:\n9. (Optional) For **Page Size (ticket_comments)**, enter the number of records per page for the `ticket_comments` stream. The default is 100 and the maximum is 1000. Lower values may help prevent timeouts on large Zendesk instances.\n\n## Supported Streams\n- Tickets (Incremental)\n- Ticket Audits (Client-Side Incremental)\n- Ticket Comments (Incremental)\n- Ticket Events (Incremental)\n\n## Limitations & Troubleshooting\n### Connector limitations\n#### Rate limiting\nThe connector's **Number of concurrent threads** setting (default: 4) controls how many streams sync in parallel. If your plan supports higher rate limits, increase this value for faster syncs. The minimum is 2 and the maximum is 40. A single thread leaves no other stream emitting while the `tickets` stream reads, so a saved value of 1 is treated as 2 from the first sync after upgrading to 5.6.0, and the stored configuration is updated to match. If the source settings form flags the field before that first sync, set it to 2 or more.\n\nZendesk's incremental export endpoints have a stricter rate limit of 10 requests per minute, regardless of plan tier. This applies to the `tickets`, `ticket_comments`, `ticket_events`, `ticket_metric_events`, `users`, and `organizations` streams that use incremental exports. The `deleted_tickets` stream has a rate limit of 10 requests per minute. The connector includes a built-in API budget that automatically throttles requests to stay within these limits.\n\nIf the connector receives a 429 (Too Many Requests) response, it respects the `Retry-After` header and waits before retrying. The `ticket_comments` stream also retries on 504 (Gateway Timeout) errors with exponential backoff, which can occur on large Zendesk instances.\n\n#### Side conversations access\n- `404`, when the ticket no longer exists. The `tickets` stream returns deleted tickets, so this is expected.\n\n## Changelog\n| 5.0.0 | 2026-01-22 | 70990 | Add OAuth2.0 with refresh token support. | | | | | | |\n\n| | | | |\n\n| | | 0.1.5 | 2021-10-26 | 7679 | Add ticket_id and ticket_comments | | 0.1.2 | 2021-10-16 | 6513 | Fixed TicketComments stream | | 0.1.1 | 2021-09-02 | 5787 | Fixed incremental logic for the ticket_comments stream |"
+          },
+          {
+            "text": "## Supported sync modes\n\nThe Zendesk Support source connector supports the following sync modes:\n\n- Full Refresh | Overwrite\n- Full Refresh | Append\n- Incremental Sync | Append\n- Incremental Sync | Deduped History\n\n:::note\nThere are two types of incremental sync:\n\n1. Incremental (standard server-side, where the API returns only data updated or created since the last sync).\n2. Client-Side Incremental (the API returns all available data, and the connector filters out only new records).\n:::\n\n## Supported Streams\n\nThe Zendesk Support source connector supports the following streams:\n\n- Account Attributes \\(Enterprise only\\)\n- Articles \\(Incremental\\)\n- Article Votes \\(Incremental\\)\n- Article Comments \\(Incremental\\)\n- Article Comment Votes \\(Incremental\\)\n- Article Attachments \\(Incremental\\) \\(Supports file transfer\\)\n- Attribute Definitions \\(Enterprise only\\)\n- Audit Logs \\(Incremental\\) \\(Enterprise only\\)\n- Automations\n- Brands\n- Custom Roles \\(Client-Side Incremental\\)\n- Groups \\(Client-Side Incremental\\)\n- Group Memberships \\(Client-Side Incremental\\)\n- Macros \\(Incremental\\)\n- Organizations \\(Incremental\\)\n- Organization Fields \\(Client-Side Incremental\\)\n- Organization Memberships \\(Client-Side Incremental\\)\n- Posts \\(Incremental\\)\n- Post Comments \\(Incremental\\)\n… (26 more lines)",
+            "truncated": true,
+            "full_tokens_est": 1647
+          }
+        ],
+        "license": "NOASSERTION"
+      },
+      {
+        "id": "doc:https://developer.zendesk.com/api-reference/ticketing/ticket-management/incremental_exports/",
+        "url": "https://developer.zendesk.com/api-reference/ticketing/ticket-management/incremental_exports/",
+        "title": "Incremental Exports",
+        "passages": [
+          {
+            "text": "# Incremental Exports\n### incremental ticket export cursor based permalink Incremental Ticket Export, Cursor Based\n#### code samples permalink Code Samples\n\n#### example responses permalink Example response(s)\n\n### incremental user export cursor based permalink Incremental User Export, Cursor Based\n#### limits permalink Limits\nThis endpoint has its own rate limit that is different from the account wide rate limit. When calls are made to this endpoint, this limit will be consumed and you will get a `429 Too Many Requests` response code if the allocation is exhausted.\n\n##### headers permalink Headers\n\n##### details permalink Details\nPlease refer to the general account limits for more information."
+          },
+          {
+            "text": "#### exclude_deleted permalink exclude\\_deleted\n\nIf true, excludes deleted tickets from the response. By default, deletions will appear in the ticket stream. If used in combination with the Incremental Ticket Export, you can separate your deleted ticket activity from your live data.\n\nExample:\n\n```\nhttps://{subdomain}.zendesk.com/api/v2/incremental/tickets/cursor?exclude_deleted=true&cursor=MTU3NjYxMzUzOS4wfHw0Njd8\n```\n\n### incremental ticket metric event export permalink Incremental Ticket Metric Event Export\n\nSee List Ticket Metric Events.\n\n### incremental custom object record export permalink Incremental Custom Object Record Export\n\nSee Incremental Custom Object Record Export, Cursor Based in the Custom Object API docs.\n\n### incremental article export permalink Incremental Article Export\n\nSee List Articles in the Help Center API docs.\n\n### incremental ticket export cursor based permalink Incremental Ticket Export, Cursor Based\n\n- `GET /api/v2/incremental/tickets/cursor`\n\nReturns the tickets that changed since the start time. For more information,\nsee Exporting tickets in Using the Incremental Exports API.\n\nThis endpoint supports cursor-based incremental exports.\nCursor-based exports are highly encouraged because they provide more consistent performance and\nresponse body sizes. For more information, see Cursor-based incremental exports in Using the Incremental Exports API."
+          }
+        ]
+      },
+      {
+        "id": "doc:https://developer.zendesk.com/documentation/ticketing/data-and-reporting/exporting-a-ticket-to-a-csv-file-with-python/",
+        "url": "https://developer.zendesk.com/documentation/ticketing/data-and-reporting/exporting-a-ticket-to-a-csv-file-with-python/",
+        "title": "Tutorial: Exporting updated tickets to a CSV file",
+        "passages": [
+          {
+            "text": "# Tutorial: Exporting updated tickets to a CSV file\n## what you need permalink What you need\n- Environment variables set for `ZENDESK_ACCESS_TOKEN` and `ZENDESK_SUBDOMAIN` for authentication\n\n## exporting zendesk tickets permalink Exporting Zendesk tickets\n- The number of retries is limited to avoid indefinite waiting. If exceeded, the script stops and reports the failure.\n\n### how it works permalink How it works\n- Uses the `fetch_incremental_tickets` function to retrieve tickets updated since the start time. This function:\n  - Implements rate limit handling by detecting HTTP 429 responses."
+          }
+        ]
+      }
+    ]
+  }
+}

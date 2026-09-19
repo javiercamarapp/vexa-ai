@@ -1,0 +1,439 @@
+{"url": "https://getthematic.com/", "final_url": "https://getthematic.com/", "status": 200, "retrieved_at": "2026-09-19T02:12:26.395743+00:00", "sha256": "42888be32d64ed07f40af0473d35b2c15adcd346d93d7b69f2ce53d03e68d228"}
+
+The Customer Intelligence Layer for CX | Thematic
+Skip to main content
+Free master session
+Claude in Action for CX professionals. Join Alyona on September 17.
+Save your seat
+Platform
+Solutions
+Case Studies
+Pricing
+Resources
+Book a Demo
+Login
+Capabilities
+Unify Feedback with Lenses
+Integrate sources into one view
+Themes and Taxonomy
+Themes that emerge from the feedback
+Answers
+Ask anything, get a traceable answer
+Impact Analysis
+Find what actually moves your metrics
+Scoring Agent
+CX metrics without waiting on surveys
+Workflows
+Route insight to the teams who act
+AI Tools (MCP)
+Access from Copilot, Claude, ChatGPT
+The Platform
+Platform Overview
+How Thematic works, end to end
+Human-in-the-Loop AI
+AI you can inspect and steer
+Security and Data Governance
+Enterprise controls, PII, compliance
+Services
+Reporting Service
+Your recurring reports, done for you
+Partnership Program
+Technology, reseller and referral partners
+See Thematic AI in action:
+Watch our demo videos now
+Watch Demo
+Customer Experience
+From signal to CX action
+Voice of Customer
+The intelligence layer for VoC programs
+Research and Insights
+Scale research without losing rigour
+Voice of Employee
+Scale employee listening
+What Voice of Customer Teams Need to Know About the Modern Data Stack
+Unify feedback, drive action, and scale impact across the entire organization.
+Read the modern data stack guide
+Read case studies:
+Discover how leading companies achieve success with Thematic AI.
+Read Case Studies
+Read and Watch
+Insights
+CX and research articles
+Guides and Playbooks
+Downloadable frameworks and templates
+Demo Videos
+Short product walkthroughs
+Events
+Where to find us
+Learn and Support
+CX Intelligence Course
+Become the person who proves CX value
+Help Center
+Product documentation
+Masterclasses
+Live and on-demand training
+From Ignored to Indispensable: The Proven, Step-by-Step CX Insights Mastery Blueprint in < 6 Days!
+543% ROI.
+Learn why Thematic is a worthy investment in Forrester'sâ¢ TEI report.
+Get the Report
+Platform
+Solutions
+Case Studies
+Pricing
+Resources
+Book a Demo
+Login
+Enterprise Customer Intelligence
+The feedback is in your CX suite.
+The answer isn't.
+Thematic is the intelligence layer your CX suite was missing. One defensible source of customer truth for your team and AI agents across every channel. No rip and replace.
+Ask
+Answers
+Score change
+Revenue at risk
+Deep Dive
+App reviews knew five weeks earlier
+Tariffs come up in
+2,859
+comments this quarter, up 74% on Q2, and the complaint is rarely the price itself.
+Customers accept the increase but not the way it appeared. The largest granular theme is
+tariff increase not explained at checkout
+, followed by
+no notice before the increase took effect
+. A smaller and angrier group say the
+tariff was applied to items marked exempt
+, and those are the comments asking for refunds.
+App review signal
+Exempt-item complaints appeared in store reviews five weeks before the first support ticket. Your survey saw
+12%
+of the tariff theme.
+Themes
+38,213 responses across 4 sources
+Tickets
+Calls
+App reviews
+CX suite survey
+Tariff increase not explained at checkout
+1,284
+No notice before the increase took effect
+962
+Tariff applied to items marked exempt
+613
+67
+-3.1
+-2.4
+-1.9
++0.8
++0.4
++0.2
+61
+Q2
+Tariff not
+explained
+Basket
+resets
+Support
+wait
+Exempt items
+fixed
+Returns
+window
+Delivery
+ETA
+Q3
+Attributed across all four sources, not the survey alone
+Enterprise ARR at risk
+18%
+$4.2M of $23.4M, across 11 of 41 accounts
+Granular themes driving it
+Joined to account revenue, evidence pooled from every channel
+Tariff increase not explained
+$1.6M
+Basket resets at payment
+$1.1M
+Support wait over 10 min
+$0.8M
+Exempt items misapplied
+$0.5M
+Deep Dive
+Tariff increase not explained
+No line item shown for the tariff
+78% negative
+The total moves but nothing explains why
+Customers hunt the receipt for a breakdown
+Highest complaint rate on orders under $80
+Support ticket
++412
+âThere is no line for it anywhere, the number just went up.â
+Total changes between cart and payment
+74% negative
+Price shown at cart differs at the payment step
+Read as a bait and switch, not a tariff
+Drives the most abandoned baskets of any cluster
+App review
++318
+âCart said one price, checkout said another. I closed the tab.â
+Read as a hidden fee, not a tariff
+71% negative
+Customers do not connect it to import costs
+Several assumed it was a service charge
+Trust language appears in most of these comments
+Call transcript
++264
+âI assumed you were sneaking in a fee. Nobody said tariff.â
+Exempt items charged anyway
+69% negative
+Applied to categories marked exempt at checkout
+These are the comments asking for refunds
+Concentrated in two product categories
+CX suite survey
++187
+âBooks are exempt and I was still charged the surcharge.â
+Advance notice defused it
+63% positive
+Customers told before the change rarely complained
+Same increase, completely different tone
+Several said the warning was the reason they stayed
+Call transcript
++143
+âYou emailed me a week before, so it was not a surprise.â
+App review signal
+App reviews knew five weeks earlier
+Exempt-item complaints appeared in store reviews five weeks before the first support ticket. Your survey saw
+12%
+of the tariff theme.
+The Problem
+You need decision-ready insights.
+Instead you have data gymnastics.
+Most taxonomies are already out of date
+Your CX platform promised insights out of the box. Instead you got static taxonomies that drift. Black-box AI you can't defend. A different customer story in every channel. Thematic fixes the foundation. One source of truth, every theme traceable to the raw comments behind it.
+You're still manually reworking data and reports
+Every cycle starts with validation. Reconciling outputs, checking whether themes still reflect reality.
+Analysts spend their best hours on the data
+before a single insight reaches a decision-maker.
+Every AI agent reads the customer differently
+Your team is prompting differently. Product's version of the customer story doesn't match CX's.
+Each tool trained on a different slice
+, making the inconsistency worse at scale.
+The Thematic Difference
+Thematic solves what your existing CX suite
+fails to deliver.
+One trusted view of your customer
+, built from the bottom up across every channel.
+Every team sees the insight that matters to them
+, tied to the metrics that matter to the business.
+Each team knows what to act on, and when
+. Whether that's support closing the loop with a customer today, or product changing a feature next quarter.
+The intelligence layer your AI agents can trust.
+Use Thematic agents to prioritize action, or deploy your own agents knowing their actions are based on the same customer truth. Not six different interpretations of it.
+Works alongside your existing stack
+Up and running in days, not quarters
+No taxonomy rebuilds required
+Professional services dependency ends
+Dedicated specialist support from day one
+Enterprise security and compliance built in
+How Thematic works
+From raw feedback to
+confident action.
+In five steps.
+Step 01 â Ingest
+Connect all customer data sources.
+Surveys, support tickets, call center transcripts, app reviews, CRM notes. Directly from your existing systems or data warehouse. PII redaction and language translation built in. Privacy preserved, global analysis enabled. SOC 2 Type II certified. Every source in one place.
+Read more about data integrations.
+Step 02 â Unify
+One consistent layer. Across every source.
+Not channel-by-channel analysis. One view, structured around how each team actually works. Role-based access and audit controls built in by design. Product sees feature friction. Operations sees service failures. CX sees the full picture. Same underlying data. Tailored to each team's needs. No more conflicting versions of the customer story.
+Learn more about data unification.
+Step 03 â Understand
+Themes built from what customers actually said.
+Not a predefined taxonomy. The Thematic Theming Agent surfaces what's present in customer language, including what's emerging before it becomes a crisis. Every theme traces back to the exact words that created it. You can see inside it, adjust it, and steer it.
+Read more about Thematicâs approach.
+Step 04 â Prioritize
+Not just what customers are saying. What to act on first.
+Themes scored by business impact. The Thematic Scoring Agent generates predicted NPS, churn propensity, and effort scores from unstructured feedback, without waiting for survey data. Walk into any executive conversation with a prioritized list and the numbers to back it up.
+Learn more about prioritization
+Step 05 â Activate
+Easily route insights to the right people and tools.
+Thematic Predictive Actions route insights to the right team, in the tools they already use. Tickets created. Alerts triggered. Dashboards updated. AI agent workflows connected via open architecture. To improve individual experiences and address root causes.
+Learn more about activation
+The Transformation
+Layer enterprise-grade AI intelligence across your whole organization.
+Without Friction.
+Data Gymnastics
+Outdated taxonomies
+Siloed dashboards
+Conflicting AI summaries
+Manual rework every quarter
+Outputs nobody can defend
+Insights that don't travel across the business
+Intelligence layer
+Enterprise-Grade Intelligence
+One trusted view of the customer
+Every team sees what matters to them
+Early warning on emerging issues
+Executive-ready evidence on demand
+Outmaneuver competition on customer signals
+Decisions that hold up under scrutiny
+PROVEN IN YOUR INDUSTRY
+See How Teams Like Yours Use Thematic
+Retail
+Financial
+Infrastructure
+Telco
+Marketplaces
+Groceries
+Entertainment
+Thematic transformed our 20,000 monthly verbatims from overwhelming noise into our most strategic asset.
+Mark Vaughan, Head of Customer Insights
+Our partnership with Thematic helps us get clear customer intelligence to directly inform our product roadmap and corporate strategy. Because everything we do should make our customers lives easier. With the insights, we've seen significant improvements, such as a 30% decrease in contact centre failure.
+Michael Sherwood- Head of Customer Experience, Atombank
+In quickly getting the voice of the customer from a survey to the CEOâs desk, Thematic is by far the best solution. Thematic is easier to use for refining themes and the model. Itâs able to synthesise the impact that themes have on the overall score. Itâs simple to triangulate third party data sets and easily compare cohorts of data
+Blake James - Executive Manager Research and Insights
+Thematic has a great UI and is very intuitive, with not much training required to start using the software. You need to understand what you need to do in order to change performance. Thematic does that.
+Melanie Disse - Customer Research Specialist, Vodafone
+We wouldnât be able to get the quality of insights without Thematic. Everyone uses it, understands it and itâs a driver of insights and time savings.
+Zach Schendel, Head of Research
+Not only did Thematic uncover new actionable insights, but they reduced our time to insight from 7 days to 5 hours - less than 9% of our previous analysis time, while using multiple datasets for analysis.
+Head of Customer Insights - APAC Leading Retailer
+The Music Instruments industry has a lot of very specific terminology and product information so a lot of other solutions were just not appropriate. It's important that Thematic is customizable, and scaleable too. Armed with Thematic, I can enter discussions with industry partners, knowing where the issues lie.
+Young Ly- CEO, Serato
+proof in Practice
+The results enterprises see when their insights finally work.
+Read full report
+543%
+Return on investment
+Forrester Total Economic Impact Study
+$652K
+Annual savings documented
+Forrester Total Economic Impact Study
+92%
+Faster time to insights
+Customer-reported outcome
+69%
+Fewer contact center calls
+Forrester Total Economic Impact Study
+The investment casE
+Thematic layers on top of your existing stack. Then starts to replace it.
+Before adding Thematic to a budget as a new line item, account for what it removes from that same budget.
+What you pay for today
+Professional services fees for taxonomy reconfiguration
+Analyst hours on data wrangling and model maintenance
+External consulting costs for periodic model rebuilds
+Decisions made on stale, fragmented, undefendable data
+What remains with Thematic
+A system that gets more valuable the longer it is used
+A path to replace legacy tools when you're ready, on your own timeline
+Thematic specialists who know your data and your business
+Decisions made on evidence that holds up under scrutiny
+Forrester Total Economic Impact Study
+543% ROI. $652K in annual savings. Payback under six months.
+These are not projections. They are the documented outcome of enterprise teams who made the shift.
+Read report
+Common questions
+Answered before the first call.
+The questions CX solutions buyers ask most. Answered directly.
+If you still have questions, book a call with our sales team using the form below.
+We already have text analytics in our current CX platform contract. Why do we need Thematic?
+Built-in text analytics are typically rule-based systems built on taxonomies your team defines and maintains. They find what you already know to look for. Thematic works from the bottom up, discovering themes from actual customer language without predefined categories. The result is insights that stay current without quarterly reconfiguration, issues caught before they escalate, and outputs your entire organization trusts rather than questions.
+Do we have to replace our existing stack to use this?
+No. Thematic deploys on top of your existing infrastructure. No rip-and-replace project. No internal replatforming. Most teams are surfacing insights within days of connecting their data. Many eventually move Thematic into the centre of their stack, but that decision comes from confidence, not obligation.
+How is this different from running our feedback through GPT?
+GPT can summarise feedback. Thematic builds meaning over time. A GPT summary gives you a confident-sounding output with no way to trace it back to the customer language behind it, no consistency across teams, and no institutional memory when you return next quarter. Thematic builds a versioned, traceable theme model that every analyst can interrogate and every leader can verify. The AI shows its working.
+We are building AI agents to automate CX decisions. Does Thematic work with that?
+This is exactly where Thematic's architecture matters most. Agents are only as trustworthy as the intelligence layer underneath them. Thematic provides the consistent, traceable foundation that agents need to act from. Without a unified source of customer truth, agents built on fragmented data will produce confident-sounding decisions that nobody can reconcile or defend. Thematic is the layer that makes agentic CX reliable.
+How long does implementation actually take?
+Most teams produce their first analysis within days of connecting data sources. There is no lengthy professional services engagement, no taxonomy-building workshop, and no model training phase before you see output. Thematic's dedicated onboarding specialists work with your team to configure the platform and validate the first themes against your business context.
+How do we justify the cost internally?
+Start with what Thematic replaces rather than what it costs. Add up professional services fees for taxonomy maintenance, analyst hours on data wrangling, and any external consulting for model rebuilds. In most cases, Thematic replaces those costs rather than adding to them. The Forrester Total Economic Impact Study validated 543% ROI with payback under 6 months and $652K in annual savings.
+What does ongoing maintenance look like?
+There is no maintenance cycle in the traditional sense. Thematic's Theming Agent continuously adapts to what customers are actually saying, so the model stays current without quarterly rebuilds or analyst intervention. Your dedicated specialist monitors theme quality and flags anything that needs your attention. The system gets more accurate over time, not less.
+Who uses Thematic: just the insights team or the whole business?
+Both. The insights team typically owns the platform and the theme model. But Thematic is built so that product, CX, operations, and strategy teams can each access the view that matters to them, without needing the insights team to run a report first. Role-based access means everyone sees what they need, and nothing they do not.
+Ready to see what customer intelligence
+is supposed to feel like?
+Most enterprise implementations are live within days, with no taxonomy rebuilds or professional services engagement, and a dedicated specialist from day one.
+First name
+Last name
+Email address
+*
+What industry are you in?
+*
+Select industry
+Software/Tech
+Retail
+Financial Services
+Healthcare
+Manufacturing
+Travel & Hospitality
+Automotive
+Other
+Company size
+*
+Select company size
+Less than 300
+300-500
+More than 500 employees
+What is your seniority level?
+*
+Select seniority level
+Executive (CMO, VP, SVP, CXO)
+Director
+Manager
+Specialist / Analyst / Researcher
+Consultant
+Student
+Other
+Book a time
+Product
+Overview
+Pricing
+Accuracy
+Security & Privacy
+Security & Compliance
+Product Changelog
+Support
+Knowledge Base
+Integrations
+Thematic API
+Login
+Resources
+Blog
+Community
+Webinars & eBooks
+Case Studies
+Tools
+NPS Calculator
+Thematic vs Clarabridge
+Thematic vs TextIQ
+Thematic vs Medallia
+Thematic vs Chattermill
+Thematic vs Kapiche
+Guides
+Sentiment Analysis Guide
+How Thematic Analysis Software works
+How to Analyze Surveys
+How to Analyze Customer and Product Reviews
+How to Code Qualitative Data
+How to Code and Analyze Open-Ended Questions
+Company
+About Us
+Science Behind Thematic
+Contact Us
+Privacy Terms
+Terms of service
+Â© Copyright Thematic Analysis Inc.
+By clicking
+"Accept"
+, you agree to the
+    storing of cookies on your device to enhance site navigation, analyze site
+    usage, and assist in our marketing efforts. View our
+Privacy Policy
+for more information.
+We use cookies to enhance site navigation, analyze site usage, and assist in our marketing efforts. You can opt out at any time in
+Preferences
+, or read our
+Privacy Policy
+.
+Preferences
+Reject
+Accept

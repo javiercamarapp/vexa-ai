@@ -1,0 +1,47 @@
+{
+  "retrieved_at": "2026-09-19T01:53:59.749203+00:00",
+  "query": "Vercel Workflow durable workflow use step sleep retries limits Next.js",
+  "endpoint": "keyless developer search",
+  "sha256": "dffa7c0feb52b9525f40560e47d87a5e556c4865289f57b15145bfa7cc3d0cff",
+  "response": {
+    "success": true,
+    "partial": false,
+    "results": [
+      {
+        "id": "web:https://flaviocopes.com/vercel-workflows/",
+        "url": "https://flaviocopes.com/vercel-workflows/",
+        "title": "Vercel Workflows tutorial: build a durable background job",
+        "passages": [
+          {
+            "text": "Build a durable Vercel Workflow with use workflow, use step, sleep, automatic retries, local inspection, and deployment-safe execution."
+          }
+        ]
+      },
+      {
+        "id": "web:https://jhak.im/blog/building-reliable-onboarding-flows-with-vercel-workflows",
+        "url": "https://jhak.im/blog/building-reliable-onboarding-flows-with-vercel-workflows",
+        "title": "Building Reliable Onboarding Flows with Vercel Workflows - Jerrick Hakim",
+        "passages": [
+          {
+            "text": "\"use workflow\" makes the entire function durable; \"use step\" adds automatic retries to individual operations; sleep() pauses without consuming"
+          }
+        ]
+      },
+      {
+        "id": "doc:https://vercel.com/academy/llms-full.txt",
+        "url": "https://vercel.com/academy/llms-full.txt",
+        "title": "Vercel Academy — Full Content Export",
+        "passages": [
+          {
+            "text": "# Your First Workflow\n## Workflows vs Steps\n\nIf a step fails, the Workflow SDK retries it automatically (3 times by default) without re-running completed steps.\n\n# Parallel Steps and Sleep\n## Solution\n\n# Workflow Error Handling\n## Advanced: Custom Retry Limits\nBy default, steps retry 3 times (4 total attempts). You can customize this per step:\n\nSet `maxRetries = 0` for steps that should never retry (one attempt only). Combine this with `FatalError` for steps where any failure is permanent."
+          },
+          {
+            "text": "## Troubleshooting\n\n\\*\\*Warning: Steps run sequentially instead of in parallel\\*\\*\n\nMake sure you're passing the step calls to `Promise.all`, not awaiting each one individually. `await evaluateResort(...)` inside a `for` loop runs them sequentially. `Promise.all(resortIds.map(...))` runs them in parallel.\n\n\\*\\*Warning: Sleep doesn't seem to work locally\\*\\*\n\nThe local Workflow SDK processes steps synchronously. Short sleeps like `sleep('5s')` should work, but the timing may not be precise. Deploy to Vercel to test production sleep behavior where the workflow suspends and resumes.\n\n## Advanced: Racing Steps Against a Timeout\n\n`Promise.race` lets you set a deadline on a group of steps:\n\n```typescript\nimport { sleep } from 'workflow';\n\nconst results = await Promise.race([\n  Promise.all(\n    resortIds.map((id) => evaluateResort(id, alertsByResort[id]!))\n  ),\n  sleep('30s').then(() => 'timeout' as const)\n]);\n\nif (results === 'timeout') {\n  console.warn('[Workflow] Evaluation timed out after 30s');\n  return { results: [], timedOut: true };\n}\n```\n\nThe workflow returns whatever finishes first: the actual results or the timeout. Useful when you'd rather return partial data than wait indefinitely.\n\n---\ntitle: \"Error Handling\"\ndescription: \"Handle errors in workflows using FatalError for permanent failures, RetryableError with retryAfter for transient failures, and getStepMetadata for attempt-aware backoff.\"\n… (20 more lines)",
+            "truncated": true,
+            "full_tokens_est": 570
+          }
+        ]
+      }
+    ]
+  }
+}

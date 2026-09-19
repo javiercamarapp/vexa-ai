@@ -1,0 +1,55 @@
+{
+  "retrieved_at": "2026-09-19T01:54:10.729593+00:00",
+  "query": "Supabase MCP server read only project scoped security production warning",
+  "endpoint": "keyless developer search",
+  "sha256": "9b11555cf93dbeb4db88a29372e275ddac88923559ae38fce14a9755d1e7bbd3",
+  "response": {
+    "success": true,
+    "partial": false,
+    "results": [
+      {
+        "id": "doc:https://github.com/supabase/supabase/blob/24e8333c54374b94645d77c2170c089c249a7173/apps/docs/content/guides/ai-tools/mcp.mdx",
+        "url": "https://github.com/supabase/supabase/blob/24e8333c54374b94645d77c2170c089c249a7173/apps/docs/content/guides/ai-tools/mcp.mdx",
+        "title": "Supabase MCP Server",
+        "passages": [
+          {
+            "text": "## Manual authentication\n### CI environment\n1. Production projects can contain sensitive data. Before connecting one, scope the server to that project, enable read-only mode, restrict the available feature groups, and review the security risks.\n\n### Manual OAuth app\n1. Production projects can contain sensitive data. Before connecting one, scope the server to that project, enable read-only mode, restrict the available feature groups, and review the security risks.\n\n## Security risks\n### Prompt injection\nApprove in advance only the project-scoped, read-only tools that the routine needs.\n\n### Recommendations\n- **Protect production data**: Connect to a production project only when the task requires production evidence. Use project scoping, read-only mode, restricted feature groups, and the narrowest data query that can answer the question. Do not include secrets or unrelated personal data in prompts or reports.\n- **Project scoping**: Scope your MCP server to a specific project, limiting access to only that project's resources. This prevents LLMs from accessing data from other projects in your Supabase account."
+          },
+          {
+            "text": "### Debugging\n\n- `query_logs` - Run a read-only SQL query against project logs to filter, aggregate, or join across log fields. See Query logs with SQL.\n- `get_advisors` - Get security and performance advisors\n\n### Development\n\n- `get_project_url` - Get the API URL for a project\n- `get_publishable_keys` - Get publishable and legacy anon API keys for a project\n- `generate_typescript_types` - Generate TypeScript types from schema\n\n### Edge Functions\n\n- `list_edge_functions` - List all Edge Functions\n- `get_edge_function` - Get a specific Edge Function\n- `deploy_edge_function` - Deploy an Edge Function\n\n### Account management\n\nDisabled when using project-scoped mode (`project_ref` parameter).\n\n- `list_projects` / `get_project` - List or get project details\n- `create_project` / `pause_project` / `restore_project` - Manage projects\n- `list_organizations` / `get_organization` - Organization management\n- `get_cost` / `confirm_cost` - Cost information\n\n### Docs\n\n- `search_docs` - Search Supabase documentation\n\n### Branching (experimental)\n\nRequires a paid plan.\n\n- `create_branch` / `list_branches` / `delete_branch` - Branch management\n- `merge_branch` / `reset_branch` / `rebase_branch` - Branch operations\n… (19 more lines)",
+            "truncated": true,
+            "full_tokens_est": 620
+          }
+        ],
+        "license": "Apache-2.0"
+      },
+      {
+        "id": "doc:https://github.com/njrini99-code/helmv3/blob/8023d0e79bec43aa7e0719862f9c1952162cb1cf/docs/AGENT_LIFECYCLE.md",
+        "url": "https://github.com/njrini99-code/helmv3/blob/8023d0e79bec43aa7e0719862f9c1952162cb1cf/docs/AGENT_LIFECYCLE.md",
+        "title": "The agent lifecycle in this repo, and what auditing it found",
+        "passages": [
+          {
+            "text": "# The agent lifecycle in this repo, and what auditing it found\n## Part 2 — The stack, and where everything comes from\n### Where data and services come from\n- **MCP** — `.mcp.json` declares exactly one server: `supabase`. It must\nstay project-scoped and read-only; `apply_migration` and `execute_sql`\nhit production directly with `service_role`, which is why a guard\nmatches those tool names.\n\n## Part 11 — Supabase and Vercel: the tool rules\n### Supabase — production is not a place you experiment\nMCP warning is always-on rather than path-scoped: an MCP call opens no\n\n- Production MCP access stays **project-scoped and read-only**. Schema\nchanges belong in a reviewed migration."
+          },
+          {
+            "text": "### TypeScript is strict, and then some\n\n`strict: true` plus **`noUncheckedIndexedAccess: true`**. That second one\nis why `arr[0]` types as `T | undefined` and why the repo convention is\nguard-then-assert with `!` and a one-line comment naming the invariant —\nnever a silent `?? fallback`. Target `es2018`, module `esnext`.\n\n`tsconfig.json` deliberately does **not** include `.next/types/**`. Those\nglobs match zero files in CI but break `npm run typecheck` locally\n(measured: exit 2 with, exit 0 without). `npm run build` re-injects them,\nso `scripts/strip-next-tsconfig-injection.mjs` runs as `postbuild` and\nremoves them again — but only after proving the diff is exactly the known\nbuild artifact, so a deliberate tsconfig edit survives.\n\n### Where data and services come from\n\n- **Supabase** — one project, ref `qmnssrrolpinvwjjnufo`, committed in\n  `supabase/.temp/project-ref`. **Production is a single shared database**\n  serving golf, baseball and lifting. There is no staging copy.\n- **MCP** — `.mcp.json` declares exactly one server: `supabase`. It must\n  stay project-scoped and read-only; `apply_migration` and `execute_sql`\n  hit production directly with `service_role`, which is why a guard\n  matches those tool names.\n- **Env** — five files: `.env`, `.env.local`, `.env.example` (412 lines,\n  the documentation of what exists), and two `.local` overlays.\n  `.worktreeinclude` deliberately **excludes** all of them, so a live\n  production secret is not copied into every parallel worktree.\n- **Sentry, Vercel, Stripe, Inngest** — all via env, none checked in.\n\n### Claude Code plugins\n\nFive enabled at project scope: `claude-security`, `security-guidance`,\n`sentry`, `superpowers`, `vercel`. Fifteen more at user scope. Plugins\ninstalled at project scope also load in worktrees of the same repo.\n\n### Build and deploy\n\n`vercel.json`:\n… (19 more lines)",
+            "truncated": true,
+            "full_tokens_est": 655
+          }
+        ],
+        "license": "NOASSERTION"
+      },
+      {
+        "id": "doc:https://github.com/bytebase/dbhub/blob/c457729960d566226d43af06a0807e0287c6eb92/docs/blog/postgres-mcp-server-review-supabase-mcp.mdx",
+        "url": "https://github.com/bytebase/dbhub/blob/c457729960d566226d43af06a0807e0287c6eb92/docs/blog/postgres-mcp-server-review-supabase-mcp.mdx",
+        "title": "Postgres MCP Server Review - Supabase MCP Server",
+        "passages": [
+          {
+            "text": "## Installation\n\n## Security\n\n## Summary\n### The Good\n- **Better security defaults**: While prompt injection attacks affect all database MCP servers, Supabase implements more security guardrails than most. OAuth authentication with project scoping prevents cross-project access. Read-only mode uses a dedicated `supabase_read_only_user` (not just query filtering).\n\n### Should You Use It?\nFollow the security best practices—use `read_only=true`, restrict to specific projects with `project_ref`, and limit feature groups to reduce attack surface."
+          }
+        ],
+        "license": "MIT"
+      }
+    ]
+  }
+}

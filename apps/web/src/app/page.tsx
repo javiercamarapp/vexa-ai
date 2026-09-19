@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { ACTIVE_ORG, AccessError, authClient, config, identity, resolveSession } from '../lib/auth';
 import { SessionGuard } from './session-guard';
@@ -24,7 +25,8 @@ export default async function Home() {
       </select>{' '}<button type="submit">Cambiar organización</button>
     </form>
     <h2>{active.name}</h2><p>Rol: {session.active.role}</p>
-    <p>Producto en construcción. Las fuentes y funciones de análisis aún no están disponibles.</p>
+    <p>El workspace muestra estados explícitos cuando un servicio aún no está integrado o configurado.</p>
+    <p><Link href="/overview">Abrir workspace</Link></p>
     <form action="/auth/logout" method="post"><button type="submit">Cerrar sesión</button></form>
   </section>;
 }

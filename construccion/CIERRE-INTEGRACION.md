@@ -2,7 +2,7 @@
 
 Prioridad explícita del usuario: convertir lo construido en recorridos integrados y aceptados, no abrir más módulos. Se conserva alcance completo y los 60 IDs. Superadmin es ampliación separada, no se introduce silenciosamente en el denominador.
 
-## Tablero actualizado — 9/60 aceptadas
+## Tablero actualizado — 10/60 aceptadas
 
 F01-03 aceptado por runner en `009fd730810facd943bca548ee9e6ec7a7d55cb9`: gate168/168, regresiones25/25, controlador110OK y revisión independiente. Materialización limpia revalidada. Primer rechazo por modos0664/0644 preservado y corregido sin diferencias de contenido.
 
@@ -18,7 +18,7 @@ F01-03 aceptado por runner en `009fd730810facd943bca548ee9e6ec7a7d55cb9`: gate16
 | Navegación entre importación/inbox/preferencias | Clicks reales yAPI200 | Aprobada | Laboratorio40cb628/3c258a8 | No equivale a ocho vistas completas |
 | Assign/dismiss | 11acciones+34SQL+26web y Auth/Chromium | Correctivo aprobado; capacidades por rol/estado/binding, legacy fail-closed | Laboratorio597c0ea | No amplía SQL ni acredita F06 completo |
 | Notificaciones | SQL/HTTP/Chromium y flujo desde brief real | Correctivo aprobado | Laboratorio1101d0c+d4c28dc | Push/email, logout integrado y destinatario distinto pendientes |
-| Shell F01-04 | UI/Auth, cookies renovadas y reset correcto de detalle | Correctivos y compatibilidad aprobados; QA del conjunto en curso. Examen ya aprobado | Propuesta aislada; correctivos también en laboratorio5fbf223 | Sin proveedor F06 en esta base; aceptación oficial pendiente |
+| Shell F01-04 | Gate3/3;193regresiones+110controlador;Auth/Chromium4roles | Examen,QA ycompatibilidad aprobados | Baseline50674a4, aceptado con materialización limpia | Sólo diseño/UI/Auth; no proveedor ni accionesF06 completos |
 
 Los SHA de laboratorio preservan código, no lo convierten en baseline aceptado. Se trasladan bytes revisados por allowlist y se registran hashes locales. No copiar repos enteros al candidato ni alterar su examen.
 

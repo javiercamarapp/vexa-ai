@@ -1,6 +1,13 @@
 # Progreso verificable
 Actualizado: 2026-09-19 local. Los apartados anteriores conservados abajo son cortes históricos, no inventario vigente.
 
+## F01-04 cerrado y aceptado —19-sep,16:29 local
+- **10/60 aceptadas. Commit50674a4b871ed822f3374ec6ee7ae2f2dadbf875.** Segundo candidato con registro correcto: verify oficial,193/193regresiones previas y110controlador, todos exit0; accept repitió el gate en materialización limpia, exit0. Ningún fallo se omitió.
+- Tres revisiones separadas aprobaron examen, QA de UI y compatibilidad. UI: ocho rutas/cuatro roles, seis estados, 390×844/1440×900, teclado/foco/reduced-motion,76capturas y controles extra de refresh/reset/revocación. Gate3/3; oráculos7/7+role1/1 en revisión independiente.
+- Rechazo anterior244ae0e por registro stale conservado, corregido en control-plane3884d92 y repetido desdeprepare. FuenteUI idéntica a los25archivos revisados y modosGit normalizados; no se cambió el examen para pasar.
+- Alcance aceptado: base visual/autorizada F01-04. El proveedorF06 ausente se declara indisponible; no se afirma UI con datos/acciones completas ni producción. Integración funcional más amplia sigue preservada en laboratorio5fbf223, con límites explícitos.
+- Primero publicar este cierre mediante publisher y verificar SHA/Actions apagadas; sólo después abrir siguiente tarea F01-05. Sin nuevos módulos paralelos pendientes de terminar.
+
 ## F01-04 — rechazo de registro conservado,19-sep
 - Los tres revisores aprobaron examen/UI/compatibilidad. QA Chromium:3/3,76capturas,ocho rutas/cuatro roles, foco/teclado/reduced-motion y controles adicionales de refresh/reset/revocación.
 - Candidato244ae0e verificado oficialmente. Regresiones reales:192/193, único fallo `F00-05 stale register F01-04`; schema168 y Auth reales pasaron. Registro seguía missing; generar guía no lo actualiza.

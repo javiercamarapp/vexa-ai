@@ -3,7 +3,7 @@
 **Carpeta canónica:** `/Users/javiercamaraportepetit/vexa` · fuera de iCloud. Preparación rehecha desde fuentes originales con Astra vía Codex. **No es todavía el SaaS completo ni un deploy.** Estado/recibos: [PROGRESO.md](PROGRESO.md).
 
 ## Estado de construcción — corte19-sep
-**9/60 tareas aceptadas.** Último hito: schema/RLS/Storage F01-03 (`009fd73`), después de Auth local y scaffold. Gate168/168, regresiones25/25 y controlador110OK; aceptación desde materialización limpia, no sólo laboratorio.
+**10/60 tareas aceptadas.** Último hito: shell/UI/Auth F01-04 (`50674a4`), después de schema/RLS/Storage F01-03 (`009fd73`). GateUI3/3, regresiones193/193 y controlador110OK; aceptación desde materialización limpia. Es base visual/autorizada; proveedor y acciones F06 no se presentan como implementados en ese incremento.
 
 Prioridad vigente: **[cerrar e integrar lo ya construido](construccion/CIERRE-INTEGRACION.md)**. Workspace, CSV/pipeline e inbox tienen correctivos revisados en una rama de integración; no son todavía todas las tareas F02–F06 aceptadas. [PROGRESO.md](PROGRESO.md) distingue baseline, laboratorio, pruebas y pendientes.
 

@@ -23,9 +23,9 @@ El usuario indicó que los datos del cliente llegarán después. No frenar la co
 
 Petición más reciente del usuario (19-sep, 15:54): completar producción/60IDs por fases, terminar e integrar antes de avanzar; después pide múltiples agentes para acelerar. Se concilian ambas instrucciones: **máximo tres agentes dentro de la misma fase**, no tres módulos nuevos. Un escritor por área; examen, regresiones y QA pueden correr en copias propias, integración/promoción sólo por el principal.
 
-Fase activa: **F01-04**. Reutilizar `layout-fixed` y el examen corregido, no reconstruir. Correctivo UI refresh/reset aprobado independientemente; revisión del examen terminó por timeout900s sin veredicto. Cerrar esa revisión, congelar gate, preparar/adoptar candidato, verificar, repetir todos los gates aceptados y controlador, aceptar materialización limpia y publicar mediante publisher. Sólo entonces elegir F01-05 u otra tarea elegible según dependencias; no saltear bloqueos para inflar60/60.
+**F01-04 aceptado50674a4**, con193regresiones y110controlador; rechazo por registro stale preservado y corregido mediante nuevo candidato. Publicar este cierre mediante publisher y verificar SHA antes de abrir **F01-05**, siguiente tarea elegible. No saltear bloqueos para inflar60/60. Para cada tarea: examen externo aprobado/congelado, prepare/adopción permitida, verify, revisión, todos los gates aceptados/controlador, accept limpio y publicación.
 
-Fuente de estado: runner para aceptación; recibos privados para trabajo/procesos. **9/60** al iniciar esta fase. Laboratorio integrado `5fbf223` conserva CSV→recomendación→intervención→brief→inbox y assign/dismiss revisados, sin convertirlos en tareas aceptadas. No perder ese trabajo ni mezclarlo de golpe con F01-04.
+Fuente de estado: runner para aceptación; recibos privados para trabajo/procesos. **10/60** después del cierre F01-04 (9/60 al iniciar). Laboratorio integrado `5fbf223` conserva CSV→recomendación→intervención→brief→inbox y assign/dismiss revisados, sin convertirlos en tareas aceptadas. No perder ese trabajo ni mezclarlo de golpe con F01-04.
 
 Tanda supervisada120min, hasta24invocaciones,128consumidas previamente bajo techo220; consultar reconciliación real antes de lanzar. No reset de presupuesto/rechazos/STOP. Conserva cero gasto incremental, sin envíos ni cloud no autorizado. Los límites6/8 y prioridades paralelas siguientes son **históricos, sustituidos por este modo**.
 
@@ -90,7 +90,8 @@ Commits por cambios reales verificados; autor/committer Javier, email noreply as
 - [x] Kernel económico limitado y scaffold F01-01 aceptados; preparar infraestructura LOCAL y GitHub privado.
 - [x] Auth/membership/callback/selector/logout aceptado con Supabase local y Chrome reales; Google remoto sigue pendiente.
 - [x] Schema tenant-aware/RLS/Storage F01-03 aceptado009fd73 con gate real y materialización limpia.
-- [ ] Cerrar F01-04 diseño/navegación/estados y después F01-05 CI, sin confundir CI local con ejecución remota.
+- [x] F01-04 diseño/navegación/estados aceptado50674a4; no equivale a backendF06.
+- [ ] F01-05 CI, sin confundir CI local con ejecución remota.
 - [ ] Adoptar módulos de ingesta/conectores, implementar persistencia/jobs/consumer y continuidad CRM.
 - [ ] Adoptar gateway/evidencia; completar extracción/clustering/snapshots/ranking.
 - [ ] Ocho vistas con estados/errores/acciones reales; intervención, medición y brief.

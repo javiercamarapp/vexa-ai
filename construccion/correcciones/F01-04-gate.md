@@ -1,6 +1,6 @@
 # F01-04 — correcciones conservadas antes de congelar
 
-Estado al19-sep2026,16:05: examen aprobado independientemente y trasladado al control-plane para congelación. Producto todavía no aceptado. No repetir autoría desde cero: reusar el soporte corregido y verificar su procedencia. Los recibos originales y artefactos sintéticos se conservan localmente.
+Estado al19-sep2026,16:05: examen aprobado independientemente y trasladado al control-plane para congelación. Cierre posterior16:29: producto F01-04 aceptado50674a4 tras193regresiones,110controlador y nueva materialización limpia; limitado al alcanceUI/Auth, no F06/producción. No repetir autoría desde cero: reusar el soporte corregido y verificar su procedencia. Los recibos originales y artefactos sintéticos se conservan localmente.
 
 ## Alcance que no debe cambiar
 

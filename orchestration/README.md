@@ -1,7 +1,7 @@
 # Construcción reanudable con Astra/Codex
 
 ## Estado real
-Controlador local implementado; pruebas unitarias/integración con proceso Codex simulado. E00 tiene gate ejecutable del kernel económico. **54 tareas posteriores están especificadas pero sus gates de aceptación todavía no están escritos**. El controlador las bloquea, no da un PASS por encontrar un Markdown. No existe un bucle de meses corriendo ni un SaaS desplegado. Consultar PROGRESO.md para recibos de ejecución real adicionales.
+Controlador local implementado; 23 pruebas unitarias/integración con proceso Codex simulado. Además se ejecutó una vuelta real Astra/Codex de E00: worker/gate exit 0, sin patch, recheck y aceptación; el siguiente gate faltante detuvo la ejecución. E00 tiene gate ejecutable del kernel económico. **54 tareas posteriores están especificadas pero sus gates de aceptación todavía no están escritos**. El controlador las bloquea, no da un PASS por encontrar un Markdown. No existe un bucle de meses corriendo ni un SaaS desplegado. Consultar PROGRESO.md para recibos de ejecución real adicionales.
 
 ## Grafo y roles
 `graph.json`: 55 tareas, E00 + 54 microtareas de F00–F08; deps explícitas, allowlist de escritura, prompt, objetivo individual, gate y aprobación. `docs/blueprint/F*.md` describe fase completa. El prompt contextualiza la fase pero CURRENT TASK ONLY limita al objetivo individual. Una microtarea aún excesiva se divide antes de ejecutar; 15 minutos no bastan para construir un CRM completo.
@@ -31,6 +31,8 @@ Leer cada SKILL.md al activarla; lista no significa que todas se hayan ejecutado
 **Presupuesto:** default una vuelta/30 minutos de sesión; máximo 15 minutos por worker, gate ≤5 minutos, 2 intentos por tarea. CLI permite 1–30 vueltas y 1–480 minutos, concurrencia=1. Autenticación Codex ChatGPT; entorno no hereda API keys. Suscripción tiene límites, no se promete uso ilimitado.
 **Agotamiento:** 2 fallos en misma tarea, gate faltante, dependencia no aceptada, aprobación, guard, STOP o presupuesto. Guard/bloqueo detiene; error de worker conserva baseline. Dependencia fallida no se marca satisfactoria.
 **Crash:** estado se guarda atómicamente antes de worker. Si queda running tras terminar proceso, reintento usa el siguiente intento y conserva worktree anterior. Antes de reanudar confirmar que no hay worker huérfano. No existe rescate perfecto ante SIGKILL del controlador: detener proceso huérfano autorizado y revisar worktree.
+Auth tiene timeout ≤15 s y accept respeta el presupuesto restante. Operaciones Git tienen timeout individual de 30 s; I/O y cleanup agregan overhead, no se promete finalización exacta al milisegundo del deadline. Timeout limpia miembros supervivientes del mismo process group aunque líder ya haya terminado; procesos deliberadamente desligados requieren aislamiento/supervisión de host y están fuera del modelo cooperativo.
+
 **STOP:** `touch .runtime/STOP` impide comenzar siguiente vuelta; no interrumpe instantáneamente la actual. Ctrl-C del controlador termina grupo del worker al capturar interrupción. Timeout mata grupo de procesos. Nada queda ejecutándose indefinidamente por diseño.
 
 ## Comandos

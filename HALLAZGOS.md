@@ -9,7 +9,7 @@
 - Supabase Queues vs Vercel Workflow sigue spike abierto. Cola durable sin consumidor verificado no procesa nada por sí sola.
 - OpenRouter data_collection deny no equivale a ZDR/residencia. Catálogo público no acredita política del endpoint.
 - Catálogo consultado incluye Astra $10/$50 por millón entrada/salida: no conviene inferir cada ticket con modelo premium sin medir COGS. Construcción Codex y consumo SaaS son economías diferentes.
-- Kernel: 12 tests pasan. Controlador: 22 tests pasan, incluyendo Git real con CLI Codex simulado. Revisión independiente encontró P2 de límites temporales, reproducido y corregido.
+- Kernel: 12 tests pasan. Controlador: 23 tests pasan, incluyendo Git real con CLI Codex simulado. Revisiones independientes encontraron P2 de límites temporales y de hijos supervivientes al timeout: ambos reproducidos con tests rojos y corregidos. Una vuelta real Astra/Codex verificó E00 sin patch; se aceptó tras recheck y el siguiente gate faltante detuvo el grafo.
 - Grafo: 55 tareas, 54 gates no escritos. Esta carencia bloquea construcción automática; no equivale a software entregado.
 
 ## 2026-09-18 — reinicio desde fuentes

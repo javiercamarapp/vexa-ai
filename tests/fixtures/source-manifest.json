@@ -1,0 +1,50 @@
+[
+  {
+    "id": "SRC-01",
+    "kind": "audio",
+    "sha256": "30abfe8a94a771c6bf8d5bed8ef62952d414babb81b12aed7f5f3ba7be949b58",
+    "bytes": 1130755,
+    "duration_seconds": 136.853333
+  },
+  {
+    "id": "SRC-02",
+    "kind": "audio",
+    "sha256": "b134f6e00b433dacb7ac2bb311d3f6696fe329bb683df17d1ffcd1345b003b2f",
+    "bytes": 824087,
+    "duration_seconds": 97.344
+  },
+  {
+    "id": "SRC-03",
+    "kind": "audio",
+    "sha256": "1c0ec84680315e4a17148e03bd9b8a164f9cad9d12e26bd67f732176b30a4efe",
+    "bytes": 2488626,
+    "duration_seconds": 309.397333
+  },
+  {
+    "id": "SRC-04",
+    "kind": "audio",
+    "sha256": "7266986e6b8f646fab302ce6c485635d51ea883116f6ea99d45a78cc5e91708d",
+    "bytes": 247605,
+    "duration_seconds": 23.744
+  },
+  {
+    "id": "SRC-05",
+    "kind": "audio",
+    "sha256": "74d7d941b97e78fb6d1757fd12494b6dcdb38d2ce723c40d571046e1c6f95f1a",
+    "bytes": 103744,
+    "duration_seconds": 5.44
+  },
+  {
+    "id": "SRC-06",
+    "kind": "audio",
+    "sha256": "8c9b0042417f29ea705e0d32b8c6b914b2d28a622300cd21b747bf9f8ae03a8b",
+    "bytes": 211544,
+    "duration_seconds": 19.050667
+  },
+  {
+    "id": "SRC-07",
+    "kind": "docx",
+    "sha256": "ff78bc98741b9d3f02352d144f9868d6b4b01a7153e46707eb4deca629e04c5f",
+    "bytes": 30979
+  }
+]

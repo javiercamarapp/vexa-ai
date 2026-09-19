@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "provider": "codex-chatgpt",
   "model": "gpt-6-astra",
   "max_attempts_per_task": 2,
@@ -36,7 +36,7 @@
     {
       "id": "F00-02",
       "phase": "F00",
-      "objective": "Asignar sponsor de negocio, responsable de CRM, owner de privacidad y finanzas.",
+      "objective": "Registrar responsables/pendientes de piloto sin inventar nombres; autorizar únicamente preparación con datos sintéticos.",
       "depends_on": [
         "F00-01"
       ],
@@ -51,7 +51,7 @@
     {
       "id": "F00-03",
       "phase": "F00",
-      "objective": "Definir cuentas dev/preview/prod propias de VEXA; no reutilizar producción Likida.",
+      "objective": "Definir inventario dev local sintético y preview/prod sin provisionar; permisos cloud separados.",
       "depends_on": [
         "F00-02"
       ],
@@ -71,7 +71,8 @@
         "F00-03"
       ],
       "allowed_paths": [
-        "docs/blueprint/"
+        "docs/blueprint/",
+        "tests/fixtures/syn-e2e-v1.json"
       ],
       "acceptance": "tests/acceptance/F00-04.test.mjs",
       "prompt": "orchestration/prompts/F00.md",
@@ -81,7 +82,7 @@
     {
       "id": "F00-05",
       "phase": "F00",
-      "objective": "Escribir gates de aceptación de cada tarea en tests/acceptance fuera de candidate y revisar contra PRD.",
+      "objective": "Congelar el gate del siguiente incremento y registrar todos los pendientes; repetir control-plane antes de cada worker, sin PASS por documentación.",
       "depends_on": [
         "F00-04"
       ],
@@ -103,12 +104,14 @@
       "allowed_paths": [
         "apps/web/",
         "supabase/",
-        "packages/platform/"
+        "packages/platform/",
+        "package.json",
+        "package-lock.json"
       ],
       "acceptance": "tests/acceptance/F01-01.test.mjs",
       "prompt": "orchestration/prompts/F01.md",
       "auto_accept": false,
-      "requires_approval": false
+      "requires_approval": true
     },
     {
       "id": "F01-02",
@@ -171,12 +174,14 @@
       "allowed_paths": [
         "apps/web/",
         "supabase/",
-        "packages/platform/"
+        "packages/platform/",
+        ".github/workflows/ci.yml",
+        "package.json"
       ],
       "acceptance": "tests/acceptance/F01-05.test.mjs",
       "prompt": "orchestration/prompts/F01.md",
       "auto_accept": false,
-      "requires_approval": false
+      "requires_approval": true
     },
     {
       "id": "F02-01",
@@ -514,12 +519,13 @@
         "packages/gateway/",
         "packages/problems/",
         "apps/web/src/",
-        "supabase/"
+        "supabase/",
+        "docs/blueprint/evaluation-protocol.json"
       ],
       "acceptance": "tests/acceptance/F04-07.test.mjs",
       "prompt": "orchestration/prompts/F04.md",
       "auto_accept": false,
-      "requires_approval": false
+      "requires_approval": true
     },
     {
       "id": "F05-01",
@@ -713,7 +719,8 @@
         "apps/web/",
         "packages/recommendations/",
         "packages/interventions/",
-        "packages/briefs/"
+        "packages/briefs/",
+        "supabase/migrations/0014_interventions.sql"
       ],
       "acceptance": "tests/acceptance/F06-05.test.mjs",
       "prompt": "orchestration/prompts/F06.md",
@@ -749,12 +756,13 @@
         "apps/web/",
         "packages/recommendations/",
         "packages/interventions/",
-        "packages/briefs/"
+        "packages/briefs/",
+        "docs/blueprint/visual-review.md"
       ],
       "acceptance": "tests/acceptance/F06-07.test.mjs",
       "prompt": "orchestration/prompts/F06.md",
       "auto_accept": false,
-      "requires_approval": false
+      "requires_approval": true
     },
     {
       "id": "F07-01",
@@ -766,12 +774,13 @@
       "allowed_paths": [
         "apps/web/",
         "packages/",
-        "supabase/"
+        "supabase/",
+        "docs/blueprint/security-findings.json"
       ],
       "acceptance": "tests/acceptance/F07-01.test.mjs",
       "prompt": "orchestration/prompts/F07.md",
       "auto_accept": false,
-      "requires_approval": false
+      "requires_approval": true
     },
     {
       "id": "F07-02",
@@ -783,12 +792,13 @@
       "allowed_paths": [
         "apps/web/",
         "packages/",
-        "supabase/"
+        "supabase/",
+        "docs/blueprint/mutation-report.json"
       ],
       "acceptance": "tests/acceptance/F07-02.test.mjs",
       "prompt": "orchestration/prompts/F07.md",
       "auto_accept": false,
-      "requires_approval": false
+      "requires_approval": true
     },
     {
       "id": "F07-03",
@@ -800,12 +810,13 @@
       "allowed_paths": [
         "apps/web/",
         "packages/",
-        "supabase/"
+        "supabase/",
+        "docs/blueprint/chaos-report.json"
       ],
       "acceptance": "tests/acceptance/F07-03.test.mjs",
       "prompt": "orchestration/prompts/F07.md",
       "auto_accept": false,
-      "requires_approval": false
+      "requires_approval": true
     },
     {
       "id": "F07-04",
@@ -817,12 +828,13 @@
       "allowed_paths": [
         "apps/web/",
         "packages/",
-        "supabase/"
+        "supabase/",
+        "docs/blueprint/load-results.json"
       ],
       "acceptance": "tests/acceptance/F07-04.test.mjs",
       "prompt": "orchestration/prompts/F07.md",
       "auto_accept": false,
-      "requires_approval": false
+      "requires_approval": true
     },
     {
       "id": "F07-05",
@@ -834,12 +846,13 @@
       "allowed_paths": [
         "apps/web/",
         "packages/",
-        "supabase/"
+        "supabase/",
+        "docs/blueprint/pilot-evaluation.json"
       ],
       "acceptance": "tests/acceptance/F07-05.test.mjs",
       "prompt": "orchestration/prompts/F07.md",
       "auto_accept": false,
-      "requires_approval": false
+      "requires_approval": true
     },
     {
       "id": "F07-06",
@@ -851,12 +864,13 @@
       "allowed_paths": [
         "apps/web/",
         "packages/",
-        "supabase/"
+        "supabase/",
+        "docs/blueprint/restore-drill.json"
       ],
       "acceptance": "tests/acceptance/F07-06.test.mjs",
       "prompt": "orchestration/prompts/F07.md",
       "auto_accept": false,
-      "requires_approval": false
+      "requires_approval": true
     },
     {
       "id": "F08-01",

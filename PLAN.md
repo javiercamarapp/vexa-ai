@@ -1,5 +1,20 @@
 # VEXA — investigación y construcción verificable
 
+## Ampliación activa — construcción guiada comparable a Likida
+Solicitud: comprobar y completar el paso a paso para construir VEXA en loop de punta a punta. No equivale a desplegar el SaaS en esta sesión.
+
+Criterio de cierre de esta ampliación:
+1. Comparación documentada de los planos de construcción, reanudación, QA y automejora de Likida; citas de archivo/línea y límites del contraste.
+2. Un punto de entrada y una ficha específica por tarea del grafo: inputs, contrato, archivos, pasos, comandos, resultados esperados, pruebas adversarias, recuperación y quién desbloquea cada dependencia.
+3. Separar trabajo del control-plane, worker offline y operador con accesos. Detectar automáticamente gates ausentes/allowlists imposibles/dependencias circulares; no fabricar PASS.
+4. Herramientas locales de diagnóstico y preparación probadas con casos negativos. Un piloto sintético de los pasos ejecutables; sin credenciales reales ni publicación.
+5. Revisión con contexto limpio contra rúbrica previa; correcciones, evidencia y copia al Escritorio sin pisar cambios del usuario.
+
+Nivel: cadena guiada sobre el controlador existente, no otro framework de agentes. Presupuesto de este bloque: hasta 90 min; 2 invocaciones iniciales Codex/Astra (builder y revisor limpio) más 1 pasada correctiva acotada tras reproducir H1/H2/H3; máximo total 3, concurrencia 1, sin APIs de inferencia pagadas. No se amplía a construcción del SaaS. Principal escribe guía/contratos/herramientas; revisor sólo su reporte. Reductor: principal confronta hallazgos con reproducción y conserva los bloqueos reales. No hay autorización implícita de cloud, datos Senix o producción.
+
+### Cierre del presupuesto del bloque
+Se agotaron las tres invocaciones permitidas. La segunda revisión detectó H2b; el principal lo reprodujo y corrigió con cuatro regresiones adicionales. No se lanza una cuarta revisión ni construcción SaaS. El cierre/verificación/copia prolongó la ventana prevista de 90min; no se presenta como cumplimiento de un deadline estricto. La falta de revalidación independiente del último parche se deja explícita.
+
 ## Encargo
 Rehacer desde las fuentes los seis audios y el DOCX; interpretar el PRD de 35 secciones compartido en la sesión; revisar Documentos Likida y repos Likida/Atiende como referencia de profundidad y calidad. Preparar investigación, diligencia CTO (oferta declarada de 30%), blueprint por fases para un pitch en un mes y ejecución agentica reanudable con pruebas. Stack solicitado: Vercel, Supabase, GitHub y OpenRouter para el producto. Construcción: suscripción Codex, modelo openai-codex/gpt-6-astra; sin llamadas adicionales a APIs pagadas para esta preparación.
 

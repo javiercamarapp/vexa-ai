@@ -1,0 +1,41 @@
+{
+  "scope": "five hand-picked arithmetic mutations; not whole-product mutation score",
+  "baseline_sha256": "8dc03ea2bc69b6c9257054eb8ec9a0ce58f4b6ef7b7a791caacb296d6371f69d",
+  "gate_sha256": "76794032fab59979055c791a8512c2a18477d8655c033bddc62420b1d92b43cf",
+  "baseline_exit": 0,
+  "results": [
+    {
+      "id": "unknown-as-zero",
+      "status": "killed",
+      "exit": 1,
+      "log_sha256": "6ffd92e9a2f703c018d1db2830ffd822e3aa64ed6a9fa615eedc14fd8bb2ddf7"
+    },
+    {
+      "id": "duplicate-events-counted",
+      "status": "killed",
+      "exit": 1,
+      "log_sha256": "53f20ba64665af892eef1e76b189924183968f55c449f9fee32bb9de34ef7b9f"
+    },
+    {
+      "id": "reversal-added",
+      "status": "killed",
+      "exit": 1,
+      "log_sha256": "ca3eef55f14e76273d8038a5ad37115bbab337e07e1d977d2c2c9f158713f7bc"
+    },
+    {
+      "id": "precision-lost",
+      "status": "killed",
+      "exit": 1,
+      "log_sha256": "27d3205ea1e3ada45c8080f179ffb7f3ac50fba6772b5ccf0e081b2e66c60ebf"
+    },
+    {
+      "id": "scenario-overstated",
+      "status": "killed",
+      "exit": 1,
+      "log_sha256": "0e631d9731871364d24c03e3ea81054be5d5765383a19caa9a63b626d5b3a5e8"
+    }
+  ],
+  "killed": 5,
+  "total": 5,
+  "baseline_unchanged": true
+}

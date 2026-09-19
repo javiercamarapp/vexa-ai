@@ -1,0 +1,16 @@
+{
+  "dev": {
+    "kind": "local",
+    "data_mode": "synthetic",
+    "runtime_ai_enabled": false,
+    "project_ref": null
+  },
+  "preview": {
+    "status": "unprovisioned",
+    "project_ref": null
+  },
+  "prod": {
+    "status": "unprovisioned",
+    "project_ref": null
+  }
+}

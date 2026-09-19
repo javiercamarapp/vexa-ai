@@ -1,6 +1,6 @@
 # VEXA — instrucciones de trabajo
 
-1. Leer README.md, PROGRESO.md y docs/CONTEXTO-CANONICO.md; después la fase asignada, no todo fuentes/ en cada vuelta.
+1. Leer README.md, PROGRESO.md y docs/CONTEXTO-CANONICO.md; después construccion/README.md y la ficha de la próxima tarea (`python3 scripts/guide.py next`). No releer todo fuentes/ en cada vuelta. Catálogo autorado y grafo v3 mandan sobre los generadores históricos.
 2. Construcción usa Codex/ChatGPT gpt-6-astra; OpenRouter sólo será runtime del producto con presupuesto y autorización aparte.
 3. private/ contiene audios, PRD, manifest y logs privados: no publicar, no commitear, no enviar a APIs externas. Originales inmutables.
 4. Likida/Atiende y sus configuraciones son referencias read-only. Nunca copiar .env, tokens, datos cliente o IP sin permiso.

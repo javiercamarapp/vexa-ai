@@ -1,5 +1,11 @@
 # Hallazgos
 
+## Construcción guiada — corte nuevo 19-sep-2026
+- La comparación útil con Likida es por requisitos/efectos/oráculos/reanudación, no por páginas. Se especificaron 55 encargos y el programa hasta release; no se construyó el SaaS.
+- Las 54 pruebas ausentes del corte inicial pasaron a 47. Escribir/revisar el gate justo antes del incremento permite construir sin entregar todo el examen futuro al worker ni falsificar PASS.
+- La suite de 66 tests no detectó un verified sin salida tras rechazo, aceptación desde un artefacto ignorado ni sobreescritura de logs al recuperar. Revisión externa los reprodujo; se corrigieron y añadieron diez regresiones, total76. Una segunda revisión halló permisos no transportables por Git: se corrigió validando una materialización limpia antes de promover, con cuatro regresiones más (80 tests). Este último parche sólo tiene comprobación del principal, no nueva aprobación independiente.
+- F00 representa preparación sintética, no permisos o cloud listos. Cuentas, gold humano, piloto y publicación siguen como actos externos. Evidencia actual y veredictos en construccion/; cifras inferiores son cortes anteriores.
+
 ## 2026-09-18/19 — fuentes, investigación y verificación
 - Audio: la transición HubSpot→Zendesk es central para el pitch. Adaptadores read-only comparten modelo canónico y preservan aliases/historia; mock no acredita conexión real.
 - La separación VEXA/Convexia y propuesta 70/30 son declaraciones del audio; documentos firmados/IP/vesting/control siguen pendientes.

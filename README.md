@@ -2,6 +2,11 @@
 
 **Carpeta canónica:** `/Users/javiercamaraportepetit/vexa` · fuera de iCloud. Preparación rehecha desde fuentes originales con Astra vía Codex. **No es todavía el SaaS completo ni un deploy.** Estado/recibos: [PROGRESO.md](PROGRESO.md).
 
+## Construcción guiada de punta a punta
+**[Empieza aquí: guía de construcción](construccion/README.md)** · [55 fichas](construccion/05-TAREAS.md) · [Guía HTML continua](construccion/GUIA-COMPLETA.html) · [PDF](construccion/GUIA-COMPLETA.pdf) · [Comparación con Likida](construccion/00-COMPARACION-LIKIDA.md).
+
+Ciclo control-plane → gate externo → prepare/run → verify → revisión → accept; recuperación supervisada, contratos y runbooks. Hay 8 gates de tareas presentes y 47 pendientes; el de scaffold está rojo mientras no se construya. **Guía completa no equivale a loop totalmente desatendido ni SaaS terminado.**
+
 ## Investigación de negocio ampliada — TAM, SAM, SOM y finanzas
 **[Índice del estudio completo](negocio/README.md)** · **[TAM/SAM/SOM](negocio/05-Precios-y-Finanzas/tam-sam-som.md)** · **[Excel de mercado/finanzas](negocio/05-Precios-y-Finanzas/VEXA-MERCADO-Y-FINANZAS.xlsx)** · **[Informe HTML](negocio/INFORME-VEXA.html)**.
 
@@ -58,7 +63,7 @@ Días se solapan por trabajo de diseño/validación; un solo implementador no ha
 - `packages/economics/index.mjs`: kernel puro limitado de dinero/exposición/refunds/escenarios.
 - `tests/acceptance/economics.test.mjs`: contrato externo; soporta VEXA_CANDIDATE.
 - `orchestration/runner.py`: controlador Codex acotado, candidatos aislados en Git worktree, gates y aceptación explícita.
-- `tests/controller/test_runner.py`: 23 tests unitarios y de integración con CLI Codex simulado. Adicionalmente, una vuelta real Astra/Codex verificó E00 sin cambios, pasó su gate y quedó aceptada; la siguiente se detuvo por gate faltante.
+- `tests/controller/`: 80 tests unitarios/integración, Git real y CLI simulado; incluye rechazo posterior a revisión, ignorados/modos y preservación de logs. E00 tuvo además una vuelta real Astra/Codex aceptada, sin patch. El recorrido actual y sus límites se registran en [evidencia de construcción](construccion/EVIDENCIA.md).
 
 ```bash
 cd ~/vexa
@@ -66,7 +71,7 @@ npm test
 npm run test:controller
 npm run graph:check
 ```
-Node >=22 y Python3, sin instalar dependencias para esos tests. El grafo tiene 55 tareas; sólo E00 tiene gate escrito en esta etapa. Los otros 54 **bloquean** hasta preparar pruebas/entorno y resolver aprobaciones. No hay proceso autónomo de producción corriendo.
+Node >=22 y Python3, sin instalar dependencias para kernel/controlador. Grafo v3 con 55 tareas: 8 gates presentes, 47 pendientes (escritura/revisión justo antes del incremento, ver fichas). Las pruebas de runtime necesitan entorno real de ensayo. No hay proceso autónomo de producción corriendo.
 
 ## Bloqueos que no puede inventar un agente
 Acuerdo/NDA/DPA, derechos y muestra real Senix; responsables/fecha migración; cuentas/proyectos VEXA y presupuestos de runtime; gold humano y validación de negocio; scaffold/auth/RLS/ingesta/UI aún por implementar. El 30% no equivale a sociedad formalizada y un gasto sintético no equivale a ahorro real.

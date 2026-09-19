@@ -1,0 +1,281 @@
+{
+  "policy": "just-in-time-external-gates",
+  "meaning": "authored is not executed, passed or product-ready",
+  "tasks": [
+    {
+      "id": "E00",
+      "state": "authored",
+      "product_pass": false
+    },
+    {
+      "id": "F00-01",
+      "state": "authored",
+      "product_pass": false
+    },
+    {
+      "id": "F00-02",
+      "state": "authored",
+      "product_pass": false
+    },
+    {
+      "id": "F00-03",
+      "state": "authored",
+      "product_pass": false
+    },
+    {
+      "id": "F00-04",
+      "state": "authored",
+      "product_pass": false
+    },
+    {
+      "id": "F00-05",
+      "state": "authored",
+      "product_pass": false
+    },
+    {
+      "id": "F01-01",
+      "state": "authored",
+      "product_pass": false
+    },
+    {
+      "id": "F01-02",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F01-03",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F01-04",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F01-05",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F02-01",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F02-02",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F02-03",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F02-04",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F02-05",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F02-06",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F03-01",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F03-02",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F03-03",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F03-04",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F03-05",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F03-06",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F04-01",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F04-02",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F04-03",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F04-04",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F04-05",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F04-06",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F04-07",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F05-01",
+      "state": "authored",
+      "product_pass": false
+    },
+    {
+      "id": "F05-02",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F05-03",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F05-04",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F05-05",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F05-06",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F06-01",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F06-02",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F06-03",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F06-04",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F06-05",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F06-06",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F06-07",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F07-01",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F07-02",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F07-03",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F07-04",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F07-05",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F07-06",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F08-01",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F08-02",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F08-03",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F08-04",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F08-05",
+      "state": "missing",
+      "product_pass": false
+    },
+    {
+      "id": "F08-06",
+      "state": "missing",
+      "product_pass": false
+    }
+  ]
+}

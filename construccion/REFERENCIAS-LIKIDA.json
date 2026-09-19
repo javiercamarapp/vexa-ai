@@ -1,0 +1,74 @@
+[
+  {
+    "id": "L1",
+    "path": "~/Desktop/Documentos Likida/00-BLUEPRINT-EJECUCION-CLAUDE-CODE.md",
+    "bytes": 18933,
+    "lines": 337,
+    "sha256": "ce863a30aa887a9ed98b4611f815a4263b40931e237fa15936364d5a5e35486b",
+    "read_ranges": "complete"
+  },
+  {
+    "id": "L2",
+    "path": "~/Desktop/Documentos Likida/16-Blueprint-de-Construccion/00-PLAN-DE-CIERRE-VIGENTE.md",
+    "bytes": 914,
+    "lines": 16,
+    "sha256": "4d4b1902526d9cab6564886c6b68025cef9f0d3d4299b64aa8d555d33d77b61b",
+    "read_ranges": "complete"
+  },
+  {
+    "id": "L3",
+    "path": "~/Desktop/Documentos Likida/16-Blueprint-de-Construccion/00-PROMPT-SIGUIENTE-SESION.md",
+    "bytes": 15075,
+    "lines": 247,
+    "sha256": "18753969868de385268adbf9fbe9015547db8e0c3943a6751c0aac29c83992b5",
+    "read_ranges": "complete"
+  },
+  {
+    "id": "L4",
+    "path": "~/Desktop/Documentos Likida/16-Blueprint-de-Construccion/fase-1-primer-cliente.md",
+    "bytes": 12031,
+    "lines": 198,
+    "sha256": "5d6519b5b52b06ed81283668b40f59652a589748144b3a4a0a016afb53298686",
+    "read_ranges": "complete"
+  },
+  {
+    "id": "L5",
+    "path": "~/Desktop/Documentos Likida/13-Agentes-de-AI/10-Ingenieria-y-Producto/qa-autonomo/encargo-fase-1.md",
+    "bytes": 8980,
+    "lines": 136,
+    "sha256": "6295710dce6c30678a917ad51e8db6911d7e5e16d6bb2d36a9aa06bd1aa1ffe4",
+    "read_ranges": "complete"
+  },
+  {
+    "id": "L6",
+    "path": "~/Desktop/Documentos Likida/13-Agentes-de-AI/10-Ingenieria-y-Producto/maquina-de-automejora/plan-de-adopcion.md",
+    "bytes": 13865,
+    "lines": 219,
+    "sha256": "1e7c7e6dfb0f40c85007a4fc0f37ebcfea1697ab55d061a25792c17327c8bf50",
+    "read_ranges": "complete"
+  },
+  {
+    "id": "L7",
+    "path": "~/Desktop/Documentos Likida/13-Agentes-de-AI/10-Ingenieria-y-Producto/maquina-de-automejora/00-MAQUINA-DE-AUTOMEJORA.md",
+    "bytes": 56976,
+    "lines": 755,
+    "sha256": "c06cb6376434ac42d21eccece49695179cf1c4f6b0824975a0151107a533a682",
+    "read_ranges": "1-240,460-756"
+  },
+  {
+    "id": "L8",
+    "path": "~/Desktop/Documentos Likida/00-LO-QUE-FALTA-PARA-PUNTA-A-PUNTA.md",
+    "bytes": 12908,
+    "lines": 257,
+    "sha256": "a6311e2e76c1930a4a0d2f410ddce441979e63749806d46515f43cb050651461",
+    "read_ranges": "complete"
+  },
+  {
+    "id": "R1",
+    "path": "~/likida/docs/conocimiento/plan-de-cierre.md",
+    "bytes": 10776,
+    "lines": 174,
+    "sha256": "2231e888885edf6712dc70ff04d0382306f8c6a2cf8d8e3e1b7aa08526fe109c",
+    "read_ranges": "complete"
+  }
+]

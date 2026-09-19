@@ -1,0 +1,952 @@
+{
+  "version": 2,
+  "provider": "codex-chatgpt",
+  "model": "gpt-6-astra",
+  "max_attempts_per_task": 2,
+  "turn_timeout_seconds": 900,
+  "concurrency": 1,
+  "tasks": [
+    {
+      "id": "E00",
+      "depends_on": [],
+      "allowed_paths": [
+        "packages/economics"
+      ],
+      "acceptance": "tests/acceptance/economics.test.mjs",
+      "prompt": "orchestration/prompts/E00.md",
+      "objective": "Verificar kernel financiero existente contra contrato externo, corregir sólo fallos reproducibles.",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F00-01",
+      "phase": "F00",
+      "objective": "Validar los 6 hashes/duraciones/transcripciones y marcar incertidumbres ASR.",
+      "depends_on": [
+        "E00"
+      ],
+      "allowed_paths": [
+        "docs/blueprint/"
+      ],
+      "acceptance": "tests/acceptance/F00-01.test.mjs",
+      "prompt": "orchestration/prompts/F00.md",
+      "auto_accept": false,
+      "requires_approval": true
+    },
+    {
+      "id": "F00-02",
+      "phase": "F00",
+      "objective": "Asignar sponsor de negocio, responsable de CRM, owner de privacidad y finanzas.",
+      "depends_on": [
+        "F00-01"
+      ],
+      "allowed_paths": [
+        "docs/blueprint/"
+      ],
+      "acceptance": "tests/acceptance/F00-02.test.mjs",
+      "prompt": "orchestration/prompts/F00.md",
+      "auto_accept": false,
+      "requires_approval": true
+    },
+    {
+      "id": "F00-03",
+      "phase": "F00",
+      "objective": "Definir cuentas dev/preview/prod propias de VEXA; no reutilizar producción Likida.",
+      "depends_on": [
+        "F00-02"
+      ],
+      "allowed_paths": [
+        "docs/blueprint/"
+      ],
+      "acceptance": "tests/acceptance/F00-03.test.mjs",
+      "prompt": "orchestration/prompts/F00.md",
+      "auto_accept": false,
+      "requires_approval": true
+    },
+    {
+      "id": "F00-04",
+      "phase": "F00",
+      "objective": "Crear fixtures dos tenants, clientes repetidos, orders/refunds/reversals, dos monedas, nulos, mensajes con instrucciones maliciosas.",
+      "depends_on": [
+        "F00-03"
+      ],
+      "allowed_paths": [
+        "docs/blueprint/"
+      ],
+      "acceptance": "tests/acceptance/F00-04.test.mjs",
+      "prompt": "orchestration/prompts/F00.md",
+      "auto_accept": false,
+      "requires_approval": true
+    },
+    {
+      "id": "F00-05",
+      "phase": "F00",
+      "objective": "Escribir gates de aceptación de cada tarea en tests/acceptance fuera de candidate y revisar contra PRD.",
+      "depends_on": [
+        "F00-04"
+      ],
+      "allowed_paths": [
+        "docs/blueprint/"
+      ],
+      "acceptance": "tests/acceptance/F00-05.test.mjs",
+      "prompt": "orchestration/prompts/F00.md",
+      "auto_accept": false,
+      "requires_approval": true
+    },
+    {
+      "id": "F01-01",
+      "phase": "F01",
+      "objective": "Resolver versiones actuales desde documentación instalada/catálogos y fijar lockfile; no copiar latest de memoria.",
+      "depends_on": [
+        "F00-05"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "supabase/",
+        "packages/platform/"
+      ],
+      "acceptance": "tests/acceptance/F01-01.test.mjs",
+      "prompt": "orchestration/prompts/F01.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F01-02",
+      "phase": "F01",
+      "objective": "Implementar login/logout, membership en DB y selector de organización sin confiar tenant_id del body.",
+      "depends_on": [
+        "F01-01"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "supabase/",
+        "packages/platform/"
+      ],
+      "acceptance": "tests/acceptance/F01-02.test.mjs",
+      "prompt": "orchestration/prompts/F01.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F01-03",
+      "phase": "F01",
+      "objective": "SQL migrations con claves tenant-aware y RLS default deny; Storage privado.",
+      "depends_on": [
+        "F01-02"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "supabase/",
+        "packages/platform/"
+      ],
+      "acceptance": "tests/acceptance/F01-03.test.mjs",
+      "prompt": "orchestration/prompts/F01.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F01-04",
+      "phase": "F01",
+      "objective": "Diseño base accesible, sidebar, navegación y estados vacío/error/stale/loading.",
+      "depends_on": [
+        "F01-03"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "supabase/",
+        "packages/platform/"
+      ],
+      "acceptance": "tests/acceptance/F01-04.test.mjs",
+      "prompt": "orchestration/prompts/F01.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F01-05",
+      "phase": "F01",
+      "objective": "CI lint/typecheck/unit/SQL integration/build; secretos de preview mínimos, ninguna clave servicio al browser.",
+      "depends_on": [
+        "F01-04"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "supabase/",
+        "packages/platform/"
+      ],
+      "acceptance": "tests/acceptance/F01-05.test.mjs",
+      "prompt": "orchestration/prompts/F01.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F02-01",
+      "phase": "F02",
+      "objective": "Definir límites de archivo/filas/tamaño descomprimido; impedir zip bombs y formularios ejecutables.",
+      "depends_on": [
+        "F01-05"
+      ],
+      "allowed_paths": [
+        "packages/ingestion/",
+        "packages/jobs/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F02-01.test.mjs",
+      "prompt": "orchestration/prompts/F02.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F02-02",
+      "phase": "F02",
+      "objective": "Carga directa Storage autorizada; registrar import+outbox atómicamente.",
+      "depends_on": [
+        "F02-01"
+      ],
+      "allowed_paths": [
+        "packages/ingestion/",
+        "packages/jobs/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F02-02.test.mjs",
+      "prompt": "orchestration/prompts/F02.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F02-03",
+      "phase": "F02",
+      "objective": "Preview de columnas, timezone/moneda explícita, row errors descargables sin CSV injection.",
+      "depends_on": [
+        "F02-02"
+      ],
+      "allowed_paths": [
+        "packages/ingestion/",
+        "packages/jobs/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F02-03.test.mjs",
+      "prompt": "orchestration/prompts/F02.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F02-04",
+      "phase": "F02",
+      "objective": "Canonicalizar fuente/IDs/revisiones, dedup único DB, cuarentena de ambiguos.",
+      "depends_on": [
+        "F02-03"
+      ],
+      "allowed_paths": [
+        "packages/ingestion/",
+        "packages/jobs/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F02-04.test.mjs",
+      "prompt": "orchestration/prompts/F02.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F02-05",
+      "phase": "F02",
+      "objective": "Worker por chunks con deadline, lease/fencing, checkpoint, backoff/429/cancelación y dead-letter.",
+      "depends_on": [
+        "F02-04"
+      ],
+      "allowed_paths": [
+        "packages/ingestion/",
+        "packages/jobs/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F02-05.test.mjs",
+      "prompt": "orchestration/prompts/F02.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F02-06",
+      "phase": "F02",
+      "objective": "Probar consumidor real y alarma de cola estancada; 202 no significa análisis completado.",
+      "depends_on": [
+        "F02-05"
+      ],
+      "allowed_paths": [
+        "packages/ingestion/",
+        "packages/jobs/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F02-06.test.mjs",
+      "prompt": "orchestration/prompts/F02.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F03-01",
+      "phase": "F03",
+      "objective": "S01 confirma versión de rutas/scopes HubSpot; recuperar mensajes reales no sólo propiedades de ticket.",
+      "depends_on": [
+        "F02-06"
+      ],
+      "allowed_paths": [
+        "packages/connectors/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F03-01.test.mjs",
+      "prompt": "orchestration/prompts/F03.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F03-02",
+      "phase": "F03",
+      "objective": "S02 confirma subdominio, cursor y comments Zendesk, actualizado/borrado.",
+      "depends_on": [
+        "F03-01"
+      ],
+      "allowed_paths": [
+        "packages/connectors/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F03-02.test.mjs",
+      "prompt": "orchestration/prompts/F03.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F03-03",
+      "phase": "F03",
+      "objective": "Guardar cursor sólo tras commit de página; manejar ventana de actualización y backfill con sobreposición deduplicada.",
+      "depends_on": [
+        "F03-02"
+      ],
+      "allowed_paths": [
+        "packages/connectors/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F03-03.test.mjs",
+      "prompt": "orchestration/prompts/F03.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F03-04",
+      "phase": "F03",
+      "objective": "Preparar mapa aliases HubSpot→Zendesk con procedencia y ambigüedad, sin fusionar sólo por email/texto.",
+      "depends_on": [
+        "F03-03"
+      ],
+      "allowed_paths": [
+        "packages/connectors/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F03-04.test.mjs",
+      "prompt": "orchestration/prompts/F03.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F03-05",
+      "phase": "F03",
+      "objective": "UI health: última sincronización, filas/cobertura, permisos revocados y plan de reconexión.",
+      "depends_on": [
+        "F03-04"
+      ],
+      "allowed_paths": [
+        "packages/connectors/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F03-05.test.mjs",
+      "prompt": "orchestration/prompts/F03.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F03-06",
+      "phase": "F03",
+      "objective": "Comparar dataset antes/después con mismos filtros y pipeline versionado; visibilizar cambio de cobertura de canales.",
+      "depends_on": [
+        "F03-05"
+      ],
+      "allowed_paths": [
+        "packages/connectors/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F03-06.test.mjs",
+      "prompt": "orchestration/prompts/F03.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F04-01",
+      "phase": "F04",
+      "objective": "Gateway valida modelos/rutas desde catálogo y política de retención/residencia antes de red.",
+      "depends_on": [
+        "F02-06"
+      ],
+      "allowed_paths": [
+        "packages/intelligence/",
+        "packages/gateway/",
+        "packages/problems/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F04-01.test.mjs",
+      "prompt": "orchestration/prompts/F04.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F04-02",
+      "phase": "F04",
+      "objective": "Reserva atómica por tenant/job; errores con gasto incierto conservan reserva hasta conciliación.",
+      "depends_on": [
+        "F04-01"
+      ],
+      "allowed_paths": [
+        "packages/intelligence/",
+        "packages/gateway/",
+        "packages/problems/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F04-02.test.mjs",
+      "prompt": "orchestration/prompts/F04.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F04-03",
+      "phase": "F04",
+      "objective": "Redactar PII, tratar tickets como datos sin autoridad, extraer issue/sentiment/intent/urgency/entities + spans y abstención.",
+      "depends_on": [
+        "F04-02"
+      ],
+      "allowed_paths": [
+        "packages/intelligence/",
+        "packages/gateway/",
+        "packages/problems/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F04-03.test.mjs",
+      "prompt": "orchestration/prompts/F04.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F04-04",
+      "phase": "F04",
+      "objective": "Validar cada cita contra message_revision autorizada, enum y límites del schema.",
+      "depends_on": [
+        "F04-03"
+      ],
+      "allowed_paths": [
+        "packages/intelligence/",
+        "packages/gateway/",
+        "packages/problems/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F04-04.test.mjs",
+      "prompt": "orchestration/prompts/F04.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F04-05",
+      "phase": "F04",
+      "objective": "Embeddings model/dim versionados, recuperación tenant-filtered, clustering incremental estable, outliers y split/merge revisables.",
+      "depends_on": [
+        "F04-04"
+      ],
+      "allowed_paths": [
+        "packages/intelligence/",
+        "packages/gateway/",
+        "packages/problems/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F04-05.test.mjs",
+      "prompt": "orchestration/prompts/F04.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F04-06",
+      "phase": "F04",
+      "objective": "Separar síntoma, causa probable y confirmación operacional; no inventar batch/carrier/SKU.",
+      "depends_on": [
+        "F04-05"
+      ],
+      "allowed_paths": [
+        "packages/intelligence/",
+        "packages/gateway/",
+        "packages/problems/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F04-06.test.mjs",
+      "prompt": "orchestration/prompts/F04.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F04-07",
+      "phase": "F04",
+      "objective": "Medir gold temporal humano: clasificación, calidad clusters, abstención, evidencia, costo y latencia; holdout no tuneable.",
+      "depends_on": [
+        "F04-06"
+      ],
+      "allowed_paths": [
+        "packages/intelligence/",
+        "packages/gateway/",
+        "packages/problems/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F04-07.test.mjs",
+      "prompt": "orchestration/prompts/F04.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F05-01",
+      "phase": "F05",
+      "objective": "Leer contrato completo calidad/01 y kernel existente, no reescribir reglas por gusto.",
+      "depends_on": [
+        "F03-06",
+        "F04-07"
+      ],
+      "allowed_paths": [
+        "packages/economics/",
+        "packages/metrics/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F05-01.test.mjs",
+      "prompt": "orchestration/prompts/F05.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F05-02",
+      "phase": "F05",
+      "objective": "Separar revenue exposure, refunds netos, replacement cost, costo modelado soporte y escenarios de future loss.",
+      "depends_on": [
+        "F05-01"
+      ],
+      "allowed_paths": [
+        "packages/economics/",
+        "packages/metrics/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F05-02.test.mjs",
+      "prompt": "orchestration/prompts/F05.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F05-03",
+      "phase": "F05",
+      "objective": "Unión global de órdenes/clientes/eventos entre problemas; filas no aditivas señaladas.",
+      "depends_on": [
+        "F05-02"
+      ],
+      "allowed_paths": [
+        "packages/economics/",
+        "packages/metrics/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F05-03.test.mjs",
+      "prompt": "orchestration/prompts/F05.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F05-04",
+      "phase": "F05",
+      "objective": "Minor units/Decimal, moneda/exponente/horizonte/FX versionados; unknown!=zero y coverage.",
+      "depends_on": [
+        "F05-03"
+      ],
+      "allowed_paths": [
+        "packages/economics/",
+        "packages/metrics/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F05-04.test.mjs",
+      "prompt": "orchestration/prompts/F05.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F05-05",
+      "phase": "F05",
+      "objective": "Publish snapshot atómico con scope_hash, versiones y watermark; export/UI mismo bundle.",
+      "depends_on": [
+        "F05-04"
+      ],
+      "allowed_paths": [
+        "packages/economics/",
+        "packages/metrics/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F05-05.test.mjs",
+      "prompt": "orchestration/prompts/F05.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F05-06",
+      "phase": "F05",
+      "objective": "Prioridad con carril crítico aparte, fórmula versionada y razones; normalización no oculta urgencias al cambiar set.",
+      "depends_on": [
+        "F05-05"
+      ],
+      "allowed_paths": [
+        "packages/economics/",
+        "packages/metrics/",
+        "apps/web/src/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F05-06.test.mjs",
+      "prompt": "orchestration/prompts/F05.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F06-01",
+      "phase": "F06",
+      "objective": "Implementar filtros compartidos tenant+snapshot+scope sin joins que dupliquen dinero.",
+      "depends_on": [
+        "F05-06"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "packages/recommendations/",
+        "packages/interventions/",
+        "packages/briefs/"
+      ],
+      "acceptance": "tests/acceptance/F06-01.test.mjs",
+      "prompt": "orchestration/prompts/F06.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F06-02",
+      "phase": "F06",
+      "objective": "Detail navega cifra→componente→evento→evidencia, con estados de causa probable y cobertura.",
+      "depends_on": [
+        "F06-01"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "packages/recommendations/",
+        "packages/interventions/",
+        "packages/briefs/"
+      ],
+      "acceptance": "tests/acceptance/F06-02.test.mjs",
+      "prompt": "orchestration/prompts/F06.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F06-03",
+      "phase": "F06",
+      "objective": "Recomendación específica y condicionada, owner/estado/dismiss con razón e historial.",
+      "depends_on": [
+        "F06-02"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "packages/recommendations/",
+        "packages/interventions/",
+        "packages/briefs/"
+      ],
+      "acceptance": "tests/acceptance/F06-03.test.mjs",
+      "prompt": "orchestration/prompts/F06.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F06-04",
+      "phase": "F06",
+      "objective": "Explorer usa herramientas read-only allowlisted sobre vistas SQL seguras; pregunta ambigua pide alcance.",
+      "depends_on": [
+        "F06-03"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "packages/recommendations/",
+        "packages/interventions/",
+        "packages/briefs/"
+      ],
+      "acceptance": "tests/acceptance/F06-04.test.mjs",
+      "prompt": "orchestration/prompts/F06.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F06-05",
+      "phase": "F06",
+      "objective": "Intervención guarda baseline/hipótesis/owner/fechas y plan de medición antes de cambio.",
+      "depends_on": [
+        "F06-04"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "packages/recommendations/",
+        "packages/interventions/",
+        "packages/briefs/"
+      ],
+      "acceptance": "tests/acceptance/F06-05.test.mjs",
+      "prompt": "orchestration/prompts/F06.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F06-06",
+      "phase": "F06",
+      "objective": "Brief versionado basado en snapshots; envío email no implícito; vistas y export primero.",
+      "depends_on": [
+        "F06-05"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "packages/recommendations/",
+        "packages/interventions/",
+        "packages/briefs/"
+      ],
+      "acceptance": "tests/acceptance/F06-06.test.mjs",
+      "prompt": "orchestration/prompts/F06.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F06-07",
+      "phase": "F06",
+      "objective": "Revisión visual móvil/desktop, teclado, contraste y reducción movimiento; no copiar marcas.",
+      "depends_on": [
+        "F06-06"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "packages/recommendations/",
+        "packages/interventions/",
+        "packages/briefs/"
+      ],
+      "acceptance": "tests/acceptance/F06-07.test.mjs",
+      "prompt": "orchestration/prompts/F06.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F07-01",
+      "phase": "F07",
+      "objective": "Revisar amenazas RLS/storage/vectores/exports/jobs e intentar cruce tenant con IDs conocidos.",
+      "depends_on": [
+        "F06-07"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "packages/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F07-01.test.mjs",
+      "prompt": "orchestration/prompts/F07.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F07-02",
+      "phase": "F07",
+      "objective": "Metamórficas: reordenar, duplicar, partir lotes, migrar identidad; mutación sobre dinero y autorización.",
+      "depends_on": [
+        "F07-01"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "packages/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F07-02.test.mjs",
+      "prompt": "orchestration/prompts/F07.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F07-03",
+      "phase": "F07",
+      "objective": "Caos: worker caído, lease vencido, quota LLM, DB caída, token revocado, dead-letter y replay.",
+      "depends_on": [
+        "F07-02"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "packages/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F07-03.test.mjs",
+      "prompt": "orchestration/prompts/F07.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F07-04",
+      "phase": "F07",
+      "objective": "Carga 10K/50K/150K fixtures; registrar hardware, versiones, concurrencia, p95 y costo, sin extrapolar linealmente sin medir.",
+      "depends_on": [
+        "F07-03"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "packages/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F07-04.test.mjs",
+      "prompt": "orchestration/prompts/F07.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F07-05",
+      "phase": "F07",
+      "objective": "Evaluación humano gold y sponsor de acción; ningún benchmark sustituye datos reales.",
+      "depends_on": [
+        "F07-04"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "packages/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F07-05.test.mjs",
+      "prompt": "orchestration/prompts/F07.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F07-06",
+      "phase": "F07",
+      "objective": "Runbooks cancelación, rollback, restore, datos borrados y eliminación de embeddings/backups conforme política.",
+      "depends_on": [
+        "F07-05"
+      ],
+      "allowed_paths": [
+        "apps/web/",
+        "packages/",
+        "supabase/"
+      ],
+      "acceptance": "tests/acceptance/F07-06.test.mjs",
+      "prompt": "orchestration/prompts/F07.md",
+      "auto_accept": false,
+      "requires_approval": false
+    },
+    {
+      "id": "F08-01",
+      "phase": "F08",
+      "objective": "Preparar manifiesto release con SHA, migrations, config hashes, URLs y propietarios sin secretos.",
+      "depends_on": [
+        "F07-06"
+      ],
+      "allowed_paths": [
+        "docs/entrega/"
+      ],
+      "acceptance": "tests/acceptance/F08-01.test.mjs",
+      "prompt": "orchestration/prompts/F08.md",
+      "auto_accept": false,
+      "requires_approval": true
+    },
+    {
+      "id": "F08-02",
+      "phase": "F08",
+      "objective": "Ejecutar smoke remoto del flujo completo, dos tenants, job durable y export.",
+      "depends_on": [
+        "F08-01"
+      ],
+      "allowed_paths": [
+        "docs/entrega/"
+      ],
+      "acceptance": "tests/acceptance/F08-02.test.mjs",
+      "prompt": "orchestration/prompts/F08.md",
+      "auto_accept": false,
+      "requires_approval": true
+    },
+    {
+      "id": "F08-03",
+      "phase": "F08",
+      "objective": "Ensayar pitch de 5 minutos, demo grabada de respaldo y fixture claramente rotulado si feed falla.",
+      "depends_on": [
+        "F08-02"
+      ],
+      "allowed_paths": [
+        "docs/entrega/"
+      ],
+      "acceptance": "tests/acceptance/F08-03.test.mjs",
+      "prompt": "orchestration/prompts/F08.md",
+      "auto_accept": false,
+      "requires_approval": true
+    },
+    {
+      "id": "F08-04",
+      "phase": "F08",
+      "objective": "Validar permiso de logo/datos/caso, rango financiero y supuestos antes de diapositivas.",
+      "depends_on": [
+        "F08-03"
+      ],
+      "allowed_paths": [
+        "docs/entrega/"
+      ],
+      "acceptance": "tests/acceptance/F08-04.test.mjs",
+      "prompt": "orchestration/prompts/F08.md",
+      "auto_accept": false,
+      "requires_approval": true
+    },
+    {
+      "id": "F08-05",
+      "phase": "F08",
+      "objective": "Entregar guía usuario/operación/desarrollador, accesos revocables, backlog y fechas de próximos controles.",
+      "depends_on": [
+        "F08-04"
+      ],
+      "allowed_paths": [
+        "docs/entrega/"
+      ],
+      "acceptance": "tests/acceptance/F08-05.test.mjs",
+      "prompt": "orchestration/prompts/F08.md",
+      "auto_accept": false,
+      "requires_approval": true
+    },
+    {
+      "id": "F08-06",
+      "phase": "F08",
+      "objective": "Congelar resultados y próximos experimentos: éxito del pitch no equivale a validación PMF.",
+      "depends_on": [
+        "F08-05"
+      ],
+      "allowed_paths": [
+        "docs/entrega/"
+      ],
+      "acceptance": "tests/acceptance/F08-06.test.mjs",
+      "prompt": "orchestration/prompts/F08.md",
+      "auto_accept": false,
+      "requires_approval": true
+    }
+  ]
+}

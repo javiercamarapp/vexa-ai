@@ -1,6 +1,14 @@
 # Progreso verificable
 Actualizado: 2026-09-18 local / 2026-09-19 UTC.
 
+## Construcción guiada — ampliación del 19-sep-2026 UTC
+- Contraste de nueve referencias/rangos de construcción, reanudación, QA y automejora de Likida, preservadas read-only. No auditoría de toda Likida ni equivalencia de producción.
+- `construccion/`: 55 fichas autoradas, contratos DB/API/jobs/UI, setup, QA, recovery, release y guía HTML/PDF. Grafo v3: mismos 55 IDs; ocho gates presentes y 47 pendientes de implementación JIT externa al candidato.
+- Controlador con prepare/verify/accept/recover y reject supervisado. Revisión independiente encontró H1/H2 P1 y H3 P2: ruta de corrección ausente, ignorados promovidos falsamente y logs sobrescritos. Los tres reproducidos en rojo y corregidos; informe inicial preservado.
+- Suite posterior: **80 tests controlador OK**, más 12 kernel, 12 preparación/negativos y 12 negocio. Cinco mutantes aritméticos fallan por aserción. Scaffold/all-gates siguen rojos; readiness sale2. No prueba software completo.
+- La revisión correctiva confirmó H1/H3 resueltos y encontró H2b (permisos no transportados por Git). Se reprodujo en rojo y se corrigió: accept verifica una materialización limpia del commit, incluso por auto-accept. Cuatro regresiones adicionales pasan; este último parche no tuvo otra revisión independiente.
+- Recorrido real y entrega final: ver [construccion/EVIDENCIA.md](construccion/EVIDENCIA.md). Los apartados siguientes conservan cortes históricos, no sustituyen este inventario actual.
+
 ## ✓ Ampliación de negocio solicitada después — 19-sep-2026 UTC
 - Se contrastó la estructura con índice/TAM/estudio de Documentos Likida y se agregó negocio/: mercado, ICP, competencia/precios/capital, TAM/SAM/SOM, unit economics, forecast36meses, GTM, validación, inversionistas, riesgos y diez marcas semilla NO calificadas.
 - Fuente primaria: XLSX Census SUSB2022, 140 filas seleccionadas, nueve bandas de receipts $10M–<$100M y **2,975 firmas** NAICS454110. No se suman NAICS como cuentas únicas; bandas ausentes no son cero.

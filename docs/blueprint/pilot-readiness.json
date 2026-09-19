@@ -1,0 +1,28 @@
+{
+  "local_scope": "synthetic-development",
+  "customer_data_allowed": false,
+  "design_partner_status": "proposed",
+  "pilot_status": "blocked",
+  "pilot_roles": {
+    "business": {
+      "status": "pending",
+      "name": null,
+      "evidence_ref": null
+    },
+    "crm": {
+      "status": "pending",
+      "name": null,
+      "evidence_ref": null
+    },
+    "privacy": {
+      "status": "pending",
+      "name": null,
+      "evidence_ref": null
+    },
+    "finance": {
+      "status": "pending",
+      "name": null,
+      "evidence_ref": null
+    }
+  }
+}

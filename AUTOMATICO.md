@@ -7,6 +7,16 @@ El usuario pidió agentes/loop graph y fijó UN MES. PLAN.md contiene el mapa de
 
 El supervisor serial se detuvo en checkpoint; equipo paralelo terminó y Auth fue aceptado después. Las pausas propias se retiraron verificando token, sin borrar ajenas. Recibos del equipo en `private/parallel-batch-1.json` y `.runtime/team-*/`. Antes de reanudar comprobar revisión del grafo v4, presupuesto reconciliado y checkout limpio. No lanzar otro escritor del baseline por ver un PID parado.
 
+## Continuidad tras renovación de créditos — vigente
+El usuario renovó créditos después del checkpoint de una hora. Siete propuestas quedaron en commits locales con estado parcial/revisión pendiente; se retoman, NO se reconstruyen. F01-03 corrigió examen y principal reprodujo38controles reales; falta revisión final/gate contra candidato. Principal también reprodujo13SQL de jobs y6SQL de métricas. Fuentes/recibos en PROGRESO.md.
+
+Nueva tanda acotada120min, hasta6agentes disjuntos y promoción serial, bajo techo acumulado220.36llamadas reservadas para propuestas/revisiones desde33consumidas al iniciar ola2;151seriales máximas, siempre reconciliando consumo real de recibos antes de volver a lanzar. El nuevo permiso no autoriza API pagada, contratación, envíos externos ni declarar producción sin pruebas. STOP propio del checkpoint se conserva hasta cerrar integración/revisión: no borrarlo para lanzar otro escritor.
+
+## Checkpoint anterior — segunda ola del 19-sep
+Tras recuperar la sesión, el autor corrigió F01-03 y terminó; STOP propio `parallel-wave-2-checkpoint-20260919` retuvo el supervisor antes de revisión/congelación. Principal reprodujo9controles SQL/mutantes reales. Propuesta conservada en `.runtime/auto-1789829683970974000-1789829684063951000-gate-worktree`; NO abrir otro autor sin revisar/adoptar lo que ya produjo. El examen completo todavía no acredita F01-03.
+
+Cuatro constructores trabajan en propuestas disjuntas según PLAN.md y recibos `private/parallel-wave-2.json`.33llamadas consumidas antes de esta ola,20reservadas para propuestas/revisiones,167disponibles para el siguiente supervisor bajo techo220. Política reducida, no conteo reiniciado. Los números de tandas anteriores que siguen abajo son históricos. Antes de reanudar: terminar checkpoint, revisar lo integrado, reconciliar consumo real, comprobar locks/checkout limpio y retirar sólo STOP propio por token.
+
 ## Ciclo real
 1. Seleccionar una tarea elegible del grafo, respetando dependencias aceptadas.
 2. Autor separado escribe su examen externo faltante; ejecutarlo sobre baseline y someterlo a revisión independiente.

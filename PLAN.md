@@ -39,6 +39,36 @@ Ola completada: tres módulos corrigieron5hallazgos y pasaron82tests reproducido
 
 Worktrees/PIDs y recibos de esta ola: `private/parallel-batch-1.json` y `.runtime/team-*/`. No copiar esos archivos ni fuentes privadas a GitHub. Cada propuesta parte de un SHA fijo y no modifica archivos de otro agente. SQL compartido sólo por responsable autorizado, nunca varios resets simultáneos.
 
+## Renovación posterior de créditos — continuar sin reiniciar
+El usuario renovó créditos y pidió continuar normalmente hasta el software completo enterprise y listo para producción, con todas las features/acciones/notificaciones. Se conserva el checkpoint de la hora anterior: siete propuestas en commits locales, no aceptadas ni publicadas como producto. Nueva tanda acotada120min y hasta6agentes, mismo techo acumulado220y cero gasto incremental/cloud/envíos no autorizado. No borrar consumo, rechazos ni límites de verificación. Cuenta, Google real, proveedores y producción siguen requiriendo configuración/actos verificables.
+
+Prioridad operativa:1)cerrar examen y schema F01-03;2)adoptar/matchear contratos canónicos de datos/jobs/métricas/web;3)conectar acciones reales e integración end-to-end;4)superadmin/backoffice/costes y correos enterprise en paralelo disjunto;5)regresiones/revisión/aceptación y publicación del SHA. No seguir multiplicando piezas sin integrarlas. Mantener oráculos independientes y nunca sustituir operación pendiente con HTTP200/arrayvacío.
+
+## Prioridad posterior: última hora y ampliación superadmin
+El usuario indica una hora restante y25%de cuota semanal, pide máximo avance paralelo y añade superadmin tipo Likida/Atiende, cerebro, prospectos, backoffice automatizado y control de gastos IA por rubro. Contrato: `construccion/AMPLIACION-SUPERADMIN.md`. No estaban todos dentro de60IDs: conservarlos y ampliar bajo revisión en checkpoint, nunca cambiar el denominador silenciosamente ni autoaceptar.
+
+**Esta prioridad prevalece sobre la concurrencia/presupuesto histórico de abajo:** hasta8agentes simultáneos en24GiB RAM observados, propiedad disjunta, no DB compartida. Integración sigue serial.36llamadas reservadas para cuatro módulos, examen, schema y ampliaciones/revisiones;151seriales como máximo bajo techo220después de33consumidas al inicio de ola2. Reconciliar consumo real y plazo ANTES de relanzar; límite operativo de la hora guardado en recibo privado y aplicado a nuevas invocaciones. No reiniciar ni cambiar proveedor ante cuota agotada.
+
+Nuevos propietarios: schema sólo0002/0003/0004y platform/db; UI superadmin sólo grupo(superadmin),api/admin,lib/components/tests/superadmin; backend sólo packages/admin y backoffice; templates de correo en paquete separado cuando haya slot. Referencias Likida/Atiende selectivas read-only, sin datos/secretos/marca. Principal verificó autoría GitHub y conserva commits reales periódicos; no sacrificar permisos/dinero/aceptación por agotar quota.
+
+## Ola 2 — ejecución completa solicitada nuevamente el 19-sep
+El usuario reiteró todas las60tareas, guía/PRD/audios completos, varios agentes y commits reales atribuidos a su GitHub. No se reduce el objetivo ni se convierten requisitos humanos en resultados automáticos. Principal releyó las transcripciones completas de los seis audios (ambas pasadas), DOCX extraído y PRD35; no nueva escucha ni certificación ASR.
+
+Máximo4agentes concurrentes, worktrees disjuntos, modelo gpt-6-astra por ChatGPT,15min por llamada. Un build y una corrección como máximo por módulo, cada uno con revisión independiente. Presupuesto reservado20llamadas:16para cuatro módulos (build/review/fix/recheck) y4para seguimiento del gate;167seriales restantes después de33consumidas. Cero gasto incremental. Los recibos pueden devolver presupuesto NO consumido tras reconciliar, nunca borran gasto anterior.
+
+| Agente | Propiedad exclusiva | Entrega verificable / reporte |
+|---|---|---|
+| Ingesta/jobs | packages/ingestion,connectors,jobs | Adoptar983e007; CSV→persistencia→consumidor/checkpoint, PostgreSQL real y fallos. packages/jobs/IMPLEMENTATION.md |
+| Análisis/decisiones | packages/gateway,intelligence,problems,metrics,recommendations,interventions,briefs | Adoptar733c47e; evidencia→problemas→métricas→intervención→brief sin duplicar kernel. packages/metrics/IMPLEMENTATION.md |
+| Web | Rutas workspace/APIs explícitas, componentes/CSS y lib/workspace en apps/web | Ocho vistas, estados, filtros y servidor autorizado. NO modificar Auth aceptado. apps/web/IMPLEMENTATION-WORKSPACE.md |
+| Notificaciones | packages/notifications | Adoptar1a0df4e; SQL durable, preferencias/inbox, recibos y dispositivos. packages/notifications/IMPLEMENTATION-PERSISTENCE.md |
+
+SQL de propuestas reside dentro de cada paquete; nadie aplica migraciones a la DB compartida. Principal resuelve bindings/esquema y promueve serialmente, nunca por un unit test aislado. La autoría corregida F01-03 terminó antes de lanzar el cuarto constructor; no se superó concurrencia4. Supervisor pausado bajo STOP propio en checkpoint: conservar propuesta de examen y ejecutar/revisar antes de congelar, no gastar otro intento rehaciendo lo mismo.
+
+Reductor: principal abre artefactos, reproduce comandos, contrasta interfaces/requisitos, conserva rechazos, exige gate independiente por ID y revalidación de commit limpio. Componentes con limitaciones no cierran requisitos dependientes. Recibos privados `private/parallel-wave-2.json` y `.runtime/wave2-*/`, no publicar. No reescribir estados/recibos para aparentar60/60.
+
+Commits por cambios reales verificados; autor/committer Javier, email noreply asociado a javiercamarapp, publicación determinista del SHA a main privado. No commits vacíos, retrofechas, force-push o dividir cambios artificialmente. Visibilidad de contribuciones privadas del perfil es configuración aparte, no se declara comprobada.
+
 ## Secuencia de integración
 - [x] Kernel económico limitado y scaffold F01-01 aceptados; preparar infraestructura LOCAL y GitHub privado.
 - [x] Auth/membership/callback/selector/logout aceptado con Supabase local y Chrome reales; Google remoto sigue pendiente.

@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "authorization": "User requests complete enterprise-quality build in one month, agents/graph and real pushes. Local synthetic tests only; notifications only authorized VEXA users. 32 ChatGPT calls consumed (29 prior,1 graph review,2 rejected F01-03 gate author/review), of program cap220;188 available after session recovery. Prior receipts retained; explicit retry only for reviewed F01-03 corrections. No new spend or external sends authorized.",
+  "authorization": "User requests complete enterprise-quality build in one month, agents/graph and real pushes. Local synthetic tests only; notifications only authorized VEXA users. 33 ChatGPT calls consumed before wave2.36 reserved across wave2, schema, superadmin/backoffice and enterprise-template proposals/reviews; at most151 serial calls under cap220. User subsequently renewed credits and explicitly requested normal continuation. Prior one-hour checkpoint is preserved, not erased. New bounded120min phase, max6 isolated agents, integration serial. Reconcile all actual receipts before relaunch; no automatic retry after quota/deadline or paid-provider fallback. No new spend or external sends authorized.",
   "max_minutes": 120,
   "max_cycles": 54,
-  "max_model_calls": 188,
+  "max_model_calls": 151,
   "local_task_ids": [
     "F01-01",
     "F01-02",

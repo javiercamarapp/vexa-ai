@@ -12,7 +12,11 @@
 
 ## Recorrido real y copia
 
-Pendientes del cierre: ejecutar prepare/verify/accept sobre F00 sintético desde checkout limpio y verificar copia al Escritorio sin pisar cambios. Se registrarán aquí después de observarse, no por tener scripts.
+**Recorrido real ejecutado:** F00-01 a F00-05, cada una prepare → verify → accept: **15 comandos, todos exit0**, desde checkout limpio `ceeaf6501d0a54bc483cff28d179e855249a366a`. Sin llamadas de modelo ni cloud. Los gates comprobaron preparación/fixtures existentes; no crearon una app. E00 y cinco tareas F00 aceptadas; próximo paso F01-01, cuyo scaffold aún falta. [Recibo](RECORRIDO-LOCAL.json).
+
+PDF final: **71 páginas**, 55 encabezados de tarea y comando reject encontrados en texto extraído. Páginas45/70 inspeccionadas visualmente; no inspección manual de todas las páginas. HTML/catalogo/55 fichas coinciden con fuentes. Nueve hashes de referencias Likida permanecen idénticos.
+
+La verificación de copia registra paths y SHA256 en `RECIBO-ENTREGA.json` después de comparar los archivos de destino. La copia no incluye Git ni runtime; no inferir estado local desde esa ausencia.
 
 ## No acreditado
 

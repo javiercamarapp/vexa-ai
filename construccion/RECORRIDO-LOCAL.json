@@ -1,0 +1,129 @@
+{
+  "scope": "synthetic-preparation-only",
+  "records": [
+    {
+      "task": "F00-01",
+      "action": "prepare",
+      "exit": 0,
+      "status": "prepared",
+      "baseline": "ceeaf6501d0a54bc483cff28d179e855249a366a",
+      "commit": null
+    },
+    {
+      "task": "F00-01",
+      "action": "verify",
+      "exit": 0,
+      "status": "verified",
+      "baseline": "ceeaf6501d0a54bc483cff28d179e855249a366a",
+      "commit": "ceeaf6501d0a54bc483cff28d179e855249a366a"
+    },
+    {
+      "task": "F00-01",
+      "action": "accept",
+      "exit": 0,
+      "status": "accepted",
+      "baseline": "ceeaf6501d0a54bc483cff28d179e855249a366a",
+      "commit": "ceeaf6501d0a54bc483cff28d179e855249a366a"
+    },
+    {
+      "task": "F00-02",
+      "action": "prepare",
+      "exit": 0,
+      "status": "prepared",
+      "baseline": "ceeaf6501d0a54bc483cff28d179e855249a366a",
+      "commit": null
+    },
+    {
+      "task": "F00-02",
+      "action": "verify",
+      "exit": 0,
+      "status": "verified",
+      "baseline": "ceeaf6501d0a54bc483cff28d179e855249a366a",
+      "commit": "ceeaf6501d0a54bc483cff28d179e855249a366a"
+    },
+    {
+      "task": "F00-02",
+      "action": "accept",
+      "exit": 0,
+      "status": "accepted",
+      "baseline": "ceeaf6501d0a54bc483cff28d179e855249a366a",
+      "commit": "ceeaf6501d0a54bc483cff28d179e855249a366a"
+    },
+    {
+      "task": "F00-03",
+      "action": "prepare",
+      "exit": 0,
+      "status": "prepared",
+      "baseline": "ceeaf6501d0a54bc483cff28d179e855249a366a",
+      "commit": null
+    },
+    {
+      "task": "F00-03",
+      "action": "verify",
+      "exit": 0,
+      "status": "verified",
+      "baseline": "ceeaf6501d0a54bc483cff28d179e855249a366a",
+      "commit": "ceeaf6501d0a54bc483cff28d179e855249a366a"
+    },
+    {
+      "task": "F00-03",
+      "action": "accept",
+      "exit": 0,
+      "status": "accepted",
+      "baseline": "ceeaf6501d0a54bc483cff28d179e855249a366a",
+      "commit": "ceeaf6501d0a54bc483cff28d179e855249a366a"
+    },
+    {
+      "task": "F00-04",
+      "action": "prepare",
+      "exit": 0,
+      "status": "prepared",
+      "baseline": "ceeaf6501d0a54bc483cff28d179e855249a366a",
+      "commit": null
+    },
+    {
+      "task": "F00-04",
+      "action": "verify",
+      "exit": 0,
+      "status": "verified",
+      "baseline": "ceeaf6501d0a54bc483cff28d179e855249a366a",
+      "commit": "ceeaf6501d0a54bc483cff28d179e855249a366a"
+    },
+    {
+      "task": "F00-04",
+      "action": "accept",
+      "exit": 0,
+      "status": "accepted",
+      "baseline": "ceeaf6501d0a54bc483cff28d179e855249a366a",
+      "commit": "ceeaf6501d0a54bc483cff28d179e855249a366a"
+    },
+    {
+      "task": "F00-05",
+      "action": "prepare",
+      "exit": 0,
+      "status": "prepared",
+      "baseline": "ceeaf6501d0a54bc483cff28d179e855249a366a",
+      "commit": null
+    },
+    {
+      "task": "F00-05",
+      "action": "verify",
+      "exit": 0,
+      "status": "verified",
+      "baseline": "ceeaf6501d0a54bc483cff28d179e855249a366a",
+      "commit": "ceeaf6501d0a54bc483cff28d179e855249a366a"
+    },
+    {
+      "task": "F00-05",
+      "action": "accept",
+      "exit": 0,
+      "status": "accepted",
+      "baseline": "ceeaf6501d0a54bc483cff28d179e855249a366a",
+      "commit": "ceeaf6501d0a54bc483cff28d179e855249a366a"
+    }
+  ],
+  "real_model_calls": 0,
+  "cloud_calls": 0,
+  "baseline": "ceeaf6501d0a54bc483cff28d179e855249a366a",
+  "state_sha256": "2bad6ce67ed4ea828bff660b24565daab7dce639553cea09252e28fc5ff495c1"
+}

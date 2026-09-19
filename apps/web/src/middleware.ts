@@ -4,7 +4,8 @@ import { failure, localRedirect, requestAuth } from './lib/auth-http';
 export async function middleware(request:NextRequest) {
   try {
     const c=authConfig();
-    if(!c || request.nextUrl.pathname!=='/')return NextResponse.next({headers:PRIVATE_HEADERS});
+    const protectedRoute=request.nextUrl.pathname==='/'||/^\/(overview|problems|customers|recommendations|explorer|interventions|briefs)(\/|$)/.test(request.nextUrl.pathname);
+    if(!c || !protectedRoute)return NextResponse.next({headers:PRIVATE_HEADERS});
     const {client,finish}=requestAuth(request);
     try {
       await resolveSession(identity(client),request.cookies.get(ACTIVE_ORG)?.value);
@@ -15,4 +16,4 @@ export async function middleware(request:NextRequest) {
     }
   } catch(error) {return failure(error);}
 }
-export const config = { runtime: 'nodejs', matcher: ['/', '/login', '/auth/:path*'] };
+export const config = { runtime: 'nodejs', matcher: ['/', '/login', '/auth/:path*', '/overview/:path*', '/problems/:path*', '/customers/:path*', '/recommendations/:path*', '/explorer/:path*', '/interventions/:path*', '/briefs/:path*'] };

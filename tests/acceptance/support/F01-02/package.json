@@ -1,0 +1,1 @@
+{"name":"vexa-f01-02-exam-tools","private":true,"type":"module","dependencies":{"@supabase/ssr":"0.12.7","@supabase/supabase-js":"2.116.0","playwright-core":"1.63.0"}}

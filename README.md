@@ -53,7 +53,7 @@ Días se solapan por trabajo de diseño/validación; un solo implementador no ha
 - `packages/economics/index.mjs`: kernel puro limitado de dinero/exposición/refunds/escenarios.
 - `tests/acceptance/economics.test.mjs`: contrato externo; soporta VEXA_CANDIDATE.
 - `orchestration/runner.py`: controlador Codex acotado, candidatos aislados en Git worktree, gates y aceptación explícita.
-- `tests/controller/test_runner.py`: tests unitarios y de integración con CLI Codex simulado.
+- `tests/controller/test_runner.py`: 23 tests unitarios y de integración con CLI Codex simulado. Adicionalmente, una vuelta real Astra/Codex verificó E00 sin cambios, pasó su gate y quedó aceptada; la siguiente se detuvo por gate faltante.
 
 ```bash
 cd ~/vexa

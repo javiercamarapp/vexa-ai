@@ -7,6 +7,8 @@
   "scripts": {
     "test": "node --test tests/acceptance/*.test.mjs",
     "test:controller": "python3 -m unittest discover -s tests/controller -v",
-    "graph:check": "python3 orchestration/runner.py status"
+    "graph:check": "python3 orchestration/runner.py status",
+    "test:business": "python3 -m unittest discover -s tests/business -v",
+    "business:build": "python3 scripts/census_market.py && python3 scripts/business_model.py"
   }
 }

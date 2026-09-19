@@ -1,0 +1,1393 @@
+{"source_id": "gorgias-plans", "url": "https://www.gorgias.com/blog/gorgias-plan", "final_url": "https://www.gorgias.com/blog/gorgias-plan", "http_status": 200, "retrieved_at": "2026-09-19T03:26:18.762797+00:00", "sha256": "852f324303d413edfb89129c819ab5350a52f2fb6ecbc5cea99bf891d7afa4de", "content_type": "text/html; charset=utf-8"}
+
+How to Choose the Best Gorgias Plan For You
+-->
+Product
+Solutions
+Pricing
+Integrations
+Resources
+Login
+Book a demo
+Sign up free
+AI Agent
+Your AI teammate for customer experience
+Gaia
+Helpdesk
+One inbox for every customer conversation
+Voice
+SMS
+Gorgias product tour ->
+See what’s new
+AI Agent Benchmark
+Designed for Enterprise
+Trusted by largest Shopify brands to deliver winning experiences
+Industries
+Clothing & Apparel
+Subscriptions
+Beauty & Cosmetics
+Health & Wellness
+Home & Garden
+Food & Beverage
+Explore all →
+Use cases
+Product Education
+Proactive engagement
+Recommendations
+Explore all →
+Ecommerce Platforms
+Shopify
+BigCommerce
+Magento
+WooCommerce
+Preferred Integrations
+Loop Returns
+Yotpo
+Recharge
+Bloomreach
+Attentive
+Explore all 100+ Apps →
+Custom Integrations
+Developer Docs
+Become an app partner
+Learn
+Gorgias Academy
+Blog
+Ebooks
+Connect
+Customer Stories
+Partner Stories
+Events
+Community
+Help Center
+Gorgias Community
+Behind the Inbox
+Tools
+ROI Calculator
+SKU Generator
+Playbooks
+Featured Resource
+Gorgias Ecom Lab
+Transparent, data-backed insights for the future of CX. No gates. Just open research.
+Featured Resource
+F*ck BFCM Fears
+Ticket spikes? AI breaking? Refund chaos? Discounts not working? Get it off your chest in 10 seconds.
+Product
+AI Agent
+Sell, support, engage customers 24/7
+Gaia
+Helpdesk
+All messages in one central inbox
+Voice
+Support by phone, from your helpdesk
+SMS
+Respond to inbound text messages
+Product tour
+See Gorgias in action
+Explore Gorgias through 3-minute interactive product tour
+See what’s new
+AI Agent Benchmark
+Solutions
+Gorgias for Enterprise
+Where the largest Shopify brands deliver winning experiences
+Industries
+Clothing & Apparel
+Subscriptions
+Beauty & Cosmetics
+Health & Wellness
+Home & Garden
+Food & Beverage
+Explore all ->
+Use cases
+Product Education
+Proactive engagement
+Recommendations
+Explore all ->
+Pricing
+Integrations
+Ecommerce Platforms
+Shopify
+BigCommerce
+Magento
+WooCommerce
+Preferred integrations
+Loop Returns
+Yotpo
+Recharge
+Bloomreach
+Attentive
+Explore all 100+ Apps →
+Custom Integrations
+Custom Integrations
+Developer Docs
+Become an app partner
+Resources
+Learn
+Gorgias Academy
+Blog
+Ebooks
+Connects
+Customer Stories
+Partner Stories
+Events
+Community
+Help Center
+Gorgias Community
+Behind the Inbox
+Tools
+ROI Calculator
+SKU Generator
+Playbooks
+Book a demo
+Blog
+Gorgias Product
+Gorgias Plans and Pricing
+Which Gorgias Plan Should You Choose? (Pricing Breakdown)
+0
+min
+-
+Gorgias Team
+Updated on
+May 14, 2026
+-
+Created on
+January 2, 2025
+Gorgias Product
+Pricing
+No items found.
+Blog
+Playbook
+Gorgias Plans and Pricing
+Which Gorgias Plan Should You Choose? (Pricing Breakdown)
+min
+-
+Gorgias Team
+Updated on
+May 14, 2026
+-
+Created on
+January 2, 2025
+No items found.
+No items found.
+Table of contents
+Heading 2
+Heading 3
+Want to provide Best-in-class CX to your Shoppers?
+Try Gorgias Free Now
+TL;DR:
+Gorgias offers five main plans: Starter ($10 USD/month), Basic ($60/month), Pro ($360/month), Advanced ($900/month), and Enterprise (custom quote)
+Pricing is based on billable tickets with monthly allotments ranging from 50 to 5,000 tickets
+AI Agent and automation features help reduce billable ticket volume
+Voice and SMS channels are available as paid add-ons
+Annual billing unlocks discounts, with a 7-day free trial available
+Gorgias uses
+ticket-based pricing
+that scales with your support volume. Each plan includes a monthly ticket allotment, unlimited agent seats on higher tiers, and access to core helpdesk features.
+The platform's
+deep Shopify integration
+and AI capabilities help ecommerce brands automate repetitive inquiries while maintaining personalized support. Understanding how billable tickets work and which add-ons you need helps you choose the right plan for your business.
+Gorgias plans overview
+Gorgias is a
+helpdesk platform designed specifically for ecommerce brands
+. This means it connects directly to your Shopify store to pull customer and order data into your support conversations.
+The platform offers five pricing plans: Starter, Basic, Pro, and Advanced. Unlike most helpdesk tools that charge per agent, Gorgias charges based on billable tickets. A billable ticket is any customer-initiated conversation that your support team views or responds to.
+This pricing model works better for growing ecommerce teams. You can add unlimited agents on Pro and Advanced plans without paying extra per person. Your costs scale with your actual support volume, not your team size.
+Starter
+$10 USD
+50
+3
+Basic
+$60 USD
+300
+500
+Pro
+$360 USD
+2,000
+500
+Advanced
+$900 USD
+5,000
+500
+Enterprise
+Custom
+Custom
+500
+Gorgias pricing breakdown by plan
+Each Gorgias plan is built for different stages of your ecommerce growth. The key difference between plans is how many billable tickets you get each month and which features are included.
+A billable ticket counts when a customer sends you a message and your team interacts with it. Multiple messages in the same conversation only count as one ticket. Automated responses that fully resolve issues don't count at all.
+Starter plan ($10/month)
+The Starter plan gives you 50 billable tickets per month for $10. This plan works for new stores testing the platform or brands with very low support volume.
+You get three agent seats and email support only. No automation features or advanced reporting are included. Think of this as a basic helpdesk to get started without a big commitment.
+Basic plan ($60/month)
+The Basic plan includes 300 billable tickets monthly for $60. This plan targets growing brands with steady customer inquiries.
+You get three agent seats, email and live chat channels, plus basic automation Rules. The Help Center feature is included, along with standard integrations. Most established Shopify stores start here.
+Key features added in Basic:
+Live chat:
+Real-time website chat widget for instant customer support
+Rules:
+Automated ticket routing and tagging to save time
+Help Center:
+Self-service portal where customers find answers independently
+Support from Gorgias is based on your business size, not your plan:
+Standard Support (Under $3M in annual revenue)
+: Self-serve onboarding with live webinars and tailored resources, 24/7 email and chat support, plus access to Gorgias Academy, the Help Center, Community, and product webinars
+Specialist Support ($3M–$20M in annual revenue)
+: Dedicated 1:1 onboarding and implementation, 24/7 email and chat support, access to a Product Specialist, plus all standard resources
+Dedicated Support ($20M+ in annual revenue or $40K+ contract)
+: Personalized onboarding with dedicated experts (including optional on-site support), 24/7 priority email and chat support, a dedicated Customer Success Manager, plus access to professional services and custom solutions
+Pro plan ($360/month)
+The Pro plan provides 2,000 billable tickets for $360 monthly. This plan serves scaling brands with significant support needs.
+Most successful direct-to-consumer brands operate on this plan. The unlimited agents feature alone can save thousands compared to
+per-seat competitors
+.
+You get unlimited agent seats, which makes it cost-effective for growing teams. All channels except Voice and SMS are included. Advanced automation, custom Views, and
+revenue statistics
+help you optimize operations.
+Support from Gorgias is based on your business size, not your plan:
+Standard Support (Under $3M in annual revenue)
+: Self-serve onboarding with live webinars and tailored resources, 24/7 email and chat support, plus access to Gorgias Academy, the Help Center, Community, and product webinars
+Specialist Support ($3M–$20M in annual revenue)
+: Dedicated 1:1 onboarding and implementation, 24/7 email and chat support, access to a Product Specialist, plus all standard resources
+Dedicated Support ($20M+ in annual revenue or $40K+ contract)
+: Personalized onboarding with dedicated experts (including optional on-site support), 24/7 priority email and chat support, a dedicated Customer Success Manager, plus access to professional services and custom solutions
+Advanced plan ($900/month)
+The Advanced plan offers 5,000 billable tickets for $900 per month. This enterprise-level plan includes everything in Pro plus premium support features.
+Support from Gorgias is based on your business size, not your plan:
+Standard Support (Under $3M in annual revenue)
+: Self-serve onboarding with live webinars and tailored resources, 24/7 email and chat support, plus access to Gorgias Academy, the Help Center, Community, and product webinars
+Specialist Support ($3M–$20M in annual revenue)
+: Dedicated 1:1 onboarding and implementation, 24/7 email and chat support, access to a Product Specialist, plus all standard resources
+Dedicated Support ($20M+ in annual revenue or $40K+ contract)
+: Personalized onboarding with dedicated experts (including optional on-site support), 24/7 priority email and chat support, a dedicated Customer Success Manager, plus access to professional services and custom solutions
+Enterprise plan (Custom pricing)
+The Enterprise plan offers fully customized pricing and ticket volume based on your business needs. This plan is built for large ecommerce brands with high support volume and complex operations.
+You get unlimited agent seats, along with access to all support channels, including Voice and SMS. Advanced customization options, API access, and deeper integrations help support more sophisticated workflows.
+This plan works best for brands operating at scale, managing multiple teams or regions, or needing a highly tailored support setup.
+Support from Gorgias is based on your business size, not your plan:
+Standard Support (Under $3M in annual revenue)
+: Self-serve onboarding with live webinars and tailored resources, 24/7 email and chat support, plus access to Gorgias Academy, the Help Center, Community, and product webinars
+Specialist Support ($3M–$20M in annual revenue)
+: Dedicated 1:1 onboarding and implementation, 24/7 email and chat support, access to a Product Specialist, plus all standard resources
+Dedicated Support ($20M+ in annual revenue or $40K+ contract)
+: Personalized onboarding with dedicated experts (including optional on-site support), 24/7 priority email and chat support, a dedicated Customer Success Manager, plus access to professional services and custom solutions
+{{lead-magnet-1}}
+AI Agent pricing and automation fees
+AI Agent
+is Gorgias's
+conversational AI
+tool that handles common customer questions automatically. It starts at $250 monthly as an add-on to any plan.
+The key benefit is cost savings. Conversations fully resolved by AI Agent don't count as billable tickets. This means AI can handle hundreds of inquiries without increasing your monthly bill.
+AI Agent works for common questions like:
+Order tracking:
+"Where is my order?" gets instant tracking updates
+Return requests:
+Customers can start returns without agent help
+Product questions:
+AI pulls answers from your Help Center and product pages
+Policy inquiries:
+Shipping, return, and exchange policies get automated responses
+Voice and SMS add-on pricing
+Voice support
+starts at $70 monthly plus usage fees. SMS pricing varies by country and message volume. Both channels create billable tickets when customers initiate contact.
+These channels integrate into your unified inbox. Your team can switch between email, chat, social media, and phone calls without losing conversation context.
+Billable events and definitions
+Understanding what counts as a billable ticket helps you choose the right plan and control costs.
+Billable tickets include:
+Customer emails:
+Any email from a customer to your support address
+Live chat messages:
+Conversations started by customers on your website
+Social media messages:
+Direct messages on Instagram, Facebook, or Twitter
+SMS and Voice calls:
+Customer-initiated text messages or phone calls
+Non-billable activities include:
+Internal notes:
+Messages between your team members
+Automated responses:
+AI or Rules that fully resolve issues without agent involvement
+Outbound messages:
+Proactive emails or messages you send to customers
+Help Center visits:
+Customers browsing your self-service portal
+Read more:
+Definitions of billable events (help doc)
+How overages work on Gorgias plans
+Gorgias uses a soft cap system. This means you never get cut off from receiving customer messages if you exceed your monthly ticket limit.
+Instead, you pay overage fees for extra tickets. These fees are charged at the end of your billing cycle based on how many tickets you went over.
+Overage rates are:
+Starter and Basic plans:
+$0.40 per extra ticket
+Pro plan:
+$0.25 per extra ticket
+Advanced plan:
+Custom negotiated rates
+You can monitor your usage in real-time through the Gorgias dashboard. Set up alerts to notify you when approaching your limit. This helps avoid surprise charges and lets you upgrade your plan if needed.
+Discounts and billing options on Gorgias plans
+Gorgias offers several ways to reduce your subscription costs and manage payments flexibly.
+Annual billing saves up to 17%
+Paying annually unlocks the maximum discount on all plans except Starter. Annual contracts provide cost predictability and can be adjusted as your business scales.
+The discount applies to your base plan cost. Add-ons like AI Agent, Voice, and SMS are typically billed monthly regardless of your main plan billing cycle.
+Free trial
+Gorgias offers a free 7-day trial. You can send a maximum of 10 email ticket messages during your trial. You cannot publish a help center during your trial. No credit card is required to start exploring the platform.
+Most brands go live within 48 hours using self-serve resources. Gorgias provides setup guides, video tutorials, and email support during your trial.
+Total cost of ownership for Gorgias
+Your monthly subscription is just one part of the total investment. Consider implementation costs, potential extras, and the return on investment.
+Implementation and onboarding costs
+Most brands set up Gorgias for free using the provided resources. The Shopify integration is straightforward, and basic workflows can be configured quickly.
+Optional paid onboarding helps with:
+Data migration:
+Moving existing tickets and customer history
+Custom workflows:
+Setting up complex automation Rules and Views
+Team training:
+Hands-on sessions for your support staff
+Integration setup:
+Connecting third-party apps and tools
+Budget time for your team to learn the platform. The Shopify-native interface reduces the learning curve compared to generic helpdesk tools.
+Add-on costs to consider
+Additional costs can arise beyond your subscription:
+Third-party apps:
+Specialized integrations from the App Store may have fees
+API usage:
+High-volume custom implementations might incur charges
+Channel usage:
+Voice and SMS have per-minute and per-message costs
+Training time:
+Internal time spent on platform adoption and optimization
+ROI and efficiency gains
+Gorgias typically pays for itself through efficiency improvements.
+Automation Rules reduce ticket volume by 20-30%
+for most brands. AI Agent can resolve up to 60% of common inquiries automatically.
+These reductions translate to direct cost savings. Your team spends less time on repetitive tasks and more time on complex issues that drive customer satisfaction and sales.
+Faster response times improve
+customer satisfaction scores
+. Better support experiences lead to higher retention rates and increased customer lifetime value.
+Related:
+What happens when CX agents love their platform? Ask Glossier, Tommy John, and Brunt Workwear
+Who Gorgias plans are best for
+Gorgias works best for
+Shopify and Shopify Plus
+merchants who view customer support as a growth driver. The deep ecommerce integration makes it less suitable for
+B2B companies
+or non-Shopify platforms.
+Starter and Basic plans
+fit brands doing under $1 million annually with manageable support volume. These plans provide professional helpdesk features without enterprise complexity.
+Pro plan
+serves brands in the $1-10 million range needing advanced automation and unlimited agents. The revenue statistics and custom reporting help optimize support operations for growth.
+Advanced plan
+supports enterprise brands with high ticket volumes and complex workflows. The dedicated Customer Success Manager and priority support ensure smooth operations at scale.
+Consider your current ticket volume and growth trajectory. Most brands start with Basic and upgrade as they scale. The ticket-based pricing grows with your actual support needs.
+What Gorgias users say about pricing
+Current customers consistently highlight the value of unlimited agents on Pro and Advanced plans. This feature can save thousands compared to per-seat competitors as teams grow.
+Users praise the transparent billing model. Ticket-based pricing is more predictable than usage-based models that charge for every interaction. You know your costs upfront based on support volume.
+Some smaller brands find seasonal spikes challenging with ticket-based pricing. However, users report that automation and AI features typically offset subscription costs by reducing manual work.
+Review sites like G2 and Capterra show high satisfaction with Gorgias pricing transparency and the ROI from efficiency gains.
+Find your perfect Gorgias plan
+Choose your plan based on current ticket volume and expected growth. Start with Basic if you're handling 200-300 tickets monthly. Upgrade to Pro when you need unlimited agents or advanced features.
+The combination of ticket-based pricing, unlimited agents on higher tiers, and powerful automation makes Gorgias cost-effective for growing ecommerce brands. You pay for actual support volume, not team size.
+Ready to see how Gorgias transforms your customer support operations?
+Book a demo
+to get personalized pricing recommendations for your business.
+{{lead-magnet-2}}
+FAQs
+Can I upgrade or downgrade my Gorgias plan anytime?
+You can upgrade your plan immediately with prorated charges. Downgrades take effect at your next billing cycle to avoid service interruptions.
+What happens when I exceed my monthly ticket limit?
+When you use up all of your plan’s tickets, you have two options: you can upgrade to a higher plan that accommodates more tickets, or you can pay the overage fees associated with your current plan.
+Do spam emails count as billable tickets?
+No, spam emails do not count as billable tickets as long as an agent or a Rule does not respond to them. A ticket will only be billed if it receives a response from an agent or Rule (a helpdesk action that triggers based on certain conditions).
+Why should I add AI Agent if my team is already handling customer inquiries efficiently?
+AI Agent improves your team's efficiency by automating as much as 60% of tickets. This gives your team more time to focus on complex, revenue-generating conversations and provide strategic insights to other departments in your organization. Even if your team is managing well now, AI Agent can help you scale and handle increasing volumes without additional hires.
+Editor
+Author Profile
+.
+LinkedIn
+Author
+Gorgias Team
+Author Profile
+.
+LinkedIn
+Editor
+Author Profile
+.
+LinkedIn
+Author
+Gorgias Team
+Author Profile
+.
+LinkedIn
+Recommended Articles
+Customer Service Response Time: Benchmarks, Calculation, and 6 Ways to Improve
+0
+min read . By Astaeka Pramuditya
+By Astaeka Pramuditya
+TL;DR:
+Customer service response time measures how quickly your team replies to inquiries. First response time (FRT) tracks the initial reply, and next response time (NRT) tracks subsequent messages.
+Most customers expect a response within 10 minutes, but the median FRT across industries is 12+ hours for email, under 2 minutes for live chat, and 1–5 hours for social media
+Fast response times directly impact customer satisfaction, loyalty, and revenue while reducing ticket volume from multi-channel follow-ups
+Calculate FRT by dividing total time to first reply by number of tickets, excluding autoresponders and counting only business hours
+Improve response time by setting SLAs, prioritizing tickets, using templates and AI, deflecting with self-service, offering real-time channels, and monitoring analytics
+When a customer reaches out with a question or problem, the clock starts ticking. Customer service response time measures how quickly your team acknowledges and replies to that inquiry.
+It's one of the clearest signals of whether you prioritize customer experience or leave shoppers waiting.
+Today, most customers expect a reply within minutes, not hours. Slow responses erode trust, increase support workload, and drive customers to competitors.
+This guide covers what response time is, how to calculate it, industry benchmarks by channel, and six practical ways to improve it with Gorgias.
+What is customer service response time?
+Customer service response time
+is the time between when a customer sends an inquiry and when your team sends a meaningful reply. This metric tracks how long customers wait for acknowledgment and help, making it a core indicator of your support team's efficiency and your brand's commitment to customer experience.
+Two related metrics matter most:
+first response time (FRT)
+and
+next response time (NRT)
+. Understanding the difference helps you measure and optimize the right parts of your support workflow.
+FRT is the time to the first meaningful reply after a customer inquiry. NRT is the time to subsequent replies in the same conversation.
+A meaningful first reply addresses the customer's specific question or problem. Autoresponders don't count toward FRT because they don't provide actual help. Only human or AI-generated responses that acknowledge the issue and move toward resolution count as a first response.
+The response time clock follows business hours, not wall-clock time. If a customer emails at 10 PM and you reply at 8:05 AM the next morning, your FRT is five minutes, not 10 hours. This business-hours approach gives a realistic picture of your team's performance during operating hours.
+Response time fits into the broader ticket lifecycle and SLA clock. From the moment a ticket enters your queue, the SLA clock runs until your team sends that first meaningful reply. This measurement helps you track whether you're meeting customer expectations and your own service commitments.
+Why response time matters for support outcomes
+Fast response times directly influence
+customer satisfaction (CSAT) scores
+and long-term loyalty. When customers receive quick replies, they feel valued and prioritized. When they wait hours or days, frustration builds and trust erodes.
+Slow responses create a cascading workload problem through multi-channel escalation. A customer who doesn't hear back via email will often follow up on other channels, creating new tickets for the same issue. This multiplies your team's work, but fast initial responses prevent this problem.
+Ticket deflection
+and
+SLA adherence
+both depend on response speed. Quick replies give you the chance to deflect simple questions to self-service resources before frustration sets in.
+Meeting SLA commitments becomes easier when your average response time is low. This gives you a buffer for complex or high-priority tickets.
+Response time affects
+time-to-resolution
+and ticket backlog. The faster you respond initially, the faster conversations progress toward resolution. Backlogs shrink when tickets move through your queue efficiently rather than piling up while customers wait.
+Revenue suffers when response times lag. Customers with pre-purchase questions abandon carts, and post-purchase issues can drive them to competitors. In contrast, fast and helpful first replies improve First Contact Resolution (FCR) rates.
+Benchmarks by channel and how to calculate FRT
+Response time expectations vary dramatically by channel. Customers expect near-instant replies on live chat but tolerate longer waits for email. Understanding these benchmarks helps you set realistic goals and allocate resources appropriately.
+First response time benchmarks by channel
+Industry data shows clear patterns in what customers consider acceptable
+average response time
+across different support channels:
+Channel
+Best-in-Class
+Baseline
+Email
+<1 hour
+12 hours
+Live chat
+<1 minute
+1.5 minutes
+Social media
+1 hour
+5 hours
+Best-in-class
+represents what top-performing support teams achieve, while
+Baseline
+reflects typical industry performance.
+These benchmarks vary by industry, customer tier, and product complexity. For example, VIP customers expect faster responses than general shoppers.
+How to calculate first response time (FRT)
+Calculating FRT requires tracking time from inquiry receipt to first meaningful reply, then averaging across all tickets. You can use a straightforward formula:
+FRT = Total time to first reply ÷ Number of tickets
+Follow these steps for accurate calculation:
+Track time from inquiry receipt to first meaningful reply (exclude autoresponders)
+Sum total time for all tickets in a given period
+Divide by the number of tickets
+Use the median instead of the average for more stable results
+For example, if your team sent three replies at two hours, four hours, and six hours, total time is 12 hours. Divide by three tickets equals a four-hour average FRT.
+The difference between
+median and average
+matters for accuracy. Average FRT can be skewed by outliers, while median FRT shows the typical customer experience.
+Always count only
+business hours
+to get realistic performance data.
+Modern helpdesk software like Gorgias tracks this automatically, pulling data from your ticket system and calculating FRT across channels, agents, and time periods. Manual calculation works for small teams, but automated analytics become essential as ticket volume grows.
+Six ways to improve response time with Gorgias
+Improving response time requires the right combination of process, automation, and tools. These six tactics work together to reduce FRT while maintaining quality and giving your team breathing room to handle complex issues.
+1. Set and enforce SLAs with alerts
+A service level agreement (SLA) is a formal commitment to specific response and resolution times. SLAs create accountability by establishing clear expectations for your team and your customers. When everyone knows the target, prioritization becomes clearer and performance becomes measurable.
+SLAs should vary by ticket priority. Urgent issues from VIP customers deserve faster responses than standard inquiries. Setting
+tiered targets
+lets you allocate resources appropriately without promising unrealistic response times across all ticket types.
+Gorgias's SLA feature lets you set FRT targets by channel and priority, then sends alerts when tickets approach breach thresholds. These proactive notifications prevent SLA violations by giving agents time to respond before the deadline passes. You can also track SLA adherence in reports to identify trends and adjust staffing or processes.
+Set FRT targets by channel and priority
+Receive alerts before SLA breach
+Track SLA adherence in reports
+Adjust targets based on team capacity and customer expectations
+Create escalation rules for at-risk tickets
+2. Prioritize and auto-route high-impact tickets
+Not all tickets carry equal urgency. A customer reporting a fraudulent charge needs a faster response than someone asking about product sizing.
+Auto-triage
+uses signals like keywords, customer tier, and sentiment. This helps identify high-priority tickets and route them to the right agents.
+Gorgias
+Rules
+automate this prioritization. You can create rules that detect urgency indicators like "urgent," "broken," or "refund" and automatically assign those tickets to senior agents or priority queues. You can route VIP customers to specialized teams or assign billing questions to agents with financial expertise.
+This intelligent routing prevents critical issues from sitting in a general queue while agents work through lower-priority tickets. It also ensures customers with complex needs reach agents who can actually solve their problems on the first try.
+Auto-detect urgency using keywords like "urgent," "broken," "refund"
+Route VIP customers to senior agents
+Assign by channel or topic (billing to billing team, technical to technical team)
+Use sentiment analysis to flag frustrated customers
+Create priority queues for time-sensitive issues
+3. Use templates and AI for faster, on-brand replies
+Templates
+(also called canned responses or macros) save enormous time on repetitive questions. Instead of typing the same answer about shipping policies or return windows dozens of times per day, agents select a template and personalize it with customer-specific details. This approach maintains consistency, reduces errors, and frees agents to focus on complex issues.
+Gorgias
+AI Agent
+takes this further by drafting replies automatically. It analyzes the customer's question, pulls relevant information, and generates an on-brand response in seconds.
+Agents can review and edit the draft, which maintains your brand voice while reducing time per ticket.
+The key to effective templates is personalization. Generic, robotic responses frustrate customers. Good templates include merge fields for customer names, order numbers, and specific details. They read like personal messages, not form letters.
+Create
+customer service response templates
+for FAQs (shipping, returns, product questions)
+Use AI Assist to draft replies in seconds
+Personalize templates with customer data (name, order number, purchase history)
+Maintain consistent brand voice across all replies
+Update templates regularly based on customer feedback
+4. Deflect with knowledge base and chat automation
+Self-service deflection
+means customers find answers without agent help. This is the fastest possible response time: instant. When customers can resolve common questions through a searchable knowledge base or automated chat flow, they get immediate satisfaction and your team avoids another ticket.
+Gorgias comes with a
+Help Center
+builder that lets you create a comprehensive, searchable knowledge base with FAQs, how-to guides, and troubleshooting articles. AI Agent can then step in to use these resources to inform its responses when customers ask questions.
+Self-service isn't just about reducing ticket volume. It actually improves customer satisfaction for straightforward questions. Customers who want quick answers prefer finding them instantly over waiting for an agent to tell them the same information. Reserve your agents for questions that genuinely require human judgment and expertise.
+Build a searchable
+Help Center
+with FAQs
+Use an AI agent to surface answers automatically
+Offer order tracking and return portals for self-service
+Create video tutorials for visual learners
+Monitor which articles customers use most to identify gaps
+5. Offer real-time channels (live chat, SMS, social) in one inbox
+Customers increasingly expect real-time support through channels like
+Live Chat
+,
+SMS
+, and
+social media
+. These channels have the fastest FRT benchmarks (under one to two minutes for chat) because customers assume someone is available to respond immediately.
+Gorgias's
+omnichannel inbox
+consolidates all these channels into a single view. Agents see messages from
+live chat
+, SMS, Instagram, Facebook, and email in one unified dashboard. They can respond in real-time without switching tools or losing context.
+This unified approach prevents missed messages and duplicate replies. When a customer messages you on Instagram and then emails an hour later, agents see both messages attached to the same customer profile. They understand the full history and can provide consistent, informed responses across every channel.
+Manage
+live chat
+, SMS, Instagram, Facebook, and email in one inbox
+See full customer history across channels
+Respond in real-time without switching tools
+Set up chat automation for
+24/7 coverage
+Route real-time channels to agents with fastest response patterns
+6. Monitor analytics to remove bottlenecks
+Analytics
+reveal where delays actually occur. You might assume slow response times come from understaffing, but data could show the real issue is ticket misrouting or agents spending too long on low-priority tickets. Without measurement, you're guessing.
+Gorgias's
+reporting dashboard
+tracks FRT, NRT, SLA adherence, and agent performance across channels, time periods, and ticket types. You can see which channels have the slowest response times and which hours create
+bottlenecks
+. The data also shows which agents may need coaching or additional training.
+These data-driven insights let you adjust staffing to match demand, redistribute workload during peak hours, and identify process improvements. Continuous monitoring creates a feedback loop where you measure, adjust, and measure again. Response times improve steadily rather than staying stuck at whatever your current processes produce.
+Track FRT and NRT by channel, agent, and time period
+Identify peak hours and adjust staffing accordingly
+Monitor SLA adherence and escalation rates
+Compare agent performance to identify coaching opportunities
+Use trend data to forecast staffing needs
+Balance speed and quality (FCR, CSAT) + next steps
+Speed alone doesn't guarantee great customer service. Rushing through tickets with incomplete or unhelpful replies damages
+customer satisfaction (CSAT)
+just as much as slow responses do. The goal is to optimize both speed and quality.
+First contact resolution (FCR)
+measures how often you solve a customer's issue in the first reply. High FCR means customers don't need to follow up, which saves time for everyone and creates a better experience. Tracking FCR alongside FRT shows whether your fast responses are actually helpful or just fast.
+The tradeoff is real. Agents who rush to hit response time targets might send partial answers that create more back-and-forth. Agents who take too long crafting perfect replies miss SLA targets and frustrate waiting customers. The ideal balance is a fast reply that contains a complete, accurate solution.
+Gorgias helps you balance speed and quality. It combines automation tools with full customer context like order data and past conversations.
+Quality assurance (QA)
+processes ensure consistency as you scale. Review a sample of tickets regularly to verify that fast responses maintain your standards. Track metrics like average handle time (AHT) alongside resolution time to understand the full picture.
+Your next steps are to:
+Audit your current FRT across all channels
+Set realistic SLA goals based on industry benchmarks and your resources
+Implement the six tactics above, starting with the highest-impact changes
+Monitor analytics weekly to track progress
+See how Gorgias helps you balance speed and quality.
+Book a demo
+today.
+{lead-magnet-2}}
+Customer Experience
+Customer Service Measurement
+Customer Service Messaging: Tips and Templates for SMS + Conversational Channels
+0
+min read . By Ryan Baum
+By Ryan Baum
+Customer service messaging (also known as conversational customer service) is a powerful way to elevate the customer experience and delight customers beyond their expectations. For customers, texting with a support agent feels much more convenient and casual than slower channels like email. And, SMS is a much better channel for “on-the-go” communication, since most people always have their mobile phones and can usually reply to text messages quickly.
+That’s why customer service messaging is one of many recent
+customer service trends
+shaking up how ecommerce and D2C businesses offer support.
+In this guide, we’ll discuss how your business can implement or improve this
+type of customer support
+and other conversational channels in your customer service strategy.
+Let’s get started with why it’s important for businesses to
+offer SMS customer service
+.
+What is SMS customer service?
+SMS customer service is when support teams resolve customer questions and issues via text message.
+Why SMS text messaging improves the customer service experience
+Customers love these one-to-one messaging channels for customer service because they’re so quick and convenient. When implemented well, conversational messaging allows customers to reach your CS team and get answers quickly —
+within 42 seconds, most of the time
+. Especially considering that
+42% of customers prefer
+communicating with customer service on messaging apps over any other channel, introducing a conversational channel may do wonders for your brand’s customer satisfaction.
+Your customer support team can also use these channels to
+proactively reach out to customers
+with important updates and timely discounts.
+SMS customer service is especially attractive to your customers because they don’t have to stay glued to your website or check a social media app for new DMs. They can get answers to their questions on a device they already check
+96 times per day
+. Let’s take a closer look at SMS, a channel that’s quickly gaining ground as a standard support option.
+10 tips to successfully incorporate messaging into your customer service strategy
+Adding each messaging channel at one time might overwhelm your customer support team. Likewise, a new channel may have low adoption if you don’t announce it to your customers. As you begin offering messaging experiences as a part of your customer care portfolio, use our top 10 techniques to maximize the effectiveness of your workflows on those channels.
+1) Funnel all interactions to SMS or messaging channels and then move to email or phone if needed
+For issues with easy solutions, there’s no reason for customers to engage with email or phone. Emails are slow and clunky and phone calls can lead to customer frustrations, especially if your wait times are excessive. Texts are far faster than either option and can provide simple, accurate information that leads to speedier solutions — and happier customers.
+For that reason, we recommend setting up your contact page and information so that text and other live channels are your first line of communication — well, after
+self-service support
+. You can always move to email or phone if the customer requests it or if the problem you’re trying to solve is better suited to one of those channels.
+Tip:
+Speed is an important factor in all customer service interactions, but it’s critical when sending any sort of instant message. First response time (FRT) is a
+key customer service metric
+you can measure with Gorgias through the
+analytics dashboard
+. Make sure to track the speed of your responses when you start your support messaging program.
+‍
+2) Consistently let your customers know that you’re available on quick messaging channels
+To inform your customers they can now text your brand, we recommend adding “Text us,” plus your phone number, in some or all of these places:
+The footer of your website
+The “Contact Us” page of your website
+Your Gorgias Help Center
+Transactional emails (order confirmation, return initiated, etc.)
+The signature of your support agents
+You can put your messaging app information in the same spots, and make sure to say you accept support requests via DM in your social media bios so customers know they can shoot you a message.
+Tip:
+Because conversational customer service usually takes place on a user’s phone, you need to keep responses short and friendly. The long, detailed macros and
+templates you might use for emails
+won’t work when communicating through short messages — depending on your platform and your customer’s phone, long messages might not send or might get broken into multiple text messages. Plus, depending on your brand’s tone of voice, conversational channels are a great place to use emojis, images, and GIFs to make the conversation even more friendly and casual.
+Source:
+Berkey Filters
+3) Use autoresponders for a lightning-fast first response
+Start every messaging interaction with an autoresponder. This tactic lets your customer know that you received their request, and it gives your human agents a small buffer of time to finish up their current encounter before starting the new one. You can also include a link to your help center in case they want to look for their answer on their own.
+You can use this tactic whether you’re incorporating
+chatbots
+for basic query automation, or using your customer service agents for all customer interactions.
+See page XX for an example of an autoresponder Rule for messaging.
+4) Create a system to categorize and segment priority tickets
+Some customer support tickets should take higher priority than others. A customer that’s reporting a fraudulent purchase with their debit card needs a quicker response than someone who’s asking if there are any discounts they can use.
+You can start by prioritizing:
+Tickets that have been open the longest
+. These are the customers who may be growing impatient, or even angry enough not to shop or work with your business again. This can be set up with a View of tickets that have been open for more than X minutes, where X is an amount of time corresponding to your service-level agreement (SLA).
+Tickets from VIPs and loyal customers
+. You can tag these customers and make a View based on that tag to surface their questions and concerns.
+Tickets that fall into certain
+intents
+, like “order/damaged,” which Gorgias auto-assigns through our proprietary algorithms. You can auto-assign these tickets with a “priority” tag using a simple automation Rule and set up a View that has all open priority tickets.
+Source:
+Gorgias
+You can even set up dual priority queues for all priority-tagged tickets: One for priority tickets that are about to go past the
+first response time
+in your SLA and another for all other priority tickets. Then prioritize the former, followed by the latter, followed by other tickets, to keep your first response time and
+resolution time
+down while giving attention to important tickets.
+Beyond prioritizing tickets, it’s also helpful to categorize them if they share similarities. Grouping similar tickets together boosts efficiency. For example, your team can come up with one main solution (create a new discount code because the previous one is buggy) and easily resolve the entire group of tickets in a single pass.
+5) Use Macro templates to respond faster to repetitive requests…
+If you are responding to customer service messages on a platform like Gorgias that supports Macro templates, you need to take advantage of this time-saving feature. But you can’t just take your existing
+email templates
+and drop them into these conversations.
+You need to create a specific set of Macros for messaging purposes, using the principles we mentioned earlier: short, friendly, personalized, etc. That means you need to use variables like [Customer first name] or [Last order number] to personalize messages. If you set up your Macros strategically for DM and SMS messaging, many can be reused for live chat, as well.
+To prioritize building Macros that will have the highest impact, create Macro templates to respond to the most common questions that have come through your helpdesk. You can also ask your team which responses they end up writing out the most and add those templates too.
+Once you create and launch these Macros, you can automatically add Tags to Macros for reporting to see which Macros are being used the most. This will help you understand where you have gaps (or unhelpful Macros) and can make tweaks to improve your agent workflow and customer experience.
+6) …Or deflect those repetitive requests altogether with automation Rules
+If your customer service platform supports automation, as Gorgias does through our
+Automation Add-on
+, you can deflect up to a third of repetitive, tedious tickets instantly, with no human interaction. Much of this automation can be applied to customer service messaging, as well.
+When we mention automated answers, some support professionals say something like, “We don’t want to send low-quality automated responses to our customers.” We completely agree: For many tickets, automation doesn’t provide the best customer experience.
+However, as you know, most tickets your support team receives are repetitive and low-impact, like questions about order status (
+WISMO
+) or your
+refund policy
+. We recommend setting up automatic responses for these tickets, so customers get instant answers and agents have more time to respond to tickets that actually need a human touch.
+Look through your reporting dashboards to see the tickets that are taking up the most time on your support team, and prioritize those requests for automation with Rules, where appropriate.
+7) Go beyond text-only interactions with multimedia messaging
+WhatsApp Business, Facebook Messenger, and SMS support images, and luckily so does Gorgias. This is a more engaging way to interact with customers, and it also allows you to exchange relevant images like broken parts, malfunctioning equipment, and screenshots for more helpful instructions.
+If you want to go this route, maintain a catalog of fun, topical images that your support team can use in their customer conversations, and give them the freedom to collect their own images to insert. It’s a great way to make your support feel more personal and human, but use common sense:
+Frustrated customers
+don’t want to receive a picture or meme, they want their problem solved as quickly as possible.
+8) Provide proactive support at scale on platforms that allow it
+SMS and other personalized one-to-one support channels can get a little complicated because not everyone wants to interact on the same messaging application. True SMS support goes out over cellular networks and lands in users’ actual text messages, the same way messages from their friends and family do.
+But you may need to be ready to handle other support channels that use similar short, text-based communication. These include
+Facebook Messenger
+,
+WhatsApp
+, and
+your website’s web chat
+. Certain channels may be a better fit for your unique customer base — for example, Instagram attracts a younger audience than Facebook Messenger, and WhatsApp is more common outside the US. Likewise, you may have other specialized messaging channels or messaging platforms that you need to support.
+As a rule of thumb, you need to be where most of your customers are, which varies across businesses and industries. But to reach the desired level of customer engagement, most businesses need to be reachable via most, if not all, the major applications and support channels.
+That’s where a unified customer service platform can be really useful. By keeping all of your customer conversations in one feed, you can handle more channels more strategically, through triage and routing to dedicated agents for specific tasks. For example, you could have one agent who just handles messaging and route all messages to that person for a quicker response.
+On platforms like
+WhatsApp
+Business, you don’t have to wait around to hear from customers. This allows for a wide range of strategic and
+proactive support
+interactions.
+For example, you can send out text blasts:
+When you have an issue affecting all customers
+(i.e. website downtime) to let them know what’s going on (and avoid getting excessive tickets about the issue)
+When you have new product launches
+or add-ons, driving revenue and customer education
+When you have
+relevant
+announcements for customers:
+limit these to news that actually affects customers (i.e. shutting down your community or a time-sensitive sale), not company news (i.e. your latest fundraising)
+A proactive approach builds trust with your audience — they will see you going above and beyond with these efforts, and know that you’ll be upfront with potential issues.
+9) Integrate your SMS support with your marketing efforts
+SMS marketing is a useful tool for your ecommerce store, but it becomes even more powerful when you integrate your SMS marketing tool into Gorgias. Send out SMS blasts and have support agents on hand to handle any questions you get in response, to help nudge those customers closer to a sale.
+Source:
+Gorgias
+With certain integrations —
+Klaviyo
+, for example — you can even use Gorgias attributes to segment and build campaigns. Use this function for win-back campaigns, or to send a special offer to customers who posted low CSAT scores.
+10) Conduct surveys using text messages to collect feedback from customers
+Text messages are an effective method for collecting feedback from existing customers, too. Once customers opt in to SMS communication, you can use this point of contact to launch quick surveys that provide valuable feedback.
+Response rate is always an issue with email surveys, and other channels see higher response rates. Using a multichannel approach will supply you with more responses and help you make more data-driven decisions with the results.
+Note:
+In a customer service tool like Gorgias, you would use one of our integrations with
+Klaviyo
+or
+Attentive
+to send the survey to entire segmented lists of customers or prospects, all at once.
+SMS customer service templates for common response types
+Ready to start implementing an SMS customer service strategy but not sure what to say? We get it: Staying concise yet friendly is tough, and so is conveying all the needed information in such a short space.
+We’ve put together a collection of proven templates you can start using today. Adapt as many of these as you need to fit the contours of your business, and bring them into your customer service platform of choice. In Gorgias, you could auto-populate these responses through our Macros.
+Note: We’re sharing these templates as text messages, but they can easily be adapted to other conversational channels like social media DMs and live chat.
+Ticket received template
+As we mentioned earlier, it’s a good idea to set up an autoresponder. This tactic can buy your team time to finish up a previous interaction or send an email, yet it shows you’re on top of the interaction and will be back soon.
+Here’s our template for a ticket received autoresponder:
+Thanks for texting {Brand Name}. An agent is reviewing your question now. We’ll get back to you shortly :)
+Introduction message template
+The introduction message is the point where your autoresponder or chatbot passes off the reins to a human agent. It’s the first point of personalization, and you want to make a solid impression. Still, your agents don’t need to be typing these out every single time. Use a template like this one to break the ice (just with a little less repetitive stress injury):
+Hello, {Customer First Name} {Customer Last Name}! I’m {Your Name} from {Brand Name}. Thanks for messaging us. What can I help you with today?
+Hours of operation template
+There are two frequent scenarios where an hours-of-operations text makes sense. One is as an answer for when
+customers message you on social media
+or elsewhere just to ask when you’re open. In those cases, use this template:
+Hello, {Customer First Name}! I’m {Your Name} from {Brand Name}. Our hours of operation are Monday through Friday, 9 a.m. to 8 p.m. Best, {Your Name}
+The other scenario is when a customer reaches out via a messaging channel and there’s no one on the other end. If your helpdesk isn’t open 24 hours a day, use a template like this when the team isn’t live:
+Hello, {Customer First Name}! Our live chat helpdesk is open {list hours}. You’ve reached us outside those hours. Leave a short message here and we’ll get back to you tomorrow.
+By the way, if around-the-clock coverage is a goal of yours, you might be interested in introducing contact forms into your live chat widget. These forms let you keep your live chat on 24/7 and, when nobody’s available to answer, they ask customers for contact information so you can be sure to follow up. Learn more about Gorgias’
+automation add-on
+and
+contact forms
+.
+Order status template
+This one’s pretty obvious: You want to let the customer know the status of an order, and there’s no reason to manually type a whole message to do it.
+Use this template when a customer asks for their order status. You can create variations of this one for delays or other order status updates, and even customize it further to include tracking information.
+Hey {Customer First Name}, great news: Your order has shipped! It will arrive on {delivery date}. Let me know if I can help you with anything else!
+Payment reminder template
+Customers with recurring subscriptions sometimes forget the frequency they sign up for or when their next payment will be. Use this template if customers frequently ask your brand when their next payment is:
+Hello, {Customer First Name} {Customer Last Name}! I’m {Your Name} from {Brand Name}. Your next payment of {amount} is coming up. Your card on file will be charged {due date}. Questions? Reply here or call {phone number}.
+Pro tip:
+While there’s nothing inherently wrong with soliciting payment via SMS, many consumers will view this with suspicion. Text channels may not be the best avenue for inviting bill payments or collecting credit card information. It could also lead to more cancellations, which makes it a balancing act, though customer clarity is important to have. Always track the impact of changes to your process and be mindful of how new touchpoints could affect it.
+Deals or rewards template
+If you’re trying to build brand loyalty or win back an upset customer, sometimes a simple discount code can go a long way. At the end of an SMS conversation, there may be times when you can surprise and delight customers by sending over an exclusive deal. Here’s a template (though you’ll certainly need to customize this one further to fit the details of your offer):
+{Customer First Name}, thanks for being such a loyal customer. We’d like to give you {details of the offer}! Click to redeem: {short URL}
+Refund issued template
+Refunds happen, and they don’t always require a massively complicated interaction with your contact center. If you’re able to resolve a ticket and issue a refund with a simpler interaction, this template can finish the one-to-one portion of the encounter.
+Notice the template specifies that the interaction will finish up asynchronously (via email). It’s a great way to tie off the synchronous, real-time interaction and lead the customer right to the next step (check your email.)
+Here’s the template:
+Hey {Customer First Name}! We’ve issued a refund for your last order. We’ll send all the details to your email, but feel free to let me know here if you need anything else.
+Pro tip:
+You can tie discounts and future order credits into this template, but make sure your entire team is aligned on your official policy as you update the Macros to match it. You may also want to have different tiers of intervention (and offerings) depending on the severity of the issue.
+Customer check-in template
+The customer check-in is another asynchronous message that occurs outside of an active conversation. Perhaps the customer walked away from a previous encounter or seems to be stuck on the customer journey based on other CRM data.
+Whatever the reason, a gentle, well-timed message can sometimes get the customer back on track.
+Here’s a model:
+Hello, {Customer First Name} {Customer Last Name}! I’m {Your Name} from {Brand Name}. Just checking in to make sure everything is working well for you. If you have any issues with our {products/service} or need anything else, let me know!
+Templates for SMS marketing and relevant integrations
+Though a
+customer service platform
+can handle the above templates, you’ll likely want to expand even further through
+additional integrations
+with the platform. If you take that approach, here are some opportunities that open up:
+Discount template
+If you’re running a sale or trying to drive traffic to your site, a great way to do so is by texting a discount code to customers on your SMS list. Because their phone is probably close by, it’s great way to promote your sale and make sure it gets noticed. Here’s a template you can use (but remember to update with your own promotion!):
+Flash sale, this weekend only! Up to 40% off, including our latest collection. Shop now: {insert URL}
+Appointment reminder template
+Medical offices and other organizations that schedule appointments or meetings can bolster attendance and reduce no-shows by providing yet another reminder — one that reaches patients and customers directly via phone.
+If your SMS system supports it, you can invite an auto-reply to confirm or cancel an appointment, too. Use this template:
+Hello, {Customer First Name} {Customer Last Name}! I’m {Your Name} from {Brand Name}. Your appointment is scheduled for tomorrow at {appointment time}. See you then! Reply Y to confirm, N to cancel.
+Order confirmation template
+Order confirmation messages simply confirm that your business has received and is processing a customer order. These don’t typically take place during an active one-to-one customer service interaction. Instead, they’re sent automatically and asynchronously, whenever the order confirms.
+Still, you can set them up as personalized messages and enable replying so that, if something happens to be wrong, the customer knows how to reach out.
+Hello, {Customer First Name} {Customer Last Name}! I’m {Your Name} from {Brand Name}. Your order #{order number} has been received, and we’re working on it now! We’ll message you again when it ships. Questions? Reply here.
+Pickup notification template
+If you’re in an industry that offers pickup services (whether curbside pickup, custom goods like eyeglasses, or anything else), a text message is a great way to let someone know their order is ready for pickup. SMS reaches customers when they’re on the go in a way that email frequently doesn’t.
+Here’s an example:
+Hello, {Customer First Name} {Customer Last Name}! I’m {Your Name} from {Brand Name}. Your recent order #{order number} is now available for pickup at {location}. Stop by to grab it anytime today before {closing time}!
+Survey or poll template
+This message asks your customers to respond to a survey or poll. It’s a data-gathering tool that can pull in responses from people who ignore your emails or the messages at the bottom of store receipts. Try a script like this:
+Hello, {Customer First Name} {Customer Last Name}! I’m {Your Name} from {Brand Name}. We value your opinion as a customer and we’d love specific feedback on {topic}. Here’s a 5-minute survey: {short URL}
+Membership renewals template
+Membership renewals, like payments, ought to be set up as automatic occurrences. Still, it’s helpful to remind a customer that a charge will hit their bank account soon — you don’t want to track down non-payments, and you don’t want angry customers who weren’t prepared for a bill.
+Here’s an example:
+Hi, {Customer First Name} {Customer Last Name}! I’m {Your Name} from {Brand Name}. Your annual membership renewal is coming up on {date}. Your card on file will be charged on that day.
+{{lead-magnet-1}}
+Is conversational and SMS customer service right for your business?
+At Gorgias, we believe any industry can find value in
+conversational support
+, though some industries and brands will get more bang for their buck with these channels.
+For ecommerce brands that deliver physical products, conversational support is a no-brainer. Imagine your customers get shipping updates via SMS and can just respond to the message if the package isn’t delivered correctly to get immediate help. No need to open up a laptop and log into a support portal or compose an email.
+If you’re on the fence about offering conversational customer support, consider whether any of these points are relevant for your business:
+First, consider your primary audience. If you sell to millennials and Gen Z, conversational customer service deserves serious consideration.
+These groups value speed and convenience more than anything
+: Millennials prefer live chat over every other channel, and 71% of people between 16 and 24 agree that faster customer service would drastically improve the shopping experience.
+These two generations grew up texting. It’s a very natural communication style for them, so they’ll feel right at home texting and DMing your brand. They’re also absolutely massive groups — combined, they make up a staggering
+42.3% of the U.S. population
+.
+If you’re targeting an older generation, texting may not feel as natural. They have a higher tendency to prefer email or phone, although that’s changing by the day.
+Is your marketing team already sending SMS campaigns?
+One of the biggest hurdles to implementing conversational support is getting the systems, hardware, and staff in place to respond to SMS texts and messaging app requests at scale. If you’re already sending SMS marketing campaigns, then you already have some of that infrastructure in place.
+So, if you’ve already made the investment in SMS for marketing purposes, then integrating messaging with your customer service platform and team requires minimal additional investment.
+Fortunately, your
+helpdesk
+and
+SMS marketing software
+may integrate to give you a centralized way to spark conversations if customers reach out via text or respond to SMS campaigns. With
+Gorgias and Klaviyo
+, for example, customer responses to SMS marketing campaigns get assigned directly to an agent for fast response times.
+Are customers abandoning conversations on other channels?
+One of the benefits of messaging is that customers don’t have to stay on the phone or by their computer — they can easily continue talking even if they have to take the dog out, go to work, or even fall asleep and respond in the morning. Plus, while email conversations often span multiple days which is frustrating for customers with simple requests, requests on messaging channels usually get resolved before customers lose interest or patience.
+If you notice that your brand currently sees lots of unresolved email threads or phone calls, you might need to offer customers a more convenient and flexible channel to talk to your team. This is a perfect use case for SMS and other messaging channels.
+Are you already active on related channels?
+It’s important to show up where your customers are. That’s why most brands post and engage with customers on social media pages. But if you’re posting on social media and not providing support to customers who reach out via DM, you’re missing a big opportunity.
+By adding conversational support via Facebook Messenger and Instagram and Twitter DMs, you can maximize your presence on those platforms and provide an
+omnichannel customer experience
+for both existing and prospective customers.
+Are you struggling to gather customer feedback?
+We often discuss the importance of customer feedback to monitor brand perception and constantly improve the product and customer experience. But as most brands know, getting feedback via email can be a challenge because of low survey open rates and lack of follow-up from customers.
+Business texting lets you ask your customer base for feedback on a channel they are less likely to ignore. Text messages have
+a whopping 98% open rate
+. Consider sending
+CSAT
+,
+NPS surveys
+, and other requests for customer feedback on this channel to raise your response rate for more accurate
+customer support metrics
+. Of course, with great power comes great responsibility: Spamming customers will quickly damage customer relationships, so don’t send too many messages to their personal devices.
+What to look for in text messaging tools
+SMS customer service is an avenue that customers are growing to expect. But managing yet another communication channel — much less one that demands real-time responses — takes careful planning.
+Implementing a messaging strategy requires using tools built for that purpose. Some customer service messaging platforms offer SMS support natively, while others integrate a third-party SMS integration tool to add this functionality.
+As you consider the available options, make sure the one you choose offers the features you need. Some tools are full-fledged SMS marketing solutions. Others focus specifically on SMS as a support channel.
+It’s easier for most businesses to use an
+all-in-one customer service platform
+like
+Gorgias
+to support an
+omnichannel approach
+. With this kind of helpdesk platform,
+SMS tickets can be handled in the same feed
+as your other tickets and benefit from the same workflows and automation.
+Here are some other features your customer service tool needs to have to handle SMS ticket effectively:
+Conversation history (for SMS and other text-based channels like Facebook Messenger or webchat) so your agents know what this client has asked about or needed support for in the past
+Ability to create and customize macros as replies to SMS questions
+Ability to send and receive images or videos (this is great if your support teams need to see the damaged item to issue a refund, for example)
+Routing or triaging capabilities to make sure SMS conversations don’t get lost in a queue of tickets
+Integration with other ecommerce tools so your agents have all the context they need to reply in a single space (e.g., surfacing
+Shopify customer data
+or CRM data during a support interaction)
+Ecommerce SMS marketing tools to complement your customer experience
+As we mentioned earlier, SMS marketing lets brands connect with consumers in a personalized and measurable way, just like with customer service. According to
+Attentive
+, average read rates of 97% within 15 minutes make SMS a prime channel for connecting with prospects and customers.
+If you’re looking for the right SMS marketing tool to work in tandem with your new SMS customer service channel, consider these four leading tools. Each one integrates with Gorgias, along with most of the rest of your tech stack.
+Each tool offers a slightly different feature set. Revisit the list of features we compiled earlier in this article to help determine which are the most important to you, then vet these four tools against your customized list.
+Klaviyo
+, a Gorgias preferred partner, is a leading customer data and marketing automation platform that leans heavily on SMS communications. Automatically create tickets in Gorgias if customers reply to Klaviyo SMS messages, and send Gorgias events into Klaviyo to create targeted audience lists based on support experiences.
+Attentive
+, also a Gorgias preferred partner, sends automatic text messages to your subscribers at each step of the customer lifecycle. It collects real-time behavioral data on customers as well, and the Gorgias integration allows you to see that customer data within the Gorgias sidebar. If a customer replies to an Attentive SMS, it’ll automatically create a ticket in Gorgias for agents to reply to.
+Postscript
+is an SMS messaging tool that drives revenue growth and improves the customer experience over SMS. If a customer replies to a Postscript SMS, it’ll automatically create a ticket in Gorgias for agents to reply to.
+SMSBump
+is a D2C focused SMS customer journey automation tool by Yotpo that boasts powerful results: 45% conversion rate and 25x ROI for D2C brands. By connecting SMSBump with Gorgias, tickets will automatically be created if customers reply to SMSBump campaigns.
+Integrate your SMS tool with your helpdesk for a seamless customer experience
+Integrating any of these SMS marketing tools with Gorgias is a great way to unify your marketing and support efforts to improve the overall customer experience.
+For example, if customers respond to an SMS marketing blast from a tool integrated with Gorgias, the response gets brought into the helpdesk. The agent can see the initial marketing message and the customers response, so they can answer any follow-up questions. It's like an alley-oop from your marketing to your support team.
+Also, these integrations help your marketing team be more aware of active support conversations to avoid tone deaf marketing. For example, by integrating Gorgias and your SMS marketing tool, you can pause marketing campaigns on customers awaiting a response from support. (Nobody wants to get marketing messages if they're waiting on a delayed order, or troubleshooting their last purchase).
+Message your customers in real time with Gorgias
+Customer service messaging across a wide range of message-based platforms can be a powerful addition to your
+customer service channels
+. Of these, the SMS channel is one of the most powerful options for businesses that want to reach customers directly where they are.
+The scripts and tools provided in this guide should put you well on your way toward a successful SMS support rollout. But make sure that at the core of your customer service operation, you have a platform robust enough to handle everything you need to do — and whatever functionality you might add in the future. For more examples and tactics to launch a successful rollout of SMS support, check out our
+playbook of Berkey Filters
+, an online store that released SMS support to great adoption.
+{{lead-magnet-2}}
+Gorgias is the customer support and helpdesk platform built for ecommerce businesses like yours. Our live chat tools and 150+ integrations equip you to reach your customers — whenever and however you choose.
+See how Gorgias supercharges customer support and helpdesk via SMS
+. Alternatively, check out more information about our integrations with:
+Instagram messages
+Facebook messenger
+‍
+WhatsApp messaging
+SMS
+Live Chat
+Chatbot vs. Live Chat Software: What's the Right Solution?
+0
+min read . By Lauren Strapagiel
+By Lauren Strapagiel
+Imagine leaving your angriest customers to spar with an automated script in your website’s chat window. Now picture your support team reading “Where is my order?” for the hundredth time and glancing at the clock, only to find six hours left in the workday.
+Who do you think is more frustrated?
+Luckily, you won’t have to answer that, because these are completely avoidable problems. Once you learn the important distinctions between chatbot software and live chat software, you’ll understand how to use them both more effectively and lower blood pressures across the board.
+Chatbots rely completely on automation and artificial intelligence (AI) while live chat software connects customers with human agents via a real-time chatbox. A third option, self-service chat, is an appealing alternative.
+To determine which solution(s) is best for your business, let’s compare chatbots and live chat software and go through the top use cases for each.
+What is live chat software?
+Live chat support
+connects customers with human support agents who can answer their questions and assist them with any issues. When a customer opens the chat box on a live chat support solution, they are connected with a real person from the company's customer support department.
+Support agents then use live chat messaging to address customer inquiries and walk customers through the solution to their problem.
+Interested in getting live chat software? Check out one of these lists for tailored recommendations:
+Best live chat software for ecommerce
+Best live chat software for Shopify stores
+Best live chat software for general use
+Pros and cons of live chat
+Pros:
+Live agents have the knowledge base to answer complex queries and customer issues
+73% of customers
+state that live chat is the most satisfactory form of customer communication with a company
+Enables multitasking for support agents so they can assist multiple customers at the same time
+The personalized touch of a real human can go a long way toward improving your customer satisfaction
+Support agents can find opportunities to convert visitors or turn support interactions into additional sales
+Cons:
+Not available after-hours when your customer team is off the clock
+More expensive to employ agents to respond to chats
+Responses will be slowed down by high volume which impacts resolution times
+Much of your agents’ time will be spent answering the same simple questions over and over
+{{lead-magnet-1}}
+What is the difference between chatbots vs. live chat?
+Unlike live chat software, chatbot software doesn’t connect customers with human agents. Instead, chatbot software connects customers with a chatbot that utilizes AI and machine learning to provide natural language answers to common questions.
+Automation assists customers with less complex issues and provides quick answers. Chatbot technology enables companies to reduce their average response time, and frees up support agents to focus on more complex queries.
+Pros and cons of chat bots
+Pros:
+The ability to answer questions 24/7 without paying for agents to work around the clock. According to a survey by Drift,
+64% of customers
+say that 24/7 service is the best feature of chatbots.
+Chatbots offer instant responses to common questions like pricing inquiries, improving customer experience with quick resolutions to common issues
+Chatbot solutions are a highly cost-effective option, as they allow companies to resolve more customer issues without having to hire new customer support reps
+By answering commonly asked questions and resolving simple issues, chatbot solutions can free up support agents to focus on more complex questions
+Cons:
+Chatbots can’t handle complex inquiries requiring human intervention
+Automated responses are a colder, less human form of communication, which can impact customer satisfaction
+No opportunity for agents to elevate an inquiry into an exemplary customer experience, such as offering personalized live chat offers
+Customers will become frustrated if the chatbot can’t properly answer their questions or solve an issue
+{{lead-magnet-2}}
+Live chat vs. chatbots: Evaluating their strengths to help you choose the right one (or both)
+When comparing chatbots with live chat solutions, it's important to recognize that each category offers its own unique advantages. Many companies choose to employ both live chat and chatbot apps on their ecommerce websites.
+With that in mind, let's explore the strengths of each solution.
+Response times and customer expectations
+One of the biggest advantages of chatbot solutions is the fact that they allow for immediate responses to customer inquiries. Live chat solutions can also help companies reduce their wait times, though not to the same degree.
+Chatbot advantage: Answers are immediate
+According to
+data from HubSpot
+, 90% of customers rate an "immediate" response as important or very important when contacting customer service, with 60% of customers defining "immediate" as 10 minutes or less.
+With a chatbot app, offering immediate response times to customer queries is a much more attainable goal. Best of all, these immediate response times are a 24/7 offering for customers, whereas live chat agents may not always be on the clock.
+Live chat advantage: Solve complex issues
+The problem with relying solely on chatbots to reduce customer wait times is the fact that even the best and most intelligent chatbots are often unable to resolve complex issues. Chatbots are excellent at pulling information from internal databases to answer common questions, such as providing the status of a customer's order or editing it.
+But for uncommon questions or complex issues, a chatbot alone may not be sufficient. Because they can only handle one thing at a time, it can take forever before you get all of your questions resolved.
+Solution: Use both chatbots and live chat
+Many companies use chatbots alongside live chat support. This allows businesses to offer both immediate responses, as well as more in-depth support for complex issues.
+For example, a customer may first be connected with a chatbot that provides instant responses to their query and assists with gathering initial information. If the chatbot determines the customer's question or issue is too complex to resolve, the customer is then connected to a support agent via live chat.
+This combination is an ideal solution for many companies, allowing them to quickly resolve common issues without the need for a live chat agent. At the same time, customers have the option to speak with a real person in cases where assistance from a chatbot alone isn’t sufficient.
+Human touch and personalization needs
+While chatbot apps can help reduce customer service wait times and the number of customer service reps needed, many customers prefer speaking with a person.
+Live chat advantage: The human touch
+A CGS study found that
+86% of customers
+would rather interact with a human agent than a chatbot. Further, 71% of customers say that they would be less likely to purchase from a brand that did not have real customer service representatives available.
+Chatbot advantage: AI learning
+Chatbots have come a long way toward replicating natural language and determining customer intent for better customer engagement. Today, the best chatbot applications can come quite close to sounding like actual human beings.
+Chatbots leverage AI and machine learning to deliver personalized responses, as opposed to only “canned” responses, and can better serve your customers.
+Solution: Use both chatbots and live chat
+Even the most advanced chatbots still fall short of a live representative when it comes to delivering a personalized, human touch. They’re also lacking when it comes to handling more complex questions or customer issues.
+Once again, a combination of automation and
+live chat support
+is typically the best approach.
+Consistency and accuracy
+Chatbots and live chat applications have unique advantages when it comes to delivering consistent and accurate responses to customer queries.
+Chatbot advantage: Consistency
+Chatbots are excellent at delivering consistent, on-brand messaging. They can be programmed to systematically follow templates or scripts to provide a consistent customer service experience.
+When working with human customer support agents, this high degree of consistency can be a little more difficult to achieve.
+Live chat advantage: Accuracy
+While live chat support may not offer the same consistency as chatbots, human support agents do tend to be more accurate when determining the intent of the customer they are assisting.
+For example, a simple spelling error can sometimes confuse chatbots, whereas a human customer support agent would be much more likely to look past the error and correctly figure out what the customer needs.
+A human agent is also much more likely than a chatbot to accurately interpret questions that are worded strangely.
+Solution: Use both chatbots and live chat
+For companies that are choosing between chatbots and live chat support, it’s a question of whether they’d like to prioritize consistency or accuracy. This is yet another reason why
+a combination of chatbots and live chat support
+is often the best solution.
+More chat features to provide self-service support without the bots
+Many of the issues your website visitors have with bad chatbots involve their mimicry of support from real people. It’s easy to tell when you’re chatting with a robot, but it’s not always made clear to you by the chat widget.
+But there’s a third chat option that you should consider in addition to live chat and chatbot software.
+Self-service
+chat options make it clear to your customers that they are receiving automated help. By presenting menus instead of imitating a human conversation,
+self-service customer support
+empowers customers to find the answers they need on their own.
+It’s a win-win, because the customers get the answers they need in real time, at any hour. And your team can focus on support tickets that are more important to the business.
+Here are a few ways self-service chat options can work.
+Self-service order management
+Up to 30% of incoming customer service tickets are shipping status requests. With self-service order management in the chat widget, customers are empowered to make these queries on their own — providing fast answers and reducing your support tickets.
+These automated options are
+easy to add with Gorgias
+.
+This self-service
+adds buttons to the chat widget to automatically:
+Track an order
+Return an order
+Cancel an order
+Quick service with chat automation provides quick, responsive customer service, which means better customer experience and a positive impact on revenue.
+Barcelona-based shoe brand ALOHAS added self-service order management flows with Gorgias after experiencing a high chat volume. This allowed customers to find information on their own without a human needing to respond.
+Here’s how a “track order” request looks in action:
+ALOHAS
+Quick answer flows
+When using a chat widget, you’ll notice the same questions come up again and again. You can satisfy those FAQs by
+adding quick answer flows
+into the chat widget.
+These automations can be set up in the widget for questions like:
+What is your shipping policy?
+Are there any discounts available?
+Do you have any new products?
+What materials do you use?
+These automations can be customized for whatever FAQs are most relevant to your ecommerce store.
+Here’s how it looks, for example, when an ALOHAS customer wants to find out more about the brand’s shipping policy.
+Luxury jewelry brand Jaxxon has used these self-service quick responses
+with great success
+. The customer service team found themselves overwhelmed with customer questions and unable to respond as quickly as desired.
+Jaxxon upgraded their live chat widget with
+Gorgias Automate
+with Quick Responses for customers. The result, combined with using Gorgias’ helpdesk, reduced live chat volume by 17% and lifted the on-site conversion rate by 6%.
+Jaxxon
+Autoresponders
+Even when a customer chooses to type out a question, automation can be used to provide quick, customized service through the chat widget.
+Gorgias
+can detect questions
+that come in through chat and provide automatic answers using
+Rules
+and
+Macros
+.
+Here’s how the flow works:
+Intact detection
+scans the incoming message.
+Rules
+is triggered when a relevant message is found (such as some asking about where their order us) is responds to the customer.
+Macros
+is where you create the templated response sent to the customer. The Macro can be set up to pull in a customer’s unique information like order number, their name, and their tracking code.
+The best part is this can not only be used for chat, but for responses to tickets coming in through other communication channels like
+email
+,
+social media
+, and
+SMS
+.
+Keep customer service running 24/7
+With Gorgias, you can make sure your chat widget isn’t missing a single ticket, even if your customer support team is offline.
+First, you can
+set up your business hours
+to correspond with when you have live chat available. This will show up on your site’s chat widget by either showing the current status as online or offline.
+From there, you can create automated responses for whether you’re offline or online. During business hours, this message can tell customers you’ve received their request and give a time by which they can expect a response.
+After business hours, the responder can tell customers that although you’re offline, they can expect a response during the next day’s business hours via email.
+Absolute Collagen
+You can also use
+a contact form
+which turns a chat into an emailed ticket. This is great to use after-hours and to make sure chat requests don’t get lost overnight.
+Combine automation and human interaction for the strongest customer experience
+The use of automation within customer service
+is multifaceted. As we discussed earlier, a human touch is critical for many customers, and speaking with an automated chatbot can be a turn-off. However, automation certainly has its place in the customer service process.
+On the customer’s side, starting with self-service chat helps them receive quicker customer support at scale — a more satisfying experience. On your team’s side, automation allows for sorting, segmenting, and
+prioritizing tickets
+.
+When self-service chat can’t solve an issue, someone from your support team can easily step into the conversation. You can use Macros — scripts that automatically bring in the customer’s information — to scale the human touch on your support team.
+So in reality, it’s not automation vs human support. These are two complementary tools that work better together. And the result is a stronger and faster customer experience for your website visitors, which can
+increase your conversion rate
+by as much as 12%.
+Still not convinced? In 2021, brands using the Gorgias chat widget generated an average of $38,702 from conversations involving chat. We have a whole post on
+live chat statistics
+that can help illustrate the impact our chat widget can have on your business.
+Gorgias brings intuitive live chat to your ecommerce business, alongside your other channels
+If you’re an ecommerce business looking for an all-in-one customer support solution that includes live chat support and AI-powered chatbots, Gorgias is your one-stop shop.
+Our algorithms are trained on hundreds of millions of ecommerce tickets, so you can be sure your customers are getting the right responses every time.
+Plus, you can manage both live chat and chatbot conversations in the same dashboard that you use for all your other channels, including phone, email and major social media platforms. Bring in chat from other channels, including
+Facebook Messenger
+. We’ll even be
+supporting Whatsapp
+in early 2023.
+Our customer support platform is available for
+Magento
+,
+Shopify
+, and
+BigCommerce
+users.
+Read more about our chat offerings by
+clicking here
+.
+Live Chat
+Automation and Self-Service
+Customer Delight Is A Losing Strategy in Ecommerce: Here’s What’s Better
+0
+min read . By Jordan Miller
+By Jordan Miller
+Most ecommerce businesses understand that offering great products at a reasonable price isn’t enough. We know that customer experience is key to gaining long-term loyal customers, obtaining reviews and referrals, and growing in the long term. But too many brands believe that a great customer experience means
+surprising and delighting customers
+.
+Frankly, handwritten notes and freebies don’t make for a great customer experience or a winning strategy. That’s not why customers reach out to your brand, nor is it what drives customer retention. They reach out to support for quick, helpful, effortless experiences; this is what makes top-notch
+customer service so important
+. Then (and only then) should you put the cherry on top with surprising, delightful extras.
+Why “surprise and delight” is not a viable customer service strategy
+Top-notch customer support is like an ice cream sundae, and efforts to thrill customers are the sprinkles and cherries on top. Sprinkles and cherries are great, but they don’t make for a satisfying sundae on their own.
+Customers won’t be that amused if you make them wait on hold for 45 minutes and greet them with lighthearted jokes. Likewise, you’ll make a customer feel frustrated if you spend your budget on freebies but ignore implementing customer feedback about the product.
+More than anything, customers who contact a brand's customer service team want their problems solved quickly and well. Fast, helpful, low-effort experiences are the base of your sundae, and any extra efforts to delight the customer are sure to fall flat if you can't do that.
+Customer service interactions tend to drive disloyalty, not loyalty
+According to Emplifi
+, 49% of consumers have left a brand in the past year due to a poor customer experience. Also, according to
+The Effortless Experience
+, an influential customer service book by best-selling author Matthew Dixon, customer service interactions are 4x more likely to drive customer disloyalty than they are to drive customer loyalty.
+The Effortless Experience
+If 20% of support interactions leave customers delighted and 80% leave customers frustrated, your greatest opportunity is to reduce frustration, not chase after hard-to-achieve delight.
+Ecommerce customer delight isn’t linked to loyalty (and it’s expensive)
+The Effortless Experience
+also reveals that going “above and beyond” isn’t even what drives that 20% of loyalty-building interactions. While companies assume exceeding customer expectations generate superfans, customers are generally just as satisfied when companies simply meet their expectations.
+And 80% of companies who use customer delight as a strategy say they spend heavily on providing this delight: More overhead from giveaways, VIP kickbacks, refunds, and policy exceptions. Given that these delightful experiences don’t correlate to customer loyalty, this is not money well spent.
+Support’s biggest impact is to mitigate disloyalty by reducing customer effort
+If we zoom into what drives customers away, the most common issue is a high degree of effort — not a lack of gifts or delightful conversations. Common reasons for high-effort experiences include:
+Multiple contacts to resolve an issue
+Repeating information
+Getting transferred between channels
+The negative impact of these high-effort experiences is staggering. According to The Effortless Experience, a whopping 96% of customers who had high-effort experiences feel disloyal to those companies afterward.
+To put it simply, most companies are trying to go “above and beyond” before they effectively provide the baseline of customer service, which is a helpful and low-effort experience.
+How to minimize customer effort: The better version of surprise and delight
+The key to customer retention is reducing customer effort.
+94% of customers
+intend to purchase after a low-effort experience compared to a slim 4% after high-effort experiences, making it an essential part of a best-in-class customer experience. Lowering customer effort involves designing an intuitive user experience, decreasing the number of steps required to complete tasks, improving reply and response times (along with other key
+customer support metrics
+), and using forward resolution in support.
+Here are five more quick wins to reduce customer effort in ecommerce:
+1) Offer self-service functionality on your website
+88% of customers
+expect your online store to offer some kind of self-service.
+Self-service resources
+could be as simple as a
+frequently-asked questions (FAQ) page
+or more interactive functionality to manage orders without having to reach out to customer support.
+For merchants using Gorgias, you can set up a Help Center that does both in just a few clicks. Customers can read articles about your brand and shipping policy, and check their delivery status (
+which they do an average of 4.6 times
+for every order) instantaneously.
+Here’s a great example of self-service order management on Steve Madden’s Help Center:
+Steve Madden
+Learn more about self-service order management with Gorgias.
+2) List answers to pre-sales questions in a help center
+Once you have an
+FAQ page
+or
+customer knowledge base
+, one type of question to proactively answer is pre-sales questions. These are questions potential customers have while mulling over a purchase in their heads before hitting “Place order” at checkout:
+Is it the right size for me?
+Is it compatible with products I already own?
+Can I return it if I’m dissatisfied?
+Will it arrive before the holidays?
+If customers have to reach out and wait for an answer, they might just abandon the purchase and look for another online retailer that better addresses their questions. At least, that’s the case for the 63% of customers who attempt to solve issues via
+self-service support
+before reaching out.
+So, don’t delay in making clear sizing guides, shipping policies,
+returns policies
+, and other self-service information that your customers need to confidently make a purchase.
+3) Use forward resolution in customer support to avoid unnecessary follow-ups
+Forward resolution is the practice of solving anticipated issues for customers before the customer even thinks to ask.
+Let’s look at a real-world example: A customer inquires about shipping times to their local region. The support agent can see they have items in their cart that are on pre-order and, while answering the customer’s question about shipping time, also tells them that pre-order items are sent separately and that they can track delivery status through self-service. The agent has answered the initial question and forward-resolved two potential issues — reducing effort for the customer.
+If you can, audit multi-touch tickets from the past few months to understand which questions tend to have natural follow-ups you can proactively answer. Then, add that follow-up information to your templates, or
+Macros
+if you use Gorgias, to improve your customer experience.
+Here’s a Macro that not only answer’s a customer question about the location of an order, but lets them know when that order will be shipped:
+Learn more about resolution time from Gorgias’s Director of Customer Support
+.
+4) Know more, ask les‍s
+One of the most damaging mistakes is making customers repeat themselves. Agents need that information to do their jobs well, but asking a customer to repeat their story at every juncture is a surefire way to damage a valuable customer relationship.
+Instead, give customer service representatives all the customer context they need from the jump. Gorgias’s customer sidebar gives agents valuable context like purchase and communication history (from
+Shopify
+or
+BigCommerce
+), reviews information, cart data, social media engagement, and
+much
+more so customers don’t need to constantly retell their story.
+Learn more about Gorgias's customer sidebar (and how it helps you better understand and serve your customers).
+5) Make your support more convenient with automation and omnichannel
+90% of customers
+say an “immediate” response is important, and
+78% of customers
+prefer a variety of support channels to get in contact with customer support.
+To answer questions faster, consider using a customer support platform with
+automation
+features to help your team move faster and automatically respond to repetitive customer questions. Gorgias’ automated system can help you prioritize customer service requests, tag the appropriate agent, and close no-response tickets so you spend less time on admin work. And, with the help of pre-written Macros, automated Rules, and
+chatbot-like self-service flows
+, you can send instant, personalized responses to questions like, “Where is my order?”
+Additionally, explore expanding to an omnichannel or multichannel
+ecommerce customer service
+strategy, which gives customers more touchpoints for your brand. Customers value the convenience of
+texting your brand
+,
+calling your brand
+, and
+hearing from you on social media
+. If you’re only available via email, you will likely lose customers due to high effort.
+Read our guide to
+omnichannel customer service
+or check out our
+unified helpdesk
+to learn more.
+{{lead-magnet-2}}
+6 ways to delight ecommerce customers (once they have a low-effort experience)
+Don’t get us wrong, customers usually enjoy an extra bit of pizazz or a freebie. And those sprinkles can even boost your brand’s
+conversion rate
+in the short term and boost customer loyalty in the long term — as long as they’re not associated with a high-effort experience.
+Take a look at the following customer delight strategies and consider adopting them
+only
+once you’ve developed a low-effort customer experience as a foundation.
+1) Offer free shipping (the new normal for customer satisfaction)
+According to a 2021 survey,
+66% of customers expect free shipping
+with every online purchase. This means that free shipping is often more of an expectation than a bonus — thanks, Amazon. Nevertheless, offering free shipping to your customers can still be a great way to encourage customer delight in many cases.
+Customers love the word "free," even if the money that they are saving is only a few dollars. In fact, many stores can raise their product pricing slightly to make up for shipping costs and still see a boost in conversion rate from offering free shipping.
+If you can’t offer free shipping to every customer, setting qualifying amounts is a good way to delight customers with free shipping while also driving higher average order values.
+Woxer
+is one ecommerce brand that offers free shipping on all domestic orders and some international orders. Plus — another
+best practice
+— Woxer makes this information easily accessible as a
+Quick Response
+in their live chat widget.
+Woxer
+For more help on how to offer free shipping without losing too much money, check out our guide to offering free shipping.
+2) Launch a customer referral program
+Creating a customer referral portal or program offers dual benefits. For one, it helps your brand attract new customers by encouraging them to refer their friends, family, and colleagues through word-of-mouth advertising. Along with introducing your brand to new potential customers, referral programs can also be a great way to blow away your customers: Everyone loves the opportunity to earn discounts and rewards!
+If your ecommerce company has a strong
+net promoter score (NPS)
+, you’re positioned to launch a referral program, capitalize on that goodwill, and delight your customers. If you want to start a referral marketing program, check out tools like
+Extole
+which systematically reward customers who bring you business via word of mouth.
+3) Post user-generated content on social media
+Recognition is its own reward, and a shout-out on social media is something most customers enjoy. Highlighting customers who use your products, positive customer reviews, and other delightful interactions allow you to celebrate customers and add social proof to your social media profile. It also reduces the number of content marketing materials you need to produce on your own.
+Marine Layer's Instagram
+is full of customer shout-outs and other user-generated content that your brand may be able to pull inspiration from:
+Marine Layer
+4) Use loyalty programs to reward VIP customers
+Like a referral program, a loyalty program rewards customers for repeat purchases and continued brand loyalty. If your customer experience is already smooth enough to bring in repeat customers, delighting those superfans with rewards is a strong strategy.
+If you already use Gorgias, you can integrate loyalty platforms like
+LoyaltyLion
+to make the customer experience even more seamless. For example,
+esmi Skin Minerals
+uses Gorgias and its integration with Loyalty Lion to bring loyalty data into Gorgias and provide even more personalized, automated service to shoppers. Thanks to this powerful integration, esmi achieved a 58% boost in brand loyalty program enrollment and a 2X increase in average loyalty program member spend.
+Learn more about how esmi uses Gorgias and Loyalty Lion to improve loyalty program enrollment rates and double the lifetime value of its loyal customers.
+5) Celebrate customer milestones for loyal customers
+Even if you don’t have an official loyalty program, you can celebrate your VIP customers at key milestones like birthdays or the anniversary of their first purchase. On top of sharing some warm and fuzzies (and maybe free product), one benefit of this kind of celebration is to potentially get a shoutout from customers on social media for your surprise.
+Check out our
+CX Growth Playbook
+to learn how to implement this tip with Zapier, plus read about 18 other tactics to drive growth through customer experience.
+{{lead-magnet-1}}
+6) Optimize proactive customer service across the customer journey
+One way to delight customers is to move beyond purely reactive customer service, which requires customers to reach out to get help. With
+proactive customer service
+, a combination of directly reaching out to customers and creating self-service resources, you can help more potential customers,
+reduce cart abandonment
+, and improve your brand’s customer experience.
+Proactive customer support could include self-service resources, like those described above. It also includes non-intrusive
+chat campaigns
+, which let you automatically reach out to customers who display certain behaviors to offer support. For example, you could reach out to customers who linger on a product page to ask if they have questions about the product or need a recommendation on sizing.
+Here’s what Ohh Deer, an online retailer that sells delightful stationery, says about chat campaigns:
+“With chat campaigns, the goal is to remove any customer equivocation and get the customer to the product they really want.”
+– Alex Turner, Customer Experience Manager at Ohh Deer
+Learn how Ohh Deer drives $12,500 each quarter through Gorgias chat.
+Delight and retain your ecommerce customers with low-effort support
+The key to
+great customer service
+isn’t some sparkly delight. It’s efficient, convenient, and helpful support that customers can access in a variety of ways.
+With Gorgias, ecommerce brands can access the tools and integrations they need to automate time-consuming tasks, provide instant answers, and reduce the number of times customers have to write in and wait for your customer support team’s answer. Through our platform, your customer support team becomes more than just a team to answer customer questions — it becomes a revenue-generating machine.
+Book a demo to see how Gorgias can help your ecommerce brand.
+Customer Experience
+Start driving revenue from every conversation
+See how it works
+Sign up for free
+Product
+Industries
+Compare
+Resources
+Company
+Product
++ Shopify
++ WooCommerce
++ BigCommerce
++ Magento
++ PrestaShop
+Support by Phone
+Latest Releases
+Support Documentation
+Developers
+Service Status
+Roadmap
+Pricing
+Industries
+Clothing & Apparel
+Beauty & Cosmetics
+Home & Garden
+Subscriptions
+Health & Wellness
+Food & Beverage
+Luxury & Jewelry
+Sports & Fitness
+Pet & Animal
+Baby
+Retail
+Consumer Electronics
+B2B
+Compare
+Zendesk
+Kustomer
+Gladly
+Intercom
+Richpanel
+Re:amaze
+Gmail
+Zowie
+Ada
+Siena
+Yuma
+Resources
+Playbooks
+Ebooks
+Blog
+Customer Stories
+App store
+Refer a Friend
+Refer a Client
+Help center
+Gorgias Academy
+Customer Resources
+Onboarding
+Company
+About Gorgias
+Careers
+Events
+Sustainability
+People resources
+Gorgias Partners
+Become a Partner
+Affiliate program
+Partner Login
+Gorgias brand
+Hey AI, learn about us
+The Conversational AI platform for ecommerce.
+Get updates on Gorgias
+Social
+© 2026. All rights reserved.
+Privacy
+Legal
+Terms of Use
+Terms of Service
+Security
+Accessibility
+Gorgias Product
+Pricing
+Table of contents

@@ -1,0 +1,465 @@
+{"source_id": "medallia-recap", "url": "https://www.medallia.com/blog/reinventing-medallia-for-the-ai-era-what-that-means/", "final_url": "https://www.medallia.com/blog/reinventing-medallia-for-the-ai-era-what-that-means/", "http_status": 200, "retrieved_at": "2026-09-19T03:26:20.430966+00:00", "sha256": "d1c305b24b435e34d132ecfd823598a87f41d45febf55c985e1f06386ebf1bed", "content_type": "text/html; charset=UTF-8"}
+
+We’re Reinventing Medallia for the AI Era. Here’s What That Means. – Medallia
+Why Medallia
+Why Medallia
+Learn how partnering with us can transform your business — for both customers and
+                                        employees.
+Success Stories
+See results from brands like yours
+Enterprise-Grade Platform
+Explore all features and benefits
+World-Class Service
+Get support for crucial operations
+Global Impact
+Impact the world beyond your own
+AI Leadership
+Follow our AI experience innovations
+Partner Network
+Access approved, localized expertise
+Platform
+Medallia Platform
+Explore how experiences come together in one powerful platform.
+Comprehensive Feedback Capture
+Collect every signal for more meaningful data
+Administration
+Run complex, global programs with self-service
+Role-Based Reporting
+Close the loop and drive action quickly
+AI & Analytics
+Uncover essential insights from every interaction
+Integrations
+Easily share data across systems and teams
+Pricing
+Expand your program with flexible pricing
+Enterprise-Grade Security
+Keep your business data safe and compliant
+Solutions
+Customer Experience
+End-to-end customer experience management and orchestration
+Overview
+Customer Experience Management
+Digital Experience
+Experience Orchestration
+Personalized Messaging
+Employee Experience
+Employee listening and activation solutions
+Overview
+Employee Listening
+Employee Activation
+Contact Center
+Improve agent engagement and optimize service quality
+Overview
+Conversational Intelligence
+Agent Coaching
+Quality Management
+Intelligent Callback
+Market Research
+Expert research strategy, design, analytics, and deliverables
+Overview
+Agile Research
+Video
+Research Strategy & Services
+Industries
+Automotive
+Financial Services
+Healthcare
+Insurance
+Life Sciences
+Manufacturing
+Public Sector
+Retail
+Restaurants
+Technology & Services
+Telco & Media
+Travel & Hospitality
+Utilities
+Resources
+Discover
+Get guidance from leading experience professionals across a variety
+                                                    of mediums.
+Blog
+Newsroom
+Customer Stories
+Industry Recognition
+Event Calendar
+Medallia Xchange
+Learn
+Whether a tenured Medallia pro or a burgeoning advocate, there’s
+                                                    plenty to learn.
+Training & Certification
+Medallia User Group
+Experience 101
+Experience Now
+Resource Hub
+Partners
+Support
+Our team is ready to support you with knowledge, help,
+                                                    and new enhancements.
+Knowledge Center
+Contact Support
+Explore Experience '27.
+Build what's next with us in Las Vegas, February 9-11, 2027.
+See event details
+Solutions
+By use case
+By role
+By industry
+Integrations with your tools
+Platform
+How Medallia works
+AI that takes action
+Pricing
+Customer Stories
+Learn
+Resource Hub
+News
+Events to attend
+Why Choose Medallia
+What’s new in the platform
+Support
+Contact Support
+Knowledge Center
+User Groups
+Why Medallia
+Why choose Medallia?
+Customer stories
+Comparisons to alternatives
+Pricing
+Solutions
+By industry
+Retail
+Financial Services
+Travel & Hospitality
+Healthcare
+See all
+By role
+Customer Experience
+Contact Center
+Digital
+Employee Experience
+See all
+By use case
+Grow revenue and retention
+Drive impact across key moments
+Reduce costs and drivers of friction
+Reduce risk and liability
+Platform
+How Medallia works
+AI that takes action
+Integrations with your tools
+What's new in the platform
+Resources
+Learn
+Playbooks, Guides, How-to's
+News
+Events to attend
+Support
+Contact Support
+Knowledge Center
+User Groups
+English
+SELECT YOUR REGION & LANGUAGE
+English
+France (Français)
+Germany (Deutsch)
+Spain (Español)
+Latam (Español)
+Italy (Italiano)
+Japan (日本語)
+Korea (한국어)
+Brazil (Português Brasileiro)
+Request a demo
+Request a demo
+Why Medallia
+Why Medallia
+Learn how partnering with us can transform your business — for both
+                                                customers and employees.
+Success Stories
+See results from brands like yours
+World-Class Service
+Get support for crucial operations
+Enterprise-Grade Platform
+Explore all features and benefits
+Global Impact
+Improve the world beyond your own
+AI Leadership
+Follow our AI experience innovations
+Partner Network
+Access approved, localized expertise
+Platform
+Medallia Platform
+Explore how experiences come together in one powerful
+                                                platform.
+Comprehensive Feedback Capture
+Collect every signal for more meaningful data
+Administration
+Run complex, global programs with self-service
+Role-Based Reporting
+Close the loop and drive action quickly
+AI & Analytics
+Uncover essential insights from every interaction
+Integrations
+Easily share data across systems and teams
+Pricing
+Expand your program with flexible pricing
+Enterprise-Grade Security
+Keep your business data safe and compliant
+Solutions
+Customer Experience
+End-to-end customer experience management and
+                                                            orchestration
+Customer Experience Management
+Tracking & measurement to improve customer loyalty
+Digital Experience
+Capture & scoring for digital journeys
+Experience Orchestration
+Individualized customer journeys at scale
+Personalized Messaging
+AI-driven two-way messaging
+Employee Experience
+Employee listening and activation solutions
+Employee Listening
+Candidate to exit experience feedback
+Employee Activation
+Real-time feedback tied to stakeholder action
+Contact Center
+Improve agent engagement and optimize service
+                                                            quality
+Conversational Intelligence
+Automated insights from every conversation
+Agent Coaching
+Frontline-specific coaching
+Quality Management
+QM and assurance optimization
+Intelligent Callback
+Virtual hold and scheduling technology
+Market Research
+Expert research strategy, design, analytics, and
+                                                            deliverables
+Agile Research
+Pre-built surveys for quick insights
+Video Research
+Online focus groups and panel studies
+Research Strategy & Services
+In-house experts for customized research
+Industries
+Industries
+Explore our best-in-class experience management solutions for your
+                                                industry
+Automotive
+Financial Services
+Healthcare
+Insurance
+Life Sciences
+Manufacturing
+Public Sector
+Restaurants
+Retail
+Technology & Services
+Telecom and Media
+Travel & Hospitality
+Utilities
+Resources
+Discover
+Get guidance from leading experience professionals
+                                                        across a variety of mediums.
+Blog
+Newsroom
+Customer Stories
+Industry Recognition
+Event Calendar
+Medallia Xchange
+Learn
+Whether a tenured Medallia pro or a burgeoning
+                                                        advocate, there's plenty to learn.
+Training & Certification
+Medallia User Group
+Experience 101
+Experience Now
+Resource Hub
+Partners
+Support
+Our team is ready to support you with knowledge, help,
+                                                        and new enhancements.
+Knowledge Center
+Contact Support
+Explore Experience '27.
+Build what's next with us in Las Vegas, February 9-11, 2027.
+See event details
+Solutions
+By use case
+By role
+By industry
+Integrations with your tools
+Platform
+How Medallia works
+AI that takes action
+Pricing
+Customer Stories
+Learn
+Resource Hub
+News
+Events to attend
+Why Choose Medallia
+What’s new in the platform
+Support
+Contact Support
+Knowledge Center
+User Groups
+Why Medallia
+Why choose Medallia?
+Customer stories
+Comparisons to alternatives
+Pricing
+Solutions
+By industry
+Retail
+Financial Services
+Travel & Hospitality
+Healthcare
+See all
+By role
+Customer Experience
+Contact Center
+Digital
+Employee Experience
+See all
+By use case
+Grow revenue and retention
+Drive impact across key moments
+Reduce costs and drivers of friction
+Reduce risk and liability
+Platform
+How Medallia works
+AI that takes action
+Integrations with your tools
+What's new in the platform
+Resources
+Learn
+Playbooks, Guides, How-to's
+News
+Events to attend
+Support
+Contact Support
+Knowledge Center
+User Groups
+English
+SELECT YOUR REGION & LANGUAGE
+English
+France (Français)
+Germany (Deutsch)
+Spain (Español)
+Latam (Español)
+Italy (Italiano)
+Japan (日本語)
+Korea (한국어)
+Brazil (Português Brasileiro)
+Request a demo
+Request a demo
+Customer Experience
+We’re Reinventing Medallia for the AI Era. Here’s What That Means.
+by
+Mark Bishof
+June 17, 2026
+Today
+we announced
+that Medallia has new ownership by an investor group, led by Blackstone, through a recapitalization agreement. This move provides $150 million in new capital for our innovation, services, and product roadmap.
+I joined Medallia 18 months ago and brought in a new
+executive team
+to reinvent both our business and the experience management space, building on Medallia’s strong foundation. This team represents the deepest collective expertise in the industry. And over the last year and a half, we’ve been executing a deliberate strategy to capture the market opportunity ahead of us. Today, we are officially ushering in our next chapter.
+Here is what we are building — and why now is exactly the right moment.
+What the world’s largest enterprises are demanding right now
+Across every industry we serve, the conversations I am having with enterprise leaders have shifted significantly. The question is no longer whether AI belongs in their experience programs, it is which platform can deliver AI capabilities with the scale, security, and reliability their operations require. What they are asking for is specific. They want platforms that do not just surface what is happening across customer and employee journeys — they want platforms that act on it. Automatically. Across the organization. Connected to the operational systems their business runs on. They want continuous improvement programs driven by real-time intelligence, not quarterly review cycles. They want the ability to resolve a customer issue before it escalates, to identify an employee experience problem before it affects retention, to connect a signal from the contact center to a decision in product or operations without routing it through a manual process.
+The demand is real and it is accelerating faster than most anticipated. We are built to meet it.
+The platform we are building
+For the past 18 months we have been reimagining the platform around exactly this demand. The work is already underway and today’s capital accelerates every dimension of it, with focus anchored in:
+Conversational feedback experiences.
+AI-driven orchestration and automation that transforms how enterprises engage with and respond to customers  — continuously, across every channel, in real time. Not periodic listening programs but interactive, always-on dialogue that captures feedback and provides contextualized responses automatically.
+AI-driven action orchestration.
+The ability to connect experience data across every touchpoint in the customer and employee journey and coordinate enterprise-wide responses in real time. When a signal emerges in one part of the organization, the platform connects it to action across systems and functions — services, operations, product, HR — without requiring a human to broker the handoff. This is how large enterprises move from managing experience in silos to driving systemic, continuous improvement.
+Agentic automation.
+A platform that does not just identify what is happening but autonomously determines root causes, triggers the appropriate response, and resolves issues without manual intervention at every step. This is the capability enterprise leaders are asking for most urgently: AI that can take action, not just generate a report. The result is a system that gets smarter and faster with every interaction.
+We have new solutions in development in each of these areas — ahead of anything we have publicly shared. Today’s capital accelerates our innovation.
+Why Medallia is positioned to deliver this at enterprise scale
+The enterprises that trust Medallia are operating at a scale and complexity that sets a high bar. Global organizations manage hundreds of millions of customer interactions and millions of employee touchpoints, across dozens of markets, on infrastructure that has to continue to modernize.
+We don’t just serve large organizations, we integrate into their operational fabric. By anchoring enterprise-grade security, complex data integrations, and the operational resilience of global deployment into our architecture, we’ve built structural stability that others simply cannot replicate.
+What we are adding is an AI-native platform layer that is built from the ground up, not retrofitted onto existing products, for the demands of AI-first experience management. All while preserving and extending everything our customers rely on today.
+The combination of proven enterprise infrastructure and a platform reimagined for AI is what will separate the leaders in this market. That is the conviction driving everything we are building. The capital from today’s transaction funds that commitment at the scale it requires, backed by investors who have spent decades building enterprise technology companies and who understand what it takes to win at this level.
+The timing is deliberate. We have de-levered the business at a moment when financial flexibility is becoming a genuine competitive differentiator. The ability to invest aggressively, move quickly, and make long-term platform commitments without a debt overhang is not something every player in this market can claim right now.
+We can.
+What this means for our customers
+If you are a Medallia customer, here is what today means: the investment behind your partnership is now better resourced than it has ever been.
+What changes is the pace. The AI-driven orchestration tools, the conversational feedback experiences, the agentic automation capabilities that will change how your organization acts on experience data — all of it moves faster. We’re pairing that accelerated innovation with investment in professional services and modernization to help you maximize the value you get from Medallia.
+We are in this business to drive outcomes. Business transformation. Measurable improvement in the metrics that matter most to your organization. That has always been true. What changes today is how fast we can deliver on it, and at what scale.
+The trust our customers place in us is not lost on me. They run some of the world’s most consequential customer relationships through our platform. Billions of interactions, across millions of their customers, every day. That is a serious responsibility. We have built the enterprise-grade governance, security, and controls that trust demands. Today’s investment means we go further and faster on behalf of the organizations that trust us to get it right.
+If you have questions or want to talk through what this means for your business, reach out to me directly at
+[email protected]
+.
+To the Medallia team
+You have been executing a transformation plan that required you to trust the direction before the destination was fully visible. You rebuilt how we go to market, how we build products, and how we serve customers. Now, we are poised to invest more in this business.
+We already have a world-class team that has been driving innovation and building this platform to where it is today — strong and ready to scale. Now, we intend to grow, recruiting even more engineers, product managers, services talent, sales talent, and more.
+Today closes the open question on the capital structure and raises the bar on what we are expected to deliver. We have the foundation, the investment, and the backing to execute at a level this company has not had before. I expect us to meet that moment — and I have no doubt we will.
+Customer Experience
+September 4, 2026
+Struggling to Convince Other Teams to Share Customer Data? Here’s What Works
+Customer Experience
+August 24, 2026
+Why the Right Talent is Paramount for Engineering the Future of CX
+Customer Experience
+August 11, 2026
+CX Leaders, Here’s How to Earn Buy-In
+There’s a hidden story in your data.
+Connect with one of our experts to learn more.
+Request a demo
+Request a demo
+Why Medallia
+Why Medallia
+Experience
+Experience Hub 101
+Net Promoter Score
+Voice of the Customer
+CEM Software
+Customer Experience Management
+Customer Retention
+Platform
+Text Analytics
+Admin Suite
+Ask Now
+Mobile
+Pricing
+Company
+About Medallia
+Customers
+Services
+Events
+Industry Recognition
+Newsroom
+Contact
+Brand Guidelines
+Resources
+Developer Portal
+Documentation
+Blog
+Medallia Leadership Team
+Partners
+Data Protection
+Careers
+English
+SELECT YOUR REGION & LANGUAGE
+English
+France (Français)
+Germany (Deutsch)
+Spain (Español)
+Latam (Español)
+Italy (Italiano)
+Japan (日本語)
+Korea (한국어)
+Brazil (Português Brasileiro)
+Terms of
+                            Use
+Privacy
+                            Policy
+Security
+Copyright © 2026 Medallia, Inc. All rights reserved.
+© Medallia®, the Medallia logo, and the names and marks associated with Medallia’s products are trademarks of Medallia and/or its affiliates. Net Promoter, Net Promoter Score and NPS are registered trademarks of Bain & Company, Inc., Fred Reichheld and Satmetrix Systems, Inc. All other trademarks are the property of their respective owners.

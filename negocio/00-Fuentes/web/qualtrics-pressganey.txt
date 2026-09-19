@@ -1,0 +1,318 @@
+{"source_id": "qualtrics-pressganey", "url": "https://www.qualtrics.com/news/qualtrics-acquires-press-ganey-forsta/", "final_url": "https://www.qualtrics.com/news/qualtrics-acquires-press-ganey-forsta/", "http_status": 200, "retrieved_at": "2026-09-19T03:26:18.394104+00:00", "sha256": "05b1b04be98ecd8b0c338250a6b7573a727053977021f2eac91fa9611b5a831d", "content_type": "text/html; charset=UTF-8"}
+
+Qualtrics Acquires Healthcare Experience Leader Press Ganey Forsta
+Skip to main content
+Newsroom
+Qualtrics Acquires Press Ganey Forsta
+Qualtrics Acquires Healthcare Experience Leader Press Ganey Forsta for $6.75 Billion: Expands Experience Management (XM) Category Leadership Creating World’s Largest AI Dataset for Human Experiential Context Ever Assembled
+May 18, 2026
+Qualtrics
+Adding Press Ganey Forsta, the trusted standard for healthcare experience, to the Qualtrics XM dataset combines decades of proprietary healthcare data and regulatory systems with the leading XM AI & data platform to supercharge human experience management for all industries.
+AI is redefining patient expectations in real time, and healthcare systems are racing to close the gap between clinical excellence and modern consumer-grade experiences.
+Qualtrics + Press Ganey Forsta gives healthcare leaders the power to anticipate patient needs before they escalate, transforming healthcare experience from reactive measurement into predictive action.
+The largest tech acquisition in Utah history marks a defining moment for the future of AI, healthcare, and Experience Management.
+Share
+Copied To Clipboard!
+PROVO, Utah — May 18, 2026 — Today Qualtrics announced the completion of its acquisition of Press Ganey Forsta for $6.75 billion USD. Qualtrics created the Experience Management category to deliver legendary experiences for organizations and the people they serve.  The acquisition expands the world’s largest proprietary human Experience Management (XM) AI & data platform with the scale and depth of the world’s largest healthcare experience dataset.
+The Experience Gap problem
+The experience gap is the delta between what patients expect versus what organizations can deliver. Life is moving at the speed of AI and expectations have never been higher.
+Patients no longer compare their healthcare experience to the hospital across town, but to the best hospitality, travel, dining, concierge, and digital experiences they have anywhere in their lives. Now, people walk into healthcare systems informed, researched, empowered, anxious, and expectation-hungry with an AI doctor in their pocket.
+“AI permanently changed what people expect from every experience in their lives,” said Jason Maynard, CEO of Qualtrics. “That’s why the future will be won in the Experience Gap. Leaders want to deliver intelligent, responsive, and predictable human experiences. In the age of AI, experience is now the differentiator in every industry, and for the first time ever that problem can be solved in healthcare. The rich data and context intelligence we are building raises the standard for what experience management can do across every industry we serve.”
+Experience Management is the required context for human-first AI experiences
+The Qualtrics proprietary XM AI and data platform provides the human understanding and contextual inference that large language models alone lack. This transforms proprietary experiential signals into trusted, outcome-driven experiences in every moment that matters.
+Press Ganey Forsta is the trusted standard for healthcare experience. More than 41,000 healthcare facilities rely on Press Ganey Forsta measurement systems, including the majority of U.S. hospitals. This proprietary advantage is based on decades of patient voice data, deep relationships with provider, payer, and post-acute leaders. This unique combination is purpose-built for the clinical, regulatory, and operational realities of care delivery.
+The combination of Qualtrics and Press Ganey Forsta enables healthcare providers and payers to benefit from the most robust and complete human experience set of experiential data in the world.
+This dataset creates the engine for a new generation of Al-driven synthetic experience intelligence systems capable of simulating outcomes, predicting human needs and behaviors, and orchestrating more personalized experiences at unprecedented scale.
+The future of healthcare will be defined by both clinical excellence, and the ability to orchestrate connected, whole-person experiences across the entire spectrum of healthcare, recovery, behavioral health, preventative care and wellness.
+With the acquisition of Press Ganey Forsta the Experience Management dataset expands significantly with the inclusion of an entirely unique and broad dimension of data around the most important element of every human’s life, their health.
+For Qualtrics customers in financial services, public sector, technology, retail, hospitality, and beyond, this means a more powerful platform — more data, more context, and more precise AI — in service of the same outcomes they rely on Qualtrics to deliver today.
+Leaders across healthcare support the combination of Qualtrics and Press Ganey Forsta
+"The opportunity ahead for healthcare is not simply more data or more AI, it is the ability to turn insight into timely, human-centered action,” said
+David Entwistle, President and CEO of Stanford Health Care.
+"As the industry evolves, organizations that succeed will be those that pair proven technology with deep expertise in patient and care team experience to drive meaningful improvements in care delivery, trust, and outcomes."
+“At Carilion, our focus is always delivering safe, high-quality care and the best care experience for our patients,” said
+Steve Arner, President and CEO of Carilion Clinic
+. “To meet evolving community needs, health systems need to understand what patients and caregivers are experiencing in real time and respond thoughtfully. The combination of Qualtrics and Press Ganey Forsta will help identify timely insights to support informed decisions, stronger connections, and ultimately a better care experience for our team and the patients who depend on us.”
+"Our unwavering commitment has always been to deliver the highest quality, safest and most compassionate care for patients. The combination of Qualtrics and Press Ganey will enable our organization to seamlessly bridge the gap between patient experience and clinical outcomes.  We are excited to leverage these unified capabilities to surface real time insights, act faster and continuously elevate our standard of care,” said
+Stephen J. Motew, M.D., President and CEO of UF Health
+.
+“This combination brings together two dynamic companies that provide deep AI-powered analytic insights and drive improvement, ultimately accelerating our goal to reach zero harm and build resiliency in the workforce, with the benefactors being our patients, families, clinicians and team members,” said
+John Couris, President and CEO of Tampa General Hospital
+.
+“Qualtrics’ acquisition of Press Ganey Forsta reflects a broader industry shift toward unifying experience and operational data to power AI-driven decision-making," said
+Keith Kirkpatrick, VP & Research Director with The Futurum Group
+. "By combining healthcare-specific benchmarking and provider data with its XM platform, healthcare organizations will be well positioned to transition from relying solely on retrospective insights to leveraging real-time, outcome-oriented actions that improve both patient and provider experiences.”
+About The Company
+Together, Qualtrics and Press Ganey Forsta are the world’s leading Experience Management (XM) platform, helping organizations understand, predict, and improve human outcomes across customer, employee, and patient experiences. By uniting Qualtrics’ leadership in Experience Management with Press Ganey Forsta’s Human Experience (HX) Platform, the combined company enables organizations to turn experience insights into strategic advantage across healthcare, financial services, hospitality, retail, technology, and other industries worldwide.
+Tags:
+Customer Service
+Employee Engagement
+Customer Journey
+Healthcare
+✕
+#
+#
+close
+Request a demo
+Thank you
+We'll contact you shortly
+First Name
+Last Name
+Company
+Job Title
+Email
+Phone Number
+- Select -
+Afghanistan
+Åland Islands
+Albania
+Algeria
+American Samoa
+Andorra
+Angola
+Anguilla
+Antarctica
+Antigua and Barbuda
+Argentina
+Armenia
+Aruba
+Australia
+Austria
+Azerbaijan
+Bahamas
+Bahrain
+Bangladesh
+Barbados
+Belarus
+Belgium
+Belize
+Benin
+Bermuda
+Bhutan
+Bolivia
+Bonaire, Sint Eustatius and Saba
+Bosnia and Herzegovina
+Botswana
+Bouvet Island
+Brazil
+British Indian Ocean Territory
+Brunei Darussalam
+Bulgaria
+Burkina Faso
+Burundi
+Cambodia
+Cameroon
+Canada
+Cape Verde
+Cayman Islands
+Central African Republic
+Chad
+Chile
+China
+Christmas Island
+Cocos (Keeling) Islands
+Colombia
+Comoros
+Congo, The Republic of the
+Cook Islands
+Costa Rica
+Côte d'Ivoire
+Croatia
+Curaçao
+Cyprus
+Czech Republic
+Denmark
+Djibouti
+Dominica
+Dominican Republic
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Eritrea
+Estonia
+Ethiopia
+Falkland Islands (Malvinas)
+Faroe Islands
+Fiji
+Finland
+France
+French Guiana
+French Polynesia
+French Southern Territories
+Gabon
+Gambia
+Georgia
+Germany
+Ghana
+Gibraltar
+Greece
+Greenland
+Grenada
+Guadeloupe
+Guam
+Guatemala
+Guernsey
+Guinea
+Guinea-Bissau
+Guyana
+Haiti
+Heard Island and McDonald Islands
+Holy See (Vatican City State)
+Honduras
+Hong Kong, China
+Hungary
+Iceland
+India
+Indonesia
+Iraq
+Ireland
+Isle of Man
+Israel
+Italy
+Jamaica
+Japan
+Jersey
+Jordan
+Kazakhstan
+Kenya
+Kuwait
+Kyrgyzstan
+Lao
+Latvia
+Lebanon
+Lesotho
+Liberia
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+Macau, China
+Macedonia
+Madagascar
+Malawi
+Malaysia
+Maldives
+Mali
+Malta
+Marshall Islands
+Martinique
+Mauritania
+Mauritius
+Mayotte
+Mexico
+Micronesia
+Moldova
+Monaco
+Mongolia
+Montenegro
+Montserrat
+Morocco
+Mozambique
+Myanmar
+Namibia
+Nauru
+Nepal
+Netherlands
+New Caledonia
+New Zealand
+Nicaragua
+Niger
+Nigeria
+Niue
+Norfolk Island
+Northern Mariana Islands
+Norway
+Oman
+Pakistan
+Palau
+Palestine
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippines
+Pitcairn
+Poland
+Portugal
+Puerto Rico
+Qatar
+Réunion
+Romania
+Russia, excluding Crimea
+Rwanda
+Saint Barthélemy
+Saint Helena, Ascension and Tristan da Cunha
+Saint Kitts and Nevis
+Saint Lucia
+Saint Martin (French part)
+Saint Pierre and Miquelon
+Saint Vincent and the Grenadines
+Samoa
+San Marino
+Sao Tome and Principe
+Saudi Arabia
+Senegal
+Serbia
+Seychelles
+Sierra Leone
+Singapore
+Sint Maarten (Dutch part)
+Slovakia
+Slovenia
+Solomon Islands
+Somalia
+South Africa
+South Georgia and the South Sandwich Islands
+South Korea
+South Sudan
+Spain
+Sri Lanka
+Sudan
+Suriname
+Svalbard and Jan Mayen
+Swaziland
+Sweden
+Switzerland
+Taiwan, China
+Tajikistan
+Tanzania
+Thailand
+Timor-Leste
+Togo
+Tokelau
+Tonga
+Trinidad and Tobago
+Tunisia
+Turkey
+Turkmenistan
+Turks and Caicos Islands
+Tuvalu
+Uganda
+Ukraine, excluding Crimea
+United Arab Emirates
+United Kingdom
+United States
+United States Minor Outlying Islands
+Uruguay
+Uzbekistan
+Vanuatu
+Venezuela
+Viet Nam
+Virgin Islands, British
+Virgin Islands, U.S.
+Wallis and Futuna
+Western Sahara
+Yemen
+Zambia
+Zimbabwe
+Country
+Lead Comments
+Yes, I would like to receive marketing communications regarding Qualtrics products, services, and events
+Privacy Optin
+By providing this information, you agree that we may process your personal data in accordance with our
+Privacy Statement
+.
+Submit
+×
+close

@@ -1,0 +1,187 @@
+{"source_id": "loop-pricing", "url": "https://www.loopreturns.com/pricing/", "final_url": "https://www.loopreturns.com/pricing/", "http_status": 200, "retrieved_at": "2026-09-19T03:26:20.673000+00:00", "sha256": "cec22876271f642806a8f8e6c86948240eecf892fbf1cdad7e07ee1c11710944", "content_type": "text/html; charset=utf-8"}
+
+Pricing | Loop Returns
+Products
+Partners
+Resources
+Pricing
+Sign in
+Book a demo
+Pricing
+Pricing plans that work for you
+Explore our pricing plans so you can find the perfect fit for your brand.
+Loop Core
+Tracking
+Bundle & save
+10% OFF
+Checkout+
+Free software + return shipping. All of Loop's best functionality.
+Who is this for?
+Free
+Book a demo
+Includes
+Returns software
+US & Canada domestic return labels
+Return Bars®
+Advanced features
+Package Protection
+Essential
+Cut costs and curate a perfect return experience.
+Starting at
+$155
+per
+month
+Book a demo
+Includes
+Unlimited destinations
+Automated return policies
+Carrier rate shopping
+Workflows
+Advanced
+Turn returns into a new revenue stream and optimize for sustainable growth.
+Starting at
+$340
+per
+month
+Book a demo
+Includes
+Shop Now
+Instant Exchange
+Bonus Credit
+Fraud prevention
+What's included
+Loop Core
+Checkout+
+-
+Free
+Essential
+-
+$155
+/
+month
+/
+m
+Advanced
+-
+$340
+/
+month
+/
+m
+Auto returns processing
+Order editing
+Destinations
+Unlimited
+Unlimited
+Unlimited
+Return policy
+Unlimited
+Unlimited
+Unlimited
+Store credit
+Refund
+Gift receipts/gift returns
+Variant exchanges
+Negotiated rates
+Flat fees for outcomes
+Shipping label customizations
+Insights
+Fraud
+RECOMMENDED
+Workflows
+Integrations
+Dynamic fees
+Custom URL
+Printerless Returns
+Test Environment
+Access to box-free/label-free
+Advanced exchanges
+Keep Item
+Cross Border Returns
+Bundles
+Shop Now
+Instant Exchange
+Bonus Credit
+Store credit incentive
+Loop Point of Sale (POS)
+Shop Later
+Returns and exchanges tracking
+Package Protection
+Checkout+
+Checkout+
+Support
+Checkout+
+-
+Free
+Essential
+-
+$155
+/
+month
+/
+m
+Advanced
+-
+$340
+/
+month
+/
+m
+Dedicated onboarding
+Dedicated support team
+Help Center knowledge base
+Performance review meetings
+20,000+ annual order volume
+20,000+ annual order volume
+20,000+ annual order volume
+Merchant Success Manager
+20,000+ annual order volume
+20,000+ annual order volume
+20,000+ annual order volume
+Stay in the loop
+Subscribe for product updates and Loop’s biweekly newsletter.
+Products
+Intelligence
+Checkout+
+Protection
+Promise
+Editing
+Tracking
+Returns
+Exchanges
+Fraud
+Integrations
+Shipping
+Compare
+Loop vs Narvar
+Loop vs Aftership
+Loop vs ReturnGo
+Loop vs Swap
+Loop vs ZigZag
+Loop vs Refundid
+Resources
+Pricing
+How Loop works
+Loop for Shopify
+Blog
+Case studies
+Swipe files
+Events
+Help center
+Status
+Developers
+Company
+About us
+In the news
+Careers
+Security
+Contact us
+FAQs
+Terms of service
+Privacy notice
+Data processing addendum
+Partners
+Partner hub
+Apply to become a partner
+Cookie Preferences
+© 2026 Loop Returns

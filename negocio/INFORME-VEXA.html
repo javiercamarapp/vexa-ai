@@ -1,0 +1,1923 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>VEXA — mercado, TAM/SAM/SOM y negocio</title><style>
+:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;color:#202124;background:#efefed;font:16px/1.6 Arial,Helvetica,sans-serif}main{max-width:1120px;margin:35px auto;background:white;padding:64px 72px}.eyebrow{font-size:12px;letter-spacing:2px;font-weight:700}.cover{min-height:760px;display:flex;flex-direction:column;justify-content:center;border-bottom:3px solid #111;margin-bottom:42px}.cover h1{font-size:76px;line-height:1;margin:24px 0}.cover h2{font-size:31px;font-weight:400;max-width:730px}.cover .note{border-left:4px solid #222;padding:14px 20px;background:#f4f4f1;font-size:15px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0}.stat{border-top:1px solid #bbb;padding:14px 0}.stat strong{font-size:29px;display:block}.stat span{font-size:13px}.meta{font-size:12px;color:#555}.toc{padding-bottom:30px;border-bottom:1px solid #ddd}.toc a{color:#222}article{margin-top:62px}h1{font-size:31px;line-height:1.2;margin:28px 0 24px}h2{font-size:22px;line-height:1.25;margin-top:36px}h3{font-size:17px;margin-top:28px}table{border-collapse:collapse;width:100%;font-size:12px;line-height:1.45;margin:22px 0;table-layout:auto}th{background:#222;color:white;text-align:left}th,td{padding:9px 8px;border-bottom:1px solid #ccc;vertical-align:top;overflow-wrap:anywhere}tr:nth-child(even){background:#f7f7f5}blockquote{padding:12px 22px;background:#f4f4f1;border-left:3px solid #333;margin:22px 0}a{color:#2b5363;overflow-wrap:anywhere}code{font-size:12px;background:#f2f2f0;padding:2px 3px;overflow-wrap:anywhere}pre{white-space:pre-wrap;padding:14px;background:#f3f3f1;font-size:12px;overflow-wrap:anywhere}.chapter-label{font:11px monospace;color:#777;letter-spacing:1px}.footer{font-size:12px;border-top:1px solid #999;margin-top:45px;padding-top:20px}
+@page{size:A4;margin:17mm 15mm 18mm}@media print{body{background:white;font-size:10.2px;line-height:1.45}main{padding:0;margin:0;max-width:none}.cover{min-height:240mm;margin:0;border:0;break-after:page}.cover h1{font-size:66px}.cover h2{font-size:28px}.cover .note{font-size:12px}.toc{break-after:page}article{break-before:page;margin-top:0}h1{font-size:25px}h2{font-size:17px;margin-top:22px}h3{font-size:13px}h1,h2,h3{break-after:avoid}table{font-size:8.3px;line-height:1.35}th,td{padding:6px 5px}thead{display:table-header-group}tr{break-inside:avoid}p,li{orphans:3;widows:3}pre,code{font-size:9px}a{color:#222;text-decoration:none}.stats .stat strong{font-size:26px}.stats .stat span{font-size:10px}}@media(max-width:800px){main{padding:25px;margin:0}.cover h1{font-size:55px}.stats{grid-template-columns:1fr}table{font-size:10px}}
+</style></head><body><main><section class="cover"><div class="eyebrow">VEXA / INVESTIGACIÓN DE NEGOCIO</div><h1>Del feedback<br>a una decisión<br>económica.</h1><h2>Mercado, TAM / SAM / SOM, competencia, estrategia comercial y escenarios financieros.</h2><div class="stats"><div class="stat"><strong>2,975</strong><span>Firmas núcleo USA · Census 2022<br>No clientes calificados</span></div><div class="stat"><strong>US$53.5M</strong><span>TAM núcleo anual a precio supuesto<br>No TAM global ni gasto observado</span></div><div class="stat"><strong>36 meses</strong><span>Modelo reproducible · 3 escenarios<br>No forecast validado</span></div></div><div class="note"><strong>Qué está probado y qué no.</strong> Los conteos proceden de datos oficiales; precios, filtros SAM y desempeño comercial son hipótesis visibles. No hay aquí entrevistas inventadas, clientes simulados ni ahorro atribuido sin evidencia.</div><p class="meta">19 de septiembre de 2026 UTC · USA cuantificado; México contextual<br>Fuentes primarias y comerciales, fórmulas, CSV/XLSX y límites de uso.<br>El software completo y su despliegue siguen pendientes.</p></section><nav class="toc"><h1>Contenido</h1><ol><li><a href="#chapter-1">¿Está al nivel de Documentos Likida?</a></li><li><a href="#chapter-2">Cifras canónicas de mercado y negocio VEXA</a></li><li><a href="#chapter-3">Estudio de mercado: inteligencia económica de posventa para marcas físicas</a></li><li><a href="#chapter-4">ICP, segmentos y comprador: a quién sí y a quién no</a></li><li><a href="#chapter-5">TAM / SAM / SOM — mercado con cuentas reproducibles, no un porcentaje de un mercado gigante</a></li><li><a href="#chapter-6">Competencia y sustitutos — comparación útil para vender, no una tabla de checks inventados</a></li><li><a href="#chapter-7">Financiamiento competitivo y consolidación</a></li><li><a href="#chapter-8">Pricing y unit economics — vender valor sin regalar cómputo/consultoría</a></li><li><a href="#chapter-9">Corridas financieras de 36 meses</a></li><li><a href="#chapter-10">GTM de 90 días: una decisión que cambia, luego repetibilidad</a></li><li><a href="#chapter-11">Investigación primaria pendiente: cómo sustituir hipótesis por evidencia</a></li><li><a href="#chapter-12">VEXA — inteligencia económica de posventa</a></li><li><a href="#chapter-13">Memo para decidir si vale la pena construir y financiar VEXA</a></li><li><a href="#chapter-14">Premortem de negocio, datos y sociedad</a></li><li><a href="#chapter-15">Lista semilla para investigación comercial — NO pipeline calificado</a></li><li><a href="#chapter-16">Registro de fuentes y límites de lectura</a></li></ol></nav><article id="chapter-1"><div class="chapter-label">CAPÍTULO 01 · MAPA-DE-COBERTURA.md</div><h1>¿Está al nivel de Documentos Likida?</h1>
+<p><strong>Antes de esta ampliación, no en negocio.</strong> Había contexto, competencia preliminar y arquitectura; faltaban universo cuantificado, TAM/SAM/SOM, forecast y paquete comercial. Se compararon índice maestro Likida, estudio de mercado y TAM canónico; no se auditó toda esa carpeta ni se certificaron sus cifras históricas. Adoptamos su idea de fuente única, método y límites, no sus números.</p>
+<h2>Equivalencia por contenido, no por nº de archivos</h2>
+<table>
+<thead>
+<tr>
+<th>Rubro de referencia Likida</th>
+<th>VEXA ahora</th>
+<th>Diferencia material pendiente</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Estudio de mercado</td>
+<td>Mercado/valor/cadena/dolor/geografías con fuentes</td>
+<td>No investigación primaria ni mercado global armonizado</td>
+</tr>
+<tr>
+<td>Universo/censo</td>
+<td>XLSX oficial Census, filas, bandas, missing y dedup explícitos</td>
+<td>Censo agregado, no nombres de2,975firmas para vender</td>
+</tr>
+<tr>
+<td>TAM/SAM/SOM</td>
+<td>Fórmulas, escenarios, filtros, cotas y modelo36meses</td>
+<td>Precio/filtros/conversión no medidos; no SAM validado</td>
+</tr>
+<tr>
+<td>Precio/unit economics</td>
+<td>Componentes COGS, sensibilidad, CAC/payback</td>
+<td>Facturas y horas de servicio reales pendientes</td>
+</tr>
+<tr>
+<td>Corridas financieras</td>
+<td>108filas,3escenarios, Excel/CSV/JSON, caja/lag/churn</td>
+<td>No contabilidad ni forecast corroborado con clientes</td>
+</tr>
+<tr>
+<td>Competencia</td>
+<td>Precios públicos actuales, sustitutos, capital y preguntas de demo</td>
+<td>Demos comparadas y cotizaciones no realizadas</td>
+</tr>
+<tr>
+<td>Kit inversionista</td>
+<td>One-pager, memo, FAQ, claims/data room</td>
+<td>Sin round ask aprobado, entidad/cap table por formalizar</td>
+</tr>
+<tr>
+<td>GTM</td>
+<td>Canales, discovery, oferta, pipeline, metas90días</td>
+<td>No outreach ni conversiones observadas</td>
+</tr>
+<tr>
+<td>Base de prospectos</td>
+<td>Diez marcas con categoría/web verificada</td>
+<td>No revenue/stack/contacto/fit calificados; no comparable a un censo propio con evidencia de dolor</td>
+</tr>
+<tr>
+<td>Operaciones/QA</td>
+<td>Dossiers técnicos existentes y prueba de kernel/controller</td>
+<td>Aplicación/conectores/producción pendientes</td>
+</tr>
+<tr>
+<td>Compliance/sociedad</td>
+<td>Riesgos, autorizaciones,30%y separación IP</td>
+<td>No dictamen jurídico o contratos recibidos</td>
+</tr>
+<tr>
+<td>Fuentes/contradicciones</td>
+<td>Registro48capturas/35usadas, limites y datos derivados</td>
+<td>Reportes privados no comprados; fuentes403no leídas</td>
+</tr>
+</tbody>
+</table>
+<h2>Veredicto preciso</h2>
+<p><strong>Ya existe una estructura amplia de investigación de negocio y un modelo numérico defendible en sus supuestos. No existe todavía validación comercial equivalente a un trabajo de campo ni un censo propio de compradores.</strong> El nivel documental mejoró con datos reales; no se fabricaron entrevistas/empresas/clientes para aparentar igualdad.</p>
+<p>Lo que convertiría esta carpeta en evidencia más fuerte: muestra nominal licenciada/deduplicada; filtros SAM medidos sobre muestra adecuada; entrevistas con Finanzas/CX y decisión de compra; piloto autorizado con dinero reconciliado; intervención ejecutada; pago y coste de entrega medidos; repetición fuera del primer partner. Esa evidencia no se obtiene sólo redactando más páginas.</p>
+<h2>Integridad que sí se puede comprobar ahora</h2>
+<ul>
+<li>SHA/archivo original Census, filas18333–18341y9bandas para el2,975.</li>
+<li>Missing bands no rellenados en ramas estrechas; sectores no sumados como empresas únicas.</li>
+<li>Precio y cuatro filtros SAM rotulados ESCENARIO, no atribuidos falsamente al Census.</li>
+<li>Modelo/caja/stock/backlog/ARR vs revenue y formato Excel probados localmente.</li>
+<li>Precios Gorgias reconciliados entre guía y página vigente; financiación no confundida con valuación.</li>
+<li>Fuentes con URL/fecha/hash y errores de acceso explícitos.</li>
+<li>Revisión independiente acotada del modelo y límites, cuando conste su recibo en PROGRESO.md.</li>
+</ul></article><article id="chapter-2"><div class="chapter-label">CAPÍTULO 02 · 05-Precios-y-Finanzas/00-CIFRAS-CANONICAS.md</div><h1>Cifras canónicas de mercado y negocio VEXA</h1>
+<p>Corte de investigación: <strong>19-sep-2026 UTC</strong>. Moneda del modelo: <strong>USD</strong>. Datos oficiales de empresas: <strong>2022</strong>, publicados 10-abr-2025, clasificación NAICS 2017. Los precios propuestos son escenarios de 2026 aplicados a ese universo histórico: NO son un conteo actualizado a 2026.</p>
+<h2>Semáforo obligatorio</h2>
+<ul>
+<li><strong>OBSERVADO:</strong> valor encontrado en tabla primaria o página abierta; no implica que midamos su verdad independientemente.</li>
+<li><strong>DERIVADO:</strong> cálculo reproducible desde valores observados; hereda límites de la fuente.</li>
+<li><strong>ESCENARIO:</strong> depende de precios, filtros o desempeño supuesto; NO es evidencia de tracción.</li>
+<li><strong>NO MEDIDO:</strong> datos propios/piloto/contratos que todavía no existen en esta investigación.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Indicador</th>
+<th style="text-align: right;">Valor</th>
+<th>Naturaleza / procedencia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Firmas NAICS 454110, receipts empresariales ≥$10M y &lt;$100M</td>
+<td style="text-align: right;"><strong>2,975</strong></td>
+<td>DERIVADO de 9 bandas Census, filas Excel 18333–18341</td>
+</tr>
+<tr>
+<td>Establecimientos de esas firmas</td>
+<td style="text-align: right;">3,212</td>
+<td>DERIVADO; no usar establecimientos como clientes</td>
+</tr>
+<tr>
+<td>Firmas retail 44–45, mismas bandas</td>
+<td style="text-align: right;">37,825</td>
+<td>DERIVADO sector; incluye 454110, no sumarlos</td>
+</tr>
+<tr>
+<td>Firmas manufactura 31–33</td>
+<td style="text-align: right;">28,622</td>
+<td>DERIVADO sector, no todas son marcas de consumo</td>
+</tr>
+<tr>
+<td>Firmas mayoreo 42</td>
+<td style="text-align: right;">44,106</td>
+<td>DERIVADO sector, no todas tienen posventa consumidor</td>
+</tr>
+<tr>
+<td>Unión amplia manufactura/mayoreo/retail</td>
+<td style="text-align: right;"><strong>44,106–110,553</strong></td>
+<td>COTA matemática, no censo deduplicado ni TAM elegible</td>
+</tr>
+<tr>
+<td>Precio base supuesto</td>
+<td style="text-align: right;">$1,499/mes; $17,988/año</td>
+<td>ESCENARIO del PRD; no validado por compradores</td>
+</tr>
+<tr>
+<td>TAM núcleo, a precio base</td>
+<td style="text-align: right;"><strong>$53,514,300/año</strong></td>
+<td>ESCENARIO: 2,975 × $17,988; no TAM global</td>
+</tr>
+<tr>
+<td>TAM núcleo sensibilidad precio</td>
+<td style="text-align: right;"><strong>$28.52M–$107.06M/año</strong></td>
+<td>ESCENARIOS a $799–$2,999/mes; no intervalo estadístico</td>
+</tr>
+<tr>
+<td>SAM base</td>
+<td style="text-align: right;"><strong>589.05 cuentas equivalentes; $10,595,831/año</strong></td>
+<td>ESCENARIO con 4 filtros NO medidos; redondear ~589 y ~$10.6M al presentar</td>
+</tr>
+<tr>
+<td>SOM base salida años 1/2/3</td>
+<td style="text-align: right;"><strong>$145,915 / $524,524 / $988,700 ARR</strong></td>
+<td>ESCENARIO de embudo, capacidad, churn y universo agotable</td>
+</tr>
+<tr>
+<td>Ingreso recurrente reconocido base años 1/2/3</td>
+<td style="text-align: right;"><strong>$49,064 / $321,855 / $790,486</strong></td>
+<td>ESCENARIO, distinto de ARR de salida</td>
+</tr>
+<tr>
+<td>Clientes equivalentes base al cierre años 1/2/3</td>
+<td style="text-align: right;"><strong>8.11 / 29.16 / 54.96</strong></td>
+<td>Expectativa matemática; no clientes reales ni cuota prometida</td>
+</tr>
+<tr>
+<td>COGS recurrente ejemplo 50K conversaciones</td>
+<td style="text-align: right;"><strong>$270.90/cuenta-mes</strong></td>
+<td>ESCENARIO, incluye soporte/AI/cloud/reserva/pagos; no factura observada</td>
+</tr>
+<tr>
+<td>Margen bruto recurrente ejemplo base</td>
+<td style="text-align: right;"><strong>81.93%</strong></td>
+<td>ESCENARIO; excluye onboarding/fijos que sí entran al flujo de caja</td>
+</tr>
+<tr>
+<td>Caja base máxima necesaria para primeros 18 meses</td>
+<td style="text-align: right;"><strong>$175,437</strong></td>
+<td>ESCENARIO de déficit acumulado antes de financiar, sin colchón</td>
+</tr>
+<tr>
+<td>Caja base anterior + 6 mensualidades de fijos/marketing año 2</td>
+<td style="text-align: right;"><strong>$289,437</strong></td>
+<td>ESCENARIO; no ask aprobado ni garantía de 24 meses</td>
+</tr>
+<tr>
+<td>Clientes de pago VEXA acreditados en esta investigación</td>
+<td style="text-align: right;"><strong>0 acreditados</strong></td>
+<td>NO MEDIDO: no se aportaron contratos/facturas; no afirmación sobre hechos externos desconocidos</td>
+</tr>
+</tbody>
+</table>
+<h2>Cifras de contexto que jamás se convierten en TAM VEXA</h2>
+<ul>
+<li>Census Q2-2026: <strong>$340.2B</strong> ventas ecommerce USA ajustadas estacionalmente, <strong>17.1%</strong> del retail. Ventas de comercios, no gasto en VEXA.</li>
+<li>NRF/Happy Returns: <strong>$849.9B</strong> devoluciones retail proyectadas para 2025 y <strong>19.3%</strong> de ventas online devueltas. Valor devuelto, no pérdida neta evitada ni mercado software.</li>
+<li>MarketsandMarkets: CEM global <strong>$15.78B en 2026 → $34.02B en 2032</strong>, CAGR <strong>13.7%</strong>; estimación comercial amplia con software/servicios y sectores distintos.</li>
+<li>Shopify: <strong>$378.441B GMV 2025</strong>, reporte financiero p.1; no número de empresas compradoras de VEXA.</li>
+<li>AMVO, edición EVO 2026: <strong>$941 mil millones MXN</strong> y <strong>77.2M compradores</strong>; la página pública no fija inequívocamente el año base de esas dos cifras. No convertir compradores ni ventas en empresas elegibles.</li>
+</ul>
+<h2>Fuente única / cómo cambiar</h2>
+<p>Universo: <code>universo-census.json</code> + <code>census-filas.csv</code> + XLSX oficial en ../00-Fuentes/ (la ruta correcta desde aquí: <code>../00-Fuentes/census-receipts-2022.xlsx</code>). Supuestos: <code>supuestos.json</code>. Cálculo: <code>../../scripts/business_model.py</code> desde la raíz negocio; comando desde proyecto <code>python3 scripts/business_model.py</code>. Resultados: <code>resultados-modelo.json</code>, <code>forecast-36-meses.csv</code> y <code>VEXA-MERCADO-Y-FINANZAS.xlsx</code>.</p>
+<p>Si cambia un input, regenerar modelo/tablas e informe. No corregir a mano sólo el deck. El Excel es una <strong>vista de resultados calculados</strong>, no promete recalcular todo al editar una celda: modificar JSON y volver a generar. Los importes aquí se redondean para lectura, el JSON mantiene precisión de cálculo suficiente.</p></article><article id="chapter-3"><div class="chapter-label">CAPÍTULO 03 · 02-Mercado/estudio-de-mercado.md</div><h1>Estudio de mercado: inteligencia económica de posventa para marcas físicas</h1>
+<h2>1. Mercado que compra VEXA</h2>
+<p>VEXA entra en la intersección de <strong>customer intelligence/VoC</strong>, analítica de servicio, calidad de producto, gestión de devoluciones y planificación económica de operaciones. No sustituye inicialmente al helpdesk, al ERP, al sistema de refunds ni al equipo de garantías. Su trabajo es transformar evidencia dispersa en una decisión: qué problema arreglar, cuánto importe está observado, qué parte es escenario y quién debe actuar.</p>
+<p>El comprador no compra clasificación de sentimiento por sí misma. Compra tiempo para decidir, trazabilidad que Finanzas acepte y un mecanismo para comprobar si una intervención cambió el problema. Hoy ese trabajo puede hacerse con analistas, Excel/BI, helpdesk reporting, plataformas de VoC o consultoría. La competencia incluye <strong>no hacer nada</strong> cuando los datos son malos o ninguna persona tiene autoridad para ejecutar.</p>
+<h2>2. Magnitud del contexto: cinco cifras que NO son TAM</h2>
+<table>
+<thead>
+<tr>
+<th>Contexto</th>
+<th>Evidencia abierta</th>
+<th>Qué permite afirmar</th>
+<th>Qué NO permite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ecommerce estadounidense</td>
+<td>Census Q2-2026: $340.2B trimestrales ajustados, 17.1% del retail, +12.2% interanual, sin ajustar precios</td>
+<td>El canal es económicamente importante y creció en ese período</td>
+<td>Multiplicar por una comisión VEXA sin producto/contrato; anualizar como resultado anual observado</td>
+</tr>
+<tr>
+<td>CEM global</td>
+<td>MarketsandMarkets julio-2026: $15.78B 2026, $34.02B 2032, CAGR13.7%</td>
+<td>Existe categoría amplia de gasto y previsiones comerciales</td>
+<td>Llamarlo TAM VEXA; incluye servicios, BFSI, telecom, healthcare y muchas funciones</td>
+</tr>
+<tr>
+<td>Devoluciones USA</td>
+<td>NRF/Happy Returns octubre-2025: $849.9B proyectados; 19.3% de ventas online devueltas</td>
+<td>El proceso tiene peso material y merece análisis</td>
+<td>Llamar todo importe devuelto pérdida neta o ahorro capturable</td>
+</tr>
+<tr>
+<td>Plataforma Shopify</td>
+<td>Reporte financiero 2025: GMV $378.441B; ingresos plataforma $11.556B</td>
+<td>Hay infraestructura con transacciones y contexto de pedidos a escala</td>
+<td>Confundir GMV con gasto de marcas en analítica o contar tiendas como empresas únicas</td>
+</tr>
+<tr>
+<td>México</td>
+<td>AMVO EVO2026, página pública: $941 mil millones MXN y 77.2M compradores</td>
+<td>Hay un mercado digital relevante para explorar distribución en español</td>
+<td>Obtener empresas $10M–100M de consumidores/GMV; convertir moneda sin TC y período</td>
+</tr>
+</tbody>
+</table>
+<p>Fuentes/URLs: <code>../00-Fuentes/INDICE.md</code>. En AMVO no quedó inequívoco el año base de ambas cifras en la página pública, y no se accedió al informe afiliados. No se comparan como si fueran datos armonizados de 2026.</p>
+<h3>Diferencias de metodología que importan</h3>
+<p>NRF 2024 estimaba $890B de devoluciones y 16.9% de ventas totales devueltas; su encuesta empresarial fue de 249 profesionales en retailers de más de $500M, fuera del ICP propuesto de VEXA. NRF 2025 publica 19.3% para <strong>ventas online</strong>, otro denominador. No concluir «subieron 2.4 puntos» comparando ambas tasas. Tampoco aplicar 19.3% a cada SKU de herramientas: varía por categoría, canal, políticas y geografía. Los reportes son evidencia del problema, no medición de Senix.</p>
+<p>MarketsandMarkets publica estimaciones y metodología resumida, pero no se compró su dataset completo. Otros reportes GVR/Fortune no se pudieron leer por HTTP403; no se inventó una triangulación entre cifras. Su predicción de crecimiento no se convierte en crecimiento de número de clientes VEXA.</p>
+<h2>3. Cadena de valor y dónde se pierde información</h2>
+<p><code>Fabricante/OEM → marca/importador → distribuidor/marketplace/DTC → comprador → soporte → devolución/garantía/reemplazo → calidad/operación → Finanzas</code>.</p>
+<ul>
+<li>El fabricante conoce lote/especificación, pero no necesariamente ve mensajes del comprador.</li>
+<li>La marca conserva promesa, contenido y políticas, pero un marketplace puede limitar identidad del cliente.</li>
+<li>El retailer observa pedido y retorno; la marca puede recibir sólo informes agregados.</li>
+<li>Soporte conoce síntoma narrado; almacén conoce motivo físico; ERP conoce importe final. Etiquetas no siempre concuerdan.</li>
+<li>Finanzas valida costo/margen, pero no suele leer miles de conversaciones para hallar causa.</li>
+<li>El dueño de contenido, producto, logística o garantías ejecuta la intervención; si falta ese dueño, no hay loop de resultado.</li>
+</ul>
+<p>La oportunidad no es únicamente añadir más fuentes: es <strong>enlazar fuentes con sus derechos, identidades y ventanas correctas</strong>, conservar desconocidos y resolver una decisión transversal.</p>
+<h2>4. Dolores por familia y mecanismo económico</h2>
+<table>
+<thead>
+<tr>
+<th>Familia</th>
+<th>Señal conversacional</th>
+<th>Evidencia adicional indispensable</th>
+<th>Medida económica razonable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Expectativa/contenido</td>
+<td>Tamaño, compatibilidad, accesorios no claros</td>
+<td>Ficha/listing versionado, SKU, pedido, motivo devolución</td>
+<td>Refund/reemplazo observado; tasa por unidades vendidas</td>
+</tr>
+<tr>
+<td>Calidad/defecto</td>
+<td>Falla repetida, batería, piezas</td>
+<td>Lote, inspección, firmware, horas/uso; no sólo reclamo</td>
+<td>Eventos observados y exposición de cohorte; severidad humana aparte</td>
+</tr>
+<tr>
+<td>Fulfillment</td>
+<td>Daño, atraso, pieza faltante</td>
+<td>Carrier, entrega, almacén, número de envío</td>
+<td>Reenvíos y costos confirmados; no atribuir causalmente por correlación</td>
+</tr>
+<tr>
+<td>Garantía/servicio</td>
+<td>Fricción, instrucciones, espera</td>
+<td>Reglas garantía, elegibilidad, tiempos, resolución</td>
+<td>Costo de servicio con tarifa declarada y outcome observado</td>
+</tr>
+<tr>
+<td>Cobro/devolución</td>
+<td>Refund pendiente/parcial, cargo duplicado</td>
+<td>Transacción liquidada, reversals, moneda</td>
+<td>Ledger neto deduplicado, nunca importe alegado como liquidado</td>
+</tr>
+</tbody>
+</table>
+<p><strong>ROI no es revenue-at-risk.</strong> Un pedido expuesto puede devolverse, cambiarse o retenerse parcialmente. Recuperar ingreso bruto no es recuperar margen bruto, y evitar una llamada no elimina automáticamente una plaza laboral. Toda propuesta comercial debe separar capacidad liberada, reducción real de gasto y efecto causal todavía incierto.</p>
+<h2>5. Por qué ahora / fuerzas contrapuestas</h2>
+<p><strong>A favor:</strong> estructura de datos de comercio más accesible; extracción y resúmenes ya viables; crecimiento del canal; fragmentación CRM que abre una compra por continuidad; líderes CX presionados para justificar inversión con economía. Evidencia: crecimiento Census, arquitectura de Gorgias, pricing explícito de SentiSum con causas “priced”, anuncios de agentes de los competidores.</p>
+<p><strong>En contra:</strong> los incumbentes incorporan funciones rápidamente; clientes pueden consolidar herramientas; AI reduce el precio percibido de etiquetar texto; acceso a marketplaces/PII introduce riesgo y trabajo; CFO exige más pruebas, no más dashboards. El presupuesto se puede ir a automatizar soporte o ejecutar devoluciones antes que a observarlas.</p>
+<p><strong>No hay ventana demostrada de monopolio.</strong> Una migración es un trigger de venta temporal, no moat duradero. VEXA debe sobrevivir una vez terminada la migración demostrando decisiones y resultados semanales.</p>
+<h2>6. Geografías y secuencia propuesta</h2>
+<table>
+<thead>
+<tr>
+<th>Mercado</th>
+<th>Razón para considerarlo</th>
+<th>Fricción/no conocido</th>
+<th>Decisión</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>USA</td>
+<td>Piloto propuesto; datos Census reproducibles; ecosistema ecommerce</td>
+<td>Competencia fuerte, seguridad/seguro, procurement y datos</td>
+<td>Núcleo cuantificado y prioridad de validación</td>
+</tr>
+<tr>
+<td>México</td>
+<td>Cercanía operativa/idioma; contexto AMVO</td>
+<td>Falta censo armonizado por ingresos USD y tickets; pricing/MXN/contratos</td>
+<td>Entrevistas, no sumar un TAM inventado</td>
+</tr>
+<tr>
+<td>Canadá/Reino Unido</td>
+<td>Ecosistema de commerce y operación en inglés</td>
+<td>Falta denominador comparable, residencia/procurement</td>
+<td>Expansión por clientes concretos, no masa supuesta</td>
+</tr>
+<tr>
+<td>Brasil</td>
+<td>Hipótesis de escala regional</td>
+<td>Portugués, integraciones, LGPD y economía local sin estudio de campo</td>
+<td>Postergar hasta demostrar repetibilidad</td>
+</tr>
+<tr>
+<td>Otros países</td>
+<td>Posible expansión</td>
+<td>Sin conteo/canal/condiciones verificadas</td>
+<td>Visión, fuera del sizing actual</td>
+</tr>
+</tbody>
+</table>
+<p>No se usó PIB ni % de población para distribuir TAM entre países. En cada expansión se necesita censo/registro/licencia, unidad compradora deduplicada, bandas de ingresos actualizadas, salarios/costos propios, acceso técnico y precio probado.</p>
+<h2>7. Conclusión de mercado</h2>
+<p>Hay problema económico y compradores que ya destinan presupuesto a productos cercanos. <strong>No se ha probado que exista un hueco competitivo sin ocupar ni que VEXA gane.</strong> La tesis más concreta es posventa física con ledger conciliable, evidencia por pedido/SKU y neutralidad frente al CRM, apoyada por capacidad de implementar cambios. El siguiente activo valioso no son más páginas: es una muestra autorizada que permita reconciliar el dinero y un comprador que pague por una decisión que cambió.</p></article><article id="chapter-4"><div class="chapter-label">CAPÍTULO 04 · 02-Mercado/icp-y-segmentacion.md</div><h1>ICP, segmentos y comprador: a quién sí y a quién no</h1>
+<h2>ICP propuesto, no validado</h2>
+<p>Marca/importador/retailer de bienes físicos, operación de posventa USA, receipts/revenue de la entidad relevante aproximadamente $10M–100M, volumen de interacción suficiente, venta por varios canales y alguien que pueda cambiar una política, contenido o proceso. Debe existir permiso para unir una muestra de conversaciones con pedidos/productos/eventos financieros. El volumen 10K–500K interacciones/mes viene del PRD y todavía no es evidencia empírica de la distribución del mercado.</p>
+<p>La empresa no se califica sólo por facturación: una marca de ticket alto puede recibir pocos contactos; otra de bajo ticket puede tener tantos que el presupuesto de $799 sea inviable. También puede tener revenue alto pero poco control de la posventa si todo ocurre en un marketplace.</p>
+<h2>Priorización de verticales — juicio de producto, no encuesta</h2>
+<p>Escala 1–5 propuesta, mayor=mejor oportunidad excepto fricción; no publicar como ranking medido de mercado. Evaluar: gravedad/costo, repetición por SKU, accesibilidad de datos, ejecutabilidad de corrección y complejidad/regulación. No sumar un score arbitrario a dólares; es una herramienta de decisión interna.</p>
+<table>
+<thead>
+<tr>
+<th>Segmento</th>
+<th>Hipótesis de dolor</th>
+<th>Ventaja para prueba</th>
+<th>Riesgo</th>
+<th>Prioridad inicial</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Herramientas/jardín</td>
+<td>Compatibilidad, armado, batería, garantía</td>
+<td>Piloto propuesto y problema repetido por modelo/SKU</td>
+<td>Estacionalidad, OEM/lotes inaccesibles, safety</td>
+<td>1 condicionado al acceso real</td>
+</tr>
+<tr>
+<td>Pequeño electrodoméstico/home</td>
+<td>Instrucciones, desempeño, piezas, devolución</td>
+<td>SKU/datos de pedido y cambios de contenido accionables</td>
+<td>Importador vs fabricante; reclamo ≠ defecto</td>
+<td>1 para validar replicabilidad</td>
+</tr>
+<tr>
+<td>Cocina/utensilios</td>
+<td>Expectativa, uso, cuidados, daño</td>
+<td>Fichas y educación corregibles sin cambiar fábrica</td>
+<td>No exagerar seguridad/materiales</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Muebles/home furnishings</td>
+<td>Daño, medidas, montaje, entrega</td>
+<td>Costos logísticos y expectativas visibles</td>
+<td>Ventanas largas, muchos carriers/reemplazos</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Deporte/outdoor</td>
+<td>Talla/compatibilidad/desgaste</td>
+<td>Variantes y causa de retorno diferenciables</td>
+<td>Confundir preferencia con defecto</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Electrónica/accesorios</td>
+<td>Compatibilidad/firmware/batería</td>
+<td>Mucha señal por modelo/versión</td>
+<td>Mayor riesgo de safety y soporte técnico</td>
+<td>2 con owner experto</td>
+</tr>
+<tr>
+<td>Moda</td>
+<td>Talla/bracketing/devoluciones</td>
+<td>Volumen alto y soluciones existentes</td>
+<td>Mercado returns muy competido, señal económica distinta</td>
+<td>3, no primer wedge</td>
+</tr>
+<tr>
+<td>Belleza</td>
+<td>Expectativas/reacción/uso</td>
+<td>Feedback recurrente y repetición de compra</td>
+<td>Sensibilidad salud y atribución</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Alimentos/frescos</td>
+<td>Caducidad/entrega/calidad</td>
+<td>Problema material</td>
+<td>Sanidad, trazabilidad y tiempos distintos</td>
+<td>Fuera del primer piloto</td>
+</tr>
+<tr>
+<td>SaaS/servicios</td>
+<td>Churn/soporte</td>
+<td>Datos digitales abundantes</td>
+<td>Se diluye especialización física; rivals fuertes</td>
+<td>Fuera del sizing del wedge</td>
+</tr>
+</tbody>
+</table>
+<h2>Buying committee</h2>
+<table>
+<thead>
+<tr>
+<th>Rol</th>
+<th>Qué le duele / métrica</th>
+<th>Qué hay que demostrar</th>
+<th>Objeción que puede matar la compra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Head of CX / Support</td>
+<td>Backlog, repetición, justificar mejoras</td>
+<td>Casos útiles y horas de análisis liberadas</td>
+<td>«Ya lo veo en Zendesk»</td>
+</tr>
+<tr>
+<td>COO / postventa</td>
+<td>Costos/reemplazos/incidencias</td>
+<td>Intervención específica con dueño y mecanismo</td>
+<td>«No controlo la fábrica/carrier»</td>
+</tr>
+<tr>
+<td>CFO / Finanzas</td>
+<td>Confiabilidad, gasto real, retorno</td>
+<td>Conciliación por evento, moneda y período</td>
+<td>«Ese importe es exposición, no pérdida»</td>
+</tr>
+<tr>
+<td>Calidad / producto</td>
+<td>Causas y prioridades por SKU/lote</td>
+<td>Evidencia y severidad separada de volumen</td>
+<td>«El ticket no demuestra causa raíz»</td>
+</tr>
+<tr>
+<td>IT / seguridad</td>
+<td>Accesos, integración, datos</td>
+<td>Read-only, scopes, aislamiento, borrado, logs mínimos</td>
+<td>«No podemos enviar estos datos a esos proveedores»</td>
+</tr>
+<tr>
+<td>CEO</td>
+<td>Foco y asignación de capital</td>
+<td>Tres decisiones claras en cinco minutos</td>
+<td>«Es otra presentación sin acción»</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Champion no equivale a firmante.</strong> Registrar quién está interesado, quién puede aprobar gasto, quién posee datos y quién ejecuta la acción. Si son cuatro personas, el piloto debe incluirlas.</p>
+<h2>Señales de compra y de descarte</h2>
+<p>Triggers: cambio CRM, salto de devoluciones, lanzamiento de línea, cambio de política/listing, temporada alta, integración de varias marcas, auditoría de calidad o ejecutivo nuevo. Un incidente sensible requiere proceso humano/legal, no una demo comercial de IA.</p>
+<p>Descartar/posponer: nadie puede dar acceso legítimo; sólo screenshots sin export; menos casos de los necesarios para observar patrones; no hay owner de intervención; expectativa de refunds/respuestas automáticas desde día 1; quiere precio fijo ilimitado sin medir volumen; busca certificación/diagnóstico técnico que no podemos dar; toda cifra requiere datos inaccesibles del marketplace.</p>
+<h2>Ficha de calificación antes de ofertar</h2>
+<ol>
+<li>Entidad compradora/grupo/marcas/país, con fuente y estado de verificación.</li>
+<li>Ingreso de la entidad relevante: rango y año, o desconocido; no inventarlo con número de seguidores.</li>
+<li>Conversaciones/mes, canales, idiomas, p95 longitud, temporada; export o captura autorizada del contador.</li>
+<li>Stack CRM/commerce/returns/ERP; permisos y método read-only.</li>
+<li>20 casos comparados UI vs export: ¿mensajes completos? ¿order_id? ¿SKU? ¿refund liquidado?</li>
+<li>Dolor narrado por cliente, costo conocido y baseline; fuente por cada cifra.</li>
+<li>Dueño de decisión, presupuesto, proceso contractual, sponsor y calendario.</li>
+<li>Acción factible en piloto; criterio de valor y fecha para decidir pago/continuidad.</li>
+</ol>
+<p>Clasificaciones: identificado → contactado → entrevista → calificado → datos autorizados → piloto → contrato pagado. No ascender por inferencia. Una lista de marcas con webs activas no es pipeline ni SAM validado.</p></article><article id="chapter-5"><div class="chapter-label">CAPÍTULO 05 · 05-Precios-y-Finanzas/tam-sam-som.md</div><h1>TAM / SAM / SOM — mercado con cuentas reproducibles, no un porcentaje de un mercado gigante</h1>
+<h2>1. Decisión geográfica y unidad económica</h2>
+<p><strong>USA primero</strong>: el piloto propuesto opera posventa estadounidense y los audios priorizan migración HubSpot→Zendesk. Es una decisión de enfoque, no una afirmación de que VEXA sólo pueda vender allí. México se analiza como expansión comercial; Canadá, Reino Unido, Brasil y resto del mundo quedan fuera de esta cuantificación hasta tener denominadores comparables. No etiquetar el resultado como «TAM global».</p>
+<p>Unidad objetivo: una organización compradora con presupuesto y acceso a los datos que financiaría una suscripción. Una empresa puede tener varias marcas, dominios, tiendas Shopify y cuentas de marketplace. Esos activos no equivalen automáticamente a múltiples clientes. Subsidiaria, marca y grupo consolidado pueden arrojar ingresos muy distintos: verificar quién contrata y quién cumple el rango $10M–100M. No se acreditó que Senix cumpla ese rango; es un design partner propuesto, no un dato que justifique el censo.</p>
+<h2>2. Fuente oficial y extracción</h2>
+<p><strong>Census, SUSB 2022</strong>, publicación 10-abr-2025, tabla “The Number of Firms and Establishments, Employment, Annual Payroll, and Receipts by Industry and Enterprise Receipts Size: 2022”. URLs:
+- Índice: https://www.census.gov/data/tables/2022/econ/susb/2022-susb-annual.html
+- XLSX: https://www2.census.gov/programs-surveys/susb/tables/2022/us_6digitnaics_rcptsize_2022.xlsx
+- Definiciones: https://www.census.gov/programs-surveys/susb/about/glossary.html</p>
+<p>Se descargó el XLSX real, no una cifra de un resultado de búsqueda. Hoja <code>US 6-digit NAICS</code>; columnas: NAICS, descripción, <strong>Enterprise Size ($1,000)</strong>, Firms, Establishments. El rango <code>[10,000;100,000)</code> en esa columna significa <strong>US$10 millones a menos de US$100 millones</strong>. No US$10 mil a US$100 mil. No se incluye el bucket $100M+, que también incluiría empresas mucho mayores; no fingir una frontera exacta inclusiva en $100M que los datos no permiten.</p>
+<p>NAICS 2017 <code>454110</code> = <strong>Electronic Shopping and Mail-Order Houses</strong>. Es una cohorte identificable de ecommerce/venta por catálogo, no todas las marcas DTC ni todos los negocios que venden online. Fabricantes, retailers omnicanal y marcas extranjeras pueden clasificarse en otras ramas. SUSB cubre empresas con empleo remunerado dentro de su alcance, no todas las tiendas digitales sin empleados.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Fila Excel</th>
+<th>Banda receipts ($1,000)</th>
+<th style="text-align: right;">Firmas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">18333</td>
+<td>10,000–14,999</td>
+<td style="text-align: right;">996</td>
+</tr>
+<tr>
+<td style="text-align: right;">18334</td>
+<td>15,000–19,999</td>
+<td style="text-align: right;">544</td>
+</tr>
+<tr>
+<td style="text-align: right;">18335</td>
+<td>20,000–24,999</td>
+<td style="text-align: right;">340</td>
+</tr>
+<tr>
+<td style="text-align: right;">18336</td>
+<td>25,000–29,999</td>
+<td style="text-align: right;">218</td>
+</tr>
+<tr>
+<td style="text-align: right;">18337</td>
+<td>30,000–34,999</td>
+<td style="text-align: right;">166</td>
+</tr>
+<tr>
+<td style="text-align: right;">18338</td>
+<td>35,000–39,999</td>
+<td style="text-align: right;">143</td>
+</tr>
+<tr>
+<td style="text-align: right;">18339</td>
+<td>40,000–49,999</td>
+<td style="text-align: right;">170</td>
+</tr>
+<tr>
+<td style="text-align: right;">18340</td>
+<td>50,000–74,999</td>
+<td style="text-align: right;">264</td>
+</tr>
+<tr>
+<td style="text-align: right;">18341</td>
+<td>75,000–99,999</td>
+<td style="text-align: right;">134</td>
+</tr>
+<tr>
+<td style="text-align: right;"><strong>Total</strong></td>
+<td></td>
+<td style="text-align: right;"><strong>2,975</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Las nueve bandas están publicadas para este código. Correspondientes establecimientos: <strong>3,212</strong>, no 2,975; usamos firmas, no locales. Los recibos censales no son necesariamente ventas consolidadas auditadas: la definición advierte duplicación de receipts en algunas empresas multiestablecimiento. Estos límites se heredan al filtro de tamaño.</p>
+<h3>La trampa de sumar NAICS</h3>
+<p>Census define firm como establecimientos del mismo dueño <strong>dentro de industria/geografía</strong>. Un grupo puede aparecer en más de una industria. Por tanto:
+- 454110 está contenido en retail 44–45: sumarlos duplica.
+- Manufactura 31–33 = 28,622 firmas; mayoreo 42 = 44,106; retail 44–45 = 37,825, todas en el mismo rango de receipts.
+- <strong>No</strong> se pueden declarar 110,553 empresas únicas sumando esos sectores.
+- Sin microdatos de identidad, la unión está acotada matemáticamente entre <code>max(28,622;44,106;37,825)=44,106</code> y <code>28,622+44,106+37,825=110,553</code>. Es una cota de unión sectorial, no de empresas que necesitan VEXA.</p>
+<p>Algunas ramas estrechas omiten bandas. Ejemplo: fabricación de equipos de jardín 333112 sólo tiene dos de las nueve bandas objetivo publicadas; la suma publicada da 13, <strong>no un total completo</strong>. Se marca lower bound y missing, sin rellenar ceros ni extrapolar la proporción. <code>universo-census.json</code> guarda todos esos huecos y filas.</p>
+<h2>3. TAM núcleo: tamaño del bolsillo de software bajo precio supuesto</h2>
+<p><code>TAM núcleo por precio = 2,975 firmas × ACV supuesto</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Escenario de precio, no tarifas acordadas</th>
+<th style="text-align: right;">MRR</th>
+<th style="text-align: right;">ACV</th>
+<th style="text-align: right;">TAM núcleo anual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Conservador</td>
+<td style="text-align: right;">$799</td>
+<td style="text-align: right;">$9,588</td>
+<td style="text-align: right;"><strong>$28,524,300</strong></td>
+</tr>
+<tr>
+<td>Base</td>
+<td style="text-align: right;">$1,499</td>
+<td style="text-align: right;">$17,988</td>
+<td style="text-align: right;"><strong>$53,514,300</strong></td>
+</tr>
+<tr>
+<td>Expansión/upmarket</td>
+<td style="text-align: right;">$2,999</td>
+<td style="text-align: right;">$35,988</td>
+<td style="text-align: right;"><strong>$107,064,300</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Interpretación correcta:</strong> sensibilidad del máximo ingreso de suscripción de una cohorte histórica si todas compraran a ese precio. No una estimación de gasto ya existente, una valoración de VEXA ni evidencia de willingness to pay. Tampoco es todo el TAM potencial: faltan fabricantes y omnicanal fuera de 454110, pero no se suman sin deduplicación.</p>
+<p>El escenario base aplicado a la cota amplia 44,106–110,553 da $793,378,728–$1,988,627,364/año <strong>antes de filtrar ajuste al problema y sin deduplicación exacta</strong>. Esa cifra sólo sirve como techo exploratorio de expansión, NO como titular del deck. A diferencia del núcleo, contiene mayoreo industrial, automoción, combustibles y otras actividades poco afines. No llamar al extremo superior «nuestro mercado de $2B».</p>
+<p>No se inflaron los conteos 2022 con el CAGR de un reporte CEM: crecimiento del gasto software y crecimiento del número de empresas no son la misma variable. Una actualización a 2026 requeriría otro conteo o una proyección separada explícita.</p>
+<h2>4. SAM: filtros que hoy son hipótesis y así se presentan</h2>
+<p>SAM debería contar cuentas que VEXA puede servir con producto, datos, precio y capacidad comercial reales. <strong>No contamos aún con una muestra representativa para medir estos filtros.</strong> Esta entrega calcula escenarios condicionados, no inventa porcentajes «de mercado».</p>
+<table>
+<thead>
+<tr>
+<th>Filtro secuencial condicional</th>
+<th style="text-align: right;">Conservador</th>
+<th style="text-align: right;">Base</th>
+<th style="text-align: right;">Expansión</th>
+<th>Qué dato permitiría sustituirlo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Categorías físicas con dolor afín</td>
+<td style="text-align: right;">45%</td>
+<td style="text-align: right;">60%</td>
+<td style="text-align: right;">80%</td>
+<td>Muestra de firmas/actividad principal/productos</td>
+</tr>
+<tr>
+<td>Volumen de posventa y necesidad económica suficientes</td>
+<td style="text-align: right;">40%</td>
+<td style="text-align: right;">55%</td>
+<td style="text-align: right;">75%</td>
+<td>Interacciones/mes, motivos, costo y dueño de decisión</td>
+</tr>
+<tr>
+<td>Datos enlazables y stack exportable</td>
+<td style="text-align: right;">60%</td>
+<td style="text-align: right;">75%</td>
+<td style="text-align: right;">90%</td>
+<td>Muestra real reconciliada de CRM/pedidos/refunds</td>
+</tr>
+<tr>
+<td>Gobernanza, acceso y viabilidad de compra</td>
+<td style="text-align: right;">70%</td>
+<td style="text-align: right;">80%</td>
+<td style="text-align: right;">90%</td>
+<td>Security/procurement/autoridad y presupuesto</td>
+</tr>
+</tbody>
+</table>
+<p>Cada tasa se aplica al conjunto que sobrevivió el filtro anterior; son probabilidades <strong>condicionales propuestas</strong>, no porcentajes marginales independientes extraídos de encuestas distintas. No añadir un filtro «nos responde al correo» aquí: la ejecución comercial se mide en SOM.</p>
+<p>Base: <code>2,975 × .60 × .55 × .75 × .80 = 589.05</code> cuentas equivalentes. Trayectoria: 2,975 → 1,785 → 981.75 → 736.31 → 589.05. SAM base: <code>589.05 × $17,988 = $10,595,831.40/año</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Escenario</th>
+<th style="text-align: right;">SAM cuentas equivalentes</th>
+<th style="text-align: right;">SAM anual a precio del escenario</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Conservador</td>
+<td style="text-align: right;">224.91</td>
+<td style="text-align: right;">$2,156,437</td>
+</tr>
+<tr>
+<td>Base</td>
+<td style="text-align: right;">589.05</td>
+<td style="text-align: right;">$10,595,831</td>
+</tr>
+<tr>
+<td>Expansión</td>
+<td style="text-align: right;">1,445.85</td>
+<td style="text-align: right;">$52,033,250</td>
+</tr>
+</tbody>
+</table>
+<p>No son intervalos de confianza. Cambian al mismo tiempo filtros y precio, por lo que la amplitud refleja supuestos conjuntos. Sensibilidad univariable base: aumentar 10 puntos absolutos el filtro de datos (.75→.85), manteniendo los demás, añade 78.54 cuentas equivalentes y ~$1.41M de SAM; no justifica asumir que ese aumento se logrará.</p>
+<h2>5. SOM: se gana con capacidad, no escogiendo «1% del TAM»</h2>
+<p>Modelo mensual de 36 meses, reproducible. Arranca prospección en mes 3. Base: 50 cuentas nuevas investigadas/mes año 1, 100 año 2, 160 año 3; 12% reunión, 35% piloto sobre reuniones y 50% pago sobre pilotos. Ciclo de venta supuesto dos meses. Onboarding máximo 2/3/5 cuentas al mes según año; backlog preservado. Churn logo 1% mensual supuesto, sin upsell. Cada cuenta nueva empieza a facturar a mitad de mes; las bajas ocurren al inicio para el cálculo.</p>
+<p>No contamos cada mensaje como lead nuevo. El universo de prospección se agota en 2,975 cuentas: el modelo reduce o detiene outreach al agotarlo, en vez de «generar» nuevos prospectos infinitos. Ese universo es el core bruto, mayor que el SAM postcalificación; el embudo capta descartes/no respuesta y no supera SAM en clientes activos. Se conserva un backlog de ventas ganadas no onboardeadas, sin contabilizarlas como clientes de pago.</p>
+<table>
+<thead>
+<tr>
+<th>Base</th>
+<th style="text-align: right;">Año 1</th>
+<th style="text-align: right;">Año 2</th>
+<th style="text-align: right;">Año 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clientes equivalentes al cierre</td>
+<td style="text-align: right;">8.11</td>
+<td style="text-align: right;">29.16</td>
+<td style="text-align: right;">54.96</td>
+</tr>
+<tr>
+<td>ARR de salida</td>
+<td style="text-align: right;">$145,915</td>
+<td style="text-align: right;">$524,524</td>
+<td style="text-align: right;">$988,700</td>
+</tr>
+<tr>
+<td>Ingreso recurrente reconocido durante el año</td>
+<td style="text-align: right;">$49,064</td>
+<td style="text-align: right;">$321,855</td>
+<td style="text-align: right;">$790,486</td>
+</tr>
+</tbody>
+</table>
+<p><strong>No se acreditó un solo contrato de pago VEXA en esta investigación.</strong> Los decimales son expectativas, no fracciones de clientes reales. Estos resultados describen las consecuencias de supuestos que aún pueden fallar simultáneamente. El SOM no es pronóstico garantizado ni prueba de PMF.</p>
+<h2>6. Qué sí puede decir el pitch</h2>
+<blockquote>
+<p>«Identificamos una cohorte censal estadounidense de 2,975 firmas de ecommerce/venta por catálogo en el rango de tamaño buscado, con datos 2022. A un precio propuesto de $17,988 anuales, esa cohorte representa un escenario de $53.5M de suscripción. Estamos validando qué parte tiene datos y dolor suficientes; nuestro escenario base servible es ~$10.6M, todavía no un censo validado. Empezamos por posventa de productos físicos y continuidad entre CRMs.»</p>
+</blockquote>
+<p>Si esa explicación ocupa demasiado en una slide, mostrar cifra+etiqueta+pie corto y conservar metodología en appendix, <strong>no eliminar el calificativo</strong>. No decir «TAM validado $2B», «mercado 2026 de 2,975 marcas» ni «capturaremos $1M en tres años».</p>
+<h2>7. Cómo convertir los supuestos en evidencia</h2>
+<ol>
+<li>Seleccionar una muestra probabilística de cuentas del universo cuando exista un directorio licenciado que permita identidad y dedup. SUSB agregado no entrega una lista comercial de esas firmas.</li>
+<li>Registrar parent/buyer/geografía/ingresos/fuentes y clasificar elegibilidad con dos evaluadores; no imputar ingreso a partir de tráfico web.</li>
+<li>Separar una muestra cualitativa de 12–20 entrevistas (buena para descubrir motivos) de una muestra probabilística para estimar prevalencias. Doce entrevistas por conveniencia NO estiman el 60% de fit.</li>
+<li>Para orientación muestral: una proporción simple de población ~2,975, 95% de confianza y ±10 puntos, bajo muestreo aleatorio simple y peor caso p=.5, requiere del orden de 94 respuestas completas. No respuestas/contactabilidad/clustering pueden aumentar necesidad; no declarar ese margen sobre una muestra de conveniencia.</li>
+<li>Calcular embudo observado por cohorte y precio; pilot completion, pago y renovación se documentan por evento, no sólo intención declarada.</li>
+<li>Actualizar source/model version y todas las piezas dependientes. No reescribir el dato histórico como actual.</li>
+</ol>
+<p>Reproducción: <code>python3 scripts/census_market.py &amp;&amp; python3 scripts/business_model.py &amp;&amp; python3 -m unittest discover -s tests/business -v</code>. Fuentes originales, filas y resultados acompañan el documento.</p></article><article id="chapter-6"><div class="chapter-label">CAPÍTULO 06 · 03-Competencia/mapa-competitivo.md</div><h1>Competencia y sustitutos — comparación útil para vender, no una tabla de checks inventados</h1>
+<p>Corte 19-sep-2026. Se abrieron fuentes oficiales; no se contrataron productos ni corrieron demos comparadas. <strong>Documentado</strong> significa que el vendor lo declara; <strong>no verificado</strong> no significa que no exista. No marcar un hueco como ventaja VEXA sin probar ambas cosas.</p>
+<h2>Mapa por presupuesto que compite</h2>
+<table>
+<thead>
+<tr>
+<th>Capa</th>
+<th>Actores</th>
+<th>Qué ya ofrecen públicamente</th>
+<th>Qué debe demostrar VEXA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Customer intelligence / VoC</td>
+<td>Enterpret, SentiSum, Thematic, Chattermill, unitQ</td>
+<td>Taxonomía, feedback unificado, insights, contexto económico/acciones en distintos grados</td>
+<td>Dinero transaccional conciliable y acción por pedido/SKU, no sólo nombre de función</td>
+</tr>
+<tr>
+<td>Helpdesk y AI support</td>
+<td>Gorgias, Zendesk/HubSpot ecosistemas</td>
+<td>Conversaciones, reporting, datos commerce, automatización</td>
+<td>Insight transversal adicional sin pedir reemplazar helpdesk</td>
+</tr>
+<tr>
+<td>Returns/postpurchase</td>
+<td>Loop, Narvar</td>
+<td>Gestión operativa, cambios, tracking, insights de devoluciones</td>
+<td>Unir antes/después de soporte con operación financiera, sin sustituir ejecución probada</td>
+</tr>
+<tr>
+<td>Enterprise XM</td>
+<td>Qualtrics, Medallia</td>
+<td>Datos experiencia, analítica, workflows, portfolios amplios</td>
+<td>Time-to-value y enfoque midmarket, sin prometer compliance no implementado</td>
+</tr>
+<tr>
+<td>BI/analista/consultoría</td>
+<td>Excel, SQL/BI, equipo interno, consultores CX</td>
+<td>Personalización y confianza existentes</td>
+<td>Mejor tiempo/calidad trazable a menor costo total, incluyendo onboarding</td>
+</tr>
+<tr>
+<td>Inacción</td>
+<td>El problema se tolera</td>
+<td>Cero proyecto nuevo/procurement</td>
+<td>Decisión concreta con retorno creíble y dueño</td>
+</tr>
+</tbody>
+</table>
+<h2>Precios observados y límites de comparación</h2>
+<table>
+<thead>
+<tr>
+<th>Producto/fuente</th>
+<th>Precio visible al corte</th>
+<th>Alcance relevante</th>
+<th>Advertencia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SentiSum <code>/pricing</code></td>
+<td>Desde <strong>$100,000/año</strong></td>
+<td>Core CX Intelligence, usuarios ilimitados, Insights/Early Warning e integraciones</td>
+<td>Quality, Automation y MCP adicionales; moneda sólo <code>$</code> en texto; no cotización VEXA-like</td>
+</tr>
+<tr>
+<td>Thematic <code>/product/plan-and-pricing</code></td>
+<td>Foundation <strong>$25,000/año</strong></td>
+<td>Hasta 25,000 comentarios, 3 datasets, herramientas/API/workflows</td>
+<td>Ventana del cupo de comentarios no explícita en extracto; no asumir mensual; moneda sólo <code>$</code></td>
+</tr>
+<tr>
+<td>Gorgias <code>/pricing</code></td>
+<td>Starter bundle <strong>$40/mes</strong>; Basic <strong>$77/mes anual</strong>; Pro <strong>$471/mes anual</strong>; Advanced <strong>$1,227/mes anual</strong></td>
+<td>Combina Helpdesk+AI, cupos 50/300/2,000/5,000 tickets y distintos AI interactions</td>
+<td>Importes anuales facturados $924/$5,652/$14,724; excedentes y módulos aparte; no comparar con AI ilimitada</td>
+</tr>
+<tr>
+<td>Loop <code>/pricing</code></td>
+<td>Essential <strong>$155/mes</strong>, Advanced <strong>$340/mes</strong>, Checkout+ mostrado Free</td>
+<td>Returns, intercambios y flujos asociados</td>
+<td>Revisar cargos transaccionales, etiquetas, elegibilidad y costo a consumidor; Free no prueba costo total cero</td>
+</tr>
+<tr>
+<td>Enterpret/Chattermill/unitQ/Qualtrics/Medallia/Narvar</td>
+<td>Sin tarifa comparable verificada en las páginas seleccionadas</td>
+<td>Venta consultiva o alcance no cerrado aquí</td>
+<td>No decir «no publican precios» como afirmación exhaustiva</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Conflicto resuelto de Gorgias:</strong> la guía de planes actualizada mayo-2026 lista precios Helpdesk $10/$60/$360/$900 mensuales; la página <code>/pricing</code> abierta ahora presenta bundles/annual distintos. No son una comparación homogénea ni se suman a ciegas. Para tabla comercial usamos página de pricing actual y guardamos ambos recibos; solicitar cotización con mismo volumen, billing y módulos.</p>
+<h2>Cinco fichas de rival directo</h2>
+<p><strong>SentiSum:</strong> mensaje muy cercano — conversaciones “read, priced and routed”, auditoría read-only gratis y hasta walk-away90 días como promesa comercial. Una prueba de datos gratis no diferencia por sí sola. Ganaríamos si cliente necesita granularidad/portabilidad y nuestra evidencia supera una comparación ciega; hoy no se demostró. Perderíamos por falta de credenciales enterprise, servicio y madurez.</p>
+<p><strong>Enterpret:</strong> contexto de clientes, taxonomía, integraciones/agentes y cierre del ciclo. Rival de la visión de grafo, no sólo sentimiento. Ganar requiere una decisión financiera/SKU con menos implementación o mayor confianza; no tenemos benchmark contra él.</p>
+<p><strong>Thematic:</strong> trazabilidad temática, dashboards, workflows y revisión humana. Precio público ayuda a encontrar compradores con gasto real, pero no autoriza copiar ese ACV a VEXA. Puede cubrir buena parte de la necesidad de insights sin sistema nuevo.</p>
+<p><strong>Chattermill:</strong> Unified Customer Intelligence y expansión agentic. Servicios CX y conexión de problemas con contexto debilitan que «software + Convexia» sea único. Verificar qué módulos son disponibles/roadmap y medir costo de implementación.</p>
+<p><strong>unitQ:</strong> producto/calidad + impacto y relación estratégica con Zendesk. Distribución integrada puede vencer al mejor algoritmo aislado. Neutralidad CRM de VEXA vale sólo si mejora continuidad y evita pérdida de historia realmente.</p>
+<h2>Barreras defensibles, con pruebas para refutarlas</h2>
+<table>
+<thead>
+<tr>
+<th>Hipótesis de ventaja</th>
+<th>Prueba que la confirma parcialmente</th>
+<th>Qué la refuta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Conciliación financiera superior</td>
+<td>Finanzas reproduce top casos con ledger y mismos totales</td>
+<td>Competidor hace lo mismo o VEXA no puede enlazar órdenes</td>
+</tr>
+<tr>
+<td>Especialización posventa física</td>
+<td>Tres marcas de una vertical usan taxonomía/evidencia con adaptación limitada</td>
+<td>Cada cuenta requiere semanas de consultoría irrepetible</td>
+</tr>
+<tr>
+<td>Portabilidad CRM</td>
+<td>Mismo problema/historial sobre migración real sin inflar conteos</td>
+<td>Otro producto lo resuelve igual o migración no genera WTP</td>
+</tr>
+<tr>
+<td>Loop de intervención</td>
+<td>Acciones ejecutadas y medición predefinida durante varios ciclos</td>
+<td>Nadie cambia decisiones o resultado no atribuible</td>
+</tr>
+<tr>
+<td>Distribución Convexia</td>
+<td>Acceso legal repetible a varios compradores que pagan</td>
+<td>Depende de una sola relación o IP/datos no son transferibles</td>
+</tr>
+</tbody>
+</table>
+<p>Los datos de un cliente no son un moat cross-tenant utilizable por defecto. Integraciones, know-how, procedimientos y evidencia histórica autorizada pueden acumularse; no presumir licencia de entrenamiento general.</p>
+<h2>Protocolo de bake-off</h2>
+<p>Mismo dataset autorizado, mismos filtros/horizonte, mismos eventos contables y presupuesto/tiempo. Pedir top diez problemas, tres intervenciones y desglose económico. Evaluar a ciegas: hallazgos nuevos útiles, consistencia de citas, doble conteo, abstención correcta, causas no justificadas y tiempo de analista para conciliar. Registrar costo total de usuario/onboarding/histórico/volumen/AI/export. El ganador no se elige por número de slides ni por narrativa del vendor.</p>
+<p>URLs y snapshots: <code>../00-Fuentes/INDICE.md</code>; fuentes clave <code>sentisum-pricing</code>, <code>thematic-pricing</code>, <code>gorgias-pricing-2026</code>, <code>gorgias-plans</code>, <code>loop-pricing</code> y páginas oficiales previas en docs/investigacion/fuentes/web/. Investigación especializada nativa de Codex contrastada mediante descargas primarias; no se adopta su conclusión sin fuentes.</p></article><article id="chapter-7"><div class="chapter-label">CAPÍTULO 07 · 03-Competencia/capital-y-consolidacion.md</div><h1>Financiamiento competitivo y consolidación</h1>
+<p><strong>Ronda ≠ valuación ≠ ingresos ≠ compra de otra empresa.</strong> Estas transacciones demuestran interés/inversión en mercados relacionados, no una valuación razonable para VEXA. Fechas históricas no se presentan como la última ronda al corte.</p>
+<table>
+<thead>
+<tr>
+<th>Organización</th>
+<th>Hecho anunciado por fuente abierta</th>
+<th>Fecha</th>
+<th>Interpretación correcta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Enterpret</td>
+<td>$20.8M Series A, liderada por Canaan</td>
+<td>4-dic-2024</td>
+<td>Capital de ronda, no valuación ni ARR</td>
+</tr>
+<tr>
+<td>Chattermill</td>
+<td>$26M Series B, Beringea</td>
+<td>6-dic-2022; página actualizada 24-jun-2025</td>
+<td>Ronda histórica; actualización editorial no cambia fecha del evento</td>
+</tr>
+<tr>
+<td>unitQ</td>
+<td>Inversión estratégica Zendesk Ventures</td>
+<td>20-jun-2024</td>
+<td>Monto no divulgado en anuncio; no rellenarlo con una ronda diferente</td>
+</tr>
+<tr>
+<td>Gorgias</td>
+<td>$29M Series C-2, inversores existentes incluido Shopify</td>
+<td>mayo-2024</td>
+<td>Ronda; páginas con fechas 9/10-may y actualización jul; no fijar día que no se reconcilió</td>
+</tr>
+<tr>
+<td>Loop</td>
+<td>$65M Series B, CRV/Shopify/Renegade</td>
+<td>21-jul-2021</td>
+<td>Capital histórico, no ingresos ni total confirmado a 2026</td>
+</tr>
+<tr>
+<td>Narvar</td>
+<td>$30M Series C; $64M total a esa fecha</td>
+<td>28-ago-2018</td>
+<td>Comunicado de la compañía distribuido por PRNewswire; no total actualizado</td>
+</tr>
+<tr>
+<td>Qualtrics</td>
+<td>Compra completada de Press Ganey Forsta por $6.75B</td>
+<td>18-may-2026</td>
+<td>Precio de adquisición de objetivo; no valuación o ronda de Qualtrics</td>
+</tr>
+<tr>
+<td>Medallia</td>
+<td>Recapitalización, nuevo grupo propietario liderado por Blackstone, $150M nuevo capital</td>
+<td>17-jun-2026</td>
+<td>Estructura capital/deuda no desglosada aquí; no tratar Thoma Bravo como dueño vigente por una noticia antigua</td>
+</tr>
+</tbody>
+</table>
+<p>SentiSum/Thematic: no se cerró investigación de financiamiento en este bloque; no significa que no se hayan financiado. No se suman rondas de años diferentes sin revisar instrumentos, duplicados, deudas y operaciones secundarias.</p>
+<h2>Lectura estratégica</h2>
+<ol>
+<li>Los incumbentes tienen recursos y ecosistemas; la barrera para VEXA no es sólo precisión de un prompt.</li>
+<li>Una recapitalización también puede responder a necesidades de balance: no es automáticamente señal de crecimiento explosivo de demanda.</li>
+<li>Inversión de plataformas en analítica —Zendesk/unitQ, Shopify/Gorgias/Loop— ofrece distribución y al mismo tiempo dependencia estratégica. Neutralidad CRM puede ser útil, pero debe justificar otro proveedor en procurement.</li>
+<li>Una adquisición en healthcare/XM no es comparable directo de una startup de posventa ecommerce preingresos.</li>
+<li>Para valorar una ronda VEXA hacen falta equipo/acuerdo, clientes, margen, retención, crecimiento, riesgo y mercado probado. Ninguno se reemplaza multiplicando un TAM por 1%.</li>
+</ol>
+<h2>Preparación de fundraising</h2>
+<p>Antes de explorar inversores: cerrar derechos sobre IP/datos y vesting, verificar piloto, mostrar evidencia de una intervención, medir coste de entrega y distinguir servicios Convexia de software VEXA. Preparar lista de fondos con tesis/etapa/geografía y revisar conflictos de portafolio de forma actual; no trasladar listas o prohibiciones específicas de Likida a otra empresa.</p>
+<p>Los URLs, títulos, fechas, HTTP y hashes de cada anuncio están en <code>../00-Fuentes/INDICE.md</code> bajo <code>enterpret-series-a</code>, <code>chattermill-series-b</code>, <code>unitq-zendesk</code>, <code>gorgias-series-c2</code>, <code>loop-series-b</code>, <code>narvar-series-c</code>, <code>qualtrics-pressganey</code>, <code>medallia-recap</code>.</p></article><article id="chapter-8"><div class="chapter-label">CAPÍTULO 08 · 05-Precios-y-Finanzas/precio-y-unit-economics.md</div><h1>Pricing y unit economics — vender valor sin regalar cómputo/consultoría</h1>
+<h2>1. Hipótesis de monetización</h2>
+<p>El PRD propone $299/$799/$1,499 y enterprise $3K–10K+. No son precios aprobados o validados por pago. Para sizing/forecast usamos tres escenarios homogéneos de MRR $799/$1,499/$2,999; no pretendemos que correspondan a tres cohortes observadas. No copiar simplemente el precio más alto del competidor.</p>
+<p><strong>Propuesta a validar:</strong> suscripción por organización y banda de volumen/fuentes, núcleo de trazabilidad económica incluido; implementación extraordinaria separada; servicios operativos Convexia en contrato/factura distintos. No cobrar porcentaje de revenue-at-risk detectado: incentiva inflar riesgo, no resolverlo. Success fee sólo tras definir atribución, margen, baseline y contrato; hoy no existe esa base.</p>
+<p>Una oferta Starter sin la capa económica perdería el diferencial. Alternativa: piloto acotado con la capa completa, una fuente y un problema, limitando volumen y horas expertas. Su precio se decide con costo real y comprador, no con un descuento automático del 90%.</p>
+<h2>2. Ejemplo reproducible de COGS (ESCENARIO)</h2>
+<p>50,000 conversaciones/cuenta-mes, 1,500 tokens entrada y 250 salida cada una. Una extracción Flash-lite (catálogo $0.30/$2.50 por millón), escalamiento de 10% a Sonnet ($2/$10), factor 1.15 por retries. No se ejecutaron esas inferencias ni se midió consumo real. Tarifas de catálogo consultadas por GET público al corte, no factura garantizada de endpoint.</p>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Cuenta</th>
+<th style="text-align: right;">USD/cuenta-mes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Extracción</td>
+<td>75M entrada×.30 + 12.5M salida×2.50</td>
+<td style="text-align: right;">53.75</td>
+</tr>
+<tr>
+<td>Escalamiento</td>
+<td>7.5M×2 + 1.25M×10</td>
+<td style="text-align: right;">27.50</td>
+</tr>
+<tr>
+<td>AI anterior con reserva retries</td>
+<td>(53.75+27.50)×1.15</td>
+<td style="text-align: right;">93.44</td>
+</tr>
+<tr>
+<td>Embeddings/briefs</td>
+<td>Reserva SUPUESTA, no consumo medido</td>
+<td style="text-align: right;">10.00</td>
+</tr>
+<tr>
+<td>DB/jobs/storage/egress asignado</td>
+<td>Reserva SUPUESTA</td>
+<td style="text-align: right;">35.00</td>
+</tr>
+<tr>
+<td>Soporte variable</td>
+<td>2h × $40/h fully loaded supuesto</td>
+<td style="text-align: right;">80.00</td>
+</tr>
+<tr>
+<td>Procesamiento de pagos</td>
+<td>3.5% × $1,499, tasa SUPUESTA</td>
+<td style="text-align: right;">52.47</td>
+</tr>
+<tr>
+<td><strong>Total recurrente</strong></td>
+<td></td>
+<td style="text-align: right;"><strong>270.90</strong></td>
+</tr>
+<tr>
+<td><strong>Margen bruto recurrente</strong></td>
+<td>(1499−270.9025)/1499</td>
+<td style="text-align: right;"><strong>81.93%</strong></td>
+</tr>
+</tbody>
+</table>
+<p>No sumar dos veces la extracción al subtotal AI. Modelo no usa cache gratis ni asume timeout sin costo. Tarifa soporte no es salario real declarado por cliente ni estadística BLS: BLS fue inaccesible HTTP403; por eso no se usa como respaldo de $40.</p>
+<p>Costos NO incluidos en este margen recurrente pero SÍ en forecast: onboarding (12h×$40=$480 por nuevo cliente), costo de pilotos no convertidos, nómina/fijos y marketing. Impuestos, collection delay, devoluciones de suscripción, costo de capital, riesgo legal y costos cloud no modelados pueden empeorar resultado. Soporte variable se presupuesta como capacidad externa distinta de las horas de personal incluidas en fijos; si son las mismas personas, reasignar para no doblecontar.</p>
+<h2>3. Sensibilidad que cambia la oferta</h2>
+<p>Mismo MRR $1,499 y mismos supuestos de tokens/caso; soporte/reservas mantenidos constantes sólo para aislar volumen. En operación probablemente también aumentan.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Conversaciones/mes</th>
+<th style="text-align: right;">COGS supuesto</th>
+<th style="text-align: right;">Margen bruto supuesto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">10,000</td>
+<td style="text-align: right;">$196.15</td>
+<td style="text-align: right;">86.91%</td>
+</tr>
+<tr>
+<td style="text-align: right;">50,000</td>
+<td style="text-align: right;">$270.90</td>
+<td style="text-align: right;">81.93%</td>
+</tr>
+<tr>
+<td style="text-align: right;">150,000</td>
+<td style="text-align: right;">$457.78</td>
+<td style="text-align: right;">69.46%</td>
+</tr>
+<tr>
+<td style="text-align: right;">500,000</td>
+<td style="text-align: right;">$1,111.84</td>
+<td style="text-align: right;">25.83%</td>
+</tr>
+</tbody>
+</table>
+<p>Si se usa Astra para TODAS las 50K conversaciones con los mismos tokens, catálogo $10/$50 por millón y factor1.15, el COGS ejemplo llega a <strong>$1,758.72</strong>, margen <strong>−17.33%</strong> al mismo precio. Esto no invalida usar Astra para desarrollar: <strong>Codex suscripción y runtime SaaS son costos distintos</strong>. Tampoco demuestra que un modelo más barato cumpla calidad; requiere gold humano y routing validado.</p>
+<p>La banda de volumen se cotiza después de medir longitud, dedup, histórico, reprocess, idiomas y evals. Establecer uso incluido, alertas/tope, política de excesos y qué cobra un reanálisis pedido por cliente. No vender «unlimited» sin una política técnica y económica real.</p>
+<h2>4. CAC y payback</h2>
+<p><code>CAC fully allocated = (porción ventas/marketing de fijos + marketing extra + pilotos no convertidos) / clientes nuevos del período</code>. Todos son escenarios. En base, asignamos 25% de fijos a comercial, $1K/mes extra y $120 por piloto no convertido. El resultado no es CAC medido: año1 ~$6,579 y payback ~5.4 meses; año2 ~$2,988 y ~2.4 meses. La caída depende del volumen/conversión, no de una ventaja demostrada.</p>
+<p>Payback divide CAC por contribución recurrente MRR−COGS y no por ingresos brutos. Si el margen es ≤0, payback no existe bajo ese modelo. Una cuenta enterprise puede pagar más y costar mucho más de integrar/soportar; la tabla no presupone lo contrario.</p>
+<p>No publicar LTV/CAC como validado sin retención por cohortes. El cálculo <code>margen mensual/churn mensual</code> sería extremadamente sensible al 1% que hoy es un supuesto y asume estacionariedad/vida sin límite; no se usa para justificar una valuación.</p>
+<h2>5. Prueba de precio</h2>
+<ol>
+<li>Mostrar el mismo resultado concreto a compradores comparables; registrar necesidad actual, presupuesto y alternativa pagada.</li>
+<li>Presentar alcance/volumen/onboarding explícitos a precio fijo y pedir una decisión real de piloto/contrato, no sólo «¿te gusta?».</li>
+<li>Separar rango declarado, propuesta enviada, aprobación y pago cobrado. No contar un sí informal como revenue.</li>
+<li>Medir horas de onboarding/soporte por cuenta, errores/mantenimiento de conectores y facturas proveedores.</li>
+<li>Si costo de onboarding supera meses de margen o cada cliente requiere integración bespoke, subir setup/reducir alcance antes de escalar ventas.</li>
+</ol>
+<p>La página SentiSum parte de $100K/año y Thematic de $25K/año; sirven para entender bandas de oferta, no para asegurar que VEXA pueda cobrar esas cantidades. Más barato tampoco gana si el cliente debe dedicar 40 horas a validar números.</p></article><article id="chapter-9"><div class="chapter-label">CAPÍTULO 09 · 05-Precios-y-Finanzas/corridas-financieras.md</div><h1>Corridas financieras de 36 meses</h1>
+<p><strong>Escenarios, no pronósticos ni estados financieros.</strong> Hay 108 filas mensuales (36×3), JSON de supuestos, CSV y Excel de resultados. No se verificaron clientes de pago, salarios, conversión o churn VEXA. La precisión decimal sirve para reproducir cuentas, no para expresar certeza.</p>
+<h2>1. Fórmulas y secuencia</h2>
+<p>Outreach empieza en mes3; cada cuenta se prospecta como nueva una sola vez. Reuniones→pilotos→ventas ganadas con tasas supuestas; se aplica lag de 2–3 meses; las ventas que exceden capacidad esperan en backlog y no cuentan como clientes. Churn se aplica al stock inicial; altas comienzan a facturar a mitad de mes. ARR de salida usa activos al final ×MRR×12, mientras ingresos anuales suman el revenue reconocido de cada mes. No son intercambiables.</p>
+<p><code>Caja final = caja inicial + revenue recurrente + setup − COGS − onboarding − pilotos no convertidos − fijos − marketing extra</code>. Caja inicial=0, financiación=0; saldos negativos indican necesidad de fondos, no dinero existente. Setup=0 en estas corridas. No hay upsell, expansión, pagos anuales adelantados, impuestos, retraso de cobro ni impagos. Algunos supuestos son favorables; otros conservadores. No esconderlos detrás de un único número de caja.</p>
+<h2>2. Drivers</h2>
+<table>
+<thead>
+<tr>
+<th>Input supuesto</th>
+<th style="text-align: right;">Conservador</th>
+<th style="text-align: right;">Base</th>
+<th style="text-align: right;">Expansión</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MRR</td>
+<td style="text-align: right;">$799</td>
+<td style="text-align: right;">$1,499</td>
+<td style="text-align: right;">$2,999</td>
+</tr>
+<tr>
+<td>Nuevas cuentas objetivo/mes años1/2/3</td>
+<td style="text-align: right;">25 / 45 / 65</td>
+<td style="text-align: right;">50 / 100 / 160</td>
+<td style="text-align: right;">90 / 200 / 350</td>
+</tr>
+<tr>
+<td>Reunión sobre cuenta prospectada</td>
+<td style="text-align: right;">8%</td>
+<td style="text-align: right;">12%</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr>
+<td>Piloto sobre reunión</td>
+<td style="text-align: right;">30%</td>
+<td style="text-align: right;">35%</td>
+<td style="text-align: right;">45%</td>
+</tr>
+<tr>
+<td>Pago sobre piloto</td>
+<td style="text-align: right;">35%</td>
+<td style="text-align: right;">50%</td>
+<td style="text-align: right;">55%</td>
+</tr>
+<tr>
+<td>Lag ventas meses</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td>Churn mensual logos</td>
+<td style="text-align: right;">2%</td>
+<td style="text-align: right;">1%</td>
+<td style="text-align: right;">0.75%</td>
+</tr>
+<tr>
+<td>Onboardings máximos/mes años1/2/3</td>
+<td style="text-align: right;">1 / 2 / 3</td>
+<td style="text-align: right;">2 / 3 / 5</td>
+<td style="text-align: right;">3 / 6 / 10</td>
+</tr>
+<tr>
+<td>Fijos mensuales años1/2/3</td>
+<td style="text-align: right;">$8K/$10K/$12K</td>
+<td style="text-align: right;">$14K/$18K/$25K</td>
+<td style="text-align: right;">$22K/$40K/$65K</td>
+</tr>
+</tbody>
+</table>
+<p>Fijos son presupuesto de capacidad de equipo/operación, NO nómina existente o promesa de contratación. Se modela trabajo fundador remunerado dentro del presupuesto económico; no afirmar que el costo desaparece por trabajar sin sueldo. Adaptar la caja real una vez acordados dedicación/sueldo del CTO y socio. Marketing extra $1K/mes en todos; soporte variable se trata fuera del fijo, según contrato de costos.</p>
+<h2>3. Resultados redondeados</h2>
+<table>
+<thead>
+<tr>
+<th>Escenario/año</th>
+<th style="text-align: right;">Clientes equivalentes al cierre</th>
+<th style="text-align: right;">ARR salida</th>
+<th style="text-align: right;">Ingreso recurrente del año</th>
+<th style="text-align: right;">Caja acumulada sin financiar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Conservador A1</td>
+<td style="text-align: right;">1.38</td>
+<td style="text-align: right;">$13,276</td>
+<td style="text-align: right;">$3,928</td>
+<td style="text-align: right;">−$106,457</td>
+</tr>
+<tr>
+<td>Conservador A2</td>
+<td style="text-align: right;">4.74</td>
+<td style="text-align: right;">$45,481</td>
+<td style="text-align: right;">$27,964</td>
+<td style="text-align: right;">−$222,064</td>
+</tr>
+<tr>
+<td>Conservador A3</td>
+<td style="text-align: right;">9.19</td>
+<td style="text-align: right;">$88,092</td>
+<td style="text-align: right;">$65,208</td>
+<td style="text-align: right;">−$337,328</td>
+</tr>
+<tr>
+<td>Base A1</td>
+<td style="text-align: right;">8.11</td>
+<td style="text-align: right;">$145,915</td>
+<td style="text-align: right;">$49,064</td>
+<td style="text-align: right;">−$145,095</td>
+</tr>
+<tr>
+<td>Base A2</td>
+<td style="text-align: right;">29.16</td>
+<td style="text-align: right;">$524,524</td>
+<td style="text-align: right;">$321,855</td>
+<td style="text-align: right;">−$123,518</td>
+</tr>
+<tr>
+<td>Base A3</td>
+<td style="text-align: right;">54.96</td>
+<td style="text-align: right;">$988,700</td>
+<td style="text-align: right;">$790,486</td>
+<td style="text-align: right;">$194,029</td>
+</tr>
+<tr>
+<td>Expansión A1</td>
+<td style="text-align: right;">23.38</td>
+<td style="text-align: right;">$841,376</td>
+<td style="text-align: right;">$282,299</td>
+<td style="text-align: right;">−$39,162</td>
+</tr>
+<tr>
+<td>Expansión A2</td>
+<td style="text-align: right;">90.13</td>
+<td style="text-align: right;">$3,243,562</td>
+<td style="text-align: right;">$2,048,251</td>
+<td style="text-align: right;">$1,253,757</td>
+</tr>
+<tr>
+<td>Expansión A3</td>
+<td style="text-align: right;">102.85</td>
+<td style="text-align: right;">$3,701,426</td>
+<td style="text-align: right;">$3,782,581</td>
+<td style="text-align: right;">$3,825,795</td>
+</tr>
+</tbody>
+</table>
+<p>En expansión, ingreso del A3 puede superar ARR de salida porque se agota la prospección y hay churn: el ARR final baja frente a algunos meses anteriores. Eso es una consecuencia del modelo y un recordatorio de que ARR no es facturación anual. Una generación infinita de cuentas ocultaría este límite.</p>
+<p>Caso base entra en flujo mensual positivo por primera vez en mes18, expansión mes8 y conservador no lo hace en 36 meses. «Primer mes positivo» no prueba rentabilidad sostenida; revisar todos los meses, sobre todo después de aumentos de fijo o agotamiento de leads.</p>
+<h2>4. Caja / ronda</h2>
+<table>
+<thead>
+<tr>
+<th>Escenario</th>
+<th style="text-align: right;">Máximo déficit dentro de primeros 18 meses</th>
+<th style="text-align: right;">Más 6 mensualidades de fijos+marketing del año2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Conservador</td>
+<td style="text-align: right;">$167,110</td>
+<td style="text-align: right;">$233,110</td>
+</tr>
+<tr>
+<td>Base</td>
+<td style="text-align: right;">$175,437</td>
+<td style="text-align: right;">$289,437</td>
+</tr>
+<tr>
+<td>Expansión</td>
+<td style="text-align: right;">$131,189</td>
+<td style="text-align: right;">$377,189</td>
+</tr>
+</tbody>
+</table>
+<p>La reserva es explícitamente de <strong>costos fijos+marketing</strong>, no un presupuesto integral validado para otros seis meses. Mayor crecimiento supuesto puede reducir déficit inicial y a la vez exigir mayor colchón para equipo. No usar el caso expansión para decir que el riesgo de financiación es menor.</p>
+<p><strong>No hay ask aprobado de VEXA.</strong> El $500K de materiales Likida pertenece a otra empresa y NO se reutiliza. Estos escenarios sugieren qué habría que financiar bajo ciertos planes; el monto final depende de salarios/dedicación, hitos, capital disponible, DSO, impuestos, gastos legales, políticas cloud, riesgo y condiciones societarias.</p>
+<h2>5. Umbrales de revisión antes de gastar</h2>
+<ul>
+<li>Si no hay datos legítimos y sponsor al terminar semana1: sólo fixtures, no contratar capacidad productiva basada en piloto inexistente.</li>
+<li>Si al mes2 no hay problema conciliable y disposición a ejecutar una acción: restringir hipótesis antes de escalar adquisición.</li>
+<li>Si pilotos no convierten, probar buyer/alcance/precio; no mejorar el forecast subiendo a mano paid_rate.</li>
+<li>Si onboarding requiere 40h en vez de12, costo directo supuesto pasa $480→$1,600; incluirlo y revisar capacidad, no sólo margen recurrente.</li>
+<li>Si la cobranza tarda 30/60/90 días, añadir capital de trabajo según facturación y calendario, no suponer cobro instantáneo.</li>
+<li>Si churn anual/expansión se mide, recalcular por cohorts; no ajustar retrospectivamente para embellecer el pitch.</li>
+</ul>
+<h2>6. Reproducción y pruebas</h2>
+<p><code>python3 scripts/business_model.py</code> produce JSON/CSV/XLSX. <code>python3 -m unittest discover -s tests/business -v</code> verifica fuente de 2,975/9 bandas, missing≠zero, fórmula TAM/SAM, ventas con lag, límite de prospectos, conservación de clientes/backlog/caja, no confundir ARR con ingresos y costos de tokens. El Excel es una presentación con valores calculados; no se validó una cadena de fórmulas editable dentro de Excel. El JSON es el punto de cambio y el script la implementación canónica.</p></article><article id="chapter-10"><div class="chapter-label">CAPÍTULO 10 · 04-GTM/plan-comercial-90-dias.md</div><h1>GTM de 90 días: una decisión que cambia, luego repetibilidad</h1>
+<h2>Tesis de entrada</h2>
+<p>Vender a responsable de CX/posventa con sponsor operativo y financiero. Mensaje propuesto: <strong>«Identifica qué problemas de posventa cuestan dinero, demuestra de dónde sale cada cifra y decide qué corregir sin cambiar tu helpdesk».</strong> No vender «agentes autónomos para toda tu empresa». Cambiar CRM es un trigger; la retención debe venir de decisiones posteriores, no de la migración misma.</p>
+<h2>Canales por orden de prueba</h2>
+<ol>
+<li><strong>Founder-led / relación propuesta Convexia:</strong> acceso cálido si derechos y relación comercial existen. Registrar cuántas introducciones verdaderas llegan, no asumir un canal por asociación verbal. Primer riesgo: dependencia de una sola cuenta.</li>
+<li><strong>Outbound de cuentas investigadas:</strong> marcas físicas por categoría/operación, contacto nominativo legítimo y opt-out aplicable. La lista semilla no está calificada; no comprar spam masivo ni usar datos personales de fuentes privadas. Priorizar contexto de dolor, no «vi tu web y tengo IA».</li>
+<li><strong>Partners de ecommerce/helpdesk/returns:</strong> agencias y consultores que ya implementan fuentes; acuerdos sobre propiedad de cliente, datos, soporte y comisiones. No llamar partner a una empresa antes de acuerdo.</li>
+<li><strong>Contenido/prueba pública autorizada:</strong> ficha económica sintética o caso consentido. Escribir método de conciliación/errores típicos, no screenshots de datos cliente. SEO masivo no es el canal inmediato de un piloto a 30 días.</li>
+</ol>
+<h2>Hitos y puertas de decisión</h2>
+<table>
+<thead>
+<tr>
+<th>Ventana</th>
+<th>Trabajo</th>
+<th>Evidencia requerida</th>
+<th>Decisión</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Días1–7</td>
+<td>Sponsor/datos/alcance; 4–6 entrevistas exploratorias</td>
+<td>Acceso legítimo, fuentes y owner; notas consentidas</td>
+<td>Si falta acceso, no prometer demo con datos reales</td>
+</tr>
+<tr>
+<td>Días8–14</td>
+<td>Reconciliar muestra; comparar analista vs pipeline; analizar 3 problemas</td>
+<td>Denominadores, importes y limitaciones reproducibles</td>
+<td>Si sólo hay texto, reducir promesa financiera</td>
+</tr>
+<tr>
+<td>Días15–30</td>
+<td>Una intervención, demo ejecutiva, propuesta de piloto</td>
+<td>Acción aceptada, criterio de medición, decisión comercial</td>
+<td>Pitch con resultados que existen, no ahorro anticipado</td>
+</tr>
+<tr>
+<td>Días31–60</td>
+<td>2–3 pilotos adicionales como meta, fuera de cuenta inicial</td>
+<td>Costos de onboarding, reutilización, contratos/pago reales</td>
+<td>¿Es repetible o consultoría distinta cada vez?</td>
+</tr>
+<tr>
+<td>Días61–90</td>
+<td>Cohortes de uso/acción/continuidad y revisión de precio</td>
+<td>Retención por eventos y economics por cuenta</td>
+<td>Invertir en canal sólo con entrega repetible</td>
+</tr>
+</tbody>
+</table>
+<p>Metas 4–6 entrevistas o 2–3 pilotos son objetivos operativos propuestos, NO trabajo ejecutado ni forecast de conversión. Buyer puede tardar más por security/procurement; incorporar tiempos reales al modelo.</p>
+<h2>Pipeline mínimo</h2>
+<p>Estados con evidencia: identificado → investigado → contactado → reunión → calificado → permiso datos → piloto → propuesta → contrato → pago → onboarding → activo → revisión/renovación. IDs únicos por grupo/entidad compradora, fuente/fecha y owner. Lead perdido registra motivo real; no desaparecerlo del denominador. Reunión agendada ≠ asistida; piloto agendado ≠ entregado; propuesta verbal ≠ contrato; contrato ≠ cobro.</p>
+<p>KPIs: cuentas nuevas trabajadas, contacto efectivo, reunión asistida, fit medido, acceso conseguido, tiempo primer insight, costo piloto, conversión a pago, CAC fully allocated, horas de onboarding, uso por buyer, intervención creada/ejecutada, calidad/coverage, margen y renovación. Reportar tamaños muestrales y ventanas; no declarar PMF por un NPS de un usuario.</p>
+<h2>Guion discovery (no enviado)</h2>
+<ul>
+<li>«¿Qué problema de posventa volvió esta semana y quién decide arreglarlo?»</li>
+<li>«¿Cómo estiman lo que costó? ¿Qué dato confía Finanzas y cuál discuten?»</li>
+<li>«Muéstrame la última acción que decidieron con esos datos y cómo comprobaron el resultado.»</li>
+<li>«¿Qué pierden hoy en la transición entre CRM, ecommerce y devoluciones?»</li>
+<li>«¿Quién daría acceso y quién puede aprobar este proyecto? ¿Qué se tiene que ver para pagar?»</li>
+</ul>
+<p>No empezar sugeriendo un ahorro. Capturar el lenguaje del cliente y pedir evidencia de su proceso actual. Si contesta que su stack ya lo resuelve satisfactoriamente, registrar contraevidencia, no convertirlo en oportunidad ficticia.</p>
+<h2>Propuesta piloto y restricciones</h2>
+<p>Una organización, período acordado, CSV/una fuente read-only y prueba de continuidad CRM si ambos accesos existen. Entregables: registro de calidad/cobertura, top problemas con citas, una ficha económica conciliada, tres acciones condicionadas y una intervención con owner/baseline. Fuera: responder tickets, emitir refunds, cambiar CRM, entrenar modelos con datos entre clientes, garantizar precisión o ahorro no medidos.</p>
+<p>Duración, precio, horas incluidas, volumen, acceso, retención, seguridad, criterios, soporte y salida por escrito. Servicios de ejecución de Convexia independientes; no forzar contratar ambos ni mezclar ROI software con facturación de implementación.</p>
+<h2>Objeciones y respuesta honesta</h2>
+<p>«Zendesk ya lo hace» → comparemos una decisión y el cálculo con sus herramientas; si es suficiente, no añadir VEXA.
+«Tus dólares están inventados» → abrir ledger/cobertura/supuestos; si faltan datos, mostrar desconocido.
+«Quiero ahorro garantizado» → se puede acordar criterio de piloto, no fabricar causalidad futura.
+«No puedo compartir PII» → minimizar/seudonimizar; sin ruta legal y técnica aceptable, no enviar datos.
+«Lo quiero todo por $299 ilimitado» → demostrar costo/alcance y ofrecer un piloto limitado, no vender pérdida escondida.</p>
+<h2>Qué NO se hizo</h2>
+<p>No se enviaron mensajes, reservaron demos, contactaron marcas, contrataron directorios ni se cobraron pilotos. Este playbook es operativo/propuesto; la evidencia comercial se registra al ejecutarlo.</p></article><article id="chapter-11"><div class="chapter-label">CAPÍTULO 11 · 06-Validacion/protocolo-entrevistas-y-wtp.md</div><h1>Investigación primaria pendiente: cómo sustituir hipótesis por evidencia</h1>
+<h2>Diseño de investigación</h2>
+<p>La investigación documental y el Census no prueban demanda de VEXA. Hacen falta tres tipos de evidencia distintos:
+1. <strong>Cualitativa de descubrimiento:</strong> 12–20 entrevistas con compradores/operadores para descubrir problemas, decisiones y objeciones. Muestra intencional por segmento, no representativa para calcular SAM.
+2. <strong>Cuantitativa de elegibilidad:</strong> muestra probabilística de empresas identificables del universo, cuando se obtenga directorio legítimo. Mide filtros SAM con denominadores/no respuestas/ponderaciones; una lista de marcas favoritas no la sustituye.
+3. <strong>Conductual/comercial:</strong> datos autorizados, acciones, contrato y cobro. WTP verbal se mantiene separado de pago real.</p>
+<h2>Muestreo cualitativo propuesto</h2>
+<p>Cuatro herramientas/jardín, cuatro home/appliances, cuatro muebles/cocina, más casos negativos o sin presupuesto hasta saturación. Buscar variedad de CRM, venta DTC/marketplace, volumen, país y control de la acción. No entrevistar sólo a amigos del socio ni sólo a campeones entusiasmados. Sponsor del piloto no representa todo el mercado.</p>
+<p>Roles dentro de cada cuenta: CX, Operaciones, Finanzas; al menos un bloque de entrevista donde el comprador económico responda sin que el champion conteste por él. Permiso para grabar/notas y tratamiento de datos antes de transcribir; esta fase no grabó entrevistas nuevas.</p>
+<h2>Cuestionario de 35–45 minutos</h2>
+<p><strong>Contexto (5min):</strong> rol, objetivos, canales, quién paga. Rango de revenue/volumen con año/fuente o «no compartido». Diferenciar marca y grupo.
+<strong>Proceso actual (10min):</strong> último problema concreto; cómo se descubrió; qué sistemas/intermediarios tocaron; cuánto tiempo; qué cálculo se debatió; qué intervención ocurrió.
+<strong>Datos (8min):</strong> qué liga conversación→cliente→pedido→SKU→refund; qué campo falta; restricciones de marketplaces; quién aprueba export; cómo se maneja borrado.
+<strong>Economía (7min):</strong> costos efectivamente conocidos, alternativa actual pagada, gasto/capacidad liberada; no inducir importe. Pedir documentos sólo bajo permiso.
+<strong>Decisión (5min):</strong> qué cambiaría la prioridad, quién ejecuta, ventana de resultado, qué invalidaría la herramienta.
+<strong>Precio/compromiso (5min):</strong> presentar alcance idéntico y precio propuesto; preguntar proceso para contratar. No disfrazar investigación como venta si se prometió lo contrario.</p>
+<h2>Registro por entrevista</h2>
+<p>ID seudónimo, empresa/matriz deduplicada, fecha, permiso, rol, fuente de reclutamiento, segmento, stack, rango ingreso y calidad de evidencia, volumen y calidad, problema literal, último ejemplo, alternativa, costo conocido, datos accesibles, buyer, propuesta presentada, respuesta de precio, siguiente compromiso, evidencias, contradicciones y no respondido.</p>
+<p><strong>No convertir</strong> «tenemos muchos tickets» en &gt;10K; «es caro» en $50K; «suena interesante» en intención de compra. Anotaciones directas separadas de interpretación del agente. Si el interlocutor no sabe, conservar desconocido.</p>
+<h2>Pruebas para el piloto</h2>
+<ul>
+<li>Conjunto humano: protocolo canónico en docs/blueprint/calidad/02; clasificación útil &gt;85% es meta, no resultado.</li>
+<li>Dinero: reconciliar muestra y casos negativos con Finanzas; contabilizar coverage, no sólo casos que se pudieron unir.</li>
+<li>Novedad: juez independiente del generador compara contra informe previo del equipo; reporte incompleto no es «insight nuevo».</li>
+<li>Acción: intervención aceptada y ejecutada con owner y fecha, no sólo botón clicked.</li>
+<li>Tiempo ejecutivo: tarea específica cronometrada con humano; latencia backend no sustituye comprensión.</li>
+<li>Pago: documento, factura y cobro según acuerdos; ninguna firma simulada.</li>
+</ul>
+<h2>Stop/go propuesto</h2>
+<p><strong>Seguir:</strong> al menos dos cuentas independientes con problema conciliable, acceso legal y compromiso comercial verificable, y costo de entregar que puede caber en precio. Es un gate propuesto de etapa, no prueba de PMF.
+<strong>Cambiar:</strong> interés en temas pero no en economía; datos no enlazables; buyer real distinto; requiere servicio intensivo. Cambiar alcance/precio/segmento y repetir, no acomodar labels.
+<strong>Parar o posponer:</strong> derechos de datos/IP no claros, cifras no reconciliables, nadie puede ejecutar, o la alternativa existente resuelve suficientemente sin valor incremental.</p>
+<h2>Integridad de resultados</h2>
+<p>No mezclar challenge set y muestra natural, no entrenar prompts sobre holdout y luego presentarlo como test, no quitar entrevistas negativas del denominador, no mezclar clientes Convexia con VEXA, no ocultar reclutamiento por conveniencia. Una investigación «completa» documenta estos límites y el trabajo de campo faltante; no fabrica respuestas para llenar capítulos.</p></article><article id="chapter-12"><div class="chapter-label">CAPÍTULO 12 · 01-Inversionistas/one-pager.md</div><h1>VEXA — inteligencia económica de posventa</h1>
+<p><strong>Estado: prevalidación comercial; kernel/controlador local, no SaaS desplegado.</strong> Material de trabajo para pitch, no anuncio de clientes o ronda.</p>
+<h2>Problema</h2>
+<p>Las marcas físicas reciben señales en soporte, pedidos, devoluciones, garantías y marketplaces, pero les cuesta demostrar qué problema concreto merece inversión y si corregirlo redujo un costo. Un tema frecuente no es necesariamente el más caro; una cifra convincente no es necesariamente contable.</p>
+<h2>Propuesta</h2>
+<p>VEXA organiza Business Problems por evidencia y producto/cohorte, une conversaciones con eventos financieros autorizados, separa observado/estimado/desconocido y propone intervenciones humanas con línea base. No reemplaza al helpdesk ni ejecuta refunds automáticamente. La continuidad HubSpot→Zendesk del piloto propuesto ofrece una primera prueba práctica de independencia del CRM.</p>
+<h2>Mercado</h2>
+<p>Census SUSB2022 identifica <strong>2,975 firmas de ecommerce/venta por catálogo</strong> con receipts empresariales US$10M–&lt;$100M. A precio <strong>supuesto</strong> US$17,988/año: <strong>TAM núcleo por precio US$53.5M/año</strong>. Filtros todavía no medidos dan <strong>SAM base escenario US$10.6M/año</strong>. Es una cohorte USA histórica, no TAM global ni conteo de marcas actualizado a 2026. Fabricantes/retail omnicanal son expansión no deduplicada aún. Método completo en <code>../05-Precios-y-Finanzas/tam-sam-som.md</code>.</p>
+<h2>Por qué podríamos ganar — hipótesis por probar</h2>
+<p>Conciliación financiera por pedido/SKU, intervención medible y neutralidad frente al CRM, más canal/ejecución operativa de Convexia si se formalizan derechos y relación. SentiSum/Enterpret/Thematic/Chattermill/unitQ y sistemas returns ya compiten: no afirmamos categoría sin competencia ni moat demostrado.</p>
+<h2>Modelo de negocio</h2>
+<p>Suscripción por organización/banda de volumen; hipótesis base $1,499/mes. Implementación y servicios operativos separados cuando correspondan. Ejemplo de 50K conversaciones supone COGS recurrente $270.90 y margen81.93%; no medido, no garantía para todo volumen.</p>
+<h2>Evidencia actual</h2>
+<p>Fuentes originales interpretadas, investigación con páginas/tabla Census, escenarios reproducibles, núcleo económico probado y plan de 30 días. No se acreditaron contratos de pago, precisión sobre gold humano, ahorro causal ni acceso autorizado a CRM del design partner propuesto. Senix/Convexia no se usan como logos de cliente o alianza formal sin permiso.</p>
+<h2>Hitos / ask</h2>
+<p>Próxima evidencia: acceso legítimo y muestra conciliada, una intervención aceptada, piloto pagado y replicación en otra marca. <strong>Monto de ronda, entidad, dedicación y acuerdo societario aún por definir.</strong> Escenario base de caja: ~$175K máximo déficit de18meses + ~$114K de reserva de fijos/marketing, no ask aprobado. La oferta CTO30% requiere fully diluted, vesting recíproco, IP previa, decisiones, gastos y salida por escrito.</p></article><article id="chapter-13"><div class="chapter-label">CAPÍTULO 13 · 01-Inversionistas/memo-y-preguntas-dificiles.md</div><h1>Memo para decidir si vale la pena construir y financiar VEXA</h1>
+<h2>Tesis</h2>
+<p>La abundancia de mensajes no resuelve la escasez de decisiones confiables. Una marca puede saber que «la gente se queja de la batería» y todavía no saber qué SKU/lote está implicado, cuánto gasto observado existe, qué intervención tiene dueño y cómo medir su efecto. VEXA propone cubrir ese tramo, no el universo entero de atención al cliente.</p>
+<p>La oportunidad atractiva combina producto físico, posventa multicanal y datos económicos. El riesgo central también está ahí: si no se puede enlazar el dato o nadie acepta el cálculo, el producto se degrada a un dashboard temático, justo donde hay proveedores maduros. El design partner propuesto debe servir para <strong>refutar o corroborar esa unión</strong>, no para presumir logo.</p>
+<p>La migración CRM obliga a modelar identidad e historia y puede generar urgencia. Pero una migración termina: la propuesta duradera debe ser una revisión económica/operativa útil cada semana. El piloto necesita medir decisiones y uso, no sólo que la importación termine.</p>
+<p>El mercado núcleo cuantificable hoy es de decenas de millones de dólares de suscripción bajo precio supuesto, no billones. La expansión hacia fabricante, importador y retail omnicanal puede ser mayor, pero sus conteos se solapan y su necesidad no está calificada. Una tesis venture tendría que demostrar expansión repetible, ACV/retención atractivos y distribución; no basta una cota amplia de población.</p>
+<h2>Veinte preguntas difíciles</h2>
+<ol>
+<li><strong>¿Por qué no lo hace Zendesk?</strong> Puede cubrir parte. Tenemos que mostrar una decisión económica transversal adicional; no se hizo bake-off aún.</li>
+<li><strong>¿Quién paga?</strong> Hipótesis: CX/COO con validación CFO. Champion y firmante deben identificarse en entrevistas.</li>
+<li><strong>¿Qué está construido?</strong> Kernel y controlador local; aplicación/cloud/integraciones pendientes según PROGRESO.md.</li>
+<li><strong>¿Cuántos clientes?</strong> No se acreditó cliente VEXA pagado en esta investigación. Design partner propuesto no es contrato.</li>
+<li><strong>¿TAM?</strong> $53.5M núcleo por precio supuesto sobre2,975firmas Census2022. No TAM global validado.</li>
+<li><strong>¿SAM?</strong> Base escenario~$10.6M con filtros aún no medidos. No disfrazarlos de censo.</li>
+<li><strong>¿Por qué ese precio?</strong> Hipótesis del PRD más análisis de costos/alternativas; falta disposición a pagar real.</li>
+<li><strong>¿Margen?</strong> Ejemplo81.93% con50Kcasos; a500K cae25.83% con supuestos iguales. No hay margen medido de producción.</li>
+<li><strong>¿Ahorro?</strong> Ninguno causal acreditado. Riesgo, refund, costo y margen son conceptos distintos.</li>
+<li><strong>¿Moat?</strong> Posible especialización/evidencia/operación/distribución; todavía no probado y sin derecho automático a datos cross-tenant.</li>
+<li><strong>¿Competencia?</strong> Diez categorías/proveedores documentados; SentiSum vende causas monetizadas y otros actúan sobre returns. No somos los primeros en decirlo.</li>
+<li><strong>¿Dependencia de LLM?</strong> Gateway, schema, citas, evaluación y presupuesto; selección por calidad/costo. Modelo barato sin calidad no resuelve unidad económica.</li>
+<li><strong>¿Si migra el CRM?</strong> Modelo canónico y aliases; capacidad propuesta a probar con fuentes reales, no demostrada por mock.</li>
+<li><strong>¿Si no hay order_id/SKU?</strong> Coverage visible; money unknown, análisis parcial explícito; quizá segmento equivocado para promesa financiera.</li>
+<li><strong>¿Seguridad?</strong> Diseño de mínimos privilegios, RLS/Storage/jobs/exports y contratos; no certificación SOC2 existente.</li>
+<li><strong>¿Equipo/equity?</strong> Propuesta70/30de audio; cap table, vesting, IP y derechos pendientes de formalización.</li>
+<li><strong>¿Convexia es canal exclusivo?</strong> No acreditado. Revisar contratos de socios/cliente y partes relacionadas.</li>
+<li><strong>¿Cuánto capital?</strong> Depende de hitos/fijos/dedicación. Escenario base18meses+reserva~$289K, no monto de ronda aprobado.</li>
+<li><strong>¿Qué mata la tesis?</strong> Datos no conciliables, ninguna decisión cambia, onboarding siempre bespoke o comprador satisfecho con alternativas.</li>
+<li><strong>¿Qué harían en90días?</strong> Piloto autorizado, una intervención y2–3validaciones adicionales como meta; medir venta/entrega antes de expandir canal.</li>
+</ol>
+<h2>Deck recomendado (12 láminas)</h2>
+<p>Problema con caso permitido → comprador → demo/cálculo → acción/medición → evidencia actual y límites → universo/TAM/SAM claramente rotulados → competencia → hipótesis de modelo económico → plan de validación/distribución → equipo/estructura pendiente → hitos/uso de fondos → ask decidido con datos. Evitar una portada con cifras de GMV/devoluciones convertidas en mercado de software.</p>
+<h2>Data room mínimo</h2>
+<p>Entidad/cap table/vesting/IP/contratos partes relacionadas; autorizaciones de datos/subprocesadores/retención; requisitos y arquitectura; pruebas/seguridad; fuentes de mercado/modelo reproducible; clientes/contratos/facturas cuando existan; cohorts/finanzas/facturas cloud; incidentes y riesgos; presupuesto y decisiones reservadas. Marcar disponible/pendiente/no aplica y dueño. No rellenar con firmas, testimonios o estados financieros simulados.</p></article><article id="chapter-14"><div class="chapter-label">CAPÍTULO 14 · 07-Riesgos-y-Compliance/premortem-y-condiciones.md</div><h1>Premortem de negocio, datos y sociedad</h1>
+<p>Hipótesis: dentro de doce meses el proyecto falló. ¿Qué habría ocurrido? Este registro prioriza causas y pruebas; no asigna probabilidades numéricas sin evidencia.</p>
+<table>
+<thead>
+<tr>
+<th>Riesgo</th>
+<th>Señal temprana</th>
+<th>Mitigación / prueba</th>
+<th>Quién decide</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dólares no conciliables</td>
+<td>CFO no reproduce casos; muchos enlaces faltantes</td>
+<td>Ledger por evento, supuestos y cobertura; prueba ciega con analista</td>
+<td>Finanzas cliente + producto</td>
+</tr>
+<tr>
+<td>Sin acción ejecutable</td>
+<td>Recomendaciones sin owner/control</td>
+<td>Elegir intervención viable antes del piloto</td>
+<td>COO/posventa</td>
+</tr>
+<tr>
+<td>Demanda sólo del socio</td>
+<td>Todos los leads dependen de una relación</td>
+<td>Dos cuentas independientes y evidencia de pago</td>
+<td>Fundadores</td>
+</tr>
+<tr>
+<td>Consulting disfrazado de SaaS</td>
+<td>Horas de integración crecen por cuenta</td>
+<td>Medir horas/margen, limitar scope, separar setup/servicios</td>
+<td>CTO/operación</td>
+</tr>
+<tr>
+<td>Incumbente absorbe función</td>
+<td>Cliente prefiere módulo existente</td>
+<td>Bake-off, foco donde hay valor incremental y neutralidad</td>
+<td>Producto/comercial</td>
+</tr>
+<tr>
+<td>Datos/IP no autorizados</td>
+<td>NDA genérico sin derecho a procesamiento</td>
+<td>Revisar entidad contratante, DPA/finalidad/subprocesadores y licencias</td>
+<td>Asesor legal/cliente</td>
+</tr>
+<tr>
+<td>Dependencia de plataforma</td>
+<td>Rate limits/scopes bloquean historia</td>
+<td>Adaptadores versionados, CSV legítimo, checkpoint y alertas</td>
+<td>Ingeniería</td>
+</tr>
+<tr>
+<td>Costos AI sin control</td>
+<td>Reprocessing y conversaciones largas destruyen margen</td>
+<td>Presupuestos/reservas, límites y selección por evals</td>
+<td>Ingeniería/finanzas</td>
+</tr>
+<tr>
+<td>Promesa de seguridad exagerada</td>
+<td>Se vende SOC2/residencia sin respaldo</td>
+<td>Claims revisados, controles medidos y roadmap separado</td>
+<td>Seguridad/comercial</td>
+</tr>
+<tr>
+<td>Conflicto70/30</td>
+<td>Obligaciones/vesting/IP ambiguos</td>
+<td>Pacto fundador y partes relacionadas antes de dedicación exclusiva</td>
+<td>Socios/abogado</td>
+</tr>
+<tr>
+<td>Responsabilidad producto físico</td>
+<td>Reclamo de daño se maneja como tema común</td>
+<td>Escalación humana de severidad, proceso cliente; no diagnóstico técnico automático</td>
+<td>Calidad/legal cliente</td>
+</tr>
+<tr>
+<td>Forecast tratado como plan comprometido</td>
+<td>Se contrata equipo por ARR hipotético</td>
+<td>Presupuesto por hitos y revisión de caja/ventas reales</td>
+<td>Socios</td>
+</tr>
+</tbody>
+</table>
+<h2>Condiciones de datos y seguridad</h2>
+<p>NDA no equivale a autorización de CRM, DPA, licencia de entrenamiento ni permiso de logo. Inventariar responsable/encargado, finalidades, categorías, retención, transferencia, proveedores, acceso y borrado según jurisdicción aplicable. La guía FTC “Start with Security” es una referencia general de minimización y gestión de riesgo, no certificación ni dictamen de cumplimiento. Fuente abierta: https://www.ftc.gov/business-guidance/resources/start-security-guide-business.</p>
+<p>No se accedió a una fuente CPSC suficiente para citar aquí plazos legales específicos; la página intentada dio403. Por eso no se inventa un deber de reporte de X horas. Cualquier incidente de seguridad de producto requiere política del cliente y revisión especializada. VEXA no determina si existe defecto legal, retiro o causalidad técnica a partir de texto.</p>
+<p>Desarrollo por Codex no habilita enviar conversaciones de clientes al proveedor. Antes de inferencia real revisar OpenRouter/endpoint/subencargado/retención/residencia; <code>data_collection: deny</code> no sustituye DPA ni es automáticamente ZDR. Separar entornos y permisos; no service_role en browser. Diseño técnico detallado en docs/blueprint/calidad/03.</p>
+<h2>Sociedad y el30%</h2>
+<p>No hay conclusión «30% es bueno/malo» sin capital aportado, tracción, dedicación, salario, vesting simétrico, fully diluted, opciones/SAFE, IP previa, cláusulas leaver, propiedad de oportunidad Convexia y decisiones reservadas. El costo de oportunidad de otros proyectos existe, pero no conocemos ingresos/horas para monetizarlo. Avanzar en activos reversibles y diligencia; no regalar IP previa ni firmar exclusividad por una promesa verbal.</p>
+<h2>Prioridad de diligencia</h2>
+<p>Antes de datos: autorización/entidad/retención y acceso mínimo. Antes de mes exclusivo: pacto de socios y obligaciones recíprocas. Antes de gastar: presupuesto firmado y criterio de parada. Antes de pitch público: permisos de marca/datos, cifras con etiquetas y estado de producto. Antes de producción: pruebas negativas y respuesta a incidentes. Nada de lo anterior queda aprobado por haber escrito esta carpeta.</p></article><article id="chapter-15"><div class="chapter-label">CAPÍTULO 15 · 08-Prospectos/lista-semilla.md</div><h1>Lista semilla para investigación comercial — NO pipeline calificado</h1>
+<p>Se revisaron páginas oficiales de diez marcas para confirmar <strong>categoría/productos visibles</strong>, no ingresos, stack, dolor, disposición a pagar o salud financiera. No se contactó a nadie. El CSV adjunto conserva esos campos como unknown/not_verified; no se contabilizan como SAM ni clientes.</p>
+<table>
+<thead>
+<tr>
+<th>Marca</th>
+<th>Categoría observada en página oficial</th>
+<th>Hipótesis que investigar, no dolor atribuido</th>
+<th>Fuente</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dreo</td>
+<td>Ventiladores/equipos domésticos</td>
+<td>Compatibilidad, instrucciones y posventa por modelo</td>
+<td>https://www.dreo.com/pages/about-us</td>
+</tr>
+<tr>
+<td>Ooni</td>
+<td>Hornos para pizza</td>
+<td>Armado, uso y accesorios/combustible</td>
+<td>https://ooni.com/pages/about-us</td>
+</tr>
+<tr>
+<td>Fellow</td>
+<td>Equipos de café</td>
+<td>Uso, desempeño y soporte por modelo</td>
+<td>https://fellowproducts.com/pages/about-us</td>
+</tr>
+<tr>
+<td>Caraway</td>
+<td>Cookware/cocina</td>
+<td>Expectativas, cuidado y devoluciones</td>
+<td>https://www.carawayhome.com/pages/our-story</td>
+</tr>
+<tr>
+<td>Our Place</td>
+<td>Cocina/sartenes</td>
+<td>Instrucciones/uso y diferencias entre líneas</td>
+<td>https://fromourplace.com/</td>
+</tr>
+<tr>
+<td>Branch</td>
+<td>Sillas y escritorios</td>
+<td>Ergonomía declarada, armado, dimensiones/entrega</td>
+<td>https://www.branchfurniture.com/</td>
+</tr>
+<tr>
+<td>Made In</td>
+<td>Cookware/utensilios</td>
+<td>Materiales/usos/compatibilidad</td>
+<td>https://madeincookware.com/</td>
+</tr>
+<tr>
+<td>Ruggable</td>
+<td>Alfombras lavables</td>
+<td>Medidas, cuidado/lavado y expectativas</td>
+<td>https://ruggable.com/</td>
+</tr>
+<tr>
+<td>BrüMate</td>
+<td>Drinkware/tumblers/coolers</td>
+<td>Uso, sellado/accesorios/soporte</td>
+<td>https://www.brumate.com/</td>
+</tr>
+<tr>
+<td>Burrow</td>
+<td>Muebles/sofás modulares</td>
+<td>Armado, componentes, entrega</td>
+<td>https://burrow.com/</td>
+</tr>
+</tbody>
+</table>
+<p>Senix permanece como <strong>design partner propuesto por audios</strong>, con diligencia y permisos pendientes, no se usa para validar automáticamente las diez marcas anteriores. No se importó información personal de clientes ni se recopilaron correos de empleados.</p>
+<h2>Antes de convertir marca en cuenta</h2>
+<ol>
+<li>Identificar entidad/matriz y unidad que compra; una adquisición puede hacer que dos marcas compartan presupuesto.</li>
+<li>Verificar operación atendible y actividad reciente, no sólo que el sitio responda200.</li>
+<li>Acreditar rango de ingreso y año por fuente confiable o declaración del comprador; no estimarlo desde tráfico.</li>
+<li>Confirmar volumen/tipo de contacto, CRM, pedidos/refunds y permisos en entrevista.</li>
+<li>Registrar buyer, trigger y alternativa actual; sin eso es una marca identificada, no oportunidad.</li>
+<li>No extrapolar la proporción que califique en esta selección de conveniencia al SAM de2,975firmas.</li>
+</ol>
+<p>La selección prioriza ejemplos afines, no intenta ser una muestra representativa ni afirma que pertenezcan al NAICS454110/rango censal. Algunas podrían estar por encima de$100M o en otro país/industria; hasta verificarlo no entran al universo comercial calificado.</p></article><article id="chapter-16"><div class="chapter-label">CAPÍTULO 16 · 00-Fuentes/INDICE.md</div><h1>Registro de fuentes y límites de lectura</h1>
+<p>Corte19-sep-2026UTC. URLs públicas abiertas; HTTP200 no garantiza contenido útil ni veracidad independiente. <code>used_in_analysis</code> significa que se empleó contenido específico, no que se auditó todo el documento/negocio. Fuentes de proveedores son declaraciones comerciales. Los reportes comerciales no equivalen a censo.</p>
+<p>Se registraron <strong>48 intentos/capturas</strong> y <strong>35 fuentes usadas</strong> en los capítulos (incluye páginas oficiales de marcas; no son todas estudios de mercado). Los fallos403/404 se conservan, no se cuentan como validación. Firecrawl402 se documenta en PLAN-INVESTIGACION; no se recargó ni se eludió cuota.</p>
+<h2>Fuentes con respaldo local</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th style="text-align: right;">HTTP</th>
+<th>Usada</th>
+<th>URL / captura</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>amazon-smb</td>
+<td style="text-align: right;">404</td>
+<td>No / exploración</td>
+<td><a href="https://sellingpartners.aboutamazon.com/2024-small-business-empowerment-report">Original</a> · <a href="00-Fuentes/web/amazon-smb.txt">Texto</a></td>
+</tr>
+<tr>
+<td>amvo-estudios</td>
+<td style="text-align: right;">200</td>
+<td>No / exploración</td>
+<td><a href="https://amvo.org.mx/estudios/">Original</a> · <a href="00-Fuentes/web/amvo-estudios.txt">Texto</a></td>
+</tr>
+<tr>
+<td>amvo-evo-2026</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://amvo.org.mx/descarga-evo-2026">Original</a> · <a href="00-Fuentes/web/amvo-evo-2026.txt">Texto</a></td>
+</tr>
+<tr>
+<td>bls-customer-service</td>
+<td style="text-align: right;">403</td>
+<td>No / exploración</td>
+<td><a href="https://www.bls.gov/ooh/office-and-administrative-support/customer-service-representatives.htm">Original</a> · <a href="00-Fuentes/web/bls-customer-service.txt">Texto</a></td>
+</tr>
+<tr>
+<td>bls-oes</td>
+<td style="text-align: right;">403</td>
+<td>No / exploración</td>
+<td><a href="https://www.bls.gov/oes/2024/may/oes434051.htm">Original</a> · <a href="00-Fuentes/web/bls-oes.txt">Texto</a></td>
+</tr>
+<tr>
+<td>branch-home</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.branchfurniture.com/">Original</a> · <a href="00-Fuentes/web/branch-home.txt">Texto</a></td>
+</tr>
+<tr>
+<td>brumate-home</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.brumate.com/">Original</a> · <a href="00-Fuentes/web/brumate-home.txt">Texto</a></td>
+</tr>
+<tr>
+<td>burrow-home</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://burrow.com/">Original</a> · <a href="00-Fuentes/web/burrow-home.txt">Texto</a></td>
+</tr>
+<tr>
+<td>caraway-about</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.carawayhome.com/pages/our-story">Original</a> · <a href="00-Fuentes/web/caraway-about.txt">Texto</a></td>
+</tr>
+<tr>
+<td>census-definitions</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.census.gov/programs-surveys/susb/about/glossary.html">Original</a> · <a href="00-Fuentes/web/census-definitions.txt">Texto</a></td>
+</tr>
+<tr>
+<td>census-ecom-timeseries</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.census.gov/retail/mrts/www/data/pdf/ec_current.pdf">Original</a> · <a href="00-Fuentes/web/census-ecom-timeseries.txt">Texto</a></td>
+</tr>
+<tr>
+<td>census-ecommerce</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.census.gov/retail/ecommerce.html">Original</a> · <a href="00-Fuentes/web/census-ecommerce.txt">Texto</a></td>
+</tr>
+<tr>
+<td>census-large-receipts-2022</td>
+<td style="text-align: right;">200</td>
+<td>No / exploración</td>
+<td><a href="https://www2.census.gov/programs-surveys/susb/tables/2022/us_naicssector_large_rcptsize_2022.xlsx">Original</a> · <a href="00-Fuentes/web/census-large-receipts-2022.txt">Texto</a></td>
+</tr>
+<tr>
+<td>census-receipts-2022</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www2.census.gov/programs-surveys/susb/tables/2022/us_6digitnaics_rcptsize_2022.xlsx">Original</a> · <a href="00-Fuentes/web/census-receipts-2022.txt">Texto</a></td>
+</tr>
+<tr>
+<td>census-susb-2022</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.census.gov/data/tables/2022/econ/susb/2022-susb-annual.html">Original</a> · <a href="00-Fuentes/web/census-susb-2022.txt">Texto</a></td>
+</tr>
+<tr>
+<td>census-susb-about</td>
+<td style="text-align: right;">200</td>
+<td>No / exploración</td>
+<td><a href="https://www.census.gov/programs-surveys/susb/about.html">Original</a> · <a href="00-Fuentes/web/census-susb-about.txt">Texto</a></td>
+</tr>
+<tr>
+<td>chattermill-series-b</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://chattermill.com/blog/chattermill-secures-26m-series-b">Original</a> · <a href="00-Fuentes/web/chattermill-series-b.txt">Texto</a></td>
+</tr>
+<tr>
+<td>cpsc-recall-duty</td>
+<td style="text-align: right;">403</td>
+<td>No / exploración</td>
+<td><a href="https://www.cpsc.gov/Business--Manufacturing/Recall-Guidance/Duty-to-Report-to-the-CPSC-Your-Rights-and-Responsibilities">Original</a> · <a href="00-Fuentes/web/cpsc-recall-duty.txt">Texto</a></td>
+</tr>
+<tr>
+<td>dreo-about</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.dreo.com/pages/about-us">Original</a> · <a href="00-Fuentes/web/dreo-about.txt">Texto</a></td>
+</tr>
+<tr>
+<td>enterpret-series-a</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.enterpret.com/blog/enterpret-series-a">Original</a> · <a href="00-Fuentes/web/enterpret-series-a.txt">Texto</a></td>
+</tr>
+<tr>
+<td>fellow-about</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://fellowproducts.com/pages/about-us">Original</a> · <a href="00-Fuentes/web/fellow-about.txt">Texto</a></td>
+</tr>
+<tr>
+<td>fortune-cx</td>
+<td style="text-align: right;">403</td>
+<td>No / exploración</td>
+<td><a href="https://www.fortunebusinessinsights.com/customer-experience-management-cxm-market-103002">Original</a> · <a href="00-Fuentes/web/fortune-cx.txt">Texto</a></td>
+</tr>
+<tr>
+<td>ftc-security</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.ftc.gov/business-guidance/resources/start-security-guide-business">Original</a> · <a href="00-Fuentes/web/ftc-security.txt">Texto</a></td>
+</tr>
+<tr>
+<td>gorgias-plans</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.gorgias.com/blog/gorgias-plan">Original</a> · <a href="00-Fuentes/web/gorgias-plans.txt">Texto</a></td>
+</tr>
+<tr>
+<td>gorgias-pricing-2026</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.gorgias.com/pricing">Original</a> · <a href="00-Fuentes/web/gorgias-pricing-2026.txt">Texto</a></td>
+</tr>
+<tr>
+<td>gorgias-series-c2</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.gorgias.com/blog/series-c2-ai-powered-cx">Original</a> · <a href="00-Fuentes/web/gorgias-series-c2.txt">Texto</a></td>
+</tr>
+<tr>
+<td>grandview-cx</td>
+<td style="text-align: right;">403</td>
+<td>No / exploración</td>
+<td><a href="https://www.grandviewresearch.com/industry-analysis/customer-experience-management-market">Original</a> · <a href="00-Fuentes/web/grandview-cx.txt">Texto</a></td>
+</tr>
+<tr>
+<td>inegi-ce2024</td>
+<td style="text-align: right;">200</td>
+<td>No / exploración</td>
+<td><a href="https://www.inegi.org.mx/programas/ce/2024/">Original</a> · <a href="00-Fuentes/web/inegi-ce2024.txt">Texto</a></td>
+</tr>
+<tr>
+<td>loop-pricing</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.loopreturns.com/pricing/">Original</a> · <a href="00-Fuentes/web/loop-pricing.txt">Texto</a></td>
+</tr>
+<tr>
+<td>loop-series-b</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.loopreturns.com/blog/loop-raises-65m-series-b/">Original</a> · <a href="00-Fuentes/web/loop-series-b.txt">Texto</a></td>
+</tr>
+<tr>
+<td>madein-home</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://madeincookware.com/">Original</a> · <a href="00-Fuentes/web/madein-home.txt">Texto</a></td>
+</tr>
+<tr>
+<td>marketsandmarkets-cx</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.marketsandmarkets.com/Market-Reports/customer-experience-management-cem-market-543.html">Original</a> · <a href="00-Fuentes/web/marketsandmarkets-cx.txt">Texto</a></td>
+</tr>
+<tr>
+<td>medallia-recap</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.medallia.com/blog/reinventing-medallia-for-the-ai-era-what-that-means/">Original</a> · <a href="00-Fuentes/web/medallia-recap.txt">Texto</a></td>
+</tr>
+<tr>
+<td>narvar-series-c</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.prnewswire.com/news-releases/narvar-raises-30m-series-c-funding-round-as-global-brands-increase-investment-in-customer-loyalty-and-engagement-300703004.html">Original</a> · <a href="00-Fuentes/web/narvar-series-c.txt">Texto</a></td>
+</tr>
+<tr>
+<td>nrf-2025-release</td>
+<td style="text-align: right;">404</td>
+<td>No / exploración</td>
+<td><a href="https://nrf.com/media-center/press-releases/nrf-and-happy-returns-report-2025-retail-returns-expected-to-total-8499-billion">Original</a> · <a href="00-Fuentes/web/nrf-2025-release.txt">Texto</a></td>
+</tr>
+<tr>
+<td>nrf-returns-2024</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://nrf.com/media-center/press-releases/nrf-and-happy-returns-report-2024-retail-returns-total-890-billion">Original</a> · <a href="00-Fuentes/web/nrf-returns-2024.txt">Texto</a></td>
+</tr>
+<tr>
+<td>nrf-returns-2025</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://nrf.com/research/2025-retail-returns-landscape">Original</a> · <a href="00-Fuentes/web/nrf-returns-2025.txt">Texto</a></td>
+</tr>
+<tr>
+<td>ooni-about</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://ooni.com/pages/about-us">Original</a> · <a href="00-Fuentes/web/ooni-about.txt">Texto</a></td>
+</tr>
+<tr>
+<td>ourplace-about</td>
+<td style="text-align: right;">404</td>
+<td>No / exploración</td>
+<td><a href="https://fromourplace.com/pages/about-us">Original</a> · <a href="00-Fuentes/web/ourplace-about.txt">Texto</a></td>
+</tr>
+<tr>
+<td>ourplace-home</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://fromourplace.com/">Original</a> · <a href="00-Fuentes/web/ourplace-home.txt">Texto</a></td>
+</tr>
+<tr>
+<td>qualtrics-pressganey</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.qualtrics.com/news/qualtrics-acquires-press-ganey-forsta/">Original</a> · <a href="00-Fuentes/web/qualtrics-pressganey.txt">Texto</a></td>
+</tr>
+<tr>
+<td>ruggable-home</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://ruggable.com/">Original</a> · <a href="00-Fuentes/web/ruggable-home.txt">Texto</a></td>
+</tr>
+<tr>
+<td>sba-2024</td>
+<td style="text-align: right;">200</td>
+<td>No / exploración</td>
+<td><a href="https://advocacy.sba.gov/2024/11/19/frequently-asked-questions-about-small-business-2024/">Original</a> · <a href="00-Fuentes/web/sba-2024.txt">Texto</a></td>
+</tr>
+<tr>
+<td>sentisum-pricing</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.sentisum.com/pricing">Original</a> · <a href="00-Fuentes/web/sentisum-pricing.txt">Texto</a></td>
+</tr>
+<tr>
+<td>shopify-financials-2025</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://s27.q4cdn.com/572064924/files/doc_financials/2025/q4/Shopify_Investor_Press_Release_Q4-25_FINAL.pdf">Original</a> · <a href="00-Fuentes/web/shopify-financials-2025.txt">Texto</a></td>
+</tr>
+<tr>
+<td>shopify-results-2025</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.shopify.com/news/shopify-q4-2025-financial-results">Original</a> · <a href="00-Fuentes/web/shopify-results-2025.txt">Texto</a></td>
+</tr>
+<tr>
+<td>thematic-pricing</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://getthematic.com/product/plan-and-pricing">Original</a> · <a href="00-Fuentes/web/thematic-pricing.txt">Texto</a></td>
+</tr>
+<tr>
+<td>unitq-zendesk</td>
+<td style="text-align: right;">200</td>
+<td>Sí</td>
+<td><a href="https://www.unitq.com/blog/unitq-customer-zendesk-becomes-strategic-unitq-investor/">Original</a> · <a href="00-Fuentes/web/unitq-zendesk.txt">Texto</a></td>
+</tr>
+</tbody>
+</table>
+<h2>Artefactos primarios estructurados</h2>
+<ul>
+<li><a href="00-Fuentes/census-receipts-2022.xlsx">Census XLSX original</a>: hoja US 6-digit NAICS, bandas expresadas en miles USD, NAICS2017, año2022. SHA en registro y universo-census.json.</li>
+<li><a href="05-Precios-y-Finanzas/census-filas.csv">Filas extraídas</a> conservan número de fila original.</li>
+<li><a href="00-Fuentes/web/shopify-financials-2025-extracted.txt">PDF Shopify convertido a texto</a>: cifras en millones USD; PDF URL/hash en fuente shopify-financials-2025.</li>
+<li><a href="00-Fuentes/web/census-ecom-pdf-extracted.txt">PDF Census ecommerce convertido a texto</a>: URL/hash en fuente census-ecom-timeseries.</li>
+<li>Catálogo de modelos utilizado: https://openrouter.ai/api/v1/models, copia local ../../docs/investigacion/fuentes/openrouter-candidatos.json desde proyecto; sus tarifas no son factura observada.</li>
+</ul>
+<h2>Limitaciones materiales</h2>
+<ul>
+<li>GVR/Fortune y BLS:403, cifras no usadas. INEGI: respuesta200 demasiado escueta para un conteo; no se afirma haber extraído Censos Económicos mexicanos.</li>
+<li>AMVO: resumen público; informe afiliados no accedido y año base de cifras de portada no inequívoco.</li>
+<li>NRF: estimaciones/encuestas, no dinero neto perdido.2024y2025tienen denominadores distintos.</li>
+<li>SUSB: firma definida por industria/geografía; no sumar categorías ni firmas como marcas. Bandas omitidas no son cero.</li>
+<li>Gorgias: guía histórica/actualizada vs pricing vigente difieren en billing/paquetes; tabla comercial adopta /pricing y señala discrepancia.</li>
+<li>No demos, cotizaciones negociadas, entrevistas o contratos completados.</li>
+</ul></article><p class="footer">VEXA · Estudio de investigación secundaria y escenarios. Ver datos canónicos y supuestos antes de citar. El modelo no sustituye validación comercial, revisión legal ni comprobación de producto.</p></main></body></html>

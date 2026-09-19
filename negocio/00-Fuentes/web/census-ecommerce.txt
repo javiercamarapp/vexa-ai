@@ -1,0 +1,102 @@
+{"source_id": "census-ecommerce", "url": "https://www.census.gov/retail/ecommerce.html", "final_url": "https://www.census.gov/retail/ecommerce.html", "http_status": 200, "retrieved_at": "2026-09-19T03:13:09.306315+00:00", "sha256": "8e27b9907c3dd50bd407b0c23c45c24a6984ab42d259b69d28c3231b2a57fbd5", "content_type": "text/html; charset=utf-8"}
+
+Monthly Retail Trade - Quarterly Retail E-Commerce Sales Report
+An official website of the United States government
+Check out our new
+Automotive Statistics
+webpage where you can explore, interact with, and discover insights through a wide range of automotive-related indicator data!
+Skip to main content
+end of header
+Census.gov
+>
+Business and Economy
+>
+Retail - Monthly
+>
+Quarterly Retail E-Commerce Sales Report
+Skip to looking for section
+Main
+About
+Information for Respondents
+Data
+Time Series/Trend Charts
+Technical Documentation
+Release Schedule
+Definitions
+FAQs
+Contact Us
+Back to Our Surveys & Programs
+Main
+About
+Information for Respondents
+Data
+Time Series/Trend Charts
+Technical Documentation
+Release Schedule
+Definitions
+FAQs
+Contact Us
+Back to Our Surveys & Programs
+FOR IMMEDIATE RELEASE: Tuesday, August 18, 2026
+Quarterly Retail E-Commerce Sales
+August 18, 2026
+CB26-133
+Quarterly Retail E-Commerce Sales Report
+The Census Bureau of the Department of Commerce announced today that the estimate of U.S. retail e-commerce sales for the second quarter of 2026, adjusted for seasonal variation, but not for price changes, was $340.2 billion, an increase of 3.8 percent (±0.4 percent) from the first quarter of 2026. Total retail sales for the second quarter of 2026 were estimated at $1,986.5 billion, an increase of 2.9 percent (±0.2 percent) from the first quarter of 2026. The second quarter 2026 e-commerce estimate increased 12.2 percent (±0.9 percent) from the second quarter of 2025 while total retail sales increased 6.7 percent (±0.5 percent) in the same period. E-commerce sales in the second quarter of 2026 accounted for 17.1 percent of total sales.
+On a not adjusted basis, the estimate of U.S. retail e-commerce sales for the second quarter of 2026 totaled $329.5 billion, a increase of 9.4 percent (±0.4 percent) from the first quarter of 2026. The second quarter 2026 e-commerce estimate increased 12.4 percent (±0.9 percent) from the second quarter of 2025 while total retail sales increased 6.6 percent (±0.5 percent) in the same period. E-commerce sales in the second quarter of 2026 accounted for 16.4 percent of total sales.
+Full 2nd Quarter 2026 Publication
+All Files are [
+<
+1MB]
+Full 2Q 2026 Publication
+2Q 2026 Publication Table 1
+2Q 2026 Publication Table 2
+2Q 2026 Publication Table (Delimited)
+2Q 2026 Publication Table (Delimited)
+Adjusted Sales Time Series
+Not Adjusted Sales Time Series
+Adjusted Sales Time Series (Delimited)
+Not Adjusted Sales Time Series (Delimited)
+Supplemental Tables
+All Files are [
+<
+1MB]
+2Q 2026 E-Commerce Tables
+Time Series Tables
+Explanatory Material
+Contact
+For Survey Processing and Survey Methodology:
+Email Us!
+Call us: 301-763-2713
+For Seasonal Adjustment
+Call us: 301-763-7186
+Related Information
+Business and Industry
+Annual Retail Trade
+Economic Census
+Economic Indicators
+CONNECT WITH US
+Information Quality
+Data Linkage Infrastructure
+Data Protection and Privacy Policy
+Accessibility
+FOIA
+Inspector General
+No FEAR Act
+U.S. Department of Commerce
+USA.gov
+Measuring America's People, Places, and Economy
+X
+Is this page helpful?
+Yes
+No
+X
+No, thanks
+255
+characters remaining
+X
+Thank you for your feedback.
+Comments or suggestions?
+By selecting this link you will leave
+www.census.gov
+. Please check the Privacy Policy of the site you are visiting.

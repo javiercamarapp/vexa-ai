@@ -1,0 +1,141 @@
+naics,description,receipt_band_thousands_usd,firms,establishments,excel_row,source,source_sheet
+--,Total,"09: 10,000-14,999",85220,137053,12,CENSUS-SUSB-2022,US 6-digit NAICS
+--,Total,"10: 15,000-19,999",44621,86739,13,CENSUS-SUSB-2022,US 6-digit NAICS
+--,Total,"11: 20,000-24,999",27826,61220,14,CENSUS-SUSB-2022,US 6-digit NAICS
+--,Total,"12: 25,000-29,999",18783,46501,15,CENSUS-SUSB-2022,US 6-digit NAICS
+--,Total,"13: 30,000-34,999",14064,37427,16,CENSUS-SUSB-2022,US 6-digit NAICS
+--,Total,"14: 35,000-39,999",10714,32988,17,CENSUS-SUSB-2022,US 6-digit NAICS
+--,Total,"15: 40,000-49,999",15221,53758,18,CENSUS-SUSB-2022,US 6-digit NAICS
+--,Total,"16: 50,000-74,999",22060,90893,19,CENSUS-SUSB-2022,US 6-digit NAICS
+--,Total,"17: 75,000-99,999",11078,60251,20,CENSUS-SUSB-2022,US 6-digit NAICS
+31-33,Manufacturing,"09: 10,000-14,999",8282,9227,2739,CENSUS-SUSB-2022,US 6-digit NAICS
+31-33,Manufacturing,"10: 15,000-19,999",4968,5769,2740,CENSUS-SUSB-2022,US 6-digit NAICS
+31-33,Manufacturing,"11: 20,000-24,999",3240,4043,2741,CENSUS-SUSB-2022,US 6-digit NAICS
+31-33,Manufacturing,"12: 25,000-29,999",2296,2948,2742,CENSUS-SUSB-2022,US 6-digit NAICS
+31-33,Manufacturing,"13: 30,000-34,999",1799,2398,2743,CENSUS-SUSB-2022,US 6-digit NAICS
+31-33,Manufacturing,"14: 35,000-39,999",1399,1954,2744,CENSUS-SUSB-2022,US 6-digit NAICS
+31-33,Manufacturing,"15: 40,000-49,999",2021,2963,2745,CENSUS-SUSB-2022,US 6-digit NAICS
+31-33,Manufacturing,"16: 50,000-74,999",3007,4987,2746,CENSUS-SUSB-2022,US 6-digit NAICS
+31-33,Manufacturing,"17: 75,000-99,999",1610,2983,2747,CENSUS-SUSB-2022,US 6-digit NAICS
+333112,Lawn and Garden Tractor and Home Lawn and Garden Equipment Manufacturing,"09: 10,000-14,999",9,9,9300,CENSUS-SUSB-2022,US 6-digit NAICS
+333112,Lawn and Garden Tractor and Home Lawn and Garden Equipment Manufacturing,"15: 40,000-49,999",4,4,9301,CENSUS-SUSB-2022,US 6-digit NAICS
+333991,Power-Driven Handtool Manufacturing,"09: 10,000-14,999",3,3,10074,CENSUS-SUSB-2022,US 6-digit NAICS
+333991,Power-Driven Handtool Manufacturing,"11: 20,000-24,999",4,4,10075,CENSUS-SUSB-2022,US 6-digit NAICS
+334310,Audio and Video Equipment Manufacturing,"09: 10,000-14,999",12,14,10435,CENSUS-SUSB-2022,US 6-digit NAICS
+334310,Audio and Video Equipment Manufacturing,"10: 15,000-19,999",8,10,10436,CENSUS-SUSB-2022,US 6-digit NAICS
+334310,Audio and Video Equipment Manufacturing,"11: 20,000-24,999",6,6,10437,CENSUS-SUSB-2022,US 6-digit NAICS
+334310,Audio and Video Equipment Manufacturing,"12: 25,000-29,999",5,6,10438,CENSUS-SUSB-2022,US 6-digit NAICS
+334310,Audio and Video Equipment Manufacturing,"15: 40,000-49,999",3,3,10439,CENSUS-SUSB-2022,US 6-digit NAICS
+334310,Audio and Video Equipment Manufacturing,"16: 50,000-74,999",9,11,10440,CENSUS-SUSB-2022,US 6-digit NAICS
+334310,Audio and Video Equipment Manufacturing,"17: 75,000-99,999",3,5,10441,CENSUS-SUSB-2022,US 6-digit NAICS
+335210,Small Electrical Appliance Manufacturing,"09: 10,000-14,999",8,8,10959,CENSUS-SUSB-2022,US 6-digit NAICS
+335210,Small Electrical Appliance Manufacturing,"15: 40,000-49,999",3,3,10960,CENSUS-SUSB-2022,US 6-digit NAICS
+335210,Small Electrical Appliance Manufacturing,"16: 50,000-74,999",3,4,10961,CENSUS-SUSB-2022,US 6-digit NAICS
+335220,Major Household Appliance Manufacturing,"09: 10,000-14,999",6,6,10982,CENSUS-SUSB-2022,US 6-digit NAICS
+335220,Major Household Appliance Manufacturing,"10: 15,000-19,999",4,5,10983,CENSUS-SUSB-2022,US 6-digit NAICS
+337,Furniture and Related Product Manufacturing,"09: 10,000-14,999",313,337,12072,CENSUS-SUSB-2022,US 6-digit NAICS
+337,Furniture and Related Product Manufacturing,"10: 15,000-19,999",181,189,12073,CENSUS-SUSB-2022,US 6-digit NAICS
+337,Furniture and Related Product Manufacturing,"11: 20,000-24,999",119,131,12074,CENSUS-SUSB-2022,US 6-digit NAICS
+337,Furniture and Related Product Manufacturing,"12: 25,000-29,999",66,72,12075,CENSUS-SUSB-2022,US 6-digit NAICS
+337,Furniture and Related Product Manufacturing,"13: 30,000-34,999",64,74,12076,CENSUS-SUSB-2022,US 6-digit NAICS
+337,Furniture and Related Product Manufacturing,"14: 35,000-39,999",42,56,12077,CENSUS-SUSB-2022,US 6-digit NAICS
+337,Furniture and Related Product Manufacturing,"15: 40,000-49,999",52,66,12078,CENSUS-SUSB-2022,US 6-digit NAICS
+337,Furniture and Related Product Manufacturing,"16: 50,000-74,999",84,120,12079,CENSUS-SUSB-2022,US 6-digit NAICS
+337,Furniture and Related Product Manufacturing,"17: 75,000-99,999",31,43,12080,CENSUS-SUSB-2022,US 6-digit NAICS
+339920,Sporting and Athletic Goods Manufacturing,"09: 10,000-14,999",40,42,12621,CENSUS-SUSB-2022,US 6-digit NAICS
+339920,Sporting and Athletic Goods Manufacturing,"10: 15,000-19,999",15,16,12622,CENSUS-SUSB-2022,US 6-digit NAICS
+339920,Sporting and Athletic Goods Manufacturing,"11: 20,000-24,999",9,9,12623,CENSUS-SUSB-2022,US 6-digit NAICS
+339920,Sporting and Athletic Goods Manufacturing,"12: 25,000-29,999",12,13,12624,CENSUS-SUSB-2022,US 6-digit NAICS
+339920,Sporting and Athletic Goods Manufacturing,"13: 30,000-34,999",4,5,12625,CENSUS-SUSB-2022,US 6-digit NAICS
+339920,Sporting and Athletic Goods Manufacturing,"14: 35,000-39,999",7,8,12626,CENSUS-SUSB-2022,US 6-digit NAICS
+339920,Sporting and Athletic Goods Manufacturing,"15: 40,000-49,999",9,9,12627,CENSUS-SUSB-2022,US 6-digit NAICS
+339920,Sporting and Athletic Goods Manufacturing,"16: 50,000-74,999",10,13,12628,CENSUS-SUSB-2022,US 6-digit NAICS
+339920,Sporting and Athletic Goods Manufacturing,"17: 75,000-99,999",11,14,12629,CENSUS-SUSB-2022,US 6-digit NAICS
+42,Wholesale Trade,"09: 10,000-14,999",12799,14798,12831,CENSUS-SUSB-2022,US 6-digit NAICS
+42,Wholesale Trade,"10: 15,000-19,999",7370,9096,12832,CENSUS-SUSB-2022,US 6-digit NAICS
+42,Wholesale Trade,"11: 20,000-24,999",5069,6488,12833,CENSUS-SUSB-2022,US 6-digit NAICS
+42,Wholesale Trade,"12: 25,000-29,999",3432,4699,12834,CENSUS-SUSB-2022,US 6-digit NAICS
+42,Wholesale Trade,"13: 30,000-34,999",2771,3863,12835,CENSUS-SUSB-2022,US 6-digit NAICS
+42,Wholesale Trade,"14: 35,000-39,999",2085,3089,12836,CENSUS-SUSB-2022,US 6-digit NAICS
+42,Wholesale Trade,"15: 40,000-49,999",3126,5216,12837,CENSUS-SUSB-2022,US 6-digit NAICS
+42,Wholesale Trade,"16: 50,000-74,999",4881,8615,12838,CENSUS-SUSB-2022,US 6-digit NAICS
+42,Wholesale Trade,"17: 75,000-99,999",2573,5268,12839,CENSUS-SUSB-2022,US 6-digit NAICS
+423710,Hardware Merchant Wholesalers,"09: 10,000-14,999",201,233,13795,CENSUS-SUSB-2022,US 6-digit NAICS
+423710,Hardware Merchant Wholesalers,"10: 15,000-19,999",124,165,13796,CENSUS-SUSB-2022,US 6-digit NAICS
+423710,Hardware Merchant Wholesalers,"11: 20,000-24,999",70,105,13797,CENSUS-SUSB-2022,US 6-digit NAICS
+423710,Hardware Merchant Wholesalers,"12: 25,000-29,999",45,79,13798,CENSUS-SUSB-2022,US 6-digit NAICS
+423710,Hardware Merchant Wholesalers,"13: 30,000-34,999",41,72,13799,CENSUS-SUSB-2022,US 6-digit NAICS
+423710,Hardware Merchant Wholesalers,"14: 35,000-39,999",32,53,13800,CENSUS-SUSB-2022,US 6-digit NAICS
+423710,Hardware Merchant Wholesalers,"15: 40,000-49,999",48,86,13801,CENSUS-SUSB-2022,US 6-digit NAICS
+423710,Hardware Merchant Wholesalers,"16: 50,000-74,999",59,90,13802,CENSUS-SUSB-2022,US 6-digit NAICS
+423710,Hardware Merchant Wholesalers,"17: 75,000-99,999",34,95,13803,CENSUS-SUSB-2022,US 6-digit NAICS
+44-45,Retail Trade,"09: 10,000-14,999",12419,19222,15783,CENSUS-SUSB-2022,US 6-digit NAICS
+44-45,Retail Trade,"10: 15,000-19,999",6375,11183,15784,CENSUS-SUSB-2022,US 6-digit NAICS
+44-45,Retail Trade,"11: 20,000-24,999",3879,7716,15785,CENSUS-SUSB-2022,US 6-digit NAICS
+44-45,Retail Trade,"12: 25,000-29,999",2738,5395,15786,CENSUS-SUSB-2022,US 6-digit NAICS
+44-45,Retail Trade,"13: 30,000-34,999",2174,4788,15787,CENSUS-SUSB-2022,US 6-digit NAICS
+44-45,Retail Trade,"14: 35,000-39,999",1649,4353,15788,CENSUS-SUSB-2022,US 6-digit NAICS
+44-45,Retail Trade,"15: 40,000-49,999",2520,6800,15789,CENSUS-SUSB-2022,US 6-digit NAICS
+44-45,Retail Trade,"16: 50,000-74,999",3953,11715,15790,CENSUS-SUSB-2022,US 6-digit NAICS
+44-45,Retail Trade,"17: 75,000-99,999",2118,7705,15791,CENSUS-SUSB-2022,US 6-digit NAICS
+442,Furniture and Home Furnishings Stores,"09: 10,000-14,999",450,884,16107,CENSUS-SUSB-2022,US 6-digit NAICS
+442,Furniture and Home Furnishings Stores,"10: 15,000-19,999",209,569,16108,CENSUS-SUSB-2022,US 6-digit NAICS
+442,Furniture and Home Furnishings Stores,"11: 20,000-24,999",118,369,16109,CENSUS-SUSB-2022,US 6-digit NAICS
+442,Furniture and Home Furnishings Stores,"12: 25,000-29,999",84,231,16110,CENSUS-SUSB-2022,US 6-digit NAICS
+442,Furniture and Home Furnishings Stores,"13: 30,000-34,999",49,182,16111,CENSUS-SUSB-2022,US 6-digit NAICS
+442,Furniture and Home Furnishings Stores,"14: 35,000-39,999",37,216,16112,CENSUS-SUSB-2022,US 6-digit NAICS
+442,Furniture and Home Furnishings Stores,"15: 40,000-49,999",53,327,16113,CENSUS-SUSB-2022,US 6-digit NAICS
+442,Furniture and Home Furnishings Stores,"16: 50,000-74,999",80,709,16114,CENSUS-SUSB-2022,US 6-digit NAICS
+442,Furniture and Home Furnishings Stores,"17: 75,000-99,999",30,271,16115,CENSUS-SUSB-2022,US 6-digit NAICS
+443,Electronics and Appliance Stores,"09: 10,000-14,999",198,340,16280,CENSUS-SUSB-2022,US 6-digit NAICS
+443,Electronics and Appliance Stores,"10: 15,000-19,999",105,254,16281,CENSUS-SUSB-2022,US 6-digit NAICS
+443,Electronics and Appliance Stores,"11: 20,000-24,999",51,168,16282,CENSUS-SUSB-2022,US 6-digit NAICS
+443,Electronics and Appliance Stores,"12: 25,000-29,999",38,121,16283,CENSUS-SUSB-2022,US 6-digit NAICS
+443,Electronics and Appliance Stores,"13: 30,000-34,999",32,110,16284,CENSUS-SUSB-2022,US 6-digit NAICS
+443,Electronics and Appliance Stores,"14: 35,000-39,999",19,128,16285,CENSUS-SUSB-2022,US 6-digit NAICS
+443,Electronics and Appliance Stores,"15: 40,000-49,999",35,273,16286,CENSUS-SUSB-2022,US 6-digit NAICS
+443,Electronics and Appliance Stores,"16: 50,000-74,999",37,145,16287,CENSUS-SUSB-2022,US 6-digit NAICS
+443,Electronics and Appliance Stores,"17: 75,000-99,999",24,276,16288,CENSUS-SUSB-2022,US 6-digit NAICS
+444130,Hardware Stores,"09: 10,000-14,999",179,312,16494,CENSUS-SUSB-2022,US 6-digit NAICS
+444130,Hardware Stores,"10: 15,000-19,999",80,176,16495,CENSUS-SUSB-2022,US 6-digit NAICS
+444130,Hardware Stores,"11: 20,000-24,999",51,122,16496,CENSUS-SUSB-2022,US 6-digit NAICS
+444130,Hardware Stores,"12: 25,000-29,999",24,54,16497,CENSUS-SUSB-2022,US 6-digit NAICS
+444130,Hardware Stores,"13: 30,000-34,999",23,58,16498,CENSUS-SUSB-2022,US 6-digit NAICS
+444130,Hardware Stores,"14: 35,000-39,999",20,86,16499,CENSUS-SUSB-2022,US 6-digit NAICS
+444130,Hardware Stores,"15: 40,000-49,999",23,84,16500,CENSUS-SUSB-2022,US 6-digit NAICS
+444130,Hardware Stores,"16: 50,000-74,999",34,163,16501,CENSUS-SUSB-2022,US 6-digit NAICS
+444130,Hardware Stores,"17: 75,000-99,999",12,67,16502,CENSUS-SUSB-2022,US 6-digit NAICS
+446120,"Cosmetics, Beauty Supplies, and Perfume Stores","09: 10,000-14,999",30,45,17059,CENSUS-SUSB-2022,US 6-digit NAICS
+446120,"Cosmetics, Beauty Supplies, and Perfume Stores","10: 15,000-19,999",21,67,17060,CENSUS-SUSB-2022,US 6-digit NAICS
+446120,"Cosmetics, Beauty Supplies, and Perfume Stores","11: 20,000-24,999",8,28,17061,CENSUS-SUSB-2022,US 6-digit NAICS
+446120,"Cosmetics, Beauty Supplies, and Perfume Stores","12: 25,000-29,999",5,5,17062,CENSUS-SUSB-2022,US 6-digit NAICS
+446120,"Cosmetics, Beauty Supplies, and Perfume Stores","13: 30,000-34,999",4,23,17063,CENSUS-SUSB-2022,US 6-digit NAICS
+446120,"Cosmetics, Beauty Supplies, and Perfume Stores","14: 35,000-39,999",3,3,17064,CENSUS-SUSB-2022,US 6-digit NAICS
+446120,"Cosmetics, Beauty Supplies, and Perfume Stores","15: 40,000-49,999",4,122,17065,CENSUS-SUSB-2022,US 6-digit NAICS
+446120,"Cosmetics, Beauty Supplies, and Perfume Stores","16: 50,000-74,999",5,89,17066,CENSUS-SUSB-2022,US 6-digit NAICS
+451110,Sporting Goods Stores,"09: 10,000-14,999",158,326,17680,CENSUS-SUSB-2022,US 6-digit NAICS
+451110,Sporting Goods Stores,"10: 15,000-19,999",70,167,17681,CENSUS-SUSB-2022,US 6-digit NAICS
+451110,Sporting Goods Stores,"11: 20,000-24,999",32,71,17682,CENSUS-SUSB-2022,US 6-digit NAICS
+451110,Sporting Goods Stores,"12: 25,000-29,999",29,64,17683,CENSUS-SUSB-2022,US 6-digit NAICS
+451110,Sporting Goods Stores,"13: 30,000-34,999",22,69,17684,CENSUS-SUSB-2022,US 6-digit NAICS
+451110,Sporting Goods Stores,"14: 35,000-39,999",8,26,17685,CENSUS-SUSB-2022,US 6-digit NAICS
+451110,Sporting Goods Stores,"15: 40,000-49,999",14,116,17686,CENSUS-SUSB-2022,US 6-digit NAICS
+451110,Sporting Goods Stores,"16: 50,000-74,999",18,42,17687,CENSUS-SUSB-2022,US 6-digit NAICS
+451110,Sporting Goods Stores,"17: 75,000-99,999",13,83,17688,CENSUS-SUSB-2022,US 6-digit NAICS
+453910,Pet and Pet Supplies Stores,"09: 10,000-14,999",37,125,18142,CENSUS-SUSB-2022,US 6-digit NAICS
+453910,Pet and Pet Supplies Stores,"10: 15,000-19,999",18,56,18143,CENSUS-SUSB-2022,US 6-digit NAICS
+453910,Pet and Pet Supplies Stores,"11: 20,000-24,999",14,88,18144,CENSUS-SUSB-2022,US 6-digit NAICS
+453910,Pet and Pet Supplies Stores,"12: 25,000-29,999",6,30,18145,CENSUS-SUSB-2022,US 6-digit NAICS
+453910,Pet and Pet Supplies Stores,"14: 35,000-39,999",3,9,18146,CENSUS-SUSB-2022,US 6-digit NAICS
+453910,Pet and Pet Supplies Stores,"15: 40,000-49,999",8,85,18147,CENSUS-SUSB-2022,US 6-digit NAICS
+453910,Pet and Pet Supplies Stores,"16: 50,000-74,999",4,34,18148,CENSUS-SUSB-2022,US 6-digit NAICS
+453910,Pet and Pet Supplies Stores,"17: 75,000-99,999",7,87,18149,CENSUS-SUSB-2022,US 6-digit NAICS
+454110,Electronic Shopping and Mail-Order Houses,"09: 10,000-14,999",996,1031,18333,CENSUS-SUSB-2022,US 6-digit NAICS
+454110,Electronic Shopping and Mail-Order Houses,"10: 15,000-19,999",544,573,18334,CENSUS-SUSB-2022,US 6-digit NAICS
+454110,Electronic Shopping and Mail-Order Houses,"11: 20,000-24,999",340,358,18335,CENSUS-SUSB-2022,US 6-digit NAICS
+454110,Electronic Shopping and Mail-Order Houses,"12: 25,000-29,999",218,240,18336,CENSUS-SUSB-2022,US 6-digit NAICS
+454110,Electronic Shopping and Mail-Order Houses,"13: 30,000-34,999",166,181,18337,CENSUS-SUSB-2022,US 6-digit NAICS
+454110,Electronic Shopping and Mail-Order Houses,"14: 35,000-39,999",143,152,18338,CENSUS-SUSB-2022,US 6-digit NAICS
+454110,Electronic Shopping and Mail-Order Houses,"15: 40,000-49,999",170,180,18339,CENSUS-SUSB-2022,US 6-digit NAICS
+454110,Electronic Shopping and Mail-Order Houses,"16: 50,000-74,999",264,308,18340,CENSUS-SUSB-2022,US 6-digit NAICS
+454110,Electronic Shopping and Mail-Order Houses,"17: 75,000-99,999",134,189,18341,CENSUS-SUSB-2022,US 6-digit NAICS

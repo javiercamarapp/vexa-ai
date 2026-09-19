@@ -1,0 +1,2 @@
+{"source_id": "nrf-2025-release", "url": "https://nrf.com/media-center/press-releases/nrf-and-happy-returns-report-2025-retail-returns-expected-to-total-8499-billion", "final_url": "https://nrf.com/media-center/press-releases/nrf-and-happy-returns-report-2025-retail-returns-expected-to-total-8499-billion", "http_status": 404, "retrieved_at": "2026-09-19T03:19:45.168689+00:00", "sha256": "e0c99510d82486f10e801328d6b8e98d2e6546eb774184a60a9651c4622c511a", "content_type": "text/html; charset=utf-8"}
+

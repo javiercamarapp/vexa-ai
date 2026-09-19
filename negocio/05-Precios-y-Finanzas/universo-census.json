@@ -1,0 +1,418 @@
+{
+  "data_year": 2022,
+  "release_date": "2025-04-10",
+  "source_url": "https://www2.census.gov/programs-surveys/susb/tables/2022/us_6digitnaics_rcptsize_2022.xlsx",
+  "sha256": "f2cf0cfcfee4317d50118baf0507d40492907abe73ccb78f5e76a89b99425264",
+  "receipt_min_usd": 10000000,
+  "receipt_max_exclusive_usd": 100000000,
+  "naics_version": 2017,
+  "unit_warning": "Firm counts are industry-specific, NOT additive across NAICS; this is not a brand census. Missing bands are not zero.",
+  "sectors": [
+    {
+      "naics": "--",
+      "description": "Total",
+      "published_firm_sum": 249587,
+      "published_establishment_sum": 606830,
+      "present_bands": 9,
+      "missing_bands": [],
+      "complete_target_bands": true,
+      "interpretation": "published sector count",
+      "rows": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ]
+    },
+    {
+      "naics": "31-33",
+      "description": "Manufacturing",
+      "published_firm_sum": 28622,
+      "published_establishment_sum": 37272,
+      "present_bands": 9,
+      "missing_bands": [],
+      "complete_target_bands": true,
+      "interpretation": "published sector count",
+      "rows": [
+        2739,
+        2740,
+        2741,
+        2742,
+        2743,
+        2744,
+        2745,
+        2746,
+        2747
+      ]
+    },
+    {
+      "naics": "42",
+      "description": "Wholesale Trade",
+      "published_firm_sum": 44106,
+      "published_establishment_sum": 61132,
+      "present_bands": 9,
+      "missing_bands": [],
+      "complete_target_bands": true,
+      "interpretation": "published sector count",
+      "rows": [
+        12831,
+        12832,
+        12833,
+        12834,
+        12835,
+        12836,
+        12837,
+        12838,
+        12839
+      ]
+    },
+    {
+      "naics": "44-45",
+      "description": "Retail Trade",
+      "published_firm_sum": 37825,
+      "published_establishment_sum": 78877,
+      "present_bands": 9,
+      "missing_bands": [],
+      "complete_target_bands": true,
+      "interpretation": "published sector count",
+      "rows": [
+        15783,
+        15784,
+        15785,
+        15786,
+        15787,
+        15788,
+        15789,
+        15790,
+        15791
+      ]
+    },
+    {
+      "naics": "454110",
+      "description": "Electronic Shopping and Mail-Order Houses",
+      "published_firm_sum": 2975,
+      "published_establishment_sum": 3212,
+      "present_bands": 9,
+      "missing_bands": [],
+      "complete_target_bands": true,
+      "interpretation": "published sector count",
+      "rows": [
+        18333,
+        18334,
+        18335,
+        18336,
+        18337,
+        18338,
+        18339,
+        18340,
+        18341
+      ]
+    },
+    {
+      "naics": "333112",
+      "description": "Lawn and Garden Tractor and Home Lawn and Garden Equipment Manufacturing",
+      "published_firm_sum": 13,
+      "published_establishment_sum": 13,
+      "present_bands": 2,
+      "missing_bands": [
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "16",
+        "17"
+      ],
+      "complete_target_bands": false,
+      "interpretation": "lower bound from published bands; missing does not mean zero",
+      "rows": [
+        9300,
+        9301
+      ]
+    },
+    {
+      "naics": "333991",
+      "description": "Power-Driven Handtool Manufacturing",
+      "published_firm_sum": 7,
+      "published_establishment_sum": 7,
+      "present_bands": 2,
+      "missing_bands": [
+        "10",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+      ],
+      "complete_target_bands": false,
+      "interpretation": "lower bound from published bands; missing does not mean zero",
+      "rows": [
+        10074,
+        10075
+      ]
+    },
+    {
+      "naics": "335210",
+      "description": "Small Electrical Appliance Manufacturing",
+      "published_firm_sum": 14,
+      "published_establishment_sum": 15,
+      "present_bands": 3,
+      "missing_bands": [
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "17"
+      ],
+      "complete_target_bands": false,
+      "interpretation": "lower bound from published bands; missing does not mean zero",
+      "rows": [
+        10959,
+        10960,
+        10961
+      ]
+    },
+    {
+      "naics": "335220",
+      "description": "Major Household Appliance Manufacturing",
+      "published_firm_sum": 10,
+      "published_establishment_sum": 11,
+      "present_bands": 2,
+      "missing_bands": [
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+      ],
+      "complete_target_bands": false,
+      "interpretation": "lower bound from published bands; missing does not mean zero",
+      "rows": [
+        10982,
+        10983
+      ]
+    },
+    {
+      "naics": "334310",
+      "description": "Audio and Video Equipment Manufacturing",
+      "published_firm_sum": 46,
+      "published_establishment_sum": 55,
+      "present_bands": 7,
+      "missing_bands": [
+        "13",
+        "14"
+      ],
+      "complete_target_bands": false,
+      "interpretation": "lower bound from published bands; missing does not mean zero",
+      "rows": [
+        10435,
+        10436,
+        10437,
+        10438,
+        10439,
+        10440,
+        10441
+      ]
+    },
+    {
+      "naics": "337",
+      "description": "Furniture and Related Product Manufacturing",
+      "published_firm_sum": 952,
+      "published_establishment_sum": 1088,
+      "present_bands": 9,
+      "missing_bands": [],
+      "complete_target_bands": true,
+      "interpretation": "published sector count",
+      "rows": [
+        12072,
+        12073,
+        12074,
+        12075,
+        12076,
+        12077,
+        12078,
+        12079,
+        12080
+      ]
+    },
+    {
+      "naics": "339920",
+      "description": "Sporting and Athletic Goods Manufacturing",
+      "published_firm_sum": 117,
+      "published_establishment_sum": 129,
+      "present_bands": 9,
+      "missing_bands": [],
+      "complete_target_bands": true,
+      "interpretation": "published sector count",
+      "rows": [
+        12621,
+        12622,
+        12623,
+        12624,
+        12625,
+        12626,
+        12627,
+        12628,
+        12629
+      ]
+    },
+    {
+      "naics": "423710",
+      "description": "Hardware Merchant Wholesalers",
+      "published_firm_sum": 654,
+      "published_establishment_sum": 978,
+      "present_bands": 9,
+      "missing_bands": [],
+      "complete_target_bands": true,
+      "interpretation": "published sector count",
+      "rows": [
+        13795,
+        13796,
+        13797,
+        13798,
+        13799,
+        13800,
+        13801,
+        13802,
+        13803
+      ]
+    },
+    {
+      "naics": "444130",
+      "description": "Hardware Stores",
+      "published_firm_sum": 446,
+      "published_establishment_sum": 1122,
+      "present_bands": 9,
+      "missing_bands": [],
+      "complete_target_bands": true,
+      "interpretation": "published sector count",
+      "rows": [
+        16494,
+        16495,
+        16496,
+        16497,
+        16498,
+        16499,
+        16500,
+        16501,
+        16502
+      ]
+    },
+    {
+      "naics": "442",
+      "description": "Furniture and Home Furnishings Stores",
+      "published_firm_sum": 1110,
+      "published_establishment_sum": 3758,
+      "present_bands": 9,
+      "missing_bands": [],
+      "complete_target_bands": true,
+      "interpretation": "published sector count",
+      "rows": [
+        16107,
+        16108,
+        16109,
+        16110,
+        16111,
+        16112,
+        16113,
+        16114,
+        16115
+      ]
+    },
+    {
+      "naics": "443",
+      "description": "Electronics and Appliance Stores",
+      "published_firm_sum": 539,
+      "published_establishment_sum": 1815,
+      "present_bands": 9,
+      "missing_bands": [],
+      "complete_target_bands": true,
+      "interpretation": "published sector count",
+      "rows": [
+        16280,
+        16281,
+        16282,
+        16283,
+        16284,
+        16285,
+        16286,
+        16287,
+        16288
+      ]
+    },
+    {
+      "naics": "446120",
+      "description": "Cosmetics, Beauty Supplies, and Perfume Stores",
+      "published_firm_sum": 80,
+      "published_establishment_sum": 382,
+      "present_bands": 8,
+      "missing_bands": [
+        "17"
+      ],
+      "complete_target_bands": false,
+      "interpretation": "lower bound from published bands; missing does not mean zero",
+      "rows": [
+        17059,
+        17060,
+        17061,
+        17062,
+        17063,
+        17064,
+        17065,
+        17066
+      ]
+    },
+    {
+      "naics": "451110",
+      "description": "Sporting Goods Stores",
+      "published_firm_sum": 364,
+      "published_establishment_sum": 964,
+      "present_bands": 9,
+      "missing_bands": [],
+      "complete_target_bands": true,
+      "interpretation": "published sector count",
+      "rows": [
+        17680,
+        17681,
+        17682,
+        17683,
+        17684,
+        17685,
+        17686,
+        17687,
+        17688
+      ]
+    },
+    {
+      "naics": "453910",
+      "description": "Pet and Pet Supplies Stores",
+      "published_firm_sum": 97,
+      "published_establishment_sum": 514,
+      "present_bands": 8,
+      "missing_bands": [
+        "13"
+      ],
+      "complete_target_bands": false,
+      "interpretation": "lower bound from published bands; missing does not mean zero",
+      "rows": [
+        18142,
+        18143,
+        18144,
+        18145,
+        18146,
+        18147,
+        18148,
+        18149
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{"source_id": "cpsc-recall-duty", "url": "https://www.cpsc.gov/Business--Manufacturing/Recall-Guidance/Duty-to-Report-to-the-CPSC-Your-Rights-and-Responsibilities", "final_url": "https://www.cpsc.gov/Business--Manufacturing/Recall-Guidance/Duty-to-Report-to-the-CPSC-Your-Rights-and-Responsibilities", "http_status": 403, "retrieved_at": "2026-09-19T03:29:51.589236+00:00", "sha256": "ad1f60c190f385d10b8473bc24688b7a4ed0908edd8c6dc327b3bf0735c32d78", "content_type": "text/html"}
+
+Access Denied
+Access Denied
+You don't have permission to access "http://www.cpsc.gov/Business--Manufacturing/Recall-Guidance/Duty-to-Report-to-the-CPSC-Your-Rights-and-Responsibilities" on this server.
+Reference #18.66a6f7bd.1789788591.366ccf6d
+https://errors.edgesuite.net/18.66a6f7bd.1789788591.366ccf6d

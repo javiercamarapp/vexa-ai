@@ -1,0 +1,208 @@
+{"source_id": "loop-series-b", "url": "https://www.loopreturns.com/blog/loop-raises-65m-series-b/", "final_url": "https://www.loopreturns.com/blog/loop-raises-65m-series-b/", "http_status": 200, "retrieved_at": "2026-09-19T03:26:20.241072+00:00", "sha256": "ce4c9258edbd722f71ab962cd810596e37ed2756b1a13915220c1734ad5673aa", "content_type": "text/html; charset=utf-8"}
+
+We just raised $65M – Here’s what’s next
+Products
+Partners
+Resources
+Pricing
+Sign in
+Book a demo
+Back to blog
+Jonathan Poma
+July 21, 2021
+We just raised $65M – Here’s what’s next
+Big news: we just raised $65M! There's a lot on deck - and we're poised to create an even better online returns experience for brands & customers alike.
+Big news:
+we just raised $65M in our series B funding!
+The round was led by
+CRV,
+along with
+Shopify
+, and
+RenegadePartners
+. Existing investors
+FirstMark Capital
+,
+Ridge Ventures
+,
+Peterson Ventures
+, and
+Lerer Hippeau
+joined in as well.
+I couldn’t have asked to bring better partners and better humans into the fold with this round of investment, and I’m so grateful we get to leverage these amazing new partners to help us help merchants win in this modern retail landscape.
+Every merchant who’s said yes to our product and given us feedback along the way, every investor and advisor who’s been a part of the story, and every employee who’s dedicated their time and energy to Loop—thank you. It’s only because of you all that we’re here, and that we have this opportunity.
+With this round of funding, there’s a lot on deck. All of it designed to create an even better online returns experience for customers and drive higher lifetime value for brands.
+We plan on investing heavily in our
+product development
+and
+go-to-market teams
+so that we can continue to transform returns from a huge challenge into an experience that shoppers love.
+Loop is Redefining Returns
+As the ecommerce landscape continues to grow,
+Loop is proving that returns ARE a profit center
+. We currently work with over 700 online brands including
+Brooklinen
+,
+Chubbies
+, and
+Madhappy
+to create a returns experience that makes everyone happy: brands and customers alike.
+But it’s not only about happiness. With our returns philosophy & purpose-built software, we’ve helped our brands
+retain $400 million in revenue
+. As more ecommerce stores adapt their approach to returns, that number will only grow.
+We want to make one thing clear:
+returns are NOT the enemy
+. Most returns happen because the product didn’t fit, not because customers don’t want the product. With that in mind, Loop has developed an
+exchange-first platform
+that transforms the return experience – for customers, it feels just like an extension of shopping.
+This
+philosophy
+is ironclad no matter how you slice it. Exchanges not only help brands retain revenue on the initial purchase, but they drive future purchases too. In data we’ve collected from hundreds of thousands of orders and over 500 brands, we’ve found that a customer who takes an exchange is
+33.8% more likely
+to make a second purchase.
+We help online stores to put customers first. Using Loop, they are able to set up an
+on-demand returns portal
+that allows a customer to initiate a return on their time. In other words, they don’t have to wait for a brand representative to email, chat, or call them back to get started.
+Brands everywhere have felt this pain: a manually processed return can take a service rep 15 to 30 minutes to complete. Loop helps brands save their team hours per week and customers get the same quality experience they get when initially making the purchase.
+Learn more:
+How Chubbies increased customer lifetime value by 100% with returns
+In a nutshell, here’s how Loop makes returns easy:
+On-demand portal:
+Customers can return at any time with automatic return approval.
+Optimized for exchanges:
+Exchanges are suggested over refunds at several touchpoints in the return journey.
+Returns-centric insights:
+Data that helps brands reduce future returns without hurting customers.
+World-class logistics:
+Ship around the world with printed (or printerless) return labels that are fully integrated into your warehouse ecosystem.
+Loop also has an evolving list of partner
+integrations
+including logistics platforms (
+ShipHero
+), shipping solutions (
+EasyPost
+), customer experience tools (
+Gorgias
+), and even ecommerce email platforms (
+Klaviyo
+).
+What are we doing with this money?
+We plan to use this funding to achieve a few goals:
+Increasing Loop’s flexibility
+Improving our returns coverage (enabling more returns to flow through Loop)
+Growing our product and go-to-market teams
+With product flexibility
+, our goal is to support the most innovative return policy rules. By investing here, we’ll help you approve more of your returns automatically so you can spend your time elsewhere in the business. Our return coverage grows every day – but until we reach 100%, there’s work to be done.
+Improved returns coverage
+is really exciting. More development here means greater facilitation of special returns cases and international returns. Our goal is to remove the words “unfortunately, at this time…” from every return policy. It’s all about helping brands create the ultimate returns experience – any limitation to that needs to be addressed.
+Achieving the above is based primarily on people. That’s why we are using this funding to
+grow our product and go-to-market teams
+. We need everyone, from skilled developers to product experts.
+New funding, same amazing customer experiences
+With this round of funding, we’re doubling down on what we do best:
+creating amazing
+post-purchase experiences
+for both brands & customers
+. We’re grateful for this opportunity to be the leader in returns management.
+Our commitment remains the same: we want to make shopping easy for everyone. If we can do that, then our brands and their customers will reap the benefits.
+One of those brands is
+Madhappy
+, an apparel brand painting a
+bright future
+together with Loop. They’re a brand that puts customer experience first – and if you know anything about them, you’ll know happiness is what Madhappy is all about.
+Nobody knows how happiness & post-purchase experience intermingle like
+Peiman Raf
+, co-founder of Madhappy:
+“We’ve loved working with Loop. Customer experience doesn’t end with a purchase – and having Loop as our post-purchase touchpoint has been helpful in keeping our customers happy.”
+Another brand on its way straight to the top:
+Baseballism
+. Using Loop features like
+Bonus Credit
+, Baseballism retains revenue with more exchanges and fewer refunds. It’s all about helping customers get the right fit, right away. With instant exchanges, customers get their new product sent up to 3 days faster than they’d get them otherwise.
+Here’s how
+John Maddalone
+, Strategic Account Manager at Baseballism puts it:
+“The functionality that Loop provides allows us to encourage customers to take a customer retaining exchange. We’ve seen our refunds go from 60 percent of all of our returns down to 40% with Loop.”
+We’ve said it before and we’ll say it again:
+returns are a profit center
+. Far from being a money-pit, returns an important touchpoint where brands can upsell and win customers for life. One huge brand running with that ideology:
+Chubbies
+.
+According to
+Dave Wardell
+, Chubbies CFO, the success is in the numbers:
+“The incremental revenue we create through upsells in our return process is up almost 100 percent. That likely means $250k in additional revenue created through Loop.”
+This funding round has brought much excitement—but it is simply validation that we’re doing something right, and a milestone along the way. We’re eager to get to work on features that will give brands the power to master the post-purchase experience.
+As always, keep it locked to the Loop blog & socials as we move towards creating the perfect return management solution.
+One more time, to our investors, our customers, our employees, and our partners, thank you 🙏
+This has been and continues to be the most rewarding work of my life, serving you. And it’s still day one. Let’s get to work.
+JP
+Stay in the loop
+Subscribe for product updates and Loop's biweekly newsletter.
+Continue reading
+Peak Season
+The Q5 Returns Playbook: Everything you need for BFCM and beyond
+Alex Rosas
+September 16, 2026
+Peak Season
+We asked three brands for their hottest BFCM take. They all focused on the same thing.
+Gabriella Sanchez
+September 15, 2026
+In this article
+Loop is Redefining Returns
+What are we doing with this money?
+New funding, same amazing customer experiences
+Ready to get started?
+See how Loop works
+Book a demo
+Stay in the loop
+Subscribe for product updates and Loop's biweekly newsletter.
+Retain more revenue with Loop today
+Book a demo
+Stay in the loop
+Subscribe for product updates and Loop’s biweekly newsletter.
+Products
+Intelligence
+Checkout+
+Protection
+Promise
+Editing
+Tracking
+Returns
+Exchanges
+Fraud
+Integrations
+Shipping
+Compare
+Loop vs Narvar
+Loop vs Aftership
+Loop vs ReturnGo
+Loop vs Swap
+Loop vs ZigZag
+Loop vs Refundid
+Resources
+Pricing
+How Loop works
+Loop for Shopify
+Blog
+Case studies
+Swipe files
+Events
+Help center
+Status
+Developers
+Company
+About us
+In the news
+Careers
+Security
+Contact us
+FAQs
+Terms of service
+Privacy notice
+Data processing addendum
+Partners
+Partner hub
+Apply to become a partner
+Cookie Preferences
+© 2026 Loop Returns

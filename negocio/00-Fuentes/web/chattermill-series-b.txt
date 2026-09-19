@@ -1,0 +1,178 @@
+{"source_id": "chattermill-series-b", "url": "https://chattermill.com/blog/chattermill-secures-26m-series-b", "final_url": "https://chattermill.com/blog/chattermill-secures-26m-series-b", "http_status": 200, "retrieved_at": "2026-09-19T03:26:17.289404+00:00", "sha256": "5577b419b5b62010260027528fcd83a985d69911f89718b4f41b96296df05a58", "content_type": "text/html; charset=utf-8"}
+
+Chattermill Secures $26M Series B To Analyse Over A Billion Pieces Of Customer Feedback For Businesses
+Platform
+PLATFORM
+Platform Overview
+How Chattermill works
+Integrations
+Unify feedback across every source
+Insights Engine: Lyra AI
+Analyze feedback with AI
+XLG Acceleration
+Connect CX to business outcomes
+Security & Privacy
+Protect customer data
+AGENTS
+Lyra Agent
+Agentic AI for customer feedback
+Proactive Insights
+An agent that's proactive by design
+Why Lyra Agent
+See what makes Lyra Agent perform best
+MCP & Skills
+Connect to your AI agents
+Agentic CXI Architecture
+Infrastructure for agentic work
+ANALYTICS
+Precision Insights
+Identify precise issues
+Impact Analysis
+Understand impact on your metrics
+Reports & Dashboards
+Collaborate across teams
+Anomaly Detection
+Trigger alerts
+Workflows & Automations
+Share insights with the right people
+See Chattermill in action
+Take a product tour
+Customer Stories
+CUSTOMER STORIES
+Uber
+400+ users, 8 year partnership
+HelloFresh
+30% increase in average order values
+Qonto
+80+ hours of manual work saved
+E.On Next
+144% increase in NPS
+All customer stories →
+FEATURED CUSTOMER STORIES
+How Uber scaled CX intelligence with Chattermill over 8 years
+Read more →
+How HelloFresh increased average order values by 30% using feedback insights
+Read more →
+Resources
+GUIDES
+Guides & Playbooks
+Explore CX intelligence trends, expert insights, and industry best practices.
+BLOG
+Chattermill
+Blog
+Explore CX & Product strategies, market trends and latest product insights.
+CX INTELLIGENCE ACADEMY
+CX Intelligence Academy
+Get certified and become an expert in how to prove the value of CX for the business.
+MORE
+Help Center
+API Docs
+Book a demo
+Sign in
+Sign in
+Book a demo
+Meet Lyra Agent, the AI agent for customer feedback analysis, built to think like a seasoned analyst.
+Learn more
+Chattermill Secures $26M Series B To Analyse Over A Billion Pieces Of Customer Feedback For Businesses
+By
+Arron Westbrook
+Guest Contributor
+Last Updated
+June 24, 2025
+Contents
+The CX intelligence
+platform that's AI-native by design
+Book a demo
+London, UK - 6th December 2022
+—
+Chattermill
+, the Unified Customer Intelligence platform, today announced a $26M Series B funding round to double down on its growth, expanding its platform capabilities to meet its vision as the first true Unified Customer Intelligence Platform. The Series B was led by Beringea, with participation from previous investors DN Capital, Ventech, Runa Capital, btov Partners, SVB, and new investors Blossom Street Ventures.
+Chattermill analyses millions of interactions between a company and its customers, from feedback data to social media. It empowers businesses to easily unify their customer experience data, and uses deep learning-based AI to deliver actionable insights that help companies deliver loyalty and growth-driving customer experiences. Chattermill works with leading brands, including Amazon, Uber, H&M, and Zappos, to power their CX programs.
+Since raising its $8M Series A in 2020, the Entrepreneur First alumnus Chattermill has more than doubled its team, and hit 200 per cent of its new business revenue and pipeline targets in Q1 ‘22. Chattermill has seen customers like Uber and JustEat triple their usage, having seen the impact the platform can drive. The company was ranked #1 in G2’s Momentum Grid Report for Text Analytics and has been named a High Performer in the Feedback Analytics Software category.
+In the current economic downturn, customer experience is critical. In the UK, more than 8 million adults have cancelled monthly outgoings to combat rising bills and 76 per cent of customers who claim to be loyal to a brand would still buy from competitors if it were cheaper or more convenient
+‍
+Mark Shepherd, Investment Manager at Beringea, commented,
+“Customers today share vast amounts of feedback online across a wealth of platforms and channels, providing a huge opportunity for businesses to drive performance through customer insight. However, the current solutions in the market lack flexibility and accuracy when analysing this unstructured customer feedback across a wide range of sectors. Chattermill has, therefore, enabled a blue-chip roster of clients to tap into a ‘data gold mine’ that had previously been out of reach – the highly-scalable, intuitive product that Mikhail, Dmitry, and their exceptional team is demonstrating immense opportunity as proven by their rapid growth.”
+Analysing customer experience data at scale to uncover meaningful insights is a difficult task, but it is the key to building great customer experiences. Today, customer experience data is spread across dozens of sources – including surveys, reviews, support conversations, product feedback and social media. Traditional analytics tools struggle to support the volume of feedback, and manual analysis is too time-consuming for CX teams to do. Chattermill solves this problem.
+‍
+Mikhail Dubov, CEO & Co-Founder of Chattermill, said,
+“Building a customer experience strategy for large businesses is incredibly difficult, and it must be data-driven. Today, CX plays a huge part in any business's success – especially in these challenging economic times. We believe there is no other technology that can provide the level of efficiency and insight needed for CX teams to succeed – this is why we are trusted by major brands like Amazon and Uber. Our goal is that our AI is able to analyse over a billion pieces of customer feedback for our clients.”
+‍
+Speaking on their work with Chattermill, Steve Crolic, Associate Director Voice of the Customer at HelloFresh, said,
+“Chattermill is an integral part of our success in delivering our market-leading customer experience. We were one of the first brands to recognise the impact Chattermill could have in making sense of our customer data.  Over our years working together, it has been a crucial tool in improving the HelloFresh experience to keep our customers happy and, better still, keep them coming back for more.”
+‍
+Dubov continued,
+“Raising a Series B in the current economic environment can be challenging, and the fact we were able to raise this round is a huge testament to our product. This further validates the market demand for our vision and technology, enabling us to build the Unified Customer Intelligence category, expand the range of insights we deliver to users, and further develop our solutions.”
+‍
+Konstantin Vinogradov, London-based General Partner at Runa Capital, added,
+“Customer experience is crucial, but many businesses still lack proper AI-based tools to analyse data to help improve it. Chattermill has built a comprehensive tech product suite that brilliantly solves this issue for enterprises. Having worked with the founders for some time, we at Runa are impressed by their results and resilience, and consider this team as capable of building a true category leader.”
+Chattermill is headquartered in London. The funding will support its continued organic expansion in the US and Europe as well as its growing partner network across the world. Chattermill is growing its team and is hiring across Engineering, Data and Commercial functions.
+About Chattermill
+Chattermill, the leading Unified Customer Intelligence Platform, enables businesses to unify their customer feedback reviews, support tickets, conversations, and social media data, using AI to deliver insights that help businesses deliver loyalty and retention-driving customer experiences. The world’s leading brands, including Amazon, Uber, H&M, and Zappos, use Chattermill every day to power their CX programs.
+Related blog post
+Introducing Lyra Agent: The AI Agent for Customer Feedback Analysis
+AI and Automation
+September 16, 2026
+SentiSum vs Qualtrics: Which VoC Tool Wins in 2026?
+AI and Automation
+September 16, 2026
+Claude vs ChatGPT for Customer Feedback Analysis (2026)
+AI and Automation
+CX intelligence
+for teams and agents
+Book a demo
+PLATFORM
+Platform Overview
+Product Tour
+Integrations
+Insights Engine: Lyra AI
+Security & Privacy
+ANALYTICS
+Precision Insights
+Impact Analysis
+Reports & Dashboards
+Anomaly Detection
+Workflows & Automations
+AGENTS
+Lyra Agent
+Proactive Insights
+Why Lyra Agent
+MCP & Skills
+Agentic CXI Architecture
+CUSTOMERS
+Uber
+HelloFresh
+Qonto
+E.ON Next
+Customer Stories
+COMPARISONS
+Alternatives
+Chattermill vs Thematic
+Chattermill vs Enterpret
+Chattermill vs Unwrap
+Chattermill vs Caplena
+Chattermill vs TextiQ
+Chattermill vs Medallia
+Chattermill vs UnitQ
+Chattermill vs Qualtrics
+RESOURCES
+Customer Stories
+Chattermill Blog
+CX Intelligence Academy
+Help Center
+API Docs
+AI Labs
+COMPANY
+About Us
+Contact Us
+Careers
+Security
+Trust Center
+Chattermill Analytics Limited
+68 Hanbury St, London, E1 5JL,
+United Kingdom
+© Chattermill 2015-2026 All Rights Reserved
+Terms and conditions
+Cookies
+Privacy Policy
+Legal

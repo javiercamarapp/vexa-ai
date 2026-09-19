@@ -1,0 +1,122 @@
+{"source_id": "shopify-results-2025", "url": "https://www.shopify.com/news/shopify-q4-2025-financial-results", "final_url": "https://www.shopify.com/news/shopify-q4-2025-financial-results", "http_status": 200, "retrieved_at": "2026-09-19T03:13:10.867279+00:00", "sha256": "a09d5ecd7a16a651357bde4906cb6aa3df0970b18728ce7cf478347a727ec683", "content_type": "text/html; charset=utf-8"}
+
+Shopify’s Standout 2025: The Launchpad for a  New Era of Commerce in 2026
+Skip to Content
+All news
+Company
+Product
+POV
+Insights
+Press releases
+About us
+Search
+All news
+Search
+Press Releases
+Shopify’s Standout 2025: The Launchpad for a  New Era of Commerce in 2026
+February 11, 2026
+by Shopify
+Share this story
+:
+Twitter
+Facebook
+Email
+Read more
+Shopify Delivers Big: 30%+ Growth Across GMV, Revenue, Gross Profit, and Free Cash Flow
+Shopify to Announce Second-Quarter 2026 Financial Results
+Shopify Announces Results of its 2026 Annual Meeting of Shareholders
+by Shopify
+Internet, Everywhere - February 11, 2026 - Shopify Inc. (NASDAQ, TSX: SHOP) announced today financial results for the quarter and year ended December 31, 2025.
+Shopify achieved Q4 revenue growth of 31% and a 19% free cash flow margin,
+marking ten consecutive quarters of double-digit free cash flow margins.
+“2025 was Shopify at full throttle - driving compounding growth, while laying the rails for the new era of AI commerce,” said Harley Finkelstein, President of Shopify. “2026 will be the year of the builders, and we’ll be powering them - from first sale to full scale.”
+Jeff Hoffmeister, Chief Financial Officer, said, “We closed Q4 with strong top-line growth and disciplined cash generation with revenue up 31% year-over-year and a 19% free cash flow margin. This brings 2025 to 30% revenue growth, 4 percentage points higher than 2024, and a 17% free cash flow margin. With AI reshaping how buyers discover and purchase, we delivered these strong margins while investing in Catalog, Sidekick, Universal Commerce Protocol, and our full platform of commerce solutions. We ended 2025 with strength across all merchant sizes, regions, and channels, setting us up well for 2026.”
+2026 Outlook
+The outlook that follows supersedes all prior financial outlook statements made by Shopify, constitutes forward-looking information within the meaning of applicable securities laws, is based on a number of assumptions, and is subject to a number of risks. Actual results could vary materially as a result of numerous factors, including certain risk factors, many of which are beyond Shopify’s control. Please see “Forward-looking Statements” at the end of this press release.
+For the first quarter of 2026, we expect:
+Revenue to grow at a low-thirties percentage rate on a year-over-year basis, similar to Q4 2025;
+Gross profit dollars to grow at a high-twenties percentage rate on a year-over-year basis;
+Operating expenses as a percentage of revenue to be 37% to 38%;
+Stock-based compensation to be $140 million; and
+Free cash flow margin to be in the low-to-mid teens, slightly below Q1 of 2025.
+Share Repurchase Authorization
+Shopify’s Board of Directors has authorized a share repurchase program of up to $2 billion. Shopify expects the program to be executed using pre-arranged algorithmic trading instructions, with no set quarterly or annual minimums. “We are launching this share repurchase program from a position of financial and operating strength, as clearly demonstrated by the results we announced today. Our capital allocation principles remain unchanged: prioritizing growth while remaining disciplined, flexible, and focused on long-term value for Shopify and our shareholders,” said Jeff Hoffmeister, Chief Financial Officer of Shopify.
+Quarterly Conference Call
+Shopify’s management team will hold a conference call to discuss our fourth-quarter results today, February 11, 2026, at 8:30 a.m. ET. The conference call will be webcast in the Investor Relations section of Shopify’s website at
+www.shopify.com/investors/events
+. An archived replay of the webcast will be available following the conclusion of the call.
+Shopify’s Annual Report on Form 10-K for the year ended December 31, 2025, including the Audited Consolidated Financial Statements and accompanying Notes, and Management’s Discussion and Analysis, will be available on Shopify’s website at
+www.shopify.com
+and will be filed on EDGAR at
+www.sec.gov
+and on SEDAR+ at
+www.sedarplus.ca
+. Shareholders may, upon request, receive a hard copy of the complete audited financial statements free of charge.
+Shopify's Fourth Quarter 2025 press release including financial statements can be found
+here
+.
+About Shopify
+Shopify provides essential internet infrastructure for commerce. Shopify’s all-in-one platform makes it easier to start, run, and grow a business, powering sales online, in-store, and everywhere in between. Millions of businesses in 175+ countries use Shopify—from entrepreneurs to brands like Aldo, BarkBox, Carrier, Meta, Vuori, SKIMS, and Supreme.
+Regulatory Disclosures and Forward-looking Statements
+Advisory Regarding Forward-looking Statements
+This press release contains forward-looking statements and forward-looking information (collectively, “forward-looking statements”), including statements related to Shopify’s financial outlook, such as expected revenue and expenses for the next fiscal quarter, Shopify’s expectations regarding the development of emerging technologies, including AI, and Shopify’s share repurchase program. These statements can be identified by words such as “will” and “expect” and are based on Shopify’s current projections and expectations about future events and financial results. Known and unknown risks may cause actual results to differ materially from those described in the forward-looking statements. These risks include, but are not limited to, the Company’s ability to maintain expected growth and manage expenses, the impact of changes in economic conditions and consumer spending in key markets such as the United States, Europe, and globally, the impact of measures that affect international trade, including tariffs, the adoption and impact of emerging technologies such as AI, our reliance on third-party providers to deliver services, a cyberattack or security breach, and serious errors or defects in software or hardware. Other factors and risks that may cause actual results to differ materially from those set out in the forward-looking statements are set out in Shopify’s Annual Report on Form 10-K under the heading “Risk Factors” and other filings made with US and Canadian securities regulators, available at
+www.sec.gov
+and www.sedarplus.ca. Undue reliance should not be placed on the forward-looking statements in this press release, which are based on information available to management on the date hereof and represent management’s beliefs regarding future events, projections and financial trends, which, by their nature, are inherently uncertain. The forward-looking statements are provided to give additional information about management’s expectations and beliefs and may not be appropriate for other purposes. Shopify undertakes no duty to publicly update or revise any forward-looking statements, except as may be required by law.
+Share Repurchase Program
+Shopify’s Board of Directors has authorized a share repurchase program of up to $2 billion (approximately $2.4 billion CAD) of the Company’s outstanding Class A subordinate voting shares. The share repurchase program will go into effect on February 17, 2026, has no fixed expiration date, and may be amended, suspended, or discontinued at any time, subject to applicable laws. Repurchases may be made through open-market purchases on the Nasdaq, privately negotiated transactions including block trades, or other means, in each case in compliance with applicable securities laws. The timing, number, and value of any Class A subordinate voting shares repurchased will depend on a variety of factors, including price, general business and market conditions, applicable legal requirements, and alternative investment opportunities. In accordance with applicable securities laws, the maximum number of Class A subordinate voting shares repurchased will not exceed 5% of Shopify’s issued and outstanding Class A subordinate voting shares.
+(1)
+Gross Merchandise Volume, or GMV, represents the total dollar value of orders facilitated through the Shopify platform including certain apps and channels for which a revenue-sharing arrangement is in place in the period, net of refunds, and inclusive of shipping and handling, duty, and value-added taxes.
+Monthly Recurring Revenue, or MRR, is the aggregate value of all subscription plans, excluding variable platform fees, in effect on the last day of the period, assuming merchants maintain their subscription the following month and is used by management as a directional indicator of subscription solutions revenue going forward.
+Free cash flow and free cash flow margin are non-GAAP financial measures which are reconciled in the non-GAAP reconciliation at the end of this press release. Shopify believes free cash flow and free cash flow margin provide useful information to help investors and others understand our operating results and the performance of our business in the same manner as management. Shopify does not reconcile forward-looking non-GAAP free cash flow margin as certain financial information, the probable significance of which cannot be determined, is not available and cannot be reasonably estimated. Free cash flow is a non-GAAP financial measure calculated as cash flow from operations less capital expenditures.
+(2)
+All comparisons are to 2024, unless otherwise stated. The US ecommerce market share is based on a combination of US Census Bureau data (Quarterly Retail E-Commerce Sales, not adjusted) and internal estimates. Shopify market share represents sales by Shopify merchants based on Shopify’s 2025 US GMV (excluding merchant sales made through POS). International revenue represents total revenue for all regions outside North America. Offline revenue includes revenue from Shopify Payments for offline, POS Pro and Retail plan subscriptions and POS Hardware. B2B represents a very small portion of total GMV today, given it is a product offering for Plus merchants only.
+Share this story
+:
+Twitter
+Facebook
+Email
+Read more
+Shopify Delivers Big: 30%+ Growth Across GMV, Revenue, Gross Profit, and Free Cash Flow
+Shopify to Announce Second-Quarter 2026 Financial Results
+Shopify Announces Results of its 2026 Annual Meeting of Shareholders
+Shopify
+What is Shopify?
+Shopify Editions
+Careers
+Investors
+Newsroom
+Sustainability
+Ecosystem
+Developer Docs
+Theme Store
+App Store
+Partners
+Affiliates
+Resources
+Blog
+Compare Shopify
+Guides
+Courses
+Free Tools
+Changelog
+Support
+Shopify Help Center
+Community Forum
+Hire a Partner
+Service Status
+USA
+|
+English
+USA
+English
+USA
+|
+English
+Choose a region & language
+USA
+English
+Terms of Service
+Legal
+Privacy Policy
+Sitemap
+Your Privacy Choices

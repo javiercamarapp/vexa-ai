@@ -1,0 +1,301 @@
+{"source_id": "thematic-pricing", "url": "https://getthematic.com/product/plan-and-pricing", "final_url": "https://getthematic.com/product/plan-and-pricing", "http_status": 200, "retrieved_at": "2026-09-19T03:26:17.787271+00:00", "sha256": "0124d3685486e51b45d9ecb5bd6266d428d8421a7181b4fa0bb8a06f94973bbc", "content_type": "text/html"}
+
+Flexible Plans and Pricing for AI Feedback Analytics | Thematic
+Skip to main content
+Free master session
+Claude in Action for CX professionals. Join Alyona on September 17.
+Save your seat
+Platform
+Solutions
+Case Studies
+Pricing
+Resources
+Book a Demo
+Login
+Capabilities
+Unify Feedback with Lenses
+Integrate sources into one view
+Themes and Taxonomy
+Themes that emerge from the feedback
+Answers
+Ask anything, get a traceable answer
+Impact Analysis
+Find what actually moves your metrics
+Scoring Agent
+CX metrics without waiting on surveys
+Workflows
+Route insight to the teams who act
+AI Tools (MCP)
+Access from Copilot, Claude, ChatGPT
+The Platform
+Platform Overview
+How Thematic works, end to end
+Human-in-the-Loop AI
+AI you can inspect and steer
+Security and Data Governance
+Enterprise controls, PII, compliance
+Services
+Reporting Service
+Your recurring reports, done for you
+Partnership Program
+Technology, reseller and referral partners
+See Thematic AI in action:
+Watch our demo videos now
+Watch Demo
+Customer Experience
+From signal to CX action
+Voice of Customer
+The intelligence layer for VoC programs
+Research and Insights
+Scale research without losing rigour
+Voice of Employee
+Scale employee listening
+What Voice of Customer Teams Need to Know About the Modern Data Stack
+Unify feedback, drive action, and scale impact across the entire organization.
+Read the modern data stack guide
+Read case studies:
+Discover how leading companies achieve success with Thematic AI.
+Read Case Studies
+Read and Watch
+Insights
+CX and research articles
+Guides and Playbooks
+Downloadable frameworks and templates
+Demo Videos
+Short product walkthroughs
+Events
+Where to find us
+Learn and Support
+CX Intelligence Course
+Become the person who proves CX value
+Help Center
+Product documentation
+Masterclasses
+Live and on-demand training
+From Ignored to Indispensable: The Proven, Step-by-Step CX Insights Mastery Blueprint in < 6 Days!
+543% ROI.
+Learn why Thematic is a worthy investment in Forrester'sâ¢ TEI report.
+Get the Report
+Platform
+Solutions
+Case Studies
+Pricing
+Resources
+Book a Demo
+Login
+Pricing Plans to Suit Your Organization
+An easy and flexible pricing model helping you drive exceptional experience and product outcomes from unstructured feedback at scale.
+Foundation
+$25,000 per year
+A comprehensive view of themes, sentiment and categories in your feedback data
+Assigned Customer Success Manager
+Full platform access
+24/7 support
+Book a demo
+Flexibility and simplicity
+Enterprise
+Let us prepare a customized proposal for you.
+Comment volume discounts
+Tailored onboarding
+Country specific rates
+Complete security support
+Partnership level of support
+Book a demo
+What plan meets your needs?
+Get in touch and weâll give you a personalized recommendation based on your current needs and future goals.
+Get a pricing estimate
+Foundation
+Enterprise
+Comment volume *
+Up to 25,000
+Custom
+Datasets *
+Up to 3 Datasets
+Custom
+Thematic and Sentiment analysis
+â
+â
+Advanced Analysis Tools
+â
+â
+Dashboards and Reports
+â
+â
+Workflows
+â
+â
+Summarizer
+â
+â
+Thematic Answers, with natural language interface
+â
+â
+API and one-click integrations
+â
+â
+Foundation
+Comment volume *
+Up to 25,000
+Datasets *
+Up to 3 Datasets
+Thematic and Sentiment analysis
+â
+Advanced Analysis Tools
+â
+Dashboards and Reports
+â
+Workflows
+â
+Summarizer
+â
+Thematic Answers, with natural language interface
+â
+API and one-click integrations
+â
+Enterprise
+Comment volume *
+Custom
+Datasets *
+Custom
+Thematic and Sentiment analysis
+â
+Advanced Analysis Tools
+â
+Dashboards and Reports
+â
+Workflows
+â
+Summarizer
+â
+Thematic Answers, with natural language interface
+â
+API and one-click integrations
+â
+* A comment can be a review, a verbatim response to a survey in an open-ended question, a customer complaint text, a customer interaction with a chat agent, a support ticket.
+* A dataset can be a CSV spreadsheet, a survey pulled from a survey tool, or data pulled from a data source such as a CX platform, support platform, or a social media site.
+Common questions
+Have questions? We have answers!
+How does Thematic pricing work?
+All contracts are based on comment volume, number of datasets, how the dataset is analyzed and the support you need.
+What are we like to work with?
+We pride ourselves on our outstanding support! Our Customer Success team, lead by a former customer, are often described as 'legendary', 'outstanding' and 'exceptional'. Just check out our G2 reviews.
+Do integrations cost extra?
+There's no additional cost for our one click integrations or csv uploads. You can also use our API to push data into Thematic. We make it easy to pipe in your data.
+What data can I add?
+Any dataset with comments, along with the quantitative variables or metadata you'd like to include. Your comments could be survey responses, conversations, support chat, app reviews, social media data or community chat. Thematic works best with at least 2,000 rows of verbatims.
+Can I do a custom demo on my own data?
+Yes, we offer custom demos on your data or a comprehensive paid pilot for the complete experience of the Thematic platform.
+What data protection do you have in place?
+You can be sure your data and reporting is handled properly. Thematic is Soc 2 Type II and GDPR compliant with comprehensive security features and workflows.
+How do we compare to our competitors?
+Find out three ways that we compare to each of these alternatives to Thematic.
+Qualtrics XM Discover
+Qualtrics TextIQ
+Chattermill
+Medallia
+How Thematic delivers value and ROI
+Save thousands of hours getting to trusted insights
+Thematic transforms feedback at scale into insights faster than the business makes decisions. It's an almost instant time to value.
+No AI maintenance or technical coding skills required.Save time getting to insights
+Save time getting to insights
+Get insights that drive customer-led growth
+Use our advanced analysis suite to find and share insights that help to improve product and services.
+Build a customer-led organization using our self-service feature to answer specific insights questions on the spot.Get specific and actionable insights.
+Get specific and actionable insights.
+Get a full view of customer data and pain points
+Thematic analyzes feedback, chat, reviews, social media and support data for a full view of the customer.
+Get an easy to consume, quantified story from your qualitative data with all the context you need.Learn more about our reporting and analysis tools
+Learn more about our reporting and analysis tools
+We used to spend weeks generating org-wide reports. We now get them done in one day with Thematic.
+CX Analyst
+Thematic has been the ultimate unlock for us to get a meaningful understanding of our unstructured data effectively and efficiently.
+Listening Engagement Manager
+Integrations that connect the feedback you get everyday.
+Ready to see what customer intelligence
+is supposed to feel like?
+Most enterprise implementations are live within days, with no taxonomy rebuilds or professional services engagement, and a dedicated specialist from day one.
+First name
+Last name
+Email address
+*
+What industry are you in?
+*
+Select industry
+Software/Tech
+Retail
+Financial Services
+Healthcare
+Manufacturing
+Travel & Hospitality
+Automotive
+Other
+Company size
+*
+Select company size
+Less than 300
+300-500
+More than 500 employees
+What is your seniority level?
+*
+Select seniority level
+Executive (CMO, VP, SVP, CXO)
+Director
+Manager
+Specialist / Analyst / Researcher
+Consultant
+Student
+Other
+Book a time
+Product
+Overview
+Pricing
+Accuracy
+Security & Privacy
+Security & Compliance
+Product Changelog
+Support
+Knowledge Base
+Integrations
+Thematic API
+Login
+Resources
+Blog
+Community
+Webinars & eBooks
+Case Studies
+Tools
+NPS Calculator
+Thematic vs Clarabridge
+Thematic vs TextIQ
+Thematic vs Medallia
+Thematic vs Chattermill
+Thematic vs Kapiche
+Guides
+Sentiment Analysis Guide
+How Thematic Analysis Software works
+How to Analyze Surveys
+How to Analyze Customer and Product Reviews
+How to Code Qualitative Data
+How to Code and Analyze Open-Ended Questions
+Company
+About Us
+Science Behind Thematic
+Contact Us
+Privacy Terms
+Terms of service
+Â© Copyright Thematic Analysis Inc.
+By clicking
+"Accept"
+, you agree to the
+    storing of cookies on your device to enhance site navigation, analyze site
+    usage, and assist in our marketing efforts. View our
+Privacy Policy
+for more information.
+We use cookies to enhance site navigation, analyze site usage, and assist in our marketing efforts. You can opt out at any time in
+Preferences
+, or read our
+Privacy Policy
+.
+Preferences
+Reject
+Accept

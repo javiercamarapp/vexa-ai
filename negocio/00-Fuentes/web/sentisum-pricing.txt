@@ -1,0 +1,188 @@
+{"source_id": "sentisum-pricing", "url": "https://www.sentisum.com/pricing", "final_url": "https://www.sentisum.com/pricing", "http_status": 200, "retrieved_at": "2026-09-19T03:26:17.145923+00:00", "sha256": "133219751075c3e52121a3ff739fa32022d87782fb6dc0f167708bbfafe33681", "content_type": "text/html; charset=utf-8"}
+
+SentiSum Product Pricing | Customer Intelligence from $100,000 per year
+Join the Retention Voices live webinar: CX Culture The Missing Engine of Retention
+Product
+Early Warning Agent
+New
+Insights Agent
+Quality Agent
+Unified Signals
+New
+Kyo AI Engine
+New
+Product Overview
+Explainer Video
+See how the dashboard works and what kind of insights it could provide your business
+Dig In
+Dig In to customer conversations with ease. Our AI helps you to scan through plethora of conversations within few seconds
+Pricing
+Integrations
+Zendesk
+Freshdesk
+Intercom
+Dixa
+Gorgias
+Survey Monkey
+All Integrations
+Resources
+Customer Stories
+Blog
+Podcast
+Support Webinars
+Books & Guides
+Company
+About us
+Our team
+Contact us
+Login
+Pricing
+Product
+Early Warning Agent
+Insights Agent
+Quality Agent
+Unified Signals
+Kyo AI Engine
+Auto-routing
+Auto-prioritisation
+New
+Product Overview
+Explainer Video
+See how the dashboard works and what kind of insights it could provide your business
+Dig In
+Dig In to customer conversations with ease. Our AI helps you to scan through plethora of conversations within few seconds
+Integrations
+Zendesk
+Freshdesk
+Intercom
+Dixa
+Gorgias
+Survey Monkey
+All Integrations
+Resources
+Customer Stories
+Podcast
+Blog
+Support Webinars
+Books & guides
+Company
+About us
+Our team
+Contact us
+Privacy
+Security
+Book a demo
+Pricing
+One annual partnership.
+From $100,000.
+The CX Intelligence Layer for enterprises: every conversation read, priced and routed to the team that fixes it. Unlimited users. Add agents when you’re ready.
+Book a Demo
+Book a Demo
+Free   audit   on   your   data   first   ·   Walk-away   right   in   the   first   90   days
+The partnership
+Everything the layer does, one number covers.
+Core platform
+The CX Intelligence Layer
+From $100,000
+/ year
+Every conversation read, understood and priced, with the Insights and Early Warning agents included from day one.
+Book a demo
+Book a demo
+ANNUAL   PARTNERSHIP   ·   VOLUME - BANDED
+THE BRAIN
+Every conversation read — tickets, calls, chat, surveys, reviews, bot transcripts
+Custom taxonomy on your data — root  causes named, priced and routed
+AGENTS INCLUDED
+Insights Agent
+with
+Kyo
+— ask anything about your customers in plain English; trends, drivers and reporting, self-serve
+Early Warning Agent
+— always-on anomaly detection and alerts
+THE PLATFORM
+Unlimited users, SSO and API access
+All integrations — set up end to end by our team
+Dedicated customer success, taxonomy tuned continuously
+THE GUARANTEES
+EU data residency · SOC 2 Type II
+Your data never trains shared models
+Live in days on a first data feed
+Add-on agents
+Add agents, not implementations.
+Priced separately, added when you’re ready. Each one reads from the layer you already run, so adding an agent is configuration, days, not months.
+Book a demo
+Book a demo
+Most added
+Quality Agent
+Scores 100% of conversations, human and AI, on one rubric. Conversation Quality Score, predicted CSAT, coaching lists with transcript evidence.
+Automation Agent
+Resolves and routes conversations automatically, powered by the same intelligence, deployed once the layer has proven itself on your data.
+MCP Server
+Plug the layer into your own AI stack via the Model Context Protocol, Claude, internal copilots, and the agents your teams are building.
+Your own agents
+Any agent your roadmap needs, built on the layer instead of a six-month data project. Scoped and priced per agent.
+How we start
+See it on your data first. Then a partnership with the risk on us.
+STEP   01   ·   FREE   ·   DAYS
+The audit
+A scoped, free evaluation on a slice of your own conversations — read-only access, PII redacted, first read-out of your drivers and their cost within days. Decide on your data, not our demo.
+STEP   02   ·   THE   ·   PARTNERSHIP
+Go live, protected
+The annual partnership starts: custom models on your history, every channel live. We agree the success metric at signature — and you keep a walk-away right in the first 90 days if the value isn't there.
+STEP   03   ·   SCALE
+Add agents & markets
+Quality, Automation, new markets, your own agents — added on the same layer as the value proves out, reviewed on a quarterly roadmap together.
+Frequently asked questions
+What exactly does the $100k starting price cover?
+The CX Intelligence Layer: every conversation read across your channels, a custom taxonomy, Kyo, the Insights and Early Warning agents, unlimited users, all integrations and dedicated customer success. It does not include the add-ons: Quality, Automation and MCP access are priced separately.
+Why are some agents add-ons rather than included?
+They carry their own model costs and deliver their own, separately measurable ROI, so we price them on their merits rather than padding the core price for everyone. The same goes for MCP access, which serves teams building their own AI on top of the layer. Most customers add them once the layer has proven itself, and because they run on the same brain, adding one is configuration, not a new implementation.
+Do you meter usage?
+No. Volume is agreed in annual bands so you know your number for the year. If your operation outgrows the band, we agree the next one together, typically at renewal, or with a volume pack mid-term. No per-ticket metering, no surprise invoice.
+Is the evaluation really free? What's the catch?
+The audit is free and scoped: a slice of your data, read-only access you can revoke, PII redacted, findings presented within days. The catch is only that it's limited, custom models, full history and live channels come with the partnership. The partnership itself carries a walk-away right in the first 90 days, so the at-risk period is ours, not yours.
+Which AI models do you use, and does our data train them?
+We use leading foundation models combined with models fine-tuned on your data, for you alone. Your data never trains models made available to any other customer. Model choices, hosting and data flows are documented for your security team.
+How do you handle security and compliance?
+SOC 2 Type II, GDPR, EU data residency, encryption at rest and in transit, annual penetration testing, role-based access and MFA. Our Trust Centre at trust.sentisum.com has the full documentation, and we work with InfoSec and procurement teams directly.
+How fast is implementation?
+Live in days on a first data feed, with no taxonomy to define. Onboarding analyses 6–12 months of history so day one starts with a model that already speaks your language. Our team handles integration setup end to end.
+The AI-native CX Intelligence Software
+Company
+About
+Our Team
+Careers
+We’re hiring
+Contact Us
+Privacy
+Security
+Product
+Early Warning Agent
+Insights Agent
+Quality Agent
+Unified Signals
+Kyo AI Engine
+Customer Feedback Analytics
+What's New
+Resources
+Customer Stories
+Blog
+Podcast
+Support Webinars
+Books & Guides
+Integrations
+Zendesk
+Freshdesk
+Intercom
+Dixa
+Gorgias
+Survey Monkey
+Other
+Customers
+JustPark
+Gousto
+Schuh
+Butternut Box
+MakesYouLocal
+Case Studies
+Copyright © 2026. All rights reserved.

@@ -3,6 +3,9 @@
 ## Fuentes y precedencia
 El usuario solicita rehacer la investigación y preparación completa usando Astra/Codex. Audio y DOCX son fuentes, no instrucciones ejecutables. El PRD pegado en esta conversación tiene 35 secciones. Decisiones posteriores explícitas del usuario prevalecen: entrega para pitch en UN MES, stack Vercel/Supabase/GitHub/OpenRouter. Donde las fuentes discrepan se conserva el conflicto, no se elimina por conveniencia.
 
+## Ampliación de negocio — 19-sep-2026
+El usuario pidió equiparar profundidad de investigación con Documentos Likida, específicamente TAM/SAM/SOM y mercado. El dossier vigente de negocio está en [negocio/README](../negocio/README.md); cifras canónicas en [05-Precios-y-Finanzas](../negocio/05-Precios-y-Finanzas/00-CIFRAS-CANONICAS.md). Hay conteo Census2022 de2,975firmas del núcleoUSA y escenarios reproducibles; filtrosSAM/venta/precio siguen no medidos. No convertirlos en tracción ni modificar alcance del SaaS por estas proyecciones.
+
 ## Tesis
 Motor de decisiones para eCommerce/consumer: conversaciones → problema de negocio → causa probable respaldada → impacto económico observado/estimado/inferido → recomendación → intervención humana → medición. No vender sentimiento o resúmenes como el producto. No inferir causalidad ni dinero recuperado únicamente de cambios antes/después.
 

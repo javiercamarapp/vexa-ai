@@ -1,0 +1,884 @@
+{"source_id": "fellow-about", "url": "https://fellowproducts.com/pages/about-us", "final_url": "https://fellowproducts.com/pages/about-us", "http_status": 200, "retrieved_at": "2026-09-19T03:21:03.392496+00:00", "sha256": "44d16345856d9206bb82174ff8dfba6f8fb8713bb8d8ed54cc2c71a3cea57ea3", "content_type": "text/html; charset=utf-8"}
+
+About us
+Skip to content
+New✨
+The Series 1 Accessories Bundle
+New✨
+The Series 1 Accessories Bundle
+Opus 2 is here
+⚙️ One grinder. Any brew.
+Opus 2 is here
+⚙️ One grinder. Any brew.
+Fellow Drops
+— rare coffee finds, hand-picked weekly☕️
+Fellow Drops
+— rare coffee finds, hand-picked weekly☕️
+Free US shipping on orders $75+
+Shop Now
+🚀
+Free US shipping on orders $75+
+Shop Now
+🚀
+Menu
+Featured
+Featured
+Best Sellers
+New Arrivals
+New Items
+Bundle +  Save
+New Deals
+Refurbished Gear
+Last Chance
+Digital Gift Cards
+Highlights
++$25 Coffee Credit
+Espresso Series 1
+Matcha Set
+17% off
+The Aiden + Grinder Kit
+Stagg EKG Electric Kettle
+Join Fellow Drops
+Espresso
+Espresso
+Espresso Series 1
+Opus 2 Conical Burr Grinder
+New
+Espresso Machines
+Espresso Accessories
+Cleaning + Maintenance
+Espresso 101 Class
+BIGFACE x Fellow Espresso Series 1
+Save $194. Series 1 + Accessories Bundle.
+Espresso Series 1
+Espresso Grinder
+Register Your Machine
+Product Guide + Education
+Coffee Makers
+Coffee Makers
+Aiden Precision Coffee Maker
+Coffee Grinders
+Pour-Over
+French Press
+Coffee Scale
+Accessories
+Bundle + Save
+Aiden Precision Coffee Maker
+Product Guide + Education
+Save $100 with The Aiden + Grinder Kit
+Join Fellow Drops
+Grinders
+Grinders
+Ode Brew Grinder Gen 2
+Opus 2 Conical Burr Grinder
+New
+Compare Grinders
+Gear Guides
+Espresso - Opus 2 Conical Burr Grinder
+Pour-Over - Ode Brew Grinder Gen 2
+Save with The Grind It Kit
+Save 20% with The Electric Kit
+Kettles
+Kettles
+Electric Kettles
+Tea Kettles
+Stovetop
+Compare Kettles
+Bundle + Save
+Save with the Electric Kit
+Highlights
+Stagg EKG Electric Kettle
+Corvo EKG Electric Kettle
+Clyde Electric Kettle
+Stagg Pour-Over Kettle
+Drinkware
+Drinkware
+Travel Mugs
+New Colors
+Glassware
+Ceramic Mugs
+Espresso Drinkware
+Barware
+Bundle + Save
+Compare Carters
+Highlights
+Carter 3-in-1 Lid System
+Carter Slide Mug
+Carter Carry Travel Mug
+Pirch Espresso Glasses
+Accessories
+Accessories
+Pour-over
+Espresso Accessories
+French Press
+Matcha
+Coffee Scale
+Coffee Storage
+Coffee Filters
+Replacement Parts
+Cleaning + Maintenance
+Shop the Matcha Set
+Save with the Carter 3-in-1 Lid System
+Keep coffee fresh with Atmos
+Bundle + Save
+Bundle + Save
+Highlights
+8% off
+The Series 1 + Grinder Kit
+13% off
+The Kettle + Matcha Kit
+20% off
+The Electric Kit
+17% off
+The Aiden + Grinder Kit
+Shop All
+Coffee + Tea
+Coffee + Tea
+Shop All Coffee
+Best Sellers
+Espresso Beans
+Loose Leaf
+Infusers
+Matcha
+Join Fellow Drops
+Highlights
+Medium
+Angel Wings
+Medium
+Cherry Pick
+Medium
+Dead Reckoning Seasonal Blend
+Light
+Ethiopia Anasora Guji Natural
+Shop All
+Fellow Drops
+Academy
+Academy
+Product Education
+Espresso Series 1
+Aiden Precision Coffee Maker
+Opus 2 Conical Burr Grinder
+Opus Conical Burr Grinder
+Ode Brew Grinder Gen 2
+Stagg + Corvo Electric Kettles
+Electric Clyde
+Tally Precision Scale
+How Tos
+Dialing In Your Grind
+Perfecting Milk Steaming
+Make a Cappuccino
+Make a Matcha Latte
+Cold Brew with Aiden Coffee Maker
+Brewing Pour-Over
+Perfecting French Press
+Contact Us
+Product FAQs
+Search
+Account
+Search
+Search
+Featured
+Best Sellers
+New Arrivals
+New Items
+Bundle +  Save
+New Deals
+Refurbished Gear
+Last Chance
+Digital Gift Cards
+Join Fellow Drops
+Featured
++$25 Coffee Credit
+Espresso Series 1
+Matcha Set
+17% off
+The Aiden + Grinder Kit
+Stagg EKG Electric Kettle
+Ode Brew Grinder Gen 2
+Espresso
+Espresso Series 1
+Opus 2 Conical Burr Grinder
+New
+Espresso Machines
+Espresso Accessories
+Cleaning + Maintenance
+Espresso 101 Class
+BIGFACE x Fellow Espresso Series 1
+Save $194. Series 1 + Accessories Bundle.
+Espresso Series 1
+Espresso Grinder
+Register Your Machine
+Product Guide + Education
+Coffee Makers
+Aiden Precision Coffee Maker
+Coffee Grinders
+Pour-Over
+French Press
+Coffee Scale
+Accessories
+Bundle + Save
+Join Fellow Drops
+Aiden Precision Coffee Maker
+Product Guide + Education
+Save $100 with The Aiden + Grinder Kit
+Grinders
+Ode Brew Grinder Gen 2
+Opus 2 Conical Burr Grinder
+New
+Compare Grinders
+Gear Guides
+Espresso - Opus 2 Conical Burr Grinder
+Pour-Over - Ode Brew Grinder Gen 2
+Save with The Grind It Kit
+Save 20% with The Electric Kit
+Kettles
+Electric Kettles
+Tea Kettles
+Stovetop
+Compare Kettles
+Bundle + Save
+Save with the Electric Kit
+All Kettles
+Stagg EKG Electric Kettle
+Corvo EKG Electric Kettle
+Clyde Electric Kettle
+Stagg Pour-Over Kettle
+Drinkware
+Travel Mugs
+New Colors
+Glassware
+Ceramic Mugs
+Espresso Drinkware
+Barware
+Bundle + Save
+Compare Carters
+Drinkware
+Carter 3-in-1 Lid System
+Carter Slide Mug
+Carter Carry Travel Mug
+Pirch Espresso Glasses
+Carter Move Mug
+Accessories
+Pour-over
+Espresso Accessories
+French Press
+Matcha
+Coffee Scale
+Coffee Storage
+Coffee Filters
+Replacement Parts
+Cleaning + Maintenance
+Shop the Matcha Set
+Save with the Carter 3-in-1 Lid System
+Keep coffee fresh with Atmos
+Bundle + Save
+Kits + Bundles
+Shop All
+8% off
+The Series 1 + Grinder Kit
+13% off
+The Kettle + Matcha Kit
+20% off
+The Electric Kit
+17% off
+The Aiden + Grinder Kit
+10% off
+Essential Espresso Bundle
+Coffee + Tea
+Shop All Coffee
+Best Sellers
+Espresso Beans
+Loose Leaf
+Infusers
+Matcha
+Join Fellow Drops
+Best Selling Coffee Beans
+Shop All
+Medium
+Angel Wings
+Medium
+Cherry Pick
+Medium
+Dead Reckoning Seasonal Blend
+Light
+Ethiopia Anasora Guji Natural
+Decaf
+La Angostura Decaf
+Fellow Drops
+Academy
+Product Education
+Espresso Series 1
+Aiden Precision Coffee Maker
+Opus 2 Conical Burr Grinder
+Opus Conical Burr Grinder
+Ode Brew Grinder Gen 2
+Stagg + Corvo Electric Kettles
+Electric Clyde
+Tally Precision Scale
+How Tos
+Dialing In Your Grind
+Perfecting Milk Steaming
+Make a Cappuccino
+Make a Matcha Latte
+Cold Brew with Aiden Coffee Maker
+Brewing Pour-Over
+Perfecting French Press
+Contact Us
+Product FAQs
+Search
+Search
+Log in
+Cart
+0 items
+Best Sellers
+Espresso Machine
+Coffee Maker
+Grinders
+Kettles
+Drinkware
+Accessories
+Bundle + Save
+Matcha
+Coffee + Tea
+Fellow Drops
+Gifts
+Shop All
+Home
+/
+We're Fellow
+We believe that the act of making should be meaningful and fulfilling, done with intention and precision. Fellow makes beautifully functional tools for any kitchen, designed in San Francisco and used around the world. When the simple motions of life become small moments of joy, that's Everyday Magic.™
+Your one-stop shop to brew like a Pro
+We started in the steep end…
+We started Fellow in 2013 with a vision of bringing the cafe experience home, but without the clunky equipment. We wanted our home brewing gear to be beautifully functional and fully intuitive, tools that anyone could use to make the kind of coffee we love to drink. After eight months and countless prototypes, Duo Coffee Steeper was born: a unique brewer that combined the best of pour-over and French press in one elegant and easy design. We put it on Kickstarter and received enough backing to make it real.
+Discover where it all began
+Taking it slow (pour).
+Over the years, we’ve worked to complete your coffee counter, building tools for the brew methods you use the most. We’ve stayed true to our roots, designing each new product as a complete reimagination and taking as long as it takes to get it right. In 2014, we created our iconic Stagg Pour-Over Kettle and two years later launched Stagg EKG, which has become the gold standard of electric pour-over kettles, used by champion baristas and home brewers alike.
+Learn More
+Just add coffee? Done.
+We’ve added intentionally to our product line-up, creating delightful and nuanced tools for every step of the brewing process, from game-changing grinders to the last travel mug you’ll need. It was only natural to also source the best coffees in the world. Great gear is only as good as the coffee you brew with it, and we’re honored to be able to collaborate with world-class roasters and share our favorites with you.
+Discover our Coffee Collection
+Visit IRL
+Find our flagship Fellow Store + Playground in San Francisco’s Mission District, or discover our second location on Abbot Kinney Blvd in Venice, Los Angeles. Whether you’re new to specialty coffee or a World Brewers Cup Champion, this is your space to play, brew a cup, share a tip, take a class, or just talk shop.
+Find a Store
+Work with us
+Join us on our march to brighter, less boring mornings. Whatever your experience, background, or inner voice that tells you this is a shot in the dark, we want to hear from you.
+View Openings
+Test
+Heyyyy
+Company
+About Fellow
+Our Blog
+Careers
+Exclusive Deals + Offers
+Wholesale
+Corporate Gifts
+Reviews
+Support
+💬 Contact Us
+Shipping Information
+Track Your Order
+Claiming your coffee credit
+Returns + Exchanges + Warranty
+Register Your Product
+Product FAQs
+Stores
+San Francisco Store
+Los Angeles Store
+Thailand Store
+Store Locator
+Facebook
+•
+Instagram
+•
+TikTok
+•
+YouTube
+© Fellow Industries, Inc. 2026
+·
+Privacy Policy
+·
+Terms of Use
+·
+Site Map
+·
+Patents
+·
+Diversity, Equity & Inclusion
+·
+Accessibility Statement
+·
+Accessibility Settings
+·
+Cookie Settings
+$
+Andorra USD
+United Arab Emirates USD
+Anguilla USD
+Albania USD
+Armenia USD
+Austria / Österreich USD
+Aland Islands USD
+Azerbaijan USD
+Bangladesh USD
+Belgium USD
+Bulgaria / България USD
+Bahrain USD
+Saint Barthélemy USD
+Caribbean Netherlands USD
+Brasil USD
+Belarus / Беларусь USD
+Cocos (Keeling) Islands USD
+Central African Republic USD
+Switzerland USD
+Cote d'Ivoire USD
+China / 中国大陆 USD
+Colombia USD
+Christmas Island USD
+Cyprus USD
+Czech Republic USD
+Deutschland / Germany USD
+Djibouti USD
+Danmark USD
+Dominica USD
+Western Sahara USD
+España USD
+Ethiopia USD
+Finland USD
+Falkland Islands USD
+France USD
+Gabon USD
+United Kingdom USD
+Georgia USD
+Guernsey USD
+Gibraltar USD
+Greenland USD
+Equatorial Guinea USD
+Greece / Ελλαδα USD
+Hong Kong SAR / 香港特別行政區 USD
+Hrvatska / Croatia USD
+Hungary USD
+Indonesia USD
+Ireland USD
+Israel USD
+Isle of Man USD
+India USD
+British Indian Ocean Territory USD
+Iceland USD
+Italia / Italy USD
+Jersey USD
+Jordan USD
+Japan / 日本 USD
+Cambodia USD
+Comoros USD
+Saint Kitts and Nevis USD
+Saint Lucia USD
+Liechtenstein USD
+Lietuva / Lithuania USD
+Luxembourg USD
+Libya USD
+Monaco USD
+Macedonia USD
+Mali USD
+Myanmar USD
+Macau SAR / 澳門特別行政區 USD
+Montserrat USD
+Malta USD
+México USD
+Malaysia USD
+Niger USD
+Norfolk Island USD
+Nederland / Netherlands USD
+Norway / Norge USD
+Nauru USD
+Niue USD
+New Zealand USD
+Polynésie Française / French Polynesia USD
+Polska / Poland USD
+Saint-Pierre-et-Miquelon / Saint Pierre and Miquelon USD
+Pitcairn USD
+Palestinian Territories USD
+Portugal USD
+România USD
+Serbia USD
+Russia / Россия USD
+Saudi Arabia USD
+Sverige / Sweden USD
+Singapore USD
+Saint Helena USD
+Slovenija USD
+Svalbard & Jan Mayen USD
+Slovensko / Slovakia USD
+San Marino USD
+Somalia USD
+Sao Tome and Principe USD
+El Salvador USD
+French Southern Territories USD
+Togo USD
+Thailand / ไทย USD
+Tokelau USD
+Türkiye / Turkey USD
+Tuvalu USD
+United States Minor Outlying Islands USD
+Uzbekistan USD
+Vatican / Holy See USD
+Saint Vincent and the Grenadines USD
+Vietnam USD
+Wallis and Futuna USD
+Kosovo USD
+Antigua and Barbuda USD
+Angola USD
+Argentina USD
+Aruba USD
+Bosnia and Herzegovina USD
+Barbados USD
+Burkina Faso USD
+Burundi USD
+Benin USD
+Bermuda USD
+Bolivia USD
+Bahamas USD
+Botswana USD
+Belize USD
+Cook Islands USD
+Chile USD
+Cameroun / Cameroon USD
+Costa Rica USD
+República Dominicana / Dominican Republic USD
+Algérie USD
+Ecuador USD
+Egypt USD
+Eritrea USD
+Grenada USD
+Ghana USD
+Gambia USD
+Guatemala USD
+Guinea-Bissau USD
+Guyana USD
+Honduras USD
+Haiti USD
+Iraq USD
+Jamaica USD
+Kenya USD
+Kyrgyzstan USD
+Kuwait USD
+Cayman Islands USD
+Kazakhstan USD
+Lebanon USD
+Sri Lanka USD
+Lesotho USD
+Latvija / Latvia USD
+Maroc / Morocco USD
+Moldova USD
+Montenegro USD
+Saint-Martin FR USD
+Madagascar USD
+Mauritaniya / Mauritania USD
+Mauritius USD
+Maldives USD
+Malawi USD
+Mozambique USD
+Namibia USD
+Nigeria USD
+Nicaragua USD
+Nepal USD
+Oman USD
+Panamá USD
+Perú / Peru USD
+Philippines USD
+Pakistan USD
+Paraguay USD
+Qatar USD
+Rwanda USD
+Seychelles USD
+Sudan USD
+Senegal USD
+Turks and Caicos Islands USD
+Tajikistan USD
+Tunisie / Tunisia USD
+Trinidad and Tobago USD
+Taiwan USD
+Ukraine / Україна USD
+Uganda USD
+South Africa USD
+Zambia USD
+Zimbabwe USD
+Fiji USD
+Guinea USD
+Guyane française / French Guiana USD
+Guadaloupe USD
+Martinique USD
+Sierra Leone USD
+Mayotte USD
+Liberia USD
+Cape Verde USD
+Eesti / Estonia USD
+Suriname USD
+Uruguay USD
+Canada USD
+United States USD
+Australia AUD
+Choosing a selection results in a full page refresh.
+Add Gift Box + Gift Note
+Make your Order Feel Special
+$7.50
+Make your order of Fellow gear feel extra special with a matte black Fellow gift box and gift note. Questions?
+Click here
+.
+Add a Gift Note (Optional)
+Note: Coffee beans ship separately to ensure maximum freshness and can't be included in gift boxes.
+Cancel
+Add to Order
+Cart
+0 items
+Your cart is currently empty.
+We can help you with that.
+Continue shopping
+Why Not Add
+Pirch Espresso Glasses
+Regular price
+$34.95
+Unit price
+/
+per
+Panama Elida Estate Catuai Reserva Natural ASD
+Regular price
+$28.00
+Unit price
+/
+per
+Carter 3-in-1 Lid System
+Regular price
+$57.00
+Sale price
+$49.95
+Unit price
+/
+per
+Atmos Vacuum Canister
+Regular price
+$29.95
+Unit price
+/
+per
+Aiden Precision Coffee Maker
+Regular price
+$399.95
+Unit price
+/
+per
+Quick shop
+Are you in the right place?
+Please select your shipping country.
+Buy from the country of your choice. Remember that we can only ship your order to addresses located in the chosen country.
+Country
+United States
+Andorra
+United Arab Emirates
+Anguilla
+Albania
+Armenia
+Austria / Österreich
+Aland Islands
+Azerbaijan
+Bangladesh
+Belgium
+Bulgaria / България
+Bahrain
+Saint Barthélemy
+Caribbean Netherlands
+Brasil
+Belarus / Беларусь
+Cocos (Keeling) Islands
+Central African Republic
+Switzerland
+Cote d'Ivoire
+China / 中国大陆
+Colombia
+Christmas Island
+Cyprus
+Czech Republic
+Deutschland / Germany
+Djibouti
+Danmark
+Dominica
+Western Sahara
+España
+Ethiopia
+Finland
+Falkland Islands
+France
+Gabon
+United Kingdom
+Georgia
+Guernsey
+Gibraltar
+Greenland
+Equatorial Guinea
+Greece / Ελλαδα
+Hong Kong SAR / 香港特別行政區
+Hrvatska / Croatia
+Hungary
+Indonesia
+Ireland
+Israel
+Isle of Man
+India
+British Indian Ocean Territory
+Iceland
+Italia / Italy
+Jersey
+Jordan
+Japan / 日本
+Cambodia
+Comoros
+Saint Kitts and Nevis
+Saint Lucia
+Liechtenstein
+Lietuva / Lithuania
+Luxembourg
+Libya
+Monaco
+Macedonia
+Mali
+Myanmar
+Macau SAR / 澳門特別行政區
+Montserrat
+Malta
+México
+Malaysia
+Niger
+Norfolk Island
+Nederland / Netherlands
+Norway / Norge
+Nauru
+Niue
+New Zealand
+Polynésie Française / French Polynesia
+Polska / Poland
+Saint-Pierre-et-Miquelon / Saint Pierre and Miquelon
+Pitcairn
+Palestinian Territories
+Portugal
+România
+Serbia
+Russia / Россия
+Saudi Arabia
+Sverige / Sweden
+Singapore
+Saint Helena
+Slovenija
+Svalbard & Jan Mayen
+Slovensko / Slovakia
+San Marino
+Somalia
+Sao Tome and Principe
+El Salvador
+French Southern Territories
+Togo
+Thailand / ไทย
+Tokelau
+Türkiye / Turkey
+Tuvalu
+United States Minor Outlying Islands
+Uzbekistan
+Vatican / Holy See
+Saint Vincent and the Grenadines
+Vietnam
+Wallis and Futuna
+Kosovo
+Antigua and Barbuda
+Angola
+Argentina
+Aruba
+Bosnia and Herzegovina
+Barbados
+Burkina Faso
+Burundi
+Benin
+Bermuda
+Bolivia
+Bahamas
+Botswana
+Belize
+Cook Islands
+Chile
+Cameroun / Cameroon
+Costa Rica
+República Dominicana / Dominican Republic
+Algérie
+Ecuador
+Egypt
+Eritrea
+Grenada
+Ghana
+Gambia
+Guatemala
+Guinea-Bissau
+Guyana
+Honduras
+Haiti
+Iraq
+Jamaica
+Kenya
+Kyrgyzstan
+Kuwait
+Cayman Islands
+Kazakhstan
+Lebanon
+Sri Lanka
+Lesotho
+Latvija / Latvia
+Maroc / Morocco
+Moldova
+Montenegro
+Saint-Martin FR
+Madagascar
+Mauritaniya / Mauritania
+Mauritius
+Maldives
+Malawi
+Mozambique
+Namibia
+Nigeria
+Nicaragua
+Nepal
+Oman
+Panamá
+Perú / Peru
+Philippines
+Pakistan
+Paraguay
+Qatar
+Rwanda
+Seychelles
+Sudan
+Senegal
+Turks and Caicos Islands
+Tajikistan
+Tunisie / Tunisia
+Trinidad and Tobago
+Taiwan
+Ukraine / Україна
+Uganda
+South Africa
+Zambia
+Zimbabwe
+Fiji
+Guinea
+Guyane française / French Guiana
+Guadaloupe
+Martinique
+Sierra Leone
+Mayotte
+Liberia
+Cape Verde
+Eesti / Estonia
+Suriname
+Uruguay
+Canada
+United States
+Australia
+Language
+English
+English
+Shop now

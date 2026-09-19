@@ -1,6 +1,16 @@
 # Progreso verificable
 Actualizado: 2026-09-18 local / 2026-09-19 UTC.
 
+## ✓ Ampliación de negocio solicitada después — 19-sep-2026 UTC
+- Se contrastó la estructura con índice/TAM/estudio de Documentos Likida y se agregó negocio/: mercado, ICP, competencia/precios/capital, TAM/SAM/SOM, unit economics, forecast36meses, GTM, validación, inversionistas, riesgos y diez marcas semilla NO calificadas.
+- Fuente primaria: XLSX Census SUSB2022, 140 filas seleccionadas, nueve bandas de receipts $10M–<$100M y **2,975 firmas** NAICS454110. No se suman NAICS como cuentas únicas; bandas ausentes no son cero.
+- **TAM núcleo precio base supuesto $53.5M/año; SAM base escenario $10.6M; SOM base A3 ~$989K ARR.** No demanda o ingresos observados. Modelos/inputs en negocio/05-Precios-y-Finanzas/.
+- Registro:48capturas/intentos,35fuentes usadas (incluye páginas de10marcas), sin ocultar403/404/contenido escaso. Firecrawl402 por saldo agotado; fallback fuentes públicas directas + búsqueda nativa Codex, sin compra de créditos o inferencia OpenRouter.
+- `npm run test:business` → **12 tests OK**. Revisor independiente comprobó filas oficiales y cálculos en memoria: sin P0/P1/P2 en su alcance, límites de filtros/demanda/caja explícitos. Informe privado REVISION-MERCADO-Y-MODELO.md, salida0.
+- **Informe HTML offline y PDF de35páginas/16capítulos**, Excel y108filas mensuales CSV. `python3 scripts/verify_business_delivery.py` → integrityPASS; SHA Census coincide,120links locales en ese corte,35páginas y montos esenciales presentes. Portada y páginas10/21inspeccionadas visualmente.
+- Primer Chrome imprimió el PDF pero no cerró y alcanzó timeout; se implementó generación acotada por validación del artefacto y limpieza del grupo. `python3 scripts/render_business_pdf.py` → salida0,16marcadores/importe presentes y grupo de navegador limpiado. No se ocultó el fallo inicial.
+- Lo que sigue sin validar: entrevistas, censo nominal deduplicado, filtros SAM empíricos, cotizaciones homogéneas, contratos/pagos/piloto, cohortes/costos reales; USA es núcleo cuantificado, no mercado global completo.
+
 ## ✓ Fuentes e investigación
 - Siete originales preservados con SHA256: seis M4A + DOCX. Audio total medido **591.829333 segundos**.
 - Dos pasadas completas Whisper CPP small, TXT/SRT/JSON: **36 salidas**, transcripción reunida en private/TRANSCRIPCIONES-COMPLETAS.md. ASR con errores señalados, sin auditoría humana palabra por palabra. Medium no se descargó por timeout; no se utilizó.

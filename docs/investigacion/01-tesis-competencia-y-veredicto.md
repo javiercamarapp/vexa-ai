@@ -37,8 +37,12 @@ Construir la versión de 30 días, pero cambiar de «plataforma agéntica univer
 - Mostrar una ficha con importe observado, escenario modelado y acción; preguntar qué haría diferente y si autoriza intervención. No contar «me encanta» como compra.
 - Entrevistar otros dos negocios fuera de Senix para detectar sobreajuste. No usar datos Senix para entrenarlos.
 
-## Mercado: método sin TAM fabricado
+## Mercado: ampliación cuantitativa posterior
+
+**Actualización 19-sep-2026:** el dossier de negocio ahora contiene universo Census2022 (2,975 firmas en el núcleo definido), TAM por escenarios de precio, SAM con filtros explícitamente supuestos y SOM/forecast de36meses. La fuente vigente es [TAM/SAM/SOM](../../negocio/05-Precios-y-Finanzas/tam-sam-som.md) y las [cifras canónicas](../../negocio/05-Precios-y-Finanzas/00-CIFRAS-CANONICAS.md). El análisis siguiente sigue describiendo el método y sus límites, no una ausencia de cálculo.
+
+## Método sin TAM fabricado
 El ICP de $10M–$100M y 10K–500K interacciones/mes es hipótesis del PRD. Volumen de tickets, no facturación sola, condiciona costo/valor. Contar marcas elegibles por país, categoría, helpdesk y operación activa; deduplicar matriz/marca; documentar fuente y fecha. SAM exige acceso comercial y capacidad de soporte. SOM debe salir de capacidad comercial: cuentas abordadas × tasa de reunión × piloto × cierre × ACV; las tasas siguen sin medir. No publicar una cifra «multimillonaria» a partir del entusiasmo del audio.
 
 ## Pendientes de investigación
-Demos comparadas y cotizaciones de los cinco rivales directos; casos independientes de retención/revenue; TAM por fuentes de empresas verificadas; disposición a pagar; contratos de acceso. No se han completado y no se suplirán con investigación fiscal de Likida, que es otro mercado.
+Demos comparadas y cotizaciones homogéneas de rivales; casos independientes de retención/revenue; censo nominal deduplicado de clientes elegibles y validación de filtros SAM; disposición a pagar y contratos de acceso. El universo agregado oficial/TAM por escenarios sí se calcularon en negocio/. La investigación fiscal de Likida no se usa para suplir los pendientes de otro mercado.

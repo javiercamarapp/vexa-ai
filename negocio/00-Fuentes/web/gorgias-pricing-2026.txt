@@ -1,0 +1,428 @@
+{"source_id": "gorgias-pricing-2026", "url": "https://www.gorgias.com/pricing", "final_url": "https://www.gorgias.com/pricing", "http_status": 200, "retrieved_at": "2026-09-19T03:21:00.578075+00:00", "sha256": "816d32f1343b170dd26fb998d1806787991d9574731619298e3364c981e9c1a9", "content_type": "text/html; charset=utf-8"}
+
+Gorgias Pricing – Build the customer support suite that fits your needs
+-->
+Product
+Solutions
+Pricing
+Integrations
+Resources
+Login
+Book a demo
+Sign up free
+AI Agent
+Your AI teammate for customer experience
+Gaia
+Helpdesk
+One inbox for every customer conversation
+Voice
+SMS
+Gorgias product tour ->
+See what’s new
+AI Agent Benchmark
+Designed for Enterprise
+Trusted by largest Shopify brands to deliver winning experiences
+Industries
+Clothing & Apparel
+Subscriptions
+Beauty & Cosmetics
+Health & Wellness
+Home & Garden
+Food & Beverage
+Explore all →
+Use cases
+Product Education
+Proactive engagement
+Recommendations
+Explore all →
+Ecommerce Platforms
+Shopify
+BigCommerce
+Magento
+WooCommerce
+Preferred Integrations
+Loop Returns
+Yotpo
+Recharge
+Bloomreach
+Attentive
+Explore all 100+ Apps →
+Custom Integrations
+Developer Docs
+Become an app partner
+Learn
+Gorgias Academy
+Blog
+Ebooks
+Connect
+Customer Stories
+Partner Stories
+Events
+Community
+Help Center
+Gorgias Community
+Behind the Inbox
+Tools
+ROI Calculator
+SKU Generator
+Playbooks
+Featured Resource
+Gorgias Ecom Lab
+Transparent, data-backed insights for the future of CX. No gates. Just open research.
+Featured Resource
+F*ck BFCM Fears
+Ticket spikes? AI breaking? Refund chaos? Discounts not working? Get it off your chest in 10 seconds.
+Product
+AI Agent
+Sell, support, engage customers 24/7
+Gaia
+Helpdesk
+All messages in one central inbox
+Voice
+Support by phone, from your helpdesk
+SMS
+Respond to inbound text messages
+Product tour
+See Gorgias in action
+Explore Gorgias through 3-minute interactive product tour
+See what’s new
+AI Agent Benchmark
+Solutions
+Gorgias for Enterprise
+Where the largest Shopify brands deliver winning experiences
+Industries
+Clothing & Apparel
+Subscriptions
+Beauty & Cosmetics
+Health & Wellness
+Home & Garden
+Food & Beverage
+Explore all ->
+Use cases
+Product Education
+Proactive engagement
+Recommendations
+Explore all ->
+Pricing
+Integrations
+Ecommerce Platforms
+Shopify
+BigCommerce
+Magento
+WooCommerce
+Preferred integrations
+Loop Returns
+Yotpo
+Recharge
+Bloomreach
+Attentive
+Explore all 100+ Apps →
+Custom Integrations
+Custom Integrations
+Developer Docs
+Become an app partner
+Resources
+Learn
+Gorgias Academy
+Blog
+Ebooks
+Connects
+Customer Stories
+Partner Stories
+Events
+Community
+Help Center
+Gorgias Community
+Behind the Inbox
+Tools
+ROI Calculator
+SKU Generator
+Playbooks
+Book a demo
+Pricing
+Helpdesk + AI Agent.
+One platform. One inbox. One bill.
+AI Agent on every plan, pay only when it resolves a conversation.
+Helpdesk scales from 50 to 5,000 tickets a month, never priced per agent.
+Monthly
+Annual
+Add AI Agent
+Starter
+For smaller brands getting started on one platform.
+$40
+/mo
+Billed monthly · cancel anytime
+Included
+50 tickets / month
+30 automated interactions
+Helpdesk
+$10/mo
+Then a $0.40 per-ticket fee past your limit.
+AI Agent
+i
+$30/mo
+Then a $1.50 per automated interaction fee past your limit.
+Start free trial
+Monthly billing only
+Basic
+For growing brands whose support volume is outpacing their team.
+$90
+$77
+/mo
+$924 billed annually
+Included
+300 tickets / month
+30 automated interactions
+Helpdesk
+$50/mo
+Then a $0.40 per-ticket fee past your limit.
+AI Agent
+i
+$27/mo
+Then a $1.50 per automated interaction fee past your limit.
+Start free trial
+No credit card required
+Most popular · 12,400+ brands
+Pro
+For scaling brands that let AI resolve and sell, with revenue analytics.
+$550
+$471
+/mo
+$5,652 billed annually
+Included
+2,000 tickets / month
+190 automated interactions
+Helpdesk
+$300/mo
+Then a $0.36 per-ticket fee past your limit.
+AI Agent
+i
+$171/mo
+Then a $1.50 per automated interaction fee past your limit.
+Start free trial
+No credit card required
+Advanced
+For high-volume brands: peak-ready automation, dedicated support.
+$1,430
+$1,227
+/mo
+$14,724 billed annually
+Included
+5,000 tickets / month
+530 automated interactions
+Helpdesk
+$750/mo
+Then a $0.36 per-ticket fee past your limit.
+AI Agent
+i
+$477/mo
+Then a $1.50 per automated interaction fee past your limit.
+Talk to sales
+Book a 30-minute call
+Need a fully custom plan?
+For teams over 5,000 conversations a month with complex security, compliance, or integration needs.
+Talk to sales
+Book a 30-minute call
+SSO (SAML), audit logs
+Unlimited Help Centers, API at 4 requests per second
+Custom DPA or MSA, plus security review support
+Dedicated CSM and solutions architect
+New Actions, deeper integrations, and custom automations
+Proactive knowledge-gap detection that keeps AI answers accurate
+Compare all features ↓
+ROI calculator ->
+We power customer conversations for 40% of Shopify brands
+Read case study
+Read case study
+Read case study
+Read case study
+Read case study
+Add-ons
+Voice and SMS,when you need them.
+Add Voice or SMS to any plan. Pricing scales with your call and text volume, so you can choose the tier that matches your usage.
+Compare plans
+Every feature side by side.
+Starter
+Basic
+Pro
+Most popular
+Advanced
+Essentials
+Tickets included
+50/mo
+300/mo
+2,000/mo
+5,000/mo
+User seats
+3
+500
+500
+500
+Overage
+$0.40/tkt
+$40/100
+$36/100
+$36/100
+API rate limit
+2 req/s
+2 req/s
+2 req/s
+2 req/s
+AI Agent (included on every plan)
+Per automated interaction
+$1.00
+$0.90
+$0.90
+$0.85
+Pre-trained on 18+ verticals
+Brand voice & guardrails
+—
+Actions (cancel, discount, apply)
+—
+Channels & integrations
+Email, chat, social, help center
+Shopify / Shopify Plus
+WooCommerce
+BigCommerce
+—
+Magento
+—
+—
+150+ app integrations
+Voice & SMS add-ons
+—
+Analytics
+Support performance
+Revenue attribution
+—
+—
+Live statistics
+Automation statistics
+Support & onboarding
+Tier
+Community
+Standard
+Specialist
+Dedicated
+Dedicated CSM
+—
+—
+—
+Onboarding
+Self-serve
+Self-serve
+1:1 onboarding
+White-glove
+SLA
+—
+—
+—
+Security
+SSO (Google, Microsoft)
+Audit logs
+—
+—
+GDPR / CCPA compliance
+"When we first started with Gorgias, our goal was to hit 30% automation in 30 days. We surpassed that and are now above 50% automation, and we’re still climbing."
+Courtney Bajek
+Customer Service Lead at Orthofeet
+Read the full story
+->
+FAQs
+Frequently Asked Questions
+General
+Billing and Pricing
+Support and Services
+Getting started
+Data & Security
+Who's Gorgias for?
+Whether you're scaling fast or leading the pack, if you're focused on driving sales, automating support, and building loyal customers at scale, Gorgias is for you.
+What are the different products available?
+Gorgias offers a customer experience platform for support and marketing through two complementary products: Helpdesk and AI Agent.
+What is Helpdesk?
+Helpdesk is your all-in-one support hub designed specifically for ecommerce and Shopify. It unifies every customer channel and provides your team with the tools to deliver fast, reliable, and personalized support.
+What is AI Agent?
+AI Agent is your always-on ecommerce expert — resolving support questions instantly, converting shoppers with personalized chat, and automating actions like returns, order tracking, and more. All without a human in the loop.
+Can someone give me a demo of Gorgias?
+Absolutely. Our team can walk you through how Gorgias works, what AI Agent can do for your brand, and how to start seeing impact fast. Book a personalized demo whenever you're ready.
+Start driving revenue from every conversation
+See how it works
+Sign up for free
+Product
+Industries
+Compare
+Resources
+Company
+Product
++ Shopify
++ WooCommerce
++ BigCommerce
++ Magento
++ PrestaShop
+Support by Phone
+Latest Releases
+Support Documentation
+Developers
+Service Status
+Roadmap
+Pricing
+Industries
+Clothing & Apparel
+Beauty & Cosmetics
+Home & Garden
+Subscriptions
+Health & Wellness
+Food & Beverage
+Luxury & Jewelry
+Sports & Fitness
+Pet & Animal
+Baby
+Retail
+Consumer Electronics
+B2B
+Compare
+Zendesk
+Kustomer
+Gladly
+Intercom
+Richpanel
+Re:amaze
+Gmail
+Zowie
+Ada
+Siena
+Yuma
+Resources
+Playbooks
+Ebooks
+Blog
+Customer Stories
+App store
+Refer a Friend
+Refer a Client
+Help center
+Gorgias Academy
+Customer Resources
+Onboarding
+Company
+About Gorgias
+Careers
+Events
+Sustainability
+People resources
+Gorgias Partners
+Become a Partner
+Affiliate program
+Partner Login
+Gorgias brand
+Hey AI, learn about us
+The Conversational AI platform for ecommerce.
+Get updates on Gorgias
+Social
+© 2026. All rights reserved.
+Privacy
+Legal
+Terms of Use
+Terms of Service
+Security
+Accessibility

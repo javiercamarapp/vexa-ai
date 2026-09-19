@@ -1,0 +1,746 @@
+[
+  {
+    "href": "https://www.gorgias.com/",
+    "text": ""
+  },
+  {
+    "href": "https://www.gorgias.com/pricing",
+    "text": "Product "
+  },
+  {
+    "href": "https://www.gorgias.com/pricing",
+    "text": "Solutions "
+  },
+  {
+    "href": "https://www.gorgias.com/pricing",
+    "text": "Pricing "
+  },
+  {
+    "href": "https://www.gorgias.com/pricing",
+    "text": "Integrations "
+  },
+  {
+    "href": "https://www.gorgias.com/pricing",
+    "text": "Resources "
+  },
+  {
+    "href": "https://www.gorgias.com/login",
+    "text": "Login "
+  },
+  {
+    "href": "https://www.gorgias.com/demo",
+    "text": "Book a demo "
+  },
+  {
+    "href": "https://www.gorgias.com/signup",
+    "text": "Sign up free "
+  },
+  {
+    "href": "https://www.gorgias.com/ai-agent",
+    "text": "AI Agent Your AI teammate for customer experience "
+  },
+  {
+    "href": "https://www.gorgias.com/gaia",
+    "text": "Gaia "
+  },
+  {
+    "href": "https://www.gorgias.com/products/helpdesk",
+    "text": "Helpdesk One inbox for every customer conversation "
+  },
+  {
+    "href": "https://www.gorgias.com/products/voice",
+    "text": "Voice "
+  },
+  {
+    "href": "https://www.gorgias.com/product/sms",
+    "text": "SMS "
+  },
+  {
+    "href": "https://www.gorgias.com/pricing",
+    "text": ""
+  },
+  {
+    "href": "https://www.gorgias.com/product-tour",
+    "text": "Gorgias product tour -> "
+  },
+  {
+    "href": "https://evals.gorgias.com/",
+    "text": "See what’s new AI Agent Benchmark "
+  },
+  {
+    "href": "https://www.gorgias.com/enterprise",
+    "text": ""
+  },
+  {
+    "href": "https://www.gorgias.com/industry/clothing-apparel",
+    "text": "Clothing & Apparel "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/subscriptions",
+    "text": "Subscriptions "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/beauty-cosmetics",
+    "text": "Beauty & Cosmetics "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/health-wellness",
+    "text": "Health & Wellness "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/home-garden",
+    "text": "Home & Garden "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/food-beverage",
+    "text": "Food & Beverage "
+  },
+  {
+    "href": "https://www.gorgias.com/industries",
+    "text": "Explore all → "
+  },
+  {
+    "href": "https://www.gorgias.com/use-case/guide-every-shopper-to-the-right-gear-for-their-workouts",
+    "text": "Product Education "
+  },
+  {
+    "href": "https://www.gorgias.com/use-case/speed-up-product-discovery-with-proactive-assistance",
+    "text": "Proactive engagement "
+  },
+  {
+    "href": "https://www.gorgias.com/use-case/retain-loyal-customers-by-helping-them-find-replacements-for-their-discontinued-favorites",
+    "text": "Recommendations "
+  },
+  {
+    "href": "https://www.gorgias.com/use-cases",
+    "text": "Explore all → "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/shopify",
+    "text": "Shopify "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/bigcommerce",
+    "text": "BigCommerce "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/magento",
+    "text": "Magento "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/woocommerce",
+    "text": "WooCommerce "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/loop-returns",
+    "text": "Loop Returns "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/yotpo",
+    "text": "Yotpo "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/recharge",
+    "text": "Recharge "
+  },
+  {
+    "href": "https://www.gorgias.com/apps/bloomreach",
+    "text": "Bloomreach "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/attentive",
+    "text": "Attentive "
+  },
+  {
+    "href": "https://www.gorgias.com/apps",
+    "text": "Explore all 100+ Apps → "
+  },
+  {
+    "href": "https://docs.gorgias.com/en-US",
+    "text": "Developer Docs "
+  },
+  {
+    "href": "https://www.gorgias.com/tech-partner",
+    "text": "Become an app partner "
+  },
+  {
+    "href": "https://www.gorgias.com/customer-resources/academy",
+    "text": "Gorgias Academy "
+  },
+  {
+    "href": "https://www.gorgias.com/blog",
+    "text": "Blog "
+  },
+  {
+    "href": "https://www.gorgias.com/ebooks",
+    "text": "Ebooks "
+  },
+  {
+    "href": "https://www.gorgias.com/customers",
+    "text": "Customer Stories "
+  },
+  {
+    "href": "https://www.gorgias.com/partner-stories",
+    "text": "Partner Stories "
+  },
+  {
+    "href": "https://www.gorgias.com/events",
+    "text": "Events "
+  },
+  {
+    "href": "https://docs.gorgias.com/en-US",
+    "text": "Help Center "
+  },
+  {
+    "href": "https://community.gorgias.com/feed",
+    "text": "Gorgias Community "
+  },
+  {
+    "href": "https://www.gorgias.com/behind-the-inbox-podcast",
+    "text": "Behind the Inbox "
+  },
+  {
+    "href": "https://www.gorgias.com/roi-calculator",
+    "text": "ROI Calculator "
+  },
+  {
+    "href": "https://www.gorgias.com/tools/sku-generator",
+    "text": "SKU Generator "
+  },
+  {
+    "href": "https://www.gorgias.com/playbooks",
+    "text": "Playbooks "
+  },
+  {
+    "href": "https://www.gorgias.com/ecom-lab",
+    "text": "Featured Resource Gorgias Ecom Lab Transparent, data-backed insights for the future of CX. No gates. Just open research. "
+  },
+  {
+    "href": "https://www.gorgias.com/fck-bfcm-fear",
+    "text": "Featured Resource F*ck BFCM Fears Ticket spikes? AI breaking? Refund chaos? Discounts not working? Get it off your chest in 10 seconds. "
+  },
+  {
+    "href": "https://www.gorgias.com/wip/legacy/legacy-home",
+    "text": ""
+  },
+  {
+    "href": "https://www.gorgias.com/ai-agent",
+    "text": "AI Agent Sell, support, engage customers 24/7 "
+  },
+  {
+    "href": "https://www.gorgias.com/gaia",
+    "text": "Gaia "
+  },
+  {
+    "href": "https://www.gorgias.com/products/helpdesk",
+    "text": "Helpdesk All messages in one central inbox "
+  },
+  {
+    "href": "https://www.gorgias.com/products/voice",
+    "text": "Voice Support by phone, from your helpdesk "
+  },
+  {
+    "href": "https://www.gorgias.com/product/sms",
+    "text": "SMS Respond to inbound text messages "
+  },
+  {
+    "href": "https://www.gorgias.com/product-tour",
+    "text": "Product tour See Gorgias in action Explore Gorgias through 3-minute interactive product tour "
+  },
+  {
+    "href": "https://evals.gorgias.com/",
+    "text": "See what’s new AI Agent Benchmark "
+  },
+  {
+    "href": "https://www.gorgias.com/enterprise",
+    "text": "Gorgias for Enterprise Where the largest Shopify brands deliver winning experiences "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/clothing-apparel",
+    "text": "Clothing & Apparel "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/subscriptions",
+    "text": "Subscriptions "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/beauty-cosmetics",
+    "text": "Beauty & Cosmetics "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/health-wellness",
+    "text": "Health & Wellness "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/home-garden",
+    "text": "Home & Garden "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/food-beverage",
+    "text": "Food & Beverage "
+  },
+  {
+    "href": "https://www.gorgias.com/industries",
+    "text": "Explore all -> "
+  },
+  {
+    "href": "https://www.gorgias.com/use-case/guide-every-shopper-to-the-right-gear-for-their-workouts",
+    "text": "Product Education "
+  },
+  {
+    "href": "https://www.gorgias.com/use-case/speed-up-product-discovery-with-proactive-assistance",
+    "text": "Proactive engagement "
+  },
+  {
+    "href": "https://www.gorgias.com/use-case/retain-loyal-customers-by-helping-them-find-replacements-for-their-discontinued-favorites",
+    "text": "Recommendations "
+  },
+  {
+    "href": "https://www.gorgias.com/use-cases",
+    "text": "Explore all -> "
+  },
+  {
+    "href": "https://www.gorgias.com/pricing",
+    "text": "Pricing "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/shopify",
+    "text": "Shopify "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/bigcommerce",
+    "text": "BigCommerce "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/magento",
+    "text": "Magento "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/woocommerce",
+    "text": "WooCommerce "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/loop-returns",
+    "text": "Loop Returns "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/yotpo",
+    "text": "Yotpo "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/recharge",
+    "text": "Recharge "
+  },
+  {
+    "href": "https://www.gorgias.com/apps/bloomreach",
+    "text": "Bloomreach "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/attentive",
+    "text": "Attentive "
+  },
+  {
+    "href": "https://www.gorgias.com/apps",
+    "text": "Explore all 100+ Apps → "
+  },
+  {
+    "href": "https://www.gorgias.com/pricing",
+    "text": "Custom Integrations "
+  },
+  {
+    "href": "https://docs.gorgias.com/en-US",
+    "text": "Developer Docs "
+  },
+  {
+    "href": "https://www.gorgias.com/tech-partner",
+    "text": "Become an app partner "
+  },
+  {
+    "href": "https://www.gorgias.com/customer-resources/academy",
+    "text": "Gorgias Academy "
+  },
+  {
+    "href": "https://www.gorgias.com/blog",
+    "text": "Blog "
+  },
+  {
+    "href": "https://www.gorgias.com/ebooks",
+    "text": "Ebooks "
+  },
+  {
+    "href": "https://www.gorgias.com/customers",
+    "text": "Customer Stories "
+  },
+  {
+    "href": "https://www.gorgias.com/partner-stories",
+    "text": "Partner Stories "
+  },
+  {
+    "href": "https://www.gorgias.com/events",
+    "text": "Events "
+  },
+  {
+    "href": "https://docs.gorgias.com/en-US",
+    "text": "Help Center "
+  },
+  {
+    "href": "https://community.gorgias.com/feed",
+    "text": "Gorgias Community "
+  },
+  {
+    "href": "https://www.gorgias.com/behind-the-inbox-podcast",
+    "text": "Behind the Inbox "
+  },
+  {
+    "href": "https://www.gorgias.com/roi-calculator",
+    "text": "ROI Calculator "
+  },
+  {
+    "href": "https://www.gorgias.com/tools/sku-generator",
+    "text": "SKU Generator "
+  },
+  {
+    "href": "https://www.gorgias.com/playbooks",
+    "text": "Playbooks "
+  },
+  {
+    "href": "https://www.gorgias.com/pricing",
+    "text": "Book a demo "
+  },
+  {
+    "href": "https://www.gorgias.com/signup?automationRate=20&planSelected=basic",
+    "text": "Start free trial "
+  },
+  {
+    "href": "https://www.gorgias.com/signup?automationRate=30&planSelected=pro",
+    "text": "Start free trial "
+  },
+  {
+    "href": "https://www.gorgias.com/demo?automationRate=30&planSelected=advanced",
+    "text": "Talk to sales "
+  },
+  {
+    "href": "https://www.gorgias.com/demo",
+    "text": "Talk to sales "
+  },
+  {
+    "href": "https://www.gorgias.com/pricing#compare",
+    "text": "Compare all features ↓ "
+  },
+  {
+    "href": "https://www.gorgias.com/roi-calculator",
+    "text": "ROI calculator -> "
+  },
+  {
+    "href": "https://www.gorgias.com/customers/tommy-john",
+    "text": "Read case study "
+  },
+  {
+    "href": "https://www.gorgias.com/pricing",
+    "text": "Read case study "
+  },
+  {
+    "href": "https://www.gorgias.com/customers/orthofeet",
+    "text": "Read case study "
+  },
+  {
+    "href": "https://www.gorgias.com/customers/tushy",
+    "text": "Read case study "
+  },
+  {
+    "href": "https://www.gorgias.com/pricing",
+    "text": "Read case study "
+  },
+  {
+    "href": "https://www.gorgias.com/customers/orthofeet",
+    "text": "\"When we first started with Gorgias, our goal was to hit 30% automation in 30 days. We surpassed that and are now above 50% automation, and we’re still climbing.\" Courtney Bajek Customer Service Lead at Orthofeet Read the full story -> "
+  },
+  {
+    "href": "https://www.gorgias.com/demo",
+    "text": "See how it works "
+  },
+  {
+    "href": "https://www.gorgias.com/signup",
+    "text": "Sign up for free "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/shopify",
+    "text": "+ Shopify "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/woocommerce",
+    "text": "+ WooCommerce "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/bigcommerce",
+    "text": "+ BigCommerce "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/magento",
+    "text": "+ Magento "
+  },
+  {
+    "href": "https://www.gorgias.com/ecommerce/prestashop",
+    "text": "+ PrestaShop "
+  },
+  {
+    "href": "https://www.gorgias.com/product/voice",
+    "text": "Support by Phone "
+  },
+  {
+    "href": "https://updates.gorgias.com/",
+    "text": "Latest Releases "
+  },
+  {
+    "href": "https://docs.gorgias.com/",
+    "text": "Support Documentation "
+  },
+  {
+    "href": "https://developers.gorgias.com/",
+    "text": "Developers "
+  },
+  {
+    "href": "https://status.gorgias.com/",
+    "text": "Service Status "
+  },
+  {
+    "href": "https://www.gorgias.com/roadmap",
+    "text": "Roadmap "
+  },
+  {
+    "href": "https://www.gorgias.com/pricing?ref=home&ref-position=other",
+    "text": "Pricing "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/clothing-apparel",
+    "text": "Clothing & Apparel "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/beauty-cosmetics",
+    "text": "Beauty & Cosmetics "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/home-garden",
+    "text": "Home & Garden "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/subscriptions",
+    "text": "Subscriptions "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/health-wellness",
+    "text": "Health & Wellness "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/food-beverage",
+    "text": "Food & Beverage "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/luxury-jewelry",
+    "text": "Luxury & Jewelry "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/sports-fitness",
+    "text": "Sports & Fitness "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/pet-animal",
+    "text": "Pet & Animal "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/baby",
+    "text": "Baby "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/retail",
+    "text": "Retail "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/consumer-electronics",
+    "text": "Consumer Electronics "
+  },
+  {
+    "href": "https://www.gorgias.com/industry/b2b",
+    "text": "B2B "
+  },
+  {
+    "href": "https://www.gorgias.com/comparison/zendesk",
+    "text": "Zendesk "
+  },
+  {
+    "href": "https://www.gorgias.com/comparison/kustomer",
+    "text": "Kustomer "
+  },
+  {
+    "href": "https://www.gorgias.com/comparison/gladly",
+    "text": "Gladly "
+  },
+  {
+    "href": "https://www.gorgias.com/comparison/intercom",
+    "text": "Intercom "
+  },
+  {
+    "href": "https://www.gorgias.com/comparison/richpanel",
+    "text": "Richpanel "
+  },
+  {
+    "href": "https://www.gorgias.com/comparison/reamaze",
+    "text": "Re:amaze "
+  },
+  {
+    "href": "https://www.gorgias.com/comparison/gmail",
+    "text": "Gmail "
+  },
+  {
+    "href": "https://www.gorgias.com/comparison/zowie",
+    "text": "Zowie "
+  },
+  {
+    "href": "https://www.gorgias.com/comparison/ada",
+    "text": "Ada "
+  },
+  {
+    "href": "https://www.gorgias.com/comparison/siena",
+    "text": "Siena "
+  },
+  {
+    "href": "https://www.gorgias.com/comparison/yuma",
+    "text": "Yuma "
+  },
+  {
+    "href": "https://www.gorgias.com/playbooks",
+    "text": "Playbooks "
+  },
+  {
+    "href": "https://www.gorgias.com/ebooks",
+    "text": "Ebooks "
+  },
+  {
+    "href": "https://www.gorgias.com/blog",
+    "text": "Blog "
+  },
+  {
+    "href": "https://www.gorgias.com/customers",
+    "text": "Customer Stories "
+  },
+  {
+    "href": "https://www.gorgias.com/apps",
+    "text": "App store "
+  },
+  {
+    "href": "https://www.gorgias.com/referral-program",
+    "text": "Refer a Friend "
+  },
+  {
+    "href": "https://www.gorgias.com/partner-referral",
+    "text": "Refer a Client "
+  },
+  {
+    "href": "https://docs.gorgias.com/",
+    "text": "Help center "
+  },
+  {
+    "href": "https://www.gorgias.com/customer-resources/academy",
+    "text": "Gorgias Academy "
+  },
+  {
+    "href": "https://www.gorgias.com/customer-resources",
+    "text": "Customer Resources "
+  },
+  {
+    "href": "https://www.gorgias.com/onboarding",
+    "text": "Onboarding "
+  },
+  {
+    "href": "https://www.gorgias.com/about-us",
+    "text": "About Gorgias "
+  },
+  {
+    "href": "https://www.gorgias.com/about-us/careers",
+    "text": "Careers "
+  },
+  {
+    "href": "https://www.gorgias.com/events",
+    "text": "Events "
+  },
+  {
+    "href": "https://www.gorgias.com/sustainability",
+    "text": "Sustainability "
+  },
+  {
+    "href": "https://www.gorgias.com/blog-category/gorgias-culture",
+    "text": "People resources "
+  },
+  {
+    "href": "https://agencies.gorgias.com/",
+    "text": "Gorgias Partners "
+  },
+  {
+    "href": "https://www.gorgias.com/partner-program",
+    "text": "Become a Partner "
+  },
+  {
+    "href": "https://www.gorgias.com/affiliate-program",
+    "text": "Affiliate program "
+  },
+  {
+    "href": "https://dash.partnerstack.com/handshake",
+    "text": "Partner Login "
+  },
+  {
+    "href": "https://www.gorgias.com/about-us/style",
+    "text": "Gorgias brand "
+  },
+  {
+    "href": "https://www.gorgias.com/llm-info",
+    "text": "Hey AI, learn about us "
+  },
+  {
+    "href": "https://www.gorgias.com",
+    "text": ""
+  },
+  {
+    "href": "https://www.gorgias.com/sustainability",
+    "text": ""
+  },
+  {
+    "href": "https://www.linkedin.com/company/gorgias",
+    "text": ""
+  },
+  {
+    "href": "https://www.instagram.com/gorgias/",
+    "text": ""
+  },
+  {
+    "href": "https://www.facebook.com/GorgiasHQ",
+    "text": ""
+  },
+  {
+    "href": "https://www.youtube.com/c/Gorgias",
+    "text": ""
+  },
+  {
+    "href": "https://www.gorgias.com/legal/privacy",
+    "text": "Privacy "
+  },
+  {
+    "href": "https://www.gorgias.com/legal",
+    "text": "Legal "
+  },
+  {
+    "href": "https://www.gorgias.com/legal/terms-of-use",
+    "text": "Terms of Use "
+  },
+  {
+    "href": "https://www.gorgias.com/legal/terms-of-service",
+    "text": "Terms of Service "
+  },
+  {
+    "href": "https://www.gorgias.com/security",
+    "text": "Security "
+  },
+  {
+    "href": "https://www.gorgias.com/legal/accessibility",
+    "text": "Accessibility "
+  }
+]

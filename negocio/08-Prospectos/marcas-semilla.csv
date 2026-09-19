@@ -1,0 +1,11 @@
+id,brand,category_observed,source_url,source_id,observed_at,parent_entity,revenue_range,helpdesk,qualification_status,contacted,paid_customer_evidence
+P01,Dreo,Home appliances,https://www.dreo.com/pages/about-us,dreo-about,2026-09-19T03:21:01.935019+00:00,not_verified,unknown,not_verified,identified_not_qualified,False,False
+P02,Ooni,Pizza ovens,https://ooni.com/pages/about-us,ooni-about,2026-09-19T03:21:03.077670+00:00,not_verified,unknown,not_verified,identified_not_qualified,False,False
+P03,Fellow,Coffee equipment,https://fellowproducts.com/pages/about-us,fellow-about,2026-09-19T03:21:03.392496+00:00,not_verified,unknown,not_verified,identified_not_qualified,False,False
+P04,Caraway,Cookware,https://www.carawayhome.com/pages/our-story,caraway-about,2026-09-19T03:21:04.467485+00:00,not_verified,unknown,not_verified,identified_not_qualified,False,False
+P05,Our Place,Cookware,https://fromourplace.com/,ourplace-home,2026-09-19T03:29:49.569504+00:00,not_verified,unknown,not_verified,identified_not_qualified,False,False
+P06,Branch,Furniture,https://www.branchfurniture.com/,branch-home,2026-09-19T03:29:51.207831+00:00,not_verified,unknown,not_verified,identified_not_qualified,False,False
+P07,Made In,Cookware,https://madeincookware.com/,madein-home,2026-09-19T03:29:50.482814+00:00,not_verified,unknown,not_verified,identified_not_qualified,False,False
+P08,Ruggable,Washable rugs,https://ruggable.com/,ruggable-home,2026-09-19T03:29:49.812405+00:00,not_verified,unknown,not_verified,identified_not_qualified,False,False
+P09,BrüMate,Drinkware,https://www.brumate.com/,brumate-home,2026-09-19T03:29:52.855402+00:00,not_verified,unknown,not_verified,identified_not_qualified,False,False
+P10,Burrow,Furniture,https://burrow.com/,burrow-home,2026-09-19T03:29:54.988879+00:00,not_verified,unknown,not_verified,identified_not_qualified,False,False

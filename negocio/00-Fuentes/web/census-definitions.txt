@@ -1,0 +1,414 @@
+{"source_id": "census-definitions", "url": "https://www.census.gov/programs-surveys/susb/about/glossary.html", "final_url": "https://www.census.gov/programs-surveys/susb/about/glossary.html", "http_status": 200, "retrieved_at": "2026-09-19T03:15:02.860218+00:00", "sha256": "dc223872c435d26140bea32b3282dcb3de46a73635a3a454b5745cd8a9884e88", "content_type": "text/html; charset=UTF-8"}
+
+Statistics of U.S. Businesses Glossary
+United States Census Bureau | An official website of the United States Government
+An official website of the United States government
+Here’s how you know
+Here’s how you know
+Official websites use .gov
+A
+.gov
+website belongs to an official government organization in the United States.
+Secure .gov websites use HTTPS
+A
+lock
+(
+) or
+https://
+means you’ve safely connected to the .gov website. Share sensitive information only on official, secure websites.
+Income, Poverty and Health Insurance
+Join us today at 10 am ET for a live webinar announcing new Income, Poverty and Health Insurance estimates for the nation.
+Skip Header
+Partners
+Researchers
+Educators
+Survey Respondents
+Explore Census.gov for...
+Partners
+Researchers
+Educators
+Survey Respondents
+News
+NAICS Codes
+Jobs
+About Us
+Contact Us
+Help
+Topics
+Data & Maps
+Surveys & Programs
+Resource Library
+Search data, events, resources, and more
+Search
+Search
+Helpful Links
+Advanced Data Search
+Get Survey Help
+Census Bureau Data and Maps
+American Community Survey (ACS)
+Census Records & Genealogy
+Helpful Links
+Advanced Data Search
+Get Survey Help
+Census Bureau Data and Maps
+American Community Survey (ACS)
+Census Records & Genealogy
+Search
+Menu
+Topics
+Browse our topics and subtopics to find information and data.
+View All Topics and Subtopics
+Index A to Z
+Age and Sex
+Business and Economy
+Education
+Emergency Management / Disasters
+Employment
+Families and Living Arrangements
+Geography
+Health
+Hispanic Origin
+Housing
+Income and Poverty
+International Trade
+Migration/Geographic Mobility
+Population
+Population Estimates
+Public Sector
+Race
+Redistricting
+Research
+Voting and Registration
+Data & Maps
+Access demographic, economic and population data from the U.S. Census Bureau. Explore census data with visualizations and view tutorials.
+Explore data on data.census.gov
+View all data resources
+Census Academy
+Combining Data
+Data Tools and Apps
+Datasets
+Developers
+Experimental Data Products
+Interactive Maps
+Mapping Files
+Profiles
+Related Sites
+Software
+Tables
+Training and Workshops
+Visualizations
+Surveys & Programs
+Our surveys provide periodic and comprehensive statistics about the nation. This data is critical for government programs, policies, and decision-making.
+Survey Help
+View all Surveys & Programs
+2020 Census
+2026 Census Test
+2030 Census
+American Community Survey (ACS)
+American Housing Survey (AHS)
+Annual Business Survey (ABS)
+Annual Integrated Economic Survey (AIES)
+County Business Patterns (CBP)
+Current Population Survey (CPS)
+Economic Census
+Household Pulse Survey
+International Programs
+Metro and Micro Areas
+Population Estimates
+Population Projections
+Small Area Income and Poverty
+Statistics of U.S. Businesses
+Survey of Income and Program Participation (SIPP)
+Resource Library
+Browse our collection of stories and more.
+View all library resources
+Glossary
+America Counts: Stories
+Audio
+Blogs
+Facts for Features
+Fact Sheets
+Infographics and Visualizations
+Publications
+Spotlights
+Stats for Stories
+Training (Census Academy)
+Videos
+Working Papers
+Topics
+Data & Maps
+Surveys & Programs
+Resource Library
+Topics
+Data & Maps
+Surveys & Programs
+Resource Library
+Partners
+Researchers
+Educators
+Survey Respondents
+News
+NAICS Codes
+Jobs
+About Us
+Contact Us
+Help
+View All Topics and Subtopics
+Index A to Z
+Age and Sex
+Business and Economy
+Education
+Emergency Management / Disasters
+Employment
+Families and Living Arrangements
+Geography
+Health
+Hispanic Origin
+Housing
+Income and Poverty
+International Trade
+Migration/Geographic Mobility
+Population
+Population Estimates
+Public Sector
+Race
+Redistricting
+Research
+Voting and Registration
+Explore data on data.census.gov
+View all data resources
+Census Academy
+Combining Data
+Data Tools and Apps
+Datasets
+Developers
+Experimental Data Products
+Interactive Maps
+Mapping Files
+Profiles
+Related Sites
+Software
+Tables
+Training and Workshops
+Visualizations
+Survey Help
+View all Surveys & Programs
+2020 Census
+2026 Census Test
+2030 Census
+American Community Survey (ACS)
+American Housing Survey (AHS)
+Annual Business Survey (ABS)
+Annual Integrated Economic Survey (AIES)
+County Business Patterns (CBP)
+Current Population Survey (CPS)
+Economic Census
+Household Pulse Survey
+International Programs
+Metro and Micro Areas
+Population Estimates
+Population Projections
+Small Area Income and Poverty
+Statistics of U.S. Businesses
+Survey of Income and Program Participation (SIPP)
+View all library resources
+Glossary
+America Counts: Stories
+Audio
+Blogs
+Facts for Features
+Fact Sheets
+Infographics and Visualizations
+Publications
+Spotlights
+Stats for Stories
+Training (Census Academy)
+Videos
+Working Papers
+//
+Census.gov
+/
+Our Surveys & Programs
+/
+Statistics of U.S. Businesses (SUSB)
+/
+About
+/
+Glossary
+Statistics of U.S. Businesses Glossary
+Skip Navigation
+Within About This Program
+FAQs
+Glossary
+Related Sites
+Within About This Program
+Within About This Program
+FAQs
+Glossary
+Related Sites
+Statistics of U.S. Businesses Glossary
+The glossary below defines terms included in the
+Statistics of U.S. Businesses (SUSB)
+program.
+Abbreviations and Symbols
+D
+Withheld to avoid disclosing data for individual companies; data are included in higher level totals
+G
+Low noise; cell value was changed by less than 2 percent by the application of noise
+H
+Moderate noise; cell value was changed by 2 percent or more but less than 5 percent by the application of noise
+J
+High noise; cell value was changed by 5 percent or more by the application of noise
+S
+Withheld because estimate did not meet publication standards
+N
+Not available or not comparable
+r
+Revised
+a
+0 to 19 employees
+b
+20 to 99 employees
+c
+100 to 249 employees
+e
+250 to 499 employees
+f
+500 to 999 employees
+g
+1,000 to 2,499 employees
+h
+2,500 to 4,999 employees
+i
+5,000 to 9,999 employees
+j
+10,000 to 24,999 employees
+k
+25,000 to 49,999 employees
+l
+50,000 to 99,999 employees
+m
+100,000 employees or more
+At-Large District
+At-large is a designation for members of a governing body who are elected, and one at-large representative is elected from the entire state. States with at-large congressional districts are: Alaska, Delaware, North Dakota, South Dakota, Vermont, and Wyoming.
+Business Information Tracking Series (BITS)
+A file which links establishments in the annual County Business Patterns data from year to year. We use a series of matches to link establishments across years. The primary match links establishments having the same census identification number in both the initial and subsequent years. These are establishments which have undergone no ownership or organizational changes.
+The remainder of the matches uses establishment identification numbers such as the employer identification number, as well as establishment attributes like business name and address, ZIP code, and industry code to create links for establishments that have remained in existence but have undergone ownership or organizational changes which lead to changes in the census identification numbers across years.
+Using this file, we are able to create longitudinal tabulations. A longitudinal tabulation is a tabulation that provides a study of business entities across a span of years. A longitudinal tabulation measures the change in business entities, such as establishment births, deaths, expansions, and contractions for an industry and/or enterprise size. In contrast, non-longitudinal tabulations show aggregate totals for an industry and/or enterprise size. Comparison of non-longitudinal tabulations of two-year time periods do not provide explanations for changes in business entities.
+Congressional District
+A congressional district is an electoral constituency that elects a single member of a congress. A congressional district is based on population, which, in the United States, is taken using a census every ten years. There are 435 congressional districts in the United States House of Representatives.
+Employment
+Paid employment consists of full- and part-time employees, including salaried officers and executives of corporations, who are on the payroll in the pay period including March 12. Included are employees on paid sick leave, holidays, and vacations; not included are sole proprietors and partners of unincorporated businesses.
+Enterprise
+An enterprise (or "company") is a business organization consisting of one or more domestic establishments that were specified under common ownership or control. The enterprise and the establishment are the same for single-establishment firms. Each multi-establishment company forms one enterprise - the enterprise employment and annual payroll are summed from the associated establishments.
+Enterprise Classification
+An enterprise may have establishments in many different industries. For the purpose of classifying an entire enterprise into a single industry, the classification methodology starts by excluding nonoperating establishments - establishments classified as manufacturers' sales branches and offices, establishments engaged in management of companies and enterprises (NAICS 55), and auxiliary establishments. The enterprise is then classified into the 2-digit NAICS sector in which it paid the largest share of its payroll. Then, within this 2-digit NAICS sector, the enterprise is classified into the 3-digit NAICS sub-sector in which the enterprise paid the largest share of payroll. Finally, within the assigned 3-digit NAICS sub-sector, the enterprise is classified into the 4-digit NAICS industry group with the largest share of payroll.
+SUSB currently has tabulations by enterprise industry for the 2012-2015 reference years.
+Enterprise Size
+Enterprise size designations are determined by the summed employment of all associated establishments. Employer enterprises with zero employees are enterprises for which no associated establishments reported paid employees in the mid-March pay period but paid employees at some time during the year.
+Establishment
+An establishment is a single physical location at which business is conducted or services or industrial operations are performed. It is not necessarily identical with a company or enterprise, which may consist of one or more establishments. When two or more activities are carried on at a single location under a single ownership, all activities generally are grouped together as a single establishment. The entire establishment is classified on the basis of its major activity and all data are included in that classification.
+Establishment counts represent the number of locations with paid employees any time during the year. This series excludes government establishments except for government sponsored Beer, Wine, and Distilled Alcoholic Beverage Merchant Wholesalers (NAICS 4248); Beer, Wine, and Liquor Stores (NAICS 44531); Tobacco Stores (NAICS 453991); Book Publishers (511130); Monetary Authorities – Central Bank (NAICS 521110); Savings Institutions (NAICS 522120); Credit Unions (NAICS 522130); Hospitals (NAICS 622); Gambling Industries (NAICS 7132); and Casino Hotels (NAICS 721120).
+Establishment Births
+Births are establishments that have zero employment in the first quarter of the initial year and positive employment in the first quarter of the subsequent year.
+Establishment Contractions
+Contractions are establishments that have positive first quarter employment in both the initial and subsequent years and decrease employment during the time period between the first quarter of the initial year and the first quarter of the subsequent year.
+Establishment Deaths
+Deaths are establishments that have positive employment in the first quarter of the initial year and zero employment in the first quarter of the subsequent year.
+Establishment Expansions
+Expansions are establishments that have positive first quarter employment in both the initial and subsequent years and increase employment during the time period between the first quarter of the initial year and the first quarter of the subsequent year.
+Firm
+A firm is a business organization consisting of one or more domestic establishments in the same geographic area and industry that were specified under common ownership or control. The firm and the establishment are the same for single-establishment firms. For each multi-establishment firm, establishments in the same industry within a geographic area will be counted as one firm; the firm employment and annual payroll are summed from the associated establishments.
+Legal Form of Organization (LFO)
+LFO is assigned at the establishment level and is derived from administrative records data sources. The following LFOs are included in the SUSB program.
+C-Corporation and other corporate legal forms of organization
+- An incorporated business that is granted a charter recognizing it as a separate legal entity having its own privileges, and liabilities distinct from those of its members.
+S-Corporation
+- A form of corporation where the entity does not pay any federal income taxes. The corporation's income or losses are divided among and passed to its shareholders. The shareholders must then report the income or loss on their own individual income tax returns.
+Sole Proprietorships
+- An unincorporated business with a sole owner.
+Partnership
+- An unincorporated business where two or more persons join to carry on a trade or business with each having a shared financial interest in the business.
+Non-profit
+- An organization that does not distribute surplus funds to its owners or shareholders, but instead uses surplus funds to help pursue its goals. Most non-profit organizations are exempt from income taxes.
+Government
+- A business that taxpayers primarily fund. Most government businesses are out of scope to this data series.
+Metropolitan/Micropolitan Statistical Area (MSA)
+MSA is a core area containing a substantial population nucleus, together with adjacent communities having a high degree of economic and social integration with that core.
+Each metropolitan statistical area must have at least one urbanized area of 50,000 or more inhabitants. Each micropolitan statistical area must have at least one urban cluster of at least 10,000 but less than 50,000 population.  Metropolitan and micropolitan statistical areas can be collectively referred to as "Core Based Statistical Areas" (CBSAs); however, SUSB uses the term MSA.
+Noise Infusion
+Noise infusion is a method of disclosure avoidance in which a random noise multiplier is applied to certain data values for each business prior to table creation. Disclosure protection is accomplished in a manner that results in a relatively small change in the majority of tabulated values. Per Department of Commerce Administrative Order
+DAO 216-26
+, as of June 4, 2026, noise infusion will no longer be used for future Census Bureau statistical products.
+Nonemployer
+A nonemployer business is one that has no paid employees, has annual business receipts of $1,000 or more ($1 or more in the Construction industry), and is subject to federal income taxes.
+SUSB does not include data for nonemployer businesses. For these data, refer to the
+Nonemployer Statistics
+.
+North American Industry Classification System (NAICS)
+NAICS
+is the standard used by Federal statistical agencies in classifying business establishments for the purpose of collecting, analyzing, and publishing statistical data related to the U.S. business economy. This system is used by the United States, Canada and Mexico.
+Payroll
+Payroll includes all forms of compensation, such as salaries, wages, commissions, dismissal pay, bonuses, vacation allowances, sick-leave pay, and employee contributions to qualified pension plans paid during the year to all employees. For corporations, payroll includes amounts paid to officers and executives; for unincorporated businesses, it does not include profit or other compensation of proprietors or partners. Payroll is reported before deductions for social security, income tax, insurance, union dues, etc. This definition of payroll is the same as that used by the Internal Revenue Service (IRS) on Form 941 as taxable Medicare Wages and Tips (even if not subject to income or FICA tax). First-quarter payroll consists of payroll during the January-to-March quarter.
+Receipts
+Receipts (net of taxes collected from customers or clients) are defined as operating revenue for goods produced or distributed, or for services provided. Receipts excludes local, state, and federal sales and other taxes collected from customers or clients and paid directly to a tax agency. Receipts are acquired from economic census data for establishments in industries that are in-scope to the economic census; receipts are acquired from IRS tax data for single-establishment businesses in industries that are out-of-scope to the economic census; and payroll-to-receipts ratios are used to estimate receipts for multi-establishment businesses in industries that are out-of-scope to the economic census. SUSB tabulations provide summed establishment receipts which creates some duplication of receipts for large multi-establishment enterprises. Receipts data are available for years ending in 2 and 7 only.
+Reference Year
+The reference year is the year for which the data are published. SUSB data are available approximately 2 to 2 1/2 years after the conclusion of the reference year.
+Statewide
+A county-equivalent geography assigned to employers without a fixed location within a state (or of unknown county location). Employers who report data for multiple locations under one common location are also given a statewide classification. This incomplete detail causes only slight understatement of county employment.
+Territory
+A US territory is a region under the sovereign jurisdiction of the US federal government, but not a state, and includes places like Puerto Rico, the US Virgin Islands, American Samoa, the Northern Mariana Islands, and Guam.
+Share
+Facebook
+X (Twitter)
+LinkedIn
+Related Information
+About Statistics of U.S. Businesses (SUSB)
+Statistics of U.S. Business Data
+Page Last Revised - July 23, 2026
+✕
+Is this page helpful?
+Yes
+No
+✕
+NO THANKS
+255 characters maximum
+255 characters maximum reached
+✕
+Thank you for your feedback.
+Comments or suggestions?
+Top
+Back to Header
+Receive Updates
+To sign up for updates please enter your email address.
+Enter your email address
+Subscribe
+Stay Current
+America Counts
+Director’s Blog
+Deputy Director’s Blog
+Random Samplings
+Research Matters
+Stay Connected
+Contact
+Support
+Jobs
+Follow
+Information Quality
+|
+Data Linkage Infrastructure
+|
+Data Protection and Privacy Policy
+|
+Accessibility
+|
+FOIA
+|
+Inspector General
+|
+No FEAR Act
+|
+U.S. Department of Commerce
+|
+USA.gov
+Measuring America's People and Economy

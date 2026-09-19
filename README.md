@@ -2,6 +2,11 @@
 
 **Carpeta canónica:** `/Users/javiercamaraportepetit/vexa` · fuera de iCloud. Preparación rehecha desde fuentes originales con Astra vía Codex. **No es todavía el SaaS completo ni un deploy.** Estado/recibos: [PROGRESO.md](PROGRESO.md).
 
+## Investigación de negocio ampliada — TAM, SAM, SOM y finanzas
+**[Índice del estudio completo](negocio/README.md)** · **[TAM/SAM/SOM](negocio/05-Precios-y-Finanzas/tam-sam-som.md)** · **[Excel de mercado/finanzas](negocio/05-Precios-y-Finanzas/VEXA-MERCADO-Y-FINANZAS.xlsx)** · **[Informe HTML](negocio/INFORME-VEXA.html)**.
+
+Base oficial: 2,975 firmas ecommerce/venta por catálogo USA en bandas de receipts $10M–<$100M (Census2022), no clientes calificados. TAM núcleo a precio base supuesto ~$53.5M/año; SAM base escenario ~$10.6M; SOM base A3 ~$989K ARR. Filtros, precios y forecast no son métricas observadas. El dossier incluye competencia/precios, GTM, entrevistas, fuentes, riesgos, lista semilla y modelo de36meses.
+
 ## Empieza aquí
 1. [Contexto e interpretación](docs/CONTEXTO-CANONICO.md): lo que dicen audios, DOCX y PRD; discrepancias y decisiones.
 2. [Tesis/competencia/veredicto](docs/investigacion/01-tesis-competencia-y-veredicto.md): **CAMBIAR el posicionamiento**, no vender feedback→dinero como novedad exclusiva.

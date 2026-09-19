@@ -1,0 +1,10 @@
+{"source_id": "bls-oes", "url": "https://www.bls.gov/oes/2024/may/oes434051.htm", "final_url": "https://www.bls.gov/oes/2024/may/oes434051.htm", "http_status": 403, "retrieved_at": "2026-09-19T03:19:45.750881+00:00", "sha256": "96088fe52a21321e4ef0ae5f8e1e993b84fe61cb6faff72f80f11d80f4ff9ff9", "content_type": "text/html"}
+
+Access Denied
+Bureau of Labor Statistics
+Access Denied
+The BLS is committed to providing data promptly and according to established schedules. Automated retrieval programs (commonly called "robots" or "bots") can cause delays and interfere with other customers' timely access to information. Therefore, bot activity that doesn't conform to BLS usage policy is prohibited.
+We apologize for any inconvenience. If you believe we have made an error, please
+contact us
+.
+Please contact your administrator with the error code: 0.66a6f7bd.1789787985.365b2efc

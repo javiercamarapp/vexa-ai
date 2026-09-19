@@ -1,0 +1,35 @@
+{
+  "version": "2026-09-19-v1",
+  "currency": "USD",
+  "disclaimer": "ALL conversion, eligibility, price, churn, volume, salary, retention and cost inputs below are planning assumptions, not measured VEXA performance. Only core_firms comes from Census observed 2022 data; token prices from fetched public catalog.",
+  "core_naics": "454110",
+  "core_firms": 2975,
+  "core_source": "universo-census.json; complete bands 09..17; USD10M <= enterprise receipts < USD100M",
+  "scenarios": {
+    "conservador": {"monthly_price":799,"physical_category_fit":0.45,"volume_and_need_fit":0.40,"data_stack_fit":0.60,"governance_fit":0.70,"outreach_year1_monthly":25,"outreach_year2_monthly":45,"outreach_year3_monthly":65,"meeting_rate":0.08,"pilot_rate":0.30,"paid_rate":0.35,"sales_lag_months":3,"monthly_logo_churn":0.02,"onboarding_cap_year1":1,"onboarding_cap_year2":2,"onboarding_cap_year3":3,"fixed_opex_year1_monthly":8000,"fixed_opex_year2_monthly":10000,"fixed_opex_year3_monthly":12000},
+    "base": {"monthly_price":1499,"physical_category_fit":0.60,"volume_and_need_fit":0.55,"data_stack_fit":0.75,"governance_fit":0.80,"outreach_year1_monthly":50,"outreach_year2_monthly":100,"outreach_year3_monthly":160,"meeting_rate":0.12,"pilot_rate":0.35,"paid_rate":0.50,"sales_lag_months":2,"monthly_logo_churn":0.01,"onboarding_cap_year1":2,"onboarding_cap_year2":3,"onboarding_cap_year3":5,"fixed_opex_year1_monthly":14000,"fixed_opex_year2_monthly":18000,"fixed_opex_year3_monthly":25000},
+    "expansion": {"monthly_price":2999,"physical_category_fit":0.80,"volume_and_need_fit":0.75,"data_stack_fit":0.90,"governance_fit":0.90,"outreach_year1_monthly":90,"outreach_year2_monthly":200,"outreach_year3_monthly":350,"meeting_rate":0.16,"pilot_rate":0.45,"paid_rate":0.55,"sales_lag_months":2,"monthly_logo_churn":0.0075,"onboarding_cap_year1":3,"onboarding_cap_year2":6,"onboarding_cap_year3":10,"fixed_opex_year1_monthly":22000,"fixed_opex_year2_monthly":40000,"fixed_opex_year3_monthly":65000}
+  },
+  "costs": {
+    "conversations_per_active_month":50000,
+    "input_tokens_per_conversation":1500,
+    "output_tokens_per_conversation":250,
+    "extraction_input_usd_per_million":0.30,
+    "extraction_output_usd_per_million":2.50,
+    "escalation_fraction":0.10,
+    "escalation_input_usd_per_million":2,
+    "escalation_output_usd_per_million":10,
+    "retry_cost_multiplier":1.15,
+    "embeddings_briefs_per_active_month":10,
+    "allocated_cloud_per_active_month":35,
+    "variable_support_hours_per_active_month":2,
+    "support_hourly_loaded_usd":40,
+    "payment_rate":0.035,
+    "onboarding_hours_per_new_customer":12,
+    "onboarding_hourly_usd":40,
+    "setup_fee_usd":0,
+    "unconverted_pilot_cost_usd":120,
+    "extra_fixed_marketing_monthly":1000
+  },
+  "forecast": {"months":36,"initial_cash":0,"first_outreach_month":3,"buffer_months":6,"sales_marketing_share_fixed_opex":0.25,"assumed_repeat_prospecting_policy":"Every outreach count is a newly targeted account. Cold prospecting universe is the 2,975 broad core accounts, not the post-qualification SAM. Exhaustion caps outreach; no pretend fresh leads after exhaustion. No expansion revenue, taxes, financing, annual prepayment or cash collection delay modeled."}
+}

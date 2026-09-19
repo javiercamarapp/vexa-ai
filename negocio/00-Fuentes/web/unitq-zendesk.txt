@@ -1,0 +1,112 @@
+{"source_id": "unitq-zendesk", "url": "https://www.unitq.com/blog/unitq-customer-zendesk-becomes-strategic-unitq-investor/", "final_url": "https://www.unitq.com/blog/unitq-customer-zendesk-becomes-strategic-unitq-investor/", "http_status": 200, "retrieved_at": "2026-09-19T03:26:18.689819+00:00", "sha256": "9ff479453c6e929ac21b52e10edefa43ca724f13ae2c39d85174f4f893894dc4", "content_type": "text/html"}
+
+unitQ Announces Strategic Investment from Zendesk Ventures to Propel AI-Powered Customer Feedback Innovation
+Skip to main content
+Solutions
+Customers
+unitQ Score
+Resources
+Company
+Login
+Get a demo
+What's inside
+From unitQ customer to unitQ investor
+Transcending funding
+unitQ customer Zendesk becomes strategic unitQ investor
+Jun 20, 2024
+By
+Christian Wiklund and Niklas Lindstrom
+unitQ
+Itâs an exciting new chapter for unitQ. We are thrilled to announce a strategic investment in unitQ from Zendesk Ventures, an AI-focused global venture fund. This partnership solidifies a powerful alliance to propel unitQ as a leader in shaping the future of AI-based customer experience innovation.
+Our decision to partner with
+Zendesk Ventures
+was driven by our aligned core values and vision to reinvent the customer experience. Zendesk, the company providing the most complete AI solution for CX in the market, brings unparalleled expertise and resources to the table. As
+Ben Barclay
+, SVP of Strategy, Corporate Development, & Transformation at Zendesk said, âEvery organization is on a path to becoming AI-driven, and weâre eager to form partnerships with companies leading this new era.â
+From unitQ customer to unitQ investor
+Zendesk Venturesâ investment in unitQ is a huge signal of confidence in our team, product and vision.Â
+The unitQ team has built a customer feedback platform that is used by some of the worldâs most recognized brands, including
+AllTrails
+,
+Bumble
+, Spotify,
+Uber
+,
+Pinterest
+â and plenty more â including
+Zendesk
+. Thatâs right, Zendesk has experienced the value that unitQ brings to customer centric organizations first hand and is now investing in us to help elevate our company to the next level!Â
+âWe chose unitQ after evaluating and trying different solutions in the market,â said
+Shawn Slipy
+, Vice President Global CX Operations, Zendesk. âThe granularity and speed at which unitQ is able to deliver actionable customer insights is above and beyond what others could offer, and weâre grateful for our continued partnership.âÂ
+Transcending funding
+Zendesk Ventures offers access to CX and AI experts, strategic partnerships and opportunities to get featured on the
+Zendesk Marketplace
+, home to over 1,300 apps. This exposure, including access to a network of portfolio companies they support, will expand our brand awareness and foster our growth. As we explore our partnership, weâll look to build deeper relationships with analysts, press connections and joint customers facilitated through Zendesk Ventures' vast network of industry experts.Â
+Zendesk Ventures isnât alone in believing in our mission to revolutionize how product builders, engineers, support leaders and team members understand customer feedback in real time to build superior products, fix bugs faster and resolve support issues at scale.Â
+Zendesk has already been pivotal in providing introductions to key champions and weâve been able to deliver more value to unitQ customers as a result of our shared technology integrations. Weâve experienced the power of Zendeskâs community first-hand and are excited to explore joint go-to-market efforts with Zendeskâs ecosystem of customers, technology partners and evangelists.Â
+Letâs GO!
+Christian Wiklund
+is unitQâs Co-Founder and CEO;
+Niklas Lindstrom
+is unitQâs Co-Founder and Chief Technology OfficerÂ
+Newsletter
+Quality insights, in your inbox
+Join product and CX leaders getting the latest on customer intelligence, once a month.
+Related
+Blogs
+News
+Sep 16, 2026
+AI is coming for research work. We asked professionals which part.
+Read Now
+News
+Resources
+Aug 05, 2026
+Is AI replacing researchers? We're asking them directly
+Read Now
+News
+May 21, 2026
+Every app promises to âdelightâ users. Forty actually delivered.
+Read Now
+unitQ HQ
+501 2nd Street
+San Francisco, CA 94107
+Follow us
+Contact us
+Solutions
+Platform overview
+unitQ Monitor
+unitQ Impact
+unitQ Compete
+unitQ Support QA
+unitQ Research
+unitQ Social
+agentQ
+Integrations
+Security
+AWS
+Use cases
+Issue monitoring & resolution
+Product prioritization
+Support optimization
+Competitive intelligence
+AI interviews
+Social listening
+Company
+About
+Careers
+Resources
+Blog
+News
+Epic Awards
+Research hub
+Compare unitQ
+Â©
+2026
+unitQ. All rights reserved
+(
+Copyright Dispute Policy
+)
+Terms & Conditions
+Privacy Policy
+Service Status

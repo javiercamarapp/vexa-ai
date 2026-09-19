@@ -1,0 +1,210 @@
+{"source_id": "enterpret-series-a", "url": "https://www.enterpret.com/blog/enterpret-series-a", "final_url": "https://www.enterpret.com/blog/enterpret-series-a", "http_status": 200, "retrieved_at": "2026-09-19T03:26:17.190220+00:00", "sha256": "bbc5e25d91190842481f5991698710ea74778f05a94389793dcb41f9289f1ce4", "content_type": "text/html; charset=utf-8"}
+
+Announcing Enterpret’s $20.8M Series A to build the future of customer intelligence
+[Webinar] CX for the AI Era: Fireside Chat with Sunil Joseph, VP of CS & Support at OpenRouter
+Register Now
+Platform
+Unify
+Feedback Integrations
+Unify feedback from every source
+Adaptive Taxonomy
+Classify feedback & insights
+Customer Context Graph
+Connect feedback to context
+Data Enrichment
+Enrich and extract deeper insights
+uNDERSTAND
+Dashboard
+Visualize and quantify insights
+Enterpret AI Insights
+Ask, analyze & act on feedback
+Enterpret MCP Server
+Your feedback available to any AI
+Sales Intelligence
+Understand every deal to win more
+Act
+AI Agents
+Automate resolutions & actions
+Close the Loop
+Detect resolutions and respond
+Workflow Integrations
+Connect tools & trigger actions
+platform
+Explore the Enterpret Software
+Try the product in under 5 minutes
+See Integrations Library
+Book Demo
+Solutions
+Solutions
+Product Management
+Build what customers want
+Voice of Customer
+Scale customer empathy
+Customer Experience
+Elevate customer love
+See Integrations Library
+Book Demo
+Customers
+Customers
+Canva
+scaled insights from 200M+ users
+Notion
+saved time spent by  over 360%
+Apollo.io
+cut support tickets by 40%
+Bitvavo
+sped up response times
+Descript
+saved analysis time by 83%
+Feeld
+scaled feedback ops by 10x
+Read all
+customer stories
+FEATURED STORY
+How Canva Scaled Insights From 200+ Mil Users
+The team transforms customer feedback to action
+See Integrations Library
+Book Demo
+Resources
+Resources
+Blog
+Customer intelligence insights
+Templates
+Voice of the customer resources
+Press
+See Enterpret in the news
+Manifesto
+What we believe and why we exist
+Use Cases
+Practical examples and workflows
+Build vs Buy Quiz
+Which is right for you?
+See Integrations Library
+Book Demo
+Unify
+Feedback Integrations
+Unify feedback from every source
+Adaptive Taxonomy
+Classify feedback & insights
+Customer Context Graph
+Connect feedback to context
+Data Enrichment
+Enrich and extract deeper insights
+uNDERSTAND
+Dashboard
+Visualize and quantify insights
+Enterpret AI Insights
+Ask, analyze & act on feedback
+Enterpret MCP Server
+Your feedback available to any AI
+Sales Intelligence
+Understand every deal to win more
+Act
+AI Agents
+Automate resolutions & actions
+Close the Loop
+Detect resolutions and respond
+Workflow Integrations
+Connect tools & trigger actions
+platform
+Explore the Enterpret Software
+Try the product in under 5 minutes
+See Integrations Library
+Book Demo
+BOOK A DEMO
+Log In
+Try Enterpret
+BOOK A DEMO
+CONTENT
+Text Link
+Text Link
+Announcements
+December 4, 2024
+Announcing Enterpret’s $20.8M Series A to build the future of customer intelligence
+Varun Sharma
+Co-founder, CEO
+When Arnav and I started Enterpret in 2020, we had a bold vision: to help every company unlock the power of its most valuable dataset—customer feedback.
+Today, we’re thrilled to announce the next chapter in that journey: Enterpret has raised $20.8 million in Series A funding, led by Rayfe Gaspar-Asaoka at Canaan Partners, with participation from Kleiner Perkins, Peak XV Partners, Wing Ventures, Recall Capital, and an incredible group of angel investors.
+This milestone is a celebration of our team of Entropies and the incredible product and CX leaders who have partnered with us. It’s also a moment to reflect on why we’re building Enterpret and why the future of customer-centricity has never been brighter.
+‍Why Customer Feedback Matters
+‍
+CUSTOMERS
+. Oh, what a special thing they are.
+They trust you to solve a problem that matters to them. They root for you to succeed. They share their challenges and aspirations so you can improve, and when things work, they become your biggest advocates. But here’s the hard truth: many companies struggle to tap into this goldmine of insights. Teams are overwhelmed with unstructured feedback—support tickets, sales calls, surveys, social media comments—spread across silos. As a result, opportunities are missed, and problems grow before they’re resolved.
+Enter Enterpret.
+We believe the
+Voice of the Customer
+matters. It’s not just data—it’s direction. That’s why we’re building the Operating System for Customer Centricity.
+What Makes Enterpret Different‍
+At the heart of Enterpret is our Customer Knowledge Graph—a proprietary AI technology designed to transform massive amounts of feedback into real-time, actionable insights. Here’s what sets us apart:
+Transparency and Inspectability
+: Our insights are explainable. No black boxes, no guesswork—just clarity teams can trust.
+Universal Value
+: We break down silos, making feedback accessible and actionable for every team, from Product to CX to Revenue.
+Collaboration-First
+: Unified feedback fosters alignment and ensures teams move together toward what customers need most. This is AI done differently. It’s not about replacing teams; it’s about empowering them to work smarter, faster, and with a shared purpose.
+‍The Next Chapter: Insights to Action‍
+This funding is about scaling our mission. We’ve spent the last four years helping teams unlock customer feedback, and now, we’re doubling down. Our platform already helps product and CX teams close the feedback loop faster and integrate insights into their daily workflows. The next step?
+Actionable AI.
+Imagine:
+Catching bugs and anomalies before they become crises.
+Automatically closing the loop with customers to drive loyalty.
+Seamlessly integrating insights into the tools your team already loves.
+This is where we’re headed—AI that doesn’t just tell you what to do, but helps you do it.
+Gratitude and growth‍
+This milestone wouldn’t have been possible without our customers. Thank you for believing in an early-stage startup and pushing us to continuously raise the bar.
+To Canva, Notion, Loom, Monday.com, Strava, Descript, Linear, Vimeo, and many others: you are the reason we exist.
+To our team of Entropies: your grit, optimism, and customer obsession are our superpowers. Early-stage startups are a rollercoaster—sometimes it feels like 4 weeks, and sometimes 4 decades—but through it all, you’ve made Enterpret what it is today.
+To our new partners: we’re thrilled to welcome Rayfe Gaspar-Asaoka to our board and some incredible new angel investors, including Lauryn Motamedi from Notion, Elena Verna from Dropbox, Nan Yu from Linear, Andrew Berman from Zapier, and Adena Nadler from The Browser Company. Your belief in our vision means the world to us.
+Looking Ahead
+To our future customers and teammates: we are ready for you. We are building a future where every interaction with your customers drives alignment, innovation, and impact. Namaste, and welcome to Enterpret! ‍
+Read all about the coverage in TechCrunch
+!
+Related Blogs
+See all blogs
+Product Insights
+Aug 28, 2026
+Key Lessons with Marty Cagan on Building in the AI Era
+Aug 26, 2026
+Your next deal shouldn’t start from zero
+Jul 21, 2026
+How to Analyze Millions of Pieces of Customer Feedback
+Generative AI
+Jul 14, 2026
+Why Users Leave AI Products, and What They Actually Want Instead
+AI That Learns Your Business
+Generic AI gives generic insights. Enterpret is trained on your data to speak your language.
+Book a demo
+Start transforming feedback into
+customer love
+.
+Leading companies like Perplexity, Notion and Strava power customer intelligence with Enterpret
+BOOK A DEMO
+company
+About us
+Careers
+RESOURCES
+Use Cases
+Blog
+VoC Templates
+Status Page
+Help Center
+Changelog
+Guides
+legal
+Terms of Service
+Privacy Policy
+Data Usage
+Security
+connect
+X
+Linkedin
+YouTube
+Free Tools
+App Review Analyzer
+Survey Data Analyzer
+Build vs Buy Quiz
+TRY ENTERPRET
+See the Enterpret Platform in 5 mins
+Discover how top companies turn customer feedback into actionable insights automatically. No commitment required.
+Try Platform

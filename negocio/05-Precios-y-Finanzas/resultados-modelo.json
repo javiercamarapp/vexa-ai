@@ -1,0 +1,251 @@
+{
+  "conservador": {
+    "size": {
+      "core_firms_observed_2022": 2975.0,
+      "annual_price_assumed": 9588.0,
+      "tam_core_price_scenario": 28524300.0,
+      "sam_expected_accounts_scenario": 224.91,
+      "sam_arr_scenario": 2156437.08,
+      "stages": [
+        {
+          "filter": "physical_category_fit",
+          "conditional_assumption": 0.45,
+          "remaining_expected_accounts": 1338.75
+        },
+        {
+          "filter": "volume_and_need_fit",
+          "conditional_assumption": 0.4,
+          "remaining_expected_accounts": 535.5
+        },
+        {
+          "filter": "data_stack_fit",
+          "conditional_assumption": 0.6,
+          "remaining_expected_accounts": 321.3
+        },
+        {
+          "filter": "governance_fit",
+          "conditional_assumption": 0.7,
+          "remaining_expected_accounts": 224.91
+        }
+      ]
+    },
+    "unit_cost": {
+      "extraction": 53.75,
+      "escalation": 27.5,
+      "ai_with_retry_allowance": 93.4375,
+      "support": 80.0,
+      "recurring_cogs_per_active_month": 246.4025,
+      "gross_margin": 0.6916113892365456
+    },
+    "annual": [
+      {
+        "year": 1,
+        "new_expected_logos": 1.47,
+        "end_expected_logos": 1.38468190090944,
+        "revenue_recurring": 3927.553897494515,
+        "arr_exit": 13276.33006591971,
+        "net_cash_flow": -106457.25899265241,
+        "cash_before_financing_end": -106457.25899265241,
+        "fully_allocated_cac_scenario": 24808.163265306124,
+        "cac_payback_months_scenario": 44.89373054584236
+      },
+      {
+        "year": 2,
+        "new_expected_logos": 4.032,
+        "end_expected_logos": 4.743576243587872,
+        "revenue_recurring": 27963.543589796733,
+        "arr_exit": 45481.40902352051,
+        "net_cash_flow": -115606.33476988398,
+        "cash_before_financing_end": -222063.5937625364,
+        "fully_allocated_cac_scenario": 10667.380952380952,
+        "cac_payback_months_scenario": 19.304070236258674
+      },
+      {
+        "year": 3,
+        "new_expected_logos": 6.048,
+        "end_expected_logos": 9.187736328173525,
+        "revenue_recurring": 65208.11252838709,
+        "arr_exit": 88092.01591452776,
+        "net_cash_flow": -115264.52670474921,
+        "cash_before_financing_end": -337328.12046728557,
+        "fully_allocated_cac_scenario": 8177.936507936508,
+        "cac_payback_months_scenario": 14.799083434030209
+      }
+    ],
+    "cash_needed_no_buffer": {
+      "12": 106457.25899265241,
+      "18": 167109.69395740502,
+      "24": 222063.5937625364,
+      "36": 337328.12046728557
+    },
+    "cash_18_months_plus_6_month_fixed_buffer": 233109.69395740502,
+    "first_positive_month_before_financing": null,
+    "caution": "All SOM/price/eligibility/cost/conversion values are scenarios, not measured results; positive cash flow can be temporary."
+  },
+  "base": {
+    "size": {
+      "core_firms_observed_2022": 2975.0,
+      "annual_price_assumed": 17988.0,
+      "tam_core_price_scenario": 53514300.0,
+      "sam_expected_accounts_scenario": 589.05,
+      "sam_arr_scenario": 10595831.4,
+      "stages": [
+        {
+          "filter": "physical_category_fit",
+          "conditional_assumption": 0.6,
+          "remaining_expected_accounts": 1785.0
+        },
+        {
+          "filter": "volume_and_need_fit",
+          "conditional_assumption": 0.55,
+          "remaining_expected_accounts": 981.75
+        },
+        {
+          "filter": "data_stack_fit",
+          "conditional_assumption": 0.75,
+          "remaining_expected_accounts": 736.3125
+        },
+        {
+          "filter": "governance_fit",
+          "conditional_assumption": 0.8,
+          "remaining_expected_accounts": 589.05
+        }
+      ]
+    },
+    "unit_cost": {
+      "extraction": 53.75,
+      "escalation": 27.5,
+      "ai_with_retry_allowance": 93.4375,
+      "support": 80.0,
+      "recurring_cogs_per_active_month": 270.9025,
+      "gross_margin": 0.8192778519012676
+    },
+    "annual": [
+      {
+        "year": 1,
+        "new_expected_logos": 8.4,
+        "end_expected_logos": 8.11180708506839,
+        "revenue_recurring": 49063.91676876593,
+        "arr_exit": 145915.1858462102,
+        "net_cash_flow": -145095.01966382287,
+        "cash_before_financing_end": -145095.01966382287,
+        "fully_allocated_cac_scenario": 6578.571428571428,
+        "cac_payback_months_scenario": 5.356717547728441
+      },
+      {
+        "year": 2,
+        "new_expected_logos": 23.1,
+        "end_expected_logos": 29.159653676366286,
+        "revenue_recurring": 321855.0680048007,
+        "arr_exit": 524523.8503304768,
+        "net_cash_flow": 21576.72873850949,
+        "cash_before_financing_end": -123518.29092531338,
+        "fully_allocated_cac_scenario": 2988.051948051948,
+        "cac_payback_months_scenario": 2.433073878948494
+      },
+      {
+        "year": 3,
+        "new_expected_logos": 30.975,
+        "end_expected_logos": 54.96440087171617,
+        "revenue_recurring": 790486.4489628813,
+        "arr_exit": 988699.6428804306,
+        "net_cash_flow": 317547.0398633704,
+        "cash_before_financing_end": 194028.74893805702,
+        "fully_allocated_cac_scenario": 2912.4455205811137,
+        "cac_payback_months_scenario": 2.3715100149467885
+      }
+    ],
+    "cash_needed_no_buffer": {
+      "12": 145095.01966382287,
+      "18": 175436.99252573395,
+      "24": 175436.99252573395,
+      "36": 175436.99252573395
+    },
+    "cash_18_months_plus_6_month_fixed_buffer": 289436.99252573395,
+    "first_positive_month_before_financing": 18,
+    "caution": "All SOM/price/eligibility/cost/conversion values are scenarios, not measured results; positive cash flow can be temporary."
+  },
+  "expansion": {
+    "size": {
+      "core_firms_observed_2022": 2975.0,
+      "annual_price_assumed": 35988.0,
+      "tam_core_price_scenario": 107064300.0,
+      "sam_expected_accounts_scenario": 1445.85,
+      "sam_arr_scenario": 52033249.8,
+      "stages": [
+        {
+          "filter": "physical_category_fit",
+          "conditional_assumption": 0.8,
+          "remaining_expected_accounts": 2380.0
+        },
+        {
+          "filter": "volume_and_need_fit",
+          "conditional_assumption": 0.75,
+          "remaining_expected_accounts": 1785.0
+        },
+        {
+          "filter": "data_stack_fit",
+          "conditional_assumption": 0.9,
+          "remaining_expected_accounts": 1606.5
+        },
+        {
+          "filter": "governance_fit",
+          "conditional_assumption": 0.9,
+          "remaining_expected_accounts": 1445.85
+        }
+      ]
+    },
+    "unit_cost": {
+      "extraction": 53.75,
+      "escalation": 27.5,
+      "ai_with_retry_allowance": 93.4375,
+      "support": 80.0,
+      "recurring_cogs_per_active_month": 323.4025,
+      "gross_margin": 0.8921632210736913
+    },
+    "annual": [
+      {
+        "year": 1,
+        "new_expected_logos": 24.0,
+        "end_expected_logos": 23.379361935823407,
+        "revenue_recurring": 282299.18037428096,
+        "arr_exit": 841376.4773464128,
+        "net_cash_flow": -39162.25393081855,
+        "cash_before_financing_end": -39162.25393081855,
+        "fully_allocated_cac_scenario": 3395.8,
+        "cac_payback_months_scenario": 1.269174455425377
+      },
+      {
+        "year": 2,
+        "new_expected_logos": 71.64,
+        "end_expected_logos": 90.12900020127618,
+        "revenue_recurring": 2048250.6307457115,
+        "arr_exit": 3243562.459243527,
+        "net_cash_flow": 1292919.0802923138,
+        "cash_before_financing_end": 1253756.8263614953,
+        "fully_allocated_cac_scenario": 1955.1591289782245,
+        "cac_payback_months_scenario": 0.7307373881827235
+      },
+      {
+        "year": 3,
+        "new_expected_logos": 22.17,
+        "end_expected_logos": 102.85167626362694,
+        "revenue_recurring": 3782581.322378997,
+        "arr_exit": 3701426.1253754064,
+        "net_cash_flow": 2572038.3365468285,
+        "cash_before_financing_end": 3825795.162908324,
+        "fully_allocated_cac_scenario": 9336.941813261164,
+        "cac_payback_months_scenario": 3.489666070199708
+      }
+    ],
+    "cash_needed_no_buffer": {
+      "12": 131189.38601792188,
+      "18": 131189.38601792188,
+      "24": 131189.38601792188,
+      "36": 131189.38601792188
+    },
+    "cash_18_months_plus_6_month_fixed_buffer": 377189.38601792185,
+    "first_positive_month_before_financing": 8,
+    "caution": "All SOM/price/eligibility/cost/conversion values are scenarios, not measured results; positive cash flow can be temporary."
+  }
+}

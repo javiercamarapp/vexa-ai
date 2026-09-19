@@ -1,0 +1,598 @@
+{"source_id": "narvar-series-c", "url": "https://www.prnewswire.com/news-releases/narvar-raises-30m-series-c-funding-round-as-global-brands-increase-investment-in-customer-loyalty-and-engagement-300703004.html", "final_url": "https://www.prnewswire.com/news-releases/narvar-raises-30m-series-c-funding-round-as-global-brands-increase-investment-in-customer-loyalty-and-engagement-300703004.html", "http_status": 200, "retrieved_at": "2026-09-19T03:26:20.028038+00:00", "sha256": "f604d4d91e8db9973f62e4fe490c9b725f143e1b74187240faa74a5edabec407", "content_type": "text/html; charset=UTF-8"}
+
+Narvar Raises $30M Series C Funding Round as Global Brands Increase Investment in Customer Loyalty and Engagement
+Accessibility Statement
+Skip Navigation
+Resources
+Investor Relations
+Journalists
+Agencies
+Client Login
+Send a Release
+News
+Products
+Contact
+Search
+Search
+When typing in this field, a list of search results will appear and be automatically updated as you type.
+Searching for your content...
+No results found. Please change your search terms and try again.
+News in Focus
+Browse News Releases
+All News Releases
+All Public Company
+English-only
+News Releases Overview
+Multimedia Gallery
+All Multimedia
+All Photos
+All Videos
+Multimedia Gallery Overview
+Trending Topics
+All Trending Topics
+Business & Money
+Auto & Transportation
+All Automotive & Transportation
+Aerospace, Defense
+Air Freight
+Airlines & Aviation
+Automotive
+Maritime & Shipbuilding
+Railroads and Intermodal Transportation
+Supply Chain/Logistics
+Transportation, Trucking & Railroad
+Travel
+Trucking and Road Transportation
+Auto & Transportation Overview
+View All Auto & Transportation
+Business Technology
+All Business Technology
+Blockchain
+Broadcast Tech
+Computer & Electronics
+Computer Hardware
+Computer Software
+Data Analytics
+Electronic Commerce
+Electronic Components
+Electronic Design Automation
+Financial Technology
+High Tech Security
+Internet Technology
+Nanotechnology
+Networks
+Peripherals
+Semiconductors
+Business Technology Overview
+View All Business Technology
+Entertain­ment & Media
+All Entertain­ment & Media
+Advertising
+Art
+Books
+Entertainment
+Film and Motion Picture
+Magazines
+Music
+Publishing & Information Services
+Radio & Podcast
+Television
+Entertain­ment & Media Overview
+View All Entertain­ment & Media
+Financial Services & Investing
+All Financial Services & Investing
+Accounting News & Issues
+Acquisitions, Mergers and Takeovers
+Banking & Financial Services
+Bankruptcy
+Bond & Stock Ratings
+Conference Call Announcements
+Contracts
+Cryptocurrency
+Dividends
+Earnings
+Earnings Forecasts & Projections
+Financing Agreements
+Insurance
+Investments Opinions
+Joint Ventures
+Mutual Funds
+Private Placement
+Real Estate
+Restructuring & Recapitalization
+Sales Reports
+Shareholder Activism
+Shareholder Meetings
+Stock Offering
+Stock Split
+Venture Capital
+Financial Services & Investing Overview
+View All Financial Services & Investing
+General Business
+All General Business
+Awards
+Commercial Real Estate
+Corporate Expansion
+Earnings
+Environmental, Social and Governance (ESG)
+Human Resource & Workforce Management
+Licensing
+New Products & Services
+Obituaries
+Outsourcing Businesses
+Overseas Real Estate (non-US)
+Personnel Announcements
+Real Estate Transactions
+Residential Real Estate
+Small Business Services
+Socially Responsible Investing
+Surveys, Polls and Research
+Trade Show News
+General Business Overview
+View All General Business
+Science & Tech
+Consumer Technology
+All Consumer Technology
+Artificial Intelligence
+Blockchain
+Cloud Computing/Internet of Things
+Computer Electronics
+Computer Hardware
+Computer Software
+Consumer Electronics
+Cryptocurrency
+Data Analytics
+Electronic Commerce
+Electronic Gaming
+Financial Technology
+Mobile Entertainment
+Multimedia & Internet
+Peripherals
+Social Media
+STEM (Science, Tech, Engineering, Math)
+Supply Chain/Logistics
+Wireless Communications
+Consumer Technology Overview
+View All Consumer Technology
+Energy & Natural Resources
+All Energy
+Alternative Energies
+Chemical
+Electrical Utilities
+Gas
+General Manufacturing
+Mining
+Mining & Metals
+Oil & Energy
+Oil and Gas Discoveries
+Utilities
+Water Utilities
+Energy & Natural Resources Overview
+View All Energy & Natural Resources
+Environ­ment
+All Environ­ment
+Conservation & Recycling
+Environmental Issues
+Environmental Policy
+Environmental Products & Services
+Green Technology
+Natural Disasters
+Environ­ment Overview
+View All Environ­ment
+Heavy Industry & Manufacturing
+All Heavy Industry & Manufacturing
+Aerospace & Defense
+Agriculture
+Chemical
+Construction & Building
+General Manufacturing
+HVAC (Heating, Ventilation and Air-Conditioning)
+Machinery
+Machine Tools, Metalworking and Metallurgy
+Mining
+Mining & Metals
+Paper, Forest Products & Containers
+Precious Metals
+Textiles
+Tobacco
+Heavy Industry & Manufacturing Overview
+View All Heavy Industry & Manufacturing
+Telecomm­unications
+All Telecomm­unications
+Carriers and Services
+Mobile Entertainment
+Networks
+Peripherals
+Telecommunications Equipment
+Telecommunications Industry
+VoIP (Voice over Internet Protocol)
+Wireless Communications
+Telecomm­unications Overview
+View All Telecomm­unications
+Lifestyle & Health
+Consumer Products & Retail
+All Consumer Products & Retail
+Animals & Pets
+Beers, Wines and Spirits
+Beverages
+Bridal Services
+Cannabis
+Cosmetics and Personal Care
+Fashion
+Food & Beverages
+Furniture and Furnishings
+Home Improvement
+Household, Consumer & Cosmetics
+Household Products
+Jewelry
+Non-Alcoholic Beverages
+Office Products
+Organic Food
+Product Recalls
+Restaurants
+Retail
+Supermarkets
+Toys
+Consumer Products & Retail Overview
+View All Consumer Products & Retail
+Entertain­ment & Media
+All Entertain­ment & Media
+Advertising
+Art
+Books
+Entertainment
+Film and Motion Picture
+Magazines
+Music
+Publishing & Information Services
+Radio & Podcast
+Television
+Entertain­ment & Media Overview
+View All Entertain­ment & Media
+Health
+All Health
+Biometrics
+Biotechnology
+Clinical Trials & Medical Discoveries
+Dentistry
+FDA Approval
+Fitness/Wellness
+Health Care & Hospitals
+Health Insurance
+Infection Control
+International Medical Approval
+Medical Equipment
+Medical Pharmaceuticals
+Mental Health
+Pharmaceuticals
+Supplementary Medicine
+Health Overview
+View All Health
+Sports
+All Sports
+General Sports
+Outdoors, Camping & Hiking
+Sporting Events
+Sports Equipment & Accessories
+Sports Overview
+View All Sports
+Travel
+All Travel
+Amusement Parks and Tourist Attractions
+Gambling & Casinos
+Hotels and Resorts
+Leisure & Tourism
+Outdoors, Camping & Hiking
+Passenger Aviation
+Travel Industry
+Travel Overview
+View All Travel
+Policy & Public Interest
+Policy & Public Interest
+All Policy & Public Interest
+Advocacy Group Opinion
+Animal Welfare
+Congressional & Presidential Campaigns
+Corporate Social Responsibility
+Domestic Policy
+Economic News, Trends, Analysis
+Education
+Environmental
+European Government
+FDA Approval
+Federal and State Legislation
+Federal Executive Branch & Agency
+Foreign Policy & International Affairs
+Homeland Security
+Labor & Union
+Legal Issues
+Natural Disasters
+Not For Profit
+Patent Law
+Public Safety
+Trade Policy
+U.S. State Policy
+Policy & Public Interest Overview
+View All Policy & Public Interest
+People & Culture
+People & Culture
+All People & Culture
+Aboriginal, First Nations & Native American
+African American
+Asian American
+Children
+Diversity, Equity & Inclusion
+Hispanic
+Lesbian, Gay & Bisexual
+Men's Interest
+People with Disabilities
+Religion
+Senior Citizens
+Veterans
+Women
+People & Culture Overview
+View All People & Culture
+In-Language News
+Arabic
+español
+português
+Česko
+Danmark
+Deutschland
+España
+France
+Italia
+Nederland
+Norge
+Polska
+Portugal
+Россия
+Slovensko
+Suomi
+Sverige
+Explore Our Platform
+Plan Campaigns
+Create with AI
+Distribute Press Releases
+Report Results
+Amplify Content
+All Products
+General Inquiries
+Editorial Bureaus
+Partnerships
+Media Inquiries
+Worldwide Offices
+Hamburger menu
+Send a Release
+ALL CONTACT INFO
+Contact Us
+888-776-0942
+from 8 AM - 10 PM ET
+Send a Release
+Client Login
+Resources
+Blog
+Journalists
+RSS
+News in Focus
+Browse All News
+Multimedia Gallery
+Trending Topics
+Business & Money
+Auto & Transportation
+Business Technology
+Entertain­ment & Media
+Financial Services & Investing
+General Business
+Science & Tech
+Consumer Technology
+Energy & Natural Resources
+Environ­ment
+Heavy Industry & Manufacturing
+Telecomm­unications
+Lifestyle & Health
+Consumer Products & Retail
+Entertain­ment & Media
+Health
+Sports
+Travel
+Policy & Public Interest
+People & Culture
+People & Culture
+Send a Release
+Client Login
+Resources
+Blog
+Journalists
+RSS
+Explore Our Platform
+Plan Campaigns
+Create with AI
+Distribute Press Releases
+Report Results
+Amplify Content
+All Products
+Send a Release
+Client Login
+Resources
+Blog
+Journalists
+RSS
+General Inquiries
+Editorial Bureaus
+Partnerships
+Media Inquiries
+Worldwide Offices
+Send a Release
+Client Login
+Resources
+Blog
+Journalists
+RSS
+Narvar Raises $30M Series C Funding Round as Global Brands Increase Investment in Customer Loyalty and Engagement
+USA - English
+India - English
+More than 500 global retailers rely on Narvar to deliver world-class customer engagement to 300 million consumers worldwide
+News provided by
+Narvar
+Aug 28, 2018, 07:30 ET
+Share this article
+Share to
+X
+Share this article
+Share to
+X
+SAN FRANCISCO
+,
+Aug. 28, 2018
+/PRNewswire/ --
+Narvar
+, the premium post-purchase customer engagement platform, today announced a
+$30 million
+Series C financing round led by Accel, who also led Narvar's Series A round. Existing investors including Battery Ventures participated in the round, as well as new investors Salesforce Ventures and Scale Venture Partners. In conjunction with the financing,
+Ryan Sweeney
+, partner at Accel, will join Narvar's board. Since its founding in 2012, Narvar has raised
+$64 million
+in total funding.
+"Accel has proudly been a Narvar partner from the start, and has watched the company's customer adoption, product innovation, employee culture and global market traction continue to flourish," said Sweeney. "Over the last few years, Narvar has redefined e-commerce service standards by changing the way brands interact with their customers throughout the entire online purchase lifecycle. We're confident the company will continue to play a key role in shaping the future of online retail experiences and we're looking forward to continuing to support Amit and the rest of the team on this mission."
+Experts predict that by 2020
+, customer experience will overtake price and product as the key brand differentiator. Traditionally, retailers have been obsessed with acquisition and conversion, often neglecting the post-purchase phase of the journey. Narvar helps brands to engage customers at a time of high anticipation and build long-term loyalty with their customers.
+By working with more than 500 of the world's most admired retailers, including Patagonia, Gap, Levi's, TUMI and Sephora, Narvar has created the industry standard for addressing the post-purchase opportunity. Narvar's robust, intelligent and customized SaaS platform provides powerful delivery tracking analytics, delivery notifications, returns management, seamless feedback collection and timely customer communications. The company has served nearly 5 billion customer interactions across 38 countries and 50 languages.
+"When we started Narvar just a few years ago, we set out to simplify the everyday lives of customers," said
+Amit Sharma
+, founder and CEO, Narvar. "We recognized a huge opportunity for brands to deliver exceptional post-purchase customer engagement, and have helped retailers realize this vision for more than 300 million people. At the same time, e-commerce adoption has skyrocketed — in fact, more than 70 percent of adults online have interacted with Narvar through the retailers we support, and we anticipate this will continue trending up. We'll use this new investment to continue developing leading products for our customers while investing heavily in international growth to support global brands."
+"Growing our direct-to-consumer business is a priority for us not only financially, but also strategically as it allows us to engage with a customer long-term and ensure the interactions are on-brand," said
+Charlie Cole
+, chief digital officer at TUMI. "Differentiating the post-purchase experience represents one of the primary areas where brands can win against the major marketplace players, as it provides an opportunity to delight a customer and build long-term loyalty. Narvar has been an excellent partner for us in accomplishing both goals – driving thoughtful brand interactions and exemplary post-purchase services via their platform."
+With this new round of funding, Narvar will ramp up product innovation and R&D efforts while aggressively hiring to support its growing offices around the world. In the last 12 months, Narvar has doubled revenue and employee headcount, deepened its executive bench, and added more than 100 brands, including Costco and Lululemon, to its roster of customers. The company has also expanded its global footprint into APAC and EMEA —  opening a
+London
+office and making its first leadership hires in
+Germany
+.
+Narvar is trusted by over 600 carriers and 500 leading brands across industries including apparel, health and beauty, housewares, mass merchants, home improvement, and electronics. With Narvar, retailers realize additional revenue and lower shipping and returns-related contact volume by an average of 30 percent within days. Consumers who interact with Narvar-powered brands report being highly satisfied with their post-purchase experience.
+About Narvar
+Narvar helps retailers inspire loyalty beyond reason. As an enterprise-grade customer engagement platform serving 500+ retailers like Sephora, Patagonia, Home Depot, Gap, and Bose, Narvar enables seamless post-purchase engagement that retain, engage, and delight customers — from cart to doorstep, and beyond. With effortless order tracking, proactive communications, and seamless returns, Narvar applies machine learning across billions of interactions to simplify the everyday lives of consumers.
+For more information, visit
+narvar.com
+.
+About Accel
+Accel is a leading venture capital firm that invests in people and their companies from the earliest days through all phases of private company growth. Atlassian,
+Braintree
+, Cloudera, DJI, Dropbox, Dropcam, Etsy, Facebook, Flipkart, Jet, Lookout Security, Qualtrics, Slack, Spotify, Supercell, and Vox Media are among the companies the firm has backed over the past 30 years. The firm seeks to understand entrepreneurs as individuals, appreciate their originality and play to their strengths. Because greatness doesn't have a stereotype. For more, visit
+www.accel.com
+,
+www.facebook.com/accel
+or
+www.twitter.com/accel
+.
+Salesforce Ventures
+Salesforce is the fastest growing top five enterprise software company and the #1 CRM provider globally. Salesforce Ventures—the company's corporate investment group—invests in the next generation of enterprise technology that extends the power of the Salesforce Customer Success Platform, helping companies connect with their customers in entirely new ways. Portfolio companies receive funding as well as access to the world's largest cloud ecosystem and the guidance of Salesforce's innovators and executives. With Salesforce Ventures, portfolio companies can also leverage Salesforce's expertise in corporate philanthropy by joining Pledge 1% to make giving back part of their business model. Salesforce Ventures has invested in more than 275 enterprise cloud startups in 17 different countries since 2009. For more information, please visit
+www.salesforce.com/ventures
+.
+Scale Venture Partners
+Scale Venture Partners (@scalevp) invests in software companies that are transforming the future of work. Investments include: Box (BOX), Chef, Cloudhealth, DataStax, Demandbase, DocuSign (DOCU), ExactTarget (ET), HubSpot (HUBS), JFrog, Lever, and WalkMe. ScaleVP partners with entrepreneurs to support accelerated growth from the first customer to market leadership. Founded in 2000, ScaleVP has over
+$1.8 billion
+under management and is located in Silicon Valley. For more information visit
+www.scalevp.com
+.
+SOURCE Narvar
+Related Links
+http://www.corp.narvar.com
+21
+%
+more press release views with
+Request a Demo
+×
+Modal title
+Also from this source
+Sixty-Five Percent of Consumers Will Use AI to Shop This Holiday Season, but Only 8% of Retailers Say They're Ready
+Consumers are embracing AI for holiday shopping faster than retailers are preparing for it, according to new research from Narvar, the AI-powered...
+Narvar Finds January Returns Climb Nearly Twice as Fast as Holiday Sales, Marking a More Cautious Consumer Entering 2026
+New data from Narvar shows that while overall holiday order volume increased approximately 6% year over year, return volume rose nearly twice as...
+More Releases From This Source
+Explore
+Retail
+Computer & Electronics
+Electronic Commerce
+Electronic Commerce
+News Releases in Similar Topics
+Contact PR Newswire
+Call PR Newswire at 888-776-0942
+from 8 AM - 9 PM ET
+Chat with an Expert
+Contact Us
+General Inquiries
+Editorial Bureaus
+Partnerships
+Media Inquiries
+Worldwide Offices
+Products
+Explore Our Platform
+Plan Campaigns
+Create with AI
+Distribute Press Releases
+Report Results
+Amplify Content
+About
+About PR Newswire
+About Cision
+Careers
+Accessibility Statement
+Global Sites
+APAC
+APAC - Simplified Chinese
+APAC - Traditional Chinese
+Brazil
+Canada
+Czech
+Denmark
+Finland
+France
+Germany
+India
+Indonesia
+Israel
+Italy
+Japan
+Korea
+Mexico
+Middle East
+Middle East - Arabic
+Netherlands
+Norway
+Poland
+Portugal
+Russia
+Slovakia
+Spain
+Sweden
+United Kingdom
+Vietnam
+My Services
+All New Releases
+Platform Login
+Data Privacy
+Do not sell or share my personal information
+:
+Submit via
+[email protected]
+Call Privacy toll-free:
+877-297-8921
+Contact PR Newswire
+Products
+About
+My Services
+All News Releases
+Platform Login
+ProfNet
+Call PR Newswire at
+888-776-0942
+Terms of Use
+Privacy Policy
+Information Security Policy
+Site Map
+RSS
+Cookies
+Copyright © 2026
+Cision
+US Inc.

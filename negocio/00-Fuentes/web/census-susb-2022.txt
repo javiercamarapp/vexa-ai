@@ -1,0 +1,350 @@
+{"source_id": "census-susb-2022", "url": "https://www.census.gov/data/tables/2022/econ/susb/2022-susb-annual.html", "final_url": "https://www.census.gov/data/tables/2022/econ/susb/2022-susb-annual.html", "http_status": 200, "retrieved_at": "2026-09-19T03:13:10.133009+00:00", "sha256": "c94d25fdec806eb24d014b92acfac9297912c3e0d9615ec4f180d038bb68c46c", "content_type": "text/html; charset=UTF-8"}
+
+2022 SUSB Annual Data Tables by Establishment Industry
+United States Census Bureau | An official website of the United States Government
+An official website of the United States government
+Here’s how you know
+Here’s how you know
+Official websites use .gov
+A
+.gov
+website belongs to an official government organization in the United States.
+Secure .gov websites use HTTPS
+A
+lock
+(
+) or
+https://
+means you’ve safely connected to the .gov website. Share sensitive information only on official, secure websites.
+Skip Header
+Partners
+Researchers
+Educators
+Survey Respondents
+Explore Census.gov for...
+Partners
+Researchers
+Educators
+Survey Respondents
+News
+NAICS Codes
+Jobs
+About Us
+Contact Us
+Help
+Topics
+Data & Maps
+Surveys & Programs
+Resource Library
+Search data, events, resources, and more
+Search
+Search
+Helpful Links
+Advanced Data Search
+Get Survey Help
+Census Bureau Data and Maps
+American Community Survey (ACS)
+Census Records & Genealogy
+Helpful Links
+Advanced Data Search
+Get Survey Help
+Census Bureau Data and Maps
+American Community Survey (ACS)
+Census Records & Genealogy
+Search
+Menu
+Topics
+Browse our topics and subtopics to find information and data.
+View All Topics and Subtopics
+Index A to Z
+Age and Sex
+Business and Economy
+Education
+Emergency Management / Disasters
+Employment
+Families and Living Arrangements
+Geography
+Health
+Hispanic Origin
+Housing
+Income and Poverty
+International Trade
+Migration/Geographic Mobility
+Population
+Population Estimates
+Public Sector
+Race
+Redistricting
+Research
+Voting and Registration
+Data & Maps
+Access demographic, economic and population data from the U.S. Census Bureau. Explore census data with visualizations and view tutorials.
+Explore data on data.census.gov
+View all data resources
+Census Academy
+Combining Data
+Data Tools and Apps
+Datasets
+Developers
+Experimental Data Products
+Interactive Maps
+Mapping Files
+Profiles
+Related Sites
+Software
+Tables
+Training and Workshops
+Visualizations
+Surveys & Programs
+Our surveys provide periodic and comprehensive statistics about the nation. This data is critical for government programs, policies, and decision-making.
+Survey Help
+View all Surveys & Programs
+2020 Census
+2026 Census Test
+2030 Census
+American Community Survey (ACS)
+American Housing Survey (AHS)
+Annual Business Survey (ABS)
+Annual Integrated Economic Survey (AIES)
+County Business Patterns (CBP)
+Current Population Survey (CPS)
+Economic Census
+Household Pulse Survey
+International Programs
+Metro and Micro Areas
+Population Estimates
+Population Projections
+Small Area Income and Poverty
+Statistics of U.S. Businesses
+Survey of Income and Program Participation (SIPP)
+Resource Library
+Browse our collection of stories and more.
+View all library resources
+Glossary
+America Counts: Stories
+Audio
+Blogs
+Facts for Features
+Fact Sheets
+Infographics and Visualizations
+Publications
+Spotlights
+Stats for Stories
+Training (Census Academy)
+Videos
+Working Papers
+Topics
+Data & Maps
+Surveys & Programs
+Resource Library
+Topics
+Data & Maps
+Surveys & Programs
+Resource Library
+Partners
+Researchers
+Educators
+Survey Respondents
+News
+NAICS Codes
+Jobs
+About Us
+Contact Us
+Help
+View All Topics and Subtopics
+Index A to Z
+Age and Sex
+Business and Economy
+Education
+Emergency Management / Disasters
+Employment
+Families and Living Arrangements
+Geography
+Health
+Hispanic Origin
+Housing
+Income and Poverty
+International Trade
+Migration/Geographic Mobility
+Population
+Population Estimates
+Public Sector
+Race
+Redistricting
+Research
+Voting and Registration
+Explore data on data.census.gov
+View all data resources
+Census Academy
+Combining Data
+Data Tools and Apps
+Datasets
+Developers
+Experimental Data Products
+Interactive Maps
+Mapping Files
+Profiles
+Related Sites
+Software
+Tables
+Training and Workshops
+Visualizations
+Survey Help
+View all Surveys & Programs
+2020 Census
+2026 Census Test
+2030 Census
+American Community Survey (ACS)
+American Housing Survey (AHS)
+Annual Business Survey (ABS)
+Annual Integrated Economic Survey (AIES)
+County Business Patterns (CBP)
+Current Population Survey (CPS)
+Economic Census
+Household Pulse Survey
+International Programs
+Metro and Micro Areas
+Population Estimates
+Population Projections
+Small Area Income and Poverty
+Statistics of U.S. Businesses
+Survey of Income and Program Participation (SIPP)
+View all library resources
+Glossary
+America Counts: Stories
+Audio
+Blogs
+Facts for Features
+Fact Sheets
+Infographics and Visualizations
+Publications
+Spotlights
+Stats for Stories
+Training (Census Academy)
+Videos
+Working Papers
+//
+Census.gov
+/
+Census Bureau Data and Maps
+/
+Tables
+/
+2022 SUSB Annual Data Tables by Establishment Industry
+2022 SUSB Annual Data Tables by Establishment Industry
+Skip Navigation
+Within Census Bureau Data and Maps
+Data Tools and Apps
+Datasets
+Developers
+Errata Notes
+News
+Related Sites
+Software
+Tables
+Visualizations
+Within Census Bureau Data and Maps
+Within Census Bureau Data and Maps
+Data Tools and Apps
+Datasets
+Developers
+Errata Notes
+News
+Related Sites
+Software
+Tables
+Visualizations
+2022 SUSB Annual Data Tables by Establishment Industry
+April 2025
+Notice: Revision of Table
+July 22, 2025 - The 2022 SUSB Metropolitan Statistical Area (MSA) by 3-digit NAICS table that was originally released on May 29, 2025, was revised and is available below. The revised table reflects the removal of extraneous estimates that were previously included. All remaining estimates remain unchanged and match the originally published estimates.
+The Census Bureau identified an error in the 2022 SUSB Annual Data by Establishment Industry, Metropolitan Statistical Area (MSA) by 3-digit NAICS table. The table was temporarily removed and was replaced when an updated version became available. No additional tables previously released were affected.
+Statistics of U.S. Businesses (SUSB)
+annual or static data include number of firms, number of establishments, employment, annual payroll, and receipts for most U.S. business establishments. The data are tabulated by geographic area, industry, and enterprise employment or receipts size. The industry classification is based on 2017 North American Industry Classification System (
+NAICS
+) codes. An establishment with 0 employment is an establishment with no paid employees in the mid-March pay period but with paid employees at some time during the year.
+Data by Enterprise Employment Size
+The following links are subsets of SUSB data in spreadsheet format.  Data in comma-delimited format can be downloaded from the
+SUSB Annual Datasets
+page.
+U.S. and States:
+U.S. & states, 6-digit NAICS
+[37.7 MB]
+U.S. and states, NAICS, detailed  employment
+[4.8 MB]
+U.S., NAICS sectors, larger employment sizes up to 20,000+
+[<1.0 MB]
+U.S. & States, NAICS sectors, legal form of organization (LFO)
+[4.1 MB]
+U.S. Territories:
+Puerto Rico & Island Areas, 6-digit NAICS
+[<1.0 MB]
+Metropolitan Statistical Areas (MSAs):
+MSA, 3-digit NAICS
+[28.6 MB]
+Counties:
+State by county, 3-digit NAICS
+[38.9 MB]
+Congressional Districts:
+State by congressional district, NAICS sectors
+[5.7 MB]
+Data by Enterprise Receipts Size:
+U.S., 6-digit NAICS
+[2.0 MB]
+U.S., NAICS sectors, large receipt sizes up to 2.5 billion
+[<1.0 MB]
+Share
+Facebook
+X (Twitter)
+LinkedIn
+Related Information
+Statistics of U.S. Businesses Tables
+DATASET
+2022 SUSB Annual Datasets by Establishment Industry
+Page Last Revised - August 4, 2025
+✕
+Is this page helpful?
+Yes
+No
+✕
+NO THANKS
+255 characters maximum
+255 characters maximum reached
+✕
+Thank you for your feedback.
+Comments or suggestions?
+Top
+Back to Header
+Receive Updates
+To sign up for updates please enter your email address.
+Enter your email address
+Subscribe
+Stay Current
+America Counts
+Director’s Blog
+Deputy Director’s Blog
+Random Samplings
+Research Matters
+Stay Connected
+Contact
+Support
+Jobs
+Follow
+Information Quality
+|
+Data Linkage Infrastructure
+|
+Data Protection and Privacy Policy
+|
+Accessibility
+|
+FOIA
+|
+Inspector General
+|
+No FEAR Act
+|
+U.S. Department of Commerce
+|
+USA.gov
+Measuring America's People and Economy

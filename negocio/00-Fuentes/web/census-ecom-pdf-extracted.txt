@@ -1,0 +1,144 @@
+                                                   FOR IMMEDIATE RELEASE
+                                          TUESDAY, AUGUST 18, 2026, AT 10:00 A.M. EDT
+
+Data Inquiries Economic Indicators Division, Retail Indicator Branch: (301) 763-2713                                          CB26-133
+Media Inquiries Public Information Office: (301) 763-3030
+
+                                        QUARTERLY RETAIL E-COMMERCE SALES
+                                                2nd QUARTER 2026
+The Census Bureau of the Department of Commerce announced today that the estimate of U.S. retail e-commerce sales for the
+second quarter of 2026, adjusted for seasonal variation, but not for price changes, was $340.2 billion, an increase of 3.8 percent
+(±0.4 percent) from the first quarter of 2026. Total retail sales for the second quarter of 2026 were estimated at $1,986.5 billion, an
+increase of 2.9 percent (±0.2 percent) from the first quarter of 2026. The second quarter 2026 e-commerce estimate increased 12.2
+percent (±0.9 percent) from the second quarter of 2025 while total retail sales increased 6.7 percent (±0.5 percent) in the same
+period. E-commerce sales in the second quarter of 2026 accounted for 17.1 percent of total sales.
+On a not adjusted basis, the estimate of U.S. retail e-commerce sales for the second quarter of 2026 totaled $329.5 billion, a
+increase of 9.4 percent (±0.4 percent) from the first quarter of 2026. The second quarter 2026 e-commerce estimate increased 12.4
+percent (±0.9 percent) from the second quarter of 2025 while total retail sales increased 6.6 percent (±0.5 percent) in the same
+period. E-commerce sales in the second quarter of 2026 accounted for 16.4 percent of total sales.
+
+
+                   Estimated Quarterly U.S. Retail E-commerce Sales as a Percent of Total Quarterly Retail Sales:
+                                                1st Quarter 2017 – 2nd Quarter 2026
+Percent of Total
+
+
+
+
+The Quarterly Retail E-Commerce sales estimate for the third quarter of 2026 is scheduled for release on November 19, 2026 at
+10:00 A.M. EST.
+For information, including estimates from 4th quarter 1999 forward, visit the Census Bureau’s Website at
+<http://www.census.gov/retail>. For additional information about Census Bureau e-business measurement programs and plans visit
+<https://www.census.gov/programs-surveys/e-stats.html>.
+* The 90% confidence interval includes zero. The Census Bureau does not have sufficient statistical evidence to conclude that the
+actual change is different from zero.
+Table 1.                  Estimated Quarterly U.S. Retail Sales: Total and E-commerce1
+(Estimates are based on data from the Monthly Retail Trade Survey and administrative records.)
+.
+
+                                              Retail Sales                 E-commerce              Percent Change                         Percent Change
+                                          (millions of dollars)            as a Percent          From Prior Quarter                     From Same Quarter
+             Quarter                                                             of                                                         A Year Ago
+                                       Total             E-commerce            Total          Total           E-commerce              Total          E-commerce
+    Adjusted2
+    2nd quarter 2026(p)             1,986,488               340,244            17.1            2.9                 3.8                 6.7                12.2
+    1st quarter 2026(r)             1,929,759               327,861            17.0            1.5                 3.1                 3.9                10.1
+    4th quarter 2025                1,900,653               317,999            16.7            0.4                 2.3                 2.7                 5.9
+    3rd quarter 2025                1,893,125               310,817            16.4            1.7                 2.5                 4.1                 5.3
+    2nd quarter 2025(r)             1,861,603               303,284            16.3            0.2                 1.9                 3.7                 5.0
+    Not Adjusted
+    2nd quarter 2026(p)             2,011,977               329,530            16.4            11.5                9.4                 6.6                12.4
+    1st quarter 2026(r)             1,804,536               301,242            16.7            -9.7               -17.5                4.0                 9.3
+    4th quarter 2025                1,999,440               365,160            18.3             5.4               21.8                 2.8                 5.6
+    3rd quarter 2025                1,896,573               299,717            15.8            0.5                 2.2                 4.2                 5.2
+    2nd quarter 2025                1,887,093               293,140            15.5            8.7                 6.3                 3.8                 5.3
+
+    (p) Preliminary estimate. (r) Revised estimate.
+1
+  E-commerce sales are sales of goods and services where the buyer places an order, or the price and terms of the sale are negotiated over an Internet, mobile
+device (M-commerce), extranet, Electronic Data Interchange (EDI) network, electronic mail, or other comparable online system. Payment may or may not be
+made online. Estimates include data only for businesses with paid employees. Prior to the benchmark report released in April 2025, the Quarterly E-commerce
+estimates included nonemployers.
+2 Estimates are adjusted for seasonal variation, but not for price changes. Total sales estimates are also adjusted for trading-day differences and moving holidays.
+
+
+Note: Table 2 provides estimated measures of sampling variability. For information on confidentiality protection, sampling error, nonsampling error, sample
+design, and definitions, see http://www.census.gov/retail/mrts/how_surveys_are_collected.html.
+
+
+
+Table 2.                  Estimated Measures of Sampling Variability for Quarterly U.S. Retail Sales Estimates: Total and E-
+                          commerce
+(Estimates are shown as percents and are based on data from the Monthly Retail Trade Survey.)
+                                               Coefficient of             Standard Error               SE for                          SE for Percent Change
+                                               Variation (CV)                 (SE) for              Percent Change                      From Same Quarter
+             Quarter                                                       E-commerce             From Prior Quarter                         A Year Ago
+                                                                           as a Percent
+                                       Total             E-commerce          of Total          Total           E-commerce             Total           E-commerce
+    2nd quarter 2026(p)                 1.0                     2.2             0.3            0.1                 0.2                 0.3                0.5
+    1st quarter 2026(r)                 1.0                     2.2             0.3            0.1                 0.2                 0.3                0.8
+    4th quarter 2025                    0.9                     2.2             0.3            0.1                 0.3                 0.3                1.0
+    3rd quarter 2025                    0.9                     2.1             0.3            0.1                 0.2                 0.2                0.7
+    2nd quarter 2025                    0.9                     2.1             0.3            0.2                 0.5                 0.2                0.7
+    (p) Preliminary estimate. (r) Revised estimate. (Z) Estimate is less than 0.05%.
+Note: Estimated measures of sampling variability are based on data not adjusted for seasonal variation, trading-day differences, or moving holidays, and are
+used to make confidence statements about both adjusted and not adjusted estimates. For information on confidentiality protection, sampling error,
+nonsampling error, sample design, and definitions, see http://www.census.gov/retail/mrts/how_surveys_are_collected.html.
+Survey Description
+Retail e-commerce sales are estimated from the same sample used for the Monthly Retail Trade Survey (MRTS) to estimate preliminary
+and final U.S. retail sales. Advance U.S. retail sales are estimated from a subsample of the MRTS sample that is not of adequate size to
+measure changes in retail e-commerce sales.
+A stratified simple random sampling method is used to select approximately 10,800 retail firms excluding food services whose
+sales are then weighted and benchmarked to represent the complete universe of over two million retail firms. The MRTS
+sample is probability based and represents all employer firms engaged in retail activities as defined by the North American Industry
+Classification System (NAICS). Coverage includes all retailers whether or not they are engaged in e-commerce. Online travel
+services, financial brokers and dealers, and ticket sales agencies are not classified as retail and are not included in either the
+total retail or retail e-commerce sales estimates. Previously, firms without paid employees, or nonemployers, were included in the
+estimates through a benchmarking adjustment factor. As of the April 2025 annual revision report, nonemployers are no longer included
+in the estimates and have been removed from the time series to be aligned with the Annual Integrated Economic Survey (AIES). E-
+commerce sales are included in the total monthly sales estimates.
+The MRTS sample is updated on an ongoing basis to account for new retail employer businesses (including those selling via the
+Internet), business deaths, and other changes to the retail business universe. Firms are asked each month to report e-commerce sales
+separately. For each month of the quarter, data for nonresponding sampling units are imputed from responding sampling units falling
+within the same kind of business and sales size category or based on historical performance of that company. Responding firms account
+for approximately 68 percent of the e-commerce sales estimate and about 64 percent of the estimate of U.S. retail sales for any
+quarter.
+For each month of the quarter, estimates are obtained by summing weighted sales (either reported or imputed). The monthly
+estimates are benchmarked to prior annual survey estimates. Estimates for the quarter are obtained by summing the monthly
+benchmarked estimates. The estimate for the most recent quarter is a preliminary estimate. Therefore, the estimate is subject to
+revision. Data users who create their own estimates using data from this report should cite the Census Bureau as the source of
+the input data only.
+The Census Bureau has reviewed this data product to ensure appropriate access, use, and disclosure avoidance protection of
+the confidential source data (Project No. P-7504206, Disclosure Review Board (DRB) approval number: CBDRB-FY26-003).
+Adjusted Estimates
+This report publishes estimates that have been adjusted for seasonal variation and holiday and trading-day differences, but
+not for price changes. We used quarterly e-commerce sales estimates for 4th quarter 1999 to the current quarter as input to
+the X-13ARIMA-SEATS program to derive the adjusted estimates. For sales, we derived quarterly adjusted estimates by
+summing adjusted monthly sales estimates for each respective quarter. Seasonal adjustment of estimates is an approximation
+based on current and past experiences.
+The X-13ARIMA-SEATS software improves upon the X-12 ARIMA seasonal adjustment software by providing enhanced
+diagnostics as well as incorporating an enhanced version of the Bank of Spain’s SEATS (Signal Extraction in ARIMA Time Series)
+software, which uses an ARIMA model-based procedure instead of the X-11 filter-based approach to estimate seasonal
+factors. The X-13ARIMA-SEATS and X-12 ARIMA software produce identical results when using X-13ARIMA-SEATS with the X-
+11 filter-based adjustments. The X-13ARIMA-SEATS software and additional information on the X-13ARIMA-SEATS program
+may be found at https://www.census.gov/data/software/x13as.html.
+Note that the retail estimates continue to be adjusted using the X-11 filter-based adjustment procedure.
+Reliability of Estimates
+Because the estimates in this report are based on a sample survey, they contain sampling error and nonsampling error.
+Sampling error is the difference between the estimate and the result that would be obtained from a complete enumeration of the
+population conducted under the same survey conditions. This error occurs because only a subset of the entire population is measured
+in a sample survey. Standard errors and coefficients of variation, as given in Table 2 of this report, are estimated measures of sampling
+variation.
+The margin of error, as used on page 1, gives a range about the estimate which is a 90 percent confidence interval. If, for example, the
+estimated percent change is -11.4% and its estimated standard error is 1.2%, then the margin of error is
+±1.753 x 1.2% or 2.1%, and the 90 percent confidence interval is -13.5% to -9.3%. Confidence intervals are computed based
+on the particular sample selected and canvassed. If one repeats the process of drawing all possible samples and forming all
+corresponding confidence intervals, approximately 90 percent of these individual confidence intervals would contain the
+estimate computed from a complete enumeration of all units on the sampling frame. If the confidence interval contains 0%,
+then one does not have sufficient evidence to conclude at the 90 percent confidence level that the change is different from
+zero.
+Nonsampling error encompasses all other factors that contribute to the total error of a sample survey estimate. This type of
+error can occur because of nonresponse, insufficient coverage of the universe of retail businesses with e-commerce sales,
+mistakes in the recording and coding of data, and other errors of collection, response, coverage, or processing. Although not
+directly measured, precautionary steps are taken to minimize the effects of nonsampling error.
+

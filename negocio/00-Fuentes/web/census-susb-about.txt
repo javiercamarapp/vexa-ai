@@ -1,0 +1,342 @@
+{"source_id": "census-susb-about", "url": "https://www.census.gov/programs-surveys/susb/about.html", "final_url": "https://www.census.gov/programs-surveys/susb/about.html", "http_status": 200, "retrieved_at": "2026-09-19T03:13:11.569387+00:00", "sha256": "b5377e9d0ab40e4cda72d9035a1b3c64567d47923dc7b8942cdb7274142cf452", "content_type": "text/html; charset=UTF-8"}
+
+About Statistics of U.S. Businesses (SUSB)
+United States Census Bureau | An official website of the United States Government
+An official website of the United States government
+Here’s how you know
+Here’s how you know
+Official websites use .gov
+A
+.gov
+website belongs to an official government organization in the United States.
+Secure .gov websites use HTTPS
+A
+lock
+(
+) or
+https://
+means you’ve safely connected to the .gov website. Share sensitive information only on official, secure websites.
+Skip Header
+Partners
+Researchers
+Educators
+Survey Respondents
+Explore Census.gov for...
+Partners
+Researchers
+Educators
+Survey Respondents
+News
+NAICS Codes
+Jobs
+About Us
+Contact Us
+Help
+Topics
+Data & Maps
+Surveys & Programs
+Resource Library
+Search data, events, resources, and more
+Search
+Search
+Helpful Links
+Advanced Data Search
+Get Survey Help
+Census Bureau Data and Maps
+American Community Survey (ACS)
+Census Records & Genealogy
+Helpful Links
+Advanced Data Search
+Get Survey Help
+Census Bureau Data and Maps
+American Community Survey (ACS)
+Census Records & Genealogy
+Search
+Menu
+Topics
+Browse our topics and subtopics to find information and data.
+View All Topics and Subtopics
+Index A to Z
+Age and Sex
+Business and Economy
+Education
+Emergency Management / Disasters
+Employment
+Families and Living Arrangements
+Geography
+Health
+Hispanic Origin
+Housing
+Income and Poverty
+International Trade
+Migration/Geographic Mobility
+Population
+Population Estimates
+Public Sector
+Race
+Redistricting
+Research
+Voting and Registration
+Data & Maps
+Access demographic, economic and population data from the U.S. Census Bureau. Explore census data with visualizations and view tutorials.
+Explore data on data.census.gov
+View all data resources
+Census Academy
+Combining Data
+Data Tools and Apps
+Datasets
+Developers
+Experimental Data Products
+Interactive Maps
+Mapping Files
+Profiles
+Related Sites
+Software
+Tables
+Training and Workshops
+Visualizations
+Surveys & Programs
+Our surveys provide periodic and comprehensive statistics about the nation. This data is critical for government programs, policies, and decision-making.
+Survey Help
+View all Surveys & Programs
+2020 Census
+2026 Census Test
+2030 Census
+American Community Survey (ACS)
+American Housing Survey (AHS)
+Annual Business Survey (ABS)
+Annual Integrated Economic Survey (AIES)
+County Business Patterns (CBP)
+Current Population Survey (CPS)
+Economic Census
+Household Pulse Survey
+International Programs
+Metro and Micro Areas
+Population Estimates
+Population Projections
+Small Area Income and Poverty
+Statistics of U.S. Businesses
+Survey of Income and Program Participation (SIPP)
+Resource Library
+Browse our collection of stories and more.
+View all library resources
+Glossary
+America Counts: Stories
+Audio
+Blogs
+Facts for Features
+Fact Sheets
+Infographics and Visualizations
+Publications
+Spotlights
+Stats for Stories
+Training (Census Academy)
+Videos
+Working Papers
+Topics
+Data & Maps
+Surveys & Programs
+Resource Library
+Topics
+Data & Maps
+Surveys & Programs
+Resource Library
+Partners
+Researchers
+Educators
+Survey Respondents
+News
+NAICS Codes
+Jobs
+About Us
+Contact Us
+Help
+View All Topics and Subtopics
+Index A to Z
+Age and Sex
+Business and Economy
+Education
+Emergency Management / Disasters
+Employment
+Families and Living Arrangements
+Geography
+Health
+Hispanic Origin
+Housing
+Income and Poverty
+International Trade
+Migration/Geographic Mobility
+Population
+Population Estimates
+Public Sector
+Race
+Redistricting
+Research
+Voting and Registration
+Explore data on data.census.gov
+View all data resources
+Census Academy
+Combining Data
+Data Tools and Apps
+Datasets
+Developers
+Experimental Data Products
+Interactive Maps
+Mapping Files
+Profiles
+Related Sites
+Software
+Tables
+Training and Workshops
+Visualizations
+Survey Help
+View all Surveys & Programs
+2020 Census
+2026 Census Test
+2030 Census
+American Community Survey (ACS)
+American Housing Survey (AHS)
+Annual Business Survey (ABS)
+Annual Integrated Economic Survey (AIES)
+County Business Patterns (CBP)
+Current Population Survey (CPS)
+Economic Census
+Household Pulse Survey
+International Programs
+Metro and Micro Areas
+Population Estimates
+Population Projections
+Small Area Income and Poverty
+Statistics of U.S. Businesses
+Survey of Income and Program Participation (SIPP)
+View all library resources
+Glossary
+America Counts: Stories
+Audio
+Blogs
+Facts for Features
+Fact Sheets
+Infographics and Visualizations
+Publications
+Spotlights
+Stats for Stories
+Training (Census Academy)
+Videos
+Working Papers
+//
+Census.gov
+/
+Our Surveys & Programs
+/
+Statistics of U.S. Businesses (SUSB)
+/
+About
+About Statistics of U.S. Businesses (SUSB)
+Skip Navigation
+Within About This Program
+FAQs
+Glossary
+Related Sites
+Within About This Program
+Within About This Program
+FAQs
+Glossary
+Related Sites
+About this Program
+Statistics of U.S. Businesses (SUSB)
+is an annual series that provides subnational economic data by establishment industry & enterprise size.
+Tabulations providing data by employment size of enterprise were developed in cooperation with, and partially funded by, the Office of Advocacy of the U.S. Small Business Administration (SBA).
+Purpose
+SUSB provides annual statistics for U.S. business establishments with paid employees by geography, industry, and enterprise size. This program is authorized under the United States Code, Titles 13 and 26.
+Coverage
+Statistics are available on establishments at the U.S. level and by state, U.S. territory, county, Metropolitan/Micropolitan Statistical Area (MSA), and Congressional District level. SUSB covers most NAICS industries excluding Crop and Animal Production (NAICS 111,112); Rail Transportation (NAICS 482); Postal Service (NAICS 491); Pension, Health, Welfare, and Other Insurance Funds (NAICS 525110, 525120, 525190); Trusts, Estates, and Agency Accounts (NAICS 525920); Offices of Notaries (NAICS 541120); Private Households (NAICS 814); and Public Administration (NAICS 92). SUSB also excludes most establishments reporting government employees.
+Content
+Data are presented by geographic area, industry detail, legal form of organization (U.S. and state only), and enterprise size. Annual data consist of number of firms, number of establishments, employment during the week of March 12, and annual payroll. In addition, receipts data are included for years ending in 2 and 7.
+Dynamic data, which were historically created from the Business Information Tracking Series (BITS), consist of the number of establishments and corresponding employment change for births, deaths, expansions, and contractions. Subsequent to the release of 2015-2016 tabulations, the SUSB program has ceased production of all tabulations consisting of dynamic data. For historic tables, see
+SUSB Tables
+. For similar time series data spanning recent years, see the
+Business Dynamics Statistics
+.
+Precautions are taken to avoid disclosing the operations of an individual employer.
+Data Representation on the Internet
+SUSB Tables:
+U.S. and state annual data tables available for 1992 and 1997-present.
+- Legal form of organization (LFO) data added in 2007 (U.S.) and 2018 (states)
+Metropolitan Statistical Area (MSA) annual data tables added in 1997 and Micropolitan areas defined in 2003
+County annual data tables added in 2000
+Congressional District annual data tables added in 2015
+U.S. and state employment change data tables available for 1997-2016, discontinued after 2016
+MSA employment change data tables added in 2002, discontinued after 2016
+County employment change data tables added in 1999, discontinued after 2016
+Puerto Rico & Island Areas annual data tables added in 2020
+SUSB Datasets:
+U.S. and state annual datasets available for 1997-present
+MSA annual dataset added in 1997 and Micropolitan areas defined in 2003
+U.S. and state employment change datasets available for 2008-2016, discontinued after 2016
+Limited historical data available upon request.
+Frequency
+Tabulations providing data by employment size of enterprise have been assembled annually as far back as 1988 but the internet does not include all years. Limited historical data available upon request.
+Methods
+A compilation of data extracted from the Business Register (BR). The BR contains the Census Bureau's most complete, current, and consistent data for U.S. business establishments. The BR is updated continuously and incorporates data from: the Census Bureau's economic censuses and current business surveys, quarterly and annual Federal tax records, and other departmental and federal statistics.
+Products
+SUSB data are available approximately 2 to 2 1/2 years after each reference year. Data are released as spreadsheets and in comma-delimited format.
+Uses
+The data are the standard reference source for small business statistics.
+Private businesses use the data for market research, strategic business planning, and managing sales territories. State and local governments, as well as, budget, economic development, and planning offices use the data to assess business changes, develop fiscal policies, and plan future policies and programs.
+Special Features
+Provides the only source of annual, complete, and consistent enterprise-level data for U.S. businesses, with industry detail.
+Contact Us
+Contact information for the Statistics of U.S. Businesses (SUSB) program is available on our
+contact page
+.
+Share
+Facebook
+X (Twitter)
+LinkedIn
+Page Last Revised - June 26, 2026
+✕
+Is this page helpful?
+Yes
+No
+✕
+NO THANKS
+255 characters maximum
+255 characters maximum reached
+✕
+Thank you for your feedback.
+Comments or suggestions?
+Top
+Back to Header
+Receive Updates
+To sign up for updates please enter your email address.
+Enter your email address
+Subscribe
+Stay Current
+America Counts
+Director’s Blog
+Deputy Director’s Blog
+Random Samplings
+Research Matters
+Stay Connected
+Contact
+Support
+Jobs
+Follow
+Information Quality
+|
+Data Linkage Infrastructure
+|
+Data Protection and Privacy Policy
+|
+Accessibility
+|
+FOIA
+|
+Inspector General
+|
+No FEAR Act
+|
+U.S. Department of Commerce
+|
+USA.gov
+Measuring America's People and Economy

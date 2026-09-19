@@ -1,0 +1,10 @@
+{"source_id": "bls-customer-service", "url": "https://www.bls.gov/ooh/office-and-administrative-support/customer-service-representatives.htm", "final_url": "https://www.bls.gov/ooh/office-and-administrative-support/customer-service-representatives.htm", "http_status": 403, "retrieved_at": "2026-09-19T03:15:05.825938+00:00", "sha256": "a77deafc34c6029b9380d743941cd281bd43a278dc12b0da025ff35c2e06658c", "content_type": "text/html"}
+
+Access Denied
+Bureau of Labor Statistics
+Access Denied
+The BLS is committed to providing data promptly and according to established schedules. Automated retrieval programs (commonly called "robots" or "bots") can cause delays and interfere with other customers' timely access to information. Therefore, bot activity that doesn't conform to BLS usage policy is prohibited.
+We apologize for any inconvenience. If you believe we have made an error, please
+contact us
+.
+Please contact your administrator with the error code: 0.56a6f7bd.1789787704.669320c8

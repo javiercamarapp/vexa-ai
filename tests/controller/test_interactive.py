@@ -203,6 +203,25 @@ class InteractiveTests(unittest.TestCase):
         self.assertEqual(call.args[4]['VEXA_CANDIDATE'], self.state()['worktree'])
         self.assertNotIn('OPENAI_API_KEY', call.args[4]); self.assert_baseline()
 
+    def test_verify_and_clean_promotion_respect_configured_gate_time_cap(self):
+        for minutes, expected in [(1, 60), (10, 600), (30, 900)]:
+            with self.subTest(minutes=minutes):
+                case = InteractiveTests(); case.setUp()
+                try:
+                    path = case.root / 'orchestration/graph.json'
+                    graph = json.loads(path.read_text()); graph['turn_timeout_seconds'] = 900
+                    path.write_text(json.dumps(graph)); case.commit_controller()
+                    case.prepare_good()
+                    for action in ('verify', 'accept'):
+                        with patch.object(r, 'run_bounded', wraps=r.run_bounded) as run:
+                            case.invoke(action, '--task', 'A', '--max-minutes', str(minutes))
+                        timeout = run.call_args.args[3]
+                        self.assertGreater(timeout, expected - 5)
+                        self.assertLessEqual(timeout, expected)
+                    self.assertEqual(case.state()['status'], 'accepted')
+                finally:
+                    case.doCleanups()
+
     def test_gate_mutation_and_commit_hook_mutation_block(self):
         for kind in ['candidate', 'controller', 'hook']:
             with self.subTest(kind=kind):

@@ -65,6 +65,16 @@ else:
  if KIND=='regress':Path('packages/demo/stable.txt').write_text('bad')
 """.replace('KIND',repr(kind)).replace('GATE',repr(self.fx.gate))
   self.fx.worker('exec('+repr(code)+')')
+ def test_runner_stage_uses_configured_cap_without_exceeding_phase_deadline(self):
+  import time
+  from unittest.mock import patch
+  self.loop.rt.mkdir(exist_ok=True);self.loop.s={'run_id':'SYNTHETIC-budget'}
+  self.loop.graph={'turn_timeout_seconds':900}
+  for remaining,expected in [(60,60),(600,600),(1500,900)]:
+   self.loop.end=time.monotonic()+remaining
+   def observe(args,graph,rt,sp,state,end,budget,parser):
+    self.assertGreater(budget(),expected-5);self.assertLessEqual(budget(),expected)
+   with patch.object(a.r,'execute',side_effect=observe):self.loop.execute_runner('verify','A')
  def test_real_pipeline_accepts_only_reviewed_valid_candidate(self):
   result=self.loop.run();self.assertEqual(self.fx.state()['status'],'accepted')
   self.assertEqual((self.fx.root/'packages/demo/value.txt').read_text(),'good')

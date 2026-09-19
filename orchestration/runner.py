@@ -236,7 +236,7 @@ def interactive(args, graph, runtime, sp, state, remaining_budget, parser):
                 or 'SYMLINK' in before.values()):
             raise ValueError('Protected path or symlink guard')
         row['gate_exit'] = run_bounded(['node', '--test', str(gate_path(ROOT, task))], ROOT, log,
-                                      min(300, remaining_budget()),
+                                      min(graph['turn_timeout_seconds'], remaining_budget()),
                                       {**clean_environment(), 'VEXA_CANDIDATE': str(candidate)})
         check_interactive_context(task, state, row)
         if (interactive_signature(candidate, True) != before
@@ -364,7 +364,7 @@ def execute(args,graph,runtime,sp,state,end,remaining_budget,parser):
             reason='Candidate/baseline differs from clean commit materialization; reject and correct'
             recheck_log.write_text(reason+'\n');seal_log(row,recheck_log);atomic_json(sp,state)
             raise SystemExit(reason)
-        code=run_bounded(['node','--test',str(gate)],ROOT,recheck_log,min(300,remaining_budget()),
+        code=run_bounded(['node','--test',str(gate)],ROOT,recheck_log,min(graph['turn_timeout_seconds'],remaining_budget()),
                          {**clean_environment(),'VEXA_CANDIDATE':str(probe)})
         seal_log(row,recheck_log);atomic_json(sp,state)
         if code: raise SystemExit('Acceptance recheck failed')
@@ -441,7 +441,7 @@ def execute(args,graph,runtime,sp,state,end,remaining_budget,parser):
             row['status']='failed';row['reason']='budget before validation';atomic_json(sp,state);break
         before_gate=full_signature
         gate_log=receipt_log(runtime,row,'gate');atomic_json(sp,state)
-        testcode=run_bounded(['node','--test',str(gate)],ROOT,gate_log,min(remaining,300),
+        testcode=run_bounded(['node','--test',str(gate)],ROOT,gate_log,min(remaining,graph['turn_timeout_seconds']),
                             {**clean_environment(),'VEXA_CANDIDATE':str(candidate)})
         row['gate_exit']=testcode;seal_log(row,gate_log)
         if interactive_signature(candidate,True)!=before_gate:

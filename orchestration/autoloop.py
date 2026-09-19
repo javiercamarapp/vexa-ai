@@ -84,8 +84,9 @@ class Loop:
     def execute_runner(self, action, tid, note=None):
         # run() owns the SAME lock as runner.main; execute in-process, never bypass
         # a competing owner or recursively acquire our own flock via another CLI.
-        args=argparse.Namespace(action=action,task=tid,approval_note=note,max_rounds=1,max_minutes=5,auto_accept=False)
-        end=min(self.end,time.monotonic()+300)
+        seconds=self.graph['turn_timeout_seconds']
+        args=argparse.Namespace(action=action,task=tid,approval_note=note,max_rounds=1,max_minutes=(seconds+59)//60,auto_accept=False)
+        end=min(self.end,time.monotonic()+seconds)
         def remaining():
             left=end-time.monotonic()
             if left<=0:raise SystemExit('Time budget reached')

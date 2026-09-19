@@ -1,0 +1,29 @@
+import Link from "next/link";
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "VEXA · En construcción",
+  description: "Base inicial de VEXA. Producto en construcción, sin datos de clientes ni métricas disponibles.",
+  robots: { index: false, follow: false },
+};
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="es">
+      <body>
+        <a className="skip-link" href="#contenido">Saltar al contenido</a>
+        <header className="site-header">
+          <Link className="wordmark" href="/" aria-label="VEXA, inicio">VEXA<span aria-hidden="true">.</span></Link>
+          <span className="status">En construcción</span>
+        </header>
+        <main id="contenido" tabIndex={-1}>{children}</main>
+        <footer className="site-footer">
+          <span>VEXA · Base inicial del producto</span>
+          <a href="/api/health/version">Versión técnica (JSON)</a>
+        </footer>
+      </body>
+    </html>
+  );
+}

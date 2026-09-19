@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "engines": {"node": ">=22"},
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "test": "npm run test:kernel && npm run test:foundation",
     "test:kernel": "node --test tests/acceptance/economics.test.mjs",
@@ -17,5 +19,8 @@
     "graph:check": "python3 orchestration/runner.py status",
     "test:business": "python3 -m unittest discover -s tests/business -v",
     "business:build": "python3 scripts/census_market.py && python3 scripts/business_model.py"
-  }
+  },
+  "workspaces": [
+    "apps/web"
+  ]
 }

@@ -1,6 +1,6 @@
 # VEXA — instrucciones de trabajo
 
-1. Leer README.md, PROGRESO.md y docs/CONTEXTO-CANONICO.md; después construccion/README.md y la ficha de la próxima tarea (`python3 scripts/guide.py next`). No releer todo fuentes/ en cada vuelta. Catálogo autorado y grafo v3 mandan sobre los generadores históricos.
+1. Leer README.md, PROGRESO.md, docs/CONTEXTO-CANONICO.md, construccion/ALCANCE-CONFIRMADO.md y AUTOMATICO.md; después construccion/README.md y la ficha de la próxima tarea (`python3 scripts/guide.py next`). No releer todo fuentes/ en cada vuelta. Catálogo autorado y grafo v3 mandan sobre los generadores históricos.
 2. Construcción usa Codex/ChatGPT gpt-6-astra; OpenRouter sólo será runtime del producto con presupuesto y autorización aparte.
 3. private/ contiene audios, PRD, manifest y logs privados: no publicar, no commitear, no enviar a APIs externas. Originales inmutables.
 4. Likida/Atiende y sus configuraciones son referencias read-only. Nunca copiar .env, tokens, datos cliente o IP sin permiso.
@@ -10,4 +10,4 @@
 8. Datos del cliente, producción, publicación remota, contratación y envíos requieren permiso/accesos específicos. Usar fixtures rotulados mientras tanto.
 9. Cierre con comando/salida, SHA y lista de no probado. Documentación, mocks y kernel local no son SaaS terminado.
 
-Comandos actuales: npm test; npm run test:controller; npm run graph:check. No hay todavía build/dev del SaaS. Para el loop leer orchestration/README.md. No regenerar grafo durante ejecución activa.
+Comandos actuales: npm test; npm run test:controller; npm run graph:check. Scaffold en apps/web: npm run build --workspace @vexa/web, después de instalar en una copia temporal; no mutar el candidato con node_modules/.next. Para el supervisor vigente leer AUTOMATICO.md; orchestration/README.md documenta el runner base. No regenerar grafo durante ejecución activa. Publicación GitHub sólo mediante publisher determinista tras aceptación; workers no hacen push. El encargo exige el MVP completo de ocho vistas, no una demo recortada.

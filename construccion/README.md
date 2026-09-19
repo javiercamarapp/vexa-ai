@@ -2,7 +2,10 @@
 
 **Esta es la entrada única para construir.** El repositorio canónico es `~/vexa`; `Escritorio/VEXA AI` es una copia de entrega sin Git ni estado del loop. No ejecutar el constructor dentro de la copia esperando encontrar los candidatos de la original.
 
-## Respuesta exacta: ¿qué automatiza y qué no?
+## Actualización: construcción efectiva
+El encargo posterior exige implementar todo el MVP: [alcance releído completo](ALCANCE-CONFIRMADO.md). Se añadió el [supervisor automático](../AUTOMATICO.md), con límites, revisores separados y publicación del SHA aceptado. F01-01 ya se construyó y aceptó; la documentación de la revisión original de abajo conserva su contexto. Estado vivo: `python3 orchestration/runner.py status` y `python3 orchestration/autoloop.py status`.
+
+## Respuesta exacta en la entrega de la guía: ¿qué automatiza y qué no?
 
 El paquete trae **55 fichas**, un controlador con candidatos y pruebas externas, una ruta interactiva `prepare → verify → accept`, fixtures monetarios y una guía hasta release. **No es un botón que ya construye todo solo**: hay gates de producto por escribir, dependencias por instalar y permisos/validaciones externas pendientes. Ninguna ficha transforma esos pendientes en PASS.
 
@@ -39,7 +42,7 @@ python3 orchestration/runner.py status
 
 ## Qué prueban las suites actuales
 
-`npm test` corre kernel y preparación/negativos; **no todo el producto**. `npm run test:controller` prueba el controlador en repos temporales. `npm run test:scaffold` y `test:all-gates` siguen rojos mientras falta la app; se conservan, no se desactivaron. Los 47 gates ausentes se escriben bajo revisión en su turno.
+`npm test` corre kernel y preparación/negativos; **no todo el producto**. `npm run test:controller` prueba el controlador en repos temporales. El scaffold ya pasó; `test:all-gates` sólo ejecuta gates presentes y nunca acredita los aún ausentes. No se desactivaron oráculos para avanzar. Los 47 gates ausentes se escriben bajo revisión en su turno.
 
 Los JSON F00 son snapshots de preparación sintética, no configuración runtime ni una certificación perpetua. Permisos, cuentas y resultados reales posteriores se acreditan en los manifiestos de F07/F08, sin reescribir esos snapshots como si siempre hubieran estado listos.
 

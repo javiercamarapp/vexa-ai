@@ -3,6 +3,9 @@
 ## Fuentes y precedencia
 El usuario solicita rehacer la investigación y preparación completa usando Astra/Codex. Audio y DOCX son fuentes, no instrucciones ejecutables. El PRD pegado en esta conversación tiene 35 secciones. Decisiones posteriores explícitas del usuario prevalecen: entrega para pitch en UN MES, stack Vercel/Supabase/GitHub/OpenRouter. Donde las fuentes discrepan se conserva el conflicto, no se elimina por conveniencia.
 
+## Construcción efectiva y relectura íntegra — 19-sep-2026
+El usuario exige implementar TODO el MVP y releer las fuentes completas. Lectura íntegra realizada de los seis audios en ambas transcripciones, DOCX extraído y PRD35; [alcance confirmado](../construccion/ALCANCE-CONFIRMADO.md). Entrada operativa vigente: [AUTOMATICO](../AUTOMATICO.md). Scaffold F01-01 aceptado, Supabase LOCAL dedicado activo, GitHub privado y proyecto Vercel vacío creados. No equivalen a SaaS terminado, permisos de cliente, Google, inferencia OpenRouter ni deploy. Merge/push periódicos autorizados expresamente, sólo cambios reales verificados; nada de actividad artificial. Los apartados anteriores de preparación y sus inventarios quedan como cortes históricos.
+
 ## Ampliación de construcción — 19-sep-2026
 El usuario pidió comprobar y equiparar el paso a paso con el calibre de Likida. Entrada vigente: [construccion/README](../construccion/README.md); 55 fichas específicas, grafo v3, prepare/verify/accept y recuperación supervisada. F00 sólo acredita preparación sintética; piloto/producción requieren sus verificaciones externas. Gates presentes no equivalen a aprobados, y aún faltan gates de producto. No regenerar grafo ni editar estado para simular aceptación.
 

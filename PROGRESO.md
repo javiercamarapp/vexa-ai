@@ -1,5 +1,15 @@
 # Progreso verificable
-Actualizado: 2026-09-18 local / 2026-09-19 UTC.
+Actualizado: 2026-09-19 local. Los apartados anteriores conservados abajo son cortes históricos, no inventario vigente.
+
+## Construcción efectiva y automatización — 19-sep
+- Relectura íntegra solicitada: seis audios en ambas transcripciones, DOCX extraído completo y PRD de35secciones; [alcance confirmado](construccion/ALCANCE-CONFIRMADO.md). No reconocimiento auditivo humano palabra por palabra.
+- F01-01 implementado por Astra/Codex, revisado independientemente y aceptado (`9e0010a`): Next.js/TS/npm workspace, página honesta y health/version. Instalación offline, lint/typecheck/build reales. Primer intento falló por filtro absoluto del gate; se corrigió externamente y verificó de nuevo sin cambiar fuentes del candidato. **7/55 aceptadas al arrancar supervisor.**
+- Supabase local `vexa-local` activo en5632x con configuración propia. GitHub privado `javiercamarapp/vexa-ai` creado; identidad noreply configurada para commits futuros sin reescribir historia. Vercel `vexa-ai` creado en cuenta existente, sin deploy. Actions temporalmente desactivadas: sin gasto adicional aprobado.
+- Nuevo supervisor con autor/revisor de gates, constructor/revisor de implementación, regresiones previas, materialización limpia y publicación del SHA verificado. Cuatro invocaciones bootstrap/revisión; tres informes conservan hallazgos y correcciones, no aprobaciones ficticias.
+- Bugs reproducidos/corregidos: auth ChatGPT persistida, lock común, presupuesto de intentos que sobrevivía mal a relanzamientos y main adelantada publicada indebidamente. Última revisión independiente del publisher:6tests OK, sin P0/P1/P2 en ese alcance.
+- Verificación canónica: **107tests controlador/supervisor/publicador OK** (`private/logs/canonical-automation-107.log`); `npm test`24, copia scaffold2. Estos tests usan Git real, CLI modelado y remotos bare; no prueban cloud ni autonomía prolongada.
+- Programa operativo en [AUTOMATICO.md](AUTOMATICO.md). Política:42IDs locales,3h por tanda,216llamadas restantes como máximo, dos intentos persistentes por ID. Estado/PID reales en `.runtime/autoloop-state.json`; no inferir ejecución por existir el código.
+- Pendiente: Auth/RLS/ingesta/IA/ocho vistas, integración real Google/OpenRouter/CRMs, Supabase cloud/deploy/CI remoto, permisos/gold/piloto. El encargo completo sigue abierto.
 
 ## Construcción guiada — ampliación del 19-sep-2026 UTC
 - Contraste de nueve referencias/rangos de construcción, reanudación, QA y automejora de Likida, preservadas read-only. No auditoría de toda Likida ni equivalencia de producción.

@@ -24,7 +24,7 @@ El DAG `orchestration/graph.json` v4 conserva los55IDs anteriores y añade5 expl
 
 Cambio operativo autorizado por la petición de agentes: construir **propuestas aisladas** de módulos independientes en paralelo, con unit tests propios y reportes acotados. No son candidatos oficiales aceptados. Control-plane prepara/revisa/congela el examen externo desde requisitos; después `prepare`, adopción de código permitido, `verify`, revisión y `accept` con materialización limpia. Nadie escribe/modifica su propio gate de aceptación. No bajar pruebas para integrar rápido.
 
-Un escritor por área; máximo4agentes concurrentes. El principal integra interfaces y dependencias, reproduce pruebas y decide keep/revert; no integra por declaración de un agente. No se cambia grafo ni baseline durante una etapa con snapshot congelado. El supervisor serial quedó pausado en checkpoint para esta transición; propuestas trabajan sin modificar raíz.
+Un escritor por área; máximo6agentes concurrentes en la tanda renovada vigente (los límites de4/8 que siguen son históricos). El principal integra interfaces y dependencias, reproduce pruebas y decide keep/revert; no integra por declaración de un agente. No se cambia grafo ni baseline durante una etapa con snapshot congelado. El supervisor serial quedó pausado en checkpoint para esta transición; propuestas trabajan sin modificar raíz.
 
 ### Ola inicial (modelo gpt-6-astra por petición del usuario, ChatGPT OAuth)
 | Agente | Propiedad exclusiva | Entrega/reporte |
@@ -44,10 +44,17 @@ El usuario renovó créditos y pidió continuar normalmente hasta el software co
 
 Prioridad operativa:1)cerrar examen y schema F01-03;2)adoptar/matchear contratos canónicos de datos/jobs/métricas/web;3)conectar acciones reales e integración end-to-end;4)superadmin/backoffice/costes y correos enterprise en paralelo disjunto;5)regresiones/revisión/aceptación y publicación del SHA. No seguir multiplicando piezas sin integrarlas. Mantener oráculos independientes y nunca sustituir operación pendiente con HTTP200/arrayvacío.
 
-## Prioridad posterior: última hora y ampliación superadmin
+### Integración y presupuesto reconciliados — corte posterior
+Servicio SQL canónico de workspace y laboratorio de integración HTTP/SSR en scopes nuevos aislados; no sustituir tablas núcleo por stores genéricos. Admin UI/backend siguen `construccion/CONTRATO-ADMIN-INTEGRACION.md`. Copias de inputs quedan fijadas por commit antes de modificar otra etapa; si gate/revisor lee un árbol, la corrección se hace en otro, no durante su lectura.
+
+88invocaciones Codex contabilizadas mediante33previas+55recibos; máximo132adicionales bajo220, presupuesto compartido manual/serial. Actualizar desde recibos antes de lanzar: este número es un corte, no una cuota inmutable ni una medida de tokens. F01-03 aún no congelado/aceptado; quedan revisiones de aprobación y fixtures, no resetear por ello toda la construcción.
+
+Preflight de sólo lectura: Vercel `vexa-ai` accesible, aún frameworkOther/root./Node24; ningún proyecto con nombreVEXA visible en la cuentaCLI Supabase y repo sin project-ref cloud. Variables runtime relevantes ausentes en este proceso/archivos habituales; no demuestra ausencia en otros almacenes. No se crearon recursos ni modificó cloud. Configurar proyecto propio/OAuth/presupuestoIA/remitente y verificar despliegue sigue siendo requisito separado.
+
+## Checkpoint histórico: última hora y ampliación superadmin
 El usuario indica una hora restante y25%de cuota semanal, pide máximo avance paralelo y añade superadmin tipo Likida/Atiende, cerebro, prospectos, backoffice automatizado y control de gastos IA por rubro. Contrato: `construccion/AMPLIACION-SUPERADMIN.md`. No estaban todos dentro de60IDs: conservarlos y ampliar bajo revisión en checkpoint, nunca cambiar el denominador silenciosamente ni autoaceptar.
 
-**Esta prioridad prevalece sobre la concurrencia/presupuesto histórico de abajo:** hasta8agentes simultáneos en24GiB RAM observados, propiedad disjunta, no DB compartida. Integración sigue serial.36llamadas reservadas para cuatro módulos, examen, schema y ampliaciones/revisiones;151seriales como máximo bajo techo220después de33consumidas al inicio de ola2. Reconciliar consumo real y plazo ANTES de relanzar; límite operativo de la hora guardado en recibo privado y aplicado a nuevas invocaciones. No reiniciar ni cambiar proveedor ante cuota agotada.
+**Corte histórico, sustituido por la renovación de120min/máximo6:** hasta8agentes simultáneos en24GiB RAM observados, propiedad disjunta, no DB compartida. Integración sigue serial.36llamadas reservadas para cuatro módulos, examen, schema y ampliaciones/revisiones;151seriales como máximo bajo techo220después de33consumidas al inicio de ola2. Reconciliar consumo real y plazo ANTES de relanzar; límite operativo de la hora guardado en recibo privado y aplicado a nuevas invocaciones. No reiniciar ni cambiar proveedor ante cuota agotada.
 
 Nuevos propietarios: schema sólo0002/0003/0004y platform/db; UI superadmin sólo grupo(superadmin),api/admin,lib/components/tests/superadmin; backend sólo packages/admin y backoffice; templates de correo en paquete separado cuando haya slot. Referencias Likida/Atiende selectivas read-only, sin datos/secretos/marca. Principal verificó autoría GitHub y conserva commits reales periódicos; no sacrificar permisos/dinero/aceptación por agotar quota.
 

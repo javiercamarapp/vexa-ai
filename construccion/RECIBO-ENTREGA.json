@@ -1,0 +1,603 @@
+{
+  "scope": "construction-delivery-public-delta",
+  "source_commit": "86f6af1163a3e68660f688890bd2217b31811523",
+  "baseline_compared": "197b95c11dccc61b0a6e0dc1e77043af0dc4c6f9",
+  "verified_files": 118,
+  "writes": 118,
+  "overwrites_with_backup": 20,
+  "preserved_originals_and_other_files": true,
+  "git_runtime_excluded": true,
+  "receipt_excludes_itself": true,
+  "files": [
+    {
+      "path": "00-ABRE-CONSTRUCCION.html",
+      "sha256": "01d6534e4ee5d32a4d3bf09ca91cd71ce201460f59af776388916d838deb888a",
+      "bytes": 963
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "a65636ab1b7ef345175bda0f010dd8dd435c27a7a3442fba644cfa0c9dbe1f63",
+      "bytes": 1618
+    },
+    {
+      "path": "HALLAZGOS.md",
+      "sha256": "2205a2dec7cb62e9a80e3794322c9ceae37490c93ebc8cf4b08de0476112ad39",
+      "bytes": 3735
+    },
+    {
+      "path": "PLAN.md",
+      "sha256": "c1987cbc36e22db0f2523e0ad5baf1e9f6b2abd7ce512eddbb510db699832729",
+      "bytes": 6013
+    },
+    {
+      "path": "PROGRESO.md",
+      "sha256": "42ddeddd872007ea9edddb0a770534de0bb11f5f4a75c99e3ffb7e9ee67974eb",
+      "bytes": 9995
+    },
+    {
+      "path": "README.md",
+      "sha256": "f11a7eb5dac8fdfa807cbfacafab1fa5e0eba093f399d41f83219d3318e12d6b",
+      "bytes": 7171
+    },
+    {
+      "path": "construccion/00-COMPARACION-LIKIDA.md",
+      "sha256": "2278b0c1bd9655986754fd64dde975d0b5a420839ab078ba0ee9af656baa668d",
+      "bytes": 7435
+    },
+    {
+      "path": "construccion/01-ARRANQUE-Y-REANUDACION.md",
+      "sha256": "48965063291a834133fd1669412217c93792c96153149db51f118449f3b1069e",
+      "bytes": 9197
+    },
+    {
+      "path": "construccion/02-ENTORNO.md",
+      "sha256": "9387fc62b9ad4253f8dfa811be0fa24eda2e9ea55346d28774e6a55c7efdc101",
+      "bytes": 5657
+    },
+    {
+      "path": "construccion/03-CONTRATOS.md",
+      "sha256": "bb09913336cbc14731b7828233d7a9f5a4dcf963d52bb99941d46d995c2793bc",
+      "bytes": 11300
+    },
+    {
+      "path": "construccion/04-PRUEBAS-Y-LOOP.md",
+      "sha256": "814998f040f3286f854e756f4ac7220a033609b50e30749cefdae9ee8d32dcae",
+      "bytes": 9706
+    },
+    {
+      "path": "construccion/05-TAREAS.md",
+      "sha256": "0421e632758883d0b9b3d2eea24d30e9e773d8661267d5c846c6932e295dca38",
+      "bytes": 8091
+    },
+    {
+      "path": "construccion/06-OPERACION-Y-RELEASE.md",
+      "sha256": "83fa80fc98ba63041a6292b5c8068c8ac8c58e373c930e6a53115b08c4cdb21d",
+      "bytes": 7419
+    },
+    {
+      "path": "construccion/07-RUBRICA.md",
+      "sha256": "bbd5dd397bca773238603d1916fd81a710d0cee0b95a044bfc9a2bced7f5d8d3",
+      "bytes": 2776
+    },
+    {
+      "path": "construccion/CORRECCIONES-REVISION.md",
+      "sha256": "7cce769ff5d5a97a0fcbbdfe07de96ec645394fb3be9eb0680de73812e76c642",
+      "bytes": 2082
+    },
+    {
+      "path": "construccion/EVIDENCIA.md",
+      "sha256": "5bc0066fdfa5a585439efcfaf20f4be77207b113ae2a63012e7a587b2222298d",
+      "bytes": 3067
+    },
+    {
+      "path": "construccion/GUIA-COMPLETA.html",
+      "sha256": "bc40703b4176d7f40901d0e3c85442effa6f7a6eb88a130201e94a0edcc6d785",
+      "bytes": 286513
+    },
+    {
+      "path": "construccion/GUIA-COMPLETA.pdf",
+      "sha256": "a4e7561551e6bea87dc94fd0b6049698120bec48325ccaf986fac20b8d29e6cd",
+      "bytes": 1967926
+    },
+    {
+      "path": "construccion/README.md",
+      "sha256": "57342ae96329941df5e46d830476e3da19bdbd66ea3c17c37d2a5d3be962cb86",
+      "bytes": 5156
+    },
+    {
+      "path": "construccion/RECORRIDO-LOCAL.json",
+      "sha256": "40899e1e940a390da5530de5d8119cc89c13032465cccea7c34ed3a93ab0ee05",
+      "bytes": 3501
+    },
+    {
+      "path": "construccion/REFERENCIAS-LIKIDA.json",
+      "sha256": "ef00e26eeaf909091cafcf59a52a20f550b718bdef4c19cce971ef1c0ba8b334",
+      "bytes": 2478
+    },
+    {
+      "path": "construccion/RESULTADO-MUTACION.json",
+      "sha256": "b997b6de0b97de9da5565f2c6ec35a9a64510846af185585fb62002647401f37",
+      "bytes": 1244
+    },
+    {
+      "path": "construccion/REVISION-INDEPENDIENTE.md",
+      "sha256": "aa38e91229fda823b6cc86c51b3c89d37c3b47ca35ee48bfbba6368f674628d1",
+      "bytes": 17897
+    },
+    {
+      "path": "construccion/REVISION-PARCHE.md",
+      "sha256": "c67c112ec5401c1531692ac148e82466c6e1110c9c495136f17b24c7841eac1e",
+      "bytes": 6293
+    },
+    {
+      "path": "construccion/catalogo.json",
+      "sha256": "01c47fd8760d145cb2fffe54f36f0f19fbe32b5889b05842459dd569d38261fd",
+      "bytes": 91061
+    },
+    {
+      "path": "construccion/tareas/E00.md",
+      "sha256": "53e872a557863c57b60a4f8effdb0844dc479aeedb339349ab6a0ccb9de9bb2b",
+      "bytes": 3083
+    },
+    {
+      "path": "construccion/tareas/F00-01.md",
+      "sha256": "6821de11e36cdb5d3fa6b7e9b0da0989278d606d5438c9e0f4172be3e6c61b4b",
+      "bytes": 3146
+    },
+    {
+      "path": "construccion/tareas/F00-02.md",
+      "sha256": "fac056477fb65419ea896b1e49074dd46c5397f46ae62996af096fac58a44801",
+      "bytes": 3245
+    },
+    {
+      "path": "construccion/tareas/F00-03.md",
+      "sha256": "43172c36d48b37f9bbc723c771f05fca23cf3afa66dc106e6e8656a48bf92808",
+      "bytes": 3171
+    },
+    {
+      "path": "construccion/tareas/F00-04.md",
+      "sha256": "7c4dc5b70c695650c468c7a9904989bee008f81b11aec92c9501ca0406977ef6",
+      "bytes": 3216
+    },
+    {
+      "path": "construccion/tareas/F00-05.md",
+      "sha256": "7f7994913439896a4381ee1717b6a592efbd572ce3f97b89272e1bc17b063d38",
+      "bytes": 3258
+    },
+    {
+      "path": "construccion/tareas/F01-01.md",
+      "sha256": "3655137bd47ab5dc4d110d439902ffbab8e2bcee99b821e0edca0615668b596c",
+      "bytes": 3488
+    },
+    {
+      "path": "construccion/tareas/F01-02.md",
+      "sha256": "a605c0c9032a91b89a54b07f180c9c11173ec65b3fcd21f34610cf94fb154496",
+      "bytes": 3607
+    },
+    {
+      "path": "construccion/tareas/F01-03.md",
+      "sha256": "c08822a2431a0b4a3b57a7674867d9964ec5d674816a5fff9e07b2fab1bb6c62",
+      "bytes": 3672
+    },
+    {
+      "path": "construccion/tareas/F01-04.md",
+      "sha256": "ffcaf7ee1f96298989719849d8be731089e431aeda9ef1f7df9005b537b890af",
+      "bytes": 3380
+    },
+    {
+      "path": "construccion/tareas/F01-05.md",
+      "sha256": "4f63c8482d160020cf343a3688cdca40cde72e202dbfd9a75f981c7b517a8df3",
+      "bytes": 3276
+    },
+    {
+      "path": "construccion/tareas/F02-01.md",
+      "sha256": "dc885d9e7cb01c9605ba564f290375b4280f0421d1ce1bfcd0f77b265f4a7991",
+      "bytes": 3550
+    },
+    {
+      "path": "construccion/tareas/F02-02.md",
+      "sha256": "c2d516f99161398d2978953931586d5523728e35354c93548e70a4f0e290714e",
+      "bytes": 3339
+    },
+    {
+      "path": "construccion/tareas/F02-03.md",
+      "sha256": "92f4bc26d524c2dedc0e0d1bc90f09c451037f04d6ca7ad1a3c305dc748c5971",
+      "bytes": 3383
+    },
+    {
+      "path": "construccion/tareas/F02-04.md",
+      "sha256": "0c7f2a7fc6621216a4375b77c670590bfab61d91d84475287709b760ed5472da",
+      "bytes": 3315
+    },
+    {
+      "path": "construccion/tareas/F02-05.md",
+      "sha256": "ceeee2a1bc553e0503c55e0ceace9aff29f4cd024507680c172c0d7c82996c30",
+      "bytes": 3584
+    },
+    {
+      "path": "construccion/tareas/F02-06.md",
+      "sha256": "a882f7153c877480936066a6eb1852dd659bf42643ca3507b08c6c85eeaeae52",
+      "bytes": 3387
+    },
+    {
+      "path": "construccion/tareas/F03-01.md",
+      "sha256": "2fd68287e657ded38886d3e7cc1a70866eb96a08e89f3ca2cee2d215cb100b85",
+      "bytes": 3413
+    },
+    {
+      "path": "construccion/tareas/F03-02.md",
+      "sha256": "f0068661316329c5875d45d9a25c03e40f9bdd5ea61ffba98e5f4345b48bd345",
+      "bytes": 3333
+    },
+    {
+      "path": "construccion/tareas/F03-03.md",
+      "sha256": "a16a76b569fb54ae7b45566997338f4ad36f1b9a7ef61edafbe1537e7a8c54f5",
+      "bytes": 3334
+    },
+    {
+      "path": "construccion/tareas/F03-04.md",
+      "sha256": "225ab0c577e39ee02f701d1cf50ec13070885cb1a2fab8d4ceea245a2d08378f",
+      "bytes": 3338
+    },
+    {
+      "path": "construccion/tareas/F03-05.md",
+      "sha256": "dc6f432ac3333e725880933a44fb88290d36d1bc642a59aca1d573c457998d0c",
+      "bytes": 3279
+    },
+    {
+      "path": "construccion/tareas/F03-06.md",
+      "sha256": "05970ab69c5c9477a1ed7b41b477ed120a0359e4cbb163602071118db121cc11",
+      "bytes": 3332
+    },
+    {
+      "path": "construccion/tareas/F04-01.md",
+      "sha256": "50c741112bef7bd7f15a01f72aab262e90eeaaccd153c5164654ffb9b2073c5e",
+      "bytes": 3370
+    },
+    {
+      "path": "construccion/tareas/F04-02.md",
+      "sha256": "9923707b119ffbc49889ed4db693ab8070ec9a3ef9b122e25430ebf6bab5d5c7",
+      "bytes": 3405
+    },
+    {
+      "path": "construccion/tareas/F04-03.md",
+      "sha256": "49f81b7136a1458810752e8aa788fae7e09c8dc5073cf3c1064af327ad9a46ef",
+      "bytes": 3600
+    },
+    {
+      "path": "construccion/tareas/F04-04.md",
+      "sha256": "4cf41fd2ba041e9f8f4d08683f055136065f606cc74b2077840ba86d0f67ad54",
+      "bytes": 3381
+    },
+    {
+      "path": "construccion/tareas/F04-05.md",
+      "sha256": "176d92f3ef79c904a3aa06603feb8818774239cc5d1469f48a60c70a78db3340",
+      "bytes": 3496
+    },
+    {
+      "path": "construccion/tareas/F04-06.md",
+      "sha256": "eb1b5de8e37a12d62f2dcbf7770cca934eda7517475cf588e5be517bed2654d1",
+      "bytes": 3306
+    },
+    {
+      "path": "construccion/tareas/F04-07.md",
+      "sha256": "b7895dab8f0a39753166d296e750ec281404073a1b3bd061abdb0552205fb56b",
+      "bytes": 3340
+    },
+    {
+      "path": "construccion/tareas/F05-01.md",
+      "sha256": "ff4d0cab846b3ed08090ea0d657721d8c2d1ad878c55e5ad042e75bfd054f14c",
+      "bytes": 3117
+    },
+    {
+      "path": "construccion/tareas/F05-02.md",
+      "sha256": "c5a76f28cf37ac8c3138b2322b37be3b83a0913f38cb5af915577ec5353bd306",
+      "bytes": 3376
+    },
+    {
+      "path": "construccion/tareas/F05-03.md",
+      "sha256": "b64d49676246041f0fdb70fac0956ba56973e536c0e51824efdc700b574867ab",
+      "bytes": 3224
+    },
+    {
+      "path": "construccion/tareas/F05-04.md",
+      "sha256": "a45a75829c1fe527d59e5155be05e9426063d82c6bd88c0f3322c18d1c4da489",
+      "bytes": 3303
+    },
+    {
+      "path": "construccion/tareas/F05-05.md",
+      "sha256": "4182bd43e0ac9841b34f58715fb7eb8a1369086a4f40277c83bafef099dcd793",
+      "bytes": 3292
+    },
+    {
+      "path": "construccion/tareas/F05-06.md",
+      "sha256": "0b46138f05ee2312d3461594280cfc4996e95e1b721d7cac646fef47887772d7",
+      "bytes": 3329
+    },
+    {
+      "path": "construccion/tareas/F06-01.md",
+      "sha256": "bf52867aab6100573ed1287c0409487b17f682d08991bfb803a01e950382d78c",
+      "bytes": 3296
+    },
+    {
+      "path": "construccion/tareas/F06-02.md",
+      "sha256": "60135ca9405540e21078b6cf6e3e3da7bad52114a61d2872c5b5ab2d93ca3992",
+      "bytes": 3318
+    },
+    {
+      "path": "construccion/tareas/F06-03.md",
+      "sha256": "fe0bc33734c6036b97226a76e9a1ad3664c0352b58b4770fb9f8b3b8a0d2c075",
+      "bytes": 3254
+    },
+    {
+      "path": "construccion/tareas/F06-04.md",
+      "sha256": "19c687eb4b0916a477999205e6da693294ad818f505b23398d9272efe0ad5b7d",
+      "bytes": 3405
+    },
+    {
+      "path": "construccion/tareas/F06-05.md",
+      "sha256": "4abfe05e8d36fbdb0b403a9fddf15a7a0b21b912efed760f502e8a5bff178e88",
+      "bytes": 3444
+    },
+    {
+      "path": "construccion/tareas/F06-06.md",
+      "sha256": "997566e9b693ba344b3fc97471bb7d90cc0c44a494956001ab5687d79cb3cd62",
+      "bytes": 3312
+    },
+    {
+      "path": "construccion/tareas/F06-07.md",
+      "sha256": "18e5a8959484c5340e5d1c3575a18284ebdf10d19a61a793fe1ccdd20652490f",
+      "bytes": 3234
+    },
+    {
+      "path": "construccion/tareas/F07-01.md",
+      "sha256": "d82508e7c6eb8e1c4f51eb8a34fdbe0f3b179fb1db1a647dc50865fe24b81545",
+      "bytes": 3277
+    },
+    {
+      "path": "construccion/tareas/F07-02.md",
+      "sha256": "612f2cd34552e6a6a5089178db1ab455d5730c9243c8083f48ac84e3a250eb48",
+      "bytes": 3218
+    },
+    {
+      "path": "construccion/tareas/F07-03.md",
+      "sha256": "87d644f4abcc36bbb4bc00893a4dff2a7d29d7c68d7c1050ad78218cb9e0f6a7",
+      "bytes": 3204
+    },
+    {
+      "path": "construccion/tareas/F07-04.md",
+      "sha256": "6a551029bfb5f0652c937f68a595a66d3175e9c920b480d72c4fcae6651d01b2",
+      "bytes": 3344
+    },
+    {
+      "path": "construccion/tareas/F07-05.md",
+      "sha256": "e114ecb1ab2a0984aba20abd1e5f40031d8f6a2b2df2bf4b7452ec68751fcd11",
+      "bytes": 3141
+    },
+    {
+      "path": "construccion/tareas/F07-06.md",
+      "sha256": "2711afe2f443a07e47c72747c68113e056dc9874ec720d17a7dd7154d15c4037",
+      "bytes": 3266
+    },
+    {
+      "path": "construccion/tareas/F08-01.md",
+      "sha256": "b91055ead5b53f2917b165347b4f8731ec0e6c6778f0c59d51299c31a8f985db",
+      "bytes": 3156
+    },
+    {
+      "path": "construccion/tareas/F08-02.md",
+      "sha256": "cc3bb3090eb3b4ca46ea592fcff1e2f3f1428bd4fa4315cf5873531c40dd3d9d",
+      "bytes": 3125
+    },
+    {
+      "path": "construccion/tareas/F08-03.md",
+      "sha256": "17844785c1fade52f1410d3a80e4ae360110065ec8398ba9828fc6c3ce59b09e",
+      "bytes": 3228
+    },
+    {
+      "path": "construccion/tareas/F08-04.md",
+      "sha256": "1d4e1ad4370e0e6567ace7142428164a03274deb375749f894cd122fd745641d",
+      "bytes": 3115
+    },
+    {
+      "path": "construccion/tareas/F08-05.md",
+      "sha256": "ce4aad6aaa87ec3266ff0920ea00b203369ae8b5bd99bf6ceac26064941a9541",
+      "bytes": 3291
+    },
+    {
+      "path": "construccion/tareas/F08-06.md",
+      "sha256": "b9d471b236c650f9caf2fbd57be72fa0294156784cd5cfa1246787c2939bb65a",
+      "bytes": 3204
+    },
+    {
+      "path": "docs/CONTEXTO-CANONICO.md",
+      "sha256": "21bd93d48a4fc9df408aa093f7b464717bac94ca3db9cb14bdee1b5af591d9a0",
+      "bytes": 6781
+    },
+    {
+      "path": "docs/blueprint/F00.md",
+      "sha256": "e96452a39799c606177c63cd0a5c81feb5024d21893ef8d21ded41b1d9a7099a",
+      "bytes": 2586
+    },
+    {
+      "path": "docs/blueprint/environments.json",
+      "sha256": "1ba867e17849a2b4468f4fb0c9ebcfaa112577eac34e81f50a544ce4c634c659",
+      "bytes": 274
+    },
+    {
+      "path": "docs/blueprint/gate-register.json",
+      "sha256": "7ae15b770f821a7cbeaaad53304720fb311294cfba1bda2d71ac92c0c5dd4b66",
+      "bytes": 5029
+    },
+    {
+      "path": "docs/blueprint/pilot-readiness.json",
+      "sha256": "cdf03fbf7897f728ba2cf0d3e0aa20f9c61af21096c49c6ab1d19fef02e9c032",
+      "bytes": 559
+    },
+    {
+      "path": "docs/blueprint/source-review.json",
+      "sha256": "321bb3076fcacf2202aded9692532efc0f86bc4973ab5592b89956af2f96d226",
+      "bytes": 1646
+    },
+    {
+      "path": "orchestration/README.md",
+      "sha256": "a5fab1a779f96645a8fcbf24cd9af02bd0b46049d4b92ce93d798a7496cc516e",
+      "bytes": 10211
+    },
+    {
+      "path": "orchestration/graph.json",
+      "sha256": "030ae5186d7e3a09f5a789c4c4dc36208b938dabcdabf0eb9b25f6ab67c68244",
+      "bytes": 28680
+    },
+    {
+      "path": "orchestration/history/graph-v2-before-guided.json",
+      "sha256": "37b7094ca229d0f913446fd8097bb61fa72e5bbc7d3796785ea5f3945106252e",
+      "bytes": 28008
+    },
+    {
+      "path": "orchestration/prompts/F00.md",
+      "sha256": "e921eece78b74c88defd0af606b025886391d0401408fbe0ef4bc610e213977b",
+      "bytes": 699
+    },
+    {
+      "path": "orchestration/prompts/F01.md",
+      "sha256": "eab5b61e2694a031d83dfd2ff8346d05b7a519b6f9df3545833211ab63efdb6e",
+      "bytes": 699
+    },
+    {
+      "path": "orchestration/prompts/F02.md",
+      "sha256": "0f78fde3872e46699a8194f83722074e39aca536d5ecb4ba66670e4ba53541ac",
+      "bytes": 699
+    },
+    {
+      "path": "orchestration/prompts/F03.md",
+      "sha256": "d3328d0bd1ea85da8f6031cf56c794fe193a089020d87031218d212974ad1358",
+      "bytes": 699
+    },
+    {
+      "path": "orchestration/prompts/F04.md",
+      "sha256": "926f94de26f0ce6d7b647d1b6d102a76b91edc478859528b1cb0894b8d7c2273",
+      "bytes": 699
+    },
+    {
+      "path": "orchestration/prompts/F05.md",
+      "sha256": "b3221d815721b73a7dfd215fa5e3f9b1f850baf1386fbd01aaa892e08f5f0d6c",
+      "bytes": 699
+    },
+    {
+      "path": "orchestration/prompts/F06.md",
+      "sha256": "0b509ae3508de3ae782bea659da8069ee3a0efaa9cfcb192b418285aa215b4a9",
+      "bytes": 699
+    },
+    {
+      "path": "orchestration/prompts/F07.md",
+      "sha256": "a385f0365410c88c4995f0672cc7cc1ac4f55a0357523717b64db40489affd8f",
+      "bytes": 699
+    },
+    {
+      "path": "orchestration/prompts/F08.md",
+      "sha256": "00f896fcbd39904684c624f90e5c32e7844658af10908bd82a44a1a659797855",
+      "bytes": 699
+    },
+    {
+      "path": "orchestration/runner.py",
+      "sha256": "d1dbdf0c9962212d56d8aaa8f73be85a2a1563f07d812152184db10bc3beb7f8",
+      "bytes": 26792
+    },
+    {
+      "path": "package.json",
+      "sha256": "2da266b02cd84940c246e900bcf0055f35de82bf129dc59273be7e1e4d9bd231",
+      "bytes": 1000
+    },
+    {
+      "path": "scripts/construction_catalog.py",
+      "sha256": "22b1d491c391cf0d4335925871534e1a308af2b387bad6625c4fd9fdacb6b420",
+      "bytes": 43165
+    },
+    {
+      "path": "scripts/guide.py",
+      "sha256": "d57e2665891b6be8375eb95f045a1df27cdcaed99a601b793fdda5db73adcb42",
+      "bytes": 11098
+    },
+    {
+      "path": "scripts/probe_economics_mutations.py",
+      "sha256": "897b5f0d189a4b33241d4956ec95624660603e44f526f0c24997a6e94855ac18",
+      "bytes": 2857
+    },
+    {
+      "path": "tests/acceptance/F00-01.test.mjs",
+      "sha256": "c28c21cb0e20cc0f476fbc177b887c6a3939e1f9c807d8bb0a69f5cc6175e2f2",
+      "bytes": 305
+    },
+    {
+      "path": "tests/acceptance/F00-02.test.mjs",
+      "sha256": "8379f9c7d25f23be8b4e95658f23a4f540c885bd3378f4271a64314f30eea889",
+      "bytes": 261
+    },
+    {
+      "path": "tests/acceptance/F00-03.test.mjs",
+      "sha256": "9d2fd8eb23d02b2c6040969af50b71db8b88d6425607f364b12235bf76c00f99",
+      "bytes": 261
+    },
+    {
+      "path": "tests/acceptance/F00-04.test.mjs",
+      "sha256": "58cee702f8f79504d3666b0a3d874e230ff3d900f9c37643aff2c56dc92d1678",
+      "bytes": 260
+    },
+    {
+      "path": "tests/acceptance/F00-05.test.mjs",
+      "sha256": "176e81ae22a07d049f16fda874791029ff8edaeb813edfc2578346997543459d",
+      "bytes": 258
+    },
+    {
+      "path": "tests/acceptance/F01-01.test.mjs",
+      "sha256": "ab70ee2e2f96199f17049abcadbd2fa9ffb9c689c362f906d919508fb2923ddb",
+      "bytes": 2198
+    },
+    {
+      "path": "tests/acceptance/F05-01.test.mjs",
+      "sha256": "0ff2e15f0afe565cfa26aa004a258ff04d37ccf80f6bde3000c4d63b5bf24c9a",
+      "bytes": 90
+    },
+    {
+      "path": "tests/acceptance/foundation-negative.test.mjs",
+      "sha256": "3f754ea538124927e897c8c109f5dd1f8f40bd827d6f5844c212c1f9a506209d",
+      "bytes": 1840
+    },
+    {
+      "path": "tests/acceptance/foundation.mjs",
+      "sha256": "e4bd91801d579faf4dd7484e675fde3234f6d7de86378248b269a090354a716e",
+      "bytes": 3613
+    },
+    {
+      "path": "tests/controller/test_guide.py",
+      "sha256": "eead979c77b25db76688cd27f6b5dbfd4fedf97177841fad385999e13813435c",
+      "bytes": 2737
+    },
+    {
+      "path": "tests/controller/test_interactive.py",
+      "sha256": "308233f5bd4e8a47685621eef3b03db473dca9608fb4364796e5c319a2390319",
+      "bytes": 15771
+    },
+    {
+      "path": "tests/controller/test_recovery.py",
+      "sha256": "3225a745d6dc2173cce3d9f0012ba3bfdac51a65e7a3538731683cad52280caa",
+      "bytes": 2834
+    },
+    {
+      "path": "tests/controller/test_review_regressions.py",
+      "sha256": "d31b2589cf8a7d34083f87bc4af1ceb04ec2f86f2da99de0bcc6e4c59b1e1432",
+      "bytes": 8774
+    },
+    {
+      "path": "tests/fixtures/source-manifest.json",
+      "sha256": "1baf9c95b65e29b1d3446b0eb4a12568b59c7b5e2fc2e0fb0ec94714f4ad814e",
+      "bytes": 1268
+    },
+    {
+      "path": "tests/fixtures/syn-e2e-v1.json",
+      "sha256": "38d7ecbad85499098bf88d402f5eb245fd5aed431ec9e8c6007d5d5326e1bc94",
+      "bytes": 3460
+    }
+  ]
+}

@@ -1,4 +1,9 @@
 import assert from 'node:assert/strict';
+export async function readOnlyNavigation(page,origin) {
+  // Reloading a POST result can resubmit the authorized pre-interception body.
+  // Observe using GET; do not change the state being asserted.
+  return page.goto(origin);
+}
 export function redirectOracle(next,destination,origin) {
   const dest=new URL(destination,origin);
   assert.equal(dest.origin,origin,'REDIRECT_ORIGIN: callback escaped origin');

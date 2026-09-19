@@ -16,6 +16,13 @@ Parche en worktree separado (sin integrar): extrae oráculos puros, verifica ori
 
 Falta revisión independiente del parche e implementar/probar app completa. Los5tests de soporte no acreditan callback real del producto, selección o revocación de una app todavía ausente. La propuesta Auth se construye aparte, no se modifica el gate desde ella ni se acepta por estos recibos.
 
+## Observador con efecto lateral — reproducido con app real
+Al ejecutar la app real,5subcasos pasaron y selección falló ORG_STATE. La traza mostró cookie A2 correcta tras403: era `page.reload()` quien reenviaba el POST original autorizado A, distinto del cuerpo B cambiado sólo por `route.fetch`. No se modificó el producto para hacer pasar esto.
+
+Corrección externa: navegación GET explícita al origen antes de conservar exactamente la misma aserción A2/noB y la comparación DB. Regresión nueva observada roja por efecto del observador;5tests puros verdes. Contra el mismo código de app:7/7 en diagnóstico con Auth/DB/Chrome locales reales (6subcasos + envolvente). Revisión independiente del diff aprobada, sin P0/P1/P2 en este parche. La primera revisión no pudo cerrar por instrucción ambigua «No Git»; se suministró diff y permiso explícito de Git read-only, sin ocultar ese recibo.
+
+La recuperación formal conserva candidatos/logs; preparar de nuevo desde gate congelado antes de aceptar. Ejecutar Supabase CLI en una copia de configuración aparte: hacerlo dentro de candidato creó `.temp/cli-latest` y el guard lo rechazó correctamente. No borrar ignorados indiscriminadamente ni relajar el guard.
+
 ## Límites del trabajo
 - Mismos contrato, ficha, allowlist y grafo. No escribir la implementación del SaaS desde el autor de gates.
 - Supabase propio: `project_id=vexa-local`, API56321, DB56322, Mailpit56324. Verificar identidad antes de crear fixtures. Sólo usuarios/sesiones sintéticos y temporales propios; no resetear ni consultar otros proyectos.

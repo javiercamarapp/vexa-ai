@@ -3,7 +3,16 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import {copyBuildInputs} from '../acceptance/scaffold-copy.mjs';
+import {copyBuildInputs,buildEnvironment} from '../acceptance/scaffold-copy.mjs';
+
+test('nested npm configuration and credentials are not inherited by build tools',()=>{
+ const env=buildEnvironment({PATH:'/bin',HOME:'/home/test',npm_config_allow_scripts:'*',
+  NODE_OPTIONS:'--require=/untrusted',OPENROUTER_API_KEY:'synthetic-not-a-key'},'/tmp/owned-build');
+ assert.equal(env.PATH,'/bin');assert.equal(env.HOME,'/home/test');
+ for(const key of ['npm_config_allow_scripts','NODE_OPTIONS','OPENROUTER_API_KEY'])assert.equal(env[key],undefined);
+ assert.equal(env.NPM_CONFIG_USERCONFIG,'/dev/null');
+ assert.equal(env.NPM_CONFIG_GLOBALCONFIG,'/tmp/owned-build/empty-global-npmrc');
+});
 
 test('copies sources even when candidate is under a .runtime ancestor', () => {
  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'vexa-copy-test-'));

@@ -1,6 +1,6 @@
 # Notificaciones, push y correos VEXA — ampliación solicitada
 
-**Estado:** funcionalidades solicitadas explícitamente; propuesta de diseño pendiente de confirmar destinatarios. NO implementado ni añadido al grafo activo. No confundir este documento con un envío realizado.
+**Estado:** funcionalidades solicitadas explícitamente; destinatarios CONFIRMADOS posteriormente por el usuario: «vexa», ante la alternativa usuarios VEXA/clientes finales. Diseño técnico base para propuesta aislada de implementación; dominio/proveedor/entrega productiva no autorizados por esa respuesta. NO integrado ni añadido al grafo activo. No confundir este documento con un envío realizado.
 
 ## Confirmado por el usuario
 - Producto completo con tablas, conexiones, APIs e integraciones/MCP pertinentes.
@@ -9,9 +9,9 @@
 - Calidad de ingeniería y producto comparable a Likida y Atiende, no sólo una maqueta.
 
 ## Decisión que cambia alcance y privacidad
-¿Avisos sólo a usuarios autorizados de VEXA dentro de cada empresa, o también a clientes finales de esas empresas?
+**Decisión del usuario: sólo usuarios autorizados de VEXA dentro de cada empresa.**
 
-**Recomendación:** usuarios del panel; no contactar automáticamente consumidores, titulares de conversaciones o contactos importados. Cualquier comunicación a clientes finales requiere otro contrato de consentimiento, destinatarios y permisos. El producto original prohíbe acciones externas autónomas.
+Usuarios del panel; no contactar automáticamente consumidores, titulares de conversaciones o contactos importados. Cualquier comunicación a clientes finales requiere otro contrato de consentimiento, destinatarios y permisos. El producto original prohíbe acciones externas autónomas.
 
 ## Propuesta técnica para aprobar
 ### Canales

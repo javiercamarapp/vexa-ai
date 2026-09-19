@@ -1,6 +1,14 @@
 # Progreso verificable
 Actualizado: 2026-09-19 local. Los apartados anteriores conservados abajo son cortes históricos, no inventario vigente.
 
+## Agentes en paralelo — 19-sep (estado más reciente)
+- Plazo corregido por usuario: UN MES, no una semana; destinatarios notificaciones confirmados: usuarios VEXA. PLAN.md sustituye investigación histórica por construcción real, manteniendo gates externos y aceptación serial.
+- Segunda autoría de gate Auth terminó; supervisor paró por STOP de checkpoint antes de revisión, preservando propuesta. Revisor encontró2P2 adicionales (normalización de redirect con backslash y revocación que aceptaba cualquier redirect local). No se aprobaron ni se marcó Auth implementado. Ensayo Docker del revisor bloqueado por sandbox, no prueba de fallo de Auth.
+- Se lanzaron constructores aislados de conectores/ingesta, gateway/evidencia y notificaciones; tres propuestas entregadas. Principal abrió reportes y reprodujo sus tests: **18/18 +24/24 +22/22, exit0, cero skipped**. Son64tests unitarios con fixtures/transporte simulado, no gates externos ni conexión real.
+- Las tres revisiones independientes rechazaron las propuestas pese al verde:2P2 en ingesta/transporte,1P2 en caducidad de política de modelos y2P1 por mutabilidad posterior a autorización/validación en notificaciones. Se archivaron las fuentes v1 y lanzaron correcciones focalizadas con regresiones; NO se ocultaron los hallazgos. Cuarto constructor trabaja Auth/identidad mínima en otro worktree; puede proponer manifests raíz porque es único dueño en esa copia. Ninguna propuesta está integrada ni aceptada: siguen7/55 hitos incluyendo preparación.
+- Parche acotado del gate Auth en worktree separado:2rojos por aserción reproducidos,4tests puros verdes; principal ejecutó probe LOCAL Auth real,1verde con positivo+mutante. Sin app todavía, no prueba callback/revocación del producto. Parche pendiente de revisión externa.
+- Manifiesto/recibos privados: `private/parallel-batch-1.json`, `.runtime/team-*/`. Logs principal `private/logs/principal-{connectors,gateway,notifications}-tests.log`. Estado/PIDs son dinámicos; consultar recibos, no asumir que siguen vivos por leer este corte.
+
 ## Primera parada y ampliaciones — 19-sep
 - Supervisor terminó su primera tanda porque el revisor rechazó el gate F01-02: no probaba redirect exitoso, confundía posible CSRF con autorización y sólo había ejercitado ausencia de archivo. Estado:7/55 aceptadas, Auth sin implementar. Informe original conservado; correcciones públicas en construccion/correcciones/F01-02-gate.md.
 - Se corrigió y reprodujo una limitación de recuperación: tarea cuyo gate falla antes de prepare aún no tiene fila de estado. Renovar explícitamente su presupuesto ahora reconoce pending por defecto, sin crear fila falsa ni permitir recuperar accepted/prepared/verified. **108tests generales OK**, revisión independiente22tests del supervisor OK. No se redujeron oráculos de Auth.

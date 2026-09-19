@@ -3,6 +3,11 @@
 ## Encargo vigente
 El usuario pidió construir, no seguir investigando: SaaS con GitHub, Vercel, Supabase, Google Auth, APIs/OpenRouter y calidad comparable a Likida. Investigación y contratos existentes son entradas. No repetirlos ni confundir un plan con software funcionando.
 
+## Cambio operativo vigente — agentes y plazo
+El usuario corrigió expresamente el plazo: **UN MES, no una semana**. Pidió agentes y loop graph continuo, sin escatimar esfuerzo. PLAN.md es el programa actualizado: propuestas independientes en worktrees disjuntos y unit tests, gates externos congelados antes de preparar/adoptar candidato oficial, integración serial por dependencias y revisión. Las propuestas no cuentan como tareas aceptadas. No significa bucle infinito, gasto ilimitado ni omitir STOP/seguridad.
+
+Notificaciones/push/correos: destinatarios confirmados por el usuario son usuarios autorizados de VEXA, no clientes finales importados. Proveedor/dominio/entrega real siguen pendientes de configurar y verificar. Los datos de cliente llegarán después: construir con fixtures y conectores configurables ahora.
+
 ## Éxito
 Código construible, tests de aislamiento/RBAC/ingesta/jobs/evidencia/dinero y ocho vistas con efectos reales; GitHub privado con CI; entorno VEXA en Vercel/Supabase; login Google probado ida/vuelta; llamadas reales OpenRouter presupuestadas; smoke remoto, versión servida y recuperación. Nada de acceso ficticio, métricas inventadas ni marcas de cliente sin autorización. Verificar cada capa por separado. Validación comercial/gold humano/piloto son hitos distintos que no se inventan por desplegar software.
 

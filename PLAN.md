@@ -1,54 +1,60 @@
-# VEXA — investigación y construcción verificable
+# VEXA — construcción completa por grafo y agentes
 
-## Ampliación activa — construcción guiada comparable a Likida
-Solicitud: comprobar y completar el paso a paso para construir VEXA en loop de punta a punta. No equivale a desplegar el SaaS en esta sesión.
+Actualizado: 2026-09-19. Este plan reemplaza los bloques históricos de investigación/preparación conservados en Git. El usuario pidió construir y confirmó **UN MES, no una semana**. Referencia de calendario: 19-oct-2026 si se cuenta desde este encargo; objetivo, no entrega garantizada ni estado alcanzado.
 
-Criterio de cierre de esta ampliación:
-1. Comparación documentada de los planos de construcción, reanudación, QA y automejora de Likida; citas de archivo/línea y límites del contraste.
-2. Un punto de entrada y una ficha específica por tarea del grafo: inputs, contrato, archivos, pasos, comandos, resultados esperados, pruebas adversarias, recuperación y quién desbloquea cada dependencia.
-3. Separar trabajo del control-plane, worker offline y operador con accesos. Detectar automáticamente gates ausentes/allowlists imposibles/dependencias circulares; no fabricar PASS.
-4. Herramientas locales de diagnóstico y preparación probadas con casos negativos. Un piloto sintético de los pasos ejecutables; sin credenciales reales ni publicación.
-5. Revisión con contexto limpio contra rúbrica previa; correcciones, evidencia y copia al Escritorio sin pisar cambios del usuario.
+## Objetivo y cierre
+Producto completo del PRD y ampliaciones confirmadas: Next.js, Auth/organizaciones/roles, tablas/migraciones/RLS/Storage, importaciones y conectores HubSpot/Zendesk, trabajos durables, OpenRouter multimodelo/evidencia, dinero/prioridad, ocho vistas, intervenciones/medición/brief, notificaciones internas/push/correos para USUARIOS DE VEXA, seguridad/observabilidad/recuperación y entrega operable.
 
-Nivel: cadena guiada sobre el controlador existente, no otro framework de agentes. Presupuesto de este bloque: hasta 90 min; 2 invocaciones iniciales Codex/Astra (builder y revisor limpio) más 1 pasada correctiva acotada tras reproducir H1/H2/H3; máximo total 3, concurrencia 1, sin APIs de inferencia pagadas. No se amplía a construcción del SaaS. Principal escribe guía/contratos/herramientas; revisor sólo su reporte. Reductor: principal confronta hallazgos con reproducción y conserva los bloqueos reales. No hay autorización implícita de cloud, datos Senix o producción.
+Distinguir dos hitos:
+1. **Connection-ready:** código y migraciones integrados, flujo sintético completo probado, configuración y onboarding que permiten aportar credenciales/scopes/mapeos/datos sin programar de nuevo los conectores soportados; configuración ausente produce estado accionable, no éxito ficticio. Tests de fallos, aislamiento y recuperación pasan.
+2. **Producción validada:** proyectos propios configurados, dominio/OAuth/remitente verificados, proveedores reales autorizados, smoke remoto con SHA/recibos y prueba de restore. No acreditar esto con mocks o Mailpit. Conectar una API no sustituye permisos legales, DNS o disponibilidad de campos financieros.
 
-### Cierre del presupuesto del bloque
-Se agotaron las tres invocaciones permitidas. La segunda revisión detectó H2b; el principal lo reprodujo y corrigió con cuatro regresiones adicionales. No se lanza una cuarta revisión ni construcción SaaS. El cierre/verificación/copia prolongó la ventana prevista de 90min; no se presenta como cumplimiento de un deadline estricto. La falta de revalidación independiente del último parche se deja explícita.
+El usuario indicó que los datos del cliente llegarán después. No frenar la construcción independiente por eso: usar fixtures rotulados, contratos canónicos y mapeos configurables. No inventar resultados de Senix, probabilidades calibradas, ahorros ni validación comercial.
 
-## Encargo
-Rehacer desde las fuentes los seis audios y el DOCX; interpretar el PRD de 35 secciones compartido en la sesión; revisar Documentos Likida y repos Likida/Atiende como referencia de profundidad y calidad. Preparar investigación, diligencia CTO (oferta declarada de 30%), blueprint por fases para un pitch en un mes y ejecución agentica reanudable con pruebas. Stack solicitado: Vercel, Supabase, GitHub y OpenRouter para el producto. Construcción: suscripción Codex, modelo openai-codex/gpt-6-astra; sin llamadas adicionales a APIs pagadas para esta preparación.
+## Fuentes y APIs permitidas
+- `construccion/ALCANCE-CONFIRMADO.md`: relectura completa; `docs/blueprint/02-TRAZABILIDAD-PRD.md`:35secciones.
+- `docs/blueprint/01-CONTRATOS-Y-DATOS.md`:SourceEnvelope/interfaces/tablas; `construccion/03-CONTRATOS.md`:API/RBAC/SQL/pipeline.
+- `packages/economics/index.mjs`:kernel económico existente; no duplicar fórmulas en UI/LLM.
+- `apps/web/`:scaffold aceptado; `supabase/config.toml`:proyecto LOCAL `vexa-local`,5632x.
+- `docs/investigacion/integraciones/01-hubspot-zendesk-migracion.md` y `04-openrouter-modelos-privacidad.md`:contratos/proveedores.
+- GitHub privado `javiercamarapp/vexa-ai`, Vercel proyecto vacío `vexa-ai`. Acceso CLI observado no equivale a conexión productiva completa. Nunca usar proyectos/secretos de Likida/Atiende/Moni.
 
-## Criterio de terminación
-- Seis transcripciones completas, timestamps, duración, manifiesto SHA256 y limitaciones de reconocimiento; DOCX extraído íntegramente.
-- Matriz trazable audio/documento → requisito → decisión → fase → prueba.
-- Investigación con fuentes leídas y fechas; separar hechos, hipótesis y datos pendientes.
-- Blueprint de 30 días, contratos de datos, seguridad multi-tenant, motores financieros reproducibles, evaluación, UX, integraciones y runbooks.
-- Grafo de construcción y reintentos acotados; tareas verificadas por pruebas, no por autoafirmación del agente.
-- Software terminado sólo cuando CI, RLS, E2E, evaluaciones y despliegue hayan sido comprobados. Documentación terminada no equivale a producto terminado.
+## Ejecución: grafo con propuestas paralelas, integración serial
+El DAG `orchestration/graph.json` mantiene55IDs y estados reales; no se reinicia ni se falsifican recibos. Dependencias determinan integración, no impiden preparar módulos independientes.
 
-## Fase 0: capacidades observadas
-- `whisper-cli`: /opt/homebrew/bin/whisper-cli; modelos locales ~/.cache/whisper-cpp/ggml-small.bin y ggml-tiny.bin. Transcripción local, sin subir audios.
-- `ffmpeg`, `ffprobe`: /opt/homebrew/bin/.
-- Extracción DOCX local con Python zipfile + XML (sin dependencias externas).
-- CLIs encontrados: gh, vercel, supabase, codex, pi. Existencia no demuestra acceso al proyecto VEXA.
-- Modelo de esta sesión comprobado mediante PI_PROVIDER/PI_MODEL: openai-codex/gpt-6-astra.
+Cambio operativo autorizado por la petición de agentes: construir **propuestas aisladas** de módulos independientes en paralelo, con unit tests propios y reportes acotados. No son candidatos oficiales aceptados. Control-plane prepara/revisa/congela el examen externo desde requisitos; después `prepare`, adopción de código permitido, `verify`, revisión y `accept` con materialización limpia. Nadie escribe/modifica su propio gate de aceptación. No bajar pruebas para integrar rápido.
 
-## Estado del plan tras esta preparación
-1–3 cubiertos en el alcance documentado (referencias de repos selectivas, no auditoría total). 4 cubierto como diseño/contratos/grafo, no software. 5 controlador y pruebas locales implementados, gates del resto del SaaS pendientes. 6 kernel financiero inicial verificado; aplicación y cloud pendientes. 7 handoff y recibos en PROGRESO.md/README.md. El presupuesto de 120 minutos siguiente fue el bloque inicial, no una ejecución autónoma ilimitada ni una promesa de completar todo el producto.
+Un escritor por área; máximo4agentes concurrentes. El principal integra interfaces y dependencias, reproduce pruebas y decide keep/revert; no integra por declaración de un agente. No se cambia grafo ni baseline durante una etapa con snapshot congelado. El supervisor serial quedó pausado en checkpoint para esta transición; propuestas trabajan sin modificar raíz.
 
-## Pasos
-1. Preservar y transcribir fuentes; extraer DOCX.
-2. Leer transcripciones y referencias relevantes; documentar discrepancias y pendientes.
-3. Investigación técnica y comercial con fuentes públicas, sin APIs de pago.
-4. Escribir arquitectura y blueprint por fases, riesgos, criterios de aceptación y grafo.
-5. Construir y probar harness reanudable; no arrancar ejecución remota irreversible.
-6. Implementar entregables locales iniciales y verificar; continuar hasta límites reales de la sesión.
-7. Handoff exacto con lo terminado, lo pendiente y comandos reales.
+### Ola inicial (modelo gpt-6-astra por petición del usuario, ChatGPT OAuth)
+| Agente | Propiedad exclusiva | Entrega/reporte |
+|---|---|---|
+| Ingesta/conectores | packages/ingestion/**, packages/connectors/** | Código normalización/CSV y HTTP read-only; packages/connectors/IMPLEMENTATION.md |
+| Gateway/evidencia | packages/gateway/**, packages/intelligence/** | Reserva/políticas/structured output/citas; packages/gateway/IMPLEMENTATION.md |
+| Notificaciones | packages/notifications/** | Política, templates, despacho/adaptadores; packages/notifications/IMPLEMENTATION.md |
+| Revisor Auth | Sólo revisión del gate corregido F01-02 y temporales de ensayo | Entregado:2P2 concretos pendientes; no aprobado |
+| Constructor Auth (tras terminar revisor) | apps/web/**, packages/platform/**, supabase/migrations/**, package.json y lock raíz de SU worktree | Identidad mínima, SSR/selector/login/logout; packages/platform/IMPLEMENTATION.md |
 
-## Decisiones y límites
-- Carpeta canónica ~/vexa, fuera de iCloud. Fuentes privadas en private/, excluidas de Git.
-- Likida/Atiende sólo lectura: no copiar claves, datos de clientes ni propiedad intelectual sin revisar derechos.
-- PRD prohíbe agentes autónomos de negocio en MVP: distinguir agentes que CONSTRUYEN de autonomía del PRODUCTO. Acciones externas de negocio quedan aprobadas por humano.
-- Horizonte de entrega: 30 días desde kickoff confirmado; no prometer viabilidad de toda la visión futura dentro del plazo.
-- Preparación secuencial con estado en disco. Primer bloque: hasta 120 minutos, 0 USD en APIs adicionales, 0 subagentes por ahora; transcripción seis archivos sin reintentos infinitos.
-- No despliegue de producción, contratos, mensajes a socios ni datos Senix a terceros sin autorización específica.
+Tres primeros constructores entregaron propuestas; principal reprodujo64tests unitarios verdes y lanzó revisión independiente de cada módulo. Cuatro trabajos concurrentes ahora: constructor Auth +3revisores. No son tareas aceptadas. Manifests raíz sólo los propone Auth; antes de adoptar deberá congelarse explícitamente su allowlist/dependencia, pues el F01-02 original no incluye esos dos archivos.
+
+Worktrees/PIDs y recibos de esta ola: `private/parallel-batch-1.json` y `.runtime/team-*/`. No copiar esos archivos ni fuentes privadas a GitHub. Cada propuesta parte de un SHA fijo y no modifica archivos de otro agente. SQL compartido sólo por responsable autorizado, nunca varios resets simultáneos.
+
+## Secuencia de integración
+- [x] Kernel económico limitado y scaffold F01-01 aceptados; preparar infraestructura LOCAL y GitHub privado.
+- [ ] Corregir/revisar gate Auth; implementar identidad mínima/membership/login/callback/logout y probar Auth local real.
+- [ ] Completar schema tenant-aware, RLS/Storage, diseño/navigation y CI.
+- [ ] Adoptar módulos de ingesta/conectores, implementar persistencia/jobs/consumer y continuidad CRM.
+- [ ] Adoptar gateway/evidencia; completar extracción/clustering/snapshots/ranking.
+- [ ] Ocho vistas con estados/errores/acciones reales; intervención, medición y brief.
+- [ ] Incorporar tareas propias de notificaciones al DAG en checkpoint, sin ocultar ampliación; centro in-app, Web Push, correos, preferencias y outbox durable. Destinatarios confirmados: usuarios VEXA, no consumidores.
+- [ ] QA adversarial, carga, accesibilidad, seguridad, restore, release/onboarding y smoke con conexiones autorizadas.
+
+## Presupuesto, continuidad y paradas
+Ola inicial:3constructores (<=15min cada uno) + revisor Auth (<=8.5min); después constructor Auth (<=15min) +3revisores (<=10min10s). Máximo4concurrentes;8llamadas lanzadas en la ola hasta este corte. Correcciones/revisión posteriores acotadas; hasta12llamadas de modelo para esta ola, máximo2intentos por entregable antes de diagnóstico. No prometer un daemon de un mes: trabajo continuo por tandas/checkpoints y estado durable.
+
+Construcción sólo suscripción ChatGPT; cero inferencia API pagada para desarrollar. Sin gasto incremental nuevo, contratación, emails/push a personas o datos reales a terceros sin autorización. Mantener límites globales y descontar llamadas/tandas ya usadas antes de reanudar supervisor. STOP/cuota/credencial/seguridad obligan a parar la parte afectada, no a fingir avance; continuar propuestas independientes seguras.
+
+Merge/push periódicos autorizados: únicamente SHA revisado, ramas no divergentes, repo privado, paths/historia sin privados y confirmación SHA remoto. Sin commits vacíos, fechas falsas ni force-push. Actions no se llaman CI verde mientras estén desactivadas/sin ejecución.
+
+## Qué significa calidad enterprise aquí
+Aislamiento multi-tenant probado, permisos y auditoría, gestión de secretos, minimización/retención, idempotencia, cuotas, observabilidad, retries/dead-letter, backup/restore, despliegue/rollback y pruebas de flujos reales. No equivale a certificación SOC2/ISO, SLA contractual, SSO/SCIM implementado por mencionar enterprise ni garantía de ausencia total de bugs.

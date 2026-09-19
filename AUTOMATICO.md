@@ -2,6 +2,11 @@
 
 Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Programa: [PROGRAMA](PROGRAMA.md). Repositorio canónico `~/vexa`; NO ejecutar en la copia de Escritorio. Las fuentes privadas permanecen locales.
 
+## Modo vigente: propuestas paralelas, promoción serial
+El usuario pidió agentes/loop graph y fijó UN MES. PLAN.md contiene el mapa de propietarios/entregables. Módulos independientes pueden construirse como propuestas aisladas antes de que sus dependencias se acepten; no se cuentan como progreso aceptado. Antes de adoptar en candidato oficial: examen externo diseñado/revisado/congelado desde contrato, allowlist explícita, pruebas/revisión/materialización limpia. Propuestas no modifican raíz/control-plane ni DB compartida.
+
+El supervisor serial fue detenido en checkpoint al acabar autoría de gate F01-02; STOP propio conservado durante transición, no es un modelo todavía construyendo. Recibos del equipo en `private/parallel-batch-1.json` y `.runtime/team-*/`. Antes de reanudar, recoger revisiones, reconciliar llamadas y retirar únicamente STOP propio comprobado. No lanzar otro escritor del baseline por ver un PID parado.
+
 ## Ciclo real
 1. Seleccionar una tarea elegible del grafo, respetando dependencias aceptadas.
 2. Autor separado escribe su examen externo faltante; ejecutarlo sobre baseline y someterlo a revisión independiente.

@@ -1,5 +1,13 @@
 # Hallazgos
 
+## Construcción efectiva y paralelismo — 19-sep-2026
+- Usuario exige producto completo connection-ready; confirmó UN MES después de mencionar una semana. Datos reales se aportarán después; no bloquear módulos independientes por su ausencia.
+- Primer gate Auth rechazado por oráculos insuficientes; no hubo aceptación de producto. Nueva propuesta conserva probe Auth local positivo/mutante y callbacks/selección/revocación: requiere revisión antes de adoptar. STOP en checkpoint conservó trabajo, no se mató el autor.
+- Secuencializar toda preparación de módulos detrás de Auth estaba limitando avance. Nueva estrategia: propuestas disjuntas en paralelo y promoción serial por DAG/gates; no confundir propuesta escrita con tarea aceptada.
+- Recuperación antes de prepare tenía default de estado inconsistente: arreglado, rojo observado y108tests verdes; revisión independiente22tests OK. No se inventó fila de producto.
+- Usuario confirmó notificaciones exclusivamente para usuarios VEXA. Referencias Likida/Atiende muestran permisos/anti-ruido/outbox/plantillas, pero no se copia su código ni se toma aceptación del proveedor como prueba de entrega.
+- PLAN.md anterior seguía describiendo investigación cerrada: se reemplazó por plan de construcción vigente; historial anterior queda en Git.
+
 ## Construcción guiada — corte nuevo 19-sep-2026
 - La comparación útil con Likida es por requisitos/efectos/oráculos/reanudación, no por páginas. Se especificaron 55 encargos y el programa hasta release; no se construyó el SaaS.
 - Las 54 pruebas ausentes del corte inicial pasaron a 47. Escribir/revisar el gate justo antes del incremento permite construir sin entregar todo el examen futuro al worker ni falsificar PASS.

@@ -132,6 +132,14 @@ else:
   import json
   state=json.loads((self.fx.root/'.runtime/autoloop-state.json').read_text())
   self.assertEqual(state['attempts']['A'],0);self.assertEqual(len(state['budget_renewals']),1)
+ def test_gate_rejection_before_prepare_can_be_explicitly_retried(self):
+  import json
+  rt=self.fx.root/'.runtime';rt.mkdir();(rt/'STOP').write_text('operator pause')
+  (rt/'autoloop-state.json').write_text(json.dumps({'status':'stopped','attempts':{'A':1},'blocked':{'A':'gate review rejected'}}))
+  self.loop.authorize_retry('A','Gate critique reviewed; no product candidate existed')
+  state=json.loads((rt/'autoloop-state.json').read_text())
+  self.assertEqual(state['attempts']['A'],0);self.assertNotIn('A',state['blocked'])
+  self.assertFalse((rt/'state.json').exists());self.assertTrue((rt/'STOP').exists())
  def test_stale_running_receipt_requires_review(self):
   rt=self.fx.root/'.runtime';rt.mkdir();(rt/'autoloop-state.json').write_text('{"status":"running"}')
   with self.assertRaisesRegex(a.StopLoop,'operator_review'):self.loop.run()

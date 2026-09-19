@@ -252,7 +252,7 @@ Devuelve archivos, comandos/salidas y bloqueos reales, sin afirmar completado po
             except BlockingIOError:raise StopLoop('another_controller_running')
             if not (self.rt/'STOP').exists():raise StopLoop('STOP_required_for_budget_renewal')
             self.root_snapshot()
-            if self.states().get(tid,{}).get('status')!='pending':raise StopLoop('runner_recovery_to_pending_required_first')
+            if self.states().get(tid,{}).get('status','pending')!='pending':raise StopLoop('runner_recovery_to_pending_required_first')
             old=json.loads(self.file.read_text())
             if tid not in old.get('attempts',{}):raise StopLoop('no_previous_attempt')
             r.atomic_json(self.rt/f'auto-before-renewal-{time.time_ns()}.json',old)

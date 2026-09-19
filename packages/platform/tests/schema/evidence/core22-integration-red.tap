@@ -1,0 +1,95 @@
+▶ content-bound approval on PostgreSQL17
+  ✖ snapshot missing/cross-tenant parent is FK 23503; published is 23514 and RBAC 42501 (88.299916ms)
+  ✖ service-style SQL transitions preserve approval with CAS version and transition reason (102.117625ms)
+  ✖ operational updates cannot smuggle definitions or forge approval, skip CAS counter, or edit terminal reason (1806.201792ms)
+✖ content-bound approval on PostgreSQL17 (7012.361334ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7100.625375
+
+✖ failing tests:
+
+test at packages/platform/tests/schema/integration-compat.test.mjs:38:10
+✖ snapshot missing/cross-tenant parent is FK 23503; published is 23514 and RBAC 42501 (88.299916ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  snapshot unavailable
+  CONTEXT:  PL/pgSQL function public.vexa_snapshot_guard() line 16 at RAISE
+  SQL statement "insert into components(id,tenant_id,snapshot_id,amount_minor,currency,exponent) values('00000000-0000-4000-8000-000000000040','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','00000000-0000-4000-8000-000000000098',100,'USD',2)"
+  PL/pgSQL function inline_code_block line 1 at SQL statement
+  
+  
+  3 !== 0
+  
+      at docker (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/integration-compat.test.mjs:9:121)
+      at sql (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/integration-compat.test.mjs:15:15)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/integration-compat.test.mjs:40:3)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at TestContext.test (node:internal/test_runner/test:399:20)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/integration-compat.test.mjs:38:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at packages/platform/tests/schema/integration-compat.test.mjs:55:10
+✖ service-style SQL transitions preserve approval with CAS version and transition reason (102.117625ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  approved definition immutable without reapproval
+  CONTEXT:  PL/pgSQL function public.vexa_intervention_transition() line 18 at RAISE
+  
+  
+  3 !== 0
+  
+      at docker (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/integration-compat.test.mjs:9:121)
+      at sql (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/integration-compat.test.mjs:15:15)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/integration-compat.test.mjs:56:3)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at TestContext.test (node:internal/test_runner/test:399:20)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/integration-compat.test.mjs:55:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at packages/platform/tests/schema/integration-compat.test.mjs:66:10
+✖ operational updates cannot smuggle definitions or forge approval, skip CAS counter, or edit terminal reason (1806.201792ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  approved definition immutable without reapproval
+  CONTEXT:  PL/pgSQL function public.vexa_intervention_transition() line 18 at RAISE
+  
+  
+  3 !== 0
+  
+      at docker (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/integration-compat.test.mjs:9:121)
+      at sql (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/integration-compat.test.mjs:15:15)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/integration-compat.test.mjs:70:3)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at TestContext.test (node:internal/test_runner/test:399:20)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/integration-compat.test.mjs:66:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

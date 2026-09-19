@@ -1,0 +1,147 @@
+▶ content-bound approval on PostgreSQL17
+  ✖ reviewer bypass: swapped draft recommendation plus hypothesis cannot activate (74.213541ms)
+  ✖ all intervention definition fields bound, including version and receipt (63.90375ms)
+  ✖ recommendation content frozen, new draft replacement requires owner reapproval (51.393417ms)
+  ✖ measurement definition frozen; result remains operational with assignment and status checks (50.98125ms)
+  ✖ plan insertion/deletion, mutable baseline, direct active and forged receipt denied (46.920084ms)
+✖ content-bound approval on PostgreSQL17 (2685.840667ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 0
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2740.225
+
+✖ failing tests:
+
+test at ../../../Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:37:10
+✖ reviewer bypass: swapped draft recommendation plus hypothesis cannot activate (74.213541ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  UNEXPECTED_ALLOWED
+  CONTEXT:  PL/pgSQL function inline_code_block line 1 at RAISE
+  
+  
+  3 !== 0
+  
+      at docker (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:9:121)
+      at sql (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:15:15)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:38:3)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at TestContext.test (node:internal/test_runner/test:399:20)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:37:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:41:10
+✖ all intervention definition fields bound, including version and receipt (63.90375ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  UNEXPECTED_ALLOWED
+  CONTEXT:  PL/pgSQL function inline_code_block line 1 at RAISE
+  
+  
+  3 !== 0
+  
+      at docker (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:9:121)
+      at sql (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:15:15)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:44:4)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at TestContext.test (node:internal/test_runner/test:399:20)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:41:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:48:10
+✖ recommendation content frozen, new draft replacement requires owner reapproval (51.393417ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  UNEXPECTED_ALLOWED
+  CONTEXT:  PL/pgSQL function inline_code_block line 1 at RAISE
+  
+  
+  3 !== 0
+  
+      at docker (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:9:121)
+      at sql (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:15:15)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:50:4)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at TestContext.test (node:internal/test_runner/test:399:20)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:48:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:58:10
+✖ measurement definition frozen; result remains operational with assignment and status checks (50.98125ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  UNEXPECTED_ALLOWED
+  CONTEXT:  PL/pgSQL function inline_code_block line 1 at RAISE
+  
+  
+  3 !== 0
+  
+      at docker (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:9:121)
+      at sql (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:15:15)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:60:4)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at TestContext.test (node:internal/test_runner/test:399:20)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:58:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:72:10
+✖ plan insertion/deletion, mutable baseline, direct active and forged receipt denied (46.920084ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  UNEXPECTED_ALLOWED
+  CONTEXT:  PL/pgSQL function inline_code_block line 1 at RAISE
+  
+  
+  3 !== 0
+  
+      at docker (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:9:121)
+      at sql (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:15:15)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:73:3)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at TestContext.test (node:internal/test_runner/test:399:20)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/renewed-schema-approval-1789837609445822000/schema/packages/platform/tests/schema/approval-content.test.mjs:72:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

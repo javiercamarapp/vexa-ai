@@ -1,0 +1,6 @@
+{
+  "supabase/migrations/0004_evidence_money.sql": "53a3cf7fe5bffa9ec9d7bee1717fdf15f70cf44b5a442313bc71c6764e114799",
+  "packages/platform/tests/schema/approval-content.test.mjs": "3c08053650cebec02cf7140b337a2fd9000915d3f3aedf98ecf7d7c966c74784",
+  "packages/platform/tests/schema/review-regressions.test.mjs": "2d0941a485cb6f5894a4d7f1c7d097b0dfc2a8f306ef609e9ccb8e3bb7defbfe",
+  "packages/platform/IMPLEMENTATION-SCHEMA.md": "c711197223ccc2c7aad64ccfbcef4d958c4d6896f60e1e3af9104171edbed46a"
+}

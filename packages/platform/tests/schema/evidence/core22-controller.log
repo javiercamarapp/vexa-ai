@@ -1,0 +1,209 @@
+
+> vexa@0.0.1 test:controller
+> python3 -m unittest discover -s tests/controller -v
+
+test_api_key_login_never_launches_a_model (test_autoloop.FlowTests) ... Preparing worktree (detached HEAD a5a3fe6)
+ok
+test_budget_exhaustion_before_review_never_accepts (test_autoloop.FlowTests) ... Preparing worktree (detached HEAD 2f92f24)
+ok
+test_budget_renewal_requires_stop_and_explicit_review (test_autoloop.FlowTests) ... Preparing worktree (detached HEAD f34e6df)
+Preparing worktree (detached HEAD f34e6df)
+ok
+test_existing_runner_lock_blocks_gate_authoring (test_autoloop.FlowTests) ... ok
+test_gate_failure_gets_at_most_two_attempts (test_autoloop.FlowTests) ... Preparing worktree (detached HEAD 6892e87)
+Preparing worktree (detached HEAD 6892e87)
+ok
+test_gate_rejection_before_prepare_can_be_explicitly_retried (test_autoloop.FlowTests) ... ok
+test_previous_accepted_contract_cannot_regress (test_autoloop.FlowTests) ... Preparing worktree (detached HEAD 67b3227)
+Preparing worktree (detached HEAD 67b3227)
+ok
+test_real_pipeline_accepts_only_reviewed_valid_candidate (test_autoloop.FlowTests) ... Preparing worktree (detached HEAD 6fa6d68)
+Preparing worktree (detached HEAD c7aad8c)
+ok
+test_relaunch_does_not_renew_exhausted_task_budget (test_autoloop.FlowTests) ... Preparing worktree (detached HEAD 12b2de7)
+Preparing worktree (detached HEAD 12b2de7)
+ok
+test_separate_author_review_and_worker_for_missing_gate (test_autoloop.FlowTests) ... Preparing worktree (detached HEAD e14bde6)
+Preparing worktree (detached HEAD 8ab4cdb)
+Preparing worktree (detached HEAD 00cb05d)
+ok
+test_stale_running_receipt_requires_review (test_autoloop.FlowTests) ... ok
+test_two_review_rejections_never_promote_or_retry_forever (test_autoloop.FlowTests) ... Preparing worktree (detached HEAD 44fc06e)
+Preparing worktree (detached HEAD 44fc06e)
+ok
+test_user_stop_is_not_removed (test_autoloop.FlowTests) ... ok
+test_worker_cannot_change_its_own_gate (test_autoloop.FlowTests) ... Preparing worktree (detached HEAD a14f698)
+ok
+test_blocked_branch_does_not_stop_independent_local_work (test_autoloop.SchedulingTests) ... ok
+test_dependency_must_be_accepted (test_autoloop.SchedulingTests) ... ok
+test_excluded_external_task_is_never_selected (test_autoloop.SchedulingTests) ... ok
+test_exhausted_task_is_not_reset (test_autoloop.SchedulingTests) ... ok
+test_p2_blocks_even_if_reviewer_says_approved (test_autoloop.SchedulingTests) ... ok
+test_prepared_or_running_is_never_restarted (test_autoloop.SchedulingTests) ... ok
+test_review_requires_correct_task_stage_and_boolean (test_autoloop.SchedulingTests) ... ok
+test_unknown_review_shape_fails_closed (test_autoloop.SchedulingTests) ... ok
+test_blank_gate_not_ready (test_guide.GuideTests) ... ok
+test_cycles_rejected (test_guide.GuideTests) ... ok
+test_duplicate_card_rejected (test_guide.GuideTests) ... ok
+test_existing_gate_is_not_product_pass (test_guide.GuideTests) ... ok
+test_missing_card_rejected (test_guide.GuideTests) ... ok
+test_missing_gate_is_not_ready_but_complete_spec (test_guide.GuideTests) ... ok
+test_missing_input_rejected (test_guide.GuideTests) ... ok
+test_oracle_omitted_rejected (test_guide.GuideTests) ... ok
+test_packet_contains_specific_oracles_and_blocker (test_guide.GuideTests) ... ok
+test_traversal_rejected (test_guide.GuideTests) ... ok
+test_unwritable_output_rejected (test_guide.GuideTests) ... ok
+test_worker_cannot_write_control_even_if_allowlisted (test_guide.GuideTests) ... ok
+test_accept_does_not_execute_post_merge_hook (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD 03bca5f)
+Preparing worktree (detached HEAD ef12690)
+ok
+test_accept_recheck_mutation_blocks (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD b411606)
+Preparing worktree (detached HEAD 0ebedc2)
+ok
+test_accept_rechecks_frozen_control_even_with_clean_tree (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD b45a061)
+ok
+test_accept_rejects_ignored_file_added_after_verify (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD 2a362a3)
+ok
+test_approval_attestation_required_and_saved (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD 1f670ad)
+ok
+test_control_gate_graph_and_prompt_changes_block (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD 8e247bb)
+Preparing worktree (detached HEAD 0af58ce)
+Preparing worktree (detached HEAD 0af58ce)
+ok
+test_dependency_receipt_changes_block (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD e0d8d93)
+ok
+test_forbidden_diff_and_symlink_block (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD 68bf3c0)
+Preparing worktree (detached HEAD c456416)
+Preparing worktree (detached HEAD c456416)
+ok
+test_gate_failure_preserves_attempts_and_ceiling (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD ec5eac6)
+Preparing worktree (detached HEAD ec5eac6)
+ok
+test_gate_mutation_and_commit_hook_mutation_block (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD efde94f)
+Preparing worktree (detached HEAD 6c1b8dd)
+Preparing worktree (detached HEAD 6352b8b)
+ok
+test_gate_timeout_budget_and_environment (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD 8ea624b)
+ok
+test_ignored_input_cannot_pass_without_being_committed (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD f7c8924)
+ok
+test_no_patch_verified_without_commit (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD a84fb7f)
+Preparing worktree (detached HEAD a84fb7f)
+ok
+test_operator_commit_blocks (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD 10fa9ff)
+ok
+test_prepare_budget_expired_does_not_create_candidate (test_interactive.InteractiveTests) ... ok
+test_prepare_edit_verify_accept_without_codex (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD 22b7b0c)
+Preparing worktree (detached HEAD 6f269c3)
+ok
+test_prepare_missing_gate (test_interactive.InteractiveTests) ... ok
+test_prepare_requires_accepted_dependencies (test_interactive.InteractiveTests) ... ok
+test_prepare_requires_clean_controller (test_interactive.InteractiveTests) ... ok
+test_prepare_respects_lock (test_interactive.InteractiveTests) ... ok
+test_prepare_twice_preserves_candidate_and_attempt (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD d5ad51d)
+ok
+test_private_and_environment_not_copied (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD 784cd93)
+ok
+test_run_cannot_use_approval_note_as_automatic_permission (test_interactive.InteractiveTests) ... ok
+test_scheduler_skips_live_candidates (test_interactive.InteractiveTests) ... ok
+test_verify_budget_expired_does_not_commit (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD 8277604)
+ok
+test_verify_only_prepared (test_interactive.InteractiveTests) ... Preparing worktree (detached HEAD 8277604)
+ok
+test_dirty_source_is_never_published (test_publisher.PublisherTests) ... ok
+test_diverged_remote_is_not_force_pushed (test_publisher.PublisherTests) ... ok
+test_main_ahead_of_reviewed_build_is_never_published (test_publisher.PublisherTests) ... ok
+test_private_history_is_blocked_even_if_deleted_or_export_ignored (test_publisher.PublisherTests) ... ok
+test_push_pins_reviewed_sha_even_if_main_changes_after_check (test_publisher.PublisherTests) ... ok
+test_push_verifies_remote_and_repeat_creates_no_commits (test_publisher.PublisherTests) ... ok
+test_cannot_reopen_verified_or_accepted_as_if_failed (test_recovery.RecoveryTests) ... Preparing worktree (detached HEAD ec55bdc)
+ok
+test_dependency_receipts_are_fixed_size_and_tamper_sensitive (test_recovery.RecoveryTests) ... ok
+test_new_attempt_keeps_recovery_history (test_recovery.RecoveryTests) ... Preparing worktree (detached HEAD 0529c04)
+Preparing worktree (detached HEAD 0529c04)
+Preparing worktree (detached HEAD 0529c04)
+ok
+test_recovery_does_not_touch_candidate_or_baseline (test_recovery.RecoveryTests) ... Preparing worktree (detached HEAD 0cc1ed6)
+Preparing worktree (detached HEAD 0cc1ed6)
+ok
+test_recovery_requires_stop_and_reason_preserves_history (test_recovery.RecoveryTests) ... Preparing worktree (detached HEAD 55a1af5)
+Preparing worktree (detached HEAD 55a1af5)
+ok
+test_auto_accept_also_requires_clean_materialization (test_review_regressions.ReviewRegressions) ... Preparing worktree (detached HEAD 176600d)
+Preparing worktree (detached HEAD 2a49f73)
+ok
+test_failed_recheck_log_survives_later_success (test_review_regressions.ReviewRegressions) ... Preparing worktree (detached HEAD ad8d521)
+Preparing worktree (detached HEAD f80725c)
+Preparing worktree (detached HEAD f80725c)
+ok
+test_gate_cannot_silently_mutate_mode_in_worker_path (test_review_regressions.ReviewRegressions) ... Preparing worktree (detached HEAD e1b5034)
+ok
+test_ignored_artifact_added_after_worker_verification_blocks_accept (test_review_regressions.ReviewRegressions) ... Preparing worktree (detached HEAD fbbf492)
+ok
+test_interactive_nonportable_permissions_cannot_be_accepted (test_review_regressions.ReviewRegressions) ... Preparing worktree (detached HEAD 8442849)
+Preparing worktree (detached HEAD 99a5b16)
+ok
+test_recovery_never_overwrites_prior_verification_log (test_review_regressions.ReviewRegressions) ... Preparing worktree (detached HEAD afedd34)
+Preparing worktree (detached HEAD afedd34)
+ok
+test_recovery_preserves_all_worker_logs_across_cycles (test_review_regressions.ReviewRegressions) ... Preparing worktree (detached HEAD 262a39f)
+Preparing worktree (detached HEAD 262a39f)
+Preparing worktree (detached HEAD 262a39f)
+ok
+test_reject_never_reopens_prepared_or_accepted (test_review_regressions.ReviewRegressions) ... Preparing worktree (detached HEAD 2db4416)
+Preparing worktree (detached HEAD 623ead1)
+ok
+test_reject_requires_stop_and_explicit_note (test_review_regressions.ReviewRegressions) ... Preparing worktree (detached HEAD 142b0e0)
+ok
+test_rejected_verified_candidate_can_be_corrected_without_state_forgery (test_review_regressions.ReviewRegressions) ... Preparing worktree (detached HEAD de1f7a2)
+Preparing worktree (detached HEAD de1f7a2)
+Preparing worktree (detached HEAD b1d3593)
+ok
+test_unchanged_baseline_mode_drift_blocks_accept (test_review_regressions.ReviewRegressions) ... Preparing worktree (detached HEAD 3018072)
+Preparing worktree (detached HEAD ff68193)
+ok
+test_worker_accepts_only_content_that_also_passes_on_baseline (test_review_regressions.ReviewRegressions) ... Preparing worktree (detached HEAD 7a234f9)
+Preparing worktree (detached HEAD c76c479)
+ok
+test_worker_cannot_promote_uncommitted_ignored_artifact (test_review_regressions.ReviewRegressions) ... Preparing worktree (detached HEAD 7e303a8)
+ok
+test_worker_nonportable_permissions_cannot_be_accepted (test_review_regressions.ReviewRegressions) ... Preparing worktree (detached HEAD f8ba0ee)
+Preparing worktree (detached HEAD e4542fa)
+ok
+test_accept_gate_obeys_requested_budget (test_runner.ControllerIntegrationTests) ... Preparing worktree (detached HEAD 1710443)
+Preparing worktree (detached HEAD ac93a7c)
+ok
+test_accept_rechecks_current_candidate (test_runner.ControllerIntegrationTests) ... Preparing worktree (detached HEAD bc00bee)
+ok
+test_authentication_is_bounded (test_runner.ControllerIntegrationTests) ... Preparing worktree (detached HEAD 80dcc19)
+ok
+test_failed_worker_not_accepted_and_retry_ceiling (test_runner.ControllerIntegrationTests) ... Preparing worktree (detached HEAD a904363)
+Preparing worktree (detached HEAD a904363)
+ok
+test_protected_change_blocks_and_preserves_baseline (test_runner.ControllerIntegrationTests) ... Preparing worktree (detached HEAD 29d4cbf)
+ok
+test_status_does_not_write_runtime (test_runner.ControllerIntegrationTests) ... ok
+test_verified_not_merged_until_explicit_accept (test_runner.ControllerIntegrationTests) ... Preparing worktree (detached HEAD e083f37)
+Preparing worktree (detached HEAD c459bc0)
+ok
+test_absolute_and_traversal_paths_rejected (test_runner.ControllerTests) ... ok
+test_api_credentials_not_inherited (test_runner.ControllerTests) ... ok
+test_atomic_state_roundtrip (test_runner.ControllerTests) ... ok
+test_attempt_ceiling_and_blocked_stop_retries (test_runner.ControllerTests) ... ok
+test_cycle_rejected (test_runner.ControllerTests) ... ok
+test_duplicate_id_rejected (test_runner.ControllerTests) ... ok
+test_exact_paths_not_prefix_collision (test_runner.ControllerTests) ... ok
+test_failed_dependency_does_not_block_independent_task (test_runner.ControllerTests) ... ok
+test_gate_cannot_escape_root (test_runner.ControllerTests) ... ok
+test_missing_dependency_rejected (test_runner.ControllerTests) ... ok
+test_missing_gate_fails_closed (test_runner.ControllerTests) ... ok
+test_process_failure_propagates (test_runner.ControllerTests) ... ok
+test_real_graph_is_acyclic (test_runner.ControllerTests) ... ok
+test_timeout_kills_descendants_even_if_leader_exits (test_runner.ControllerTests) ... ok
+test_timeout_returns_non_success (test_runner.ControllerTests) ... ok
+test_verified_dependency_is_not_accepted (test_runner.ControllerTests) ... ok
+
+----------------------------------------------------------------------
+Ran 108 tests in 144.242s
+
+OK

@@ -1,0 +1,33 @@
+▶ content-bound approval on PostgreSQL17
+  ✔ reviewer bypass: swapped draft recommendation plus hypothesis cannot activate (47.888625ms)
+  ✔ all intervention definition fields bound, including version and receipt (782.315166ms)
+  ✔ recommendation content frozen, new draft replacement requires owner reapproval (537.302458ms)
+  ✔ measurement definition frozen; result remains operational with assignment and status checks (547.394292ms)
+  ✔ plan insertion/deletion, mutable baseline, direct active and forged receipt denied (44.544917ms)
+  ✔ draft editing/retention stays legal; revoked and unassigned operators cannot record results (42.511833ms)
+  ✔ approval serializes recommendation edits and plan updates/inserts in both orders (1450.16025ms)
+✔ content-bound approval on PostgreSQL17 (6285.001417ms)
+✔ missing configuration is actionable 503; missing row is 404 (0.778125ms)
+✔ transaction binds verified identity, read-only mode, no reusable capability (0.453708ms)
+✔ fresh database membership determines role, rollback and release on forbidden action (0.115209ms)
+✔ database failure never becomes an empty list and never exposes driver secrets (0.495333ms)
+✔ RBAC contractual matrix (0.846ms)
+▶ independent review regressions on PostgreSQL17
+  ✔ P1 published components and attributions survive retain; draft retention stays permitted (44.748916ms)
+  ✔ P1 execute requires prior approval (42.274583ms)
+  ✔ P1 operator INSERT active is rejected (40.3005ms)
+  ✔ invisible snapshot fails closed for both child deletes; retain never updates snapshot (42.65125ms)
+  ✔ P2 attribution component must match tenant AND snapshot (54.642791ms)
+  ✔ approval roles, legal execution, assignment and terminal states (73.780458ms)
+  ✔ concurrent publication versus mutation and retention, both orders (28639.924625ms)
+✔ independent review regressions on PostgreSQL17 (31714.684792ms)
+PASS SYNTHETIC: 36 tables; migrations; dual-member immutable tenant; fresh revocation; cross FK; money/counters; restricted backend. Storage/Auth HTTP NOT tested.
+✔ SYNTHETIC PostgreSQL17: migrations, constraints, RLS, backend (3128.101584ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 31776.918625

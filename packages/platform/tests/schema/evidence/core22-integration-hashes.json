@@ -1,0 +1,13 @@
+{
+  "baseline_sha": "9bffa3cb26fb71319a1695a71dd303604f9eb17a",
+  "constraint_lines_preserved": 197,
+  "sha256": {
+    "supabase/migrations/0004_evidence_money.sql": "b5598eafe59ccbf1d71c88ae42a207e41c120e81d20e761b82d13b0afc7161c3",
+    "packages/platform/tests/schema/review-regressions.test.mjs": "40e177b28c0aa2f7b82f028b0f665d685189729a9c6dca8e446ed5e6bb61ddf6",
+    "packages/platform/tests/schema/integration-compat.test.mjs": "60a7001472bb9d37c3702c8c973d224e03bf4e98c15b24e74a4a1a147879d0f5",
+    "packages/platform/tests/schema/db.test.ts": "fcf6ba2fd79d90f4721f3d762eb4cfee5c412ca6b99a55d558f3d20254c4da5b",
+    "packages/platform/tests/schema/approval-content.test.mjs": "0b5c3543479c32396e9c2324362de1927a9fd7a9ad21b0b9aafd70f9ee6d42b4",
+    "packages/platform/tests/schema/sql.test.mjs": "d44107d91c1111a2e45f733a6f89d1f74b1ba27a069e685bc0f3830948ebb20f",
+    "packages/platform/tests/schema/service-cas.test.mjs": "20494866472563652478cf943351744170a5273a317ddd9f1390ef0488f8363a"
+  }
+}

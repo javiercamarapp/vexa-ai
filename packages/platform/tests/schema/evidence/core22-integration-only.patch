@@ -1,0 +1,48 @@
+--- before/0004_evidence_money.sql
++++ after/0004_evidence_money.sql
+@@ -594,12 +594,12 @@
+  else
+    if tg_op<>'INSERT' then
+      select s.status='published' into published from public.metric_snapshots s where s.tenant_id=old.tenant_id and s.id=old.snapshot_id for update;
+-     if not found or published is null then raise exception 'snapshot unavailable' using errcode='23514'; end if;
++     if not found or published is null then raise exception 'snapshot unavailable' using errcode='23503'; end if;
+      if published then raise exception 'published component immutable' using errcode='23514'; end if;
+    end if;
+    if tg_op<>'DELETE' then
+      select s.status='published' into published from public.metric_snapshots s where s.tenant_id=new.tenant_id and s.id=new.snapshot_id for update;
+-     if not found or published is null then raise exception 'snapshot unavailable' using errcode='23514'; end if;
++     if not found or published is null then raise exception 'snapshot unavailable' using errcode='23503'; end if;
+      if published then raise exception 'published component immutable' using errcode='23514'; end if;
+    end if;
+  end if;
+@@ -779,7 +779,7 @@
+      raise exception 'approval requires published baseline' using errcode='23514';
+    end if;
+  end loop;
+- return jsonb_build_object('intervention',to_jsonb(i)-array['status','updated_at','approval_content'],
++ return jsonb_build_object('intervention',to_jsonb(i)-array['status','version','reason','updated_at','approval_content'],
+    'recommendation',to_jsonb(r)-array['updated_at'],'plans',plans);
+ end $$;
+ revoke all on function public.vexa_approval_content(public.interventions) from public,anon,authenticated;
+@@ -797,12 +797,20 @@
+    if new.approval_content is distinct from old.approval_content then
+      raise exception 'approval receipt is database owned' using errcode='23514';
+    end if;
++   -- CAS bookkeeping is not approved content. If touched after draft it must
++   -- accompany a state transition and advance exactly one; content checks below
++   -- still apply independently of the counter. Legacy status-only writes remain
++   -- compatible; the service enforces expected_version and always increments.
++   if old.status<>'draft' and (new.version,new.reason) is distinct from (old.version,old.reason) and
++      (new.status is not distinct from old.status or new.version<>old.version+1) then
++     raise exception 'operational change requires transition and next version' using errcode='23514';
++   end if;
+    if action='approve' and public.vexa_member(new.tenant_id,array['owner']) and new.status='approved' then
+      update public.recommendations set approval_bound=true where tenant_id=new.tenant_id and id=new.recommendation_id;
+      if not found then raise exception 'recommendation unavailable' using errcode='23514'; end if;
+      new.approval_content := public.vexa_approval_content(new);
+    elsif old.status<>'draft' then
+-     if (to_jsonb(new)-array['status','updated_at']) is distinct from (to_jsonb(old)-array['status','updated_at']) then
++     if (to_jsonb(new)-array['status','version','reason','updated_at']) is distinct from (to_jsonb(old)-array['status','version','reason','updated_at']) then
+        raise exception 'approved definition immutable without reapproval' using errcode='23514';
+      end if;
+      if action='execute' and (old.approval_content is null or old.approval_content is distinct from public.vexa_approval_content(new)) then

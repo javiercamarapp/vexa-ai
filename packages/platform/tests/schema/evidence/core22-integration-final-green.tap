@@ -1,0 +1,38 @@
+▶ content-bound approval on PostgreSQL17
+  ✔ reviewer bypass: swapped draft recommendation plus hypothesis cannot activate (330.949958ms)
+  ✔ all intervention definition fields bound, including skipped CAS counter and receipt (4531.426583ms)
+  ✔ recommendation content frozen, new draft replacement requires owner reapproval (2116.862375ms)
+  ✔ measurement definition frozen; result remains operational with assignment and status checks (3012.918208ms)
+  ✔ plan insertion/deletion, mutable baseline, direct active and forged receipt denied (329.274334ms)
+  ✔ draft editing/retention stays legal; revoked and unassigned operators cannot record results (305.537042ms)
+  ✔ approval serializes recommendation edits and plan updates/inserts in both orders (7966.157ms)
+✔ content-bound approval on PostgreSQL17 (40798.287333ms)
+✔ missing configuration is actionable 503; missing row is 404 (0.942708ms)
+✔ transaction binds verified identity, read-only mode, no reusable capability (0.540958ms)
+✔ fresh database membership determines role, rollback and release on forbidden action (0.1445ms)
+✔ database failure never becomes an empty list and never exposes driver secrets (0.13275ms)
+✔ RBAC contractual matrix (3.061042ms)
+▶ content-bound approval on PostgreSQL17
+  ✔ snapshot missing/cross-tenant parent is FK 23503; published is 23514 and RBAC 42501 (214.676042ms)
+  ✔ service-style SQL transitions preserve approval with CAS version and transition reason (298.808917ms)
+  ✔ operational updates cannot smuggle definitions or forge approval, skip CAS counter, or edit terminal reason (6031.086292ms)
+✔ content-bound approval on PostgreSQL17 (29175.535917ms)
+▶ independent review regressions on PostgreSQL17
+  ✔ P1 published components and attributions survive retain; draft retention stays permitted (325.470625ms)
+  ✔ P1 execute requires prior approval (387.630417ms)
+  ✔ P1 operator INSERT active is rejected (340.123042ms)
+  ✔ invisible snapshot fails closed for both child deletes; retain never updates snapshot (665.821125ms)
+  ✔ P2 attribution component must match tenant AND snapshot (590.057666ms)
+  ✔ approval roles, legal execution, assignment and terminal states (615.6715ms)
+  ✔ concurrent publication versus mutation and retention, both orders (13125.323666ms)
+✔ independent review regressions on PostgreSQL17 (38301.222166ms)
+PASS SYNTHETIC: 36 tables; migrations; dual-member immutable tenant; fresh revocation; cross FK; money/counters; restricted backend. Storage/Auth HTTP NOT tested.
+✔ SYNTHETIC PostgreSQL17: migrations, constraints, RLS, backend (26009.624917ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 41209.453834

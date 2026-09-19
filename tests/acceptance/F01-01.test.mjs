@@ -6,7 +6,7 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import os from 'node:os';
 import {candidate} from './foundation.mjs';
-import {copyBuildInputs} from './scaffold-copy.mjs';
+import {copyBuildInputs,buildEnvironment} from './scaffold-copy.mjs';
 test('real Next/TypeScript workspace, frozen lock and successful local toolchain', {timeout:240000},()=>{
  const pkg=JSON.parse(fs.readFileSync(path.join(candidate,'apps/web/package.json'),'utf8'));
  assert.ok(pkg.dependencies?.next,'Next dependency required');
@@ -17,12 +17,13 @@ test('real Next/TypeScript workspace, frozen lock and successful local toolchain
  const build=fs.mkdtempSync(path.join(os.tmpdir(),'vexa-scaffold-'));
  try {
   copyBuildInputs(candidate,build);
-  const install=spawnSync('npm',['ci','--offline','--ignore-scripts','--no-audit','--no-fund'],{cwd:build,encoding:'utf8',timeout:45000,maxBuffer:2*1024*1024});
+  const env=buildEnvironment(process.env,build);
+  const install=spawnSync('npm',['ci','--offline','--ignore-scripts','--no-audit','--no-fund'],{cwd:build,env,encoding:'utf8',timeout:45000,maxBuffer:2*1024*1024});
   assert.ifError(install.error);assert.equal(install.status,0,`Offline cache/dependencies not ready: ${install.stderr}`);
   for(const name of ['lint','typecheck','build']){
    assert.ok(pkg.scripts?.[name],`${name} missing`);
    assert.ok(!/^\s*(echo|true|exit\s+0)\b/.test(pkg.scripts[name]),`${name} is a no-op`);
-   const result=spawnSync('npm',['run',name,'--workspace','apps/web'],{cwd:build,encoding:'utf8',timeout:55000,maxBuffer:2*1024*1024});
+   const result=spawnSync('npm',['run',name,'--workspace','apps/web'],{cwd:build,env,encoding:'utf8',timeout:55000,maxBuffer:2*1024*1024});
    assert.ifError(result.error);
    assert.equal(result.status,0,`${name}: ${result.stderr}\n${result.stdout}`);
   }

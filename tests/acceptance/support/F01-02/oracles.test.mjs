@@ -1,7 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {redirectOracle,revocationOracle} from './oracles.mjs';
+import {redirectOracle,revocationOracle,readOnlyNavigation} from './oracles.mjs';
 const origin='http://127.0.0.1:3640';
+test('observing selection after forbidden POST never replays the browser form',async()=>{
+  let active='authorized-A2';const requests=[];
+  // Browser behavior reproduced against real app in the diagnostic: reload on
+  // the POST result replays original A, not the body changed by route.fetch.
+  const page={reload:async()=>{requests.push('POST A');active='authorized-A';},goto:async url=>requests.push(`GET ${url}`)};
+  await readOnlyNavigation(page,origin);
+  assert.equal(active,'authorized-A2','observer changed active organization');
+  assert.deepEqual(requests,[`GET ${origin}`]);
+});
 test('safe fallback accepts normalized external backslash destination',()=>{
   redirectOracle('/\\example.invalid/escape','/',origin);
 });

@@ -5,7 +5,7 @@ import path from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {local,sql,startApp,login,origin,denied,tamper} from './support/F01-02/harness.mjs';
 
-import {revocationOracle} from './support/F01-02/oracles.mjs';
+import {revocationOracle,readOnlyNavigation} from './support/F01-02/oracles.mjs';
 const candidate=process.env.VEXA_CANDIDATE;
 test('F01-02: real SSR callback, membership, invalid sessions, revocation and logout', {timeout:290000},async t=>{
   assert.ok(candidate,'SETUP: set VEXA_CANDIDATE explicitly');
@@ -78,7 +78,7 @@ test('F01-02: real SSR callback, membership, invalid sessions, revocation and lo
       assert.doesNotMatch(attackBody,/csrf|invalid.*(?:nonce|action)|origin.*mismatch/i,'SETUP: CSRF failure is not membership enforcement');
       assert.match(attackBody,/forbidden|membership|organization|not.found|organizaci[oó]n|permiso/i,'ORG_REASON: rejection must identify authorization');
       assert.ok(!attackBody.includes(canary),'TENANT_LEAK: B data in rejection');
-      await page.reload();assert.equal(await selector().inputValue(),a2,'ORG_STATE: forbidden selection changed active organization');await noB();
+      await readOnlyNavigation(page,origin);assert.equal(await selector().inputValue(),a2,'ORG_STATE: forbidden selection changed active organization');await noB();
       assert.equal(sql(`SELECT tenant_id,role,status,permissions_version FROM public.memberships WHERE user_id='${A.userId}' ORDER BY tenant_id;`),before,'ORG_DB: forbidden request changed membership');
       await select(a);
     });

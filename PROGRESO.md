@@ -1,7 +1,15 @@
 # Progreso verificable
 Actualizado: 2026-09-19 local. Los apartados anteriores conservados abajo son cortes históricos, no inventario vigente.
 
-## Auth aceptado y grafo ampliado — último corte 19-sep
+## Recuperación de sesión — 19-sep, después de la parada F01-03
+- Sesión original recuperada: `2026-09-19T01-22-25-033Z_01a0b741-e889-77b6-a5cc-7d519d34649c`. El último mensaje decía loop activo; el recibo posterior demuestra que terminó por rechazo del examen F01-03. No quedó ningún supervisor vivo al recuperar.
+- Baseline `dc59d31`, checkout limpio, 8/60 aceptadas. `runner status` confirma F01-03 pending, sin candidato; `autoloop status` conserva el rechazo de revisión. No se reinició el producto ni se aceptó software nuevo.
+- Principal leyó el examen rechazado, su harness y los tres hallazgos: cobertura funcional limitada a dos tablas, FKs ausentes invisibles al examen y falta de positivos/mutantes ejecutados. Instrucciones de corrección en `construccion/correcciones/F01-03-gate.md`.
+- Detectado además setup no ejecutable con la infraestructura existente: exigía stack vacío y etiqueta inexistente. Se exige launcher repetible y seguro, sin resetear el VEXA compartido.
+- Docker no estaba disponible; arrancado por operador, contenedores VEXA locales observados activos. `guide.py audit` → 60 tareas/fichas, cero errores, 9 gates disponibles y 51 faltantes. Esto no prueba servicios ni esquema de producto.
+- Presupuesto reconciliado: 30 previas +2 del intento rechazado =32 consumidas; política reducida a188 restantes del techo220. Tanda de120min,54ciclos, dos intentos por tarea, sin gasto incremental. Renovación explícita F01-03 bajo STOP; lanzamiento/avance se acredita sólo con recibo/PID vivos.
+
+## Auth aceptado y grafo ampliado — corte anterior 19-sep
 - **F01-02 accepted, commit8f85ee7**. Migración0001 aplicada una vez a Supabase LOCAL VEXA56322, sin tocar otros proyectos. PKCE/callback válido, selección A/B, redirects externos, cookies/firma/expiración, revocación y logout/back probados en Auth/DB/Chrome reales:7tests (6subcasos+envolvente), luego reejecutados en materialización limpia por accept. Google remoto sigue sin configurar.
 - 22archivos de Auth transferidos con hashes idénticos a propuesta revisada; P1 de Referrer-Policy corregido sin admitir Origin:null. Revisor reprodujo29tests HTTP y build; principal20tests session y SQL/RLS en PostgreSQL17 desechable. Fallo de locale reproducido y diagnosticado antes del verde LANG=C/LC_ALL=C.
 - Guard rechazó metadata ignorada que el operador creó al ejecutar CLI Supabase en candidato; recuperación conservó evidencia y abrió copia limpia. Gate real detectó después un falso positivo del observador: reload reenviaba el POST original. Traza/rojo específico, GET de lectura, revisión independiente y nueva congelación; ninguna aserción de tenant/estado/DB se eliminó.

@@ -1,6 +1,8 @@
 <!doctype html><html lang="es"><meta charset="utf-8"><title>VEXA — guía de construcción</title><style>body{font:17px/1.6 system-ui;max-width:1100px;margin:40px auto;padding:24px;color:#19202a}h1,h2{line-height:1.15}h1{font-size:40px}h2{margin-top:2em}section{border-top:2px solid #ccd;padding-top:20px;margin-top:50px}table{border-collapse:collapse;width:100%;font-size:14px}th,td{border:1px solid #ddd;padding:9px;text-align:left;vertical-align:top}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f1f3f5;padding:16px;font-size:13px}code{overflow-wrap:anywhere}a{color:#1854a0}@media print{section{break-before:page;border:0;padding:0;margin:0}body{font-size:12px;line-height:1.45;margin:0;padding:0}h1{font-size:24px}h2{font-size:16px;margin-top:1em}pre{font-size:10px;padding:8px}table{font-size:10px}th,td{padding:5px}}@page{size:A4;margin:16mm}</style><h1>VEXA · Construcción de punta a punta</h1><p>Guía de implementación. No certifica SaaS desplegado. Las fichas indican gates pendientes.</p><section id="README.md"><h1>VEXA — de la carpeta al producto, paso a paso</h1>
 <p><strong>Esta es la entrada única para construir.</strong> El repositorio canónico es <code>~/vexa</code>; <code>Escritorio/VEXA AI</code> es una copia de entrega sin Git ni estado del loop. No ejecutar el constructor dentro de la copia esperando encontrar los candidatos de la original.</p>
-<h2>Respuesta exacta: ¿qué automatiza y qué no?</h2>
+<h2>Actualización: construcción efectiva</h2>
+<p>El encargo posterior exige implementar todo el MVP: <a href="ALCANCE-CONFIRMADO.md">alcance releído completo</a>. Se añadió el <a href="../AUTOMATICO.md">supervisor automático</a>, con límites, revisores separados y publicación del SHA aceptado. F01-01 ya se construyó y aceptó; la documentación de la revisión original de abajo conserva su contexto. Estado vivo: <code>python3 orchestration/runner.py status</code> y <code>python3 orchestration/autoloop.py status</code>.</p>
+<h2>Respuesta exacta en la entrega de la guía: ¿qué automatiza y qué no?</h2>
 <p>El paquete trae <strong>55 fichas</strong>, un controlador con candidatos y pruebas externas, una ruta interactiva <code>prepare → verify → accept</code>, fixtures monetarios y una guía hasta release. <strong>No es un botón que ya construye todo solo</strong>: hay gates de producto por escribir, dependencias por instalar y permisos/validaciones externas pendientes. Ninguna ficha transforma esos pendientes en PASS.</p>
 <p>En esta revisión se sustituyó el supuesto irreal de «escribir absolutamente todas las pruebas antes del primer scaffold» por un <strong>ciclo de pruebas externo justo antes de cada incremento</strong>. El control-plane escribe el gate específico de la siguiente ficha, demuestra su rojo, lo revisa/versiona y sólo entonces abre el candidato. El worker jamás escribe su propio examen. Esta es una secuencia de construcción guiada con puntos humanos, no una prueba de autonomía desatendida de meses.</p>
 <h2>Leer en este orden</h2>
@@ -30,7 +32,7 @@ python3 orchestration/runner.py status
 <li><code>status</code> es lectura del estado local. <code>accepted</code> acredita el alcance del gate de ese ID, no el SaaS entero.</li>
 </ul>
 <h2>Qué prueban las suites actuales</h2>
-<p><code>npm test</code> corre kernel y preparación/negativos; <strong>no todo el producto</strong>. <code>npm run test:controller</code> prueba el controlador en repos temporales. <code>npm run test:scaffold</code> y <code>test:all-gates</code> siguen rojos mientras falta la app; se conservan, no se desactivaron. Los 47 gates ausentes se escriben bajo revisión en su turno.</p>
+<p><code>npm test</code> corre kernel y preparación/negativos; <strong>no todo el producto</strong>. <code>npm run test:controller</code> prueba el controlador en repos temporales. El scaffold ya pasó; <code>test:all-gates</code> sólo ejecuta gates presentes y nunca acredita los aún ausentes. No se desactivaron oráculos para avanzar. Los 47 gates ausentes se escriben bajo revisión en su turno.</p>
 <p>Los JSON F00 son snapshots de preparación sintética, no configuración runtime ni una certificación perpetua. Permisos, cuentas y resultados reales posteriores se acreditan en los manifiestos de F07/F08, sin reescribir esos snapshots como si siempre hubieran estado listos.</p>
 <h2>Tres carriles, una secuencia</h2>
 <table>
@@ -1693,7 +1695,7 @@ python3 orchestration/runner.py accept --task F01-01 --max-minutes 5
 <h2>Cierre obligatorio</h2>
 <p><code>task_id, baseline_sha, candidate_sha, fixture_hash, command, exit_code, expected, observed, artifacts, reviewer, pending</code>. Las pruebas/grafo no las edita el candidato. Dos fallos agotan intento; guardar reproducción y pasar a recuperación supervisada, no editar status=accepted. Build/instalación de dependencias se hacen en copia temporal para no mutar el candidato durante el gate.</p></section><section id="F01-02"><h1>F01-02 — Implementar login/logout, membership en DB y selector de organización sin confiar tenant_id del body.</h1>
 <p><strong>Modalidad:</strong> worker. <strong>Dependencias:</strong> F01-01.
-<strong>Gate:</strong> MISSING — escribir/revisar primero en control-plane.</p>
+<strong>Gate:</strong> PRESENT (no significa PASS).</p>
 <h2>Entrada (leer, no inventar contexto)</h2>
 <ul>
 <li><code>AGENTS.md</code></li>

@@ -276,7 +276,9 @@
     "allowed_paths": [
       "apps/web/",
       "supabase/",
-      "packages/platform/"
+      "packages/platform/",
+      "package.json",
+      "package-lock.json"
     ],
     "acceptance": "tests/acceptance/F01-02.test.mjs",
     "prompt": "orchestration/prompts/F01.md",

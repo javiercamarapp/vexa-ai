@@ -6,6 +6,7 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import os from 'node:os';
 import {candidate} from './foundation.mjs';
+import {copyBuildInputs} from './scaffold-copy.mjs';
 test('real Next/TypeScript workspace, frozen lock and successful local toolchain', {timeout:240000},()=>{
  const pkg=JSON.parse(fs.readFileSync(path.join(candidate,'apps/web/package.json'),'utf8'));
  assert.ok(pkg.dependencies?.next,'Next dependency required');
@@ -15,11 +16,7 @@ test('real Next/TypeScript workspace, frozen lock and successful local toolchain
  // An operator primes npm's cache interactively from the reviewed lock first.
  const build=fs.mkdtempSync(path.join(os.tmpdir(),'vexa-scaffold-'));
  try {
-  for(const rel of ['package.json','package-lock.json','apps','packages']){
-   const source=path.join(candidate,rel);
-   if(fs.existsSync(source)) fs.cpSync(source,path.join(build,rel),{recursive:true,
-    filter:p=>!p.split(path.sep).some(x=>['node_modules','.next','.git','.runtime'].includes(x))});
-  }
+  copyBuildInputs(candidate,build);
   const install=spawnSync('npm',['ci','--offline','--ignore-scripts','--no-audit','--no-fund'],{cwd:build,encoding:'utf8',timeout:45000,maxBuffer:2*1024*1024});
   assert.ifError(install.error);assert.equal(install.status,0,`Offline cache/dependencies not ready: ${install.stderr}`);
   for(const name of ['lint','typecheck','build']){

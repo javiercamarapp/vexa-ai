@@ -2,6 +2,17 @@
 
 Recuperación de sesión: 2026-09-19. El usuario pidió recuperar y continuar la construcción existente. Estado al recuperar: baseline dc59d31187df0997c26d433e47b315aaaa971c80; 8/60 tareas aceptadas. F01-03 NO tiene candidato ni gate aceptado.
 
+## Cierre de revisión del examen — 19-sep, 14:05 local
+- Suite final tras corrección diferida:73/73controles/mutantes y168/168contra laboratorio,0fallos/0skips. Baseline canónico continúa rojo IMPLEMENTATION_MISSING. No se presenta laboratorio como candidato aceptado.
+- Revisor anterior reprodujo67controles SQL y detectó falso rechazo de FK DEFERRABLE INITIALLY DEFERRED. Principal reprodujo00000 frente a23503 esperado; el probe ahora fuerza SET CONSTRAINTS ALL IMMEDIATE antes de rollback, sin desactivar RI. Revisor independiente reprodujo19comprobaciones: FK inmediata/diferida, ausente/escalar, guard falso23503, restauración de triggers/datos/modo y permisos authenticated. Correctivo aprobado, fuentes preservadas por SHA256.
+- Se adopta el examen revisado en control-plane para congelarlo antes de preparar candidato oficial. No hay aceptación automática ni cambio manual de estados. Historial anterior conservado abajo.
+
+## Recuperación posterior — 19-sep, corte anterior: examen aún NO congelado
+- Se reprodujeron72controles/mutantes SQL/Auth/Storage/RPC:72pass,0fail,0skips. Se añadieron y ejercitaron escrituras Storage ajenas, autorreactivación prohibida y login real nuevo del mismo usuario revocado. Mutaciones de POSTupsert/PUT requieren también INSERT permisivo para representar una vulnerabilidad efectiva; sin eso la API aún rechaza por RLS y no se mata un mutante real. No se eliminó ningún negativo.
+- Examen contra schema propuesto:162/168pass;5fallos específicos más envolvente. Storage/retrieval/revocación vieja+nueva pasan. FallosFK: guards de dominio/parent inmutable se ejecutan antes de RI y devuelven23514 o23503 sin nombre de constraint. No es evidencia de fuga; tampoco permite aceptar una FK por un guard que la enmascara.
+- Corrección propuesta del EXAMEN, pendiente revisión independiente: probar FK física como administrador desechable dentro de la transacción siempre-revertida del probe, con DISABLE TRIGGER USER sólo en esa operación. Triggers internos RI permanecen activos; RLS/roles/tenant/immutabilidad/servicios se prueban por separado sin desactivar triggers. No aplicar esta técnica al producto, DB compartida ni operaciones de autorización.
+- Nueva regresión independiente: trigger inmutable23514 y guard que simula23503. Con FK presente pasa; retirarFK debe fallar aunque el guard siga rechazando; comparar catálogo de triggers antes/después demuestra restauración por rollback. Reproducción pequeña rojo/verde realizada; suite completa73y nuevo candidato se repiten antes de solicitar congelación. Propuesta no aceptada por haber agregado el control.
+
 ## Rechazo preservado
 Revisión independiente `.runtime/auto-1789811719497179000-1789812168471004000-review.json`, approved=false. La propuesta rechazada se conserva en `.runtime/auto-1789811719497179000-1789811719591932000-gate-worktree/tests/acceptance/` del repositorio canónico `~/vexa`. Se puede leer/copiar su soporte como punto de partida, no tratarlo como examen aprobado. No publicar logs ni recibos privados.
 

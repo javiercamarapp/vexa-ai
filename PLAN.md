@@ -19,7 +19,17 @@ El usuario indicó que los datos del cliente llegarán después. No frenar la co
 - `docs/investigacion/integraciones/01-hubspot-zendesk-migracion.md` y `04-openrouter-modelos-privacidad.md`:contratos/proveedores.
 - GitHub privado `javiercamarapp/vexa-ai`, Vercel proyecto vacío `vexa-ai`. Acceso CLI observado no equivale a conexión productiva completa. Nunca usar proyectos/secretos de Likida/Atiende/Moni.
 
-## Ejecución: grafo con propuestas paralelas, integración serial
+## Modo vigente — cerrar una fase antes de abrir otra
+
+Petición más reciente del usuario (19-sep, 15:54): completar producción/60IDs por fases, terminar e integrar antes de avanzar; después pide múltiples agentes para acelerar. Se concilian ambas instrucciones: **máximo tres agentes dentro de la misma fase**, no tres módulos nuevos. Un escritor por área; examen, regresiones y QA pueden correr en copias propias, integración/promoción sólo por el principal.
+
+Fase activa: **F01-04**. Reutilizar `layout-fixed` y el examen corregido, no reconstruir. Correctivo UI refresh/reset aprobado independientemente; revisión del examen terminó por timeout900s sin veredicto. Cerrar esa revisión, congelar gate, preparar/adoptar candidato, verificar, repetir todos los gates aceptados y controlador, aceptar materialización limpia y publicar mediante publisher. Sólo entonces elegir F01-05 u otra tarea elegible según dependencias; no saltear bloqueos para inflar60/60.
+
+Fuente de estado: runner para aceptación; recibos privados para trabajo/procesos. **9/60** al iniciar esta fase. Laboratorio integrado `5fbf223` conserva CSV→recomendación→intervención→brief→inbox y assign/dismiss revisados, sin convertirlos en tareas aceptadas. No perder ese trabajo ni mezclarlo de golpe con F01-04.
+
+Tanda supervisada120min, hasta24invocaciones,128consumidas previamente bajo techo220; consultar reconciliación real antes de lanzar. No reset de presupuesto/rechazos/STOP. Conserva cero gasto incremental, sin envíos ni cloud no autorizado. Los límites6/8 y prioridades paralelas siguientes son **históricos, sustituidos por este modo**.
+
+## Historial: grafo con propuestas paralelas, integración serial
 El DAG `orchestration/graph.json` v4 conserva los55IDs anteriores y añade5 explícitos para notificaciones (F06-08..12):60tareas. No se reinicia ni se falsifican recibos. F04-07 construye el harness, no certifica gold ausente; F07-05 mantiene validación humana. Runbooks ya no esperan datos humanos, pero release sí depende de ambos. Dependencias determinan integración, no impiden preparar módulos independientes.
 
 Cambio operativo autorizado por la petición de agentes: construir **propuestas aisladas** de módulos independientes en paralelo, con unit tests propios y reportes acotados. No son candidatos oficiales aceptados. Control-plane prepara/revisa/congela el examen externo desde requisitos; después `prepare`, adopción de código permitido, `verify`, revisión y `accept` con materialización limpia. Nadie escribe/modifica su propio gate de aceptación. No bajar pruebas para integrar rápido.
@@ -79,7 +89,8 @@ Commits por cambios reales verificados; autor/committer Javier, email noreply as
 ## Secuencia de integración
 - [x] Kernel económico limitado y scaffold F01-01 aceptados; preparar infraestructura LOCAL y GitHub privado.
 - [x] Auth/membership/callback/selector/logout aceptado con Supabase local y Chrome reales; Google remoto sigue pendiente.
-- [ ] Completar schema tenant-aware, RLS/Storage, diseño/navigation y CI.
+- [x] Schema tenant-aware/RLS/Storage F01-03 aceptado009fd73 con gate real y materialización limpia.
+- [ ] Cerrar F01-04 diseño/navegación/estados y después F01-05 CI, sin confundir CI local con ejecución remota.
 - [ ] Adoptar módulos de ingesta/conectores, implementar persistencia/jobs/consumer y continuidad CRM.
 - [ ] Adoptar gateway/evidencia; completar extracción/clustering/snapshots/ranking.
 - [ ] Ocho vistas con estados/errores/acciones reales; intervención, medición y brief.

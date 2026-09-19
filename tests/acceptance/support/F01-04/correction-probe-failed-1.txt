@@ -1,0 +1,42 @@
+Artifacts: /var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f01-04-qXkSnr
+✖ F01-04 oracle probe: React/Next/Chromium real y mutantes (20123.999542ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20182.162167
+
+✖ failing tests:
+
+test at tests/acceptance/support/F01-04/probe.test.mjs:6:1
+✖ F01-04 oracle probe: React/Next/Chromium real y mutantes (20123.999542ms)
+  AssertionError [ERR_ASSERTION]: locator.innerText: Error: strict mode violation: getByRole('alert') resolved to 2 elements:
+      1) <div role="alert" class="state-panel error">…</div> aka getByText('No pudimos cargar esta vistaAlcance inválido. Revisa los filtros.Referencia:')
+      2) <div role="alert" aria-live="assertive" id="__next-route-announcer__"></div> aka locator('[id="__next-route-announcer__"]')
+  
+  Call log:
+    - waiting for getByRole('alert')
+  
+      at validation (/tmp/browser.cjs:65:27)
+      at async /tmp/browser.cjs:102:100 {
+    log: [ "  - waiting for getByRole('alert')" ]
+  }
+  
+  
+  1 !== 0
+  
+      at validation (file:///Users/javiercamaraportepetit/vexa/.runtime/closure-1789847917909284000/F01-04-gate/tests/acceptance/support/F01-04/probe.test.mjs:9:100)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/closure-1789847917909284000/F01-04-gate/tests/acceptance/support/F01-04/probe.test.mjs:9:129)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

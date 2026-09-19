@@ -1,0 +1,29 @@
+AUTHORIZED /overview status=200 role=owner org=synthetic dependency=true
+AUTHORIZED /problems status=200 role=owner org=synthetic dependency=true
+AUTHORIZED /recommendations status=200 role=owner org=synthetic dependency=true
+AUTHORIZED /explorer status=200 role=owner org=synthetic dependency=true
+AUTHORIZED /interventions status=200 role=owner org=synthetic dependency=true
+AUTHORIZED /briefs status=200 role=owner org=synthetic dependency=true
+AUTHORIZED /problems/338a6ef0-5a46-4f61-9ed1-83cbd1a96c18 status=200 role=owner org=synthetic dependency=true
+AUTHORIZED /customers/18a6f3df-77c0-4579-92aa-3f42e16e6b9e status=200 role=owner org=synthetic dependency=true
+AUTHORIZED AFTER_ATTACK status=200 role=owner org=synthetic dependency=true
+AssertionError [ERR_ASSERTION]: AUTHORIZED_ROLE_PRESERVED expected=analyst
+    at authorized (/tmp/browser.cjs:75:59)
+    at async /tmp/browser.cjs:118:51 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'Saltar al contenido\n' +
+    'VEXA.\n' +
+    'En construcción\n' +
+    '\n' +
+    'DECISIONES CON EVIDENCIA\n' +
+    '\n' +
+    'Resumen\n' +
+    'Problemas\n' +
+    'Recomendaciones\n' +
+    'Explorador\n' +
+    '...',
+  expected: /\bRol: analyst\b/,
+  operator: 'match',
+  diff: 'simple'
+}

@@ -1,0 +1,18 @@
+source: files=728 changed=0
+lab: files=364 changed=0
+fixture absent; final PNG=28
+$ git rev-parse HEAD
+exit=0
+53828e0d74667213bf478e4b808bd9ff482bd0ec
+
+$ git diff --exit-code
+exit=0
+
+$ git status --short
+exit=0
+?? tests/acceptance/F01-04.test.mjs
+?? tests/acceptance/support/F01-04/
+
+$ docker ps --filter name=vexa-f01-04 --format {{.Names}}
+exit=0
+

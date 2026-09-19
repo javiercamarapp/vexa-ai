@@ -1,0 +1,40 @@
+AUTHORIZED /overview status=200 role=owner org=synthetic dependency=true
+AUTHORIZED /problems status=200 role=owner org=synthetic dependency=true
+AUTHORIZED /recommendations status=200 role=owner org=synthetic dependency=true
+AUTHORIZED /explorer status=200 role=owner org=synthetic dependency=true
+AUTHORIZED /interventions status=200 role=owner org=synthetic dependency=true
+AUTHORIZED /briefs status=200 role=owner org=synthetic dependency=true
+AUTHORIZED /problems/707fc998-d0a5-4a90-a992-657882d6878b status=200 role=owner org=synthetic dependency=true
+AUTHORIZED /customers/bc770da7-41e5-49b7-8ef4-26985eb5fdde status=200 role=owner org=synthetic dependency=true
+AUTHORIZED AFTER_ATTACK status=200 role=owner org=synthetic dependency=true
+AUTHORIZED /overview status=200 role=analyst org=synthetic dependency=true
+AUTHORIZED /problems status=200 role=analyst org=synthetic dependency=true
+AUTHORIZED /recommendations status=200 role=analyst org=synthetic dependency=true
+AUTHORIZED /explorer status=200 role=analyst org=synthetic dependency=true
+AUTHORIZED /interventions status=200 role=analyst org=synthetic dependency=true
+AUTHORIZED /briefs status=200 role=analyst org=synthetic dependency=true
+AUTHORIZED /problems/707fc998-d0a5-4a90-a992-657882d6878b status=200 role=analyst org=synthetic dependency=true
+AUTHORIZED /customers/bc770da7-41e5-49b7-8ef4-26985eb5fdde status=200 role=analyst org=synthetic dependency=true
+ACTION_DENIED role=analyst status=403 code=role_forbidden database=unconfigured
+AUTHORIZED AFTER_ATTACK status=200 role=analyst org=synthetic dependency=true
+AUTHORIZED /overview status=200 role=operator org=synthetic dependency=true
+AUTHORIZED /problems status=200 role=operator org=synthetic dependency=true
+AUTHORIZED /recommendations status=200 role=operator org=synthetic dependency=true
+AUTHORIZED /explorer status=200 role=operator org=synthetic dependency=true
+AUTHORIZED /interventions status=200 role=operator org=synthetic dependency=true
+AUTHORIZED /briefs status=200 role=operator org=synthetic dependency=true
+AUTHORIZED /problems/707fc998-d0a5-4a90-a992-657882d6878b status=200 role=operator org=synthetic dependency=true
+AUTHORIZED /customers/bc770da7-41e5-49b7-8ef4-26985eb5fdde status=200 role=operator org=synthetic dependency=true
+ACTION_DENIED role=operator status=403 code=role_forbidden database=unconfigured
+AUTHORIZED AFTER_ATTACK status=200 role=operator org=synthetic dependency=true
+AUTHORIZED /overview status=200 role=viewer org=synthetic dependency=true
+AUTHORIZED /problems status=200 role=viewer org=synthetic dependency=true
+AUTHORIZED /recommendations status=200 role=viewer org=synthetic dependency=true
+AUTHORIZED /explorer status=200 role=viewer org=synthetic dependency=true
+AUTHORIZED /interventions status=200 role=viewer org=synthetic dependency=true
+AUTHORIZED /briefs status=200 role=viewer org=synthetic dependency=true
+AUTHORIZED /problems/707fc998-d0a5-4a90-a992-657882d6878b status=200 role=viewer org=synthetic dependency=true
+AUTHORIZED /customers/bc770da7-41e5-49b7-8ef4-26985eb5fdde status=200 role=viewer org=synthetic dependency=true
+ACTION_DENIED role=viewer status=403 code=role_forbidden database=unconfigured
+AUTHORIZED AFTER_ATTACK status=200 role=viewer org=synthetic dependency=true
+PASS routes

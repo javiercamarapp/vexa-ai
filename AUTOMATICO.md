@@ -2,12 +2,18 @@
 
 Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Programa: [PROGRAMA](PROGRAMA.md). Repositorio canónico `~/vexa`; NO ejecutar en la copia de Escritorio. Las fuentes privadas permanecen locales.
 
-## Modo vigente: propuestas paralelas, promoción serial
+## Modo vigente — paralelismo dentro de una fase, cierre serial
+
+Última instrucción del usuario: terminar/integrar una fase antes de avanzar, usando varios agentes para acelerar. Máximo3 agentes sobre **F01-04**, con copias y responsabilidades separadas (examen, regresiones, QA); principal único integrador. No abrir más módulos ni iniciar otro supervisor mientras se cierra esta fase. `PLAN.md` y recibos actuales prevalecen sobre cifras históricas siguientes.
+
+Inicio de esta tanda:9/60aceptadas,128invocaciones consumidas/220globales,120min y hasta24nuevas. Reconciliar desde recibos, no reiniciar. CorrectivoUI aprobado; examen sigue sin aprobación tras timeout900s. Congelar/prepare/verify/revisión/regresiones/accept/publicación antes de pasar a la siguiente tarea. No declarar producción por fuentes sintéticas ni activar gasto/cloud/envíos por esta renovación.
+
+## Historial: propuestas paralelas, promoción serial
 El usuario pidió agentes/loop graph y fijó UN MES. PLAN.md contiene el mapa de propietarios/entregables. Módulos independientes pueden construirse como propuestas aisladas antes de que sus dependencias se acepten; no se cuentan como progreso aceptado. Antes de adoptar en candidato oficial: examen externo diseñado/revisado/congelado desde contrato, allowlist explícita, pruebas/revisión/materialización limpia. Propuestas no modifican raíz/control-plane ni DB compartida.
 
 El supervisor serial se detuvo en checkpoint; equipo paralelo terminó y Auth fue aceptado después. Las pausas propias se retiraron verificando token, sin borrar ajenas. Recibos del equipo en `private/parallel-batch-1.json` y `.runtime/team-*/`. Antes de reanudar comprobar revisión del grafo v4, presupuesto reconciliado y checkout limpio. No lanzar otro escritor del baseline por ver un PID parado.
 
-## Continuidad tras renovación de créditos — vigente
+## Historial: continuidad tras renovación de créditos
 El usuario renovó créditos después del checkpoint de una hora. Siete propuestas quedaron en commits locales con estado parcial/revisión pendiente; se retoman, NO se reconstruyen. F01-03 amplió el examen a72controles/mutantes; sigue sin congelar por hallazgos y fallos de fixtures contra candidato. Principal también reprodujo13SQL de jobs,6SQL de métricas y13SQL de notificaciones; no equivalen a producto integrado. Fuentes/recibos en PROGRESO.md.
 
 Nueva tanda acotada120min, hasta6agentes disjuntos y promoción serial, bajo techo acumulado220.Última reconciliación:88invocaciones Codex (33previas+55recibos); máximo132adicionales compartidas por propuestas manuales y supervisor serial. Recontar recibos antes de lanzar; no son presupuestos independientes ni contabilidad de tokens. El nuevo permiso no autoriza API pagada, contratación, envíos externos ni declarar producción sin pruebas. STOP propio del checkpoint se conserva hasta cerrar integración/revisión: no borrarlo para lanzar otro escritor.
@@ -37,7 +43,7 @@ python3 orchestration/autoloop.py run
 ```
 `run` devuelve2 al detenerse con recibo parcial: revisar `reason`, no interpretarlo como producto terminado. El proceso puede ejecutarse desacoplado de la terminal; sólo un PID vivo y el recibo lo acreditan. No es un servicio que sobreviva garantizadamente a suspensión/reinicio/SIGKILL.
 
-## Límites de esta tanda
+## Límites históricos de la tanda anterior
 - Política `orchestration/auto-policy.json`:47IDs locales F01–F07 (incluye5notificaciones), **120min**,54ciclos; último corte132invocaciones adicionales bajo techo acumulado220. Usar reconciliación de recibos vigente, no cifras históricas; no borrar consumo al relanzar.
 - Dos intentos por tarea; agotamiento persiste entre relanzamientos. Un solo escritor: supervisor mantiene tanto su lock como el del runner.
 - Login ChatGPT comprobado antes de cada llamada, timeout15s; cada modelo hasta15min. Sin fallback a API key/OpenRouter para desarrollar.

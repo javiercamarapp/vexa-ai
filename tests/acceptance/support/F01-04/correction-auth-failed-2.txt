@@ -1,0 +1,45 @@
+▶ F01-04: componentes reales, ocho rutas y autorización independiente del menú
+  ✔ seis estados, alcance, teclado, foco y dos viewports (10078.93875ms)
+  ✖ rutas protegidas con sesión real y selectores forjados (10192.881583ms)
+Artifacts: /var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f01-04-DWIVd7
+✖ F01-04: componentes reales, ocho rutas y autorización independiente del menú (26592.77775ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 1
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 26652.238083
+
+✖ failing tests:
+
+test at tests/acceptance/F01-04.test.mjs:12:11
+✖ rutas protegidas con sesión real y selectores forjados (10192.881583ms)
+  AssertionError [ERR_ASSERTION]: page.goto: net::ERR_CONNECTION_REFUSED at http://host.docker.internal:57560/overview?date_start=2026-09-01&date_end=2026-10-01&timezone=UTC&currency=USD&date_basis=conversation
+  Call log:
+    - navigating to "http://host.docker.internal:57560/overview?date_start=2026-09-01&date_end=2026-10-01&timezone=UTC&currency=USD&date_basis=conversation", waiting until "load"
+  
+      at /tmp/browser.cjs:108:23 {
+    log: [
+      '  - navigating to "http://host.docker.internal:57560/overview?date_start=2026-09-01&date_end=2026-10-01&timezone=UTC&currency=USD&date_basis=conversation", waiting until "load"'
+    ],
+    name: 'Error'
+  }
+  
+  
+  1 !== 0
+  
+      at routes (file:///Users/javiercamaraportepetit/vexa/.runtime/closure-1789847917909284000/F01-04-gate/tests/acceptance/support/F01-04/routes.mjs:39:72)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/closure-1789847917909284000/F01-04-gate/tests/acceptance/F01-04.test.mjs:12:3)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

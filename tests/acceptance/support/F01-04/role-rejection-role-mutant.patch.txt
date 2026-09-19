@@ -1,0 +1,1 @@
+packages/platform/src/session.ts: return {user,memberships,active}; -> return {user,memberships,active:{...active,role:'owner' as const}};

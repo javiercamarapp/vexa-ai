@@ -1,0 +1,11 @@
+role-correction-auth.txt: host fixture absent; browser container removed by passing teardown
+role-correction-mutant.txt: host fixture absent; browser container removed by passing teardown
+source: 728 files, 0 changed
+lab: 364 files, 0 changed
+All prior receipts unchanged; README and rejection-preserved appended only
+docker ps -a --filter name=vexa-f01-04: empty
+docker network ls --filter name=vexa-f01-04: empty
+lsof -nP -iTCP:57560-57569 -sTCP:LISTEN: no listeners
+Disposable DB HostConfig.PortBindings: {}
+Evidence scan: 0 JWT/cookie values; no fixture.json under support
+git diff --exit-code: 0; git status: only tests/acceptance/F01-04.test.mjs and tests/acceptance/support/F01-04/ untracked

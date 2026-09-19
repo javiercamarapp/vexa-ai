@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 3,
   "provider": "codex-chatgpt",
   "model": "gpt-6-astra",
   "max_attempts_per_task": 2,
@@ -512,7 +512,7 @@
     {
       "id": "F04-07",
       "phase": "F04",
-      "objective": "Implementar harness temporal de evaluación reproducible; sin gold humano reportar not_measured, nunca certificar precisión con fixtures.",
+      "objective": "Medir gold temporal humano: clasificación, calidad clusters, abstención, evidencia, costo y latencia; holdout no tuneable.",
       "depends_on": [
         "F04-06"
       ],
@@ -748,118 +748,11 @@
       "requires_approval": false
     },
     {
-      "id": "F06-08",
-      "phase": "F06",
-      "objective": "Centro in-app y preferencias para usuarios VEXA con membership/RLS; no contactos CRM.",
-      "depends_on": [
-        "F01-03",
-        "F01-04",
-        "F02-06"
-      ],
-      "allowed_paths": [
-        "apps/web/",
-        "packages/notifications/",
-        "supabase/migrations/",
-        "package.json",
-        "package-lock.json"
-      ],
-      "acceptance": "tests/acceptance/F06-08.test.mjs",
-      "prompt": "orchestration/prompts/F06.md",
-      "auto_accept": false,
-      "requires_approval": false
-    },
-    {
-      "id": "F06-09",
-      "phase": "F06",
-      "objective": "Outbox de notificaciones SQL, consumidor real, fencing, cuotas/anti-ruido y conciliación de incertidumbre.",
-      "depends_on": [
-        "F06-08"
-      ],
-      "allowed_paths": [
-        "apps/web/",
-        "packages/notifications/",
-        "supabase/migrations/",
-        "package.json",
-        "package-lock.json",
-        "packages/jobs/"
-      ],
-      "acceptance": "tests/acceptance/F06-09.test.mjs",
-      "prompt": "orchestration/prompts/F06.md",
-      "auto_accept": false,
-      "requires_approval": false
-    },
-    {
-      "id": "F06-10",
-      "phase": "F06",
-      "objective": "Correo transaccional profesional HTML/texto, Mailpit local, webhooks firmados/replay y estados de entrega honestos.",
-      "depends_on": [
-        "F06-09"
-      ],
-      "allowed_paths": [
-        "apps/web/",
-        "packages/notifications/",
-        "supabase/migrations/",
-        "package.json",
-        "package-lock.json"
-      ],
-      "acceptance": "tests/acceptance/F06-10.test.mjs",
-      "prompt": "orchestration/prompts/F06.md",
-      "auto_accept": false,
-      "requires_approval": false
-    },
-    {
-      "id": "F06-11",
-      "phase": "F06",
-      "objective": "Web Push/PWA con consentimiento, SDK estándar, endpoints seguros, service worker y revocación por usuario/scope.",
-      "depends_on": [
-        "F06-09"
-      ],
-      "allowed_paths": [
-        "apps/web/",
-        "packages/notifications/",
-        "supabase/migrations/",
-        "package.json",
-        "package-lock.json"
-      ],
-      "acceptance": "tests/acceptance/F06-11.test.mjs",
-      "prompt": "orchestration/prompts/F06.md",
-      "auto_accept": false,
-      "requires_approval": false
-    },
-    {
-      "id": "F06-12",
-      "phase": "F06",
-      "objective": "Conectar emisores reales y verificar notificaciones E2E locales A/B, sin declarar entregas remotas simuladas.",
-      "depends_on": [
-        "F06-10",
-        "F06-11",
-        "F06-05",
-        "F06-06"
-      ],
-      "allowed_paths": [
-        "apps/web/",
-        "packages/notifications/",
-        "supabase/migrations/",
-        "package.json",
-        "package-lock.json",
-        "packages/briefs/",
-        "packages/interventions/",
-        "packages/ingestion/",
-        "packages/jobs/",
-        "packages/connectors/",
-        "docs/blueprint/notification-readiness.json"
-      ],
-      "acceptance": "tests/acceptance/F06-12.test.mjs",
-      "prompt": "orchestration/prompts/F06.md",
-      "auto_accept": false,
-      "requires_approval": false
-    },
-    {
       "id": "F06-07",
       "phase": "F06",
       "objective": "Revisión visual móvil/desktop, teclado, contraste y reducción movimiento; no copiar marcas.",
       "depends_on": [
-        "F06-12"
+        "F06-06"
       ],
       "allowed_paths": [
         "apps/web/",
@@ -968,7 +861,7 @@
       "phase": "F07",
       "objective": "Runbooks cancelación, rollback, restore, datos borrados y eliminación de embeddings/backups conforme política.",
       "depends_on": [
-        "F07-04"
+        "F07-05"
       ],
       "allowed_paths": [
         "apps/web/",
@@ -986,7 +879,6 @@
       "phase": "F08",
       "objective": "Preparar manifiesto release con SHA, migrations, config hashes, URLs y propietarios sin secretos.",
       "depends_on": [
-        "F07-05",
         "F07-06"
       ],
       "allowed_paths": [

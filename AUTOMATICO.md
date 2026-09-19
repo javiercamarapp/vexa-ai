@@ -5,7 +5,7 @@ Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Pro
 ## Modo vigente: propuestas paralelas, promoción serial
 El usuario pidió agentes/loop graph y fijó UN MES. PLAN.md contiene el mapa de propietarios/entregables. Módulos independientes pueden construirse como propuestas aisladas antes de que sus dependencias se acepten; no se cuentan como progreso aceptado. Antes de adoptar en candidato oficial: examen externo diseñado/revisado/congelado desde contrato, allowlist explícita, pruebas/revisión/materialización limpia. Propuestas no modifican raíz/control-plane ni DB compartida.
 
-El supervisor serial fue detenido en checkpoint al acabar autoría de gate F01-02; STOP propio conservado durante transición, no es un modelo todavía construyendo. Recibos del equipo en `private/parallel-batch-1.json` y `.runtime/team-*/`. Antes de reanudar, recoger revisiones, reconciliar llamadas y retirar únicamente STOP propio comprobado. No lanzar otro escritor del baseline por ver un PID parado.
+El supervisor serial se detuvo en checkpoint; equipo paralelo terminó y Auth fue aceptado después. Las pausas propias se retiraron verificando token, sin borrar ajenas. Recibos del equipo en `private/parallel-batch-1.json` y `.runtime/team-*/`. Antes de reanudar comprobar revisión del grafo v4, presupuesto reconciliado y checkout limpio. No lanzar otro escritor del baseline por ver un PID parado.
 
 ## Ciclo real
 1. Seleccionar una tarea elegible del grafo, respetando dependencias aceptadas.
@@ -28,7 +28,7 @@ python3 orchestration/autoloop.py run
 `run` devuelve2 al detenerse con recibo parcial: revisar `reason`, no interpretarlo como producto terminado. El proceso puede ejecutarse desacoplado de la terminal; sólo un PID vivo y el recibo lo acreditan. No es un servicio que sobreviva garantizadamente a suspensión/reinicio/SIGKILL.
 
 ## Límites de esta tanda
-- Política `orchestration/auto-policy.json`:42 IDs locales F01–F07, **120min**,54ciclos,212llamadas Codex como máximo en la reanudación, después de8llamadas usadas (5bootstrap,2en primer gate y1revisión de recuperación).
+- Política `orchestration/auto-policy.json`:47IDs locales F01–F07 (incluye5notificaciones), **120min**,54ciclos,190llamadas máximas después de29usadas y1reservada para revisión del nuevo grafo. Techo acumulado220; no borrar consumo al relanzar.
 - Dos intentos por tarea; agotamiento persiste entre relanzamientos. Un solo escritor: supervisor mantiene tanto su lock como el del runner.
 - Login ChatGPT comprobado antes de cada llamada, timeout15s; cada modelo hasta15min. Sin fallback a API key/OpenRouter para desarrollar.
 - Sin gasto incremental autorizado. GitHub privado ya creado; **Actions desactivadas temporalmente** hasta aprobar uso/presupuesto. YAML o tests locales no se llaman CI remoto verde.
@@ -51,12 +51,12 @@ python3 orchestration/autoloop.py retry --task ID --approval-note 'causa revisad
 4. `retry` conserva STOP y evidencia. Revisar antes de retirar la pausa y reanudar. No se renuevan ciclos agotados por simple relanzamiento.
 
 ## Ampliaciones y primera parada
-Push/correos profesionales solicitados: [propuesta pendiente de destinatarios](docs/superpowers/specs/2026-09-19-notificaciones-propuesta.md). No son funcionalidades implementadas ni se añadieron silenciosamente al grafo.
+Push/correos profesionales: [spec con destinatarios confirmados VEXA](docs/superpowers/specs/2026-09-19-notificaciones-propuesta.md). Grafo v4 añade explícitamente F06-08..12; componentes revisados en banco local, no funcionalidades integradas ni entregas remotas verificadas.
 
-Primera tanda se detuvo por rechazo del gate F01-02: redirect tras éxito, control positivo de replay y demostración de oráculos sobre defectos. Se conserva el rechazo. Antes de reautoría leer [correcciones](construccion/correcciones/F01-02-gate.md). No se aceptó código de Auth. La renovación requiere nota y STOP explícitos, incluso si la tarea aún no tiene fila de producto.
+Primera tanda se detuvo por rechazo del gate F01-02: redirect tras éxito, control positivo de replay y demostración de oráculos sobre defectos. Se conserva el rechazo. Antes de reautoría leer [correcciones](construccion/correcciones/F01-02-gate.md). Ese corte no había aceptado Auth; posteriormente F01-02 sí fue aceptado en8f85ee7 tras gate real y materialización limpia. La renovación requiere nota y STOP explícitos, incluso si la tarea aún no tiene fila de producto.
 
 ## Evidencia
-- Scaffold F01-01 aceptado en `9e0010a`: Next.js real, instalación offline/lint/typecheck/build en copia temporal; revisión independiente del código. No Auth ni producto completo.
+- Scaffold F01-01 aceptado en `9e0010a`: Next.js real, instalación offline/lint/typecheck/build en copia temporal; revisión independiente del código. Ese hito no acreditaba Auth ni producto completo; Auth local se aceptó después, el SaaS completo sigue abierto.
 - Correcciones revisadas: login persistido, lock compartido, presupuesto persistente y publicación de main adelantada; esta última bloqueada antes de enviar, con refspec SHA inmutable.
 - `python3 -W error::ResourceWarning -m unittest discover -s tests/controller`: **108tests OK** en repos canónico. La regresión adicional permite recuperación explícita si el gate fue rechazado antes de que existiera candidato; no crea un estado de producto ficticio. Git real, CLI Codex simulado y remotos bare en tests; no demuestra autonomía prolongada ni cloud.
 - `npm test`:24tests kernel/preparación. `node --test tests/tooling/scaffold-copy.test.mjs`:3tests de copia/entorno; el filtro relativo conserva candidatos dentro de `.runtime`. El build usa whitelist de entorno y npm config vacía para evitar EALLOWSCRIPTS al invocarlo desde npm run y no heredar claves/preloads.

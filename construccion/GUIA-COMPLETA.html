@@ -1222,7 +1222,7 @@ test('rechaza cita del tenant B incluso si el texto coincide', () =&gt; {
 <tr>
 <td><a href="tareas/F04-07.md">F04-07</a></td>
 <td>interactive</td>
-<td>Medir gold temporal humano: clasificación, calidad clusters, abstención, evidencia, costo y latencia; holdout no tuneable.</td>
+<td>Implementar harness temporal de evaluación reproducible; sin gold humano reportar not_measured, nunca certificar precisión con fixtures.</td>
 </tr>
 <tr>
 <td><a href="tareas/F05-01.md">F05-01</a></td>
@@ -1283,6 +1283,31 @@ test('rechaza cita del tenant B incluso si el texto coincide', () =&gt; {
 <td><a href="tareas/F06-06.md">F06-06</a></td>
 <td>worker</td>
 <td>Brief versionado basado en snapshots; envío email no implícito; vistas y export primero.</td>
+</tr>
+<tr>
+<td><a href="tareas/F06-08.md">F06-08</a></td>
+<td>worker</td>
+<td>Centro in-app y preferencias para usuarios VEXA con membership/RLS; no contactos CRM.</td>
+</tr>
+<tr>
+<td><a href="tareas/F06-09.md">F06-09</a></td>
+<td>worker</td>
+<td>Outbox de notificaciones SQL, consumidor real, fencing, cuotas/anti-ruido y conciliación de incertidumbre.</td>
+</tr>
+<tr>
+<td><a href="tareas/F06-10.md">F06-10</a></td>
+<td>worker</td>
+<td>Correo transaccional profesional HTML/texto, Mailpit local, webhooks firmados/replay y estados de entrega honestos.</td>
+</tr>
+<tr>
+<td><a href="tareas/F06-11.md">F06-11</a></td>
+<td>worker</td>
+<td>Web Push/PWA con consentimiento, SDK estándar, endpoints seguros, service worker y revocación por usuario/scope.</td>
+</tr>
+<tr>
+<td><a href="tareas/F06-12.md">F06-12</a></td>
+<td>worker</td>
+<td>Conectar emisores reales y verificar notificaciones E2E locales A/B, sin declarar entregas remotas simuladas.</td>
 </tr>
 <tr>
 <td><a href="tareas/F06-07.md">F06-07</a></td>
@@ -2826,7 +2851,7 @@ Alternativa offline una vez listo gate/entorno: <code>python3 orchestration/runn
 <h2>Recuperación específica</h2>
 <p>Rectificar claim por nueva versión y registrar motivo; no borrar evidencia contraria.</p>
 <h2>Cierre obligatorio</h2>
-<p><code>task_id, baseline_sha, candidate_sha, fixture_hash, command, exit_code, expected, observed, artifacts, reviewer, pending</code>. Las pruebas/grafo no las edita el candidato. Dos fallos agotan intento; guardar reproducción y pasar a recuperación supervisada, no editar status=accepted. Build/instalación de dependencias se hacen en copia temporal para no mutar el candidato durante el gate.</p></section><section id="F04-07"><h1>F04-07 — Medir gold temporal humano: clasificación, calidad clusters, abstención, evidencia, costo y latencia; holdout no tuneable.</h1>
+<p><code>task_id, baseline_sha, candidate_sha, fixture_hash, command, exit_code, expected, observed, artifacts, reviewer, pending</code>. Las pruebas/grafo no las edita el candidato. Dos fallos agotan intento; guardar reproducción y pasar a recuperación supervisada, no editar status=accepted. Build/instalación de dependencias se hacen en copia temporal para no mutar el candidato durante el gate.</p></section><section id="F04-07"><h1>F04-07 — Implementar harness temporal de evaluación reproducible; sin gold humano reportar not_measured, nunca certificar precisión con fixtures.</h1>
 <p><strong>Modalidad:</strong> interactive. <strong>Dependencias:</strong> F04-06.
 <strong>Gate:</strong> MISSING — escribir/revisar primero en control-plane.</p>
 <h2>Entrada (leer, no inventar contexto)</h2>
@@ -3487,8 +3512,269 @@ Alternativa offline una vez listo gate/entorno: <code>python3 orchestration/runn
 <h2>Recuperación específica</h2>
 <p>Si falla validación, no publicar brief; usar versión anterior señalando stale.</p>
 <h2>Cierre obligatorio</h2>
+<p><code>task_id, baseline_sha, candidate_sha, fixture_hash, command, exit_code, expected, observed, artifacts, reviewer, pending</code>. Las pruebas/grafo no las edita el candidato. Dos fallos agotan intento; guardar reproducción y pasar a recuperación supervisada, no editar status=accepted. Build/instalación de dependencias se hacen en copia temporal para no mutar el candidato durante el gate.</p></section><section id="F06-08"><h1>F06-08 — Centro in-app y preferencias para usuarios VEXA con membership/RLS; no contactos CRM.</h1>
+<p><strong>Modalidad:</strong> worker. <strong>Dependencias:</strong> F01-03, F01-04, F02-06.
+<strong>Gate:</strong> MISSING — escribir/revisar primero en control-plane.</p>
+<h2>Entrada (leer, no inventar contexto)</h2>
+<ul>
+<li><code>AGENTS.md</code></li>
+<li><code>docs/CONTEXTO-CANONICO.md</code></li>
+<li><code>docs/blueprint/F06.md</code></li>
+<li><code>construccion/03-CONTRATOS.md</code></li>
+</ul>
+<h2>Salida prevista — no afirma que ya existe</h2>
+<ul>
+<li><code>supabase/migrations/0015_notifications.sql</code></li>
+<li><code>packages/notifications/src/preferences.ts</code></li>
+<li><code>apps/web/src/app/(product)/notifications/page.tsx</code></li>
+</ul>
+<h2>Pasos específicos</h2>
+<ol>
+<li>Leer PROPUESTAS-PARA-INTEGRAR y reutilizar catálogo/eligibilidad/templates revisados.</li>
+<li>Centro in-app y preferencias por tenant/usuario/evento/canal, FK a memberships y RLS; nunca destinatarios desde clientes CRM.</li>
+<li>API revalida permisos del recurso y membership vigente; ausencia de configuración falla cerrada.</li>
+<li>Invitaciones requieren acto explícito de owner y destinatario reservado; marcar eventos no conectados como tales.</li>
+</ol>
+<h2>Oráculos obligatorios para el gate</h2>
+<ul>
+<li>A no lee ni modifica inbox/preferencias de B mediante REST directo.</li>
+<li>Viewer sólo cambia sus propias preferencias y lectura.</li>
+<li>Un customer importado sin membership jamás se convierte en destinatario.</li>
+</ul>
+<h2>Preparar la prueba ANTES del worker</h2>
+<ol>
+<li>Controlador escribe el gate siguiente a partir de los oráculos de arriba. Si requiere DB/browser, seguir 04-PRUEBAS-Y-LOOP.md; no sustituirlo por un JSON que diga passed.</li>
+<li>Ejecutar contra implementación ausente y contra el defecto específico (nulo→cero, duplicado, fuga, según tarea). Registrar fallo por la aserción correcta; un error de setup NO mata un mutante.</li>
+<li>Revisar gate fuera del candidato y hacer commit. Refrescar registro de gates y guía al agregar pruebas, antes de prepare, nunca durante una verificación.</li>
+</ol>
+<h2>Comandos del ciclo</h2>
+<pre><code class="language-bash">cd ~/vexa
+python3 scripts/guide.py audit
+python3 scripts/guide.py packet --task F06-08
+python3 orchestration/runner.py prepare --task F06-08 --max-minutes 1
+# Editar sólo el worktree impreso, sin commit; guardar su ruta en CANDIDATE.
+VEXA_CANDIDATE=&quot;$CANDIDATE&quot; node --test tests/acceptance/F06-08.test.mjs
+python3 orchestration/runner.py verify --task F06-08 --max-minutes 5
+# Revisión independiente de diff, controles y log; NO aceptar por autoafirmación.
+# Si se rechaza: STOP + reject --task F06-08 --approval-note &quot;referencia real&quot;; ver capítulo 01.
+python3 orchestration/runner.py accept --task F06-08 --max-minutes 5
+</code></pre>
+<p>Estos comandos fallan cerrados si faltan gate/dependencias/permiso; no son evidencia de ejecución. No pegar la nota de ejemplo como aprobación. La modalidad external requiere actos fuera del loop; prepare sólo abre un candidato local.
+Alternativa offline una vez listo gate/entorno: <code>python3 orchestration/runner.py run --max-rounds 1 --max-minutes 20</code>. Selecciona la próxima tarea elegible del grafo; no garantiza que sea esta. Verificar estado antes.</p>
+<h2>Recuperación específica</h2>
+<p>Conservar filas y error; no reemplazar autorizador por snapshot enviado por browser.</p>
+<h2>Cierre obligatorio</h2>
+<p><code>task_id, baseline_sha, candidate_sha, fixture_hash, command, exit_code, expected, observed, artifacts, reviewer, pending</code>. Las pruebas/grafo no las edita el candidato. Dos fallos agotan intento; guardar reproducción y pasar a recuperación supervisada, no editar status=accepted. Build/instalación de dependencias se hacen en copia temporal para no mutar el candidato durante el gate.</p></section><section id="F06-09"><h1>F06-09 — Outbox de notificaciones SQL, consumidor real, fencing, cuotas/anti-ruido y conciliación de incertidumbre.</h1>
+<p><strong>Modalidad:</strong> worker. <strong>Dependencias:</strong> F06-08.
+<strong>Gate:</strong> MISSING — escribir/revisar primero en control-plane.</p>
+<h2>Entrada (leer, no inventar contexto)</h2>
+<ul>
+<li><code>AGENTS.md</code></li>
+<li><code>docs/CONTEXTO-CANONICO.md</code></li>
+<li><code>docs/blueprint/F06.md</code></li>
+<li><code>construccion/03-CONTRATOS.md</code></li>
+</ul>
+<h2>Salida prevista — no afirma que ya existe</h2>
+<ul>
+<li><code>supabase/migrations/0016_notification_outbox.sql</code></li>
+<li><code>packages/notifications/src/repository.ts</code></li>
+<li><code>packages/notifications/src/worker.ts</code></li>
+</ul>
+<h2>Pasos específicos</h2>
+<ol>
+<li>Conectar puerto revisado a SQL/outbox y consumidor existente, no crear otro sistema de jobs.</li>
+<li>Insert evento/outbox atómico, clave idempotente, claims/leases/fences y revalidación actual de autorización antes del efecto.</li>
+<li>Separar queued/accepted/delivered/read/uncertain; timeout ambiguo no se reenvía ni libera por TTL.</li>
+<li>Backoff/dead-letter, límites de frecuencia/digest y alarmas sin bucles de notificación recursiva.</li>
+</ol>
+<h2>Oráculos obligatorios para el gate</h2>
+<ul>
+<li>Dos workers reales no duplican el efecto; fence viejo no publica.</li>
+<li>Crash después de HTTP antes de commit queda uncertain y requiere conciliación.</li>
+<li>Revocación/preferencia/config caída impiden nuevo despacho; objetos mutables no cambian receptor validado.</li>
+</ul>
+<h2>Preparar la prueba ANTES del worker</h2>
+<ol>
+<li>Controlador escribe el gate siguiente a partir de los oráculos de arriba. Si requiere DB/browser, seguir 04-PRUEBAS-Y-LOOP.md; no sustituirlo por un JSON que diga passed.</li>
+<li>Ejecutar contra implementación ausente y contra el defecto específico (nulo→cero, duplicado, fuga, según tarea). Registrar fallo por la aserción correcta; un error de setup NO mata un mutante.</li>
+<li>Revisar gate fuera del candidato y hacer commit. Refrescar registro de gates y guía al agregar pruebas, antes de prepare, nunca durante una verificación.</li>
+</ol>
+<h2>Comandos del ciclo</h2>
+<pre><code class="language-bash">cd ~/vexa
+python3 scripts/guide.py audit
+python3 scripts/guide.py packet --task F06-09
+python3 orchestration/runner.py prepare --task F06-09 --max-minutes 1
+# Editar sólo el worktree impreso, sin commit; guardar su ruta en CANDIDATE.
+VEXA_CANDIDATE=&quot;$CANDIDATE&quot; node --test tests/acceptance/F06-09.test.mjs
+python3 orchestration/runner.py verify --task F06-09 --max-minutes 5
+# Revisión independiente de diff, controles y log; NO aceptar por autoafirmación.
+# Si se rechaza: STOP + reject --task F06-09 --approval-note &quot;referencia real&quot;; ver capítulo 01.
+python3 orchestration/runner.py accept --task F06-09 --max-minutes 5
+</code></pre>
+<p>Estos comandos fallan cerrados si faltan gate/dependencias/permiso; no son evidencia de ejecución. No pegar la nota de ejemplo como aprobación. La modalidad external requiere actos fuera del loop; prepare sólo abre un candidato local.
+Alternativa offline una vez listo gate/entorno: <code>python3 orchestration/runner.py run --max-rounds 1 --max-minutes 20</code>. Selecciona la próxima tarea elegible del grafo; no garantiza que sea esta. Verificar estado antes.</p>
+<h2>Recuperación específica</h2>
+<p>Conservar intento/proveedor/evidencia; ningún retry manual ignora ventana de idempotencia ni autorización.</p>
+<h2>Cierre obligatorio</h2>
+<p><code>task_id, baseline_sha, candidate_sha, fixture_hash, command, exit_code, expected, observed, artifacts, reviewer, pending</code>. Las pruebas/grafo no las edita el candidato. Dos fallos agotan intento; guardar reproducción y pasar a recuperación supervisada, no editar status=accepted. Build/instalación de dependencias se hacen en copia temporal para no mutar el candidato durante el gate.</p></section><section id="F06-10"><h1>F06-10 — Correo transaccional profesional HTML/texto, Mailpit local, webhooks firmados/replay y estados de entrega honestos.</h1>
+<p><strong>Modalidad:</strong> worker. <strong>Dependencias:</strong> F06-09.
+<strong>Gate:</strong> MISSING — escribir/revisar primero en control-plane.</p>
+<h2>Entrada (leer, no inventar contexto)</h2>
+<ul>
+<li><code>AGENTS.md</code></li>
+<li><code>docs/CONTEXTO-CANONICO.md</code></li>
+<li><code>docs/blueprint/F06.md</code></li>
+<li><code>construccion/03-CONTRATOS.md</code></li>
+</ul>
+<h2>Salida prevista — no afirma que ya existe</h2>
+<ul>
+<li><code>supabase/migrations/0017_notification_receipts.sql</code></li>
+<li><code>packages/notifications/src/email.ts</code></li>
+<li><code>apps/web/src/app/api/webhooks/email/route.ts</code></li>
+</ul>
+<h2>Pasos específicos</h2>
+<ol>
+<li>Integrar templates HTML+texto revisados y adaptador transaccional con key/remitente configurables; sin key bloquea.</li>
+<li>Ensayo real LOCAL en Mailpit y previews responsive, sin emails externos ni afirmar compatibilidad de clientes no probados.</li>
+<li>Verificar firma de webhook con SDK estándar sobre body original, antigüedad y replay; tenant viene del mapping interno de message_id, no del payload.</li>
+<li>Conservar estados ambiguos/orphans para conciliación; comprobar SPF/DKIM/DMARC sólo cuando exista dominio autorizado.</li>
+</ol>
+<h2>Oráculos obligatorios para el gate</h2>
+<ul>
+<li>HTML/URL/header injection se rechaza o escapa; texto plano contiene CTA/motivo.</li>
+<li>Firma inválida/expirada, replay o ID ajeno no cambia entrega.</li>
+<li>202/accepted no aparece delivered; un recibo local no acredita Resend real.</li>
+</ul>
+<h2>Preparar la prueba ANTES del worker</h2>
+<ol>
+<li>Controlador escribe el gate siguiente a partir de los oráculos de arriba. Si requiere DB/browser, seguir 04-PRUEBAS-Y-LOOP.md; no sustituirlo por un JSON que diga passed.</li>
+<li>Ejecutar contra implementación ausente y contra el defecto específico (nulo→cero, duplicado, fuga, según tarea). Registrar fallo por la aserción correcta; un error de setup NO mata un mutante.</li>
+<li>Revisar gate fuera del candidato y hacer commit. Refrescar registro de gates y guía al agregar pruebas, antes de prepare, nunca durante una verificación.</li>
+</ol>
+<h2>Comandos del ciclo</h2>
+<pre><code class="language-bash">cd ~/vexa
+python3 scripts/guide.py audit
+python3 scripts/guide.py packet --task F06-10
+python3 orchestration/runner.py prepare --task F06-10 --max-minutes 1
+# Editar sólo el worktree impreso, sin commit; guardar su ruta en CANDIDATE.
+VEXA_CANDIDATE=&quot;$CANDIDATE&quot; node --test tests/acceptance/F06-10.test.mjs
+python3 orchestration/runner.py verify --task F06-10 --max-minutes 5
+# Revisión independiente de diff, controles y log; NO aceptar por autoafirmación.
+# Si se rechaza: STOP + reject --task F06-10 --approval-note &quot;referencia real&quot;; ver capítulo 01.
+python3 orchestration/runner.py accept --task F06-10 --max-minutes 5
+</code></pre>
+<p>Estos comandos fallan cerrados si faltan gate/dependencias/permiso; no son evidencia de ejecución. No pegar la nota de ejemplo como aprobación. La modalidad external requiere actos fuera del loop; prepare sólo abre un candidato local.
+Alternativa offline una vez listo gate/entorno: <code>python3 orchestration/runner.py run --max-rounds 1 --max-minutes 20</code>. Selecciona la próxima tarea elegible del grafo; no garantiza que sea esta. Verificar estado antes.</p>
+<h2>Recuperación específica</h2>
+<p>Bloquear canal y señalar configuración pendiente; no usar remitente/credenciales de otro proyecto.</p>
+<h2>Cierre obligatorio</h2>
+<p><code>task_id, baseline_sha, candidate_sha, fixture_hash, command, exit_code, expected, observed, artifacts, reviewer, pending</code>. Las pruebas/grafo no las edita el candidato. Dos fallos agotan intento; guardar reproducción y pasar a recuperación supervisada, no editar status=accepted. Build/instalación de dependencias se hacen en copia temporal para no mutar el candidato durante el gate.</p></section><section id="F06-11"><h1>F06-11 — Web Push/PWA con consentimiento, SDK estándar, endpoints seguros, service worker y revocación por usuario/scope.</h1>
+<p><strong>Modalidad:</strong> worker. <strong>Dependencias:</strong> F06-09.
+<strong>Gate:</strong> MISSING — escribir/revisar primero en control-plane.</p>
+<h2>Entrada (leer, no inventar contexto)</h2>
+<ul>
+<li><code>AGENTS.md</code></li>
+<li><code>docs/CONTEXTO-CANONICO.md</code></li>
+<li><code>docs/blueprint/F06.md</code></li>
+<li><code>construccion/03-CONTRATOS.md</code></li>
+</ul>
+<h2>Salida prevista — no afirma que ya existe</h2>
+<ul>
+<li><code>supabase/migrations/0018_push_subscriptions.sql</code></li>
+<li><code>packages/notifications/src/push.ts</code></li>
+<li><code>apps/web/public/service-worker.js</code></li>
+<li><code>apps/web/src/components/push-preferences.tsx</code></li>
+</ul>
+<h2>Pasos específicos</h2>
+<ol>
+<li>Instalar/fijar SDK Push estándar y reutilizar transporte revisado, sin criptografía propia.</li>
+<li>Opt-in explícito, registro/rotación/revocación por dispositivo y scope; session/logout/revocación no deja acceso cruzado.</li>
+<li>Validar endpoint y copiar exactamente URL/keys usados por SDK antes de awaits; no redirects/SSRF.</li>
+<li>Payload mínimo sin PII/importes, click sólo rutas propias con autorización actual; pruebas browser locales separadas de entrega real.</li>
+</ol>
+<h2>Oráculos obligatorios para el gate</h2>
+<ul>
+<li>Mutar objeto tras validarlo no cambia destino real; endpoint interno se rechaza.</li>
+<li>410 revoca,429 respeta backoff,timeout queda uncertain.</li>
+<li>Sin permiso/config/SDK no hay éxito falso; logout/cambio de scope conserva aislamiento.</li>
+</ul>
+<h2>Preparar la prueba ANTES del worker</h2>
+<ol>
+<li>Controlador escribe el gate siguiente a partir de los oráculos de arriba. Si requiere DB/browser, seguir 04-PRUEBAS-Y-LOOP.md; no sustituirlo por un JSON que diga passed.</li>
+<li>Ejecutar contra implementación ausente y contra el defecto específico (nulo→cero, duplicado, fuga, según tarea). Registrar fallo por la aserción correcta; un error de setup NO mata un mutante.</li>
+<li>Revisar gate fuera del candidato y hacer commit. Refrescar registro de gates y guía al agregar pruebas, antes de prepare, nunca durante una verificación.</li>
+</ol>
+<h2>Comandos del ciclo</h2>
+<pre><code class="language-bash">cd ~/vexa
+python3 scripts/guide.py audit
+python3 scripts/guide.py packet --task F06-11
+python3 orchestration/runner.py prepare --task F06-11 --max-minutes 1
+# Editar sólo el worktree impreso, sin commit; guardar su ruta en CANDIDATE.
+VEXA_CANDIDATE=&quot;$CANDIDATE&quot; node --test tests/acceptance/F06-11.test.mjs
+python3 orchestration/runner.py verify --task F06-11 --max-minutes 5
+# Revisión independiente de diff, controles y log; NO aceptar por autoafirmación.
+# Si se rechaza: STOP + reject --task F06-11 --approval-note &quot;referencia real&quot;; ver capítulo 01.
+python3 orchestration/runner.py accept --task F06-11 --max-minutes 5
+</code></pre>
+<p>Estos comandos fallan cerrados si faltan gate/dependencias/permiso; no son evidencia de ejecución. No pegar la nota de ejemplo como aprobación. La modalidad external requiere actos fuera del loop; prepare sólo abre un candidato local.
+Alternativa offline una vez listo gate/entorno: <code>python3 orchestration/runner.py run --max-rounds 1 --max-minutes 20</code>. Selecciona la próxima tarea elegible del grafo; no garantiza que sea esta. Verificar estado antes.</p>
+<h2>Recuperación específica</h2>
+<p>Desactivar suscripción y conservar motivo seguro; no solicitar permisos ni contactar dispositivos reales sin autorización.</p>
+<h2>Cierre obligatorio</h2>
+<p><code>task_id, baseline_sha, candidate_sha, fixture_hash, command, exit_code, expected, observed, artifacts, reviewer, pending</code>. Las pruebas/grafo no las edita el candidato. Dos fallos agotan intento; guardar reproducción y pasar a recuperación supervisada, no editar status=accepted. Build/instalación de dependencias se hacen en copia temporal para no mutar el candidato durante el gate.</p></section><section id="F06-12"><h1>F06-12 — Conectar emisores reales y verificar notificaciones E2E locales A/B, sin declarar entregas remotas simuladas.</h1>
+<p><strong>Modalidad:</strong> worker. <strong>Dependencias:</strong> F06-10, F06-11, F06-05, F06-06.
+<strong>Gate:</strong> MISSING — escribir/revisar primero en control-plane.</p>
+<h2>Entrada (leer, no inventar contexto)</h2>
+<ul>
+<li><code>AGENTS.md</code></li>
+<li><code>docs/CONTEXTO-CANONICO.md</code></li>
+<li><code>docs/blueprint/F06.md</code></li>
+<li><code>construccion/03-CONTRATOS.md</code></li>
+</ul>
+<h2>Salida prevista — no afirma que ya existe</h2>
+<ul>
+<li><code>packages/notifications/src/events.ts</code></li>
+<li><code>apps/web/src/app/(product)/notifications/integration.test.tsx</code></li>
+<li><code>docs/blueprint/notification-readiness.json</code></li>
+</ul>
+<h2>Pasos específicos</h2>
+<ol>
+<li>Conectar brief/intervención/health/jobs reales a eventos autorizados y outbox, sin notificar por cada mensaje CRM.</li>
+<li>Probar acción de negocio→transacción→consumidor→inbox/transportes locales y deep-link autorizado, en dos tenants.</li>
+<li>Ajustar rutas reales y preferencias; no declarar connected sólo por existir template.</li>
+<li>Entregar configuración/domino/VAPID/receipts/operación pendientes separados de pruebas locales.</li>
+</ol>
+<h2>Oráculos obligatorios para el gate</h2>
+<ul>
+<li>Doble clic o replay genera un evento lógico; emisores transaccionales no dejan medias escrituras.</li>
+<li>Usuario revocado no abre el recurso aunque conserve aviso antiguo.</li>
+<li>Todos los destinos son usuarios VEXA; proveedores reales no probados quedan explícitos.</li>
+</ul>
+<h2>Preparar la prueba ANTES del worker</h2>
+<ol>
+<li>Controlador escribe el gate siguiente a partir de los oráculos de arriba. Si requiere DB/browser, seguir 04-PRUEBAS-Y-LOOP.md; no sustituirlo por un JSON que diga passed.</li>
+<li>Ejecutar contra implementación ausente y contra el defecto específico (nulo→cero, duplicado, fuga, según tarea). Registrar fallo por la aserción correcta; un error de setup NO mata un mutante.</li>
+<li>Revisar gate fuera del candidato y hacer commit. Refrescar registro de gates y guía al agregar pruebas, antes de prepare, nunca durante una verificación.</li>
+</ol>
+<h2>Comandos del ciclo</h2>
+<pre><code class="language-bash">cd ~/vexa
+python3 scripts/guide.py audit
+python3 scripts/guide.py packet --task F06-12
+python3 orchestration/runner.py prepare --task F06-12 --max-minutes 1
+# Editar sólo el worktree impreso, sin commit; guardar su ruta en CANDIDATE.
+VEXA_CANDIDATE=&quot;$CANDIDATE&quot; node --test tests/acceptance/F06-12.test.mjs
+python3 orchestration/runner.py verify --task F06-12 --max-minutes 5
+# Revisión independiente de diff, controles y log; NO aceptar por autoafirmación.
+# Si se rechaza: STOP + reject --task F06-12 --approval-note &quot;referencia real&quot;; ver capítulo 01.
+python3 orchestration/runner.py accept --task F06-12 --max-minutes 5
+</code></pre>
+<p>Estos comandos fallan cerrados si faltan gate/dependencias/permiso; no son evidencia de ejecución. No pegar la nota de ejemplo como aprobación. La modalidad external requiere actos fuera del loop; prepare sólo abre un candidato local.
+Alternativa offline una vez listo gate/entorno: <code>python3 orchestration/runner.py run --max-rounds 1 --max-minutes 20</code>. Selecciona la próxima tarea elegible del grafo; no garantiza que sea esta. Verificar estado antes.</p>
+<h2>Recuperación específica</h2>
+<p>Conservar feature/canal bloqueado y última evidencia; no presentar mocks como entrega productiva.</p>
+<h2>Cierre obligatorio</h2>
 <p><code>task_id, baseline_sha, candidate_sha, fixture_hash, command, exit_code, expected, observed, artifacts, reviewer, pending</code>. Las pruebas/grafo no las edita el candidato. Dos fallos agotan intento; guardar reproducción y pasar a recuperación supervisada, no editar status=accepted. Build/instalación de dependencias se hacen en copia temporal para no mutar el candidato durante el gate.</p></section><section id="F06-07"><h1>F06-07 — Revisión visual móvil/desktop, teclado, contraste y reducción movimiento; no copiar marcas.</h1>
-<p><strong>Modalidad:</strong> interactive. <strong>Dependencias:</strong> F06-06.
+<p><strong>Modalidad:</strong> interactive. <strong>Dependencias:</strong> F06-12.
 <strong>Gate:</strong> MISSING — escribir/revisar primero en control-plane.</p>
 <h2>Entrada (leer, no inventar contexto)</h2>
 <ul>
@@ -3504,7 +3790,7 @@ Alternativa offline una vez listo gate/entorno: <code>python3 orchestration/runn
 </ul>
 <h2>Pasos específicos</h2>
 <ol>
-<li>Playwright contra las ocho rutas propias a 390x844 y 1440x900, con prefers-reduced-motion.</li>
+<li>Playwright contra las ocho vistas más Auth/notificaciones/preferencias a 390x844 y 1440x900, con prefers-reduced-motion.</li>
 <li>Probar teclado, labels, foco, contraste WCAG AA, tablas pequeñas y carga lenta.</li>
 <li>Comparar screenshots antes y después y requests de cada acción; no dar PASS por imagen si falló el POST.</li>
 <li>Separar juicio visual humano de aserciones DOM y de negocio.</li>
@@ -3554,7 +3840,7 @@ python3 orchestration/runner.py accept --task F06-07 --max-minutes 5
 </ul>
 <h2>Pasos específicos</h2>
 <ol>
-<li>Ejecutar SEC-01..08 sobre DB, Storage, vectores, cache, exports y jobs locales reales, con usuarios A/B e IDs conocidos.</li>
+<li>Ejecutar SEC-01..08 sobre DB, Storage, vectores, cache, exports, jobs y notificaciones locales reales, con usuarios A/B e IDs conocidos.</li>
 <li>Atacar endpoints directamente; revisar exposición de service_role y SSRF mediante adjuntos.</li>
 <li>Revocar acceso durante un job y repetir descarga; inspeccionar logs por PII y tokens.</li>
 <li>Registrar exploit y reproducción concretos; habilitar RLS no demuestra aislamiento.</li>
@@ -3787,7 +4073,7 @@ python3 orchestration/runner.py accept --task F07-05 --max-minutes 5
 <p>Mantener el piloto bloqueado y avanzar sólo documentación o demo rotulada sin falsear resultados.</p>
 <h2>Cierre obligatorio</h2>
 <p><code>task_id, baseline_sha, candidate_sha, fixture_hash, command, exit_code, expected, observed, artifacts, reviewer, pending</code>. Las pruebas/grafo no las edita el candidato. Dos fallos agotan intento; guardar reproducción y pasar a recuperación supervisada, no editar status=accepted. Build/instalación de dependencias se hacen en copia temporal para no mutar el candidato durante el gate.</p></section><section id="F07-06"><h1>F07-06 — Runbooks cancelación, rollback, restore, datos borrados y eliminación de embeddings/backups conforme política.</h1>
-<p><strong>Modalidad:</strong> interactive. <strong>Dependencias:</strong> F07-05.
+<p><strong>Modalidad:</strong> interactive. <strong>Dependencias:</strong> F07-04.
 <strong>Gate:</strong> MISSING — escribir/revisar primero en control-plane.</p>
 <h2>Entrada (leer, no inventar contexto)</h2>
 <ul>
@@ -3800,7 +4086,7 @@ python3 orchestration/runner.py accept --task F07-05 --max-minutes 5
 <ul>
 <li><code>docs/blueprint/restore-drill.json</code></li>
 <li><code>packages/jobs/src/deletion.ts</code></li>
-<li><code>supabase/migrations/0015_tombstones.sql</code></li>
+<li><code>supabase/migrations/0019_tombstones.sql</code></li>
 </ul>
 <h2>Pasos específicos</h2>
 <ol>
@@ -3838,7 +4124,7 @@ python3 orchestration/runner.py accept --task F07-06 --max-minutes 5
 <p>Si falla restore, bloquear release y conservar backup intacto; repetir en DB nueva, nunca resetear producción.</p>
 <h2>Cierre obligatorio</h2>
 <p><code>task_id, baseline_sha, candidate_sha, fixture_hash, command, exit_code, expected, observed, artifacts, reviewer, pending</code>. Las pruebas/grafo no las edita el candidato. Dos fallos agotan intento; guardar reproducción y pasar a recuperación supervisada, no editar status=accepted. Build/instalación de dependencias se hacen en copia temporal para no mutar el candidato durante el gate.</p></section><section id="F08-01"><h1>F08-01 — Preparar manifiesto release con SHA, migrations, config hashes, URLs y propietarios sin secretos.</h1>
-<p><strong>Modalidad:</strong> external. <strong>Dependencias:</strong> F07-06.
+<p><strong>Modalidad:</strong> external. <strong>Dependencias:</strong> F07-05, F07-06.
 <strong>Gate:</strong> MISSING — escribir/revisar primero en control-plane.</p>
 <h2>Entrada (leer, no inventar contexto)</h2>
 <ul>

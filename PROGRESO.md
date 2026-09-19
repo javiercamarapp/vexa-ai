@@ -1,7 +1,16 @@
 # Progreso verificable
 Actualizado: 2026-09-19 local. Los apartados anteriores conservados abajo son cortes históricos, no inventario vigente.
 
-## Agentes en paralelo — 19-sep (estado más reciente)
+## Auth aceptado y grafo ampliado — último corte 19-sep
+- **F01-02 accepted, commit8f85ee7**. Migración0001 aplicada una vez a Supabase LOCAL VEXA56322, sin tocar otros proyectos. PKCE/callback válido, selección A/B, redirects externos, cookies/firma/expiración, revocación y logout/back probados en Auth/DB/Chrome reales:7tests (6subcasos+envolvente), luego reejecutados en materialización limpia por accept. Google remoto sigue sin configurar.
+- 22archivos de Auth transferidos con hashes idénticos a propuesta revisada; P1 de Referrer-Policy corregido sin admitir Origin:null. Revisor reprodujo29tests HTTP y build; principal20tests session y SQL/RLS en PostgreSQL17 desechable. Fallo de locale reproducido y diagnosticado antes del verde LANG=C/LC_ALL=C.
+- Guard rechazó metadata ignorada que el operador creó al ejecutar CLI Supabase en candidato; recuperación conservó evidencia y abrió copia limpia. Gate real detectó después un falso positivo del observador: reload reenviaba el POST original. Traza/rojo específico, GET de lectura, revisión independiente y nueva congelación; ninguna aserción de tenant/estado/DB se eliminó.
+- Regresiones de7gates previos:18/18 verdes contra candidato. Una corrida tuvo timeout de npm no reproducido; se conserva, sin atribuir causa ni aumentar límites. Repetición de etapas ci/lint/typecheck/build y repetición del gate original verdes. Suite controlador108verde antes de ampliación.
+- Propuestas corregidas de ingesta/conectores21, gateway/intelligence34 y notificaciones27: **82tests reproducidos**, revisiones independientes aprobadas; commits locales en PROPUESTAS-PARA-INTEGRAR. No son todavía tareas integradas/aceptadas.
+- Grafo v4 conserva55IDs y añade5notificaciones, total60. Auth/scaffold+preparación:8aceptadas;9gates presentes,51faltantes. Harness de evaluación no inventa gold; validación humana sigue bloqueando release, no redacción de runbooks. Ampliación revisada independientemente y aprobada: audit/graph check sin errores,55IDs y entradas previas preservados,64derivados reproducidos,108controller+24npm verdes. Principal reprodujo también108+24 y5oráculos Auth. No son pruebas del producto faltante.
+- Consumo30llamadas incluida revisión del grafo;190restantes del techo220. Sin APIs pagadas de inferencia, correos/push a personas ni producción. Copia de Escritorio aún no sincronizada con estos cambios.
+
+## Agentes en paralelo — 19-sep (corte anterior)
 - Plazo corregido por usuario: UN MES, no una semana; destinatarios notificaciones confirmados: usuarios VEXA. PLAN.md sustituye investigación histórica por construcción real, manteniendo gates externos y aceptación serial.
 - Segunda autoría de gate Auth terminó; supervisor paró por STOP de checkpoint antes de revisión, preservando propuesta. Revisor encontró2P2 adicionales (normalización de redirect con backslash y revocación que aceptaba cualquier redirect local). No se aprobaron ni se marcó Auth implementado. Ensayo Docker del revisor bloqueado por sandbox, no prueba de fallo de Auth.
 - Se lanzaron constructores aislados de conectores/ingesta, gateway/evidencia y notificaciones; tres propuestas entregadas. Principal abrió reportes y reprodujo sus tests: **18/18 +24/24 +22/22, exit0, cero skipped**. Son64tests unitarios con fixtures/transporte simulado, no gates externos ni conexión real.

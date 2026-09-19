@@ -20,7 +20,7 @@ El usuario indicó que los datos del cliente llegarán después. No frenar la co
 - GitHub privado `javiercamarapp/vexa-ai`, Vercel proyecto vacío `vexa-ai`. Acceso CLI observado no equivale a conexión productiva completa. Nunca usar proyectos/secretos de Likida/Atiende/Moni.
 
 ## Ejecución: grafo con propuestas paralelas, integración serial
-El DAG `orchestration/graph.json` mantiene55IDs y estados reales; no se reinicia ni se falsifican recibos. Dependencias determinan integración, no impiden preparar módulos independientes.
+El DAG `orchestration/graph.json` v4 conserva los55IDs anteriores y añade5 explícitos para notificaciones (F06-08..12):60tareas. No se reinicia ni se falsifican recibos. F04-07 construye el harness, no certifica gold ausente; F07-05 mantiene validación humana. Runbooks ya no esperan datos humanos, pero release sí depende de ambos. Dependencias determinan integración, no impiden preparar módulos independientes.
 
 Cambio operativo autorizado por la petición de agentes: construir **propuestas aisladas** de módulos independientes en paralelo, con unit tests propios y reportes acotados. No son candidatos oficiales aceptados. Control-plane prepara/revisa/congela el examen externo desde requisitos; después `prepare`, adopción de código permitido, `verify`, revisión y `accept` con materialización limpia. Nadie escribe/modifica su propio gate de aceptación. No bajar pruebas para integrar rápido.
 
@@ -32,25 +32,26 @@ Un escritor por área; máximo4agentes concurrentes. El principal integra interf
 | Ingesta/conectores | packages/ingestion/**, packages/connectors/** | Código normalización/CSV y HTTP read-only; packages/connectors/IMPLEMENTATION.md |
 | Gateway/evidencia | packages/gateway/**, packages/intelligence/** | Reserva/políticas/structured output/citas; packages/gateway/IMPLEMENTATION.md |
 | Notificaciones | packages/notifications/** | Política, templates, despacho/adaptadores; packages/notifications/IMPLEMENTATION.md |
-| Revisor Auth | Sólo revisión del gate corregido F01-02 y temporales de ensayo | Entregado:2P2 concretos pendientes; no aprobado |
+| Revisor Auth | Sólo revisión del gate corregido F01-02 y temporales de ensayo | Correcciones revisadas; gate congelado y Auth aceptado tras prueba real |
 | Constructor Auth (tras terminar revisor) | apps/web/**, packages/platform/**, supabase/migrations/**, package.json y lock raíz de SU worktree | Identidad mínima, SSR/selector/login/logout; packages/platform/IMPLEMENTATION.md |
 
-Tres primeros constructores entregaron propuestas; principal reprodujo64tests unitarios verdes y lanzó revisión independiente de cada módulo. Cuatro trabajos concurrentes ahora: constructor Auth +3revisores. No son tareas aceptadas. Manifests raíz sólo los propone Auth; antes de adoptar deberá congelarse explícitamente su allowlist/dependencia, pues el F01-02 original no incluye esos dos archivos.
+Ola completada: tres módulos corrigieron5hallazgos y pasaron82tests reproducidos por principal + revisión independiente, conservados en commits locales (ver PROPUESTAS-PARA-INTEGRAR). No son tareas aceptadas. Auth corrigió P1 de Referrer-Policy, pasó gate real local y materialización limpia, y fue aceptado en8f85ee7. Su allowlist de manifests raíz se congeló antes de preparar, no se amplió desde el candidato.
 
 Worktrees/PIDs y recibos de esta ola: `private/parallel-batch-1.json` y `.runtime/team-*/`. No copiar esos archivos ni fuentes privadas a GitHub. Cada propuesta parte de un SHA fijo y no modifica archivos de otro agente. SQL compartido sólo por responsable autorizado, nunca varios resets simultáneos.
 
 ## Secuencia de integración
 - [x] Kernel económico limitado y scaffold F01-01 aceptados; preparar infraestructura LOCAL y GitHub privado.
-- [ ] Corregir/revisar gate Auth; implementar identidad mínima/membership/login/callback/logout y probar Auth local real.
+- [x] Auth/membership/callback/selector/logout aceptado con Supabase local y Chrome reales; Google remoto sigue pendiente.
 - [ ] Completar schema tenant-aware, RLS/Storage, diseño/navigation y CI.
 - [ ] Adoptar módulos de ingesta/conectores, implementar persistencia/jobs/consumer y continuidad CRM.
 - [ ] Adoptar gateway/evidencia; completar extracción/clustering/snapshots/ranking.
 - [ ] Ocho vistas con estados/errores/acciones reales; intervención, medición y brief.
-- [ ] Incorporar tareas propias de notificaciones al DAG en checkpoint, sin ocultar ampliación; centro in-app, Web Push, correos, preferencias y outbox durable. Destinatarios confirmados: usuarios VEXA, no consumidores.
+- [x] Incorporar5tareas propias de notificaciones al DAG en checkpoint; no se oculta ampliación ni se aceptan por existir.
+- [ ] Implementar/integrar esas5tareas: centro in-app, Web Push, correos, preferencias y outbox durable, sólo usuarios VEXA.
 - [ ] QA adversarial, carga, accesibilidad, seguridad, restore, release/onboarding y smoke con conexiones autorizadas.
 
 ## Presupuesto, continuidad y paradas
-Ola inicial:3constructores (<=15min cada uno) + revisor Auth (<=8.5min); después constructor Auth (<=15min) +3revisores (<=10min10s). Máximo4concurrentes;8llamadas lanzadas en la ola hasta este corte. Correcciones/revisión posteriores acotadas; hasta12llamadas de modelo para esta ola, máximo2intentos por entregable antes de diagnóstico. No prometer un daemon de un mes: trabajo continuo por tandas/checkpoints y estado durable.
+Ola inicial y revisiones/correcciones cerradas:29llamadas acumuladas del programa (8previas +1autor reanudado +20equipo/revisiones). La ampliación de revisiones fue explícita en recibos privados; no se reinició el conteo. Presupuesto próximo:1revisión del cambio de grafo y hasta190llamadas del supervisor, techo total220,120min/54ciclos por tanda. Máximo4propuestas concurrentes; integración/promoción serial. No prometer un daemon de un mes: trabajo continuo por tandas/checkpoints y estado durable.
 
 Construcción sólo suscripción ChatGPT; cero inferencia API pagada para desarrollar. Sin gasto incremental nuevo, contratación, emails/push a personas o datos reales a terceros sin autorización. Mantener límites globales y descontar llamadas/tandas ya usadas antes de reanudar supervisor. STOP/cuota/credencial/seguridad obligan a parar la parte afectada, no a fingir avance; continuar propuestas independientes seguras.
 

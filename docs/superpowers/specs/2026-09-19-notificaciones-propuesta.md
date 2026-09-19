@@ -1,6 +1,6 @@
 # Notificaciones, push y correos VEXA — ampliación solicitada
 
-**Estado:** funcionalidades solicitadas explícitamente; destinatarios CONFIRMADOS posteriormente por el usuario: «vexa», ante la alternativa usuarios VEXA/clientes finales. Diseño técnico base para propuesta aislada de implementación; dominio/proveedor/entrega productiva no autorizados por esa respuesta. NO integrado ni añadido al grafo activo. No confundir este documento con un envío realizado.
+**Estado:** funcionalidades solicitadas explícitamente; destinatarios CONFIRMADOS posteriormente por el usuario: «vexa», ante la alternativa usuarios VEXA/clientes finales. Diseño técnico base para propuesta aislada de implementación; dominio/proveedor/entrega productiva no autorizados por esa respuesta. Componentes aislados revisados (27tests reproducidos), NO integrados. Alcance añadido explícitamente al grafo v4 en checkpoint: F06-08..12, sin aceptación de tareas ni envío real. No confundir este documento con un envío realizado.
 
 ## Confirmado por el usuario
 - Producto completo con tablas, conexiones, APIs e integraciones/MCP pertinentes.

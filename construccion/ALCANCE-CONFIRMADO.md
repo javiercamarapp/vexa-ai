@@ -34,5 +34,8 @@ La matriz existente [02-TRAZABILIDAD-PRD](../docs/blueprint/02-TRAZABILIDAD-PRD.
 4. Sponsor/evaluadores: gold humano, entrevistas/WTP, utilidad CEO, métricas y evidencia de intervenciones. No fabricar entrevistas, clientes de pago ni resultados.
 5. Coordinación: plan previo a visita a Monterrey, intros USA/China y acuerdos de viaje/documentos. Son compromisos humanos propuestos, no features ni autorizaciones para reservas/firma/envíos.
 
+## Ampliación posterior confirmada
+El usuario pidió calidad enterprise, agentes/loop graph y confirmó UN MES (no una semana). Añadió push y correos profesionales; destinatarios exclusivamente usuarios autorizados de VEXA. Grafo v4 conserva55IDs y añade F06-08..12: inbox/preferencias, outbox durable, email/receipts, Web Push y conexión E2E de eventos. Generar un brief no implica permiso para enviarlo. Datos/credenciales llegarán después; construir connection-ready con fixtures rotulados sin fingir validación remota.
+
 ## Criterio de cierre
 No basta compilar. Usuario autorizado → conectar/importar → procesamiento durable → problemas/evidencias/importes → ocho vistas → intervención → medición/brief debe funcionar con permisos correctos y pruebas adversarias, además de integración remota verificada. Cada pendiente externo permanece explícito. El estado vivo se consulta con `python3 orchestration/runner.py status`; este documento NO acredita producto terminado.

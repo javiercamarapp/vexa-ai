@@ -33,7 +33,7 @@ Generado desde scripts/construction_catalog.py y el grafo vigente. No es una lis
 | [F04-04](tareas/F04-04.md) | worker | Validar cada cita contra message_revision autorizada, enum y límites del schema. |
 | [F04-05](tareas/F04-05.md) | worker | Embeddings model/dim versionados, recuperación tenant-filtered, clustering incremental estable, outliers y split/merge revisables. |
 | [F04-06](tareas/F04-06.md) | worker | Separar síntoma, causa probable y confirmación operacional; no inventar batch/carrier/SKU. |
-| [F04-07](tareas/F04-07.md) | interactive | Medir gold temporal humano: clasificación, calidad clusters, abstención, evidencia, costo y latencia; holdout no tuneable. |
+| [F04-07](tareas/F04-07.md) | interactive | Implementar harness temporal de evaluación reproducible; sin gold humano reportar not_measured, nunca certificar precisión con fixtures. |
 | [F05-01](tareas/F05-01.md) | worker | Leer contrato completo calidad/01 y kernel existente, no reescribir reglas por gusto. |
 | [F05-02](tareas/F05-02.md) | worker | Separar revenue exposure, refunds netos, replacement cost, costo modelado soporte y escenarios de future loss. |
 | [F05-03](tareas/F05-03.md) | worker | Unión global de órdenes/clientes/eventos entre problemas; filas no aditivas señaladas. |
@@ -46,6 +46,11 @@ Generado desde scripts/construction_catalog.py y el grafo vigente. No es una lis
 | [F06-04](tareas/F06-04.md) | worker | Explorer usa herramientas read-only allowlisted sobre vistas SQL seguras; pregunta ambigua pide alcance. |
 | [F06-05](tareas/F06-05.md) | worker | Intervención guarda baseline/hipótesis/owner/fechas y plan de medición antes de cambio. |
 | [F06-06](tareas/F06-06.md) | worker | Brief versionado basado en snapshots; envío email no implícito; vistas y export primero. |
+| [F06-08](tareas/F06-08.md) | worker | Centro in-app y preferencias para usuarios VEXA con membership/RLS; no contactos CRM. |
+| [F06-09](tareas/F06-09.md) | worker | Outbox de notificaciones SQL, consumidor real, fencing, cuotas/anti-ruido y conciliación de incertidumbre. |
+| [F06-10](tareas/F06-10.md) | worker | Correo transaccional profesional HTML/texto, Mailpit local, webhooks firmados/replay y estados de entrega honestos. |
+| [F06-11](tareas/F06-11.md) | worker | Web Push/PWA con consentimiento, SDK estándar, endpoints seguros, service worker y revocación por usuario/scope. |
+| [F06-12](tareas/F06-12.md) | worker | Conectar emisores reales y verificar notificaciones E2E locales A/B, sin declarar entregas remotas simuladas. |
 | [F06-07](tareas/F06-07.md) | interactive | Revisión visual móvil/desktop, teclado, contraste y reducción movimiento; no copiar marcas. |
 | [F07-01](tareas/F07-01.md) | interactive | Revisar amenazas RLS/storage/vectores/exports/jobs e intentar cruce tenant con IDs conocidos. |
 | [F07-02](tareas/F07-02.md) | interactive | Metamórficas: reordenar, duplicar, partir lotes, migrar identidad; mutación sobre dinero y autorización. |

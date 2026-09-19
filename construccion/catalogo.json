@@ -1205,7 +1205,7 @@
   {
     "id": "F04-07",
     "phase": "F04",
-    "objective": "Medir gold temporal humano: clasificación, calidad clusters, abstención, evidencia, costo y latencia; holdout no tuneable.",
+    "objective": "Implementar harness temporal de evaluación reproducible; sin gold humano reportar not_measured, nunca certificar precisión con fixtures.",
     "depends_on": [
       "F04-06"
     ],
@@ -1752,11 +1752,244 @@
     "gate_command": "VEXA_CANDIDATE=\"$CANDIDATE\" node --test tests/acceptance/F06-06.test.mjs"
   },
   {
+    "id": "F06-08",
+    "phase": "F06",
+    "objective": "Centro in-app y preferencias para usuarios VEXA con membership/RLS; no contactos CRM.",
+    "depends_on": [
+      "F01-03",
+      "F01-04",
+      "F02-06"
+    ],
+    "allowed_paths": [
+      "apps/web/",
+      "packages/notifications/",
+      "supabase/migrations/",
+      "package.json",
+      "package-lock.json"
+    ],
+    "acceptance": "tests/acceptance/F06-08.test.mjs",
+    "prompt": "orchestration/prompts/F06.md",
+    "auto_accept": false,
+    "requires_approval": false,
+    "deliverables": [
+      "supabase/migrations/0015_notifications.sql",
+      "packages/notifications/src/preferences.ts",
+      "apps/web/src/app/(product)/notifications/page.tsx"
+    ],
+    "steps": [
+      "Leer PROPUESTAS-PARA-INTEGRAR y reutilizar catálogo/eligibilidad/templates revisados.",
+      "Centro in-app y preferencias por tenant/usuario/evento/canal, FK a memberships y RLS; nunca destinatarios desde clientes CRM.",
+      "API revalida permisos del recurso y membership vigente; ausencia de configuración falla cerrada.",
+      "Invitaciones requieren acto explícito de owner y destinatario reservado; marcar eventos no conectados como tales."
+    ],
+    "oracles": [
+      "A no lee ni modifica inbox/preferencias de B mediante REST directo.",
+      "Viewer sólo cambia sus propias preferencias y lectura.",
+      "Un customer importado sin membership jamás se convierte en destinatario."
+    ],
+    "recovery": "Conservar filas y error; no reemplazar autorizador por snapshot enviado por browser.",
+    "mode": "worker",
+    "reads": [
+      "AGENTS.md",
+      "docs/CONTEXTO-CANONICO.md",
+      "docs/blueprint/F06.md",
+      "construccion/03-CONTRATOS.md"
+    ],
+    "gate_command": "VEXA_CANDIDATE=\"$CANDIDATE\" node --test tests/acceptance/F06-08.test.mjs"
+  },
+  {
+    "id": "F06-09",
+    "phase": "F06",
+    "objective": "Outbox de notificaciones SQL, consumidor real, fencing, cuotas/anti-ruido y conciliación de incertidumbre.",
+    "depends_on": [
+      "F06-08"
+    ],
+    "allowed_paths": [
+      "apps/web/",
+      "packages/notifications/",
+      "supabase/migrations/",
+      "package.json",
+      "package-lock.json",
+      "packages/jobs/"
+    ],
+    "acceptance": "tests/acceptance/F06-09.test.mjs",
+    "prompt": "orchestration/prompts/F06.md",
+    "auto_accept": false,
+    "requires_approval": false,
+    "deliverables": [
+      "supabase/migrations/0016_notification_outbox.sql",
+      "packages/notifications/src/repository.ts",
+      "packages/notifications/src/worker.ts"
+    ],
+    "steps": [
+      "Conectar puerto revisado a SQL/outbox y consumidor existente, no crear otro sistema de jobs.",
+      "Insert evento/outbox atómico, clave idempotente, claims/leases/fences y revalidación actual de autorización antes del efecto.",
+      "Separar queued/accepted/delivered/read/uncertain; timeout ambiguo no se reenvía ni libera por TTL.",
+      "Backoff/dead-letter, límites de frecuencia/digest y alarmas sin bucles de notificación recursiva."
+    ],
+    "oracles": [
+      "Dos workers reales no duplican el efecto; fence viejo no publica.",
+      "Crash después de HTTP antes de commit queda uncertain y requiere conciliación.",
+      "Revocación/preferencia/config caída impiden nuevo despacho; objetos mutables no cambian receptor validado."
+    ],
+    "recovery": "Conservar intento/proveedor/evidencia; ningún retry manual ignora ventana de idempotencia ni autorización.",
+    "mode": "worker",
+    "reads": [
+      "AGENTS.md",
+      "docs/CONTEXTO-CANONICO.md",
+      "docs/blueprint/F06.md",
+      "construccion/03-CONTRATOS.md"
+    ],
+    "gate_command": "VEXA_CANDIDATE=\"$CANDIDATE\" node --test tests/acceptance/F06-09.test.mjs"
+  },
+  {
+    "id": "F06-10",
+    "phase": "F06",
+    "objective": "Correo transaccional profesional HTML/texto, Mailpit local, webhooks firmados/replay y estados de entrega honestos.",
+    "depends_on": [
+      "F06-09"
+    ],
+    "allowed_paths": [
+      "apps/web/",
+      "packages/notifications/",
+      "supabase/migrations/",
+      "package.json",
+      "package-lock.json"
+    ],
+    "acceptance": "tests/acceptance/F06-10.test.mjs",
+    "prompt": "orchestration/prompts/F06.md",
+    "auto_accept": false,
+    "requires_approval": false,
+    "deliverables": [
+      "supabase/migrations/0017_notification_receipts.sql",
+      "packages/notifications/src/email.ts",
+      "apps/web/src/app/api/webhooks/email/route.ts"
+    ],
+    "steps": [
+      "Integrar templates HTML+texto revisados y adaptador transaccional con key/remitente configurables; sin key bloquea.",
+      "Ensayo real LOCAL en Mailpit y previews responsive, sin emails externos ni afirmar compatibilidad de clientes no probados.",
+      "Verificar firma de webhook con SDK estándar sobre body original, antigüedad y replay; tenant viene del mapping interno de message_id, no del payload.",
+      "Conservar estados ambiguos/orphans para conciliación; comprobar SPF/DKIM/DMARC sólo cuando exista dominio autorizado."
+    ],
+    "oracles": [
+      "HTML/URL/header injection se rechaza o escapa; texto plano contiene CTA/motivo.",
+      "Firma inválida/expirada, replay o ID ajeno no cambia entrega.",
+      "202/accepted no aparece delivered; un recibo local no acredita Resend real."
+    ],
+    "recovery": "Bloquear canal y señalar configuración pendiente; no usar remitente/credenciales de otro proyecto.",
+    "mode": "worker",
+    "reads": [
+      "AGENTS.md",
+      "docs/CONTEXTO-CANONICO.md",
+      "docs/blueprint/F06.md",
+      "construccion/03-CONTRATOS.md"
+    ],
+    "gate_command": "VEXA_CANDIDATE=\"$CANDIDATE\" node --test tests/acceptance/F06-10.test.mjs"
+  },
+  {
+    "id": "F06-11",
+    "phase": "F06",
+    "objective": "Web Push/PWA con consentimiento, SDK estándar, endpoints seguros, service worker y revocación por usuario/scope.",
+    "depends_on": [
+      "F06-09"
+    ],
+    "allowed_paths": [
+      "apps/web/",
+      "packages/notifications/",
+      "supabase/migrations/",
+      "package.json",
+      "package-lock.json"
+    ],
+    "acceptance": "tests/acceptance/F06-11.test.mjs",
+    "prompt": "orchestration/prompts/F06.md",
+    "auto_accept": false,
+    "requires_approval": false,
+    "deliverables": [
+      "supabase/migrations/0018_push_subscriptions.sql",
+      "packages/notifications/src/push.ts",
+      "apps/web/public/service-worker.js",
+      "apps/web/src/components/push-preferences.tsx"
+    ],
+    "steps": [
+      "Instalar/fijar SDK Push estándar y reutilizar transporte revisado, sin criptografía propia.",
+      "Opt-in explícito, registro/rotación/revocación por dispositivo y scope; session/logout/revocación no deja acceso cruzado.",
+      "Validar endpoint y copiar exactamente URL/keys usados por SDK antes de awaits; no redirects/SSRF.",
+      "Payload mínimo sin PII/importes, click sólo rutas propias con autorización actual; pruebas browser locales separadas de entrega real."
+    ],
+    "oracles": [
+      "Mutar objeto tras validarlo no cambia destino real; endpoint interno se rechaza.",
+      "410 revoca,429 respeta backoff,timeout queda uncertain.",
+      "Sin permiso/config/SDK no hay éxito falso; logout/cambio de scope conserva aislamiento."
+    ],
+    "recovery": "Desactivar suscripción y conservar motivo seguro; no solicitar permisos ni contactar dispositivos reales sin autorización.",
+    "mode": "worker",
+    "reads": [
+      "AGENTS.md",
+      "docs/CONTEXTO-CANONICO.md",
+      "docs/blueprint/F06.md",
+      "construccion/03-CONTRATOS.md"
+    ],
+    "gate_command": "VEXA_CANDIDATE=\"$CANDIDATE\" node --test tests/acceptance/F06-11.test.mjs"
+  },
+  {
+    "id": "F06-12",
+    "phase": "F06",
+    "objective": "Conectar emisores reales y verificar notificaciones E2E locales A/B, sin declarar entregas remotas simuladas.",
+    "depends_on": [
+      "F06-10",
+      "F06-11",
+      "F06-05",
+      "F06-06"
+    ],
+    "allowed_paths": [
+      "apps/web/",
+      "packages/notifications/",
+      "supabase/migrations/",
+      "package.json",
+      "package-lock.json",
+      "packages/briefs/",
+      "packages/interventions/",
+      "packages/ingestion/",
+      "packages/jobs/",
+      "packages/connectors/",
+      "docs/blueprint/notification-readiness.json"
+    ],
+    "acceptance": "tests/acceptance/F06-12.test.mjs",
+    "prompt": "orchestration/prompts/F06.md",
+    "auto_accept": false,
+    "requires_approval": false,
+    "deliverables": [
+      "packages/notifications/src/events.ts",
+      "apps/web/src/app/(product)/notifications/integration.test.tsx",
+      "docs/blueprint/notification-readiness.json"
+    ],
+    "steps": [
+      "Conectar brief/intervención/health/jobs reales a eventos autorizados y outbox, sin notificar por cada mensaje CRM.",
+      "Probar acción de negocio→transacción→consumidor→inbox/transportes locales y deep-link autorizado, en dos tenants.",
+      "Ajustar rutas reales y preferencias; no declarar connected sólo por existir template.",
+      "Entregar configuración/domino/VAPID/receipts/operación pendientes separados de pruebas locales."
+    ],
+    "oracles": [
+      "Doble clic o replay genera un evento lógico; emisores transaccionales no dejan medias escrituras.",
+      "Usuario revocado no abre el recurso aunque conserve aviso antiguo.",
+      "Todos los destinos son usuarios VEXA; proveedores reales no probados quedan explícitos."
+    ],
+    "recovery": "Conservar feature/canal bloqueado y última evidencia; no presentar mocks como entrega productiva.",
+    "mode": "worker",
+    "reads": [
+      "AGENTS.md",
+      "docs/CONTEXTO-CANONICO.md",
+      "docs/blueprint/F06.md",
+      "construccion/03-CONTRATOS.md"
+    ],
+    "gate_command": "VEXA_CANDIDATE=\"$CANDIDATE\" node --test tests/acceptance/F06-12.test.mjs"
+  },
+  {
     "id": "F06-07",
     "phase": "F06",
     "objective": "Revisión visual móvil/desktop, teclado, contraste y reducción movimiento; no copiar marcas.",
     "depends_on": [
-      "F06-06"
+      "F06-12"
     ],
     "allowed_paths": [
       "apps/web/",
@@ -1774,7 +2007,7 @@
       "docs/blueprint/visual-review.md"
     ],
     "steps": [
-      "Playwright contra las ocho rutas propias a 390x844 y 1440x900, con prefers-reduced-motion.",
+      "Playwright contra las ocho vistas más Auth/notificaciones/preferencias a 390x844 y 1440x900, con prefers-reduced-motion.",
       "Probar teclado, labels, foco, contraste WCAG AA, tablas pequeñas y carga lenta.",
       "Comparar screenshots antes y después y requests de cada acción; no dar PASS por imagen si falló el POST.",
       "Separar juicio visual humano de aserciones DOM y de negocio."
@@ -1816,7 +2049,7 @@
       "packages/platform/src/authorization.ts"
     ],
     "steps": [
-      "Ejecutar SEC-01..08 sobre DB, Storage, vectores, cache, exports y jobs locales reales, con usuarios A/B e IDs conocidos.",
+      "Ejecutar SEC-01..08 sobre DB, Storage, vectores, cache, exports, jobs y notificaciones locales reales, con usuarios A/B e IDs conocidos.",
       "Atacar endpoints directamente; revisar exposición de service_role y SSRF mediante adjuntos.",
       "Revocar acceso durante un job y repetir descarga; inspeccionar logs por PII y tokens.",
       "Registrar exploit y reproducción concretos; habilitar RLS no demuestra aislamiento."
@@ -2008,7 +2241,7 @@
     "phase": "F07",
     "objective": "Runbooks cancelación, rollback, restore, datos borrados y eliminación de embeddings/backups conforme política.",
     "depends_on": [
-      "F07-05"
+      "F07-04"
     ],
     "allowed_paths": [
       "apps/web/",
@@ -2023,7 +2256,7 @@
     "deliverables": [
       "docs/blueprint/restore-drill.json",
       "packages/jobs/src/deletion.ts",
-      "supabase/migrations/0015_tombstones.sql"
+      "supabase/migrations/0019_tombstones.sql"
     ],
     "steps": [
       "Ensayar backup y restore en entorno efímero, conciliando conteos, hashes, tenant y ledger.",
@@ -2051,6 +2284,7 @@
     "phase": "F08",
     "objective": "Preparar manifiesto release con SHA, migrations, config hashes, URLs y propietarios sin secretos.",
     "depends_on": [
+      "F07-05",
       "F07-06"
     ],
     "allowed_paths": [

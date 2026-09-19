@@ -67,6 +67,16 @@ class ControllerTests(unittest.TestCase):
    before=time.monotonic()
    result=r.run_bounded([sys.executable,'-c','import time; time.sleep(20)'],d,Path(d)/'log',.1)
    self.assertEqual(result,124);self.assertLess(time.monotonic()-before,5)
+ def test_timeout_kills_descendants_even_if_leader_exits(self):
+  import sys
+  with tempfile.TemporaryDirectory() as d:
+   ready=Path(d)/'ready';late=Path(d)/'late'
+   child=f"import signal,time; from pathlib import Path; signal.signal(signal.SIGTERM,signal.SIG_IGN); Path({str(ready)!r}).write_text('ready'); time.sleep(1); Path({str(late)!r}).write_text('escaped')"
+   parent=f"import subprocess,sys,time; subprocess.Popen([sys.executable,'-c',{child!r}]); time.sleep(20)"
+   result=r.run_bounded([sys.executable,'-c',parent],d,Path(d)/'log',.5)
+   self.assertEqual(result,124);self.assertTrue(ready.exists())
+   time.sleep(1.1)
+   self.assertFalse(late.exists(),'descendant survived timeout after leader exited')
  def test_process_failure_propagates(self):
   import sys
   with tempfile.TemporaryDirectory() as d:

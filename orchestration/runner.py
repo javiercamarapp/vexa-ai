@@ -78,10 +78,15 @@ def run_bounded(argv, cwd, log_path, timeout, env=None):
         try:
             return proc.wait(timeout=timeout)
         except (subprocess.TimeoutExpired, KeyboardInterrupt):
-            os.killpg(proc.pid, signal.SIGTERM)
+            try: os.killpg(proc.pid, signal.SIGTERM)
+            except ProcessLookupError: pass
             try: proc.wait(timeout=3)
-            except subprocess.TimeoutExpired:
-                os.killpg(proc.pid, signal.SIGKILL); proc.wait()
+            except subprocess.TimeoutExpired: pass
+            # A dead group leader does not imply that all descendants exited.
+            # Always kill surviving members, including children ignoring SIGTERM.
+            try: os.killpg(proc.pid, signal.SIGKILL)
+            except ProcessLookupError: pass
+            proc.wait()
             return 124
 
 
@@ -147,10 +152,14 @@ def main():
                   'gate='+('present' if (ROOT/t['acceptance']).is_file() else 'MISSING'))
         return
     runtime.mkdir(exist_ok=True)
-    lock=(runtime/'lock').open('a+')
-    try: fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
-    except BlockingIOError: raise SystemExit('Another controller is running')
-    state=json.loads(sp.read_text()) if sp.exists() else {}
+    with (runtime/'lock').open('a+') as lock:
+        try: fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        except BlockingIOError: raise SystemExit('Another controller is running')
+        state=json.loads(sp.read_text()) if sp.exists() else {}
+        return execute(args,graph,runtime,sp,state,end,remaining_budget,parser)
+
+
+def execute(args,graph,runtime,sp,state,end,remaining_budget,parser):
     if git(ROOT,'status','--porcelain'):
         raise SystemExit('Controller checkout must be clean; commit/review changes first')
     if args.action=='accept':

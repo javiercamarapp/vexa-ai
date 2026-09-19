@@ -1,0 +1,23 @@
+KILLED retry hash-only /ERROR_RETRY_REQUEST/
+▶ F01-04 oracle probe: React/Next/Chromium real y mutantes
+  ✔ retry hash-only (8290.82275ms)
+KILLED retry salto Tab /ERROR_RETRY_KEYBOARD/
+  ✔ retry salto Tab (4630.2755ms)
+KILLED omite validación /VALIDATION_SPECIFIC/
+  ✔ omite validación (2990.449ms)
+KILLED error a vacío /ERROR_VISIBLE/
+  ✔ error a vacío (4274.91075ms)
+KILLED pierde alcance /SCOPE_PRESERVED/
+  ✔ pierde alcance (6932.793125ms)
+KILLED navegación sin teclado /KEYBOARD_NAV/
+  ✔ navegación sin teclado (7154.221666ms)
+Artifacts: /var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f01-04-zlPGXk
+✔ F01-04 oracle probe: React/Next/Chromium real y mutantes (71338.785792ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 71391.582709

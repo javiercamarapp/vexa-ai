@@ -1,0 +1,10 @@
+AUTHORIZED /overview status=200 org=synthetic-owner dependency=true
+AUTHORIZED /problems status=200 org=synthetic-owner dependency=true
+AUTHORIZED /recommendations status=200 org=synthetic-owner dependency=true
+AUTHORIZED /explorer status=200 org=synthetic-owner dependency=true
+AUTHORIZED /interventions status=200 org=synthetic-owner dependency=true
+AUTHORIZED /briefs status=200 org=synthetic-owner dependency=true
+AUTHORIZED /problems/8f31ae2c-9418-47c1-817d-b6e16be54bb0 status=200 org=synthetic-owner dependency=true
+AUTHORIZED /customers/8869d3d3-9965-4955-ba12-ac4926885973 status=200 org=synthetic-owner dependency=true
+AUTHORIZED AFTER_ATTACK status=200 org=synthetic-owner dependency=true
+PASS routes

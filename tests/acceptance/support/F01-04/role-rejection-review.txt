@@ -1,0 +1,14 @@
+INDEPENDENT REVIEW: REJECT EXAM ONLY
+Gate SHA 53828e0d74667213bf478e4b808bd9ff482bd0ec
+Integrated SHA 56f051b4a35c3fa8ed1b01c147a968c8c2897a8d
+VEXA_CANDIDATE="$PWD" node --test tests/acceptance/support/F01-04/probe.test.mjs
+VEXA_CANDIDATE="/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0104-independent-6hf1jdfc/lab" node --test tests/acceptance/F01-04.test.mjs
+VEXA_CANDIDATE="/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0104-independent-6hf1jdfc/role-mutant" node --test tests/acceptance/F01-04.test.mjs
+VEXA_CANDIDATE="/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0104-independent-6hf1jdfc/identity-mutant" node --test tests/acceptance/F01-04.test.mjs
+
+probe: exit0 7/7 six targeted mutations killed; auth: exit0 3/3 requests54; role-mutant: exit0 3/3 requests54 SURVIVED; identity-mutant: exit1 AUTHORIZED_SHELL (1 pass, 2 fail including parent).
+P1 routes.mjs:13-14 and browser.cjs:75,121-140: only owner fixture, no role-negative. Isolated mutation in role-mutant.patch.txt forces every resolved role to owner and full gate passes.
+Readability independently observed docker exec default user=node, fixture600 node, test-r exit0; DB PortBindings {}. Only own UUID resources, --pull never, ports57560..57564. Docker ps-a/network filter empty after cleanup; lsof57560..57569 no listener.
+Visual: inspected fresh 1440-error, 390-overview and 1440-overview PNGs. Explicit actionable database_not_configured, no fabricated empty/ready.
+Source/exam/base lab unchanged; rejected receipts preserved (hashes). Secret-pattern scan and exact cookie comparison found no material. No fixture remained.
+Not run: complete SaaS, F06/backend producers, production build, general npm/controller/graph suites, cloud OAuth, exhaustive SQL/RLS, accessibility contrast/screenreader. No product or production approval.

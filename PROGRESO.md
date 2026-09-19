@@ -1,6 +1,11 @@
 # Progreso verificable
 Actualizado: 2026-09-19 local. Los apartados anteriores conservados abajo son cortes históricos, no inventario vigente.
 
+## F01-04 — rechazo de registro conservado,19-sep
+- Los tres revisores aprobaron examen/UI/compatibilidad. QA Chromium:3/3,76capturas,ocho rutas/cuatro roles, foco/teclado/reduced-motion y controles adicionales de refresh/reset/revocación.
+- Candidato244ae0e verificado oficialmente. Regresiones reales:192/193, único fallo `F00-05 stale register F01-04`; schema168 y Auth reales pasaron. Registro seguía missing; generar guía no lo actualiza.
+- Reject oficial bajo STOP propio preservó candidato/log/historial. Corrección control-plane exclusivamente a authored, con product_pass=false. Nuevo prepare/verify/regresiones/accept obligatorio; **siguen9/60**, no aceptación por192verdes.
+
 ## Cierre por fase con agentes coordinados — 19-sep,16:05 local
 - Petición vigente: terminar/integrar una fase antes de avanzar; varios agentes dentro de esa fase, máximo3. PLAN/AUTOMATICO/AGENTS alineados. Fase activa F01-04; siguen9/60aceptadas. Nueva ventana120min,128invocaciones previas preservadas bajo220; no autorización nueva de gasto/cloud/envíos.
 - Examen F01-04 obtuvo aprobación independiente: role-probe1/1 y probe7/7 propios, siete mutantes específicos, evidencia previa auditada y hashes/capturas/privacidad/cleanup. Timeout900s anterior conservado sin veredicto, no convertido en PASS. Examen trasladado para congelación; todavía falta aceptación del producto.

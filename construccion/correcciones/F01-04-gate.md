@@ -22,4 +22,8 @@ Revisión anterior reprodujo probe7/7, Auth3/3 y mutante adicional de identidad 
 
 La primera revisión UI encontró refresh sin Set-Cookie en rutas fuera del middleware y reset de Customer Detail hacia /customers inexistente. Se reprodujeron ambos rojos y corrigieron en otro worktree inmutable para los revisores. Recheck focal aprobó cookies, reset con UUID, enlace raíz y el mismo correctivo integrado; prueba permanente en `apps/web/tests/workspace/recovery/run.py` dentro de la propuesta. No confundir esa aprobación con aprobación del examen o aceptación de F01-04.
 
-Antes de promover: aprobación externa del examen, commit congelado, prepare/adopción permitida, verify, revisión de producto, TODOS los gates aceptados y controlador, accept con materialización limpia, publisher. No cambiar oráculos ni ampliar allowlist durante un candidato congelado.
+## Registro de gates antes de preparar
+
+El primer candidato verificado244ae0e pasó F01-04, pero las regresiones dieron192/193: F00-05 rechazó `stale register F01-04` porque `docs/blueprint/gate-register.json` todavía decía missing. `guide.py render` NO actualiza ese registro. Se rechazó el candidato mediante runner bajo STOP propio, conservando historial, y se corrigió sólo metadata a authored (`product_pass` permanece false). Repetir desde nuevo prepare con registro congelado correcto; no editar registro dentro de un candidato ni desactivar F00-05.
+
+Antes de promover: aprobación externa del examen, registro/guía actualizados, commit congelado, prepare/adopción permitida, verify, revisión de producto, TODOS los gates aceptados y controlador, accept con materialización limpia, publisher. No cambiar oráculos ni ampliar allowlist durante un candidato congelado.

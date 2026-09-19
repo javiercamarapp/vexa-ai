@@ -2,23 +2,25 @@
 
 Prioridad explícita del usuario: convertir lo construido en recorridos integrados y aceptados, no abrir más módulos. Se conserva alcance completo y los 60 IDs. Superadmin es ampliación separada, no se introduce silenciosamente en el denominador.
 
-## Tablero al inicio del cierre
+## Tablero actualizado — 9/60 aceptadas
+
+F01-03 aceptado por runner en `009fd730810facd943bca548ee9e6ec7a7d55cb9`: gate168/168, regresiones25/25, controlador110OK y revisión independiente. Materialización limpia revalidada. Primer rechazo por modos0664/0644 preservado y corregido sin diferencias de contenido.
 
 | Entregable | Construido y probado | Integración | Aceptación pendiente |
 |---|---|---|---|
 | Identidad/scaffold | Aceptados previamente | Baseline | Google remoto no validado |
-| Schema/RLS/Storage F01-03 | Propuesta SQL revisada; examen final168/168 | Adopción oficial siguiente | Verify, regresiones y materialización limpia |
+| Schema/RLS/Storage F01-03 | Revisado y168/168 | Baseline009fd73 | Aceptado localmente; no producción |
 | Examen externo F01-03 | 73controles/mutantes; revisión correctiva aprobada | Control-plane | No equivale a producto |
 | Superadmin | 57unit,22DOM,16SQL; correctivo revisado | Laboratorio, commit3fb3712 | Auth/MFA/recorrido completo y gate propio |
 | Workspace/intervenciones/brief | Recheck independiente SQL/Auth/Chromium aprobado | Rama integrada582e4b3 | Assign/dismiss, Explorer y productor de mediciones |
 | CSV/pipeline/jobs | Upgrade real revisado;20SQL y42unit del revisor | Rama integradacd00085 | H1entradaHTTP; compatibilidad legacyH3; recorrido completo |
-| Notificaciones | Correctivos SQL/HTTP y50unit | Revisión final en curso | UI y ensamblaje con workspace; push/email real pendientes |
+| Notificaciones | Correctivos SQL/HTTP y50unit; revisor probó Chromium | Rama integrada1101d0c; principal repitió SQL/HTTP combinado | Push/email real, logout y destinatario distinto pendientes |
 
 Los SHA de laboratorio preservan código, no lo convierten en baseline aceptado. Se trasladan bytes revisados por allowlist y se registran hashes locales. No copiar repos enteros al candidato ni alterar su examen.
 
 ## Orden de cierre
 
-1. Congelar examen F01-03 revisado; adoptar solamente schema canónico en candidato oficial y promover mediante runner.
+1. **Cerrado:** examen F01-03 congelado y schema adoptado/aceptado mediante runner.
 2. Reunir workspace, ingesta y notificaciones revisados en una sola rama; aplicar migraciones en una DB efímera nueva y ejecutar suites combinadas. Corregir dependencias de instalación, no ocultarlas con orden manual sin documentar.
 3. Probar usuario autorizado → importación → job → snapshot → vistas → intervención → brief → inbox. Un eslabón ausente bloquea ese recorrido, no se reemplaza con respuestas vacías o éxito simulado.
 4. Cerrar huecos ya identificados (HTTP/importación, acciones restantes, medición y navegación) dentro de ese recorrido. No abrir módulos adicionales independientes.

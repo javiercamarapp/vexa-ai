@@ -1,6 +1,13 @@
 # Progreso verificable
 Actualizado: 2026-09-19 local. Los apartados anteriores conservados abajo son cortes históricos, no inventario vigente.
 
+## F01-03 aceptado — cierre posterior19-sep
+- **9/60 tareas aceptadas. F01-03:009fd730810facd943bca548ee9e6ec7a7d55cb9.** Runner verify y accept oficiales; materialización limpia verificada y retirada. Gate final168/168, anteriores25/25, controlador110OK. Revisor independiente confirmó21SQL+5adaptador,30relaciones y97FKs descubiertas, identidad/RLS/revocación; aprobación limitada a F01-03.
+- Primer accept rechazó correctamente diferencias de modos: tar produjo35archivos0664, Git materializó0644; cero diferencias de contenido. Diagnóstico preservado, reject supervisado, nuevo candidato desde la materialización limpia y repetición de verify/regresiones/accept. Árbol Git idéntico al revisado; no se eliminó el guard ni se cambió examen/producto.
+- Control-plane congelado920811b y correctivo de timeout53828e0 integrado tras revisión independiente:110tests y56combinaciones de presupuesto verificadas por revisor. Usa cota900delgrafo y presupuesto restante, no tiempo ilimitado.
+- Rama de integración reúne correctivos aprobados: workspace582e4b3, ingestacd00085, notifications1101d0c. Principal ejecutó sobre esa combinación build/typecheck/lint y SQL/HTTP Auth real: revocación entre inbox/ACK revierte,50drafts no bloquean brief, paginación40avisos, concurrencia/replay/tenant/CSRF verdes. Activación excluida de ese harness; no confundirlo con E2E de todo el SaaS.
+- Continúan cierre de instalación estándar y entradaCSVHTTP; examen externo de navegación/estadosF01-04 en autoría aislada. Primera propuesta de migraciones rechazó paths/symlinks y mostró tres rojos: se conserva, corrección supervisada; no se incorpora al baseline. Sin cloud/envíos/inferencia pagada ni aceptación ficticia de módulos posteriores.
+
 ## Cierre prioritario autorizado — 19-sep, 14:05 local
 - Usuario ordenó integrar/cerrar lo ya construido antes de abrir más frentes. Tablero separado construido/integrado/aceptado: [CIERRE-INTEGRACION](construccion/CIERRE-INTEGRACION.md). No hay porcentaje inventado; aún8/60aceptadas al iniciar este cierre.
 - ExamenF01-03: última suite73/73 y candidato-laboratorio168/168,0fallos/0skips. Revisor detectó falso rechazo de FK diferida, reproducido y corregido sin ocultar FK ausente. Nuevo revisor19comprobacionesSQL verdes, sin hallazgos del correctivo. Se incorpora examen externo revisado; producto aún requiere prepare/verify/revisión/regresiones/accept.

@@ -1,4 +1,14 @@
-# F02-02 — revisión local aprobada; integración rechazada por matriz global
+# F02-02 — recuperación revisada de la matriz global
+
+## Recuperación del 20-sep: revisión independiente aprobada
+
+Se conserva abajo el rechazo original. La extensión externa de F01-03 ahora clasifica `import_uploads` como metadatos 1:1 de `imports`: PK `import_id`, procedencia/identidad en el padre, autorización y tres FK comprobadas separadamente. No se añadió un `id` artificial ni se modificó el producto para satisfacer la forma del fixture.
+
+Revisor independiente: `f0202-matrix-review-1789920300925213000`. Baseline 168/168, producto 172/172, 97/100 FK, Auth/Storage y revocación reales. Nueve ciclos de mutación 0→aserción→0, más tres probes independientes (FORCE RLS, DELETE backend, SELECT anon) en Node22.22.0. 4989 archivos conservaron hashes/modos; 20 recursos propios eliminados. Matriz/harness/services históricos intactos; ninguna tabla adicional desconocida se permite.
+
+Esta aprobación autoriza congelar el examen y volver a preparar F02-02, no aceptarlo directamente. Pendientes: verify, regresiones completas y accept limpio. Sigue 12/60 hasta ese cierre. Las instrucciones posteriores del usuario («continúa», «hasta terminar», varios puntos en paralelo) renovaron la ejecución sin resetear consumo: 28 llamadas F02 / 172 acumuladas al cerrar esta revisión; techo global 220, sin gasto externo adicional.
+
+## Historial: revisión local aprobada; integración rechazada por matriz global
 
 ## Estado vigente después de verify/regresiones
 

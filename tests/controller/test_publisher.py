@@ -1,6 +1,8 @@
 import importlib.util
 from pathlib import Path
-import subprocess,tempfile,unittest
+import subprocess,tempfile,unittest,json
+from contextlib import contextmanager
+from unittest.mock import patch
 s=importlib.util.spec_from_file_location('publisher',Path(__file__).resolve().parents[2]/'orchestration/publisher.py')
 p=importlib.util.module_from_spec(s);s.loader.exec_module(p)
 class PublisherTests(unittest.TestCase):
@@ -55,4 +57,45 @@ class PublisherTests(unittest.TestCase):
   remote=p.git(other,'rev-parse','HEAD');self.change('second')
   with self.assertRaises(subprocess.CalledProcessError):p.publish_git(self.root,str(self.remote))
   self.assertEqual(p.git(self.root,'ls-remote',str(self.remote),'refs/heads/main').split()[0],remote)
+ @contextmanager
+ def repository_policy(self, visibility='PRIVATE', enabled=False):
+  actual=subprocess.check_output
+  def metadata(argv,*args,**kwargs):
+   if argv[0]!='gh':return actual(argv,*args,**kwargs)
+   if argv==['gh','repo','view',p.REPO,'--json','visibility']:return json.dumps({'visibility':visibility})
+   if argv==['gh','api','repos/'+p.REPO+'/actions/permissions']:return json.dumps({'enabled':enabled})
+   raise AssertionError('Unexpected external command: '+repr(argv))
+  with patch.object(p,'TARGET',str(self.remote)),patch.object(p.subprocess,'check_output',side_effect=metadata):yield
+ def test_public_requires_opt_in_by_default(self):
+  with self.repository_policy('PUBLIC'):
+   with self.assertRaises(ValueError):p.publish_vexa(self.root)
+  self.assertEqual(p.git(self.root,'ls-remote',str(self.remote),'refs/heads/main'),'')
+ def test_public_explicit_opt_in_pushes_real_commit_and_verifies_sha(self):
+  self.change('approved public change')
+  with self.repository_policy('PUBLIC'):out=p.publish_vexa(self.root,allow_public=True)
+  self.assertTrue(out['remote_sha_verified']);self.assertEqual(out['sha'],p.git(self.remote,'rev-parse','main'))
+ def test_private_default_remains_compatible(self):
+  with self.repository_policy():out=p.publish_vexa(self.root)
+  self.assertTrue(out['remote_sha_verified'])
+ def test_unknown_visibility_is_not_approved_by_public_opt_in(self):
+  for visibility in ['INTERNAL','public',None]:
+   with self.repository_policy(visibility):
+    with self.assertRaises(ValueError):p.publish_vexa(self.root,allow_public=True)
+  self.assertEqual(p.git(self.root,'ls-remote',str(self.remote),'refs/heads/main'),'')
+ def test_public_opt_in_requires_literal_true(self):
+  for approval in ['true','false',1,None]:
+   with self.repository_policy('PUBLIC'):
+    with self.assertRaises(ValueError):p.publish_vexa(self.root,allow_public=approval)
+  self.assertEqual(p.git(self.root,'ls-remote',str(self.remote),'refs/heads/main'),'')
+ def test_public_permission_does_not_authorize_actions(self):
+  with self.repository_policy('PUBLIC',enabled=True):
+   with self.assertRaisesRegex(ValueError,'Actions enabled'):p.publish_vexa(self.root,allow_public=True)
+  self.assertEqual(p.git(self.root,'ls-remote',str(self.remote),'refs/heads/main'),'')
+ def test_public_permission_does_not_bypass_sensitive_history(self):
+  (self.root/'private').mkdir();(self.root/'private/synthetic.txt').write_text('SYNTHETIC not a credential')
+  p.git(self.root,'add','.');p.git(self.root,'commit','-qm','fixture forbidden history')
+  (self.root/'private/synthetic.txt').unlink();p.git(self.root,'add','.');p.git(self.root,'commit','-qm','fixture deleted file')
+  with self.repository_policy('PUBLIC'):
+   with self.assertRaisesRegex(ValueError,'Private/sensitive'):p.publish_vexa(self.root,allow_public=True)
+  self.assertEqual(p.git(self.root,'ls-remote',str(self.remote),'refs/heads/main'),'')
 if __name__=='__main__':unittest.main()

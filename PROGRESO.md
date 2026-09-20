@@ -1,6 +1,12 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## Publicación pública autorizada y auditoría final requerida — 20-sep
+- El repositorio cambió a público fuera de esta sesión. El primer push posterior a aceptación fue bloqueado por la guarda de privacidad; no se eludió. El usuario confirmó explícitamente «PUBLICO SIGUE MERGENADO».
+- Publicador actualizado con opt-in `allow_public=True` literal y keyword-only; privado continúa como default, visibilidad desconocida rechazada y Actions sigue bajo permiso independiente. Historial completo, paths/secretos, ff-only y SHA remoto conservados.13tests de publicador y117de controlador verdes; revisión independiente aprobó únicamente esas2rutas. No se interpreta la autorización pública como permiso de gasto/Actions.
+- El usuario reiteró60/60 enterprise y auditoría final de TODO el repositorio, botones, features, agentes, integraciones y recuperación. No basta que compile ni que funcionen fixtures de cada módulo por separado. Sólo configuración/credenciales/autorizaciones externas pueden quedar tras el hito connection-ready.
+-32llamadasF02/176global iniciadas al cierre de revisión de publicador; techos y ventana vigentes sin reset.
+
 ## F02-02 aceptado — 20-sep
 - **13/60**, commit `791c854904b2121295dd7313eb37823c5286aaf8`. Producto previamente revisado reutilizado: 71 archivos idénticos por hash/modo al candidato conservado; no reconstruido ni alterado para acomodar el examen.
 - Corrección externa de matriz revisada independientemente y congelada/publicada en `c9aee57`: baseline168 y producto172, 97/100FK, Auth/Storage/revocación; nueve ciclos de mutantes y tres probes independientes Node22 (FORCE, DELETE backend, SELECT anon). Se conservan el fallo original y su rechazo.

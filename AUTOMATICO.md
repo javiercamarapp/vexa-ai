@@ -10,6 +10,12 @@ Usuario reiteró loop y entrega connection-ready de TODO blueprint+audios, conin
 
 Renovación REAL del20-sep por «continúa», «hasta terminar» y múltiples puntos: ventana hasta14:05, techo40F02/220global;31F02/175global iniciadas. Máximo3agentes de la misma fase, principal único integrador. STOP propio archivado y retirado después de revisión/corrección congelada. No hubo bucle activo toda la noche; no se afirma ejecución desatendida por tener un plan. Revisiones/aceptación no renuevan presupuestos automáticamente. Fuentes/rechazos intactos; no reutilizar la antigua extensión errónea ligada al permiso económico. Recibos privados vigentes mandan.
 
+## Publicación y cierre autorizados el20-sep
+
+GitHub VEXA es público por decisión externa y confirmación explícita del usuario. El primer intento fue bloqueado; se corrigió el publicador mediante opt-in revisado, no bypass. Principal: `publish_vexa(root, allow_public=True, allow_actions=False)`. El supervisor mantiene default cerrado: no arrancarlo asumiendo que ya tiene ese permiso configurado.13tests de publicador/117controlador y revisión independiente; publicar sólo cambios reales revisados, sin secretos ni fechas/commits artificiales.
+
+El cierre exige60/60 más auditoría final integral con testers de UI, botones, features, agentes, integraciones y recuperación. Después únicamente credenciales/configuración/autorizaciones externas; no conectores por programar. Auditoría local no acredita producción externa ni elimina aprobaciones humanas.
+
 ## Modo vigente — paralelismo dentro de una fase, cierre serial
 
 Última instrucción del usuario: terminar/integrar una fase antes de avanzar, usando varios agentes para acelerar. Máximo3 agentes sobre **una sola fase/tarea**, con copias y responsabilidades separadas (examen, regresiones, QA); principal único integrador. F01-04 aceptado50674a4 y publicado84219b0 con SHA remoto verificado. F01-05 aceptado17263dc con verify/accept limpios y publicado8340d26 (SHA y autoría remotos verificados). BloqueF02 activo con hasta3agentes disjuntos: límites/streaming/XLSX del examen, examen durable SQL/Storage/jobs y propuesta de parser reutilizando banco. Propuestas y exámenes pueden avanzar en paralelo; el gate se congela antes de prepare/adopción oficial/verify/accept, no se usa esta regla para impedir propuestas aisladas. No autoaceptar propuestas ni contar CI remoto por pruebas locales. No abrir más módulos ni otro supervisor que compita. `PLAN.md` y recibos actuales prevalecen sobre cifras históricas siguientes.

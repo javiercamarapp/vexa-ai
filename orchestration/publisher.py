@@ -58,9 +58,12 @@ def publish_git(root,target,credential_helper=False):
  return {'sha':head,'previous_main':old,'new_commits':int(git(root,'rev-list','--count',old+'..'+head)),'remote_sha_verified':True}
 
 
-def publish_vexa(root,allow_actions=False):
+def publish_vexa(root,allow_actions=False,*,allow_public=False):
+ """Public visibility requires explicit operator opt-in; no settings are changed."""
  data=json.loads(subprocess.check_output(['gh','repo','view',REPO,'--json','visibility'],text=True,timeout=20))
- if data.get('visibility')!='PRIVATE':raise ValueError('Dedicated VEXA repository must remain private')
+ visibility=data.get('visibility')
+ if visibility not in ('PRIVATE','PUBLIC'):raise ValueError('Unknown repository visibility')
+ if visibility=='PUBLIC' and allow_public is not True:raise ValueError('Public VEXA publication requires explicit approval')
  permission=json.loads(subprocess.check_output(['gh','api','repos/'+REPO+'/actions/permissions'],text=True,timeout=20))
  if permission.get('enabled') and not allow_actions:raise ValueError('Actions enabled without an approved execution budget')
  return publish_git(root,TARGET,credential_helper=True)

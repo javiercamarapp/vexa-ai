@@ -17,6 +17,8 @@ Distinguir dos hitos:
 1. **Connection-ready:** código y migraciones integrados, flujo sintético completo probado, configuración y onboarding que permiten aportar credenciales/scopes/mapeos/datos sin programar de nuevo los conectores soportados; configuración ausente produce estado accionable, no éxito ficticio. Tests de fallos, aislamiento y recuperación pasan.
 2. **Producción validada:** proyectos propios configurados, dominio/OAuth/remitente verificados, proveedores reales autorizados, smoke remoto con SHA/recibos y prueba de restore. No acreditar esto con mocks o Mailpit. Conectar una API no sustituye permisos legales, DNS o disponibilidad de campos financieros.
 
+**Compuerta final adicional solicitada el20-sep:** después de60/60, auditoría integral y reauditoría de correcciones con testers especializados. Inventariar y probar botones/rutas/estados, flujos completos UI→API→DB/Storage→jobs→agentes→resultado, roles/tenants, OAuth/conectores, errores/reintentos/reinicio, privacidad/dinero y configuración ausente. Cada rubro requiere evidencia reproducible y no probados explícitos; no certificar enterprise con checks de presencia ni mocks de negocio. Mantener hasta3agentes aislados; integración/publicación sólo por principal.
+
 El usuario indicó que los datos del cliente llegarán después. No frenar la construcción independiente por eso: usar fixtures rotulados, contratos canónicos y mapeos configurables. No inventar resultados de Senix, probabilidades calibradas, ahorros ni validación comercial.
 
 ## Fuentes y APIs permitidas
@@ -25,7 +27,7 @@ El usuario indicó que los datos del cliente llegarán después. No frenar la co
 - `packages/economics/index.mjs`:kernel económico existente; no duplicar fórmulas en UI/LLM.
 - `apps/web/`:scaffold aceptado; `supabase/config.toml`:proyecto LOCAL `vexa-local`,5632x.
 - `docs/investigacion/integraciones/01-hubspot-zendesk-migracion.md` y `04-openrouter-modelos-privacidad.md`:contratos/proveedores.
-- GitHub privado `javiercamarapp/vexa-ai`, Vercel proyecto vacío `vexa-ai`. Acceso CLI observado no equivale a conexión productiva completa. Nunca usar proyectos/secretos de Likida/Atiende/Moni.
+- GitHub **público**, autorizado explícitamente el20-sep: `javiercamarapp/vexa-ai`; publicar con opt-in revisado y escaneo de historial, Actions desactivado. Vercel proyecto vacío `vexa-ai`. Acceso CLI observado no equivale a conexión productiva completa. Nunca usar proyectos/secretos de Likida/Atiende/Moni.
 
 ## Modo vigente — cerrar una fase antes de abrir otra
 

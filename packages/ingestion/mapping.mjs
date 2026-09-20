@@ -1,10 +1,12 @@
 import {parseCSV,parseXLSX,parseMoney,validateContext,timestamp,contentHash,IngestionError,requiredString} from './index.mjs';
-const fields=['id','text','date','order','sku','amount','currency','customer'];
+const legacyFields=['id','text','date','order','sku','amount','currency','customer'];
+const fields=[...legacyFields,'role','conversation'];
 const fail=(code,field=null)=>{throw new IngestionError(code,field);};
 export function canonicalMapping(mapping){
  if(!mapping||typeof mapping!=='object'||!mapping.columns||Object.keys(mapping).some(k=>!['columns','timezone','dateFormat','currency','sheet'].includes(k))||Object.keys(mapping.columns).some(k=>!fields.includes(k)))fail('INVALID_MAPPING');
- const columns=Object.fromEntries(fields.map(k=>[k,mapping.columns[k]??null]));
- for(const k of fields)if(columns[k]!==null&&(typeof columns[k]!=='string'||!columns[k].length))fail('INVALID_COLUMN',k);
+ const selected=[...legacyFields,...['role','conversation'].filter(k=>Object.hasOwn(mapping.columns,k))];
+ const columns=Object.fromEntries(selected.map(k=>[k,mapping.columns[k]??null]));
+ for(const k of fields)if(columns[k]!=null&&(typeof columns[k]!=='string'||!columns[k].length))fail('INVALID_COLUMN',k);
  if(!columns.id||!columns.text)fail('REQUIRED_COLUMNS');
  if(typeof mapping.timezone!=='string'||!mapping.timezone||/^[+-]/.test(mapping.timezone))fail('TIMEZONE_REQUIRED','date');
  try{new Intl.DateTimeFormat('en',{timeZone:mapping.timezone});}catch{fail('INVALID_TIMEZONE','date');}

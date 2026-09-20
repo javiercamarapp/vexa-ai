@@ -3,11 +3,12 @@ import {NextRequest,NextResponse} from 'next/server';
 import {Pool} from 'pg';
 import {randomUUID} from 'node:crypto';
 import {createDatabase,type SqlPool} from '@vexa/platform/db';
+import {createJobRepository} from '../../../../../packages/jobs/durable/repository.mjs';
 import {createImportHandler} from '../../../../../packages/jobs/index.mjs';
 import {ACTIVE_ORG,AccessError,assertOrigin,config,identity,PRIVATE_HEADERS} from '../auth';
 import {requestAuth} from '../auth-http';
 let pool:SqlPool|undefined;
-function serverPool():SqlPool {
+export function serverPool():SqlPool {
  if(pool)return pool;
  const connectionString=process.env.VEXA_DATABASE_URL;
  if(!connectionString)throw new AccessError(503,'database_not_configured');
@@ -27,7 +28,7 @@ export async function imports(request:NextRequest) {
   const auth=requestAuth(request);finish=auth.finish;
   const database=createDatabase({identity:identity(auth.client),pool:serverPool(),selectedTenant:request.cookies.get(ACTIVE_ORG)?.value});
   const bucket=auth.client.storage.from('vexa-private');
-  const handler=createImportHandler({database,confirmationSecret:process.env.VEXA_IMPORT_CONFIRMATION_SECRET,storage:{
+  const handler=createImportHandler({database,admission:process.env.VEXA_DURABLE_CONSUMER==='enabled'?()=>createJobRepository({database}).health():undefined,confirmationSecret:process.env.VEXA_IMPORT_CONFIRMATION_SECRET,storage:{
    async createUpload(_scope,row){const {data,error}=await bucket.createSignedUploadUrl(row.object_path,{upsert:false});if(error||!data?.signedUrl)throw new AccessError(503,'storage_sign_unavailable');return {url:data.signedUrl};},
    async read(_scope,row){const {data,error}=await bucket.download(row.object_path);if(error||!data)throw new AccessError(503,'storage_read_unavailable');if(data.size>20971520)throw new AccessError(422,'object_too_large');return new Uint8Array(await data.arrayBuffer());}
   }});

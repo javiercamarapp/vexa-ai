@@ -1,0 +1,3 @@
+import type {createDatabase} from '../../platform/src/db';
+export interface Repository {errors(id:string):Promise<any>;canonicals(id:string):Promise<any>;history(id:string,canonicalId:string,selection?:any):Promise<any>;health():Promise<{healthy:boolean;reasons:string[]}>;get(id:string):Promise<unknown>;cancel(id:string):Promise<unknown>;replay(id:string):Promise<unknown>;setup(userId:string,enabled:boolean):Promise<unknown>;}
+export function createJobRepository(options:{database:ReturnType<typeof createDatabase>;leaseMs?:number;deadlineMs?:number;queueMs?:number;heartbeatMs?:number;worker?:boolean;rejectRecord?:(scope:unknown,input:{importId:string;record:unknown;error:{code:string;field:string|null;line:string|number}})=>Promise<unknown>}):Repository;

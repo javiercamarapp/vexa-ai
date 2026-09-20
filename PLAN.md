@@ -2,6 +2,14 @@
 
 Actualizado: 2026-09-19. Este plan reemplaza los bloques históricos de investigación/preparación conservados en Git. El usuario pidió construir y confirmó **UN MES, no una semana**. Referencia de calendario: 19-oct-2026 si se cuenta desde este encargo; objetivo, no entrega garantizada ni estado alcanzado.
 
+## Actualización vigente — cierre F02-01
+
+**12/60 aceptadas**, F02-01 `3f4cc27`, ingesta CSV/XLSX revisada y revalidada limpia. SiguienteF02-02: producto/examen locales terminados como propuestas; revisión conjunta independiente en curso, no aceptación. Se conserva todo el banco y el alcance completo.
+
+Últimas órdenes: continuar loop, integrar blueprint+audios de punta a punta y dejar sólo credenciales/autorizaciones externas; el hito inmediato es **connection-ready completo**, no maqueta ni integraciones pendientes de programar. Producción validada sigue siendo un hito distinto. Verceldeploy propio autorizado; gastos adicionales/inferencia no. Supabasecreado con autorización10USD/mes; SQLremoto requiere aprobacióninteractiva, no eludirla.
+
+Renovación explícita22:20:120minhasta00:20del20sep, sin reset:24llamadasF02 iniciadas/168global de220, máximo3concurrentes. La prórroga anterior vinculada erróneamente al permiso económico fue corregida y cancelada, con evidencia ycleanup; no reutilizarla. Cifras y ventanas anteriores abajo son históricas.
+
 ## Objetivo y cierre
 Producto completo del PRD y ampliaciones confirmadas: Next.js, Auth/organizaciones/roles, tablas/migraciones/RLS/Storage, importaciones y conectores HubSpot/Zendesk, trabajos durables, OpenRouter multimodelo/evidencia, dinero/prioridad, ocho vistas, intervenciones/medición/brief, notificaciones internas/push/correos para USUARIOS DE VEXA, seguridad/observabilidad/recuperación y entrega operable.
 

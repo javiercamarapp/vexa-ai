@@ -1,5 +1,15 @@
 # F02-01 — examen externo y correcciones preservadas
 
+## Cierre vigente
+
+F02-01 aceptado `3f4cc27ce74167b1d9294e73a17b9e3437d9ec7a`: **12/60**. Gate64 congelado antes del candidato, sin cambiarlo durante verificación. Revisión independiente final aprobó fuente exacta,90pruebas propias/64gate enNode22y26,26casoswriter,17+8regresionesXML,32adversariales adicionales ytypecheck.84archivos adoptados porbytes/modos. Verify yaccept reejecutado en materialización limpia exit0. RegresiónF01-05 fresca cubrió los11gatesanteriores ycontrolador110; cuatrojobs ycleanup verdes.
+
+El lexer manual fue sustituido por saxes6.0.0+xmlchars2.2.0, conSRI/licenciasISC/MIT ypatch de tresimports relativos; gramáticaOOXML explícita conserva fallos cerrados. Compatibilidad openpyxl probada: metadata, filtros/impresión, protección de edición no cifrada y celdasinline vacías como null, nunca0. No se afirma soporteOfficeuniversal,clientecorpus ni techoRSS. No producciónremota.
+
+Se preservaron dosrechazosXML (4+6casos), rechazo dearchivo básico escritorreal ydosP2 del revisor (inline vacío/protecciónhoja). Correcciones deproducto fuera de fuentesrevisadas; ningún relajamiento del examende64. DosJSONderivados delprimerprobe fueron sobrescritos accidentalmente porprincipal; evidenciaoriginal de dictamen/stdout/fixtures intacta yrecheckfinal enTMPnuevo. No se afirma hashes históricos intactos para esosdosderivados.
+
+Lo siguiente es historial al congelar, no estado actual.
+
 19-sep-2026. Estado al congelar: **11/60**, parser aún no aceptado.
 
 ## Desarrollo y evidencia

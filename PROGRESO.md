@@ -1,6 +1,16 @@
 # Progreso verificable
 Actualizado: 2026-09-19 local. Los apartados anteriores conservados abajo son cortes históricos, no inventario vigente.
 
+## F02-01 aceptado —19-sep, cierre posterior a23:00
+- **12/60**, commit `3f4cc27ce74167b1d9294e73a17b9e3437d9ec7a`.84archivos de ingestion adoptados por hash/modo; prepare/verify/accept oficiales exit0.64casos reejecutados desde materialización limpia.
+- Revisión independiente aprobada:90propios+64gate enNode22/26; corpuswriter26/26; regresiones17/17+8/8;32adversariales adicionales ytypecheck estricto. Fuentes/592archivos ymodos preservados. saxes6.0.0+xmlchars2.2.0 con licencias/proveniencia; sólo tres imports relativos de upstream.
+- Rechazos anteriores preservados:10ambigüedadesXML ycompatibilidad openpyxl (metadata, vacíos/protección). No se editó gateexterno para volver verde. No corpuscliente,Office/LibreOffice universal,fuzzing exhaustivo ni techoRSS.
+- F01-05 fresco:4jobs exit0, cobertura comprobada deTODOSlos11gates anteriores ycontrolador110. Fuente del ensayo byte/modo idéntica al candidatooficial. Huellascontrol iguales antes/después enlos4recibos,cleanup verificado. Monitoradicional erróneo incluía private/runtime activos; discrepancia explicada/preservada,nose ocultó.
+- Incidente de evidencia: ejecutar unprobe delrevisor sobrescribió dosJSONderivados; dictamen/stdout/comandos/fixtures/fuente originales intactos. Derivados preservados yrecheckfinal efectuado conTMPnuevo, no hashes históricos inventados.
+- Ventana anterior venció20:46. Se corrigió prórroga indebidamente asociada a aprobación10USD; dosagentes cancelados y5recursos propios retirados porID/owner, recibos intactos. Usuario renovó explícitamente loop a22:20:120min, sin reset decontadores.24/24F02 iniciadas=168/220global; revisiónconjunta02 encurso. Máximo3agentes.
+- Producto02: reserva/cargaStorage/confirmación/Pg/SSR/crash-restart propuestos; examen02 completo localconSSRautenticado+24Node ymutantesOrigin/SHA/atomicidad0→1→0. Falta dictamen independiente,scope/freeze yaceptaciónoficial; no cuenta13todavía.
+- Usuario aclaró objetivo completo blueprint+audios connection-ready: después sólo configuración/credenciales/OAuth, no integracionesporprogramar. Autorizó despliegueVEXA enVercel e integraciónAPIs/MCP propios; no extras/upgrade ni presupuestoOpenRouter. Supabase10USD/mes cotizados, sin migracionesremotas poraprobación interactiva pendiente. Actions sigueapagadas.
+
 ## F02-01: examen aprobado; Supabase creado —19-sep,20:23
 -64casos y19mutantes del gate aprobados por revisor independiente, sin P0–P2. Se conservaron cuatro regresiones XML que rechazaron el primer parser;331archivos control-plane adoptados por hash. Registro authored/product_pass=false y guía antes de prepare.
 - Correctivo del parser en recheck independiente: reporte autor40/40propios+39snapshot+17/17adversariales, menorRSS observado, sin afirmar techo universal. No adopción de producto ni nueva aceptación todavía: **11/60**.

@@ -4,3 +4,5 @@
 /00-ABRE-CONSTRUCCION.html linguist-generated=true
 # scripts/render_business_report.py
 /negocio/INFORME-VEXA.html linguist-generated=true
+# Licensed, provenance-pinned upstream XML dependencies; handwritten ingestion stays included.
+/packages/ingestion/vendor/** linguist-vendored=true

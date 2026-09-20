@@ -2,6 +2,14 @@
 
 Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Programa: [PROGRAMA](PROGRAMA.md). Repositorio canónico `~/vexa`; NO ejecutar en la copia de Escritorio. Las fuentes privadas permanecen locales.
 
+## Checkpoint vigente — F02-01 aceptado
+
+**12/60**, commit3f4cc27. IngestaCSV/XLSX aceptada tras revisión independiente,90pruebaspropias/64externas yregresiones reales de11gatesanteriores+controlador. F02-02 enrevisión conjunta delproducto/examen; no13/60todavía.
+
+Usuario reiteró loop y entrega connection-ready de TODO blueprint+audios, conintegraciones implementadas ydespués sólo credenciales/autorizaciones externas. DespliegueVEXA enVercel autorizado; no gastoextra/inferencia/Actions. Supabasepropio creado, SQLremoto bloqueado poraprobacióninteractiva, no eludirporotrocanal.
+
+Renovación REAL22:20:120minhasta00:20del20sep;24/24invocacionesF02 iniciadas,168/220global. Revisiones/aceptaciónen curso no renuevan presupuesto automáticamente. Fuentesrechazadas ydospropuestas canceladasanteriores intactas. Se corrigió una extensión de tiempo indebidamente inferida del permiso económico; no reutilizarla. Recibosprivadosvigentes mandan; bloques siguientes conservan contexto histórico.
+
 ## Modo vigente — paralelismo dentro de una fase, cierre serial
 
 Última instrucción del usuario: terminar/integrar una fase antes de avanzar, usando varios agentes para acelerar. Máximo3 agentes sobre **una sola fase/tarea**, con copias y responsabilidades separadas (examen, regresiones, QA); principal único integrador. F01-04 aceptado50674a4 y publicado84219b0 con SHA remoto verificado. F01-05 aceptado17263dc con verify/accept limpios y publicado8340d26 (SHA y autoría remotos verificados). BloqueF02 activo con hasta3agentes disjuntos: límites/streaming/XLSX del examen, examen durable SQL/Storage/jobs y propuesta de parser reutilizando banco. Propuestas y exámenes pueden avanzar en paralelo; el gate se congela antes de prepare/adopción oficial/verify/accept, no se usa esta regla para impedir propuestas aisladas. No autoaceptar propuestas ni contar CI remoto por pruebas locales. No abrir más módulos ni otro supervisor que compita. `PLAN.md` y recibos actuales prevalecen sobre cifras históricas siguientes.

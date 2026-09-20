@@ -3,7 +3,9 @@
 **Carpeta canónica:** `/Users/javiercamaraportepetit/vexa` · fuera de iCloud. Preparación rehecha desde fuentes originales con Astra vía Codex. **No es todavía el SaaS completo ni un deploy.** Estado/recibos: [PROGRESO.md](PROGRESO.md).
 
 ## Estado de construcción — corte19-sep
-**11/60 tareas aceptadas.** Último hito: CI local F01-05 (`17263dc`), tras shell/UI/Auth F01-04 y schema/RLS/Storage F01-03. Cuatro jobs reales —controlador/kernel, compilación, SQL y Auth/UI— pasaron verify y accept desde commit limpio. Actions sigue desactivado; esto no acredita CI remoto, backend F06 completo ni producción.
+**12/60 tareas aceptadas.** Último hito: ingesta CSV/XLSX F02-01 (`3f4cc27`): streaming, límites, importes exactos y XML/ZIP con revisión independiente y aceptación limpia. Pasaron los11gates anteriores mediante cuatro jobs reales de CI local, incluido controlador110. Actions sigue desactivado; esto no acredita CI remoto ni producción.
+
+**Entrega solicitada:** todo el blueprint y lo pedido en los audios, integrado y listo para conectar credenciales/autorizaciones externas sin programar piezas faltantes. El objetivo connection-ready no reduce el alcance ni equivale a validación productiva con cuentas reales. Supabase propio está creado; migraciones remotas y conexión de aplicación siguen pendientes.
 
 Prioridad vigente: **[cerrar e integrar lo ya construido](construccion/CIERRE-INTEGRACION.md)**. Workspace, CSV/pipeline e inbox tienen correctivos revisados en una rama de integración; no son todavía todas las tareas F02–F06 aceptadas. [PROGRESO.md](PROGRESO.md) distingue baseline, laboratorio, pruebas y pendientes.
 
@@ -86,7 +88,7 @@ npm test
 npm run test:controller
 npm run graph:check
 ```
-Node >=22 y Python3, sin instalar dependencias para kernel/controlador. Grafo v4 con60tareas:11gates presentes,49pendientes (escritura/revisión justo antes del incremento; presencia no significa PASS). Las pruebas de runtime necesitan entorno real de ensayo. No hay proceso autónomo de producción corriendo.
+Node >=22 y Python3, sin instalar dependencias para kernel/controlador. Grafo v4 con60tareas:12gates presentes,48pendientes (escritura/revisión justo antes del incremento; presencia no significa PASS). Las pruebas de runtime necesitan entorno real de ensayo. No hay proceso autónomo de producción corriendo.
 
 ## Bloqueos que no puede inventar un agente
 Acuerdo/NDA/DPA, derechos y muestra real Senix; responsables/fecha migración; Supabase cloud, Google OAuth y presupuesto OpenRouter/infraestructura; gold humano y validación de negocio. Auth/RLS locales ya están aceptados; ingesta/UI y demás módulos siguen su integración y aceptación por alcance. GitHub privado, proyecto Vercel vacío y Supabase local ya se crearon; eso no es un deploy. El 30% no equivale a sociedad formalizada y un gasto sintético no equivale a ahorro real.

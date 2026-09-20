@@ -1,6 +1,14 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## F02-05 aceptado — 20-sep
+
+- **16/60**, F02 **5/6**, producto `9e738b9835a358b684b855fb61a1524fc29b65de`.43archivos revisados: delegaciónSQL007 ligada al tenant e identidad inmutable, worker durable, dispatcher/coldstarts, renovaciónAuth, recuperación y UI de jobs/historial.
+- Verify Node22 y accept sobre materialización Git limpia Node26:27grupos cada uno, incluidos mutantes0→1→0, interrupción real10K, backoff/429/401, revocación, CSV y CAS. Matriz007:8controles y16casos de mutantes; revisión independiente de producto/control aprobada.
+- Regresiones F02-01/02/03/04 más cuatro jobs CI pass/exit0, huellas intactas y cleanup verificado. Producto idéntico entre corridas; la guardaCSV posterior fue revisada y probada por separado. Recibos privados: f0205-regressions-current.json, f0205-v2-verify-current.json y f0205-v2-accept-current.json.
+- IncidenciaCSV anterior preservada: cabecera sin fila, causa original desconocida por falta de estado guardado. Diagnóstico completo y verificación posterior no la reprodujeron. Se corrigió esa carencia del examen con recibo0600 y precondiciones explícitas; seis probes independientes y rojo/verde SQL/browser, sin retryciego. No afirmar que se identificó/corrigió el origen del rojo; seguimiento para auditoría final.
+- F02-06 pendiente; todavía no17/60 ni producción. SupabaseDDL remoto requiere aprobación legítima; no se ejecutó. Actions permanece desactivado.
+
 ## F02-04 aceptado — 20-sep
 
 - **15/60**, fase F02 **4/6**. Commit `26a0d9f1b838d79391cb6bc00ae7c0291599b85f`: identidad lógica, historial inmutable, deduplicación SQL, cuarentena y selección owner con CAS/auditoría.

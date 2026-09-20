@@ -1,4 +1,8 @@
-# F02-05 — corrección externa pendiente de validación completa
+# F02-05 — cierre aceptado con evidencia preservada
+
+## Aceptación formal — 20-sep
+
+Producto `9e738b9835a358b684b855fb61a1524fc29b65de`,16/60 y F02 en5/6. Revisión independiente aprobada, verify Node22 y accept Git limpio Node26:27/27 cada uno, CSVprecondiciones+bytes exactos verdes, cleanup por IDs. F02-01/02/03/04 y cuatro jobs CI pass; fuentes/control intactos. Sólo la guarda diagnóstica cambió tras esas regresiones y tuvo revisión/probes/rojo-verde propios. Incidencia original no reproducida, causa desconocida conservada abajo; no declararla reparada. Producción y proveedores siguen sin acreditar.
 
 ## Evidencia del CSV y precondición de consumo — 20-sep
 

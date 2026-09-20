@@ -2,7 +2,11 @@
 
 Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Programa: [PROGRAMA](PROGRAMA.md). Repositorio canónico `~/vexa`; NO ejecutar en la copia de Escritorio. Las fuentes privadas permanecen locales.
 
-## Checkpoint vigente — F02-04 aceptado,15/60
+## Checkpoint vigente — F02-05 aceptado,16/60
+
+F02 en5/6. Producto `9e738b9`: revisión independiente, verifyNode22 y acceptGitlimpioNode26 con27grupos cada uno; regresiones01–04 y cuatro jobs CI verdes, fuentes/control intactos y limpieza verificada. Publicar mediante publisher autorizado antes del cierre06. IncidenciaCSV anterior no reproducida: causa desconocida preservada, examen reforzado con recibo/precondiciones y seguimiento en auditoría final. Sólo después de aceptar/probar/publicar06 se anunciará17/60. Sin producción remota ni Actions habilitado.
+
+## Historial — F02-04 aceptado,15/60
 
 F02 en4/6. Producto `26a0d9f`: revisión independiente, verify04, regresiones01/02/03 y cuatro jobs CI pass; huellas intactas y limpieza verificada. Padre interrumpido reconciliado mediante evidencia original en recibo nuevo; accept limpio exit0. Publicar mediante publisher autorizado antes de integrar05. Faltan05/06 y pruebas remotas; no anunciar17/60 hasta aceptar, compilar, probar y publicar toda F02.
 

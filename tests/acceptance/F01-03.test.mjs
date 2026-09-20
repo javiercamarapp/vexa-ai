@@ -4,6 +4,7 @@ import {candidateInputs,launch,write,denied} from './support/F01-03/harness.mjs'
 import {definitions,relations,insert,q} from './support/F01-03/matrix.mjs';
 import {A,B,identityOracle,schemaOracle,seed,tableOracle,fkOracle,revokeOracle,foreignKeys,discoveredFkOracle} from './support/F01-03/oracles.mjs';
 import * as history from './support/F01-03/source-history/oracles.mjs';
+import * as workers from './support/F01-03/worker-delegations/oracles.mjs';
 import * as uploads from './support/F01-03/import-uploads/oracles.mjs';
 import {serviceOracle} from './support/F01-03/services.mjs';
 
@@ -12,6 +13,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   const h=await launch({services:true});t.after(()=>h.close());
   for(const migration of migrations)h.sql(migration);
   h.sql("NOTIFY pgrst, 'reload schema';");
+  if(migrations.workerDelegationsRequired)assert.ok(workers.present(h),'WORKER_MIGRATION_REQUIRED');
   schemaOracle(h);
   const actors={};for(const key of ['a','b','dual','outsider','viewer','analyst','operator'])actors[key]=await h.user();
   const f=seed(h,actors);
@@ -21,6 +23,10 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   if(uploads.present(h)){
     f.importUploads=uploads.seedUploads(h,f,actors);
     await t.test('import_uploads owner and backend authorization',()=>uploads.access(h,f.importUploads,actors));
+  }
+  if(workers.present(h)){
+    f.workers=workers.seedWorkers(h,actors);
+    for(const [name,oracle] of Object.entries(workers.checks))await t.test('worker delegation '+name,()=>oracle(h,f,actors));
   }
   await t.test("identity tables",()=>identityOracle(h,actors));
   for(const [table] of definitions)await t.test('functional RLS '+table,()=>tableOracle(h,table,f,actors));

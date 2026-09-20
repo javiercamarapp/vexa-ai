@@ -49,3 +49,25 @@ Docker estaba apagado al recuperar; el operador lo arrancó y comprobó los cont
 
 ## Secuencia autorizada
 Nueva autoría aislada → positivos/mutantes y baseline → revisión independiente → congelación → candidato allowlisted → verify/revisión/regresiones → accept con materialización limpia. Conservar rechazo y consumo anterior. No modificar estados a mano ni aceptar la tarea por documentación.
+
+## Autoría de extensión SQL 0007 — 20-sep (no aprobación)
+
+Área aislada `matrix`, base `ff5f9bf8813b8d7956f3b1482d2b220cc4b8e6ca`.
+Estado aceptado conservado: **15/60**, F02-05/06 pendientes. La extensión
+`tests/acceptance/support/F01-03/worker-delegations/` añade clasificación exacta
+para PK `(tenant_id,user_id)`, FK membership, RLS/FORCE/grants y probes funcionales
+de roles, acciones, scope, identidad, revocación y RPC security-definer estrechas.
+No se quitan aserciones de 0004/5/6 ni se admiten tablas desconocidas.
+
+El baseline006 pasó el gate completo:193/193,0fail,0skip,exit0. El producto viejo
+read-only se probó mediante copia TMP con0006 del worktree vigente. La corrida
+007 reprodujo dos aserciones P1: INSERT en scope ajeno y cambio de user_id.
+UPDATE en scope ajeno pasó; tenant swap no se declara vulnerable. El probe de
+RPC sin identidad requirió diagnóstico separado; no se cuenta como mutante eliminado.
+El informe RESULTADO.md anunciado durante la autoría no llegó a escribirse: la invocación terminó por timeout124. Se conservan código, logs y recibos; no se transforma ese timeout en aprobación. Los comandos están en `tests/acceptance/support/F01-03/worker-delegations/README.md`.
+La autoría no congela, no registra approved y no acepta producto. Requiere rerun
+sobre snapshot corregido proporcionado por el principal y revisión independiente.
+
+## Reconciliación y comprobación del principal — 20-sep
+
+Autor finalizado sin hijos de pruebas activos al recogerlo. Contra snapshot corregido: SQL0078/8 y mutantes16/16, cero fallos/skips, recursos propios ausentes; baseline006193/193 previo preservado. Los15mutantes prueban RLS/FORCE, grants, FK física, PK, read, tabla desconocida y grants/definer/alcance/efectos de RPC con0→aserción concreta→0. Una primera invocación del principal falló por directorio de salida ausente; se creó ese directorio y se volvió a ejecutar sin cambiar código ni oráculos. Evidencia privada `matrix007-validation-retry-1789936742876577000.json`. Revisión independiente del delta no halló bloqueantes de matriz; sigue requerida regresión global contra el candidato oficial. Esto no acepta05/06 ni producción.

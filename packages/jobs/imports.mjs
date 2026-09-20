@@ -1,9 +1,11 @@
+import {previewImport,inspectImport,canonicalMapping,exportRowErrors} from '../ingestion/mapping.mjs';
 import {AccessError} from '../platform/src/session.ts';
 import {createHash,createHmac,randomUUID,timingSafeEqual} from 'node:crypto';
 const VERSION='f02-durable-v1';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const hash=x=>createHash('sha256').update(x).digest('hex');
 const fail=(status,code)=>{throw new AccessError(status,code);};
+const domain=fn=>{try{return fn();}catch(e){if(e?.name==='IngestionError')fail(422,e.code);throw e;}};
 const pick=(x,keys)=>{if(!x||typeof x!=='object'||Array.isArray(x)||Object.keys(x).some(k=>!keys.includes(k)))fail(400,'invalid_input');};
 async function body(request){if(Number(request.headers.get('content-length'))>8192)fail(413,'metadata_too_large');const reader=request.body?.getReader();if(!reader)fail(400,'invalid_json');let n=0,parts=[];while(true){const r=await reader.read();if(r.done)break;n+=r.value.length;if(n>8192){await reader.cancel();fail(413,'metadata_too_large');}parts.push(r.value);}try{return JSON.parse(Buffer.concat(parts).toString('utf8'));}catch{fail(400,'invalid_json');}}
 /** Trusted server ports: database=createDatabase(identity,SqlPool,selectedTenant).
@@ -18,9 +20,28 @@ export function createImportHandler({database,storage,confirmationSecret}={}) {
   const response=(status,data)=>Response.json({contract_version:VERSION,data,meta:{trace_id,state:data.state??data.import?.state}},{status,headers:{'Cache-Control':'private, no-store'}});
   try{
    if(!database?.transaction||!storage?.createUpload||!storage?.read||typeof confirmationSecret!=='string'||confirmationSecret.length<32)fail(503,'imports_configuration_required');
-   const url=new URL(request.url),match=url.pathname.match(/^\/api\/imports(?:\/([0-9a-f-]+)(\/confirm)?)?$/i);
-   if(!match||match[1]&&!uuid.test(match[1])||url.search)fail(404,'route_not_found');
-   if(request.method==='GET'&&match[1]&&!match[2])return await database.transaction('read',async s=>{const r=await get(s,match[1]);return response(200,{import:{id:r.id,state:r.state,total:r.total,accepted:r.accepted,rejected:r.rejected,duplicates:r.duplicates,pending:r.pending,job_id:r.job_id}});});
+   const url=new URL(request.url),match=url.pathname.match(/^\/api\/imports(?:\/([0-9a-f-]+)(\/(?:confirm|preview|mapping|errors\.csv))?)?$/i);
+   if(!match||match[1]&&!uuid.test(match[1])||(url.search&&(request.method!=='GET'||(match[1]?Boolean(match[2])||[...url.searchParams.keys()].some(k=>k!=='sheet'):[...url.searchParams.keys()].some(k=>!['offset','connection_offset'].includes(k))))))fail(404,'route_not_found');
+   const owned=async(s,id)=>{const r=await get(s,id);if(r.user_id!==s.userId)fail(404,'import_not_found');return r;};
+   const verified=async(s,r)=>{await connection(s,r.connection_id);const owner=(await s.query("SELECT owner_id FROM storage.objects WHERE bucket_id='vexa-private' AND name=$1",[r.object_path])).rows[0];if(!owner||owner.owner_id!==s.userId)fail(422,'object_unavailable');const bytes=await storage.read({tenantId:s.tenantId,userId:s.userId},r);if(!(bytes instanceof Uint8Array)||bytes.byteLength!==Number(r.size)||hash(bytes)!==r.file_hash)fail(422,'object_bytes_invalid');return bytes;};
+   const preview=(bytes,r,mapping)=>domain(()=>previewImport(bytes,{contentType:r.content_type,mapping,context:{tenant_id:r.tenant_id,connection_id:r.connection_id,source:'csv',source_account_id:r.connection_id},observedAt:new Date().toISOString()}));
+   if(request.method==='GET'&&!match[1])return await database.transaction('read',async s=>{
+    const offset=Number(url.searchParams.get('offset')??0),connectionOffset=Number(url.searchParams.get('connection_offset')??0);if(!Number.isSafeInteger(offset)||offset<0||offset>1000000||!Number.isSafeInteger(connectionOffset)||connectionOffset<0||connectionOffset>1000000)fail(400,'invalid_pagination');
+    const connections=(await s.query("SELECT id,source,account_id FROM public.connections WHERE tenant_id=$1 AND status='active' AND source IN ('csv','xlsx') ORDER BY id LIMIT 101 OFFSET $2",[s.tenantId,connectionOffset])).rows;
+    const reservations=(await s.query('SELECT i.id,i.state,i.mapping_version,i.created_at FROM public.imports i JOIN public.import_uploads u ON u.import_id=i.id AND u.tenant_id=i.tenant_id WHERE i.tenant_id=$1 AND u.user_id=$2 ORDER BY i.created_at DESC,i.id LIMIT 51 OFFSET $3',[s.tenantId,s.userId,offset])).rows;
+    return response(200,{connections:connections.slice(0,100),reservations:reservations.slice(0,50),next_offset:reservations.length>50?offset+50:null,next_connection_offset:connections.length>100?connectionOffset+100:null,has_more:reservations.length>50,connections_has_more:connections.length>100});
+   });
+   if(request.method==='GET'&&match[1])return await database.transaction('read',async s=>{
+    const r=await owned(s,match[1]);
+    if(match[2]==='/errors.csv'){if(!r.provenance?.mapping)fail(409,'mapping_required');const result=preview(await verified(s,r),r,r.provenance.mapping);return new Response(exportRowErrors(result.errors),{headers:{'Content-Type':'text/csv; charset=utf-8','Content-Disposition':'attachment; filename="row-errors.csv"','Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'}});}
+    if(match[2])fail(405,'method_not_allowed');
+    const data={import:{id:r.id,state:r.state,total:r.total,accepted:r.accepted,rejected:r.rejected,duplicates:r.duplicates,pending:r.pending,job_id:r.job_id,mapping_version:r.mapping_version,file_hash:r.file_hash,expires_at:r.expires_at},mapping:r.provenance?.mapping??null,mapping_history:r.provenance?.mapping_history??[]};
+    const object=(await s.query("SELECT owner_id FROM storage.objects WHERE bucket_id='vexa-private' AND name=$1",[r.object_path])).rows[0];
+    if(!object)return response(200,{...data,preview_state:'awaiting_upload'});
+    const bytes=await verified(s,r);
+    if(data.mapping&&!url.searchParams.has('sheet'))return response(200,{...data,preview:preview(bytes,r,data.mapping),preview_state:'ready',upload_token:r.job_id?undefined:token(r)});
+    try{const info=inspectImport(bytes,{contentType:r.content_type,sheet:url.searchParams.get('sheet'),discover:true});return response(200,{...data,headers:info.headers,sheets:info.sheets,preview_state:info.headers.length?'mapping_required':'sheet_required'});}catch(e){if(e.code==='SHEET_REQUIRED')return response(200,{...data,preview_state:'sheet_required'});if(e?.name==='IngestionError')fail(422,e.code);throw e;}
+   });
    if(request.method!=='POST')fail(405,'method_not_allowed');
    const input=await body(request);
    if(!match[1]){
@@ -49,7 +70,27 @@ export function createImportHandler({database,storage,confirmationSecret}={}) {
      return response(201,{import_id:current.id,state:current.state,object_path:current.object_path,upload_url:capability.url,upload_token:token(current),expires_at:new Date(current.expires_at).toISOString()});
     });
    }
-   if(!match[2])fail(404,'route_not_found');
+   if(match[2]==='/preview'||match[2]==='/mapping'){
+    const save=match[2]==='/mapping';pick(input,save?['mapping','expected_version']:['mapping']);
+    return await database.transaction('import',async s=>{
+     await s.query('SELECT id FROM public.imports WHERE tenant_id=$1 AND id=$2 FOR UPDATE',[s.tenantId,match[1]]);
+     const r=await owned(s,match[1]);if(r.job_id||r.state!=='reserved')fail(409,'mapping_immutable_new_import_required');if(new Date(r.expires_at)<=new Date())fail(409,'reservation_expired');
+     const mapping=domain(()=>canonicalMapping(input.mapping)),result=preview(await verified(s,r),r,mapping);
+     if(!save)return response(200,result);
+     if(typeof input.expected_version!=='string')fail(400,'expected_version_required');
+     const previous=r.provenance??{};
+     if(input.expected_version!==r.mapping_version){const last=previous.mapping_history?.at(-1);if(result.mapping_version!==r.mapping_version||last?.previous_version!==input.expected_version)fail(409,'mapping_version_conflict');return response(200,{...result,upload_token:token(r),mapping});}
+     if(result.mapping_version!==r.mapping_version||!previous.mapping){
+      const history=[...(previous.mapping_history??[]),{mapping_version:result.mapping_version,previous_version:r.mapping_version,mapping,confirmed_by:s.userId,confirmed_at:new Date().toISOString()}];
+      if(history.length>100)fail(409,'mapping_history_limit');
+      await s.query('UPDATE public.imports SET mapping_version=$3,provenance=$4::jsonb,updated_at=now() WHERE tenant_id=$1 AND id=$2',[s.tenantId,r.id,result.mapping_version,JSON.stringify({...previous,mapping,mapping_history:history})]);
+      const fingerprint=hash(JSON.stringify([r.connection_id,result.mapping_version,r.content_type,Number(r.size),r.file_hash]));
+      await s.query('UPDATE public.import_uploads SET request_hash=$3 WHERE tenant_id=$1 AND import_id=$2',[s.tenantId,r.id,fingerprint]);
+     }
+     const current=await owned(s,r.id);return response(200,{...result,mapping,upload_token:token(current)});
+    });
+   }
+   if(match[2]!=='/confirm')fail(404,'route_not_found');
    pick(input,['upload_token','sha256','mapping_version']);
    const prepared=await database.transaction('import',async s=>{
     const r=await get(s,match[1]);if(r.user_id!==s.userId)fail(404,'import_not_found');await connection(s,r.connection_id);
@@ -67,11 +108,14 @@ export function createImportHandler({database,storage,confirmationSecret}={}) {
    }
    // Auth/session/membership/connection revalidated after download. RPC locks and commits all three effects.
    return await database.transaction('import',async s=>{
+    await s.query('SELECT id FROM public.imports WHERE tenant_id=$1 AND id=$2 FOR UPDATE',[s.tenantId,match[1]]);
     const r=await get(s,match[1]);if(r.user_id!==s.userId)fail(404,'import_not_found');await connection(s,r.connection_id);
+    if(input.mapping_version!==r.mapping_version||input.upload_token!==token(r))fail(409,'confirmation_conflict');
     const result=await s.query('SELECT * FROM public.confirm_import($1,$2,$3,$4)',[r.id,input.sha256,Number(r.size),input.mapping_version]);
     return response(202,result.rows[0]);
    });
   }catch(error){
+   if(error?.name==='IngestionError'){error.status=422;}
    const status=[400,401,403,404,405,409,413,422,503].includes(error?.status)?error.status:503;
    const code=status===503?'imports_unavailable':error.code??'imports_rejected';
    return Response.json({contract_version:VERSION,error:{code,message:status===503?'Configurar y comprobar PostgreSQL, Storage y el secreto de confirmación en el servidor.':'No se pudo completar la importación.',retryable:status===503},meta:{trace_id}},{status,headers:{'Cache-Control':'private, no-store'}});

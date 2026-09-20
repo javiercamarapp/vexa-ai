@@ -1,2 +1,2 @@
 export const runtime='nodejs';
-export {imports as POST} from '../../../lib/imports/server';
+export {imports as POST,imports as GET} from '../../../lib/imports/server';

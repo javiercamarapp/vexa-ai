@@ -1,6 +1,10 @@
 # F02-04 — persistencia e historial canónicos revisados
 
-## Recheck independiente aprobado, aceptación pendiente
+## Cierre aceptado — 20-sep
+
+F02-04 aceptado en `26a0d9f`, **15/60; F02 en4/6**. Verify y regresiones01/02/03 más cuatro jobs CI pasaron. Reconciliación nueva fechada preserva el timeout del padre y verifica los recibos originales, cleanup, huellas y contexto. Accept limpio reejecutó04 y salió0. La preparación anterior rechazada por13journals0600 se conserva: sólo copias históricas revisadas se normalizaron0644 sin cambio de bytes; journals activos siguen0600. No altera los límites de alcance indicados abajo.
+
+## Histórico — recheck independiente previo a aceptación
 
 Recheck192:23/23 casos reales en Node22 y26, matriz SQL193/193 y ocho negativos contra falsas ejecuciones (cero casos, omisión, skip y duplicado por versión).95archivos de producto idénticos por SHA/modo a revisión188; se reutilizan sus25probes adicionales. Control/producto/HEAD intactos;15recursos propios retirados. El producto04 se materializa sobre03 ya aceptado; no reintroducir los dos componentes03 anteriores a su corrección.
 

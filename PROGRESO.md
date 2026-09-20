@@ -1,6 +1,13 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## F02-04 aceptado — 20-sep
+
+- **15/60**, fase F02 **4/6**. Commit `26a0d9f1b838d79391cb6bc00ae7c0291599b85f`: identidad lógica, historial inmutable, deduplicación SQL, cuarentena y selección owner con CAS/auditoría.
+- Revisión192 aprobada, verify04 y regresiones F02-01/02/03 completas; cuatro recibos CI pass/exit0, limpieza comprobada y huellas de candidato/control intactas. Reconciliación nueva `private/f0204-reconciliation-20260920T201723Z.json`: preserva el timeout del padre y referencia los logs originales; no fabrica el agregado perdido.
+- Accept limpio `private/f0204-clean-accept-20260920T201739Z.json`, exit0. Se verificaron firma/contexto/baseline antes de aceptar. Se preservan el rechazo anterior por modos Git y su normalización limitada a13journals históricos.
+- Pendientes05/06: corregir binding/identidad de delegaciones, extender matriz007 y completar cobertura externa. No acredita cloud ni producción.
+
 ## F02-03 aceptado — 20-sep
 
 - **14/60**, faseF02 **3/6**. Commit `f0eb8560cc16c92ad30b6aabf77e4c76ad2d857a`.59archivos adoptados; sólo dos componentes cambiaron respecto al candidato rechazado, con revisión independiente del delta.

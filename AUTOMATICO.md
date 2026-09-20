@@ -2,7 +2,11 @@
 
 Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Programa: [PROGRAMA](PROGRAMA.md). Repositorio canónico `~/vexa`; NO ejecutar en la copia de Escritorio. Las fuentes privadas permanecen locales.
 
-## Checkpoint vigente — F02-03 aceptado
+## Checkpoint vigente — F02-04 aceptado,15/60
+
+F02 en4/6. Producto `26a0d9f`: revisión independiente, verify04, regresiones01/02/03 y cuatro jobs CI pass; huellas intactas y limpieza verificada. Padre interrumpido reconciliado mediante evidencia original en recibo nuevo; accept limpio exit0. Publicar mediante publisher autorizado antes de integrar05. Faltan05/06 y pruebas remotas; no anunciar17/60 hasta aceptar, compilar, probar y publicar toda F02.
+
+## Historial — F02-03 aceptado,14/60
 
 **14/60; F02 en3/6.** Commit `f0eb856`: verify03, F02-01/02 y los cuatro jobs CI pass; fuentes/control intactos y cleanup verificado. Accept reejecutó desde copia Git limpia, exit0. Publicar por publisher con opt-in público antes de preparar04. Permanecen pendientes04–06 y validación remota. El relato siguiente conserva el rechazo anterior, no el estado vigente.
 

@@ -3,7 +3,7 @@
 **Carpeta canónica:** `/Users/javiercamaraportepetit/vexa` · fuera de iCloud. Preparación rehecha desde fuentes originales con Astra vía Codex. **No es todavía el SaaS completo ni un deploy.** Estado/recibos: [PROGRESO.md](PROGRESO.md).
 
 ## Estado de construcción — corte 20-sep
-**14/60 tareas aceptadas; F02 en3/6.** Último hito: preview y mapeo CSV/XLSX F02-03 (`f0eb856`), con validación completa, fechas/moneda explícitas, errores descargables, paginación, recuperación y concurrencia CAS. Revisión independiente, verify y accept limpio pasaron; también F02-01/02 y los cuatro jobs de CI local, cubriendo las13tareas anteriores. Se conservaron y corrigieron los rechazos de lint/navegación y el falso positivo del smoke offline. F02-04/05/06 siguen pendientes. Actions continúa desactivado; esto no acredita CI remoto ni producción.
+**15/60 tareas aceptadas; F02 en4/6.** Último hito: identidad, revisiones, deduplicación y cuarentena canónicas F02-04 (`26a0d9f`). Revisión independiente aprobada; verify04, regresiones F02-01/02/03 y cuatro jobs CI locales pasaron con huellas intactas y limpieza verificada. El padre de la corrida terminó por timeout: sus recibos originales se reconciliaron por separado, sin declarar éxito del padre. Accept reejecutó04 desde Git limpio y salió0. F02-05/06 siguen pendientes. Actions continúa desactivado; esto no acredita CI remoto ni producción.
 
 **Entrega solicitada:** todo el blueprint y lo pedido en los audios, integrado y listo para conectar credenciales/autorizaciones externas sin programar piezas faltantes. El objetivo connection-ready no reduce el alcance ni equivale a validación productiva con cuentas reales. Supabase propio está creado; migraciones remotas y conexión de aplicación siguen pendientes.
 

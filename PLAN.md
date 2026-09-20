@@ -2,7 +2,11 @@
 
 Actualizado: 2026-09-20. Este plan reemplaza los bloques históricos de investigación/preparación conservados en Git. El usuario pidió construir y confirmó **UN MES, no una semana**. Referencia de calendario: 19-oct-2026 si se cuenta desde este encargo; objetivo, no entrega garantizada ni estado alcanzado.
 
-## Actualización vigente — F02-03 aceptado,14/60
+## Checkpoint vigente — F02-04 aceptado,15/60
+
+F02 en4/6. Producto `26a0d9f`: revisión independiente, verify04, regresiones01/02/03 y cuatro jobs CI pass; huellas intactas y limpieza verificada. Padre interrumpido reconciliado mediante evidencia original en recibo nuevo; accept limpio exit0. Publicar mediante publisher autorizado antes de integrar05. Faltan05/06 y pruebas remotas; no anunciar17/60 hasta aceptar, compilar, probar y publicar toda F02.
+
+## Historial — F02-03 aceptado,14/60
 
 F02-03 aceptado en `f0eb856`: nuevo verify y accept limpio, F02-01/02 y cuatro jobs CI pasaron; fuentes/control intactos, cleanup verificado. F02 está3/6; faltan04–06. Publicar este cierre real antes de la siguiente integración. El rechazo y las correcciones relatados a continuación se conservan como historia, no como bloqueo vigente de03.
 

@@ -1,6 +1,26 @@
 # Progreso verificable
 Actualizado: 2026-09-19 local. Los apartados anteriores conservados abajo son cortes históricos, no inventario vigente.
 
+## Autorización específica Supabase —19-sep, posterior al checkpoint
+- El usuario respondió afirmativamente a hasta10USD/mes adicionales para un proyecto VEXA, sin cambio de plan ni extras. Operación de creación delegada al especialista con comprobación de coste/moneda, deduplicación y verificación de ID/estado.
+- No equivale a autorizar OpenRouter, otros recursos, upgrades, Actions, envíos ni gasto de construcción.154invocaciones acumuladas/10enventanaF02. No se afirma creado hasta recibir evidencia real.
+
+## Checkpoint F02 e infraestructura —19-sep,20:00
+- **11/60 aceptadas.** Parser CSV/XLSX propuesto:26 unitarios y39 casos del examen preliminar con exit0. No es aceptación: revisión independiente de ZIP/XML/streaming en curso y examen adversarial en cierre.
+- El recibo original del parser quedó blocked_or_partial por un único __pycache__ generado al ejecutar npm test; paths de producto válidos y modelo exit0. Se preservó original y se creó copia limpia sólo de ingestion para revisión, sin retroaprobar el recibo.
+- F02-02 dispone de11 casos de oráculo Auth/Storage/SQL reales y dos mutantes0/1/0; falta SqlPool/createDatabase/RLS canónico, Next/SSR y recuperación. No se cuenta servidor sintético de referencia como producto.
+- Se verificaron ocho eventos MCP reales de codex_apps en preflight. La conexión HTTP Supabase transitoria fallóAuthRequired; no se confundió con el conector que sí respondió. Ver VEXA-INFRA-PREFLIGHT.md.
+- Usuario autorizó crear proyecto Supabase exclusivo. Consulta MCP actual: organizaciónPro, coste adicional amount10/monthly, sin moneda en respuesta. NO confirm_cost ni create_project ejecutados. Se solicitó autorización hasta10USD/mes y confirmar moneda antes de crear; respuesta económica pendiente.
+- VentanaF02 hasta20:46;144 llamadas previas+9 iniciadas=153/220, máximo24 en fase y3concurrentes. Fuentes/recibos fallidos conservados. No Actions/deploy/inferencia/gasto ejecutados.
+- Usuario reiteró publicación de avances reales y objetivo enterprise60/60. No publicar propuestas sin revisión ni convertir pruebas locales en validación remota. Siguiente cierre: gate/parser F02-01.
+
+## Publicado en GitHub y bloque F02 abierto —19-sep,18:49
+- Publisher integró3commits reales a main privado, SHA8340d26e1c6463ed6ccd158ee2a6ed4d202bc987 verificado vía API. Commit17263dc autor/committer reconocidos comojaviercamarapp. No garantiza visibilidad pública de contribuciones privadas.
+- GitHubLanguages actualizado:Python269655,JavaScript258987,PLpgSQL114432,TypeScript69000,HTML1373bytes. HTMLgenerado excluido legítimamente, ningún código ocultado. Actionsenabled=false comprobado.
+-3agentes activos: gatesF02-01..06; recuperación/integración de banco5fbf223 (sin reescribir funcionalidad antes de gate); infraestructura MCP/CLI sólolectura. Concurrencia3, integración/aceptaciónserialporDAG; próximoTaskF02-01.
+- SupabaseMCP global existeconOAuth/project_ref, pero no se presupone que seaVEXA. Agente usa conexión efímera read-only y tools limitadas a listarproyectos/organizaciones; siAuthfalla, debe marcarlo yrotularfallbackCLI. Vercel/GitHub/OpenRouter no encontrados comoMCP enconfigrevisada; DockerMCP sólofetch/duckduckgo/playwright.
+- VentanaF02hasta20:46,144previas+3iniciadas=147de220; anteriorcerrada/archivada. Sin gasto/Actions/inferencia/deploy automáticos. **11/60** formales; infraestructura productiva todavía por comprobar.
+
 ## F01-05 aceptado —19-sep,18:38
 - **11/60 aceptadas. Commit17263dc2818fcac148f3bcc415eb61584c4aae66.** Prepare/verify/accept oficiales exit0; accept volvió a ejecutar cuatrojobs desde materialización limpia. Candidato sólo.github/workflows/ci.yml, idéntico a referencia revisada; ninguna aceptación por mera existencia de YAML.
 - Kernel24/controlador110/tooling7, build y API200, SQLpreflight+168, Auth7/UI3; ademásrevisiónindependiente de M10,lifecycle12,browserreal,policy8 ycleanup24recursos. Fuente/codehashes conservados; fallosanteriores no borrados.

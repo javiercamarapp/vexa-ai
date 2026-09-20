@@ -1,4 +1,14 @@
-# F02-02 — congelación revisada, todavía sin aceptación
+# F02-02 — revisión local aprobada; integración rechazada por matriz global
+
+## Estado vigente después de verify/regresiones
+
+Prepare yverify oficiales exit0. RegresiónF02-01 pasó; los jobscontrol-kernel/web-quality/AuthUIpasaron, peroSQL falló enF01-03: `MATRIX: unclassified public table; extend external exam before freeze`, tablaimport_uploads. El principal ejecutóreject, preservando candidato/commit/recibos. **12/60**; no integración niaceptación02.
+
+La matrizglobal clasifica36tablas conid; import_uploads usaimport_idPK ylectura directasólo deldueño, porloqueno cabeañadiendounnombrenalista genérica. Requiere extensióncontrol-plane por catálogo, conoráculos completos cuando latabla estépresente; mantener168pruebasdelcore yfallo porcualquierotra tabladesconocida. F02-02 seguirá exigiendo latabla; la extensión opcional enF01-03 no autorizaomitirlapara02.
+
+Añadir: schema/RLS/FORCE/PK/grants, A/B/dual/viewer/anon/outsider yowner-only; backendacción/tenant/revocación; sus3FKs compuestas haciaimports/memberships/jobs conpositivosy23503reales. Aislar cadaFK paraquenootrarestricciónmateelmutante; nodebilitaraserciones ni cambiarproductoestructuralmentepara satisfacerfixtureid. Baseline0001–0004 y candidato0001–0005 deben pasar; mutantes RLS/FK/owner ytabladesconocida debenfallarporcriteriocorrecto.
+
+Faltaautoría/revisiónindependiente de esaextensión, nuevafreeze yreprepare. Laaprobaciónlocal siguiente noincluíalasregresionesglobales, yno sesobrescribecomorechazodelcódigofuncional. PresupuestoF02:24/24llamadasconsumidas,168/220global; nollamadasadicionalessinrenovaciónexplícita. STOPyrecibosconservados.
 
 ## Contrato y alcance
 

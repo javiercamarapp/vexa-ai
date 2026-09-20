@@ -4,7 +4,7 @@ Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Pro
 
 ## Checkpoint vigente — F02-01 aceptado
 
-**12/60**, commit3f4cc27. IngestaCSV/XLSX aceptada tras revisión independiente,90pruebaspropias/64externas yregresiones reales de11gatesanteriores+controlador. F02-02 enrevisión conjunta delproducto/examen; no13/60todavía.
+**12/60**, commit3f4cc27. IngestaCSV/XLSX aceptada tras revisión independiente,90pruebaspropias/64externas yregresiones reales de11gatesanteriores+controlador. F02-02 pasórevisión conjunta yverify, pero fuerechazado al fallarregresiónF01-03: import_uploads sin clasificaciónenmatrizglobal. Fuente/candidato/recibospreservados, STOPpropio,tareapending. Extender/revisarmatrizsinquitarcontroles antes dereprepare; no13/60.
 
 Usuario reiteró loop y entrega connection-ready de TODO blueprint+audios, conintegraciones implementadas ydespués sólo credenciales/autorizaciones externas. DespliegueVEXA enVercel autorizado; no gastoextra/inferencia/Actions. Supabasepropio creado, SQLremoto bloqueado poraprobacióninteractiva, no eludirporotrocanal.
 

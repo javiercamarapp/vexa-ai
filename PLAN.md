@@ -4,7 +4,7 @@ Actualizado: 2026-09-19. Este plan reemplaza los bloques históricos de investig
 
 ## Actualización vigente — cierre F02-01
 
-**12/60 aceptadas**, F02-01 `3f4cc27`, ingesta CSV/XLSX revisada y revalidada limpia. SiguienteF02-02: producto/examen locales terminados como propuestas; revisión conjunta independiente en curso, no aceptación. Se conserva todo el banco y el alcance completo.
+**12/60 aceptadas**, F02-01 `3f4cc27`, ingesta CSV/XLSX revisada y revalidada limpia. SiguienteF02-02: producto/examen aprobados enrevisión conjunta yverifyoficial, pero rechazada suintegración porregresiónF01-03(import_uploads noclasificadaenmatrizglobal). ExtendercontrolconRLS/owner/PKimport_id/3FKs,revisar,congelaryrepreparar; no simplementeomitirla. Candidatopreservado, tareapending/STOP; noaceptación. Se conserva todo el banco y el alcance completo.
 
 Últimas órdenes: continuar loop, integrar blueprint+audios de punta a punta y dejar sólo credenciales/autorizaciones externas; el hito inmediato es **connection-ready completo**, no maqueta ni integraciones pendientes de programar. Producción validada sigue siendo un hito distinto. Verceldeploy propio autorizado; gastos adicionales/inferencia no. Supabasecreado con autorización10USD/mes; SQLremoto requiere aprobacióninteractiva, no eludirla.
 

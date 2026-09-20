@@ -1,6 +1,13 @@
 # Progreso verificable
 Actualizado: 2026-09-19 local. Los apartados anteriores conservados abajo son cortes históricos, no inventario vigente.
 
+## Integración F02-02 retenida por regresión global —19-sep
+- **12/60**, no13. Main publicado `f96b26dba68a903db19cdb0ef77b02a108589f85`, SHA remoto verificado, contiene ingestaaceptada yexamen02 revisado; no producto02.
+- Revisión conjunta02 aprobó examen/producto/scope: SSR+24Node en22.23.2/26.7, Origin/SHA/atomicidad0→1→0,8controlesindependientes, M10 ycleanup90recursos. Scope de3manifests revisado/congelado antes deprepare.
+- Verifyoficial02 exit0, pero regresióncompleta: F02-01pass; CI control-kernel/web/AuthUIpass; SQLfalló en `MATRIX: unclassified public table; extend external exam before freeze` porimport_uploads. Fuente/control intactos ycleanup verificado. No defecto ocultado como setup.
+- Principal ejecutóreject oficial: candidato/commit/verificación preservados, tarea vuelvepending conhistorial. No producto02 mezclado enmain. Debe ampliarse matrizglobal de seguridad antes denuevofreeze/prepare: PKimport_id,owner-onlyread, RLS y3FKscompuestas; no simplemente permitirtabla ni quitaraserción.
+-24/24llamadasF02 y168/220global consumidas. STOP propio conserva rechazo; no nuevasllamadasmodelos ni resetautomático. Operacionesdeterministas de cierre/publicación autorizadas. Objetivo connection-ready completo permanece, no se declara alcanzado.
+
 ## F02-01 aceptado —19-sep, cierre posterior a23:00
 - **12/60**, commit `3f4cc27ce74167b1d9294e73a17b9e3437d9ec7a`.84archivos de ingestion adoptados por hash/modo; prepare/verify/accept oficiales exit0.64casos reejecutados desde materialización limpia.
 - Revisión independiente aprobada:90propios+64gate enNode22/26; corpuswriter26/26; regresiones17/17+8/8;32adversariales adicionales ytypecheck estricto. Fuentes/592archivos ymodos preservados. saxes6.0.0+xmlchars2.2.0 con licencias/proveniencia; sólo tres imports relativos de upstream.

@@ -1,5 +1,13 @@
 # F02-05 — corrección externa pendiente de validación completa
 
+## Evidencia del CSV y precondición de consumo — 20-sep
+
+Una corrida Node22 produjo sólo cabecera CSV. Se preservó el rojo: no guardaba estado del job antes de limpiar, por lo que su causa original sigue desconocida. Un diagnóstico parcial y otro completo27/27 con el mismo producto no lo reprodujeron; verify oficial Node26 también pasó27/27 con observación SQL de sólo lectura. Esto no demuestra que el fallo original esté corregido.
+
+Se corrigió la carencia de diagnóstico del examen, sin cambiar producto, bytes esperados ni introducir reintentos: guardar estado/checkpoint/contadores/intentos en recibo0600 y exigir partial/done/offset103/una rechazada antes de descargar. Revisión independiente del único archivo aprobada; seis probes sintéticos y dos casos SQL/browser reales: no-consumo falla por CSV_CONSUME_TERMINAL con recibo queued/sin intentos; consumo real pasa CSV exacto. El wrapper del rojo confirma el fallo esperado, no aprueba ese producto.
+
+El primer candidato verificado se preserva/rechaza para congelar esta guarda. Sus regresiones F02-01/02/03/04 y cuatro jobs CI pasaron con huellas y cleanup intactos; se reutilizan para el producto idéntico. Nuevo verify/accept debe ejecutar el examen reforzado, conservando la incidencia no reproducida para seguimiento y auditoría final.
+
 ## Revisión independiente y correcciones de cierre — 20-sep
 
 Revisión de producto rechazó historial que quedaba vacío tras queued→terminal y no permitía recuperar503. La UI comunica estado/checkpoint y permite actualizar historial; el caso externo ahora abre queued, provoca503, reintenta, comprueba aparición automática y conserva CAS409→200. Rojo anterior por `HISTORY_RETRY_AVAILABLE`, verde corregido; no timeout contado como mutante.

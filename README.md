@@ -2,6 +2,14 @@
 
 **Carpeta canónica:** `/Users/javiercamaraportepetit/vexa` · fuera de iCloud. Preparación rehecha desde fuentes originales con Astra vía Codex. **No es todavía el SaaS completo ni un deploy.** Estado/recibos: [PROGRESO.md](PROGRESO.md).
 
+## Checkpoint vigente —17/60; F03 en construcción
+
+F02 está6/6 aceptada y publicada en main `9874b81`. El examen F03-01 y su entorno privado fueron revisados independientemente; el producto HubSpot corregido permanece en propuesta, pendiente de ensayo real autorizado sobre20conversaciones y reconciliación UI/export. Sin acceso legítimo el gate devuelve S01_LIVE_BLOCKED; no hay18/60 ni producción remota acreditada.
+
+Se continúa la construcción independiente de Zendesk dentro de F03, en worktrees disjuntos con constructor y examen separados. El cierre sigue siendo serial: F03-01 antes de aceptar F03-02. La falta de datos del cliente no impide preparar y probar código independiente, ni autoriza saltarse gates o declarar aceptación por fixtures. Cambios locales de infraestructura no conceden permiso sobre cuentas ni datos externos.
+
+Límites conservados:220llamadas acumuladas, deadline00:00 del21-sep UTC−06, máximo3agentes y cero gasto nuevo. Recibos privados atómicos mandan sobre los contadores históricos de abajo. Publicar cada cierre aceptado mediante publisher autorizado y verificar SHA remoto; sin Actions ni commits artificiales.
+
 ## Estado de construcción — corte 20-sep
 **17/60 tareas aceptadas; F02 completa en6/6.** Importación, persistencia canónica, worker durable y UI de recuperación integrados. F02-05 (`9e738b9`) y F02-06 (comportamiento existente en `63b9725`, sin parche artificial) pasaron sus27grupos de verifyNode22 y acceptGitlimpioNode26. Compilación integrada, regresiones F02-01/02/03/04 y cuatro jobs CI locales verdes; huellas y limpieza verificadas. Siguiente fase: F03, HubSpot/Zendesk y migración. Actions permanece desactivado; no acredita producción.
 

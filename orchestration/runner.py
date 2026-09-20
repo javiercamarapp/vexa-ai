@@ -71,6 +71,24 @@ def clean_environment():
     return {k: v for k, v in os.environ.items() if k in keep}
 
 
+
+def acceptance_environment(task, row):
+    """Narrow live-gate environment; never used by model workers or auto-run.
+
+    approval_note is an operator attestation, not a grant of account permission.
+    The supervisor must match it to the real decision before invoking verify.
+    """
+    env = clean_environment()
+    note = row.get('approval_note', '')
+    if (task['id'] == 'F03-01' and task.get('requires_approval') is True
+            and isinstance(note, str) and note.strip()):
+        for key in ('VEXA_HUBSPOT_S01_CONFIG', 'VEXA_HUBSPOT_TOKEN',
+                    'VEXA_HUBSPOT_RECONCILIATION_KEY'):
+            if key in os.environ:
+                env[key] = os.environ[key]
+        env['VEXA_HUBSPOT_APPROVAL_REFERENCE'] = note
+    return env
+
 def run_bounded(argv, cwd, log_path, timeout, env=None):
     with Path(log_path).open('wb') as log:
         proc = subprocess.Popen(argv, cwd=cwd, env=env, stdout=log,
@@ -237,7 +255,7 @@ def interactive(args, graph, runtime, sp, state, remaining_budget, parser):
             raise ValueError('Protected path or symlink guard')
         row['gate_exit'] = run_bounded(['node', '--test', str(gate_path(ROOT, task))], ROOT, log,
                                       min(graph['turn_timeout_seconds'], remaining_budget()),
-                                      {**clean_environment(), 'VEXA_CANDIDATE': str(candidate)})
+                                      {**acceptance_environment(task, row), 'VEXA_CANDIDATE': str(candidate)})
         check_interactive_context(task, state, row)
         if (interactive_signature(candidate, True) != before
                 or git(candidate, 'rev-parse', 'HEAD') != row['baseline']):
@@ -365,7 +383,7 @@ def execute(args,graph,runtime,sp,state,end,remaining_budget,parser):
             recheck_log.write_text(reason+'\n');seal_log(row,recheck_log);atomic_json(sp,state)
             raise SystemExit(reason)
         code=run_bounded(['node','--test',str(gate)],ROOT,recheck_log,min(graph['turn_timeout_seconds'],remaining_budget()),
-                         {**clean_environment(),'VEXA_CANDIDATE':str(probe)})
+                         {**acceptance_environment(task, row),'VEXA_CANDIDATE':str(probe)})
         seal_log(row,recheck_log);atomic_json(sp,state)
         if code: raise SystemExit('Acceptance recheck failed')
         if (interactive_signature(probe,True)!=promoted_signature

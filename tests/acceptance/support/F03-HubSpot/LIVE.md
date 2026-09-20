@@ -1,0 +1,47 @@
+# F03-01: local disponible, S01 remoto bloqueado
+
+El examen local usa HTTP real en 127.0.0.1 con fetch inyectado: valida host HTTPS del proveedor, método GET, redirect manual y señal Abort antes de redirigir al stub. Todos los cuerpos son SYNTHETIC, CC0-1.0. No contiene credenciales ni usa datos cliente. `local.test.mjs` nunca acredita una cuenta HubSpot.
+
+```sh
+VEXA_CANDIDATE=/ruta/propuesta node --test tests/acceptance/support/F03-HubSpot/local.test.mjs
+VEXA_CANDIDATE=/ruta/propuesta node tests/acceptance/support/F03-HubSpot/mutants.mjs
+python3 orchestration/runner.py verify --task F03-01 --approval-note "referencia REAL de aprobación del titular" --max-minutes 5
+```
+
+El último comando ejecuta `live.mjs` y falla con `S01_LIVE_BLOCKED` si falta configuración legítima. No admite bandera offline, variable de éxito ni recibo de éxito como sustituto de llamadas reales. El ejecutor está implementado, pero no se ha ejecutado contra HubSpot: faltan cuenta/app, autorización y export independiente. Preparar este código no acepta la tarea.
+
+## Contrato documentado y conflicto abierto
+
+Consultado el20-sep2026, sin API autenticada. La [guía legacy oficial](https://developers.hubspot.com/docs/api-reference/legacy/conversations/guide) documenta conversations.read para GET, threads/mensajes v3, cursores after, association=TICKET y actores A-/V-. Respalda el contrato local v3; no prueba disponibilidad/scopes efectivos de una cuenta. La [guía latest](https://developers.hubspot.com/docs/api-reference/latest/conversations/conversations/guide) presenta `/conversations/2026-09/conversations/...`, mientras la spec citada por el dossier usa `/conversations/conversations/2026-09/...`. Mantener rechazo de versión no comprobada: no probar rutas por tanteo ni fallback silencioso.
+
+El [cambio oficial Help Desk](https://developers.hubspot.com/changelog/upcoming-breaking-change-conversations-api-help-desk-and-comments) anuncia la transición de comentarios a notas. Leer mensajes no demuestra por sí solo cobertura total de notas CRM. El conector debe señalar lo no leído, no presentarlo como cero notas ni conversación completa universal.
+
+## Ensayo live pendiente: autorización primero, evidencia independiente después
+
+1. El titular identifica app/cuenta, relación con tenant, inboxes, fechas, veinte threads permitidos y permiso explícito de leer cuerpos/notas. Scopes mínimos: conversations.read; tickets sólo si se aprueba leer sus propiedades. No solicitar escritura. Datos Senix requieren autorización propia, no se deduce del permiso de publicar GitHub.
+2. Principal revisa el transporte separado `live.mjs` con otro agente antes de ejecutar. Host fijo api.hubapi.com, HTTPS validado, GET allowlist exacta; token leído dentro del proceso desde almacén autorizado, sin imprimir ni enviarlo al modelo. No usar headers/body en shell, logs o artefactos públicos. El mismo adaptador y hash de fuentes que el candidato se ejecuta sin fetch sintético; fecha límite, tamaño, páginas y presupuesto de requests explícitos. No guardar tokens, IDs, texto ni hashes simples de contenido sensible en recibos públicos.
+3. Registrar dentro de directorio privado0600: comandos sin secretos, GitSHA y hash de control, runtime, aprobación referenciada, versión/rutas sin IDs, status, latencia, contadores por página/rol/cuerpo, truncación, errores, cobertura, límites efectivos y salida. Identificadores pueden sustituirse por HMAC con clave privada por ensayo; respuestas originales sólo si están autorizadas y con retención acordada. Nada de logs automáticos de URLs con IDs ni payloads.
+4. Revisor independiente presencia la ejecución o la repite con el mismo código congelado; coteja20threads con UI/export autorizado (no scraping silencioso). Compara cantidad, páginas, roles/notas, cuerpo truncado/original, asociaciones, archivados y huecos. Verifica app/scopes efectivos en evidencia del proveedor y relación cuenta↔tenant, sin tratar `scopes:[...]` suministrado a código como prueba remota. Contrasta logs de requests reales con export; un JSON autoafirmado no basta. Conserva disconformidades y ausencia de scopes como BLOCKED.
+5. El gate usa fetch nativo capturado antes de cargar producto; no acepta inyección de transporte en el modo live. Introspección OAuth verifica hub_id, client_id y conversations.read directamente; luego exige lectura real de20threads y compara todos sus mensajes por HMAC contra la muestra independiente. Cero diferencias, cuerpos completos y muestras presentes son necesarios. La referencia de autorización del config sólo apunta a la decisión real: el supervisor la coteja antes de ejecutar, no considera que crear un archivo conceda permisos. Revisión, freeze y verify/accept limpio siguen obligatorios; no editar status del runner.
+
+## Configuración exacta del ejecutor ya implementado
+
+Después de autorización explícita y revisión independiente: `VEXA_HUBSPOT_S01_CONFIG` apunta a JSON absoluto0600 fuera del candidato, sin symlink. Campos: version `v3`, authorization_ref de la decisión real, account_id de cuenta esperada (string numérico), client_id de app esperada, tenant_id/connection_id autorizados, reviewer e implementer distintos, expires_at vigente menos de24h, reconciliation_file, reconciliation_sha256; opcionales inbox_id y archived. Token y claveHMAC sólo en VEXA_HUBSPOT_TOKEN y VEXA_HUBSPOT_RECONCILIATION_KEY del proceso autorizado. Nunca escribirlos en comandos/logs.
+
+El supervisor compara la referencia con la aprobación real. En verify/accept, el runner proporciona `VEXA_HUBSPOT_APPROVAL_REFERENCE` desde `approval_note`; el live exige igualdad exacta con `authorization_ref` antes de cualquier petición, incluida introspección. Un archivo o una variable creada a mano no concede aprobación. La tarea requiere aprobación explícita y los workers no reciben secretos.
+
+El archivo reconciliation_file privado0600 contiene origin `authorized-ui-or-export`, account_id, reviewer, threads (20–1000IDs únicos de texto, seleccionados y autorizados explícitamente), messages [{id,thread,digest}]. El revisor obtiene la muestra de UI/export independientemente del adaptador; cada digest es HMAC-SHA256 con la clave privada sobre JSON `[message_id,thread_id,role,visibility,text,associations]`, asociaciones ordenadas como pares `[entity_type,external_id]`. Texto NFC, notas internas y cuerpo original completo. `reconciliationDigest` publica la forma exacta sin escribir contenido. Guardar el SHA256 del archivo en config preserva integridad; no convierte un archivo inventado en evidencia. La comparación se ejecuta contra respuestas reales cada vez, nunca contra un receipt passed.
+
+Límites:240s,250solicitudesGET de conversaciones,max(20,número de hilos autorizados)páginas/recurso,10kregistros,10s/request,1retry; HTTPs yapi.hubapi.com fijos, sinredirects. El único GET adicional es introspecciónOAuth. Se usa el [contrato legacy documentado](https://developers.hubspot.com/blog/enhancing-user-insights-in-public-apps-using-oauth-tokens), vigente hasta16feb2027 según [deprecación oficial](https://developers.hubspot.com/changelog/v1-oauth-api-deprecation). Su token viaja en el path al proveedor: sólo se construye enmemoria, nunca logs/errores/recibos/telemetría. Config OAuth requerida; no afirmar soporte universal de private apps. La nueva ruta POST introspect está anunciada, pero no se inventa su schema de autenticación. Recibo público sólo contadores/status, sin URLs/IDs/textos/digests sensibles.
+
+El runner sólo pasa las tres variables privadas del ensayo para F03-01 con requires_approval=true y approval_note real no vacío; el referencebinding procede de ese registro, nunca de una variable heredada. Verify/accept limpio ejecutan el gate real con estas guardas. No sustituir por recibos JSON ni autorizar mediante banderas offline.
+
+## Corrección acotada review203 — no lectura fuera de muestra
+
+El driver anterior recorría la lista general de threads y filtraba después de leer cuerpos; la reproducción sintética autorizaba20 y observaba21. Ese recibo y rechazo se conservan. El driver corregido pasa `threadIds` al mismo adaptador y solicita cada thread directamente: GET `/conversations/v3/conversations/threads/{threadId}?archived=…&association=TICKET`, documentado en la guía legacy oficial (consultada20-sep-2026, sección Retrieve threads). No pide listar inboxes ni hilos fuera de la muestra. Si inbox_id se configura, se coteja con la metadata devuelta antes de leer mensajes.
+
+La guardia externa también exige que cada GET de thread, messages y original-content pertenezca al conjunto exacto autorizado. Bloquea la ruta de listado general y cualquier ID exterior antes del transporte nativo. La allowlist copiada queda ligada al checkpoint y no puede ampliarse mutando el array del caller. Cada página directa comprende sólo un hilo autorizado con todas sus páginas de mensajes. El scope mínimo de veinte hilos no se transforma en permiso de leer otros cuerpos que aparezcan en una página de cuenta. Los tests de la regresión usan fixtures rotulados en un proceso aislado; su resultado passed sintético jamás sustituye S01.
+
+
+
+Pendiente: revisión independiente del ejecutor y ensayo live autorizado, escoger versión según evidencia real, verificar cobertura de notas Help Desk según permiso, reconciliar muestra/export y validar integración durable en fichas posteriores. Esta nota es un procedimiento pendiente, no evidencia de ensayo ejecutado.

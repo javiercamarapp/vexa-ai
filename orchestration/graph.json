@@ -308,7 +308,7 @@
       "acceptance": "tests/acceptance/F03-01.test.mjs",
       "prompt": "orchestration/prompts/F03.md",
       "auto_accept": false,
-      "requires_approval": false
+      "requires_approval": true
     },
     {
       "id": "F03-02",

@@ -2,7 +2,15 @@
 
 Actualizado: 2026-09-20. Este plan reemplaza los bloques históricos de investigación/preparación conservados en Git. El usuario pidió construir y confirmó **UN MES, no una semana**. Referencia de calendario: 19-oct-2026 si se cuenta desde este encargo; objetivo, no entrega garantizada ni estado alcanzado.
 
-## Checkpoint vigente — F02 completa,17/60
+## Checkpoint vigente —17/60; F03 en construcción
+
+F02 está6/6 aceptada y publicada en main `9874b81`. El examen F03-01 y su entorno privado fueron revisados independientemente; el producto HubSpot corregido permanece en propuesta, pendiente de ensayo real autorizado sobre20conversaciones y reconciliación UI/export. Sin acceso legítimo el gate devuelve S01_LIVE_BLOCKED; no hay18/60 ni producción remota acreditada.
+
+Se continúa la construcción independiente de Zendesk dentro de F03, en worktrees disjuntos con constructor y examen separados. El cierre sigue siendo serial: F03-01 antes de aceptar F03-02. La falta de datos del cliente no impide preparar y probar código independiente, ni autoriza saltarse gates o declarar aceptación por fixtures. Cambios locales de infraestructura no conceden permiso sobre cuentas ni datos externos.
+
+Límites conservados:220llamadas acumuladas, deadline00:00 del21-sep UTC−06, máximo3agentes y cero gasto nuevo. Recibos privados atómicos mandan sobre los contadores históricos de abajo. Publicar cada cierre aceptado mediante publisher autorizado y verificar SHA remoto; sin Actions ni commits artificiales.
+
+## Historial — F02 completa,17/60
 
 F02 en6/6, compilada y probada. F02-05 (`9e738b9`) y standalone06 (comportamiento existente en `63b9725`) pasaron27grupos cada verifyNode22/acceptGitlimpioNode26; cuatro regresiones y cuatro jobs CI verdes, producto intacto y cleanup verificado. Publicar cierre06 antes de abrirF03. IncidenciaCSV anterior no reproducida sigue documentada, sin causa demostrada; examen reforzado y seguimiento en auditoría integral. No producción remota ni Actions habilitado. Presupuesto acumulado200/220; deadline vigente00:00 del21-sep UTC−06, sin reset ni gasto nuevo.
 

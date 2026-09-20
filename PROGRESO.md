@@ -1,6 +1,14 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## Checkpoint vigente —17/60; F03 en construcción
+
+F02 está6/6 aceptada y publicada en main `9874b81`. El examen F03-01 y su entorno privado fueron revisados independientemente; el producto HubSpot corregido permanece en propuesta, pendiente de ensayo real autorizado sobre20conversaciones y reconciliación UI/export. Sin acceso legítimo el gate devuelve S01_LIVE_BLOCKED; no hay18/60 ni producción remota acreditada.
+
+Se continúa la construcción independiente de Zendesk dentro de F03, en worktrees disjuntos con constructor y examen separados. El cierre sigue siendo serial: F03-01 antes de aceptar F03-02. La falta de datos del cliente no impide preparar y probar código independiente, ni autoriza saltarse gates o declarar aceptación por fixtures. Cambios locales de infraestructura no conceden permiso sobre cuentas ni datos externos.
+
+Límites conservados:220llamadas acumuladas, deadline00:00 del21-sep UTC−06, máximo3agentes y cero gasto nuevo. Recibos privados atómicos mandan sobre los contadores históricos de abajo. Publicar cada cierre aceptado mediante publisher autorizado y verificar SHA remoto; sin Actions ni commits artificiales.
+
 ## F02 completa — F02-06 aceptado,20-sep
 
 - **17/60**, F02 **6/6**, compilada y probada. F02-06 acepta comportamiento existente en `63b97255847e9874e7407769f2647f1cd600a5e7`; no se creó un commit de producto vacío. El worker/UI compartidos se integraron en F02-05 (`9e738b9`).

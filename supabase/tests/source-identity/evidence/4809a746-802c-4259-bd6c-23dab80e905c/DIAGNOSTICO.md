@@ -1,0 +1,1 @@
+Fallo del harness: faltó punto y coma en el bloque PL/pgSQL pasado a h.probe. El wrapper informó INFRA_F01_03, pero no es caída de infraestructura ni fallo del producto. No acredita rechazo RLS ni mata mutante. result.json original preservado; su etiqueta product_failed describe la fase, no atribución correcta. Se corrige sólo la prueba propia y se reejecuta en recurso nuevo.

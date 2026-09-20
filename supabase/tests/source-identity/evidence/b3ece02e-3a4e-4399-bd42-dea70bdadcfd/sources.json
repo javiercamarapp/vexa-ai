@@ -1,0 +1,6 @@
+{
+  "packages/ingestion/persistence/index.mjs": "bb46c2129b94febf20e23940af751ac3fb444831799fefd14b1a9974050ba76b",
+  "packages/ingestion/persistence/index.d.ts": "b41cb459657487fbc0a93800b2fba68a0149242ee436a23c4d2e1505733bc522",
+  "supabase/migrations/0006_source_identity.sql": "e7561daaeebac6619177aa360072a46209e323007d3ebc25c75c678a31f87816",
+  "supabase/tests/source-identity/run.mjs": "dc67ca92deb84fad12bd7f9073fde498108972d782915b1174c4c26c464ff2ab"
+}

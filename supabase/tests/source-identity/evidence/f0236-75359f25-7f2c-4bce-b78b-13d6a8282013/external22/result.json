@@ -1,0 +1,7 @@
+{
+  "exit": 1,
+  "cleanup_verified": true,
+  "resources": 5,
+  "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f02-data-durable-1789924838176941000/canonical-fix",
+  "node": "/tmp/vexa-xml-interop-renewed/node-v22.22.0-darwin-arm64/bin/node"
+}

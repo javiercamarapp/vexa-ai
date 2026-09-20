@@ -1,0 +1,15 @@
+{
+  "status": "product_failed",
+  "checks": [
+    "runtime role has no bypass or ownership",
+    "five entities, exact money, no raw text",
+    "repeat/reorder stable IDs and counters",
+    "versions remain history, conflict durable original",
+    "tenant/hash/role/date/mapping quarantine",
+    "CSV real parser, structural conversation, money not inferred",
+    "rollback is not rejection; all effects atomic",
+    "viewer/operator denied, revocation during transaction"
+  ],
+  "error": "INFRA_F01_03: docker exec failed (3); no authorization verdict; details suppressed",
+  "stack": "AssertionError [ERR_ASSERTION]: INFRA_F01_03: docker exec failed (3); no authorization verdict; details suppressed\n    at docker (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-fOLQMb/infra.mjs:13:10)\n    at Object.sql (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-fOLQMb/infra.mjs:41:27)\n    at Object.json (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-fOLQMb/infra.mjs:42:41)\n    at Object.probe (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-fOLQMb/infra.mjs:46:16)\n    at file:///Users/javiercamaraportepetit/vexa/.runtime/f0203-close-f0204-1789921456816411000/canonical/supabase/tests/source-identity/run.mjs:103:18\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async check (file:///Users/javiercamaraportepetit/vexa/.runtime/f0203-close-f0204-1789921456816411000/canonical/supabase/tests/source-identity/run.mjs:24:32)\n    at async file:///Users/javiercamaraportepetit/vexa/.runtime/f0203-close-f0204-1789921456816411000/canonical/supabase/tests/source-identity/run.mjs:97:2"
+}

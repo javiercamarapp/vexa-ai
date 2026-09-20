@@ -1,0 +1,84 @@
+/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-p_ohmdrk
+✖ F01-03: real candidate migrations, SQL matrix, Storage and retrieval (18536.573209ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18643.071416
+
+✖ failing tests:
+
+test at ../../../../../../private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-p_ohmdrk/tests/acceptance/F01-03.test.mjs:10:1
+✖ F01-03: real candidate migrations, SQL matrix, Storage and retrieval (18536.573209ms)
+  AssertionError [ERR_ASSERTION]: MATRIX: unclassified public table; extend external exam before freeze
+  + actual - expected
+  ... Skipped lines
+  
+    [
+      'assumptions',
+      'attempts',
+      'attributions',
+      'audit_events',
+  ...
+      'reversals',
+  +   'source_heads',
+      'tombstones',
+      'weekly_briefs'
+    ]
+  
+      at schemaOracle (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-p_ohmdrk/tests/acceptance/support/F01-03/oracles.mjs:49:10)
+      at TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-p_ohmdrk/tests/acceptance/F01-03.test.mjs:15:3)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [
+      'assumptions',           'attempts',
+      'attributions',          'audit_events',
+      'checkpoints',           'components',
+      'connections',           'conversations',
+      'cost_rates',            'customers',
+      'dead_letters',          'economic_events',
+      'embeddings',            'evidence_spans',
+      'external_aliases',      'extraction_runs',
+      'import_rows',           'imports',
+      'interventions',         'issues',
+      'jobs',                  'measurement_plans',
+      'message_revisions',     'messages',
+      'metric_snapshots',      'order_lines',
+      'orders',                'outbox',
+      'problem_conversations', 'problem_versions',
+      'problems',              'products',
+      'recommendations',       'reversals',
+      'source_heads',          'tombstones',
+      'weekly_briefs'
+    ],
+    expected: [
+      'assumptions',           'attempts',
+      'attributions',          'audit_events',
+      'checkpoints',           'components',
+      'connections',           'conversations',
+      'cost_rates',            'customers',
+      'dead_letters',          'economic_events',
+      'embeddings',            'evidence_spans',
+      'external_aliases',      'extraction_runs',
+      'import_rows',           'imports',
+      'interventions',         'issues',
+      'jobs',                  'measurement_plans',
+      'message_revisions',     'messages',
+      'metric_snapshots',      'order_lines',
+      'orders',                'outbox',
+      'problem_conversations', 'problem_versions',
+      'problems',              'products',
+      'recommendations',       'reversals',
+      'tombstones',            'weekly_briefs'
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+EXIT 1 CLEANUP True

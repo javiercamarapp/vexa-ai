@@ -1,0 +1,27 @@
+(node:37843) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS runtime role has no bypass or ownership
+PASS five entities, exact money, no raw text
+PASS repeat/reorder stable IDs and counters
+PASS versions remain history, conflict durable original
+PASS tenant/hash/role/date/mapping quarantine
+PASS CSV real parser, structural conversation, money not inferred
+PASS rollback is not rejection; all effects atomic
+PASS viewer/operator denied, revocation during transaction
+AssertionError [ERR_ASSERTION]: INFRA_F01_03: docker exec failed (3); no authorization verdict; details suppressed
+    at docker (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-fOLQMb/infra.mjs:13:10)
+    at Object.sql (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-fOLQMb/infra.mjs:41:27)
+    at Object.json (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-fOLQMb/infra.mjs:42:41)
+    at Object.probe (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-fOLQMb/infra.mjs:46:16)
+    at file:///Users/javiercamaraportepetit/vexa/.runtime/f0203-close-f0204-1789921456816411000/canonical/supabase/tests/source-identity/run.mjs:103:18
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async check (file:///Users/javiercamaraportepetit/vexa/.runtime/f0203-close-f0204-1789921456816411000/canonical/supabase/tests/source-identity/run.mjs:24:32)
+    at async file:///Users/javiercamaraportepetit/vexa/.runtime/f0203-close-f0204-1789921456816411000/canonical/supabase/tests/source-identity/run.mjs:97:2 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f0203-close-f0204-1789921456816411000/canonical/supabase/tests/source-identity/evidence/4809a746-802c-4259-bd6c-23dab80e905c

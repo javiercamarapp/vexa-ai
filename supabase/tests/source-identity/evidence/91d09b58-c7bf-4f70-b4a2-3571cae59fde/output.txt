@@ -1,0 +1,12 @@
+(node:34984) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS five entities, exact money, no raw text
+PASS repeat/reorder stable IDs and counters
+PASS versions remain history, conflict durable original
+PASS tenant/hash/role/date/mapping quarantine
+PASS CSV real parser, structural conversation, money not inferred
+PASS rollback is not rejection; all effects atomic
+PASS viewer/operator denied, revocation during transaction
+PASS two OS processes, independent imports, unique DB winner
+PASS 10000 rows accounted, no cap
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f0203-close-f0204-1789921456816411000/canonical/supabase/tests/source-identity/evidence/91d09b58-c7bf-4f70-b4a2-3571cae59fde

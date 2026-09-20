@@ -1,0 +1,147 @@
+/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-z_591ork
+TAP version 13
+# (node:26565) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: F02-04 independent real persistence effects
+    # Subtest: five entities and exact bigint known relationships
+    ok 1 - five entities and exact bigint known relationships
+      ---
+      duration_ms: 1241.057042
+      type: 'test'
+      ...
+    # Subtest: replay and reorder keep IDs and ledger
+    ok 2 - replay and reorder keep IDs and ledger
+      ---
+      duration_ms: 1016.599584
+      type: 'test'
+      ...
+    # Subtest: same revision conflicting hash preserves original and quarantines
+    ok 3 - same revision conflicting hash preserves original and quarantines
+      ---
+      duration_ms: 637.358584
+      type: 'test'
+      ...
+    # Subtest: two independent Node processes deduplicate concurrent revision
+    ok 4 - two independent Node processes deduplicate concurrent revision
+      ---
+      duration_ms: 505.898208
+      type: 'test'
+      ...
+    # Subtest: CSV known customer/order/SKU relationships survive persistence
+    ok 5 - CSV known customer/order/SKU relationships survive persistence
+      ---
+      duration_ms: 458.930667
+      type: 'test'
+      ...
+    # Subtest: new revision retains one logical order and does not double money
+    not ok 6 - new revision retains one logical order and does not double money
+      ---
+      duration_ms: 610.661833
+      type: 'test'
+      location: '/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-z_591ork/tests/acceptance/support/F02-canonical/exam.mjs:59:10'
+      failureType: 'testCodeFailure'
+      error: |-
+        REVISION_NOT_ADDITIVE
+        + actual - expected
+        
+        + ''
+        - '9007199254740994'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: '9007199254740994'
+      actual: ''
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-z_591ork/tests/acceptance/support/F02-canonical/exam.mjs:64:10)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-z_591ork/tests/acceptance/support/F02-canonical/exam.mjs:59:2)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: customer permits occurred_at null
+    ok 7 - customer permits occurred_at null
+      ---
+      duration_ms: 195.142167
+      type: 'test'
+      ...
+    # Subtest: product permits occurred_at null
+    ok 8 - product permits occurred_at null
+      ---
+      duration_ms: 192.423375
+      type: 'test'
+      ...
+    # Subtest: tenant, source, account, content hash and mapping cannot be forged
+    ok 9 - tenant, source, account, content hash and mapping cannot be forged
+      ---
+      duration_ms: 1950.891791
+      type: 'test'
+      ...
+    # Subtest: ambiguous reference quarantines, never selects arbitrary customer
+    ok 10 - ambiguous reference quarantines, never selects arbitrary customer
+      ---
+      duration_ms: 1182.162875
+      type: 'test'
+      ...
+    # Subtest: same import exact replay does not increment counters and changed row quarantines
+    ok 11 - same import exact replay does not increment counters and changed row quarantines
+      ---
+      duration_ms: 1382.703
+      type: 'test'
+      ...
+    # Subtest: unknown amount remains SQL null rather than zero
+    ok 12 - unknown amount remains SQL null rather than zero
+      ---
+      duration_ms: 971.699291
+      type: 'test'
+      ...
+    # Subtest: SQL failure propagates and entire transaction rolls back
+    ok 13 - SQL failure propagates and entire transaction rolls back
+      ---
+      duration_ms: 728.748959
+      type: 'test'
+      ...
+    1..13
+not ok 1 - F02-04 independent real persistence effects
+  ---
+  duration_ms: 18560.254292
+  type: 'test'
+  location: '/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-z_591ork/tests/acceptance/support/F02-canonical/exam.mjs:12:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# OBSERVED_REVISION_SUM=
+# Subtest: F02-04 coverage closure
+not ok 2 - F02-04 coverage closure
+  ---
+  duration_ms: 0.174875
+  type: 'test'
+  location: '/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-z_591ork/tests/acceptance/F02-04.test.mjs:7:1'
+  failureType: 'testCodeFailure'
+  error: 'GATE_INCOMPLETE: all entity revision projections, connection/account independence and failure inside persistence remain unproven; no acceptance'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'fail'
+  stack: |-
+    TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-z_591ork/tests/acceptance/F02-04.test.mjs:7:43)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..2
+# tests 15
+# suites 0
+# pass 12
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 18623.336583
+
+EXIT 1 CLEANUP True

@@ -1,0 +1,17 @@
+{
+  "status": "pass",
+  "checks": [
+    "runtime role has no bypass or ownership",
+    "five entities, exact money, no raw text",
+    "repeat/reorder stable IDs and counters",
+    "versions remain history, conflict durable original",
+    "tenant/hash/role/date/mapping quarantine",
+    "CSV real parser, structural conversation, money not inferred",
+    "rollback is not rejection; all effects atomic",
+    "viewer/operator denied, revocation during transaction",
+    "new tables deny browser DML, immutable revision, row conflict",
+    "failure after domain insertion rolls back instead of quarantine",
+    "two OS processes, independent imports, unique DB winner",
+    "10000 rows accounted, no cap"
+  ]
+}

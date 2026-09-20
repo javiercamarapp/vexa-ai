@@ -1,0 +1,29 @@
+{
+  "runs": [
+    {
+      "receipt": "55a58d1b-1d21-4090-a620-653588c9871f",
+      "status": "pass",
+      "checks": 16,
+      "cleanup": {
+        "verified": true
+      }
+    },
+    {
+      "receipt": "b3ece02e-3a4e-4399-bd42-dea70bdadcfd",
+      "status": "pass",
+      "checks": 16,
+      "cleanup": {
+        "verified": true
+      }
+    },
+    {
+      "receipt": "e36db052-4791-465b-9342-3e8534d07941",
+      "status": "pass",
+      "checks": 16,
+      "cleanup": {
+        "verified": true
+      }
+    }
+  ],
+  "final_source_hashes_match": true
+}

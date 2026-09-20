@@ -1,0 +1,550 @@
+TAP version 13
+# Subtest: versioned CSV adapter preserves original hash and normalizes text/references independently
+ok 1 - versioned CSV adapter preserves original hash and normalizes text/references independently
+  ---
+  duration_ms: 8.101834
+  type: 'test'
+  ...
+# Subtest: raw mutation, normalized-as-raw and unsupported adapter versions fail closed
+ok 2 - raw mutation, normalized-as-raw and unsupported adapter versions fail closed
+  ---
+  duration_ms: 0.529208
+  type: 'test'
+  ...
+# Subtest: missing conversation and unknown role never manufacture canonical identities
+ok 3 - missing conversation and unknown role never manufacture canonical identities
+  ---
+  duration_ms: 0.165916
+  type: 'test'
+  ...
+# Subtest: CSV BOM, quotes, escaped quotes and multiline with physical row references
+ok 4 - CSV BOM, quotes, escaped quotes and multiline with physical row references
+  ---
+  duration_ms: 2.320084
+  type: 'test'
+  ...
+# Subtest: CSV syntax, encoding and limits reject explicitly
+ok 5 - CSV syntax, encoding and limits reject explicitly
+  ---
+  duration_ms: 0.455125
+  type: 'test'
+  ...
+# Subtest: normalization reports invalid rows; unknown identifiers remain null; markup/formulas inert
+ok 6 - normalization reports invalid rows; unknown identifiers remain null; markup/formulas inert
+  ---
+  duration_ms: 5.966084
+  type: 'test'
+  ...
+# Subtest: timestamps reject impossible calendar days, ambiguous times and missing identity columns
+ok 7 - timestamps reject impossible calendar days, ambiguous times and missing identity columns
+  ---
+  duration_ms: 0.445375
+  type: 'test'
+  ...
+# Subtest: hash stable across property order, revision excludes observation time, tenant/account/source isolate identity
+ok 8 - hash stable across property order, revision excludes observation time, tenant/account/source isolate identity
+  ---
+  duration_ms: 0.273375
+  type: 'test'
+  ...
+# Subtest: repeat revision is duplicate, edits are history of one entity, collision rejected, same text never merges
+ok 9 - repeat revision is duplicate, edits are history of one entity, collision rejected, same text never merges
+  ---
+  duration_ms: 5.238875
+  type: 'test'
+  ...
+# Subtest: CSV stable fallback identity is file and mapping scoped; revisions deduplicate independently of row order with explicit ID
+ok 10 - CSV stable fallback identity is file and mapping scoped; revisions deduplicate independently of row order with explicit ID
+  ---
+  duration_ms: 0.434791
+  type: 'test'
+  ...
+# Subtest: explicit approved aliases link identities within one tenant only, never text or email
+ok 11 - explicit approved aliases link identities within one tenant only, never text or email
+  ---
+  duration_ms: 0.334417
+  type: 'test'
+  ...
+# Subtest: CSV rejects bad columns without dropping later records; row tenant never overrides server context
+ok 12 - CSV rejects bad columns without dropping later records; row tenant never overrides server context
+  ---
+  duration_ms: 0.349666
+  type: 'test'
+  ...
+# Subtest: real openpyxl basic worksheet preserves message and numeric text
+ok 13 - real openpyxl basic worksheet preserves message and numeric text
+  ---
+  duration_ms: 13.285917
+  type: 'test'
+  ...
+# Subtest: openpyxl-multiple-rich-formula preserves all sheets and ignores no data behind metadata
+ok 14 - openpyxl-multiple-rich-formula preserves all sheets and ignores no data behind metadata
+  ---
+  duration_ms: 5.049375
+  type: 'test'
+  ...
+# Subtest: openpyxl-metadata preserves all sheets and ignores no data behind metadata
+ok 15 - openpyxl-metadata preserves all sheets and ignores no data behind metadata
+  ---
+  duration_ms: 4.1095
+  type: 'test'
+  ...
+# Subtest: openpyxl-custom-filter preserves all sheets and ignores no data behind metadata
+ok 16 - openpyxl-custom-filter preserves all sheets and ignores no data behind metadata
+  ---
+  duration_ms: 2.587167
+  type: 'test'
+  ...
+# Subtest: openpyxl-hidden-and-named-formula preserves all sheets and ignores no data behind metadata
+ok 17 - openpyxl-hidden-and-named-formula preserves all sheets and ignores no data behind metadata
+  ---
+  duration_ms: 2.645208
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-protection-child
+ok 18 - paired malicious writer: bad-protection-child
+  ---
+  duration_ms: 1.725083
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-name-child
+ok 19 - paired malicious writer: bad-name-child
+  ---
+  duration_ms: 0.636458
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-name-scope
+ok 20 - paired malicious writer: bad-name-scope
+  ---
+  duration_ms: 0.526
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-name-external
+ok 21 - paired malicious writer: bad-name-external
+  ---
+  duration_ms: 0.9635
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-filter-child
+ok 22 - paired malicious writer: bad-filter-child
+  ---
+  duration_ms: 1.439708
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-filter-column
+ok 23 - paired malicious writer: bad-filter-column
+  ---
+  duration_ms: 1.120709
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-filter-range
+ok 24 - paired malicious writer: bad-filter-range
+  ---
+  duration_ms: 1.201791
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-protection-boolean
+ok 25 - paired malicious writer: bad-protection-boolean
+  ---
+  duration_ms: 0.534541
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-header-cell
+ok 26 - paired malicious writer: bad-header-cell
+  ---
+  duration_ms: 1.133875
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-duplicate-names
+ok 27 - paired malicious writer: bad-duplicate-names
+  ---
+  duration_ms: 0.567
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-duplicate-protection
+ok 28 - paired malicious writer: bad-duplicate-protection
+  ---
+  duration_ms: 0.479958
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-name-attribute
+ok 29 - paired malicious writer: bad-name-attribute
+  ---
+  duration_ms: 0.449833
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-name-macro
+ok 30 - paired malicious writer: bad-name-macro
+  ---
+  duration_ms: 0.434541
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-print-area
+ok 31 - paired malicious writer: bad-print-area
+  ---
+  duration_ms: 0.476417
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-print-sheet
+ok 32 - paired malicious writer: bad-print-sheet
+  ---
+  duration_ms: 0.814375
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-sort-range
+ok 33 - paired malicious writer: bad-sort-range
+  ---
+  duration_ms: 0.887167
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-filter-choice
+ok 34 - paired malicious writer: bad-filter-choice
+  ---
+  duration_ms: 0.768667
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-filter-duplicate
+ok 35 - paired malicious writer: bad-filter-duplicate
+  ---
+  duration_ms: 0.772
+  type: 'test'
+  ...
+# Subtest: paired malicious writer: bad-protection-hash-group
+ok 36 - paired malicious writer: bad-protection-hash-group
+  ---
+  duration_ms: 0.387584
+  type: 'test'
+  ...
+# Subtest: stream independent byte chunks, physical lines, escaped quotes, CR-only and emoji
+ok 37 - stream independent byte chunks, physical lines, escaped quotes, CR-only and emoji
+  ---
+  duration_ms: 1.167375
+  type: 'test'
+  ...
+# Subtest: stream backpressure within chunk and abort do not pull another chunk
+ok 38 - stream backpressure within chunk and abort do not pull another chunk
+  ---
+  duration_ms: 0.36425
+  type: 'test'
+  ...
+# Subtest: stream invalid UTF8, truncation and physical limit location
+ok 39 - stream invalid UTF8, truncation and physical limit location
+  ---
+  duration_ms: 0.663084
+  type: 'test'
+  ...
+# Subtest: money validation keeps raw hash and exact minor units; text counts points
+ok 40 - money validation keeps raw hash and exact minor units; text counts points
+  ---
+  duration_ms: 14.513083
+  type: 'test'
+  ...
+# Subtest: abort rejects pending uncooperative read without waiting for iterator.return
+ok 41 - abort rejects pending uncooperative read without waiting for iterator.return
+  ---
+  duration_ms: 0.259208
+  type: 'test'
+  ...
+# Subtest: money explicit currency, precision and unknown amounts cannot silently become zero
+ok 42 - money explicit currency, precision and unknown amounts cannot silently become zero
+  ---
+  duration_ms: 0.140625
+  type: 'test'
+  ...
+# Subtest: custom normalize row budget excludes header and all parsers locate first excess
+ok 43 - custom normalize row budget excludes header and all parsers locate first excess
+  ---
+  duration_ms: 0.563917
+  type: 'test'
+  ...
+# Subtest: real writer preserves blank inline cell as null with empty metadata
+ok 44 - real writer preserves blank inline cell as null with empty metadata
+  ---
+  duration_ms: 15.1255
+  type: 'test'
+  ...
+# Subtest: real writer preserves blank inline cell as null with protected metadata
+ok 45 - real writer preserves blank inline cell as null with protected metadata
+  ---
+  duration_ms: 10.071667
+  type: 'test'
+  ...
+# Subtest: malformed writer variant fails closed: inline-value
+ok 46 - malformed writer variant fails closed: inline-value
+  ---
+  duration_ms: 1.185167
+  type: 'test'
+  ...
+# Subtest: malformed writer variant fails closed: protection-duplicate
+ok 47 - malformed writer variant fails closed: protection-duplicate
+  ---
+  duration_ms: 0.853542
+  type: 'test'
+  ...
+# Subtest: malformed writer variant fails closed: protection-nested-cell
+ok 48 - malformed writer variant fails closed: protection-nested-cell
+  ---
+  duration_ms: 1.383125
+  type: 'test'
+  ...
+# Subtest: malformed writer variant fails closed: protection-foreign
+ok 49 - malformed writer variant fails closed: protection-foreign
+  ---
+  duration_ms: 1.74275
+  type: 'test'
+  ...
+# Subtest: malformed writer variant fails closed: protection-bool
+ok 50 - malformed writer variant fails closed: protection-bool
+  ---
+  duration_ms: 0.891959
+  type: 'test'
+  ...
+# Subtest: malformed writer variant fails closed: protection-hash-group
+ok 51 - malformed writer variant fails closed: protection-hash-group
+  ---
+  duration_ms: 0.871875
+  type: 'test'
+  ...
+# Subtest: malformed writer variant fails closed: protection-password
+ok 52 - malformed writer variant fails closed: protection-password
+  ---
+  duration_ms: 1.031625
+  type: 'test'
+  ...
+# Subtest: XLSX actual shared/rich strings, sparse cells, exact numeric lexeme, formula blocked
+ok 53 - XLSX actual shared/rich strings, sparse cells, exact numeric lexeme, formula blocked
+  ---
+  duration_ms: 14.49225
+  type: 'test'
+  ...
+# Subtest: XLSX rejects corrupt CRC, overlapping entries, path traversal, DTD, malformed XML
+ok 54 - XLSX rejects corrupt CRC, overlapping entries, path traversal, DTD, malformed XML
+  ---
+  duration_ms: 7.097125
+  type: 'test'
+  ...
+# Subtest: XLSX expansion declaration lie, oversized row index and maxRows fail closed
+ok 55 - XLSX expansion declaration lie, oversized row index and maxRows fail closed
+  ---
+  duration_ms: 2.087291
+  type: 'test'
+  ...
+# Subtest: XLSX refuses namespace tricks, invalid entities, duplicate attributes and out-of-order cells
+ok 56 - XLSX refuses namespace tricks, invalid entities, duplicate attributes and out-of-order cells
+  ---
+  duration_ms: 2.21
+  type: 'test'
+  ...
+# Subtest: XLSX exact configured expansion and missing closing XML
+ok 57 - XLSX exact configured expansion and missing closing XML
+  ---
+  duration_ms: 2.234167
+  type: 'test'
+  ...
+# Subtest: XLSX stored ZIP entries, prefixed XML elements and numeric entities are supported
+ok 58 - XLSX stored ZIP entries, prefixed XML elements and numeric entities are supported
+  ---
+  duration_ms: 1.424667
+  type: 'test'
+  ...
+# Subtest: XLSX full workbooks stored/deflated with descriptors; consumed deflate bytes checked
+ok 59 - XLSX full workbooks stored/deflated with descriptors; consumed deflate bytes checked
+  ---
+  duration_ms: 1.425
+  type: 'test'
+  ...
+# Subtest: XLSX corrective rejects duplicate sheetData
+ok 60 - XLSX corrective rejects duplicate sheetData
+  ---
+  duration_ms: 0.484292
+  type: 'test'
+  ...
+# Subtest: XLSX corrective rejects duplicate cell value
+ok 61 - XLSX corrective rejects duplicate cell value
+  ---
+  duration_ms: 0.860958
+  type: 'test'
+  ...
+# Subtest: XLSX corrective rejects alternate content
+ok 62 - XLSX corrective rejects alternate content
+  ---
+  duration_ms: 0.709959
+  type: 'test'
+  ...
+# Subtest: XLSX corrective rejects foreign inline text
+ok 63 - XLSX corrective rejects foreign inline text
+  ---
+  duration_ms: 0.670791
+  type: 'test'
+  ...
+# Subtest: XLSX corrective rejects foreign shared run
+ok 64 - XLSX corrective rejects foreign shared run
+  ---
+  duration_ms: 0.367458
+  type: 'test'
+  ...
+# Subtest: XLSX corrective rejects duplicate inline string
+ok 65 - XLSX corrective rejects duplicate inline string
+  ---
+  duration_ms: 0.471792
+  type: 'test'
+  ...
+# Subtest: XLSX corrective rejects unknown row wrapper
+ok 66 - XLSX corrective rejects unknown row wrapper
+  ---
+  duration_ms: 0.430833
+  type: 'test'
+  ...
+# Subtest: XLSX corrective rejects nested value markup
+ok 67 - XLSX corrective rejects nested value markup
+  ---
+  duration_ms: 0.399958
+  type: 'test'
+  ...
+# Subtest: XLSX corrective rejects mixed rich and plain text
+ok 68 - XLSX corrective rejects mixed rich and plain text
+  ---
+  duration_ms: 0.339792
+  type: 'test'
+  ...
+# Subtest: XLSX corrective preserves prefixed rich text, whitespace, phonetics and exact lexemes
+ok 69 - XLSX corrective preserves prefixed rich text, whitespace, phonetics and exact lexemes
+  ---
+  duration_ms: 0.549542
+  type: 'test'
+  ...
+# Subtest: XLSX event consumption preserves shared string indices, empty entries and final row
+ok 70 - XLSX event consumption preserves shared string indices, empty entries and final row
+  ---
+  duration_ms: 141.7005
+  type: 'test'
+  ...
+# Subtest: XLSX explicit unsupported extensions reject rather than omit data
+ok 71 - XLSX explicit unsupported extensions reject rather than omit data
+  ---
+  duration_ms: 1.177625
+  type: 'test'
+  ...
+# Subtest: XLSX malformed tail after streamed rows/shared strings remains fatal
+ok 72 - XLSX malformed tail after streamed rows/shared strings remains fatal
+  ---
+  duration_ms: 0.911541
+  type: 'test'
+  ...
+# Subtest: XLSX event consumers reject nested fake worksheet/SST roots
+ok 73 - XLSX event consumers reject nested fake worksheet/SST roots
+  ---
+  duration_ms: 0.745334
+  type: 'test'
+  ...
+# Subtest: XLSX grammar rejects duplicate sheets
+ok 74 - XLSX grammar rejects duplicate sheets
+  ---
+  duration_ms: 0.359917
+  type: 'test'
+  ...
+# Subtest: XLSX grammar rejects workbook metadata hiding a list
+ok 75 - XLSX grammar rejects workbook metadata hiding a list
+  ---
+  duration_ms: 0.316042
+  type: 'test'
+  ...
+# Subtest: XLSX grammar rejects worksheet metadata hiding values
+ok 76 - XLSX grammar rejects worksheet metadata hiding values
+  ---
+  duration_ms: 0.394625
+  type: 'test'
+  ...
+# Subtest: XLSX grammar rejects scalar property with non-whitespace text
+ok 77 - XLSX grammar rejects scalar property with non-whitespace text
+  ---
+  duration_ms: 0.707875
+  type: 'test'
+  ...
+# Subtest: XLSX grammar rejects duplicate run formatting
+ok 78 - XLSX grammar rejects duplicate run formatting
+  ---
+  duration_ms: 0.391291
+  type: 'test'
+  ...
+# Subtest: XLSX grammar rejects foreign attribute is not a local attribute
+ok 79 - XLSX grammar rejects foreign attribute is not a local attribute
+  ---
+  duration_ms: 0.352083
+  type: 'test'
+  ...
+# Subtest: XLSX grammar rejects unbound attribute prefix
+ok 80 - XLSX grammar rejects unbound attribute prefix
+  ---
+  duration_ms: 0.33675
+  type: 'test'
+  ...
+# Subtest: XLSX grammar rejects reserved namespace binding
+ok 81 - XLSX grammar rejects reserved namespace binding
+  ---
+  duration_ms: 0.410667
+  type: 'test'
+  ...
+# Subtest: XLSX grammar rejects invalid double colon QName
+ok 82 - XLSX grammar rejects invalid double colon QName
+  ---
+  duration_ms: 0.485042
+  type: 'test'
+  ...
+# Subtest: XLSX grammar rejects unknown metadata subtree
+ok 83 - XLSX grammar rejects unknown metadata subtree
+  ---
+  duration_ms: 0.366667
+  type: 'test'
+  ...
+# Subtest: XLSX grammar rejects definedNames cannot hide cell data
+ok 84 - XLSX grammar rejects definedNames cannot hide cell data
+  ---
+  duration_ms: 0.600834
+  type: 'test'
+  ...
+# Subtest: XLSX grammar rejects ambiguous relationship wrapper
+ok 85 - XLSX grammar rejects ambiguous relationship wrapper
+  ---
+  duration_ms: 0.267208
+  type: 'test'
+  ...
+# Subtest: XLSX grammar rejects unknown content types node
+ok 86 - XLSX grammar rejects unknown content types node
+  ---
+  duration_ms: 0.215916
+  type: 'test'
+  ...
+# Subtest: XLSX arbitrary Unicode namespace prefixes and formatting order retain rich text
+ok 87 - XLSX arbitrary Unicode namespace prefixes and formatting order retain rich text
+  ---
+  duration_ms: 0.702875
+  type: 'test'
+  ...
+# Subtest: XLSX supported metadata is structurally validated while retaining data
+ok 88 - XLSX supported metadata is structurally validated while retaining data
+  ---
+  duration_ms: 0.551125
+  type: 'test'
+  ...
+# Subtest: XLSX required metadata attributes and unique sheet IDs are enforced
+ok 89 - XLSX required metadata attributes and unique sheet IDs are enforced
+  ---
+  duration_ms: 2.21875
+  type: 'test'
+  ...
+# Subtest: XLSX validates XML well-formedness in unconsumed parts without building a DOM
+ok 90 - XLSX validates XML well-formedness in unconsumed parts without building a DOM
+  ---
+  duration_ms: 3.574541
+  type: 'test'
+  ...
+1..90
+# tests 90
+# suites 0
+# pass 90
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 300.155417

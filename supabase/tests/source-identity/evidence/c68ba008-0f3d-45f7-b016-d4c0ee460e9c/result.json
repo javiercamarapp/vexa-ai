@@ -1,0 +1,17 @@
+{
+  "status": "product_failed",
+  "checks": [
+    "runtime role has no bypass or ownership",
+    "five entities, exact money, no raw text",
+    "repeat/reorder stable IDs and counters",
+    "versions remain history, conflict durable original",
+    "tenant/hash/role/date/mapping quarantine",
+    "CSV real parser, structural conversation, money not inferred",
+    "rollback is not rejection; all effects atomic",
+    "viewer/operator denied, revocation during transaction",
+    "new tables deny browser DML, immutable revision, row conflict",
+    "failure after domain insertion rolls back instead of quarantine"
+  ],
+  "error": "CHILD_FAILED SQLSTATE 23505 INSERT INTO public.source_revisions (id,tenant_id,connection_id,e\nfile:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-VxzFA1/db.mjs:30\n  if (['23505','23503','23514','40001','40P01'].includes(code ?? '')) return new AccessError(409,'database_conflict');\n                                                                             ^\n\nAccessError: database_conflict\n    at databaseError (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-VxzFA1/db.mjs:30:78)\n    at Object.transaction (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-VxzFA1/db.mjs:70:15)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-VxzFA1/child.mjs:1:1005 {\n  status: 409,\n  code: 'database_conflict'\n}\n\nNode.js v26.7.0\n",
+  "stack": "Error: CHILD_FAILED SQLSTATE 23505 INSERT INTO public.source_revisions (id,tenant_id,connection_id,e\nfile:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-VxzFA1/db.mjs:30\n  if (['23505','23503','23514','40001','40P01'].includes(code ?? '')) return new AccessError(409,'database_conflict');\n                                                                             ^\n\nAccessError: database_conflict\n    at databaseError (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-VxzFA1/db.mjs:30:78)\n    at Object.transaction (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-VxzFA1/db.mjs:70:15)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-VxzFA1/child.mjs:1:1005 {\n  status: 409,\n  code: 'database_conflict'\n}\n\nNode.js v26.7.0\n\n    at ChildProcess.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-data-durable-1789924838176941000/canonical-fix/supabase/tests/source-identity/run.mjs:114:580)\n    at ChildProcess.emit (node:events:514:20)\n    at ChildProcess._handle.onexit (node:internal/child_process:294:12)"
+}

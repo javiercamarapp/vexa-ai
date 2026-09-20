@@ -1,0 +1,14 @@
+{
+  "status": "product_failed",
+  "checks": [
+    "five entities, exact money, no raw text",
+    "repeat/reorder stable IDs and counters",
+    "versions remain history, conflict durable original",
+    "tenant/hash/role/date/mapping quarantine",
+    "CSV real parser, structural conversation, money not inferred",
+    "rollback is not rejection; all effects atomic",
+    "viewer/operator denied, revocation during transaction"
+  ],
+  "error": "CHILD_FAILED",
+  "stack": "Error: CHILD_FAILED\n    at ChildProcess.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f0203-close-f0204-1789921456816411000/canonical/supabase/tests/source-identity/run.mjs:98:543)\n    at ChildProcess.emit (node:events:519:28)\n    at ChildProcess._handle.onexit (node:internal/child_process:293:12)"
+}

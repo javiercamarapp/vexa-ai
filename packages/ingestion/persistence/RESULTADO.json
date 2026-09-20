@@ -1,0 +1,53 @@
+{
+  "task_id": "F02-04",
+  "baseline_sha": "38a8c503cf691413fde27d385a47ade53273843e",
+  "candidate_sha": null,
+  "acceptance": false,
+  "command": "/tmp/vexa-xml-interop-renewed/node-v22.22.0-darwin-arm64/bin/node supabase/tests/source-identity/run.mjs",
+  "exit_code": 0,
+  "expected": "12 groups, 10000 accounted, cleanup verified",
+  "observed": {
+    "status": "pass",
+    "checks": [
+      "runtime role has no bypass or ownership",
+      "five entities, exact money, no raw text",
+      "repeat/reorder stable IDs and counters",
+      "versions remain history, conflict durable original",
+      "tenant/hash/role/date/mapping quarantine",
+      "CSV real parser, structural conversation, money not inferred",
+      "rollback is not rejection; all effects atomic",
+      "viewer/operator denied, revocation during transaction",
+      "new tables deny browser DML, immutable revision, row conflict",
+      "failure after domain insertion rolls back instead of quarantine",
+      "two OS processes, independent imports, unique DB winner",
+      "10000 rows accounted, no cap"
+    ]
+  },
+  "artifacts": "supabase/tests/source-identity/evidence/9f5c700a-db58-4f36-9062-2db7cf9fe124",
+  "source_hashes": {
+    "packages/ingestion/persistence/index.mjs": "e939a979a08bbc75b463c8c41a0d3e51ab529746ca85bc8998e6f628502f16e3",
+    "packages/ingestion/persistence/index.d.ts": "73e72ffb1babeb943b38b3664cabab72107a12edfbed589501ad6b55281d2709",
+    "supabase/migrations/0006_source_identity.sql": "12735152064d0dc70d526123e3da442e9c41fa4d670b717cfed8b5a0357fb89f",
+    "supabase/tests/source-identity/run.mjs": "67e4c98cdb503cea04fe0c0c885a21f346a54acc19a9cdf1e928c988a67924b4"
+  },
+  "core_hashes_unchanged": {
+    "supabase/migrations/0005_import_outbox.sql": "af99f51bdd2101b56d1793463004c8f2259b764ad367fadf7322f78107c5afcf",
+    "supabase/migrations/0002_sources.sql": "d6fbccfe2f192566e6ae3efe244412a0fda92294cc3b0af6adee3228df66c09b",
+    "supabase/migrations/0004_evidence_money.sql": "b5598eafe59ccbf1d71c88ae42a207e41c120e81d20e761b82d13b0afc7161c3",
+    "supabase/migrations/0001_identity.sql": "73f98d0b3b895fb3637d6613ad18dde2a48387714424dd0159d5db871b8f9108",
+    "supabase/migrations/0003_execution.sql": "3142bd37fd0e9922e75758e056470587d93e89aeeed82e076cd8c44f9971f699"
+  },
+  "npm_test_exit": 0,
+  "ingestion_tests": {
+    "exit_code": 0,
+    "pass": 90
+  },
+  "reviewer": null,
+  "pending": [
+    "external matrix expansion for source_revisions and source_quarantine",
+    "independent gate and review",
+    "SourceEnvelope raw hydration",
+    "CSV structured relations",
+    "consumer05 integration"
+  ]
+}

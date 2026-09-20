@@ -1,0 +1,28 @@
+(node:33184) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS five entities, exact money, no raw text
+PASS repeat/reorder stable IDs and counters
+PASS versions remain history, conflict durable original
+PASS tenant/hash/role/date/mapping quarantine
+PASS CSV real parser, structural conversation, money not inferred
+PASS rollback is not rejection; all effects atomic
+PASS viewer/operator denied, revocation during transaction
+Error: CHILD_FAILED file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-rdX2xK/db.mjs:30
+  if (['23505','23503','23514','40001','40P01'].includes(code ?? '')) return new AccessError(409,'database_conflict');
+                                                                             ^
+
+AccessError: database_conflict
+    at databaseError (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-rdX2xK/db.mjs:30:78)
+    at Object.transaction (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-rdX2xK/db.mjs:70:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-source-identity-rdX2xK/child.mjs:1:677 {
+  status: 409,
+  code: 'database_conflict'
+}
+
+Node.js v22.22.0
+
+    at ChildProcess.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f0203-close-f0204-1789921456816411000/canonical/supabase/tests/source-identity/run.mjs:98:580)
+    at ChildProcess.emit (node:events:519:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f0203-close-f0204-1789921456816411000/canonical/supabase/tests/source-identity/evidence/d05ebfb8-e11c-4833-8d61-c8ee8bb3fafb

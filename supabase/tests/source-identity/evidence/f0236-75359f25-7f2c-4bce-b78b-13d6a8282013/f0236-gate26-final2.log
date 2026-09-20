@@ -1,0 +1,73 @@
+/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-1dbamez0
+(node:40881) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ F02-04 independent real persistence effects
+  ✔ five entities and exact bigint known relationships (2815.631083ms)
+  ✔ replay and reorder keep IDs and ledger (1870.84675ms)
+  ✔ same revision conflicting hash preserves original and quarantines (1122.59675ms)
+  ✔ two independent Node processes deduplicate concurrent revision (740.823292ms)
+  ✔ CSV known customer/order/SKU relationships survive persistence (539.606333ms)
+  ✖ new revision retains one logical order and does not double money (1098.377666ms)
+  ✔ customer permits occurred_at null (364.203958ms)
+  ✔ product permits occurred_at null (423.433ms)
+  ✔ tenant, source, account, content hash and mapping cannot be forged (2999.515875ms)
+  ✔ ambiguous reference quarantines, never selects arbitrary customer (1181.113125ms)
+  ✔ same import exact replay does not increment counters and changed row quarantines (1399.675041ms)
+  ✔ unknown amount remains SQL null rather than zero (588.72375ms)
+  ✔ SQL failure propagates and entire transaction rolls back (920.656166ms)
+✖ F02-04 independent real persistence effects (29195.285291ms)
+ℹ OBSERVED_REVISION_SUM=
+✖ F02-04 coverage closure (0.206709ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 12
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 29289.328625
+
+✖ failing tests:
+
+test at ../../../../../../private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-1dbamez0/tests/acceptance/support/F02-canonical/exam.mjs:59:10
+✖ new revision retains one logical order and does not double money (1098.377666ms)
+  AssertionError [ERR_ASSERTION]: REVISION_NOT_ADDITIVE
+  + actual - expected
+  
+  + ''
+  - '9007199254740994'
+  
+      at TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-1dbamez0/tests/acceptance/support/F02-canonical/exam.mjs:64:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-1dbamez0/tests/acceptance/support/F02-canonical/exam.mjs:59:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: '9007199254740994',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../../../../private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-1dbamez0/tests/acceptance/F02-04.test.mjs:7:1
+✖ F02-04 coverage closure (0.206709ms)
+  AssertionError [ERR_ASSERTION]: GATE_INCOMPLETE: all entity revision projections, connection/account independence and failure inside persistence remain unproven; no acceptance
+      at TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-1dbamez0/tests/acceptance/F02-04.test.mjs:7:43)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'fail',
+    diff: 'simple'
+  }
+
+EXIT 1 CLEANUP True

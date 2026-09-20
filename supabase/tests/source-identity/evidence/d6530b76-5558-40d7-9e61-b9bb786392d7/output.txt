@@ -1,0 +1,14 @@
+(node:30907) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS five entities, exact money, no raw text
+PASS repeat/reorder stable IDs and counters
+PASS versions remain history, conflict durable original
+PASS tenant/hash/role/date/mapping quarantine
+PASS CSV real parser, structural conversation, money not inferred
+PASS rollback is not rejection; all effects atomic
+PASS viewer/operator denied, revocation during transaction
+Error: CHILD_FAILED
+    at ChildProcess.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f0203-close-f0204-1789921456816411000/canonical/supabase/tests/source-identity/run.mjs:98:543)
+    at ChildProcess.emit (node:events:519:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f0203-close-f0204-1789921456816411000/canonical/supabase/tests/source-identity/evidence/d6530b76-5558-40d7-9e61-b9bb786392d7

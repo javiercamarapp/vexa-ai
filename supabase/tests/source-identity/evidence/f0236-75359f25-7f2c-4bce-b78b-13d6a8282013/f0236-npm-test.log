@@ -1,0 +1,52 @@
+
+> vexa@0.0.1 test
+> npm run test:kernel && npm run test:foundation
+
+
+> vexa@0.0.1 test:kernel
+> node --test tests/acceptance/economics.test.mjs
+
+✔ known zero differs from missing, totals are exact decimal strings (2.589625ms)
+✔ currency buckets are not summed and empty data does not assert zero (10.499541ms)
+✔ exact replay is idempotent, conflicting repeated identity rejects (0.433625ms)
+✔ invalid money never silently normalizes (0.15475ms)
+✔ arbitrary precision and permutation invariance (0.111ms)
+✔ problem overlap does not inflate global exposure; unknown link is an error (0.230042ms)
+✔ refund minus reversal deduplicates and accepts reverse arrival order (0.209708ms)
+✔ pending refund is not paid; unknown refund stays unknown (0.076ms)
+✔ orphan, excessive and cross-currency reversals reject, not silently clip (0.161083ms)
+✔ event replay with conflicting state cannot mask uncertainty (0.116375ms)
+✔ scenario is named scenario with horizon; integer arithmetic rounding once (0.149292ms)
+✔ seeded replay property: duplicate/permutation never changes sums (22.985375ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 125.194625
+
+> vexa@0.0.1 test:foundation
+> node --test tests/acceptance/F00-*.test.mjs tests/acceptance/foundation-negative.test.mjs
+
+✔ F00-01: preparation contract only (1.235667ms)
+✔ F00-02: preparation contract only (1.2995ms)
+✔ F00-03: preparation contract only (1.418666ms)
+✔ F00-04: preparation contract only (13.897167ms)
+✔ F00-05: preparation contract only (3.69875ms)
+✔ source checksum tampering is rejected (4.326958ms)
+✔ invented human transcription certification is rejected (0.350625ms)
+✔ synthetic readiness cannot authorize real customer data (0.173417ms)
+✔ unprovisioned production cannot be presented as provisioned (0.211458ms)
+✔ fixture financial error rejects, not just JSON shape (10.244833ms)
+✔ null customer fixture cannot quietly become known zero (0.423791ms)
+✔ gate register cannot claim a product PASS (0.990208ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 124.693625

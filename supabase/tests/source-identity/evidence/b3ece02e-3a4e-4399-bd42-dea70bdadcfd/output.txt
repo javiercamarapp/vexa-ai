@@ -1,0 +1,19 @@
+(node:30926) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS runtime role has no bypass or ownership
+PASS five entities, exact money, no raw text
+PASS repeat/reorder stable IDs and counters
+PASS versions remain history, conflict durable original
+PASS tenant/hash/role/date/mapping quarantine
+PASS CSV real parser, structural conversation, money not inferred
+PASS rollback is not rejection; all effects atomic
+PASS viewer/operator denied, revocation during transaction
+PASS new tables deny browser DML, immutable revision, row conflict
+PASS failure after domain insertion rolls back instead of quarantine
+PASS two OS processes, independent imports, unique DB winner
+PASS stable order history, ambiguity clears money, explicit CAS restores exact snapshot
+PASS four other entities preserve revisions and relationships; dates nullable
+PASS CSV known relations and mismatch quarantine without orders from amount
+PASS normalization rejection keeps safe metadata, replay and counters
+PASS 10000 rows accounted, no cap
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f02-data-durable-1789924838176941000/canonical-fix/supabase/tests/source-identity/evidence/b3ece02e-3a4e-4399-bd42-dea70bdadcfd

@@ -20,12 +20,18 @@ export function candidateInputs(candidate) {
   const files=fs.readdirSync(dir).filter(x=>/^\d.*\.sql$/.test(x)).sort();
   assert.ok(files.length>1,'IMPLEMENTATION_MISSING: sólo identidad; faltan migraciones F01-03');
   assert.ok(fs.existsSync(path.join(candidate,'packages/platform/src/db.ts')),'IMPLEMENTATION_MISSING: db.ts');
-  return files.map(f=>{const p=path.join(dir,f);assert.ok(!fs.lstatSync(p).isSymbolicLink(),'SYMLINK migration');return fs.readFileSync(p,'utf8');});
+  const migrations=files.map(f=>{const p=path.join(dir,f);assert.ok(!fs.lstatSync(p).isSymbolicLink(),'SYMLINK migration');return fs.readFileSync(p,'utf8');});
+  migrations.workerDelegationsRequired=files.includes('0007_job_leases.sql');
+  return migrations;
 }
 export async function launch({services=false}={}) {
   const resources=resourceBroker();
+  const portBase=Number(process.env.VEXA_F01_03_PORT_BASE??56327);
+  assert.ok(Number.isInteger(portBase)&&portBase>1024&&portBase<65533,'INVALID_PORT_BASE');
+  const ports={auth:portBase,storage:portBase+1,rest:portBase+2};
   const prefix='vexa-f01-03-'+randomUUID(), owned=[];
   const credentials=new Map();
+  const resourceIds=[];
   let network=false;
   const password='SYN-'+randomBytes(24).toString('hex'),secret=randomBytes(32).toString('hex');
   const sign=role=>{const b=[{alg:'HS256',typ:'JWT'},{role,iss:'supabase',exp:Math.floor(Date.now()/1000)+1800}].map(x=>Buffer.from(JSON.stringify(x)).toString('base64url')).join('.');return b+'.'+createHmac('sha256',secret).update(b).digest('base64url');};
@@ -46,7 +52,7 @@ export async function launch({services=false}={}) {
         END $exam$; RESET ROLE; SELECT value FROM exam_result; ROLLBACK;`);
     },
     async http(kind,route,token,{method='GET',body,headers={}}={}) {
-      const base=`http://127.0.0.1:${{auth:56327,storage:56328,rest:56329}[kind]}`;
+      const base=`http://127.0.0.1:${ports[kind]}`;
       const url=new URL(route,base);assert.equal(url.origin,base,'NETWORK: own local service only');
       // SQL probes block the event loop beyond the server keepalive lifetime.
       // Close each connection (including health checks); never replay a write.
@@ -68,7 +74,9 @@ export async function launch({services=false}={}) {
       assert.ok(claims(r.data.access_token).session_id!==claims(actor.token).session_id,'AUTH_NEW_SESSION');
       return {id:actor.id,token:r.data.access_token};
     },
-    close(){credentials.clear();const failures=[];for(const name of [...owned].reverse()){try{resources.remove('container',name);}catch{failures.push(name);}}if(network){try{resources.remove('network',prefix);}catch{failures.push(prefix);}}assert.deepEqual(failures,[],'TEARDOWN: own resources not removed');},
+    close(){credentials.clear();const failures=[];for(const name of [...owned].reverse()){try{resources.remove('container',name);}catch{failures.push(name);}}if(network){try{resources.remove('network',prefix);}catch{failures.push(prefix);}}assert.deepEqual(failures,[],'TEARDOWN: own resources not removed');
+      for(const resource of resourceIds){const r=spawnSync('docker',[resource.kind,'inspect',resource.id],{encoding:'utf8',timeout:15000});assert.ok(!r.error&&r.status!==0&&/No such|not found/.test(r.stderr),'TEARDOWN_ID_STILL_PRESENT');resource.absent=true;}
+      if(process.env.VEXA_F01_03_CLEANUP)fs.writeFileSync(process.env.VEXA_F01_03_CLEANUP,JSON.stringify(resourceIds,null,2),{mode:0o600});},
   };
   const run=(kind,env={},port)=>{
     const name=prefix+'-'+kind;
@@ -77,19 +85,20 @@ export async function launch({services=false}={}) {
     docker(['run','--pull','never','-d','--name',name,...resources.reserve('container',name),'--network',prefix,
       '--label','com.supabase.cli.project=vexa-local',...(port?['-p',`127.0.0.1:${port}:${kind==='storage'?5000:kind==='auth'?9999:3000}`]:[]),
       ...Object.entries(env).flatMap(([k,v])=>['-e',`${k}=${v}`]),images[kind]]);
+    resourceIds.push({kind:'container',id:docker(['container','inspect',name,'--format','{{.Id}}'])});
   };
   try {
     for(const kind of services?Object.keys(images):['db'])docker(['image','inspect',images[kind],'--format','{{.Id}}']);
-    network=true;docker(['network','create',...resources.reserve('network',prefix),prefix]);
+    network=true;resourceIds.push({kind:'network',id:docker(['network','create',...resources.reserve('network',prefix),prefix])});
     run('db',{POSTGRES_PASSWORD:password});
     let ready=false;
     for(let i=0;i<80;i++){try{docker(['exec',prefix+'-db','pg_isready','-h','127.0.0.1']);ready=h.sql("SELECT count(*) FROM pg_roles WHERE rolname IN ('authenticator','supabase_auth_admin','supabase_storage_admin')")==='3';if(ready)break;}catch{}await new Promise(r=>setTimeout(r,100));}
     assert.ok(ready,'INFRA: disposable PostgreSQL did not start');
     h.sql(`ALTER ROLE authenticator PASSWORD ${q(password)}; ALTER ROLE supabase_auth_admin PASSWORD ${q(password)}; ALTER ROLE supabase_storage_admin PASSWORD ${q(password)};`);
     if(services){
-      run('auth',{GOTRUE_API_HOST:'0.0.0.0',GOTRUE_API_PORT:9999,API_EXTERNAL_URL:'http://127.0.0.1:56327',GOTRUE_SITE_URL:'http://127.0.0.1:56327',GOTRUE_DB_DRIVER:'postgres',GOTRUE_DB_DATABASE_URL:`postgres://supabase_auth_admin:${password}@${prefix}-db:5432/postgres`,GOTRUE_JWT_SECRET:secret,GOTRUE_JWT_AUD:'authenticated',GOTRUE_JWT_DEFAULT_GROUP_NAME:'authenticated',GOTRUE_DISABLE_SIGNUP:false,GOTRUE_MAILER_AUTOCONFIRM:true},56327);
-      run('rest',{PGRST_DB_URI:`postgres://authenticator:${password}@${prefix}-db:5432/postgres`,PGRST_DB_SCHEMAS:'public',PGRST_DB_ANON_ROLE:'anon',PGRST_JWT_SECRET:secret},56329);
-      run('storage',{DATABASE_URL:`postgres://supabase_storage_admin:${password}@${prefix}-db:5432/postgres`,POSTGREST_URL:`http://${prefix}-rest:3000`,PGRST_JWT_SECRET:secret,AUTH_JWT_SECRET:secret,ANON_KEY:anon,SERVICE_KEY:service,STORAGE_BACKEND:'file',FILE_STORAGE_BACKEND_PATH:'/tmp/vexa-storage',TENANT_ID:'vexa-local',REGION:'local',GLOBAL_S3_BUCKET:'vexa-local',FILE_SIZE_LIMIT:1048576},56328);
+      run('auth',{GOTRUE_API_HOST:'0.0.0.0',GOTRUE_API_PORT:9999,API_EXTERNAL_URL:`http://127.0.0.1:${ports.auth}`,GOTRUE_SITE_URL:`http://127.0.0.1:${ports.auth}`,GOTRUE_DB_DRIVER:'postgres',GOTRUE_DB_DATABASE_URL:`postgres://supabase_auth_admin:${password}@${prefix}-db:5432/postgres`,GOTRUE_JWT_SECRET:secret,GOTRUE_JWT_AUD:'authenticated',GOTRUE_JWT_DEFAULT_GROUP_NAME:'authenticated',GOTRUE_DISABLE_SIGNUP:false,GOTRUE_MAILER_AUTOCONFIRM:true},ports.auth);
+      run('rest',{PGRST_DB_URI:`postgres://authenticator:${password}@${prefix}-db:5432/postgres`,PGRST_DB_SCHEMAS:'public',PGRST_DB_ANON_ROLE:'anon',PGRST_JWT_SECRET:secret},ports.rest);
+      run('storage',{DATABASE_URL:`postgres://supabase_storage_admin:${password}@${prefix}-db:5432/postgres`,POSTGREST_URL:`http://${prefix}-rest:3000`,PGRST_JWT_SECRET:secret,AUTH_JWT_SECRET:secret,ANON_KEY:anon,SERVICE_KEY:service,STORAGE_BACKEND:'file',FILE_STORAGE_BACKEND_PATH:'/tmp/vexa-storage',TENANT_ID:'vexa-local',REGION:'local',GLOBAL_S3_BUCKET:'vexa-local',FILE_SIZE_LIMIT:1048576},ports.storage);
       for(const [kind,route] of [['auth','/health'],['rest','/'],['storage','/status']]){
         let ok=false;for(let i=0;i<100;i++){try{ok=(await h.http(kind,route)).status===200;if(ok)break;}catch{}await new Promise(r=>setTimeout(r,100));}
         let detail='';if(!ok){try{detail=docker(['logs','--tail','5',prefix+'-'+kind]).replaceAll(password,'[synthetic-redacted]').replaceAll(secret,'[synthetic-redacted]').replaceAll(anon,'[synthetic-redacted]').replaceAll(service,'[synthetic-redacted]');}catch{}}assert.ok(ok,`INFRA: disposable ${kind} unavailable; no mock fallback ${detail}`);

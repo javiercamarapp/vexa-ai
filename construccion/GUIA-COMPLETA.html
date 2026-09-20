@@ -2291,7 +2291,7 @@ Alternativa offline una vez listo gate/entorno: <code>python3 orchestration/runn
 <h2>Cierre obligatorio</h2>
 <p><code>task_id, baseline_sha, candidate_sha, fixture_hash, command, exit_code, expected, observed, artifacts, reviewer, pending</code>. Las pruebas/grafo no las edita el candidato. Dos fallos agotan intento; guardar reproducción y pasar a recuperación supervisada, no editar status=accepted. Build/instalación de dependencias se hacen en copia temporal para no mutar el candidato durante el gate.</p></section><section id="F03-02"><h1>F03-02 — S02 confirma subdominio, cursor y comments Zendesk, actualizado/borrado.</h1>
 <p><strong>Modalidad:</strong> worker. <strong>Dependencias:</strong> F03-01.
-<strong>Gate:</strong> MISSING — escribir/revisar primero en control-plane.</p>
+<strong>Gate:</strong> PRESENT (no significa PASS).</p>
 <h2>Entrada (leer, no inventar contexto)</h2>
 <ul>
 <li><code>AGENTS.md</code></li>
@@ -2330,7 +2330,7 @@ python3 scripts/guide.py packet --task F03-02
 python3 orchestration/runner.py prepare --task F03-02 --max-minutes 1
 # Editar sólo el worktree impreso, sin commit; guardar su ruta en CANDIDATE.
 VEXA_CANDIDATE=&quot;$CANDIDATE&quot; node --test tests/acceptance/F03-02.test.mjs
-python3 orchestration/runner.py verify --task F03-02 --max-minutes 5
+python3 orchestration/runner.py verify --task F03-02 --max-minutes 5 --approval-note &quot;REFERENCIA A LA DECISIÓN REAL DEL OPERADOR&quot;
 # Revisión independiente de diff, controles y log; NO aceptar por autoafirmación.
 # Si se rechaza: STOP + reject --task F03-02 --approval-note &quot;referencia real&quot;; ver capítulo 01.
 python3 orchestration/runner.py accept --task F03-02 --max-minutes 5

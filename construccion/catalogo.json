@@ -753,7 +753,7 @@
     "acceptance": "tests/acceptance/F03-02.test.mjs",
     "prompt": "orchestration/prompts/F03.md",
     "auto_accept": false,
-    "requires_approval": false,
+    "requires_approval": true,
     "deliverables": [
       "packages/connectors/src/zendesk.ts",
       "packages/connectors/fixtures/zendesk-pages.json"

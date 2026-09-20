@@ -80,13 +80,19 @@ def acceptance_environment(task, row):
     """
     env = clean_environment()
     note = row.get('approval_note', '')
-    if (task['id'] == 'F03-01' and task.get('requires_approval') is True
+    live_gates = {
+        'F03-01': ('VEXA_HUBSPOT_S01_CONFIG', 'VEXA_HUBSPOT_TOKEN',
+                   'VEXA_HUBSPOT_RECONCILIATION_KEY', 'VEXA_HUBSPOT_APPROVAL_REFERENCE'),
+        'F03-02': ('VEXA_ZENDESK_S02_CONFIG', 'VEXA_ZENDESK_TOKEN',
+                   'VEXA_ZENDESK_RECONCILIATION_KEY', 'VEXA_ZENDESK_APPROVAL_REFERENCE'),
+    }
+    keys = live_gates.get(task['id'])
+    if (keys and task.get('requires_approval') is True
             and isinstance(note, str) and note.strip()):
-        for key in ('VEXA_HUBSPOT_S01_CONFIG', 'VEXA_HUBSPOT_TOKEN',
-                    'VEXA_HUBSPOT_RECONCILIATION_KEY'):
+        for key in keys[:3]:
             if key in os.environ:
                 env[key] = os.environ[key]
-        env['VEXA_HUBSPOT_APPROVAL_REFERENCE'] = note
+        env[keys[3]] = note
     return env
 
 def run_bounded(argv, cwd, log_path, timeout, env=None):

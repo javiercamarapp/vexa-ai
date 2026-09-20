@@ -23,6 +23,7 @@ export function candidateInputs(candidate) {
   const migrations=files.map(f=>{const p=path.join(dir,f);assert.ok(!fs.lstatSync(p).isSymbolicLink(),'SYMLINK migration');return fs.readFileSync(p,'utf8');});
   migrations.workerDelegationsRequired=files.includes('0007_job_leases.sql');
   migrations.syncRequired=files.includes('0008_sync_cursors.sql');
+  migrations.aliasesRequired=files.includes('0009_aliases.sql');
   return migrations;
 }
 export async function launch({services=false}={}) {

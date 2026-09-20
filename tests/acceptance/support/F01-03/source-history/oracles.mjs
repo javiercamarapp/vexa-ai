@@ -22,7 +22,7 @@ export function seedHistory(h,f){
  for(const side of ['a','b']){
   const r=f[side];
   if(present(h).includes('source_revisions')){
-   r.source_revisions={id:randomUUID(),tenant_id:r.customers.tenant_id,connection_id:r.connections.id,entity_type:'customer',external_id:'history-fixture',source_revision:'1',content_hash:'a'.repeat(64),fingerprint:'b'.repeat(64),mapping_version:'1',canonical_id:r.customers.id,customer_id:r.customers.id,provenance:{fixture:true},snapshot:[]};
+   r.source_revisions={id:randomUUID(),tenant_id:r.customers.tenant_id,connection_id:r.connections.id,entity_type:'customer',external_id:'history-fixture',source_revision:'1',content_hash:'a'.repeat(64),fingerprint:'b'.repeat(64),mapping_version:'1',canonical_id:r.customers.id,customer_id:r.customers.id,provenance:{fixture:true,...(h.sql("SELECT EXISTS(SELECT 1 FROM pg_attribute WHERE attrelid='public.external_aliases'::regclass AND attname='operation' AND NOT attisdropped)")==='t'?{source:r.connections.source,account_id:r.connections.account_id}:{})},snapshot:[]};
    h.sql(insert('source_revisions',r.source_revisions)+';');
   }
   if(present(h).includes('source_heads')){r.source_heads={id:r.customers.id,tenant_id:r.customers.tenant_id,connection_id:r.connections.id,entity_type:'customer',external_id:'history-fixture',selected_revision_id:r.source_revisions.id,state:'unique',version:1};h.sql(insert('source_heads',r.source_heads)+';');}

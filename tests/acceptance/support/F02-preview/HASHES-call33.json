@@ -1,0 +1,66 @@
+{
+  "tests/acceptance/F02-03.test.mjs": {
+    "sha256": "5c24b75678a571b1ad800b24a81489d20dd56beba8e6f572af55a8440bd67760",
+    "mode": 420
+  },
+  "tests/acceptance/support/F02-preview/browser.mjs": {
+    "sha256": "da0c62d2ffc61139e5644a502662e75f59a41da9b0e662cf3b259f3b74f825b1",
+    "mode": 420
+  },
+  "tests/acceptance/support/F02-preview/client-boundary.mjs": {
+    "sha256": "6e8a5c771675d71fd343d4394318093424623d4075547cd7c548e6fb27496e51",
+    "mode": 420
+  },
+  "tests/acceptance/support/F02-preview/completion.mjs": {
+    "sha256": "6990c6a0bbc6a1743fa60149cd89f6456f0853132f6bb47703334b7ff338d6a4",
+    "mode": 420
+  },
+  "tests/acceptance/support/F02-preview/fixtures.mjs": {
+    "sha256": "ae66a218659911ef9e71ac86e618ff42c73a01f53ed5fcfd354428da6f74aa41",
+    "mode": 420
+  },
+  "tests/acceptance/support/F02-preview/http.mjs": {
+    "sha256": "a225ee0b389102669cb08b04a932cfdec673860e74c09035d50d593b4e5a4b48",
+    "mode": 420
+  },
+  "tests/acceptance/support/F02-preview/http.test.mjs": {
+    "sha256": "b4297965bef44b660090a78152b8b15e42e2b13388b1f914166590e4ca5481ca",
+    "mode": 420
+  },
+  "tests/acceptance/support/F02-preview/meta-worker.mjs": {
+    "sha256": "c71fa0f18a676eae47911fa2bececeb176b850baf77ed5766a427fd0a8c0f356",
+    "mode": 420
+  },
+  "tests/acceptance/support/F02-preview/meta.test.mjs": {
+    "sha256": "29f03280d09e2502ff1b5934896a9038ec090e348551d788b8693c78f8be3cde",
+    "mode": 420
+  },
+  "tests/acceptance/support/F02-preview/mutations.py": {
+    "sha256": "fec990f4da522bef296d7f2bd413f69d7fc775a5a3b2d372505244739ed90481",
+    "mode": 420
+  },
+  "tests/acceptance/support/F02-preview/oracles.mjs": {
+    "sha256": "d8576597be81f1d1809235a7ae2859185adbd2bc5a88f7a890038b282fba1e37",
+    "mode": 420
+  },
+  "tests/acceptance/support/F02-preview/pure.mjs": {
+    "sha256": "a30625864434e3523401191274e4ce3c09f6ef9ec38725b517b15b21c5729b5d",
+    "mode": 420
+  },
+  "tests/acceptance/support/F02-preview/pure.test.mjs": {
+    "sha256": "605ee8b34279b754a54da554b5a75ad8d6083051ab350310533c5bac2840f204",
+    "mode": 420
+  },
+  "tests/acceptance/support/F02-preview/run.py": {
+    "sha256": "1f856e84c3f330cb2085d4f3c40cab892d79ddc3778a771b30f3768f6d8bd35e",
+    "mode": 420
+  },
+  "tests/acceptance/support/F02-preview/ssr.mjs": {
+    "sha256": "6c36fa89a5f887c13cc73008ad33122ae71e03ddb2a5f9e7d06a4f751c12f178",
+    "mode": 420
+  },
+  "tests/acceptance/support/F02-preview/ui-states.mjs": {
+    "sha256": "a9da684f75fb6372b2738cdd26d093a0a624ffe2b7c89b8b42e465c9941eee41",
+    "mode": 420
+  }
+}

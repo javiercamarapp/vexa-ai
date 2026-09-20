@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {definitions,relations,ordered,fixture,insert,q,ident,freshRow} from './matrix.mjs';
 import {denied,rows,read,write} from './harness.mjs';
+import * as uploads from './import-uploads/oracles.mjs';
 export const A='00000000-0000-4000-8000-00000000000a',B='00000000-0000-4000-8000-00000000000b';
 export function identityOracle(h,actors) {
   rows(h.probe(read('organizations'),actors.a),[A],'ORG_READ_A');
@@ -43,8 +44,10 @@ export function schemaOracle(h) {
     assert.equal(row.unique,true,`UNIQUE_TENANT_ID:${table}`);
   }
   // Extra private tables cannot silently escape the functional matrix.
-  assert.deepEqual(tables.filter(x=>!['organizations','memberships'].includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
+  const hasUploads=tables.some(x=>x.name===uploads.table);
+  assert.deepEqual(tables.filter(x=>!['organizations','memberships',...(hasUploads?[uploads.table]:[])].includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
   const fks=foreignKeys(h);
+  if(hasUploads)uploads.schema(h,fks);
   for(const {table,column,parent} of relations)
     assert.ok(fks.some(fk=>fk.table===table && fk.parent===parent && fk.validated && fk.mapping.tenant_id==='tenant_id' && fk.mapping[column]==='id'),`FK_MISSING:${table}.${column}->${parent}`);
   for(const fk of fks){
@@ -218,6 +221,7 @@ function fkDiagnostic(h,table,result){
 // Every discovered private edge gets a valid INSERT and a foreign-parent INSERT.
 // Diagnostics retain the rejecting constraint; mandatory presence is checked separately.
 export function discoveredFkOracle(h,f,fk) {
+  if(fk.table===uploads.table)return uploads.fk(h,f.importUploads,fk);
   if(fk.parent==='organizations')return; // identity links exercised by identityOracle
   const make=side=>{
     const row=freshRow(f.a[fk.table]);

@@ -27,3 +27,31 @@ Las pruebas físicas de FK aíslan exclusivamente los triggers de usuario en un 
 - SHA256 `matrix.mjs`: `48467c35a4071e077602d57696bebee1f7a2c664441dc0759209b1fe9b0fa8ea`.
 
 Historial de rechazos, setup fallido y reproducciones conservado localmente, no sobrescrito. Congelar este examen no acepta migraciones: después se prepara un candidato oficial, adopta sólo el delta de schema, ejecutan gates/regresiones, revisión y materialización limpia. No acredita URLs firmadas revocables instantáneamente, providers remotos, datos de cliente ni SaaS completo.
+
+## Extensión propuesta import_uploads — 20-sep-2026
+
+`import-uploads/oracles.mjs` se activa por presencia en el catálogo público. El
+baseline de cuatro migraciones conserva el examen core; cualquier otra tabla
+pública desconocida sigue siendo un error. La presencia de `import_uploads`
+obliga a comprobar schema/PK `import_id`, tipos/nullability, RLS/FORCE, grants,
+lectura exclusiva del dueño y operaciones backend con rol `vexa_backend`,
+acción, tenant y membership reales. No añade `id` al producto ni sustituye la
+obligación de existencia del gate F02-02.
+
+Las tres FK descubiertas se enrutan al oráculo específico, con positivos y
+rechazos 23503 atribuidos a la constraint objetivo. El probe elimina sólo la
+reserva A dentro de su transacción revertida antes de reinsertar (evita23505),
+desactiva sólo triggers USER y fuerza constraints inmediatas. Los mutantes
+físicos usan catálogo previo a retirar cada FK, para demostrar aceptación del
+cruce cuando falta esa FK; no cuentan errores de setup como detecciones.
+
+```sh
+node tests/acceptance/support/F01-03/import-uploads/run.mjs \
+  /ruta/baseline-0001-0004 /ruta/producto-0001-0005 /ruta/tmp-existente
+```
+
+El runner ejecuta los dos gates completos y los controles de mutación en serie,
+con journals exclusivos0600 y comprobación de recursos retirados. Consulte
+[RESULTADO.md](import-uploads/RESULTADO.md) para comandos/salidas/hashes y límites.
+Esto es una propuesta control-plane para revisión independiente, sin freeze,
+registro, prepare, aceptación ni publicación.

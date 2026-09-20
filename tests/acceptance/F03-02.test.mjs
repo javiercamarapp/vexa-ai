@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {spawnSync} from 'node:child_process';
+import {runLive} from '../../support/F03-Zendesk/live.mjs';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..'),candidate=process.env.VEXA_CANDIDATE??root;
+test('F03-02 external local transport and negative controls',()=>{const r=spawnSync(process.execPath,['--test',path.join(root,'support/F03-Zendesk/local.test.mjs'),path.join(root,'support/F03-Zendesk/live-authorization.test.mjs'),path.join(root,'support/F03-Zendesk/live-synthetic.test.mjs'),path.join(root,'support/F03-Zendesk/live-duplicates.test.mjs')],{env:Object.fromEntries(Object.entries({...process.env,VEXA_CANDIDATE:candidate}).filter(([k])=>k!=='NODE_TEST_CONTEXT')),encoding:'utf8',timeout:180000,maxBuffer:2*1024*1024});assert.equal(r.status,0,`${r.stdout}\n${r.stderr}`);});
+test('F03-02 behavior mutants 0 to 1 to 0',()=>{const r=spawnSync(process.execPath,[path.join(root,'support/F03-Zendesk/mutants.mjs')],{env:Object.fromEntries(Object.entries({...process.env,VEXA_CANDIDATE:candidate}).filter(([k])=>k!=='NODE_TEST_CONTEXT')),encoding:'utf8',timeout:180000,maxBuffer:2*1024*1024});assert.equal(r.status,0,`${r.stdout}\n${r.stderr}`);});
+test('S02 real authorized account and independent reconciliation',async()=>{const result=await runLive(candidate);assert.equal(result.s02_live,true);assert.equal(result.status,'pass');});

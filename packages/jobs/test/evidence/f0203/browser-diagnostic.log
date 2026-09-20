@@ -1,0 +1,49 @@
+SETUP real services and migrations ready
+SETUP real pg driver [ { current_user: 'f02_login' } ]
+SETUP Next ready
+PASS SSR anonymous/CSRF
+PASS concurrent reservation/replay/conflict
+PASS direct real Storage/foreign scope/capability
+PASS F02-03 preview/money/errors/CAS/history/restart/queued immutable
+locator.innerText: Error: strict mode violation: locator('[role=alert]') resolved to 2 elements:
+    1) <p role="alert">Failed to fetch Si hay conflicto, recarga la rese…</p> aka getByText('Failed to fetch Si hay')
+    2) <div role="alert" aria-live="assertive" id="__next-route-announcer__"></div> aka locator('[id="__next-route-announcer__"]')
+
+Call log:
+  - waiting for locator('[role=alert]')
+
+
+AssertionError [ERR_ASSERTION]: BROWSER_FLOW
+
+1 !== 0
+
+    at file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0203-jprx8mg3/packages/jobs/test/mapping-http.mjs:94:371
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: BROWSER_FLOW
+
+1 !== 0
+
+    at file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0203-jprx8mg3/packages/jobs/test/mapping-http.mjs:94:371
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+
+EVIDENCE /var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0203-jprx8mg3/tests/acceptance/support/F02-durable/evidence/run-7cc89266-a23d-4df6-a73f-fb781b72bcab EXIT 1 CLEANUP True

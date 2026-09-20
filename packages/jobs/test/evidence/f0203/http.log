@@ -1,0 +1,19 @@
+SETUP real services and migrations ready
+SETUP real pg driver [ { current_user: 'f02_login' } ]
+SETUP Next ready
+PASS SSR anonymous/CSRF
+PASS concurrent reservation/replay/conflict
+PASS direct real Storage/foreign scope/capability
+PASS F02-03 preview/money/errors/CAS/history/restart/queued immutable
+PASS wrong real bytes rejected
+PASS real Storage size mismatch denied; correct retry
+PASS direct Storage and reservation RLS deny foreign tenant
+PASS expired reservation Storage deny
+PASS outbox failure rolls back job+transition, retry recovers
+PASS actual Next process crash during outbox write rolls back; restart recovers
+PASS backend NOLOGIN/NOSUPERUSER/NOBYPASSRLS; unsafe login denied
+PASS role/revocation revalidation
+PASS absent Pg config 503
+PRODUCT_HTTP_COMPLETE
+
+EVIDENCE /var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0203-jprx8mg3/tests/acceptance/support/F02-durable/evidence/run-9f94d2aa-eba5-4f36-9621-a3fe08069360 EXIT 0 CLEANUP True

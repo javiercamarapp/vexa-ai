@@ -1,0 +1,58 @@
+SETUP real services and migrations ready
+SETUP real pg driver [ { current_user: 'f02_login' } ]
+SETUP Next ready
+PASS SSR anonymous/CSRF
+PASS concurrent reservation/replay/conflict
+PASS direct real Storage/foreign scope/capability
+PASS F02-03 preview/money/errors/CAS/history/restart/queued immutable
+NETWORK_FAILURE GET http://127.0.0.1:57911/ net::ERR_ABORTED
+NETWORK_FAILURE GET http://127.0.0.1:57911/recommendations net::ERR_ABORTED
+NETWORK_FAILURE GET http://127.0.0.1:57911/problems net::ERR_ABORTED
+NETWORK_FAILURE GET http://127.0.0.1:57911/overview net::ERR_ABORTED
+NETWORK_FAILURE GET http://127.0.0.1:57911/explorer net::ERR_ABORTED
+NETWORK_FAILURE GET http://127.0.0.1:57911/briefs net::ERR_ABORTED
+NETWORK_FAILURE GET http://127.0.0.1:57911/interventions net::ERR_ABORTED
+NETWORK_FAILURE GET http://127.0.0.1:57911/imports net::ERR_ABORTED
+NETWORK_FAILURE GET http://127.0.0.1:57911/explorer net::ERR_ABORTED
+NETWORK_FAILURE GET http://127.0.0.1:57911/overview net::ERR_ABORTED
+NETWORK_FAILURE GET http://127.0.0.1:57911/problems net::ERR_ABORTED
+NETWORK_FAILURE GET http://127.0.0.1:57911/recommendations net::ERR_ABORTED
+NETWORK_FAILURE GET http://127.0.0.1:57911/interventions net::ERR_ABORTED
+NETWORK_FAILURE GET http://127.0.0.1:57911/briefs net::ERR_ABORTED
+NETWORK_FAILURE PUT http://127.0.0.1:57910/storage/v1/object/upload/sign/vexa-private/89b9bd1e-fcb9-4f47-95b8-8c1ff9778120/imports/2f2d2f85-ebbe-45b4-90f5-0b47b8832d9b/original net::ERR_FAILED
+UPLOAD_UI: Failed to fetch Si hay conflicto, recarga la reserva antes de guardar. Las reservas caducadas requieren una nueva importación.
+
+AssertionError [ERR_ASSERTION]: BROWSER_FLOW
+
+1 !== 0
+
+    at file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0203-jprx8mg3/packages/jobs/test/mapping-http.mjs:94:371
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: BROWSER_FLOW
+
+1 !== 0
+
+    at file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0203-jprx8mg3/packages/jobs/test/mapping-http.mjs:94:371
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+
+EVIDENCE /var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0203-jprx8mg3/tests/acceptance/support/F02-durable/evidence/run-1f511d22-851f-4f11-8577-47bf963884e0 EXIT 1 CLEANUP True

@@ -1,0 +1,66 @@
+npm warn deprecated eslint@9.39.4: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+
+added 376 packages in 3s
+['npm', 'ci', '--offline', '--ignore-scripts', '--no-audit', '--no-fund'] 0
+
+> @vexa/web@0.0.1 build
+> next build --webpack
+
+▲ Next.js 16.3.5 (webpack)
+⚠ Warning: Next.js ignored package.json in /private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0203-jprx8mg3 because it would include your home directory (/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0203-jprx8mg3).
+ To use this directory, set `outputFileTracingRoot` in your Next.js config.
+
+✓ Running next.config.ts took 665ms
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead.
+
+  To migrate automatically, run:
+  npx @next/codemod@canary middleware-to-proxy .
+
+  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 2.8s
+  Running TypeScript ...
+  Finished TypeScript in 1086ms ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/8) ...
+  Generating static pages using 7 workers (2/8) 
+  Generating static pages using 7 workers (4/8) 
+  Generating static pages using 7 workers (6/8) 
+✓ Generating static pages using 7 workers (8/8) in 91ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /api/health/version
+├ ƒ /api/imports
+├ ƒ /api/imports/[id]
+├ ƒ /api/imports/[id]/confirm
+├ ƒ /api/imports/[id]/errors.csv
+├ ƒ /api/imports/[id]/mapping
+├ ƒ /api/imports/[id]/preview
+├ ƒ /auth/callback
+├ ƒ /auth/google
+├ ƒ /auth/logout
+├ ƒ /auth/organization
+├ ƒ /briefs
+├ ƒ /customers/[id]
+├ ƒ /explorer
+├ ƒ /imports
+├ ƒ /interventions
+├ ƒ /login
+├ ƒ /overview
+├ ƒ /problems
+├ ƒ /problems/[id]
+└ ƒ /recommendations
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+['npm', 'run', 'build', '--workspace', '@vexa/web'] 0
+TMP /var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0203-jprx8mg3

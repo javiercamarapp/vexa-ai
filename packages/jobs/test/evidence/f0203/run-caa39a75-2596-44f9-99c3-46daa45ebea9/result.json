@@ -1,0 +1,8 @@
+{
+  "argv": [
+    "node",
+    "packages/jobs/test/mapping-http.mjs"
+  ],
+  "exit_code": 1,
+  "cleanup_verified": true
+}

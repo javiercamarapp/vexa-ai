@@ -1,0 +1,49 @@
+{
+  "journal": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0203-jprx8mg3/tests/acceptance/support/F02-durable/evidence/run-7cc89266-a23d-4df6-a73f-fb781b72bcab/resources-a8a50b48-b56d-4f7e-adc8-6b6cb9bb6506.jsonl",
+  "broker": "a8a50b48-b56d-4f7e-adc8-6b6cb9bb6506",
+  "verified": true,
+  "resources": [
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-ee177840-ac08-492b-afd5-ee76c004c1ef-db",
+      "broker": "a8a50b48-b56d-4f7e-adc8-6b6cb9bb6506",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-ee177840-ac08-492b-afd5-ee76c004c1ef-auth",
+      "broker": "a8a50b48-b56d-4f7e-adc8-6b6cb9bb6506",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-ee177840-ac08-492b-afd5-ee76c004c1ef-rest",
+      "broker": "a8a50b48-b56d-4f7e-adc8-6b6cb9bb6506",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-ee177840-ac08-492b-afd5-ee76c004c1ef-storage",
+      "broker": "a8a50b48-b56d-4f7e-adc8-6b6cb9bb6506",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-04-7dfc092f-cfe3-4fcf-8895-dc58f068e40e-browser",
+      "broker": "a8a50b48-b56d-4f7e-adc8-6b6cb9bb6506",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "network",
+      "name": "vexa-f01-03-ee177840-ac08-492b-afd5-ee76c004c1ef",
+      "broker": "a8a50b48-b56d-4f7e-adc8-6b6cb9bb6506",
+      "id": null,
+      "absent": true
+    }
+  ]
+}

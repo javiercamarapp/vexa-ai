@@ -1,0 +1,4 @@
+3f4dfa7a38d3c2f792498da639ba44862bb0220f2d78762a19968606c4e548c6  packages/ingestion/mapping.test.mjs
+e48b954724e225c2236dddd312cae9be8722a9bde409406393b91e02c07600eb  packages/ingestion/mapping-fixtures.mjs
+1c2b3a00d79dad7495bf29cf9fc3feffe1e2ccb557e37a05b81196718a4b3b5c  packages/jobs/test/mapping-http.mjs
+849db12bd1b085814b86fa8c9a2a3e78a385119226ae186410bfb9dbe2baefb0  packages/jobs/test/mapping-browser.cjs

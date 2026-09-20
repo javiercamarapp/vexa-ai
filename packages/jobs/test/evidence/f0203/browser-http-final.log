@@ -1,0 +1,55 @@
+SETUP real services and migrations ready
+SETUP real pg driver [ { current_user: 'f02_login' } ]
+SETUP Next ready
+PASS SSR anonymous/CSRF
+PASS concurrent reservation/replay/conflict
+PASS direct real Storage/foreign scope/capability
+PASS F02-03 preview/money/errors/CAS/history/restart/queued immutable
+PASS wrong real bytes rejected
+PASS real Storage size mismatch denied; correct retry
+PASS direct Storage and reservation RLS deny foreign tenant
+PASS expired reservation Storage deny
+PASS outbox failure rolls back job+transition, retry recovers
+PASS actual Next process crash during outbox write rolls back; restart recovers
+PASS backend NOLOGIN/NOSUPERUSER/NOBYPASSRLS; unsafe login denied
+PASS role/revocation revalidation
+PASS absent Pg config 503
+locator.selectOption: Timeout 30000ms exceeded.
+Call log:
+  - waiting for getByLabel('Columna id')
+
+
+AssertionError [ERR_ASSERTION]: BROWSER_FLOW
+
+1 !== 0
+
+    at file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0203-jprx8mg3/packages/jobs/test/mapping-http.mjs:92:371
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: BROWSER_FLOW
+
+1 !== 0
+
+    at file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0203-jprx8mg3/packages/jobs/test/mapping-http.mjs:92:371
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+
+EVIDENCE /var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0203-jprx8mg3/tests/acceptance/support/F02-durable/evidence/run-73bb3db0-98fb-47d1-8a65-0745b940a57f EXIT 1 CLEANUP True

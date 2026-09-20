@@ -1,0 +1,22 @@
+{
+  "valid.xlsx": {
+    "sha256": "fa7f05813c429d49c1dc318418c7143046aa9bc5757c271946f2ae2aa7b822ce",
+    "bytes": 1278
+  },
+  "duplicate-sheetdata.xlsx": {
+    "sha256": "86a229638bab0b520adfebcbaf6644009d6efc32d006706f927cb544e8bf3bb9",
+    "bytes": 1290
+  },
+  "duplicate-value.xlsx": {
+    "sha256": "7c144c453a4668391e668a5655d29e2e7360d6dd40c338f6711b81330eac2dc3",
+    "bytes": 1279
+  },
+  "alternate-content.xlsx": {
+    "sha256": "136e6c5e4af24272b9ddefef7e79a1d4fe50ba159cd6c0225166037fb6edf40b",
+    "bytes": 1328
+  },
+  "foreign-richtext.xlsx": {
+    "sha256": "17c8d7475b90fa75c6aee1fdfdd91ec1c586df934b2a11787a5bbf2021a995b5",
+    "bytes": 1305
+  }
+}

@@ -1,0 +1,62 @@
+[
+  {
+    "label": "direct-final22",
+    "command": [
+      "/tmp/vexa-xml-interop-renewed/node-v22.22.0-darwin-arm64/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "tests/acceptance/F02-04.test.mjs"
+    ],
+    "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f02-data-durable-1789924838176941000/canonical-fix",
+    "node": "/tmp/vexa-xml-interop-renewed/node-v22.22.0-darwin-arm64/bin/node",
+    "exit": 1
+  },
+  {
+    "label": "direct-final26",
+    "command": [
+      "node",
+      "--test",
+      "--test-reporter=tap",
+      "tests/acceptance/F02-04.test.mjs"
+    ],
+    "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f02-data-durable-1789924838176941000/canonical-fix",
+    "node": "node",
+    "exit": 1
+  },
+  {
+    "label": "mutants-final22",
+    "command": [
+      "python3",
+      "-B",
+      "tests/acceptance/support/F02-canonical/run.py",
+      "support/F02-canonical/mutations.test.mjs"
+    ],
+    "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f02-data-durable-1789924838176941000/canonical-fix",
+    "node": "/tmp/vexa-xml-interop-renewed/node-v22.22.0-darwin-arm64/bin/node",
+    "exit": 0
+  },
+  {
+    "label": "mutants-final26",
+    "command": [
+      "python3",
+      "-B",
+      "tests/acceptance/support/F02-canonical/run.py",
+      "support/F02-canonical/mutations.test.mjs"
+    ],
+    "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f02-data-durable-1789924838176941000/canonical-fix",
+    "node": "node",
+    "exit": 0
+  },
+  {
+    "label": "absence-final26",
+    "command": [
+      "node",
+      "--test",
+      "--test-reporter=tap",
+      "tests/acceptance/F02-04.test.mjs"
+    ],
+    "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f0204-exam-close-1789926239225372000/gate",
+    "node": "node",
+    "exit": 1
+  }
+]

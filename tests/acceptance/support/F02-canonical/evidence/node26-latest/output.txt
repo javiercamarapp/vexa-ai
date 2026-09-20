@@ -1,0 +1,134 @@
+(node:39902) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ F02-04 independent real persistence effects
+  ✔ five entities and exact bigint known relationships (2297.951916ms)
+  ✔ replay and reorder keep IDs and ledger (1358.65325ms)
+  ✔ same revision conflicting hash preserves original and quarantines (1143.140042ms)
+  ✔ two independent Node processes deduplicate concurrent revision (454.881125ms)
+  ✖ CSV known customer/order/SKU relationships survive persistence (244.878917ms)
+  ✖ new revision retains one logical order and does not double money (707.138834ms)
+  ✖ customer permits occurred_at null (349.56675ms)
+  ✖ product permits occurred_at null (358.913208ms)
+  ✔ tenant, source, account, content hash and mapping cannot be forged (2822.5545ms)
+  ✔ ambiguous reference quarantines, never selects arbitrary customer (1103.617083ms)
+  ✔ same import exact replay does not increment counters and changed row quarantines (810.517875ms)
+  ✔ unknown amount remains SQL null rather than zero (410.185834ms)
+  ✔ SQL failure propagates and entire transaction rolls back (769.076041ms)
+✖ F02-04 independent real persistence effects (25937.037042ms)
+ℹ OBSERVED_REVISION_SUM=18014398509481987
+✖ F02-04 coverage closure (0.243666ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 9
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 26024.990708
+
+✖ failing tests:
+
+test at ../../../../../../private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-f5n96nrl/tests/acceptance/support/F02-canonical/exam.mjs:53:10
+✖ CSV known customer/order/SKU relationships survive persistence (244.878917ms)
+  AssertionError [ERR_ASSERTION]: CSV_KNOWN_RELATIONS:CSV_IDENTITY_MISMATCH
+  + actual - expected
+  
+  + 'rejected'
+  - 'inserted'
+  
+      at TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-f5n96nrl/tests/acceptance/support/F02-canonical/exam.mjs:56:37)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-f5n96nrl/tests/acceptance/support/F02-canonical/exam.mjs:53:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'rejected',
+    expected: 'inserted',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../../../../private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-f5n96nrl/tests/acceptance/support/F02-canonical/exam.mjs:59:10
+✖ new revision retains one logical order and does not double money (707.138834ms)
+  AssertionError [ERR_ASSERTION]: LOGICAL_ORDER_SINGLE_PROJECTION
+  
+  '2' !== '1'
+  
+      at TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-f5n96nrl/tests/acceptance/support/F02-canonical/exam.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-f5n96nrl/tests/acceptance/support/F02-canonical/exam.mjs:59:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '2',
+    expected: '1',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../../../../private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-f5n96nrl/tests/acceptance/support/F02-canonical/exam.mjs:66:80
+✖ customer permits occurred_at null (349.56675ms)
+  AssertionError [ERR_ASSERTION]: TIME_OPTIONAL:customer
+  + actual - expected
+  
+  + 'rejected'
+  - 'inserted'
+  
+      at TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-f5n96nrl/tests/acceptance/support/F02-canonical/exam.mjs:66:135)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-f5n96nrl/tests/acceptance/support/F02-canonical/exam.mjs:66:72)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'rejected',
+    expected: 'inserted',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../../../../private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-f5n96nrl/tests/acceptance/support/F02-canonical/exam.mjs:66:80
+✖ product permits occurred_at null (358.913208ms)
+  AssertionError [ERR_ASSERTION]: TIME_OPTIONAL:product
+  + actual - expected
+  
+  + 'rejected'
+  - 'inserted'
+  
+      at TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-f5n96nrl/tests/acceptance/support/F02-canonical/exam.mjs:66:135)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-f5n96nrl/tests/acceptance/support/F02-canonical/exam.mjs:66:72)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'rejected',
+    expected: 'inserted',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../../../../private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-f5n96nrl/tests/acceptance/F02-04.test.mjs:4:1
+✖ F02-04 coverage closure (0.243666ms)
+  AssertionError [ERR_ASSERTION]: GATE_INCOMPLETE: pending complete independently reviewed coverage: all entity revision projections, connection/account independence and failure inside persistence; no acceptance
+      at TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-f5n96nrl/tests/acceptance/F02-04.test.mjs:4:43)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'fail',
+    diff: 'simple'
+  }

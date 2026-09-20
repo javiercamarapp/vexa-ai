@@ -1,0 +1,20 @@
+(node:4790) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ three real mutants each baseline 0 -> assertion 1 -> restored 0
+  ✔ DB dedup unique constraint (343.33275ms)
+  ✔ real persistence conflict branch (808.231292ms)
+  ✔ DB tenant insert policy (351.552167ms)
+✔ three real mutants each baseline 0 -> assertion 1 -> restored 0 (8670.660458ms)
+ℹ DEDUP 0 -> 1 assertion (00000 vs 23505) -> 0
+ℹ CONFLICT 0 -> 1 assertion (duplicate vs conflict) -> 0
+ℹ TENANT 0 -> 1 assertion (00000 vs 42501) -> 0
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8739.043542
+
+FAKE_GREEN_INCOMPLETE

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {candidateInputs,launch,write,denied} from './support/F01-03/harness.mjs';
 import {definitions,relations,insert,q} from './support/F01-03/matrix.mjs';
 import {A,B,identityOracle,schemaOracle,seed,tableOracle,fkOracle,revokeOracle,foreignKeys,discoveredFkOracle} from './support/F01-03/oracles.mjs';
+import * as history from './support/F01-03/source-history/oracles.mjs';
 import * as uploads from './support/F01-03/import-uploads/oracles.mjs';
 import {serviceOracle} from './support/F01-03/services.mjs';
 
@@ -14,6 +15,9 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   schemaOracle(h);
   const actors={};for(const key of ['a','b','dual','outsider','viewer','analyst','operator'])actors[key]=await h.user();
   const f=seed(h,actors);
+  history.seedHistory(h,f);
+  if(history.present(h).length)await t.test('source history backend authorization',()=>history.access(h,f,actors));
+  if(history.present(h).includes('source_heads'))await t.test('owner selection fence cannot bypass via SQL',()=>history.selectionFence(h,f,actors));
   if(uploads.present(h)){
     f.importUploads=uploads.seedUploads(h,f,actors);
     await t.test('import_uploads owner and backend authorization',()=>uploads.access(h,f.importUploads,actors));

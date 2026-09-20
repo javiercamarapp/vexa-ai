@@ -1,0 +1,1197 @@
+/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-n9wa22zi
+TAP version 13
+# Subtest: F01-03: real candidate migrations, SQL matrix, Storage and retrieval
+    # Subtest: source history backend authorization
+    ok 1 - source history backend authorization
+      ---
+      duration_ms: 11009.378542
+      type: 'test'
+      ...
+    # Subtest: owner selection fence cannot bypass via SQL
+    not ok 2 - owner selection fence cannot bypass via SQL
+      ---
+      duration_ms: 570.331
+      type: 'test'
+      location: '/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-n9wa22zi/tests/acceptance/F01-03.test.mjs:20:58'
+      failureType: 'testCodeFailure'
+      error: 'P1_OWNER_SELECTION_BYPASS_ANALYST_DIRECT_HEAD_UPDATE: expected permission/zero rows, got 00000/1'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: true
+      actual: false
+      operator: '=='
+      stack: |-
+        denied (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-n9wa22zi/tests/acceptance/support/F01-03/harness.mjs:101:48)
+        Module.selectionFence (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-n9wa22zi/tests/acceptance/support/F01-03/source-history/oracles.mjs:95:2)
+        TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-n9wa22zi/tests/acceptance/F01-03.test.mjs:20:121)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Test.start (node:internal/test_runner/test:944:17)
+        TestContext.test (node:internal/test_runner/test:373:20)
+        TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-n9wa22zi/tests/acceptance/F01-03.test.mjs:20:58)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+      ...
+    # Subtest: import_uploads owner and backend authorization
+    ok 3 - import_uploads owner and backend authorization
+      ---
+      duration_ms: 9066.367042
+      type: 'test'
+      ...
+    # Subtest: identity tables
+    ok 4 - identity tables
+      ---
+      duration_ms: 3448.046375
+      type: 'test'
+      ...
+    # Subtest: functional RLS connections
+    ok 5 - functional RLS connections
+      ---
+      duration_ms: 5731.025333
+      type: 'test'
+      ...
+    # Subtest: functional RLS external_aliases
+    ok 6 - functional RLS external_aliases
+      ---
+      duration_ms: 4775.577
+      type: 'test'
+      ...
+    # Subtest: functional RLS imports
+    ok 7 - functional RLS imports
+      ---
+      duration_ms: 4052.614792
+      type: 'test'
+      ...
+    # Subtest: functional RLS import_rows
+    ok 8 - functional RLS import_rows
+      ---
+      duration_ms: 4033.44975
+      type: 'test'
+      ...
+    # Subtest: functional RLS customers
+    ok 9 - functional RLS customers
+      ---
+      duration_ms: 3827.663583
+      type: 'test'
+      ...
+    # Subtest: functional RLS products
+    ok 10 - functional RLS products
+      ---
+      duration_ms: 3911.991958
+      type: 'test'
+      ...
+    # Subtest: functional RLS orders
+    ok 11 - functional RLS orders
+      ---
+      duration_ms: 3848.638083
+      type: 'test'
+      ...
+    # Subtest: functional RLS order_lines
+    ok 12 - functional RLS order_lines
+      ---
+      duration_ms: 4149.737542
+      type: 'test'
+      ...
+    # Subtest: functional RLS conversations
+    ok 13 - functional RLS conversations
+      ---
+      duration_ms: 4382.305042
+      type: 'test'
+      ...
+    # Subtest: functional RLS messages
+    ok 14 - functional RLS messages
+      ---
+      duration_ms: 4712.607416
+      type: 'test'
+      ...
+    # Subtest: functional RLS message_revisions
+    ok 15 - functional RLS message_revisions
+      ---
+      duration_ms: 4447.75075
+      type: 'test'
+      ...
+    # Subtest: functional RLS jobs
+    ok 16 - functional RLS jobs
+      ---
+      duration_ms: 4001.003708
+      type: 'test'
+      ...
+    # Subtest: functional RLS attempts
+    ok 17 - functional RLS attempts
+      ---
+      duration_ms: 3593.704
+      type: 'test'
+      ...
+    # Subtest: functional RLS checkpoints
+    ok 18 - functional RLS checkpoints
+      ---
+      duration_ms: 4555.549042
+      type: 'test'
+      ...
+    # Subtest: functional RLS outbox
+    ok 19 - functional RLS outbox
+      ---
+      duration_ms: 3968.31725
+      type: 'test'
+      ...
+    # Subtest: functional RLS dead_letters
+    ok 20 - functional RLS dead_letters
+      ---
+      duration_ms: 3071.122792
+      type: 'test'
+      ...
+    # Subtest: functional RLS extraction_runs
+    ok 21 - functional RLS extraction_runs
+      ---
+      duration_ms: 3612.470375
+      type: 'test'
+      ...
+    # Subtest: functional RLS issues
+    ok 22 - functional RLS issues
+      ---
+      duration_ms: 4455.944958
+      type: 'test'
+      ...
+    # Subtest: functional RLS evidence_spans
+    ok 23 - functional RLS evidence_spans
+      ---
+      duration_ms: 4637.970625
+      type: 'test'
+      ...
+    # Subtest: functional RLS embeddings
+    ok 24 - functional RLS embeddings
+      ---
+      duration_ms: 4451.741875
+      type: 'test'
+      ...
+    # Subtest: functional RLS problems
+    ok 25 - functional RLS problems
+      ---
+      duration_ms: 4065.526541
+      type: 'test'
+      ...
+    # Subtest: functional RLS problem_versions
+    ok 26 - functional RLS problem_versions
+      ---
+      duration_ms: 4094.9915
+      type: 'test'
+      ...
+    # Subtest: functional RLS problem_conversations
+    ok 27 - functional RLS problem_conversations
+      ---
+      duration_ms: 5944.765833
+      type: 'test'
+      ...
+    # Subtest: functional RLS economic_events
+    ok 28 - functional RLS economic_events
+      ---
+      duration_ms: 5118.172792
+      type: 'test'
+      ...
+    # Subtest: functional RLS reversals
+    ok 29 - functional RLS reversals
+      ---
+      duration_ms: 7194.531291
+      type: 'test'
+      ...
+    # Subtest: functional RLS cost_rates
+    ok 30 - functional RLS cost_rates
+      ---
+      duration_ms: 8228.423125
+      type: 'test'
+      ...
+    # Subtest: functional RLS assumptions
+    ok 31 - functional RLS assumptions
+      ---
+      duration_ms: 8078.386375
+      type: 'test'
+      ...
+    # Subtest: functional RLS metric_snapshots
+    ok 32 - functional RLS metric_snapshots
+      ---
+      duration_ms: 8034.704208
+      type: 'test'
+      ...
+    # Subtest: functional RLS components
+    ok 33 - functional RLS components
+      ---
+      duration_ms: 7765.578792
+      type: 'test'
+      ...
+    # Subtest: functional RLS attributions
+    ok 34 - functional RLS attributions
+      ---
+      duration_ms: 4839.69675
+      type: 'test'
+      ...
+    # Subtest: functional RLS recommendations
+    ok 35 - functional RLS recommendations
+      ---
+      duration_ms: 4543.742833
+      type: 'test'
+      ...
+    # Subtest: functional RLS interventions
+    ok 36 - functional RLS interventions
+      ---
+      duration_ms: 4271.624166
+      type: 'test'
+      ...
+    # Subtest: functional RLS measurement_plans
+    ok 37 - functional RLS measurement_plans
+      ---
+      duration_ms: 4600.335709
+      type: 'test'
+      ...
+    # Subtest: functional RLS weekly_briefs
+    ok 38 - functional RLS weekly_briefs
+      ---
+      duration_ms: 3796.695
+      type: 'test'
+      ...
+    # Subtest: functional RLS audit_events
+    ok 39 - functional RLS audit_events
+      ---
+      duration_ms: 2946.6585
+      type: 'test'
+      ...
+    # Subtest: functional RLS tombstones
+    ok 40 - functional RLS tombstones
+      ---
+      duration_ms: 4443.75675
+      type: 'test'
+      ...
+    # Subtest: required FK external_aliases.canonical_id
+    ok 41 - required FK external_aliases.canonical_id
+      ---
+      duration_ms: 252.615333
+      type: 'test'
+      ...
+    # Subtest: required FK import_rows.import_id
+    ok 42 - required FK import_rows.import_id
+      ---
+      duration_ms: 228.654291
+      type: 'test'
+      ...
+    # Subtest: required FK orders.customer_id
+    ok 43 - required FK orders.customer_id
+      ---
+      duration_ms: 315.2895
+      type: 'test'
+      ...
+    # Subtest: required FK order_lines.order_id
+    ok 44 - required FK order_lines.order_id
+      ---
+      duration_ms: 209.958292
+      type: 'test'
+      ...
+    # Subtest: required FK order_lines.product_id
+    ok 45 - required FK order_lines.product_id
+      ---
+      duration_ms: 160.168667
+      type: 'test'
+      ...
+    # Subtest: required FK conversations.connection_id
+    ok 46 - required FK conversations.connection_id
+      ---
+      duration_ms: 160.103209
+      type: 'test'
+      ...
+    # Subtest: required FK conversations.customer_id
+    ok 47 - required FK conversations.customer_id
+      ---
+      duration_ms: 146.722
+      type: 'test'
+      ...
+    # Subtest: required FK conversations.order_id
+    ok 48 - required FK conversations.order_id
+      ---
+      duration_ms: 129.841708
+      type: 'test'
+      ...
+    # Subtest: required FK messages.conversation_id
+    ok 49 - required FK messages.conversation_id
+      ---
+      duration_ms: 145.997584
+      type: 'test'
+      ...
+    # Subtest: required FK message_revisions.message_id
+    ok 50 - required FK message_revisions.message_id
+      ---
+      duration_ms: 159.764042
+      type: 'test'
+      ...
+    # Subtest: required FK attempts.job_id
+    ok 51 - required FK attempts.job_id
+      ---
+      duration_ms: 139.706708
+      type: 'test'
+      ...
+    # Subtest: required FK checkpoints.job_id
+    ok 52 - required FK checkpoints.job_id
+      ---
+      duration_ms: 143.413875
+      type: 'test'
+      ...
+    # Subtest: required FK outbox.job_id
+    ok 53 - required FK outbox.job_id
+      ---
+      duration_ms: 128.613375
+      type: 'test'
+      ...
+    # Subtest: required FK dead_letters.job_id
+    ok 54 - required FK dead_letters.job_id
+      ---
+      duration_ms: 133.269875
+      type: 'test'
+      ...
+    # Subtest: required FK extraction_runs.conversation_id
+    ok 55 - required FK extraction_runs.conversation_id
+      ---
+      duration_ms: 167.14875
+      type: 'test'
+      ...
+    # Subtest: required FK issues.extraction_run_id
+    ok 56 - required FK issues.extraction_run_id
+      ---
+      duration_ms: 172.075292
+      type: 'test'
+      ...
+    # Subtest: required FK evidence_spans.message_revision_id
+    ok 57 - required FK evidence_spans.message_revision_id
+      ---
+      duration_ms: 174.705125
+      type: 'test'
+      ...
+    # Subtest: required FK embeddings.message_revision_id
+    ok 58 - required FK embeddings.message_revision_id
+      ---
+      duration_ms: 171.900375
+      type: 'test'
+      ...
+    # Subtest: required FK problem_versions.problem_id
+    ok 59 - required FK problem_versions.problem_id
+      ---
+      duration_ms: 150.153833
+      type: 'test'
+      ...
+    # Subtest: required FK problem_conversations.problem_id
+    ok 60 - required FK problem_conversations.problem_id
+      ---
+      duration_ms: 270.918625
+      type: 'test'
+      ...
+    # Subtest: required FK problem_conversations.conversation_id
+    ok 61 - required FK problem_conversations.conversation_id
+      ---
+      duration_ms: 337.003459
+      type: 'test'
+      ...
+    # Subtest: required FK economic_events.order_id
+    ok 62 - required FK economic_events.order_id
+      ---
+      duration_ms: 326.444083
+      type: 'test'
+      ...
+    # Subtest: required FK reversals.reversal_of
+    ok 63 - required FK reversals.reversal_of
+      ---
+      duration_ms: 169.4315
+      type: 'test'
+      ...
+    # Subtest: required FK components.snapshot_id
+    ok 64 - required FK components.snapshot_id
+      ---
+      duration_ms: 147.113625
+      type: 'test'
+      ...
+    # Subtest: required FK attributions.snapshot_id
+    ok 65 - required FK attributions.snapshot_id
+      ---
+      duration_ms: 157.578
+      type: 'test'
+      ...
+    # Subtest: required FK attributions.economic_event_id
+    ok 66 - required FK attributions.economic_event_id
+      ---
+      duration_ms: 191.720959
+      type: 'test'
+      ...
+    # Subtest: required FK recommendations.problem_id
+    ok 67 - required FK recommendations.problem_id
+      ---
+      duration_ms: 151.471208
+      type: 'test'
+      ...
+    # Subtest: required FK interventions.recommendation_id
+    ok 68 - required FK interventions.recommendation_id
+      ---
+      duration_ms: 141.824
+      type: 'test'
+      ...
+    # Subtest: required FK measurement_plans.intervention_id
+    ok 69 - required FK measurement_plans.intervention_id
+      ---
+      duration_ms: 147.494792
+      type: 'test'
+      ...
+    # Subtest: required FK weekly_briefs.snapshot_id
+    ok 70 - required FK weekly_briefs.snapshot_id
+      ---
+      duration_ms: 139.4805
+      type: 'test'
+      ...
+    # Subtest: discovered FK memberships_tenant_id_fkey
+    ok 71 - discovered FK memberships_tenant_id_fkey
+      ---
+      duration_ms: 0.25225
+      type: 'test'
+      ...
+    # Subtest: discovered FK jobs_tenant_id_fkey
+    ok 72 - discovered FK jobs_tenant_id_fkey
+      ---
+      duration_ms: 0.0475
+      type: 'test'
+      ...
+    # Subtest: discovered FK jobs_tenant_id_import_id_fkey
+    ok 73 - discovered FK jobs_tenant_id_import_id_fkey
+      ---
+      duration_ms: 145.474209
+      type: 'test'
+      ...
+    # Subtest: discovered FK attempts_tenant_id_fkey
+    ok 74 - discovered FK attempts_tenant_id_fkey
+      ---
+      duration_ms: 0.170291
+      type: 'test'
+      ...
+    # Subtest: discovered FK attempts_tenant_id_job_id_fkey
+    ok 75 - discovered FK attempts_tenant_id_job_id_fkey
+      ---
+      duration_ms: 183.998209
+      type: 'test'
+      ...
+    # Subtest: discovered FK imports_tenant_id_connection_id_fkey
+    ok 76 - discovered FK imports_tenant_id_connection_id_fkey
+      ---
+      duration_ms: 165.106458
+      type: 'test'
+      ...
+    # Subtest: discovered FK imports_tenant_id_fkey
+    ok 77 - discovered FK imports_tenant_id_fkey
+      ---
+      duration_ms: 0.094041
+      type: 'test'
+      ...
+    # Subtest: discovered FK import_rows_tenant_id_fkey
+    ok 78 - discovered FK import_rows_tenant_id_fkey
+      ---
+      duration_ms: 0.18075
+      type: 'test'
+      ...
+    # Subtest: discovered FK import_rows_tenant_id_import_id_fkey
+    ok 79 - discovered FK import_rows_tenant_id_import_id_fkey
+      ---
+      duration_ms: 170.30075
+      type: 'test'
+      ...
+    # Subtest: discovered FK customers_tenant_id_connection_id_fkey
+    ok 80 - discovered FK customers_tenant_id_connection_id_fkey
+      ---
+      duration_ms: 207.93075
+      type: 'test'
+      ...
+    # Subtest: discovered FK customers_tenant_id_fkey
+    ok 81 - discovered FK customers_tenant_id_fkey
+      ---
+      duration_ms: 0.139334
+      type: 'test'
+      ...
+    # Subtest: discovered FK products_tenant_id_connection_id_fkey
+    ok 82 - discovered FK products_tenant_id_connection_id_fkey
+      ---
+      duration_ms: 160.061291
+      type: 'test'
+      ...
+    # Subtest: discovered FK products_tenant_id_fkey
+    ok 83 - discovered FK products_tenant_id_fkey
+      ---
+      duration_ms: 0.090167
+      type: 'test'
+      ...
+    # Subtest: discovered FK orders_tenant_id_connection_id_fkey
+    ok 84 - discovered FK orders_tenant_id_connection_id_fkey
+      ---
+      duration_ms: 169.647125
+      type: 'test'
+      ...
+    # Subtest: discovered FK orders_tenant_id_customer_id_fkey
+    ok 85 - discovered FK orders_tenant_id_customer_id_fkey
+      ---
+      duration_ms: 180.896375
+      type: 'test'
+      ...
+    # Subtest: discovered FK orders_tenant_id_fkey
+    ok 86 - discovered FK orders_tenant_id_fkey
+      ---
+      duration_ms: 0.098792
+      type: 'test'
+      ...
+    # Subtest: discovered FK order_lines_tenant_id_fkey
+    ok 87 - discovered FK order_lines_tenant_id_fkey
+      ---
+      duration_ms: 0.049375
+      type: 'test'
+      ...
+    # Subtest: discovered FK order_lines_tenant_id_order_id_fkey
+    ok 88 - discovered FK order_lines_tenant_id_order_id_fkey
+      ---
+      duration_ms: 217.342875
+      type: 'test'
+      ...
+    # Subtest: discovered FK order_lines_tenant_id_product_id_fkey
+    ok 89 - discovered FK order_lines_tenant_id_product_id_fkey
+      ---
+      duration_ms: 276.581417
+      type: 'test'
+      ...
+    # Subtest: discovered FK conversations_tenant_id_connection_id_fkey
+    ok 90 - discovered FK conversations_tenant_id_connection_id_fkey
+      ---
+      duration_ms: 339.16475
+      type: 'test'
+      ...
+    # Subtest: discovered FK conversations_tenant_id_customer_id_fkey
+    ok 91 - discovered FK conversations_tenant_id_customer_id_fkey
+      ---
+      duration_ms: 439.587167
+      type: 'test'
+      ...
+    # Subtest: discovered FK conversations_tenant_id_fkey
+    ok 92 - discovered FK conversations_tenant_id_fkey
+      ---
+      duration_ms: 0.120333
+      type: 'test'
+      ...
+    # Subtest: discovered FK conversations_tenant_id_order_id_fkey
+    ok 93 - discovered FK conversations_tenant_id_order_id_fkey
+      ---
+      duration_ms: 381.175917
+      type: 'test'
+      ...
+    # Subtest: discovered FK message_revisions_tenant_id_fkey
+    ok 94 - discovered FK message_revisions_tenant_id_fkey
+      ---
+      duration_ms: 0.121208
+      type: 'test'
+      ...
+    # Subtest: discovered FK message_revisions_tenant_id_message_id_fkey
+    ok 95 - discovered FK message_revisions_tenant_id_message_id_fkey
+      ---
+      duration_ms: 360.114
+      type: 'test'
+      ...
+    # Subtest: discovered FK messages_tenant_id_connection_id_fkey
+    ok 96 - discovered FK messages_tenant_id_connection_id_fkey
+      ---
+      duration_ms: 334.973125
+      type: 'test'
+      ...
+    # Subtest: discovered FK messages_tenant_id_conversation_id_fkey
+    ok 97 - discovered FK messages_tenant_id_conversation_id_fkey
+      ---
+      duration_ms: 270.471167
+      type: 'test'
+      ...
+    # Subtest: discovered FK messages_tenant_id_fkey
+    ok 98 - discovered FK messages_tenant_id_fkey
+      ---
+      duration_ms: 0.122583
+      type: 'test'
+      ...
+    # Subtest: discovered FK external_aliases_tenant_id_approved_by_fkey
+    ok 99 - discovered FK external_aliases_tenant_id_approved_by_fkey
+      ---
+      duration_ms: 244.186917
+      type: 'test'
+      ...
+    # Subtest: discovered FK external_aliases_tenant_id_canonical_id_fkey
+    ok 100 - discovered FK external_aliases_tenant_id_canonical_id_fkey
+      ---
+      duration_ms: 200.699625
+      type: 'test'
+      ...
+    # Subtest: discovered FK external_aliases_tenant_id_fkey
+    ok 101 - discovered FK external_aliases_tenant_id_fkey
+      ---
+      duration_ms: 0.091333
+      type: 'test'
+      ...
+    # Subtest: discovered FK connections_tenant_id_fkey
+    ok 102 - discovered FK connections_tenant_id_fkey
+      ---
+      duration_ms: 0.043416
+      type: 'test'
+      ...
+    # Subtest: discovered FK checkpoints_tenant_id_fkey
+    ok 103 - discovered FK checkpoints_tenant_id_fkey
+      ---
+      duration_ms: 0.034875
+      type: 'test'
+      ...
+    # Subtest: discovered FK checkpoints_tenant_id_job_id_fkey
+    ok 104 - discovered FK checkpoints_tenant_id_job_id_fkey
+      ---
+      duration_ms: 174.07625
+      type: 'test'
+      ...
+    # Subtest: discovered FK outbox_tenant_id_fkey
+    ok 105 - discovered FK outbox_tenant_id_fkey
+      ---
+      duration_ms: 0.084958
+      type: 'test'
+      ...
+    # Subtest: discovered FK outbox_tenant_id_job_id_fkey
+    ok 106 - discovered FK outbox_tenant_id_job_id_fkey
+      ---
+      duration_ms: 253.845334
+      type: 'test'
+      ...
+    # Subtest: discovered FK dead_letters_tenant_id_attempt_id_fkey
+    ok 107 - discovered FK dead_letters_tenant_id_attempt_id_fkey
+      ---
+      duration_ms: 212.515292
+      type: 'test'
+      ...
+    # Subtest: discovered FK dead_letters_tenant_id_fkey
+    ok 108 - discovered FK dead_letters_tenant_id_fkey
+      ---
+      duration_ms: 0.111458
+      type: 'test'
+      ...
+    # Subtest: discovered FK dead_letters_tenant_id_job_id_fkey
+    ok 109 - discovered FK dead_letters_tenant_id_job_id_fkey
+      ---
+      duration_ms: 166.602417
+      type: 'test'
+      ...
+    # Subtest: discovered FK tombstones_tenant_id_connection_id_fkey
+    ok 110 - discovered FK tombstones_tenant_id_connection_id_fkey
+      ---
+      duration_ms: 173.753167
+      type: 'test'
+      ...
+    # Subtest: discovered FK tombstones_tenant_id_fkey
+    ok 111 - discovered FK tombstones_tenant_id_fkey
+      ---
+      duration_ms: 0.167333
+      type: 'test'
+      ...
+    # Subtest: discovered FK extraction_runs_tenant_id_conversation_id_fkey
+    ok 112 - discovered FK extraction_runs_tenant_id_conversation_id_fkey
+      ---
+      duration_ms: 171.684916
+      type: 'test'
+      ...
+    # Subtest: discovered FK extraction_runs_tenant_id_fkey
+    ok 113 - discovered FK extraction_runs_tenant_id_fkey
+      ---
+      duration_ms: 0.09
+      type: 'test'
+      ...
+    # Subtest: discovered FK extraction_runs_tenant_id_job_id_fkey
+    ok 114 - discovered FK extraction_runs_tenant_id_job_id_fkey
+      ---
+      duration_ms: 168.299833
+      type: 'test'
+      ...
+    # Subtest: discovered FK issues_tenant_id_extraction_run_id_fkey
+    ok 115 - discovered FK issues_tenant_id_extraction_run_id_fkey
+      ---
+      duration_ms: 236.666625
+      type: 'test'
+      ...
+    # Subtest: discovered FK issues_tenant_id_fkey
+    ok 116 - discovered FK issues_tenant_id_fkey
+      ---
+      duration_ms: 0.08625
+      type: 'test'
+      ...
+    # Subtest: discovered FK evidence_spans_tenant_id_fkey
+    ok 117 - discovered FK evidence_spans_tenant_id_fkey
+      ---
+      duration_ms: 0.043125
+      type: 'test'
+      ...
+    # Subtest: discovered FK evidence_spans_tenant_id_issue_id_fkey
+    ok 118 - discovered FK evidence_spans_tenant_id_issue_id_fkey
+      ---
+      duration_ms: 158.960667
+      type: 'test'
+      ...
+    # Subtest: discovered FK evidence_spans_tenant_id_message_revision_id_fkey
+    ok 119 - discovered FK evidence_spans_tenant_id_message_revision_id_fkey
+      ---
+      duration_ms: 183.918833
+      type: 'test'
+      ...
+    # Subtest: discovered FK embeddings_tenant_id_fkey
+    ok 120 - discovered FK embeddings_tenant_id_fkey
+      ---
+      duration_ms: 0.754083
+      type: 'test'
+      ...
+    # Subtest: discovered FK embeddings_tenant_id_message_revision_id_fkey
+    ok 121 - discovered FK embeddings_tenant_id_message_revision_id_fkey
+      ---
+      duration_ms: 190.723667
+      type: 'test'
+      ...
+    # Subtest: discovered FK problems_tenant_id_fkey
+    ok 122 - discovered FK problems_tenant_id_fkey
+      ---
+      duration_ms: 0.11625
+      type: 'test'
+      ...
+    # Subtest: discovered FK problem_versions_tenant_id_fkey
+    ok 123 - discovered FK problem_versions_tenant_id_fkey
+      ---
+      duration_ms: 0.061375
+      type: 'test'
+      ...
+    # Subtest: discovered FK problem_versions_tenant_id_previous_version_id_fkey
+    ok 124 - discovered FK problem_versions_tenant_id_previous_version_id_fkey
+      ---
+      duration_ms: 161.1955
+      type: 'test'
+      ...
+    # Subtest: discovered FK problem_versions_tenant_id_problem_id_fkey
+    ok 125 - discovered FK problem_versions_tenant_id_problem_id_fkey
+      ---
+      duration_ms: 161.747375
+      type: 'test'
+      ...
+    # Subtest: discovered FK problem_conversations_tenant_id_conversation_id_fkey
+    ok 126 - discovered FK problem_conversations_tenant_id_conversation_id_fkey
+      ---
+      duration_ms: 159.086167
+      type: 'test'
+      ...
+    # Subtest: discovered FK problem_conversations_tenant_id_fkey
+    ok 127 - discovered FK problem_conversations_tenant_id_fkey
+      ---
+      duration_ms: 0.084
+      type: 'test'
+      ...
+    # Subtest: discovered FK problem_conversations_tenant_id_issue_id_fkey
+    ok 128 - discovered FK problem_conversations_tenant_id_issue_id_fkey
+      ---
+      duration_ms: 181.116
+      type: 'test'
+      ...
+    # Subtest: discovered FK problem_conversations_tenant_id_problem_id_fkey
+    ok 129 - discovered FK problem_conversations_tenant_id_problem_id_fkey
+      ---
+      duration_ms: 206.632791
+      type: 'test'
+      ...
+    # Subtest: discovered FK reversals_tenant_id_fkey
+    ok 130 - discovered FK reversals_tenant_id_fkey
+      ---
+      duration_ms: 0.618292
+      type: 'test'
+      ...
+    # Subtest: discovered FK reversals_tenant_id_reversal_of_currency_exponent_fkey
+    ok 131 - discovered FK reversals_tenant_id_reversal_of_currency_exponent_fkey
+      ---
+      duration_ms: 237.618625
+      type: 'test'
+      ...
+    # Subtest: discovered FK reversals_tenant_id_reversal_of_fkey
+    ok 132 - discovered FK reversals_tenant_id_reversal_of_fkey
+      ---
+      duration_ms: 222.419833
+      type: 'test'
+      ...
+    # Subtest: discovered FK cost_rates_tenant_id_fkey
+    ok 133 - discovered FK cost_rates_tenant_id_fkey
+      ---
+      duration_ms: 0.124375
+      type: 'test'
+      ...
+    # Subtest: discovered FK assumptions_tenant_id_approved_by_fkey
+    ok 134 - discovered FK assumptions_tenant_id_approved_by_fkey
+      ---
+      duration_ms: 230.860166
+      type: 'test'
+      ...
+    # Subtest: discovered FK assumptions_tenant_id_fkey
+    ok 135 - discovered FK assumptions_tenant_id_fkey
+      ---
+      duration_ms: 0.118958
+      type: 'test'
+      ...
+    # Subtest: discovered FK metric_snapshots_tenant_id_fkey
+    ok 136 - discovered FK metric_snapshots_tenant_id_fkey
+      ---
+      duration_ms: 0.078125
+      type: 'test'
+      ...
+    # Subtest: discovered FK metric_snapshots_tenant_id_job_id_fkey
+    ok 137 - discovered FK metric_snapshots_tenant_id_job_id_fkey
+      ---
+      duration_ms: 316.638667
+      type: 'test'
+      ...
+    # Subtest: discovered FK components_tenant_id_fkey
+    ok 138 - discovered FK components_tenant_id_fkey
+      ---
+      duration_ms: 0.087375
+      type: 'test'
+      ...
+    # Subtest: discovered FK components_tenant_id_problem_id_fkey
+    ok 139 - discovered FK components_tenant_id_problem_id_fkey
+      ---
+      duration_ms: 184.854667
+      type: 'test'
+      ...
+    # Subtest: discovered FK components_tenant_id_snapshot_id_fkey
+    ok 140 - discovered FK components_tenant_id_snapshot_id_fkey
+      ---
+      duration_ms: 172.780583
+      type: 'test'
+      ...
+    # Subtest: discovered FK attribution_component_snapshot_fk
+    ok 141 - discovered FK attribution_component_snapshot_fk
+      ---
+      duration_ms: 144.548542
+      type: 'test'
+      ...
+    # Subtest: discovered FK attributions_tenant_id_component_id_fkey
+    ok 142 - discovered FK attributions_tenant_id_component_id_fkey
+      ---
+      duration_ms: 184.202458
+      type: 'test'
+      ...
+    # Subtest: discovered FK attributions_tenant_id_economic_event_id_fkey
+    ok 143 - discovered FK attributions_tenant_id_economic_event_id_fkey
+      ---
+      duration_ms: 184.696084
+      type: 'test'
+      ...
+    # Subtest: discovered FK attributions_tenant_id_fkey
+    ok 144 - discovered FK attributions_tenant_id_fkey
+      ---
+      duration_ms: 0.216333
+      type: 'test'
+      ...
+    # Subtest: discovered FK attributions_tenant_id_problem_id_fkey
+    ok 145 - discovered FK attributions_tenant_id_problem_id_fkey
+      ---
+      duration_ms: 155.90925
+      type: 'test'
+      ...
+    # Subtest: discovered FK attributions_tenant_id_snapshot_id_fkey
+    ok 146 - discovered FK attributions_tenant_id_snapshot_id_fkey
+      ---
+      duration_ms: 211.5625
+      type: 'test'
+      ...
+    # Subtest: discovered FK recommendations_tenant_id_evidence_span_id_fkey
+    ok 147 - discovered FK recommendations_tenant_id_evidence_span_id_fkey
+      ---
+      duration_ms: 192.455417
+      type: 'test'
+      ...
+    # Subtest: discovered FK recommendations_tenant_id_fkey
+    ok 148 - discovered FK recommendations_tenant_id_fkey
+      ---
+      duration_ms: 0.130958
+      type: 'test'
+      ...
+    # Subtest: discovered FK recommendations_tenant_id_owner_id_fkey
+    ok 149 - discovered FK recommendations_tenant_id_owner_id_fkey
+      ---
+      duration_ms: 157.199292
+      type: 'test'
+      ...
+    # Subtest: discovered FK recommendations_tenant_id_problem_id_fkey
+    ok 150 - discovered FK recommendations_tenant_id_problem_id_fkey
+      ---
+      duration_ms: 165.24225
+      type: 'test'
+      ...
+    # Subtest: discovered FK recommendations_tenant_id_snapshot_id_fkey
+    ok 151 - discovered FK recommendations_tenant_id_snapshot_id_fkey
+      ---
+      duration_ms: 280.080292
+      type: 'test'
+      ...
+    # Subtest: discovered FK interventions_tenant_id_baseline_ref_fkey
+    ok 152 - discovered FK interventions_tenant_id_baseline_ref_fkey
+      ---
+      duration_ms: 201.230459
+      type: 'test'
+      ...
+    # Subtest: discovered FK interventions_tenant_id_fkey
+    ok 153 - discovered FK interventions_tenant_id_fkey
+      ---
+      duration_ms: 0.093542
+      type: 'test'
+      ...
+    # Subtest: discovered FK interventions_tenant_id_measurement_ref_fkey
+    ok 154 - discovered FK interventions_tenant_id_measurement_ref_fkey
+      ---
+      duration_ms: 186.812208
+      type: 'test'
+      ...
+    # Subtest: discovered FK interventions_tenant_id_owner_id_fkey
+    ok 155 - discovered FK interventions_tenant_id_owner_id_fkey
+      ---
+      duration_ms: 287.014625
+      type: 'test'
+      ...
+    # Subtest: discovered FK interventions_tenant_id_recommendation_id_fkey
+    ok 156 - discovered FK interventions_tenant_id_recommendation_id_fkey
+      ---
+      duration_ms: 456.21225
+      type: 'test'
+      ...
+    # Subtest: discovered FK measurement_plans_tenant_id_baseline_ref_fkey
+    ok 157 - discovered FK measurement_plans_tenant_id_baseline_ref_fkey
+      ---
+      duration_ms: 187.167042
+      type: 'test'
+      ...
+    # Subtest: discovered FK measurement_plans_tenant_id_fkey
+    ok 158 - discovered FK measurement_plans_tenant_id_fkey
+      ---
+      duration_ms: 0.129417
+      type: 'test'
+      ...
+    # Subtest: discovered FK measurement_plans_tenant_id_intervention_id_fkey
+    ok 159 - discovered FK measurement_plans_tenant_id_intervention_id_fkey
+      ---
+      duration_ms: 210.562916
+      type: 'test'
+      ...
+    # Subtest: discovered FK import_uploads_tenant_id_import_id_fkey
+    ok 160 - discovered FK import_uploads_tenant_id_import_id_fkey
+      ---
+      duration_ms: 196.556542
+      type: 'test'
+      ...
+    # Subtest: discovered FK import_uploads_tenant_id_job_id_fkey
+    ok 161 - discovered FK import_uploads_tenant_id_job_id_fkey
+      ---
+      duration_ms: 335.424584
+      type: 'test'
+      ...
+    # Subtest: discovered FK import_uploads_tenant_id_user_id_fkey
+    ok 162 - discovered FK import_uploads_tenant_id_user_id_fkey
+      ---
+      duration_ms: 195.2815
+      type: 'test'
+      ...
+    # Subtest: discovered FK weekly_briefs_tenant_id_fkey
+    ok 163 - discovered FK weekly_briefs_tenant_id_fkey
+      ---
+      duration_ms: 0.158666
+      type: 'test'
+      ...
+    # Subtest: discovered FK weekly_briefs_tenant_id_snapshot_id_fkey
+    ok 164 - discovered FK weekly_briefs_tenant_id_snapshot_id_fkey
+      ---
+      duration_ms: 176.749083
+      type: 'test'
+      ...
+    # Subtest: discovered FK audit_events_tenant_id_fkey
+    ok 165 - discovered FK audit_events_tenant_id_fkey
+      ---
+      duration_ms: 0.094375
+      type: 'test'
+      ...
+    # Subtest: discovered FK economic_events_tenant_id_assumption_id_fkey
+    ok 166 - discovered FK economic_events_tenant_id_assumption_id_fkey
+      ---
+      duration_ms: 203.497667
+      type: 'test'
+      ...
+    # Subtest: discovered FK economic_events_tenant_id_cost_rate_id_fkey
+    ok 167 - discovered FK economic_events_tenant_id_cost_rate_id_fkey
+      ---
+      duration_ms: 158.9515
+      type: 'test'
+      ...
+    # Subtest: discovered FK economic_events_tenant_id_evidence_span_id_fkey
+    ok 168 - discovered FK economic_events_tenant_id_evidence_span_id_fkey
+      ---
+      duration_ms: 194.295166
+      type: 'test'
+      ...
+    # Subtest: discovered FK economic_events_tenant_id_fkey
+    ok 169 - discovered FK economic_events_tenant_id_fkey
+      ---
+      duration_ms: 0.115208
+      type: 'test'
+      ...
+    # Subtest: discovered FK economic_events_tenant_id_order_id_fkey
+    ok 170 - discovered FK economic_events_tenant_id_order_id_fkey
+      ---
+      duration_ms: 175.097125
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_revisions_tenant_id_connection_id_fkey
+    ok 171 - discovered FK source_revisions_tenant_id_connection_id_fkey
+      ---
+      duration_ms: 205.090333
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_revisions_tenant_id_conversation_id_fkey
+    ok 172 - discovered FK source_revisions_tenant_id_conversation_id_fkey
+      ---
+      duration_ms: 226.0555
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_revisions_tenant_id_customer_id_fkey
+    ok 173 - discovered FK source_revisions_tenant_id_customer_id_fkey
+      ---
+      duration_ms: 169.689416
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_revisions_tenant_id_fkey
+    ok 174 - discovered FK source_revisions_tenant_id_fkey
+      ---
+      duration_ms: 174.904583
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_revisions_tenant_id_message_id_fkey
+    ok 175 - discovered FK source_revisions_tenant_id_message_id_fkey
+      ---
+      duration_ms: 180.257083
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_revisions_tenant_id_message_revision_id_fkey
+    ok 176 - discovered FK source_revisions_tenant_id_message_revision_id_fkey
+      ---
+      duration_ms: 175.172375
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_revisions_tenant_id_order_id_fkey
+    ok 177 - discovered FK source_revisions_tenant_id_order_id_fkey
+      ---
+      duration_ms: 212.816167
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_revisions_tenant_id_product_id_fkey
+    ok 178 - discovered FK source_revisions_tenant_id_product_id_fkey
+      ---
+      duration_ms: 167.239666
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_revisions_tenant_id_related_conversation_id_fkey
+    ok 179 - discovered FK source_revisions_tenant_id_related_conversation_id_fkey
+      ---
+      duration_ms: 159.374875
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_revisions_tenant_id_related_customer_id_fkey
+    ok 180 - discovered FK source_revisions_tenant_id_related_customer_id_fkey
+      ---
+      duration_ms: 156.743
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_revisions_tenant_id_related_order_id_fkey
+    ok 181 - discovered FK source_revisions_tenant_id_related_order_id_fkey
+      ---
+      duration_ms: 188.467333
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_revisions_tenant_id_related_product_id_fkey
+    ok 182 - discovered FK source_revisions_tenant_id_related_product_id_fkey
+      ---
+      duration_ms: 173.807958
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_quarantine_tenant_id_fkey
+    ok 183 - discovered FK source_quarantine_tenant_id_fkey
+      ---
+      duration_ms: 175.629875
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_quarantine_tenant_id_import_id_fkey
+    ok 184 - discovered FK source_quarantine_tenant_id_import_id_fkey
+      ---
+      duration_ms: 175.953583
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_quarantine_tenant_id_import_row_id_fkey
+    ok 185 - discovered FK source_quarantine_tenant_id_import_row_id_fkey
+      ---
+      duration_ms: 182.728459
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_quarantine_tenant_id_original_revision_id_fkey
+    ok 186 - discovered FK source_quarantine_tenant_id_original_revision_id_fkey
+      ---
+      duration_ms: 205.398334
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_heads_tenant_id_connection_id_fkey
+    ok 187 - discovered FK source_heads_tenant_id_connection_id_fkey
+      ---
+      duration_ms: 174.760667
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_heads_tenant_id_fkey
+    ok 188 - discovered FK source_heads_tenant_id_fkey
+      ---
+      duration_ms: 165.510917
+      type: 'test'
+      ...
+    # Subtest: discovered FK source_heads_tenant_id_id_selected_revision_id_fkey
+    ok 189 - discovered FK source_heads_tenant_id_id_selected_revision_id_fkey
+      ---
+      duration_ms: 166.007375
+      type: 'test'
+      ...
+    # Subtest: external identity 42 is tenant scoped and revision deduplicated
+    ok 190 - external identity 42 is tenant scoped and revision deduplicated
+      ---
+      duration_ms: 259.383041
+      type: 'test'
+      ...
+    # Subtest: membership cannot be self-granted or escalated
+    ok 191 - membership cannot be self-granted or escalated
+      ---
+      duration_ms: 160.749458
+      type: 'test'
+      ...
+    # Subtest: old session after membership revocation
+    ok 192 - old session after membership revocation
+      ---
+      duration_ms: 21565.39175
+      type: 'test'
+      ...
+    1..192
+not ok 1 - F01-03: real candidate migrations, SQL matrix, Storage and retrieval
+  ---
+  duration_ms: 292159.312708
+  type: 'test'
+  location: '/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-n9wa22zi/tests/acceptance/F01-03.test.mjs:10:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# REAL_AUTH_STORAGE_RETRIEVAL_COMPLETE: positives, external negatives, forged selector, payload isolation
+# REAL_OLD_SESSION_REVOCATION_COMPLETE: SQL, Storage and retrieval
+1..1
+# tests 193
+# suites 0
+# pass 191
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 292224.865459
+
+EXIT 1 CLEANUP True

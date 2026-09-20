@@ -1,0 +1,84 @@
+(node:60869) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ F02-04 independent real persistence effects
+  ✔ five entities and exact bigint known relationships (937.561375ms)
+  ✔ replay and reorder keep IDs and ledger (681.074333ms)
+  ✔ same revision conflicting hash preserves original and quarantines (442.313916ms)
+  ✖ new revision retains one logical order and does not double money (411.598041ms)
+  ✖ customer and product permit occurred_at null (180.837667ms)
+  ✔ tenant, source, account, content hash and mapping cannot be forged (1195.193709ms)
+  ✔ ambiguous reference quarantines, never selects arbitrary customer (563.092416ms)
+  ✔ SQL failure propagates and entire transaction rolls back (315.08ms)
+✖ F02-04 independent real persistence effects (9418.040334ms)
+✖ F02-04 coverage closure (0.1575ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 6
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9490.478916
+
+✖ failing tests:
+
+test at ../../../../../../private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-mdrevtaa/tests/acceptance/support/F02-canonical/exam.mjs:42:10
+✖ new revision retains one logical order and does not double money (411.598041ms)
+  AssertionError [ERR_ASSERTION]: LOGICAL_ORDER_SINGLE_PROJECTION
+  
+  '2' !== '1'
+  
+      at TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-mdrevtaa/tests/acceptance/support/F02-canonical/exam.mjs:45:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-mdrevtaa/tests/acceptance/support/F02-canonical/exam.mjs:42:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '2',
+    expected: '1',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../../../../private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-mdrevtaa/tests/acceptance/support/F02-canonical/exam.mjs:48:10
+✖ customer and product permit occurred_at null (180.837667ms)
+  AssertionError [ERR_ASSERTION]: TIME_OPTIONAL:customer
+  + actual - expected
+  
+  + 'rejected'
+  - 'inserted'
+  
+      at TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-mdrevtaa/tests/acceptance/support/F02-canonical/exam.mjs:49:80)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-mdrevtaa/tests/acceptance/support/F02-canonical/exam.mjs:48:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'rejected',
+    expected: 'inserted',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../../../../private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-mdrevtaa/tests/acceptance/F02-04.test.mjs:4:1
+✖ F02-04 coverage closure (0.1575ms)
+  AssertionError [ERR_ASSERTION]: GATE_INCOMPLETE: pending real two-process concurrency, DB mutation cycles and structured CSV relationship oracle; no acceptance
+      at TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-mdrevtaa/tests/acceptance/F02-04.test.mjs:4:43)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'fail',
+    diff: 'simple'
+  }

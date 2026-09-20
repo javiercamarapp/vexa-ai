@@ -1,0 +1,205 @@
+TAP version 13
+# (node:39628) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: F02-04 independent real persistence effects
+    # Subtest: five entities and exact bigint known relationships
+    ok 1 - five entities and exact bigint known relationships
+      ---
+      duration_ms: 3107.581708
+      type: 'test'
+      ...
+    # Subtest: replay and reorder keep IDs and ledger
+    ok 2 - replay and reorder keep IDs and ledger
+      ---
+      duration_ms: 1319.624
+      type: 'test'
+      ...
+    # Subtest: same revision conflicting hash preserves original and quarantines
+    ok 3 - same revision conflicting hash preserves original and quarantines
+      ---
+      duration_ms: 852.427375
+      type: 'test'
+      ...
+    # Subtest: two independent Node processes deduplicate concurrent revision
+    ok 4 - two independent Node processes deduplicate concurrent revision
+      ---
+      duration_ms: 750.591791
+      type: 'test'
+      ...
+    # Subtest: CSV known customer/order/SKU relationships survive persistence
+    not ok 5 - CSV known customer/order/SKU relationships survive persistence
+      ---
+      duration_ms: 379.01375
+      type: 'test'
+      location: '/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-iywvh2am/tests/acceptance/support/F02-canonical/exam.mjs:53:10'
+      failureType: 'testCodeFailure'
+      error: |-
+        CSV_KNOWN_RELATIONS:CSV_IDENTITY_MISMATCH
+        + actual - expected
+        
+        + 'rejected'
+        - 'inserted'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'inserted'
+      actual: 'rejected'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-iywvh2am/tests/acceptance/support/F02-canonical/exam.mjs:56:37)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-iywvh2am/tests/acceptance/support/F02-canonical/exam.mjs:53:2)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: new revision retains one logical order and does not double money
+    not ok 6 - new revision retains one logical order and does not double money
+      ---
+      duration_ms: 763.555292
+      type: 'test'
+      location: '/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-iywvh2am/tests/acceptance/support/F02-canonical/exam.mjs:59:10'
+      failureType: 'testCodeFailure'
+      error: |-
+        LOGICAL_ORDER_SINGLE_PROJECTION
+        
+        '2' !== '1'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: '1'
+      actual: '2'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-iywvh2am/tests/acceptance/support/F02-canonical/exam.mjs:63:10)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-iywvh2am/tests/acceptance/support/F02-canonical/exam.mjs:59:2)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: customer permits occurred_at null
+    not ok 7 - customer permits occurred_at null
+      ---
+      duration_ms: 232.956
+      type: 'test'
+      location: '/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-iywvh2am/tests/acceptance/support/F02-canonical/exam.mjs:66:80'
+      failureType: 'testCodeFailure'
+      error: |-
+        TIME_OPTIONAL:customer
+        + actual - expected
+        
+        + 'rejected'
+        - 'inserted'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'inserted'
+      actual: 'rejected'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-iywvh2am/tests/acceptance/support/F02-canonical/exam.mjs:66:135)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-iywvh2am/tests/acceptance/support/F02-canonical/exam.mjs:66:72)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: product permits occurred_at null
+    not ok 8 - product permits occurred_at null
+      ---
+      duration_ms: 255.739541
+      type: 'test'
+      location: '/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-iywvh2am/tests/acceptance/support/F02-canonical/exam.mjs:66:80'
+      failureType: 'testCodeFailure'
+      error: |-
+        TIME_OPTIONAL:product
+        + actual - expected
+        
+        + 'rejected'
+        - 'inserted'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'inserted'
+      actual: 'rejected'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-iywvh2am/tests/acceptance/support/F02-canonical/exam.mjs:66:135)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-iywvh2am/tests/acceptance/support/F02-canonical/exam.mjs:66:72)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: tenant, source, account, content hash and mapping cannot be forged
+    ok 9 - tenant, source, account, content hash and mapping cannot be forged
+      ---
+      duration_ms: 2784.317875
+      type: 'test'
+      ...
+    # Subtest: ambiguous reference quarantines, never selects arbitrary customer
+    ok 10 - ambiguous reference quarantines, never selects arbitrary customer
+      ---
+      duration_ms: 1103.17975
+      type: 'test'
+      ...
+    # Subtest: same import exact replay does not increment counters and changed row quarantines
+    ok 11 - same import exact replay does not increment counters and changed row quarantines
+      ---
+      duration_ms: 958.238333
+      type: 'test'
+      ...
+    # Subtest: unknown amount remains SQL null rather than zero
+    ok 12 - unknown amount remains SQL null rather than zero
+      ---
+      duration_ms: 389.278917
+      type: 'test'
+      ...
+    # Subtest: SQL failure propagates and entire transaction rolls back
+    ok 13 - SQL failure propagates and entire transaction rolls back
+      ---
+      duration_ms: 415.696292
+      type: 'test'
+      ...
+    1..13
+not ok 1 - F02-04 independent real persistence effects
+  ---
+  duration_ms: 25332.885625
+  type: 'test'
+  location: '/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-iywvh2am/tests/acceptance/support/F02-canonical/exam.mjs:12:1'
+  failureType: 'subtestsFailed'
+  error: '4 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# OBSERVED_REVISION_SUM=18014398509481987
+# Subtest: F02-04 coverage closure
+not ok 2 - F02-04 coverage closure
+  ---
+  duration_ms: 0.200833
+  type: 'test'
+  location: '/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-iywvh2am/tests/acceptance/F02-04.test.mjs:4:1'
+  failureType: 'testCodeFailure'
+  error: 'GATE_INCOMPLETE: pending complete independently reviewed coverage: all entity revision projections, connection/account independence and failure inside persistence; no acceptance'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'fail'
+  stack: |-
+    TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-iywvh2am/tests/acceptance/F02-04.test.mjs:4:43)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..2
+# tests 15
+# suites 0
+# pass 9
+# fail 6
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 25405.270708

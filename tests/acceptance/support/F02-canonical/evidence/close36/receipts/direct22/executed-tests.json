@@ -1,0 +1,8 @@
+{
+  "tests/acceptance/F02-04.test.mjs": "2669f2a29e92b3d60ad7ae371b5fd438d49a30f3e89659f678489f9fc652e087",
+  "tests/acceptance/F01-03.test.mjs": "3e32307652b2b06c625a9199cdda337211ed8cff344ed1c9fbf0e1a45337e85f",
+  "tests/acceptance/support/F02-canonical/exam.mjs": "3319a2db39b00036a89dd115625c8bf81e6a7e1dd7cbd4bc484b5f005b74a1eb",
+  "tests/acceptance/support/F02-canonical/mutations.test.mjs": "74aa8318f5a4fd1458c6bc62ad5c3ee1ae0fd33dcca5d46ee3496570ad77fe60",
+  "tests/acceptance/support/F01-03/oracles.mjs": "42c2ee2110e6e3dcf8dca537f2cdb6e3259fdcaa536d64070da1948009f81c91",
+  "tests/acceptance/support/F01-03/source-history/oracles.mjs": "454c08a3a9f16053662cc52174241780a1f59243fd11888ed65d4f0f53d4b6ae"
+}

@@ -1,0 +1,46 @@
+✖ F02-04 isolated infrastructure required (0.763375ms)
+✖ F02-04 coverage closure (0.100166ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 71.767208
+
+✖ failing tests:
+
+test at tests/acceptance/F02-04.test.mjs:6:6
+✖ F02-04 isolated infrastructure required (0.763375ms)
+  AssertionError [ERR_ASSERTION]: GATE_INCOMPLETE: execute python3 -B tests/acceptance/support/F02-canonical/run.py with VEXA_CANDIDATE
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-specialists-1789923505171224000/canonical-gate/tests/acceptance/F02-04.test.mjs:6:64)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'fail',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-04.test.mjs:7:1
+✖ F02-04 coverage closure (0.100166ms)
+  AssertionError [ERR_ASSERTION]: GATE_INCOMPLETE: all entity revision projections, connection/account independence and failure inside persistence remain unproven; no acceptance
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-specialists-1789923505171224000/canonical-gate/tests/acceptance/F02-04.test.mjs:7:43)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'fail',
+    diff: 'simple'
+  }

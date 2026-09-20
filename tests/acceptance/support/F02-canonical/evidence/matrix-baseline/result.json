@@ -1,0 +1,7 @@
+{
+  "exit": 0,
+  "cleanup_verified": true,
+  "resources": 5,
+  "candidate": "/Users/javiercamaraportepetit/vexa",
+  "node": "node"
+}

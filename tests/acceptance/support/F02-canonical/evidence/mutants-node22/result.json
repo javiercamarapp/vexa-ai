@@ -1,0 +1,7 @@
+{
+  "exit": 0,
+  "cleanup_verified": true,
+  "resources": 5,
+  "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f0203-close-f0204-1789921456816411000/canonical",
+  "node": "/tmp/vexa-xml-interop-renewed/node-v22.22.0-darwin-arm64/bin/node"
+}

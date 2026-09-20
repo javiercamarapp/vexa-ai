@@ -1,0 +1,46 @@
+✖ F02-04 independent real persistence effects (1.970083ms)
+✖ F02-04 coverage closure (0.150042ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 85.442666
+
+✖ failing tests:
+
+test at ../../../../../../private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-js61gngl/tests/acceptance/support/F02-canonical/exam.mjs:12:1
+✖ F02-04 independent real persistence effects (1.970083ms)
+  AssertionError [ERR_ASSERTION]: IMPLEMENTATION_MISSING:F02-04
+      at TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-js61gngl/tests/acceptance/support/F02-canonical/exam.mjs:13:9)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at ../../../../../../private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-js61gngl/tests/acceptance/F02-04.test.mjs:4:1
+✖ F02-04 coverage closure (0.150042ms)
+  AssertionError [ERR_ASSERTION]: GATE_INCOMPLETE: pending complete independently reviewed coverage: same-import replay accounting, unknown money and all entity revision projections; no acceptance
+      at TestContext.<anonymous> (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-js61gngl/tests/acceptance/F02-04.test.mjs:4:43)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'fail',
+    diff: 'simple'
+  }

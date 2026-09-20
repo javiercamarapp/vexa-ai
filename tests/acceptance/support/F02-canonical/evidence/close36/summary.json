@@ -1,0 +1,122 @@
+{
+  "absence-final26": {
+    "exit": 1,
+    "cleanup_verified": true,
+    "resources": 0,
+    "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f0204-exam-close-1789926239225372000/gate",
+    "node": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+    "artifact": "tests/acceptance/support/F02-canonical/evidence/close36/receipts/absence-final26",
+    "temp": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-ufwmo12t",
+    "source_equal": true
+  },
+  "matrix6": {
+    "exit": 1,
+    "cleanup_verified": true,
+    "resources": 5,
+    "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f02-data-durable-1789924838176941000/canonical-fix",
+    "node": "node",
+    "artifact": "tests/acceptance/support/F02-canonical/evidence/close36/receipts/matrix6",
+    "temp": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-lelgpt_1",
+    "source_equal": true
+  },
+  "direct22": {
+    "exit": 0,
+    "cleanup_verified": true,
+    "resources": 5,
+    "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f02-data-durable-1789924838176941000/canonical-fix",
+    "node": "/private/tmp/vexa-xml-interop-renewed/node-v22.22.0-darwin-arm64/bin/node",
+    "artifact": "tests/acceptance/support/F02-canonical/evidence/close36/receipts/direct22",
+    "temp": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-j07d5usn",
+    "source_equal": true
+  },
+  "mutants26": {
+    "exit": 1,
+    "cleanup_verified": true,
+    "resources": 5,
+    "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f02-data-durable-1789924838176941000/canonical-fix",
+    "node": "node",
+    "artifact": "tests/acceptance/support/F02-canonical/evidence/close36/receipts/mutants26",
+    "temp": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-ruoqjgtc",
+    "source_equal": true
+  },
+  "matrix5": {
+    "exit": 0,
+    "cleanup_verified": true,
+    "resources": 5,
+    "candidate": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-baselines-gedc6mdn/5",
+    "node": "node",
+    "artifact": "tests/acceptance/support/F02-canonical/evidence/close36/receipts/matrix5",
+    "temp": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-m42h0r9e",
+    "source_equal": true
+  },
+  "matrix4": {
+    "exit": 0,
+    "cleanup_verified": true,
+    "resources": 5,
+    "candidate": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-baselines-gedc6mdn/4",
+    "node": "node",
+    "artifact": "tests/acceptance/support/F02-canonical/evidence/close36/receipts/matrix4",
+    "temp": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-xkwjgd4z",
+    "source_equal": true
+  },
+  "direct26": {
+    "exit": 1,
+    "cleanup_verified": true,
+    "resources": 5,
+    "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f02-data-durable-1789924838176941000/canonical-fix",
+    "node": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+    "artifact": "tests/acceptance/support/F02-canonical/evidence/close36/receipts/direct26",
+    "temp": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-3f9sik6g",
+    "source_equal": true
+  },
+  "matrix6-final22": {
+    "exit": 1,
+    "cleanup_verified": true,
+    "resources": 5,
+    "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f02-data-durable-1789924838176941000/canonical-fix",
+    "node": "/tmp/vexa-xml-interop-renewed/node-v22.22.0-darwin-arm64/bin/node",
+    "artifact": "tests/acceptance/support/F02-canonical/evidence/close36/receipts/matrix6-final22",
+    "temp": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-n9wa22zi",
+    "source_equal": true
+  },
+  "direct-final22": {
+    "exit": 1,
+    "cleanup_verified": true,
+    "resources": 5,
+    "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f02-data-durable-1789924838176941000/canonical-fix",
+    "node": "/private/tmp/vexa-xml-interop-renewed/node-v22.22.0-darwin-arm64/bin/node",
+    "artifact": "tests/acceptance/support/F02-canonical/evidence/close36/receipts/direct-final22",
+    "temp": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-o1ku6n0j",
+    "source_equal": true
+  },
+  "direct-final26": {
+    "exit": 1,
+    "cleanup_verified": true,
+    "resources": 5,
+    "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f02-data-durable-1789924838176941000/canonical-fix",
+    "node": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+    "artifact": "tests/acceptance/support/F02-canonical/evidence/close36/receipts/direct-final26",
+    "temp": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-_1hwg9o6",
+    "source_equal": true
+  },
+  "mutants-final22": {
+    "exit": 0,
+    "cleanup_verified": true,
+    "resources": 5,
+    "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f02-data-durable-1789924838176941000/canonical-fix",
+    "node": "/tmp/vexa-xml-interop-renewed/node-v22.22.0-darwin-arm64/bin/node",
+    "artifact": "tests/acceptance/support/F02-canonical/evidence/close36/receipts/mutants-final22",
+    "temp": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-3jlng3q0",
+    "source_equal": true
+  },
+  "mutants-final26": {
+    "exit": 0,
+    "cleanup_verified": true,
+    "resources": 5,
+    "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f02-data-durable-1789924838176941000/canonical-fix",
+    "node": "node",
+    "artifact": "tests/acceptance/support/F02-canonical/evidence/close36/receipts/mutants-final26",
+    "temp": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0204-external-3ciwmv7w",
+    "source_equal": true
+  }
+}

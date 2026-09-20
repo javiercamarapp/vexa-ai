@@ -1,0 +1,6 @@
+{
+  "supabase/migrations/0001_identity.sql": "73f98d0b3b895fb3637d6613ad18dde2a48387714424dd0159d5db871b8f9108",
+  "supabase/migrations/0002_sources.sql": "d6fbccfe2f192566e6ae3efe244412a0fda92294cc3b0af6adee3228df66c09b",
+  "supabase/migrations/0003_execution.sql": "3142bd37fd0e9922e75758e056470587d93e89aeeed82e076cd8c44f9971f699",
+  "supabase/migrations/0004_evidence_money.sql": "b5598eafe59ccbf1d71c88ae42a207e41c120e81d20e761b82d13b0afc7161c3"
+}

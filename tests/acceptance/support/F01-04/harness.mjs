@@ -7,6 +7,7 @@ import {spawn,spawnSync} from 'node:child_process';
 import {randomUUID} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {buildEnvironment} from '../../scaffold-copy.mjs';
+import {resourceBroker} from '../ci/resources.mjs';
 const here=path.dirname(fileURLToPath(import.meta.url));
 export function command(bin,args,options={}){
  const r=spawnSync(bin,args,{encoding:'utf8',timeout:120000,maxBuffer:8*1024*1024,...options});
@@ -32,8 +33,9 @@ function copy(src,dest){
 export async function prepare(candidate,{proposal=false}={}){
  assert.ok(candidate,'VEXA_CANDIDATE explícito obligatorio');
  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'vexa-f01-04-'));
- const h={tmp,child:null,container:'vexa-f01-04-browser-'+randomUUID()};
- h.close=async()=>{if(h.child){h.child.kill('SIGTERM');await new Promise(r=>setTimeout(r,300));if(h.child.exitCode===null)h.child.kill('SIGKILL');}if(h.browserStarted)command('docker',['rm','-f',h.container]);};
+ const broker=resourceBroker();
+ const h={tmp,child:null,container:'vexa-f01-04-'+randomUUID()+'-browser'};
+ h.close=async()=>{if(h.child){h.child.kill('SIGTERM');await new Promise(r=>setTimeout(r,300));if(h.child.exitCode===null)h.child.kill('SIGKILL');}if(h.browserReserved)broker.remove('container',h.container);};
  try{
   for(const rel of ['package.json','package-lock.json','apps','packages'])if(fs.existsSync(path.join(candidate,rel)))copy(path.join(candidate,rel),path.join(tmp,rel));
   if(proposal){
@@ -61,7 +63,8 @@ h.env={...buildEnvironment(process.env,tmp),WATCHPACK_POLLING:'500'};
     await new Promise(r=>setTimeout(r,200));
    }assert.fail('SETUP Next render unavailable: '+fs.readFileSync(path.join(tmp,'next.log'),'utf8').slice(-4000));
   };
-  command('docker',['run','--pull','never','-d','--name',h.container,'--entrypoint','sleep','8771dc4666e7','900']);h.browserStarted=true;
+  const browserLabels=broker.reserve('container',h.container);h.browserReserved=true;
+  command('docker',['run','--pull','never','-d','--name',h.container,...browserLabels,'--add-host','host.docker.internal:host-gateway','--entrypoint','sleep','mcp/playwright@sha256:8771dc4666e7c11440bfc6a0c6b00480e9a15b8891b45f29a52d7d995f8d1492','900']);h.browserStarted=true;
   // Container-local loopback bridge preserves the application's allowed localhost origin.
   command('docker',['exec','-d',h.container,'node','-e',"require('node:net').createServer(s=>{const u=require('node:net').connect(57560,'host.docker.internal');s.on('error',()=>u.destroy());u.on('error',()=>s.destroy());s.pipe(u);u.pipe(s);}).listen(57560,'127.0.0.1')"]);
   command('docker',['cp',path.join(here,'browser.cjs'),h.container+':/tmp/browser.cjs']);

@@ -1,6 +1,33 @@
 # Progreso verificable
 Actualizado: 2026-09-19 local. Los apartados anteriores conservados abajo son cortes históricos, no inventario vigente.
 
+## F01-05 — paquete aprobado y adoptado en control-plane,18:22
+- Recheck conjunto aprobado, sin P0–P2: M10/lifecycle/fourjobs reconciliados;669archivos estables y24recursos propios retirados. No repetición ficticia de evidencias ni cierre remoto.
+-32archivos de soporte/gates/metadata adoptados exactamente desde fuente revisada; registroF01-05 authored/product_passfalse yallowlist sólo.github/ci.yml+package.json. F00-05 ytooling7 verdes; guía regenerada antesdeprepare.
+- Pendiente ciclooficial. **10/60**, no se incrementa por aprobación del examen.144invocaciones acumuladas; ningunaActions/cloud/envío.
+
+## F01-05 — correctivos bajo revisión final,18:04
+- M10 ya aprobado independientemente: mismojob sano0→service_role público rechazado1→sano0; negativo propio /review-server-canary rechazado,restauraciónverde.48artefactos/70HTTP; anon permitido; TS2322siguefallando. No cubreJSbrowserni solicitudescalculadas/ausenciauniversal.
+- Lifecycle autor reportó12/12+policy8: journal0600 porUUID,labels/IDspropios,cleanup,cancelaciones143/130,timeout124yrecibos. Principal repitió12/12 en combinación; aprobación integral pendiente.
+- BrowserF01-04 estaba fuera deljournal. Principal reprodujoBROWSER_NOT_JOURNALED y registró/etiquetó antes de crearlo,normalcloseporowner/ID; ensayo realBrowser+cancelación verde,fuente previa preservada. Sin cambios deoráculos.
+- Revisiónfinal está sobre copia conjunta nueva, no sobreárbolmutabledurantepruebas. Debe repetirloscuatrojobs yloscontroles; **10/60**,sinacceptporunitarios.
+-143invocaciones al iniciar revisiónfinal; límite220/ventanahasta18:59. GitHubclasificaciónHTML corregidalocal,pushpendienteal cierreverificado.
+
+## F01-05 — revisión del conjunto bloquea tres defectos,17:46
+- Auth aislado aprobado independientemente:gate7/7,oráculos5/5,firma1/1; repetición con fuente0444,PKCE/Mailpit,revocación,puertos ajenos/señales ycleanup verificados.
+- Examen CI combinado ejecutó cuatrojobs reales exit0:control24+110+7,web build/API200,SQLpreflight+168,Auth7+UI3. Policy8/tooling7 pasan. No equivale a aceptación: revisor rechazó3P2 reproducibles.
+- Clave service_role sintética publicada enpublic/ escapaba al guard; timeout dejabaDB/red; SIGTERM al launcher dejabahijo/sinreceipt. Correcciones separadas lifecycle/artefactos, fuentes rechazadas preservadas. No se relajó ningún oráculo.
+- Principal reprodujoTDD de copyBuildInputs: readonly→scratchescribible,symlink/overlap/sobrescritura rechazados;7tests. Revisióncombinada conservó estos controles.
+- GitHubLanguages comprobado:HTML431644bytes,430271de documentosgenerados. `.gitattributes` marca sólo3HTMLgenerados yREADMEexplica stack; verificaciónlocal congitcheck-attr. Publicaciónpendiente; no se fuerzaTypeScript ni se oculta código.
+- Siguen **10/60**, Actionsdesactivadas.139llamadas antesdeestosdoscorrectivos=141al iniciarlos; ventanahasta18:59,techo220sinreset.
+
+## F01-05 en construcción —19-sep,16:59 local
+- F01-04 publicado mediante publisher:84219b0, SHA remoto verificado, cuatro commits reales, Actions apagadas. Siguen10/60.
+- Preflight de portabilidad y seguridad terminado: F01-02 depende de ChromeMac/DBcompartida; F01-04 usa imagenDockerARM local. No basta escribir YAML.
+- Dos autores control-plane aislados: Auth/PKCE/Mailpit/Chrome sobre recursos propios; ejecutor/examen CI con cuatro jobs y mutantes reales. Sin tocar producto ni DBcompartida. No declarar CI remoto sinrun_id/SHA; Actions continúa desactivado.
+- Perfil propuesto Ubuntu24.04ARM, imágenes ya comprobadasARM; no afirmarLinux/x64 o GitHubprobados. CI inicial de main revisado, no ejecución de forks ni promesa de sandbox contra código hostil.
+- Usuario reiteró continuar hasta60/60; nueva ventana acotada hasta18:59, historial/cap220/cero gasto preservados.135invocaciones acumuladas al lanzar autores; no son tokens ni una medida de costeAPI.
+
 ## F01-04 cerrado y aceptado —19-sep,16:29 local
 - **10/60 aceptadas. Commit50674a4b871ed822f3374ec6ee7ae2f2dadbf875.** Segundo candidato con registro correcto: verify oficial,193/193regresiones previas y110controlador, todos exit0; accept repitió el gate en materialización limpia, exit0. Ningún fallo se omitió.
 - Tres revisiones separadas aprobaron examen, QA de UI y compatibilidad. UI: ocho rutas/cuatro roles, seis estados, 390×844/1440×900, teclado/foco/reduced-motion,76capturas y controles extra de refresh/reset/revocación. Gate3/3; oráculos7/7+role1/1 en revisión independiente.

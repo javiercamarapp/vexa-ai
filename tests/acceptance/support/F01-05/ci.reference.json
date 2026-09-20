@@ -1,0 +1,208 @@
+{
+  "name": "F01-05 reviewed main only",
+  "on": {
+    "push": {
+      "branches": [
+        "main"
+      ]
+    },
+    "workflow_dispatch": {}
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "jobs": {
+    "control-kernel": {
+      "runs-on": "ubuntu-24.04-arm",
+      "timeout-minutes": 15,
+      "if": "${{ github.ref == 'refs/heads/main' }}",
+      "permissions": {
+        "contents": "read"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "path": "control",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "path": "candidate",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/setup-node@820762786026740c76f36085b0efc47a31fe5020",
+          "with": {
+            "node-version": "26.7.0"
+          }
+        },
+        {
+          "uses": "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+          "with": {
+            "python-version": "3.12"
+          }
+        },
+        {
+          "name": "Trusted disposable bootstrap",
+          "shell": "bash --noprofile --norc -euo pipefail {0}",
+          "run": "python3 control/tests/acceptance/support/ci/bootstrap.py --candidate \"$GITHUB_WORKSPACE/candidate\" --authorized-disposable-runner"
+        },
+        {
+          "name": "Required job",
+          "shell": "bash --noprofile --norc -euo pipefail {0}",
+          "run": "python3 control/tests/acceptance/support/ci/run.py --job control-kernel --candidate \"$GITHUB_WORKSPACE/candidate\" --event-sha \"$GITHUB_SHA\""
+        }
+      ]
+    },
+    "web-quality": {
+      "runs-on": "ubuntu-24.04-arm",
+      "timeout-minutes": 15,
+      "if": "${{ github.ref == 'refs/heads/main' }}",
+      "permissions": {
+        "contents": "read"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "path": "control",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "path": "candidate",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/setup-node@820762786026740c76f36085b0efc47a31fe5020",
+          "with": {
+            "node-version": "26.7.0"
+          }
+        },
+        {
+          "uses": "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+          "with": {
+            "python-version": "3.12"
+          }
+        },
+        {
+          "name": "Trusted disposable bootstrap",
+          "shell": "bash --noprofile --norc -euo pipefail {0}",
+          "run": "python3 control/tests/acceptance/support/ci/bootstrap.py --candidate \"$GITHUB_WORKSPACE/candidate\" --authorized-disposable-runner"
+        },
+        {
+          "name": "Required job",
+          "shell": "bash --noprofile --norc -euo pipefail {0}",
+          "run": "python3 control/tests/acceptance/support/ci/run.py --job web-quality --candidate \"$GITHUB_WORKSPACE/candidate\" --event-sha \"$GITHUB_SHA\""
+        }
+      ]
+    },
+    "sql-integration": {
+      "runs-on": "ubuntu-24.04-arm",
+      "timeout-minutes": 15,
+      "if": "${{ github.ref == 'refs/heads/main' }}",
+      "permissions": {
+        "contents": "read"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "path": "control",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "path": "candidate",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/setup-node@820762786026740c76f36085b0efc47a31fe5020",
+          "with": {
+            "node-version": "26.7.0"
+          }
+        },
+        {
+          "uses": "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+          "with": {
+            "python-version": "3.12"
+          }
+        },
+        {
+          "name": "Trusted disposable bootstrap",
+          "shell": "bash --noprofile --norc -euo pipefail {0}",
+          "run": "python3 control/tests/acceptance/support/ci/bootstrap.py --candidate \"$GITHUB_WORKSPACE/candidate\" --authorized-disposable-runner"
+        },
+        {
+          "name": "Required job",
+          "shell": "bash --noprofile --norc -euo pipefail {0}",
+          "run": "python3 control/tests/acceptance/support/ci/run.py --job sql-integration --candidate \"$GITHUB_WORKSPACE/candidate\" --event-sha \"$GITHUB_SHA\""
+        }
+      ]
+    },
+    "auth-e2e": {
+      "runs-on": "ubuntu-24.04-arm",
+      "timeout-minutes": 15,
+      "if": "${{ github.ref == 'refs/heads/main' }}",
+      "permissions": {
+        "contents": "read"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "path": "control",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "path": "candidate",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/setup-node@820762786026740c76f36085b0efc47a31fe5020",
+          "with": {
+            "node-version": "26.7.0"
+          }
+        },
+        {
+          "uses": "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+          "with": {
+            "python-version": "3.12"
+          }
+        },
+        {
+          "name": "Trusted disposable bootstrap",
+          "shell": "bash --noprofile --norc -euo pipefail {0}",
+          "run": "python3 control/tests/acceptance/support/ci/bootstrap.py --candidate \"$GITHUB_WORKSPACE/candidate\" --authorized-disposable-runner"
+        },
+        {
+          "name": "Required job",
+          "shell": "bash --noprofile --norc -euo pipefail {0}",
+          "run": "python3 control/tests/acceptance/support/ci/run.py --job auth-e2e --candidate \"$GITHUB_WORKSPACE/candidate\" --event-sha \"$GITHUB_SHA\""
+        }
+      ]
+    }
+  }
+}

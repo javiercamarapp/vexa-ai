@@ -174,9 +174,6 @@
         "F01-04"
       ],
       "allowed_paths": [
-        "apps/web/",
-        "supabase/",
-        "packages/platform/",
         ".github/workflows/ci.yml",
         "package.json"
       ],

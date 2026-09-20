@@ -36,7 +36,9 @@ try {
  let ok=false;for(let i=0;i<100;i++){assert.equal(child.exitCode,null,'BUILD_START_EXIT');try{const r=await fetch(`http://127.0.0.1:${port}/api/health/version`,{redirect:'manual',signal:AbortSignal.timeout(1000)});if(r.status===200){ok=true;break;}}catch{}await new Promise(r=>setTimeout(r,100));}assert.ok(ok,'BUILD_API_HEALTH');
  console.log('BUILD_API_HEALTH:200');
  const origin=`http://127.0.0.1:${port}`;
- const result=await inspectPublished(cwd,origin,fixture);
+ const configurationKeys=['NEXT_PUBLIC_SUPABASE_URL','NEXT_PUBLIC_SUPABASE_ANON_KEY','VEXA_DATABASE_URL','VEXA_IMPORT_CONFIRMATION_SECRET'];
+ assert.ok(configurationKeys.every(key=>env[key]===undefined),'OFFLINE_SMOKE_MUST_BE_UNCONFIGURED');
+ const result=await inspectPublished(cwd,origin,fixture,{allowUnconfiguredImports:true});
  const publicResponse=await fetch(`${origin}/${publicName}`,{signal:AbortSignal.timeout(10000)});
  assert.ok(publicResponse.status===200 && await publicResponse.text()===fixture.anon,'PUBLIC_ANON_CONTROL');
  console.log('CLIENT_ARTIFACTS_CLEAN:'+JSON.stringify(result));

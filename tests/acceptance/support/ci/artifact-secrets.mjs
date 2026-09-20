@@ -39,7 +39,7 @@ function files(root) {
   return entry.isDirectory()?files(file):[file];
  });
 }
-export async function inspectPublished(cwd,origin,fixture) {
+export async function inspectPublished(cwd,origin,fixture,{allowUnconfiguredImports=false}={}) {
  let artifacts=0,requests=0;
  const queue=new Map([['/',false],['/login',false],['/api/health/version',true]]);
  const add=(url,required=false)=>queue.set(url,required||queue.get(url)||false);
@@ -68,7 +68,19 @@ export async function inspectPublished(cwd,origin,fixture) {
   assertNoSecrets(JSON.stringify([...response.headers]),fixture,'response_headers');
   const body=await response.text();assertNoSecrets(body,fixture,'http');
   if(required && response.status!==200)throw new Error('ARTIFACT_HTTP_STATUS');
-  if(response.status>=500)throw new Error('PAGE_HTTP_STATUS');
+  if(response.status>=500){
+   // Only the offline build smoke may acknowledge this exact fail-closed API.
+   // Body/header secret detection above still runs; pages and arbitrary 5xx fail.
+   let envelope;try{envelope=JSON.parse(body);}catch{}
+   const cache=response.headers.get('cache-control')??'';
+   const expected=allowUnconfiguredImports===true&&!required&&response.status===503&&url.pathname==='/api/imports'&&!url.search
+    &&/^application\/json(?:;|$)/i.test(response.headers.get('content-type')??'')
+    &&/(?:^|,)\s*private\s*(?:,|$)/i.test(cache)&&/(?:^|,)\s*no-store\s*(?:,|$)/i.test(cache)
+    &&envelope?.contract_version==='f02-durable-v1'&&envelope?.error?.code==='auth_not_configured'
+    &&envelope.error.retryable===true&&typeof envelope.error.message==='string'
+    &&typeof envelope.meta?.trace_id==='string'&&envelope.meta.trace_id.length>0;
+   if(!expected)throw new Error('PAGE_HTTP_STATUS');
+  }
   const location=response.headers.get('location');if(location)add(new URL(location,url).href);
   // HTML/CSS assets and literal fetch/import URLs. No browser JS execution.
   for(const match of body.matchAll(/(?:src|href|action)=["']([^"']+)|url\(["']?([^\s)'";]+)|(?:fetch|import)\(["']([^"']+)/g)) {

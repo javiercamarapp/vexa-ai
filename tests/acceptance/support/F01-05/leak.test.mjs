@@ -33,3 +33,30 @@ test('published artifacts and actual HTTP responses fail independently, restore 
   await inspectPublished(root,origin,c);
  }finally {await new Promise(r=>server.close(r));fs.rmSync(root,{recursive:true,force:true});}
 });
+
+test('unconfigured imports exception is explicit, exact and still scans response secrets',async()=>{
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'leak-configuration-')),c=canaries();
+ let status=503,route='/api/imports',code='auth_not_configured',secret=false,cache='private, no-store',retryable=true,contract='f02-durable-v1',contentType='application/json';
+ const server=http.createServer((req,res)=>{
+  if(req.url==='/'){res.end(`<a href="${route}">Fixture API</a>`);return;}
+  if(req.url!==route){res.end('healthy fixture');return;}
+  res.writeHead(status,{'Content-Type':contentType,'Cache-Control':cache});
+  res.end(JSON.stringify({contract_version:contract,error:{code,message:secret?c.server:'Configura Auth.',retryable},meta:{trace_id:c.nonce}}));
+ });
+ await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin=`http://127.0.0.1:${server.address().port}`;
+ const probe=options=>inspectPublished(root,origin,c,options),allow={allowUnconfiguredImports:true};
+ try{
+  await assert.rejects(probe(),/PAGE_HTTP_STATUS/);
+  await assert.rejects(probe({allowUnconfiguredImports:'true'}),/PAGE_HTTP_STATUS/);
+  await probe(allow);
+  secret=true;await assert.rejects(probe(allow),/SERVER_CANARY:http/);secret=false;
+  status=500;await assert.rejects(probe(allow),/PAGE_HTTP_STATUS/);status=503;
+  for(const wrong of ['/imports','/api/health/version','/api/imports/other','/api/imports?other=1']){route=wrong;await assert.rejects(probe(allow),wrong==='/api/health/version'?/ARTIFACT_HTTP_STATUS/:/PAGE_HTTP_STATUS/);}route='/api/imports';
+  code='database_role_unsafe';await assert.rejects(probe(allow),/PAGE_HTTP_STATUS/);code='auth_not_configured';
+  cache='public';await assert.rejects(probe(allow),/PAGE_HTTP_STATUS/);cache='private, no-store';
+  retryable=false;await assert.rejects(probe(allow),/PAGE_HTTP_STATUS/);retryable=true;
+  contract='other';await assert.rejects(probe(allow),/PAGE_HTTP_STATUS/);contract='f02-durable-v1';
+  contentType='text/html';await assert.rejects(probe(allow),/PAGE_HTTP_STATUS/);contentType='application/json';
+  await probe(allow);
+ }finally{await new Promise(r=>server.close(r));fs.rmSync(root,{recursive:true,force:true});}
+});

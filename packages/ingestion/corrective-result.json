@@ -1,0 +1,367 @@
+{
+  "task_id": "F02-01",
+  "stage": "prototype-parser-corrective-not-formalTask",
+  "approved": false,
+  "baseline_sha_from_supplied_review": "8340d26e1c6463ed6ccd158ee2a6ed4d202bc987",
+  "candidate_sha": null,
+  "node": "v26.7.0",
+  "source": "/Users/javiercamaraportepetit/vexa/.runtime/f0201-parser-fix-1789869851442807000/parser-fix",
+  "results": [
+    {
+      "name": "final-own",
+      "command": [
+        "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+        "--test",
+        "packages/ingestion/csv-adapter.test.mjs",
+        "packages/ingestion/index.test.mjs",
+        "packages/ingestion/parser.test.mjs",
+        "packages/ingestion/xlsx.test.mjs"
+      ],
+      "cwd": "/tmp/f0201-parser-corrective/candidate",
+      "env": {},
+      "started": "2026-09-20T02:09:41.996Z",
+      "exit_code": 0,
+      "signal": null,
+      "log": "/tmp/f0201-parser-corrective/final-own.log"
+    },
+    {
+      "name": "final-independent",
+      "command": [
+        "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+        "--test",
+        "/tmp/f0201-parser-corrective/vexa-parser-review-assertions.mjs"
+      ],
+      "cwd": "/tmp/f0201-parser-corrective/candidate",
+      "env": {},
+      "started": "2026-09-20T02:09:42.186Z",
+      "exit_code": 0,
+      "signal": null,
+      "log": "/tmp/f0201-parser-corrective/final-independent.log"
+    },
+    {
+      "name": "final-gate",
+      "command": [
+        "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+        "--test",
+        "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs"
+      ],
+      "cwd": "/tmp/f0201-parser-corrective/candidate",
+      "env": {
+        "VEXA_CANDIDATE": "/tmp/f0201-parser-corrective/candidate"
+      },
+      "started": "2026-09-20T02:09:42.278Z",
+      "exit_code": 0,
+      "signal": null,
+      "log": "/tmp/f0201-parser-corrective/final-gate.log"
+    },
+    {
+      "name": "final-four-probes",
+      "command": [
+        "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+        "/tmp/f0201-parser-corrective/vexa-parser-review-probe.mjs",
+        "duplicate-sheetdata",
+        "duplicate-value",
+        "alternate-content",
+        "foreign-richtext"
+      ],
+      "cwd": "/tmp/f0201-parser-corrective/candidate",
+      "env": {},
+      "started": "2026-09-20T02:09:51.740Z",
+      "exit_code": 0,
+      "signal": null,
+      "log": "/tmp/f0201-parser-corrective/final-four-probes.log"
+    },
+    {
+      "name": "original-rss-large-shared",
+      "command": [
+        "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+        "/tmp/f0201-parser-corrective/vexa-parser-review-probe.mjs",
+        "large-shared"
+      ],
+      "cwd": "/tmp/f0201-parser-corrective/original",
+      "env": {},
+      "started": "2026-09-20T02:09:51.783Z",
+      "exit_code": 0,
+      "signal": null,
+      "log": "/tmp/f0201-parser-corrective/original-rss-large-shared.log"
+    },
+    {
+      "name": "corrected-rss-large-shared",
+      "command": [
+        "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+        "/tmp/f0201-parser-corrective/vexa-parser-review-probe.mjs",
+        "large-shared"
+      ],
+      "cwd": "/tmp/f0201-parser-corrective/candidate",
+      "env": {},
+      "started": "2026-09-20T02:09:52.416Z",
+      "exit_code": 0,
+      "signal": null,
+      "log": "/tmp/f0201-parser-corrective/corrected-rss-large-shared.log"
+    },
+    {
+      "name": "original-rss-million-nodes",
+      "command": [
+        "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+        "/tmp/f0201-parser-corrective/vexa-parser-review-probe.mjs",
+        "million-nodes"
+      ],
+      "cwd": "/tmp/f0201-parser-corrective/original",
+      "env": {},
+      "started": "2026-09-20T02:09:52.971Z",
+      "exit_code": 0,
+      "signal": null,
+      "log": "/tmp/f0201-parser-corrective/original-rss-million-nodes.log"
+    },
+    {
+      "name": "corrected-rss-million-nodes",
+      "command": [
+        "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+        "/tmp/f0201-parser-corrective/vexa-parser-review-probe.mjs",
+        "million-nodes"
+      ],
+      "cwd": "/tmp/f0201-parser-corrective/candidate",
+      "env": {},
+      "started": "2026-09-20T02:09:53.289Z",
+      "exit_code": 0,
+      "signal": null,
+      "log": "/tmp/f0201-parser-corrective/corrected-rss-million-nodes.log"
+    }
+  ],
+  "red": {
+    "independent": {
+      "command": "node --test /tmp/f0201-parser-corrective/vexa-parser-review-assertions.mjs",
+      "cwd": "/Users/javiercamaraportepetit/vexa/.runtime/f0201-parser-fix-1789869851442807000/parser-fix",
+      "exit_code": 1,
+      "pass": 13,
+      "fail": 4,
+      "log": "/tmp/f0201-parser-corrective/independent-red.log"
+    },
+    "own": {
+      "command": "node --test packages/ingestion/xlsx.test.mjs",
+      "cwd": "/Users/javiercamaraportepetit/vexa/.runtime/f0201-parser-fix-1789869851442807000/parser-fix",
+      "exit_code": 1,
+      "pass": 8,
+      "fail": 9,
+      "log": "/tmp/f0201-parser-corrective/own-red.log"
+    }
+  },
+  "oracle_files_checked": 185,
+  "changedOracles": [],
+  "copiedProductMatches": true,
+  "product_sha256": {
+    "csv-adapter.test.mjs": "9c8d3ea448a9657e66ea3d359ef0c9a078d4c00ec5b010ce7b1622b72e6dc791",
+    "csv.mjs": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71",
+    "index.d.ts": "752dc92a0c02380c41f38527b7eec65f6bc391593de31410b846c5e71668a66c",
+    "index.mjs": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d",
+    "index.test.mjs": "37e4446ee76db410f2cebaeaf38c6059b8f3cce73c34cf85ef86291c2ac314ae",
+    "parser.test.mjs": "2e072858cd97340ed5d711755e2e0f0cb1cc4d2cca693705a828f3f46745ef05",
+    "xlsx.mjs": "c5727ba18f8c340ff40d90a8bc6295859015d350c01aee22b8c59b26fcfde5a1",
+    "xlsx.test.mjs": "02b1ffff30a63814327743abef93ff86d7b7d671097aa17f938d44a1858a42b1"
+  },
+  "gate_sha256": "e347f900f5f31ba765b8220874a3af4b6c4681230cee3c014c07c1075b09f795",
+  "pending": [
+    "Independent re-review of changes and explicit structural subset",
+    "Real Excel/LibreOffice corpus",
+    "Universal RSS bound (not claimed)",
+    "Node22 / consumer typecheck / extensive fuzzing",
+    "No formal acceptance, baseline adoption, controller, UI, DB, cloud or build"
+  ],
+  "fixture_sha256": {
+    "formula-cached.xlsx": {
+      "bytes": 1276,
+      "sha256": "a2fee8239ddf4f0d4e226a23287e8f27fdff6b869c8923a470ebb13d1766803e"
+    },
+    "duplicate-sheetdata.xlsx": {
+      "bytes": 1290,
+      "sha256": "86a229638bab0b520adfebcbaf6644009d6efc32d006706f927cb544e8bf3bb9"
+    },
+    "lying-small.xlsx": {
+      "bytes": 1278,
+      "sha256": "3e4980bf46cab34bbc358564ee7f06f034e8d32f96aa985727190a2a5c77f986"
+    },
+    "external.xlsx": {
+      "bytes": 1525,
+      "sha256": "33b0747314cc8860fd2bda11bad592f34a69d1a64f52b9916f8d629a85a4a4f2"
+    },
+    "dtd.xlsx": {
+      "bytes": 1296,
+      "sha256": "cbbe4db965b84ce6e8d6d67e62b32d31b76942c1f1820f051ad9d4a010804a0b"
+    },
+    "duplicate-entry.xlsx": {
+      "bytes": 1275,
+      "sha256": "74c7d5b992177e21e562f8a56ea70f41aa8042626bb38042a2a67e36b58a186f"
+    },
+    "large-shared.xlsx": {
+      "bytes": 20061,
+      "sha256": "9f7d0199bcc65458bee1948b08ceaaf9a64a4d435dd73034cc56cef601ed3c9f"
+    },
+    "duplicate-value.xlsx": {
+      "bytes": 1279,
+      "sha256": "7c144c453a4668391e668a5655d29e2e7360d6dd40c338f6711b81330eac2dc3"
+    },
+    "overlap.xlsx": {
+      "bytes": 1278,
+      "sha256": "7dc900385ba3c8c740fcdb7723823e21225cbea4f286a130a577e125635c6d49"
+    },
+    "valid.xlsx": {
+      "bytes": 1278,
+      "sha256": "fa7f05813c429d49c1dc318418c7143046aa9bc5757c271946f2ae2aa7b822ce"
+    },
+    "foreign-richtext.xlsx": {
+      "bytes": 1305,
+      "sha256": "17c8d7475b90fa75c6aee1fdfdd91ec1c586df934b2a11787a5bbf2021a995b5"
+    },
+    "lying-big.xlsx": {
+      "bytes": 1278,
+      "sha256": "4a356698dd48a20c70d286c72a44fec50eed64d7ae9042f53367f846efc33058"
+    },
+    "crc.xlsx": {
+      "bytes": 1278,
+      "sha256": "7971c7b2e013d7503ca507765eb36883c4b301405ce0f1ba9dd52402a6135d5f"
+    },
+    "macro.xlsx": {
+      "bytes": 1339,
+      "sha256": "2b86555ead2ca28bee1bd1c4cfba5a4526170dce86c6ae5cd665d32e143199eb"
+    },
+    "million-nodes.xlsx": {
+      "bytes": 4774,
+      "sha256": "80bb9a11e58b857e497d1ea12ffd0fc05d48b4eb2d322c74de901a21e897d4cf"
+    },
+    "alternate-content.xlsx": {
+      "bytes": 1328,
+      "sha256": "136e6c5e4af24272b9ddefef7e79a1d4fe50ba159cd6c0225166037fb6edf40b"
+    },
+    "truncated.xlsx": {
+      "bytes": 1271,
+      "sha256": "abf82cd09607d06e9c39efa9d078da338dda27bab3015ffa1fed3b308cf1b507"
+    },
+    "zip64.xlsx": {
+      "bytes": 1278,
+      "sha256": "85f6f8ee2f81fbc142a5679d22b55ae616f86160cec7f05264a7f16561da418e"
+    },
+    "escaped-text.xlsx": {
+      "bytes": 1308,
+      "sha256": "2f5c1236808c339e1c1e205dbc80dd97a892370b27bc25117e8de97f73841938"
+    }
+  },
+  "evidence_sha256": {
+    "before.json": "8cebaee66d47c0bff099e060962f6bb3fda02fb3c50262a45ecb938356cad5fe",
+    "after.json": "ac5e42b37c9e81afe881a3c15be10678dc689a2087c724e7a72b49650da4018a",
+    "recheck.mjs": "ec72ad0daac219538d07d580e65b726cabeb225140311c2e7690b035fe4da454",
+    "independent-red.log": "7e32e327a99e1123f9044613d71f796254c9b8614ffe4f5e6fd9d6de60c1e077",
+    "own-red.log": "4243e3cd6dcf4a0a4b7cbdd4ac9fd5d8857f94d40dc7e542f6b56ee71888d3ce",
+    "final-own.log": "143ba9e8af2ef8f0b6ddf7c90eb8c11d4189c0fe7726473c879233c2be2a6504",
+    "final-independent.log": "ae9eec2caebfa79b6474b17d1135e5d93f30293c3862dba663183987fc32cde9",
+    "final-gate.log": "af5efeee0cf947d8f14fdc51fb1b4ebcf21d9c5f8eb0d6a155a8b649e7d17570",
+    "final-four-probes.log": "d407c71f3f448e2e5093828da68148c44435cb6af33bfc97eb118f6d3443e659",
+    "original-rss-large-shared.log": "0845404deabec99aead3bf126456c1168ec77e28b17eaab5113098ca52da9682",
+    "corrected-rss-large-shared.log": "9fd35847b2db98ed9aab6bfe6d38696c4dd26b5faf6ff32277bc1273cce2d2df",
+    "original-rss-million-nodes.log": "1177f693cf8f06177eddb359e4689ad0e944d4de05c30e60038e0dfff9621837",
+    "corrected-rss-million-nodes.log": "ad0f4e0f1ffe9e1fce435ccdf93c113b618e4011328da0504f66253f6c6c311e"
+  },
+  "final_counts": {
+    "own": {
+      "pass": 40,
+      "fail": 0
+    },
+    "independent": {
+      "pass": 17,
+      "fail": 0
+    },
+    "snapshot": {
+      "pass": 39,
+      "fail": 0
+    }
+  },
+  "memory_observations": {
+    "original-rss-large-shared": {
+      "name": "large-shared",
+      "outcome": {
+        "sheets": [
+          {
+            "name": "Synthetic",
+            "rows": [
+              {
+                "line": 1,
+                "values": [
+                  "x"
+                ]
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "ms": 583.4763330000001,
+      "maxRSS": 454992,
+      "memory": {
+        "rss": 465928192,
+        "heapTotal": 369311744,
+        "heapUsed": 299499760,
+        "external": 17792065,
+        "arrayBuffers": 7927808
+      }
+    },
+    "corrected-rss-large-shared": {
+      "name": "large-shared",
+      "outcome": {
+        "sheets": [
+          {
+            "name": "Synthetic",
+            "rows": [
+              {
+                "line": 1,
+                "values": [
+                  "x"
+                ]
+              }
+            ],
+            "errors": []
+          }
+        ]
+      },
+      "ms": 511.78437500000007,
+      "maxRSS": 120784,
+      "memory": {
+        "rss": 123715584,
+        "heapTotal": 45432832,
+        "heapUsed": 12414168,
+        "external": 17726529,
+        "arrayBuffers": 7862272
+      }
+    },
+    "original-rss-million-nodes": {
+      "name": "million-nodes",
+      "outcome": {
+        "code": "XLSX_LIMIT_COLUMNS",
+        "message": "XLSX_LIMIT_COLUMNS"
+      },
+      "ms": 271.188,
+      "maxRSS": 383120,
+      "memory": {
+        "rss": 392347648,
+        "heapTotal": 320258048,
+        "heapUsed": 278906112,
+        "external": 9692161,
+        "arrayBuffers": 3877852
+      }
+    },
+    "corrected-rss-million-nodes": {
+      "name": "million-nodes",
+      "outcome": {
+        "code": "XLSX_LIMIT_COLUMNS",
+        "message": "XLSX_LIMIT_COLUMNS"
+      },
+      "ms": 30.901708000000003,
+      "maxRSS": 67568,
+      "memory": {
+        "rss": 69222400,
+        "heapTotal": 10633216,
+        "heapUsed": 6000888,
+        "external": 9692237,
+        "arrayBuffers": 3877928
+      }
+    }
+  }
+}

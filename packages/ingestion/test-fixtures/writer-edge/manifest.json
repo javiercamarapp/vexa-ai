@@ -1,0 +1,15 @@
+{
+  "data": "SYNTHETIC",
+  "writer": "openpyxl 3.1.5",
+  "sha256": {
+    "empty.xlsx": "a47c9d6c188687b1104140666fb040bb0da256eb462468ecd288e13057dec246",
+    "protected.xlsx": "87ad6fd51dc700a180b22f1d80868d11c5e38115bf2c4c10a29456ff8cb656a5",
+    "inline-value.xlsx": "19fcb6b05c6d87487842086f7402eff4f13de4cd0238db2796e250b8787de71d",
+    "protection-duplicate.xlsx": "1341bfa74df441e7cee660c62437dc318359c6ea6f659b19137b6f855756ffa1",
+    "protection-nested-cell.xlsx": "172d030a438b9b19eca6fbee43ffb2cbf29dfaec524b0b6f72af3fcc3f20742f",
+    "protection-foreign.xlsx": "03407d09d763c0199c4244dcc5c30023100990ac0f7e7dfc6382b89842e9ea39",
+    "protection-bool.xlsx": "e19cf77cc1f4194621078cc143dceda960dd555081bd6b415a85f8d0efd64ccb",
+    "protection-hash-group.xlsx": "6d83d202ef7009d2441431f25275c1807ca97032df3157a60683ee6729d06b6c",
+    "protection-password.xlsx": "0a6afc5ed2c5c70c6f456530e7c975a6237a24df8ca0112e7486a20da37356a7"
+  }
+}

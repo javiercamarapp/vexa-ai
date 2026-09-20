@@ -1,0 +1,137 @@
+[
+  {
+    "name": "saxes",
+    "version": "6.0.0",
+    "license": "ISC",
+    "source": "https://registry.npmjs.org/saxes/-/saxes-6.0.0.tgz",
+    "sha256": "1cdf52fbbe1ccbd175c365d2b8e63f46e590e74aff23fa6a44a6ec51522e96db",
+    "integrity": "sha512-xAg7SOnEhrm5zI3puOOKyy1OMcMlIJZYNJY7xLBwSze0UjhPLnWfj2GF2EpT0jmzaJKIWKHLsaSSajf35bcYnA==",
+    "files": [
+      {
+        "path": "saxes/saxes.js",
+        "original_sha256": "d00e2ba27ed7d6ac961d03ff14d6b8c0eb5bf063ed2c996c22c6df06ac121423",
+        "final_sha256": "665f5b46a6ab8c7f2c69ed13ca320a48c187b1eb27b9e44a31a76a9aba3b6d81"
+      },
+      {
+        "path": "saxes/package.json",
+        "original_sha256": "32052572b41c2a890ed0854798c48454cc5991dcaafe5fb1718a4253046acfd3",
+        "final_sha256": "32052572b41c2a890ed0854798c48454cc5991dcaafe5fb1718a4253046acfd3"
+      },
+      {
+        "path": "saxes/saxes.js.map",
+        "original_sha256": "bf0ebc4bc6bec1a50bf91fab8b5460212e753becea10409082edac58fa8c7d6c",
+        "final_sha256": "bf0ebc4bc6bec1a50bf91fab8b5460212e753becea10409082edac58fa8c7d6c"
+      },
+      {
+        "path": "saxes/README.md",
+        "original_sha256": "ade6061f7c778cdd868d9b0f711530e4c1ec1f33767222ce33bb05e295bf6f0c",
+        "final_sha256": "ade6061f7c778cdd868d9b0f711530e4c1ec1f33767222ce33bb05e295bf6f0c"
+      },
+      {
+        "path": "saxes/saxes.d.ts",
+        "original_sha256": "a795d722f71f114bbb73ad6fbde87c11e3b64af808f91183e1db601ff456d37f",
+        "final_sha256": "a795d722f71f114bbb73ad6fbde87c11e3b64af808f91183e1db601ff456d37f"
+      }
+    ]
+  },
+  {
+    "name": "xmlchars",
+    "version": "2.2.0",
+    "license": "MIT",
+    "source": "https://registry.npmjs.org/xmlchars/-/xmlchars-2.2.0.tgz",
+    "sha256": "bdf900298963e4bd95b76aa95e96d29f05687e6ae662d617061778267b576da8",
+    "integrity": "sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==",
+    "files": [
+      {
+        "path": "xmlchars/LICENSE",
+        "original_sha256": "45d196313c2647d313cc65ca9b093d2d6974b64d35ee7346f2c60c9d518dff2c",
+        "final_sha256": "45d196313c2647d313cc65ca9b093d2d6974b64d35ee7346f2c60c9d518dff2c"
+      },
+      {
+        "path": "xmlchars/xml/1.1/ed2.js",
+        "original_sha256": "461d5c71cc6076dc16aebbfd2d3c506481df5a74f43631d82372a6ffdc239d69",
+        "final_sha256": "461d5c71cc6076dc16aebbfd2d3c506481df5a74f43631d82372a6ffdc239d69"
+      },
+      {
+        "path": "xmlchars/xmlns/1.0/ed3.js",
+        "original_sha256": "ff14ffa3a2cdfdd1b6077c4a8443dc949f53d5bb56de5ed89d4dbc5d9fdf08f7",
+        "final_sha256": "ff14ffa3a2cdfdd1b6077c4a8443dc949f53d5bb56de5ed89d4dbc5d9fdf08f7"
+      },
+      {
+        "path": "xmlchars/xml/1.0/ed4.js",
+        "original_sha256": "7ae981a2801658ff2eb92d418c000376381044a5caed40392fea9ad38c9d08c8",
+        "final_sha256": "7ae981a2801658ff2eb92d418c000376381044a5caed40392fea9ad38c9d08c8"
+      },
+      {
+        "path": "xmlchars/xml/1.0/ed5.js",
+        "original_sha256": "ea350479ab6f6553c0c3395c30ec440fb39821f6902081939831ddf1b5e8fd0f",
+        "final_sha256": "ea350479ab6f6553c0c3395c30ec440fb39821f6902081939831ddf1b5e8fd0f"
+      },
+      {
+        "path": "xmlchars/xmlchars.js",
+        "original_sha256": "d5024cfd86dc4624feda301419bb56f5f3bd2b63963c2bdf88aff7c6afb6bdf2",
+        "final_sha256": "d5024cfd86dc4624feda301419bb56f5f3bd2b63963c2bdf88aff7c6afb6bdf2"
+      },
+      {
+        "path": "xmlchars/package.json",
+        "original_sha256": "a91c0b20003ff9399dde1de8c59681f1b6901c6fb1aac71780a3a876dc548583",
+        "final_sha256": "a91c0b20003ff9399dde1de8c59681f1b6901c6fb1aac71780a3a876dc548583"
+      },
+      {
+        "path": "xmlchars/xml/1.1/ed2.js.map",
+        "original_sha256": "4dc036dc6f13bb07581fe268d6858f89074ed8ce971c38a1b630938100a6b19b",
+        "final_sha256": "4dc036dc6f13bb07581fe268d6858f89074ed8ce971c38a1b630938100a6b19b"
+      },
+      {
+        "path": "xmlchars/xmlns/1.0/ed3.js.map",
+        "original_sha256": "2dabf94f8ae6eb305ed5c1b432f7a49dcd91f29b29cde05375d5c9f5dfa7e300",
+        "final_sha256": "2dabf94f8ae6eb305ed5c1b432f7a49dcd91f29b29cde05375d5c9f5dfa7e300"
+      },
+      {
+        "path": "xmlchars/xml/1.0/ed4.js.map",
+        "original_sha256": "ae07b2d2592ddb2bad17126cfc6f40e11b5d085d4d51cdc796a626d9e3bf2c9e",
+        "final_sha256": "ae07b2d2592ddb2bad17126cfc6f40e11b5d085d4d51cdc796a626d9e3bf2c9e"
+      },
+      {
+        "path": "xmlchars/xml/1.0/ed5.js.map",
+        "original_sha256": "458e372d99ae5c62cf95320f1df61ec4843a355bfd2e36f3bf8e67384ee5aa12",
+        "final_sha256": "458e372d99ae5c62cf95320f1df61ec4843a355bfd2e36f3bf8e67384ee5aa12"
+      },
+      {
+        "path": "xmlchars/xmlchars.js.map",
+        "original_sha256": "7a1358ab44707d1d8a68d13453c01547ffe158a4929a56849bfc5f411ebed8cc",
+        "final_sha256": "7a1358ab44707d1d8a68d13453c01547ffe158a4929a56849bfc5f411ebed8cc"
+      },
+      {
+        "path": "xmlchars/README.md",
+        "original_sha256": "eb05246b228f24bd82f40d1c80ac8d56afc6bc96731d188e013a41564e445bda",
+        "final_sha256": "eb05246b228f24bd82f40d1c80ac8d56afc6bc96731d188e013a41564e445bda"
+      },
+      {
+        "path": "xmlchars/xml/1.1/ed2.d.ts",
+        "original_sha256": "764391775fc90a5904c833a9538f44012c83baf81116f2bb6c4cce2a182eca4d",
+        "final_sha256": "764391775fc90a5904c833a9538f44012c83baf81116f2bb6c4cce2a182eca4d"
+      },
+      {
+        "path": "xmlchars/xmlns/1.0/ed3.d.ts",
+        "original_sha256": "8514561762de5684298a79453ea83e515af0d061710e64b2851ec89f3a4221d9",
+        "final_sha256": "8514561762de5684298a79453ea83e515af0d061710e64b2851ec89f3a4221d9"
+      },
+      {
+        "path": "xmlchars/xml/1.0/ed4.d.ts",
+        "original_sha256": "31a482a4cb8b5bfa0a0fa9cf21a405a2f510704c99fa9c492265facda534bca4",
+        "final_sha256": "31a482a4cb8b5bfa0a0fa9cf21a405a2f510704c99fa9c492265facda534bca4"
+      },
+      {
+        "path": "xmlchars/xml/1.0/ed5.d.ts",
+        "original_sha256": "a8d1920a105bb364d37f471ac777e9d8972df98c5487bf9b0fab7043eb49e4d4",
+        "final_sha256": "a8d1920a105bb364d37f471ac777e9d8972df98c5487bf9b0fab7043eb49e4d4"
+      },
+      {
+        "path": "xmlchars/xmlchars.d.ts",
+        "original_sha256": "72dfe9bac2276537ab273ef47e017f3cd488d6df075ff7224903a80d37ba66f6",
+        "final_sha256": "72dfe9bac2276537ab273ef47e017f3cd488d6df075ff7224903a80d37ba66f6"
+      }
+    ]
+  }
+]

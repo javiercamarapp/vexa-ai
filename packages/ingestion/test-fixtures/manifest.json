@@ -1,0 +1,31 @@
+{
+  "label": "SYNTHETIC",
+  "writer": "openpyxl 3.1.5",
+  "generator": "generate.py",
+  "files_sha256": {
+    "openpyxl-basic": "425f38b44a8f1b6fbe51ca9ae0085bdee2833e9d87579b7b5d08097c34e3396d",
+    "openpyxl-multiple-rich-formula": "6a9479b5c3a8d318bdf8e7daac626471c24375f9a5b42651b6206f8d6ad9018d",
+    "openpyxl-metadata": "0baf57348eeb893a28786e2d897cb731e0584357a6bda6d0f0079e91a00210be",
+    "openpyxl-custom-filter": "ab4ac5423f1c260fec78b5e9c9c14ae87b08764c31e88ac553b54896c978aef0",
+    "openpyxl-hidden-and-named-formula": "417a74a2b741a5d6c47baaf70d9433065e5fb429bae1e962f2eba3667fb30857",
+    "bad-protection-child": "a047c0b11644bb1b87f723ce19ab165a1baf6b4ef47713c9eb4706a6f759f80f",
+    "bad-name-child": "33145486e265aa61784974bdf61724d0930846b78c5fffaa16ec7feee5c26f49",
+    "bad-name-scope": "366aa877e161d7583bebc7c4b6320adc25b8b88ad6d9897222bf43db646ac715",
+    "bad-name-external": "a33da70111c50976e3d044c7d5591d5ac48a6043d8ea1c22eba9c1979a795c94",
+    "bad-filter-child": "c149cd4944449d1712cee815fd58a34cf67f5a2e10a63dd8359bb4af17f9e66a",
+    "bad-filter-column": "6b5c5e4ec0f4487cbf730198e4cd7c4f4bb6e9a6ffdc693aae5b8d0d1032230c",
+    "bad-filter-range": "94a31a5348d1f6f2e75fa38788f6a731840bfb65f72a2570b0c060bffc09e8ec",
+    "bad-protection-boolean": "17295a5768971a0e962198979fa3f693f3df9975a5728e19c3b7f03edafb717e",
+    "bad-header-cell": "695402099396a7bc265c0802e9c8be901dcb60561e9e59deaac2343d9702e823",
+    "bad-duplicate-names": "267ca888bc7a8bc14766b380b45ad17c42e736402b4645f9087facd9dd9c8eff",
+    "bad-duplicate-protection": "fa5f1d1c4e0822610b8c5f192627436a3cd8d7caf8122758b5a7a8cf297a6d70",
+    "bad-name-attribute": "ca5f9ac8cc3fbcff0b4527a6e38fe88b3098d3bf8a1a53920c1bd15dfbddf60f",
+    "bad-name-macro": "88fb088c5414fb7d3ddafbe7ab44fb731c77e90b5f06e358cff8ee8bfdf7c144",
+    "bad-print-area": "fd76939408553a7f875a81dab7bc25da05b8f543014716bc68224ba3c4b2f939",
+    "bad-print-sheet": "e1fae0adb6dbbb2cb0ee4ee097a2a69eb15d8843aa7ed2596899ffd2b2c85ead",
+    "bad-sort-range": "c0b3841f29f296d7ebc34d84aeca4c7b9663b700ab1fa7d2634401f68f191a38",
+    "bad-filter-choice": "9a4906405a4942f8bef47e7f71444944286de07482e52b25b6170889a4b65110",
+    "bad-filter-duplicate": "889455014187b235a913c41c4e7598f2c61ff7c7123d651fa4d9997c0d3e098f",
+    "bad-protection-hash-group": "967373d625cdd808dcb5524420f72198d3c4bf1166f0ec61226f3d823dd21026"
+  }
+}

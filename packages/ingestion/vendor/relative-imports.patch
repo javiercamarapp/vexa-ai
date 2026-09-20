@@ -1,0 +1,15 @@
+--- saxes/saxes.js.upstream
++++ saxes/saxes.js
+@@ -1,9 +1,9 @@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.SaxesParser = exports.EVENTS = void 0;
+-const ed5 = require("xmlchars/xml/1.0/ed5");
+-const ed2 = require("xmlchars/xml/1.1/ed2");
+-const NSed3 = require("xmlchars/xmlns/1.0/ed3");
++const ed5 = require("../xmlchars/xml/1.0/ed5");
++const ed2 = require("../xmlchars/xml/1.1/ed2");
++const NSed3 = require("../xmlchars/xmlns/1.0/ed3");
+ var isS = ed5.isS;
+ var isChar10 = ed5.isChar;
+ var isNameStartChar = ed5.isNameStartChar;

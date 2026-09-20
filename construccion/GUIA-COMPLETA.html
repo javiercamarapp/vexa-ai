@@ -2342,7 +2342,7 @@ Alternativa offline una vez listo gate/entorno: <code>python3 orchestration/runn
 <h2>Cierre obligatorio</h2>
 <p><code>task_id, baseline_sha, candidate_sha, fixture_hash, command, exit_code, expected, observed, artifacts, reviewer, pending</code>. Las pruebas/grafo no las edita el candidato. Dos fallos agotan intento; guardar reproducción y pasar a recuperación supervisada, no editar status=accepted. Build/instalación de dependencias se hacen en copia temporal para no mutar el candidato durante el gate.</p></section><section id="F03-03"><h1>F03-03 — Guardar cursor sólo tras commit de página; manejar ventana de actualización y backfill con sobreposición deduplicada.</h1>
 <p><strong>Modalidad:</strong> worker. <strong>Dependencias:</strong> F03-02.
-<strong>Gate:</strong> MISSING — escribir/revisar primero en control-plane.</p>
+<strong>Gate:</strong> PRESENT (no significa PASS).</p>
 <h2>Entrada (leer, no inventar contexto)</h2>
 <ul>
 <li><code>AGENTS.md</code></li>

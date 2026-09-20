@@ -22,6 +22,7 @@ export function candidateInputs(candidate) {
   assert.ok(fs.existsSync(path.join(candidate,'packages/platform/src/db.ts')),'IMPLEMENTATION_MISSING: db.ts');
   const migrations=files.map(f=>{const p=path.join(dir,f);assert.ok(!fs.lstatSync(p).isSymbolicLink(),'SYMLINK migration');return fs.readFileSync(p,'utf8');});
   migrations.workerDelegationsRequired=files.includes('0007_job_leases.sql');
+  migrations.syncRequired=files.includes('0008_sync_cursors.sql');
   return migrations;
 }
 export async function launch({services=false}={}) {

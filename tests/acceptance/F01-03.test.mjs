@@ -1,3 +1,4 @@
+import * as sync from './support/F01-03/sync/oracles.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {candidateInputs,launch,write,denied} from './support/F01-03/harness.mjs';
@@ -14,10 +15,12 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   for(const migration of migrations)h.sql(migration);
   h.sql("NOTIFY pgrst, 'reload schema';");
   if(migrations.workerDelegationsRequired)assert.ok(workers.present(h),'WORKER_MIGRATION_REQUIRED');
+  if(migrations.syncRequired)assert.deepEqual(sync.present(h),sync.tables,'SYNC_MIGRATION_REQUIRED');
   schemaOracle(h);
   const actors={};for(const key of ['a','b','dual','outsider','viewer','analyst','operator'])actors[key]=await h.user();
   const f=seed(h,actors);
   history.seedHistory(h,f);
+  if(sync.present(h).length){f.sync=sync.seed(h,f,actors);await t.test('sync008 backend raw authorization',()=>sync.access(h,f.sync,actors));}
   if(history.present(h).length)await t.test('source history backend authorization',()=>history.access(h,f,actors));
   if(history.present(h).includes('source_heads'))await t.test('owner selection fence cannot bypass via SQL',()=>history.selectionFence(h,f,actors));
   if(uploads.present(h)){

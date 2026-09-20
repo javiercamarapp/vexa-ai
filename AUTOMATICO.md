@@ -2,7 +2,11 @@
 
 Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Programa: [PROGRAMA](PROGRAMA.md). Repositorio canónico `~/vexa`; NO ejecutar en la copia de Escritorio. Las fuentes privadas permanecen locales.
 
-## Cierre único activo — F02-03, aún no aceptado
+## Checkpoint vigente — F02-03 aceptado
+
+**14/60; F02 en3/6.** Commit `f0eb856`: verify03, F02-01/02 y los cuatro jobs CI pass; fuentes/control intactos y cleanup verificado. Accept reejecutó desde copia Git limpia, exit0. Publicar por publisher con opt-in público antes de preparar04. Permanecen pendientes04–06 y validación remota. El relato siguiente conserva el rechazo anterior, no el estado vigente.
+
+## Historial — cierre único F02-03
 
 **13/60**. Recoger resultados terminados antes de abrir más trabajo. F02-03 pasó su examen y F02-01/02, pero fue rechazado por regresión global: lint de efecto React y número de destinos del menú principal. Propuesta de corrección mínima y revisión del smoke offline en curso; no repetir aprobaciones de código inalterado ni aceptar un candidato con regresiones rojas. Después de accept limpio, publicar por publisher y comprobar el SHA remoto antes de avanzar.
 

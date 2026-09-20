@@ -1,6 +1,13 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## F02-03 aceptado — 20-sep
+
+- **14/60**, faseF02 **3/6**. Commit `f0eb8560cc16c92ad30b6aabf77e4c76ad2d857a`.59archivos adoptados; sólo dos componentes cambiaron respecto al candidato rechazado, con revisión independiente del delta.
+- Recheck191 aprobó también la corrección estrecha del smoke sin backend: no oculta errores500 ni secretos. Control congelado en `9098b0a` antes del nuevo prepare.
+- Verify03, F02-01, F02-02 y F01-05 exit0. Cuatro jobs CI pass con fuentes/control intactos y cleanup verificado. Accept volvió a ejecutar03 desde una materialización Git limpia y salió0. Evidencia privada: f0203-official-v2-close-check.json y f0203-official-v2-accept.log.
+- No inferir estabilidad universal del aborto de navegación anterior ni borrar sus logs.04 tiene corrección de guarda pendiente;05/06 tienen P1 de delegación y cobertura pendiente. F02 no está completa y producción/cloud no están acreditados.
+
 ## F02-03: integración iniciada y rechazo global preservado — 20-sep
 
 - Continúa **13/60 aceptadas**, F02 en2/6. Examen03 revisado y congelado en `28726bc`;59archivos de producto adoptados por hash/modo. Verify03, F02-01 y F02-02 salieron0.

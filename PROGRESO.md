@@ -1,6 +1,14 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## F02 completa — F02-06 aceptado,20-sep
+
+- **17/60**, F02 **6/6**, compilada y probada. F02-06 acepta comportamiento existente en `63b97255847e9874e7407769f2647f1cd600a5e7`; no se creó un commit de producto vacío. El worker/UI compartidos se integraron en F02-05 (`9e738b9`).
+- Standalone06: verifyNode22 y acceptGitlimpioNode26,27/27 cada uno,0skip, mutantes0→1→0 y cleanup por IDs. Incluye heartbeat sin progreso, cola/lease/umbrales configurables, cancel/replay, consumidor separado, dispatcher multitenant/coldstarts, refreshAuth, seis estadosUI, CSV e historialCAS. Recibos privados: f0206-verify-current.json y f0206-accept-current.json.
+- Compilación ejecutada en copias temporales por los exámenes; producto sin cambios desde las cuatro regresiones y cuatro jobs CI de05, todos pass/exit0 y huellas/cleanup verificados. Revisiones independientes de producto/control y deltaCSV aprobadas. No se repiten regresiones de código idéntico sin un motivo nuevo.
+- GitHub05 publicado en `63b97255847e9874e7407769f2647f1cd600a5e7`, SHA remoto comprobado y autor/committer reconocidos como javiercamarapp. Publicar este cierre06 con publisher autorizado antes de avanzar aF03.
+- IncidenciaCSV anterior sin causa identificada permanece registrada; exámenes posteriores reforzados verdes no prueban su origen. Auditoría integral final deberá retomar su seguimiento. SupabaseDDL, proveedores reales y producción siguen sin validar; Actions desactivado. Quedan43tareas y la auditoría final.
+
 ## F02-05 aceptado — 20-sep
 
 - **16/60**, F02 **5/6**, producto `9e738b9835a358b684b855fb61a1524fc29b65de`.43archivos revisados: delegaciónSQL007 ligada al tenant e identidad inmutable, worker durable, dispatcher/coldstarts, renovaciónAuth, recuperación y UI de jobs/historial.

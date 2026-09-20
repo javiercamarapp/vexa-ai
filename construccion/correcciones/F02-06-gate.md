@@ -1,4 +1,8 @@
-# F02-06 — corrección externa pendiente de validación completa
+# F02-06 — cierre aceptado con evidencia preservada
+
+## Aceptación formal — 20-sep
+
+Comportamiento existente en `63b97255847e9874e7407769f2647f1cd600a5e7`, sin parche artificial.17/60, F02 en6/6. Standalone06 verifyNode22 y acceptGitlimpioNode26:27/27 cada uno, incluyendo CSVprecondiciones+bytes exactos, UIhistorial/retry/CAS, mutantes y cleanup por IDs. Compilación integrada realizada en TMP. Producto sin cambios desde regresiones01–04/cuatro jobs CI de05. IncidenciaCSV anterior no reproducida y causa desconocida conservadas abajo; seguimiento final, no declaración de reparación. Producción y proveedores siguen pendientes.
 
 ## Evidencia del CSV y precondición de consumo — 20-sep
 

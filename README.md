@@ -3,9 +3,9 @@
 **Carpeta canónica:** `/Users/javiercamaraportepetit/vexa` · fuera de iCloud. Preparación rehecha desde fuentes originales con Astra vía Codex. **No es todavía el SaaS completo ni un deploy.** Estado/recibos: [PROGRESO.md](PROGRESO.md).
 
 ## Estado de construcción — corte 20-sep
-**16/60 tareas aceptadas; F02 en5/6.** Último hito: worker durable F02-05 (`9e738b9`), con leases/fencing, checkpoint atómico, recuperación, delegación acotada y consumidor separado del request. Revisión independiente; verify Node22 y accept Git limpio Node26 pasaron27grupos. Regresiones F02-01/02/03/04 y cuatro jobs CI locales verdes, con huellas y limpieza verificadas. F02-06 sigue pendiente. Actions está desactivado; no acredita producción.
+**17/60 tareas aceptadas; F02 completa en6/6.** Importación, persistencia canónica, worker durable y UI de recuperación integrados. F02-05 (`9e738b9`) y F02-06 (comportamiento existente en `63b9725`, sin parche artificial) pasaron sus27grupos de verifyNode22 y acceptGitlimpioNode26. Compilación integrada, regresiones F02-01/02/03/04 y cuatro jobs CI locales verdes; huellas y limpieza verificadas. Siguiente fase: F03, HubSpot/Zendesk y migración. Actions permanece desactivado; no acredita producción.
 
-Se conserva una incidencia CSV previa no reproducida cuya causa original sigue desconocida. El examen ahora guarda y exige el estado terminal/checkpoint/rechazo antes de descargar, sin relajar los bytes esperados ni añadir reintentos; revisión y rojo/verde específicos aprobados. Seguimiento pendiente en la auditoría final.
+Se conserva una incidenciaCSV previa no reproducida cuya causa original sigue desconocida. El examen guarda/exige estado terminal/checkpoint/rechazo antes de descargar, sin cambiar bytes esperados ni añadir reintentos; revisión y rojo/verde específicos aprobados. Seguimiento pendiente en auditoría integral final.
 
 **Entrega solicitada:** todo el blueprint y lo pedido en los audios, integrado y listo para conectar credenciales/autorizaciones externas sin programar piezas faltantes. El objetivo connection-ready no reduce el alcance ni equivale a validación productiva con cuentas reales. Supabase propio está creado; migraciones remotas y conexión de aplicación siguen pendientes.
 

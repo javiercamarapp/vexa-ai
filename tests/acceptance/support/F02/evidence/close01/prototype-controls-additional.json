@@ -1,0 +1,299 @@
+{
+  "source": "/Users/javiercamaraportepetit/vexa/.runtime/f0201-parser-1789866904789409000/parser",
+  "beforeHashes": {
+    "index.mjs": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d",
+    "csv.mjs": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71",
+    "xlsx.mjs": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+  },
+  "afterHashes": {
+    "index.mjs": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d",
+    "csv.mjs": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71",
+    "xlsx.mjs": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+  },
+  "sourceUnchanged": true,
+  "controlOnly": false,
+  "results": [
+    {
+      "id": "crc",
+      "file": "xlsx.mjs",
+      "from": "if(crc32(out)!==e.crc)fail('XLSX_CRC');",
+      "to": "",
+      "replacement": "first occurrence only",
+      "expected": "ADVERSE_REJECT:crc",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX adversarial crc",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX adversarial crc",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "94f126047851587adc5fcfdf899bfa9ad6b305911fcf729894eebdc8b37804b4"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX adversarial crc",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+        }
+      ],
+      "killed": true
+    },
+    {
+      "id": "size-small",
+      "file": "xlsx.mjs",
+      "from": "if(out.length!==e.raw)fail('XLSX_ZIP_MISMATCH');",
+      "to": "",
+      "replacement": "first occurrence only",
+      "expected": "ADVERSE_REJECT:declared-small",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX adversarial declared-small",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX adversarial declared-small",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "5fb91091984d8fd70450a4b7a3561471a824e1bfbc5a8f47286e2c40f4ca7bab"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX adversarial declared-small",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+        }
+      ],
+      "killed": true
+    },
+    {
+      "id": "size-large",
+      "file": "xlsx.mjs",
+      "from": "if(out.length!==e.raw)fail('XLSX_ZIP_MISMATCH');",
+      "to": "",
+      "replacement": "first occurrence only",
+      "expected": "ADVERSE_REJECT:declared-large",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX adversarial declared-large",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX adversarial declared-large",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "5fb91091984d8fd70450a4b7a3561471a824e1bfbc5a8f47286e2c40f4ca7bab"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX adversarial declared-large",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+        }
+      ],
+      "killed": true
+    },
+    {
+      "id": "duplicate",
+      "file": "xlsx.mjs",
+      "from": "if(entries.has(name))fail('XLSX_ZIP_DUPLICATE');",
+      "to": "",
+      "replacement": "first occurrence only",
+      "expected": "ADVERSE_REJECT:duplicate",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX adversarial duplicate",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX adversarial duplicate",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "c8b33b8f458574fd1de79b1a1472099bd2f03eaa99ef95e40cbcbbf10a7ea6d5"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX adversarial duplicate",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+        }
+      ],
+      "killed": true
+    },
+    {
+      "id": "path-alias",
+      "file": "xlsx.mjs",
+      "from": "  if(!name||name.includes('\\\\')||name.startsWith('/')||name.includes(':')||/[\\x00-\\x1f]/.test(name)||name.split('/').some(s=>s==='..'||s==='.'||s===''))fail('XLSX_PATH');",
+      "to": "",
+      "replacement": "first occurrence only",
+      "expected": "ADVERSE_REJECT:alias-dot",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX adversarial alias-dot",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX adversarial alias-dot",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "c57d50f6ad9f3c62d09cb10db47ab3731284fb909d09e0d5e5b8e5e145b00194"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX adversarial alias-dot",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+        }
+      ],
+      "killed": true
+    },
+    {
+      "id": "actual-budget",
+      "file": "xlsx.mjs",
+      "from": "maxOutputLength:Math.max(1,Math.min(e.raw,cfg.maxExpandedBytes-actual))",
+      "to": "maxOutputLength:2147483647",
+      "replacement": "first occurrence only",
+      "expected": "ACTUAL_EXPANSION_CAP",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX actual expansion observed cap",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX actual expansion observed cap",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "761679a777a59327d608507c0c43486601ce6d30acc853519144264b337d5b1b"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX actual expansion observed cap",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+        }
+      ],
+      "killed": true
+    }
+  ]
+}

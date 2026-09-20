@@ -1,0 +1,26 @@
+[
+  {
+    "file": "tests/acceptance/support/F02/common.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "tests/acceptance/support/F02/mutations.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "tests/acceptance/support/F02/xlsx.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "tests/acceptance/F02-03.test.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "tests/acceptance/F02-04.test.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "tests/acceptance/F02-01.test.mjs",
+    "exit_code": 0
+  }
+]

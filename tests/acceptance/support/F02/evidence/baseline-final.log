@@ -1,0 +1,34 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: IMPLEMENTATION_MISSING: packages/ingestion/index.mjs
+    at ingestion (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-block-1789865317128980000/gates/tests/acceptance/support/F02/common.mjs:8:9)
+    at file:///Users/javiercamaraportepetit/vexa/.runtime/f02-block-1789865317128980000/gates/tests/acceptance/F02-01.test.mjs:5:15
+    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)
+    at async node:internal/modules/esm/loader:650:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v26.7.0
+✖ tests/acceptance/F02-01.test.mjs (41.566ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 45.1125
+
+✖ failing tests:
+
+test at tests/acceptance/F02-01.test.mjs:1:1
+✖ tests/acceptance/F02-01.test.mjs (41.566ms)
+  'test failed'

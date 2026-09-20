@@ -1,0 +1,25 @@
+TAP version 13
+# Subtest: F02-01 streaming abort and consumer break
+not ok 1 - F02-01 streaming abort and consumer break
+  ---
+  duration_ms: 1.201459
+  type: 'test'
+  location: '/Users/javiercamaraportepetit/vexa/.runtime/f02-close-1789869350567408000/gate-fix/tests/acceptance/F02-01.test.mjs:50:221'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection: STREAM_CANCEL_REASON'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    async cancellation (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-close-1789869350567408000/gate-fix/tests/acceptance/support/F02/stream.mjs:19:257)
+    async Test.run (node:internal/test_runner/test:1404:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 54.505583

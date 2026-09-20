@@ -1,0 +1,4 @@
+import fs from 'node:fs';import path from 'node:path';import {createHash} from 'node:crypto';import {adverseIds,fixture,positiveEntities} from './adversarial-xlsx.mjs';
+const dir=new URL('./evidence/close01/fixtures/',import.meta.url);fs.mkdirSync(dir,{recursive:true});const hash=b=>createHash('sha256').update(b).digest('hex');const manifest=[];
+for(const id of adverseIds){const {good,bad,codes,limits}=fixture(id);fs.writeFileSync(new URL(id+'-good.xlsx',dir),good);fs.writeFileSync(new URL(id+'-bad.xlsx',dir),bad);manifest.push({id,goodHash:hash(good),badHash:hash(bad),codes,limits});}
+fs.writeFileSync(new URL('positive-entities.xlsx',dir),positiveEntities());fs.writeFileSync(new URL('fixtures.json',dir),JSON.stringify(manifest,null,2)+'\n');console.log(JSON.stringify({fixtures:manifest.length,dir:path.resolve(dir.pathname)}));

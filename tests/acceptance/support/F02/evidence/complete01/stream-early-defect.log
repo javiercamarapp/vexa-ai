@@ -1,0 +1,12 @@
+file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/stream.mjs:10
+ try {const first=await Promise.race([it.next(),new Promise((_,reject)=>timer=setTimeout(()=>reject(Object.assign(new Error('STREAM_EARLY_EMISSION'),{code:'ERR_ASSERTION'})),1500))]);assert.deepEqual(first,{done:false,value:row(['id','text'],1)},'STREAM_FIRST_ROW');assert.equal(ended,false,'STREAM_SOURCE_NOT_ENDED');release();assert.deepEqual((await it.next()).value,row(['1','end'],2));assert.equal((await it.next()).done,true);assert.equal(closed,true);} finally {clearTimeout(timer);release();await it.return?.();}
+                                                                                                                  ^
+
+Error: STREAM_EARLY_EMISSION
+    at Timeout.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/stream.mjs:10:115)
+    at listOnTimeout (node:internal/timers:685:17)
+    at process.processTimers (node:internal/timers:618:7) {
+  code: 'ERR_ASSERTION'
+}
+
+Node.js v26.7.0

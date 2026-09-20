@@ -1,0 +1,92 @@
+TAP version 13
+# Subtest: F02-01 independent XML paired positive retains numeric text
+ok 1 - F02-01 independent XML paired positive retains numeric text
+  ---
+  duration_ms: 3.135583
+  type: 'test'
+  ...
+# Subtest: F02-01 independent XML rejects duplicate-sheetdata instead of silently losing/interpreting data
+not ok 2 - F02-01 independent XML rejects duplicate-sheetdata instead of silently losing/interpreting data
+  ---
+  duration_ms: 1.010334
+  type: 'test'
+  location: '/Users/javiercamaraportepetit/vexa/.runtime/f0201-final-gate-1789870362831314000/tests/acceptance/support/F02/xml-cardinality-regressions.mjs:24:5'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception: OOXML_REJECTION_REQUIRED:duplicate-sheetdata'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f0201-final-gate-1789870362831314000/tests/acceptance/support/F02/xml-cardinality-regressions.mjs:25:14)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: F02-01 independent XML rejects duplicate-value instead of silently losing/interpreting data
+not ok 3 - F02-01 independent XML rejects duplicate-value instead of silently losing/interpreting data
+  ---
+  duration_ms: 0.355666
+  type: 'test'
+  location: '/Users/javiercamaraportepetit/vexa/.runtime/f0201-final-gate-1789870362831314000/tests/acceptance/support/F02/xml-cardinality-regressions.mjs:24:5'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception: OOXML_REJECTION_REQUIRED:duplicate-value'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f0201-final-gate-1789870362831314000/tests/acceptance/support/F02/xml-cardinality-regressions.mjs:25:14)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: F02-01 independent XML rejects alternate-content instead of silently losing/interpreting data
+not ok 4 - F02-01 independent XML rejects alternate-content instead of silently losing/interpreting data
+  ---
+  duration_ms: 0.376583
+  type: 'test'
+  location: '/Users/javiercamaraportepetit/vexa/.runtime/f0201-final-gate-1789870362831314000/tests/acceptance/support/F02/xml-cardinality-regressions.mjs:24:5'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception: OOXML_REJECTION_REQUIRED:alternate-content'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f0201-final-gate-1789870362831314000/tests/acceptance/support/F02/xml-cardinality-regressions.mjs:25:14)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: F02-01 independent XML rejects foreign-richtext instead of silently losing/interpreting data
+not ok 5 - F02-01 independent XML rejects foreign-richtext instead of silently losing/interpreting data
+  ---
+  duration_ms: 0.284459
+  type: 'test'
+  location: '/Users/javiercamaraportepetit/vexa/.runtime/f0201-final-gate-1789870362831314000/tests/acceptance/support/F02/xml-cardinality-regressions.mjs:24:5'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception: OOXML_REJECTION_REQUIRED:foreign-richtext'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f0201-final-gate-1789870362831314000/tests/acceptance/support/F02/xml-cardinality-regressions.mjs:25:14)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 1
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 61.472958

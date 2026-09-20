@@ -1,0 +1,20 @@
+{
+  "controlOnly": true,
+  "reader": "Python stdlib csv.reader; real bytes; no limit/cancel implementation",
+  "results": [
+    {
+      "id": "early",
+      "before": 0,
+      "defect": 1,
+      "restored": 0,
+      "assertion": "STREAM_EARLY_EMISSION"
+    },
+    {
+      "id": "split",
+      "before": 0,
+      "defect": 1,
+      "restored": 0,
+      "assertion": "STREAM_SPLIT_"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "baseline_sha": "8340d26e1c6463ed6ccd158ee2a6ed4d202bc987",
+  "bank_sha": "5fbf2230b76d24e19cad966f97a136b661d03aaa",
+  "bank_source_sha256": "53928bdf9a751fc3efa58b7b794b4de38134e34fc84ec7dc59e4b93a40a104f8",
+  "runs": [
+    {
+      "name": "baseline-final",
+      "argv": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "tests/acceptance/F02-01.test.mjs"
+      ],
+      "candidate": null,
+      "exit": 1,
+      "log": "baseline-final.log"
+    },
+    {
+      "name": "bank-final",
+      "argv": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "tests/acceptance/F02-01.test.mjs"
+      ],
+      "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/closure-1789847917909284000/connected",
+      "exit": 1,
+      "log": "bank-final.log"
+    },
+    {
+      "name": "stream-final",
+      "argv": [
+        "node",
+        "tests/acceptance/support/F02/control-stream.mjs"
+      ],
+      "candidate": null,
+      "exit": 0,
+      "log": "stream-final.log"
+    },
+    {
+      "name": "syntax",
+      "exit": 0,
+      "node": "all top-level F02 mjs + F02-01 gate",
+      "python": "ast.parse all top-level F02 py; no pycache"
+    },
+    {
+      "name": "git diff --check",
+      "exit": 0,
+      "output": ""
+    }
+  ],
+  "final_control_commands": [
+    {
+      "argv": [
+        "node",
+        "tests/acceptance/support/F02/control-xlsx.mjs"
+      ],
+      "exit": 0,
+      "evidence": "xlsx-controls.json; xlsx-*-before/defect/restored.log"
+    },
+    {
+      "argv": [
+        "node",
+        "tests/acceptance/support/F02/control-stream.mjs"
+      ],
+      "exit": 0,
+      "evidence": "stream-controls.json; stream-*-before/defect/restored.log"
+    }
+  ],
+  "syntax_final": "all mjs node --check and py ast.parse exit0"
+}

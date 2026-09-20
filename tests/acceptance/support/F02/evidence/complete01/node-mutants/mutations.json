@@ -1,0 +1,67 @@
+{
+  "source": "/Users/javiercamaraportepetit/vexa/.runtime/closure-1789847917909284000/connected",
+  "source_hash": "53928bdf9a751fc3efa58b7b794b4de38134e34fc84ec7dc59e4b93a40a104f8",
+  "results": [
+    {
+      "id": "bytes",
+      "before": 0,
+      "mutant": 1,
+      "after": 0,
+      "expected": "EXPECTED_REJECTION:CSV_LIMIT_BYTES",
+      "killed": true
+    },
+    {
+      "id": "columns",
+      "before": 0,
+      "mutant": 1,
+      "after": 0,
+      "expected": "EXPECTED_REJECTION:CSV_LIMIT_COLUMNS",
+      "killed": true
+    },
+    {
+      "id": "field",
+      "before": 0,
+      "mutant": 1,
+      "after": 0,
+      "expected": "EXPECTED_REJECTION:CSV_LIMIT_FIELD",
+      "killed": true
+    },
+    {
+      "id": "rows",
+      "before": 0,
+      "mutant": 1,
+      "after": 0,
+      "expected": "EXPECTED_REJECTION:CSV_LIMIT_ROWS",
+      "killed": true
+    },
+    {
+      "id": "truncation",
+      "before": 0,
+      "mutant": 1,
+      "after": 0,
+      "expected": "CSV_TRUNCATED_ROW_COUNT",
+      "killed": true
+    },
+    {
+      "id": "execution",
+      "before": 0,
+      "mutant": 1,
+      "after": 0,
+      "expected": "HTML_EXECUTION",
+      "killed": true
+    },
+    {
+      "id": "formula",
+      "before": 0,
+      "mutant": 1,
+      "after": 0,
+      "expected": "HYPERLINK",
+      "killed": true
+    }
+  ],
+  "unproven": [
+    "XLSX zipbomb/formula/expanded boundaries: binding absent",
+    "browser/network beyond fetch and eval",
+    "durable DB, Auth, Storage, worker"
+  ]
+}

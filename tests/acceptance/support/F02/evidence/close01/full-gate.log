@@ -1,0 +1,364 @@
+TAP version 13
+# Subtest: F02-01 CSV UTF8 BOM multiline escaped quotes and physical row
+ok 1 - F02-01 CSV UTF8 BOM multiline escaped quotes and physical row
+  ---
+  duration_ms: 0.92475
+  type: 'test'
+  ...
+# Subtest: F02-01 CSV encoding invalid UTF8
+ok 2 - F02-01 CSV encoding invalid UTF8
+  ---
+  duration_ms: 0.201375
+  type: 'test'
+  ...
+# Subtest: F02-01 CSV encoding NUL
+ok 3 - F02-01 CSV encoding NUL
+  ---
+  duration_ms: 0.0525
+  type: 'test'
+  ...
+# Subtest: F02-01 CSV encoding surrogate
+ok 4 - F02-01 CSV encoding surrogate
+  ---
+  duration_ms: 0.038042
+  type: 'test'
+  ...
+# Subtest: F02-01 CSV truncated quoted record retains reason and line
+ok 5 - F02-01 CSV truncated quoted record retains reason and line
+  ---
+  duration_ms: 0.073833
+  type: 'test'
+  ...
+# Subtest: F02-01 CSV byte boundary uses UTF8 bytes
+ok 6 - F02-01 CSV byte boundary uses UTF8 bytes
+  ---
+  duration_ms: 0.061
+  type: 'test'
+  ...
+# Subtest: F02-01 CSV column boundary
+ok 7 - F02-01 CSV column boundary
+  ---
+  duration_ms: 0.066834
+  type: 'test'
+  ...
+# Subtest: F02-01 CSV field boundary
+ok 8 - F02-01 CSV field boundary
+  ---
+  duration_ms: 0.062375
+  type: 'test'
+  ...
+# Subtest: F02-01 CSV row boundary precise custom limit
+ok 9 - F02-01 CSV row boundary precise custom limit
+  ---
+  duration_ms: 0.082916
+  type: 'test'
+  ...
+# Subtest: F02-01 50000 data rows accepted; row 50001 rejected with location
+ok 10 - F02-01 50000 data rows accepted; row 50001 rejected with location
+  ---
+  duration_ms: 530.023792
+  type: 'test'
+  ...
+# Subtest: F02-01 configured 20MiB compressed boundary independent of field size
+ok 11 - F02-01 configured 20MiB compressed boundary independent of field size
+  ---
+  duration_ms: 877.686208
+  type: 'test'
+  ...
+# Subtest: F02-01 default 20MiB policy accepts 9MiB bounded fields
+ok 12 - F02-01 default 20MiB policy accepts 9MiB bounded fields
+  ---
+  duration_ms: 200.896875
+  type: 'test'
+  ...
+# Subtest: F02-01 message 2000 allowed and 2001 rejected by row
+ok 13 - F02-01 message 2000 allowed and 2001 rejected by row
+  ---
+  duration_ms: 0.383625
+  type: 'test'
+  ...
+# Subtest: F02-01 unknown customer/SKU remain null
+ok 14 - F02-01 unknown customer/SKU remain null
+  ---
+  duration_ms: 0.065042
+  type: 'test'
+  ...
+# Subtest: F02-01 CSV formulas/HTML are inert strings; no fetch/eval
+ok 15 - F02-01 CSV formulas/HTML are inert strings; no fetch/eval
+  ---
+  duration_ms: 0.131
+  type: 'test'
+  ...
+# Subtest: F02-01 amount invalid cannot become accounting zero or value
+ok 16 - F02-01 amount invalid cannot become accounting zero or value
+  ---
+  duration_ms: 0.241375
+  type: 'test'
+  ...
+# Subtest: F02-01 amount formula cannot become accounting zero or value
+ok 17 - F02-01 amount formula cannot become accounting zero or value
+  ---
+  duration_ms: 0.084542
+  type: 'test'
+  ...
+# Subtest: F02-01 streaming emits before source ends
+ok 18 - F02-01 streaming emits before source ends
+  ---
+  duration_ms: 0.332292
+  type: 'test'
+  ...
+# Subtest: F02-01 streaming all UTF8 quotes CRLF split positions
+ok 19 - F02-01 streaming all UTF8 quotes CRLF split positions
+  ---
+  duration_ms: 1.196041
+  type: 'test'
+  ...
+# Subtest: F02-01 streaming abort and consumer break
+ok 20 - F02-01 streaming abort and consumer break
+  ---
+  duration_ms: 0.232333
+  type: 'test'
+  ...
+# Subtest: F02-01 streaming bounded consumption after rejection
+ok 21 - F02-01 streaming bounded consumption after rejection
+  ---
+  duration_ms: 0.200417
+  type: 'test'
+  ...
+# Subtest: F02-01 streaming malformed UTF8 and truncated quote
+ok 22 - F02-01 streaming malformed UTF8 and truncated quote
+  ---
+  duration_ms: 0.120708
+  type: 'test'
+  ...
+# Subtest: F02-01 message length is Unicode codepoints not UTF8 or UTF16
+ok 23 - F02-01 message length is Unicode codepoints not UTF8 or UTF16
+  ---
+  duration_ms: 0.392208
+  type: 'test'
+  ...
+# Subtest: F02-01 CSV UTF8 bytes distinct from Unicode points
+ok 24 - F02-01 CSV UTF8 bytes distinct from Unicode points
+  ---
+  duration_ms: 0.050417
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX valid actual cells and 10 sheets
+ok 25 - F02-01 XLSX valid actual cells and 10 sheets
+  ---
+  duration_ms: 9.972583
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX compressed bytes exact and minus one
+ok 26 - F02-01 XLSX compressed bytes exact and minus one
+  ---
+  duration_ms: 0.4725
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX expanded bytes every member exact and minus one
+ok 27 - F02-01 XLSX expanded bytes every member exact and minus one
+  ---
+  duration_ms: 0.4625
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX zipbomb real compressed content
+ok 28 - F02-01 XLSX zipbomb real compressed content
+  ---
+  duration_ms: 49.357458
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX 11 sheets
+ok 29 - F02-01 XLSX 11 sheets
+  ---
+  duration_ms: 0.877125
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX external refs
+ok 30 - F02-01 XLSX external refs
+  ---
+  duration_ms: 0.313792
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX macro part and relationship
+ok 31 - F02-01 XLSX macro part and relationship
+  ---
+  duration_ms: 0.208417
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX cached formula blocked
+ok 32 - F02-01 XLSX cached formula blocked
+  ---
+  duration_ms: 0.280042
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX truncated ZIP
+ok 33 - F02-01 XLSX truncated ZIP
+  ---
+  duration_ms: 0.184291
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX default compressed 20MiB
+ok 34 - F02-01 XLSX default compressed 20MiB
+  ---
+  duration_ms: 1042.266125
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX default expanded 100MiB
+ok 35 - F02-01 XLSX default expanded 100MiB
+  ---
+  duration_ms: 5777.932417
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX reject before any observed expansion
+ok 36 - F02-01 XLSX reject before any observed expansion
+  ---
+  duration_ms: 76.729625
+  type: 'test'
+  ...
+# Subtest: F02-01 streaming abort interrupts a pending read
+ok 37 - F02-01 streaming abort interrupts a pending read
+  ---
+  duration_ms: 4.713833
+  type: 'test'
+  ...
+# Subtest: F02-01 streaming source error remains failure
+ok 38 - F02-01 streaming source error remains failure
+  ---
+  duration_ms: 0.143042
+  type: 'test'
+  ...
+# Subtest: F02-01 default CSV 20MiB exact and overflow with bounded fields
+ok 39 - F02-01 default CSV 20MiB exact and overflow with bounded fields
+  ---
+  duration_ms: 802.309541
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial positive-entities
+ok 40 - F02-01 XLSX adversarial positive-entities
+  ---
+  duration_ms: 48.232667
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial crc
+ok 41 - F02-01 XLSX adversarial crc
+  ---
+  duration_ms: 45.128125
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial declared-small
+ok 42 - F02-01 XLSX adversarial declared-small
+  ---
+  duration_ms: 44.941666
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial declared-large
+ok 43 - F02-01 XLSX adversarial declared-large
+  ---
+  duration_ms: 44.647459
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial actual-deflate-budget
+ok 44 - F02-01 XLSX adversarial actual-deflate-budget
+  ---
+  duration_ms: 82.01425
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial actual-store-budget
+ok 45 - F02-01 XLSX adversarial actual-store-budget
+  ---
+  duration_ms: 84.216792
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial duplicate
+ok 46 - F02-01 XLSX adversarial duplicate
+  ---
+  duration_ms: 44.720875
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial alias-dot
+ok 47 - F02-01 XLSX adversarial alias-dot
+  ---
+  duration_ms: 44.966292
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial escape-dotdot
+ok 48 - F02-01 XLSX adversarial escape-dotdot
+  ---
+  duration_ms: 44.851875
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial escape-absolute
+ok 49 - F02-01 XLSX adversarial escape-absolute
+  ---
+  duration_ms: 44.442125
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial escape-backslash
+ok 50 - F02-01 XLSX adversarial escape-backslash
+  ---
+  duration_ms: 46.063583
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial relationship-escape
+ok 51 - F02-01 XLSX adversarial relationship-escape
+  ---
+  duration_ms: 46.220875
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial relationship-encoded
+ok 52 - F02-01 XLSX adversarial relationship-encoded
+  ---
+  duration_ms: 45.230584
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial xml-dtd-internal
+ok 53 - F02-01 XLSX adversarial xml-dtd-internal
+  ---
+  duration_ms: 45.765833
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial xml-dtd-external
+ok 54 - F02-01 XLSX adversarial xml-dtd-external
+  ---
+  duration_ms: 45.188416
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial xml-dtd-file
+ok 55 - F02-01 XLSX adversarial xml-dtd-file
+  ---
+  duration_ms: 45.2675
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial xml-unknown-entity
+ok 56 - F02-01 XLSX adversarial xml-unknown-entity
+  ---
+  duration_ms: 46.102875
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial zip64
+ok 57 - F02-01 XLSX adversarial zip64
+  ---
+  duration_ms: 45.377208
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX actual expansion observed cap
+ok 58 - F02-01 XLSX actual expansion observed cap
+  ---
+  duration_ms: 82.652166
+  type: 'test'
+  ...
+# Subtest: F02-01 normalized NFC message counts published codepoints
+ok 59 - F02-01 normalized NFC message counts published codepoints
+  ---
+  duration_ms: 0.64075
+  type: 'test'
+  ...
+1..59
+# tests 59
+# suites 0
+# pass 59
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10425.380625

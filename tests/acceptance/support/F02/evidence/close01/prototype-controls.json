@@ -1,0 +1,487 @@
+{
+  "source": "/Users/javiercamaraportepetit/vexa/.runtime/f0201-parser-1789866904789409000/parser",
+  "beforeHashes": {
+    "index.mjs": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d",
+    "csv.mjs": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71",
+    "xlsx.mjs": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+  },
+  "afterHashes": {
+    "index.mjs": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d",
+    "csv.mjs": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71",
+    "xlsx.mjs": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+  },
+  "sourceUnchanged": true,
+  "controlOnly": false,
+  "results": [
+    {
+      "id": "cancel-close",
+      "file": "csv.mjs",
+      "from": "Promise.resolve(iterator.return?.()).catch(()=>{});",
+      "to": "Promise.resolve().catch(()=>{});",
+      "replacement": "first occurrence only",
+      "expected": "STREAM_CANCEL_CLOSE",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=streaming abort and consumer break",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=streaming abort and consumer break",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "6edbfa96f07b002e1df72bb61d944101ab37a10515e1cfcc10759fa2614e90ae"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=streaming abort and consumer break",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71"
+        }
+      ],
+      "killed": true
+    },
+    {
+      "id": "break-close",
+      "file": "csv.mjs",
+      "from": "else await iterator.return?.();",
+      "to": "else void 0;",
+      "replacement": "first occurrence only",
+      "expected": "STREAM_BREAK_CLOSE",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=streaming abort and consumer break",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=streaming abort and consumer break",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "563f1e0f0d03338158d9088af2d99a7120788b03650e022938ecef32150a17c7"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=streaming abort and consumer break",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71"
+        }
+      ],
+      "killed": true
+    },
+    {
+      "id": "pending-abort",
+      "file": "csv.mjs",
+      "from": "const abort=()=>{const e=new IngestionError('CSV_CANCELLED');",
+      "to": "const abort=()=>{const e=new IngestionError('CSV_ENCODING');",
+      "replacement": "first occurrence only",
+      "expected": "STREAM_PENDING_ABORT",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=streaming abort interrupts a pending read",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=streaming abort interrupts a pending read",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "54c3b7cf049241e819b152c2b70fd434d2a693f2d3a83ae6efb88dc9068eadf9"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=streaming abort interrupts a pending read",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71"
+        }
+      ],
+      "killed": true
+    },
+    {
+      "id": "consumption",
+      "file": "csv.mjs",
+      "from": "}finally{",
+      "to": "}catch(error){await iterator.next();throw error;}finally{",
+      "replacement": "first occurrence only",
+      "expected": "STREAM_CONSUMPTION_CSV_LIMIT_BYTES",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=streaming bounded consumption after rejection",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=streaming bounded consumption after rejection",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "76c915e55577087fc62f730b2135566de3a23d7833375c2a0501b4b28285847f"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=streaming bounded consumption after rejection",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71"
+        }
+      ],
+      "killed": true
+    },
+    {
+      "id": "rows-normalized",
+      "file": "index.mjs",
+      "from": "? 50001 : limits.maxRows+1",
+      "to": "? 50002 : limits.maxRows+1",
+      "replacement": "first occurrence only",
+      "expected": "Missing expected exception",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=50000 data rows accepted",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=50000 data rows accepted",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "6879a74f6abfc9fd9c97dcfa848365a4759cf4ead49881bf03f2ec288f824c2d"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=50000 data rows accepted",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d"
+        }
+      ],
+      "killed": true
+    },
+    {
+      "id": "unicode",
+      "file": "index.mjs",
+      "from": "[...data.text.normalize('NFC')].length>2000",
+      "to": "data.text.normalize('NFC').length>2000",
+      "replacement": "first occurrence only",
+      "expected": "MESSAGE_CODEPOINT_LIMIT",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=message length is Unicode codepoints",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=message length is Unicode codepoints",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "31078b5f95976310844f5abb4cc81eb0d25a10ca052082ac2b380dc533127ae9"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=message length is Unicode codepoints",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d"
+        }
+      ],
+      "killed": true
+    },
+    {
+      "id": "message-limit",
+      "file": "index.mjs",
+      "from": "[...data.text.normalize('NFC')].length>2000",
+      "to": "[...data.text.normalize('NFC')].length>2001",
+      "replacement": "first occurrence only",
+      "expected": "MESSAGE_LIMIT_2000",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=message 2000 allowed",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=message 2000 allowed",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "933666a1e857a913a24e9b81b2040c83cbb3fe03c0254e7b92bee61c09a47d5e"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=message 2000 allowed",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d"
+        }
+      ],
+      "killed": true
+    },
+    {
+      "id": "invalid-zero",
+      "file": "index.mjs",
+      "from": "fail('INVALID_AMOUNT','amount');",
+      "to": "return {amount_minor:'0',currency,exponent:2};",
+      "replacement": "first occurrence only",
+      "expected": "ACCOUNTING_AMOUNT_REJECTED",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=amount invalid cannot",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=amount invalid cannot",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "590aa9446a3889a340535bcd5da5d569e5d5fa759855723d1383ddffb953cc4b"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=amount invalid cannot",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d"
+        }
+      ],
+      "killed": true
+    },
+    {
+      "id": "formula-zero",
+      "file": "index.mjs",
+      "from": "fail('INVALID_AMOUNT','amount');",
+      "to": "return {amount_minor:'0',currency,exponent:2};",
+      "replacement": "first occurrence only",
+      "expected": "ACCOUNTING_AMOUNT_REJECTED",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=amount formula cannot",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=amount formula cannot",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "590aa9446a3889a340535bcd5da5d569e5d5fa759855723d1383ddffb953cc4b"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=amount formula cannot",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d"
+        }
+      ],
+      "killed": true
+    },
+    {
+      "id": "pre-expansion",
+      "file": "xlsx.mjs",
+      "from": "if(input.byteLength>cfg.maxBytes)fail('XLSX_LIMIT_BYTES');",
+      "to": "if(input.byteLength>cfg.maxBytes)fail('XLSX_LIMIT_BYTES');\n const premature=Buffer.from(input);if(premature.readUInt16LE(8)===8)inflateRawSync(premature.subarray(30+premature.readUInt16LE(26)+premature.readUInt16LE(28),30+premature.readUInt16LE(26)+premature.readUInt16LE(28)+premature.readUInt32LE(18)));",
+      "replacement": "first occurrence only",
+      "expected": "XLSX_PREEXPANSION_NO_INFLATE",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX reject before any observed expansion",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX reject before any observed expansion",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "9142137bcd34ecabc9718126317179f41cfc9895474ad191c968b9e03c3b2101"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX reject before any observed expansion",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+        }
+      ],
+      "killed": true
+    }
+  ]
+}

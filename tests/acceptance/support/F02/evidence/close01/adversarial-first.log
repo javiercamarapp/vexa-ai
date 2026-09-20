@@ -1,0 +1,118 @@
+TAP version 13
+# Subtest: F02-01 XLSX adversarial positive-entities
+ok 1 - F02-01 XLSX adversarial positive-entities
+  ---
+  duration_ms: 46.887125
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial crc
+ok 2 - F02-01 XLSX adversarial crc
+  ---
+  duration_ms: 48.132083
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial declared-small
+ok 3 - F02-01 XLSX adversarial declared-small
+  ---
+  duration_ms: 45.413625
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial declared-large
+ok 4 - F02-01 XLSX adversarial declared-large
+  ---
+  duration_ms: 47.6005
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial actual-deflate-budget
+ok 5 - F02-01 XLSX adversarial actual-deflate-budget
+  ---
+  duration_ms: 84.658333
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial actual-store-budget
+ok 6 - F02-01 XLSX adversarial actual-store-budget
+  ---
+  duration_ms: 84.775875
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial duplicate
+ok 7 - F02-01 XLSX adversarial duplicate
+  ---
+  duration_ms: 44.287167
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial alias-dot
+ok 8 - F02-01 XLSX adversarial alias-dot
+  ---
+  duration_ms: 45.463333
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial escape-dotdot
+ok 9 - F02-01 XLSX adversarial escape-dotdot
+  ---
+  duration_ms: 43.939709
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial escape-absolute
+ok 10 - F02-01 XLSX adversarial escape-absolute
+  ---
+  duration_ms: 43.984208
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial escape-backslash
+ok 11 - F02-01 XLSX adversarial escape-backslash
+  ---
+  duration_ms: 44.495458
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial relationship-escape
+ok 12 - F02-01 XLSX adversarial relationship-escape
+  ---
+  duration_ms: 43.978
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial relationship-encoded
+ok 13 - F02-01 XLSX adversarial relationship-encoded
+  ---
+  duration_ms: 44.511792
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial xml-dtd-internal
+ok 14 - F02-01 XLSX adversarial xml-dtd-internal
+  ---
+  duration_ms: 44.255375
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial xml-dtd-external
+ok 15 - F02-01 XLSX adversarial xml-dtd-external
+  ---
+  duration_ms: 43.795083
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial xml-dtd-file
+ok 16 - F02-01 XLSX adversarial xml-dtd-file
+  ---
+  duration_ms: 45.568708
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial xml-unknown-entity
+ok 17 - F02-01 XLSX adversarial xml-unknown-entity
+  ---
+  duration_ms: 45.317416
+  type: 'test'
+  ...
+# Subtest: F02-01 XLSX adversarial zip64
+ok 18 - F02-01 XLSX adversarial zip64
+  ---
+  duration_ms: 43.991875
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 953.22725

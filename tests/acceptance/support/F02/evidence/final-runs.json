@@ -1,0 +1,55 @@
+[
+  {
+    "name": "baseline-final",
+    "command": [
+      "node",
+      "--test",
+      "tests/acceptance/F02-01.test.mjs"
+    ],
+    "candidate": null,
+    "exit_code": 1,
+    "summary": [
+      "\u2139 tests 1",
+      "\u2139 suites 0",
+      "\u2139 pass 0",
+      "\u2139 fail 1",
+      "\u2139 cancelled 0",
+      "\u2139 skipped 0",
+      "\u2139 todo 0",
+      "\u2139 duration_ms 45.1125"
+    ]
+  },
+  {
+    "name": "bank-final",
+    "command": [
+      "node",
+      "--test",
+      "tests/acceptance/F02-01.test.mjs",
+      "tests/acceptance/F02-03.test.mjs",
+      "tests/acceptance/F02-04.test.mjs"
+    ],
+    "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/closure-1789847917909284000/connected",
+    "exit_code": 1,
+    "summary": [
+      "\u2139 tests 36",
+      "\u2139 suites 0",
+      "\u2139 pass 17",
+      "\u2139 fail 19",
+      "\u2139 cancelled 0",
+      "\u2139 skipped 0",
+      "\u2139 todo 0",
+      "\u2139 duration_ms 1070.973125"
+    ]
+  },
+  {
+    "name": "mutations-recheck",
+    "command": [
+      "node",
+      "tests/acceptance/support/F02/mutations.mjs",
+      "/Users/javiercamaraportepetit/vexa/.runtime/closure-1789847917909284000/connected"
+    ],
+    "candidate": null,
+    "exit_code": 0,
+    "summary": []
+  }
+]

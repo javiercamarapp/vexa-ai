@@ -1,0 +1,340 @@
+{
+  "controlOnly": true,
+  "results": [
+    {
+      "type": "control-positive",
+      "name": "valid actual cells and 10 sheets",
+      "exit": 0
+    },
+    {
+      "type": "control-positive",
+      "name": "compressed bytes exact and minus one",
+      "exit": 0
+    },
+    {
+      "type": "control-positive",
+      "name": "expanded bytes every member exact and minus one",
+      "exit": 0
+    },
+    {
+      "type": "control-positive",
+      "name": "zipbomb real compressed content",
+      "exit": 0
+    },
+    {
+      "type": "control-positive",
+      "name": "11 sheets",
+      "exit": 0
+    },
+    {
+      "type": "control-positive",
+      "name": "external refs",
+      "exit": 0
+    },
+    {
+      "type": "control-positive",
+      "name": "macro part and relationship",
+      "exit": 0
+    },
+    {
+      "type": "control-positive",
+      "name": "cached formula blocked",
+      "exit": 0
+    },
+    {
+      "type": "control-positive",
+      "name": "truncated ZIP",
+      "exit": 0
+    },
+    {
+      "type": "control-positive",
+      "name": "default expanded 100MiB",
+      "exit": 0
+    },
+    {
+      "type": "control-mutation",
+      "id": "bytes",
+      "before": 0,
+      "defect": 1,
+      "restored": 0,
+      "assertion": "EXPECTED_REJECTION:XLSX_LIMIT_BYTES",
+      "observed": "Missing expected exception: EXPECTED_REJECTION:XLSX_LIMIT_BYTES"
+    },
+    {
+      "type": "control-mutation",
+      "id": "expanded",
+      "before": 0,
+      "defect": 1,
+      "restored": 0,
+      "assertion": "EXPECTED_REJECTION:XLSX_LIMIT_EXPANDED",
+      "observed": "Missing expected exception: EXPECTED_REJECTION:XLSX_LIMIT_EXPANDED"
+    },
+    {
+      "type": "control-mutation",
+      "id": "zipbomb",
+      "before": 0,
+      "defect": 1,
+      "restored": 0,
+      "assertion": "EXPECTED_REJECTION:XLSX_LIMIT_EXPANDED",
+      "observed": "Missing expected exception: EXPECTED_REJECTION:XLSX_LIMIT_EXPANDED"
+    },
+    {
+      "type": "control-mutation",
+      "id": "sheets",
+      "before": 0,
+      "defect": 1,
+      "restored": 0,
+      "assertion": "EXPECTED_REJECTION:XLSX_LIMIT_SHEETS",
+      "observed": "Missing expected exception: EXPECTED_REJECTION:XLSX_LIMIT_SHEETS"
+    },
+    {
+      "type": "control-mutation",
+      "id": "external",
+      "before": 0,
+      "defect": 1,
+      "restored": 0,
+      "assertion": "EXPECTED_REJECTION:XLSX_EXTERNAL_LINK",
+      "observed": "Missing expected exception: EXPECTED_REJECTION:XLSX_EXTERNAL_LINK"
+    },
+    {
+      "type": "control-mutation",
+      "id": "macros",
+      "before": 0,
+      "defect": 1,
+      "restored": 0,
+      "assertion": "EXPECTED_REJECTION:XLSX_MACROS",
+      "observed": "Missing expected exception: EXPECTED_REJECTION:XLSX_MACROS"
+    },
+    {
+      "type": "control-mutation",
+      "id": "formula",
+      "before": 0,
+      "defect": 1,
+      "restored": 0,
+      "assertion": "FORMULA_CACHED_VALUE_FORBIDDEN",
+      "observed": "FORMULA_CACHED_VALUE_FORBIDDEN\n\n'2' !== null\n"
+    },
+    {
+      "type": "control-mutation",
+      "id": "pre-expansion",
+      "before": 0,
+      "defect": 1,
+      "restored": 0,
+      "assertion": "PREEXPANSION_ZERO_READS",
+      "observed": "PREEXPANSION_ZERO_READS\n+ actual - expected\n\n+ [\n+   'padding.xml'\n+ ]\n- []\n"
+    }
+  ],
+  "fixtures": [
+    {
+      "args": {},
+      "sha256": "b2519d1213712f471cc06be420360dc7e726400cc5855bc78932d7f072b73307",
+      "sheets": 1,
+      "cells": [
+        [
+          "SYNTHETIC",
+          "1001"
+        ]
+      ],
+      "expanded": 1414,
+      "crc": "verified",
+      "relationships": "verified",
+      "xpath": "verified"
+    },
+    {
+      "args": {
+        "sheets": 10
+      },
+      "sha256": "312a3660da9f151f8138a751b0df7ebe25b6d413a402085bd2654c44e61c8def",
+      "sheets": 10,
+      "cells": [
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ]
+      ],
+      "expanded": 6154,
+      "crc": "verified",
+      "relationships": "verified",
+      "xpath": "verified"
+    },
+    {
+      "args": {
+        "sheets": 11
+      },
+      "sha256": "3b587ba627bc60ab1069f39ccadbba7c1514933e9f166b87e45b382e542b0d5a",
+      "sheets": 11,
+      "cells": [
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ],
+        [
+          "SYNTHETIC",
+          "1001"
+        ]
+      ],
+      "expanded": 6686,
+      "crc": "verified",
+      "relationships": "verified",
+      "xpath": "verified"
+    },
+    {
+      "args": {
+        "formula": true
+      },
+      "sha256": "ff2e4d6223fceb9b6be96d18bb0d425d061420823e2e11cc8bd11426587d653e",
+      "sheets": 1,
+      "cells": [
+        [
+          "SYNTHETIC",
+          "2"
+        ]
+      ],
+      "expanded": 1421,
+      "crc": "verified",
+      "relationships": "verified",
+      "xpath": "verified"
+    },
+    {
+      "args": {
+        "external": true
+      },
+      "sha256": "8ac0a80b2a32c040d3bcf8b07aacf441596a642381f25b697862a896cf297103",
+      "sheets": 1,
+      "cells": [
+        [
+          "SYNTHETIC",
+          "1001"
+        ]
+      ],
+      "expanded": 1593,
+      "crc": "verified",
+      "relationships": "verified",
+      "xpath": "verified"
+    },
+    {
+      "args": {
+        "macro": true
+      },
+      "sha256": "f3d7426979a600b39a8d85558c6845cb96a2a38f2b04f716a45c7179302a9f3c",
+      "sheets": 1,
+      "cells": [
+        [
+          "SYNTHETIC",
+          "1001"
+        ]
+      ],
+      "expanded": 1666,
+      "crc": "verified",
+      "relationships": "verified",
+      "xpath": "verified"
+    },
+    {
+      "args": {
+        "padding": 1048576
+      },
+      "sha256": "5d9e55a636bde5d0ea87cfbf3958d8c999f8a5013f54bd82b7e8a6987f51a6d9",
+      "sheets": 1,
+      "cells": [
+        [
+          "SYNTHETIC",
+          "1001"
+        ]
+      ],
+      "expanded": 1050009,
+      "crc": "verified",
+      "relationships": "verified",
+      "xpath": "verified"
+    },
+    {
+      "args": {
+        "label": "OTHER",
+        "value": "37"
+      },
+      "sha256": "acaef6258c3067eeba7a31a7db273af16eac9f2cf9d493efd2f626c6607903f5",
+      "sheets": 1,
+      "cells": [
+        [
+          "OTHER",
+          "37"
+        ]
+      ],
+      "expanded": 1408,
+      "crc": "verified",
+      "relationships": "verified",
+      "xpath": "verified"
+    }
+  ]
+}

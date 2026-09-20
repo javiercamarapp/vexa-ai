@@ -1,0 +1,25 @@
+{
+  "exit": 0,
+  "files": [
+    "tests/acceptance/F02-01.test.mjs",
+    "tests/acceptance/support/F02/probe-adversarial.mjs",
+    "tests/acceptance/support/F02/preexpand.mjs",
+    "tests/acceptance/support/F02/probe-xlsx.mjs",
+    "tests/acceptance/support/F02/export-adversarial.mjs",
+    "tests/acceptance/support/F02/probe-expanded.mjs",
+    "tests/acceptance/support/F02/common.mjs",
+    "tests/acceptance/support/F02/control-xlsx.mjs",
+    "tests/acceptance/support/F02/xlsx-oracles.mjs",
+    "tests/acceptance/support/F02/mutations.mjs",
+    "tests/acceptance/support/F02/xlsx.mjs",
+    "tests/acceptance/support/F02/control-prototype.mjs",
+    "tests/acceptance/support/F02/control-stream.mjs",
+    "tests/acceptance/support/F02/stream.mjs",
+    "tests/acceptance/support/F02/adversarial-xlsx.mjs",
+    "tests/acceptance/support/F02/verify-prototype.py",
+    "tests/acceptance/support/F02/fixture-validate.py",
+    "tests/acceptance/support/F02/zip-reader.py",
+    "tests/acceptance/support/F02/validate-adversarial.py"
+  ],
+  "python": "ast.parse; no cache"
+}

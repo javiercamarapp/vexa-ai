@@ -1,0 +1,28 @@
+TAP version 13
+# Subtest: F02-01 CSV byte boundary uses UTF8 bytes
+not ok 1 - F02-01 CSV byte boundary uses UTF8 bytes
+  ---
+  duration_ms: 0.877792
+  type: 'test'
+  location: '/Users/javiercamaraportepetit/vexa/.runtime/f02-block-1789865317128980000/gates/tests/acceptance/F02-01.test.mjs:15:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception: EXPECTED_REJECTION:CSV_LIMIT_BYTES'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    rejected (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-block-1789865317128980000/gates/tests/acceptance/support/F02/common.mjs:18:42)
+    TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-block-1789865317128980000/gates/tests/acceptance/F02-01.test.mjs:15:106)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.start (node:internal/test_runner/test:1257:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 61.362083

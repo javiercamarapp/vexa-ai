@@ -1,0 +1,45 @@
+{
+  "gate_sha256": "4a231c827e36e8c3663ec89acd39a29c302666978df3379a9e7bfcb0ef9e424d",
+  "source_hashes": {
+    "index.mjs": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d",
+    "csv.mjs": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71",
+    "xlsx.mjs": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+  },
+  "source_receipts_agree": true,
+  "unique_mutants": 19,
+  "gate_tests": 59,
+  "checks": [
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout": "8340d26e1c6463ed6ccd158ee2a6ed4d202bc987\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "exit": 0,
+      "stdout": "?? tests/acceptance/F02-01.test.mjs\n?? tests/acceptance/support/F02/\n",
+      "stderr": ""
+    }
+  ],
+  "review": "pending",
+  "accepted": false
+}

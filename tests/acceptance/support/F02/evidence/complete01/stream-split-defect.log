@@ -1,0 +1,40 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: STREAM_SPLIT_1
++ actual - expected
+
+  [
+    {
+      line: 1,
+      type: 'row',
+      values: [
++       '���id',
+-       'id',
+        'text'
+      ]
+    },
+    {
+      line: 2,
+
+    at Array.splitBoundary (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/stream.mjs:15:52)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/control-stream.mjs:26:55 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [
+    { type: 'row', values: [ '���id', 'text' ], line: 1 },
+    { type: 'row', values: [ '1', '😀é,a\nb "Q"' ], line: 2 },
+    { type: 'row', values: [ '2', 'end' ], line: 4 }
+  ],
+  expected: [
+    { type: 'row', values: [ 'id', 'text' ], line: 1 },
+    { type: 'row', values: [ '1', '😀é,a\nb "Q"' ], line: 2 },
+    { type: 'row', values: [ '2', 'end' ], line: 4 }
+  ],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.7.0

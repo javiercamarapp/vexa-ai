@@ -1,0 +1,144 @@
+[
+  {
+    "id": "crc",
+    "goodHash": "b2519d1213712f471cc06be420360dc7e726400cc5855bc78932d7f072b73307",
+    "badHash": "9b9efde94107f362e963e4effcb0e2b0f5d93801d6b632867cc2c9d38de6901d",
+    "codes": [
+      "XLSX_CRC"
+    ]
+  },
+  {
+    "id": "declared-small",
+    "goodHash": "6bc64d7575747ab3bfd90be1d172c3108a2a6d79a9705f97f0f10b82621bc8ba",
+    "badHash": "efe63277584827bd3c5c3f6c1eebcb943584d9482a28d1691bf2f760dd6e4a4e",
+    "codes": [
+      "XLSX_ZIP_MISMATCH"
+    ]
+  },
+  {
+    "id": "declared-large",
+    "goodHash": "c88e533e208fbc53e0f58d05f06c7b34e4c0b7d0f116089871b547ce8988d3ca",
+    "badHash": "592ef414b31d9506ee07b73dc8aa0be292466d42b2e0078670d95911e0799388",
+    "codes": [
+      "XLSX_ZIP_MISMATCH"
+    ]
+  },
+  {
+    "id": "actual-deflate-budget",
+    "goodHash": "5d9e55a636bde5d0ea87cfbf3958d8c999f8a5013f54bd82b7e8a6987f51a6d9",
+    "badHash": "2c45b8c67cf3cab5a06764373d24a051174048f4202bd07c42a337d6b6e63a0d",
+    "codes": [
+      "XLSX_LIMIT_EXPANDED"
+    ],
+    "limits": {
+      "maxExpandedBytes": 100000
+    }
+  },
+  {
+    "id": "actual-store-budget",
+    "goodHash": "98d0e874ce52f007e25695d7d5cdc9cc7a948387c899dfa6d9337bd9160e77be",
+    "badHash": "ae071a950c6a8f065c4cbf399195099851fbe58a22eb52ac700f402ccadb5f89",
+    "codes": [
+      "XLSX_LIMIT_EXPANDED"
+    ],
+    "limits": {
+      "maxExpandedBytes": 100000
+    }
+  },
+  {
+    "id": "duplicate",
+    "goodHash": "b2519d1213712f471cc06be420360dc7e726400cc5855bc78932d7f072b73307",
+    "badHash": "bf84d4d8a33582a6e55033bbf6fc581c54b33cc189f398b75b8aa43caadee4ce",
+    "codes": [
+      "XLSX_ZIP_DUPLICATE"
+    ]
+  },
+  {
+    "id": "alias-dot",
+    "goodHash": "b2519d1213712f471cc06be420360dc7e726400cc5855bc78932d7f072b73307",
+    "badHash": "878b500668e8cafaaf1a20cb72007e27582e2e8bc3fa8cbb614cc04d9766a15d",
+    "codes": [
+      "XLSX_PATH"
+    ]
+  },
+  {
+    "id": "escape-dotdot",
+    "goodHash": "b2519d1213712f471cc06be420360dc7e726400cc5855bc78932d7f072b73307",
+    "badHash": "9aa8f6b9af5674105f5ce416f8622c6f97bd0501c196bcf7f82f2777041adc2b",
+    "codes": [
+      "XLSX_PATH"
+    ]
+  },
+  {
+    "id": "escape-absolute",
+    "goodHash": "b2519d1213712f471cc06be420360dc7e726400cc5855bc78932d7f072b73307",
+    "badHash": "a88c4aad41560b6a9c7d146255aaccfdb3e11ee72965e19740db12cbaf005f07",
+    "codes": [
+      "XLSX_PATH"
+    ]
+  },
+  {
+    "id": "escape-backslash",
+    "goodHash": "b2519d1213712f471cc06be420360dc7e726400cc5855bc78932d7f072b73307",
+    "badHash": "a7483b2f9392f70e4f8c2a03522fb2ea7597cd4f3ff54745ca355e863967ef83",
+    "codes": [
+      "XLSX_PATH"
+    ]
+  },
+  {
+    "id": "relationship-escape",
+    "goodHash": "b2519d1213712f471cc06be420360dc7e726400cc5855bc78932d7f072b73307",
+    "badHash": "81c4e80ab47a22ead1c41af07f3c1686b15d9ee2ffd928f2b784f0db31c3c8c4",
+    "codes": [
+      "XLSX_PATH"
+    ]
+  },
+  {
+    "id": "relationship-encoded",
+    "goodHash": "b2519d1213712f471cc06be420360dc7e726400cc5855bc78932d7f072b73307",
+    "badHash": "040360fc9ee451f640f56f95aef4a5fe7a440c18859d9fc23104531fe5e17eec",
+    "codes": [
+      "XLSX_PATH"
+    ]
+  },
+  {
+    "id": "xml-dtd-internal",
+    "goodHash": "b2519d1213712f471cc06be420360dc7e726400cc5855bc78932d7f072b73307",
+    "badHash": "86fd680fbdbed5a72b0b7150f2260594618e870d0c17e77b84ae365043a0d86c",
+    "codes": [
+      "XLSX_XML"
+    ]
+  },
+  {
+    "id": "xml-dtd-external",
+    "goodHash": "b2519d1213712f471cc06be420360dc7e726400cc5855bc78932d7f072b73307",
+    "badHash": "fa8a548dcba27e5457149d42348460290ac559e4006e414eafcb7ebe68fc39f2",
+    "codes": [
+      "XLSX_XML"
+    ]
+  },
+  {
+    "id": "xml-dtd-file",
+    "goodHash": "b2519d1213712f471cc06be420360dc7e726400cc5855bc78932d7f072b73307",
+    "badHash": "095f8f7c7ffdf8474c41fd237ca6e483b57c51babee4bc6cc897064c176331d0",
+    "codes": [
+      "XLSX_XML"
+    ]
+  },
+  {
+    "id": "xml-unknown-entity",
+    "goodHash": "b2519d1213712f471cc06be420360dc7e726400cc5855bc78932d7f072b73307",
+    "badHash": "8b3008fb894572a204656f5d14bb89bac1ca855943e8d740f71482ce29e7cfb4",
+    "codes": [
+      "XLSX_XML"
+    ]
+  },
+  {
+    "id": "zip64",
+    "goodHash": "b2519d1213712f471cc06be420360dc7e726400cc5855bc78932d7f072b73307",
+    "badHash": "0239c428e944da245ccc09391106a395e3486b12c9c5e1efaea780054f28fa80",
+    "codes": [
+      "XLSX_ZIP_UNSUPPORTED"
+    ]
+  }
+]

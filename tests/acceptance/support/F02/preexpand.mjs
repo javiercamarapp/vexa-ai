@@ -1,0 +1,6 @@
+// Runtime observer: actual Node zlib calls, no candidate self-reported verdict.
+import assert from 'node:assert/strict';import zlib from 'node:zlib';import {syncBuiltinESMExports} from 'node:module';import {workbook} from './xlsx.mjs';import {ingestion,exported} from './common.mjs';
+let calls=0;const originals=new Map();
+for(const name of ['inflateRawSync','inflateSync','unzipSync','inflateRaw','inflate','unzip','createInflateRaw','createInflate','createUnzip']){const descriptor=Object.getOwnPropertyDescriptor(zlib,name);originals.set(name,descriptor);Object.defineProperty(zlib,name,{...descriptor,value:function(...args){calls++;return descriptor.value.apply(this,args);}});}
+syncBuiltinESMExports();
+try{const parse=exported(await ingestion(),'parseXLSX');const good=parse(workbook());assert.equal(good.sheets[0].rows[0].values[0],'SYNTHETIC');if(calls===0){console.error('BLOCKED: INSTRUMENTATION_UNAVAILABLE; review adapter for this reader, not a product defect or mutant kill');process.exitCode=2;}else{calls=0;assert.throws(()=>parse(workbook({padding:1024*1024}),{maxExpandedBytes:100000}),e=>e.code==='XLSX_LIMIT_EXPANDED');assert.equal(calls,0,'XLSX_PREEXPANSION_NO_INFLATE');console.log('XLSX_PREEXPANSION_OBSERVED');}}finally{for(const [name,d]of originals)Object.defineProperty(zlib,name,d);syncBuiltinESMExports();}

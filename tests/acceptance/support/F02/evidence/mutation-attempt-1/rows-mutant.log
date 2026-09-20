@@ -1,0 +1,27 @@
+✖ F02-01 CSV row boundary precise custom limit (0.900667ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 52.307541
+
+✖ failing tests:
+
+test at tests/acceptance/F02-01.test.mjs:18:1
+✖ F02-01 CSV row boundary precise custom limit (0.900667ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception: EXPECTED_REJECTION:CSV_LIMIT_ROWS
+      at rejected (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-block-1789865317128980000/gates/tests/acceptance/support/F02/common.mjs:18:42)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-block-1789865317128980000/gates/tests/acceptance/F02-01.test.mjs:18:112)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }

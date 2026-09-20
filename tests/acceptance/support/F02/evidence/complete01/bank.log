@@ -1,0 +1,566 @@
+✔ F02-01 CSV UTF8 BOM multiline escaped quotes and physical row (6.169708ms)
+✔ F02-01 CSV encoding invalid UTF8 (0.284417ms)
+✔ F02-01 CSV encoding NUL (0.061833ms)
+✔ F02-01 CSV encoding surrogate (0.046708ms)
+✔ F02-01 CSV truncated quoted record retains reason and line (0.10325ms)
+✔ F02-01 CSV byte boundary uses UTF8 bytes (0.063667ms)
+✔ F02-01 CSV column boundary (0.071834ms)
+✔ F02-01 CSV field boundary (0.063375ms)
+✔ F02-01 CSV row boundary precise custom limit (0.081375ms)
+✖ F02-01 50000 data rows accepted; row 50001 rejected with location (247.995834ms)
+✔ F02-01 configured 20MiB compressed boundary independent of field size (946.21325ms)
+✖ F02-01 default 20MiB policy accepts 9MiB bounded fields (3.853416ms)
+✖ F02-01 message 2000 allowed and 2001 rejected by row (19.737416ms)
+✔ F02-01 unknown customer/SKU remain null (0.204625ms)
+✔ F02-01 CSV formulas/HTML are inert strings; no fetch/eval (0.461083ms)
+✖ F02-01 amount invalid cannot become accounting zero or value (0.355125ms)
+✖ F02-01 amount formula cannot become accounting zero or value (0.202667ms)
+✖ F02-01 streaming emits before source ends (0.275917ms)
+✖ F02-01 streaming all UTF8 quotes CRLF split positions (0.147417ms)
+✖ F02-01 streaming abort and consumer break (0.276417ms)
+✖ F02-01 streaming bounded consumption after rejection (0.085125ms)
+✖ F02-01 streaming malformed UTF8 and truncated quote (0.162417ms)
+✖ F02-01 message length is Unicode codepoints not UTF8 or UTF16 (5.177417ms)
+✔ F02-01 CSV UTF8 bytes distinct from Unicode points (0.117416ms)
+✖ F02-01 XLSX valid actual cells and 10 sheets (0.095125ms)
+✖ F02-01 XLSX compressed bytes exact and minus one (0.1885ms)
+✖ F02-01 XLSX expanded bytes every member exact and minus one (0.080625ms)
+✖ F02-01 XLSX zipbomb real compressed content (0.072792ms)
+✖ F02-01 XLSX 11 sheets (0.056416ms)
+✖ F02-01 XLSX external refs (0.064667ms)
+✖ F02-01 XLSX macro part and relationship (0.059541ms)
+✖ F02-01 XLSX cached formula blocked (0.054292ms)
+✖ F02-01 XLSX truncated ZIP (0.0495ms)
+✖ F02-01 XLSX default expanded 100MiB (0.053666ms)
+✖ F02-01 XLSX reject before any observed expansion (98.478875ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 13
+ℹ fail 22
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1907.713291
+
+✖ failing tests:
+
+test at tests/acceptance/F02-01.test.mjs:19:1
+✖ F02-01 50000 data rows accepted; row 50001 rejected with location (247.995834ms)
+  Error [IngestionError]: CSV_LIMIT_ROWS
+      at fail (file:///Users/javiercamaraportepetit/vexa/.runtime/closure-1789847917909284000/connected/packages/ingestion/index.mjs:6:39)
+      at pushRow (file:///Users/javiercamaraportepetit/vexa/.runtime/closure-1789847917909284000/connected/packages/ingestion/index.mjs:85:42)
+      at parseCSV (file:///Users/javiercamaraportepetit/vexa/.runtime/closure-1789847917909284000/connected/packages/ingestion/index.mjs:100:81)
+      at normalizeCSV (file:///Users/javiercamaraportepetit/vexa/.runtime/closure-1789847917909284000/connected/packages/ingestion/index.mjs:106:16)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:21:15)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12) {
+    code: 'CSV_LIMIT_ROWS',
+    field: null
+  }
+
+test at tests/acceptance/F02-01.test.mjs:29:1
+✖ F02-01 default 20MiB policy accepts 9MiB bounded fields (3.853416ms)
+  Error [IngestionError]: CSV_LIMIT_BYTES
+      at fail (file:///Users/javiercamaraportepetit/vexa/.runtime/closure-1789847917909284000/connected/packages/ingestion/index.mjs:6:39)
+      at parseCSV (file:///Users/javiercamaraportepetit/vexa/.runtime/closure-1789847917909284000/connected/packages/ingestion/index.mjs:76:97)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:30:47)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    code: 'CSV_LIMIT_BYTES',
+    field: null
+  }
+
+test at tests/acceptance/F02-01.test.mjs:32:1
+✖ F02-01 message 2000 allowed and 2001 rejected by row (19.737416ms)
+  AssertionError [ERR_ASSERTION]: MESSAGE_LIMIT_2000
+  
+  2 !== 1
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:34:9)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:43:83
+✖ F02-01 amount invalid cannot become accounting zero or value (0.355125ms)
+  AssertionError [ERR_ASSERTION]: ACCOUNTING_AMOUNT_REJECTED
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:45:9)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:43:83
+✖ F02-01 amount formula cannot become accounting zero or value (0.202667ms)
+  AssertionError [ERR_ASSERTION]: ACCOUNTING_AMOUNT_REJECTED
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:45:9)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:49:221
+✖ F02-01 streaming emits before source ends (0.275917ms)
+  AssertionError [ERR_ASSERTION]: CONTRACT_BINDING_MISSING: ingestion.parseCSVStream; see support/F02/README.md
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at exported (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/common.mjs:12:41)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:49:279)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:49:221
+✖ F02-01 streaming all UTF8 quotes CRLF split positions (0.147417ms)
+  AssertionError [ERR_ASSERTION]: CONTRACT_BINDING_MISSING: ingestion.parseCSVStream; see support/F02/README.md
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at exported (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/common.mjs:12:41)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:49:279)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:49:221
+✖ F02-01 streaming abort and consumer break (0.276417ms)
+  AssertionError [ERR_ASSERTION]: CONTRACT_BINDING_MISSING: ingestion.parseCSVStream; see support/F02/README.md
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at exported (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/common.mjs:12:41)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:49:279)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:49:221
+✖ F02-01 streaming bounded consumption after rejection (0.085125ms)
+  AssertionError [ERR_ASSERTION]: CONTRACT_BINDING_MISSING: ingestion.parseCSVStream; see support/F02/README.md
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at exported (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/common.mjs:12:41)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:49:279)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:50:1
+✖ F02-01 streaming malformed UTF8 and truncated quote (0.162417ms)
+  AssertionError [ERR_ASSERTION]: CONTRACT_BINDING_MISSING: ingestion.parseCSVStream; see support/F02/README.md
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at exported (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/common.mjs:12:41)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:51:15)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:54:1
+✖ F02-01 message length is Unicode codepoints not UTF8 or UTF16 (5.177417ms)
+  AssertionError [ERR_ASSERTION]: MESSAGE_CODEPOINT_LIMIT
+  
+  2 !== 1
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:56:9)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:61:37
+✖ F02-01 XLSX valid actual cells and 10 sheets (0.095125ms)
+  AssertionError [ERR_ASSERTION]: CONTRACT_BINDING_MISSING: ingestion.parseXLSX; see support/F02/README.md
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at exported (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/common.mjs:12:41)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:61:75)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:61:37
+✖ F02-01 XLSX compressed bytes exact and minus one (0.1885ms)
+  AssertionError [ERR_ASSERTION]: CONTRACT_BINDING_MISSING: ingestion.parseXLSX; see support/F02/README.md
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at exported (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/common.mjs:12:41)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:61:75)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:61:37
+✖ F02-01 XLSX expanded bytes every member exact and minus one (0.080625ms)
+  AssertionError [ERR_ASSERTION]: CONTRACT_BINDING_MISSING: ingestion.parseXLSX; see support/F02/README.md
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at exported (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/common.mjs:12:41)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:61:75)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:61:37
+✖ F02-01 XLSX zipbomb real compressed content (0.072792ms)
+  AssertionError [ERR_ASSERTION]: CONTRACT_BINDING_MISSING: ingestion.parseXLSX; see support/F02/README.md
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at exported (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/common.mjs:12:41)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:61:75)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:61:37
+✖ F02-01 XLSX 11 sheets (0.056416ms)
+  AssertionError [ERR_ASSERTION]: CONTRACT_BINDING_MISSING: ingestion.parseXLSX; see support/F02/README.md
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at exported (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/common.mjs:12:41)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:61:75)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:61:37
+✖ F02-01 XLSX external refs (0.064667ms)
+  AssertionError [ERR_ASSERTION]: CONTRACT_BINDING_MISSING: ingestion.parseXLSX; see support/F02/README.md
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at exported (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/common.mjs:12:41)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:61:75)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:61:37
+✖ F02-01 XLSX macro part and relationship (0.059541ms)
+  AssertionError [ERR_ASSERTION]: CONTRACT_BINDING_MISSING: ingestion.parseXLSX; see support/F02/README.md
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at exported (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/common.mjs:12:41)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:61:75)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:61:37
+✖ F02-01 XLSX cached formula blocked (0.054292ms)
+  AssertionError [ERR_ASSERTION]: CONTRACT_BINDING_MISSING: ingestion.parseXLSX; see support/F02/README.md
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at exported (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/common.mjs:12:41)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:61:75)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:61:37
+✖ F02-01 XLSX truncated ZIP (0.0495ms)
+  AssertionError [ERR_ASSERTION]: CONTRACT_BINDING_MISSING: ingestion.parseXLSX; see support/F02/README.md
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at exported (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/common.mjs:12:41)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:61:75)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:61:37
+✖ F02-01 XLSX default expanded 100MiB (0.053666ms)
+  AssertionError [ERR_ASSERTION]: CONTRACT_BINDING_MISSING: ingestion.parseXLSX; see support/F02/README.md
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at exported (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/common.mjs:12:41)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:61:75)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/F02-01.test.mjs:64:1
+✖ F02-01 XLSX reject before any observed expansion (98.478875ms)
+  AssertionError [ERR_ASSERTION]: PREEXPANSION_PROBE_FAILED
+  
+  node:internal/modules/run_main:107
+      triggerUncaughtException(
+      ^
+  
+  AssertionError [ERR_ASSERTION]: CONTRACT_BINDING_MISSING: ingestion.parseXLSX; see support/F02/README.md
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at exported (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/common.mjs:12:41)
+      at file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/support/F02/preexpand.mjs:6:17 {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+  
+  Node.js v26.7.0
+  
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/limits/tests/acceptance/F02-01.test.mjs:66:9)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

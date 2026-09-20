@@ -1,0 +1,65 @@
+{
+  "source": "/Users/javiercamaraportepetit/vexa/.runtime/f0201-parser-1789866904789409000/parser",
+  "beforeHashes": {
+    "index.mjs": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d",
+    "csv.mjs": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71",
+    "xlsx.mjs": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+  },
+  "afterHashes": {
+    "index.mjs": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d",
+    "csv.mjs": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71",
+    "xlsx.mjs": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+  },
+  "sourceUnchanged": true,
+  "controlOnly": false,
+  "gateHash": "4a231c827e36e8c3663ec89acd39a29c302666978df3379a9e7bfcb0ef9e424d",
+  "results": [
+    {
+      "id": "actual-budget",
+      "file": "xlsx.mjs",
+      "from": "maxOutputLength:Math.max(1,Math.min(e.raw,cfg.maxExpandedBytes-actual))",
+      "to": "maxOutputLength:2147483647",
+      "replacement": "first occurrence only",
+      "expected": "ACTUAL_EXPANSION_CAP",
+      "stages": [
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX actual expansion observed cap",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+        },
+        {
+          "exit": 1,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX actual expansion observed cap",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "761679a777a59327d608507c0c43486601ce6d30acc853519144264b337d5b1b"
+        },
+        {
+          "exit": 0,
+          "signal": null,
+          "command": [
+            "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+            "--test",
+            "--test-reporter=tap",
+            "--test-name-pattern=XLSX actual expansion observed cap",
+            "tests/acceptance/F02-01.test.mjs"
+          ],
+          "sourceHash": "b97e223f08fde6394c5493d68bc92f118b07cb240eef3ab668285f6adde75e37"
+        }
+      ],
+      "killed": true
+    }
+  ]
+}

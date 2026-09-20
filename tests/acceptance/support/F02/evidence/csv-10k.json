@@ -1,0 +1,12 @@
+{
+  "synthetic": true,
+  "rows": 10000,
+  "bytes": 845751,
+  "sha256": "384411d7bdf0a262ad90e313a9a92dad269ebba7eb230661d2dccaa1a799ec8d",
+  "expected": {
+    "accepted": 8000,
+    "duplicates": 1000,
+    "rejected": 1000
+  },
+  "scope": "pure; no durable DB"
+}

@@ -1,6 +1,13 @@
 # Progreso verificable
 Actualizado: 2026-09-19 local. Los apartados anteriores conservados abajo son cortes históricos, no inventario vigente.
 
+## F02-01: examen aprobado; Supabase creado —19-sep,20:23
+-64casos y19mutantes del gate aprobados por revisor independiente, sin P0–P2. Se conservaron cuatro regresiones XML que rechazaron el primer parser;331archivos control-plane adoptados por hash. Registro authored/product_pass=false y guía antes de prepare.
+- Correctivo del parser en recheck independiente: reporte autor40/40propios+39snapshot+17/17adversariales, menorRSS observado, sin afirmar techo universal. No adopción de producto ni nueva aceptación todavía: **11/60**.
+- Supabasevexa-ai creado una sola vez tras autorizar10USD/mes; IDpulstqwbzhquaiporcmf,us-east-1,ACTIVE_HEALTHY por MCP yCLI independiente. Sin extras/upgrade/otrosproyectos. Nota pública SUPABASE-PROYECTO.md.
+- Historial remoto vacío; SQLpreflight bloqueado por aprobación interactiva/policynever. Ceroapply_migration/DDL; no se eludió mediante otrocanal. Schema/Auth/Storage/appremotos pendientes.
+-158llamadasacumuladas/14ventanaF02;3máximoconcurrentes. No gastos deconstrucción/OpenRouter,Actions,deploy ni envíos. Siguiente:freeze,prepare,verify,regresiónCIqueincluye10gatesanteriores+controlador,accept ypublish.
+
 ## Autorización específica Supabase —19-sep, posterior al checkpoint
 - El usuario respondió afirmativamente a hasta10USD/mes adicionales para un proyecto VEXA, sin cambio de plan ni extras. Operación de creación delegada al especialista con comprobación de coste/moneda, deduplicación y verificación de ID/estado.
 - No equivale a autorizar OpenRouter, otros recursos, upgrades, Actions, envíos ni gasto de construcción.154invocaciones acumuladas/10enventanaF02. No se afirma creado hasta recibir evidencia real.

@@ -1,0 +1,69 @@
+{
+  "head": "7be51ea785e03e0bb5196fed96e11a718cf0e63b",
+  "code": {
+    "tests/acceptance/F02-03.test.mjs": {
+      "sha256": "5c24b75678a571b1ad800b24a81489d20dd56beba8e6f572af55a8440bd67760",
+      "mode": "0o644"
+    },
+    "tests/acceptance/support/F02-preview/browser.mjs": {
+      "sha256": "da0c62d2ffc61139e5644a502662e75f59a41da9b0e662cf3b259f3b74f825b1",
+      "mode": "0o644"
+    },
+    "tests/acceptance/support/F02-preview/meta.test.mjs": {
+      "sha256": "29f03280d09e2502ff1b5934896a9038ec090e348551d788b8693c78f8be3cde",
+      "mode": "0o644"
+    },
+    "tests/acceptance/support/F02-preview/ui-states.mjs": {
+      "sha256": "0ad818937cba4d8338ade34a2ae7fdeea4df726ec2c9f2a2f7aec3b83c169d06",
+      "mode": "0o644"
+    },
+    "tests/acceptance/support/F02-preview/fixtures.mjs": {
+      "sha256": "ae66a218659911ef9e71ac86e618ff42c73a01f53ed5fcfd354428da6f74aa41",
+      "mode": "0o644"
+    },
+    "tests/acceptance/support/F02-preview/client-boundary.mjs": {
+      "sha256": "6e8a5c771675d71fd343d4394318093424623d4075547cd7c548e6fb27496e51",
+      "mode": "0o644"
+    },
+    "tests/acceptance/support/F02-preview/pure.test.mjs": {
+      "sha256": "605ee8b34279b754a54da554b5a75ad8d6083051ab350310533c5bac2840f204",
+      "mode": "0o644"
+    },
+    "tests/acceptance/support/F02-preview/meta-worker.mjs": {
+      "sha256": "c71fa0f18a676eae47911fa2bececeb176b850baf77ed5766a427fd0a8c0f356",
+      "mode": "0o644"
+    },
+    "tests/acceptance/support/F02-preview/http.test.mjs": {
+      "sha256": "b4297965bef44b660090a78152b8b15e42e2b13388b1f914166590e4ca5481ca",
+      "mode": "0o644"
+    },
+    "tests/acceptance/support/F02-preview/ssr.mjs": {
+      "sha256": "4dd3f01ccdbfa826a6484da1263be32611012b39f65f4c7f06875999c2a4bce5",
+      "mode": "0o644"
+    },
+    "tests/acceptance/support/F02-preview/pure.mjs": {
+      "sha256": "a30625864434e3523401191274e4ce3c09f6ef9ec38725b517b15b21c5729b5d",
+      "mode": "0o644"
+    },
+    "tests/acceptance/support/F02-preview/oracles.mjs": {
+      "sha256": "d8576597be81f1d1809235a7ae2859185adbd2bc5a88f7a890038b282fba1e37",
+      "mode": "0o644"
+    },
+    "tests/acceptance/support/F02-preview/http.mjs": {
+      "sha256": "1de0e2145ed5576260708f0e6ffffd7dde8dc3f426931e5931b5750d752b87fd",
+      "mode": "0o644"
+    },
+    "tests/acceptance/support/F02-preview/run.py": {
+      "sha256": "22b708b8eedfb196943c41dd7a264f5f6832dae22ddfa5be8a2d882bfc4bd53c",
+      "mode": "0o644"
+    },
+    "tests/acceptance/support/F02-preview/mutations.py": {
+      "sha256": "fec990f4da522bef296d7f2bd413f69d7fc775a5a3b2d372505244739ed90481",
+      "mode": "0o644"
+    }
+  },
+  "code_manifest_sha256": "cf3a94059e0000bf19fa08605f6ae3b65ddd61d53642ec58c6c04632878b48c1",
+  "product_source_manifest_sha256": "db6be62c78340a35b7de2862ed3e6a146a5ebf709778dc51329b15747940b718",
+  "product_source_manifest": "evidence-call30/sources-before.json",
+  "final_run": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0203-gate-sggu880z"
+}

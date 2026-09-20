@@ -1,0 +1,278 @@
+TAP version 13
+# Subtest: F02-03 external prospectivo — nunca autoacepta
+    # Subtest: USD exact, null distinct from observed zero, mixed currencies explicit
+    ok 1 - USD exact, null distinct from observed zero, mixed currencies explicit
+      ---
+      duration_ms: 10.549292
+      type: 'test'
+      ...
+    # Subtest: JPY fraction rejected 10.01
+    ok 2 - JPY fraction rejected 10.01
+      ---
+      duration_ms: 0.588791
+      type: 'test'
+      ...
+    # Subtest: JPY fraction rejected 0.01
+    ok 3 - JPY fraction rejected 0.01
+      ---
+      duration_ms: 0.280375
+      type: 'test'
+      ...
+    # Subtest: JPY fraction rejected -10.01
+    ok 4 - JPY fraction rejected -10.01
+      ---
+      duration_ms: 0.269708
+      type: 'test'
+      ...
+    # Subtest: USD above Number safe integer exact
+    ok 5 - USD above Number safe integer exact
+      ---
+      duration_ms: 0.223917
+      type: 'test'
+      ...
+    # Subtest: ambiguous missing format
+    ok 6 - ambiguous missing format
+      ---
+      duration_ms: 0.194584
+      type: 'test'
+      ...
+    # Subtest: missing timezone
+    ok 7 - missing timezone
+      ---
+      duration_ms: 0.087083
+      type: 'test'
+      ...
+    # Subtest: invalid calendar
+    ok 8 - invalid calendar
+      ---
+      duration_ms: 0.32175
+      type: 'test'
+      ...
+    # Subtest: DST gap
+    ok 9 - DST gap
+      ---
+      duration_ms: 0.737459
+      type: 'test'
+      ...
+    # Subtest: DST fold
+    ok 10 - DST fold
+      ---
+      duration_ms: 0.338916
+      type: 'test'
+      ...
+    # Subtest: exact instant dmy01/02/2026
+    ok 11 - exact instant dmy01/02/2026
+      ---
+      duration_ms: 0.37175
+      type: 'test'
+      ...
+    # Subtest: exact instant mdy01/02/2026
+    ok 12 - exact instant mdy01/02/2026
+      ---
+      duration_ms: 0.354084
+      type: 'test'
+      ...
+    # Subtest: exact instant ymd2026-02-01
+    ok 13 - exact instant ymd2026-02-01
+      ---
+      duration_ms: 0.269667
+      type: 'test'
+      ...
+    # Subtest: exact instant iso2026-11-01T01:30:00-04:00
+    ok 14 - exact instant iso2026-11-01T01:30:00-04:00
+      ---
+      duration_ms: 0.157416
+      type: 'test'
+      ...
+    # Subtest: exact instant iso2026-11-01T01:30:00-05:00
+    ok 15 - exact instant iso2026-11-01T01:30:00-05:00
+      ---
+      duration_ms: 0.133333
+      type: 'test'
+      ...
+    # Subtest: currency absent is not inferred
+    ok 16 - currency absent is not inferred
+      ---
+      duration_ms: 0.076583
+      type: 'test'
+      ...
+    # Subtest: constant explicit USD
+    ok 17 - constant explicit USD
+      ---
+      duration_ms: 0.174709
+      type: 'test'
+      ...
+    # Subtest: no amount has explicit null money
+    ok 18 - no amount has explicit null money
+      ---
+      duration_ms: 0.124208
+      type: 'test'
+      ...
+    # Subtest: duplicate literal header
+    ok 19 - duplicate literal header
+      ---
+      duration_ms: 0.08
+      type: 'test'
+      ...
+    # Subtest: missing selected column
+    ok 20 - missing selected column
+      ---
+      duration_ms: 0.084083
+      type: 'test'
+      ...
+    # Subtest: mapping hash canonical order and changes
+    ok 21 - mapping hash canonical order and changes
+      ---
+      duration_ms: 0.321292
+      type: 'test'
+      ...
+    # Subtest: 10000 rows, full counters with bounded sample and errors after sample
+    ok 22 - 10000 rows, full counters with bounded sample and errors after sample
+      ---
+      duration_ms: 47.323208
+      type: 'test'
+      ...
+    # Subtest: PII absent in errors and RFC4180 formula neutralization
+    ok 23 - PII absent in errors and RFC4180 formula neutralization
+      ---
+      duration_ms: 0.630083
+      type: 'test'
+      ...
+    # Subtest: multisheet explicit choice mandatory
+    ok 24 - multisheet explicit choice mandatory
+      ---
+      duration_ms: 4.778791
+      type: 'test'
+      ...
+    # Subtest: multisheet selected by literal name
+    ok 25 - multisheet selected by literal name
+      ---
+      duration_ms: 1.365042
+      type: 'test'
+      ...
+    # Subtest: Excel numeric serial date explicitly unsupported
+    ok 26 - Excel numeric serial date explicitly unsupported
+      ---
+      duration_ms: 1.229958
+      type: 'test'
+      ...
+    # Subtest: sample retains source line and literal text
+    ok 27 - sample retains source line and literal text
+      ---
+      duration_ms: 0.144208
+      type: 'test'
+      ...
+    # Subtest: unknown sheet rejected
+    ok 28 - unknown sheet rejected
+      ---
+      duration_ms: 0.959459
+      type: 'test'
+      ...
+# (node:45215) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# HTTP_PREVIEW_ASSERTIONS_FINISHED — not full gate acceptance
+# PASS BUILD ci
+# PASS BUILD run
+    # Subtest: real Auth/Pg/Storage HTTP
+    ok 29 - real Auth/Pg/Storage HTTP
+      ---
+      duration_ms: 7645.920709
+      type: 'test'
+      ...
+# PASS SSR AUTH
+# STORAGE_TRANSPORT {"method":"PUT","status":200,"origin":null}
+# PASS SSR ORIGIN CAS HISTORY RESTART
+# PASS SSR DB STORAGE RECOVERY
+# PASS M10 {"chunks":43,"responses":14}
+# BROWSER_TRANSPORT GET / net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /problems net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /overview net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /recommendations net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /explorer net::ERR_ABORTED
+# BROWSER_TRANSPORT GET / net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /briefs net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /interventions net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /imports net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /recommendations net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /overview net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /problems net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /interventions net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /briefs net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /explorer net::ERR_ABORTED
+# STORAGE_TRANSPORT {"method":"PUT","status":200,"origin":"http://127.0.0.1:57961"}
+# BROWSER_TRANSPORT GET /api/imports/75df8c7e-277a-4bd0-9e4d-07f20a9eb485/errors.csv net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /problems net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /overview net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /explorer net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /imports net::ERR_ABORTED
+# PASS BROWSER POSITIVE
+# BROWSER_TRANSPORT GET /interventions net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /briefs net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /explorer net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /problems net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /recommendations net::ERR_ABORTED
+# BROWSER_TRANSPORT GET / net::ERR_ABORTED
+# BROWSER_TRANSPORT GET / net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /interventions net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /briefs net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /problems net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /recommendations net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /overview net::ERR_ABORTED
+# BROWSER_TRANSPORT GET / net::ERR_ABORTED
+# PASS UI LOADING
+# BROWSER_TRANSPORT GET /explorer net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /briefs net::ERR_ABORTED
+# BROWSER_TRANSPORT GET / net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /interventions net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /imports net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /recommendations net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /overview net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /problems net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /explorer net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /interventions net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /briefs net::ERR_ABORTED
+# BROWSER_TRANSPORT GET /api/imports net::ERR_FAILED
+# BROWSER_ERROR Failed to load resource: net::ERR_FAILED
+# PASS UI ERROR RETRY
+# PASS UI EMPTY
+# BROWSER_ERROR Failed to load resource: the server responded with a status of 403 (Forbidden)
+# PASS UI REVOCATION
+# STORAGE_TRANSPORT {"method":"PUT","status":200,"origin":"http://127.0.0.1:57961"}
+# BROWSER_TRANSPORT GET /api/imports/53527797-8f6b-4764-91e5-392acb18ceb0/errors.csv net::ERR_ABORTED
+# PASS UI XLSX SELECTION CSV DOWNLOAD
+# STORAGE_TRANSPORT {"method":"PUT","status":200,"origin":"http://127.0.0.1:57961"}
+# PASS UI 10000 ROWS EXACT COUNTERS
+# PASS M10 FINAL {"chunks":43,"responses":43}
+# SSR_LOCAL_CLEANUP
+    # Subtest: real Next SSR Chromium
+    ok 30 - real Next SSR Chromium
+      ---
+      duration_ms: 33884.749542
+      type: 'test'
+      ...
+    1..30
+not ok 1 - F02-03 external prospectivo — nunca autoacepta
+  ---
+  duration_ms: 41623.76625
+  type: 'test'
+  location: '/Users/javiercamaraportepetit/vexa/.runtime/f0203-close-f0204-1789921456816411000/preview-gate/tests/acceptance/F02-03.test.mjs:8:1'
+  failureType: 'testCodeFailure'
+  error: 'GATE_INCOMPLETE: backend/UI completos, negativos reales, mutantes producto y revisión independiente pendientes; no bypass por JSON'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'fail'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f0203-close-f0204-1789921456816411000/preview-gate/tests/acceptance/F02-03.test.mjs:19:9)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 31
+# suites 0
+# pass 30
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 41664.317042

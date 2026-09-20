@@ -1,0 +1,84 @@
+{
+  "journal": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0203-gate-sggu880z/resources-bc0e6b30-0a54-4f0c-a697-eb32b425985f.jsonl",
+  "broker": "bc0e6b30-0a54-4f0c-a697-eb32b425985f",
+  "verified": true,
+  "resources": [
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-aa11bea6-7906-4d7f-938b-c944785188ba-db",
+      "broker": "bc0e6b30-0a54-4f0c-a697-eb32b425985f",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-aa11bea6-7906-4d7f-938b-c944785188ba-auth",
+      "broker": "bc0e6b30-0a54-4f0c-a697-eb32b425985f",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-aa11bea6-7906-4d7f-938b-c944785188ba-rest",
+      "broker": "bc0e6b30-0a54-4f0c-a697-eb32b425985f",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-aa11bea6-7906-4d7f-938b-c944785188ba-storage",
+      "broker": "bc0e6b30-0a54-4f0c-a697-eb32b425985f",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-195b08fb-1642-4505-a16e-b341eecd0f68-db",
+      "broker": "bc0e6b30-0a54-4f0c-a697-eb32b425985f",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-195b08fb-1642-4505-a16e-b341eecd0f68-auth",
+      "broker": "bc0e6b30-0a54-4f0c-a697-eb32b425985f",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-195b08fb-1642-4505-a16e-b341eecd0f68-rest",
+      "broker": "bc0e6b30-0a54-4f0c-a697-eb32b425985f",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-195b08fb-1642-4505-a16e-b341eecd0f68-storage",
+      "broker": "bc0e6b30-0a54-4f0c-a697-eb32b425985f",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-04-6b131d6d-ec70-4ddb-a0db-3802db60a6a4-browser",
+      "broker": "bc0e6b30-0a54-4f0c-a697-eb32b425985f",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "network",
+      "name": "vexa-f01-03-aa11bea6-7906-4d7f-938b-c944785188ba",
+      "broker": "bc0e6b30-0a54-4f0c-a697-eb32b425985f",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "network",
+      "name": "vexa-f01-03-195b08fb-1642-4505-a16e-b341eecd0f68",
+      "broker": "bc0e6b30-0a54-4f0c-a697-eb32b425985f",
+      "id": null,
+      "absent": true
+    }
+  ]
+}

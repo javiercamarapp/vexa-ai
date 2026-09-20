@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/tmp/vexa-xml-interop-renewed/node-v22.22.0-darwin-arm64/bin/node",
+    "--test",
+    "tests/acceptance/F02-03.test.mjs"
+  ],
+  "exit_code": 1,
+  "source_unchanged": true,
+  "cleanup_verified": true,
+  "state": "GATE_INCOMPLETE"
+}

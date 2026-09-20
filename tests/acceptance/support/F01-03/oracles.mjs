@@ -1,3 +1,4 @@
+import * as aliases from './aliases/oracles.mjs';
 import * as sync from './sync/oracles.mjs';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
@@ -54,6 +55,7 @@ export function schemaOracle(h) {
   history.schema(h,fks);
   if(workers.present(h))workers.schema(h,fks);
   if(sync.present(h).length)sync.schema(h,fks);
+  if(aliases.present(h))aliases.schema(h,fks);
   for(const {table,column,parent} of relations)
     assert.ok(fks.some(fk=>fk.table===table && fk.parent===parent && fk.validated && fk.mapping.tenant_id==='tenant_id' && fk.mapping[column]==='id'),`FK_MISSING:${table}.${column}->${parent}`);
   for(const fk of fks){
@@ -94,8 +96,8 @@ export function seed(h,actors) {
   }
   const a=fixture(A),b=fixture(B);
   // Catalog, not migration text, supplies additional edges and column mappings.
-  const edges=foreignKeys(h).filter(fk=>fk.parent!=='organizations');
-  const pending=definitions.map(([table])=>table),done=new Set(['memberships']);
+  const edges=foreignKeys(h).filter(fk=>fk.parent!=='organizations' && (fk.table!=='external_aliases'||!aliases.present(h)));
+  const pending=definitions.map(([table])=>table).filter(table=>table!=='external_aliases'||!aliases.present(h)),done=new Set(['memberships']);
   const parents=Object.fromEntries([['a',A],['b',B]].map(([side,tenant])=>[side,{memberships:h.json(`SELECT to_jsonb(m) FROM memberships m WHERE tenant_id=${q(tenant)} AND user_id=${q(actors[side].id)};`)}]));
   while(pending.length){
     const {table,nulls}=seedStep(pending,edges,done);
@@ -113,17 +115,20 @@ export function seed(h,actors) {
     }
     done.add(table);
   }
+  if(aliases.present(h))aliases.seed(h,{a,b},actors);
   Object.defineProperty(a,'memberships',{value:parents.a.memberships});
   Object.defineProperty(b,'memberships',{value:parents.b.memberships});
   return {a,b};
 }
 export function tableOracle(h,table,f,actors) {
+  if(table===aliases.table&&aliases.present(h))return aliases.access(h,f,actors);
   const {a,b}=f;
   const snapshot=()=>h.json(`SELECT jsonb_agg(to_jsonb(r) ORDER BY id) FROM public.${ident(table)} r;`);
   const before=snapshot();
-  for(const key of ['a','viewer','analyst','operator'])rows(h.probe(read(table),actors[key]),[a[table].id],`READ_A:${table}:${key}`);
-  rows(h.probe(read(table),actors.b),[b[table].id],`READ_B:${table}`);
-  rows(h.probe(read(table),actors.dual),[a[table].id,b[table].id],`READ_AB:${table}`);
+  const visible=side=>[f[side][table].id,...(table==='conversations'&&f[side].aliasTarget?[f[side].aliasTarget.id]:[])];
+  for(const key of ['a','viewer','analyst','operator'])rows(h.probe(read(table),actors[key]),visible('a'),`READ_A:${table}:${key}`);
+  rows(h.probe(read(table),actors.b),visible('b'),`READ_B:${table}`);
+  rows(h.probe(read(table),actors.dual),[...visible('a'),...visible('b')],`READ_AB:${table}`);
   const fresh=(tenant)=>freshRow((tenant===A?a:b)[table]);
   // Insert/delete on a leaf clone: dependent fixtures cannot mask authorization.
   const immutable=table==='audit_events';
@@ -229,6 +234,7 @@ function fkDiagnostic(h,table,result){
 // Every discovered private edge gets a valid INSERT and a foreign-parent INSERT.
 // Diagnostics retain the rejecting constraint; mandatory presence is checked separately.
 export function discoveredFkOracle(h,f,fk) {
+  if(fk.table===aliases.table&&aliases.present(h))return aliases.fk(h,f,fk);
   if(sync.tables.includes(fk.table))return sync.fk(h,f.sync,fk);
   if(fk.table===workers.table)return workers.fk(h,f.workers,fk);
   if(history.tables.includes(fk.table))return history.fk(h,f,fk);

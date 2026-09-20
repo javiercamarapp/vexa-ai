@@ -1,3 +1,4 @@
+import * as aliases from './support/F01-03/aliases/oracles.mjs';
 import * as sync from './support/F01-03/sync/oracles.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -16,6 +17,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   h.sql("NOTIFY pgrst, 'reload schema';");
   if(migrations.workerDelegationsRequired)assert.ok(workers.present(h),'WORKER_MIGRATION_REQUIRED');
   if(migrations.syncRequired)assert.deepEqual(sync.present(h),sync.tables,'SYNC_MIGRATION_REQUIRED');
+  if(migrations.aliasesRequired)assert.ok(aliases.present(h),'ALIAS_MIGRATION_REQUIRED');
   schemaOracle(h);
   const actors={};for(const key of ['a','b','dual','outsider','viewer','analyst','operator'])actors[key]=await h.user();
   const f=seed(h,actors);

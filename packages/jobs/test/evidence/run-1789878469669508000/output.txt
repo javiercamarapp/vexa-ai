@@ -1,0 +1,35 @@
+SETUP real services and migrations ready
+SETUP real pg driver [ { current_user: 'f02_login' } ]
+SETUP Next ready
+PASS SSR anonymous/CSRF
+PASS concurrent reservation/replay/conflict
+PASS direct real Storage/foreign scope/capability
+PASS concurrent confirmation -> one job/outbox; GET queued
+PASS Next restart/replay durable
+PASS wrong real bytes rejected
+AssertionError [ERR_ASSERTION]: expired Storage capability must not accept bytes
+    at file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/imports/packages/jobs/test/http.mjs:49:238
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 200,
+  expected: 200,
+  operator: 'notStrictEqual',
+  diff: 'simple'
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: expired Storage capability must not accept bytes
+    at file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/imports/packages/jobs/test/http.mjs:49:238
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 200,
+  expected: 200,
+  operator: 'notStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.7.0

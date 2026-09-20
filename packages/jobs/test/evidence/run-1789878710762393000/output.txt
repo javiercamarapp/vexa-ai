@@ -1,0 +1,18 @@
+SETUP real services and migrations ready
+SETUP real pg driver [ { current_user: 'f02_login' } ]
+SETUP Next ready
+PASS SSR anonymous/CSRF
+PASS concurrent reservation/replay/conflict
+PASS direct real Storage/foreign scope/capability
+PASS concurrent confirmation -> one job/outbox; GET queued
+PASS Next restart/replay durable
+PASS wrong real bytes rejected
+PASS real Storage size mismatch denied; correct retry
+PASS direct Storage and reservation RLS deny foreign tenant
+PASS expired reservation Storage deny
+PASS outbox failure rolls back job+transition, retry recovers
+PASS actual Next process crash during outbox write rolls back; restart recovers
+PASS backend NOLOGIN/NOSUPERUSER/NOBYPASSRLS; unsafe login denied
+PASS role/revocation revalidation
+PASS absent Pg config 503
+PRODUCT_HTTP_COMPLETE

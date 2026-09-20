@@ -1,0 +1,31 @@
+SETUP real services and migrations ready
+Error: Connection terminated due to connection timeout
+    at /private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0202-renewed-m8nbaivb/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/imports/packages/jobs/test/http.mjs:26:14 {
+  [cause]: Error: Connection terminated unexpectedly
+      at Connection.<anonymous> (/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0202-renewed-m8nbaivb/node_modules/pg/lib/client.js:136:73)
+      at Connection.wrapper (node:events:639:12)
+      at Connection.emit (node:events:514:20)
+      at Socket.<anonymous> (/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0202-renewed-m8nbaivb/node_modules/pg/lib/connection.js:62:12)
+      at Socket.emit (node:events:514:20)
+      at Pipe.<anonymous> (node:net:362:12)
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+Error: Connection terminated due to connection timeout
+    at /private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0202-renewed-m8nbaivb/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/imports/packages/jobs/test/http.mjs:26:14 {
+  [cause]: Error: Connection terminated unexpectedly
+      at Connection.<anonymous> (/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0202-renewed-m8nbaivb/node_modules/pg/lib/client.js:136:73)
+      at Connection.wrapper (node:events:639:12)
+      at Connection.emit (node:events:514:20)
+      at Socket.<anonymous> (/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0202-renewed-m8nbaivb/node_modules/pg/lib/connection.js:62:12)
+      at Socket.emit (node:events:514:20)
+      at Pipe.<anonymous> (node:net:362:12)
+}
+
+Node.js v26.7.0

@@ -1,0 +1,31 @@
+{
+  "tmp": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0202-product-4r07ix44",
+  "results": [
+    {
+      "command": [
+        "npm",
+        "ci",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund",
+        "--userconfig=/dev/null",
+        "--globalconfig=/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0202-product-4r07ix44/empty-global.npmrc"
+      ],
+      "exit_code": 0,
+      "log": "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/imports/packages/jobs/test/evidence/prepare-1789878670528905000-0.txt"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "build",
+        "--workspace",
+        "@vexa/web",
+        "--userconfig=/dev/null",
+        "--globalconfig=/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0202-product-4r07ix44/empty-global.npmrc"
+      ],
+      "exit_code": 0,
+      "log": "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/imports/packages/jobs/test/evidence/prepare-1789878670528905000-1.txt"
+    }
+  ]
+}

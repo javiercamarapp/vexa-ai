@@ -1,0 +1,37 @@
+SETUP real services and migrations ready
+SETUP Next ready
+PASS SSR anonymous/CSRF
+AssertionError [ERR_ASSERTION]: {"status":503,"data":{"contract_version":"f02-durable-v1","error":{"code":"imports_unavailable","message":"Configurar y comprobar PostgreSQL, Storage y el secreto de confirmación en el servidor.","retryable":true},"meta":{"trace_id":"3aba4b87-9c5f-4f84-b272-de6db6e9200b"}}}
+
+503 !== 201
+
+    at ok (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/imports/packages/jobs/test/http.mjs:33:31)
+    at file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/imports/packages/jobs/test/http.mjs:35:120
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 503,
+  expected: 201,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: {"status":503,"data":{"contract_version":"f02-durable-v1","error":{"code":"imports_unavailable","message":"Configurar y comprobar PostgreSQL, Storage y el secreto de confirmación en el servidor.","retryable":true},"meta":{"trace_id":"3aba4b87-9c5f-4f84-b272-de6db6e9200b"}}}
+
+503 !== 201
+
+    at ok (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/imports/packages/jobs/test/http.mjs:33:31)
+    at file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/imports/packages/jobs/test/http.mjs:35:120
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 503,
+  expected: 201,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.7.0

@@ -1,0 +1,14 @@
+SETUP real services and migrations ready
+SETUP real pg driver [ { current_user: 'f02_login' } ]
+SETUP Next ready
+PASS SSR anonymous/CSRF
+PASS concurrent reservation/replay/conflict
+PASS direct real Storage/foreign scope/capability
+PASS concurrent confirmation -> one job/outbox; GET queued
+PASS Next restart/replay durable
+PASS wrong real bytes rejected
+PASS expired reservation Storage deny
+PASS outbox failure rolls back job+transition, retry recovers
+PASS role/revocation revalidation
+PASS absent Pg config 503
+PRODUCT_HTTP_COMPLETE

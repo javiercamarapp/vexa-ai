@@ -1,0 +1,52 @@
+
+> vexa@0.0.1 test
+> npm run test:kernel && npm run test:foundation
+
+
+> vexa@0.0.1 test:kernel
+> node --test tests/acceptance/economics.test.mjs
+
+✔ known zero differs from missing, totals are exact decimal strings (1.2205ms)
+✔ currency buckets are not summed and empty data does not assert zero (5.628375ms)
+✔ exact replay is idempotent, conflicting repeated identity rejects (0.258291ms)
+✔ invalid money never silently normalizes (0.126917ms)
+✔ arbitrary precision and permutation invariance (0.079042ms)
+✔ problem overlap does not inflate global exposure; unknown link is an error (0.164875ms)
+✔ refund minus reversal deduplicates and accepts reverse arrival order (0.179291ms)
+✔ pending refund is not paid; unknown refund stays unknown (0.057375ms)
+✔ orphan, excessive and cross-currency reversals reject, not silently clip (0.142958ms)
+✔ event replay with conflicting state cannot mask uncertainty (0.0925ms)
+✔ scenario is named scenario with horizon; integer arithmetic rounding once (0.120209ms)
+✔ seeded replay property: duplicate/permutation never changes sums (8.426583ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 70.348625
+
+> vexa@0.0.1 test:foundation
+> node --test tests/acceptance/F00-*.test.mjs tests/acceptance/foundation-negative.test.mjs
+
+✔ F00-01: preparation contract only (1.95725ms)
+✔ F00-02: preparation contract only (1.004334ms)
+✔ F00-03: preparation contract only (0.850166ms)
+✔ F00-04: preparation contract only (8.16425ms)
+✔ F00-05: preparation contract only (2.775084ms)
+✔ source checksum tampering is rejected (2.890834ms)
+✔ invented human transcription certification is rejected (0.271042ms)
+✔ synthetic readiness cannot authorize real customer data (0.156041ms)
+✔ unprovisioned production cannot be presented as provisioned (0.17875ms)
+✔ fixture financial error rejects, not just JSON shape (6.542ms)
+✔ null customer fixture cannot quietly become known zero (0.181667ms)
+✔ gate register cannot claim a product PASS (0.68575ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 75.4665

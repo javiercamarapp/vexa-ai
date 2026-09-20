@@ -1,0 +1,8 @@
+{
+  "argv": [
+    "node",
+    "packages/jobs/test/http.mjs"
+  ],
+  "exit_code": 124,
+  "cleanup_verified": true
+}

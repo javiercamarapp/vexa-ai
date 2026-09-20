@@ -1,0 +1,28 @@
+[
+  {
+    "command": [
+      "npm",
+      "test"
+    ],
+    "exit_code": 0,
+    "log": "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/imports/packages/jobs/test/evidence/renewed-npm-test.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:controller"
+    ],
+    "exit_code": 0,
+    "log": "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/imports/packages/jobs/test/evidence/renewed-controller.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "graph:check"
+    ],
+    "exit_code": 0,
+    "log": "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/imports/packages/jobs/test/evidence/renewed-graph.txt"
+  }
+]

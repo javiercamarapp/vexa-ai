@@ -1,3 +1,4 @@
+import {resourceBroker} from '../ci/resources.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -22,6 +23,7 @@ export function candidateInputs(candidate) {
   return files.map(f=>{const p=path.join(dir,f);assert.ok(!fs.lstatSync(p).isSymbolicLink(),'SYMLINK migration');return fs.readFileSync(p,'utf8');});
 }
 export async function launch({services=false}={}) {
+  const resources=resourceBroker();
   const prefix='vexa-f01-03-'+randomUUID(), owned=[];
   const credentials=new Map();
   let network=false;
@@ -66,19 +68,19 @@ export async function launch({services=false}={}) {
       assert.ok(claims(r.data.access_token).session_id!==claims(actor.token).session_id,'AUTH_NEW_SESSION');
       return {id:actor.id,token:r.data.access_token};
     },
-    close(){credentials.clear();const failures=[];for(const name of owned.reverse()){try{docker(['rm','-f','-v',name]);}catch{failures.push(name);}}if(network){try{docker(['network','rm',prefix]);}catch{failures.push(prefix);}}assert.deepEqual(failures,[],'TEARDOWN: own resources not removed');},
+    close(){credentials.clear();const failures=[];for(const name of [...owned].reverse()){try{resources.remove('container',name);}catch{failures.push(name);}}if(network){try{resources.remove('network',prefix);}catch{failures.push(prefix);}}assert.deepEqual(failures,[],'TEARDOWN: own resources not removed');},
   };
   const run=(kind,env={},port)=>{
     const name=prefix+'-'+kind;
     // Reserve ownership before run: a failed port bind can leave a container.
     owned.push(name);
-    docker(['run','--pull','never','-d','--name',name,'--network',prefix,
+    docker(['run','--pull','never','-d','--name',name,...resources.reserve('container',name),'--network',prefix,
       '--label','com.supabase.cli.project=vexa-local',...(port?['-p',`127.0.0.1:${port}:${kind==='storage'?5000:kind==='auth'?9999:3000}`]:[]),
       ...Object.entries(env).flatMap(([k,v])=>['-e',`${k}=${v}`]),images[kind]]);
   };
   try {
     for(const kind of services?Object.keys(images):['db'])docker(['image','inspect',images[kind],'--format','{{.Id}}']);
-    docker(['network','create',prefix]);network=true;
+    network=true;docker(['network','create',...resources.reserve('network',prefix),prefix]);
     run('db',{POSTGRES_PASSWORD:password});
     let ready=false;
     for(let i=0;i<80;i++){try{docker(['exec',prefix+'-db','pg_isready','-h','127.0.0.1']);ready=h.sql("SELECT count(*) FROM pg_roles WHERE rolname IN ('authenticator','supabase_auth_admin','supabase_storage_admin')")==='3';if(ready)break;}catch{}await new Promise(r=>setTimeout(r,100));}

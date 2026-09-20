@@ -9,10 +9,15 @@ Prioridad vigente: **[cerrar e integrar lo ya construido](construccion/CIERRE-IN
 
 Programa y guardias: **[AUTOMATICO.md](AUTOMATICO.md)** · **[alcance completo](construccion/ALCANCE-CONFIRMADO.md)**. El principal promueve serialmente; no lanzar otro supervisor mientras haya candidatos/ensayos activos. Consultar recibos y procesos: este documento no acredita que siga vivo un worker. Google remoto, proveedores, CI remoto y producción siguen pendientes; Actions permanece desactivado.
 
+## Tecnologías y lenguajes en GitHub
+- Interfaz: React/Next.js con TypeScript; lógica de negocio: Node.js/JavaScript.
+- Datos y permisos: PostgreSQL/SQL; construcción y verificación: Python y Node.js.
+- GitHub calcula porcentajes por bytes, no por la importancia de cada componente. Los HTML de la guía y del informe son documentación generada; `.gitattributes` los identifica sin excluir código fuente ni forzar un lenguaje principal.
+
 ## Construcción guiada de punta a punta
 **[Empieza aquí: guía de construcción](construccion/README.md)** · [60 fichas](construccion/05-TAREAS.md) · [Guía HTML continua](construccion/GUIA-COMPLETA.html) · [PDF](construccion/GUIA-COMPLETA.pdf) · [Comparación con Likida](construccion/00-COMPARACION-LIKIDA.md).
 
-Ciclo control-plane → gate externo → prepare/run → verify → revisión → accept; recuperación supervisada, contratos y runbooks. Al arrancar hay 8 gates de tareas presentes y 47 pendientes; el scaffold ya pasó en candidato y materialización limpia. **Guía completa no equivale a loop totalmente desatendido ni SaaS terminado.**
+Ciclo control-plane → gate externo → prepare/run → verify → revisión → accept; recuperación supervisada, contratos y runbooks. El inventario vigente se consulta con `python3 scripts/guide.py audit`; presencia de un gate no significa aceptación. El scaffold pasó en candidato y materialización limpia. **Guía completa no equivale a loop totalmente desatendido ni SaaS terminado.**
 
 ## Investigación de negocio ampliada — TAM, SAM, SOM y finanzas
 **[Índice del estudio completo](negocio/README.md)** · **[TAM/SAM/SOM](negocio/05-Precios-y-Finanzas/tam-sam-som.md)** · **[Excel de mercado/finanzas](negocio/05-Precios-y-Finanzas/VEXA-MERCADO-Y-FINANZAS.xlsx)** · **[Informe HTML](negocio/INFORME-VEXA.html)**.

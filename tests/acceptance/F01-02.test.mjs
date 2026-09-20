@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import {randomUUID} from 'node:crypto';
-import {local,sql,startApp,login,origin,denied,tamper} from './support/F01-02/harness.mjs';
+import {local,sql,startApp,login,origin,authURL,denied,tamper} from './support/F01-02/harness.mjs';
 
 import {revocationOracle,readOnlyNavigation} from './support/F01-02/oracles.mjs';
 const candidate=process.env.VEXA_CANDIDATE;
@@ -24,13 +24,13 @@ test('F01-02: real SSR callback, membership, invalid sessions, revocation and lo
       ('${a}','${A.userId}','analyst','active',1),('${a2}','${A.userId}','analyst','active',1),('${b}','${B.userId}','owner','active',1); COMMIT;`);
     seeded=true;
     await startApp(h,candidate);
-    browser=await h.chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});
+    browser=await h.launchBrowser();
     const context=await browser.newContext({serviceWorkers:'block'});
     // Browser must not contact Google, cloud, or any other local service.
     const forbidden=[];
     await context.route('**/*',async route=>{
       const url=new URL(route.request().url());
-      if(![origin,'http://127.0.0.1:56321'].includes(url.origin)){forbidden.push(url.origin);await route.abort();}
+      if(![origin,authURL].includes(url.origin)){forbidden.push(url.origin);await route.abort();}
       else await route.continue();
     });
     const page=await context.newPage();

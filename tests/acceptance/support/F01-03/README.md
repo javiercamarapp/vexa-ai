@@ -55,3 +55,32 @@ con journals exclusivos0600 y comprobación de recursos retirados. Consulte
 [RESULTADO.md](import-uploads/RESULTADO.md) para comandos/salidas/hashes y límites.
 Esto es una propuesta control-plane para revisión independiente, sin freeze,
 registro, prepare, aceptación ni publicación.
+
+## Extensión propuesta source history — F02 llamada34/global178
+
+`source-history/oracles.mjs` clasifica explícitamente `source_revisions` y
+`source_quarantine` sólo cuando existen; F02-04 exige ambas. Conserva intactos
+los 168 controles core y la extensión import_uploads. Exige RLS/FORCE, grants
+backend-only SELECT/INSERT, negativos Auth/anon/service_role, roles, acción,
+tenant y revocación. Descubre y prueba las once FK nuevas, incluidos enlaces a
+organizations, con positivo, SQLSTATE23503 y constraint exacta. Los probes
+polimórficos mantienen CHECK y alinean canonical_id/entity_type para que no
+oculten la FK; sólo desactivan triggers USER y fuerzan constraints inmediatas.
+Además prueba que una revisión no admita cero/dos proyecciones, tipo distinto
+ni canonical_id desalineado. Esto no acredita una sola entidad lógica entre
+revisiones: el examen F02-04 detecta ese defecto real por separado.
+
+Ejecución aislada y resultados en `../F02-canonical/RESULTADO.md`. Toda otra
+tabla pública desconocida sigue bloqueada. Propuesta sin freeze ni aceptación.
+
+## Reconciliación FIX36 (examen40; revisión Root pendiente)
+
+La extensión `source-history/oracles.mjs` clasifica explícitamente source_heads,
+source_revisions (snapshot y cinco relaciones nuevas) y source_quarantine:19 FK
+adicionales respecto baseline5. La FK triple de selección se comprueba por catálogo
+con tenant/identidad/revisión y por efecto SQL. Ninguna tabla desconocida se admite.
+Sólo cuando existe source_heads se exige messages.occurred_at nullable y se prueban
+UPDATE/DELETE denegados al backend en message_revisions. Baselines4/5 conservan
+sus controles. La selección owner tiene un negativo adicional contra UPDATE SQL
+por analyst; su rojo es un bloqueo de producto, no una excepción de la matriz.
+Véase `../F02-canonical/FINAL.md` para las ejecuciones y limitaciones finales.

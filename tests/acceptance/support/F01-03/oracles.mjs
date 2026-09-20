@@ -3,6 +3,7 @@ import {randomUUID} from 'node:crypto';
 import {definitions,relations,ordered,fixture,insert,q,ident,freshRow} from './matrix.mjs';
 import {denied,rows,read,write} from './harness.mjs';
 import * as uploads from './import-uploads/oracles.mjs';
+import * as history from './source-history/oracles.mjs';
 export const A='00000000-0000-4000-8000-00000000000a',B='00000000-0000-4000-8000-00000000000b';
 export function identityOracle(h,actors) {
   rows(h.probe(read('organizations'),actors.a),[A],'ORG_READ_A');
@@ -45,9 +46,10 @@ export function schemaOracle(h) {
   }
   // Extra private tables cannot silently escape the functional matrix.
   const hasUploads=tables.some(x=>x.name===uploads.table);
-  assert.deepEqual(tables.filter(x=>!['organizations','memberships',...(hasUploads?[uploads.table]:[])].includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
+  assert.deepEqual(tables.filter(x=>!['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h)].includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
   const fks=foreignKeys(h);
   if(hasUploads)uploads.schema(h,fks);
+  history.schema(h,fks);
   for(const {table,column,parent} of relations)
     assert.ok(fks.some(fk=>fk.table===table && fk.parent===parent && fk.validated && fk.mapping.tenant_id==='tenant_id' && fk.mapping[column]==='id'),`FK_MISSING:${table}.${column}->${parent}`);
   for(const fk of fks){
@@ -121,6 +123,7 @@ export function tableOracle(h,table,f,actors) {
   const fresh=(tenant)=>freshRow((tenant===A?a:b)[table]);
   // Insert/delete on a leaf clone: dependent fixtures cannot mask authorization.
   const immutable=table==='audit_events';
+  const appendOnly=table==='message_revisions'&&history.present(h).includes('source_heads');
   const disposable=immutable?a[table]:fresh(A);if(!immutable)h.sql(insert(table,disposable)+';');
   try {
     for(const actor of [null,actors.outsider,actors.a,actors.viewer,actors.analyst,actors.operator]) {
@@ -137,8 +140,9 @@ export function tableOracle(h,table,f,actors) {
     }
     const allowed=table==='connections'?actors.a:'backend';
     const pos=fresh(A);rows(h.probe(write(insert(table,pos)),allowed),[pos.id],`INSERT_POSITIVE:${table}`);
-    if(!immutable)rows(h.probe(write(`UPDATE public.${ident(table)} SET updated_at=updated_at+interval '1 second' WHERE id=${q(disposable.id)}`),allowed),[disposable.id],`UPDATE_POSITIVE:${table}`);
-    if(!immutable)rows(h.probe(write(`DELETE FROM public.${ident(table)} WHERE id=${q(disposable.id)}`),allowed),[disposable.id],`DELETE_POSITIVE:${table}`);
+    if(!immutable&&!appendOnly)rows(h.probe(write(`UPDATE public.${ident(table)} SET updated_at=updated_at+interval '1 second' WHERE id=${q(disposable.id)}`),allowed),[disposable.id],`UPDATE_POSITIVE:${table}`);
+    if(!immutable&&!appendOnly)rows(h.probe(write(`DELETE FROM public.${ident(table)} WHERE id=${q(disposable.id)}`),allowed),[disposable.id],`DELETE_POSITIVE:${table}`);
+    if(appendOnly)for(const op of ['UPDATE','DELETE'])denied(h.probe(`SET LOCAL ROLE vexa_backend; ${write(op==='UPDATE'?`UPDATE message_revisions SET hash='changed' WHERE id=${q(disposable.id)}`:`DELETE FROM message_revisions WHERE id=${q(disposable.id)}`)}`),'APPEND_ONLY_MESSAGE_HISTORY:'+op);
     const swap=h.probe(write(`UPDATE public.${ident(table)} SET tenant_id=${q(B)} WHERE id=${q(disposable.id)}`),actors.dual);
     // 23503 is deliberately NOT accepted: it can hide a missing immutability rule.
     if(swap.code!=='23514')denied(swap,`TENANT_SWAP:${table}`);
@@ -221,6 +225,7 @@ function fkDiagnostic(h,table,result){
 // Every discovered private edge gets a valid INSERT and a foreign-parent INSERT.
 // Diagnostics retain the rejecting constraint; mandatory presence is checked separately.
 export function discoveredFkOracle(h,f,fk) {
+  if(history.tables.includes(fk.table))return history.fk(h,f,fk);
   if(fk.table===uploads.table)return uploads.fk(h,f.importUploads,fk);
   if(fk.parent==='organizations')return; // identity links exercised by identityOracle
   const make=side=>{

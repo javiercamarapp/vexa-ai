@@ -11,7 +11,7 @@ async function body(request){if(Number(request.headers.get('content-length'))>81
 /** Trusted server ports: database=createDatabase(identity,SqlPool,selectedTenant).
  * storage uses the SAME authenticated session; no administrative SQL or token input.
  */
-export function createImportHandler({database,storage,confirmationSecret}={}) {
+export function createImportHandler({database,storage,confirmationSecret,admission}={}) {
  const token=r=>createHmac('sha256',confirmationSecret).update([r.tenant_id,r.import_id,r.user_id,r.request_hash,new Date(r.expires_at).toISOString()].join('\n')).digest('base64url');
  const connection=async(s,id)=>{const r=await s.query("SELECT id FROM public.connections WHERE tenant_id=$1 AND id=$2 AND status='active' AND source IN ('csv','xlsx')",[s.tenantId,id]);if(!r.rows.length)fail(404,'connection_not_found');};
  const get=async(s,id)=>{const r=await s.query('SELECT i.*,u.import_id,u.user_id,u.size,u.content_type,u.request_hash,u.expires_at,u.job_id FROM public.imports i JOIN public.import_uploads u ON u.import_id=i.id AND u.tenant_id=i.tenant_id WHERE i.tenant_id=$1 AND i.id=$2',[s.tenantId,id]);if(!r.rows.length)fail(404,'import_not_found');return r.rows[0];};
@@ -44,6 +44,7 @@ export function createImportHandler({database,storage,confirmationSecret}={}) {
    });
    if(request.method!=='POST')fail(405,'method_not_allowed');
    const input=await body(request);
+   if(admission&&(!match[1]||match[2]==='/confirm')){const health=await admission();if(!health?.healthy)fail(503,'consumer_unhealthy');}
    if(!match[1]){
     pick(input,['connection_id','mapping_version','content_type','size','sha256']);
     const key=request.headers.get('idempotency-key');

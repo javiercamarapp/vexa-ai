@@ -1,1 +1,13 @@
-{"name":"@vexa/platform","version":"0.0.1","private":true,"type":"module","exports":{"./session":"./src/session.ts"},"scripts":{"test":"node --experimental-strip-types --test tests/*.test.ts"}}
+{
+  "name": "@vexa/platform",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./session": "./src/session.ts",
+    "./db": "./src/db.ts"
+  },
+  "scripts": {
+    "test": "node --experimental-strip-types --test tests/*.test.ts"
+  }
+}

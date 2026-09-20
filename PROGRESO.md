@@ -1,6 +1,15 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## F02-03: integración iniciada y rechazo global preservado — 20-sep
+
+- Continúa **13/60 aceptadas**, F02 en2/6. Examen03 revisado y congelado en `28726bc`;59archivos de producto adoptados por hash/modo. Verify03, F02-01 y F02-02 salieron0.
+- CI global detectó lint `react-hooks/set-state-in-effect` y `SIX_ENTRIES:7 !=6`. Control/kernel y SQL pasaron; huellas de fuente/control permanecieron idénticas y cleanup comprobado. Candidato `0b433d26a80cb7acfd1bf22867ff71a04c651bf4` rechazado oficialmente, no promovido.
+- Corrección aislada de dos componentes: bootstrap asíncrono cancelable, sin desactivar lint; seis destinos núcleo y enlace Importaciones en navegación Gestión. Revisor independiente reejecutó31casos y probes de StrictMode/unmount/503/retry/retención/teclado. No aprobación final mientras falte la regresión global.
+- El smoke offline descubrió `/api/imports` en el bundle y rechazó su503 `auth_not_configured`, con configuración deliberadamente ausente. Excepción estrecha en revisión: sólo API exacta, contrato/error/tipo/caché esperados y opt-in del smoke; escaneo de secretos sigue ejecutándose antes. Web-quality corregido pasó. Un aborto `ERR_ABORTED` de navegación F01-04 permanece registrado e investigado, no borrado como éxito.
+- Usuario señaló demora sin publicación. Corrección operativa: una tarea en cierre; recoger recibos terminados, revisar sólo deltas, probar lint/regresiones afectadas temprano y publicar después de accept sin esperar toda la fase. Ningún plan o proceso terminado se anuncia como bucle activo.
+-04 conserva un fallo del examen que acepta un marcador sin casos de dominio.05/06 conserva P1 reproducido en delegaciones del worker y cobertura pendiente. No declarar6/6 ni desplegar como producto terminado.
+
 ## Publicación pública autorizada y auditoría final requerida — 20-sep
 - El repositorio cambió a público fuera de esta sesión. El primer push posterior a aceptación fue bloqueado por la guarda de privacidad; no se eludió. El usuario confirmó explícitamente «PUBLICO SIGUE MERGENADO».
 - Publicador actualizado con opt-in `allow_public=True` literal y keyword-only; privado continúa como default, visibilidad desconocida rechazada y Actions sigue bajo permiso independiente. Historial completo, paths/secretos, ff-only y SHA remoto conservados.13tests de publicador y117de controlador verdes; revisión independiente aprobó únicamente esas2rutas. No se interpreta la autorización pública como permiso de gasto/Actions.

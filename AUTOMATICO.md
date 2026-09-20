@@ -2,13 +2,19 @@
 
 Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Programa: [PROGRAMA](PROGRAMA.md). Repositorio canónico `~/vexa`; NO ejecutar en la copia de Escritorio. Las fuentes privadas permanecen locales.
 
-## Checkpoint vigente — F02-02 aceptado
+## Cierre único activo — F02-03, aún no aceptado
+
+**13/60**. Recoger resultados terminados antes de abrir más trabajo. F02-03 pasó su examen y F02-01/02, pero fue rechazado por regresión global: lint de efecto React y número de destinos del menú principal. Propuesta de corrección mínima y revisión del smoke offline en curso; no repetir aprobaciones de código inalterado ni aceptar un candidato con regresiones rojas. Después de accept limpio, publicar por publisher y comprobar el SHA remoto antes de avanzar.
+
+Cada fallo requiere comando, causa reproducible, corrección y prueba afectada; conservar también errores intermitentes y corridas incompletas. Las propuestas04–06 no frenan el cierre independiente de03. F02 sólo se anuncia terminada con6/6 aceptadas, compilación integrada, regresiones y publicación:17/60 global.
+
+## Último checkpoint aceptado — F02-02
 
 **13/60**, commit `791c854`. Carga directa y confirmación atómica aceptadas tras corregir/revisar la matriz global (168baseline/172producto,97/100FK). Nuevos verify/accept limpios, F02-01 y cuatro jobs CI pasaron:12gates anteriores+controlador110, fuente/control intactos y24recursos limpiados. Rechazo original preservado. F02-03/04 continúan como propuestas disjuntas: navegador03 todavía en depuración, examen03 y persistencia04 sin aceptación.
 
 Usuario reiteró loop y entrega connection-ready de TODO blueprint+audios, conintegraciones implementadas ydespués sólo credenciales/autorizaciones externas. DespliegueVEXA enVercel autorizado; no gastoextra/inferencia/Actions. Supabasepropio creado, SQLremoto bloqueado poraprobacióninteractiva, no eludirporotrocanal.
 
-Renovación REAL del20-sep por «continúa», «hasta terminar» y múltiples puntos: ventana hasta14:05, techo40F02/220global;31F02/175global iniciadas. Máximo3agentes de la misma fase, principal único integrador. STOP propio archivado y retirado después de revisión/corrección congelada. No hubo bucle activo toda la noche; no se afirma ejecución desatendida por tener un plan. Revisiones/aceptación no renuevan presupuestos automáticamente. Fuentes/rechazos intactos; no reutilizar la antigua extensión errónea ligada al permiso económico. Recibos privados vigentes mandan.
+Renovación REAL de todo el día del20-sep: ventana hasta00:00 del21-sep UTC−06, techo76F02/220global con base144; registro privado atómico sin reset. Corte de revisión:191global iniciadas. Máximo3agentes de la misma fase, principal único integrador. STOP propio archivado y retirado después de revisión/corrección congelada. No hubo bucle activo toda la noche; no se afirma ejecución desatendida por tener un plan. Revisiones/aceptación no renuevan presupuestos automáticamente. Fuentes/rechazos intactos; no reutilizar la antigua extensión errónea ligada al permiso económico. Recibos privados vigentes mandan.
 
 ## Publicación y cierre autorizados el20-sep
 

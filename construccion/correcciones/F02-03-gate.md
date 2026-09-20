@@ -1,6 +1,16 @@
 # F02-03 — examen y producto revisados, pendientes de aceptación oficial
 
-## Revisión final del 20-sep
+## Regresión global y recheck antes de nueva preparación
+
+La aprobación inicial no se convirtió en aceptación: el candidato `0b433d2` pasó03/01/02 pero falló lint y el contrato de seis destinos del menú núcleo. Se rechazó por runner, conservando commit, recibos y STOP. Dos correcciones de producto revisadas: carga inicial asíncrona cancelable sin desactivar lint y navegación Gestión separada para Importaciones.
+
+Al superar lint, el smoke offline descubrió la API desde el bundle y rechazó su503 esperado por falta de Auth. Corrección externa de CI revisada independientemente: excepción con opt-in sólo en smoke sin configuración, ruta exacta `/api/imports` sin query,503 JSON, caché privada/no-store y contrato/error `auth_not_configured` explícitos. Los secretos se inspeccionan antes de esa excepción;500, páginas, health, otras rutas y errores de backend siguen fallando. Nuevas negativas y control positivo, sin alterar el comportamiento del producto para acomodarlo.
+
+Recheck191 aprobado: tres métodos de secretos con múltiples negativas, web-quality completo (55artefactos/80solicitudes), F01-04 completo3/3 y cuatro roles; reutiliza31/31 y probes StrictMode/unmount/503/retry/retención de la revisión190 porque producto no cambió. Hashes/modos intactos, limpieza verificada. Un aborto previo `ERR_ABORTED` permanece documentado: transición pendiente plausible, causa no demostrada; el pase posterior no garantiza estabilidad universal.
+
+Sigue pendiente nueva aceptación limpia y regresión global sobre el candidato definitivo;13/60 hasta entonces.
+
+## Revisión inicial del 20-sep
 
 Revisión independiente `f02-closing-reviews-1789928750854153000-review03`: aprobada sin hallazgos. Control y producto preservados por hashes/modos (1741/1768 archivos). Reejecución independiente Node26: 31/31 casos internos, cero skips, Next/Auth/SQL/Storage/Chromium reales y limpieza verificada. Reutiliza la revisión anterior para código inalterado: 96 regresiones de producto, F02-02 real y tres ciclos de mutación 0→aserción→0.
 

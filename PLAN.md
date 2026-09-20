@@ -2,13 +2,19 @@
 
 Actualizado: 2026-09-20. Este plan reemplaza los bloques históricos de investigación/preparación conservados en Git. El usuario pidió construir y confirmó **UN MES, no una semana**. Referencia de calendario: 19-oct-2026 si se cuenta desde este encargo; objetivo, no entrega garantizada ni estado alcanzado.
 
-## Actualización vigente — cierre F02-02
+## Actualización vigente — F02-03 en cierre, todavía13/60
+
+Una sola tarea en cierre:03. La revisión inicial aprobó su examen/producto, pero la regresión global rechazó el candidato por lint React y siete enlaces dentro del menú principal que exige seis. Corregir producto sin cambiar esos oráculos: carga inicial asíncrona cancelable y enlace de importaciones en navegación de gestión. El smoke offline además encontró un503 esperado de Auth ausente en la API descubierta desde el bundle; su excepción exacta requiere revisión externa, mantiene escaneo de secretos y no permite5xx arbitrarios. Se conserva también un aborto intermitente de navegación F01-04 para investigar, no esconder.
+
+No abrir más módulos mientras haya una aprobación pendiente de integrar. Cada resultado termina en una decisión concreta; después de aceptar, publicar y verificar SHA remoto. Reusar pruebas inmutables, revisar deltas y ejecutar primero lint/regresiones afectadas. F02 completa son6/6 y17/60 global, todavía no alcanzados.
+
+## Último cierre aceptado — F02-02
 
 **13/60 aceptadas**, F02-02 `791c854`: carga directa Storage y confirmación atómica import/job/outbox. La regresión de matriz se corrigió mediante extensión externa independiente, sin cambiar producto ni quitar controles. Nuevos verify/accept limpios y regresiones de las12tareas anteriores+controlador110 pasaron. Historial de rechazo conservado. F02-03/04 siguen como propuestas; tres agentes separan producto03, examen03 y canonicalización04. Se conserva todo el banco y el alcance completo.
 
 Últimas órdenes: continuar loop, integrar blueprint+audios de punta a punta y dejar sólo credenciales/autorizaciones externas; el hito inmediato es **connection-ready completo**, no maqueta ni integraciones pendientes de programar. Producción validada sigue siendo un hito distinto. Verceldeploy propio autorizado; gastos adicionales/inferencia no. Supabasecreado con autorización10USD/mes; SQLremoto requiere aprobacióninteractiva, no eludirla.
 
-Renovación explícita del20-sep: continuar hasta terminar y trabajar varios puntos de la misma fase. Ventana hasta14:05, techo40llamadasF02/220global,31F02/175global iniciadas; máximo3agentes concurrentes. No reset ni renovación automática. La prórroga histórica vinculada erróneamente al permiso económico fue corregida y cancelada; no reutilizarla. Cifras y ventanas anteriores abajo son históricas.
+Renovación explícita de todo el día del20-sep: hasta00:00 del21-sep (UTC−06), techo acumulado220, base144+asignaciónF02 de76; máximo3agentes concurrentes y cero gasto nuevo. Registro privado atómico de llamadas, sin reset ni renovación automática;191 llamadas acumuladas iniciadas al redactar este corte. Caffeinate no garantiza ejecución desatendida. La prórroga histórica vinculada erróneamente al permiso económico fue corregida y cancelada; no reutilizarla. Cifras y ventanas anteriores abajo son históricas.
 
 ## Objetivo y cierre
 Producto completo del PRD y ampliaciones confirmadas: Next.js, Auth/organizaciones/roles, tablas/migraciones/RLS/Storage, importaciones y conectores HubSpot/Zendesk, trabajos durables, OpenRouter multimodelo/evidencia, dinero/prioridad, ocho vistas, intervenciones/medición/brief, notificaciones internas/push/correos para USUARIOS DE VEXA, seguridad/observabilidad/recuperación y entrega operable.

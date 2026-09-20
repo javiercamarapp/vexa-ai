@@ -1,0 +1,61 @@
+COMMAND ["npm","ci","--offline","--ignore-scripts","--no-audit","--no-fund"] EXIT 0 ERROR null
+
+added 376 packages in 3s
+npm warn deprecated eslint@9.39.4: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+COMMAND ["npm","run","build","--workspace","@vexa/web"] EXIT 0 ERROR null
+
+> @vexa/web@0.0.1 build
+> next build --webpack
+
+▲ Next.js 16.3.5 (webpack)
+✓ Running next.config.ts took 657ms
+⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 3.7s
+  Running TypeScript ...
+  Finished TypeScript in 1625ms ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/8) ...
+  Generating static pages using 7 workers (2/8) 
+  Generating static pages using 7 workers (4/8) 
+  Generating static pages using 7 workers (6/8) 
+✓ Generating static pages using 7 workers (8/8) in 154ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /api/health/version
+├ ƒ /api/imports
+├ ƒ /api/imports/[id]
+├ ƒ /api/imports/[id]/confirm
+├ ƒ /auth/callback
+├ ƒ /auth/google
+├ ƒ /auth/logout
+├ ƒ /auth/organization
+├ ƒ /briefs
+├ ƒ /customers/[id]
+├ ƒ /explorer
+├ ƒ /interventions
+├ ƒ /login
+├ ƒ /overview
+├ ƒ /problems
+├ ƒ /problems/[id]
+└ ƒ /recommendations
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead.
+
+  To migrate automatically, run:
+  npx @next/codemod@canary middleware-to-proxy .
+
+  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+NEXT_REAL_ROUTE:503/auth_not_configured; no authenticated SQL/Storage SSR claim
+SOURCE_SHA256 {"apps/web/src/lib/imports/server.ts":"abda1faee4531bd6c1ff9902d2aa3d43c973896bf83f77952c79d44217c6e56d","packages/jobs/imports.mjs":"f1cb38627208e251b0d6b1cdf805c0c08a128d57a53de0468bc54ba6987e15d9","supabase/migrations/0005_import_outbox.sql":"af99f51bdd2101b56d1793463004c8f2259b764ad367fadf7322f78107c5afcf"}

@@ -1,0 +1,43 @@
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✖ D02-01 reservation, real direct upload, hash, queued and concurrent retry (958.251125ms)
+  ✔ D02-02 hash and size independently observed from Storage (623.963625ms)
+  ✔ D02-03 nonexistent object and expired confirmation capability (1009.103667ms)
+  ✔ D02-04 SQL fault at jobs rolls back confirmation; retry preserves reservation (776.676125ms)
+  ✔ D02-04 SQL fault at outbox rolls back confirmation; retry preserves reservation (735.67ms)
+  ✔ D02-05 cross tenant confirmation, polling, selector and object substitution (1051.249875ms)
+  ✔ D02-06 revoked member cannot confirm, poll or fetch previously known object (712.543833ms)
+  ✔ D02-07 anonymous, viewer and caller-selected bucket forbidden (222.514334ms)
+✖ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (66336.445083ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 7
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 66458.892625
+
+✖ failing tests:
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:22:10
+✖ D02-01 reservation, real direct upload, hash, queued and concurrent retry (958.251125ms)
+  AssertionError [ERR_ASSERTION]: RESERVATION_REPLAY
+  + actual - expected
+  
+  + undefined
+  - '596a1c2a-cb68-40ad-81ea-0203ad39ae70'
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/exam02.mjs:27:56)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/exam02.mjs:22:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/probe.test.mjs:7:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: '596a1c2a-cb68-40ad-81ea-0203ad39ae70',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

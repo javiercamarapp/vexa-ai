@@ -1,0 +1,41 @@
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✔ D02-01 reservation, real direct upload, hash, queued and concurrent retry (863.766208ms)
+  ✔ D02-02 hash and size independently observed from Storage (561.160959ms)
+  ✔ D02-03 nonexistent object and expired confirmation capability (847.1685ms)
+  ✔ D02-04 SQL fault at jobs rolls back confirmation; retry preserves reservation (721.409666ms)
+  ✔ D02-04 SQL fault at outbox rolls back confirmation; retry preserves reservation (708.171291ms)
+  ✔ D02-05 cross tenant confirmation, polling, selector and object substitution (1007.236833ms)
+  ✔ D02-06 revoked member cannot confirm, poll or fetch previously known object (553.352417ms)
+  ✔ D02-10 failed reservation cannot leave an untracked Storage object (688.122167ms)
+  ✔ D02-09 independent SQL connections contend on tenant/idempotency unique (687.909625ms)
+  ✔ D02-08 Storage rejects correctly signed expired upload token; fresh control uploads (426.505375ms)
+  ✔ D02-07 anonymous, viewer and caller-selected bucket forbidden (218.524458ms)
+✔ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (12179.993542ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"d3cfb87c6d9e515b370ce5c02fa44e00ddeeb66173e00289b64c87689d0df29e","bytes_base64":"aWQsdGV4dAphNGUxYTZhZC00MGYzLTQ2NWYtODNkYi03MDQ1ZjRiMDA5ZDcsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"d3cfb87c6d9e515b370ce5c02fa44e00ddeeb66173e00289b64c87689d0df29e","bytes_base64":"aWQsdGV4dAphNGUxYTZhZC00MGYzLTQ2NWYtODNkYi03MDQ1ZjRiMDA5ZDcsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"70baaf64d34130d4ba6dcb4a607fd9137b46c17836fc5d1a4e664bd2fe7aacc4","bytes_base64":"aWQsdGV4dAoyNjY5NzUxMC1mMTMwLTQwZDItODg5Ny00ZGVlOTBmZjZmMDIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"7ddaa58286800e5154ae74b6a82dd060af52070df7bee16caa849e7e59e7dad9","bytes_base64":"aWQsdGV4dAphY2U1Y2UwMy03ZDhmLTQ0N2EtODhlYi1kYjYyYWY3YjVhNDEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"f6ccd79be88b94a41f188859cfa6203abf83482d8b8f0ac90349080a6b8737b9","bytes_base64":"aWQsdGV4dAoyMGM3ZDYzOS0yOWE0LTQ1OTYtYThmMS01ZTdhYzllZjhkNDAsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"ef5e28454dc50b9b52cbf10a4afe6c938f1767f7458d4f0e07e9e8ff6d9b3fa2","bytes_base64":"aWQsdGV4dAo0YmU0ZTY2MC00ZjExLTQ0MTctYjRkZS0zMDhlNWFiNDU3YzksU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"d99f529de81a09e2df418330dc0adf7a81f1e4ae1aa4778d293169ced34d70cd","bytes_base64":"aWQsdGV4dApiODIxZmQzNS1jZWUwLTQzZjctODM4Ni1mZWQyMzBiYzM5OWMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"1fc83756b27181cf09cf0944d9a895a4d3c89f3dc7e343f59f54166fb7c0e7f6","bytes_base64":"aWQsdGV4dApiNmQ0MjljMS05YzMwLTQ0MDYtOGEyMy0wMDY3OTk4ODUyNzksU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"184e0bd22871f6f651ed25e6091da173c9428335dc76fa7273565eeb3edb65e2","bytes_base64":"aWQsdGV4dAphN2NmMjAyMy03ZWQ3LTQyN2MtOGYyMi02Nzc5MjU3M2E0ZjQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"4dcaaeedc1beb33be63e5a6595c6dfc43f68b7181ebdcee504059c4dc02098e0","bytes_base64":"aWQsdGV4dApiMmQ3ZDM0Yi1mNGQzLTRiNWEtYWI1ZS03MDM0ODVmODA5MzIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"0fd28630aa1b60221e5676c60c20774faf3f8a1c8fabecee9f401e6a6058008f","bytes_base64":"aWQsdGV4dAoyOTI0NGVjYi04ZDBlLTQ3ZmEtYmFhMS1mNzE2N2FiYjJhYzAsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"27aa831b0ff864b7a325ddc07224b241090091a8f0bafe29c72df31d2c684e97","bytes_base64":"aWQsdGV4dAo5YTM3OGM1ZS0wYzNkLTQ5MzYtYTJjYy04MDZmYzE0MWRmZTksU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"da0f29bde49b52bf907894b611ea20fda433567c5151fb6e8ad6ddd0eb18ec3d","bytes_base64":"aWQsdGV4dAo3NmEwYzRmZS02ZTkzLTRmYzUtOTM4Zi01YzE1Njg3YjIxMjMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"268497f1bc87160ba12a948ebee844debaa4ebb23c8628af31ba5ecfe140ca5a","bytes_base64":"aWQsdGV4dApiNjQ3MzI0ZC0zYjVhLTQxYmUtODlhOS0zNTJjZTBjM2IyNjksU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"d74cb747c607ee8dbfccfbe2a81c537cac4a10372294a94a4cc5625bed0bed8f","bytes_base64":"aWQsdGV4dApjMjM3MGI4NS1jZTI4LTQ5NzYtOGZhZS1kMWU1NGNhNGFkNjgsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"b06668b41bfb0b26b648c202872134c74cc5677810b45f6a38904bc13fbf8d61","bytes_base64":"aWQsdGV4dAo4ZDVlZTM5Ny0yMjQ0LTQyZGYtYjJhZi03MzgyZTNhOWQyOTEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"a37104d1ac26c44bb6b7e5a8bc804810e2648c01ba428c518f5b3e46895010d5","bytes_base64":"aWQsdGV4dAowMjBkODAyMC02NjQ3LTRjNGUtYjM5Ni1jZmU0ZTI5MDRlNmYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"9f6fcecbbc27a81afaf4193ed6bc638545495be5ee455c6d97ef13a4caf432fe","bytes_base64":"aWQsdGV4dAo1ZTYzZDEwZS0wZWQ5LTQzNzYtODBlMi0yNDMwMGFlZWUzZDgsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"f26161acb3da9ceb25fd8a40acfbef1190cc3f84111eeddb0ceaac1350e830bc","bytes_base64":"aWQsdGV4dAozMGIwMDAwYS1mN2RlLTQ5YjEtYTYwNi1kNDQzYTI0ZWUwNDcsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"d7afb80340ede6372be3fadb097d52292d1491bd9f5c1ba65cae7bbf30fe607f","bytes_base64":"aWQsdGV4dAplZmMyYTZkZS1mYmZhLTQ1YjAtYWI1Yi05ZmU0ODMwYTAxNWEsU1lOVEhFVElDCg=="}
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12239.739333

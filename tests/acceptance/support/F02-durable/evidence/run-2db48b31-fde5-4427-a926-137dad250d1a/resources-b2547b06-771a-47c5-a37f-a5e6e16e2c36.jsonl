@@ -1,0 +1,15 @@
+{"kind":"network","name":"vexa-f01-03-ef590845-ce3e-4564-971a-3fbfe3baba8b","broker":"b2547b06-771a-47c5-a37f-a5e6e16e2c36"}
+{"kind":"container","name":"vexa-f01-03-ef590845-ce3e-4564-971a-3fbfe3baba8b-db","broker":"b2547b06-771a-47c5-a37f-a5e6e16e2c36"}
+{"kind":"container","name":"vexa-f01-03-ef590845-ce3e-4564-971a-3fbfe3baba8b-auth","broker":"b2547b06-771a-47c5-a37f-a5e6e16e2c36"}
+{"kind":"container","name":"vexa-f01-03-ef590845-ce3e-4564-971a-3fbfe3baba8b-rest","broker":"b2547b06-771a-47c5-a37f-a5e6e16e2c36"}
+{"kind":"container","name":"vexa-f01-03-ef590845-ce3e-4564-971a-3fbfe3baba8b-storage","broker":"b2547b06-771a-47c5-a37f-a5e6e16e2c36"}
+{"kind":"network","name":"vexa-f01-03-b0def3dd-1ad9-42f7-84d2-dc08b14f02ed","broker":"b2547b06-771a-47c5-a37f-a5e6e16e2c36"}
+{"kind":"container","name":"vexa-f01-03-b0def3dd-1ad9-42f7-84d2-dc08b14f02ed-db","broker":"b2547b06-771a-47c5-a37f-a5e6e16e2c36"}
+{"kind":"container","name":"vexa-f01-03-b0def3dd-1ad9-42f7-84d2-dc08b14f02ed-auth","broker":"b2547b06-771a-47c5-a37f-a5e6e16e2c36"}
+{"kind":"container","name":"vexa-f01-03-b0def3dd-1ad9-42f7-84d2-dc08b14f02ed-rest","broker":"b2547b06-771a-47c5-a37f-a5e6e16e2c36"}
+{"kind":"container","name":"vexa-f01-03-b0def3dd-1ad9-42f7-84d2-dc08b14f02ed-storage","broker":"b2547b06-771a-47c5-a37f-a5e6e16e2c36"}
+{"kind":"network","name":"vexa-f01-03-9ea0bff3-71c8-4753-b5d6-4e3bb2a24d7f","broker":"b2547b06-771a-47c5-a37f-a5e6e16e2c36"}
+{"kind":"container","name":"vexa-f01-03-9ea0bff3-71c8-4753-b5d6-4e3bb2a24d7f-db","broker":"b2547b06-771a-47c5-a37f-a5e6e16e2c36"}
+{"kind":"container","name":"vexa-f01-03-9ea0bff3-71c8-4753-b5d6-4e3bb2a24d7f-auth","broker":"b2547b06-771a-47c5-a37f-a5e6e16e2c36"}
+{"kind":"container","name":"vexa-f01-03-9ea0bff3-71c8-4753-b5d6-4e3bb2a24d7f-rest","broker":"b2547b06-771a-47c5-a37f-a5e6e16e2c36"}
+{"kind":"container","name":"vexa-f01-03-9ea0bff3-71c8-4753-b5d6-4e3bb2a24d7f-storage","broker":"b2547b06-771a-47c5-a37f-a5e6e16e2c36"}

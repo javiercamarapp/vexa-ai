@@ -1,0 +1,5 @@
+{"kind":"network","name":"vexa-f01-03-669df412-d81c-4892-abf9-4a44bf3514df","broker":"f9a830d6-2764-41fd-8263-637e7dbce105"}
+{"kind":"container","name":"vexa-f01-03-669df412-d81c-4892-abf9-4a44bf3514df-db","broker":"f9a830d6-2764-41fd-8263-637e7dbce105"}
+{"kind":"container","name":"vexa-f01-03-669df412-d81c-4892-abf9-4a44bf3514df-auth","broker":"f9a830d6-2764-41fd-8263-637e7dbce105"}
+{"kind":"container","name":"vexa-f01-03-669df412-d81c-4892-abf9-4a44bf3514df-rest","broker":"f9a830d6-2764-41fd-8263-637e7dbce105"}
+{"kind":"container","name":"vexa-f01-03-669df412-d81c-4892-abf9-4a44bf3514df-storage","broker":"f9a830d6-2764-41fd-8263-637e7dbce105"}

@@ -1,0 +1,61 @@
+{
+  "source_hashes": {
+    "supabase/config.toml": "4ecb8251b32c4b727e0326836cd3b7a5f947321a004192d5b3656749fa0eb8d1",
+    "packages/platform/src/session.ts": "ec5996600042fc01c0893885f4d5014f118c6ecfa4edd29135ebe3a72736b22a",
+    "packages/platform/src/db.ts": "2157e685b93e8ffe3664b91ac522a462f2073fc711bb3624b80a032f0c929e67",
+    "packages/jobs/index.mjs": "9066c3071ae4608503d5b64d6b6c72acdd5333cdd9300613e9b2474d3c55a6a1",
+    "packages/jobs/imports.mjs": "f1cb38627208e251b0d6b1cdf805c0c08a128d57a53de0468bc54ba6987e15d9",
+    "supabase/migrations/0005_import_outbox.sql": "af99f51bdd2101b56d1793463004c8f2259b764ad367fadf7322f78107c5afcf",
+    "supabase/migrations/0002_sources.sql": "d6fbccfe2f192566e6ae3efe244412a0fda92294cc3b0af6adee3228df66c09b",
+    "supabase/migrations/0004_evidence_money.sql": "b5598eafe59ccbf1d71c88ae42a207e41c120e81d20e761b82d13b0afc7161c3",
+    "supabase/migrations/0001_identity.sql": "73f98d0b3b895fb3637d6613ad18dde2a48387714424dd0159d5db871b8f9108",
+    "supabase/migrations/0003_execution.sql": "3142bd37fd0e9922e75758e056470587d93e89aeeed82e076cd8c44f9971f699"
+  },
+  "runs": [
+    {
+      "name": "atomic",
+      "stage": "healthy",
+      "exit": 0,
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/run.py",
+        "node",
+        "--test",
+        "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-probe.test.mjs"
+      ],
+      "assertion": "ATOMIC_CONFIRM_ROLLBACK",
+      "mutation_sha256": "f1cb38627208e251b0d6b1cdf805c0c08a128d57a53de0468bc54ba6987e15d9"
+    },
+    {
+      "name": "atomic",
+      "stage": "defect",
+      "exit": 1,
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/run.py",
+        "node",
+        "--test",
+        "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-probe.test.mjs"
+      ],
+      "assertion": "ATOMIC_CONFIRM_ROLLBACK",
+      "mutation_sha256": "9ff5e1ba93684c3a2f8e626626c7cf1765612c379c84430afe6195df6f1d65ad"
+    },
+    {
+      "name": "atomic",
+      "stage": "restored",
+      "exit": 0,
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/run.py",
+        "node",
+        "--test",
+        "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-probe.test.mjs"
+      ],
+      "assertion": "ATOMIC_CONFIRM_ROLLBACK",
+      "mutation_sha256": "f1cb38627208e251b0d6b1cdf805c0c08a128d57a53de0468bc54ba6987e15d9"
+    }
+  ]
+}

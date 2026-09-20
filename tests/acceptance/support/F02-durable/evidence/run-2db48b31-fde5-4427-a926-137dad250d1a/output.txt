@@ -1,0 +1,75 @@
+(node:6221) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ PRODUCT byte oracles with actual Storage, independent SQL observer
+  ✔ hash (457.302292ms)
+  ✔ size (619.818417ms)
+  ✔ positive (506.831209ms)
+✔ PRODUCT byte oracles with actual Storage, independent SQL observer (6106.163125ms)
+(node:6927) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ PRODUCT actual SQL expiry and object owner; SYNTHETIC local Node
+  ✔ actual object owner checked independently of valid bytes (600.774084ms)
+  ✔ reservation expires by wall and SQL clock with unchanged valid signature (3208.653209ms)
+✔ PRODUCT actual SQL expiry and object owner; SYNTHETIC local Node (8236.303292ms)
+ℹ OWNER_FIXTURE_SETUP {"code":"42501","detail":"","context":"PL/pgSQL function public.guard_reserved_import_object() line 5 at RAISE\nSQL statement \"UPDATE storage.objects SET owner_id='433b335e-2544-4232-94d3-df3b95b248d3' WHERE name='badd49cc-75e8-4ba9-8f86-c12b0ace0ccb/imports/8a2e29e5-5ef3-4c56-ae44-068361ce1f05/original'\"\nPL/pgSQL function inline_code_block line 4 at SQL statement","message":"reserved import object immutable","constraint":""}
+(node:7646) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ PRODUCT NODE DIAGNOSTIC; not frozen acceptance, no SSR claim
+  ✔ D02-01 reservation, real direct upload, hash, queued and concurrent retry (799.133125ms)
+  ✔ D02-03 nonexistent object and expired confirmation capability (328.568791ms)
+  ✔ D02-04 SQL fault at jobs rolls back confirmation; retry preserves reservation (854.883917ms)
+  ✔ D02-04 SQL fault at outbox rolls back confirmation; retry preserves reservation (863.911166ms)
+  ✔ D02-05 cross tenant confirmation, polling, selector and object substitution (1110.377584ms)
+  ✔ D02-06 revoked member cannot confirm, poll or fetch previously known object (560.943166ms)
+  ✔ D02-10 failed reservation cannot leave an untracked Storage object (784.11175ms)
+  ✔ D02-09 independent SQL connections contend on tenant/idempotency unique (674.543041ms)
+  ✔ D02-08 Storage rejects correctly signed expired upload token; fresh control uploads (498.30025ms)
+  ✔ D02-07 anonymous, viewer and caller-selected bucket forbidden (160.017875ms)
+  ✔ D02-11 canonical login, SET LOCAL ROLE, RLS and stale membership guard (300.777ms)
+  ✔ D02-12 simultaneous HTTP reservations and conflicting mapping (766.27575ms)
+  ✔ D02-13 malformed body, arbitrary object path, invalid size and inactive connection (370.652875ms)
+  ✔ D02-14 SIGKILL HTTP after reservation and confirm preserves persistent IDs (1134.834333ms)
+  ✔ D02-16 same tenant second actor cannot confirm another owners reservation (682.125209ms)
+  ✔ D02-17 identical bytes distinct reservation keys each remain tracked (890.639917ms)
+✔ PRODUCT NODE DIAGNOSTIC; not frozen acceptance, no SSR claim (15271.788458ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"b63d15eee28098481642ee18d355801668cf117188dbe03bbffec2819005cdef","bytes_base64":"aWQsdGV4dAo3ODA2YmNkNS1jZDI2LTQ0NmYtYWJjMy00NTdiMmY3OTA0NzMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"b63d15eee28098481642ee18d355801668cf117188dbe03bbffec2819005cdef","bytes_base64":"aWQsdGV4dAo3ODA2YmNkNS1jZDI2LTQ0NmYtYWJjMy00NTdiMmY3OTA0NzMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"d0dedf38e92e8c9f20bc3af744cd773d06f4b722b56c6c11bfce7a820b18f8b9","bytes_base64":"aWQsdGV4dAo5YjY3YzdmZC00N2I2LTRhMDktYThiYy0wMzhhNWViYTVlYzAsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"1e4329c75a7b98778592ff2e576a2dcdbdd6fb45bee942b843029691bc9d54a3","bytes_base64":"aWQsdGV4dAoxODE1MzIxZC1jN2E0LTQ4M2ItOWU1Zi0wNDJjZTY5YTk4ODQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"1d70d031ccffb3d8fe232fc868241240f7a4a72e3170534c4cfff3a79d5271cf","bytes_base64":"aWQsdGV4dAo2MjFlNDgyMS01OTE0LTQwYjktOWE0OC05Mjg0YmNlMmI3OWYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"61dc9f84babcff25a58b7dcb73a58719a947ef2984457284dcd369ea44e16ce6","bytes_base64":"aWQsdGV4dAphOTk0MDgxYS1kYmU5LTQxYWEtOTIxNi01MzAyYjVmZTg0YWUsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"8db6c464efa43ae04e74a4624401ba13439af063a85ac3688ea0474cee81794f","bytes_base64":"aWQsdGV4dAo1YjVlZDlhYy0yMjg4LTQ0NzktYTBjOS0xNmQ1MjRjYTNhM2EsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"9652a0a6d7fe067a52ad2f87da0d430e9468c45655e5b6df427c4afcda27566e","bytes_base64":"aWQsdGV4dAo3OTgzNDVkNC01M2U1LTQ4ZmEtYTFjYy1hYWU3NDNmMjkzZDMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"0f0815fadbb494f815bef37fd412b3e32ea157899c9c2dd472fa988315d89b33","bytes_base64":"aWQsdGV4dAplMmMzNmVjZS0zNjBiLTRjMTYtOGQ3MS0wMjQxNDY5ZTM2NzIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"3e4f955a450c6ff165051d2af6e23bef1d95a6dfc4a17bcab2384cffbab5965e","bytes_base64":"aWQsdGV4dAplMTI5YThkMS04OTgxLTQzMDYtYjE1ZS1mNGU3Nzk0ZjMzOWEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"3039405a19464694bfcdda59ce2a64078816dc39bdcd6ce45679404e7ddc9842","bytes_base64":"aWQsdGV4dApiY2E1Y2UxZS04NDIwLTRkOGYtODVjYy1iODIxZTFmYTE3YWIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"68611304cd40fd0aef3b8c4248de97ccb835be6fb27efe702176429546a74040","bytes_base64":"aWQsdGV4dApjZDlhMmQ5ZS0zYTJmLTQwMzUtYWFjNi0zMzllZDFiNzI2ZTUsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"61887149c0f36134e50c183becc05ea166f28f807ba723762c6a37af999cec34","bytes_base64":"aWQsdGV4dAo2NTUwZDVlOS04M2NjLTQxMmMtOWYyYS1lYTUzMDBkODEwNmYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"18fa717b0e733108a3b1099f45c35f37300f9bbf015a37f59e2528405da76c60","bytes_base64":"aWQsdGV4dApiNmJmMWUxMi0wNWNkLTQ1ZjUtYWUyNi00MmQ4OWM4MjNkYTQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"bbe59ea077fac94e6783eb0729fa39d7e0917ec1556dcc9107b09bb78f862ab1","bytes_base64":"aWQsdGV4dApiYjE1ODU5Zi1jNzg5LTRjYzEtYTZhYi1jNjE5NjNmY2JlYWEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"0285f630ffcbf5cc5c9d9a8ef83c1d521d99ac515b7b2302150a4888ba63c10d","bytes_base64":"aWQsdGV4dApkYTRhNjcyOC00MDllLTRjNjktOWViMC01ZGZiZWZjMzY1MTIsU1lOVEhFVElDCg=="}
+ℹ PRODUCT_ROLE {"current_user":"f02_product","rolsuper":false,"rolbypassrls":false}
+ℹ SYNTHETIC_FIXTURE {"sha256":"4482d85d2ee8bc7ef46b78da40baea761d2b9f545078fef513c41fa9f900f5d7","bytes_base64":"aWQsdGV4dApmMmNiNDFjNS01ZTc2LTRkMzUtOWQwZS0xZTFmNTgzNDdjNGQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"4482d85d2ee8bc7ef46b78da40baea761d2b9f545078fef513c41fa9f900f5d7","bytes_base64":"aWQsdGV4dApmMmNiNDFjNS01ZTc2LTRkMzUtOWQwZS0xZTFmNTgzNDdjNGQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"4482d85d2ee8bc7ef46b78da40baea761d2b9f545078fef513c41fa9f900f5d7","bytes_base64":"aWQsdGV4dApmMmNiNDFjNS01ZTc2LTRkMzUtOWQwZS0xZTFmNTgzNDdjNGQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"4482d85d2ee8bc7ef46b78da40baea761d2b9f545078fef513c41fa9f900f5d7","bytes_base64":"aWQsdGV4dApmMmNiNDFjNS01ZTc2LTRkMzUtOWQwZS0xZTFmNTgzNDdjNGQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"4482d85d2ee8bc7ef46b78da40baea761d2b9f545078fef513c41fa9f900f5d7","bytes_base64":"aWQsdGV4dApmMmNiNDFjNS01ZTc2LTRkMzUtOWQwZS0xZTFmNTgzNDdjNGQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"c9203ff7f2239bd33c532cedf7fecb50b62b0b7ad6e72a87c33010b2a0466fe3","bytes_base64":"aWQsdGV4dAo4YTAyMWM1Yi1kOGQ0LTRkZDEtODZjZi1jNGRlYmRhMmU0MzMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"a336de77a4bc4ae08729e90ff51e6d0654ea90aa0eaf918f1b5ef74cef862936","bytes_base64":"aWQsdGV4dAo4OGIyOTcwMC1iYzQyLTRiZGEtOWZlZC0zYjhiMDMxZmIzZjMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"b1ae71bc33f274079749c6073dca4232c276d97a9a44e256a66d635ec7c9197b","bytes_base64":"aWQsdGV4dAplMmVkY2YxOC02MmFiLTQ3ZTAtOGU1ZS0wMjcwMzljNzQ0ZDEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"e5b51931b46c06bfc0d784c2ab982af532222316ec7c5d231eba38e242b35bb2","bytes_base64":"aWQsdGV4dApiZDk0MTQ3YS01ZmIwLTQ2MDUtYTJlMi1mNTViNDBiOGVhYmYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"88ee292969ff0e62d9d617a74a56b04cc38e4c1ac8aae6bbda192eeed960e1df","bytes_base64":"aWQsdGV4dAo2MTRlYWEwZS0yZDdkLTRjOWUtOWM0NC0wYmNmMTUyZjc1MmMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"41ec392afb6c7501aac7d13d5fda3970e565ba3b990426acb5db7db3ad0f7ff7","bytes_base64":"aWQsdGV4dAphZWI1MDRhMS05M2M2LTQxNDYtOTlhZC0zMjYyY2I1OGEyOGYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"7d543eb322f9caf4e0f9e0b1e79db3de6292e34416a12ae0a4c37e1346b2700a","bytes_base64":"aWQsdGV4dApkMGMzZjYzOC1iZmM3LTRjMDQtOTVhMS1kNTZiMWQxZmYxMTYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"929d7b9daf15ec5e4aa80918f594c618e2ac2d80671c3191a9ae0133b45868f6","bytes_base64":"aWQsdGV4dAo5NDdjZGQ2Ny0wODcwLTQzYTItOGY0Ni0zZTVlMGVlMWIxNDAsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"70e2893bc163f4003a7a5b1d4aa9db2c7d6e40f84bf91ac7466e0292b3765067","bytes_base64":"aWQsdGV4dAozZGQ0ZDUwMy04NmY2LTQ1NDctOGMwNy03YTA2NjE4ZGFhZDMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"f6e2b7291ec88af48ecaf43692b5e32e2749d0e35a8f1a6b07d9fe443eb53cd9","bytes_base64":"aWQsdGV4dAo1NGFlNDYyNS0wNzhlLTRmNzEtODU4Ni0yMDIyNTQ3MDI1NDcsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"f6e2b7291ec88af48ecaf43692b5e32e2749d0e35a8f1a6b07d9fe443eb53cd9","bytes_base64":"aWQsdGV4dAo1NGFlNDYyNS0wNzhlLTRmNzEtODU4Ni0yMDIyNTQ3MDI1NDcsU1lOVEhFVElDCg=="}
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 29792.817167

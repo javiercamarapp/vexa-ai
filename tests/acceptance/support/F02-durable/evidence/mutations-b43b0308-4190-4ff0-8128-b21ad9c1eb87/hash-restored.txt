@@ -1,0 +1,17 @@
+(node:27140) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✔ D02-02 hash and size independently observed from Storage (787.105667ms)
+✔ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (6031.665333ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"7b648c6d2476ae30b9864d269f2cbcbbbbde6355712a13430b6e2b1dcf25df85","bytes_base64":"aWQsdGV4dAoyM2ExZjQ2Yi05NjQzLTRkODUtYjU4MS1jZTMzNTViZTFiMDIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"045d22ea2f94efa40831cab739d276428a5a9bd9974b7ab8e74db306b8065b41","bytes_base64":"aWQsdGV4dAoyYTlhOWNmYS03MWZjLTRiNmQtYTRmYy0zNDkwODQ3NzU0ZjgsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6097.260292
+
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/evidence/run-b58633a0-74b8-449e-a879-883d486e7fdc EXIT 0 CLEANUP True

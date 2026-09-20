@@ -1,0 +1,252 @@
+(node:40973) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ PRODUCT NODE DIAGNOSTIC; not frozen acceptance, no SSR claim
+  ✖ D02-01 reservation, real direct upload, hash, queued and concurrent retry (1263.229625ms)
+  ✖ D02-02 hash and size independently observed from Storage (411.189042ms)
+  ✖ D02-03 nonexistent object and expired confirmation capability (301.41775ms)
+  ✔ D02-04 SQL fault at jobs rolls back confirmation; retry preserves reservation (957.120708ms)
+  ✔ D02-04 SQL fault at outbox rolls back confirmation; retry preserves reservation (912.450417ms)
+  ✖ D02-05 cross tenant confirmation, polling, selector and object substitution (444.110958ms)
+  ✔ D02-06 revoked member cannot confirm, poll or fetch previously known object (706.547375ms)
+  ✔ D02-10 failed reservation cannot leave an untracked Storage object (848.926834ms)
+  ✔ D02-09 independent SQL connections contend on tenant/idempotency unique (739.363625ms)
+  ✔ D02-08 Storage rejects correctly signed expired upload token; fresh control uploads (796.956792ms)
+  ✖ D02-07 anonymous, viewer and caller-selected bucket forbidden (1.62125ms)
+  ✔ D02-11 canonical login, SET LOCAL ROLE, RLS and stale membership guard (551.046291ms)
+  ✖ D02-12 simultaneous HTTP reservations and conflicting mapping (477.565ms)
+  ✖ D02-13 malformed body, arbitrary object path, invalid size and inactive connection (173.187667ms)
+  ✔ D02-14 SIGKILL HTTP after reservation and confirm preserves persistent IDs (1204.793292ms)
+  ✖ D02-16 same tenant second actor cannot confirm another owners reservation (453.402208ms)
+  ✔ D02-17 identical bytes distinct reservation keys each remain tracked (931.971667ms)
+  ✖ D02-15 expired reconciliation retains reservation and bytes without completing work (724.814333ms)
+✖ PRODUCT NODE DIAGNOSTIC; not frozen acceptance, no SSR claim (18029.333417ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"42f4161752266ae5d23ba8a8b21c54d8cf4f018bb574c6731b9ef2e1ef31f38d","bytes_base64":"aWQsdGV4dApkNGJiY2FjOS01OGZmLTQ4YjQtODg0Ny1mMTczY2FiNDEzZjMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"42f4161752266ae5d23ba8a8b21c54d8cf4f018bb574c6731b9ef2e1ef31f38d","bytes_base64":"aWQsdGV4dApkNGJiY2FjOS01OGZmLTQ4YjQtODg0Ny1mMTczY2FiNDEzZjMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"b641e86f764e25a858e2ed5c79ab25c9f2cd1b34d0bc945ecfdd0816e0dca285","bytes_base64":"aWQsdGV4dAplYjBmYWZmYy1kNWFiLTQyZjMtODQ1ZC00MDAzZTYzM2U4OWEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"14a62eae4e23a7784262533a44163bca425e33724a265ec9b364a4b98a9e243d","bytes_base64":"aWQsdGV4dAo3YzE3NTI3OS1mYmNmLTRhNjEtYjkzNS01OWI3YzU5YTg3NjAsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"d426c0a5041c1ad7a8eef8b883b52172c86bc7291ccabff9e669e890fffc2381","bytes_base64":"aWQsdGV4dAo5MWRkMzkwOS05MWE3LTRiNDctODRhNi1mM2NkODk1NGMyNTksU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"87d3e2b371c1e69166f818cfcc70f6c490456cc5931b6130e3b2938d82392556","bytes_base64":"aWQsdGV4dAphZTU2MmViNS04ZTk1LTQ1MjYtYjBmYy04ZTZhMGQwNjZiODMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"a9da4346986bcb0d5c413bc71401ba113b9a9e665d29d244918c06b1ad3f4489","bytes_base64":"aWQsdGV4dAplYWJhMmUxNC1hZDQyLTRjYjctYTllNy1kMmYxMTQxMzA5YTUsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"a89ee90021a90e3c971ecfdbad65fba17f58e876e1dc6c916b260d06d858cf60","bytes_base64":"aWQsdGV4dAo2NjE1NWVhYi1hODdkLTRmNDAtOTZmMS1kOTFmOWZlYmIyZGUsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"815856eb776bac3ded73ef23ee5fd6825a14cea426c94cec295165dc577cda77","bytes_base64":"aWQsdGV4dAo2MDYzNmFjNy0yYWUyLTQ4MjktOTE2MS0wMmI3NjdlNzRmYjgsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"5f3ff4c8883bcf80be77847bac0df4a690cd39c8b6809463ed821527541b9c6e","bytes_base64":"aWQsdGV4dAoxZGQ1NDVmMC04YjUzLTRmNzEtYjAyMC04NzJkZTgxODNkZmMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"9b7481f25f45606a2d6faab58d815f3e9ea52b49fb6c5f7a6293f6385f25c221","bytes_base64":"aWQsdGV4dApiYzU3NzAxMS03Zjc2LTQwMTQtYWU5MS05NDJlMjkxNmJmMzAsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"ae9813249be19a602a93ea0fae9c82e6e1ae83859b3e28ebaa72fad15bfd5f03","bytes_base64":"aWQsdGV4dAplZDhlNDYyZS01NDM3LTQyY2QtOWRjMy03Y2FmZDc4NTYzMmQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"a170c2a77981b5c2e62d838ca9f2bd5f2813acee2391b8bc834e434544a1c4a6","bytes_base64":"aWQsdGV4dAo4NzgzN2FmZS1mZmVhLTRjNmUtOGFmNC1iYThlNDI3YTMzYmIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"a170c2a77981b5c2e62d838ca9f2bd5f2813acee2391b8bc834e434544a1c4a6","bytes_base64":"aWQsdGV4dAo4NzgzN2FmZS1mZmVhLTRjNmUtOGFmNC1iYThlNDI3YTMzYmIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"a170c2a77981b5c2e62d838ca9f2bd5f2813acee2391b8bc834e434544a1c4a6","bytes_base64":"aWQsdGV4dAo4NzgzN2FmZS1mZmVhLTRjNmUtOGFmNC1iYThlNDI3YTMzYmIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"a170c2a77981b5c2e62d838ca9f2bd5f2813acee2391b8bc834e434544a1c4a6","bytes_base64":"aWQsdGV4dAo4NzgzN2FmZS1mZmVhLTRjNmUtOGFmNC1iYThlNDI3YTMzYmIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"a170c2a77981b5c2e62d838ca9f2bd5f2813acee2391b8bc834e434544a1c4a6","bytes_base64":"aWQsdGV4dAo4NzgzN2FmZS1mZmVhLTRjNmUtOGFmNC1iYThlNDI3YTMzYmIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"ab7a3d321afa268fd4234c046d13682676124049a200bd8c7229afe96b077fc4","bytes_base64":"aWQsdGV4dApjNTIwOWY0NC1lOTJiLTQyZjUtYjhmOS1kNTI4YWFiN2M4OTQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"ce1481cff31ce4ab6cdd852aeeb829d7857f718682c7de8b763194080dead16f","bytes_base64":"aWQsdGV4dAo0M2U2MGRiMC0xM2VkLTRmZDQtODkwNC0zOWM4ZDU0ZWI2YjcsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"717c59fff6396fb0f2cfd7d6b7ccfc49421513115ad1267c7f90bb64562acd4d","bytes_base64":"aWQsdGV4dAoyYjk2Mjk5Yi1hNmQ1LTRkMTEtODFmNy0xNmU0ZWIyNTdiNDEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"f447c2fa9b63c32e5971563976284a0192ecb226403a7ffcc737d39b6d7aa6b5","bytes_base64":"aWQsdGV4dAowOTIyMTc0NS1jYWVmLTRiMzEtOTViYS05YTdhOWQ3NWIxZTQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"d7cfd483bf916e1ee258bc87f636c55dbb156cd5f04bbdfe4de47fb7b0b39d54","bytes_base64":"aWQsdGV4dAo1YWQ2YWI5Ni0yNDhmLTRkNzktOGFlMy0yZTJkNzI0NTc5ZTEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"550e008b216e9dbe5c601cba94854fd7882ab3966356964e62d2c9af32f39160","bytes_base64":"aWQsdGV4dAoxYjVlMGM4Yi0yMDQ1LTQyYzYtODA4MS1iYWEwZjgyYjg3NjMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"ca60181130037d0d29a5b9cdde94485017940f2f8b89bfdf38ccbb2c4a1cb66a","bytes_base64":"aWQsdGV4dAoxMDgxNGViYi0yY2Q1LTQwZmQtYTJjZi04Zjg2ZTk2MTEwMTgsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"1de43a07a7abbb22cbb75594411f3f970f180510b5e071f13a570e8f76d0f725","bytes_base64":"aWQsdGV4dAo5ZGJmMDlmZi1iODI3LTQ5YTUtOTc3Mi0wMzEzNDY1Mzk1OTgsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"4d2f4e4ed231386d3e4d33312d48c49253672c6e6c3b079eb541e981e64c6ad0","bytes_base64":"aWQsdGV4dApmM2FmOTY3NS1lNmMwLTQ1MzMtYTU0OC05NTRmZWViODExYTIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"4d2f4e4ed231386d3e4d33312d48c49253672c6e6c3b079eb541e981e64c6ad0","bytes_base64":"aWQsdGV4dApmM2FmOTY3NS1lNmMwLTQ1MzMtYTU0OC05NTRmZWViODExYTIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"12c935d2fc060a62e34fcae9519ad1fe58286fc9f98daae5793034996d5446b1","bytes_base64":"aWQsdGV4dAo2Y2ZhNjBiMC01OTg2LTQ0OTktODIwNi0yMTA5NGY4NzBjMWQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"176848ee81df6d67dae388e9fc3fb330c7393fd6ecc694912bfc9686e933787d","bytes_base64":"aWQsdGV4dAo5OTM3OGYyOC0xN2NhLTQxZmEtYWY2Mi0xNDlhNzA4MDk4OGIsU1lOVEhFVElDCg=="}
+ℹ tests 19
+ℹ suites 0
+ℹ pass 9
+ℹ fail 10
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18095.240875
+
+✖ failing tests:
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-01 reservation, real direct upload, hash, queued and concurrent retry (1263.229625ms)
+  AssertionError [ERR_ASSERTION]: IDEMPOTENCY_PAYLOAD_CONFLICT
+  
+  503 !== 409
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:33:60)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:27:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-probe.test.mjs:10:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 409,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-02 hash and size independently observed from Storage (411.189042ms)
+  AssertionError [ERR_ASSERTION]: HASH_REASON
+  + actual - expected
+  
+  + 'object_bytes_invalid'
+  - 'hash_mismatch'
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:37:82)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:35:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-probe.test.mjs:10:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'object_bytes_invalid',
+    expected: 'hash_mismatch',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-03 nonexistent object and expired confirmation capability (301.41775ms)
+  AssertionError [ERR_ASSERTION]: MISSING_OBJECT
+  
+  503 !== 422
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:41:43)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:40:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-probe.test.mjs:10:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 422,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-05 cross tenant confirmation, polling, selector and object substitution (444.110958ms)
+  AssertionError [ERR_ASSERTION]: CROSS_CONFIRM
+  
+  503 !== 404
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:55:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:53:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-probe.test.mjs:10:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 404,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-07 anonymous, viewer and caller-selected bucket forbidden (1.62125ms)
+  AssertionError [ERR_ASSERTION]: ANONYMOUS
+  
+  400 !== 401
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:98:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:97:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-probe.test.mjs:10:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 400,
+    expected: 401,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-12 simultaneous HTTP reservations and conflicting mapping (477.565ms)
+  AssertionError [ERR_ASSERTION]: RESERVE_MAPPING_CONFLICT
+  
+  503 !== 409
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:127:51)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:123:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-probe.test.mjs:10:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 409,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-13 malformed body, arbitrary object path, invalid size and inactive connection (173.187667ms)
+  AssertionError [ERR_ASSERTION]: INACTIVE_CONNECTION
+  
+  503 !== 404
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:135:14)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:131:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-probe.test.mjs:10:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 404,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-16 same tenant second actor cannot confirm another owners reservation (453.402208ms)
+  AssertionError [ERR_ASSERTION]: RESERVATION_OWNER
+  
+  503 !== 404
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:156:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:152:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-probe.test.mjs:10:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 404,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-15 expired reconciliation retains reservation and bytes without completing work (724.814333ms)
+  AssertionError [ERR_ASSERTION]: RECONCILIATION_TOKEN_STILL_EXPIRED
+  
+  202 !== 403
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:173:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:167:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-probe.test.mjs:10:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 202,
+    expected: 403,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

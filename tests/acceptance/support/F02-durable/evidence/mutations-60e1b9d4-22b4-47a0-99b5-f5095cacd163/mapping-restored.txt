@@ -1,0 +1,20 @@
+(node:50436) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✔ D02-12 simultaneous HTTP reservations and conflicting mapping (602.52975ms)
+✔ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (5361.648583ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"734b7e258c70de4601386e7a67203ec4428c93ce19ef437ce684ba644d45e346","bytes_base64":"aWQsdGV4dAowYzMyMzY4MC0wZjgwLTRiOGUtYjdkZi04YTJiMTU4ODExNDcsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"734b7e258c70de4601386e7a67203ec4428c93ce19ef437ce684ba644d45e346","bytes_base64":"aWQsdGV4dAowYzMyMzY4MC0wZjgwLTRiOGUtYjdkZi04YTJiMTU4ODExNDcsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"734b7e258c70de4601386e7a67203ec4428c93ce19ef437ce684ba644d45e346","bytes_base64":"aWQsdGV4dAowYzMyMzY4MC0wZjgwLTRiOGUtYjdkZi04YTJiMTU4ODExNDcsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"734b7e258c70de4601386e7a67203ec4428c93ce19ef437ce684ba644d45e346","bytes_base64":"aWQsdGV4dAowYzMyMzY4MC0wZjgwLTRiOGUtYjdkZi04YTJiMTU4ODExNDcsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"734b7e258c70de4601386e7a67203ec4428c93ce19ef437ce684ba644d45e346","bytes_base64":"aWQsdGV4dAowYzMyMzY4MC0wZjgwLTRiOGUtYjdkZi04YTJiMTU4ODExNDcsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5423.69025
+
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/evidence/run-36fc7377-bb13-4f65-b8c5-76c4ce5288b5 EXIT 0 CLEANUP True

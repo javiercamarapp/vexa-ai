@@ -1,0 +1,22 @@
+{
+  "candidate": "/Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate",
+  "sha256": {
+    "apps/web/src/middleware.ts": "3f48b650952a76421b2a3f781faf951d44b87cdb9fe2d28cd0d46ede39b793f8",
+    "apps/web/src/lib/auth-http.ts": "0b4adf33a54dd6c0d2b1f7b3f37d06b47a4f3817519f0e15f328b7388d7e3526",
+    "apps/web/src/lib/auth.ts": "3541a3dc308e5b27192bb486cbb94772c3639d218b1858338fe1db308dd99742",
+    "apps/web/src/lib/workspace/data.ts": "c31a1602abfc8bca75d98e6b4d11e717974ae160f31efc5a62eb2778ddbe0b37",
+    "apps/web/src/lib/workspace/contracts.ts": "5af40134e7ed4483ca0bfed66ecf712bfff30e0b4d549c21635386ffe60c2870",
+    "apps/web/src/lib/workspace/server.ts": "be92e0508837fd9ed2b1da1a387068948b10df881c733eb4ce9bbed1f3ac03bf",
+    "apps/web/src/app/api/health/version/route.ts": "9ccdccfb2f2dd39c4231e9ad0c9d1086b9f2286512861f748fd81c78ec088676",
+    "apps/web/src/app/auth/organization/route.ts": "2e35dab9aa12001f2251e60894bee5ff469cadda7a5de78e7350df68f549cc0c",
+    "apps/web/src/app/auth/google/route.ts": "99473f809b89d49174da585ad2fa722b37e1c8437d6cde8eec74fb5afd34ab9b",
+    "apps/web/src/app/auth/logout/route.ts": "000818f92a0eaac96189717d1a98ffef19e85f1a000698a77fe822c3f680292f",
+    "apps/web/src/app/auth/callback/route.ts": "2afa15f7a884f79de85c0d403443bd58ea2d39f322e7c3a187b7e0dbd64f9e29",
+    "packages/platform/src/session.ts": "ec5996600042fc01c0893885f4d5014f118c6ecfa4edd29135ebe3a72736b22a",
+    "packages/platform/src/db.ts": "2157e685b93e8ffe3664b91ac522a462f2073fc711bb3624b80a032f0c929e67",
+    "supabase/migrations/0002_sources.sql": "d6fbccfe2f192566e6ae3efe244412a0fda92294cc3b0af6adee3228df66c09b",
+    "supabase/migrations/0004_evidence_money.sql": "b5598eafe59ccbf1d71c88ae42a207e41c120e81d20e761b82d13b0afc7161c3",
+    "supabase/migrations/0001_identity.sql": "73f98d0b3b895fb3637d6613ad18dde2a48387714424dd0159d5db871b8f9108",
+    "supabase/migrations/0003_execution.sql": "3142bd37fd0e9922e75758e056470587d93e89aeeed82e076cd8c44f9971f699"
+  }
+}

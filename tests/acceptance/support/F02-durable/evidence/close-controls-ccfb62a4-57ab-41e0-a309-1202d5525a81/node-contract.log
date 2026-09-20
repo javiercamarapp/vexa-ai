@@ -1,0 +1,84 @@
+(node:3781) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ PRODUCT NODE DIAGNOSTIC; not frozen acceptance, no SSR claim
+  ✔ D02-01 reservation, real direct upload, hash, queued and concurrent retry (831.678584ms)
+  ✔ D02-03 nonexistent object and expired confirmation capability (330.474209ms)
+  ✔ D02-04 SQL fault at jobs rolls back confirmation; retry preserves reservation (936.75925ms)
+  ✔ D02-04 SQL fault at outbox rolls back confirmation; retry preserves reservation (867.67675ms)
+  ✔ D02-05 cross tenant confirmation, polling, selector and object substitution (1113.090084ms)
+  ✔ D02-06 revoked member cannot confirm, poll or fetch previously known object (580.839792ms)
+  ✔ D02-10 failed reservation cannot leave an untracked Storage object (774.885666ms)
+  ✔ D02-09 independent SQL connections contend on tenant/idempotency unique (691.964708ms)
+  ✔ D02-08 Storage rejects correctly signed expired upload token; fresh control uploads (478.92175ms)
+  ✖ D02-07 anonymous, viewer and caller-selected bucket forbidden (1.786458ms)
+  ✔ D02-11 canonical login, SET LOCAL ROLE, RLS and stale membership guard (297.212ms)
+  ✔ D02-12 simultaneous HTTP reservations and conflicting mapping (778.225583ms)
+  ✔ D02-13 malformed body, arbitrary object path, invalid size and inactive connection (368.725625ms)
+  ✔ D02-14 SIGKILL HTTP after reservation and confirm preserves persistent IDs (1137.145083ms)
+  ✔ D02-16 same tenant second actor cannot confirm another owners reservation (672.159375ms)
+  ✔ D02-17 identical bytes distinct reservation keys each remain tracked (914.393666ms)
+✖ PRODUCT NODE DIAGNOSTIC; not frozen acceptance, no SSR claim (15252.757083ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"92054da6ef3e79ce626a1d8344e754a828a73721df149ab279f23e8def35ac83","bytes_base64":"aWQsdGV4dAphNTQxYjU3Yi05Mjk0LTQ5MmEtOGYyYS0wODMxYzJjZGI5YzYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"92054da6ef3e79ce626a1d8344e754a828a73721df149ab279f23e8def35ac83","bytes_base64":"aWQsdGV4dAphNTQxYjU3Yi05Mjk0LTQ5MmEtOGYyYS0wODMxYzJjZGI5YzYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"eedbab1d2ad0d34ad86f12891a12063e47a349859dbe8a97504e810a2cdc7659","bytes_base64":"aWQsdGV4dAozZTcxZjFjMy03NTEzLTQ5YTctYTNjMy03NDE5OGM0NWE1ZGUsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"a9905c33906317d938c025799fbf9018d72f502368408e7392cbce507c395cc6","bytes_base64":"aWQsdGV4dAo3ZjBkNGRlMC0xOTA1LTRhMjYtYWU5Ni01MzQ1NTA3ODAwODYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"af0d5e981ff9976a952a455ac4e265d237dbc8c14e78c010a3026f726f4dde07","bytes_base64":"aWQsdGV4dAplYzk2OTkzZC1hOWM4LTQ4Y2UtOWEwOS0yMTQ2ZWEzZTY5MjEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"ccc61ca84e7aedd8b0a8f8044f720cdaad0ee2e35a20dab1c2d067e02cba313f","bytes_base64":"aWQsdGV4dAo5ZjAzMjdmNy03NmVjLTQxNDktOGMyNi00N2UyYWM3NTQzMzIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"d743349e1c103f9df1c0af92eb324f5084aefc0743b7464832ea40b0d8ee2651","bytes_base64":"aWQsdGV4dAo1NDMzMGE3Ny1jYjA2LTQ1MWEtOWQ5Zi02OTIzNzA5OTAxYWIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"687a99a56e646a5a72a4db493883fe1bc9e3b23cae99787f03a7c5cb6b0f6c1b","bytes_base64":"aWQsdGV4dAo1ZmM1NTdmYi1lY2Q4LTRkNzUtOTUxMi03OGExYmEwM2RjYmQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"1b072500beae5832883bb0e17c94274436c1761b2962c63176559c07c05879f2","bytes_base64":"aWQsdGV4dApmZWE5OTBlYS02M2IwLTQzM2MtYTg2ZS1lZTU2NDI0YjRhNjUsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"f67d4b9844ec9637b7f6b9ce86b559fbe4919a5ecbd96c94feac2bbe78ad3576","bytes_base64":"aWQsdGV4dAowZDhlNWRkNC1kNzBlLTQ3N2YtYTM0ZS04MGRmZTBlNjY2NTIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"60c8528443bdf8076a4849f8cc92a2c56551bdbc964b18fca24a4a788f2d2bf4","bytes_base64":"aWQsdGV4dAoxYWU3NjMxMS00YWU4LTQxMGQtOTY1MC02YzUyMTY2NjQ2OWEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"d943f8f0f6b5a12f9368a9a977d9d05a896977eba476ebc444db52ae1c349a3a","bytes_base64":"aWQsdGV4dApkZGQ4ODhkMS03ODczLTRlODktYWM3OC01MzQwM2MzOTFjYTAsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"88fcd83c59eb74ab3cca788e5ddf5338ce3084862660879bd1ad4fb45d50027f","bytes_base64":"aWQsdGV4dAo3NjYxYmZlYy0xMTg2LTRmNWQtYTAyYi01MGI4ZGMxNmZkOWUsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"9ad7f795e0ca3d7beb8b43c24fd06b22fedce6d8fe7ff0743999608b9be56707","bytes_base64":"aWQsdGV4dAo3MDhhNmIwMy03Y2U3LTQ3OTAtODJlZC0xZmJlZmM5ZGQ0OWMsU1lOVEhFVElDCg=="}
+ℹ PRODUCT_ROLE {"current_user":"f02_product","rolsuper":false,"rolbypassrls":false}
+ℹ SYNTHETIC_FIXTURE {"sha256":"e757fefbca4c1d2160c9adfa952ad0f0fde39907ebef418473cf069d39f2a1f0","bytes_base64":"aWQsdGV4dAo4MjgwODQzNy1jYmI5LTQ0ZDktODYyNi00OTQwNGM1MWU4N2YsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"e757fefbca4c1d2160c9adfa952ad0f0fde39907ebef418473cf069d39f2a1f0","bytes_base64":"aWQsdGV4dAo4MjgwODQzNy1jYmI5LTQ0ZDktODYyNi00OTQwNGM1MWU4N2YsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"e757fefbca4c1d2160c9adfa952ad0f0fde39907ebef418473cf069d39f2a1f0","bytes_base64":"aWQsdGV4dAo4MjgwODQzNy1jYmI5LTQ0ZDktODYyNi00OTQwNGM1MWU4N2YsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"e757fefbca4c1d2160c9adfa952ad0f0fde39907ebef418473cf069d39f2a1f0","bytes_base64":"aWQsdGV4dAo4MjgwODQzNy1jYmI5LTQ0ZDktODYyNi00OTQwNGM1MWU4N2YsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"e757fefbca4c1d2160c9adfa952ad0f0fde39907ebef418473cf069d39f2a1f0","bytes_base64":"aWQsdGV4dAo4MjgwODQzNy1jYmI5LTQ0ZDktODYyNi00OTQwNGM1MWU4N2YsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"99dcdc294edafe1a9f9de5855b732f5917bb825585a424086531486a0ed3d1fb","bytes_base64":"aWQsdGV4dAoyYzMwODRiZS1iNGZjLTRhZjctYmMwOC1lNzkzNmE4MmEzNzAsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"5dd93fd38afb63455982196755dca17ec06a1b34ebcd9e80cdef4f1ffc58e339","bytes_base64":"aWQsdGV4dAoyNGVkY2YyYS1jOTVjLTRlYjUtOTFkNS01NjQ0YTk2NzAzOTQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"4059fbcfa8b40b2594662e308e0b393a32f54f196b1cd7c2f4e124e323ddd4fe","bytes_base64":"aWQsdGV4dApiMmI4MzgwZC1iZTFhLTRmOTctOTQxYy00MTJlODM1ZjA4ZDUsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"9f38ae4db324aa79549361d7a48f0a9400bc1001e186c52e6e05e2d8107f640a","bytes_base64":"aWQsdGV4dAozYjlmZGZlNi0yZjYzLTRkNDAtYWUzNS1lZTg2OTg4ZTM3OTIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"fb3af3583f4618080ffd998722a88bb48298244e02b92e76aa87594d9a36f9f8","bytes_base64":"aWQsdGV4dApiZWU3NjViOC00NjBhLTQ2M2UtOGE5Ny0yZWY4MjE5N2Q1NWQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"dbf3f5e42d39615e84383d070c53da493d81545749323588566e3ba5224bfd1f","bytes_base64":"aWQsdGV4dAo4YWNkYTZjMS1hMTJlLTRiYTUtOGM3Ni04MWJhOWM3MDRhNmIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"330446d94185aa8fed42d74dd91592bd84f722fd5a20885958c218d2f0fb9bae","bytes_base64":"aWQsdGV4dAo0MWFhMmMwMS1lNjgxLTRmNGUtODgzOS1jNjQwMTBiZDZmNDMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"1491d0aad7dd945b39a4bf50fbcb37504164b72d467f34e7b3831808a272c0f9","bytes_base64":"aWQsdGV4dAo0MTk1MTI4MC1iYjNjLTQ0MmMtYmMxMS0zOWJkZTU4MzE3NjIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"c7ac4b449ac85c0171e5cbed79ccfaab4c461b0867e1f36732b4cf86810933db","bytes_base64":"aWQsdGV4dAplZTZmZWUzNS03YjU1LTRkODItYTI3YS03ZTI4MDA2ZTU4ODIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"4ab6fb0ebd48a6f06c6e310c9b08c005a0d68bffc0f874287a2030dca5c6fe68","bytes_base64":"aWQsdGV4dAo5Mjc2MTIwZi03NTg2LTQxNGEtODJkMi1iZDdhNjFhNjVkMjgsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"4ab6fb0ebd48a6f06c6e310c9b08c005a0d68bffc0f874287a2030dca5c6fe68","bytes_base64":"aWQsdGV4dAo5Mjc2MTIwZi03NTg2LTQxNGEtODJkMi1iZDdhNjFhNjVkMjgsU1lOVEhFVElDCg=="}
+ℹ tests 17
+ℹ suites 0
+ℹ pass 15
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15313.154667
+
+✖ failing tests:
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-07 anonymous, viewer and caller-selected bucket forbidden (1.786458ms)
+  AssertionError [ERR_ASSERTION]: ANONYMOUS
+  
+  400 !== 401
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/exam02.mjs:99:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/exam02.mjs:98:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/product-probe.test.mjs:10:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 400,
+    expected: 401,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/evidence/run-ab8b297b-9e23-4ad4-8cad-4a09aa6f582c EXIT 1 CLEANUP True

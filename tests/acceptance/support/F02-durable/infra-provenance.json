@@ -1,0 +1,14 @@
+{
+  "source": "tests/acceptance/support/F01-03/harness.mjs",
+  "sha256": "714ce49e137ed59ce79ceae9e5671248ca85a242b987736b31b0ed01c0408168",
+  "changes": [
+    "relative matrix import",
+    "synthetic Storage clock signer for correctly signed expiration probes",
+    "HTTP readiness diagnostic",
+    "async independent psql connection for unique contention",
+    "assert DB host port bindings empty",
+    "canonical productConfiguration creates a dedicated NOINHERIT NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE login with vexa_backend membership",
+    "pg driver transport executes in owned Storage container, no SQL admin port given to product"
+  ],
+  "assertions_copied": "infrastructure only; no product assertions"
+}

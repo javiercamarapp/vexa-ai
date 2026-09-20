@@ -1,0 +1,37 @@
+(node:26467) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✖ D02-02 hash and size independently observed from Storage (252.178375ms)
+✖ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (5108.981042ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"c21b430d06b9a0bdc400069b269de6fb80dd2dc28434f9d44b897ec855becbc1","bytes_base64":"aWQsdGV4dAo1OGI0NjY2NS0wZDNhLTQ3MTUtOTY4MS1iYjgzNTQzNGI3Y2MsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5170.637
+
+✖ failing tests:
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-02 hash and size independently observed from Storage (252.178375ms)
+  AssertionError [ERR_ASSERTION]: HASH_MISMATCH
+  
+  202 !== 422
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:37:39)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:35:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs:7:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 202,
+    expected: 422,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

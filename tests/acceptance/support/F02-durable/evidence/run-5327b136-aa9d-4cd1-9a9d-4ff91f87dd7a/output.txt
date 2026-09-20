@@ -1,0 +1,68 @@
+(node:38472) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✔ D02-01 reservation, real direct upload, hash, queued and concurrent retry (605.978875ms)
+  ✔ D02-02 hash and size independently observed from Storage (692.651083ms)
+  ✔ D02-03 nonexistent object and expired confirmation capability (737.676292ms)
+  ✔ D02-04 SQL fault at jobs rolls back confirmation; retry preserves reservation (589.500209ms)
+  ✔ D02-04 SQL fault at outbox rolls back confirmation; retry preserves reservation (656.686166ms)
+  ✔ D02-05 cross tenant confirmation, polling, selector and object substitution (929.073208ms)
+  ✔ D02-06 revoked member cannot confirm, poll or fetch previously known object (388.683ms)
+  ✔ D02-10 failed reservation cannot leave an untracked Storage object (654.365375ms)
+  ✔ D02-09 independent SQL connections contend on tenant/idempotency unique (684.480125ms)
+  ✔ D02-08 Storage rejects correctly signed expired upload token; fresh control uploads (275.205084ms)
+  ✔ D02-07 anonymous, viewer and caller-selected bucket forbidden (261.973959ms)
+  ✔ D02-11 canonical login, SET LOCAL ROLE, RLS and stale membership guard (304.953167ms)
+  ✔ D02-12 simultaneous HTTP reservations and conflicting mapping (547.103125ms)
+  ✔ D02-13 malformed body, arbitrary object path, invalid size and inactive connection (935.4255ms)
+  ✔ D02-14 SIGKILL HTTP after reservation and confirm preserves persistent IDs (700.999125ms)
+  ✔ D02-16 same tenant second actor cannot confirm another owners reservation (514.764333ms)
+  ✔ D02-17 identical bytes distinct reservation keys each remain tracked (542.752917ms)
+  ✔ D02-15 expired reconciliation retains reservation and bytes without completing work (611.091291ms)
+✔ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (16099.283041ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"00ff07cf9f7ab0e6e05ba99bdb08b3059a528bbfe087b5aa88f56ee95ffde2d7","bytes_base64":"aWQsdGV4dAo5OGZhNGE1OC04MzU2LTQ5ODUtYTQ1YS0yZTBkZjdjMmVlOTksU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"00ff07cf9f7ab0e6e05ba99bdb08b3059a528bbfe087b5aa88f56ee95ffde2d7","bytes_base64":"aWQsdGV4dAo5OGZhNGE1OC04MzU2LTQ5ODUtYTQ1YS0yZTBkZjdjMmVlOTksU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"8700545357e9846984c6fee53ab00d7ffe789090a2ec993898f1a3ba35658472","bytes_base64":"aWQsdGV4dApiNmQzZGUxNS0yZjY4LTQxMDQtYTlmYS1kZjE4YjFmZTM1Y2YsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"088d3ab47cd91b26405c3f2e25e7deb7ace2dd6f299b53f3a71f36a7f3b053cf","bytes_base64":"aWQsdGV4dAoyNmRiZmMzMS01ZTU0LTRiMTItODkxYi0wZTRkMWY3MTNlY2EsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"991c5e58c56351ba0a99cdf245d90d802d44d7410410ae77c52255e2f937d05d","bytes_base64":"aWQsdGV4dApmYzc1MWVkNS0zODllLTRiMzctOThlOC02NGViMjBjNzQ4YzEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"d51ce42876f859cd0ea43004183f3ce952578efc410170a6662e700a2eec3202","bytes_base64":"aWQsdGV4dAo5ZGMwODI1YS02YjM3LTRlMjItOThiMS01ZTY0Y2IxYWNmOGIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"b616200885049c1af42110a9a6a599d10e6b4b6854e09c42ed0b8e038e490a59","bytes_base64":"aWQsdGV4dAozNmEwZDBkYy01NjkyLTRlMWMtYmU3OS04ZWQwYjRiNTJmMzksU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"bf06d56e4a4f81ec0065fca4b33c34d54552d3dbfcd33e8610dab6673a70a9f5","bytes_base64":"aWQsdGV4dAo5NTQ5MTc0OC1iMDcxLTRlODQtYmYwYy1jMDg2MGY0Y2RlZDAsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"85a737786b036215d1250c520a35b63c8213479319022f73ee4a1cfa432914f0","bytes_base64":"aWQsdGV4dAo1NjNkNmQ2MS1hN2Y3LTQ0ODEtYTRhYy03MTIzODMwNDA0NjEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"5eb4a511819b484a4ee765f34217f2f5065ee23dd364a94d3e9e6a1b07a9f519","bytes_base64":"aWQsdGV4dAphMjBjZjkwNy01YTBiLTQzZDAtYmMzNi0yZWU5ZWQ1NTlkZGEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"fe193fff737ca96c67df34cdf9e097fcd6a2966b8542f3560dedb8557b3f9aeb","bytes_base64":"aWQsdGV4dAo0MzlmMDFjYS05ZDA3LTQ2MzktOGFhMy0zMjZkMDJmMzdlMGEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"f7d81322c57403c74112d5724a1f2f2d34d5970fc1f8b7bafc7592a93730fb7c","bytes_base64":"aWQsdGV4dAo0NDdjOGYwMi01MGY3LTQyNGQtODAxMC1iOGNhNmUyNjNmN2QsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"061cb9ad658691d97b52bfd9cfe8119f66c1bd960021cc7da741ddd46d8743c4","bytes_base64":"aWQsdGV4dApiOGI5ZDU5MS1hMGI0LTRiYTktYjEzZi1jNzg2NjYwMzAwYWQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"61a7a04c51f6bf834b0b190a6d4fb3e8d1d1d4dcbeede921819f7d51deb532b8","bytes_base64":"aWQsdGV4dAo0YjgwZTc2YS1jYjY1LTQyOTAtYjcyMC00Zjk1ODg5ZmUwN2EsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"3c331881602da48e6301648a017d2af65d5536f18d46af410516fa395fc6e35b","bytes_base64":"aWQsdGV4dAozNGJiNzYwYS00NzQyLTQ3YjEtOWM0Ny1kODk3Y2Y5ZjMxZTQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"43ace52a3d311a913bf004197bd5db6207750e2380877943739c94c75a7d55ac","bytes_base64":"aWQsdGV4dAplNzE4ZDliMi1iMzY2LTQ2ZmUtYTUzZC04MGE3OTA5Mjc5ODYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"3ae599bba618ddb3b1f678ac92de61ea3a5f9b3a81366c1025311e62c2712527","bytes_base64":"aWQsdGV4dAoxNWZiZTJhZC00Y2RiLTRmMjYtOGI1Ni00MWI1MDRhNDlmMjUsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"5802a2e4ced6fb7804d21133e62f7bfb47dc2dbd1e4a6a5d8d831713bb7c0285","bytes_base64":"aWQsdGV4dAo5YzRkOTA1NS05N2ZhLTRkNmYtODRkMy0zMDkyYjYyNGYyNzksU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"f0d488ecc8d846ff7482e204da9ec84a98f420bb44d64a2ba25f0a1d21b9a5a4","bytes_base64":"aWQsdGV4dApmYTgwNzIwNS03Y2U1LTRiMzktYTg0Yi1hZmQwMjhhZWE3NmYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"86afa1dc87f1f9a40d2724c2565fed6b9f53d49b8cabb0f5b29c5195d6890eaa","bytes_base64":"aWQsdGV4dApjOWZjODQ5NS1kMzY3LTQzMjctYTRmNC1iMTliOWFkODJmM2QsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"8aa021e4ae6aa8f79f6c764f56fa185990283c1582363ca7956897b9548106fc","bytes_base64":"aWQsdGV4dAowZjUyMDQ2MC1mYzA2LTRlNDAtODgzYy1kNTMyOTJhNjBiZmMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"8aa021e4ae6aa8f79f6c764f56fa185990283c1582363ca7956897b9548106fc","bytes_base64":"aWQsdGV4dAowZjUyMDQ2MC1mYzA2LTRlNDAtODgzYy1kNTMyOTJhNjBiZmMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"8aa021e4ae6aa8f79f6c764f56fa185990283c1582363ca7956897b9548106fc","bytes_base64":"aWQsdGV4dAowZjUyMDQ2MC1mYzA2LTRlNDAtODgzYy1kNTMyOTJhNjBiZmMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"8aa021e4ae6aa8f79f6c764f56fa185990283c1582363ca7956897b9548106fc","bytes_base64":"aWQsdGV4dAowZjUyMDQ2MC1mYzA2LTRlNDAtODgzYy1kNTMyOTJhNjBiZmMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"8aa021e4ae6aa8f79f6c764f56fa185990283c1582363ca7956897b9548106fc","bytes_base64":"aWQsdGV4dAowZjUyMDQ2MC1mYzA2LTRlNDAtODgzYy1kNTMyOTJhNjBiZmMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"f5937afb7bc34c4c411ea0abfc4aecd13badb89feb76e0a0914febc534c12321","bytes_base64":"aWQsdGV4dApiOTdlOWQxOS0zZTY4LTRlYmYtYWZjNS1kZTc1MGIxNGJlYTcsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"bdf2b0da1f66624f0df51bbd3e99458db6a0fb0386a8517bb259d858759e5b10","bytes_base64":"aWQsdGV4dApiMjMyZWY5OS1iZmIxLTQ0N2UtODdlMi01MmY3NGM0ZmNhNjQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"b07ccace52c7ea1ccef18361b8060efede8b295c5001977dc1f0be72e8e8ed6b","bytes_base64":"aWQsdGV4dAo5MDY0YWE3OC0zMzE1LTQ2OTgtOWQ5NC1mMGNiNWI1YzRkYmIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"dabb23e4250f6cc65b4f627b303018778c527f8c87ba634572365197536a424d","bytes_base64":"aWQsdGV4dAo5YmY5OGE2NC05NzQ1LTRhNGEtYTNiMS1lYWZhMWFkZGU5OTMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"6bd050aa86a7bbb8138857383d92bfd547434b680d2897ca8e48d742edd22b10","bytes_base64":"aWQsdGV4dAo3Yzg3OTUzZi0yNDZkLTRjM2YtYWExYS0wYmJiMDA2OGZlNTQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"67cc22e9ffc751d16e12c719a5eeabce7d933b64bf565a61bfa36c2cb68dadac","bytes_base64":"aWQsdGV4dAoyM2UzNmIwYy00NmE1LTQ1NGMtOGQ4OS02NmM4OTBkMzdlODMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"d15871291494d472df4a455e273a27e9cffcb9729c5e36aa6478d9e58f9ed1a1","bytes_base64":"aWQsdGV4dApmZTc3Mzc2Yy02ODYzLTQ0MWEtODI4My01ZTU0NWMyNTZlYzYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"8a61e2e25e978b77c3147633936dbeed20db80b026c9ae490a82790dfb6fe81f","bytes_base64":"aWQsdGV4dAozZWIwMzUxYi1lZDNjLTQyZmItYTMyYi05ZDZmNGYxZmUxNmYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"e6859139d09a83488dde18b9b2a1cfb9be34dca47fe3e16202c10a93f2619b82","bytes_base64":"aWQsdGV4dAo5NzllNWVhNi0zYWFiLTRhMWYtYTVjMC00M2ViYzhjZjcyYzYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"60f296a47b00af34af17db80d3a2376b7df59dbe0c699d6b7e713756f3456596","bytes_base64":"aWQsdGV4dAplMzMxZmM5Mi0wYmMwLTQ4MmUtYWJkYi01YTQ1MGViMGY5MDEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"60f296a47b00af34af17db80d3a2376b7df59dbe0c699d6b7e713756f3456596","bytes_base64":"aWQsdGV4dAplMzMxZmM5Mi0wYmMwLTQ4MmUtYWJkYi01YTQ1MGViMGY5MDEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"7dcc69f050e36fa68a026eba5f2837c0553f2cb84948798aa2815fdf07351be0","bytes_base64":"aWQsdGV4dAo3MDU5YmFjZi0zZDJiLTRjYWUtYTE0MS0yNjk2NjhhNDQzMjUsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"dbd7c4af22035ae141c359524c1025d64ed4dfb349497f0fa0f6ab0ab5f1a18f","bytes_base64":"aWQsdGV4dAoyOGQ4ZDE0MS1kMzFlLTQ5ZGMtYTYzMC1iNDYyOGViMDY3MDYsU1lOVEhFVElDCg=="}
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16159.00625

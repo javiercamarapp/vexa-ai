@@ -1,0 +1,14 @@
+▶ SYNTHETIC ORACLE mutation proof; SQL and Storage real, NOT product
+  ✔ M02-HASH healthy0 → assertion1 → restored0 (1492.655625ms)
+  ✔ M02-ATOMIC healthy0 → assertion1 → restored0 (2022.393125ms)
+✔ SYNTHETIC ORACLE mutation proof; SQL and Storage real, NOT product (8758.254792ms)
+ℹ M02-HASH healthy=0 defect=1 restored=0 assertion=HASH_MISMATCH
+ℹ M02-ATOMIC healthy=0 defect=1 restored=0 assertion=ATOMIC_CONFIRM_ROLLBACK
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8817.551

@@ -1,0 +1,15 @@
+(node:98639) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✔ D02-02 hash and size independently observed from Storage (545.498208ms)
+✔ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (5171.346458ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"5f0621e2ea375c51ab51192038bcf0282075e66e766bfeeba31ecc5a097a3959","bytes_base64":"aWQsdGV4dAoxMTFmMzg4Ny1kNzkxLTQ0MmItODZiMC0zMjgxNDJkMjMyM2IsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"ecae53a55c7d48c11198a57b60bc9aa381d18ddb828143cbe5904b7a44591a94","bytes_base64":"aWQsdGV4dApjMjEyNzI5My00OThiLTRhMGUtOGMxMy00NzE0NzVmMDhhNDMsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5233.215709

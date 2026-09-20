@@ -1,0 +1,40 @@
+(node:59229) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✖ D02-02 hash and size independently observed from Storage (498.56925ms)
+✖ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (5231.586042ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"c405fd042a09fa4230254d3ef66eb1a67b821168ca0f13c949c77f8161edc37c","bytes_base64":"aWQsdGV4dAozNjkzYjM2Ni1hOGI5LTQzNTktODEwMy04MTUxOTUyZmExOWMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"0a0f07135c064b0f514c3dc0f2d222d83866cc590877c82cc250c7e70e047ce3","bytes_base64":"aWQsdGV4dAo1ZjdlNTBkZS05NjRjLTRjMWYtYTJhNS05YWU5MzQwNzY4ODIsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5295.755125
+
+✖ failing tests:
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-02 hash and size independently observed from Storage (498.56925ms)
+  AssertionError [ERR_ASSERTION]: SIZE_MISMATCH
+  
+  202 !== 422
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:38:146)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:35:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs:7:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 202,
+    expected: 422,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/evidence/run-f7fc6a52-fb2b-4202-acb1-275a7a8f5a66 EXIT 1 CLEANUP True

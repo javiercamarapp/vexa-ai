@@ -1,0 +1,27 @@
+COMMAND ["npm","ci","--offline","--ignore-scripts","--no-audit","--no-fund"] EXIT 0
+COMMAND ["npm","run","build","--workspace","@vexa/web"] EXIT 0
+(node:2150) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+FIXTURE {"label":"SYNTHETIC","license":"CC0-1.0","base64":"aWQsdGV4dApleGFtLFNZTlRIRVRJQyBpbmRlcGVuZGVudCBnYXRlCg==","sha256":"1e8e6614fb6a9139a17ac08a9a6768c5125697b72ff06cdc967ebb264c2df50b"}
+SSR_AUTHENTICATED_POSITIVE_REACHED
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: SSR_ORIGIN_REJECT: {"status":201,"data":{"contract_version":"f02-durable-v1","data":{"import_id":"3448902a-bd2b-4276-9d70-53d4b61dd2e4","state":"reserved","object_path":"ab0fa955-1230-4ab1-b594-023f76c4e1b8/imports/3448902a-bd2b-4276-9d70-53d4b61dd2e4/original","upload_url":"http://127.0.0.1:61269/storage/v1/object/upload/sign/vexa-private/ab0fa955-1230-4ab1-b594-023f76c4e1b8/imports/3448902a-bd2b-4276-9d70-53d4b61dd2e4/original?token=eyJhbGciOiJIUzI1NiJ9.eyJvd25lciI6ImNlMGRkYmY4LTJmYTctNDIwNi1iMDM2LWU2NThlYjBiYjVjYSIsInVybCI6InZleGEtcHJpdmF0ZS9hYjBmYTk1NS0xMjMwLTRhYjEtYjU5NC0wMjNmNzZjNGUxYjgvaW1wb3J0cy8zNDQ4OTAyYS1iZDJiLTQyNzYtOWQ3MC01M2Q0YjYxZGQyZTQvb3JpZ2luYWwiLCJ1cHNlcnQiOmZhbHNlLCJzY29wZSI6InVwbG9hZCIsImlhdCI6MTc4OTg3OTQ1MywiZXhwIjoxNzg5ODc5NTEzfQ.lMcM6l76bUin0T80R0nIXUo0S3x4rNc7ookOkUWsGQM","upload_token":"UvY89CvhhaX00C6CgGax1U0jmrzMYp_R5Tx_qGiZzoM","expires_at":"2026-09-20T04:59:13.956Z"},"meta":{"trace_id":"2497ee6d-b727-4a62-90d0-60d60cb4ac41","state":"reserved"}}}
+
+201 !== 403
+
+    at status (file:///Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/ssr-exam.mjs:33:37)
+    at ssrExam (file:///Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/ssr-exam.mjs:45:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/ssr-exam.mjs:72:56 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 201,
+  expected: 403,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.7.0

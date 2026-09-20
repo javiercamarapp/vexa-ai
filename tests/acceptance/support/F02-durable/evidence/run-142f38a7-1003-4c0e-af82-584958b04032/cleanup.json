@@ -1,0 +1,42 @@
+{
+  "journal": "/Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/evidence/run-142f38a7-1003-4c0e-af82-584958b04032/resources-8a5a03b3-acd1-4f5f-8631-40f4741db3f9.jsonl",
+  "broker": "8a5a03b3-acd1-4f5f-8631-40f4741db3f9",
+  "verified": true,
+  "resources": [
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-4aa4ebcf-bf25-4912-b047-ebb86bafeceb-db",
+      "broker": "8a5a03b3-acd1-4f5f-8631-40f4741db3f9",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-4aa4ebcf-bf25-4912-b047-ebb86bafeceb-auth",
+      "broker": "8a5a03b3-acd1-4f5f-8631-40f4741db3f9",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-4aa4ebcf-bf25-4912-b047-ebb86bafeceb-rest",
+      "broker": "8a5a03b3-acd1-4f5f-8631-40f4741db3f9",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-4aa4ebcf-bf25-4912-b047-ebb86bafeceb-storage",
+      "broker": "8a5a03b3-acd1-4f5f-8631-40f4741db3f9",
+      "id": null,
+      "absent": true
+    },
+    {
+      "kind": "network",
+      "name": "vexa-f01-03-4aa4ebcf-bf25-4912-b047-ebb86bafeceb",
+      "broker": "8a5a03b3-acd1-4f5f-8631-40f4741db3f9",
+      "id": null,
+      "absent": true
+    }
+  ]
+}

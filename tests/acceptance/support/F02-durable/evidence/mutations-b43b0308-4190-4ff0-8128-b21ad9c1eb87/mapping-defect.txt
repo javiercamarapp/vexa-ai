@@ -1,0 +1,43 @@
+(node:31065) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✖ D02-12 simultaneous HTTP reservations and conflicting mapping (394.505417ms)
+✖ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (5144.459083ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"cc10885efc90c7fabba6255d8c0869dc1383fb68af3865ee7247ca9c5d86e6de","bytes_base64":"aWQsdGV4dAoxNjcyMGU4NS1mZjlhLTRhYjgtYThiYi0xMWQ5MDZkYTRjZDksU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"cc10885efc90c7fabba6255d8c0869dc1383fb68af3865ee7247ca9c5d86e6de","bytes_base64":"aWQsdGV4dAoxNjcyMGU4NS1mZjlhLTRhYjgtYThiYi0xMWQ5MDZkYTRjZDksU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"cc10885efc90c7fabba6255d8c0869dc1383fb68af3865ee7247ca9c5d86e6de","bytes_base64":"aWQsdGV4dAoxNjcyMGU4NS1mZjlhLTRhYjgtYThiYi0xMWQ5MDZkYTRjZDksU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"cc10885efc90c7fabba6255d8c0869dc1383fb68af3865ee7247ca9c5d86e6de","bytes_base64":"aWQsdGV4dAoxNjcyMGU4NS1mZjlhLTRhYjgtYThiYi0xMWQ5MDZkYTRjZDksU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"cc10885efc90c7fabba6255d8c0869dc1383fb68af3865ee7247ca9c5d86e6de","bytes_base64":"aWQsdGV4dAoxNjcyMGU4NS1mZjlhLTRhYjgtYThiYi0xMWQ5MDZkYTRjZDksU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5206.532625
+
+✖ failing tests:
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-12 simultaneous HTTP reservations and conflicting mapping (394.505417ms)
+  AssertionError [ERR_ASSERTION]: RESERVE_MAPPING_CONFLICT
+  
+  201 !== 409
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:127:51)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:123:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs:7:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 409,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/evidence/run-853168d6-e6c5-487a-a4ce-77d11045c9ab EXIT 1 CLEANUP True

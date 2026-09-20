@@ -1,0 +1,8 @@
+{
+  "argv": [
+    "node",
+    "/Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/ssr-exam.mjs"
+  ],
+  "exit_code": 0,
+  "cleanup_verified": true
+}

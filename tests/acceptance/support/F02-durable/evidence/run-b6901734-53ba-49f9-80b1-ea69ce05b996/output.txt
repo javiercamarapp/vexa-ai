@@ -1,0 +1,18 @@
+(node:31818) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✔ D02-12 simultaneous HTTP reservations and conflicting mapping (666.306959ms)
+✔ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (5643.941583ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"210e34ed5f54f0316e7a5698d51a7af1749b7b8ea79ce2dc40d7b3f267c90fba","bytes_base64":"aWQsdGV4dAphNzgzNTdjOC1jZWNiLTRiZWUtOWJkZC0xYmU1NzYzYTNmOTgsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"210e34ed5f54f0316e7a5698d51a7af1749b7b8ea79ce2dc40d7b3f267c90fba","bytes_base64":"aWQsdGV4dAphNzgzNTdjOC1jZWNiLTRiZWUtOWJkZC0xYmU1NzYzYTNmOTgsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"210e34ed5f54f0316e7a5698d51a7af1749b7b8ea79ce2dc40d7b3f267c90fba","bytes_base64":"aWQsdGV4dAphNzgzNTdjOC1jZWNiLTRiZWUtOWJkZC0xYmU1NzYzYTNmOTgsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"210e34ed5f54f0316e7a5698d51a7af1749b7b8ea79ce2dc40d7b3f267c90fba","bytes_base64":"aWQsdGV4dAphNzgzNTdjOC1jZWNiLTRiZWUtOWJkZC0xYmU1NzYzYTNmOTgsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"210e34ed5f54f0316e7a5698d51a7af1749b7b8ea79ce2dc40d7b3f267c90fba","bytes_base64":"aWQsdGV4dAphNzgzNTdjOC1jZWNiLTRiZWUtOWJkZC0xYmU1NzYzYTNmOTgsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5708.974834

@@ -1,0 +1,55 @@
+[
+  {
+    "label": "ssr-healthy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/run.py",
+      "node",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/ssr-exam.mjs"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "marker": "SSR_INDEPENDENT_TOTAL_PASS"
+  },
+  {
+    "label": "ssr-origin-mutant",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/run.py",
+      "node",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/ssr-exam.mjs"
+    ],
+    "exit": 1,
+    "expected": 1,
+    "marker": "SSR_ORIGIN_REJECT"
+  },
+  {
+    "label": "ssr-restored",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/run.py",
+      "node",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/ssr-exam.mjs"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "marker": "SSR_INDEPENDENT_TOTAL_PASS"
+  },
+  {
+    "label": "node-contract",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/run.py",
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/product-probe.test.mjs"
+    ],
+    "exit": 1,
+    "expected": 0,
+    "marker": ""
+  }
+]

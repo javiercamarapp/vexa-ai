@@ -1,0 +1,56 @@
+(node:82492) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ PRODUCT NODE DIAGNOSTIC; not frozen acceptance, no SSR claim
+  ✖ D02-04 SQL fault at outbox rolls back confirmation; retry preserves reservation (973.77025ms)
+✖ PRODUCT NODE DIAGNOSTIC; not frozen acceptance, no SSR claim (6705.81225ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"e80cb82a1932b6b5f2a3481c76359cd020d8320d20097b47207cd3a6312c7173","bytes_base64":"aWQsdGV4dAo0YWJjODg4MS1iZTM3LTQwOWEtOTU4Ny0zMjFiOGZhZjRiMWIsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6775.202709
+
+✖ failing tests:
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-04 SQL fault at outbox rolls back confirmation; retry preserves reservation (973.77025ms)
+  AssertionError [ERR_ASSERTION]: ATOMIC_CONFIRM_ROLLBACK
+  + actual - expected
+  ... Skipped lines
+  
+    {
+      imports: [
+        {
+          accepted: 0,
+          connection_id: '8181badf-0f8c-4ba7-8198-e9ea418fc35a',
+  ...
+          pending: 0,
+  +       provenance: {
+  +         premature: true
+  +       },
+  -       provenance: {},
+          rejected: 0,
+          state: 'reserved',
+          tenant_id: '36eb2d41-8ee1-4085-b9e0-9580e0ac0439',
+          total: 0,
+          updated_at: '2026-09-20T04:33:56.178444+00:00'
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:49:61)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:46:39)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-probe.test.mjs:10:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { imports: [ [Object] ], jobs: [], outbox: [] },
+    expected: { imports: [ [Object] ], jobs: [], outbox: [] },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/evidence/run-51db4f94-7bad-4d71-97db-1ce12da8bdb6 EXIT 1 CLEANUP True

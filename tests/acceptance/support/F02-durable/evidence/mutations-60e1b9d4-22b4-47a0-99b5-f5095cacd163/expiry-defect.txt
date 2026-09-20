@@ -1,0 +1,37 @@
+(node:54336) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✖ D02-15 expired reconciliation retains reservation and bytes without completing work (717.092542ms)
+✖ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (7481.617ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"3702ab555ec5cac0a10329f79a41c9626fafaced834d82f145a31d198885bfe2","bytes_base64":"aWQsdGV4dAoyNWExMDQzOC05ZGRiLTRhNjktYjk5Zi1hNzhmMzcxYzg4MmEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"0005e77bf8bd55190cbe5e1007161bb617944815812358c66c075f06ea6db94e","bytes_base64":"aWQsdGV4dAplNGY2ZDZhYS1jYjg4LTRiMDAtYmE3OS0zNjYxYTVmNzc3NDYsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7581.570542
+
+✖ failing tests:
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-15 expired reconciliation retains reservation and bytes without completing work (717.092542ms)
+  AssertionError [ERR_ASSERTION]: EXPIRED_NOT_QUEUED
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:171:206)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:167:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs:7:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'queued',
+    expected: 'queued',
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
+
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/evidence/run-2e3ae487-e5c7-4f39-b102-45b0c1f7e47c EXIT 1 CLEANUP True

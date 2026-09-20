@@ -1,0 +1,15 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {productBinding} from './support/F02-durable/product-binding.mjs';
+import {runtime} from './support/F02-durable/runtime.mjs';
+import {exam02} from './support/F02-durable/exam02.mjs';
+test('F02-02 durable candidate (proposed boundary; review required)',{timeout:300000},async t=>{
+ const candidate=path.resolve(process.env.VEXA_CANDIDATE??'.');
+ const entry=path.join(candidate,'packages/jobs/index.mjs');
+ assert.ok(fs.existsSync(entry),'IMPLEMENTATION_MISSING: packages/jobs/index.mjs');
+
+ const h=await runtime(candidate);t.after(()=>h.close());await exam02(t,h,ports=>productBinding(candidate,ports),{processEntry:path.join(candidate,'packages/jobs/index.mjs')});
+ assert.fail("GATE_INCOMPLETE: actual Next SSR binding, expiry/maintenance contract and mandatory product mutations still require review; Node oracle positives are not product acceptance");
+});

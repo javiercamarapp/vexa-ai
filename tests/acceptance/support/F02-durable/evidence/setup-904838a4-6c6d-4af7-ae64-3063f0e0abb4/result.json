@@ -1,0 +1,7 @@
+{
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B -m ast tests/acceptance/support/F02-durable/product-mutations.py",
+  "exit_code": 1,
+  "classification": "syntax/setup, NOT mutant",
+  "observed": "SyntaxError: invalid syntax on line17 (nested import quote in mutation string)",
+  "fixed": "escaped mutation source using Python repr before any mutation execution"
+}

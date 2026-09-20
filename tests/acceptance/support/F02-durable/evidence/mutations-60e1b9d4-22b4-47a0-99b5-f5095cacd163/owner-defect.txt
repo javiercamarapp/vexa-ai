@@ -1,0 +1,39 @@
+(node:56563) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✖ D02-16 same tenant second actor cannot confirm another owners reservation (407.542917ms)
+✖ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (4956.697083ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"8110ca4a0bfdf085b4f210570aed6c14bd986ff7a6c4f452258074ee097aa4d0","bytes_base64":"aWQsdGV4dAo5ZTQ0OTlmNC1mMjY0LTRkNzItYmRhNS01YTIyNGM4YTg0NTUsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5019.90125
+
+✖ failing tests:
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-16 same tenant second actor cannot confirm another owners reservation (407.542917ms)
+  AssertionError [ERR_ASSERTION]: RESERVATION_OWNER
+  
+  202 !== 404
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:156:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:152:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs:7:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 202,
+    expected: 404,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/evidence/run-f5ffe46a-a0d3-4edd-8015-081c4244cb95 EXIT 1 CLEANUP True

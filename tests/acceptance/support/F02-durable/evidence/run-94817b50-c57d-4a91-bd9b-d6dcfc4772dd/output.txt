@@ -1,0 +1,14 @@
+(node:13449) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ PRODUCT NODE DIAGNOSTIC; not frozen acceptance, no SSR claim
+  ✔ D02-04 SQL fault at outbox rolls back confirmation; retry preserves reservation (902.796834ms)
+✔ PRODUCT NODE DIAGNOSTIC; not frozen acceptance, no SSR claim (5406.821958ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"dac95d0a0e9fa263bc72d1dcfed2301bf942364067eebabe93b64a7b91e9ad34","bytes_base64":"aWQsdGV4dAo2NWZkYjljMy03MGEyLTQxOWEtYTU0NC1hN2NlYzY2YzBmNmMsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5466.223083

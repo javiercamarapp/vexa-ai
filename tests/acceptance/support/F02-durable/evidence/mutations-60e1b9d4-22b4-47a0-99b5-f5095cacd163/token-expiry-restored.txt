@@ -1,0 +1,18 @@
+(node:64598) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✔ D02-03 nonexistent object and expired confirmation capability (758.437625ms)
+✔ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (5655.082833ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"d67c70232b2f88c37b818a9a05315b58bdf991bed66e8c38e1d018eb46e57229","bytes_base64":"aWQsdGV4dAoxZmZjODExMi1lZTNhLTRhZDEtYTkxNy01YjI5OTZjMTdmMjEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"b032eeb764994db2a9ecde153d6e3701ecbdc84ad7f15f40a3e2c684681e0cef","bytes_base64":"aWQsdGV4dAoyNGY4NDM0Zi0wOGUzLTQ2NjAtYjYwYS1kM2FhZTM2NTcwNTgsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"1b5e80c1466175c1bc6971fc6b1db7a8f455ad6f18e67262892620d8e650e864","bytes_base64":"aWQsdGV4dAo2NTQxNjRiOC1iMGRjLTRkZjYtODg2NS00YWIzMTdiZDNiYWUsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5720.819625
+
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/evidence/run-155d0bb4-80fa-4e11-b891-dd0ff7d4fbd6 EXIT 0 CLEANUP True

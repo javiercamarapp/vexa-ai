@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "node",
+    "--test",
+    "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/probe.test.mjs"
+  ],
+  "exit_code": 0,
+  "cleanup_verified": true
+}

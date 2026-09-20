@@ -1,0 +1,14 @@
+(node:55840) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✔ D02-16 same tenant second actor cannot confirm another owners reservation (535.91025ms)
+✔ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (5300.776417ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"83e22615f47ca0a0f27b814380f71ebfa8545f2f2e1095ee9451940f6f176db0","bytes_base64":"aWQsdGV4dAo1ZGQ2OTk1Mi0zYTdmLTRiNDEtOTEyNS0yMjU4NTY0NWU0NmIsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5368.827334

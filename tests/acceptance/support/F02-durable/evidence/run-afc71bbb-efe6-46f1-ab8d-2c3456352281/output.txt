@@ -1,0 +1,15 @@
+(node:79194) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ PRODUCT actual SQL expiry and object owner; SYNTHETIC local Node
+  ✔ actual object owner checked independently of valid bytes (1215.073875ms)
+  ✔ reservation expires by wall and SQL clock with unchanged valid signature (3597.640166ms)
+✔ PRODUCT actual SQL expiry and object owner; SYNTHETIC local Node (13849.386792ms)
+ℹ OWNER_FIXTURE_SETUP {"code":"42501","detail":"","context":"PL/pgSQL function public.guard_reserved_import_object() line 5 at RAISE\nSQL statement \"UPDATE storage.objects SET owner_id='773cd885-6a09-47d0-9ad6-5006f31c545c' WHERE name='c9242d31-d54f-483d-9eeb-925861e00599/imports/cd386fe9-f798-4ca8-bf14-aa7852bef45a/original'\"\nPL/pgSQL function inline_code_block line 4 at SQL statement","message":"reserved import object immutable","constraint":""}
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13936.8575

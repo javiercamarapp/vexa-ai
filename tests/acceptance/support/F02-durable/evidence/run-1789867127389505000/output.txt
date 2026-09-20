@@ -1,0 +1,39 @@
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✔ D02-01 reservation, real direct upload, hash, queued and concurrent retry (875.262625ms)
+  ✔ D02-02 hash and size independently observed from Storage (603.662541ms)
+  ✔ D02-03 nonexistent object and expired confirmation capability (892.290583ms)
+  ✔ D02-04 SQL fault at jobs rolls back confirmation; retry preserves reservation (781.068208ms)
+  ✔ D02-04 SQL fault at outbox rolls back confirmation; retry preserves reservation (783.263541ms)
+  ✔ D02-05 cross tenant confirmation, polling, selector and object substitution (1065.137416ms)
+  ✔ D02-06 revoked member cannot confirm, poll or fetch previously known object (591.186917ms)
+  ✖ D02-08 Storage rejects correctly signed expired upload token; fresh control uploads (146.383208ms)
+  ✔ D02-07 anonymous, viewer and caller-selected bucket forbidden (205.278083ms)
+✖ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (11439.452458ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 8
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11513.457834
+
+✖ failing tests:
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:5:52
+✖ D02-08 Storage rejects correctly signed expired upload token; fresh control uploads (146.383208ms)
+  AssertionError [ERR_ASSERTION]: STORAGE_EXPIRED_REASON
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/exam02.mjs:71:148)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/exam02.mjs:67:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/probe.test.mjs:7:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '{"statusCode":"400","error":"InvalidJWT","message":"\\"exp\\" claim timestamp check failed","code":"InvalidJWT"}',
+    expected: /expired/i,
+    operator: 'match',
+    diff: 'simple'
+  }

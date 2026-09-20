@@ -1,0 +1,19 @@
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✔ D02-01 reservation, real direct upload, hash, queued and concurrent retry (924.11375ms)
+  ✔ D02-02 hash and size independently observed from Storage (666.439667ms)
+  ✔ D02-03 nonexistent object and expired confirmation capability (1089.168958ms)
+  ✔ D02-04 SQL fault at jobs rolls back confirmation; retry preserves reservation (961.208167ms)
+  ✔ D02-04 SQL fault at outbox rolls back confirmation; retry preserves reservation (780.667875ms)
+  ✔ D02-05 cross tenant confirmation, polling, selector and object substitution (1125.951834ms)
+  ✔ D02-06 revoked member cannot confirm, poll or fetch previously known object (580.331292ms)
+  ✔ D02-08 Storage rejects correctly signed expired upload token; fresh control uploads (420.649959ms)
+  ✔ D02-07 anonymous, viewer and caller-selected bucket forbidden (199.791625ms)
+✔ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (11872.184417ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11934.269

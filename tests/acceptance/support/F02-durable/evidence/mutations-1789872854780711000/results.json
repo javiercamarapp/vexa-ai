@@ -1,0 +1,50 @@
+[
+  {
+    "name": "hash",
+    "stage": "healthy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f0202-canonical-1789872505200408000/durable-gate/tests/acceptance/support/F02-durable/run.py",
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f0202-canonical-1789872505200408000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "case": "D02-02",
+    "defect": "",
+    "exit": 0,
+    "expected": 0,
+    "assertion": null
+  },
+  {
+    "name": "hash",
+    "stage": "defect",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f0202-canonical-1789872505200408000/durable-gate/tests/acceptance/support/F02-durable/run.py",
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f0202-canonical-1789872505200408000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "case": "D02-02",
+    "defect": "hash",
+    "exit": 1,
+    "expected": 1,
+    "assertion": "HASH_MISMATCH"
+  },
+  {
+    "name": "hash",
+    "stage": "restored",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f0202-canonical-1789872505200408000/durable-gate/tests/acceptance/support/F02-durable/run.py",
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f0202-canonical-1789872505200408000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "case": "D02-02",
+    "defect": "",
+    "exit": 0,
+    "expected": 0,
+    "assertion": null
+  }
+]

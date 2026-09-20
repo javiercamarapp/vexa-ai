@@ -1,0 +1,38 @@
+(node:77227) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ PRODUCT byte oracles with actual Storage, independent SQL observer
+  ✖ hash (497.045584ms)
+  ✔ positive (548.248083ms)
+✖ PRODUCT byte oracles with actual Storage, independent SQL observer (5856.096459ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 1
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5917.334292
+
+✖ failing tests:
+
+test at tests/acceptance/support/F02-durable/product-bytes.test.mjs:8:109
+✖ hash (497.045584ms)
+  AssertionError [ERR_ASSERTION]: PRODUCT_HASH_MISMATCH
+  
+  202 !== 422
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-bytes.test.mjs:15:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-bytes.test.mjs:8:101)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 202,
+    expected: 422,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/evidence/run-8a6afd90-1fb5-4264-be87-fe75fa79b186 EXIT 1 CLEANUP True

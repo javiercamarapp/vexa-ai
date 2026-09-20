@@ -1,0 +1,98 @@
+[
+  {
+    "name": "hash",
+    "stage": "healthy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/run.py",
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "case": "D02-02",
+    "defect": "",
+    "exit": 0,
+    "expected": 0,
+    "assertion": null
+  },
+  {
+    "name": "hash",
+    "stage": "defect",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/run.py",
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "case": "D02-02",
+    "defect": "hash",
+    "exit": 1,
+    "expected": 1,
+    "assertion": "HASH_MISMATCH"
+  },
+  {
+    "name": "hash",
+    "stage": "restored",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/run.py",
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "case": "D02-02",
+    "defect": "",
+    "exit": 0,
+    "expected": 0,
+    "assertion": null
+  },
+  {
+    "name": "atomic",
+    "stage": "healthy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/run.py",
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "case": "SQL fault at outbox",
+    "defect": "",
+    "exit": 0,
+    "expected": 0,
+    "assertion": null
+  },
+  {
+    "name": "atomic",
+    "stage": "defect",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/run.py",
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "case": "SQL fault at outbox",
+    "defect": "atomic",
+    "exit": 1,
+    "expected": 1,
+    "assertion": "ATOMIC_CONFIRM_ROLLBACK"
+  },
+  {
+    "name": "atomic",
+    "stage": "restored",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/run.py",
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "case": "SQL fault at outbox",
+    "defect": "",
+    "exit": 0,
+    "expected": 0,
+    "assertion": null
+  }
+]

@@ -1,0 +1,580 @@
+[
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-00842eb4-c594-44b0-9c5e-7e8b0332ba73"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-00afa936-e0c0-4e0f-9ed3-27f16b714be2"
+  },
+  {
+    "argv": [
+      "node",
+      "tests/acceptance/support/F02-durable/next-smoke.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-07122742-35ff-439b-a7da-ab7d38016837"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-0bdd91a2-18cd-4242-9989-61f296a17736"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-127ffde4-65e2-4531-99d8-2c32551dc6b9"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/support/F02-durable/product-expiry.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-134fc26c-ce2b-4cfa-936e-a2bc11a1c314"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-155d0bb4-80fa-4e11-b891-dd0ff7d4fbd6"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-1789878166181001000"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-18c21275-618d-40a5-acaf-1ed2c4d74499"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-2337b1a9-22a8-4ce8-bc3e-a12186312af9"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-2512481c-0e9a-4911-aac1-7d9899b0d083"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-2e3ae487-e5c7-4f39-b102-45b0c1f7e47c"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-30c0daa8-edfd-4b45-9bad-1d78354451e1"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-36b05293-ef63-4a84-b322-1d0a6a29ad14"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-36fc7377-bb13-4f65-b8c5-76c4ce5288b5"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-38a68276-0694-4c4e-97b6-a3ed4ca840cc"
+  },
+  {
+    "argv": [
+      "node",
+      "tests/acceptance/support/F02-durable/next-smoke.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-3b003fa7-4969-4038-9af9-eb5207d3fa6b"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-bytes.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-4cb787d2-f366-4440-8dfa-62b080ec1d89"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/support/F02-durable/product-expiry.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-517021e3-9b98-49c1-960d-2d912ca13a23"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-51db4f94-7bad-4d71-97db-1ce12da8bdb6"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-5327b136-aa9d-4cd1-9a9d-4ff91f87dd7a"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-5455fa81-839f-4acd-b832-3236cf98678a"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-65177fc6-d0bd-44f2-8047-4548dd27be50"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-67aa1c41-6a71-43ab-9275-251660167065"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-6d4aa9f2-f08e-4a85-b754-ba258b1505ff"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-792885a0-3e24-4769-b49e-2e13cac7a7dc"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-bytes.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-7f35cb85-b8c5-4513-9fe4-73ed41e29f72"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-853168d6-e6c5-487a-a4ce-77d11045c9ab"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-87527a29-a02b-4308-8ae5-ec9eb2e80663"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-bytes.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-8a6afd90-1fb5-4264-be87-fe75fa79b186"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-8c56a113-fa9d-4731-9a78-35617bf1f1f0"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-8ce0eae6-a2b7-4d25-9a0a-1a5a86d57569"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-bytes.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-92fd3b53-4360-4aff-9975-5e023c554a47"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-97300b91-027e-44f1-a632-e5febc0b266c"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-973c50b2-98e5-423b-9e0f-ae1fe1b044b3"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-9c62664c-6a23-41f6-8ef3-87c96d286579"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-a763d06d-fcea-4def-95be-ec82a40499cf"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-ad6679a5-4800-415b-81cd-d5d85d90900b"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-ae5a1de3-6fb6-49f1-a710-49e7cd75ae17"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/support/F02-durable/product-expiry.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-afc71bbb-efe6-46f1-ab8d-2c3456352281"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-b58633a0-74b8-449e-a879-883d486e7fdc"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-b6901734-53ba-49f9-80b1-ea69ce05b996"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-b779f975-f410-49fc-8e49-35416d37e255"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/F02-02.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-b9a67dec-bfae-40aa-b7f7-34e35fb9e5a1"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-bf9cd8a2-fc26-4aa3-bc82-c5c677581a00"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-c2b5a208-4c65-430f-a1b1-31b934c985c7"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-c36a6540-57cf-4692-b461-3d338c97cd9c"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-c5f8bb00-2799-4049-bab2-939cad0fb23b"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-c75ab00b-d567-4eb1-9456-b1213243c299"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-c911b3d3-9460-4c27-8f36-3a94ec232812"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-dc0111ce-3f18-43dd-99a7-d3c7bdea13fc"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-ea58067d-bd9f-46b3-8409-085975b3b022"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/support/F02-durable/product-probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-eed40611-2df6-4b11-8b0e-93c53b59823e"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-f5ffe46a-a0d3-4edd-8015-081c4244cb95"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-f7fc6a52-fb2b-4202-acb1-275a7a8f5a66"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-fa8550b3-11bf-4905-a628-abba961c7464"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-fad20673-c77e-4183-9695-fef36219f57f"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true,
+    "artifact": "evidence/run-fcffdc9f-7a5a-44bc-bfd4-7c4609a6e5f4"
+  }
+]

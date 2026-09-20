@@ -1,0 +1,89 @@
+COMMAND ["npm","ci","--offline","--ignore-scripts","--no-audit","--no-fund"] EXIT 0
+COMMAND ["npm","run","build","--workspace","@vexa/web"] EXIT 0
+(node:14543) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+FIXTURE {"label":"SYNTHETIC","license":"CC0-1.0","base64":"aWQsdGV4dApleGFtLFNZTlRIRVRJQyBpbmRlcGVuZGVudCBnYXRlCg==","sha256":"1e8e6614fb6a9139a17ac08a9a6768c5125697b72ff06cdc967ebb264c2df50b"}
+SSR_AUTHENTICATED_POSITIVE_REACHED
+PASS SSR flow concurrency tenant origin restart
+SIZE_REJECTION {"status":500,"text":"{\"statusCode\":\"500\",\"error\":\"DatabaseError\",\"message\":\"database error, code: 23514\",\"code\":\"DatabaseError\"}"}
+PASS SIZE early reject exact reservation/capability recovery independent reader
+PASS HASH same size confirm422
+PASS SSR revocation same cookie then recovery
+SSR_INDEPENDENT_TOTAL_PASS
+TOTAL_NODE_COMMAND ["/opt/homebrew/Cellar/node/26.7.0/bin/node","--test","--test-concurrency=1","/Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/product-probe.test.mjs","/Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/product-expiry.test.mjs","/Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/product-bytes.test.mjs"] EXIT 0
+(node:15632) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ PRODUCT byte oracles with actual Storage, independent SQL observer
+  ✔ hash (406.381041ms)
+  ✔ size (631.265125ms)
+  ✔ positive (504.801625ms)
+✔ PRODUCT byte oracles with actual Storage, independent SQL observer (6078.114417ms)
+(node:16411) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ PRODUCT actual SQL expiry and object owner; SYNTHETIC local Node
+  ✔ actual object owner checked independently of valid bytes (650.535333ms)
+  ✔ reservation expires by wall and SQL clock with unchanged valid signature (3236.757375ms)
+✔ PRODUCT actual SQL expiry and object owner; SYNTHETIC local Node (8818.828042ms)
+ℹ OWNER_FIXTURE_SETUP {"code":"42501","detail":"","context":"PL/pgSQL function public.guard_reserved_import_object() line 5 at RAISE\nSQL statement \"UPDATE storage.objects SET owner_id='8deb7582-7748-4141-acee-0c51ff221908' WHERE name='3959059a-d703-4785-9a7f-9b15b9f71ecd/imports/a6bf1548-bc52-41fb-b059-6628f6da7d41/original'\"\nPL/pgSQL function inline_code_block line 4 at SQL statement","message":"reserved import object immutable","constraint":""}
+(node:18351) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ PRODUCT NODE DIAGNOSTIC; not frozen acceptance, no SSR claim
+  ✔ D02-01 reservation, real direct upload, hash, queued and concurrent retry (852.210792ms)
+  ✔ D02-03 nonexistent object and expired confirmation capability (358.798917ms)
+  ✔ D02-04 SQL fault at jobs rolls back confirmation; retry preserves reservation (872.497875ms)
+  ✔ D02-04 SQL fault at outbox rolls back confirmation; retry preserves reservation (902.33775ms)
+  ✔ D02-05 cross tenant confirmation, polling, selector and object substitution (1060.484458ms)
+  ✔ D02-06 revoked member cannot confirm, poll or fetch previously known object (547.586959ms)
+  ✔ D02-10 failed reservation cannot leave an untracked Storage object (774.410375ms)
+  ✔ D02-09 independent SQL connections contend on tenant/idempotency unique (694.956166ms)
+  ✔ D02-08 Storage rejects correctly signed expired upload token; fresh control uploads (486.009833ms)
+  ✔ D02-07 anonymous, viewer and caller-selected bucket forbidden (160.952458ms)
+  ✔ D02-11 canonical login, SET LOCAL ROLE, RLS and stale membership guard (311.464ms)
+  ✔ D02-12 simultaneous HTTP reservations and conflicting mapping (784.347375ms)
+  ✔ D02-13 malformed body, arbitrary object path, invalid size and inactive connection (356.843041ms)
+  ✔ D02-14 SIGKILL HTTP after reservation and confirm preserves persistent IDs (1184.173458ms)
+  ✔ D02-16 same tenant second actor cannot confirm another owners reservation (673.322041ms)
+  ✔ D02-17 identical bytes distinct reservation keys each remain tracked (919.609292ms)
+✔ PRODUCT NODE DIAGNOSTIC; not frozen acceptance, no SSR claim (15714.905833ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"977d988d2a6601b5a083603f0220c5d0aa466e046042f4bc97233dcc08e1bb76","bytes_base64":"aWQsdGV4dAphMzNhYTk2MC1iOTRmLTRjZjItODNkMi03M2M1N2NhZWIyOTIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"977d988d2a6601b5a083603f0220c5d0aa466e046042f4bc97233dcc08e1bb76","bytes_base64":"aWQsdGV4dAphMzNhYTk2MC1iOTRmLTRjZjItODNkMi03M2M1N2NhZWIyOTIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"9ab3e5bddbdd533e5927d90ebf751ea38f3c1f559d6745408d1707eddf7cb326","bytes_base64":"aWQsdGV4dAo4OTg1NDNmMS0xMzJmLTQ0M2MtOWM5Yi1kNTRkZDBmODhhNzQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"caf18211a8483d7573b4d52f64f16d0fdcbf3624b33d07dd42e52129f0d461ea","bytes_base64":"aWQsdGV4dAphY2E4ZmJjOS03OWUyLTQ2NWUtODFjMS03MTJhMzQ1OTYwMWUsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"1c56e8cd8212eb2ed090559846f67cff62fcbb868fe936b2ca3b770d9d70f8fa","bytes_base64":"aWQsdGV4dAo0ZjNjZDllYS1hYTY3LTRkOTgtOTk0Yi01Nzk3MzNhNzE2NTksU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"81beff9a41a9a730d7fe5073082253d0ff98ddabdcf57b921161a39d3c3d4f41","bytes_base64":"aWQsdGV4dAphOGY2OWNlNC01MmExLTQ1NDItOWEyYS04OTVmMDRmYTA4NmQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"3ec7795c1e7a114c2b5c6914e5c2567f2636b08adfbde5431383bd258761834f","bytes_base64":"aWQsdGV4dAoyYzg0YjI0Mi1kNzA0LTQwNGUtYTgzZS1iZTY5ZjkxYjYwZTQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"c691ea73f8bf10ca5378999f87ac7d6cd8298b8e47c45f71f1c77481d8563a0b","bytes_base64":"aWQsdGV4dAo4YTZjZjk1Yy0wNjM1LTRhMzctOTViOS05ZGNjOWYyNTM4MzgsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"41358eeb0947be60461d278d4b7e66d3e8ca5f4f991a420cb39d860cfd61ef8f","bytes_base64":"aWQsdGV4dAo4NTIzYWJhZi1iYWRiLTRkMzYtYmI1YS1lYTdlMzI5YjgyMWUsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"a6335ffb8a8a5210c9b1cbdce75960d31c6ea71ee50bb37ebbc52050615ead58","bytes_base64":"aWQsdGV4dApkNmFhZGZiOC0xM2FiLTQ5ODItYjlkMy1mN2IwYmM2N2ZmZjIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"fe9eb7640af9df240c59c391d0e3ce30129a757ca1540c4172dac4472584a679","bytes_base64":"aWQsdGV4dAoxMDc5OTIwOS05ZGViLTRjMjEtOGVlNy03MWZmNzc2M2U2NTMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"24bfe2a62182f1fea18715d51af4b4b872c12c9fc558653194dfcf12f005b657","bytes_base64":"aWQsdGV4dApmZmIzOGU1Yy00NTgyLTRlZWItOTVjNy1lMWE2MjA4M2MwNTAsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"a2c4cae7c7c830b6242733a6e2d93489024bece0806eb6d24ea21a7574927af7","bytes_base64":"aWQsdGV4dAphMTM1NWJkMC01MTNjLTQyY2ItYTJhZS1mMWE0NGUxMDlmNTYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"b31c91f0d277f0491801430665b2d61f222893e620ec8764ba971a64bfe3bcda","bytes_base64":"aWQsdGV4dApkMWY1YzA4Zi03OGU1LTQ4OTgtYjVhMC0zOWU5NjY3MmI2MjcsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"833c1027889ade0b0dad57963a58395a49fe4708bd03ee37271ea33e812e697e","bytes_base64":"aWQsdGV4dAoxMDczZDZlNy1jYjAwLTQ5YzktODQwMS02MjI3OTIxOWYxZDksU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"8d8cd011013a87ced667cd966e79496149e820b127a68d6860fe64c69df215c1","bytes_base64":"aWQsdGV4dAo5OTliOTljMi0wZWEwLTQ0NDYtODQ4Mi1iZjg1ZGYwMzc2OTYsU1lOVEhFVElDCg=="}
+ℹ PRODUCT_ROLE {"current_user":"f02_product","rolsuper":false,"rolbypassrls":false}
+ℹ SYNTHETIC_FIXTURE {"sha256":"4e1d88c8d184b192754abfe640259260b91d89464d79631163b17a9241b23841","bytes_base64":"aWQsdGV4dAo0NjE2NzQyZi1kMmQ2LTRjZjUtOGUwMC0zOWYzZTdhMDA0YTQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"4e1d88c8d184b192754abfe640259260b91d89464d79631163b17a9241b23841","bytes_base64":"aWQsdGV4dAo0NjE2NzQyZi1kMmQ2LTRjZjUtOGUwMC0zOWYzZTdhMDA0YTQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"4e1d88c8d184b192754abfe640259260b91d89464d79631163b17a9241b23841","bytes_base64":"aWQsdGV4dAo0NjE2NzQyZi1kMmQ2LTRjZjUtOGUwMC0zOWYzZTdhMDA0YTQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"4e1d88c8d184b192754abfe640259260b91d89464d79631163b17a9241b23841","bytes_base64":"aWQsdGV4dAo0NjE2NzQyZi1kMmQ2LTRjZjUtOGUwMC0zOWYzZTdhMDA0YTQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"4e1d88c8d184b192754abfe640259260b91d89464d79631163b17a9241b23841","bytes_base64":"aWQsdGV4dAo0NjE2NzQyZi1kMmQ2LTRjZjUtOGUwMC0zOWYzZTdhMDA0YTQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"af52c3d0407114d27a85f794739e6dd8896c7686634ab6f2ca8c9d84b7f004c0","bytes_base64":"aWQsdGV4dAo0ODU5NDQxMi1lMWFjLTQzY2QtYWI3Yy1lOTkwOWRlYzk3NjIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"2a0d380f29998d1e777278781a15fcfed5c4763034d8ab4c87805b75007db78b","bytes_base64":"aWQsdGV4dAo4NDVhNGEzMi02NWVmLTRkYWUtOTNiYS1hMmNhOGRhMzVkNWIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"d5754b0f62fa566c6be71261646f3427a4a8c188c9feed4df15d453d0a26aa35","bytes_base64":"aWQsdGV4dAoxZGNhOWI0Ny01NDBjLTRjOTctYjdjMC03ZGNhOGFiODY3ODEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"dbc4462dfc8640038c749d7cc2b73fe5bfb6292af213e92333dbd2f06e3bebde","bytes_base64":"aWQsdGV4dAowYTA0ZTQ3OS1kMmE0LTQ5NTAtYWFmOC00NzE2NzUzNWM2ZWYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"6d0570d44add0265b568a607b8cf33ebfc4df9a86eab18e7ea4dea30883baa3d","bytes_base64":"aWQsdGV4dApiODg2Y2EzMi0xMjc4LTRkYTMtYWM1MC1lOTRjM2M1MGFjMzcsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"9aa3a0718585053c79f4e5af2e2eca578ae45adc5aa3c3f0178d1439a21c3c58","bytes_base64":"aWQsdGV4dAoyZWUzNzEyYS03ZWYwLTRjYjQtOWZiYS0wYTE2YTE0OGE1MzYsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"300e10d14af7502a95cd138414774c00408dd2f9b5d020e7cd08aca7ccee1d4c","bytes_base64":"aWQsdGV4dAo0MmJiZjMzNC0wMDg3LTRmZDEtYWI2MC1lMGU5YWE5NzgxZDgsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"5264221ce5623a28ab4ecb82296ae746e8ac2e57d206fe1b795d256d645cab62","bytes_base64":"aWQsdGV4dAo4NjA0YzljYy1iYmNlLTQzOTMtOTZjOS00NGQ5ZGU0MDI4NTMsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"f28d14eda89d6f75f16cfedf5d76ce3ef66677bfb66e5ad134614db8a1c73b1e","bytes_base64":"aWQsdGV4dAo0ODU5MzY3Yy0zMDFlLTQ2OGMtYjU3OC0xNGZlNjA5YzI3YWQsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"ae8d5685a4fd7d2f5bffb34e81210054af9bbacc1675d27cb0ac1ec56bd74031","bytes_base64":"aWQsdGV4dAozYmJmMGNjYi1jMzM0LTRlNjUtYTQ5Zi0zNjI5ODFhODA2NTEsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"ae8d5685a4fd7d2f5bffb34e81210054af9bbacc1675d27cb0ac1ec56bd74031","bytes_base64":"aWQsdGV4dAozYmJmMGNjYi1jMzM0LTRlNjUtYTQ5Zi0zNjI5ODFhODA2NTEsU1lOVEhFVElDCg=="}
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30790.84375
+F02_02_TOTAL_PRODUCT_PASS_REVIEW_PENDING

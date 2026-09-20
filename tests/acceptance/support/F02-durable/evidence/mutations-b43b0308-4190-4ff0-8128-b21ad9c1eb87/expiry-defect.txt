@@ -1,0 +1,35 @@
+(node:35459) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✖ D02-15 expired reconciliation retains reservation and bytes without completing work (395.457959ms)
+✖ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (5501.865667ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"687982fc47b002cfb535381a790f5c6d14ea934bdf2343d70b41fe38b1be0639","bytes_base64":"aWQsdGV4dAo4ZmQ3ODg1Yi02MThkLTRjOWItODA3NS1mNzkzOWRhM2FlZWIsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"810d0f6e5bec3f95279bc1b44886ed14fc6e2a77a0fd22ba7ec08266c296b196","bytes_base64":"aWQsdGV4dApmMDM2ZGYzNS05ODMzLTQ3ZTgtYjEwZC01ZGJmNDMyYTQ2NzgsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5562.058458
+
+✖ failing tests:
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-15 expired reconciliation retains reservation and bytes without completing work (395.457959ms)
+  Error: database_conflict
+      at databaseError (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f02-db-inputs-UpgrP5/db.mjs:30:78)
+      at Object.transaction (file:///private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f02-db-inputs-UpgrP5/db.mjs:70:15)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:156:3)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:152:2)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs:7:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    status: 409,
+    code: 'database_conflict'
+  }
+
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/evidence/run-792885a0-3e24-4769-b49e-2e13cac7a7dc EXIT 1 CLEANUP True

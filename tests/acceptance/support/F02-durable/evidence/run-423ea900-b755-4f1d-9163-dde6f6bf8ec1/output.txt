@@ -1,0 +1,26 @@
+COMMAND ["npm","ci","--offline","--ignore-scripts","--no-audit","--no-fund"] EXIT 0
+COMMAND ["npm","run","build","--workspace","@vexa/web"] EXIT 0
+(node:98001) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+FIXTURE {"label":"SYNTHETIC","license":"CC0-1.0","base64":"aWQsdGV4dApleGFtLFNZTlRIRVRJQyBpbmRlcGVuZGVudCBnYXRlCg==","sha256":"1e8e6614fb6a9139a17ac08a9a6768c5125697b72ff06cdc967ebb264c2df50b"}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: SSR_ANONYMOUS: {"status":400,"data":{"contract_version":"f02-durable-v1","error":{"code":"invalid_metadata","message":"No se pudo completar la importación.","retryable":false},"meta":{"trace_id":"55ee0fb6-2543-4109-a27f-c623082e3299"}}}
+
+400 !== 401
+
+    at status (file:///Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/ssr-exam.mjs:33:37)
+    at ssrExam (file:///Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/ssr-exam.mjs:42:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/ssr-exam.mjs:72:56 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 400,
+  expected: 401,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.7.0

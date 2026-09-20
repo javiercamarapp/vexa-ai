@@ -1,0 +1,17 @@
+(node:34723) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✔ D02-15 expired reconciliation retains reservation and bytes without completing work (635.324417ms)
+✔ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (5813.5805ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"31f945a794659e4b68ff60252403122a0e563cc8f96aa3ebf2a453276d4ad1ea","bytes_base64":"aWQsdGV4dAo5MDljMGI5Zi1jNzAwLTQ5MjUtOWVhOS1hNDYxOGU5NmViYWUsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"26962d7660c41639ac26015a995345e0dcbd768fd09029193a231594cc87c320","bytes_base64":"aWQsdGV4dAo4ZTNlNTcwMy1kZDUzLTQ2OGMtOTA5Yi1hNGZmODU2ZDA3MWIsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5878.785916
+
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/evidence/run-00842eb4-c594-44b0-9c5e-7e8b0332ba73 EXIT 0 CLEANUP True

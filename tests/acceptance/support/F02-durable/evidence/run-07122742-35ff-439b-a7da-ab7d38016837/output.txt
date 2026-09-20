@@ -1,0 +1,61 @@
+COMMAND ["npm","ci","--offline","--ignore-scripts","--no-audit","--no-fund"] EXIT 0 ERROR null
+
+added 376 packages in 3s
+npm warn deprecated eslint@9.39.4: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+COMMAND ["npm","run","build","--workspace","@vexa/web"] EXIT 1 ERROR null
+
+> @vexa/web@0.0.1 build
+> next build --webpack
+
+▲ Next.js 16.3.5 (webpack)
+✓ Running next.config.ts took 663ms
+⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+
+  Creating an optimized production build ...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead.
+
+  To migrate automatically, run:
+  npx @next/codemod@canary middleware-to-proxy .
+
+  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+Failed to compile.
+
+./src/lib/imports/server.ts
+Module not found: Can't resolve '../../../../../../packages/jobs/index.mjs'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./src/app/api/imports/[id]/confirm/route.ts
+
+
+> Build failed because of webpack errors
+npm error Lifecycle script `build` failed with error:
+npm error code 1
+npm error path /private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f02-next-smoke-808qtW/apps/web
+npm error workspace @vexa/web@0.0.1
+npm error location /private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f02-next-smoke-808qtW/apps/web
+npm error command failed
+npm error command sh -c next build --webpack
+SOURCE_SHA256 {"apps/web/src/lib/imports/server.ts":"dc3c5dcd8cfe89d08cdb56a21a4f4557c9303a10c3272c67568fb46fa56c7d78","packages/jobs/imports.mjs":"f1cb38627208e251b0d6b1cdf805c0c08a128d57a53de0468bc54ba6987e15d9","supabase/migrations/0005_import_outbox.sql":"c49f38963374456880213852ef8216fd42cede60448bbe42bea5bc9f2f6dfa03"}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: NEXT_BUILD_SETUP
+
+1 !== 0
+
+    at file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/next-smoke.mjs:20:179
+    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)
+    at async node:internal/modules/esm/loader:650:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.7.0

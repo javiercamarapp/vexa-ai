@@ -1,0 +1,14 @@
+COMMAND ["npm","ci","--offline","--ignore-scripts","--no-audit","--no-fund"] EXIT 0
+COMMAND ["npm","run","build","--workspace","@vexa/web"] EXIT 0
+(node:2760) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+FIXTURE {"label":"SYNTHETIC","license":"CC0-1.0","base64":"aWQsdGV4dApleGFtLFNZTlRIRVRJQyBpbmRlcGVuZGVudCBnYXRlCg==","sha256":"1e8e6614fb6a9139a17ac08a9a6768c5125697b72ff06cdc967ebb264c2df50b"}
+SSR_AUTHENTICATED_POSITIVE_REACHED
+PASS SSR flow concurrency tenant origin restart
+SIZE_REJECTION {"status":500,"text":"{\"statusCode\":\"500\",\"error\":\"DatabaseError\",\"message\":\"database error, code: 23514\",\"code\":\"DatabaseError\"}"}
+PASS SIZE early reject exact reservation/capability recovery independent reader
+PASS HASH same size confirm422
+PASS SSR revocation same cookie then recovery
+SSR_INDEPENDENT_TOTAL_PASS
+
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/evidence/run-c27d4c6f-26c6-4bc8-8a5c-a9b8647c2f57 EXIT 0 CLEANUP True

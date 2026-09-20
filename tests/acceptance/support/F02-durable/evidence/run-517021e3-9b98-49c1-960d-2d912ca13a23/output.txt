@@ -1,0 +1,36 @@
+(node:73223) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ PRODUCT actual SQL expiry and object owner; SYNTHETIC local Node
+  ✖ actual object owner checked independently of valid bytes (436.665709ms)
+  ✔ reservation expires by wall and SQL clock with unchanged valid signature (3574.1045ms)
+✖ PRODUCT actual SQL expiry and object owner; SYNTHETIC local Node (9129.602167ms)
+ℹ OWNER_FIXTURE_SETUP {"code":"42501","detail":"","context":"PL/pgSQL function public.guard_reserved_import_object() line 5 at RAISE\nSQL statement \"UPDATE storage.objects SET owner_id='d841fb84-b2b1-4876-8cca-f98fcacc747d' WHERE name='dea30cc1-aa3e-4e7f-b4e4-f570e549e9a3/imports/71ec504e-8f8e-40c9-8db7-04f817b3911f/original'\"\nPL/pgSQL function inline_code_block line 4 at SQL statement","message":"reserved import object immutable","constraint":""}
+ℹ tests 3
+ℹ suites 0
+ℹ pass 1
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9193.406667
+
+✖ failing tests:
+
+test at tests/acceptance/support/F02-durable/product-expiry.test.mjs:14:10
+✖ actual object owner checked independently of valid bytes (436.665709ms)
+  AssertionError [ERR_ASSERTION]: INFRA_F01_03: docker exec failed (3); no authorization verdict; details suppressed
+      at docker (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/isolated-infra.mjs:13:10)
+      at Object.sql (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/isolated-infra.mjs:41:27)
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-expiry.test.mjs:18:5)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/product-expiry.test.mjs:14:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

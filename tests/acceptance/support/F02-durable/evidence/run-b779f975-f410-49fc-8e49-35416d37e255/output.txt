@@ -1,0 +1,15 @@
+(node:52939) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✔ D02-15 expired reconciliation retains reservation and bytes without completing work (1430.822042ms)
+✔ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (8889.672375ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"ced7ced8d505feeb3bbd03c8ca60afb7a3758bf3720c83b7542a50582fb20dcc","bytes_base64":"aWQsdGV4dApkOTQxNzA2OC1mYmU0LTQwZGEtOTc4My1kN2U3NzdkYjliNGUsU1lOVEhFVElDCg=="}
+ℹ SYNTHETIC_FIXTURE {"sha256":"0f751ab1d2f8834b1a7086a762ba47acc7e5babdb4aa2694e8873012a4a0e780","bytes_base64":"aWQsdGV4dAo1NGI5NTg3Ni0xYmZiLTRhZTgtODY4Mi03ZTJkZDU1MmQ0NGQsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8959.98925

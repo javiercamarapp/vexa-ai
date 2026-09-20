@@ -1,0 +1,16 @@
+(node:11789) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ PRODUCT NODE DIAGNOSTIC; not frozen acceptance, no SSR claim
+  ✔ D02-04 SQL fault at outbox rolls back confirmation; retry preserves reservation (936.89675ms)
+✔ PRODUCT NODE DIAGNOSTIC; not frozen acceptance, no SSR claim (5565.362958ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"9e74d808b5fb370f93e719bddc2b6543336312fc46ed15b5c955078b8d7c95ae","bytes_base64":"aWQsdGV4dApkOTVjZWI2OC05YTAzLTQyNDQtODg4ZC0zYjM1MDE3ZTQxNjksU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5627.007458
+
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f0202-gate-close-1789879168087856000/gate/tests/acceptance/support/F02-durable/evidence/run-47a6186d-b33b-4969-8ab3-44ed175c8e36 EXIT 0 CLEANUP True

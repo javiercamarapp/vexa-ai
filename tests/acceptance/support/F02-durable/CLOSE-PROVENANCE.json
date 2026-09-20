@@ -1,0 +1,24 @@
+{
+  "product": "/Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/imports",
+  "read_only_sources": {
+    "packages/jobs/test/http.mjs": "6c07121ee3a217feb10f4815533734e9103fb470e705a7ab907758d2a0373150",
+    "packages/jobs/test/prepare.py": "79c1c2c765f7e69e29d1ae4067e7a4a91563fb815da24842efd97e54b8bb852d",
+    "packages/jobs/F02-02-owned-manifest.json": "4e8f72cc3645aa6a3813d57cb9cce119d6c71d5804ecd2504262d5ae3d71e175",
+    "packages/jobs/F02-02-PROPOSAL.md": "d9947d9890821d60093240cd8e24fe1a58bd43720dcab0d3399249f2127c169a"
+  },
+  "reuse": "http.mjs: transport Unix socket docker nc, local service proxy, SSR cookie format only; no assertions copied. prepare.py read for build infrastructure; gate uses own accepted scaffold-copy.",
+  "fixtures": {
+    "kind": "SYNTHETIC only",
+    "ssr_base64": "aWQsdGV4dApleGFtLFNZTlRIRVRJQyBpbmRlcGVuZGVudCBnYXRlCg==",
+    "ssr_sha256": "1e8e6614fb6a9139a17ac08a9a6768c5125697b72ff06cdc967ebb264c2df50b",
+    "new_fixture_license": "CC0-1.0",
+    "inherited": "Auth UUID/users + Node fixtures from existing owned gate; full bytes/hash in runtime logs; no customer data"
+  },
+  "dependency_licenses_from_product_lock": {
+    "next@16.3.5": "MIT",
+    "pg@8.16.3": "MIT",
+    "@supabase/ssr@0.12.7": "MIT",
+    "@supabase/supabase-js@2.116.0": "MIT"
+  },
+  "project_license": "No explicit license grant established; original project/infra sources remain under original terms, no relicensing or redistribution"
+}

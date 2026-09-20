@@ -1,0 +1,152 @@
+[
+  {
+    "receipt": "evidence/run-1789866877977527000/result.json",
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true
+  },
+  {
+    "receipt": "evidence/run-1789866986116135000/result.json",
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true
+  },
+  {
+    "receipt": "evidence/run-1789867127389505000/result.json",
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true
+  },
+  {
+    "receipt": "evidence/run-1789867163521069000/result.json",
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/F02-02.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true
+  },
+  {
+    "receipt": "evidence/run-1789867185309189000/result.json",
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true
+  },
+  {
+    "receipt": "evidence/run-1789867239520812000/result.json",
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/support/F02-durable/mutations.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true
+  },
+  {
+    "receipt": "evidence/run-1789867275593459000/result.json",
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true
+  },
+  {
+    "receipt": "evidence/run-1789867311507188000/result.json",
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true
+  },
+  {
+    "receipt": "evidence/run-1789867319098694000/result.json",
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true
+  },
+  {
+    "receipt": "evidence/run-1789867326208534000/result.json",
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true
+  },
+  {
+    "receipt": "evidence/run-1789867333376770000/result.json",
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true
+  },
+  {
+    "receipt": "evidence/run-1789867339793534000/result.json",
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/F02-02.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true
+  },
+  {
+    "receipt": "evidence/run-1789867341716129000/result.json",
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 1,
+    "cleanup_verified": true
+  },
+  {
+    "receipt": "evidence/run-1789867348624515000/result.json",
+    "argv": [
+      "node",
+      "--test",
+      "/Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true
+  },
+  {
+    "receipt": "evidence/run-1789867380023579000/result.json",
+    "argv": [
+      "node",
+      "--test",
+      "tests/acceptance/support/F02-durable/probe.test.mjs"
+    ],
+    "exit_code": 0,
+    "cleanup_verified": true
+  }
+]

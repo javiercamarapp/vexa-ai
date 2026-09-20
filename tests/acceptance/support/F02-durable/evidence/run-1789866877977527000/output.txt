@@ -1,0 +1,27 @@
+✖ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (70802.312459ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 71183.753417
+
+✖ failing tests:
+
+test at tests/acceptance/support/F02-durable/probe.test.mjs:5:1
+✖ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (70802.312459ms)
+  AssertionError [ERR_ASSERTION]: INFRA: disposable storage unavailable; no mock fallback 
+      at launch (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F01-03/harness.mjs:95:273)
+      at async runtime (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/runtime.mjs:11:10)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-complete-1789866620572603000/durable/tests/acceptance/support/F02-durable/probe.test.mjs:6:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

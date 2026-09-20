@@ -1,0 +1,52 @@
+(node:47261) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✖ D02-04 SQL fault at outbox rolls back confirmation; retry preserves reservation (474.82025ms)
+✖ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (6064.314833ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"008f4313f3decaed35f1d58360376763c19e15e4cc6a02602a2a0839ce168c4e","bytes_base64":"aWQsdGV4dAplMzg2MGY4OC1iYmYzLTQ2NzEtOGM1Yi03NTBlYzU2ZjEyZjQsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6126.286959
+
+✖ failing tests:
+
+test at tests/acceptance/support/F02-durable/exam02.mjs:8:52
+✖ D02-04 SQL fault at outbox rolls back confirmation; retry preserves reservation (474.82025ms)
+  AssertionError [ERR_ASSERTION]: ATOMIC_CONFIRM_ROLLBACK
+  + actual - expected
+  ... Skipped lines
+  
+    {
+      imports: [
+        {
+          accepted: 0,
+          connection_id: '2e07b844-8dc1-474a-870d-72eae581a4b4',
+  ...
+          rejected: 0,
+  +       state: 'queued',
+  -       state: 'reserved',
+          tenant_id: '622f9ccc-0c00-4582-8b39-72e8b4e8e226',
+          total: 0,
+          updated_at: '2026-09-20T04:27:53.675155+00:00'
+        }
+      ],
+  
+      at TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:49:61)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async exam02 (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/exam02.mjs:46:39)
+      at async TestContext.<anonymous> (file:///Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/probe.test.mjs:7:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { imports: [ [Object] ], jobs: [], outbox: [] },
+    expected: { imports: [ [Object] ], jobs: [], outbox: [] },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

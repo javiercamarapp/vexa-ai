@@ -490,7 +490,10 @@
       "packages/ingestion/",
       "packages/jobs/",
       "apps/web/src/",
-      "supabase/"
+      "supabase/",
+      "apps/web/package.json",
+      "packages/platform/package.json",
+      "package-lock.json"
     ],
     "acceptance": "tests/acceptance/F02-02.test.mjs",
     "prompt": "orchestration/prompts/F02.md",

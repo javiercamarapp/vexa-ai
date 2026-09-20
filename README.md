@@ -88,7 +88,7 @@ npm test
 npm run test:controller
 npm run graph:check
 ```
-Node >=22 y Python3, sin instalar dependencias para kernel/controlador. Grafo v4 con60tareas:12gates presentes,48pendientes (escritura/revisión justo antes del incremento; presencia no significa PASS). Las pruebas de runtime necesitan entorno real de ensayo. No hay proceso autónomo de producción corriendo.
+Node >=22 y Python3, sin instalar dependencias para kernel/controlador. Grafo v4 con60tareas:13gates presentes,47pendientes (escritura/revisión justo antes del incremento; presencia no significa PASS). Las pruebas de runtime necesitan entorno real de ensayo. No hay proceso autónomo de producción corriendo.
 
 ## Bloqueos que no puede inventar un agente
 Acuerdo/NDA/DPA, derechos y muestra real Senix; responsables/fecha migración; Supabase cloud, Google OAuth y presupuesto OpenRouter/infraestructura; gold humano y validación de negocio. Auth/RLS locales ya están aceptados; ingesta/UI y demás módulos siguen su integración y aceptación por alcance. GitHub privado, proyecto Vercel vacío y Supabase local ya se crearon; eso no es un deploy. El 30% no equivale a sociedad formalizada y un gasto sintético no equivale a ahorro real.

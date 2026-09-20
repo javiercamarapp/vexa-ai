@@ -1,0 +1,16 @@
+(node:29466) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✔ D02-04 SQL fault at outbox rolls back confirmation; retry preserves reservation (663.291208ms)
+✔ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (5438.729ms)
+ℹ SYNTHETIC_FIXTURE {"sha256":"49177e307059e7033a670274983b2305e45aa64fa8c0a814b0ef0488d77df784","bytes_base64":"aWQsdGV4dApiMTUyNjE4NC00ODU2LTQwYTktYjYyMy0xYmJlMDBlYjBjNGUsU1lOVEhFVElDCg=="}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5504.992
+
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/evidence/run-2512481c-0e9a-4911-aac1-7d9899b0d083 EXIT 0 CLEANUP True

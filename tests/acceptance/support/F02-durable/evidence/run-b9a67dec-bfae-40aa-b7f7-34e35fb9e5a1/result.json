@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "node",
+    "--test",
+    "tests/acceptance/F02-02.test.mjs"
+  ],
+  "exit_code": 1,
+  "cleanup_verified": true
+}

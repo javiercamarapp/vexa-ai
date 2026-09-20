@@ -1,0 +1,8 @@
+{
+  "argv": [
+    "node",
+    "tests/acceptance/support/F02-durable/total-exam.mjs"
+  ],
+  "exit_code": 0,
+  "cleanup_verified": true
+}

@@ -1,0 +1,15 @@
+(node:32572) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ SYNTHETIC ORACLE PROBE ONLY — not product F02-02
+  ✔ D02-14 SIGKILL HTTP after reservation and confirm preserves persistent IDs (748.894417ms)
+✔ SYNTHETIC ORACLE PROBE ONLY — not product F02-02 (5610.5155ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5671.445833
+
+EVIDENCE /Users/javiercamaraportepetit/vexa/.runtime/f02-renewed-1789878121257397000/durable-gate/tests/acceptance/support/F02-durable/evidence/run-c911b3d3-9460-4c27-8f36-3a94ec232812 EXIT 0 CLEANUP True

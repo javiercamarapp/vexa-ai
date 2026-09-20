@@ -1,5 +1,14 @@
 # Progreso verificable
-Actualizado: 2026-09-19 local. Los apartados anteriores conservados abajo son cortes históricos, no inventario vigente.
+Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
+
+## F02-02 aceptado — 20-sep
+- **13/60**, commit `791c854904b2121295dd7313eb37823c5286aaf8`. Producto previamente revisado reutilizado: 71 archivos idénticos por hash/modo al candidato conservado; no reconstruido ni alterado para acomodar el examen.
+- Corrección externa de matriz revisada independientemente y congelada/publicada en `c9aee57`: baseline168 y producto172, 97/100FK, Auth/Storage/revocación; nueve ciclos de mutantes y tres probes independientes Node22 (FORCE, DELETE backend, SELECT anon). Se conservan el fallo original y su rechazo.
+- Nuevo prepare/verify/accept limpio exit0. Regresión F02-01 más cuatro jobs F01-05 exit0 cubrieron las12tareas previas y controlador110; hashes de candidato/control idénticos antes/después; cleanup de24recursos verificado. Evidencia privada: f0202-matrix-close-check.json y f0202-regression-reconciliation.json. No CI remoto ni producción.
+- GitHub confirmó autor y committer `javiercamarapp` en c9aee57. Publicación de producto aceptado mediante publisher, no commits vacíos ni fechas ficticias; visibilidad de contribuciones privadas no comprobada.
+- F02-03 tiene propuesta UI/API/mapping con build/HTTP y95pruebas de ingesta, pero navegador falló en PUT directo a Storage; no se declaró terminado. Tres agentes disjuntos continúan: depuración de ese flujo, cierre de examen03 y canonicalización/dedupSQL04.
+- Usuario renovó explícitamente «continúa», «hasta terminar» y múltiples puntos. Nueva ventana hasta14:05del20-sep, techo40llamadasF02 y220global;31F02/175global iniciadas, sin reset. STOP propio anterior archivado y retirado sólo tras revisión/corrección congelada. La tanda nocturna sí estuvo pausada; no se afirma ejecución continua durante la noche.
+- Se mantiene alcance completo blueprint+audios connection-ready; credenciales/autorizaciones externas posteriores no pueden ocultar programación pendiente. Sin nuevo gasto, inferencia pagada, Actions, cloudDDL ni bypass de aprobación interactiva.
 
 ## Integración F02-02 retenida por regresión global —19-sep
 - **12/60**, no13. Main publicado `f96b26dba68a903db19cdb0ef77b02a108589f85`, SHA remoto verificado, contiene ingestaaceptada yexamen02 revisado; no producto02.

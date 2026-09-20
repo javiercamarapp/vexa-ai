@@ -2,13 +2,13 @@
 
 Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Programa: [PROGRAMA](PROGRAMA.md). Repositorio canónico `~/vexa`; NO ejecutar en la copia de Escritorio. Las fuentes privadas permanecen locales.
 
-## Checkpoint vigente — F02-01 aceptado
+## Checkpoint vigente — F02-02 aceptado
 
-**12/60**, commit3f4cc27. IngestaCSV/XLSX aceptada tras revisión independiente,90pruebaspropias/64externas yregresiones reales de11gatesanteriores+controlador. F02-02 pasórevisión conjunta yverify, pero fuerechazado al fallarregresiónF01-03: import_uploads sin clasificaciónenmatrizglobal. Fuente/candidato/recibospreservados, STOPpropio,tareapending. Extender/revisarmatrizsinquitarcontroles antes dereprepare; no13/60.
+**13/60**, commit `791c854`. Carga directa y confirmación atómica aceptadas tras corregir/revisar la matriz global (168baseline/172producto,97/100FK). Nuevos verify/accept limpios, F02-01 y cuatro jobs CI pasaron:12gates anteriores+controlador110, fuente/control intactos y24recursos limpiados. Rechazo original preservado. F02-03/04 continúan como propuestas disjuntas: navegador03 todavía en depuración, examen03 y persistencia04 sin aceptación.
 
 Usuario reiteró loop y entrega connection-ready de TODO blueprint+audios, conintegraciones implementadas ydespués sólo credenciales/autorizaciones externas. DespliegueVEXA enVercel autorizado; no gastoextra/inferencia/Actions. Supabasepropio creado, SQLremoto bloqueado poraprobacióninteractiva, no eludirporotrocanal.
 
-Renovación REAL22:20:120minhasta00:20del20sep;24/24invocacionesF02 iniciadas,168/220global. Revisiones/aceptaciónen curso no renuevan presupuesto automáticamente. Fuentesrechazadas ydospropuestas canceladasanteriores intactas. Se corrigió una extensión de tiempo indebidamente inferida del permiso económico; no reutilizarla. Recibosprivadosvigentes mandan; bloques siguientes conservan contexto histórico.
+Renovación REAL del20-sep por «continúa», «hasta terminar» y múltiples puntos: ventana hasta14:05, techo40F02/220global;31F02/175global iniciadas. Máximo3agentes de la misma fase, principal único integrador. STOP propio archivado y retirado después de revisión/corrección congelada. No hubo bucle activo toda la noche; no se afirma ejecución desatendida por tener un plan. Revisiones/aceptación no renuevan presupuestos automáticamente. Fuentes/rechazos intactos; no reutilizar la antigua extensión errónea ligada al permiso económico. Recibos privados vigentes mandan.
 
 ## Modo vigente — paralelismo dentro de una fase, cierre serial
 

@@ -1,4 +1,10 @@
-# F02-02 — recuperación revisada de la matriz global
+# F02-02 — recuperación revisada y aceptación limpia
+
+## Cierre oficial del 20-sep
+
+**13/60 aceptadas**, commit `791c854904b2121295dd7313eb37823c5286aaf8`. Tras congelar la corrección en `c9aee57`, se preparó otro candidato y se copiaron los mismos71archivos de producto por hash/modo. Verify exit0; regresión F02-01 y los cuatro jobs F01-05 exit0, cubriendo12gates anteriores y controlador110. Huellas de fuente/control intactas,24recursos retirados. Accept reejecutó el examen desde materialización limpia y terminó exit0. Los estados pendientes y rechazos siguientes son historia preservada, no estado vigente.
+
+El cierre prueba carga/confirmación durable local, no procesamiento completo, UI de mapeo03, consumidores05/06, cuentas reales ni producción. Actions continúa desactivado.
 
 ## Recuperación del 20-sep: revisión independiente aprobada
 

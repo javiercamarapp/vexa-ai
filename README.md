@@ -2,8 +2,8 @@
 
 **Carpeta canónica:** `/Users/javiercamaraportepetit/vexa` · fuera de iCloud. Preparación rehecha desde fuentes originales con Astra vía Codex. **No es todavía el SaaS completo ni un deploy.** Estado/recibos: [PROGRESO.md](PROGRESO.md).
 
-## Estado de construcción — corte19-sep
-**12/60 tareas aceptadas.** Último hito: ingesta CSV/XLSX F02-01 (`3f4cc27`): streaming, límites, importes exactos y XML/ZIP con revisión independiente y aceptación limpia. Pasaron los11gates anteriores mediante cuatro jobs reales de CI local, incluido controlador110. Actions sigue desactivado; esto no acredita CI remoto ni producción.
+## Estado de construcción — corte 20-sep
+**13/60 tareas aceptadas.** Último hito: carga directa e importación durable F02-02 (`791c854`): Auth/Storage/SSR reales, validación de propietario/hash/tamaño y confirmación atómica import+job+outbox. La matriz SQL fue ampliada y revisada sin eliminar controles. Verify y accept limpio pasaron, junto con las 12 tareas anteriores y controlador110 mediante CI local. F02-03/04 avanzan como propuestas, no aceptadas. Actions sigue desactivado; esto no acredita CI remoto ni producción.
 
 **Entrega solicitada:** todo el blueprint y lo pedido en los audios, integrado y listo para conectar credenciales/autorizaciones externas sin programar piezas faltantes. El objetivo connection-ready no reduce el alcance ni equivale a validación productiva con cuentas reales. Supabase propio está creado; migraciones remotas y conexión de aplicación siguen pendientes.
 

@@ -23,9 +23,9 @@ El usuario indicó que los datos del cliente llegarán después. No frenar la co
 
 Petición más reciente del usuario (19-sep, 15:54): completar producción/60IDs por fases, terminar e integrar antes de avanzar; después pide múltiples agentes para acelerar. Se concilian ambas instrucciones: **máximo tres agentes dentro de la misma fase**, no tres módulos nuevos. Un escritor por área; examen, regresiones y QA pueden correr en copias propias, integración/promoción sólo por el principal.
 
-**F01-04 aceptado50674a4**, con193regresiones y110controlador; rechazo por registro stale preservado y corregido mediante nuevo candidato. Publicado y SHA remoto verificado84219b0, con Actions apagadas. **F01-05 activo**: adaptar Auth a recursos propios y preparar ejecutor/examen CI; dos agentes disjuntos, después revisión e integración serial. No saltear bloqueos para inflar60/60. Para cada tarea: examen externo aprobado/congelado, prepare/adopción permitida, verify, revisión, todos los gates aceptados/controlador, accept limpio y publicación.
+**F01-04 aceptado50674a4**, con193regresiones y110controlador; rechazo por registro stale preservado y corregido mediante nuevo candidato. Publicado y SHA remoto verificado84219b0, con Actions apagadas. **F01-05 aceptado17263dc**: cuatrojobs reales en verify/accept limpio, sin activarActions. Publicar y verificar remoto antes de abrir bloqueF02. Nueva petición: acelerar con hasta3agentes especializados sobre un bloque de fase, reusando propuestas; no rehacer módulos por cadaID. Integración/aceptación individual según DAG y alcance, no recortar pruebas. No saltear bloqueos para inflar60/60. Para cada tarea: examen externo aprobado/congelado, prepare/adopción permitida, verify, revisión, todos los gates aceptados/controlador, accept limpio y publicación.
 
-Fuente de estado: runner para aceptación; recibos privados para trabajo/procesos. **10/60** después del cierre F01-04 (9/60 al iniciar). Laboratorio integrado `5fbf223` conserva CSV→recomendación→intervención→brief→inbox y assign/dismiss revisados, sin convertirlos en tareas aceptadas. No perder ese trabajo ni mezclarlo de golpe con F01-04.
+Fuente de estado: runner para aceptación; recibos privados para trabajo/procesos. **11/60** después del cierre F01-05 (9/60 al iniciar ventana anterior). Laboratorio integrado `5fbf223` conserva CSV→recomendación→intervención→brief→inbox y assign/dismiss revisados, sin convertirlos en tareas aceptadas. No perder ese trabajo ni mezclarlo de golpe con F01-04.
 
 Nueva orden de continuar hasta60/60 (16:58). Ventana supervisada120min hasta18:59, máximo24invocaciones:133consumidas antes y2constructores iniciados=135acumuladas, techo220 compartido. Ventana previa archivada, no borrada; consultar recibos antes de lanzar. Actions/cloud/envíos siguen sin autorización. No reset de presupuesto/rechazos/STOP. Conserva cero gasto incremental, sin envíos ni cloud no autorizado. Los límites6/8 y prioridades paralelas siguientes son **históricos, sustituidos por este modo**.
 
@@ -91,7 +91,7 @@ Commits por cambios reales verificados; autor/committer Javier, email noreply as
 - [x] Auth/membership/callback/selector/logout aceptado con Supabase local y Chrome reales; Google remoto sigue pendiente.
 - [x] Schema tenant-aware/RLS/Storage F01-03 aceptado009fd73 con gate real y materialización limpia.
 - [x] F01-04 diseño/navegación/estados aceptado50674a4; no equivale a backendF06.
-- [ ] F01-05 CI, sin confundir CI local con ejecución remota.
+- [x] F01-05 CI local aceptado17263dc; CI remoto no ejecutado, Actions desactivado.
 - [ ] Adoptar módulos de ingesta/conectores, implementar persistencia/jobs/consumer y continuidad CRM.
 - [ ] Adoptar gateway/evidencia; completar extracción/clustering/snapshots/ranking.
 - [ ] Ocho vistas con estados/errores/acciones reales; intervención, medición y brief.

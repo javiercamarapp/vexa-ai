@@ -1,6 +1,13 @@
 # Progreso verificable
 Actualizado: 2026-09-19 local. Los apartados anteriores conservados abajo son cortes históricos, no inventario vigente.
 
+## F01-05 aceptado —19-sep,18:38
+- **11/60 aceptadas. Commit17263dc2818fcac148f3bcc415eb61584c4aae66.** Prepare/verify/accept oficiales exit0; accept volvió a ejecutar cuatrojobs desde materialización limpia. Candidato sólo.github/workflows/ci.yml, idéntico a referencia revisada; ninguna aceptación por mera existencia de YAML.
+- Kernel24/controlador110/tooling7, build y API200, SQLpreflight+168, Auth7/UI3; ademásrevisiónindependiente de M10,lifecycle12,browserreal,policy8 ycleanup24recursos. Fuente/codehashes conservados; fallosanteriores no borrados.
+- Publicación inmediata solicitada: autor Javier,noreply221053731+javiercamarapp@users.noreply.github.com; publisher debe verificar SHA remoto. `.gitattributes` corrige sólo HTMLgenerado; no se fuerza un lenguaje ni commits artificiales.
+- Usuario amplía petición explícita a Supabase/backend/Vercel/GitHub/OpenRouter víaMCP. Verificar conectores/accesos yproyectospropios; no inferir autorización de gasto. CI remoto/producción no acreditados;Actionsapagadas.
+- Próximo bloque F02: autoría de gates e integración/revisión del código ya construido en paralelo disjunto, hasta3agentes; aceptación individual según DAG, sin reimplementar por cadaID.
+
 ## F01-05 — paquete aprobado y adoptado en control-plane,18:22
 - Recheck conjunto aprobado, sin P0–P2: M10/lifecycle/fourjobs reconciliados;669archivos estables y24recursos propios retirados. No repetición ficticia de evidencias ni cierre remoto.
 -32archivos de soporte/gates/metadata adoptados exactamente desde fuente revisada; registroF01-05 authored/product_passfalse yallowlist sólo.github/ci.yml+package.json. F00-05 ytooling7 verdes; guía regenerada antesdeprepare.

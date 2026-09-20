@@ -2,7 +2,9 @@
 
 Prioridad explícita del usuario: convertir lo construido en recorridos integrados y aceptados, no abrir más módulos. Se conserva alcance completo y los 60 IDs. Superadmin es ampliación separada, no se introduce silenciosamente en el denominador.
 
-## Tablero actualizado — 10/60 aceptadas
+## Tablero actualizado — 11/60 aceptadas
+
+CI F01-05 aceptado17263dc: cuatrojobs locales, revisión independiente y materialización limpia. No CI remoto/Actions activado ni producción. El resto de propuestas mantiene sus límites de aceptación.
 
 F01-03 aceptado por runner en `009fd730810facd943bca548ee9e6ec7a7d55cb9`: gate168/168, regresiones25/25, controlador110OK y revisión independiente. Materialización limpia revalidada. Primer rechazo por modos0664/0644 preservado y corregido sin diferencias de contenido.
 

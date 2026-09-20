@@ -34,6 +34,6 @@ Se conservaron árbol rechazado y reproducciones. No se borraron pruebas ni se r
 
 Revisión final y recheck reconciliaron M10 con lifecycle:669archivos/fingerprints intactos, cuatrojobs completos, lifecycle12/browser/policy8 y24recursos propios retirados. Aprobación explícita sólo CI local, sin P0–P2. Un primer fixture carecía de metadataGit (git ls-files128); se preservó como error de preparación y se repitió el examen íntegro sin editar código.
 
-Pendientes: congelación, prepare/verify/accept limpio y publicación. No confundir propuestas o cuatro jobs locales con aceptación F01-05. SHA y estado final se registran en PROGRESO.md.
+Cierre posterior: congelaciónfd3d66d, prepare/verify/accept oficiales exit0; commit17263dc aceptado desde materialización limpia,11/60. Publicación separada mediante publisher. Esto no acredita CI remoto: SHA/estado vigente en PROGRESO.md.
 
 No probado: Ubuntu/GitHub remoto, x64, TLS/Google OAuth real, SIGKILL del launcher o caída del host. Los journals permiten recuperación supervisada; no son un recolector persistente. No se autoriza gasto, cloud ni proveedor real por escribir este gate.

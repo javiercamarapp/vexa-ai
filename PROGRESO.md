@@ -1,13 +1,13 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
-## Checkpoint vigente —25/60 técnicamente listas; 19 aceptadas en el grafo
+## Checkpoint vigente —26/60 técnicamente listas; 20 aceptadas en el grafo
 
-F03 incorpora sus seis entregables completos: conectores HubSpot/Zendesk, ingesta histórica durable, cursores, equivalencias humanas con confirmación/deshacer e historial, salud y comparación de cortes. Revisión independiente y cuatro jobs CI locales en verde; recorrido UI/API/SQL de equivalencias6/6 y revocación4/4 después de las correcciones. Cuentas reales, datos autorizados y aprobaciones externas siguen pendientes; no acredita producción. Detalle: construccion/F03-CIERRE-TECNICO.md y construccion/ESTADO-CONSTRUCCION.json.
+F04-03 aceptada en `ac9db737`: redacción de datos personales, extracción estructurada con citas, persistencia, cola durable, API e interfaz de análisis. Revisión independiente, 60/60 en verify Node22 y aceptación Git limpio Node26; compilación y regresiones afectadas comprobadas. Sin inferencia pagada ni validación productiva externa.
 
-El conteo de construcción suma 19 aceptadas por el runner más seis de F03 técnicamente listas con validación externa pendiente, según el criterio solicitado. No se modifica el registro histórico de gates live. F04-01/02 aceptadas; F04-03/04 conservan propuestas revisadas, todavía sin sumar.
+F03 conserva sus seis entregables técnicamente completos e integrados, con cuentas reales, datos autorizados y aprobaciones externas pendientes. El total suma 20 aceptadas por el runner y seis de F03; no altera los gates live. Registro: construccion/ESTADO-CONSTRUCCION.json. El trabajo posterior todavía no suma al contador.
 
-Ventana vigente: hasta las 10:43 de Mérida del 21-sep, 234/240 invocaciones acumuladas, máximo 3 agentes y cero gasto externo nuevo. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+Ventana renovada por respuesta del usuario: hasta las 12:50 de Mérida del 21-sep, 237/260 invocaciones acumuladas, máximo 3 agentes y cero gasto externo nuevo. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## F02 completa — F02-06 aceptado,20-sep
 

@@ -20,7 +20,8 @@
     "F02-05",
     "F02-06",
     "F04-01",
-    "F04-02"
+    "F04-02",
+    "F04-03"
   ],
   "technical_ready_external_pending": [
     "F03-01",
@@ -30,7 +31,7 @@
     "F03-05",
     "F03-06"
   ],
-  "construction_total": 25,
+  "construction_total": 26,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [

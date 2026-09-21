@@ -1,0 +1,20 @@
+{
+  "at": "2026-09-21T17:26:13.057903+00:00",
+  "fixture_disclaimer": "SYNTHETIC fixtures; simulated annotation structures are schema tests, not human labels or quality evidence",
+  "expected": [
+    "synthetic/model/silver labels never certify human performance",
+    "zero denominators null explicitly",
+    "human gold requires dataset/hash/date/two distinct annotators/independence/adjudicator distinct/disagreementreason",
+    "holdout immutable taxonomy+thresholds fixed before tuning; reject client/group/contentHash/time leakage",
+    "development export excludes holdout content and labels, including unapproved metadata",
+    "classification useful85 and buyer insight70 separate, no buyerobservations=>not_measured",
+    "precision TP/(TP+FP),recall TP/(TP+FN) including abstentionpositive",
+    "citations invalid count explicit; knowncost sum separate unknowncount,total unknown not0",
+    "reproducible hashes receipts; inputbytes readonly, CLI O_EXCL no overwrite and failclosed"
+  ],
+  "mutation_targets": [
+    "synthetic quality forced measured100percent",
+    "zero denominators forced1",
+    "holdout included in development export"
+  ]
+}

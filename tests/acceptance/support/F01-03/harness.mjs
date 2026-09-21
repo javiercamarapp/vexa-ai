@@ -29,6 +29,7 @@ export function candidateInputs(candidate) {
   migrations.extractionRequired=files.includes('0012_extraction_redaction.sql');
   migrations.crmRequired=files.includes('0013_crm_runtime.sql');
   migrations.problemsRequired=files.some(f=>/^0016_/.test(f));
+  migrations.causalityRequired=files.some(f=>/^0017_/.test(f));
   return migrations;
 }
 export async function launch({services=false}={}) {

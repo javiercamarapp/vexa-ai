@@ -2,13 +2,13 @@
 
 Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Programa: [PROGRAMA](PROGRAMA.md). Repositorio canónico `~/vexa`; NO ejecutar en la copia de Escritorio. Las fuentes privadas permanecen locales.
 
-## Checkpoint vigente —18/60 aceptadas; cierre de F04
+## Checkpoint vigente —19/60 aceptadas; cierre de F04
 
-F02 conserva sus 6/6. F04-01 está aceptada en `d473c956`: gateway con catálogo y políticas, revisión independiente, 24/24 en verify Node22 y aceptación desde Git limpio Node26, seis mutantes y los cuatro jobs CI locales en verde. No hubo inferencia pagada ni validación productiva externa.
+F02 conserva sus 6/6. F04-01 está aceptada en `d473c956` y F04-02 en `a9c7a6b3`: gateway con políticas y presupuesto durable por tenant, reservas, conciliación e idempotencia de importes normalizados. F04-02 pasó 23/23 en Node22 y aceptación desde Git limpio Node26, tres mutantes, regresión F04-01 y los cuatro jobs CI locales. No hubo inferencia pagada ni validación productiva externa.
 
-F04-02, F04-03 y F04-04 tienen propuestas revisadas con correcciones comprobadas de idempotencia, reparto de tenants por consumidor y revocación de datos en UI. Se están integrando y cerrando por el grafo; esas propuestas todavía no suman al contador. CRM conserva pendientes de cuentas reales y reconciliación autorizada. La definición de «lista técnicamente» está en construccion/PENDIENTES-DEL-OPERADOR.md.
+F04-03 y F04-04 conservan propuestas revisadas y regresiones locales verdes. F03 está cerrando UI de equivalencias y correcciones de revocación antes de integrar su construcción técnica; sus gates con cuentas reales permanecen pendientes. Las propuestas no suman al contador. Definición de «lista técnicamente»: construccion/PENDIENTES-DEL-OPERADOR.md.
 
-Ventana renovada el 21-sep: 240 invocaciones acumuladas, hasta las 10:43 de Mérida, máximo 3 agentes y cero gasto externo nuevo. Consumo registrado:227; historial conservado. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto comprobado. Los apartados siguientes son históricos.
+Ventana renovada el 21-sep: 240 invocaciones acumuladas, hasta las 10:43 de Mérida, máximo 3 agentes y cero gasto externo nuevo. Consumo registrado:232; historial conservado. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto comprobado. Los apartados siguientes son históricos.
 
 ## Historial — F02 completa,17/60
 

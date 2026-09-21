@@ -1491,7 +1491,10 @@
     "auto_accept": false,
     "requires_approval": false,
     "deliverables": [
-      "packages/metrics/src/priority.ts"
+      "packages/metrics/priority.mjs",
+      "supabase/migrations/0022_priority.sql",
+      "apps/web/src/app/api/economic-priorities/route.ts",
+      "apps/web/src/components/economic-priority-panel.tsx"
     ],
     "steps": [
       "Ranking versionado con impacto respaldado,frecuencia,severidad,accionabilidad; guardar contribuciones de fórmula.",

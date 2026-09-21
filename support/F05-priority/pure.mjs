@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';
+test('F05-06 priority implementation exists',()=>{for(const p of ['packages/metrics/priority.mjs','supabase/migrations/0022_priority.sql','apps/web/src/components/economic-priority-panel.tsx'])assert.ok(process.env.VEXA_CANDIDATE&&fs.existsSync(path.join(process.env.VEXA_CANDIDATE,p)),'PRIORITY_IMPLEMENTATION_MISSING:'+p);});

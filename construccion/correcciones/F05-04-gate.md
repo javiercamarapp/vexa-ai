@@ -16,3 +16,7 @@ La revisión del componente aislado sugirió consentimiento obsoleto; el key del
 Evidencia263: SQL0020 aceptaba `-infinity` como fecha de catálogo/tasa; guard `isfinite` lo rechaza, rojo focal preservado y nueve casos focalizados verdes sobre SQL5d5a. Su primer positivo usaba jsonb_populate_record, enviaba created_at=null y disparaba23502; se corrigió únicamente el fixture a INSERT de columnas explícitas. Matriz mantiene dos tablas nuevas/cuatro FK y clasificación estricta. Ausencia específica263: MONEY_IMPLEMENTATION_MISSING.
 
 Preparación262: f48bd74 es commit de controles previo a producto03; usar producto41a3c94 más delta261. Un build con esa base equivocada se registró como fallo de preparación sin recursos creados. En browser, selects anidados en label incluyen opciones en su nombre accesible; usar prefijos específicos /^Moneda base/ y /^Moneda de destino/. El timeout exact-label no prueba defecto del producto; conservar DOM y reparación del selector.
+
+## Respuestas monetarias y snapshots simultáneos —21-sep
+
+La regresión con F05-05 encontró que dos esperas de navegador sólo filtraban GET y fxRateId. El nuevo panel consultaba snapshots con el mismo identificador y su respuesta200 podía capturarse como un DTO monetario. Ambas esperas deben exigir también la ruta exacta /api/economics; se conservan los importes, moneda, conversión, CAS y todos los oráculos financieros. El fallo TypeError de la prueba original se conserva en evidencia privada; el ajuste del selector recibió revisión independiente269 antes de repetir la regresión.

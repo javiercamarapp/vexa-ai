@@ -38,9 +38,10 @@
     "F05-02",
     "F05-03",
     "F05-04",
-    "F05-05"
+    "F05-05",
+    "F05-06"
   ],
-  "construction_total": 35,
+  "construction_total": 36,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -239,6 +240,24 @@
       ],
       "official_dependency_pending": [
         "F05-04",
+        "F03-06"
+      ]
+    },
+    {
+      "task_id": "F05-06",
+      "technical_ready": true,
+      "implemented": "Prioridad con carril crítico separado, fórmula y políticas versionadas, normalización fija, contribuciones con importes exactos/desconocidos y aprobación humana de accionabilidad; snapshot autorizado, API y navegador.",
+      "programming_pending": [],
+      "scope_note": "Ficha F05-06 completa técnicamente. F06–08 y auditoría integral final siguen pendientes.",
+      "external_pending": [
+        {
+          "owner": "Titular de infraestructura y responsable de datos del cliente",
+          "pending": "Fuentes reales autorizadas, políticas operativas del cliente, migraciones y despliegue remoto con aprobación legítima.",
+          "verification": "Validar clasificación y carril crítico con datos autorizados y permisos reales del cliente."
+        }
+      ],
+      "official_dependency_pending": [
+        "F05-05",
         "F03-06"
       ]
     }

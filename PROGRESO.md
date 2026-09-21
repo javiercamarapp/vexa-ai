@@ -1,13 +1,13 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
-## Checkpoint vigente —33/60 técnicamente listas; 24 aceptadas en el grafo
+## Checkpoint vigente —34/60 técnicamente listas; 24 aceptadas en el grafo
 
-F05-03 integra exposición por unión global de órdenes, clientes y eventos, equivalencias documentadas y cobertura persistente. Cuatro formularios reales con evidencia, autorización actual y CAS. Revisión independiente Node26: 13/13 funcionales y 1/1 aritmética; copia Git limpia Node22: 14/14 y regresión F05-02 10/10. Matriz SQL/Auth/Storage271/271, focalizados15/15 y controlador125/125; compilación y lint verdes. Alcance: construccion/F05-03-CIERRE-TECNICO.md. F05 queda en3/6; formatos/FX, snapshots y prioridad todavía no suman.
+F05-04 integra DTO monetario y formato compartido, monedas originales separadas, catálogo y tasas aprobadas/versionadas. API y navegador12/12; copia Git limpia Node22:22/22, regresión F05-03 13/13 y F05-02 10/10. Matriz SQL/Auth/Storage277/277, focales9/9 y controlador125/125; compilación y lint verdes. Alcance: construccion/F05-04-CIERRE-TECNICO.md. F05 queda4/6; snapshots y prioridad todavía no suman.
 
-El total suma24 aceptadas por el runner y nueve técnicamente listas con validación/dependencia externa pendiente: seis de F03 y F05-01/02/03. El grafo conserva dependencias live. Cuentas reales, datos autorizados y aprobaciones externas siguen pendientes; no acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
+El total suma24 aceptadas por el runner y diez técnicamente listas con validación/dependencia externa pendiente: seis de F03 y F05-01/02/03/04. El grafo conserva dependencias live. Cuentas reales, datos autorizados y aprobaciones externas siguen pendientes; no acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
 
-El usuario retiró el límite de tiempo el21-sep. Presupuesto conservado: 263/280 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate activo no garantiza supervivencia de la sesión. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+El usuario retiró el límite de tiempo el21-sep. Presupuesto conservado: 266/280 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate activo no garantiza supervivencia de la sesión. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## F02 completa — F02-06 aceptado,20-sep
 

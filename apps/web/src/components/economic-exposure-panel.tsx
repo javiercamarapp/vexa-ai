@@ -1,4 +1,5 @@
 'use client';
+import {formatMinorUnits as money} from '../../../../packages/metrics/money.mjs';
 import {useState} from 'react';
 import type {EconomicEntry,EconomicSource} from '../../../../packages/metrics/repository.mjs';
 import type {ExposureView} from '../../../../packages/metrics/exposure.mjs';
@@ -6,7 +7,7 @@ import type {ExposureView} from '../../../../packages/metrics/exposure.mjs';
 type Props={view:ExposureView;entries:EconomicEntry[];sources:EconomicSource[];canWrite:boolean;busy:boolean;onSubmit:(input:unknown)=>Promise<void>};
 type Metric={amountMinor:string|null;knownSubtotalMinor:string|null;knownCount:number;totalCount:number;status:string;currency:string;exponent:number};
 const kindLabel:Record<string,string>={order:'Orden',refund:'Reembolso',reversal:'Reversión',replacement:'Reemplazo',support_model:'Soporte modelado'};
-function money(value:string|null,currency:string,exponent:number){if(value===null)return 'Desconocido';const negative=value.startsWith('-'),digits=(negative?value.slice(1):value).padStart(exponent+1,'0');return `${negative?'-':''}${exponent?digits.slice(0,-exponent)+'.'+digits.slice(-exponent):digits} ${currency}`;}
+
 function Amount({name,value}:{name:string;value:Metric}){return <article aria-label={name}><h4>{name}</h4><p>{money(value.amountMinor,value.currency,value.exponent)}</p><p>Subtotal conocido: {money(value.knownSubtotalMinor,value.currency,value.exponent)} · Cobertura {value.knownCount}/{value.totalCount}</p>{value.amountMinor===null&&<p>El subtotal no acredita el total. Hay importes, vínculos o cobertura pendientes de revisión.</p>}</article>;}
 function Records({ids,entries,sources}:{ids:string[];entries:EconomicEntry[];sources:EconomicSource[]}){return <details><summary>Ver registros y evidencia</summary>{[...new Set(ids)].map(id=>{const e=entries.find(row=>row.id===id);return e?<article key={id}><h5>{e.externalId} · {kindLabel[e.kind]}</h5><p>{money(e.amountMinor,e.currency,e.exponent)} · {e.effectiveAt}</p><p>{e.report}</p><p>Revisión {e.revision}; fuente {sources.find(s=>s.id===e.sourceId)?.name??'pendiente de revisión'}.</p></article>:<p key={id}>El registro ya no está disponible en la consulta autorizada actual.</p>;})}</details>;}
 function Approval({name,report,approved,onReport,onApproved}:{name:string;report:string;approved:boolean;onReport:(v:string)=>void;onApproved:(v:boolean)=>void}){return <><label>Evidencia de {name}<textarea required minLength={20} maxLength={4000} value={report} onChange={e=>{onReport(e.target.value);onApproved(false);}}/></label><label style={{display:'flex',alignItems:'center',gap:'.5rem'}}><input style={{width:'auto'}} type="checkbox" checked={approved} onChange={e=>onApproved(e.target.checked)}/>Revisé y apruebo {name}</label></>;}

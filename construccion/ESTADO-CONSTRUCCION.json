@@ -36,9 +36,10 @@
     "F03-06",
     "F05-01",
     "F05-02",
-    "F05-03"
+    "F05-03",
+    "F05-04"
   ],
-  "construction_total": 33,
+  "construction_total": 34,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -201,6 +202,24 @@
       ],
       "official_dependency_pending": [
         "F05-02",
+        "F03-06"
+      ]
+    },
+    {
+      "task_id": "F05-04",
+      "technical_ready": true,
+      "implemented": "DTO monetario exacto integrado en API/UI, formato compartido, monedas originales separadas, catálogo y tipos de cambio aprobados/versionados con CAS y revocación; conversión explícita conserva original y evidencia.",
+      "programming_pending": [],
+      "scope_note": "Ficha F05-04; snapshots y prioridad corresponden a05/06 y todavía no se contabilizan.",
+      "external_pending": [
+        {
+          "owner": "Responsable financiero del cliente y titular de infraestructura",
+          "pending": "Catálogos y tasas reales con fuente, fecha y aprobación; migraciones/despliegue remotos mediante aprobación legítima.",
+          "verification": "Verificar fuentes y configuración autorizadas y recorrido remoto, sin usar tasas sintéticas como información de mercado."
+        }
+      ],
+      "official_dependency_pending": [
+        "F05-03",
         "F03-06"
       ]
     }

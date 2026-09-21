@@ -1399,8 +1399,12 @@
     "auto_accept": false,
     "requires_approval": false,
     "deliverables": [
-      "packages/metrics/src/money.ts",
-      "packages/metrics/src/scope.ts"
+      "packages/metrics/money.mjs",
+      "packages/metrics/scope.mjs",
+      "packages/metrics/money-adapter.mjs",
+      "packages/metrics/money-repository.mjs",
+      "supabase/migrations/0020_money_configuration.sql",
+      "apps/web/src/components/economic-money-panel.tsx"
     ],
     "steps": [
       "DTO monetario: amount_minor string",

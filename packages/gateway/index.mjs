@@ -69,8 +69,12 @@ export function createGateway({apiKey,policy,modelsByRole,catalog,runtime='stub'
     try {reservation=await budgetRepository.reserve({tenantId:data.tenantId,taskKey:data.taskKey,window:p.window,amountMinor:String(total),tenantLimitMinor:p.tenantLimitMinor,currency:'USD',exponent:6,fingerprint:sha256(JSON.stringify({payload,policy:p,catalogVersion:catalogSnapshot.version,plans:plans.map(x=>({...x,ceiling:String(x.ceiling)}))}))});}
     catch{return error('budget_unavailable');}
     if(!reservation?.acquired)return error(['duplicate_task','idempotency_conflict'].includes(reservation?.reason)?reservation.reason:'budget_exceeded');
-    const id=reservation.reservationId;let reported=0n,uncertain=false;
+    const id=reservation.reservationId;let reported=0n,uncertain=false,pendingAttempt=null;
     const finish=async result=>{
+      if(result.error?.code==='policy_blocked'&&pendingAttempt!==null){
+        try{await budgetRepository.recordAttempt(id,{index:pendingAttempt,state:'not_sent'});}
+        catch{uncertain=true;result=error('budget_unavailable');}
+      }
       try {await budgetRepository.finalize(id,{state:uncertain?'uncertain':'settled',actualMinor:uncertain?null:String(reported),reportedMinor:String(reported)});}
       catch{return {...error('budget_unavailable'),billingState:'uncertain'};}
       return {...result,billingState:uncertain?'uncertain':'settled'};
@@ -79,9 +83,11 @@ export function createGateway({apiKey,policy,modelsByRole,catalog,runtime='stub'
       const {candidate:c,body,ceiling}=plans[i];
       try{await budgetRepository.recordAttempt(id,{index:i,model:c.model,provider:c.provider,pricingVersion:c.pricing.version,ceilingMinor:String(ceiling),startedAt:clock.now(),state:'started'});}
       catch{uncertain=true;return finish(error('budget_unavailable'));}
+      pendingAttempt=i;
       // Planning is not authorization to send after repository/retry waits.
       // No transport occurred for this attempt; reconcile only prior known usage.
       if(!eligible(c,p,clock.now(),catalogSnapshot))return finish(error('policy_blocked'));
+      pendingAttempt=null; // No await between this boundary and invoking the transport.
       const controller=new AbortController();let timer;
       let response,envelope;
       try {

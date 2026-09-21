@@ -17,7 +17,7 @@ export type ReservationResult =
 export interface BudgetRepository {
   reserve(request: ReservationRequest): Promise<ReservationResult>;
   recordAttempt(reservationId: string, attempt: {
-    index: number; state: 'started'|'received'; model?: string; provider?: string;
+    index: number; state: 'started'|'received'|'not_sent'; model?: string; provider?: string;
     pricingVersion?: string; ceilingMinor?: string; startedAt?: number;
     httpStatus?: number; remoteIdHash?: string|null; usage?: Record<string,number>;
     reportedMinor?: string|null; receivedAt?: number;

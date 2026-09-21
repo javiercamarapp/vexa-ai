@@ -1,3 +1,5 @@
+import * as crm from './support/F01-03/crm-runtime/oracles.mjs';
+import * as extraction from './support/F01-03/extraction-oracles.mjs';
 import * as budget from './support/F01-03/budget-oracles.mjs';
 import * as health from './support/F01-03/health/oracles.mjs';
 import * as aliases from './support/F01-03/aliases/oracles.mjs';
@@ -22,6 +24,8 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   if(migrations.aliasesRequired)assert.ok(aliases.present(h),'ALIAS_MIGRATION_REQUIRED');
   if(migrations.healthRequired)assert.ok(health.present(h),'HEALTH_MIGRATION_REQUIRED');
   if(migrations.budgetRequired)assert.deepEqual(budget.present(h),budget.tables,'BUDGET_MIGRATION_REQUIRED');
+  if(migrations.extractionRequired)assert.deepEqual(extraction.present(h),extraction.tables,'EXTRACTION_MIGRATION_REQUIRED');
+  if(migrations.crmRequired)assert.ok(crm.present(h),'CRM_MIGRATION_REQUIRED');
   schemaOracle(h);
   const actors={};for(const key of ['a','b','dual','outsider','viewer','analyst','operator'])actors[key]=await h.user();
   const f=seed(h,actors);
@@ -40,6 +44,8 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   }
   await t.test("identity tables",()=>identityOracle(h,actors));
   for(const [table] of definitions)await t.test('functional RLS '+table,()=>tableOracle(h,table,f,actors));
+  if(crm.present(h)){f.crm=crm.seed(h,f,actors);await t.test('CRM settings0013 authorization and dispatch',()=>crm.access(h,f.crm,actors));}
+  if(extraction.present(h).length){f.extraction=extraction.seed(h,f,actors);await t.test('extraction0012 private maps and claims authorization',()=>extraction.access(h,f.extraction,actors));}
   if(budget.present(h).length){f.budget=budget.seed(h,f,actors);await t.test('budget0011 authorization and reconciliation',()=>budget.access(h,f.budget,actors));}
   for(const relation of relations)await t.test(`required FK ${relation.table}.${relation.column}`,()=>fkOracle(h,f,relation));
   for(const fk of foreignKeys(h))await t.test(`discovered FK ${fk.name}`,()=>discoveredFkOracle(h,f,fk));

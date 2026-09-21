@@ -69,17 +69,19 @@ export async function inspectPublished(cwd,origin,fixture,{allowUnconfiguredImpo
   const body=await response.text();assertNoSecrets(body,fixture,'http');
   if(required && response.status!==200)throw new Error('ARTIFACT_HTTP_STATUS');
   if(response.status>=500){
-   // Only the offline build smoke may acknowledge this exact fail-closed API.
+   // Only the offline build smoke may acknowledge these explicit configuration contracts.
    // Body/header secret detection above still runs; pages and arbitrary 5xx fail.
    let envelope;try{envelope=JSON.parse(body);}catch{}
    const cache=response.headers.get('cache-control')??'';
-   const expected=allowUnconfiguredImports===true&&!required&&response.status===503&&url.pathname==='/api/imports'&&!url.search
+   const imports=url.pathname==='/api/imports'&&envelope?.contract_version==='f02-durable-v1'&&envelope?.error?.code==='auth_not_configured';
+   const crm=['/api/connections','/api/connections/settings','/api/migrations'].includes(url.pathname)&&envelope?.contract_version==='f03-crm-v1'&&envelope?.error?.code==='configuration_required';
+   const aliases=url.pathname==='/api/migrations/aliases'&&envelope?.contract_version==='f03-alias-v1'&&envelope?.error?.code==='configuration_required';
+   const expected=allowUnconfiguredImports===true&&!required&&response.status===503&&(imports||crm||aliases)&&!url.search
     &&/^application\/json(?:;|$)/i.test(response.headers.get('content-type')??'')
     &&/(?:^|,)\s*private\s*(?:,|$)/i.test(cache)&&/(?:^|,)\s*no-store\s*(?:,|$)/i.test(cache)
-    &&envelope?.contract_version==='f02-durable-v1'&&envelope?.error?.code==='auth_not_configured'
     &&envelope.error.retryable===true&&typeof envelope.error.message==='string'
     &&typeof envelope.meta?.trace_id==='string'&&envelope.meta.trace_id.length>0;
-   if(!expected)throw new Error('PAGE_HTTP_STATUS');
+   if(!expected)throw new Error('PAGE_HTTP_STATUS:'+url.pathname+':'+response.status+':'+String(envelope?.error?.code));
   }
   const location=response.headers.get('location');if(location)add(new URL(location,url).href);
   // HTML/CSS assets and literal fetch/import URLs. No browser JS execution.

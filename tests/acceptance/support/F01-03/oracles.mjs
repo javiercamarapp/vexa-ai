@@ -1,3 +1,5 @@
+import * as crm from './crm-runtime/oracles.mjs';
+import * as extraction from './extraction-oracles.mjs';
 import * as budget from './budget-oracles.mjs';
 import * as health from './health/oracles.mjs';
 import * as aliases from './aliases/oracles.mjs';
@@ -51,15 +53,17 @@ export function schemaOracle(h) {
   }
   // Extra private tables cannot silently escape the functional matrix.
   const hasUploads=tables.some(x=>x.name===uploads.table);
-  assert.deepEqual(tables.filter(x=>!['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h),...(workers.present(h)?[workers.table]:[]),...sync.present(h),...(health.present(h)?[health.table]:[]),...budget.present(h)].includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
+  assert.deepEqual(tables.filter(x=>!['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h),...(workers.present(h)?[workers.table]:[]),...sync.present(h),...(health.present(h)?[health.table]:[]),...(crm.present(h)?[crm.table]:[]),...budget.present(h),...extraction.present(h)].includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
   const fks=foreignKeys(h);
   if(budget.present(h).length)budget.schema(h,fks);
+  if(extraction.present(h).length)extraction.schema(h,fks);
   if(hasUploads)uploads.schema(h,fks);
   history.schema(h,fks);
   if(workers.present(h))workers.schema(h,fks);
   if(sync.present(h).length)sync.schema(h,fks);
   if(aliases.present(h))aliases.schema(h,fks);
   if(health.present(h))health.schema(h,fks);
+  if(crm.present(h))crm.schema(h,fks);
   for(const {table,column,parent} of relations)
     assert.ok(fks.some(fk=>fk.table===table && fk.parent===parent && fk.validated && fk.mapping.tenant_id==='tenant_id' && fk.mapping[column]==='id'),`FK_MISSING:${table}.${column}->${parent}`);
   for(const fk of fks){
@@ -238,6 +242,8 @@ function fkDiagnostic(h,table,result){
 // Every discovered private edge gets a valid INSERT and a foreign-parent INSERT.
 // Diagnostics retain the rejecting constraint; mandatory presence is checked separately.
 export function discoveredFkOracle(h,f,fk) {
+  if(fk.table===crm.table)return crm.fk(h,f.crm,fk);
+  if(extraction.tables.includes(fk.table))return extraction.fk(h,f.extraction,fk);
   if(budget.tables.includes(fk.table))return budget.fk(h,f.budget,fk);
   if(fk.table===health.table)return health.fk(h,f.health,fk);
   if(fk.table===aliases.table&&aliases.present(h))return aliases.fk(h,f,fk);

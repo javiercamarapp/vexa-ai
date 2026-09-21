@@ -33,6 +33,7 @@ export function candidateInputs(candidate) {
   migrations.economicRequired=files.some(f=>/^0018_/.test(f));
   migrations.exposureRequired=files.some(f=>/^0019_/.test(f));
   migrations.moneyRequired=files.some(f=>/^0020_/.test(f));
+  migrations.snapshotsRequired=files.some(f=>/^0021_/.test(f));
   return migrations;
 }
 export async function launch({services=false}={}) {

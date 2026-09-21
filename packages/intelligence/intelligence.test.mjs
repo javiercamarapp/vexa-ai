@@ -1,0 +1,11 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {validateEvidence,validateExtraction} from './index.mjs';
+const hash=s=>createHash('sha256').update(s).digest('hex');
+const revisions=[{tenant_id:'t',message_revision_id:'r',role:'customer',text:'A😀 roto'}];
+const span={message_revision_id:'r',start:1,end:2,quote:'😀',quote_hash:hash('😀'),role:'customer'};
+test('offsets Unicode code points y hash exacto',()=>{assert.equal(validateEvidence([span],revisions,{tenantId:'t'}).ok,true);for(const patch of [{end:3},{start:1.5},{quote:'x'},{quote_hash:hash('x')},{role:'internal'},{message_revision_id:'alien'}])assert.equal(validateEvidence([{...span,...patch}],revisions,{tenantId:'t'}).ok,false);assert.equal(validateEvidence([span],revisions,{tenantId:'other'}).ok,false);});
+test('revisiones duplicadas e internas no se convierten en cliente',()=>{assert.equal(validateEvidence([span],[...revisions,...revisions],{tenantId:'t'}).ok,false);assert.equal(validateEvidence([span],[{...revisions[0],role:'internal'}],{tenantId:'t'}).ok,false);});
+test('esquema estricto: abstención, enums, evidencia y dinero',()=>{const valid={issues:[{category:'producto',severity:'medium',evidence:[span]}],sentiment:'negative',intent:'complaint',urgency:'normal',entities:[],abstention:null};const opts={taxonomy:['producto','indeterminable'],tenantId:'t'};assert.equal(validateExtraction(valid,revisions,opts).ok,true);for(const patch of [{amount:5},{probability:0.9},{sentiment:'banana'},{issues:[]},{abstention:{reason:'insufficient_evidence'}},{entities:[{type:'customer_id',value:'invented'}]}])assert.equal(validateExtraction({...valid,...patch},revisions,opts).ok,false);});
+test('modelo entrega citas; el servidor calcula hashes sin exigir criptografía al LLM',async()=>{const {validateModelExtraction}=await import('./index.mjs');const {quote_hash,...modelSpan}=span;const value={issues:[{category:'producto',severity:'medium',evidence:[modelSpan]}],sentiment:'negative',intent:'complaint',urgency:'normal',entities:[],abstention:null};const result=validateModelExtraction(value,revisions,{taxonomy:['producto'],tenantId:'t'});assert.equal(result.ok,true);assert.equal(result.data.issues[0].evidence[0].quote_hash,quote_hash);assert.equal(value.issues[0].evidence[0].quote_hash,undefined);});

@@ -2,13 +2,13 @@
 
 Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Programa: [PROGRAMA](PROGRAMA.md). Repositorio canónico `~/vexa`; NO ejecutar en la copia de Escritorio. Las fuentes privadas permanecen locales.
 
-## Checkpoint vigente —27/60 técnicamente listas; 21 aceptadas en el grafo
+## Checkpoint vigente —28/60 técnicamente listas; 22 aceptadas en el grafo
 
-F04-04 aceptada en `6d06d249`: validación y consulta autorizada de citas con offsets Unicode, procedencia, revisión histórica y revocación inmediata en interfaz. Revisión independiente, 29/29 en verify Node22 y aceptación Git limpio Node26; compilación y regresiones afectadas comprobadas. Sin inferencia pagada ni validación productiva externa.
+F04-05 aceptada en `ead95f38`: embeddings versionados, agrupación incremental, búsqueda autorizada, revisión humana split/merge y recuperación durable con presupuesto. Revisión independiente, 27/27 en verify Node22 y aceptación Git limpio Node26; compilación y regresiones afectadas comprobadas. Sin inferencia pagada ni validación productiva externa.
 
-F03 conserva sus seis entregables técnicamente completos e integrados, con cuentas reales, datos autorizados y aprobaciones externas pendientes. El total suma 21 aceptadas por el runner y seis de F03; no altera los gates live. Registro: construccion/ESTADO-CONSTRUCCION.json. El trabajo posterior todavía no suma al contador.
+F03 conserva sus seis entregables técnicamente completos e integrados, con cuentas reales, datos autorizados y aprobaciones externas pendientes. El total suma 22 aceptadas por el runner y seis de F03; no altera los gates live. Registro: construccion/ESTADO-CONSTRUCCION.json. El trabajo posterior todavía no suma al contador.
 
-Ventana renovada por respuesta del usuario: hasta las 12:50 de Mérida del 21-sep, 240/260 invocaciones acumuladas, máximo 3 agentes y cero gasto externo nuevo. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+Ventana renovada por respuesta del usuario: hasta las 12:50 de Mérida del 21-sep, 244/260 invocaciones acumuladas, máximo 3 agentes y cero gasto externo nuevo. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## Historial — F02 completa,17/60
 

@@ -33,9 +33,10 @@
     "F03-03",
     "F03-04",
     "F03-05",
-    "F03-06"
+    "F03-06",
+    "F05-01"
   ],
-  "construction_total": 30,
+  "construction_total": 31,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -146,6 +147,23 @@
           "pending": "Aprobación legítima y aplicación de migraciones CRM incluidas0013/0015, secretos del worker/CRM y cron/despliegue remoto; no se ejecutó aquí.",
           "verification": "Deploy autorizado, comprobación SHA y recorrido remoto multitenant con scheduler."
         }
+      ]
+    },
+    {
+      "task_id": "F05-01",
+      "technical_ready": true,
+      "implemented": "Adaptador puro ledger→kernel existente, dinero exacto, procedencia, identidad económica, ventanas/cobertura/conciliación y hashes; 34/34 externos en Node22/26 y materialización limpia.",
+      "programming_pending": [],
+      "scope_note": "Sólo ficha F05-01. Persistencia/API/UI y demás trabajo financiero corresponden a F05-02..06 y todavía no se contabilizan.",
+      "external_pending": [
+        {
+          "owner": "Titular de las cuentas y responsable financiero del cliente",
+          "pending": "Validar las fuentes y decisiones contables con datos autorizados del cliente; F03-06 live continúa sin aceptación.",
+          "verification": "Reconciliar fuentes reales bajo permisos legítimos. Los fixtures prueban el adaptador, no la veracidad de datos o producción."
+        }
+      ],
+      "official_dependency_pending": [
+        "F03-06"
       ]
     }
   ]

@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';import {randomUUID} from 'node:crypto';
+import {q,insert} from './matrix.mjs';import {read,write,rows,denied} from './harness.mjs';import {backend} from './import-uploads/oracles.mjs';
+export const tables=['ai_budget_limits','ai_budget_reservations','ai_budget_attempts','ai_budget_reconciliations'];
+export const present=h=>tables.filter(t=>h.sql(`SELECT to_regclass(${q('public.'+t)}) IS NOT NULL`)==='t');
+const expected={ai_budget_limits:[['organizations',{tenant_id:'id'}]],ai_budget_reservations:[['organizations',{tenant_id:'id'}],['jobs',{tenant_id:'tenant_id',job_id:'id'}],['memberships',{tenant_id:'tenant_id',actor_id:'user_id'}]],ai_budget_attempts:[['ai_budget_reservations',{tenant_id:'tenant_id',reservation_id:'id'}]],ai_budget_reconciliations:[['ai_budget_reservations',{tenant_id:'tenant_id',reservation_id:'id'}],['memberships',{tenant_id:'tenant_id',actor_id:'user_id'}]]};
+export function schema(h,fks){assert.deepEqual(present(h),tables,'BUDGET_ALL_TABLES_REQUIRED');for(const table of tables){
+ assert.deepEqual(h.json(`SELECT jsonb_build_array(relrowsecurity,relforcerowsecurity) FROM pg_class WHERE oid=${q('public.'+table)}::regclass`),[true,true],'BUDGET_FORCE:'+table);
+ assert.equal(h.sql(`SELECT attnotnull FROM pg_attribute WHERE attrelid=${q('public.'+table)}::regclass AND attname='tenant_id'`),'t');
+ for(const role of ['anon','authenticated','service_role','vexa_backend'])for(const action of ['SELECT','INSERT','UPDATE','DELETE','TRUNCATE','REFERENCES','TRIGGER']){const allowed=role==='vexa_backend'&&(['SELECT','INSERT'].includes(action)||action==='UPDATE'&&['ai_budget_limits','ai_budget_reservations'].includes(table));assert.equal(h.sql(`SELECT has_table_privilege(${q(role)},${q('public.'+table)},${q(action)})`),allowed?'t':'f','BUDGET_GRANT:'+table+':'+role+':'+action);}
+ const keys=fks.filter(k=>k.table===table);assert.equal(keys.length,expected[table].length);for(const[parent,mapping]of expected[table])assert.ok(keys.some(k=>k.parent===parent&&k.validated&&JSON.stringify(Object.entries(k.mapping).sort())===JSON.stringify(Object.entries(mapping).sort())),'BUDGET_REQUIRED_FK:'+table+':'+parent);
+}}
+export function seed(h,f,actors){const out={};for(const side of ['a','b']){
+ const tenant=f[side].jobs.tenant_id,actor=actors[side].id,token=randomUUID(),job={...f[side].jobs,id:randomUUID(),type:'extraction'},window='SYN-global-budget';h.sql(insert('jobs',job)+';');
+ const limit={id:randomUUID(),tenant_id:tenant,purpose:'extraction',window_key:window,limit_minor:'1000',version:1},all={...limit,id:randomUUID(),purpose:'all'};
+ h.sql(`BEGIN;SELECT set_config('request.jwt.claim.sub',${q(actor)},true),set_config('vexa.tenant_id',${q(tenant)},true),set_config('vexa.action','configure',true);${insert('ai_budget_limits',all)};${insert('ai_budget_limits',limit)};COMMIT;`);
+ const reservation={id:randomUUID(),tenant_id:tenant,job_id:job.id,purpose:'extraction',window_key:window,task_key:randomUUID(),fingerprint:'a'.repeat(64),actor_id:actor,owner_token:token,held_minor:'10',state:'reserved',reported_minor:'0',actual_minor:null,version:1};
+ const attempt={id:randomUUID(),tenant_id:tenant,reservation_id:reservation.id,owner_token:token,attempt_index:0,state:'started',model:'SYN-model',provider:'SYN-provider',pricing_version:'SYN-rate',ceiling_minor:'10'};
+ h.sql(`BEGIN;SELECT set_config('request.jwt.claim.sub',${q(actor)},true),set_config('vexa.tenant_id',${q(tenant)},true),set_config('vexa.action','import',true),set_config('vexa.budget_owner_token',${q(token)},true);${insert('ai_budget_reservations',reservation)};${insert('ai_budget_attempts',attempt)};UPDATE ai_budget_reservations SET state='uncertain',version=2 WHERE id=${q(reservation.id)};COMMIT;`);
+ const reconciliation={id:randomUUID(),tenant_id:tenant,reservation_id:reservation.id,actor_id:actor,expected_version:2,actual_minor:'0',evidence_hash:side.repeat(64),confirmed_provider_evidence:true};
+ h.sql(`BEGIN;SELECT set_config('request.jwt.claim.sub',${q(actor)},true),set_config('vexa.tenant_id',${q(tenant)},true),set_config('vexa.action','configure',true);${insert('ai_budget_reconciliations',reconciliation)};UPDATE ai_budget_reservations SET state='settled',actual_minor=0,reported_minor=0,version=3 WHERE id=${q(reservation.id)};COMMIT;`);
+ out[side]={jobs:job,memberships:f[side].memberships,ai_budget_limits:limit,ai_budget_reservations:reservation,ai_budget_attempts:attempt,ai_budget_reconciliations:reconciliation};
+ }return out;}
+export function access(h,f,actors){const A=f.a.jobs.tenant_id,B=f.b.jobs.tenant_id;for(const table of tables){
+ for(const actor of [null,...Object.values(actors)])denied(h.probe(read(table),actor),'BUDGET_DIRECT_DENIED:'+table);denied(h.probe('SET LOCAL ROLE service_role;'+read(table)),'BUDGET_SERVICE_DENIED');
+ const expected=table==='ai_budget_limits'?2:1;
+ for(const role of ['a','analyst','operator','viewer','dual']){const result=backend(h,read(table),actors[role],A,'read');assert.equal(result.code,'00000');assert.equal(result.rows.length,expected);assert.ok(result.rows.every(r=>r.tenant_id===A),'BUDGET_READ_TENANT');}
+ for(const[actor,tenant]of [[actors.a,B],[actors.dual,null],[actors.outsider,A]]){const result=backend(h,read(table),actor,tenant,'read');assert.equal(result.code,'00000');assert.equal(result.rows.length,0,'BUDGET_READ_SCOPE');}
+ const revoked=`UPDATE memberships SET status='revoked' WHERE user_id=${q(actors.a.id)} AND tenant_id=${q(A)};`;assert.equal(backend(h,read(table),actors.a,A,'read',revoked).rows.length,0,'BUDGET_REVOKED_READ');
+ for(const role of ['a','analyst','operator','viewer'])denied(backend(h,write('DELETE FROM '+table),actors[role],A,'retain'),'BUDGET_NO_DELETE');
+ }
+ const createLimit=actor=>insert('ai_budget_limits',{...f.a.ai_budget_limits,id:randomUUID(),window_key:'SYN-new-limit'});
+ rows(backend(h,write(createLimit()),actors.a,A,'configure'),[0],'BUDGET_OWNER_CONFIG_POSITIVE');for(const role of ['analyst','operator','viewer','outsider'])denied(backend(h,write(createLimit()),actors[role],A,'configure'),'BUDGET_OWNER_ONLY');
+ const update=`UPDATE ai_budget_limits SET limit_minor=1,version=version+1 WHERE tenant_id=${q(A)}`;denied(backend(h,write(update),actors.a,A,'import'),'BUDGET_IMPORT_CANNOT_CONFIGURE');
+ for(const table of ['ai_budget_attempts','ai_budget_reconciliations'])denied(backend(h,write(`UPDATE ${table} SET created_at=clock_timestamp()`),actors.a,A,'configure'),'BUDGET_EVIDENCE_IMMUTABLE');
+}
+export function fk(h,f,key){const row={...f.a[key.table]};const remove=key.table==='ai_budget_reservations'?`ALTER TABLE ai_budget_attempts DISABLE TRIGGER USER;ALTER TABLE ai_budget_reconciliations DISABLE TRIGGER USER;DELETE FROM ai_budget_attempts;DELETE FROM ai_budget_reconciliations;`:'';const physical=value=>h.probe(`ALTER TABLE ${key.table} DISABLE TRIGGER USER;${remove}DELETE FROM ${key.table} WHERE id=${q(row.id)};${write(insert(key.table,value))}SET CONSTRAINTS ALL IMMEDIATE;`);rows(physical(row),[0],'BUDGET_FK_POSITIVE:'+key.name);const bad={...row};if(key.parent==='organizations')bad.tenant_id=randomUUID();else for(const[col,ref]of Object.entries(key.mapping))if(col!=='tenant_id')bad[col]=f.b[key.parent][ref];const result=physical(bad);assert.equal(result.code,'23503','BUDGET_FK_NEGATIVE:'+key.name);assert.ok(result.constraint);}

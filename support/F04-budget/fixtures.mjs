@@ -1,0 +1,6 @@
+import {randomUUID,createHash} from 'node:crypto';
+export const digest=value=>createHash('sha256').update(String(value)).digest('hex');
+export function request(actor,{taskKey=randomUUID(),window='SYN-budget-window',amountMinor='80',fingerprint=digest(randomUUID()),tenantLimitMinor='999999',...extra}={}){return{tenantId:actor.tenant,taskKey,window,amountMinor,fingerprint,tenantLimitMinor,currency:'USD',exponent:6,...extra};}
+export async function configured(h,{actor,purpose='extraction',window='SYN-budget-window',global='100',purposeLimit=global}={}){actor??=await h.actor();const setup=h.budget(actor,{purpose});await setup.repository.configure({window,purpose:'all',limitMinor:global});await setup.repository.configure({window,purpose,limitMinor:purposeLimit});return{...setup,window};}
+export const started=(index=0,ceilingMinor='80')=>({index,state:'started',model:'synthetic/model',provider:'synthetic/provider',pricingVersion:'SYN-ceiling-1',ceilingMinor,startedAt:Date.now()});
+export const received=(index=0,reportedMinor='20')=>({index,state:'received',httpStatus:200,remoteIdHash:digest('SYN-provider-'+index),usage:{prompt_tokens:1,completion_tokens:1,total_tokens:2},reportedMinor,receivedAt:Date.now()});

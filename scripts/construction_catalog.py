@@ -102,7 +102,7 @@ add('F04-01','packages/gateway/index.mjs|packages/gateway/catalog.mjs|packages/g
  'Policy explícita por tenant/job: allowed_models/providers, collection, retention, region, max_cost; catálogo no prueba elegibilidad del endpoint.|Resolver intersección y bloquear si vacía; fallback sólo dentro de la misma política.|Runtime stub por defecto en desarrollo; no API key en frontend ni builder.|Cache de catálogo versionada y caducidad; falla de catálogo no convierte política a allow-all.',
  'Sin endpoint elegible no hay fetch.|Fallback de residencia incompatible se rechaza.|data_collection=deny no se presenta como ZDR; ambos campos distintos.',
  'Pausar job en policy_blocked, conservar input_ref; sólo owner cambia política con nueva versión.')
-add('F04-02','packages/gateway/src/budget.ts|supabase/migrations/0010_ai_budget.sql',
+add('F04-02','packages/gateway/durable-budget.mjs|packages/gateway/budget.mjs|supabase/migrations/0011_ai_budget.sql',
  'Reserva atómica tenant/job/attempt antes de request; límites por propósito para que explorer no vacíe extracción.|Ledger estados reserved/settled/uncertain/released; timeout incierto NO libera gratis.|Registrar modelo, tokens, tarifa/version, request_id y uso real; reconciliar asincrónicamente.|No inferir costo runtime desde suscripción Codex del constructor.',
  'Dos reservas simultáneas de80contra saldo100 admiten sólo una.|Timeout post-request conserva uncertain80.|Retry con request nuevo contabiliza su propio costo y nunca duplica movimiento interno.',
  'Congelar propósito al superar límite; reconciliar proveedor antes de liberar reserva; no poner costo0 porque faltó usage.')

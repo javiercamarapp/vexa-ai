@@ -30,6 +30,7 @@ export function candidateInputs(candidate) {
   migrations.crmRequired=files.includes('0013_crm_runtime.sql');
   migrations.problemsRequired=files.some(f=>/^0016_/.test(f));
   migrations.causalityRequired=files.some(f=>/^0017_/.test(f));
+  migrations.economicRequired=files.some(f=>/^0018_/.test(f));
   return migrations;
 }
 export async function launch({services=false}={}) {

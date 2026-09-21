@@ -1,13 +1,13 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
-## Checkpoint vigente —26/60 técnicamente listas; 20 aceptadas en el grafo
+## Checkpoint vigente —27/60 técnicamente listas; 21 aceptadas en el grafo
 
-F04-03 aceptada en `ac9db737`: redacción de datos personales, extracción estructurada con citas, persistencia, cola durable, API e interfaz de análisis. Revisión independiente, 60/60 en verify Node22 y aceptación Git limpio Node26; compilación y regresiones afectadas comprobadas. Sin inferencia pagada ni validación productiva externa.
+F04-04 aceptada en `6d06d249`: validación y consulta autorizada de citas con offsets Unicode, procedencia, revisión histórica y revocación inmediata en interfaz. Revisión independiente, 29/29 en verify Node22 y aceptación Git limpio Node26; compilación y regresiones afectadas comprobadas. Sin inferencia pagada ni validación productiva externa.
 
-F03 conserva sus seis entregables técnicamente completos e integrados, con cuentas reales, datos autorizados y aprobaciones externas pendientes. El total suma 20 aceptadas por el runner y seis de F03; no altera los gates live. Registro: construccion/ESTADO-CONSTRUCCION.json. El trabajo posterior todavía no suma al contador.
+F03 conserva sus seis entregables técnicamente completos e integrados, con cuentas reales, datos autorizados y aprobaciones externas pendientes. El total suma 21 aceptadas por el runner y seis de F03; no altera los gates live. Registro: construccion/ESTADO-CONSTRUCCION.json. El trabajo posterior todavía no suma al contador.
 
-Ventana renovada por respuesta del usuario: hasta las 12:50 de Mérida del 21-sep, 237/260 invocaciones acumuladas, máximo 3 agentes y cero gasto externo nuevo. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+Ventana renovada por respuesta del usuario: hasta las 12:50 de Mérida del 21-sep, 240/260 invocaciones acumuladas, máximo 3 agentes y cero gasto externo nuevo. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## F02 completa — F02-06 aceptado,20-sep
 

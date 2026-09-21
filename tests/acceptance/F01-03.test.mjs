@@ -1,3 +1,4 @@
+import * as exposure from './support/F01-03/exposure-oracles.mjs';
 import * as economic from './support/F01-03/economic-oracles.mjs';
 import * as causality from './support/F01-03/causality-oracles.mjs';
 import * as problems from './support/F01-03/problems-oracles.mjs';
@@ -32,6 +33,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   if(migrations.problemsRequired)assert.deepEqual(problems.present(h),problems.tables,'PROBLEM_MIGRATION_REQUIRED');
   if(migrations.causalityRequired)assert.deepEqual(causality.present(h),causality.tables,'CAUSAL_MIGRATION_REQUIRED');
   if(migrations.economicRequired)assert.deepEqual(economic.present(h),economic.tables,'ECONOMIC_MIGRATION_REQUIRED');
+  if(migrations.exposureRequired)assert.deepEqual(exposure.present(h),exposure.tables,'EXPOSURE_MIGRATION_REQUIRED');
   schemaOracle(h);
   const actors={};for(const key of ['a','b','dual','outsider','viewer','analyst','operator'])actors[key]=await h.user();
   const f=seed(h,actors);
@@ -57,6 +59,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   if(problems.present(h).length){f.problemVectors=problems.seed(h,f,actors);await t.test('problems0016 authorization',()=>problems.access(h,f.problemVectors,actors));}
   if(causality.present(h).length){f.causality=causality.seed(h,f,actors);await t.test('causality0017 authorization',()=>causality.access(h,f.causality,actors));await t.test('causality0017 scoped contributor helper',()=>causality.contributor(h,f.causality,actors));}
   if(economic.present(h).length){f.economic=economic.seed(h,f,actors);await t.test('economic0018 authorization and append-only',()=>economic.access(h,f.economic,actors));await t.test('economic0018 exact amounts state source and CAS',()=>economic.financial(h,f.economic,actors));}
+  if(exposure.present(h).length){f.exposure=exposure.seed(h,f,actors);await t.test('exposure0019 authorization and append-only',()=>exposure.access(h,f.exposure,actors));await t.test('exposure0019 identity and CAS',()=>exposure.identity(h,f.exposure,actors));await t.test('exposure0019 contributor revocation',()=>exposure.contributor(h,f.exposure,actors));}
   for(const fk of foreignKeys(h))await t.test(`discovered FK ${fk.name}`,()=>discoveredFkOracle(h,f,fk));
   await t.test('external identity 42 is tenant scoped and revision deduplicated',()=>{
     assert.equal(h.sql("SELECT count(*) FROM public.conversations WHERE external_id='42'"),'2');

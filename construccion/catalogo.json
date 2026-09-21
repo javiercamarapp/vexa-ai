@@ -1355,7 +1355,10 @@
     "auto_accept": false,
     "requires_approval": false,
     "deliverables": [
-      "packages/metrics/src/exposure.ts"
+      "packages/metrics/exposure.mjs",
+      "packages/metrics/exposure.d.mts",
+      "supabase/migrations/0019_economic_problem_links.sql",
+      "apps/web/src/components/economic-exposure-panel.tsx"
     ],
     "steps": [
       "Calcular exposición por unión de order_ids dentro de scope autorizado.",

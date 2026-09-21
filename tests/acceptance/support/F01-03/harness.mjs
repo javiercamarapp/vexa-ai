@@ -31,6 +31,7 @@ export function candidateInputs(candidate) {
   migrations.problemsRequired=files.some(f=>/^0016_/.test(f));
   migrations.causalityRequired=files.some(f=>/^0017_/.test(f));
   migrations.economicRequired=files.some(f=>/^0018_/.test(f));
+  migrations.exposureRequired=files.some(f=>/^0019_/.test(f));
   return migrations;
 }
 export async function launch({services=false}={}) {

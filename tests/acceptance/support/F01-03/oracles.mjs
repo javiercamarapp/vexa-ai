@@ -1,3 +1,4 @@
+import * as exposure from './exposure-oracles.mjs';
 import * as economic from './economic-oracles.mjs';
 import * as causality from './causality-oracles.mjs';
 import * as problems from './problems-oracles.mjs';
@@ -56,8 +57,9 @@ export function schemaOracle(h) {
   }
   // Extra private tables cannot silently escape the functional matrix.
   const hasUploads=tables.some(x=>x.name===uploads.table);
-  assert.deepEqual(tables.filter(x=>!['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h),...(workers.present(h)?[workers.table]:[]),...sync.present(h),...(health.present(h)?[health.table]:[]),...(crm.present(h)?[crm.table]:[]),...budget.present(h),...extraction.present(h),...problems.present(h),...causality.present(h),...economic.present(h)].includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
+  assert.deepEqual(tables.filter(x=>!['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h),...(workers.present(h)?[workers.table]:[]),...sync.present(h),...(health.present(h)?[health.table]:[]),...(crm.present(h)?[crm.table]:[]),...budget.present(h),...extraction.present(h),...problems.present(h),...causality.present(h),...economic.present(h),...exposure.present(h)].includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
   const fks=foreignKeys(h);
+  if(exposure.present(h).length)exposure.schema(h,fks);
   if(economic.present(h).length)economic.schema(h,fks);
   if(problems.present(h).length)problems.schema(h,fks);
   if(causality.present(h).length)causality.schema(h,fks);
@@ -248,6 +250,7 @@ function fkDiagnostic(h,table,result){
 // Every discovered private edge gets a valid INSERT and a foreign-parent INSERT.
 // Diagnostics retain the rejecting constraint; mandatory presence is checked separately.
 export function discoveredFkOracle(h,f,fk) {
+  if(exposure.tables.includes(fk.table))return exposure.fk(h,f.exposure,fk);
   if(economic.tables.includes(fk.table))return economic.fk(h,f.economic,fk);
   if(causality.tables.includes(fk.table))return causality.fk(h,f.causality,fk);
   if(problems.tables.includes(fk.table))return problems.fk(h,f.problemVectors,fk);

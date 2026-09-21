@@ -76,8 +76,9 @@ export async function inspectPublished(cwd,origin,fixture,{allowUnconfiguredImpo
    const imports=url.pathname==='/api/imports'&&envelope?.contract_version==='f02-durable-v1'&&envelope?.error?.code==='auth_not_configured';
    const crm=['/api/connections','/api/connections/settings','/api/migrations'].includes(url.pathname)&&envelope?.contract_version==='f03-crm-v1'&&envelope?.error?.code==='configuration_required';
    const extraction=url.pathname==='/api/extraction'&&envelope?.contract_version==='f04-extraction-v1'&&envelope?.error?.code==='configuration_required';
+   const problems=url.pathname==='/api/problems'&&envelope?.contract_version==='f04-problems-v1'&&envelope?.error?.code==='configuration_required';
    const aliases=url.pathname==='/api/migrations/aliases'&&envelope?.contract_version==='f03-alias-v1'&&envelope?.error?.code==='configuration_required';
-   const expected=allowUnconfiguredImports===true&&!required&&response.status===503&&(imports||crm||extraction||aliases)&&!url.search
+   const expected=allowUnconfiguredImports===true&&!required&&response.status===503&&(imports||crm||extraction||aliases||problems)&&!url.search
     &&/^application\/json(?:;|$)/i.test(response.headers.get('content-type')??'')
     &&/(?:^|,)\s*private\s*(?:,|$)/i.test(cache)&&/(?:^|,)\s*no-store\s*(?:,|$)/i.test(cache)
     &&envelope.error.retryable===true&&typeof envelope.error.message==='string'

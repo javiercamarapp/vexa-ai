@@ -1,3 +1,4 @@
+import * as problems from './support/F01-03/problems-oracles.mjs';
 import * as crm from './support/F01-03/crm-runtime/oracles.mjs';
 import * as extraction from './support/F01-03/extraction-oracles.mjs';
 import * as budget from './support/F01-03/budget-oracles.mjs';
@@ -26,6 +27,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   if(migrations.budgetRequired)assert.deepEqual(budget.present(h),budget.tables,'BUDGET_MIGRATION_REQUIRED');
   if(migrations.extractionRequired)assert.deepEqual(extraction.present(h),extraction.tables,'EXTRACTION_MIGRATION_REQUIRED');
   if(migrations.crmRequired)assert.ok(crm.present(h),'CRM_MIGRATION_REQUIRED');
+  if(migrations.problemsRequired)assert.deepEqual(problems.present(h),problems.tables,'PROBLEM_MIGRATION_REQUIRED');
   schemaOracle(h);
   const actors={};for(const key of ['a','b','dual','outsider','viewer','analyst','operator'])actors[key]=await h.user();
   const f=seed(h,actors);
@@ -48,6 +50,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   if(extraction.present(h).length){f.extraction=extraction.seed(h,f,actors);await t.test('extraction0012 private maps and claims authorization',()=>extraction.access(h,f.extraction,actors));}
   if(budget.present(h).length){f.budget=budget.seed(h,f,actors);await t.test('budget0011 authorization and reconciliation',()=>budget.access(h,f.budget,actors));}
   for(const relation of relations)await t.test(`required FK ${relation.table}.${relation.column}`,()=>fkOracle(h,f,relation));
+  if(problems.present(h).length){f.problemVectors=problems.seed(h,f,actors);await t.test('problems0016 authorization',()=>problems.access(h,f.problemVectors,actors));}
   for(const fk of foreignKeys(h))await t.test(`discovered FK ${fk.name}`,()=>discoveredFkOracle(h,f,fk));
   await t.test('external identity 42 is tenant scoped and revision deduplicated',()=>{
     assert.equal(h.sql("SELECT count(*) FROM public.conversations WHERE external_id='42'"),'2');

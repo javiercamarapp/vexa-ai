@@ -126,7 +126,7 @@ add('F04-07','packages/intelligence/evaluation/evaluate.mjs|packages/intelligenc
  'Separar fixtures sintéticos de gold humano: dataset_id,hash,annotator,fecha y split por cliente/tiempo sin leakage.|Congelar holdout externo, taxonomy y umbrales antes de tune; doble anotación y desacuerdos visibles.|Reportar precisión/recall por clase, cobertura, abstención, citas inválidas, costo/latencia con denominadores.|Objetivos PRD >85% clasificación útil y >70% insight nuevo son hipótesis distintas; la segunda requiere compradores.',
  'Sin gold humano resultado not_measured, jamás100%por concordar con stub.|Clase sin positivos reporta métrica indefinida, no0o1.|Holdout no participa en selección de prompt y no se copia al worker.',
  'Si falla umbral, conservar corrida y abrir experimento con train/dev; no retocar holdout.','interactive')
-add('F05-01','packages/economics/index.mjs',
+add('F05-01','packages/economics/index.mjs|packages/economics/adapter.mjs|packages/economics/adapter.d.mts|packages/economics/ADAPTER.md|packages/economics/adapter.test.mjs',
  'Reusar kernel E00 y leer FIN01..12; no reescribirlo para acomodar tipos de UI.|Diseñar adaptador ledger->argumentos existentes con status/period/currency/source declarados.|Correr gate E00 como regresión requerida también en esta tarea.',
  'Los12casos existentes siguen pasando.|String minor units por encima de2^53 no pierde precisión.|Importes ausentes y conflicts siguen explícitos.',
  'No sustituir una función financiera verde por LLM. Corregir adaptador antes de tocar kernel.')

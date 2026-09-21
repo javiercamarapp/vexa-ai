@@ -1,0 +1,10 @@
+import type {CurrencyCatalog,Money,FxConversion} from './money.mjs';
+import type {MetricEnvelope} from './money-adapter.mjs';
+import type {EconomicScope} from './repository.mjs';
+export type CurrencyInput={currency:string;exponent:number;expectedVersion:number;active:boolean;source:string;reference:string;date:string;report:string;attested:true};
+export type FxRateInput={rateId?:string;expectedVersion:number;base:string;quote:string;rate:string;rounding:'half_up'|'half_even'|'toward_zero';active:boolean;source:string;reference:string;date:string;report:string;attested:true};
+export type CurrencyVersion={id:string;currency:string;exponent:number;version:number;active:boolean;valid:boolean;source:string|null;reference:string|null;date:string;report:string|null};
+export type FxRateVersion={id:string;rateId:string;version:number;base:string;quote:string;rate:string|null;rounding:'half_up'|'half_even'|'toward_zero';active:boolean;valid:boolean;reason:string|null;source:string|null;reference:string|null;date:string;report:string|null};
+export type MonetaryView={catalog:CurrencyCatalog;currencyVersions:CurrencyVersion[];fxRates:FxRateVersion[];nativeBundles:Array<{currency:string;exponent:number;scope:EconomicScope;metrics:MetricEnvelope[]}>;conversion:{rateId:string;version:number;items:Array<{key:string;label:string;modeled:boolean;original:Money;converted:Money;conversion:FxConversion|null;display:string;originalDisplay:string}>}|null;notice:string};
+export function createMoneyRepository(options:{database:any}):{recordCurrency(input:CurrencyInput):Promise<CurrencyVersion>;recordFxRate(input:FxRateInput):Promise<FxRateVersion>};
+export function readMonetary(scope:any,input:any):Promise<MonetaryView>;

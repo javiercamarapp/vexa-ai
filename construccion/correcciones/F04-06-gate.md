@@ -16,3 +16,7 @@ Un mutante que suprime la prioridad humana se calibra 0→1→0 y falla una aser
 Node22 pasó 18/18 antes del último ajuste del confirmador. La validación oficial de la fuente final en Node22 y su aceptación en Node26 son pasos separados; este informe no los sustituye ni declara producción. No se ejecutaron acciones externas de recall o reembolso.
 
 Los errores iniciales de semilla, selector y restauración del estado de conexión pertenecían al control: se conservaron los recibos rojos y se corrigieron sin desactivar guardas del producto. Los recursos de prueba usan identificadores propios, broker y journal restringido; la matriz respeta el broker heredado del supervisor y verifica su limpieza.
+
+## Compatibilidad del control con el runner oficial
+
+La primera verificación oficial Node22 alcanzó SQL7/7, pero un guard del control rechazó el directorio legítimo del supervisor por contener una ruta local fija. Se sustituyó exclusivamente por la comparación `realpath(raíz del módulo de control) != realpath(candidato)`. La ejecución desde la raíz del control con un candidato distinto está permitida; la misma ruta real, incluso mediante alias simbólico, se rechaza. Los builds y adaptaciones continúan exclusivamente en temporales y el candidato permanece en lectura. La prueba focal pasó en Node22 y Node26; no se repitió el conjunto completo porque corresponde a la recuperación oficial supervisada. Los oráculos funcionales y SQL permanecen intactos.

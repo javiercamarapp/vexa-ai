@@ -2,7 +2,7 @@ import {createRequire} from 'node:module';
 import {workerCredentials} from './credentials.mjs';
 import {createJobRepository} from './repository.mjs';
 export async function createRuntime(env=process.env,{createDatabase,pool:providedPool,deadlineAt,consumer='imports'}={}){
- if(!['imports','crm','extraction'].includes(consumer))throw Error('WORKER_CONSUMER_INVALID');
+ if(!['imports','crm','extraction','problems'].includes(consumer))throw Error('WORKER_CONSUMER_INVALID');
  for(const key of ['VEXA_DATABASE_URL','VEXA_SUPABASE_URL','VEXA_SUPABASE_ANON_KEY','VEXA_WORKER_EMAIL','VEXA_WORKER_PASSWORD','VEXA_WORKER_USER_ID'])if(!env[key])throw Error('CONFIGURATION_REQUIRED');
  if(!createDatabase)({createDatabase}=await import(/* webpackIgnore: true */ '../../platform/db.mjs'));
  const dispatcher=env.VEXA_WORKER_DISPATCHER==='enabled';

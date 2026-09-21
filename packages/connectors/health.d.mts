@@ -1,0 +1,7 @@
+import type {DatabaseAction,DatabaseScope} from '../platform/src/db.js';
+export interface HealthDatabase {transaction<T>(action:DatabaseAction,work:(scope:DatabaseScope)=>Promise<T>):Promise<T>}
+export interface ConnectionHealth {id:string;source:string;accountId:string;connectionStatus:string;state:string;lastAttempt:string|null;lastSuccess:string|null;watermark:{kind:'checkpoint_hash';value:string}|null;coverage:{observed:number;accepted:number;rejected:number}|null;lagSeconds:number|null;lagBasis:'time_since_success';permissions:'revoked'|'available'|'unknown';errorCode:string|null;reconnect:{ownerRequired:true;canRequest:boolean;attemptId:string|null;steps:string[]}|null}
+export interface HealthAttempt {connectionId:string;attemptId:string}
+export function safeHealthError(error:unknown):{state:'reconnect_required'|'stale';code:string};
+export function healthView(row:Record<string,unknown>,now?:number):ConnectionHealth;
+export function createHealthRepository(options:{database:HealthDatabase}):Readonly<{list():Promise<ConnectionHealth[]>;requestRecheck(input:{connectionId:string;expectedAttemptId:string;confirmedCredentialRotation:true}):Promise<{state:'verification_pending'}>;recoverCompleted(input:{syncId:string}):Promise<void>;beginAttempt(input:{connectionId:string;syncId:string;workerId:string;fence:number}):Promise<HealthAttempt>;finishAttempt(input:HealthAttempt&{syncId:string;outcome?:'done'|'continuation';error?:unknown}):Promise<void>}>;

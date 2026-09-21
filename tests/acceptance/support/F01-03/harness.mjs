@@ -26,6 +26,8 @@ export function candidateInputs(candidate) {
   migrations.aliasesRequired=files.includes('0009_aliases.sql');
   migrations.budgetRequired=files.includes('0011_ai_budget.sql');
   migrations.healthRequired=files.includes('0010_connection_health.sql');
+  migrations.extractionRequired=files.includes('0012_extraction_redaction.sql');
+  migrations.crmRequired=files.includes('0013_crm_runtime.sql');
   return migrations;
 }
 export async function launch({services=false}={}) {

@@ -1,0 +1,147 @@
+{
+  "updated": "2026-09-21",
+  "definition": "Construcción técnica integrada y probada; sólo accesos, datos, decisiones o aprobaciones externas pendientes. No acredita producción.",
+  "accepted_in_graph": [
+    "E00",
+    "F00-01",
+    "F00-02",
+    "F00-03",
+    "F00-04",
+    "F00-05",
+    "F01-01",
+    "F01-02",
+    "F01-03",
+    "F01-04",
+    "F01-05",
+    "F02-01",
+    "F02-02",
+    "F02-03",
+    "F02-04",
+    "F02-05",
+    "F02-06",
+    "F04-01",
+    "F04-02"
+  ],
+  "technical_ready_external_pending": [
+    "F03-01",
+    "F03-02",
+    "F03-03",
+    "F03-04",
+    "F03-05",
+    "F03-06"
+  ],
+  "construction_total": 25,
+  "total_tasks": 60,
+  "production_validated": false,
+  "external_pending": [
+    {
+      "task_id": "F03-01",
+      "technical_ready": true,
+      "implemented": "AdaptadorHubSpotv3/scopes, mensajes+notas/revisiones, altaowner, credencialserverbound, histórico/consumidor/reconexión.",
+      "programming_pending": [],
+      "external_pending": [
+        {
+          "owner": "Titular HubSpot y responsable datos",
+          "pending": "Cuenta/app/token con lectura autorizada, scopes/version efectivos y20conversaciones autorizadas con referenciaindependiente.",
+          "verification": "S01 live contraexport/UI independiente; no sustituirlo con fixture ni extenderpermiso alectura noautorizada."
+        },
+        {
+          "owner": "Javier / titular de infraestructura",
+          "pending": "Aprobación legítima y aplicación de migraciones CRM incluidas0013/0015, secretos del worker/CRM y cron/despliegue remoto; no se ejecutó aquí.",
+          "verification": "Deploy autorizado, comprobación SHA y recorrido remoto multitenant con scheduler."
+        }
+      ]
+    },
+    {
+      "task_id": "F03-02",
+      "technical_ready": true,
+      "implemented": "AdaptadorZendeskcursor/comments/users/public/internal/deletes, mismo consumidor durable y altaowner.",
+      "programming_pending": [],
+      "external_pending": [
+        {
+          "owner": "Titular Zendesk y responsable datos",
+          "pending": "Subdominio, token/plan/scopes, permiso de exportincremental de cuenta/ventana y20referencias autorizadas.",
+          "verification": "S02 live conreferenciaindependiente; seleccionar20casos no autoriza por sísolo escaneo de cuenta."
+        },
+        {
+          "owner": "Javier / titular de infraestructura",
+          "pending": "Aprobación legítima y aplicación de migraciones CRM incluidas0013/0015, secretos del worker/CRM y cron/despliegue remoto; no se ejecutó aquí.",
+          "verification": "Deploy autorizado, comprobación SHA y recorrido remoto multitenant con scheduler."
+        }
+      ]
+    },
+    {
+      "task_id": "F03-03",
+      "technical_ready": true,
+      "implemented": "Página/checkpoint atómicos, replay/CAS/fences, backfill/overlap/continuation, consumidor y rotación aislada porpropósito.",
+      "programming_pending": [],
+      "external_pending": [
+        {
+          "owner": "Javier / titular de infraestructura",
+          "pending": "Aprobación legítima y aplicación de migraciones CRM incluidas0013/0015, secretos del worker/CRM y cron/despliegue remoto; no se ejecutó aquí.",
+          "verification": "Deploy autorizado, comprobación SHA y recorrido remoto multitenant con scheduler."
+        },
+        {
+          "owner": "TitularCRM",
+          "pending": "Datos y permisos reales para verificar continuidadenproveedor.",
+          "verification": "Ejecutar carga/reanudación autorizada y reconciliarIDs/revisiones conledger."
+        }
+      ]
+    },
+    {
+      "task_id": "F03-04",
+      "technical_ready": true,
+      "implemented": "RepositorioSQLalias, propuesta/confirm/undo/history y proyecciónconsumida porcomparación revisados; nofaltacoreSQL.",
+      "programming_pending": [],
+      "external_pending": [
+        {
+          "owner": "Responsable migracióncliente",
+          "pending": "Confirmación humana deevidencia/equivalencias ambiguas reales.",
+          "verification": "Owner compara fuentes yregistraaprobación/razón; noautoidentidad por texto/email."
+        },
+        {
+          "owner": "Javier / titular de infraestructura",
+          "pending": "Aprobación legítima y aplicación de migraciones CRM incluidas0013/0015, secretos del worker/CRM y cron/despliegue remoto; no se ejecutó aquí.",
+          "verification": "Deploy autorizado, comprobación SHA y recorrido remoto multitenant con scheduler."
+        }
+      ]
+    },
+    {
+      "task_id": "F03-05",
+      "technical_ready": true,
+      "implemented": "Panelrealhealth, últimaintento/éxito/cobertura/watermark/lag separados, rechazo401persistido, bloqueofetch, ownerrecheck y reintento real;estadoA/Baislado.",
+      "programming_pending": [],
+      "external_pending": [
+        {
+          "owner": "TitularCRM",
+          "pending": "Credencial legítima/rotación autorizada ycomprobación realdelosscopes.",
+          "verification": "Ejecutar revocación/reconexión autorizadas; comprobar quefailed/noop nofalseanúltimoéxito."
+        },
+        {
+          "owner": "Javier / titular de infraestructura",
+          "pending": "Aprobación legítima y aplicación de migraciones CRM incluidas0013/0015, secretos del worker/CRM y cron/despliegue remoto; no se ejecutó aquí.",
+          "verification": "Deploy autorizado, comprobación SHA y recorrido remoto multitenant con scheduler."
+        }
+      ]
+    },
+    {
+      "task_id": "F03-06",
+      "technical_ready": true,
+      "implemented": "CortesSQLinmutables, API+UIcapture/list/compare/paginación, IDsúnicos/exposición30000/cobertura/método y nocomparabilidad;17/17 enmaterialización.",
+      "programming_pending": [],
+      "phase_dependency_note": "Aliases API/UI supplied229 reviewed230, targeted revocation fixed234 and reviewed232.",
+      "external_pending": [
+        {
+          "owner": "Responsable datos/migracióncliente",
+          "pending": "Históricos reales y decisiones de equivalencias delcliente.",
+          "verification": "Crearbaseline/corteposterior autorizado, revisar cambiosdecobertura/método; noafirmarahorrocausal."
+        },
+        {
+          "owner": "Javier / titular de infraestructura",
+          "pending": "Aprobación legítima y aplicación de migraciones CRM incluidas0013/0015, secretos del worker/CRM y cron/despliegue remoto; no se ejecutó aquí.",
+          "verification": "Deploy autorizado, comprobación SHA y recorrido remoto multitenant con scheduler."
+        }
+      ]
+    }
+  ]
+}

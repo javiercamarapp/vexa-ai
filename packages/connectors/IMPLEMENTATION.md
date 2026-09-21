@@ -1,0 +1,70 @@
+# F03-01 — propuesta HubSpot, 20-sep-2026
+
+Propuesta sobre baseline `9874b81`; no commit, aceptación ni publicación por este constructor. Sólo `packages/connectors/**`. Ingestión, SQL0001–0007 y plataforma aceptadas permanecen intactas. Reutilización selectiva del transporte de `983e007e98f8516ad0380ba4f51ee58b2086fa54`; no se adoptó su adaptador Zendesk ni código antiguo de ingesta.
+
+## Contrato y fuentes oficiales consultadas el20-sep
+
+- [Guía Conversations legacy v3](https://developers.hubspot.com/docs/api-reference/legacy/conversations/guide): threads, mensajes paginados, `association=TICKET`, scopes `conversations.read`, actor `A-` agente y `V-` visitante. Actores `E/I/S/L` permanecen desconocidos, nunca se asignan automáticamente a cliente. La configuración declara scopes; no acredita que el proveedor los haya concedido ni autentica tenant/account.
+- [Contenido original](https://developers.hubspot.es/docs/api-reference/legacy/conversations/conversations/messages/get-conversations): GET `/conversations/v3/conversations/threads/{threadId}/messages/{messageId}/original-content`, respuesta text/richText. Se recupera para los dos estados truncados documentados; el hash incluye mensaje y original completos. No se descargan adjuntos ni URLs del payload.
+- [Tickets](https://developers.hubspot.com/docs/api-reference/legacy/crm/objects/tickets/guide): lectura CRMv3 por ID, propiedades metadata; nunca se usan como conversación. Scope `tickets` declarado explícitamente para habilitar este canal.
+- [Notas y scope de lectura](https://developers.hubspot.com/docs/api-reference/legacy/crm/activities/notes/get-note) y [guía](https://developers.hubspot.com/docs/api-reference/legacy/crm/activities/notes/guide): CRMv3, `hs_note_body`, `crm.objects.contacts.read`.
+- [Asociaciones](https://developers.hubspot.com/docs/api-reference/legacy/crm/associations/associate-records/guide): GET CRMv4 tickets/{id}/associations/notes, resultados `toObjectId`; todas las páginas antes del checkpoint exterior.
+- [Cambio HelpDesk](https://developers.hubspot.com/changelog/upcoming-breaking-change-conversations-api-help-desk-and-comments), anunciado19-mar, efectivo23-sep-2026: notas asociadas al ticket sustituyen comentarios en HelpDesk. Por eso el canal Notes es implementado y explícito, separado de COMMENT. No se infiere relación1:1 ticket/thread.
+- [Anuncio15-sep-2026](https://developers.hubspot.com/changelog/fall-2026-spotlight): hay versión2026-09. No demuestra ruta exacta ni disponibilidad por cuenta. Las páginasdated consultadas fallaron y el dossier conserva tres familias contradictorias. Este módulo fija `version:'v3'` exclusivamente; cualquier otra falla CONTRACT_BLOCKED. No hay fallback/tanteo. S01 debe confirmar esta versión en la cuenta autorizada.
+
+## API implementada
+
+`createHubSpotAdapter({context,token,version:'v3',scopes,fetch?,clock?,sleep?,archived?,inboxId?,includeTickets?,includeNotes?,threadIds?,deadlineMs?,...limits})`. Fetch real por defecto y puerto inyectable; sólo HTTPS api.hubapi.com, GET y rutas exactas, redirects bloqueados. 401/403 enclava RECONNECT_REQUIRED con state reconnect_required. 429/5xx/red/cuerpo interrumpido reintentan acotadamente; Retry-After demasiado largo devuelve RETRY_DEFERRED; deadline no permite espera que lo sobrepase. Límites de bytes, páginas y registros; errores constantes sin mensajes del proveedor, token o PII.
+
+`pages({checkpoint?})` emite Page por página de threads, después de agotar subpáginas de messages/notes. Fallo HTTP en cualquier subrecurso aborta esa página sin proponer nuevo checkpoint. Checkpoint ligado al contexto/filtros/versión; debe persistirse por el consumidor junto a registros y cuarentena en una transacción. Este adaptador no escribe DB ni acredita persistencia/integración del job F03-03.
+
+Records contienen SourceEnvelope vigente, payload privado, revisión hash estable, referencias y cuerpo/rol/visibilidad/cobertura explícitos. Thread/ticket text=null. MESSAGE role según todos sus senders; desconocido queda desconocido y visibilidad conservadora. COMMENT siempre internal. Notes independientes internas asociadas al ticket, conversation_id=null. `text_format:inert_html` conserva cuerpo HTML de nota como texto inerte, no como HTML sanitizado; consumidor nunca debe usar innerHTML. Originales y cuarentenas contienen PII potencial: no logs ni respuestas públicas. El envelope payload_ref es referencia lógica, no objeto ya persistido en Storage.
+
+`includeTickets`/`includeNotes` defaultfalse; cobertura refleja canales desactivados. Cada recorrido cubre el filtro archived solicitado; no se declara cobertura global de todos los inboxes/archivados ni captura exhaustiva de ediciones tardías. Los tipos de evento sin cuerpo conservan metadata y marcan cuerpo incompleto. Identidades numéricas inseguras se rechazan y preservan en cuarentena, no se redondean ni se fusionan por email/texto.
+
+## Spike live preparado, no ejecutado
+
+`node packages/connectors/spike-hubspot.mjs`: sin configuración devuelve exit2/blocked/live_attempted:false. Configuración explícita mediante archivo privado0600 en VEXA_HUBSPOT_SPIKE_CONFIG y token separado en VEXA_HUBSPOT_TOKEN. El JSON admite context, version, scopes, archived, inboxId, includeTickets, includeNotes, threadIds, authorizationRef, accountConfirmed, versionConfirmed; no host ni fetch ni timeout arbitrarios. Sólo ejecutar tras permiso legítimo para esa cuenta/datos.
+
+Recibo redacted sólo con contadores/código/status/host/método, nunca IDs/textos/cursor/token. Busca20threads, como máximo5min/20páginas/10kregistros. Su salida puede ser observed_needs_reconciliation, jamás s01_accepted:true. El recibo no prueba scopes efectivos ni correspondencia de cuenta; la verificación independiente del control-plane y la comparación de20threads contra UI/export autorizados siguen obligatorias. No hay credenciales disponibles, llamadas autenticadas ni datos cliente en esta entrega.
+
+## Evidencia local
+
+- TDD inicial frente al banco:4fallos funcionales (mensajes no recuperados, scope sin exigir, estado de reconexión ausente, checkpoint emitido antes de messages), log `/tmp/vexa-f0301-product-red.log`.
+- TDD original truncado: esperado cuerpo completo, observado short; log `/tmp/vexa-f0301-product-original-red.log`. Parche de original-content cerró la regresión.
+- Node26 y Node22:9/9,0skip en `/tmp/vexa-f0301-product-node26.log` y `/tmp/vexa-f0301-product-node22.log`. Incluye paginación anidada, roles/asociaciones/hash, autorización declarada,401/429, subrecurso500/SSRF, originales, notasCRM paginadas, deadline, identidad insegura y autorización del spike.
+- Spike sin configurar: `/tmp/vexa-f0301-product-spike-unconfigured.log`, blocked/live_attempted:false. Esto NO es prueba live ni cierre S01.
+- Sin dependencias nuevas, build de app innecesario por módulo ESM aislado. Revisión y examen independiente pertenecen al principal. No aceptación por tests propios.
+
+## Pendiente real
+
+S01: cuenta/app autorizada, autorización de datos, scopes efectivos/versión en esa cuenta,20threads y mensajes/asociaciones reconciliados con export/UI, incluidos HelpDesk/notas y huecos de cobertura. Las fases posteriores conectan este adaptador a credenciales protegidas, persistencia/checkpoints durables y UI health; no están implementadas ni reclamadas por F03-01. No se declara SaaS completo, proveedor conectado ni producción.
+
+## Corrección del límite de cuarentena — principal
+
+Reproducción con maxRecords2: un thread aceptado y tres mensajes inválidos emitían cuatro objetos. El contador incluye ahora aceptados y rechazados; excederlo aborta antes de proponer checkpoint. También cubre threads inválidos. Tres regresiones específicas: dos rojas en fuente anterior;12/12 verdes Node22 y26 tras cambio mínimo. Evidencia privada local: `/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-f0301-record-limit-ecgfqxvo`. Propuesta original y manifiesto preservados; requiere revisión independiente y S01live sigue pendiente.
+
+## Delta review203 / llamada204
+
+`threadIds` fija una muestra explícita de IDs string únicos (1–1000), copia inmutable y scope de checkpoint. Se usa GET directo de cada thread, documentado en la guía oficial de Conversations legacy, nunca listado de inbox/cuenta. Cada Page representa un hilo completo; un ID/inbox de respuesta distinto aborta antes del primer cuerpo. Ausencia de threadIds mantiene el modo de listado de la integración general, que requiere su autorización propia. El spike observacional exige al menos20threadIds explícitos; no asume permiso de listar toda la cuenta.
+
+Cobertura separada: `bodies_missing` cuenta mensajes sin cuerpo completo; `notes_bodies_missing` cuenta notas sin cuerpo. `notes_complete` requiere el canal habilitado y cero notas faltantes. Una nota incompleta no convierte un MESSAGE completo en incompleto. Errores de transporte/esquema de notas abortan la página, no devuelven cobertura falsa.
+
+Conservado el parche previo maxRecords que contabiliza también cuarentenas. Pruebas propias16/16 en Node22.23.2/26.7; cuatro nuevos controles demostraron rojo antes del parche: lectura OUTSIDE en misma página, falta de validación de muestra, identidad directa y nota vacía falselycomplete. Pruebascontrol4/4 incluyen muestra20sinlista/overread y referencebinding de aprobación con cero peticiones ante desajuste. No llamadas autenticadas, aceptación ni modificación de originales. Los tres archivos de control en este worktree son propuesta separada para el principal, nunca parte del producto candidato.
+
+## F03-02 — propuesta Zendesk, 20-sep-2026
+
+Propuesta independiente en la misma fase, no aceptación ni publicación. Se reutilizó selectivamente el contrato de `983e007e98f8516ad0380ba4f51ee58b2086fa54` (subdominio, incremental/cursor y cuarentena) y el transporte corregido de HubSpot. El cambio compartido sólo extrae factory interna con origen/rutas fijos para cada proveedor; los consumidores no pueden configurar un host arbitrario. `createZendeskAdapter({context,token,subdomain,startTime,...limits})` usa OAuth Bearer, GET real por defecto, no API token Basic. IDs opacos en strings; números inseguros se cuarentenan. Subdominio es un único label DNS bajo `.zendesk.com`, nunca un dominio suministrado completo.
+
+- [Incremental Exports](https://developer.zendesk.com/api-reference/ticketing/ticket-management/incremental_exports/): cursor, after_cursor y end_of_stream; requiere admin. La primera ventana empieza hace más de60segundos; no se excluyen deleted. `after_cursor` final se conserva para la siguiente sincronización. Validación de next_url admite sólo el mismo origen/ruta (con o sin .json) y parámetros permitidos, pero reconstruye la solicitud desde el cursor.
+- [Guía incremental](https://developer.zendesk.com/documentation/api-basics/working-with-data/using-the-incremental-export-api/): `status:deleted` es evidencia de borrado; registros mínimos desaparecen del export90días después del borrado permanente. Se emite tombstone:true y deleted:true, conservando fecha de borrado sólo si existe explícitamente. No se inventa fecha desde updated_at ni se interpreta404 como borrado. La captura histórica completa requiere ventana y acceso reales.
+- [Ticket Comments](https://developer.zendesk.com/api-reference/ticketing/tickets/ticket_comments/): páginas cursor de100, public/internal, plain_body/body y author_id. Se agotan todas las páginas accesibles antes de proponer el checkpoint del ticket. No fetch de attachments/recording_url. Texto de ticket permanece null. HTML no se ejecuta ni se convierte en cuerpo por defecto. VoiceComment o texto de al menos65536bytes marca cuerpo incompleto: el proveedor documenta truncación silenciosa a64KB, por lo que no se promete recuperación del original previo a esa pérdida.
+- [Users](https://developer.zendesk.com/api-reference/ticketing/users/users/): se consulta user por author_id público para obtener role. end-user→customer, agent/admin→agent; ausente/desconocido→unknown. requester_id jamás determina rol. Notas privadas son internal incluso si su autor es end-user. Lookup fallido aborta página con error real, no altera silenciosamente permisos/cobertura. Evidence mínima {user_id,provider_role} queda junto al comentario en el payload privado y hash de revisión; no conserva datos adicionales del usuario.
+
+Paginación, retry/Retry-After, deadline, abort durante cuerpo, límite de respuesta, reconexión enclavada y errores constantes se comparten con HubSpot. maxRecords contabiliza filas aceptadas y cuarentenas; sobrepasarlo aborta sin emitir checkpoint. Los objetos auxiliares de usuario no son filas ingeridas. maxPages aplica por colección; deadline y registros acotan el recorrido total. Consumer futuro debe hacer commit atómico de registros, rechazos y checkpoint; este módulo no implementa ni afirma F03-03, UIhealth, almacenamiento de tokens ni OAuth interactivo.
+
+### Evidencia y pendientes F03-02
+
+TDD propio:6fallos por export Zendesk ausente, luego6casos verdes más regresiones HubSpot. Logs `/tmp/vexa-f0302-product-red.log`, `/tmp/vexa-f0302-product-node26.log`, `/tmp/vexa-f0302-product-node22.log`. Pruebas con Response/HTTP local no acreditan S02 ni cuenta conectada. Control-plane tiene un examen independiente y verificación live separada; este constructor no modifica controles. Sin dependencias/instalaciones, Git mutations, llamadas autenticadas ni credenciales. Build Next no corresponde a estos archivos ESM aislados; revisión independiente, gate externo y acceso autorizado Zendesk siguen pendientes.
+
+Corrección antes de congelar: una cadena Unicode de65538bytes bajaba de64KB al normalizarNFC y podía declararse completa. Regresión observada roja (`true !== false`) en `/tmp/vexa-f0302-provider-bytes-red.log`; ahora el límite usa bytes originales del proveedor. Suite final propia25/25 (7Zendesk+18regresionesHubSpot) en Node22/26. Transporte compartido pasó además examen independiente HubSpot28/28 en ambas versiones, logs `/tmp/vexa-f0302-product-hubspot-node22.log` y `/tmp/vexa-f0302-product-hubspot-node26.log`.

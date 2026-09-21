@@ -1,7 +1,8 @@
 import {createRequire} from 'node:module';
 import {workerCredentials} from './credentials.mjs';
 import {createJobRepository} from './repository.mjs';
-export async function createRuntime(env=process.env,{createDatabase,pool:providedPool,deadlineAt}={}){
+export async function createRuntime(env=process.env,{createDatabase,pool:providedPool,deadlineAt,consumer='imports'}={}){
+ if(!['imports','crm','extraction'].includes(consumer))throw Error('WORKER_CONSUMER_INVALID');
  for(const key of ['VEXA_DATABASE_URL','VEXA_SUPABASE_URL','VEXA_SUPABASE_ANON_KEY','VEXA_WORKER_EMAIL','VEXA_WORKER_PASSWORD','VEXA_WORKER_USER_ID'])if(!env[key])throw Error('CONFIGURATION_REQUIRED');
  if(!createDatabase)({createDatabase}=await import(/* webpackIgnore: true */ '../../platform/db.mjs'));
  const dispatcher=env.VEXA_WORKER_DISPATCHER==='enabled';
@@ -17,7 +18,7 @@ export async function createRuntime(env=process.env,{createDatabase,pool:provide
   try{const user=await identity.getUser();if(user.id!==env.VEXA_WORKER_USER_ID)throw Error('WORKER_IDENTITY_MISMATCH');
    const c=await pool.connect();try{await c.query('BEGIN');await c.query('SET LOCAL ROLE vexa_backend');
     await c.query("SELECT set_config('request.jwt.claim.sub',$1,true),set_config('vexa.action','worker_dispatch',true),set_config('statement_timeout','5000',true)",[user.id]);
-    tenant=(await c.query('SELECT public.reserve_worker_scope() AS tenant')).rows[0]?.tenant;
+    tenant=(await c.query('SELECT public.reserve_worker_scope($1::text) AS tenant',[consumer])).rows[0]?.tenant;
     await c.query('COMMIT');
    }catch(e){await c.query('ROLLBACK');throw e;}finally{c.release();}
   }catch(e){await driver.end();throw e;}
@@ -26,5 +27,5 @@ export async function createRuntime(env=process.env,{createDatabase,pool:provide
  const canonical=createDatabase({identity,pool,selectedTenant:tenant});
  const database=deadlineAt?{transaction:async(action,work)=>{if(Date.now()>=deadlineAt)throw Error('CHUNK_TIMEOUT');return canonical.transaction(action,async s=>{const remaining=Math.floor(deadlineAt-Date.now());if(remaining<1)throw Error('CHUNK_TIMEOUT');await s.query("SELECT set_config('transaction_timeout',$1,true),set_config('statement_timeout',$1,true)",[String(remaining)]);return work(s);});}}:canonical;
  const storage={async read(scope,row,options){if(scope.tenantId!==row.tenant_id||row.tenant_id!==tenant||!row.object_path.startsWith(scope.tenantId+'/imports/'+row.id+'/'))throw Error('STORAGE_SCOPE');const r=await get('/storage/v1/object/authenticated/vexa-private/'+row.object_path.split('/').map(encodeURIComponent).join('/'),options);const bytes=new Uint8Array(await r.arrayBuffer());if(bytes.length>20971520)throw Error('STORAGE_LIMIT');return bytes;}};
- return {chunkSize:Number(env.VEXA_WORKER_CHUNK_SIZE??100),repository:createJobRepository({database,worker:true}),storage,close:()=>driver.end()};
+ return {database,chunkSize:Number(env.VEXA_WORKER_CHUNK_SIZE??100),repository:createJobRepository({database,worker:true}),storage,close:()=>driver.end()};
 }

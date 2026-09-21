@@ -7,7 +7,7 @@ F02 sigue6/6 aceptada y publicada. F03-01..05 tienen propuestas locales revisada
 
 El cierre oficial sigue en F03-01: faltan cuentas/permisos legítimos de HubSpot/Zendesk y reconciliación independiente sobre20conversaciones autorizadas. El usuario autorizó expresamente continuar propuestas locales de F04 mientras tanto. Gateway01 quedó revisado:24/24 en Node22/26 y seis mutantes. F04-02 tiene presupuesto SQL en pruebas locales; sigue sin aceptación. Sin inferencia pagada ni resultados de cliente inventados.
 
-Límites conservados:220llamadas acumuladas, deadline00:00 del21-sep UTC−06, máximo3agentes y cero gasto nuevo. El trabajo de controles revisados puede conservarse en GitHub bajo la autorización explícita de push/merge, con publisher, Actions desactivadas y SHA comprobado; no presenta el producto propuesto como aceptado. No hay un supervisor desatendido acreditado. Los apartados siguientes son históricos.
+Ventana renovada el 21-sep por el usuario: 240 invocaciones acumuladas, hasta las 10:43 del 21-sep (Mérida), máximo 3 agentes y cero gasto externo nuevo. Se conservan las 220 invocaciones previas; revisiones 221–223 asignadas. El trabajo de controles revisados puede conservarse en GitHub bajo la autorización explícita de push/merge, con publisher, Actions desactivadas y SHA comprobado; no presenta el producto propuesto como aceptado. No hay un supervisor desatendido acreditado. Los apartados siguientes son históricos.
 
 ## F02 completa — F02-06 aceptado,20-sep
 

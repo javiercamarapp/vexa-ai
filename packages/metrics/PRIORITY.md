@@ -1,0 +1,17 @@
+# Prioridad explicable y versionada
+
+El módulo reaprovecha la escala ordinal de severidad y la deduplicación por issue del banco revisado `5fbf2230`, ampliadas mediante la fórmula `weighted-priority-v1`. No es un modelo probabilístico ni una estimación de ahorro.
+
+Un propietario aprueba pesos enteros cuya suma es10000, referencia fija de frecuencia y referencia monetaria explícita en moneda/exponente. El formulario propone pesos iguales y20 evidencias como punto de partida editable; ninguna propuesta se activa sin aprobación. La fórmula limita cada razón a1 y multiplica por su peso: impacto respaldado/referencia monetaria; evidencias únicas/referencia de frecuencia; severidad ordinal/60; evaluación operacional de accionabilidad(0.25,0.5,1 para baja/media/alta). Redondea aportaciones hacia abajo a puntos enteros, sin convertir importes a Number. La normalización no depende de otros problemas, páginas ni mínimo/máximo del conjunto.
+
+El impacto procede exclusivamente de `exposure.<problemId>` del snapshot económico publicado, con su moneda/exponente; no suma reembolsos y costos. La cobertura parcial aporta sólo un límite inferior explícito. Lo desconocido mantiene contribución null e intervalo de puntuación hasta el peso pendiente; jamás fabrica dinero0. La frecuencia cuenta IDs únicos de issues ligados a revisiones de los miembros actuales autorizados, no tasa temporal. Versiones de problemas y runs de extracción quedan capturadas aparte del corte financiero.
+
+El carril crítico incluye severidad alta/crítica y categorías de seguridad, privacidad o fraude, incluidas señales posibles. Es independiente de impacto, frecuencia y accionabilidad. No confirma incidentes ni ejecuta acciones. La UI conserva el contador de este carril aunque falte una relación financiera del problema con el alcance.
+
+`priority_policy_versions` y `priority_actionability_versions` guardan decisiones humanas append-only con actor, reporte y CAS. La accionabilidad se vincula a la versión exacta del problema. `priority_runs`/`priority_entries` forman la evaluación canónica, publicada atómicamente y ligada a snapshot_id/scope_hash/política/entradas. Cada fila conserva contribuciones, razones y delta frente a la versión anterior. Un reintento idéntico reutiliza la evaluación; recalcular con otra política crea nueva versión. Para volver a una política anterior se publica una nueva evaluación con esa política aprobada; no se reescribe el historial.
+
+GET/POST `/api/economic-priorities` derivan tenant, actor y permisos del servidor. Cualquier lectura revalida snapshot y evidencia conservada; cambios de fuente, retención o revocación no se transforman en datos vacíos. La UI distingue falta de política, información parcial, clasificación histórica y errores, y elimina contenido ante denegación de autorización.
+
+No se declara calibración, precisión comercial, ahorro causal ni aprobación de datos reales. Las pruebas locales usan fixtures sintéticos identificados. El proveedor general de workspace y la gestión de intervenciones pertenecen a fases posteriores.
+
+La cabecera de versión devuelve sólo identificador/versión dentro del tenant autorizado. Se usa para CAS cuando una contribución dejó de ser legible: no resucita una evaluación anterior ni reutiliza números de versión. La UI avisa explícitamente de una clasificación anterior no disponible y permite nueva publicación con evidencia y política autorizadas; no revela su contenido.

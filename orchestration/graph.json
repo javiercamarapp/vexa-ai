@@ -483,7 +483,9 @@
         "packages/gateway/",
         "packages/problems/",
         "apps/web/src/",
-        "supabase/"
+        "supabase/",
+        "packages/jobs/durable/runtime.mjs",
+        "packages/jobs/durable/runtime.d.mts"
       ],
       "acceptance": "tests/acceptance/F04-05.test.mjs",
       "prompt": "orchestration/prompts/F04.md",

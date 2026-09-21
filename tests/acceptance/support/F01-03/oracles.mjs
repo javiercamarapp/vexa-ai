@@ -1,3 +1,4 @@
+import * as problems from './problems-oracles.mjs';
 import * as crm from './crm-runtime/oracles.mjs';
 import * as extraction from './extraction-oracles.mjs';
 import * as budget from './budget-oracles.mjs';
@@ -53,8 +54,9 @@ export function schemaOracle(h) {
   }
   // Extra private tables cannot silently escape the functional matrix.
   const hasUploads=tables.some(x=>x.name===uploads.table);
-  assert.deepEqual(tables.filter(x=>!['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h),...(workers.present(h)?[workers.table]:[]),...sync.present(h),...(health.present(h)?[health.table]:[]),...(crm.present(h)?[crm.table]:[]),...budget.present(h),...extraction.present(h)].includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
+  assert.deepEqual(tables.filter(x=>!['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h),...(workers.present(h)?[workers.table]:[]),...sync.present(h),...(health.present(h)?[health.table]:[]),...(crm.present(h)?[crm.table]:[]),...budget.present(h),...extraction.present(h),...problems.present(h)].includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
   const fks=foreignKeys(h);
+  if(problems.present(h).length)problems.schema(h,fks);
   if(budget.present(h).length)budget.schema(h,fks);
   if(extraction.present(h).length)extraction.schema(h,fks);
   if(hasUploads)uploads.schema(h,fks);
@@ -242,6 +244,7 @@ function fkDiagnostic(h,table,result){
 // Every discovered private edge gets a valid INSERT and a foreign-parent INSERT.
 // Diagnostics retain the rejecting constraint; mandatory presence is checked separately.
 export function discoveredFkOracle(h,f,fk) {
+  if(problems.tables.includes(fk.table))return problems.fk(h,f.problemVectors,fk);
   if(fk.table===crm.table)return crm.fk(h,f.crm,fk);
   if(extraction.tables.includes(fk.table))return extraction.fk(h,f.extraction,fk);
   if(budget.tables.includes(fk.table))return budget.fk(h,f.budget,fk);

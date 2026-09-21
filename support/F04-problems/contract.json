@@ -1,0 +1,55 @@
+{
+  "written_at": "2026-09-21T16:53:25.984299+00:00",
+  "fixture": "SYNTHETIC F04-05 ONLY; real local Auth/PG/Storage; paid provider forbidden",
+  "required": [
+    "tenant SQL prefilter protects identical foreign vector including scores/metadata",
+    "model/dim/version independent spaces reject mismatches",
+    "incremental memberships stable and outliers explicit review",
+    "split/merge owner approved reason CAS append history immutable prior snapshots",
+    "conversation/order dedup across split/merge; unknown not zero",
+    "unauthorized viewer writes, tenant body, CSRF, revoked sessions and sources fail closed",
+    "persistent queue leases/fences retry after crash no duplicate embeddings/memberships",
+    "four consumers interleaved two tenants independently fair including legacy imports",
+    "provider sees only authorized redacted extraction text; no raw transcript/private mapping",
+    "old response after denied access cannot repopulate visible data"
+  ],
+  "mutants": [
+    "remove tenant predicate in retrieval",
+    "ignore embedding version/model/dim",
+    "rewrite IDs incrementally",
+    "ignore split/merge expectedVersion",
+    "share dispatch rotation across consumers"
+  ],
+  "implementation_required": [
+    "packages/problems/repository.mjs",
+    "packages/problems/runtime.mjs",
+    "packages/gateway/embeddings.mjs",
+    "supabase/migrations/0016_problem_runtime.sql",
+    "apps/web/src/app/api/problems/route.ts"
+  ],
+  "exports": {
+    "repository": [
+      "createProblemRepository"
+    ],
+    "runtime": [
+      "createProblemRuntime",
+      "createProblemConfigResolver"
+    ]
+  },
+  "mutation_execution": {
+    "executed_specific_red_then_restored": [
+      "SQL version predicate removed",
+      "shared durable dispatch rotation"
+    ],
+    "not_executed_not_pass": [
+      "remove tenant predicate",
+      "rewrite stable IDs",
+      "ignore CAS version"
+    ],
+    "functional_oracles_executed_for_unmutated_targets": [
+      "identical B vector excluded and foreign ID rejected",
+      "incremental A keeps same stable problem ID",
+      "active parent stale CAS HTTP409 and retired replay rejected"
+    ]
+  }
+}

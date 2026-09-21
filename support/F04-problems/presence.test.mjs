@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';
+test('F04-05 domain and migration must exist before functional probes',()=>{const root=process.env.VEXA_CANDIDATE;assert.ok(root,'CANDIDATE_REQUIRED');assert.ok(fs.existsSync(path.join(root,'packages/problems')),'F0405_IMPLEMENTATION_MISSING: durable problems domain');assert.ok(fs.readdirSync(path.join(root,'supabase/migrations')).some(x=>/^0016_.*\.sql$/.test(x)),'F0405_IMPLEMENTATION_MISSING: SQL0016');});

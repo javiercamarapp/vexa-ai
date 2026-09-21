@@ -2,13 +2,13 @@
 
 **Carpeta canónica:** `/Users/javiercamaraportepetit/vexa` · fuera de iCloud. Preparación rehecha desde fuentes originales con Astra vía Codex. **No es todavía el SaaS completo ni un deploy.** Estado/recibos: [PROGRESO.md](PROGRESO.md).
 
-## Checkpoint vigente —28/60 técnicamente listas; 22 aceptadas en el grafo
+## Checkpoint vigente —29/60 técnicamente listas; 23 aceptadas en el grafo
 
-F04-05 aceptada en `ead95f38`: embeddings versionados, agrupación incremental, búsqueda autorizada, revisión humana split/merge y recuperación durable con presupuesto. Revisión independiente, 27/27 en verify Node22 y aceptación Git limpio Node26; compilación y regresiones afectadas comprobadas. Sin inferencia pagada ni validación productiva externa.
+F04-06 aceptada en `15339afb`: causalidad operacional con evidencia independiente, historial inmutable, permisos vigentes y carril de riesgo humano. Revisión independiente, 19/19 en verify Node22 y aceptación Git limpio Node26; compilación y regresiones afectadas comprobadas. Sin inferencia pagada ni validación productiva externa.
 
-F03 conserva sus seis entregables técnicamente completos e integrados, con cuentas reales, datos autorizados y aprobaciones externas pendientes. El total suma 22 aceptadas por el runner y seis de F03; no altera los gates live. Registro: construccion/ESTADO-CONSTRUCCION.json. El trabajo posterior todavía no suma al contador.
+F03 conserva sus seis entregables técnicamente completos e integrados, con cuentas reales, datos autorizados y aprobaciones externas pendientes. El total suma 23 aceptadas por el runner y seis de F03; no altera los gates live. Registro: construccion/ESTADO-CONSTRUCCION.json. El trabajo posterior todavía no suma al contador.
 
-Ventana renovada por respuesta del usuario: hasta las 12:50 de Mérida del 21-sep, 244/260 invocaciones acumuladas, máximo 3 agentes y cero gasto externo nuevo. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+Ventana renovada por respuesta del usuario: hasta las 12:50 de Mérida del 21-sep, 247/260 invocaciones acumuladas, máximo 3 agentes y cero gasto externo nuevo. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## Estado de construcción — corte 20-sep
 **17/60 tareas aceptadas; F02 completa en6/6.** Importación, persistencia canónica, worker durable y UI de recuperación integrados. F02-05 (`9e738b9`) y F02-06 (comportamiento existente en `63b9725`, sin parche artificial) pasaron sus27grupos de verifyNode22 y acceptGitlimpioNode26. Compilación integrada, regresiones F02-01/02/03/04 y cuatro jobs CI locales verdes; huellas y limpieza verificadas. Siguiente fase: F03, HubSpot/Zendesk y migración. Actions permanece desactivado; no acredita producción.

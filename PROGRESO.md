@@ -1,13 +1,13 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
-## Checkpoint vigente —34/60 técnicamente listas; 24 aceptadas en el grafo
+## Checkpoint vigente —35/60 técnicamente listas; 24 aceptadas en el grafo
 
-F05-04 integra DTO monetario y formato compartido, monedas originales separadas, catálogo y tasas aprobadas/versionadas. API y navegador12/12; copia Git limpia Node22:22/22, regresión F05-03 13/13 y F05-02 10/10. Matriz SQL/Auth/Storage277/277, focales9/9 y controlador125/125; compilación y lint verdes. Alcance: construccion/F05-04-CIERRE-TECNICO.md. F05 queda4/6; snapshots y prioridad todavía no suman.
+F05-05 integra snapshots atómicos, historial inmutable y exportaciones JSON/CSV ligadas al mismo alcance. Revisión independiente15/15; copia Git limpia Node22:15/15 y regresión monetaria22/22. Exposición13/13, ledger10/10, matriz SQL/Auth/Storage286/286, focales12/12 y controlador125/125. Compilación, lint, tipos y CI web local verdes. Alcance: construccion/F05-05-CIERRE-TECNICO.md. F05 queda5/6; prioridad sigue en revisión.
 
-El total suma24 aceptadas por el runner y diez técnicamente listas con validación/dependencia externa pendiente: seis de F03 y F05-01/02/03/04. El grafo conserva dependencias live. Cuentas reales, datos autorizados y aprobaciones externas siguen pendientes; no acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
+El total suma24 aceptadas por el runner y once técnicamente listas con validación/dependencia externa pendiente: seis de F03 y F05-01 a05. El grafo conserva dependencias live. Cuentas reales, datos autorizados y aprobaciones externas siguen pendientes; no acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
 
-El usuario retiró el límite de tiempo el21-sep. Presupuesto conservado: 266/280 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate activo no garantiza supervivencia de la sesión. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+El usuario retiró el límite de tiempo el21-sep. Presupuesto conservado:269/280 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate activo no garantiza supervivencia de la sesión. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## F02 completa — F02-06 aceptado,20-sep
 

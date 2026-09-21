@@ -37,9 +37,10 @@
     "F05-01",
     "F05-02",
     "F05-03",
-    "F05-04"
+    "F05-04",
+    "F05-05"
   ],
-  "construction_total": 34,
+  "construction_total": 35,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -220,6 +221,24 @@
       ],
       "official_dependency_pending": [
         "F05-03",
+        "F03-06"
+      ]
+    },
+    {
+      "task_id": "F05-05",
+      "technical_ready": true,
+      "implemented": "Snapshots canónicos con preparación durable, publicación atómica, historial inmutable, versiones/evidencia fijadas, lectura autorizada y exportaciones JSON/CSV del mismo snapshot y alcance.",
+      "programming_pending": [],
+      "scope_note": "Ficha F05-05; prioridad F05-06 sigue como propuesta en revisión y no se contabiliza.",
+      "external_pending": [
+        {
+          "owner": "Titular de infraestructura y responsable de datos del cliente",
+          "pending": "Datos/fuentes reales autorizados, migraciones y despliegue remotos con aprobación legítima.",
+          "verification": "Publicar y recuperar un snapshot con fuentes reales, comprobar permisos y exportaciones en el entorno remoto autorizado."
+        }
+      ],
+      "official_dependency_pending": [
+        "F05-04",
         "F03-06"
       ]
     }

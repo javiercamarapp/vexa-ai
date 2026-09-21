@@ -1,0 +1,7 @@
+import type {EconomicScope} from './repository.mjs';
+import type {Money} from './money.mjs';
+export type SnapshotComponent={id:string;metric:string;label:string;currency:string;exponent:number;amountMinor:string|null;knownSubtotalMinor:string|null;money:Money|null;display:string;configurationStatus:string;modeled:boolean;conversion:Record<string,unknown>|null};
+export type SnapshotView={id:string;status:'draft'|'published';scopeHash:string;inputHash:string;contentHash:string;asOf:string;watermark:string|null;scope:EconomicScope;exposure:{membership:unknown[];customerExposure:{global:{count:number|null;knownCount:number;status:string};byProblem:Record<string,unknown>};problemRowsAreAdditive:false};versions:{schema:string;policy:string;models:unknown[]};components:SnapshotComponent[];publishedAt:string|null};
+export type SnapshotSelection={scope:EconomicScope;fxRateId?:string};
+export function createSnapshotRepository(options:{database:any;hooks?:{afterComponent?:(input:{index:number;snapshotId:string})=>Promise<void>;afterStage?:(view:SnapshotView)=>Promise<void>}}):{stage(input:SnapshotSelection):Promise<SnapshotView>;publish(input:{snapshotId:string;expectedContentHash:string}):Promise<SnapshotView>;latest(input:SnapshotSelection):Promise<{snapshot:SnapshotView|null;canPublish:boolean}>;get(input:{snapshotId:string;scopeHash?:string}):Promise<SnapshotView>};
+export function snapshotCsv(snapshot:SnapshotView):string;

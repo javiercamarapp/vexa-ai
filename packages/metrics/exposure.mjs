@@ -47,8 +47,8 @@ const gateMetric=(m,reason,identity=false)=>{m.amountMinor=null;m.status=identit
 const uniq=x=>[...new Set(x)].sort();
 /** Pure approved adapter arithmetic; repository supplies authorized canonical identities. */
 export function calculateExposure(input){const result=adaptLedger(input);return {canonicalAllOrders:result.metrics.allOrders,...result.metrics.exposure,membership:input.links.map(l=>({problemId:l.problemId,orderId:l.orderId})),warning:'Las filas por problema no son aditivas. El global usa la unión de órdenes.'};}
-async function build(s,scope,st){
- const asOf=iso((await one(s,'SELECT transaction_timestamp() AS now',[])).now);
+async function build(s,scope,st,fixedAsOf){
+ const asOf=fixedAsOf??iso((await one(s,'SELECT transaction_timestamp() AS now',[])).now);
  const inputHash=hash({scope,entries:st.entries.map(e=>[e.rowId,e.actorActive]),sources:st.sources,relations:st.relations.map(r=>[r.id,r.valid]),aliases:st.aliases.map(r=>[r.id,r.valid]),customers:st.customerBindings.map(r=>[r.id,r.valid]),problems:st.problems.map(p=>[p.problem_id,p.version,p.valid])});
  const cov=await one(s,'SELECT *,public.economic_contributor_active(tenant_id,actor_id) AS actor_active FROM public.economic_relation_coverage WHERE tenant_id=$1 AND scope_key=$2 ORDER BY version DESC LIMIT 1',[s.tenantId,hash(scope)]);
  const current=!!(cov&&cov.actor_active&&cov.input_hash===inputHash&&canonical(cov.scope)===canonical(scope));
@@ -82,7 +82,7 @@ async function build(s,scope,st){
  metrics.eventUnion={global:eventFor(null),byProblem:Object.fromEntries(problemIds.map(p=>[p,eventFor(p)])),problemRowsAreAdditive:false};
  return {inputHash,scope,canonicalAllOrders,coverage,relations:st.relations,aliases:st.aliases,customerBindings:st.customerBindings,problemOptions:st.problems.filter(p=>p.valid).map(p=>({id:p.problem_id,label:p.provenance.snapshot.label,version:p.version})),metrics};
 }
-export async function readExposure(s,{scope}){scope=normalizeScope(scope);return build(s,scope,await state(s));}
+export async function readExposure(s,{scope,asOf}){scope=normalizeScope(scope);return build(s,scope,await state(s),asOf);}
 const writeLock=async s=>{await s.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[s.tenantId+':economic-ledger']);await s.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[s.tenantId+':economic-relations']);};
 export function createExposureRepository({database}){
  const transact=async work=>{let own;try{return await database.transaction('configure',async s=>{await writeLock(s);try{return await work(s);}catch(e){if(e instanceof EconomicError)own=e;throw e;}});}catch(e){if(own)throw own;throw e;}};

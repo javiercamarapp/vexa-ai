@@ -1,0 +1,15 @@
+# Snapshots económicos publicados
+
+El registro actual y el snapshot publicado son vistas distintas. La UI de economía prepara un borrador con las fuentes autorizadas, muestra su identificador y permite al propietario publicarlo. Lectores autorizados consultan la última publicación del alcance. JSON y CSV apuntan al mismo identificador y hash mostrados, incluso si otra persona publica después.
+
+`createSnapshotRepository({database})` expone `stage({scope,fxRateId?})`, `publish({snapshotId,expectedContentHash})`, `latest({scope,fxRateId?})` y `get({snapshotId,scopeHash?})`. El servidor deriva organización, usuario y rol de la sesión vigente. Preparar y publicar requieren propietario; no se aceptan cifras del navegador. Las rutas POST comprueban origen. El catálogo y las tasas siguen siendo versiones aprobadas de F05-04; la conversión es explícita y conserva el original.
+
+`metric_snapshots` y `components` son la persistencia canónica. Preparar confirma un borrador completo en una transacción; publicar valida cantidad y digest de todos los componentes y actualiza la cabeza del alcance atómicamente. Un cierre del proceso entre componentes revierte esa transacción. Un cierre después de preparar deja el borrador durable y la publicación anterior intacta. Reintentar la misma entrada/versiones recupera el mismo identificador, corte y hash; no reescribe publicaciones. Los hooks opcionales de módulo `afterComponent` y `afterStage` permiten comprobar interrupciones reales fuera de HTTP; no son parámetros de usuario.
+
+La identidad de entrada usa referencias y versiones persistidas, estado de autorización y evidencia; excluye hora de lectura e identidad del lector. `asOf` queda fijado por el reloj transaccional del servidor en la primera preparación de la entrada y se conserva. El manifiesto conserva marcas de fuentes y modelos/políticas de extracciones realmente referenciadas. Los desconocidos y subtotales parciales son componentes válidos: integridad completa no significa cobertura financiera completa.
+
+Nuevos registros generan una publicación nueva. La consulta histórica no exige que el ledger siga igual, pero sí acceso actual a sus fuentes, evidencia conservada y contribuyentes autorizados. Revocar una fuente o contribuyente bloquea esa consulta. Retirar datos no convierte su valor en cero ni permite exportarlos desde un historial.
+
+CSV usa cadenas de unidades menores exactas, comillas RFC4180 y neutralización de prefijos de fórmula. Un campo monetario vacío significa desconocido y lleva su estado. JSON preserva los DTO y valores originales. No hay suma conjunta de exposición, reembolso, costo y escenario. No se implementa aquí el proveedor general de workspace de F06, envíos, automatización externa ni publicación de briefs.
+
+Las nuevas snapshots económicas no son legibles mediante SELECT authenticated directo. La API usa el backend con rol y tenant derivados, oculta borradores a quienes no sean propietarios y revalida evidencia redacted retenida. Las snapshots anteriores sin economic_schema_version conservan su política existente.

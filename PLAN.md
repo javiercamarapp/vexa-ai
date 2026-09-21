@@ -2,13 +2,13 @@
 
 Actualizado: 2026-09-20. Este plan reemplaza los bloques históricos de investigación/preparación conservados en Git. El usuario pidió construir y confirmó **UN MES, no una semana**. Referencia de calendario: 19-oct-2026 si se cuenta desde este encargo; objetivo, no entrega garantizada ni estado alcanzado.
 
-## Checkpoint vigente —32/60 técnicamente listas; 24 aceptadas en el grafo
+## Checkpoint vigente —33/60 técnicamente listas; 24 aceptadas en el grafo
 
-F05-02 integra ledger económico persistente, API y formularios con autorización actual, historial y componentes financieros separados. Revisión independiente y copia Git limpia: 10/10 en Node26 y Node22, matriz SQL/Auth/Storage 260/260 y controlador 125/125; compilación y lint verdes. Alcance/evidencia: construccion/F05-02-CIERRE-TECNICO.md. F05 queda en 2/6; exposición global, formatos/FX, snapshots y prioridad todavía no suman.
+F05-03 integra exposición por unión global de órdenes, clientes y eventos, equivalencias documentadas y cobertura persistente. Cuatro formularios reales con evidencia, autorización actual y CAS. Revisión independiente Node26: 13/13 funcionales y 1/1 aritmética; copia Git limpia Node22: 14/14 y regresión F05-02 10/10. Matriz SQL/Auth/Storage271/271, focalizados15/15 y controlador125/125; compilación y lint verdes. Alcance: construccion/F05-03-CIERRE-TECNICO.md. F05 queda en3/6; formatos/FX, snapshots y prioridad todavía no suman.
 
-El total suma 24 aceptadas por el runner y ocho técnicamente listas con validación/dependencia externa pendiente: seis de F03 y F05-01/02. El grafo conserva las dependencias live. Cuentas reales, datos autorizados y aprobaciones externas siguen pendientes; no acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
+El total suma24 aceptadas por el runner y nueve técnicamente listas con validación/dependencia externa pendiente: seis de F03 y F05-01/02/03. El grafo conserva dependencias live. Cuentas reales, datos autorizados y aprobaciones externas siguen pendientes; no acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
 
-Ventana autorizada: hasta las 12:50 de Mérida del 21-sep, 254/260 invocaciones acumuladas, máximo 3 agentes y cero gasto externo nuevo. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+El usuario retiró el límite de tiempo el21-sep. Presupuesto conservado: 263/280 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate activo no garantiza supervivencia de la sesión. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## Historial — F02 completa,17/60
 

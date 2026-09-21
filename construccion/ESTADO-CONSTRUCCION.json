@@ -35,9 +35,10 @@
     "F03-05",
     "F03-06",
     "F05-01",
-    "F05-02"
+    "F05-02",
+    "F05-03"
   ],
-  "construction_total": 32,
+  "construction_total": 33,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -182,6 +183,24 @@
       ],
       "official_dependency_pending": [
         "F05-01",
+        "F03-06"
+      ]
+    },
+    {
+      "task_id": "F05-03",
+      "technical_ready": true,
+      "implemented": "Relaciones operacionales persistentes, equivalencias de órdenes, identidad declarada de clientes, cobertura por alcance y unión global de órdenes/clientes/eventos. API y cuatro formularios con CAS, evidencia y autorización actual.",
+      "programming_pending": [],
+      "scope_note": "Ficha F05-03; formatos/FX, snapshots publicados y prioridad son F05-04/05/06, sin completar ni contabilizar.",
+      "external_pending": [
+        {
+          "owner": "Responsable operacional del cliente y titular de infraestructura",
+          "pending": "Evidencia real autorizada de relaciones/equivalencias/clientes, revisión de cobertura y aprobación legítima para migraciones/despliegue remotos.",
+          "verification": "Conciliar evidencia real y ejecutar recorrido remoto autorizado; pruebas sintéticas locales no acreditan producción."
+        }
+      ],
+      "official_dependency_pending": [
+        "F05-02",
         "F03-06"
       ]
     }

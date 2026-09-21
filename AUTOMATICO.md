@@ -2,13 +2,13 @@
 
 Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Programa: [PROGRAMA](PROGRAMA.md). Repositorio canónico `~/vexa`; NO ejecutar en la copia de Escritorio. Las fuentes privadas permanecen locales.
 
-## Checkpoint vigente —17/60; F03 en construcción
+## Checkpoint vigente —18/60 aceptadas; cierre de F04
 
-F02 sigue6/6 aceptada y publicada. F03-01..05 tienen propuestas locales revisadas; salud05 pasó15/15 en Node22/26 y29/29 de sincronización tras corregir una recuperación de resumen. Comparación06 pasó17/17 en Node22/26 tras revisión y corrección de nombres de canal; la copia integrada05+06 pasó17/17 de comparación y15/15 de salud. Estos resultados son pruebas locales, no incrementos del contador aceptado.
+F02 conserva sus 6/6. F04-01 está aceptada en `d473c956`: gateway con catálogo y políticas, revisión independiente, 24/24 en verify Node22 y aceptación desde Git limpio Node26, seis mutantes y los cuatro jobs CI locales en verde. No hubo inferencia pagada ni validación productiva externa.
 
-El cierre oficial sigue en F03-01: faltan cuentas/permisos legítimos de HubSpot/Zendesk y reconciliación independiente sobre20conversaciones autorizadas. El usuario autorizó expresamente continuar propuestas locales de F04 mientras tanto. Gateway01 quedó revisado:24/24 en Node22/26 y seis mutantes. F04-02 tiene presupuesto SQL en pruebas locales; sigue sin aceptación. Sin inferencia pagada ni resultados de cliente inventados.
+F04-02, F04-03 y F04-04 tienen propuestas revisadas con correcciones comprobadas de idempotencia, reparto de tenants por consumidor y revocación de datos en UI. Se están integrando y cerrando por el grafo; esas propuestas todavía no suman al contador. CRM conserva pendientes de cuentas reales y reconciliación autorizada. La definición de «lista técnicamente» está en construccion/PENDIENTES-DEL-OPERADOR.md.
 
-Ventana renovada el 21-sep por el usuario: 240 invocaciones acumuladas, hasta las 10:43 del 21-sep (Mérida), máximo 3 agentes y cero gasto externo nuevo. Se conservan las 220 invocaciones previas; revisiones 221–223 asignadas. El trabajo de controles revisados puede conservarse en GitHub bajo la autorización explícita de push/merge, con publisher, Actions desactivadas y SHA comprobado; no presenta el producto propuesto como aceptado. No hay un supervisor desatendido acreditado. Los apartados siguientes son históricos.
+Ventana renovada el 21-sep: 240 invocaciones acumuladas, hasta las 10:43 de Mérida, máximo 3 agentes y cero gasto externo nuevo. Consumo registrado:227; historial conservado. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto comprobado. Los apartados siguientes son históricos.
 
 ## Historial — F02 completa,17/60
 

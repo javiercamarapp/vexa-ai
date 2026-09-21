@@ -2,11 +2,11 @@
 
 Actualizado: 2026-09-20. Este plan reemplaza los bloques históricos de investigación/preparación conservados en Git. El usuario pidió construir y confirmó **UN MES, no una semana**. Referencia de calendario: 19-oct-2026 si se cuenta desde este encargo; objetivo, no entrega garantizada ni estado alcanzado.
 
-## Checkpoint vigente —29/60 técnicamente listas; 23 aceptadas en el grafo
+## Checkpoint vigente —30/60 técnicamente listas; 24 aceptadas en el grafo
 
-F04-06 aceptada en `15339afb`: causalidad operacional con evidencia independiente, historial inmutable, permisos vigentes y carril de riesgo humano. Revisión independiente, 19/19 en verify Node22 y aceptación Git limpio Node26; compilación y regresiones afectadas comprobadas. Sin inferencia pagada ni validación productiva externa.
+F04-07 aceptada en `2f59ab99`: evaluador reproducible con holdout protegido, métricas explícitas y calidad no medida cuando falta evaluación humana. Revisión independiente, 17/17 en verify Node22 y aceptación Git limpio Node26; compilación y regresiones afectadas comprobadas. Sin inferencia pagada ni validación productiva externa.
 
-F03 conserva sus seis entregables técnicamente completos e integrados, con cuentas reales, datos autorizados y aprobaciones externas pendientes. El total suma 23 aceptadas por el runner y seis de F03; no altera los gates live. Registro: construccion/ESTADO-CONSTRUCCION.json. El trabajo posterior todavía no suma al contador.
+F03 conserva sus seis entregables técnicamente completos e integrados, con cuentas reales, datos autorizados y aprobaciones externas pendientes. El total suma 24 aceptadas por el runner y seis de F03; no altera los gates live. Registro: construccion/ESTADO-CONSTRUCCION.json. El trabajo posterior todavía no suma al contador.
 
 Ventana renovada por respuesta del usuario: hasta las 12:50 de Mérida del 21-sep, 247/260 invocaciones acumuladas, máximo 3 agentes y cero gasto externo nuevo. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 

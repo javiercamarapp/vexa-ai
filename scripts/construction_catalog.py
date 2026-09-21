@@ -130,7 +130,7 @@ add('F05-01','packages/economics/index.mjs|packages/economics/adapter.mjs|packag
  'Reusar kernel E00 y leer FIN01..12; no reescribirlo para acomodar tipos de UI.|Diseñar adaptador ledger->argumentos existentes con status/period/currency/source declarados.|Correr gate E00 como regresión requerida también en esta tarea.',
  'Los12casos existentes siguen pasando.|String minor units por encima de2^53 no pierde precisión.|Importes ausentes y conflicts siguen explícitos.',
  'No sustituir una función financiera verde por LLM. Corregir adaptador antes de tocar kernel.')
-add('F05-02','packages/metrics/src/components.ts|supabase/migrations/0012_economic_ledger.sql',
+add('F05-02','packages/metrics/components.mjs|packages/metrics/repository.mjs|packages/metrics/repository.d.mts|supabase/migrations/0018_economic_runtime.sql|apps/web/src/app/api/economics/route.ts|apps/web/src/components/economic-panel.tsx|apps/web/src/app/(workspace)/overview/page.tsx|packages/metrics/OPERATIONS.md',
  'Ledger inmutable con evento/reversal/source_id/status/effective_at; órdenes no son automáticamente pérdida.|Bundles separados exposure/refunds/replacement/support_model/future_scenario.|Rates y supuestos requieren vigencia/unidad/evidencia; refunds sólo settled y reversals enlazados.|No usar relato Me devolvieron20como fuente de refund observado.',
  'SYN:refund1500,replacement1200,support_model500 separados; no ahorro3200.|R1repetido dedup y reversal-500 sólo del mismo evento/moneda.|Reversal sin original o exceso va a conflicto, no importe neto arbitrario.',
  'Evento incorrecto se compensa/versiona; no borrar ledger para cuadrar UI.')

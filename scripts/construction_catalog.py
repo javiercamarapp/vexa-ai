@@ -94,7 +94,7 @@ add('F03-05','apps/web/src/components/connection-health.tsx|apps/web/src/app/(wo
  'Mostrar last_attempt,last_success,watermark,cobertura,lag y permisos, separados por conexión.|401/403 activa reconexión; timeout muestra stale sin perder último éxito.|Redactar tokens/headers/querys en logs; rotación sin exponer valores.|No conectar cuentas reales desde botones de demo.',
  'Revocación se ve en UI y bloquea siguiente sync.|Un intento fallido no actualiza last_success.|Health A nunca enumera conexiones B.',
  'Ofrecer pasos de reconexión con scopes mínimos y owner; no autogenerar nuevos tokens ni reaprovechar credenciales de otro tenant.')
-add('F03-06','packages/connectors/src/comparability.ts|apps/web/src/components/migration-comparison.tsx',
+add('F03-06','packages/connectors/comparability.mjs|apps/web/src/components/migration-comparison.tsx|apps/web/src/app/(workspace)/migrations/page.tsx|apps/web/src/app/api/migrations/route.ts|apps/web/src/app/api/migrations/compare/route.ts',
  'Congelar baseline con scope/pipeline/mapping/taxonomy y watermark.|Reprocesar fixture migrado y comparar IDs únicos, mensajes, importes y coverage por canal.|Separar diferencias de método de diferencias de negocio; no sumarlas a ahorro.|Panel reporta comparable o no_comparable con motivos.',
  'Alias simple no cambia exposición global30000.|Canal perdido muestra caída de cobertura y no una mejora de tickets.|Cambio de taxonomy/version exige explicación antes de delta comparable.',
  'Retener ambos snapshots; corregir mapeo y crear nueva comparación, no modificar el baseline.')

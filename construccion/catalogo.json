@@ -923,8 +923,11 @@
     "auto_accept": false,
     "requires_approval": false,
     "deliverables": [
-      "packages/connectors/src/comparability.ts",
-      "apps/web/src/components/migration-comparison.tsx"
+      "packages/connectors/comparability.mjs",
+      "apps/web/src/components/migration-comparison.tsx",
+      "apps/web/src/app/(workspace)/migrations/page.tsx",
+      "apps/web/src/app/api/migrations/route.ts",
+      "apps/web/src/app/api/migrations/compare/route.ts"
     ],
     "steps": [
       "Congelar baseline con scope/pipeline/mapping/taxonomy y watermark.",

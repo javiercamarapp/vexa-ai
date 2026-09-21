@@ -2499,7 +2499,7 @@ Alternativa offline una vez listo gate/entorno: <code>python3 orchestration/runn
 <h2>Cierre obligatorio</h2>
 <p><code>task_id, baseline_sha, candidate_sha, fixture_hash, command, exit_code, expected, observed, artifacts, reviewer, pending</code>. Las pruebas/grafo no las edita el candidato. Dos fallos agotan intento; guardar reproducción y pasar a recuperación supervisada, no editar status=accepted. Build/instalación de dependencias se hacen en copia temporal para no mutar el candidato durante el gate.</p></section><section id="F03-06"><h1>F03-06 — Comparar dataset antes/después con mismos filtros y pipeline versionado; visibilizar cambio de cobertura de canales.</h1>
 <p><strong>Modalidad:</strong> worker. <strong>Dependencias:</strong> F03-05.
-<strong>Gate:</strong> MISSING — escribir/revisar primero en control-plane.</p>
+<strong>Gate:</strong> PRESENT (no significa PASS).</p>
 <h2>Entrada (leer, no inventar contexto)</h2>
 <ul>
 <li><code>AGENTS.md</code></li>
@@ -2509,8 +2509,11 @@ Alternativa offline una vez listo gate/entorno: <code>python3 orchestration/runn
 </ul>
 <h2>Salida prevista — no afirma que ya existe</h2>
 <ul>
-<li><code>packages/connectors/src/comparability.ts</code></li>
+<li><code>packages/connectors/comparability.mjs</code></li>
 <li><code>apps/web/src/components/migration-comparison.tsx</code></li>
+<li><code>apps/web/src/app/(workspace)/migrations/page.tsx</code></li>
+<li><code>apps/web/src/app/api/migrations/route.ts</code></li>
+<li><code>apps/web/src/app/api/migrations/compare/route.ts</code></li>
 </ul>
 <h2>Pasos específicos</h2>
 <ol>

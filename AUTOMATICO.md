@@ -4,7 +4,7 @@ Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Pro
 
 ## Checkpoint vigente —17/60; F03 en construcción
 
-F02 sigue6/6 aceptada y publicada. F03-01..05 tienen propuestas locales revisadas; salud05 pasó15/15 en Node22/26 y29/29 de sincronización tras corregir una recuperación de resumen. Comparación06 pasó17/17 en ambas versiones antes de revisión; un caso de nombres de canal ya tiene corrección aprobada y regresiones finales en cierre. Estos resultados son pruebas locales, no incrementos del contador aceptado.
+F02 sigue6/6 aceptada y publicada. F03-01..05 tienen propuestas locales revisadas; salud05 pasó15/15 en Node22/26 y29/29 de sincronización tras corregir una recuperación de resumen. Comparación06 pasó17/17 en Node22/26 tras revisión y corrección de nombres de canal; la copia integrada05+06 pasó17/17 de comparación y15/15 de salud. Estos resultados son pruebas locales, no incrementos del contador aceptado.
 
 El cierre oficial sigue en F03-01: faltan cuentas/permisos legítimos de HubSpot/Zendesk y reconciliación independiente sobre20conversaciones autorizadas. El usuario autorizó expresamente continuar propuestas locales de F04 mientras tanto. Gateway01 reutiliza el banco revisado y está en examen local; sin inferencia pagada ni resultados de cliente inventados.
 

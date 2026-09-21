@@ -879,7 +879,11 @@
     "requires_approval": false,
     "deliverables": [
       "apps/web/src/components/connection-health.tsx",
-      "packages/connectors/src/health.ts"
+      "apps/web/src/app/(workspace)/connections/page.tsx",
+      "apps/web/src/app/api/connections/route.ts",
+      "apps/web/src/app/api/connections/[id]/recheck/route.ts",
+      "packages/connectors/health.mjs",
+      "supabase/migrations/0010_connection_health.sql"
     ],
     "steps": [
       "Mostrar last_attempt,last_success,watermark,cobertura,lag y permisos, separados por conexión.",

@@ -3,11 +3,11 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 ## Checkpoint vigente —17/60; F03 en construcción
 
-F02 está6/6 aceptada y publicada en main `9874b81`. El examen F03-01 y su entorno privado fueron revisados independientemente; el producto HubSpot corregido permanece en propuesta, pendiente de ensayo real autorizado sobre20conversaciones y reconciliación UI/export. Sin acceso legítimo el gate devuelve S01_LIVE_BLOCKED; no hay18/60 ni producción remota acreditada.
+F02 sigue6/6 aceptada y publicada. F03-01..05 tienen propuestas locales revisadas; salud05 pasó15/15 en Node22/26 y29/29 de sincronización tras corregir una recuperación de resumen. Comparación06 pasó17/17 en ambas versiones antes de revisión; un caso de nombres de canal ya tiene corrección aprobada y regresiones finales en cierre. Estos resultados son pruebas locales, no incrementos del contador aceptado.
 
-HubSpot, Zendesk, sincronización duradera y alias con aprobación humana tienen propuestas locales revisadas. F03-04 pasó 13/13 pruebas en Node 22 y 26, tres mutantes y la matriz SQL/Auth/Storage de 209 casos; la revisión corrigió un ciclo concurrente posible bajo REPEATABLE READ y SQL exige ahora READ COMMITTED para aprobar o deshacer. Se preservan fuentes, revisiones y snapshots. El siguiente trabajo independiente de esta fase es F03-05, panel real de salud y reconexión. S01/S02 reales siguen pendientes de acceso legítimo; el cierre oficial continúa serial desde F03-01. La falta de datos del cliente permite construir y probar código independiente, sin saltarse gates ni declarar aceptación por fixtures.
+El cierre oficial sigue en F03-01: faltan cuentas/permisos legítimos de HubSpot/Zendesk y reconciliación independiente sobre20conversaciones autorizadas. El usuario autorizó expresamente continuar propuestas locales de F04 mientras tanto. Gateway01 reutiliza el banco revisado y está en examen local; sin inferencia pagada ni resultados de cliente inventados.
 
-Límites conservados:220llamadas acumuladas, deadline00:00 del21-sep UTC−06, máximo3agentes y cero gasto nuevo. Recibos privados atómicos mandan sobre los contadores históricos de abajo. Publicar cada cierre aceptado mediante publisher autorizado y verificar SHA remoto; sin Actions ni commits artificiales.
+Límites conservados:220llamadas acumuladas, deadline00:00 del21-sep UTC−06, máximo3agentes y cero gasto nuevo. El trabajo de controles revisados puede conservarse en GitHub bajo la autorización explícita de push/merge, con publisher, Actions desactivadas y SHA comprobado; no presenta el producto propuesto como aceptado. No hay un supervisor desatendido acreditado. Los apartados siguientes son históricos.
 
 ## F02 completa — F02-06 aceptado,20-sep
 

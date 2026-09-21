@@ -24,6 +24,7 @@ export function candidateInputs(candidate) {
   migrations.workerDelegationsRequired=files.includes('0007_job_leases.sql');
   migrations.syncRequired=files.includes('0008_sync_cursors.sql');
   migrations.aliasesRequired=files.includes('0009_aliases.sql');
+  migrations.healthRequired=files.includes('0010_connection_health.sql');
   return migrations;
 }
 export async function launch({services=false}={}) {

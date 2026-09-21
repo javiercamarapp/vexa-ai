@@ -90,7 +90,7 @@ add('F03-04','packages/connectors/src/aliases.ts|supabase/migrations/0009_aliase
  'Alias une tuplas source_account/entity/external_id del mismo tenant con evidence_ref y aprobador.|Matching propone, humano confirma; email/texto similares no autorizan merge.|Conservar canonical_id, fuentes, timestamps y autoría; deshacer alias mediante evento compensatorio.|SYN: HubSpot42 y Zendesk142 apuntan T1, mientras Zendesk43/44 permanecen otros casos.',
  'Alias aprobado deja4conversaciones A, no5.|Alias A→B o ambiguo es rechazo.|Deshacer alias no borra fuente ni reescribe snapshots históricos.',
  'Marcar no comparable hasta resolución; no recuento silencioso ni dedup por texto para mejorar dashboard.')
-add('F03-05','apps/web/src/components/connection-health.tsx|packages/connectors/src/health.ts',
+add('F03-05','apps/web/src/components/connection-health.tsx|apps/web/src/app/(workspace)/connections/page.tsx|apps/web/src/app/api/connections/route.ts|apps/web/src/app/api/connections/[id]/recheck/route.ts|packages/connectors/health.mjs|supabase/migrations/0010_connection_health.sql',
  'Mostrar last_attempt,last_success,watermark,cobertura,lag y permisos, separados por conexión.|401/403 activa reconexión; timeout muestra stale sin perder último éxito.|Redactar tokens/headers/querys en logs; rotación sin exponer valores.|No conectar cuentas reales desde botones de demo.',
  'Revocación se ve en UI y bloquea siguiente sync.|Un intento fallido no actualiza last_success.|Health A nunca enumera conexiones B.',
  'Ofrecer pasos de reconexión con scopes mínimos y owner; no autogenerar nuevos tokens ni reaprovechar credenciales de otro tenant.')

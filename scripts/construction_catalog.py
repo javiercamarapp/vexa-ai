@@ -98,7 +98,7 @@ add('F03-06','packages/connectors/comparability.mjs|apps/web/src/components/migr
  'Congelar baseline con scope/pipeline/mapping/taxonomy y watermark.|Reprocesar fixture migrado y comparar IDs únicos, mensajes, importes y coverage por canal.|Separar diferencias de método de diferencias de negocio; no sumarlas a ahorro.|Panel reporta comparable o no_comparable con motivos.',
  'Alias simple no cambia exposición global30000.|Canal perdido muestra caída de cobertura y no una mejora de tickets.|Cambio de taxonomy/version exige explicación antes de delta comparable.',
  'Retener ambos snapshots; corregir mapeo y crear nueva comparación, no modificar el baseline.')
-add('F04-01','packages/gateway/src/policy.ts|packages/gateway/src/catalog.ts',
+add('F04-01','packages/gateway/index.mjs|packages/gateway/catalog.mjs|packages/gateway/catalog.d.mts',
  'Policy explícita por tenant/job: allowed_models/providers, collection, retention, region, max_cost; catálogo no prueba elegibilidad del endpoint.|Resolver intersección y bloquear si vacía; fallback sólo dentro de la misma política.|Runtime stub por defecto en desarrollo; no API key en frontend ni builder.|Cache de catálogo versionada y caducidad; falla de catálogo no convierte política a allow-all.',
  'Sin endpoint elegible no hay fetch.|Fallback de residencia incompatible se rechaza.|data_collection=deny no se presenta como ZDR; ambos campos distintos.',
  'Pausar job en policy_blocked, conservar input_ref; sólo owner cambia política con nueva versión.')

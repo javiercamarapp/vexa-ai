@@ -969,8 +969,9 @@
     "auto_accept": false,
     "requires_approval": false,
     "deliverables": [
-      "packages/gateway/src/policy.ts",
-      "packages/gateway/src/catalog.ts"
+      "packages/gateway/index.mjs",
+      "packages/gateway/catalog.mjs",
+      "packages/gateway/catalog.d.mts"
     ],
     "steps": [
       "Policy explícita por tenant/job: allowed_models/providers, collection, retention, region, max_cost; catálogo no prueba elegibilidad del endpoint.",

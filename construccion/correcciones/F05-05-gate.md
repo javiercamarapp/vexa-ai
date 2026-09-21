@@ -1,0 +1,23 @@
+# Correcciones del examen F05-05
+
+La base de producto es 2869989dbcde90a1ffd9da993d6bc9280e41c993 más los doce archivos del manifiesto264 congelado. El commit8a448bb contiene controles; no se usa como base de producto. Los proveedores y agrupaciones de fixtures están rotulados sintéticos; Auth, PostgreSQL, Storage, extracción autorizada, API y navegador son reales.
+
+Un bundle completo significa integridad de todos sus componentes. Importe desconocido conserva null y subtotal/cobertura conocidos; no requiere cobertura monetaria del100%. Export JSON y CSV conservan snapshotId/scopeHash y cadenas minor units, incluidas cifras mayores que2^53. CSV protege texto editable contra fórmulas sin alterar signos de columnas monetarias.
+
+Los crashes usan procesos hijos reales y SIGKILL sobre hooks inyectados exclusivamente en el constructor del repositorio: dentro de la transacción del primer componente y después del commit del draft. No hay endpoint, header ni flag público de fallo. Deben preservarse el último publicado y el retry por mismo input.
+
+La captura de modelos se prueba con extracción real y embeddings de la versión actual del problema contribuyente, más una pertenencia histórica ajena a esa versión. Revocar la histórica no debe invalidar el bundle; revocar la captura sí deniega. Las observaciones de revisión sobre filtro valid inexistente, watermark futuro, pertenencias históricas y desmontaje del hijo tras rechazo del padre se corrigieron antes de esta ejecución funcional; no se declaran falsos rojos reproducidos.
+
+RLS puede ocultar una fila draft, una fuente retirada o un creador revocado antes del chequeo del repositorio. Los oráculos correspondientes admiten403/404 sin payload de datos;503 no es denegación válida. La revocación específica de evidencia conserva el403 del repositorio. El browser mantiene timezone America/Merida para verificar que el alcance exportado sigue UTC explícito.
+
+La ausencia de implementación fue reproducida como SNAPSHOT_IMPLEMENTATION_MISSING. El probe CSV de signo se ejecutó después de la corrección y fue verde; no se presenta como rojo. La calibración causal de aislamiento de scope altera una cláusula SQL válida únicamente en copia temporal del módulo, exige el fallo SNAPSHOT_SCOPE_PINNED_HEAD y restaura bytes antes del tercer paso.
+
+La lectura final del baseline04 confirma que la API ya rechaza watermark futuro. El gate exige400 y prueba una ventana futura con watermark actual autorizado; no introduce una fuente inválida ni presenta esa hipótesis como defecto reproducido. El primer rojo runtime real fue lectura publicada viewer409: digest NULL con24 componentes visibles por el uso de vexa_backend_action(read) que restringe aowner. Se conserva diagnóstico y exige lectura200 y latesthead para viewer/analyst/operator tras corrección localSQL.
+
+El siguiente rojo fue fixture: una orden observada fechada en diciembre incumplía el CHECK vigente que prohíbe hechos futuros. Se conserva el409 y se reemplaza sólo la fecha fixture por una orden observada válida dentro de una ventana que todavía no termina. El oráculo sigue exigiendo totalnull/asOfactual y no relaja SQL.
+
+El recorrido de descarga retenida bloqueó navegación principal del anchor original: Playwright registró locator.fill esperando finalizar la URL de export. No fue discrepancia financiera. Se conserva el stack y se añade liberación de holds en finally y temporizador acotado; el producto declara download en ambos enlaces para el recorrido concurrente. La calibración sigue usando descarga real de Chromium y bytes del servidor.
+
+La matriz266 independiente aporta doce focalizadas finales: borradores/metadataNULL/downgrade, headcompuesto/selector, digestUTC/roles, CAS y rollback. Sus controles se importan por hashes del manifiesto266 y no se duplican sus corridas desde265.
+
+Con download explícito, Chromium descarga fuera del page.route; esperar esa ruta dejó una barrera de control sin señal aunque el archivo real ya existía. Se conservan DOM vivo y archivo real, y la limpieza manual identifica sólo procesos/IDs propios. El intento de throttle CDP por target tampoco retardó ese download (eventos reales completados antes del filtro); el oráculo lo rechazó sin afirmar éxito. El control definitivo usa proxy HTTP local passthrough: conserva método, Host, Origin, cookies, estado, headers y bytes del backend real. Para la URL exacta se envían headers y un byte y se retiene el resto hasta que otro alcance aparece; Browser.downloadProgress debe seguir no completado. Hold acotado a10s, releasefinally, cierre sockets/servidor y probe aislado de passthrough/limpieza previo. No hay lógica económica simulada ni cambios a producto.

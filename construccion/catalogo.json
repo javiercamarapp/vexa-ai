@@ -1446,8 +1446,11 @@
     "auto_accept": false,
     "requires_approval": false,
     "deliverables": [
-      "packages/metrics/src/snapshots.ts",
-      "supabase/migrations/0013_snapshots.sql"
+      "packages/metrics/snapshots.mjs",
+      "supabase/migrations/0021_economic_snapshots.sql",
+      "apps/web/src/app/api/economic-snapshots/route.ts",
+      "apps/web/src/app/api/economic-snapshots/[id]/export/route.ts",
+      "apps/web/src/components/economic-snapshot-panel.tsx"
     ],
     "steps": [
       "Construir staging snapshot con tenant,scope_hash,watermark,input_hash,policy/model/schema versiones.",

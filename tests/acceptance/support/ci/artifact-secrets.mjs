@@ -78,7 +78,9 @@ export async function inspectPublished(cwd,origin,fixture,{allowUnconfiguredImpo
    const extraction=url.pathname==='/api/extraction'&&envelope?.contract_version==='f04-extraction-v1'&&envelope?.error?.code==='configuration_required';
    const problems=url.pathname==='/api/problems'&&envelope?.contract_version==='f04-problems-v1'&&envelope?.error?.code==='configuration_required';
    const aliases=url.pathname==='/api/migrations/aliases'&&envelope?.contract_version==='f03-alias-v1'&&envelope?.error?.code==='configuration_required';
-   const expected=allowUnconfiguredImports===true&&!required&&response.status===503&&(imports||crm||extraction||aliases||problems)&&!url.search
+   const economics=url.pathname==='/api/economics'&&envelope?.contract_version==='f05-economics-v1'&&envelope?.error?.code==='configuration_required';
+   const snapshots=url.pathname==='/api/economic-snapshots'&&envelope?.contract_version==='f05-snapshots-v1'&&envelope?.error?.code==='configuration_required';
+   const expected=allowUnconfiguredImports===true&&!required&&response.status===503&&(imports||crm||extraction||aliases||problems||snapshots||economics)&&!url.search
     &&/^application\/json(?:;|$)/i.test(response.headers.get('content-type')??'')
     &&/(?:^|,)\s*private\s*(?:,|$)/i.test(cache)&&/(?:^|,)\s*no-store\s*(?:,|$)/i.test(cache)
     &&envelope.error.retryable===true&&typeof envelope.error.message==='string'

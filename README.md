@@ -6,7 +6,7 @@
 
 F02 sigue6/6 aceptada y publicada. F03-01..05 tienen propuestas locales revisadas; salud05 pasó15/15 en Node22/26 y29/29 de sincronización tras corregir una recuperación de resumen. Comparación06 pasó17/17 en Node22/26 tras revisión y corrección de nombres de canal; la copia integrada05+06 pasó17/17 de comparación y15/15 de salud. Estos resultados son pruebas locales, no incrementos del contador aceptado.
 
-El cierre oficial sigue en F03-01: faltan cuentas/permisos legítimos de HubSpot/Zendesk y reconciliación independiente sobre20conversaciones autorizadas. El usuario autorizó expresamente continuar propuestas locales de F04 mientras tanto. Gateway01 reutiliza el banco revisado y está en examen local; sin inferencia pagada ni resultados de cliente inventados.
+El cierre oficial sigue en F03-01: faltan cuentas/permisos legítimos de HubSpot/Zendesk y reconciliación independiente sobre20conversaciones autorizadas. El usuario autorizó expresamente continuar propuestas locales de F04 mientras tanto. Gateway01 quedó revisado:24/24 en Node22/26 y seis mutantes. F04-02 tiene presupuesto SQL en pruebas locales; sigue sin aceptación. Sin inferencia pagada ni resultados de cliente inventados.
 
 Límites conservados:220llamadas acumuladas, deadline00:00 del21-sep UTC−06, máximo3agentes y cero gasto nuevo. El trabajo de controles revisados puede conservarse en GitHub bajo la autorización explícita de push/merge, con publisher, Actions desactivadas y SHA comprobado; no presenta el producto propuesto como aceptado. No hay un supervisor desatendido acreditado. Los apartados siguientes son históricos.
 

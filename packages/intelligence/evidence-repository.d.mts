@@ -1,0 +1,3 @@
+export type EvidenceSpan={message_revision_id:string;start:number;end:number;quote:string;quote_hash:string;role:'customer'|'agent'|'internal'};
+export type EvidenceView={runId:string;conversationId:string;state:'current'|'historical';status:'succeeded'|'abstained';model:string;createdAt:string;issues:{category:string;severity:string;evidence:EvidenceSpan[]}[];sentiment:string;intent:string;urgency:string;entities:{type:string;value:string;evidence:EvidenceSpan[]}[];abstention:null|{reason:string}};
+export function createEvidenceRepository(options:{database:any}):{get(runId:string):Promise<EvidenceView>};

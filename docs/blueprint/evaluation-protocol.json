@@ -1,0 +1,13 @@
+{
+  "schema_version": "vexa-evaluation-protocol-template-v1",
+  "status": "not_measured",
+  "human_gold": null,
+  "tool": "packages/intelligence/evaluation/cli.mjs",
+  "protocol": "freeze dataset and taxonomy before tuning; holdout stays with external evaluator",
+  "classification_usefulness_target": {"operator": ">", "value": 0.85, "denominator": "all emitted classifications; human usefulness requires topic/evidence/decision checks"},
+  "buyer_new_insight_target": {"operator": ">", "value": 0.70, "denominator": "all eligible real buyers, including nonresponse conservatively"},
+  "undefined_denominator": null,
+  "unknown_cost": null,
+  "human_annotation": {"independent_blind_annotators": 2, "disagreement_adjudicator": "third distinct human with dated reason", "provenance": ["dataset_id", "dataset_hash", "annotator_id", "annotated_at", "reviewer_attestation"]},
+  "release_decision": "never automatic; human authenticity and authorized buyer research remain external requirements"
+}

@@ -1,3 +1,4 @@
+import * as budget from './budget-oracles.mjs';
 import * as health from './health/oracles.mjs';
 import * as aliases from './aliases/oracles.mjs';
 import * as sync from './sync/oracles.mjs';
@@ -50,8 +51,9 @@ export function schemaOracle(h) {
   }
   // Extra private tables cannot silently escape the functional matrix.
   const hasUploads=tables.some(x=>x.name===uploads.table);
-  assert.deepEqual(tables.filter(x=>!['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h),...(workers.present(h)?[workers.table]:[]),...sync.present(h),...(health.present(h)?[health.table]:[])].includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
+  assert.deepEqual(tables.filter(x=>!['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h),...(workers.present(h)?[workers.table]:[]),...sync.present(h),...(health.present(h)?[health.table]:[]),...budget.present(h)].includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
   const fks=foreignKeys(h);
+  if(budget.present(h).length)budget.schema(h,fks);
   if(hasUploads)uploads.schema(h,fks);
   history.schema(h,fks);
   if(workers.present(h))workers.schema(h,fks);
@@ -236,6 +238,7 @@ function fkDiagnostic(h,table,result){
 // Every discovered private edge gets a valid INSERT and a foreign-parent INSERT.
 // Diagnostics retain the rejecting constraint; mandatory presence is checked separately.
 export function discoveredFkOracle(h,f,fk) {
+  if(budget.tables.includes(fk.table))return budget.fk(h,f.budget,fk);
   if(fk.table===health.table)return health.fk(h,f.health,fk);
   if(fk.table===aliases.table&&aliases.present(h))return aliases.fk(h,f,fk);
   if(sync.tables.includes(fk.table))return sync.fk(h,f.sync,fk);

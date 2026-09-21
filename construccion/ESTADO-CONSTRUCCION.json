@@ -34,9 +34,10 @@
     "F03-04",
     "F03-05",
     "F03-06",
-    "F05-01"
+    "F05-01",
+    "F05-02"
   ],
-  "construction_total": 31,
+  "construction_total": 32,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -163,6 +164,24 @@
         }
       ],
       "official_dependency_pending": [
+        "F03-06"
+      ]
+    },
+    {
+      "task_id": "F05-02",
+      "technical_ready": true,
+      "implemented": "Ledger operacional append-only, versiones CAS, fuentes por familia, API y formularios autorizados, importes separados y escenarios con vigencia/horizonte. Revisión independiente10/10Node26, materialización limpia10/10Node22 y matrizSQL/Auth/Storage260/260.",
+      "programming_pending": [],
+      "scope_note": "Ficha F05-02; las relaciones globales de exposición y snapshots publicados corresponden a F05-03/05, todavía sin completar ni contabilizar.",
+      "external_pending": [
+        {
+          "owner": "Responsable financiero del cliente y titular de infraestructura",
+          "pending": "Fuentes operacionales reales autorizadas y aprobación legítima para migraciones/despliegue remotos.",
+          "verification": "Conciliar datos/documentos reales y ejecutar recorrido remoto autorizado; pruebas locales no acreditan producción."
+        }
+      ],
+      "official_dependency_pending": [
+        "F05-01",
         "F03-06"
       ]
     }

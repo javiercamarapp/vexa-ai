@@ -1,13 +1,13 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
-## Checkpoint vigente —31/60 técnicamente listas; 24 aceptadas en el grafo
+## Checkpoint vigente —32/60 técnicamente listas; 24 aceptadas en el grafo
 
-F04 completa en 7/7 y publicada. F05-01 incorpora el adaptador financiero exacto sobre E00 intacto: revisión independiente, 34/34 en Node22 y Node26 y materialización limpia comprobada. Alcance y límites: construccion/F05-01-CIERRE-TECNICO.md. El ledger, la API, la interfaz y las demás tareas de F05 todavía no suman al contador.
+F05-02 integra ledger económico persistente, API y formularios con autorización actual, historial y componentes financieros separados. Revisión independiente y copia Git limpia: 10/10 en Node26 y Node22, matriz SQL/Auth/Storage 260/260 y controlador 125/125; compilación y lint verdes. Alcance/evidencia: construccion/F05-02-CIERRE-TECNICO.md. F05 queda en 2/6; exposición global, formatos/FX, snapshots y prioridad todavía no suman.
 
-El total suma 24 aceptadas por el runner y siete técnicamente listas con validación externa pendiente: seis de F03 y F05-01, cuya dependencia live F03-06 se conserva. Cuentas reales, datos autorizados y aprobaciones externas siguen pendientes; no acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
+El total suma 24 aceptadas por el runner y ocho técnicamente listas con validación/dependencia externa pendiente: seis de F03 y F05-01/02. El grafo conserva las dependencias live. Cuentas reales, datos autorizados y aprobaciones externas siguen pendientes; no acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
 
-Ventana autorizada: hasta las 12:50 de Mérida del 21-sep, 251/260 invocaciones acumuladas, máximo 3 agentes y cero gasto externo nuevo. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+Ventana autorizada: hasta las 12:50 de Mérida del 21-sep, 254/260 invocaciones acumuladas, máximo 3 agentes y cero gasto externo nuevo. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## F02 completa — F02-06 aceptado,20-sep
 

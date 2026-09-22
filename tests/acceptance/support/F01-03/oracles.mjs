@@ -1,3 +1,4 @@
+import * as workspace from './workspace-oracles.mjs';
 import * as priority from './priority-oracles.mjs';
 import * as snapshots from './snapshot-oracles.mjs';
 import * as money from './money-oracles.mjs';
@@ -60,8 +61,9 @@ export function schemaOracle(h) {
   }
   // Extra private tables cannot silently escape the functional matrix.
   const hasUploads=tables.some(x=>x.name===uploads.table);
-  assert.deepEqual(tables.filter(x=>!['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h),...(workers.present(h)?[workers.table]:[]),...sync.present(h),...(health.present(h)?[health.table]:[]),...(crm.present(h)?[crm.table]:[]),...budget.present(h),...extraction.present(h),...problems.present(h),...causality.present(h),...economic.present(h),...exposure.present(h),...money.present(h),...snapshots.present(h),...priority.present(h)].includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
+  assert.deepEqual(tables.filter(x=>!['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h),...(workers.present(h)?[workers.table]:[]),...sync.present(h),...(health.present(h)?[health.table]:[]),...(crm.present(h)?[crm.table]:[]),...budget.present(h),...extraction.present(h),...problems.present(h),...causality.present(h),...economic.present(h),...exposure.present(h),...money.present(h),...snapshots.present(h),...priority.present(h),...workspace.present(h)].includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
   const fks=foreignKeys(h);
+  if(workspace.present(h).length)workspace.schema(h,fks);
   if(priority.present(h).length)priority.schema(h,fks);
   if(snapshots.present(h).length)snapshots.schema(h,fks);
   if(money.present(h).length)money.schema(h,fks);
@@ -256,6 +258,7 @@ function fkDiagnostic(h,table,result){
 // Every discovered private edge gets a valid INSERT and a foreign-parent INSERT.
 // Diagnostics retain the rejecting constraint; mandatory presence is checked separately.
 export function discoveredFkOracle(h,f,fk) {
+  if(workspace.tables.includes(fk.table))return workspace.fk(h,f.workspace,fk);
   if(priority.tables.includes(fk.table))return priority.fk(h,f.priority,fk);
   if(snapshots.tables.includes(fk.table)||fk.table==='metric_snapshots'&&['created_by','published_by'].some(c=>c in fk.mapping))return snapshots.fk(h,f.snapshots,fk);
   if(money.tables.includes(fk.table))return money.fk(h,f.money,fk);

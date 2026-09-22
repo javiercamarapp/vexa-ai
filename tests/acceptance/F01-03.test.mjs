@@ -1,3 +1,4 @@
+import * as workspace from './support/F01-03/workspace-oracles.mjs';
 import * as priority from './support/F01-03/priority-oracles.mjs';
 import * as snapshots from './support/F01-03/snapshot-oracles.mjs';
 import * as money from './support/F01-03/money-oracles.mjs';
@@ -38,6 +39,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   if(migrations.economicRequired)assert.deepEqual(economic.present(h),economic.tables,'ECONOMIC_MIGRATION_REQUIRED');
   if(migrations.exposureRequired)assert.deepEqual(exposure.present(h),exposure.tables,'EXPOSURE_MIGRATION_REQUIRED');
   if(migrations.moneyRequired)assert.deepEqual(money.present(h),money.tables,'MONEY_MIGRATION_REQUIRED');
+  if(migrations.workspaceRequired)assert.deepEqual(workspace.present(h),workspace.tables,'WORKSPACE_MIGRATION_REQUIRED');
   if(migrations.priorityRequired)assert.deepEqual(priority.present(h),priority.tables,'PRIORITY_MIGRATION_REQUIRED');
   if(migrations.snapshotsRequired)assert.deepEqual(snapshots.present(h),snapshots.tables,'SNAPSHOT_MIGRATION_REQUIRED');
   schemaOracle(h);
@@ -69,6 +71,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   if(money.present(h).length){f.money=money.seed(h,f,actors);await t.test('money0020 authorization and append-only',()=>money.access(h,f.money,actors));await t.test('money0020 catalog FX provenance versions and contributors',()=>money.versions(h,f.money,actors));}
   if(snapshots.present(h).length){f.snapshots=snapshots.seed(h,f,actors);await t.test('snapshots0021 private drafts and current authorization',()=>snapshots.visibility(h,f.snapshots,actors));await t.test('snapshots0021 exact money metadata and identity',()=>snapshots.metadata(h,f.snapshots,actors));await t.test('snapshots0021 atomic publication and immutable history',()=>snapshots.integrity(h,f.snapshots,actors));await t.test('snapshots0021 digest timezone independence',()=>snapshots.timezones(h,f.snapshots,actors));await t.test('snapshots0021 withdrawn source privacy',()=>snapshots.withdrawal(h,f.snapshots,actors));}
   if(priority.present(h).length){f.priority=priority.seed(h,f,actors,f.snapshots);await t.test('priority0022 tenant current actors and roles',()=>priority.access(h,f.priority,actors));await t.test('priority0022 exact policy versions and actionability CAS',()=>priority.versions(h,f.priority,actors));await t.test('priority0022 publication integrity rollback and immutable history',()=>priority.integrity(h,f.priority,actors));await t.test('priority0022 scoped metadata head and revocation recovery',()=>priority.heads(h,f.priority,actors));await t.test('priority0022 historical input republished with new version',()=>priority.rollbackPolicy(h,f.priority,actors));}
+  if(workspace.present(h).length){f.workspace=await workspace.seed(h,f,actors,f.snapshots);await t.test('workspace0023 tenant roles and current mapping contributors',()=>workspace.access(h,f.workspace,actors));await t.test('workspace0023 mapping and immutable binding integrity',()=>workspace.integrity(h,f.workspace,actors));}
   for(const fk of foreignKeys(h))await t.test(`discovered FK ${fk.name}`,()=>discoveredFkOracle(h,f,fk));
   await t.test('external identity 42 is tenant scoped and revision deduplicated',()=>{
     assert.equal(h.sql("SELECT count(*) FROM public.conversations WHERE external_id='42'"),'2');

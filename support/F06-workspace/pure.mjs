@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';
+test('F06-01 real workspace implementation exists',()=>{for(const p of ['packages/workspace-service/index.mjs','packages/workspace-service/contracts.mjs','supabase/migrations/0023_workspace_scopes.sql','apps/web/src/app/api/workspace/route.ts','apps/web/src/app/api/workspace/export/route.ts'])assert.ok(process.env.VEXA_CANDIDATE&&fs.existsSync(path.join(process.env.VEXA_CANDIDATE,p)),'WORKSPACE_IMPLEMENTATION_MISSING:'+p);});

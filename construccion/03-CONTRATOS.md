@@ -80,10 +80,10 @@ Las rutas de login/callback dependen de la integración SSR documentada de la ve
 ### Scope y dinero: ejemplos exactos
 
 ```json
-{"date_start":"2026-09-01T00:00:00Z","date_end":"2026-10-01T00:00:00Z","timezone":"UTC","date_basis":"order","currency":"USD","sku":[],"source":[],"snapshot_id":"synthetic-S1"}
+{"date_start":"2026-09-01T00:00:00Z","date_end":"2026-10-01T00:00:00Z","timezone":"UTC","date_basis":"occurred_at","currency":"USD","basis":"net","sku":[],"source":[],"snapshot_id":"synthetic-S1"}
 ```
 
-`tenant_id` se añade en servidor desde sesión. `scope_hash` se calcula sobre serialización canónica incluyendo permisos/versiones, filtros y snapshot; no confiar en hash enviado por browser. Cursor se liga a ese scope y sort con desempate ID. Agregados SQL sobre TODA la población, no sobre la primera página.
+`tenant_id` se añade en servidor desde sesión. El `scope_hash` de datos se calcula sobre serialización canónica de snapshot base, su hash, filtros y versiones de clasificación capturadas; no confía en el hash enviado por browser y no depende del lector. Una vista derivada identifica por separado `base_snapshot_id`, `base_scope_hash` y su manifiesto inmutable de clasificación. El cursor usa además `cursor_auth_hash`, ligado al usuario, rol y versión vigente de permisos; no se reutiliza entre lectores o recursos. Exportar vuelve a validar acceso actual a todas las referencias. Cambiar filtros o clasificación puede crear otra vista explícita, pero nunca modifica la vista histórica fijada por snapshot y hash. Agregados sobre TODA la población autorizada del snapshot, no sobre la primera página. En el ledger actual la fecha soportada es `occurred_at` (fecha efectiva del registro económico, UTC); otras bases requieren procedencia implementada y no se sustituyen silenciosamente.
 
 ```json
 {"metric":"revenue_exposure","amount_minor":"30000","currency":"USD","exponent":2,"kind":"observed-order-exposure-not-loss","additive_across_problems":false,"order_ids":["O1","O2"],"scope_hash":"calculado-no-literal","snapshot_id":"synthetic-S1"}

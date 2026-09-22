@@ -126,7 +126,7 @@ test('F05-03 real evidence, authorized canonical union and operational exposure 
   await step('real UI records identities, confirms and withdraws aliases, links and coverage',async()=>{
    const browser=await h.browser(),ctx=await browser.newContext({timezoneId:'America/Merida'});ctx.setDefaultTimeout(12000);h.ctx=ctx;
    await ctx.addCookies(h.cookie(h.A).split('; ').map(v=>{const i=v.indexOf('=');return{name:v.slice(0,i),value:v.slice(i+1),url:h.base};}));
-   const page=await ctx.newPage();h.page=page;await page.goto(h.base+'/overview');
+   const page=await ctx.newPage();h.page=page;await page.goto(h.base+'/economics');
    const ledger=page.getByRole('region',{name:'Ledger económico',exact:true});await ledger.getByLabel('Fin exclusivo UTC',{exact:true}).fill('2026-09-20');
    const panel=page.getByRole('region',{name:'Exposición por problemas',exact:true});await panel.getByRole('heading',{name:'Exposición por problemas',exact:true}).waitFor();
    const action=async button=>{const posted=page.waitForResponse(r=>new URL(r.url()).pathname===route&&r.request().method()==='POST');const refreshed=page.waitForResponse(r=>new URL(r.url()).pathname===route&&r.request().method()==='GET');await button.click();assert.equal((await posted).status(),200);assert.equal((await refreshed).status(),200);await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));};

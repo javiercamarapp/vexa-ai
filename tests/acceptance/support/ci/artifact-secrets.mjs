@@ -83,7 +83,8 @@ export async function inspectPublished(cwd,origin,fixture,{allowUnconfiguredImpo
    const priority=url.pathname==='/api/economic-priorities'&&envelope?.contract_version==='f05-priority-v1'&&envelope?.error?.code==='configuration_required';
    const workspace=['/api/workspace','/api/workspace/mappings','/api/workspace/export'].includes(url.pathname)&&envelope?.contract_version==='f06-workspace-v1'&&envelope?.error?.code==='configuration_required';
    const detail=url.pathname==='/api/workspace/customer-bindings'&&envelope?.contract_version==='f06-detail-v1'&&envelope?.error?.code==='configuration_required';
-   const expected=allowUnconfiguredImports===true&&!required&&response.status===503&&(imports||crm||extraction||aliases||problems||snapshots||economics||priority||workspace||detail)&&!url.search
+   const recommendation=url.pathname==='/api/recommendations'&&envelope?.contract_version==='f06-recommendations-v1'&&envelope?.error?.code==='configuration_required';
+   const expected=allowUnconfiguredImports===true&&!required&&response.status===503&&(imports||crm||extraction||aliases||problems||snapshots||economics||priority||workspace||detail||recommendation)&&!url.search
     &&/^application\/json(?:;|$)/i.test(response.headers.get('content-type')??'')
     &&/(?:^|,)\s*private\s*(?:,|$)/i.test(cache)&&/(?:^|,)\s*no-store\s*(?:,|$)/i.test(cache)
     &&envelope.error.retryable===true&&typeof envelope.error.message==='string'

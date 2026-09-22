@@ -692,7 +692,8 @@
         "apps/web/",
         "packages/recommendations/",
         "packages/interventions/",
-        "packages/briefs/"
+        "packages/briefs/",
+        "supabase/migrations/0025_recommendations.sql"
       ],
       "acceptance": "tests/acceptance/F06-03.test.mjs",
       "prompt": "orchestration/prompts/F06.md",

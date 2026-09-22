@@ -1647,15 +1647,26 @@
       "apps/web/",
       "packages/recommendations/",
       "packages/interventions/",
-      "packages/briefs/"
+      "packages/briefs/",
+      "supabase/migrations/0025_recommendations.sql"
     ],
     "acceptance": "tests/acceptance/F06-03.test.mjs",
     "prompt": "orchestration/prompts/F06.md",
     "auto_accept": false,
     "requires_approval": false,
     "deliverables": [
-      "packages/recommendations/src/service.ts",
-      "apps/web/src/app/(product)/recommendations/page.tsx"
+      "packages/recommendations/index.mjs",
+      "packages/recommendations/index.d.mts",
+      "packages/recommendations/generate.mjs",
+      "packages/recommendations/OPERATIONS.md",
+      "supabase/migrations/0025_recommendations.sql",
+      "apps/web/src/lib/recommendations/server.ts",
+      "apps/web/src/app/api/recommendations/route.ts",
+      "apps/web/src/app/api/recommendations/[id]/route.ts",
+      "apps/web/src/app/api/recommendations/[id]/interventions/route.ts",
+      "apps/web/src/components/recommendations/panel.tsx",
+      "apps/web/src/app/(workspace)/recommendations/page.tsx",
+      "apps/web/src/components/workspace/detail-panel.tsx"
     ],
     "steps": [
       "Versionar recomendación con problem_version,action,preconditions,evidence_refs y rationale.",

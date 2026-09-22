@@ -1,3 +1,4 @@
+import * as recommendations from './support/F01-03/recommendation-oracles.mjs';
 import * as detail from './support/F01-03/detail-oracles.mjs';
 import * as workspace from './support/F01-03/workspace-oracles.mjs';
 import * as priority from './support/F01-03/priority-oracles.mjs';
@@ -40,6 +41,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   if(migrations.economicRequired)assert.deepEqual(economic.present(h),economic.tables,'ECONOMIC_MIGRATION_REQUIRED');
   if(migrations.exposureRequired)assert.deepEqual(exposure.present(h),exposure.tables,'EXPOSURE_MIGRATION_REQUIRED');
   if(migrations.moneyRequired)assert.deepEqual(money.present(h),money.tables,'MONEY_MIGRATION_REQUIRED');
+  if(migrations.recommendationsRequired)assert.deepEqual(recommendations.present(h),recommendations.tables,'RECOMMENDATION_MIGRATION_REQUIRED');
   if(migrations.detailRequired)assert.deepEqual(detail.present(h),detail.tables,'DETAIL_MIGRATION_REQUIRED');
   if(migrations.workspaceRequired)assert.deepEqual(workspace.present(h),workspace.tables,'WORKSPACE_MIGRATION_REQUIRED');
   if(migrations.priorityRequired)assert.deepEqual(priority.present(h),priority.tables,'PRIORITY_MIGRATION_REQUIRED');
@@ -75,6 +77,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   if(priority.present(h).length){f.priority=priority.seed(h,f,actors,f.snapshots);await t.test('priority0022 tenant current actors and roles',()=>priority.access(h,f.priority,actors));await t.test('priority0022 exact policy versions and actionability CAS',()=>priority.versions(h,f.priority,actors));await t.test('priority0022 publication integrity rollback and immutable history',()=>priority.integrity(h,f.priority,actors));await t.test('priority0022 scoped metadata head and revocation recovery',()=>priority.heads(h,f.priority,actors));await t.test('priority0022 historical input republished with new version',()=>priority.rollbackPolicy(h,f.priority,actors));}
   if(workspace.present(h).length){f.workspace=await workspace.seed(h,f,actors,f.snapshots);await t.test('workspace0023 tenant roles and current mapping contributors',()=>workspace.access(h,f.workspace,actors));await t.test('workspace0023 mapping and immutable binding integrity',()=>workspace.integrity(h,f.workspace,actors));}
   if(detail.present(h).length){f.detail=await detail.seed(h,f,actors,f.workspace);await t.test('detail0024 tenant roles and private identities',()=>detail.access(h,f.detail,actors));await t.test('detail0024 approved identity CAS cutoff and immutable receipt',()=>detail.integrity(h,f.detail,actors));await t.test('detail0024 complete conversation identity manifest',()=>detail.conversationCompleteness(h,f,actors,f.workspace));}
+  if(recommendations.present(h).length){f.recommendations=await recommendations.seed(h,f,actors,f.workspace);await t.test('recommendations0025 tenant current roles capabilities',()=>recommendations.access(h,f.recommendations,actors));await t.test('recommendations0025 captured evidence CAS history draft only',()=>recommendations.integrity(h,f.recommendations,actors));await t.test('recommendations0025 withdrawn evidence cannot certify writes',()=>recommendations.sourceAuthorization(h,f.recommendations,actors));await t.test('recommendations0025 scoped helper privileges',()=>recommendations.helpers(h,f.recommendations,actors));await t.test('recommendations0025 revoked history cannot be recertified',()=>recommendations.revokedHistory(h,f.recommendations,actors));}
   for(const fk of foreignKeys(h))await t.test(`discovered FK ${fk.name}`,()=>discoveredFkOracle(h,f,fk));
   await t.test('external identity 42 is tenant scoped and revision deduplicated',()=>{
     assert.equal(h.sql("SELECT count(*) FROM public.conversations WHERE external_id='42'"),'2');

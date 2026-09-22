@@ -33,6 +33,7 @@ export function candidateInputs(candidate) {
   migrations.economicRequired=files.some(f=>/^0018_/.test(f));
   migrations.exposureRequired=files.some(f=>/^0019_/.test(f));
   migrations.moneyRequired=files.some(f=>/^0020_/.test(f));
+  migrations.recommendationsRequired=files.some(f=>/^0025_/.test(f));
   migrations.detailRequired=files.some(f=>/^0024_/.test(f));
   migrations.workspaceRequired=files.some(f=>/^0023_/.test(f));
   migrations.priorityRequired=files.some(f=>/^0022_/.test(f));

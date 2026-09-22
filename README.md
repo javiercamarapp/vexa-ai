@@ -2,13 +2,13 @@
 
 **Carpeta canónica:** `/Users/javiercamaraportepetit/vexa` · fuera de iCloud. Preparación rehecha desde fuentes originales con Astra vía Codex. **No es todavía el SaaS completo ni un deploy.** Estado/recibos: [PROGRESO.md](PROGRESO.md).
 
-## Checkpoint vigente —37/60 técnicamente listas; 24 aceptadas en el grafo
+## Checkpoint vigente —38/60 técnicamente listas; 24 aceptadas en el grafo
 
-F06-01 añade filtros compartidos entre Overview, Problems, API y exportaciones con historial inmutable, clasificación SKU/origen aprobada y permisos vigentes. Copia Git limpia26/26; prioridad14/14 y cinco regresiones afectadas verdes. Matriz SQL/Auth/Storage312/312, focales12/12, dominio10/10 en Node22/26 y controlador125/125. Compilación, lint, tipos y CI web local verdes. Alcance: construccion/F06-01-CIERRE-TECNICO.md. Siguiente cierre:F06-02, detalle con trazabilidad financiera y evidencia.
+F06-02 incorpora navegación cifra→componente→evento→evidencia y cliente canónico con unión de órdenes/conversaciones sin duplicación ni atribuciones inventadas. Las asociaciones aprobadas tienen historial independiente del corte financiero; cada paso revalida acceso y la revocación limpia toda la vista. Copia Git limpia19/19 y regresiones16/16+5/5; matriz SQL/Auth/Storage323/323, focal14/14, dominio8/8 Node22/26, controlador125/125 y CI web verdes. Alcance: construccion/F06-02-CIERRE-TECNICO.md. Siguiente cierre:F06-03.
 
-El total suma24 aceptadas por el runner y trece técnicamente listas con dependencia/validación externa pendiente: seis F03, seis F05 y F06-01. F06–08 y auditoría integral aún requieren trabajo; cuentas reales, datos autorizados y aprobaciones externas siguen pendientes. No acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
+El total suma24 aceptadas por el runner y catorce técnicamente listas con dependencia/validación externa pendiente: seis F03, seis F05 y F06-01/02. Restan22 tareas de construcción y la auditoría integral final. Cuentas reales, datos autorizados y aprobaciones externas siguen pendientes; no acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
 
-Tiempo sin límite autorizado; presupuesto conservado:272/280 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate no impide suspensión al cerrar la tapa ni garantiza supervivencia de sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+Tiempo sin límite autorizado; presupuesto conservado:275/280 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate no impide suspensión al cerrar la tapa ni garantiza supervivencia de sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## Estado de construcción — corte 20-sep
 **17/60 tareas aceptadas; F02 completa en6/6.** Importación, persistencia canónica, worker durable y UI de recuperación integrados. F02-05 (`9e738b9`) y F02-06 (comportamiento existente en `63b9725`, sin parche artificial) pasaron sus27grupos de verifyNode22 y acceptGitlimpioNode26. Compilación integrada, regresiones F02-01/02/03/04 y cuatro jobs CI locales verdes; huellas y limpieza verificadas. Siguiente fase: F03, HubSpot/Zendesk y migración. Actions permanece desactivado; no acredita producción.

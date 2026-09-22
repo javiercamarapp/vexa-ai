@@ -40,9 +40,10 @@
     "F05-04",
     "F05-05",
     "F05-06",
-    "F06-01"
+    "F06-01",
+    "F06-02"
   ],
-  "construction_total": 37,
+  "construction_total": 38,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -277,6 +278,24 @@
       ],
       "official_dependency_pending": [
         "F05-06",
+        "F03-06"
+      ]
+    },
+    {
+      "task_id": "F06-02",
+      "technical_ready": true,
+      "implemented": "Detalle cifra→componente→evento→evidencia financiera física y unión de órdenes/conversaciones del cliente canónico. Asociación owner/CAS con historia de identidad independiente del corte financiero; autorización en cada paso y retirada de toda la vista ante pérdida de acceso.",
+      "programming_pending": [],
+      "scope_note": "Ficha F06-02 completa técnicamente; resto F06–08 y auditoría integral siguen pendientes.",
+      "external_pending": [
+        {
+          "owner": "Titular de infraestructura y responsable de datos del cliente",
+          "pending": "Migraciones y despliegue remotos con aprobación legítima, fuentes autorizadas y asociaciones de identidad respaldadas por datos del cliente.",
+          "verification": "Validar trazabilidad financiera, identidad, cobertura, roles y revocación contra publicaciones de datos reales autorizados."
+        }
+      ],
+      "official_dependency_pending": [
+        "F06-01",
         "F03-06"
       ]
     }

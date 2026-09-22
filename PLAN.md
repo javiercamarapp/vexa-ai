@@ -2,13 +2,13 @@
 
 Actualizado: 2026-09-20. Este plan reemplaza los bloques históricos de investigación/preparación conservados en Git. El usuario pidió construir y confirmó **UN MES, no una semana**. Referencia de calendario: 19-oct-2026 si se cuenta desde este encargo; objetivo, no entrega garantizada ni estado alcanzado.
 
-## Checkpoint vigente —38/60 técnicamente listas; 24 aceptadas en el grafo
+## Checkpoint vigente —39/60 técnicamente listas; 24 aceptadas en el grafo
 
-F06-02 incorpora navegación cifra→componente→evento→evidencia y cliente canónico con unión de órdenes/conversaciones sin duplicación ni atribuciones inventadas. Las asociaciones aprobadas tienen historial independiente del corte financiero; cada paso revalida acceso y la revocación limpia toda la vista. Copia Git limpia19/19 y regresiones16/16+5/5; matriz SQL/Auth/Storage323/323, focal14/14, dominio8/8 Node22/26, controlador125/125 y CI web verdes. Alcance: construccion/F06-02-CIERRE-TECNICO.md. Siguiente cierre:F06-03.
+F06-03 incorpora recomendaciones con evidencia, condiciones y responsables; revisión/descarte/reapertura con razón e historial; e intervención borrador idempotente sin ejecutar acciones externas. API, interfaz y SQL revalidan el acceso vigente. Copia Git limpia20/20 y regresión del detalle11/11; 25migraciones con333 controles verdes y recuperación selectiva18/18 de una colisión de fixture, focal15/15, dominio6/6 Node22/26, controlador125/125 y CI web verdes. Alcance: construccion/F06-03-CIERRE-TECNICO.md. Siguiente cierre:F06-04.
 
-El total suma24 aceptadas por el runner y catorce técnicamente listas con dependencia/validación externa pendiente: seis F03, seis F05 y F06-01/02. Restan22 tareas de construcción y la auditoría integral final. Cuentas reales, datos autorizados y aprobaciones externas siguen pendientes; no acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
+El total suma24 aceptadas por el runner y quince técnicamente listas con dependencia/validación externa pendiente: seis F03, seis F05 y F06-01/02/03. Restan21 tareas de construcción y la auditoría integral final. Cuentas reales, datos autorizados y aprobaciones externas siguen pendientes; no acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
 
-Tiempo sin límite autorizado; presupuesto conservado:275/280 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate no impide suspensión al cerrar la tapa ni garantiza supervivencia de sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+Tiempo sin límite autorizado; presupuesto conservado:278/360 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate no impide suspensión al cerrar la tapa ni garantiza supervivencia de sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## Historial — F02 completa,17/60
 

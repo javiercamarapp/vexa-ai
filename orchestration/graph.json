@@ -672,7 +672,9 @@
         "apps/web/",
         "packages/recommendations/",
         "packages/interventions/",
-        "packages/briefs/"
+        "packages/briefs/",
+        "packages/workspace-service/",
+        "supabase/migrations/0024_workspace_detail.sql"
       ],
       "acceptance": "tests/acceptance/F06-02.test.mjs",
       "prompt": "orchestration/prompts/F06.md",

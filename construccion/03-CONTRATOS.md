@@ -104,3 +104,9 @@ Overview, Problems, Problem detail, Recommendations, Explorer, Customer, Interve
 ## ADR-07 · Intervención y causalidad
 
 Draft→approved(owner)→active(owner/operator asignado)→measuring→closed; cancelled con razón/auditoría. Baseline/hipótesis/unidad/población/fechas/plan se fijan antes de ejecutar. Cierre sin medición409. Antes/después es asociación, no ahorro causal; cambios de temporada, cobertura, mix de clientes y migración deben tratarse. Ninguna transición modifica CRM o emite un refund por sí sola.
+
+### Detalle F06-02: identidad y procedencia histórica
+
+El detalle conserva el snapshot y scope_hash financiero de F06-01. Un detail_hash adicional fija las versiones de asociación entre customer_key financiero y customers.id canónico, y las revisiones de conversación capturadas. detail_as_of identifica la vista de identidad, separado de as_of financiero; una asociación posterior no se presenta como existente al corte económico. Abrir una nueva vista de identidad crea una identidad explícita nueva; una vista fijada nunca consulta vínculos actuales como fallback ni cambia sus importes.
+
+Los vínculos requieren evidencia, aprobación owner, CAS e historial con FK de tenant; no se crean clientes por hash o igualdad casual de texto. Conversaciones del mismo problema no se atribuyen a un cliente sin identidad histórica verificable. Los drilldowns reautorizan cada componente/evento/evidencia; sólo los registros financieros autorizados y sus versiones de fuente justifican dinero. Citas conversacionales y causalidad actual son contexto separado, con estado y cobertura explícitos.

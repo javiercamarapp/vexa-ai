@@ -1592,15 +1592,28 @@
       "apps/web/",
       "packages/recommendations/",
       "packages/interventions/",
-      "packages/briefs/"
+      "packages/briefs/",
+      "packages/workspace-service/",
+      "supabase/migrations/0024_workspace_detail.sql"
     ],
     "acceptance": "tests/acceptance/F06-02.test.mjs",
     "prompt": "orchestration/prompts/F06.md",
     "auto_accept": false,
     "requires_approval": false,
     "deliverables": [
-      "apps/web/src/app/(product)/problems/[id]/page.tsx",
-      "apps/web/src/app/(product)/customers/[id]/page.tsx"
+      "packages/workspace-service/detail.mjs",
+      "packages/workspace-service/detail-graph.mjs",
+      "packages/workspace-service/detail.d.mts",
+      "packages/workspace-service/DETAIL.md",
+      "supabase/migrations/0024_workspace_detail.sql",
+      "apps/web/src/lib/workspace/detail-server.ts",
+      "apps/web/src/app/api/workspace/detail/[kind]/[id]/route.ts",
+      "apps/web/src/app/api/workspace/customer-bindings/route.ts",
+      "apps/web/src/components/workspace/detail-panel.tsx",
+      "apps/web/src/components/workspace/customer-bindings.tsx",
+      "apps/web/src/app/(workspace)/problems/[id]/page.tsx",
+      "apps/web/src/app/(workspace)/customers/[id]/page.tsx",
+      "apps/web/src/app/(workspace)/economics/page.tsx"
     ],
     "steps": [
       "Detail permite cifra->componente->evento->evidencia; no salto directo a texto generado.",

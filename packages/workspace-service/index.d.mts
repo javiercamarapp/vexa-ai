@@ -1,0 +1,9 @@
+import type {WorkspaceScope} from './contracts.mjs';
+export type WorkspaceMetric={label:string;kind:string;amount_minor:string|null;known_subtotal:string|null;currency:string;exponent:number;source_ref:string;status:string;coverage:{known_n:number;eligible_n:number};missing_reasons:string[]};
+export type WorkspaceRecord={id:string;title:string;summary:string;status:string;version:number;owner:null;customer_id:null;problem_id:string|null;metrics:WorkspaceMetric[];evidence:{id:string;quote:string;source_ref:string;role:string}[];details:{label:string;value:string}[]};
+export type WorkspaceBundle={items:WorkspaceRecord[];meta:{state:'empty'|'partial'|'stale'|'ready';snapshot_id:string|null;base_snapshot_id:string|null;base_scope_hash:string|null;scope_hash:string|null;cursor_auth_hash:string|null;coverage:string;watermark:string|null;next_cursor:string|null;critical_notice:string|null;scope:WorkspaceScope;mapping_manifest_id:string|null;can_manage:boolean}};
+export type MappingInput={ledgerRowId:string;expectedVersion:number;skus:string[]|null;source:'hubspot'|'zendesk'|'csv'|'excel'|null;active:boolean;report:string;attested:true};
+export type MappingView={id:string;ledgerRowId:string;version:number;skus:string[]|null;source:string|null;active:boolean;valid:boolean;report:string|null};
+export type MappingsView={orders:{ledgerRowId:string;entityId:string;externalId:string;currency:string;exponent:number;amountMinor:string|null;sourceName:string}[];mappings:MappingView[];canWrite:boolean};
+export function createWorkspaceService(options:{database:any}):{query(query:URLSearchParams|{scope:WorkspaceScope;resource:string;limit:number;cursor:string|null},options?:{all?:boolean}):Promise<WorkspaceBundle>;mappings():Promise<MappingsView>;recordMapping(input:MappingInput):Promise<MappingView>};
+export function workspaceCsv(bundle:WorkspaceBundle):string;

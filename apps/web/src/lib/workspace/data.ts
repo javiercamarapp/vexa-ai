@@ -1,17 +1,18 @@
 import { AccessError } from '@vexa/platform/session';
 import { UUID, makeCursor, pageCursor, scopeHash, type Bundle, type Context, type Resource, type Scope, type RecordView, type Metric, type Evidence } from './contracts';
 export type ResolvedScope = Scope & {snapshot_id:string};
-export interface ReadPort {resolveSnapshot(input:{tenant_id:string;scope:Scope}):Promise<unknown>;read(input:{tenant_id:string;resource:Resource;id:string|null;scope:ResolvedScope;scope_hash:string;limit:number;after:string|null}):Promise<unknown>}
+export interface ReadPort {query?: (input: {scope: import('../../../../../packages/workspace-service/contracts.mjs').WorkspaceScope;resource:string;limit:number;cursor:string|null})=>Promise<import('../../../../../packages/workspace-service/index.mjs').WorkspaceBundle>;resolveSnapshot(input:{tenant_id:string;scope:Scope}):Promise<unknown>;read(input:{tenant_id:string;resource:Resource;id:string|null;scope:ResolvedScope;scope_hash:string;limit:number;after:string|null}):Promise<unknown>}
 function invalid():never{throw new AccessError(503,'workspace_contract_invalid');}
 function object(value:unknown):Record<string,unknown>{if(!value||typeof value!=='object'||Array.isArray(value))invalid();return value as Record<string,unknown>;}
 function str(value:unknown,max=4000):string{if(typeof value!=='string'||value.length>max)invalid();return value;}
 function nullable(value:unknown){return value===null?null:str(value);}
 function list(value:unknown,max:number):unknown[]{if(!Array.isArray(value)||value.length>max)invalid();return value;}
 function id(value:unknown){const s=str(value,36);if(!UUID.test(s))invalid();return s;}
-function minor(value:unknown){if(value===null)return null;const s=str(value,100);if(!/^-?(0|[1-9]\d*)$/.test(s))invalid();return s;}
+function minor(value:unknown){if(value===null)return null;const s=str(value,4097);if(!/^-?(0|[1-9]\d*)$/.test(s))invalid();return s;}
 function metric(value:unknown,currency:string):Metric{const m=object(value);if(m.currency!==currency||!Number.isInteger(m.exponent)||Number(m.exponent)<0||Number(m.exponent)>6)invalid();return {label:str(m.label,200),amount_minor:minor(m.amount_minor),currency,exponent:Number(m.exponent),kind:str(m.kind,200),source_ref:str(m.source_ref),known_subtotal:minor(m.known_subtotal)};}
 function record(value:unknown,currency:string):RecordView{const r=object(value);if(!Number.isSafeInteger(r.version)||Number(r.version)<1)invalid();return {id:id(r.id),title:str(r.title,300),summary:str(r.summary),status:str(r.status,100),version:Number(r.version),owner:nullable(r.owner),customer_id:r.customer_id===null?null:id(r.customer_id),problem_id:r.problem_id===null?null:id(r.problem_id),metrics:list(r.metrics,30).map(m=>metric(m,currency)),evidence:list(r.evidence,50).map(e=>{const v=object(e);if(!['customer','agent','internal'].includes(String(v.role)))invalid();return {id:id(v.id),quote:str(v.quote),source_ref:str(v.source_ref),role:str(v.role)} as Evidence;}),details:list(r.details,30).map(d=>{const v=object(d);return {label:str(v.label,200),value:str(v.value)};})};}
 export async function readWorkspace(port:ReadPort,context:Context,resource:Resource,request:{scope:Scope;limit:number;cursor:string|null},resourceId:string|null=null):Promise<Bundle>{
+ if(port.query&&['metrics','problems'].includes(resource)){if(resourceId)throw new AccessError(503,'workspace_detail_unavailable');const scope={...request.scope,basis:request.scope.basis??'net',exponent:request.scope.exponent??null,scope_hash:request.scope.scope_hash??null};return await port.query({scope,resource,limit:request.limit,cursor:request.cursor}) as Bundle;}
  if(resourceId&&!UUID.test(resourceId))throw new AccessError(404,'resource_not_found');
  // Resolve latest once; every subsequent read must pin this immutable snapshot.
  let snapshotId=request.scope.snapshot_id;

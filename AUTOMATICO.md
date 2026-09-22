@@ -2,13 +2,13 @@
 
 Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Programa: [PROGRAMA](PROGRAMA.md). Repositorio canónico `~/vexa`; NO ejecutar en la copia de Escritorio. Las fuentes privadas permanecen locales.
 
-## Checkpoint vigente —36/60 técnicamente listas; 24 aceptadas en el grafo
+## Checkpoint vigente —37/60 técnicamente listas; 24 aceptadas en el grafo
 
-F05 completa6/6 técnica: ledger, exposición, dinero, snapshots y prioridad explicable con carril crítico separado. F05-06: revisión14/14, dominio7/7 Node22/26; copia Git limpia21/21 y regresión snapshots15/15. Matriz SQL/Auth/Storage305/305, focales22/22 y controlador125/125. Compilación, lint, tipos y CI web local verdes. Alcance: construccion/F05-06-CIERRE-TECNICO.md. Próxima fase:F06, workspace e interfaces conectadas.
+F06-01 añade filtros compartidos entre Overview, Problems, API y exportaciones con historial inmutable, clasificación SKU/origen aprobada y permisos vigentes. Copia Git limpia26/26; prioridad14/14 y cinco regresiones afectadas verdes. Matriz SQL/Auth/Storage312/312, focales12/12, dominio10/10 en Node22/26 y controlador125/125. Compilación, lint, tipos y CI web local verdes. Alcance: construccion/F06-01-CIERRE-TECNICO.md. Siguiente cierre:F06-02, detalle con trazabilidad financiera y evidencia.
 
-El total suma24 aceptadas por el runner y doce técnicamente listas con validación/dependencia externa pendiente: seis de F03 y seis de F05. El grafo conserva dependencias live. F06–08 y auditoría integral aún requieren trabajo; cuentas reales, datos autorizados y aprobaciones externas siguen pendientes. No acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
+El total suma24 aceptadas por el runner y trece técnicamente listas con dependencia/validación externa pendiente: seis F03, seis F05 y F06-01. F06–08 y auditoría integral aún requieren trabajo; cuentas reales, datos autorizados y aprobaciones externas siguen pendientes. No acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
 
-El usuario retiró el límite de tiempo el21-sep. Presupuesto conservado:269/280 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate activo no garantiza supervivencia de la sesión. Publicación sólo mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+Tiempo sin límite autorizado; presupuesto conservado:272/280 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate no impide suspensión al cerrar la tapa ni garantiza supervivencia de sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## Historial — F02 completa,17/60
 

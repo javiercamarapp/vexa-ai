@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-21",
+  "updated": "2026-09-22",
   "definition": "Construcción técnica integrada y probada; sólo accesos, datos, decisiones o aprobaciones externas pendientes. No acredita producción.",
   "accepted_in_graph": [
     "E00",
@@ -39,9 +39,10 @@
     "F05-03",
     "F05-04",
     "F05-05",
-    "F05-06"
+    "F05-06",
+    "F06-01"
   ],
-  "construction_total": 36,
+  "construction_total": 37,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -258,6 +259,24 @@
       ],
       "official_dependency_pending": [
         "F05-05",
+        "F03-06"
+      ]
+    },
+    {
+      "task_id": "F06-01",
+      "technical_ready": true,
+      "implemented": "Overview y Problems comparten snapshot y alcance derivado inmutable en URL/API/exports. Clasificación SKU/origen con aprobación owner, CAS e historial; cursor ligado a permisos actuales; respuestas tardías descartadas y exportación revocada ante pérdida de acceso.",
+      "programming_pending": [],
+      "scope_note": "Ficha F06-01 completa técnicamente; detalles F06-02 y resto F06–08/auditoría integral siguen pendientes.",
+      "external_pending": [
+        {
+          "owner": "Titular de infraestructura y responsable de datos del cliente",
+          "pending": "Migraciones/despliegue remoto con aprobación legítima, fuentes reales autorizadas y clasificación de órdenes basada en evidencia del cliente.",
+          "verification": "Validar filtros, permisos y exportaciones contra publicaciones procedentes de datos reales autorizados."
+        }
+      ],
+      "official_dependency_pending": [
+        "F05-06",
         "F03-06"
       ]
     }

@@ -1,0 +1,15 @@
+# F06-05 — Intervenciones y medición con evidencia
+
+Desde una recomendación publicada se abre su borrador en la vista Intervenciones con los mismos filtros y alcance. Antes de aprobar, se registra un plan versionado con hipótesis, responsable, baseline de medición, unidad, población, resultado, control, madurez, fechas y cambios concurrentes. El contexto original de la recomendación se conserva separado del baseline financiero elegido. La aprobación congela el plan.
+
+La API deriva identidad y tenant del servidor. El owner aprueba, cancela, reasigna y reabre; sólo el owner o el operador asignado registra ejecución. Las transiciones usan versión esperada, claves ligadas al contenido y eventos inmutables. Un doble envío o una respuesta perdida no duplica el cambio; un formulario obsoleto conserva su contenido y exige actualización. Reasignar a un operador retirado no reescribe quién figuraba en el plan aprobado.
+
+La medición exige una publicación posterior a la ejecución y calcula importes desde las fuentes financieras, sin aceptar dinero suministrado por el cliente HTTP. Conserva precisión por encima de2^53, moneda, cobertura, subtotal conocido y null. Una observación incompleta persiste como parcial y no permite cerrar. Antes/después se presenta como asociación, sin atribuir ahorro causal ni sumar beneficios compartidos. Reabrir conserva planes/resultados anteriores pero exige una nueva medición del ciclo actual; el contador de ciclo pertenece a la base de datos.
+
+Las referencias financieras capturadas se revalidan al leer o usar un resultado, incluyendo los autores vigentes de los mapeos del baseline y del periodo posterior. Retirar fuentes, revocar acceso o recibir una respuesta tardía no rehabilita datos. Los actores operativos históricos permanecen en la auditoría sin sustituir la autorización vigente de las fuentes financieras.
+
+Verificación: API/navegador14/14 sobre la versión previa al último ajuste SQL; copia Git limpia del producto final19/19 y regresión de Recomendaciones20/20. Revisión independiente del delta de seguridad y sus pruebas afectadas, con recibos privados por hash. La matriz anterior355/355 y la recuperación selectiva10/10 se conservan por hash. La regresión oficial expandida del principal ejecutó además la matriz final356/356 y las pruebas SQL específicas de Recomendaciones16/16, para392/392 junto con sus20casos funcionales y puros. Tipos, lint, compilación y CI web verdes; sus once archivos runtime permanecen idénticos. Controlador125/125. Controles congelados:ddb2706dadf213090f636f9d9eef1e03f654dee5.
+
+Los fallos reproducidos de reutilización de resultados tras reapertura y acceso persistente tras revocar un autor financiero quedan corregidos y sus pruebas negativas conservadas. También se conservan los fallos de fixtures y selectores, con su diagnóstico. Todos los recursos propios se verificaron ausentes antes de publicar.
+
+41/60 técnicamente listas;24 aceptadas formalmente en el grafo. Restan19 tareas y la auditoría integral final de20rubros. Cuentas/históricos autorizados, SQL remoto legítimamente aprobado, despliegue y validaciones humanas siguen pendientes. No acredita producción.

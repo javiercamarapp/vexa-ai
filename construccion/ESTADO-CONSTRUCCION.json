@@ -43,9 +43,10 @@
     "F06-01",
     "F06-02",
     "F06-03",
-    "F06-04"
+    "F06-04",
+    "F06-05"
   ],
-  "construction_total": 40,
+  "construction_total": 41,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -334,6 +335,24 @@
       ],
       "official_dependency_pending": [
         "F06-03",
+        "F03-06"
+      ]
+    },
+    {
+      "task_id": "F06-05",
+      "technical_ready": true,
+      "implemented": "Intervenciones con planes versionados, baseline financiero explícito, aprobación inmutable, ejecución registrada, medición persistente calculada desde datos autorizados, reasignación y reapertura auditadas. API y UI integradas; concurrencia, idempotencia, aislamiento y revocación probados.",
+      "programming_pending": [],
+      "scope_note": "Ficha F06-05 completa técnicamente. Medición antes/después es asociación, no ahorro causal. No ejecuta cambios externos de CRM. Resto F06–08 y auditoría integral de veinte rubros pendientes.",
+      "external_pending": [
+        {
+          "owner": "Titular de infraestructura y responsable de datos del cliente",
+          "pending": "Cuentas, fuentes e histórico autorizados, configuración/despliegue y aprobación legítima de migraciones previas y0026.",
+          "verification": "Validar un plan y una intervención del cliente, responsables reales y ventanas de observación comparables con su histórico financiero autorizado."
+        }
+      ],
+      "official_dependency_pending": [
+        "F06-04",
         "F03-06"
       ]
     }

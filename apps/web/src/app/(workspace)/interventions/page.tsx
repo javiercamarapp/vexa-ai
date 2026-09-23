@@ -1,2 +1,3 @@
-import { WorkspaceView, type Query } from '../../../lib/workspace/view';
-export default async function Page(props:{searchParams:Query}){return <WorkspaceView resource="interventions" searchParams={props.searchParams} />;}
+import {InterventionsPanel} from '../../../components/interventions/panel';
+import {queryParams,type Query} from '../../../lib/workspace/view';
+export default async function Page({searchParams}:{searchParams:Query}){return <InterventionsPanel initialQuery={queryParams(await searchParams).toString()}/>;}

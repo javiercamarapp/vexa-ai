@@ -1861,16 +1861,29 @@
       "packages/notifications/",
       "supabase/migrations/",
       "package.json",
-      "package-lock.json"
+      "package-lock.json",
+      "packages/platform/src/db.ts"
     ],
     "acceptance": "tests/acceptance/F06-08.test.mjs",
     "prompt": "orchestration/prompts/F06.md",
     "auto_accept": false,
     "requires_approval": false,
     "deliverables": [
-      "supabase/migrations/0015_notifications.sql",
-      "packages/notifications/src/preferences.ts",
-      "apps/web/src/app/(product)/notifications/page.tsx"
+      "packages/notifications/OPERATIONS.md",
+      "packages/notifications/catalog.mjs",
+      "packages/notifications/contracts.mjs",
+      "packages/notifications/index.d.mts",
+      "packages/notifications/index.mjs",
+      "packages/platform/src/db.ts",
+      "supabase/migrations/0028_notification_center.sql",
+      "apps/web/src/lib/notifications/server.ts",
+      "apps/web/src/app/api/notifications/route.ts",
+      "apps/web/src/app/api/notifications/preferences/route.ts",
+      "apps/web/src/app/api/notifications/[id]/read/route.ts",
+      "apps/web/src/components/notifications/panel.tsx",
+      "apps/web/src/app/(workspace)/notifications/page.tsx",
+      "apps/web/src/app/(workspace)/settings/notifications/page.tsx",
+      "apps/web/src/components/workspace/navigation.tsx"
     ],
     "steps": [
       "Leer PROPUESTAS-PARA-INTEGRAR y reutilizar catálogo/eligibilidad/templates revisados.",

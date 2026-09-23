@@ -1,0 +1,26 @@
+import * as recommendations from '../../tests/acceptance/support/F01-03/recommendation-oracles.mjs';
+import * as interventions from '../../tests/acceptance/support/F01-03/intervention-oracles.mjs';
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {launch,candidateInputs} from '../../tests/acceptance/support/F01-03/harness.mjs';
+import {seed,foreignKeys} from '../../tests/acceptance/support/F01-03/oracles.mjs';
+import * as history from '../../tests/acceptance/support/F01-03/source-history/oracles.mjs';
+import * as snapshots from '../../tests/acceptance/support/F01-03/snapshot-oracles.mjs';
+import * as workspace from '../../tests/acceptance/support/F01-03/workspace-oracles.mjs';
+import * as notifications from '../../tests/acceptance/support/F01-03/notification-oracles.mjs';
+import * as briefs from '../../tests/acceptance/support/F01-03/brief-oracles.mjs';
+test('F06-08 SQL implementation required',()=>{assert.ok(fs.existsSync(path.join(process.env.VEXA_CANDIDATE,'supabase/migrations/0028_notification_center.sql')),'NOTIFICATION_SQL_IMPLEMENTATION_MISSING');});
+test('F06-08 independent notification membership resources and owned state',{timeout:300000},async t=>{
+ const h=await launch({services:true});t.after(()=>{const c=process.env.VEXA_F01_03_CLEANUP;try{if(c)process.env.VEXA_F01_03_CLEANUP=c+'.targeted';h.close();}finally{if(c)process.env.VEXA_F01_03_CLEANUP=c;}});
+ for(const sql of candidateInputs(process.env.VEXA_CANDIDATE))h.sql(sql);
+ const keys=foreignKeys(h);await t.test('private RLS and tenant foreign keys',()=>notifications.schema(h,keys));
+ const actors={};for(const key of ['a','b','dual','outsider','viewer','analyst','operator'])actors[key]=await h.user();
+ const base=seed(h,actors);history.seedHistory(h,base);const snaps=snapshots.seed(h,base,actors),workspaces=await workspace.seed(h,base,actors,snaps),b=await briefs.seed(h,base,actors,workspaces);base.recommendations=await recommendations.seed(h,base,actors,workspaces);base.interventions=interventions.seed(h,base.recommendations,actors);const f=await notifications.seed(h,base,actors,b);
+ await t.test('notification own users roles tenant',()=>notifications.access(h,f,actors));
+ await t.test('notification preferences CAS event integrity and own read',()=>notifications.integrity(h,f,actors));
+ await t.test('notification current resources scoped helpers and NULL capability',()=>notifications.authorization(h,f,actors));
+ await t.test('notification catalogue resource roles and current evidence',()=>notifications.resources(h,f,actors));
+ for(const key of keys.filter(notifications.ownsFk))await t.test('notification tenant FK '+key.name,()=>notifications.fk(h,f,key));
+});

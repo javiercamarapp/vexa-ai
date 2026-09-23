@@ -771,7 +771,8 @@
         "packages/notifications/",
         "supabase/migrations/",
         "package.json",
-        "package-lock.json"
+        "package-lock.json",
+        "packages/platform/src/db.ts"
       ],
       "acceptance": "tests/acceptance/F06-08.test.mjs",
       "prompt": "orchestration/prompts/F06.md",

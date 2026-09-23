@@ -1,0 +1,15 @@
+# Intervenciones y medición
+
+El borrador nace de una recomendación autorizada. La nueva API `/api/interventions` permite consultar; `/api/interventions/[id]` recibe `plan`, `transition`, `assign` o `measure`. No ejecuta CRM, pagos ni reembolsos.
+
+El contexto de recomendación conserva su publicación y alcance. El plan elige explícitamente otro baseline publicado si conviene medir una ventana cercana a la implementación. Debe conservar moneda, base, versiones de método/modelo y filtros; SKU representa órdenes que contienen SKU, no ventas de líneas. La aprobación owner congela hipótesis, definición poblacional, control, unidad, outcome, madurez, fechas y baseline. Los planes se versionan por inserción mientras están en borrador.
+
+`draft → approved → active → measuring → closed`; cancelación requiere owner y razón. Activación registra inicio real posterior a aprobación; medición registra fin real. Owner o el operator asignado ejecutan transiciones operativas. Reasignar es una acción owner independiente: conserva el responsable originalmente aprobado en el plan y audita el responsable operativo nuevo. Retirar a un responsable bloquea ejecución hasta reasignar, sin borrar historial.
+
+La medición sólo recibe una publicación posterior; el servidor no acepta importes ni resultados del navegador. SQL deriva resultados desde referencias inmutables y dimensiones autorizadas, y el repositorio los contrasta con la proyección existente del kernel financiero. Se conserva dinero exacto como cadenas, cobertura, denominadores y versiones. El post debe comenzar después del fin real. Ventanas incompatibles, inmaduras o incompletas conservan razones y delta nulo; no habilitan cierre. Cierre exige resultado completo persistido y procedencia todavía autorizada. Owner puede reabrir `closed → measuring` con razón: mantiene plan, aprobación e historial y limpia la referencia de resultado vigente para exigir una nueva medición antes de recerrar.
+
+El delta es post menos baseline. Es asociación antes/después, no ahorro causal. Población significa regla declarada y filtros comunes; no asignación experimental comprobada. Los denominadores de clientes usan identidades económicas declaradas y deduplicadas; no se presentan como validación CRM. Cambios concurrentes y ausencia de control permanecen visibles. Los beneficios de intervenciones superpuestas no son aditivos y no hay total de ingresos recuperados.
+
+Cada escritura requiere versión esperada, requestKey y razón. Repetir exactamente una solicitud devuelve su versión original; reutilizar su clave con otro payload falla. Las definiciones, eventos y resultados permanecen inmutables. Ante conflicto, recargar la versión y revisar antes de una nueva solicitud. Una retirada de fuente o evidencia deniega consultas y nuevas operaciones; nunca se sustituye por cero.
+
+Configuración usa la misma Auth/DB autorizada del producto. Ausencia de configuración devuelve `configuration_required`; errores operativos no se convierten en ausencia de datos. No hay secretos ni endpoints de reloj/pruebas en el producto.

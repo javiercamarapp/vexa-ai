@@ -35,7 +35,7 @@ function RecommendationCard({item,members,busy,conflict,operate}:{item:Recommend
    <button disabled={locked}>{item.status==='dismissed'?'Reabrir recomendación':'Descartar recomendación'}</button>
   </form>{item.status==='proposed'&&<button disabled={locked||item.drafts.length>0} onClick={create}>Crear intervención borrador</button>}</>}
   {!item.canMutate&&<p>Esta versión es de consulta con tus permisos y la evidencia vigentes.</p>}
-  {item.drafts.length>0&&<section aria-label="Borradores de intervención"><h3>Intervención guardada como borrador</h3><p>El borrador aún no autoriza ejecución. Conserva la recomendación, su responsable y su publicación de referencia.</p><ul>{item.drafts.map(d=><li key={d.id}>{d.id} · {d.status} · Recomendación v{d.recommendationVersion} · {d.hypothesis}</li>)}</ul></section>}
+  {item.drafts.length>0&&<section aria-label="Borradores de intervención"><h3>Intervención guardada como borrador</h3><p>El borrador aún no autoriza ejecución. Conserva la recomendación, su responsable y su publicación de referencia.</p><ul>{item.drafts.map(d=><li key={d.id}><Link href={'/interventions?'+pinnedQuery(item.scope,item.snapshotId,item.scopeHash).toString()+'#intervention-'+d.id}>Abrir intervención</Link> · {d.status} · Recomendación v{d.recommendationVersion} · {d.hypothesis}</li>)}</ul></section>}
   <details><summary>Historial de versiones ({item.history.length})</summary><ol>{item.history.map(v=><li key={v.version}><strong>v{v.version} · {v.status==='dismissed'?'Descartada':'Propuesta'}</strong><p>{v.action}</p><p>{v.reason}</p><p>Responsable: {v.ownerId??'Sin asignar'} · Registrado por {v.actorId} · <time>{v.createdAt}</time></p></li>)}</ol></details>
  </article>;
 }

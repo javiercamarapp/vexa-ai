@@ -1,0 +1,15 @@
+# F06-06 — Brief ejecutivo con versiones y procedencia
+
+La vista Brief ejecutivo genera versiones desde una publicación financiera y un alcance fijados. Guarda cifras, fuentes, prioridades disponibles, revisión crítica, recomendaciones, intervenciones y límites. Historial, detalle y exportaciones conservan la identidad y el contenido de cada versión; no reconstruyen el pasado con datos actuales.
+
+Los importes mantienen moneda, precisión, subtotal conocido, cobertura y desconocidos como null. Los problemas compartidos no se suman al total. Una publicación previa seleccionada explícitamente produce diferencias observadas sólo cuando periodos, filtros, método y base son compatibles; los demás casos muestran razones y deltas desconocidos. No se atribuye ahorro causal ni se inventa un pronóstico. Generar y exportar no envía correo ni modifica fuentes financieras, CRM, jobs u outbox.
+
+El servidor deriva identidad y tenant. Owner y analyst pueden generar; los miembros vigentes leen únicamente documentos cuyas fuentes y referencias siguen autorizadas, incluyendo ambos periodos comparados. La base protege las versiones, cabeceras y claves de petición. Solicitudes concurrentes usan bloqueo transaccional y versión esperada; los reintentos conservan el resultado original. Una respuesta perdida mantiene la última versión verificada y exige actualizar antes de anunciar éxito.
+
+JSON y HTML se descargan mediante una nueva comprobación de acceso. El HTML escapa las fuentes y conserva restricciones de contenido; no hay enlace público permanente. Retirar una fuente o revocar al lector bloquea nuevas descargas y limpia la interfaz. Una respuesta tardía no restaura contenido después de salir y volver.
+
+Verificación independiente:15/15 API y navegador en Node26, matriz SQL27 de371/371, focales18/18 y dominio8/8 en Node22 y26. La materialización Git limpia final pasó23/23 en Node22. Tipos, lint, compilación, controles web y controlador125/125 verdes. El único ajuste visual posterior permite partir referencias largas entre líneas; tiene revisión independiente, imagen final comprobada y nuevas pruebas limpias y web sobre esos bytes. Controles congelados:69d8ce1acc9294318029ec915b41670622bfcab6.
+
+Se conservan reproducciones y correcciones de orden no determinista, una referencia SQL a una columna inexistente, metadatos financieros falsificados con hashes válidos, afirmaciones de causalidad y pronóstico inventadas y el fallo de publicación de la segunda versión causado por INSERT antes de ON CONFLICT. Este último se corrige actualizando la cabecera existente con comparación de versión, manteniendo las guardas SQL. La ausencia de capacidad explícita también se prueba como rechazo. Los errores del arnés se documentan aparte y no cuentan como pruebas de seguridad exitosas. Todos los recursos propios se comprobaron ausentes antes de publicar.
+
+42/60 técnicamente listas y24 aceptadas formalmente en el grafo. Restan18 tareas y la auditoría integral final de20 rubros. Fuentes reales, históricos autorizados, configuración, SQL remoto aprobado legítimamente y validación productiva siguen pendientes. Este cierre local no acredita producción.

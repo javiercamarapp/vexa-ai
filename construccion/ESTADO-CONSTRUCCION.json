@@ -44,9 +44,10 @@
     "F06-02",
     "F06-03",
     "F06-04",
-    "F06-05"
+    "F06-05",
+    "F06-06"
   ],
-  "construction_total": 41,
+  "construction_total": 42,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -353,6 +354,24 @@
       ],
       "official_dependency_pending": [
         "F06-04",
+        "F03-06"
+      ]
+    },
+    {
+      "task_id": "F06-06",
+      "technical_ready": true,
+      "implemented": "Brief ejecutivo versionado e inmutable desde publicaciones y alcances explícitos; cifras canónicas, prioridades, carril crítico, acciones e histórico. Comparación observada entre periodos compatibles, exportaciones JSON/HTML autorizadas y recuperación segura en UI/API.",
+      "programming_pending": [],
+      "scope_note": "Ficha F06-06 completa técnicamente; generar o exportar no envía correo ni cambia CRM. No estima ahorro causal ni pronósticos sin modelo. Notificaciones F06-08..12, accesibilidad global F06-07, F07/F08 y auditoría integral pendientes.",
+      "external_pending": [
+        {
+          "owner": "Titular de infraestructura y responsable de datos del cliente",
+          "pending": "Fuentes e histórico autorizados, cuentas/configuración, despliegue y aprobación legítima de migraciones previas y0027.",
+          "verification": "Recorrido remoto con publicaciones financieras autorizadas, comparación histórica representativa y revocación de lectores/fuentes reales."
+        }
+      ],
+      "official_dependency_pending": [
+        "F06-05",
         "F03-06"
       ]
     }

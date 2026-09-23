@@ -19,9 +19,13 @@ export function createExtractionHandler({database,resolveConfig,runtime='stub'})
    const context=await database.transaction('read',async s=>({tenantId:s.tenantId,role:s.role}));
    let config;try{config=resolveConfig(context.tenantId);}catch{config=null;}
    if(request.method==='GET'){
+    const query=new URL(request.url).searchParams;for(const key of query.keys())if(!['conversation_cursor','job_cursor','limit'].includes(key)||query.getAll(key).length!==1)invalid();
+    const rawLimit=query.get('limit');if(rawLimit!==null&&!/^(?:[1-9]|[1-9][0-9]|100)$/.test(rawLimit))invalid();const limit=rawLimit===null?100:Number(rawLimit);
+    const jobs=await queue.listPage({cursor:query.get('job_cursor'),limit}),conversations=['owner','analyst'].includes(context.role)?await queue.conversationsPage({cursor:query.get('conversation_cursor'),limit}):{items:[],next_cursor:null,hasMore:false};
+    if(!['owner','analyst'].includes(context.role)&&query.has('conversation_cursor'))invalid();
     const limits=config&&context.role==='owner'?await database.transaction('read',async s=>(await s.query('SELECT purpose,limit_minor::text AS limit_minor,version FROM public.ai_budget_limits WHERE tenant_id=$1 AND window_key=$2 AND purpose IN (\'all\',\'extraction\') ORDER BY purpose',[s.tenantId,config.gateway.policy.window])).rows):[];
     const reservations=config&&context.role==='owner'?await budget().list({window:config.gateway.policy.window}):[];
-    return Response.json({jobs:await queue.list(),conversations:['owner','analyst'].includes(context.role)?await queue.conversations():[],canSubmit:['owner','analyst'].includes(context.role),canConfigure:context.role==='owner',configuration:{ready:!!config,enabled:runtime==='enabled',window:config?.gateway.policy.window??null},limits,reservations},{headers});
+    return Response.json({jobs:jobs.items,conversations:conversations.items,pagination:{jobs:{next_cursor:jobs.next_cursor,hasMore:jobs.hasMore},conversations:{next_cursor:conversations.next_cursor,hasMore:conversations.hasMore}},canSubmit:['owner','analyst'].includes(context.role),canConfigure:context.role==='owner',configuration:{ready:!!config,enabled:runtime==='enabled',window:config?.gateway.policy.window??null},limits,reservations},{headers});
    }
    if(request.method!=='POST')return new Response(null,{status:405,headers});
    const raw=await request.text();if(Buffer.byteLength(raw)>8192)invalid();let body;try{body=JSON.parse(raw);}catch{invalid();}

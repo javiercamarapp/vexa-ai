@@ -25,6 +25,21 @@ export function createExtractionQueue({database,leaseMs=45000}={}){
   await s.query('UPDATE public.jobs SET state=$3,lease_until=NULL,provenance=$4,updated_at=clock_timestamp() WHERE tenant_id=$1 AND id=$2',[s.tenantId,j.id,state,JSON.stringify({reason:safeReasons.has(reason)?reason:reason==null?null:'execution_failed'})]);
   await s.query('UPDATE public.attempts SET state=$4,finished_at=clock_timestamp(),error_code=$5 WHERE tenant_id=$1 AND job_id=$2 AND fencing_token=$3 AND state=\'running\'',[s.tenantId,j.id,j.fencing_token,state==='succeeded'?'succeeded':reason==='reconciliation_required'?'uncertain':'failed',reason??null]);
  }
+ function pageInput(options={}){if(!options||typeof options!=='object'||Array.isArray(options)||Object.keys(options).some(k=>!['cursor','limit'].includes(k)))fail('extraction_input_invalid',400);const {cursor=null,limit=100}=options;if(cursor!==null&&!uuid(cursor)||!Number.isInteger(limit)||limit<1||limit>100)fail('extraction_input_invalid',400);return {cursor,limit};}
+ async function listPage(options){const {cursor,limit}=pageInput(options);return database.transaction('read',async s=>{
+  if(cursor&&!await one(s,'SELECT j.id FROM public.extraction_requests r JOIN public.jobs j ON j.tenant_id=r.tenant_id AND j.id=r.job_id WHERE r.tenant_id=$1 AND (r.actor_id=$2 OR $3::boolean) AND j.id=$4',[s.tenantId,s.userId,s.role==='owner',cursor]))fail('extraction_input_invalid',400);
+  const rows=(await s.query(`WITH anchor AS (SELECT created_at FROM public.jobs WHERE tenant_id=$1 AND id=$4::uuid)
+   SELECT j.id,j.state,j.provenance,j.created_at,r.conversation_id,e.id AS run_id,e.status AS run_status FROM public.extraction_requests r JOIN public.jobs j ON j.tenant_id=r.tenant_id AND j.id=r.job_id LEFT JOIN public.extraction_runs e ON e.tenant_id=j.tenant_id AND e.job_id=j.id
+   WHERE r.tenant_id=$1 AND (r.actor_id=$2 OR $3::boolean) AND ($4::uuid IS NULL OR j.created_at<(SELECT created_at FROM anchor) OR (j.created_at=(SELECT created_at FROM anchor) AND j.id>$4::uuid)) ORDER BY j.created_at DESC,j.id ASC LIMIT $5`,[s.tenantId,s.userId,s.role==='owner',cursor,limit+1])).rows;
+  const items=rows.slice(0,limit).map(projection),hasMore=rows.length>limit;return {items,next_cursor:hasMore?items.at(-1).id:null,hasMore};
+ });}
+ async function conversationsPage(options){const {cursor,limit}=pageInput(options);return database.transaction('read',async s=>{
+  if(cursor&&!await one(s,"SELECT c.id FROM public.conversations c JOIN public.connections n ON n.tenant_id=c.tenant_id AND n.id=c.connection_id JOIN public.source_heads h ON h.tenant_id=c.tenant_id AND h.id=c.id WHERE c.tenant_id=$1 AND c.id=$2 AND c.deleted_at IS NULL AND n.status='active' AND h.state IN ('unique','selected')",[s.tenantId,cursor]))fail('extraction_input_invalid',400);
+  const rows=(await s.query(`WITH anchor AS (SELECT created_at FROM public.conversations WHERE tenant_id=$1 AND id=$2::uuid)
+   SELECT c.id,c.source,c.created_at FROM public.conversations c JOIN public.connections n ON n.tenant_id=c.tenant_id AND n.id=c.connection_id JOIN public.source_heads h ON h.tenant_id=c.tenant_id AND h.id=c.id
+   WHERE c.tenant_id=$1 AND c.deleted_at IS NULL AND n.status='active' AND h.state IN ('unique','selected') AND ($2::uuid IS NULL OR c.created_at<(SELECT created_at FROM anchor) OR (c.created_at=(SELECT created_at FROM anchor) AND c.id>$2::uuid)) ORDER BY c.created_at DESC,c.id ASC LIMIT $3`,[s.tenantId,cursor,limit+1])).rows;
+  const items=rows.slice(0,limit),hasMore=rows.length>limit;return {items,next_cursor:hasMore?items.at(-1).id:null,hasMore};
+ });}
  return Object.freeze({
   async submit({conversationId,requestKey,configHash}){
    if(!uuid(conversationId)||!uuid(requestKey)||typeof configHash!=='string'||! /^[a-f0-9]{64}$/.test(configHash))fail('extraction_input_invalid',400);
@@ -39,8 +54,9 @@ export function createExtractionQueue({database,leaseMs=45000}={}){
     return projection(await request(s,id));
    });
   },
-  async list(){return database.transaction('read',async s=>(await s.query(`SELECT j.id,j.state,j.provenance,j.created_at,r.conversation_id,e.id AS run_id,e.status AS run_status FROM public.extraction_requests r JOIN public.jobs j ON j.tenant_id=r.tenant_id AND j.id=r.job_id LEFT JOIN public.extraction_runs e ON e.tenant_id=j.tenant_id AND e.job_id=j.id WHERE r.tenant_id=$1 AND (r.actor_id=$2 OR $3::boolean) ORDER BY j.created_at DESC,j.id LIMIT 100`,[s.tenantId,s.userId,s.role==='owner'])).rows.map(projection));},
-  async conversations(){return database.transaction('read',async s=>(await s.query(`SELECT c.id,c.source,c.created_at FROM public.conversations c JOIN public.connections n ON n.tenant_id=c.tenant_id AND n.id=c.connection_id JOIN public.source_heads h ON h.tenant_id=c.tenant_id AND h.id=c.id WHERE c.tenant_id=$1 AND c.deleted_at IS NULL AND n.status='active' AND h.state IN ('unique','selected') ORDER BY c.created_at DESC,c.id LIMIT 100`,[s.tenantId])).rows);},
+  listPage,conversationsPage,
+  async list(){return (await listPage()).items;},
+  async conversations(){return (await conversationsPage()).items;},
   async cancel(id){if(!uuid(id))fail('extraction_input_invalid',400);return tx(async s=>{const j=await request(s,id,true);await accessible(s,j);if(!['queued','running'].includes(j.state))return projection(j);await s.query("UPDATE public.jobs SET state='cancelled',cancel_requested_at=clock_timestamp(),fencing_token=fencing_token+1,lease_until=NULL WHERE tenant_id=$1 AND id=$2",[s.tenantId,id]);await s.query("UPDATE public.attempts SET state='cancelled',finished_at=clock_timestamp() WHERE tenant_id=$1 AND job_id=$2 AND state='running'",[s.tenantId,id]);return {...projection(j),state:'cancelled'};});},
   async claim(){return tx(async s=>{
    await delegated(s);

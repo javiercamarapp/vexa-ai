@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import {readFile,writeFile,mkdir,lstat} from 'node:fs/promises';
 import {resolve,join} from 'node:path';
-import {pathToFileURL,fileURLToPath} from 'node:url';
+import {fileURLToPath} from 'node:url';
+import {realpathSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {evaluate,freezeProtocol,exportDevelopment,hashValue,EvaluationError} from './evaluate.mjs';
 const fail=code=>{throw new EvaluationError(code);};
@@ -24,4 +25,5 @@ export async function main(argv=process.argv.slice(2)){
  const receipt={schema_version:'vexa-evaluation-receipt-v1',created_at:new Date().toISOString(),command:[process.execPath,fileURLToPath(import.meta.url),...argv],exit_code:0,result_hash:hashValue(result),result_file_hash:await hashFile(resultPath),input_file_hashes:{protocol:inputHashes.get(flags.protocol),dataset:inputHashes.get(flags.dataset),predictions:inputHashes.get(flags.predictions)},engine_hash:await hashFile(fileURLToPath(new URL('./evaluate.mjs',import.meta.url))),cli_hash:await hashFile(fileURLToPath(import.meta.url)),exposure,replay,status:result.status,release_decision:'not_issued'};
  await write(join(flags.out,'receipt.json'),receipt);return {status:result.status,result_hash:receipt.result_hash,path:flags.out,replay};
 }
-if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){main().then(result=>process.stdout.write(JSON.stringify(result)+'\n')).catch(error=>{const code=error instanceof EvaluationError?error.code:error?.code==='EEXIST'?'OUTPUT_EXISTS':'EVALUATION_FAILED';process.stderr.write(JSON.stringify({status:'failed',code})+'\n');process.exitCode=1;});}
+function isEntry(){try{return !!process.argv[1]&&realpathSync(process.argv[1])===realpathSync(fileURLToPath(import.meta.url));}catch{return false;}}
+if(isEntry()){main().then(result=>process.stdout.write(JSON.stringify(result)+'\n')).catch(error=>{const code=error instanceof EvaluationError?error.code:error?.code==='EEXIST'?'OUTPUT_EXISTS':'EVALUATION_FAILED';process.stderr.write(JSON.stringify({status:'failed',code})+'\n');process.exitCode=1;});}

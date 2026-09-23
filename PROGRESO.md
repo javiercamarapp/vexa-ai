@@ -1,6 +1,12 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## Reparación verificada y propuestas en revisión —23-sep
+
+Corregida la entrada del consumidor durable y del evaluador: ejecutar sus CLI por un alias de ruta podía terminar con exit0 sin realizar trabajo. Reproducción negativa, corrección mínima y revisión independiente311; alias de archivo/directorio, salida real e importación sin arranque comprobados en Node22/26. Regresiones: evaluación17/17 y durable8/8. La reparación no añade una tarea al contador.
+
+Las propuestas locales F06-09..12 tienen pruebas funcionales; permanecen fuera del contador mientras faltan revisiones/aceptación. F07: robustez económica revisada independientemente (6/6 por runtime y cinco mutantes detectados por runtime); caos de autor30/30 en tres repeticiones; restore de autor5/5, en revisión independiente. Carga10K/50K medida,150K aún en ejecución al guardar este corte. No se declara auditoría final ni producción. Presupuesto acumulado312/360, sin reinicio.
+
 ## Checkpoint vigente —43/60 técnicamente listas; 25 aceptadas en el grafo
 
 F06-08 integra el centro de notificaciones, preferencias propias con control de versiones, lectura idempotente y enlaces a recursos autorizados. API/navegador15/15, gate oficial y aceptación Git limpia22/22, matriz SQL381/381. Tipos, lint, compilación, autenticación, navegación y controlador125/125 verificados. Alcance: construccion/F06-08-CIERRE-TECNICO.md. Siguiente cierre:F06-09, outbox y consumidor de notificaciones.

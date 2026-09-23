@@ -1,0 +1,12 @@
+import {createHash} from 'node:crypto';
+import {catalog,channels} from './catalog.mjs';
+export class NotificationError extends Error{constructor(code,status=400){super(code);this.code=code;this.status=status;}}
+export const check=(ok,code='notification_input_invalid',status=400)=>{if(!ok)throw new NotificationError(code,status);};
+export const uuid=v=>typeof v==='string'&&/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(v);
+export const strict=(o,keys)=>o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
+const hash=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
+export function parseInboxQuery(query){check(query instanceof URLSearchParams);check([...query.keys()].every(k=>['limit','status','cursor'].includes(k)&&query.getAll(k).length===1),'notification_filter_invalid');const l=query.get('limit')??'30',status=query.get('status')??'all';check(/^[1-9][0-9]{0,2}$/.test(l)&&Number(l)<=100&&['all','unread'].includes(status),'notification_filter_invalid');const cursor=query.get('cursor');check(cursor===null||cursor.length>0&&cursor.length<=2048,'notification_cursor_invalid');return {limit:Number(l),status,cursor};}
+export function validatePreference(input){check(strict(input,['channel','eventType','enabled','expectedVersion'])&&channels.some(c=>c.id===input.channel)&&(input.eventType==='*'||catalog.some(c=>c.type===input.eventType))&&typeof input.enabled==='boolean'&&Number.isSafeInteger(input.expectedVersion)&&input.expectedVersion>=0&&input.expectedVersion<2147483647);return structuredClone(input);}
+export function cursorBinding(scope,selection){return hash([scope.tenantId,scope.userId,scope.role,scope.permissionsVersion,selection.status,selection.limit]);}
+export function encodeCursor(after,binding){return Buffer.from(JSON.stringify({v:1,binding,after})).toString('base64url');}
+export function decodeCursor(cursor,binding){if(cursor===null)return null;try{check(/^[A-Za-z0-9_-]+$/.test(cursor));const x=JSON.parse(Buffer.from(cursor,'base64url').toString('utf8'));check(strict(x,['v','binding','after'])&&x.v===1&&x.binding===binding&&strict(x.after,['createdAt','id'])&&uuid(x.after.id)&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}Z$/.test(x.after.createdAt)&&Number.isFinite(Date.parse(x.after.createdAt))&&new Date(x.after.createdAt).toISOString()===x.after.createdAt.slice(0,23)+'Z');return x.after;}catch{throw new NotificationError('notification_cursor_conflict',409);}}

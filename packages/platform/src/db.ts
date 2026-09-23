@@ -10,8 +10,9 @@ export interface SqlConnection {
   release(): void;
 }
 export interface SqlPool { connect(): Promise<SqlConnection> }
-export type DatabaseAction = 'read' | 'materialize' | 'import' | 'configure' | 'propose' | 'approve' | 'execute' | 'retain';
+export type DatabaseAction = 'read' | 'notify' | 'materialize' | 'import' | 'configure' | 'propose' | 'approve' | 'execute' | 'retain';
 const roles: Record<DatabaseAction, readonly Membership['role'][]> = {
+  notify: ['owner','analyst','operator','viewer'],
   read: ['owner','analyst','operator','viewer'], materialize: ['owner','analyst','operator','viewer'], import: ['owner','analyst'], configure: ['owner'],
   propose: ['owner','analyst','operator'], approve: ['owner'], execute: ['owner','operator'], retain: ['owner'],
 };

@@ -1,3 +1,4 @@
+import * as interventions from './support/F01-03/intervention-oracles.mjs';
 import * as recommendations from './support/F01-03/recommendation-oracles.mjs';
 import * as detail from './support/F01-03/detail-oracles.mjs';
 import * as workspace from './support/F01-03/workspace-oracles.mjs';
@@ -41,6 +42,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   if(migrations.economicRequired)assert.deepEqual(economic.present(h),economic.tables,'ECONOMIC_MIGRATION_REQUIRED');
   if(migrations.exposureRequired)assert.deepEqual(exposure.present(h),exposure.tables,'EXPOSURE_MIGRATION_REQUIRED');
   if(migrations.moneyRequired)assert.deepEqual(money.present(h),money.tables,'MONEY_MIGRATION_REQUIRED');
+  if(migrations.interventionsRequired)assert.deepEqual(interventions.present(h),interventions.tables,'INTERVENTION_MIGRATION_REQUIRED');
   if(migrations.recommendationsRequired)assert.deepEqual(recommendations.present(h),recommendations.tables,'RECOMMENDATION_MIGRATION_REQUIRED');
   if(migrations.detailRequired)assert.deepEqual(detail.present(h),detail.tables,'DETAIL_MIGRATION_REQUIRED');
   if(migrations.workspaceRequired)assert.deepEqual(workspace.present(h),workspace.tables,'WORKSPACE_MIGRATION_REQUIRED');
@@ -78,6 +80,20 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   if(workspace.present(h).length){f.workspace=await workspace.seed(h,f,actors,f.snapshots);await t.test('workspace0023 tenant roles and current mapping contributors',()=>workspace.access(h,f.workspace,actors));await t.test('workspace0023 mapping and immutable binding integrity',()=>workspace.integrity(h,f.workspace,actors));}
   if(detail.present(h).length){f.detail=await detail.seed(h,f,actors,f.workspace);await t.test('detail0024 tenant roles and private identities',()=>detail.access(h,f.detail,actors));await t.test('detail0024 approved identity CAS cutoff and immutable receipt',()=>detail.integrity(h,f.detail,actors));await t.test('detail0024 complete conversation identity manifest',()=>detail.conversationCompleteness(h,f,actors,f.workspace));}
   if(recommendations.present(h).length){f.recommendations=await recommendations.seed(h,f,actors,f.workspace);await t.test('recommendations0025 tenant current roles capabilities',()=>recommendations.access(h,f.recommendations,actors));await t.test('recommendations0025 captured evidence CAS history draft only',()=>recommendations.integrity(h,f.recommendations,actors));await t.test('recommendations0025 withdrawn evidence cannot certify writes',()=>recommendations.sourceAuthorization(h,f.recommendations,actors));await t.test('recommendations0025 scoped helper privileges',()=>recommendations.helpers(h,f.recommendations,actors));await t.test('recommendations0025 revoked history cannot be recertified',()=>recommendations.revokedHistory(h,f.recommendations,actors));}
+  if(interventions.present(h).length){
+    f.interventions=interventions.seed(h,f.recommendations,actors);
+    await t.test('interventions0026 scoped money and current sources',()=>interventions.projection(h,f.workspace,actors));
+    await t.test('interventions0026 plan permissions CAS and approval immutability',()=>interventions.states(h,f.interventions,actors));
+    await t.test('interventions0026 ordered canonical measurement and exact delta',()=>interventions.lifecycle(h,f.interventions,f.recommendations,f.workspace,actors));
+    assert.ok(f.interventions.a.intervention_results&&f.interventions.b.intervention_results,'INTERVENTION_LIFECYCLE_PREREQUISITE');
+    await t.test('interventions0026 operational owner recovery without source revival',()=>interventions.assignment(h,f.interventions,actors));
+    await t.test('interventions0026 net refund and unknown reversal',()=>interventions.refunds(h,f.interventions,f.workspace,actors));
+    await t.test('interventions0026 partial unknown and immature measurements',()=>interventions.partial(h,f.interventions,f.recommendations,f.workspace,actors));
+    await t.test('interventions0026 reopen retains history and requires new measurement',()=>interventions.reopen(h,f.interventions,actors));
+    await t.test('interventions0026 current captured mapping contributor',()=>interventions.mappingAuthorization(h,f.interventions,actors));
+    await t.test('interventions0026 tenant roles immutable audit and result authority',()=>interventions.access(h,f.interventions,actors));
+    await t.test('interventions0026 scoped helper privileges',()=>interventions.scopedHelpers(h,f.recommendations,actors));
+  }
   for(const fk of foreignKeys(h))await t.test(`discovered FK ${fk.name}`,()=>discoveredFkOracle(h,f,fk));
   await t.test('external identity 42 is tenant scoped and revision deduplicated',()=>{
     assert.equal(h.sql("SELECT count(*) FROM public.conversations WHERE external_id='42'"),'2');

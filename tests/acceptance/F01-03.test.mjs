@@ -1,3 +1,4 @@
+import * as notifications from './support/F01-03/notification-oracles.mjs';
 import * as briefs from './support/F01-03/brief-oracles.mjs';
 import * as interventions from './support/F01-03/intervention-oracles.mjs';
 import * as recommendations from './support/F01-03/recommendation-oracles.mjs';
@@ -50,6 +51,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   if(migrations.priorityRequired)assert.deepEqual(priority.present(h),priority.tables,'PRIORITY_MIGRATION_REQUIRED');
   if(migrations.snapshotsRequired)assert.deepEqual(snapshots.present(h),snapshots.tables,'SNAPSHOT_MIGRATION_REQUIRED');
   if(migrations.briefsRequired)assert.deepEqual(briefs.present(h),briefs.tables,'BRIEF_MIGRATION_REQUIRED');
+  if(migrations.notificationsRequired)assert.deepEqual(notifications.present(h),notifications.tables,'NOTIFICATIONS_MIGRATION_REQUIRED');
   schemaOracle(h);
   const actors={};for(const key of ['a','b','dual','outsider','viewer','analyst','operator'])actors[key]=await h.user();
   const f=seed(h,actors);
@@ -97,6 +99,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
     await t.test('interventions0026 scoped helper privileges',()=>interventions.scopedHelpers(h,f.recommendations,actors));
   }
   if(briefs.present(h).length){f.briefs=await briefs.seed(h,f,actors,f.workspace);await t.test('briefs0027 current roles and tenant capabilities',()=>briefs.access(h,f.briefs,actors));await t.test('briefs0027 immutable scoped publication and payload-bound replay',()=>briefs.integrity(h,f.briefs,actors));await t.test('briefs0027 no invented causal savings',()=>briefs.claims(h,f.briefs,actors));await t.test('briefs0027 current snapshot mapping and comparison authority',()=>briefs.authorization(h,f.briefs,actors));await t.test('briefs0027 exact prior comparison and both-source authorization',()=>briefs.comparison(h,f.briefs,actors));}
+  if(notifications.present(h).length){f.notifications=await notifications.seed(h,f,actors,f.briefs);await t.test('notifications0028 own users roles and tenant',()=>notifications.access(h,f.notifications,actors));await t.test('notifications0028 own preferences CAS and immutable event/read state',()=>notifications.integrity(h,f.notifications,actors));await t.test('notifications0028 current resource authority and absent capability',()=>notifications.authorization(h,f.notifications,actors));await t.test('notifications0028 all catalogue resource roles and evidence',()=>notifications.resources(h,f.notifications,actors));}
   for(const fk of foreignKeys(h))await t.test(`discovered FK ${fk.name}`,()=>discoveredFkOracle(h,f,fk));
   await t.test('external identity 42 is tenant scoped and revision deduplicated',()=>{
     assert.equal(h.sql("SELECT count(*) FROM public.conversations WHERE external_id='42'"),'2');

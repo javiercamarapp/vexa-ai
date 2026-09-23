@@ -730,7 +730,8 @@
         "packages/recommendations/",
         "packages/interventions/",
         "packages/briefs/",
-        "supabase/migrations/0014_interventions.sql"
+        "supabase/migrations/0026_interventions.sql",
+        "packages/workspace-service/index.mjs"
       ],
       "acceptance": "tests/acceptance/F06-05.test.mjs",
       "prompt": "orchestration/prompts/F06.md",

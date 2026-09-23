@@ -1753,16 +1753,26 @@
       "packages/recommendations/",
       "packages/interventions/",
       "packages/briefs/",
-      "supabase/migrations/0014_interventions.sql"
+      "supabase/migrations/0026_interventions.sql",
+      "packages/workspace-service/index.mjs"
     ],
     "acceptance": "tests/acceptance/F06-05.test.mjs",
     "prompt": "orchestration/prompts/F06.md",
     "auto_accept": false,
     "requires_approval": false,
     "deliverables": [
-      "packages/interventions/src/state-machine.ts",
-      "apps/web/src/app/(product)/interventions/page.tsx",
-      "supabase/migrations/0014_interventions.sql"
+      "packages/interventions/index.mjs",
+      "packages/interventions/index.d.mts",
+      "packages/interventions/state.mjs",
+      "packages/interventions/OPERATIONS.md",
+      "packages/workspace-service/index.mjs",
+      "supabase/migrations/0026_interventions.sql",
+      "apps/web/src/lib/interventions/server.ts",
+      "apps/web/src/app/api/interventions/route.ts",
+      "apps/web/src/app/api/interventions/[id]/route.ts",
+      "apps/web/src/components/interventions/panel.tsx",
+      "apps/web/src/app/(workspace)/interventions/page.tsx",
+      "apps/web/src/components/recommendations/panel.tsx"
     ],
     "steps": [
       "Estados draft->approved->active->measuring->closed y cancelled con permisos definidos.",

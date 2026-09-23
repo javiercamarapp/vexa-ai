@@ -68,6 +68,7 @@ h.env={...buildEnvironment(process.env,tmp),WATCHPACK_POLLING:'500'};
   // Container-local loopback bridge preserves the application's allowed localhost origin.
   command('docker',['exec','-d',h.container,'node','-e',"require('node:net').createServer(s=>{const u=require('node:net').connect(57560,'host.docker.internal');s.on('error',()=>u.destroy());u.on('error',()=>s.destroy());s.pipe(u);u.pipe(s);}).listen(57560,'127.0.0.1')"]);
   command('docker',['cp',path.join(here,'browser.cjs'),h.container+':/tmp/browser.cjs']);
+  command('docker',['cp',path.join(here,'dependency-oracle.cjs'),h.container+':/tmp/dependency-oracle.cjs']);
   h.browser=mode=>{
    const r=spawnSync('docker',['exec',h.container,'node','/tmp/browser.cjs',mode],{encoding:'utf8',timeout:150000,maxBuffer:4*1024*1024});
    fs.appendFileSync(path.join(tmp,'browser.log'),r.stdout+r.stderr);return r;

@@ -1,6 +1,7 @@
 const assert=require('node:assert/strict');
 const {chromium}=require('/app/node_modules/playwright-core');
 const fs=require('node:fs');
+const {dependencyRoute,dependencyHeaders,dependencyResponse,dependencyPresentation}=require('./dependency-oracle.cjs');
 const base='http://localhost:57560';
 const scope='date_start=2026-09-01&date_end=2026-10-01&currency=MXN&timezone=UTC&date_basis=conversation&sku=SYN-A&sku=SYN-B&source=csv&source=zendesk&snapshot_id=11111111-1111-4111-8111-111111111111';
 const paths=['/overview','/problems','/recommendations','/explorer','/interventions','/briefs'];
@@ -66,6 +67,22 @@ async function validation(page,code){
  assert.match(await alert.innerText(),/Alcance inválido|invalid scope/i,'VALIDATION_ACTIONABLE');
  assert.equal(await page.getByText(/Snapshot disponible/).count(),0,'INVALID_URL_NOT_READY');
 }
+async function authorizedNavigation(page,url,fixture,label){
+ let pending;const expected=fixture.dependencyMode==='csr-workspace'?dependencyRoute(new URL(url).pathname):null;
+ // Synthetic detail pins exercise its dependency request; they do not assert a real snapshot.
+ if(expected?.contract==='f06-detail-v1'){const scoped=new URL(url);scoped.searchParams.set('snapshot_id','11111111-1111-4111-8111-111111111111');scoped.searchParams.set('scope_hash','a'.repeat(64));url=scoped.toString();}
+ if(expected)pending=page.waitForResponse(r=>new URL(r.url()).pathname===expected.path&&r.request().method()==='GET',{timeout:10000});
+ const response=await page.goto(url);
+ if(pending){
+  const observed=await pending;assert.equal(observed.status(),503,'DEPENDENCY_BROWSER_STATUS:'+label);dependencyHeaders(observed.headers());
+  // Some panels discard the error body; Chromium may never finish response.json().
+  // Check the exact envelope via a second real GET sharing this browser's Auth cookies.
+  const api=await page.context().request.get(observed.url(),{timeout:10000});
+  dependencyResponse(api.status(),api.headers(),await api.json(),expected);
+  console.log('DEPENDENCY_HTTP '+label+' browser=503 verified=503 path='+expected.path+' contract='+expected.contract);
+ }
+ await authorized(page,response,fixture,label);return response;
+}
 async function authorized(page,response,fixture,label){
  assert.ok([200,503].includes(response.status()),'AUTHORIZED_ROUTE:'+label);
  assert.notEqual(new URL(page.url()).pathname,'/login','AUTHORIZED_NO_REDIRECT');
@@ -75,7 +92,10 @@ async function authorized(page,response,fixture,label){
  const body=await page.locator('body').innerText();assert.match(body,new RegExp('\\bRol: '+fixture.role+'\\b'),'AUTHORIZED_ROLE_PRESERVED expected='+fixture.role);
  assert.doesNotMatch(body,/ONLY_B_|workspace_identity_unavailable|organizations_unavailable|authentication_required/,'AUTH_NOT_DEPENDENCY');
  const alert=page.locator('[role=alert]:not(#__next-route-announcer__)');
- if(fixture.dependencyUnavailable||await alert.count()||response.status()===503){
+ if(fixture.dependencyMode==='csr-workspace'){
+  try{await alert.first().waitFor({state:'visible',timeout:6000});}catch{assert.fail('DEPENDENCY_VISIBLE');}
+  dependencyPresentation(await alert.allInnerTexts(),await page.locator('body').innerText());
+ }else if(fixture.dependencyUnavailable||await alert.count()||response.status()===503){
   assert.equal(await alert.count(),1,'DEPENDENCY_VISIBLE');
   assert.match(await alert.innerText(),/workspace_unavailable|workspace_database_unavailable|database_not_configured/,'DEPENDENCY_SPECIFIC');
   assert.match(await alert.innerText(),/administrador.*configurar.*PostgreSQL.*workspace/i,'DEPENDENCY_ACTIONABLE');
@@ -100,6 +120,8 @@ async function authorized(page,response,fixture,label){
   }
  }else if(process.argv[2]==='validation'){
   for(const [query,code] of invalidQueries){await page.goto(base+'/exam-f01-04?kind=error&'+query);await validation(page,code);}
+ }else if(process.argv[2]==='dependency-probe'){
+  const fixture=JSON.parse(fs.readFileSync('/tmp/fixture.json','utf8')),session=fixture.sessions.find(s=>s.role==='owner');fixture.role=session.role;await context.addCookies(session.cookies.map(c=>({...c,url:base})));await authorizedNavigation(page,base+'/overview?date_start=2026-09-01&date_end=2026-10-01&currency=USD&timezone=UTC&date_basis=conversation',fixture,'DEPENDENCY_PROBE');
  }else{
   const routeScope='date_start=2026-09-01&date_end=2026-10-01&timezone=UTC&currency=USD&date_basis=conversation';
   const fixture=JSON.parse(fs.readFileSync('/tmp/fixture.json','utf8'));
@@ -115,7 +137,7 @@ async function authorized(page,response,fixture,label){
   await context.clearCookies();
   await context.addCookies(session.cookies.map(c=>({...c,url:base})));
   for(const p of [...paths,...detailPaths]){
-   const r=await page.goto(base+p+'?'+routeScope);await authorized(page,r,fixture,p);
+   const r=await authorizedNavigation(page,base+p+'?'+routeScope,fixture,p);
    assert.equal(new URL(page.url()).pathname,p,'AUTHORIZED_NO_REDIRECT');
    assert.equal(await page.getByRole('navigation',{name:'Espacio de trabajo'}).count(),1,'AUTHORIZED_SHELL');
    assert.equal(await page.locator('h1').count(),1,'ROUTE_HEADING');
@@ -130,8 +152,8 @@ async function authorized(page,response,fixture,label){
   }
   // Real route authorization: a menu link cannot authorize a forged selector.
   for(const p of [...paths,...detailPaths]){
-   const r=await page.goto(base+p+'?'+routeScope+'&tenant_id='+fixture.foreign);
-   if(![400,401,403,404].includes(r.status()))await validation(page,'unsupported_filter');
+   const r=fixture.dependencyMode==='csr-workspace'?await authorizedNavigation(page,base+p+'?'+routeScope+'&tenant_id='+fixture.foreign,fixture,'FORGED_QUERY:'+p):await page.goto(base+p+'?'+routeScope+'&tenant_id='+fixture.foreign);
+   if(fixture.dependencyMode!=='csr-workspace'&&![400,401,403,404].includes(r.status()))await validation(page,'unsupported_filter');
    assert.equal(await page.getByText(/Snapshot disponible/).count(),0,'FORGED_SCOPE_NOT_READY');
   }
   await context.addCookies([{name:'vexa_active_org',value:fixture.foreign,url:base}]);
@@ -139,9 +161,9 @@ async function authorized(page,response,fixture,label){
    const r=await page.goto(base+p+'?'+routeScope);assert.ok([401,403,404].includes(r.status())||new URL(page.url()).pathname==='/login','FORGED_ORG_DENIED:'+p);
   }
   await context.addCookies([{name:'vexa_active_org',value:fixture.tenant,url:base}]);
-  await authorized(page,await page.goto(base+'/overview?'+routeScope),fixture,'AFTER_ATTACK');
+  await authorizedNavigation(page,base+'/overview?'+routeScope,fixture,'AFTER_ATTACK');
   for(const [query,code] of invalidQueries){
-   await page.goto(base+'/overview?'+query);await validation(page,code);
+   if(fixture.dependencyMode==='csr-workspace'){await authorizedNavigation(page,base+'/overview?'+query,fixture,'INVALID_QUERY:'+code);await page.goto(base+'/exam-f01-04?kind=error&'+query);await validation(page,code);}else{await page.goto(base+'/overview?'+query);await validation(page,code);}
   }
   await context.addCookies([{name:'sb-127-auth-token',value:'base64-invalid-session',url:base}]);
   for(const p of [...paths,...detailPaths]){

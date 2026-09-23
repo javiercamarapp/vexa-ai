@@ -5,7 +5,8 @@ import http from 'node:http';
 import {randomUUID} from 'node:crypto';
 import {launch} from './services.mjs';
 import {command} from './harness.mjs';
-export async function routes(h,candidate){
+export async function routes(h,candidate,{mode='routes'}={}){
+ assert.ok(['routes','dependency-probe'].includes(mode),'ROUTE_TEST_MODE');
  // Start fresh identity services. Existing Auth product code is never replaced.
  const s=await launch({services:true});let proxy;
  try{
@@ -32,7 +33,7 @@ export async function routes(h,candidate){
   // Action API is optional for F01. Only test existing action routes, never require F06.
   const actionFile=path.join(candidate,'apps/web/src/app/api/interventions/[id]/transition/route.ts');
   const actionPresent=fs.existsSync(actionFile)&&/\bPOST\b/.test(fs.readFileSync(actionFile,'utf8'));
-  const file=path.join(h.tmp,'fixture.json');fs.writeFileSync(file,JSON.stringify({tenant,foreign,problem,customer,dependencyUnavailable:true,sessions,actionPresent}),{mode:0o600});
+  const file=path.join(h.tmp,'fixture.json');fs.writeFileSync(file,JSON.stringify({tenant,foreign,problem,customer,dependencyUnavailable:true,dependencyMode:fs.existsSync(path.join(candidate,'apps/web/src/components/workspace/shared-panel.tsx'))?'csr-workspace':'legacy-ssr',sessions,actionPresent}),{mode:0o600});
   assert.equal(fs.statSync(file).mode&0o777,0o600,'FIXTURE_MODE_0600');
   command('docker',['cp',file,h.container+':/tmp/fixture.json']);
   // Keep 0600; transfer ownership only inside our disposable container.
@@ -42,7 +43,7 @@ export async function routes(h,candidate){
   console.log('FIXTURE_PRIVATE_NODE mode=600 owner=node readable=true');
   // Async child is essential: the local HTTP proxy must keep serving requests.
   const {spawn}=await import('node:child_process');
-  const result=await new Promise((resolve,reject)=>{let output='';const p=spawn('docker',['exec',h.container,'node','/tmp/browser.cjs','routes']);p.stdout.on('data',d=>output+=d);p.stderr.on('data',d=>output+=d);p.on('error',reject);p.on('close',code=>resolve({code,output}));});
-  fs.writeFileSync(path.join(h.tmp,'routes.log'),result.output);assert.equal(result.code,0,result.output);for(const [role,count] of Object.entries(verifiedIdentityRequests)){assert.ok(count>0,'REAL_IDENTITY_VERIFIED:'+role);console.log('REAL_IDENTITY_VERIFIED role='+role+' requests='+count);}h.screenshots();
+  const result=await new Promise((resolve,reject)=>{let output='';const p=spawn('docker',['exec',h.container,'node','/tmp/browser.cjs',mode]);p.stdout.on('data',d=>output+=d);p.stderr.on('data',d=>output+=d);p.on('error',reject);p.on('close',code=>resolve({code,output}));});
+  fs.writeFileSync(path.join(h.tmp,mode+'.log'),result.output);assert.equal(result.code,0,result.output);for(const [role,count] of Object.entries(verifiedIdentityRequests)){if(mode==='dependency-probe'&&role!=='owner')continue;assert.ok(count>0,'REAL_IDENTITY_VERIFIED:'+role);console.log('REAL_IDENTITY_VERIFIED role='+role+' requests='+count);}if(mode==='routes')h.screenshots();
  }finally{fs.rmSync(path.join(h.tmp,'fixture.json'),{force:true});command('docker',['exec','--user','root',h.container,'rm','-f','/tmp/fixture.json']);if(proxy)await new Promise(r=>proxy.close(r));s.close();}
 }

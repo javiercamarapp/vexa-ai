@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-22",
+  "updated": "2026-09-23",
   "definition": "Construcción técnica integrada y probada; sólo accesos, datos, decisiones o aprobaciones externas pendientes. No acredita producción.",
   "accepted_in_graph": [
     "E00",
@@ -42,9 +42,10 @@
     "F05-06",
     "F06-01",
     "F06-02",
-    "F06-03"
+    "F06-03",
+    "F06-04"
   ],
-  "construction_total": 39,
+  "construction_total": 40,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -315,6 +316,24 @@
       ],
       "official_dependency_pending": [
         "F06-02",
+        "F03-06"
+      ]
+    },
+    {
+      "task_id": "F06-04",
+      "technical_ready": true,
+      "implemented": "Explorer con búsqueda, filtros y paginación exhaustiva, citas autorizadas y herramientas de sólo lectura. Preguntas determinísticas soportadas devuelven importes exactos, cobertura y referencias del mismo alcance; ambigüedad y causalidad sin evidencia generan aclaración/abstención.",
+      "programming_pending": [],
+      "scope_note": "Ficha F06-04 completa técnicamente. No promete un modelo conversacional no implementado: modo determinístico explícito. Resto F06–08 y auditoría integral de veinte rubros pendientes.",
+      "external_pending": [
+        {
+          "owner": "Titular de infraestructura y responsable de datos del cliente",
+          "pending": "Cuentas y fuentes autorizadas, configuración/despliegue y aprobación legítima de migraciones previas.",
+          "verification": "Recorrido de búsqueda, preguntas soportadas, cobertura, referencias e aislamiento sobre publicaciones del histórico real autorizado."
+        }
+      ],
+      "official_dependency_pending": [
+        "F06-03",
         "F03-06"
       ]
     }

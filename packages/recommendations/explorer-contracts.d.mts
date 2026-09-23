@@ -1,0 +1,12 @@
+import type {WorkspaceScope} from '../workspace-service/contracts.mjs';
+export {WorkspaceError} from '../workspace-service/contracts.mjs';
+export const EXPLORER_VERSION:'f06-explorer-v1';
+export type ExplorerRequest={scope:WorkspaceScope;sharedQuery:string;search:string;status:'all'|'ready'|'partial'|'stale';order:'title_asc'|'id_asc';limit:number;cursor:string|null};
+export function parseExplorerQuery(query:URLSearchParams):ExplorerRequest;
+export function normalizeSearch(value:string):string;
+export function explorerCursorBinding(input:{authHash:string;snapshotId:string;scopeHash:string;search:string;status:string;order:string;limit:number}):string;
+export function encodeExplorerCursor(input:{after:{sort:string;id:string};binding:string}):string;
+export function decodeExplorerCursor(raw:string|null,input:{binding:string}):{sort:string;id:string}|null;
+export const TOOL_SCHEMAS:readonly {name:string;inputSchema:object}[];
+export function validateToolCall(input:unknown):{name:'search_problems'|'read_metrics'|'get_evidence';args:{query:string;problemId?:string}};
+export function clarifyQuestion(input:unknown):{question:string;query:string;missing:('basis'|'currency'|'period'|'published_scope'|'measure')[];metrics:string[];causal:boolean};

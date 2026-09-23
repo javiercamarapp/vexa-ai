@@ -1,0 +1,12 @@
+import type {WorkspaceScope} from '../workspace-service/contracts.mjs';
+import type {WorkspaceMetric,WorkspaceBundle} from '../workspace-service/index.mjs';
+export type ExplorerCitation={runId:string;conversationId:string;messageRevisionId:string;quote:string;quoteHash:string;role:string;category:string;severity:string;source:string};
+export type ExplorerItem={id:string;title:string;version:number;status:'ready'|'partial'|'stale';summary:string;metrics:WorkspaceMetric[];evidenceCount:number;citations:ExplorerCitation[]};
+export type ExplorerMeta={snapshotId:string;scopeHash:string;baseScopeHash:string;scope:WorkspaceScope;state:'empty'|'partial'|'stale'|'ready';coverage:string;watermark:string|null;nextCursor:string|null;totalMatched:number;query:string;statusFilter:'all'|'ready'|'partial'|'stale';order:'title_asc'|'id_asc';limit:number;ai:{available:false;reason:'deterministic_mode'}};
+export type ExplorerPage={items:ExplorerItem[];meta:ExplorerMeta};
+export type ExplorerEvidence={problemId:string;problemVersion:number;title:string;snapshotId:string;scopeHash:string;coverage:string;citations:ExplorerCitation[]};
+export type ExplorerFinancialReference={kind:'snapshot_metric';metric:string;sourceRef:string;snapshotId:string;scopeHash:string;href:string;label:string};
+export type ExplorerQuestion={status:'clarification_required'|'answered'|'abstained'|'unsupported';mode:'deterministic';question:string;answer:string|null;missing:('basis'|'currency'|'period'|'published_scope'|'measure')[];message:string;snapshotId:string|null;scopeHash:string|null;scope:WorkspaceScope|null;coverage:string|null;metrics:WorkspaceMetric[];references:ExplorerFinancialReference[];ai:{available:false;reason:'deterministic_mode'}};
+export type ExplorerToolName='search_problems'|'read_metrics'|'get_evidence';
+export type ExplorerToolResult={name:ExplorerToolName;result:ExplorerPage|WorkspaceBundle|ExplorerEvidence};
+export function createExplorerRepository(options:{database:any}):{search(input:{query:URLSearchParams}):Promise<ExplorerPage>;evidence(input:{query:URLSearchParams;problemId:string}):Promise<ExplorerEvidence>;tools(input:{name:ExplorerToolName;args:{query:string;problemId?:string}}):Promise<ExplorerToolResult>;ask(input:{question:string;query?:string|null}):Promise<ExplorerQuestion>};

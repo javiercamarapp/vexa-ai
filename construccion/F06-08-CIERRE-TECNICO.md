@@ -1,0 +1,15 @@
+# F06-08 — Centro de notificaciones y preferencias propias
+
+Los usuarios con membresía vigente pueden consultar sus avisos, paginar, filtrar los no leídos y marcar lectura. Cada operación vuelve a comprobar el recurso y la identidad actuales. Una lectura repetida conserva la primera fecha; una referencia ajena o retirada no concede acceso. Los enlaces internos abren el recurso correspondiente con su alcance autorizado.
+
+Las preferencias se guardan por organización, usuario, canal y evento. La ausencia de fila significa desactivado. Las escrituras comparan la versión esperada y rechazan conflictos; el navegador vuelve a leer el valor persistido antes de anunciar éxito. Si se pierde la respuesta después de guardar, actualizar recupera el estado real. Errores de acceso o de red no se presentan como bandejas vacías; una respuesta tardía no restaura datos tras revocación o navegación.
+
+Las tres tablas aplican RLS forzada, seis relaciones de tenant y permisos mínimos. El acceso directo desde el navegador está cerrado. Todos los roles activos pueden gestionar sólo sus preferencias y lectura; la capacidad notify no permite modificar finanzas, jobs, conexiones ni destinatarios. Los clientes y contactos CRM sin membresía no se convierten en destinatarios.
+
+El catálogo y los canales indican su disponibilidad real. Este cierre no instala emisores de negocio, outbox, envíos de correo ni suscripciones push: corresponden a F06-09..12. Los eventos de las pruebas son sintéticos, insertados por propietario SQL con todas las guardas activas; no se cuentan como entregas productivas. Guardar una preferencia no envía mensajes ni concede permisos del navegador.
+
+Verificación independiente:15/15 API y navegador sobre Auth/PostgreSQL reales; siete grupos de dominio en Node22 y26; matriz de las28 migraciones381/381; controles focales de capacidad, recursos y roles. El gate oficial reúne22 comprobaciones y se verifica de nuevo desde una materialización Git limpia antes de aceptar. Tipos, lint, compilación, controles web, autenticación, navegación y125 pruebas del controlador verificados. Se revisaron capturas de escritorio, móvil y preferencias. Recibos y recursos temporales se conciliaron por hash e identidad antes de publicar.
+
+La regresión de navegación también se reprodujo en la versión publicada anterior: el examen antiguo consultaba una alerta antes de terminar la carga y exigía textos del scaffold. Su corrección espera la respuesta contractual y una alerta visible y accionable, conservando rutas, roles, aislamiento y pruebas negativas. El mutante que oculta un error como vacío debe fallar. Los fallos originales y su diagnóstico se conservan; no se modifica producto para simular disponibilidad.
+
+43/60 tareas técnicas integradas y25 aceptadas formalmente. Restan17 tareas y la auditoría integral de20 rubros. Configuración y aprobación legítima de SQL remoto, cuentas y fuentes reales y validación productiva siguen pendientes. Las pruebas locales no acreditan producción.

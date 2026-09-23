@@ -2,13 +2,13 @@
 
 Actualizado: 2026-09-20. Este plan reemplaza los bloques históricos de investigación/preparación conservados en Git. El usuario pidió construir y confirmó **UN MES, no una semana**. Referencia de calendario: 19-oct-2026 si se cuenta desde este encargo; objetivo, no entrega garantizada ni estado alcanzado.
 
-## Checkpoint vigente —42/60 técnicamente listas; 24 aceptadas en el grafo
+## Checkpoint vigente —43/60 técnicamente listas; 25 aceptadas en el grafo
 
-F06-06 integra el brief ejecutivo versionado, historial inmutable, comparación histórica observada y exportaciones JSON/HTML con acceso revalidado. API/navegador15/15; copia Git limpia final23/23, matriz SQL371/371 y focales18/18. Tipos, lint, compilación, CI web y controlador125/125 verdes. Revisión visual corregida y comprobada. Alcance: construccion/F06-06-CIERRE-TECNICO.md. Siguiente cierre:F06-08, centro de notificaciones y preferencias.
+F06-08 integra el centro de notificaciones, preferencias propias con control de versiones, lectura idempotente y enlaces a recursos autorizados. API/navegador15/15, gate oficial y aceptación Git limpia22/22, matriz SQL381/381. Tipos, lint, compilación, autenticación, navegación y controlador125/125 verificados. Alcance: construccion/F06-08-CIERRE-TECNICO.md. Siguiente cierre:F06-09, outbox y consumidor de notificaciones.
 
-El total suma24 aceptadas por el runner y dieciocho técnicamente listas con dependencia/validación externa pendiente: seis F03, seis F05 y F06-01..06. Restan18 tareas de construcción y la auditoría integral de20 rubros. El cierre solicitado exige todo el software técnico de punta a punta, incluida ingesta histórica CRM y evaluación de agentes; sólo cuentas, datos, credenciales y aprobaciones externas pueden quedar pendientes. No acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
+El total suma25 aceptadas por el runner y dieciocho técnicamente listas con dependencia/validación externa pendiente: seis F03, seis F05 y F06-01..06. Restan17 tareas de construcción y la auditoría integral de20 rubros. El cierre solicitado exige todo el software técnico de punta a punta, incluida ingesta histórica CRM y evaluación de agentes; sólo cuentas, datos, credenciales y aprobaciones externas pueden quedar pendientes. No acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
 
-Tiempo sin límite autorizado; presupuesto conservado:292/360 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate mantiene pantalla y sistema despiertos con tapa abierta; no garantiza supervivencia de la sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+Tiempo sin límite autorizado; presupuesto conservado:296/360 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate mantiene pantalla y sistema despiertos con tapa abierta; no garantiza supervivencia de la sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## Historial — F02 completa,17/60
 

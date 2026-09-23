@@ -1707,8 +1707,18 @@
     "auto_accept": false,
     "requires_approval": false,
     "deliverables": [
-      "packages/recommendations/src/explorer-tools.ts",
-      "apps/web/src/app/(product)/explorer/page.tsx"
+      "packages/recommendations/explorer.mjs",
+      "packages/recommendations/explorer.d.mts",
+      "packages/recommendations/explorer-contracts.mjs",
+      "packages/recommendations/explorer-contracts.d.mts",
+      "packages/recommendations/EXPLORER.md",
+      "apps/web/src/lib/explorer/server.ts",
+      "apps/web/src/app/api/explorer/route.ts",
+      "apps/web/src/app/api/explorer/query/route.ts",
+      "apps/web/src/app/api/explorer/tools/route.ts",
+      "apps/web/src/components/explorer/panel.tsx",
+      "apps/web/src/app/(workspace)/explorer/page.tsx",
+      "apps/web/src/components/workspace/navigation.tsx"
     ],
     "steps": [
       "Explorer con búsqueda/filtros/paginación y opcional pregunta ejecutiva, herramientas read-only allowlisted.",

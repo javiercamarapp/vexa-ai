@@ -1,7 +1,15 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
-## Reparación verificada y propuestas en revisión —23-sep
+## Reparación de accesibilidad verificada —23-sep, corte323
+
+Las métricas de Resumen, Problemas y Brief conservan su importe, referencia y subtotal dentro de una descripción semántica válida. Corrección de las listas de definición en los renderizadores compartido, histórico y de brief; tamaños de texto preservados. Revisión independiente320 en navegador:4/4 para Resumen/Problemas y2/2 para Brief con comparación y subtotal desconocido. Se conservan300/300/15USD y comparación400→300, diferencia−100. Lint y compilación local del parche sobre la base publicada pasan. No acredita accesibilidad completa: quedan combinaciones de estados, contraste y juicio visual humano.
+
+La carga de ingesta10K/50K/150K terminó con9800/49000/147000 filas aceptadas,1%rechazos esperados,1%duplicados y cero pendientes. Medición local con datos sintéticos, un tenant y un trabajador;150K tomó1629s de procesamiento en tres trabajos. Revisión independiente de archivos, conteos, métricas y limpieza completada. Este baseline no incluye la propuesta posterior de retención, ni extracción IA, y no acredita capacidad productiva. La recuperación de una caída tras100/350 filas completó las250restantes en Node22/26.
+
+Retención y continuidad del histórico siguen en reparación/revisión local; la pantalla de Análisis necesita paginar el histórico y el encadenamiento automático de sus etapas sigue pendiente. Estas tareas no se cuentan como terminadas ni como simples credenciales faltantes. El contador permanece43/60 técnicas y25 aceptadas por el runner; no se ha ejecutado la auditoría integral final de20rubros.
+
+## Corte anterior — reparación CLI y propuestas en revisión,23-sep
 
 Corregida la entrada del consumidor durable y del evaluador: ejecutar sus CLI por un alias de ruta podía terminar con exit0 sin realizar trabajo. Reproducción negativa, corrección mínima y revisión independiente311; alias de archivo/directorio, salida real e importación sin arranque comprobados en Node22/26. Regresiones: evaluación17/17 y durable8/8. La reparación no añade una tarea al contador.
 
@@ -13,7 +21,7 @@ F06-08 integra el centro de notificaciones, preferencias propias con control de 
 
 El total suma25 aceptadas por el runner y dieciocho técnicamente listas con dependencia/validación externa pendiente: seis F03, seis F05 y F06-01..06. Restan17 tareas de construcción y la auditoría integral de20 rubros. El cierre solicitado exige todo el software técnico de punta a punta, incluida ingesta histórica CRM y evaluación de agentes; sólo cuentas, datos, credenciales y aprobaciones externas pueden quedar pendientes. No acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
 
-Tiempo sin límite autorizado; presupuesto conservado:296/360 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate mantiene pantalla y sistema despiertos con tapa abierta; no garantiza supervivencia de la sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+Tiempo sin límite autorizado; presupuesto conservado al corte de este checkpoint:323/360 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate mantiene pantalla y sistema despiertos con tapa abierta; no garantiza supervivencia de la sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## F02 completa — F02-06 aceptado,20-sep
 

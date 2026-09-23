@@ -1,6 +1,14 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## Histórico accesible por páginas —23-sep, corte325
+
+La pantalla de Análisis permite recorrer conversaciones y trabajos más allá de los100 iniciales. Cursores separados, navegación anterior/siguiente, selección reiniciada al cambiar de página y actualización periódica que conserva la página. Cada consulta vuelve a comprobar permisos; un fallo de acceso limpia los datos mostrados. Vista viva con orden estable, sin prometer una captura atómica entre páginas.
+
+Revisión independiente321 y pruebas autor322:102 conversaciones/trabajos sin duplicación entre páginas; contratos Node22/26 y navegador móvil. Sobre la base publicada con la reparación de accesibilidad: lint, compilación,19pruebas del flujo durable y6de navegador pasan; incluyen solicitud, cancelación, conciliación de costo desconocido y revocación. No añade inferencia ni procesamiento automático y no incrementa el contador43/60 técnicas,25formales.
+
+Siguen pendientes la continuidad automática CRM→extracción→agrupación, la configuración operable de presupuesto embedding, la visibilidad de problemas sin asociación financiera y la purga de texto derivado detectada en revisión de recuperación. Son pendientes técnicos; no se presentan como simples claves externas faltantes.
+
 ## Reparación de accesibilidad verificada —23-sep, corte323
 
 Las métricas de Resumen, Problemas y Brief conservan su importe, referencia y subtotal dentro de una descripción semántica válida. Corrección de las listas de definición en los renderizadores compartido, histórico y de brief; tamaños de texto preservados. Revisión independiente320 en navegador:4/4 para Resumen/Problemas y2/2 para Brief con comparación y subtotal desconocido. Se conservan300/300/15USD y comparación400→300, diferencia−100. Lint y compilación local del parche sobre la base publicada pasan. No acredita accesibilidad completa: quedan combinaciones de estados, contraste y juicio visual humano.
@@ -21,7 +29,7 @@ F06-08 integra el centro de notificaciones, preferencias propias con control de 
 
 El total suma25 aceptadas por el runner y dieciocho técnicamente listas con dependencia/validación externa pendiente: seis F03, seis F05 y F06-01..06. Restan17 tareas de construcción y la auditoría integral de20 rubros. El cierre solicitado exige todo el software técnico de punta a punta, incluida ingesta histórica CRM y evaluación de agentes; sólo cuentas, datos, credenciales y aprobaciones externas pueden quedar pendientes. No acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
 
-Tiempo sin límite autorizado; presupuesto conservado al corte de este checkpoint:323/360 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate mantiene pantalla y sistema despiertos con tapa abierta; no garantiza supervivencia de la sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+Tiempo sin límite autorizado; presupuesto conservado al corte de este checkpoint:325/360 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate mantiene pantalla y sistema despiertos con tapa abierta; no garantiza supervivencia de la sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## F02 completa — F02-06 aceptado,20-sep
 

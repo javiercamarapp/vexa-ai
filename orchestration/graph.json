@@ -749,7 +749,8 @@
         "apps/web/",
         "packages/recommendations/",
         "packages/interventions/",
-        "packages/briefs/"
+        "packages/briefs/",
+        "supabase/migrations/0027_briefs.sql"
       ],
       "acceptance": "tests/acceptance/F06-06.test.mjs",
       "prompt": "orchestration/prompts/F06.md",

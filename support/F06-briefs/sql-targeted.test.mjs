@@ -1,0 +1,24 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {launch,candidateInputs} from '../../tests/acceptance/support/F01-03/harness.mjs';
+import {seed,foreignKeys} from '../../tests/acceptance/support/F01-03/oracles.mjs';
+import * as history from '../../tests/acceptance/support/F01-03/source-history/oracles.mjs';
+import * as snapshots from '../../tests/acceptance/support/F01-03/snapshot-oracles.mjs';
+import * as workspace from '../../tests/acceptance/support/F01-03/workspace-oracles.mjs';
+import * as briefs from '../../tests/acceptance/support/F01-03/brief-oracles.mjs';
+test('F06-06 SQL implementation required',()=>{assert.ok(fs.existsSync(path.join(process.env.VEXA_CANDIDATE,'supabase/migrations/0027_briefs.sql')),'BRIEF_SQL_IMPLEMENTATION_MISSING');});
+test('F06-06 independent durable brief authorization and immutable version',{timeout:300000},async t=>{
+ const h=await launch({services:true});t.after(()=>{const c=process.env.VEXA_F01_03_CLEANUP;try{if(c)process.env.VEXA_F01_03_CLEANUP=c+'.targeted';h.close();}finally{if(c)process.env.VEXA_F01_03_CLEANUP=c;}});
+ for(const sql of candidateInputs(process.env.VEXA_CANDIDATE))h.sql(sql);
+ const keys=foreignKeys(h);await t.test('private RLS and tenant foreign keys',()=>briefs.schema(h,keys));
+ const actors={};for(const key of ['a','b','dual','outsider','viewer','analyst','operator'])actors[key]=await h.user();
+ const base=seed(h,actors);history.seedHistory(h,base);const snaps=snapshots.seed(h,base,actors),workspaces=await workspace.seed(h,base,actors,snaps),f=await briefs.seed(h,base,actors,workspaces);
+ await t.test('brief current roles tenant and capabilities',()=>briefs.access(h,f,actors));
+ await t.test('brief immutable payload bound versions and replay',()=>briefs.integrity(h,f,actors));
+ await t.test('no stored causal savings or recovered revenue invention',()=>briefs.claims(h,f,actors));
+ await t.test('brief current financial references and captured mapping contributors',()=>briefs.authorization(h,f,actors));
+ await t.test('comparison is exact and previous source withdrawal cannot export',()=>briefs.comparison(h,f,actors));
+ for(const key of keys.filter(briefs.ownsFk))await t.test('brief tenant FK '+key.name,()=>briefs.fk(h,f,key));
+});

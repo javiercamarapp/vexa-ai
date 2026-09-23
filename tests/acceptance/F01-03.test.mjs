@@ -1,3 +1,4 @@
+import * as briefs from './support/F01-03/brief-oracles.mjs';
 import * as interventions from './support/F01-03/intervention-oracles.mjs';
 import * as recommendations from './support/F01-03/recommendation-oracles.mjs';
 import * as detail from './support/F01-03/detail-oracles.mjs';
@@ -48,6 +49,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   if(migrations.workspaceRequired)assert.deepEqual(workspace.present(h),workspace.tables,'WORKSPACE_MIGRATION_REQUIRED');
   if(migrations.priorityRequired)assert.deepEqual(priority.present(h),priority.tables,'PRIORITY_MIGRATION_REQUIRED');
   if(migrations.snapshotsRequired)assert.deepEqual(snapshots.present(h),snapshots.tables,'SNAPSHOT_MIGRATION_REQUIRED');
+  if(migrations.briefsRequired)assert.deepEqual(briefs.present(h),briefs.tables,'BRIEF_MIGRATION_REQUIRED');
   schemaOracle(h);
   const actors={};for(const key of ['a','b','dual','outsider','viewer','analyst','operator'])actors[key]=await h.user();
   const f=seed(h,actors);
@@ -94,6 +96,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
     await t.test('interventions0026 tenant roles immutable audit and result authority',()=>interventions.access(h,f.interventions,actors));
     await t.test('interventions0026 scoped helper privileges',()=>interventions.scopedHelpers(h,f.recommendations,actors));
   }
+  if(briefs.present(h).length){f.briefs=await briefs.seed(h,f,actors,f.workspace);await t.test('briefs0027 current roles and tenant capabilities',()=>briefs.access(h,f.briefs,actors));await t.test('briefs0027 immutable scoped publication and payload-bound replay',()=>briefs.integrity(h,f.briefs,actors));await t.test('briefs0027 no invented causal savings',()=>briefs.claims(h,f.briefs,actors));await t.test('briefs0027 current snapshot mapping and comparison authority',()=>briefs.authorization(h,f.briefs,actors));await t.test('briefs0027 exact prior comparison and both-source authorization',()=>briefs.comparison(h,f.briefs,actors));}
   for(const fk of foreignKeys(h))await t.test(`discovered FK ${fk.name}`,()=>discoveredFkOracle(h,f,fk));
   await t.test('external identity 42 is tenant scoped and revision deduplicated',()=>{
     assert.equal(h.sql("SELECT count(*) FROM public.conversations WHERE external_id='42'"),'2');

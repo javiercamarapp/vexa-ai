@@ -86,7 +86,8 @@ export async function inspectPublished(cwd,origin,fixture,{allowUnconfiguredImpo
    const recommendation=url.pathname==='/api/recommendations'&&envelope?.contract_version==='f06-recommendations-v1'&&envelope?.error?.code==='configuration_required';
    const explorer=url.pathname==='/api/explorer'&&envelope?.contract_version==='f06-explorer-v1'&&envelope?.error?.code==='configuration_required';
    const interventions=url.pathname==='/api/interventions'&&envelope?.contract_version==='f06-interventions-v1'&&envelope?.error?.code==='configuration_required';
-   const expected=allowUnconfiguredImports===true&&!required&&response.status===503&&(imports||crm||extraction||aliases||problems||snapshots||economics||priority||workspace||detail||recommendation||explorer||interventions)&&!url.search
+   const briefs=url.pathname==='/api/briefs'&&envelope?.contract_version==='f06-briefs-v1'&&envelope?.error?.code==='configuration_required';
+   const expected=allowUnconfiguredImports===true&&!required&&response.status===503&&(imports||crm||extraction||aliases||problems||snapshots||economics||priority||workspace||detail||recommendation||explorer||interventions||briefs)&&!url.search
     &&/^application\/json(?:;|$)/i.test(response.headers.get('content-type')??'')
     &&/(?:^|,)\s*private\s*(?:,|$)/i.test(cache)&&/(?:^|,)\s*no-store\s*(?:,|$)/i.test(cache)
     &&envelope.error.retryable===true&&typeof envelope.error.message==='string'

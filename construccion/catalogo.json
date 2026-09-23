@@ -1813,8 +1813,18 @@
     "auto_accept": false,
     "requires_approval": false,
     "deliverables": [
-      "packages/briefs/src/build.ts",
-      "apps/web/src/app/(product)/brief/page.tsx"
+      "packages/briefs/index.mjs",
+      "packages/briefs/index.d.mts",
+      "packages/briefs/build.mjs",
+      "packages/briefs/OPERATIONS.md",
+      "supabase/migrations/0027_briefs.sql",
+      "apps/web/src/lib/briefs/server.ts",
+      "apps/web/src/app/api/briefs/route.ts",
+      "apps/web/src/app/api/briefs/[id]/route.ts",
+      "apps/web/src/app/api/briefs/[id]/export/route.ts",
+      "apps/web/src/components/briefs/panel.tsx",
+      "apps/web/src/app/(workspace)/briefs/page.tsx",
+      "apps/web/src/app/(workspace)/briefs/[id]/page.tsx"
     ],
     "steps": [
       "Generar brief desde snapshot, top 3, carril crítico, cambios, acciones y límites; no nuevos cálculos del LLM.",

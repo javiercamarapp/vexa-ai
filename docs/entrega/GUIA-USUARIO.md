@@ -4,7 +4,7 @@ Pendiente de ensayo por un usuario independiente siguiendo sólo esta guía. Cue
 
 ## Acceso
 
-Abra /login, use el método habilitado y seleccione una organización de su membresía. Seleccionar una organización no concede acceso nuevo. Owner configura conexiones, presupuesto, delegaciones y aprobaciones; analyst importa/analiza; operator participa en acciones autorizadas; viewer consulta. Cada operación verifica permisos actuales en servidor. No existe aún una invitación general a nuevas cuentas conectada: aprovisionamiento y membresías se coordinan con el administrador.
+Abra /login, use el método habilitado y seleccione una organización de su membresía. Seleccionar una organización no concede acceso nuevo. Owner configura conexiones, presupuesto, delegaciones y aprobaciones; analyst importa/analiza; operator participa en acciones autorizadas; viewer consulta. Cada operación verifica permisos actuales en servidor. En Equipo, un owner puede invitar por correo, revisar invitaciones pendientes, cancelarlas, cambiar roles o revocar acceso. El destinatario verifica su correo y acepta explícitamente antes de obtener membresía. La invitación expira en siete días y no cambia el rol de una membresía activa existente. La aplicación conserva al menos un owner. El reingreso por correo después de cerrar sesión está en construcción; hasta integrarlo el login disponible depende de Google configurado.
 
 ## Histórico e importación
 
@@ -28,7 +28,7 @@ Use /problems para lista y detalle, y /problems/manage para agrupación. /overvi
 
 ## Avisos y errores
 
-/notifications contiene avisos; /settings/notifications sus preferencias. Con propuestas F06-10..12 integradas, owner configura /settings/notification-delivery y cada persona registra Push en /notifications/push. Canales requieren configuración, consentimiento y consumidor activo. accepted no significa delivered; invitación no conectada sigue rotulada.
+/notifications contiene avisos; /settings/notifications sus preferencias. Con propuestas F06-10..12 integradas, owner configura /settings/notification-delivery y cada persona registra Push en /notifications/push. Canales requieren configuración, consentimiento y consumidor activo. accepted no significa delivered. Las invitaciones de Equipo usan Supabase Auth y tienen estados de envío separados de la aceptación de membresía; un envío incierto no se reintenta automáticamente.
 
 403 requiere revisar permiso;409 exige recargar versión y revisar antes de confirmar otra vez. Servicio no disponible no equivale a cero resultados. No repita imports/inferencia/envíos inciertos para ocultar un error. Cerrar sesión invalida Auth; con F06-11 revoca dispositivos de esa sesión y conserva historial de intentos.
 

@@ -1,0 +1,2 @@
+export class TeamError extends Error { status:number;code:string;constructor(status:number,code:string); }
+export function createTeam(options:{client: {rpc(name:string,input:Record<string,unknown>):PromiseLike<{data:unknown;error:{code?:string;message?:string}|null}>};tenantId?:string;sendInvitation?: (input:{id:string;email:string})=>Promise<string>}):{call(input:Record<string,unknown>):Promise<unknown>;invite(input:Record<string,unknown>):Promise<unknown>};

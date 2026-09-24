@@ -4,6 +4,14 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Equipo e invitaciones integrados —24-sep, corte348
+
+Equipo permite al owner invitar, listar y cancelar invitaciones, cambiar roles con versión y revocar acceso; SQL0038 conserva al menos un owner activo bajo concurrencia. Supabase Auth verifica el correo actual antes de la aceptación explícita. Revocar una membresía impide reingresar mediante replay; no elimina cuentas globales ni permisos de otras organizaciones.
+
+La solicitud de envío queda registrada antes del HTTP. Un timeout conserva incertidumbre y no reenvía; sólo una respuesta inequívoca de cuenta existente habilita el enlace sin crear usuario. Autor343 pasó10/10 en Node22/26 con Auth/PostgreSQL/SMTP Mailpit y navegador reales locales. La revisión345 comprobó autoridad, carreras, identidad final y errores. Detectó que cierre de ruta y middleware sobrescribían no-referrer; ambas capas se corrigieron, con3/3 focales por runtime y cookies conservadas. Integración17fuentes sobre435ff2a:lint/build verdes. Los fallos previos se conservan.
+
+El recorrido inicial de invitación está conectado; el reingreso por correo después de cerrar sesión sigue en construcción346 y revisión348. No hubo correos externos ni SQL remoto. SMTP, cuentas, configuración y permisos reales quedan separados de las pruebas locales.43/60 técnicas,25formales, sin incremento transversal.
+
 ## Candidatos evaluados y rollback conectados —24-sep, corte346
 
 Un owner puede importar el resumen firmado por un custodio independiente, revisar criterios y seleccionar una configuración autorizada del catálogo. La selección y el rollback conservan versiones con CAS; el worker y los lotes históricos usan el mismo hash efectivo. Un cambio posterior rechaza trabajos antiguos y pausa el lote hasta revisión. Se integra navegación, API, SQL0037 y guía; no hay promoción ni entrenamiento automáticos.

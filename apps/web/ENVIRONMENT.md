@@ -5,6 +5,7 @@ Auth, permisos, importación durable, conectores, análisis y workspace están i
 | Servicio | Variables | Condición |
 |---|---|---|
 | Auth web | NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, NEXT_PUBLIC_SITE_URL | Las tres; proyecto VEXA y origen correcto. Anon no es service-role. |
+| Invitaciones de equipo | VEXA_TEAM_AUTH_URL, VEXA_TEAM_AUTH_ADMIN_KEY | URL raíz del mismo proyecto Supabase; clave administrativa exclusivamente servidor. SMTP y redirect propio `/auth/invitations/*` configurados en Auth. |
 | Google | VEXA_GOOGLE_AUTH_ENABLED | Requiere OAuth/redirects configurados legítimamente. |
 | SQL | VEXA_DATABASE_URL | Sólo servidor; login restringido, sin superuser, BYPASSRLS ni propiedad de tablas. |
 | Importación | VEXA_IMPORT_CONFIRMATION_SECRET, VEXA_DURABLE_CONSUMER | Secreto servidor y admisión según salud del consumidor. |

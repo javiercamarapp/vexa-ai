@@ -2,13 +2,13 @@
 
 Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Programa: [PROGRAMA](PROGRAMA.md). Repositorio canónico `~/vexa`; NO ejecutar en la copia de Escritorio. Las fuentes privadas permanecen locales.
 
-## Checkpoint vigente —44/60 con trabajo técnico completo; 25 aceptadas en el grafo
+## Checkpoint vigente —45/60 con trabajo técnico completo; 25 aceptadas en el grafo
 
 F06-08 integra el centro de notificaciones, preferencias propias con control de versiones, lectura idempotente y enlaces a recursos autorizados. API/navegador15/15, gate oficial y aceptación Git limpia22/22, matriz SQL381/381. Tipos, lint, compilación, autenticación, navegación y controlador125/125 verificados. Alcance: construccion/F06-08-CIERRE-TECNICO.md. F06-09 conserva un bloqueo de revisión que no se reintenta ni transfiere. Se cierran trabajos independientes autorizados: histórico/evaluación, equipo/acceso por correo, retención, recuperación y entrega; sus recibos vigentes están en PROGRESO.
 
-El total suma25 aceptadas por el runner, dieciocho con dependencia/validación externa pendiente (seis F03, seis F05 y F06-01..06), y F07-02 con software/control independiente integrados y aceptación formal pendiente de F07-01. Restan16 fichas sin cierre técnico. La auditoría integral de20 rubros ya tiene revisiones acotadas; carga y caos siguen en validación. No equivale a auditoría global aprobada. El cierre solicitado exige todo el software técnico de punta a punta, incluida ingesta histórica CRM y evaluación de agentes; sólo cuentas, datos, credenciales y aprobaciones externas pueden quedar pendientes. No acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
+El total suma25 aceptadas por el runner, dieciocho con dependencia/validación externa pendiente (seis F03, seis F05 y F06-01..06), y F07-02/03 con software/control independiente integrados y aceptación formal pendiente de sus dependencias. Restan15 fichas sin cierre técnico. La auditoría integral de20 rubros ya tiene revisiones acotadas; caos y su gate están integrados y la carga sigue en validación. No equivale a auditoría global aprobada. El cierre solicitado exige todo el software técnico de punta a punta, incluida ingesta histórica CRM y evaluación de agentes; sólo cuentas, datos, credenciales y aprobaciones externas pueden quedar pendientes. No acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
 
-Tiempo sin límite autorizado; presupuesto conservado al corte de este checkpoint:359/360 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate mantiene pantalla y sistema despiertos con tapa abierta; no garantiza supervivencia de la sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+Tiempo sin límite autorizado; presupuesto conservado al corte de este checkpoint:360/360 invocaciones acumuladas reservadas, máximo3 agentes y cero gasto externo nuevo. Caffeinate mantiene pantalla y sistema despiertos con tapa abierta; no garantiza supervivencia de la sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## Historial — F02 completa,17/60
 

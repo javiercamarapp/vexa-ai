@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## F07-03 cierra su control técnico —24-sep, corte360
+
+Gate externo portable integrado:33/33 casos reales en Node22, compilación/lint, cuatro controles candidatos sustituidos por trampas sin ejecución; negativos2/2 por runtime y ausencia de producto rechazada antes de infraestructura. Cinco recursos propios ausentes; revisión360 de28archivos del delta. Gate/registro disponibles, sin aceptar por informe autodeclarado.
+
+45/60 técnicas:25aceptadas por runner,18con validación externa y2con dependencia formal pendiente. F07-03 esperaF07-02; no elimina el bloqueoF06-09. Carga150K sigue activa.
+
 ## Caos y recuperación actuales integrados —24-sep, corte360
 
 Ejecutor portable de once escenarios,33/33Node26, con fuentes públicas hastaSQL0038. Guardas posteriores3/3Node22 y26; revisión del principal con dos casos reales y tres negativos del CLI, Storage eliminado por HTTP y350filas únicas tras reinicio. Los resultados antiguos no se reatribuyen a otra composición. Revisión360 de79archivos y limpieza verificadas. Detalle: construccion/F07-03-RECUPERACION-VERIFICADA.md.

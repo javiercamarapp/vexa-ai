@@ -15,6 +15,7 @@ Auth, permisos, importación durable, conectores, análisis y workspace están i
 | Problemas | VEXA_PROBLEMS_RUNTIME, VEXA_PROBLEMS_CONFIG_JSON | Política y versiones del servidor, no del navegador. |
 | Email, propuesta F06-10/12 | VEXA_EMAIL_MODE, RESEND_API_KEY, RESEND_WEBHOOK_SECRET, VEXA_EMAIL_FROM, VEXA_APP_ORIGIN, VEXA_EMAIL_DATABASE_URL | Remitente autorizado, webhook y rol dedicado. Mailpit local no acredita entrega externa. |
 | Push, propuesta F06-11/12 | VEXA_PUSH_SUBJECT, VEXA_PUSH_PUBLIC_KEY, VEXA_PUSH_PRIVATE_KEY | Privada sólo servidor; consentimiento por dispositivo y HTTPS. |
+| Retención | VEXA_RETENTION_LEDGER_KEY | Clave de al menos 32 bytes sólo en servidor; firma confirmaciones y registros exportados. Conservarla en el gestor de secretos para verificar respaldos; no cambiarla sin conservar capacidad de verificación. |
 | Identidad de build | VEXA_BUILD_REVISION | SHA completo de 40 caracteres hexadecimales minúsculos del checkout limpio que se compila. |
 
 VEXA_COMPILED_REVISION se deriva en next.config.ts. /api/health/version devuelve esa revisión compilada o null si falta. No acredita disponibilidad de DB/consumidores ni producción. No etiquete una copia sin integrar con el SHA de una versión anterior. El smoke remoto compara el valor servido con el manifest.

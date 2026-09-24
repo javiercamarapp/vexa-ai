@@ -1,0 +1,1 @@
+{"name":"@vexa/release-smoke","private":true,"type":"module","description":"Operator-run smoke; no deployment, provisioning, SQL or inference","peerDependencies":{"playwright-core":">=1.51.1 <2"}}

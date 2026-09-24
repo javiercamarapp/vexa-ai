@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Documentación de entrega revisada —24-sep, corte353
+
+Guías de desarrollo, operación, accesos, permisos de material y próximos experimentos conectadas con un backlog de diez pendientes. Cada pendiente distingue condición observable, aceptación y responsable por rol; no se inventan personas, autorizaciones ni fechas. La revisión349 comprobó los ocho archivos, enlaces y comandos, y corrigió dos precisiones: el restore previo sólo cubre SQL0035 y el build identifica source.commit_sha.
+
+Los manuales no sustituyen el ensayo de usuario ni los gates; portabilidad CRM observada, restore actual, smoke remoto, responsables reales y acta final siguen separados.43/60 técnicas,25formales, sin incremento documental.
+
 ## Landmarks de seis pantallas corregidos —24-sep, corte352
 
 Histórico, invitación, migraciones, evaluación, retención y catálogo de problemas conservan un único main de página; sus paneles interiores usan section con los atributos existentes. Se elimina además el padding duplicado de main. No cambian operaciones ni permisos.

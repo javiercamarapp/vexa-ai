@@ -1,0 +1,50 @@
+{
+  "schema_version": "vexa-publication-permissions-v1",
+  "status": "blocked_for_identifiable_material",
+  "prepared_at": "2026-09-24",
+  "purpose": "Preparar el pitch sin atribuir permisos, clientes, socios o resultados no acreditados.",
+  "default_material": {
+    "product_name": "VEXA",
+    "data_kind": "synthetic",
+    "third_party_identity": false,
+    "label_required": "DEMOSTRACIÓN SINTÉTICA — NO ES INFORMACIÓN DE UN CLIENTE",
+    "recorded_backup_label_required": "RESPALDO GRABADO — NO ES UNA SESIÓN EN VIVO"
+  },
+  "identifiable_assets": [
+    {"kind": "company_name", "status": "not_authorized", "evidence_ref": null},
+    {"kind": "logo", "status": "not_authorized", "evidence_ref": null},
+    {"kind": "customer_data", "status": "not_authorized", "evidence_ref": null},
+    {"kind": "case_study", "status": "not_authorized", "evidence_ref": null},
+    {"kind": "quotation", "status": "not_authorized", "evidence_ref": null},
+    {"kind": "customer_metrics", "status": "not_authorized", "evidence_ref": null}
+  ],
+  "approval_record_required": [
+    "identidad y facultad verificadas del titular que autoriza",
+    "asset exacto y hash o versión",
+    "propósito, audiencia, canales y territorios aprobados",
+    "fecha de aprobación, comienzo, vencimiento y condiciones",
+    "referencia privada al consentimiento escrito",
+    "revisión de revocación y alcance antes de cada publicación",
+    "responsable nominal del material y de retirar copias revocadas"
+  ],
+  "release_rules": [
+    "Cada material identificable requiere aprobación explícita vigente y correspondiente al asset, versión, propósito y canal exactos.",
+    "Ausencia, vencimiento, revocación, ambigüedad o evidencia sin validar bloquean el asset identificable.",
+    "Un NDA o acceso técnico a una cuenta no se toma como autorización para publicar un caso.",
+    "Mantener los consentimientos, identidades y datos originales fuera de Git público.",
+    "Este registro describe una revisión operativa; no implementa un control automático ni sustituye una autorización del titular."
+  ],
+  "claim_register": [
+    {"claim": "Ingresos vinculados 300 USD y reembolsos 15 USD", "classification": "synthetic_fixture", "constraint": "Mismo snapshot y alcance comprobados; no sumar ni llamar pérdida o ahorro."},
+    {"claim": "Ahorro causal, retorno o predicción de ingresos", "classification": "not_measured", "constraint": "No presentar como resultado validado."},
+    {"claim": "Clientes, socios, participación firmada o ingresos comerciales", "classification": "not_verified_here", "constraint": "Una propuesta o conversación no acredita un contrato, una sociedad ni una venta."},
+    {"claim": "Precios, mercado y forecast", "classification": "scenario_if_used", "source": "negocio/05-Precios-y-Finanzas/00-CIFRAS-CANONICAS.md", "constraint": "Conservar corte y supuestos; no presentar escenarios como clientes, ingresos reales o mercado validado."},
+    {"claim": "Producción y cuentas conectadas", "classification": "pending_remote_validation", "constraint": "Pruebas locales y video sintético no acreditan servicio productivo ni una conexión real."}
+  ],
+  "pending": [
+    {"owner_role": "Javier y titular autorizado de cada asset", "item": "Consentimientos reales de los materiales identificables que se decida usar", "exit_condition": "Evidencia escrita revisada, vigente y ajustada al alcance exacto; de lo contrario excluir el asset."},
+    {"owner_role": "Responsable de la presentación", "item": "Validar el deck y video finales contra este registro", "exit_condition": "Inventario de assets y claims del entregable exacto, hashes y revisión registrados antes de publicarlo."}
+  ],
+  "external_messages_sent": false,
+  "identifiable_material_publication_authorized": false
+}

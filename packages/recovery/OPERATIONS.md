@@ -1,4 +1,11 @@
-# Recuperación y retención — propuesta F07-06
+# Recuperación y retención — operación y evidencia local
+
+## Estado integrado al24-sep
+
+El núcleo de recuperación, API de owner, pantalla `/settings/retention` y adaptador Supabase Storage están integrados. [WEB.md](WEB.md) describe previsualización, confirmación, borrado y purga por lotes. La revisión337 cerró carreras entre consentimiento y registro de artefactos y comprobó restore con SQL0035:cinco controles locales, ledger reaplicado y contenido borrado ausente. El rollback web ensayado correspondió a la appf04eae4→3fe59d7 sobre SQL0033/0034; no afirma compatibilidad de versiones posteriores.
+
+No hay todavía recibo de restore integral con SQL0036–0038; debe ensayarse el esquema exacto vigente antes de cerrar recuperación. Quedan además validación remota, política/custodia real y autorización de producción. El CLI de ensayo sigue siendo exclusivamente local/sintético. Los apartados de correcciones que siguen conservan sus cortes históricos; frases como “propuesta no publicada” o “API pendiente” describen esos cortes, no este estado integrado. Migraciones experimentales diferentes ya aplicadas requieren expansión revisada, nunca reescribir una migración instalada.
+
 
 La biblioteca `index.mjs` recibe la transacción canónica autorizada, un adaptador Storage con `remove/exists` y una clave de ledger de al menos 32 bytes. Exige owner activo, tenant seleccionado y acción `retain`; no acepta destinos CRM. Primero `policy({expectedVersion:0,backupTtlSeconds})`; luego `preview` y `erase({connectionId,entityType,externalId,requestId,confirmed:true})`. Tipos: message, conversation, customer. La confirmación incluye borrar el archivo completo que contenía la fila, con posibles otras filas; el preview lo declara. Nunca modifica fuentes privadas del repositorio.
 

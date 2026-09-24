@@ -1,0 +1,171 @@
+{
+  "task": "F07-06",
+  "reservation": 324,
+  "status": "author-derived-redaction-and-current-schema-restore-pass-independent-review-pending",
+  "baseline": "freeze319 9acebd7828cf6253fff162b9acd6e94901483c61b5542258aacd41da1966cc21",
+  "cause": "Derived extraction quotes and entity values plus brief document/canonical materializations were not physically redacted",
+  "repair": "Relation-based quote/value redaction with private immutable full-row hash receipts; exact guarded transitions preserve original IDs/hash/financial/audit history",
+  "authorEvidence": {
+    "derived": "/tmp/vexa-recovery324-derived",
+    "restore": "/tmp/vexa-recovery324-restore",
+    "restoreResult": {
+      "state": "reconciled-synthetic-only",
+      "reconciliations": [
+        {
+          "tenantId": "00000000-0000-4000-8000-000000000001",
+          "applied": {
+            "reapplied": 1,
+            "ledgerHash": "490211b46b82507d6333a4e500eaba9d3a8db6072f4a714c9a37858a26c87851",
+            "state": "storage_reconciliation_required"
+          },
+          "purged": {
+            "complete": true,
+            "receipts": [
+              {
+                "id": "3ade031c-9fef-4a1f-bb96-6fe43f6d53b3",
+                "status": "deleted"
+              },
+              {
+                "id": "43f276ce-5474-4ecf-a980-2935f45dd425",
+                "status": "deleted"
+              },
+              {
+                "id": "f033c813-0bb9-4502-bf9d-ac3b05c9c90c",
+                "status": "deleted"
+              }
+            ],
+            "externalCopies": "not_verified"
+          }
+        },
+        {
+          "tenantId": "00000000-0000-4000-8000-000000000002",
+          "applied": {
+            "reapplied": 0,
+            "ledgerHash": "57b0460a4d255eb36a5f656537f46ccc7217c844956e55cf1a80ddc83065314f",
+            "state": "storage_reconciliation_required"
+          },
+          "purged": {
+            "complete": true,
+            "receipts": [],
+            "externalCopies": "not_verified"
+          }
+        }
+      ],
+      "rtoObservedMs": 520,
+      "recoveryPointAgeObservedMs": 874,
+      "backupOriginalHashUnchanged": true,
+      "scope": "all-backed-up-tenants-local-fixture-no-SLA",
+      "databaseNetworkAccess": "CONNECTION-LIMIT-0-and-PUBLIC-CONNECT-revoked; existing-application-sessions-terminated"
+    },
+    "derivedRestore": {
+      "quotesAbsent": true,
+      "financialAmountUnchanged": true,
+      "redactionReceipts": 2
+    },
+    "rpo": {
+      "observedMs": 381,
+      "lostControlMarkers": 1,
+      "definition": "Difference between latest source and restored synthetic checkpoint; tombstones replayed separately; no SLA"
+    },
+    "rollback": {
+      "schemaStrategy": "expand-only-no-down-migration",
+      "financialSnapshotHashUnchanged": true,
+      "lastPublishedAmountMinor": "12345",
+      "scope": "legacy-authorized-SQL-shape-not-full-web-rollback"
+    }
+  },
+  "control323": {
+    "immutable": true,
+    "red": "/tmp/vexa-recovery324-red",
+    "after": "/tmp/vexa-recovery324-green",
+    "purgeAssertion": "passes after fix",
+    "fullResult": "not pass: later specific-error assertion expects tombstoned but cancelled job rejected as unavailable"
+  },
+  "limits": [
+    "Synthetic local PostgreSQL and filesystem Storage only",
+    "Managed extraction tested; brief payload test uses valid legacy rows, not complete managed brief generation",
+    "Independent acceptance pending; no SQL09 security review repeated",
+    "No external copy deletion claim; registered artifacts only",
+    "Local restore isolation implementation unchanged; previous quarantine proofs reused by hash"
+  ],
+  "previousNamespaceProof": {
+    "task": "F07-06",
+    "reservation": 319,
+    "status": "author-namespace-repair-pass-independent-recheck-pending",
+    "baseline": "freeze314 ea44f801bfef7c8834d92f3b4acb8a9ccd0ce2b4a13087e80d45601585ad355b",
+    "cause": "Untyped new tombstone aliases and artifact source_key confused entity types sharing external_id",
+    "repair": "New writes only typed retention_ledger; immutable legacy tombstones kept; typed guards in three consumers; entityType required for artifacts",
+    "namespaceEvidence": {
+      "label": "SYNTHETIC real PostgreSQL namespace/consumer guards; injected synthetic source reader, no provider",
+      "checks": [
+        "message erased; same-id customer/conversation/other-connection history, extraction, evidence and artifacts preserved; replay denied",
+        "typed-only markers independently enforced by extraction/evidence/customer detail guards",
+        "legacy external tombstone remains blocking including new artifacts, immutable history untouched"
+      ]
+    },
+    "independentControlReplayed": {
+      "source": "/Users/javiercamaraportepetit/vexa/.runtime/f0706-review-317-frozen1",
+      "unchanged": true,
+      "command": "VEXA_CANDIDATE=<source319> VEXA_EVIDENCE=/tmp/vexa-recovery319-matrix317 node --test <frozen317>/tests/acceptance/F07-06.test.mjs",
+      "exitCode": 0,
+      "passed": 3,
+      "evidence": "/tmp/vexa-recovery319-matrix317",
+      "log": "/tmp/vexa-recovery319-matrix317.log"
+    },
+    "authorCommand": {
+      "command": "node packages/recovery/tests/namespaces.mjs",
+      "exitCode": 0,
+      "log": "/tmp/vexa-recovery319-namespace3.log"
+    },
+    "redEvidence": "/Users/javiercamaraportepetit/vexa/.runtime/f0706-review-317-frozen1/evidence/matrix1/namespace-observed.json",
+    "fixtureSetupError": {
+      "log": "/tmp/vexa-recovery319-namespace.log",
+      "cause": "42P08 UUID/text parameter inference in fixture INSERT",
+      "correction": "Explicit uuid cast only in author fixture, not a product defect"
+    },
+    "reusedRestoreEvidence": {
+      "manifest": "/Users/javiercamaraportepetit/vexa/.runtime/f07-recovery-314-frozen2/manifest.json",
+      "local_mjs_sha256": "78f43acf9a75c2e57f7db60a540a0d98bb8096a25eae3b75042089dc0d01e169",
+      "verifyRecoveryLedgerFunctionUnchanged": true,
+      "scope": "Isolation314/317 reused; complete restore of schema319 not rerun or claimed"
+    },
+    "compatibility": "Apply revised unpublished schema0033 before compatible readers/artifact writer. Experimental previously applied0033 requires separately reviewed migration; do not alter applied history. No down migration.",
+    "pending": [
+      "Independent review319 and remaining delta33 matrix",
+      "Complete restore assessment with revised schema if required by controller",
+      "No remote/cloud/security09/production acceptance"
+    ],
+    "cleanup": {
+      "authorContainersRemoved": [
+        "vexa-recovery-309-source",
+        "vexa-recovery-309-target"
+      ],
+      "externalControl": {
+        "resources": [
+          {
+            "kind": "network",
+            "name": "vexa-recovery-312-c3d8e911-ebe9-4203-b063-878c88c60d1c",
+            "id": "b88be47cf769e9e6a7e031b6d49e5a2ab8317dc121ed7f8fbf3f7a3ca13c8f15",
+            "broker": "c3d8e911-ebe9-4203-b063-878c88c60d1c",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-recovery-312-c3d8e911-ebe9-4203-b063-878c88c60d1c-source",
+            "id": "e5ac3a1f3b4ec4dfce8ee8cfad6d083c820ff8625a813bd48e348d318efbb6f2",
+            "broker": "c3d8e911-ebe9-4203-b063-878c88c60d1c",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-recovery-312-c3d8e911-ebe9-4203-b063-878c88c60d1c-target",
+            "id": "c53be00c535f9ef8b6ca71c4ac068bc6186094b10e59b51f4f7ca2a5e58d6743",
+            "broker": "c3d8e911-ebe9-4203-b063-878c88c60d1c",
+            "absent": true
+          }
+        ],
+        "temporaryRemoved": true
+      }
+    }
+  }
+}

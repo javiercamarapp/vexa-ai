@@ -29,8 +29,8 @@ export function createEvidenceRepository({database}={}){
     LEFT JOIN public.source_revisions current_source ON current_source.tenant_id=h.tenant_id AND current_source.id=h.selected_revision_id
     WHERE r.tenant_id=$1 AND r.id=ANY($2::uuid[])`,[s.tenantId,manifest.map(x=>x.message_revision_id)])).rows;
    if(stored.length!==manifest.length||new Set(stored.map(x=>x.id)).size!==stored.length)fail();
-   const byId=new Map(stored.map(x=>[x.id,x])),revisions=[],tombstoneKeys=[conversation.id,conversation.external_id];let historical=!['unique','selected'].includes(conversation.state),bytes=0;
-   const key=(entityType,externalId)=>{const identity=identityKey({tenant_id:s.tenantId,connection_id:conversation.connection_id,source:conversation.source,source_account_id:conversation.account_id,entity_type:entityType,external_id:externalId});tombstoneKeys.push(identity,sha256(identity));};key('conversation',conversation.external_id);
+   const identities=[];const byId=new Map(stored.map(x=>[x.id,x])),revisions=[],tombstoneKeys=[conversation.id,conversation.external_id];let historical=!['unique','selected'].includes(conversation.state),bytes=0;
+   const key=(entityType,externalId)=>{identities.push({kind:entityType,external_id:externalId});const identity=identityKey({tenant_id:s.tenantId,connection_id:conversation.connection_id,source:conversation.source,source_account_id:conversation.account_id,entity_type:entityType,external_id:externalId});tombstoneKeys.push(identity,sha256(identity));};key('conversation',conversation.external_id);
    for(const input of manifest){
     const r=byId.get(input.message_revision_id),snapshots=r?.snapshot?.filter(x=>x.table==='messages'&&x.row?.id===r.message_id);
     if(!r||!['unique','selected','ambiguous'].includes(r.head_state)||r.deleted_at||r.original_deleted||r.message_deleted||!r.redaction_version||r.original_id!==input.original_revision_id||r.original_message_id!==r.message_id||r.canonical_id!==r.message_id||r.connection_id!==conversation.connection_id||r.source_connection!==conversation.connection_id||snapshots?.length!==1||snapshots[0].row.role!==input.role||snapshots[0].row.conversation_id!==run.conversation_id||typeof r.redacted_text!=='string'||r.hash!==input.hash||sha256(r.redacted_text)!==input.hash)fail();
@@ -39,6 +39,7 @@ export function createEvidenceRepository({database}={}){
     if(!['unique','selected'].includes(r.head_state)||r.current_revision!==r.original_id)historical=true;
     tombstoneKeys.push(r.id,r.original_id,r.message_id,r.external_id);key('message',r.external_id);
    }
+   if((await one(s,'SELECT EXISTS(SELECT 1 FROM jsonb_to_recordset($3::jsonb) AS x(kind text,external_id text) WHERE public.retention_source_deleted($1,$2,x.kind,x.external_id)) AS deleted',[s.tenantId,conversation.connection_id,JSON.stringify(identities)]))?.deleted)fail();
    if(await one(s,'SELECT id FROM public.tombstones WHERE tenant_id=$1 AND (connection_id IS NULL OR connection_id=$2) AND deleted_source_key=ANY($3::text[]) LIMIT 1',[s.tenantId,conversation.connection_id,tombstoneKeys]))fail();
    if(sha256(JSON.stringify({revisions,policyHash:run.provenance.policy_hash,taxonomy:run.provenance.taxonomy}))!==run.input_hash)fail();
    const result=validateExtraction(run.provenance.result,revisions,{taxonomy:run.provenance.taxonomy,tenantId:s.tenantId});if(!result.ok)fail();

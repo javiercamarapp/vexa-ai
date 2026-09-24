@@ -1,6 +1,14 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## Retención y restauración: núcleo integrado —24-sep, corte333
+
+Integrado el núcleo revisado de borrado tipado, purga de materializaciones y restauración en cuarentena. Conserva identidades y finanzas, redacta citas/entidades derivadas, impide reingesta de fuentes borradas y reaplica el ledger vigente de todos los tenants antes de servir un backup. Los recibos de redacción preservan hashes sin copiar el texto eliminado.
+
+La revisión independiente326 cerró tres defectos concretos: sesiones que sobrevivían al bloqueo de restore, colisión entre tipos con igual ID y citas derivadas que persistían. Sobre la rama publicada, con SQL0033 y0034, lint/build y restauración real de PostgreSQL5/5 pasan; fuentes coinciden con lo revisado y recursos se recogieron. Los negativos, fallos de I/O y cancelación real del CLI se reutilizan por hash.
+
+El CLI de recuperación sigue limitado a ensayo local. El agente332 completa la API, interfaz de owner y purga mediante Supabase Storage real; todavía son pendientes técnicos. No se adopta ni se acepta la propuesta bloqueada de notificaciones al integrar este núcleo independiente. F07-06 sigue sin cierre;43/60 técnicas,25formales.
+
 ## Histórico durable de principio a fin —24-sep, corte332
 
 Integrado el lote autorizado por owner que continúa con la interfaz cerrada: selección estable, fragmentos de hasta25 conversaciones, extracción y agrupación mediante las colas existentes, detalle paginado, cancelación y pausa por permisos/configuración. Conserva presupuesto, identidad real del worker e idempotencia tras caída; no publica dinero ni mejora el modelo por mera ejecución.

@@ -82,6 +82,7 @@ async function applySnapshot(s,snapshot){
 async function persistRevision(s,e,p,mapping){
  if(!Object.hasOwn(tables,e.entity_type))reject('ENTITY_UNSUPPORTED');
  if(e.deleted_at)reject('DELETION_REQUIRES_RETENTION');
+ if((await s.query('SELECT public.retention_source_deleted($1,$2,$3,$4) AS deleted',[s.tenantId,e.connection_id,e.entity_type,e.external_id])).rows[0]?.deleted)reject('SOURCE_TOMBSTONED');
  const canonical=id([identityKey(e)]), revisionId=id([identityKey(e),e.source_revision]);
  const fingerprint=contentHash({content_hash:e.content_hash,occurred_at:e.occurred_at,deleted_at:e.deleted_at,adapter_version:e.adapter_version??null,normalized_hash:contentHash(p),mapping_version:mapping});
  const old=(await s.query('SELECT id,canonical_id,fingerprint FROM public.source_revisions WHERE tenant_id=$1 AND connection_id=$2 AND entity_type=$3 AND external_id=$4 AND source_revision=$5',[s.tenantId,e.connection_id,e.entity_type,e.external_id,e.source_revision])).rows[0];
@@ -111,6 +112,7 @@ export async function readCanonicalHistory(scope,{canonicalId}){
  if(typeof window!=='undefined'||!uuid(canonicalId))throw Error('CANONICAL_ID_INVALID');
  const head=(await scope.query('SELECT * FROM public.source_heads WHERE tenant_id=$1 AND id=$2',[scope.tenantId,canonicalId])).rows[0];
  if(!head)return null;
+ if((await scope.query('SELECT public.retention_source_deleted($1,$2,$3,$4) AS deleted',[scope.tenantId,head.connection_id,head.entity_type,head.external_id])).rows[0]?.deleted)return null;
  const revisions=(await scope.query('SELECT * FROM public.source_revisions WHERE tenant_id=$1 AND canonical_id=$2 ORDER BY id',[scope.tenantId,canonicalId])).rows;
  return {head,revisions};
 }
@@ -124,6 +126,7 @@ export async function selectCanonicalRevision(scope,{canonicalId,revisionId,expe
  if(!found)throw Error('CANONICAL_NOT_FOUND');
  await scope.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[scope.tenantId+':'+found.connection_id]);
  const head=(await scope.query('SELECT * FROM public.source_heads WHERE tenant_id=$1 AND id=$2 FOR UPDATE',[scope.tenantId,canonicalId])).rows[0];
+ if((await scope.query('SELECT public.retention_source_deleted($1,$2,$3,$4) AS deleted',[scope.tenantId,head.connection_id,head.entity_type,head.external_id])).rows[0]?.deleted)throw Error('SOURCE_TOMBSTONED');
  if(Number(head.version)!==expectedVersion)return {status:'conflict',code:'SELECTION_CAS_CONFLICT'};
  const revision=(await scope.query('SELECT snapshot FROM public.source_revisions WHERE tenant_id=$1 AND canonical_id=$2 AND id=$3',[scope.tenantId,canonicalId,revisionId])).rows[0];
  if(!revision)throw Error('REVISION_NOT_FOUND');
@@ -151,6 +154,8 @@ export async function persistCanonical(scope,{importId,record},internal){
  const payloadRef=`import:${importId}:row:${id([rowRef])}`; // no arbitrary URI/PII copied to DB
  const previous=(await scope.query('SELECT id,row_hash,provenance FROM public.import_rows WHERE tenant_id=$1 AND import_id=$2 AND row_ref=$3',[scope.tenantId,importId,rowRef])).rows[0];
  if(previous){
+  const raw=record?.envelope??record;
+  if(raw?.connection_id===imported.connection_id&&(await scope.query('SELECT public.retention_source_deleted($1,$2,$3,$4) AS deleted',[scope.tenantId,imported.connection_id,raw.entity_type,raw.external_id])).rows[0]?.deleted)return {status:'rejected',code:'SOURCE_TOMBSTONED'};
   if(previous.row_hash===evidenceHash){const {original_revision_id,...replayed}=previous.provenance.result;return replayed;}
   await quarantine(scope,importId,previous.id,evidenceHash,'IMPORT_ROW_CONFLICT',null,payloadRef);
   return {status:'conflict',code:'IMPORT_ROW_CONFLICT'};

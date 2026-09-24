@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## F08-01 control externo integrado —24-sep, revisión362
+
+50/60 ámbitos técnicos y25aceptaciones formales. Inventario actual/identidadHTTPS/evidencia/privacidad/caducidad verificados; 5/5 controles y6/6 escenarios independientes porNode22/26, controlador10/10. No verificación remota ni producción: el operador debe aportar evidencias completas y autorización legítima. Detalle construccion/F08-01-CIERRE-TECNICO.md.
+
+MCP Supabase autorizado:27migraciones públicas aplicadas;0028falló42501 por atributoSET de función no permitido al administrador gestionado. Primera reproducción preservada; reparación específica en curso, sin ampliar privilegios ni tocar ámbitoF06-09 excluido. Invocaciones363/364; F08-02 revisado con dos correcciones, integración siguiente. Los apartados inferiores son cortes históricos.
+
 ## Entrega técnica y auditoría por capas consolidadas —24-sep, corte360
 
 F08-03/05 tienen artefactos y recorridos técnicos revisados: respaldoWebM301.8s SYN/offline, guion, portabilidadCRM y guías probadas con importación/exportación/reingreso/revocación. Faltan actos humanos concretos: ensayo cronometrado/comprensión, permisos de material, entrega de accesos y recepción con responsables/fechas reales. Revisión360; no se fabrican aprobaciones humanas ni se cuentan plantillas como pruebas.

@@ -48,10 +48,11 @@
     "F06-05",
     "F06-06",
     "F07-06",
+    "F08-01",
     "F08-03",
     "F08-05"
   ],
-  "construction_total": 49,
+  "construction_total": 50,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -432,6 +433,25 @@
           "owner": "Javier, operador de infraestructura y responsable nominal de usuarios",
           "pending": "Entrega de accesos revocables, recepción humana, políticas y fechas reales de revisión.",
           "verification": "Entregar por gestor/OAuth, verificar roles/revocación de cuentas legítimas y registrar recepción; nunca publicar secretos."
+        }
+      ]
+    },
+    {
+      "task_id": "F08-01",
+      "technical_ready": true,
+      "implemented": "Generador de manifiesto y control externo de inventario, revisión HTTP de SHA, evidencia y permisos declarados del operador; integración del supervisor revisada.",
+      "programming_pending": [],
+      "verification_pending": [],
+      "official_dependency_pending": [
+        "F07-05",
+        "F07-06"
+      ],
+      "evidence": "construccion/F08-01-CIERRE-TECNICO.md",
+      "external_pending": [
+        {
+          "owner": "Operador de infraestructura y revisor independiente",
+          "pending": "Destino funcional, documentación real de permisos y cobertura completa de release; aceptación legítima.",
+          "verification": "Cotejar titularidad/proyectos, resolver compatibilidadSQL0028, configurar entorno, ejecutar smoke remoto y control con aprobación real. Revisión acotada no equivale a cobertura completa."
         }
       ]
     }

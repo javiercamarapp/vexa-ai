@@ -48,7 +48,7 @@
     "F06-05",
     "F06-06"
   ],
-  "construction_total": 45,
+  "construction_total": 46,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -379,7 +379,8 @@
   ],
   "technical_ready_formal_pending": [
     "F07-02",
-    "F07-03"
+    "F07-03",
+    "F07-04"
   ],
   "formal_pending": [
     {
@@ -401,6 +402,16 @@
       "owner": "Controlador de aceptación",
       "condition": "F07-02 aceptada legítimamente; después verify/accept limpio sin eludir F06-09.",
       "evidence": "construccion/F07-03-RECUPERACION-VERIFICADA.md"
+    },
+    {
+      "task_id": "F07-04",
+      "technical_ready": true,
+      "programming_pending": [],
+      "verification_pending": [],
+      "formal_dependency": "F07-03",
+      "owner": "Controlador de aceptación",
+      "condition": "F07-03 aceptada legítimamente; ejecutar verify/accept limpio con el manifiesto vigente.",
+      "evidence": "construccion/F07-04-CIERRE-TECNICO.md"
     }
   ]
 }

@@ -1,0 +1,184 @@
+{
+  "task_id": "F07-04",
+  "status": "measured_ingestion_only_no_production",
+  "measurement_base_sha": "d723cc2b3e2dd985eb04dccfa70187eeac07bddf",
+  "measurement_report_sha256": "e321752f55b789623f6ba507f0087a88d1154a03730283a2c271e728e13bef32",
+  "measurement_dependency_manifest_sha256": "1ea81d5fd2f751df191734aeee7e7f4c63f8358005a4ec938a9ec0e63967954a",
+  "publication_source_manifest_sha256": "d845d0099ab1163d7ac7bec4b6a85322696d7f49ab41f3f66129f75c3f156e35",
+  "publication_dependency_manifest_sha256": "7be52f2a5c81164a5ff6c4ecebea56c0023e8f0f7784900bd9626faf98c83980",
+  "inventory_delta": "2046 original files unchanged; nine chaos test helpers added. Prior reports cannot authorize escalation under the new manifest.",
+  "versions": {
+    "node": "v26.7.0",
+    "postgres": "17.6",
+    "docker": "29.7.2"
+  },
+  "hardware": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpus": 8,
+    "cpuModel": "Apple M3",
+    "totalMemoryBytes": 25769803776,
+    "freeMemoryAtStartBytes": 1484128256,
+    "osRelease": "27.0.0",
+    "loadAverageAtStart": [
+      2.95849609375,
+      2.6201171875,
+      2.69287109375
+    ],
+    "environment": "Shared developer host; other local workloads are not controlled",
+    "docker": {
+      "memoryBytes": 8319770624,
+      "cpus": 8,
+      "os": "Docker Desktop",
+      "arch": "aarch64"
+    }
+  },
+  "cost": {
+    "measured": false,
+    "total": null,
+    "currency": null,
+    "reason": "Local resources; no monetary measurement and no external paid requests"
+  },
+  "slo": {
+    "approved": false,
+    "budget": null,
+    "comparison": null,
+    "existingProposedObjective": {
+      "source": "docs/blueprint/calidad/02-conjunto-dorado-evaluacion.md#8",
+      "rows": 1000,
+      "tenants": 2,
+      "jobs": 2,
+      "p95Ms": 600000,
+      "scope": "upload through extraction validation aggregation and usable snapshot",
+      "testedHere": false
+    },
+    "meaning": "No approved SLO for10K/50K/150K ingestion-only; measurements do not validate proposed full pipeline objective or commercial capacity"
+  },
+  "scales": [
+    {
+      "rows": 10000,
+      "seed": 10308,
+      "concurrency": 1,
+      "workerChunkRows": 100,
+      "observed": {
+        "total": 10000,
+        "accepted": 9800,
+        "rejected": 100,
+        "duplicates": 100,
+        "pending": 0
+      },
+      "processingMs": 118822.65608400002,
+      "endToEndMs": 119314.508208,
+      "metrics": {
+        "inputRowsPerSecond": 84.15903439265522,
+        "acceptedRowsPerSecond": 82.4758537048021,
+        "commitP50Ms": 1122.9591250000012,
+        "commitP95Ms": 1223.1713750000054,
+        "apiP95Ms": 169.11833300000217,
+        "commitSamples": 100,
+        "apiSamples": 5,
+        "workerMaxRssKiB": 230224
+      }
+    },
+    {
+      "rows": 50000,
+      "seed": 50308,
+      "concurrency": 1,
+      "workerChunkRows": 100,
+      "observed": {
+        "total": 50000,
+        "accepted": 49000,
+        "rejected": 500,
+        "duplicates": 500,
+        "pending": 0
+      },
+      "processingMs": 624432.70025,
+      "endToEndMs": 625218.769416,
+      "metrics": {
+        "inputRowsPerSecond": 80.07268033846054,
+        "acceptedRowsPerSecond": 78.47122673169133,
+        "commitP50Ms": 1136.1207080000313,
+        "commitP95Ms": 1510.8113329999906,
+        "apiP95Ms": 389.8184579999943,
+        "commitSamples": 500,
+        "apiSamples": 5,
+        "workerMaxRssKiB": 361808
+      }
+    },
+    {
+      "rows": 150000,
+      "seed": 150308,
+      "concurrency": 1,
+      "workerChunkRows": 100,
+      "observed": {
+        "total": 150000,
+        "accepted": 147000,
+        "rejected": 1500,
+        "duplicates": 1500,
+        "pending": 0
+      },
+      "processingMs": 1839709.069292,
+      "endToEndMs": 1842324.039667,
+      "metrics": {
+        "inputRowsPerSecond": 81.53463093907914,
+        "acceptedRowsPerSecond": 79.90393832029756,
+        "commitP50Ms": 1132.7876249998808,
+        "commitP95Ms": 1379.0404999998864,
+        "apiP95Ms": 470.1816670000553,
+        "commitSamples": 1500,
+        "apiSamples": 15,
+        "workerMaxRssKiB": 437120
+      }
+    }
+  ],
+  "dataset_hashes": [
+    {
+      "rows": 10000,
+      "file_rows": 10000,
+      "sha256": "953d0fb84bb4a017541afcad542ac242dcf6adf5b7b11706ea78f349c4d55c78"
+    },
+    {
+      "rows": 50000,
+      "file_rows": 50000,
+      "sha256": "ea93472031d248470e242188a8e4a42e8037ec4b000ea131ef904eedc8775de8"
+    },
+    {
+      "rows": 150000,
+      "file_rows": 50000,
+      "sha256": "7d6d022ff9526095298903d49c74b5c4a7519df114201e6250036db244056d1d"
+    },
+    {
+      "rows": 150000,
+      "file_rows": 50000,
+      "sha256": "6359c4e84f8dcff26f79315e90b35ac99fe2d00eb7f05af3c65ec1826138ee54"
+    },
+    {
+      "rows": 150000,
+      "file_rows": 50000,
+      "sha256": "a539fb9159aa266739662cac9e7b45ba60c132db70d6ee61a54f980d83a274fb"
+    }
+  ],
+  "independent_review_manifest_sha256": "e0e2a215b2b5be65d4ccb2d6a5fa5c0e9599188ea0a5cef1312507e1071b6d74",
+  "verification": {
+    "dataset_rows_recounted": 210000,
+    "chunks_checked": 2100,
+    "files_hashed": 5,
+    "p95_recomputed": true,
+    "sql_explain_present": true,
+    "resource_cleanup_verified": true,
+    "source_inventory_and_adapter_each_runtime": [
+      4,
+      2
+    ],
+    "process_lifecycle_cases_each_runtime": 4,
+    "late_zero_launcher_cases_each_runtime": 2,
+    "full_210k_wrapper_rerun": false,
+    "note": "Actual underlying CLI and full report checked; wrapper integration tested separately without claiming another complete210K run."
+  },
+  "formal_acceptance": false,
+  "production_validated": false,
+  "pending": [
+    "F07-03 acceptance and clean official verify/accept",
+    "Authorized real destination, provider capacity/cost and business SLO; ingestion timing does not measure extraction or model quality"
+  ]
+}

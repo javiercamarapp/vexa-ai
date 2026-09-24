@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {fileURLToPath} from 'node:url';import {spawnSync} from 'node:child_process';import {runGroup} from './process.mjs';
+export async function launch(){
+ assert.ok(process.env.VEXA_CANDIDATE,'VEXA_CANDIDATE_REQUIRED');assert.ok(!process.env.VEXA_CI_JOURNAL&&!process.env.VEXA_CI_BROKER,'EXCLUSIVE_RESOURCE_JOURNAL_REQUIRED');
+ const root=path.resolve(fileURLToPath(new URL('../..',import.meta.url))),out=fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()),'f0704-external-'));fs.chmodSync(out,0o700);
+ const env={...process.env,VEXA_LOAD_SCALES:'10000,50000,150000'};delete env.NODE_TEST_CONTEXT;delete env.VEXA_LOAD_PREVIOUS_REPORT;
+ let evidence=null,protocolError=null;
+ const result=await runGroup(process.execPath,[path.join(root,'packages/jobs/load/run.mjs')],{env,log:path.join(out,'run.log'),timeoutMs:7200000,onLine:line=>{if(line.startsWith('LOAD308_RUNNING:')){if(evidence!==null)protocolError='ONE_LOAD_RUN_REQUIRED';evidence=line.slice('LOAD308_RUNNING:'.length);console.log('F07-04 evidence: '+evidence);}}});
+ fs.writeFileSync(path.join(out,'process.json'),JSON.stringify(result)+'\n',{mode:0o600});assert.equal(result.timedOut,false,'LOAD_PROCESS_TIMEOUT_CLEANUP_NOT_VERIFIED');assert.equal(result.error,null,'LOAD_PROCESS_ERROR');assert.equal(result.signal,null,'LOAD_PROCESS_SIGNAL');assert.equal(result.code,0,'LOAD_PROCESS_FAILED:'+out);assert.equal(protocolError,null);assert.ok(evidence,'LOAD_EVIDENCE_REQUIRED');
+ const verified=spawnSync('python3',[path.join(root,'support/F07-load/verify-report.py'),path.join(evidence,'report.json'),path.join(root,'packages/jobs/load/dependencies.json'),process.env.VEXA_CANDIDATE],{encoding:'utf8',timeout:30000,maxBuffer:8*1024*1024});fs.writeFileSync(path.join(out,'independent-report.json'),verified.stdout??'',{mode:0o600});fs.writeFileSync(path.join(out,'verify-errors.log'),verified.stderr??'',{mode:0o600});assert.ok(!verified.error&&verified.signal===null&&verified.status===0,'INDEPENDENT_LOAD_VERIFICATION:'+out);return out;
+}

@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## F07-04 carga y control externo integrados —24-sep, corte360
+
+210000filas verificadas en escalas10K/50K/150K, cero pendientes,2100chunks ycincohashesCSV. Ingesta extrema a extremo119.3/625.2/1842.3s. Revisión358:86archivos, p95 recalculado y recursos/PIDs recogidos. Se repararon inventario incompleto y timeout que podía dejar vivo un hijo. Negativos del control enNode22/26; costo desconocido null. Ejecutor/gate revisados e integrados, fuentes medidas originales y nuevoinventario separados.
+
+46/60 técnicas:25runner+18externas+3dependencias formales. F07-04 esperaF07-03; no indica producción ni capacidad de un pipeline con IA. Detalle construccion/F07-04-CIERRE-TECNICO.md.
+
 ## F07-03 cierra su control técnico —24-sep, corte360
 
 Gate externo portable integrado:33/33 casos reales en Node22, compilación/lint, cuatro controles candidatos sustituidos por trampas sin ejecución; negativos2/2 por runtime y ausencia de producto rechazada antes de infraestructura. Cinco recursos propios ausentes; revisión360 de28archivos del delta. Gate/registro disponibles, sin aceptar por informe autodeclarado.

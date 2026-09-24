@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Restore local del esquema actual comprobado —24-sep, corte354
+
+SQL0036–0038 se incluyen en backup y restauración reales separados, con retención0035 reaplicada. Cinco controles en Node26 pasaron: siete tablas conservan sus hashes, selección y rollback conservan versiones1/2, el repositorio permite rollback3 y rechaza CAS antiguo y clave revocada. Equipos conserva revocaciones anteriores al backup e invitaciones expiradas; fuentes borradas no vuelven a exportarse ni admiten feedback. Unknown cost sigue null.
+
+El principal revisó controles,61fuentes ejecutables intactas, ocho archivos del backup y tablas en el dump; no se atribuye otra corrida completa. El fixture firmado de elegibilidad es SYN fabricado, no gold real. Auth es SQL sintético y Storage filesystem. El destino permanece cerrado: revocaciones posteriores al backup, configuración gestionada y permiso de release requieren reconciliación externa. RPO604ms/RTO707ms son observaciones locales, no SLA.43/60 técnicas y25formales.
+
 ## Smoke reproducible de release integrado —24-sep, corte354
 
 El CLI exige manifiesto, autorización vinculada al destino/SHA/tenants/operaciones y sesiones privadas. Comprueba SHA servido, Auth A/B, importación hasta contabilidad terminal, ocho vistas, dinero y export del mismo corte, aislamiento, caída acotada del consumidor con recuperación del mismo job y revocación. Los ACK sólo coordinan; los efectos se comprueban por HTTP y navegador. No despliega ni aplica SQL remoto.

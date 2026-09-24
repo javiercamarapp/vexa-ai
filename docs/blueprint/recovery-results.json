@@ -1,0 +1,52 @@
+{
+  "schema_version": "vexa-local-recovery-observation-v1",
+  "source_commit": "70e61a2d988700b9f4995f315bd0d94786af2878",
+  "schema_last_migration": "0038_team_invitations.sql",
+  "status": "pass_local_scoped",
+  "runtime": "Node26.7.0",
+  "checks_passed": 5,
+  "checks_total": 5,
+  "process": {
+    "exit_code": 0,
+    "signal": null,
+    "error": null
+  },
+  "data_kind": "synthetic",
+  "backend": "PostgreSQL17 with SQL Auth fixture and filesystem Storage",
+  "observed": {
+    "table_count_preserved": 7,
+    "candidate_versions_before_backup": [
+      1,
+      2
+    ],
+    "rollback_version_after_restore": 3,
+    "stale_version_denied": true,
+    "revoked_custodian_denied": true,
+    "owner_visible": true,
+    "viewer_and_foreign_owner_denied": true,
+    "prebackup_membership_revocation_preserved": true,
+    "expired_invitation_denied": true,
+    "erased_feedback_rejected": true,
+    "development_export_after_erasure": 0,
+    "unknown_cost_preserved": true,
+    "derived_quotes_purged": true,
+    "financial_snapshot_hash_unchanged": true,
+    "original_backup_hash_unchanged": true,
+    "rpo_ms": 604,
+    "rto_ms": 707,
+    "database_access": "connection_limit_0_and_public_connect_revoked"
+  },
+  "review": {
+    "kind": "independent_control_and_artifact_inspection",
+    "source_manifest_sha256": "4c78b9e15d67f4f105c98f18d571efbd9be3157517a634b434549a6feb57fa55",
+    "separate_full_runtime_replay": false
+  },
+  "limits": [
+    "Not a cloud or managed Auth restore",
+    "RPO/RTO are local fixture observations, not a client SLA",
+    "Candidate eligibility uses explicitly fabricated signed SYN contract metadata; no authentic gold or inference",
+    "Post-backup membership revocations require separate current-authority reconciliation before opening access",
+    "Old financial SQL shape checked; not a full previous web binary rollback",
+    "No SQL09 review, formal task acceptance or production certification"
+  ]
+}

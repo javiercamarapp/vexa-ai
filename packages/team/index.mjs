@@ -1,0 +1,5 @@
+export class TeamError extends Error { constructor(status,code){super(code);this.status=status;this.code=code;} }
+export function createTeam({client,tenantId,sendInvitation}){
+ async function call(input){const {data,error}=await client.rpc('team_manage',{p_tenant:tenantId??null,p_input:input});if(error){const code=/^team_[a-z_]+$/.test(error.message??'')?error.message:'team_unavailable';throw new TeamError(error.code==='42501'?403:error.code==='P0001'?409:['22023','22P02','23502','23514'].includes(error.code)?400:503,code);}return data;}
+ return {call,async invite(input){if(!sendInvitation)throw new TeamError(503,'team_configuration_required');const result=await call({...input,operation:'invite'});if(result.replay)return result;const claim=await call({operation:'claim',id:result.id});if(!claim.claimed)return result;let delivery='uncertain';try{delivery=await sendInvitation({id:claim.id,email:claim.email});}catch{}await call({operation:'receipt',id:claim.id,delivery});return {...result,delivery};}};
+}

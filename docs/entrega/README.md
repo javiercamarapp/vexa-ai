@@ -7,6 +7,7 @@ Preparación local pendiente de revisión y aceptación F08; no es acta de produ
 - [Operación](RUNBOOK.md): recuperación y comprobaciones.
 - [Accesos](ACCESOS-SIN-SECRETOS.md): responsables y validación pendiente.
 - [Configuración](../../apps/web/ENVIRONMENT.md).
+- [Smoke del destino](SMOKE-REMOTO.md): ejecutor, autorización y límites de la prueba local.
 - [Manifest reproducible](../../packages/release/README.md).
 - [Demo grabada](demo-script.md) y [manifiesto del video](demo-backup-manifest.json).
 - [Permisos de material](publication-permissions.json): por defecto sólo VEXA y datos sintéticos.

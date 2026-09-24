@@ -4,6 +4,14 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Smoke reproducible de release integrado —24-sep, corte354
+
+El CLI exige manifiesto, autorización vinculada al destino/SHA/tenants/operaciones y sesiones privadas. Comprueba SHA servido, Auth A/B, importación hasta contabilidad terminal, ocho vistas, dinero y export del mismo corte, aislamiento, caída acotada del consumidor con recuperación del mismo job y revocación. Los ACK sólo coordinan; los efectos se comprueban por HTTP y navegador. No despliega ni aplica SQL remoto.
+
+Autor347 y revisión351 ejecutaron el CLI original8/8 local con Auth/PostgreSQL/Storage/worker/Next reales y datosSYN. La revisión encontró importación después de caducar la autorización; el parche vuelve a comprobarla antes de cada solicitud y control. Delta independiente2/2 en Node22/26, más transporte/archivos2/2 por runtime: cero jobs después del vencimiento y reanudación compensatoria real del consumidor ya pausado, sin declarar PASS. Unitarias raíz8/8 por runtime. Se reutilizan las ocho fases del código anterior sin atribuir una corrida completa nueva al parche.
+
+El paso remoto necesita destino, cuentas, configuración y autorización legítimos; falta aceptación formal.43/60 técnicas y25formales, sin incremento por este ejecutor.
+
 ## Documentación de entrega revisada —24-sep, corte353
 
 Guías de desarrollo, operación, accesos, permisos de material y próximos experimentos conectadas con un backlog de diez pendientes. Cada pendiente distingue condición observable, aceptación y responsable por rol; no se inventan personas, autorizaciones ni fechas. La revisión349 comprobó los ocho archivos, enlaces y comandos, y corrigió dos precisiones: el restore previo sólo cubre SQL0035 y el build identifica source.commit_sha.

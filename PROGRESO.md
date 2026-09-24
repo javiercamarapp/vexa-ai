@@ -1,6 +1,12 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## Robustez económica reproducible —24-sep
+
+Integradas la suite y el runner de mutaciones ya revisados:9/9 pruebas de autor y cinco defectos detectados en Node22 y26. La revisión independiente311 pasó6/6 controles por runtime y detectó sus cinco mutantes propios. Los cinco módulos económicos, la suite y el runner mantienen los hashes examinados; se reutiliza esa evidencia sin repetir código inalterado.
+
+Cubre reordenación, duplicados, particiones, identidades resueltas, moneda, importes desconocidos, aislamiento de filas y precisión. El reporte conservado corresponde al corte de autor; la revisión posterior está identificada en la documentación. Es dominio puro, sin acreditación de RLS, carga ni conectores reales. F07-02 sigue pendiente de aceptación formal y de F07-01. Contador43/60 técnicas,25formales sin incremento.
+
 ## Problemas visibles sin asociación financiera —24-sep, corte331
 
 Problemas incluye ahora un catálogo actual autorizado, con acceso al detalle incluso cuando el histórico no aporta órdenes ni importes. Los filtros y exportaciones financieros conservan su snapshot; el catálogo explica que muestra el estado actual. No inventa dinero ni convierte desconocido en cero. Actualizar limpia enlaces anteriores; retirar evidencia o revocar acceso impide volver a mostrarlos.

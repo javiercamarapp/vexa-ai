@@ -1,0 +1,420 @@
+{
+  "task_id": "F07-02",
+  "status": "author_pass_pending_independent_review",
+  "seed": 42,
+  "scope": "five named mutations of the pure ledger-to-money boundary; not whole-product coverage",
+  "independent_acceptance": false,
+  "source_hashes": {
+    "packages/economics/index.mjs": "8dc03ea2bc69b6c9257054eb8ec9a0ce58f4b6ef7b7a791caacb296d6371f69d",
+    "packages/economics/adapter.mjs": "66df75ce03ff5c26d5d58a7514cc77fc221926ae5c0f316a4913fee20702465c",
+    "packages/metrics/money.mjs": "122602b701a0042ce3a63a0ba16bf76202cb5f899435206b6630b2489dee64f5",
+    "packages/metrics/money-adapter.mjs": "e852026dfc163f56fe74232f827a62be315d59b06ca488c674b01cb4f9c5de35",
+    "packages/metrics/scope.mjs": "31b5c91f81fdb1f8f94e27d8524f1d90b21c644ec8e4dd707098d0d271d82c6d",
+    "packages/economics/robustness.test.mjs": "aeb8ff86e070de4929a5f0e1c8b48a5df3a8f665d97b76f32c027615196741e2"
+  },
+  "runner_sha256": "c24f8d1fa922301fd3b1325ea5b8c66936209268ab1190f6a4a36ce311b21cd7",
+  "artifacts": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2",
+  "runtimes": [
+    {
+      "version": {
+        "command": [
+          "/opt/homebrew/opt/node@22/bin/node",
+          "--version"
+        ],
+        "candidate": null,
+        "exit_code": 0,
+        "timeout": false,
+        "seconds": 0.02183595800306648,
+        "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/runtime-0.log",
+        "log_sha256": "c42fcf0db5a550bda2f566fcdc21955df3e5a8ec3aeb90ac533f3776e7fce32a"
+      },
+      "baseline": {
+        "command": [
+          "/opt/homebrew/opt/node@22/bin/node",
+          "--test",
+          "--test-reporter=tap",
+          "/Users/javiercamaraportepetit/vexa/.runtime/f07-robustness-principal-1790201398899586000/packages/economics/robustness.test.mjs"
+        ],
+        "candidate": null,
+        "exit_code": 0,
+        "timeout": false,
+        "seconds": 0.5054477909870911,
+        "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/baseline-0.log",
+        "log_sha256": "d16f17731843a545825898e415a0933dc8af2695870f421b9fded0056e3ef8ee"
+      },
+      "mutations": [
+        {
+          "id": "unknown-as-observed-zero",
+          "oracle": "UNKNOWN_TOTAL_IS_NOT_ZERO",
+          "status": "killed",
+          "mutant_sha256": "54e5ba6f397f34bbbf7dd544507cfd83f57104a73bb9f6832743dd5240d9eaf2",
+          "syntax": {
+            "command": [
+              "/opt/homebrew/opt/node@22/bin/node",
+              "--check",
+              "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-vughot_w/packages/economics/index.mjs"
+            ],
+            "candidate": null,
+            "exit_code": 0,
+            "timeout": false,
+            "seconds": 0.05286329198861495,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/0-unknown-as-observed-zero-syntax.log",
+            "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "run": {
+            "command": [
+              "/opt/homebrew/opt/node@22/bin/node",
+              "--test",
+              "--test-reporter=tap",
+              "/Users/javiercamaraportepetit/vexa/.runtime/f07-robustness-principal-1790201398899586000/packages/economics/robustness.test.mjs"
+            ],
+            "candidate": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-vughot_w",
+            "exit_code": 1,
+            "timeout": false,
+            "seconds": 0.4119467080163304,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/0-unknown-as-observed-zero.log",
+            "log_sha256": "1c4f754d3f5320b7fe755e0dffc0e483e6c1d441cc45ce6d3bb7bec40f71ee1e"
+          }
+        },
+        {
+          "id": "replayed-metric-added-twice",
+          "oracle": "METRIC_REPLAY_MUST_NOT_ADD",
+          "status": "killed",
+          "mutant_sha256": "2741a29dd70faa90a19f4e3e3ae99607661e75d5102ae4e1b6532be0440fae4d",
+          "syntax": {
+            "command": [
+              "/opt/homebrew/opt/node@22/bin/node",
+              "--check",
+              "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-60xl5evd/packages/metrics/money.mjs"
+            ],
+            "candidate": null,
+            "exit_code": 0,
+            "timeout": false,
+            "seconds": 0.04743550001876429,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/0-replayed-metric-added-twice-syntax.log",
+            "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "run": {
+            "command": [
+              "/opt/homebrew/opt/node@22/bin/node",
+              "--test",
+              "--test-reporter=tap",
+              "/Users/javiercamaraportepetit/vexa/.runtime/f07-robustness-principal-1790201398899586000/packages/economics/robustness.test.mjs"
+            ],
+            "candidate": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-60xl5evd",
+            "exit_code": 1,
+            "timeout": false,
+            "seconds": 0.36350470900652,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/0-replayed-metric-added-twice.log",
+            "log_sha256": "e57fac6fdd5ebc6e1da48b40fe4042f11e63122a4d099ee7a766b0d368b42284"
+          }
+        },
+        {
+          "id": "ignore-currency-on-sum",
+          "oracle": "NO_IMPLICIT_CROSS_CURRENCY_SUM",
+          "status": "killed",
+          "mutant_sha256": "a3e29b0bd711e21276c4c2b0cc3442a55428901f4405a7a411ec0f25d0b2b4d7",
+          "syntax": {
+            "command": [
+              "/opt/homebrew/opt/node@22/bin/node",
+              "--check",
+              "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-_q4mreq5/packages/metrics/money.mjs"
+            ],
+            "candidate": null,
+            "exit_code": 0,
+            "timeout": false,
+            "seconds": 0.0497806670027785,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/0-ignore-currency-on-sum-syntax.log",
+            "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "run": {
+            "command": [
+              "/opt/homebrew/opt/node@22/bin/node",
+              "--test",
+              "--test-reporter=tap",
+              "/Users/javiercamaraportepetit/vexa/.runtime/f07-robustness-principal-1790201398899586000/packages/economics/robustness.test.mjs"
+            ],
+            "candidate": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-_q4mreq5",
+            "exit_code": 1,
+            "timeout": false,
+            "seconds": 0.3888667919964064,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/0-ignore-currency-on-sum.log",
+            "log_sha256": "a69c1e542179aeb0dd71f0f1cdccff039560f084f50e7f8aad252b4c20c0da5b"
+          }
+        },
+        {
+          "id": "omit-row-tenant-validation",
+          "oracle": "FOREIGN_ROW_MUST_NOT_BE_HIDDEN_BY_FILTER",
+          "status": "killed",
+          "mutant_sha256": "3040e94c6785bb3cf7ef7cae93c872ddcd1df2eb3fa52178f24a72675e149e9b",
+          "syntax": {
+            "command": [
+              "/opt/homebrew/opt/node@22/bin/node",
+              "--check",
+              "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-fva15g0f/packages/economics/adapter.mjs"
+            ],
+            "candidate": null,
+            "exit_code": 0,
+            "timeout": false,
+            "seconds": 0.04855924998992123,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/0-omit-row-tenant-validation-syntax.log",
+            "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "run": {
+            "command": [
+              "/opt/homebrew/opt/node@22/bin/node",
+              "--test",
+              "--test-reporter=tap",
+              "/Users/javiercamaraportepetit/vexa/.runtime/f07-robustness-principal-1790201398899586000/packages/economics/robustness.test.mjs"
+            ],
+            "candidate": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-fva15g0f",
+            "exit_code": 1,
+            "timeout": false,
+            "seconds": 0.4223592079943046,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/0-omit-row-tenant-validation.log",
+            "log_sha256": "985d82fec379263e72c9d006ba1441ad7661baa140305cb83ca32a9dd1ac7d81"
+          }
+        },
+        {
+          "id": "coerce-minor-units-to-number",
+          "oracle": "EXACT_KNOWN_SUBTOTAL",
+          "status": "killed",
+          "mutant_sha256": "fe0feef44d791edc089da47a2d76d5751c4920e74f17d0e389a9c6d9b50bce0e",
+          "syntax": {
+            "command": [
+              "/opt/homebrew/opt/node@22/bin/node",
+              "--check",
+              "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-pikw9fz3/packages/economics/index.mjs"
+            ],
+            "candidate": null,
+            "exit_code": 0,
+            "timeout": false,
+            "seconds": 0.05251462501473725,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/0-coerce-minor-units-to-number-syntax.log",
+            "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "run": {
+            "command": [
+              "/opt/homebrew/opt/node@22/bin/node",
+              "--test",
+              "--test-reporter=tap",
+              "/Users/javiercamaraportepetit/vexa/.runtime/f07-robustness-principal-1790201398899586000/packages/economics/robustness.test.mjs"
+            ],
+            "candidate": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-pikw9fz3",
+            "exit_code": 1,
+            "timeout": false,
+            "seconds": 0.417303082998842,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/0-coerce-minor-units-to-number.log",
+            "log_sha256": "15f7eb3878b0d3f0133785eb5d958f95b666f116c1a3eb712bc2d7fefbf5decc"
+          }
+        }
+      ]
+    },
+    {
+      "version": {
+        "command": [
+          "/opt/homebrew/bin/node",
+          "--version"
+        ],
+        "candidate": null,
+        "exit_code": 0,
+        "timeout": false,
+        "seconds": 0.027631083998130634,
+        "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/runtime-1.log",
+        "log_sha256": "fe9da612097c5b1f2808feef32b5685e7a19a607fd96c7d6abe1454f0edc7e1c"
+      },
+      "baseline": {
+        "command": [
+          "/opt/homebrew/bin/node",
+          "--test",
+          "--test-reporter=tap",
+          "/Users/javiercamaraportepetit/vexa/.runtime/f07-robustness-principal-1790201398899586000/packages/economics/robustness.test.mjs"
+        ],
+        "candidate": null,
+        "exit_code": 0,
+        "timeout": false,
+        "seconds": 0.3304784999927506,
+        "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/baseline-1.log",
+        "log_sha256": "9266b7d3344e09f8399a0740c8a66e5b3df8bbe209d4eae182b49778513928d0"
+      },
+      "mutations": [
+        {
+          "id": "unknown-as-observed-zero",
+          "oracle": "UNKNOWN_TOTAL_IS_NOT_ZERO",
+          "status": "killed",
+          "mutant_sha256": "54e5ba6f397f34bbbf7dd544507cfd83f57104a73bb9f6832743dd5240d9eaf2",
+          "syntax": {
+            "command": [
+              "/opt/homebrew/bin/node",
+              "--check",
+              "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-o70bvqmd/packages/economics/index.mjs"
+            ],
+            "candidate": null,
+            "exit_code": 0,
+            "timeout": false,
+            "seconds": 0.0356935000163503,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/1-unknown-as-observed-zero-syntax.log",
+            "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "run": {
+            "command": [
+              "/opt/homebrew/bin/node",
+              "--test",
+              "--test-reporter=tap",
+              "/Users/javiercamaraportepetit/vexa/.runtime/f07-robustness-principal-1790201398899586000/packages/economics/robustness.test.mjs"
+            ],
+            "candidate": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-o70bvqmd",
+            "exit_code": 1,
+            "timeout": false,
+            "seconds": 0.33332029200391844,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/1-unknown-as-observed-zero.log",
+            "log_sha256": "52566e7facc6e2e94c01a5b98ac533d68c7c57b3910a68cd3e32deceb83ae755"
+          }
+        },
+        {
+          "id": "replayed-metric-added-twice",
+          "oracle": "METRIC_REPLAY_MUST_NOT_ADD",
+          "status": "killed",
+          "mutant_sha256": "2741a29dd70faa90a19f4e3e3ae99607661e75d5102ae4e1b6532be0440fae4d",
+          "syntax": {
+            "command": [
+              "/opt/homebrew/bin/node",
+              "--check",
+              "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-r6ztu73d/packages/metrics/money.mjs"
+            ],
+            "candidate": null,
+            "exit_code": 0,
+            "timeout": false,
+            "seconds": 0.03707904097973369,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/1-replayed-metric-added-twice-syntax.log",
+            "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "run": {
+            "command": [
+              "/opt/homebrew/bin/node",
+              "--test",
+              "--test-reporter=tap",
+              "/Users/javiercamaraportepetit/vexa/.runtime/f07-robustness-principal-1790201398899586000/packages/economics/robustness.test.mjs"
+            ],
+            "candidate": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-r6ztu73d",
+            "exit_code": 1,
+            "timeout": false,
+            "seconds": 0.2919036670064088,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/1-replayed-metric-added-twice.log",
+            "log_sha256": "435f83dbda0e3715f1edd2181dadbd283ba5cd0c2bb8c7c926a4da980d7a882f"
+          }
+        },
+        {
+          "id": "ignore-currency-on-sum",
+          "oracle": "NO_IMPLICIT_CROSS_CURRENCY_SUM",
+          "status": "killed",
+          "mutant_sha256": "a3e29b0bd711e21276c4c2b0cc3442a55428901f4405a7a411ec0f25d0b2b4d7",
+          "syntax": {
+            "command": [
+              "/opt/homebrew/bin/node",
+              "--check",
+              "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-rt92_shr/packages/metrics/money.mjs"
+            ],
+            "candidate": null,
+            "exit_code": 0,
+            "timeout": false,
+            "seconds": 0.04013712500454858,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/1-ignore-currency-on-sum-syntax.log",
+            "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "run": {
+            "command": [
+              "/opt/homebrew/bin/node",
+              "--test",
+              "--test-reporter=tap",
+              "/Users/javiercamaraportepetit/vexa/.runtime/f07-robustness-principal-1790201398899586000/packages/economics/robustness.test.mjs"
+            ],
+            "candidate": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-rt92_shr",
+            "exit_code": 1,
+            "timeout": false,
+            "seconds": 0.33697933302028105,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/1-ignore-currency-on-sum.log",
+            "log_sha256": "4fdf8b6825019b13bee896718baad8e2426f9c80bde81df430c058992703ca25"
+          }
+        },
+        {
+          "id": "omit-row-tenant-validation",
+          "oracle": "FOREIGN_ROW_MUST_NOT_BE_HIDDEN_BY_FILTER",
+          "status": "killed",
+          "mutant_sha256": "3040e94c6785bb3cf7ef7cae93c872ddcd1df2eb3fa52178f24a72675e149e9b",
+          "syntax": {
+            "command": [
+              "/opt/homebrew/bin/node",
+              "--check",
+              "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-jufttl9j/packages/economics/adapter.mjs"
+            ],
+            "candidate": null,
+            "exit_code": 0,
+            "timeout": false,
+            "seconds": 0.04172950002248399,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/1-omit-row-tenant-validation-syntax.log",
+            "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "run": {
+            "command": [
+              "/opt/homebrew/bin/node",
+              "--test",
+              "--test-reporter=tap",
+              "/Users/javiercamaraportepetit/vexa/.runtime/f07-robustness-principal-1790201398899586000/packages/economics/robustness.test.mjs"
+            ],
+            "candidate": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-jufttl9j",
+            "exit_code": 1,
+            "timeout": false,
+            "seconds": 0.3358163329830859,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/1-omit-row-tenant-validation.log",
+            "log_sha256": "6173dc2840c9d7104ec6474166bec183f4688972030798f051c7d7d0002477f3"
+          }
+        },
+        {
+          "id": "coerce-minor-units-to-number",
+          "oracle": "EXACT_KNOWN_SUBTOTAL",
+          "status": "killed",
+          "mutant_sha256": "fe0feef44d791edc089da47a2d76d5751c4920e74f17d0e389a9c6d9b50bce0e",
+          "syntax": {
+            "command": [
+              "/opt/homebrew/bin/node",
+              "--check",
+              "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-yjo7g7dp/packages/economics/index.mjs"
+            ],
+            "candidate": null,
+            "exit_code": 0,
+            "timeout": false,
+            "seconds": 0.0432692079921253,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/1-coerce-minor-units-to-number-syntax.log",
+            "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "run": {
+            "command": [
+              "/opt/homebrew/bin/node",
+              "--test",
+              "--test-reporter=tap",
+              "/Users/javiercamaraportepetit/vexa/.runtime/f07-robustness-principal-1790201398899586000/packages/economics/robustness.test.mjs"
+            ],
+            "candidate": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-mutant-yjo7g7dp",
+            "exit_code": 1,
+            "timeout": false,
+            "seconds": 0.3299931669898797,
+            "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-economic-robustness-wodn6ag2/1-coerce-minor-units-to-number.log",
+            "log_sha256": "bdb8d381aab653fc3c483e760b8380897044ff066b41fa674c3bbcc28a5c0f35"
+          }
+        }
+      ]
+    }
+  ],
+  "pending": [
+    "Independent acceptance gate/review",
+    "CRM identity persistence is outside this pure resolved-record test",
+    "RLS and HTTP authorization are outside this suite"
+  ],
+  "totals": {
+    "killed": 10,
+    "survived": 0,
+    "invalid": 0
+  },
+  "source_unchanged": true
+}

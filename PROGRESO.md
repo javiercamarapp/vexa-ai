@@ -1,6 +1,12 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## Presupuesto de agrupación operable —24-sep, corte330
+
+El propietario puede configurar los límites global y de agrupación desde Problemas, con ventana propia, control de versión y conciliación explícita de reservas antiguas aunque cambie la configuración. Los costos desconocidos permanecen desconocidos; cero requiere confirmación y evidencia declarada. Configurar límites no activa proveedores ni ejecuta inferencia.
+
+Autor325:8/8 escenarios API/PostgreSQL/navegador en Node22 y26. Revisión independiente327:7/7, incluidos CAS y recibos concurrentes, importes mayores de2^53 exactos, aislamiento, permisos y revocación real. Regresión del flujo existente:5/5 de agrupación, detalle, separación/unión, permisos y respuesta tardía; lint/build pasan sobre la base publicada. Sin cambios de esquema ni gateway.43/60 técnicas y25formales; esta reparación cierra un hueco operativo sin añadir una tarea.
+
 ## Histórico accesible por páginas —23-sep, corte325
 
 La pantalla de Análisis permite recorrer conversaciones y trabajos más allá de los100 iniciales. Cursores separados, navegación anterior/siguiente, selección reiniciada al cambiar de página y actualización periódica que conserva la página. Cada consulta vuelve a comprobar permisos; un fallo de acceso limpia los datos mostrados. Vista viva con orden estable, sin prometer una captura atómica entre páginas.
@@ -29,7 +35,7 @@ F06-08 integra el centro de notificaciones, preferencias propias con control de 
 
 El total suma25 aceptadas por el runner y dieciocho técnicamente listas con dependencia/validación externa pendiente: seis F03, seis F05 y F06-01..06. Restan17 tareas de construcción y la auditoría integral de20 rubros. El cierre solicitado exige todo el software técnico de punta a punta, incluida ingesta histórica CRM y evaluación de agentes; sólo cuentas, datos, credenciales y aprobaciones externas pueden quedar pendientes. No acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
 
-Tiempo sin límite autorizado; presupuesto conservado al corte de este checkpoint:325/360 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate mantiene pantalla y sistema despiertos con tapa abierta; no garantiza supervivencia de la sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+Tiempo sin límite autorizado; presupuesto conservado al corte de este checkpoint:330/360 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate mantiene pantalla y sistema despiertos con tapa abierta; no garantiza supervivencia de la sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## F02 completa — F02-06 aceptado,20-sep
 

@@ -1,0 +1,60 @@
+{
+  "schema": "vexa-pilot-evaluation-v1",
+  "task_id": "F07-05",
+  "status": "not_run",
+  "reason": "No se han aportado consentimientos, gold humano, participantes ni sponsor reales.",
+  "synthetic_results_are_not_human_validation": true,
+  "production_validated": false,
+  "consents": {
+    "status": "pending",
+    "owner": "Titular de datos y participantes",
+    "evidence_ref": null
+  },
+  "gold": {
+    "status": "not_available",
+    "owner": "Dos anotadores y adjudicador designados por el cliente",
+    "dataset_ref": null,
+    "holdout_ref": null,
+    "custodian_key_ref": null,
+    "evaluated_items": null,
+    "agreement": null
+  },
+  "metrics": {
+    "ceo_comprehension": {
+      "status": "not_measured",
+      "participants": null,
+      "completed_under_five_minutes": null,
+      "duration_seconds": null,
+      "method": "Cronometrar comprensión humana del mismo guion; no usar duración del pipeline ni del video."
+    },
+    "new_insight": {
+      "status": "not_measured",
+      "respondents": null,
+      "affirmative": null
+    },
+    "sponsored_action": {
+      "status": "not_measured",
+      "respondents": null,
+      "committed_actions": null,
+      "sponsor_ref": null
+    },
+    "willingness_to_pay": {
+      "status": "not_measured",
+      "respondents": null,
+      "affirmative": null,
+      "currency": null,
+      "amount_minor": null
+    }
+  },
+  "causal_savings": {
+    "status": "not_established",
+    "amount_minor": null,
+    "reason": "Aprobar una recomendación o comparar antes/después no demuestra causalidad."
+  },
+  "next_step": {
+    "owner": "Sponsor del cliente y responsable de evaluación",
+    "condition": "Consentimientos y datos autorizados, holdout independiente, evaluación real y ensayo humano registrados fuera de Git. Sólo publicar agregados autorizados con denominadores."
+  },
+  "technical_count_increment": 0,
+  "formal_acceptance": false
+}

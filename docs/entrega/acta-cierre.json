@@ -1,0 +1,75 @@
+{
+  "schema": "vexa-layered-close-v1",
+  "status": "consolidated_blocked_not_production",
+  "technical_tasks_complete": 49,
+  "formal_runner_accepted": 25,
+  "total_tasks": 60,
+  "production_validated": false,
+  "source_commit": "30b5fe1b90a7ca40271c9a9bd29dc31681a916ea",
+  "layers": {
+    "documentation": {
+      "status": "reviewed_guides_consolidation_submitted_for_final_review",
+      "evidence": [
+        "GUIA-USUARIO.md",
+        "RUNBOOK.md",
+        "GUIA-DESARROLLADOR.md",
+        "ensayo-guia-resultados.json"
+      ],
+      "human_acceptance": "pending_actual_recipients_access_and_dates"
+    },
+    "local_software": {
+      "status": "technical_scopes_verified_remaining_excluded_and_validation_gaps",
+      "evidence": [
+        "../../construccion/ESTADO-CONSTRUCCION.json",
+        "AUDITORIA-20-RUBROS.md"
+      ]
+    },
+    "synthetic_demo": {
+      "status": "recorded_and_reviewed_not_real_provider_data",
+      "evidence": [
+        "demo-backup.webm",
+        "portabilidad-crm-resultados.json"
+      ],
+      "human_rehearsal": "not_observed"
+    },
+    "real_pilot": {
+      "status": "not_run",
+      "owner": "Sponsor y participantes del cliente",
+      "exit_condition": "Consentimiento, cuentas y datos reales, evaluación humana, resultados observados y aceptación explícita",
+      "evidence": [
+        "../blueprint/pilot-evaluation.json"
+      ]
+    },
+    "production": {
+      "status": "not_run",
+      "owner": "Operador de infraestructura y QA",
+      "exit_condition": "SQL/despliegue aprobados, configuración real, SHA servido, smoke remoto y recuperación autorizada"
+    }
+  },
+  "pmf_validated": false,
+  "human_pitch_observed": false,
+  "next_experiments": "proximos-experimentos.md",
+  "blockers": [
+    {
+      "id": "notification_review",
+      "owner": "Plataforma de revisión/aprobación",
+      "exit_condition": "Dictamen legítimo del ámbito bloqueado sin reintentar ni transferir el examen rechazado en esta sesión"
+    },
+    {
+      "id": "external_activation",
+      "owner": "Javier/titulares de cuentas",
+      "exit_condition": "Accesos, datos y aprobaciones legítimos; validación real posterior"
+    },
+    {
+      "id": "release_control_integration",
+      "owner": "Ingeniería y revisión independiente",
+      "exit_condition": "Integrar y revisar entradas formalesF08-01/02; no reemplazar smoke real por JSON"
+    }
+  ],
+  "dates": {
+    "next_human_review": null,
+    "reason": "No se inventan acuerdos, fechas, participantes ni pagos"
+  },
+  "loop_status": "bounded_supervised_work_360_of_360_calls_reserved_not_unattended_service",
+  "technical_count_note": "49 significa25runner+21alcances con validación externa pendiente+3dependencias formales. No equivale a producción."
+}

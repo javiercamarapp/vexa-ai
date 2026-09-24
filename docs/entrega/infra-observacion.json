@@ -1,0 +1,10 @@
+{
+  "checked_at": 1790279173.104683,
+  "via": "Supabase MCP get_project",
+  "name": "vexa-ai",
+  "status": "ACTIVE_HEALTHY",
+  "region": "us-east-1",
+  "sql_executed": false,
+  "deployment_validated": false,
+  "scope": "Metadatos de proyecto observados por el principal; no examen de esquema, SQL, Auth ni app."
+}

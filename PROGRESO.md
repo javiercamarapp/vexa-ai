@@ -4,6 +4,14 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Entrega técnica y auditoría por capas consolidadas —24-sep, corte360
+
+F08-03/05 tienen artefactos y recorridos técnicos revisados: respaldoWebM301.8s SYN/offline, guion, portabilidadCRM y guías probadas con importación/exportación/reingreso/revocación. Faltan actos humanos concretos: ensayo cronometrado/comprensión, permisos de material, entrega de accesos y recepción con responsables/fechas reales. Revisión360; no se fabrican aprobaciones humanas ni se cuentan plantillas como pruebas.
+
+49/60 técnicas:25aceptadas por runner,21con validación externa y3con dependencia formal. Auditoría20rubros consolidada, no aprobación global: F06-09 excluido, controles de releaseF08-01/02 aún por integrar, piloto/producción sin ejecutar. Acta y lista de conexión distinguen esas capas; el piloto conserva not_run/denominadoresnull. Presupuesto360/360 reservado; no hay nuevas invocaciones autorizadas por el tiempo sin límite.
+
+Carga210K y caos/restore tienen ejecutores y controles actuales publicados, con SHA y fallos preservados. La medición local no acredita pipelineIA completo ni costo comercial.
+
 ## F07-06 control portable y rollback financiero cerrados —24-sep, corte360
 
 Restauración deSQL0038 y siete historiales seguida de binarioNextanterior real: SHA servido, mismo snapshot/refund1500, tenantB404 y vuelta al actual. Cuatro trampas de controles candidatos no se ejecutaron. Cinco controles de restore y continuidad web pasaronNode26; revisión360 de9fuentes y46evidencias. Handler de cancelación corregido, pruebaSIGTERMreal con exit1 y tres recursos ausentes, sin reatribuir otra suite completa.

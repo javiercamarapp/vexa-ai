@@ -20,3 +20,7 @@ La entrega final adjunta manifest del SHA realmente integrado, smoke remoto, res
 Para retomar: AGENTS.md, cabeceras de README/PROGRESO/PLAN/AUTOMATICO, python3 orchestration/runner.py status y ficha concreta. Reutilizar evidencia ligada a hashes. No reiniciar contadores/imports/exámenes sin causa. Publicar sólo con publisher autorizado, sin activar Actions o despliegues accidentalmente.
 
 [Ensayo técnico de la guía](ensayo-guia-resultados.json): agente independiente siguió la interfaz, completó importación, exportación y revocación con datosSYN. Se corrigieron errores de red y navegación entre detalle y resumen. No sustituye ensayo humano ni inferencia real.
+
+## Estado consolidado
+
+[Auditoría de20rubros](AUDITORIA-20-RUBROS.md), [acta por capas](acta-cierre.json) y [pendientes para conectar](PENDIENTES-PARA-CONECTAR.md). Las pruebas locales, preparación del pitch y guías no acreditan piloto ni producción. El [registro del piloto](../blueprint/pilot-evaluation.json) conserva métricas no medidas y denominadores nulos.

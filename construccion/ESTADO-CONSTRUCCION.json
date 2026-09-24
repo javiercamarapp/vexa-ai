@@ -47,9 +47,11 @@
     "F06-04",
     "F06-05",
     "F06-06",
-    "F07-06"
+    "F07-06",
+    "F08-03",
+    "F08-05"
   ],
-  "construction_total": 47,
+  "construction_total": 49,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -167,7 +169,7 @@
       "technical_ready": true,
       "implemented": "Adaptador puro ledger→kernel existente, dinero exacto, procedencia, identidad económica, ventanas/cobertura/conciliación y hashes; 34/34 externos en Node22/26 y materialización limpia.",
       "programming_pending": [],
-      "scope_note": "Sólo ficha F05-01. Persistencia/API/UI y demás trabajo financiero corresponden a F05-02..06 y todavía no se contabilizan.",
+      "scope_note": "Esta fila describe únicamente F05-01. Consultar las categorías vigentes del registro para las demás fichas; no acredita producción.",
       "external_pending": [
         {
           "owner": "Titular de las cuentas y responsable financiero del cliente",
@@ -184,7 +186,7 @@
       "technical_ready": true,
       "implemented": "Ledger operacional append-only, versiones CAS, fuentes por familia, API y formularios autorizados, importes separados y escenarios con vigencia/horizonte. Revisión independiente10/10Node26, materialización limpia10/10Node22 y matrizSQL/Auth/Storage260/260.",
       "programming_pending": [],
-      "scope_note": "Ficha F05-02; las relaciones globales de exposición y snapshots publicados corresponden a F05-03/05, todavía sin completar ni contabilizar.",
+      "scope_note": "Esta fila describe únicamente F05-02. Consultar las categorías vigentes del registro para las demás fichas; no acredita producción.",
       "external_pending": [
         {
           "owner": "Responsable financiero del cliente y titular de infraestructura",
@@ -202,7 +204,7 @@
       "technical_ready": true,
       "implemented": "Relaciones operacionales persistentes, equivalencias de órdenes, identidad declarada de clientes, cobertura por alcance y unión global de órdenes/clientes/eventos. API y cuatro formularios con CAS, evidencia y autorización actual.",
       "programming_pending": [],
-      "scope_note": "Ficha F05-03; formatos/FX, snapshots publicados y prioridad son F05-04/05/06, sin completar ni contabilizar.",
+      "scope_note": "Esta fila describe únicamente F05-03. Consultar las categorías vigentes del registro para las demás fichas; no acredita producción.",
       "external_pending": [
         {
           "owner": "Responsable operacional del cliente y titular de infraestructura",
@@ -220,7 +222,7 @@
       "technical_ready": true,
       "implemented": "DTO monetario exacto integrado en API/UI, formato compartido, monedas originales separadas, catálogo y tipos de cambio aprobados/versionados con CAS y revocación; conversión explícita conserva original y evidencia.",
       "programming_pending": [],
-      "scope_note": "Ficha F05-04; snapshots y prioridad corresponden a05/06 y todavía no se contabilizan.",
+      "scope_note": "Esta fila describe únicamente F05-04. Consultar las categorías vigentes del registro para las demás fichas; no acredita producción.",
       "external_pending": [
         {
           "owner": "Responsable financiero del cliente y titular de infraestructura",
@@ -238,7 +240,7 @@
       "technical_ready": true,
       "implemented": "Snapshots canónicos con preparación durable, publicación atómica, historial inmutable, versiones/evidencia fijadas, lectura autorizada y exportaciones JSON/CSV del mismo snapshot y alcance.",
       "programming_pending": [],
-      "scope_note": "Ficha F05-05; prioridad F05-06 sigue como propuesta en revisión y no se contabiliza.",
+      "scope_note": "Esta fila describe únicamente F05-05. Consultar las categorías vigentes del registro para las demás fichas; no acredita producción.",
       "external_pending": [
         {
           "owner": "Titular de infraestructura y responsable de datos del cliente",
@@ -256,7 +258,7 @@
       "technical_ready": true,
       "implemented": "Prioridad con carril crítico separado, fórmula y políticas versionadas, normalización fija, contribuciones con importes exactos/desconocidos y aprobación humana de accionabilidad; snapshot autorizado, API y navegador.",
       "programming_pending": [],
-      "scope_note": "Ficha F05-06 completa técnicamente. F06–08 y auditoría integral final siguen pendientes.",
+      "scope_note": "Esta fila describe únicamente F05-06. Consultar las categorías vigentes del registro para las demás fichas; no acredita producción.",
       "external_pending": [
         {
           "owner": "Titular de infraestructura y responsable de datos del cliente",
@@ -274,7 +276,7 @@
       "technical_ready": true,
       "implemented": "Overview y Problems comparten snapshot y alcance derivado inmutable en URL/API/exports. Clasificación SKU/origen con aprobación owner, CAS e historial; cursor ligado a permisos actuales; respuestas tardías descartadas y exportación revocada ante pérdida de acceso.",
       "programming_pending": [],
-      "scope_note": "Ficha F06-01 completa técnicamente; detalles F06-02 y resto F06–08/auditoría integral siguen pendientes.",
+      "scope_note": "Esta fila describe únicamente F06-01. Consultar las categorías vigentes del registro para las demás fichas; no acredita producción.",
       "external_pending": [
         {
           "owner": "Titular de infraestructura y responsable de datos del cliente",
@@ -292,7 +294,7 @@
       "technical_ready": true,
       "implemented": "Detalle cifra→componente→evento→evidencia financiera física y unión de órdenes/conversaciones del cliente canónico. Asociación owner/CAS con historia de identidad independiente del corte financiero; autorización en cada paso y retirada de toda la vista ante pérdida de acceso.",
       "programming_pending": [],
-      "scope_note": "Ficha F06-02 completa técnicamente; resto F06–08 y auditoría integral siguen pendientes.",
+      "scope_note": "Esta fila describe únicamente F06-02. Consultar las categorías vigentes del registro para las demás fichas; no acredita producción.",
       "external_pending": [
         {
           "owner": "Titular de infraestructura y responsable de datos del cliente",
@@ -310,7 +312,7 @@
       "technical_ready": true,
       "implemented": "Recomendaciones específicas condicionadas por evidencia, versión del problema y alcance publicado. Owner, revisión, descarte y reapertura con razón/CAS e historial persistente. Intervención draft idempotente con definición capturada; retirada de acceso en API/UI/SQL, sin ejecutar acciones externas.",
       "programming_pending": [],
-      "scope_note": "Ficha F06-03 completa técnicamente; transiciones de intervención pertenecen a F06-05. Resto F06–08 y auditoría integral pendientes.",
+      "scope_note": "Esta fila describe únicamente F06-03. Consultar las categorías vigentes del registro para las demás fichas; no acredita producción.",
       "external_pending": [
         {
           "owner": "Titular de infraestructura y responsable de datos del cliente",
@@ -328,7 +330,7 @@
       "technical_ready": true,
       "implemented": "Explorer con búsqueda, filtros y paginación exhaustiva, citas autorizadas y herramientas de sólo lectura. Preguntas determinísticas soportadas devuelven importes exactos, cobertura y referencias del mismo alcance; ambigüedad y causalidad sin evidencia generan aclaración/abstención.",
       "programming_pending": [],
-      "scope_note": "Ficha F06-04 completa técnicamente. No promete un modelo conversacional no implementado: modo determinístico explícito. Resto F06–08 y auditoría integral de veinte rubros pendientes.",
+      "scope_note": "Esta fila describe únicamente F06-04. Consultar las categorías vigentes del registro para las demás fichas; no acredita producción.",
       "external_pending": [
         {
           "owner": "Titular de infraestructura y responsable de datos del cliente",
@@ -346,7 +348,7 @@
       "technical_ready": true,
       "implemented": "Intervenciones con planes versionados, baseline financiero explícito, aprobación inmutable, ejecución registrada, medición persistente calculada desde datos autorizados, reasignación y reapertura auditadas. API y UI integradas; concurrencia, idempotencia, aislamiento y revocación probados.",
       "programming_pending": [],
-      "scope_note": "Ficha F06-05 completa técnicamente. Medición antes/después es asociación, no ahorro causal. No ejecuta cambios externos de CRM. Resto F06–08 y auditoría integral de veinte rubros pendientes.",
+      "scope_note": "Esta fila describe únicamente F06-05. Consultar las categorías vigentes del registro para las demás fichas; no acredita producción.",
       "external_pending": [
         {
           "owner": "Titular de infraestructura y responsable de datos del cliente",
@@ -364,7 +366,7 @@
       "technical_ready": true,
       "implemented": "Brief ejecutivo versionado e inmutable desde publicaciones y alcances explícitos; cifras canónicas, prioridades, carril crítico, acciones e histórico. Comparación observada entre periodos compatibles, exportaciones JSON/HTML autorizadas y recuperación segura en UI/API.",
       "programming_pending": [],
-      "scope_note": "Ficha F06-06 completa técnicamente; generar o exportar no envía correo ni cambia CRM. No estima ahorro causal ni pronósticos sin modelo. Notificaciones F06-08..12, accesibilidad global F06-07, F07/F08 y auditoría integral pendientes.",
+      "scope_note": "Esta fila describe únicamente F06-06. Consultar las categorías vigentes del registro para las demás fichas; no acredita producción.",
       "external_pending": [
         {
           "owner": "Titular de infraestructura y responsable de datos del cliente",
@@ -392,6 +394,44 @@
           "owner": "Operador de infraestructura y responsable de datos",
           "pending": "Destino gestionado, política/custodia real, aprobación SQL/restore y reconciliación de autoridad posterior al backup.",
           "verification": "Restore autorizado en destino aislado, reconciliar membresías/claves/sesiones; smoke y permisos reales antes de abrir acceso. Los tiempos locales no son SLA."
+        }
+      ]
+    },
+    {
+      "task_id": "F08-03",
+      "technical_ready": true,
+      "implemented": "Guion y respaldo301.8s SYN con prueba offline, ocho vistas y portabilidadCRM local revisados.",
+      "programming_pending": [],
+      "verification_pending": [],
+      "scope_note": "Artefactos y ensayo técnico completos; aprobación/ensayo humano no se simulan ni se declaran realizados.",
+      "official_dependency_pending": [
+        "F08-02"
+      ],
+      "evidence": "docs/entrega/demo-script.md",
+      "external_pending": [
+        {
+          "owner": "Presentador y revisor humano; titular de material identificable",
+          "pending": "Ensayo humano cronometrado de cinco minutos, comprensión y permisos de material real si se incorpora.",
+          "verification": "Revisor humano observa el guion y respaldo sin sustituir comprensión por duración del job o video."
+        }
+      ]
+    },
+    {
+      "task_id": "F08-05",
+      "technical_ready": true,
+      "implemented": "Guías de usuario/desarrollador/runbook/accesos revisadas y ensayo GUI real de importación, exportación, reingreso y revocación.",
+      "programming_pending": [],
+      "verification_pending": [],
+      "scope_note": "Artefactos y ensayo técnico completos; aprobación/ensayo humano no se simulan ni se declaran realizados.",
+      "official_dependency_pending": [
+        "F08-04"
+      ],
+      "evidence": "docs/entrega/ensayo-guia-resultados.json",
+      "external_pending": [
+        {
+          "owner": "Javier, operador de infraestructura y responsable nominal de usuarios",
+          "pending": "Entrega de accesos revocables, recepción humana, políticas y fechas reales de revisión.",
+          "verification": "Entregar por gestor/OAuth, verificar roles/revocación de cuentas legítimas y registrar recepción; nunca publicar secretos."
         }
       ]
     }

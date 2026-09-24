@@ -1,0 +1,1 @@
+export function createRecoveryWeb(options:{database:any;storage:any;ledgerKey?:string;clock?:()=>number}):{state():Promise<any>;sources(input:any):Promise<any>;policy(input:any):Promise<any>;preview(input:any):Promise<any>;erase(input:any):Promise<any>;purge():Promise<any>;exportLedger():Promise<any>};

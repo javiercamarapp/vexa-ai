@@ -31,3 +31,9 @@ Use /problems para lista y detalle, y /problems/manage para agrupación. /overvi
 /notifications contiene avisos; /settings/notifications sus preferencias. Con propuestas F06-10..12 integradas, owner configura /settings/notification-delivery y cada persona registra Push en /notifications/push. Canales requieren configuración, consentimiento y consumidor activo. accepted no significa delivered; invitación no conectada sigue rotulada.
 
 403 requiere revisar permiso;409 exige recargar versión y revisar antes de confirmar otra vez. Servicio no disponible no equivale a cero resultados. No repita imports/inferencia/envíos inciertos para ocultar un error. Cerrar sesión invalida Auth; con F06-11 revoca dispositivos de esa sesión y conserva historial de intentos.
+
+## Retención y borrado
+
+En /settings/retention, un owner activo configura el plazo de las nuevas copias registradas; las existentes conservan su vencimiento. Seleccione conexión, tipo e identidad, previsualice y revise todo el alcance. La eliminación de un archivo fuente afecta también las otras filas que contenga: la pantalla enumera estos archivos antes de pedir confirmación irreversible. Un cambio de alcance o política requiere otra previsualización.
+
+Tras confirmar, el borrado lógico queda registrado. Use la acción de eliminar o reintentar archivos pendientes hasta terminar las tandas de 25. Un fallo de Storage mantiene el estado pendiente; no indica que el objeto haya desaparecido. Descargue y custodie el registro firmado fuera del backup junto al procedimiento de recuperación. La clave de firma permanece en servidor. Esta interfaz no restaura producción ni elimina copias de un CRM externo.

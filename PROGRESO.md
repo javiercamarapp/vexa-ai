@@ -1,6 +1,15 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+
+## Retención operable y consentimiento estable —24-sep, corte338
+
+Integradas API y pantalla de owner para configurar el plazo de nuevas copias, seleccionar fuentes paginadas, previsualizar y confirmar el borrado, purgar Storage en lotes de25 y descargar el ledger firmado. Las rutas usan la sesión vigente del owner; la clave de firma permanece sólo en el servidor. Se muestra el alcance de archivos RAW completos antes de confirmar.
+
+La revisión335 encontró una carrera que podía añadir un artefacto al borrado después de la previsualización. La reparación serializa su registro con la confirmación e impide cambiar la identidad de artefactos existentes. Revisión independiente337: un registro previo exige nueva previsualización; uno concurrente espera al commit y queda pendiente bajo la política ya vigente. Siete cambios de identidad se rechazan sin alterar filas. Purga real conserva backups aún vigentes.
+
+Los ensayos de autor332 en Node22/26 y controles335 inalterados se reutilizan por hash.337 cerró los estados de carga, error de red, confirmación obsoleta y recuperación después de un POST confirmado cuyo refresco falla. Restore con SQL0035 pasó5/5 y preservó finanzas, ledger y backup original sin resucitar texto eliminado. La composición sobre la rama publicada pasó lint/build y la regresión portable de concurrencia3/3; los errores previos de controles se conservan. No acredita restore cloud, eliminación en el CRM original ni copias externas no registradas.43/60 técnicas,25formales; F07-06 sigue sin aceptación formal.
+
 ## Correcciones de interfaz revisadas —24-sep, corte335
 
 Integradas cuatro fuentes: carga/error/recuperación del histórico y sus elementos, grupo accesible en economía, subtotales del Explorador dentro de sus definiciones y referencias largas que ajustan al ancho móvil. El fix de Push está revisado pero permanece en su propuesta, sin adelantar la aceptación bloqueada de notificaciones.

@@ -20,6 +20,8 @@ async function currentSources(s,conversationId){
   LEFT JOIN public.message_revisions r ON r.tenant_id=sr.tenant_id AND r.id=sr.message_revision_id
   WHERE m.tenant_id=$1 AND m.conversation_id=$2 AND m.deleted_at IS NULL ORDER BY m.id LIMIT 501`,[s.tenantId,conversationId])).rows;
  if(!rows.length||rows.length>500||rows.some(r=>!r.id||r.deleted_at||!['unique','selected'].includes(r.head_state)))fail('EXTRACTION_REVISION_UNAVAILABLE');
+ const identities=[{kind:'conversation',external_id:c.external_id},...rows.map(r=>({kind:'message',external_id:r.external_id}))];
+ if((await one(s,'SELECT EXISTS(SELECT 1 FROM jsonb_to_recordset($3::jsonb) AS x(kind text,external_id text) WHERE public.retention_source_deleted($1,$2,x.kind,x.external_id)) AS deleted',[s.tenantId,c.connection_id,JSON.stringify(identities)]))?.deleted)fail('EXTRACTION_TOMBSTONED');
  const keys=[c.id,c.external_id];
  for(const row of [{...c,message_id:c.id,id:c.id,entity_type:'conversation'},...rows.map(r=>({...r,entity_type:'message'}))]){
   const identity=identityKey({tenant_id:s.tenantId,connection_id:c.connection_id,source:c.source,source_account_id:c.account_id,entity_type:row.entity_type,external_id:row.external_id});keys.push(row.id,row.message_id,row.external_id,identity,sha256(identity));

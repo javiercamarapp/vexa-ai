@@ -37,3 +37,11 @@ Use /problems para lista y detalle, y /problems/manage para agrupación. /overvi
 En /settings/retention, un owner activo configura el plazo de las nuevas copias registradas; las existentes conservan su vencimiento. Seleccione conexión, tipo e identidad, previsualice y revise todo el alcance. La eliminación de un archivo fuente afecta también las otras filas que contenga: la pantalla enumera estos archivos antes de pedir confirmación irreversible. Un cambio de alcance o política requiere otra previsualización.
 
 Tras confirmar, el borrado lógico queda registrado. Use la acción de eliminar o reintentar archivos pendientes hasta terminar las tandas de 25. Un fallo de Storage mantiene el estado pendiente; no indica que el objeto haya desaparecido. Descargue y custodie el registro firmado fuera del backup junto al procedimiento de recuperación. La clave de firma permanece en servidor. Esta interfaz no restaura producción ni elimina copias de un CRM externo.
+
+## Evaluación del histórico
+
+Tras completar análisis del histórico, un owner puede abrir Evaluación histórica, elegir conexión y taxonomía exacta y fijar la ventana de disponibilidad y su corte exclusivo. Una cohorte conserva los IDs y hashes de hasta500 resultados; las páginas muestran25 casos. Las fechas provienen de las revisiones originales utilizadas: una corrección posterior del CRM no cambia retrospectivamente el momento del evento evaluado.
+
+Revise la evidencia autorizada antes de confirmar etiquetas y valoraciones. Guardar añade una versión de feedback ligada al resultado; una versión obsoleta requiere actualizar. La descarga incluye casos elegibles, exclusiones con razón y procedencia. Un cliente sin identidad canónica o una fuente fuera del corte se excluyen explícitamente. Revocar acceso o borrar una fuente impide posteriores lecturas y descargas de su contenido.
+
+El conjunto descargado sirve para desarrollo y es compatible con el evaluador local. El feedback de un owner no sustituye gold humano independiente. Esta pantalla no ejecuta nuevos modelos ni entrena o promueve candidatos. La evaluación de calidad, la ejecución externa de candidatos y cualquier aprobación de cambio conservan sus controles específicos; las métricas sintéticas no acreditan precisión real.

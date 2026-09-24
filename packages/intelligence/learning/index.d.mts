@@ -1,0 +1,1 @@
+export function createLearningRepository(options:{database:any;clock?:()=>number}):{state(cursor?:string|null):Promise<any>;taxonomies(connectionId:string):Promise<any>;create(input:any):Promise<any>;page(input:any):Promise<any>;feedback(input:any):Promise<any>;exportDevelopment(cohortId:string):Promise<any>};

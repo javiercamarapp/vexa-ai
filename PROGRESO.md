@@ -2,6 +2,15 @@
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
 
+
+## Evaluación del histórico conectada —24-sep, corte341
+
+El owner puede seleccionar conexión, taxonomía y corte temporal, congelar cohortes de resultados existentes, revisar evidencia y guardar feedback versionado. La interfaz recorre casos y cohortes por páginas; exporta desarrollo con procedencia y exclusiones explícitas. No almacena copias del texto en el nuevo ledger. Un cliente sin identidad canónica queda excluido; revocación y borrado se comprueban otra vez al leer/exportar.
+
+Autor334 pasó7/7 en Node22/26. La revisión336 detectó que un cambio de fecha canónica del CRM alteraba la elegibilidad histórica.338 corrigió el vínculo con la revisión original y las fechas desconocidas:4/4 focales por runtime;336 cerró el mismo oráculo rojo con el parche. Se reutilizan las pruebas de roles, SQL, navegador y CLI inalterados. Un POST confirmado seguido de recarga fallida muestra el guardado persistido y el error de lectura, sin fingir una vista actualizada.
+
+La composición con retención0035 y evaluación0036 pasó lint/build y dos controles reales locales de integración: navegación móvil y previsualización sin efectos, seguida de borrado que retira contenido exportable y rechaza feedback obsoleto. El conjunto es silver de desarrollo; no es gold humano ni acredita precisión. No ejecuta ni promueve candidatos. Su ejecutor independiente está en construcción.43/60 técnicas,25formales; no se incrementa el contador por este cierre transversal.
+
 ## Retención operable y consentimiento estable —24-sep, corte338
 
 Integradas API y pantalla de owner para configurar el plazo de nuevas copias, seleccionar fuentes paginadas, previsualizar y confirmar el borrado, purgar Storage en lotes de25 y descargar el ledger firmado. Las rutas usan la sesión vigente del owner; la clave de firma permanece sólo en el servidor. Se muestra el alcance de archivos RAW completos antes de confirmar.

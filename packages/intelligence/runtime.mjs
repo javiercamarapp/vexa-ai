@@ -1,3 +1,4 @@
+import {createManagedExtractionResolver} from './candidates/resolve.mjs';
 import {sha256,extractionSchema} from './index.mjs';
 import {redactText} from './redact.mjs';
 import {createExtractionQueue} from './queue.mjs';
@@ -21,12 +22,13 @@ export function createExtractionConfigResolver(raw='[]'){
  }
  return tenantId=>{const value=map.get(tenantId);if(!value)fail();return structuredClone(value);};
 }
-export function createExtractionRuntime({database,storage,resolveConfig,apiKey,runtime='stub',fetch,clock}={}){
+export function createExtractionRuntime({database,storage,resolveConfig,apiKey,runtime='stub',fetch,clock,env=process.env,runtimeCode}={}){
  if(typeof resolveConfig!=='function')fail();
  const queue=createExtractionQueue({database});
+ const effective=createManagedExtractionResolver({database,baseResolver:resolveConfig,env,runtimeCode});
  return Object.freeze({queue,async tick(){
   const claim=await queue.claim();if(!claim)return {state:'idle'};if(claim.recovered)return claim;
-  let config;try{config=resolveConfig(claim.tenant_id);}catch{return queue.reject(claim,'configuration_required');}
+  let config;try{config=await effective(claim.tenant_id);}catch{return queue.reject(claim,'configuration_required');}
   if(config.hash!==claim.configHash)return queue.reject(claim,'configuration_changed');
   const scoped=queue.scopedDatabase(claim);
   const repository=createExtractionRepository({database:scoped,storage});

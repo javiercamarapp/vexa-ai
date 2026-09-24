@@ -1,1 +1,1 @@
-export function historyConfig(env?:NodeJS.ProcessEnv):(tenant:string)=>{ready:boolean;enabled:boolean;extractionHash?:string;embeddingHash?:string};
+export function historyConfig(env?:NodeJS.ProcessEnv,database?:any,runtimeCode?:Record<string,string>):(tenant:string,scope?:any)=>Promise<{ready:boolean;enabled:boolean;extractionHash?:string;embeddingHash?:string}>;

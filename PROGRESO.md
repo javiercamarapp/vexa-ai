@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Landmarks de seis pantallas corregidos —24-sep, corte352
+
+Histórico, invitación, migraciones, evaluación, retención y catálogo de problemas conservan un único main de página; sus paneles interiores usan section con los atributos existentes. Se elimina además el padding duplicado de main. No cambian operaciones ni permisos.
+
+Revisión350:12 reproducciones del defecto previo en Node22;12/12 combinaciones por Node22/26 después de reparar, seis rutas a390/1440, salto por teclado funcional, nombres y estados de carga conservados, sin desbordamiento. Axe cubrió exclusivamente tres reglas de landmarks. Lint/build verdes; no acredita auditoría completa de accesibilidad ni cierre F06-07.43/60 técnicas y25formales.
+
 ## Reingreso por correo integrado —24-sep, corte350
 
 Los usuarios existentes pueden solicitar un enlace nuevo desde login, completar la sesión y elegir una organización vigente después de cerrar sesión. La solicitud conserva respuesta opaca para cuentas desconocidas y fallos de proveedor, no crea usuarios y limita el reenvío desde la interfaz. El callback retira el fragmento y deriva la identidad del refresh validado; una membresía revocada no se reactiva.

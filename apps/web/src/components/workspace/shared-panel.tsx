@@ -5,6 +5,7 @@ import type {Bundle,Scope} from '../../lib/workspace/contracts';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
 import {DataState} from './data-state';
 import {SharedFilters} from './shared-filters';
+import {CurrentProblems} from './current-problems';
 type ViewScope=Scope & {basis:string;exponent?:number};
 type ViewBundle=Omit<Bundle,'meta'> & {meta:Omit<Bundle['meta'],'scope_hash'> & {scope_hash:string|null;base_snapshot_id:string|null;base_scope_hash:string|null;cursor_auth_hash:string;scope:ViewScope;mapping_manifest_id:string|null;can_manage:boolean}};
 function initialScope(query:string):ViewScope{
@@ -47,6 +48,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
  return <section aria-label={resource==='metrics'?'Resumen con alcance compartido':'Problemas con alcance compartido'}>
   <p className="eyebrow">Decisiones con evidencia</p><h1>{resource==='metrics'?'Resumen ejecutivo':'Problemas de negocio'}</h1>
   <p className="intro">Cifras y cobertura de una publicación fija. La exposición compartida entre problemas no se suma ni equivale a pérdida.</p>
+  {resource==='problems'&&<><CurrentProblems/><h2>Publicación financiera</h2></>}
   <SharedFilters key={JSON.stringify(scope)} scope={scope} onApply={apply}/>
   <button type="button" disabled={busy} onClick={update}>Actualizar vista</button><button type="button" disabled={busy} onClick={latest}>Ver publicación más reciente</button>
   {busy&&<DataState state={{kind:'loading'}}/>}{error&&<DataState state={{kind:'error',code:'workspace_request_failed',message:error}}/>}

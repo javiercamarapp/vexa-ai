@@ -15,3 +15,9 @@ La proyección lee exclusivamente las filas enumeradas en `input_manifest` del s
 `GET /api/workspace/export` requiere snapshot y scope hash, conserva el mismo alcance y exporta todas sus filas. JSON devuelve el bundle; CSV incluye IDs, hashes, familia y minor units exactos, sin texto editable ni fórmulas. La exportación F05 sin filtros no se usa para exportar una vista filtrada.
 
 Sin publicación: `empty`. Cobertura parcial: `partial`. Versión actual posterior: `stale`; evidencia histórica no autorizada o no verificable: error. Fallos de infraestructura/autorización son errores HTTP, nunca ausencia fabricada. La ausencia de configuración tiene un contrato 503 explícito; no cubre fallos operativos. Clientes, recomendaciones, intervenciones, briefs, detalle de problemas y otros proveedores de F06 siguen fuera del alcance de esta entrega F06-01.
+
+## Catálogo actual independiente del importe
+
+La pantalla `/problems` también muestra el catálogo actual autorizado de `/api/problems`, incluidos problemas de conversaciones sin asociación financiera. Su lista y enlaces no requieren una publicación financiera. Es una sección explícitamente actual: los filtros y exportaciones del snapshot siguen limitados a su publicación y no filtran este catálogo. No añade dinero, no convierte desconocido en cero y no reescribe snapshots para incorporar problemas nuevos.
+
+Actualizar el catálogo limpia datos previos; errores y cambios de autorización se muestran sin conservar enlaces antiguos. Sólo se muestran problemas activos cuya evidencia sigue siendo accesible según el repositorio canónico. El detalle de conversaciones se abre sin fingir una identidad financiera. Las páginas y componentes financieros conservan sus contratos previos.

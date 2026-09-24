@@ -1,6 +1,12 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## Problemas visibles sin asociación financiera —24-sep, corte331
+
+Problemas incluye ahora un catálogo actual autorizado, con acceso al detalle incluso cuando el histórico no aporta órdenes ni importes. Los filtros y exportaciones financieros conservan su snapshot; el catálogo explica que muestra el estado actual. No inventa dinero ni convierte desconocido en cero. Actualizar limpia enlaces anteriores; retirar evidencia o revocar acceso impide volver a mostrarlos.
+
+Prueba de autor:7pasos reales locales desde CRM sintético hasta extracción, agrupación, snapshot con importe desconocido, catálogo y revocación. Revisión independiente330:6focales de aislamiento, HTML, filtros, errores, retirada de evidencia y respuestas tardías; hash financiero intacto y amountMinor presente como null. La integración corrigió una advertencia de lint mediante un delta de limpieza revisado estáticamente; lint/build finales pasan. El ensayo inicial de autor comprobó build, sin lint separado; el recibo de integración final sí cubre ambos.43/60 técnicas,25formales; no cierre productivo.
+
 ## Identidad compilada y preparación de entrega —24-sep
 
 La versión pública incorpora una revisión Git fijada durante compilación; cambiar variables al arrancar no puede renombrar el binario ya construido. El inventario de release exige un checkout limpio, rechaza flags Git que ocultan modificaciones y registra hashes y nombres de configuración sin copiar secretos. Su salida queda bloqueada hasta disponer de revisiones, destino, responsables y verificaciones externas reales.
@@ -41,7 +47,7 @@ F06-08 integra el centro de notificaciones, preferencias propias con control de 
 
 El total suma25 aceptadas por el runner y dieciocho técnicamente listas con dependencia/validación externa pendiente: seis F03, seis F05 y F06-01..06. Restan17 tareas de construcción y la auditoría integral de20 rubros. El cierre solicitado exige todo el software técnico de punta a punta, incluida ingesta histórica CRM y evaluación de agentes; sólo cuentas, datos, credenciales y aprobaciones externas pueden quedar pendientes. No acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
 
-Tiempo sin límite autorizado; presupuesto conservado al corte de este checkpoint:330/360 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate mantiene pantalla y sistema despiertos con tapa abierta; no garantiza supervivencia de la sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+Tiempo sin límite autorizado; presupuesto conservado al corte de este checkpoint:331/360 invocaciones acumuladas, máximo3 agentes y cero gasto externo nuevo. Caffeinate mantiene pantalla y sistema despiertos con tapa abierta; no garantiza supervivencia de la sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## F02 completa — F02-06 aceptado,20-sep
 

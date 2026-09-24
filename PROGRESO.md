@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Caos y recuperación actuales integrados —24-sep, corte360
+
+Ejecutor portable de once escenarios,33/33Node26, con fuentes públicas hastaSQL0038. Guardas posteriores3/3Node22 y26; revisión del principal con dos casos reales y tres negativos del CLI, Storage eliminado por HTTP y350filas únicas tras reinicio. Los resultados antiguos no se reatribuyen a otra composición. Revisión360 de79archivos y limpieza verificadas. Detalle: construccion/F07-03-RECUPERACION-VERIFICADA.md.
+
+La aceptación formal y su gate siguen pendientes;44/60 técnicas,25formales. La carga150K continúa sobre una copia inmutable independiente; no se modifica durante su medición. Presupuesto360/360 reservado, sin nuevas invocaciones.
+
 ## F07-02 con trabajo técnico completo —24-sep, corte359
 
 Se integran los controles independientes311 revisados por el principal y auditados357. Seis oráculos actuales pasaron en Node22/26; evidencia anterior de mutantes y nueve casos autores reutilizada sólo con hashes intactos. La ficha ya no tiene programación u oráculo técnico identificado pendiente. El gate está disponible; la aceptación formal sigue bloqueada por F07-01 y no se intentó eludirla.

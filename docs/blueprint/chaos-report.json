@@ -1,0 +1,1847 @@
+{
+  "task_id": "F07-03",
+  "reservation": 359,
+  "baseline_sha": "d723cc2b3e2dd985eb04dccfa70187eeac07bddf",
+  "status": "author_measured_core33_and_guard_delta_pass_independent_review_pending",
+  "scope": "LOCAL SYN published durable core and current owner retention API/SQL35–38; no production or formal acceptance",
+  "excluded": "F06-09/review299 and unpublished notifications29–32 not examined or adopted",
+  "command": "node packages/jobs/chaos/run.mjs --synthetic-local --evidence /tmp/vexa-chaos359-author26-v2 --repetitions 3",
+  "node": "v26.7.0",
+  "exit_code": 0,
+  "measured_source_manifest_sha256": "48d3a822364c91124640267d9362e484272eefdf5299f8159874e69df6d0bd0f",
+  "guard_delta_manifest_sha256": "0c98d37022e77dcdfb1ec58f5246a2071dfd9e78cb48c9808f9aeb99e0687ff1",
+  "measured_source_files": [
+    {
+      "path": "packages/jobs/chaos/README.md",
+      "sha256": "1ee4ec73a133e703b2b6f418bde6f96e05955640a4c684705c8476420fe83da8"
+    },
+    {
+      "path": "packages/jobs/chaos/budget.mjs",
+      "sha256": "4e886c3634ff04c46cba28dbd5c1eb7362f7cdb9ee161970bf7d090a536f8a22"
+    },
+    {
+      "path": "packages/jobs/chaos/fixtures.mjs",
+      "sha256": "9325421852932e6d19534bddd6660397722698b9ed9068c160939ad575a104c2"
+    },
+    {
+      "path": "packages/jobs/chaos/harness.mjs",
+      "sha256": "e0ea808968d23c0b6c71f0090263bc0adca4ff307dcfb0f8e0f75fdcb9f12e65"
+    },
+    {
+      "path": "packages/jobs/chaos/jobs.mjs",
+      "sha256": "3404bdedfebca8ee269170a16655aabc3000811c0553ad46959111f74a52fd69"
+    },
+    {
+      "path": "packages/jobs/chaos/retention.mjs",
+      "sha256": "01838c4773a9cb43cabc0d217acaf33bcc7f9a9ae870347de278d1d8283b9d4d"
+    },
+    {
+      "path": "packages/jobs/chaos/run.mjs",
+      "sha256": "b4463d6de116d0f662d93de5d5464a35f7378645590bb431d489092d0aac7e35"
+    }
+  ],
+  "guard_delta": "Node22/26 actual CLI+adapter tests3/3 each; fresh directory/no overwrite/symlink/overlap rejection; strict process exit; bounded waits;33scenarios not rerun for preinfra guard changes",
+  "seed": 42,
+  "repetitions": 3,
+  "snapshot": {
+    "id": "703fe1c8-9801-5b85-a642-8250a5c78ac0",
+    "sha256": "c0fcc60e0ec0ebb38cfb3d5179de24853bcd4d2b10a83bf20bd8cb871f03ba18"
+  },
+  "results": [
+    {
+      "round": 1,
+      "name": "crash_postcommit",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:44:31.340Z",
+      "backlogBefore": {
+        "failed": 0,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [],
+      "recoveryMs": 3941.843332999997,
+      "deadline": "2026-09-24T19:59:32.155393+00:00",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "fixtureHash": "8442724ee340f508dd6d23350adfd9dff923ac686136a1ce4d27f817d7a7e8da",
+      "jobId": "53401854-a175-4879-9054-057c9593e367",
+      "committedHash": "5aff4201258c128dcbac5cce29811543c62cc747309db179672c2f284ad6b958",
+      "observed": {
+        "state": "succeeded",
+        "cursor": 350,
+        "committedBeforeCrash": 100,
+        "resumedTail": 250,
+        "uniqueRows": 350,
+        "priorLedgerIdentical": true,
+        "oracleCorruptionsDetected": 3
+      },
+      "accounting": {
+        "total": 350,
+        "pending": 0,
+        "accepted": 350,
+        "rejected": 0,
+        "duplicates": 0
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 6414.896459000003,
+      "backlogAfter": {
+        "failed": 0,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": "LEASE_EXPIRED",
+          "fence": 1,
+          "state": "uncertain",
+          "number": 1,
+          "startedAt": "2026-09-24T19:44:32.148608+00:00",
+          "finishedAt": "2026-09-24T19:44:33.910573+00:00"
+        },
+        {
+          "error": null,
+          "fence": 2,
+          "state": "succeeded",
+          "number": 2,
+          "startedAt": "2026-09-24T19:44:33.900883+00:00",
+          "finishedAt": "2026-09-24T19:44:37.568925+00:00"
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "name": "expired_lease",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:44:37.831Z",
+      "backlogBefore": {
+        "failed": 0,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "STALE_FENCE"
+      ],
+      "recoveryMs": 2827.8190840000025,
+      "deadline": "2026-09-24T19:59:38.220Z",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "bafb3d36-27d7-4727-8055-0d162d856fed",
+      "fixtureHash": "226519d55ec5711a5995698ff7ab67ed78b140f8e203ea2192b57bec80adb9b7",
+      "observed": {
+        "winners": 1,
+        "staleFenceRejected": true,
+        "rows": 200
+      },
+      "accounting": {
+        "total": 200,
+        "pending": 0,
+        "accepted": 200,
+        "rejected": 0,
+        "duplicates": 0
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 3633.961458000005,
+      "backlogAfter": {
+        "failed": 0,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": "LEASE_EXPIRED",
+          "fence": 1,
+          "state": "uncertain",
+          "number": 1,
+          "startedAt": "2026-09-24T19:44:38.215623+00:00",
+          "finishedAt": "2026-09-24T19:44:38.300438+00:00"
+        },
+        {
+          "error": "LEASE_EXPIRED",
+          "fence": 2,
+          "state": "uncertain",
+          "number": 2,
+          "startedAt": "2026-09-24T19:44:38.292348+00:00",
+          "finishedAt": "2026-09-24T19:44:38.510049+00:00"
+        },
+        {
+          "error": null,
+          "fence": 3,
+          "state": "succeeded",
+          "number": 3,
+          "startedAt": "2026-09-24T19:44:38.504525+00:00",
+          "finishedAt": "2026-09-24T19:44:41.278523+00:00"
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "name": "storage_429",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:44:41.539Z",
+      "backlogBefore": {
+        "failed": 0,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "HTTP_429"
+      ],
+      "recoveryMs": 1341.2803749999948,
+      "deadline": "2026-09-24T19:59:41.956435+00:00",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "722e2162-0225-4eb7-9c60-108b307c2231",
+      "retryAt": "2026-09-24T19:44:43.109878+00:00",
+      "attemptsBeforeRecovery": 1,
+      "observed": {
+        "noEarlyRetry": true,
+        "rows": 200
+      },
+      "accounting": {
+        "total": 200,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 200
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 3117.4112500000047,
+      "backlogAfter": {
+        "failed": 0,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": "SOURCE_FAILED",
+          "fence": 1,
+          "state": "failed",
+          "number": 1,
+          "startedAt": "2026-09-24T19:44:41.946977+00:00",
+          "finishedAt": "2026-09-24T19:44:42.109099+00:00"
+        },
+        {
+          "error": null,
+          "fence": 2,
+          "state": "succeeded",
+          "number": 2,
+          "startedAt": "2026-09-24T19:44:43.203936+00:00",
+          "finishedAt": "2026-09-24T19:44:44.473987+00:00"
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "name": "storage_401_deadletter_replay",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:44:44.731Z",
+      "backlogBefore": {
+        "failed": 0,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "HTTP_401"
+      ],
+      "recoveryMs": 1367.0834170000016,
+      "deadline": "2026-09-24T19:59:45.135705+00:00",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "939c78a1-ac51-467b-9f2b-9e888dd3b53a",
+      "observed": {
+        "automaticRetry": false,
+        "manualReplay": true,
+        "deadLettersPreserved": 1,
+        "cursor": 200
+      },
+      "accounting": {
+        "total": 200,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 200
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 2121.488333000001,
+      "backlogAfter": {
+        "failed": 0,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": "AUTHENTICATION_FAILED",
+          "fence": 1,
+          "state": "failed",
+          "number": 1,
+          "startedAt": "2026-09-24T19:44:45.130356+00:00",
+          "finishedAt": "2026-09-24T19:44:45.262658+00:00"
+        },
+        {
+          "error": null,
+          "fence": 4,
+          "state": "succeeded",
+          "number": 4,
+          "startedAt": "2026-09-24T19:44:45.426148+00:00",
+          "finishedAt": "2026-09-24T19:44:46.69807+00:00"
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "name": "revocation_during_work",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:44:46.930Z",
+      "backlogBefore": {
+        "failed": 0,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "ACTOR_REVOKED"
+      ],
+      "recoveryMs": null,
+      "deadline": "2026-09-24T19:59:47.319Z",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "277452c8-a085-47a3-be86-5deb44136923",
+      "observed": {
+        "publishedRows": 0,
+        "deadLetters": 1,
+        "oldCursorPreserved": true
+      },
+      "accounting": {
+        "total": 0,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 0
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 776.7280000000028,
+      "backlogAfter": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": null,
+          "fence": 1,
+          "state": "running",
+          "number": 1,
+          "startedAt": "2026-09-24T19:44:47.312523+00:00",
+          "finishedAt": null
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "name": "deadline",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:44:47.787Z",
+      "backlogBefore": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "DEADLINE"
+      ],
+      "recoveryMs": null,
+      "deadline": "2000-01-01T00:00:00Z",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "c40f24f9-ec45-44d7-90bf-fd9788ff1543",
+      "observed": {
+        "publishedRows": 0,
+        "cursor": null
+      },
+      "accounting": {
+        "total": 0,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 0
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 696.9388340000005,
+      "backlogAfter": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": null,
+          "fence": 1,
+          "state": "cancelled",
+          "number": 1,
+          "startedAt": "2026-09-24T19:44:48.189255+00:00",
+          "finishedAt": "2026-09-24T19:44:48.403545+00:00"
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "name": "explicit_cancel",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:44:48.560Z",
+      "backlogBefore": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "STALE_FENCE"
+      ],
+      "recoveryMs": null,
+      "deadline": "2026-09-24T19:59:48.999Z",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "2eb84f44-b0f5-422b-b875-b090c6e45fb3",
+      "observed": {
+        "state": "cancelled",
+        "publishedRows": 0,
+        "oldCursorPreserved": true
+      },
+      "accounting": {
+        "total": 0,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 0
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 729.4903750000012,
+      "backlogAfter": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": null,
+          "fence": 1,
+          "state": "cancelled",
+          "number": 1,
+          "startedAt": "2026-09-24T19:44:48.982228+00:00",
+          "finishedAt": "2026-09-24T19:44:49.062965+00:00"
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "name": "database_outage",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:44:49.363Z",
+      "backlogBefore": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "HTTP_503"
+      ],
+      "recoveryMs": 2821.5551659999983,
+      "deadline": "2026-09-24T19:59:49.743Z",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "cb321a7d-6914-46a9-bac2-dbb3c51b838b",
+      "observed": {
+        "cursor": 200,
+        "rows": 200,
+        "recoveryActor": "local runner restarts process after DB restoration"
+      },
+      "accounting": {
+        "total": 200,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 200
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 3463.769583000001,
+      "backlogAfter": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": "LEASE_EXPIRED",
+          "fence": 1,
+          "state": "uncertain",
+          "number": 1,
+          "startedAt": "2026-09-24T19:44:49.73826+00:00",
+          "finishedAt": "2026-09-24T19:44:51.30117+00:00"
+        },
+        {
+          "error": null,
+          "fence": 2,
+          "state": "succeeded",
+          "number": 2,
+          "startedAt": "2026-09-24T19:44:51.292651+00:00",
+          "finishedAt": "2026-09-24T19:44:52.609356+00:00"
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "name": "budget_concurrent_quota",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:44:52.900Z",
+      "backlogBefore": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "BUDGET_EXHAUSTED"
+      ],
+      "recoveryMs": null,
+      "deadline": null,
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "2c4d7ef9-650e-416d-9207-0d4d3ebf555e",
+      "observed": {
+        "admitted": 1,
+        "denied": 1,
+        "limitMinor": "100",
+        "heldMinor": "80",
+        "actualMinor": null
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 225.29087500000605,
+      "backlogAfter": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": []
+    },
+    {
+      "round": 1,
+      "name": "llm_timeout_uncertain",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:44:53.199Z",
+      "backlogBefore": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "timeout"
+      ],
+      "recoveryMs": null,
+      "deadline": {
+        "clock": "logical",
+        "timeoutMs": 10,
+        "start": 1790121600000,
+        "end": 1790121600010
+      },
+      "expected": "durable invariants asserted against PostgreSQL",
+      "budgetAttempts": [
+        {
+          "index": 0,
+          "state": "started",
+          "httpStatus": null,
+          "ceilingMinor": "4109",
+          "reportedMinor": null
+        }
+      ],
+      "jobId": "515695b0-c748-43eb-ae35-45466f9dec1e",
+      "observed": {
+        "transport": "in-process synthetic; no HTTP",
+        "attemptCommittedBeforeTransport": true,
+        "calls": 1,
+        "state": "uncertain",
+        "heldMinor": "4109",
+        "actualMinor": null,
+        "overBudgetDenied": true
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 283.2636249999996,
+      "backlogAfter": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": []
+    },
+    {
+      "round": 1,
+      "name": "deleted_source_replay",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:44:53.553Z",
+      "backlogBefore": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "SOURCE_TOMBSTONED"
+      ],
+      "recoveryMs": 2295.600584,
+      "deadline": "2026-09-24T19:59:58.451343+00:00",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "5e4d2f10-67af-4bf5-bd7c-08aced81119c",
+      "fixtureHash": "226519d55ec5711a5995698ff7ab67ed78b140f8e203ea2192b57bec80adb9b7",
+      "observed": {
+        "replayedJob": "5e4d2f10-67af-4bf5-bd7c-08aced81119c",
+        "newIngestionJob": "08b92222-49f9-4fda-8112-f4975c582069",
+        "rows": 200,
+        "newIngestionState": "partial",
+        "tombstonedRejected": 1,
+        "activeDeletedContent": 0,
+        "ledgerEntries": 1,
+        "rawStorage": "owner Auth/Storage HTTP purge complete; object metadata absent",
+        "purgedArtifacts": 1,
+        "tombstoneHash": "a27c196dbde09855e4647c084b7c943df677ee529f663968a37b5dbca88690a5"
+      },
+      "accounting": {
+        "total": 200,
+        "pending": 0,
+        "accepted": 200,
+        "rejected": 0,
+        "duplicates": 0
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 6428.657082999998,
+      "backlogAfter": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": null,
+          "fence": 1,
+          "state": "cancelled",
+          "number": 1,
+          "startedAt": "2026-09-24T19:44:54.475901+00:00",
+          "finishedAt": "2026-09-24T19:44:57.486173+00:00"
+        },
+        {
+          "error": null,
+          "fence": 4,
+          "state": "succeeded",
+          "number": 4,
+          "startedAt": "2026-09-24T19:44:57.662358+00:00",
+          "finishedAt": "2026-09-24T19:44:57.738359+00:00"
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "name": "crash_postcommit",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:00.166Z",
+      "backlogBefore": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [],
+      "recoveryMs": 3619.175915999993,
+      "deadline": "2026-09-24T20:00:00.973037+00:00",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "fixtureHash": "8442724ee340f508dd6d23350adfd9dff923ac686136a1ce4d27f817d7a7e8da",
+      "jobId": "784df4ea-fcc3-425e-8ef6-89c524c51743",
+      "committedHash": "7f94824f247048d7e10e5ebcb7601fb27e5a117a1629c77f5ef8111331acb06a",
+      "observed": {
+        "state": "succeeded",
+        "cursor": 350,
+        "committedBeforeCrash": 100,
+        "resumedTail": 250,
+        "uniqueRows": 350,
+        "priorLedgerIdentical": true,
+        "oracleCorruptionsDetected": 3
+      },
+      "accounting": {
+        "total": 350,
+        "pending": 0,
+        "accepted": 350,
+        "rejected": 0,
+        "duplicates": 0
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 6087.483625000008,
+      "backlogAfter": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": "LEASE_EXPIRED",
+          "fence": 1,
+          "state": "uncertain",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:00.965605+00:00",
+          "finishedAt": "2026-09-24T19:45:02.731333+00:00"
+        },
+        {
+          "error": null,
+          "fence": 2,
+          "state": "succeeded",
+          "number": 2,
+          "startedAt": "2026-09-24T19:45:02.721538+00:00",
+          "finishedAt": "2026-09-24T19:45:06.057677+00:00"
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "name": "expired_lease",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:06.329Z",
+      "backlogBefore": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "STALE_FENCE"
+      ],
+      "recoveryMs": 1244.6620420000108,
+      "deadline": "2026-09-24T20:00:06.740Z",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "4eedd952-faca-4762-a9a8-8dc93533f517",
+      "fixtureHash": "226519d55ec5711a5995698ff7ab67ed78b140f8e203ea2192b57bec80adb9b7",
+      "observed": {
+        "winners": 1,
+        "staleFenceRejected": true,
+        "rows": 200
+      },
+      "accounting": {
+        "total": 200,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 200
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 2073.2937079999974,
+      "backlogAfter": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": "LEASE_EXPIRED",
+          "fence": 1,
+          "state": "uncertain",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:06.734942+00:00",
+          "finishedAt": "2026-09-24T19:45:06.813617+00:00"
+        },
+        {
+          "error": "LEASE_EXPIRED",
+          "fence": 2,
+          "state": "uncertain",
+          "number": 2,
+          "startedAt": "2026-09-24T19:45:06.808093+00:00",
+          "finishedAt": "2026-09-24T19:45:07.030863+00:00"
+        },
+        {
+          "error": null,
+          "fence": 3,
+          "state": "succeeded",
+          "number": 3,
+          "startedAt": "2026-09-24T19:45:07.025582+00:00",
+          "finishedAt": "2026-09-24T19:45:08.215314+00:00"
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "name": "storage_429",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:08.483Z",
+      "backlogBefore": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "HTTP_429"
+      ],
+      "recoveryMs": 1328.3239999999932,
+      "deadline": "2026-09-24T20:00:08.89346+00:00",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "81745965-743c-4b88-ab6c-0cd13df93f76",
+      "retryAt": "2026-09-24T19:45:10.076168+00:00",
+      "attemptsBeforeRecovery": 1,
+      "observed": {
+        "noEarlyRetry": true,
+        "rows": 200
+      },
+      "accounting": {
+        "total": 200,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 200
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 3130.4130830000067,
+      "backlogAfter": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": "SOURCE_FAILED",
+          "fence": 1,
+          "state": "failed",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:08.887566+00:00",
+          "finishedAt": "2026-09-24T19:45:09.075475+00:00"
+        },
+        {
+          "error": null,
+          "fence": 2,
+          "state": "succeeded",
+          "number": 2,
+          "startedAt": "2026-09-24T19:45:10.182889+00:00",
+          "finishedAt": "2026-09-24T19:45:11.429921+00:00"
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "name": "storage_401_deadletter_replay",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:11.690Z",
+      "backlogBefore": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "HTTP_401"
+      ],
+      "recoveryMs": 1285.3212080000085,
+      "deadline": "2026-09-24T20:00:12.086551+00:00",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "4e47cdc1-cd6b-4df2-8e79-a83b986b5d3a",
+      "observed": {
+        "automaticRetry": false,
+        "manualReplay": true,
+        "deadLettersPreserved": 1,
+        "cursor": 200
+      },
+      "accounting": {
+        "total": 200,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 200
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 2014.0320000000065,
+      "backlogAfter": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": "AUTHENTICATION_FAILED",
+          "fence": 1,
+          "state": "failed",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:12.081376+00:00",
+          "finishedAt": "2026-09-24T19:45:12.202423+00:00"
+        },
+        {
+          "error": null,
+          "fence": 4,
+          "state": "succeeded",
+          "number": 4,
+          "startedAt": "2026-09-24T19:45:12.357599+00:00",
+          "finishedAt": "2026-09-24T19:45:13.556833+00:00"
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "name": "revocation_during_work",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:13.776Z",
+      "backlogBefore": {
+        "failed": 1,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "ACTOR_REVOKED"
+      ],
+      "recoveryMs": null,
+      "deadline": "2026-09-24T20:00:14.142Z",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "6097407d-9627-49d2-a87c-4c333ed34d00",
+      "observed": {
+        "publishedRows": 0,
+        "deadLetters": 1,
+        "oldCursorPreserved": true
+      },
+      "accounting": {
+        "total": 0,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 0
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 722.1856669999979,
+      "backlogAfter": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": null,
+          "fence": 1,
+          "state": "running",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:14.137995+00:00",
+          "finishedAt": null
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "name": "deadline",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:14.570Z",
+      "backlogBefore": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "DEADLINE"
+      ],
+      "recoveryMs": null,
+      "deadline": "2000-01-01T00:00:00Z",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "8e44df15-c17e-4847-8a98-8e749229a861",
+      "observed": {
+        "publishedRows": 0,
+        "cursor": null
+      },
+      "accounting": {
+        "total": 0,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 0
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 623.1437500000029,
+      "backlogAfter": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": null,
+          "fence": 1,
+          "state": "cancelled",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:14.932383+00:00",
+          "finishedAt": "2026-09-24T19:45:15.117272+00:00"
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "name": "explicit_cancel",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:15.265Z",
+      "backlogBefore": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "STALE_FENCE"
+      ],
+      "recoveryMs": null,
+      "deadline": "2026-09-24T20:00:15.634Z",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "73b3beb6-a189-4d92-900d-1c7e307fdac5",
+      "observed": {
+        "state": "cancelled",
+        "publishedRows": 0,
+        "oldCursorPreserved": true
+      },
+      "accounting": {
+        "total": 0,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 0
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 598.7695410000015,
+      "backlogAfter": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": null,
+          "fence": 1,
+          "state": "cancelled",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:15.629717+00:00",
+          "finishedAt": "2026-09-24T19:45:15.669233+00:00"
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "name": "database_outage",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:15.938Z",
+      "backlogBefore": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "HTTP_503"
+      ],
+      "recoveryMs": 2644.4761670000007,
+      "deadline": "2026-09-24T20:00:16.336Z",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "50fd3b15-4f5b-4bd6-99dd-a1dfe6ecd0c3",
+      "observed": {
+        "cursor": 200,
+        "rows": 200,
+        "recoveryActor": "local runner restarts process after DB restoration"
+      },
+      "accounting": {
+        "total": 200,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 200
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 3335.107917000001,
+      "backlogAfter": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": "LEASE_EXPIRED",
+          "fence": 1,
+          "state": "uncertain",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:16.331506+00:00",
+          "finishedAt": "2026-09-24T19:45:17.664933+00:00"
+        },
+        {
+          "error": null,
+          "fence": 2,
+          "state": "succeeded",
+          "number": 2,
+          "startedAt": "2026-09-24T19:45:17.655793+00:00",
+          "finishedAt": "2026-09-24T19:45:19.025197+00:00"
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "name": "budget_concurrent_quota",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:19.348Z",
+      "backlogBefore": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "BUDGET_EXHAUSTED"
+      ],
+      "recoveryMs": null,
+      "deadline": null,
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "7bdb14db-1e2b-4f9b-86d0-eb571195f942",
+      "observed": {
+        "admitted": 1,
+        "denied": 1,
+        "limitMinor": "100",
+        "heldMinor": "80",
+        "actualMinor": null
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 226.22816699999385,
+      "backlogAfter": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": []
+    },
+    {
+      "round": 2,
+      "name": "llm_timeout_uncertain",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:19.646Z",
+      "backlogBefore": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "timeout"
+      ],
+      "recoveryMs": null,
+      "deadline": {
+        "clock": "logical",
+        "timeoutMs": 10,
+        "start": 1790121600000,
+        "end": 1790121600010
+      },
+      "expected": "durable invariants asserted against PostgreSQL",
+      "budgetAttempts": [
+        {
+          "index": 0,
+          "state": "started",
+          "httpStatus": null,
+          "ceilingMinor": "4109",
+          "reportedMinor": null
+        }
+      ],
+      "jobId": "dd81f84a-7bc9-4742-a1cd-fe6eeec15f2a",
+      "observed": {
+        "transport": "in-process synthetic; no HTTP",
+        "attemptCommittedBeforeTransport": true,
+        "calls": 1,
+        "state": "uncertain",
+        "heldMinor": "4109",
+        "actualMinor": null,
+        "overBudgetDenied": true
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 285.20037500000035,
+      "backlogAfter": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": []
+    },
+    {
+      "round": 2,
+      "name": "deleted_source_replay",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:20.004Z",
+      "backlogBefore": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "SOURCE_TOMBSTONED"
+      ],
+      "recoveryMs": 2165.598874999996,
+      "deadline": "2026-09-24T20:00:24.828119+00:00",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "4e169997-167c-4550-83e7-c36331f41906",
+      "fixtureHash": "226519d55ec5711a5995698ff7ab67ed78b140f8e203ea2192b57bec80adb9b7",
+      "observed": {
+        "replayedJob": "4e169997-167c-4550-83e7-c36331f41906",
+        "newIngestionJob": "eed29891-3c82-41b4-a649-d0f95aafc238",
+        "rows": 200,
+        "newIngestionState": "partial",
+        "tombstonedRejected": 1,
+        "activeDeletedContent": 0,
+        "ledgerEntries": 1,
+        "rawStorage": "owner Auth/Storage HTTP purge complete; object metadata absent",
+        "purgedArtifacts": 1,
+        "tombstoneHash": "a27c196dbde09855e4647c084b7c943df677ee529f663968a37b5dbca88690a5"
+      },
+      "accounting": {
+        "total": 200,
+        "pending": 0,
+        "accepted": 200,
+        "rejected": 0,
+        "duplicates": 0
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 6252.8740839999955,
+      "backlogAfter": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": null,
+          "fence": 1,
+          "state": "cancelled",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:20.960329+00:00",
+          "finishedAt": "2026-09-24T19:45:23.886811+00:00"
+        },
+        {
+          "error": null,
+          "fence": 4,
+          "state": "succeeded",
+          "number": 4,
+          "startedAt": "2026-09-24T19:45:24.060161+00:00",
+          "finishedAt": "2026-09-24T19:45:24.131109+00:00"
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "name": "crash_postcommit",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:26.442Z",
+      "backlogBefore": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [],
+      "recoveryMs": 3867.8628330000065,
+      "deadline": "2026-09-24T20:00:27.270162+00:00",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "fixtureHash": "8442724ee340f508dd6d23350adfd9dff923ac686136a1ce4d27f817d7a7e8da",
+      "jobId": "e5ea520f-87a8-47aa-abe7-0548970a5949",
+      "committedHash": "cbb929bc5f9f76f85d051721361f2e212874812fbf0fc6dd4504c3de212626f5",
+      "observed": {
+        "state": "succeeded",
+        "cursor": 350,
+        "committedBeforeCrash": 100,
+        "resumedTail": 250,
+        "uniqueRows": 350,
+        "priorLedgerIdentical": true,
+        "oracleCorruptionsDetected": 3
+      },
+      "accounting": {
+        "total": 350,
+        "pending": 0,
+        "accepted": 350,
+        "rejected": 0,
+        "duplicates": 0
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 6203.402833,
+      "backlogAfter": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": "LEASE_EXPIRED",
+          "fence": 1,
+          "state": "uncertain",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:27.26284+00:00",
+          "finishedAt": "2026-09-24T19:45:28.880047+00:00"
+        },
+        {
+          "error": null,
+          "fence": 2,
+          "state": "succeeded",
+          "number": 2,
+          "startedAt": "2026-09-24T19:45:28.871374+00:00",
+          "finishedAt": "2026-09-24T19:45:32.464759+00:00"
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "name": "expired_lease",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:32.718Z",
+      "backlogBefore": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "STALE_FENCE"
+      ],
+      "recoveryMs": 1271.580083000008,
+      "deadline": "2026-09-24T20:00:33.099Z",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "5c0aadb0-4794-4a3f-aea1-564a798fc585",
+      "fixtureHash": "226519d55ec5711a5995698ff7ab67ed78b140f8e203ea2192b57bec80adb9b7",
+      "observed": {
+        "winners": 1,
+        "staleFenceRejected": true,
+        "rows": 200
+      },
+      "accounting": {
+        "total": 200,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 200
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 2061.580375000005,
+      "backlogAfter": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": "LEASE_EXPIRED",
+          "fence": 1,
+          "state": "uncertain",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:33.092804+00:00",
+          "finishedAt": "2026-09-24T19:45:33.177591+00:00"
+        },
+        {
+          "error": "LEASE_EXPIRED",
+          "fence": 2,
+          "state": "uncertain",
+          "number": 2,
+          "startedAt": "2026-09-24T19:45:33.171396+00:00",
+          "finishedAt": "2026-09-24T19:45:33.384495+00:00"
+        },
+        {
+          "error": null,
+          "fence": 3,
+          "state": "succeeded",
+          "number": 3,
+          "startedAt": "2026-09-24T19:45:33.378577+00:00",
+          "finishedAt": "2026-09-24T19:45:34.5968+00:00"
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "name": "storage_429",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:34.853Z",
+      "backlogBefore": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "HTTP_429"
+      ],
+      "recoveryMs": 1321.9474999999948,
+      "deadline": "2026-09-24T20:00:35.26698+00:00",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "eaf7d4b6-e62b-4635-b528-0fc346d910cf",
+      "retryAt": "2026-09-24T19:45:36.395297+00:00",
+      "attemptsBeforeRecovery": 1,
+      "observed": {
+        "noEarlyRetry": true,
+        "rows": 200
+      },
+      "accounting": {
+        "total": 200,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 200
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 3076.8425419999985,
+      "backlogAfter": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": "SOURCE_FAILED",
+          "fence": 1,
+          "state": "failed",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:35.261506+00:00",
+          "finishedAt": "2026-09-24T19:45:35.394612+00:00"
+        },
+        {
+          "error": null,
+          "fence": 2,
+          "state": "succeeded",
+          "number": 2,
+          "startedAt": "2026-09-24T19:45:36.475522+00:00",
+          "finishedAt": "2026-09-24T19:45:37.742311+00:00"
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "name": "storage_401_deadletter_replay",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:38.010Z",
+      "backlogBefore": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "HTTP_401"
+      ],
+      "recoveryMs": 1412.6203749999986,
+      "deadline": "2026-09-24T20:00:38.425716+00:00",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "79668486-b98a-4f8b-8456-2c8e51669905",
+      "observed": {
+        "automaticRetry": false,
+        "manualReplay": true,
+        "deadLettersPreserved": 1,
+        "cursor": 200
+      },
+      "accounting": {
+        "total": 200,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 200
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 2188.502999999997,
+      "backlogAfter": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": "AUTHENTICATION_FAILED",
+          "fence": 1,
+          "state": "failed",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:38.420612+00:00",
+          "finishedAt": "2026-09-24T19:45:38.545874+00:00"
+        },
+        {
+          "error": null,
+          "fence": 4,
+          "state": "succeeded",
+          "number": 4,
+          "startedAt": "2026-09-24T19:45:38.718234+00:00",
+          "finishedAt": "2026-09-24T19:45:40.034212+00:00"
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "name": "revocation_during_work",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:40.274Z",
+      "backlogBefore": {
+        "failed": 2,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "ACTOR_REVOKED"
+      ],
+      "recoveryMs": null,
+      "deadline": "2026-09-24T20:00:40.680Z",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "33b82862-2fff-4a61-8b3c-62badc123560",
+      "observed": {
+        "publishedRows": 0,
+        "deadLetters": 1,
+        "oldCursorPreserved": true
+      },
+      "accounting": {
+        "total": 0,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 0
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 770.9511250000069,
+      "backlogAfter": {
+        "failed": 3,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": null,
+          "fence": 1,
+          "state": "running",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:40.675558+00:00",
+          "finishedAt": null
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "name": "deadline",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:41.117Z",
+      "backlogBefore": {
+        "failed": 3,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "DEADLINE"
+      ],
+      "recoveryMs": null,
+      "deadline": "2000-01-01T00:00:00Z",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "18cab368-fe42-4b57-9df6-bcf0296f6104",
+      "observed": {
+        "publishedRows": 0,
+        "cursor": null
+      },
+      "accounting": {
+        "total": 0,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 0
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 639.9595419999969,
+      "backlogAfter": {
+        "failed": 3,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": null,
+          "fence": 1,
+          "state": "cancelled",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:41.495948+00:00",
+          "finishedAt": "2026-09-24T19:45:41.678817+00:00"
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "name": "explicit_cancel",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:41.831Z",
+      "backlogBefore": {
+        "failed": 3,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "STALE_FENCE"
+      ],
+      "recoveryMs": null,
+      "deadline": "2026-09-24T20:00:42.232Z",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "e018769d-f2f0-41c0-a864-8c6677ac48d3",
+      "observed": {
+        "state": "cancelled",
+        "publishedRows": 0,
+        "oldCursorPreserved": true
+      },
+      "accounting": {
+        "total": 0,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 0
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 621.9099999999889,
+      "backlogAfter": {
+        "failed": 3,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": null,
+          "fence": 1,
+          "state": "cancelled",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:42.226349+00:00",
+          "finishedAt": "2026-09-24T19:45:42.269461+00:00"
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "name": "database_outage",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:42.526Z",
+      "backlogBefore": {
+        "failed": 3,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "HTTP_503"
+      ],
+      "recoveryMs": 2643.7193750000006,
+      "deadline": "2026-09-24T20:00:42.897Z",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "cd6bcd0b-bafa-4df3-a69f-10e65c69fea1",
+      "observed": {
+        "cursor": 200,
+        "rows": 200,
+        "recoveryActor": "local runner restarts process after DB restoration"
+      },
+      "accounting": {
+        "total": 200,
+        "pending": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicates": 200
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 3280.6774589999986,
+      "backlogAfter": {
+        "failed": 3,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": "LEASE_EXPIRED",
+          "fence": 1,
+          "state": "uncertain",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:42.892845+00:00",
+          "finishedAt": "2026-09-24T19:45:44.261995+00:00"
+        },
+        {
+          "error": null,
+          "fence": 2,
+          "state": "succeeded",
+          "number": 2,
+          "startedAt": "2026-09-24T19:45:44.252089+00:00",
+          "finishedAt": "2026-09-24T19:45:45.586695+00:00"
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "name": "budget_concurrent_quota",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:45.883Z",
+      "backlogBefore": {
+        "failed": 3,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "BUDGET_EXHAUSTED"
+      ],
+      "recoveryMs": null,
+      "deadline": null,
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "2d95b3ce-93b9-4cfd-b660-f6b0c2138004",
+      "observed": {
+        "admitted": 1,
+        "denied": 1,
+        "limitMinor": "100",
+        "heldMinor": "80",
+        "actualMinor": null
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 241.95066599998972,
+      "backlogAfter": {
+        "failed": 3,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": []
+    },
+    {
+      "round": 3,
+      "name": "llm_timeout_uncertain",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:46.206Z",
+      "backlogBefore": {
+        "failed": 3,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "timeout"
+      ],
+      "recoveryMs": null,
+      "deadline": {
+        "clock": "logical",
+        "timeoutMs": 10,
+        "start": 1790121600000,
+        "end": 1790121600010
+      },
+      "expected": "durable invariants asserted against PostgreSQL",
+      "budgetAttempts": [
+        {
+          "index": 0,
+          "state": "started",
+          "httpStatus": null,
+          "ceilingMinor": "4109",
+          "reportedMinor": null
+        }
+      ],
+      "jobId": "1bf4c05a-fc48-4608-bc9b-606b8c4e50e9",
+      "observed": {
+        "transport": "in-process synthetic; no HTTP",
+        "attemptCommittedBeforeTransport": true,
+        "calls": 1,
+        "state": "uncertain",
+        "heldMinor": "4109",
+        "actualMinor": null,
+        "overBudgetDenied": true
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 292.6517080000049,
+      "backlogAfter": {
+        "failed": 3,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": []
+    },
+    {
+      "round": 3,
+      "name": "deleted_source_replay",
+      "seed": 42,
+      "status": "pass",
+      "startedAt": "2026-09-24T19:45:46.572Z",
+      "backlogBefore": {
+        "failed": 3,
+        "queued": 0,
+        "running": 0
+      },
+      "errors": [
+        "SOURCE_TOMBSTONED"
+      ],
+      "recoveryMs": 2176.877124999999,
+      "deadline": "2026-09-24T20:00:51.905089+00:00",
+      "expected": "durable invariants asserted against PostgreSQL",
+      "jobId": "f5fba638-2436-4e72-aacd-ceafb3e84711",
+      "fixtureHash": "226519d55ec5711a5995698ff7ab67ed78b140f8e203ea2192b57bec80adb9b7",
+      "observed": {
+        "replayedJob": "f5fba638-2436-4e72-aacd-ceafb3e84711",
+        "newIngestionJob": "2b224cb3-b7db-431e-8451-de48692ab797",
+        "rows": 200,
+        "newIngestionState": "partial",
+        "tombstonedRejected": 1,
+        "activeDeletedContent": 0,
+        "ledgerEntries": 1,
+        "rawStorage": "owner Auth/Storage HTTP purge complete; object metadata absent",
+        "purgedArtifacts": 1,
+        "tombstoneHash": "a27c196dbde09855e4647c084b7c943df677ee529f663968a37b5dbca88690a5"
+      },
+      "accounting": {
+        "total": 200,
+        "pending": 0,
+        "accepted": 200,
+        "rejected": 0,
+        "duplicates": 0
+      },
+      "snapshotUnchanged": true,
+      "durationMs": 6743.328292000006,
+      "backlogAfter": {
+        "failed": 3,
+        "queued": 0,
+        "running": 0
+      },
+      "attempts": [
+        {
+          "error": null,
+          "fence": 1,
+          "state": "cancelled",
+          "number": 1,
+          "startedAt": "2026-09-24T19:45:47.534073+00:00",
+          "finishedAt": "2026-09-24T19:45:50.943983+00:00"
+        },
+        {
+          "error": null,
+          "fence": 4,
+          "state": "succeeded",
+          "number": 4,
+          "startedAt": "2026-09-24T19:45:51.115264+00:00",
+          "finishedAt": "2026-09-24T19:45:51.189093+00:00"
+        }
+      ]
+    }
+  ],
+  "completedRounds": [
+    {
+      "round": 1,
+      "passed": 11,
+      "expected": 11
+    },
+    {
+      "round": 2,
+      "passed": 11,
+      "expected": 11
+    },
+    {
+      "round": 3,
+      "passed": 11,
+      "expected": 11
+    }
+  ],
+  "prior_failures": [
+    {
+      "run": "author26-v1",
+      "exit_code": 1,
+      "cause": "new control parsed empty JSON for budget job without import; scalar null fixed;8job scenarios had passed; no product defect"
+    }
+  ],
+  "cleanup": {
+    "resourcesAbsent": 10,
+    "recordedPidsAbsent": 28,
+    "ports": "61620–61625 free"
+  },
+  "pending": [
+    "independent principal review and publication",
+    "formal F07-03 acceptance not claimed",
+    "excluded notification-domain review remains blocked",
+    "real CRM/provider/cloud/production not exercised",
+    "shared host metrics are not SLO or comparison with concurrent load358"
+  ],
+  "reused": "310 modules and318 prefix/tail oracle selectively; historical30PASS not attributed to this run"
+}

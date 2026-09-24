@@ -1,4 +1,5 @@
 import { config } from '../../lib/auth';
+import {EmailLogin} from '../../components/email-login';
 export const dynamic='force-dynamic';
 export default async function Login({searchParams}:{searchParams:Promise<{error?:string}>}) {
   let configured=false;
@@ -10,6 +11,7 @@ export default async function Login({searchParams}:{searchParams:Promise<{error?
     {!configured && <p>El acceso aún no está configurado.</p>}
     {google ? <form action="/auth/google" method="post"><button type="submit">Continuar con Google</button></form> : <p>Google no está habilitado. El administrador debe configurar el proveedor antes de usarlo.</p>}
     <p>Los enlaces de acceso del entorno local se verifican mediante Supabase Auth.</p>
+    {configured && process.env.VEXA_EMAIL_AUTH_ENABLED==='true' && <EmailLogin/>}
     {configured && <form action="/auth/logout" method="post"><button type="submit">Cerrar sesión</button></form>}
   </section>;
 }

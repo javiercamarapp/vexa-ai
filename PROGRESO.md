@@ -3,6 +3,15 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+
+## Ejecutor externo de candidatos revisado —24-sep, corte343
+
+El custodio puede congelar protocolo, dataset, roles, configuración y código, y producir predicciones mediante el gateway original para el evaluador existente. El ledger SQLite registra exposición, reservas e intentos antes del transporte; una caída ambigua impide reenviar. El replay exacto utiliza únicamente un resultado ya escrito. Costos desconocidos permanecen nulos y retienen presupuesto.
+
+La revisión340 confirmó y cerró un fallo que permitía inicializar dos ledgers contra la misma autoridad de evaluación. El ancla exclusiva liga identidad, alcance y directorio; el control rojo se conserva. Autor339:6/6 en Node22/26; revisión independiente:7/7 por runtime, incluyendo SIGKILL antes/después del transporte, concurrencia, pérdida/corrupción, roles/citas Unicode, límites privados y costo desconocido. El mutante que cambiaba costo nulo por cero fue detectado. La integración de las nueve fuentes y pruebas portables pasó6/6 en Node22.
+
+No hubo inferencia pagada ni gold real; el transporte SYN produjo resultados not_measured en el evaluador original. La custodia del filesystem sigue siendo un control operacional frente a su administrador. Este ejecutor no entrena ni promueve modelos; selección, aprobación humana y rollback operables siguen en construcción.43/60 técnicas y25formales, sin incremento por este bloque transversal.
+
 ## Evaluación del histórico conectada —24-sep, corte341
 
 El owner puede seleccionar conexión, taxonomía y corte temporal, congelar cohortes de resultados existentes, revisar evidencia y guardar feedback versionado. La interfaz recorre casos y cohortes por páginas; exporta desarrollo con procedencia y exclusiones explícitas. No almacena copias del texto en el nuevo ledger. Un cliente sin identidad canónica queda excluido; revocación y borrado se comprueban otra vez al leer/exportar.

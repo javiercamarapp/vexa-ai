@@ -1,0 +1,2 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';import {fixture} from './fixture.mjs';import {initialize} from '../ledger.mjs';
+test('same evaluator ledger authority cannot initialize a second execution ledger',()=>{const f=fixture();try{initialize(f.ledger,f.scope);const second=path.join(f.dir,'second-ledger');fs.mkdirSync(second,{mode:0o700});assert.throws(()=>initialize(second,f.scope),/EVALUATOR_EXECUTION_ALREADY_BOUND/);}finally{fs.rmSync(f.dir,{recursive:true,force:true});}});

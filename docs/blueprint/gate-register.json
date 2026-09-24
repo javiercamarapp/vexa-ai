@@ -249,8 +249,9 @@
     },
     {
       "id": "F07-02",
-      "state": "missing",
-      "product_pass": false
+      "state": "authored",
+      "product_pass": false,
+      "review": "independent311+principal current integration+audit357; formal acceptance pending"
     },
     {
       "id": "F07-03",

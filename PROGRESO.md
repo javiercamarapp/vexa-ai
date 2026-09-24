@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## F07-02 con trabajo técnico completo —24-sep, corte359
+
+Se integran los controles independientes311 revisados por el principal y auditados357. Seis oráculos actuales pasaron en Node22/26; evidencia anterior de mutantes y nueve casos autores reutilizada sólo con hashes intactos. La ficha ya no tiene programación u oráculo técnico identificado pendiente. El gate está disponible; la aceptación formal sigue bloqueada por F07-01 y no se intentó eludirla.
+
+44/60 con trabajo técnico completo:25 aceptadas por runner,18 con validaciones externas y1 con dependencia formal pendiente. El conteo distingue estas categorías; no significa44 aceptadas ni producción. Construcción y auditoría de carga/caos continúan; F06-09 conserva su bloqueo de revisión. Detalle: construccion/F07-02-CIERRE-TECNICO.md.
+
 ## Candidatos con más de cien evaluaciones reparados —24-sep, corte358
 
 La lista dejaba de abrir con413 después de registrar el recibo101. Se sustituyó el rechazo por páginas acotadas de resultados e historial, cursores ligados al tenant, versión activa global y botones para recuperar registros antiguos. Se preservan autoridad owner, firma, CAS y rollback. Revisor357:201recibos y102versiones, rollbackversión1→103, conflictos y cursores inválidos/ajenos, UI con201/103, error/reintento y revocación403.

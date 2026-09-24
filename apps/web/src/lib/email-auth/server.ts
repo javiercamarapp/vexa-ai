@@ -3,6 +3,7 @@ import {NextRequest,NextResponse} from 'next/server';
 import {createClient} from '@supabase/supabase-js';
 import {AccessError,assertOrigin,config,identity,PRIVATE_HEADERS} from '../auth';
 import {requestAuth} from '../auth-http';
+import {emailAdmission} from './admission';
 const headers={...PRIVATE_HEADERS,'Referrer-Policy':'no-referrer',Vary:'Cookie'};
 const generic={message:'Si la cuenta existe, Auth intentará enviar un enlace. La entrega no está confirmada. Revisa tu correo antes de solicitar otro.',retryAfterSeconds:60};
 async function input(request:NextRequest,limit:number){if(request.headers.get('content-type')?.split(';')[0]?.trim()!=='application/json'||!request.body)throw new AccessError(400,'email_auth_input_invalid');const reader=request.body.getReader();const chunks:Uint8Array[]=[];let size=0;try{for(;;){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>limit){await reader.cancel();throw new AccessError(413,'email_auth_input_limit');}chunks.push(value);}}finally{reader.releaseLock();}try{const result=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(Buffer.concat(chunks)));if(!result||typeof result!=='object'||Array.isArray(result))throw new Error();return result;}catch{throw new AccessError(400,'email_auth_input_invalid');}}
@@ -11,8 +12,12 @@ export async function emailAuth(request:NextRequest,operation:'request'|'session
  const body=await input(request,operation==='request'?1024:16384);
  if(operation==='request'){
   if(Object.keys(body).length!==1||typeof body.email!=='string'||body.email.length>254||!/^\S+@[^\s@]+\.[^\s@]+$/.test(body.email.trim()))throw new AccessError(400,'email_auth_input_invalid');
-  const client=createClient(c.url,c.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,flowType:'implicit'},global:{fetch:(target,init)=>fetch(target,{...init,cache:'no-store',signal:AbortSignal.timeout(10000)})}});
-  try{await client.auth.signInWithOtp({email:body.email.trim().toLowerCase(),options:{shouldCreateUser:false,emailRedirectTo:new URL('/auth/email/complete',c.origin).href}});}catch{/* Same public result for transport uncertainty and unknown accounts. Never retry. */}
+  const admission=emailAdmission.reserve(body.email);if(!admission)return NextResponse.json(generic,{status:202,headers:{...headers,'Retry-After':'60'}});
+  let unavailable=false;
+  try{const client=createClient(c.url,c.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,flowType:'implicit'},global:{fetch:(target,init)=>fetch(target,{...init,cache:'no-store',signal:AbortSignal.timeout(10000)})}});
+   const result=await client.auth.signInWithOtp({email:body.email.trim().toLowerCase(),options:{shouldCreateUser:false,emailRedirectTo:new URL('/auth/email/complete',c.origin).href}});
+   unavailable=Boolean(result.error&&(result.error.status===undefined||result.error.status===0||result.error.status>=500));
+  }catch{unavailable=true;}finally{admission.finish(unavailable);}
   return NextResponse.json(generic,{status:202,headers:{...headers,'Retry-After':'60'}});
  }
  if(Object.keys(body).some(k=>!['accessToken','refreshToken'].includes(k))||typeof body.accessToken!=='string'||typeof body.refreshToken!=='string'||body.accessToken.length>8000||body.refreshToken.length>8000||!body.refreshToken)throw new AccessError(400,'email_auth_input_invalid');

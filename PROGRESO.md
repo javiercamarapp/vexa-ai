@@ -1,6 +1,12 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## Correcciones de interfaz revisadas —24-sep, corte335
+
+Integradas cuatro fuentes: carga/error/recuperación del histórico y sus elementos, grupo accesible en economía, subtotales del Explorador dentro de sus definiciones y referencias largas que ajustan al ancho móvil. El fix de Push está revisado pero permanece en su propuesta, sin adelantar la aceptación bloqueada de notificaciones.
+
+La revisión333 acumuló178capturas a390×844 y1440×900 con Auth/PG/Storage reales locales; conserva corridas fallidas y reutiliza evidencias inalteradas316/320. Cerró cinco hallazgos concretos; el último focal2/2 verificó referencia íntegra, navegación con el mismo alcance, importes desconocidos y cero violaciones axe en esa respuesta. Lint/build de las cuatro fuentes sobre la rama publicada pasan. El timeout posterior del wrapper móvil no se convierte en una corrida PASS. Revisión humana de usabilidad, otros motores/lector de pantalla y la interfaz nueva de retención siguen separados. Registro: docs/blueprint/visual-review.md.43/60 técnicas,25formales, sin incremento por reparación.
+
 ## Carga con retención revisada —24-sep, corte335
 
 Las escalas de ingesta de10K,50K y150K terminaron con98%aceptadas,1%rechazos esperados,1%duplicados y cero pendientes. Procesamiento observado:142,3s,675,7s y2100,2s; cada trabajo de150K terminó dentro del límite original900s. El principal recontó210000filas CSV, recalculó percentiles y verificó cursores, contadores API, hashes y ausencia de recursos. Resumen público: docs/blueprint/load-results.json.

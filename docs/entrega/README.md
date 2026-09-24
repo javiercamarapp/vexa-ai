@@ -18,3 +18,5 @@ Preparación local pendiente de revisión y aceptación F08; no es acta de produ
 La entrega final adjunta manifest del SHA realmente integrado, smoke remoto, restore con tombstones, responsables y pendientes. En esta preparación hay revisiones técnicas pendientes además de accesos externos.
 
 Para retomar: AGENTS.md, cabeceras de README/PROGRESO/PLAN/AUTOMATICO, python3 orchestration/runner.py status y ficha concreta. Reutilizar evidencia ligada a hashes. No reiniciar contadores/imports/exámenes sin causa. Publicar sólo con publisher autorizado, sin activar Actions o despliegues accidentalmente.
+
+[Ensayo técnico de la guía](ensayo-guia-resultados.json): agente independiente siguió la interfaz, completó importación, exportación y revocación con datosSYN. Se corrigieron errores de red y navegación entre detalle y resumen. No sustituye ensayo humano ni inferencia real.

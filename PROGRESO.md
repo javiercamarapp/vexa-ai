@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Ensayo de guía e interfaz corregidos —24-sep, corte357
+
+El agente354 completó importación por UI, export del mismo corte y revocación por otro owner, con Auth/PostgreSQL/Storage/Mailpit/Next reales locales y datosSYN. Se corrigieron dos fallos: errores de red crudos en importación y parámetros de detalle que invalidaban el resumen. Retry del mismo archivo deja una reserva/un job, dos filas aceptadas y cero pendientes; seis destinos conservan scope/snapshot y USD300/15. Revocación limpia el detalle y deniega export403.
+
+Ocho vistas y acciones previas se reutilizan; los deltas se probaron de nuevo. Lint/build verdes,228 archivos de evidencia comprobados y14recursos de dos corridas ausentes. El análisis inicial era fixture explícita; no es IA real ni ensayo humano.43/60 técnicas,25formales; no incrementa el contador por reparaciones transversales.
+
 ## Portabilidad CRM y captura de cortes reparadas —24-sep, corte354
 
 El recorrido adicional SYN de HubSpot/Zendesk confirma aliases explícitos, cuatro fuentes→dos conversaciones resueltas y USD300 sin duplicación. Conserva canales originales distintos, pérdida de cobertura no comparable e importe desconocido separado del subtotal. Usa persistencia, Auth, API y navegador locales; las órdenes son fixture versionada, no dinero inferido por el conector. No realiza HTTP a proveedores ni ensaya el pitch humano.

@@ -1,0 +1,44 @@
+{
+  "schema": "vexa-guide-trial-v1",
+  "synthetic": true,
+  "kind": "independent_agent_guided_trial_not_human_rehearsal",
+  "baseline": "8aa7d853c734edfeea35f637a9bebe8acc507240",
+  "source_delta": [
+    {
+      "path": "apps/web/src/components/import-preview.tsx",
+      "sha256": "0b08300234bedac7b79ad94508dbccc33011bb348c415bff9e05bdc6c1291c33"
+    },
+    {
+      "path": "apps/web/src/components/workspace/navigation.tsx",
+      "sha256": "254becb20dbfe0e010427ce374e677abc911ddc3456c99ebe7f1963ca01be4a0"
+    }
+  ],
+  "evidence_manifest_sha256": "2a35f91c95709bf7a574d0080f33c91e28e8998744e351114c6fbc3cb1357552",
+  "assertions": {
+    "original_eight_views_and_actions_reused": true,
+    "gui_import_accepted": 2,
+    "gui_import_jobs": 1,
+    "gui_import_pending": 0,
+    "same_snapshot_scope_money": {
+      "currency": "USD",
+      "orders_minor": "30000",
+      "refunds_minor": "1500"
+    },
+    "api_and_storage_error_sanitized": true,
+    "same_file_retry_one_reservation": true,
+    "six_navigation_links_preserve_financial_scope_without_detail_receipt": true,
+    "owner_gui_revocation_clears_reader": true,
+    "revoked_detail_http": 403,
+    "revoked_export_http": 403
+  },
+  "cleanup": {
+    "original_resources_absent": 7,
+    "repaired_resources_absent": 7
+  },
+  "limits": [
+    "Analysis and economics seeded explicitly with SYN fixture; no real inference",
+    "Original successful eight views reused; affected navigation/import/revocation executed after two repairs",
+    "No independent human rehearsal, real CRM account, SQL09 review, external send or production validation",
+    "Harness/selector/timing failures preserved separately; no blanket full-run PASS"
+  ]
+}

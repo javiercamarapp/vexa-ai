@@ -1,6 +1,12 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## Identidad compilada y preparación de entrega —24-sep
+
+La versión pública incorpora una revisión Git fijada durante compilación; cambiar variables al arrancar no puede renombrar el binario ya construido. El inventario de release exige un checkout limpio, rechaza flags Git que ocultan modificaciones y registra hashes y nombres de configuración sin copiar secretos. Su salida queda bloqueada hasta disponer de revisiones, destino, responsables y verificaciones externas reales.
+
+Se integra la preparación de entorno y documentación de uso/operación, con pendientes explícitos. Revisión independiente313/315 y regresiones conservadas por hash; la composición actual pasó lint/build y comprobación HTTP de identidad inmutable. No es aceptación de F08 ni despliegue, y el endpoint continúa indicando construcción. Contador43/60 técnicas y25formales.
+
 ## Presupuesto de agrupación operable —24-sep, corte330
 
 El propietario puede configurar los límites global y de agrupación desde Problemas, con ventana propia, control de versión y conciliación explícita de reservas antiguas aunque cambie la configuración. Los costos desconocidos permanecen desconocidos; cero requiere confirmación y evidencia declarada. Configurar límites no activa proveedores ni ejecuta inferencia.

@@ -4,6 +4,14 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Respaldo de demostración revisado —24-sep, corte344
+
+Video continuo de5:01.8 con datos sintéticos y rótulo permanente, guion y manifiesto de versión84d487b. El recorrido real local usa Auth/PostgreSQL/Storage/Next, conserva300USD de órdenes y15USD de reembolsos sin sumarlos, muestra trazabilidad, consulta, plan de intervención y medición parcial. La descarga JSON coincide con el API; el dato posterior y su delta permanecen desconocidos.
+
+Autor341 y revisión independiente del principal:67artefactos verificados por hash, nueve muestras visuales, metadatos del archivo y reproducción offline sin solicitudes HTTP. Los fallos del renderer anterior se conservan; el renderer final y la decodificación completa terminaron en0. No hubo inferencia pagada ni datos de clientes. El script extraído de captura se revisó y pasó sintaxis, sin repetir la toma completa.
+
+F08-03 no se declara completa: faltan el ensayo humano cronometrado y la demostración de portabilidad HubSpot/Zendesk. No es un despliegue ni evidencia productiva.43/60 técnicas y25formales, sin incremento por este respaldo parcial.
+
 ## Ejecutor externo de candidatos revisado —24-sep, corte343
 
 El custodio puede congelar protocolo, dataset, roles, configuración y código, y producir predicciones mediante el gateway original para el evaluador existente. El ledger SQLite registra exposición, reservas e intentos antes del transporte; una caída ambigua impide reenviar. El replay exacto utiliza únicamente un resultado ya escrito. Costos desconocidos permanecen nulos y retienen presupuesto.

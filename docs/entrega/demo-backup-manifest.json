@@ -1,0 +1,155 @@
+{
+  "schema_version": "vexa-demo-backup-v1",
+  "status": "local_synthetic_backup_independently_reviewed_not_task_acceptance",
+  "software_revision": "84d487b0dbded1a6966f2b3536e8d0436f62b2b7",
+  "video": {
+    "path": "demo-backup.webm",
+    "sha256": "caaef8f5ac010c4fd8aecede7144c44f479279154fe8fd3031beae0139a37b2e",
+    "bytes": 5445806,
+    "duration_seconds": 301.8,
+    "codec": "VP9",
+    "container": "WebM",
+    "width": 1366,
+    "height": 900,
+    "frames_per_second": 10,
+    "audio": false
+  },
+  "capture": {
+    "method": "Playwright recordVideo continuous real browser viewport",
+    "interaction_window_seconds": 300.003,
+    "source_frames": "Native Chromium video; diagnostic JPEG samples also preserved privately",
+    "processing": "VP9 encode, 10fps normalization, permanent PNG watermark. No business value replacement or cut montage.",
+    "overlay_is_product_feature": false,
+    "permanent_label": "DEMOSTRACIÓN SINTÉTICA · RESPALDO GRABADO · NO ES UNA SESIÓN EN VIVO",
+    "human_timed_rehearsal": false
+  },
+  "synthetic_fixture": {
+    "name": "SYN detail/intervention repository fixtures",
+    "sha256": {
+      "support/F06-detail/fixtures.mjs": "6b80fffd974ab6b40fc6327e0e022bcc09c1e054f8e525307e84f689b07d9713",
+      "support/F06-interventions/fixtures.mjs": "841fda21c48e632918717bac591aa548edc376a3a2b0782b4c7c0b6b170e7788",
+      "support/F05-snapshots/fixtures.mjs": "fd12bb335a04c8c4357f4fee4589b7088e7cf6abc7a1f5bf5cca60e5ee757abf"
+    },
+    "no_real_customer_data": true,
+    "preparation": "Real local Auth/PG/Storage/Next; canonical/extraction/grouping SYN fixtures, economic API and published snapshots. Recommendation and intervention draft prepared by API before recording. No model provider calls."
+  },
+  "financial": {
+    "currency": "USD",
+    "exponent": 2,
+    "exposure_minor": "30000",
+    "orders_minor": "30000",
+    "refunds_minor": "1500",
+    "additive": false,
+    "causal_saving_claimed": false,
+    "snapshot_id": "3237dc63-62ec-5583-a779-e6db8d217fdb",
+    "scope_hash": "a2cc16f9d32d5439a9484f5b782afaa325fe5f21301d2f71881ac3f876fc50e4",
+    "measurement_snapshot_id": "4239263b-e5fb-591e-a5ba-cb74bd100ba4",
+    "measurement_state": "partial",
+    "measurement_after_minor": null,
+    "measurement_delta_minor": null
+  },
+  "export": {
+    "id": "9c5eab9e-8463-4856-88b3-4b02f5d6ac24",
+    "contentHash": "b98b6eb6a0a2c8f0813d91c11f7a3dbc81d772956a2a340781d2c873b6c258a3",
+    "bytesSha256": "321183be4629585787afdfa956315a9f70c3cfe46b812b0dc8957e27898491ba",
+    "matchesAPI": true
+  },
+  "verification": {
+    "full_decode_exit_code": 0,
+    "render_exit_code": 0,
+    "offline_playback": "pass",
+    "offline_seconds_advanced": 2.444532,
+    "offline_http_requests": 0,
+    "sample_seconds": [
+      0.2,
+      35,
+      70,
+      108,
+      145,
+      200,
+      240,
+      270,
+      298
+    ],
+    "labels_visually_checked": "AI inspection of all nine offline samples; human review pending",
+    "software_source_files_unchanged": 518,
+    "independent_review": {
+      "reviewer": "principal (independent of video author341)",
+      "visual_samples": 9,
+      "offline_playback": "pass",
+      "offline_seconds_advanced": 2.449561,
+      "offline_http_requests": 0,
+      "export_matches_api": true,
+      "script_syntax_checks": 3,
+      "capture_only_script_reexecuted": false
+    }
+  },
+  "observed_chapters": [
+    {
+      "targetSecond": 0,
+      "actualSecond": 0.001,
+      "name": "Resumen y procedencia"
+    },
+    {
+      "targetSecond": 35,
+      "actualSecond": 35.003,
+      "name": "Problemas del mismo corte"
+    },
+    {
+      "targetSecond": 65,
+      "actualSecond": 65.002,
+      "name": "Trazabilidad financiera"
+    },
+    {
+      "targetSecond": 90,
+      "actualSecond": 90,
+      "name": "Cliente sintético"
+    },
+    {
+      "targetSecond": 108,
+      "actualSecond": 108.001,
+      "name": "Explorar el alcance"
+    },
+    {
+      "targetSecond": 130,
+      "actualSecond": 130.001,
+      "name": "Recomendación y plan"
+    },
+    {
+      "targetSecond": 170,
+      "actualSecond": 170.003,
+      "name": "Aprobación y medición parcial"
+    },
+    {
+      "targetSecond": 220,
+      "actualSecond": 220.003,
+      "name": "Brief y exportación concordante"
+    },
+    {
+      "targetSecond": 257,
+      "actualSecond": 257.002,
+      "name": "Histórico y límites"
+    },
+    {
+      "targetSecond": 282,
+      "actualSecond": 282.002,
+      "name": "Cierre y siguiente paso"
+    }
+  ],
+  "recovery_accounting": {
+    "initial_frame_capture_render": "failed: local FFmpeg lacked drawtext; preserved",
+    "initial_continuous_wrapper": "all recorded actions completed; obsolete unbounded render interrupted after preflight diagnosis, exit1 preserved",
+    "final_render": "separate corrected renderer exit0, exact probed duration, full decode exit0",
+    "offline_verification": "separate verifier exit0; no failed command relabelled PASS"
+  },
+  "pending": [
+    "Formal task acceptance",
+    "Human timed five-minute rehearsal and comprehension test",
+    "HubSpot/Zendesk portability demonstration with authorized equivalence fixture",
+    "Real customer pilot, production authorization, external accounts and credentials"
+  ],
+  "excluded": [
+    "SQL09/domain299 acceptance",
+    "Training, promotion, paid inference, real push/email or remote deployment"
+  ]
+}

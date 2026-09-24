@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Candidatos con más de cien evaluaciones reparados —24-sep, corte358
+
+La lista dejaba de abrir con413 después de registrar el recibo101. Se sustituyó el rechazo por páginas acotadas de resultados e historial, cursores ligados al tenant, versión activa global y botones para recuperar registros antiguos. Se preservan autoridad owner, firma, CAS y rollback. Revisor357:201recibos y102versiones, rollbackversión1→103, conflictos y cursores inválidos/ajenos, UI con201/103, error/reintento y revocación403.
+
+Tres grupos pasaron antes de un error de selector del control; la recuperación focal verificó el cuarto. Se preservan los resultados y el exit1 inicial. Lint/build de la composición verdes;55 archivos de revisión y21recursos de tres corridas comprobados. La corrida anterior del mismo revisor también verificó Next16.3.6, ocho vistas y CSV hasta dos filas terminales.43/60 técnicas y25formales; no inferencia pagada ni aceptación global.
+
 ## Sesiones y admisión por correo endurecidas —24-sep, corte357
 
 La invitación rechazada ya no emite cookie de sesión; el rechazo403 queda sin acceso al workspace401 y el caso válido conserva aceptación explícita. Revisión356:3/3Node22 y composición5/5Node26, incluyendo protección local ante upstream503: cinco solicitudes→un intento, respuesta opaca y recuperación sólo por solicitud explícita. Next/eslint-config-next16.3.6, lint/build y unitarias4/4 de admisión verdes.57 archivos de revisión y18recursos comprobados. Alcance y límites en docs/entrega/seguridad-revision-356.md.

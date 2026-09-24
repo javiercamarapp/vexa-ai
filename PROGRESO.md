@@ -1,6 +1,14 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## Histórico durable de principio a fin —24-sep, corte332
+
+Integrado el lote autorizado por owner que continúa con la interfaz cerrada: selección estable, fragmentos de hasta25 conversaciones, extracción y agrupación mediante las colas existentes, detalle paginado, cancelación y pausa por permisos/configuración. Conserva presupuesto, identidad real del worker e idempotencia tras caída; no publica dinero ni mejora el modelo por mera ejecución.
+
+Autor328:102 conversaciones CRM sintéticas terminan en102 extracciones y102 agrupaciones; Node26 final7/7, Node22 completo7/7 más4/4 sobre el último ajuste CAS. Revisión independiente331:9/9, incluidos aislamiento, vínculo de hijos, presupuesto vigente, respuesta retenida durante cancelación/revocación y fuente retirada. Lint/build de integración y ocho regresiones durables pasan.
+
+Se preservan los fallos causados durante suspensión por tapa cerrada y su evidencia de macOS. La repetición conservó límites y fuentes. El lint diagnóstico mostró ETIMEDOUT incluso con exit0; se descartó ese resultado y se comprobó de nuevo sin timeout. No se valida precisión de modelo, proveedores reales ni capacidad comercial.43/60 técnicas,25formales; no se incrementa por cerrar este hueco transversal.
+
 ## Robustez económica reproducible —24-sep
 
 Integradas la suite y el runner de mutaciones ya revisados:9/9 pruebas de autor y cinco defectos detectados en Node22 y26. La revisión independiente311 pasó6/6 controles por runtime y detectó sus cinco mutantes propios. Los cinco módulos económicos, la suite y el runner mantienen los hashes examinados; se reutiliza esa evidencia sin repetir código inalterado.

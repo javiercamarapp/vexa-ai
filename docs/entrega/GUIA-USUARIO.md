@@ -16,6 +16,8 @@ En /imports seleccione conexión y CSV/XLSX (hasta 20 MiB), reserve/suba, asigne
 
 En /analysis, owner configura límites y owner/analyst solicita extracción de conversación autorizada. Worker redacta, llama al proveedor habilitado y valida. Sin política/proveedor/presupuesto no se simula éxito. Costo incierto requiere conciliación; reenviar puede generar otro costo.
 
+En /history, owner confirma el procesamiento de una conexión con los runtimes y presupuestos configurados. El lote continúa con la interfaz cerrada, muestra progreso por conversación y permite cancelar; requiere los consumidores de histórico, extracción y agrupación activos. Procesar el histórico no publica cifras ni mide por sí solo la calidad del modelo.
+
 Use /problems para lista y detalle, y /problems/manage para agrupación. /overview muestra prioridades/cobertura; el historial de cliente se abre desde una identidad conocida. /explorer consulta evidencia autorizada. Revise fuente, versión, fechas y límites; una cita válida no prueba causalidad.
 
 ## Dinero, acción y brief

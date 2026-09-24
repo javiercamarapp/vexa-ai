@@ -1,0 +1,333 @@
+{
+  "schema": "vexa-local-load-summary-v2",
+  "status": "measured_local_synthetic_not_release_accepted",
+  "date": "2026-09-24",
+  "actual_baseline": "f4ee8f51feb3410b3b67b946c0dedee6d5aac30f",
+  "composition": "Published baseline plus50proposed notification files and17reviewed retention files; not identical to the public release.",
+  "composition_sha256": "e0fc99c14c3f409a88c86619984126ad45c50dcc2506a9a384f2d2b4e4f2de28",
+  "benchmark_baseline_literal_caveat": "Original runner retains8e3f2d2 metadata; actual tested composition is identified separately, without rewriting original receipts.",
+  "config": {
+    "workers": 1,
+    "chunkRows": 100,
+    "deadlineMsPerJob": 900000,
+    "150K": "3x50K legitimate files"
+  },
+  "independent_recalculation": {
+    "csv_rows_recounted": 210000,
+    "artifacts_hashed": 59,
+    "percentiles_recomputed": true,
+    "chunk_offsets_checked": true,
+    "resource_ids_reinspected_absent": true,
+    "new_load_execution": false
+  },
+  "runs": [
+    {
+      "label": "10k",
+      "rows": 10000,
+      "status": "measured",
+      "receipt_sha256": "0272745e380d45c2f3957b426a29404e8b65a2ba165e9fd786d7843509f21b8b",
+      "started_at": "2026-09-24T03:29:06.559Z",
+      "finished_at": "2026-09-24T03:32:11.904Z",
+      "versions": {
+        "node": "v22.23.2",
+        "postgres": "17.6",
+        "docker": "29.7.2"
+      },
+      "hardware": {
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpus": 8,
+        "cpuModel": "Apple M3",
+        "totalMemoryBytes": 25769803776,
+        "freeMemoryAtStartBytes": 561053696,
+        "osRelease": "27.0.0",
+        "loadAverageAtStart": [
+          1.642578125,
+          2.73388671875,
+          2.50439453125
+        ],
+        "environment": "Shared developer host; other local workloads are not controlled",
+        "docker": {
+          "memoryBytes": 8319770624,
+          "cpus": 8,
+          "os": "Docker Desktop",
+          "arch": "aarch64"
+        }
+      },
+      "source_files": [
+        {
+          "sha256": "953d0fb84bb4a017541afcad542ac242dcf6adf5b7b11706ea78f349c4d55c78",
+          "bytes": 1225633,
+          "rows": 10000
+        }
+      ],
+      "observed": {
+        "total": 10000,
+        "accepted": 9800,
+        "rejected": 100,
+        "duplicates": 100,
+        "pending": 0
+      },
+      "processing_ms": 142307.878917,
+      "end_to_end_ms": 142867.010334,
+      "metrics": {
+        "inputRowsPerSecond": 70.27017812437796,
+        "acceptedRowsPerSecond": 68.8647745618904,
+        "commitP50Ms": 1221.042042000001,
+        "commitP95Ms": 1962.4385000000038,
+        "apiP95Ms": 200.80479200000264,
+        "commitSamples": 100,
+        "apiSamples": 5,
+        "workerMaxRssKiB": 167248
+      },
+      "job_timings": [
+        {
+          "deadline": "2026-09-24T03:44:46.963659+00:00",
+          "elapsedMs": 142200.247,
+          "failureCount": 0,
+          "firstStartedAt": "2026-09-24T03:29:46.935138+00:00",
+          "lastFinishedAt": "2026-09-24T03:32:09.135385+00:00"
+        }
+      ],
+      "processing_time_ratio_to_baseline308": 1.3279869975849667
+    },
+    {
+      "label": "50k",
+      "rows": 50000,
+      "status": "measured",
+      "receipt_sha256": "0614de172c9f09df5c1564b268860ceb2d96f079d1494857788b0213f2c3ed04",
+      "started_at": "2026-09-24T03:32:47.688Z",
+      "finished_at": "2026-09-24T03:44:38.873Z",
+      "versions": {
+        "node": "v22.23.2",
+        "postgres": "17.6",
+        "docker": "29.7.2"
+      },
+      "hardware": {
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpus": 8,
+        "cpuModel": "Apple M3",
+        "totalMemoryBytes": 25769803776,
+        "freeMemoryAtStartBytes": 2035580928,
+        "osRelease": "27.0.0",
+        "loadAverageAtStart": [
+          3.29833984375,
+          4.41162109375,
+          3.41845703125
+        ],
+        "environment": "Shared developer host; other local workloads are not controlled",
+        "docker": {
+          "memoryBytes": 8319770624,
+          "cpus": 8,
+          "os": "Docker Desktop",
+          "arch": "aarch64"
+        }
+      },
+      "source_files": [
+        {
+          "sha256": "ea93472031d248470e242188a8e4a42e8037ec4b000ea131ef904eedc8775de8",
+          "bytes": 6261416,
+          "rows": 50000
+        }
+      ],
+      "observed": {
+        "total": 50000,
+        "accepted": 49000,
+        "rejected": 500,
+        "duplicates": 500,
+        "pending": 0
+      },
+      "processing_ms": 675737.414666,
+      "end_to_end_ms": 676628.700709,
+      "metrics": {
+        "inputRowsPerSecond": 73.99323896356063,
+        "acceptedRowsPerSecond": 72.51337418428942,
+        "commitP50Ms": 1176.6872500000027,
+        "commitP95Ms": 1885.7637080000131,
+        "apiP95Ms": 409.03800000000047,
+        "commitSamples": 500,
+        "apiSamples": 5,
+        "workerMaxRssKiB": 349648
+      },
+      "job_timings": [
+        {
+          "deadline": "2026-09-24T03:48:19.873403+00:00",
+          "elapsedMs": 675648.955,
+          "failureCount": 0,
+          "firstStartedAt": "2026-09-24T03:33:19.862506+00:00",
+          "lastFinishedAt": "2026-09-24T03:44:35.511461+00:00"
+        }
+      ],
+      "processing_time_ratio_to_baseline308": 1.2262387567101456
+    },
+    {
+      "label": "150k-sleep-failed",
+      "rows": 150000,
+      "status": "failed",
+      "receipt_sha256": "174ea03d0b56507aaf38c07ec35e041d2a1b8850eebc7488ec05abb31ea01635",
+      "started_at": "2026-09-24T03:45:02.054Z",
+      "finished_at": "2026-09-24T04:02:29.619Z",
+      "versions": {
+        "node": "v22.23.2",
+        "postgres": "17.6",
+        "docker": "29.7.2"
+      },
+      "hardware": {
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpus": 8,
+        "cpuModel": "Apple M3",
+        "totalMemoryBytes": 25769803776,
+        "freeMemoryAtStartBytes": 2541961216,
+        "osRelease": "27.0.0",
+        "loadAverageAtStart": [
+          4.3623046875,
+          5.05029296875,
+          4.3232421875
+        ],
+        "environment": "Shared developer host; other local workloads are not controlled",
+        "docker": {
+          "memoryBytes": 8319770624,
+          "cpus": 8,
+          "os": "Docker Desktop",
+          "arch": "aarch64"
+        }
+      },
+      "source_files": [
+        {
+          "sha256": "7d6d022ff9526095298903d49c74b5c4a7519df114201e6250036db244056d1d",
+          "bytes": 6461340,
+          "rows": 50000
+        },
+        {
+          "sha256": "6359c4e84f8dcff26f79315e90b35ac99fe2d00eb7f05af3c65ec1826138ee54",
+          "bytes": 6494785,
+          "rows": 50000
+        },
+        {
+          "sha256": "a539fb9159aa266739662cac9e7b45ba60c132db70d6ee61a54f980d83a274fb",
+          "bytes": 6644716,
+          "rows": 50000
+        }
+      ],
+      "error": {
+        "message": "LOAD_WORKER_CALL_TIMEOUT:consume",
+        "code": null
+      },
+      "committed_chunk_samples": 0,
+      "cause": "Clamshell sleep569s corroborated by570.463s gap in samples; original failure preserved. Terminal DB checkpoint unavailable.",
+      "retry": "Only this150Kscale repeated with original deadlines after power/sleep diagnosis."
+    },
+    {
+      "label": "150k-retry",
+      "rows": 150000,
+      "status": "measured",
+      "receipt_sha256": "a6b2215cb79a7a7421df549b8beb5df0cefaa71f7b862be0f311de38b12816dc",
+      "started_at": "2026-09-24T16:11:15.182Z",
+      "finished_at": "2026-09-24T16:46:57.040Z",
+      "versions": {
+        "node": "v22.23.2",
+        "postgres": "17.6",
+        "docker": "29.7.2"
+      },
+      "hardware": {
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpus": 8,
+        "cpuModel": "Apple M3",
+        "totalMemoryBytes": 25769803776,
+        "freeMemoryAtStartBytes": 869646336,
+        "osRelease": "27.0.0",
+        "loadAverageAtStart": [
+          3.734375,
+          6.9619140625,
+          8.43896484375
+        ],
+        "environment": "Shared developer host; other local workloads are not controlled",
+        "docker": {
+          "memoryBytes": 8319770624,
+          "cpus": 8,
+          "os": "Docker Desktop",
+          "arch": "aarch64"
+        }
+      },
+      "source_files": [
+        {
+          "sha256": "7d6d022ff9526095298903d49c74b5c4a7519df114201e6250036db244056d1d",
+          "bytes": 6461340,
+          "rows": 50000
+        },
+        {
+          "sha256": "6359c4e84f8dcff26f79315e90b35ac99fe2d00eb7f05af3c65ec1826138ee54",
+          "bytes": 6494785,
+          "rows": 50000
+        },
+        {
+          "sha256": "a539fb9159aa266739662cac9e7b45ba60c132db70d6ee61a54f980d83a274fb",
+          "bytes": 6644716,
+          "rows": 50000
+        }
+      ],
+      "observed": {
+        "total": 150000,
+        "accepted": 147000,
+        "rejected": 1500,
+        "duplicates": 1500,
+        "pending": 0
+      },
+      "processing_ms": 2100166.571166,
+      "end_to_end_ms": 2102824.0979999998,
+      "metrics": {
+        "inputRowsPerSecond": 71.42290619201738,
+        "acceptedRowsPerSecond": 69.99444806817704,
+        "commitP50Ms": 1180.4882079998497,
+        "commitP95Ms": 2113.468584000133,
+        "apiP95Ms": 446.57316600000195,
+        "commitSamples": 1500,
+        "apiSamples": 15,
+        "workerMaxRssKiB": 355792
+      },
+      "job_timings": [
+        {
+          "deadline": "2026-09-24T16:26:53.336068+00:00",
+          "elapsedMs": 672920.418,
+          "failureCount": 0,
+          "firstStartedAt": "2026-09-24T16:11:53.327997+00:00",
+          "lastFinishedAt": "2026-09-24T16:23:06.248415+00:00"
+        },
+        {
+          "deadline": "2026-09-24T16:38:06.351341+00:00",
+          "elapsedMs": 676862.265,
+          "failureCount": 0,
+          "firstStartedAt": "2026-09-24T16:23:06.346629+00:00",
+          "lastFinishedAt": "2026-09-24T16:34:23.208894+00:00"
+        },
+        {
+          "deadline": "2026-09-24T16:49:23.310068+00:00",
+          "elapsedMs": 750101.25,
+          "failureCount": 0,
+          "firstStartedAt": "2026-09-24T16:34:23.305006+00:00",
+          "lastFinishedAt": "2026-09-24T16:46:53.406256+00:00"
+        }
+      ],
+      "processing_time_ratio_to_baseline308": 1.2892339072697048
+    }
+  ],
+  "cost": {
+    "measured": false,
+    "total": null
+  },
+  "commercial_slo": {
+    "approved": false,
+    "capacity_claim": null
+  },
+  "limits": [
+    "Ingestion only: no LLM/extraction or full historical evaluation throughput measured.",
+    "Single tenant/connection/worker on shared development host; no causal attribution of slowdown to one migration.",
+    "Synthetic files and measured local resources are not customer production validation.",
+    "All successful jobs finished within original900000ms; no deadline was increased.",
+    "Failed sleep-interrupted run remains failed; only separate retry passed.",
+    "No F06-09 security approval or formal F07-04 acceptance."
+  ]
+}

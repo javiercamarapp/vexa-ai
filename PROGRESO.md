@@ -1,6 +1,12 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## Carga con retención revisada —24-sep, corte335
+
+Las escalas de ingesta de10K,50K y150K terminaron con98%aceptadas,1%rechazos esperados,1%duplicados y cero pendientes. Procesamiento observado:142,3s,675,7s y2100,2s; cada trabajo de150K terminó dentro del límite original900s. El principal recontó210000filas CSV, recalculó percentiles y verificó cursores, contadores API, hashes y ausencia de recursos. Resumen público: docs/blueprint/load-results.json.
+
+Esta composición incluye propuestas de notificaciones y retención; no es una medición del HEAD público ni del pipeline IA completo. Frente al baseline308, los tiempos aumentaron32,8%,22,6%y28,9%; el host compartido no permite atribuir el cambio a una sola migración. No se midió costo monetario ni se aprobó un SLO comercial. La primera corrida150K interrumpida por suspensión del portátil permanece fallida; sólo esa escala se repitió con límites intactos. F07-04 no se declara aceptada; contador43/60 técnicas,25formales.
+
 ## Retención y restauración: núcleo integrado —24-sep, corte333
 
 Integrado el núcleo revisado de borrado tipado, purga de materializaciones y restauración en cuarentena. Conserva identidades y finanzas, redacta citas/entidades derivadas, impide reingesta de fuentes borradas y reaplica el ledger vigente de todos los tenants antes de servir un backup. Los recibos de redacción preservan hashes sin copiar el texto eliminado.

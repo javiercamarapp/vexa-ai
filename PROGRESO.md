@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Portabilidad CRM y captura de cortes reparadas —24-sep, corte354
+
+El recorrido adicional SYN de HubSpot/Zendesk confirma aliases explícitos, cuatro fuentes→dos conversaciones resueltas y USD300 sin duplicación. Conserva canales originales distintos, pérdida de cobertura no comparable e importe desconocido separado del subtotal. Usa persistencia, Auth, API y navegador locales; las órdenes son fixture versionada, no dinero inferido por el conector. No realiza HTTP a proveedores ni ensaya el pitch humano.
+
+Se reparó un403 real al capturar cortes: la política restrictiva de visibilidad no veía la nueva fila durante INSERT ON CONFLICT. INSERT simple bajo savepoint y SELECT posterior exacto mantienen RLS y arbitraje único; sólo23505 recupera un corte existente, sin ocultar otros conflictos. No se modificaron SQL ni grants. Autor353:9/9 en Node22/26 con lint/build. Principal:cuatro oráculos nuevos sobre composición actual, seis capturas simultáneas→una fila, separación de scopes, viewer/tenantB denegados y conflicto único ajeno sin falso éxito. Dos muestras visuales revisadas; todos los recursos propios recogidos.43/60 técnicas y25formales.
+
 ## Restore local del esquema actual comprobado —24-sep, corte354
 
 SQL0036–0038 se incluyen en backup y restauración reales separados, con retención0035 reaplicada. Cinco controles en Node26 pasaron: siete tablas conservan sus hashes, selección y rollback conservan versiones1/2, el repositorio permite rollback3 y rechaza CAS antiguo y clave revocada. Equipos conserva revocaciones anteriores al backup e invitaciones expiradas; fuentes borradas no vuelven a exportarse ni admiten feedback. Unknown cost sigue null.

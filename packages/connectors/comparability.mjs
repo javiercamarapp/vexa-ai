@@ -108,8 +108,17 @@ export function createComparisonRepository({database}={}){
   async capture(input){const scope=comparisonScope(input);return database.transaction('import',async tx=>{
    const raw=(await tx.query(captureSql,[tx.tenantId])).rows[0],d=dataset(raw,scope),scopeHash=hash(scope);
    const value=JSON.stringify({kind:KIND,dataset:d});
-   const inserted=await tx.query(`INSERT INTO public.metric_snapshots(tenant_id,scope_hash,input_hash,policy_version,watermark,status,bundle_ref,date_start,date_end,timezone,currency,date_basis,published_at,provenance) VALUES($1,$2,$3,$4,$5,'published',$6,$7,$8,$9,$10,'conversation',clock_timestamp(),$11::jsonb) ON CONFLICT(tenant_id,scope_hash,input_hash,policy_version) DO NOTHING RETURNING *`,[tx.tenantId,scopeHash,d.inputHash,KIND,d.watermark,KIND+':'+d.inputHash,scope.dateStart,scope.dateEnd,scope.timezone,scope.currency,value]);
-   const row=inserted.rows[0]??(await tx.query('SELECT * FROM public.metric_snapshots WHERE tenant_id=$1 AND scope_hash=$2 AND input_hash=$3 AND policy_version=$4',[tx.tenantId,scopeHash,d.inputHash,KIND])).rows[0];return publicSnapshot(row);
+   await tx.query('SAVEPOINT migration_capture_insert');
+   let duplicate;
+   try { await tx.query(`INSERT INTO public.metric_snapshots(tenant_id,scope_hash,input_hash,policy_version,watermark,status,bundle_ref,date_start,date_end,timezone,currency,date_basis,published_at,provenance) VALUES($1,$2,$3,$4,$5,'published',$6,$7,$8,$9,$10,'conversation',clock_timestamp(),$11::jsonb)`,[tx.tenantId,scopeHash,d.inputHash,KIND,d.watermark,KIND+':'+d.inputHash,scope.dateStart,scope.dateEnd,scope.timezone,scope.currency,value]);
+   } catch(error) {
+    if(error?.code!=='23505')throw error;
+    duplicate=error;await tx.query('ROLLBACK TO SAVEPOINT migration_capture_insert');
+   }
+   await tx.query('RELEASE SAVEPOINT migration_capture_insert');
+   // A separate statement lets the existing visibility policy observe the inserted row.
+   const row=(await tx.query('SELECT * FROM public.metric_snapshots WHERE tenant_id=$1 AND scope_hash=$2 AND input_hash=$3 AND policy_version=$4',[tx.tenantId,scopeHash,d.inputHash,KIND])).rows[0];
+   if(!row&&duplicate)throw duplicate;return publicSnapshot(row);
   });},
   async list({cursor=null}={}){
    let last=null;if(cursor!==null){try{if(typeof cursor!=='string'||cursor.length>300||!/^[a-zA-Z0-9_-]+$/.test(cursor))fail('COMPARISON_CURSOR_INVALID');last=JSON.parse(Buffer.from(cursor,'base64url').toString());if(!uuid(last.id))fail('COMPARISON_CURSOR_INVALID');date(last.createdAt,6);}catch{fail('COMPARISON_CURSOR_INVALID');}}

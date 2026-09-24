@@ -1,0 +1,133 @@
+{
+  "schema": "vexa-synthetic-crm-portability-v1",
+  "baseline_sha": "b4cd69ecda6c144d743e851d6a70891f9a4431d0",
+  "source": "SYN local adapter pages, no remote CRM feed",
+  "author_review_pending": false,
+  "formal_F08_03_accepted": false,
+  "human_rehearsal": false,
+  "provider_requests": 0,
+  "node_runs": [
+    {
+      "node": "22.23.2",
+      "command": "node packages/connectors/tests/portability-demo.mjs PRIVATE_EVIDENCE_DIR",
+      "exit_code": 0,
+      "checks_passed": 9
+    },
+    {
+      "node": "26.7.0",
+      "command": "node packages/connectors/tests/portability-demo.mjs PRIVATE_EVIDENCE_DIR",
+      "exit_code": 0,
+      "checks_passed": 9
+    }
+  ],
+  "observed": [
+    {
+      "name": "concurrent captures converge on one immutable identity"
+    },
+    {
+      "name": "capture idempotent and viewer read-only",
+      "viewerCaptureStatus": 403
+    },
+    {
+      "name": "same source replay preserves canonical IDs and revisions",
+      "sourceConversations": 4,
+      "orders": 2
+    },
+    {
+      "name": "browser explicit alias joins both CRMs without doubling money",
+      "resolved": 2,
+      "source": 4,
+      "amountMinor": "30000",
+      "deltaMinor": "0",
+      "savings": null
+    },
+    {
+      "name": "provider channel IDs remain distinct and deny false comparability",
+      "reasons": [
+        "channel_coverage_changed"
+      ]
+    },
+    {
+      "name": "missing source coverage never becomes improvement",
+      "deltaMinor": null
+    },
+    {
+      "name": "unknown money remains null with separate known subtotal",
+      "amountMinor": null,
+      "knownSubtotalMinor": "30000"
+    },
+    {
+      "name": "tenant B cannot read snapshots or bind A identities",
+      "comparisonStatus": 409,
+      "proposalStatus": 409,
+      "listingCount": 0
+    },
+    {
+      "name": "baseline immutable despite alias and later source fixture changes"
+    }
+  ],
+  "money": {
+    "currency": "USD",
+    "exponent": 2,
+    "known_minor": "30000",
+    "unknown_total": null,
+    "refunds_from_other_demo_not_added": true,
+    "savings": null
+  },
+  "limitations": [
+    "No message bodies in this fixture (message count0)",
+    "No remote CRM transport, accounts or coverage measurement",
+    "Financial associations seeded explicitly, not inferred by connectors",
+    "Channel loss is a disposable dataset fixture modification, not a retention operation",
+    "No human study, promotion or production acceptance"
+  ],
+  "screenshots": [
+    {
+      "path": "docs/entrega/portabilidad-syn-01-equivalent.png",
+      "sha256": "53d34129ed4d9795a30b72a1441c5c26f719db358a86cec403f5f772e5b6fa27",
+      "source": "real Chromium, Node22 final, synthetic fixture"
+    },
+    {
+      "path": "docs/entrega/portabilidad-syn-02-provider-coverage.png",
+      "sha256": "9baa94284e8b65ae644bca802d54a73f3acf89d2bcdc5e14a339ef5926d89071",
+      "source": "real Chromium, Node22 final, synthetic fixture"
+    },
+    {
+      "path": "docs/entrega/portabilidad-syn-03-channel-loss.png",
+      "sha256": "9bb269ffbfd8bf811e2825f86dd905f9504f3c7fa93063e961b36b10ad2db203",
+      "source": "real Chromium, Node22 final, synthetic fixture"
+    },
+    {
+      "path": "docs/entrega/portabilidad-syn-04-unknown.png",
+      "sha256": "ec4b243bf095f8c4e8ae0c58c4e23337555e08527b4196c75264e0c9184ddf94",
+      "source": "real Chromium, Node22 final, synthetic fixture"
+    }
+  ],
+  "product_fix": {
+    "path": "packages/connectors/comparability.mjs",
+    "sha256": "da016062f134d58359fb2edeb308035914cafc5cff509d0531be1fcdc26b0d5d",
+    "cause": "restrictive SELECT visibility of new row under ON CONFLICT/RETURNING",
+    "change": "plain INSERT in savepoint,23505 rollback, exact scoped SELECT in same transaction",
+    "sql_changes": false
+  },
+  "cleanup": {
+    "all_owned_resources_absent": true,
+    "resources_checked": 33,
+    "ports": "61620..61625 free",
+    "persistent_processes": []
+  },
+  "independent_review": {
+    "reviewer": "principal",
+    "manifest_sha256": "8bff007248ad9f7cbe49378f8216f93dbdd39775d8c2b818ebc9650db440b4d5",
+    "new_runtime_checks": 4,
+    "runtime": "Node26.7.0",
+    "source_composition": "f0befed6a377fbb6798974dd81b1caae7484af4f + nine author files",
+    "real_api_pg_auth": true,
+    "real_crm_provider": false,
+    "visual_samples": [
+      "01-equivalent",
+      "04-unknown"
+    ],
+    "formal_acceptance": false
+  }
+}

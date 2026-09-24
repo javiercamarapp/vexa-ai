@@ -10,6 +10,7 @@ Preparación local pendiente de revisión y aceptación F08; no es acta de produ
 - [Smoke del destino](SMOKE-REMOTO.md): ejecutor, autorización y límites de la prueba local.
 - [Manifest reproducible](../../packages/release/README.md).
 - [Demo grabada](demo-script.md) y [manifiesto del video](demo-backup-manifest.json).
+- [Portabilidad CRM](portabilidad-crm.md): alias y diferencias observados en ensayo SYN.
 - [Permisos de material](publication-permissions.json): por defecto sólo VEXA y datos sintéticos.
 - [Backlog de entrega](BACKLOG.md): condiciones de cierre, responsables por rol y pendientes.
 - [Próximos experimentos](proximos-experimentos.md): protocolo, responsables externos y condiciones de salida.

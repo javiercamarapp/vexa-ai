@@ -32,3 +32,5 @@ No se muestra una equivalencia HubSpot/Zendesk: esta fixture no contiene una com
 La recomendación y el borrador de intervención se prepararon mediante el API real antes de la toma; la grabación muestra guardar el plan y sus transiciones posteriores.
 
 Las extracciones y agrupaciones de preparación emplean los fixtures explícitos del repositorio; las respuestas sintéticas no son una medida de precisión. No hay datos de Senix, logos de terceros, campañas, envíos push/email, llamadas pagadas ni ejecución remota. No se acepta el dominio SQL09/299 por esta grabación. La revisión independiente del respaldo y la aceptación formal se registran fuera de este documento.
+
+La [demostración adicional de portabilidad CRM](portabilidad-crm.md) ya cuenta con recorrido local SYN y capturas verificadas. Es un artefacto separado; no modifica ni añade ese recorrido al video anterior, ni demuestra una migración real del cliente.

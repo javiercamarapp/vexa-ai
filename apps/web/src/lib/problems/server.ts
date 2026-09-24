@@ -2,6 +2,7 @@ import 'server-only';
 import {randomUUID} from 'node:crypto';
 import {NextRequest,NextResponse} from 'next/server';
 import {createDatabase} from '@vexa/platform/db';
+import {createProblemBudget} from '../../../../../packages/problems/budget.mjs';
 import {createProblemRepository} from '../../../../../packages/problems/repository.mjs';
 import {createProblemConfigResolver} from '../../../../../packages/problems/runtime.mjs';
 import {serverPool} from '../imports/server';
@@ -23,13 +24,18 @@ export async function problems(request:NextRequest,problemId?:string){
   if(problemId!==undefined){if(!uuid(problemId)||request.method!=='GET')throw invalid();return finish(NextResponse.json({problem:await repository.detail({problemId})},{headers}));}
   let runtimeConfig:ReturnType<ReturnType<typeof createProblemConfigResolver>>|null;try{runtimeConfig=createProblemConfigResolver(process.env.VEXA_PROBLEMS_CONFIG_JSON??'[]')(context.tenantId);}catch{runtimeConfig=null;}
   const canSubmit=['owner','analyst'].includes(context.role),canRestructure=context.role==='owner';
+  const budget=createProblemBudget({database,window:runtimeConfig?.gateway?.policy?.window});
   if(request.method==='GET'){
-   const [items,sources,jobs]=await Promise.all([repository.list(),canSubmit?repository.sources():[],repository.jobs()]);
-   return finish(NextResponse.json({problems:items,sources,jobs,canSubmit,canRestructure,configuration:{ready:!!runtimeConfig,enabled:process.env.VEXA_PROBLEMS_RUNTIME==='enabled'}},{headers}));
+   const [items,sources,jobs,budgetView]=await Promise.all([repository.list(),canSubmit?repository.sources():[],repository.jobs(),canRestructure?budget.read():null]);
+   return finish(NextResponse.json({problems:items,sources,jobs,canSubmit,canRestructure,canConfigureBudget:canRestructure,budget:budgetView,configuration:{ready:!!runtimeConfig,enabled:process.env.VEXA_PROBLEMS_RUNTIME==='enabled'}},{headers}));
   }
   const raw=await request.text();if(Buffer.byteLength(raw)>32768)throw invalid();let parsed:unknown;try{parsed=JSON.parse(raw);}catch{throw invalid();}
-  const body=object(parsed,['operation','extractionRunId','requestKey','embeddingId','limit','parents','children','reason','approved']);let data;
-  if(body.operation==='submit'){
+  const body=object(parsed,['operation','extractionRunId','requestKey','embeddingId','limit','parents','children','reason','approved','purpose','limitUsd','expectedVersion','expectedWindow','reservationId','actualUsd','evidenceHash','confirmedProviderEvidence']);let data;
+  if(body.operation==='budget'){
+   data=await budget.configure(body);
+  }else if(body.operation==='reconcile'){
+   data=await budget.reconcile(body);
+  }else if(body.operation==='submit'){
    object(body,['operation','extractionRunId','requestKey']);if(!canSubmit)throw new AccessError(403,'role_insufficient');if(!uuid(body.extractionRunId)||!uuid(body.requestKey))throw invalid();if(!runtimeConfig)throw new AccessError(503,'configuration_required');if(process.env.VEXA_PROBLEMS_RUNTIME!=='enabled')throw new AccessError(503,'runtime_disabled');
    data=await repository.submit({extractionRunId:body.extractionRunId,requestKey:body.requestKey,configHash:runtimeConfig.hash});
   }else if(body.operation==='retrieve'){
@@ -45,7 +51,7 @@ export async function problems(request:NextRequest,problemId?:string){
   return finish(NextResponse.json({data},{status:body.operation==='submit'?202:200,headers}));
  }catch(error){
   const e=error as {status?:number;code?:string};const status=[400,401,403,404,409,503].includes(e.status??0)?e.status!:503;
-  const known=new Set(['configuration_required','runtime_disabled','problem_input_invalid','role_insufficient','organization_not_authorized','authentication_required','problem_not_found','problem_conflict','database_conflict']);
+  const known=new Set(['configuration_required','runtime_disabled','problem_input_invalid','role_insufficient','organization_not_authorized','authentication_required','problem_not_found','problem_conflict','database_conflict','budget_window_changed','budget_reservation_not_found']);
   return finish(NextResponse.json({contract_version:'f04-problems-v1',error:{code:known.has(e.code??'')?e.code:'problems_unavailable',message:'No se pudo consultar o modificar los problemas.',retryable:status===503},meta:{trace_id:randomUUID()}},{status,headers}));
  }
 }

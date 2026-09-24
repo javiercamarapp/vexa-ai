@@ -4,6 +4,14 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Reingreso por correo integrado —24-sep, corte350
+
+Los usuarios existentes pueden solicitar un enlace nuevo desde login, completar la sesión y elegir una organización vigente después de cerrar sesión. La solicitud conserva respuesta opaca para cuentas desconocidas y fallos de proveedor, no crea usuarios y limita el reenvío desde la interfaz. El callback retira el fragmento y deriva la identidad del refresh validado; una membresía revocada no se reactiva.
+
+Autor346:13/13 grupos en Node22/26 sobre la primera versión. La revisión348 detectó que un rechazo por correo no confirmado todavía emitía una cookie; se corrigió el punto de entrega de sesión y el mismo control quedó verde. Delta independiente3/3 por runtime y cuatro grupos previos reutilizados; no se atribuyen los13 grupos al código reparado. Integración de diez archivos sobrec701005:lint y build verdes, fuente intacta. Los rojos se conservan.
+
+Sólo se usó SMTP local Mailpit con datos sintéticos. Configurar SMTP, allowlist y cuentas reales sigue pendiente; no acredita entrega externa ni producción.43/60 técnicas y25formales, sin incremento transversal.
+
 ## Equipo e invitaciones integrados —24-sep, corte348
 
 Equipo permite al owner invitar, listar y cancelar invitaciones, cambiar roles con versión y revocar acceso; SQL0038 conserva al menos un owner activo bajo concurrencia. Supabase Auth verifica el correo actual antes de la aceptación explícita. Revocar una membresía impide reingresar mediante replay; no elimina cuentas globales ni permisos de otras organizaciones.

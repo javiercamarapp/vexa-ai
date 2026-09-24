@@ -18,9 +18,9 @@ Landing borra fragmento antes de llamar a red. El refresh token se valida median
 
 La transición de cookies/tenant termina en navegación completa, descartando Router cache previo a autenticación. Una excepción ESLint puntual explica esa necesidad. La página no envía referrer y los tokens no entran en query ni logs propios. Body JSON acotado a16KiB y RPC4KiB; campos/rutas extra rechazan. Paginación estable25 por ID para miembros e invitaciones pendientes. Error de carga borra la lista anterior; refresh fallido no muestra éxito.
 
-## Límite funcional abierto: reingreso
+## Reingreso por correo
 
-El login actual sólo ofrece Google cuando está configurado. Una cuenta invitada que no pueda usar Google obtiene la sesión inicial por correo pero carece todavía de un camino público de reingreso después del logout. Hace falta un delta Auth acotado para magic-link de usuarios existentes, con revisión propia. Esta propuesta NO demuestra connection-ready ni cierre completo de cuentas. No se modifica login global para ocultar ese pendiente.
+El módulo separado `/auth/email` permite volver a iniciar sesión desde `/login` cuando `VEXA_EMAIL_AUTH_ENABLED=true`; únicamente para usuarios existentes, sin crear cuentas ni membresías. Configurar SMTP y el redirect propio `/auth/email/complete`. La respuesta de solicitud es uniforme y no acredita entrega. La sesión exige identidad final confirmada; las respuestas rechazadas no instalan cookies nuevas. Una cuenta revocada puede seguir siendo una identidad de Auth, pero no obtiene acceso al equipo revocado. Los ensayos locales no acreditan entrega mediante un SMTP externo.
 
 ## Pruebas del autor, locales SYN
 
@@ -34,4 +34,4 @@ El control reutiliza infraestructura real Auth/PostgreSQL/PostgREST/Storage/Next
 
 Fuentes oficiales: [invitar por email](https://supabase.com/docs/reference/javascript/auth-admin-inviteuserbyemail), [getUser](https://supabase.com/docs/reference/javascript/auth-getuser), [magic links y OTP](https://supabase.com/docs/guides/auth/auth-email-passwordless).
 
-Revisión independiente345: autoridad, envío incierto, identidad final, cuerpos, configuración y encabezados HTTP comprobados; 3/3 focales en Node22/26 tras corregir la política no-referrer. La integración completa pasó lint/build. El reingreso por correo sigue en su módulo separado y no se declara terminado en este corte.
+Revisión independiente345: autoridad, envío incierto, identidad final, cuerpos, configuración y encabezados HTTP comprobados; 3/3 focales en Node22/26 tras corregir la política no-referrer. La integración completa pasó lint/build. El reingreso tiene pruebas y revisión independientes de este módulo.

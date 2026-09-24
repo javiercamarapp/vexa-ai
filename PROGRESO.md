@@ -4,6 +4,14 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Candidatos evaluados y rollback conectados —24-sep, corte346
+
+Un owner puede importar el resumen firmado por un custodio independiente, revisar criterios y seleccionar una configuración autorizada del catálogo. La selección y el rollback conservan versiones con CAS; el worker y los lotes históricos usan el mismo hash efectivo. Un cambio posterior rechaza trabajos antiguos y pausa el lote hasta revisión. Se integra navegación, API, SQL0037 y guía; no hay promoción ni entrenamiento automáticos.
+
+La revisión344 detectó que un cambio de código del gateway mantenía elegible un resultado anterior. El resumen ahora liga los cuatro módulos compartidos evaluados y la aplicación contrasta sus hashes con los del build. La misma mutación quedó rechazada en Node22/26; modificar el entorno del proceso no relabela el artefacto web. También se corrigieron hashes que desbordaban en móvil y consentimiento persistente tras guardar con recarga fallida.
+
+Autor342:7/7 en ambos runtimes. Revisión independiente:cuatro controles previos Auth/PG/browser, focales de deriva de código y UI390/1440; regresión final integrada7/7 en Node26, lint y build estrictos. Los metadatos de gold usados en las pruebas son fixtures contractuales SYN explícitos, no evidencia humana real ni precisión medida. El custodio real debe validar gold, roles y redacción; los holdouts distintos no se presentan como mejora estadística.43/60 técnicas,25formales: bloque transversal sin incremento artificial.
+
 ## Respaldo de demostración revisado —24-sep, corte344
 
 Video continuo de5:01.8 con datos sintéticos y rótulo permanente, guion y manifiesto de versión84d487b. El recorrido real local usa Auth/PostgreSQL/Storage/Next, conserva300USD de órdenes y15USD de reembolsos sin sumarlos, muestra trazabilidad, consulta, plan de intervención y medición parcial. La descarga JSON coincide con el API; el dato posterior y su delta permanecen desconocidos.

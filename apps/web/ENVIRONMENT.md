@@ -12,6 +12,7 @@ Auth, permisos, importación durable, conectores, análisis y workspace están i
 | Programación | VEXA_WORKER_DISPATCHER, VEXA_WORKER_TENANT, VEXA_WORKER_TRIGGER_SECRET, VEXA_WORKER_ENDPOINT, VEXA_WORKER_INTERVAL_MS | Dispatcher o tenant fijo; cada consumidor necesita su programación. |
 | CRM | VEXA_CRM_CREDENTIALS_JSON | Sólo servidor; vincula referencia a tenant/proveedor/cuenta. Ver packages/connectors/CRM-RUNTIME.md. |
 | Extracción | VEXA_AI_RUNTIME, OPENROUTER_API_KEY, VEXA_EXTRACTION_CONFIG_JSON | Inferencia requiere habilitación, autorización de gasto, privacidad, tarifas y presupuesto. |
+| Candidatos evaluados | VEXA_EXTRACTION_CANDIDATES_JSON, VEXA_EVALUATION_CUSTODIANS_JSON | Catálogo por tenant y claves públicas Ed25519 activas; owner confirma una evaluación válida. No habilita inferencia ni presupuesto. |
 | Problemas | VEXA_PROBLEMS_RUNTIME, VEXA_PROBLEMS_CONFIG_JSON | Política y versiones del servidor, no del navegador. |
 | Email, propuesta F06-10/12 | VEXA_EMAIL_MODE, RESEND_API_KEY, RESEND_WEBHOOK_SECRET, VEXA_EMAIL_FROM, VEXA_APP_ORIGIN, VEXA_EMAIL_DATABASE_URL | Remitente autorizado, webhook y rol dedicado. Mailpit local no acredita entrega externa. |
 | Push, propuesta F06-11/12 | VEXA_PUSH_SUBJECT, VEXA_PUSH_PUBLIC_KEY, VEXA_PUSH_PRIVATE_KEY | Privada sólo servidor; consentimiento por dispositivo y HTTPS. |
@@ -37,3 +38,5 @@ Para una release autorizada, tomar git rev-parse HEAD del checkout limpio y sumi
 Migraciones cloud, Vault, extensiones, cron y despliegues conservan sus permisos específicos. El frontend no instala cron ni mantiene workers por sí solo. Proveer secretos mediante el gestor del entorno, nunca en NEXT_PUBLIC_*, Git, capturas o logs. Coordinar rotación en proveedor y consumidores y verificar revocación. Originales privados y datos del cliente no forman parte del build.
 
 Guías de entrega: docs/entrega/. Esta configuración no significa que únicamente falten claves mientras existan revisiones técnicas pendientes.
+
+La clave privada `VEXA_EVALUATION_SIGNING_KEY` pertenece sólo al CLI externo del custodio; nunca al servidor web ni al worker. Véase `packages/intelligence/candidates/README.md`. `VEXA_COMPILED_EXTRACTION_CODE` se deriva de los archivos en next.config.ts y queda incorporado al build; no es una variable que deba pegar el operador. Cambiar el código evaluado obliga a una nueva evaluación compatible antes de seleccionar o ejecutar ese candidato.

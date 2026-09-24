@@ -45,3 +45,11 @@ Tras completar análisis del histórico, un owner puede abrir Evaluación histó
 Revise la evidencia autorizada antes de confirmar etiquetas y valoraciones. Guardar añade una versión de feedback ligada al resultado; una versión obsoleta requiere actualizar. La descarga incluye casos elegibles, exclusiones con razón y procedencia. Un cliente sin identidad canónica o una fuente fuera del corte se excluyen explícitamente. Revocar acceso o borrar una fuente impide posteriores lecturas y descargas de su contenido.
 
 El conjunto descargado sirve para desarrollo y es compatible con el evaluador local. El feedback de un owner no sustituye gold humano independiente. Esta pantalla no ejecuta nuevos modelos ni entrena o promueve candidatos. La evaluación de calidad, la ejecución externa de candidatos y cualquier aprobación de cambio conservan sus controles específicos; las métricas sintéticas no acreditan precisión real.
+
+## Selección de candidatos
+
+En Candidatos evaluados, un owner importa el resumen firmado por el custodio independiente y revisa estado, cobertura, procedencia, costo y criterios. Importar conserva el registro; seleccionar exige confirmación explícita de evidencia y una versión vigente. Un conjunto sintético o de desarrollo no permite seleccionar. Las firmas no acreditan por sí solas autenticidad del gold humano: ésta corresponde a la custodia externa.
+
+La selección se aplica al análisis siguiente y conserva su historial. Un trabajo en cola cuyo hash de configuración ya no coincide se rechaza; un lote histórico se pausa para revisión. Puede volver a una versión anterior disponible mediante rollback, que registra una nueva versión. Revocar una clave, cambiar el catálogo o desplegar código de extracción distinto al evaluado bloquea el candidato afectado. La comparación de holdouts distintos es descriptiva y no prueba una mejora estadística.
+
+La pantalla no entrena modelos ni autoriza gasto. Conserve el catálogo y las claves públicas de las versiones que puedan necesitar rollback; el custodio conserva su clave privada y la evidencia de evaluación fuera de la aplicación.

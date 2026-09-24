@@ -1,3 +1,4 @@
+import {createManagedExtractionResolver} from './candidates/resolve.mjs';
 import {randomUUID} from 'node:crypto';
 import {createExtractionQueue} from './queue.mjs';
 import {createDurableBudgetRepository} from '../gateway/durable-budget.mjs';
@@ -11,13 +12,14 @@ export function extractionFailure(error){
  return Response.json({contract_version:'f04-extraction-v1',error:{code:codes.has(error?.code)?error.code:'extraction_unavailable',message:'No se pudo completar la solicitud de análisis.',retryable:status===503},meta:{trace_id:randomUUID()}},{status,headers});
 }
 /** Auth, session cookies and CSRF are supplied by the Next server boundary. */
-export function createExtractionHandler({database,resolveConfig,runtime='stub'}){
+export function createExtractionHandler({database,resolveConfig,runtime='stub',env=process.env,runtimeCode}){
  const queue=createExtractionQueue({database});
+ const effective=createManagedExtractionResolver({database,baseResolver:resolveConfig,env,runtimeCode});
  const budget=(jobId=randomUUID())=>createDurableBudgetRepository({database,purpose:'extraction',jobId}); // configure/list/reconcile do not create a job or reserve spend.
  return async request=>{
   try{
    const context=await database.transaction('read',async s=>({tenantId:s.tenantId,role:s.role}));
-   let config;try{config=resolveConfig(context.tenantId);}catch{config=null;}
+   let config;try{config=await effective(context.tenantId);}catch{config=null;}
    if(request.method==='GET'){
     const query=new URL(request.url).searchParams;for(const key of query.keys())if(!['conversation_cursor','job_cursor','limit'].includes(key)||query.getAll(key).length!==1)invalid();
     const rawLimit=query.get('limit');if(rawLimit!==null&&!/^(?:[1-9]|[1-9][0-9]|100)$/.test(rawLimit))invalid();const limit=rawLimit===null?100:Number(rawLimit);

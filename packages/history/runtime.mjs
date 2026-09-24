@@ -10,7 +10,7 @@ export function createHistoryRuntime({database,resolveConfig,chunkSize=25,afterC
  requireThat(s.role==='analyst'&&(await one(s,'SELECT public.history_worker($1) AS ok',[s.tenantId]))?.ok,'worker_disabled',403);
  const b=await one(s,"SELECT * FROM public.history_batches WHERE tenant_id=$1 AND state='active' ORDER BY last_tick NULLS FIRST,created_at,id LIMIT 1 FOR UPDATE SKIP LOCKED",[s.tenantId]);if(!b)return{state:'idle'};
  const auth=await one(s,'SELECT public.history_batch_authorized($1) AS ok',[b.id]);
- const c=resolveConfig(s.tenantId),reason=!auth?.ok?'authorization_revoked':!c.ready||!c.enabled?'runtime_disabled':c.extractionHash!==b.extraction_hash||c.embeddingHash!==b.embedding_hash?'configuration_changed':null;
+ const c=await resolveConfig(s.tenantId,s),reason=!auth?.ok?'authorization_revoked':!c.ready||!c.enabled?'runtime_disabled':c.extractionHash!==b.extraction_hash||c.embeddingHash!==b.embedding_hash?'configuration_changed':null;
  if(reason){await s.query("UPDATE public.history_batches SET state='paused',reason=$3,version=version+1,last_tick=clock_timestamp() WHERE tenant_id=$1 AND id=$2",[s.tenantId,b.id,reason]);return{state:'paused',id:b.id,reason};}
  const scoped={transaction:async(_,work)=>work(s)},extraction=createExtractionQueue({database:scoped}),problems=createProblemRepository({database:scoped});
  if(!b.enumerated){const sources=(await s.query("SELECT c.id FROM public.conversations c JOIN public.source_heads h ON h.tenant_id=c.tenant_id AND h.id=c.id WHERE c.tenant_id=$1 AND c.connection_id=$2 AND c.deleted_at IS NULL AND c.created_at<=$3 AND h.state IN ('unique','selected') AND ($4::uuid IS NULL OR c.id>$4) ORDER BY c.id LIMIT $5",[s.tenantId,b.connection_id,b.cutoff,b.cursor,chunkSize])).rows;

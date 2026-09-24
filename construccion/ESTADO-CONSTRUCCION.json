@@ -46,9 +46,10 @@
     "F06-03",
     "F06-04",
     "F06-05",
-    "F06-06"
+    "F06-06",
+    "F07-06"
   ],
-  "construction_total": 46,
+  "construction_total": 47,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -374,6 +375,24 @@
       "official_dependency_pending": [
         "F06-05",
         "F03-06"
+      ]
+    },
+    {
+      "task_id": "F07-06",
+      "technical_ready": true,
+      "implemented": "Backup/restore, retención, purga y control externo portable; histórico/equipo/candidatos preservados y continuidad financiera de binario anterior comprobada.",
+      "programming_pending": [],
+      "verification_pending": [],
+      "official_dependency_pending": [
+        "F07-04"
+      ],
+      "evidence": "construccion/F07-06-CIERRE-TECNICO.md",
+      "external_pending": [
+        {
+          "owner": "Operador de infraestructura y responsable de datos",
+          "pending": "Destino gestionado, política/custodia real, aprobación SQL/restore y reconciliación de autoridad posterior al backup.",
+          "verification": "Restore autorizado en destino aislado, reconciliar membresías/claves/sesiones; smoke y permisos reales antes de abrir acceso. Los tiempos locales no son SLA."
+        }
       ]
     }
   ],

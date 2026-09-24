@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## F07-06 control portable y rollback financiero cerrados —24-sep, corte360
+
+Restauración deSQL0038 y siete historiales seguida de binarioNextanterior real: SHA servido, mismo snapshot/refund1500, tenantB404 y vuelta al actual. Cuatro trampas de controles candidatos no se ejecutaron. Cinco controles de restore y continuidad web pasaronNode26; revisión360 de9fuentes y46evidencias. Handler de cancelación corregido, pruebaSIGTERMreal con exit1 y tres recursos ausentes, sin reatribuir otra suite completa.
+
+47/60 técnicas:25runner+19externas+3dependencias formales. Restan operación gestionada/autoridad del cliente y aceptaciónF07-04; no producción ni rollback general recomendado de un binario con defecto conocido de paginación. Detalle construccion/F07-06-CIERRE-TECNICO.md.
+
 ## F07-04 carga y control externo integrados —24-sep, corte360
 
 210000filas verificadas en escalas10K/50K/150K, cero pendientes,2100chunks ycincohashesCSV. Ingesta extrema a extremo119.3/625.2/1842.3s. Revisión358:86archivos, p95 recalculado y recursos/PIDs recogidos. Se repararon inventario incompleto y timeout que podía dejar vivo un hijo. Negativos del control enNode22/26; costo desconocido null. Ejecutor/gate revisados e integrados, fuentes medidas originales y nuevoinventario separados.

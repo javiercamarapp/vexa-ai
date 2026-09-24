@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Sesiones y admisión por correo endurecidas —24-sep, corte357
+
+La invitación rechazada ya no emite cookie de sesión; el rechazo403 queda sin acceso al workspace401 y el caso válido conserva aceptación explícita. Revisión356:3/3Node22 y composición5/5Node26, incluyendo protección local ante upstream503: cinco solicitudes→un intento, respuesta opaca y recuperación sólo por solicitud explícita. Next/eslint-config-next16.3.6, lint/build y unitarias4/4 de admisión verdes.57 archivos de revisión y18recursos comprobados. Alcance y límites en docs/entrega/seguridad-revision-356.md.
+
+La protección de admisión es por proceso; cuotas y CDN reales siguen sin verificarse. Auditoría20rubros en curso, F06-09 excluido por bloqueo vigente;43/60 técnicas y25formales. No producción ni incremento por parches.
+
 ## Ensayo de guía e interfaz corregidos —24-sep, corte357
 
 El agente354 completó importación por UI, export del mismo corte y revocación por otro owner, con Auth/PostgreSQL/Storage/Mailpit/Next reales locales y datosSYN. Se corrigieron dos fallos: errores de red crudos en importación y parámetros de detalle que invalidaban el resumen. Retry del mismo archivo deja una reserva/un job, dos filas aceptadas y cero pendientes; seis destinos conservan scope/snapshot y USD300/15. Revocación limpia el detalle y deniega export403.

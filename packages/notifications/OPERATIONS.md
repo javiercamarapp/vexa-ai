@@ -14,3 +14,7 @@ Cada lectura y cambio leído comprueba el recurso actual. Briefs usan las fuente
 Los seis eventos del catálogo del banco revisado permanecen `connected:false`. El centro puede mostrar filas legítimas existentes, pero esta entrega no instala emisores de negocio. Email y push no están conectados. Guardar una preferencia no envía mensajes, registra dispositivos, concede permiso push ni activa un emisor. No hay endpoint de emisión, despachador, outbox o URLs aportadas por cliente. Las pruebas insertan eventos sintéticos mediante propietario SQL, pasando triggers/FK sin desactivarlos; no equivalen a emisores productivos.
 
 La propuesta reutiliza catálogo, mensajes mínimos, eligibilidad por membership/recurso y política de preferencias explícitas del banco5fbf223. No copia el pool/auth antiguos ni migraciones de laboratorio. F06-09..12 integrarán sus propios flujos bajo revisión, sin afirmar que están implementados aquí.
+
+## Lectura y contador
+
+La bandeja abre en avisos sin leer. Abrir un detalle nuevo confirma su lectura antes de navegar; marcar como leído también retira el aviso del filtro pendiente. El filtro de todos conserva el historial. El contador viene de SQL bajo el mismo tenant, usuario y RLS del recurso, sin aproximarlo al tamaño de página; un error no se convierte en cero. Se actualiza tras lectura, navegación y recuperación del foco, sin polling continuo. Revocar el recurso lo retira también del conteo. Estos cambios no activan productores de eventos ni entrega email/push.

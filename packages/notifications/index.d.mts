@@ -3,7 +3,7 @@ export type NotificationType='membership.welcome'|'membership.invited'|'brief.av
 export type CatalogEntry={type:NotificationType;label:string;description:string;connected:boolean};
 export type Preference={channel:NotificationChannel;eventType:NotificationType|'*';enabled:boolean;version:number};
 export type NotificationItem={id:string;type:NotificationType;resourceId:string;title:string;body:string;href:string;createdAt:string;readAt:string|null};
-export type InboxView={items:NotificationItem[];nextCursor:string|null;status:'all'|'unread';limit:number};
+export type InboxView={items:NotificationItem[];nextCursor:string|null;status:'all'|'unread';limit:number;unreadCount:number};
 export type PreferencesView={catalog:CatalogEntry[];channels:{id:NotificationChannel;label:string;deliveryAvailable:boolean;reason:string}[];preferences:Preference[]};
 export class NotificationError extends Error{status:number;code:string;constructor(code:string,status?:number)}
 export const catalog:readonly CatalogEntry[];

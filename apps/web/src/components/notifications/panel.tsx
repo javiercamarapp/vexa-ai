@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import {useRouter} from 'next/navigation';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {InboxView,NotificationItem,PreferencesView,Preference} from '../../../../../packages/notifications/index.mjs';
 
@@ -11,7 +12,7 @@ const errorText=(status:number)=>status===401||status===403?'Tu acceso cambió. 
 const safeHref=(value:unknown):value is string=>typeof value==='string'&&value.startsWith('/')&&!value.startsWith('//')&&!/[\\\u0000-\u0020]/.test(value);
 const validItem=(item:NotificationItem)=>Boolean(item&&typeof item.id==='string'&&typeof item.title==='string'&&typeof item.body==='string'&&typeof item.createdAt==='string'&&(item.readAt===null||typeof item.readAt==='string')&&safeHref(item.href));
 function inboxValue(data:InboxView,status:Status):InboxView{
- if(!data||!Array.isArray(data.items)||data.items.some(item=>!validItem(item))||data.status!==status||(data.nextCursor!==null&&typeof data.nextCursor!=='string'))throw Error('No se pudo verificar la bandeja recibida.');
+ if(!data||!Number.isSafeInteger(data.unreadCount)||data.unreadCount<0||!Array.isArray(data.items)||data.items.some(item=>!validItem(item))||data.status!==status||(data.nextCursor!==null&&typeof data.nextCursor!=='string'))throw Error('No se pudo verificar la bandeja recibida.');
  return data;
 }
 function preferenceValue(data:PreferencesView):PreferencesView{
@@ -20,9 +21,10 @@ function preferenceValue(data:PreferencesView):PreferencesView{
 }
 
 export function NotificationPanel({settings=false}:{settings?:boolean}){
+ const router=useRouter();
  const [inbox,setInbox]=useState<InboxView|null>(null),[preferences,setPreferences]=useState<PreferencesView|null>(null);
- const [status,setStatus]=useState<Status>('all'),[busy,setBusy]=useState(true),[error,setError]=useState(''),[notice,setNotice]=useState('');
- const epoch=useRef(0),controller=useRef<AbortController|null>(null),pending=useRef(false),currentStatus=useRef<Status>('all');
+ const [status,setStatus]=useState<Status>('unread'),[busy,setBusy]=useState(true),[error,setError]=useState(''),[notice,setNotice]=useState('');
+ const epoch=useRef(0),controller=useRef<AbortController|null>(null),pending=useRef(false),currentStatus=useRef<Status>('unread');
  const invalidate=useCallback(()=>{epoch.current++;controller.current?.abort();pending.current=false;},[]);
  const clear=useCallback(()=>{setInbox(null);setPreferences(null);},[]);
  const begin=useCallback(()=>{controller.current?.abort();const abort=new AbortController();controller.current=abort;const generation=++epoch.current;pending.current=true;setBusy(true);setError('');setNotice('');return {abort,generation};},[]);
@@ -38,7 +40,7 @@ export function NotificationPanel({settings=false}:{settings?:boolean}){
   try{
    const data=await request(settings?'/preferences':'?status='+nextStatus,op.abort.signal);
    if(!current(op))return;
-   if(settings)setPreferences(preferenceValue(data));else setInbox(inboxValue(data,nextStatus));
+   if(settings)setPreferences(preferenceValue(data));else{setInbox(inboxValue(data,nextStatus));window.dispatchEvent(new Event('vexa-notifications-changed'));}
   }catch(cause){if(current(op)){clear();setError(cause instanceof Error?cause.message:errorText(503));}}
   finally{if(current(op)){pending.current=false;setBusy(false);}}
  },[begin,clear,current,request,settings]);
@@ -65,13 +67,13 @@ export function NotificationPanel({settings=false}:{settings?:boolean}){
   }catch(cause){if(current(op)){clear();setError(cause instanceof Error?cause.message:errorText(503));}}
   finally{if(current(op)){pending.current=false;setBusy(false);}}
  };
- const markRead=async(item:NotificationItem)=>{
+ const markRead=async(item:NotificationItem,openDetail=false)=>{
   if(pending.current||!inbox)return;const op=begin();
   try{
    const value=await request('/'+item.id+'/read',op.abort.signal,{});if(!current(op))return;
    if(value?.id!==item.id||typeof value.readAt!=='string')throw Error('No se pudo comprobar la lectura del aviso.');
    const data=inboxValue(await request('?status='+currentStatus.current,op.abort.signal),currentStatus.current);if(!current(op))return;
-   setInbox(data);setNotice('Aviso marcado como leído.');
+   setInbox(data);setNotice('Aviso marcado como leído.');window.dispatchEvent(new Event('vexa-notifications-changed'));if(openDetail)router.push(item.href);
   }catch(cause){if(current(op)){clear();setError(cause instanceof Error?cause.message:errorText(503));}}
   finally{if(current(op)){pending.current=false;setBusy(false);}}
  };
@@ -96,12 +98,13 @@ export function NotificationPanel({settings=false}:{settings?:boolean}){
    </fieldset>)}</div>
   </>}
   {!settings&&inbox&&<>
+   <p role="status">{inbox.unreadCount} {inbox.unreadCount===1?'aviso sin leer':'avisos sin leer'}</p>
    {!inbox.items.length&&<p>{status==='unread'?'No hay avisos sin leer disponibles.':'No hay avisos disponibles.'}</p>}
    <ul aria-label="Avisos disponibles" style={{listStyle:'none',padding:0,display:'grid',gap:'1rem'}}>{inbox.items.map(item=><li key={item.id}>
     <article className="record-card" aria-label={item.title} data-notification-id={item.id}>
      <p className="muted">{item.readAt?'Leído':'Sin leer'} · <time dateTime={item.createdAt}>{item.createdAt.slice(0,19).replace('T',' ')} UTC</time></p>
      <h2>{item.title}</h2><p>{item.body}</p>
-     <div style={{display:'flex',gap:'1rem',flexWrap:'wrap',alignItems:'center'}}><Link href={item.href}>Abrir detalle</Link>{!item.readAt&&<button style={{width:'auto'}} disabled={busy} onClick={()=>void markRead(item)}>Marcar como leído</button>}</div>
+     <div style={{display:'flex',gap:'1rem',flexWrap:'wrap',alignItems:'center'}}>{item.readAt?<Link href={item.href}>Abrir detalle</Link>:<button style={{width:'auto'}} disabled={busy} onClick={()=>void markRead(item,true)}>Abrir detalle</button>}{!item.readAt&&<button style={{width:'auto'}} disabled={busy} onClick={()=>void markRead(item)}>Marcar como leído</button>}</div>
     </article>
    </li>)}</ul>
    {inbox.nextCursor&&<button disabled={busy} onClick={()=>void more()}>Cargar más avisos</button>}

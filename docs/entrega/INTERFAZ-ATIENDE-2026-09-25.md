@@ -34,3 +34,7 @@ Estado global:53/60alcances técnicos y25aceptaciones formales. Este cambio no a
 | 381, composición final y controles | b8ffec202cc76e5aeee5f9410eca023a8467e96beccc03f6fc76358f17cf88d9 |
 
 La composición final comprende37fuentes revisadas. El inventario de carga contiene2089entradas; actualizarlo no crea una medición nueva. Los recibos y las sesiones permanecen privados.
+
+## Comprobación posterior al despliegue
+
+El SHA `aed5c3a7fc65c0af9f6ecc3315732e905774d03d` fue publicado y desplegado; su revisión servida coincide. Pasan seis controles remotos de versión/login/navegación/trabajo real,20rutas autenticadas después de resolver sus requests y el estado final móvil de importaciones. Chrome, cuentasSYN propias y sin inferencia pagada. Los cuatro controles de caché/aislamiento del mismo trabajo también pasan; [detalle del destino](VERCEL-ESTADO-2026-09-25.md). El smoke completo de ocho fases y producción siguen pendientes.

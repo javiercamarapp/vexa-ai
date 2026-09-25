@@ -1,6 +1,14 @@
 # Progreso verificable
 Actualizado: 2026-09-25. Los apartados conservados abajo son cortes históricos.
 
+## Interfaz publicada y comprobada en Vercel —25-sep
+
+GitHub y el alias https://vexa-ai.vercel.app sirven el cambio de producto `aed5c3a7fc65c0af9f6ecc3315732e905774d03d`. Publisher autorizado, autor/committer asociados y repositorio no fork comprobados;719fuentes exactas exportadas, compilación VercelREADY y revisión servida correcta.
+
+Seis controles remotos pasan: SHA, login1440/390/320 con proveedores pendientes visibles y movimiento reducido, actualización del trabajo real y grupos de navegación compacta, menú móvil con Escape/retorno de foco/navegación. Veinte rutas autenticadas comprobadas después de resolver sus solicitudes, sin errores JavaScript sin capturar. Una prueba focal adicional esperó el estado final de las importaciones móviles; la primera captura del menú estaba todavía cargando y se conserva con ese límite. Cuatro solicitudes de la misma URLSYN A→B→anónimo→A obtienen200/404/401/200, private/no-store y ninguna respuestaHIT de caché.
+
+No equivale a ejecutar582controles ni al smoke completo de ocho fases.53/60técnicos,25formales y producciónfalse.383llamadas acumuladas reservadas:382prepara el adaptador de smoke remotoSYN y383lo revisa de forma independiente antes de operaciones remotas; sin reset ni nuevo gasto externo. [Estado y límites](docs/entrega/VERCEL-ESTADO-2026-09-25.md).
+
 ## Interfaz Atiende y movimiento: revisión independiente cerrada —25-sep
 
 Se integran37fuentes revisadas379/381: login, navegación compacta/móvil, páginas auxiliares, tablas accesibles, confirmaciones explícitas y movimiento reducido. F01-04 intacto3/3; Auth/SQL/Storage locales reales, CSV3/3, export financiero, cancelación0POST y doble clic1POST comprobados. Matriz29rutas×3anchos, inventario582sitios de controles con cobertura diferenciada. Lint y compilaciónNode22 final verdes; los resultados no certifican582acciones ni accesibilidad global. [Evidencias, correcciones y límites](docs/entrega/INTERFAZ-ATIENDE-2026-09-25.md).

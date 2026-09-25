@@ -37,7 +37,7 @@ Esto actualiza los rubros3,6,8,11,14 y17 del corte histórico: el despliegue, SQ
 
 ## Actualización de frontend comprobada —25-sep
 
-Revisiones379/381: estructura Atiende, navegación móvil/compacta, confirmaciones, tablas y movimiento reducido integrados;37fuentes finales, compilaciónNode22, F01-04 intacto y controles reales locales de Auth/SQL/Storage. La matriz diferencia29rutas de582sitios de controles: no son582acciones ejecutadas. Se corrigieron grupos inaccesibles al contraer, una tabla sin región propia y contraste de placeholders. [Informe delimitado y huellas](INTERFAZ-ATIENDE-2026-09-25.md). Chrome comprobado; revisión humana, accesibilidad global y validación del nuevo despliegue siguen separadas.
+Revisiones379/381: estructura Atiende, navegación móvil/compacta, confirmaciones, tablas y movimiento reducido integrados;37fuentes finales, compilaciónNode22, F01-04 intacto y controles reales locales de Auth/SQL/Storage. La matriz diferencia29rutas de582sitios de controles: no son582acciones ejecutadas. Se corrigieron grupos inaccesibles al contraer, una tabla sin región propia y contraste de placeholders. [Informe delimitado y huellas](INTERFAZ-ATIENDE-2026-09-25.md). Chrome comprobado. El SHAaed5c3a ya fue desplegado y validado con seis controles remotos,20rutas autenticadas y una comprobación focal de importaciones móviles; revisión humana y accesibilidad global siguen pendientes. El rubro9 incorpora cuatro solicitudes al mismo trabajoSYN A/B/anónimo/A con200/404/401/200, private/no-store y sinHIT de caché; alcance focal, no todos los endpoints.
 
 ## Reparaciones verificadas
 

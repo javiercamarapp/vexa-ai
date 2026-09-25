@@ -42,3 +42,9 @@ Migraciones cloud, Vault, extensiones, cron y despliegues conservan sus permisos
 Guías de entrega: docs/entrega/. Esta configuración no significa que únicamente falten claves mientras existan revisiones técnicas pendientes.
 
 La clave privada `VEXA_EVALUATION_SIGNING_KEY` pertenece sólo al CLI externo del custodio; nunca al servidor web ni al worker. Véase `packages/intelligence/candidates/README.md`. `VEXA_COMPILED_EXTRACTION_CODE` se deriva de los archivos en next.config.ts y queda incorporado al build; no es una variable que deba pegar el operador. Cambiar el código evaluado obliga a una nueva evaluación compatible antes de seleccionar o ejecutar ese candidato.
+
+## CA del servidor PostgreSQL gestionado
+
+`VEXA_DATABASE_CA_PEM` es una variable exclusiva del servidor con el PEM de las autoridades oficiales del proveedor (puede contener varias). Cuando se configura, el pool valida cadena y hostname con `rejectUnauthorized: true`. La URL `VEXA_DATABASE_URL` debe omitir parámetros `ssl`, `sslmode`, `sslcert`, `sslkey`, `sslrootcert`, `sslnegotiation`, `useLibpqCompat` y `host`: se rechazan para impedir que el parser reemplace la configuración TLS o seleccione un socket Unix sin TLS. Un hostname que codifique una ruta Unix también se rechaza. Un PEM vacío, inválido, con claves privadas o certificados que no sean CA también se rechaza. Nunca usar `NODE_TLS_REJECT_UNAUTHORIZED=0` ni desactivar la verificación para resolver un error de confianza.
+
+Obtener el CA desde la documentación o distribución oficial del proveedor; no confiar automáticamente en el certificado presentado por el servidor. Mantener las credenciales de la URL fuera del repositorio. La variable no modifica los certificados del sistema ni otros clientes HTTP. Sin esta variable se conserva la configuración del URI, utilizada también por los entornos de prueba locales.

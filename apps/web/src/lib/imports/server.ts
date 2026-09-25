@@ -1,6 +1,7 @@
 import 'server-only';
 import {NextRequest,NextResponse} from 'next/server';
 import {Pool} from 'pg';
+import {databasePoolOptions} from '@vexa/platform/pool-options';
 import {randomUUID} from 'node:crypto';
 import {createDatabase,type SqlPool} from '@vexa/platform/db';
 import {createJobRepository} from '../../../../../packages/jobs/durable/repository.mjs';
@@ -12,7 +13,7 @@ export function serverPool():SqlPool {
  if(pool)return pool;
  const connectionString=process.env.VEXA_DATABASE_URL;
  if(!connectionString)throw new AccessError(503,'database_not_configured');
- const driver=new Pool({connectionString,max:5,connectionTimeoutMillis:5000,idleTimeoutMillis:30000});
+ const driver=new Pool(databasePoolOptions(connectionString,process.env.VEXA_DATABASE_CA_PEM));
  // Defense in depth: reject privileged/misprovisioned login before domain work.
  pool={async connect(){const c=await driver.connect();try{
   const r=await c.query("SELECT rolsuper,rolbypassrls,EXISTS(SELECT 1 FROM pg_class WHERE relnamespace='public'::regnamespace AND relowner=(SELECT oid FROM pg_roles WHERE rolname=current_user)) AS owns FROM pg_roles WHERE rolname=current_user");

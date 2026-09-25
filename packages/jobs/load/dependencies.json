@@ -1,11 +1,11 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "ce919965881b165868f29cd96f853ea9d23b7306",
-  "composition": "Current inventory includes the reviewed Node22 engine pins for Vercel deployment. Original 210K reports retain their measured sources; this inventory does not reattribute those measurements or authorize scale escalation.",
+  "baselineSha": "369f083296351fac3db281e708d7325444fa49cf",
+  "composition": "Current source inventory includes reviewed strict optional PostgreSQL CA configuration. Historic load measurements retain their original sources and are not reattributed to this composition.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
-      "sha256": "2aaa5d62e8a03a7e9c5c3b413e7891976fa0601631a5605728d72a37a03cd19b"
+      "sha256": "406a34852906d48f01b52dfe3d2332587652e6fb5b405a799f42593ea59b0561"
     },
     {
       "path": "apps/web/IMPLEMENTATION-WORKSPACE-BASE.md",
@@ -661,7 +661,7 @@
     },
     {
       "path": "apps/web/src/lib/imports/server.ts",
-      "sha256": "ffc3316fd1d413db22825630e5dcfbb9eba6873d509484c5836bde35e1e3a12b"
+      "sha256": "1a4efdd14df26294d4df70531b777b74631a6db0e20dc2ede953bdab63d684b0"
     },
     {
       "path": "apps/web/src/lib/interventions/server.ts",
@@ -2309,11 +2309,15 @@
     },
     {
       "path": "packages/platform/package.json",
-      "sha256": "1ee4846bdf7a86aebc883f8fb6e8644b5e92316b806d87bed5476699c09b8e85"
+      "sha256": "6064d87519a719d4efc20d895177412f70f3c16e2da493f4bf626500ccda862e"
     },
     {
       "path": "packages/platform/src/db.ts",
       "sha256": "9f8000f651d940a3a52b9c03cd500929ae0d38c6c638dea268c252aeeb62b5c8"
+    },
+    {
+      "path": "packages/platform/src/pool-options.ts",
+      "sha256": "8f81e0e9e1f4d035bcdf8fa1645ae69d22291258f9b2232bfd520840c2d65091"
     },
     {
       "path": "packages/platform/src/session.ts",
@@ -2322,6 +2326,10 @@
     {
       "path": "packages/platform/tests/identity.sql",
       "sha256": "708431d4fe929bb08fdb2515a31323c1cec05d6a21bbd3db4721c115de177b6a"
+    },
+    {
+      "path": "packages/platform/tests/pool-options.test.ts",
+      "sha256": "24a8da588edf7453742e11db55b5530602324d24aa4cc24e07ee767286396415"
     },
     {
       "path": "packages/platform/tests/schema/approval-content.test.mjs",

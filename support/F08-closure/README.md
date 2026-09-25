@@ -1,0 +1,27 @@
+# F08-06: cierre por capas, verificación externa
+
+El acta pública `docs/entrega/acta-cierre.json` es un corte histórico49/60. Se conserva sin reatribuir sus pruebas ni actualizar su SHA retrospectivamente. `proximos-experimentos.md` y la auditoría20 ya revisados se reutilizan. Este control nuevo verifica un expediente de cierre privado; no crea plantillas favorables, entrevistas, pagos, fechas ni permisos.
+
+## Entrada del supervisor
+
+`VEXA_CLOSURE_DOSSIER` y `VEXA_CLOSURE_AUTHORIZATION`: rutas absolutas de archivos JSON privados0600 fuera del candidato. `VEXA_CLOSURE_APPROVAL_REFERENCE`: decisión real guardada por el supervisor, nunca una referencia tomada del candidato. `VEXA_CANDIDATE`: checkout completamente limpio. Allowlist integrada y revisada del supervisor: esas dos rutas y la referencia derivada de la nota guardada; nunca transferirlas al worker. Integración del runner revisada por el principal.
+
+El expediente `vexa-closure-dossier-v1` contiene `sourceSha` actual, hashes `documents` de acta, próximos experimentos, auditoría20 y estado de construcción, `counts`, cinco `layers` (documentation/local_software/synthetic_demo/real_pilot/production), `metrics`, `blockers`, `experiments`, `processes` y referencias privadas `evidence`. La autorización `vexa-closure-authorization-v1` liga el SHA y hash exacto del expediente, operación `verify_final_closure`, referencia legítima, operador, revisor distinto del implementador, caducidad máxima24h y hashes de recibos y artefactos revisados. Esos campos **registran** una revisión; el operador debe comprobar el contenido original y su autoridad. Una firma o JSON favorable no produce permiso ni certifica la verdad.
+
+Cada recibo `vexa-closure-observation-v1` declara SHA, capa, estado, comando, exitCode, observador, fecha y condición sintética, más artefactos originales con hash. Los artefactos pueden ser texto, JSON o binario, privados y fuera del candidato. Límite4MiB por archivo, hasta100recibos,200artefactos y32MiB de artefactos en conjunto. Los resultados reales tienen `synthetic:false`; una demo no se puede reasignar a piloto. El operador revisa explícitamente cada hash. Una fase `not_run`, `blocked` o `fail` no satisface cierre formal.
+
+Métricas: `status: not_measured` exige numerator/denominator/value/evidence nulos. Una razón `observed` exige método y ventana, denominador positivo y numerador entero; el control recalcula desde `observations` del recibo (metric/subject/success/method/window), con sujetos distintos. Dinero no se modela como tasa: los experimentos mantienen paymentMinor/currency y una referencia cuyas observaciones de pago coincidan; una fecha acordada exige coincidencia de experimento/fecha/responsable en `agreements`. Sin acuerdo real, `agreedDate` y `paymentMinor` permanecen null.
+
+Los bloqueos siempre tienen id, owner y exitCondition; las capas incompletas también. El cierre formal exige cero bloqueos y todas las capas pass. Los60IDs se derivan del grafo y las tres listas disjuntas del estado de construcción: no basta escribir60 en el expediente. Esto sólo comprueba coherencia del inventario publicado; la legitimidad de cada aceptación sigue siendo responsabilidad del runner y de la revisión independiente.
+
+## Evidencia remota y procesos
+
+Después de las comprobaciones anteriores, `remoteSmokeGateInput` debe apuntar a la entrada privada de **F08-smoke ya revisado**. `remoteSmokeApprovalReference` pertenece a la autorización. Se reutiliza su verificador externo, con custodia de clave fuera del candidato/controlador, challenge vigente, SHA, hashes del examinador, HMAC, resultado del proceso, ocho observaciones y hashes de screenshots. Se exige modo `remote-authorized`. No se ejecutan módulos, tests o scripts del candidato, ni redes, ni un smoke nuevo desde este gate. Un recibo sintético/autodeclarado no reemplaza el control remoto.
+
+El operador certifica que el inventario `processes` está completo (`processInventoryReviewed`). Cada proceso local registrado requiere recibo y estado collected; `kill(pid,0)` observa su ausencia sin terminarlo. Un PID presente, reutilizado o no observable bloquea conservadoramente. El operador debe verificar por separado los recursos remotos y procesos fuera de este host; una lista vacía por sí sola no acredita que nunca existieron procesos. La supervisión puede permanecer activa hasta recoger este gate, pero los workers de construcción y ensayos deben estar recogidos.
+
+Antes de devolver resultado se releen archivos/hashes, autorización, SHA y limpieza. Resultado `verified_closure_binding`, siempre `formalAcceptance:false`, `productionValidated:false`, `pmfValidated:false`: el runner conserva la aceptación, la autoridad real decide producción, y este hito no valida PMF ni causalidad de ahorro. No promete un servicio de loop ilimitado.
+
+## Pruebas y límite actual
+
+`node --test support/F08-closure/control.test.mjs` usa repos temporales SYN propios; nunca altera el historial del candidato. Verifica negativos de conteo, hashes, mezcla de capas, métricas, autorización, permisos/paths, fechas y procesos. La fixture válida de binding sigue49/60 y **falla cierre formal**, intencionalmente. Estas pruebas verdes acreditan el control local, no un cierre real. El conjunto existenteF08-smoke conserva sus propias evidencias y no se reejecuta por este delta. Revisión independiente371 y supervisor integrados; las pruebas externas/humanas y el bloqueo excluido conservan su estado.

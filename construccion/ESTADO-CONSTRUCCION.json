@@ -52,9 +52,10 @@
     "F08-02",
     "F08-03",
     "F08-04",
-    "F08-05"
+    "F08-05",
+    "F08-06"
   ],
-  "construction_total": 52,
+  "construction_total": 53,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -486,6 +487,23 @@
           "pending": "Logos definitivos VEXA y autorización documental real de materiales identificables del cliente; cotejo humano de los assets y alcance.",
           "verification": "Revisar documentos y paquete exacto, guardar autorización legítima y ejecutar gate; NDA no sustituye consentimiento para publicar."
         }
+      ]
+    },
+    {
+      "task_id": "F08-06",
+      "technical_ready": true,
+      "implemented": "Control externo de acta por capas, SHA y archivos, métricas recalculadas, inventario disjunto, evidencia remota y ausencia de procesos; runner aislado revisado.",
+      "programming_pending": [],
+      "evidence": "construccion/F08-06-CIERRE-TECNICO.md",
+      "external_pending": [
+        {
+          "owner": "Operador VEXA y responsables del piloto y presentación",
+          "pending": "Resultados reales, evidencia completa de release y piloto, acuerdos de entrevistas/pagos/seguimiento y decisión final de cierre.",
+          "verification": "Cotejar expediente privado contra archivos y observaciones, ejecutar gate con autorización legítima; ninguna capa blocked/not_run cuenta como PASS ni un pitch como PMF."
+        }
+      ],
+      "official_dependency_pending": [
+        "F08-05"
       ]
     }
   ],

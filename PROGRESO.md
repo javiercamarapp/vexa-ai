@@ -4,6 +4,10 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## F08-06 control de cierre integrado —25-sep
+
+53/60 alcances técnicos y25 aceptaciones formales. Revisión371:23/23 controles y11/11 pruebas del runner porNode22/26, más composición final del supervisor revisada por el principal. Se ligan actas, métricas y ocho fases remotas a bytes/SHA y autoridad; no se confunde el histórico49 con cierre actual ni se acepta una capa blocked/not_run. Detalle: construccion/F08-06-CIERRE-TECNICO.md. Piloto, acuerdos humanos y cierre real siguen pendientes.
+
 ## F08-04 control de permisos integrado —25-sep
 
 52/60 alcances técnicos y25 aceptaciones formales. Control externo y runner revisados370:49/49 autor y10/10 independientes porNode22/26,7/7 de aislamiento del supervisor. Inventario exacto y doble cotejo de hashes/alcance/vigencia; no transforma una declaración en permiso legal. Cierre: construccion/F08-04-CIERRE-TECNICO.md. Falta el consentimiento real del titular y el cotejo humano del material; logos VEXA definitivos serán aportados después por el usuario.

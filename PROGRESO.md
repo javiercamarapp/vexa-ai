@@ -1,6 +1,12 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## Consumidores: carga portable de PostgreSQL revisada e integrada —25-sep
+
+Revisión377 autorizada por el usuario y recogida: los cinco POST compilados fallan503/MODULE_NOT_FOUND en el baseline trasladado y pasan200/IDLE con la importación dinámica de pg. El contenedor no tiene la ruta original del build ni acceso a red. Diez rechazos401 preceden al transporte; CLI5/5 porNode22/26, lint/buildNode22 y696 fuentes comprobadas. Auth/DB son dobles explícitos en esa prueba de empaquetado. Se conserva la limitación de376, que cargaba la exportación POST sin ejecutarla.
+
+La corrección de un archivo está integrada y el inventario de fuentes actualizado, sin atribuirle mediciones históricas de carga. TLS12/12 porNode22/26 y heartbeat real del candidato desdeMac ya comprobados. Siguiente verificación: compilar el SHA publicado, desplegar y probar CSV real en Vercel/Supabase; todavía no aprobada.53/60 técnicos,25 formales, producciónfalse.377 invocaciones acumuladas sin reset. El usuario también confirmó la referencia visual exacta del repositorio Atiende-Agencia-AI para login y frontend; comparación en curso.
+
 ## VEXA AI desplegada; reparación del consumidor pendiente de revisión —25-sep
 
 https://vexa-ai.vercel.app sirve722a9d90b8b527592e2438fb86e5ed3ba6ce3755. Compilación Vercel, login escritorio/móvil, Auth de dos tenants SYN, consultas propias y rechazos401/403 comprobados. La configuración del pooler de transacciones resolvió el503 de las consultas iniciales; TLS y rol restringido se mantienen.

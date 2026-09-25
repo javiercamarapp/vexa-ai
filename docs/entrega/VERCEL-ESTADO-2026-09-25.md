@@ -10,13 +10,13 @@ URL propia: **https://vexa-ai.vercel.app**. Proyecto `vexa-ai`, runtime Node 22.
 - La conexión directa inicial devolvía 503 en las consultas del backend. La dirección del pooler se obtuvo con `supabase link`, sin adivinarla. El rol restringido mantiene TLS 1.3 con CA oficial y verificación de hostname. Tras configurar el pooler de transacciones, ambas consultas remotas pasaron.
 - El owner SYN puede habilitar y revocar la delegación del worker mediante la API desplegada. Las pruebas dejaron la delegación deshabilitada y no activaron programación continua.
 
-## Defecto pendiente de integrar
+## Defecto de empaquetado: corrección revisada e integrada
 
 La llamada HTTP al consumidor desplegado devuelve `WORKER_UNAVAILABLE`. Se reprodujo con su ruta compilada y sus dependencias en un contenedor aislado: `createRequire(import.meta.url)` conservaba una ruta absoluta de la máquina de compilación; cargar `pg` terminaba en `MODULE_NOT_FOUND`.
 
 Existe una corrección local de un archivo que usa importación dinámica del módulo. La misma prueba aislada pasa de 503 a 200/IDLE y alcanza el despacho. Compilación y lint pasan, al igual que 12 pruebas TLS por Node 22 y 26. La fuente corregida también autenticó al worker y escribió un heartbeat en Supabase real, comprobado por la API de salud de Vercel. Esta última prueba ejecutó el candidato desde la máquina local: **no sustituye la ejecución del consumidor corregido en Vercel**.
 
-Falta revisión independiente antes de integrar, publicar y desplegar esa corrección. El límite acumulado autorizado está agotado en 376/376 invocaciones; se solicitó ampliarlo a 377 para esa revisión puntual. No se inicia otra llamada sin respuesta. La importación remota hasta estado terminal y su recuperación siguen pendientes; no se da por aprobado el smoke remoto completo.
+El usuario autorizó la revisión377 y la continuación del trabajo. La revisión independiente ejecutó los cinco POST trasladados: cinco fallos503 del baseline y cinco respuestas200/IDLE del candidato, más diez rechazos401 antes de acceder a DB/Auth. CLI5/5 porNode22/26, lint/buildNode22 y limpieza comprobados. La corrección queda integrada. Falta desplegar el nuevo SHA y comprobar la importación remota hasta estado terminal y su recuperación; no se da por aprobado el smoke remoto completo.
 
 ## Configuración externa pendiente
 

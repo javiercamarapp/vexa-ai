@@ -51,9 +51,10 @@
     "F08-01",
     "F08-02",
     "F08-03",
+    "F08-04",
     "F08-05"
   ],
-  "construction_total": 51,
+  "construction_total": 52,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -471,6 +472,20 @@
       ],
       "official_dependency_pending": [
         "F08-01"
+      ]
+    },
+    {
+      "task_id": "F08-04",
+      "technical_ready": true,
+      "implemented": "Inventario exacto y control externo de permisos por asset, scope, vigencia, revocación y clasificación de claims; entrada del supervisor aislada y revisada.",
+      "programming_pending": [],
+      "evidence": "construccion/F08-04-CIERRE-TECNICO.md",
+      "external_pending": [
+        {
+          "owner": "Titular de derechos y operador responsable de la presentación",
+          "pending": "Logos definitivos VEXA y autorización documental real de materiales identificables del cliente; cotejo humano de los assets y alcance.",
+          "verification": "Revisar documentos y paquete exacto, guardar autorización legítima y ejecutar gate; NDA no sustituye consentimiento para publicar."
+        }
       ]
     }
   ],

@@ -88,6 +88,8 @@ def acceptance_environment(task, row):
         'F08-01': ('VEXA_RELEASE_MANIFEST', 'VEXA_RELEASE_VERIFICATION_AUTHORIZATION',
                    'VEXA_RELEASE_APPROVAL_REFERENCE'),
         'F08-02': ('VEXA_SMOKE_GATE_INPUT', 'VEXA_SMOKE_APPROVAL_REFERENCE'),
+        'F08-04': ('VEXA_PERMISSIONS_MANIFEST', 'VEXA_PERMISSIONS_AUTHORIZATION',
+                   'VEXA_PERMISSIONS_APPROVAL_REFERENCE'),
     }
     keys = live_gates.get(task['id'])
     if (keys and task.get('requires_approval') is True

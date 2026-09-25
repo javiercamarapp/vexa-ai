@@ -4,6 +4,10 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## F08-04 control de permisos integrado —25-sep
+
+52/60 alcances técnicos y25 aceptaciones formales. Control externo y runner revisados370:49/49 autor y10/10 independientes porNode22/26,7/7 de aislamiento del supervisor. Inventario exacto y doble cotejo de hashes/alcance/vigencia; no transforma una declaración en permiso legal. Cierre: construccion/F08-04-CIERRE-TECNICO.md. Falta el consentimiento real del titular y el cotejo humano del material; logos VEXA definitivos serán aportados después por el usuario.
+
 ## TLS del pool web comprobado contra Supabase —25-sep
 
 El backend admite CA oficial por variable exclusiva de servidor y mantiene validación de certificado y hostname. Revisión372 corrigió dos overrides del parser: sslnegotiation podía reemplazar el CA y host/socket podía evitar TLS.40/40 pruebas de plataforma y7/7 independientes porNode22/26, TLS real local, lint y build verdes. El principal verificó además conexión real TLS1.3 a Supabase, ausencia de acceso heredado, identidad sin USAGE de Auth, aislamiento para sujeto sin membresías y restauración del rol tras transacción. Un rojo inicial del control asumía acceso a organizations; se corrigió a memberships, sin ampliar grants.

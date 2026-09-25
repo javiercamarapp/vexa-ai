@@ -1,6 +1,12 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## VEXA AI desplegada; reparación del consumidor pendiente de revisión —25-sep
+
+https://vexa-ai.vercel.app sirve722a9d90b8b527592e2438fb86e5ed3ba6ce3755. Compilación Vercel, login escritorio/móvil, Auth de dos tenants SYN, consultas propias y rechazos401/403 comprobados. La configuración del pooler de transacciones resolvió el503 de las consultas iniciales; TLS y rol restringido se mantienen.
+
+El consumidor remoto reveló una ruta absoluta de compilación en createRequire. Reproducción aislada503/MODULE_NOT_FOUND y candidato corregido200/IDLE; lint/build y12/12TLS porNode22/26 pasan. El candidato también verificó Auth, despacho y heartbeat contra Supabase real desde la máquina local, sin consumo de jobs. No está integrado ni desplegado: falta revisión independiente, presupuesto376/376 agotado y ampliación puntual a377 solicitada. No se afirma importación remota completa. DelegaciónSYN deshabilitada al terminar, cron continuo sin activar. [Detalle y pendientes](docs/entrega/VERCEL-ESTADO-2026-09-25.md).53/60 técnicos,25 formales; producciónfalse.
+
 
 
 

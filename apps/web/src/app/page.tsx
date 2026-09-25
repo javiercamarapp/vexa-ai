@@ -6,7 +6,7 @@ import { SessionGuard } from './session-guard';
 export const dynamic='force-dynamic';
 export default async function Home() {
   const c=config();
-  if(!c)return <section className="home"><h1>VEXA · En construcción</h1><p>El acceso aún no está configurado. No hay datos de clientes ni métricas disponibles.</p><a href="/login">Acceder</a></section>;
+  if(!c)return <section className="home access-flow"><h1>VEXA · En construcción</h1><p>El acceso aún no está configurado. No hay datos de clientes ni métricas disponibles.</p><a href="/login">Acceder</a></section>;
   const jar=await cookies();
   // Middleware owns refresh writes; server rendering can only read cookies.
   const client=authClient({getAll:()=>jar.getAll(),set:()=>{}});
@@ -17,7 +17,7 @@ export default async function Home() {
   if(error)throw new AccessError(503,'organizations_unavailable');
   const active=organizations?.find(org=>org.id===session.active.tenant_id);
   if(!active)redirect('/login?error=access_denied');
-  return <section className="home"><SessionGuard/><h1>Tu organización</h1>
+  return <section className="home access-flow"><SessionGuard/><h1>Tu organización</h1>
     <form action="/auth/organization" method="post">
       <label htmlFor="organization">Organización activa</label>{' '}
       <select id="organization" name="tenant_id" defaultValue={session.active.tenant_id} required>

@@ -2,8 +2,9 @@
 import Link from 'next/link';
 import {useEffect,useState} from 'react';
 import {usePathname} from 'next/navigation';
+import {WorkspaceIcon} from '../workspace/icon';
 
-export function NotificationNavigationLink(){
+export function NotificationNavigationLink({compact=false}:{compact?:boolean}){
  const pathname=usePathname();const [count,setCount]=useState<number|null>(null);
  useEffect(()=>{
   let current=true,generation=0;let request:AbortController|undefined;
@@ -16,5 +17,5 @@ export function NotificationNavigationLink(){
   void refresh();window.addEventListener('vexa-notifications-changed',refreshVisible);window.addEventListener('focus',refreshVisible);document.addEventListener('visibilitychange',refreshVisible);
   return()=>{current=false;request?.abort();window.removeEventListener('vexa-notifications-changed',refreshVisible);window.removeEventListener('focus',refreshVisible);document.removeEventListener('visibilitychange',refreshVisible);};
  },[pathname]);
- return <Link href="/notifications" aria-label="Notificaciones" aria-current={pathname==='/notifications'||pathname==='/settings/notifications'?'page':undefined} title={count===null?'Notificaciones':`${count} avisos sin leer`}>Notificaciones{count!==null&&count>0&&<span aria-label={`${count} avisos sin leer`} style={{marginLeft:'.5rem',fontWeight:700}}>{count}</span>}</Link>;
+ return <Link className={compact?'notification-bell':undefined} href="/notifications" aria-label="Notificaciones" aria-current={pathname==='/notifications'||pathname==='/settings/notifications'?'page':undefined} title={count===null?'Notificaciones':`${count} avisos sin leer`}><WorkspaceIcon name="notifications"/><span className={compact?'sr-only':undefined}>Notificaciones</span>{count!==null&&count>0&&<span aria-label={`${count} avisos sin leer`} className="notification-count">{count}</span>}</Link>;
 }

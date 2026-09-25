@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "d75e1f532d1fa59f95822de157ac9e5b0a526d6f",
-  "composition": "Current source inventory uses one reviewed strict CA configuration for web and five durable consumers. Historic load reports retain their original measured sources, not this composition.",
+  "baselineSha": "f95d1625ffd07ca580de6348a8ceb588604735fd",
+  "composition": "Source inventory includes reviewed dynamic pg import for portable hosted consumers. Historic load measurements retain their original measured source identities.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -1777,7 +1777,7 @@
     },
     {
       "path": "packages/jobs/durable/runtime.mjs",
-      "sha256": "f4991af33ebdbf0f02793e1657a5952dba54da4b18ed8792869dba266d7399db"
+      "sha256": "6aa2e4d823ef1babb320934224992c84edf78d522672aaf346b5981c8595682d"
     },
     {
       "path": "packages/jobs/durable/scheduler.mjs",

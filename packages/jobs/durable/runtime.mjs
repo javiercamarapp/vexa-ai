@@ -1,4 +1,3 @@
-import {createRequire} from 'node:module';
 import {databasePoolOptions} from './pg-options.mjs';
 import {workerCredentials} from './credentials.mjs';
 import {createJobRepository} from './repository.mjs';
@@ -9,7 +8,7 @@ export async function createRuntime(env=process.env,{createDatabase,pool:provide
  const dispatcher=env.VEXA_WORKER_DISPATCHER==='enabled';
  if(!dispatcher&&!env.VEXA_WORKER_TENANT)throw Error('CONFIGURATION_REQUIRED');
  const credentials=workerCredentials(env);
- const require=createRequire(import.meta.url),{Pool}=require('pg');const driver=new Pool({...databasePoolOptions(env.VEXA_DATABASE_URL,env.VEXA_DATABASE_CA_PEM),max:3});
+ const {Pool}=await import('pg');const driver=new Pool({...databasePoolOptions(env.VEXA_DATABASE_URL,env.VEXA_DATABASE_CA_PEM),max:3});
  const pool=providedPool??{async connect(){const c=await driver.connect();try{const r=await c.query("SELECT rolsuper,rolbypassrls,EXISTS(SELECT 1 FROM pg_class WHERE relnamespace='public'::regnamespace AND relowner=(SELECT oid FROM pg_roles WHERE rolname=current_user)) AS owns FROM pg_roles WHERE rolname=current_user");if(!r.rows[0]||r.rows[0].rolsuper||r.rows[0].rolbypassrls||r.rows[0].owns)throw Error('UNSAFE_DATABASE_ROLE');return c;}catch(e){c.release();throw e;}}};
 
  async function get(route,{signal}={}){const r=await fetch(env.VEXA_SUPABASE_URL+route,{headers:{apikey:env.VEXA_SUPABASE_ANON_KEY,Authorization:'Bearer '+await credentials.token()},signal:signal??AbortSignal.timeout(10000),redirect:'error'});if(!r.ok)throw Object.assign(Error('REMOTE_REJECTED'),{status:r.status,retryAfter:r.headers.get('retry-after')});return r;}

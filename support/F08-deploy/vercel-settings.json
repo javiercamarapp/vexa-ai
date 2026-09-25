@@ -1,0 +1,9 @@
+{
+  "framework": "nextjs",
+  "rootDirectory": "apps/web",
+  "sourceFilesOutsideRootDirectory": true,
+  "nodeVersion": "22.x",
+  "installCommand": "cd ../.. && npm ci --ignore-scripts --no-audit --no-fund",
+  "buildCommand": "npm run build",
+  "outputDirectory": null
+}

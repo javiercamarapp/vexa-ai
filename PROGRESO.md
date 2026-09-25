@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Supabase actualizado y configuración de hosting revisada —25-sep
+
+35 migraciones de dominio públicas aplicadas mediante MCP legítimo, más un bootstrap operativo del login restringido. Se comprobaron99/99 tablas públicas con RLS y cero funciones invocadoras con referencias Auth sin resolver. El rol no tiene superusuario, bypassRLS, herencia automática ni USAGE de Auth; SSL obligatorio activado. Las migraciones0029–0032 permanecen fuera de alcance.
+
+Se integra la configuración de Vercel para monorepo/Node22 y dos operaciones de cron faltantes (histórico y problemas), con8/8 pruebas PostgreSQL y7/7 negativas independientes; build y trazas aisladas de cinco consumidores comprobados. Ningún cron remoto se ha activado: cinco programaciones continuas cada30s implicarían14400 invocaciones/día; el costo real y la cadencia quedan por decidir. No se modifica el grafo ni se declara producción.51/60 técnicos,25 formales.
+
 ## PostgreSQL gestionado: compatibilidad y regresión —25-sep
 
 Se corrige el atributo de configuración de0028 que Supabase rechaza al crear la función. La restauración del contexto se verifica también ante excepción.0039 resuelve identidad Auth sin otorgar USAGE del esquema al login de aplicación; conserva OID, dueño y permisos de103 funciones, con17 reemplazos explícitos y rollback ante una función no prevista.

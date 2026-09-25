@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "b91a044b07fb3d1a29bbc3992f54f83464147878",
-  "composition": "Current source inventory after reviewed managed PostgreSQL compatibility and release-table controls. Historic 210K measurements retain their original manifest and do not authorize scale escalation or production claims for this composition.",
+  "baselineSha": "ce919965881b165868f29cd96f853ea9d23b7306",
+  "composition": "Current inventory includes the reviewed Node22 engine pins for Vercel deployment. Original 210K reports retain their measured sources; this inventory does not reattribute those measurements or authorize scale escalation.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -25,7 +25,7 @@
     },
     {
       "path": "apps/web/package.json",
-      "sha256": "5a2cb7cf1651c0b38e0d33e7e2ec162825b1a1cb0dedafc186af941affbe1e66"
+      "sha256": "fa40b9871c4cfcd5dfe4e40177a60e7f61077dbe9c858ef4b8215e1d6efb679f"
     },
     {
       "path": "apps/web/src/app/(workspace)/analysis/[id]/page.tsx",
@@ -753,11 +753,11 @@
     },
     {
       "path": "package-lock.json",
-      "sha256": "6d800b1d4e412bd644dc17286b3b29cc518e67d0a435d165b5a7fccfaa2d1488"
+      "sha256": "dffda51f6a7ac993abc5edd41c033e1d942cfc2d20fa865df9ced6085e98b9cf"
     },
     {
       "path": "package.json",
-      "sha256": "ddafd1b24804364eaf1ad33556449b32e8fd60fbda56d66cfd3c2d81f019c89f"
+      "sha256": "55000af355ce1d8c89f95231ab85153d6a17bfdd4c48cd6af37d54e16d55c955"
     },
     {
       "path": "packages/briefs/OPERATIONS.md",

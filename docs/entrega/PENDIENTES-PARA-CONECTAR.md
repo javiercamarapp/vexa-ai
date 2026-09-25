@@ -5,7 +5,7 @@ Todavía existen bloqueos técnicos/de revisión, por lo que no se afirma que ba
 ## Bloqueos que no son credenciales
 
 - F06-09: un filtro automático de posible riesgo de ciberseguridad interrumpió la revisión; no hay dictamen final. El examen no se reintenta ni transfiere. Sus propuestas de entrega por correo/push y eventos no están publicadas ni aceptadas. No se corrige este bloqueo pegando una API.
-- ReleaseF08-01: inventario y control integrados/revisados; destino y evidencias completas pendientes. F08-02: smoke y control revisados, integración del supervisor pendiente. Incompatibilidad de migración0028 con PostgreSQL gestionado en reparación. Son pendientes técnicos explícitos.
+- ReleaseF08-01: inventario y control integrados/revisados; destino y evidencias completas pendientes. F08-02: smoke, control e integración del supervisor revisados e integrados; ejecución remota completa pendiente. Incompatibilidad de migración0028 con PostgreSQL gestionado en reparación. Son pendientes técnicos explícitos.
 - Carga, caos y recuperación ya tienen ejecutores/control portables revisados. Sus mediciones son locales y conservan sus límites.
 - F06-07 y cadena final: revisión visual humana, aceptación formal y cierre global conservan sus requisitos. El ensayo de un agente no se llama ensayo humano.
 

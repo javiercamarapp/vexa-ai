@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## F08-02 control e integración del supervisor —25-sep
+
+51/60 ámbitos técnicos, 25 aceptaciones formales. Siete fuentes revisadas363, 7/7 controles y 2/2 regresiones Node22/26; señal real espera al hijo y conserva fallo. Delta del supervisor revisado364 con12/12 pruebas de entorno: puntero de recibo y referencia guardada, sin cookies/entradas de ejecución. Evidencia351 de ocho fases locales reutilizada sólo por hashes, no reatribuida a otro SHA/destino. Detalle construccion/F08-02-CIERRE-TECNICO.md.
+
+No smoke remoto ni producción acreditados. Compatibilidad gestionada0028/0039 y configuración del hosting siguen en revisión y prueba; no son credenciales faltantes. Renovación explícita376, 366 invocaciones reservadas al corte, máximo3 agentes, sin compras ni inferencia pagada. Los apartados inferiores son históricos.
+
 ## F08-01 control externo integrado —24-sep, revisión362
 
 50/60 ámbitos técnicos y25aceptaciones formales. Inventario actual/identidadHTTPS/evidencia/privacidad/caducidad verificados; 5/5 controles y6/6 escenarios independientes porNode22/26, controlador10/10. No verificación remota ni producción: el operador debe aportar evidencias completas y autorización legítima. Detalle construccion/F08-01-CIERRE-TECNICO.md.

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-24",
+  "updated": "2026-09-25",
   "definition": "Trabajo técnico de la ficha integrado y probado. Las cuentas/datos/aprobaciones externas y las dependencias de aceptación formal se identifican por separado. No acredita producción.",
   "accepted_in_graph": [
     "E00",
@@ -49,10 +49,11 @@
     "F06-06",
     "F07-06",
     "F08-01",
+    "F08-02",
     "F08-03",
     "F08-05"
   ],
-  "construction_total": 50,
+  "construction_total": 51,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -453,6 +454,23 @@
           "pending": "Destino funcional, documentación real de permisos y cobertura completa de release; aceptación legítima.",
           "verification": "Cotejar titularidad/proyectos, resolver compatibilidadSQL0028, configurar entorno, ejecutar smoke remoto y control con aprobación real. Revisión acotada no equivale a cobertura completa."
         }
+      ]
+    },
+    {
+      "task_id": "F08-02",
+      "technical_ready": true,
+      "implemented": "CLI de ocho fases y control externo con custodia de recibo, SHA limpio, artefactos/oráculos, recolección del hijo y aislamiento de entradas integrados y revisados.",
+      "programming_pending": [],
+      "scope_note": "Ejecutor/control técnicos. Evidencia local previa no acredita un destino remoto ni la composición actual; infraestructura gestionada en reparación independiente.",
+      "external_pending": [
+        {
+          "owner": "Operador de infraestructura VEXA",
+          "pending": "Destino funcional y manifiesto del SHA exacto, identidades SYN autorizadas, controles del consumidor y autorización de ensayo remoto.",
+          "verification": "Ejecutar ocho fases remotas reales, revisar recibo/artefactos/limpieza y revalidar el mismo SHA limpio; no aceptar por un informe sintético firmado."
+        }
+      ],
+      "official_dependency_pending": [
+        "F08-01"
       ]
     }
   ],

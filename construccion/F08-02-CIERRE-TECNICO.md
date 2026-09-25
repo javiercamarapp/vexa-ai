@@ -1,0 +1,7 @@
+# F08-02 — ejecutor remoto y control externo integrados
+
+El launcher usa cuatro módulos confiables del controlador y un candidato Git limpio. Ejecuta las ocho fases fuera del grupo acotado del runner y recoge el hijo incluso si falla el recibo inicial o el padre recibe una señal. El examen corto valida custodia, SHA, challenge vigente, resultado real del proceso y oráculos/artefactos. Sólo admite evidencia remote-authorized para aceptación formal. Un HMAC acredita custodia local, no autorización ni producción por sí solo.
+
+Revisión independiente363: siete fuentes, 7/7 controles y 2/2 regresiones por Node22/26; SIGTERM real y fin del hijo comprobados. Fallos originales preservados. Evidencia351 de ocho fases locales reutilizada tras verificar 73 hashes y cuatro módulos idénticos; no reatribuida a un nuevo destino o SHA. Revisión364 del delta del supervisor: 12/12 pruebas de entorno, incluyendo F03/F08-01 y prepare/verify/accept sintéticos. Sólo se hereda el puntero privado del recibo y la referencia guardada; no cookies ni entradas de ejecución.
+
+51/60 ámbitos técnicos y 25 aceptaciones formales. No se ejecutó ni aceptó el smoke remoto. Faltan destino operativo, configuración y autorización concretas, ejecución real completa y aceptación de F08-01. Las reparaciones de PostgreSQL gestionado y programación del hosting se registran por separado; no se afirma que todo el software esté listo sólo con claves.

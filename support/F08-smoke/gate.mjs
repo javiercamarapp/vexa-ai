@@ -1,0 +1,2 @@
+import path from 'node:path';import assert from 'node:assert/strict';import {verifyReceipt} from './receipt.mjs';
+export function launch(){const result=verifyReceipt({controller:path.resolve(import.meta.dirname,'../..'),candidate:process.env.VEXA_CANDIDATE,gateInput:process.env.VEXA_SMOKE_GATE_INPUT,approvalReference:process.env.VEXA_SMOKE_APPROVAL_REFERENCE});assert.equal(result.mode,'remote-authorized','REMOTE_EXECUTION_REQUIRED_LOCAL_PROOF_NOT_FORMAL_ACCEPTANCE');return result;}

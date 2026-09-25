@@ -70,7 +70,29 @@ export async function storageWriteOracle(h,actors,{operation='all',revoked=false
     for(const op of ['OVERWRITE','UPDATE','MOVE'])storageDenied(await ops[op](actor,name));
     const del=await ops.DELETE(actor,name);
     if(role==='a'){
-      assert.equal(del.status,200,'STORAGE_OWNER_DELETE');
+      const retained=h.sql("SELECT to_regclass('public.retention_web_requests') IS NOT NULL")==='t';
+      if(retained){
+        assert.equal(h.sql("SELECT to_regprocedure('public.retention_storage_authorized(text)') IS NOT NULL"),'t','STORAGE_RETENTION_AUTHORIZATION_REQUIRED');
+        const preserved=async(response,label)=>{
+          if(response.status===200)assert.deepEqual(response.data,[],label);else storageDenied(response);
+          assert.equal(h.sql(`SELECT count(*) FROM storage.objects WHERE name=${q(name)}`),'1',label+':metadata');
+          const visible=await h.http('storage',`/object/authenticated/${bucket}/${name}`,actor.token);
+          assert.equal(visible.status,200,label+':read');assert.equal(visible.text,JSON.stringify(payload),label+':bytes');
+        };
+        await preserved(del,'STORAGE_NO_RETENTION_CONSENT');
+        const connection=h.sql(`SELECT id FROM public.connections WHERE tenant_id=${q(A)} ORDER BY id LIMIT 1`),artifact=randomUUID();
+        assert.match(connection,/^[a-f0-9-]{36}$/,'STORAGE_SYN_CONNECTION');
+        // Authorized state is a SYN database fixture. The real HTTP actor must still
+        // satisfy current membership, tenant, pending status and expiration checks.
+        h.sql(`INSERT INTO public.retention_artifacts(id,tenant_id,connection_id,entity_type,source_key,class,object_path,expires_at,status) VALUES(${q(artifact)},${q(A)},${q(connection)},'message','SYN-storage-oracle','raw',${q(name)},clock_timestamp()-interval '1 minute','active')`);
+        await preserved(await ops.DELETE(actor,name),'STORAGE_ACTIVE_ARTIFACT_DENIED');
+        h.sql(`UPDATE public.retention_artifacts SET status='pending',expires_at=clock_timestamp()+interval '1 day' WHERE id=${q(artifact)}`);
+        await preserved(await ops.DELETE(actor,name),'STORAGE_UNEXPIRED_ARTIFACT_DENIED');
+        h.sql(`UPDATE public.retention_artifacts SET expires_at=clock_timestamp()-interval '1 minute' WHERE id=${q(artifact)}`);
+        await preserved(await ops.DELETE(actors.b,name),'STORAGE_FOREIGN_RETENTION_DENIED');
+        const authorized=await ops.DELETE(actor,name);assert.equal(authorized.status,200,'STORAGE_AUTHORIZED_RETENTION_DELETE');
+        storageDenied(await h.http('storage',`/object/authenticated/${bucket}/${name}`,actor.token));
+      }else assert.equal(del.status,200,'STORAGE_OWNER_DELETE');
       assert.equal(h.sql(`SELECT count(*) FROM storage.objects WHERE name=${q(name)}`),'0','STORAGE_OWNER_DELETE_EFFECT');
     }else{
       if(del.status===200)assert.deepEqual(del.data,[],'STORAGE_ANALYST_DELETE');else storageDenied(del);

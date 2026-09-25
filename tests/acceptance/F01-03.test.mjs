@@ -1,3 +1,4 @@
+import * as releaseTables from './support/F01-03/release-tables/oracles.mjs';
 import * as notifications from './support/F01-03/notification-oracles.mjs';
 import * as briefs from './support/F01-03/brief-oracles.mjs';
 import * as interventions from './support/F01-03/intervention-oracles.mjs';
@@ -31,6 +32,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   const migrations=candidateInputs(process.env.VEXA_CANDIDATE);
   const h=await launch({services:true});t.after(()=>h.close());
   for(const migration of migrations)h.sql(migration);
+  releaseTables.requireTables(h,migrations.releaseTablesRequired);
   h.sql("NOTIFY pgrst, 'reload schema';");
   if(migrations.workerDelegationsRequired)assert.ok(workers.present(h),'WORKER_MIGRATION_REQUIRED');
   if(migrations.syncRequired)assert.deepEqual(sync.present(h),sync.tables,'SYNC_MIGRATION_REQUIRED');
@@ -100,6 +102,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   }
   if(briefs.present(h).length){f.briefs=await briefs.seed(h,f,actors,f.workspace);await t.test('briefs0027 current roles and tenant capabilities',()=>briefs.access(h,f.briefs,actors));await t.test('briefs0027 immutable scoped publication and payload-bound replay',()=>briefs.integrity(h,f.briefs,actors));await t.test('briefs0027 no invented causal savings',()=>briefs.claims(h,f.briefs,actors));await t.test('briefs0027 current snapshot mapping and comparison authority',()=>briefs.authorization(h,f.briefs,actors));await t.test('briefs0027 exact prior comparison and both-source authorization',()=>briefs.comparison(h,f.briefs,actors));}
   if(notifications.present(h).length){f.notifications=await notifications.seed(h,f,actors,f.briefs);await t.test('notifications0028 own users roles and tenant',()=>notifications.access(h,f.notifications,actors));await t.test('notifications0028 own preferences CAS and immutable event/read state',()=>notifications.integrity(h,f.notifications,actors));await t.test('notifications0028 current resource authority and absent capability',()=>notifications.authorization(h,f.notifications,actors));await t.test('notifications0028 all catalogue resource roles and evidence',()=>notifications.resources(h,f.notifications,actors));}
+  if(releaseTables.present(h).length){releaseTables.seed(h,f,actors);await t.test('release0033..38 real tenant row visibility and raw-role denials',()=>releaseTables.access(h,f,actors));}
   for(const fk of foreignKeys(h))await t.test(`discovered FK ${fk.name}`,()=>discoveredFkOracle(h,f,fk));
   await t.test('external identity 42 is tenant scoped and revision deduplicated',()=>{
     assert.equal(h.sql("SELECT count(*) FROM public.conversations WHERE external_id='42'"),'2');

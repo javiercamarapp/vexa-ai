@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "18079abaafd9c9e602d1dffe934d7af11a16e9cd",
-  "composition": "Published runtime unchanged from measured d723; current inventory additionally includes nine chaos test helpers. Prior reports retain original manifest and cannot authorize scale escalation for this manifest.",
+  "baselineSha": "b91a044b07fb3d1a29bbc3992f54f83464147878",
+  "composition": "Current source inventory after reviewed managed PostgreSQL compatibility and release-table controls. Historic 210K measurements retain their original manifest and do not authorize scale escalation or production claims for this composition.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -2825,7 +2825,7 @@
     },
     {
       "path": "supabase/migrations/0028_notification_center.sql",
-      "sha256": "3715c312bcdecbaab27074580c15fc659e21d2ec31bd5ec37c1e63ae0c133628"
+      "sha256": "877665b9cdb1f4cb2e0c77859aa6c2721feada9a6ae666fbca01686ce96af9eb"
     },
     {
       "path": "supabase/migrations/0033_retention_recovery.sql",
@@ -2850,6 +2850,10 @@
     {
       "path": "supabase/migrations/0038_team_invitations.sql",
       "sha256": "ffef63fbf71b1ef71ff7c9399d7614c71460f7fdcbfaa092c64b5167835854ee"
+    },
+    {
+      "path": "supabase/migrations/0039_managed_runtime_identity.sql",
+      "sha256": "2338b900b633273ed7f5a8812618c05bf4659e103a3c1dcebeb557b43602f113"
     },
     {
       "path": "tests/acceptance/scaffold-copy.mjs",
@@ -2933,7 +2937,7 @@
     },
     {
       "path": "tests/acceptance/support/F01-03/harness.mjs",
-      "sha256": "0b49d3d2cac2db768cd8a22587ddf264535a14b79e359aeb14d56ea6790e325c"
+      "sha256": "6e8d9b47ab7c4b12ab55c060c23fcbb1b513764941b3dbcf7d522a50b1400476"
     },
     {
       "path": "tests/acceptance/support/F01-03/health/oracles.mjs",
@@ -2973,7 +2977,7 @@
     },
     {
       "path": "tests/acceptance/support/F01-03/oracles.mjs",
-      "sha256": "8f6df6f8304df454086d1ac625f99e92f67e3cadd114a3a13d7b780e9b648634"
+      "sha256": "4e994dfbea373c033ce19f0cf8a1b2b7675393bd78f045d59674ef873210e934"
     },
     {
       "path": "tests/acceptance/support/F01-03/oracles.test.mjs",
@@ -2992,8 +2996,12 @@
       "sha256": "6e34d418da8918fb1d63b0f49da5cd54bb717c3fb2d69441e121e5d46ba5a5c4"
     },
     {
+      "path": "tests/acceptance/support/F01-03/release-tables/oracles.mjs",
+      "sha256": "20300a9469accf9a71fa499d0b438762825c2f3748ada95f5972db5bb03e3405"
+    },
+    {
       "path": "tests/acceptance/support/F01-03/services.mjs",
-      "sha256": "a92b52fe69b67e0e17050f8593b9ba23acefdaf8276c8a648d4703b865b1c3c7"
+      "sha256": "44d4761b9619cf5fd0f057eee6bdd45e9abc1bddc3355316b1e65fab30ebc647"
     },
     {
       "path": "tests/acceptance/support/F01-03/snapshot-oracles.mjs",

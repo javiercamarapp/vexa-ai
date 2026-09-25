@@ -41,6 +41,13 @@ export function candidateInputs(candidate) {
   migrations.workspaceRequired=files.some(f=>/^0023_/.test(f));
   migrations.priorityRequired=files.some(f=>/^0022_/.test(f));
   migrations.snapshotsRequired=files.some(f=>/^0021_/.test(f));
+  const releaseTablesByMigration={
+    '0033':['retention_policies','retention_ledger','retention_artifacts','retention_redactions'],
+    '0034':['history_batches','history_items'], '0035':['retention_web_requests'],
+    '0036':['learning_cohorts','learning_items','learning_feedback'],
+    '0037':['candidate_results','candidate_selections'], '0038':['team_invitations','team_audit'],
+  };
+  migrations.releaseTablesRequired=Object.entries(releaseTablesByMigration).flatMap(([version,tables])=>files.some(file=>file.startsWith(version+'_'))?tables:[]).sort();
   return migrations;
 }
 export async function launch({services=false}={}) {

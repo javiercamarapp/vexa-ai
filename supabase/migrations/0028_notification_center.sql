@@ -31,32 +31,42 @@ create table public.notification_preferences (
  primary key(tenant_id,user_id,channel,event_type),
  foreign key(tenant_id,user_id) references public.memberships(tenant_id,user_id) on delete restrict
 );
--- Private fixed read adapter. Its SET is function-scoped and restored automatically on return/error.
+-- Private fixed read adapter. Runtime-local context works with managed PostgreSQL owners.
+-- Restore the previous capability on every normal return or exception; never grant a broader capability.
 -- No EXECUTE for runtime callers; the public guard below checks the ORIGINAL capability before entering.
 create function public.notification_resource_read(t uuid,u uuid,k text,r uuid) returns boolean
-language plpgsql stable security definer set search_path='' set vexa.action='read' as $$
-declare i public.interventions;j public.jobs;p public.measurement_plans;mid uuid;begin
- if t is distinct from nullif(current_setting('vexa.tenant_id',true),'')::uuid or u is distinct from auth.uid() or public.vexa_member(t) is not true then return false;end if;
+language plpgsql stable security definer set search_path='' as $$
+declare i public.interventions;j public.jobs;p public.measurement_plans;mid uuid; prior_action text:=current_setting('vexa.action',true); permitted boolean:=false;begin
+ perform set_config('vexa.action','read',true);
+ <<resource_scope>>
+ begin
+ if t is distinct from nullif(current_setting('vexa.tenant_id',true),'')::uuid or u is distinct from auth.uid() or public.vexa_member(t) is not true then permitted:=false;exit resource_scope;end if;
  if k='brief.available' then
-  return coalesce(exists(select 1 from public.weekly_briefs where tenant_id=t and id=r and status='published' and brief_schema='brief-v1') and public.brief_visible(t,r),false);
+  permitted:=coalesce(exists(select 1 from public.weekly_briefs where tenant_id=t and id=r and status='published' and brief_schema='brief-v1') and public.brief_visible(t,r),false);exit resource_scope;
  elsif k='intervention.assigned' then
   select * into i from public.interventions where tenant_id=t and id=r;
-  if i.id is null or i.owner_id is distinct from u or public.intervention_authorized(t,r) is not true then return false;end if;
+  if i.id is null or i.owner_id is distinct from u or public.intervention_authorized(t,r) is not true then permitted:=false;exit resource_scope;end if;
   if i.plan_id is not null then
    select * into p from public.measurement_plans where tenant_id=t and id=i.plan_id;
-   if p.id is null or public.intervention_inputs_current(t,p.baseline_ref,'[]') is not true then return false;end if;
+   if p.id is null or public.intervention_inputs_current(t,p.baseline_ref,'[]') is not true then permitted:=false;exit resource_scope;end if;
    for mid in select value::uuid from jsonb_array_elements_text(p.provenance->'baselineMappingIds') loop
-    if not exists(select 1 from public.workspace_order_dimension_versions where tenant_id=t and id=mid and active and public.intervention_member(t,actor_id,array['owner'])) then return false;end if;
+    if not exists(select 1 from public.workspace_order_dimension_versions where tenant_id=t and id=mid and active and public.intervention_member(t,actor_id,array['owner'])) then permitted:=false;exit resource_scope;end if;
    end loop;
   end if;
-  if exists(select 1 from public.intervention_results z where z.tenant_id=t and z.intervention_id=r and public.intervention_result_mappings_current(t,z.result) is not true) then return false;end if;
-  return true;
- elsif k='membership.welcome' then return r=u;
- elsif k='connection.attention' then return public.vexa_member(t,array['owner']) and exists(select 1 from public.connections where tenant_id=t and id=r);
+  if exists(select 1 from public.intervention_results z where z.tenant_id=t and z.intervention_id=r and public.intervention_result_mappings_current(t,z.result) is not true) then permitted:=false;exit resource_scope;end if;
+  permitted:=true;exit resource_scope;
+ elsif k='membership.welcome' then permitted:=r=u;exit resource_scope;
+ elsif k='connection.attention' then permitted:=public.vexa_member(t,array['owner']) and exists(select 1 from public.connections where tenant_id=t and id=r);exit resource_scope;
  elsif k='processing.failed' then
   select * into j from public.jobs where tenant_id=t and id=r;
-  return j.id is not null and j.import_id is not null and public.vexa_member(t,array['owner','analyst']) and exists(select 1 from public.imports where tenant_id=t and id=j.import_id);
- end if;return false;
+  permitted:=j.id is not null and j.import_id is not null and public.vexa_member(t,array['owner','analyst']) and exists(select 1 from public.imports where tenant_id=t and id=j.import_id);exit resource_scope;
+ end if;permitted:=false;exit resource_scope;
+end resource_scope;
+ perform set_config('vexa.action',coalesce(prior_action,''),true);
+ return permitted;
+exception when others then
+ perform set_config('vexa.action',coalesce(prior_action,''),true);
+ raise;
 end $$;
 revoke all on function public.notification_resource_read(uuid,uuid,text,uuid) from public,anon,authenticated,service_role,vexa_backend;
 create function public.notification_resource_current(t uuid,u uuid,k text,r uuid) returns boolean

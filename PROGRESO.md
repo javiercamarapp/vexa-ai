@@ -4,6 +4,14 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## PostgreSQL gestionado: compatibilidad y regresión —25-sep
+
+Se corrige el atributo de configuración de0028 que Supabase rechaza al crear la función. La restauración del contexto se verifica también ante excepción.0039 resuelve identidad Auth sin otorgar USAGE del esquema al login de aplicación; conserva OID, dueño y permisos de103 funciones, con17 reemplazos explícitos y rollback ante una función no prevista.
+
+Revisión independiente364:9/9 casos gestionados y8/8 negativos. Regresión366:425/425, con Auth, Storage, retrieval y revocación de sesiones reales locales; actualización38→39:5/5. Se adaptaron únicamente controles obsoletos para las14 tablas públicas de0033–0038, tombstones inmutables y borrado de Storage autorizado por retención. Los rojos anteriores quedan preservados en evidencia privada. Inventario de carga actualizado; no se reatribuye la medición histórica210K.
+
+51/60 alcances técnicos y25 aceptaciones formales, sin incremento por esta reparación. Supabase mantiene27 migraciones de dominio aplicadas; el login restringido está creado, su conexión TLS1.3 con CA oficial funciona y la exigencia SSL quedó activada. Aplicación remota de0028/0033–0039 y despliegue web siguen pendientes al corte. No acredita producción. Presupuesto371/376 reservado; controlesF08-04/06 bajo revisión independiente.
+
 ## F08-02 control e integración del supervisor —25-sep
 
 51/60 ámbitos técnicos, 25 aceptaciones formales. Siete fuentes revisadas363, 7/7 controles y 2/2 regresiones Node22/26; señal real espera al hijo y conserva fallo. Delta del supervisor revisado364 con12/12 pruebas de entorno: puntero de recibo y referencia guardada, sin cookies/entradas de ejecución. Evidencia351 de ocho fases locales reutilizada sólo por hashes, no reatribuida a otro SHA/destino. Detalle construccion/F08-02-CIERRE-TECNICO.md.

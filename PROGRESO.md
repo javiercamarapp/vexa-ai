@@ -1,6 +1,12 @@
 # Progreso verificable
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
+## Importación y recuperación reales en Vercel/Supabase —25-sep
+
+El alias vexa-ai.vercel.app sirve1ccec37fafe5ff2db0dbad10ffb103b31f43f62a. Siete controles focales remotos pasan: SHA servido, Auth/aislamiento de dos organizaciones SYN, delegación, consumidor HTTP/heartbeat, CSV→Storage→trabajo succeeded con3/3 filas aceptadas, denegación del ID ajeno y pausa/alarma/admisión503/recuperación del mismo trabajo. Las dos importaciones terminan sin rechazos, duplicados ni pendientes; delegación deshabilitada al terminar, sin cron continuo ni inferencia pagada. Revisión377 recogida y fuente publicada con SHA remoto comprobado.
+
+Esto cierra el defecto de empaquetado del consumidor; no sustituye el smoke completo de ocho fases, cuentas CRM reales ni auditoría integral.53/60 técnicos,25 formales, producciónfalse. Continúa la adaptación visual a Atiende con paleta verde/blanco/negro confirmada. El usuario autorizó continuar sin reconfirmaciones rutinarias;378 llamadas reservadas, asignación acotada379 para autoría y revisión visual, sin reset ni nuevo gasto externo.
+
 ## Consumidores: carga portable de PostgreSQL revisada e integrada —25-sep
 
 Revisión377 autorizada por el usuario y recogida: los cinco POST compilados fallan503/MODULE_NOT_FOUND en el baseline trasladado y pasan200/IDLE con la importación dinámica de pg. El contenedor no tiene la ruta original del build ni acceso a red. Diez rechazos401 preceden al transporte; CLI5/5 porNode22/26, lint/buildNode22 y696 fuentes comprobadas. Auth/DB son dobles explícitos en esa prueba de empaquetado. Se conserva la limitación de376, que cargaba la exportación POST sin ejecutarla.

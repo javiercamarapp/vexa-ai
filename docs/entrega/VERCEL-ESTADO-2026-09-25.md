@@ -1,6 +1,6 @@
 # VEXA AI — despliegue comprobado, 25 de septiembre
 
-URL propia: **https://vexa-ai.vercel.app**. Proyecto `vexa-ai`, runtime Node 22. El artefacto desplegado sirve la revisión `722a9d90b8b527592e2438fb86e5ed3ba6ce3755`, publicada también en GitHub. El destino de Vercel se llama `production`; ese nombre no certifica que el producto esté listo para clientes.
+URL propia: **https://vexa-ai.vercel.app**. Proyecto `vexa-ai`, runtime Node 22. El artefacto desplegado sirve la revisión `1ccec37fafe5ff2db0dbad10ffb103b31f43f62a`, publicada también en GitHub. El destino de Vercel se llama `production`; ese nombre no certifica que el producto esté listo para clientes.
 
 ## Comprobaciones realizadas
 
@@ -10,16 +10,16 @@ URL propia: **https://vexa-ai.vercel.app**. Proyecto `vexa-ai`, runtime Node 22.
 - La conexión directa inicial devolvía 503 en las consultas del backend. La dirección del pooler se obtuvo con `supabase link`, sin adivinarla. El rol restringido mantiene TLS 1.3 con CA oficial y verificación de hostname. Tras configurar el pooler de transacciones, ambas consultas remotas pasaron.
 - El owner SYN puede habilitar y revocar la delegación del worker mediante la API desplegada. Las pruebas dejaron la delegación deshabilitada y no activaron programación continua.
 
-## Defecto de empaquetado: corrección revisada e integrada
+## Defecto de empaquetado corregido y comprobado en Vercel
 
-La llamada HTTP al consumidor desplegado devuelve `WORKER_UNAVAILABLE`. Se reprodujo con su ruta compilada y sus dependencias en un contenedor aislado: `createRequire(import.meta.url)` conservaba una ruta absoluta de la máquina de compilación; cargar `pg` terminaba en `MODULE_NOT_FOUND`.
+La llamada HTTP al consumidor anterior devolvía `WORKER_UNAVAILABLE`. Se reprodujo con su ruta compilada y sus dependencias en un contenedor aislado: `createRequire(import.meta.url)` conservaba una ruta absoluta de la máquina de compilación; cargar `pg` terminaba en `MODULE_NOT_FOUND`.
 
-Existe una corrección local de un archivo que usa importación dinámica del módulo. La misma prueba aislada pasa de 503 a 200/IDLE y alcanza el despacho. Compilación y lint pasan, al igual que 12 pruebas TLS por Node 22 y 26. La fuente corregida también autenticó al worker y escribió un heartbeat en Supabase real, comprobado por la API de salud de Vercel. Esta última prueba ejecutó el candidato desde la máquina local: **no sustituye la ejecución del consumidor corregido en Vercel**.
+Se integró una corrección de un archivo que usa importación dinámica del módulo. La misma prueba aislada pasa de 503 a 200/IDLE y alcanza el despacho. Compilación y lint pasan, al igual que 12 pruebas TLS por Node 22 y 26. La fuente corregida también autenticó al worker y escribió un heartbeat en Supabase real, comprobado por la API de salud de Vercel. Esta última prueba ejecutó el candidato desde la máquina local: **no sustituye la ejecución del consumidor corregido en Vercel**.
 
-El usuario autorizó la revisión377 y la continuación del trabajo. La revisión independiente ejecutó los cinco POST trasladados: cinco fallos503 del baseline y cinco respuestas200/IDLE del candidato, más diez rechazos401 antes de acceder a DB/Auth. CLI5/5 porNode22/26, lint/buildNode22 y limpieza comprobados. La corrección queda integrada. Falta desplegar el nuevo SHA y comprobar la importación remota hasta estado terminal y su recuperación; no se da por aprobado el smoke remoto completo.
+El usuario autorizó la revisión377 y la continuación del trabajo. La revisión independiente ejecutó los cinco POST trasladados: cinco fallos503 del baseline y cinco respuestas200/IDLE del candidato, más diez rechazos401 antes de acceder a DB/Auth. CLI5/5 porNode22/26, lint/buildNode22 y limpieza comprobados. La corrección está publicada y desplegada. El consumidor HTTP real autenticó y procesó una importación de tres filas desde Storage hasta succeeded: tres aceptadas, cero rechazos, duplicados o pendientes. Una segunda organización no pudo leer el trabajo conocido. Una segunda importación quedó en cola durante una pausa controlada; se observó NO_HEARTBEAT y rechazo503 de nuevas admisiones, y el mismo trabajo terminó con tres filas aceptadas al reanudar. Delegación deshabilitada al acabar. Los siete controles focales pasaron; no equivalen al smoke completo de ocho fases ni a validación de CRM/IA real.
 
 ## Configuración externa pendiente
 
 El usuario decidió dejar el dominio de correo y los logos pendientes. No se reutiliza el dominio SMTP de otro producto. Google OAuth y correo permanecen deshabilitados hasta configurar y verificar los proveedores propios. Las trece plantillas Auth están preparadas y probadas localmente; su aplicación remota y la entrega real siguen pendientes. No se activan crons continuos ni inferencia pagada.
 
-Se conserva el conteo de 53/60 alcances técnicos integrados y 25 aceptaciones formales, con esta reparación de despliegue abierta. No hay incremento por configurar hosting ni por repetir una prueba. Las siete fichas sin cierre y el bloqueo de revisión de F06-09 permanecen; la auditoría integral no está aprobada y `production_validated` continúa en `false`.
+Se conserva el conteo de 53/60 alcances técnicos integrados y 25 aceptaciones formales, con esta reparación de despliegue cerrada. No hay incremento por configurar hosting ni por repetir una prueba. Las siete fichas sin cierre y el bloqueo de revisión de F06-09 permanecen; la auditoría integral no está aprobada y `production_validated` continúa en `false`.

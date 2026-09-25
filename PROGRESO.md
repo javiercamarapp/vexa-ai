@@ -4,6 +4,14 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Login sin contraseña y correos de marca unificados —25-sep
+
+Login central verde/blanco/negro, Google y enlace mágico existentes integrados con mensajes de acceso claros. Trece plantillas Supabase Auth y seguridad comparten cabecera, paleta y pie; logo configurable pendiente del usuario. Se verifica sesión antes de ofrecer cerrar sesión y se retiran textos técnicos del pie visible. Las invitaciones mantienen aceptación y permisos del equipo separados del enlace de Auth.
+
+Autor373:8/8 recorridos reales locales,29/29Auth,15/15plantillas, lint/build/tipos enNode22/26. SMTPMailpit, Auth, PKCE y navegador reales; Google externo no ejecutado. Revisor375:12/12 negativos por runtime y4/4 focales tras dos ajustes visuales,29/29Auth y compilación;18 recursos de revisión recogidos. Se preservó un rojo de inventario provocado por un log dentro del candidato y se verificó fuera del candidato. Fuentes finales revisadas; no certificación de Outlook/Gmail/AppleMail.
+
+El usuario dejará dominio/remitente y logos pendientes. La web usará el proyectoVercel vexa-ai y su URL propia vexa-ai.vercel.app. Resend sólo tiene verificado un dominio de otro producto, que no se reutiliza para VEXA. Google requiere su OAuth propio; SMTP externo y aplicación remota de plantillas siguen sin configurar.53/60 técnicos,25 formales; sin afirmar producción ni entrega externa.
+
 ## Lectura de notificaciones y contador sincronizados —25-sep
 
 La bandeja abre con avisos sin leer; abrir detalle confirma lectura y retira el aviso pendiente, manteniendo historial en todos. El contador SQL incluye sólo filas autorizadas, independientemente de la página. Recargar tras una respuesta perdida también actualiza el contador lateral. No se convierte un fallo de red o permiso en cero ni se navega fingiendo lectura confirmada.

@@ -65,3 +65,22 @@ main:has(.workspace) { max-width: 96rem; padding: 2rem clamp(1rem, 3vw, 3rem); }
 .action-form { display: grid; gap: 1rem; margin-top: 1.5rem; max-width: 38rem; }.action-form textarea { min-height: 6rem; }.page-next { display: inline-block; padding: 1rem; }
 @media(max-width: 760px) { .workspace { grid-template-columns: minmax(0,1fr); gap: 1.5rem; }.workspace-sidebar { border-right: 0; border-bottom: 1px solid #cad4c8; padding: 0 0 1rem; }.workspace-sidebar nav ul { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }.workspace-sidebar form { max-width: 25rem; }.metric-grid { grid-template-columns: minmax(0,1fr); } }
 @media(prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+
+/* Passwordless entry shares the application palette and accessible target sizes. */
+.auth-card { width: 100%; max-width: 30rem; padding: clamp(1.5rem, 5vw, 2.5rem); border: 1px solid #cad4c8; border-radius: 1rem; background: #ffffff; box-shadow: 0 12px 40px #11111108; }
+main:has(.auth-card) { display: grid; place-items: center; min-height: calc(100dvh - 10rem); padding: 2rem 1rem; }
+body:has(.auth-card) .site-header { display: none; }
+.auth-brand { display: flex; justify-content: center; margin-bottom: 2rem; }
+.auth-card h1 { font-size: clamp(1.7rem, 5vw, 2.2rem); text-align: center; }
+.auth-card form { display: grid; gap: .75rem; margin: 1.5rem 0; }
+.auth-card form p, .auth-card form h2 { margin: 0; }
+.auth-card input, .auth-card button { font: inherit; width: 100%; min-width: 0; min-height: 48px; padding: .75rem 1rem; border: 1px solid #75877e; border-radius: .4rem; }
+.auth-card input { background: #ffffff; color: #111111; }
+.auth-card button { background: #166534; color: #fff; cursor: pointer; }
+.auth-card button:disabled { opacity: .65; cursor: wait; }
+
+body:has(.auth-card) { background: #ffffff; color: #111111; }
+.auth-card .wordmark { color: #111111; }
+.auth-card .wordmark span { color: #166534; }
+
+.auth-card form[action="/auth/logout"] button { background: #ffffff; color: #111111; }

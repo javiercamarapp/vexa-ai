@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "20ba491282a41dbebc11ce55278dcd545e0a7dd7",
-  "composition": "Current source inventory includes reviewed notification read and authorized total count. Historic load reports retain their measured sources and are not reattributed to this composition.",
+  "baselineSha": "df26f7333d682326139f4d227df9d8aeea6f0bca",
+  "composition": "Current source inventory includes reviewed passwordless login and unified authentication email branding. Historic load reports retain their measured sources and are not reattributed to this composition.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -417,15 +417,15 @@
     },
     {
       "path": "apps/web/src/app/globals.css",
-      "sha256": "008058cede53d3c2a7c6d7ff02a84070358d228e7f80304e8d1a8d7495346a97"
+      "sha256": "06ea0442c2a8d38b0490cd01d1cba3a3f28aeb640deb29e754e5f35e4185e62e"
     },
     {
       "path": "apps/web/src/app/layout.tsx",
-      "sha256": "64696354864345c38ffc57320fb29273af7b1e4c0e971eaa02ab3b5e77818709"
+      "sha256": "7ccdc9d43c356dd42dd18f0b7e1a094bb988712990c64a884e9cb4d3fa158a2f"
     },
     {
       "path": "apps/web/src/app/login/page.tsx",
-      "sha256": "177fe222f827ba796725da309c65e667dc87924a33e280d3877e998aaf747e33"
+      "sha256": "59a7dcf1a7cb5a14786c936e2c541e68456188d8146fd43a1d04d2b1931af1c6"
     },
     {
       "path": "apps/web/src/app/page.tsx",
@@ -485,7 +485,7 @@
     },
     {
       "path": "apps/web/src/components/email-login.tsx",
-      "sha256": "ce6910a35e7988da2b116acb30d8a939a49804c97f71a19409b435389de5eb50"
+      "sha256": "fdb2543a6b0a3289bbef916c6dc4158b729b1715397f987a9cdb63afd2714f57"
     },
     {
       "path": "apps/web/src/components/embedding-budget-panel.tsx",
@@ -564,6 +564,10 @@
       "sha256": "b74d2e4d101f973702f732646dc94751285c5780281252177b9c74dd638b7ffe"
     },
     {
+      "path": "apps/web/src/components/vexa-brand.tsx",
+      "sha256": "7d2307dc0fa008ac43a937759ae13b8f445805ab1efbdae08be26c0937ff7fd3"
+    },
+    {
       "path": "apps/web/src/components/workspace/action-form.tsx",
       "sha256": "09073e17cab4cd1880a293430ddbc20c00e7a33dfc8b4202937afde4c11460bd"
     },
@@ -612,6 +616,18 @@
       "sha256": "3541a3dc308e5b27192bb486cbb94772c3639d218b1858338fe1db308dd99742"
     },
     {
+      "path": "apps/web/src/lib/brand.d.mts",
+      "sha256": "4ddf99b4cb4599107d2ef9cb6147a6258c6d82b234972f122d5abb0f83351d0c"
+    },
+    {
+      "path": "apps/web/src/lib/brand.json",
+      "sha256": "594c9168b56014924ec495cecda0a395d928bf71c64def5ca9a99768d16dd896"
+    },
+    {
+      "path": "apps/web/src/lib/brand.mjs",
+      "sha256": "412d532ac7b147da13dd6575031e4525c9e210777d50f07db863ad3ecf1abaa9"
+    },
+    {
       "path": "apps/web/src/lib/briefs/server.ts",
       "sha256": "2a61437a5e711c59501d084336f774ff9256064ae6aad5da473c45af04a8263a"
     },
@@ -641,7 +657,7 @@
     },
     {
       "path": "apps/web/src/lib/email-auth/server.ts",
-      "sha256": "359043922b18c495b0b52845378855ac18358efaff8b637782b9f08505686758"
+      "sha256": "0effa12a0464fd3df19f60502ff24c71d8280b8483062f5ceb298b3bb7345bff"
     },
     {
       "path": "apps/web/src/lib/evaluation/server.ts",

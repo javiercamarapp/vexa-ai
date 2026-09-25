@@ -1,3 +1,4 @@
+import * as releaseTables from './release-tables/oracles.mjs';
 import * as notifications from './notification-oracles.mjs';
 import * as briefs from './brief-oracles.mjs';
 import * as interventions from './intervention-oracles.mjs';
@@ -66,8 +67,10 @@ export function schemaOracle(h) {
   }
   // Extra private tables cannot silently escape the functional matrix.
   const hasUploads=tables.some(x=>x.name===uploads.table);
-  assert.deepEqual(tables.filter(x=>!['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h),...(workers.present(h)?[workers.table]:[]),...sync.present(h),...(health.present(h)?[health.table]:[]),...(crm.present(h)?[crm.table]:[]),...budget.present(h),...extraction.present(h),...problems.present(h),...causality.present(h),...economic.present(h),...exposure.present(h),...money.present(h),...snapshots.present(h),...priority.present(h),...workspace.present(h),...detail.present(h),...recommendations.present(h),...interventions.present(h),...briefs.present(h),...notifications.present(h)].includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
+  const classified=['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h),...(workers.present(h)?[workers.table]:[]),...sync.present(h),...(health.present(h)?[health.table]:[]),...(crm.present(h)?[crm.table]:[]),...budget.present(h),...extraction.present(h),...problems.present(h),...causality.present(h),...economic.present(h),...exposure.present(h),...money.present(h),...snapshots.present(h),...priority.present(h),...workspace.present(h),...detail.present(h),...recommendations.present(h),...interventions.present(h),...briefs.present(h),...notifications.present(h),...releaseTables.present(h)];
+  assert.deepEqual(tables.filter(x=>!classified.includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
   const fks=foreignKeys(h);
+  releaseTables.schema(h,fks);
   if(workspace.present(h).length)workspace.schema(h,fks);
   if(detail.present(h).length)detail.schema(h,fks);
   if(recommendations.present(h).length)recommendations.schema(h,fks);
@@ -165,7 +168,8 @@ export function tableOracle(h,table,f,actors) {
   rows(h.probe(read(table),actors.dual),[...visible('a'),...visible('b')],`READ_AB:${table}`);
   const fresh=(tenant)=>freshRow((tenant===A?a:b)[table]);
   // Insert/delete on a leaf clone: dependent fixtures cannot mask authorization.
-  const immutable=table==='audit_events';
+  const retentionTombstone=table==='tombstones'&&h.sql("SELECT to_regclass('public.retention_ledger') IS NOT NULL")==='t';
+  const immutable=table==='audit_events'||retentionTombstone;
   const appendOnly=table==='message_revisions'&&history.present(h).includes('source_heads');
   const disposable=immutable?a[table]:fresh(A);if(!immutable)h.sql(insert(table,disposable)+';');
   try {
@@ -185,6 +189,7 @@ export function tableOracle(h,table,f,actors) {
     const pos=fresh(A);rows(h.probe(write(insert(table,pos)),allowed),[pos.id],`INSERT_POSITIVE:${table}`);
     if(!immutable&&!appendOnly)rows(h.probe(write(`UPDATE public.${ident(table)} SET updated_at=updated_at+interval '1 second' WHERE id=${q(disposable.id)}`),allowed),[disposable.id],`UPDATE_POSITIVE:${table}`);
     if(!immutable&&!appendOnly)rows(h.probe(write(`DELETE FROM public.${ident(table)} WHERE id=${q(disposable.id)}`),allowed),[disposable.id],`DELETE_POSITIVE:${table}`);
+    if(retentionTombstone)for(const op of ['UPDATE','DELETE'])assert.equal(h.probe(write(op==='UPDATE'?`UPDATE public.tombstones SET updated_at=updated_at+interval '1 second' WHERE id=${q(disposable.id)}`:`DELETE FROM public.tombstones WHERE id=${q(disposable.id)}`)).code,'42501',`RETENTION_TOMBSTONE_IMMUTABLE:${op}`);
     if(appendOnly)for(const op of ['UPDATE','DELETE'])denied(h.probe(`SET LOCAL ROLE vexa_backend; ${write(op==='UPDATE'?`UPDATE message_revisions SET hash='changed' WHERE id=${q(disposable.id)}`:`DELETE FROM message_revisions WHERE id=${q(disposable.id)}`)}`),'APPEND_ONLY_MESSAGE_HISTORY:'+op);
     const swap=h.probe(write(`UPDATE public.${ident(table)} SET tenant_id=${q(B)} WHERE id=${q(disposable.id)}`),actors.dual);
     // 23503 is deliberately NOT accepted: it can hide a missing immutability rule.
@@ -268,6 +273,7 @@ function fkDiagnostic(h,table,result){
 // Every discovered private edge gets a valid INSERT and a foreign-parent INSERT.
 // Diagnostics retain the rejecting constraint; mandatory presence is checked separately.
 export function discoveredFkOracle(h,f,fk) {
+  if(releaseTables.tables.includes(fk.table))return releaseTables.fk(h,f,fk);
   if(notifications.ownsFk(fk))return notifications.fk(h,f.notifications,fk);
   if(briefs.ownsFk(fk))return briefs.fk(h,f.briefs,fk);
   if(workspace.tables.includes(fk.table))return workspace.fk(h,f.workspace,fk);

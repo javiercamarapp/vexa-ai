@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "369f083296351fac3db281e708d7325444fa49cf",
-  "composition": "Current source inventory includes reviewed strict optional PostgreSQL CA configuration. Historic load measurements retain their original sources and are not reattributed to this composition.",
+  "baselineSha": "20ba491282a41dbebc11ce55278dcd545e0a7dd7",
+  "composition": "Current source inventory includes reviewed notification read and authorized total count. Historic load reports retain their measured sources and are not reattributed to this composition.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -536,8 +536,12 @@
       "sha256": "156698f7a0cc58f293c6811874d8866140bc531a1808f08743973687d6c2112a"
     },
     {
+      "path": "apps/web/src/components/notifications/navigation-link.tsx",
+      "sha256": "dcf383e333f048e0502a246d7f8d28daa0da9db4bdbf5b7dbcd8418e5f795a40"
+    },
+    {
       "path": "apps/web/src/components/notifications/panel.tsx",
-      "sha256": "f60558a5edd42591221579b47343f19e3c6240cb482d30dea2bc9cc81d900ef5"
+      "sha256": "6ed64cd024ea3e19c59a2a39ca1cd63ee5adf63ef7f9a30b47c9523e8825290d"
     },
     {
       "path": "apps/web/src/components/problems-panel.tsx",
@@ -585,7 +589,7 @@
     },
     {
       "path": "apps/web/src/components/workspace/navigation.tsx",
-      "sha256": "254becb20dbfe0e010427ce374e677abc911ddc3456c99ebe7f1963ca01be4a0"
+      "sha256": "50c138d827e4103732157b44d8a95c9cbc3b204217f131fa6ab31069d1cb6962"
     },
     {
       "path": "apps/web/src/components/workspace/order-mappings.tsx",
@@ -2281,7 +2285,7 @@
     },
     {
       "path": "packages/notifications/OPERATIONS.md",
-      "sha256": "fb15c57bdbdafeca5822e33674a2c9fb68908dc5a895932520891436b0655e17"
+      "sha256": "6159ec2a2097be569d14705efb33600122f482ab3733cc610625a2d13b5b7eef"
     },
     {
       "path": "packages/notifications/catalog.mjs",
@@ -2293,11 +2297,11 @@
     },
     {
       "path": "packages/notifications/index.d.mts",
-      "sha256": "89f3ed6e2076c53bebb88ffd485d2392426e2b48cf2ee3a6dc89d4ffe3ccd51f"
+      "sha256": "0d9848cd7fe96934dc23f7350410e3a797849bfac1b7a8e5d13366fa5912d7de"
     },
     {
       "path": "packages/notifications/index.mjs",
-      "sha256": "4d1af1964cc1d8fb532d08860a7826d89b5ed3b507c5a343b97d207fa42efa63"
+      "sha256": "e9afc1612876e2f75810912e994e9342be604fcd43adf5805c2275223c4c0bcc"
     },
     {
       "path": "packages/platform/IMPLEMENTATION-SCHEMA.md",

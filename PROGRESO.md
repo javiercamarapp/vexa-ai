@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## Lectura de notificaciones y contador sincronizados —25-sep
+
+La bandeja abre con avisos sin leer; abrir detalle confirma lectura y retira el aviso pendiente, manteniendo historial en todos. El contador SQL incluye sólo filas autorizadas, independientemente de la página. Recargar tras una respuesta perdida también actualiza el contador lateral. No se convierte un fallo de red o permiso en cero ni se navega fingiendo lectura confirmada.
+
+Revisión374:8/8 finales Node22 y26 con Auth/DB/Storage/API/navegador reales, lint/build; contratos7/7 por runtime. Incluye respuesta POST perdida tras commit, contador antiguo y revocación. Regresión anterior15/15 preservada con su SHA; una corrección de recibo evita escribir pass si falla un subtest.30 recursos y cinco procesos recogidos.53/60 técnicos y25 formales, sin incremento por esta reparación. El ámbito no activa generación de eventos ni entrega externa email/push.
+
 ## F08-06 control de cierre integrado —25-sep
 
 53/60 alcances técnicos y25 aceptaciones formales. Revisión371:23/23 controles y11/11 pruebas del runner porNode22/26, más composición final del supervisor revisada por el principal. Se ligan actas, métricas y ocho fases remotas a bytes/SHA y autoridad; no se confunde el histórico49 con cierre actual ni se acepta una capa blocked/not_run. Detalle: construccion/F08-06-CIERRE-TECNICO.md. Piloto, acuerdos humanos y cierre real siguen pendientes.

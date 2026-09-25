@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## TLS del pool web comprobado contra Supabase —25-sep
+
+El backend admite CA oficial por variable exclusiva de servidor y mantiene validación de certificado y hostname. Revisión372 corrigió dos overrides del parser: sslnegotiation podía reemplazar el CA y host/socket podía evitar TLS.40/40 pruebas de plataforma y7/7 independientes porNode22/26, TLS real local, lint y build verdes. El principal verificó además conexión real TLS1.3 a Supabase, ausencia de acceso heredado, identidad sin USAGE de Auth, aislamiento para sujeto sin membresías y restauración del rol tras transacción. Un rojo inicial del control asumía acceso a organizations; se corrigió a memberships, sin ampliar grants.
+
+Vercel tiene configuración monorepo/Node22 aplicada y Git desconectado; aún no hay despliegue de la aplicación.51/60 técnicos,25 formales. Google/magic link existen; nueva petición de marca en correos Auth y comportamiento de lectura de notificaciones en construcción y prueba. No se declara producción ni envío externo verificado.
+
 ## Supabase actualizado y configuración de hosting revisada —25-sep
 
 35 migraciones de dominio públicas aplicadas mediante MCP legítimo, más un bootstrap operativo del login restringido. Se comprobaron99/99 tablas públicas con RLS y cero funciones invocadoras con referencias Auth sin resolver. El rol no tiene superusuario, bypassRLS, herencia automática ni USAGE de Auth; SSL obligatorio activado. Las migraciones0029–0032 permanecen fuera de alcance.

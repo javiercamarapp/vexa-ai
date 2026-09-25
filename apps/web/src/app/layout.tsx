@@ -20,8 +20,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </header>
         <main id="contenido" tabIndex={-1}>{children}</main>
         <footer className="site-footer">
-          <span>VEXA · Base inicial del producto</span>
-          <a href="/api/health/version">Versión técnica (JSON)</a>
+          <span>VEXA</span>
         </footer>
       </body>
     </html>

@@ -4,6 +4,12 @@ Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes histó
 
 
 
+## TLS compartido también en los cinco consumidores —25-sep
+
+Se encontró que el driver durable todavía omitía el CA configurado para la web. Ahora ambos usan el mismo helper, con límite de pool3 para consumidores. No se duplican reglas ni se cambia identidad, delegación, negocio o autorización.
+
+Revisión376:12/12 pruebas independientes porNode22/26 con Pool real de cada consumidor, rechazo de CA ajena/hostname/overrides/socket y mutante sin CA detectado. Lint/buildNode22,689 fuentes comprobadas y cinco rutas POST cargadas desde sus trazas aisladas, incluido el chunk TLS. El principal verificó además cinco conexiones reales TLS1.3 a Supabase como vexa_runtime; sólo conexión/consulta del rol, sin trabajo remoto ni inferencia. Recursos recogidos.53/60 técnicos,25 formales;376/376 invocaciones reservadas. Continúa el principal con despliegue y verificaciones deterministas autorizadas; no se afirma un loop autónomo sin procesos.
+
 ## Login sin contraseña y correos de marca unificados —25-sep
 
 Login central verde/blanco/negro, Google y enlace mágico existentes integrados con mensajes de acceso claros. Trece plantillas Supabase Auth y seguridad comparten cabecera, paleta y pie; logo configurable pendiente del usuario. Se verifica sesión antes de ofrecer cerrar sesión y se retiran textos técnicos del pie visible. Las invitaciones mantienen aceptación y permisos del equipo separados del enlace de Auth.

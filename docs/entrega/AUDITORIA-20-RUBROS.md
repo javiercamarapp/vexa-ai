@@ -27,6 +27,18 @@ Corte de producto revisado:3f7f47a y deltas publicados d5fd99e (importación/nav
 | 19 Integraciones y herramientas | Backfill→incremental durable, cuentas/orígenes restringidos, redirects denegados y herramienta de lectura con esquema cerrado. | CRM publicado usa polling; no existe receptor webhookCRM que pueda declararse probado. Cuentas reales pendientes. |
 | 20 Agentes y supervisión | Prompt SYSTEM realmente activo; sólo entradas redactadas/citas, tool_calls rechazados; configuración efectiva y firma versionada. | Gold humano, inferencia autorizada y calidad semántica reales; no entrenamiento/promoción automáticos. |
 
+## Actualización de infraestructura comprobada —25-sep
+
+El corte remoto posterior sirve `1ccec37fafe5ff2db0dbad10ffb103b31f43f62a` en https://vexa-ai.vercel.app. No se atribuyen a ese SHA los benchmarks históricos de esta tabla. Supabase gestionado recibió las35migraciones autorizadas (0001–0028 y0033–0039) y bootstrap del rol restringido;99tablas públicas conRLS. El pooler mantiene verificación TLS/CA y hostname. El ámbito SQL0029–0032 sigue excluido.
+
+Siete controles focales reales pasaron: revisión servida, dos organizaciones SYN autenticadas/aisladas, delegación, consumidor HTTP/heartbeat, CSV→Storage→trabajo terminal3/3 aceptadas, acceso ajeno denegado y pausa→alarma/admisión503→recuperación del mismo trabajo sin duplicados. Tres comprobaciones posteriores de navegador verificaron estado/actualizar/descarga de errores y rechazo ajeno en escritorio/móvil. Delegación deshabilitada al terminar y sin cron continuo. Recibos privados conservan SHA y alcance; [detalle publicado](VERCEL-ESTADO-2026-09-25.md).
+
+Esto actualiza los rubros3,6,8,11,14 y17 del corte histórico: el despliegue, SQL autorizado y consumidor remoto ya no son meros metadatos. Siguen pendientes el smoke remoto completo de ocho fases, restore gestionado, programación continua, Google/SMTP propios, CRM/modelos reales y los bloqueos descritos. La revisión visual posterior de Atiende se registra por separado; estos controles no aprueban los20rubros ni producción.
+
+## Actualización de frontend comprobada —25-sep
+
+Revisiones379/381: estructura Atiende, navegación móvil/compacta, confirmaciones, tablas y movimiento reducido integrados;37fuentes finales, compilaciónNode22, F01-04 intacto y controles reales locales de Auth/SQL/Storage. La matriz diferencia29rutas de582sitios de controles: no son582acciones ejecutadas. Se corrigieron grupos inaccesibles al contraer, una tabla sin región propia y contraste de placeholders. [Informe delimitado y huellas](INTERFAZ-ATIENDE-2026-09-25.md). Chrome comprobado; revisión humana, accesibilidad global y validación del nuevo despliegue siguen separadas.
+
 ## Reparaciones verificadas
 
 - Una invitación rechazada emitía cookie: el mismo403 ahora deja cero cookies y workspace401; el caso válido conserva identidad final y aceptación.
@@ -65,4 +77,4 @@ Caos:33casos autoresNode26, guardas posteriores en22/26, dos casos independiente
 | Revisión360 del gate de caos | 8ead7834dc27027f71b2c7e26a1f268e345c456a6aa373f3d7fb7164dab6bd05 |
 | Revisión360 del control de recuperación | c4ed21ea4af87eafb2b6e2a1c563ec3a775d98b0e925f553d3d7a20141fde08b |
 
-Los20rubros tienen conclusiones delimitadas. El ámbito excluido, las validaciones humanas y el despliegue real impiden declarar auditoría global aprobada o software listo para producción.
+Los20rubros tienen conclusiones delimitadas. El ámbito excluido, las validaciones humanas y el smoke remoto completo pendiente impiden declarar auditoría global aprobada o software listo para producción.

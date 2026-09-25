@@ -1,4 +1,12 @@
 # Progreso verificable
+Actualizado: 2026-09-25. Los apartados conservados abajo son cortes históricos.
+
+## Interfaz Atiende y movimiento: revisión independiente cerrada —25-sep
+
+Se integran37fuentes revisadas379/381: login, navegación compacta/móvil, páginas auxiliares, tablas accesibles, confirmaciones explícitas y movimiento reducido. F01-04 intacto3/3; Auth/SQL/Storage locales reales, CSV3/3, export financiero, cancelación0POST y doble clic1POST comprobados. Matriz29rutas×3anchos, inventario582sitios de controles con cobertura diferenciada. Lint y compilaciónNode22 final verdes; los resultados no certifican582acciones ni accesibilidad global. [Evidencias, correcciones y límites](docs/entrega/INTERFAZ-ATIENDE-2026-09-25.md).
+
+53/60 técnicos y25 formales, sin inflar contadores. Publicación y comprobación del nuevo SHA en Vercel son el siguiente paso; el runtime remoto anterior sigue identificado aparte.382 llamadas acumuladas reservadas, sin reset ni gasto externo adicional;382 prepara localmente el smoke remoto completo mientras se cierra esta publicación.
+
 Actualizado: 2026-09-20 local. Los apartados conservados abajo son cortes históricos, no inventario vigente.
 
 ## Importación y recuperación reales en Vercel/Supabase —25-sep

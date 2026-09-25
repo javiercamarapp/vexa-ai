@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function NotFound(){return <section className="access-flow"><p className="eyebrow">VEXA AI · 404</p><h1>No encontramos esta página</h1><p>El enlace puede haber cambiado. Vuelve a tu espacio de trabajo para abrir un recurso disponible con tu acceso.</p><Link href="/overview">Ir al resumen</Link><br/><Link href="/login">Iniciar sesión con otra cuenta</Link></section>;}

@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "f95d1625ffd07ca580de6348a8ceb588604735fd",
-  "composition": "Source inventory includes reviewed dynamic pg import for portable hosted consumers. Historic load measurements retain their original measured source identities.",
+  "baselineSha": "486f7ac1034d1bb90b1245fc4a75e6a18399a863",
+  "composition": "Source inventory includes reviewed Atiende-style VEXA UI, accessible navigation and confirmations, restrained motion and final placeholder contrast correction (reviews379/381). Historic load measurements retain their original measured source identities; no new load measurement claimed.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -26,6 +26,70 @@
     {
       "path": "apps/web/package.json",
       "sha256": "fa40b9871c4cfcd5dfe4e40177a60e7f61077dbe9c858ef4b8215e1d6efb679f"
+    },
+    {
+      "path": "apps/web/public/fonts/fraunces-0.ttf",
+      "sha256": "3eb6cf0a14feb1876cc464fa093af4e0c5b05dc46dec65619c1d95f2a1ab5aa7"
+    },
+    {
+      "path": "apps/web/public/fonts/fraunces-OFL.txt",
+      "sha256": "bdf4c22802eaf804f998195871c6b8938aac2ac14b2d78a8bd66a6f1eced833b"
+    },
+    {
+      "path": "apps/web/public/fonts/ibmplexmono-0.ttf",
+      "sha256": "a7fdc993f9f0387caedba4e42521136fa97e4c0837ae6239bf0413ccf8af00c2"
+    },
+    {
+      "path": "apps/web/public/fonts/ibmplexmono-1.ttf",
+      "sha256": "4fc14a73ca53ba9d32fd759ae1ca1a3133326035d0dd337862b3ee1633cc156e"
+    },
+    {
+      "path": "apps/web/public/fonts/ibmplexmono-OFL.txt",
+      "sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da"
+    },
+    {
+      "path": "apps/web/public/fonts/instrumentsans-0.ttf",
+      "sha256": "01689ad055025ff1891607b077513c9389f73360d471dcffa036e326af179b00"
+    },
+    {
+      "path": "apps/web/public/fonts/instrumentsans-1.ttf",
+      "sha256": "a7bcb84cb01f6e33eecdd2cbff3f97ff1674c0e8e37c6921b6cd717b8c854d98"
+    },
+    {
+      "path": "apps/web/public/fonts/instrumentsans-2.ttf",
+      "sha256": "5e39a358a65a72b6b74b56b384bbe17a61d8899d33cc255d49112e6522e3df0d"
+    },
+    {
+      "path": "apps/web/public/fonts/instrumentsans-OFL.txt",
+      "sha256": "9e27a72ed30eb49a08678f6a5d6ed98ec7ba5368f541637ee0683ec9134ef966"
+    },
+    {
+      "path": "apps/web/public/fonts/inter-0.ttf",
+      "sha256": "1b08e7fc267a5c7e1d614100f604b83e7e8a0be241f0f288faa2b3ac93a683ba"
+    },
+    {
+      "path": "apps/web/public/fonts/inter-1.ttf",
+      "sha256": "8c883f63b2c4157d997319f2c8bc6995ed4357ef371940d31ca159004a4aae63"
+    },
+    {
+      "path": "apps/web/public/fonts/inter-2.ttf",
+      "sha256": "e7a1aaf7eda9f2fad4131725fa556265ec75ca7b2d756260173a040363e8d4f7"
+    },
+    {
+      "path": "apps/web/public/fonts/inter-3.ttf",
+      "sha256": "b37284b5701b6b168dfc770aa1a4ac492106422fd3ba76bc7641e37434e8019c"
+    },
+    {
+      "path": "apps/web/public/fonts/inter-OFL.txt",
+      "sha256": "5b9321a4298cfeb6b34354164a1c3afc3db114569984c502b9b35d988fd58c57"
+    },
+    {
+      "path": "apps/web/public/fonts/sources.json",
+      "sha256": "daaa25a304f5937218883c00264041792d4e47b5aeddd2b705ac84fdb8d08e29"
+    },
+    {
+      "path": "apps/web/public/images/login-hero.png",
+      "sha256": "c129c6ed5c6b3a653c52334df29081da16b5f9c66afdb1ccde82b1da39484f62"
     },
     {
       "path": "apps/web/src/app/(workspace)/analysis/[id]/page.tsx",
@@ -93,7 +157,7 @@
     },
     {
       "path": "apps/web/src/app/(workspace)/layout.tsx",
-      "sha256": "5bcf92c60739a3796a45160bd4d01fabcaccd3499f7bf8ba86719e7022378f0a"
+      "sha256": "d93c81dd6e054fdd8465092201f3c3f4e7aa1fc8718432f75399455c260ba101"
     },
     {
       "path": "apps/web/src/app/(workspace)/loading.tsx",
@@ -416,20 +480,32 @@
       "sha256": "2e35dab9aa12001f2251e60894bee5ff469cadda7a5de78e7350df68f549cc0c"
     },
     {
+      "path": "apps/web/src/app/error.tsx",
+      "sha256": "c6dc5616be54aa22326729269e00aa9b180d724e635b2882c17ec48f962aee2d"
+    },
+    {
+      "path": "apps/web/src/app/fonts.css",
+      "sha256": "51c6830c16ad01d1d103297cd5bf1efbf4fb6d47ab3f4d9ea28a1ba059b95a32"
+    },
+    {
       "path": "apps/web/src/app/globals.css",
-      "sha256": "06ea0442c2a8d38b0490cd01d1cba3a3f28aeb640deb29e754e5f35e4185e62e"
+      "sha256": "1f70a34f55803a9e4c6fcbed9ddb0ab1f8960312b5e79b0cdb8e917a830c10e8"
     },
     {
       "path": "apps/web/src/app/layout.tsx",
-      "sha256": "7ccdc9d43c356dd42dd18f0b7e1a094bb988712990c64a884e9cb4d3fa158a2f"
+      "sha256": "dd468e0451ad6ffdd3fc4024ad227c4f183b94ba7af3c37d6ef2cb498625d623"
     },
     {
       "path": "apps/web/src/app/login/page.tsx",
-      "sha256": "59a7dcf1a7cb5a14786c936e2c541e68456188d8146fd43a1d04d2b1931af1c6"
+      "sha256": "72badea69edf32260505677d567078dd7a44b901c8dee0ded1d0baf72a78d854"
+    },
+    {
+      "path": "apps/web/src/app/not-found.tsx",
+      "sha256": "53bf058c4485eb9e13cffb9b28d7bdcc82ebb3779225328c33f6d366e688a6df"
     },
     {
       "path": "apps/web/src/app/page.tsx",
-      "sha256": "91c19ce14d540f0b8cf4f0ab2ff5350b095427e541ba624c5d892e89b0da0f56"
+      "sha256": "3048650fe2682a7b3753ed558efd4cad62d87a095aa752911f7c2bc8d7327111"
     },
     {
       "path": "apps/web/src/app/session-guard.tsx",
@@ -450,6 +526,10 @@
     {
       "path": "apps/web/src/components/cause-evidence.tsx",
       "sha256": "2f6d843d8d534fd006daccac77366824bbd00a747b00b2f036000f6240cf24c7"
+    },
+    {
+      "path": "apps/web/src/components/confirmation-dialog.tsx",
+      "sha256": "0a16729055a1147ae103dc37e2cb28e9b6b20fe45c2d397e7b52e9a3a8f40cbb"
     },
     {
       "path": "apps/web/src/components/connection-health.tsx",
@@ -481,11 +561,11 @@
     },
     {
       "path": "apps/web/src/components/email-login-complete.tsx",
-      "sha256": "c311ad7a3d7c0ddb69206494298c4c6535b557080d9626092b2cc1c51bd6096d"
+      "sha256": "889e0500ba2868574d21f424e06dd142e9b1524eb732e8d4b07a5ee37dc31b6b"
     },
     {
       "path": "apps/web/src/components/email-login.tsx",
-      "sha256": "fdb2543a6b0a3289bbef916c6dc4158b729b1715397f987a9cdb63afd2714f57"
+      "sha256": "55f302d6d91ab5bc04c06da83abe352455c096f37e75eec428ca88e6b06a147c"
     },
     {
       "path": "apps/web/src/components/embedding-budget-panel.tsx",
@@ -513,11 +593,11 @@
     },
     {
       "path": "apps/web/src/components/history-panel.tsx",
-      "sha256": "4c5099fc8ebc8abb117f478006e275886cef792e246a132bc70078c7a3656f1b"
+      "sha256": "5adfd770a8c4df6bc387961b5c963212fac391da06f80d2629509c732e2c29c5"
     },
     {
       "path": "apps/web/src/components/import-preview.tsx",
-      "sha256": "0b08300234bedac7b79ad94508dbccc33011bb348c415bff9e05bdc6c1291c33"
+      "sha256": "923ae8660de3cbb4a6b9f2d94a813a9c810cfc6fe8bc8828e0d76b1dc0e25256"
     },
     {
       "path": "apps/web/src/components/interventions/panel.tsx",
@@ -533,11 +613,11 @@
     },
     {
       "path": "apps/web/src/components/migration-comparison.tsx",
-      "sha256": "156698f7a0cc58f293c6811874d8866140bc531a1808f08743973687d6c2112a"
+      "sha256": "1fb35e52d166043e6aaecab508091c0eb3a130f1cbb6215dfe5437e3c6b3ff85"
     },
     {
       "path": "apps/web/src/components/notifications/navigation-link.tsx",
-      "sha256": "dcf383e333f048e0502a246d7f8d28daa0da9db4bdbf5b7dbcd8418e5f795a40"
+      "sha256": "ff4c026f465ce6f5a50e968cf42d88001d2fe0d54a2178b48607f176c5f2f052"
     },
     {
       "path": "apps/web/src/components/notifications/panel.tsx",
@@ -557,11 +637,11 @@
     },
     {
       "path": "apps/web/src/components/team-invitation.tsx",
-      "sha256": "d4cb32aa2ced2dbfa4b6acdb70f0a12f97ac6abcdcf4f88602b6074876e44bcf"
+      "sha256": "a6c77c9e40c7cfb28eac91e71778b2704a875990c14bffc7eb3c4e3f684425b9"
     },
     {
       "path": "apps/web/src/components/team-panel.tsx",
-      "sha256": "b74d2e4d101f973702f732646dc94751285c5780281252177b9c74dd638b7ffe"
+      "sha256": "cd9e9a4d07a9dc14504be7f4e27feef453a3bee75858cba596867b68e4359f92"
     },
     {
       "path": "apps/web/src/components/vexa-brand.tsx",
@@ -592,12 +672,20 @@
       "sha256": "bf99ccb8f3d66f36807848a1f7b05868d4ea358b50da42f7d45c4e88d3bf6305"
     },
     {
+      "path": "apps/web/src/components/workspace/icon.tsx",
+      "sha256": "3b21925e0f13bb19d77871b742e090b826c45df2213bfb6538a0fbb30404d732"
+    },
+    {
       "path": "apps/web/src/components/workspace/navigation.tsx",
-      "sha256": "50c138d827e4103732157b44d8a95c9cbc3b204217f131fa6ab31069d1cb6962"
+      "sha256": "d0fdd9507a118f8678aaa0805017536a739168bbaa34d83a0b74017646bbeffb"
     },
     {
       "path": "apps/web/src/components/workspace/order-mappings.tsx",
       "sha256": "04870c2d40777d6e8ffee4a8e6c2793852451df0028ad12641daffca035f7838"
+    },
+    {
+      "path": "apps/web/src/components/workspace/scroll-table.tsx",
+      "sha256": "bb37312185e78fed6595d14b991e422dc0a67b3964e27d06fd6764c1907c86a2"
     },
     {
       "path": "apps/web/src/components/workspace/shared-filters.tsx",
@@ -606,6 +694,10 @@
     {
       "path": "apps/web/src/components/workspace/shared-panel.tsx",
       "sha256": "351894b0834b33582319b68f06e3e7764abfbcdf8a4ff0c53e422f4298b7da4e"
+    },
+    {
+      "path": "apps/web/src/components/workspace/shell.tsx",
+      "sha256": "72a8891cc17c08b2e3a56e0d8ca1c511a85a8adacf2c5c557943f4f550c74619"
     },
     {
       "path": "apps/web/src/lib/auth-http.ts",

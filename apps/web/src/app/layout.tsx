@@ -1,11 +1,12 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import "./fonts.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "VEXA · En construcción",
-  description: "Base inicial de VEXA. Producto en construcción, sin datos de clientes ni métricas disponibles.",
+  title: "VEXA AI",
+  description: "VEXA AI · Decisiones con evidencia para tu equipo.",
   robots: { index: false, follow: false },
 };
 

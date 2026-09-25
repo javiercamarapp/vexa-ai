@@ -5,7 +5,7 @@ Todavía existen bloqueos técnicos/de revisión, por lo que no se afirma que ba
 ## Bloqueos que no son credenciales
 
 - F06-09: un filtro automático de posible riesgo de ciberseguridad interrumpió la revisión; no hay dictamen final. El examen no se reintenta ni transfiere. Sus propuestas de entrega por correo/push y eventos no están publicadas ni aceptadas. No se corrige este bloqueo pegando una API.
-- ReleaseF08-01: inventario y control integrados/revisados; destino y evidencias completas pendientes. F08-02: smoke, control e integración del supervisor revisados e integrados; ejecución remota completa pendiente. Incompatibilidad de migración0028 con PostgreSQL gestionado en reparación. Son pendientes técnicos explícitos.
+- ReleaseF08-01/02: inventario, smoke y controles revisados e integrados. La incompatibilidad de migración0028 ya fue corregida;35migraciones autorizadas aplicadas, Vercel desplegado y CSV/aislamiento/pausa/recuperación remotos comprobados. Falta el smoke completo de ocho fases y el cierre global; los controles focales no lo sustituyen.
 - Carga, caos y recuperación ya tienen ejecutores/control portables revisados. Sus mediciones son locales y conservan sus límites.
 - F06-07 y cadena final: revisión visual humana, aceptación formal y cierre global conservan sus requisitos. El ensayo de un agente no se llama ensayo humano.
 
@@ -13,8 +13,8 @@ Todavía existen bloqueos técnicos/de revisión, por lo que no se afirma que ba
 
 | Aporte | Titular | Después de aportarlo |
 |---|---|---|
-| Acceso/aprobación legítima SQL del proyecto VEXA, destino y política de backup | Operador Supabase/Javier | Aplicar migraciones revisadas, roles/Storage/Auth, programaciones y prueba de restore; nunca evadir la aprobación por otro canal. |
-| Entorno/URL y autorización de despliegue/costo | Operador hosting | Generar manifiesto del SHA final, configurar secretos, compilar/desplegar y ejecutar smoke real completo. |
+| Política de backup/restore y aprobaciones concretas restantes | Operador Supabase/Javier | SQL autorizado/rol/Storage/Auth propios ya configurados. Completar programación y restore gestionado; cualquier SQL nuevo conserva aprobación legítima. |
+| Cierre del entorno propio y política operativa/costos | Operador hosting | La URL vexa-ai.vercel.app ya existe y sirve código verificado. Desplegar los deltas finales revisados y completar smoke/operación sin compras ni planes nuevos implícitos. |
 | Métodos de login, remitente SMTP/redirects, usuarios y organizaciones | Titular Auth | Conectar correo/OAuth, permisos, renovación y revocación reales. |
 | Cuentas HubSpot/Zendesk, scopes e histórico autorizado | Titular CRM/responsable de datos | Configurar conexión y fecha inicial, importar histórico disponible y reconciliar muestra contra export independiente antes de pasar a incremental. |
 | Cuenta/modelos, privacidad, tarifas y presupuesto de inferencia | Titular IA | Habilitar extracción con presupuesto durable; comprobar respuestas/citas/costos reales y todos los estados de error. |

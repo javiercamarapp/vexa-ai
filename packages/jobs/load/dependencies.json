@@ -1,11 +1,11 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "df26f7333d682326139f4d227df9d8aeea6f0bca",
-  "composition": "Current source inventory includes reviewed passwordless login and unified authentication email branding. Historic load reports retain their measured sources and are not reattributed to this composition.",
+  "baselineSha": "d75e1f532d1fa59f95822de157ac9e5b0a526d6f",
+  "composition": "Current source inventory uses one reviewed strict CA configuration for web and five durable consumers. Historic load reports retain their original measured sources, not this composition.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
-      "sha256": "406a34852906d48f01b52dfe3d2332587652e6fb5b405a799f42593ea59b0561"
+      "sha256": "8ce5563be18b259a6d7c972605f186399c85178f36a9be4473f58581f3ec27a5"
     },
     {
       "path": "apps/web/IMPLEMENTATION-WORKSPACE-BASE.md",
@@ -1752,6 +1752,14 @@
       "sha256": "e25db476381744cdb92a1d8b9800f526885e188260a127e7dacedb5c24abd505"
     },
     {
+      "path": "packages/jobs/durable/pg-options.d.mts",
+      "sha256": "bd23c815f06eca30ede8fdecb842fc7cb5b72991838b27b935347bb6ecf440ff"
+    },
+    {
+      "path": "packages/jobs/durable/pg-options.mjs",
+      "sha256": "60de8c9573cd942c6ef66214b7b0093d09b6becc1bc4ff27b21e0d1033371327"
+    },
+    {
       "path": "packages/jobs/durable/records.mjs",
       "sha256": "3423927e8c65fca1243d46e4bb60bd49d251ab6b20138edd2dd18eacec5c8481"
     },
@@ -1769,7 +1777,7 @@
     },
     {
       "path": "packages/jobs/durable/runtime.mjs",
-      "sha256": "7fd8def735e9000e11f0e7cdad23b7934ee692eeadac40b44108f75f235091ca"
+      "sha256": "f4991af33ebdbf0f02793e1657a5952dba54da4b18ed8792869dba266d7399db"
     },
     {
       "path": "packages/jobs/durable/scheduler.mjs",
@@ -2337,7 +2345,7 @@
     },
     {
       "path": "packages/platform/src/pool-options.ts",
-      "sha256": "8f81e0e9e1f4d035bcdf8fa1645ae69d22291258f9b2232bfd520840c2d65091"
+      "sha256": "66b9c4a6dca7ebc1c944c3ef6f093c7d77f2462230708e9066638ec358a9cb51"
     },
     {
       "path": "packages/platform/src/session.ts",

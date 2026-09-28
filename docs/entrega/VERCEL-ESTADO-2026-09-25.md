@@ -1,5 +1,9 @@
 # VEXA AI — despliegue comprobado, 25 de septiembre
 
+## Actualización28-sep: corrección móvil publicada y verificada
+
+El alias sirve `22e8137c1c97e0c61f20c7b00cc0158a778cef56`: despliegueREADY, SHA servido, login200 y assetCSS revisado comprobados.719fuentes exportadas; backend/JavaScript sin cambios desde `b9ed3db`. Las cinco comprobaciones locales independientes WebKit/Chromium y sus límites están en [CHECKS-UI](CHECKS-UI-2026-09-28.md). El smoke completo del apartado siguiente pertenece a su SHA original; no se repitió ni se atribuye a este despliegue.53/60técnicas,25formales, producciónfalse.
+
 ## Actualización28-sep: smoke completo aprobado
 
 El alias sirve `b9ed3db5ef4df825c27ed208722ad2faad4ee9c3`. Runner oficial8/8fases y ocho vistas;114solicitudes, límite15s intacto, cuentasSYN y limpieza verificada. [Informe completo](SMOKE-REMOTO-2026-09-28.md).53/60técnicas,25formales, producciónfalse; los cortes siguientes conservan su fecha y alcance.

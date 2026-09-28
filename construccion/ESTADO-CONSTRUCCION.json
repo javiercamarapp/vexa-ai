@@ -550,6 +550,21 @@
     "scope": "SYN propio; Auth/PostgreSQL/Storage reales; ocho fases y ocho vistas",
     "status": "passed",
     "evidence": "docs/entrega/SMOKE-REMOTO-2026-09-28.md",
-    "production_approval": false
+    "production_approval": false,
+    "kind": "last_full_synthetic_smoke"
+  },
+  "latest_deployment": {
+    "source_sha": "22e8137c1c97e0c61f20c7b00cc0158a778cef56",
+    "url": "https://vexa-ai.vercel.app",
+    "status": "READY_verified",
+    "checks": [
+      "served_revision",
+      "login_http_200",
+      "compiled_css_rule"
+    ],
+    "backend_javascript_unchanged_since": "b9ed3db5ef4df825c27ed208722ad2faad4ee9c3",
+    "full_smoke_rerun": false,
+    "production_validated": false,
+    "evidence": "docs/entrega/CHECKS-UI-2026-09-28.md"
   }
 }

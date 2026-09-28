@@ -8,7 +8,7 @@ Se integra una corrección mínima revisada del selector nativo: en WebKit una o
 
 Se conservan los fallos de control y el agregado de consola fallido: ocho errores RSC se reproducen también retirando sólo la regla CSS nueva. No son regresión del parche; no se afirma una auditoría global sin errores. Revisión390 cotejó el ciclo histórico/evaluación/selección/rollback con sus fuentes vigentes, sin detectar una pieza nueva pendiente; actualiza dos README obsoletos, no agrega una corridaE2E. [Mapa y activación pendiente](docs/entrega/CICLO-AGENTES-2026-09-28.md).
 
-Acta y registro reconciliados con53/60técnicas,25formales y smokeSYN remoto8/8 previo; se mantienen los siete pendientes reales y producciónfalse.390reservas acumuladas conservadas, revisiones recogidas. Este corte es integración local: publicación y despliegue de este cambio se acreditarán por su recibo y SHA posterior.
+Acta y registro reconciliados con53/60técnicas,25formales y smokeSYN remoto8/8 previo; se mantienen los siete pendientes reales y producciónfalse.390reservas acumuladas conservadas, revisiones recogidas. Publicado e integrado en main mediante publisher autorizado como `22e8137c1c97e0c61f20c7b00cc0158a778cef56`; VercelREADY, revisión servida, login200 y CSS compilado verificados. No hubo cambios de backend/JavaScript desde el smoke8/8 de `b9ed3db`; su evidencia conserva esa revisión.
 
 ## Smoke remoto completo aprobado —28-sep
 

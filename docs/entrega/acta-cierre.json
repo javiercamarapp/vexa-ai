@@ -5,7 +5,7 @@
   "formal_runner_accepted": 25,
   "total_tasks": 60,
   "production_validated": false,
-  "source_commit": "d5cb1ea75c6859edf8be0365f9fcc81cfd39fd1e",
+  "source_commit": "22e8137c1c97e0c61f20c7b00cc0158a778cef56",
   "layers": {
     "documentation": {
       "status": "reviewed_guides_consolidation_submitted_for_final_review",
@@ -46,11 +46,19 @@
       "exit_condition": "Cerrar alcance técnico restante, revisión legítima, cuentas/modelos autorizados y operación real; no confundir deployREADY con aprobación de producción.",
       "evidence": [
         "SMOKE-REMOTO-2026-09-28.md",
-        "VERCEL-ESTADO-2026-09-25.md"
+        "VERCEL-ESTADO-2026-09-25.md",
+        "CHECKS-UI-2026-09-28.md"
       ],
       "smoke_checks_passed": 8,
       "smoke_views_passed": 8,
-      "production_validated": false
+      "production_validated": false,
+      "smoke_source_commit": "b9ed3db5ef4df825c27ed208722ad2faad4ee9c3",
+      "current_deployment_checks": [
+        "READY",
+        "served_revision",
+        "login_http_200",
+        "compiled_css_rule"
+      ]
     }
   },
   "pmf_validated": false,
@@ -85,5 +93,5 @@
     "note": "Corte histórico anterior al despliegue y smoke remoto; conservado enGit."
   },
   "updated": "2026-09-28",
-  "deployed_source_commit": "b9ed3db5ef4df825c27ed208722ad2faad4ee9c3"
+  "deployed_source_commit": "22e8137c1c97e0c61f20c7b00cc0158a778cef56"
 }

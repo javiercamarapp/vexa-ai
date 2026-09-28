@@ -217,6 +217,8 @@ body:has(.workspace-shell) > .skip-link {display:none;}
 .workspace-content legend {font-size:13px;font-weight:600;line-height:1.5;padding:0 6px;color:#1b2d21;max-width:100%;}
 .workspace-content label {font-size:12.5px;font-weight:500;line-height:1.5;color:#35473b;}
 .workspace-content :where(input:not([type=checkbox]):not([type=radio]),select,textarea) {min-height:44px;font-size:14px;line-height:1.5;padding:10px 12px;box-shadow:0 1px 2px #11181304;}
+/* Bound native select overflow in WebKit without clipping the page or its labels. */
+.workspace-content select {max-width:100%;overflow:hidden;}
 .workspace-content textarea {min-height:100px;resize:vertical;}
 .workspace-content input::placeholder,.access-flow input::placeholder {color:#637168;opacity:1;}
 .workspace-content label:has(>input[type=checkbox]),.workspace-content label:has(>input[type=radio]) {display:flex;align-items:center;gap:10px;min-height:44px;cursor:pointer;}

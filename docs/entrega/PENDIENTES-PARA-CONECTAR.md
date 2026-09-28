@@ -2,6 +2,8 @@
 
 Todavía existen bloqueos técnicos/de revisión, por lo que no se afirma que baste pegar APIs para todo el producto. El estado técnico y formal está en construccion/ESTADO-CONSTRUCCION.json; producción sigue sin validar.
 
+La [lista exacta de las siete fichas](SIETE-PENDIENTES-2026-09-28.md) separa las verificaciones técnicas, la revisión interrumpida y la evaluación humana.
+
 ## Bloqueos que no son credenciales
 
 - F06-09: un filtro automático de posible riesgo de ciberseguridad interrumpió la revisión; no hay dictamen final. El examen no se reintenta ni transfiere. Sus propuestas de entrega por correo/push y eventos no están publicadas ni aceptadas. No se corrige este bloqueo pegando una API.

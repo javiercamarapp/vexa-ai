@@ -2,6 +2,14 @@
 Actualizado: 2026-09-28. Los apartados conservados abajo son cortes históricos.
 
 
+## Checks UI y conciliación del ciclo de agentes —28-sep
+
+Se integra una corrección mínima revisada del selector nativo: en WebKit una opción larga propagaba el desbordamiento de Intervenciones móvil. Dos declaraciones CSS contienen el control sin ocultar la página. Lint/build Node22 y cinco controles focales independientes en WebKit/Chromium pasan:320/390/1440px, opciones/foco, guardar planPOST200 con recarga y filtros reales. Equipo: cambio de rol persistido y último owner409; histórico sin configuración conserva su bloqueo. Revisiones388/389 y límites en [el informe](docs/entrega/CHECKS-UI-2026-09-28.md).
+
+Se conservan los fallos de control y el agregado de consola fallido: ocho errores RSC se reproducen también retirando sólo la regla CSS nueva. No son regresión del parche; no se afirma una auditoría global sin errores. Revisión390 cotejó el ciclo histórico/evaluación/selección/rollback con sus fuentes vigentes, sin detectar una pieza nueva pendiente; actualiza dos README obsoletos, no agrega una corridaE2E. [Mapa y activación pendiente](docs/entrega/CICLO-AGENTES-2026-09-28.md).
+
+Acta y registro reconciliados con53/60técnicas,25formales y smokeSYN remoto8/8 previo; se mantienen los siete pendientes reales y producciónfalse.390reservas acumuladas conservadas, revisiones recogidas. Este corte es integración local: publicación y despliegue de este cambio se acreditarán por su recibo y SHA posterior.
+
 ## Smoke remoto completo aprobado —28-sep
 
 El producto `b9ed3db5ef4df825c27ed208722ad2faad4ee9c3` está publicado en GitHub y desplegado en https://vexa-ai.vercel.app. El runner oficial terminó **8/8 fases y ocho vistas**, con114solicitudes registradas y ocho capturas verificadas por hash. No se cambió el timeout de transporte de15segundos. Importación normal3/3, dinero/export30000/1500minorUSD, aislamientoA/B, alarma por pausa, recuperación del mismo trabajo3/3 sin duplicados y revocaciónA conBautorizado pasaron en la misma corrida.

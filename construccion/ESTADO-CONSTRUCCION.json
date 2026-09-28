@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-25",
+  "updated": "2026-09-28",
   "definition": "Trabajo técnico de la ficha integrado y probado. Las cuentas/datos/aprobaciones externas y las dependencias de aceptación formal se identifican por separado. No acredita producción.",
   "accepted_in_graph": [
     "E00",
@@ -72,8 +72,8 @@
         },
         {
           "owner": "Javier / titular de infraestructura",
-          "pending": "Aprobación legítima y aplicación de migraciones CRM incluidas0013/0015, secretos del worker/CRM y cron/despliegue remoto; no se ejecutó aquí.",
-          "verification": "Deploy autorizado, comprobación SHA y recorrido remoto multitenant con scheduler."
+          "pending": "Cuentas/credenciales CRM reales autorizadas, configuración específica y operación programada. Las migraciones0013/0015 ya están aplicadas legítimamente en el Supabase propio; el despliegue y recorridoSYN remoto están comprobados.",
+          "verification": "Conectar la cuenta autorizada, reconciliar histórico e incremental contra el proveedor y validar programación/rotación reales. El smokeSYN no sustituye este ensayo."
         }
       ]
     },
@@ -90,8 +90,8 @@
         },
         {
           "owner": "Javier / titular de infraestructura",
-          "pending": "Aprobación legítima y aplicación de migraciones CRM incluidas0013/0015, secretos del worker/CRM y cron/despliegue remoto; no se ejecutó aquí.",
-          "verification": "Deploy autorizado, comprobación SHA y recorrido remoto multitenant con scheduler."
+          "pending": "Cuentas/credenciales CRM reales autorizadas, configuración específica y operación programada. Las migraciones0013/0015 ya están aplicadas legítimamente en el Supabase propio; el despliegue y recorridoSYN remoto están comprobados.",
+          "verification": "Conectar la cuenta autorizada, reconciliar histórico e incremental contra el proveedor y validar programación/rotación reales. El smokeSYN no sustituye este ensayo."
         }
       ]
     },
@@ -103,8 +103,8 @@
       "external_pending": [
         {
           "owner": "Javier / titular de infraestructura",
-          "pending": "Aprobación legítima y aplicación de migraciones CRM incluidas0013/0015, secretos del worker/CRM y cron/despliegue remoto; no se ejecutó aquí.",
-          "verification": "Deploy autorizado, comprobación SHA y recorrido remoto multitenant con scheduler."
+          "pending": "Cuentas/credenciales CRM reales autorizadas, configuración específica y operación programada. Las migraciones0013/0015 ya están aplicadas legítimamente en el Supabase propio; el despliegue y recorridoSYN remoto están comprobados.",
+          "verification": "Conectar la cuenta autorizada, reconciliar histórico e incremental contra el proveedor y validar programación/rotación reales. El smokeSYN no sustituye este ensayo."
         },
         {
           "owner": "TitularCRM",
@@ -126,8 +126,8 @@
         },
         {
           "owner": "Javier / titular de infraestructura",
-          "pending": "Aprobación legítima y aplicación de migraciones CRM incluidas0013/0015, secretos del worker/CRM y cron/despliegue remoto; no se ejecutó aquí.",
-          "verification": "Deploy autorizado, comprobación SHA y recorrido remoto multitenant con scheduler."
+          "pending": "Cuentas/credenciales CRM reales autorizadas, configuración específica y operación programada. Las migraciones0013/0015 ya están aplicadas legítimamente en el Supabase propio; el despliegue y recorridoSYN remoto están comprobados.",
+          "verification": "Conectar la cuenta autorizada, reconciliar histórico e incremental contra el proveedor y validar programación/rotación reales. El smokeSYN no sustituye este ensayo."
         }
       ]
     },
@@ -144,8 +144,8 @@
         },
         {
           "owner": "Javier / titular de infraestructura",
-          "pending": "Aprobación legítima y aplicación de migraciones CRM incluidas0013/0015, secretos del worker/CRM y cron/despliegue remoto; no se ejecutó aquí.",
-          "verification": "Deploy autorizado, comprobación SHA y recorrido remoto multitenant con scheduler."
+          "pending": "Cuentas/credenciales CRM reales autorizadas, configuración específica y operación programada. Las migraciones0013/0015 ya están aplicadas legítimamente en el Supabase propio; el despliegue y recorridoSYN remoto están comprobados.",
+          "verification": "Conectar la cuenta autorizada, reconciliar histórico e incremental contra el proveedor y validar programación/rotación reales. El smokeSYN no sustituye este ensayo."
         }
       ]
     },
@@ -163,8 +163,8 @@
         },
         {
           "owner": "Javier / titular de infraestructura",
-          "pending": "Aprobación legítima y aplicación de migraciones CRM incluidas0013/0015, secretos del worker/CRM y cron/despliegue remoto; no se ejecutó aquí.",
-          "verification": "Deploy autorizado, comprobación SHA y recorrido remoto multitenant con scheduler."
+          "pending": "Cuentas/credenciales CRM reales autorizadas, configuración específica y operación programada. Las migraciones0013/0015 ya están aplicadas legítimamente en el Supabase propio; el despliegue y recorridoSYN remoto están comprobados.",
+          "verification": "Conectar la cuenta autorizada, reconciliar histórico e incremental contra el proveedor y validar programación/rotación reales. El smokeSYN no sustituye este ensayo."
         }
       ]
     },
@@ -453,8 +453,8 @@
       "external_pending": [
         {
           "owner": "Operador de infraestructura y revisor independiente",
-          "pending": "Destino funcional, documentación real de permisos y cobertura completa de release; aceptación legítima.",
-          "verification": "Cotejar titularidad/proyectos, resolver compatibilidadSQL0028, configurar entorno, ejecutar smoke remoto y control con aprobación real. Revisión acotada no equivale a cobertura completa."
+          "pending": "Cobertura completa de release y aceptación legítima de las dependencias. Destino, compatibilidadSQL0028 y smokeSYN remoto ya comprobados.",
+          "verification": "Cotejar el manifiesto del producto final, permisos y cobertura restante; preservar el recibo remoto b9ed3db sin atribuirlo a versiones de runtime distintas."
         }
       ]
     },
@@ -463,12 +463,12 @@
       "technical_ready": true,
       "implemented": "CLI de ocho fases y control externo con custodia de recibo, SHA limpio, artefactos/oráculos, recolección del hijo y aislamiento de entradas integrados y revisados.",
       "programming_pending": [],
-      "scope_note": "Ejecutor/control técnicos. Evidencia local previa no acredita un destino remoto ni la composición actual; infraestructura gestionada en reparación independiente.",
+      "scope_note": "Ejecutor/control revisados y smokeSYN remoto8/8 aprobado el28-sep en b9ed3db. El estado técnico no constituye aceptación formal ni producción.",
       "external_pending": [
         {
           "owner": "Operador de infraestructura VEXA",
-          "pending": "Destino funcional y manifiesto del SHA exacto, identidades SYN autorizadas, controles del consumidor y autorización de ensayo remoto.",
-          "verification": "Ejecutar ocho fases remotas reales, revisar recibo/artefactos/limpieza y revalidar el mismo SHA limpio; no aceptar por un informe sintético firmado."
+          "pending": "Aceptación formal dependiente deF08-01 y repetición sólo ante cambio del runtime o nueva causa. Las ocho fases remotas ya pasaron en b9ed3db.",
+          "verification": "Conservar recibo,114solicitudes,ocho vistas y limpieza verificados; no convertir la pruebaSYN en validación de cuentas/proveedores reales."
         }
       ],
       "official_dependency_pending": [
@@ -543,5 +543,13 @@
       "condition": "F07-03 aceptada legítimamente; ejecutar verify/accept limpio con el manifiesto vigente.",
       "evidence": "construccion/F07-04-CIERRE-TECNICO.md"
     }
-  ]
+  ],
+  "deployed_verification": {
+    "source_sha": "b9ed3db5ef4df825c27ed208722ad2faad4ee9c3",
+    "url": "https://vexa-ai.vercel.app",
+    "scope": "SYN propio; Auth/PostgreSQL/Storage reales; ocho fases y ocho vistas",
+    "status": "passed",
+    "evidence": "docs/entrega/SMOKE-REMOTO-2026-09-28.md",
+    "production_approval": false
+  }
 }

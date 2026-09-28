@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "486f7ac1034d1bb90b1245fc4a75e6a18399a863",
-  "composition": "Source inventory includes reviewed Atiende-style VEXA UI, accessible navigation and confirmations, restrained motion and final placeholder contrast correction (reviews379/381). Historic load measurements retain their original measured source identities; no new load measurement claimed.",
+  "baselineSha": "a4c05987c49235b418fbaed56b447f7dddc99658",
+  "composition": "Reviewed snapshot reference batching (384) and asynchronous confirmation focus restoration (385). Historical load measurements retain their original measured source identities; no new load measurement claimed.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -529,7 +529,7 @@
     },
     {
       "path": "apps/web/src/components/confirmation-dialog.tsx",
-      "sha256": "0a16729055a1147ae103dc37e2cb28e9b6b20fe45c2d397e7b52e9a3a8f40cbb"
+      "sha256": "030823a3d9b11fe0f552ed5461fc60d55d90dae6b8191b8336fe55268cc314b3"
     },
     {
       "path": "apps/web/src/components/connection-health.tsx",
@@ -593,7 +593,7 @@
     },
     {
       "path": "apps/web/src/components/history-panel.tsx",
-      "sha256": "5adfd770a8c4df6bc387961b5c963212fac391da06f80d2629509c732e2c29c5"
+      "sha256": "4928816f56807f3d694f6ea320ddb2e5de8d8e10868bbdeb03277d24ebec6641"
     },
     {
       "path": "apps/web/src/components/import-preview.tsx",
@@ -641,7 +641,7 @@
     },
     {
       "path": "apps/web/src/components/team-panel.tsx",
-      "sha256": "cd9e9a4d07a9dc14504be7f4e27feef453a3bee75858cba596867b68e4359f92"
+      "sha256": "32c7f117a6036196ce4436feab70dad2adec927ff93394bf51d34868ce116e71"
     },
     {
       "path": "apps/web/src/components/vexa-brand.tsx",
@@ -2397,7 +2397,7 @@
     },
     {
       "path": "packages/metrics/snapshots.mjs",
-      "sha256": "09683ce28e194f557af953f86e1f49f2dbc114feaeec976a7144f0c01a690328"
+      "sha256": "09ae23643050dce68feff9a722832a4524b1864b6e05e3309fe64ded75228b94"
     },
     {
       "path": "packages/notifications/OPERATIONS.md",

@@ -2,6 +2,14 @@
 Actualizado: 2026-09-28. Los apartados conservados abajo son cortes históricos.
 
 
+## Correcciones revisadas para el siguiente despliegue —28-sep
+
+Se integran cuatro fuentes con revisión independiente: agrupación de referencias de snapshots (384, 39/39 escenarios independientes y regresiones conservadas de 15 snapshots +14 intervenciones) y retorno de foco tras confirmaciones asíncronas (385, 17/17 escenarios independientes; 12/12 del autor). Los hashes de propuestas, recibos y evidencias se comprobaron antes de adoptar. El cambio de snapshots conserva autorización y aislamiento; su mejora de latencia en Vercel sigue pendiente de comprobar con el timeout original de15segundos.
+
+El usuario fijó entrega en dos días y reiteró autorización para continuar, publicar y conectar las APIs de VEXA con acceso disponible.385 reservas acumuladas conservadas, máximo3 agentes y sin nuevas compras ni inferencia pagada. La Mac está conectada a corriente y caffeinate activo; esto no garantiza continuidad de la sesión. El ensayo siguiente reutiliza exclusivamente las cuentas SYN propias: A se reactivó expresamente como preparación, permissions_version3, conservando la evidencia anterior de revocación; consumidor deshabilitado hasta la prueba acotada.
+
+53/60 técnicas y25 formales, sin aumento por estas reparaciones. Google OAuth, remitente SMTP y cuentas CRM reales siguen requiriendo configuración propia. El alcance bloqueadoF06-09 sigue excluido y producciónfalse. Lint y compilación conjunta en copia aislada Node22 aprobados; el nuevo smoke remoto sigue pendiente en este corte. Los resultados posteriores se añadirán con su SHA.
+
 ## Recuperación y revocación remotas comprobadas por separado —28-sep
 
 La prueba focal posterior pasó cinco controles: SHA servido, Auth de dos organizaciones SYN, importación normal 3/3, pausa/alarma/admisión503/recuperación del mismo trabajo 3/3 sin duplicados, y revocación de A con lecturas/exportaciones denegadas mientras B conserva acceso. El informe marca `fullSmoke:false`; no cambia el fallo de Intervenciones en el recorrido original ni sustituye las ocho vistas.

@@ -16,7 +16,32 @@ async function capture(s,selection){const refs=[],times=[],watermarks=[];for(con
  const exposure=await readExposure(s,{scope:selection.scope});const contributing=new Set(exposure.relations.filter(r=>r.active&&r.valid).map(r=>r.problemId));const problems=exposure.problemOptions.filter(p=>contributing.has(p.id));const runs=[];for(const p of problems){const rows=(await s.query(`SELECT DISTINCT e.id,e.model_id,e.prompt_hash,e.schema_hash,e.provenance,e.created_at FROM public.extraction_runs e JOIN public.problem_embedding_members m ON m.tenant_id=e.tenant_id AND m.extraction_run_id=e.id JOIN public.problem_versions p ON p.tenant_id=m.tenant_id AND p.problem_id=m.problem_id AND p.version=$3 WHERE m.tenant_id=$1 AND m.problem_id=$2 AND m.embedding_id IN(SELECT value::uuid FROM jsonb_array_elements_text(p.provenance->'snapshot'->'embeddingIds')) ORDER BY e.id`,[s.tenantId,p.id,p.version])).rows;for(const r of rows){runs.push({id:r.id,model:r.model_id,promptHash:r.prompt_hash,schemaHash:r.schema_hash,policy:r.provenance.policy_hash??null,taxonomy:r.provenance.taxonomy??null});times.push(iso(r.created_at));}}
  const models=[...new Map(runs.map(r=>[r.id,r])).values()].sort((a,b)=>a.id.localeCompare(b.id));const manifest={refs,watermarks,models,exposureInputHash:exposure.inputHash,selection,policy:POLICY,schema:SCHEMA};return {manifest,inputHash:hash(manifest),asOf:times.sort().at(-1)??'1970-01-01T00:00:00.000Z'};}
 async function authorizeCaptured(s,snap){check(await one(s,'SELECT 1 AS ok WHERE public.economic_contributor_active($1,$2)',[s.tenantId,snap.created_by]),'snapshot_contributor_unavailable',403);if(snap.published_by)check(await one(s,'SELECT 1 AS ok WHERE public.economic_contributor_active($1,$2)',[s.tenantId,snap.published_by]),'snapshot_contributor_unavailable',403);
- for(const r of snap.input_manifest.refs){check(tables.some(t=>t[0]===r.table),'snapshot_manifest_invalid');const row=await one(s,`SELECT *,public.economic_contributor_active(tenant_id,actor_id) AS actor_active FROM public.${r.table} WHERE tenant_id=$1 AND id=$2`,[s.tenantId,r.id]);check(row,'snapshot_evidence_unavailable',403);if(r.authorized)check(row.actor_active,'snapshot_contributor_unavailable',403);if(r.table==='economic_source_versions'&&r.active&&r.authorized){const latest=await one(s,'SELECT *,public.economic_contributor_active(tenant_id,actor_id) AS actor_active FROM public.economic_source_versions WHERE tenant_id=$1 AND source_id=$2 ORDER BY version DESC LIMIT 1',[s.tenantId,row.source_id]);check(latest?.active&&latest.actor_active,'snapshot_source_unavailable',403);}if(['economic_currency_versions','economic_fx_versions'].includes(r.table)&&r.active&&r.authorized){const key=r.table==='economic_currency_versions'?'currency':'rate_id';const latest=await one(s,`SELECT *,public.economic_contributor_active(tenant_id,actor_id) AS actor_active FROM public.${r.table} WHERE tenant_id=$1 AND ${key}=$2 ORDER BY version DESC LIMIT 1`,[s.tenantId,row[key]]);check(latest?.active&&latest.actor_active,'snapshot_configuration_unavailable',403);}}
+ // Batch captured references in one statement. Every load still rechecks the current
+ // tenant, contributor and latest source/configuration state; no cross-call cache.
+ const groups=new Map();
+ for(const ref of snap.input_manifest.refs){
+  check(tables.some(t=>t[0]===ref.table),'snapshot_manifest_invalid');
+  if(!groups.has(ref.table))groups.set(ref.table,[]);
+  groups.get(ref.table).push(ref.id);
+ }
+ const args=[s.tenantId],parts=[];
+ for(const [table,ids] of groups){
+  args.push(ids);
+  const key=table==='economic_source_versions'?'source_id':table==='economic_currency_versions'?'currency':table==='economic_fx_versions'?'rate_id':null;
+  const latest=key?`EXISTS(SELECT 1 FROM (SELECT active,public.economic_contributor_active(tenant_id,actor_id) AS actor_active FROM public.${table} WHERE tenant_id=$1 AND ${key}=captured.${key} ORDER BY version DESC LIMIT 1) current_version WHERE current_version.active AND current_version.actor_active)`:'true';
+  parts.push(`SELECT '${table}' AS table_name,captured.id,public.economic_contributor_active(captured.tenant_id,captured.actor_id) AS actor_active,${latest} AS latest_available FROM public.${table} captured WHERE captured.tenant_id=$1 AND captured.id=ANY($${args.length}::uuid[])`);
+ }
+ const rows=parts.length?(await s.query(parts.join(' UNION ALL '),args)).rows:[];
+ const byRef=new Map(rows.map(row=>[row.table_name+':'+row.id,row]));
+ for(const ref of snap.input_manifest.refs){
+  const row=byRef.get(ref.table+':'+ref.id);
+  check(row,'snapshot_evidence_unavailable',403);
+  if(ref.authorized)check(row.actor_active,'snapshot_contributor_unavailable',403);
+  if(ref.active&&ref.authorized){
+   if(ref.table==='economic_source_versions')check(row.latest_available,'snapshot_source_unavailable',403);
+   if(['economic_currency_versions','economic_fx_versions'].includes(ref.table))check(row.latest_available,'snapshot_configuration_unavailable',403);
+  }
+ }
  const repo=createEvidenceRepository({database:{transaction:async(_a,fn)=>fn(s)}});for(const run of snap.input_manifest.models){try{await repo.get(run.id);}catch(e){if(e.message==='EVIDENCE_UNAVAILABLE')throw new EconomicError('snapshot_evidence_unavailable',403);throw e;}}
 }
 const normalizeMoney=(money,inputHash)=>money?{...money,provenance:money.provenance.map(p=>p.source==='authorized_economic_ledger'?{...p,reference:inputHash}:p)}:null;

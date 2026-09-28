@@ -4,7 +4,7 @@
 
 ## Checkpoint vigente —53/60 con trabajo técnico completo; 25 aceptadas en el grafo
 
-Correcciones adicionales de consultas y permisos revisadas386/387 e integradas; compilación conjunta aprobada, nuevo smoke remoto pendiente con límite original15s. La versión d3991bf permanece como último destino comprobado, cuyo smoke falló en exportación. Entrega solicitada en dos días;387 reservas acumuladas, sin reset. Conectar APIs con accesos propios autorizados; detalle en PROGRESO.
+Producto GitHub/Vercel `b9ed3db`: smoke remoto oficial8/8 fases y ocho vistas aprobado con timeout15s original;114solicitudes, CSV3/3, dinero/export, aislamiento, recuperación y revocación verificados. Correcciones revisadas384/385/387;387reservas acumuladas sin reset.53/60técnicas,25formales y producciónfalse; cuentasCRM,OAuth/SMTP y cierre global pendientes. [Informe](docs/entrega/SMOKE-REMOTO-2026-09-28.md).
 
 La interfaz Atiende/VEXA tiene revisión independiente379/381 cerrada,37fuentes integradas y compilación finalNode22 aprobada. [Alcance y límites](docs/entrega/INTERFAZ-ATIENDE-2026-09-25.md); publicada y desplegada como aed5c3a, con SHA servido y navegador remoto comprobados; detalle en PROGRESO.
 

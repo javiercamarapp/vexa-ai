@@ -1,5 +1,13 @@
 # Progreso verificable
-Actualizado: 2026-09-25. Los apartados conservados abajo son cortes históricos.
+Actualizado: 2026-09-28. Los apartados conservados abajo son cortes históricos.
+
+## Smoke remoto: cinco fases aprobadas y bloqueo de latencia —28-sep
+
+El runner oficial, sin modificar su límite de 15 segundos, verificó el SHA servido `aed5c3a7fc65c0af9f6ecc3315732e905774d03d`, dos organizaciones SYN con Auth real, CSV durable 3/3, cifras/export financiero 30000/1500 minor USD y denegación de recursos ajenos. Seis vistas resolvieron y fueron capturadas. La fase de ocho vistas falló en Intervenciones: reproducción 15007 ms→timeout y diagnóstico separado 200 en 16487 ms. El informe completo permanece **fallido**, sin atribuirle recuperación ni revocación finales que no alcanzó. Brief pasó por separado mediante API 200 en 1090 ms; no es una prueba de su interfaz.
+
+El perfil desde Mac encontró 718 consultas SQL y 11 comprobaciones de identidad/membresía para una intervención. Una propuesta local agrupa las referencias del snapshot manteniendo RLS y comprobaciones de autoridad:538 consultas, una reducción de 180 (25,1%). La medición desde Mac pasó de 167125 a 145833 ms; no demuestra la latencia que tendría en Vercel. Regresión de snapshots 15/15 aprobada, incluida revocación y exportación, y regresión de Intervenciones 14/14; propuesta **sin integración, publicación ni revisión independiente**. [Alcance de auditoría](docs/entrega/AUDITORIA-20-RUBROS.md).
+
+La delegación del consumidor quedó deshabilitada y el navegador SYN propio cerrado. Sin cron continuo, mensajes ni inferencia pagada. Auditoría de dependencias sobre el lockfile desplegado: 0 avisos conocidos, 461 dependencias contabilizadas; no certifica toda la seguridad. Los agentes 382/383 terminaron por cuota: 383 no emitió aprobación y no quedan agentes activos. 53/60 técnicas, 25 formales, 383 reservas acumuladas conservadas y producción false.
 
 ## Interfaz publicada y comprobada en Vercel —25-sep
 

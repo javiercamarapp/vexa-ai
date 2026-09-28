@@ -1,5 +1,11 @@
 # VEXA AI — despliegue comprobado, 25 de septiembre
 
+## Actualización 28-sep: smoke completo fallido por latencia
+
+El alias conserva el producto `aed5c3a7fc65c0af9f6ecc3315732e905774d03d`. Cinco fases remotas pasaron y seis vistas fueron renderizadas; Intervenciones excede 15 segundos. La reproducción confirmó el timeout y una respuesta 200 en 16,487 segundos bajo diagnóstico separado. No se cambiaron los límites del runner ni se desplegó una corrección sin revisión. API de Brief comprobada por separado:200 en 1,090 segundos.
+
+Delegación del consumidor deshabilitada, navegador SYN cerrado, sin ejecución programada continua. La propuesta local reduce consultas 718→538 y pasó 15 pruebas de snapshots y 14 de Intervenciones; siguen pendientes revisión independiente y verificación del rendimiento remoto. 53/60 técnicas, 25 formales, producción false. [Detalle de auditoría y límites](AUDITORIA-20-RUBROS.md). Los apartados siguientes conservan los cortes anteriores.
+
 URL propia: **https://vexa-ai.vercel.app**. Proyecto `vexa-ai`, runtime Node 22. El artefacto desplegado sirve la revisión `aed5c3a7fc65c0af9f6ecc3315732e905774d03d`, publicada también en GitHub. El destino de Vercel se llama `production`; ese nombre no certifica que el producto esté listo para clientes.
 
 ## Comprobaciones realizadas

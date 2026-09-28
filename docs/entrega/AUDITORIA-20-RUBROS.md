@@ -39,6 +39,16 @@ Esto actualiza los rubros3,6,8,11,14 y17 del corte histórico: el despliegue, SQ
 
 Revisiones379/381: estructura Atiende, navegación móvil/compacta, confirmaciones, tablas y movimiento reducido integrados;37fuentes finales, compilaciónNode22, F01-04 intacto y controles reales locales de Auth/SQL/Storage. La matriz diferencia29rutas de582sitios de controles: no son582acciones ejecutadas. Se corrigieron grupos inaccesibles al contraer, una tabla sin región propia y contraste de placeholders. [Informe delimitado y huellas](INTERFAZ-ATIENDE-2026-09-25.md). Chrome comprobado. El SHAaed5c3a ya fue desplegado y validado con seis controles remotos,20rutas autenticadas y una comprobación focal de importaciones móviles; revisión humana y accesibilidad global siguen pendientes. El rubro9 incorpora cuatro solicitudes al mismo trabajoSYN A/B/anónimo/A con200/404/401/200, private/no-store y sinHIT de caché; alcance focal, no todos los endpoints.
 
+## Actualización remota y rendimiento —28-sep
+
+El runner oficial sobre el producto `aed5c3a7fc65c0af9f6ecc3315732e905774d03d` aprobó cinco fases: revisión servida, dos tenants autenticados, importación durable 3/3, dinero/export 30000/1500 minor USD y aislamiento de IDs conocidos. Renderizó seis vistas; la siguiente solicitud, Intervenciones, excedió el límite de 15 segundos. Se conserva el resultado fallido. La prueba focal separada de Brief obtuvo API 200 en 1090 ms; no acredita su vista. Las fases finales de recuperación y revocación no se ejecutaron en esta corrida; la evidencia anterior conserva su fecha y alcance.
+
+**Hallazgo abierto de rendimiento (rubros 4 y 6):** listar una sola intervención SYN requiere 718 consultas SQL y 11 resoluciones de sesión. El mismo endpoint remoto produjo timeout a 15007 ms y respondió200 en 16487 ms bajo un límite diagnóstico separado. La causa observada incluye lecturas secuenciales de cada referencia capturada, repetidas en las validaciones de snapshots. Impide aprobar el recorrido remoto con su límite original.
+
+La propuesta local agrupa referencias con tablas permitidas, parámetros y filtro por tenant, sin caché entre llamadas ni supresión de controles de contribuidor/fuente/configuración/evidencia. Reduce 718 a 538 consultas (25,1%); desde Mac se midieron 167125 vs 145833 ms. Son observaciones en una ruta de red distinta de Vercel, no un benchmark de producción ni prueba de que el defecto remoto esté cerrado. La regresión existente de snapshots aprobó 15/15, con recuperación, exportación y revocación; Intervenciones aprobó 14/14, con transiciones, medición y denegación de fuentes retiradas. La propuesta permanece fuera del producto publicado hasta revisión independiente y comprobación remota.
+
+El rubro 12 incorpora `npm audit --json` del lockfile exacto del runtime: 0 avisos conocidos en 461 dependencias contabilizadas. Este resultado no cubre defectos de lógica, configuración, APIs o el ámbito excluido. Consumidor delegado deshabilitado y navegador de prueba propio cerrado al terminar; ningún cron continuo habilitado. Los 20 rubros continúan con sus límites; no hay aprobación global ni 60/60.
+
 ## Reparaciones verificadas
 
 - Una invitación rechazada emitía cookie: el mismo403 ahora deja cero cookies y workspace401; el caso válido conserva identidad final y aceptación.

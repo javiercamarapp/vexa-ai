@@ -4,7 +4,7 @@
 
 ## Checkpoint vigente —53/60 con trabajo técnico completo; 25 aceptadas en el grafo
 
-Producto GitHub/Vercel `b9ed3db`: smoke remoto oficial8/8 fases y ocho vistas aprobado con timeout15s original;114solicitudes, CSV3/3, dinero/export, aislamiento, recuperación y revocación verificados. Correcciones revisadas384/385/387;387reservas acumuladas sin reset.53/60técnicas,25formales y producciónfalse; cuentasCRM,OAuth/SMTP y cierre global pendientes. [Informe](docs/entrega/SMOKE-REMOTO-2026-09-28.md).
+Producto actual GitHub/Vercel `22e8137`: corrección móvil del selector revisada, compilada y desplegada; SHA servido, login200 y regla CSS comprobados. Revisiones388/389/390 recogidas;390reservas acumuladas conservadas. El último smoke remoto oficial8/8 fases y ocho vistas corresponde a `b9ed3db`, con114solicitudes y timeout15s original; las fuentes backend/JavaScript no cambiaron. No se atribuye una repetición del smoke al nuevoSHA.53/60técnicas,25formales y producciónfalse. [Checks actuales](docs/entrega/CHECKS-UI-2026-09-28.md) · [Smoke previo](docs/entrega/SMOKE-REMOTO-2026-09-28.md).
 
 La interfaz Atiende/VEXA tiene revisión independiente379/381 cerrada,37fuentes integradas y compilación finalNode22 aprobada. [Alcance y límites](docs/entrega/INTERFAZ-ATIENDE-2026-09-25.md); publicada y desplegada como aed5c3a, con SHA servido y navegador remoto comprobados; detalle en PROGRESO.
 

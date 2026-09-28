@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "d3991bf503f6816185c2cf080f853c4555240c6c",
-  "composition": "Reviewed immutable evidence join constraints, pinned workspace preparation and extraction role error precedence (386/387). Historical load measurements retain their original source identities; no new load measurement claimed.",
+  "baselineSha": "d5cb1ea75c6859edf8be0365f9fcc81cfd39fd1e",
+  "composition": "Reviewed native select containment (388/389) and reconciled candidate-cycle documentation (390). Historical load measurements keep their original source identities; no new load measurement claimed.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -489,7 +489,7 @@
     },
     {
       "path": "apps/web/src/app/globals.css",
-      "sha256": "1f70a34f55803a9e4c6fcbed9ddb0ab1f8960312b5e79b0cdb8e917a830c10e8"
+      "sha256": "d1e23f88c623432842477febab628e257ead9c510c265ec2201c5d76a242a703"
     },
     {
       "path": "apps/web/src/app/layout.tsx",
@@ -1569,7 +1569,7 @@
     },
     {
       "path": "packages/intelligence/candidate-execution/README.md",
-      "sha256": "86243cde7716562eb616fa7956e0f894a6fa95c01e67b398293459e844f4e62a"
+      "sha256": "270c450f45db88f8085da2f948bbadcdf88be3b9d82d227079ae3ad53b4360c7"
     },
     {
       "path": "packages/intelligence/candidate-execution/cli.mjs",
@@ -1705,7 +1705,7 @@
     },
     {
       "path": "packages/intelligence/learning/README.md",
-      "sha256": "626c30b01b6ecfb396dcc127564da1c21f698afb8f16f29aff6180d20f2e7e53"
+      "sha256": "87f968b0851f37fafe8c796aeba7d3c83e594c96f39e90390d29e216cde8db36"
     },
     {
       "path": "packages/intelligence/learning/index.d.mts",

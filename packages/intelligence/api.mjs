@@ -34,6 +34,8 @@ export function createExtractionHandler({database,resolveConfig,runtime='stub',e
    if(!body||typeof body!=='object')invalid();let data;
    if(body.action==='cancel'){fields(body,['action','jobId']);data=await queue.cancel(body.jobId);}
    else{
+    // Deny unauthorized actions before reporting missing runtime configuration.
+    if(['submit','budget','reconcile'].includes(body.action)&&!(body.action==='submit'?['owner','analyst']:['owner']).includes(context.role))throw Object.assign(Error('role_insufficient'),{status:403,code:'role_insufficient'});
     if(!config)throw Object.assign(Error('configuration_required'),{code:'configuration_required',status:503});
     if(body.action==='submit'){fields(body,['action','conversationId','requestKey']);data=await queue.submit({conversationId:body.conversationId,requestKey:body.requestKey,configHash:config.hash});}
     else if(body.action==='budget'){

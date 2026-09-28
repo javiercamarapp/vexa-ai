@@ -95,3 +95,13 @@ Caos:33casos autoresNode26, guardas posteriores en22/26, dos casos independiente
 | Revisión360 del control de recuperación | c4ed21ea4af87eafb2b6e2a1c563ec3a775d98b0e925f553d3d7a20141fde08b |
 
 Los20rubros tienen conclusiones delimitadas. El ámbito excluido, las validaciones humanas y el smoke remoto completo pendiente impiden declarar auditoría global aprobada o software listo para producción.
+
+## Segunda corrección de latencia y clasificación de permisos —28-sep
+
+La primera corrección fue publicada y desplegada como d3991bf, pero el runner oficial falló en exportación financiera después de aprobar SHA, Auth A/B e importación3/3. El límite original de15segundos permanece intacto. Reproducción aislada: exportación13,5–13,7s e Intervenciones49,7s con límite diagnóstico55s; las solicitudes abortadas y sus respuestas tardías no se cuentan como aprobadas.
+
+El diagnóstico identificó dos causas adicionales. La consulta de evidencia unía26revisiones×22mensajes×17revisiones fuente; sus IDs originales ya estaban en el manifiesto validado. Añadir esos filtros conserva RLS y las comprobaciones posteriores y redujo esa consulta de722,5ms a24,5ms en EXPLAIN real del tenantSYN. La propuesta386 omite una preparación repetida sólo cuando snapshot_id y scope_hash ya están fijados, manteniendo la transacción final íntegra:106→82SQL y2→1resoluciones de identidad, con mismos payloads/errores en la prueba local. Estas mediciones no certifican latencia remota final.
+
+La regresión también reprodujo un defecto previo de clasificación: el visor recibía503 por configuración inaccesible antes de comprobar que no podía solicitar análisis. El handler ahora devuelve403 para acciones prohibidas antes de evaluar configuración; los roles habilitados conservan503 cuando ésta falta. Se preserva la corrida original fallida; la prueba de navegador afectada volvió a pasar8/8. El resto de esa corrida conserva15subpruebas SQL y4de revocación de navegador aprobadas.
+
+Composición de tres fuentes con lint/buildNode22 verdes; revisión independiente387 aprobada:27/27 escenarios PostgreSQL conRLS y24/24 casos de roles/configuración. Los hashes de51archivos del autor y48de composición fueron comprobados; publicación y smoke remoto del nuevo SHA pendientes en este corte. Presupuesto acumulado387 sin reset, máximo3agentes.53/60técnicas y25formales, producciónfalse; no contar reparaciones como tareas nuevas. Google/SMTP propios, cuentasCRM y presupuesto de inferencia siguen pendientes. ConsumidorSYN deshabilitado al cerrar cada ensayo.

@@ -2,6 +2,16 @@
 Actualizado: 2026-09-28. Los apartados conservados abajo son cortes históricos.
 
 
+## Segunda corrección de latencia y clasificación de permisos —28-sep
+
+La primera corrección fue publicada y desplegada como d3991bf, pero el runner oficial falló en exportación financiera después de aprobar SHA, Auth A/B e importación3/3. El límite original de15segundos permanece intacto. Reproducción aislada: exportación13,5–13,7s e Intervenciones49,7s con límite diagnóstico55s; las solicitudes abortadas y sus respuestas tardías no se cuentan como aprobadas.
+
+El diagnóstico identificó dos causas adicionales. La consulta de evidencia unía26revisiones×22mensajes×17revisiones fuente; sus IDs originales ya estaban en el manifiesto validado. Añadir esos filtros conserva RLS y las comprobaciones posteriores y redujo esa consulta de722,5ms a24,5ms en EXPLAIN real del tenantSYN. La propuesta386 omite una preparación repetida sólo cuando snapshot_id y scope_hash ya están fijados, manteniendo la transacción final íntegra:106→82SQL y2→1resoluciones de identidad, con mismos payloads/errores en la prueba local. Estas mediciones no certifican latencia remota final.
+
+La regresión también reprodujo un defecto previo de clasificación: el visor recibía503 por configuración inaccesible antes de comprobar que no podía solicitar análisis. El handler ahora devuelve403 para acciones prohibidas antes de evaluar configuración; los roles habilitados conservan503 cuando ésta falta. Se preserva la corrida original fallida; la prueba de navegador afectada volvió a pasar8/8. El resto de esa corrida conserva15subpruebas SQL y4de revocación de navegador aprobadas.
+
+Composición de tres fuentes con lint/buildNode22 verdes; revisión independiente387 aprobada:27/27 escenarios PostgreSQL conRLS y24/24 casos de roles/configuración. Los hashes de51archivos del autor y48de composición fueron comprobados; publicación y smoke remoto del nuevo SHA pendientes en este corte. Presupuesto acumulado387 sin reset, máximo3agentes.53/60técnicas y25formales, producciónfalse; no contar reparaciones como tareas nuevas. Google/SMTP propios, cuentasCRM y presupuesto de inferencia siguen pendientes. ConsumidorSYN deshabilitado al cerrar cada ensayo.
+
 ## Correcciones revisadas para el siguiente despliegue —28-sep
 
 Se integran cuatro fuentes con revisión independiente: agrupación de referencias de snapshots (384, 39/39 escenarios independientes y regresiones conservadas de 15 snapshots +14 intervenciones) y retorno de foco tras confirmaciones asíncronas (385, 17/17 escenarios independientes; 12/12 del autor). Los hashes de propuestas, recibos y evidencias se comprobaron antes de adoptar. El cambio de snapshots conserva autorización y aislamiento; su mejora de latencia en Vercel sigue pendiente de comprobar con el timeout original de15segundos.

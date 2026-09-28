@@ -4,7 +4,7 @@ Objetivo completo: [ALCANCE-CONFIRMADO](construccion/ALCANCE-CONFIRMADO.md). Pro
 
 ## Checkpoint vigente —53/60 con trabajo técnico completo; 25 aceptadas en el grafo
 
-Correcciones de snapshots y foco integradas tras revisiones384/385; compilación conjunta aprobada y smoke remoto pendiente. Nueva fecha objetivo indicada por el usuario: entrega en dos días. Reservas acumuladas385, sin reset; conectar APIs con accesos propios autorizados. Detalle y límites en PROGRESO.
+Correcciones adicionales de consultas y permisos revisadas386/387 e integradas; compilación conjunta aprobada, nuevo smoke remoto pendiente con límite original15s. La versión d3991bf permanece como último destino comprobado, cuyo smoke falló en exportación. Entrega solicitada en dos días;387 reservas acumuladas, sin reset. Conectar APIs con accesos propios autorizados; detalle en PROGRESO.
 
 La interfaz Atiende/VEXA tiene revisión independiente379/381 cerrada,37fuentes integradas y compilación finalNode22 aprobada. [Alcance y límites](docs/entrega/INTERFAZ-ATIENDE-2026-09-25.md); publicada y desplegada como aed5c3a, con SHA servido y navegador remoto comprobados; detalle en PROGRESO.
 
@@ -12,7 +12,7 @@ F06-08 integra el centro de notificaciones, preferencias propias con control de 
 
 El total suma25 aceptadas por el runner, veinticinco con dependencia/validación externa pendiente (seis F03, seis F05, F06-01..06, recuperación F07-06 y entrega F08-03/05 más release F08-01/02 y permisos F08-04 y cierre F08-06), y F07-02/03/04 con software/control independiente integrados y aceptación formal pendiente de sus dependencias. Restan7 fichas sin cierre técnico. La auditoría de20rubros está consolidada con límites explícitos; caos, carga y recuperación tienen controles integrados. F08-01/02/04/06 tienen controles revisados e integrados; la ejecución remota completa y el bloqueo de revisión F06-09 siguen pendientes. No equivale a auditoría global aprobada. El cierre solicitado exige todo el software técnico de punta a punta, incluida ingesta histórica CRM y evaluación de agentes; sólo cuentas, datos, credenciales y aprobaciones externas pueden quedar pendientes. No acredita producción. Registro: construccion/ESTADO-CONSTRUCCION.json.
 
-Tiempo sin límite autorizado; presupuesto conservado al corte de este checkpoint:385/385 invocaciones acumuladas reservadas, máximo3 agentes. Usuario autorizó usar MCP y desplegar en sus proyectos VEXA; sin nuevas compras ni inferencia pagada. Caffeinate mantiene pantalla y sistema despiertos con tapa abierta; no garantiza supervivencia de la sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
+Tiempo sin límite autorizado; presupuesto conservado al corte de este checkpoint:387/387 invocaciones acumuladas reservadas, máximo3 agentes. Usuario autorizó usar MCP y desplegar en sus proyectos VEXA; sin nuevas compras ni inferencia pagada. Caffeinate mantiene pantalla y sistema despiertos con tapa abierta; no garantiza supervivencia de la sesión. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado. Los apartados siguientes son históricos.
 
 ## Historial — F02 completa,17/60
 

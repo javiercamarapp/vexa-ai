@@ -49,6 +49,13 @@ La propuesta local agrupa referencias con tablas permitidas, parámetros y filtr
 
 El rubro 12 incorpora `npm audit --json` del lockfile exacto del runtime: 0 avisos conocidos en 461 dependencias contabilizadas. Este resultado no cubre defectos de lógica, configuración, APIs o el ámbito excluido. Consumidor delegado deshabilitado y navegador de prueba propio cerrado al terminar; ningún cron continuo habilitado. Los 20 rubros continúan con sus límites; no hay aprobación global ni 60/60.
 
+
+### Recuperación y revocación focales posteriores
+
+Cinco controles separados aprobaron sobre el mismo producto remoto: SHA, AuthA/B, importación normal3/3, pausa→alarma `NO_HEARTBEAT`/`OLDEST_QUEUE`→admisión503→recuperación del mismo trabajo3/3, y revocaciónA con lecturas/export denegados yB autorizado. El informe usa un esquema focal explícito y `fullSmoke:false`; no convierte el recorrido completo fallido en aprobado. Complementa los rubros3,6,11y17 con esta ejecución remota, sin trasladar resultados a la propuesta de rendimiento.
+
+Un defecto del operador privado impedía confirmar la pausa: consultaba como segundo owner una importación restringida a su creador. Se reprodujo trabajo200/importación404 y se comprobó el vínculo desde el `id`/`import_id` del trabajo autorizado. La solicitud original se reintentó antes de vencer; el fallo y sus hashes se preservan. Ningún permiso del producto fue relajado. Seis pruebas del contrato operativo pasaron. La cuentaA queda revocada; el operador distinto mantiene el último owner. Delegación del consumidor deshabilitada al terminar. Esta comprobación del principal no es una nueva revisión independiente.
+
 ## Reparaciones verificadas
 
 - Una invitación rechazada emitía cookie: el mismo403 ahora deja cero cookies y workspace401; el caso válido conserva identidad final y aceptación.

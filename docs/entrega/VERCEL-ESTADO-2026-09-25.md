@@ -6,6 +6,9 @@ El alias conserva el producto `aed5c3a7fc65c0af9f6ecc3315732e905774d03d`. Cinco 
 
 Delegación del consumidor deshabilitada, navegador SYN cerrado, sin ejecución programada continua. La propuesta local reduce consultas 718→538 y pasó 15 pruebas de snapshots y 14 de Intervenciones; siguen pendientes revisión independiente y verificación del rendimiento remoto. 53/60 técnicas, 25 formales, producción false. [Detalle de auditoría y límites](AUDITORIA-20-RUBROS.md). Los apartados siguientes conservan los cortes anteriores.
 
+
+Una ejecución focal posterior comprobó pausa, alarma, rechazo de admisión, recuperación del mismo trabajo3/3 y revocación real de la cuentaSYN A, con B todavía autorizado. Se conservaron los fallos del operador de ensayo y su corrección de vínculo trabajo/importación; no se modificaron permisos del producto. El informe focal no acredita ocho vistas ni corrige la latencia del recorrido completo. La delegación vuelve a quedar deshabilitada.
+
 URL propia: **https://vexa-ai.vercel.app**. Proyecto `vexa-ai`, runtime Node 22. El artefacto desplegado sirve la revisión `aed5c3a7fc65c0af9f6ecc3315732e905774d03d`, publicada también en GitHub. El destino de Vercel se llama `production`; ese nombre no certifica que el producto esté listo para clientes.
 
 ## Comprobaciones realizadas

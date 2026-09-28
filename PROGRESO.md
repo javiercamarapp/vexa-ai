@@ -1,6 +1,13 @@
 # Progreso verificable
 Actualizado: 2026-09-28. Los apartados conservados abajo son cortes históricos.
 
+
+## Recuperación y revocación remotas comprobadas por separado —28-sep
+
+La prueba focal posterior pasó cinco controles: SHA servido, Auth de dos organizaciones SYN, importación normal 3/3, pausa/alarma/admisión503/recuperación del mismo trabajo 3/3 sin duplicados, y revocación de A con lecturas/exportaciones denegadas mientras B conserva acceso. El informe marca `fullSmoke:false`; no cambia el fallo de Intervenciones en el recorrido original ni sustituye las ocho vistas.
+
+Se corrigió únicamente el operador privado del ensayo: el segundo owner podía consultar el trabajo, pero recibía404 al abrir la importación creada por A. Ahora confirma la relación mediante los campos `id` e `import_id` del trabajo autorizado, sin ampliar permisos. Se conservan el intento fallido y el reintento válido de la misma solicitud antes de vencer; seis pruebas del contrato operativo siguen verdes. La cuenta A quedó revocada y la delegación del consumidor deshabilitada. Sin nuevos cambios de producto, revisión independiente adicional ni aumento del contador:53/60 técnicas y25 formales.
+
 ## Smoke remoto: cinco fases aprobadas y bloqueo de latencia —28-sep
 
 El runner oficial, sin modificar su límite de 15 segundos, verificó el SHA servido `aed5c3a7fc65c0af9f6ecc3315732e905774d03d`, dos organizaciones SYN con Auth real, CSV durable 3/3, cifras/export financiero 30000/1500 minor USD y denegación de recursos ajenos. Seis vistas resolvieron y fueron capturadas. La fase de ocho vistas falló en Intervenciones: reproducción 15007 ms→timeout y diagnóstico separado 200 en 16487 ms. El informe completo permanece **fallido**, sin atribuirle recuperación ni revocación finales que no alcanzó. Brief pasó por separado mediante API 200 en 1090 ms; no es una prueba de su interfaz.

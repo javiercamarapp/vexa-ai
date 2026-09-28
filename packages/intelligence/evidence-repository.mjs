@@ -17,6 +17,8 @@ export function createEvidenceRepository({database}={}){
     FROM public.conversations c JOIN public.connections n ON n.tenant_id=c.tenant_id AND n.id=c.connection_id
     LEFT JOIN public.source_heads h ON h.tenant_id=c.tenant_id AND h.id=c.id WHERE c.tenant_id=$1 AND c.id=$2`,[s.tenantId,run.conversation_id]);
    if(!conversation||conversation.deleted_at||conversation.status!=='active'||!['unique','selected','ambiguous'].includes(conversation.state))fail();
+   // Constrain joins to the validated immutable manifest before expanding source rows.
+   // Every existing row, provenance, authority and content check below remains mandatory.
    const stored=(await s.query(`SELECT r.id,r.message_id,r.redacted_text,r.hash,r.deleted_at,r.redaction_version,r.provenance,
     original.id AS original_id,original.message_id AS original_message_id,original.deleted_at AS original_deleted,
     m.deleted_at AS message_deleted,m.connection_id,m.external_id,
@@ -27,7 +29,8 @@ export function createEvidenceRepository({database}={}){
     JOIN public.source_revisions sr ON sr.tenant_id=original.tenant_id AND sr.message_revision_id=original.id AND sr.entity_type='message'
     LEFT JOIN public.source_heads h ON h.tenant_id=m.tenant_id AND h.id=m.id
     LEFT JOIN public.source_revisions current_source ON current_source.tenant_id=h.tenant_id AND current_source.id=h.selected_revision_id
-    WHERE r.tenant_id=$1 AND r.id=ANY($2::uuid[])`,[s.tenantId,manifest.map(x=>x.message_revision_id)])).rows;
+    WHERE r.tenant_id=$1 AND r.id=ANY($2::uuid[])
+    AND original.id=ANY($3::uuid[]) AND sr.message_revision_id=ANY($3::uuid[])`,[s.tenantId,manifest.map(x=>x.message_revision_id),manifest.map(x=>x.original_revision_id)])).rows;
    if(stored.length!==manifest.length||new Set(stored.map(x=>x.id)).size!==stored.length)fail();
    const identities=[];const byId=new Map(stored.map(x=>[x.id,x])),revisions=[],tombstoneKeys=[conversation.id,conversation.external_id];let historical=!['unique','selected'].includes(conversation.state),bytes=0;
    const key=(entityType,externalId)=>{identities.push({kind:entityType,external_id:externalId});const identity=identityKey({tenant_id:s.tenantId,connection_id:conversation.connection_id,source:conversation.source,source_account_id:conversation.account_id,entity_type:entityType,external_id:externalId});tombstoneKeys.push(identity,sha256(identity));};key('conversation',conversation.external_id);

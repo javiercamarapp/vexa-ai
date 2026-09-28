@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "a4c05987c49235b418fbaed56b447f7dddc99658",
-  "composition": "Reviewed snapshot reference batching (384) and asynchronous confirmation focus restoration (385). Historical load measurements retain their original measured source identities; no new load measurement claimed.",
+  "baselineSha": "d3991bf503f6816185c2cf080f853c4555240c6c",
+  "composition": "Reviewed immutable evidence join constraints, pinned workspace preparation and extraction role error precedence (386/387). Historical load measurements retain their original source identities; no new load measurement claimed.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -1565,7 +1565,7 @@
     },
     {
       "path": "packages/intelligence/api.mjs",
-      "sha256": "010368b6d38b7e520f1bbabbb2ba81995bcdd18416b155d53053c8f59f9133eb"
+      "sha256": "a4b16bb6c55bd6e7b7745e496a6b0df77c9c24fc0b34951c82173b150f82e14b"
     },
     {
       "path": "packages/intelligence/candidate-execution/README.md",
@@ -1665,7 +1665,7 @@
     },
     {
       "path": "packages/intelligence/evidence-repository.mjs",
-      "sha256": "a64df388922235efad6783550e520b548ad0c795764777edc8ea8512de4feb51"
+      "sha256": "4929d971c7e1f4bcbba2217ba7ef143715e79af3579a3f1630c5a82bb9318a74"
     },
     {
       "path": "packages/intelligence/extract.mjs",
@@ -2829,7 +2829,7 @@
     },
     {
       "path": "packages/workspace-service/index.mjs",
-      "sha256": "bf568757618b0ed056573d5343b9c96cb8432d3bc6b34418af81a8c79c3a07fd"
+      "sha256": "b4dd8d05930cc2a1dbc01872cc752f91687e0f6b8cda96e731e80dcc2ad9a12b"
     },
     {
       "path": "packages/workspace-service/tests/current-problems/harness.mjs",

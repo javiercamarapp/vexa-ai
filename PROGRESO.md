@@ -2,6 +2,12 @@
 Actualizado: 2026-09-28. Los apartados conservados abajo son cortes históricos.
 
 
+## Smoke remoto completo aprobado —28-sep
+
+El producto `b9ed3db5ef4df825c27ed208722ad2faad4ee9c3` está publicado en GitHub y desplegado en https://vexa-ai.vercel.app. El runner oficial terminó **8/8 fases y ocho vistas**, con114solicitudes registradas y ocho capturas verificadas por hash. No se cambió el timeout de transporte de15segundos. Importación normal3/3, dinero/export30000/1500minorUSD, aislamientoA/B, alarma por pausa, recuperación del mismo trabajo3/3 sin duplicados y revocaciónA conBautorizado pasaron en la misma corrida.
+
+Se conservaron los fallos anteriores y sus fuentes. Al terminar, A quedó revocada con permissions_version4; la delegación del consumidor se deshabilitó y fue confirmada porSQL. Navegador propio cerrado; sin cron continuo ni inferencia/correos reales. El estado productivo continúa false:53/60técnicas y25formales. El smoke cierra el bloqueo remoto del recorridoSYN, no los siete ámbitos pendientes ni las cuentas/validaciones externas. [Informe y límites](docs/entrega/SMOKE-REMOTO-2026-09-28.md).
+
 ## Segunda corrección de latencia y clasificación de permisos —28-sep
 
 La primera corrección fue publicada y desplegada como d3991bf, pero el runner oficial falló en exportación financiera después de aprobar SHA, Auth A/B e importación3/3. El límite original de15segundos permanece intacto. Reproducción aislada: exportación13,5–13,7s e Intervenciones49,7s con límite diagnóstico55s; las solicitudes abortadas y sus respuestas tardías no se cuentan como aprobadas.

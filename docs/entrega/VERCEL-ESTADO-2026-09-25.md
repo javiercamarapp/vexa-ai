@@ -1,5 +1,10 @@
 # VEXA AI — despliegue comprobado, 25 de septiembre
 
+## Actualización28-sep: smoke completo aprobado
+
+El alias sirve `b9ed3db5ef4df825c27ed208722ad2faad4ee9c3`. Runner oficial8/8fases y ocho vistas;114solicitudes, límite15s intacto, cuentasSYN y limpieza verificada. [Informe completo](SMOKE-REMOTO-2026-09-28.md).53/60técnicas,25formales, producciónfalse; los cortes siguientes conservan su fecha y alcance.
+
+
 ## Actualización 28-sep: smoke completo fallido por latencia
 
 El alias conserva el producto `aed5c3a7fc65c0af9f6ecc3315732e905774d03d`. Cinco fases remotas pasaron y seis vistas fueron renderizadas; Intervenciones excede 15 segundos. La reproducción confirmó el timeout y una respuesta 200 en 16,487 segundos bajo diagnóstico separado. No se cambiaron los límites del runner ni se desplegó una corrección sin revisión. API de Brief comprobada por separado:200 en 1,090 segundos.

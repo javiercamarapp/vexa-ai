@@ -5,7 +5,7 @@ Todavía existen bloqueos técnicos/de revisión, por lo que no se afirma que ba
 ## Bloqueos que no son credenciales
 
 - F06-09: un filtro automático de posible riesgo de ciberseguridad interrumpió la revisión; no hay dictamen final. El examen no se reintenta ni transfiere. Sus propuestas de entrega por correo/push y eventos no están publicadas ni aceptadas. No se corrige este bloqueo pegando una API.
-- ReleaseF08-01/02: inventario, smoke y controles revisados e integrados. La incompatibilidad de migración0028 ya fue corregida;35migraciones autorizadas aplicadas, Vercel desplegado y CSV/aislamiento/pausa/recuperación remotos comprobados. Falta el smoke completo de ocho fases y el cierre global; los controles focales no lo sustituyen.
+- ReleaseF08-01/02: inventario, smoke y controles revisados e integrados. La incompatibilidad de migración0028 ya fue corregida;35migraciones autorizadas aplicadas, Vercel desplegado y CSV/aislamiento/pausa/recuperación remotos comprobados. El smoke oficial completo8/8 y ocho vistas pasó el28-sep en b9ed3db, con Auth/Storage/DB realesSYN y timeout15s. Falta el cierre global; este recorrido no sustituye cuentas/proveedores ni los ámbitos bloqueados.
 - Carga, caos y recuperación ya tienen ejecutores/control portables revisados. Sus mediciones son locales y conservan sus límites.
 - F06-07 y cadena final: revisión visual humana, aceptación formal y cierre global conservan sus requisitos. El ensayo de un agente no se llama ensayo humano.
 

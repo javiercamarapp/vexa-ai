@@ -1,6 +1,12 @@
 # Progreso verificable
 Actualizado: 2026-09-28. Los apartados conservados abajo son cortes históricos.
 
+## Contraste y datos desactualizados corregidos — ronda391–393
+
+Dos defectos confirmados: texto pequeño del login3,19:1 y falta de aviso global stale en Explorador. ParcheCSS revisado independientemente por root en Chromium, con cota13,30:1 y texto completo; parcheExplorer revisado393 con rojo real y cinco grupos verdes, dinero intacto y revocación403/recuperación200. Composición lint/buildNode22 aprobada. Se incorporan contraste focal, teclado secuencial, estados reales de Equipo/inbox/preferencias y cinco casos de presentación del login. [Informe y límites](docs/entrega/ACCESIBILIDAD-ESTADOS-2026-09-28.md).
+
+393reservas acumuladas conservadas y recogidas.53/60técnicas,25formales y producciónfalse. Este corte registra integración comprobada; el SHA publicado y desplegado se acredita por separado. No se reetiqueta el smoke remoto b9 como una ejecución nueva.
+
 
 ## Checks UI y conciliación del ciclo de agentes —28-sep
 

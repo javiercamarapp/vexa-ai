@@ -566,5 +566,16 @@
     "full_smoke_rerun": false,
     "production_validated": false,
     "evidence": "docs/entrega/CHECKS-UI-2026-09-28.md"
+  },
+  "latest_ui_audit": {
+    "reservations": [
+      391,
+      392,
+      393
+    ],
+    "status": "two_fixes_independently_reviewed_composed_build_pass",
+    "evidence": "docs/entrega/ACCESIBILIDAD-ESTADOS-2026-09-28.md",
+    "technical_count_increment": 0,
+    "production_validated": false
   }
 }

@@ -4,7 +4,7 @@ Corte de código público: `d5cb1ea75c6859edf8be0365f9fcc81cfd39fd1e`; producto 
 
 | Ficha | Lo disponible | Lo que impide cerrarla |
 |---|---|---|
-| F06-07, interfaz y accesibilidad | Ocho vistas, navegación, estados y correcciones revisadas; checks adicionales WebKit/axe sobre el producto público y corrección del selector con revisión independiente. | Completar cobertura de estados y contraste, clasificar el comportamiento de precarga de WebKit en la auditoría global, incluir las pantallas de entrega cuando su ámbito esté habilitado y revisión visual humana. No basta una captura ni cero avisos de axe. |
+| F06-07, interfaz y accesibilidad | Ocho vistas, navegación, estados y correcciones revisadas; checks adicionales WebKit/axe sobre el producto público y corrección del selector con revisión independiente. | Contraste y estados ampliados en391–393, con dos defectos corregidos y teclado focal comprobado. Restan revisión visual humana/tecnologías asistivas, acciones no ejecutadas del inventario y pantallas de entrega cuando su ámbito esté habilitado; los errores de precarga anteriores permanecen documentados. No basta cero avisos de axe. |
 | F06-09, entrega durable | Centro de lectura publicado en F06-08. Hay evidencia funcional histórica de una propuesta de entrega, que no está aceptada. | Revisión automática interrumpida, sin dictamen independiente final; integración y regresiones pendientes. No se puede dar por entregado el outbox ni sustituir la revisión con una clave API. |
 | F06-10, correo de producto | Propuesta local y ensayo histórico de correo local; separados de los correos de autenticación ya integrados. | Depende del ámbito de entrega bloqueado; faltan revisión e integración aceptadas. Después, dominio/remitente propios y verificación real de entrega/recibos. |
 | F06-11, Web Push | Propuesta local; no es una función aceptada del producto público. | Depende del ámbito bloqueado; revisión, integración y recorrido de consentimiento/dispositivo/entrega real pendientes. Una clave VAPID no acredita ese recorrido. |
@@ -25,3 +25,5 @@ Las fichas bloqueadas conservan sus originales y recibos; no se reenvía el exam
 El smoke remoto completo ya aprobado conserva su [informe y alcance](SMOKE-REMOTO-2026-09-28.md). Los [aportes de cuentas y datos](PENDIENTES-PARA-CONECTAR.md) son distintos de estas revisiones técnicas. Ninguno de los checks anteriores certifica producción ni modifica el contador.
 
 [Checks UI, corrección y límites](CHECKS-UI-2026-09-28.md) · [Ciclo de agentes y evidencia reconciliada](CICLO-AGENTES-2026-09-28.md).
+
+[Ampliación de contraste, teclado y estados391–393](ACCESIBILIDAD-ESTADOS-2026-09-28.md).

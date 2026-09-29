@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "082e85b93729c6fdcc6aeedda3bbee03ae52f0c4",
-  "composition": "Login caption contrast391 independently reviewed by root and Explorer stale-state visibility392 independently reviewed393. Two-source Node22 lint/build passed. Historical load measurements retain original identities; no new load benchmark.",
+  "baselineSha": "e6a6d1e5eecca1d54accf9f93b231b54f980ea94",
+  "composition": "Connection reconnection consent bound to exact attempt and synchronous repeated-activation guard395, independently reviewed by root with stale409 and fresh202 recovery. Node22 lint/build passed. Historical load results retain their original source identities; no new benchmark.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -533,7 +533,7 @@
     },
     {
       "path": "apps/web/src/components/connection-health.tsx",
-      "sha256": "d90a0fc2d74d32c028595fd3340e2126f8cc098257e8e44a30c7b4575692f455"
+      "sha256": "6a8c502cce1af753011a2499da0e0e99308e5b7a8865e5efb360945af00eaeb6"
     },
     {
       "path": "apps/web/src/components/connection-settings.tsx",

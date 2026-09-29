@@ -5,7 +5,7 @@
   "formal_runner_accepted": 25,
   "total_tasks": 60,
   "production_validated": false,
-  "source_commit": "4218d71c23f978776c40d27c848ca8d4ffcf6c6d",
+  "source_commit": "5c9f84d4c7f285d98940ac45f4ebed291880532e",
   "layers": {
     "documentation": {
       "status": "reviewed_guides_consolidation_submitted_for_final_review",
@@ -48,7 +48,8 @@
         "SMOKE-REMOTO-2026-09-28.md",
         "VERCEL-ESTADO-2026-09-25.md",
         "CHECKS-UI-2026-09-28.md",
-        "ACCESIBILIDAD-ESTADOS-2026-09-28.md"
+        "ACCESIBILIDAD-ESTADOS-2026-09-28.md",
+        "ACCIONES-UI-2026-09-29.md"
       ],
       "smoke_checks_passed": 8,
       "smoke_views_passed": 8,
@@ -57,12 +58,10 @@
       "current_deployment_checks": [
         "READY",
         "served_revision",
-        "login_browser_1440_390",
-        "compiled_css_rule",
-        "uploaded_reviewed_sources_sha256"
+        "uploaded_reviewed_source_sha256",
+        "authenticated_connections_1440_390_read_only"
       ],
-      "remote_authenticated_explorer_rerun": true,
-      "remote_authenticated_explorer_scope": {
+      "previous_remote_authenticated_explorer_scope": {
         "unavailable404_observations": 2,
         "empty_checks_passed": 2,
         "ready_stale_tested": false,
@@ -102,6 +101,6 @@
     "technical_tasks_complete": 49,
     "note": "Corte histórico anterior al despliegue y smoke remoto; conservado enGit."
   },
-  "updated": "2026-09-28",
-  "deployed_source_commit": "4218d71c23f978776c40d27c848ca8d4ffcf6c6d"
+  "updated": "2026-09-29",
+  "deployed_source_commit": "5c9f84d4c7f285d98940ac45f4ebed291880532e"
 }

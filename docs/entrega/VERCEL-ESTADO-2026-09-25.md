@@ -1,5 +1,9 @@
 # VEXA AI — despliegue comprobado, 25 de septiembre
 
+## Corte29-sep: reconexión corregida y desplegada
+
+Producto `5c9f84d4c7f285d98940ac45f4ebed291880532e`, Vercel READY y SHA servido/fuente subida verificados. Consentimiento por intento y bloqueo síncrono de solicitudes repetidas: revisión independiente y pruebas locales409/202, compilaciónNode22; Conexiones remoto Chromium1440/WebKit390 aprobado con alcance de lectura. [Informe394–396 y límites](ACCIONES-UI-2026-09-29.md).53/60técnicas,25formales, producción pendiente. Los cortes siguientes conservan sus alcances y fechas.
+
 ## Actualización: contraste y aviso stale comprobados
 
 Producto vigente `4218d71c23f978776c40d27c848ca8d4ffcf6c6d`, desplegadoREADY y SHA servido comprobado. Login remoto1440/390, CSS corregido y fuentes subidas verificadas; Explorador autenticado con observaciones404 y controles de vacío/actualizar en Chromium/WebKit, sin ready/stale remoto ni nuevo smoke completo. [Pruebas locales independientes y límites](ACCESIBILIDAD-ESTADOS-2026-09-28.md). El smoke completob9 conserva su revisión original. CLI de logs propio respondió;14solicitudes observadas del despliegue anterior,200/303, no certificación global de errores.53/60técnicas,25formales, producciónfalse. Los apartados siguientes son cortes históricos.

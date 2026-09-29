@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-28",
+  "updated": "2026-09-29",
   "definition": "Trabajo técnico de la ficha integrado y probado. Las cuentas/datos/aprobaciones externas y las dependencias de aceptación formal se identifican por separado. No acredita producción.",
   "accepted_in_graph": [
     "E00",
@@ -554,6 +554,36 @@
     "kind": "last_full_synthetic_smoke"
   },
   "latest_deployment": {
+    "source_sha": "5c9f84d4c7f285d98940ac45f4ebed291880532e",
+    "deployment_id": "dpl_BtaLPXUrgGQpxByXAWk6n3e6UkGt",
+    "url": "https://vexa-ai.vercel.app",
+    "status": "READY_verified",
+    "checks": [
+      "served_revision",
+      "uploaded_reviewed_source_sha256",
+      "authenticated_connections_1440_390_read_only"
+    ],
+    "backend_unchanged_since": "b9ed3db5ef4df825c27ed208722ad2faad4ee9c3",
+    "frontend_changes": [
+      "consent_bound_to_reconnection_attempt",
+      "synchronous_duplicate_request_guard"
+    ],
+    "full_smoke_rerun": false,
+    "production_validated": false,
+    "evidence": "docs/entrega/ACCIONES-UI-2026-09-29.md"
+  },
+  "latest_ui_audit": {
+    "reservations": [
+      394,
+      395,
+      396
+    ],
+    "status": "results_collected_repair_reviewed_published_deployed_scoped_verification",
+    "evidence": "docs/entrega/ACCIONES-UI-2026-09-29.md",
+    "technical_count_increment": 0,
+    "production_validated": false
+  },
+  "previous_deployment": {
     "source_sha": "4218d71c23f978776c40d27c848ca8d4ffcf6c6d",
     "url": "https://vexa-ai.vercel.app",
     "status": "READY_verified",
@@ -579,16 +609,5 @@
       "full_smoke": false,
       "evidence": "docs/entrega/ACCESIBILIDAD-ESTADOS-2026-09-28.md"
     }
-  },
-  "latest_ui_audit": {
-    "reservations": [
-      391,
-      392,
-      393
-    ],
-    "status": "reviewed_compiled_published_deployed_scoped_verification",
-    "evidence": "docs/entrega/ACCESIBILIDAD-ESTADOS-2026-09-28.md",
-    "technical_count_increment": 0,
-    "production_validated": false
   }
 }

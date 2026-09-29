@@ -1,5 +1,9 @@
 # Auditoría integral de20 rubros
 
+## Corte29-sep: reconexión corregida y desplegada
+
+Producto `5c9f84d4c7f285d98940ac45f4ebed291880532e`, Vercel READY y SHA servido/fuente subida verificados. Consentimiento por intento y bloqueo síncrono de solicitudes repetidas: revisión independiente y pruebas locales409/202, compilaciónNode22; Conexiones remoto Chromium1440/WebKit390 aprobado con alcance de lectura. [Informe394–396 y límites](ACCIONES-UI-2026-09-29.md).53/60técnicas,25formales, producción pendiente. Los cortes siguientes conservan sus alcances y fechas.
+
 **Estado: auditoría consolidada del ámbito disponible, con bloqueos explícitos; no aprobación de producción ni60/60.** Las tres revisiones independientes cubrieron los20 rubros definidos. Sus conclusiones tienen límites explícitos: código publicado, infraestructura local y datosSYN. El examen rechazado de F06-09 y sus propuestas de notificaciones permanecen excluidos; esto impide una conclusión global favorable sobre todo el producto.
 
 Corte de producto revisado:3f7f47a y deltas publicados d5fd99e (importación/navegación), d1956d9 (sesiones, correo y Next), d723cc2 (paginación de candidatos).728d99b integra el control puro de robustez, sin alterar el runtime. La carga210K y recuperación actuales tienen revisión independiente y controles externos integrados; se conservan por separado las fuentes medidas y los deltas de integración. No se trasladan resultados de composiciones privadas anteriores a la versión pública.

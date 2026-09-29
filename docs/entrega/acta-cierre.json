@@ -105,5 +105,18 @@
     "note": "Corte histórico anterior al despliegue y smoke remoto; conservado enGit."
   },
   "updated": "2026-09-29",
-  "deployed_source_commit": "78b524ded807623df410d5b199a5b0df8687e002"
+  "deployed_source_commit": "78b524ded807623df410d5b199a5b0df8687e002",
+  "latest_audit": {
+    "date": "2026-09-29",
+    "source_commit": "94db0848a6c61538508a354ff0715f377364af6d",
+    "rubrics": 20,
+    "kind": "evidence_reconciliation_and_scoped_live_checks",
+    "verdict": "blocked_not_production",
+    "anonymous_routes_denied": 24,
+    "dependency_advisories": 0,
+    "immutable_artifacts_verified": 609,
+    "final_post_60_audit": false,
+    "evidence": "AUDITORIA-20-RUBROS-2026-09-29.md",
+    "technical_count_increment": 0
+  }
 }

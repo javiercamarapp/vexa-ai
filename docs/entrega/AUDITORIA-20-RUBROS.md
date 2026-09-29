@@ -1,5 +1,10 @@
 # Auditoría integral de20 rubros
 
+## Reauditoría actual29-sep
+
+[Mapa vigente de los20rubros y comprobaciones nuevas](AUDITORIA-20-RUBROS-2026-09-29.md):24APIs deniegan acceso anónimo conprivate/no-store, dependenciaaudit sin avisos y609artefactos verificados porhash.54/60técnicas,25formales y aprobación productiva bloqueada. La auditoría final posterior a60/60 no se ha completado. Los cortes siguientes son históricos.
+
+
 > Actualización29-sep: **54/60 técnicas**,25formales. F07-05 tiene preparación técnica integrada y revisada; el piloto humano sigue `not_run`. Restan seis fichas técnicas. [Estado actual y evidencia](PILOTO-TECNICO-2026-09-29.md). Las tablas/cortes siguientes conservan su estado histórico y no son una auditoría global aprobada.
 
 

@@ -2,7 +2,7 @@
 
 Todavía existen bloqueos técnicos/de revisión, por lo que no se afirma que baste pegar APIs para todo el producto. El estado técnico y formal está en construccion/ESTADO-CONSTRUCCION.json; producción sigue sin validar.
 
-La [lista exacta de las siete fichas](SIETE-PENDIENTES-2026-09-28.md) separa las verificaciones técnicas, la revisión interrumpida y la evaluación humana.
+El [estado actual de las seis fichas técnicas restantes](PILOTO-TECNICO-2026-09-29.md) distingue la revisión bloqueada de los aportes humanos. F07-05 tiene software preparado, pero su piloto real continúa `not_run`. La [reauditoría actual de20rubros](AUDITORIA-20-RUBROS-2026-09-29.md) mantiene límites y comprobaciones por área.
 
 ## Bloqueos que no son credenciales
 

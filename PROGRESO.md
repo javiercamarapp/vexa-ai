@@ -1,6 +1,12 @@
 # Progreso verificable
 Actualizado: 2026-09-29. Los apartados conservados abajo son cortes históricos.
 
+## Reauditoría actual de20rubros —29-sep
+
+Se conciliaron las veinte áreas con evidencia previa identificada porSHA y pruebas nuevas:24APIs rechazaron acceso anónimo conprivate/no-store; versión remota78b524d confirmada, npm audit actual sin avisos y609artefactos íntegros. Seis400iniciales sólo eran validación de input; los seis alcancesSYNválidos devolvieron401. No se reejecutó ni reetiquetó el smoke8/8. [Informe completo, bloqueos y límites](docs/entrega/AUDITORIA-20-RUBROS-2026-09-29.md).
+
+54/60técnicas y25formales permanecen iguales.400invocaciones acumuladas, ninguna nueva para esta conciliación. Entrega/revisión global y operación/proveedores/piloto reales siguen pendientes; no es cierre productivo ni un loop en segundo plano.
+
 ## F07-05 preparada técnicamente — ronda399–400
 
 54/60técnicas y25formales. Evaluador offline del piloto integrado tras revisión independiente400;25controles principales y21propios del revisor, más ensayo del procedimiento literal desde la integración. Cuantifica observaciones aportadas sin fabricar gold, consentimiento, sponsor ni entrevistas. El piloto humano continúa `not_run`, producciónfalse. [Cambio, huellas y pendientes](construccion/F07-05-CIERRE-TECNICO.md).

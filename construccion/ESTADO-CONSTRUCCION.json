@@ -47,6 +47,7 @@
     "F06-04",
     "F06-05",
     "F06-06",
+    "F07-05",
     "F07-06",
     "F08-01",
     "F08-02",
@@ -55,7 +56,7 @@
     "F08-05",
     "F08-06"
   ],
-  "construction_total": 53,
+  "construction_total": 54,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -505,6 +506,24 @@
       "official_dependency_pending": [
         "F08-05"
       ]
+    },
+    {
+      "task_id": "F07-05",
+      "technical_ready": true,
+      "implemented": "Evaluación offline de observaciones CEO/insight/sponsor/WTP ligada a resultado y recibo F04; dinero preciso, denominadores completos, consentimiento/fechas, privacidad y salidas exclusivas. Autor399, revisión400 e integración comprobados.",
+      "programming_pending": [],
+      "evidence": "construccion/F07-05-CIERRE-TECNICO.md",
+      "external_pending": [
+        {
+          "owner": "Sponsor del cliente, participantes y responsable de evaluación",
+          "pending": "Consentimientos, gold/holdout humano autorizado, comprensión cronometrada y respuestas reales de insight/acción/WTP. Revisión humana de autenticidad y decisión formal.",
+          "verification": "Ejecutar PILOT.md con archivos privados legítimos; no presentar fixtures como investigación. El piloto real sigue not_run."
+        }
+      ],
+      "official_dependency_pending": [
+        "F07-04"
+      ],
+      "formal_gate_pending": true
     }
   ],
   "technical_ready_formal_pending": [
@@ -599,5 +618,18 @@
     "full_smoke_rerun": false,
     "production_validated": false,
     "evidence": "docs/entrega/ACCIONES-UI-2026-09-29.md"
+  },
+  "latest_technical_closure": {
+    "task_id": "F07-05",
+    "reservations": [
+      399,
+      400
+    ],
+    "status": "integrated_independently_reviewed_operator_flow_verified",
+    "technical_count_increment": 1,
+    "real_pilot_status": "not_run",
+    "formal_acceptance": false,
+    "production_validated": false,
+    "evidence": "construccion/F07-05-CIERRE-TECNICO.md"
   }
 }

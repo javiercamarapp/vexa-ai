@@ -1,5 +1,8 @@
 # Auditoría integral de20 rubros
 
+> Actualización29-sep: **54/60 técnicas**,25formales. F07-05 tiene preparación técnica integrada y revisada; el piloto humano sigue `not_run`. Restan seis fichas técnicas. [Estado actual y evidencia](PILOTO-TECNICO-2026-09-29.md). Las tablas/cortes siguientes conservan su estado histórico y no son una auditoría global aprobada.
+
+
 ## Corte29-sep: aprobación económica ligada a contenido y versiones
 
 Producto `78b524ded807623df410d5b199a5b0df8687e002` publicado y desplegado READY; SHA servido y fuente subida verificados. Autor397 y revisión independiente398, Node22 y recuperación409→200; invalidación de aprobación comprobada en escritorio/móvil remotos sin escrituras. [Informe y límites](CONSENTIMIENTO-ECONOMICO-2026-09-29.md).53/60técnicas,25formales, producción pendiente. Los apartados siguientes conservan sus fechas y alcances.

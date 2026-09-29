@@ -1,6 +1,12 @@
 # Progreso verificable
 Actualizado: 2026-09-29. Los apartados conservados abajo son cortes históricos.
 
+## F07-05 preparada técnicamente — ronda399–400
+
+54/60técnicas y25formales. Evaluador offline del piloto integrado tras revisión independiente400;25controles principales y21propios del revisor, más ensayo del procedimiento literal desde la integración. Cuantifica observaciones aportadas sin fabricar gold, consentimiento, sponsor ni entrevistas. El piloto humano continúa `not_run`, producciónfalse. [Cambio, huellas y pendientes](construccion/F07-05-CIERRE-TECNICO.md).
+
+400reservas conservadas y ambas recogidas. Seis fichas sin cierre técnico permanecen pendientes; el bloqueo de revisión de entrega no se eludió. Web78b524d y smokecompleto b9ed3db conservan sus pruebas. Este cambio CLI offline no provoca otro despliegue web. [Estado actual](docs/entrega/PILOTO-TECNICO-2026-09-29.md).
+
 ## Consentimiento económico corregido y verificado — ronda397–398
 
 Producto desplegado `78b524d`: aprobar registros y fuentes económicas queda ligado a sus campos y versiones actuales; editar exige nueva confirmación. Rojo real, autor397 y revisión independiente398, lint/buildNode22 y recuperación409→200 aprobados. Vercel READY, SHA servido/fuente subida verificados y formulario remoto en Chromium1440/WebKit390 comprobado sin escrituras. El smoke completo8/8 conserva el SHA `b9ed3db`.53/60 técnicas,25 formales; producción pendiente. [Evidencia actual](docs/entrega/CONSENTIMIENTO-ECONOMICO-2026-09-29.md).

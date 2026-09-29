@@ -1,7 +1,7 @@
 {
   "schema": "vexa-layered-close-v1",
   "status": "consolidated_blocked_not_production",
-  "technical_tasks_complete": 53,
+  "technical_tasks_complete": 54,
   "formal_runner_accepted": 25,
   "total_tasks": 60,
   "production_validated": false,
@@ -21,7 +21,8 @@
       "status": "technical_scopes_verified_remaining_excluded_and_validation_gaps",
       "evidence": [
         "../../construccion/ESTADO-CONSTRUCCION.json",
-        "AUDITORIA-20-RUBROS.md"
+        "AUDITORIA-20-RUBROS.md",
+        "../../construccion/F07-05-CIERRE-TECNICO.md"
       ]
     },
     "synthetic_demo": {
@@ -38,7 +39,8 @@
       "exit_condition": "Consentimiento, cuentas y datos reales, evaluación humana, resultados observados y aceptación explícita",
       "evidence": [
         "../blueprint/pilot-evaluation.json"
-      ]
+      ],
+      "technical_preparation": "integrated_reviewed_external_inputs_pending"
     },
     "production": {
       "status": "deployed_synthetic_smoke_pass_global_approval_blocked",
@@ -86,9 +88,9 @@
       "exit_condition": "Accesos, datos y aprobaciones legítimos; validación real posterior"
     },
     {
-      "id": "remaining_seven_scopes",
+      "id": "remaining_six_technical_scopes",
       "owner": "Ingeniería/revisión y evaluadores humanos según ficha",
-      "exit_condition": "CerrarF06-07,F06-09..12,F07-01/F07-05 con evidencia real; consultar el registro de pendientes, sin elevar el conteo por una propuesta."
+      "exit_condition": "Cerrar F06-07,F06-09..12,F07-01 con revisión legítima y evidencia completa. F07-05 está técnicamente preparada; el piloto humano permanece en su capa not_run."
     }
   ],
   "dates": {
@@ -96,7 +98,7 @@
     "reason": "No se inventan acuerdos, fechas, participantes ni pagos"
   },
   "loop_status": "Trabajo supervisado; consultar procesos/recibos vivos. Este documento no acredita un servicio continuo.",
-  "technical_count_note": "53 =25runner+25alcances con validación externa pendiente+3dependencias formales. Las siete restantes no están contabilizadas; no equivale a producción.",
+  "technical_count_note": "54 =25runner+26alcances con validación externa pendiente+3dependencias formales. F07-05 cuenta preparación técnica integrada, no piloto humano ejecutado. Restan seis alcances técnicos; no equivale a producción.",
   "previous_checkpoint": {
     "source_commit": "30b5fe1b90a7ca40271c9a9bd29dc31681a916ea",
     "technical_tasks_complete": 49,

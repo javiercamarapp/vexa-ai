@@ -1,5 +1,8 @@
 # Las siete fichas que faltan
 
+> Actualización29-sep: **54/60 técnicas**,25formales. F07-05 tiene preparación técnica integrada y revisada; el piloto humano sigue `not_run`. Restan seis fichas técnicas. [Estado actual y evidencia](PILOTO-TECNICO-2026-09-29.md). Las tablas/cortes siguientes conservan su estado histórico y no son una auditoría global aprobada.
+
+
 Producto vigente publicado/desplegado: `78b524ded807623df410d5b199a5b0df8687e002`; último smoke remoto completo: `b9ed3db5ef4df825c27ed208722ad2faad4ee9c3`. **53/60 técnicas y25 aceptadas formalmente**. Esta lista distingue ingeniería, revisión interrumpida y evidencia que sólo pueden aportar personas externas.
 
 | Ficha | Lo disponible | Lo que impide cerrarla |

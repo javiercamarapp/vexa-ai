@@ -1,5 +1,9 @@
 # VEXA AI — despliegue comprobado, 25 de septiembre
 
+## Corte29-sep: aprobación económica ligada a contenido y versiones
+
+Producto `78b524ded807623df410d5b199a5b0df8687e002` publicado y desplegado READY; SHA servido y fuente subida verificados. Autor397 y revisión independiente398, Node22 y recuperación409→200; invalidación de aprobación comprobada en escritorio/móvil remotos sin escrituras. [Informe y límites](CONSENTIMIENTO-ECONOMICO-2026-09-29.md).53/60técnicas,25formales, producción pendiente. Los apartados siguientes conservan sus fechas y alcances.
+
 ## Corte29-sep: reconexión corregida y desplegada
 
 Producto `5c9f84d4c7f285d98940ac45f4ebed291880532e`, Vercel READY y SHA servido/fuente subida verificados. Consentimiento por intento y bloqueo síncrono de solicitudes repetidas: revisión independiente y pruebas locales409/202, compilaciónNode22; Conexiones remoto Chromium1440/WebKit390 aprobado con alcance de lectura. [Informe394–396 y límites](ACCIONES-UI-2026-09-29.md).53/60técnicas,25formales, producción pendiente. Los cortes siguientes conservan sus alcances y fechas.

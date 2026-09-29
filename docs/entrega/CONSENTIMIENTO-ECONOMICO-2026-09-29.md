@@ -22,7 +22,9 @@ Revisión independiente398: APPROVED_SCOPED. Tres grupos con Auth/PostgreSQL rea
 
 Manifiesto independiente36artefactos: `a5f25d2c112295df774808c38c2a38c720b7232dbedad39a35eb803fd3c84d6a`. Ambos manifiestos y el archivo integrado se verificaron por hash. El inventario de2089fuentes está reconciliado; no se atribuye un benchmark nuevo.
 
-La publicación remota y el despliegue se registrarán después de comprobarlos.
+Publicado en main como `78b524ded807623df410d5b199a5b0df8687e002` por el publisher autorizado, Actions desactivadas y SHA remoto verificado; autor y committer asociados a la cuenta existente. Vercel READY, despliegue `dpl_5SSUaovqyHmkgEUpMkRDLtCZ7Dk6`, alias https://vexa-ai.vercel.app. SHA servido y hash del archivo subido coinciden con la revisión independiente.
+
+En Chromium1440 y WebKit390, página/API económicas respondieron200. Aprobar una fuente habilita el botón; editar nombre o estado activo retira la aprobación y deshabilita guardar; confirmar de nuevo funciona. Cero POST remotos, cero erroresJavaScript y sesiones cerradas. Manifiesto6artefactos: `28e9aa92d6f582096200ff900b3eb677b0404fb7693fce34748f01c2917dd079`. La escritura y el conflicto se probaron localmente; no se afirma haber creado registros económicos remotos ni validado proveedores. El último smoke remoto completo conserva la revisión `b9ed3db`; no se repitió ni se atribuye a este despliegue.
 
 ## Control independiente de navegación móvil
 

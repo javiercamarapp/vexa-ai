@@ -1,6 +1,12 @@
 # Progreso verificable
 Actualizado: 2026-09-29. Los apartados conservados abajo son cortes históricos.
 
+## Consentimiento económico corregido y verificado — ronda397–398
+
+Producto desplegado `78b524d`: aprobar registros y fuentes económicas queda ligado a sus campos y versiones actuales; editar exige nueva confirmación. Rojo real, autor397 y revisión independiente398, lint/buildNode22 y recuperación409→200 aprobados. Vercel READY, SHA servido/fuente subida verificados y formulario remoto en Chromium1440/WebKit390 comprobado sin escrituras. El smoke completo8/8 conserva el SHA `b9ed3db`.53/60 técnicas,25 formales; producción pendiente. [Evidencia actual](docs/entrega/CONSENTIMIENTO-ECONOMICO-2026-09-29.md).
+
+Dos agentes terminaron y se recogieron ambos resultados.398reservas conservadas. Navegación móvil por teclado comprobada aparte sobre5c9f84d, sin mutaciones ni erroresJavaScript. Se corrige la atribución del focal previo de cancelación: usó Node26 predeterminado; sus resultados no se reejecutaron ni se modificaron. Ninguno de estos avances cierra todaF06-07 ni aumenta el contador.
+
 ## Reconexión corregida y acciones verificadas — ronda394–396
 
 Producto desplegado `5c9f84d`: consentimiento de reconexión ligado a cada intento y bloqueo de solicitudes repetidas, con revisión independiente, lint/buildNode22 y recuperación409→202 comprobados. Vercel READY, SHA servido/fuente subida verificados y Conexiones remoto200 en Chromium1440/WebKit390. Ronda394–396 recogida, incluidos escenario futuro y controles de confirmación. El smoke completo8/8 conserva el SHA `b9ed3db`.53/60 técnicas,25 formales; producción pendiente. [Evidencia actual](docs/entrega/ACCIONES-UI-2026-09-29.md).

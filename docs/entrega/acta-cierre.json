@@ -5,7 +5,7 @@
   "formal_runner_accepted": 25,
   "total_tasks": 60,
   "production_validated": false,
-  "source_commit": "5c9f84d4c7f285d98940ac45f4ebed291880532e",
+  "source_commit": "78b524ded807623df410d5b199a5b0df8687e002",
   "layers": {
     "documentation": {
       "status": "reviewed_guides_consolidation_submitted_for_final_review",
@@ -49,7 +49,8 @@
         "VERCEL-ESTADO-2026-09-25.md",
         "CHECKS-UI-2026-09-28.md",
         "ACCESIBILIDAD-ESTADOS-2026-09-28.md",
-        "ACCIONES-UI-2026-09-29.md"
+        "ACCIONES-UI-2026-09-29.md",
+        "CONSENTIMIENTO-ECONOMICO-2026-09-29.md"
       ],
       "smoke_checks_passed": 8,
       "smoke_views_passed": 8,
@@ -59,7 +60,7 @@
         "READY",
         "served_revision",
         "uploaded_reviewed_source_sha256",
-        "authenticated_connections_1440_390_read_only"
+        "economic_consent_edit_invalidation_1440_390_no_writes"
       ],
       "previous_remote_authenticated_explorer_scope": {
         "unavailable404_observations": 2,
@@ -102,5 +103,5 @@
     "note": "Corte histórico anterior al despliegue y smoke remoto; conservado enGit."
   },
   "updated": "2026-09-29",
-  "deployed_source_commit": "5c9f84d4c7f285d98940ac45f4ebed291880532e"
+  "deployed_source_commit": "78b524ded807623df410d5b199a5b0df8687e002"
 }

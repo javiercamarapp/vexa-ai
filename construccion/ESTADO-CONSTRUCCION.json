@@ -554,6 +554,34 @@
     "kind": "last_full_synthetic_smoke"
   },
   "latest_deployment": {
+    "source_sha": "78b524ded807623df410d5b199a5b0df8687e002",
+    "deployment_id": "dpl_5SSUaovqyHmkgEUpMkRDLtCZ7Dk6",
+    "url": "https://vexa-ai.vercel.app",
+    "status": "READY_verified",
+    "checks": [
+      "served_revision",
+      "uploaded_reviewed_source_sha256",
+      "economic_consent_edit_invalidation_1440_390_no_writes"
+    ],
+    "backend_unchanged_since": "b9ed3db5ef4df825c27ed208722ad2faad4ee9c3",
+    "frontend_changes": [
+      "economic_source_and_record_consent_bound_to_fields_and_versions"
+    ],
+    "full_smoke_rerun": false,
+    "production_validated": false,
+    "evidence": "docs/entrega/CONSENTIMIENTO-ECONOMICO-2026-09-29.md"
+  },
+  "latest_ui_audit": {
+    "reservations": [
+      397,
+      398
+    ],
+    "status": "independent_review_approved_repair_published_deployed_scoped_verification",
+    "evidence": "docs/entrega/CONSENTIMIENTO-ECONOMICO-2026-09-29.md",
+    "technical_count_increment": 0,
+    "production_validated": false
+  },
+  "previous_deployment": {
     "source_sha": "5c9f84d4c7f285d98940ac45f4ebed291880532e",
     "deployment_id": "dpl_BtaLPXUrgGQpxByXAWk6n3e6UkGt",
     "url": "https://vexa-ai.vercel.app",
@@ -571,43 +599,5 @@
     "full_smoke_rerun": false,
     "production_validated": false,
     "evidence": "docs/entrega/ACCIONES-UI-2026-09-29.md"
-  },
-  "latest_ui_audit": {
-    "reservations": [
-      394,
-      395,
-      396
-    ],
-    "status": "results_collected_repair_reviewed_published_deployed_scoped_verification",
-    "evidence": "docs/entrega/ACCIONES-UI-2026-09-29.md",
-    "technical_count_increment": 0,
-    "production_validated": false
-  },
-  "previous_deployment": {
-    "source_sha": "4218d71c23f978776c40d27c848ca8d4ffcf6c6d",
-    "url": "https://vexa-ai.vercel.app",
-    "status": "READY_verified",
-    "checks": [
-      "served_revision",
-      "login_browser_1440_390",
-      "compiled_css_rule",
-      "uploaded_reviewed_sources_sha256"
-    ],
-    "backend_unchanged_since": "b9ed3db5ef4df825c27ed208722ad2faad4ee9c3",
-    "frontend_changes": [
-      "login_caption_contrast",
-      "explorer_stale_warning"
-    ],
-    "full_smoke_rerun": false,
-    "remote_authenticated_explorer_rerun": true,
-    "production_validated": false,
-    "evidence": "docs/entrega/ACCESIBILIDAD-ESTADOS-2026-09-28.md",
-    "remote_authenticated_explorer_scope": {
-      "unavailable404_observations": 2,
-      "empty_checks_passed": 2,
-      "ready_stale_tested": false,
-      "full_smoke": false,
-      "evidence": "docs/entrega/ACCESIBILIDAD-ESTADOS-2026-09-28.md"
-    }
   }
 }

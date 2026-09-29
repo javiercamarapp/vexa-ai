@@ -1,6 +1,6 @@
 # Las siete fichas que faltan
 
-Producto vigente publicado/desplegado: `5c9f84d4c7f285d98940ac45f4ebed291880532e`; último smoke remoto completo: `b9ed3db5ef4df825c27ed208722ad2faad4ee9c3`. **53/60 técnicas y25 aceptadas formalmente**. Esta lista distingue ingeniería, revisión interrumpida y evidencia que sólo pueden aportar personas externas.
+Producto vigente publicado/desplegado: `78b524ded807623df410d5b199a5b0df8687e002`; último smoke remoto completo: `b9ed3db5ef4df825c27ed208722ad2faad4ee9c3`. **53/60 técnicas y25 aceptadas formalmente**. Esta lista distingue ingeniería, revisión interrumpida y evidencia que sólo pueden aportar personas externas.
 
 | Ficha | Lo disponible | Lo que impide cerrarla |
 |---|---|---|
@@ -29,3 +29,5 @@ El smoke remoto completo ya aprobado conserva su [informe y alcance](SMOKE-REMOT
 [Ampliación de contraste, teclado y estados391–393](ACCESIBILIDAD-ESTADOS-2026-09-28.md).
 
 [Corrección de reconexión y cobertura de acciones394–396, con comprobación remota focal](ACCIONES-UI-2026-09-29.md). No cambia el cierre global de las siete fichas.
+
+[Consentimiento económico397–398 corregido y comprobado en destino](CONSENTIMIENTO-ECONOMICO-2026-09-29.md). Los requisitos de cierre de las siete fichas se conservan.

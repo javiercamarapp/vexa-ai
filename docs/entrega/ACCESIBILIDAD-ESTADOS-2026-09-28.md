@@ -33,3 +33,19 @@ Se conservan los fallos de controles privados: selector de Equipo demasiado ampl
 | Estados de login, presentación | `f80d5f5f60ab46cfd844f992681d578b4883b9a7f60c93bc61f007ef835880b0` |
 
 Los procesos y servicios locales de esta ronda se recogieron. Esta evidencia no acredita revisión visual humana, lector de pantalla, Safari físico,582acciones ejecutadas, proveedores reales ni el ámbito de entrega bloqueado. [Siete pendientes](SIETE-PENDIENTES-2026-09-28.md). El smoke remoto completo previo conserva el SHA `b9ed3db`; publicación y verificación de estas dos correcciones se registran con su propio SHA, sin reetiquetar aquel ensayo.
+
+## Publicación y verificación remota
+
+Integrado y publicado mediante publisher autorizado en dos commits atómicos: `03cafa1699c0dde6bbffb8c0cd4d981db2cebb41` y `4218d71c23f978776c40d27c848ca8d4ffcf6c6d`. Se conservaron autoría y commits; SHA remoto comprobado. VercelREADY sirve4218d71 en https://vexa-ai.vercel.app, exportado desde719fuentes exactas. Login remoto1440/390 pasa sin desbordamiento ni erroresJavaScript; el CSS servido contiene la corrección.
+
+Las dos fuentes subidas al despliegue coinciden porSHA256 con la composición revisada. Se consultaron mediante la [API oficial de archivos del despliegue](https://vercel.com/docs/rest-api/deployments/list-deployment-files); esto prueba las fuentes subidas, no sustituye ejecutar una ruta autenticada. Una ruta de bundle obtenida del build local devolvió404 en el despliegue y se conserva como una suposición inválida del verificador. La comprobación autenticada posterior encontró la ruta real del asset y obtuvo200. Sus cinco grupos de ready/partial/stale conservan la ejecución local con servicios reales; no se trasladan a la nube.
+
+La consulta de logs porCLI autorizado devolvió14solicitudes de la hora anterior del despliegue22e8137: siete200 y siete303, nivelinfo. El403 del MCP anterior no impedía esta consulta autorizada. Una muestra limitada sin errores no certifica la ausencia global de errores ni monitoreo continuo.
+
+### Explorador autenticado en el despliegue actual
+
+La publicación sintética antigua ya no está disponible para el operador: API404 y página200 con aviso de acceso, sin registros ni consulta protegida. Ese estado y el botón de actualizar se observaron en Chromium1440 y WebKit390 antes de un fallo posterior del verificador. La organizaciónB conserva membresía activa y responde200 sin snapshot: dos controles focales posteriores aprobaron vacío y actualización en ambos motores, sin desbordamiento ni erroresJavaScript. Se verificó el asset real del Explorador con200. No se reactivóA, no se habilitó el consumidor y no se alteraron datos ni enviaron mensajes. Las sesiones nuevas se cerraron.
+
+El primer intento asumía que la publicación antigua seguiría disponible y falló ante404. El segundo contaba cualquier `role=alert` de la página: incluía el anunciador vacío de Next; la comprobación corregida identifica ese elemento y exige cero alertas en el Explorador. Dos derivados reutilizaron por error la ruta del JSON agregado; se conservan código, logs y capturas, y se declara la pérdida de aquel JSON. Por ello no se presenta un agregado4/4: hay dos observaciones previas al fallo y dos comprobaciones focales posteriores. Manifiesto privado de21artefactos: `b88c89b554757510329d4961ef557fa5a43bbcffc8edd901ceec13b6b470c56f`.
+
+Esta ejecución no ejercita ready/stale remotos ni repite el smoke completo; producción permanece sin aprobar.

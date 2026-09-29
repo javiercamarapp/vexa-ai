@@ -5,7 +5,7 @@ Actualizado: 2026-09-28. Los apartados conservados abajo son cortes históricos.
 
 Dos defectos confirmados: texto pequeño del login3,19:1 y falta de aviso global stale en Explorador. ParcheCSS revisado independientemente por root en Chromium, con cota13,30:1 y texto completo; parcheExplorer revisado393 con rojo real y cinco grupos verdes, dinero intacto y revocación403/recuperación200. Composición lint/buildNode22 aprobada. Se incorporan contraste focal, teclado secuencial, estados reales de Equipo/inbox/preferencias y cinco casos de presentación del login. [Informe y límites](docs/entrega/ACCESIBILIDAD-ESTADOS-2026-09-28.md).
 
-393reservas acumuladas conservadas y recogidas.53/60técnicas,25formales y producciónfalse. Este corte registra integración comprobada; el SHA publicado y desplegado se acredita por separado. No se reetiqueta el smoke remoto b9 como una ejecución nueva.
+393reservas acumuladas conservadas y recogidas.53/60técnicas,25formales y producciónfalse. Publicado mediante publisher autorizado en dos commits reales:03cafa1 y4218d71. VercelREADY sirve4218d71; login remoto1440/390 sin desbordamiento ni erroresJS, CSS revisado y dos fuentes subidas comprobadas por hash. El Explorador autenticado remoto muestra el404 sin datos protegidos y el vacío real deB en Chromium/WebKit; ready/stale conservan las pruebas locales, sin nuevo smoke completo. CLI permitió observar14solicitudes del despliegue anterior con200/303, sin errores en esa muestra limitada. No se reetiqueta el smoke remoto b9 como una ejecución nueva.
 
 
 ## Checks UI y conciliación del ciclo de agentes —28-sep

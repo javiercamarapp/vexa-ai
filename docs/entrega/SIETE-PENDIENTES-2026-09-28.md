@@ -1,6 +1,6 @@
 # Las siete fichas que faltan
 
-Corte de código público: `d5cb1ea75c6859edf8be0365f9fcc81cfd39fd1e`; producto desplegado y smoke aprobado: `b9ed3db5ef4df825c27ed208722ad2faad4ee9c3`. El total sigue en **53/60 técnicas y 25 aceptadas formalmente**. Esta lista distingue trabajo de ingeniería, revisión interrumpida y evidencia que sólo pueden aportar personas externas.
+Producto vigente publicado/desplegado: `4218d71c23f978776c40d27c848ca8d4ffcf6c6d`; último smoke remoto completo: `b9ed3db5ef4df825c27ed208722ad2faad4ee9c3`. **53/60 técnicas y25 aceptadas formalmente**. Esta lista distingue ingeniería, revisión interrumpida y evidencia que sólo pueden aportar personas externas.
 
 | Ficha | Lo disponible | Lo que impide cerrarla |
 |---|---|---|
@@ -20,7 +20,7 @@ Las fichas bloqueadas conservan sus originales y recibos; no se reenvía el exam
 - Supabase: tres tablas internas con RLS forzada y sin permisos SELECT/INSERT para `authenticated`, ni SELECT para `anon`. El aviso «RLS Enabled No Policy» no indica exposición de esas tablas. No se añadieron permisos para silenciarlo.
 - Tres funciones de autorización/gestión tienen `SECURITY DEFINER`, `search_path` vacío y ejecución denegada a `anon`; `authenticated` puede ejecutarlas por diseño. Las fuentes contienen comprobaciones de identidad/organización/rol. Este cotejo de configuración no sustituye una prueba completa de todas las ramas. [Descripción del aviso](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable).
 - La protección de contraseñas filtradas figura desactivada en Supabase. Es un aviso de configuración, separado de la revisión F06-09 y de los métodos Google/magic link aún sin conectar. [Configuración del proveedor](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection).
-- La consulta MCP de errores runtime de Vercel devolvió `403 Forbidden`; no aporta un resultado favorable ni se interpreta como ausencia de errores.
+- La consulta MCP de errores runtime devolvió `403 Forbidden`. La consulta posterior porCLI autorizado sí funcionó:14solicitudes recientes del despliegue22e8137,200/303, sin errores en esa muestra. No demuestra ausencia global ni monitoreo continuo.
 
 El smoke remoto completo ya aprobado conserva su [informe y alcance](SMOKE-REMOTO-2026-09-28.md). Los [aportes de cuentas y datos](PENDIENTES-PARA-CONECTAR.md) son distintos de estas revisiones técnicas. Ninguno de los checks anteriores certifica producción ni modifica el contador.
 

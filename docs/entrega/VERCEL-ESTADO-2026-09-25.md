@@ -1,5 +1,9 @@
 # VEXA AI — despliegue comprobado, 25 de septiembre
 
+## Actualización: contraste y aviso stale comprobados
+
+Producto vigente `4218d71c23f978776c40d27c848ca8d4ffcf6c6d`, desplegadoREADY y SHA servido comprobado. Login remoto1440/390, CSS corregido y fuentes subidas verificadas; Explorador autenticado con observaciones404 y controles de vacío/actualizar en Chromium/WebKit, sin ready/stale remoto ni nuevo smoke completo. [Pruebas locales independientes y límites](ACCESIBILIDAD-ESTADOS-2026-09-28.md). El smoke completob9 conserva su revisión original. CLI de logs propio respondió;14solicitudes observadas del despliegue anterior,200/303, no certificación global de errores.53/60técnicas,25formales, producciónfalse. Los apartados siguientes son cortes históricos.
+
 ## Actualización28-sep: corrección móvil publicada y verificada
 
 El alias sirve `22e8137c1c97e0c61f20c7b00cc0158a778cef56`: despliegueREADY, SHA servido, login200 y assetCSS revisado comprobados.719fuentes exportadas; backend/JavaScript sin cambios desde `b9ed3db`. Las cinco comprobaciones locales independientes WebKit/Chromium y sus límites están en [CHECKS-UI](CHECKS-UI-2026-09-28.md). El smoke completo del apartado siguiente pertenece a su SHA original; no se repitió ni se atribuye a este despliegue.53/60técnicas,25formales, producciónfalse.

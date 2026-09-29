@@ -4,7 +4,7 @@ Actualizado: 2026-09-20. Este plan reemplaza los bloques históricos de investig
 
 ## Checkpoint vigente —53/60 con trabajo técnico completo; 25 aceptadas en el grafo
 
-Producto actual GitHub/Vercel `22e8137`: corrección móvil del selector revisada, compilada y desplegada; SHA servido, login200 y regla CSS comprobados. Revisiones388/389/390 recogidas;390reservas acumuladas conservadas. El último smoke remoto oficial8/8 fases y ocho vistas corresponde a `b9ed3db`, con114solicitudes y timeout15s original; las fuentes backend/JavaScript no cambiaron. No se atribuye una repetición del smoke al nuevoSHA.53/60técnicas,25formales y producciónfalse. [Checks actuales](docs/entrega/CHECKS-UI-2026-09-28.md) · [Smoke previo](docs/entrega/SMOKE-REMOTO-2026-09-28.md).
+Producto actual GitHub/Vercel `4218d71`: contraste del login y aviso de datos desactualizados del Explorador corregidos y revisados; composiciónNode22 y regresiones afectadas aprobadas. SHA servido, login remoto1440/390 y dos fuentes subidas a Vercel verificadas por hash.393reservas acumuladas conservadas. El último smoke remoto completo8/8 conserva el SHA `b9ed3db`; no se repitió ni se atribuye al nuevo despliegue.53/60técnicas,25formales y producciónfalse. [Informe actual](docs/entrega/ACCESIBILIDAD-ESTADOS-2026-09-28.md).
 
 La interfaz Atiende/VEXA tiene revisión independiente379/381 cerrada,37fuentes integradas y compilación finalNode22 aprobada. [Alcance y límites](docs/entrega/INTERFAZ-ATIENDE-2026-09-25.md); publicada y desplegada como aed5c3a, con SHA servido y navegador remoto comprobados; detalle en PROGRESO.
 

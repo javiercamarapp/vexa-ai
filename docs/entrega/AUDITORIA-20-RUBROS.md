@@ -123,3 +123,5 @@ Los rubros5/18 incorporan [checks UI388/389](CHECKS-UI-2026-09-28.md): desbordam
 ## Ronda391–393: contraste, estados y teclado
 
 Rubros5/18: dos defectos reproducidos y reparados con revisión independiente; contraste del login y ausencia de aviso stale del Explorador. Estados parciales/desactualizados/vacíos con datosSYN reales, Equipo/inbox/preferencias con403/recuperación200, navegación secuencial y estados de solicitud del login documentados por separado. [Informe](ACCESIBILIDAD-ESTADOS-2026-09-28.md). No se eleva el conteo ni se declara accesibilidad global, entrega externa o producción; los20rubros conservan sus límites.
+
+La composición391–393 quedó publicada y desplegada como4218d71; login remoto y fuentes subidas verificados. Rubros14/16: CLI de logs autorizado funciona aunque el MCP había devuelto403; la muestra de14solicitudes del despliegue anterior no contiene errores y conserva ese alcance temporal. El focal autenticado posterior verifica presentación404/vacío del Explorador y actualización en Chromium/WebKit; no repite ready/stale ni el smoke completo y no aprueba producción.

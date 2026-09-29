@@ -5,7 +5,7 @@
   "formal_runner_accepted": 25,
   "total_tasks": 60,
   "production_validated": false,
-  "source_commit": "22e8137c1c97e0c61f20c7b00cc0158a778cef56",
+  "source_commit": "4218d71c23f978776c40d27c848ca8d4ffcf6c6d",
   "layers": {
     "documentation": {
       "status": "reviewed_guides_consolidation_submitted_for_final_review",
@@ -47,7 +47,8 @@
       "evidence": [
         "SMOKE-REMOTO-2026-09-28.md",
         "VERCEL-ESTADO-2026-09-25.md",
-        "CHECKS-UI-2026-09-28.md"
+        "CHECKS-UI-2026-09-28.md",
+        "ACCESIBILIDAD-ESTADOS-2026-09-28.md"
       ],
       "smoke_checks_passed": 8,
       "smoke_views_passed": 8,
@@ -56,9 +57,18 @@
       "current_deployment_checks": [
         "READY",
         "served_revision",
-        "login_http_200",
-        "compiled_css_rule"
-      ]
+        "login_browser_1440_390",
+        "compiled_css_rule",
+        "uploaded_reviewed_sources_sha256"
+      ],
+      "remote_authenticated_explorer_rerun": true,
+      "remote_authenticated_explorer_scope": {
+        "unavailable404_observations": 2,
+        "empty_checks_passed": 2,
+        "ready_stale_tested": false,
+        "full_smoke": false,
+        "evidence": "docs/entrega/ACCESIBILIDAD-ESTADOS-2026-09-28.md"
+      }
     }
   },
   "pmf_validated": false,
@@ -93,5 +103,5 @@
     "note": "Corte histórico anterior al despliegue y smoke remoto; conservado enGit."
   },
   "updated": "2026-09-28",
-  "deployed_source_commit": "22e8137c1c97e0c61f20c7b00cc0158a778cef56"
+  "deployed_source_commit": "4218d71c23f978776c40d27c848ca8d4ffcf6c6d"
 }

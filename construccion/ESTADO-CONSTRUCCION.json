@@ -554,18 +554,31 @@
     "kind": "last_full_synthetic_smoke"
   },
   "latest_deployment": {
-    "source_sha": "22e8137c1c97e0c61f20c7b00cc0158a778cef56",
+    "source_sha": "4218d71c23f978776c40d27c848ca8d4ffcf6c6d",
     "url": "https://vexa-ai.vercel.app",
     "status": "READY_verified",
     "checks": [
       "served_revision",
-      "login_http_200",
-      "compiled_css_rule"
+      "login_browser_1440_390",
+      "compiled_css_rule",
+      "uploaded_reviewed_sources_sha256"
     ],
-    "backend_javascript_unchanged_since": "b9ed3db5ef4df825c27ed208722ad2faad4ee9c3",
+    "backend_unchanged_since": "b9ed3db5ef4df825c27ed208722ad2faad4ee9c3",
+    "frontend_changes": [
+      "login_caption_contrast",
+      "explorer_stale_warning"
+    ],
     "full_smoke_rerun": false,
+    "remote_authenticated_explorer_rerun": true,
     "production_validated": false,
-    "evidence": "docs/entrega/CHECKS-UI-2026-09-28.md"
+    "evidence": "docs/entrega/ACCESIBILIDAD-ESTADOS-2026-09-28.md",
+    "remote_authenticated_explorer_scope": {
+      "unavailable404_observations": 2,
+      "empty_checks_passed": 2,
+      "ready_stale_tested": false,
+      "full_smoke": false,
+      "evidence": "docs/entrega/ACCESIBILIDAD-ESTADOS-2026-09-28.md"
+    }
   },
   "latest_ui_audit": {
     "reservations": [
@@ -573,7 +586,7 @@
       392,
       393
     ],
-    "status": "two_fixes_independently_reviewed_composed_build_pass",
+    "status": "reviewed_compiled_published_deployed_scoped_verification",
     "evidence": "docs/entrega/ACCESIBILIDAD-ESTADOS-2026-09-28.md",
     "technical_count_increment": 0,
     "production_validated": false

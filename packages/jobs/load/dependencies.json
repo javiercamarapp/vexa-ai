@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "d5cb1ea75c6859edf8be0365f9fcc81cfd39fd1e",
-  "composition": "Reviewed native select containment (388/389) and reconciled candidate-cycle documentation (390). Historical load measurements keep their original source identities; no new load measurement claimed.",
+  "baselineSha": "082e85b93729c6fdcc6aeedda3bbee03ae52f0c4",
+  "composition": "Login caption contrast391 independently reviewed by root; existing native select containment retained. Historical load measurements keep original source identities; no new load benchmark.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -489,7 +489,7 @@
     },
     {
       "path": "apps/web/src/app/globals.css",
-      "sha256": "d1e23f88c623432842477febab628e257ead9c510c265ec2201c5d76a242a703"
+      "sha256": "65e29cd1f557f244f69de1e102233982f6caa491b15e578cbe2269def54e7dd3"
     },
     {
       "path": "apps/web/src/app/layout.tsx",

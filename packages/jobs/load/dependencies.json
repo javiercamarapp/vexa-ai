@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "da88b5da1e17b457071772f2453a2be2919568b5",
-  "composition": "Economic source/record consent bound to edited fields and current versions397; independent398 three-group real Auth/SQL UI recovery, Node22 lint/build. Existing load results retain their original source identities; no new benchmark.",
+  "baselineSha": "c8353256b91fc83ff089080136ff7c4e736b61ff",
+  "composition": "Adds offline F07-05 pilot preparation399 reviewed400: aggregate supplied human observations with F04 receipt binding, synthetic labels, precise money and private outputs. Historical load results retain their original source identity; no new load benchmark.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -1648,6 +1648,10 @@
       "sha256": "710dd3a47c73473139c537b348589222b7dbd96578e2720c4ea1268126d6beef"
     },
     {
+      "path": "packages/intelligence/evaluation/PILOT.md",
+      "sha256": "878c57e1c4290eae0b3366f128a64a78ab7c164fe2f96853dec4d8914c7f23ac"
+    },
+    {
       "path": "packages/intelligence/evaluation/README.md",
       "sha256": "c36eca02fbd4251822a9a345a9c843c56bc70b864d03ffde93d2697b561f2375"
     },
@@ -1658,6 +1662,14 @@
     {
       "path": "packages/intelligence/evaluation/evaluate.mjs",
       "sha256": "13545290c235b4c5776a7b75bf336bec696f3efba96a9c9ad98523d71b2ac617"
+    },
+    {
+      "path": "packages/intelligence/evaluation/pilot-cli.mjs",
+      "sha256": "efee7af320375d5be50058838099e5d03bec39b0a9a03aac42f5d6d38894bd03"
+    },
+    {
+      "path": "packages/intelligence/evaluation/pilot.mjs",
+      "sha256": "493f6955ebefbfdb837bcbab50695bfae6bbbb0cc01ef1d15088391cbfaf0b17"
     },
     {
       "path": "packages/intelligence/evidence-repository.d.mts",

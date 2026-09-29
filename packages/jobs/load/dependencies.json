@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "e6a6d1e5eecca1d54accf9f93b231b54f980ea94",
-  "composition": "Connection reconnection consent bound to exact attempt and synchronous repeated-activation guard395, independently reviewed by root with stale409 and fresh202 recovery. Node22 lint/build passed. Historical load results retain their original source identities; no new benchmark.",
+  "baselineSha": "da88b5da1e17b457071772f2453a2be2919568b5",
+  "composition": "Economic source/record consent bound to edited fields and current versions397; independent398 three-group real Auth/SQL UI recovery, Node22 lint/build. Existing load results retain their original source identities; no new benchmark.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -549,7 +549,7 @@
     },
     {
       "path": "apps/web/src/components/economic-panel.tsx",
-      "sha256": "169d9299764e2194206c2141c4de42568423d4019899fadae343193db280c822"
+      "sha256": "efd54805af59e4b31a631effe809135f842f062795ac1dc80a87e7f7f2570c0f"
     },
     {
       "path": "apps/web/src/components/economic-priority-panel.tsx",

@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
   "baselineSha": "082e85b93729c6fdcc6aeedda3bbee03ae52f0c4",
-  "composition": "Login caption contrast391 independently reviewed by root; existing native select containment retained. Historical load measurements keep original source identities; no new load benchmark.",
+  "composition": "Login caption contrast391 independently reviewed by root and Explorer stale-state visibility392 independently reviewed393. Two-source Node22 lint/build passed. Historical load measurements retain original identities; no new load benchmark.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -581,7 +581,7 @@
     },
     {
       "path": "apps/web/src/components/explorer/panel.tsx",
-      "sha256": "606ba47f5a949d43da62be1c3494878044868352189ba3de3795aa5663073d5b"
+      "sha256": "1ca40ea1137af7482cd9af54df27e07ad7c3b14d669fd7d49696d5d4e10a2f88"
     },
     {
       "path": "apps/web/src/components/extraction-panel.tsx",

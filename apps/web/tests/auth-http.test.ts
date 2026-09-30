@@ -21,7 +21,7 @@ const encode=(v:unknown)=>Buffer.from(JSON.stringify(v)).toString('base64url');
 function session(){const exp=Math.floor(Date.now()/1000)+3600;return {access_token:`${encode({alg:'HS256',typ:'JWT'})}.${encode({sub:userId,exp,session_id:'synthetic-session'})}.synthetic-signature`,refresh_token:'synthetic-refresh',expires_at:exp,expires_in:3600,token_type:'bearer',user};}
 function cookies(){return `sb-127-auth-token=base64-${encode(session())}; ${ACTIVE_ORG}=${A}`;}
 function request(path:string,body?:string,requestOrigin:string|null=origin){return new NextRequest(origin+path,{method:body===undefined?'GET':'POST',headers:{cookie:cookies(),...(requestOrigin?{origin:requestOrigin}:{}),...(body===undefined?{}:{'content-type':'application/x-www-form-urlencoded'})},...(body===undefined?{}:{body})});}
-function mockServer(options:{revoked?:boolean; dbError?:boolean; invalid?:boolean; logoutError?:boolean}={}) {
+function mockServer(options:{revoked?:boolean; dbError?:boolean; invalid?:boolean; logoutError?:boolean; platform?:'granted'|'denied'|'unavailable'}={}) {
   const paths:string[]=[];
   globalThis.fetch=async(input)=>{
     const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);paths.push(url.pathname);
@@ -29,6 +29,7 @@ function mockServer(options:{revoked?:boolean; dbError?:boolean; invalid?:boolea
     if(url.pathname==='/auth/v1/user')return options.invalid?json({msg:'invalid token'},401):json(user);
     if(url.pathname==='/auth/v1/token' || url.pathname==='/auth/v1/verify')return json(session());
     if(url.pathname==='/auth/v1/logout')return options.logoutError?json({msg:'unavailable'},503):new Response(null,{status:204});
+    if(url.pathname==='/rest/v1/rpc/platform_manage')return options.platform==='granted'?json({administrator:true}):options.platform==='unavailable'?json({code:'PGRST000',message:'unavailable'},503):json({code:'42501',message:'platform_access_denied'},403);
     if(url.pathname==='/rest/v1/memberships')return options.dbError?json({message:'unavailable'},503):json(options.revoked?[]:[A,B].map(tenant_id=>({tenant_id,user_id:userId,role:'owner',status:'active',permissions_version:1})));
     throw new Error(`unexpected mocked network path ${url.pathname}`);
   };return paths;
@@ -72,3 +73,21 @@ for (const [path,handler] of [['/auth/google',google],['/auth/organization',sele
     assert.equal(response.cookies.get(ACTIVE_ORG),undefined);
     assert.deepEqual(paths,[]);
   });
+
+test('platform grant sends completed OAuth login to platform even without membership',async()=>{
+ setup();const paths=mockServer({platform:'granted',revoked:true});const req=request('/auth/callback?code=synthetic-code');req.cookies.set('sb-127-auth-token-code-verifier','base64-'+encode('synthetic-verifier'));const response=await callback(req);
+ assert.equal(response.status,303);assert.equal(response.headers.get('location'),origin+'/platform');assert.ok(paths.includes('/rest/v1/rpc/platform_manage'));
+});
+test('platform grant revocation is checked again by callback',async()=>{
+ setup();mockServer({platform:'denied'});const req=request('/auth/callback?code=synthetic-code');req.cookies.set('sb-127-auth-token-code-verifier','base64-'+encode('synthetic-verifier'));const response=await callback(req);
+ assert.equal(response.status,303);assert.equal(response.headers.get('location'),origin+'/');
+});
+test('platform authorization outage fails callback visibly instead of selecting unauthorized destination',async()=>{
+ setup();mockServer({platform:'unavailable'});const req=request('/auth/callback?code=synthetic-code');req.cookies.set('sb-127-auth-token-code-verifier','base64-'+encode('synthetic-verifier'));const response=await callback(req);
+ assert.equal(response.status,503);assert.equal(response.headers.get('location'),null);assert.match(response.headers.get('cache-control')!,/no-store/);
+});
+test('platform middleware refreshes identity without requiring membership; page and RPC own grant checks',async()=>{
+ setup();const paths=mockServer({revoked:true});const response=await middleware(request('/platform'));
+ assert.equal(response.status,200);assert.deepEqual(paths,['/auth/v1/user']);assert.match(response.headers.get('cache-control')!,/no-store/);
+ mockServer({invalid:true});assert.equal((await middleware(request('/platform'))).status,303);
+});

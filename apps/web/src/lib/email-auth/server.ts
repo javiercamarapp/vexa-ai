@@ -27,7 +27,8 @@ export async function emailAuth(request:NextRequest,operation:'request'|'session
  const verified=await auth.client.auth.getUser();if(verified.error||!verified.data.user?.email_confirmed_at)throw new AccessError(401,'email_auth_invalid_link');
  const memberships=await identity(auth.client).memberships(verified.data.user.id);const ids=memberships.map(m=>m.tenant_id);
  let organizations:{id:string;name:string}[]=[];if(ids.length){const result=await auth.client.from('organizations').select('id,name').in('id',ids).order('name');if(result.error)throw new AccessError(503,'email_auth_unavailable');organizations=result.data;}
+ const grant=await auth.client.rpc('platform_manage',{p_input:{operation:'status'}});if(grant.error&&grant.error.code!=='42501')throw new AccessError(503,'email_auth_unavailable');const platformAccess=!grant.error&&grant.data?.administrator===true;
  // Commit refreshed cookies only after all final-identity and authorization reads succeed.
  finish=response=>{const finished=auth.finish(response);for(const [key,value] of Object.entries(headers))finished.headers.set(key,value);return finished;};
- return finish(NextResponse.json({organizations},{headers}));
+ return finish(NextResponse.json({organizations,platformAccess},{headers}));
  }catch(error){const e=error as {status?:number};const status=[400,401,403,413,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({error:{code:status===401?'email_auth_invalid_link':status===403?'email_auth_origin_rejected':status===400||status===413?'email_auth_input_invalid':'email_auth_unavailable'}},{status,headers}));}}

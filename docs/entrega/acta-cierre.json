@@ -5,7 +5,7 @@
   "formal_runner_accepted": 25,
   "total_tasks": 60,
   "production_validated": false,
-  "source_commit": "78b524ded807623df410d5b199a5b0df8687e002",
+  "source_commit": "ad3736968091567b8c5e58d331206cc5ad6f8c84",
   "layers": {
     "documentation": {
       "status": "reviewed_guides_consolidation_submitted_for_final_review",
@@ -121,7 +121,7 @@
   },
   "crm_webhook_checkpoint": {
     "date": "2026-09-30",
-    "status": "reviewed_integrated_remote_schema_verified_publication_pending",
+    "status": "published_deployed_remote_schema_verified_external_activation_pending",
     "review": 401,
     "technical_total": 54,
     "formal_total": 25,
@@ -129,6 +129,10 @@
     "migration": "20260930170847",
     "feature_enabled": false,
     "evidence": "WEBHOOKS-CRM-2026-09-30.md",
-    "real_provider_validation": "pending_accounts_signatures_subscriptions"
+    "real_provider_validation": "pending_accounts_signatures_subscriptions",
+    "source_commit": "ad3736968091567b8c5e58d331206cc5ad6f8c84",
+    "deployment_id": "dpl_7mzRZeQu8Juuk8ZFFPuHzW1pZacN",
+    "served_revision_verified": true,
+    "uploaded_sources_verified": 8
   }
 }

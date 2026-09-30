@@ -1,6 +1,6 @@
 # Lo que falta para conectar y validar
 
-Actualización30-sep: receptor de webhooks CRM revisado e integrado; SQL0040 remota verificada. Faltan bindings/secreto/suscripción de cuentas autorizadas y comprobación real. [Configuración y evidencia](WEBHOOKS-CRM-2026-09-30.md). No cambia54/60 ni aprobación productiva.
+Actualización30-sep: receptor de webhooks CRM publicado y desplegado `ad37369`; SQL0040 remota verificada. Faltan bindings/secreto/suscripción de cuentas autorizadas y comprobación real. [Configuración y evidencia](WEBHOOKS-CRM-2026-09-30.md). No cambia54/60 ni aprobación productiva.
 
 Todavía existen bloqueos técnicos/de revisión, por lo que no se afirma que baste pegar APIs para todo el producto. El estado técnico y formal está en construccion/ESTADO-CONSTRUCCION.json; producción sigue sin validar.
 

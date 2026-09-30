@@ -5,7 +5,7 @@ Actualizado: 2026-09-30. Los apartados conservados abajo son cortes históricos.
 
 HubSpotv3/Zendesk reciben solicitudes firmadas y despiertan la sincronización existente mediante recibos durables, con identidad del servidor y límites. Revisión401 aprobada;50escenarios root,5independientes,414de matriz externa y8mutantes verdes. Composición32transporte/24básicos/134controlador aprobada. SQL0040 aplicada legítimamente por MCP y permisos remotos verificados. Desactivado hasta configurar cuentas, firmas y programación; no hay cron nuevo. [Evidencia y activación](docs/entrega/WEBHOOKS-CRM-2026-09-30.md).
 
-54/60técnicas y25formales conservadas; no cierre productivo.401invocaciones acumuladas sin reset, revisión recogida. Publicación/despliegue todavía pendientes en este corte.
+54/60técnicas y25formales conservadas; no cierre productivo.401invocaciones acumuladas sin reset, revisión recogida. Publicado y desplegado `ad37369`: SHA remoto/servido y ocho fuentes ejecutables verificados, login200, receptor desactivado503/no-store y consumidorCRM anónimo401. El smoke completo anterior conserva b9ed3db.
 
 ## Reauditoría actual de20rubros —29-sep
 

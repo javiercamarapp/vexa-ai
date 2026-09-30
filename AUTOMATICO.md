@@ -1,5 +1,11 @@
 # Construcción automática VEXA
 
+## Botones de correo y confirmación desplegados — 30-sep
+
+Los botones verdes de los correos Auth están centrados y revisados. Cambiar nombre o responsable de una organización ahora exige confirmar de nuevo; `d39e9a3` publicado y desplegado, READY/SHA/fuente verificados. Pruebas locales Chromium/WebKit y comprobación remota móvil/escritorio aprobadas, sin crear organizaciones. [Evidencia de la tanda406–408](docs/entrega/CORREOS-CONFIRMACION-2026-09-30.md).
+
+**54/60 técnicas, 25 formales; producción pendiente.** Los tres agentes terminaron. Push todavía necesita integración técnica y gate; no basta VAPID. Las plantillas de correo remoto y SMTP propio siguen pendientes. Acumulado408 conservado; los apartados siguientes son históricos.
+
 ## Acceso y administración publicados — 30-sep, actualización vigente
 
 Producto `c7a30ac` publicado y desplegado: READY y SHA servido comprobados. El enlace original de Supabase ya retorna a VEXA; seis comprobaciones remotas de sesión, plataforma, permisos, móvil, revocación y logout aprobadas. Administración de plataforma integrada con revisión independiente y migración aplicada. Google real y configuración de correos remotos siguen pendientes. Las 13 plantillas Auth tienen membrete: 52 presentaciones previas y 20 comprobaciones posteriores de botones centrados, sin acreditar entrega real. [Evidencia y límites](docs/entrega/ACCESO-PLATAFORMA-CORREOS-2026-09-30.md).

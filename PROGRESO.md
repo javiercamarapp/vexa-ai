@@ -1,6 +1,10 @@
 # Progreso verificable
 Actualizado: 2026-09-30. Los apartados conservados abajo son cortes históricos.
 
+## Acceso por correo — diagnóstico 30-sep
+
+Acceso por correo habilitado y desplegado sobre las mismas fuentes `ccf546b`; READY y SHA servido comprobados. Una cuenta sintética completó sesión, selección de equipo, apertura del workspace y logout. El enlace original de Supabase todavía retorna a `localhost`: configuración de URLs pendiente de acceso administrativo. Google y superadministrador global siguen pendientes. [Evidencia, configuración exacta y límites](docs/entrega/ACCESO-AUTH-2026-09-30.md). Se mantienen 54/60 técnicas, 25 formales y producción pendiente. Publicación GitHub con autoría conservada, Actions apagado y sin vínculo Git de Vercel; sin nueva compilación por esta documentación.
+
 ## Botones y confirmaciones publicados — 30-sep
 
 La revisión402 aprobó dos archivos de presentación, con ocho controles nuevos deCSS enChromium/WebKit y evidencia previa conservada. Publicado y desplegado `ccf546b`: READY, SHA servido y dos fuentes revisadas verificados; foco, Escape, cancelación sinPOST, movimiento reducido y navegación lateral comprobados en escritorio/móvil. [Evidencia y límites](docs/entrega/UNIFICACION-UI-2026-09-30.md). Se mantienen54/60 técnicas,25formales y producciónfalse; no se cierra todaF06-07 por un ajuste visual.402/402invocaciones conservadas; ninguna revisión queda ejecutándose.

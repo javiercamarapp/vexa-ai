@@ -1,3 +1,4 @@
+import * as crmWebhooks from './crm-webhooks/oracles.mjs';
 import * as releaseTables from './release-tables/oracles.mjs';
 import * as notifications from './notification-oracles.mjs';
 import * as briefs from './brief-oracles.mjs';
@@ -67,9 +68,10 @@ export function schemaOracle(h) {
   }
   // Extra private tables cannot silently escape the functional matrix.
   const hasUploads=tables.some(x=>x.name===uploads.table);
-  const classified=['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h),...(workers.present(h)?[workers.table]:[]),...sync.present(h),...(health.present(h)?[health.table]:[]),...(crm.present(h)?[crm.table]:[]),...budget.present(h),...extraction.present(h),...problems.present(h),...causality.present(h),...economic.present(h),...exposure.present(h),...money.present(h),...snapshots.present(h),...priority.present(h),...workspace.present(h),...detail.present(h),...recommendations.present(h),...interventions.present(h),...briefs.present(h),...notifications.present(h),...releaseTables.present(h)];
+  const classified=['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h),...(workers.present(h)?[workers.table]:[]),...sync.present(h),...(health.present(h)?[health.table]:[]),...(crm.present(h)?[crm.table]:[]),...(crmWebhooks.present(h)?[crmWebhooks.table]:[]),...budget.present(h),...extraction.present(h),...problems.present(h),...causality.present(h),...economic.present(h),...exposure.present(h),...money.present(h),...snapshots.present(h),...priority.present(h),...workspace.present(h),...detail.present(h),...recommendations.present(h),...interventions.present(h),...briefs.present(h),...notifications.present(h),...releaseTables.present(h)];
   assert.deepEqual(tables.filter(x=>!classified.includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
   const fks=foreignKeys(h);
+  if(crmWebhooks.present(h))crmWebhooks.schema(h,fks);
   releaseTables.schema(h,fks);
   if(workspace.present(h).length)workspace.schema(h,fks);
   if(detail.present(h).length)detail.schema(h,fks);
@@ -273,6 +275,7 @@ function fkDiagnostic(h,table,result){
 // Every discovered private edge gets a valid INSERT and a foreign-parent INSERT.
 // Diagnostics retain the rejecting constraint; mandatory presence is checked separately.
 export function discoveredFkOracle(h,f,fk) {
+  if(fk.table===crmWebhooks.table)return crmWebhooks.fk(h,f.crmWebhooks,fk);
   if(releaseTables.tables.includes(fk.table))return releaseTables.fk(h,f,fk);
   if(notifications.ownsFk(fk))return notifications.fk(h,f.notifications,fk);
   if(briefs.ownsFk(fk))return briefs.fk(h,f.briefs,fk);

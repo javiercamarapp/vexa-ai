@@ -4,8 +4,8 @@ const uuid=v=>typeof v==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9
 const fail=code=>{throw Object.assign(Error(code),{code});};
 const one=async(s,sql,args)=>(await s.query(sql,args)).rows[0];
 const view=r=>({connectionId:r.connection_id,source:r.source,accountId:r.account_id,credentialRef:r.credential_ref,enabled:r.enabled,historyFrom:new Date(r.history_from).toISOString(),backfillTo:new Date(r.backfill_to).toISOString(),overlapSeconds:r.overlap_seconds,pollSeconds:r.poll_seconds,version:r.version,failureCount:r.failure_count,errorCode:r.error_code,nextAttemptAt:new Date(r.next_attempt_at).toISOString()});
-export function createCRMRuntime({database,resolveCredentials,fetch:transport,clock=Date.now}={}){
- if(typeof window!=='undefined'||typeof database?.transaction!=='function'||typeof resolveCredentials!=='function')fail('CRM_CONFIGURATION_REQUIRED');
+export function createCRMRuntime({database,resolveCredentials,fetch:transport,clock=Date.now,webhookSignals=false}={}){
+ if(typeof webhookSignals!=='boolean'||typeof window!=='undefined'||typeof database?.transaction!=='function'||typeof resolveCredentials!=='function')fail('CRM_CONFIGURATION_REQUIRED');
  return Object.freeze({
   async list(){return database.transaction('read',async s=>({canConfigure:s.role==='owner',settings:(await s.query(`SELECT c.source,c.account_id,c.credential_ref,s.* FROM public.crm_sync_settings s JOIN public.connections c ON c.tenant_id=s.tenant_id AND c.id=s.connection_id WHERE s.tenant_id=$1 ORDER BY c.source,c.account_id`,[s.tenantId])).rows.map(view)}));},
   async configure(input){
@@ -31,6 +31,7 @@ export function createCRMRuntime({database,resolveCredentials,fetch:transport,cl
      AND public.crm_actor_authorized(r.connection_id) AND coalesce(h.state,'unknown')<>'reconnect_required'
      ORDER BY r.last_dispatched_at NULLS FIRST,r.id LIMIT 1 FOR UPDATE OF r SKIP LOCKED`,[s.tenantId]);
     if(!row)return null;
+    const webhookSequence=webhookSignals?(await one(s,'SELECT coalesce(max(id),0)::text AS sequence FROM public.crm_webhook_receipts WHERE tenant_id=$1 AND connection_id=$2',[s.tenantId,row.connection_id])).sequence:null;
     await s.query('UPDATE public.crm_sync_settings SET last_dispatched_at=clock_timestamp(),next_attempt_at=clock_timestamp()+interval \'30 seconds\',updated_at=clock_timestamp() WHERE tenant_id=$1 AND id=$2',[s.tenantId,row.id]);
     const generation='crm-runtime-v1:'+row.generation;
     const prior=await one(s,'SELECT mode,window_spec,done FROM public.sync_cursors WHERE tenant_id=$1 AND connection_id=$2 AND window_spec->>\'version\'=$3 ORDER BY done ASC,(window_spec->>\'to\')::timestamptz DESC,id LIMIT 1',[s.tenantId,row.connection_id,generation]);
@@ -38,16 +39,25 @@ export function createCRMRuntime({database,resolveCredentials,fetch:transport,cl
     if(prior&&!prior.done){mode=prior.mode;const{fetchFrom,...original}=prior.window_spec;window=original;}
     else if(!prior){mode='backfill';window={from:new Date(row.history_from).toISOString(),to:new Date(row.backfill_to).toISOString(),overlapSeconds:row.overlap_seconds,version:generation};}
     else{mode='live';const from=Math.max(Date.parse(prior.window_spec.to),new Date(row.history_from).getTime()),to=clock();if(to<=from)return null;window={from:new Date(from).toISOString(),to:new Date(to).toISOString(),overlapSeconds:row.overlap_seconds,version:generation};}
-    return {row,mode,window,tenantId:s.tenantId};
+    return {row,mode,window,tenantId:s.tenantId,webhookSequence};
    });
    if(!chosen)return {state:'idle'};
-   const {row,mode,window,tenantId}=chosen;
+   const {row,mode,window,tenantId,webhookSequence}=chosen;
    const guarded={transaction(action,work){return database.transaction(action,async s=>{if(s.tenantId!==tenantId||!(await one(s,'SELECT public.crm_actor_authorized($1) AS ok',[row.connection_id]))?.ok)fail('CRM_AUTHORIZATION_REVOKED');return work(s);});}};
    try{
     const credentials=resolveCredentials({tenantId,source:row.source,accountId:row.account_id,credentialRef:row.credential_ref});
     const repository=createSyncRepository({database:guarded}),adapterFactory=createCRMAdapterFactory({...credentials,...(transport?{fetch:transport}:{}),clock:()=>new Date(clock()),timeoutMs:Math.min(10000,deadlineMs),maxRetries:0});
     const result=await runSync({repository,connectionId:row.connection_id,mode,window,adapterFactory,deadlineMs,maxPages,leaseMs:30000,clock});
-    await guarded.transaction('import',s=>s.query('UPDATE public.crm_sync_settings SET failure_count=0,error_code=null,next_attempt_at=clock_timestamp()+$3*interval \'1 second\',updated_at=clock_timestamp() WHERE tenant_id=$1 AND id=$2',[s.tenantId,row.id,result.state==='done'?row.poll_seconds:30]));
+    await guarded.transaction('import',async s=>{
+     let delay=result.state==='done'?row.poll_seconds:30;
+     if(webhookSignals){
+      // Separate statements after the row lock observe an ingress committed while waiting.
+      await s.query('SELECT id FROM public.crm_sync_settings WHERE tenant_id=$1 AND id=$2 FOR UPDATE',[s.tenantId,row.id]);
+      const pending=await one(s,'SELECT EXISTS(SELECT 1 FROM public.crm_webhook_receipts WHERE tenant_id=$1 AND connection_id=$2 AND id>$3::bigint) AS pending',[s.tenantId,row.connection_id,webhookSequence]);
+      if(pending.pending)delay=0;
+     }
+     await s.query('UPDATE public.crm_sync_settings SET failure_count=0,error_code=null,next_attempt_at=clock_timestamp()+$3*interval \'1 second\',updated_at=clock_timestamp() WHERE tenant_id=$1 AND id=$2',[s.tenantId,row.id,delay]);
+    });
     return {state:result.state,connectionId:row.connection_id,pages:result.pages};
    }catch(error){
     const code=error?.code==='CRM_CREDENTIAL_CONFIGURATION_REQUIRED'?error.code:error?.code==='RECONNECT_REQUIRED'?'RECONNECT_REQUIRED':'SYNC_FAILED';

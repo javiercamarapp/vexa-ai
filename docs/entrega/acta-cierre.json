@@ -118,5 +118,17 @@
     "final_post_60_audit": false,
     "evidence": "AUDITORIA-20-RUBROS-2026-09-29.md",
     "technical_count_increment": 0
+  },
+  "crm_webhook_checkpoint": {
+    "date": "2026-09-30",
+    "status": "reviewed_integrated_remote_schema_verified_publication_pending",
+    "review": 401,
+    "technical_total": 54,
+    "formal_total": 25,
+    "production": false,
+    "migration": "20260930170847",
+    "feature_enabled": false,
+    "evidence": "WEBHOOKS-CRM-2026-09-30.md",
+    "real_provider_validation": "pending_accounts_signatures_subscriptions"
   }
 }

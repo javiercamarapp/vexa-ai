@@ -1,5 +1,7 @@
 # Reauditoría de20 rubros —29 de septiembre
 
+Corte histórico del29-sep. El hueco de receptorCRM tiene [implementación y revisión posteriores,30-sep](WEBHOOKS-CRM-2026-09-30.md); no reatribuir las pruebas de este informe al cambio posterior.
+
 **Dictamen: bloqueada para producción. 54/60 fichas técnicamente preparadas; 25 aceptadas formalmente.** Esta revisión consolida las veinte áreas contra el árbol publicado y agrega comprobaciones actuales; no es la auditoría final aprobada después de 60/60. La revisión de entrega excluida impide evaluar el producto completo. No se modifican contadores por emitir este informe.
 
 Código revisado: `94db0848a6c61538508a354ff0715f377364af6d`. Web observada: `78b524ded807623df410d5b199a5b0df8687e002`. Último smoke completo 8/8: `b9ed3db5ef4df825c27ed208722ad2faad4ee9c3`. Sus evidencias son distintas; el evaluador del piloto es offline y no requiere desplegar la web.

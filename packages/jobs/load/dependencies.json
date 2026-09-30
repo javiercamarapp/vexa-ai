@@ -1,11 +1,11 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "c8353256b91fc83ff089080136ff7c4e736b61ff",
-  "composition": "Adds offline F07-05 pilot preparation399 reviewed400: aggregate supplied human observations with F04 receipt binding, synthetic labels, precise money and private outputs. Historical load results retain their original source identity; no new load benchmark.",
+  "baselineSha": "4274ad39b6a2accb832fe76ee181775a79193c3b",
+  "composition": "Adds CRM webhook ingress reviewed401, SQL0040 and current security oracles. Existing load evidence retains its original hashes; no new capacity benchmark.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
-      "sha256": "8ce5563be18b259a6d7c972605f186399c85178f36a9be4473f58581f3ec27a5"
+      "sha256": "0603326ae7bb324d9a5d59f03e9e60f177a5e89cd7d7d41fa1bc3291dc33e29e"
     },
     {
       "path": "apps/web/IMPLEMENTATION-WORKSPACE-BASE.md",
@@ -309,7 +309,7 @@
     },
     {
       "path": "apps/web/src/app/api/internal/crm/route.ts",
-      "sha256": "4189c87d657d900897c4df594030554b2b1f53ffe7b1b24d3918fa6d75d326f1"
+      "sha256": "80459465835a8505bdc90862bc88a35946f402b24a6421d99a495fc8f1466e33"
     },
     {
       "path": "apps/web/src/app/api/internal/extraction/route.ts",
@@ -422,6 +422,10 @@
     {
       "path": "apps/web/src/app/api/team/route.ts",
       "sha256": "2c4d83ae9f309f80bd0301bc9bb6218137fccdb2b1706c756057c3e2fb238789"
+    },
+    {
+      "path": "apps/web/src/app/api/webhooks/crm/[bindingId]/route.ts",
+      "sha256": "d9a09db975cb904cd03448f381655836defea52db13723d7c0c60421e5e4f522"
     },
     {
       "path": "apps/web/src/app/api/workspace/customer-bindings/route.ts",
@@ -912,6 +916,10 @@
       "sha256": "85da172accf74ce658f98dac1e819ec294114e0e2de85ab8befe527ca344f8f8"
     },
     {
+      "path": "packages/connectors/WEBHOOKS.md",
+      "sha256": "0ef430b815b688f5796c22b614e631a13ad487f2183d2ea02a11369444008c06"
+    },
+    {
       "path": "packages/connectors/aliases.d.mts",
       "sha256": "a305bd2373a9723408a360cad5c81529107f88c541564ef58665bb0c647079dd"
     },
@@ -989,11 +997,11 @@
     },
     {
       "path": "packages/connectors/runtime.d.mts",
-      "sha256": "bbe29959217aa1e13fadf0cf57a2c1a1ae2eb9bb17aecd2970baae8df2940d48"
+      "sha256": "9ce807fe0fa257a51307b68f3138d424ee7958b8c747d5867692580a5046dd78"
     },
     {
       "path": "packages/connectors/runtime.mjs",
-      "sha256": "672a4e1ef62b98572f0336cabe00a280aa40d55804c95b058794b88fcf20f170"
+      "sha256": "fbf970784dcdbce5c6e46533b582672703b883587102452bf81bccd88e7ac3b1"
     },
     {
       "path": "packages/connectors/spike-hubspot.mjs",
@@ -1026,6 +1034,26 @@
     {
       "path": "packages/connectors/transport.mjs",
       "sha256": "b4ccb5613ff9e440953535923924e38838b795731f2d9ea5a4e6b55dd793aa08"
+    },
+    {
+      "path": "packages/connectors/webhook-repository.d.mts",
+      "sha256": "0d1eb265aa75fe01d31df0f735c3d2ab859846cfe51006647dce82ca3673c804"
+    },
+    {
+      "path": "packages/connectors/webhook-repository.mjs",
+      "sha256": "54a033ef0df81f8ad2e45f08aedce220af1cf7c788cd6ac6ff661d869b8d7f6a"
+    },
+    {
+      "path": "packages/connectors/webhooks.d.mts",
+      "sha256": "bb63106daa9458d3aa594c777c5c07c282b5b1bf213508c9394b8d00bad72b34"
+    },
+    {
+      "path": "packages/connectors/webhooks.mjs",
+      "sha256": "c7fc80fdb27c107686abaf65a48c5a84adc555bcbeb10f7a9cd07731c8dfa8ee"
+    },
+    {
+      "path": "packages/connectors/webhooks.test.mjs",
+      "sha256": "6cee3ee83ea631d97d3b3dbf67cff4a5078f2416d26a4945c9df327e5e7bb77d"
     },
     {
       "path": "packages/connectors/zendesk-body-coverage.test.mjs",
@@ -2996,6 +3024,10 @@
       "sha256": "2338b900b633273ed7f5a8812618c05bf4659e103a3c1dcebeb557b43602f113"
     },
     {
+      "path": "supabase/migrations/0040_crm_webhook_receipts.sql",
+      "sha256": "a76845783b2afe63a08ce5ac6f571f10cf9bd54bc7b9708b178b810aba007949"
+    },
+    {
       "path": "tests/acceptance/scaffold-copy.mjs",
       "sha256": "58536e25b27fe0fe437e17e6540756ebf0aaf71470f74cf3b338a47e6f27b782"
     },
@@ -3060,6 +3092,14 @@
       "sha256": "57b5ec20728987432eed25e58f8bd3858910a3048bb41f94a7b99f8510488fe4"
     },
     {
+      "path": "tests/acceptance/support/F01-03/crm-webhooks/mutations.test.mjs",
+      "sha256": "fa73cb9e45e06d791f29e7b1a3925ba835ac04d86eb8a709fe376a876706b888"
+    },
+    {
+      "path": "tests/acceptance/support/F01-03/crm-webhooks/oracles.mjs",
+      "sha256": "cb2a7d5dc4e153c9bbb6c9bd5e6b8bd50703562e3a65cf7e850e115b1ca5cc37"
+    },
+    {
       "path": "tests/acceptance/support/F01-03/detail-oracles.mjs",
       "sha256": "918dd7552d7ead45171b2565f279270b32eda1a47686109421836a66c30ad183"
     },
@@ -3077,7 +3117,7 @@
     },
     {
       "path": "tests/acceptance/support/F01-03/harness.mjs",
-      "sha256": "6e8d9b47ab7c4b12ab55c060c23fcbb1b513764941b3dbcf7d522a50b1400476"
+      "sha256": "89d3ba7e5a7e66f55b63ab2f066b972325c7e87de3bb3783a9705a63cc9204ee"
     },
     {
       "path": "tests/acceptance/support/F01-03/health/oracles.mjs",
@@ -3117,7 +3157,7 @@
     },
     {
       "path": "tests/acceptance/support/F01-03/oracles.mjs",
-      "sha256": "4e994dfbea373c033ce19f0cf8a1b2b7675393bd78f045d59674ef873210e934"
+      "sha256": "373a8cd55905825fc47d89012ab47b9e92feb0ec2405c1bbbdb8cd54ac200b57"
     },
     {
       "path": "tests/acceptance/support/F01-03/oracles.test.mjs",

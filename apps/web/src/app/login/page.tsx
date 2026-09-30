@@ -10,7 +10,8 @@ export default async function Login({searchParams}:{searchParams:Promise<{error?
   if(configured){
     try{const jar=await cookies();const client=authClient({getAll:()=>jar.getAll(),set:()=>{}});const {data,error}=await client.auth.getUser();signedIn=!error&&!!data.user;}catch{/* An unavailable or invalid session does not expose a logout action. */}
   }
-  const denied=!!(await searchParams).error;
+  const loginError=(await searchParams).error;
+  const denied=!!loginError;
   const google=configured && process.env.VEXA_GOOGLE_AUTH_ENABLED==='true';
   const email=configured && process.env.VEXA_EMAIL_AUTH_ENABLED==='true';
   return <div className="login">
@@ -21,7 +22,7 @@ export default async function Login({searchParams}:{searchParams:Promise<{error?
         <h1 className="login-serif login-entra">Bienvenido<br/>a VEXA AI</h1>
         <p className="login-intro login-entra">Decisiones con evidencia para tu equipo.</p>
         <div className="login-divider"/>
-        {denied && <p className="login-message" role="alert">Acceso denegado. Inicia sesión con una cuenta que tenga una organización activa.</p>}
+        {denied && <p className="login-message" role="alert">{loginError==='oauth_cancelled'?'Google no completó el acceso. Puedes intentarlo de nuevo o entrar con un enlace por correo.':'Acceso denegado. Inicia sesión con una cuenta que tenga una organización activa.'}</p>}
         {!configured && <p className="login-hint">El acceso aún no está configurado.</p>}
         <form action="/auth/google" method="post" className="login-google login-entra">
           <button type="submit" className="login-btn login-btn-borde" disabled={!google} aria-describedby={!google?'google-availability':undefined}>

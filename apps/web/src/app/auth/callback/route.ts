@@ -8,6 +8,7 @@ export async function GET(request:NextRequest) {
     try {
       const code=request.nextUrl.searchParams.get('code');
       const tokenHash=request.nextUrl.searchParams.get('token_hash');
+      if(!code && !tokenHash && request.nextUrl.searchParams.get('error')==='access_denied')return finish(localRedirect('/login?error=oauth_cancelled'));
       // PKCE code works with OAuth and email PKCE. Token-hash OTP is local-only.
       const local=['localhost','127.0.0.1','[::1]'].includes(new URL(c.url).hostname);
       if(code && tokenHash)throw new AccessError(400,'ambiguous_callback');

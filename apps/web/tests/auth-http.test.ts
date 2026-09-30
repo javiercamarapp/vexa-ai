@@ -91,3 +91,5 @@ test('platform middleware refreshes identity without requiring membership; page 
  assert.equal(response.status,200);assert.deepEqual(paths,['/auth/v1/user']);assert.match(response.headers.get('cache-control')!,/no-store/);
  mockServer({invalid:true});assert.equal((await middleware(request('/platform'))).status,303);
 });
+
+test('OAuth cancellation returns to local login without network, tokens or provider details',async()=>{setup();const paths=mockServer();const response=await callback(request('/auth/callback?error=access_denied&error_description=private-provider-message&next=https://evil.test'));assert.equal(response.status,303);assert.equal(response.headers.get('location'),origin+'/login?error=oauth_cancelled');assert.match(response.headers.get('cache-control')!,/no-store/);assert.deepEqual(paths,[]);assert.equal(response.cookies.get(ACTIVE_ORG),undefined);});

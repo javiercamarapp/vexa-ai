@@ -28,6 +28,7 @@ export function candidateInputs(candidate) {
   migrations.healthRequired=files.includes('0010_connection_health.sql');
   migrations.extractionRequired=files.includes('0012_extraction_redaction.sql');
   migrations.crmRequired=files.includes('0013_crm_runtime.sql');
+  migrations.crmWebhooksRequired=files.includes('0040_crm_webhook_receipts.sql');
   migrations.problemsRequired=files.some(f=>/^0016_/.test(f));
   migrations.causalityRequired=files.some(f=>/^0017_/.test(f));
   migrations.economicRequired=files.some(f=>/^0018_/.test(f));

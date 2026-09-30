@@ -4,13 +4,15 @@
 
 ## Checkpoint vigente —54/60 técnicas;25 aceptadas en el grafo
 
+Webhooks CRM integrados tras revisión401; migración0040 aplicada por MCP. [Evidencia del30-sep](docs/entrega/WEBHOOKS-CRM-2026-09-30.md). Activación y cuentas reales pendientes; el total54/60 permanece igual.
+
 F07-05 integra el evaluador offline del piloto y su guía operativa:25controles del principal,21independientes y procedimiento documentado comprobados con Node22. Autor399 y revisor400 recogidos; código integrado exactamente desde fuentes congeladas. Sólo en esta ficha quedan aportes humanos y aceptación formal: consentimiento, gold/holdout, participantes, cronometraje, sponsor y respuestas reales. El piloto sigue `not_run`; no equivale a producción. [Cierre técnico y evidencia](construccion/F07-05-CIERRE-TECNICO.md).
 
 El total suma25aceptadas por runner,26con validación externa pendiente y3con dependencias formales. Restan seis fichas técnicas: F06-07, F06-09..12 y F07-01. La revisión bloqueada de entrega y sus dependencias permanecen pendientes; no basta conectar cuentas para cerrar todo. [Estado actual y límites](docs/entrega/PILOTO-TECNICO-2026-09-29.md).
 
 La web continúa desplegada en `78b524d`: consentimiento económico corregido y revisión remota focal comprobada. Último smoke completo8/8 en `b9ed3db`; sus resultados conservan ese SHA. El cambio del piloto es una herramienta offline y no requiere desplegar la web. [Evidencia de la web](docs/entrega/CONSENTIMIENTO-ECONOMICO-2026-09-29.md).
 
-Tiempo sin límite autorizado; presupuesto conservado400/400invocaciones acumuladas, máximo3agentes. No nuevas compras ni inferencia pagada. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado por recibo; estos documentos no acreditan un servicio autónomo después de cerrar la sesión. Caffeinate no garantiza supervivencia de la sesión. Los apartados siguientes son históricos.
+Tiempo sin límite autorizado; presupuesto conservado401/401invocaciones acumuladas, máximo3agentes. No nuevas compras ni inferencia pagada. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado por recibo; estos documentos no acreditan un servicio autónomo después de cerrar la sesión. Caffeinate no garantiza supervivencia de la sesión. Los apartados siguientes son históricos.
 
 ## Estado de construcción — corte 20-sep
 **17/60 tareas aceptadas; F02 completa en6/6.** Importación, persistencia canónica, worker durable y UI de recuperación integrados. F02-05 (`9e738b9`) y F02-06 (comportamiento existente en `63b9725`, sin parche artificial) pasaron sus27grupos de verifyNode22 y acceptGitlimpioNode26. Compilación integrada, regresiones F02-01/02/03/04 y cuatro jobs CI locales verdes; huellas y limpieza verificadas. Siguiente fase: F03, HubSpot/Zendesk y migración. Actions permanece desactivado; no acredita producción.

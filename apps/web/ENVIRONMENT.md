@@ -13,6 +13,7 @@ Auth, permisos, importación durable, conectores, análisis y workspace están i
 | Worker | VEXA_SUPABASE_URL, VEXA_SUPABASE_ANON_KEY, VEXA_WORKER_EMAIL, VEXA_WORKER_PASSWORD, VEXA_WORKER_USER_ID | Identidad real de servicio y delegación vigente. |
 | Programación | VEXA_WORKER_DISPATCHER, VEXA_WORKER_TENANT, VEXA_WORKER_TRIGGER_SECRET, VEXA_WORKER_ENDPOINT, VEXA_WORKER_INTERVAL_MS | Dispatcher o tenant fijo; cada consumidor necesita su programación. |
 | CRM | VEXA_CRM_CREDENTIALS_JSON | Sólo servidor; vincula referencia a tenant/proveedor/cuenta. Ver packages/connectors/CRM-RUNTIME.md. |
+| Webhooks CRM | VEXA_CRM_WEBHOOKS_ENABLED, VEXA_CRM_WEBHOOK_BINDINGS_JSON | Flagtrue sólo tras migración0040 y cuentas autorizadas; binding firmado servidor. Guía `packages/connectors/WEBHOOKS.md`. Requiere consumidorCRM programado; no lo arranca el callback. |
 | Extracción | VEXA_AI_RUNTIME, OPENROUTER_API_KEY, VEXA_EXTRACTION_CONFIG_JSON | Inferencia requiere habilitación, autorización de gasto, privacidad, tarifas y presupuesto. |
 | Candidatos evaluados | VEXA_EXTRACTION_CANDIDATES_JSON, VEXA_EVALUATION_CUSTODIANS_JSON | Catálogo por tenant y claves públicas Ed25519 activas; owner confirma una evaluación válida. No habilita inferencia ni presupuesto. |
 | Problemas | VEXA_PROBLEMS_RUNTIME, VEXA_PROBLEMS_CONFIG_JSON | Política y versiones del servidor, no del navegador. |

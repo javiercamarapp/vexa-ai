@@ -226,7 +226,7 @@ body:has(.workspace-shell) > .skip-link {display:none;}
 .workspace-content label:has(>input:disabled) {cursor:default;}
 .workspace-content input[type=file] {padding:8px;background:var(--ui-soft);font-size:12px;}
 .workspace-content input[type=file]::file-selector-button {min-height:32px;padding:6px 12px;margin-right:12px;border:1px solid var(--ui-border);border-radius:6px;background:white;font:500 12px Inter,sans-serif;color:#166534;cursor:pointer;}
-.workspace-content button {font-size:12.5px;font-weight:500;line-height:1.4;min-height:44px;padding:10px 16px;border:1px solid #166534;box-shadow:0 1px 2px #11181308;}
+.workspace-content button {font-size:14px;font-weight:600;letter-spacing:.005em;line-height:1.4;min-height:44px;padding:10px 20px;border:1px solid #166534;border-radius:999px;box-shadow:0 1px 2px #11181308;}
 .workspace-content button[type=button] {color:#166534;background:#fff;border-color:#cbd9cf;}
 .workspace-content button:not(:disabled):hover {background:#124e29;color:#fff;border-color:#124e29;}
 .workspace-content button:disabled {opacity:.55;box-shadow:none;}
@@ -290,16 +290,25 @@ body:has(.access-flow) .site-footer {max-width:960px;border-color:var(--ui-borde
 @media(prefers-reduced-motion:reduce) {
  .workspace-shell *,.workspace-shell *::before,.workspace-shell *::after,.workspace-mobile-dialog::backdrop,.access-flow * {animation:none!important;transition:none!important;scroll-behavior:auto!important;}
 }
-.confirmation-dialog {width:min(440px,calc(100vw - 32px));max-height:calc(100dvh - 48px);overflow:auto;padding:24px;border:1px solid var(--ui-border);border-radius:18px;background:#fff;color:#111813;box-shadow:0 24px 80px #10201733;}
-.confirmation-dialog::backdrop {background:#11181370;backdrop-filter:blur(3px);}
-.confirmation-heading {display:flex;align-items:center;gap:12px;}
-.confirmation-mark {display:grid;place-items:center;flex:none;width:36px;height:36px;border:1px solid #d6e4db;border-radius:12px;background:#edf5ef;color:#166534;font-weight:600;}
+.confirmation-dialog {width:min(512px,calc(100vw - 32px));max-height:calc(100dvh - 48px);overflow:auto;padding:24px;border:1px solid var(--ui-border);border-radius:8px;background:#fff;color:#111813;box-shadow:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a;}
+.confirmation-dialog::backdrop {background:#000c;}
+.confirmation-heading {display:flex;flex-direction:column;gap:8px;}
 .workspace-content .confirmation-dialog h2 {margin:0;font-size:18px;line-height:1.4;}
-.workspace-content .confirmation-dialog p {margin:18px 0 24px;font-size:13px;color:#58685e;}
-.confirmation-actions {display:flex;gap:10px;justify-content:flex-end;}
-.workspace-content .confirmation-actions button {flex:1;width:auto;margin:0;min-height:44px;}
-.workspace-content .confirmation-actions button:last-child {background:#166534;color:white;border-color:#166534;}
+.workspace-content .confirmation-dialog p {margin:16px 0;font-size:14px;color:#58685e;}
+.confirmation-actions {display:flex;gap:8px;justify-content:flex-end;}
+.workspace-content .confirmation-actions button {flex:0 1 auto;width:auto;margin:0;min-height:44px;}
+.workspace-content .confirmation-actions .confirmation-confirm {background:var(--accent);border-color:var(--accent);color:#fff;}
+.workspace-content .confirmation-actions .confirmation-confirm:not(:disabled):hover {background:#124e29;border-color:#124e29;}
+@media(max-width:639px) {
+ .confirmation-heading,.confirmation-dialog p {text-align:center;}
+ .confirmation-actions {flex-direction:column-reverse;}
+ .workspace-content .confirmation-actions button {width:100%;}
+}
+@media(prefers-reduced-motion:no-preference) {
+ .confirmation-dialog[open] {animation:confirmation-enter 200ms var(--ui-ease) both;}
+ .confirmation-dialog[open]::backdrop {animation:workspace-backdrop 200ms ease both;}
+}
+@keyframes confirmation-enter {from{opacity:0;transform:translateY(4px) scale(.95)}to{opacity:1;transform:none}}
 .workspace-content .confirmation-actions .confirmation-cancel {background:white;color:#253d2d;border-color:#cbd9cf;}
 .workspace-content .confirmation-actions button:not(:disabled):hover {background:#124e29;color:white;}
-@media(prefers-reduced-motion:no-preference){.confirmation-dialog[open]{animation:workspace-enter var(--ui-motion) var(--ui-ease) both;}.confirmation-dialog[open]::backdrop{animation:workspace-backdrop var(--ui-motion) ease both;}}
 @media(prefers-reduced-motion:reduce){.confirmation-dialog,.confirmation-dialog::backdrop{animation:none!important;transition:none!important;}}

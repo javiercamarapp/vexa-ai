@@ -1,5 +1,11 @@
 # VEXA AI · construcción e integración verificable
 
+## Acceso y administración publicados — 30-sep, actualización vigente
+
+Producto `c7a30ac` publicado y desplegado: READY y SHA servido comprobados. El enlace original de Supabase ya retorna a VEXA; seis comprobaciones remotas de sesión, plataforma, permisos, móvil, revocación y logout aprobadas. Administración de plataforma integrada con revisión independiente y migración aplicada. Google real y configuración de correos remotos siguen pendientes. Las 13 plantillas Auth tienen membrete: 52 presentaciones previas y 20 comprobaciones posteriores de botones centrados, sin acreditar entrega real. [Evidencia y límites](docs/entrega/ACCESO-PLATAFORMA-CORREOS-2026-09-30.md).
+
+Se mantienen **54/60 técnicas, 25 formales y producción pendiente**. Agentes Auth 403–405 recogidos; nueva tanda F06 406–408 autorizada sin reiniciar contadores. Los apartados siguientes conservan cortes históricos.
+
 **Carpeta canónica:** `/Users/javiercamaraportepetit/vexa` · fuera de iCloud. Preparación rehecha desde fuentes originales con Astra vía Codex. **Web desplegada en [vexa-ai.vercel.app](https://vexa-ai.vercel.app), todavía sin cierre productivo completo.** [Estado del despliegue y comprobaciones](docs/entrega/VERCEL-ESTADO-2026-09-25.md). Estado/recibos: [PROGRESO.md](PROGRESO.md).
 
 ## Acceso por correo — diagnóstico 30-sep

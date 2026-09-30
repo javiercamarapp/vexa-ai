@@ -1,5 +1,7 @@
 # Acceso por correo: despliegue y diagnóstico del retorno
 
+**Actualización posterior:** el retorno localhost quedó corregido y la administración de plataforma fue integrada y verificada. Ver [estado vigente](ACCESO-PLATAFORMA-CORREOS-2026-09-30.md). El diagnóstico siguiente se conserva como evidencia histórica.
+
 El acceso por correo está habilitado en la web desplegada. El enlace de Supabase todavía redirige a `http://localhost:3000/`; por ello el inicio desde el correo **no está validado de punta a punta**. Se mantienen 54/60 tareas técnicas, 25 aceptaciones formales y producción pendiente.
 
 ## Cambio y evidencia

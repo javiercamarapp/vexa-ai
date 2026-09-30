@@ -1,5 +1,11 @@
 # VEXA — construcción completa por grafo y agentes
 
+## Acceso y administración publicados — 30-sep, actualización vigente
+
+Producto `c7a30ac` publicado y desplegado: READY y SHA servido comprobados. El enlace original de Supabase ya retorna a VEXA; seis comprobaciones remotas de sesión, plataforma, permisos, móvil, revocación y logout aprobadas. Administración de plataforma integrada con revisión independiente y migración aplicada. Google real y configuración de correos remotos siguen pendientes. Las 13 plantillas Auth tienen membrete: 52 presentaciones previas y 20 comprobaciones posteriores de botones centrados, sin acreditar entrega real. [Evidencia y límites](docs/entrega/ACCESO-PLATAFORMA-CORREOS-2026-09-30.md).
+
+Se mantienen **54/60 técnicas, 25 formales y producción pendiente**. Agentes Auth 403–405 recogidos; nueva tanda F06 406–408 autorizada sin reiniciar contadores. Los apartados siguientes conservan cortes históricos.
+
 Actualizado: 2026-09-20. Este plan reemplaza los bloques históricos de investigación/preparación conservados en Git. El usuario pidió construir y confirmó **UN MES, no una semana**. Referencia de calendario: 19-oct-2026 si se cuenta desde este encargo; objetivo, no entrega garantizada ni estado alcanzado.
 
 ## Botones y confirmaciones publicados — 30-sep

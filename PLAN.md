@@ -2,6 +2,10 @@
 
 Actualizado: 2026-09-20. Este plan reemplaza los bloques históricos de investigación/preparación conservados en Git. El usuario pidió construir y confirmó **UN MES, no una semana**. Referencia de calendario: 19-oct-2026 si se cuenta desde este encargo; objetivo, no entrega garantizada ni estado alcanzado.
 
+## Botones y confirmaciones publicados — 30-sep
+
+La revisión402 aprobó dos archivos de presentación, con ocho controles nuevos deCSS enChromium/WebKit y evidencia previa conservada. Publicado y desplegado `ccf546b`: READY, SHA servido y dos fuentes revisadas verificados; foco, Escape, cancelación sinPOST, movimiento reducido y navegación lateral comprobados en escritorio/móvil. [Evidencia y límites](docs/entrega/UNIFICACION-UI-2026-09-30.md). Se mantienen54/60 técnicas,25formales y producciónfalse; no se cierra todaF06-07 por un ajuste visual.402/402invocaciones conservadas; ninguna revisión queda ejecutándose.
+
 ## Checkpoint vigente —54/60 técnicas;25 aceptadas en el grafo
 
 Webhooks CRM publicados y desplegados `ad37369` tras revisión401; migración0040 aplicada por MCP y comprobada. [Evidencia del30-sep](docs/entrega/WEBHOOKS-CRM-2026-09-30.md). Activación y cuentas reales pendientes; el total54/60 permanece igual.

@@ -5,7 +5,7 @@
   "formal_runner_accepted": 25,
   "total_tasks": 60,
   "production_validated": false,
-  "source_commit": "ad3736968091567b8c5e58d331206cc5ad6f8c84",
+  "source_commit": "ccf546b3495ec8d8fb0e2c2886e3be842274696a",
   "layers": {
     "documentation": {
       "status": "reviewed_guides_consolidation_submitted_for_final_review",
@@ -52,7 +52,8 @@
         "CHECKS-UI-2026-09-28.md",
         "ACCESIBILIDAD-ESTADOS-2026-09-28.md",
         "ACCIONES-UI-2026-09-29.md",
-        "CONSENTIMIENTO-ECONOMICO-2026-09-29.md"
+        "CONSENTIMIENTO-ECONOMICO-2026-09-29.md",
+        "UNIFICACION-UI-2026-09-30.md"
       ],
       "smoke_checks_passed": 8,
       "smoke_views_passed": 8,
@@ -61,8 +62,9 @@
       "current_deployment_checks": [
         "READY",
         "served_revision",
-        "uploaded_reviewed_source_sha256",
-        "economic_consent_edit_invalidation_1440_390_no_writes"
+        "two_reviewed_sources_sha256",
+        "login200",
+        "dialog_focus_cancel_escape_motion_navigation_1440_390_no_writes"
       ],
       "previous_remote_authenticated_explorer_scope": {
         "unavailable404_observations": 2,
@@ -104,8 +106,8 @@
     "technical_tasks_complete": 49,
     "note": "Corte histórico anterior al despliegue y smoke remoto; conservado enGit."
   },
-  "updated": "2026-09-29",
-  "deployed_source_commit": "78b524ded807623df410d5b199a5b0df8687e002",
+  "updated": "2026-09-30",
+  "deployed_source_commit": "ccf546b3495ec8d8fb0e2c2886e3be842274696a",
   "latest_audit": {
     "date": "2026-09-29",
     "source_commit": "94db0848a6c61538508a354ff0715f377364af6d",
@@ -134,5 +136,18 @@
     "deployment_id": "dpl_7mzRZeQu8Juuk8ZFFPuHzW1pZacN",
     "served_revision_verified": true,
     "uploaded_sources_verified": 8
+  },
+  "ui_unification_checkpoint": {
+    "date": "2026-09-30",
+    "status": "reviewed_published_deployed_verified",
+    "review": 402,
+    "source_commit": "ccf546b3495ec8d8fb0e2c2886e3be842274696a",
+    "deployment_id": "dpl_6jUJNzjz6DUW61GhoFu5DUGsBXrN",
+    "evidence": "UNIFICACION-UI-2026-09-30.md",
+    "uploaded_sources_verified": 2,
+    "independent_isolated_css_scenarios": 8,
+    "remote_dialog_contexts": 2,
+    "business_mutations": 0,
+    "production_validated": false
   }
 }

@@ -1,6 +1,10 @@
 # Progreso verificable
 Actualizado: 2026-09-30. Los apartados conservados abajo son cortes históricos.
 
+## Botones y confirmaciones publicados — 30-sep
+
+La revisión402 aprobó dos archivos de presentación, con ocho controles nuevos deCSS enChromium/WebKit y evidencia previa conservada. Publicado y desplegado `ccf546b`: READY, SHA servido y dos fuentes revisadas verificados; foco, Escape, cancelación sinPOST, movimiento reducido y navegación lateral comprobados en escritorio/móvil. [Evidencia y límites](docs/entrega/UNIFICACION-UI-2026-09-30.md). Se mantienen54/60 técnicas,25formales y producciónfalse; no se cierra todaF06-07 por un ajuste visual.402/402invocaciones conservadas; ninguna revisión queda ejecutándose.
+
 ## Webhooks CRM revisados e integrados —30-sep
 
 HubSpotv3/Zendesk reciben solicitudes firmadas y despiertan la sincronización existente mediante recibos durables, con identidad del servidor y límites. Revisión401 aprobada;50escenarios root,5independientes,414de matriz externa y8mutantes verdes. Composición32transporte/24básicos/134controlador aprobada. SQL0040 aplicada legítimamente por MCP y permisos remotos verificados. Desactivado hasta configurar cuentas, firmas y programación; no hay cron nuevo. [Evidencia y activación](docs/entrega/WEBHOOKS-CRM-2026-09-30.md).

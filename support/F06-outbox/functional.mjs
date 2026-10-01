@@ -86,10 +86,12 @@ test('F06-09 real SQL Auth and independent consumers preserve notification effec
    const job="update public.jobs set state='failed',lease_until=null where tenant_id=t and id=j.id;";
    assert.equal(original.split(branch).length,2,'MUTANT_SINGLE_SENDING_BRANCH');assert.equal(original.split(job).length,3,'MUTANT_TWO_TERMINAL_BRANCHES');
    const mutant=original.replace(branch,branch.replace("state='uncertain'","state='retry'")).replace(job,job.replace("state='failed'","state='queued'"));
+   // This case calibrates resend after a crash; retain actual expiry without a subsecond RPC budget.
+   const calibrationLeaseMs=5000;
    const exercise=async label=>{
-    await waitQuota();const row=await owner.repository.enqueue(event(h,f)),a=await processWorker();await a.call('settings',{hold:true});const pending=a.call('consume');await eventually(()=>a.barriers,x=>x.length>0,label+'-after-http');const seen=receiver.requests.length;await a.kill();await pending;
+    await waitQuota();const row=await owner.repository.enqueue(event(h,f)),a=await processWorker({leaseMs:calibrationLeaseMs});await a.call('settings',{hold:true});const pending=a.call('consume');await eventually(()=>a.barriers,x=>x.length>0,label+'-after-http');const seen=receiver.requests.length;await a.kill();await pending;
     const sending=await owner.repository.get(row.id);assert.equal(sending.state,'sending');await eventually(()=>owner.repository.get(row.id),x=>Date.parse(x.leaseUntil)<=Date.now(),label+'-lease-expired');
-    const b=await processWorker();const response=await b.call('consume');assert.ok(response.ok,JSON.stringify(response));const recovered=await owner.repository.get(row.id);await b.kill();return {label,id:row.id,before:sending,after:recovered,httpBefore:seen,httpAfter:receiver.requests.length};
+    const b=await processWorker({leaseMs:calibrationLeaseMs});const response=await b.call('consume');assert.ok(response.ok,JSON.stringify(response));const recovered=await owner.repository.get(row.id);await b.kill();return {label,id:row.id,before:sending,after:recovered,httpBefore:seen,httpAfter:receiver.requests.length};
    };
    let negative;try{h.sql(mutant);assert.notEqual(hash(definition()),hash(original));negative=await exercise('SYN_MUTANT');assert.equal(negative.after.state,'accepted','MUTANT_ACTUALLY_RESENT');assert.equal(negative.httpAfter,negative.httpBefore+1,'MUTANT_SECOND_HTTP_OBSERVED');assert.throws(()=>assert.equal(negative.httpAfter,negative.httpBefore,'NO_RESEND'),/NO_RESEND/);}
    finally{h.sql(original);assert.equal(hash(definition()),hash(original),'SQL_MUTANT_RESTORED_EXACT');}

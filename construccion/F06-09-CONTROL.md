@@ -21,3 +21,7 @@ Este documento describe el examen; su existencia no significa aceptación. La pr
 ## Arranque de infraestructura de pruebas
 
 Bajo carga del equipo, hubo fallos de disponibilidad de Storage antes de ejecutar las aserciones del producto. Se conservan esos fallos y no se atribuye una causa exacta a los contenedores originales ya recogidos. Una calibración independiente del producto retarda veinte segundos el arranque real de Storage: la espera anterior de cien sondeos cada100ms falla con el contenedor sano; una espera acotada a60s obtiene HTTP200 real en25,46s. Los dos harness de infraestructura usan ahora ese plazo de arranque. No se eliminan controles, no se sustituyen servicios por mocks y el gate F06-09 mantiene su límite global de900s.
+
+## Calibración de recuperación tras interrupción
+
+El ensayo de mutación conserva la duplicación HTTP real como control negativo y exige ausencia de reenvío después de restaurar exactamente SQL. Su plazo de lease era1s: una calibración externa con1200ms de latencia tras el HTTP provoca `notification_renew` SQLSTATE40001 y conflicto409; con5s el mismo escenario pasa. Sólo los dos consumidores de ese ensayo usan ahora5s, conservando expiración real, `response.ok`, estado aceptado del mutante, incertidumbre restaurada y conteos HTTP. No se cambia el plazo predeterminado del producto ni el límite global900s. La corrida natural focal y la calibración causal pasan5/5 cada una; la causa exacta del fallo histórico, cuyo SQLSTATE se sanitizó, permanece inferida.

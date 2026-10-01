@@ -2142,7 +2142,10 @@
     "auto_accept": false,
     "requires_approval": true,
     "deliverables": [
-      "apps/web/src/components/accessibility.tsx",
+      "apps/web/src/app/globals.css",
+      "apps/web/src/components/workspace/shell.tsx",
+      "apps/web/src/components/workspace/navigation.tsx",
+      "apps/web/src/components/confirmation-dialog.tsx",
       "docs/blueprint/visual-review.md"
     ],
     "steps": [

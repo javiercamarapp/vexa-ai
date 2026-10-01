@@ -174,7 +174,7 @@ add('F06-06','packages/briefs/index.mjs|packages/briefs/index.d.mts|packages/bri
  'Generar brief desde snapshot, top 3, carril crítico, cambios, acciones y límites; no nuevos cálculos del LLM.|Validar toda cifra/cita contra bundle y permisos; rechazar inconsistencia.|Export server-side con scope fijo y acceso revalidado al descargar.|No enviar correo por generar brief; envío es permiso separado.',
  'Mismo snapshot, scope y versión producen las mismas cifras y hashes.|No afirmar VEXA recuperó 32: mostrar sólo componentes respaldados.|Revocar usuario tras generar export impide una descarga nueva.',
  'Si falla validación, no publicar brief; usar versión anterior señalando stale.')
-add('F06-07','apps/web/src/components/accessibility.tsx|docs/blueprint/visual-review.md',
+add('F06-07','apps/web/src/app/globals.css|apps/web/src/components/workspace/shell.tsx|apps/web/src/components/workspace/navigation.tsx|apps/web/src/components/confirmation-dialog.tsx|docs/blueprint/visual-review.md',
  'Playwright contra las ocho vistas más Auth/notificaciones/preferencias a 390x844 y 1440x900, con prefers-reduced-motion.|Probar teclado, labels, foco, contraste WCAG AA, tablas pequeñas y carga lenta.|Comparar screenshots antes y después y requests de cada acción; no dar PASS por imagen si falló el POST.|Separar juicio visual humano de aserciones DOM y de negocio.',
  'Ninguna advertencia o cifra queda fuera de pantalla sin acceso.|Probar loading, error, empty, partial, stale y ready por ruta.|Sin violaciones críticas de axe y con revisión visual humana documentada; no una nota 10 autoelegida.',
  'Corregir CSS/componentes sin sanar snapshots de dinero; congelar defecto visual con viewport/ruta.','interactive')

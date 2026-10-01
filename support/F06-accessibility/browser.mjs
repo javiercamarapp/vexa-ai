@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';
 import {assertReady} from './ready.mjs';
 import {nativeContrast} from './contrast.mjs';
-import {assertAudit,assertFocus} from './oracles.mjs';
+import {assertAudit} from './oracles.mjs';
+import {keyboardScan} from './keyboard.mjs';
 export async function scan({page,url,viewport,axePath,out,engine,label}){
  const pageErrors=[],consoleErrors=[],requests=[];
  const onError=e=>pageErrors.push(e.message),onConsole=m=>{if(m.type()==='error')consoleErrors.push(m.text());};
@@ -20,15 +21,7 @@ export async function scan({page,url,viewport,axePath,out,engine,label}){
   row.incompleteResolved=await nativeContrast(page,row.incomplete);
   await page.evaluate(()=>scrollTo(0,0));
   assertAudit(row);
-  // Traversal records every stop until wrapping or a bounded complete page length.
-  const stops=[];const count=await page.locator('a[href],button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),[tabindex="0"]').count();
-  for(let i=0;i<Math.min(count+2,180);i++){
-   await page.keyboard.press(engine==='webkit'?'Alt+Tab':'Tab');const focus=await page.evaluate(()=>{const e=document.activeElement,r=e.getBoundingClientRect(),s=getComputedStyle(e);return{tag:e.tagName,name:e.getAttribute('aria-label')||e.textContent.slice(0,90),body:e===document.body,visible:r.width>0&&r.height>0&&r.top>=-1&&r.left>=-1&&r.top<innerHeight&&r.left<innerWidth,indicator:(s.outlineStyle!=='none'&&parseFloat(s.outlineWidth)>=2&&s.outlineColor!=='transparent'&&s.outlineColor!=='rgba(0, 0, 0, 0)')};});
-   // A complete native traversal may pass through browser chrome once; keep it in receipt.
-   if(focus.body&&i>0)break;
-   assertFocus(focus);stops.push(focus);
-  }
-  assert.ok(stops.length>0,'NO_KEYBOARD_STOPS');row.keyboard=stops;assertAudit(row);row.status='pass';return row;
+  await keyboardScan(page,engine,row);assertAudit(row);row.status='pass';return row;
  }catch(error){row.status='fail';row.error=error.message;throw error;}
  finally{row.pageErrors=pageErrors;row.consoleErrors=consoleErrors;row.requests=requests;fs.writeFileSync(path.join(out,stem+'.json'),JSON.stringify(row,null,2));page.off('pageerror',onError);page.off('console',onConsole);page.off('response',onResponse);}
 }

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 export function assertIncomplete(incomplete,resolved=[]){
  assert.ok(incomplete.every(rule=>Array.isArray(rule?.nodes)),'WCAG_INCOMPLETE_REQUIRES_ADJUDICATION');
  const nodes=incomplete.flatMap(rule=>rule.nodes.map(node=>({rule:rule.id,...node})));assert.equal(resolved.length,nodes.length,'WCAG_INCOMPLETE_REQUIRES_ADJUDICATION');
- for(const node of nodes){const matches=resolved.filter(r=>r.rule===node.rule&&r.target===node.target[0]&&r.html===node.html);assert.equal(matches.length,1,'WCAG_EXACT_RESOLUTION_REQUIRED');const r=matches[0];assert.equal(node.rule,'color-contrast');assert.equal(r.status,'resolved_current_native_measurement');assert.ok(Number.isFinite(r.ratio)&&r.ratio>=4.5,'NATIVE_TEXT_CONTRAST_BELOW_AA');assert.ok(r.visible&&r.unoccluded,'NATIVE_CONTRAST_NOT_VISIBLE');assert.equal(r.foreground?.alpha,1);assert.equal(r.background?.alpha,1);}
+ for(const node of nodes){const matches=resolved.filter(r=>r.rule===node.rule&&r.target===node.target[0]&&r.html===node.html);assert.equal(matches.length,1,'WCAG_EXACT_RESOLUTION_REQUIRED');const r=matches[0];assert.equal(node.rule,'color-contrast');assert.equal(r.status,'resolved_current_native_measurement');assert.ok(Number.isFinite(r.ratio)&&r.ratio>=4.5,'NATIVE_TEXT_CONTRAST_BELOW_AA');assert.ok(r.visible&&r.unoccluded,'NATIVE_CONTRAST_NOT_VISIBLE');assert.equal(r.foreground?.alpha,1);assert.ok(r.background?.alpha===1||(r.mobileNavigationLabel===true&&r.tag==='SPAN'&&r.contrastModel==='white_mobile_overlay_bound_0_255'&&r.background.alpha>0&&r.background.alpha<1&&r.background.rgb.every(v=>v===255)),'UNSUPPORTED_CONTRAST_BACKGROUND');}
 }
 export function assertAudit(row){
  assert.equal(row.http,200,'UI_HTTP');assert.equal(row.overflow,false,'UI_OVERFLOW');

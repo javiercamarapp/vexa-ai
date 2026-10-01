@@ -15,7 +15,9 @@ test('F06-07 composed local SYN accessibility and action persistence; human judg
  for(const [file,hash]of Object.entries(bindings.files))assert.equal(sha(fs.readFileSync(path.join(sourceRoot,file))),hash,'INHERITED_EVIDENCE_CHANGED:'+file);
  const ledgerPath=process.env.VEXA_F0607_REVIEWED_LEDGER;assert.ok(ledgerPath,'REVIEWED_ROUTE_STATE_LEDGER_REQUIRED_BEFORE_INFRA');const ledger=JSON.parse(fs.readFileSync(ledgerPath));validateInheritance({candidate,root:sourceRoot,ledger,bindings});
  const report={task:'F06-07',status:'running',fixture:'SYN-A/B-existing-canonical-detail-v1',checks:[],humanVisual:'not_run',formalAcceptance:false,versions:{node:process.version,playwrightSha256:sha(fs.readFileSync(playwright)),axeSha256:sha(fs.readFileSync(axePath))},historicalErrors:'389/RSC remains historical FAIL; current scans never filter console errors',pending:['Human visual review','F06-12 accepted receipt and final source reconciliation','Route-state/action inheritance independent adjudication; no global coverage claim']};
+ const scanFailures=[];report.scanFailures=scanFailures;
  const save=()=>fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));const record=x=>{report.checks.push(x);save();};let h,browser;
+ const scanAndRecord=async(args,route,state)=>{try{record({...await scan(args),route,state});}catch(error){const stem=args.engine+'-'+args.label.replace(/[^a-z0-9]/gi,'_')+'-'+args.viewport.width;const row=JSON.parse(fs.readFileSync(path.join(out,stem+'.json')));scanFailures.push({engine:args.engine,route,viewport:args.viewport,error:error.message});record({...row,route,state,status:'fail'});}};
  try{
   h=await setup(candidate,out);const f=await seedDetail(h,{beforeSnapshot:async x=>x.ok(h.request(h.A,'/api/workspace/customer-bindings',{customerKey:'C1',customerId:x.a.customers.C1,expectedVersion:0,active:true,report:detailReport,attested:true}))});
   const query=detailQuery(f.snapshot),workspace=await f.ok(h.request(h.A,'/api/workspace?'+query+'&resource=metrics'));query.set('scope_hash',workspace.meta.scope_hash);
@@ -31,15 +33,16 @@ test('F06-07 composed local SYN accessibility and action persistence; human judg
    const blocked=[];await context.route('**/*',r=>{if(!['127.0.0.1','localhost'].includes(new URL(r.request().url()).hostname)){blocked.push(r.request().url());return r.abort();}return r.continue();});
    const page=await context.newPage();
    try{
-    for(const viewport of [{width:390,height:844},{width:1440,height:900}])for(const route of [...views,...extra])record({...await scan({page,url:h.base+route+(views.includes(route)?'?'+query:''),viewport,axePath,out,engine,label:route}),route:route.replace(f.p1.id,'[id]').replace(f.a.customers.C1,'[id]').replace(brief.id,'[id]'),state:'ready'});
+    for(const viewport of [{width:390,height:844},{width:1440,height:900}])for(const route of [...views,...extra])await scanAndRecord({page,url:h.base+route+(views.includes(route)?'?'+query:''),viewport,axePath,out,engine,label:route},route.replace(f.p1.id,'[id]').replace(f.a.customers.C1,'[id]').replace(brief.id,'[id]'),'ready');
     await missingLoadingStates({page,h,query,brief,record});await emptyInbox({page,h,record});
     await notificationStates({page,h,record});await preferencesPersistence({page,h,record});await briefPersistence({page,h,f,query,record});
     assert.deepEqual(blocked,[],'OUTBOUND_BROWSER_ATTEMPT');
    }finally{await context.close();}
    const anon=await browser.newContext({reducedMotion:'reduce'});anon.setDefaultTimeout(15000);await anon.route('**/*',r=>['127.0.0.1','localhost'].includes(new URL(r.request().url()).hostname)?r.continue():r.abort());const publicPage=await anon.newPage();
-   try{for(const viewport of [{width:390,height:844},{width:1440,height:900}])for(const route of ['/login','/login?error=oauth_cancelled','/auth/email/complete'])record({...await scan({page:publicPage,url:h.base+route,viewport,axePath,out,engine,label:route}),route:route.split('?')[0],state:route.includes('?error=')||route==='/auth/email/complete'?'error':'ready'});}
+   try{for(const viewport of [{width:390,height:844},{width:1440,height:900}])for(const route of ['/login','/login?error=oauth_cancelled','/auth/email/complete'])await scanAndRecord({page:publicPage,url:h.base+route,viewport,axePath,out,engine,label:route},route.split('?')[0],route.includes('?error=')||route==='/auth/email/complete'?'error':'ready');}
    finally{await anon.close();await browser.close();browser=null;}
   }
+  assert.deepEqual(scanFailures,[],'UI_INDEPENDENT_SCANS_FAILED');
   for(const row of ledger.filter(r=>r.requiredByF0607))for(const [state,item]of Object.entries(row.states))if(item.resolution==='current_run')assert.ok(hasPassedState(report.checks,row.route,state,item.scenario),'STATE_SCENARIO_NOT_EXECUTED:'+row.route+':'+state);
   h.verifySources();report.status='pass_scoped_automated_composition';
  }catch(error){report.status='fail';report.error={message:error.message,stack:error.stack};throw error;}

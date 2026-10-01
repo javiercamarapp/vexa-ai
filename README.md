@@ -1,5 +1,11 @@
 # VEXA AI · construcción e integración verificable
 
+## Validación remota actual — estado vigente
+
+**59/60 técnicas y28 aceptadas formalmente; producción pendiente.** El release desplegado `f893851` pasó8/8 fases remotas y ocho vistas con datos SYN propios: importación, cifras/exportación, interrupción/recuperación y revocación. Limpieza comprobada por MCP. [Evidencia y límites](docs/entrega/SMOKE-REMOTO-2026-10-01.md).
+
+Controles formales, inventario y documentación publicados en `178d55c`, cuatro commits reales sin nuevo build de Vercel. Restan F07-01/revisión global rechazada automáticamente, matriz global incompleta: 114 PASS/2 canceladas, carga 50K fallida al plazo/150K no iniciada y las validaciones externas/operativas identificadas en la [auditoría de 20 rubros](docs/entrega/AUDITORIA-20-RUBROS-2026-10-01.md). No basta pegar APIs. Los bloques siguientes conservan cortes anteriores.
+
 ## Interfaz integrada — estado vigente
 
 **59/60 técnicas y 28 aceptadas formalmente; producción pendiente.** F06-07 completa la composición local con 68/68 revisiones de pantalla, ocho acciones persistidas y revisión independiente 433. Lint, compilación y limpieza comprobados. [Evidencia y límites](construccion/F06-07-CIERRE-TECNICO.md).

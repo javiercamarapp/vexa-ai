@@ -10,7 +10,7 @@ export async function POST(request:NextRequest) {
     // Never claim logout succeeded when Auth could not revoke refresh sessions.
     const response=finish(error ? failure(new AccessError(503,'logout_unavailable')) : localRedirect('/login'));
     for(const {name} of request.cookies.getAll()) {
-      if(name===ACTIVE_ORG || name.startsWith('sb-'))response.cookies.set(name,'',{httpOnly:true,secure:c.secure,sameSite:'lax',path:'/',maxAge:0});
+      if(name===ACTIVE_ORG || name==='vexa_push_device' || name.startsWith('sb-'))response.cookies.set(name,'',{httpOnly:true,secure:c.secure,sameSite:'lax',path:'/',maxAge:0});
     }
     response.cookies.set(ACTIVE_ORG,'',{path:'/',maxAge:0});
     response.headers.set('Clear-Site-Data','"cache", "cookies", "storage"');

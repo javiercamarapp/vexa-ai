@@ -4,7 +4,7 @@
 
 **57/60 técnicas y 28 aceptadas formalmente; producción pendiente.** F06-11 integrada en `2165849`: verificación51/51 y aceptación limpia51/51, ambas con3/3pruebas HTTP hijas. Migración0031 aplicada por MCP y permisos remotos comprobados. [Cierre y límites](construccion/F06-11-CIERRE.md).
 
-Quedan F06-12, F06-07 y F07-01, más validación integrada y auditoría final. La publicación/despliegue de Push todavía debe comprobarse; las cuentas y la entrega con proveedores/dispositivos reales siguen pendientes. Los apartados siguientes son históricos.
+Quedan F06-12, F06-07 y F07-01, más validación integrada y auditoría final. Push publicado y desplegado en `3a2e34d`: READY, SHA servido, fuentes y protección del endpoint comprobados. Las cuentas y la entrega con proveedores/dispositivos reales siguen pendientes. Los apartados siguientes son históricos.
 
 ## Correo aceptado — estado vigente
 

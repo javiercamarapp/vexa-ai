@@ -20,7 +20,7 @@ Se conservan los ensayos fallidos: advertencia de lint corregida sin desactivar 
 
 Migración0031 aplicada por MCP, versión `20261001043847`, SQL SHA256 `00e2d85922c41701b3d8a61044e9c0eafce096b208ce0784c4c1bba7ddd915fb`. Dos tablas con RLS forzado,84combinaciones de permisos de tabla y18de funciones comprobadas; cero concesiones inesperadas. FK Auth con SET NULL, trigger de revocación y versión de intento obligatoria comprobados. Sin suscripciones ni intentos reales creados.
 
-Publicación y despliegue de esta revisión pendientes de su recibo; la web anterior conserva `cd6c17f`. El SHA servido y las fuentes se comprobarán antes de acreditar el despliegue.
+Publicado mediante publisher autorizado: `3a2e34d6234eea6a6d6caff588891068df89d1ea`, tres commits reales con autoría asociada y SHA remoto comprobado. Vercel `dpl_GWo7g9uKbwpDiQwTqYHWTDtRtXS3` READY en https://vexa-ai.vercel.app: SHA servido y las trece fuentes modificadas coinciden; login200, Push anónimo401/no-store y service worker200 con bytes exactos. Actions desactivadas y sin enlace Git de Vercel. El smoke completo anterior conserva `b9ed3db`; no se atribuye al despliegue actual.
 
 ## Pendientes reales
 

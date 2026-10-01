@@ -20,7 +20,7 @@ Migración0032 aplicada legítimamente por MCP, versión `20261001053556`, SQL S
 
 El advisor identifica la tabla privada sin políticas: su falta de acceso directo es intencional y está comprobada por ACL. También conserva avisos sobre seis funciones SECURITY DEFINER invocables por usuarios y protección de contraseñas filtradas desactivada; se revisarán en F07-01, sin declararlos resueltos por esta ficha. Referencias: [funciones privilegiadas](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable), [protección de contraseñas](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection).
 
-Publicación GitHub y despliegue de esta composición pendientes de comprobar al redactar este cierre. La última web verificada conserva `3a2e34d` de Push. No se atribuye a esta versión el smoke completo anterior `b9ed3db`.
+Publicado mediante publisher autorizado en `a01b50b2cb01729eda4a6940dfbb868a1adef356`, tres commits reales con autoría asociada y SHA remoto comprobado. Vercel `dpl_HFpKAb8F9GTH9CJQwq88FGTZiPap` READY en https://vexa-ai.vercel.app: SHA servido y19fuentes modificadas coinciden. Login200, Push/políticas/consumidor anónimos401 conno-store; service worker200 con bytes verificados. Actions desactivadas, sin enlaceGit deVercel. No se atribuye a esta versión el smoke completo anterior `b9ed3db`.
 
 ## Límites y pendientes
 

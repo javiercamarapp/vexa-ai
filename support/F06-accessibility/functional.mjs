@@ -1,4 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';import {pathToFileURL} from 'node:url';import {createHash,randomUUID} from 'node:crypto';
+import {deliveredInboxReady} from './delivered-inbox.mjs';
 import {setup} from '../F06-notifications/harness.mjs';
 import {seedDetail,detailQuery,detailReport} from '../F06-detail/fixtures.mjs';
 import {missingLoadingStates,emptyInbox,hasPassedState} from './focal-states.mjs';
@@ -17,7 +18,7 @@ test('F06-07 composed local SYN accessibility and action persistence; human judg
  const report={task:'F06-07',status:'running',fixture:'SYN-A/B-existing-canonical-detail-v1',checks:[],humanVisual:'not_run',formalAcceptance:false,versions:{node:process.version,playwrightSha256:sha(fs.readFileSync(playwright)),axeSha256:sha(fs.readFileSync(axePath))},historicalErrors:'389/RSC remains historical FAIL; current scans never filter console errors',pending:['Human visual review','F06-12 accepted receipt and final source reconciliation','Route-state/action inheritance independent adjudication; no global coverage claim']};
  const scanFailures=[];report.scanFailures=scanFailures;
  const save=()=>fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));const record=x=>{report.checks.push(x);save();};let h,browser;
- const scanAndRecord=async(args,route,state)=>{try{record({...await scan(args),route,state});}catch(error){const stem=args.engine+'-'+args.label.replace(/[^a-z0-9]/gi,'_')+'-'+args.viewport.width;const row=JSON.parse(fs.readFileSync(path.join(out,stem+'.json')));scanFailures.push({engine:args.engine,route,viewport:args.viewport,error:error.message});record({...row,route,state,status:'fail'});}};
+ const scanAndRecord=async(args,route,state)=>{try{const row=await scan(args);const actualState=row.dataState.state??state;record({...row,route,state:actualState,scenario:'scan:'+route+':'+actualState});}catch(error){const stem=args.engine+'-'+args.label.replace(/[^a-z0-9]/gi,'_')+'-'+args.viewport.width;const row=JSON.parse(fs.readFileSync(path.join(out,stem+'.json')));scanFailures.push({engine:args.engine,route,viewport:args.viewport,error:error.message});const actualState=row.dataState?.state??state;record({...row,route,state:actualState,scenario:'scan:'+route+':'+actualState,status:'fail'});}};
  try{
   h=await setup(candidate,out);const f=await seedDetail(h,{beforeSnapshot:async x=>x.ok(h.request(h.A,'/api/workspace/customer-bindings',{customerKey:'C1',customerId:x.a.customers.C1,expectedVersion:0,active:true,report:detailReport,attested:true}))});
   const query=detailQuery(f.snapshot),workspace=await f.ok(h.request(h.A,'/api/workspace?'+query+'&resource=metrics'));query.set('scope_hash',workspace.meta.scope_hash);
@@ -35,7 +36,7 @@ test('F06-07 composed local SYN accessibility and action persistence; human judg
    try{
     for(const viewport of [{width:390,height:844},{width:1440,height:900}])for(const route of [...views,...extra])await scanAndRecord({page,url:h.base+route+(views.includes(route)?'?'+query:''),viewport,axePath,out,engine,label:route},route.replace(f.p1.id,'[id]').replace(f.a.customers.C1,'[id]').replace(brief.id,'[id]'),'ready');
     await missingLoadingStates({page,h,query,brief,record});await emptyInbox({page,h,record});
-    await notificationStates({page,h,record});await preferencesPersistence({page,h,record});await briefPersistence({page,h,f,query,record});
+    await notificationStates({page,h,record});await deliveredInboxReady({page,h,record,scanAndRecord,axePath,out,engine});await preferencesPersistence({page,h,record});await briefPersistence({page,h,f,query,record});
     assert.deepEqual(blocked,[],'OUTBOUND_BROWSER_ATTEMPT');
    }finally{await context.close();}
    const anon=await browser.newContext({reducedMotion:'reduce'});anon.setDefaultTimeout(15000);await anon.route('**/*',r=>['127.0.0.1','localhost'].includes(new URL(r.request().url()).hostname)?r.continue():r.abort());const publicPage=await anon.newPage();

@@ -28,4 +28,4 @@ export async function emptyInbox({page,h,record}){
  record({scenario:'empty-inbox-real',route:'/notifications',state:'empty',status:'pass',http:200,items:0,unreadCount:0});
 }
 
-export function hasPassedState(checks,route,state,scenario){return checks.some(c=>c.status==='pass'&&c.route===route&&c.state===state&&(c.scenario===undefined||c.scenario===scenario));}
+export function hasPassedState(checks,route,state,scenario){return checks.some(c=>c.status==='pass'&&c.route===route&&c.state===state&&c.scenario===scenario);}

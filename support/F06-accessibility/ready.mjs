@@ -29,6 +29,7 @@ export async function assertReady(page,url,requests){
  let marker;
  if(c.kind==='login'||c.kind==='login-error'){await main.getByRole('heading',{name:/Bienvenido.*VEXA AI/}).waitFor();marker=await main.locator('form[action="/auth/google"] button').count()===1&&await main.locator('input[type="email"]').count()===1;}
  else if(c.kind==='invalid-email-link'){await main.getByRole('alert').filter({hasText:'El enlace no es válido'}).waitFor();marker=await main.getByRole('link',{name:'Volver a iniciar sesión',exact:true}).isVisible();}
+ else if(c.path==='/notifications'){const populated=main.locator('article[data-notification-id]'),empty=main.getByText('No hay avisos sin leer disponibles.',{exact:true});await populated.or(empty).first().waitFor();const populatedCount=await populated.count();marker=populatedCount>0?await populated.first().isVisible():await empty.isVisible();c.state=populatedCount>0?'ready':'empty';c.itemCount=populatedCount;}
  else{await main.locator(c.selector).first().waitFor();marker=await main.locator(c.selector).first().isVisible();}
  const responses=requests.filter(x=>x.method==='GET'&&x.path===c.api);const r={...c,marker,busy:await main.locator('[aria-busy="true"]').count(),loadingText:await main.getByRole('status').filter({hasText:/^(Verificando|Cargando|Validando sesión)/}).count(),errors:await main.locator('.state-panel.error,p[role="alert"]').count(),apiObserved:responses.length>0,apiStatus:responses.at(-1)?.status};
  assertReadyEvidence(r);return r;

@@ -23,6 +23,7 @@
   },
   "workspaces": [
     "apps/web",
-    "packages/platform"
+    "packages/platform",
+    "packages/notifications"
   ]
 }

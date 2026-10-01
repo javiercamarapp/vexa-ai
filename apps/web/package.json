@@ -20,7 +20,8 @@
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.116.0",
     "@vexa/platform": "0.0.1",
-    "pg": "8.16.3"
+    "pg": "8.16.3",
+    "@vexa/notifications": "0.0.1"
   },
   "devDependencies": {
     "@types/node": "24.10.1",

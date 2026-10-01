@@ -1,0 +1,19 @@
+{
+  "name": "@vexa/notifications",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./email": "./email.mjs",
+    "./receipts": {
+      "types": "./receipts.d.mts",
+      "default": "./receipts.mjs"
+    }
+  },
+  "dependencies": {
+    "resend": "6.28.1",
+    "nodemailer": "10.0.10",
+    "pg": "8.16.3",
+    "web-push": "3.6.7"
+  }
+}

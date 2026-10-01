@@ -52,3 +52,10 @@ Una reproducción estática del DOMrun6 con CSS, fuentes e imagen actuales confi
 
 
 Run7 repitió68scans y ocho acciones;64scans aprobaron. Los cuatro fallos del login se deben a serialización del CSS compilado: `0deg`/`0px` frente a `to top`/`0%`. La recuperación6 admite exclusivamente esas dos cadenas completas del mismo gradiente, conservando colores, alpha, posiciones22%/46%, geometría y umbrales.46verificaciones de navegador y18 del comprobador independiente incluyen cambios de dirección, origen, stops y alpha rechazados. El focal reproduce la notación observada en los errores; la capturaHTTP del CSS completo llegó después de la limpieza y no produjo artefacto. No se presenta como ejecución del compilado ni aprobación de producto. Revisión433 aprobó un único archivo para la siguiente corrida integrada.
+
+
+## Espera del panel — run8 y recuperación7
+
+Run8 terminó rojo tras26scansChromium aprobados: la espera global networkidle agotó15s antes de las acciones. No se identificó qué petición mantuvo activa la red. El control ahora observa el GET exacto del panel antes de navegar/refrescar y exige HTTP200 más los marcadores DOM existentes, sin busy/error; comparte15s entre respuesta, clicks y DOM. Conserva retención de respuesta, drenaje de interceptores, revocación403 y restauración200. Una petición ajena retenida demuestra por qué la quietud global no acredita ese estado, sin atribuir la causa concreta de run8.
+
+El focal inicial HTTP omitía charset y mostraba una elipsis mal decodificada; sus fallos originales se conservaron. Con UTF8 explícito pasan36observaciones en ambos motores, incluidos rechazo401, busy200, plazo agotado y200sin marcador. Las ocho regresiones siguen verdes. Revisión433 aprueba exclusivamente ambos controles exactos para una nueva ejecución integrada; no modifica producto, presupuesto, contador ni aprobación de producción.

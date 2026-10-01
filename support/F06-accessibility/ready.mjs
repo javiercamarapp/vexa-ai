@@ -24,13 +24,14 @@ export function assertReadyEvidence(r){
  else assert.equal(r.errors,0,'READY_ERROR_SHELL');
  if(r.api){assert.ok(r.apiObserved,'READY_API_NOT_OBSERVED');assert.equal(r.apiStatus,200,'READY_API_NOT_SUCCESS');}
 }
-export async function assertReady(page,url,requests){
+export async function assertReady(page,url,requests,{deadlineAt}={}){
+ const waitOptions=()=>{if(deadlineAt===undefined)return{};const timeout=deadlineAt-Date.now();assert.ok(timeout>0,'READY_DEADLINE_EXCEEDED');return{timeout};};
  const c=readyContract(url),main=page.locator('main');
  let marker;
- if(c.kind==='login'||c.kind==='login-error'){await main.getByRole('heading',{name:/Bienvenido.*VEXA AI/}).waitFor();marker=await main.locator('form[action="/auth/google"] button').count()===1&&await main.locator('input[type="email"]').count()===1;}
- else if(c.kind==='invalid-email-link'){await main.getByRole('alert').filter({hasText:'El enlace no es válido'}).waitFor();marker=await main.getByRole('link',{name:'Volver a iniciar sesión',exact:true}).isVisible();}
- else if(c.path==='/notifications'){const populated=main.locator('article[data-notification-id]'),empty=main.getByText('No hay avisos sin leer disponibles.',{exact:true});await populated.or(empty).first().waitFor();const populatedCount=await populated.count();marker=populatedCount>0?await populated.first().isVisible():await empty.isVisible();c.state=populatedCount>0?'ready':'empty';c.itemCount=populatedCount;}
- else{await main.locator(c.selector).first().waitFor();marker=await main.locator(c.selector).first().isVisible();}
+ if(c.kind==='login'||c.kind==='login-error'){await main.getByRole('heading',{name:/Bienvenido.*VEXA AI/}).waitFor(waitOptions());marker=await main.locator('form[action="/auth/google"] button').count()===1&&await main.locator('input[type="email"]').count()===1;}
+ else if(c.kind==='invalid-email-link'){await main.getByRole('alert').filter({hasText:'El enlace no es válido'}).waitFor(waitOptions());marker=await main.getByRole('link',{name:'Volver a iniciar sesión',exact:true}).isVisible();}
+ else if(c.path==='/notifications'){const populated=main.locator('article[data-notification-id]'),empty=main.getByText('No hay avisos sin leer disponibles.',{exact:true});await populated.or(empty).first().waitFor(waitOptions());const populatedCount=await populated.count();marker=populatedCount>0?await populated.first().isVisible():await empty.isVisible();c.state=populatedCount>0?'ready':'empty';c.itemCount=populatedCount;}
+ else{await main.locator(c.selector).first().waitFor(waitOptions());marker=await main.locator(c.selector).first().isVisible();}
  const responses=requests.filter(x=>x.method==='GET'&&x.path===c.api);const r={...c,marker,busy:await main.locator('[aria-busy="true"]').count(),loadingText:await main.getByRole('status').filter({hasText:/^(Verificando|Cargando|Validando sesión)/}).count(),errors:await main.locator('.state-panel.error,p[role="alert"]').count(),apiObserved:responses.length>0,apiStatus:responses.at(-1)?.status};
  assertReadyEvidence(r);return r;
 }

@@ -2,7 +2,7 @@
 
 Corte: 1 de octubre de 2026. Producto desplegado `dbb834c`, con READY, SHA y fuentes comprobados; el último smoke remoto integral corresponde a `f893851`. Plantilla operacional de notificaciones y regresión SQL publicadas en `e80b122`; el observador de carga sigue en `66a25c1`. La propuesta 442 no se adoptó: comparación diferida por host no preparado, sin ventanas medidas. Estado:59/60 técnicas,28 formales,producción pendiente. Registro de salida pendiente, no lista de defectos confirmados ni acta de producción. P1 indica condición que bloquea habilitar producción; P2 bloquea la entrega prevista. El responsable se expresa por rol porque las personas y fechas deben acordarse realmente. Los recibos privados no se publican; su existencia no convierte un pendiente en PASS.
 
-Programación: seis plantillas explícitas disponibles; regresión SQL8/8 y ensayo local de transporte HTTPS1/1 revisados. Ambos mantienen pendiente la instalación/configuración y el ensayo del producto gestionado; no hay consumidores activos acreditados por esas pruebas.
+Programación: seis plantillas explícitas disponibles; regresión SQL8/8 y ensayo local de transporte HTTPS1/1 revisados. Las extensiones pg_cron/pg_net ya están instaladas y siete controles posteriores de Auth/Data API pasaron. Quedan la configuración de consumidores y el ensayo del producto gestionado; no hay consumidores activos acreditados por esas pruebas.
 
 Para retomar desde el repositorio canónico: leer AGENTS y cabeceras vigentes; consultar `python3 orchestration/runner.py status` y la ficha indicada. Los comandos de diagnóstico siguientes son de lectura; no ejecutar exámenes detenidos, SQL remoto o envíos para completar este documento.
 

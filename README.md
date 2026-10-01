@@ -4,6 +4,8 @@ Software para importar conversaciones e información histórica, conservar su pr
 
 ## Estado actual — 1 de octubre de 2026
 
+Las extensiones `pg_cron` y `pg_net` ya están instaladas en Supabase VEXA mediante una migración explícita revisada. Siete comprobaciones posteriores de Auth/Data API pasaron; las dos observaciones conservaron cero tareas programadas, ejecuciones y solicitudes HTTP. La instalación no acredita consumidores activos: falta configurar y ensayar la operación gestionada.
+
 La plantilla faltante de notificaciones quedó publicada en `e80b122`, junto con su regresión SQL local 8/8 y guía de los seis consumidores. La propuesta de persistencia 442 pasó 23 pruebas canónicas y 16 casos focales; sigue experimental. Sus calentamientos comprobaron 2194→1900 consultas por bloque, pero la comparación de tiempos se difirió por host no preparado: cero ventanas medidas. No hay nueva validación 50K/150K ni cambio del contador.
 
 **59/60 tareas de construcción técnica, 28 aceptadas formalmente. Producción pendiente.** El objetivo es dejar pendientes únicamente cuentas, APIs y datos del cliente; todavía faltan verificaciones técnicas para poder afirmar ese estado.

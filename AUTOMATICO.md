@@ -1,5 +1,11 @@
 # Construcción automática VEXA
 
+## Interfaz integrada — estado vigente
+
+**59/60 técnicas y 28 aceptadas formalmente; producción pendiente.** F06-07 completa la composición local con 68/68 revisiones de pantalla, ocho acciones persistidas y revisión independiente 433. Lint, compilación y limpieza comprobados. [Evidencia y límites](construccion/F06-07-CIERRE-TECNICO.md).
+
+Resta F07-01 (seguridad global), conciliación de inventario/carga y controles formales, validación del release y auditoría final de 20 rubros. El juicio visual humano, las cuentas y la validación con datos históricos siguen separados. La publicación de este cierre está en curso; el despliegue anterior conserva `a01b50b`. Los apartados siguientes son históricos.
+
 ## Eventos integrados — estado vigente
 
 **58/60 técnicas y28aceptadas formalmente; producción pendiente.** F06-12 integrada en `b0bb17c`: gate Git limpio23/23,16contratos internos,12lectores y8estados UI, revisión independiente428 aprobada. Migración0032 aplicada por MCP y permisos remotos comprobados. [Cierre y límites](construccion/F06-12-CIERRE-TECNICO.md).

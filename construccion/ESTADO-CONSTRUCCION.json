@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-30",
+  "updated": "2026-10-01",
   "definition": "Trabajo técnico de la ficha integrado y probado. Las cuentas/datos/aprobaciones externas y las dependencias de aceptación formal se identifican por separado. No acredita producción.",
   "accepted_in_graph": [
     "E00",
@@ -57,9 +57,10 @@
     "F08-03",
     "F08-04",
     "F08-05",
-    "F08-06"
+    "F08-06",
+    "F06-07"
   ],
-  "construction_total": 58,
+  "construction_total": 59,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -527,6 +528,24 @@
         "F07-04"
       ],
       "formal_gate_pending": true
+    },
+    {
+      "task_id": "F06-07",
+      "technical_ready": true,
+      "implemented": "Composición automatizada local:68scans,8acciones persistidas,teclado/contraste/movimiento,estados y revisión independiente433.",
+      "programming_pending": [],
+      "verification_pending": [],
+      "official_dependency_pending": [
+        "F06-12"
+      ],
+      "evidence": "construccion/F06-07-CIERRE-TECNICO.md",
+      "external_pending": [
+        {
+          "owner": "Revisor visual humano y controlador de aceptación",
+          "pending": "Juicio visual humano y aceptación formal de la cadena de dependencias.",
+          "verification": "Revisar composición y artefactos vigentes; no sustituir actos humanos con observaciones automatizadas."
+        }
+      ]
     }
   ],
   "technical_ready_formal_pending": [
@@ -634,18 +653,16 @@
     "evidence": "docs/entrega/CORREOS-CONFIRMACION-2026-09-30.md"
   },
   "latest_technical_closure": {
-    "task_id": "F06-12",
-    "source_sha": "b0bb17cc79724e84fc89ebf4fc94f131d787135a",
-    "status": "technical_review_approved_remote_migration_published_deployed_verified",
+    "task_id": "F06-07",
+    "source_sha": "6d505f7e5bb4a2bc3669c0bec8c7d267f8336ed5",
+    "control_sha": "7b1153f3d95908ab7a02375b311f58c8237d3dd5",
+    "status": "technical_review_approved_publication_pending",
     "technical_count_increment": 1,
     "formal_acceptance": false,
     "production_validated": false,
-    "evidence": "construccion/F06-12-CIERRE-TECNICO.md",
-    "remote_migration": "20261001053556_vexa_0032_notification_business_events",
-    "publication_sha": "a01b50b2cb01729eda4a6940dfbb868a1adef356"
+    "evidence": "construccion/F06-07-CIERRE-TECNICO.md"
   },
   "remaining_technical_tasks": [
-    "F06-07",
     "F07-01"
   ],
   "release_validation_pending": [

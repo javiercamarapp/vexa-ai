@@ -1,34 +1,31 @@
 # Lo que falta para conectar y validar
 
-Actualización30-sep: receptor de webhooks CRM publicado y desplegado `ad37369`; SQL0040 remota verificada. Faltan bindings/secreto/suscripción de cuentas autorizadas y comprobación real. [Configuración y evidencia](WEBHOOKS-CRM-2026-09-30.md). No cambia54/60 ni aprobación productiva.
+Corte 1-oct:59/60 técnicas y28 aceptadas formalmente tras el cierre de interfaz. Producción pendiente. Correo, Push, outbox y eventos ya están implementados, revisados y publicados; las antiguas referencias a bloqueo de revisión de F06-09 quedaron superadas por sus cierres posteriores. No falta escribir esos adaptadores.
 
-Todavía existen bloqueos técnicos/de revisión, por lo que no se afirma que baste pegar APIs para todo el producto. El estado técnico y formal está en construccion/ESTADO-CONSTRUCCION.json; producción sigue sin validar.
+Todavía falta cerrar seguridad global F07-01, conciliar inventario/carga y controles formales, comprobar el release final y completar la auditoría de20 rubros. Por tanto, **aún no se afirma que sólo baste pegar APIs**. El estado verificable está en [ESTADO-CONSTRUCCION](../../construccion/ESTADO-CONSTRUCCION.json).
 
-El [estado actual de las seis fichas técnicas restantes](PILOTO-TECNICO-2026-09-29.md) distingue la revisión bloqueada de los aportes humanos. F07-05 tiene software preparado, pero su piloto real continúa `not_run`. La [reauditoría actual de20rubros](AUDITORIA-20-RUBROS-2026-09-29.md) mantiene límites y comprobaciones por área.
+## Aportes que se pueden reunir ahora
 
-## Bloqueos que no son credenciales
+| Qué solicitar | Dónde lo tiene el titular | Para qué lo usa VEXA y cómo se verificará |
+| --- | --- | --- |
+| Cliente OAuth Google y acceso al proyecto de autenticación | Administrador del proyecto Google y del Supabase propio de VEXA | Inicio con Google, redirects de producción, consentimiento, sesión y revocación reales. |
+| Proveedor de correo, dominio/remitente verificado, credenciales SMTP y acceso DNS | Responsable del dominio y cuenta de correo transaccional | Aplicar las 13 plantillas Auth con membrete y entregar mensajes de acceso y avisos autorizados; verificar recepción, rebotes y supresiones. |
+| Configuración Web Push/VAPID, contacto operativo y dispositivos con consentimiento | Operador VEXA; cada usuario permite avisos en su navegador | Registrar dispositivos, enviar avisos autorizados y validar entrega/lectura/revocación reales. Las claves VAPID se pueden generar paraVEXA; no son una API que el cliente deba comprar. |
+| Cuenta/app HubSpot con lectura autorizada y sus scopes | Administrador HubSpot, configuración de integración/app | Importar conversaciones/mensajes y continuidad histórica; reconciliar20 referencias contra export/UI independiente. |
+| Subdominio Zendesk, credencial y acceso incremental autorizado | Administrador Zendesk, centro de administración/API | Leer tickets/comentarios/usuarios y cambios; comprobar cobertura, cursores y20 referencias independientes. |
+| Registro de webhooks y secretos por cuenta cuando aplique | Administradores CRM | Vincular eventos firmados a la cuenta autorizada, deduplicar y reanudar sincronización. Receptor ya implementado; activación real pendiente. |
+| Ventana histórica, equivalencias HubSpot→Zendesk y export de órdenes/productos/refunds/costos | Responsable de datos/operaciones/finanzas | Cargar lo disponible, comprobar faltantes y duplicados, calcular importes con procedencia y mostrar lo desconocido sin inventarlo. |
+| Cuenta OpenRouter, modelos permitidos, política de datos y presupuesto de inferencia | Titular IA/infraestructura y responsable de privacidad | Activar extracción/embeddings con límites de gasto, citas y abstención; comprobar calidad/costos con proveedor real. La suscripciónCodex no paga estas llamadas. |
+| Usuarios, roles, responsables, programación y política de backup/retención | Javier y operador VEXA con responsable del cliente | Delegar consumidores, programarlos y ensayar recuperación y revocación. El frontend abierto no mantiene un worker activo. |
+| Datos autorizados, gold/holdout, dos anotadores y sponsor | Responsable del cliente/evaluación | Medir calidad y comparar configuraciones con evidencia independiente; resolver identidades ambiguas y revisar recomendaciones. |
+| Logo VEXA definitivo, permisos de materiales y participantes del piloto | Javier y titulares de derechos/datos | Completar marca y ensayo humano de comprensión, uso y pitch; no presentar fixtures como resultados reales. |
 
-- F06-09: un filtro automático de posible riesgo de ciberseguridad interrumpió la revisión; no hay dictamen final. El examen no se reintenta ni transfiere. Sus propuestas de entrega por correo/push y eventos no están publicadas ni aceptadas. No se corrige este bloqueo pegando una API.
-- ReleaseF08-01/02: inventario, smoke y controles revisados e integrados. La incompatibilidad de migración0028 ya fue corregida;35migraciones autorizadas aplicadas, Vercel desplegado y CSV/aislamiento/pausa/recuperación remotos comprobados. El smoke oficial completo8/8 y ocho vistas pasó el28-sep en b9ed3db, con Auth/Storage/DB realesSYN y timeout15s. Falta el cierre global; este recorrido no sustituye cuentas/proveedores ni los ámbitos bloqueados.
-- Carga, caos y recuperación ya tienen ejecutores/control portables revisados. Sus mediciones son locales y conservan sus límites.
-- F06-07 y cadena final: revisión visual humana, aceptación formal y cierre global conservan sus requisitos. El ensayo de un agente no se llama ensayo humano.
+Usar OAuth, gestor de secretos o la configuración del proveedor. No entregar contraseñas/claves en documentos públicos ni commits. Los nombres de variables y límites están en [Entorno](../../apps/web/ENVIRONMENT.md), [Eventos](../../packages/notifications/EVENTS.md), [Correo](../../packages/notifications/EMAIL.md) y [Push](../../packages/notifications/PUSH.md). No se necesita acceso a cuentas Likida/Atiende para operarVEXA.
 
-## Aportes externos y trabajo ejecutable posterior
+## Histórico y mejora supervisada
 
-| Aporte | Titular | Después de aportarlo |
-|---|---|---|
-| Política de backup/restore y aprobaciones concretas restantes | Operador Supabase/Javier | SQL autorizado/rol/Storage/Auth propios ya configurados. Completar programación y restore gestionado; cualquier SQL nuevo conserva aprobación legítima. |
-| Cierre del entorno propio y política operativa/costos | Operador hosting | La URL vexa-ai.vercel.app ya existe y sirve código verificado. Desplegar los deltas finales revisados y completar smoke/operación sin compras ni planes nuevos implícitos. |
-| Métodos de login, remitente SMTP/redirects, usuarios y organizaciones | Titular Auth | Conectar correo/OAuth, permisos, renovación y revocación reales. |
-| Cuentas HubSpot/Zendesk, scopes e histórico autorizado | Titular CRM/responsable de datos | Configurar conexión y fecha inicial, importar histórico disponible y reconciliar muestra contra export independiente antes de pasar a incremental. |
-| Cuenta/modelos, privacidad, tarifas y presupuesto de inferencia | Titular IA | Habilitar extracción con presupuesto durable; comprobar respuestas/citas/costos reales y todos los estados de error. |
-| Gold legítimo, dos anotadores/adjudicación y custodio externo | Cliente/responsable de evaluación | Evaluar candidatos con holdout externo, firma y revisión; seleccionar o revertir una configuración autorizada desde la UI. |
-| Permisos de caso/logo/citas/métricas y participantes del piloto | Cliente/presentador | Ensayo humano, estudio de comprensión/acción y pitch. Sin permiso, sólo VEXA y datosSYN. |
+Los conectores recuperan lo que permita la cuenta y conservan checkpoints, revisiones y deduplicación. HubSpot no puede proporcionar una historia que su API no exponga. Se debe reconciliar una muestra y los conteos/cobertura antes de dar por completa la carga y pasar a incremental.
 
-Las variables por nombre están en [Entorno](../../apps/web/ENVIRONMENT.md). Usar gestor de secretos, OAuth o las configuraciones legítimas del proveedor; no enviar claves por documentos ni commit. El worker necesita identidad/delegación y programación; el frontend por sí solo no mantiene un consumidor activo.
+El histórico autorizado recorre redacción, extracción, problemas, métricas y evaluación. La mejora consiste en comparar y seleccionar configuraciones con holdout independiente y posibilidad de rollback. Feedback automático no se convierte en gold humano, y resultados sintéticos no prueban calidad del LLM. VEXA no modifica autónomamente el código ni ejecuta acciones sobre el CRM del cliente.
 
-## Histórico y mejora de agentes
-
-Los conectores recuperan lo que permita la cuenta y conservan checkpoints, revisiones y deduplicación. HubSpot no inventa un snapshot histórico que su API no exponga; Zendesk conserva cursor/ventanas. El histórico autorizado puede pasar por redacción, extracción, problemas/métricas, cohortes de desarrollo y feedback. Las fuentes retiradas no reaparecen en los exports de desarrollo.
-
-La selección de candidatos exige evaluación independiente firmada ligada al tenant, configuración y código compilado. El feedback silver no se convierte en gold por renombrarlo; un resultadoSYN no prueba calidad de un LLM. La mejora consiste en evaluar y seleccionar versiones verificadas, con rollback y supervisión; no en reescribir o entrenar automáticamente el sistema sin autorización.
+El último smoke remoto completo corresponde a `b9ed3db`, no automáticamente a releases posteriores. Los recibos de cada despliegue y el cierre global deben verificarse sobre sus fuentes exactas; ninguna API sustituye las pruebas pendientes ni los actos humanos requeridos.

@@ -1,5 +1,11 @@
 # Construcción automática VEXA
 
+## Correo aceptado — estado vigente
+
+**56/60 técnicas y 27 aceptadas formalmente; producción pendiente.** F06-10 integrada en `1457036`: verificación39/39 y aceptación limpia39/39, ambas con25/25pruebas hijas. Migración0030 aplicada por MCP y permisos remotos comprobados. [Cierre y límites](construccion/F06-10-CIERRE.md).
+
+Quedan F06-11, F06-12, F06-07 y F07-01, más la validación integrada final. Proveedor/dominio de correo, cuentas y datos reales siguen pendientes. El total técnico no acredita entrega externa ni aprobación de producción. Los apartados siguientes conservan cortes históricos.
+
 ## Outbox aceptado y publicado — 30-sep, estado vigente
 
 **55/60 técnicas y 26 aceptadas formalmente; producción pendiente.** F06-09 está integrada en `c1212af`: verificación38/38, aceptación limpia38/38 y matriz SQL432/432. GitHub confirma el SHA y seis commits reales con autoría asociada. [Cierre y límites](construccion/F06-09-CIERRE.md).

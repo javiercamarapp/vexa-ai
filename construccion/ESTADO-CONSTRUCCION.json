@@ -27,7 +27,8 @@
     "F04-06",
     "F04-07",
     "F06-08",
-    "F06-09"
+    "F06-09",
+    "F06-10"
   ],
   "technical_ready_external_pending": [
     "F03-01",
@@ -57,7 +58,7 @@
     "F08-05",
     "F08-06"
   ],
-  "construction_total": 55,
+  "construction_total": 56,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -616,18 +617,17 @@
     "evidence": "docs/entrega/CONSENTIMIENTO-ECONOMICO-2026-09-29.md"
   },
   "latest_technical_closure": {
-    "task_id": "F06-09",
-    "source_sha": "c1212af62f6fb72d3eca65ad444886cf1cf963ad",
-    "status": "accepted_published_managed_sql_fixed_remote_migration_verified",
+    "task_id": "F06-10",
+    "source_sha": "145703632d4e5e93b9d42c85b39671cf5f06da1b",
+    "status": "accepted_remote_migration_verified_publication_pending",
     "technical_count_increment": 1,
     "formal_acceptance": true,
     "production_validated": false,
-    "evidence": "construccion/F06-09-CIERRE.md",
-    "remote_migration": "20261001024159_vexa_0029_notification_outbox"
+    "evidence": "construccion/F06-10-CIERRE.md",
+    "remote_migration": "20261001033338_vexa_0030_notification_email"
   },
   "remaining_technical_tasks": [
     "F06-07",
-    "F06-10",
     "F06-11",
     "F06-12",
     "F07-01"

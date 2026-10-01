@@ -12,6 +12,8 @@ La revisión independiente 436 cotejó 378 referencias previas por SHA256 sin di
 
 ## Correcciones comprobadas
 
+- El ensayo gestionado cron→pg_net→worker de Vercel completó un import SYN de dos filas: dos HTTP 200, checkpoint 2 y cero pendientes. Limpieza y conservación de trabajos ajenos comprobadas por MCP. Programación retirada al terminar; no acredita operación continua ni recuperación gestionada. [Recibos y límites](OPERACION-GESTIONADA-2026-10-01.md).
+
 - Un ensayo local separado de cron→pg_net→HTTPS pasó 1/1: dos POST correlacionados con HTTP200, control de certificado, límite temporal y revocación con quietud. El receptor era sintético y la base desechable; no era Next ni Supabase gestionado. El primer intento falló por herramientas ausentes en la imagen y se conserva. La alternativa usa otra imagen ya disponible y retiró ambos contenedores, red y temporales.
 
 - La plantilla faltante de notificaciones quedó publicada en `e80b122`, junto con su regresión SQL local 8/8 y guía de los seis consumidores. La propuesta de persistencia 442 pasó 23 pruebas canónicas y 16 casos focales; sigue experimental. Sus calentamientos comprobaron 2194→1900 consultas por bloque, pero la comparación de tiempos se difirió por host no preparado: cero ventanas medidas. No hay nueva validación 50K/150K ni cambio del contador. [Detalle del experimento](DIAGNOSTICO-CAPACIDAD-2026-10-01.md).

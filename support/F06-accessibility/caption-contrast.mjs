@@ -8,7 +8,7 @@ export function captionBound(m){
  let alpha,minimum,model;
  if(m.target===captionTargets[0]){assert.deepEqual(m.background.rgb,[16,27,20]);assert.ok(m.background.alpha>0&&m.background.alpha<=1);alpha=m.background.alpha;minimum=4.5;model='caption_dark_overlay_bound_0_255';}
  else{
-  assert.equal(m.background.alpha,0);assert.equal(m.gradient,'linear-gradient(to top, rgba(16, 27, 20, 0.72) 0%, rgba(16, 27, 20, 0.34) 22%, rgba(0, 0, 0, 0) 46%)','UNREVIEWED_CAPTION_GRADIENT');
+  assert.equal(m.background.alpha,0);assert.ok(['linear-gradient(to top, rgba(16, 27, 20, 0.72) 0%, rgba(16, 27, 20, 0.34) 22%, rgba(0, 0, 0, 0) 46%)','linear-gradient(0deg, rgba(16, 27, 20, 0.72) 0px, rgba(16, 27, 20, 0.34) 22%, rgba(0, 0, 0, 0) 46%)'].includes(m.gradient),'UNREVIEWED_CAPTION_GRADIENT');
   assert.ok(m.fontSize>=24,'CAPTION_SMALL_TEXT_REQUIRES_SEPARATE_MEASUREMENT');
   const r=m.rect,v=m.veilRect;assert.ok(v.height>0&&r.top>=v.top&&r.bottom<=v.bottom&&r.left>=v.left&&r.right<=v.right,'CAPTION_OUTSIDE_VEIL');
   const fraction=(v.bottom-r.top)/v.height;assert.ok(fraction>=0&&fraction<=.22,'CAPTION_OUTSIDE_REVIEWED_GRADIENT_SEGMENT');

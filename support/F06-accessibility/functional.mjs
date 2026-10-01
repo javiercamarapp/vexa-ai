@@ -37,7 +37,7 @@ test('F06-07 composed local SYN accessibility and action persistence; human judg
     assert.deepEqual(blocked,[],'OUTBOUND_BROWSER_ATTEMPT');
    }finally{await context.close();}
    const anon=await browser.newContext({reducedMotion:'reduce'});anon.setDefaultTimeout(15000);await anon.route('**/*',r=>['127.0.0.1','localhost'].includes(new URL(r.request().url()).hostname)?r.continue():r.abort());const publicPage=await anon.newPage();
-   try{for(const viewport of [{width:390,height:844},{width:1440,height:900}])for(const route of ['/login','/login?error=oauth_cancelled','/auth/email/complete'])record({...await scan({page:publicPage,url:h.base+route,viewport,axePath,out,engine,label:route}),route:route.split('?')[0],state:route.includes('?error=')?'error':'ready'});}
+   try{for(const viewport of [{width:390,height:844},{width:1440,height:900}])for(const route of ['/login','/login?error=oauth_cancelled','/auth/email/complete'])record({...await scan({page:publicPage,url:h.base+route,viewport,axePath,out,engine,label:route}),route:route.split('?')[0],state:route.includes('?error=')||route==='/auth/email/complete'?'error':'ready'});}
    finally{await anon.close();await browser.close();browser=null;}
   }
   for(const row of ledger.filter(r=>r.requiredByF0607))for(const [state,item]of Object.entries(row.states))if(item.resolution==='current_run')assert.ok(hasPassedState(report.checks,row.route,state,item.scenario),'STATE_SCENARIO_NOT_EXECUTED:'+row.route+':'+state);

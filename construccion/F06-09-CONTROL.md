@@ -17,3 +17,7 @@ SQL revisado: `491c7760f957f458eff57ef779bc07fcbbc78ac4bbbb6da25e30afe6584ff6fe`
 El examen protegido `tests/acceptance/F06-09.test.mjs` verifica primero la presencia del código, después carga los controles de contrato, SQL, revocación, consumidor y parada. Los mutantes causales prueban que eliminar controles de identidad, recibos o preferencias produce fallos semánticos. La matriz F01-03 conserva sus controles anteriores y añade lecturas, mutaciones denegadas, revocación y relaciones entre equipos para el outbox.
 
 Este documento describe el examen; su existencia no significa aceptación. La promoción requiere `prepare → verify → accept` desde Git limpio y publicación por el publisher autorizado. Correo, push y emisores de eventos corresponden a F06-10..12; las cuentas reales, migración remota, operación y auditoría global conservan su comprobación propia.
+
+## Arranque de infraestructura de pruebas
+
+Bajo carga del equipo, hubo fallos de disponibilidad de Storage antes de ejecutar las aserciones del producto. Se conservan esos fallos y no se atribuye una causa exacta a los contenedores originales ya recogidos. Una calibración independiente del producto retarda veinte segundos el arranque real de Storage: la espera anterior de cien sondeos cada100ms falla con el contenedor sano; una espera acotada a60s obtiene HTTP200 real en25,46s. Los dos harness de infraestructura usan ahora ese plazo de arranque. No se eliminan controles, no se sustituyen servicios por mocks y el gate F06-09 mantiene su límite global de900s.

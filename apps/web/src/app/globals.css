@@ -268,6 +268,8 @@ body:has(.access-flow) .site-footer {max-width:960px;border-color:var(--ui-borde
 .access-flow a {display:inline-flex;align-items:center;min-height:44px;font-weight:500;}
 .workspace-shell .nav-group summary {min-height:36px;}
 .workspace-shell :where(button,a,summary,input,select,textarea):focus-visible,.access-flow :where(button,a,input,select):focus-visible,.table-scroll:focus-visible {outline:2px solid var(--ui-focus);outline-offset:3px;}
+/* Native date fields keep their shared focus ring while tabbing into the calendar control. */
+.workspace-shell :where(input[type=date],input[type=datetime-local]):focus-within {outline:2px solid var(--ui-focus);outline-offset:3px;}
 @media(max-width:767px) {
  .workspace-content fieldset,.workspace-content article:not(.record-card) {padding:16px;}
  .workspace-content .table-scroll :where(th,td) {padding:10px 12px;}

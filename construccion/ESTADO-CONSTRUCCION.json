@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-29",
+  "updated": "2026-09-30",
   "definition": "Trabajo técnico de la ficha integrado y probado. Las cuentas/datos/aprobaciones externas y las dependencias de aceptación formal se identifican por separado. No acredita producción.",
   "accepted_in_graph": [
     "E00",
@@ -26,7 +26,8 @@
     "F04-05",
     "F04-06",
     "F04-07",
-    "F06-08"
+    "F06-08",
+    "F06-09"
   ],
   "technical_ready_external_pending": [
     "F03-01",
@@ -56,7 +57,7 @@
     "F08-05",
     "F08-06"
   ],
-  "construction_total": 54,
+  "construction_total": 55,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -573,6 +574,30 @@
     "kind": "last_full_synthetic_smoke"
   },
   "latest_deployment": {
+    "source_sha": "d39e9a3a73935d7caf18d88073d9b2537ef6ebd7",
+    "deployment_id": "dpl_C8krwPUUBrK85NoZPwziZAtd8BwV",
+    "url": "https://vexa-ai.vercel.app",
+    "status": "READY_verified",
+    "checks": [
+      "served_revision",
+      "uploaded_reviewed_source_sha256",
+      "organization_confirmation_1440_390_no_writes"
+    ],
+    "full_smoke_rerun": false,
+    "production_validated": false,
+    "evidence": "docs/entrega/CORREOS-CONFIRMACION-2026-09-30.md"
+  },
+  "latest_ui_audit": {
+    "reservations": [
+      397,
+      398
+    ],
+    "status": "independent_review_approved_repair_published_deployed_scoped_verification",
+    "evidence": "docs/entrega/CONSENTIMIENTO-ECONOMICO-2026-09-29.md",
+    "technical_count_increment": 0,
+    "production_validated": false
+  },
+  "previous_deployment": {
     "source_sha": "78b524ded807623df410d5b199a5b0df8687e002",
     "deployment_id": "dpl_5SSUaovqyHmkgEUpMkRDLtCZ7Dk6",
     "url": "https://vexa-ai.vercel.app",
@@ -590,46 +615,26 @@
     "production_validated": false,
     "evidence": "docs/entrega/CONSENTIMIENTO-ECONOMICO-2026-09-29.md"
   },
-  "latest_ui_audit": {
-    "reservations": [
-      397,
-      398
-    ],
-    "status": "independent_review_approved_repair_published_deployed_scoped_verification",
-    "evidence": "docs/entrega/CONSENTIMIENTO-ECONOMICO-2026-09-29.md",
-    "technical_count_increment": 0,
-    "production_validated": false
-  },
-  "previous_deployment": {
-    "source_sha": "5c9f84d4c7f285d98940ac45f4ebed291880532e",
-    "deployment_id": "dpl_BtaLPXUrgGQpxByXAWk6n3e6UkGt",
-    "url": "https://vexa-ai.vercel.app",
-    "status": "READY_verified",
-    "checks": [
-      "served_revision",
-      "uploaded_reviewed_source_sha256",
-      "authenticated_connections_1440_390_read_only"
-    ],
-    "backend_unchanged_since": "b9ed3db5ef4df825c27ed208722ad2faad4ee9c3",
-    "frontend_changes": [
-      "consent_bound_to_reconnection_attempt",
-      "synchronous_duplicate_request_guard"
-    ],
-    "full_smoke_rerun": false,
-    "production_validated": false,
-    "evidence": "docs/entrega/ACCIONES-UI-2026-09-29.md"
-  },
   "latest_technical_closure": {
-    "task_id": "F07-05",
-    "reservations": [
-      399,
-      400
-    ],
-    "status": "integrated_independently_reviewed_operator_flow_verified",
+    "task_id": "F06-09",
+    "source_sha": "c1212af62f6fb72d3eca65ad444886cf1cf963ad",
+    "status": "accepted_published_managed_sql_fixed_remote_migration_verified",
     "technical_count_increment": 1,
-    "real_pilot_status": "not_run",
-    "formal_acceptance": false,
+    "formal_acceptance": true,
     "production_validated": false,
-    "evidence": "construccion/F07-05-CIERRE-TECNICO.md"
-  }
+    "evidence": "construccion/F06-09-CIERRE.md",
+    "remote_migration": "20261001024159_vexa_0029_notification_outbox"
+  },
+  "remaining_technical_tasks": [
+    "F06-07",
+    "F06-10",
+    "F06-11",
+    "F06-12",
+    "F07-01"
+  ],
+  "release_validation_pending": [
+    "F07-04 dependency inventory and affected load validation",
+    "F07-05/F08-03/F08-05 formal gate entrypoints",
+    "Final integrated tests and20area audit on final release"
+  ]
 }

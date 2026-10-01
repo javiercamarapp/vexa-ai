@@ -1,3 +1,4 @@
+import {captionTargets,captionContrast} from './caption-contrast.mjs';
 import assert from 'node:assert/strict';
 // Resolve native controls and exact mobile navigation labels; retain every raw axe finding.
 export async function nativeContrast(page,incomplete){
@@ -5,6 +6,7 @@ export async function nativeContrast(page,incomplete){
  for(const finding of incomplete){
   assert.equal(finding.id,'color-contrast','UNRESOLVED_NON_CONTRAST_RULE');
   for(const node of finding.nodes){
+   if(captionTargets.includes(node.target?.[0])){records.push(await captionContrast(page,node));continue;}
    assert.equal(node.target.length,1,'UNSUPPORTED_SHADOW_CONTRAST_TARGET');
    assert.equal(typeof node.fullHtml,'string','FULL_DOM_SNAPSHOT_REQUIRED');const target=node.target[0],element=page.locator(target);assert.equal(await element.count(),1,'AMBIGUOUS_CONTRAST_TARGET');
    await element.evaluate(e=>e.scrollIntoView({block:'center',inline:'center',behavior:'instant'}));

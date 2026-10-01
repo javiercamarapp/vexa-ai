@@ -7,11 +7,11 @@ const entries=[
  ['connection.attention','Revisa el estado de tu conexión','Una conexión de tu organización necesita revisión. Consulta su estado antes de decidir cómo continuar.'],
  ['processing.failed','Revisa el procesamiento pendiente','Un procesamiento no pudo completarse. Consulta el error y las opciones disponibles; no se presupone que los datos estén completos.'],
 ];
-export const catalog=Object.freeze(entries.map(([type,label,description])=>Object.freeze({type,label,description,connected:false})));
+export const catalog=Object.freeze(entries.map(([type,label,description])=>Object.freeze({type,label,description,connected:type!=='membership.invited'})));
 export const channels=Object.freeze([
- {id:'inapp',label:'Centro de notificaciones',deliveryAvailable:false,reason:'El centro está disponible; los emisores de eventos todavía no están conectados.'},
- {id:'email',label:'Correo electrónico',deliveryAvailable:false,reason:'Envío por correo todavía no integrado. Guardar una preferencia no envía mensajes.'},
- {id:'push',label:'Notificaciones push',deliveryAvailable:false,reason:'Push todavía no integrado. Esta preferencia no registra dispositivos ni concede consentimiento del navegador.'},
+ {id:'inapp',label:'Centro de notificaciones',deliveryAvailable:true,reason:'Los eventos autorizados se guardan con la operación de negocio. Requiere una política habilitada, tus preferencias y el consumidor activo.'},
+ {id:'email',label:'Correo electrónico',deliveryAvailable:false,reason:'El adaptador está integrado. La configuración del remitente y proveedor se comprueba en el servidor; una preferencia no confirma entrega.'},
+ {id:'push',label:'Notificaciones push',deliveryAvailable:false,reason:'El adaptador está integrado. Activa el dispositivo con consentimiento explícito; una preferencia no concede permiso del navegador.'},
 ].map(Object.freeze));
 export function resourceHref(type,id){
  if(type==='brief.available')return '/briefs/'+id;

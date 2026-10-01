@@ -575,6 +575,31 @@
     "kind": "last_full_synthetic_smoke"
   },
   "latest_deployment": {
+    "source_sha": "cd6c17f10bf1656fb904baa812eb0b394cee42ef",
+    "deployment_id": "dpl_Dc14cKJb34xTawZJng8KvncxLaQu",
+    "url": "https://vexa-ai.vercel.app",
+    "status": "READY_verified",
+    "checks": [
+      "served_revision",
+      "uploaded_reviewed_source_sha256",
+      "login_200",
+      "email_webhook_unconfigured_503_no_store"
+    ],
+    "full_smoke_rerun": false,
+    "production_validated": false,
+    "evidence": "construccion/F06-10-CIERRE.md"
+  },
+  "latest_ui_audit": {
+    "reservations": [
+      397,
+      398
+    ],
+    "status": "independent_review_approved_repair_published_deployed_scoped_verification",
+    "evidence": "docs/entrega/CONSENTIMIENTO-ECONOMICO-2026-09-29.md",
+    "technical_count_increment": 0,
+    "production_validated": false
+  },
+  "previous_deployment": {
     "source_sha": "d39e9a3a73935d7caf18d88073d9b2537ef6ebd7",
     "deployment_id": "dpl_C8krwPUUBrK85NoZPwziZAtd8BwV",
     "url": "https://vexa-ai.vercel.app",
@@ -588,38 +613,10 @@
     "production_validated": false,
     "evidence": "docs/entrega/CORREOS-CONFIRMACION-2026-09-30.md"
   },
-  "latest_ui_audit": {
-    "reservations": [
-      397,
-      398
-    ],
-    "status": "independent_review_approved_repair_published_deployed_scoped_verification",
-    "evidence": "docs/entrega/CONSENTIMIENTO-ECONOMICO-2026-09-29.md",
-    "technical_count_increment": 0,
-    "production_validated": false
-  },
-  "previous_deployment": {
-    "source_sha": "78b524ded807623df410d5b199a5b0df8687e002",
-    "deployment_id": "dpl_5SSUaovqyHmkgEUpMkRDLtCZ7Dk6",
-    "url": "https://vexa-ai.vercel.app",
-    "status": "READY_verified",
-    "checks": [
-      "served_revision",
-      "uploaded_reviewed_source_sha256",
-      "economic_consent_edit_invalidation_1440_390_no_writes"
-    ],
-    "backend_unchanged_since": "b9ed3db5ef4df825c27ed208722ad2faad4ee9c3",
-    "frontend_changes": [
-      "economic_source_and_record_consent_bound_to_fields_and_versions"
-    ],
-    "full_smoke_rerun": false,
-    "production_validated": false,
-    "evidence": "docs/entrega/CONSENTIMIENTO-ECONOMICO-2026-09-29.md"
-  },
   "latest_technical_closure": {
     "task_id": "F06-10",
     "source_sha": "145703632d4e5e93b9d42c85b39671cf5f06da1b",
-    "status": "accepted_remote_migration_verified_publication_pending",
+    "status": "accepted_published_deployed_remote_migration_verified",
     "technical_count_increment": 1,
     "formal_acceptance": true,
     "production_validated": false,

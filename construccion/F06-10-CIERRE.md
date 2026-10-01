@@ -20,7 +20,7 @@ El primer ensayo limpio se conserva con37/39: una variable heredada de Node impe
 
 Migración0030 aplicada legítimamente por MCP, versión `20261001033338`, SQL SHA256 `d89a4045940450896889995b100ef0a34631db986a63fbd56910b27a1641d3d6`. Tres tablas con RLS forzado,105combinaciones de privilegios de tabla y30de funciones comprobadas: cero concesiones inesperadas. Rol de correo sin login, herencia, superusuario, bypass ni membresías de aplicación. Cero mensajes/recibos/supresiones remotos; no se envió correo externo.
 
-Publicación por publisher autorizado, conservando commits coherentes; el recibo remoto se registra después del push. Vercel todavía conserva `d39e9a3` al preparar este cierre; despliegue de esta versión pendiente de comprobación. GitHub Actions desactivado y Vercel sin enlace Git automático.
+Publicado en GitHub main mediante publisher autorizado: `cd6c17f10bf1656fb904baa812eb0b394cee42ef`, tres commits coherentes conservados, autoría asociada y SHA remoto verificado. Vercel `dpl_Dc14cKJb34xTawZJng8KvncxLaQu` está READY en [VEXA AI](https://vexa-ai.vercel.app); SHA servido y17fuentes cambiadas subidas comprobados. Login200 y receptor email503/no-store mientras carece de configuración, sin efectos externos. GitHub Actions desactivado y Vercel sin enlace Git automático. Esta comprobación acotada no sustituye el smoke integral anterior ni la auditoría final.
 
 ## Pendientes reales
 

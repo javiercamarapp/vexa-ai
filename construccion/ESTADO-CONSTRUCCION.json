@@ -600,13 +600,14 @@
     }
   ],
   "deployed_verification": {
-    "source_sha": "b9ed3db5ef4df825c27ed208722ad2faad4ee9c3",
+    "source_sha": "f893851b708cefb41f44ddafc991780814e6cae1",
     "url": "https://vexa-ai.vercel.app",
-    "scope": "SYN propio; Auth/PostgreSQL/Storage reales; ocho fases y ocho vistas",
+    "scope": "SYN propio; Auth/PostgreSQL/Storage reales; ocho fases y ocho vistas; cleanup MCP",
     "status": "passed",
-    "evidence": "docs/entrega/SMOKE-REMOTO-2026-09-28.md",
+    "evidence": "docs/entrega/SMOKE-REMOTO-2026-10-01.md",
     "production_approval": false,
-    "kind": "last_full_synthetic_smoke"
+    "kind": "last_full_synthetic_smoke",
+    "report_sha256": "f116f090f7277dab446a380b67cefd1610001b28f5f5cabcb1b90b795761f75b"
   },
   "latest_deployment": {
     "source_sha": "f893851b708cefb41f44ddafc991780814e6cae1",
@@ -624,9 +625,10 @@
       "service_worker_bytes_verified"
     ],
     "uploaded_sources": 1,
-    "full_smoke_rerun": false,
+    "full_smoke_rerun": true,
     "production_validated": false,
-    "evidence": "construccion/F06-07-CIERRE-TECNICO.md"
+    "evidence": "construccion/F06-07-CIERRE-TECNICO.md",
+    "full_smoke_evidence": "docs/entrega/SMOKE-REMOTO-2026-10-01.md"
   },
   "latest_ui_audit": {
     "reservations": [
@@ -673,8 +675,18 @@
     "F07-01"
   ],
   "release_validation_pending": [
-    "F07-04 dependency inventory and affected load validation",
-    "F07-05/F08-03/F08-05 formal gate entrypoints",
-    "Final integrated tests and20area audit on final release"
-  ]
+    "F07-01 independent global security review435 automatically rejected; no verdict",
+    "Current integrated SQL matrix incomplete114PASS/2cancelled after600000ms parent timeout",
+    "Current50K load failed job deadline900000ms at checkpoint27200;150K not run; controlled diagnosis pending",
+    "Current/managed recovery and external operational/provider/history/human validations from20area audit; no production approval"
+  ],
+  "previous_full_smoke": {
+    "source_sha": "b9ed3db5ef4df825c27ed208722ad2faad4ee9c3",
+    "url": "https://vexa-ai.vercel.app",
+    "scope": "SYN propio; Auth/PostgreSQL/Storage reales; ocho fases y ocho vistas",
+    "status": "passed",
+    "evidence": "docs/entrega/SMOKE-REMOTO-2026-09-28.md",
+    "production_approval": false,
+    "kind": "last_full_synthetic_smoke"
+  }
 }

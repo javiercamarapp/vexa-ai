@@ -2025,10 +2025,11 @@
     "auto_accept": false,
     "requires_approval": false,
     "deliverables": [
-      "supabase/migrations/0018_push_subscriptions.sql",
-      "packages/notifications/src/push.ts",
+      "supabase/migrations/0031_push_subscriptions.sql",
+      "packages/notifications/push.mjs",
       "apps/web/public/service-worker.js",
-      "apps/web/src/components/push-preferences.tsx"
+      "apps/web/src/components/notifications/push-preferences.tsx",
+      "apps/web/src/app/api/notifications/push/route.ts"
     ],
     "steps": [
       "Instalar/fijar SDK Push estándar y reutilizar transporte revisado, sin criptografía propia.",

@@ -4,7 +4,7 @@
 
 **59/60 técnicas y 28 aceptadas formalmente; producción pendiente.** F06-07 completa la composición local con 68/68 revisiones de pantalla, ocho acciones persistidas y revisión independiente 433. Lint, compilación y limpieza comprobados. [Evidencia y límites](construccion/F06-07-CIERRE-TECNICO.md).
 
-Resta F07-01 (seguridad global), conciliación de inventario/carga y controles formales, validación del release y auditoría final de 20 rubros. El juicio visual humano, las cuentas y la validación con datos históricos siguen separados. La publicación de este cierre está en curso; el despliegue anterior conserva `a01b50b`. Los apartados siguientes son históricos.
+Resta F07-01 (seguridad global), conciliación de inventario/carga y controles formales, validación del release y auditoría final de 20 rubros. El juicio visual humano, las cuentas y la validación con datos históricos siguen separados. Publicado y desplegado `f893851`: SHA servido, fuente CSS y endpoints protegidos verificados. Los apartados siguientes son históricos.
 
 ## Eventos integrados — estado vigente
 

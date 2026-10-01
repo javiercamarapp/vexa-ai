@@ -49,7 +49,7 @@ Los nombres son contrato; no pegar claves en Git, URL, argumentos CLI visibles o
 
 ## Infraestructura de ejecución ya soportada
 
-Hay cinco funciones Node de Next, cada una con `maxDuration=60`, y colas/checkpoints/leases SQL. Supabase `pg_cron` puede invocar por `pg_net` cada30segundos; Vault guarda el Bearer. Esta ruta usa Supabase y Vercel existentes y no necesita un daemon de laptop ni otro hosting. Disponibilidad y límites efectivos se verifican en el proyecto, no por esta descripción.
+Hay seis funciones Node de Next, cada una con `maxDuration=60`, y colas/checkpoints/leases SQL. Supabase `pg_cron` puede invocar por `pg_net` cada30segundos; Vault guarda el Bearer. Esta ruta usa Supabase y Vercel existentes y no necesita un daemon de laptop ni otro hosting. Disponibilidad y límites efectivos se verifican en el proyecto, no por esta descripción.
 
 | Consumidor | Endpoint POST | Script operativo | Secreto Vault / job |
 |---|---|---|---|
@@ -58,14 +58,15 @@ Hay cinco funciones Node de Next, cada una con `maxDuration=60`, y colas/checkpo
 | extracción | `/api/internal/extraction` | `supabase/operations/extraction-cron.sql` | `vexa_extraction_trigger` / `vexa-extraction-chunk` |
 | problemas | `/api/internal/problems` | `supabase/operations/problems-cron.sql` | `vexa_problems_trigger` / `vexa-problems-chunk` |
 | histórico | `/api/internal/history` | `supabase/operations/history-cron.sql` | `vexa_history_trigger` / `vexa-history-chunk` |
+| notificaciones | `/api/internal/notifications` | `supabase/operations/notifications-cron.sql` | `vexa_notifications_trigger` / `vexa-notifications-chunk` |
 
 Cada script exige `vexa.<nombre>_bootstrap_approved=yes`, endpoint y secreto en parámetros de sesión, con aprobación real del operador. Para imports el nombre es `worker`. No introducir valores en un archivo versionado ni inventar la aprobación. Aplicar por el canal remoto autorizado; si una revisión lo rechaza, detener esa mutación. Los scripts son operaciones explícitas, no migraciones autoejecutadas.
 
-Antes: comprobar `pg_extension` y permisos efectivos de `pg_cron`, `pg_net`, Vault. Si están disponibles pero ausentes, su habilitación es una mutación remota independiente que debe pasar por la aprobación legítima. Provisionar rol DB, usuario Auth worker, membresías/delegaciones y comprobar las cinco rutas con la identidad y secretos reales. Sólo entonces programar los consumidores necesarios. Un runtime IA deshabilitado no permite aceptar procesamiento histórico completo.
+Antes: comprobar `pg_extension` y permisos efectivos de `pg_cron`, `pg_net`, Vault. Si están disponibles pero ausentes, su habilitación es una mutación remota independiente que debe pasar por la aprobación legítima. Provisionar rol DB, usuario Auth worker, membresías/delegaciones y comprobar las seis rutas con la identidad y secretos reales. Sólo entonces programar los consumidores necesarios. Un runtime IA deshabilitado no permite aceptar procesamiento histórico completo.
 
 Después: verificar nombres únicos, schedule30segundos y estado activo en `cron.job`, sin mostrar la columna command ni secretos Vault en logs. Correlacionar `cron.job_run_details` con respuestas HTTP de `net._http_response`, heartbeat y avance terminal del job de prueba. Éxito de cron significa que se encoló HTTP; no significa que Next devolvió200 ni que el trabajo terminó. Las colas de pg_net no sustituyen la cola durable de producto: si se pierde una invocación, la siguiente debe recuperar el trabajo SQL sin duplicación.
 
-Con cinco schedules activos continuamente hay14400invocaciones/día, aunque la cola esté vacía. No es costo cero: verificar límites, presupuesto autorizado y medición del proveedor. Empezar el smoke con imports y fixtures SYN; habilitar CRM e IA sólo con sus cuentas y permisos de consumo reales. El scheduler no debe usar Vercel Cron diario como equivalente a30segundos.
+Con seis schedules activos continuamente hay17280invocaciones/día, aunque la cola esté vacía. No es costo cero: verificar límites, presupuesto autorizado y medición del proveedor. Empezar el smoke con imports y fixtures SYN; habilitar CRM e IA sólo con sus cuentas y permisos de consumo reales. El scheduler no debe usar Vercel Cron diario como equivalente a30segundos.
 
 Para detener un consumidor, aplicar el mismo script con su aprobación real y `vexa.<nombre>_revoke=yes`. Esto elimina únicamente su job; no borra secretos ni cancela trabajo en vuelo. Revisar las leases/reservas pendientes antes de revocar al worker o rotar el trigger compartido. La revocación de history debe conservar extracción/problemas para reconciliar hijos ya admitidos según su autoridad vigente.
 
@@ -76,5 +77,7 @@ CRM sincroniza el histórico autorizado hacia almacenamiento canónico; history 
 ## Verificación del delta
 
 `node --test support/F08-deploy/scheduler.test.mjs` usa PostgreSQL/pg_cron/pg_net/Vault reales y recursos propios. Comprueba aprobación ausente, endpoint inválido, creación/rotación sin duplicar job, secreto fuera del comando, revocación aislada y limpieza. El launcher cron está deshabilitado sólo en esa base desechable: no prueba entrega HTTP ni ejecución remota. Los endpoints/consumidores no se modifican aquí; el smoke remoto F08-02 debe probarlos después de desplegar.
+
+`node --test support/F08-deploy/notifications-scheduler.test.mjs` comprueba además la plantilla de notificaciones: ruta y cuerpo exactos, rotación y revocación que conserva problemas. El ensayo local pasó 8/8 (siete subpruebas y su padre) con Node22; el launcher permaneció desactivado y las colas HTTP vacías. No acredita entrega de avisos ni programación remota.
 
 Fuentes oficiales consultadas: [monorepos Vercel](https://vercel.com/docs/monorepos/monorepo-faq), [API de proyecto](https://vercel.com/docs/rest-api/projects/update-an-existing-project), [límites de funciones](https://vercel.com/docs/functions/limitations), [tracing Next](https://nextjs.org/docs/app/api-reference/config/next-config-js/output), [Node en Vercel](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions), [Cron Supabase](https://supabase.com/docs/guides/cron), [pg_net](https://supabase.com/docs/guides/database/extensions/pg_net).

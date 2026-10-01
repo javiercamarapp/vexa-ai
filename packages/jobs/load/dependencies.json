@@ -1820,6 +1820,10 @@
       "sha256": "e378a7cb6703c7c540cd7de5288cb1ff56a26ec8bf0dc2750a934d7d3f5720e7"
     },
     {
+      "path": "packages/intelligence/learning/export.test.mjs",
+      "sha256": "f4978c217893768d104cc239a021204c8bd96afead29700a594f4914b9e3d5b0"
+    },
+    {
       "path": "packages/intelligence/learning/index.d.mts",
       "sha256": "8ce688280d45799757da458a9f0859766aa126c021b291a04892fd47ff8f5ba3"
     },

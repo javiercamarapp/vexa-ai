@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "f83cb24e0b29282b4bf9ccfde11c82d16411b97f",
-  "composition": "Current release f893851 product plus verified deployment documentation and notification operations clarification. Inventory refresh only; prior load measurements remain historical until a new measured run.",
+  "baselineSha": "2eff53d0aa95ffc5de0cd22a30114d612bc7c760",
+  "composition": "Release f893851 product plus reviewed local recovery control compatibility. Two chaos adapter/control hashes updated; prior load measurements retain their original manifest and source scope.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -1897,11 +1897,11 @@
     },
     {
       "path": "packages/jobs/chaos/guards.test.mjs",
-      "sha256": "b84bd67284fcccc1d0c867d9d6894e8b768a3b1a4fbb148b0bbca975a85b2027"
+      "sha256": "8ef6445fd986c16f30ad53b7623e216f44a11c8149b52d4d9def95e64289af91"
     },
     {
       "path": "packages/jobs/chaos/harness.mjs",
-      "sha256": "d14f56d07ee100943cdeba7b2ecc454435676378c0b73dec9e19d12b49697f9a"
+      "sha256": "4ab6466e25b1c547c6cbae18b11d725df36cd638c24bba6c14a67593900658df"
     },
     {
       "path": "packages/jobs/chaos/jobs.mjs",

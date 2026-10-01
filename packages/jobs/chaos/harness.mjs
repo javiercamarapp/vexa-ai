@@ -12,7 +12,8 @@ export function adaptHarness(original,base){
   change("['run','build','--workspace','@vexa/web']","['run','lint','--workspace','@vexa/web'],['run','build','--workspace','@vexa/web']",'replacement6');
   change("assert.equal(r.status,0,'BUILD_'+args[0]);","validateProcess(r,'BUILD_'+args[0]);",'replacement7');
   change("assert.equal(build.status,0,'REAL_CLI_BUILD');","validateProcess(build,'REAL_CLI_BUILD');",'replacement8');
-  change("args[0]+'.log'","args.join('-').replaceAll('/','_')+'.log'",'replacement9');
+  // Upstream already records distinct build/lint logs; keep that contract fail-closed.
+  assert.equal(code.split("args.join('-').replaceAll('/','_')+'.log'").length,2,'HARNESS_CONTRACT_build_log_names');
   // Reuse complete source hashes. Runtime methods use actual product modules, never behavioral replacements.
   change('h.built=built;h.common=common;',`h.built=built;h.common=common;for(const name of ['recovery','gateway','intelligence','briefs','interventions','recommendations','workspace-service','metrics','economics','problems','connectors'])fs.cpSync(path.join(tmp,'packages',name),path.join(built,'packages',name),{recursive:true});`,'replacement10');
   // DB outage can terminate Next: stopping an already exited child must not await a second exit event.

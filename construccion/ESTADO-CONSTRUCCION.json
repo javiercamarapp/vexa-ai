@@ -688,5 +688,16 @@
     "evidence": "docs/entrega/SMOKE-REMOTO-2026-09-28.md",
     "production_approval": false,
     "kind": "last_full_synthetic_smoke"
+  },
+  "latest_local_recovery_verification": {
+    "date": "2026-10-01",
+    "candidate_sha": "0691dbdea97b9e27f451ad3676cfffacc6629608",
+    "status": "passed_local_offline_restore_and_financial_rollback",
+    "evidence": "docs/entrega/RECUPERACION-2026-10-01.md",
+    "gate_sha256": "695b43704cea856da8c33f01e59e1e0eaf1bd47751e79fa534c2ea6c47aac569",
+    "restore_child_pass": 5,
+    "cleanup_resources_verified": 8,
+    "formal_acceptance": false,
+    "production_approval": false
   }
 }

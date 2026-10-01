@@ -1,5 +1,11 @@
 # VEXA — construcción completa por grafo y agentes
 
+## Recuperación local comprobada — estado vigente
+
+**59/60 técnicas y 28 aceptadas formalmente; producción pendiente.** El gate de restauración y retorno de versión pasó completo: restauración 5/5, continuidad financiera con el binario anterior, regreso a la versión actual y limpieza de ocho recursos. Se corrigieron tres incompatibilidades de los controles locales sin relajar las guardas del producto. [Evidencia y límites](docs/entrega/RECUPERACION-2026-10-01.md).
+
+El producto desplegado conserva su smoke remoto SYN 8/8. F07-01, capacidad 50K/150K y validaciones externas siguen pendientes; este resultado no significa que sólo falten API. Los cortes anteriores conservan su fecha y alcance.
+
 ## Validación remota actual — estado vigente
 
 **59/60 técnicas y28 aceptadas formalmente; producción pendiente.** El release desplegado `f893851` pasó8/8 fases remotas y ocho vistas con datos SYN propios: importación, cifras/exportación, interrupción/recuperación y revocación. Limpieza comprobada por MCP. [Evidencia y límites](docs/entrega/SMOKE-REMOTO-2026-10-01.md).

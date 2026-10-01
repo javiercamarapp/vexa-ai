@@ -2,7 +2,7 @@
 
 ## Correo aceptado — estado vigente
 
-**56/60 técnicas y 27 aceptadas formalmente; producción pendiente.** F06-10 integrada en `1457036`: verificación39/39 y aceptación limpia39/39, ambas con25/25pruebas hijas. Migración0030 aplicada por MCP y permisos remotos comprobados. [Cierre y límites](construccion/F06-10-CIERRE.md).
+**56/60 técnicas y 27 aceptadas formalmente; producción pendiente.** F06-10 integrada en `1457036`: verificación39/39 y aceptación limpia39/39, ambas con25/25pruebas hijas. Migración0030 aplicada por MCP y permisos remotos comprobados. Publicado y desplegado `cd6c17f`: READY, SHA servido, fuentes y endpoint comprobados. [Cierre y límites](construccion/F06-10-CIERRE.md).
 
 Quedan F06-11, F06-12, F06-07 y F07-01, más la validación integrada final. Proveedor/dominio de correo, cuentas y datos reales siguen pendientes. El total técnico no acredita entrega externa ni aprobación de producción. Los apartados siguientes conservan cortes históricos.
 

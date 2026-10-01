@@ -1,3 +1,4 @@
+import * as businessNotifications from './business-notification-oracles.mjs';
 import * as push from './push-oracles.mjs';
 import * as email from './email-oracles.mjs';
 import * as outbox from './outbox-oracles.mjs';
@@ -71,7 +72,7 @@ export function schemaOracle(h) {
   }
   // Extra private tables cannot silently escape the functional matrix.
   const hasUploads=tables.some(x=>x.name===uploads.table);
-  const classified=['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h),...(workers.present(h)?[workers.table]:[]),...sync.present(h),...(health.present(h)?[health.table]:[]),...(crm.present(h)?[crm.table]:[]),...(crmWebhooks.present(h)?[crmWebhooks.table]:[]),...budget.present(h),...extraction.present(h),...problems.present(h),...causality.present(h),...economic.present(h),...exposure.present(h),...money.present(h),...snapshots.present(h),...priority.present(h),...workspace.present(h),...detail.present(h),...recommendations.present(h),...interventions.present(h),...briefs.present(h),...notifications.present(h),...outbox.present(h),...email.present(h),...push.present(h),...releaseTables.present(h)];
+  const classified=['organizations','memberships',...(hasUploads?[uploads.table]:[]),...history.present(h),...(workers.present(h)?[workers.table]:[]),...sync.present(h),...(health.present(h)?[health.table]:[]),...(crm.present(h)?[crm.table]:[]),...(crmWebhooks.present(h)?[crmWebhooks.table]:[]),...budget.present(h),...extraction.present(h),...problems.present(h),...causality.present(h),...economic.present(h),...exposure.present(h),...money.present(h),...snapshots.present(h),...priority.present(h),...workspace.present(h),...detail.present(h),...recommendations.present(h),...interventions.present(h),...briefs.present(h),...notifications.present(h),...outbox.present(h),...email.present(h),...push.present(h),...(businessNotifications.present(h)?[businessNotifications.table]:[]),...releaseTables.present(h)];
   assert.deepEqual(tables.filter(x=>!classified.includes(x.name)).map(x=>x.name).sort(),definitions.map(([n])=>n).sort(),'MATRIX: unclassified public table; extend external exam before freeze');
   const fks=foreignKeys(h);
   if(crmWebhooks.present(h))crmWebhooks.schema(h,fks);
@@ -85,6 +86,7 @@ export function schemaOracle(h) {
   if(outbox.present(h).length)outbox.schema(h,fks);
   if(email.present(h).length)email.schema(h,fks);
   if(push.present(h).length)push.schema(h,fks);
+  if(businessNotifications.present(h))businessNotifications.schema(h,fks);
   if(priority.present(h).length)priority.schema(h,fks);
   if(snapshots.present(h).length)snapshots.schema(h,fks);
   if(money.present(h).length)money.schema(h,fks);
@@ -284,6 +286,7 @@ export function discoveredFkOracle(h,f,fk) {
   if(outbox.ownsFk(fk))return outbox.fk(h,f.outbox,fk);
   if(email.ownsFk(fk))return email.fk(h,f.email,fk);
   if(push.ownsFk(fk))return push.fk(h,f.push,fk);
+  if(businessNotifications.ownsFk(fk))return businessNotifications.fk(h,f.businessNotifications,fk);
   if(fk.table===crmWebhooks.table)return crmWebhooks.fk(h,f.crmWebhooks,fk);
   if(releaseTables.tables.includes(fk.table))return releaseTables.fk(h,f,fk);
   if(notifications.ownsFk(fk))return notifications.fk(h,f.notifications,fk);

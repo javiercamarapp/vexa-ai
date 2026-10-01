@@ -99,7 +99,7 @@ export async function launch({services=false}={}) {
       run('rest',{PGRST_DB_URI:`postgres://authenticator:${password}@${prefix}-db:5432/postgres`,PGRST_DB_SCHEMAS:'public',PGRST_DB_ANON_ROLE:'anon',PGRST_JWT_SECRET:secret},56329);
       run('storage',{DATABASE_URL:`postgres://supabase_storage_admin:${password}@${prefix}-db:5432/postgres`,POSTGREST_URL:`http://${prefix}-rest:3000`,PGRST_JWT_SECRET:secret,AUTH_JWT_SECRET:secret,ANON_KEY:anon,SERVICE_KEY:service,STORAGE_BACKEND:'file',FILE_STORAGE_BACKEND_PATH:'/tmp/vexa-storage',TENANT_ID:'vexa-local',REGION:'local',GLOBAL_S3_BUCKET:'vexa-local',FILE_SIZE_LIMIT:1048576},56328);
       for(const [kind,route] of [['auth','/health'],['rest','/'],['storage','/status']]){
-        let ok=false;for(let i=0;i<100;i++){try{ok=(await h.http(kind,route)).status===200;if(ok)break;}catch{}await new Promise(r=>setTimeout(r,100));}
+        let ok=false;const readyDeadline=Date.now()+60000;while(Date.now()<readyDeadline){try{ok=(await h.http(kind,route)).status===200;if(ok)break;}catch{}await new Promise(r=>setTimeout(r,100));}
         let detail='';if(!ok){try{detail=docker(['logs','--tail','5',prefix+'-'+kind]).replaceAll(password,'[synthetic-redacted]').replaceAll(secret,'[synthetic-redacted]').replaceAll(anon,'[synthetic-redacted]').replaceAll(service,'[synthetic-redacted]');}catch{}}if(!ok)process.stderr.write('F02_INFRA_STATUS '+kind+' '+JSON.stringify(await h.http(kind,route).catch(e=>({error:e.message})))+'\n');assert.ok(ok,`INFRA: disposable ${kind} unavailable; no mock fallback ${detail}`);
       }
     }

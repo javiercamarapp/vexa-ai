@@ -2,6 +2,8 @@
 
 ## Estado actual — 1 de octubre de 2026
 
+La exportación del histórico para evaluación conserva ahora la secuencia del análisis original: antes podía reordenar los mensajes por UUID. La regresión pasa 4/4 en Node 22 y 26 con datos sintéticos, lector y CLI reales; no valida calidad del modelo ni conexiones externas. [Contrato y prueba reproducible](packages/intelligence/learning/README.md). Se mantienen 59/60 técnicas y 28 aceptadas.
+
 El ensayo gestionado de imports pasó: dos invocaciones cron→pg_net→Vercel con HTTP 200, dos filas sintéticas aceptadas y cero pendientes; retirada de programación y delegación comprobada por MCP. Acredita ese recorrido acotado, no operación permanente. [Evidencia y límites](docs/entrega/OPERACION-GESTIONADA-2026-10-01.md).
 
 Las extensiones `pg_cron` y `pg_net` ya están instaladas en Supabase VEXA mediante una migración explícita revisada. Siete comprobaciones posteriores de Auth/Data API pasaron; las dos observaciones conservaron cero tareas programadas, ejecuciones y solicitudes HTTP. La instalación por sí sola no acredita consumidores activos; el ensayo acotado documentado arriba completa la primera comprobación gestionada. La operación permanente sigue pendiente.
@@ -10,7 +12,7 @@ La plantilla faltante de notificaciones quedó publicada en `e80b122`, junto con
 
 **59/60 tareas técnicas, 28 aceptadas formalmente; producción pendiente.** El objetivo de dejar sólo cuentas, APIs y datos por conectar sigue abierto: faltan verificaciones técnicas de capacidad y cierre global.
 
-Producto desplegado `dbb834c`: Equipo corregido según acceso, 16 escenarios locales Chromium/WebKit aprobados y versión/fuentes remotas verificadas. El último smoke remoto SYN integral conserva su versión `f893851`, 8/8 y ocho vistas; recuperación local 5/5 con retorno de versión y regreso comprobados. Última carga 10K revisada: 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas y cero pendientes. La carga 50K falló al plazo y 150K actual no se ejecutó. El observador publicado en `66a25c1` añade tiempos UTC/monotónicos, CPU y resultado por bloque; sus pruebas son de instrumentación y no heredan las mediciones del worker anterior.
+Verificación remota anterior, producto `dbb834c`: Equipo corregido según acceso, 16 escenarios locales Chromium/WebKit aprobados y versión/fuentes remotas verificadas. El último smoke remoto SYN integral conserva su versión `f893851`, 8/8 y ocho vistas; recuperación local 5/5 con retorno de versión y regreso comprobados. Última carga 10K revisada: 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas y cero pendientes. La carga 50K falló al plazo y 150K actual no se ejecutó. El observador publicado en `66a25c1` añade tiempos UTC/monotónicos, CPU y resultado por bloque; sus pruebas son de instrumentación y no heredan las mediciones del worker anterior.
 
 [Auditoría vigente de 20 rubros](docs/entrega/AUDITORIA-20-RUBROS-2026-10-01.md) · [Backlog verificable](docs/entrega/BACKLOG.md) · [Cuentas, datos y configuración que solicitar](docs/entrega/PENDIENTES-PARA-CONECTAR.md) · [Estado estructurado](construccion/ESTADO-CONSTRUCCION.json)
 

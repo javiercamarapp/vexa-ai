@@ -1,3 +1,4 @@
+import { revokePushForSession } from '../../../lib/notifications/push-server';
 import { NextRequest } from 'next/server';
 import { ACTIVE_ORG, AccessError, assertOrigin, authorizeSelection, config, identity } from '../../../lib/auth';
 import { failure, localRedirect, requestAuth } from '../../../lib/auth-http';
@@ -10,6 +11,7 @@ export async function POST(request:NextRequest) {
     const {client,finish}=requestAuth(request);
     try {
       const membership=await authorizeSelection(identity(client),tenant);
+      await revokePushForSession(request,client,false,membership.tenant_id);
       const response=localRedirect('/');
       response.cookies.set(ACTIVE_ORG,membership.tenant_id,{httpOnly:true,secure:c.secure,sameSite:'lax',path:'/',maxAge:60*60*24*30});
       return finish(response);

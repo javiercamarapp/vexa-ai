@@ -4,7 +4,7 @@
 
 **58/60 técnicas y28aceptadas formalmente; producción pendiente.** F06-12 integrada en `b0bb17c`: gate Git limpio23/23,16contratos internos,12lectores y8estados UI, revisión independiente428 aprobada. Migración0032 aplicada por MCP y permisos remotos comprobados. [Cierre y límites](construccion/F06-12-CIERRE-TECNICO.md).
 
-Quedan F06-07(interfaz global), F07-01(seguridad global) y la validación/auditoría final. La aceptación formal12 conserva sus dependencias05/06; las cuentas, proveedores y validaciones humanas siguen separados. Publicación/despliegue12 en preparación; última web verificada `3a2e34d`. Los apartados siguientes son históricos.
+Quedan F06-07(interfaz global), F07-01(seguridad global) y la validación/auditoría final. La aceptación formal12 conserva sus dependencias05/06; las cuentas, proveedores y validaciones humanas siguen separados. Publicado y desplegado `a01b50b`: SHA servido,19fuentes y protección de endpoints verificados. Los apartados siguientes son históricos.
 
 ## Push aceptado — estado vigente
 

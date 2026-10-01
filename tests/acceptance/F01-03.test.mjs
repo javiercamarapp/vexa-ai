@@ -1,3 +1,4 @@
+import * as businessNotifications from './support/F01-03/business-notification-oracles.mjs';
 import * as push from './support/F01-03/push-oracles.mjs';
 import * as email from './support/F01-03/email-oracles.mjs';
 import * as outbox from './support/F01-03/outbox-oracles.mjs';
@@ -61,6 +62,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   if(migrations.outboxRequired)assert.deepEqual(outbox.present(h),outbox.tables,'OUTBOX_MIGRATION_REQUIRED');
   if(migrations.emailRequired)assert.deepEqual(email.present(h),email.tables,'EMAIL_MIGRATION_REQUIRED');
   if(migrations.pushRequired)assert.deepEqual(push.present(h),push.tables,'PUSH_MIGRATION_REQUIRED');
+  if(migrations.businessNotificationsRequired)assert.equal(businessNotifications.present(h),true,'BUSINESS_NOTIFICATION_MIGRATION_REQUIRED');
   if(migrations.notificationsRequired)assert.deepEqual(notifications.present(h),notifications.tables,'NOTIFICATIONS_MIGRATION_REQUIRED');
   schemaOracle(h);
   const actors={};for(const key of ['a','b','dual','outsider','viewer','analyst','operator'])actors[key]=await h.user();
@@ -115,6 +117,7 @@ test('F01-03: real candidate migrations, SQL matrix, Storage and retrieval', {ti
   if(outbox.present(h).length){f.outbox=await outbox.seed(h,f,actors);await t.test('outbox0029 exact private operational access and current authority',()=>outbox.access(h,f.outbox,actors));}
   if(email.present(h).length){f.email=email.seed(h,f.outbox,actors);await t.test('email0030 private receipt mapping and tenant-scoped status',()=>email.access(h,f.email,actors));}
   if(push.present(h).length){f.push=await push.seed(h,f.outbox,actors);await t.test('push0031 private device keys and current-session RPC isolation',()=>push.access(h,f.push,actors));}
+  if(businessNotifications.present(h)){f.businessNotifications=businessNotifications.seed(h,f.outbox);await t.test('business0032 private transaction ledger and cross-tenant event binding',()=>businessNotifications.access(h,f.businessNotifications,actors));}
   for(const fk of foreignKeys(h))await t.test(`discovered FK ${fk.name}`,()=>discoveredFkOracle(h,f,fk));
   await t.test('external identity 42 is tenant scoped and revision deduplicated',()=>{
     assert.equal(h.sql("SELECT count(*) FROM public.conversations WHERE external_id='42'"),'2');

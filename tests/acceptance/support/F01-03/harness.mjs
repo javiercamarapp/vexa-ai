@@ -39,6 +39,7 @@ export function candidateInputs(candidate) {
   migrations.outboxRequired=files.includes('0029_notification_outbox.sql');
   migrations.emailRequired=files.includes('0030_notification_email.sql');
   migrations.pushRequired=files.includes('0031_push_subscriptions.sql');
+  migrations.businessNotificationsRequired=files.includes('0032_notification_business_events.sql');
   migrations.interventionsRequired=files.some(f=>/^0026_/.test(f));
   migrations.recommendationsRequired=files.some(f=>/^0025_/.test(f));
   migrations.detailRequired=files.some(f=>/^0024_/.test(f));

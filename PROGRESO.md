@@ -2,6 +2,8 @@
 
 ## Estado actual — 1 de octubre de 2026
 
+La plantilla faltante de notificaciones quedó publicada en `e80b122`, junto con su regresión SQL local 8/8 y guía de los seis consumidores. La propuesta de persistencia 442 pasó 23 pruebas canónicas y 16 casos focales; sigue experimental. Sus calentamientos comprobaron 2194→1900 consultas por bloque, pero la comparación de tiempos se difirió por host no preparado: cero ventanas medidas. No hay nueva validación 50K/150K ni cambio del contador.
+
 **59/60 tareas técnicas, 28 aceptadas formalmente; producción pendiente.** El objetivo de dejar sólo cuentas, APIs y datos por conectar sigue abierto: faltan verificaciones técnicas de capacidad y cierre global.
 
 Producto desplegado `dbb834c`: Equipo corregido según acceso, 16 escenarios locales Chromium/WebKit aprobados y versión/fuentes remotas verificadas. El último smoke remoto SYN integral conserva su versión `f893851`, 8/8 y ocho vistas; recuperación local 5/5 con retorno de versión y regreso comprobados. Última carga 10K revisada: 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas y cero pendientes. La carga 50K falló al plazo y 150K actual no se ejecutó. El observador publicado en `66a25c1` añade tiempos UTC/monotónicos, CPU y resultado por bloque; sus pruebas son de instrumentación y no heredan las mediciones del worker anterior.

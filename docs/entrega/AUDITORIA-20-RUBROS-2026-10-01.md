@@ -12,6 +12,10 @@ La revisión independiente 436 cotejó 378 referencias previas por SHA256 sin di
 
 ## Correcciones comprobadas
 
+- Un ensayo local separado de cron→pg_net→HTTPS pasó 1/1: dos POST correlacionados con HTTP200, control de certificado, límite temporal y revocación con quietud. El receptor era sintético y la base desechable; no era Next ni Supabase gestionado. El primer intento falló por herramientas ausentes en la imagen y se conserva. La alternativa usa otra imagen ya disponible y retiró ambos contenedores, red y temporales.
+
+- La plantilla faltante de notificaciones quedó publicada en `e80b122`, junto con su regresión SQL local 8/8 y guía de los seis consumidores. La propuesta de persistencia 442 pasó 23 pruebas canónicas y 16 casos focales; sigue experimental. Sus calentamientos comprobaron 2194→1900 consultas por bloque, pero la comparación de tiempos se difirió por host no preparado: cero ventanas medidas. No hay nueva validación 50K/150K ni cambio del contador. [Detalle del experimento](DIAGNOSTICO-CAPACIDAD-2026-10-01.md).
+
 - Inventario de carga actualizado de2102 a2156fuentes:27cambios,54altas,ninguna baja. Se conservan los controles de exactitud. Medición anterior10K (previa a la última descrita arriba):9800aceptadas,100rechazadas,100duplicadas,0pendientes;100bloques, SQL/API concordantes y limpieza comprobada. Recuento independiente aprobado. Tiempo extremo a extremo364526ms; procesamiento27,48filas/s y commitp9512839ms. Host compartido, un tenant/consumidor; no mide nube, inferencia, costo ni SLO aprobado.
 - Documentación operacional corregida: eventos, outbox, correo, push y consumidores HTTP/daemon ya existen. Configurar preferencias no programa ni acredita entrega por proveedor.
 - F07-05/F08-03/F08-05 tienen entradas formales revisadas436:31pruebas de calibración,137del controlador y24de base. Sus tres comandos rechazan insumos externos ausentes. Los expedientesSYN sólo calibran el control; no son entrevistas, consentimiento, aprobación ni recepción reales.

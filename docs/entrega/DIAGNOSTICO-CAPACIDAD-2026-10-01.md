@@ -1,5 +1,18 @@
 # Diagnóstico de persistencia — 1 de octubre de 2026
 
+## Último experimento — agrupación de escrituras 442
+
+Propuesta no adoptada, SHA256 del archivo experimental `44d4727d4a482ac1ec29793fd7e548583a33271dd4f2258bee5f2f00d0892ba6`. Agrupa escrituras nuevas conservando fronteras de sentencia para la visibilidad de revisiones, RLS y retención. Pasó 23 pruebas canónicas de persistencia y 16 casos focales sobre esquema vigente: fallos SQL, rollback de bloque, versiones, recuperación, fence, revocación, deadline y borrado/replay. Revisión independiente 444 favorable para medir, no para integrar.
+
+El primer control de fallo dentro del bloque usó un mapeo sintético incorrecto y quedó rojo. No permitió afirmar que se había alcanzado el fallo SQL. Se conservó y corrigió con el parser real; el siguiente ensayo sí observó el fallo después de la primera fila, reversión de nueve tablas/contadores/checkpoint y recuperación de las dos filas sin cambiar el deadline. Los casos ya comprobados se reutilizaron.
+
+El ensayo de comparación único terminó con `DEFER_HOST_NOT_READY`: 90,9 segundos sin obtener tres muestras consecutivas bajo sus condiciones de preparación. Completó sólo dos calentamientos de 100 filas, cada uno con 98 aceptadas, una rechazada, una duplicada y cero pendientes. Confirmaron 2194→1900 consultas por bloque (13,40% menos). **Cero ventanas ABBA medidas: no acredita mejora temporal ni capacidad.** La presión observada del host explica el rechazo de su guarda de preparación, no demuestra la causa del fallo histórico de 50K.
+
+Se conservaron todos los recibos y se comprobaron cinco recursos, 23 procesos y temporales ausentes. Dictamen 444: conservar experimental; sin integración ni reintento automático. Hace falta una condición de entorno verificablemente distinta para completar la comparación; una nueva serie de carga conserva los plazos y hashes exigidos. La composición publicada sigue sin esta propuesta.
+
+Los experimentos siguientes son anteriores y conservan sus propias fuentes y alcance.
+
+
 **Capacidad de 50K/150K pendiente.** Los dos experimentos iniciales se midieron localmente después del fallo de 50K. No son nuevos gates de carga, no modifican el producto y no acreditan producción. El estado continúa en 59/60 tareas de construcción técnica y 28 aceptadas formalmente.
 
 ## Qué se comprobó

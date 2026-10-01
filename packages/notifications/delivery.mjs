@@ -1,0 +1,12 @@
+// Selective adoption of boundedSend/outcome semantics from notification bank 5fbf223.
+import {check,strict} from './contracts.mjs';
+export function validatePolicy(input){check(strict(input,['channel','enabled','expectedVersion','intervalMs','digestWindowMs','maxAttempts','lifetimeMs']));check(['inapp','email','push'].includes(input.channel)&&typeof input.enabled==='boolean');for(const [k,min,max]of [['expectedVersion',0,2147483646],['intervalMs',1000,86400000],['digestWindowMs',0,3600000],['maxAttempts',1,10],['lifetimeMs',1000,2592000000]])check(Number.isSafeInteger(input[k])&&input[k]>=min&&input[k]<=max);check(input.digestWindowMs<input.lifetimeMs);return structuredClone(input);}
+export function normalizeOutcome(input){let value;try{value=structuredClone(input);}catch{return {kind:'uncertain',code:'transport_invalid'};}
+ if(value?.kind==='accepted'&&typeof value.providerId==='string'&&/^[A-Za-z0-9_-]{1,200}$/.test(value.providerId))return {kind:'accepted',providerId:value.providerId};
+ if(value?.kind==='retry'){if(value.retryAfterMs!==undefined&&(!Number.isSafeInteger(value.retryAfterMs)||value.retryAfterMs<0||value.retryAfterMs>86400000))return {kind:'permanent',code:'retry_invalid'};return {kind:'retry',retryAfterMs:value.retryAfterMs??0,code:'transport_retry'};}
+ if(value?.kind==='permanent')return {kind:'permanent',code:'transport_rejected'};
+ if(value?.kind==='blocked')return {kind:'blocked',code:'transport_unconfigured'};
+ return {kind:'uncertain',code:value?.kind==='uncertain'?'transport_uncertain':'transport_invalid'};
+}
+export async function boundedSend(send,timeoutMs){check(Number.isSafeInteger(timeoutMs)&&timeoutMs>=1&&timeoutMs<=300000);const controller=new AbortController();let timer;try{return await Promise.race([Promise.resolve().then(()=>send(controller.signal)),new Promise(resolve=>{timer=setTimeout(()=>{controller.abort();resolve({kind:'uncertain',code:'transport_timeout'});},timeoutMs);})]);}catch{return {kind:'uncertain',code:'transport_exception'};}finally{clearTimeout(timer);}}
+export function recipientSnapshot(value,expected){let a;try{a=structuredClone(value);}catch{return null;}if(!a||a.tenantId!==expected.tenantId||a.userId!==expected.userId||a.channel!==expected.channel)return null;if(a.channel==='email'&&(a.emailVerified!==true||typeof a.email!=='string'||a.email.length>254||! /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(a.email)))return null;if(a.channel==='push'&&a.consent!==true)return null;return a;}

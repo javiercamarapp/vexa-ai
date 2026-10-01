@@ -37,6 +37,10 @@ La corrección evita ofrecer administración de Equipo antes de confirmar acceso
 
 Lint y compilación terminaron correctamente. Ocho controles ligeros de presentación y un control adicional con respuesta POST403 simulada complementan el recorrido; este último no acredita una entrega real. Se comprobó la eliminación de los seis recursos de prueba y sus procesos. El control específico no ensayó la degradación de propietario a analista durante la sesión ni todas las rutas auxiliares.
 
+## Publicación y despliegue
+
+Corrección publicada en GitHub y desplegada en [VEXA AI](https://vexa-ai.vercel.app), versión `dbb834cc8041e7bc528fc6dbba27f07f09bbb3b0`. Vercel confirmó READY; se verificaron la revisión servida, ocho fuentes actualizadas, el acceso público y el rechazo de solicitudes anónimas a endpoints protegidos. Este control remoto no repite las 16 pruebas autenticadas locales ni el smoke integral previo. No hubo invitaciones reales ni cambios de rol de personas.
+
 ## Evidencia y límites
 
 Los servicios de recomendaciones, intervenciones y briefs determinan las acciones disponibles; la interfaz respeta esas capacidades. Administración de plataforma verifica su concesión de acceso por separado.

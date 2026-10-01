@@ -4,7 +4,7 @@
 
 **59/60 tareas técnicas, 28 aceptadas formalmente; producción pendiente.** El objetivo de dejar sólo cuentas, APIs y datos por conectar sigue abierto: faltan verificaciones técnicas de capacidad y cierre global.
 
-Producto desplegado `f893851`: smoke remoto SYN 8/8 y ocho vistas comprobados; recuperación local 5/5 con retorno de versión y regreso comprobados. Última carga 10K revisada: 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas y cero pendientes. La carga 50K falló al plazo y 150K actual no se ejecutó. El observador publicado en `66a25c1` añade tiempos UTC/monotónicos, CPU y resultado por bloque; sus pruebas son de instrumentación y no heredan las mediciones del worker anterior.
+Producto desplegado `dbb834c`: Equipo corregido según acceso, 16 escenarios locales Chromium/WebKit aprobados y versión/fuentes remotas verificadas. El último smoke remoto SYN integral conserva su versión `f893851`, 8/8 y ocho vistas; recuperación local 5/5 con retorno de versión y regreso comprobados. Última carga 10K revisada: 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas y cero pendientes. La carga 50K falló al plazo y 150K actual no se ejecutó. El observador publicado en `66a25c1` añade tiempos UTC/monotónicos, CPU y resultado por bloque; sus pruebas son de instrumentación y no heredan las mediciones del worker anterior.
 
 [Auditoría vigente de 20 rubros](../docs/entrega/AUDITORIA-20-RUBROS-2026-10-01.md) · [Backlog verificable](../docs/entrega/BACKLOG.md) · [Cuentas, datos y configuración que solicitar](../docs/entrega/PENDIENTES-PARA-CONECTAR.md) · [Estado estructurado](ESTADO-CONSTRUCCION.json)
 

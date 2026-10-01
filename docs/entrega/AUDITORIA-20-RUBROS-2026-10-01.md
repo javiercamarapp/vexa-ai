@@ -2,7 +2,7 @@
 
 **59/60 tareas técnicas, 28 aceptadas formalmente; producción no aprobada.** Esta es la conciliación actual de los veinte rubros, con sus condiciones de cierre pendientes. No es un certificado final ni declara que sólo falten APIs.
 
-Producto desplegado `f893851`: smoke remoto SYN 8/8 y ocho vistas, con limpieza MCP. Los controles de recuperación/inventario, entradas formales y documentación anteriores ya están publicados. Último cambio del observador de carga: `66a25c1`, sin nuevo despliegue de la aplicación.
+Producto desplegado `dbb834c`: corrección de Equipo por acceso confirmado, READY, SHA servido y ocho fuentes modificadas verificadas. Su recorrido focal local pasó 16/16 en Chromium/WebKit; no se repitió el smoke remoto integral, cuya evidencia 8/8 y ocho vistas corresponde a `f893851`. Scheduler local corregido y publicado en `e6a340b`, con 12/12 controles Node 22/26 y revisión independiente. El inventario actual contiene 2157 fuentes y requiere una nueva serie de capacidad.
 
 La recuperación local pasó restauración 5/5 y retorno a versión anterior/regreso a la actual, con ocho recursos eliminados. El ensayo gestionado y todos los estados de entrega de avisos conservan sus límites. [Recibos de recuperación](RECUPERACION-2026-10-01.md) · [Recibos del smoke remoto](SMOKE-REMOTO-2026-10-01.md).
 
@@ -27,7 +27,7 @@ La revisión independiente 436 cotejó 378 referencias previas por SHA256 sin di
 |2|Arquitectura|Pipeline integrado, catálogo e inventario actual cotejados.|Validación integrada final y capacidad; modularidad no demuestra escalabilidad.|
 |3|Resiliencia/recuperación|Restore local 5/5 y retorno financiero de versión/regreso comprobados sobre la composición documentada.|Ensayo gestionado Auth/Storage, autoridad posterior al backup y estados de entrega de avisos no cubiertos por ese ensayo local.|
 |4|Capacidad/rendimiento/costo|Última 10K revisada con fuentes fijadas; observador mejorado y probado por separado. Mediciones históricas conservadas.|50K fallida al deadline900000ms, checkpoint27200;150K actual no iniciada. Nueva serie con observador actualizado, concurrencia/nube/costos y SLO por acordar y medir.|
-|5|Frontend/UX|Composición automática68/68 y8acciones de F06-07.|Juicio humano, lector asistivo/Safari físico; los68scans no significan todos los botones de todas las rutas.|
+|5|Frontend/UX|Composición68/68 y8acciones de F06-07; Equipo16/16locales porroles, revisión438/436.|Juicio humano, lector asistivo/Safari físico; los68scans no significan todos los botones de todas las rutas.|
 |6|API/backend|Contratos y cierres de avisos09:38/38,10:39/39,11:51/51,12:23/23, con sus pruebas hijas.|Matriz integrada actual incompleta:114PASS,2cancelled por timeout del padre; no116PASS.|
 |7|Dinero y efectos sensibles|Moneda/minorunits/procedencia, unknown≠zero, snapshots y controles WTP.|Conciliar export real, ventanas/monedas/costos y decisiones de negocio.|
 |8|DB/migraciones/Storage|SQL0029–0032 aplicadas y verificadas;09incluye432/432. Restore local actualizado comprobado con sus límites.|Matriz integral, recuperación gestionada y escenarios de entrega no cubiertos; no extender la evidencia local a servicios gestionados.|
@@ -36,10 +36,10 @@ La revisión independiente 436 cotejó 378 referencias previas por SHA256 sin di
 |11|Auth/permisos|Sesión/roles/revocación y composición local previas conservadas.|Revisión global sin dictamen; Google real pendiente. Estado global: no verificado.|
 |12|Seguridad/cadena de suministro|Controles focales previos conservan su alcance.|F07-01 abierto: revisión435 rechazada automáticamente por posible riesgo de ciberseguridad. Sin vulnerabilidad demostrada ni aprobación.|
 |13|Privacidad/retención|Redacción, purga derivada, tombstones y custodia técnica.|Consentimiento, política/retención/borrado reales y restauración con autoridad vigente; no dictamen legal.|
-|14|Infraestructura|Vercel READY, SHA servido y smoke remoto SYN 8/8 del producto f893851, ocho vistas y limpieza MCP.|Disponibilidad, backups y operación gestionada reales; repetir smoke si cambia el producto que afecta ese recorrido.|
+|14|Infraestructura|Vercel dbb834c READY/SHA/ocho fuentes comprobados. Último smoke SYN integral8/8 y ocho vistas en f893851, con limpieza MCP.|Disponibilidad, backups y operación gestionada reales; repetir smoke si cambia el producto que afecta ese recorrido.|
 |15|CI/CD/Git|Publisher autorizado, commits con autoría, historial escaneado, SHA remoto verificado.|Actions desactivadas por política de costo; no declararlas CI hospedado verde. Publicación final con guardas intactas.|
 |16|Errores/tracking/logs|Errores saneados, trace/job y registros de fallos conservados.|Destino/retención/acceso/alertas productivas; cancelaciones no desaparecen porque otras pruebas pasen.|
-|17|Monitoreo/operación|Heartbeats, scheduler/daemons y ensayo local de alarma/recuperación previo.|Programación continua, identidad delegada, responsables/alertas y ensayo operativo real.|
+|17|Monitoreo/operación|Heartbeats/daemons y ensayo de alarma previo; scheduler local recupera fallos y atiende señales, 12/12 Node22/26.|Programación continua, identidad delegada, responsables/alertas y ensayo operativo real.|
 |18|Pruebas/arneses|Inventario corregido, tres entradas formales integradas,31+137+24pruebas verdes.|F07-01/matriz, escalas de carga y validaciones finales; disponibilidad de59gates no equivale a59aceptaciones.|
 |19|Integraciones/webhooks/tools|HubSpot/Zendesk, webhooks, histórico/incremental, outbox/correo/push implementados.|Cuentas/scopes reales,20referencias por CRM, reconciliación histórica, dominios/proveedores/dispositivos y entrega real.|
 |20|Agentes/prompts/supervisión|Extracción/redacción, evaluación, propuestas/firmas, selección humana y rollback.|Gold/holdout, proveedores/modelos/tarifas/presupuesto autorizados y medición real. Cargar históricos no garantiza mejora ni autoriza autopromoción.|

@@ -2,7 +2,7 @@
 
 **58/60 técnicas;28 aceptadas formalmente. Producción pendiente.** Producto integrado en `b0bb17cc79724e84fc89ebf4fc94f131d787135a`, controles revisados en `e5da0dd`. La aceptación formal de esta ficha depende de F06-05/F06-06 y sus dependencias externas; no se modifica el grafo para omitirlas.
 
-Publicar un brief o asignar una intervención genera un aviso transaccional, con deduplicación, preferencias personales, política vigente y acceso actual. Abrir el aviso lo marca leído, reduce el contador y lo retira de pendientes sin tocar otra organización. El consumidor HTTP usa las factorías integradas de inapp y Push con contexto de servidor; el daemon integra correo.
+Publicar un brief o asignar una intervención genera un aviso transaccional, con deduplicación, preferencias personales, política vigente y acceso actual. Abrir el aviso lo marca leído, reduce el contador y lo retira de pendientes sin tocar otra organización. El consumidor HTTP y el daemon usan las factorías integradas de inapp, correo y Push según configuración y contexto de servidor.
 
 | Comprobación | Resultado | SHA256 |
 | --- | --- | --- |

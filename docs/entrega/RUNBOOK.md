@@ -24,7 +24,7 @@ RPO/RTO observados en fixtures son mediciones del ensayo, no SLA del cliente. No
 
 Manifest debe ligar SHA limpio, lock, migraciones y destino aprobado. Aplicar cambios expand autorizados antes de app compatible. Si falla smoke, volver al artefacto previo compatible y mantener consumidores pausados cuando corresponda; no ejecutar down migrations destructivas automáticas. Repetir sólo el smoke/regresión afectado y conservar el fallo. Verificar SHA servido, login A/B, import/job, evidencia, dinero/UI/export, revocación y alarma de consumidor. READY de Vercel no equivale a éxito del flujo.
 
-Programadores concretos: imports, CRM y extracción tienen operaciones en supabase/operations/; el histórico tiene su daemon en packages/history y las propuestas de entrega de notificaciones conservan su estado separado. SQL cloud/Vault/cron necesitan aprobación legítima. Seguir documentos de cada módulo para flags y límites; no copiar secretos al shell o Git.
+Programadores concretos: imports, CRM y extracción tienen operaciones en supabase/operations/; el histórico tiene su daemon en packages/history y las notificaciones usan el consumidor HTTP y daemon integrados descritos en packages/notifications/EVENTS.md. Configurar identidad, delegación y programación autorizadas; el endpoint por sí solo no mantiene un consumidor activo. SQL cloud/Vault/cron necesitan aprobación legítima. Seguir documentos de cada módulo para flags y límites; no copiar secretos al shell o Git.
 
 ## Cambios de candidato e histórico
 

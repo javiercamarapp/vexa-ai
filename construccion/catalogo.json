@@ -1970,16 +1970,20 @@
       "packages/notifications/",
       "supabase/migrations/",
       "package.json",
-      "package-lock.json"
+      "package-lock.json",
+      "packages/jobs/durable/build.mjs"
     ],
     "acceptance": "tests/acceptance/F06-10.test.mjs",
     "prompt": "orchestration/prompts/F06.md",
     "auto_accept": false,
     "requires_approval": false,
     "deliverables": [
-      "supabase/migrations/0017_notification_receipts.sql",
-      "packages/notifications/src/email.ts",
-      "apps/web/src/app/api/webhooks/email/route.ts"
+      "supabase/migrations/0030_notification_email.sql",
+      "packages/notifications/email.mjs",
+      "packages/notifications/receipts.mjs",
+      "packages/notifications/email-template.mjs",
+      "apps/web/src/app/api/webhooks/email/route.ts",
+      "packages/jobs/durable/build.mjs"
     ],
     "steps": [
       "Integrar templates HTML+texto revisados y adaptador transaccional con key/remitente configurables; sin key bloquea.",

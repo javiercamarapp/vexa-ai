@@ -1,13 +1,23 @@
 # VEXA — de la carpeta al producto, paso a paso
 
+## Estado actual — 1 de octubre de 2026
+
+**59/60 tareas técnicas, 28 aceptadas formalmente; producción pendiente.** El objetivo de dejar sólo cuentas, APIs y datos por conectar sigue abierto: faltan verificaciones técnicas de capacidad y cierre global.
+
+Producto desplegado `f893851`: smoke remoto SYN 8/8 y ocho vistas comprobados; recuperación local 5/5 con retorno de versión y regreso comprobados. Última carga 10K revisada: 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas y cero pendientes. La carga 50K falló al plazo y 150K actual no se ejecutó. El observador publicado en `66a25c1` añade tiempos UTC/monotónicos, CPU y resultado por bloque; sus pruebas son de instrumentación y no heredan las mediciones del worker anterior.
+
+[Auditoría vigente de 20 rubros](../docs/entrega/AUDITORIA-20-RUBROS-2026-10-01.md) · [Backlog verificable](../docs/entrega/BACKLOG.md) · [Cuentas, datos y configuración que solicitar](../docs/entrega/PENDIENTES-PARA-CONECTAR.md) · [Estado estructurado](ESTADO-CONSTRUCCION.json)
+
+La revisión global F07-01 continúa bloqueada por rechazo automático de la plataforma; no produjo dictamen. La matriz integral conserva 114 PASS y dos cancelaciones. También quedan operación programada, recuperación gestionada, proveedores y validaciones humanas reales. No se cambian el grafo, los contadores ni los plazos para declarar cierre.
+
 **Esta es la entrada única para construir.** El repositorio canónico es `~/vexa`; `Escritorio/VEXA AI` es una copia de entrega sin Git ni estado del loop. No ejecutar el constructor dentro de la copia esperando encontrar los candidatos de la original.
 
 ## Actualización: construcción efectiva
 El encargo posterior exige implementar todo el MVP: [alcance releído completo](ALCANCE-CONFIRMADO.md). Se añadió el [supervisor automático](../AUTOMATICO.md), con límites, revisores separados y publicación del SHA aceptado. F01-01 ya se construyó y aceptó; la documentación de la revisión original de abajo conserva su contexto. Estado vivo: `python3 orchestration/runner.py status` y `python3 orchestration/autoloop.py status`.
 
-## Respuesta exacta en la entrega de la guía: ¿qué automatiza y qué no?
+## Historial de la entrega original de la guía
 
-El paquete trae **55 fichas**, un controlador con candidatos y pruebas externas, una ruta interactiva `prepare → verify → accept`, fixtures monetarios y una guía hasta release. **No es un botón que ya construye todo solo**: hay gates de producto por escribir, dependencias por instalar y permisos/validaciones externas pendientes. Ninguna ficha transforma esos pendientes en PASS.
+El paquete original traía **55 fichas**; el catálogo vigente tiene **60**. La descripción histórica siguiente corresponde a aquella entrega. El paquete original incluía, un controlador con candidatos y pruebas externas, una ruta interactiva `prepare → verify → accept`, fixtures monetarios y una guía hasta release. **No es un botón que ya construye todo solo**: hay gates de producto por escribir, dependencias por instalar y permisos/validaciones externas pendientes. Ninguna ficha transforma esos pendientes en PASS.
 
 En esta revisión se sustituyó el supuesto irreal de «escribir absolutamente todas las pruebas antes del primer scaffold» por un **ciclo de pruebas externo justo antes de cada incremento**. El control-plane escribe el gate específico de la siguiente ficha, demuestra su rojo, lo revisa/versiona y sólo entonces abre el candidato. El worker jamás escribe su propio examen. Esta es una secuencia de construcción guiada con puntos humanos, no una prueba de autonomía desatendida de meses.
 

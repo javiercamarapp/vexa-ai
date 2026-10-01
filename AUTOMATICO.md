@@ -1,5 +1,27 @@
 # Construcción automática VEXA
 
+## Estado actual — 1 de octubre de 2026
+
+**59/60 tareas técnicas, 28 aceptadas formalmente; producción pendiente.** El objetivo de dejar sólo cuentas, APIs y datos por conectar sigue abierto: faltan verificaciones técnicas de capacidad y cierre global.
+
+Producto desplegado `f893851`: smoke remoto SYN 8/8 y ocho vistas comprobados; recuperación local 5/5 con retorno de versión y regreso comprobados. Última carga 10K revisada: 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas y cero pendientes. La carga 50K falló al plazo y 150K actual no se ejecutó. El observador publicado en `66a25c1` añade tiempos UTC/monotónicos, CPU y resultado por bloque; sus pruebas son de instrumentación y no heredan las mediciones del worker anterior.
+
+[Auditoría vigente de 20 rubros](docs/entrega/AUDITORIA-20-RUBROS-2026-10-01.md) · [Backlog verificable](docs/entrega/BACKLOG.md) · [Cuentas, datos y configuración que solicitar](docs/entrega/PENDIENTES-PARA-CONECTAR.md) · [Estado estructurado](construccion/ESTADO-CONSTRUCCION.json)
+
+La revisión global F07-01 continúa bloqueada por rechazo automático de la plataforma; no produjo dictamen. La matriz integral conserva 114 PASS y dos cancelaciones. También quedan operación programada, recuperación gestionada, proveedores y validaciones humanas reales. No se cambian el grafo, los contadores ni los plazos para declarar cierre.
+
+## Secuencia pendiente de cierre
+
+1. Obtener una condición verificable para la medición de capacidad; ejecutar una nueva serie con el observador publicado, empezando por 10K. Revisar el resultado antes de 50K/150K; conservar los fallos y los plazos.
+2. Resolver el bloqueo de plataforma antes de retomar el encargo global F07-01. No transferir ni repetir el encargo rechazado por otra vía.
+3. Configurar y probar proveedores, histórico e incremental, programación de consumidores, identidad delegada, alertas y recuperación gestionada con los accesos y decisiones reales.
+4. Completar las aceptaciones del grafo cuando existan sus dependencias y evidencias, y emitir la auditoría final por rubro y versión.
+
+El estado de procesos se verifica mediante PIDs y recibos; esta secuencia no afirma que exista un loop activo. Se conserva el presupuesto acumulado de 436 y la revisión acotada de la tanda existente; no se renuevan contadores automáticamente.
+
+<details>
+<summary>Historial de cortes anteriores; no es el estado vigente</summary>
+
 ## Recuperación local comprobada — estado vigente
 
 **59/60 técnicas y 28 aceptadas formalmente; producción pendiente.** El gate de restauración y retorno de versión pasó completo: restauración 5/5, continuidad financiera con el binario anterior, regreso a la versión actual y limpieza de ocho recursos. Se corrigieron tres incompatibilidades de los controles locales sin relajar las guardas del producto. [Evidencia y límites](docs/entrega/RECUPERACION-2026-10-01.md).
@@ -101,6 +123,8 @@ Cada fallo requiere comando, causa reproducible, corrección y prueba afectada; 
 Usuario reiteró loop y entrega connection-ready de TODO blueprint+audios, conintegraciones implementadas ydespués sólo credenciales/autorizaciones externas. DespliegueVEXA enVercel autorizado; no gastoextra/inferencia/Actions. Supabasepropio creado, SQLremoto bloqueado poraprobacióninteractiva, no eludirporotrocanal.
 
 Renovación REAL de todo el día del20-sep: ventana hasta00:00 del21-sep UTC−06, techo76F02/220global con base144; registro privado atómico sin reset. Corte de revisión:191global iniciadas. Máximo3agentes de la misma fase, principal único integrador. STOP propio archivado y retirado después de revisión/corrección congelada. No hubo bucle activo toda la noche; no se afirma ejecución desatendida por tener un plan. Revisiones/aceptación no renuevan presupuestos automáticamente. Fuentes/rechazos intactos; no reutilizar la antigua extensión errónea ligada al permiso económico. Recibos privados vigentes mandan.
+
+</details>
 
 ## Publicación y cierre autorizados el20-sep
 

@@ -1,21 +1,18 @@
 # Auditoría VEXA — 1 de octubre de 2026
 
-Nueva medición 10K completada y revisada: 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas y 0 pendientes; 100 bloques confirmados. Procesamiento 345.448 ms, 28,95 filas/s y commit p95 15.190 ms. La estabilidad inicial del host no se mantuvo y no se encontró infraestructura efímera VEXA abandonada. No se repitió 50K ni se inició 150K; sigue pendiente el gate completo de capacidad. [Resultado, recibos y límites](DIAGNOSTICO-CAPACIDAD-2026-10-01.md#nueva-prueba-de-10000-filas-y-límite-del-entorno). Los cortes anteriores se conservan abajo.
+**59/60 tareas técnicas, 28 aceptadas formalmente; producción no aprobada.** Esta es la conciliación actual de los veinte rubros, con sus condiciones de cierre pendientes. No es un certificado final ni declara que sólo falten APIs.
 
+Producto desplegado `f893851`: smoke remoto SYN 8/8 y ocho vistas, con limpieza MCP. Los controles de recuperación/inventario, entradas formales y documentación anteriores ya están publicados. Último cambio del observador de carga: `66a25c1`, sin nuevo despliegue de la aplicación.
 
-Actualización de capacidad: perfil local de 1000 filas y comparación exploratoria ABBA terminados con contabilidad y limpieza comprobadas. Consultas preparadas descartadas: sin mejora consistente de tiempo total ni compatibilidad con el modo de pooler documentado. No modifican el producto ni cierran 50K/150K. [Mediciones y límites](DIAGNOSTICO-CAPACIDAD-2026-10-01.md).
+La recuperación local pasó restauración 5/5 y retorno a versión anterior/regreso a la actual, con ocho recursos eliminados. El ensayo gestionado y todos los estados de entrega de avisos conservan sus límites. [Recibos de recuperación](RECUPERACION-2026-10-01.md) · [Recibos del smoke remoto](SMOKE-REMOTO-2026-10-01.md).
 
-Actualización de recuperación: el gate local F07-06 pasó completo tras corregir el bootstrap Auth, el arranque offline y el adaptador de logs. Restauración 5/5 y retorno financiero comprobado; ocho recursos eliminados. [Recibos y límites](RECUPERACION-2026-10-01.md). No acredita restore gestionado ni todos los estados de entrega de avisos; el mapa siguiente conserva el corte original.
+La última medición 10K revisada terminó con 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas y cero pendientes; 100 bloques, 345.448 ms de procesamiento y commit p95 15.190 ms. La estabilidad inicial del host no duró y no se demostró causalidad del entorno. 50K conserva su fallo al plazo y 150K actual no se ejecutó. El observador nuevo registra inicio/fin, CPU y éxito/error, pero su cambio de hash obliga a una nueva serie antes de escalar; sus pruebas unitarias no son una nueva carga. [Diagnóstico y evidencia](DIAGNOSTICO-CAPACIDAD-2026-10-01.md) · [Contrato del observador](../../packages/jobs/load/README.md).
 
-Actualización posterior al corte: el release desplegado `f893851` ya pasó el smoke remotoSYN8/8 y ocho vistas, con limpiezaMCP. Véase [evidencia actual](SMOKE-REMOTO-2026-10-01.md). El resto de pendientes sigue vigente; los párrafos del corte inicial siguientes conservan su alcance y fecha.
-
-**59/60 tareas técnicas,28 aceptadas formalmente; producción no aprobada.** Producto publicado y desplegado `f893851b708cefb41f44ddafc991780814e6cae1`. Inventario/operación corregidos en `0691dbd`; controles formales de piloto, ensayo y entrega integrados en `f309f2b`. Estos dos últimos cambios aún no estaban publicados al redactar este corte. Esta auditoría identifica el trabajo restante: no es un certificado final ni afirma que sólo falten APIs.
-
-La revisión independiente436 cotejó378referencias de evidencia por SHA256 sin discrepancias. Son referencias conservadas, con solapamientos, no378pruebas nuevas. No encontró un nuevo módulo operacional faltante fuera de los controles e inventario corregidos. Las pruebas de fuentes distintas conservan su fecha y alcance; no se les atribuye la versión actual automáticamente.
+La revisión independiente 436 cotejó 378 referencias previas por SHA256 sin discrepancias; son referencias con solapamientos, no 378 pruebas nuevas ni una nueva revisión global de seguridad. Cada prueba conserva su fuente y alcance.
 
 ## Correcciones comprobadas
 
-- Inventario de carga actualizado de2102 a2156fuentes:27cambios,54altas,ninguna baja. Se conservan los controles de exactitud. Carga actual10K:9800aceptadas,100rechazadas,100duplicadas,0pendientes;100bloques, SQL/API concordantes y limpieza comprobada. Recuento independiente aprobado. Tiempo extremo a extremo364526ms; procesamiento27,48filas/s y commitp9512839ms. Host compartido, un tenant/consumidor; no mide nube, inferencia, costo ni SLO aprobado.
+- Inventario de carga actualizado de2102 a2156fuentes:27cambios,54altas,ninguna baja. Se conservan los controles de exactitud. Medición anterior10K (previa a la última descrita arriba):9800aceptadas,100rechazadas,100duplicadas,0pendientes;100bloques, SQL/API concordantes y limpieza comprobada. Recuento independiente aprobado. Tiempo extremo a extremo364526ms; procesamiento27,48filas/s y commitp9512839ms. Host compartido, un tenant/consumidor; no mide nube, inferencia, costo ni SLO aprobado.
 - Documentación operacional corregida: eventos, outbox, correo, push y consumidores HTTP/daemon ya existen. Configurar preferencias no programa ni acredita entrega por proveedor.
 - F07-05/F08-03/F08-05 tienen entradas formales revisadas436:31pruebas de calibración,137del controlador y24de base. Sus tres comandos rechazan insumos externos ausentes. Los expedientesSYN sólo calibran el control; no son entrevistas, consentimiento, aprobación ni recepción reales.
 - UI F06-07 cerrada técnicamente:68/68revisiones de pantalla,8acciones persistidas,2032objetivos de teclado,132resoluciones explícitas y20estados obligatorios; Chromium/WebKit,móvil/escritorio. Conserva límites de inventario, herencia y juicio visual humano en su [cierre](../../construccion/F06-07-CIERRE-TECNICO.md).
@@ -28,18 +25,18 @@ La revisión independiente436 cotejó378referencias de evidencia por SHA256 sin 
 |---|---|---|---|
 |1|Diseño y negocio|Contratos, economía, ocho vistas y evaluador de piloto.|Datos financieros/históricos reales, comprensión, insight, sponsor y WTP; sin ahorro causal ni PMF acreditados.|
 |2|Arquitectura|Pipeline integrado, catálogo e inventario actual cotejados.|Validación integrada final y capacidad; modularidad no demuestra escalabilidad.|
-|3|Resiliencia/recuperación|Checkpoints, replay, recuperación y rollback locales previos.|Conciliar restore con nuevas tablas de notificaciones; ensayo gestionado Auth/Storage y autoridad posterior al backup.|
-|4|Capacidad/rendimiento/costo|10Kactual aprobado;10K/50K/150Khistóricos ligados a su fuente original.|50Kactual fallida:deadline900000ms,checkpoint27200;150Kno iniciada. concurrencia/nube/costos y SLO por acordar y medir.|
+|3|Resiliencia/recuperación|Restore local 5/5 y retorno financiero de versión/regreso comprobados sobre la composición documentada.|Ensayo gestionado Auth/Storage, autoridad posterior al backup y estados de entrega de avisos no cubiertos por ese ensayo local.|
+|4|Capacidad/rendimiento/costo|Última 10K revisada con fuentes fijadas; observador mejorado y probado por separado. Mediciones históricas conservadas.|50K fallida al deadline900000ms, checkpoint27200;150K actual no iniciada. Nueva serie con observador actualizado, concurrencia/nube/costos y SLO por acordar y medir.|
 |5|Frontend/UX|Composición automática68/68 y8acciones de F06-07.|Juicio humano, lector asistivo/Safari físico; los68scans no significan todos los botones de todas las rutas.|
 |6|API/backend|Contratos y cierres de avisos09:38/38,10:39/39,11:51/51,12:23/23, con sus pruebas hijas.|Matriz integrada actual incompleta:114PASS,2cancelled por timeout del padre; no116PASS.|
 |7|Dinero y efectos sensibles|Moneda/minorunits/procedencia, unknown≠zero, snapshots y controles WTP.|Conciliar export real, ventanas/monedas/costos y decisiones de negocio.|
-|8|DB/migraciones/Storage|SQL0029–0032 aplicadas y verificadas según recibos;09incluye432/432.|Matriz actual y restore actualizado/gestionado; no extender evidencia antigua a nuevas tablas sin comprobar.|
+|8|DB/migraciones/Storage|SQL0029–0032 aplicadas y verificadas;09incluye432/432. Restore local actualizado comprobado con sus límites.|Matriz integral, recuperación gestionada y escenarios de entrega no cubiertos; no extender la evidencia local a servicios gestionados.|
 |9|Cache/CDN|No-store/Vary y casos de sesiones previos, respuestas anónimas actuales.|Cobertura autenticada del release final y comportamiento de cambios de sesión/tenant.|
 |10|Límites/abuso|AdmisiónAuth por proceso, límites durables de gateway/jobs,429en webhook.|Verificar política distribuida/edge y saturación real; no hay un defecto confirmado que justifique inventar infraestructura.|
 |11|Auth/permisos|Sesión/roles/revocación y composición local previas conservadas.|Revisión global sin dictamen; Google real pendiente. Estado global: no verificado.|
 |12|Seguridad/cadena de suministro|Controles focales previos conservan su alcance.|F07-01 abierto: revisión435 rechazada automáticamente por posible riesgo de ciberseguridad. Sin vulnerabilidad demostrada ni aprobación.|
 |13|Privacidad/retención|Redacción, purga derivada, tombstones y custodia técnica.|Consentimiento, política/retención/borrado reales y restauración con autoridad vigente; no dictamen legal.|
-|14|Infraestructura|Vercel READY, SHA servido, fuentesCSS, login/versión, endpoints anónimos y SW comprobados.|Smoke completo del release final, disponibilidad/backups/operación gestionada.|
+|14|Infraestructura|Vercel READY, SHA servido y smoke remoto SYN 8/8 del producto f893851, ocho vistas y limpieza MCP.|Disponibilidad, backups y operación gestionada reales; repetir smoke si cambia el producto que afecta ese recorrido.|
 |15|CI/CD/Git|Publisher autorizado, commits con autoría, historial escaneado, SHA remoto verificado.|Actions desactivadas por política de costo; no declararlas CI hospedado verde. Publicación final con guardas intactas.|
 |16|Errores/tracking/logs|Errores saneados, trace/job y registros de fallos conservados.|Destino/retención/acceso/alertas productivas; cancelaciones no desaparecen porque otras pruebas pasen.|
 |17|Monitoreo/operación|Heartbeats, scheduler/daemons y ensayo local de alarma/recuperación previo.|Programación continua, identidad delegada, responsables/alertas y ensayo operativo real.|
@@ -53,7 +50,7 @@ La matriz actual terminó en677809ms con114pruebas aprobadas,0fallidas y2cancela
 
 La escala50K terminó con exit1 tras905569ms:checkpoint27200,26656aceptadas,272rechazadas y272duplicadas. El registro contiene273notificaciones de bloque, pero sólo272bloques quedaron confirmados; no sumarlas como27300filas persistidas. Se comprobaron fuente limpia, proceso terminado y cinco recursos eliminados. La medición conserva la presión del host compartido; no se atribuye causalidad sin diagnóstico. No se inició150K ni se amplió el deadline.
 
-Último smoke remoto completo:8/8 en `b9ed3db5ef4df825c27ed208722ad2faad4ee9c3`. El release `f893851` tiene comprobaciones remotas parciales identificadas arriba; no se reetiquetan como smoke completo.
+Último smoke remoto SYN completo:8/8 en `f893851b708cefb41f44ddafc991780814e6cae1`, con ocho vistas y limpieza MCP comprobada. El ensayo de `b9ed3db` es histórico; la evidencia actual está enlazada arriba.
 
 Para conexión y operación real hacen falta cuentas autorizadasGoogle/CRM, proveedor y dominio de correo/SMTP, VAPID/dispositivo con consentimiento, histórico y finanzas con procedencia, presupuesto/modelosIA, programación/identidad de consumidores, responsables y decisiones de recuperación/retención. Piloto y entrega necesitan participantes, gold, sponsor, ensayo humano y recepción legítima. [Registro de pendientes](BACKLOG.md). El trabajo técnico y de verificación restante se mantiene separado de esa lista.
 
@@ -64,4 +61,4 @@ No hubo inferencia pagada, envío a clientes ni habilitación de Actions en esta
 
 La propuesta de consolidar dos lecturas pasó 23/23 pruebas de persistencia, lint/build, cuatro ventanas de 1.000 filas y los oráculos de interrupción/reanudación y no resurrección tras borrado. Reduce 8,86% las consultas, pero no acredita mejora estable de tiempo: permanece experimental. La sonda de transporte completó 16.000 SELECT y confirma variabilidad; no demuestra que el túnel sea la causa. Limpiezas reinspeccionadas. [Mediciones, límites y condición previa a otra carga](DIAGNOSTICO-CAPACIDAD-2026-10-01.md).
 
-No hay nuevo cambio de producto, ampliación de deadline ni PASS de 50K/150K. Se conservan 59/60 técnicas, 28 formales y producción pendiente, incluida la revisión global rechazada automáticamente y las validaciones externas antes identificadas.
+La instrumentación publicada posteriormente mejora el registro de intentos sin cambiar el runtime de producto. No hay ampliación de deadline ni PASS de 50K/150K. Se conservan 59/60 técnicas, 28 formales y producción pendiente, incluida la revisión global rechazada automáticamente y las validaciones externas antes identificadas.

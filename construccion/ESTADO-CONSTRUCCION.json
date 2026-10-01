@@ -562,7 +562,7 @@
       "verification_pending": [],
       "formal_dependency": "F07-01",
       "owner": "Controlador de aceptación y aprobación externa del ámbito bloqueado",
-      "condition": "Dependencia F07-01 aceptada legítimamente; después verify/accept limpio sin eludir F06-09.",
+      "condition": "Dependencia F07-01 aceptada legítimamente; después verify/accept limpio con todas las dependencias y guardas vigentes.",
       "evidence": "construccion/F07-02-CIERRE-TECNICO.md"
     },
     {
@@ -572,18 +572,23 @@
       "verification_pending": [],
       "formal_dependency": "F07-02",
       "owner": "Controlador de aceptación",
-      "condition": "F07-02 aceptada legítimamente; después verify/accept limpio sin eludir F06-09.",
+      "condition": "F07-02 aceptada legítimamente; después verify/accept limpio con todas las dependencias y guardas vigentes.",
       "evidence": "construccion/F07-03-RECUPERACION-VERIFICADA.md"
     },
     {
       "task_id": "F07-04",
       "technical_ready": true,
       "programming_pending": [],
-      "verification_pending": [],
+      "verification_pending": [
+        "Nueva serie10K con observador66a25c1 y sus hashes, tras condición de entorno verificable; no hereda informes del worker anterior.",
+        "Cerrar50Kfallida al deadline900000ms/checkpoint27200 y medir150Ksin ampliar plazos ni escalar tras fallo.",
+        "Revisar contabilidad, checkpoints, fuentes y limpieza de cada escala; SLO comercial requiere acuerdo y medición separados."
+      ],
       "formal_dependency": "F07-03",
       "owner": "Controlador de aceptación",
-      "condition": "F07-03 aceptada legítimamente; ejecutar verify/accept limpio con el manifiesto vigente.",
-      "evidence": "construccion/F07-04-CIERRE-TECNICO.md"
+      "condition": "F07-03 aceptada legítimamente, capacidad verificada con el manifiesto y benchmark vigentes y después verify/accept limpio. No es sólo dependencia formal.",
+      "evidence": "construccion/F07-04-CIERRE-TECNICO.md",
+      "technical_ready_scope": "Implementación del benchmark disponible; validación vigente de capacidad pendiente."
     },
     {
       "task_id": "F06-12",
@@ -675,10 +680,10 @@
     "F07-01"
   ],
   "release_validation_pending": [
-    "F07-01 independent global security review435 automatically rejected; no verdict",
-    "Current integrated SQL matrix incomplete114PASS/2cancelled after600000ms parent timeout",
-    "Current50K load failed job deadline900000ms at checkpoint27200;150K not run; controlled diagnosis pending",
-    "Current/managed recovery and external operational/provider/history/human validations from20area audit; no production approval"
+    "F07-01: revisión global435 rechazada automáticamente; sin dictamen, no repetir ni transferir el encargo por otra vía.",
+    "Matriz integral incompleta:114PASS/2cancelled tras timeout600000ms del padre.",
+    "Capacidad:50Kfallida al deadline900000ms/checkpoint27200;150Kactual no ejecutada. Observador66a25c1 requiere nueva serie ligada a sus hashes.",
+    "Recuperación gestionada y estados de entrega no cubiertos; programación/identidad/alertas, proveedores/histórico y validaciones humanas reales de la auditoría20rubros."
   ],
   "previous_full_smoke": {
     "source_sha": "b9ed3db5ef4df825c27ed208722ad2faad4ee9c3",
@@ -699,5 +704,21 @@
     "cleanup_resources_verified": 8,
     "formal_acceptance": false,
     "production_approval": false
-  }
+  },
+  "connection_ready": false,
+  "latest_load_observation": {
+    "source_sha": "66a25c184d528331727329c0dda8cdfae5878a81",
+    "worker_sha256": "e2f0cb53d3e8ca9c62131648c9958c13dd2d918963873c1905bceb4b8700e775",
+    "status": "instrumentation_reviewed_published_not_capacity_approval",
+    "node22_tests": 2,
+    "node26_tests": 2,
+    "independent_node22_tests": 2,
+    "evidence": "packages/jobs/load/README.md",
+    "prior_load_results_reusable_for_escalation": false
+  },
+  "connection_readiness_pending": [
+    "Verificaciones técnicas de capacidad y cierre global.",
+    "Configuración y ensayo de operación gestionada, cuentas/proveedores y datos históricos reales.",
+    "Actos humanos, permisos, presupuestos y aceptación formal legítimos."
+  ]
 }

@@ -1,170 +1,69 @@
-# VEXA AI · construcción e integración verificable
+# VEXA AI
 
-## Recuperación local comprobada — estado vigente
+Software para importar conversaciones e información histórica, conservar su procedencia, identificar problemas y apoyar decisiones con evidencia y cifras verificables.
 
-**59/60 técnicas y 28 aceptadas formalmente; producción pendiente.** El gate de restauración y retorno de versión pasó completo: restauración 5/5, continuidad financiera con el binario anterior, regreso a la versión actual y limpieza de ocho recursos. Se corrigieron tres incompatibilidades de los controles locales sin relajar las guardas del producto. [Evidencia y límites](docs/entrega/RECUPERACION-2026-10-01.md).
+## Estado actual — 1 de octubre de 2026
 
-El producto desplegado conserva su smoke remoto SYN 8/8. F07-01, capacidad 50K/150K y validaciones externas siguen pendientes; este resultado no significa que sólo falten API. Los cortes anteriores conservan su fecha y alcance.
+**59/60 tareas de construcción técnica, 28 aceptadas formalmente. Producción pendiente.** El objetivo es dejar pendientes únicamente cuentas, APIs y datos del cliente; todavía faltan verificaciones técnicas para poder afirmar ese estado.
 
-## Validación remota actual — estado vigente
+| Indicador | Estado comprobado |
+|---|---|
+| Aplicación desplegada | [vexa-ai.vercel.app](https://vexa-ai.vercel.app), producto `f893851` |
+| Recorrido remoto sintético | 8/8 fases y ocho vistas, Auth/PostgreSQL/Storage reales, limpieza verificada por MCP |
+| Interfaz | Cierre técnico F06-07: 68/68 revisiones de pantalla y ocho acciones persistidas; conserva sus límites de cobertura |
+| Recuperación local | Restauración 5/5, retorno a versión anterior y regreso a la actual comprobados |
+| Carga | Última medición 10K revisada: 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas, cero pendientes |
+| Capacidad pendiente | 50K falló al plazo; 150K de la composición actual no se ejecutó |
+| Instrumentación | `66a25c1` registra tiempos y éxito/error por bloque; pruebas Node 22/26 y revisión independiente aprobadas |
+| Cierre global | F07-01 abierto; matriz integral con 114 PASS y dos cancelaciones, sin aprobación global |
 
-**59/60 técnicas y28 aceptadas formalmente; producción pendiente.** El release desplegado `f893851` pasó8/8 fases remotas y ocho vistas con datos SYN propios: importación, cifras/exportación, interrupción/recuperación y revocación. Limpieza comprobada por MCP. [Evidencia y límites](docs/entrega/SMOKE-REMOTO-2026-10-01.md).
+El nuevo observador cambia el hash del benchmark: las mediciones anteriores conservan su fuente original y no habilitan escalar con ese observador. Los cambios de controles y documentación posteriores al producto desplegado no representan un nuevo despliegue de la aplicación.
 
-Controles formales, inventario y documentación publicados en `178d55c`, cuatro commits reales sin nuevo build de Vercel. Restan F07-01/revisión global rechazada automáticamente, matriz global incompleta: 114 PASS/2 canceladas, carga 50K fallida al plazo/150K no iniciada y las validaciones externas/operativas identificadas en la [auditoría de 20 rubros](docs/entrega/AUDITORIA-20-RUBROS-2026-10-01.md). No basta pegar APIs. Los bloques siguientes conservan cortes anteriores.
+[Estado estructurado](construccion/ESTADO-CONSTRUCCION.json) · [Progreso y evidencias](PROGRESO.md) · [Auditoría de 20 rubros](docs/entrega/AUDITORIA-20-RUBROS-2026-10-01.md) · [Backlog de cierre](docs/entrega/BACKLOG.md)
 
-## Interfaz integrada — estado vigente
+## Implementación disponible
 
-**59/60 técnicas y 28 aceptadas formalmente; producción pendiente.** F06-07 completa la composición local con 68/68 revisiones de pantalla, ocho acciones persistidas y revisión independiente 433. Lint, compilación y limpieza comprobados. [Evidencia y límites](construccion/F06-07-CIERRE-TECNICO.md).
+- Frontend de ocho vistas, acceso, roles, organizaciones, acciones, confirmaciones y preferencias.
+- Importación CSV, persistencia, jobs durables, checkpoints, reanudación y revocación.
+- Adaptadores HubSpot/Zendesk, histórico e incremental, webhooks y reconciliación de identidades.
+- Redacción de datos personales, extracción, problemas, métricas, recomendaciones y evaluación supervisada.
+- Eventos, outbox, correo, push y lectura de notificaciones; entrega externa pendiente de proveedores y dispositivos reales.
+- Controles de aislamiento, retención, trazabilidad financiera y recuperación, con evidencia de alcance específico.
 
-Resta F07-01 (seguridad global), conciliación de inventario/carga y controles formales, validación del release y auditoría final de 20 rubros. El juicio visual humano, las cuentas y la validación con datos históricos siguen separados. Publicado y desplegado `f893851`: SHA servido, fuente CSS y endpoints protegidos verificados. Los apartados siguientes son históricos.
+Estas implementaciones no acreditan por sí solas conexiones reales, todas las rutas bajo cualquier condición ni aprobación de producción. La cobertura y los pendientes están en la auditoría enlazada.
 
-## Eventos integrados — estado vigente
+## Qué falta para entregar
 
-**58/60 técnicas y28aceptadas formalmente; producción pendiente.** F06-12 integrada en `b0bb17c`: gate Git limpio23/23,16contratos internos,12lectores y8estados UI, revisión independiente428 aprobada. Migración0032 aplicada por MCP y permisos remotos comprobados. [Cierre y límites](construccion/F06-12-CIERRE-TECNICO.md).
-
-Quedan F06-07(interfaz global), F07-01(seguridad global) y la validación/auditoría final. La aceptación formal12 conserva sus dependencias05/06; las cuentas, proveedores y validaciones humanas siguen separados. Publicado y desplegado `a01b50b`: SHA servido,19fuentes y protección de endpoints verificados. Los apartados siguientes son históricos.
-
-## Push aceptado — estado vigente
-
-**57/60 técnicas y 28 aceptadas formalmente; producción pendiente.** F06-11 integrada en `2165849`: verificación51/51 y aceptación limpia51/51, ambas con3/3pruebas HTTP hijas. Migración0031 aplicada por MCP y permisos remotos comprobados. [Cierre y límites](construccion/F06-11-CIERRE.md).
-
-Quedan F06-12, F06-07 y F07-01, más validación integrada y auditoría final. Push publicado y desplegado en `3a2e34d`: READY, SHA servido, fuentes y protección del endpoint comprobados. Las cuentas y la entrega con proveedores/dispositivos reales siguen pendientes. Los apartados siguientes son históricos.
-
-## Correo aceptado — estado vigente
-
-**56/60 técnicas y 27 aceptadas formalmente; producción pendiente.** F06-10 integrada en `1457036`: verificación39/39 y aceptación limpia39/39, ambas con25/25pruebas hijas. Migración0030 aplicada por MCP y permisos remotos comprobados. Publicado y desplegado `cd6c17f`: READY, SHA servido, fuentes y endpoint comprobados. [Cierre y límites](construccion/F06-10-CIERRE.md).
-
-Quedan F06-11, F06-12, F06-07 y F07-01, más la validación integrada final. Proveedor/dominio de correo, cuentas y datos reales siguen pendientes. El total técnico no acredita entrega externa ni aprobación de producción. Los apartados siguientes conservan cortes históricos.
-
-## Outbox aceptado y publicado — 30-sep, estado vigente
-
-**55/60 técnicas y 26 aceptadas formalmente; producción pendiente.** F06-09 está integrada en `c1212af`: verificación38/38, aceptación limpia38/38 y matriz SQL432/432. GitHub confirma el SHA y seis commits reales con autoría asociada. [Cierre y límites](construccion/F06-09-CIERRE.md).
-
-La incompatibilidad de0029 con PostgreSQL gestionado está corregida con revisión independiente y nueva regresión38/38. Migración aplicada por MCP: seis tablas con RLS forzado, permisos exactos y helper privado comprobados; no se enviaron avisos externos. Vercel conserva `d39e9a3`, sin despliegue nuevo por este cierre. Faltan F06-07, F06-10, F06-11, F06-12 y F07-01, más la comprobación integrada de la versión final. Los apartados siguientes son históricos; no significan que el servicio ya esté listo sólo para pegar APIs.
-
-## Botones de correo y confirmación desplegados — 30-sep
-
-Los botones verdes de los correos Auth están centrados y revisados. Cambiar nombre o responsable de una organización ahora exige confirmar de nuevo; `d39e9a3` publicado y desplegado, READY/SHA/fuente verificados. Pruebas locales Chromium/WebKit y comprobación remota móvil/escritorio aprobadas, sin crear organizaciones. [Evidencia de la tanda406–408](docs/entrega/CORREOS-CONFIRMACION-2026-09-30.md).
-
-**54/60 técnicas, 25 formales; producción pendiente.** Los tres agentes terminaron. Push todavía necesita integración técnica y gate; no basta VAPID. Las plantillas de correo remoto y SMTP propio siguen pendientes. Acumulado408 conservado; los apartados siguientes son históricos.
-
-## Acceso y administración publicados — 30-sep, actualización vigente
-
-Producto `c7a30ac` publicado y desplegado: READY y SHA servido comprobados. El enlace original de Supabase ya retorna a VEXA; seis comprobaciones remotas de sesión, plataforma, permisos, móvil, revocación y logout aprobadas. Administración de plataforma integrada con revisión independiente y migración aplicada. Google real y configuración de correos remotos siguen pendientes. Las 13 plantillas Auth tienen membrete: 52 presentaciones previas y 20 comprobaciones posteriores de botones centrados, sin acreditar entrega real. [Evidencia y límites](docs/entrega/ACCESO-PLATAFORMA-CORREOS-2026-09-30.md).
-
-Se mantienen **54/60 técnicas, 25 formales y producción pendiente**. Agentes Auth 403–405 recogidos; nueva tanda F06 406–408 autorizada sin reiniciar contadores. Los apartados siguientes conservan cortes históricos.
-
-**Carpeta canónica:** `/Users/javiercamaraportepetit/vexa` · fuera de iCloud. Preparación rehecha desde fuentes originales con Astra vía Codex. **Web desplegada en [vexa-ai.vercel.app](https://vexa-ai.vercel.app), todavía sin cierre productivo completo.** [Estado del despliegue y comprobaciones](docs/entrega/VERCEL-ESTADO-2026-09-25.md). Estado/recibos: [PROGRESO.md](PROGRESO.md).
-
-## Acceso por correo — diagnóstico 30-sep
-
-Acceso por correo habilitado y desplegado sobre las mismas fuentes `ccf546b`; READY y SHA servido comprobados. Una cuenta sintética completó sesión, selección de equipo, apertura del workspace y logout. El enlace original de Supabase todavía retorna a `localhost`: configuración de URLs pendiente de acceso administrativo. Google y superadministrador global siguen pendientes. [Evidencia, configuración exacta y límites](docs/entrega/ACCESO-AUTH-2026-09-30.md). Se mantienen 54/60 técnicas, 25 formales y producción pendiente. Publicación GitHub con autoría conservada, Actions apagado y sin vínculo Git de Vercel; sin nueva compilación por esta documentación.
-
-## Botones y confirmaciones publicados — 30-sep
-
-La revisión402 aprobó dos archivos de presentación, con ocho controles nuevos deCSS enChromium/WebKit y evidencia previa conservada. Publicado y desplegado `ccf546b`: READY, SHA servido y dos fuentes revisadas verificados; foco, Escape, cancelación sinPOST, movimiento reducido y navegación lateral comprobados en escritorio/móvil. [Evidencia y límites](docs/entrega/UNIFICACION-UI-2026-09-30.md). Se mantienen54/60 técnicas,25formales y producciónfalse; no se cierra todaF06-07 por un ajuste visual.402/402invocaciones conservadas; ninguna revisión queda ejecutándose.
-
-## Checkpoint vigente —54/60 técnicas;25 aceptadas en el grafo
-
-Webhooks CRM publicados y desplegados `ad37369` tras revisión401; migración0040 aplicada por MCP y comprobada. [Evidencia del30-sep](docs/entrega/WEBHOOKS-CRM-2026-09-30.md). Activación y cuentas reales pendientes; el total54/60 permanece igual.
-
-F07-05 integra el evaluador offline del piloto y su guía operativa:25controles del principal,21independientes y procedimiento documentado comprobados con Node22. Autor399 y revisor400 recogidos; código integrado exactamente desde fuentes congeladas. Sólo en esta ficha quedan aportes humanos y aceptación formal: consentimiento, gold/holdout, participantes, cronometraje, sponsor y respuestas reales. El piloto sigue `not_run`; no equivale a producción. [Cierre técnico y evidencia](construccion/F07-05-CIERRE-TECNICO.md).
-
-El total suma25aceptadas por runner,26con validación externa pendiente y3con dependencias formales. Restan seis fichas técnicas: F06-07, F06-09..12 y F07-01. La revisión bloqueada de entrega y sus dependencias permanecen pendientes; no basta conectar cuentas para cerrar todo. [Estado actual y límites](docs/entrega/PILOTO-TECNICO-2026-09-29.md).
-
-La web sirve `ad37369`: receptorCRM desactivado hasta configurar cuentas, ocho fuentes ejecutables y SHA remoto comprobados. El consentimiento económico conserva su corrección y revisión anterior. Último smoke completo8/8 en `b9ed3db`; sus resultados conservan ese SHA. El cambio del piloto es una herramienta offline y no requiere desplegar la web. [Evidencia de la web](docs/entrega/CONSENTIMIENTO-ECONOMICO-2026-09-29.md).
-
-Tiempo sin límite autorizado; presupuesto conservado401/401invocaciones acumuladas, máximo3agentes. No nuevas compras ni inferencia pagada. Publicación mediante publisher autorizado, Actions desactivadas y SHA remoto verificado por recibo; estos documentos no acreditan un servicio autónomo después de cerrar la sesión. Caffeinate no garantiza supervivencia de la sesión. Los apartados siguientes son históricos.
-
-## Estado de construcción — corte 20-sep
-**17/60 tareas aceptadas; F02 completa en6/6.** Importación, persistencia canónica, worker durable y UI de recuperación integrados. F02-05 (`9e738b9`) y F02-06 (comportamiento existente en `63b9725`, sin parche artificial) pasaron sus27grupos de verifyNode22 y acceptGitlimpioNode26. Compilación integrada, regresiones F02-01/02/03/04 y cuatro jobs CI locales verdes; huellas y limpieza verificadas. Siguiente fase: F03, HubSpot/Zendesk y migración. Actions permanece desactivado; no acredita producción.
-
-Se conserva una incidenciaCSV previa no reproducida cuya causa original sigue desconocida. El examen guarda/exige estado terminal/checkpoint/rechazo antes de descargar, sin cambiar bytes esperados ni añadir reintentos; revisión y rojo/verde específicos aprobados. Seguimiento pendiente en auditoría integral final.
-
-**Entrega solicitada:** todo el blueprint y lo pedido en los audios, integrado y listo para conectar credenciales/autorizaciones externas sin programar piezas faltantes. El objetivo connection-ready no reduce el alcance ni equivale a validación productiva con cuentas reales. Supabase propio está creado; migraciones remotas y conexión de aplicación siguen pendientes.
-
-Prioridad vigente: **[cerrar e integrar lo ya construido](construccion/CIERRE-INTEGRACION.md)**. Workspace, CSV/pipeline e inbox tienen correctivos revisados en una rama de integración; no son todavía todas las tareas F02–F06 aceptadas. [PROGRESO.md](PROGRESO.md) distingue baseline, laboratorio, pruebas y pendientes.
-
-Programa y guardias: **[AUTOMATICO.md](AUTOMATICO.md)** · **[alcance completo](construccion/ALCANCE-CONFIRMADO.md)**. El principal promueve serialmente; no lanzar otro supervisor mientras haya candidatos/ensayos activos. Consultar recibos y procesos: este documento no acredita que siga vivo un worker. Google remoto, proveedores, CI remoto y producción siguen pendientes; Actions permanece desactivado.
-
-## Tecnologías y lenguajes en GitHub
-- Interfaz: React/Next.js con TypeScript; lógica de negocio: Node.js/JavaScript.
-- Datos y permisos: PostgreSQL/SQL; construcción y verificación: Python y Node.js.
-- GitHub calcula porcentajes por bytes, no por la importancia de cada componente. Los HTML de la guía y del informe son documentación generada; `.gitattributes` los identifica sin excluir código fuente ni forzar un lenguaje principal.
-
-## Construcción guiada de punta a punta
-**[Empieza aquí: guía de construcción](construccion/README.md)** · [60 fichas](construccion/05-TAREAS.md) · [Guía HTML continua](construccion/GUIA-COMPLETA.html) · [PDF](construccion/GUIA-COMPLETA.pdf) · [Comparación con Likida](construccion/00-COMPARACION-LIKIDA.md).
-
-Ciclo control-plane → gate externo → prepare/run → verify → revisión → accept; recuperación supervisada, contratos y runbooks. El inventario vigente se consulta con `python3 scripts/guide.py audit`; presencia de un gate no significa aceptación. El scaffold pasó en candidato y materialización limpia. **Guía completa no equivale a loop totalmente desatendido ni SaaS terminado.**
-
-## Investigación de negocio ampliada — TAM, SAM, SOM y finanzas
-**[Índice del estudio completo](negocio/README.md)** · **[TAM/SAM/SOM](negocio/05-Precios-y-Finanzas/tam-sam-som.md)** · **[Excel de mercado/finanzas](negocio/05-Precios-y-Finanzas/VEXA-MERCADO-Y-FINANZAS.xlsx)** · **[Informe HTML](negocio/INFORME-VEXA.html)**.
-
-Base oficial: 2,975 firmas ecommerce/venta por catálogo USA en bandas de receipts $10M–<$100M (Census2022), no clientes calificados. TAM núcleo a precio base supuesto ~$53.5M/año; SAM base escenario ~$10.6M; SOM base A3 ~$989K ARR. Filtros, precios y forecast no son métricas observadas. El dossier incluye competencia/precios, GTM, entrevistas, fuentes, riesgos, lista semilla y modelo de36meses.
-
-## Empieza aquí
-1. [Contexto e interpretación](docs/CONTEXTO-CANONICO.md): lo que dicen audios, DOCX y PRD; discrepancias y decisiones.
-2. [Tesis/competencia/veredicto](docs/investigacion/01-tesis-competencia-y-veredicto.md): **CAMBIAR el posicionamiento**, no vender feedback→dinero como novedad exclusiva.
-3. [Oferta CTO 30%](docs/investigacion/02-diligencia-cto-30-por-ciento.md): condiciones, diligencia y riesgos antes de comprometerte.
-4. [Blueprint maestro de 30 días](docs/blueprint/00-BLUEPRINT-MAESTRO.md) y [trazabilidad de las 35 secciones](docs/blueprint/02-TRAZABILIDAD-PRD.md).
-5. [Cómo construir/reanudar](orchestration/README.md): roles, skills, grafo, pruebas, límites y comandos.
-
-## Fuentes privadas completas
-- [Seis transcripciones completas con tiempos y limitaciones ASR](private/TRANSCRIPCIONES-COMPLETAS.md).
-- [DOCX extraído](private/blueprint-original.txt); original en private/originals/.
-- [PRD/encargo íntegro original de la sesión](private/PRD-Y-ENCARGO-ORIGINAL.md).
-- [Manifiesto SHA256 y duraciones](private/manifest.json).
-- private/transcripts/ y private/transcripts-contextual/: dos pasadas locales, TXT/SRT/JSON. Se procesaron **591.829333 s**, cerca de 9:52. No hubo revisión humana escuchando cada palabra; nombres/frases inciertos se señalan.
-
-Estos links sólo funcionan en la copia local que contiene private/. Esa carpeta y logs no se suben a Git. No confundir preservación/transcripción completa con reconocimiento infalible.
-
-## Investigación
-- [Referencia Likida/Atiende](docs/investigacion/03-referencia-likida-atiende.md): revisión selectiva, no auditoría completa de todos los repos.
-- [Modelos, costos y pricing](docs/investigacion/04-modelos-costos-pricing.md): catálogo público y escenarios rotulados; sin inferencia API pagada.
-- [HubSpot→Zendesk](docs/investigacion/integraciones/01-hubspot-zendesk-migracion.md).
-- [Supabase/datos/colas](docs/investigacion/integraciones/02-supabase-datos-seguridad-colas.md).
-- [Vercel/ejecución durable](docs/investigacion/integraciones/03-vercel-ejecucion-durable.md).
-- [OpenRouter/privacidad/modelos](docs/investigacion/integraciones/04-openrouter-modelos-privacidad.md).
-- [MCP vs API y accesos](docs/investigacion/integraciones/05-mcp-vs-api-matriz-accesos.md).
-- [Spikes y decisiones abiertas](docs/investigacion/integraciones/06-decisiones-riesgos-y-spikes.md).
-- fuentes/: resultados developer index y páginas oficiales guardadas con URLs. Son evidencia para diseño, no prueba de configuración efectiva ni market sizing exhaustivo.
-
-## Blueprint ejecutable por fases
-| Fase | Días objetivo | Entregable |
+| Tipo | Pendiente | Condición de cierre |
 |---|---|---|
-| [F00](docs/blueprint/F00.md) | 1–2 | contratos, derechos, fixtures y gates |
-| [F01](docs/blueprint/F01.md) | 2–5 | app/auth/tenancy/CI |
-| [F02](docs/blueprint/F02.md) | 4–8 | importación y jobs durables |
-| [F03](docs/blueprint/F03.md) | 6–12 | HubSpot/Zendesk y continuidad |
-| [F04](docs/blueprint/F04.md) | 8–15 | modelos, evidencia, problemas |
-| [F05](docs/blueprint/F05.md) | 12–18 | dinero/snapshots/prioridad |
-| [F06](docs/blueprint/F06.md) | 15–23 | ocho vistas y acciones humanas |
-| [F07](docs/blueprint/F07.md) | 22–27 | QA/resiliencia/piloto |
-| [F08](docs/blueprint/F08.md) | 28–30 | release/pitch/entrega |
+| Técnico | Capacidad 50K/150K y serie del observador nuevo | Entorno de prueba verificable, mediciones completas, contabilidad y limpieza, revisión independiente |
+| Verificación bloqueada | Seguridad global F07-01 y matriz integral | Resolver legítimamente el rechazo automático de revisión y completar los controles; no equivale a una vulnerabilidad demostrada |
+| Configuración operativa | Consumidores programados, identidad delegada, alertas, responsables y recuperación gestionada | Configurar y ensayar la operación real; abrir el frontend no mantiene un worker activo |
+| Cuentas y datos | Google, CRM, correo/SMTP/DNS, Web Push, modelos/presupuesto, histórico y finanzas | Conectar por un canal seguro y verificar permisos, cobertura, entrega, revocación y costos |
+| Validación humana | Gold/holdout, consentimiento, sponsor, ensayo y recepción | Evidencia real; los fixtures no sustituyen participantes ni aprobación |
 
-Días se solapan por trabajo de diseño/validación; un solo implementador no hace todas las tareas simultáneamente. Horizonte condicionado a accesos y scope; no promesa de resultado garantizado en 30 días.
+La [lista para solicitar accesos](docs/entrega/PENDIENTES-PARA-CONECTAR.md) indica qué hace cada elemento, dónde obtenerlo y cómo se validará. No enviar claves a commits ni documentos públicos. El logo definitivo sigue pendiente.
 
-[Contratos y modelo de datos](docs/blueprint/01-CONTRATOS-Y-DATOS.md) · [Motor financiero](docs/blueprint/calidad/01-contrato-motor-financiero.md) · [Gold/evals](docs/blueprint/calidad/02-conjunto-dorado-evaluacion.md) · [Seguridad](docs/blueprint/calidad/03-amenazas-rls-privacidad.md) · [E2E](docs/blueprint/calidad/04-aceptacion-end-to-end.md) · [Intervenciones/causalidad](docs/blueprint/calidad/05-intervenciones-medicion-causalidad.md).
+La información histórica permite evaluar configuraciones con referencias y holdout independientes. No garantiza mejora automática ni autoriza que el sistema cambie su código o promueva configuraciones sin supervisión.
 
-## Operación
-[Piloto y guion de pitch](docs/operacion/01-PILOTO-Y-PITCH.md) · [Runbooks y accesos](docs/operacion/02-RUNBOOK-Y-ACCESOS.md).
+## Construir y retomar
 
-## Código que sí existe
-- `packages/economics/index.mjs`: kernel puro limitado de dinero/exposición/refunds/escenarios.
-- `tests/acceptance/economics.test.mjs`: contrato externo; soporta VEXA_CANDIDATE.
-- `orchestration/runner.py`: controlador Codex acotado, candidatos aislados en Git worktree, gates y aceptación explícita.
-- `orchestration/autoloop.py` y `publisher.py`: supervisor acotado, revisión independiente y merge/push del SHA verificado.
-- `apps/web/`: scaffold y Auth local aceptados; no sustituyen las ocho vistas y acciones completas.
-- `supabase/migrations/0001..0004` y `packages/platform/src/db.ts`: identidad y schema tenant-aware aceptados localmente con SQL/Auth/Storage/retrieval y pruebas adversarias.
-- `tests/controller/`: 110 tests unitarios/integración, Git real y CLI simulado; incluye rechazo posterior a revisión, ignorados/modos, presupuestos y preservación de logs. E00 tuvo además una vuelta real Astra/Codex aceptada, sin patch. El recorrido actual y sus límites se registran en [evidencia de construcción](construccion/EVIDENCIA.md).
+Repositorio canónico: `~/vexa`. Leer [AGENTS.md](AGENTS.md), [PLAN.md](PLAN.md), [AUTOMATICO.md](AUTOMATICO.md) y la [guía de construcción](construccion/README.md). Hay 60 fichas y 59 gates disponibles; presencia no significa aceptación. El grafo conserva las 28 aceptaciones formales.
 
-```bash
+```sh
 cd ~/vexa
+python3 scripts/guide.py audit
 npm test
 npm run test:controller
 npm run graph:check
 ```
-Node >=22 y Python3, sin instalar dependencias para kernel/controlador. Grafo v4 con60tareas:13gates presentes,47pendientes (escritura/revisión justo antes del incremento; presencia no significa PASS). Las pruebas de runtime necesitan entorno real de ensayo. No hay proceso autónomo de producción corriendo.
 
-## Bloqueos que no puede inventar un agente
-Acuerdo/NDA/DPA, derechos y muestra real Senix; responsables/fecha migración; Supabase cloud, Google OAuth y presupuesto OpenRouter/infraestructura; gold humano y validación de negocio. Auth/RLS locales ya están aceptados; ingesta/UI y demás módulos siguen su integración y aceptación por alcance. GitHub privado, proyecto Vercel vacío y Supabase local ya se crearon; eso no es un deploy. El 30% no equivale a sociedad formalizada y un gasto sintético no equivale a ahorro real.
+Los checks básicos usan Node 22 y Python 3. Las pruebas de runtime necesitan su entorno real y se ejecutan en copias de ensayo, conservando fuentes, recibos y limpieza. Un documento o una Mac despierta no prueban que haya procesos de construcción activos.
+
+## Arquitectura y referencias
+
+React/Next.js y TypeScript en `apps/web`; lógica Node.js en `packages`; PostgreSQL/Supabase en `supabase/migrations`; controlador y publisher en `orchestration`. GitHub conserva commits reales y autoría. Actions permanece desactivado y el proyecto Vercel no tiene despliegue automático por Git según la última comprobación; publicar documentación no requiere compilar la aplicación.
+
+[Alcance completo](construccion/ALCANCE-CONFIRMADO.md) · [Blueprint](docs/blueprint/00-BLUEPRINT-MAESTRO.md) · [60 tareas](construccion/05-TAREAS.md) · [Runbook](docs/entrega/RUNBOOK.md) · [Investigación de negocio](negocio/README.md)
+
+Las fuentes originales y los recibos privados permanecen en `private/`, fuera de la publicación. El historial de avances y límites se conserva en Git y en PROGRESO.

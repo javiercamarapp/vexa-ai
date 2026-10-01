@@ -4,6 +4,14 @@ Corte 1-oct:59/60 técnicas y28 aceptadas formalmente tras el cierre de interfaz
 
 Todavía falta cerrar seguridad global F07-01 y su matriz integral, capacidad actual de 50K/150K y los actos externos/formales de la auditoría de 20 rubros. El inventario actual de 2.156 fuentes está conciliado, una nueva prueba de 10K pasó revisión independiente, el smoke remoto SYN actual pasó 8/8 y la recuperación/rollback locales pasaron; cada resultado conserva sus límites. Por tanto, **aún no se afirma que sólo baste pegar APIs**. El estado verificable está en [ESTADO-CONSTRUCCION](../../construccion/ESTADO-CONSTRUCCION.json).
 
+## Trabajo técnico y operativo que sigue abierto
+
+- Capacidad: 50K/150K pendientes; las nuevas observaciones de `66a25c1` requieren una serie desde 10K. No basta una clave para resolver una medición incompleta.
+- Cierre global: F07-01 y matriz integral pendientes; revisión automática rechazada, sin dictamen de seguridad.
+- Operación: elegir y configurar la ejecución programada, identidad delegada, destino de alertas y responsables; ensayar recuperación gestionada y entrega real.
+
+El [backlog](BACKLOG.md) asigna responsable y condición de cierre. Recuperación local y smoke remoto SYN ya están comprobados; sus límites no se trasladan a producción.
+
 ## Aportes que se pueden reunir ahora
 
 | Qué solicitar | Dónde lo tiene el titular | Para qué lo usa VEXA y cómo se verificará |

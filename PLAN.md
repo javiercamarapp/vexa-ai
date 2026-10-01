@@ -1,5 +1,27 @@
 # VEXA — construcción completa por grafo y agentes
 
+## Estado actual — 1 de octubre de 2026
+
+**59/60 tareas técnicas, 28 aceptadas formalmente; producción pendiente.** El objetivo de dejar sólo cuentas, APIs y datos por conectar sigue abierto: faltan verificaciones técnicas de capacidad y cierre global.
+
+Producto desplegado `f893851`: smoke remoto SYN 8/8 y ocho vistas comprobados; recuperación local 5/5 con retorno de versión y regreso comprobados. Última carga 10K revisada: 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas y cero pendientes. La carga 50K falló al plazo y 150K actual no se ejecutó. El observador publicado en `66a25c1` añade tiempos UTC/monotónicos, CPU y resultado por bloque; sus pruebas son de instrumentación y no heredan las mediciones del worker anterior.
+
+[Auditoría vigente de 20 rubros](docs/entrega/AUDITORIA-20-RUBROS-2026-10-01.md) · [Backlog verificable](docs/entrega/BACKLOG.md) · [Cuentas, datos y configuración que solicitar](docs/entrega/PENDIENTES-PARA-CONECTAR.md) · [Estado estructurado](construccion/ESTADO-CONSTRUCCION.json)
+
+La revisión global F07-01 continúa bloqueada por rechazo automático de la plataforma; no produjo dictamen. La matriz integral conserva 114 PASS y dos cancelaciones. También quedan operación programada, recuperación gestionada, proveedores y validaciones humanas reales. No se cambian el grafo, los contadores ni los plazos para declarar cierre.
+
+## Secuencia pendiente de cierre
+
+1. Obtener una condición verificable para la medición de capacidad; ejecutar una nueva serie con el observador publicado, empezando por 10K. Revisar el resultado antes de 50K/150K; conservar los fallos y los plazos.
+2. Resolver el bloqueo de plataforma antes de retomar el encargo global F07-01. No transferir ni repetir el encargo rechazado por otra vía.
+3. Configurar y probar proveedores, histórico e incremental, programación de consumidores, identidad delegada, alertas y recuperación gestionada con los accesos y decisiones reales.
+4. Completar las aceptaciones del grafo cuando existan sus dependencias y evidencias, y emitir la auditoría final por rubro y versión.
+
+El estado de procesos se verifica mediante PIDs y recibos; esta secuencia no afirma que exista un loop activo. Se conserva el presupuesto acumulado de 436 y la revisión acotada de la tanda existente; no se renuevan contadores automáticamente.
+
+<details>
+<summary>Historial de cortes anteriores; no es el estado vigente</summary>
+
 ## Recuperación local comprobada — estado vigente
 
 **59/60 técnicas y 28 aceptadas formalmente; producción pendiente.** El gate de restauración y retorno de versión pasó completo: restauración 5/5, continuidad financiera con el binario anterior, regreso a la versión actual y limpieza de ocho recursos. Se corrigieron tres incompatibilidades de los controles locales sin relajar las guardas del producto. [Evidencia y límites](docs/entrega/RECUPERACION-2026-10-01.md).
@@ -101,6 +123,8 @@ No abrir más módulos mientras haya una aprobación pendiente de integrar. Cada
 Últimas órdenes: continuar loop, integrar blueprint+audios de punta a punta y dejar sólo credenciales/autorizaciones externas; el hito inmediato es **connection-ready completo**, no maqueta ni integraciones pendientes de programar. Producción validada sigue siendo un hito distinto. Verceldeploy propio autorizado; gastos adicionales/inferencia no. Supabasecreado con autorización10USD/mes; SQLremoto requiere aprobacióninteractiva, no eludirla.
 
 Renovación explícita de todo el día del20-sep: hasta00:00 del21-sep (UTC−06), techo acumulado220, base144+asignaciónF02 de76; máximo3agentes concurrentes y cero gasto nuevo. Registro privado atómico de llamadas, sin reset ni renovación automática;191 llamadas acumuladas iniciadas al redactar este corte. Caffeinate no garantiza ejecución desatendida. La prórroga histórica vinculada erróneamente al permiso económico fue corregida y cancelada; no reutilizarla. Cifras y ventanas anteriores abajo son históricas.
+
+</details>
 
 ## Objetivo y cierre
 Producto completo del PRD y ampliaciones confirmadas: Next.js, Auth/organizaciones/roles, tablas/migraciones/RLS/Storage, importaciones y conectores HubSpot/Zendesk, trabajos durables, OpenRouter multimodelo/evidencia, dinero/prioridad, ocho vistas, intervenciones/medición/brief, notificaciones internas/push/correos para USUARIOS DE VEXA, seguridad/observabilidad/recuperación y entrega operable.

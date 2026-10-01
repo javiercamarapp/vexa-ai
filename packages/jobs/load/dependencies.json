@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "2eff53d0aa95ffc5de0cd22a30114d612bc7c760",
-  "composition": "Release f893851 product plus reviewed local recovery control compatibility. Two chaos adapter/control hashes updated; prior load measurements retain their original manifest and source scope.",
+  "baselineSha": "71fd32953d5157a9a64e075d42d6e7f8e644acf3",
+  "composition": "Source at 71fd329 plus reviewed local HTTP scheduler resilience and its documentation. Previous load measurements retain their original manifests; this composition requires a new measured series.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -1916,6 +1916,10 @@
       "sha256": "16cbca3b35d438645765cd89dde30600109a1b2beef1e786ef6c428f4c1bbc3d"
     },
     {
+      "path": "packages/jobs/durable/README.md",
+      "sha256": "47425dd95475029bb268b923867bca64f152b863f2bfcaf9f5f38781c681f746"
+    },
+    {
       "path": "packages/jobs/durable/RESUME-CLOSE.md",
       "sha256": "a1c96a4a8b4eef2d1c130f7cf08d42d5d792f74691655277e94e1d2e5530eb88"
     },
@@ -1985,7 +1989,7 @@
     },
     {
       "path": "packages/jobs/durable/scheduler.mjs",
-      "sha256": "2f7fd117ed9be06d70fc9ffe7b9fb50504980a3d7cf4f610288ce1b62f23cbd3"
+      "sha256": "08fc2104109bda93575656f4933c29d421239ca225da1cfc2e609390ba100d0f"
     },
     {
       "path": "packages/jobs/durable/test/cli-entry.test.mjs",

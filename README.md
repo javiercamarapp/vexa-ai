@@ -1,5 +1,11 @@
 # VEXA AI · construcción e integración verificable
 
+## Outbox aceptado y publicado — 30-sep, estado vigente
+
+**55/60 técnicas y 26 aceptadas formalmente; producción pendiente.** F06-09 está integrada en `c1212af`: verificación38/38, aceptación limpia38/38 y matriz SQL432/432. GitHub confirma el SHA y seis commits reales con autoría asociada. [Cierre y límites](construccion/F06-09-CIERRE.md).
+
+La incompatibilidad de0029 con PostgreSQL gestionado está corregida con revisión independiente y nueva regresión38/38. Migración aplicada por MCP: seis tablas con RLS forzado, permisos exactos y helper privado comprobados; no se enviaron avisos externos. Vercel conserva `d39e9a3`, sin despliegue nuevo por este cierre. Faltan F06-07, F06-10, F06-11, F06-12 y F07-01, más la comprobación integrada de la versión final. Los apartados siguientes son históricos; no significan que el servicio ya esté listo sólo para pegar APIs.
+
 ## Botones de correo y confirmación desplegados — 30-sep
 
 Los botones verdes de los correos Auth están centrados y revisados. Cambiar nombre o responsable de una organización ahora exige confirmar de nuevo; `d39e9a3` publicado y desplegado, READY/SHA/fuente verificados. Pruebas locales Chromium/WebKit y comprobación remota móvil/escritorio aprobadas, sin crear organizaciones. [Evidencia de la tanda406–408](docs/entrega/CORREOS-CONFIRMACION-2026-09-30.md).

@@ -28,10 +28,17 @@ create table public.notification_reconciliations(
  tenant_id uuid not null,id uuid not null default gen_random_uuid(),job_id uuid not null,request_key uuid not null,fingerprint text not null,evidence_id uuid not null,decision text not null check(decision in('accepted','not_sent')),actor_id uuid not null,created_at timestamptz not null default clock_timestamp(),primary key(tenant_id,id),unique(tenant_id,request_key),foreign key(tenant_id,job_id) references public.notification_outbox(tenant_id,id),foreign key(tenant_id,actor_id) references public.memberships(tenant_id,user_id),foreign key(tenant_id,evidence_id) references public.notification_reconciliation_evidence(tenant_id,id));
 create function public.notification_worker(t uuid) returns boolean language sql stable security definer set search_path='' as $$select coalesce(t=nullif(current_setting('vexa.tenant_id',true),'')::uuid and current_setting('vexa.action',true) in('read','import') and (public.vexa_member(t,array['owner']) or(public.vexa_member(t,array['analyst']) and exists(select 1 from public.worker_delegations where tenant_id=t and user_id=auth.uid() and enabled))),false)$$;
 revoke all on function public.notification_worker(uuid) from public,anon,authenticated,service_role;grant execute on function public.notification_worker(uuid) to vexa_backend;
--- Recipient impersonation is private and scoped to this function invocation; no caller controls claim strings.
-create function public.notification_recipient_current(t uuid,u uuid,k text,r uuid,c text) returns boolean language plpgsql stable security definer set search_path='' set request.jwt.claim.sub='' as $$begin
+-- Private recipient check. Runtime-local context supports managed PostgreSQL owners.
+-- Restore the previous subject on every normal return or exception; no caller controls claim strings.
+create function public.notification_recipient_current(t uuid,u uuid,k text,r uuid,c text) returns boolean language plpgsql stable security definer set search_path='' as $$
+declare prior_sub text:=current_setting('request.jwt.claim.sub',true); permitted boolean;begin
  perform set_config('request.jwt.claim.sub',u::text,true);
- return exists(select 1 from public.memberships where tenant_id=t and user_id=u and status='active') and (select count(*)=2 and bool_and(enabled) from public.notification_preferences where tenant_id=t and user_id=u and channel=c and event_type in('*',k)) and public.notification_resource_read(t,u,k,r) is true;
+ permitted:=exists(select 1 from public.memberships where tenant_id=t and user_id=u and status='active') and (select count(*)=2 and bool_and(enabled) from public.notification_preferences where tenant_id=t and user_id=u and channel=c and event_type in('*',k)) and public.notification_resource_read(t,u,k,r) is true;
+ perform set_config('request.jwt.claim.sub',coalesce(prior_sub,''),true);
+ return permitted;
+exception when others then
+ perform set_config('request.jwt.claim.sub',coalesce(prior_sub,''),true);
+ raise;
 end $$;
 revoke all on function public.notification_recipient_current(uuid,uuid,text,uuid,text) from public,anon,authenticated,service_role,vexa_backend;
 create function public.notification_policy_set(p jsonb) returns jsonb language plpgsql security definer set search_path='' as $$declare t uuid=nullif(current_setting('vexa.tenant_id',true),'')::uuid;v integer;x public.notification_delivery_policies;begin

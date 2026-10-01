@@ -5,7 +5,18 @@ const {createRuntime}=await import(pathToFileURL(root+'/packages/jobs/durable/ru
 const {runDaemon}=await import(pathToFileURL(root+'/packages/jobs/durable/daemon.mjs'));
 const runtime=await createRuntime(process.env);let active=false;
 const send=value=>process.send?.(value);
-const repository={...runtime.repository,async commitChunk(...args){const start=performance.now();try{return await runtime.repository.commitChunk(...args);}finally{send({kind:'chunk',jobId:args[0].id,rows:args[1].records.length,offset:args[1].checkpoint.offset,done:args[1].done,commitMs:performance.now()-start,memory:process.memoryUsage(),maxRssKiB:process.resourceUsage().maxRSS});}}};
+const repository={...runtime.repository,async commitChunk(...args){
+ const startedAt=new Date().toISOString(),start=performance.now(),cpu=process.cpuUsage();let committed=false;
+ try{const result=await runtime.repository.commitChunk(...args);committed=true;return result;}
+ finally{
+  const end=performance.now(),finishedAt=new Date().toISOString(),cpuMicroseconds=process.cpuUsage(cpu);
+  // These are worker observations, not database timestamps or proof of the checkpoint.
+  // Failed attempts remain visible; only a fulfilled commitChunk sets committed=true.
+  send({kind:'chunk',jobId:args[0].id,rows:args[1].records.length,offset:args[1].checkpoint.offset,done:args[1].done,
+   committed,startedAt,finishedAt,monotonicStartMs:start,monotonicEndMs:end,commitMs:end-start,cpuMicroseconds,
+   memory:process.memoryUsage(),maxRssKiB:process.resourceUsage().maxRSS});
+ }
+}};
 process.on('message',async message=>{if(active){send({id:message.id,ok:false,error:'LOAD_WORKER_BUSY'});return;}active=true;try{
  if(message.op==='heartbeat')await repository.heartbeat();
  else if(message.op==='consume')await runDaemon({...runtime,repository,close:async()=>{}},{once:true});

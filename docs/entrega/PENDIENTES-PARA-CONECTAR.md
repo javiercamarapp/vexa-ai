@@ -2,7 +2,7 @@
 
 Corte 1-oct:59/60 técnicas y28 aceptadas formalmente tras el cierre de interfaz. Producción pendiente. Correo, Push, outbox y eventos ya están implementados, revisados y publicados; las antiguas referencias a bloqueo de revisión de F06-09 quedaron superadas por sus cierres posteriores. No falta escribir esos adaptadores.
 
-Todavía falta cerrar seguridad global F07-01, conciliar inventario/carga y controles formales, comprobar el release final y completar la auditoría de20 rubros. Por tanto, **aún no se afirma que sólo baste pegar APIs**. El estado verificable está en [ESTADO-CONSTRUCCION](../../construccion/ESTADO-CONSTRUCCION.json).
+Todavía falta cerrar seguridad global F07-01 y su matriz integral, capacidad actual de 50K/150K y los actos externos/formales de la auditoría de 20 rubros. El inventario actual de 2.156 fuentes está conciliado, una nueva prueba de 10K pasó revisión independiente, el smoke remoto SYN actual pasó 8/8 y la recuperación/rollback locales pasaron; cada resultado conserva sus límites. Por tanto, **aún no se afirma que sólo baste pegar APIs**. El estado verificable está en [ESTADO-CONSTRUCCION](../../construccion/ESTADO-CONSTRUCCION.json).
 
 ## Aportes que se pueden reunir ahora
 
@@ -28,4 +28,4 @@ Los conectores recuperan lo que permita la cuenta y conservan checkpoints, revis
 
 El histórico autorizado recorre redacción, extracción, problemas, métricas y evaluación. La mejora consiste en comparar y seleccionar configuraciones con holdout independiente y posibilidad de rollback. Feedback automático no se convierte en gold humano, y resultados sintéticos no prueban calidad del LLM. VEXA no modifica autónomamente el código ni ejecuta acciones sobre el CRM del cliente.
 
-El último smoke remoto completo corresponde a `b9ed3db`, no automáticamente a releases posteriores. Los recibos de cada despliegue y el cierre global deben verificarse sobre sus fuentes exactas; ninguna API sustituye las pruebas pendientes ni los actos humanos requeridos.
+El último smoke remoto SYN completo corresponde al producto desplegado `f893851`: 8/8 fases, ocho vistas y limpieza comprobada por MCP. [Evidencia remota y límites](SMOKE-REMOTO-2026-10-01.md). Los commits posteriores de controles y documentación no representan un nuevo despliegue de producto. [Estado de los 20 rubros](AUDITORIA-20-RUBROS-2026-10-01.md): ninguna API sustituye la capacidad pendiente, la revisión global ni los actos humanos requeridos.

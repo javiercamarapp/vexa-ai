@@ -1,5 +1,8 @@
 # Auditoría VEXA — 1 de octubre de 2026
 
+Nueva medición 10K completada y revisada: 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas y 0 pendientes; 100 bloques confirmados. Procesamiento 345.448 ms, 28,95 filas/s y commit p95 15.190 ms. La estabilidad inicial del host no se mantuvo y no se encontró infraestructura efímera VEXA abandonada. No se repitió 50K ni se inició 150K; sigue pendiente el gate completo de capacidad. [Resultado, recibos y límites](DIAGNOSTICO-CAPACIDAD-2026-10-01.md#nueva-prueba-de-10000-filas-y-límite-del-entorno). Los cortes anteriores se conservan abajo.
+
+
 Actualización de capacidad: perfil local de 1000 filas y comparación exploratoria ABBA terminados con contabilidad y limpieza comprobadas. Consultas preparadas descartadas: sin mejora consistente de tiempo total ni compatibilidad con el modo de pooler documentado. No modifican el producto ni cierran 50K/150K. [Mediciones y límites](DIAGNOSTICO-CAPACIDAD-2026-10-01.md).
 
 Actualización de recuperación: el gate local F07-06 pasó completo tras corregir el bootstrap Auth, el arranque offline y el adaptador de logs. Restauración 5/5 y retorno financiero comprobado; ocho recursos eliminados. [Recibos y límites](RECUPERACION-2026-10-01.md). No acredita restore gestionado ni todos los estados de entrega de avisos; el mapa siguiente conserva el corte original.

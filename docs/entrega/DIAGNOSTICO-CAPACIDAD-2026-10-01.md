@@ -82,3 +82,31 @@ Una observación posterior, sin pruebas VEXA activas, registró cuatro muestras 
 Antes de otra prueba grande se exige documentar una condición nueva del entorno. La observación de preparación usa tres muestras consecutivas con al menos 50% de CPU libre, 2 GiB de memoria física sin usar (`unused`) y cero swap-outs durante la muestra. Es un criterio operativo para iniciar un ensayo, no un SLO ni una aprobación de capacidad.
 
 **Estado conservado: 59/60 técnicas, 28 formales, producción pendiente.** La prueba 50K fallida y la ausencia de 150K actual siguen explícitas; estos diagnósticos no equivalen a dejar pendientes únicamente APIs o datos históricos.
+
+
+## Nueva prueba de 10.000 filas y límite del entorno
+
+Después de tres muestras consecutivas de preparación del host, se ejecutó una nueva prueba canónica de 10.000 filas sobre `25f2eb0`, con las 2.156 fuentes del manifiesto vigente comprobadas. No se adoptó la propuesta de lecturas combinadas ni se cambió el deadline de 900.000 ms por job.
+
+El proceso terminó con exit 0: **9.800 aceptadas + 100 rechazos esperados + 100 duplicadas + 0 pendientes = 10.000**. API y SQL coinciden; los 100 bloques quedaron confirmados, con offsets de 100 a 10.000 y `done=true` únicamente al final. El estado `partial` corresponde a los rechazos esperados del dataset sintético.
+
+| Medición local | Resultado |
+|---|---:|
+| Procesamiento | 345.448 ms |
+| Extremo a extremo | 346.163 ms |
+| Filas de entrada por segundo | 28,95 |
+| Commit p50 / p95 | 1.466 / 15.190 ms |
+| Memoria máxima del consumidor | 174.992 KiB |
+
+La revisión independiente confirmó contabilidad, offsets, fuentes, métricas y plazo. Se recogieron los procesos y se comprobó la ausencia de los cinco recursos temporales. Una inspección posterior no encontró procesos Node/Next con directorio de trabajo VEXA. El inventario Docker previo no mostraba contenedores efímeros VEXA abandonados y los cinco recursos de esta corrida quedaron eliminados. No se intervinieron servicios persistentes ni proyectos ajenos.
+
+**La condición inicial de estabilidad no duró.** Durante la infraestructura se tomaron 25 muestras: 13 registraron 0% de CPU libre y el mínimo de memoria física sin usar (`unused`) fue 77 MiB. Durante la ingesta fueron 23 muestras, 13 de ellas con 0% de CPU libre. Estas observaciones no prueban causalidad ni equivalen a medir continuamente el host.
+
+La revisión recomienda no repetir 50K a partir de este resultado: antes hace falta una condición de entorno suficientemente sostenida y verificable, o una corrección de producto con mejora demostrada. Se conserva la corrida 50K fallida, sin ampliar su plazo; 150K actual permanece sin ejecutar. Esta prueba de una escala no sustituye el gate completo de tres escalas, no aprueba un SLO y no mide capacidad de nube, proveedores ni inferencia.
+
+| Recibo privado | SHA256 |
+|---|---|
+| Nueva prueba 10K | `1bbf9cd1f28d080ffddf7d7ab196cd8c01ef8d1eb63d28e10b8086bbfff4d6b0` |
+| Revisión independiente 10K | `c644097c8d9deaa8b60719343e7c921a40bd93849ba16a1029e36e93bb423bb4` |
+
+Se mantienen **59/60 técnicas, 28 aceptaciones formales y producción pendiente**. No queda una carga ejecutándose por este ensayo; mantener la Mac despierta no significa que exista un bucle autónomo activo.

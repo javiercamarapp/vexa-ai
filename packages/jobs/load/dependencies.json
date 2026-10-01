@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "71fd32953d5157a9a64e075d42d6e7f8e644acf3",
-  "composition": "Source at 71fd329 plus reviewed local HTTP scheduler resilience and its documentation. Previous load measurements retain their original manifests; this composition requires a new measured series.",
+  "baselineSha": "e6a340bb850f9fbd97eb9b31e56f7bb02eb03f47",
+  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -705,7 +705,7 @@
     },
     {
       "path": "apps/web/src/components/team-panel.tsx",
-      "sha256": "2df5110eba8f99363d99f6722c6649576a5dcb9d16f957c480bafe0a95b05501"
+      "sha256": "eda877c521fbe97a3d56f1b1dabdfb9424ed0d9f1f7ec8e355ac98b026b6c0f0"
     },
     {
       "path": "apps/web/src/components/vexa-brand.tsx",

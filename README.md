@@ -23,7 +23,7 @@ El nuevo observador cambia el hash del benchmark: las mediciones anteriores cons
 
 ## Implementación disponible
 
-- Frontend de ocho vistas, acceso, roles, organizaciones, acciones, confirmaciones y preferencias.
+- Frontend de ocho vistas, acceso, roles, organizaciones, acciones, confirmaciones y preferencias. [Tipos de cuenta y dashboards](docs/entrega/TIPOS-DE-CUENTA-Y-DASHBOARDS.md).
 - Importación CSV, persistencia, jobs durables, checkpoints, reanudación y revocación.
 - Adaptadores HubSpot/Zendesk, histórico e incremental, webhooks y reconciliación de identidades.
 - Redacción de datos personales, extracción, problemas, métricas, recomendaciones y evaluación supervisada.

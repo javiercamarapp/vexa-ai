@@ -59,7 +59,7 @@
     "F08-05",
     "F08-06"
   ],
-  "construction_total": 57,
+  "construction_total": 58,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -532,7 +532,8 @@
   "technical_ready_formal_pending": [
     "F07-02",
     "F07-03",
-    "F07-04"
+    "F07-04",
+    "F06-12"
   ],
   "formal_pending": [
     {
@@ -564,6 +565,19 @@
       "owner": "Controlador de aceptación",
       "condition": "F07-03 aceptada legítimamente; ejecutar verify/accept limpio con el manifiesto vigente.",
       "evidence": "construccion/F07-04-CIERRE-TECNICO.md"
+    },
+    {
+      "task_id": "F06-12",
+      "technical_ready": true,
+      "programming_pending": [],
+      "verification_pending": [],
+      "formal_dependency": [
+        "F06-05",
+        "F06-06"
+      ],
+      "owner": "Controlador de aceptación y titulares de validaciones externas upstream",
+      "condition": "Dependencias aceptadas legítimamente; después verify/accept formal sin cambiar el grafo. Gate Git limpio23/23 y revisión428 aprobados para integración técnica.",
+      "evidence": "construccion/F06-12-CIERRE-TECNICO.md"
     }
   ],
   "deployed_verification": {
@@ -576,19 +590,20 @@
     "kind": "last_full_synthetic_smoke"
   },
   "latest_deployment": {
-    "source_sha": "cd6c17f10bf1656fb904baa812eb0b394cee42ef",
-    "deployment_id": "dpl_Dc14cKJb34xTawZJng8KvncxLaQu",
+    "source_sha": "3a2e34d6234eea6a6d6caff588891068df89d1ea",
+    "deployment_id": "dpl_GWo7g9uKbwpDiQwTqYHWTDtRtXS3",
     "url": "https://vexa-ai.vercel.app",
     "status": "READY_verified",
     "checks": [
       "served_revision",
       "uploaded_reviewed_source_sha256",
       "login_200",
-      "email_webhook_unconfigured_503_no_store"
+      "push_anonymous_401_no_store",
+      "service_worker_bytes"
     ],
     "full_smoke_rerun": false,
     "production_validated": false,
-    "evidence": "construccion/F06-10-CIERRE.md"
+    "evidence": "construccion/F06-11-CIERRE.md"
   },
   "latest_ui_audit": {
     "reservations": [
@@ -615,18 +630,17 @@
     "evidence": "docs/entrega/CORREOS-CONFIRMACION-2026-09-30.md"
   },
   "latest_technical_closure": {
-    "task_id": "F06-11",
-    "source_sha": "2165849ea478d6cc21668823f596633543b39820",
-    "status": "accepted_remote_migration_verified_publication_pending",
+    "task_id": "F06-12",
+    "source_sha": "b0bb17cc79724e84fc89ebf4fc94f131d787135a",
+    "status": "technical_review_approved_remote_migration_verified_publication_pending",
     "technical_count_increment": 1,
-    "formal_acceptance": true,
+    "formal_acceptance": false,
     "production_validated": false,
-    "evidence": "construccion/F06-11-CIERRE.md",
-    "remote_migration": "20261001043847_vexa_0031_push_subscriptions"
+    "evidence": "construccion/F06-12-CIERRE-TECNICO.md",
+    "remote_migration": "20261001053556_vexa_0032_notification_business_events"
   },
   "remaining_technical_tasks": [
     "F06-07",
-    "F06-12",
     "F07-01"
   ],
   "release_validation_pending": [

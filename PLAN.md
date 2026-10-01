@@ -1,5 +1,11 @@
 # VEXA — construcción completa por grafo y agentes
 
+## Eventos integrados — estado vigente
+
+**58/60 técnicas y28aceptadas formalmente; producción pendiente.** F06-12 integrada en `b0bb17c`: gate Git limpio23/23,16contratos internos,12lectores y8estados UI, revisión independiente428 aprobada. Migración0032 aplicada por MCP y permisos remotos comprobados. [Cierre y límites](construccion/F06-12-CIERRE-TECNICO.md).
+
+Quedan F06-07(interfaz global), F07-01(seguridad global) y la validación/auditoría final. La aceptación formal12 conserva sus dependencias05/06; las cuentas, proveedores y validaciones humanas siguen separados. Publicación/despliegue12 en preparación; última web verificada `3a2e34d`. Los apartados siguientes son históricos.
+
 ## Push aceptado — estado vigente
 
 **57/60 técnicas y 28 aceptadas formalmente; producción pendiente.** F06-11 integrada en `2165849`: verificación51/51 y aceptación limpia51/51, ambas con3/3pruebas HTTP hijas. Migración0031 aplicada por MCP y permisos remotos comprobados. [Cierre y límites](construccion/F06-11-CIERRE.md).

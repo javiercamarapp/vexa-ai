@@ -2,6 +2,8 @@
 
 ## Estado actual — 1 de octubre de 2026
 
+El ensayo remoto de continuidad de importaciones completó 503 filas sintéticas: pausa de 124 segundos desde el checkpoint 100, reanudación hasta 501+2, 16 respuestas HTTP 200 y limpieza comprobada. El evaluador se corrigió sin alterar los 69 recibos ni repetir el ensayo; 17/17 pruebas pasan en Node 22/26. No acredita operación permanente ni cambia 59/60 técnicas y 28 aceptadas. [Evidencia y límites](docs/entrega/CONTINUIDAD-IMPORTACIONES-2026-10-01.md).
+
 El preflight de carga vuelve a aceptar el inventario publicado: faltaba registrar una prueba nueva del histórico y el runner se detenía antes de arrancar. Se añadió `--preflight` para comprobar fuentes sin levantar infraestructura; 10/10 pruebas pasan en Node 22 y 26 y se verifican 2.158 archivos. Esto no acredita capacidad 50K/150K. [Comandos y alcance](packages/jobs/load/README.md).
 
 El ensayo gestionado de imports pasó: dos invocaciones cron→pg_net→Vercel con HTTP 200, dos filas sintéticas aceptadas y cero pendientes; retirada de programación y delegación comprobada por MCP. Acredita ese recorrido acotado, no operación permanente. [Evidencia y límites](docs/entrega/OPERACION-GESTIONADA-2026-10-01.md).

@@ -2,7 +2,7 @@
 
 **59/60 tareas técnicas, 28 aceptadas formalmente; producción no aprobada.** Esta es la conciliación actual de los veinte rubros, con sus condiciones de cierre pendientes. No es un certificado final ni declara que sólo falten APIs.
 
-Producto desplegado `dbb834c`: corrección de Equipo por acceso confirmado, READY, SHA servido y ocho fuentes modificadas verificadas. Su recorrido focal local pasó 16/16 en Chromium/WebKit; no se repitió el smoke remoto integral, cuya evidencia 8/8 y ocho vistas corresponde a `f893851`. Scheduler local corregido y publicado en `e6a340b`, con 12/12 controles Node 22/26 y revisión independiente. El inventario actual contiene 2157 fuentes y requiere una nueva serie de capacidad.
+Producto desplegado `1eef4d6`: la exportación histórica conserva la secuencia del análisis original, con 4/4 pruebas focales en Node 22/26 y revisión independiente. Se conserva la revisión previa de Equipo: 16/16 en Chromium/WebKit. El último smoke remoto integral, 8/8 y ocho vistas, corresponde a `f893851`. Scheduler local publicado en `e6a340b`, con 12/12 controles Node 22/26 y revisión independiente. El preflight de carga publicado en `8f2860b` corrige el archivo omitido del inventario: 2.158 fuentes verificadas y 10/10 pruebas en Node 22/26. No sustituye la nueva serie de capacidad pendiente.
 
 La recuperación local pasó restauración 5/5 y retorno a versión anterior/regreso a la actual, con ocho recursos eliminados. El ensayo gestionado y todos los estados de entrega de avisos conservan sus límites. [Recibos de recuperación](RECUPERACION-2026-10-01.md) · [Recibos del smoke remoto](SMOKE-REMOTO-2026-10-01.md).
 
@@ -11,6 +11,8 @@ La última medición 10K revisada terminó con 9.800 aceptadas, 100 rechazos esp
 La revisión independiente 436 cotejó 378 referencias previas por SHA256 sin discrepancias; son referencias con solapamientos, no 378 pruebas nuevas ni una nueva revisión global de seguridad. Cada prueba conserva su fuente y alcance.
 
 ## Correcciones comprobadas
+
+- Ensayo de continuidad remoto de diez minutos: 503 filas sintéticas, pausa de 124 segundos, reanudación desde checkpoint, 16 HTTP 200 y limpieza comprobada. Se conservan los 69 recibos y el primer fallo del evaluador; corrección revisada con 17/17 pruebas Node 22/26, sin repetir el ensayo. [Evidencia y límites](CONTINUIDAD-IMPORTACIONES-2026-10-01.md).
 
 - El ensayo gestionado cron→pg_net→worker de Vercel completó un import SYN de dos filas: dos HTTP 200, checkpoint 2 y cero pendientes. Limpieza y conservación de trabajos ajenos comprobadas por MCP. Programación retirada al terminar; no acredita operación continua ni recuperación gestionada. [Recibos y límites](OPERACION-GESTIONADA-2026-10-01.md).
 
@@ -42,10 +44,10 @@ La revisión independiente 436 cotejó 378 referencias previas por SHA256 sin di
 |11|Auth/permisos|Sesión/roles/revocación y composición local previas conservadas.|Revisión global sin dictamen; Google real pendiente. Estado global: no verificado.|
 |12|Seguridad/cadena de suministro|Controles focales previos conservan su alcance.|F07-01 abierto: revisión435 rechazada automáticamente por posible riesgo de ciberseguridad. Sin vulnerabilidad demostrada ni aprobación.|
 |13|Privacidad/retención|Redacción, purga derivada, tombstones y custodia técnica.|Consentimiento, política/retención/borrado reales y restauración con autoridad vigente; no dictamen legal.|
-|14|Infraestructura|Vercel dbb834c READY/SHA/ocho fuentes comprobados. Último smoke SYN integral8/8 y ocho vistas en f893851, con limpieza MCP.|Disponibilidad, backups y operación gestionada reales; repetir smoke si cambia el producto que afecta ese recorrido.|
+|14|Infraestructura|Vercel 1eef4d6 READY/SHA comprobados; exportación histórica corregida. Último smoke SYN integral8/8 y ocho vistas en f893851, con limpieza MCP.|Disponibilidad, backups y operación gestionada reales; repetir smoke si cambia el producto que afecta ese recorrido.|
 |15|CI/CD/Git|Publisher autorizado, commits con autoría, historial escaneado, SHA remoto verificado.|Actions desactivadas por política de costo; no declararlas CI hospedado verde. Publicación final con guardas intactas.|
 |16|Errores/tracking/logs|Errores saneados, trace/job y registros de fallos conservados.|Destino/retención/acceso/alertas productivas; cancelaciones no desaparecen porque otras pruebas pasen.|
-|17|Monitoreo/operación|Heartbeats/daemons y ensayo de alarma previo; scheduler local recupera fallos y atiende señales, 12/12 Node22/26.|Programación continua, identidad delegada, responsables/alertas y ensayo operativo real.|
+|17|Monitoreo/operación|Heartbeats/daemons y ensayo de alarma previo; scheduler local recupera fallos y atiende señales, 12/12 Node22/26.|Ensayo acotado de importaciones completado; quedan programación permanente, responsables y alertas verificadas.|
 |18|Pruebas/arneses|Inventario corregido, tres entradas formales integradas,31+137+24pruebas verdes.|F07-01/matriz, escalas de carga y validaciones finales; disponibilidad de59gates no equivale a59aceptaciones.|
 |19|Integraciones/webhooks/tools|HubSpot/Zendesk, webhooks, histórico/incremental, outbox/correo/push implementados.|Cuentas/scopes reales,20referencias por CRM, reconciliación histórica, dominios/proveedores/dispositivos y entrega real.|
 |20|Agentes/prompts/supervisión|Extracción/redacción, evaluación, propuestas/firmas, selección humana y rollback.|Gold/holdout, proveedores/modelos/tarifas/presupuesto autorizados y medición real. Cargar históricos no garantiza mejora ni autoriza autopromoción.|

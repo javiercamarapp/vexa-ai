@@ -4,6 +4,8 @@ Software para importar conversaciones e información histórica, conservar su pr
 
 ## Estado actual — 1 de octubre de 2026
 
+La exportación del histórico para evaluación conserva ahora la secuencia del análisis original: antes podía reordenar los mensajes por UUID. La regresión pasa 4/4 en Node 22 y 26 con datos sintéticos, lector y CLI reales; no valida calidad del modelo ni conexiones externas. [Contrato y prueba reproducible](packages/intelligence/learning/README.md). Se mantienen 59/60 técnicas y 28 aceptadas.
+
 El ensayo gestionado de imports pasó: dos invocaciones cron→pg_net→Vercel con HTTP 200, dos filas sintéticas aceptadas y cero pendientes; retirada de programación y delegación comprobada por MCP. Acredita ese recorrido acotado, no operación permanente. [Evidencia y límites](docs/entrega/OPERACION-GESTIONADA-2026-10-01.md).
 
 Las extensiones `pg_cron` y `pg_net` ya están instaladas en Supabase VEXA mediante una migración explícita revisada. Siete comprobaciones posteriores de Auth/Data API pasaron; las dos observaciones conservaron cero tareas programadas, ejecuciones y solicitudes HTTP. La instalación por sí sola no acredita consumidores activos; el ensayo acotado documentado arriba completa la primera comprobación gestionada. La operación permanente sigue pendiente.
@@ -14,7 +16,7 @@ La plantilla faltante de notificaciones quedó publicada en `e80b122`, junto con
 
 | Indicador | Estado comprobado |
 |---|---|
-| Aplicación desplegada | [vexa-ai.vercel.app](https://vexa-ai.vercel.app), producto `dbb834c` |
+| Aplicación desplegada | [vexa-ai.vercel.app](https://vexa-ai.vercel.app) · [SHA servido](https://vexa-ai.vercel.app/api/health/version) |
 | Último recorrido remoto sintético integral | Versión `f893851`: 8/8 fases y ocho vistas, Auth/PostgreSQL/Storage reales, limpieza verificada por MCP |
 | Interfaz | F06-07: 68/68 revisiones y ocho acciones; Equipo añade 16 escenarios locales por rol y revisión independiente. Cada evidencia conserva su alcance |
 | Recuperación local | Restauración 5/5, retorno a versión anterior y regreso a la actual comprobados |
@@ -23,7 +25,7 @@ La plantilla faltante de notificaciones quedó publicada en `e80b122`, junto con
 | Instrumentación | `66a25c1` registra tiempos y éxito/error por bloque; pruebas Node 22/26 y revisión independiente aprobadas |
 | Cierre global | F07-01 abierto; matriz integral con 114 PASS y dos cancelaciones, sin aprobación global |
 
-El nuevo observador cambia el hash del benchmark: las mediciones anteriores conservan su fuente original y no habilitan escalar con ese observador. El release `dbb834c` incluye la corrección de Equipo y las fuentes públicas actualizadas. READY, SHA servido y ocho fuentes modificadas comprobados; no se repitió el smoke remoto integral. La programación permanente sigue pendiente.
+El nuevo observador cambia el hash del benchmark: las mediciones anteriores conservan su fuente original y no habilitan escalar con ese observador. La verificación remota anterior, del release `dbb834c`, incluye la corrección de Equipo y las fuentes públicas actualizadas. READY, SHA servido y ocho fuentes modificadas comprobados; no se repitió el smoke remoto integral. La programación permanente sigue pendiente.
 
 [Estado estructurado](construccion/ESTADO-CONSTRUCCION.json) · [Progreso y evidencias](PROGRESO.md) · [Auditoría de 20 rubros](docs/entrega/AUDITORIA-20-RUBROS-2026-10-01.md) · [Backlog de cierre](docs/entrega/BACKLOG.md)
 

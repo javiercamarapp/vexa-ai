@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
   "baselineSha": "e6a340bb850f9fbd97eb9b31e56f7bb02eb03f47",
-  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed.",
+  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -1817,7 +1817,7 @@
     },
     {
       "path": "packages/intelligence/learning/README.md",
-      "sha256": "87f968b0851f37fafe8c796aeba7d3c83e594c96f39e90390d29e216cde8db36"
+      "sha256": "e378a7cb6703c7c540cd7de5288cb1ff56a26ec8bf0dc2750a934d7d3f5720e7"
     },
     {
       "path": "packages/intelligence/learning/index.d.mts",
@@ -1825,7 +1825,7 @@
     },
     {
       "path": "packages/intelligence/learning/index.mjs",
-      "sha256": "3567dfc6200ad22b444d8a78db38337d43e937ebcf5be7b653afbdc570079e3b"
+      "sha256": "8d410c8007e6a4b7691026590e50d9bbcd2d747e2fa443cc8288cce44e048da2"
     },
     {
       "path": "packages/intelligence/queue.mjs",

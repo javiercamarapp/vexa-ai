@@ -1,5 +1,7 @@
 # Auditoría VEXA — 1 de octubre de 2026
 
+Actualización de capacidad: perfil local de 1000 filas y comparación exploratoria ABBA terminados con contabilidad y limpieza comprobadas. Consultas preparadas descartadas: sin mejora consistente de tiempo total ni compatibilidad con el modo de pooler documentado. No modifican el producto ni cierran 50K/150K. [Mediciones y límites](DIAGNOSTICO-CAPACIDAD-2026-10-01.md).
+
 Actualización de recuperación: el gate local F07-06 pasó completo tras corregir el bootstrap Auth, el arranque offline y el adaptador de logs. Restauración 5/5 y retorno financiero comprobado; ocho recursos eliminados. [Recibos y límites](RECUPERACION-2026-10-01.md). No acredita restore gestionado ni todos los estados de entrega de avisos; el mapa siguiente conserva el corte original.
 
 Actualización posterior al corte: el release desplegado `f893851` ya pasó el smoke remotoSYN8/8 y ocho vistas, con limpiezaMCP. Véase [evidencia actual](SMOKE-REMOTO-2026-10-01.md). El resto de pendientes sigue vigente; los párrafos del corte inicial siguientes conservan su alcance y fecha.

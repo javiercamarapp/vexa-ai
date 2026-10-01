@@ -1,6 +1,6 @@
 # Diagnóstico de persistencia — 1 de octubre de 2026
 
-**Capacidad de 50K/150K pendiente.** Se midieron dos experimentos locales después del fallo de 50K. No son nuevos gates de carga, no modifican el producto y no acreditan producción. El estado continúa en 59/60 tareas de construcción técnica y 28 aceptadas formalmente.
+**Capacidad de 50K/150K pendiente.** Los dos experimentos iniciales se midieron localmente después del fallo de 50K. No son nuevos gates de carga, no modifican el producto y no acreditan producción. El estado continúa en 59/60 tareas de construcción técnica y 28 aceptadas formalmente.
 
 ## Qué se comprobó
 
@@ -41,3 +41,44 @@ Ambos procesos terminaron con exit 0 y se volvió a comprobar la ausencia de sus
 | Comparación ABBA | `f4096fb56170879f3cbcd20219def8422c61e3bbd9c8190c28c8c2110ecf4baa` |
 
 Los recibos originales permanecen en custodia privada. El fallo de 50K conserva su checkpoint real de 27200 filas; estos experimentos no lo convierten en PASS.
+
+
+## Lecturas combinadas: propuesta conservada como experimental
+
+Se ensayó unir únicamente las lecturas de retención y revisión de origen, después del bloqueo de concurrencia vigente. Se conservaron escrituras, cuarentena, contadores y plazos. La propuesta pasó 23/23 pruebas de persistencia real, lint y compilación; las 24 regresiones base también pasaron.
+
+Cuatro ventanas de 1.000 filas completaron, cada una, 980 aceptadas, 10 rechazadas, 10 duplicadas y cero pendientes. Se midieron **22.240 → 20.270 consultas por ventana (8,86% menos)** y 2.194 → 1.997 por lote de 100 filas. El ensayo de interrupción conservó 100 filas y recuperó las 250 restantes; el ensayo de borrado y reimportación rechazó el dato eliminado sin resucitar contenido. Cinco recursos y seis procesos propios comprobados ausentes.
+
+| Orden | Variante | Procesamiento de 1.000 filas |
+|---|---|---:|
+| 1 | Original | 15,132 s |
+| 2 | Propuesta | 15,233 s |
+| 3 | Propuesta | 15,473 s |
+| 4 | Original | 24,291 s |
+
+La media de la propuesta fue 22,1% menor, pero la primera ventana original fue más rápida que ambas propuestas. El host compartido y el crecimiento de las tablas impiden atribuir una mejora estable. **La revisión independiente recomienda conservarla experimental; no está integrada ni publicada como cambio de producto.** El inventario preparado coincide con 2.156 fuentes y cambia sólo el hash de persistencia; tampoco se adoptó.
+
+## Transporte local: medición válida, causa inconclusa
+
+El laboratorio conecta PostgreSQL mediante socket UNIX, un servidor Node y un proceso `docker exec nc` por conexión física. Se comparó ese canal con TCP a un puerto publicado exclusivamente en loopback del mismo contenedor sintético, manteniendo el mismo rol limitado, consultas parametrizadas sin nombre y conexiones calientes. La apertura se midió aparte. No se cambió el despliegue, TLS ni el pooler.
+
+Las ocho ventanas completaron 2.000 respuestas correctas cada una: **16.000 SELECT**, con los mismos contadores de llamadas y filas en PostgreSQL. Limpieza de contenedor, red, dos procesos y directorio temporal comprobada.
+
+| Ventana | Canal | Tiempo de 2.000 consultas |
+|---|---|---:|
+| 1 | Socket/pipes | 10.701 ms |
+| 2 | TCP local | 7.133 ms |
+| 3 | TCP local | 6.538 ms |
+| 4 | Socket/pipes | 780 ms |
+| 5 | TCP local | 356 ms |
+| 6 | Socket/pipes | 514 ms |
+| 7 | Socket/pipes | 501 ms |
+| 8 | TCP local | 353 ms |
+
+TCP fue 15,1% más lento en la media completa y 30,1% más rápido en el último bloque. No corresponde seleccionar sólo las ventanas favorables: **no se demuestra una ventaja estable ni la causa del fallo de 50K**. La ejecución del servidor también varió entre ventanas. No se sustituyó el transporte del gate ni se amplió su plazo.
+
+Una observación posterior, sin pruebas VEXA activas, registró cuatro muestras con 0% de CPU libre, memoria física sin usar (`unused`) entre 90 y 1.324 MB y actividad de swap-in. El inventario no encontró contenedores efímeros VEXA abandonados; permanecía la instalación local persistente. No se detuvieron servicios compartidos ni proyectos ajenos. La presión observada no prueba por sí sola la causa de la corrida fallida anterior.
+
+Antes de otra prueba grande se exige documentar una condición nueva del entorno. La observación de preparación usa tres muestras consecutivas con al menos 50% de CPU libre, 2 GiB de memoria física sin usar (`unused`) y cero swap-outs durante la muestra. Es un criterio operativo para iniciar un ensayo, no un SLO ni una aprobación de capacidad.
+
+**Estado conservado: 59/60 técnicas, 28 formales, producción pendiente.** La prueba 50K fallida y la ausencia de 150K actual siguen explícitas; estos diagnósticos no equivalen a dejar pendientes únicamente APIs o datos históricos.

@@ -55,3 +55,10 @@ La escala50K terminó con exit1 tras905569ms:checkpoint27200,26656aceptadas,272r
 Para conexión y operación real hacen falta cuentas autorizadasGoogle/CRM, proveedor y dominio de correo/SMTP, VAPID/dispositivo con consentimiento, histórico y finanzas con procedencia, presupuesto/modelosIA, programación/identidad de consumidores, responsables y decisiones de recuperación/retención. Piloto y entrega necesitan participantes, gold, sponsor, ensayo humano y recepción legítima. [Registro de pendientes](BACKLOG.md). El trabajo técnico y de verificación restante se mantiene separado de esa lista.
 
 No hubo inferencia pagada, envío a clientes ni habilitación de Actions en estas correcciones. Ningún hallazgo hipotético se presenta como vulnerabilidad confirmada. La revisión automática435 no produjo dictamen; se conserva su bloqueo y se continúa únicamente con trabajo independiente autorizado.
+
+
+### Capacidad: diagnóstico ampliado, sin cambiar la aceptación
+
+La propuesta de consolidar dos lecturas pasó 23/23 pruebas de persistencia, lint/build, cuatro ventanas de 1.000 filas y los oráculos de interrupción/reanudación y no resurrección tras borrado. Reduce 8,86% las consultas, pero no acredita mejora estable de tiempo: permanece experimental. La sonda de transporte completó 16.000 SELECT y confirma variabilidad; no demuestra que el túnel sea la causa. Limpiezas reinspeccionadas. [Mediciones, límites y condición previa a otra carga](DIAGNOSTICO-CAPACIDAD-2026-10-01.md).
+
+No hay nuevo cambio de producto, ampliación de deadline ni PASS de 50K/150K. Se conservan 59/60 técnicas, 28 formales y producción pendiente, incluida la revisión global rechazada automáticamente y las validaciones externas antes identificadas.

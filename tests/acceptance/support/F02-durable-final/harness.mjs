@@ -44,7 +44,7 @@ export async function setup(candidate,evidence){
   }fs.writeFileSync(path.join(evidence,'source-hashes.json'),JSON.stringify(inputs,null,2));
   h.verifySources=()=>{for(const [f,digest]of Object.entries(inputs)){assert.equal(hash(fs.readFileSync(path.join(candidate,f))),digest.sha256,'SOURCE_CHANGED:'+f);assert.equal(fs.statSync(path.join(candidate,f)).mode&0o777,digest.mode,'SOURCE_MODE_CHANGED:'+f);}};
   for(const args of [['ci','--offline','--ignore-scripts','--no-audit','--no-fund'],['run','build','--workspace','@vexa/web']]){
-   const r=spawnSync('npm',args,{cwd:tmp,env,encoding:'utf8',timeout:150000,maxBuffer:8*1024*1024});fs.writeFileSync(path.join(evidence,args[0]+'.log'),r.stdout+r.stderr);assert.equal(r.status,0,'BUILD_'+args[0]);
+   const r=spawnSync('npm',args,{cwd:tmp,env,encoding:'utf8',timeout:150000,maxBuffer:8*1024*1024});fs.writeFileSync(path.join(evidence,args.join('-').replaceAll('/','_')+'.log'),r.stdout+r.stderr);assert.equal(r.status,0,'BUILD_'+args[0]);
   }
   const built=path.join(tmp,'built');const build=spawnSync(process.execPath,[path.join(tmp,'packages/jobs/durable/build.mjs'),built],{cwd:tmp,env,encoding:'utf8'});
   fs.writeFileSync(path.join(evidence,'cli-build.log'),build.stdout+build.stderr);assert.equal(build.status,0,'REAL_CLI_BUILD');

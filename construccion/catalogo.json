@@ -1926,9 +1926,16 @@
     "auto_accept": false,
     "requires_approval": false,
     "deliverables": [
-      "supabase/migrations/0016_notification_outbox.sql",
-      "packages/notifications/src/repository.ts",
-      "packages/notifications/src/worker.ts"
+      "supabase/migrations/0029_notification_outbox.sql",
+      "packages/notifications/outbox.mjs",
+      "packages/notifications/worker.mjs",
+      "packages/notifications/delivery.mjs",
+      "packages/notifications/reconciliation.mjs",
+      "packages/notifications/daemon.mjs",
+      "packages/notifications/OUTBOX.md",
+      "packages/jobs/durable/runtime.mjs",
+      "packages/jobs/durable/runtime.d.mts",
+      "packages/jobs/durable/build.mjs"
     ],
     "steps": [
       "Conectar puerto revisado a SQL/outbox y consumidor existente, no crear otro sistema de jobs.",

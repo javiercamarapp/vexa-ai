@@ -265,8 +265,9 @@
     },
     {
       "id": "F07-05",
-      "state": "missing",
-      "product_pass": false
+      "state": "authored",
+      "product_pass": false,
+      "review": "Operator-pinned human workflow control; independent review pending; external evidence and formal acceptance pending"
     },
     {
       "id": "F07-06",
@@ -285,8 +286,9 @@
     },
     {
       "id": "F08-03",
-      "state": "missing",
-      "product_pass": false
+      "state": "authored",
+      "product_pass": false,
+      "review": "Operator-pinned human workflow control; independent review pending; external evidence and formal acceptance pending"
     },
     {
       "id": "F08-04",
@@ -295,8 +297,9 @@
     },
     {
       "id": "F08-05",
-      "state": "missing",
-      "product_pass": false
+      "state": "authored",
+      "product_pass": false,
+      "review": "Operator-pinned human workflow control; independent review pending; external evidence and formal acceptance pending"
     },
     {
       "id": "F08-06",

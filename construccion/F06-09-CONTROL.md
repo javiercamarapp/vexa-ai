@@ -25,3 +25,9 @@ Bajo carga del equipo, hubo fallos de disponibilidad de Storage antes de ejecuta
 ## Calibración de recuperación tras interrupción
 
 El ensayo de mutación conserva la duplicación HTTP real como control negativo y exige ausencia de reenvío después de restaurar exactamente SQL. Su plazo de lease era1s: una calibración externa con1200ms de latencia tras el HTTP provoca `notification_renew` SQLSTATE40001 y conflicto409; con5s el mismo escenario pasa. Sólo los dos consumidores de ese ensayo usan ahora5s, conservando expiración real, `response.ok`, estado aceptado del mutante, incertidumbre restaurada y conteos HTTP. No se cambia el plazo predeterminado del producto ni el límite global900s. La corrida natural focal y la calibración causal pasan5/5 cada una; la causa exacta del fallo histórico, cuyo SQLSTATE se sanitizó, permanece inferida.
+
+## Separar caducidad de límite de intentos
+
+Un ensayo funcional exigía un envío pero fijaba vida total2s, menor que el arranque observado del consumidor. Una comparación causal con espera2100ms obtiene correctamente `deadline_exhausted`, cero intentos y cero HTTP para2s; para60s obtiene `delivery_exhausted`, un intento y un HTTP sin reenvío. Ese ensayo conserva máximo un intento y usa60s de vida. Los consumidores del bloque funcional usan lease5s; las pruebas de expiración siguen esperando el vencimiento real y las de timeout HTTP mantienen su configuración. Se exige además el código de cierre `delivery_exhausted`.
+
+La revisión415 verificó los deltas y los controles de diagnóstico en Node22/26. El harness conserva ahora salida, terminación y causas de errores del servidor Next en evidencia privada sintética; vuelve a lanzar el error original, sin reintentos. Un `fetch failed` previo no se reprodujo y su causa exacta permanece pendiente: esta observabilidad no se presenta como reparación del producto. Los registros privados no se publican.

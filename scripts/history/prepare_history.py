@@ -20,17 +20,23 @@ def missing(value): return value.strip().lower() in MISSING
 
 def valid_id(value): return not missing(value) and len(value)<=4096 and not re.search(r'[\x00-\x1f]',value)
 
-def rows(path):
-    with Path(path).open(encoding='utf-8-sig',newline='') as f:
-        reader=csv.DictReader(f,strict=True)
-        if not reader.fieldnames or len(set(reader.fieldnames))!=len(reader.fieldnames) or not REQUIRED<=set(reader.fieldnames): raise ValueError('SOURCE_SCHEMA')
-        for number,row in enumerate(reader,2):
-            if None in row or None in row.values(): raise ValueError('SOURCE_COLUMNS')
-            yield number,row
+def rows(path,profile=None):
+    previous_limit=csv.field_size_limit()
+    if profile:csv.field_size_limit(20*1024*1024)
+    try:
+        with Path(path).open(encoding='utf-8-sig',newline='') as f:
+            reader=csv.DictReader(f,strict=True)
+            if not reader.fieldnames or len(set(reader.fieldnames))!=len(reader.fieldnames) or not REQUIRED<=set(reader.fieldnames): raise ValueError('SOURCE_SCHEMA')
+            for number,row in enumerate(reader,2):
+                if None in row or None in row.values(): raise ValueError('SOURCE_COLUMNS')
+                yield number,row
+    finally:
+        csv.field_size_limit(previous_limit)
 
 def identity(row): return row['source'],row['message_id']
 
-def classify(row, repeated=False):
+def classify(row, repeated=False, profile=None):
+    if profile not in {None,'history-message-v1'}:raise ValueError('INVALID_INGESTION_PROFILE')
     reasons=[]; source=row['source']; stamp=row['message_created_at']; text=row['body_text']; role=None
     ticket=row.get(source+'_ticket_id','') if source in {'hubspot','gorgias'} else ''
     if source not in {'hubspot','gorgias'}: reasons.append('SOURCE_UNKNOWN')
@@ -38,7 +44,9 @@ def classify(row, repeated=False):
     if not valid_id(ticket): reasons.append('TICKET_ID_MISSING_OR_INVALID')
     if repeated: reasons.append('REPEATED_SOURCE_MESSAGE_ID')
     if not text.strip(): reasons.append('EMPTY_BODY')
-    if len(unicodedata.normalize('NFC',text))>2000: reasons.append('BODY_OVER_2000')
+    if profile:
+        if max(len(text.encode('utf-16-le')),len(unicodedata.normalize('NFC',text).encode('utf-16-le')))>200000:reasons.append('BODY_ANALYSIS_LIMIT')
+    elif len(unicodedata.normalize('NFC',text))>2000: reasons.append('BODY_OVER_2000')
     if '\x00' in text or '\r' in text: reasons.append('BODY_CONTROL_REQUIRES_REVIEW')
     if row['is_automation']!='false': reasons.append('AUTOMATION_REQUIRES_METADATA_CONTRACT')
     direction=row['direction']; author=row['author_role']
@@ -47,12 +55,15 @@ def classify(row, repeated=False):
     else: reasons.append('DIRECTION_AUTHOR_REQUIRES_REVIEW')
     match=re.fullmatch(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.(\d+))?(?:Z|[+-]\d{2}:\d{2})',stamp)
     if not match: reasons.append('TIMESTAMP_INVALID')
-    elif len(match[1] or '')>3: reasons.append('TIMESTAMP_PRECISION_CONTRACT')
+    elif len(match[1] or '')>(6 if profile else 3): reasons.append('TIMESTAMP_PRECISION_CONTRACT')
     else:
         try:
             dt=datetime.datetime.fromisoformat(stamp.replace('Z','+00:00'))
             if dt.year<1000: raise ValueError()
-        except ValueError: reasons.append('TIMESTAMP_INVALID')
+            offset=re.search(r'[+-](\d{2}):(\d{2})$',stamp)
+            if profile and offset and (int(offset[1])>23 or int(offset[2])>59):raise ValueError()
+            if profile and dt.astimezone(datetime.timezone.utc).year<1000:raise ValueError()
+        except (ValueError,OverflowError): reasons.append('TIMESTAMP_INVALID')
     return reasons,role,ticket
 
 def csv_bytes(values):
@@ -77,7 +88,8 @@ class Batches:
         for source in list(self.active): self.close(source)
         return self.finished
 
-def prepare(manifest_path,output,max_bytes=20*1024*1024,max_rows=50000):
+def prepare(manifest_path,output,max_bytes=20*1024*1024,max_rows=50000,profile=None):
+    if profile not in {None,'history-message-v1'}:raise ValueError('INVALID_INGESTION_PROFILE')
     if not 1<=max_rows<=50000 or not 1<=max_bytes<=20*1024*1024: raise ValueError('LIMIT_RANGE')
     manifest_bytes=Path(manifest_path).read_bytes(); manifest=json.loads(manifest_bytes); manifest_hash=hashlib.sha256(manifest_bytes).hexdigest(); sources=[s for s in manifest['sources'] if s['category']=='conversations']
     if not sources: raise ValueError('NO_HISTORY_SOURCES')
@@ -91,7 +103,7 @@ def prepare(manifest_path,output,max_bytes=20*1024*1024,max_rows=50000):
         copy=dest/'originals'/f'{i:02}.csv';shutil.copyfile(path,copy)
         if digest(copy)!=source['sha256'] or digest(path)!=source['sha256']: raise ValueError('SOURCE_CHANGED')
         copy.chmod(0o400); n=0
-        for _,row in rows(copy):
+        for _,row in rows(copy,profile):
             n+=1
             if not missing(row['message_id']): counts[identity(row)]+=1
         if n!=source['rows']: raise ValueError('SOURCE_ROW_COUNT_MISMATCH')
@@ -99,9 +111,9 @@ def prepare(manifest_path,output,max_bytes=20*1024*1024,max_rows=50000):
     batches=Batches(dest/'candidates',max_bytes,max_rows); summary={'total':0,'candidate':0,'review':0,'by_source':{},'reasons':{}}; reasons_count=collections.Counter()
     with (dest/'rows.jsonl').open('x',encoding='utf-8') as ledger:
         for file in files:
-            for number,row in rows(dest/file['path']):
+            for number,row in rows(dest/file['path'],profile):
                 repeated=not missing(row['message_id']) and counts[identity(row)]>1
-                reasons,role,ticket=classify(row,repeated); rh=row_hash(row); source=row['source']; route='review' if reasons else 'candidate'
+                reasons,role,ticket=classify(row,repeated,profile); rh=row_hash(row); source=row['source']; route='review' if reasons else 'candidate'
                 item={'original':file['path'],'file_sha256':file['sha256'],'record_number':number,'row_sha256':rh,'body_sha256':hashlib.sha256(row['body_text'].encode()).hexdigest(),'source':source,'route':route,'reasons':reasons}
                 if not reasons:
                     # This digest is a local source-row revision, never a provider revision or ID.
@@ -113,12 +125,16 @@ def prepare(manifest_path,output,max_bytes=20*1024*1024,max_rows=50000):
                 for reason in reasons:group['reasons'][reason]=group['reasons'].get(reason,0)+1
     summary['reasons']=dict(sorted(reasons_count.items())); artifacts=batches.finish()
     result={'version':VERSION,'status':'prepared-local-not-imported','input_manifest_sha256':manifest_hash,'originals':files,'batches':artifacts,'rows_sha256':digest(dest/'rows.jsonl'),'summary':summary,'projection':{'identity':'original message_id; separate authorized CSV connection/account per origin source required','source_revision':'sha256 of original row, not provider revision','timestamps':'unchanged; >3 fractional digits review','text':'original CSV field; canonical product NFC; full original bytes retained','finance':'no amount or currency columns; no economic events','scope':'no tenant/connection/account assignment; synthetic context only for validation'}}
+    if profile:
+        result['ingestion_profile']=profile
+        result['projection']['timestamps']='original lexeme retained; opted-in runtime derives floor-ms with exact microsecond metadata'
+        result['projection']['text']='intact; raw and NFC <=100000 UTF16; larger remains review BODY_ANALYSIS_LIMIT; no analysis-readiness claim'
     (dest/'manifest.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n'); return result
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--manifest',required=True);parser.add_argument('--output',required=True);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--manifest',required=True);parser.add_argument('--output',required=True);parser.add_argument('--profile',choices=['history-message-v1']);args=parser.parse_args()
     try:
-        result=prepare(args.manifest,args.output);print(json.dumps({'status':result['status'],'summary':result['summary'],'batches':len(result['batches'])}))
+        result=prepare(args.manifest,args.output,profile=args.profile);print(json.dumps({'status':result['status'],'summary':result['summary'],'batches':len(result['batches'])}))
     except Exception as exc:
         # No source contents or paths in stdout/stderr. Incomplete output is never a ready manifest.
         print(json.dumps({'status':'failed','code':str(exc) if isinstance(exc,ValueError) and re.fullmatch('[A-Z_]+',str(exc)) else type(exc).__name__}));raise SystemExit(1)

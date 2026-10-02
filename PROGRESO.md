@@ -2,6 +2,8 @@
 
 ## Estado actual — 2 de octubre de 2026 (UTC)
 
+El perfil optativo `history-message-v1` conserva textos largos y la precisión original de fechas históricas, sin cambiar los límites por defecto ni fabricar identidades. Revisión independiente474 aprobada; integración:58 comprobaciones Node22,15 Python y declaraciones TypeScript verificadas. El corpus completo pasó en Node26; la corrida completa Node22 quedó inconclusa por el límite del ejecutor y no se cuenta como aprobada. [Contrato y límites](packages/ingestion/HISTORY-PROFILE.md). Persistencia real del perfil, selección UI y operación de cliente siguen pendientes; no se importaron datos ni se ejecutó IA.
+
 La herramienta de preparación histórica ya conserva originales byte a byte y comprueba su correspondencia completa con el registro de procedencia y los lotes candidatos. La revisión independiente cerró tres fallos: hash de entrada incorrecto ante cambio de archivo, valores libres de fuente en consola y proyecciones no cotejadas con el original. Pruebas: 12/12 Python y 32/32 Node22/26. [Uso y límites](scripts/history/README.md). No realiza importaciones ni llamadas a modelos.
 
 Las correcciones de scopes y eventos administrativos de HubSpot están desplegadas en `5d86243`: versión servida, diez fuentes modificadas y comprobaciones HTTP verificadas. La recuperación completó un archivo lógico de la base de origen y retirada de su credencial temporal; no acredita aún restauración ni copia de bytes de Storage. Capacidad, recuperación gestionada completa, revisión global y aceptaciones externas siguen pendientes; se mantienen **59/60 implementadas y 28/60 aceptadas**.

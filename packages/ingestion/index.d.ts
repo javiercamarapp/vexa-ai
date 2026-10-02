@@ -6,9 +6,10 @@ export interface SourceContext {
 export interface SourceEnvelope extends SourceContext {
   entity_type: string; external_id: string; source_revision: string;
   occurred_at: string | null; observed_at: string; content_hash: string;
-  payload_ref: string; deleted_at: string | null; adapter_version?: 'csv-message-v1';
+  payload_ref: string; deleted_at: string | null; adapter_version?: 'csv-message-v1'; ingestion_profile?: 'history-message-v1';
 }
 export interface EnvelopeInput {
+  ingestion_profile?: 'history-message-v1';
   entity_type: string; external_id: string; payload_ref: string;
   source_revision?: string | null; occurred_at?: string | null;
   observed_at: string; deleted_at?: string | null;
@@ -37,16 +38,16 @@ export function parseCSV(input: string | Uint8Array, limits?: CSVLimits): { rows
 export interface CSVRecord {
   money?: Money;
   envelope: SourceEnvelope;
-  raw_payload: Record<string,string>;
-  message: { text: string; role: 'customer'|'agent'|'internal'|'unknown'; customer_id: string|null; sku: string|null; order_id: string|null; conversation_external_id: string|null; content_format: 'plain_text'; redaction: 'none' };
+  raw_payload: Record<string,unknown>;
+  message: { historical_timestamp?:HistoricalTimestamp; text: string; role: 'customer'|'agent'|'internal'|'unknown'; customer_id: string|null; sku: string|null; order_id: string|null; conversation_external_id: string|null; content_format: 'plain_text'; redaction: 'none' };
   row_ref: number; row_hash: string; batch_hash: string; mapping_version: string;
 }
-export function normalizeCSV(input: string | Uint8Array, options: { context: SourceContext; observed_at: string; mappingVersion: string; limits?: CSVLimits }): {
+export function normalizeCSV(input: string | Uint8Array, options: { context: SourceContext; observed_at: string; mappingVersion: string; limits?: CSVLimits; profile?:'history-message-v1' }): {
   records: CSVRecord[]; errors: RowError[]; batch_hash: string; mapping_version: string;
   coverage: { accepted: number; rejected: number; unknown_customers: number; unknown_skus: number };
 };
 
-export function adaptCSVRaw(envelope: SourceEnvelope, raw: Record<string,string>): CSVRecord['message'];
+export function adaptCSVRaw(envelope: SourceEnvelope, raw: Record<string,unknown>): CSVRecord['message'];
 
 export type CSVStreamEvent = {type:'row'; values:string[]; line:number} | ({type:'error'} & RowError);
 /** maxRows counts all raw records, including the header. Message normalization counts data records. */
@@ -56,3 +57,5 @@ export function parseMoney(amount:string, currency:string): Money;
 export interface XLSXLimits extends CSVLimits { maxExpandedBytes?:number; maxSheets?:number; maxEntries?:number; maxXMLNodes?:number; }
 /** Restricted transitional OOXML; no macros, external relationships, ZIP64, encryption or style/date conversion. */
 export function parseXLSX(input:Uint8Array, limits?:XLSXLimits): {sheets:{name:string; rows:{line:number; values:(string|null)[]}[]; errors:RowError[]}[]};
+
+export interface HistoricalTimestamp {profile:'history-message-v1';original:string;canonical:string;precision_digits:number;epoch_microseconds:string;remainder_microseconds:number;normalization:'floor-to-millisecond'}

@@ -1,3 +1,4 @@
+import {mappingVersion as versionForMapping} from '../mapping.mjs';
 import {randomUUID} from 'node:crypto';
 import {contentHash, createEnvelope, identityKey, adaptCSVRaw, IngestionError} from '../index.mjs';
 
@@ -87,7 +88,7 @@ async function persistRevision(s,e,p,mapping){
  const fingerprint=contentHash({content_hash:e.content_hash,occurred_at:e.occurred_at,deleted_at:e.deleted_at,adapter_version:e.adapter_version??null,normalized_hash:contentHash(p),mapping_version:mapping});
  const old=(await s.query('SELECT id,canonical_id,fingerprint FROM public.source_revisions WHERE tenant_id=$1 AND connection_id=$2 AND entity_type=$3 AND external_id=$4 AND source_revision=$5',[s.tenantId,e.connection_id,e.entity_type,e.external_id,e.source_revision])).rows[0];
  if(old)return {status:old.fingerprint===fingerprint?'duplicate':'conflict',canonical_id:old.canonical_id,code:old.fingerprint===fingerprint?'DUPLICATE':'REVISION_CONFLICT',original_revision_id:old.id};
- const provenance={source:e.source,account_id:e.source_account_id,content_hash:e.content_hash,payload_ref:e.payload_ref,observed_at:e.observed_at,mapping_version:mapping,adapter_version:e.adapter_version??null};
+ const provenance={source:e.source,account_id:e.source_account_id,content_hash:e.content_hash,payload_ref:e.payload_ref,observed_at:e.observed_at,mapping_version:mapping,adapter_version:e.adapter_version??null,...(e.ingestion_profile?{ingestion_profile:e.ingestion_profile,historical_timestamp:p.historical_timestamp}:{})};
  const snapshot=await project(s,e,p,mapping,provenance,canonical);
  const head=(await s.query('SELECT * FROM public.source_heads WHERE tenant_id=$1 AND id=$2 FOR UPDATE',[s.tenantId,canonical])).rows[0];
  const row={id:revisionId,tenant_id:s.tenantId,connection_id:e.connection_id,entity_type:e.entity_type,external_id:e.external_id,source_revision:e.source_revision,content_hash:e.content_hash,fingerprint,mapping_version:mapping,canonical_id:canonical,[e.entity_type+'_id']:canonical,provenance:JSON.stringify(provenance),snapshot:JSON.stringify(snapshot),related_customer_id:snapshot.find(x=>x.row.customer_id)?.row.customer_id??null,related_product_id:snapshot.find(x=>x.row.product_id)?.row.product_id??JSON.parse(snapshot.find(x=>x.table==='messages')?.row.provenance??'{}').product_id??null,related_order_id:snapshot.find(x=>x.row.order_id)?.row.order_id??null,related_conversation_id:snapshot.find(x=>x.row.conversation_id)?.row.conversation_id??null,message_revision_id:snapshot.find(x=>x.table==='message_revisions')?.row.id??null};
@@ -178,6 +179,8 @@ export async function persistCanonical(scope,{importId,record},internal){
   if(raw.source_revision!==e.source_revision)reject('REVISION_REQUIRED');
   let p=payload;
   if(raw.adapter_version){
+   if((raw.ingestion_profile??null)!==(imported.provenance?.mapping?.profile??null))reject('INGESTION_PROFILE_MISMATCH');
+   if(raw.ingestion_profile&&versionForMapping(imported.provenance?.mapping)!==imported.mapping_version)reject('MAPPING_VERSION_MISMATCH');
    if(raw.adapter_version!=='csv-message-v1')reject('ADAPTER_UNSUPPORTED');
    if(payload.role==='unknown')reject('ROLE_AMBIGUOUS');
     p=adaptCSVRaw({...e,adapter_version:raw.adapter_version},payload);

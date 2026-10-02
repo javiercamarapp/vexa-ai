@@ -2,6 +2,8 @@
 
 ## Estado actual — 1 de octubre de 2026
 
+La preparación de recuperación gestionada incorpora un ejecutor de prueba de destino y un capturador MVCC, con 14/14 y 13/13 pruebas Node 22/26 y revisión independiente. Todavía no se ejecutó una restauración gestionada; faltan composición, copia y validación real. El intento de capacidad451 se detuvo antes de iniciar infraestructura por CPU insuficiente. [Preparación y pendientes](docs/entrega/RECUPERACION-GESTIONADA-PREPARACION-2026-10-01.md). No cambia 59/60 técnicas ni 28 aceptadas.
+
 El ensayo gestionado de imports pasó: dos invocaciones cron→pg_net→Vercel con HTTP 200, dos filas sintéticas aceptadas y cero pendientes; retirada de programación y delegación comprobada por MCP. Acredita ese recorrido acotado, no operación permanente. [Evidencia y límites](docs/entrega/OPERACION-GESTIONADA-2026-10-01.md).
 
 Las extensiones `pg_cron` y `pg_net` ya están instaladas en Supabase VEXA mediante una migración explícita revisada. Siete comprobaciones posteriores de Auth/Data API pasaron; las dos observaciones conservaron cero tareas programadas, ejecuciones y solicitudes HTTP. La instalación por sí sola no acredita consumidores activos; el ensayo acotado documentado arriba completa la primera comprobación gestionada. La operación permanente sigue pendiente.
@@ -23,7 +25,7 @@ La revisión global F07-01 continúa bloqueada por rechazo automático de la pla
 3. Configurar y probar proveedores, histórico e incremental, programación de consumidores, identidad delegada, alertas y recuperación gestionada con los accesos y decisiones reales.
 4. Completar las aceptaciones del grafo cuando existan sus dependencias y evidencias, y emitir la auditoría final por rubro y versión.
 
-El estado de procesos se verifica mediante PIDs y recibos; esta secuencia no afirma que exista un loop activo. Se conserva el acumulado de 444: investigación 439–441 y cierre técnico acotado 442–444, después de la tanda 437–438; no se renuevan contadores automáticamente.
+El estado de procesos se verifica mediante PIDs y recibos; esta secuencia no afirma que exista un loop activo. El límite acumulado vigente es 453, sin reiniciar contadores. La tanda actual abrió los agentes 451 y 452; el tercer lanzamiento no llegó a iniciar por el límite de hilos. Root preparó el capturador de fuente y 451 realizó su revisión independiente. No se renuevan contadores automáticamente.
 
 <details>
 <summary>Historial de cortes anteriores; no es el estado vigente</summary>

@@ -6,6 +6,8 @@ Programación: seis plantillas explícitas disponibles; regresión SQL8/8 y ensa
 
 Continuidad de importaciones: ensayo remoto de 600 segundos completado, con pausa/reanudación, 503 filas aceptadas, 16 HTTP 200 y retirada comprobada. El coste real no está conciliado; el tope autorizado fue USD 2. No cierra operación permanente, capacidad ni recuperación gestionada. [Recibos y revisión](CONTINUIDAD-IMPORTACIONES-2026-10-01.md).
 
+Preparación de recuperación: ejecutor de destino 14/14 y capturador MVCC 13/13, revisados independientemente. Falta completar la composición de restauración y ejecutarla en destino autorizado; no son sólo credenciales. [Alcance y huellas](RECUPERACION-GESTIONADA-PREPARACION-2026-10-01.md).
+
 Para retomar desde el repositorio canónico: leer AGENTS y cabeceras vigentes; consultar `python3 orchestration/runner.py status` y la ficha indicada. Los comandos de diagnóstico siguientes son de lectura; no ejecutar exámenes detenidos, SQL remoto o envíos para completar este documento.
 
 | ID / prioridad | Condición observable y reproducción segura | Aceptación verificable | Responsable / estado |

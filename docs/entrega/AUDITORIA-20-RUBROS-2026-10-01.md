@@ -12,6 +12,8 @@ La revisión independiente 436 cotejó 378 referencias previas por SHA256 sin di
 
 ## Correcciones comprobadas
 
+- Preparación de recuperación gestionada: prueba de destino 14/14 y captura MVCC 13/13 en Node 22/26, con revisión independiente. Corregidos clasificación incompleta, fallo del registro de recibos y desconexión durante captura. No se ejecutó restauración gestionada ni se cerró el rubro. [Alcance exacto](RECUPERACION-GESTIONADA-PREPARACION-2026-10-01.md).
+
 - Ensayo de continuidad remoto de diez minutos: 503 filas sintéticas, pausa de 124 segundos, reanudación desde checkpoint, 16 HTTP 200 y limpieza comprobada. Se conservan los 69 recibos y el primer fallo del evaluador; corrección revisada con 17/17 pruebas Node 22/26, sin repetir el ensayo. [Evidencia y límites](CONTINUIDAD-IMPORTACIONES-2026-10-01.md).
 
 - El ensayo gestionado cron→pg_net→worker de Vercel completó un import SYN de dos filas: dos HTTP 200, checkpoint 2 y cero pendientes. Limpieza y conservación de trabajos ajenos comprobadas por MCP. Programación retirada al terminar; no acredita operación continua ni recuperación gestionada. [Recibos y límites](OPERACION-GESTIONADA-2026-10-01.md).

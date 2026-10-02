@@ -1,8 +1,8 @@
 # VEXA — construcción completa por grafo y agentes
 
-## Estado actual — 1 de octubre de 2026
+## Estado actual — 2 de octubre de 2026 (UTC)
 
-El destino temporal de recuperación ya fue autorizado y creado. La conexión administrativa directa pasó con TLS; la autenticación y la limpieza tienen pruebas reales. El último ensayo se detuvo porque la RPC no estuvo disponible dentro de diez segundos; dejó el destino vacío y cerrado. Capacidad conserva cero ventanas nuevas: la caché está reparada, pero CPU/memoria impidieron el siguiente ensayo. [Evidencia y pendientes](docs/entrega/RECUPERACION-GESTIONADA-PREPARACION-2026-10-01.md). Se mantienen **59/60 fichas implementadas y 28 aceptadas**; restauración y producción no aprobadas.
+El destino temporal de recuperación ya fue autorizado y creado. La preparación administrativa corrigió la espera de RPC y el sexto ensayo comprobó los positivos Auth/RPC/Storage. Falló la denegación de una URL firmada tras cerrar las conexiones: devolvió los bytes sintéticos. Se corrigió y verificó la limpieza posterior; el destino quedó vacío y cerrado. El aislamiento de archivos durante la restauración sigue pendiente. Capacidad conserva cero ventanas nuevas: el cuarto intento se detuvo antes de crear infraestructura por CPU insuficiente. [Evidencia y pendientes](docs/entrega/RECUPERACION-GESTIONADA-PREPARACION-2026-10-01.md). Se mantienen **59/60 fichas implementadas y 28 aceptadas**; restauración y producción no aprobadas.
 
 El ensayo gestionado de imports pasó: dos invocaciones cron→pg_net→Vercel con HTTP 200, dos filas sintéticas aceptadas y cero pendientes; retirada de programación y delegación comprobada por MCP. Acredita ese recorrido acotado, no operación permanente. [Evidencia y límites](docs/entrega/OPERACION-GESTIONADA-2026-10-01.md).
 

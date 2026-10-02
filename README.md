@@ -2,9 +2,9 @@
 
 Software para importar conversaciones e información histórica, conservar su procedencia, identificar problemas y apoyar decisiones con evidencia y cifras verificables.
 
-## Estado actual — 1 de octubre de 2026
+## Estado actual — 2 de octubre de 2026 (UTC)
 
-El destino temporal de recuperación ya fue autorizado y creado. La conexión administrativa directa pasó con TLS; la autenticación y la limpieza tienen pruebas reales. El último ensayo se detuvo porque la RPC no estuvo disponible dentro de diez segundos; dejó el destino vacío y cerrado. Capacidad conserva cero ventanas nuevas: la caché está reparada, pero CPU/memoria impidieron el siguiente ensayo. [Evidencia y pendientes](docs/entrega/RECUPERACION-GESTIONADA-PREPARACION-2026-10-01.md). Se mantienen **59/60 fichas implementadas y 28 aceptadas**; restauración y producción no aprobadas.
+El destino temporal de recuperación ya fue autorizado y creado. La preparación administrativa corrigió la espera de RPC y el sexto ensayo comprobó los positivos Auth/RPC/Storage. Falló la denegación de una URL firmada tras cerrar las conexiones: devolvió los bytes sintéticos. Se corrigió y verificó la limpieza posterior; el destino quedó vacío y cerrado. El aislamiento de archivos durante la restauración sigue pendiente. Capacidad conserva cero ventanas nuevas: el cuarto intento se detuvo antes de crear infraestructura por CPU insuficiente. [Evidencia y pendientes](docs/entrega/RECUPERACION-GESTIONADA-PREPARACION-2026-10-01.md). Se mantienen **59/60 fichas implementadas y 28 aceptadas**; restauración y producción no aprobadas.
 
 El ensayo remoto de continuidad de importaciones completó 503 filas sintéticas: pausa de 124 segundos desde el checkpoint 100, reanudación hasta 501+2, 16 respuestas HTTP 200 y limpieza comprobada. El evaluador se corrigió sin alterar los 69 recibos ni repetir el ensayo; 17/17 pruebas pasan en Node 22/26. No acredita operación permanente ni cambia 59/60 técnicas y 28 aceptadas. [Evidencia y límites](docs/entrega/CONTINUIDAD-IMPORTACIONES-2026-10-01.md).
 

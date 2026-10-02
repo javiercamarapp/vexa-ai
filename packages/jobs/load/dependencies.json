@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
   "baselineSha": "e6a340bb850f9fbd97eb9b31e56f7bb02eb03f47",
-  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements.",
+  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -1052,8 +1052,12 @@
       "sha256": "a2c6c89c74b0d05d14de46726d194cd033cd1b94bb973e45a48422c854f95bd7"
     },
     {
+      "path": "packages/connectors/hubspot-ticket-read-scope.test.mjs",
+      "sha256": "a15c7fbe252c21484cc261700d6ab8987045d81813996c99bf95ad6c84076fb4"
+    },
+    {
       "path": "packages/connectors/hubspot.mjs",
-      "sha256": "715d70610c443498e1874613aea78f3db779606ac18ae4d43c6d3500438d1021"
+      "sha256": "d3d022ea1e6e2de3157d49e65d131f4a84301c62158e89bd3f247dde65ef90d8"
     },
     {
       "path": "packages/connectors/hubspot.test.mjs",

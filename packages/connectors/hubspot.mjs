@@ -11,7 +11,7 @@ export function createHubSpotAdapter(config){
  if(!Array.isArray(config.scopes)||!config.scopes.includes('conversations.read'))fail('SCOPE_REQUIRED');
  const includeTickets=config.includeTickets??false,includeNotes=config.includeNotes??false;
  if(typeof includeTickets!=='boolean'||typeof includeNotes!=='boolean')fail('INVALID_CONFIG');
- if((includeTickets||includeNotes)&&!config.scopes.includes('tickets'))fail('SCOPE_REQUIRED');
+ if((includeTickets||includeNotes)&&!config.scopes.some(scope=>scope==='tickets'||scope==='crm.objects.tickets.read'))fail('SCOPE_REQUIRED');
  if(includeNotes&&!config.scopes.includes('crm.objects.contacts.read'))fail('SCOPE_REQUIRED');
  const archived=config.archived??false;if(typeof archived!=='boolean')fail('INVALID_CONFIG');
  const inbox=config.inboxId==null?null:id(config.inboxId),maxPages=config.maxPages??100,maxRecords=config.maxRecords??100000;

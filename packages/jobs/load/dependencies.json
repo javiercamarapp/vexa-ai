@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
   "baselineSha": "e6a340bb850f9fbd97eb9b31e56f7bb02eb03f47",
-  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance.",
+  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -981,7 +981,7 @@
     },
     {
       "path": "packages/connectors/IMPLEMENTATION.md",
-      "sha256": "f2b3abcb3aa34725b637479ea48099f92a941b7b173f82870d65b98b6707870e"
+      "sha256": "8a5108fb7eaf64dc3db55e2e91160f12889b3c1459ea9a2b237692812c9d8f1c"
     },
     {
       "path": "packages/connectors/SYNC.md",
@@ -1040,6 +1040,10 @@
       "sha256": "f430f31bb966bd5681e9dd4659aa0ba256a270c96f98eaf8e515a10bb3e24b36"
     },
     {
+      "path": "packages/connectors/hubspot-events.test.mjs",
+      "sha256": "6ac88f706cd76a955506d875a6f7e49c5281da246b263d6d8be1c2ac2da03d1d"
+    },
+    {
       "path": "packages/connectors/hubspot-record-limit.test.mjs",
       "sha256": "740cdd248863bea79446cd75602a2ad5b8099dc47ab102dfba388b1ff2df5fc6"
     },
@@ -1057,7 +1061,7 @@
     },
     {
       "path": "packages/connectors/hubspot.mjs",
-      "sha256": "d3d022ea1e6e2de3157d49e65d131f4a84301c62158e89bd3f247dde65ef90d8"
+      "sha256": "19dd10b04a19101dfd38366ffb61c1e18b2c5e9b8b2669921f50247ab1f5c1be"
     },
     {
       "path": "packages/connectors/hubspot.test.mjs",
@@ -1065,7 +1069,7 @@
     },
     {
       "path": "packages/connectors/index.d.ts",
-      "sha256": "6f3869a5ca82466bddcb014a97023790fdb1d6050fe83ec162855fa6bc7485e3"
+      "sha256": "3320f560d8d8514f52ae7e64b9ae12f1742d954f28991bec19b8f21b8c133a99"
     },
     {
       "path": "packages/connectors/index.mjs",
@@ -1081,7 +1085,7 @@
     },
     {
       "path": "packages/connectors/spike-hubspot.mjs",
-      "sha256": "511b700f39cf13729fa350e9f87d24618c922d6ab92bc394907fd5241b1dc862"
+      "sha256": "b79e6c8d327c51444bf6d4364bf5fad11e54b5136a158e12893ca966c4ad0719"
     },
     {
       "path": "packages/connectors/sync-visibility.test.mjs",

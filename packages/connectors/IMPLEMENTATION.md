@@ -1,3 +1,15 @@
+# HubSpot: clasificación de eventos - 2 octubre 2026
+
+El adaptador `vexa-hubspot-v3` conserva ASSIGNMENT, THREAD_STATUS_CHANGE y THREAD_INBOX_CHANGE como `thread_event`, con payload, hash, identidad y asociaciones. `events_read` los cuenta por separado de mensajes/cuerpos faltantes. MESSAGE y COMMENT conservan recuperación de texto y roles; tipos desconocidos van a cuarentena, sin cobertura falsa.
+
+El consumidor actual conserva esos eventos como `ENTITY_METADATA_ONLY/rejected` en la ingesta y mantiene health parcial. Este cambio corrige clasificación y denominadores de cuerpos; no elimina rechazos UI. El diagnóstico registra eventos y sigue exigiendo mensajes reales y conciliación independiente para S01.
+
+La versión v3 cambia el scope: checkpoints v2 se rechazan antes de la red. Antes de activar, comprobar cursores HubSpot y preparar transición explícita si existen; nunca resetearlos silenciosamente. El último control de lectura no encontró cursores HubSpot, pero debe repetirse al activar.
+
+Revisión independiente462 aprobó los cuatro archivos: HubSpot30/30, consumidores14/14 y8escenarios adicionales en Node22/26. Son pruebas sintéticas acotadas, no aceptación S01, despliegue ni producción. Las secciones inferiores conservan la historia y sus versiones originales.
+
+---
+
 # F03-01 — propuesta HubSpot, 20-sep-2026
 
 Propuesta sobre baseline `9874b81`; no commit, aceptación ni publicación por este constructor. Sólo `packages/connectors/**`. Ingestión, SQL0001–0007 y plataforma aceptadas permanecen intactas. Reutilización selectiva del transporte de `983e007e98f8516ad0380ba4f51ee58b2086fa54`; no se adoptó su adaptador Zendesk ni código antiguo de ingesta.

@@ -27,8 +27,8 @@ export interface RejectedRecord {
 export interface Page {
  records:ConnectorRecord[];errors:RejectedRecord[];
  /** Proposed only; persist records, quarantines, and checkpoint atomically in consumer. */
- checkpoint:Checkpoint|null;done:boolean;adapter_version:'vexa-hubspot-v2';
- coverage:{objects_read:number;accepted:number;rejected:number;threads_read:number;messages_read:number;bodies_missing:number;messages_complete:boolean;notes_bodies_missing:number;notes_complete:boolean;tickets_complete:boolean;archived:boolean;live_verified:false};
+ checkpoint:Checkpoint|null;done:boolean;adapter_version:'vexa-hubspot-v3';
+ coverage:{objects_read:number;accepted:number;rejected:number;threads_read:number;messages_read:number;events_read:number;bodies_missing:number;messages_complete:boolean;notes_bodies_missing:number;notes_complete:boolean;tickets_complete:boolean;archived:boolean;live_verified:false};
 }
 export interface Adapter {pages(options?:{checkpoint?:Checkpoint|null}):AsyncGenerator<Page,void,unknown>}
 export class ConnectorError extends Error {

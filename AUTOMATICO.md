@@ -2,7 +2,7 @@
 
 ## Estado actual — 1 de octubre de 2026
 
-La preparación de recuperación gestionada incorpora un ejecutor de prueba de destino y un capturador MVCC, con 14/14 y 13/13 pruebas Node 22/26 y revisión independiente. Todavía no se ejecutó una restauración gestionada; faltan composición, copia y validación real. El intento de capacidad451 se detuvo antes de iniciar infraestructura por CPU insuficiente. [Preparación y pendientes](docs/entrega/RECUPERACION-GESTIONADA-PREPARACION-2026-10-01.md). No cambia 59/60 técnicas ni 28 aceptadas.
+El destino temporal de recuperación ya fue autorizado y creado. La conexión administrativa directa pasó con TLS; la autenticación y la limpieza tienen pruebas reales. El último ensayo se detuvo porque la RPC no estuvo disponible dentro de diez segundos; dejó el destino vacío y cerrado. Capacidad conserva cero ventanas nuevas: la caché está reparada, pero CPU/memoria impidieron el siguiente ensayo. [Evidencia y pendientes](docs/entrega/RECUPERACION-GESTIONADA-PREPARACION-2026-10-01.md). Se mantienen **59/60 fichas implementadas y 28 aceptadas**; restauración y producción no aprobadas.
 
 El ensayo remoto de continuidad de importaciones completó 503 filas sintéticas: pausa de 124 segundos desde el checkpoint 100, reanudación hasta 501+2, 16 respuestas HTTP 200 y limpieza comprobada. El evaluador se corrigió sin alterar los 69 recibos ni repetir el ensayo; 17/17 pruebas pasan en Node 22/26. No acredita operación permanente ni cambia 59/60 técnicas y 28 aceptadas. [Evidencia y límites](docs/entrega/CONTINUIDAD-IMPORTACIONES-2026-10-01.md).
 
@@ -29,7 +29,7 @@ La revisión global F07-01 continúa bloqueada por rechazo automático de la pla
 3. Configurar y probar proveedores, histórico e incremental, programación de consumidores, identidad delegada, alertas y recuperación gestionada con los accesos y decisiones reales.
 4. Completar las aceptaciones del grafo cuando existan sus dependencias y evidencias, y emitir la auditoría final por rubro y versión.
 
-El estado de procesos se verifica mediante PIDs y recibos; esta secuencia no afirma que exista un loop activo. El límite acumulado vigente es 453, sin reiniciar contadores. La tanda actual abrió los agentes 451 y 452; el tercer lanzamiento no llegó a iniciar por el límite de hilos. Root preparó el capturador de fuente y 451 realizó su revisión independiente. No se renuevan contadores automáticamente.
+El estado de procesos se verifica mediante PIDs y recibos; esta secuencia no afirma que exista un loop activo. El límite acumulado vigente registrado es 458, sin reiniciar contadores: 144 anteriores a la fase y un máximo de 314 en ella. Las asignaciones 456–458 cubren capacidad, recuperación y revisión independiente; también se concilió la corrección acotada de credenciales. La autorización de tiempo ampliado no renueva esos contadores ni acredita aceptación.
 
 <details>
 <summary>Historial de cortes anteriores; no es el estado vigente</summary>

@@ -2,7 +2,7 @@
 
 ## Estado actual — 1 de octubre de 2026
 
-La preparación de recuperación gestionada incorpora un ejecutor de prueba de destino y un capturador MVCC, con 14/14 y 13/13 pruebas Node 22/26 y revisión independiente. Todavía no se ejecutó una restauración gestionada; faltan composición, copia y validación real. El intento de capacidad451 se detuvo antes de iniciar infraestructura por CPU insuficiente. [Preparación y pendientes](docs/entrega/RECUPERACION-GESTIONADA-PREPARACION-2026-10-01.md). No cambia 59/60 técnicas ni 28 aceptadas.
+El destino temporal de recuperación ya fue autorizado y creado. La conexión administrativa directa pasó con TLS; la autenticación y la limpieza tienen pruebas reales. El último ensayo se detuvo porque la RPC no estuvo disponible dentro de diez segundos; dejó el destino vacío y cerrado. Capacidad conserva cero ventanas nuevas: la caché está reparada, pero CPU/memoria impidieron el siguiente ensayo. [Evidencia y pendientes](docs/entrega/RECUPERACION-GESTIONADA-PREPARACION-2026-10-01.md). Se mantienen **59/60 fichas implementadas y 28 aceptadas**; restauración y producción no aprobadas.
 
 El ensayo gestionado de imports pasó: dos invocaciones cron→pg_net→Vercel con HTTP 200, dos filas sintéticas aceptadas y cero pendientes; retirada de programación y delegación comprobada por MCP. Acredita ese recorrido acotado, no operación permanente. [Evidencia y límites](docs/entrega/OPERACION-GESTIONADA-2026-10-01.md).
 
@@ -12,7 +12,7 @@ La plantilla faltante de notificaciones quedó publicada en `e80b122`, junto con
 
 **59/60 tareas técnicas, 28 aceptadas formalmente; producción pendiente.** El objetivo de dejar sólo cuentas, APIs y datos por conectar sigue abierto: faltan verificaciones técnicas de capacidad y cierre global.
 
-Producto desplegado `dbb834c`: Equipo corregido según acceso, 16 escenarios locales Chromium/WebKit aprobados y versión/fuentes remotas verificadas. El último smoke remoto SYN integral conserva su versión `f893851`, 8/8 y ocho vistas; recuperación local 5/5 con retorno de versión y regreso comprobados. Última carga 10K revisada: 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas y cero pendientes. La carga 50K falló al plazo y 150K actual no se ejecutó. El observador publicado en `66a25c1` añade tiempos UTC/monotónicos, CPU y resultado por bloque; sus pruebas son de instrumentación y no heredan las mediciones del worker anterior.
+Verificación remota anterior, producto `dbb834c`: Equipo corregido según acceso, 16 escenarios locales Chromium/WebKit aprobados y versión/fuentes remotas verificadas. El último smoke remoto SYN integral conserva su versión `f893851`, 8/8 y ocho vistas; recuperación local 5/5 con retorno de versión y regreso comprobados. Última carga 10K revisada: 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas y cero pendientes. La carga 50K falló al plazo y 150K actual no se ejecutó. El observador publicado en `66a25c1` añade tiempos UTC/monotónicos, CPU y resultado por bloque; sus pruebas son de instrumentación y no heredan las mediciones del worker anterior.
 
 [Auditoría vigente de 20 rubros](docs/entrega/AUDITORIA-20-RUBROS-2026-10-01.md) · [Backlog verificable](docs/entrega/BACKLOG.md) · [Cuentas, datos y configuración que solicitar](docs/entrega/PENDIENTES-PARA-CONECTAR.md) · [Estado estructurado](construccion/ESTADO-CONSTRUCCION.json)
 
@@ -25,7 +25,7 @@ La revisión global F07-01 continúa bloqueada por rechazo automático de la pla
 3. Configurar y probar proveedores, histórico e incremental, programación de consumidores, identidad delegada, alertas y recuperación gestionada con los accesos y decisiones reales.
 4. Completar las aceptaciones del grafo cuando existan sus dependencias y evidencias, y emitir la auditoría final por rubro y versión.
 
-El estado de procesos se verifica mediante PIDs y recibos; esta secuencia no afirma que exista un loop activo. El límite acumulado vigente es 453, sin reiniciar contadores. La tanda actual abrió los agentes 451 y 452; el tercer lanzamiento no llegó a iniciar por el límite de hilos. Root preparó el capturador de fuente y 451 realizó su revisión independiente. No se renuevan contadores automáticamente.
+El estado de procesos se verifica mediante PIDs y recibos; esta secuencia no afirma que exista un loop activo. El límite acumulado vigente registrado es 458, sin reiniciar contadores: 144 anteriores a la fase y un máximo de 314 en ella. Las asignaciones 456–458 cubren capacidad, recuperación y revisión independiente; también se concilió la corrección acotada de credenciales. La autorización de tiempo ampliado no renueva esos contadores ni acredita aceptación.
 
 <details>
 <summary>Historial de cortes anteriores; no es el estado vigente</summary>

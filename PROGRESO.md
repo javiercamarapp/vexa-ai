@@ -2,7 +2,9 @@
 
 ## Estado actual — 1 de octubre de 2026
 
-La preparación de recuperación gestionada incorpora un ejecutor de prueba de destino y un capturador MVCC, con 14/14 y 13/13 pruebas Node 22/26 y revisión independiente. Todavía no se ejecutó una restauración gestionada; faltan composición, copia y validación real. El intento de capacidad451 se detuvo antes de iniciar infraestructura por CPU insuficiente. [Preparación y pendientes](docs/entrega/RECUPERACION-GESTIONADA-PREPARACION-2026-10-01.md). No cambia 59/60 técnicas ni 28 aceptadas.
+La actualización de credenciales de Supabase está desplegada sobre el mismo producto `1eef4d6`: ocho comprobaciones de acceso/páginas privadas y diez controles de credenciales pasaron, con sesiones propias retiradas. Se conservaron la firma actual y el acceso revocado de una cuenta de prueba anterior. Este cierre acotado no sustituye la revisión global de seguridad ni cambia los contadores.
+
+El destino temporal de recuperación ya fue autorizado y creado. La conexión administrativa directa pasó con TLS; la autenticación y la limpieza tienen pruebas reales. El último ensayo se detuvo porque la RPC no estuvo disponible dentro de diez segundos; dejó el destino vacío y cerrado. Capacidad conserva cero ventanas nuevas: la caché está reparada, pero CPU/memoria impidieron el siguiente ensayo. [Evidencia y pendientes](docs/entrega/RECUPERACION-GESTIONADA-PREPARACION-2026-10-01.md). Se mantienen **59/60 fichas implementadas y 28 aceptadas**; restauración y producción no aprobadas.
 
 El ensayo remoto de continuidad de importaciones completó 503 filas sintéticas: pausa de 124 segundos desde el checkpoint 100, reanudación hasta 501+2, 16 respuestas HTTP 200 y limpieza comprobada. El evaluador se corrigió sin alterar los 69 recibos ni repetir el ensayo; 17/17 pruebas pasan en Node 22/26. No acredita operación permanente ni cambia 59/60 técnicas y 28 aceptadas. [Evidencia y límites](docs/entrega/CONTINUIDAD-IMPORTACIONES-2026-10-01.md).
 

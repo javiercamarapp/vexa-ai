@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
   "baselineSha": "e6a340bb850f9fbd97eb9b31e56f7bb02eb03f47",
-  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement.",
+  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -1280,6 +1280,10 @@
       "sha256": "4aec690fe5d237d3eb430761659687ee3a73af84e1fca1bb1c11bb7d1311e252"
     },
     {
+      "path": "packages/ingestion/HISTORY-PROFILE.md",
+      "sha256": "b725e0690902bebba1ed86bfcf61f27f34ae6e25b34610b50cfc481236737d1a"
+    },
+    {
       "path": "packages/ingestion/INTEROPERABILITY.md",
       "sha256": "84c3e044da9837f01e5dc70a8870518be7ff4b313d7fd5f2c128d749d7fa303c"
     },
@@ -1304,12 +1308,24 @@
       "sha256": "cd2d9d672215b86d63eb94e26d6335b56ec35e174831733f406cc69826decf71"
     },
     {
+      "path": "packages/ingestion/history-profile.d.mts",
+      "sha256": "06585467633cd8d35ee5c6c0715be91eeac3968cf468badcb809384d488b5fb7"
+    },
+    {
+      "path": "packages/ingestion/history-profile.mjs",
+      "sha256": "a0207f41845f73fbdbb5938a01fb72f498a21ef74cfe875698e8fa6fc55647d2"
+    },
+    {
+      "path": "packages/ingestion/history-profile.test.mjs",
+      "sha256": "197fd82eda3d23880dc2afae67bc6124347cd6f8f87984041aa9d6b41ee33427"
+    },
+    {
       "path": "packages/ingestion/index.d.ts",
-      "sha256": "752dc92a0c02380c41f38527b7eec65f6bc391593de31410b846c5e71668a66c"
+      "sha256": "c6693c53ec012a32a8e9e8561585153748f62b1bd1b33520d664f22874f7f0d6"
     },
     {
       "path": "packages/ingestion/index.mjs",
-      "sha256": "17161f0276d4e69672674820f15f6c39dac97d31369e74b9a1f1fa6cec8eb33d"
+      "sha256": "30a9da737c9de477ec80a45634cbd1ece2fa77597db490874ffd82f89d43f482"
     },
     {
       "path": "packages/ingestion/index.test.mjs",
@@ -1329,15 +1345,15 @@
     },
     {
       "path": "packages/ingestion/mapping.d.mts",
-      "sha256": "7bfce0beab6cb649c5e6c244068c9c831c327cd841f8c2c62a0d56099d285e44"
+      "sha256": "9bde018ee6f93cc32a845e325d7272b8e11f4c8f7af8d3bf907d4ab037b861c9"
     },
     {
       "path": "packages/ingestion/mapping.d.ts",
-      "sha256": "7bfce0beab6cb649c5e6c244068c9c831c327cd841f8c2c62a0d56099d285e44"
+      "sha256": "9bde018ee6f93cc32a845e325d7272b8e11f4c8f7af8d3bf907d4ab037b861c9"
     },
     {
       "path": "packages/ingestion/mapping.mjs",
-      "sha256": "5d304e6236d37a5527560b5d34c7464192440d23210c855a053e81d00e5fe19e"
+      "sha256": "22eb23ac64b5b641df6ce7da7220f7c764690ad10f963941efb35f5fa41161c0"
     },
     {
       "path": "packages/ingestion/mapping.test.mjs",
@@ -1373,7 +1389,7 @@
     },
     {
       "path": "packages/ingestion/persistence/index.mjs",
-      "sha256": "936e71ee9a6fcc64e5e30f5c33c97c05a41651e3111c1a58d14077603ffc75dd"
+      "sha256": "d107db97782f8684ca873b01a855171e0c38192cf4882d9ac68269b947b08352"
     },
     {
       "path": "packages/ingestion/test-fixtures/bad-duplicate-names.xlsx",
@@ -1981,7 +1997,7 @@
     },
     {
       "path": "packages/jobs/durable/records.mjs",
-      "sha256": "3423927e8c65fca1243d46e4bb60bd49d251ab6b20138edd2dd18eacec5c8481"
+      "sha256": "fc88b41bcb5489e3089d768d5f166e607aa907f1f4b36b7cdcee80c05714fcde"
     },
     {
       "path": "packages/jobs/durable/repository.d.mts",

@@ -1,3 +1,4 @@
+import {checkedProfile,historyMetadata,validateHistoryPayload,historicalIdentity} from './history-profile.mjs';
 import { parseCSV } from './csv.mjs';
 export { parseCSV, parseCSVStream } from './csv.mjs';
 import { createHash } from 'node:crypto';
@@ -45,6 +46,7 @@ export function createEnvelope(context, record, payload) {
   envelope.source_revision = record.source_revision == null || record.source_revision === '' ? `sha256:${hash}` : requiredString(record.source_revision,'source_revision');
   envelope.occurred_at = timestamp(record.occurred_at,'occurred_at',true);
   envelope.observed_at = timestamp(record.observed_at,'observed_at');
+  if(record.ingestion_profile!==undefined){envelope.ingestion_profile=checkedProfile(record.ingestion_profile);if(scope.source!=='csv'||envelope.entity_type!=='message')fail('INVALID_INGESTION_PROFILE');}
   envelope.content_hash = hash;
   envelope.deleted_at = timestamp(record.deleted_at,'deleted_at',true);
   return Object.freeze(envelope);
@@ -71,7 +73,9 @@ export class RevisionLedger {
   history(envelope) { return [...(this.#entities.get(identityKey(envelope))?.values() ?? [])]; }
 }
 
-export function normalizeCSV(input, { context, observed_at, mappingVersion, limits } = {}) {
+export function normalizeCSV(input, { context, observed_at, mappingVersion, limits, profile } = {}) {
+  checkedProfile(profile);
+  if(profile&&((limits?.maxBytes??0)>20*1024*1024||(limits?.maxRows??0)>50000||(limits?.maxFieldChars??0)>100000))fail('INVALID_LIMIT');
   const scope=validateContext(context); if(scope.source!=='csv') fail('INVALID_CONTEXT','source');
   timestamp(observed_at); requiredString(mappingVersion,'mappingVersion');
   const parsed=parseCSV(input,{...limits,maxRows:limits?.maxRows === undefined ? 50001 : limits.maxRows+1}), head=parsed.rows[0];
@@ -83,14 +87,15 @@ export function normalizeCSV(input, { context, observed_at, mappingVersion, limi
   for(const row of parsed.rows.slice(1)) {
     try {
       if(row.values.length!==head.values.length) fail('CSV_COLUMN_COUNT');
-      const data=Object.fromEntries(head.values.map((k,i)=>[k,row.values[i]]));
+      let data=Object.fromEntries(head.values.map((k,i)=>[k,row.values[i]]));
+      if(profile){historicalIdentity(data.external_id,data.conversation_id,data.role);const original_row=data;const historical_timestamp=historyMetadata(data.text,data.occurred_at);data={...data,occurred_at:historical_timestamp.canonical,source_occurred_at:original_row.occurred_at,original_row,historical_timestamp};}
       if(!['customer','agent','internal','unknown'].includes(data.role)) fail('INVALID_ROLE','role');
-      if([...data.text.normalize('NFC')].length>2000) fail('CSV_LIMIT_MESSAGE','text');
+      if(!profile&&[...data.text.normalize('NFC')].length>2000) fail('CSV_LIMIT_MESSAGE','text');
       let money;
       if(Object.hasOwn(data,'amount')) money=parseMoney(data.amount,data.currency);
       const row_hash=contentHash(data);
-      const message={text:data.text.normalize('NFC'),role:data.role,customer_id:data.customer_id||null,sku:data.sku||null,order_id:data.order_id||null,conversation_external_id:data.conversation_id||null,content_format:'plain_text',redaction:'none'};
-      const envelope=createEnvelope(scope,{entity_type:'message',external_id:data.external_id||`csv:${contentHash([mappingVersion,batch_hash,row.line])}`,source_revision:data.source_revision||null,occurred_at:data.occurred_at,observed_at,payload_ref:`csv:${batch_hash}:line:${row.line}`},data);
+      const message={...(profile?{historical_timestamp:data.historical_timestamp}:{}),text:data.text.normalize('NFC'),role:data.role,customer_id:data.customer_id||null,sku:data.sku||null,order_id:data.order_id||null,conversation_external_id:data.conversation_id||null,content_format:'plain_text',redaction:'none'};
+      const envelope=createEnvelope(scope,{entity_type:'message',...(profile?{ingestion_profile:profile}:{}),external_id:data.external_id||`csv:${contentHash([mappingVersion,batch_hash,row.line])}`,source_revision:data.source_revision||null,occurred_at:data.occurred_at,observed_at,payload_ref:`csv:${batch_hash}:line:${row.line}`},data);
       records.push({...(money ? {money} : {}),envelope:Object.freeze({...envelope,adapter_version:'csv-message-v1'}),raw_payload:data,message,row_ref:row.line,row_hash,batch_hash,mapping_version:mappingVersion});
     } catch(error) { if(!(error instanceof IngestionError)) throw error; errors.push({code:error.code,field:error.field,line:row.line}); }
   }
@@ -122,12 +127,13 @@ export class ExplicitAliases {
 export function adaptCSVRaw(envelope, raw) {
   if(envelope.adapter_version!=='csv-message-v1'||envelope.source!=='csv'||envelope.entity_type!=='message') fail('CSV_ADAPTER_VERSION');
   if(contentHash(raw)!==envelope.content_hash) fail('CSV_RAW_HASH_MISMATCH');
+  validateHistoryPayload(envelope,raw);
   if(!raw || typeof raw.text!=='string' || !['customer','agent','internal'].includes(raw.role)) fail('CSV_MESSAGE_INVALID');
   if(typeof raw.conversation_id!=='string'||!raw.conversation_id.trim()) fail('CSV_CONVERSATION_REQUIRED');
   if(raw.external_id && raw.external_id!==envelope.external_id) fail('CSV_IDENTITY_MISMATCH');
   if(raw.source_revision && raw.source_revision!==envelope.source_revision) fail('CSV_IDENTITY_MISMATCH');
   if(timestamp(raw.occurred_at,'occurred_at')!==envelope.occurred_at) fail('CSV_IDENTITY_MISMATCH');
-  return {text:raw.text.normalize('NFC'),role:raw.role,customer_id:raw.customer_id||null,sku:raw.sku||null,order_id:raw.order_id||null,conversation_external_id:raw.conversation_id,content_format:'plain_text',redaction:'none'};
+  return {...(envelope.ingestion_profile?{historical_timestamp:raw.historical_timestamp}:{}),text:raw.text.normalize('NFC'),role:raw.role,customer_id:raw.customer_id||null,sku:raw.sku||null,order_id:raw.order_id||null,conversation_external_id:raw.conversation_id,content_format:'plain_text',redaction:'none'};
 }
 
 // Explicit supported currencies; no inferred exchange rates, exponent or floating arithmetic.

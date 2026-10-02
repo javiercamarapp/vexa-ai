@@ -1,12 +1,15 @@
+import {historyMetadata,historicalText,historicalIdentity} from '../../ingestion/history-profile.mjs';
 import {createHash} from 'node:crypto';
 import {parseCSVStream,contentHash,createEnvelope,parseMoney,requiredString,timestamp} from '../../ingestion/index.mjs';
-import {canonicalMapping,inspectImport,normalizeDate} from '../../ingestion/mapping.mjs';
+import {canonicalMapping,inspectImport,normalizeDate,mappingVersion} from '../../ingestion/mapping.mjs';
 import {fail} from './error.mjs';
 // Original file remains immutable in Storage. Each payload includes exact source cells.
 export async function recordsFromBytes(bytes,row){
  if(!(bytes instanceof Uint8Array)||bytes.length!==Number(row.size)||createHash('sha256').update(bytes).digest('hex')!==row.file_hash)fail('INPUT_HASH_MISMATCH');
  const legacy=!row.provenance?.mapping;
  const config=legacy?{columns:{id:'id',text:'text',date:'date',role:'role',conversation:'conversation'},sheet:null}:canonicalMapping(row.provenance.mapping);
+ if(config.profile&&mappingVersion(config)!==row.mapping_version)fail('MAPPING_VERSION_MISMATCH',422);
+ if(config.profile&&row.content_type!=='text/csv')fail('HISTORY_PROFILE_CSV_ONLY',422);
  if(!config.columns.role||!config.columns.conversation||!config.columns.date)fail('INGESTION_MAPPING_REQUIRED',422);
  let parsed;
  if(row.content_type==='text/csv'){
@@ -21,11 +24,12 @@ export async function recordsFromBytes(bytes,row){
   const data=Object.fromEntries(Object.entries(config.columns).map(([key,column])=>[key,column?entry.values[parsed.headers.indexOf(column)]:null]));
   try{
    if(entry.values.length!==parsed.headers.length)fail('COLUMN_COUNT',422);
-   requiredString(data.id,'id');if(typeof data.text!=='string'||[...data.text].length>2000)fail('INVALID_TEXT',422);
-   const occurred_at=legacy?(data.date==null||data.date===''?null:timestamp(data.date,'date')):normalizeDate(data.date,config.timezone,config.dateFormat);
+   requiredString(data.id,'id');if(config.profile){historicalText(data.text);historicalIdentity(data.id,data.conversation,data.role);}else if(typeof data.text!=='string'||[...data.text].length>2000)fail('INVALID_TEXT',422);
+   const historical_timestamp=config.profile?historyMetadata(data.text,data.date):null;
+   const occurred_at=historical_timestamp?historical_timestamp.canonical:legacy?(data.date==null||data.date===''?null:timestamp(data.date,'date')):normalizeDate(data.date,config.timezone,config.dateFormat);
    if(data.amount!=null&&data.amount!=='')parseMoney(data.amount,config.columns.currency?data.currency:config.currency);
-   const payload={external_id:data.id,text:data.text,occurred_at,role:data.role,conversation_id:data.conversation,customer_id:data.customer||null,order_id:data.order||null,sku:data.sku||null,source_cells:entry.values,source_headers:parsed.headers};
-   const envelope={...createEnvelope(context,{entity_type:'message',external_id:data.id,occurred_at,observed_at:new Date(row.created_at).toISOString(),payload_ref:`csv:${row.file_hash}:line:${entry.line}`},payload),adapter_version:'csv-message-v1'};
+   const payload={external_id:data.id,text:data.text,occurred_at,role:data.role,conversation_id:data.conversation,customer_id:data.customer||null,order_id:data.order||null,sku:data.sku||null,source_cells:entry.values,source_headers:parsed.headers,...(historical_timestamp?{historical_timestamp,source_occurred_at:data.date}:{})};
+   const envelope={...createEnvelope(context,{entity_type:'message',...(config.profile?{ingestion_profile:config.profile}:{}),external_id:data.id,occurred_at,observed_at:new Date(row.created_at).toISOString(),payload_ref:`csv:${row.file_hash}:line:${entry.line}`},payload),adapter_version:'csv-message-v1'};
    records.push({envelope,raw_payload:payload,row_ref:entry.line,row_hash:contentHash(payload),batch_hash:row.file_hash,mapping_version:row.mapping_version});
   }catch(error){if(!error.code)throw error;records.push({row_ref:entry.line,mapping_version:row.mapping_version,raw_hash:contentHash(entry.values),batch_hash:row.file_hash,validation_error:error.code,validation_field:error.field??null});}
  }

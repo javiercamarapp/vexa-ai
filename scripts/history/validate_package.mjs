@@ -6,12 +6,13 @@ import {fileURLToPath} from 'node:url';
 import {normalizeCSV,adaptCSVRaw,contentHash} from '../../packages/ingestion/index.mjs';
 import {previewImport,mappingVersion} from '../../packages/ingestion/mapping.mjs';
 import {recordsFromBytes} from '../../packages/jobs/durable/records.mjs';
-const mapping={columns:{id:'external_id',text:'text',date:'occurred_at',role:'role',conversation:'conversation_id',sku:'sku',order:'order_id'},timezone:'UTC',dateFormat:'iso'};
+const defaultMapping={columns:{id:'external_id',text:'text',date:'occurred_at',role:'role',conversation:'conversation_id',sku:'sku',order:'order_id'},timezone:'UTC',dateFormat:'iso'};
 const hash=b=>createHash('sha256').update(b).digest('hex');
 const ensure=(ok,code)=>{if(!ok)throw new Error(code);};
 export async function validatePackage(root){
  const manifestBytes=await readFile(path.join(root,'manifest.json'));
  const manifest=JSON.parse(manifestBytes);
+ const mapping={...defaultMapping,...(manifest.ingestion_profile?{profile:manifest.ingestion_profile}:{})};
  const proof=spawnSync('python3',[fileURLToPath(new URL('./validate_provenance.py',import.meta.url)),root],{input:manifestBytes,encoding:'utf8',maxBuffer:1024*1024});
  ensure(proof.status===0,'PROVENANCE_RECONCILIATION_FAILED');
  const provenance=JSON.parse(proof.stdout);
@@ -33,7 +34,7 @@ export async function validatePackage(root){
   const runtimeRecords=await recordsFromBytes(bytes,{size:bytes.length,file_hash:batch.sha256,content_type:'text/csv',provenance:{mapping},...context,account_id:context.source_account_id,created_at:'2026-10-02T00:00:00Z',mapping_version:mappingVersion(mapping)});
   ensure(runtimeRecords.length===batch.rows,'RUNTIME_COUNT');
   for(const record of runtimeRecords){ensure(!record.validation_error,'RUNTIME_REJECTED');adaptCSVRaw(record.envelope,record.raw_payload);}
-  const result=normalizeCSV(bytes,{context,observed_at:'2026-10-02T00:00:00Z',mappingVersion:manifest.version});
+  const result=normalizeCSV(bytes,{context,observed_at:'2026-10-02T00:00:00Z',mappingVersion:mappingVersion(mapping),...(manifest.ingestion_profile?{profile:manifest.ingestion_profile}:{})});
   ensure(result.errors.length===0&&result.records.length===batch.rows,'NORMALIZE_REJECTED');
   for(const r of result.records){
    ensure(r.envelope.external_id===r.raw_payload.external_id&&r.envelope.external_id.length>0,'IDENTITY_FALLBACK');
@@ -42,7 +43,7 @@ export async function validatePackage(root){
    const key=JSON.stringify([batch.source,r.envelope.external_id]);ensure(!identities.has(key),'REPEATED_IDENTITY');identities.add(key);
    const refKey=`${batch.path}:${r.row_ref}`, ref=refs.get(refKey);ensure(ref,'PROJECTION_REF');
    ensure(ref.row_sha256===r.raw_payload.origin_row_sha256&&ref.file_sha256===r.raw_payload.origin_file_sha256&&String(ref.record_number)===r.raw_payload.origin_record_number,'ORIGINAL_REF');refs.delete(refKey);
-   ensure(r.raw_payload.origin_timestamp===r.raw_payload.occurred_at,'TIME_ALTERED');
+   ensure(r.raw_payload.origin_timestamp===(manifest.ingestion_profile?r.raw_payload.source_occurred_at:r.raw_payload.occurred_at),'TIME_ALTERED');
    ensure(r.envelope.content_hash===contentHash(r.raw_payload),'RAW_HASH');
    const adapted=adaptCSVRaw(r.envelope,r.raw_payload);ensure(JSON.stringify(adapted)===JSON.stringify(r.message),'ADAPTER_MISMATCH');
    records++;groups[batch.source]=(groups[batch.source]??0)+1;
@@ -50,7 +51,7 @@ export async function validatePackage(root){
   batches.push({path:batch.path,rows:batch.rows,bytes:batch.bytes,sha256:batch.sha256});
  }
  ensure(refs.size===0&&total===manifest.summary.total&&candidates===manifest.summary.candidate&&review===manifest.summary.review&&records===candidates,'ACCOUNTING');
- return {status:'current-preview-durable-parser-and-adapter-compatible',total,candidate:records,review,by_source:groups,batches,provenance,limits:'Default product limits unchanged',mapping,scope:'No upload, database, runtime import, AI or acceptance; synthetic context only'};
+ return {status:manifest.ingestion_profile?'isolated-opt-in-profile-parser-compatible':'current-preview-durable-parser-and-adapter-compatible',total,candidate:records,review,by_source:groups,batches,provenance,limits:'Default product limits unchanged',mapping,scope:'No upload, database, runtime import, AI or acceptance; synthetic context only'};
 }
 if(process.argv[1]===new URL(import.meta.url).pathname){
  try {const result=await validatePackage(process.argv[2]);if(process.argv[3])await writeFile(process.argv[3],JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({...result,batches:result.batches.length}));}

@@ -1,9 +1,11 @@
+import {checkedProfile,historyMetadata,historicalText,historicalIdentity} from './history-profile.mjs';
 import {parseCSV,parseXLSX,parseMoney,validateContext,timestamp,contentHash,IngestionError,requiredString} from './index.mjs';
 const legacyFields=['id','text','date','order','sku','amount','currency','customer'];
 const fields=[...legacyFields,'role','conversation'];
 const fail=(code,field=null)=>{throw new IngestionError(code,field);};
 export function canonicalMapping(mapping){
- if(!mapping||typeof mapping!=='object'||!mapping.columns||Object.keys(mapping).some(k=>!['columns','timezone','dateFormat','currency','sheet'].includes(k))||Object.keys(mapping.columns).some(k=>!fields.includes(k)))fail('INVALID_MAPPING');
+ if(!mapping||typeof mapping!=='object'||!mapping.columns||Object.keys(mapping).some(k=>!['columns','timezone','dateFormat','currency','sheet','profile'].includes(k))||Object.keys(mapping.columns).some(k=>!fields.includes(k)))fail('INVALID_MAPPING');
+ checkedProfile(mapping.profile);if(mapping.profile&&mapping.dateFormat!=='iso')fail('HISTORY_PROFILE_ISO_REQUIRED');
  const selected=[...legacyFields,...['role','conversation'].filter(k=>Object.hasOwn(mapping.columns,k))];
  const columns=Object.fromEntries(selected.map(k=>[k,mapping.columns[k]??null]));
  for(const k of fields)if(columns[k]!=null&&(typeof columns[k]!=='string'||!columns[k].length))fail('INVALID_COLUMN',k);
@@ -15,7 +17,7 @@ export function canonicalMapping(mapping){
  if(currency!==null)parseMoney('0',currency);
  if(columns.amount&&!columns.currency&&!currency)fail('CURRENCY_REQUIRED','currency');
  if(mapping.sheet!=null&&(typeof mapping.sheet!=='string'||!mapping.sheet))fail('INVALID_SHEET');
- return {columns,timezone:mapping.timezone,dateFormat:mapping.dateFormat,currency,sheet:mapping.sheet??null};
+ return {columns,timezone:mapping.timezone,dateFormat:mapping.dateFormat,currency,sheet:mapping.sheet??null,...(mapping.profile?{profile:mapping.profile}:{})};
 }
 export function mappingVersion(mapping){return 'mapping-v1:'+contentHash({normalizer:'preview-v1',mapping:canonicalMapping(mapping)});}
 export function normalizeDate(value,timezone,format){
@@ -49,6 +51,7 @@ export function inspectImport(bytes,{contentType,sheet=null,discover=false}={}){
 }
 export function previewImport(bytes,{contentType,mapping,context,observedAt,sampleLimit=20}={}){
  validateContext(context);timestamp(observedAt,'observedAt');const config=canonicalMapping(mapping);
+ if(config.profile&&contentType!=='text/csv')fail('HISTORY_PROFILE_CSV_ONLY');
  if(!Number.isSafeInteger(sampleLimit)||sampleLimit<1||sampleLimit>100)fail('INVALID_SAMPLE_LIMIT');
  const parsed=inspectImport(bytes,{contentType,sheet:config.sheet});
  for(const k of fields)if(config.columns[k]&&!parsed.headers.includes(config.columns[k]))fail('COLUMN_NOT_FOUND',k);
@@ -57,8 +60,9 @@ export function previewImport(bytes,{contentType,mapping,context,observedAt,samp
  for(const row of parsed.rows){if(rejected.has(row.line))continue;try{
   if(row.values.length!==parsed.headers.length)fail('COLUMN_COUNT');
   const data=Object.fromEntries(fields.map(k=>[k,indexes[k]<0?null:row.values[indexes[k]]]));
-  requiredString(data.id,'id');if(typeof data.text!=='string'||[...data.text].length>2000)fail('INVALID_TEXT','text');
-  const normalized={id:data.id,text:data.text,occurred_at:normalizeDate(data.date,config.timezone,config.dateFormat),order:data.order||null,sku:data.sku||null,customer:data.customer||null,money:data.amount==null||data.amount===''?null:parseMoney(data.amount,config.columns.currency?data.currency:config.currency)};
+  requiredString(data.id,'id');if(config.profile){historicalText(data.text);historicalIdentity(data.id,data.conversation,data.role);}else if(typeof data.text!=='string'||[...data.text].length>2000)fail('INVALID_TEXT','text');
+  const historical_timestamp=config.profile?historyMetadata(data.text,data.date):null;
+  const normalized={id:data.id,text:data.text,occurred_at:historical_timestamp?.canonical??normalizeDate(data.date,config.timezone,config.dateFormat),...(historical_timestamp?{historical_timestamp}:{}),order:data.order||null,sku:data.sku||null,customer:data.customer||null,money:data.amount==null||data.amount===''?null:parseMoney(data.amount,config.columns.currency?data.currency:config.currency)};
   accepted++;if(sample.length<sampleLimit)sample.push({line:row.line,row_ref:row.line,...normalized});
  }catch(e){if(!(e instanceof IngestionError))throw e;rejected.add(row.line);errors.push({line:row.line,field:e.field,code:e.code});}}
  return {mapping_version:mappingVersion(config),input_rows:accepted+rejected.size,headers:parsed.headers,sheets:parsed.sheets,sample:{limit:sampleLimit,rows:sample,representative:false},coverage:{accepted,rejected:rejected.size,duplicates:0,pending:0},coverage_kind:'validation',deduplication:'deferred-to-F02-04',errors:errors.sort((a,b)=>a.line-b.line)};

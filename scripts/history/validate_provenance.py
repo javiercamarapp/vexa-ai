@@ -23,7 +23,7 @@ def package_path(root,name,kind):
     return path
 
 
-def parsed_original(root,original):
+def parsed_original(root,original,profile=None):
     # Hash and parse the SAME bytes on each pass, not another read of the path.
     data=package_path(root,original['path'],'original').read_bytes()
     ensure(sha(data)==original['sha256'] and len(data)==original['bytes'],'ORIGINAL_HASH')
@@ -36,7 +36,7 @@ def parsed_original(root,original):
     ensure(count==original['rows'],'ORIGINAL_ROWS')
 
 
-def validate(root,manifest):
+def _validate(root,manifest):
     root=Path(root);ensure(manifest['version']=='history-csv-bridge-v1','VERSION')
     originals=manifest['originals']; ensure(originals and len({o['path'] for o in originals})==len(originals),'ORIGINAL_INVENTORY')
     identities=collections.Counter()
@@ -68,7 +68,7 @@ def validate(root,manifest):
         for number,row in parsed_original(root,original):
             entry=ledger.pop((original['path'],number),None);ensure(entry is not None,'LEDGER_COVERAGE')
             repeated=not missing(row['message_id']) and identities[identity(row)]>1
-            reasons,role,ticket=classify(row,repeated);route='review' if reasons else 'candidate';rh=row_hash(row);source=row['source']
+            reasons,role,ticket=classify(row,repeated,manifest.get('ingestion_profile'));route='review' if reasons else 'candidate';rh=row_hash(row);source=row['source']
             expected={'original':original['path'],'file_sha256':original['sha256'],'record_number':number,'row_sha256':rh,'body_sha256':sha(row['body_text'].encode()),'source':source,'route':route,'reasons':reasons}
             if route=='candidate':
                 ref=entry.get('candidate');ensure(isinstance(ref,dict) and set(ref)=={'path','record_number','physical_line'},'PROJECTION_REF')
@@ -87,6 +87,13 @@ def validate(root,manifest):
     summary['reasons']=dict(sorted(reasons_count.items()))
     ensure(not ledger,'LEDGER_EXTRA');ensure(len(used)==len(projected),'PROJECTION_COVERAGE');ensure(summary==manifest['summary'],'SUMMARY_ORIGINAL_MISMATCH')
     return {'status':'original-population-and-projection-reconciled','originals':len(originals),'summary':summary}
+
+
+def validate(root,manifest):
+    previous_limit=csv.field_size_limit()
+    if manifest.get('ingestion_profile'):csv.field_size_limit(20*1024*1024)
+    try:return _validate(root,manifest)
+    finally:csv.field_size_limit(previous_limit)
 
 
 if __name__=='__main__':

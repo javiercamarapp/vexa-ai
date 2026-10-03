@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
   "baselineSha": "e6a340bb850f9fbd97eb9b31e56f7bb02eb03f47",
-  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance.",
+  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance. Historical CSV UI explicitly selects the reviewed opt-in profile; server-provided content type gates selection. Focal local PostgreSQL and synthetic React DOM checks passed; no new capacity or production acceptance.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -649,7 +649,7 @@
     },
     {
       "path": "apps/web/src/components/import-preview.tsx",
-      "sha256": "923ae8660de3cbb4a6b9f2d94a813a9c810cfc6fe8bc8828e0d76b1dc0e25256"
+      "sha256": "7395a906aabb76f96cff46b96deb00f96ba21c575ea449fbd8fa7f710c3c1774"
     },
     {
       "path": "apps/web/src/components/interventions/panel.tsx",
@@ -2037,7 +2037,7 @@
     },
     {
       "path": "packages/jobs/imports.mjs",
-      "sha256": "e51b3fd1ef752c14221bbb71ce3a8acbc2a561f67eb93d3f8613f9574045290e"
+      "sha256": "9424658634a42f8cde927450c8abc066733d4b86ffc1321ae5e2dcbe2d64ca68"
     },
     {
       "path": "packages/jobs/index.d.mts",

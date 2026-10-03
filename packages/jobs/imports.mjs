@@ -35,7 +35,7 @@ export function createImportHandler({database,storage,confirmationSecret,admissi
     const r=await owned(s,match[1]);
     if(match[2]==='/errors.csv'){if(!r.provenance?.mapping)fail(409,'mapping_required');const result=preview(await verified(s,r),r,r.provenance.mapping);return new Response(exportRowErrors(result.errors),{headers:{'Content-Type':'text/csv; charset=utf-8','Content-Disposition':'attachment; filename="row-errors.csv"','Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'}});}
     if(match[2])fail(405,'method_not_allowed');
-    const data={import:{id:r.id,state:r.state,total:r.total,accepted:r.accepted,rejected:r.rejected,duplicates:r.duplicates,pending:r.pending,job_id:r.job_id,mapping_version:r.mapping_version,file_hash:r.file_hash,expires_at:r.expires_at},mapping:r.provenance?.mapping??null,mapping_history:r.provenance?.mapping_history??[]};
+    const data={import:{id:r.id,state:r.state,total:r.total,accepted:r.accepted,rejected:r.rejected,duplicates:r.duplicates,pending:r.pending,job_id:r.job_id,mapping_version:r.mapping_version,file_hash:r.file_hash,expires_at:r.expires_at,content_type:r.content_type},mapping:r.provenance?.mapping??null,mapping_history:r.provenance?.mapping_history??[]};
     const object=(await s.query("SELECT owner_id FROM storage.objects WHERE bucket_id='vexa-private' AND name=$1",[r.object_path])).rows[0];
     if(!object)return response(200,{...data,preview_state:'awaiting_upload'});
     const bytes=await verified(s,r);

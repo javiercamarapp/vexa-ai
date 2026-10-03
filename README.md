@@ -2,9 +2,11 @@
 
 Software para importar conversaciones e información histórica, conservar su procedencia, identificar problemas y apoyar decisiones con evidencia y cifras verificables.
 
-## Estado actual — 2 de octubre de 2026 (UTC)
+## Estado actual — 3 de octubre de 2026 (UTC)
 
-El perfil optativo `history-message-v1` conserva textos largos y la precisión original de fechas históricas, sin cambiar los límites por defecto ni fabricar identidades. Revisión independiente474 aprobada; integración:58 comprobaciones Node22,15 Python y declaraciones TypeScript verificadas. El corpus completo pasó en Node26; la corrida completa Node22 quedó inconclusa por el límite del ejecutor y no se cuenta como aprobada. [Contrato y límites](packages/ingestion/HISTORY-PROFILE.md). Persistencia real del perfil, selección UI y operación de cliente siguen pendientes; no se importaron datos ni se ejecutó IA.
+El selector de importación permite elegir explícitamente el perfil histórico para CSV y exige volver a validar al cambiar de modo. La persistencia local pasó siete controles con PostgreSQL/Auth/RLS reales; el componente pasó cinco casos React/DOM y 16 regresiones sintéticas. Se conservan textos de 100.000 caracteres y fechas originales; selección, reintentos y permisos verificados en ese alcance. No acredita carga de cliente, Storage remoto, capacidad ni nuevas aceptaciones formales.
+
+El perfil optativo `history-message-v1` conserva textos largos y la precisión original de fechas históricas, sin cambiar los límites por defecto ni fabricar identidades. Revisión independiente474 aprobada; integración:58 comprobaciones Node22,15 Python y declaraciones TypeScript verificadas. El corpus completo pasó en Node26; la corrida completa Node22 quedó inconclusa por el límite del ejecutor y no se cuenta como aprobada. [Contrato y límites](packages/ingestion/HISTORY-PROFILE.md). La comprobación focal local de persistencia y selección UI se documenta arriba; operación de cliente pendiente. No se importaron datos ni se ejecutó IA.
 
 La herramienta de preparación histórica ya conserva originales byte a byte y comprueba su correspondencia completa con el registro de procedencia y los lotes candidatos. La revisión independiente cerró tres fallos: hash de entrada incorrecto ante cambio de archivo, valores libres de fuente en consola y proyecciones no cotejadas con el original. Pruebas: 12/12 Python y 32/32 Node22/26. [Uso y límites](scripts/history/README.md). No realiza importaciones ni llamadas a modelos.
 

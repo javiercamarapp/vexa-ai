@@ -3,6 +3,7 @@ import {useId,useState} from 'react';
 import type {Bundle} from '../../lib/workspace/contracts';
 import {buildCfoModel} from './cfo-model.mjs';
 import styles from './cfo-overview.module.css';
+import {WorkspaceIcon} from './icon';
 const states={ready:'Publicado',partial:'Cobertura parcial',stale:'Corte desactualizado',empty:'Sin publicación'};
 const percent=(bps:number)=>`${(bps/100).toLocaleString('es-MX',{maximumFractionDigits:2})}%`;
 export function CfoOverview({bundle}:{bundle:Bundle}){
@@ -12,7 +13,7 @@ export function CfoOverview({bundle}:{bundle:Bundle}){
  return <div className={styles.dashboard}>
   <div className={styles.statusRow} role="status"><span className={styles.badge} data-state={bundle.meta.state}>{states[bundle.meta.state]}</span><span>Corte <time dateTime={bundle.meta.watermark??undefined}>{bundle.meta.watermark?bundle.meta.watermark.replace('T',' ').replace(/\.\d{3}Z$/,' UTC'):'no informado'}</time></span><span>{model.rows.length} indicadores · mismo alcance</span></div>
   <div className={styles.kpis}>{model.rows.map(row=><article key={row.key} className={styles.kpi} data-state={row.state}>
-   <span className={styles.kpiLabel}>{row.metric.label}</span><strong className={styles.kpiValue}>{row.display}</strong>
+   <div className={styles.kpiInset}><div className={styles.kpiHeading}><span className={styles.kpiIcon} aria-hidden="true"><WorkspaceIcon name="economics"/></span><span className={styles.kpiLabel}>{row.metric.label}</span></div><strong className={styles.kpiValue}>{row.display}</strong></div>
    <span className={styles.kpiFoot}>{row.state==='known'?'Importe publicado':row.state==='invalid'?'Revisa la unidad y el importe':'Total desconocido'}</span>
    {row.subtotal&&<span className={styles.subtotal}>Conocido: {row.subtotal}<small>Subtotal; no es el total</small></span>}
    <span className={styles.kpiCoverage}>{row.coverage.label}</span>

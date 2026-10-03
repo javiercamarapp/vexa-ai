@@ -1,4 +1,5 @@
 const paths:Record<string,string>={
+ calendar:'M8 2v4 M16 2v4 M3 10h18 M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z',
  overview:'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',
  problems:'M12 3 2 21h20L12 3Z M12 9v5 M12 17h.01',
  recommendations:'m9 18 6 0 M10 21h4 M8 14a6 6 0 1 1 8 0l-1 2H9Z',

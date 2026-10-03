@@ -97,6 +97,7 @@ def validate_measurement(report,candidate,manifest_hash,benchmark,external):
     check(report.get('candidate')==str(candidate) and report.get('dependencyManifestSha256')==manifest_hash and report.get('benchmarkImplementation')==benchmark,'REPORT_SOURCE_BINDING')
     scripts=['capacity-compare.mjs','capacity-host.mjs','capacity-variant.json']
     check(report.get('comparisonImplementation')=={n:digest((CONTROL/'.github/scripts'/n).read_bytes()) for n in scripts},'COMPARISON_SOURCE_BINDING')
+    check(report.get('comparisonBuildInputs')=={'packages/intelligence/source-reader.mjs':digest((candidate/'packages/intelligence/source-reader.mjs').read_bytes())},'COMPARISON_BUILD_INPUTS')
     variant=read_json(CONTROL/'.github/scripts/capacity-variant.json')
     check(report.get('persistenceHashes')=={'baseline':variant['baselineSha256'],'batched':variant['proposalSha256']},'VARIANT_BINDING')
     builds=report.get('buildComparison',{});check(builds.get('changed')==['packages/ingestion/persistence/index.mjs'] and type(builds.get('files')) is int and builds['files']>0,'BUILD_DELTA')

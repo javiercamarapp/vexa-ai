@@ -37,6 +37,17 @@ export function tree(directory) {
   };
   walk(directory); return result;
 }
+// Durable ingestion CLI intentionally omits intelligence modules. Add the exact
+// candidate reader to this owned comparison build, before cloning the variant.
+export function completeComparisonBuild(candidate, built) {
+  const relative='packages/intelligence/source-reader.mjs';
+  const source=path.join(candidate,relative),target=path.join(built,relative);
+  assert.ok(fs.statSync(source).isFile()&&!fs.lstatSync(source).isSymbolicLink(),'SOURCE_READER_FILE_REQUIRED');
+  assert.ok(!fs.existsSync(target),'SOURCE_READER_BUILD_ALREADY_PRESENT');
+  fs.mkdirSync(path.dirname(target),{recursive:true});fs.copyFileSync(source,target);
+  const sha256=hash(fs.readFileSync(source));assert.equal(hash(fs.readFileSync(target)),sha256);
+  return {[relative]:sha256};
+}
 const expected = rows => ({total: rows, accepted: rows * .98, rejected: rows / 100, duplicates: rows / 100, pending: 0});
 export function compareWindows(windows, samples) {
   assert.deepEqual(windows.map(w => w.mode), ['baseline', 'batched', 'batched', 'baseline']);
@@ -80,6 +91,7 @@ async function main() {
     const base=fs.readFileSync(path.join(candidate,rel),'utf8'), proposal=applyVariant(base,variant);
     report.persistenceHashes={baseline:hash(base),batched:hash(proposal)};
     h=await setup(candidate,out);
+    report.comparisonBuildInputs=completeComparisonBuild(candidate,h.built);
     proposalBuilt=path.join(path.dirname(h.built),'comparison-batched');fs.cpSync(h.built,proposalBuilt,{recursive:true});fs.writeFileSync(path.join(proposalBuilt,rel),proposal);
     const trees={baseline:tree(h.built),batched:tree(proposalBuilt)};
     assert.deepEqual(Object.keys(trees.baseline),Object.keys(trees.batched));

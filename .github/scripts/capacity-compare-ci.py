@@ -133,7 +133,7 @@ def validate_measurement(report,candidate,manifest_hash,benchmark,external):
     warmups=report.get('warmups',[]);windows=report.get('windows',[])
     check([w.get('mode') for w in warmups]==['baseline','batched'] and [w.get('mode') for w in windows]==['baseline','batched','batched','baseline'],'ABBA_ORDER')
     check([w.get('index') for w in windows]==[0,1,2,3] and [w.get('index') for w in warmups]==[0,1],'WINDOW_INDICES')
-    for group,is_warmup,rows in [(warmups,True,100),(windows,False,1000)]:
+    for group,is_warmup,rows in [(warmups,True,100),(windows,False,10000)]:
         for w in group:
             check(w.get('warmup') is is_warmup and w.get('rows')==rows and w.get('status')=='completed','WINDOW_COMPLETION')
             expected={'total':rows,'accepted':rows*98//100,'rejected':rows//100,'duplicates':rows//100,'pending':0}

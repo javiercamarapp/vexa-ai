@@ -163,7 +163,7 @@ async function main() {
     }
     const data=path.join(out,'generated');const manifest=generateDataset({rows:10000,seed:10308,directory:data});const input=fs.readFileSync(path.join(data,manifest.files[0].filename),'utf8');assert.equal(hash(input),manifest.files[0].sha256);report.fixture=manifest;
     for (const [index,mode] of ['baseline','batched','baseline','batched','batched','baseline'].entries()) {
-      const warmup=index<2, rows=warmup?100:1000, w={index:warmup?index:index-2,mode,warmup,rows,status:'running',concurrency:1,workerChunkRows:100,deadlineMs:900000,chunks:[],sqlQueries:0,startedAt:new Date().toISOString()};active=w;save();
+      const warmup=index<2, rows=warmup?100:10000, w={index:warmup?index:index-2,mode,warmup,rows,status:'running',concurrency:1,workerChunkRows:100,deadlineMs:900000,chunks:[],sqlQueries:0,startedAt:new Date().toISOString()};active=w;save();
       const profile=createQueryProfile();
       const measured=options=>mods[mode].createDatabase({...options,pool:{async connect(){const c=await options.pool.connect();return {async query(sql,values){w.sqlQueries++;return profile.run(sql,()=>c.query(sql,values));},release(){c.release();}};}}});
       const deadlineAt=Date.now()+900000;runtime=await open(mode,h.bot,{createDatabase:measured,deadlineAt});await runtime.repository.heartbeat();

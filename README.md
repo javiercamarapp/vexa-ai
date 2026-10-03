@@ -4,6 +4,8 @@ Software para importar conversaciones e información histórica, conservar su pr
 
 ## Estado actual — 3 de octubre de 2026 (UTC)
 
+El acceso y el espacio de trabajo adoptan un diseño compacto: login con imagen fija, selector de organización en el pie gris, navegación por categorías excluyentes y temas claro/oscuro. El resumen presenta importes y cobertura del mismo corte; no inventa series históricas ni suma exposición y reembolsos. La consulta mantiene el alcance y las referencias del servicio existente. Revisión independiente y pruebas de composición registradas; no acreditan nuevas aceptaciones formales ni producción completa.
+
 El selector de importación permite elegir explícitamente el perfil histórico para CSV y exige volver a validar al cambiar de modo. La persistencia local pasó siete controles con PostgreSQL/Auth/RLS reales; el componente pasó cinco casos React/DOM y 16 regresiones sintéticas. Se conservan textos de 100.000 caracteres y fechas originales; selección, reintentos y permisos verificados en ese alcance. No acredita carga de cliente, Storage remoto, capacidad ni nuevas aceptaciones formales.
 
 El perfil optativo `history-message-v1` conserva textos largos y la precisión original de fechas históricas, sin cambiar los límites por defecto ni fabricar identidades. Revisión independiente474 aprobada; integración:58 comprobaciones Node22,15 Python y declaraciones TypeScript verificadas. El corpus completo pasó en Node26; la corrida completa Node22 quedó inconclusa por el límite del ejecutor y no se cuenta como aprobada. [Contrato y límites](packages/ingestion/HISTORY-PROFILE.md). La comprobación focal local de persistencia y selección UI se documenta arriba; operación de cliente pendiente. No se importaron datos ni se ejecutó IA.

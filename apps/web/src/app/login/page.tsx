@@ -18,9 +18,9 @@ export default async function Login({searchParams}:{searchParams:Promise<{error?
     <section className="login-column"><div className="login-inner">
       <header className="login-entra auth-brand"><VexaBrand/></header>
       <div className="login-copy">
-        <p className="login-kicker login-entra">Acceso al panel</p>
-        <h1 className="login-serif login-entra">Bienvenido<br/>a VEXA AI</h1>
-        <p className="login-intro login-entra">Decisiones con evidencia para tu equipo.</p>
+        <p className="login-kicker login-entra">Tu espacio de trabajo</p>
+        <h1 className="login-serif login-entra">Bienvenido a VEXA</h1>
+        <p className="login-intro login-entra">Conecta lo que dicen tus clientes con las decisiones de tu negocio.</p>
         <div className="login-divider"/>
         {denied && <p className="login-message" role="alert">{loginError==='oauth_cancelled'?'Google no completó el acceso. Puedes intentarlo de nuevo o entrar con un enlace por correo.':'Acceso denegado. Inicia sesión con una cuenta que tenga una organización activa.'}</p>}
         {!configured && <p className="login-hint">El acceso aún no está configurado.</p>}
@@ -39,8 +39,8 @@ export default async function Login({searchParams}:{searchParams:Promise<{error?
       </div>
     </div></section>
     <aside className="login-visual"><figure className="login-lamina">
-      {/* eslint-disable-next-line @next/next/no-img-element -- Exact unmodified visual reference supplied by the user. */}
-      <img src="/images/login-hero.png" alt="Recepción de un hotel boutique al anochecer." className="login-foto-marca" fetchPriority="high"/>
+      {/* eslint-disable-next-line @next/next/no-img-element -- Approved fixed local warehouse image. */}
+      <img src="/images/login-warehouse.webp" alt="Operación de ecommerce en un centro de distribución." className="login-foto-marca" fetchPriority="high"/>
       <div className="login-velo"/>
       <figcaption><p className="login-kicker">De conversaciones a decisiones</p><p className="login-serif">Entiende lo que importa.<br/>Decide con evidencia.</p></figcaption>
     </figure></aside>

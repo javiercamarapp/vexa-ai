@@ -74,3 +74,25 @@
   font-display: swap;
   src: url(/fonts/ibmplexmono-1.ttf) format('truetype');
 }
+
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(/fonts/intertight-500.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(/fonts/intertight-600.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(/fonts/intertight-700.ttf) format('truetype');
+}

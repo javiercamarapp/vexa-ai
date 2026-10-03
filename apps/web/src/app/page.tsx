@@ -7,6 +7,12 @@ export default async function Home() {
   const jar=await cookies();
   const client=authClient({getAll:()=>jar.getAll(),set:()=>{}});
   try {await resolveSession(identity(client),jar.get(ACTIVE_ORG)?.value);}
-  catch(error){if(error instanceof AccessError && [401,403].includes(error.status))redirect('/login?error=access_denied');throw error;}
+  catch(error){
+    if(error instanceof AccessError){
+      if(error.status===401)redirect('/login');
+      if(error.status===403)redirect('/login?error=access_denied');
+    }
+    throw error;
+  }
   redirect('/overview');
 }

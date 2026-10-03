@@ -91,11 +91,31 @@ def counters(value):
         check(type(n) is int and 0<=n<=10000,'COUNTER_RANGE');result[k]=n
     return result
 
+def validate_sql_profile(profile, queries):
+    import math
+    keys={'schema','complete','started','completed','failed','pending','overflow','unclassified','invalidDurations','groups'}
+    check(isinstance(profile,dict) and set(profile)==keys and profile['schema']=='vexa-synthetic-sql-profile-v1' and profile['complete'] is True,'SQL_PROFILE_REQUIRED')
+    check(type(queries) is int and queries>0,'SQL_QUERY_COUNT_REQUIRED')
+    for k in ['started','completed','failed','pending','overflow','unclassified','invalidDurations']:
+        check(type(profile[k]) is int and profile[k]>=0,'SQL_PROFILE_COUNTER_TYPE')
+    check(profile['started']==profile['completed']==queries and all(profile[k]==0 for k in ['pending','overflow','unclassified','invalidDurations']),'SQL_PROFILE_COMPLETENESS')
+    groups=profile['groups'];check(isinstance(groups,list) and 0<len(groups)<=128,'SQL_PROFILE_GROUP_BOUND')
+    hashes=set();count=failed=0
+    for g in groups:
+        check(isinstance(g,dict) and set(g)=={'querySha256','count','failed','totalMs','minMs','maxMs'},'SQL_PROFILE_FIELDS')
+        h=g['querySha256'];check(isinstance(h,str) and re.fullmatch('[a-f0-9]{64}',h) and h not in hashes,'SQL_PROFILE_QUERY_HASH');hashes.add(h)
+        check(type(g['count']) is int and g['count']>0 and type(g['failed']) is int and 0<=g['failed']<=g['count'],'SQL_PROFILE_GROUP_COUNT')
+        check(all(type(g[k]) in (int,float) and math.isfinite(g[k]) and g[k]>=0 for k in ['totalMs','minMs','maxMs']),'SQL_PROFILE_DURATION')
+        tolerance=1e-8*max(1,g['totalMs'])
+        check(g['minMs']<=g['maxMs'] and g['maxMs']<=g['totalMs']+tolerance and g['count']*g['minMs']<=g['totalMs']+tolerance and g['totalMs']<=g['count']*g['maxMs']+tolerance,'SQL_PROFILE_DURATION_BOUNDS')
+        count+=g['count'];failed+=g['failed']
+    check(count==queries and failed==profile['failed'],'SQL_PROFILE_TOTALS')
+
 def validate_measurement(report,candidate,manifest_hash,benchmark,external):
     check(report.get('schema')=='vexa-persistence-comparison-v1' and report.get('synthetic') is True and report.get('status')=='comparison_completed','COMPARISON_REPORT_REQUIRED')
     check(report.get('acceptance') is False and report.get('production') is False,'NO_ACCEPTANCE_CLAIM')
     check(report.get('candidate')==str(candidate) and report.get('dependencyManifestSha256')==manifest_hash and report.get('benchmarkImplementation')==benchmark,'REPORT_SOURCE_BINDING')
-    scripts=['capacity-compare.mjs','capacity-host.mjs','capacity-variant.json']
+    scripts=['capacity-compare.mjs','capacity-host.mjs','capacity-variant.json','capacity-query-profile.mjs']
     check(report.get('comparisonImplementation')=={n:digest((CONTROL/'.github/scripts'/n).read_bytes()) for n in scripts},'COMPARISON_SOURCE_BINDING')
     check(report.get('comparisonBuildInputs')=={'packages/intelligence/source-reader.mjs':digest((candidate/'packages/intelligence/source-reader.mjs').read_bytes())},'COMPARISON_BUILD_INPUTS')
     variant=read_json(CONTROL/'.github/scripts/capacity-variant.json')
@@ -124,6 +144,8 @@ def validate_measurement(report,candidate,manifest_hash,benchmark,external):
             query_count=2195 if w['mode']=='baseline' else 1901
             check(all(c.get('committed') is True and c.get('rows')==100 and c.get('queries')==query_count and c.get('done') is (i==len(chunks)-1) for i,c in enumerate(chunks)),'CHUNK_CONSISTENCY')
             check(w.get('chunkSqlQueries')==query_count*len(chunks),'QUERY_COUNT')
+            validate_sql_profile(w.get('sqlProfile'),w.get('sqlQueries'))
+            check(w['sqlQueries']>=w['chunkSqlQueries'],'SQL_PROFILE_CHUNK_COVERAGE')
             terminal=w.get('terminal',{});check(terminal.get('checkpoint',{}).get('offset')==rows and terminal.get('checkpoint',{}).get('done') is True and terminal.get('job',{}).get('state')=='partial' and terminal.get('job',{}).get('failure_count')==0,'TERMINAL_CHECKPOINT')
     comparison=report.get('comparison',{});samples=report.get('hostSamples',[])
     def host_ready(s):

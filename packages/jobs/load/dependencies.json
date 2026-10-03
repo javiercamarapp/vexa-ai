@@ -801,7 +801,7 @@
     },
     {
       "path": "apps/web/src/components/workspace/shared-filters.module.css",
-      "sha256": "5a8ba7ed8c6db8b3f18e2db130a0456f60ce8f1a8e2d810cf5309dbc252b4116"
+      "sha256": "55aa93815f4611f06b7ad3fdda57d8083623037623c939071e352f715a494836"
     },
     {
       "path": "apps/web/src/components/workspace/shared-filters.tsx",

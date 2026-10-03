@@ -5,6 +5,8 @@ export async function setup(candidate,evidence){
  const port=basePort();
  const parent=new URL('../../../tests/acceptance/support/F02-durable-final/harness.mjs',import.meta.url),directory=fs.mkdtempSync(path.join(os.tmpdir(),'vexa-public-load-driver-'));let h;
  try{let code=fs.readFileSync(parent,'utf8');
+ const builtDeclaration="const built=path.join(tmp,'built');";assert.equal(code.split(builtDeclaration).length-1,1,'LOAD_HARNESS_BUILD_PATH_DRIFT');
+ code=code.replace(builtDeclaration,`assert.ok(fs.lstatSync(path.join(tmp,'node_modules')).isDirectory(),'LOAD_DEPENDENCIES_DIRECTORY_REQUIRED');fs.symlinkSync(path.join(tmp,'node_modules'),${JSON.stringify(path.join(directory,'node_modules'))},'dir');const built=${JSON.stringify(path.join(directory,'built'))};`);
  code=code.replace(/from '([^']+)'/g,(original,relative)=>relative.startsWith('.')?'from '+JSON.stringify(new URL(relative,parent).href):original);
  code=code.replace(/new URL\('([^']+)',import.meta.url\)/g,(_,relative)=>'new URL('+JSON.stringify(new URL(relative,parent).href)+')');
  for(let i=0;i<6;i++)code=code.replaceAll(String(58160+i),String(port+i));

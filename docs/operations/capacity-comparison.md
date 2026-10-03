@@ -21,3 +21,11 @@ El perfil comienza donde se reinicia el contador de consultas y termina al final
 Estas duraciones incluyen espera de transporte y ejecución en PostgreSQL; no identifican por sí solas CPU del servidor ni el coste de una política. El perfil introduce sobrecarga y una nueva fuente del ensayo: los tiempos previos no se heredan. Sirve para decidir qué optimizar después de revisar la evidencia; no adopta la variante ni acredita 50K/150K.
 
 El cliente se envuelve después de `pool.connect()`: quedan fuera la adquisición de conexión y su comprobación previa del rol. También quedan fuera las llamadas HTTP Auth/REST que resuelven identidad. El conteo anclado cubre exclusivamente consultas del cliente envuelto, no toda actividad PostgreSQL; la diferencia entre procesamiento total y suma del perfil no se atribuye automáticamente a CPU, red o base.
+
+## Variante de contabilización
+
+La variante experimental compone las dos agrupaciones previamente medidas con una tercera: inserción de import_rows y actualización del contador en una sentencia para filas aceptadas o duplicadas. Los rechazos conservan inserción, cuarentena y contador separados. No se eliminan lecturas de permisos, retención ni revisiones, ni se adoptan cambios en el producto.
+
+El control sigue siendo la persistencia original; las ventanas comparan la composición completa contra ese control. No atribuyen una mejora incremental al tercer cambio usando tiempos de otra corrida. La predicción verificable por bloque de 100 filas es 2.195 consultas frente a 1.802: las 98 altas y un duplicado ahorran otras 99 consultas respecto de las 1.901 anteriores. Un conteo distinto rechaza el ensayo.
+
+Se añade en ambas variantes un fallo SQL deliberado al actualizar el contador de importación. Una secuencia demuestra que se alcanzó el fallo; nueve tablas y el estado del trabajo/checkpoint deben permanecer idénticos. Los controles históricos posteriores deben recuperar las mismas filas. Las diez comprobaciones semánticas deben pasar antes de medir tiempos.

@@ -1,9 +1,9 @@
-.page {font-size:13px;line-height:1.5;color:var(--ink);min-width:0;max-width:1440px;margin-inline:auto;}
-.page h1 {font-family:var(--font-display);font-size:24px;line-height:1.2;letter-spacing:-.04em;margin:3px 0 0;font-weight:600;}
+.page {font-size:13px;line-height:1.5;color:var(--ink);min-width:0;max-width:none;margin-inline:auto;}
+.page h1 {font-family:var(--font-display);font-size:20px;line-height:1.4;letter-spacing:-.04em;margin:3px 0 0;font-weight:600;}
 .kicker {display:block;color:var(--muted);font:500 10px/1.6 var(--font-mono);text-transform:uppercase;letter-spacing:.1em;}
 .header {display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap;}
 .toolbar {display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.page .toolbar button {width:fit-content;max-width:100%;min-width:0;min-height:36px;margin:0;padding:8px 14px;white-space:normal;font:500 12px/1.4 var(--font-ui);border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface);color:var(--ink);box-shadow:var(--ui-shadow);cursor:pointer;}
+.page .toolbar button {width:fit-content;max-width:100%;min-width:0;min-height:36px;margin:0;padding:8px 14px;white-space:normal;font:500 12px/1.4 var(--font-ui);border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-surface);color:var(--ink);box-shadow:var(--ui-shadow);cursor:pointer;}
 .page .toolbar button:first-child {background:var(--ui-action);color:var(--ui-action-ink);border-color:var(--ui-action);}
 .page .toolbar button:not(:disabled):hover {background:var(--ui-soft);color:var(--ink);border-color:var(--ui-input);}
 .page .toolbar button:first-child:not(:disabled):hover {background:var(--ui-action-hover);color:var(--ui-action-ink);border-color:var(--ui-action-hover);}
@@ -20,13 +20,17 @@
 .badge {padding:4px 9px;border:1px solid var(--ui-border);border-radius:999px;color:var(--ui-nav-text);background:var(--ui-nav-active);font-weight:500;}
 .badge[data-state=partial],.badge[data-state=stale] {color:var(--ui-warning);background:var(--ui-warning-soft);}
 .kpis {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;}
-.page .kpis article.kpi {display:flex;flex-direction:column;gap:6px;margin:0;padding:14px;border:1px solid var(--ui-border);border-radius:16px;background:var(--ui-surface);box-shadow:var(--ui-shadow);min-width:0;}
+.page .kpis article.kpi {display:flex;flex-direction:column;gap:6px;margin:0;padding:8px;border:1px solid var(--ui-border);border-radius:16px;background:var(--ui-surface);box-shadow:var(--ui-shadow);min-width:0;}
+.kpiInset {min-width:0;border:1px solid var(--ui-line-strong);border-radius:12px;background:var(--ui-canvas);padding:8px 12px;}
+.kpiHeading {display:flex;align-items:center;gap:10px;min-width:0;}
+.kpiIcon {display:grid;place-items:center;width:28px;height:28px;flex:none;border-radius:50%;background:var(--ui-action);color:var(--ui-action-ink);}
+.kpiIcon svg {width:15px;height:15px;}
 .kpiLabel {color:var(--muted);font-size:12px;font-weight:500;}
-.kpiValue {font-family:var(--font-display);font-size:22px;font-weight:600;letter-spacing:-.04em;line-height:1.3;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;}
-.kpiFoot,.kpiCoverage {font-size:11px;color:var(--muted);}
+.kpiValue {display:block;margin-top:2px;font-family:var(--font-display);font-size:20px;font-weight:600;letter-spacing:-.04em;line-height:1.3;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;}
+.kpiFoot,.kpiCoverage {font-size:11px;color:var(--muted);margin-inline:6px;}.kpiFoot {margin-top:2px;}
 .kpiCoverage {border-top:1px dashed var(--ui-border);padding-top:8px;margin-top:auto;}
 .kpi[data-state=unknown] .kpiValue,.kpi[data-state=invalid] .kpiValue {font-size:20px;color:var(--muted);}
-.subtotal {font-size:12px;font-variant-numeric:tabular-nums;}.subtotal small {display:block;color:var(--muted);font-size:11px;}
+.subtotal {margin-inline:6px;font-size:12px;font-variant-numeric:tabular-nums;}.subtotal small {display:block;color:var(--muted);font-size:11px;}
 .visualGrid {display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;}
 .visual,.tablePanel {border:1px solid var(--ui-border);border-radius:16px;background:var(--ui-surface);box-shadow:var(--ui-shadow);min-width:0;overflow:hidden;}
 .visual {padding:16px;}
@@ -54,5 +58,5 @@
 .page details.disclosure {border-top:1px dashed var(--ui-border);padding-top:8px;color:var(--muted);}.page details.disclosure>summary {min-height:40px;padding:10px 0;font-size:12px;color:var(--ink);}.disclosure p {max-width:100ch;}
 .empty {padding:32px;border:1px solid var(--ui-border);border-radius:16px;background:var(--ui-surface);box-shadow:var(--ui-shadow);}.empty h2 {font-size:20px;margin:9px 0;}.empty p,.empty details {font-size:13px;color:var(--muted);}
 .page :is(button,summary,a):focus-visible,.tableScroll:focus-visible {outline:2px solid var(--ui-focus);outline-offset:3px;}
-@media(max-width:1000px){.visualGrid{grid-template-columns:minmax(0,1fr)}.kpis{gap:10px}.page .kpis article.kpi{padding:16px}.chartValue{max-width:35ch}}
-@media(max-width:767px){.page .toolbar button,.page .scopeBox>summary,.page .selection>details>summary,.page .tableScroll details>summary,.page .publication details>summary,.page .disclosure details>summary,.page .empty details>summary{min-height:44px}.header{align-items:flex-start}.kpis{grid-template-columns:minmax(0,1fr)}.scopeBox>summary span{display:block;margin:4px 0 0}.selection{gap:10px}.selection dl,.disclosure dl{grid-template-columns:minmax(0,1fr)}.panelHeading{flex-wrap:wrap}.page h1{font-size:25px}.chartValue{max-width:20ch}.visual{padding:16px}.empty{padding:24px}}
+@media(max-width:1000px){.visualGrid{grid-template-columns:minmax(0,1fr)}.kpis{gap:10px}.page .kpis article.kpi{padding:8px}.chartValue{max-width:35ch}}
+@media(max-width:767px){.page .toolbar button,.page .scopeBox>summary,.page .selection>details>summary,.page .tableScroll details>summary,.page .publication details>summary,.page .disclosure details>summary,.page .empty details>summary{min-height:44px}.header{align-items:flex-start}.kpis{grid-template-columns:minmax(0,1fr)}.scopeBox>summary span{display:block;margin:4px 0 0}.selection{gap:10px}.selection dl,.disclosure dl{grid-template-columns:minmax(0,1fr)}.panelHeading{flex-wrap:wrap}.page h1{font-size:20px}.chartValue{max-width:20ch}.visual{padding:16px}.empty{padding:24px}}

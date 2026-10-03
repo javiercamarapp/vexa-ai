@@ -1,8 +1,8 @@
-.filters:global(.workspace-filters) {display:block;padding:16px;margin:16px 0;border:1px solid var(--ui-border);background:var(--ui-surface);border-radius:12px;box-shadow:var(--ui-shadow);}
+.filters:global(.workspace-filters) {display:block;padding:16px;margin:16px 0;border:1px solid var(--ui-border);background:var(--ui-surface);border-radius:16px;box-shadow:var(--ui-shadow);}
 .primary {display:grid;grid-template-columns:minmax(130px,1fr) minmax(130px,1fr) minmax(75px,.6fr) minmax(95px,.8fr) auto;align-items:end;gap:12px;}
 .filters:global(.workspace-filters) label {font-size:11px;font-weight:500;color:var(--muted);gap:5px;min-width:0;}
-.filters:global(.workspace-filters) input,.filters:global(.workspace-filters) select,.filters:global(.workspace-filters) textarea {font:400 12px/1.5 var(--font-ui);padding:8px 10px;min-height:36px;border:1px solid var(--ui-input);border-radius:8px;background:var(--ui-surface);color:var(--ink);max-width:100%;}
-.filters:global(.workspace-filters) button {width:auto;min-height:36px;padding:8px 14px;font-size:12px;border-radius:12px;white-space:nowrap;}
+.filters:global(.workspace-filters) input,.filters:global(.workspace-filters) select,.filters:global(.workspace-filters) textarea {font:400 12px/1.5 var(--font-ui);padding:8px 10px;min-height:36px;border:1px solid var(--ui-input);border-radius:16px;background:var(--ui-surface);color:var(--ink);max-width:100%;}
+.filters:global(.workspace-filters) button {width:auto;min-height:36px;padding:8px 14px;font-size:12px;border-radius:999px;white-space:nowrap;}
 .filters:global(.workspace-filters) .advanced {margin:12px 0 0;border:0;border-top:1px dashed var(--ui-border);border-radius:0;background:transparent;padding:10px 0 0;font-size:11px;color:var(--muted);}
 .filters:global(.workspace-filters) .advanced summary {cursor:pointer;width:fit-content;min-height:28px;padding:4px 0;align-content:center;font-size:11px;}
 .advancedGrid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px;}

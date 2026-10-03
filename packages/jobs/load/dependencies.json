@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
   "baselineSha": "e6a340bb850f9fbd97eb9b31e56f7bb02eb03f47",
-  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance. Historical CSV UI explicitly selects the reviewed opt-in profile; server-provided content type gates selection. Focal local PostgreSQL and synthetic React DOM checks passed; no new capacity or production acceptance. Compact Atiende-referenced UI with independently reviewed financial presentation and deterministic query card; synthetic browser checks only, no new formal acceptance or capacity measurement. Access/UI correction 2026-10-03: direct authorized entry, contextual platform access, honest first-run guidance and neutral Atiende/Likida presentation. No new formal acceptance or inherited capacity measurement. Reference fidelity 2026-10-03: self-hosted Inter Tight, Instrument Sans login, reference geometry and neutral tokens; anonymous entry differs from forbidden entry. No inherited capacity or production acceptance.",
+  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance. Historical CSV UI explicitly selects the reviewed opt-in profile; server-provided content type gates selection. Focal local PostgreSQL and synthetic React DOM checks passed; no new capacity or production acceptance. Compact Atiende-referenced UI with independently reviewed financial presentation and deterministic query card; synthetic browser checks only, no new formal acceptance or capacity measurement. Access/UI correction 2026-10-03: direct authorized entry, contextual platform access, honest first-run guidance and neutral Atiende/Likida presentation. No new formal acceptance or inherited capacity measurement. Reference fidelity 2026-10-03: self-hosted Inter Tight, Instrument Sans login, reference geometry and neutral tokens; anonymous entry differs from forbidden entry. No inherited capacity or production acceptance. Frontend unification495: current Atiende-Agencia-AI shell, navigation and KPI presentation; source binding only, no new capacity or production acceptance.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -557,7 +557,7 @@
     },
     {
       "path": "apps/web/src/app/globals.css",
-      "sha256": "d1fd3d90d3a2affc80d0215872c25d513af725f32a8102fbd7461e24b4592b01"
+      "sha256": "9f8e861df17a681fc59b7f3421cd4cc347177ff8d7e38c9b224e7d839868e638"
     },
     {
       "path": "apps/web/src/app/layout.tsx",
@@ -753,11 +753,11 @@
     },
     {
       "path": "apps/web/src/components/workspace/cfo-overview.module.css",
-      "sha256": "87581dfb1a90d4a29b7f2496f8dcbec31f6a7d6954b1d19edd543b901984c805"
+      "sha256": "5c8eb6306cb8725c24f637b77b94231b1f7662d08f7b315c47e17f3c76d6fa5d"
     },
     {
       "path": "apps/web/src/components/workspace/cfo-overview.tsx",
-      "sha256": "3de7e2b6934b464cdd3c3c7c56e4b5d160b702e31b00cecbfcf149dfdfe4f888"
+      "sha256": "b54a29216cb1cc507108f8737a46cff86be941fe0ca6db7e058e13bcec23dae2"
     },
     {
       "path": "apps/web/src/components/workspace/current-problems.tsx",
@@ -785,11 +785,11 @@
     },
     {
       "path": "apps/web/src/components/workspace/icon.tsx",
-      "sha256": "3b21925e0f13bb19d77871b742e090b826c45df2213bfb6538a0fbb30404d732"
+      "sha256": "c87c0fc12532f2899246cedd1634737d1a927bdd3a59a9768f5d2a15063b68c7"
     },
     {
       "path": "apps/web/src/components/workspace/navigation.tsx",
-      "sha256": "3c191f5d0e165418d30553b492f87d6cedf71e09ce7ba005b79e994eedbd54a4"
+      "sha256": "3c55ae46c9a2cf3ec53c16ea272948e161ef863bb60d8f2dedf90566b4874682"
     },
     {
       "path": "apps/web/src/components/workspace/order-mappings.tsx",
@@ -801,7 +801,7 @@
     },
     {
       "path": "apps/web/src/components/workspace/shared-filters.module.css",
-      "sha256": "5aca216b2ab260774b7f1e04431f8d1fbfa4dc1cf912511d7ddeaffe5c5d5450"
+      "sha256": "5a8ba7ed8c6db8b3f18e2db130a0456f60ce8f1a8e2d810cf5309dbc252b4116"
     },
     {
       "path": "apps/web/src/components/workspace/shared-filters.tsx",
@@ -813,7 +813,7 @@
     },
     {
       "path": "apps/web/src/components/workspace/shell.tsx",
-      "sha256": "7d3732bab117e241bb3ed2aa263754ff42e5a60308c1c6142ca0e944479d4712"
+      "sha256": "35bd342775111fdb0c600a750e92747ea8688d9463e83fa4bd31808f474e7791"
     },
     {
       "path": "apps/web/src/lib/auth-http.ts",

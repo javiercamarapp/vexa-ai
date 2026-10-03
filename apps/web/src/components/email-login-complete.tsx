@@ -1,16 +1,53 @@
- 'use client';
+'use client';
 import {VexaBrand} from './vexa-brand';
-import {useEffect,useState} from 'react';
-export function EmailLoginComplete(){const [organizations,setOrganizations]=useState<{id:string;name:string}[]|null>(null),[platformAccess,setPlatformAccess]=useState(false),[selected,setSelected]=useState(''),[busy,setBusy]=useState(true),[error,setError]=useState('');
-useEffect(()=>{let active=true;const fragment=new URLSearchParams(location.hash.slice(1));history.replaceState(null,'',location.pathname);const accessToken=fragment.get('access_token'),refreshToken=fragment.get('refresh_token');async function establish(){try{if(!accessToken||!refreshToken||fragment.has('error'))throw new Error();const response=await fetch('/auth/email/session',{method:'POST',signal:AbortSignal.timeout(15000),headers:{'content-type':'application/json'},body:JSON.stringify({accessToken,refreshToken})});const result=await response.json();if(!response.ok)throw new Error();if(active){setOrganizations(result.organizations);setPlatformAccess(result.platformAccess===true);setSelected(result.organizations[0]?.id??'');}}catch{if(active)setError('El enlace no es válido o ya no puede usarse. Solicita un nuevo acceso desde el formulario de correo.');}finally{if(active)setBusy(false);}}void establish();return()=>{active=false;};},[]);
-async function enter(){if(busy||!selected)return;setBusy(true);setError('');try{const form=new FormData();form.set('tenant_id',selected);const response=await fetch('/auth/organization',{method:'POST',signal:AbortSignal.timeout(15000),body:form});if(!response.ok||new URL(response.url).pathname!=='/')throw new Error();
-// eslint-disable-next-line @next/next/no-location-assign-relative-destination -- New Auth and tenant cookies require discarding the pre-login Router cache.
-window.location.assign('/');
-}catch{setOrganizations(null);setSelected('');setError('El acceso al equipo cambió o la sesión no está disponible. Vuelve a iniciar sesión.');setBusy(false);}}
-return <section className="home access-flow access-selection" aria-busy={busy}>
-<header className="access-brand"><VexaBrand/></header><p className="login-kicker">Sesión y espacios</p><h1>{busy?'Preparando tu acceso':error?'Revisa tu acceso':'Elige dónde trabajar'}</h1>
-{busy&&<p role="status">Validando sesión…</p>}{error&&<p role="alert">{error}</p>}
-{organizations&&organizations.length>0&&<div className="access-destination"><div className="access-destination-heading"><span className="access-symbol" aria-hidden="true">↗</span><div><h2>Espacio de trabajo</h2><p>Datos, decisiones y equipo de tu organización.</p></div></div><label htmlFor="email-login-organization">Organización</label><select id="email-login-organization" value={selected} onChange={e=>setSelected(e.target.value)} disabled={busy}>{organizations.map(org=><option key={org.id} value={org.id}>{org.name}</option>)}</select><button disabled={busy} onClick={enter}>Abrir espacio de trabajo <span aria-hidden="true">→</span></button></div>}
-{organizations?.length===0&&<p>Sesión iniciada. No tienes acceso a un equipo activo. Si recibiste una invitación pendiente, abre su enlace para aceptarla.</p>}
-{platformAccess&&!error&&<div className="access-destination access-platform"><div className="access-destination-heading"><span className="access-symbol" aria-hidden="true">⌘</span><div><h2>Administración de VEXA</h2><p>Acceso de plataforma separado del espacio de tu organización.</p></div></div><a href="/platform">Abrir administración de plataforma <span aria-hidden="true">↗</span></a></div>}
-<a className="access-back" href="/login">Volver al inicio de sesión</a></section>;}
+import {useEffect,useRef,useState} from 'react';
+type Organization={id:string;name:string};
+type Access={organizations:Organization[];platformAccess:boolean};
+async function selectOrganization(tenant:string){
+ const form=new FormData();form.set('tenant_id',tenant);
+ const response=await fetch('/auth/organization',{method:'POST',signal:AbortSignal.timeout(15000),body:form});
+ if(!response.ok||new URL(response.url).origin!==window.location.origin||!['/','/overview'].includes(new URL(response.url).pathname))throw new Error('selection_failed');
+}
+function openDestination(path:'/overview'|'/platform'){
+ // Fresh session cookies require discarding the pre-login Router cache.
+ window.location.assign(path);
+}
+export function EmailLoginComplete(){
+ const [access,setAccess]=useState<Access|null>(null),[busy,setBusy]=useState(true),[error,setError]=useState('');
+ const establishment=useRef<Promise<Access>|null>(null);
+ useEffect(()=>{
+  let active=true;
+  if(!establishment.current){
+   const fragment=new URLSearchParams(location.hash.slice(1));history.replaceState(null,'',location.pathname);
+   establishment.current=(async()=>{
+    const accessToken=fragment.get('access_token'),refreshToken=fragment.get('refresh_token');
+    if(!accessToken||!refreshToken||fragment.has('error'))throw new Error();
+    const response=await fetch('/auth/email/session',{method:'POST',signal:AbortSignal.timeout(15000),headers:{'content-type':'application/json'},body:JSON.stringify({accessToken,refreshToken})});
+    const result=await response.json();if(!response.ok||!Array.isArray(result.organizations))throw new Error();
+    const next:Access={organizations:result.organizations,platformAccess:result.platformAccess===true};
+    if(next.organizations.length===1)await selectOrganization(next.organizations[0].id);
+    return next;
+   })();
+  }
+  establishment.current.then(next=>{
+   if(!active)return;
+   if(next.organizations.length===1){openDestination('/overview');return;}
+   if(next.organizations.length===0&&next.platformAccess){openDestination('/platform');return;}
+   setAccess(next);setBusy(false);
+  }).catch(()=>{if(active){setError('No pudimos completar el acceso. El enlace puede haber caducado o los permisos del espacio cambiaron. Vuelve a iniciar sesión.');setBusy(false);}});
+  return()=>{active=false;};
+ },[]);
+ async function enter(tenant:string){
+  if(busy)return;setBusy(true);setError('');
+  try{await selectOrganization(tenant);openDestination('/overview');}
+  catch{setAccess(null);setError('El acceso al espacio cambió o la sesión no está disponible. Vuelve a iniciar sesión.');setBusy(false);}
+ }
+ return <section className="home access-flow access-selection" aria-busy={busy}>
+  <header className="access-brand"><VexaBrand/></header><p className="login-kicker">Bienvenido a VEXA</p><h1>{busy?'Abriendo tu espacio':error?'Revisa tu acceso':'Tus espacios de trabajo'}</h1>
+  {busy&&<p role="status">Comprobando tu acceso…</p>}{error&&<p role="alert">{error}</p>}
+  {access&&access.organizations.length>1&&<div className="access-destination"><h2>Elige el espacio de cliente</h2><p>Cada espacio contiene sus propios datos y equipo. Puedes cambiarlo después desde el menú.</p>{access.organizations.map(org=><button className="access-organization-choice" key={org.id} disabled={busy} onClick={()=>enter(org.id)}>{org.name}<span aria-hidden="true">→</span></button>)}</div>}
+  {access?.organizations.length===0&&<p>Tu sesión está iniciada, pero todavía no tienes acceso a un espacio. Si recibiste una invitación, abre su enlace para aceptarla.</p>}
+  {access?.platformAccess&&!error&&<div className="access-destination access-platform"><h2>Administración de VEXA</h2><p>Gestiona organizaciones y accesos de la plataforma.</p><a href="/platform">Abrir administración de VEXA <span aria-hidden="true">↗</span></a></div>}
+  <a className="access-back" href="/login">Volver al inicio de sesión</a>
+ </section>;
+}

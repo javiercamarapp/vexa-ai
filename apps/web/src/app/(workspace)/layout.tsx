@@ -12,6 +12,8 @@ export default async function WorkspaceLayout({children}:{children:ReactNode}){
  const {session,client}=context;const {data:organizations,error}=await client.from('organizations').select('id,name').in('id',session.memberships.map(m=>m.tenant_id)).order('name');
  if(error)return <DataState state={{kind:'error',code:'organizations_unavailable',message:'No se pudo verificar la organización. Reintenta cuando se restablezca el servicio.'}}/>;
  if(!organizations?.some(o=>o.id===session.active.tenant_id))redirect('/login?error=access_denied');
+ const platform=await client.rpc('platform_manage',{p_input:{operation:'status'}});
+ const platformAccess=!platform.error&&platform.data?.administrator===true;
  const now=new Date();const today={iso:now.toISOString().slice(0,10),label:new Intl.DateTimeFormat('es-MX',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).format(now)};
- return <><SessionGuard/><WorkspaceShell brand={<VexaBrand/>} organizations={organizations} tenant={session.active.tenant_id} role={session.active.role} today={today}>{children}</WorkspaceShell></>;
+ return <><SessionGuard/><WorkspaceShell brand={<VexaBrand/>} organizations={organizations} tenant={session.active.tenant_id} role={session.active.role} platformAccess={platformAccess} today={today}>{children}</WorkspaceShell></>;
 }

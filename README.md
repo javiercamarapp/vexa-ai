@@ -4,6 +4,8 @@ Software para importar conversaciones e información histórica, conservar su pr
 
 ## Estado actual — 3 de octubre de 2026 (UTC)
 
+El rediseño anterior fue rechazado por el usuario. Se prepara una nueva composición con tipografía Inter, bordes neutros, botones de tinta y selección azul, junto con acceso directo para una sola organización y una guía visible cuando faltan publicaciones. La administración del espacio y la de VEXA se distinguen explícitamente. La propuesta requiere revisión e integración; no acredita aceptación visual, datos de cliente ni producción. [Acceso y recorrido](docs/entrega/ACCESO-Y-RECORRIDO-2026-10-03.md).
+
 La ingesta sintética de 10.000 filas pasó en GitHub Linux ARM (4 CPU, aproximadamente 16 GB): 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas y cero pendientes. El trabajo tardó 220,15 segundos y retiró sus cinco recursos propios. Revisión independiente y restauración de Actions a desactivado comprobadas en los recibos. Es una medición de un consumidor, sin IA ni validación de capacidad comercial; 50K/150K de esta composición siguen pendientes. [Resultado, fuente y límites](docs/entrega/CAPACIDAD-CI-10K-2026-10-03.md). Se mantienen **59/60 implementadas y 28/60 aceptadas**.
 
 El acceso y el espacio de trabajo adoptan un diseño compacto: login con imagen fija, selector de organización en el pie gris, navegación por categorías excluyentes y temas claro/oscuro. El resumen presenta importes y cobertura del mismo corte; no inventa series históricas ni suma exposición y reembolsos. La consulta mantiene el alcance y las referencias del servicio existente. Revisión independiente y pruebas de composición registradas; no acreditan nuevas aceptaciones formales ni producción completa.

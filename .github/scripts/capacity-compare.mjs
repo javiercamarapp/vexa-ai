@@ -16,7 +16,7 @@ export function applyVariant(source, variant) {
   assert.equal(variant.schema, 'vexa-persistence-comparison-variant-v1');
   assert.equal(variant.experimental, true);
   assert.equal(hash(source), variant.baselineSha256, 'VARIANT_BASELINE_MISMATCH');
-  assert.equal(variant.changes.length, 3);
+  assert.equal(variant.changes.length, 4);
   let result = source;
   for (const c of variant.changes) {
     assert.equal(typeof c.before, 'string'); assert.ok(c.before.length > 0);
@@ -159,6 +159,55 @@ async function main() {
       assert.deepEqual(counters(retried.importId),{total:2,accepted:0,rejected:1,duplicates:1,pending:0});assert.deepEqual(checkDeleted(),{active:0,ledger:1});
       assert.equal(h.sql(`SELECT count(*) FROM import_rows WHERE import_id=${q(retried.importId)} AND error_code='SOURCE_TOMBSTONED'`),'1');const later=await upload(csv('NEW '+long.slice(4),4),true);await mods[semanticMode].runDaemon({...runtime,close:async()=>{}},{once:true});assert.deepEqual(counters(later.importId),{total:2,accepted:0,rejected:2,duplicates:0,pending:0});assert.deepEqual(checkDeleted(),{active:0,ledger:1});item.revisionsRetained=true;item.tombstoneRejected=1;item.newRevisionAfterTombstoneDenied=true;item.physicalRawPurgeTested=false;
     });
+    await semantic(semanticMode+':guarded_revision_read_and_late_revocation',async item=>{
+      const lines=bytes.toString('utf8').trimEnd().split('\n');
+      const single=index=>Buffer.from(lines[0]+'\n'+lines[index+1]+'\n');
+      const prepare=async index=>{
+        const imported=await upload(single(index),true),claim=await runtime.repository.claim();assert.equal(claim.id,imported.jobId);
+        const source=await runtime.repository.source(claim),records=await mods[semanticMode].recordsFromBytes(single(index),source);assert.equal(records.length,1);assert.ok(!records[0].validation_error);
+        const chunk={records,checkpoint:{offset:1,scope:mods[semanticMode].contentHash([source.file_hash,source.mapping_version,source.tenant_id,source.connection_id])},done:true};
+        await runtime.repository.renew(claim);return {imported,claim,chunk};
+      };
+      const installProbe=external=>h.sql(`CREATE SEQUENCE public.syn_revision_read_reached; GRANT USAGE,SELECT ON SEQUENCE public.syn_revision_read_reached TO vexa_backend; CREATE FUNCTION public.syn_revision_read_probe(external_value text) RETURNS boolean LANGUAGE plpgsql VOLATILE SET search_path='' AS $$ BEGIN IF external_value=${q(external)} THEN PERFORM nextval('public.syn_revision_read_reached'::regclass); RAISE EXCEPTION 'SYN_REVISION_READ_FAULT' USING ERRCODE='P0001'; END IF; RETURN true; END $$; REVOKE ALL ON FUNCTION public.syn_revision_read_probe(text) FROM public,anon,authenticated,service_role; GRANT EXECUTE ON FUNCTION public.syn_revision_read_probe(text) TO vexa_backend; CREATE POLICY syn_revision_read_probe ON public.source_revisions AS RESTRICTIVE FOR SELECT TO vexa_backend USING(public.syn_revision_read_probe(external_id))`);
+      const removeProbe=()=>h.sql('DROP POLICY syn_revision_read_probe ON public.source_revisions; DROP FUNCTION public.syn_revision_read_probe(text); DROP SEQUENCE public.syn_revision_read_reached');
+      const tombstone=await prepare(0);installProbe(prefix+'H1');
+      try{
+        assert.equal(h.sql('SELECT is_called FROM public.syn_revision_read_reached'),'f');
+        await runtime.repository.commitChunk(tombstone.claim,tombstone.chunk);
+        assert.equal(h.sql('SELECT is_called FROM public.syn_revision_read_reached'),'f');
+        assert.deepEqual(counters(tombstone.imported.importId),{total:1,accepted:0,rejected:1,duplicates:0,pending:0});
+        assert.equal(h.sql(`SELECT error_code FROM public.import_rows WHERE import_id=${q(tombstone.imported.importId)}`),'SOURCE_TOMBSTONED');item.tombstoneSkippedLookup=true;
+      }finally{removeProbe();}
+      await runtime.repository.ack(tombstone.claim);
+      const readFailure=await prepare(1),before=snapshot(),jobBefore=jobSnapshot(readFailure.claim.id),countBefore=counters(readFailure.imported.importId);installProbe(prefix+'H2');
+      try{
+        await assert.rejects(()=>runtime.repository.commitChunk(readFailure.claim,readFailure.chunk),e=>e.code==='database_unavailable');
+        assert.equal(h.sql('SELECT is_called FROM public.syn_revision_read_reached'),'t');
+        assert.deepEqual(snapshot(),before);assert.deepEqual(jobSnapshot(readFailure.claim.id),jobBefore);assert.deepEqual(counters(readFailure.imported.importId),countBefore);
+        item.lookupErrorReached=true;item.lookupFailureRolledBack=true;item.rolledBackTables=9;
+      }finally{removeProbe();}
+      await runtime.repository.commitChunk(readFailure.claim,readFailure.chunk);assert.deepEqual(counters(readFailure.imported.importId),{total:1,accepted:0,rejected:0,duplicates:1,pending:0});await runtime.repository.ack(readFailure.claim);item.lookupRecoveredDuplicate=true;
+      await runtime.close();runtime=null;
+      let armed=false,reached=false;
+      const injected=options=>mods[semanticMode].createDatabase({...options,pool:{async connect(){const c=await options.pool.connect();return {async query(sql,values){
+        const result=await c.query(sql,values);
+        if(armed&&typeof sql==='string'&&(sql.startsWith('SELECT id,canonical_id,fingerprint FROM public.source_revisions')||sql.startsWith('WITH retention AS MATERIALIZED'))&&values?.[2]==='message'&&values?.[3]===prefix+'H2'){
+          const prior=sql.startsWith('WITH retention')?result.rows[0]?.previous:result.rows[0];assert.ok(prior?.id&&prior?.fingerprint,'REVOCATION_AFTER_EXISTING_REVISION_READ');
+          armed=false;h.sql(`UPDATE worker_delegations SET enabled=false WHERE tenant_id=${q(h.A.tenant)} AND user_id=${q(h.bot.id)}`);assert.equal(h.sql(`SELECT enabled FROM worker_delegations WHERE tenant_id=${q(h.A.tenant)} AND user_id=${q(h.bot.id)}`),'f');reached=true;
+        }
+        return result;
+      },release(){c.release();}};}}});
+      runtime=await open(semanticMode,h.bot,{createDatabase:injected});await runtime.repository.heartbeat();
+      const revoked=await prepare(1),revokedBefore=snapshot(),revokedJobBefore=jobSnapshot(revoked.claim.id),revokedCountBefore=counters(revoked.imported.importId);
+      assert.equal(h.sql(`SELECT enabled FROM worker_delegations WHERE tenant_id=${q(h.A.tenant)} AND user_id=${q(h.bot.id)}`),'t');armed=true;
+      try{
+        await assert.rejects(()=>runtime.repository.commitChunk(revoked.claim,revoked.chunk),e=>e.status===403);assert.equal(reached,true);
+        assert.deepEqual(snapshot(),revokedBefore);assert.deepEqual(jobSnapshot(revoked.claim.id),revokedJobBefore);assert.deepEqual(counters(revoked.imported.importId),revokedCountBefore);
+        item.lateRevocationReached=true;item.lateRevocationDeniedStatus=403;item.lateRevocationRolledBack=true;
+      }finally{armed=false;h.sql(`UPDATE worker_delegations SET enabled=true WHERE tenant_id=${q(h.A.tenant)} AND user_id=${q(h.bot.id)}`);}
+      await runtime.repository.commitChunk(revoked.claim,revoked.chunk);assert.deepEqual(counters(revoked.imported.importId),{total:1,accepted:0,rejected:0,duplicates:1,pending:0});await runtime.repository.ack(revoked.claim);item.revocationRecoveredDuplicate=true;
+      assert.equal(h.sql("SELECT count(*) FROM pg_policies WHERE schemaname='public' AND policyname='syn_revision_read_probe'"),'0');assert.equal(h.sql("SELECT to_regprocedure('public.syn_revision_read_probe(text)') IS NULL AND to_regclass('public.syn_revision_read_reached') IS NULL"),'t');item.probeObjectsRemoved=true;
+    });
     await runtime.close();runtime=null;
     }
     const data=path.join(out,'generated');const manifest=generateDataset({rows:10000,seed:10308,directory:data});const input=fs.readFileSync(path.join(data,manifest.files[0].filename),'utf8');assert.equal(hash(input),manifest.files[0].sha256);report.fixture=manifest;
@@ -179,7 +228,7 @@ async function main() {
       w.canonicalRows=Number(h.sql(`SELECT count(*) FROM messages m JOIN conversations c ON c.tenant_id=m.tenant_id AND c.id=m.conversation_id JOIN source_heads head ON head.tenant_id=m.tenant_id AND head.id=m.id AND head.state='unique' JOIN source_revisions r ON r.tenant_id=head.tenant_id AND r.id=head.selected_revision_id AND r.canonical_id=m.id JOIN message_revisions text ON text.tenant_id=r.tenant_id AND text.id=r.message_revision_id AND text.message_id=m.id WHERE m.connection_id=${q(h.A.connection)} AND m.external_id LIKE ${q('SYN-COMP-'+index+'-%')} AND text.hash=r.content_hash AND text.text_ref=r.provenance->>'payload_ref' AND c.external_id LIKE ${q('SYN-COMP-C'+index+'-%')} AND m.deleted_at IS NULL`));assert.equal(w.canonicalRows,rows*.98);
 
       assert.deepEqual(w.chunks.map(c=>c.offset),Array.from({length:rows/100},(_,i)=>(i+1)*100));assert.ok(w.chunks.every(c=>c.committed&&c.rows===100));assert.equal(w.chunks.at(-1).done,true);
-      assert.ok(w.chunks.every(c=>c.queries===(mode==='baseline'?2195:1802)),'EXPECTED_QUERY_REDUCTION');
+      assert.ok(w.chunks.every(c=>c.queries===(mode==='baseline'?2195:1605)),'EXPECTED_QUERY_REDUCTION');
       const api=await h.request(h.A,'/api/jobs/'+imported.jobId);assert.equal(api.status,200);w.apiCounters=Object.fromEntries(Object.entries(api.data.data.counters).map(([k,v])=>[k,Number(v)]));assert.deepEqual(w.apiCounters,w.observed);
       w.terminal=jobSnapshot(imported.jobId);assert.equal(w.terminal.checkpoint.offset,rows);assert.equal(w.terminal.checkpoint.done,true);assert.equal(w.terminal.job.state,'partial');assert.equal(w.terminal.job.failure_count,0);
       await runtime.close();runtime=null;w.status='completed';w.finishedAt=new Date().toISOString();(warmup?report.warmups:report.windows).push(w);active=null;save();

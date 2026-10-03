@@ -122,13 +122,14 @@ def validate_measurement(report,candidate,manifest_hash,benchmark,external):
     check(report.get('persistenceHashes')=={'baseline':variant['baselineSha256'],'batched':variant['proposalSha256']},'VARIANT_BINDING')
     builds=report.get('buildComparison',{});check(builds.get('changed')==['packages/ingestion/persistence/index.mjs'] and type(builds.get('files')) is int and builds['files']>0,'BUILD_DELTA')
     check(all(isinstance(builds.get(k),str) and re.fullmatch('[a-f0-9]{64}',builds[k]) for k in ['baseline','batched']) and builds['baseline']!=builds['batched'],'BUILD_HASHES')
-    names=['worker_revocation_preserves_block','historical_midchunk_rollback_then_same_block','historical_readback_replay_and_other_tenant','new_revision_and_tombstone_no_resurrection']
+    names=['worker_revocation_preserves_block','accounting_failure_rolls_back_row_and_counter','historical_midchunk_rollback_then_same_block','historical_readback_replay_and_other_tenant','new_revision_and_tombstone_no_resurrection']
     semantics=report.get('semantics',[]);check([x.get('name') for x in semantics]==[mode+':'+name for mode in ['baseline','batched'] for name in names] and all(x.get('status')=='pass' for x in semantics),'SEMANTIC_CONTROLS')
-    for i in [0,4]:
+    for i in [0,5]:
         check(semantics[i].get('denied') is True,'REVOCATION_REQUIRED')
-        x=semantics[i+1];check(x.get('firstRowAppliedBeforeFailure') is True and x.get('rolledBackTables')==9 and x.get('recoveredRows')==2,'ROLLBACK_REQUIRED')
-        x=semantics[i+2];check(x.get('textLength')==100000 and x.get('rows')==2 and x.get('replayUnchanged') is True and x.get('otherTenantDenied') is True and len(x.get('persistedSourceReaderHashes',[]))==2,'HISTORICAL_READBACK_REQUIRED')
-        x=semantics[i+3];check(x.get('originalMicrosecondsDistinct') is True and x.get('revisionsRetained') is True and x.get('tombstoneRejected')==1 and x.get('newRevisionAfterTombstoneDenied') is True,'TOMBSTONE_REVISION_REQUIRED')
+        x=semantics[i+1];check(x.get('counterWriteReached') is True and x.get('rolledBackTables')==9 and x.get('rowAndCounterUnchanged') is True and x.get('checkpointUnchanged') is True,'ACCOUNTING_ROLLBACK_REQUIRED')
+        x=semantics[i+2];check(x.get('firstRowAppliedBeforeFailure') is True and x.get('rolledBackTables')==9 and x.get('recoveredRows')==2,'ROLLBACK_REQUIRED')
+        x=semantics[i+3];check(x.get('textLength')==100000 and x.get('rows')==2 and x.get('replayUnchanged') is True and x.get('otherTenantDenied') is True and len(x.get('persistedSourceReaderHashes',[]))==2,'HISTORICAL_READBACK_REQUIRED')
+        x=semantics[i+4];check(x.get('originalMicrosecondsDistinct') is True and x.get('revisionsRetained') is True and x.get('tombstoneRejected')==1 and x.get('newRevisionAfterTombstoneDenied') is True,'TOMBSTONE_REVISION_REQUIRED')
     warmups=report.get('warmups',[]);windows=report.get('windows',[])
     check([w.get('mode') for w in warmups]==['baseline','batched'] and [w.get('mode') for w in windows]==['baseline','batched','batched','baseline'],'ABBA_ORDER')
     check([w.get('index') for w in windows]==[0,1,2,3] and [w.get('index') for w in warmups]==[0,1],'WINDOW_INDICES')
@@ -141,7 +142,7 @@ def validate_measurement(report,candidate,manifest_hash,benchmark,external):
             check(w.get('concurrency')==1 and w.get('workerChunkRows')==100 and w.get('deadlineMs')==900000,'LOAD_CONFIGURATION_CHANGED')
             check(type(w.get('processingMs')) in (int,float) and 0<w['processingMs']<900000,'WINDOW_TIME')
             chunks=w.get('chunks',[]);check([c.get('offset') for c in chunks]==list(range(100,rows+1,100)),'CHUNK_OFFSETS')
-            query_count=2195 if w['mode']=='baseline' else 1901
+            query_count=2195 if w['mode']=='baseline' else 1802
             check(all(c.get('committed') is True and c.get('rows')==100 and c.get('queries')==query_count and c.get('done') is (i==len(chunks)-1) for i,c in enumerate(chunks)),'CHUNK_CONSISTENCY')
             check(w.get('chunkSqlQueries')==query_count*len(chunks),'QUERY_COUNT')
             validate_sql_profile(w.get('sqlProfile'),w.get('sqlQueries'))

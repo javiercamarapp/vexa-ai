@@ -16,7 +16,7 @@ export function applyVariant(source, variant) {
   assert.equal(variant.schema, 'vexa-persistence-comparison-variant-v1');
   assert.equal(variant.experimental, true);
   assert.equal(hash(source), variant.baselineSha256, 'VARIANT_BASELINE_MISMATCH');
-  assert.equal(variant.changes.length, 2);
+  assert.equal(variant.changes.length, 3);
   let result = source;
   for (const c of variant.changes) {
     assert.equal(typeof c.before, 'string'); assert.ok(c.before.length > 0);
@@ -115,6 +115,12 @@ async function main() {
       try{await assert.rejects(()=>runtime.repository.commitChunk(claim,chunk),e=>e.status===403);assert.deepEqual(snapshot(),before);assert.deepEqual(jobSnapshot(claim.id),jobBefore);item.denied=true;}
       finally{h.sql(`UPDATE worker_delegations SET enabled=true WHERE tenant_id=${q(h.A.tenant)} AND user_id=${q(h.bot.id)}`);}
     });
+    await semantic(semanticMode+':accounting_failure_rolls_back_row_and_counter',async item=>{
+      await runtime.repository.renew(claim);const before=snapshot(),jobBefore=jobSnapshot(claim.id),countBefore=counters(imported.importId);
+      h.sql(`CREATE SEQUENCE public.syn_accounting_reached; GRANT USAGE,SELECT ON SEQUENCE public.syn_accounting_reached TO vexa_backend; CREATE FUNCTION public.syn_accounting_fault() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.id=${q(imported.importId)}::uuid AND NEW.accepted>OLD.accepted THEN PERFORM nextval('public.syn_accounting_reached'); RAISE EXCEPTION 'SYN_ACCOUNTING_FAULT' USING ERRCODE='P0001'; END IF; RETURN NEW; END $$; CREATE TRIGGER syn_accounting_fault BEFORE UPDATE ON public.imports FOR EACH ROW EXECUTE FUNCTION public.syn_accounting_fault()`);
+      try{await assert.rejects(()=>runtime.repository.commitChunk(claim,chunk),e=>e.code==='database_unavailable');assert.equal(h.sql('SELECT is_called FROM syn_accounting_reached'),'t');assert.deepEqual(snapshot(),before);assert.deepEqual(jobSnapshot(claim.id),jobBefore);assert.deepEqual(counters(imported.importId),countBefore);item.counterWriteReached=true;item.rolledBackTables=9;item.rowAndCounterUnchanged=true;item.checkpointUnchanged=true;}
+      finally{h.sql('DROP TRIGGER syn_accounting_fault ON public.imports; DROP FUNCTION public.syn_accounting_fault(); DROP SEQUENCE public.syn_accounting_reached');}
+    });
     await semantic(semanticMode+':historical_midchunk_rollback_then_same_block',async item=>{
       await runtime.repository.renew(claim);const before=snapshot(),jobBefore=jobSnapshot(claim.id);
       h.sql(`CREATE SEQUENCE public.syn_comparison_reached; GRANT USAGE,SELECT ON SEQUENCE public.syn_comparison_reached TO vexa_backend; CREATE FUNCTION public.syn_comparison_fault() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF (SELECT external_id FROM public.messages WHERE id=NEW.message_id)=${q(prefix+'H2')} THEN IF NOT EXISTS(SELECT 1 FROM public.import_rows WHERE import_id=${q(imported.importId)} AND row_ref=${q(String(records[0].row_ref))} AND state='accepted') THEN RAISE EXCEPTION 'FIRST_ROW_NOT_APPLIED'; END IF; PERFORM nextval('public.syn_comparison_reached'); RAISE EXCEPTION 'SYN_COMPARISON_FAULT' USING ERRCODE='P0001'; END IF; RETURN NEW; END $$; CREATE TRIGGER syn_comparison_fault BEFORE INSERT ON public.message_revisions FOR EACH ROW EXECUTE FUNCTION public.syn_comparison_fault()`);
@@ -173,7 +179,7 @@ async function main() {
       w.canonicalRows=Number(h.sql(`SELECT count(*) FROM messages m JOIN conversations c ON c.tenant_id=m.tenant_id AND c.id=m.conversation_id JOIN source_heads head ON head.tenant_id=m.tenant_id AND head.id=m.id AND head.state='unique' JOIN source_revisions r ON r.tenant_id=head.tenant_id AND r.id=head.selected_revision_id AND r.canonical_id=m.id JOIN message_revisions text ON text.tenant_id=r.tenant_id AND text.id=r.message_revision_id AND text.message_id=m.id WHERE m.connection_id=${q(h.A.connection)} AND m.external_id LIKE ${q('SYN-COMP-'+index+'-%')} AND text.hash=r.content_hash AND text.text_ref=r.provenance->>'payload_ref' AND c.external_id LIKE ${q('SYN-COMP-C'+index+'-%')} AND m.deleted_at IS NULL`));assert.equal(w.canonicalRows,rows*.98);
 
       assert.deepEqual(w.chunks.map(c=>c.offset),Array.from({length:rows/100},(_,i)=>(i+1)*100));assert.ok(w.chunks.every(c=>c.committed&&c.rows===100));assert.equal(w.chunks.at(-1).done,true);
-      assert.ok(w.chunks.every(c=>c.queries===(mode==='baseline'?2195:1901)),'EXPECTED_QUERY_REDUCTION');
+      assert.ok(w.chunks.every(c=>c.queries===(mode==='baseline'?2195:1802)),'EXPECTED_QUERY_REDUCTION');
       const api=await h.request(h.A,'/api/jobs/'+imported.jobId);assert.equal(api.status,200);w.apiCounters=Object.fromEntries(Object.entries(api.data.data.counters).map(([k,v])=>[k,Number(v)]));assert.deepEqual(w.apiCounters,w.observed);
       w.terminal=jobSnapshot(imported.jobId);assert.equal(w.terminal.checkpoint.offset,rows);assert.equal(w.terminal.checkpoint.done,true);assert.equal(w.terminal.job.state,'partial');assert.equal(w.terminal.job.failure_count,0);
       await runtime.close();runtime=null;w.status='completed';w.finishedAt=new Date().toISOString();(warmup?report.warmups:report.windows).push(w);active=null;save();

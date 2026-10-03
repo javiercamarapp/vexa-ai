@@ -1369,7 +1369,7 @@
     },
     {
       "path": "packages/ingestion/history-profile.test.mjs",
-      "sha256": "197fd82eda3d23880dc2afae67bc6124347cd6f8f87984041aa9d6b41ee33427"
+      "sha256": "6046da97d57617a681a70d75d61b3de4c7af3c7290f7e5eeb9454f9a5583824d"
     },
     {
       "path": "packages/ingestion/index.d.ts",
@@ -1441,7 +1441,7 @@
     },
     {
       "path": "packages/ingestion/persistence/index.mjs",
-      "sha256": "d107db97782f8684ca873b01a855171e0c38192cf4882d9ac68269b947b08352"
+      "sha256": "3b2fe5b364dcbbd2dd19029b8f2b2b9514132cf4743b31ab6d854cb7bd9b5869"
     },
     {
       "path": "packages/ingestion/test-fixtures/bad-duplicate-names.xlsx",

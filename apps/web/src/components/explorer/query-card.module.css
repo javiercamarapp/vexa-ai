@@ -1,0 +1,25 @@
+.card{border:1px solid var(--ui-border,#dde3df);background:var(--ui-surface,#fff);border-radius:12px;margin:16px 0;overflow:hidden;color:var(--ink,#18221c)}
+.header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 18px;border-bottom:1px solid var(--ui-border,#e4e8e5)}
+.caption{font:10px/1.4 var(--font-ibm-plex-mono,monospace);letter-spacing:.09em;color:var(--muted,#647067)}
+.header h2{font-size:16px!important;line-height:1.3;margin:4px 0 0!important;font-weight:600;letter-spacing:-.02em}
+.badge{font-size:10px;padding:4px 8px;border:1px solid var(--ui-border,#dde3df);border-radius:6px;white-space:nowrap;color:var(--muted,#647067)}
+.empty{font-size:13px;margin:0;padding:18px;color:var(--muted,#647067);max-width:64ch}
+.conversation{padding:16px 18px;display:grid;gap:14px;font-size:13px}
+.question{justify-self:end;max-width:85%;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--ui-soft,#f3f5f3);border:1px solid var(--ui-border,#e2e7e3);border-radius:10px 10px 2px 10px;margin:0;padding:10px 13px}
+.answer{min-width:0}.answer h3{font-size:14px;line-height:1.4;margin:0 0 8px;font-weight:600}.answer p{margin:6px 0;overflow-wrap:anywhere}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0}.metrics>div{border:1px solid var(--ui-border,#e2e7e3);border-radius:8px;padding:10px 12px}.metrics dt{font-size:11px;color:var(--muted,#647067)}.metrics dd{margin:5px 0 0;font-size:17px;font-weight:600;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.metrics small{display:block;font-size:11px;font-weight:400;margin-top:5px}
+.coverage{color:var(--muted,#647067);font-size:11px}.references{font-size:12px}.references summary{cursor:pointer}.references ul{padding-left:18px}.references small{display:block;overflow-wrap:anywhere;color:var(--muted,#647067);font-size:10px}
+.composer{padding:13px 18px;background:var(--ui-sunken,#f7f8f7);border-top:1px solid var(--ui-border,#e2e7e3);display:grid;gap:6px}.composer>label{font-size:11px!important;font-weight:500!important}
+.inputRow{display:flex;gap:9px;align-items:flex-end}.inputRow textarea{flex:1;min-width:0;min-height:60px!important;max-height:160px;font-size:13px!important;line-height:1.5;padding:9px 11px!important;resize:vertical;border-radius:8px!important;background:var(--ui-surface,#fff)!important;color:var(--ink,#18221c)!important}.inputRow button{display:inline-flex!important;align-items:center;gap:7px;width:auto!important;min-height:34px!important;padding:7px 12px!important;border-radius:7px!important;white-space:nowrap;font-size:12px!important}
+.limit{color:var(--muted,#647067);font-size:10px;margin-top:3px}.limit summary{cursor:pointer}.limit p{font-size:11px;margin:6px 0;max-width:78ch}
+@media(max-width:600px){.header,.composer,.conversation{padding:12px}.inputRow{align-items:stretch;flex-direction:column}.inputRow button{align-self:flex-end}.metrics{grid-template-columns:1fr}.question{max-width:95%}}
+
+.card summary{min-height:24px!important;padding:3px 0!important;font-size:11px!important;background:transparent!important;border:0!important;border-radius:0!important;color:var(--muted,#647067)!important}
+
+.explorer .search{display:grid;grid-template-columns:minmax(160px,2fr) minmax(110px,1fr) minmax(130px,1fr) minmax(90px,.7fr) auto;align-items:end;gap:10px;max-width:none;margin:12px 0}
+.explorer .search label{font-size:11px;gap:4px}.explorer .search input,.explorer .search select{min-height:34px;padding:7px 9px;font-size:12px;border-radius:6px}
+.explorer .search button,.explorer .toolbar button{width:auto;min-height:34px;padding:7px 12px;font-size:12px;margin:0;border-radius:7px;white-space:nowrap}
+.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0}.explorer>p{font-size:12px;max-width:90ch}
+.explorer .publication{background:transparent;border:0;margin:10px 0;padding:0;font-size:11px;color:var(--muted,#647067)}.explorer .publication>summary{min-height:24px;padding:3px 0;font-size:11px}.publication p{margin:5px 0;overflow-wrap:anywhere}
+@media(max-width:1100px){.explorer .search{grid-template-columns:repeat(2,minmax(0,1fr))}.explorer .search button{justify-self:start}}
+@media(max-width:460px){.explorer .search{grid-template-columns:minmax(0,1fr)}.explorer .search input,.explorer .search select,.explorer .search button,.explorer .toolbar button{min-height:40px}}

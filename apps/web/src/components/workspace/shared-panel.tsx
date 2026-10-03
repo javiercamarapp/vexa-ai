@@ -6,6 +6,8 @@ import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
 import {DataState} from './data-state';
 import {SharedFilters} from './shared-filters';
 import {CurrentProblems} from './current-problems';
+import {CfoOverview} from './cfo-overview';
+import cfo from './cfo-overview.module.css';
 type ViewScope=Scope & {basis:string;exponent?:number};
 type ViewBundle=Omit<Bundle,'meta'> & {meta:Omit<Bundle['meta'],'scope_hash'> & {scope_hash:string|null;base_snapshot_id:string|null;base_scope_hash:string|null;cursor_auth_hash:string;scope:ViewScope;mapping_manifest_id:string|null;can_manage:boolean}};
 function initialScope(query:string):ViewScope{
@@ -45,8 +47,20 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
  const latest=()=>{const next=new URLSearchParams(resolved.current);next.delete('snapshot_id');next.delete('scope_hash');next.delete('cursor');navigate(next);};
  const exportUrl=(format:string)=>{const next=new URLSearchParams(pinned);next.set('resource',resource);next.set('format',format);return '/api/workspace/export?'+next.toString();};
  const state=bundle?.meta.state;
- return <section aria-label={resource==='metrics'?'Resumen con alcance compartido':'Problemas con alcance compartido'}>
-  <p className="eyebrow">Decisiones con evidencia</p><h1>{resource==='metrics'?'Resumen ejecutivo':'Problemas de negocio'}</h1>
+ if(resource==='metrics')return <section className={cfo.page} aria-label="Resumen con alcance compartido">
+  <header className={cfo.header}><div><span className={cfo.kicker}>Control financiero</span><h1>Resumen ejecutivo</h1></div><div className={cfo.toolbar}><button type="button" disabled={busy} onClick={update}>Actualizar</button><button type="button" disabled={busy} onClick={latest}>Última publicación</button></div></header>
+  <details className={cfo.scopeBox}><summary>Periodo y filtros <span>{scope.date_start.slice(0,10)} → {scope.date_end.slice(0,10)} (hasta exclusivo) · {scope.currency} · Base {scope.basis}</span></summary><SharedFilters key={JSON.stringify(scope)} scope={scope} onApply={apply}/></details>
+  {busy&&<DataState state={{kind:'loading'}}/>}{error&&<DataState state={{kind:'error',code:'workspace_request_failed',message:error}}/>}
+  {bundle&&!busy&&<>
+   {bundle.meta.critical_notice&&<aside className="state-panel partial" role="alert"><strong>Revisión crítica, independiente del importe</strong><p>{bundle.meta.critical_notice}</p></aside>}
+   <CfoOverview key={`${bundle.meta.snapshot_id}:${bundle.meta.scope_hash}`} bundle={bundle}/>
+   <div className={cfo.publication}><details><summary>Identidad de la publicación</summary><p>Snapshot: {bundle.meta.snapshot_id??'Sin publicación'} · Alcance: {bundle.meta.scope_hash??'Sin vista publicada'}</p>{bundle.meta.mapping_manifest_id&&<p>Snapshot base: {bundle.meta.base_snapshot_id} · Alcance base: {bundle.meta.base_scope_hash} · Versión de clasificación: {bundle.meta.mapping_manifest_id}</p>}</details>{bundle.meta.snapshot_id&&bundle.meta.scope_hash&&<div className={cfo.exports}><a download="workspace.json" href={exportUrl('json')}>Exportar JSON</a><a download="workspace.csv" href={exportUrl('csv')}>Exportar CSV</a></div>}</div>
+   {bundle.meta.next_cursor&&<div className={cfo.toolbar}><button type="button" onClick={()=>{const next=new URLSearchParams(pinned);next.set('cursor',bundle.meta.next_cursor!);navigate(next);}}>Página siguiente</button></div>}
+   {bundle.meta.can_manage&&<div className={cfo.management}><Link href="/economics">Fuentes y publicaciones</Link><Link href="/problems/manage">Catálogo de problemas</Link></div>}
+  </>}
+ </section>;
+ return <section aria-label="Problemas con alcance compartido">
+  <p className="eyebrow">Decisiones con evidencia</p><h1>Problemas de negocio</h1>
   <p className="intro">Cifras y cobertura de una publicación fija. La exposición compartida entre problemas no se suma ni equivale a pérdida.</p>
   {resource==='problems'&&<><CurrentProblems/><h2>Publicación financiera</h2></>}
   <SharedFilters key={JSON.stringify(scope)} scope={scope} onApply={apply}/>

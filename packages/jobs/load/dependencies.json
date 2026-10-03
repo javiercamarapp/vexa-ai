@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
   "baselineSha": "e6a340bb850f9fbd97eb9b31e56f7bb02eb03f47",
-  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance. Historical CSV UI explicitly selects the reviewed opt-in profile; server-provided content type gates selection. Focal local PostgreSQL and synthetic React DOM checks passed; no new capacity or production acceptance.",
+  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance. Historical CSV UI explicitly selects the reviewed opt-in profile; server-provided content type gates selection. Focal local PostgreSQL and synthetic React DOM checks passed; no new capacity or production acceptance. Compact Atiende-referenced UI with independently reviewed financial presentation and deterministic query card; synthetic browser checks only, no new formal acceptance or capacity measurement.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -90,6 +90,10 @@
     {
       "path": "apps/web/public/images/login-hero.png",
       "sha256": "c129c6ed5c6b3a653c52334df29081da16b5f9c66afdb1ccde82b1da39484f62"
+    },
+    {
+      "path": "apps/web/public/images/login-warehouse.webp",
+      "sha256": "e83765a93c107392e3cebc985815880e298f963f2f0ca3c38115eb0ac306c794"
     },
     {
       "path": "apps/web/public/push-icon.svg",
@@ -537,7 +541,7 @@
     },
     {
       "path": "apps/web/src/app/globals.css",
-      "sha256": "d0c43c455993ab5635821fcea0c633247000742c84a679fbc75f48f88d66f410"
+      "sha256": "289c96fc50876696911085b798f6f8ede365df75ed63b1f7debe3388450b1103"
     },
     {
       "path": "apps/web/src/app/layout.tsx",
@@ -545,7 +549,7 @@
     },
     {
       "path": "apps/web/src/app/login/page.tsx",
-      "sha256": "fd3491b895cc4b4f098100ceb6a2f96253d4694d6dc78cdbcd701cfedfa10383"
+      "sha256": "bf4f6d4b6f437ed3e32db1f0edecd8fd20e9206a0cf44cea7c2a6600284c2a5d"
     },
     {
       "path": "apps/web/src/app/not-found.tsx",
@@ -613,11 +617,11 @@
     },
     {
       "path": "apps/web/src/components/email-login-complete.tsx",
-      "sha256": "61e0a5fde4e4037acf51be27c7f550348cb54764b0401aa6efa117d311432903"
+      "sha256": "907630330cf44bef731938f197c7771840194664f3e1499fddbd9c2ffa8698ee"
     },
     {
       "path": "apps/web/src/components/email-login.tsx",
-      "sha256": "55f302d6d91ab5bc04c06da83abe352455c096f37e75eec428ca88e6b06a147c"
+      "sha256": "cb685dd0472e01d2ac3deb15b85612dfc273a26417e8a5903628fb763f2647bb"
     },
     {
       "path": "apps/web/src/components/embedding-budget-panel.tsx",
@@ -633,7 +637,15 @@
     },
     {
       "path": "apps/web/src/components/explorer/panel.tsx",
-      "sha256": "1ca40ea1137af7482cd9af54df27e07ad7c3b14d669fd7d49696d5d4e10a2f88"
+      "sha256": "1156a3faa5030f6cdaf4190568aed3ac70b9d57530bce47a39c76ea9495df77b"
+    },
+    {
+      "path": "apps/web/src/components/explorer/query-card.module.css",
+      "sha256": "18b3c1659a252cefe98a9f554d0e677979b82aad61869f2fb31bb2c26c09c6e8"
+    },
+    {
+      "path": "apps/web/src/components/explorer/query-card.tsx",
+      "sha256": "3064f452c0ed69ffe8d1bdcfb9a224daa517e3221de080cfe748d6bf9bfffc1a"
     },
     {
       "path": "apps/web/src/components/extraction-panel.tsx",
@@ -716,6 +728,22 @@
       "sha256": "09073e17cab4cd1880a293430ddbc20c00e7a33dfc8b4202937afde4c11460bd"
     },
     {
+      "path": "apps/web/src/components/workspace/cfo-model.d.mts",
+      "sha256": "c11086d65eefa7fbaf181b6adc1b4d60abe8b883c7695db758d8c6034e5e5426"
+    },
+    {
+      "path": "apps/web/src/components/workspace/cfo-model.mjs",
+      "sha256": "8890a5e6cd5d0ab803e9c008982849fa9d5fb803683522e435ac9924af689ffc"
+    },
+    {
+      "path": "apps/web/src/components/workspace/cfo-overview.module.css",
+      "sha256": "5513ed4437b19b5da83a81feb4df464ae967adeb19945ad7755ad5797c790919"
+    },
+    {
+      "path": "apps/web/src/components/workspace/cfo-overview.tsx",
+      "sha256": "3de7e2b6934b464cdd3c3c7c56e4b5d160b702e31b00cecbfcf149dfdfe4f888"
+    },
+    {
       "path": "apps/web/src/components/workspace/current-problems.tsx",
       "sha256": "0bb8be519f6bd4a248dc98a27a46d40443f000c643e462a7f3e3fbb52060c909"
     },
@@ -741,7 +769,7 @@
     },
     {
       "path": "apps/web/src/components/workspace/navigation.tsx",
-      "sha256": "d0fdd9507a118f8678aaa0805017536a739168bbaa34d83a0b74017646bbeffb"
+      "sha256": "3c191f5d0e165418d30553b492f87d6cedf71e09ce7ba005b79e994eedbd54a4"
     },
     {
       "path": "apps/web/src/components/workspace/order-mappings.tsx",
@@ -752,16 +780,20 @@
       "sha256": "bb37312185e78fed6595d14b991e422dc0a67b3964e27d06fd6764c1907c86a2"
     },
     {
+      "path": "apps/web/src/components/workspace/shared-filters.module.css",
+      "sha256": "15bf251e279d41992a619c3823d052399c7c468e6f43b0e2cc1567ccedb50561"
+    },
+    {
       "path": "apps/web/src/components/workspace/shared-filters.tsx",
-      "sha256": "e3a8cfd6ecdcc6b2535367c5bb5eb500001f7f6f6791acf11261384dfdd47f73"
+      "sha256": "8704112ef3b5d1e7c4a8288d3b3e9a9f3c3d9f62c086add135f81818a68608a3"
     },
     {
       "path": "apps/web/src/components/workspace/shared-panel.tsx",
-      "sha256": "351894b0834b33582319b68f06e3e7764abfbcdf8a4ff0c53e422f4298b7da4e"
+      "sha256": "e99fb748ee8bba1eee325dd4adad0db5b69de5bb47ee40857346e8f1a2f9d552"
     },
     {
       "path": "apps/web/src/components/workspace/shell.tsx",
-      "sha256": "72a8891cc17c08b2e3a56e0d8ca1c511a85a8adacf2c5c557943f4f550c74619"
+      "sha256": "22193c0246efd6be75baffae079a467faf31e1f0d6ed241414caf93595b633f0"
     },
     {
       "path": "apps/web/src/lib/auth-http.ts",

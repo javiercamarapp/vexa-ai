@@ -103,6 +103,22 @@ main:has(.login),main:has(.workspace-shell) { max-width:none; padding:0; margin:
 .login-inner { padding-top:0; }
 .login-visual { display:flex; flex-direction:column; padding:40px 40px 40px 24px; min-height:100dvh; }
 }
+@media(min-width:1024px) and (max-height:900px) {
+.login-column { padding:24px 40px; }
+.login-inner { max-width:440px; }
+.login-copy { padding:16px 0; }
+.login h1 { max-width:none; font-size:36px; margin:10px 0; }
+.login-intro { font-size:14px; line-height:1.5; }
+.login-divider { margin-top:18px; }
+.login-google { margin-top:18px; }
+.login-btn,.login-campo { min-height:44px; padding:10px 16px; font-size:14px; line-height:1.5; }
+.login-separator { margin:12px 0; }
+.login-email { gap:10px; }
+.login-help { margin-top:16px; font-size:12px; line-height:1.5; }
+.login-footnote { margin-top:16px; line-height:1.5; }
+.login-message { margin:10px 0; padding:12px; font-size:12px; }
+.login-visual { padding:24px 24px 24px 16px; }
+}
 .workspace-shell { display:flex; align-items:stretch; gap:16px; padding:16px; min-height:100dvh; font-size:13px; line-height:1.5; }
 .workspace-shell .workspace-sidebar { position:sticky; top:12px; width:232px; flex:0 0 232px; height:calc(100dvh - 24px); border:1px solid var(--ui-border); border-radius:16px; background:var(--ui-surface); padding:0; display:flex; flex-direction:column; overflow:hidden; }
 .sidebar-logo { display:flex; align-items:center; min-width:0; text-decoration:none; max-width:180px; }

@@ -557,7 +557,7 @@
     },
     {
       "path": "apps/web/src/app/globals.css",
-      "sha256": "9f8e861df17a681fc59b7f3421cd4cc347177ff8d7e38c9b224e7d839868e638"
+      "sha256": "dfa4215c06031a2ba6ebdd09cca3369d06ce8015a28fbae47dcfc0881d262f3d"
     },
     {
       "path": "apps/web/src/app/layout.tsx",

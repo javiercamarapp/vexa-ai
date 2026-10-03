@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Manual hosted 10K measurement; no escalation or acceptance claim."""
-import argparse, base64, gzip, hashlib, importlib.util, json, os, pathlib, re, selectors, signal, stat, subprocess, sys, tempfile, time
+"""Manual hosted fixed 10K/50K/150K series; no acceptance claim."""
+import argparse, base64, datetime, gzip, hashlib, importlib.util, json, math, os, pathlib, re, selectors, signal, stat, subprocess, sys, tempfile, time
 
 CONTROL = pathlib.Path(__file__).resolve().parents[2]
 MAX_LOG = 8 * 1024 * 1024
 MAX_BUNDLE = 16 * 1024 * 1024
 MAX_COMPRESSED = 2 * 1024 * 1024
-EXPECTED = {'total': 10000, 'accepted': 9800, 'rejected': 100, 'duplicates': 100, 'pending': 0}
+SCALES = (10000, 50000, 150000)
+# Five jobs at 900s plus 900s for setup, upload/API, build and cleanup.
+MEASUREMENT_SECONDS = 5400
 
 def check(ok, code):
     if not ok: raise ValueError(code)
@@ -25,7 +27,7 @@ def sanitize(text):
 
 def clean_env(candidate, tmp):
     env={k:os.environ[k] for k in ('PATH','HOME','LANG','LC_ALL') if k in os.environ}
-    env.update(CI='1',NEXT_TELEMETRY_DISABLED='1',PYTHONDONTWRITEBYTECODE='1',TMPDIR=str(tmp),VEXA_CANDIDATE=str(candidate),VEXA_LOAD_SCALES='10000',VEXA_LOAD_BASE_PORT='62820',NPM_CONFIG_USERCONFIG='/dev/null',NPM_CONFIG_GLOBALCONFIG=str(tmp/'empty-global-npmrc'))
+    env.update(CI='1',NEXT_TELEMETRY_DISABLED='1',PYTHONDONTWRITEBYTECODE='1',TMPDIR=str(tmp),VEXA_CANDIDATE=str(candidate),VEXA_LOAD_SCALES='10000,50000,150000',VEXA_LOAD_BASE_PORT='62820',NPM_CONFIG_USERCONFIG='/dev/null',NPM_CONFIG_GLOBALCONFIG=str(tmp/'empty-global-npmrc'))
     return env
 
 def bound_evidence(output,tmp):
@@ -82,30 +84,71 @@ def inspect_owned(evidence, env):
         results.append(item)
     return {'verified':bool(results) and all(x['absent'] for x in results),'broker':broker,'resources':results,'mode':'inspect-only-no-removal'}
 
+def expected(rows): return {'total':rows,'accepted':rows*98//100,'rejected':rows//100,'duplicates':rows//100,'pending':0}
+def finite(value): return type(value) in (int,float) and math.isfinite(value)
+def timestamp(value):
+    check(isinstance(value,str),'TIMESTAMP_REQUIRED')
+    try: parsed=datetime.datetime.fromisoformat(value.replace('Z','+00:00'))
+    except ValueError: raise ValueError('TIMESTAMP_INVALID') from None
+    check(parsed.tzinfo is not None,'TIMESTAMP_TIMEZONE_REQUIRED');return parsed
+
 def counters(value):
-    check(isinstance(value,dict) and all(k in value for k in EXPECTED),'COUNTERS_MISSING')
+    check(isinstance(value,dict) and all(k in value for k in expected(0)),'COUNTERS_MISSING')
     result={}
-    for k in EXPECTED:
+    for k in expected(0):
         n=value[k]
-        if isinstance(n,str):check(bool(re.fullmatch(r'0|[1-9]\d{0,4}',n)),'COUNTER_STRING_INVALID');n=int(n)
-        check(type(n) is int and 0<=n<=10000,'COUNTER_RANGE');result[k]=n
+        if isinstance(n,str):check(bool(re.fullmatch(r'0|[1-9]\d{0,5}',n)),'COUNTER_STRING_INVALID');n=int(n)
+        check(type(n) is int and 0<=n<=150000,'COUNTER_RANGE');result[k]=n
     return result
 
 def validate_measurement(report,candidate,manifest_hash,benchmark,external):
     check(report.get('schema')=='vexa-load-result-v1' and report.get('synthetic') is True and report.get('status')=='measured','MEASURED_REPORT_REQUIRED')
     check(report.get('candidate')==str(candidate) and report.get('dependencyManifestSha256')==manifest_hash and report.get('benchmarkImplementation')==benchmark,'REPORT_SOURCE_BINDING')
-    scales=report.get('scales');check(isinstance(scales,list) and len(scales)==1 and scales[0].get('rows')==10000 and scales[0].get('status')=='pass','EXACT_10K_REQUIRED')
-    s=scales[0];check(s.get('observed')==EXPECTED and s.get('dataset',{}).get('expected')==EXPECTED,'TERMINAL_COUNTERS')
-    check(all(type(v) is int for v in s.get('observed',{}).values()),'COUNTER_TYPES')
-    check(s.get('concurrency')==1 and s.get('workerChunkRows')==100,'LOAD_CONFIGURATION_CHANGED')
-    check(isinstance(s.get('files'),list) and s['files'] and sum(f.get('rows',0) for f in s['files'])==10000,'FILE_COVERAGE')
-    for f in s['files']:
-        observed=f.get('observed',{});check(observed.get('fileHash')==f.get('sha256') and counters(observed)==counters(f.get('apiCounters')),'SQL_API_COUNTERS')
+    check(report.get('priorEvidence') is None,'NO_EXTERNAL_PRIOR_REPORT')
+    scales=report.get('scales');check(isinstance(scales,list) and len(scales)==3 and all(isinstance(s,dict) and type(s.get('rows')) is int for s in scales) and [s.get('rows') for s in scales]==list(SCALES),'EXACT_SERIES_REQUIRED')
+    processes=report.get('processes');check(isinstance(processes,list) and len(processes)==3,'ONE_PROCESS_PER_SCALE_REQUIRED')
+    all_jobs=set();all_imports=set();previous_finish=timestamp(report.get('startedAt'))
+    for s,process,rows in zip(scales,processes,SCALES):
+        count=expected(rows);parts=1 if rows<=50000 else 3
+        check(s.get('status')=='pass' and s.get('observed')==count and s.get('dataset',{}).get('expected')==count,'TERMINAL_COUNTERS')
+        check(all(type(v) is int for v in s['observed'].values()) and all(type(v) is int for v in s['dataset']['expected'].values()),'COUNTER_TYPES')
+        check(type(s.get('concurrency')) is int and s['concurrency']==1 and type(s.get('workerChunkRows')) is int and s['workerChunkRows']==100 and type(s.get('jobDeadlineMs')) is int and s['jobDeadlineMs']==900000,'LOAD_CONFIGURATION_CHANGED')
+        dataset=s['dataset'];seed=308+rows
+        check(dataset.get('schema')=='vexa-synthetic-load-v1' and dataset.get('synthetic') is True and dataset.get('rows')==rows and dataset.get('seed')==s.get('seed')==seed and dataset.get('limits')=={'rowsPerFile':50000,'bytesPerFile':20*1024*1024},'DATASET_IDENTITY')
+        unsigned={k:v for k,v in dataset.items() if k!='sha256'}
+        check(dataset.get('sha256')==digest(json.dumps(unsigned,separators=(',',':'),ensure_ascii=False).encode()),'DATASET_MANIFEST_HASH')
+        files=s.get('files');generated=dataset.get('files')
+        check(isinstance(files,list) and isinstance(generated,list) and len(files)==len(generated)==parts,'FILE_COVERAGE')
+        chunks=s.get('chunks');check(isinstance(chunks,list) and len(chunks)==rows//100,'CHUNK_COVERAGE')
+        started=timestamp(s.get('startedAt'));check(started>=previous_finish,'SCALE_ORDER_TIMING')
+        check(process.get('chunks')==chunks and timestamp(process.get('startedAt'))>=started and timestamp(process.get('endedAt'))>=timestamp(process['startedAt']),'PROCESS_COVERAGE')
+        previous_finish=timestamp(process['endedAt']);offset=0;chunk_index=0
+        for part,(f,g) in enumerate(zip(files,generated),1):
+            n=min(50000,rows-offset);wanted=expected(n)
+            check(isinstance(f,dict) and isinstance(g,dict) and all(f.get(k)==v for k,v in g.items()),'FILE_MANIFEST_BINDING')
+            check(set(g)=={'filename','rows','bytes','sha256','firstIndex','lastIndex'} and g['filename']==f'SYN-{rows}-{seed}-part-{part}.csv' and type(g['rows']) is int and g['rows']==n and type(g['firstIndex']) is int and g['firstIndex']==offset and type(g['lastIndex']) is int and g['lastIndex']==offset+n-1,'FILE_PARTITION')
+            check(type(g['bytes']) is int and 0<g['bytes']<=20*1024*1024 and isinstance(g['sha256'],str) and re.fullmatch('[0-9a-f]{64}',g['sha256']),'FILE_BYTES_HASH')
+            for key,seen in [('jobId',all_jobs),('importId',all_imports)]:
+                value=f.get(key);check(isinstance(value,str) and re.fullmatch(r'[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}',value) and value not in seen,'UNIQUE_JOB_IMPORT');seen.add(value)
+            observed=f.get('observed',{});check(observed.get('fileHash')==g['sha256'] and counters(observed)==counters(f.get('apiCounters'))==wanted,'SQL_API_COUNTERS')
+            timing=f.get('jobTiming',{});elapsed=timing.get('elapsedMs')
+            check(timing.get('state')=='partial' and type(timing.get('failureCount')) is int and timing['failureCount']==0 and finite(elapsed) and 0<elapsed<900000,'JOB_DEADLINE_OR_FAILURE')
+            first=timestamp(timing.get('firstStartedAt'));last=timestamp(timing.get('lastFinishedAt'));deadline=timestamp(timing.get('deadline'))
+            check(started<=first<=last<=deadline and math.isclose((last-first).total_seconds()*1000,elapsed,abs_tol=1),'JOB_TIMING')
+            for i,ch in enumerate(chunks[chunk_index:chunk_index+n//100],1):
+                check(ch.get('kind')=='chunk' and ch.get('jobId')==f['jobId'] and type(ch.get('rows')) is int and ch['rows']==100 and type(ch.get('offset')) is int and ch['offset']==i*100 and ch.get('committed') is True and ch.get('done') is (i==n//100),'CHUNK_ACCOUNTING')
+                a=ch.get('monotonicStartMs');b=ch.get('monotonicEndMs');ms=ch.get('commitMs')
+                check(all(finite(x) for x in [a,b,ms]) and 0<=a<=b and 0<=ms<900000 and math.isclose(b-a,ms,abs_tol=1e-7),'CHUNK_TIMING')
+                check(first<=timestamp(ch.get('startedAt'))<=timestamp(ch.get('finishedAt'))<=deadline,'CHUNK_WALL_TIME')
+            offset+=n;chunk_index+=n//100
+        check(all(finite(s.get(k)) and 0<s[k] for k in ['processingMs','endToEndMs']) and s['processingMs']<3600000 and s['endToEndMs']>=s['processingMs'],'SCALE_TIMING')
+        api=s.get('apiRequests');check(isinstance(api,list) and [a.get('label') for a in api]==['reserve','storage_upload','mapping_preview','confirm']*parts+['job_status']*parts and all(finite(a.get('ms')) and a['ms']>=0 for a in api),'API_TIMING_COVERAGE')
+        metrics=s.get('metrics',{});check(metrics.get('commitSamples')==rows//100 and metrics.get('apiSamples')==len(api),'METRIC_COVERAGE')
     cleanup=report.get('cleanup') or {};check(cleanup.get('ownResourcesRemoved') is True and cleanup.get('temporaryPathsRemoved') is True,'INTERNAL_CLEANUP_REQUIRED')
-    resources=cleanup.get('resources');check(isinstance(resources,list) and resources and all(r.get('absent') is True for r in resources),'INTERNAL_RESOURCES_REQUIRED')
-    check(external.get('verified') is True and external.get('resources'),'EXTERNAL_CLEANUP_REQUIRED')
-    a={(r['kind'],r['name'],r['broker']) for r in resources};b={(r['kind'],r['name'],r['broker']) for r in external['resources']};check(a==b and len(a)==5 and sum(r['kind']=='container' for r in resources)==4,'CLEANUP_COVERAGE')
-    check(report.get('finishedAt') and report.get('startedAt') and report.get('processes'),'MEASUREMENT_INCOMPLETE')
+    resources=cleanup.get('resources');check(isinstance(resources,list) and len(resources)==5 and all(r.get('absent') is True for r in resources),'INTERNAL_RESOURCES_REQUIRED')
+    other=external.get('resources');check(external.get('verified') is True and isinstance(other,list) and len(other)==5 and all(r.get('absent') is True for r in other),'EXTERNAL_CLEANUP_REQUIRED')
+    a={(r['kind'],r['name'],r['broker']) for r in resources};b={(r['kind'],r['name'],r['broker']) for r in other};check(a==b and len(a)==5 and sum(r['kind']=='container' for r in resources)==4 and sum(r['kind']=='network' for r in resources)==1,'CLEANUP_COVERAGE')
+    check(timestamp(report.get('finishedAt'))>=previous_finish,'MEASUREMENT_INCOMPLETE')
 
 def transport_bundle(bundle):
     raw=json.dumps(bundle,sort_keys=True,separators=(',',':'),ensure_ascii=True).encode();check(len(raw)<=MAX_BUNDLE,'EVIDENCE_RAW_LIMIT')
@@ -163,7 +206,7 @@ def main():
     artifact=pathlib.Path(tempfile.mkdtemp(prefix='vexa-capacity-ci-',dir=runner));artifact.chmod(0o700);tmp=artifact/'tmp';tmp.mkdir(mode=0o700)
     spec=importlib.util.spec_from_file_location('capacity_lifecycle',CONTROL/'tests/acceptance/support/ci/lifecycle.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);life=module.Lifecycle(artifact);life.install()
     env=clean_env(candidate,tmp);commands=[];evidence=None;external={'verified':False};report=None
-    receipt={'schema':'capacity-manual-10k-v1','status':'FAILED','synthetic':True,'eventSha':args.event_sha,'correlation':correlation,'repository':os.environ.get('GITHUB_REPOSITORY'),'runId':os.environ.get('GITHUB_RUN_ID'),'runAttempt':os.environ.get('GITHUB_RUN_ATTEMPT'),'candidate':str(candidate),'control':str(CONTROL),'bootstrapOutcome':args.bootstrap_outcome,'commands':commands,'startedAt':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'notProved':['50K/150K','commercial capacity or SLO','AI/inference/training','production acceptance'],'escalationAuthorized':False}
+    receipt={'schema':'capacity-manual-series-v1','status':'FAILED','synthetic':True,'eventSha':args.event_sha,'correlation':correlation,'repository':os.environ.get('GITHUB_REPOSITORY'),'runId':os.environ.get('GITHUB_RUN_ID'),'runAttempt':os.environ.get('GITHUB_RUN_ATTEMPT'),'candidate':str(candidate),'control':str(CONTROL),'bootstrapOutcome':args.bootstrap_outcome,'commands':commands,'startedAt':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'notProved':['commercial capacity or SLO','AI/inference/training','production acceptance'],'fixedScales':list(SCALES),'jobDeadlineMs':900000,'measurementTimeoutSeconds':MEASUREMENT_SECONDS}
     logs={};code=1
     try:
         for checkout in (CONTROL,candidate):
@@ -174,7 +217,7 @@ def main():
         check(args.bootstrap_outcome=='success','BOOTSTRAP_NOT_SUCCESSFUL')
         check(receipt['diskBefore']['free']>=3*1024**3,'RUNNER_DISK_BELOW_3GIB')
         load=candidate/'packages/jobs/load/run.mjs';manifest=candidate/'packages/jobs/load/dependencies.json';manifest_hash=digest(manifest.read_bytes());benchmark={n:digest((load.parent/n).read_bytes()) for n in ['generator.mjs','harness.mjs','run.mjs','worker.mjs','dependencies.json']};receipt['dependencyManifestSha256']=manifest_hash;receipt['benchmarkImplementation']=benchmark
-        for stage,argv,timeout in [('preflight',['node',str(load),'--preflight'],60),('measurement',['node',str(load)],1320),('source-postflight',['node',str(load),'--preflight'],60)]:
+        for stage,argv,timeout in [('preflight',['node',str(load),'--preflight'],60),('measurement',['node',str(load)],MEASUREMENT_SECONDS),('source-postflight',['node',str(load),'--preflight'],60)]:
             command,out=run_process(argv,CONTROL,env,artifact/(stage+'.log'),life,timeout);commands.append(command)
             if stage=='measurement':
                 try:evidence=bound_evidence(out,tmp)
@@ -185,7 +228,7 @@ def main():
                 parsed=json.loads(out);check(parsed.get('status')=='source-preflight-only' and parsed.get('dependencyManifestSha256')==manifest_hash and parsed.get('capacityMeasured') is False,'SOURCE_PREFLIGHT_INVALID')
         check(evidence is not None,'MEASUREMENT_EVIDENCE_MISSING');report=read_json(evidence/'report.json');external=inspect_owned(evidence,env);validate_measurement(report,candidate,manifest_hash,benchmark,external)
         for checkout in (CONTROL,candidate):check(not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],cwd=checkout,env=env,text=True).strip(),'CHECKOUT_CHANGED')
-        receipt['status']='MEASURED_10K_COUNTS_AND_CLEANUP_VERIFIED';code=0
+        receipt['status']='MEASURED_10K_50K_150K_COUNTS_AND_CLEANUP_VERIFIED';code=0
     except Exception as e:receipt['error']=str(e) if isinstance(e,ValueError) else type(e).__name__
     finally:
         try:

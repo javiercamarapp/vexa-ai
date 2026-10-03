@@ -1,5 +1,5 @@
 {
-  "name": "Manual synthetic ingestion capacity 10K",
+  "name": "Manual synthetic ingestion capacity series",
   "on": {
     "workflow_dispatch": {
       "inputs": {
@@ -19,10 +19,10 @@
     "cancel-in-progress": false
   },
   "jobs": {
-    "capacity-10k": {
+    "capacity-series": {
       "if": "${{ github.ref == 'refs/heads/main' }}",
       "runs-on": "ubuntu-24.04-arm",
-      "timeout-minutes": 40,
+      "timeout-minutes": 110,
       "permissions": {
         "contents": "read"
       },
@@ -70,7 +70,7 @@
           "run": "umask 077\npython3 -B control/.github/scripts/capacity-ci.py --candidate \"$GITHUB_WORKSPACE/candidate\" --event-sha \"$GITHUB_SHA\" --bootstrap-only --authorized-disposable-runner > \"$RUNNER_TEMP/vexa-capacity-bootstrap.log\" 2>&1"
         },
         {
-          "name": "One 10K measurement and bounded evidence",
+          "name": "Fixed 10K then 50K then 150K series and bounded evidence",
           "if": "${{ always() }}",
           "shell": "bash --noprofile --norc -euo pipefail {0}",
           "run": "python3 -B control/.github/scripts/capacity-ci.py --candidate \"$GITHUB_WORKSPACE/candidate\" --event-sha \"$GITHUB_SHA\" --bootstrap-outcome \"${{ steps.bootstrap.outcome }}\""
@@ -81,5 +81,5 @@
       }
     }
   },
-  "run-name": "Capacity 10K \u00b7 ${{ inputs.correlation }}"
+  "run-name": "Capacity series \u00b7 ${{ inputs.correlation }}"
 }

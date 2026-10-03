@@ -8,7 +8,24 @@ const reject=code=>{throw new Rejection(code);};
 const id=parts=>{const h=contentHash(['source-persistence-v1',...parts]);return `${h.slice(0,8)}-${h.slice(8,12)}-5${h.slice(13,16)}-a${h.slice(17,20)}-${h.slice(20,32)}`;};
 const uuid=v=>typeof v==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(v);
 const tables={customer:'customers',product:'products',order:'orders',conversation:'conversations',message:'messages'};
-async function insert(s,table,row){const keys=Object.keys(row);await s.query(`INSERT INTO public.${table} (${keys.join(',')}) VALUES (${keys.map((_,i)=>'$'+(i+1)).join(',')})`,Object.values(row));}
+function insertStatement(table,row,offset=0){const keys=Object.keys(row);return `INSERT INTO public.${table} (${keys.join(',')}) VALUES (${keys.map((_,i)=>'$'+(offset+i+1)).join(',')})`;}
+async function insert(s,table,row){await s.query(insertStatement(table,row),Object.values(row));}
+// At most two writes per statement, to different tables. Keep a statement boundary
+// before heads (their policy reads source_revisions) and text revisions (their
+// retention trigger reads messages). Never batch across canonical rows/savepoints.
+async function insertCommunication(s,revision,snapshot,head){
+ const primary=snapshot[0],text=snapshot[1];
+ if(!['conversation','message'].includes(revision.entity_type)||primary?.table!==tables[revision.entity_type]||snapshot.length!==(revision.entity_type==='message'?2:1)||(text&&text.table!=='message_revisions'))throw Error('SNAPSHOT_INVALID');
+ const keys=Object.keys(primary.row);
+ if(keys.some(k=>! /^[a-z_]+$/.test(k)))throw Error('SNAPSHOT_INVALID');
+ const firstValues=Object.values(revision);
+ const projection=insertStatement(primary.table,primary.row,firstValues.length)+` ON CONFLICT (id) DO UPDATE SET ${keys.filter(k=>!['id','tenant_id'].includes(k)).map(k=>`${k}=EXCLUDED.${k}`).join(',')}`;
+ await s.query(`WITH revision_write AS (${insertStatement('source_revisions',revision)}) ${projection}`,[...firstValues,...Object.values(primary.row)]);
+ if(!text){await insert(s,'source_heads',head);return;}
+ if(Object.keys(text.row).some(k=>! /^[a-z_]+$/.test(k)))throw Error('SNAPSHOT_INVALID');
+ const headValues=Object.values(head);
+ await s.query(`WITH head_write AS (${insertStatement('source_heads',head)}) ${insertStatement('message_revisions',text.row,headValues.length)} ON CONFLICT DO NOTHING`,[...headValues,...Object.values(text.row)]);
+}
 async function reference(s,e,type,external,revision){
  if(external==null)return null;
  if(typeof external!=='string'||!external.trim())reject('REFERENCE_INVALID');
@@ -83,20 +100,31 @@ async function applySnapshot(s,snapshot){
 async function persistRevision(s,e,p,mapping){
  if(!Object.hasOwn(tables,e.entity_type))reject('ENTITY_UNSUPPORTED');
  if(e.deleted_at)reject('DELETION_REQUIRES_RETENTION');
- if((await s.query('SELECT public.retention_source_deleted($1,$2,$3,$4) AS deleted',[s.tenantId,e.connection_id,e.entity_type,e.external_id])).rows[0]?.deleted)reject('SOURCE_TOMBSTONED');
+ // persistCanonical already holds the tenant:connection advisory lock. Evaluate
+ // retention once for this revision; skip the revision subquery when deleted.
+ // This uses one read snapshot. Subsequent DML RLS and the chunk's final fence
+ // remain fresh checks; this result is never cached across records.
+ const lookup=(await s.query('WITH retention AS MATERIALIZED (SELECT public.retention_source_deleted($1,$2,$3,$4) AS deleted) SELECT retention.deleted, CASE WHEN retention.deleted THEN NULL ELSE (SELECT row_to_json(prior) FROM (SELECT id,canonical_id,fingerprint FROM public.source_revisions WHERE tenant_id=$1 AND connection_id=$2 AND entity_type=$3 AND external_id=$4 AND source_revision=$5) prior) END AS previous FROM retention',[s.tenantId,e.connection_id,e.entity_type,e.external_id,e.source_revision])).rows[0];
+ if(!lookup||typeof lookup.deleted!=='boolean'||!Object.hasOwn(lookup,'previous'))throw Error('REVISION_LOOKUP_INVALID');
+ if(lookup.deleted)reject('SOURCE_TOMBSTONED');
  const canonical=id([identityKey(e)]), revisionId=id([identityKey(e),e.source_revision]);
  const fingerprint=contentHash({content_hash:e.content_hash,occurred_at:e.occurred_at,deleted_at:e.deleted_at,adapter_version:e.adapter_version??null,normalized_hash:contentHash(p),mapping_version:mapping});
- const old=(await s.query('SELECT id,canonical_id,fingerprint FROM public.source_revisions WHERE tenant_id=$1 AND connection_id=$2 AND entity_type=$3 AND external_id=$4 AND source_revision=$5',[s.tenantId,e.connection_id,e.entity_type,e.external_id,e.source_revision])).rows[0];
+ const old=lookup.previous;
  if(old)return {status:old.fingerprint===fingerprint?'duplicate':'conflict',canonical_id:old.canonical_id,code:old.fingerprint===fingerprint?'DUPLICATE':'REVISION_CONFLICT',original_revision_id:old.id};
  const provenance={source:e.source,account_id:e.source_account_id,content_hash:e.content_hash,payload_ref:e.payload_ref,observed_at:e.observed_at,mapping_version:mapping,adapter_version:e.adapter_version??null,...(e.ingestion_profile?{ingestion_profile:e.ingestion_profile,historical_timestamp:p.historical_timestamp}:{})};
  const snapshot=await project(s,e,p,mapping,provenance,canonical);
  const head=(await s.query('SELECT * FROM public.source_heads WHERE tenant_id=$1 AND id=$2 FOR UPDATE',[s.tenantId,canonical])).rows[0];
  const row={id:revisionId,tenant_id:s.tenantId,connection_id:e.connection_id,entity_type:e.entity_type,external_id:e.external_id,source_revision:e.source_revision,content_hash:e.content_hash,fingerprint,mapping_version:mapping,canonical_id:canonical,[e.entity_type+'_id']:canonical,provenance:JSON.stringify(provenance),snapshot:JSON.stringify(snapshot),related_customer_id:snapshot.find(x=>x.row.customer_id)?.row.customer_id??null,related_product_id:snapshot.find(x=>x.row.product_id)?.row.product_id??JSON.parse(snapshot.find(x=>x.table==='messages')?.row.provenance??'{}').product_id??null,related_order_id:snapshot.find(x=>x.row.order_id)?.row.order_id??null,related_conversation_id:snapshot.find(x=>x.row.conversation_id)?.row.conversation_id??null,message_revision_id:snapshot.find(x=>x.table==='message_revisions')?.row.id??null};
- await insert(s,'source_revisions',row);
  if(!head){
-  await applySnapshot(s,snapshot);
-  await insert(s,'source_heads',{id:canonical,tenant_id:s.tenantId,connection_id:e.connection_id,entity_type:e.entity_type,external_id:e.external_id,selected_revision_id:revisionId,version:1,state:'unique'});
+  const initialHead={id:canonical,tenant_id:s.tenantId,connection_id:e.connection_id,entity_type:e.entity_type,external_id:e.external_id,selected_revision_id:revisionId,version:1,state:'unique'};
+  if(['conversation','message'].includes(e.entity_type))await insertCommunication(s,row,snapshot,initialHead);
+  else{
+   await insert(s,'source_revisions',row);
+   await applySnapshot(s,snapshot);
+   await insert(s,'source_heads',initialHead);
+  }
  }else{
+  await insert(s,'source_revisions',row);
   // Preserve every message text revision even while its logical projection is ambiguous.
   await applySnapshot(s,snapshot.filter(x=>x.table==='message_revisions'));
   await s.query("UPDATE public.source_heads SET selected_revision_id=null,version=version+1,state='ambiguous',updated_at=now() WHERE tenant_id=$1 AND id=$2",[s.tenantId,canonical]);
@@ -195,10 +223,21 @@ export async function persistCanonical(scope,{importId,record},internal){
  }
  await scope.query('RELEASE SAVEPOINT canonical_row');
  const state={inserted:'accepted',duplicate:'duplicate',conflict:'rejected',rejected:'rejected'}[result.status];
- await insert(scope,'import_rows',{id:rowId,tenant_id:scope.tenantId,import_id:importId,row_ref:rowRef,row_hash:evidenceHash,state,error_code:state==='rejected'?result.code:null,payload_ref:payloadRef,provenance:JSON.stringify({mapping_version:imported.mapping_version,result})});
- if(state==='rejected')await quarantine(scope,importId,rowId,evidenceHash,result.code,result.original_revision_id??null,payloadRef);
+ const importRow={id:rowId,tenant_id:scope.tenantId,import_id:importId,row_ref:rowRef,row_hash:evidenceHash,state,error_code:state==='rejected'?result.code:null,payload_ref:payloadRef,provenance:JSON.stringify({mapping_version:imported.mapping_version,result})};
  const counter={accepted:'accepted',duplicate:'duplicates',rejected:'rejected'}[state];
- await scope.query(`UPDATE public.imports SET ${counter}=${counter}+1,total=total+CASE WHEN pending>0 THEN 0 ELSE 1 END,pending=greatest(0,pending-1),updated_at=now() WHERE tenant_id=$1 AND id=$2`,[scope.tenantId,importId]);
+ const countSql=`UPDATE public.imports SET ${counter}=${counter}+1,total=total+CASE WHEN pending>0 THEN 0 ELSE 1 END,pending=greatest(0,pending-1),updated_at=now() WHERE tenant_id=$1 AND id=$2`;
+ if(state==='rejected'){
+  // Quarantine refers to this row: retain its existing statement boundary.
+  await insert(scope,'import_rows',importRow);
+  await quarantine(scope,importId,rowId,evidenceHash,result.code,result.original_revision_id??null,payloadRef);
+  await scope.query(countSql,[scope.tenantId,importId]);
+ }else{
+  // The import is already locked. These independent writes share one trip and
+  // one atomic statement; neither policy/trigger reads the other's new state.
+  // Keep this after canonical_row and all retention/revision/text boundaries.
+  const keys=Object.keys(importRow);
+  await scope.query(`WITH import_row_write AS (INSERT INTO public.import_rows (${keys.join(',')}) VALUES (${keys.map((_,i)=>'$'+(i+3)).join(',')})) ${countSql}`,[scope.tenantId,importId,...Object.values(importRow)]);
+ }
  const {original_revision_id,...publicResult}=result;
  return publicResult;
 }

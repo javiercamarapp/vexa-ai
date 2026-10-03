@@ -55,14 +55,21 @@ test('source reader replays same profile and returns full original text with has
  const reader=createExtractionSourceReader({storage:{read:async()=>{reads++;return bytes;}}});const value=await reader(scope,{text_ref:'SYN-REF',hash:r.envelope.content_hash,role:'customer'});assert.equal(value,r.raw_payload.text);assert.equal(reads,1);
  await assert.rejects(()=>reader(scope,{text_ref:'SYN-REF',hash:'0'.repeat(64),role:'customer'}));
 });
-function fakeScope(imported){const writes=[],stored=new Map();return {tenantId:context.tenant_id,userId:'SYN-USER',writes,query:async(sql,args=[])=>{
+function fakeScope(imported){const writes=[];const query=async(sql,args=[])=>{
+ // Record both DML statements while retaining their original parameter bindings.
+ const grouped=/^WITH (?:revision_write|head_write|import_row_write) AS \((INSERT.*?)\) ((?:INSERT|UPDATE).*)$/.exec(sql);
+ if(grouped){await query(grouped[1],args);return query(grouped[2],args);}
+ if(sql.startsWith('WITH retention AS MATERIALIZED'))return {rows:[{deleted:false,previous:null}]};
  if(sql.startsWith('SELECT i.*,c.source'))return {rows:[{...imported,state:'running',connection_status:'active',connection_id:context.connection_id,source:'csv',account_id:'SYNTHETIC'}]};
  if(sql.includes('vexa_backend_action'))return {rows:[{ok:true}]};
  if(sql.startsWith('SELECT DISTINCT canonical_id'))return {rows:[{canonical_id:'44444444-4444-4444-8444-444444444444'}]};
  if(sql.includes('retention_source_deleted'))return {rows:[{deleted:false}]};
- if(sql.startsWith('INSERT INTO public.')){writes.push({sql,args});}
+ if(sql.startsWith('INSERT INTO public.')){
+  const parameters=/VALUES\s*\(([^)]+)\)/.exec(sql);assert.ok(parameters,'recorded INSERT must expose bindings');
+  writes.push({sql,args:parameters[1].split(',').map(p=>args[Number(p.slice(1))-1])});
+ }
  return {rows:[]};
- }};}
+ };return {tenantId:context.tenant_id,userId:'SYN-USER',writes,query};}
 test('persistence reconstructs envelope/profile and records timestamp provenance; unauthorized mapping rejects',async()=>{
  const bytes=csv([{}]),imported=row(bytes),[record]=await recordsFromBytes(bytes,imported);const scope=fakeScope(imported);
  const result=await persistCanonical(scope,{importId,record});assert.equal(result.status,'inserted');

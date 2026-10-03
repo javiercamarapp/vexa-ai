@@ -4,6 +4,8 @@ Software para importar conversaciones e información histórica, conservar su pr
 
 ## Estado actual — 3 de octubre de 2026 (UTC)
 
+La ingesta sintética de 10.000 filas pasó en GitHub Linux ARM (4 CPU, aproximadamente 16 GB): 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas y cero pendientes. El trabajo tardó 220,15 segundos y retiró sus cinco recursos propios. Revisión independiente y restauración de Actions a desactivado comprobadas en los recibos. Es una medición de un consumidor, sin IA ni validación de capacidad comercial; 50K/150K de esta composición siguen pendientes. [Resultado, fuente y límites](docs/entrega/CAPACIDAD-CI-10K-2026-10-03.md). Se mantienen **59/60 implementadas y 28/60 aceptadas**.
+
 El acceso y el espacio de trabajo adoptan un diseño compacto: login con imagen fija, selector de organización en el pie gris, navegación por categorías excluyentes y temas claro/oscuro. El resumen presenta importes y cobertura del mismo corte; no inventa series históricas ni suma exposición y reembolsos. La consulta mantiene el alcance y las referencias del servicio existente. Revisión independiente y pruebas de composición registradas; no acreditan nuevas aceptaciones formales ni producción completa.
 
 El selector de importación permite elegir explícitamente el perfil histórico para CSV y exige volver a validar al cambiar de modo. La persistencia local pasó siete controles con PostgreSQL/Auth/RLS reales; el componente pasó cinco casos React/DOM y 16 regresiones sintéticas. Se conservan textos de 100.000 caracteres y fechas originales; selección, reintentos y permisos verificados en ese alcance. No acredita carga de cliente, Storage remoto, capacidad ni nuevas aceptaciones formales.

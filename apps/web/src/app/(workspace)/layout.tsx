@@ -8,7 +8,7 @@ import { VexaBrand } from '../../components/vexa-brand';
 import { DataState } from '../../components/workspace/data-state';
 export const dynamic='force-dynamic';
 export default async function WorkspaceLayout({children}:{children:ReactNode}){
- let context;try{context=await workspaceSession();}catch(error){if(error instanceof AccessError&&[401,403].includes(error.status))redirect('/login?error=access_denied');return <DataState state={{kind:'error',code:'workspace_identity_unavailable',message:'Configura el acceso Supabase y verifica el servicio de identidad para abrir el espacio de trabajo.'}}/>;}
+ let context;try{context=await workspaceSession();}catch(error){if(error instanceof AccessError){if(error.status===401)redirect('/login');if(error.status===403)redirect('/login?error=access_denied');}return <DataState state={{kind:'error',code:'workspace_identity_unavailable',message:'Configura el acceso Supabase y verifica el servicio de identidad para abrir el espacio de trabajo.'}}/>;}
  const {session,client}=context;const {data:organizations,error}=await client.from('organizations').select('id,name').in('id',session.memberships.map(m=>m.tenant_id)).order('name');
  if(error)return <DataState state={{kind:'error',code:'organizations_unavailable',message:'No se pudo verificar la organización. Reintenta cuando se restablezca el servicio.'}}/>;
  if(!organizations?.some(o=>o.id===session.active.tenant_id))redirect('/login?error=access_denied');

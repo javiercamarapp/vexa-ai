@@ -4,7 +4,7 @@ Software para importar conversaciones e información histórica, conservar su pr
 
 ## Estado actual — 3 de octubre de 2026 (UTC)
 
-El rediseño anterior fue rechazado por el usuario. Se prepara una nueva composición con tipografía Inter, bordes neutros, botones de tinta y selección azul, junto con acceso directo para una sola organización y una guía visible cuando faltan publicaciones. La administración del espacio y la de VEXA se distinguen explícitamente. La propuesta requiere revisión e integración; no acredita aceptación visual, datos de cliente ni producción. [Acceso y recorrido](docs/entrega/ACCESO-Y-RECORRIDO-2026-10-03.md).
+El acceso y el panel ajustan tipografía, composición y controles a las referencias de Likida y Atiende. La primera visita sin sesión ya no muestra un rechazo de permisos. La comparación sintética de persistencia completó cuatro ventanas y ocho controles; la propuesta experimental redujo la media aproximadamente un 7 %, sin acreditar 50K/150K ni adoptar la optimización. [Diseño, pruebas y límites](docs/entrega/DISENO-Y-CAPACIDAD-2026-10-03.md). Se mantienen **59/60 implementadas y 28/60 aceptadas**, con producción pendiente.
 
 La ingesta sintética de 10.000 filas pasó en GitHub Linux ARM (4 CPU, aproximadamente 16 GB): 9.800 aceptadas, 100 rechazos esperados, 100 duplicadas y cero pendientes. El trabajo tardó 220,15 segundos y retiró sus cinco recursos propios. Revisión independiente y restauración de Actions a desactivado comprobadas en los recibos. Es una medición de un consumidor, sin IA ni validación de capacidad comercial; 50K/150K de esta composición siguen pendientes. [Resultado, fuente y límites](docs/entrega/CAPACIDAD-CI-10K-2026-10-03.md). Se mantienen **59/60 implementadas y 28/60 aceptadas**.
 

@@ -1,5 +1,6 @@
 .filters:global(.workspace-filters) {display:block;padding:16px;margin:16px 0;border:1px solid var(--ui-border);background:var(--ui-surface);border-radius:16px;box-shadow:var(--ui-shadow);}
-.primary {display:grid;grid-template-columns:minmax(130px,1fr) minmax(130px,1fr) minmax(75px,.6fr) minmax(95px,.8fr) auto;align-items:end;gap:12px;}
+.primary {display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));align-items:end;gap:12px;}
+.primary button {justify-self:start;}
 .filters:global(.workspace-filters) label {font-size:11px;font-weight:500;color:var(--muted);gap:5px;min-width:0;}
 .filters:global(.workspace-filters) input,.filters:global(.workspace-filters) select,.filters:global(.workspace-filters) textarea {font:400 12px/1.5 var(--font-ui);padding:8px 10px;min-height:36px;border:1px solid var(--ui-input);border-radius:16px;background:var(--ui-surface);color:var(--ink);max-width:100%;}
 .filters:global(.workspace-filters) button {width:auto;min-height:36px;padding:8px 14px;font-size:12px;border-radius:999px;white-space:nowrap;}

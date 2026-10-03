@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
   "baselineSha": "e6a340bb850f9fbd97eb9b31e56f7bb02eb03f47",
-  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance. Historical CSV UI explicitly selects the reviewed opt-in profile; server-provided content type gates selection. Focal local PostgreSQL and synthetic React DOM checks passed; no new capacity or production acceptance. Compact Atiende-referenced UI with independently reviewed financial presentation and deterministic query card; synthetic browser checks only, no new formal acceptance or capacity measurement.",
+  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance. Historical CSV UI explicitly selects the reviewed opt-in profile; server-provided content type gates selection. Focal local PostgreSQL and synthetic React DOM checks passed; no new capacity or production acceptance. Compact Atiende-referenced UI with independently reviewed financial presentation and deterministic query card; synthetic browser checks only, no new formal acceptance or capacity measurement. Access/UI correction 2026-10-03: direct authorized entry, contextual platform access, honest first-run guidance and neutral Atiende/Likida presentation. No new formal acceptance or inherited capacity measurement.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -173,7 +173,7 @@
     },
     {
       "path": "apps/web/src/app/(workspace)/layout.tsx",
-      "sha256": "d93c81dd6e054fdd8465092201f3c3f4e7aa1fc8718432f75399455c260ba101"
+      "sha256": "30754335194d0254f0ca2affd9384c7d68f90adebb82c0a8e8d07106dcf6ffab"
     },
     {
       "path": "apps/web/src/app/(workspace)/loading.tsx",
@@ -541,7 +541,7 @@
     },
     {
       "path": "apps/web/src/app/globals.css",
-      "sha256": "289c96fc50876696911085b798f6f8ede365df75ed63b1f7debe3388450b1103"
+      "sha256": "5bb59cc9632e7f86333274be4d972907f573a099332de95707eb8d23e06f2485"
     },
     {
       "path": "apps/web/src/app/layout.tsx",
@@ -557,7 +557,7 @@
     },
     {
       "path": "apps/web/src/app/page.tsx",
-      "sha256": "f1ed61859230dd095b2654446341b61fb234e84be9100163f4aacfd815feb964"
+      "sha256": "2f20106cf8b55c3e22413f9db735a59b92618c0b3a26fb2732db48ab6074021a"
     },
     {
       "path": "apps/web/src/app/platform/page.tsx",
@@ -617,7 +617,7 @@
     },
     {
       "path": "apps/web/src/components/email-login-complete.tsx",
-      "sha256": "907630330cf44bef731938f197c7771840194664f3e1499fddbd9c2ffa8698ee"
+      "sha256": "33511c6621bfd58419b6bd995883471e5b4ca899f432daaf3e2cfacb7a5e78f0"
     },
     {
       "path": "apps/web/src/components/email-login.tsx",
@@ -737,7 +737,7 @@
     },
     {
       "path": "apps/web/src/components/workspace/cfo-overview.module.css",
-      "sha256": "5513ed4437b19b5da83a81feb4df464ae967adeb19945ad7755ad5797c790919"
+      "sha256": "96a35c62f1f214e3856e1c512c5109a746cf31761aa28fdf7ce34188dde6b87b"
     },
     {
       "path": "apps/web/src/components/workspace/cfo-overview.tsx",
@@ -764,6 +764,10 @@
       "sha256": "bf99ccb8f3d66f36807848a1f7b05868d4ea358b50da42f7d45c4e88d3bf6305"
     },
     {
+      "path": "apps/web/src/components/workspace/getting-started.tsx",
+      "sha256": "3b5a0d48160a505c7584d208ed3a4e3544222af1f7ae680026133949e4ac7130"
+    },
+    {
       "path": "apps/web/src/components/workspace/icon.tsx",
       "sha256": "3b21925e0f13bb19d77871b742e090b826c45df2213bfb6538a0fbb30404d732"
     },
@@ -781,7 +785,7 @@
     },
     {
       "path": "apps/web/src/components/workspace/shared-filters.module.css",
-      "sha256": "15bf251e279d41992a619c3823d052399c7c468e6f43b0e2cc1567ccedb50561"
+      "sha256": "4da64b08149346587f49fcef0c1d2e21b68ee3cd1c85ddf4ed0a8992890106e5"
     },
     {
       "path": "apps/web/src/components/workspace/shared-filters.tsx",
@@ -789,11 +793,11 @@
     },
     {
       "path": "apps/web/src/components/workspace/shared-panel.tsx",
-      "sha256": "e99fb748ee8bba1eee325dd4adad0db5b69de5bb47ee40857346e8f1a2f9d552"
+      "sha256": "a98a79d5000cea3ab8619b0ae08b053f48708bc66887db1c0dadaf597ac62cd8"
     },
     {
       "path": "apps/web/src/components/workspace/shell.tsx",
-      "sha256": "22193c0246efd6be75baffae079a467faf31e1f0d6ed241414caf93595b633f0"
+      "sha256": "7d3732bab117e241bb3ed2aa263754ff42e5a60308c1c6142ca0e944479d4712"
     },
     {
       "path": "apps/web/src/lib/auth-http.ts",

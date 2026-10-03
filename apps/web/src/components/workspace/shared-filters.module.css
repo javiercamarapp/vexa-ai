@@ -1,11 +1,12 @@
-.filters{display:block!important;padding:12px!important;margin:12px 0!important;border:1px solid var(--ui-border,#e0e4e1)!important;background:var(--ui-surface,#fff)!important;border-radius:10px!important}
-.primary{display:grid;grid-template-columns:minmax(130px,1fr) minmax(130px,1fr) minmax(75px,.6fr) minmax(95px,.8fr) auto;align-items:end;gap:10px}
-.filters label{font-size:11px!important;font-weight:500!important;color:var(--muted,#657168);gap:4px!important;min-width:0}
-.filters input,.filters select,.filters textarea{font-size:12px!important;padding:7px 9px!important;min-height:34px!important;border-radius:6px!important;background:var(--ui-surface,#fff)!important;color:var(--ink,#18221c)!important;max-width:100%}
-.filters button{width:auto!important;min-height:34px!important;padding:7px 12px!important;font-size:12px!important;border-radius:6px!important;white-space:nowrap}
-.advanced{margin-top:10px;border-top:1px solid var(--ui-border,#e0e4e1);padding-top:8px;font-size:11px;color:var(--muted,#657168)}
-.advanced summary{cursor:pointer;width:fit-content;min-height:24px;align-content:center}
-.advancedGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}
-.advancedGrid select[multiple]{height:86px}.advancedGrid textarea{min-height:86px!important}.advanced small{display:block;margin-top:8px;font-size:10px;max-width:90ch}
+.filters:global(.workspace-filters) {display:block;padding:16px;margin:16px 0;border:1px solid var(--ui-border);background:var(--ui-surface);border-radius:12px;box-shadow:var(--ui-shadow);}
+.primary {display:grid;grid-template-columns:minmax(130px,1fr) minmax(130px,1fr) minmax(75px,.6fr) minmax(95px,.8fr) auto;align-items:end;gap:12px;}
+.filters:global(.workspace-filters) label {font-size:11px;font-weight:500;color:var(--muted);gap:5px;min-width:0;}
+.filters:global(.workspace-filters) input,.filters:global(.workspace-filters) select,.filters:global(.workspace-filters) textarea {font:400 12px/1.5 var(--font-ui);padding:8px 10px;min-height:36px;border:1px solid var(--ui-input);border-radius:8px;background:var(--ui-surface);color:var(--ink);max-width:100%;}
+.filters:global(.workspace-filters) button {width:auto;min-height:36px;padding:8px 14px;font-size:12px;border-radius:999px;white-space:nowrap;}
+.filters:global(.workspace-filters) .advanced {margin:12px 0 0;border:0;border-top:1px dashed var(--ui-border);border-radius:0;background:transparent;padding:10px 0 0;font-size:11px;color:var(--muted);}
+.filters:global(.workspace-filters) .advanced summary {cursor:pointer;width:fit-content;min-height:28px;padding:4px 0;align-content:center;font-size:11px;}
+.advancedGrid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px;}
+.advancedGrid select[multiple] {height:88px;}.advancedGrid textarea {min-height:88px;}.advanced small {display:block;margin-top:10px;font-size:11px;max-width:90ch;}
 @media(max-width:850px){.primary{grid-template-columns:repeat(2,minmax(0,1fr))}.primary button{justify-self:start}.advancedGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:460px){.primary,.advancedGrid{grid-template-columns:minmax(0,1fr)}.filters button,.filters input,.filters select{min-height:40px!important}}
+@media(max-width:767px){.filters:global(.workspace-filters) button,.filters:global(.workspace-filters) input,.filters:global(.workspace-filters) select,.filters:global(.workspace-filters) .advanced summary{min-height:44px}}
+@media(max-width:460px){.primary,.advancedGrid{grid-template-columns:minmax(0,1fr)}}

@@ -6,6 +6,7 @@ import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
 import {DataState} from './data-state';
 import {SharedFilters} from './shared-filters';
 import {CurrentProblems} from './current-problems';
+import {GettingStarted} from './getting-started';
 import {CfoOverview} from './cfo-overview';
 import cfo from './cfo-overview.module.css';
 type ViewScope=Scope & {basis:string;exponent?:number};
@@ -53,6 +54,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   {busy&&<DataState state={{kind:'loading'}}/>}{error&&<DataState state={{kind:'error',code:'workspace_request_failed',message:error}}/>}
   {bundle&&!busy&&<>
    {bundle.meta.critical_notice&&<aside className="state-panel partial" role="alert"><strong>Revisión crítica, independiente del importe</strong><p>{bundle.meta.critical_notice}</p></aside>}
+   {!bundle.meta.snapshot_id&&<GettingStarted canManage={bundle.meta.can_manage} pending={bundle.meta.state==='partial'}/> }
    <CfoOverview key={`${bundle.meta.snapshot_id}:${bundle.meta.scope_hash}`} bundle={bundle}/>
    <div className={cfo.publication}><details><summary>Identidad de la publicación</summary><p>Snapshot: {bundle.meta.snapshot_id??'Sin publicación'} · Alcance: {bundle.meta.scope_hash??'Sin vista publicada'}</p>{bundle.meta.mapping_manifest_id&&<p>Snapshot base: {bundle.meta.base_snapshot_id} · Alcance base: {bundle.meta.base_scope_hash} · Versión de clasificación: {bundle.meta.mapping_manifest_id}</p>}</details>{bundle.meta.snapshot_id&&bundle.meta.scope_hash&&<div className={cfo.exports}><a download="workspace.json" href={exportUrl('json')}>Exportar JSON</a><a download="workspace.csv" href={exportUrl('csv')}>Exportar CSV</a></div>}</div>
    {bundle.meta.next_cursor&&<div className={cfo.toolbar}><button type="button" onClick={()=>{const next=new URLSearchParams(pinned);next.set('cursor',bundle.meta.next_cursor!);navigate(next);}}>Página siguiente</button></div>}

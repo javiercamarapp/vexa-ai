@@ -114,8 +114,36 @@ def transport_bundle(bundle):
     lines=['VEXA_CAPACITY_EVIDENCE_BEGIN '+json.dumps(meta,sort_keys=True)]
     lines.extend('VEXA_CAPACITY_EVIDENCE_CHUNK '+str(i//3000)+' '+encoded[i:i+3000] for i in range(0,len(encoded),3000));lines.append('VEXA_CAPACITY_EVIDENCE_END '+meta['rawSha256']);return lines
 
+
+# Capacity invokes only launch({services:true}); browser/mail delivery are not exercised.
+BOOTSTRAP_IMAGES = (('public.ecr.aws/supabase/postgres:17.6.1.159', '86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f'), ('public.ecr.aws/supabase/gotrue:v2.195.0', '362659ca70eaa75ba05bbaf963caa84c1c5afe5e8fbf0777e17b830dd5f0f60a'), ('public.ecr.aws/supabase/storage-api:v1.69.11', '97ed68d33417d253a45fe0a70f84324d92250a3e239bf18aa6cf87269dbf6727'), ('public.ecr.aws/supabase/postgrest:v16.1', '5922bde07147b82b1c9d8f749e48c1e5b99ebb233f3888bb7ab65f07cf4ac82d'))
+
+def bootstrap_dependencies(candidate, authorized):
+    check(authorized and os.environ.get('GITHUB_ACTIONS')=='true' and os.environ.get('RUNNER_ENVIRONMENT')=='github-hosted' and os.environ.get('GITHUB_REF')=='refs/heads/main','BOOTSTRAP_HOSTED_MAIN_AUTH_REQUIRED')
+    # Reuse the existing trusted environment contract, not a wider shell environment.
+    support=CONTROL/'tests/acceptance/support/ci'
+    sys.path.insert(0,str(support))
+    try:
+        spec=importlib.util.spec_from_file_location('capacity_bootstrap_environment',support/'run.py')
+        module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        environment=module.environment
+    finally:sys.path.pop(0)
+    import shutil
+    for source,dirs in [(candidate,('package.json','package-lock.json','apps','packages')),(CONTROL/'tests/acceptance/support/F01-02',('package.json','package-lock.json'))]:
+        with tempfile.TemporaryDirectory(prefix='vexa-ci-bootstrap-') as temp:
+            dest=pathlib.Path(temp)
+            for rel in dirs:
+                src=source/rel
+                if src.is_dir():shutil.copytree(src,dest/rel,ignore=shutil.ignore_patterns('.git','.next','node_modules','.env*'))
+                else:shutil.copy2(src,dest/rel)
+            subprocess.run(['npm','ci','--ignore-scripts','--no-audit','--no-fund'],cwd=dest,env=environment(dest,candidate),check=True)
+    for image,pinned in BOOTSTRAP_IMAGES:
+        ref=image.split(':')[0]+'@sha256:'+pinned
+        subprocess.run(['docker','pull','--platform','linux/arm64',ref],check=True)
+        subprocess.run(['docker','tag',ref,image],check=True)
+
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--candidate',type=pathlib.Path,required=True);p.add_argument('--event-sha',required=True);p.add_argument('--bootstrap-outcome',choices=['success','failure','cancelled','skipped'],default='skipped');p.add_argument('--identity-only',action='store_true');args=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--candidate',type=pathlib.Path,required=True);p.add_argument('--event-sha',required=True);p.add_argument('--bootstrap-outcome',choices=['success','failure','cancelled','skipped'],default='skipped');mode=p.add_mutually_exclusive_group();mode.add_argument('--identity-only',action='store_true');mode.add_argument('--bootstrap-only',action='store_true');p.add_argument('--authorized-disposable-runner',action='store_true');args=p.parse_args()
     correlation=os.environ.get('CAPACITY_CORRELATION','');check(re.fullmatch(r'[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}',correlation),'CORRELATION_UUID_REQUIRED')
     candidate=args.candidate.resolve();workspace=pathlib.Path(os.environ.get('GITHUB_WORKSPACE','/nonexistent')).resolve();runner=pathlib.Path(os.environ.get('RUNNER_TEMP','/nonexistent')).resolve()
     check(os.environ.get('GITHUB_ACTIONS')=='true' and os.environ.get('RUNNER_ENVIRONMENT')=='github-hosted' and os.environ.get('RUNNER_OS')=='Linux' and os.environ.get('RUNNER_ARCH')=='ARM64','HOSTED_LINUX_ARM_REQUIRED')
@@ -127,6 +155,9 @@ def main():
     for checkout in (CONTROL,candidate):
         check(subprocess.check_output(['git','rev-parse','HEAD'],cwd=checkout,env=identity_env,text=True).strip()==args.event_sha,'CHECKOUT_SHA_MISMATCH')
         check(not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],cwd=checkout,env=identity_env,text=True).strip(),'CHECKOUT_DIRTY')
+    check(not args.authorized_disposable_runner or args.bootstrap_only,'BOOTSTRAP_FLAG_SCOPE')
+    if args.bootstrap_only:
+        bootstrap_dependencies(candidate,args.authorized_disposable_runner);return 0
     if args.identity_only:
         print('VEXA_CAPACITY_IDENTITY_VERIFIED '+json.dumps({'eventSha':args.event_sha,'correlation':correlation}));return 0
     artifact=pathlib.Path(tempfile.mkdtemp(prefix='vexa-capacity-ci-',dir=runner));artifact.chmod(0o700);tmp=artifact/'tmp';tmp.mkdir(mode=0o700)

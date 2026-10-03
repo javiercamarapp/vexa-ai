@@ -67,7 +67,7 @@
           "continue-on-error": true,
           "timeout-minutes": 6,
           "shell": "bash --noprofile --norc -euo pipefail {0}",
-          "run": "umask 077\npython3 control/tests/acceptance/support/ci/bootstrap.py --candidate \"$GITHUB_WORKSPACE/candidate\" --authorized-disposable-runner > \"$RUNNER_TEMP/vexa-capacity-bootstrap.log\" 2>&1"
+          "run": "umask 077\npython3 -B control/.github/scripts/capacity-ci.py --candidate \"$GITHUB_WORKSPACE/candidate\" --event-sha \"$GITHUB_SHA\" --bootstrap-only --authorized-disposable-runner > \"$RUNNER_TEMP/vexa-capacity-bootstrap.log\" 2>&1"
         },
         {
           "name": "One 10K measurement and bounded evidence",

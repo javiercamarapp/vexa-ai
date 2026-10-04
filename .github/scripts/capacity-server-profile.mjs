@@ -111,7 +111,7 @@ function snapshot(){
  return validateSnapshot(raw,state.report.settings);
 }
 export async function profileSetup(candidate,out){
- const report={schema:'vexa-server-profile-v1',synthetic:true,acceptance:false,production:false,status:'initializing',candidate,persistenceSha256:hash(fs.readFileSync(path.join(candidate,'packages/ingestion/persistence/index.mjs'))),instrumentation:Object.fromEntries(['capacity-server-profile.mjs','capacity-query-profile.mjs'].map(n=>[n,hash(fs.readFileSync(path.join(control,'.github/scripts',n)))])),window:null,cleanupErrors:[],limitations:['One instrumented10K; not a capacity or optimization measurement.','Planning tracking adds overhead, not measured independently.','Client residual does not identify CPU, network or wait time.','Nested and top-level durations are separate; do not sum them.','No raw SQL, bindings, credentials or user payloads exported.']};
+ const report={schema:'vexa-server-profile-v1',synthetic:true,acceptance:false,production:false,status:'initializing',candidate,persistenceSha256:hash(fs.readFileSync(path.join(candidate,'packages/ingestion/persistence/index.mjs'))),instrumentation:Object.fromEntries(['capacity-server-profile.mjs','capacity-server-profile-run.mjs','capacity-query-profile.mjs'].map(n=>[n,hash(fs.readFileSync(path.join(control,'.github/scripts',n)))])),window:null,cleanupErrors:[],limitations:['One instrumented10K; not a capacity or optimization measurement.','Planning tracking adds overhead, not measured independently.','Client residual does not identify CPU, network or wait time.','Nested and top-level durations are separate; do not sum them.','No raw SQL, bindings, credentials or user payloads exported.']};
  assert.equal(report.persistenceSha256,PERSISTENCE,'PROFILE_PERSISTENCE_DRIFT');state={report,out,h:null};save();
  let h;
  try{
@@ -165,12 +165,14 @@ export function adaptSources(runSource,workerSource,workerUrl){
  worker=once(worker,"await runDaemon({...runtime,repository,close:async()=>{}},{once:true})","await clientConsume(()=>runDaemon({...runtime,repository,close:async()=>{}},{once:true}))");
  return {run,worker};
 }
-async function main(){
+export async function runProfile(){
  assert.equal(os.platform(),'linux');assert.equal(os.arch(),'arm64');assert.ok(process.version.startsWith('v22.'));assert.equal(os.cpus().length,4);assert.ok(os.totalmem()>=14*1024**3&&os.totalmem()<=18*1024**3);
  assert.equal(process.env.VEXA_LOAD_SCALES,'10000','PROFILE_ONLY_10K');assert.equal(process.argv.length,2,'PROFILE_NO_ARGUMENTS');
  for(const s of SHAPES)assert.equal(hash(s.sql),s.querySha256,'PROFILE_STATIC_SQL_HASH');
  const directory=fs.mkdtempSync(path.join(os.tmpdir(),'vexa-server-profile-adapter-'));fs.chmodSync(directory,0o700);
+ const cleanup=()=>fs.rmSync(directory,{recursive:true,force:true});
+ // Also remove our adapter if an unsettled top-level await ends Node with exit13.
+ process.once('exit',cleanup);
  try{const load=path.join(control,'packages/jobs/load');const runFile=path.join(directory,'run.mjs'),workerFile=path.join(directory,'worker.mjs');const adapted=adaptSources(fs.readFileSync(path.join(load,'run.mjs'),'utf8'),fs.readFileSync(path.join(load,'worker.mjs'),'utf8'),pathToFileURL(workerFile).href);fs.writeFileSync(runFile,adapted.run);fs.writeFileSync(workerFile,adapted.worker);await import(pathToFileURL(runFile));}
- finally{fs.rmSync(directory,{recursive:true,force:true});}
+ finally{process.removeListener('exit',cleanup);cleanup();}
 }
-if(process.argv[1]&&path.resolve(process.argv[1])===own)await main();

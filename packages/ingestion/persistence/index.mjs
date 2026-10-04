@@ -173,10 +173,11 @@ export async function persistCanonical(scope,{importId,record},internal){
  // Serialize accounting for a single import; uniqueness arbitrates across imports/processes.
  const imported=(await scope.query('SELECT i.*,c.source,c.account_id,c.status AS connection_status FROM public.imports i JOIN public.connections c ON c.tenant_id=i.tenant_id AND c.id=i.connection_id WHERE i.tenant_id=$1 AND i.id=$2 FOR UPDATE OF i',[scope.tenantId,importId])).rows[0];
  if(!imported)throw new Error('IMPORT_NOT_AUTHORIZED');
- const allowed=(await scope.query("SELECT public.vexa_backend_action($1,array['import']) AS ok",[scope.tenantId])).rows[0]?.ok;
+ const active=['queued','running','partial'].includes(imported.state)&&imported.connection_status==='active';
+ // Keep fresh authorization after import FOR UPDATE and a new snapshot for previous below.
+ const allowed=(await scope.query("WITH permission AS MATERIALIZED (SELECT public.vexa_backend_action($1,array['import']) AS ok) SELECT permission.ok,CASE WHEN permission.ok AND $2::boolean THEN pg_advisory_xact_lock(hashtextextended($3,0)) END AS locked FROM permission",[scope.tenantId,active,scope.tenantId+':'+imported.connection_id])).rows[0]?.ok;
  if(!allowed)throw new Error('IMPORT_NOT_AUTHORIZED');
- if(!['queued','running','partial'].includes(imported.state)||imported.connection_status!=='active')throw new Error('IMPORT_NOT_ACTIVE');
- await scope.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[scope.tenantId+':'+imported.connection_id]);
+ if(!active)throw new Error('IMPORT_NOT_ACTIVE');
  const evidenceHash=contentHash(record);
  const rowRef=record&&((Number.isSafeInteger(record.row_ref)&&record.row_ref>0)||typeof record.row_ref==='string'&&record.row_ref.length>0)?String(record.row_ref):'sha256:'+evidenceHash;
  const rowId=id([scope.tenantId,importId,rowRef]);

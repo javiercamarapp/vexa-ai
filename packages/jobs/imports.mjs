@@ -20,7 +20,22 @@ export function createImportHandler({database,storage,confirmationSecret,admissi
   const response=(status,data)=>Response.json({contract_version:VERSION,data,meta:{trace_id,state:data.state??data.import?.state}},{status,headers:{'Cache-Control':'private, no-store'}});
   try{
    if(!database?.transaction||!storage?.createUpload||!storage?.read||typeof confirmationSecret!=='string'||confirmationSecret.length<32)fail(503,'imports_configuration_required');
-   const url=new URL(request.url),match=url.pathname.match(/^\/api\/imports(?:\/([0-9a-f-]+)(\/(?:confirm|preview|mapping|errors\.csv))?)?$/i);
+   const url=new URL(request.url);
+   if(url.pathname==='/api/imports/connections'){
+    if(url.search)fail(404,'route_not_found');
+    if(request.method!=='POST')fail(405,'method_not_allowed');
+    const input=await body(request);pick(input,['account_id']);
+    if(typeof input.account_id!=='string'||!input.account_id.trim()||input.account_id.trim().length>200||/[\u0000-\u001f\u007f]/.test(input.account_id))fail(400,'invalid_connection_account');
+    const account=input.account_id.trim();
+    return await database.transaction('configure',async s=>{
+     if(s.role!=='owner')fail(403,'role_insufficient');
+     const inserted=await s.query("INSERT INTO public.connections(tenant_id,source,account_id) VALUES($1,'csv',$2) ON CONFLICT(tenant_id,source,account_id) DO NOTHING RETURNING id",[s.tenantId,account]);
+     const row=(await s.query("SELECT id,source,account_id,status FROM public.connections WHERE tenant_id=$1 AND source='csv' AND account_id=$2",[s.tenantId,account])).rows[0];
+     if(!row||row.status!=='active')fail(409,'connection_not_active');
+     return response(inserted.rows.length?201:200,{connection:{id:row.id,source:row.source,account_id:row.account_id},created:inserted.rows.length===1});
+    });
+   }
+   const match=url.pathname.match(/^\/api\/imports(?:\/([0-9a-f-]+)(\/(?:confirm|preview|mapping|errors\.csv))?)?$/i);
    if(!match||match[1]&&!uuid.test(match[1])||(url.search&&(request.method!=='GET'||(match[1]?Boolean(match[2])||[...url.searchParams.keys()].some(k=>k!=='sheet'):[...url.searchParams.keys()].some(k=>!['offset','connection_offset'].includes(k))))))fail(404,'route_not_found');
    const owned=async(s,id)=>{const r=await get(s,id);if(r.user_id!==s.userId)fail(404,'import_not_found');return r;};
    const verified=async(s,r)=>{await connection(s,r.connection_id);const owner=(await s.query("SELECT owner_id FROM storage.objects WHERE bucket_id='vexa-private' AND name=$1",[r.object_path])).rows[0];if(!owner||owner.owner_id!==s.userId)fail(422,'object_unavailable');const bytes=await storage.read({tenantId:s.tenantId,userId:s.userId},r);if(!(bytes instanceof Uint8Array)||bytes.byteLength!==Number(r.size)||hash(bytes)!==r.file_hash)fail(422,'object_bytes_invalid');return bytes;};
@@ -29,7 +44,7 @@ export function createImportHandler({database,storage,confirmationSecret,admissi
     const offset=Number(url.searchParams.get('offset')??0),connectionOffset=Number(url.searchParams.get('connection_offset')??0);if(!Number.isSafeInteger(offset)||offset<0||offset>1000000||!Number.isSafeInteger(connectionOffset)||connectionOffset<0||connectionOffset>1000000)fail(400,'invalid_pagination');
     const connections=(await s.query("SELECT id,source,account_id FROM public.connections WHERE tenant_id=$1 AND status='active' AND source IN ('csv','xlsx') ORDER BY id LIMIT 101 OFFSET $2",[s.tenantId,connectionOffset])).rows;
     const reservations=(await s.query('SELECT i.id,i.state,i.mapping_version,i.created_at FROM public.imports i JOIN public.import_uploads u ON u.import_id=i.id AND u.tenant_id=i.tenant_id WHERE i.tenant_id=$1 AND u.user_id=$2 ORDER BY i.created_at DESC,i.id LIMIT 51 OFFSET $3',[s.tenantId,s.userId,offset])).rows;
-    return response(200,{connections:connections.slice(0,100),reservations:reservations.slice(0,50),next_offset:reservations.length>50?offset+50:null,next_connection_offset:connections.length>100?connectionOffset+100:null,has_more:reservations.length>50,connections_has_more:connections.length>100});
+    return response(200,{canConfigure:s.role==='owner',connections:connections.slice(0,100),reservations:reservations.slice(0,50),next_offset:reservations.length>50?offset+50:null,next_connection_offset:connections.length>100?connectionOffset+100:null,has_more:reservations.length>50,connections_has_more:connections.length>100});
    });
    if(request.method==='GET'&&match[1])return await database.transaction('read',async s=>{
     const r=await owned(s,match[1]);

@@ -9,16 +9,17 @@ async function api(route:string,body?:unknown,key?:string,signal?:AbortSignal){c
 export function ImportPreview(){
  const [connections,setConnections]=useState<{id:string;source:string;account_id:string}[]>([]),[reservations,setReservations]=useState<Reservation[]>([]),[connection,setConnection]=useState(''),[file,setFile]=useState<File|null>(null),[detail,setDetail]=useState<Detail|null>(null),[mapping,setMapping]=useState<Mapping>(initial),[preview,setPreview]=useState<Preview|null>(null),[headers,setHeaders]=useState<string[]>([]),[busy,setBusy]=useState(true),[error,setError]=useState(''),[notice,setNotice]=useState(''),[approved,setApproved]=useState(false);
  const [sheets,setSheets]=useState<string[]>([]),[nextOffset,setNextOffset]=useState<number|null>(null),[nextConnectionOffset,setNextConnectionOffset]=useState<number|null>(null);
+ const [canConfigure,setCanConfigure]=useState(false),[connectionName,setConnectionName]=useState('');
  const retry=useRef<{fingerprint:string;key:string;id?:string}|null>(null);
  async function run(fn:()=>Promise<void>){setBusy(true);setError('');try{await fn();}catch(e){const message=e instanceof Error?e.message:'Error de importación';setError(message);if(/mapping_version_conflict|confirmation_conflict|upload_capability_invalid|reservation_expired/.test(message))setApproved(false);}finally{setBusy(false);}}
- async function list(offset=0,connectionOffset=0,append=false){const data=await api(`?offset=${offset}&connection_offset=${connectionOffset}`);setConnections(previous=>append?Array.from(new Map([...previous,...data.connections].map(c=>[c.id,c])).values()): [...data.connections,...previous.filter(c=>c.id===connection&&!data.connections.some((item:{id:string})=>item.id===c.id))]);setReservations(previous=>append?Array.from(new Map([...previous,...data.reservations].map(r=>[r.id,r])).values()):data.reservations);if(!append||offset>0)setNextOffset(data.next_offset);if(!append||connectionOffset>0)setNextConnectionOffset(data.next_connection_offset);}
+ async function list(offset=0,connectionOffset=0,append=false){const data=await api(`?offset=${offset}&connection_offset=${connectionOffset}`);setCanConfigure(data.canConfigure===true);setConnections(previous=>append?Array.from(new Map([...previous,...data.connections].map(c=>[c.id,c])).values()):data.connections);if(!append&&!data.connections.some((item:{id:string})=>item.id===connection))setConnection('');setReservations(previous=>append?Array.from(new Map([...previous,...data.reservations].map(r=>[r.id,r])).values()):data.reservations);if(!append||offset>0)setNextOffset(data.next_offset);if(!append||connectionOffset>0)setNextConnectionOffset(data.next_connection_offset);}
  useEffect(()=>{
   const controller=new AbortController();
   async function initialize(){
    try{
     const data=await api('?offset=0&connection_offset=0',undefined,undefined,controller.signal);
     if(controller.signal.aborted)return;
-    setConnections(data.connections);setReservations(data.reservations);
+    setCanConfigure(data.canConfigure===true);setConnections(data.connections);setReservations(data.reservations);
     setNextOffset(data.next_offset);setNextConnectionOffset(data.next_connection_offset);
    }catch(e){if(!controller.signal.aborted)setError(e instanceof Error?e.message:'Error de importación');}
    finally{if(!controller.signal.aborted)setBusy(false);}
@@ -26,6 +27,7 @@ export function ImportPreview(){
   void initialize();
   return()=>controller.abort();
  },[]);
+ async function createConnection(){const data=await api('/connections',{account_id:connectionName});await list();setConnections(previous=>previous.some(c=>c.id===data.connection.id)?previous:[...previous,data.connection]);setConnection(data.connection.id);setConnectionName('');setNotice(data.created?'Conexión CSV creada. Selecciona el archivo para importarlo.':'Conexión CSV existente seleccionada.');}
  async function load(id:string,sheet?:string){const d:Detail=await api('/'+id+(sheet?'?sheet='+encodeURIComponent(sheet):''));setDetail(d);setMapping(sheet?{...initial,sheet}:d.mapping??{...initial,sheet:d.sheets?.length===1?d.sheets[0]:null});setPreview(d.preview??null);setHeaders(d.preview?.headers??d.headers??[]);setSheets(d.preview?.sheets??d.sheets??[]);setApproved(Boolean(!sheet&&d.mapping&&d.upload_token&&new Date(d.import.expires_at)>new Date()));setNotice(d.preview_state==='awaiting_upload'?'Carga pendiente. Reintenta con el mismo archivo.':d.preview_state==='sheet_required'?'Selecciona una hoja del archivo.':d.import.state==='queued'?'En cola. La importación todavía no está procesada.':'Configura y valida las columnas.');}
  function change(next:Mapping){setMapping(next);setApproved(false);setPreview(null);}
  function changeProfile(value:string){
@@ -50,6 +52,7 @@ export function ImportPreview(){
  return <section aria-labelledby="imports-heading"><h1 id="imports-heading">Importaciones CSV / Excel</h1><p>Archivos hasta 20 MiB. Declara zona horaria, formato y moneda. La validación no equivale a ingestión completada.</p>
  {error&&<p role="alert">{error} Si hay conflicto, recarga la reserva antes de guardar. Las reservas caducadas requieren una nueva importación.</p>}<p role="status" aria-live="polite">{busy?'Procesando…':notice}</p>
  <button disabled={busy} onClick={()=>void run(()=>list())}>Recargar reservas / reintentar</button>
+ {canConfigure&&<form onSubmit={event=>{event.preventDefault();void run(createConnection);}}><fieldset disabled={busy}><legend>Nueva conexión CSV</legend><p>Usa un nombre para identificar el origen de estos archivos. Conserva una conexión diferente para cada origen.</p><label>Nombre del origen CSV<input name="csv-account" value={connectionName} onChange={event=>setConnectionName(event.target.value)} required maxLength={200}/></label><button disabled={busy||!connectionName.trim()}>Crear conexión CSV</button></fieldset></form>}
  <fieldset disabled={busy}><legend>Nueva importación</legend><label>Conexión<select value={connection} onChange={e=>setConnection(e.target.value)}><option value="">Selecciona conexión</option>{connections.map(c=><option key={c.id} value={c.id}>{c.source} · {c.account_id}</option>)}</select></label>{!connections.length&&<p>No hay conexiones activas disponibles.</p>}<label>Archivo<input type="file" accept=".csv,.xlsx" onChange={e=>setFile(e.target.files?.[0]??null)}/></label><button disabled={!connection||!file} onClick={()=>void run(upload)}>Reservar y subir archivo</button></fieldset>
  {nextConnectionOffset!==null&&<button disabled={busy} onClick={()=>void run(()=>list(0,nextConnectionOffset,true))}>Más conexiones</button>}
  <h2>Reservas recientes</h2>{!reservations.length?<p>No hay reservas.</p>:<ul>{reservations.map(r=><li key={r.id}><button disabled={busy} onClick={()=>void run(()=>load(r.id))}>{r.id} · {r.state}</button></li>)}</ul>}

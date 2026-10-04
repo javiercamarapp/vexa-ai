@@ -25,10 +25,10 @@ EXPECTED_CALLS={'0ad6988e32506f94bbb63ff1a14ee9272a68ac5ef5f190c5611580c3258a8c6
 SHAPES=list(EXPECTED_CALLS)
 METRICS=['plans','total_plan_time','calls','total_exec_time','rows','shared_blks_hit','shared_blks_read','shared_blks_dirtied','shared_blks_written','local_blks_hit','local_blks_read','local_blks_dirtied','local_blks_written','temp_blks_read','temp_blks_written','wal_records','wal_fpi','wal_bytes']
 PERSISTENCE='3b2fe5b364dcbbd2dd19029b8f2b2b9514132cf4743b31ab6d854cb7bd9b5869'
-def settings(value):
-    check(isinstance(value,dict) and set(value)=={'serverVersionNum','preload','track','trackPlanning','computeQueryId','userid','dbid'},'PROFILE_SETTINGS_FIELDS')
+def settings(value,*,connection=False):
+    check(isinstance(value,dict) and set(value)==({'serverVersionNum','track','trackPlanning','computeQueryId','userid','dbid'} | (set() if connection else {'preload'})),'PROFILE_SETTINGS_FIELDS')
     check(type(value['serverVersionNum']) is int and 170000<=value['serverVersionNum']<180000,'PROFILE_VERSION')
-    check(isinstance(value['preload'],str) and 'pg_stat_statements' in [s.strip() for s in value['preload'].split(',')],'PROFILE_PRELOAD')
+    if not connection:check(isinstance(value['preload'],str) and 'pg_stat_statements' in [s.strip() for s in value['preload'].split(',')],'PROFILE_PRELOAD')
     check(value['track']=='all' and value['trackPlanning']=='on' and value['computeQueryId']=='on','PROFILE_TRACKING_OFF')
     check(all(type(value[k]) is int and 0<value[k]<2**32 for k in ['userid','dbid']),'PROFILE_SCOPE')
     return value
@@ -58,7 +58,7 @@ def validate_measurement(report,candidate,manifest_hash,benchmark,external,profi
     scale=report['scales'][0];file=scale['files'][0];check(w.get('checkpoint')=={'jobId':file['jobId'],'importId':file['importId'],'offset':10000,'done':True,'fileHash':file['sha256']},'PROFILE_SQL_CHECKPOINT');check(base.timestamp(scale['startedAt'])<=base.timestamp(w.get('startedAt'))<=base.timestamp(w.get('finishedAt'))<=base.timestamp(report['processes'][0]['endedAt']),'PROFILE_WINDOW_BOUNDARY')
     check(client.get('schema')=='vexa-server-client-profile-v1' and client.get('success') is True and client.get('settingsVerified') is True,'PROFILE_CLIENT_STATUS')
     check(type(client.get('connections')) is int and 0<client['connections']<=1000 and isinstance(client.get('effectiveSettings'),list) and len(client['effectiveSettings'])==client['connections'],'PROFILE_EFFECTIVE_CONNECTIONS')
-    for value in client['effectiveSettings']:check(settings(value)==scope,'PROFILE_EFFECTIVE_SETTINGS')
+    for value in client['effectiveSettings']:check(settings(value,connection=True)=={k:v for k,v in scope.items() if k!='preload'},'PROFILE_EFFECTIVE_SETTINGS')
     cp=client.get('profile');comparison.validate_sql_profile(cp,cp.get('completed') if isinstance(cp,dict) else None);check(cp['failed']==0,'PROFILE_CLIENT_FAILURE')
     before=snapshot(w.get('before'),scope);after=snapshot(w.get('after'),scope)
     check(w['before']['statsReset']==w['after']['statsReset'] and w['before']['dealloc']==w['after']['dealloc'],'PROFILE_RESET_OR_EVICTION')

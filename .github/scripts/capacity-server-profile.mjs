@@ -67,13 +67,20 @@ export function serverMatches(sql,server){
  });
 }
 function shapeFor(sql){const found=SHAPES.filter(s=>serverMatches(s.sql,sql));assert.ok(found.length<=1,'PROFILE_SQL_AMBIGUOUS');return found[0]?.querySha256??null;}
-export function checkSettings(value){
+export function checkConnectionSettings(value){
+ assert.deepEqual(Object.keys(value??{}).sort(),['serverVersionNum','track','trackPlanning','computeQueryId','userid','dbid'].sort(),'PROFILE_CONNECTION_SETTINGS_FIELDS');
  assert.ok(value&&Number.isSafeInteger(value.serverVersionNum)&&value.serverVersionNum>=170000&&value.serverVersionNum<180000,'PROFILE_PG17_REQUIRED');
- assert.ok(typeof value.preload==='string'&&value.preload.split(',').map(v=>v.trim()).includes('pg_stat_statements'),'PROFILE_PRELOAD_REQUIRED');
  assert.equal(value.track,'all','PROFILE_TRACK_ALL_REQUIRED');assert.equal(value.trackPlanning,'on','PROFILE_PLANNING_REQUIRED');assert.equal(value.computeQueryId,'on','PROFILE_QUERY_ID_REQUIRED');
  assert.ok(integer(value.userid)&&value.userid>0&&integer(value.dbid)&&value.dbid>0,'PROFILE_SCOPE_IDS');return value;
 }
+export function checkSettings(value){
+ assert.ok(typeof value?.preload==='string'&&value.preload.split(',').map(v=>v.trim()).includes('pg_stat_statements'),'PROFILE_PRELOAD_REQUIRED');
+ const connection={...value};delete connection.preload;checkConnectionSettings(connection);return value;
+}
 const SETTINGS_SQL="SELECT jsonb_build_object('serverVersionNum',current_setting('server_version_num')::int,'preload',current_setting('shared_preload_libraries'),'track',current_setting('pg_stat_statements.track'),'trackPlanning',current_setting('pg_stat_statements.track_planning'),'computeQueryId',current_setting('compute_query_id'),'userid',(SELECT oid::bigint FROM pg_roles WHERE rolname='vexa_backend'),'dbid',(SELECT oid::bigint FROM pg_database WHERE datname=current_database())) AS settings";
+// Preload is postmaster-wide and checked by the setup administrator; restricted
+// connections must not read its privileged GUC or claim to have observed it.
+const CONNECTION_SETTINGS_SQL=once(SETTINGS_SQL,"'preload',current_setting('shared_preload_libraries'),",'');
 export function validateSnapshot(raw,scope){
  assert.ok(raw&&typeof raw.statsReset==='string'&&Number.isFinite(Date.parse(raw.statsReset))&&integer(raw.dealloc),'PROFILE_INFO_INVALID');
  assert.ok(Array.isArray(raw.entries)&&raw.entries.length<=256,'PROFILE_ENTRY_BOUND');
@@ -146,7 +153,7 @@ export async function profileDatabase(root){
  const {createDatabase}=await import(pathToFileURL(path.join(root,'packages/platform/db.mjs')));clientProfile=createQueryProfile();clientOut=process.env.VEXA_SERVER_PROFILE_EVIDENCE;
  assert.ok(clientOut&&path.isAbsolute(clientOut),'PROFILE_OUTPUT_REQUIRED');
  return options=>createDatabase({...options,pool:{async connect(){const c=await options.pool.connect();try{
-  connectionChecks.push(checkSettings((await c.query(SETTINGS_SQL)).rows[0].settings));
+  connectionChecks.push(checkConnectionSettings((await c.query(CONNECTION_SETTINGS_SQL)).rows[0].settings));
   return {query(sql,values){return clientProfile.run(sql,()=>c.query(sql,values));},release(){c.release();}};
  }catch(error){c.release();throw error;}}}});
 }

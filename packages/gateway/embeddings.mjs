@@ -2,6 +2,28 @@ import {residencyEligible,residencyEndpoint} from './residency.mjs';
 import {hash} from '../problems/contracts.mjs';
 const fail=code=>{throw Object.assign(Error(code),{code});};
 const money=x=>{if(!/^\d+$/.test(String(x)))fail('policy_blocked');return BigInt(x);};
+// Provider JSON numbers can stringify in scientific notation below one microUSD.
+// Expand their canonical decimal representation with integer arithmetic and ceil;
+// decimal strings retain the existing bounded contract (no scientific strings).
+function reportedMicroUsd(value){
+ let match;
+ if(typeof value==='number'){
+  if(!Number.isFinite(value)||value<0)return null;
+  match=/^(\d+)(?:\.(\d+))?(?:e([+-]?\d{1,3}))?$/.exec(String(value));
+ }else if(typeof value==='string'&&/^\d{1,20}(\.\d{1,18})?$/.test(value))match=/^(\d+)(?:\.(\d+))?$/.exec(value);
+ if(!match)return null;
+ const fraction=match[2]??'',coefficient=BigInt(match[1]+fraction),power=Number(match[3]??0)-fraction.length;
+ if(coefficient===0n)return 0n; // Includes explicit numeric -0; never missing data.
+ if(coefficient.toString().length+power>20||power < -324||power>20)return null;
+ const shift=power+6;
+ if(shift>=0)return coefficient*10n**BigInt(shift);
+ const divisor=10n**BigInt(-shift);return coefficient/divisor+(coefficient%divisor===0n?0n:1n);
+}
+// Observed on the pinned Azure OpenRouter route: the upstream OpenAI wire ID.
+// No namespace stripping or aliases for other model/provider combinations.
+function embeddingModelMatches(actual,candidate){
+ return actual===candidate.model||(candidate.model==='openai/text-embedding-3-small'&&candidate.provider==='azure'&&actual==='text-embedding-3-small');
+}
 export function createEmbeddingGateway({policy,candidate,catalog,apiKey,runtime='stub',budgetRepository,fetch:transport=globalThis.fetch}={}){
  const p=structuredClone(policy),c=structuredClone(candidate),catalogSnapshot=structuredClone(catalog);
  return {async embed({tenantId,taskKey,input,dimensions}){
@@ -17,12 +39,12 @@ export function createEmbeddingGateway({policy,candidate,catalog,apiKey,runtime=
  let settled=false;try{
  const response=await transport(residencyEndpoint(p,'embeddings'),{method:'POST',headers:{Authorization:'Bearer '+apiKey,'Content-Type':'application/json'},body:serialized,redirect:'error',signal:AbortSignal.timeout(p.timeoutMs)});
  const reader=response.body?.getReader();if(!reader)fail('invalid_output');let size=0,parts=[];for(;;){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>p.maxResponseBytes){await reader.cancel();fail('invalid_output');}parts.push(Buffer.from(value));}const data=JSON.parse(Buffer.concat(parts).toString('utf8'));
- const raw=String(data.usage?.cost??''),valid=/^\d{1,20}(\.\d{1,18})?$/.test(raw),[whole,fraction='']=raw.split('.'),cost=valid?BigInt(whole)*1000000n+BigInt((fraction+'000000').slice(0,6))+(/[1-9]/.test(fraction.slice(6))?1n:0n):null;
+ const cost=reportedMicroUsd(data.usage?.cost);
  const usage={};for(const key of ['prompt_tokens','total_tokens'])if(Number.isSafeInteger(data.usage?.[key])&&data.usage[key]>=0)usage[key]=data.usage[key];
  await budgetRepository.recordAttempt(id,{index:0,state:'received',httpStatus:response.status,reportedMinor:cost===null?null:String(cost),usage});
  await budgetRepository.finalize(id,{state:cost===null?'uncertain':'settled',actualMinor:cost===null?null:String(cost),reportedMinor:String(cost??0n)});settled=true;
  if(cost===null)fail('reconciliation_required');if(cost>ceiling)fail('cost_overrun');
- if(!response.ok||data.model!==c.model||!Array.isArray(data.data)||data.data.length!==input.length)fail('invalid_output');
+ if(!response.ok||!embeddingModelMatches(data.model,c)||!Array.isArray(data.data)||data.data.length!==input.length)fail('invalid_output');
  const vectors=[];for(let i=0;i<input.length;i++){const row=data.data.find(x=>x.index===i);if(!row||data.data.filter(x=>x.index===i).length!==1||!Array.isArray(row.embedding)||row.embedding.length!==dimensions||row.embedding.some(x=>!Number.isFinite(x))||!row.embedding.some(x=>x!==0))fail('invalid_output');vectors.push(row.embedding);}return vectors;
  }catch(e){if(!settled)await budgetRepository.finalize(id,{state:'uncertain',actualMinor:null,reportedMinor:'0'});throw e;}
  }};

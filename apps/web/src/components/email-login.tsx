@@ -8,6 +8,6 @@ async function submit(event:FormEvent<HTMLFormElement>){event.preventDefault();i
 return <form className="login-email login-entra" onSubmit={submit} aria-busy={busy} aria-label="Acceder por correo">
 <label className="sr-only" htmlFor="email-login-address">Correo</label>
 <input className="login-campo" id="email-login-address" name="email" type="email" placeholder="tu@empresa.com" autoComplete="email" required maxLength={254} disabled={!enabled||busy} aria-describedby={!enabled?'email-availability':undefined}/>
-<button className="login-btn login-btn-tinta" aria-busy={busy} disabled={!enabled||busy||remaining>0}><span className="login-glifo" aria-hidden="true"><VexaBrand/></span><span>{busy?'Solicitando…':remaining>0?`Espera ${remaining} s para otra solicitud`:'Continuar con correo'}</span></button>
+<button className="login-btn login-btn-tinta" aria-busy={busy} disabled={!enabled||busy||remaining>0}><span className="login-glifo" aria-hidden="true"><VexaBrand/></span><span>{busy?'Solicitando…':remaining>0?`Reintentar en ${remaining} s`:'Continuar con correo'}</span></button>
 {!enabled&&<p id="email-availability" className="login-hint">Acceso por correo: pendiente de configurar.</p>}
-{message&&<p className="login-message" role="status">{message}</p>}</form>;}
+<p className="login-message login-email-status" role="status">{message}</p></form>;}

@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
   "baselineSha": "e6a340bb850f9fbd97eb9b31e56f7bb02eb03f47",
-  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance. Historical CSV UI explicitly selects the reviewed opt-in profile; server-provided content type gates selection. Focal local PostgreSQL and synthetic React DOM checks passed; no new capacity or production acceptance. Compact Atiende-referenced UI with independently reviewed financial presentation and deterministic query card; synthetic browser checks only, no new formal acceptance or capacity measurement. Access/UI correction 2026-10-03: direct authorized entry, contextual platform access, honest first-run guidance and neutral Atiende/Likida presentation. No new formal acceptance or inherited capacity measurement. Reference fidelity 2026-10-03: self-hosted Inter Tight, Instrument Sans login, reference geometry and neutral tokens; anonymous entry differs from forbidden entry. No inherited capacity or production acceptance. Frontend unification495: current Atiende-Agencia-AI shell, navigation and KPI presentation; source binding only, no new capacity or production acceptance.",
+  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance. Historical CSV UI explicitly selects the reviewed opt-in profile; server-provided content type gates selection. Focal local PostgreSQL and synthetic React DOM checks passed; no new capacity or production acceptance. Compact Atiende-referenced UI with independently reviewed financial presentation and deterministic query card; synthetic browser checks only, no new formal acceptance or capacity measurement. Access/UI correction 2026-10-03: direct authorized entry, contextual platform access, honest first-run guidance and neutral Atiende/Likida presentation. No new formal acceptance or inherited capacity measurement. Reference fidelity 2026-10-03: self-hosted Inter Tight, Instrument Sans login, reference geometry and neutral tokens; anonymous entry differs from forbidden entry. No inherited capacity or production acceptance. Frontend unification495: current Atiende-Agencia-AI shell, navigation and KPI presentation; source binding only, no new capacity or production acceptance. Email login keeps a stable status area and compact desktop layout after requesting access; no new capacity acceptance.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -557,7 +557,7 @@
     },
     {
       "path": "apps/web/src/app/globals.css",
-      "sha256": "dfa4215c06031a2ba6ebdd09cca3369d06ce8015a28fbae47dcfc0881d262f3d"
+      "sha256": "6e5aeeb8a963f9e302a94e14c959ddbc905ced8b89ec949574be69c8019f6d6b"
     },
     {
       "path": "apps/web/src/app/layout.tsx",
@@ -637,7 +637,7 @@
     },
     {
       "path": "apps/web/src/components/email-login.tsx",
-      "sha256": "cb685dd0472e01d2ac3deb15b85612dfc273a26417e8a5903628fb763f2647bb"
+      "sha256": "cf4b7385a8c6864ad16b349355e66e024aeb63aeef9e58f931107663b87bef89"
     },
     {
       "path": "apps/web/src/components/embedding-budget-panel.tsx",

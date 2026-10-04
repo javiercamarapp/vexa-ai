@@ -13,7 +13,7 @@ export function runMutants(candidate){
   {name:'runtime_default_enabled',from:"if(runtime!=='enabled')return error('runtime_disabled');",to:"if(false)return error('runtime_disabled');",assertion:'F04_BLOCKED_RESULT_REQUIRED'},
   {name:'model_allowlist_ignored',from:'p.allowedModels.includes(c.model)&&',to:'',assertion:'F04_BLOCKED_RESULT_REQUIRED'},
   {name:'post_await_eligibility_omitted',from:"if(!eligible(c,p,clock.now(),catalogSnapshot))return finish(error('policy_blocked'));",to:'/* defective send after stale reserve/attempt */',assertion:'F04_BLOCKED_RESULT_REQUIRED'},
-  {name:'residency_ignored',from:'c.residency===p.residency&&',to:'',assertion:'F04_BLOCKED_RESULT_REQUIRED'},
+  {name:'residency_ignored',from:'residencyEligible(p,c,now)&&',to:'residencyEligible({...p,residency:c.residency},c,now)&&',assertion:'F04_BLOCKED_RESULT_REQUIRED'},
   {name:'deny_misrepresented_as_zdr',from:'(!p.requireZdr||c.zdr===true)&&',to:'',assertion:'F04_BLOCKED_RESULT_REQUIRED'},
  ];
  try{

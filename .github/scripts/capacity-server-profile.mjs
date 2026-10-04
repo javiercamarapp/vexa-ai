@@ -73,7 +73,7 @@ export function checkSettings(value){
  assert.equal(value.track,'all','PROFILE_TRACK_ALL_REQUIRED');assert.equal(value.trackPlanning,'on','PROFILE_PLANNING_REQUIRED');assert.equal(value.computeQueryId,'on','PROFILE_QUERY_ID_REQUIRED');
  assert.ok(integer(value.userid)&&value.userid>0&&integer(value.dbid)&&value.dbid>0,'PROFILE_SCOPE_IDS');return value;
 }
-const SETTINGS_SQL="SELECT jsonb_build_object('serverVersionNum',current_setting('server_version_num')::int,'preload',current_setting('shared_preload_libraries'),'track',current_setting('pg_stat_statements.track'),'trackPlanning',current_setting('pg_stat_statements.track_planning'),'computeQueryId',current_setting('compute_query_id'),'userid',(SELECT oid FROM pg_roles WHERE rolname='vexa_backend'),'dbid',(SELECT oid FROM pg_database WHERE datname=current_database())) AS settings";
+const SETTINGS_SQL="SELECT jsonb_build_object('serverVersionNum',current_setting('server_version_num')::int,'preload',current_setting('shared_preload_libraries'),'track',current_setting('pg_stat_statements.track'),'trackPlanning',current_setting('pg_stat_statements.track_planning'),'computeQueryId',current_setting('compute_query_id'),'userid',(SELECT oid::bigint FROM pg_roles WHERE rolname='vexa_backend'),'dbid',(SELECT oid::bigint FROM pg_database WHERE datname=current_database())) AS settings";
 export function validateSnapshot(raw,scope){
  assert.ok(raw&&typeof raw.statsReset==='string'&&Number.isFinite(Date.parse(raw.statsReset))&&integer(raw.dealloc),'PROFILE_INFO_INVALID');
  assert.ok(Array.isArray(raw.entries)&&raw.entries.length<=256,'PROFILE_ENTRY_BOUND');
@@ -107,7 +107,7 @@ function save(){if(state)fs.writeFileSync(path.join(state.out,'server-profile.js
 function snapshot(){
  const schema=identifier(state.report.extension.schema);
  const fields=METRICS.map(k=>"'"+k+"',"+k).join(',');
- const raw=state.h.json(`SELECT jsonb_build_object('statsReset',i.stats_reset,'dealloc',i.dealloc,'entries',(SELECT coalesce(jsonb_agg(jsonb_build_object('userid',userid,'dbid',dbid,'toplevel',toplevel,'queryid',queryid::text,'query',query,${fields})),'[]') FROM ${schema}.pg_stat_statements WHERE userid=${state.report.settings.userid} AND dbid=${state.report.settings.dbid})) FROM ${schema}.pg_stat_statements_info i`);
+ const raw=state.h.json(`SELECT jsonb_build_object('statsReset',i.stats_reset,'dealloc',i.dealloc,'entries',(SELECT coalesce(jsonb_agg(jsonb_build_object('userid',userid::bigint,'dbid',dbid::bigint,'toplevel',toplevel,'queryid',queryid::text,'query',query,${fields})),'[]') FROM ${schema}.pg_stat_statements WHERE userid=${state.report.settings.userid} AND dbid=${state.report.settings.dbid})) FROM ${schema}.pg_stat_statements_info i`);
  return validateSnapshot(raw,state.report.settings);
 }
 export async function profileSetup(candidate,out){

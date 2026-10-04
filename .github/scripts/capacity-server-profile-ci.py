@@ -50,7 +50,7 @@ def validate_measurement(report,candidate,manifest_hash,benchmark,external,profi
     validate_load(report,candidate,manifest_hash,benchmark,external)
     check(profile.get('schema')=='vexa-server-profile-v1' and profile.get('synthetic') is True and profile.get('acceptance') is False and profile.get('production') is False and profile.get('status')=='profiled','SERVER_PROFILE_REQUIRED')
     check(profile.get('candidate')==str(candidate) and profile.get('persistenceSha256')==PERSISTENCE==digest((candidate/'packages/ingestion/persistence/index.mjs').read_bytes()),'PROFILE_SOURCE_BINDING')
-    check(profile.get('instrumentation')=={n:digest((CONTROL/'.github/scripts'/n).read_bytes()) for n in ['capacity-server-profile.mjs','capacity-query-profile.mjs']},'PROFILE_IMPLEMENTATION_BINDING')
+    check(profile.get('instrumentation')=={n:digest((CONTROL/'.github/scripts'/n).read_bytes()) for n in ['capacity-server-profile.mjs','capacity-server-profile-run.mjs','capacity-query-profile.mjs']},'PROFILE_IMPLEMENTATION_BINDING')
     check(profile.get('cleanupErrors')==[],'PROFILE_CLEANUP_ERRORS');scope=settings(profile.get('settings'))
     ext=profile.get('extension');check(isinstance(ext,dict) and set(ext)=={'version','schema'} and isinstance(ext['version'],str) and re.fullmatch(r'[0-9]+(?:\.[0-9]+)+',ext['version']) and isinstance(ext['schema'],str) and re.fullmatch('[a-z_][a-z_0-9]*',ext['schema']),'PROFILE_EXTENSION')
     probe=profile.get('probe',{});check(probe=={'serverVersionNum':scope['serverVersionNum'],'preload':scope['preload'],'extension':ext},'PROFILE_PROBE_BINDING')
@@ -106,7 +106,7 @@ def main():
         check(args.bootstrap_outcome=='success','BOOTSTRAP_NOT_SUCCESSFUL')
         check(receipt['diskBefore']['free']>=3*1024**3,'RUNNER_DISK_BELOW_3GIB')
         load=candidate/'packages/jobs/load/run.mjs';manifest=candidate/'packages/jobs/load/dependencies.json';manifest_hash=digest(manifest.read_bytes());benchmark={n:digest((load.parent/n).read_bytes()) for n in ['generator.mjs','harness.mjs','run.mjs','worker.mjs','dependencies.json']};receipt['dependencyManifestSha256']=manifest_hash;receipt['benchmarkImplementation']=benchmark
-        for stage,argv,timeout in [('preflight',['node',str(load),'--preflight'],60),('measurement',['node',str(CONTROL/'.github/scripts/capacity-server-profile.mjs')],MEASUREMENT_SECONDS),('source-postflight',['node',str(load),'--preflight'],60)]:
+        for stage,argv,timeout in [('preflight',['node',str(load),'--preflight'],60),('measurement',['node',str(CONTROL/'.github/scripts/capacity-server-profile-run.mjs')],MEASUREMENT_SECONDS),('source-postflight',['node',str(load),'--preflight'],60)]:
             command,out=run_process(argv,CONTROL,env,artifact/(stage+'.log'),life,timeout);commands.append(command)
             if stage=='measurement':
                 try:evidence=bound_evidence(out,tmp)

@@ -11,3 +11,9 @@ La intersección requiere ID permitido, presencia en catálogo vigente, soporte 
 Las pruebas del banco usan modelos, tarifas, tokens y transporte sintéticos. El adaptador en memoria de presupuesto sigue marcado exclusivamente para pruebas; F04-02 debe aportar repositorio SQL durable. No se ha realizado inferencia pagada ni verificado residencia efectiva de un proveedor, precisión, precio real, gold humano o producción remota.
 
 Referencia de formato consultada20-sep-2026: [catálogo oficial](https://openrouter.ai/docs/api/api-reference/models/get-models). Controles separados de [residencia y privacidad](https://openrouter.ai/docs/guides/get-started/sovereign-ai). La consulta documental no autoriza ni demuestra acceso a funciones comerciales.
+
+## Residencia y rutas explícitas
+
+La política `residency: 'unrestricted'` usa el endpoint global y no declara residencia regional. El candidato debe coincidir y no puede afirmar `residencyEnforced: true`. Las políticas `US`/`us` y `EU`/`eu` conservan atestación vigente y usan únicamente `us.openrouter.ai` o `eu.openrouter.ai`, respectivamente. No hay retorno automático al dominio global. Las regiones desconocidas y los overrides de endpoint incompatibles se rechazan antes del envío.
+
+Esta selección no acredita habilitación regional de la cuenta: las rutas regionales requieren las condiciones del proveedor. Se conservan los controles separados de recolección, ZDR, tarifas, catálogo, presupuesto y evidencia. [Contrato oficial de residencia](https://openrouter.ai/docs/guides/features/sovereign-ai).

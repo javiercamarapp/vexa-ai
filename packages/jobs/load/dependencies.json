@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
   "baselineSha": "e6a340bb850f9fbd97eb9b31e56f7bb02eb03f47",
-  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance. Historical CSV UI explicitly selects the reviewed opt-in profile; server-provided content type gates selection. Focal local PostgreSQL and synthetic React DOM checks passed; no new capacity or production acceptance. Compact Atiende-referenced UI with independently reviewed financial presentation and deterministic query card; synthetic browser checks only, no new formal acceptance or capacity measurement. Access/UI correction 2026-10-03: direct authorized entry, contextual platform access, honest first-run guidance and neutral Atiende/Likida presentation. No new formal acceptance or inherited capacity measurement. Reference fidelity 2026-10-03: self-hosted Inter Tight, Instrument Sans login, reference geometry and neutral tokens; anonymous entry differs from forbidden entry. No inherited capacity or production acceptance. Frontend unification495: current Atiende-Agencia-AI shell, navigation and KPI presentation; source binding only, no new capacity or production acceptance. Email login keeps a stable status area and compact desktop layout after requesting access; no new capacity acceptance. Header date and notifications appear only on overview; source binding only, no new capacity acceptance. Owners can create CSV connections through the import page with role/RLS validation and idempotent creation; focal local evidence only, no new capacity or production acceptance.",
+  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance. Historical CSV UI explicitly selects the reviewed opt-in profile; server-provided content type gates selection. Focal local PostgreSQL and synthetic React DOM checks passed; no new capacity or production acceptance. Compact Atiende-referenced UI with independently reviewed financial presentation and deterministic query card; synthetic browser checks only, no new formal acceptance or capacity measurement. Access/UI correction 2026-10-03: direct authorized entry, contextual platform access, honest first-run guidance and neutral Atiende/Likida presentation. No new formal acceptance or inherited capacity measurement. Reference fidelity 2026-10-03: self-hosted Inter Tight, Instrument Sans login, reference geometry and neutral tokens; anonymous entry differs from forbidden entry. No inherited capacity or production acceptance. Frontend unification495: current Atiende-Agencia-AI shell, navigation and KPI presentation; source binding only, no new capacity or production acceptance. Email login keeps a stable status area and compact desktop layout after requesting access; no new capacity acceptance. Header date and notifications appear only on overview; source binding only, no new capacity acceptance. Owners can create CSV connections through the import page with role/RLS validation and idempotent creation; focal local evidence only, no new capacity or production acceptance. Gateway explicitly distinguishes unrestricted processing from US/EU regional routing, with legacy aliases and exact synthetic transport controls. No new capacity or formal production acceptance.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -21,7 +21,7 @@
     },
     {
       "path": "apps/web/next.config.ts",
-      "sha256": "c5e72930779ee6533ab676373a897375bda1b731908c63d135e661fb3ea849e7"
+      "sha256": "ec96c5313bc444bb6056cfc33c48a8ad82b89f521331c9ebcc2fc8c7118e768a"
     },
     {
       "path": "apps/web/package.json",
@@ -1237,7 +1237,7 @@
     },
     {
       "path": "packages/gateway/CATALOG.md",
-      "sha256": "9fc4926a0f8ef41e7c15361bfaddb03bfcee81a69434053d2d1d42b363ed928c"
+      "sha256": "5d6ede88710c8dfe1a870d603bccaf082d8703e61042b851a080bbea7928c748"
     },
     {
       "path": "packages/gateway/IMPLEMENTATION.md",
@@ -1269,7 +1269,7 @@
     },
     {
       "path": "packages/gateway/embeddings.mjs",
-      "sha256": "f058de9948891b18b075d70e99d34d01d084ab60a9747d63ca59b20d5f324c9a"
+      "sha256": "aa640f7cdfea44e9a2e0111244f9c2bdf25ad3af8ec0b30ec874824bbb9b0910"
     },
     {
       "path": "packages/gateway/gateway.test.mjs",
@@ -1277,7 +1277,15 @@
     },
     {
       "path": "packages/gateway/index.mjs",
-      "sha256": "f64d605f21aa6214ad1170c82358e82f0bbcd2fe2bcb4e0da5d12fa82fd3f17b"
+      "sha256": "6f46a98f8ae258f5c7c82c15f0e96d953e4a6aa3dbfa1cea20ac4ffb958a633d"
+    },
+    {
+      "path": "packages/gateway/residency.mjs",
+      "sha256": "be98edce682c41963b10afc3182614ad56760fd6105d95edf27bef198e1550ac"
+    },
+    {
+      "path": "packages/gateway/residency.test.mjs",
+      "sha256": "a0d36f400c61308722a46682cb04185c8eec318cdb22ba779f0011d872854a21"
     },
     {
       "path": "packages/history/OPERATIONS.md",
@@ -1757,7 +1765,7 @@
     },
     {
       "path": "packages/intelligence/candidate-execution/index.mjs",
-      "sha256": "b1af513a9403b9e4e52b0435decbf852970903278b68f61d6fda81905418d9e0"
+      "sha256": "de7d60fa32b2337679c9db8cc3f58d1451284e06fa7af573c3800eecc85ba2e2"
     },
     {
       "path": "packages/intelligence/candidate-execution/ledger.mjs",
@@ -1773,7 +1781,7 @@
     },
     {
       "path": "packages/intelligence/candidate-execution/tests/fixture.mjs",
-      "sha256": "def0519ceec323b53f688de2deaec59fff7c7e804b6cfefabf082f737993a3ce"
+      "sha256": "3325518120438b1e4ebbe78789d173b78c956dcbbb41502fd15bb82713317555"
     },
     {
       "path": "packages/intelligence/candidate-execution/tests/multi-init.test.mjs",
@@ -1781,7 +1789,7 @@
     },
     {
       "path": "packages/intelligence/candidate-execution/tests/preload.mjs",
-      "sha256": "a58c203011dcb155fc78f52b3c440a92655e7f25137790f1374a68218e043675"
+      "sha256": "1ede376b863b160897f2f4f70a4ade0bfe8989be269d17d5590b121d097924a2"
     },
     {
       "path": "packages/intelligence/candidates/README.md",
@@ -1817,7 +1825,7 @@
     },
     {
       "path": "packages/intelligence/candidates/runtime-code.mjs",
-      "sha256": "6b1bc01130d413615f6a561596fd54b10108f68523ff64ba2cd75c3d84594ba6"
+      "sha256": "9ba641eaec6ff72f0963c6ad0faf5e2958230540f3f35842a2cc74d19a563f4f"
     },
     {
       "path": "packages/intelligence/candidates/sign.mjs",

@@ -11,7 +11,7 @@ if (revision !== "" && !/^[0-9a-f]{40}$/.test(revision)) {
 }
 // Bind candidate eligibility to the actual source compiled into this artifact.
 // This public fingerprint is derived here; never read it from deployment env.
-const extractionPaths = ['packages/gateway/index.mjs','packages/gateway/budget.mjs','packages/gateway/catalog.mjs','packages/intelligence/index.mjs'];
+const extractionPaths = ['packages/gateway/index.mjs','packages/gateway/budget.mjs','packages/gateway/catalog.mjs','packages/gateway/residency.mjs','packages/intelligence/index.mjs'];
 const extractionCode = Object.fromEntries(extractionPaths.map(name => {
   const file = resolve(__dirname, '../..', name), stat = lstatSync(file);
   if (!stat.isFile() || stat.isSymbolicLink()) throw new Error('CANDIDATE_RUNTIME_SOURCE_INVALID');

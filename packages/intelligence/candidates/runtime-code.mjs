@@ -1,5 +1,5 @@
 // Public source identities only; this module performs no filesystem access.
-export const runtimeCodePaths=Object.freeze(['packages/gateway/index.mjs','packages/gateway/budget.mjs','packages/gateway/catalog.mjs','packages/intelligence/index.mjs']);
+export const runtimeCodePaths=Object.freeze(['packages/gateway/index.mjs','packages/gateway/budget.mjs','packages/gateway/catalog.mjs','packages/gateway/residency.mjs','packages/intelligence/index.mjs']);
 export function validRuntimeCode(value){return !!value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).length===runtimeCodePaths.length&&runtimeCodePaths.every(p=>typeof value[p]==='string'&&/^[a-f0-9]{64}$/.test(value[p]));}
 export function sameRuntimeCode(a,b){return validRuntimeCode(a)&&validRuntimeCode(b)&&runtimeCodePaths.every(p=>a[p]===b[p]);}
 // Next replaces this expression at BUILD time. Server environment changes cannot

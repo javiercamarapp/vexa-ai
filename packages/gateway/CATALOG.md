@@ -19,3 +19,10 @@ La política `residency: 'unrestricted'` usa el endpoint global y no declara res
 Esta selección no acredita habilitación regional de la cuenta: las rutas regionales requieren las condiciones del proveedor. Se conservan los controles separados de recolección, ZDR, tarifas, catálogo, presupuesto y evidencia. [Contrato oficial de residencia](https://openrouter.ai/docs/guides/features/sovereign-ai).
 
 Embedding billing accepts finite nonnegative numeric provider costs, including scientific notation, and rounds up to integer microUSD with BigInt. Missing or invalid cost retains an uncertain reservation. The observed Azure response ID `text-embedding-3-small` is accepted only for the pinned `openai/text-embedding-3-small` request through `azure`; other model/provider aliases remain rejected.
+
+
+### Source-bound extraction references
+
+The extraction request supplies bounded evidence spans and literal entity phrases with ephemeral ASCII references. The server resolves returned references only against the current validated revisions, then applies the unchanged final schema and citation validator. Unknown references, extra value keys and entity values linked to another revision are rejected. Existing literal spans remain compatible. Values are limited to 32 phrases per revision and 96 per request; this is not a complete entity catalog.
+
+`schemaHash` identifies the final persisted extraction schema; `wireSchemaHash` identifies the dynamic provider response schema. Reference selection preserves the original Unicode and code-point coordinates without normalization or offset repair. Synthetic provider evidence demonstrates protocol compatibility; it does not certify customer classification quality.

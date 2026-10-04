@@ -1,5 +1,5 @@
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import assert from 'node:assert/strict';import {createHash,randomUUID} from 'node:crypto';import {fork,execFile,spawnSync} from 'node:child_process';import {once} from 'node:events';import {promisify} from 'node:util';
-import {generateDataset} from './generator.mjs';import {setup,basePort} from './harness.mjs';
+import {generateDataset} from './generator.mjs';import {setup,basePort,failureSnapshot} from './harness.mjs';
 const exec=promisify(execFile),hash=bytes=>createHash('sha256').update(bytes).digest('hex'),q=v=>"'"+String(v).replaceAll("'","''")+"'";
 const candidate=process.env.VEXA_CANDIDATE;assert.ok(candidate,'VEXA_CANDIDATE_REQUIRED');
 const args=process.argv.slice(2);assert.ok(args.length===0||(args.length===1&&args[0]==='--preflight'),'LOAD_ARGUMENTS');
@@ -54,7 +54,7 @@ try{
    }assert.deepEqual(totals,scale.dataset.expected);scale.observed=totals;
    const ids=scale.files.map(x=>q(x.importId)).join(',');scale.explain=h.sql(`EXPLAIN (ANALYZE,BUFFERS,FORMAT JSON) SELECT state,count(*) FROM import_rows WHERE tenant_id=${q(h.A.tenant)} AND import_id IN(${ids}) GROUP BY state`);
    scale.metrics={inputRowsPerSecond:rows/(scale.processingMs/1000),acceptedRowsPerSecond:totals.accepted/(scale.processingMs/1000),commitP50Ms:percentile(scale.chunks.map(x=>x.commitMs),.5),commitP95Ms:percentile(scale.chunks.map(x=>x.commitMs),.95),apiP95Ms:percentile(scale.apiRequests.map(x=>x.ms),.95),commitSamples:scale.chunks.length,apiSamples:scale.apiRequests.length,workerMaxRssKiB:Math.max(...runners.map(x=>x.record.maxRssKiB))};scale.status='pass';console.log('LOAD308_SCALE_PASS:'+rows+':'+JSON.stringify(scale.metrics));
-  }catch(error){scale.status='failed';scale.error={message:error.message,code:error.code??null};scale.elapsedMs=performance.now()-runStart;try{scale.failureSnapshot=scale.files.map(file=>({job:h.json(`SELECT row_to_json(j) FROM jobs j WHERE id=${q(file.jobId)}`),import:h.json(`SELECT jsonb_build_object('id',id,'total',total,'accepted',accepted,'rejected',rejected,'duplicates',duplicates,'pending',pending,'file_hash',file_hash) FROM imports WHERE id=${q(file.importId)}`),checkpoint:h.json(`SELECT checkpoint FROM checkpoints WHERE job_id=${q(file.jobId)}`)}));}catch(e){scale.failureSnapshotError=e.message;}save();throw error;}
+  }catch(error){scale.status='failed';scale.error={message:error.message,code:error.code??null};scale.elapsedMs=performance.now()-runStart;try{scale.failureSnapshot=failureSnapshot(h,scale.files);}catch(e){scale.failureSnapshotError=e.message;}save();throw error;}
   finally{await Promise.all(runners.map(w=>w.close()));save();}
  }
  h.verifySources();verifyDependencies();report.status='measured';

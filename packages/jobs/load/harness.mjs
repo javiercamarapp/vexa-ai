@@ -15,3 +15,17 @@ export async function setup(candidate,evidence){
  fs.writeFileSync(path.join(directory,'harness.mjs'),code);const module=await import(pathToFileURL(path.join(directory,'harness.mjs')));h=await module.setup(candidate,evidence);const close=h.close.bind(h);h.close=async()=>{try{await close();}finally{fs.rmSync(directory,{recursive:true,force:true});}};return h;
  }catch(error){if(h)await h.close();fs.rmSync(directory,{recursive:true,force:true});throw error;}
 }
+
+/** Failure-path evidence only. Missing rows are null; SQL failures stay explicit per resource. */
+export function failureSnapshot(h,files){
+ const q=value=>"'"+String(value).replaceAll("'","''")+"'";
+ return files.map(file=>{
+  const result={jobId:file.jobId,importId:file.importId,errors:[]};
+  const resources={job:`SELECT row_to_json(j) FROM jobs j WHERE id=${q(file.jobId)}`,import:`SELECT jsonb_build_object('id',id,'total',total,'accepted',accepted,'rejected',rejected,'duplicates',duplicates,'pending',pending,'file_hash',file_hash) FROM imports WHERE id=${q(file.importId)}`,checkpoint:`SELECT checkpoint FROM checkpoints WHERE job_id=${q(file.jobId)}`};
+  for(const [resource,query] of Object.entries(resources)){
+   try{result[resource]=h.json(`SELECT jsonb_build_object('value',(${query}))`).value;}
+   catch(error){result.errors.push({resource,message:error.message,code:error.code??null});}
+  }
+  return result;
+ });
+}

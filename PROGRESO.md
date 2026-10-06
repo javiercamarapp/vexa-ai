@@ -1,3 +1,7 @@
+## Importación económica revisada — 6 de octubre de 2026
+
+Finanzas permite cargar órdenes y reembolsos mediante sesión de propietario, con prevalidación completa, restricción de organización dentro de la transacción y reanudación conciliada. Las fuentes permanecen incompletas; el éxito exige lectura final coincidente. Dos hallazgos de revisión cerrados; 31 pruebas, lint, typecheck y build aprobados. [Contrato, evidencia y límites](docs/entrega/IMPORTACION-ECONOMICA-2026-10-06.md). La carga de cliente y publicación financiera se verifican por separado. Sin nuevas aceptaciones ni capacidad heredada.
+
 ## 2026-10-06 — visibilidad de trabajos de importación del espacio
 
 Los propietarios pueden consultar las cargas iniciadas por otras cuentas autorizadas mediante una tabla separada y enlaces al progreso existente. Conserva propiedad de reservas y aislamiento de bytes/mapping. 33 pruebas focales, lint/typecheck/build y revisión independiente. [Detalle](docs/entrega/VISIBILIDAD-IMPORTACIONES-2026-10-06.md). Sin nuevas aceptaciones formales.

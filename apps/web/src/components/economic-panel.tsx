@@ -4,15 +4,15 @@ import {EconomicMoneyPanel} from './economic-money-panel';
 import {formatMinorUnits as format} from '../../../../packages/metrics/money.mjs';
 import {EconomicExposurePanel} from './economic-exposure-panel';
 import {useCallback,useEffect,useRef,useState} from 'react';
-import type {EconomicView} from '../../../../packages/metrics/repository.mjs';
+import type {EconomicScope,EconomicView} from '../../../../packages/metrics/repository.mjs';
 const kinds={order:'Orden registrada',refund:'Reembolso',reversal:'Reversión de reembolso',replacement:'Costo de reemplazo',support_model:'Soporte modelado',future_scenario:'Escenario futuro'};
 const sources={order_export:'Exportación de órdenes',payment_ledger:'Registro de pagos',replacement_invoice:'Factura de reemplazo',support_timesheet:'Registro de tiempo de soporte',scenario_assumption:'Supuesto aprobado de escenario'};
 const typeFor:Record<string,string>={order:'order_export',refund:'payment_ledger',reversal:'payment_ledger',replacement:'replacement_invoice',support_model:'support_timesheet',future_scenario:'scenario_assumption'};
 
-export function EconomicPanel(){
+export function EconomicPanel({initialScope}:{initialScope?:EconomicScope}={}){
  const generation=useRef(0),[data,setData]=useState<EconomicView|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  const [fxRateId,setFxRateId]=useState('');
- const [start,setStart]=useState('2026-09-01'),[end,setEnd]=useState('2026-10-01'),[currency,setCurrency]=useState('USD'),[exponent,setExponent]=useState('2'),[basis,setBasis]=useState('net_order_excluding_tax_shipping');
+ const [start,setStart]=useState(initialScope?.start.slice(0,10)??'2026-09-01'),[end,setEnd]=useState(initialScope?.end.slice(0,10)??'2026-10-01'),[currency,setCurrency]=useState(initialScope?.currency??'USD'),[exponent,setExponent]=useState(String(initialScope?.exponent??2)),[basis,setBasis]=useState(initialScope?.basis??'net_order_excluding_tax_shipping');
  const [sourceId,setSourceId]=useState(''),[sourceName,setSourceName]=useState(''),[evidenceType,setEvidenceType]=useState('payment_ledger'),[complete,setComplete]=useState(false),[active,setActive]=useState(true),[sourceReport,setSourceReport]=useState(''),[sourceApproved,setSourceApproved]=useState(false);
  const [kind,setKind]=useState('refund'),[externalId,setExternalId]=useState(''),[effectiveAt,setEffectiveAt]=useState(''),[amount,setAmount]=useState(''),[status,setStatus]=useState('settled'),[orderId,setOrderId]=useState(''),[reversalOf,setReversalOf]=useState(''),[report,setReport]=useState(''),[attested,setAttested]=useState(false),[entrySource,setEntrySource]=useState('');
  const [duration,setDuration]=useState(''),[rate,setRate]=useState(''),[rateVersion,setRateVersion]=useState(''),[rateEvidence,setRateEvidence]=useState(''),[validFrom,setValidFrom]=useState(''),[validUntil,setValidUntil]=useState(''),[customers,setCustomers]=useState(''),[probability,setProbability]=useState(''),[revenue,setRevenue]=useState(''),[horizon,setHorizon]=useState('30'),[assumption,setAssumption]=useState(''),[assumptionReport,setAssumptionReport]=useState('');

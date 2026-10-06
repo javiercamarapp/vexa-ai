@@ -6,11 +6,14 @@ export interface HubSpotConfig {
  /** If present, fetch ONLY these direct thread IDs; no account-wide list request. */
  threadIds?: string[];
  archived?: boolean; inboxId?: string; includeTickets?: boolean; includeNotes?: boolean;
+ /** Runtime chunks: provider cursors/IDs, checkpoint v2, max two GETs per yielded page. */
+ bounded?: boolean;
  fetch?: typeof globalThis.fetch; clock?: ()=>Date; sleep?: (milliseconds:number)=>Promise<void>;
  timeoutMs?: number; maxRetries?: number; maxDelayMs?: number; maxResponseBytes?: number;
  maxPages?: number; maxRecords?: number; deadlineMs?: number;
 }
 export interface Checkpoint {version:1;scope:string;cursor:string}
+export interface HubSpotCheckpointV2 {version:2;scope:string;state:{phase:'threads'|'messages'|'ticket'|'links'|'note';legacyPrefix:boolean;after:string|null;threadId:string|null;ticketId:string|null;innerAfter:string|null;noteId:string|null;seen:{threads:string[];messages:string[];notes:string[]};steps:{threads:number;messages:number;notes:number};totals:{records:number;rejected:number;missing:number;notesMissing:number}}}
 export interface Association {entity_type:'thread'|'ticket';external_id:string}
 export interface ConnectorRecord {
  envelope:SourceEnvelope;payload:Record<string,unknown>;provider_updated_at:unknown;
@@ -27,10 +30,10 @@ export interface RejectedRecord {
 export interface Page {
  records:ConnectorRecord[];errors:RejectedRecord[];
  /** Proposed only; persist records, quarantines, and checkpoint atomically in consumer. */
- checkpoint:Checkpoint|null;done:boolean;adapter_version:'vexa-hubspot-v3';
+ checkpoint:Checkpoint|HubSpotCheckpointV2|null;done:boolean;adapter_version:'vexa-hubspot-v3';
  coverage:{objects_read:number;accepted:number;rejected:number;threads_read:number;messages_read:number;events_read:number;bodies_missing:number;messages_complete:boolean;notes_bodies_missing:number;notes_complete:boolean;tickets_complete:boolean;archived:boolean;live_verified:false};
 }
-export interface Adapter {pages(options?:{checkpoint?:Checkpoint|null}):AsyncGenerator<Page,void,unknown>}
+export interface Adapter {pages(options?:{checkpoint?:Checkpoint|HubSpotCheckpointV2|null}):AsyncGenerator<Page,void,unknown>}
 export class ConnectorError extends Error {
  code:string;status:number|null;retryable:boolean;retryAfterMs:number|null;state:'error'|'reconnect_required';
  constructor(code:string,details?:{status?:number|null;retryable?:boolean;retryAfterMs?:number|null});

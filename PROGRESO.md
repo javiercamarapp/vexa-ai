@@ -1,3 +1,7 @@
+## Avance acotado de HubSpot — 6 de octubre de 2026
+
+El runtime propone bloques pequeños con checkpoint v2 y acepta los cursores v1 existentes. Recupera paginación de mensajes del mismo hilo y conserva originales que sólo tienen HTML como cuerpo incompleto. Revisión independiente aprobada tras corregir un timeout de persistencia que podía confundirse con continuación normal. Pasaron 148 pruebas focales y de regresión en la integración, lint/typecheck del candidato y veinte bloques de lectura real con reanudación entre cada uno, incluidos dos mensajes completos. [Contrato, rollback y límites](packages/connectors/HUBSPOT-BOUNDED.md). La prueba real fue de lectura: todavía no acredita persistencia, programación continua ni rendimiento suficiente para completar el histórico. Sin nuevas aceptaciones ni capacidad heredada.
+
 ## Paginación del listado de hilos — 6 de octubre de 2026
 
 Integrada la corrección revisada del alias de ruta y padding del cursor de HubSpot. Conserva checkpoints y restricciones de origen; 74 pruebas focales y de regresión en Node 22 aprobadas. La lectura real supera el primer rechazo, pero aún falla antes de completar una página; sincronización continua pendiente. [Evidencia y límites](docs/entrega/PAGINACION-HILOS-HUBSPOT-2026-10-06.md). Sin nuevas aceptaciones ni capacidad heredada.

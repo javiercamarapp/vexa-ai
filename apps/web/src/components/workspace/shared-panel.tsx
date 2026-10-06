@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import {pinWorkspaceQuery,latestWorkspaceQuery} from '../../../../../packages/workspace-service/navigation.mjs';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {Bundle,Scope} from '../../lib/workspace/contracts';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
@@ -31,25 +32,25 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
     const json=await response.json();if(controller.signal.aborted||epoch!==generation.current)return;
     if(!response.ok)throw Error(response.status===401||response.status===403?'Tu acceso cambió. Vuelve a iniciar sesión o selecciona una organización autorizada.':response.status===400?'El alcance no es válido. Revisa fechas, moneda, base y snapshot.':response.status===404?'No hay una publicación accesible para ese snapshot y alcance.':'No se pudo consultar la vista. Reintenta cuando el servicio esté disponible.');
     const next=json.data as ViewBundle;if(!next||!Array.isArray(next.items)||!next.meta||!next.meta.scope)throw Error('La respuesta no se pudo verificar.');
-    const pinned=new URLSearchParams(query);pinned.delete('resource');pinned.delete('format');if(next.meta.snapshot_id)pinned.set('snapshot_id',next.meta.snapshot_id);else pinned.delete('snapshot_id');if(next.meta.scope_hash)pinned.set('scope_hash',next.meta.scope_hash);else pinned.delete('scope_hash');
+    const pinned=pinWorkspaceQuery(query,next.meta);
     resolved.current=pinned.toString();window.history.replaceState(null,'',window.location.pathname+(pinned.size?'?'+pinned.toString():''));setBundle(next);
    }catch(e){if(!controller.signal.aborted&&epoch===generation.current){setBundle(null);setError(e instanceof Error?e.message:'No se pudo consultar la vista.');}}
    finally{if(!controller.signal.aborted&&epoch===generation.current)setBusy(false);}
   };
   void Promise.resolve().then(load);return()=>{controller.abort();invalidate();};
  },[query,reload,resource,invalidate]);
- const scope=bundle?.meta.scope??initialScope(query),pinned=new URLSearchParams(query);pinned.delete('cursor');if(bundle?.meta.snapshot_id)pinned.set('snapshot_id',bundle.meta.snapshot_id);if(bundle?.meta.scope_hash)pinned.set('scope_hash',bundle.meta.scope_hash);
+ const scope=bundle?.meta.scope??initialScope(query),pinned=bundle?pinWorkspaceQuery(query,bundle.meta):new URLSearchParams(query);pinned.delete('cursor');
  const apply=(next:URLSearchParams)=>{
   const changedBase=['date_start','date_end'].some(key=>next.get(key)!==scope[key as 'date_start'|'date_end'].slice(0,10))||next.get('currency')!==scope.currency||next.get('basis')!==scope.basis||(next.has('exponent')&&Number(next.get('exponent'))!==scope.exponent);
   if(changedBase&&bundle?.meta.snapshot_id&&next.get('snapshot_id')===bundle.meta.snapshot_id)next.delete('snapshot_id');
   next.delete('cursor');next.delete('scope_hash');navigate(next);
  };
  const update=()=>{setQuery(resolved.current);setReload(n=>n+1);};
- const latest=()=>{const next=new URLSearchParams(resolved.current);next.delete('snapshot_id');next.delete('scope_hash');next.delete('cursor');navigate(next);};
+ const latest=()=>navigate(latestWorkspaceQuery(resolved.current));
  const exportUrl=(format:string)=>{const next=new URLSearchParams(pinned);next.set('resource',resource);next.set('format',format);return '/api/workspace/export?'+next.toString();};
  const state=bundle?.meta.state;
  if(resource==='metrics')return <section className={cfo.page} aria-label="Resumen con alcance compartido">
-  <header className={cfo.header}><div><span className={cfo.kicker}>Control financiero</span><h1>Resumen ejecutivo</h1></div><div className={cfo.toolbar}><button type="button" disabled={busy} onClick={update}>Actualizar</button><button type="button" disabled={busy} onClick={latest}>Última publicación</button></div></header>
+  <header className={cfo.header}><div><span className={cfo.kicker}>Control financiero</span><h1>Resumen ejecutivo</h1></div><div className={cfo.toolbar}><button type="button" disabled={busy} onClick={update}>Actualizar</button><button type="button" disabled={busy} onClick={latest}>Última publicación de este alcance</button></div></header>
   <details className={cfo.scopeBox}><summary>Periodo y filtros <span>{scope.date_start.slice(0,10)} → {scope.date_end.slice(0,10)} (hasta exclusivo) · {scope.currency} · Base {scope.basis}</span></summary><SharedFilters key={JSON.stringify(scope)} scope={scope} onApply={apply}/></details>
   {busy&&<DataState state={{kind:'loading'}}/>}{error&&<DataState state={{kind:'error',code:'workspace_request_failed',message:error}}/>}
   {bundle&&!busy&&<>
@@ -66,7 +67,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   <p className="intro">Cifras y cobertura de una publicación fija. La exposición compartida entre problemas no se suma ni equivale a pérdida.</p>
   {resource==='problems'&&<><CurrentProblems/><h2>Publicación financiera</h2></>}
   <SharedFilters key={JSON.stringify(scope)} scope={scope} onApply={apply}/>
-  <button type="button" disabled={busy} onClick={update}>Actualizar vista</button><button type="button" disabled={busy} onClick={latest}>Ver publicación más reciente</button>
+  <button type="button" disabled={busy} onClick={update}>Actualizar vista</button><button type="button" disabled={busy} onClick={latest}>Última publicación de este alcance</button>
   {busy&&<DataState state={{kind:'loading'}}/>}{error&&<DataState state={{kind:'error',code:'workspace_request_failed',message:error}}/>}
   {bundle&&!busy&&<>
    <p className="snapshot">Snapshot: {bundle.meta.snapshot_id??'Sin publicación'} · Alcance: {bundle.meta.scope_hash??'Sin vista publicada'}</p>

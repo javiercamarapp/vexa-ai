@@ -5,3 +5,5 @@ export type CfoRow={key:string;recordId:string;recordTitle:string;version:number
 export function ratioBps(numerator:bigint,denominator:bigint):number|null;
 export function metricCoverage(value:unknown):Coverage;
 export function buildCfoModel(items:RecordView[]):{rows:CfoRow[];compatible:boolean;maximum:string|null;currency:string|null;bars:(CfoRow & {bps:number|null;negative:boolean})[];comparisonNote:string};
+
+export function kpiHeadline(row:CfoRow):{value:string;label:string|null;note:string};

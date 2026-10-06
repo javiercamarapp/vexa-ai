@@ -1,7 +1,7 @@
 'use client';
 import {useId,useState} from 'react';
 import type {Bundle} from '../../lib/workspace/contracts';
-import {buildCfoModel} from './cfo-model.mjs';
+import {buildCfoModel,kpiHeadline} from './cfo-model.mjs';
 import styles from './cfo-overview.module.css';
 import {WorkspaceIcon} from './icon';
 const states={ready:'Publicado',partial:'Cobertura parcial',stale:'Corte desactualizado',empty:'Sin publicación'};
@@ -12,12 +12,12 @@ export function CfoOverview({bundle}:{bundle:Bundle}){
  if(bundle.meta.state==='empty'||!model.rows.length)return <div className={styles.empty} role="status"><span className={styles.kicker}>Resumen financiero</span><h2>Sin cifras publicadas para este alcance</h2><p>Revisa el periodo y los filtros o publica un snapshot desde las fuentes autorizadas.</p><details><summary>Cobertura de la consulta</summary><p>{bundle.meta.coverage}</p></details></div>;
  return <div className={styles.dashboard}>
   <div className={styles.statusRow} role="status"><span className={styles.badge} data-state={bundle.meta.state}>{states[bundle.meta.state]}</span><span>Corte <time dateTime={bundle.meta.watermark??undefined}>{bundle.meta.watermark?bundle.meta.watermark.replace('T',' ').replace(/\.\d{3}Z$/,' UTC'):'no informado'}</time></span><span>{model.rows.length} indicadores · mismo alcance</span></div>
-  <div className={styles.kpis}>{model.rows.map(row=><article key={row.key} className={styles.kpi} data-state={row.state}>
-   <div className={styles.kpiInset}><div className={styles.kpiHeading}><span className={styles.kpiIcon} aria-hidden="true"><WorkspaceIcon name="economics"/></span><span className={styles.kpiLabel}>{row.metric.label}</span></div><strong className={styles.kpiValue}>{row.display}</strong></div>
-   <span className={styles.kpiFoot}>{row.state==='known'?'Importe publicado':row.state==='invalid'?'Revisa la unidad y el importe':'Total desconocido'}</span>
-   {row.subtotal&&<span className={styles.subtotal}>Conocido: {row.subtotal}<small>Subtotal; no es el total</small></span>}
+  <div className={styles.kpis}>{model.rows.map(row=>{const headline=kpiHeadline(row);return <article key={row.key} className={styles.kpi} data-state={row.state} data-documented-subtotal={!!headline.label}>
+   <div className={styles.kpiInset}><div className={styles.kpiHeading}><span className={styles.kpiIcon} aria-hidden="true"><WorkspaceIcon name="economics"/></span><span className={styles.kpiLabel}>{row.metric.label}</span></div><>{headline.label&&<span className={styles.kpiFoot}>{headline.label}</span>}<strong className={styles.kpiValue}>{headline.value}</strong></></div>
+   <span className={styles.kpiFoot}>{headline.note}</span>
+   {row.subtotal&&!headline.label&&<span className={styles.subtotal}>Conocido: {row.subtotal}<small>Subtotal; no es el total</small></span>}
    <span className={styles.kpiCoverage}>{row.coverage.label}</span>
-  </article>)}</div>
+  </article>;})}</div>
   <div className={styles.visualGrid}>
    <section className={styles.visual} aria-labelledby={id+'-amounts'}><div className={styles.panelHeading}><h2 id={id+'-amounts'}>Importes del corte</h2><span>{model.currency??'Sin escala común'}</span></div>
     <p className={styles.hint}>{model.comparisonNote}</p>

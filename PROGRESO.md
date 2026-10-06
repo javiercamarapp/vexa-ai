@@ -1,5 +1,10 @@
 # Progreso verificable
 
+## 6 de octubre de 2026 — paginación de notas de HubSpot
+
+Corregido el rechazo de un alias de ruta que HubSpot devuelve al paginar notas del mismo ticket. Revisión independiente, 50 pruebas focales en Node22/26 y lectura real de veinte hilos completadas. Se conserva la ruta de petición original y las restricciones de enlace. [Causa, comprobaciones y límites](docs/entrega/PAGINACION-HUBSPOT-2026-10-06.md). El inventario verifica2.186fuentes; sin importación productiva, aceptación formal nueva ni medición de capacidad. **59/60 técnicas,28/60 aceptadas.**
+
+
 ## Estado actual — 3 de octubre de 2026 (UTC)
 
 El acceso y el panel ajustan tipografía, composición y controles a las referencias de Likida y Atiende. La primera visita sin sesión ya no muestra un rechazo de permisos. La comparación sintética de persistencia completó cuatro ventanas y ocho controles; la propuesta experimental redujo la media aproximadamente un 7 %, sin acreditar 50K/150K ni adoptar la optimización. [Diseño, pruebas y límites](docs/entrega/DISENO-Y-CAPACIDAD-2026-10-03.md). Se mantienen **59/60 implementadas y 28/60 aceptadas**, con producción pendiente.

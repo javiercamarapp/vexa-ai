@@ -29,7 +29,11 @@ export function createHubSpotAdapter(config){
   if(body.paging!==undefined&&!object(body.paging))fail('PROVIDER_SCHEMA');
   const n=body.paging?.next;if(n==null)return null;if(!object(n))fail('PROVIDER_SCHEMA');const value=cursor(n.after);
   if(n.link!=null){if(typeof n.link!=='string'||/[\\\u0000-\u0020]/u.test(n.link))fail('UNSAFE_NEXT');let next;try{next=new URL(n.link,current);}catch{fail('UNSAFE_NEXT');}
-   if(next.origin!==current.origin||next.pathname!==current.pathname||next.username||next.password||next.hash)fail('UNSAFE_NEXT');
+   // HubSpot can return this reordered path for CRM v4 note associations.
+   // Validate the exact same ticket and association; requests still use our original route.
+   const noteAssociation=/^\/crm\/v4\/objects\/tickets\/[A-Za-z0-9_-]+\/associations\/notes$/.test(current.pathname);
+   const samePath=next.pathname===current.pathname||(noteAssociation&&next.pathname===current.pathname.replace('/crm/v4/objects/','/crm/objects/v4/'));
+   if(next.origin!==current.origin||!samePath||next.username||next.password||next.hash)fail('UNSAFE_NEXT');
    for(const k of next.searchParams.keys())if(next.searchParams.getAll(k).length!==1||!['after',...current.searchParams.keys()].includes(k))fail('UNSAFE_NEXT');
    if(next.searchParams.get('after')!==value)fail('UNSAFE_NEXT');
    for(const[k,v]of current.searchParams)if(k!=='after'&&next.searchParams.has(k)&&next.searchParams.get(k)!==v)fail('UNSAFE_NEXT');

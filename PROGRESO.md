@@ -1,3 +1,7 @@
+## 2026-10-06 — visibilidad de trabajos de importación del espacio
+
+Los propietarios pueden consultar las cargas iniciadas por otras cuentas autorizadas mediante una tabla separada y enlaces al progreso existente. Conserva propiedad de reservas y aislamiento de bytes/mapping. 33 pruebas focales, lint/typecheck/build y revisión independiente. [Detalle](docs/entrega/VISIBILIDAD-IMPORTACIONES-2026-10-06.md). Sin nuevas aceptaciones formales.
+
 ## 2026-10-06 — Rovaq AI, administración amplia y composición de tareas
 
 Cambio solicitado de marca pública y rediseño de pantallas auxiliares al estilo Atiende. Plataforma abandona el contenedor estrecho; importaciones, conexiones, histórico, equipo y ajustes usan columnas responsivas. Lint/typecheck/build Node22,15 pruebas de plantillas y revisión independiente del delta. [Detalle](docs/entrega/ROVAQ-INTERFAZ-2026-10-06.md). No altera permisos, contratos ni aceptación formal; los datos preparados no se consideran importados.

@@ -4,6 +4,9 @@ const fail=code=>{throw new ConnectorError(code);};
 const id=v=>{if(typeof v==='number'&&Number.isSafeInteger(v)&&v>=0)return String(v);if(typeof v!=='string'||!v||v.length>1024||!(/^[A-Za-z0-9_-]+$/u.test(v)))fail('INVALID_REMOTE_ID');return v;};
 const cursor=v=>{if(typeof v!=='string'||!v||v.length>4096||/[\u0000-\u001f]/u.test(v))fail('PROVIDER_SCHEMA');return v;};
 const base='/conversations/v3/conversations/threads';
+// The thread listing sometimes percent-encodes base64 padding in paging.next.after.
+// Decode only that observed single layer; all other opaque cursor characters stay opaque.
+const threadCursor=value=>/^[A-Za-z0-9+/_-]+(?:%3d){1,2}$/i.test(value)?value.replace(/%3d/gi,'='):value;
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 // Observed administrative types. Unknown provider types remain quarantined.
 const threadEventTypes=new Set(['ASSIGNMENT','THREAD_STATUS_CHANGE','THREAD_INBOX_CHANGE']);
@@ -23,25 +26,26 @@ export function createHubSpotAdapter(config){
  const selected=threadIds===null?null:Object.freeze(threadIds.map(id));
  const clock=config.clock??(()=>new Date()),transport=createTransport(config);
  const scope=contentHash({context,version:'vexa-hubspot-v3',archived,inbox,includeTickets,includeNotes,selected});
- function url(path,params={}){const u=new URL(path,'https://api.hubapi.com');for(const[k,v]of Object.entries(params))if(v!==null)u.searchParams.set(k,String(v));return u;}
+ function url(path,params={}){const u=new URL(path,'https://api.hubapi.com');for(const[k,v]of Object.entries(params))if(v!==null)u.searchParams.set(k,k==='after'&&path===base?threadCursor(String(v)):String(v));return u;}
  function nextOf(body,current){
   if(!object(body)||!Array.isArray(body.results))fail('PROVIDER_SCHEMA');
   if(body.paging!==undefined&&!object(body.paging))fail('PROVIDER_SCHEMA');
   const n=body.paging?.next;if(n==null)return null;if(!object(n))fail('PROVIDER_SCHEMA');const value=cursor(n.after);
   if(n.link!=null){if(typeof n.link!=='string'||/[\\\u0000-\u0020]/u.test(n.link))fail('UNSAFE_NEXT');let next;try{next=new URL(n.link,current);}catch{fail('UNSAFE_NEXT');}
-   // HubSpot can return this reordered path for CRM v4 note associations.
-   // Validate the exact same ticket and association; requests still use our original route.
+   // Only the observed thread-root and note-association aliases are accepted.
+   // Requests still use the original allowlisted route, never the provider's link.
    const noteAssociation=/^\/crm\/v4\/objects\/tickets\/[A-Za-z0-9_-]+\/associations\/notes$/.test(current.pathname);
-   const samePath=next.pathname===current.pathname||(noteAssociation&&next.pathname===current.pathname.replace('/crm/v4/objects/','/crm/objects/v4/'));
+   const samePath=next.pathname===current.pathname||(current.pathname===base&&next.pathname==='/conversations/conversations/v3/threads')||(noteAssociation&&next.pathname===current.pathname.replace('/crm/v4/objects/','/crm/objects/v4/'));
    if(next.origin!==current.origin||!samePath||next.username||next.password||next.hash)fail('UNSAFE_NEXT');
    for(const k of next.searchParams.keys())if(next.searchParams.getAll(k).length!==1||!['after',...current.searchParams.keys()].includes(k))fail('UNSAFE_NEXT');
-   if(next.searchParams.get('after')!==value)fail('UNSAFE_NEXT');
+   if(next.searchParams.get('after')!==(current.pathname===base?threadCursor(value):value))fail('UNSAFE_NEXT');
    for(const[k,v]of current.searchParams)if(k!=='after'&&next.searchParams.has(k)&&next.searchParams.get(k)!==v)fail('UNSAFE_NEXT');
   }return value;
  }
- async function* collection(path,params={},initial=null){let after=initial;const seen=new Set(after===null?[]:[after]);for(let n=0;n<maxPages;n++){
+ async function* collection(path,params={},initial=null){let after=initial;const cursorKey=value=>path===base?threadCursor(value):value;const seen=new Set(after===null?[]:[cursorKey(after)]);for(let n=0;n<maxPages;n++){
   const target=url(path,{...params,after}),body=await transport.request(target),next=nextOf(body,target);
-  if(next!==null&&seen.has(next))fail('CURSOR_LOOP');yield {body,next};if(next===null)return;seen.add(next);after=next;
+  // Keep raw checkpoint cursors/version/scope compatible; compare their wire meaning for loops.
+  if(next!==null&&seen.has(cursorKey(next)))fail('CURSOR_LOOP');yield {body,next};if(next===null)return;seen.add(cursorKey(next));after=next;
  }fail('PAGE_LIMIT');}
  async function* threads(params,initial){
   if(selected===null){yield* collection(base,params,initial);return;}

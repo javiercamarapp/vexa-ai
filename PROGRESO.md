@@ -1,3 +1,7 @@
+## Paginación del listado de hilos — 6 de octubre de 2026
+
+Integrada la corrección revisada del alias de ruta y padding del cursor de HubSpot. Conserva checkpoints y restricciones de origen; 74 pruebas focales y de regresión en Node 22 aprobadas. La lectura real supera el primer rechazo, pero aún falla antes de completar una página; sincronización continua pendiente. [Evidencia y límites](docs/entrega/PAGINACION-HILOS-HUBSPOT-2026-10-06.md). Sin nuevas aceptaciones ni capacidad heredada.
+
 ## Entrada al resumen publicado — 6 de octubre de 2026
 
 La entrada sin filtros selecciona la última publicación autorizada y fija su alcance completo. El subtotal documentado puede mostrarse como cifra principal conservando total desconocido y cobertura parcial. Revisión independiente aprobada tras corregir identificadores vacíos; pruebas focales, regresiones, lint, typecheck y build documentados. [Evidencia y límites](docs/entrega/ENTRADA-PUBLICACION-2026-10-06.md). Sin nuevas aceptaciones ni capacidad heredada.

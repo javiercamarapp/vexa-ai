@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
   "baselineSha": "e6a340bb850f9fbd97eb9b31e56f7bb02eb03f47",
-  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance. Historical CSV UI explicitly selects the reviewed opt-in profile; server-provided content type gates selection. Focal local PostgreSQL and synthetic React DOM checks passed; no new capacity or production acceptance. Compact Atiende-referenced UI with independently reviewed financial presentation and deterministic query card; synthetic browser checks only, no new formal acceptance or capacity measurement. Access/UI correction 2026-10-03: direct authorized entry, contextual platform access, honest first-run guidance and neutral Atiende/Likida presentation. No new formal acceptance or inherited capacity measurement. Reference fidelity 2026-10-03: self-hosted Inter Tight, Instrument Sans login, reference geometry and neutral tokens; anonymous entry differs from forbidden entry. No inherited capacity or production acceptance. Frontend unification495: current Atiende-Agencia-AI shell, navigation and KPI presentation; source binding only, no new capacity or production acceptance. Email login keeps a stable status area and compact desktop layout after requesting access; no new capacity acceptance. Header date and notifications appear only on overview; source binding only, no new capacity acceptance. Owners can create CSV connections through the import page with role/RLS validation and idempotent creation; focal local evidence only, no new capacity or production acceptance. Gateway explicitly distinguishes unrestricted processing from US/EU regional routing, with legacy aliases and exact synthetic transport controls. No new capacity or formal production acceptance. SQL membership expression uses a reusable PLpgSQL plan while preserving fresh authorization, function attributes and ACL. Local synthetic equivalence and exploratory ABBA only; no new formal acceptance, production approval or 50K/150K capacity measurement. Embedding transport handles submicroUSD numeric costs and the exact Azure wire model ID; no new capacity or formal acceptance. Source-bound evidence and entity references preserve exact Unicode before the unchanged final validator; final schema hash remains compatible with persistence. Synthetic checks only, no new capacity or formal acceptance. S01 control-plane metadata compatibility: explicit private-app or OAuth app identity, synthetic review only; no product or formal acceptance change. Failure diagnostics preserve queued jobs with missing checkpoints and isolate SQL errors per resource. Real local PostgreSQL regression only; prior 150K failure remains and no new capacity measurement is claimed. A guarded permission/advisory-lock query removes one roundtrip per canonical row while retaining fresh membership checks and post-lock dedup reads. Independently reviewed local PostgreSQL evidence; midflight EXECUTE DDL visibility limitation remains in both baseline and proposal. No new capacity success or production acceptance is claimed. HubSpot note association pagination accepts the observed reordered CRM-v4 path for the exact same ticket and notes relation while requesting only the original allowlisted route; scoped independent review, Node22/26 tests and bounded live observation. No new capacity or formal acceptance.",
+  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance. Historical CSV UI explicitly selects the reviewed opt-in profile; server-provided content type gates selection. Focal local PostgreSQL and synthetic React DOM checks passed; no new capacity or production acceptance. Compact Atiende-referenced UI with independently reviewed financial presentation and deterministic query card; synthetic browser checks only, no new formal acceptance or capacity measurement. Access/UI correction 2026-10-03: direct authorized entry, contextual platform access, honest first-run guidance and neutral Atiende/Likida presentation. No new formal acceptance or inherited capacity measurement. Reference fidelity 2026-10-03: self-hosted Inter Tight, Instrument Sans login, reference geometry and neutral tokens; anonymous entry differs from forbidden entry. No inherited capacity or production acceptance. Frontend unification495: current Atiende-Agencia-AI shell, navigation and KPI presentation; source binding only, no new capacity or production acceptance. Email login keeps a stable status area and compact desktop layout after requesting access; no new capacity acceptance. Header date and notifications appear only on overview; source binding only, no new capacity acceptance. Owners can create CSV connections through the import page with role/RLS validation and idempotent creation; focal local evidence only, no new capacity or production acceptance. Gateway explicitly distinguishes unrestricted processing from US/EU regional routing, with legacy aliases and exact synthetic transport controls. No new capacity or formal production acceptance. SQL membership expression uses a reusable PLpgSQL plan while preserving fresh authorization, function attributes and ACL. Local synthetic equivalence and exploratory ABBA only; no new formal acceptance, production approval or 50K/150K capacity measurement. Embedding transport handles submicroUSD numeric costs and the exact Azure wire model ID; no new capacity or formal acceptance. Source-bound evidence and entity references preserve exact Unicode before the unchanged final validator; final schema hash remains compatible with persistence. Synthetic checks only, no new capacity or formal acceptance. S01 control-plane metadata compatibility: explicit private-app or OAuth app identity, synthetic review only; no product or formal acceptance change. Failure diagnostics preserve queued jobs with missing checkpoints and isolate SQL errors per resource. Real local PostgreSQL regression only; prior 150K failure remains and no new capacity measurement is claimed. A guarded permission/advisory-lock query removes one roundtrip per canonical row while retaining fresh membership checks and post-lock dedup reads. Independently reviewed local PostgreSQL evidence; midflight EXECUTE DDL visibility limitation remains in both baseline and proposal. No new capacity success or production acceptance is claimed. HubSpot note association pagination accepts the observed reordered CRM-v4 path for the exact same ticket and notes relation while requesting only the original allowlisted route; scoped independent review, Node22/26 tests and bounded live observation. No new capacity or formal acceptance. Rovaq AI public branding and responsive administration/task layouts; scoped UI review and local checks only. No new capacity or formal acceptance.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -113,15 +113,15 @@
     },
     {
       "path": "apps/web/public/push-icon.svg",
-      "sha256": "05e785b5ca8b06e2c23c92bdce9cc5835ca9002ec1820b55797c1f260b26e9e8"
+      "sha256": "5a96853269252f968068d93ad3ae81ab3e1e631a408ed30a41442df5bedb8699"
     },
     {
       "path": "apps/web/public/push-manifest.webmanifest",
-      "sha256": "832ed462fe92fc872e2053b2099ae30ffd010e668d9645eb6ddd35541a7b75e7"
+      "sha256": "b75b6d0121138999f16a4289edf879263fea823de6995a1b4d7ba1d091ba2902"
     },
     {
       "path": "apps/web/public/service-worker.js",
-      "sha256": "db0aa81777e1f682b167266788db8088ac18819ccc3200ee33d0f68134f4d46c"
+      "sha256": "b28ad4017909d4d9ef58cf69a6d3cba968c9144f435e1bfbe256a66d1c8281bb"
     },
     {
       "path": "apps/web/src/app/(workspace)/analysis/[id]/page.tsx",
@@ -141,7 +141,7 @@
     },
     {
       "path": "apps/web/src/app/(workspace)/connections/page.tsx",
-      "sha256": "2d5f54f9cddb743725859074829474bedab3885db4131d60608561f338cd097c"
+      "sha256": "0e466cd72d202ae469037903bd1473e006cd1bc06a007b5ee6dbfa6a7e0f661f"
     },
     {
       "path": "apps/web/src/app/(workspace)/customers/[id]/page.tsx",
@@ -185,7 +185,7 @@
     },
     {
       "path": "apps/web/src/app/(workspace)/jobs/setup/page.tsx",
-      "sha256": "b81c221bc367fa6ace6c90764663d39efcbcd35295980a962efe55a3a2a31b4f"
+      "sha256": "a0c47fe17295ec6d6cbd1ebcdf563785284614249a58be02addf12284e1d0807"
     },
     {
       "path": "apps/web/src/app/(workspace)/layout.tsx",
@@ -205,7 +205,7 @@
     },
     {
       "path": "apps/web/src/app/(workspace)/notifications/push/page.tsx",
-      "sha256": "1ffea8849dcd5e467cfa7e84e0e2616b05cc1e69ebe07049519e5ca6829d8128"
+      "sha256": "ec6ce063462083fdfb364173481ec45c7dd70e3b02d4aafa037592c2b49d9908"
     },
     {
       "path": "apps/web/src/app/(workspace)/overview/page.tsx",
@@ -553,7 +553,7 @@
     },
     {
       "path": "apps/web/src/app/error.tsx",
-      "sha256": "c6dc5616be54aa22326729269e00aa9b180d724e635b2882c17ec48f962aee2d"
+      "sha256": "c2f44e7253cfba20dc4e86d8cc88897227f1c252596c4fb883483225b2ecd853"
     },
     {
       "path": "apps/web/src/app/fonts.css",
@@ -561,35 +561,43 @@
     },
     {
       "path": "apps/web/src/app/globals.css",
-      "sha256": "6e5aeeb8a963f9e302a94e14c959ddbc905ced8b89ec949574be69c8019f6d6b"
+      "sha256": "2f83f91902e50c3562f3bf093afdd8a542a278bd3b404002fde03cc360e37654"
     },
     {
       "path": "apps/web/src/app/layout.tsx",
-      "sha256": "dd468e0451ad6ffdd3fc4024ad227c4f183b94ba7af3c37d6ef2cb498625d623"
+      "sha256": "ca8edb6145530629d600163c61cc9b98e7aeb6f1d17f58e7530a3f073b8592b9"
     },
     {
       "path": "apps/web/src/app/login/page.tsx",
-      "sha256": "bf4f6d4b6f437ed3e32db1f0edecd8fd20e9206a0cf44cea7c2a6600284c2a5d"
+      "sha256": "019da33400cf748bd72afd473a07ab1fa7832428fc40247685d229f0b3a3b146"
     },
     {
       "path": "apps/web/src/app/not-found.tsx",
-      "sha256": "53bf058c4485eb9e13cffb9b28d7bdcc82ebb3779225328c33f6d366e688a6df"
+      "sha256": "47cad247b1154b78dd93a643f52eef16645456ed923ed5bbbcdd4215b1dfbe7a"
     },
     {
       "path": "apps/web/src/app/page.tsx",
-      "sha256": "9c15ee11f12bc3603719cb2cd0bfc2b78b575c5cf175091bc50510ecba734065"
+      "sha256": "ff4cd28327c82cf06ad93a26178b6ab4ee57f4fb2e9e36eedf3cd24c8e6187ce"
     },
     {
       "path": "apps/web/src/app/platform/page.tsx",
-      "sha256": "0cb3f7625cb21ae1860c7669c5c526d94b181df0ebe4b434f16374b4b61d0412"
+      "sha256": "e647ce1ad5b1acda0b7643ee96f87e7566fedce9ffd278e675b9fd2dc30c30b7"
+    },
+    {
+      "path": "apps/web/src/app/platform/platform.css",
+      "sha256": "65ab7a7e53a2b9d46df0628b5cd96960ccb22c5fcadf5adf5a1aea6f86e1cf04"
     },
     {
       "path": "apps/web/src/app/session-guard.tsx",
       "sha256": "1b237fa65c075d24d1c95ea905fcdbf4e271a45a841888d2dc29d5b77ca0fb2e"
     },
     {
+      "path": "apps/web/src/app/task-layout.css",
+      "sha256": "34caa41a54125a1a9b0932368d18d246b1f165e6c33f20e2c5b35f2e833c9351"
+    },
+    {
       "path": "apps/web/src/components/briefs/panel.tsx",
-      "sha256": "bd9adcf14b2dbd89db4819e9cae7100f090137f76ca35e5f9b721ebb7cd260ec"
+      "sha256": "0b451e47ef04382131b1d50580acd427a3616db5c0c092b90ba6eca031d6c99e"
     },
     {
       "path": "apps/web/src/components/candidates-panel.tsx",
@@ -609,11 +617,11 @@
     },
     {
       "path": "apps/web/src/components/connection-health.tsx",
-      "sha256": "6a8c502cce1af753011a2499da0e0e99308e5b7a8865e5efb360945af00eaeb6"
+      "sha256": "09399c3b86bbb5f40ddf96c9f93a19b77f29dead465bca9a3b3ccb72348dcf91"
     },
     {
       "path": "apps/web/src/components/connection-settings.tsx",
-      "sha256": "0379285410c2669d0e6b31f168bc17678964ccc6cf71f4911f2df7107a585a95"
+      "sha256": "d8abc29295002f5b735f715e97dd74248d7c0594ee782f5b1101649491bce657"
     },
     {
       "path": "apps/web/src/components/economic-exposure-panel.tsx",
@@ -637,7 +645,7 @@
     },
     {
       "path": "apps/web/src/components/email-login-complete.tsx",
-      "sha256": "33511c6621bfd58419b6bd995883471e5b4ca899f432daaf3e2cfacb7a5e78f0"
+      "sha256": "4973ee502e6e683d937bdd132b2950153b97b4887485bfb1ef0f6c283c8fa488"
     },
     {
       "path": "apps/web/src/components/email-login.tsx",
@@ -649,7 +657,7 @@
     },
     {
       "path": "apps/web/src/components/evaluation-panel.tsx",
-      "sha256": "e987b47ed78102336bedd3467c3fbda45c14e3404eac13f444edbf04a2e5dbac"
+      "sha256": "b2869d5dcfc97c9be6c4a3284121e00ca687f44fd773d34f10bb21e85d039b9a"
     },
     {
       "path": "apps/web/src/components/evidence-panel.tsx",
@@ -669,7 +677,7 @@
     },
     {
       "path": "apps/web/src/components/extraction-panel.tsx",
-      "sha256": "78a85cde24ed008598925c3760b59f8052f871d8de1afae9e22eeb91b1cd7db6"
+      "sha256": "eaca969662caf2078ac435847b92e9552e396ecff444582587d8fe2253824dac"
     },
     {
       "path": "apps/web/src/components/history-items.tsx",
@@ -677,15 +685,15 @@
     },
     {
       "path": "apps/web/src/components/history-panel.tsx",
-      "sha256": "4928816f56807f3d694f6ea320ddb2e5de8d8e10868bbdeb03277d24ebec6641"
+      "sha256": "afae065f5dc4f7bce4ee6e6c081d2f0299b5af492783ff48a54fbbaca53f85e1"
     },
     {
       "path": "apps/web/src/components/import-preview.tsx",
-      "sha256": "5be5e5590562dd2d24f41c3c9d99c68da384656680295f8a68f2bb64bec37f25"
+      "sha256": "70c0b79da57b0c40593aa0546f1cb2ccf77d9eb54da3cdff4055105f529f42cc"
     },
     {
       "path": "apps/web/src/components/interventions/panel.tsx",
-      "sha256": "a6b9fb8bde04ac70963c75dbe4c91140f434d2bd2774c2f07971f25d4036d8b5"
+      "sha256": "2b2e2e4a37bb493de9da5e9f0e52d48e8ccd1986b2813c9560f71a19a88ecabb"
     },
     {
       "path": "apps/web/src/components/job-progress.tsx",
@@ -693,7 +701,7 @@
     },
     {
       "path": "apps/web/src/components/migration-aliases.tsx",
-      "sha256": "f53906bf741060371361a5a04889a764515db72a24721ef68ce283b11a1b5679"
+      "sha256": "c917bd910e2b6b76a28013766fa16f6b1dea1d0eb4e85923df7141445022b972"
     },
     {
       "path": "apps/web/src/components/migration-comparison.tsx",
@@ -701,7 +709,7 @@
     },
     {
       "path": "apps/web/src/components/notifications/delivery-policies.tsx",
-      "sha256": "593f84b12c01ed89e36e67a18ad9676c22667d6fde66cad2f0459bb1335fe58a"
+      "sha256": "6682947f5613eceae6eab3ec573d28f77058edbe5351899c52b71af944125328"
     },
     {
       "path": "apps/web/src/components/notifications/navigation-link.tsx",
@@ -709,15 +717,15 @@
     },
     {
       "path": "apps/web/src/components/notifications/panel.tsx",
-      "sha256": "04e388754773553867a22950e76f1bc40db1240142af1791dd521e1b1c4cdbfb"
+      "sha256": "d89e9f8353516eebe5aa56b10b34e71d1142c929ebda49afa06c9dcbf55ba3fd"
     },
     {
       "path": "apps/web/src/components/notifications/push-preferences.tsx",
-      "sha256": "ce3c9ea59071591eab422154c64d5fd232fcc7bbf0e86bffbd739c50aa28cb55"
+      "sha256": "bbb404fb87e27ebcbd1411ef7e0cbc6d4b72f7838620a4acbaf11695020e848d"
     },
     {
       "path": "apps/web/src/components/platform-panel.tsx",
-      "sha256": "7f11e4f28e1370969b3c6d6a6caed2e3cb5e0f7cb5557fd21bdd69ad665a46d4"
+      "sha256": "532ebc1473ce497a87669c5ce3a022403bde71a46d42f8ba904eb6aba89d34e6"
     },
     {
       "path": "apps/web/src/components/problems-panel.tsx",
@@ -729,7 +737,7 @@
     },
     {
       "path": "apps/web/src/components/retention-panel.tsx",
-      "sha256": "1d858bbe381298799200abbdd0a0ba629fe5f70c0e99d2f690091e64b6f97a04"
+      "sha256": "12cbd306f737f8f2ede21fea7a67128188f55231f2e664faa6dc64c4ea679ab3"
     },
     {
       "path": "apps/web/src/components/team-invitation.tsx",
@@ -737,11 +745,11 @@
     },
     {
       "path": "apps/web/src/components/team-panel.tsx",
-      "sha256": "eda877c521fbe97a3d56f1b1dabdfb9424ed0d9f1f7ec8e355ac98b026b6c0f0"
+      "sha256": "0732948744f0f3dbd9b0088de4704177a99fd6daebc106893f75be46c942a781"
     },
     {
       "path": "apps/web/src/components/vexa-brand.tsx",
-      "sha256": "7d2307dc0fa008ac43a937759ae13b8f445805ab1efbdae08be26c0937ff7fd3"
+      "sha256": "84f40f7faa6f72cf3d07b43ba0cdf0432c442e51299ef56a5e3cdcd9f1276fe4"
     },
     {
       "path": "apps/web/src/components/workspace/action-form.tsx",
@@ -817,7 +825,7 @@
     },
     {
       "path": "apps/web/src/components/workspace/shell.tsx",
-      "sha256": "cbb3f108efed73eb13dfef9b7061741dd6123b68f065c70002855cab0bdd9aa5"
+      "sha256": "283831510a284bcb969da5e9d2fc738cbe9db2dca9dbf44333a1e9aa8c830771"
     },
     {
       "path": "apps/web/src/lib/auth-http.ts",
@@ -2665,7 +2673,7 @@
     },
     {
       "path": "packages/notifications/email-template.mjs",
-      "sha256": "64d13b596f4f4da88d00ca2e096e0a910012c89dd21b044a3a99c86d90d4aff4"
+      "sha256": "46bbcab84d94c94e059278e242ad2b0b423946d88efab0022cb0b4a6832aabdf"
     },
     {
       "path": "packages/notifications/email.mjs",

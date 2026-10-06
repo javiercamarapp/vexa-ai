@@ -1,3 +1,7 @@
+## 2026-10-06 — Rovaq AI, administración amplia y composición de tareas
+
+Cambio solicitado de marca pública y rediseño de pantallas auxiliares al estilo Atiende. Plataforma abandona el contenedor estrecho; importaciones, conexiones, histórico, equipo y ajustes usan columnas responsivas. Lint/typecheck/build Node22,15 pruebas de plantillas y revisión independiente del delta. [Detalle](docs/entrega/ROVAQ-INTERFAZ-2026-10-06.md). No altera permisos, contratos ni aceptación formal; los datos preparados no se consideran importados.
+
 # Progreso verificable
 
 ## 6 de octubre de 2026 — paginación de notas de HubSpot

@@ -10,7 +10,7 @@ self.addEventListener('push',event=>{
    if(!response.ok)return;
    const {data}=await response.json();
    if(!data?.configured||!data.devices?.some(d=>d.id===payload.subscriptionId&&d.version===payload.version&&d.deviceId===data.currentDeviceId&&d.status==='active'&&Date.parse(d.expiresAt)>Date.now()))return;
-   await self.registration.showNotification('VEXA',{body:'Tienes avisos disponibles en VEXA.',tag:'vexa-notifications',data:{href:'/notifications'}});
+   await self.registration.showNotification('Rovaq AI',{body:'Tienes avisos disponibles en Rovaq AI.',tag:'vexa-notifications',data:{href:'/notifications'}});
   }catch{/* Fail closed: no session or verified active subscription. */}
  })());
 });

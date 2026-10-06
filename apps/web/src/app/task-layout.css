@@ -1,0 +1,84 @@
+/* Task composition shared by configuration, ingestion and administration views. */
+.task-page { min-width:0; }
+.task-page>p { max-width:92ch; }
+.task-columns { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; align-items:start; margin:24px 0; }
+.task-columns>:only-child { grid-column:1/-1; }
+.workspace-content .task-card { padding:24px; border:1px solid var(--ui-border); border-radius:16px; background:var(--ui-surface); box-shadow:var(--ui-shadow); min-width:0; margin:0; }
+.task-card-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:20px; }
+.workspace-content .task-card-header h2 { margin:0; }
+.task-card>p,.task-card>form>p { color:var(--muted); font-size:12px; }
+.workspace-content .task-card form { margin-bottom:0; }
+.workspace-content .task-columns>form { margin:0; }
+.workspace-content .task-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; gap:18px; }
+.task-fields>:is(h2,h3,p,legend,fieldset,.confirmation-actions),.task-fields>label:has(input[type=checkbox]) { grid-column:1/-1; }
+.task-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px 24px; align-items:start; }
+.task-grid>:where(:not(form):not(fieldset):not(article)) { grid-column:1/-1; }
+.task-grid>p,.task-grid>h1,.task-grid>h2 { margin-top:0; margin-bottom:0; }
+.workspace-content .task-grid>form { margin:0; padding:24px; border:1px solid var(--ui-border); border-radius:16px; background:var(--ui-surface); box-shadow:var(--ui-shadow); }
+.workspace-content .task-grid>form>h2 { margin:0; }
+.workspace-content .task-grid>form>p { font-size:12px; color:var(--muted); }
+.task-section-heading { margin-top:32px; }
+.workspace-content .import-start { align-items:stretch; }
+.workspace-content .import-start fieldset { margin:0; padding:24px; height:100%; align-content:start; gap:18px; }
+.workspace-content .import-start form { display:block; }
+.import-start fieldset>p { margin:0; font-size:12px; }
+.workspace-content .import-mapping { padding:24px; grid-template-columns:repeat(3,minmax(0,1fr)); }
+.import-mapping>label:first-of-type { grid-column:1/-1; max-width:440px; }
+.task-record-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; padding:0; list-style:none; }
+.workspace-content .task-record-list button { text-align:left; width:100%; padding:14px 16px; border-radius:12px; border-color:var(--ui-border); background:var(--ui-surface); color:var(--ui-secondary); overflow-wrap:anywhere; }
+.connections-page .task-columns { grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); }
+.connection-health>article { overflow-wrap:anywhere; }
+.workspace-content .connection-health dl { display:grid; grid-template-columns:minmax(100px,.9fr) minmax(0,1.1fr); gap:12px 20px; padding:16px 0; border-block:1px solid var(--ui-border); }
+.workspace-content .connection-health dl>:is(dt,dd) { margin:0; font-size:12px; }
+.workspace-content .connection-health aside { margin-top:20px; padding-top:16px; border-top:1px solid var(--ui-border); }
+.connection-settings .task-fields { grid-template-columns:minmax(0,1fr); }
+.history-page .task-columns { grid-template-columns:minmax(280px,.75fr) minmax(0,1.25fr); }
+.history-start h2 { margin:0; }
+.history-batches h2 { overflow-wrap:anywhere; }
+.history-batches article>ul { display:flex; flex-wrap:wrap; gap:8px 20px; padding:0; list-style:none; color:var(--muted); font-size:12px; }
+.team-columns { grid-template-columns:minmax(280px,.8fr) minmax(0,1.2fr); }
+.team-invite { gap:18px; }
+.team-invite h2,.team-invite p { margin:0; }
+.team-roster>label { max-width:280px; }
+.team-members { list-style:none; padding:0; margin:20px 0 0; }
+.team-members>li { border-top:1px solid var(--ui-border); padding:20px 0; overflow-wrap:anywhere; }
+.team-members>li:last-child { padding-bottom:0; }
+.team-members strong { display:block; font-size:13px; font-weight:600; }
+.team-members span { display:block; color:var(--muted); font-size:12px; margin-top:5px; }
+.team-member-actions { display:flex; align-items:flex-end; gap:12px; flex-wrap:wrap; }
+.team-member-actions label { flex:1; min-width:130px; }
+.retention-page>section { padding:24px; border:1px solid var(--ui-border); border-radius:16px; background:var(--ui-surface); }
+.retention-page>section[aria-label="Alcance del borrado"] { border-color:var(--ui-danger-border); }
+.workspace-content :is(.evaluation-page,.analysis-page)>form { padding:24px; border:1px solid var(--ui-border); border-radius:16px; background:var(--ui-surface); display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+:is(.evaluation-page,.analysis-page)>form>:is(h2,h3,p,fieldset),:is(.evaluation-page,.analysis-page)>form>label:has(input[type=checkbox]) { grid-column:1/-1; }
+.workspace-content .notification-channels>fieldset { margin:0; padding:24px; }
+.notification-channels fieldset>div { padding-top:12px; border-top:1px solid var(--ui-border); }
+.workspace-content .delivery-page>form>fieldset { margin:0; border:0; padding:0; }
+.delivery-page .confirmation-actions { justify-content:flex-start; }
+.migration-aliases>label { grid-column:auto; }
+.migration-aliases>fieldset { grid-column:1/-1; grid-template-columns:repeat(2,minmax(0,1fr)); }
+.migration-aliases>fieldset>label:has(input[type=checkbox]) { grid-column:1/-1; }
+.worker-setup>label { max-width:640px; padding:24px; background:var(--ui-surface); border:1px solid var(--ui-border); border-radius:16px; margin:24px 0; }
+@media(min-width:1450px) { .notification-channels { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media(max-width:1100px) {
+ .connections-page .task-columns { grid-template-columns:minmax(0,1fr); }
+ .connection-settings .task-fields { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .workspace-content .import-mapping { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:950px) {
+ .task-columns,.task-grid,.team-columns,.history-page .task-columns { grid-template-columns:minmax(0,1fr); }
+ .task-columns { gap:16px; }
+ .workspace-content .task-card,.workspace-content .task-grid>form { padding:20px; }
+}
+@media(max-width:639px) {
+ .workspace-content .task-fields,.workspace-content .import-mapping,.workspace-content :is(.evaluation-page,.analysis-page)>form,.migration-aliases>fieldset,.task-record-list { grid-template-columns:minmax(0,1fr); }
+ .workspace-content .import-start fieldset,.workspace-content .notification-channels>fieldset { padding:20px; }
+ .workspace-content .connection-health dl { grid-template-columns:minmax(0,1fr); gap:4px; }
+ .workspace-content .connection-health dd { margin-bottom:12px; }
+}
+@media(prefers-reduced-motion:no-preference) {
+ .task-columns>.task-card,.task-columns>fieldset,.task-grid>form { animation:task-enter 220ms var(--ui-ease); }
+ .task-columns>:nth-child(2),.task-grid>form:nth-of-type(2) { animation-delay:35ms; }
+ .task-record-list button,.team-members>li { transition:border-color 150ms ease,background-color 150ms ease; }
+ @keyframes task-enter { from { transform:translateY(5px); } to { transform:none; } }
+}

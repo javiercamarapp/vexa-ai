@@ -78,7 +78,7 @@ export function NotificationPanel({settings=false}:{settings?:boolean}){
   finally{if(current(op)){pending.current=false;setBusy(false);}}
  };
  const heading=settings?'Preferencias de notificaciones':'Notificaciones';
- return <section aria-label={heading}>
+ return <section className="task-page notifications-page" aria-label={heading}>
   <p className="eyebrow">Tu espacio de trabajo</p><h1>{heading}</h1>
   <p>{settings?'Elige los avisos y canales que deseas recibir en esta organización.':'Avisos de esta organización disponibles con tu acceso actual.'}</p>
   <p><Link href={settings?'/notifications':'/settings/notifications'}>{settings?'Ver notificaciones':'Configurar avisos'}</Link></p>
@@ -89,7 +89,7 @@ export function NotificationPanel({settings=false}:{settings?:boolean}){
   {!settings&&<label style={labelStyle}><input type="checkbox" style={checkboxStyle} checked={status==='unread'} disabled={busy} onChange={event=>filter(event.target.checked)}/>Mostrar sólo avisos sin leer</label>}
   {settings&&preferences&&<>
    {preferences.channels.some(channel=>!channel.deliveryAvailable)&&<p>Los canales indicados como pendientes todavía no envían avisos. Puedes guardar tus preferencias para cuando estén disponibles.</p>}
-   <div style={{display:'grid',gap:'1.5rem'}}>{preferences.channels.map(channel=><fieldset key={channel.id} className="record-card" disabled={busy}>
+   <div className="task-columns notification-channels">{preferences.channels.map(channel=><fieldset key={channel.id} className="record-card" disabled={busy}>
     <legend>{channel.label}</legend><p>{channel.deliveryAvailable?'Canal configurado.':'Configuración pendiente.'}</p><p>{channel.reason}</p>
     <label style={labelStyle}><input type="checkbox" style={checkboxStyle} checked={preferences.preferences.some(p=>p.channel===channel.id&&p.eventType==='*'&&p.enabled)} onChange={event=>void save(channel.id,'*',event.target.checked)}/>{'Activar '+channel.label}</label>
     {preferences.catalog.map(entry=><div key={entry.type}>

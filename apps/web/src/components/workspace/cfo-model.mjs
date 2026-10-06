@@ -26,3 +26,9 @@ export function buildCfoModel(items){
   bars:rows.map(r=>({...r,bps:compatible&&r.state==='known'&&maximum>0n?ratioBps(absolute(BigInt(r.amount)),maximum):null,negative:r.state==='known'&&BigInt(r.amount)<0n})),
   comparisonNote:!known.length?'No hay importes completos para comparar.':!compatible?'La comparación requiere la misma moneda y decimales válidos.':maximum===0n?'Los importes conocidos son cero.':'Longitud proporcional a la magnitud; negativos a la izquierda. No es una suma.'};
 }
+
+// Presentation only: a documented subtotal never enters totals or comparison bars.
+export function kpiHeadline(row){
+ const documented=row.state==='unknown'&&row.subtotal!==null&&row.coverage.known>0;
+ return {value:documented?row.subtotal:row.display,label:documented?'Subtotal documentado':null,note:documented?'Total desconocido · Cobertura parcial':row.state==='known'?'Importe publicado':row.state==='invalid'?'Revisa la unidad y el importe':'Total desconocido'};
+}

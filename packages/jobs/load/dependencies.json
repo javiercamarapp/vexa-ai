@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
   "baselineSha": "e6a340bb850f9fbd97eb9b31e56f7bb02eb03f47",
-  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance. Historical CSV UI explicitly selects the reviewed opt-in profile; server-provided content type gates selection. Focal local PostgreSQL and synthetic React DOM checks passed; no new capacity or production acceptance. Compact Atiende-referenced UI with independently reviewed financial presentation and deterministic query card; synthetic browser checks only, no new formal acceptance or capacity measurement. Access/UI correction 2026-10-03: direct authorized entry, contextual platform access, honest first-run guidance and neutral Atiende/Likida presentation. No new formal acceptance or inherited capacity measurement. Reference fidelity 2026-10-03: self-hosted Inter Tight, Instrument Sans login, reference geometry and neutral tokens; anonymous entry differs from forbidden entry. No inherited capacity or production acceptance. Frontend unification495: current Atiende-Agencia-AI shell, navigation and KPI presentation; source binding only, no new capacity or production acceptance. Email login keeps a stable status area and compact desktop layout after requesting access; no new capacity acceptance. Header date and notifications appear only on overview; source binding only, no new capacity acceptance. Owners can create CSV connections through the import page with role/RLS validation and idempotent creation; focal local evidence only, no new capacity or production acceptance. Gateway explicitly distinguishes unrestricted processing from US/EU regional routing, with legacy aliases and exact synthetic transport controls. No new capacity or formal production acceptance. SQL membership expression uses a reusable PLpgSQL plan while preserving fresh authorization, function attributes and ACL. Local synthetic equivalence and exploratory ABBA only; no new formal acceptance, production approval or 50K/150K capacity measurement. Embedding transport handles submicroUSD numeric costs and the exact Azure wire model ID; no new capacity or formal acceptance. Source-bound evidence and entity references preserve exact Unicode before the unchanged final validator; final schema hash remains compatible with persistence. Synthetic checks only, no new capacity or formal acceptance. S01 control-plane metadata compatibility: explicit private-app or OAuth app identity, synthetic review only; no product or formal acceptance change. Failure diagnostics preserve queued jobs with missing checkpoints and isolate SQL errors per resource. Real local PostgreSQL regression only; prior 150K failure remains and no new capacity measurement is claimed. A guarded permission/advisory-lock query removes one roundtrip per canonical row while retaining fresh membership checks and post-lock dedup reads. Independently reviewed local PostgreSQL evidence; midflight EXECUTE DDL visibility limitation remains in both baseline and proposal. No new capacity success or production acceptance is claimed. HubSpot note association pagination accepts the observed reordered CRM-v4 path for the exact same ticket and notes relation while requesting only the original allowlisted route; scoped independent review, Node22/26 tests and bounded live observation. No new capacity or formal acceptance. Rovaq AI public branding and responsive administration/task layouts; scoped UI review and local checks only. No new capacity or formal acceptance. Owners can inspect tenant-scoped delegated import job metadata without accessing another uploader\u2019s bytes or mutation capabilities. Focal tests and review only; no new formal acceptance or capacity measurement. Owner economic JSON import uses the existing ledger with transaction tenant constraint, incomplete v1 sources and reconciled resumption. Focal review only; no new capacity measurement or formal acceptance.",
+  "composition": "Source at e6a340b plus TeamPanel access presentation correction. Previous load measurements retain their original manifests; no new capacity measurement is claimed. Historical development export preserves immutable manifest message order. This correction has focal Node evidence only and does not inherit new capacity measurements. HubSpot accepts the provider-verified ticket read scope in addition to the legacy scope; scoped review460 and synthetic regressions only, no new capacity acceptance. HubSpot v3 separates three known administrative event types, preserves unknown quarantine and explicitly rejects v2 checkpoints; scoped review462, no new capacity measurement. Opt-in history-message-v1 preserves long bodies and exact timestamp provenance; review474 scope only, default ingestion unchanged, no new capacity or production acceptance. Historical CSV UI explicitly selects the reviewed opt-in profile; server-provided content type gates selection. Focal local PostgreSQL and synthetic React DOM checks passed; no new capacity or production acceptance. Compact Atiende-referenced UI with independently reviewed financial presentation and deterministic query card; synthetic browser checks only, no new formal acceptance or capacity measurement. Access/UI correction 2026-10-03: direct authorized entry, contextual platform access, honest first-run guidance and neutral Atiende/Likida presentation. No new formal acceptance or inherited capacity measurement. Reference fidelity 2026-10-03: self-hosted Inter Tight, Instrument Sans login, reference geometry and neutral tokens; anonymous entry differs from forbidden entry. No inherited capacity or production acceptance. Frontend unification495: current Atiende-Agencia-AI shell, navigation and KPI presentation; source binding only, no new capacity or production acceptance. Email login keeps a stable status area and compact desktop layout after requesting access; no new capacity acceptance. Header date and notifications appear only on overview; source binding only, no new capacity acceptance. Owners can create CSV connections through the import page with role/RLS validation and idempotent creation; focal local evidence only, no new capacity or production acceptance. Gateway explicitly distinguishes unrestricted processing from US/EU regional routing, with legacy aliases and exact synthetic transport controls. No new capacity or formal production acceptance. SQL membership expression uses a reusable PLpgSQL plan while preserving fresh authorization, function attributes and ACL. Local synthetic equivalence and exploratory ABBA only; no new formal acceptance, production approval or 50K/150K capacity measurement. Embedding transport handles submicroUSD numeric costs and the exact Azure wire model ID; no new capacity or formal acceptance. Source-bound evidence and entity references preserve exact Unicode before the unchanged final validator; final schema hash remains compatible with persistence. Synthetic checks only, no new capacity or formal acceptance. S01 control-plane metadata compatibility: explicit private-app or OAuth app identity, synthetic review only; no product or formal acceptance change. Failure diagnostics preserve queued jobs with missing checkpoints and isolate SQL errors per resource. Real local PostgreSQL regression only; prior 150K failure remains and no new capacity measurement is claimed. A guarded permission/advisory-lock query removes one roundtrip per canonical row while retaining fresh membership checks and post-lock dedup reads. Independently reviewed local PostgreSQL evidence; midflight EXECUTE DDL visibility limitation remains in both baseline and proposal. No new capacity success or production acceptance is claimed. HubSpot note association pagination accepts the observed reordered CRM-v4 path for the exact same ticket and notes relation while requesting only the original allowlisted route; scoped independent review, Node22/26 tests and bounded live observation. No new capacity or formal acceptance. Rovaq AI public branding and responsive administration/task layouts; scoped UI review and local checks only. No new capacity or formal acceptance. Owners can inspect tenant-scoped delegated import job metadata without accessing another uploader\u2019s bytes or mutation capabilities. Focal tests and review only; no new formal acceptance or capacity measurement. Owner economic JSON import uses the existing ledger with transaction tenant constraint, incomplete v1 sources and reconciled resumption. Focal review only; no new capacity measurement or formal acceptance. Bare overview adopts the latest authorized publication with exact pinned scope; documented subtotals remain explicitly partial. Scoped synthetic tests and independent review only; no new capacity or formal acceptance.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -653,7 +653,7 @@
     },
     {
       "path": "apps/web/src/components/economic-snapshot-panel.tsx",
-      "sha256": "c6aef2bb5e64132bfa2c8744a576cc97475a90b8da69c4ee0c1e12f1253bcc86"
+      "sha256": "922f0c0192e0d3e08fb5682b9d07fa8955faae02f060fec44ce4a4d98f7a7008"
     },
     {
       "path": "apps/web/src/components/email-login-complete.tsx",
@@ -769,19 +769,19 @@
     },
     {
       "path": "apps/web/src/components/workspace/cfo-model.d.mts",
-      "sha256": "c11086d65eefa7fbaf181b6adc1b4d60abe8b883c7695db758d8c6034e5e5426"
+      "sha256": "b950b1a34a9d50fe7700c8af04479965ea1f80422879845d193d369962cf2dcb"
     },
     {
       "path": "apps/web/src/components/workspace/cfo-model.mjs",
-      "sha256": "8890a5e6cd5d0ab803e9c008982849fa9d5fb803683522e435ac9924af689ffc"
+      "sha256": "e9619a98e8ee16a0340ca09371dd79e3c1a92c4971b2ce43c8df8cfc9ad6156a"
     },
     {
       "path": "apps/web/src/components/workspace/cfo-overview.module.css",
-      "sha256": "5c8eb6306cb8725c24f637b77b94231b1f7662d08f7b315c47e17f3c76d6fa5d"
+      "sha256": "d2fc1b40acf73c7eb18c9b6a2010bdd99809a55996d12bea9eb857ae694ec14d"
     },
     {
       "path": "apps/web/src/components/workspace/cfo-overview.tsx",
-      "sha256": "b54a29216cb1cc507108f8737a46cff86be941fe0ca6db7e058e13bcec23dae2"
+      "sha256": "333a98761c00b8d708aa4df47ecd299ed26c6ca12c670b9a0aa4b946deef13ca"
     },
     {
       "path": "apps/web/src/components/workspace/current-problems.tsx",
@@ -833,7 +833,7 @@
     },
     {
       "path": "apps/web/src/components/workspace/shared-panel.tsx",
-      "sha256": "a98a79d5000cea3ab8619b0ae08b053f48708bc66887db1c0dadaf597ac62cd8"
+      "sha256": "bb91e67fdac933c694dbfd604f3b81671c82cac83001db4b961a1c60101e3441"
     },
     {
       "path": "apps/web/src/components/workspace/shell.tsx",
@@ -3205,7 +3205,19 @@
     },
     {
       "path": "packages/workspace-service/index.mjs",
-      "sha256": "b4dd8d05930cc2a1dbc01872cc752f91687e0f6b8cda96e731e80dcc2ad9a12b"
+      "sha256": "cc319989e86f402789b80789444d0a0ee71be4ffb5e0a957bd0b447a67d08c9f"
+    },
+    {
+      "path": "packages/workspace-service/initial-publication.mjs",
+      "sha256": "10cf9e2136d8fe933edf708af82b348f284b47c3d40e8a57bb460a76c6a52ffb"
+    },
+    {
+      "path": "packages/workspace-service/navigation.d.mts",
+      "sha256": "836175278c1de4e725dac5b6e0b9df781c8571161f1f41ea6a3f61d495f773b7"
+    },
+    {
+      "path": "packages/workspace-service/navigation.mjs",
+      "sha256": "6ebac7dd3a20c7e16903c48193dddcd79404b908888b2336fa4e7531d39db183"
     },
     {
       "path": "packages/workspace-service/tests/current-problems/harness.mjs",
@@ -3218,6 +3230,14 @@
     {
       "path": "packages/workspace-service/tests/current-problems/run.mjs",
       "sha256": "6825a4b25425d2db018a83dcf16f1fe521a206f10145834d3cd861a1e4c5f8ea"
+    },
+    {
+      "path": "packages/workspace-service/tests/initial-publication/README.md",
+      "sha256": "4d5b533217e7381de7a3adc70ec64422f7301bed224e1e187817ecc38172c7f9"
+    },
+    {
+      "path": "packages/workspace-service/tests/initial-publication/run.mjs",
+      "sha256": "fbfcd55b6d9fd2fd6c41e011ddb22906c6f57435ee50743b7f92156a7ced3d89"
     },
     {
       "path": "supabase/migrations/0001_identity.sql",

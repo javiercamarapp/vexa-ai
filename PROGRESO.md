@@ -1,3 +1,7 @@
+## Entrada al resumen publicado — 6 de octubre de 2026
+
+La entrada sin filtros selecciona la última publicación autorizada y fija su alcance completo. El subtotal documentado puede mostrarse como cifra principal conservando total desconocido y cobertura parcial. Revisión independiente aprobada tras corregir identificadores vacíos; pruebas focales, regresiones, lint, typecheck y build documentados. [Evidencia y límites](docs/entrega/ENTRADA-PUBLICACION-2026-10-06.md). Sin nuevas aceptaciones ni capacidad heredada.
+
 ## Importación económica revisada — 6 de octubre de 2026
 
 Finanzas permite cargar órdenes y reembolsos mediante sesión de propietario, con prevalidación completa, restricción de organización dentro de la transacción y reanudación conciliada. Las fuentes permanecen incompletas; el éxito exige lectura final coincidente. Dos hallazgos de revisión cerrados; 31 pruebas, lint, typecheck y build aprobados. [Contrato, evidencia y límites](docs/entrega/IMPORTACION-ECONOMICA-2026-10-06.md). La carga de cliente y publicación financiera se verifican por separado. Sin nuevas aceptaciones ni capacidad heredada.

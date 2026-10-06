@@ -1,3 +1,7 @@
+## Programación autenticada de CRM — 6 de octubre de 2026
+
+Preparado cron de Vercel cada cinco minutos sobre el mismo consumidor CRM. GET y POST comparten autenticación, límite de trabajo y exclusión; no aceptan tenant ni configuración por petición. Revisión independiente, 31 pruebas focales, lint, typecheck y build aprobados. [Activación por etapas y límites](packages/connectors/CRM-RUNTIME.md). La instalación de la credencial y las invocaciones automáticas se verifican separadamente; configurar un cron no acredita rendimiento ni histórico completo. Sin nuevas aceptaciones formales.
+
 ## Avance acotado de HubSpot — 6 de octubre de 2026
 
 El runtime propone bloques pequeños con checkpoint v2 y acepta los cursores v1 existentes. Recupera paginación de mensajes del mismo hilo y conserva originales que sólo tienen HTML como cuerpo incompleto. Revisión independiente aprobada tras corregir un timeout de persistencia que podía confundirse con continuación normal. Pasaron 148 pruebas focales y de regresión en la integración, lint/typecheck del candidato y veinte bloques de lectura real con reanudación entre cada uno, incluidos dos mensajes completos. [Contrato, rollback y límites](packages/connectors/HUBSPOT-BOUNDED.md). La prueba real fue de lectura: todavía no acredita persistencia, programación continua ni rendimiento suficiente para completar el histórico. Sin nuevas aceptaciones ni capacidad heredada.

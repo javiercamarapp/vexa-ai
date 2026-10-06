@@ -42,7 +42,7 @@ export function MigrationAliases({onChange}:{onChange:()=>void}){
  }
  const label=(row:Conversation)=>`${row.source} · ${row.accountId} · ${row.externalId}${row.revisionState==='ambiguous'?' · identidad ambigua':''}`;
  const last=history.at(-1),validDecision=confirmed&&evidence.trim().length>0&&reason.trim().length>0;
- return <section aria-labelledby="migration-aliases-title"><h2 id="migration-aliases-title">Aliases de conversaciones</h2>
+ return <section className="task-page task-grid migration-aliases" aria-labelledby="migration-aliases-title"><h2 id="migration-aliases-title">Aliases de conversaciones</h2>
  <p>Relaciona identidades de la misma organización con evidencia y aprobación humana. Una coincidencia de email o texto no confirma una identidad.</p>
  {error&&<p role="alert">{error}</p>}{notice&&<p role="status">{notice}</p>}{busy&&<p role="status">Procesando aliases…</p>}
  <button disabled={busy} onClick={()=>void action(reload)}>Actualizar aliases</button>

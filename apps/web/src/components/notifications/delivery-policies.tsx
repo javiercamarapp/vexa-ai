@@ -34,7 +34,7 @@ export function DeliveryPolicies(){
   finally{if(!controller.signal.aborted){pending.current=false;setBusy(false);}}
  };
  const change=(channel:string,delta:Partial<DeliveryPolicy>)=>setRows(previous=>previous.map(row=>row.channel===channel?{...row,...delta}:row));
- return <section aria-label="Política de envío" aria-busy={busy}><p className="eyebrow">Configuración de la organización</p><h1 ref={heading} tabIndex={-1}>Política de envío</h1>
+ return <section className="task-page task-grid delivery-page" aria-label="Política de envío" aria-busy={busy}><p className="eyebrow">Configuración de la organización</p><h1 ref={heading} tabIndex={-1}>Política de envío</h1>
   <p>Autoriza canales y define límites para los avisos futuros. Cada persona debe activar sus preferencias; Web Push también requiere permiso del navegador. Habilitar una política no confirma que el proveedor esté conectado.</p>
   <p><Link href="/settings/notifications">Mis preferencias</Link></p><button disabled={busy} onClick={()=>void load()}>Actualizar políticas</button>
   {busy&&<p role="status">Verificando políticas…</p>}{error&&<p role="alert">{error}</p>}{notice&&<p role="status">{notice}</p>}

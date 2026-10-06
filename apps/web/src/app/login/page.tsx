@@ -19,7 +19,7 @@ export default async function Login({searchParams}:{searchParams:Promise<{error?
       <header className="login-entra auth-brand"><VexaBrand/></header>
       <div className="login-copy">
         <p className="login-kicker login-entra">Tu espacio de trabajo</p>
-        <h1 className="login-serif login-entra">Bienvenido a VEXA</h1>
+        <h1 className="login-serif login-entra">Bienvenido a Rovaq AI</h1>
         <p className="login-intro login-entra">Conecta lo que dicen tus clientes con las decisiones de tu negocio.</p>
         <div className="login-divider"/>
         {denied && <p className="login-message" role="alert">{loginError==='oauth_cancelled'?'Google no completó el acceso. Puedes intentarlo de nuevo o entrar con un enlace por correo.':'Acceso denegado. Inicia sesión con una cuenta que tenga una organización activa.'}</p>}
@@ -33,7 +33,7 @@ export default async function Login({searchParams}:{searchParams:Promise<{error?
         {!google && <p id="google-availability" className="login-hint">Google: pendiente de configurar.</p>}
         <div className="login-separator"><span/>o<span/></div>
         <EmailLogin enabled={email}/>
-        <p className="login-help">¿Tu correo no tiene acceso? <strong>Pídele a tu equipo que te invite a VEXA.</strong></p>
+        <p className="login-help">¿Tu correo no tiene acceso? <strong>Pídele a tu equipo que te invite a Rovaq AI.</strong></p>
         <p className="login-footnote">Acceso reservado a equipos autorizados. Inicia sesión sin contraseña con Google o un enlace seguro en tu correo.</p>
         {signedIn && <form action="/auth/logout" method="post"><button type="submit" className="login-btn login-btn-borde">Cerrar sesión</button></form>}
       </div>

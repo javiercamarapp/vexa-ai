@@ -156,7 +156,7 @@ export async function runSync({repository,connectionId,mode,window,mappingVersio
  if(initial.done){if(repository.recoverCompleted)await repository.recoverCompleted({syncId:initial.id});return {state:'done',syncId:initial.id,checkpoint:initial.checkpoint,pages:0};}
  const lease=await repository.claim({syncId:initial.id,workerId,leaseMs});
  const ownership={syncId:initial.id,workerId,fence:Number(lease.fence)};
- let state=await repository.current(ownership),pages=0,iterator,attempt,finalizing=false;
+ let state=await repository.current(ownership),pages=0,iterator,attempt,finalizing=false,awaitingProvider=false;
  try{
   if(repository.beginAttempt)attempt=await repository.beginAttempt({connectionId,...ownership});
   const adapter=await adapterFactory({context:state.context,window:state.window_spec,mode,deadlineMs:Math.max(1,deadlineMs-(clock()-start))});
@@ -165,7 +165,7 @@ export async function runSync({repository,connectionId,mode,window,mappingVersio
   while(pages<maxPages&&clock()-start<deadlineMs){
    state=await repository.current(ownership); // Fresh membership/connection/lease before each network page.
    if(clock()-start>=deadlineMs)break;
-   const next=await iterator.next();
+   awaitingProvider=true;const next=await iterator.next();awaitingProvider=false;
    if(next.done)fail('SYNC_MISSING_TERMINAL_PAGE');
    state=await repository.commitPage({...ownership,expectedVersion:Number(state.version),page:next.value});pages++;
    if(state.done)break;
@@ -177,6 +177,11 @@ export async function runSync({repository,connectionId,mode,window,mappingVersio
   if(attempt)await repository.finishAttempt({...attempt,syncId:initial.id,outcome});
   return {state:outcome,syncId:initial.id,checkpoint:state.checkpoint,version:Number(state.version),pages};
  }catch(error){
+  // A time slice exhausted after committed progress is a continuation, not a failed source.
+  if(awaitingProvider&&!finalizing&&pages>0&&clock()-start>=deadlineMs&&['DEADLINE_EXCEEDED','TIMEOUT'].includes(error?.code)){
+   finalizing=true;if(attempt)await repository.finishAttempt({...attempt,syncId:initial.id,outcome:'continuation'});
+   return {state:'continuation',syncId:initial.id,checkpoint:state.checkpoint,version:Number(state.version),pages};
+  }
   if(attempt&&!finalizing)await repository.finishAttempt({...attempt,syncId:initial.id,error});
   throw error;
  }finally{
@@ -196,7 +201,7 @@ export function createCRMAdapterFactory(config){
   const now=(config.clock??(()=>new Date()))().getTime();
   const absoluteDeadline=Math.min(config.deadlineMs??Infinity,now+deadlineMs);
   const common={...config,context,deadlineMs:absoluteDeadline};
-  if(context.source==='hubspot')return createHubSpotAdapter(common);
+  if(context.source==='hubspot')return createHubSpotAdapter({...common,bounded:true});
   if(context.source==='zendesk')return createZendeskAdapter({...common,startTime:Math.max(0,Math.floor(Date.parse(window.fetchFrom)/1000))});
   fail('SYNC_SOURCE_UNSUPPORTED');
  };

@@ -56,11 +56,17 @@ test('SEC-04: private downloads recheck membership; reusable bearer download gra
         finally{h.sql(`UPDATE memberships SET status='active' WHERE tenant_id=${q(actor.tenant)} AND user_id=${q(actor.id)}`);}
       }
       assert.ok(!result.data?.signedURL&&!result.data?.signedUrl,'REUSABLE_DOWNLOAD_GRANT_FORBIDDEN');storageDenied(result);
-      const batch=await h.http('storage','/object/sign/vexa-private',actor.token,{method:'POST',body:{expiresIn:60,paths:[actor.path]}});
-      if(batch.status===200){assert.ok(Array.isArray(batch.data));assert.equal(batch.data.length,1);assert.equal(batch.data[0].path,actor.path);assert.equal(typeof batch.data[0].error,'string');assert.match(batch.data[0].error,/not found|unauthori[sz]ed|access denied/i);assert.ok(!batch.data[0].signedURL&&!batch.data[0].signedUrl);}
-      else storageDenied(batch);
-      const image=await h.http('storage','/object/sign/vexa-private/'+imagePath,a.token,{method:'POST',body:{expiresIn:60,transform:{width:16,height:16}}});storageDenied(image);assert.ok(!image.data?.signedUrl);
     }
+  });
+  await t.test('bulk download signing cannot issue bearer grants',async()=>{
+    for(const actor of [a,b]){
+      const batch=await h.http('storage','/object/sign/vexa-private',actor.token,{method:'POST',body:{expiresIn:60,paths:[actor.path]}});
+      if(batch.status===200){assert.ok(Array.isArray(batch.data));assert.equal(batch.data.length,1);assert.equal(batch.data[0].path,actor.path);assert.equal(typeof batch.data[0].error,'string');assert.match(batch.data[0].error,/not found|unauthori[sz]ed|access denied|^Either the object does not exist or you do not have access to it$/i);assert.ok(!batch.data[0].signedURL&&!batch.data[0].signedUrl);}
+      else storageDenied(batch);
+    }
+  });
+  await t.test('image download signing cannot issue bearer grants',async()=>{
+      const image=await h.http('storage','/object/sign/vexa-private/'+imagePath,a.token,{method:'POST',body:{expiresIn:60,transform:{width:16,height:16}}});storageDenied(image);assert.ok(!image.data?.signedUrl&&!image.data?.signedURL);
   });
   await t.test('the same authenticated URL and range are denied immediately after membership revocation',async()=>{
     h.sql(`UPDATE memberships SET status='revoked' WHERE tenant_id=${q(a.tenant)} AND user_id=${q(a.id)}`);

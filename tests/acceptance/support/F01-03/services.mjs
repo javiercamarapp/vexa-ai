@@ -110,9 +110,9 @@ export async function serviceOracle(h,f,actors) {
     const read=await h.http('storage',`/object/authenticated/${bucket}/${name}`,actors[key].token);
     assert.equal(read.status,200);assert.ok(read.text.includes(marker),'STORAGE_READ_POSITIVE');
     const signed=await h.http('storage',`/object/sign/${bucket}/${name}`,actors[key].token,{method:'POST',body:{expiresIn:30}});
-    assert.equal(signed.status,200);assert.ok(signed.data?.signedURL,'STORAGE_SIGN_POSITIVE');
-    const signedRead=await h.http('storage',signed.data.signedURL,null);
-    assert.equal(signedRead.status,200);assert.ok(signedRead.text.includes(marker),'STORAGE_SIGN_CONTENT');
+    // Bearer download URLs outlive membership revocation. Only authenticated
+    // reads may expose private bytes; signed upload admission remains separate.
+    storageDenied(signed);
   }
   for(const actor of [actors.a,actors.outsider,null]) {
     for(const endpoint of ['authenticated','public']) {

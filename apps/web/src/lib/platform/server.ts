@@ -1,13 +1,14 @@
+import {readRequestBytes} from '../request-body';
 import 'server-only';
 import {NextRequest,NextResponse} from 'next/server';
 import {AccessError,assertOrigin,config,PRIVATE_HEADERS} from '../auth';
 import {requestAuth} from '../auth-http';
 const headers={...PRIVATE_HEADERS,'Referrer-Policy':'no-referrer',Vary:'Cookie'};
 async function input(request:NextRequest){
- if(request.headers.get('content-type')?.split(';')[0]!=='application/json'||!request.body)throw new AccessError(400,'platform_input_invalid');
- const reader=request.body.getReader();let size=0;const chunks:Uint8Array[]=[];
- try{for(;;){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>4096){await reader.cancel();throw new AccessError(413,'platform_input_limit');}chunks.push(value);}}finally{reader.releaseLock();}
- try{return JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{throw new AccessError(400,'platform_input_invalid');}
+ if(request.headers.get('content-type')?.split(';')[0].trim()!=='application/json'||!request.body)throw new AccessError(400,'platform_input_invalid');
+ let bytes:Uint8Array;
+ try{bytes=await readRequestBytes(request,4096);}catch(error){if(error instanceof AccessError&&error.status===413)throw new AccessError(413,'platform_input_limit');throw error;}
+ try{const result=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));return result;}catch{throw new AccessError(400,'platform_input_invalid');}
 }
 export async function handlePlatform(request:NextRequest){
  let finish=(r:NextResponse)=>r;
@@ -29,6 +30,6 @@ export async function handlePlatform(request:NextRequest){
   const result=await auth.client.rpc('platform_manage',{p_input:value});
   if(result.error){const e=result.error;throw new AccessError(e.code==='42501'?403:e.code==='P0001'?409:['22023','22P02','23502','23514'].includes(e.code)?400:503,/^platform_[a-z_]+$/.test(e.message)?e.message:'platform_unavailable');}
   return finish(NextResponse.json({data:result.data},{headers}));
- }catch(error){const e=error as {status?:number;code?:string};const status=[400,401,403,409,413,503].includes(e.status??0)?e.status!:503;
+ }catch(error){const e=error as {status?:number;code?:string};const status=[400,401,403,408,409,413,429,503].includes(e.status??0)?e.status!:503;
   return finish(NextResponse.json({error:{code:e.code?.startsWith('platform_')?e.code:'platform_unavailable'}},{status,headers}));}
 }

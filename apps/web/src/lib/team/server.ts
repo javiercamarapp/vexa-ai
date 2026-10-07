@@ -1,3 +1,4 @@
+import {readRequestBytes} from '../request-body';
 import 'server-only';
 import {NextRequest,NextResponse} from 'next/server';
 import {createClient} from '@supabase/supabase-js';
@@ -5,7 +6,12 @@ import {ACTIVE_ORG,AccessError,assertOrigin,config,PRIVATE_HEADERS,resolveSessio
 import {requestAuth} from '../auth-http';
 import {createTeam} from '../../../../../packages/team/index.mjs';
 const headers={...PRIVATE_HEADERS,'Referrer-Policy':'no-referrer',Vary:'Cookie'};
-async function body(request:NextRequest){if(request.headers.get('content-type')?.split(';')[0]!=='application/json'||!request.body)throw new AccessError(400,'team_input_invalid');const reader=request.body.getReader();let size=0;const chunks:Uint8Array[]=[];try{for(;;){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>16384){await reader.cancel();throw new AccessError(413,'team_input_limit');}chunks.push(value);}}finally{reader.releaseLock();}try{return JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{throw new AccessError(400,'team_input_invalid');}}
+async function body(request:NextRequest){
+ if(request.headers.get('content-type')?.split(';')[0].trim()!=='application/json'||!request.body)throw new AccessError(400,'team_input_invalid');
+ let bytes:Uint8Array;
+ try{bytes=await readRequestBytes(request,16384);}catch(error){if(error instanceof AccessError&&error.status===413)throw new AccessError(413,'team_input_limit');throw error;}
+ try{const result=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));return result;}catch{throw new AccessError(400,'team_input_invalid');}
+}
 function sender(){const c=config();const key=process.env.VEXA_TEAM_AUTH_ADMIN_KEY,url=process.env.VEXA_TEAM_AUTH_URL;if(!c||!key||!url||new URL(url).origin!==new URL(c.url).origin||new URL(url).pathname!=='/')return undefined;
  const options={auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},global:{fetch:(input:RequestInfo|URL,init?:RequestInit)=>fetch(input,{...init,cache:'no-store',signal:AbortSignal.timeout(10000)})}};
  const admin=createClient(c.url,key,options),publicClient=createClient(c.url,c.key,options);
@@ -29,4 +35,4 @@ export async function handleTeam(request:NextRequest,invitationId?:string,platfo
  // A rejected invitation session must not deliver refreshed credentials.
  if(sessionExchange)finish=commitCookies;
  return finish(NextResponse.json({data},{headers}));
- }catch(error){const e=error as {status?:number;code?:string};const status=[400,401,403,409,413,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({error:{code:e.code?.startsWith('team_')?e.code:'team_unavailable'}},{status,headers}));}}
+ }catch(error){const e=error as {status?:number;code?:string};const status=[400,401,403,408,409,413,429,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({error:{code:e.code?.startsWith('team_')?e.code:'team_unavailable'}},{status,headers}));}}

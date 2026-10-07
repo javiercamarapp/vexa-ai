@@ -7,7 +7,7 @@ const fields=(body,allowed)=>{if(!body||Array.isArray(body)||typeof body!=='obje
 const dollars=value=>{if(typeof value!=='string'||! /^\d{1,12}(?:\.\d{1,6})?$/.test(value))invalid();const [whole,fraction='']=value.split('.');return String(BigInt(whole)*1000000n+BigInt(fraction.padEnd(6,'0')));};
 const headers={'Cache-Control':'private, no-store','Vary':'Cookie'};
 export function extractionFailure(error){
- const status=[400,401,403,404,409,503].includes(error?.status)?error.status:503;
+ const status=[400,401,403,404,408,409,413,429,503].includes(error?.status)?error.status:503;
  const codes=new Set(['configuration_required','extraction_input_invalid','database_conflict','database_permission_denied','role_insufficient','organization_not_authorized','authentication_required','database_input_invalid']);
  return Response.json({contract_version:'f04-extraction-v1',error:{code:codes.has(error?.code)?error.code:'extraction_unavailable',message:'No se pudo completar la solicitud de análisis.',retryable:status===503},meta:{trace_id:randomUUID()}},{status,headers});
 }

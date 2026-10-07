@@ -1,3 +1,4 @@
+import {readRequestBytes} from '../request-body';
 import 'server-only';
 import {NextRequest,NextResponse} from 'next/server';
 import {createDatabase} from '@vexa/platform/db';
@@ -8,11 +9,9 @@ import {requestAuth} from '../auth-http';
 
 async function notificationInput(request:NextRequest){
  if(request.headers.get('content-type')?.split(';')[0].trim()!=='application/json'||!request.body)throw new AccessError(400,'input_invalid');
- const reader=request.body.getReader(),chunks:Uint8Array[]=[];let size=0,timer:ReturnType<typeof setTimeout>|undefined;
- const timeout=new Promise<never>((_,reject)=>{timer=setTimeout(()=>reject(new AccessError(408,'input_timeout')),5000);});
- try{for(;;){const {done,value}=await Promise.race([reader.read(),timeout]);if(done)break;size+=value.byteLength;if(size>4096)throw new AccessError(413,'input_limit');chunks.push(value);}
-  try{return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(Buffer.concat(chunks)));}catch{throw new AccessError(400,'input_invalid');}
- }catch(error){void reader.cancel().catch(()=>{});throw error;}finally{clearTimeout(timer);reader.releaseLock();}
+ let bytes:Uint8Array;
+ try{bytes=await readRequestBytes(request,4096);}catch(error){if(error instanceof AccessError&&error.status===413)throw new AccessError(413,'input_limit');throw error;}
+ try{const result=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));return result;}catch{throw new AccessError(400,'input_invalid');}
 }
 export async function deliveryResponse(request:NextRequest){
  let finish=(r:NextResponse)=>r;
@@ -30,7 +29,7 @@ export async function deliveryResponse(request:NextRequest){
   return finish(NextResponse.json({data:await repository.save(input)},{headers:PRIVATE_HEADERS}));
  }catch(error){
   const code=(error as {status?:number}).status;
-  const status=[400,401,403,408,409,413].includes(code??0)?code!:503;
+  const status=[400,401,403,408,409,413,429].includes(code??0)?code!:503;
   return finish(NextResponse.json({error:{code:'delivery_policy_unavailable',message:status===409?'La política cambió. Actualiza antes de guardar.':'No se pudo verificar la política de envío con tus permisos actuales.'}},{status,headers:PRIVATE_HEADERS}));
  }
 }

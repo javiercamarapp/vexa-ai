@@ -1,3 +1,4 @@
+import { readRequestText } from '../request-body';
 import 'server-only';
 import {randomUUID} from 'node:crypto';
 import {cookies} from 'next/headers';
@@ -22,12 +23,12 @@ export async function workspaceResponse(request:NextRequest,mode:'query'|'export
  let data;
  if(mode==='mappings'){
   if(request.nextUrl.search)throw new AccessError(400,'unsupported_filter');
-  if(request.method==='GET')data=await service.mappings();else{const raw=await request.text();if(Buffer.byteLength(raw)>32768)throw new AccessError(400,'input_too_large');let input;try{input=JSON.parse(raw);}catch{throw new AccessError(400,'input_invalid');}data=await service.recordMapping(input);}
+  if(request.method==='GET')data=await service.mappings();else{const raw=await readRequestText(request, 32768);if(Buffer.byteLength(raw)>32768)throw new AccessError(400,'input_too_large');let input;try{input=JSON.parse(raw);}catch{throw new AccessError(400,'input_invalid');}data=await service.recordMapping(input);}
  }else{
   const params=request.nextUrl.searchParams;if(mode==='export'){if(!params.get('snapshot_id')||!params.get('scope_hash')||!['json','csv'].includes(params.get('format')??'')||params.has('cursor'))throw new AccessError(400,'export_scope_required');}else if(params.has('format'))throw new AccessError(400,'unsupported_filter');
   data=await service.query(params,{all:mode==='export'});
   if(mode==='export'){const format=params.get('format')!;return finish(new NextResponse(format==='json'?JSON.stringify(data):workspaceCsv(data),{headers:{...PRIVATE_HEADERS,'Content-Type':format==='json'?'application/json':'text/csv; charset=utf-8','Content-Disposition':`attachment; filename="workspace-${data.meta.snapshot_id}-${data.meta.scope_hash}.${format}"`,'X-Snapshot-Id':data.meta.snapshot_id!,'X-Workspace-Scope':data.meta.scope_hash!,'X-Trace-Id':traceId,'X-Contract-Version':contractVersion}}));}
  }
  return finish(NextResponse.json({contract_version:contractVersion,data,meta:{trace_id:traceId}},{headers:{...PRIVATE_HEADERS,Vary:'Cookie'}}));
- }catch(error){const e=error as {status?:number};const status=[400,401,403,404,409,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({contract_version:contractVersion,error:{code:'workspace_request_failed',retryable:status===503,message:status===409?'El alcance o su versión requiere revisión.':'No se pudo consultar el espacio de trabajo.'},meta:{trace_id:traceId}},{status,headers:PRIVATE_HEADERS}));}
+ }catch(error){const e=error as {status?:number};const status=[400,401,403,404,408,409,413,429,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({contract_version:contractVersion,error:{code:'workspace_request_failed',retryable:status===503,message:status===409?'El alcance o su versión requiere revisión.':'No se pudo consultar el espacio de trabajo.'},meta:{trace_id:traceId}},{status,headers:PRIVATE_HEADERS}));}
 }

@@ -1,3 +1,4 @@
+import {readRequestBytes} from '../request-body';
 import 'server-only';
 import {randomUUID} from 'node:crypto';
 import {NextRequest,NextResponse} from 'next/server';
@@ -24,11 +25,8 @@ async function pushClaims(client:ReturnType<typeof requestAuth>['client']){
 }
 async function pushInput(request:NextRequest){
  if(request.headers.get('content-type')?.split(';')[0].trim()!=='application/json'||!request.body)throw new AccessError(400,'input_invalid');
- const reader=request.body.getReader(),chunks:Uint8Array[]=[];let size=0,timer:ReturnType<typeof setTimeout>|undefined;
- const timeout=new Promise<never>((_,reject)=>{timer=setTimeout(()=>reject(new AccessError(408,'input_timeout')),5000);});
- try{for(;;){const {done,value}=await Promise.race([reader.read(),timeout]);if(done)break;size+=value.byteLength;if(size>8192)throw new AccessError(413,'input_limit');chunks.push(value);}
-  try{return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(Buffer.concat(chunks)));}catch{throw new AccessError(400,'input_invalid');}
- }catch(error){void reader.cancel().catch(()=>{});throw error;}finally{clearTimeout(timer);reader.releaseLock();}
+ const bytes=await readRequestBytes(request,8192);
+ try{return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{throw new AccessError(400,'input_invalid');}
 }
 export async function pushResponse(request:NextRequest){
  let finish=(r:NextResponse)=>r;const trace=randomUUID();
@@ -48,5 +46,5 @@ export async function pushResponse(request:NextRequest){
   const data=await repo.register({consent:input.consent,subscription:input.subscription},{deviceId,sessionId,expiresAt});
   const response=finish(NextResponse.json({data,meta:{trace_id:trace}},{headers:PRIVATE_HEADERS}));
   response.cookies.set(PUSH_DEVICE,deviceId,{httpOnly:true,secure:c.secure,sameSite:'strict',path:'/',maxAge:31536000});return response;
- }catch(error){const e=error as {status?:number};const status=[400,401,403,404,408,409,413,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({error:{code:'push_request_failed',message:status===409?'La suscripción cambió o pertenece a otra sesión. Desactívala antes de volver a registrarla.':'No se pudo verificar la suscripción.',retryable:status===503},meta:{trace_id:trace}},{status,headers:PRIVATE_HEADERS}));}
+ }catch(error){const e=error as {status?:number};const status=[400,401,403,404,408,409,413,429,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({error:{code:'push_request_failed',message:status===409?'La suscripción cambió o pertenece a otra sesión. Desactívala antes de volver a registrarla.':'No se pudo verificar la suscripción.',retryable:status===503},meta:{trace_id:trace}},{status,headers:PRIVATE_HEADERS}));}
 }

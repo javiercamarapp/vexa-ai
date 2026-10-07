@@ -1,3 +1,4 @@
+import {readTriggerInput} from '../../../../../../../packages/jobs/durable/trigger-input.mjs';
 import {historyConfig} from '../../../../../../../packages/history/config.mjs';
 import 'server-only';
 import {createHash,timingSafeEqual} from 'node:crypto';
@@ -15,7 +16,7 @@ export async function POST(request:Request){
  const secret=process.env.VEXA_WORKER_TRIGGER_SECRET;
  if(!secret||secret.length<32)return reply('HISTORY_CONFIGURATION_REQUIRED',503);
  if(!timingSafeEqual(digest(request.headers.get('authorization')??''),digest('Bearer '+secret)))return reply('UNAUTHORIZED',401);
- const body=await request.text();if(new URL(request.url).search||!['','{}'].includes(body))return reply('BODY_NOT_ALLOWED',400);
+ try{await readTriggerInput(request);}catch(error){const timeout=error instanceof Error&&error.message==='BODY_TIMEOUT';return reply(timeout?'REQUEST_TIMEOUT':'BODY_NOT_ALLOWED',timeout?408:400);}
  if(active)return reply('CHUNK_BUSY',409);active=true;let worker;
  try{
   worker=await createRuntime(process.env,{createDatabase,pool:serverPool(),deadlineAt:Date.now()+40000,consumer:'history'});

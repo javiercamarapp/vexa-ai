@@ -1,7 +1,7 @@
 {
   "schema": "rovaq-phase2-dependencies-v1",
   "date": "2026-10-07",
-  "status": "partial_global_review_blocked",
+  "status": "dependency_patch_complete_phase2_in_progress",
   "baseline_sha": "f6ee046cebddfcea823add5caef2eab245b422ce",
   "fix_sha": "091364402bf64378c427371468aba73b1dd31fd0",
   "audit_before": {
@@ -593,7 +593,9 @@
     "reason_recorded": "posible riesgo de ciberseguridad",
     "new_rejection_this_session": false,
     "original_rejection_prompt_located": false,
-    "gate": "missing"
+    "gate": "missing",
+    "local_restriction_removed_by_user": true,
+    "active_platform_block_observed": false
   },
   "formal_acceptance_changed": false,
   "deployed": false,

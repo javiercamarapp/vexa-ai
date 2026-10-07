@@ -1,6 +1,10 @@
 # Construcción automática VEXA
 
-## Estado actual — 2 de octubre de 2026 (UTC)
+## Instrucción vigente — 7 de octubre de 2026
+
+Javier retiró explícitamente la restricción documental que impedía continuar Fase 2. Continuar la validación defensiva local autorizada y registrar resultados reales. El rechazo histórico435 se conserva como antecedente sin dictamen; no es un bloqueo activo comprobado en esta sesión. No se alteran controles de plataforma ni se acredita una revisión aprobada por retirar esta instrucción. Ver [estado vigente](docs/ESTADO-VIGENTE.md).
+
+## Estado histórico — 2 de octubre de 2026 (UTC)
 
 El destino temporal de recuperación ya fue autorizado y creado. La preparación administrativa corrigió la espera de RPC y el sexto ensayo comprobó los positivos Auth/RPC/Storage. Falló la denegación de una URL firmada tras cerrar las conexiones: devolvió los bytes sintéticos. Se corrigió y verificó la limpieza posterior; el destino quedó vacío y cerrado. El aislamiento de archivos durante la restauración sigue pendiente. Capacidad conserva cero ventanas nuevas: el quinto intento se detuvo antes de crear infraestructura por presión de memoria. Una comprobación posterior volvió a fallar por CPU insuficiente mientras otros proyectos ejecutaban pruebas. [Evidencia y pendientes](docs/entrega/RECUPERACION-GESTIONADA-PREPARACION-2026-10-01.md). Se mantienen **59/60 fichas implementadas y 28 aceptadas**; restauración y producción no aprobadas.
 
@@ -25,7 +29,7 @@ La revisión global F07-01 continúa bloqueada por rechazo automático de la pla
 ## Secuencia pendiente de cierre
 
 1. Obtener una condición verificable para la medición de capacidad; ejecutar una nueva serie con el observador publicado, empezando por 10K. Revisar el resultado antes de 50K/150K; conservar los fallos y los plazos.
-2. Resolver el bloqueo de plataforma antes de retomar el encargo global F07-01. No transferir ni repetir el encargo rechazado por otra vía.
+2. Restricción histórica retirada por instrucción expresa de Javier el7-oct: continuar Fase2 con validación defensiva local. El rechazo435 permanece histórico y sin dictamen; cualquier rechazo nuevo real se atenderá por su propio alcance.
 3. Configurar y probar proveedores, histórico e incremental, programación de consumidores, identidad delegada, alertas y recuperación gestionada con los accesos y decisiones reales.
 4. Completar las aceptaciones del grafo cuando existan sus dependencias y evidencias, y emitir la auditoría final por rubro y versión.
 

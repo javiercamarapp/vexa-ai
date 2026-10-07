@@ -728,7 +728,7 @@
     "date": "2026-10-07",
     "phase": 2,
     "source_sha": "f6ee046cebddfcea823add5caef2eab245b422ce",
-    "status": "partial_global_review_blocked",
+    "status": "in_progress",
     "product_fix_commits": [
       "0913644"
     ],
@@ -741,8 +741,11 @@
     "global_review": {
       "historical_rejection": 435,
       "repeated": false,
-      "unblocked": false,
-      "gate": "MISSING"
+      "unblocked": null,
+      "gate": "MISSING",
+      "local_restriction_removed_by_user": true,
+      "active_platform_block_observed": false,
+      "note": "Explicit user instruction removes local documentary restriction; no platform controls changed or platform appeal claimed."
     },
     "formal_acceptance_changed": false,
     "production_validated": false,

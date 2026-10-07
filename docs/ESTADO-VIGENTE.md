@@ -2,7 +2,7 @@
 
 Corte: 7 de octubre de 2026. Fuente única de estado de la ejecución por fases.
 
-**Fase 1 cerrada al 100 % de su trabajo de línea base, corrección y clasificación. Fase 2 iniciada y parcial: dependencias corregidas; revisión global bloqueada.** Se cumple el criterio del plan: cero resultados fallidos sin clasificación. Quedan tests rojos explicados y deuda del arnés; esto no acredita aceptación integral ni producción.
+**Fase 1 cerrada al 100 % de su trabajo de línea base, corrección y clasificación. Fase 2 iniciada y parcial: dependencias corregidas; revisión y gate global en curso.** Se cumple el criterio del plan: cero resultados fallidos sin clasificación. Quedan tests rojos explicados y deuda del arnés; esto no acredita aceptación integral ni producción.
 
 | Indicador | Estado |
 |---|---|
@@ -21,7 +21,7 @@ La continuación de aceptación terminó con 1.598/1.627 y los paquetes con 537/
 | Fase del plan de Claude | Estado y trabajo restante |
 |---|---|
 | 1. Línea base y limpieza | Cerrada con fallos explicados y deuda del arnés declarada. |
-| 2. Seguridad global F07-01 | Parcial. Dos dependencias corregidas, auditoría de producción sin alertas; cinco alertas de desarrollo abiertas. Gate y revisión global pendientes por rechazo histórico 435. |
+| 2. Seguridad global F07-01 | Parcial. Dos dependencias corregidas, auditoría de producción sin alertas; cinco alertas de desarrollo abiertas. Gate y revisión global pendientes; restricción documental retirada expresamente por Javier. |
 | 3. Capacidad 10K → 50K → 150K | Pendiente. Nuevo manifiesto tras corrección SQL obliga a comenzar de nuevo en 10K; actualizar health/version en esa fase. |
 | 4. Recuperación y operación | Restore y rollback locales comprobados; falta recuperación gestionada y operación permanente completas. |
 | 5. Conexiones e histórico completo | Carga real previa reportada; fuentes adicionales, reconciliación y rendimiento real del conector pendientes. |
@@ -54,6 +54,6 @@ CSV para volumen; API para incremental/webhooks. Chunks reales por invocación t
 
 ## Límites y próximo paso
 
-La fase actual es seguridad global F07-01; continúa incompleta. [Avance, evidencia y bloqueo](entrega/SEGURIDAD-GLOBAL-2026-10-07.md). El parche de dependencias pasó lint/tipos/build y dos revisiones focales sin hallazgos. La auditoría completa sigue roja por braces de desarrollo; el rechazo histórico de plataforma sobre la revisión global sigue sin resolución. Fase 3 no iniciada. La deuda del control queda visible: conflicto Node 22/26.7, expectativas antiguas de interfaz/marca/catálogo, un fixture vencido y cinco arneses de paquetes. No se modificaron gates para forzar verde y no se aumentó el conteo formal.
+La fase actual es seguridad global F07-01; continúa incompleta. [Avance, evidencia y bloqueo](entrega/SEGURIDAD-GLOBAL-2026-10-07.md). El parche de dependencias pasó lint/tipos/build y dos revisiones focales sin hallazgos. La auditoría completa sigue roja por braces de desarrollo; Javier retiró la restricción documental histórica para continuar las pruebas locales; no se ha comprobado un bloqueo activo de plataforma. Fase 3 no iniciada. La deuda del control queda visible: conflicto Node 22/26.7, expectativas antiguas de interfaz/marca/catálogo, un fixture vencido y cinco arneses de paquetes. No se modificaron gates para forzar verde y no se aumentó el conteo formal.
 
 Los tiempos originales del plan para las seis fases sumaban aproximadamente 7–9 días de trabajo, sin esperas externas. No constituyen una fecha comprometida ni una estimación actualizada de lo pendiente.

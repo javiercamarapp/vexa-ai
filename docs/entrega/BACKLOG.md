@@ -2,7 +2,7 @@
 
 ## Estado vigente — 7 de octubre de 2026
 
-Consultar [ESTADO-VIGENTE.md](../ESTADO-VIGENTE.md): **Fase 1 cerrada con fallos explicados; Fase 2 parcial.** Parche local `0913644`: sharp/source-map-js actualizados, lint/tipos/build aprobados; auditoría de producción sin alertas y cinco de desarrollo abiertas. La revisión global conserva el bloqueo histórico 435. Correcciones locales `ed9f06d` y `9399246`; recuperación original 29/29, selección de conexión 5/5 unidades y 31/31 diagnóstico UI; paquetes 537/542 con cinco arneses antiguos pendientes. Se mantienen 59/60 fichas técnicas y 28/60 formales, producción sin validar. Histórico real previo reportado por Javier; quedan fuentes y reconciliación. Sin push, despliegue ni cambios externos en esta ejecución.
+Consultar [ESTADO-VIGENTE.md](../ESTADO-VIGENTE.md): **Fase 1 cerrada con fallos explicados; Fase 2 parcial.** Parche local `0913644`: sharp/source-map-js actualizados, lint/tipos/build aprobados; auditoría de producción sin alertas y cinco de desarrollo abiertas. Javier retiró la restricción documental histórica435; continúa la validación defensiva local de fase2. Correcciones locales `ed9f06d` y `9399246`; recuperación original 29/29, selección de conexión 5/5 unidades y 31/31 diagnóstico UI; paquetes 537/542 con cinco arneses antiguos pendientes. Se mantienen 59/60 fichas técnicas y 28/60 formales, producción sin validar. Histórico real previo reportado por Javier; quedan fuentes y reconciliación. Sin push, despliegue ni cambios externos en esta ejecución.
 
 Los cortes fechados que siguen son históricos y no sustituyen el estado vigente.
 

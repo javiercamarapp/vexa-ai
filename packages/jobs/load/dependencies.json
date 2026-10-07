@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
   "baselineSha": "b0be6df86a2aad53f46bb6054e192c94d62b13e3",
-  "composition": "Source at b0be6df plus materialized authorized import identities for pending-message recovery. Local PostgreSQL regression F03-03 passed29/29 on the delta. Earlier capacity measurements retain their original manifests; this composition requires a new10K then50K then150K series. No formal acceptance or production deployment is claimed.",
+  "composition": "Source at b0be6df plus materialized authorized import identities for pending-message recovery and revalidation of selected connections across import-list pages. Both fixes verified with local synthetic regressions. Earlier capacity measurements retain their original manifests; this composition requires a new10K then50K then150K series. No formal acceptance or production deployment is claimed.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -701,7 +701,7 @@
     },
     {
       "path": "apps/web/src/components/import-preview.tsx",
-      "sha256": "ecd0e5a847b3950723884c3abdbffdd0fe31f3debf8ed583923f31edfa494446"
+      "sha256": "d53849c6f8566d2cd7fc5e7b37b231c17fdb4ce8fdf80c8148e9e52b0f251774"
     },
     {
       "path": "apps/web/src/components/interventions/panel.tsx",
@@ -928,6 +928,10 @@
       "sha256": "d63df7217c1d404ea4e2ac24665defcc2ffd0daceef5389a733c1d4e79c67c90"
     },
     {
+      "path": "apps/web/src/lib/imports/connection-options.ts",
+      "sha256": "e42f351316075827b3fda1c0d4013f169a3a37aacd4ca790c7e8459c180c45a2"
+    },
+    {
       "path": "apps/web/src/lib/imports/server.ts",
       "sha256": "1a4efdd14df26294d4df70531b777b74631a6db0e20dc2ede953bdab63d684b0"
     },
@@ -1022,6 +1026,10 @@
     {
       "path": "apps/web/tests/email-admission.test.mjs",
       "sha256": "ec34e0018e920cc69aaa50e0b4d39270bed765baa114d89b2d81f9b623579209"
+    },
+    {
+      "path": "apps/web/tests/import-connections.test.ts",
+      "sha256": "f7a2f03caa5784382aa069c34ce1162dc9ecbdc3ac03f17c2016276b7b8cde9e"
     },
     {
       "path": "apps/web/tests/workspace/recovery/run.py",

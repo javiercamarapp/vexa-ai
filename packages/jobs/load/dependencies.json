@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "b0be6df86a2aad53f46bb6054e192c94d62b13e3",
-  "composition": "Source at b0be6df plus materialized authorized import identities for pending-message recovery and revalidation of selected connections across import-list pages. Both fixes verified with local synthetic regressions. Earlier capacity measurements retain their original manifests; this composition requires a new10K then50K then150K series. No formal acceptance or production deployment is claimed.",
+  "baselineSha": "f6ee046cebddfcea823add5caef2eab245b422ce",
+  "composition": "Phase-one source at f6ee046 plus dependency security updates sharp 0.35.5 (libvips 1.3.4) and source-map-js 1.2.2. Development-only braces advisory remains open. Requires a fresh10K then50K then150K capacity series; previous measurements retain their original manifests. No global security acceptance or deployment is claimed.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -1049,7 +1049,7 @@
     },
     {
       "path": "package-lock.json",
-      "sha256": "77baf0ec2e71a32f5ae70821263ac37e861c52fb742a304972e6dc60fc76f695"
+      "sha256": "c32bfe7e4e13f9e874446ce123d0415ee365feb8d84a4d0c9550b04bc321d82a"
     },
     {
       "path": "package.json",

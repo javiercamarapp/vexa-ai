@@ -1,0 +1,69 @@
+{
+  "schema": "rovaq-phase1-sync-recovery-v1",
+  "date": "2026-10-07",
+  "baselineSha": "b0be6df86a2aad53f46bb6054e192c94d62b13e3",
+  "scope": "Consulta de recuperación de mensajes pendientes; datos SYNTHETIC locales, PostgreSQL y Auth reales. No revisión global F07.",
+  "source": {
+    "path": "packages/connectors/sync.mjs",
+    "sha256": "75dca71845ab5ab41b4142615231b28398ef1df4396346d99d9f83778391a5c5"
+  },
+  "cause": "El anti-join repetía la lectura de filas protegidas por RLS de un import para cada mensaje pendiente. El filtro row_ref no formaba parte del Index Cond observado. La materialización inicial del lado pendiente no confirmó la hipótesis de uso completo del índice y fue sustituida antes de integrar.",
+  "change": "Materializa pendientes elegibles y lee una vez las identidades autorizadas de sus imports. Mantiene tenant, conexión, RLS, transacción, rechazo inmutable, linked-v1 y procesamiento completo.",
+  "baseline": {
+    "result": "SQL57014 statement timeout reproducido con1001mensajes anteriores a su conversación",
+    "statementTimeoutMs": 10000
+  },
+  "verified": {
+    "node": "22.23.2",
+    "postgres": "17",
+    "diagnosticQueryMs": [
+      18.317958,
+      114.600291
+    ],
+    "diagnosticCaseMs": 11433.448083,
+    "originalGate": {
+      "command": "VEXA_CANDIDATE=<checkout-separado> node --test --test-concurrency=1 tests/acceptance/F03-03.test.mjs",
+      "tests": 29,
+      "pass": 29,
+      "fail": 0,
+      "durationMs": 37188.48575,
+      "logSha256": "d6a5609c8b4e81a585b80b1d7502362b004fb01607675a807e9cfd86cb952ed0"
+    },
+    "affectedUnitTests": {
+      "files": [
+        "packages/connectors/sync.test.mjs",
+        "packages/connectors/sync-visibility.test.mjs"
+      ],
+      "tests": 12,
+      "pass": 12,
+      "fail": 0,
+      "logSha256": "4439aaf17a63fbd87264163584086547b3cb5f1dd69461d5a976872e71b2a55d"
+    },
+    "syntaxCheck": "PASS node --check packages/connectors/sync.mjs",
+    "manifestPreflight": {
+      "result": "PASS",
+      "files": 2208,
+      "logSha256": "dd7b8a0beda33d89afdbee2e9bb0025aa01e30e91ff9ea32e997483518fbf922"
+    }
+  },
+  "staticReviews": {
+    "standardsFindings": 0,
+    "specFindings": 0,
+    "scope": "Delta SQL; dos agentes de revisión distintos del autor; no veredicto global de seguridad",
+    "receiptSha256": "e4ced6aacb2cc141bcd91a14d9a24da419c1043bd545f205a0ba6e92a50d1112"
+  },
+  "capacity": {
+    "manifestSha256": "9771ed359cb5d67bee49da41f9d6e02b3b1514b47d048610a819e7c14825a9d1",
+    "previousMeasurementsInherited": false,
+    "nextSeries": [
+      10000,
+      50000,
+      150000
+    ]
+  },
+  "limitations": [
+    "Medición sintética puntual, no throughput de producción ni SLO comercial.",
+    "Identidades materializadas consumen memoria/disco temporal proporcional a los imports elegibles; no perfil de memoria a150K.",
+    "No migración, despliegue, escritura a producción ni aceptación formal nueva."
+  ]
+}

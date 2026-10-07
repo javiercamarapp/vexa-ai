@@ -1,4 +1,5 @@
 'use client';
+import {refreshConnectionOptions} from '../lib/imports/connection-options';
 import {ScrollTable} from './workspace/scroll-table';
 import {useEffect,useState,useRef} from 'react';
 import type {Mapping,Preview} from '../../../../packages/ingestion/mapping.mjs';
@@ -15,7 +16,19 @@ export function ImportPreview(){
  const [teamJobs,setTeamJobs]=useState<TeamJob[]>([]),[nextTeamOffset,setNextTeamOffset]=useState<number|null>(null);
  const retry=useRef<{fingerprint:string;key:string;id?:string}|null>(null);
  async function run(fn:()=>Promise<void>){setBusy(true);setError('');try{await fn();}catch(e){const message=e instanceof Error?e.message:'Error de importación';setError(message);setTeamJobs([]);setNextTeamOffset(null);if(/^40[13]:/.test(message))setCanConfigure(false);if(/mapping_version_conflict|confirmation_conflict|upload_capability_invalid|reservation_expired/.test(message))setApproved(false);}finally{setBusy(false);}}
- async function list(offset=0,connectionOffset=0,append=false,teamOffset=0){const data=await api(`?offset=${offset}&connection_offset=${connectionOffset}&team_offset=${teamOffset}`);setTeamJobs(previous=>append?Array.from(new Map([...previous,...(data.team_jobs??[])].map(j=>[j.id,j])).values()):(data.team_jobs??[]));if(!append||teamOffset>0)setNextTeamOffset(data.next_team_offset??null);setCanConfigure(data.canConfigure===true);setConnections(previous=>append?Array.from(new Map([...previous,...data.connections].map(c=>[c.id,c])).values()):data.connections);if(!append&&!data.connections.some((item:{id:string})=>item.id===connection))setConnection('');setReservations(previous=>append?Array.from(new Map([...previous,...data.reservations].map(r=>[r.id,r])).values()):data.reservations);if(!append||offset>0)setNextOffset(data.next_offset);if(!append||connectionOffset>0)setNextConnectionOffset(data.next_connection_offset);}
+ async function list(offset=0,connectionOffset=0,append=false,teamOffset=0){
+  const data=await api(`?offset=${offset}&connection_offset=${connectionOffset}&team_offset=${teamOffset}`);
+  const refreshed=append?data.connections:await refreshConnectionOptions(data,connection,next=>api(`?offset=${offset}&connection_offset=${next}&team_offset=${teamOffset}`));
+  setTeamJobs(previous=>append?Array.from(new Map([...previous,...(data.team_jobs??[])].map(j=>[j.id,j])).values()):(data.team_jobs??[]));
+  if(!append||teamOffset>0)setNextTeamOffset(data.next_team_offset??null);
+  setCanConfigure(data.canConfigure===true);
+  setConnections(previous=>append?Array.from(new Map([...previous,...refreshed].map(c=>[c.id,c])).values()):refreshed);
+  if(!append&&!refreshed.some((item:{id:string})=>item.id===connection))setConnection('');
+  setReservations(previous=>append?Array.from(new Map([...previous,...data.reservations].map(r=>[r.id,r])).values()):data.reservations);
+  if(!append||offset>0)setNextOffset(data.next_offset);
+  if(!append||connectionOffset>0)setNextConnectionOffset(data.next_connection_offset);
+ }
+
  useEffect(()=>{
   const controller=new AbortController();
   async function initialize(){

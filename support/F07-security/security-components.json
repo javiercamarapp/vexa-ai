@@ -1,0 +1,318 @@
+{
+  "schema": "rovaq-local-security-components-v1",
+  "status": "control-design-reviewed-execution-pending",
+  "baselineControl": "0dfd68f",
+  "description": "Sequential local components. covers records partial contribution, never proof of full SEC closure. Candidate package kernels are supplementary; fixed control integration oracles decide boundaries.",
+  "prerequisites": [
+    "Node 22 executable launches this test and all children; VEXA_CANDIDATE points to a disjoint immutable candidate.",
+    "Docker and local images/dependency artifacts required by the existing harnesses must already be available. Components reuse those harnesses without weakening their prerequisites.",
+    "Candidate package kernels resolve dependencies from the candidate snapshot; prepare dependencies outside canonical before execution.",
+    "The reviewed HTTP component must be integrated into this control snapshot before the runner starts. Its absence fails preflight.",
+    "Coverage gaps below are blocking requirements, not optional exclusions; full PASS is impossible until reviewed controls close them.",
+    "Python 3 is needed by the unchanged email/push pre-send SQL controllers; history/imports additionally require the existing local browser image."
+  ],
+  "components": [
+    {
+      "id": "sql-isolation",
+      "source": "control",
+      "files": [
+        "tests/acceptance/F01-03.test.mjs"
+      ],
+      "timeoutMs": 720000,
+      "minTests": 447,
+      "covers": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "SEC-08"
+      ]
+    },
+    {
+      "id": "storage-download",
+      "source": "control",
+      "files": [
+        "support/F07-security/storage-download.test.mjs"
+      ],
+      "timeoutMs": 180000,
+      "minTests": 8,
+      "covers": [
+        "SEC-04"
+      ]
+    },
+    {
+      "id": "http-security",
+      "source": "control",
+      "files": [
+        "support/F07-security/http.test.mjs"
+      ],
+      "timeoutMs": 900000,
+      "minTests": 11,
+      "covers": [
+        "SEC-01",
+        "SEC-04",
+        "SEC-06",
+        "SEC-08"
+      ]
+    },
+    {
+      "id": "http-extra",
+      "source": "control",
+      "files": [
+        "support/F07-security/http-extra.test.mjs"
+      ],
+      "timeoutMs": 900000,
+      "minTests": 8,
+      "covers": [
+        "SEC-01",
+        "SEC-04",
+        "SEC-06",
+        "SEC-07",
+        "SEC-08"
+      ]
+    },
+    {
+      "id": "extraction-redaction",
+      "source": "control",
+      "files": [
+        "support/F04-extraction/local.test.mjs",
+        "support/F04-extraction/sql.test.mjs"
+      ],
+      "timeoutMs": 480000,
+      "minTests": 17,
+      "covers": [
+        "SEC-03",
+        "SEC-07"
+      ]
+    },
+    {
+      "id": "extraction-workflow",
+      "source": "control",
+      "files": [
+        "support/F04-extraction/workflow.test.mjs"
+      ],
+      "timeoutMs": 480000,
+      "minTests": 1,
+      "covers": [
+        "SEC-05"
+      ]
+    },
+    {
+      "id": "authorized-evidence",
+      "source": "control",
+      "files": [
+        "support/F04-evidence/sql.test.mjs"
+      ],
+      "timeoutMs": 480000,
+      "minTests": 1,
+      "covers": [
+        "SEC-03",
+        "SEC-08"
+      ]
+    },
+    {
+      "id": "problems-retrieval",
+      "source": "control",
+      "files": [
+        "support/F04-problems/domain.test.mjs"
+      ],
+      "timeoutMs": 480000,
+      "minTests": 1,
+      "covers": [
+        "SEC-03",
+        "SEC-05"
+      ]
+    },
+    {
+      "id": "consumer-dispatch",
+      "source": "control",
+      "files": [
+        "support/F04-problems/dispatch.test.mjs"
+      ],
+      "timeoutMs": 240000,
+      "minTests": 1,
+      "covers": [
+        "SEC-05"
+      ]
+    },
+    {
+      "id": "crm-authorization",
+      "source": "control",
+      "files": [
+        "tests/acceptance/F03-runtime-security.test.mjs"
+      ],
+      "timeoutMs": 360000,
+      "minTests": 1,
+      "covers": [
+        "SEC-05"
+      ]
+    },
+    {
+      "id": "gateway-policy",
+      "source": "control",
+      "files": [
+        "support/F04-gateway/local.test.mjs"
+      ],
+      "timeoutMs": 120000,
+      "minTests": 1,
+      "covers": [
+        "SEC-07"
+      ]
+    },
+    {
+      "id": "gateway-and-connector-kernels",
+      "source": "candidate",
+      "files": [
+        "packages/gateway/gateway.test.mjs",
+        "packages/gateway/reference-grounding.test.mjs",
+        "packages/connectors/hubspot.test.mjs",
+        "packages/connectors/zendesk.test.mjs",
+        "packages/connectors/webhooks.test.mjs"
+      ],
+      "timeoutMs": 120000,
+      "minTests": 91,
+      "covers": [
+        "SEC-07"
+      ]
+    },
+    {
+      "id": "email-webhook-kernels",
+      "source": "control",
+      "files": [
+        "support/F06-email/webhook-auth.test.mjs",
+        "support/F06-email/webhook-independent.test.mjs",
+        "support/F06-email/webhook-deadline.test.mjs"
+      ],
+      "timeoutMs": 120000,
+      "minTests": 21,
+      "covers": [
+        "SEC-01",
+        "SEC-07"
+      ]
+    },
+    {
+      "id": "notification-authorization",
+      "source": "control",
+      "files": [
+        "support/F07-security/notification-security.test.mjs"
+      ],
+      "timeoutMs": 840000,
+      "minTests": 58,
+      "covers": [
+        "SEC-01",
+        "SEC-05",
+        "SEC-08"
+      ]
+    },
+    {
+      "id": "outbox-sql-and-kernels",
+      "source": "control",
+      "files": [
+        "support/F06-outbox/sql.test.mjs",
+        "support/F06-outbox/producer-finish.test.mjs",
+        "support/F06-outbox/independent.test.mjs"
+      ],
+      "timeoutMs": 480000,
+      "minTests": 1,
+      "covers": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-05",
+        "SEC-08"
+      ]
+    },
+    {
+      "id": "imports-durable-runtime",
+      "source": "control",
+      "files": [
+        "tests/acceptance/F02-05.test.mjs"
+      ],
+      "timeoutMs": 900000,
+      "minTests": 1,
+      "covers": [
+        "SEC-01",
+        "SEC-04",
+        "SEC-05",
+        "SEC-08"
+      ],
+      "note": "Existing full ENTRYDIRECT exam includes F02-05 and F02-06 inventory plus three mutation controls and cleanup; do not duplicate F02-06 execution. Historical intermittent postcommit barrier remains an execution risk."
+    },
+    {
+      "id": "history-runtime",
+      "source": "control",
+      "files": [
+        "support/F07-security/history-provider.test.mjs",
+        "support/F07-security/history-security.test.mjs"
+      ],
+      "timeoutMs": 900000,
+      "minTests": 14,
+      "covers": [
+        "SEC-01",
+        "SEC-03",
+        "SEC-05",
+        "SEC-08"
+      ],
+      "note": "Control copy of existing author runtime retains all seven steps and adds SQL publication hashes/provider-call counts around owner revocation. Wrapper validates publication receipt and cleanup, with owned-journal recovery after failed termination. Candidate harness/config dependencies remain recorded; no independent acceptance inferred. Six in-memory fixture calibrations precede the seven-step runtime wrapper; exact EU synthetic transport does not contact external providers.",
+      "terminationGraceMs": 180000
+    }
+  ],
+  "coverageGaps": [],
+  "exclusions": [
+    "No reuse of an earlier capacity result, production deployment or security acceptance.",
+    "Historical UI suites explorer/outbox/email/push are not rerun with known stale labels; omitted boundaries remain coverageGaps.",
+    "SQL and Storage are local real services; gateway kernels use synthetic provider transports, not live model execution.",
+    "Existing signed download URLs require a separately authorized transition; new emission denial does not invalidate them."
+  ],
+  "coverageNotes": [
+    {
+      "id": "SEC05-local-notification-contract",
+      "rationale": "support/F07-security/sec05-coverage.md",
+      "scope": "Real consumeNotification plus real SQL outbox and local HTTP sink, in-app publication, and provider-specific SQL pre-send controls. No claim of SMTP/push delivery or external account validation. Execution and independent acceptance remain required."
+    }
+  ],
+  "coverageDesign": [
+    {
+      "id": "SEC03-07-hostile-context-to-output",
+      "control": "support/F04-extraction/sql.test.mjs",
+      "design": "Actual context assembly and validation reject a real foreign redacted revision despite identical hostile text; roles separated, fetch destinations and logs observed. Synthetic model output, no live-model semantics claimed."
+    },
+    {
+      "id": "SEC06-cross-role-cross-tenant-cache",
+      "control": "support/F07-security/http.test.mjs + http-extra.test.mjs",
+      "design": "Same URL owner/viewer/B, revoked membership and browser logout with old cookie/tab/back. BFCache only when observed; no instantaneous idle DOM erase claimed."
+    },
+    {
+      "id": "secrets-bundle-logs",
+      "control": "support/F07-security/http-extra.test.mjs",
+      "design": "Build canaries before compilation, published artifacts/responses/logs plus authenticated JSON/HTML brief bytes and headers. Other export families and log destinations not universally claimed."
+    },
+    {
+      "id": "crm-webhook-http-persistence",
+      "control": "support/F07-security/http-extra.test.mjs",
+      "design": "Signed raw HTTP reaches real tenant-bound SQL receipt and wakeup; replay, forged binding and revoked authority have no unauthorized receipt."
+    },
+    {
+      "id": "SEC05-provider-specific-runtime-effects",
+      "control": "support/F07-security/sec05-coverage.md",
+      "design": "Contract requires local real jobs/notification authorization, covered by SQL plus actual consumer and SYN loopback; external provider delivery is outside local scope."
+    }
+  ],
+  "staticReviews": [
+    {
+      "review": "SSRF attachments",
+      "sources": [
+        "packages/connectors/hubspot.mjs",
+        "packages/connectors/zendesk.mjs",
+        "packages/connectors/transport.mjs",
+        "packages/jobs/durable/runtime.mjs",
+        "packages/recovery/storage.mjs",
+        "apps/web/src/lib/auth.ts",
+        "packages/gateway/index.mjs"
+      ],
+      "conclusion": "Connector payload attachment URLs are not fetched. CRM destinations/paths are constructed and validated; Storage uses configured server and tenant-scoped object paths. Gateway treats URLs as data.",
+      "limits": [
+        "Static data-flow review; no dynamic DNS or external infrastructure proof",
+        "Recovery SDK wrapper has no explicit redirect prohibition; no payload-controlled attachment destination found"
+      ]
+    }
+  ]
+}

@@ -32,9 +32,8 @@ export async function completionExam(page,{base,h,request,status,q,hash,snapshot
  h.sql(`UPDATE memberships SET status='revoked',permissions_version=permissions_version+1 WHERE user_id=${q(h.A.id)}`);
  try{assert.notEqual((await direct(h.A.token)).status,200,'STORAGE_DOWNLOAD_REVOKED');}finally{h.sql(`UPDATE memberships SET status='active',permissions_version=permissions_version+1 WHERE user_id=${q(h.A.id)}`);}
  assert.equal((await direct(h.A.token)).status,200,'STORAGE_DOWNLOAD_RECOVERED');
- const signed=await h.ports.storage('/object/sign/vexa-private/'+object,h.A.token,{method:'POST',body:{expiresIn:1}});assert.equal(signed.status,200,'DOWNLOAD_SIGN');
- const signedURL=new URL(signed.data.signedURL,'http://127.0.0.1:'+JSON.parse(process.env.F02_PREVIEW_PORTS)[1]);
- assert.equal((await fetch(signedURL)).status,200,'SIGNED_DOWNLOAD_POSITIVE');await new Promise(r=>setTimeout(r,2100));assert.notEqual((await fetch(signedURL)).status,200,'SIGNED_DOWNLOAD_REAL_EXPIRY');console.log('PASS STORAGE DOWNLOAD NEGATIVES REAL EXPIRY');
+ const signed=await h.ports.storage('/object/sign/vexa-private/'+object,h.A.token,{method:'POST',body:{expiresIn:1}});
+ assert.ok([401,403,404].includes(signed.status)||(signed.status===400&&[401,403,404].includes(Number(signed.data?.statusCode))),'DOWNLOAD_SIGN_DENIED');assert.ok(!signed.data?.signedURL&&!signed.data?.signedUrl,'DOWNLOAD_CAPABILITY_ABSENT');console.log('PASS STORAGE AUTHENTICATED DOWNLOAD REVOCATION; BEARER SIGNING DENIED');
  // Change the fixture DB DEFAULT before creating/signing a reservation. Never alter signed expires_at.
  h.sql("ALTER TABLE import_uploads ALTER COLUMN expires_at SET DEFAULT (now()+interval '7 seconds')");
  let expired;

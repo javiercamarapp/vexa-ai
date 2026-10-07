@@ -6,6 +6,7 @@ import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {createHash,createHmac,randomUUID} from 'node:crypto';
 import {q} from '../F06-push/harness.mjs';
+import {seedBriefs} from '../F06-briefs/fixtures.mjs';
 import {canaries,assertNoSecrets,inspectPublished} from '../../tests/acceptance/support/ci/artifact-secrets.mjs';
 
 const candidate=process.env.VEXA_CANDIDATE;
@@ -131,6 +132,72 @@ async function webhookChecks(t,h,evidence){
   return bindings.map(row=>row.secret);
 }
 
+async function exportChecks(t,h,evidence,fixture,webhookSecrets){
+  await t.test('authenticated brief exports preserve identity, hide secrets and PII, escape HTML and recheck membership',async()=>{
+    const f=await seedBriefs(h);
+    // Persist a raw PII canary through real canonical ingestion in this tenant;
+    // it is unrelated private customer data and must not enter the brief export.
+    const customerId=await f.a.save('customer','SYN-EXPORT-PRIVATE-CUSTOMER',{display_name:sensitivePayload});
+    assert.equal(h.sql(`SELECT display_name FROM customers WHERE tenant_id=${q(h.A.tenant)} AND id=${q(customerId)}`),sensitivePayload,'RAW_PII_CANARY_PERSISTED');
+    const generated=await h.request(h.A,'/api/briefs',{operation:'generate',query:f.query.toString(),comparisonQuery:null,expectedPreviousId:null,requestKey:randomUUID()});
+    assert.equal(generated.status,200,'ACTUAL_BRIEF_GENERATED');
+    const brief=generated.data.data;
+    assert.ok(brief.document.critical.some(problem=>problem.id===f.critical.id),'HOSTILE_LABEL_IN_ACTUAL_BRIEF');
+    assert.ok(JSON.stringify(brief.document).includes('<img src=x onerror=alert(1)>'),'HTML_CANARY_SOURCE_PRESENT');
+    assert.ok(brief.document.metrics.length>0&&brief.document.top3.length>0,'NONEMPTY_EXPORT_FIXTURE');
+    const scan=(value,surface)=>{
+      assertNoSecrets(value,fixture,surface);
+      for(const marker of [sensitivePayload,...webhookSecrets,h.A.email,h.B.email,'SOLO_B_9F'])
+        assertNoSecrets(value,{server:marker},surface+':SYN_PRIVATE_MARKER');
+    };
+    const observations=[];
+    const download=async(format,actor=h.A)=>{
+      const response=await fetch(h.base+'/api/briefs/'+brief.id+'/export?format='+format,{redirect:'manual',headers:{...(actor?{cookie:h.cookie(actor)}:{}),Connection:'close'},signal:AbortSignal.timeout(20000)});
+      const bytes=Buffer.from(await response.arrayBuffer());
+      scan(bytes,'authenticated_export:'+format);scan(JSON.stringify([...response.headers]),'authenticated_export_headers:'+format);
+      assert.match(response.headers.get('cache-control')??'',/\bprivate\b/,'EXPORT_PRIVATE');
+      assert.match(response.headers.get('cache-control')??'',/\bno-store\b/,'EXPORT_NO_STORE');
+      observations.push({format,status:response.status,bytes:bytes.length,sha256:hash(bytes)});
+      return {response,bytes,text:bytes.toString('utf8')};
+    };
+    const csp="default-src 'none'; sandbox; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
+    for(const format of ['json','html']){
+      const result=await download(format);assert.equal(result.response.status,200,'AUTHORIZED_EXPORT:'+format);
+      assert.ok(result.bytes.length>100,'NONEMPTY_EXPORT_BYTES');
+      assert.equal(result.response.headers.get('content-disposition'),`attachment; filename="brief-${brief.id}.${format}"`);
+      assert.equal(result.response.headers.get('x-contract-version'),'f06-briefs-v1');
+      assert.equal(result.response.headers.get('x-content-type-options'),'nosniff');
+      assert.match(result.response.headers.get('x-trace-id')??'',/^[0-9a-f-]{36}$/i);
+      assert.equal(result.response.headers.get('content-security-policy'),csp,'EXPORT_CSP_SERVED_NOT_GLOBAL_DEFAULT');
+      if(format==='json'){
+        assert.match(result.response.headers.get('content-type')??'',/^application\/json\b/);
+        const actual=JSON.parse(result.text);assert.equal(actual.id,brief.id);assert.equal(actual.contentHash,brief.contentHash);assert.deepEqual(actual.document,brief.document);
+      }else{
+        assert.match(result.response.headers.get('content-type')??'',/^text\/html\b/);
+        assert.ok(result.text.includes(brief.id)&&result.text.includes(brief.contentHash),'HTML_IDENTITY_POSITIVE');
+        assert.ok(result.text.includes('&lt;img src=x onerror=alert(1)&gt;'),'HOSTILE_LABEL_ESCAPED');
+        assert.ok(!/<(?:script|img|iframe|object)\b/i.test(result.text),'NO_ACTIVE_HOSTILE_EXPORT_TAGS');
+      }
+      fs.writeFileSync(path.join(evidence,'SYN-export-brief.'+format),result.bytes,{mode:0o600});
+      for(const [actor,status]of [[h.B,404],[null,401]]){
+        const denied=await download(format,actor);assert.equal(denied.response.status,status,'EXPORT_FOREIGN_OR_ANON');
+        assert.ok(!denied.text.includes(brief.id)&&!denied.text.includes(brief.contentHash)&&!denied.text.includes(f.critical.label),'DENIED_EXPORT_NO_DOCUMENT');
+      }
+    }
+    h.sql(`UPDATE memberships SET status='revoked',permissions_version=permissions_version+1 WHERE tenant_id=${q(h.A.tenant)} AND user_id=${q(h.A.id)}`);
+    try{
+      for(const format of ['json','html']){
+        const denied=await download(format);assert.equal(denied.response.status,403,'REVOKED_EXPORT_DENIED');
+        assert.ok(!denied.text.includes(brief.contentHash)&&!denied.text.includes(f.critical.label),'REVOKED_EXPORT_NO_DOCUMENT');
+      }
+      const control=await h.request(h.B,'/api/imports');assert.equal(control.status,200,'OTHER_TENANT_AUTH_PRESERVED');
+    }finally{h.sql(`UPDATE memberships SET status='active',permissions_version=permissions_version+1 WHERE tenant_id=${q(h.A.tenant)} AND user_id=${q(h.A.id)}`);}
+    const restored=await download('json');assert.equal(restored.response.status,200,'EXPORT_AUTHORIZATION_RECOVERED');
+    assert.deepEqual(JSON.parse(restored.text).document,brief.document,'RESTORED_EXPORT_EXACT_DOCUMENT');
+    fs.writeFileSync(path.join(evidence,'SYN-export-security.json'),JSON.stringify({observations,csp,formats:['json','html'],privateCanaryPersisted:true,scope:'actual authenticated attachment bytes, immutable brief identity, served restrictive CSP, hostile label escaping and current membership',notProven:['All export families or CSV formula safety','Arbitrary stored XSS payloads','Browser rendering of attachment HTML with CSP enforcement']},null,2),{mode:0o600});
+  });
+}
+
 async function logoutChecks(t,h,evidence){
   await t.test('real browser logout clears session; old cookie, old tab and back navigation fail closed',async()=>{
     const organizationCanary='SYN-HTTP-PRIVATE-ORG-'+randomUUID();
@@ -199,6 +266,7 @@ test('SEC HTTP extra: build canaries, signed CRM persistence and browser logout'
     fs.writeFileSync(path.join(evidence,'canary-published.json'),JSON.stringify(result,null,2),{mode:0o600});
   });
   webhookSecrets=await webhookChecks(t,h,evidence);
+  await exportChecks(t,h,evidence,fixture,webhookSecrets);
   await logoutChecks(t,h,evidence);
   await t.test('build/runtime logs contain no SYN secrets or webhook PII; external fetch remains blocked',async()=>{
     await h.stopWeb();
@@ -209,6 +277,6 @@ test('SEC HTTP extra: build canaries, signed CRM persistence and browser logout'
     }
     const attempts=fs.readFileSync(path.join(evidence,'outbound-attempts.jsonl'),'utf8').split('\n').filter(Boolean).map(JSON.parse);
     assert.equal(attempts.some(row=>row.blocked),false,'NO_EXTERNAL_FETCH_ATTEMPT');
-    fs.writeFileSync(path.join(evidence,'extra-coverage.json'),JSON.stringify({logFiles:files,buildCanaries:true,realHTTPPersistence:true,browserLogout:true,notProven:['production deployment/CDN','real CRM deliveries','provider credentials or live LLM','all authenticated pages and all log destinations','guaranteed BFCache entry','existing signed URLs revoked']},null,2),{mode:0o600});
+    fs.writeFileSync(path.join(evidence,'extra-coverage.json'),JSON.stringify({logFiles:files,buildCanaries:true,realHTTPPersistence:true,browserLogout:true,authenticatedBriefExports:true,servedBriefCSP:true,notProven:['production deployment/CDN','real CRM deliveries','provider credentials or live LLM','all authenticated pages and all log destinations','other export families and CSV formula safety','arbitrary stored XSS or browser attachment CSP enforcement','guaranteed BFCache entry','existing signed URLs revoked']},null,2),{mode:0o600});
   });
 });

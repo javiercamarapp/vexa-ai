@@ -1,3 +1,4 @@
+import { readRequestJson } from '../request-body';
 import 'server-only';
 import {randomUUID} from 'node:crypto';
 import {NextRequest,NextResponse} from 'next/server';
@@ -30,7 +31,7 @@ export async function aliases(request:NextRequest){
    try{groups=await repository.list();}catch(error){if(!(error instanceof AccessError&&error.status===409))throw error;}
    return finish(NextResponse.json({...listing,groups,projectionState:groups===null?'unresolved':'resolved'},{headers:PRIVATE_HEADERS}));
   }
-  let input:unknown;try{input=await request.json();}catch{throw invalid();}
+  let input:unknown;try{input=await readRequestJson(request, 32768);}catch(error){if(error instanceof AccessError)throw error;throw invalid();}
   if(!input||typeof input!=='object'||Array.isArray(input))throw invalid();
   const body=input as Record<string,unknown>;
   if(Object.keys(body).some(key=>!['operation','sourceConversationId','targetConversationId','expectedVersion','evidenceRef','reason','approved'].includes(key))||!uuid(body.sourceConversationId))throw invalid();

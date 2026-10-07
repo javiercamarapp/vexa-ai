@@ -19,6 +19,19 @@ const extractionCode = Object.fromEntries(extractionPaths.map(name => {
 }));
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  async headers() {
+    return [{ source: '/:path*', headers: [
+      { key: 'X-Content-Type-Options', value: 'nosniff' },
+      { key: 'X-Frame-Options', value: 'DENY' },
+      { key: 'Content-Security-Policy', value: "base-uri 'self'; object-src 'none'; frame-ancestors 'none'" },
+    ] }, {
+      // Next's configured headers also apply to route responses. Preserve the
+      // stricter attachment policy instead of replacing it with the page policy.
+      source: '/api/briefs/:id/export', headers: [
+        { key: 'Content-Security-Policy', value: "default-src 'none'; sandbox; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" },
+      ],
+    }];
+  },
   env: { VEXA_COMPILED_REVISION: revision, VEXA_COMPILED_EXTRACTION_CODE: JSON.stringify(extractionCode) },
 };
 

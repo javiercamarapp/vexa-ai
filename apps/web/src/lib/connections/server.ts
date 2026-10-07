@@ -1,3 +1,4 @@
+import { readRequestJson } from '../request-body';
 import 'server-only';
 import {NextRequest,NextResponse} from 'next/server';
 import {createDatabase} from '@vexa/platform/db';
@@ -24,7 +25,7 @@ export async function recheck(request:NextRequest){
  try{
   const configuration=config();if(!configuration)throw new AccessError(503,'configuration_required');assertOrigin(request.headers.get('origin'),configuration.origin);
   const auth=requestAuth(request);finish=auth.finish;
-  let body;try{body=await request.json();}catch{throw new AccessError(400,'recheck_input_invalid');}
+  let body;try{body=await readRequestJson(request, 32768);}catch(error){if(error instanceof AccessError)throw error;throw new AccessError(400,'recheck_input_invalid');}
   const connectionId=request.nextUrl.pathname.split('/')[3];const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
   if(!body||body.confirmedCredentialRotation!==true||!uuid.test(connectionId)||typeof body.expectedAttemptId!=='string'||!uuid.test(body.expectedAttemptId))throw new AccessError(400,'recheck_input_invalid');
   const database=createDatabase({identity:identity(auth.client),pool:serverPool(),selectedTenant:request.cookies.get(ACTIVE_ORG)?.value});

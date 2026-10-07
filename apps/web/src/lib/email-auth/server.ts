@@ -1,3 +1,4 @@
+import {readRequestBytes} from '../request-body';
 import 'server-only';
 import {NextRequest,NextResponse} from 'next/server';
 import {createClient} from '@supabase/supabase-js';
@@ -6,7 +7,12 @@ import {requestAuth} from '../auth-http';
 import {emailAdmission} from './admission';
 const headers={...PRIVATE_HEADERS,'Referrer-Policy':'no-referrer',Vary:'Cookie'};
 const generic={message:'Si la cuenta existe, intentaremos enviar un enlace. Revisa tu bandeja de entrada y correo no deseado antes de solicitar otro.',retryAfterSeconds:60};
-async function input(request:NextRequest,limit:number){if(request.headers.get('content-type')?.split(';')[0]?.trim()!=='application/json'||!request.body)throw new AccessError(400,'email_auth_input_invalid');const reader=request.body.getReader();const chunks:Uint8Array[]=[];let size=0;try{for(;;){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>limit){await reader.cancel();throw new AccessError(413,'email_auth_input_limit');}chunks.push(value);}}finally{reader.releaseLock();}try{const result=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(Buffer.concat(chunks)));if(!result||typeof result!=='object'||Array.isArray(result))throw new Error();return result;}catch{throw new AccessError(400,'email_auth_input_invalid');}}
+async function input(request:NextRequest,limit:number){
+ if(request.headers.get('content-type')?.split(';')[0].trim()!=='application/json'||!request.body)throw new AccessError(400,'email_auth_input_invalid');
+ let bytes:Uint8Array;
+ try{bytes=await readRequestBytes(request,limit);}catch(error){if(error instanceof AccessError&&error.status===413)throw new AccessError(413,'email_auth_input_limit');throw error;}
+ try{const result=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));if(!result||typeof result!=='object'||Array.isArray(result))throw new Error();return result;}catch{throw new AccessError(400,'email_auth_input_invalid');}
+}
 export async function emailAuth(request:NextRequest,operation:'request'|'session'){let finish=(r:NextResponse)=>r;try{
  const c=config();if(process.env.VEXA_EMAIL_AUTH_ENABLED!=='true'||!c)throw new AccessError(503,'email_auth_unavailable');assertOrigin(request.headers.get('origin'),c.origin);if(request.nextUrl.search)throw new AccessError(400,'email_auth_input_invalid');
  const body=await input(request,operation==='request'?1024:16384);
@@ -31,4 +37,4 @@ export async function emailAuth(request:NextRequest,operation:'request'|'session
  // Commit refreshed cookies only after all final-identity and authorization reads succeed.
  finish=response=>{const finished=auth.finish(response);for(const [key,value] of Object.entries(headers))finished.headers.set(key,value);return finished;};
  return finish(NextResponse.json({organizations,platformAccess},{headers}));
- }catch(error){const e=error as {status?:number};const status=[400,401,403,413,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({error:{code:status===401?'email_auth_invalid_link':status===403?'email_auth_origin_rejected':status===400||status===413?'email_auth_input_invalid':'email_auth_unavailable'}},{status,headers}));}}
+ }catch(error){const e=error as {status?:number};const status=[400,401,403,408,413,429,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({error:{code:status===401?'email_auth_invalid_link':status===403?'email_auth_origin_rejected':status===400||status===413?'email_auth_input_invalid':'email_auth_unavailable'}},{status,headers}));}}

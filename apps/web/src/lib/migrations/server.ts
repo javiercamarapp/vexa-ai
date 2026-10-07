@@ -1,3 +1,4 @@
+import { readRequestJson } from '../request-body';
 import 'server-only';
 import {NextRequest,NextResponse} from 'next/server';
 import {createDatabase} from '@vexa/platform/db';
@@ -15,8 +16,8 @@ export async function migrations(request:NextRequest){
   const database=createDatabase({identity:identity(auth.client),pool:serverPool(),selectedTenant:request.cookies.get(ACTIVE_ORG)?.value});
   const repository=createComparisonRepository({database});
   if(request.method==='POST'){
-   let body;try{body=await request.json();}catch{throw new AccessError(400,'comparison_input_invalid');}
-   let scope;try{scope=comparisonScope(body);}catch{throw new AccessError(400,'comparison_input_invalid');}
+   let body;try{body=await readRequestJson(request, 32768);}catch(error){if(error instanceof AccessError)throw error;throw new AccessError(400,'comparison_input_invalid');}
+   let scope;try{scope=comparisonScope(body);}catch(error){if(error instanceof AccessError)throw error;throw new AccessError(400,'comparison_input_invalid');}
    return finish(NextResponse.json({snapshot:await repository.capture(scope)},{status:201,headers:PRIVATE_HEADERS}));
   }
   if(request.nextUrl.pathname.endsWith('/compare')){

@@ -29,6 +29,7 @@ async function setupWithBuildCanaries(candidate,evidence,fixture){
     replaceOnce("env.PATH=path.dirname(process.execPath)+':'+env.PATH;", "env.PATH=path.dirname(process.execPath)+':'+env.PATH;"+${JSON.stringify(buildEnv)});
     replaceOnce('copyBuildInputs(candidate,tmp);','copyBuildInputs(candidate,tmp);'+${JSON.stringify(publicFixture)});
     for(let n=0;n<6;n++)code=code.replaceAll(String(60840+n),String(60940+n));
+    replaceOnce("h.base='http://127.0.0.1:60944'", "h.base='http://localhost:60944'");
   `;
   source=source.replace(insertion,adapter+insertion);
   fs.writeFileSync(path.join(directory,'harness.mjs'),source,{mode:0o600});
@@ -156,7 +157,7 @@ async function logoutChecks(t,h,evidence){
       const logoutResponse=active.waitForResponse(response=>response.url()===h.base+'/auth/logout'&&response.request().method()==='POST');
       await active.getByRole('button',{name:'Cerrar sesión',exact:true}).click();
       const logout=await logoutResponse;assert.equal(logout.status(),303,'LOGOUT_REVOKED');
-      assert.equal(logout.headers()['clear-site-data'],'"cache", "cookies", "storage"','LOGOUT_CLEAR_SITE_DATA');
+      assert.equal(await logout.headerValue('clear-site-data'),'"cache", "cookies", "storage"','LOGOUT_CLEAR_SITE_DATA');
       await active.waitForURL(url=>url.pathname==='/login');
       const cookies=await context.cookies(h.base);assert.equal(cookies.some(cookie=>cookie.name.startsWith('sb-')||cookie.name==='vexa_active_org'),false,'AUTH_COOKIES_CLEARED');
       const replay=await fetch(h.base+'/api/imports',{redirect:'manual',headers:{cookie:oldCookie},signal:AbortSignal.timeout(15000)});

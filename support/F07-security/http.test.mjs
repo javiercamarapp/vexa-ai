@@ -218,14 +218,14 @@ test('SEC HTTP: real local auth, bounded input, machine triggers, headers and ca
 
   await t.test('redirects remain local and organization selector never authorizes another tenant',async()=>{
     const anonymous=await request('/overview?next=https://SYN-foreign.invalid/',{actor:null});
-    assert.equal(anonymous.status,303);assert.equal(anonymous.response.headers.get('location'),h.base+'/login');
+    assert.equal(anonymous.status,303);assert.equal(new URL(anonymous.response.headers.get('location'),h.base).href,h.base+'/login');
     for(const next of ['https://SYN-foreign.invalid/','//SYN-foreign.invalid/','%2f%2fSYN-foreign.invalid']){
       const cancelled=await request('/auth/callback?error=access_denied&next='+encodeURIComponent(next),{actor:null});
-      assert.equal(cancelled.status,303);assert.equal(cancelled.response.headers.get('location'),h.base+'/login?error=oauth_cancelled');
+      assert.equal(cancelled.status,303);assert.equal(new URL(cancelled.response.headers.get('location'),h.base).href,h.base+'/login?error=oauth_cancelled');
     }
     const select=tenant=>request('/auth/organization',{method:'POST',body:new URLSearchParams({tenant_id:tenant}).toString(),headers:{'content-type':'application/x-www-form-urlencoded'}});
     assert.equal((await select(h.B.tenant)).status,403,'FOREIGN_SELECTOR_DENIED');
-    const own=await select(h.A.tenant);assert.equal(own.status,303);assert.equal(own.response.headers.get('location'),h.base+'/');
+    const own=await select(h.A.tenant);assert.equal(own.status,303);assert.equal(new URL(own.response.headers.get('location'),h.base).href,h.base+'/');
     assert.ok((own.response.headers.get('set-cookie')??'').includes('vexa_active_org='+h.A.tenant),'OWN_SELECTION_COOKIE');
   });
 

@@ -116,13 +116,21 @@ export function createSyncRepository({database}){
     }
     // Recover a message seen before its conversation in another page/batch. The original
     // rejection remains immutable; an explicit linked-v1 import row records the recovery.
-    const pending=(await s.query(`SELECT r.* FROM public.sync_raw_objects r
+    // Read authorized import identities once for the eligible imports. Keeping the
+    // anti-join outside that RLS scan avoids reevaluating every import row for
+    // every pending message; tenant policies still apply inside the CTE.
+    const pending=(await s.query(`WITH recoverable AS MATERIALIZED (
+      SELECT r.*,r.row_ref||':linked-v1' AS recovery_row_ref FROM public.sync_raw_objects r
       JOIN public.source_heads h ON h.tenant_id=r.tenant_id AND h.connection_id=r.connection_id
        AND h.entity_type='conversation' AND h.external_id=r.normalized->'payload'->>'conversation_external_id'
        AND h.state<>'ambiguous'
       WHERE r.tenant_id=$1 AND r.connection_id=$2 AND r.result->>'code'='REFERENCE_MISSING'
        AND r.normalized->'envelope'->>'entity_type'='message'
-       AND NOT EXISTS(SELECT 1 FROM public.import_rows i WHERE i.tenant_id=r.tenant_id AND i.import_id=r.import_id AND i.row_ref=r.row_ref||':linked-v1')
+    ), linked_rows AS MATERIALIZED (
+      SELECT i.import_id,i.row_ref FROM public.import_rows i
+      WHERE i.tenant_id=$1 AND i.import_id IN (SELECT import_id FROM recoverable)
+    ) SELECT r.* FROM recoverable r
+      WHERE NOT EXISTS(SELECT 1 FROM linked_rows i WHERE i.import_id=r.import_id AND i.row_ref=r.recovery_row_ref)
       ORDER BY r.id`,[s.tenantId,state.connection_id])).rows;
     for(const original of pending){
      const recovery=await persistCanonical(s,{importId:original.import_id,record:{...original.normalized,mapping_version:'crm-canonical-v1',row_ref:original.row_ref+':linked-v1'}});

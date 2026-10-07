@@ -1,5 +1,11 @@
 # VEXA AI
 
+## Estado vigente — 7 de octubre de 2026
+
+Consultar [ESTADO-VIGENTE.md](docs/ESTADO-VIGENTE.md): **Fase 1 cerrada con fallos explicados; Fase 2 no iniciada.** Correcciones locales `ed9f06d` y `9399246`; recuperación original 29/29, selección de conexión 5/5 unidades y 31/31 diagnóstico UI; paquetes 537/542 con cinco arneses antiguos pendientes. Se mantienen 59/60 fichas técnicas y 28/60 formales, producción sin validar. Histórico real previo reportado por Javier; quedan fuentes y reconciliación. Sin push, despliegue ni cambios externos en esta ejecución.
+
+Los cortes fechados que siguen son históricos y no sustituyen el estado vigente.
+
 Software para importar conversaciones e información histórica, conservar su procedencia, identificar problemas y apoyar decisiones con evidencia y cifras verificables.
 
 ## Estado actual — 3 de octubre de 2026 (UTC)

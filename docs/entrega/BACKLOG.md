@@ -1,5 +1,11 @@
 # Pendientes verificables de entrega
 
+## Estado vigente — 7 de octubre de 2026
+
+Consultar [ESTADO-VIGENTE.md](../ESTADO-VIGENTE.md): **Fase 1 cerrada con fallos explicados; Fase 2 no iniciada.** Correcciones locales `ed9f06d` y `9399246`; recuperación original 29/29, selección de conexión 5/5 unidades y 31/31 diagnóstico UI; paquetes 537/542 con cinco arneses antiguos pendientes. Se mantienen 59/60 fichas técnicas y 28/60 formales, producción sin validar. Histórico real previo reportado por Javier; quedan fuentes y reconciliación. Sin push, despliegue ni cambios externos en esta ejecución.
+
+Los cortes fechados que siguen son históricos y no sustituyen el estado vigente.
+
 Corte: 1 de octubre de 2026. Producto desplegado `1eef4d6`, con READY y SHA comprobados; la exportación histórica corregida pasó 4/4 en Node 22/26; el último smoke remoto integral corresponde a `f893851`. Plantilla operacional de notificaciones y regresión SQL publicadas en `e80b122`; el observador de carga sigue en `66a25c1`. La propuesta 442 no se adoptó: comparación diferida por host no preparado, sin ventanas medidas. Estado:59/60 técnicas,28 formales,producción pendiente. Registro de salida pendiente, no lista de defectos confirmados ni acta de producción. P1 indica condición que bloquea habilitar producción; P2 bloquea la entrega prevista. El responsable se expresa por rol porque las personas y fechas deben acordarse realmente. Los recibos privados no se publican; su existencia no convierte un pendiente en PASS.
 
 Programación: seis plantillas explícitas disponibles; regresión SQL8/8 y ensayo local de transporte HTTPS1/1 revisados. Las extensiones pg_cron/pg_net ya están instaladas y siete controles posteriores de Auth/Data API pasaron. Un ensayo posterior cron→worker de Vercel procesó dos filas SYN, con dos HTTP 200 y limpieza MCP comprobada. La programación se retiró al terminar; queda la operación permanente. [Recibo y límites](OPERACION-GESTIONADA-2026-10-01.md).

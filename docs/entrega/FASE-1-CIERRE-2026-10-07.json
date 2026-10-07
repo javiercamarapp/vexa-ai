@@ -1,0 +1,1354 @@
+{
+  "schema": "rovaq-phase1-closure-v1",
+  "date": "2026-10-07",
+  "status": "closed_with_explained_failures",
+  "criterion": "0 resultados fallidos sin clasificación; no implica suite totalmente verde ni aceptación de producto",
+  "baselineSha": "b0be6df86a2aad53f46bb6054e192c94d62b13e3",
+  "diagnosticAttemptHistory": [
+    {
+      "label": "workspace-current-labels",
+      "explanation": "Filtro SKU dentro de details cerrado.",
+      "logSha256": "6ffe50ea9aec82210f1c02f519133ef117b2ee78fc29cbe1f8984b8dbdb567ff"
+    },
+    {
+      "label": "workspace-expanded-filters",
+      "explanation": "Botón overview ahora Actualizar, antes Actualizar vista.",
+      "logSha256": "01e5c370b30a5dc6c7a42c8ae1a100e9c86ddc4b878b4eae44dff1ce73fe1998"
+    },
+    {
+      "label": "detail-financial-card",
+      "explanation": "Segundo regreso pulsaba catálogo, antes de resolver tarjeta financiera.",
+      "logSha256": "8b56a11c451f0dfb37de8223ebe83e93b55b2255abf4fa56d36036b58862a939"
+    },
+    {
+      "label": "explorer-current-label",
+      "explanation": "Etiqueta ahora Tu pregunta.",
+      "logSha256": "ff36bab99e561c95886109164e1093cb0426aaa47d0fa77a226615c0368e64f1"
+    },
+    {
+      "label": "explorer-current-query",
+      "explanation": "Fuentes dentro de details Ver fuentes; enlace existente y scope/dinero comprobados en DOM.",
+      "logSha256": "16e7e285b2c69be9f5687d235bf6ab59190eae34ccd42c275b688dbae2268b12"
+    },
+    {
+      "label": "briefs-current-label",
+      "explanation": "SKU dentro de Más filtros y alcance; botón Aplicar filtros.",
+      "logSha256": "a793c6b4090013f7f54422d7e2fa3d783e05b381521e831329edc33967d8c94f"
+    },
+    {
+      "label": "explorer-expanded-references",
+      "explanation": "Timeout total480s incluía preparación lenta; primer bloque138,949s frente27,042s anterior. Los hijos posteriores quedaron cancelados por padre. Diagnóstico final separó preparación32,276s y funcional 110,141 s dentro de 480 s, 13/13 PASS; no aceptación original.",
+      "logSha256": "eeb3ea4fe5bac6a6d12ef08d4f0432539af86d22a4a3108c071af010f5bdbfb9"
+    },
+    {
+      "label": "preview-current-ui",
+      "explanation": "EsperaGETdetail de20 MiB agotó12s. Perfil siguiente sin cambiar límite obtuvoGET 200 en 2,155 s,20 MiB y excesoPASS; retiene incidencia intermitente de entorno.",
+      "logSha256": "70f0f70de9d986a931be1ced4cfc7b864a2c0687ee978a37aa44d0d8b5096fa8"
+    },
+    {
+      "label": "auth-diagnostic-v2",
+      "explanation": "Infraestructura durante suspensión documentada de macOS.",
+      "logSha256": "ca5c8c01b4f8a06491ddd8547d1186deb394a17ce12cbaa7761bea9976ebdb8f"
+    },
+    {
+      "label": "f0203-env-recheck-v2",
+      "explanation": "Timeout durante suspensión documentada de macOS.",
+      "logSha256": "458cd4f28aa6faac5688c2800d130c7cf0406f1298a75e86b6ca0dcbf29e8143"
+    },
+    {
+      "label": "f0503-sql-recheck-v2",
+      "explanation": "Infraestructura durante suspensión documentada de macOS.",
+      "logSha256": "3ced3a4be55549293cc8aa676a2241b18d9e5bd86363b406a4c310b1b9672f52"
+    },
+    {
+      "label": "barrier-profile-v2",
+      "explanation": "Timeout durante suspensión documentada de macOS.",
+      "logSha256": "a8aedce3692bd8418752e387186bc123273c917f01466423f82fbc97adf23354"
+    },
+    {
+      "label": "f0203-awake-v3",
+      "explanation": "Control UI antiguo: nombre de navegación y regex de error; interceptor abort restante causa fallo en cascada.",
+      "logSha256": "24f952f66d25f41ee03c7bcf1267c72854e38cea1c6474cd47b3fe99609fefcf"
+    },
+    {
+      "label": "preview-upload-profile",
+      "explanation": "20 MiB y exceso PASS; descubrió defecto real de pérdida de selección segunda página, corregido9399246 y diagnóstico31/31PASS.",
+      "logSha256": "2a871f4b7040cba7e0a0cf56b967edde5258bf0c729d007fd638def943e39bd9"
+    },
+    {
+      "label": "explorer-separated-preparation",
+      "explanation": "Asercióncount0vs25 inmediatamente trasHTTP 200/URLcursor,antes renderReact. Diagnóstico final espera25artículos con mismo límite 15 s y conservaaserción de 25;13/13PASS.",
+      "logSha256": "3c113ca7fda5e7b5cc2781a8d919ad715ada02c0ae014498b8fae4291eb63235"
+    }
+  ],
+  "productFixCommits": [
+    "ed9f06d",
+    "93992467c8efcdacac38f1c7488cc9ed610d56c5"
+  ],
+  "node": "22.23.2",
+  "docker": "29.7.2",
+  "syntheticLocalOnly": true,
+  "phase1CompletionPercent": 100,
+  "phase2Started": false,
+  "formalAcceptanceChanged": false,
+  "constructionTasks": {
+    "technical": 59,
+    "formal": 28,
+    "total": 60
+  },
+  "productionValidated": false,
+  "baselineRuns": {
+    "interruptedInitial": {
+      "completedTopLevel": 234,
+      "passTopLevel": 220,
+      "failTopLevel": 14,
+      "finalSummaryAvailable": false
+    },
+    "continuation": {
+      "tests": 1627,
+      "pass": 1598,
+      "fail": 29,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 4749461.323458
+    },
+    "packages": {
+      "tests": 542,
+      "pass": 537,
+      "fail": 5,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 31866.35175
+    },
+    "note": "Los conteos de pruebas principales y anidadas no se suman ni comparan como una suite única. Continuación desde F06-01; 68 archivos de entrada recorridos en total. F07-01 no existe y no se cuenta como aprobado."
+  },
+  "unclassifiedFailureResults": 0,
+  "classifiedFailureResults": 65,
+  "classifications": [
+    {
+      "id": "F01-02",
+      "category": "Control desactualizado",
+      "explanation": "Dos esperas de networkidle no terminan por prefetch y notificaciones. Ambos cambios de organización se comprobaron correctos; cookie nueva: / responde 307 hacia /overview y el destino responde 200. No se reproduce rechazo de sesión.",
+      "evidenceLog": "auth-awake-v3.log"
+    },
+    {
+      "id": "F01-03",
+      "category": "Entorno / plazo intermitente",
+      "explanation": "La matriz inicial agotó el plazo; otras importaciones durante suspensión fallaron en docker exec. La misma matriz completa pasó 444/444 sobre el mismo SHA. Se conservan los fallos iniciales y no se atribuyen todos a la suspensión posterior. No equivale a F07-01.",
+      "evidenceLog": "remaining-gates.log"
+    },
+    {
+      "id": "F01-04",
+      "category": "Control desactualizado",
+      "explanation": "Espera Espacio de trabajo, selector Organización activa y seis enlaces. El shell vigente usa Navegación principal, grupos y contexto estático si sólo hay una organización; los recorridos complementarios de F06 verifican navegación, alcance y revocación.",
+      "evidenceLog": "interventions-current-label.log"
+    },
+    {
+      "id": "F01-05",
+      "category": "Conflicto de herramientas",
+      "explanation": "Cuatro jobs del contrato congelado exigen Node 26.7.0; engines y el plan exigen Node 22.x. Rechazo NODE_VERSION. No se alteraron contrato, workflow ni runtime requerido.",
+      "evidenceLog": "all-gates.log"
+    },
+    {
+      "id": "F02-03",
+      "category": "Control desactualizado y defecto de producto corregido",
+      "explanation": "Fallback de Playwright apuntaba a un temporal ausente: configurado módulo fijado del control. Después falló la navegación antigua y la regex fetch/error/fall ante el texto actual No se pudo recibir la respuesta; dejó un interceptor abort activo y causó un segundo error en cascada. Diagnóstico actual cambia sólo esos textos. El perfil de 20 MiB obtuvo GET 200 en 2,155 s sin cambiar 12 s de espera. Al continuar descubrió pérdida real de selección en segunda página al recargar reservas; corregida en 9399246 con páginas autorizadas actuales. Unidades 5/5, scaffold PASS y navegador complementario 31/31, incluida retirada de conexión deshabilitada.",
+      "evidenceLog": "preview-selection-fix.log"
+    },
+    {
+      "id": "F02-05",
+      "category": "Plazo intermitente, comportamiento reverificado",
+      "explanation": "Barrera postcommit inicial excedió 300 s. F02-06 original pasó el caso SIGKILL/replay; diagnóstico posterior: 110,564 s, 10.000 filas, offset 10000 y done=true, cero errores SQL. No se subió el plazo. La causa precisa del timeout antiguo no quedó aislada; queda como incidencia intermitente de ejecución, con reproducción posterior verde.",
+      "evidenceLog": "barrier-awake-v3.log"
+    },
+    {
+      "id": "F03-01",
+      "category": "Configuración y autorización externas",
+      "explanation": "Transporte local aprobado; S01 live requiere configuración privada de cuenta/app, autorización y referencia independiente reconciliada. API HubSpot y 20 casos ya disponibles según Javier; no pedirlos otra vez.",
+      "evidenceLog": "all-gates.log"
+    },
+    {
+      "id": "F03-02",
+      "category": "Configuración y autorización externas",
+      "explanation": "Transporte local aprobado; S02 live requiere cuenta/subdominio/token Zendesk autorizados y reconciliación independiente. Variables exactas en externalPrerequisites.",
+      "evidenceLog": "all-gates.log"
+    },
+    {
+      "id": "F03-03",
+      "category": "Defecto de producto corregido",
+      "explanation": "SQL57014 con 1.001 pendientes reproducido antes del cambio. Commit ed9f06d materializa pendientes y las identidades autorizadas de sus imports para evitar repetir lectura RLS. Consultas 18,318 y 114,600 ms; gate original 29/29, unidades afectadas 12/12.",
+      "evidenceLog": "sync-linked-v2-original-gate.log"
+    },
+    {
+      "id": "F05-02",
+      "category": "Fixture caducado",
+      "explanation": "El supuesto futuro venció el 1-oct pero el test sigue esperando 1000. Producto devuelve null y assumption_not_valid_as_of correctamente. Diagnóstico con supuesto vigente pasó 10/10; original continúa fallido.",
+      "evidenceLog": "ledger-current-fixture.log"
+    },
+    {
+      "id": "F05-03",
+      "category": "Entorno interrumpido, reverificado",
+      "explanation": "Fallos Docker/SQL durante suspensión del host; repetición focal del control SQL original pasó 15/15.",
+      "evidenceLog": "f0503-awake-v3.log"
+    },
+    {
+      "id": "F05-06",
+      "category": "Entorno interrumpido, reverificado",
+      "explanation": "Docker se detuvo sin veredicto SQL; repetición focal del control original pasó 22/22.",
+      "evidenceLog": "f0506-sql-recheck-v2.log"
+    },
+    {
+      "id": "F06-01",
+      "category": "Control desactualizado",
+      "explanation": "Overview usa Exportar JSON/CSV, filtros dentro de dos details, Aplicar filtros y Actualizar. Copia complementaria conserva las comprobaciones financieras, scope, respuestas tardías y revocación usando los controles vigentes. Estados visibles actuales: Sin cifras publicadas, Cobertura parcial y Corte desactualizado. Se verifica el subtotal y el total desconocido en la misma fila de la tabla; ausencia de artículos y exports tras revocación.",
+      "evidenceLog": "workspace-current-refresh.log"
+    },
+    {
+      "id": "F06-02",
+      "category": "Selector no acotado a la publicación financiera",
+      "explanation": "El selector original puede pulsar primero el catálogo de problemas, sin snapshot/scope por diseño. Copia complementaria apunta a la tarjeta financiera en entrada y regreso; 11/11 comprobaciones pasan.",
+      "evidenceLog": "detail-financial-return.log"
+    },
+    {
+      "id": "F06-03",
+      "category": "Selector financiero y navegación desactualizados",
+      "explanation": "Mismo acceso al catálogo antes de resolver la publicación; selector de tarjeta y navegación actual: 14/14. Oráculos financieros sin alterar.",
+      "evidenceLog": "recommendations-financial-card.log"
+    },
+    {
+      "id": "F06-04",
+      "category": "Control desactualizado",
+      "explanation": "Navegación renombrada, etiqueta Tu pregunta y fuentes dentro de Ver fuentes. Se sincroniza la aserción de 25 filas con el render posterior al HTTP 200. Preparación medida aparte del plazo funcional de 480 s; límites por operación intactos. Oráculos de dinero, referencias, paginación, scope, errores y revocación conservados; no es PASS del gate original.",
+      "evidenceLog": "explorer-rendered-page.log"
+    },
+    {
+      "id": "F06-05",
+      "category": "Control desactualizado",
+      "explanation": "Navegación renombrada. Copia complementaria pasó 14/14, incluida revocación con respuesta tardía.",
+      "evidenceLog": "interventions-current-label.log"
+    },
+    {
+      "id": "F06-06",
+      "category": "Control desactualizado",
+      "explanation": "Navegación renombrada, SKU en Más filtros y alcance y botón Aplicar filtros. Complementario: 15/15 con generación durable, descarga y revocación.",
+      "evidenceLog": "briefs-expanded-filters.log"
+    },
+    {
+      "id": "F06-07",
+      "category": "Prerequisitos de evaluación externa",
+      "explanation": "PRIVATE_EVIDENCE_DIRECTORY_REQUIRED: herramientas fijadas, evidencia heredada ligada a hashes y ledger adjudicado. No se inventó revisión humana, herencia ni aprobación.",
+      "evidenceLog": "remaining-gates.log"
+    },
+    {
+      "id": "F06-08",
+      "category": "Expectativa anterior a F06-12",
+      "explanation": "Dos controles esperan todos los eventos desconectados; F06-12 ya conecta productores de cinco eventos. membership.invited sigue desconectado. F06-12 y controles de transporte actuales pasan; no se confunde conexión local con proveedor externo.",
+      "evidenceLog": "remaining-gates.log"
+    },
+    {
+      "id": "F06-10",
+      "category": "Marca antigua en el control",
+      "explanation": "La única causa en 35/36 funcionales y 24/25 puros es /VEXA/ frente a Rovaq AI en HTML construido. Diagnóstico de marca actual: 1/1.",
+      "evidenceLog": "email-current-brand.log"
+    },
+    {
+      "id": "F06-11",
+      "category": "Marca antigua en el control",
+      "explanation": "Título/cuerpo del service worker esperan VEXA. Copia complementaria de marca actual: 51/51 conservando handlers, autorización y destinos.",
+      "evidenceLog": "push-current-brand.log"
+    },
+    {
+      "id": "F07-04",
+      "category": "Host suspendido; capacidad no acreditada",
+      "explanation": "10K pasó en 106,306 s. 50K: LOAD_WORKER_CALL_TIMEOUT:consume a 960 s, checkpoint 34200; último progreso 13:29:52 coincide con Clamshell Sleep 13:29:46. 150K no inició. No acredita cuello de producto; nuevo manifiesto exige empezar 10K en Fase 3.",
+      "evidenceLog": "remaining-gates.log"
+    },
+    {
+      "id": "F07-06",
+      "category": "Host suspendido; componentes reverificados",
+      "explanation": "Restore local terminó con siete tablas iguales y limpieza; rollback original expiró durante suspensión. Repetición despierta PASS: igualdad financiera antes/después, foreign404 y roll-forward idéntico. El wrapper original sigue fallido; recuperación gestionada sigue pendiente en Fase 4.",
+      "evidenceLog": "rollback-awake-v3.log"
+    },
+    {
+      "id": "F07-05",
+      "category": "Validación humana externa",
+      "explanation": "Piloto real, manifiesto y revisión legítima no presentes en el entorno aislado. Fase 6.",
+      "evidenceLog": "remaining-gates.log"
+    },
+    {
+      "id": "F08-01",
+      "category": "Autorización y evidencia externas",
+      "explanation": "Manifiesto de release, evidencia de revisión servida y aprobación legítima no suministrados.",
+      "evidenceLog": "remaining-gates.log"
+    },
+    {
+      "id": "F08-02",
+      "category": "Autorización y evidencia externas",
+      "explanation": "VEXA_SMOKE_GATE_INPUT ausente provoca path undefined; falta recibo de ejecución remota autorizada. No sustituir con localhost.",
+      "evidenceLog": "remaining-gates.log"
+    },
+    {
+      "id": "F08-03",
+      "category": "Validación humana externa",
+      "explanation": "Ensayo real cronometrado y manifiesto/revisión legítimos no suministrados.",
+      "evidenceLog": "remaining-gates.log"
+    },
+    {
+      "id": "F08-04",
+      "category": "Autorización y evidencia externas",
+      "explanation": "Inventario final de materiales y permisos revisados no suministrados.",
+      "evidenceLog": "remaining-gates.log"
+    },
+    {
+      "id": "F08-05",
+      "category": "Validación humana externa",
+      "explanation": "Entrega y guía confirmadas por una persona real, manifiesto y revisión no suministrados.",
+      "evidenceLog": "remaining-gates.log"
+    },
+    {
+      "id": "F08-06",
+      "category": "Autorización y evidencia externas",
+      "explanation": "Dossier de cierre por capas y aprobación legítima pendientes.",
+      "evidenceLog": "remaining-gates.log"
+    },
+    {
+      "id": "PKG-SCHEMA",
+      "category": "Fixture de Storage incompleto",
+      "explanation": "Cuatro pruebas crean storage.objects sin owner_id ni metadata, exigidos por migración 0005: error 42703 antes de sus oráculos. Docker sí funciona. La suposición inicial de que sólo faltaba Docker era incorrecta. Se mantienen fallidas; matrices actuales con Storage real pasan.",
+      "evidenceLog": "remaining-packages.log"
+    },
+    {
+      "id": "PKG-CAS",
+      "category": "Referencia absoluta a runtime histórico",
+      "explanation": "service-cas.test.mjs importa cuatro módulos de .runtime/renewed-app-integration-1789837609558767000; falla resolver @vexa/platform y no prueba el checkout vigente. Se mantiene fallida como deuda del arnés.",
+      "evidenceLog": "remaining-packages.log"
+    }
+  ],
+  "failureResults": [
+    {
+      "log": "all-gates.log",
+      "index": 2,
+      "depth": 4,
+      "title": "fresh authorized selection / tampered B / fresh authorized control",
+      "classification": "F01-02",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 4,
+      "depth": 4,
+      "title": "corrupt cookie, invalid signature, expired token without refresh, and anonymous",
+      "classification": "F01-02",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 5,
+      "depth": 4,
+      "title": "membership revocation blocks the immediately following request",
+      "classification": "F01-02",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 7,
+      "depth": 0,
+      "title": "F01-02: real SSR callback, membership, invalid sessions, revocation and logout",
+      "classification": "F01-02",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 8,
+      "depth": 0,
+      "title": "F01-03: real candidate migrations, SQL matrix, Storage and retrieval",
+      "classification": "F01-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 1,
+      "depth": 4,
+      "title": "seis estados, alcance, teclado, foco y dos viewports",
+      "classification": "F01-04",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 2,
+      "depth": 4,
+      "title": "rutas protegidas con sesión real y selectores forjados",
+      "classification": "F01-04",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 9,
+      "depth": 0,
+      "title": "F01-04: componentes reales, ocho rutas y autorización independiente del menú",
+      "classification": "F01-04",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 10,
+      "depth": 0,
+      "title": "F01-05: reviewed CI contract and four actual trusted jobs",
+      "classification": "F01-05",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 76,
+      "depth": 0,
+      "title": "F02-03 real mapping, HTTP and browser; acceptance remains external",
+      "classification": "F02-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 78,
+      "depth": 0,
+      "title": "F02-05 ENTRYDIRECT complete external durable contract",
+      "classification": "F02-05",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 108,
+      "depth": 0,
+      "title": "F03-01 S01 real account scopes messages and independent UI/export reconciliation",
+      "classification": "F03-01",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 111,
+      "depth": 0,
+      "title": "S02 real authorized account and independent reconciliation",
+      "classification": "F03-02",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 13,
+      "depth": 4,
+      "title": "more than1000 pending messages recover before terminal success",
+      "classification": "F03-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 112,
+      "depth": 0,
+      "title": "F03-03 real PostgreSQL page transactions and recovery",
+      "classification": "F03-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 5,
+      "depth": 4,
+      "title": "support sums exact numerators then rounds once; unknowns and forecasts remain honest",
+      "classification": "F05-02",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 200,
+      "depth": 0,
+      "title": "F05-02 real Auth SQL persistent ledger and browser financial components",
+      "classification": "F05-02",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 93,
+      "depth": 4,
+      "title": "snapshots0021 private drafts and current authorization",
+      "classification": "F01-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 108,
+      "depth": 4,
+      "title": "recommendations0025 tenant current roles capabilities",
+      "classification": "F01-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 114,
+      "depth": 4,
+      "title": "interventions0026 plan permissions CAS and approval immutability",
+      "classification": "F01-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 115,
+      "depth": 4,
+      "title": "interventions0026 ordered canonical measurement and exact delta",
+      "classification": "F01-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 206,
+      "depth": 0,
+      "title": "F01-03: real candidate migrations, SQL matrix, Storage and retrieval",
+      "classification": "F01-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 2,
+      "depth": 4,
+      "title": "FORCE RLS mutant reaches exact exposure oracle then restores",
+      "classification": "F05-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 208,
+      "depth": 0,
+      "title": "F05-03 targeted SQL schema permissions identity and contributor probes",
+      "classification": "F05-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 44,
+      "depth": 4,
+      "title": "functional RLS interventions",
+      "classification": "F01-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 45,
+      "depth": 4,
+      "title": "functional RLS measurement_plans",
+      "classification": "F01-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 46,
+      "depth": 4,
+      "title": "functional RLS weekly_briefs",
+      "classification": "F01-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 47,
+      "depth": 4,
+      "title": "functional RLS audit_events",
+      "classification": "F01-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 48,
+      "depth": 4,
+      "title": "functional RLS tombstones",
+      "classification": "F01-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 230,
+      "depth": 0,
+      "title": "F01-03: real candidate migrations, SQL matrix, Storage and retrieval",
+      "classification": "F01-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "all-gates.log",
+      "index": 232,
+      "depth": 0,
+      "title": "F05-06 targeted priority SQL",
+      "classification": "F05-06",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 8,
+      "depth": 4,
+      "title": "real browser shares URL scope across overview and problems and exports matching bytes",
+      "classification": "F06-01",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 2,
+      "depth": 0,
+      "title": "F06-01 shared authorized snapshot scope across API and real browser",
+      "classification": "F06-01",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 1,
+      "depth": 4,
+      "title": "real canonical ingestion evidence and exact settled refund establish snapshot",
+      "classification": "F06-02",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 17,
+      "depth": 0,
+      "title": "F06-02 physical financial drilldown and canonical customer identity",
+      "classification": "F06-02",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 1,
+      "depth": 4,
+      "title": "real captured evidence and financial scope seed recommendations without external operations",
+      "classification": "F06-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 31,
+      "depth": 0,
+      "title": "F06-03 conditional recommendations persist safely and create idempotent drafts only",
+      "classification": "F06-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 6,
+      "depth": 4,
+      "title": "real navigation, paging and search preserve scope and invalidate active cursor",
+      "classification": "F06-04",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 42,
+      "depth": 0,
+      "title": "F06-04 explorer provides exhaustive authorized read-only search and safe UI recovery",
+      "classification": "F06-04",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 11,
+      "depth": 4,
+      "title": "late list cannot restore intervention details after membership revocation and history return",
+      "classification": "F06-05",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 54,
+      "depth": 0,
+      "title": "F06-05 intervention plan precedes real execution and durable non-causal measurement",
+      "classification": "F06-05",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 9,
+      "depth": 4,
+      "title": "real navigation and lost generation response preserve the authorized previous brief without false success",
+      "classification": "F06-06",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 61,
+      "depth": 0,
+      "title": "F06-06 immutable briefs preserve canonical scope money evidence and current download authorization",
+      "classification": "F06-06",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 70,
+      "depth": 0,
+      "title": "F06-07 composed local SYN accessibility and action persistence; human judgment remains external",
+      "classification": "F06-07",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 1,
+      "depth": 4,
+      "title": "real fixture has published authorized resource and recipients from memberships only",
+      "classification": "F06-08",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 72,
+      "depth": 0,
+      "title": "F06-08 current membership owns inbox preferences and resource access across real API and browser",
+      "classification": "F06-08",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 74,
+      "depth": 0,
+      "title": "catalogue communicates six disconnected VEXA-only events and no external delivery",
+      "classification": "F06-08",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 1,
+      "depth": 4,
+      "title": "email pure security and configuration regressions use installed runtime copy",
+      "classification": "F06-10",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 94,
+      "depth": 0,
+      "title": "F06-10 real local SMTP and durable provider receipt lifecycle",
+      "classification": "F06-10",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 4,
+      "depth": 4,
+      "title": "exact service worker handlers reauthorize current device and ignore payload destinations",
+      "classification": "F06-11",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 96,
+      "depth": 0,
+      "title": "F06-11 actual local API browser worker and durable multi-device delivery",
+      "classification": "F06-11",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 106,
+      "depth": 0,
+      "title": "F07-04 independent10K50K150K actual ingestion measurements",
+      "classification": "F07-04",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 107,
+      "depth": 0,
+      "title": "F07-05 actual pilot artifacts and independently reviewed human observations",
+      "classification": "F07-05",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 108,
+      "depth": 0,
+      "title": "F07-06 restore current histories and previous binary financial continuity",
+      "classification": "F07-06",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 109,
+      "depth": 0,
+      "title": "F08-01 source inventory, approved evidence and remotely served revision",
+      "classification": "F08-01",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 110,
+      "depth": 0,
+      "title": "F08-02 authenticated external execution receipt and exact runtime evidence",
+      "classification": "F08-02",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 111,
+      "depth": 0,
+      "title": "F08-03 offline backup and legitimate timed human rehearsal",
+      "classification": "F08-03",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 112,
+      "depth": 0,
+      "title": "F08-04 exact material inventory and externally reviewed permission scope",
+      "classification": "F08-04",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 113,
+      "depth": 0,
+      "title": "F08-05 current guide package and externally confirmed handoff",
+      "classification": "F08-05",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-gates.log",
+      "index": 114,
+      "depth": 0,
+      "title": "F08-06 cierre por capas con evidencia observada y revisión legítima",
+      "classification": "F08-06",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-packages.log",
+      "index": 529,
+      "depth": 0,
+      "title": "content-bound approval on PostgreSQL17",
+      "classification": "PKG-SCHEMA",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-packages.log",
+      "index": 530,
+      "depth": 0,
+      "title": "content-bound approval on PostgreSQL17",
+      "classification": "PKG-SCHEMA",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-packages.log",
+      "index": 531,
+      "depth": 0,
+      "title": "independent review regressions on PostgreSQL17",
+      "classification": "PKG-SCHEMA",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-packages.log",
+      "index": 51,
+      "depth": 0,
+      "title": "packages/platform/tests/schema/service-cas.test.mjs",
+      "classification": "PKG-CAS",
+      "originalStatus": "FAIL"
+    },
+    {
+      "log": "remaining-packages.log",
+      "index": 533,
+      "depth": 0,
+      "title": "SYNTHETIC PostgreSQL17: migrations, constraints, RLS, backend",
+      "classification": "PKG-SCHEMA",
+      "originalStatus": "FAIL"
+    }
+  ],
+  "evidence": [
+    {
+      "log": "all-gates.log",
+      "sha256": "b981eae0cd0e6c40e64e368b4a78d0c29e51052e010888f8904de33b624122db",
+      "totals": {},
+      "supplementalNotFormalAcceptance": false,
+      "started_at": "2026-10-07T16:36:10.043993+00:00"
+    },
+    {
+      "log": "remaining-gates.log",
+      "sha256": "02dee27904b46df4aab7c043247977c1c3143182f10d7cf729c1d43fc822eb2f",
+      "totals": {
+        "tests": 1627,
+        "pass": 1598,
+        "fail": 29,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 4749461.323458
+      },
+      "supplementalNotFormalAcceptance": false,
+      "exit_code": 1,
+      "started_at": "2026-10-07T18:36:11.600824+00:00",
+      "finished_at": "2026-10-07T19:55:21.184601+00:00"
+    },
+    {
+      "log": "remaining-packages.log",
+      "sha256": "4b57ed7ae69181415a3180e35e43235208f9511ad228a5fc63431fae17dac2e3",
+      "totals": {
+        "tests": 542,
+        "pass": 537,
+        "fail": 5,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 31866.35175
+      },
+      "supplementalNotFormalAcceptance": false,
+      "exit_code": 1,
+      "started_at": "2026-10-07T19:55:21.219379+00:00",
+      "finished_at": "2026-10-07T19:55:53.173982+00:00"
+    },
+    {
+      "log": "controller-phase1.log",
+      "sha256": "a1b8e34a165271271a444837bf7b1ecb327059f3121c5dc9ccfc7b396c3ef911",
+      "totals": {},
+      "supplementalNotFormalAcceptance": false
+    },
+    {
+      "log": "import-selection-unit.log",
+      "sha256": "bd50a062327b287e88f60da20255b3c8a33972b56d09f99f69cdd8bacc907d92",
+      "totals": {
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 99.891792
+      },
+      "supplementalNotFormalAcceptance": false,
+      "exit_code": 0,
+      "started_at": "2026-10-07T21:58:31.334623+00:00",
+      "finished_at": "2026-10-07T21:58:31.492244+00:00"
+    },
+    {
+      "log": "import-selection-scaffold.log",
+      "sha256": "46070541acd0446287068c392ed6c33c364f36b62ecc978cc2959347f4d8306c",
+      "totals": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 39375.264709
+      },
+      "supplementalNotFormalAcceptance": false,
+      "exit_code": 0,
+      "started_at": "2026-10-07T21:58:31.503032+00:00",
+      "finished_at": "2026-10-07T21:59:10.937657+00:00"
+    },
+    {
+      "log": "import-selection-manifest-preflight.log",
+      "sha256": "c618665af91291eff55063119fa2a0879342ec1ddaa1d631c54c0193071138ed",
+      "totals": {},
+      "supplementalNotFormalAcceptance": false
+    },
+    {
+      "log": "sync-linked-v2-original-gate.log",
+      "sha256": "d6a5609c8b4e81a585b80b1d7502362b004fb01607675a807e9cfd86cb952ed0",
+      "totals": {
+        "tests": 29,
+        "pass": 29,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 37188.48575
+      },
+      "supplementalNotFormalAcceptance": false,
+      "exit_code": 0,
+      "started_at": "2026-10-07T21:21:10.557979+00:00",
+      "finished_at": "2026-10-07T21:21:47.805785+00:00"
+    },
+    {
+      "log": "sync-v2-unit.log",
+      "sha256": "4439aaf17a63fbd87264163584086547b3cb5f1dd69461d5a976872e71b2a55d",
+      "totals": {
+        "tests": 12,
+        "pass": 12,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 348.575125
+      },
+      "supplementalNotFormalAcceptance": false
+    },
+    {
+      "log": "sync-v2-manifest-preflight.log",
+      "sha256": "dd7b8a0beda33d89afdbee2e9bb0025aa01e30e91ff9ea32e997483518fbf922",
+      "totals": {},
+      "supplementalNotFormalAcceptance": false
+    },
+    {
+      "log": "sync-fix-scaffold.log",
+      "sha256": "da923f7739ed8d34c32545cdb0b58cc8dab6d58fe09c5bf8c35e787046f39bd5",
+      "totals": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 30622.306
+      },
+      "supplementalNotFormalAcceptance": false,
+      "exit_code": 0,
+      "started_at": "2026-10-07T21:06:35.865896+00:00",
+      "finished_at": "2026-10-07T21:07:06.547880+00:00",
+      "limitation": "Scaffold lint/typecheck/build ejecutados con la primera variante SQL; la variante final modifica sólo el literal SQL/comentario y pasó sintaxis, 29 controles originales y 12 unidades afectadas."
+    },
+    {
+      "log": "auth-awake-v3.log",
+      "sha256": "53de412ead6a68423e2054d3773fe79f53d555f4c4ab96a275ccd0d83779efe1",
+      "totals": {},
+      "supplementalNotFormalAcceptance": true,
+      "exit_code": 0,
+      "started_at": "2026-10-07T21:21:47.815801+00:00",
+      "finished_at": "2026-10-07T21:23:21.344630+00:00"
+    },
+    {
+      "log": "f0503-awake-v3.log",
+      "sha256": "ddb41ca848ac6523ce60d88cde56aa8a4dc6aecadd6f49273df4d2c931e1401e",
+      "totals": {
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 31805.472167
+      },
+      "supplementalNotFormalAcceptance": false,
+      "exit_code": 0,
+      "started_at": "2026-10-07T21:24:19.603157+00:00",
+      "finished_at": "2026-10-07T21:24:51.472083+00:00"
+    },
+    {
+      "log": "f0506-sql-recheck-v2.log",
+      "sha256": "be094430603c9faa1a760e2283d477ce1e4f89bdf1be63f0d9ce224ec571b921",
+      "totals": {
+        "tests": 22,
+        "pass": 22,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 37175.515083
+      },
+      "supplementalNotFormalAcceptance": false,
+      "exit_code": 0,
+      "started_at": "2026-10-07T20:44:50.864032+00:00",
+      "finished_at": "2026-10-07T20:45:28.087121+00:00"
+    },
+    {
+      "log": "barrier-awake-v3.log",
+      "sha256": "8adc21ddb512be8e589054780d1d1459bfc0763117bf1e78ffcc24b77f78a2e1",
+      "totals": {},
+      "supplementalNotFormalAcceptance": true,
+      "exit_code": 0,
+      "started_at": "2026-10-07T21:24:51.482209+00:00",
+      "finished_at": "2026-10-07T21:27:11.055599+00:00"
+    },
+    {
+      "log": "rollback-awake-v3.log",
+      "sha256": "53371f8c0f6b040ef45eddbca32cc2ca126292e4cd0dbaedc0bc7e07a25d5630",
+      "totals": {},
+      "supplementalNotFormalAcceptance": false,
+      "exit_code": 0,
+      "started_at": "2026-10-07T21:27:11.066521+00:00",
+      "finished_at": "2026-10-07T21:28:17.521834+00:00"
+    },
+    {
+      "log": "preview-selection-fix.log",
+      "sha256": "ebd701ecdbc72e530a81ddd0db3c2dee863e71a324c8fb80790e2ed1f3be9ee9",
+      "totals": {
+        "tests": 31,
+        "pass": 31,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 72299.140375
+      },
+      "supplementalNotFormalAcceptance": true,
+      "exit_code": 0,
+      "started_at": "2026-10-07T21:59:10.951207+00:00",
+      "finished_at": "2026-10-07T22:00:25.684367+00:00"
+    },
+    {
+      "log": "workspace-current-refresh.log",
+      "sha256": "41a15056612f6568378a5d29ebc6afec289fcd8f91920c5588cba45a304bc76c",
+      "totals": {
+        "tests": 16,
+        "pass": 16,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 308143.258833
+      },
+      "supplementalNotFormalAcceptance": true,
+      "exit_code": 0,
+      "started_at": "2026-10-07T21:37:05.022308+00:00",
+      "finished_at": "2026-10-07T21:42:13.450640+00:00"
+    },
+    {
+      "log": "detail-financial-return.log",
+      "sha256": "4b9de30f399e0b27deaa0fc54e522a1a554abc8c6d0a4d54e6cf847c19d3a6fa",
+      "totals": {
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 59387.547417
+      },
+      "supplementalNotFormalAcceptance": true,
+      "exit_code": 0,
+      "started_at": "2026-10-07T21:29:20.891645+00:00",
+      "finished_at": "2026-10-07T21:30:20.338301+00:00"
+    },
+    {
+      "log": "recommendations-financial-card.log",
+      "sha256": "4b6ed69bf49a896ab0721aa50ec13747495972189db55b924e29961183869dd6",
+      "totals": {
+        "tests": 14,
+        "pass": 14,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 123560.350791
+      },
+      "supplementalNotFormalAcceptance": true,
+      "exit_code": 0,
+      "started_at": "2026-10-07T21:10:59.553271+00:00",
+      "finished_at": "2026-10-07T21:13:03.197906+00:00"
+    },
+    {
+      "log": "explorer-rendered-page.log",
+      "sha256": "890b2c5499d7e9b1701d0c93d784eafa0115db816a1fcc848eb4d4e5de2c773e",
+      "totals": {
+        "tests": 13,
+        "pass": 13,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 142416.743958
+      },
+      "supplementalNotFormalAcceptance": true,
+      "exit_code": 0,
+      "started_at": "2026-10-07T22:00:25.695551+00:00",
+      "finished_at": "2026-10-07T22:02:48.172831+00:00"
+    },
+    {
+      "log": "interventions-current-label.log",
+      "sha256": "6d81eadd8d2528d07cb621dcd32f657b9430974a812e8a5b9e37a99b232801a0",
+      "totals": {
+        "tests": 14,
+        "pass": 14,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 114769.551125
+      },
+      "supplementalNotFormalAcceptance": true,
+      "exit_code": 0,
+      "started_at": "2026-10-07T21:13:03.213178+00:00",
+      "finished_at": "2026-10-07T21:14:58.058407+00:00"
+    },
+    {
+      "log": "briefs-expanded-filters.log",
+      "sha256": "c4a1eddedd4207710262e52a002a0730e41bbc20459fcf53549259aa7dae3ff6",
+      "totals": {
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 76229.43275
+      },
+      "supplementalNotFormalAcceptance": true,
+      "exit_code": 0,
+      "started_at": "2026-10-07T21:30:23.509255+00:00",
+      "finished_at": "2026-10-07T21:31:39.809227+00:00"
+    },
+    {
+      "log": "ledger-current-fixture.log",
+      "sha256": "f04638533298414c7313a4906b96913698fdebba959509fa1053b6bffd559436",
+      "totals": {
+        "tests": 10,
+        "pass": 10,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 41630.28225
+      },
+      "supplementalNotFormalAcceptance": true,
+      "exit_code": 0,
+      "started_at": "2026-10-07T21:07:06.558189+00:00",
+      "finished_at": "2026-10-07T21:07:48.248425+00:00"
+    },
+    {
+      "log": "email-current-brand.log",
+      "sha256": "a5211172908e88e6b62269b33ff9a65fe7e003bd331283433b358fbe0ccc8612",
+      "totals": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 512.447792
+      },
+      "supplementalNotFormalAcceptance": true
+    },
+    {
+      "log": "push-current-brand.log",
+      "sha256": "ddf020ce51506277a067c85c34e5c07cd69dbbd72e16bf94a87a620ee0d39326",
+      "totals": {
+        "tests": 51,
+        "pass": 51,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 115358.66125
+      },
+      "supplementalNotFormalAcceptance": true,
+      "exit_code": 0,
+      "started_at": "2026-10-07T21:18:43.903725+00:00",
+      "finished_at": "2026-10-07T21:20:39.325136+00:00"
+    }
+  ],
+  "externalPrerequisites": [
+    {
+      "gate": "F03-01",
+      "configuration": [
+        "VEXA_HUBSPOT_S01_CONFIG",
+        "VEXA_HUBSPOT_APPROVAL_REFERENCE"
+      ],
+      "requirement": "Configuración privada v4, autorización del titular vigente, referencia independiente de cuenta/app y reconciliación revisada. HubSpot y20casos ya disponibles según usuario; habilitar/reconciliar en Fase5, no pedirlos otra vez."
+    },
+    {
+      "gate": "F03-02",
+      "configuration": [
+        "VEXA_ZENDESK_S02_CONFIG",
+        "VEXA_ZENDESK_APPROVAL_REFERENCE",
+        "VEXA_ZENDESK_TOKEN",
+        "VEXA_ZENDESK_RECONCILIATION_KEY"
+      ],
+      "requirement": "Cuenta/subdominio Zendesk autorizados y reconciliación independiente con referencia del supervisor."
+    },
+    {
+      "gate": "F06-07",
+      "configuration": [
+        "VEXA_F0607_EVIDENCE",
+        "VEXA_F0607_PLAYWRIGHT",
+        "VEXA_F0607_AXE",
+        "VEXA_F0607_REUSE_ROOT",
+        "VEXA_F0607_BINDINGS",
+        "VEXA_F0607_REVIEWED_LEDGER"
+      ],
+      "requirement": "Herramientas locales pineadas, evidencia heredada ligada a hashes y ledger de rutas/estados revisado. No sustituir adjudicación externa ni juicio visual humano."
+    },
+    {
+      "gate": "F07-05/F08-03/F08-05",
+      "configuration": [
+        "VEXA_HUMAN_WORKFLOW_MANIFEST",
+        "VEXA_HUMAN_WORKFLOW_REVIEW",
+        "VEXA_HUMAN_WORKFLOW_REVIEW_SHA256",
+        "VEXA_HUMAN_WORKFLOW_APPROVAL_REFERENCE"
+      ],
+      "requirement": "Piloto observado, ensayo humano cronometrado y entrega confirmada, con revisión legítima; corresponde a Fase6."
+    },
+    {
+      "gate": "F08-01",
+      "configuration": [
+        "VEXA_RELEASE_MANIFEST",
+        "VEXA_RELEASE_VERIFICATION_AUTHORIZATION",
+        "VEXA_RELEASE_APPROVAL_REFERENCE"
+      ],
+      "requirement": "Manifiesto privado del release y autorización legítima para verificar artefactos externos; no ejecutar despliegue."
+    },
+    {
+      "gate": "F08-02",
+      "configuration": [
+        "VEXA_SMOKE_GATE_INPUT",
+        "VEXA_SMOKE_APPROVAL_REFERENCE"
+      ],
+      "requirement": "Recibo de ejecución remota autorizada y evidencia exacta del runtime; no sustituir por localhost."
+    },
+    {
+      "gate": "F08-04",
+      "configuration": [
+        "VEXA_PERMISSIONS_MANIFEST",
+        "VEXA_PERMISSIONS_AUTHORIZATION",
+        "VEXA_PERMISSIONS_APPROVAL_REFERENCE"
+      ],
+      "requirement": "Activos finales y permisos específicos comprobados con autorización legítima."
+    },
+    {
+      "gate": "F08-06",
+      "configuration": [
+        "VEXA_CLOSURE_DOSSIER",
+        "VEXA_CLOSURE_AUTHORIZATION",
+        "VEXA_CLOSURE_APPROVAL_REFERENCE"
+      ],
+      "requirement": "Expediente final por capas con actos externos reales y aprobación legítima; Fase6."
+    }
+  ],
+  "deferredHarnessRepairs": [
+    "F01-05: conciliar Node22/26.7 mediante revisión del contrato externo",
+    "Controles congelados de UI, marca, catálogo y fixture vencido: revisión del control-plane; no modificados en el candidato",
+    "4 fixtures de Storage y 1 import absoluto de paquete: permanecen fallidos, con causas documentadas; no afirmar542/542"
+  ],
+  "notProved": [
+    "F07-01 seguridad global; fase2 no iniciada",
+    "Capacidad50K/150K; nuevo manifiesto requiere empezar10K",
+    "Restauración gestionada remota y operación permanente completas",
+    "Conexiones live, cobertura/reconciliación de todo el histórico",
+    "Validación humana y aprobación formal de entrega/producción"
+  ],
+  "externalActions": {
+    "push": false,
+    "deploy": false,
+    "productionWrites": false,
+    "paidInference": false
+  },
+  "originalAcceptanceAndOrchestrationUnchanged": true,
+  "latestCleanupReceipts": [
+    {
+      "evidence": "vexa-workspace271-p8vT5S",
+      "receiptSha256": "8a6cd2a370b765d8d6fecd38d1386fb750deb2df49dbcd2cfd519f6831cfc801",
+      "summary": {
+        "ownResourcesRemoved": true,
+        "temporaryPathsRemoved": true
+      }
+    },
+    {
+      "evidence": "vexa-explorer283-osCu6W",
+      "receiptSha256": "462e84159ade74dcbd4af48e811791af32107de643c5d6af7332949915e9faa3",
+      "summary": {
+        "ownResourcesRemoved": true,
+        "temporaryPathsRemoved": true
+      }
+    },
+    {
+      "evidence": "f0203-gate-tdi6ajp4",
+      "receiptSha256": "af04ba72f51a11b9676ca42fff7b3f1fe10795c0217d06d48ee1264b60b461ed",
+      "summary": {
+        "verified": true,
+        "scratch_absent": true
+      }
+    }
+  ],
+  "diagnosticSourceManifestSha256": "d4059e7573a907fd435f4da401ad6682e39cfb0302733f74bad2d0855db2fd53",
+  "finalCanonicalManifestPreflight": {
+    "status": "source-preflight-only",
+    "files": 2210,
+    "dependencyManifestSha256": "5c21b05ac710dcd6045ac7661249801875564bcca259dd6c972fac81f5676232",
+    "priorEvidence": null,
+    "infrastructureStarted": false,
+    "capacityMeasured": false
+  }
+}

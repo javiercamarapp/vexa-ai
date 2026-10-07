@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-01",
+  "updated": "2026-10-07",
   "definition": "Trabajo técnico de la ficha integrado y probado. Las cuentas/datos/aprobaciones externas y las dependencias de aceptación formal se identifican por separado. No acredita producción.",
   "accepted_in_graph": [
     "E00",
@@ -722,5 +722,44 @@
     "Verificaciones técnicas de capacidad y cierre global.",
     "Configuración y ensayo de operación gestionada, cuentas/proveedores y datos históricos reales.",
     "Actos humanos, permisos, presupuestos y aceptación formal legítimos."
-  ]
+  ],
+  "current_status_document": "docs/ESTADO-VIGENTE.md",
+  "phase_execution": {
+    "date": "2026-10-07",
+    "source_sha": "b0be6df86a2aad53f46bb6054e192c94d62b13e3",
+    "phase": 1,
+    "status": "closed_with_explained_failures",
+    "reported_estimates": {
+      "code_percent": 95,
+      "delivery_percent": 55,
+      "basis": "auditoría recibida; no rúbrica numérica reproducible"
+    },
+    "formal_acceptance_changed": false,
+    "production_validated": false,
+    "connector_chunks_per_invocation_measured": false,
+    "external_changes_authorized": false,
+    "historical_evidence_note": "Los campos de despliegue y evidencia anteriores conservan su SHA y no se revalidaron en esta sesión.",
+    "history_status": {
+      "real_history_previously_imported_reported_by_user": true,
+      "messages_reported": 136956,
+      "import_rows_reported": 138022,
+      "independently_verified_this_session": false,
+      "new_production_writes_this_session": false
+    },
+    "completion_percent": 100,
+    "product_fix_commits": [
+      "ed9f06d",
+      "93992467c8efcdacac38f1c7488cc9ed610d56c5"
+    ],
+    "next_phase": 2,
+    "next_phase_started": false,
+    "unclassified_failures": 0,
+    "package_tests": {
+      "total": 542,
+      "pass": 537,
+      "fail": 5,
+      "cause": "fixtures de Storage incompletos e import absoluto a runtime histórico"
+    },
+    "closure_receipt": "docs/entrega/FASE-1-CIERRE-2026-10-07.json"
+  }
 }

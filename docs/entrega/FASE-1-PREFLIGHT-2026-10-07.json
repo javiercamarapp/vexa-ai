@@ -1,0 +1,30 @@
+{
+  "phase": 1,
+  "status": "baseline_preparation_completed_suite_waiting",
+  "date": "2026-10-07",
+  "source_sha": "b0be6df",
+  "node_version": "22.23.2",
+  "docker_server_version": "29.7.2",
+  "candidate": "/private/tmp/rovaq-fase1-baseline-20261007",
+  "control": "/private/tmp/rovaq-fase1-control-20261007",
+  "package_installs": [
+    {
+      "log": "/private/tmp/rovaq-fase1-receipts-20261007/npm-ci.log",
+      "sha256": "c3644a57a80960239a89870a427c3e64d54d23c16614b5b1a9ee07a2acf138a6",
+      "exit_code": 0
+    },
+    {
+      "log": "/private/tmp/rovaq-fase1-receipts-20261007/npm-ci-control.log",
+      "sha256": "04236d4ee15bc64cfbdcbad72f4dab233cacce43e36859523081387c3de98e0a",
+      "exit_code": 0
+    },
+    {
+      "log": "/private/tmp/rovaq-fase1-receipts-20261007/npm-ci-auth.log",
+      "sha256": "060db179605dd9cbd56dfa8b75ff49709efde29b4bf0b3d10da599961a441d51",
+      "exit_code": 0
+    }
+  ],
+  "acceptance_gate_result": null,
+  "package_tests_result": null,
+  "external_changes": false
+}

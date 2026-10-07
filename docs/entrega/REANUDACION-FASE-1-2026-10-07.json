@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-07T18:29:28.025389+00:00",
+  "source_sha": "b0be6df",
+  "phase": 1,
+  "status": "resumed_diagnostic_complete_phase_open",
+  "previous_run": {
+    "status": "interrupted",
+    "top_level_completed": 234,
+    "top_level_pass": 220,
+    "top_level_fail": 14,
+    "last_complete_block": "F05-06",
+    "next_block_started_without_result": "F06-01",
+    "full_suite_summary": null
+  },
+  "diagnostic": {
+    "status": "fail",
+    "code": "database_unavailable",
+    "elapsedMs": 15564.959125,
+    "queryPlans": 2,
+    "candidate": "/private/tmp/rovaq-fase1-baseline-20261007",
+    "data": "SYNTHETIC ONLY",
+    "acceptance": false
+  },
+  "sql_error": {
+    "code": "57014",
+    "message": "canceling statement due to statement timeout"
+  },
+  "cleanup_verified": true,
+  "evidence_hashes": {
+    "diagnostic-result.json": "6077338738b6a0c6277a43110cec5d360e8a7cf5724621b54594fb81495a267e",
+    "pending-query-plans.json": "1fb0acf2cab4026dcf6fdc9812dae7119c0b76b61856992f7ac9b5ba1375d4bb",
+    "sql-errors.jsonl": "b1d8bc9dcc19f40d889b928b60924ce67bd7e0e67c63b7c2b7b8ba071b62b8d2",
+    "cleanup.json": "e4109b0264b097e5de98bf58f1ab233fadddd22dce63a1597b56e39313499686"
+  },
+  "product_code_changed": false,
+  "external_changes": false,
+  "formal_acceptances_changed": false
+}

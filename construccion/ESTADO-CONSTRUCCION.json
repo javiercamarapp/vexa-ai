@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-07",
+  "updated": "2026-10-08",
   "definition": "Trabajo técnico de la ficha integrado y probado. Las cuentas/datos/aprobaciones externas y las dependencias de aceptación formal se identifican por separado. No acredita producción.",
   "accepted_in_graph": [
     "E00",
@@ -60,7 +60,7 @@
     "F08-06",
     "F06-07"
   ],
-  "construction_total": 59,
+  "construction_total": 60,
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
@@ -552,7 +552,8 @@
     "F07-02",
     "F07-03",
     "F07-04",
-    "F06-12"
+    "F06-12",
+    "F07-01"
   ],
   "formal_pending": [
     {
@@ -602,6 +603,19 @@
       "owner": "Controlador de aceptación y titulares de validaciones externas upstream",
       "condition": "Dependencias aceptadas legítimamente; después verify/accept formal sin cambiar el grafo. Gate Git limpio23/23 y revisión428 aprobados para integración técnica.",
       "evidence": "construccion/F06-12-CIERRE-TECNICO.md"
+    },
+    {
+      "task_id": "F07-01",
+      "technical_ready": true,
+      "programming_pending": [],
+      "verification_pending": [
+        "Aceptación formal mediante controlador con dependencias legítimas y composición vigente.",
+        "Auditoría npm completa conserva cinco alertas altas de desarrollo por braces sin parche publicado."
+      ],
+      "formal_dependency": "Dependencias F07-01 del grafo vigente",
+      "owner": "Controlador de aceptación y supervisor técnico",
+      "condition": "Cierre local17/17 verificado e integrado; no acredita publicación, producción ni nueva aceptación formal.",
+      "evidence": "docs/entrega/SEGURIDAD-GLOBAL-2026-10-07.md"
     }
   ],
   "deployed_verification": {
@@ -668,19 +682,17 @@
     "full_smoke_evidence": "docs/entrega/SMOKE-REMOTO-2026-10-01.md"
   },
   "latest_technical_closure": {
-    "task_id": "F06-07",
-    "source_sha": "6d505f7e5bb4a2bc3669c0bec8c7d267f8336ed5",
-    "control_sha": "7b1153f3d95908ab7a02375b311f58c8237d3dd5",
-    "status": "technical_review_approved_published_deployed_verified",
+    "task_id": "F07-01",
+    "source_sha": "54be5cf",
+    "status": "local_technical_verified_integrated",
     "technical_count_increment": 1,
     "formal_acceptance": false,
     "production_validated": false,
-    "evidence": "construccion/F06-07-CIERRE-TECNICO.md",
-    "publication_sha": "f893851b708cefb41f44ddafc991780814e6cae1"
+    "evidence": "docs/entrega/FASE-2-SEGURIDAD-2026-10-07.json",
+    "independent_reconciliation": "root/sql_spec verified original global report hash, PASS17components, no notRun entries, unchanged sources and ancestor commit on2026-10-08",
+    "publication_sha": null
   },
-  "remaining_technical_tasks": [
-    "F07-01"
-  ],
+  "remaining_technical_tasks": [],
   "release_validation_pending": [
     "F07-01: revisión global435 rechazada automáticamente; sin dictamen, no repetir ni transferir el encargo por otra vía.",
     "Matriz integral incompleta:114PASS/2cancelled tras timeout600000ms del padre.",
@@ -725,34 +737,22 @@
   ],
   "current_status_document": "docs/ESTADO-VIGENTE.md",
   "phase_execution": {
-    "date": "2026-10-07",
-    "phase": 2,
-    "source_sha": "f6ee046cebddfcea823add5caef2eab245b422ce",
+    "date": "2026-10-08",
+    "phase": 5,
+    "source_sha": "aff0517",
     "status": "in_progress",
-    "product_fix_commits": [
-      "0913644"
+    "locally_closed_phases": [
+      1,
+      2,
+      3
     ],
-    "dependency_audit": {
-      "before_high": 7,
-      "after_high": 5,
-      "after_production_total": 0,
-      "unresolved_root": "braces dev dependency has no published patch"
-    },
-    "global_review": {
-      "historical_rejection": 435,
-      "repeated": false,
-      "unblocked": null,
-      "gate": "MISSING",
-      "local_restriction_removed_by_user": true,
-      "active_platform_block_observed": false,
-      "note": "Explicit user instruction removes local documentary restriction; no platform controls changed or platform appeal claimed."
-    },
+    "phase4": "local recovery verified; managed recovery and operation pending",
+    "phase5": "CRM correction and local SQL/HTTP verified; history reconciliation and renewed capacity in progress",
     "formal_acceptance_changed": false,
     "production_validated": false,
     "external_changes_authorized": false,
-    "report": "docs/entrega/SEGURIDAD-GLOBAL-2026-10-07.md",
-    "receipt": "docs/entrega/FASE-2-DEPENDENCIAS-2026-10-07.json",
-    "next_phase": 3,
+    "report": "docs/entrega/CRM-ACOTADO-2026-10-08.md",
+    "next_phase": 6,
     "next_phase_started": false
   },
   "phase_one_closure": {

@@ -22,3 +22,6 @@ Completar y comprobar recuperación, operación, conexiones/histórico y entrega
 - Una suite pesada a la vez; agentes de examen en la misma fase; candidato inmóvil y control fuera de candidato.
 - Rama local de fase4. No push/deploy/migraciones productivas ni gasto o mensajes a terceros sin autorización específica vigente. Preparar entregables concretos antes de pedirla.
 - No modificar datos reales o revisiones ambiguas ni fabricar anotadores, consenso o resultados comerciales.
+
+## Ajuste por evidencia, 8 de octubre de 2026
+La fase5 ya tiene correcciónCRM integrada/verificada e inventario histórico comprobado; los pasos productivos conservan permisos específicos y el gateHubSpot necesita referenciaUI independiente. Se continúa con la fase6 que no depende de esas condiciones. Antes de congelar la serie final, reparar y revisar la deuda de controles clasificada en Fase1 (selectores, marca, fixture temporal, contratoNode y arneses). No bajar umbrales, fabricar actos humanos ni usar el grafo como contador editable. Consolidar los cambios que afectan al inventario antes de volver a medir10K→50K→150K. Los informes en curso sobreaff0517 conservan sólo esa identidad.

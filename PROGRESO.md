@@ -1,6 +1,6 @@
-## Estado vigente — 7 de octubre de 2026
+## Estado vigente — 8 de octubre de 2026
 
-**Fases 1, 2 y 3 completadas en su alcance local.** F07-01 pasó 17/17 componentes. La nueva serie de capacidad 10K → 50K → 150K pasó sobre `504a6b6`: 210.000 filas sintéticas, cero pendientes, fuentes invariantes y 15 recursos propios ausentes. Health/version y manifiesto corregidos; revisión independiente de serie PASS. Sin push, despliegue ni cambios externos; producción y aceptación formal pendientes. Contadores sin cambios: 59/60 técnicas y 28/60 formales. Cinco alertas altas de desarrollo por braces siguen abiertas. Siguiente: fase 4, recuperación y operación, aún no iniciada. [Cierre de fase 3](docs/entrega/CAPACIDAD-FASE-3-2026-10-07.md).
+**60/60 fichas con trabajo técnico integrado; 28/60 aceptadas formalmente (46,7 %).** La reconciliación incorpora el cierre local F07-01, probado con 17 componentes; no concede aceptación ni valida producción. Fases 1–3 cerradas localmente para sus versiones. Fase 4: recuperación local aprobada; recuperación gestionada y operación permanente pendientes. Fase 5: corrección CRM integrada y comprobada; histórico y nueva serie de capacidad en curso. El cambio de fuentes exige 10K → 50K → 150K de nuevo: 10K pasó y 50K está ejecutándose. Cinco alertas altas de desarrollo por braces siguen abiertas. Sin publicación ni despliegue de estos cambios. [Estado vigente](docs/ESTADO-VIGENTE.md).
 
 Los cortes siguientes son históricos.
 

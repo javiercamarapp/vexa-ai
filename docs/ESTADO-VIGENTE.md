@@ -1,16 +1,18 @@
 # Estado vigente — Rovaq AI / VEXA
 
-Corte: 7 de octubre de 2026. Fuente única de estado de la ejecución por fases.
+Corte: 8 de octubre de 2026. Fuente única de estado de la ejecución por fases.
 
-**Fases 1, 2 y 3 completadas en su alcance local.** F07-01 pasó 17/17 componentes. La nueva serie de capacidad 10K → 50K → 150K pasó sobre `504a6b6`: 210.000 filas sintéticas, cero pendientes, fuentes invariantes y 15 recursos propios ausentes. Health/version y manifiesto corregidos; revisión independiente de serie PASS. Sin push, despliegue ni cambios externos; producción y aceptación formal pendientes. Contadores sin cambios: 59/60 técnicas y 28/60 formales. Cinco alertas altas de desarrollo por braces siguen abiertas. Fase 4 en curso: restore/rollback local actualizado PASS; recuperación gestionada y operación permanente pendientes.
+**60/60 fichas con trabajo técnico integrado; 28/60 aceptadas formalmente (46,7 %).** La reconciliación incorpora el cierre local F07-01, probado con 17 componentes; no concede aceptación ni valida producción. Fases 1–3 cerradas localmente para sus versiones. Fase 4: recuperación local aprobada; recuperación gestionada y operación permanente pendientes. Fase 5: corrección CRM integrada y comprobada; histórico y nueva serie de capacidad en curso. El cambio de fuentes exige 10K → 50K → 150K de nuevo: 10K pasó y 50K está ejecutándose. Cinco alertas altas de desarrollo por braces siguen abiertas. Sin publicación ni despliegue de estos cambios. [Corrección CRM y evidencia](entrega/CRM-ACOTADO-2026-10-08.md).
 
 | Indicador | Estado |
 |---|---|
-| Fichas con trabajo técnico integrado | 59/60 (98,3 % del conteo). |
-| Aceptación formal en el grafo | 28/60 (46,7 %); sin cambios en esta sesión. |
+| Fichas con trabajo técnico integrado | 60/60; incluye F07-01 local. No significa entrega completa. |
+| Aceptación formal en el grafo | 28/60 (46,7 %); sin cambios. |
 | Producción validada | No. |
-| Correcciones locales | Fase 1: `ed9f06d`, SQL; `9399246`, selección de conexión. Fase 2: `0913644`, dependencias; `c5f239d`, HTTP/triggers/CSP; `fd73831`, Storage; `54be5cf`, controlador. |
-| Publicación de estas correcciones | Pendiente; sin push ni despliegue autorizado en esta sesión. |
+| Corrección CRM local | `cbeba0d`, control `aff0517`; 101 pruebas de autoría, seis controles y nueve pruebas SQL/HTTP aprobados. |
+| Nueva capacidad de esta composición | 10K PASS; 50K en ejecución y 150K pendiente. Una corrección del control F03-01 en preparación requerirá nueva identidad de fuentes antes del cierre definitivo. |
+| Publicación y operación gestionada | Pendientes de autorización específica y evidencia. |
+| Validación humana y cierre real | Pendientes; no se sustituyen con fixtures. |
 
 Los porcentajes recibidos de ≈95 % de código y ≈55 % de entrega eran estimaciones sin rúbrica reproducible. No se convierten en una nueva cifra de preparación comercial.
 

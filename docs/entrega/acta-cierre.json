@@ -18,13 +18,14 @@
       "human_acceptance": "pending_actual_recipients_access_and_dates"
     },
     "local_software": {
-      "status": "ci_and_package_regression_pass_final_capacity_in_progress",
+      "status": "ci_packages_capacity_pass_residual_unit_http_in_progress",
       "evidence": [
         "../../construccion/ESTADO-CONSTRUCCION.json",
         "CRM-ACOTADO-2026-10-08.md",
         "../../docs/ejecucion/cierre-2026-10-07/PROGRESO.md",
         "CORRECCION-NAVEGACION-2026-10-08.json",
-        "FASE-6-CI-2026-10-08.json"
+        "FASE-6-CI-2026-10-08.json",
+        "FASE-6-CAPACIDAD-2026-10-08.json"
       ]
     },
     "synthetic_demo": {
@@ -161,8 +162,8 @@
     "production_validated": false
   },
   "local_work_pending": [
-    "Completar nueva serie10K/50K/150K sobre candidato6e8b2b4 y revisión independiente.",
-    "Concluir reconciliación de auditoría final y avanzar aceptación sólo mediante controlador y evidencia legítima."
+    "Completar pruebas residuales de unidades plataforma/web y HTTP servido que no estaban incluidas en55archivos de paquetes.",
+    "Concluir reconciliación de auditoría final; aceptación mediante controlador y evidencia legítima sigue pendiente externa."
   ],
   "historical_evidence_note": "Los checkpoints y métricas remotas con fechas anteriores se conservan como historia de sus SHA; no acreditan el código local actual. La restricción antigua notification_review ya no es un bloqueo activo, y los seis alcances técnicos históricos están integrados.",
   "previous_audit_checkpoint": {

@@ -1,7 +1,7 @@
 {
   "schema": "rovaq-final-ci-progress-v1",
   "date": "2026-10-08",
-  "status": "aggregate_and_package_suite_pass_capacity_pending",
+  "status": "aggregate_and_package_suite_pass",
   "candidate": "6e8b2b4203f948408171612080b0bc62fadc19be",
   "formalAcceptance": false,
   "productionValidated": false,
@@ -400,9 +400,7 @@
       "cleanupScope": "Owned names independently absent; harness assertions cover IDs internally. IDs already removed are not independently recoverable from outer receipt."
     }
   ],
-  "pending": [
-    "Fresh10K/50K/150Kcapacity series"
-  ],
+  "pending": [],
   "failureCauses": [
     "V1: outerumask077 made five permission mutations no-ops; rechecked022 without altering controller oracles.",
     "V1: Node HTTP process lacked Next server-only marker resolution; server context now scoped to that process.",
@@ -456,5 +454,7 @@
       "Synthetic local PostgreSQL; no Auth HTTP or provider acceptance"
     ],
     "ownContainersIndependentlyAbsentByIdAndName": 4
-  }
+  },
+  "capacityFollowup": "FASE-6-CAPACIDAD-2026-10-08.json",
+  "additionalCoverage": "Residual platform/web unit files and servedHTTP under separate execution; not included in55package count"
 }

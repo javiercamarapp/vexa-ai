@@ -2,7 +2,7 @@
 
 Corte: 8 de octubre de 2026. Fuente única de estado de la ejecución por fases.
 
-**60/60 fichas con trabajo técnico integrado; 28/60 aceptadas formalmente (46,7 %).** La reconciliación incorpora el cierre local F07-01, probado con 17 componentes; no concede aceptación ni valida producción. Fases 1–3 cerradas localmente para sus versiones. Fase 4: recuperación local aprobada; recuperación gestionada y operación permanente pendientes. Fase 5: corrección CRM integrada y comprobada; histórico reconciliado en lectura, con pasos productivos pendientes. Fase 6: controles Auth/UI/SQL integrados, navegación corregida y regresiones UI aprobadas; CI agregado4/4 y paquetes586/586 aprobados; capacidad final en curso. Las nuevas cargas10K y50K pasaron sobre aff0517; consolidar los controles antes de congelar y medir la serie final completa10K →50K →150K. Cinco alertas altas de desarrollo por braces siguen abiertas. Sin publicación ni despliegue de estos cambios. [Corrección CRM y evidencia](entrega/CRM-ACOTADO-2026-10-08.md).
+**60/60 fichas con trabajo técnico integrado; 28/60 aceptadas formalmente (46,7 %).** La reconciliación incorpora el cierre local F07-01, probado con 17 componentes; no concede aceptación ni valida producción. Fases 1–3 cerradas localmente para sus versiones. Fase 4: recuperación local aprobada; recuperación gestionada y operación permanente pendientes. Fase 5: corrección CRM integrada y comprobada; histórico reconciliado en lectura, con pasos productivos pendientes. Fase 6: controles Auth/UI/SQL integrados, navegación corregida y regresiones UI aprobadas; CI agregado4/4, paquetes586/586 y capacidad final10K→50K→150K aprobados sobre6e8b2b4, con revisión independiente. Restan comprobaciones residuales de unidades/HTTP en ejecución y validación externa. Cinco alertas altas de desarrollo por braces siguen abiertas. Sin publicación ni despliegue de estos cambios. [Corrección CRM y evidencia](entrega/CRM-ACOTADO-2026-10-08.md).
 
 | Indicador | Estado |
 |---|---|
@@ -10,7 +10,7 @@ Corte: 8 de octubre de 2026. Fuente única de estado de la ejecución por fases.
 | Aceptación formal en el grafo | 28/60 (46,7 %); sin cambios. |
 | Producción validada | No. |
 | Corrección CRM local | `cbeba0d`, control `aff0517`; 101 pruebas de autoría, seis controles y nueve pruebas SQL/HTTP aprobados. |
-| Nueva capacidad de esta composición | 10K/50K PASS sobre aff0517. Serie final10K/50K/150K pendiente de consolidación de controles e identidad de fuentes actual. |
+| Nueva capacidad de esta composición | Serie final10K/50K/150K PASS sobre6e8b2b4:210.000filasSYN, cero pendientes y15recursos ausentes; revisión independiente aprobada. |
 | Publicación y operación gestionada | Pendientes de autorización específica y evidencia. |
 | Validación humana y cierre real | Pendientes; no se sustituyen con fixtures. |
 
@@ -27,7 +27,7 @@ La continuación de aceptación terminó con 1.598/1.627 y los paquetes con 537/
 | 3. Capacidad 10K → 50K → 150K | Completada localmente: 100 %. Tres escalas PASS sobre `504a6b6`, 210.000 filas SYN, cero pendientes, 15 recursos ausentes. [Informe](entrega/CAPACIDAD-FASE-3-2026-10-07.md) y [recibo](entrega/FASE-3-CAPACIDAD-2026-10-07.json). |
 | 4. Recuperación y operación | En curso: restore local 5/5 y retorno financiero/regreso PASS sobre `c2d03e2`, 8 recursos ausentes. Runbook y propuesta de protección preparados; recuperación gestionada y operación permanente pendientes. [Recibo](entrega/FASE-4-RECUPERACION-2026-10-07.json). |
 | 5. Conexiones e histórico completo | CRM corregido y verificado localmente; lecturas reales e histórico reconciliados. Referencia independiente CRM, autorización de nuevas cargas y padres/vínculos pendientes. |
-| 6. Validación y entrega | En curso: controles actuales y navegación integrados, seis UI83/83 y notificaciones30/30 aprobadas. CI4/4 y paquetes586/586 aprobados; faltan capacidad final, actos humanos, smoke remoto y recepción. |
+| 6. Validación y entrega | En curso: controles actuales y navegación integrados, seis UI83/83 y notificaciones30/30 aprobadas. CI4/4, paquetes586/586 y capacidad final aprobados; residuales unidades/HTTP en curso. Faltan actos humanos, smoke remoto y recepción. |
 
 El 10K de la línea base pasó; 50K quedó contaminado por suspensión del Mac y 150K no comenzó. No se presenta como prueba de capacidad vigente ni se atribuye el timeout al producto. La nueva serie de fase 3 sobre `504a6b6` sí completó las tres escalas, con contabilidad y limpieza verificadas.
 
@@ -64,7 +64,7 @@ CSV para volumen; API para incremental/webhooks. Chunks reales por invocación t
 
 ## Límites y próximo paso
 
-La fase 2 de seguridad global F07-01 está completada localmente, con 17 componentes aprobados y revisión de recibos por dos agentes. [Cierre, evidencia y límites](entrega/SEGURIDAD-GLOBAL-2026-10-07.md). El parche de dependencias pasó lint/tipos/build y dos revisiones focales sin hallazgos. La auditoría completa sigue roja por braces de desarrollo; Javier retiró la restricción documental histórica para continuar las pruebas locales; no se ha comprobado un bloqueo activo de plataforma. Fase 3 completada localmente para su candidato; fases 4/5 conservan condiciones externas. Fase 6 repara y verifica controles antiguos de Node, interfaz, marca, catálogo y fixtures SQL, con revisión independiente y sin bajar umbrales. Sigue la consolidación, la nueva serie completa de capacidad y la auditoría final. El contador formal permanece en 28/60: sólo F03-01 es elegible y necesita evidencia independiente real.
+La fase 2 de seguridad global F07-01 está completada localmente, con 17 componentes aprobados y revisión de recibos por dos agentes. [Cierre, evidencia y límites](entrega/SEGURIDAD-GLOBAL-2026-10-07.md). El parche de dependencias pasó lint/tipos/build y dos revisiones focales sin hallazgos. La auditoría completa sigue roja por braces de desarrollo; Javier retiró la restricción documental histórica para continuar las pruebas locales; no se ha comprobado un bloqueo activo de plataforma. Fase 3 completada localmente para su candidato; fases 4/5 conservan condiciones externas. Fase 6 repara y verifica controles antiguos de Node, interfaz, marca, catálogo y fixtures SQL, con revisión independiente y sin bajar umbrales. La consolidación y la nueva serie completa de capacidad están comprobadas; se cierran pruebas residuales y auditoría local. El contador formal permanece en 28/60: sólo F03-01 es elegible y necesita evidencia independiente real.
 
 Los tiempos originales del plan para las seis fases sumaban aproximadamente 7–9 días de trabajo, sin esperas externas. No constituyen una fecha comprometida ni una estimación actualizada de lo pendiente.
 
@@ -75,4 +75,9 @@ La web sigue sirviendo `b0be6df86a2aad53f46bb6054e192c94d62b13e3`: health/versio
 
 ## Navegación corregida y controles locales integrados
 
-Una respuesta financiera tardía podía cancelar la transición a notificaciones. Corrección510028a, controles6036597; regresiones afectadas83/83 y entrada compuesta30/30 aprobadas, incluida recuperación RSC500→documento200 y vuelta atrás. SQL compuesto493/493, schema21/21, Auth7/7, navegación de roles3/3, email39/39 y push51/51 conservan sus SHA y alcances originales. [Causa y recibos](entrega/CORRECCION-NAVEGACION-2026-10-08.md). La verificación conjunta actual aprobó CI4/4 y55archivos de paquetes586/586 sobre6e8b2b4. Capacidad final en curso. [Recibos](entrega/FASE-6-CI-2026-10-08.json).
+Una respuesta financiera tardía podía cancelar la transición a notificaciones. Corrección510028a, controles6036597; regresiones afectadas83/83 y entrada compuesta30/30 aprobadas, incluida recuperación RSC500→documento200 y vuelta atrás. SQL compuesto493/493, schema21/21, Auth7/7, navegación de roles3/3, email39/39 y push51/51 conservan sus SHA y alcances originales. [Causa y recibos](entrega/CORRECCION-NAVEGACION-2026-10-08.md). La verificación conjunta actual aprobó CI4/4 y55archivos de paquetes586/586 sobre6e8b2b4. Capacidad final aprobada con revisión independiente. [Recibos](entrega/FASE-6-CI-2026-10-08.json).
+
+
+## Capacidad final comprobada
+
+Serie fresca contra6e8b2b4:10.000en96,38s;50.000en682,32s;150.000en1.521,95s de procesamiento. Los tres archivos de50.000de la escala mayor cumplieron sus propios plazos de900s. Total210.000SYN,205.800aceptadas,2.100rechazos previstos,2.100duplicadas y cero pendientes. API/SQL/CSV/hashes/bloques/plazos cotejados;15IDs y tres workers ausentes. [Informe](entrega/CAPACIDAD-FINAL-2026-10-08.md) y [recibo](entrega/FASE-6-CAPACIDAD-2026-10-08.json). No mide inferencia, costo ni capacidad comercial.

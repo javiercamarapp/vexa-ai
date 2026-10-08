@@ -1,0 +1,190 @@
+{
+  "schema": "rovaq-final-capacity-series-v1",
+  "date": "2026-10-08",
+  "status": "local_pass_independently_verified",
+  "candidate": "6e8b2b4203f948408171612080b0bc62fadc19be",
+  "candidatePath": "/private/tmp/rovaq-fase6-final-candidate-v4-20261008",
+  "dependencyManifestSha256": "0c3b293d0f416bd1e27cffd97f039f8586c42f5486f25ad00c981cf4915a06fa",
+  "sourceFiles": 2227,
+  "benchmarkFiles": 9,
+  "node": "22.23.2",
+  "synthetic": true,
+  "scales": [
+    {
+      "rows": 10000,
+      "status": "pass",
+      "observed": {
+        "total": 10000,
+        "accepted": 9800,
+        "rejected": 100,
+        "duplicates": 100,
+        "pending": 0
+      },
+      "processingMs": 96378.652166,
+      "endToEndMs": 96909.391708,
+      "metrics": {
+        "inputRowsPerSecond": 103.75741697213475,
+        "acceptedRowsPerSecond": 101.68226863269206,
+        "commitP50Ms": 893.3281670000006,
+        "commitP95Ms": 1011.4525419999991,
+        "apiP95Ms": 172.60679199999868,
+        "commitSamples": 100,
+        "apiSamples": 5,
+        "workerMaxRssKiB": 221984
+      },
+      "files": 1,
+      "chunks": 100,
+      "jobTimings": [
+        {
+          "state": "partial",
+          "deadline": "2026-10-08T09:28:32.52805+00:00",
+          "elapsedMs": 96293.85,
+          "failureCount": 0,
+          "firstStartedAt": "2026-10-08T09:13:32.522376+00:00",
+          "lastFinishedAt": "2026-10-08T09:15:08.816226+00:00"
+        }
+      ],
+      "originalReport": "/tmp/vexa-load308-rS5769/report.json",
+      "reportSha256": "96a8322f62d65ec7c957de399e2a664585127366889bdb59f506997a082b3d13",
+      "localReview": "capacity-6e8b2b4-v1/10k-review.json",
+      "localReviewSha256": "5ab9a0e00c8bb15eb0e1bdfe4393a7ffeb7ed24c1b27cf533f49c016be66d16a",
+      "ownedResourceIdsIndependentlyAbsent": 5,
+      "sourcesUnchanged": true
+    },
+    {
+      "rows": 50000,
+      "status": "pass",
+      "observed": {
+        "total": 50000,
+        "accepted": 49000,
+        "rejected": 500,
+        "duplicates": 500,
+        "pending": 0
+      },
+      "processingMs": 682318.318417,
+      "endToEndMs": 683212.563,
+      "metrics": {
+        "inputRowsPerSecond": 73.27958029325899,
+        "acceptedRowsPerSecond": 71.8139886873938,
+        "commitP50Ms": 1005.5644589999574,
+        "commitP95Ms": 2167.9822920000006,
+        "apiP95Ms": 437.8339580000029,
+        "commitSamples": 500,
+        "apiSamples": 5,
+        "workerMaxRssKiB": 377888
+      },
+      "files": 1,
+      "chunks": 500,
+      "jobTimings": [
+        {
+          "state": "partial",
+          "deadline": "2026-10-08T09:32:17.094256+00:00",
+          "elapsedMs": 682198.058,
+          "failureCount": 0,
+          "firstStartedAt": "2026-10-08T09:17:17.088284+00:00",
+          "lastFinishedAt": "2026-10-08T09:28:39.286342+00:00"
+        }
+      ],
+      "originalReport": "/tmp/vexa-load308-KjWi0z/report.json",
+      "reportSha256": "80b655750b383bcdba89ac2771a5757ce596645ae11336190ef1e5fcd72ccf25",
+      "localReview": "capacity-6e8b2b4-v1/50k-review.json",
+      "localReviewSha256": "303e05d1ac98bd394b5f98d72157dc7baf3a437267b4cdc0daadd0550860b9dc",
+      "ownedResourceIdsIndependentlyAbsent": 5,
+      "sourcesUnchanged": true
+    },
+    {
+      "rows": 150000,
+      "status": "pass",
+      "observed": {
+        "total": 150000,
+        "accepted": 147000,
+        "rejected": 1500,
+        "duplicates": 1500,
+        "pending": 0
+      },
+      "processingMs": 1521954.157334,
+      "endToEndMs": 1524461.531125,
+      "metrics": {
+        "inputRowsPerSecond": 98.55750206218714,
+        "acceptedRowsPerSecond": 96.5863520209434,
+        "commitP50Ms": 889.4974589999765,
+        "commitP95Ms": 1322.8962499999907,
+        "apiP95Ms": 455.37054199999693,
+        "commitSamples": 1500,
+        "apiSamples": 15,
+        "workerMaxRssKiB": 386560
+      },
+      "files": 3,
+      "chunks": 1500,
+      "jobTimings": [
+        {
+          "state": "partial",
+          "deadline": "2026-10-08T09:45:22.147637+00:00",
+          "elapsedMs": 528578.725,
+          "failureCount": 0,
+          "firstStartedAt": "2026-10-08T09:30:22.141675+00:00",
+          "lastFinishedAt": "2026-10-08T09:39:10.7204+00:00"
+        },
+        {
+          "state": "partial",
+          "deadline": "2026-10-08T09:54:10.824193+00:00",
+          "elapsedMs": 519760.514,
+          "failureCount": 0,
+          "firstStartedAt": "2026-10-08T09:39:10.8191+00:00",
+          "lastFinishedAt": "2026-10-08T09:47:50.579614+00:00"
+        },
+        {
+          "state": "partial",
+          "deadline": "2026-10-08T10:02:50.6694+00:00",
+          "elapsedMs": 473344.811,
+          "failureCount": 0,
+          "firstStartedAt": "2026-10-08T09:47:50.664839+00:00",
+          "lastFinishedAt": "2026-10-08T09:55:44.00965+00:00"
+        }
+      ],
+      "originalReport": "/tmp/vexa-load308-zwBHRY/report.json",
+      "reportSha256": "7f587b171e6f1d4def8fc2484b84d4f02ae7909325cc53fca2dfe56b77f9edd3",
+      "localReview": "capacity-6e8b2b4-v1/150k-review.json",
+      "localReviewSha256": "148fb05858487c92b12d3d8a816c091505ce5c2672c16a1bf194663a4f605e1b",
+      "ownedResourceIdsIndependentlyAbsent": 5,
+      "sourcesUnchanged": true
+    }
+  ],
+  "totalInputRows": 210000,
+  "observedTotals": {
+    "total": 210000,
+    "accepted": 205800,
+    "rejected": 2100,
+    "duplicates": 2100,
+    "pending": 0
+  },
+  "uniqueOwnedResourceIdsAbsent": 15,
+  "seriesVerifier": {
+    "receipt": "capacity-6e8b2b4-v1/series-review.json",
+    "sha256": "c3f111c6873f3aa0c961af25301972dad4b64b072728d5cf6421d4208ba36ab9",
+    "status": "PASS"
+  },
+  "limits": {
+    "workerChunkRows": 100,
+    "concurrency": 1,
+    "jobDeadlineMs": 900000,
+    "scaleDeadlineMs": 3600000,
+    "maxRowsPerFile": 50000,
+    "deadlinesChanged": false
+  },
+  "formalAcceptance": false,
+  "productionValidated": false,
+  "inferenceMeasured": false,
+  "monetaryCostMeasured": false,
+  "commercialSloApproved": false,
+  "scope": "Real local Auth/PostgreSQL/Storage/Next/worker with synthetic ingestion data; shared developer host. No production/provider throughput or full intelligence pipeline claim.",
+  "priorSeries": "Historical504a6b6complete and aff0517partial remain bound to their original sources; not reused to authorize this series.",
+  "independentReview": {
+    "receipt": "fase6-ui/capacity-6e8b2b4-final-independent-review.json",
+    "sha256": "0082b9d8c75b2cad978f00f25b34308edbd947ec3fc139ea9cc3592664f575cd",
+    "findings": 0,
+    "originalVerifierReproduced": true,
+    "uniqueOwnedIdsAbsent": 15,
+    "workerPidsAbsent": 3
+  }
+}

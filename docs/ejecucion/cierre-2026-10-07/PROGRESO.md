@@ -74,3 +74,10 @@ CI final v4 aprobado: F01-05 PASS4/4 sobre6e8b2b4; kernel137/137, web-quality y 
 
 
 Paquetes finales:55archivos,586/586PASS en37,214s (npmci2,986s); ningún skip/cancel/timeout. Cuatro contenedores propios ausentes porID+nombre, scratch eliminado, fuentes/HEAD invariantes. Root cotejó los hashes de artefactos del recibo. La carga10Kfinal ya está en ejecución desde control separado contra el mismo candidato6e8b2b4. [Disposición de las33categorías y65fallos originales](../../entrega/RECONCILIACION-FALLOS-2026-10-08.json): no reetiqueta rojos como verdes ni altera28/60.
+
+
+## Serie final de capacidad aprobada
+
+Tres escalas nuevas PASS sobre6e8b2b4:10K96,379s;50K682,318s;150K1.521,954s. Total210.000SYN,2.100bloques,cero pendientes; cinco jobs partial por rechazos previstos, sin failureCount, cada uno antes de su deadline. Root verificó cada escala antes de avanzar; verificador de serie originalPASS. Revisión independiente sin hallazgos reprodujo mismoresultado, comprobó15IDs únicos y tres workers ausentes, fuentes limpias y originales intactos. Recibo SHA2560082b9d8c75b2cad978f00f25b34308edbd947ec3fc139ea9cc3592664f575cd.
+
+Sólo quedan en esta cola local cuatro archivos de unidades y dos casos HTTP servido, fuera del wrapper55; conexión5 y cuerpoHTTP7 reutilizan recibos exactos vigentes. Después se cerrará el corte local sin convertirlo en aceptación humana/productiva.

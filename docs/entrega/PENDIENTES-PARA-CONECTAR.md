@@ -4,7 +4,7 @@ Actualización8-oct:60/60 alcances técnicos integrados y28/60 aceptaciones form
 
 ## Trabajo técnico y operativo que sigue abierto
 
-- Auditoría final: controles Auth/UI/SQL en fase6 y nueva serie completa de capacidad tras consolidación;10K/50K sobre aff0517 ya pasaron.
+- Auditoría final: Auth/UI/SQL,CI4/4,paquetes586/586 y serie10K/50K/150K sobre6e8b2b4 aprobados; cierre focal de control HTTP servido en curso.
 - Seguridad global: cierre local F07-01 de17/17 componentes verificado; no existe el antiguo bloqueo documental de revisión. Aceptación formal sigue detrás de las dependencias reales del grafo.
 - Recuperación y operación: restore local actual PASS; barrera Storage administrada, ensayo gestionado, consumidores permanentes, alertas y responsables pendientes.
 - Validación humana y entrega: participantes reales, guía, pitch, gold independiente y recepción; no sustituibles con pruebas sintéticas.
@@ -33,4 +33,4 @@ Los conectores recuperan lo que permita la cuenta y conservan checkpoints, revis
 
 El histórico autorizado recorre redacción, extracción, problemas, métricas y evaluación. La mejora consiste en comparar y seleccionar configuraciones con holdout independiente y posibilidad de rollback. Feedback automático no se convierte en gold humano, y resultados sintéticos no prueban calidad del LLM. VEXA no modifica autónomamente el código ni ejecuta acciones sobre el CRM del cliente.
 
-El último smoke remoto SYN completo corresponde al producto desplegado `f893851`: 8/8 fases, ocho vistas y limpieza comprobada por MCP. [Evidencia remota y límites](SMOKE-REMOTO-2026-10-01.md). La lectura anónima del8-oct observa `b0be6df`, sin smoke autenticado completo; la composición local `6e8b2b4` no está desplegada. [Estado actual de los20rubros](AUDITORIA-20-RUBROS-2026-10-08.md): capacidad final y actos humanos siguen pendientes; la revisión global F07-01 ya pasó localmente.
+El último smoke remoto SYN completo corresponde al producto desplegado `f893851`: 8/8 fases, ocho vistas y limpieza comprobada por MCP. [Evidencia remota y límites](SMOKE-REMOTO-2026-10-01.md). La lectura anónima del8-oct observa `b0be6df`, sin smoke autenticado completo; la composición local `6e8b2b4` no está desplegada. [Estado actual de los20rubros](AUDITORIA-20-RUBROS-2026-10-08.md): capacidad final local aprobada y actos humanos pendientes; la revisión global F07-01 ya pasó localmente.

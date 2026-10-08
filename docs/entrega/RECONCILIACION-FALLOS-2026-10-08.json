@@ -1,7 +1,7 @@
 {
   "schema": "rovaq-baseline-failures-reconciliation-v1",
   "date": "2026-10-08",
-  "status": "in_progress",
+  "status": "all_baseline_categories_reconciled_external_acceptance_pending",
   "baseline": {
     "receipt": "FASE-1-CIERRE-2026-10-07.json",
     "sha256": "65cb33692b4f21ce4c0b8072fb36180b6898476b0cfcb43f0cd5c7ed0a1ca0ef",
@@ -235,9 +235,9 @@
       "id": "F07-04",
       "originalCategory": "Host suspendido; capacidad no acreditada",
       "originalFailureResults": 1,
-      "status": "in_progress",
-      "evidence": "FASE-3-CAPACIDAD-2026-10-07.json",
-      "note": "Serie completa histórica sobre504a6b6 válida para ese SHA; nueva serie final6e8b2b4 pendiente."
+      "status": "local_verified",
+      "evidence": "FASE-6-CAPACIDAD-2026-10-08.json",
+      "note": "Serie nueva10K/50K/150K PASS sobre6e8b2b4;210.000SYN, cero pendientes,15IDs ausentes y revisión independiente."
     },
     {
       "id": "F07-06",

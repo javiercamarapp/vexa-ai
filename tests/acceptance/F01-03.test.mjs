@@ -131,6 +131,9 @@ test('F01-03 part 2: domain authorization and durable fixtures', {timeout:600000
   if(!prerequisiteFailed&&!t.signal.aborted)stage=2;
 });
 test('F01-03 part 3: discovered foreign keys, Storage and retrieval revocation', {timeout:600000},async t=>{
+  // Release shared services before downstream matrices in the same test process.
+  // Register before prerequisites so a prior failure still runs cleanup; global after remains fallback.
+  t.after(async()=>{if(h){await h.close();h=undefined;}});
   assert.equal(stage,2,'SQL_DOMAIN_PREREQUISITE');
   for(const fk of foreignKeys(h))await check(t,`discovered FK ${fk.name}`,()=>discoveredFkOracle(h,f,fk));
   await check(t,'external identity 42 is tenant scoped and revision deduplicated',()=>{

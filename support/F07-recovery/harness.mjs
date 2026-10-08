@@ -4,6 +4,74 @@ import fs from 'node:fs';import path from 'node:path';import os from 'node:os';i
 const recoveryPreloads='pg_stat_statements,pgaudit,plpgsql,plpgsql_check,pg_cron,pgsodium,auto_explain,pg_tle,plan_filter,supabase_vault';
 export const q=v=>"'"+String(v).replaceAll("'","''")+"'";
 import {copyBuildInputs,buildEnvironment} from '../../tests/acceptance/scaffold-copy.mjs';
+// Exact Storage v1.69.11 helper migrations from image sha256:97ed68d33417d253a45fe0a70f84324d92250a3e239bf18aa6cf87269dbf6727.
+// The SQL-only restore fixture needs the same operation-aware policy prerequisite as real Storage.
+export const storageOperationBootstrapSQL = [
+`CREATE OR REPLACE FUNCTION storage.operation()
+    RETURNS text AS $$
+BEGIN
+    RETURN current_setting('storage.operation', true);
+END;
+$$ LANGUAGE plpgsql STABLE;`,
+`-- Ergonomic helpers for operation-aware RLS policies.
+-- These helpers read the existing transaction-local storage.operation GUC (Grand Unified Configuration).
+
+CREATE OR REPLACE FUNCTION storage.allow_only_operation(expected_operation text)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+AS $$
+  WITH current_operation AS (
+    SELECT storage.operation() AS raw_operation
+  ),
+  normalized AS (
+    SELECT
+      CASE
+        WHEN raw_operation LIKE 'storage.%' THEN substr(raw_operation, 9)
+        ELSE raw_operation
+      END AS current_operation,
+      CASE
+        WHEN expected_operation LIKE 'storage.%' THEN substr(expected_operation, 9)
+        ELSE expected_operation
+      END AS requested_operation
+    FROM current_operation
+  )
+  SELECT CASE
+    WHEN requested_operation IS NULL OR requested_operation = '' THEN FALSE
+    ELSE COALESCE(current_operation = requested_operation, FALSE)
+  END
+  FROM normalized;
+$$;
+
+CREATE OR REPLACE FUNCTION storage.allow_any_operation(expected_operations text[])
+RETURNS boolean
+LANGUAGE sql
+STABLE
+AS $$
+  WITH current_operation AS (
+    SELECT storage.operation() AS raw_operation
+  ),
+  normalized AS (
+    SELECT CASE
+      WHEN raw_operation LIKE 'storage.%' THEN substr(raw_operation, 9)
+      ELSE raw_operation
+    END AS current_operation
+    FROM current_operation
+  )
+  SELECT EXISTS (
+    SELECT 1
+    FROM normalized n
+    CROSS JOIN LATERAL unnest(expected_operations) AS expected_operation
+    WHERE expected_operation IS NOT NULL
+      AND expected_operation <> ''
+      AND n.current_operation = CASE
+        WHEN expected_operation LIKE 'storage.%' THEN substr(expected_operation, 9)
+        ELSE expected_operation
+      END
+  );
+$$;
+`
+];
 export async function setup(candidate,evidence){
  assert.ok(evidence&&path.isAbsolute(evidence));fs.mkdirSync(evidence,{recursive:true,mode:0o700});const journal=path.join(evidence,'resources.jsonl');fs.writeFileSync(journal,'',{flag:'wx',mode:0o600});const broker=randomUUID(),tmp=fs.mkdtempSync(path.join(os.tmpdir(),'vexa-recovery312-')),resources=[],pools=[],clients=[];
  const run=(args,input)=>{const r=spawnSync('docker',args,{input,encoding:'utf8',timeout:60000,maxBuffer:16*1024*1024});assert.ok(!r.error&&r.signal===null&&r.status===0,r.stderr);return r.stdout.trim();};
@@ -18,6 +86,7 @@ export async function setup(candidate,evidence){
    for(let i=0;i<200;i++){const ready=spawnSync('docker',['exec',name,'pg_isready','-h','127.0.0.1'],{stdio:'ignore'});if(ready.status===0)break;assert.ok(i<199,'DB_READY_TIMEOUT');await new Promise(r=>setTimeout(r,100));}
    const preloads=sql(name,'SHOW shared_preload_libraries');assert.equal(preloads,recoveryPreloads,'OFFLINE_RECOVERY_PRELOADS_REQUIRED');fs.writeFileSync(path.join(evidence,key+'-preloads.json'),JSON.stringify({image:'public.ecr.aws/supabase/postgres:17.6.1.166',sharedPreloadLibraries:preloads,scope:'offline synthetic recovery; pg_net worker disabled at startup'},null,2));
    sql(name,"create schema if not exists storage;create table if not exists storage.buckets(id text primary key,name text,public boolean);create table if not exists storage.objects(id uuid primary key default gen_random_uuid(),bucket_id text,name text,owner_id text,metadata jsonb);alter table storage.objects enable row level security;grant usage on schema storage to authenticated;grant select,insert,delete on storage.objects to authenticated;create table if not exists auth.sessions(id uuid primary key,user_id uuid,not_after timestamptz);alter role supabase_admin password 'synthetic-recovery-local-only';");
+   sql(name,storageOperationBootstrapSQL.join('\n'));
    sql(name,fs.readdirSync(path.join(candidate,'supabase/migrations')).filter(f=>f.endsWith('.sql')).sort().map(file=>fs.readFileSync(path.join(candidate,'supabase/migrations',file),'utf8')).join('\n'));
    sql(name,"ALTER TABLE auth.users ADD COLUMN IF NOT EXISTS email_confirmed_at timestamptz;ALTER TABLE auth.users ADD COLUMN IF NOT EXISTS deleted_at timestamptz;ALTER TABLE auth.users ADD COLUMN IF NOT EXISTS banned_until timestamptz;CREATE ROLE recovery_fixture LOGIN NOINHERIT PASSWORD 'SYN-312';GRANT vexa_backend TO recovery_fixture;");
   }

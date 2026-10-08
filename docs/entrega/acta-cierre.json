@@ -18,14 +18,15 @@
       "human_acceptance": "pending_actual_recipients_access_and_dates"
     },
     "local_software": {
-      "status": "ci_packages_capacity_pass_residual_unit_http_in_progress",
+      "status": "scoped_local_regressions_and_capacity_verified",
       "evidence": [
         "../../construccion/ESTADO-CONSTRUCCION.json",
         "CRM-ACOTADO-2026-10-08.md",
         "../../docs/ejecucion/cierre-2026-10-07/PROGRESO.md",
         "CORRECCION-NAVEGACION-2026-10-08.json",
         "FASE-6-CI-2026-10-08.json",
-        "FASE-6-CAPACIDAD-2026-10-08.json"
+        "FASE-6-CAPACIDAD-2026-10-08.json",
+        "FASE-6-COBERTURA-RESIDUAL-2026-10-08.json"
       ]
     },
     "synthetic_demo": {
@@ -122,7 +123,7 @@
     "source_commit": "6e8b2b4203f948408171612080b0bc62fadc19be",
     "rubrics": 20,
     "kind": "evidence_reconciliation_and_scoped_local_checks",
-    "verdict": "in_progress_not_production",
+    "verdict": "scoped_local_checks_verified_external_acceptance_pending",
     "dependency_advisories": {
       "production": 0,
       "development_high": 5,
@@ -162,8 +163,8 @@
     "production_validated": false
   },
   "local_work_pending": [
-    "Completar pruebas residuales de unidades plataforma/web y HTTP servido que no estaban incluidas en55archivos de paquetes.",
-    "Concluir reconciliación de auditoría final; aceptación mediante controlador y evidencia legítima sigue pendiente externa."
+    "Preparar y revisar ejecutor acotado del lote histórico100 sin invocar consumidor global; no cargar antes de autorización específica.",
+    "Preparar publicación y activaciones concretas con sus verificaciones, conservando puertas de autorización y evidencia externa."
   ],
   "historical_evidence_note": "Los checkpoints y métricas remotas con fechas anteriores se conservan como historia de sus SHA; no acreditan el código local actual. La restricción antigua notification_review ya no es un bloqueo activo, y los seis alcances técnicos históricos están integrados.",
   "previous_audit_checkpoint": {

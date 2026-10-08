@@ -4,7 +4,7 @@ Actualización8-oct:60/60 alcances técnicos integrados y28/60 aceptaciones form
 
 ## Trabajo técnico y operativo que sigue abierto
 
-- Auditoría final: Auth/UI/SQL,CI4/4,paquetes586/586 y serie10K/50K/150K sobre6e8b2b4 aprobados; cierre focal de control HTTP servido en curso.
+- Auditoría final: Auth/UI/SQL,CI4/4,paquetes586/586 y serie10K/50K/150K sobre6e8b2b4 aprobados; 60unidades residuales y2casosHTTP con control revisado aprobados.
 - Seguridad global: cierre local F07-01 de17/17 componentes verificado; no existe el antiguo bloqueo documental de revisión. Aceptación formal sigue detrás de las dependencias reales del grafo.
 - Recuperación y operación: restore local actual PASS; barrera Storage administrada, ensayo gestionado, consumidores permanentes, alertas y responsables pendientes.
 - Validación humana y entrega: participantes reales, guía, pitch, gold independiente y recepción; no sustituibles con pruebas sintéticas.

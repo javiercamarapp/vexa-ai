@@ -2,7 +2,7 @@
 
 ## Estado vigente — 8 de octubre de 2026
 
-Consultar [ESTADO-VIGENTE.md](../docs/ESTADO-VIGENTE.md): **60 alcances técnicos integrados; 28/60 aceptaciones formales.** Fases 1–3 cerradas localmente para sus versiones. Recuperación local y corrección CRM comprobadas; operación gestionada, nuevas cargas autorizadas y validaciones humanas pendientes. La fase6 aprobó CI4/4, paquetes586/586 y capacidad10K→50K→150K sobre6e8b2b4, con revisión independiente. Comprobaciones residuales de unidades/HTTP en curso. Producción sin validar; sin publicación ni cambios remotos de esta ejecución. La restricción documental histórica de revisión ya fue retirada y no es un bloqueo vigente.
+Consultar [ESTADO-VIGENTE.md](../docs/ESTADO-VIGENTE.md): **60 alcances técnicos integrados; 28/60 aceptaciones formales.** Fases 1–3 cerradas localmente para sus versiones. Recuperación local y corrección CRM comprobadas; operación gestionada, nuevas cargas autorizadas y validaciones humanas pendientes. La fase6 aprobó CI4/4, paquetes586/586 y capacidad10K→50K→150K sobre6e8b2b4, con revisión independiente. 60unidades adicionales y2casosHTTP con control vigente aprobados. Producción sin validar; sin publicación ni cambios remotos de esta ejecución. La restricción documental histórica de revisión ya fue retirada y no es un bloqueo vigente.
 
 Los cortes fechados que siguen son históricos y no sustituyen el estado vigente.
 

@@ -1,6 +1,6 @@
 # Auditoría de cierre — 8 de octubre de 2026
 
-**Reconciliación de evidencia en curso; no aprobación integral ni de producción.** Composición local congelada `6e8b2b4`; 60 alcances técnicos y 28/60 aceptaciones formales. La auditoría conserva el SHA y alcance de cada comprobación: las pruebas históricas no se presentan como una ejecución del binario actual. CI conjunto4/4, paquetes586/586 y capacidad actual10K/50K/150K aprobados. Pruebas residuales de unidades/HTTP en cierre.
+**Reconciliación de evidencia en curso; no aprobación integral ni de producción.** Composición local congelada `6e8b2b4`; 60 alcances técnicos y 28/60 aceptaciones formales. La auditoría conserva el SHA y alcance de cada comprobación: las pruebas históricas no se presentan como una ejecución del binario actual. CI conjunto4/4, paquetes586/586 y capacidad actual10K/50K/150K aprobados. 60unidades adicionales y2casosHTTP con control revisado aprobados.
 
 El rechazo documental de revisión435 ya fue retirado por Javier; no es un bloqueo activo. La revisión defensiva F07-01 se completó localmente en fase2. Los pendientes reales de cuentas, recuperación, entrega humana y producción siguen abiertos.
 
@@ -23,7 +23,7 @@ El rechazo documental de revisión435 ya fue retirado por Javier; no es un bloqu
 | 15. CI/CD y Git | Node22 y Next16.3.6 fijados; control SQL libera recursos; pruebas de herramientas calibradas. | F01-05 cuatro trabajos realesPASS; publicación y checks remotos pendientes, configuración externa intacta. |
 | 16. Errores y logs | Fallos originales conservados; recibos con hashes, exit y limpieza; error RSC recuperado en navegador real. | Destino y retención operacional de logs/alertas con responsables reales. |
 | 17. Operación y alertas | Ensayos acotados históricos y runbooks; CRM anterior observó288unidades/día en lectura real. | Programación permanente, responsables, entrega de alertas y recuperación gestionada. |
-| 18. Pruebas y arneses | Controles actuales revisados fuera de candidatos;15archivos UI integrados; prototipo service-cas retirado explícitamente y sucesores probados. | CI4/4 y paquetes586/586 sobre6e8b2b4 aprobados; capacidad final aprobada; cierre residualHTTP en curso, sin sumar suites incluidas dos veces. |
+| 18. Pruebas y arneses | Controles actuales revisados fuera de candidatos;15archivos UI integrados; prototipo service-cas retirado explícitamente y sucesores probados. | CI4/4 y paquetes586/586 sobre6e8b2b4 aprobados; capacidad final aprobada; cierre residualHTTP aprobado, sin sumar suites incluidas dos veces. |
 | 19. Integraciones y herramientas | CRM101autor+6controles+9SQL/HTTP; email39con25puros incluidos y push51 locales; histórico reconciliado en lectura. | Referencias independientes CRM, entrega real a proveedores/dispositivos y cargas expresamente autorizadas. |
 | 20. Agentes y supervisión | Contratos de extracción/redacción/herramientas y gates locales; plantillas humanas vacías preparadas. | Gold/holdout y anotación real, presupuesto/modelos autorizados, piloto, pitch y recepción. |
 
@@ -48,4 +48,7 @@ Actualización de composición: `6e8b2b4` conserva los832archivos de producto de
 Resultado posterior: CIv4completo4/4 y paquetes55archivos586/586PASS, con fuentes invariantes y limpieza comprobada en sus alcances. [Recibos del cierre conjunto](FASE-6-CI-2026-10-08.json). [Mapa completo de fallos originales](RECONCILIACION-FALLOS-2026-10-08.json):33categorías/65resultados,10categorías externas y retiradaCAS sinPASS. El párrafo anterior del focal conserva su secuencia histórica y no sustituye el nuevo recibo agregado.
 
 
-Capacidad final independiente aprobada: [tres escalas actuales](FASE-6-CAPACIDAD-2026-10-08.json),210.000SYN,cero pendientes,15IDs y tres workers ausentes; límites originales. Las60unidades residuales aprobaron. El testHTTP servido antiguo obtuvo1/2 por exigirlogout sin sesión; rojo conservado y control vigente en revisión, sin modificarproducto ni las fuentes medidas.
+Capacidad final independiente aprobada: [tres escalas actuales](FASE-6-CAPACIDAD-2026-10-08.json),210.000SYN,cero pendientes,15IDs y tres workers ausentes; límites originales. Las60unidades residuales aprobaron. El testHTTP servido antiguo obtuvo1/2 por exigirlogout sin sesión; rojo conservado; control vigente revisado y nueva corrida2/2PASS, sin modificarproducto ni las fuentes medidas.
+
+
+[Cobertura residual cerrada](FASE-6-COBERTURA-RESIDUAL-2026-10-08.json):60unidades más2HTTP en dos ejecuciones,3calibraciones del oráculo y reutilización explícita de conexión5/cuerpo7. Se conserva el testservido originalFAILcomo control reemplazado, identificado fuera del candidato. [Resumen del corte local](CIERRE-LOCAL-2026-10-08.md). La auditoría de20rubros sigue siendo reconciliación con comprobaciones acotadas; no aprobación integral de producción ni recepción humana.

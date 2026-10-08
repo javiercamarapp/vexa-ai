@@ -81,3 +81,10 @@ Paquetes finales:55archivos,586/586PASS en37,214s (npmci2,986s); ningún skip/ca
 Tres escalas nuevas PASS sobre6e8b2b4:10K96,379s;50K682,318s;150K1.521,954s. Total210.000SYN,2.100bloques,cero pendientes; cinco jobs partial por rechazos previstos, sin failureCount, cada uno antes de su deadline. Root verificó cada escala antes de avanzar; verificador de serie originalPASS. Revisión independiente sin hallazgos reprodujo mismoresultado, comprobó15IDs únicos y tres workers ausentes, fuentes limpias y originales intactos. Recibo SHA2560082b9d8c75b2cad978f00f25b34308edbd947ec3fc139ea9cc3592664f575cd.
 
 Sólo quedan en esta cola local cuatro archivos de unidades y dos casos HTTP servido, fuera del wrapper55; conexión5 y cuerpoHTTP7 reutilizan recibos exactos vigentes. Después se cerrará el corte local sin convertirlo en aceptación humana/productiva.
+
+
+## Cierre de regresiones locales de fase6
+
+Cobertura residual cerrada:60/60unidades,controlservido anterior1/2FAIL preservado,oráculo vigente3/3calibrado y ejecución corregida2/2PASSen0,85s. No se repitieron60unidades; sólo buildnecesario18,69s yservidos. Fuentes/HEAD6e8 ymanifestinvariantes;controles externos porhash yscratch/procesos retirados. Recibo público FASE-6-COBERTURA-RESIDUAL-2026-10-08.json.
+
+CI4/4,paquetes586/586,UI83/83+30/30ycapacidad210KSYNcompleta cerrados en sus alcances. No se suman suites incluidas ni se concede60/60formal. El controlador consultado confirma28accepted/32pending,próximaF03-01. Siguiente preparación local: ejecutor específico del lote histórico100, evitando consumidor global y preservando autorización expresa previa a producción.

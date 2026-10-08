@@ -1,0 +1,89 @@
+{
+  "schema": "rovaq-final-residual-coverage-v1",
+  "date": "2026-10-08",
+  "status": "local_pass_with_reviewed_external_control",
+  "candidate": "6e8b2b4203f948408171612080b0bc62fadc19be",
+  "node": "v22.23.2",
+  "formalAcceptance": false,
+  "productionValidated": false,
+  "units": {
+    "tests": 60,
+    "status": "PASS",
+    "seconds": 1.03,
+    "files": [
+      "packages/platform/tests/pool-options.test.ts",
+      "packages/platform/tests/schema/db.test.ts",
+      "apps/web/tests/email-admission.test.mjs",
+      "apps/web/tests/economic-import/import.test.ts"
+    ],
+    "receipt": {
+      "path": "fase6-residual-v1/receipt.json",
+      "sha256": "dac1439ee706342e44c481fb769408e7001e61c2cc79a16fd3a00d750bdda8e3"
+    },
+    "scope": "Unit tests with injected SQL/fetch; not live provider coverage"
+  },
+  "originalServed": {
+    "passed": 1,
+    "failed": 1,
+    "status": "FAIL_preserved_superseded_control",
+    "cause": "Configured SYN environment does not create authenticated session; original test incorrectly required logout form on anonymous login.",
+    "review": {
+      "path": "fase6-residual-v1/review.json",
+      "sha256": "331ee9161ca829b2f9a93802b2bc1974ec9806234d3d6608f1238e00f6c906a5"
+    }
+  },
+  "correctedServed": {
+    "passed": 2,
+    "failed": 0,
+    "seconds": 0.85,
+    "receipt": {
+      "path": "fase6-auth-served-corrected-v1/receipt.json",
+      "sha256": "f72054611cd5c233c9b3728c5a822c1d45809c7fd37283f0b9df30a0f51f3080"
+    },
+    "review": {
+      "path": "fase6-auth-served-corrected-v1/review.json",
+      "sha256": "03db1e848dfcf574d8f2e8fe77e3c03e6a02f813a1d0a31f74affbca44792ad6"
+    },
+    "originalCaseDeadlineMs": 30000,
+    "externalControlHashes": {
+      "auth-served.test.mjs": "33eaab8629ccd0b81031b0a6c57fb56beda4c9ef98ad83064bdc2e66ab16e385",
+      "auth-form-oracle.mjs": "cf9fcf47cde5bd52bd2571709c247b0030a5dbd4095ac3f83e8f98a900b9e46b",
+      "auth-form-oracle.test.mjs": "908ff3d408758c0fc153d078f92816406aff0983bfc52f7be0f05b7a750b447f",
+      "auth-served-README.md": "f005bf8441dd80af30c4bca560d3f5586e03f25940db1bcd09005065031753c6"
+    },
+    "overlay": "Two pinned files copied only into owned scratch; original candidate unchanged",
+    "authenticatedLogoutEvidence": "FASE-2-SEGURIDAD-2026-10-07.json; http-extra8/8, actual Auth/browser POST logout plus cookie replay denied"
+  },
+  "oracleCalibration": {
+    "log": "fase6-auth-form-oracle-v2.tap",
+    "sha256": "153ca7e2e52d056da05d2cabc793ab174fd68c923953f85410af0b8927044a01",
+    "passed": 3
+  },
+  "sourceInvariance": true,
+  "processGroupsAbsent": true,
+  "scratchRemoved": true,
+  "reused": [
+    {
+      "test": "apps/web/tests/import-connections.test.ts",
+      "tests": 5,
+      "log": "import-selection-unit.log",
+      "scope": "Exact test and connection-options helper hashes equal correction receipt and current6e8; no rerun needed",
+      "logSha256": "bd50a062327b287e88f60da20255b3c8a33972b56d09f99f69cdd8bacc907d92",
+      "testSha256": "f7a2f03caa5784382aa069c34ce1162dc9ecbdc3ac03f17c2016276b7b8cde9e"
+    },
+    {
+      "test": "apps/web/tests/request-body.test.ts",
+      "tests": 7,
+      "log": "body-units-final.log",
+      "scope": "Test/helper/auth/session unchanged from phase2 candidate54be5cf; backed also by realHTTPphase2 security receipt; no rerun needed",
+      "logSha256": "77c5d1a628928d31e9bed8c171b5a1e3e129b1da5e00554dc90d445f3dde1bc8",
+      "testSha256": "280aa7da2e17aecb0fca35ca99ad16c7da09fc8ee89734f6a1fcf283d9c95d0e"
+    }
+  ],
+  "limits": [
+    "60units and2served are two verified executions, not a single62test run",
+    "No Google OAuth provider, production data or remote publication tested",
+    "Legacy test remains failed; no retrospective PASS",
+    "Product and capacity source inventory unchanged; external controls identified separately by hashes"
+  ]
+}

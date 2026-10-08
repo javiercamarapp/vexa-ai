@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-08",
+  "updated": "2026-10-08T23:34:57.572478+00:00",
   "definition": "Trabajo técnico de la ficha integrado y probado. Las cuentas/datos/aprobaciones externas y las dependencias de aceptación formal se identifican por separado. No acredita producción.",
   "accepted_in_graph": [
     "E00",
@@ -19,6 +19,7 @@
     "F02-04",
     "F02-05",
     "F02-06",
+    "F03-01",
     "F04-01",
     "F04-02",
     "F04-03",
@@ -32,7 +33,6 @@
     "F06-11"
   ],
   "technical_ready_external_pending": [
-    "F03-01",
     "F03-02",
     "F03-03",
     "F03-04",
@@ -64,24 +64,6 @@
   "total_tasks": 60,
   "production_validated": false,
   "external_pending": [
-    {
-      "task_id": "F03-01",
-      "technical_ready": true,
-      "implemented": "AdaptadorHubSpotv3/scopes, mensajes+notas/revisiones, altaowner, credencialserverbound, histórico/consumidor/reconexión.",
-      "programming_pending": [],
-      "external_pending": [
-        {
-          "owner": "Titular HubSpot y responsable datos",
-          "pending": "Cuenta/app/token con lectura autorizada, scopes/version efectivos y20conversaciones autorizadas con referenciaindependiente.",
-          "verification": "S01 live contraexport/UI independiente; no sustituirlo con fixture ni extenderpermiso alectura noautorizada."
-        },
-        {
-          "owner": "Javier / titular de infraestructura",
-          "pending": "Cuentas/credenciales CRM reales autorizadas, configuración específica y operación programada. Las migraciones0013/0015 ya están aplicadas legítimamente en el Supabase propio; el despliegue y recorridoSYN remoto están comprobados.",
-          "verification": "Conectar la cuenta autorizada, reconciliar histórico e incremental contra el proveedor y validar programación/rotación reales. El smokeSYN no sustituye este ensayo."
-        }
-      ]
-    },
     {
       "task_id": "F03-02",
       "technical_ready": true,
@@ -793,5 +775,11 @@
       "cause": "fixtures de Storage incompletos e import absoluto a runtime histórico"
     },
     "closure_receipt": "docs/entrega/FASE-1-CIERRE-2026-10-07.json"
+  },
+  "latest_formal_acceptance": {
+    "task_id": "F03-01",
+    "commit": "0437a2708805ba0d2cb5ed3cd32710efdf80b77e",
+    "evidence": "docs/entrega/HUBSPOT-S01-ACEPTADO-2026-10-08.json",
+    "accepted_count_derived_from_runner": 29
   }
 }

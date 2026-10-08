@@ -1,5 +1,13 @@
 # Estado vigente — Rovaq AI / VEXA
 
+## Actualización — 8 de octubre: HubSpot aceptado oficialmente
+
+**29/60 aceptadas formalmente (48,3 %); 31 pendientes.** F03-01 pasó `verify` y `accept` limpio sobre `0437a27`, con revisión independiente: 29/29 pruebas en cada corrida,20hilos/28mensajes,57eventos y105registros verificados;44GET más una introspección de cuenta/app/scopes vigente por corrida. Los dos oráculos —referencia independiente UI de contenido/acciones y fidelidad exacta de texto/payload del proveedor— coinciden. Las20páginas quedan cerradas y la limpieza está comprobada.
+
+Se conserva el primer rechazo de materialización: un archivo local tenía modo0600 frente a0644 en Git, con bytes idénticos. Se corrigió únicamente ese modo mediante recuperación canónica y se repitió el ciclo. El grafo fue actualizado por el runner, sin editar estados a mano. Evidencia: `docs/entrega/HUBSPOT-S01-ACEPTADO-2026-10-08.json`.
+
+El cierre es de la muestra HubSpot; todavía faltan carga y reconciliación histórica, procesamiento/evaluación del agente, recuperación y operación de producción. **Fases4–6 abiertas.** Zendesk es la siguiente dependencia formal; su estado de migración/acceso se consulta a Javier mientras continúa el trabajo operativo autorizado. No hubo inferencia, escritura CRM/DB ni despliegue en estas corridas. Límite de IA:US$50 TOTAL.
+
 ## Actualización — 8 de octubre, 23:01 UTC: censo completo y doble cotejo revisado
 
 Censo independiente de interfaz completo para **20/20 hilos**: trece recorridos segmentados, uno con extensión completa y seis vistas vacías explícitas. No se observaron tarjetas COMMENT en ese alcance. Las notas CRM se mantienen aparte: los hilos 2–14 comparten 27 identificadores; con el primer hilo son 29 identificadores UI únicos, no 353 mensajes nuevos. Recibo maestro privado SHA256 `8d507e72a264189c5f399d879766aa8d2e621d49e0642d8a4d6f847aad6bf2c2`.

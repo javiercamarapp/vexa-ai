@@ -1,5 +1,7 @@
 # Estado vigente del plan — 8 de octubre de 2026
 
+**Corte posterior del 8-oct: 29/60 aceptadas (48,3 %).** HubSpot F03-01 completó verificación y aceptación limpia;31pendientes. Fases4–6 y producción siguen abiertas. [Evidencia de aceptación](docs/entrega/HUBSPOT-S01-ACEPTADO-2026-10-08.json). Los cortes anteriores conservan sus cifras históricas.
+
 El plan activo está en [cierre por fases](docs/ejecucion/cierre-2026-10-07/PLAN.md) y el estado en [ESTADO-VIGENTE](docs/ESTADO-VIGENTE.md). F07-01 tiene cierre técnico local comprobado; la restricción documental histórica fue retirada por Javier y no hay un bloqueo activo de plataforma comprobado. Hay 60 fichas con trabajo técnico integrado y 28 aceptadas formalmente. Recuperación gestionada, conexiones y validaciones externas conservan sus requisitos específicos. Se sigue el encargo de completar todas las fases, con una suite pesada a la vez y sin inventar aceptaciones.
 
 Los cortes anteriores que siguen son históricos; no reemplazan este estado ni el plan activo.

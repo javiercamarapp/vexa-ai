@@ -1,0 +1,55 @@
+{
+  "schema": "s01-formal-acceptance-public-v1",
+  "observed_at": "2026-10-08T23:34:57.572478+00:00",
+  "task_id": "F03-01",
+  "runner_status": "accepted",
+  "accepted_commit": "0437a2708805ba0d2cb5ed3cd32710efdf80b77e",
+  "formal_accepted": 29,
+  "total_tasks": 60,
+  "command_verify": "python3 orchestration/runner.py verify --task F03-01 --max-minutes 5 --approval-note [referencia privada de autorización real]",
+  "command_accept": "python3 orchestration/runner.py accept --task F03-01 --max-minutes 5",
+  "exit_verify": 0,
+  "exit_accept": 0,
+  "verify_tests_passed": 29,
+  "accept_tests_passed": 29,
+  "live_counts": {
+    "threads": 20,
+    "messages": 28,
+    "events": 57,
+    "records": 105,
+    "pages": 20
+  },
+  "requests_per_live_run": 44,
+  "metadata_requests_per_live_run": 1,
+  "account_scopes_verified": true,
+  "provider_plain_and_payload_exact": true,
+  "independent_ui_content_actions_reconciled": true,
+  "inventory_complete": true,
+  "source_files_verified": 3327,
+  "clean_probe_removed": true,
+  "observer_cleanup": {
+    "closed": true,
+    "activeBodies": 0,
+    "retainedBytes": 0
+  },
+  "verify_receipt_sha256": "3a2dea3000a56a42d0e4eef65f8ed57c9709171cef78539c253054a489b5e630",
+  "accept_receipt_sha256": "7670ad80bf82565878415e4d62082089ce487e726c4faa864a4b51f3739541d8",
+  "independent_review_sha256": "f9ba3da3e186baf1de0204d286bbf663a98837f611f60eb1718cc73d57b6c144",
+  "gate_logs": [
+    {
+      "kind": "verify",
+      "sha256": "bae67920ec3ad19f65455fe0b24ff3056f7a1d850d27bb08504bbacabbc210f0"
+    },
+    {
+      "kind": "recheck",
+      "sha256": "d58ec8f8bafa404f6ff84ab3f8bd42fac556db66f4f08ff79a41bd116903cd10"
+    }
+  ],
+  "previous_rejection": "First accept stopped before network: one root file mode0600 differed from clean Git0644, with identical bytes. Independent review, canonical reject/recovery and chmod0644; original receipts/history retained.",
+  "limits": [
+    "Selected20threads/28messages; does not certify all historical data imported or processed.",
+    "Does not assert HTML/CSS visual equivalence or human product validation.",
+    "No CRM/database writes, inference, or deployment in these gate runs.",
+    "Production and phases4–6 remain pending."
+  ]
+}

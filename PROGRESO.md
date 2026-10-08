@@ -1,5 +1,7 @@
 ## Estado vigente — 8 de octubre de 2026
 
+**Corte posterior del 8-oct: 29/60 aceptadas (48,3 %).** HubSpot F03-01 completó verificación y aceptación limpia;31pendientes. Fases4–6 y producción siguen abiertas. [Evidencia de aceptación](docs/entrega/HUBSPOT-S01-ACEPTADO-2026-10-08.json). Los cortes anteriores conservan sus cifras históricas.
+
 **60/60 fichas con trabajo técnico integrado; 28/60 aceptadas formalmente (46,7 %).** La reconciliación incorpora el cierre local F07-01, probado con 17 componentes; no concede aceptación ni valida producción. Fases 1–3 cerradas localmente para sus versiones. Fase 4: recuperación local aprobada; recuperación gestionada y operación permanente pendientes. Fase 5: corrección CRM integrada y comprobada; histórico reconciliado sin cargas nuevas. Fase 6: navegación y controles integrados; CI4/4, paquetes586/586 y nueva serie10K→50K→150K aprobados sobre6e8b2b4, con revisión independiente. 60unidades adicionales y2casosHTTP con control vigente aprobados; entrega humana y remota pendientes. Cinco alertas altas de desarrollo por braces siguen abiertas. Sin publicación ni despliegue de estos cambios. [Estado vigente](docs/ESTADO-VIGENTE.md).
 
 Los cortes siguientes son históricos.

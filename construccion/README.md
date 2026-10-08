@@ -1,5 +1,7 @@
 # VEXA — de la carpeta al producto, paso a paso
 
+**Corte posterior del 8-oct: 29/60 aceptadas (48,3 %).** HubSpot F03-01 completó verificación y aceptación limpia;31pendientes. Fases4–6 y producción siguen abiertas. [Evidencia de aceptación](../docs/entrega/HUBSPOT-S01-ACEPTADO-2026-10-08.json). Los cortes anteriores conservan sus cifras históricas.
+
 ## Estado vigente — 8 de octubre de 2026
 
 Consultar [ESTADO-VIGENTE.md](../docs/ESTADO-VIGENTE.md): **60 alcances técnicos integrados; 28/60 aceptaciones formales.** Fases 1–3 cerradas localmente para sus versiones. Recuperación local y corrección CRM comprobadas; operación gestionada, nuevas cargas autorizadas y validaciones humanas pendientes. La fase6 aprobó CI4/4, paquetes586/586 y capacidad10K→50K→150K sobre6e8b2b4, con revisión independiente. 60unidades adicionales y2casosHTTP con control vigente aprobados. Producción sin validar; sin publicación ni cambios remotos de esta ejecución. La restricción documental histórica de revisión ya fue retirada y no es un bloqueo vigente.

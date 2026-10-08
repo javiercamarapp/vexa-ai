@@ -103,3 +103,7 @@ Auth-e2e es el que deberá acreditar Auth/PKCE/Mailpit y UI reales. Build prueba
 API health/version200. Artefactos y stdout sólo contienen datos sintéticos.
 
 Ver `REPORT.md` para comandos, salidas y pendientes de esta vuelta. Autoría no aceptación.
+
+### Contexto de servidor del examen HTTP
+
+El proceso Node/tsx de Auth HTTP carga `server-context.mjs`: resuelve exclusivamente `server-only` al archivo oficial `next/dist/compiled/server-only/empty.js` de la instalación temporal. Es el mismo alias de servidor del compilador Next; el resto de imports conserva su resolución normal. No modifica producto, paquete instalado ni protección del compilador cliente. Cuatro controles exigen el archivo oficial cargado, rechazo del módulo de cliente, error para imports desconocidos y ausencia del hook en otro proceso. Los37casos HTTP originales permanecen intactos. Este contexto no sustituye build, inspección de artefactos ni Auth-e2e reales.

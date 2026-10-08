@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "356c3919d91d2709f33db5123c903e02ffac954c",
-  "composition": "Phase-six navigation race correction: real navigation invalidates obsolete asynchronous loads in six financial panels, preserving query pinning and fragments; reviewed current base/SQL controls. Requires a fresh 10K/50K/150K capacity series; prior measurements remain bound to older sources.",
+  "baselineSha": "74b6ff73c54e5c15b45839fa99e994921054e129",
+  "composition": "Phase-six navigation correction and reviewed current base/SQL/UI controls; Node HTTP tests resolve the official Next server marker in their own server context. Full CI and a fresh 10K/50K/150K capacity series required; earlier results remain bound to their original sources.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -8841,7 +8841,7 @@
     },
     {
       "path": "tests/acceptance/support/ci/README.md",
-      "sha256": "14da8ab7cf9feec7eb5eaf1b7cb8d304ec92ebf99a879ba865d919e61b98ee0e"
+      "sha256": "9d1abf54af6db7f03d4b72a7124446887163cc9cca1363f1217de9f3723edb16"
     },
     {
       "path": "tests/acceptance/support/ci/REPORT.md",
@@ -8876,6 +8876,14 @@
       "sha256": "952c5c1f104a5d26af35fdf466730de842986afbbeaa022532f88b2f4aa29ec7"
     },
     {
+      "path": "tests/acceptance/support/ci/server-context.mjs",
+      "sha256": "087ecd52a950b5200867ceafcff2f6732cb6161e993d93a51381cb594eb577bf"
+    },
+    {
+      "path": "tests/acceptance/support/ci/server-context.test.mjs",
+      "sha256": "14f5cec8e99ba96ae29ddf74de4453178d10d43322fb7e095beb9288fe95180c"
+    },
+    {
       "path": "tests/acceptance/support/ci/sql-preflight.mjs",
       "sha256": "eafd5b1ec203a6feeba767891e90d857da8e7463e8ee08cc9d337b77f96693a2"
     },
@@ -8885,7 +8893,7 @@
     },
     {
       "path": "tests/acceptance/support/ci/web.mjs",
-      "sha256": "4a8ecc22cfeb85e62aa91f6e51fdcba682e52878db86240e6d4917f24655bfee"
+      "sha256": "7fdfc65ae6d819d81d4df12090cd86891127a5145303baaf2154bb537936c183"
     }
   ]
 }

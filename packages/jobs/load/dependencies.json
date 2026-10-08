@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "2073177f6491128b207e71f1e6a353bcd8fcb509",
-  "composition": "Phase-six reviewed Node22/Auth/navigation/preview controls and current SQL fixtures. Product remains unchanged. Requires a fresh complete capacity series after integration; no prior measurement inheritance.",
+  "baselineSha": "a26c4c7f4569b9ff23902b3d88b720cea52afaa6",
+  "composition": "Phase-six reviewed Node22/Auth/navigation/preview/SQL controls and exact Next16.3.6 tool contract. Product unchanged by this control integration. Requires fresh complete capacity series after final consolidation.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -8876,8 +8876,12 @@
       "sha256": "eafd5b1ec203a6feeba767891e90d857da8e7463e8ee08cc9d337b77f96693a2"
     },
     {
+      "path": "tests/acceptance/support/ci/web-contract.mjs",
+      "sha256": "76bbe91de11b472fe10f6169c2952e80dcaebd685368deb0abfd923f3a8e6433"
+    },
+    {
       "path": "tests/acceptance/support/ci/web.mjs",
-      "sha256": "646a39f779a9312d28f1a2766282076e9db04faeb6d6f8132399e190fe60daa3"
+      "sha256": "4a8ecc22cfeb85e62aa91f6e51fdcba682e52878db86240e6d4917f24655bfee"
     }
   ]
 }

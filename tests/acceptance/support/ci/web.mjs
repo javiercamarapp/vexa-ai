@@ -7,14 +7,14 @@ import assert from 'node:assert/strict';
 import {spawn,spawnSync} from 'node:child_process';
 import {copyBuildInputs,buildEnvironment} from '../../scaffold-copy.mjs';
 import {canaries,inspectPublished,redact} from './artifact-secrets.mjs';
+import {validateWebPackage} from './web-contract.mjs';
 const candidate=process.argv[2];
 const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'vexa-ci-web-'));
 const fixture=canaries();
 let child;
 try {
  const pkg=JSON.parse(fs.readFileSync(path.join(candidate,'apps/web/package.json')));
- for(const [key,value] of Object.entries({lint:'eslint . --max-warnings=0',typecheck:'next typegen && tsc --noEmit',build:'next build --webpack'}))assert.equal(pkg.scripts[key],value,'WEB_SCRIPT_CONTRACT:'+key);
- for(const [key,value] of Object.entries({next:'16.3.5',typescript:'5.9.3',eslint:'9.39.4'}))assert.equal({...pkg.dependencies,...pkg.devDependencies}[key],value,'WEB_TOOL_VERSION');
+ validateWebPackage(pkg);
  copyBuildInputs(candidate,tmp);const env=buildEnvironment(process.env,tmp);const cwd=path.join(tmp,'apps/web');
  env.SUPABASE_SERVICE_ROLE_KEY=fixture.service;env.VEXA_SERVER_ONLY_CANARY=fixture.server;
  fs.mkdirSync(path.join(cwd,'public'),{recursive:true});

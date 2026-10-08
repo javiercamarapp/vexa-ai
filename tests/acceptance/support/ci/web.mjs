@@ -26,7 +26,8 @@ try {
  const control=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../../..');
  for(const rel of ['apps/web/tests/auth-http.test.ts','packages/platform/tests/session.test.ts'])fs.copyFileSync(path.join(control,rel),path.join(tmp,rel));
  run(process.execPath,['--experimental-strip-types','--test','--test-reporter=tap','tests/session.test.ts'],path.join(tmp,'packages/platform'));
- run(process.execPath,['--import','tsx','--test','--test-reporter=tap','tests/auth-http.test.ts']);
+ run(process.execPath,['--test','--test-reporter=tap',fileURLToPath(new URL('./server-context.test.mjs',import.meta.url))]);
+ run(process.execPath,['--import',fileURLToPath(new URL('./server-context.mjs',import.meta.url)),'--import','tsx','--test','--test-reporter=tap','tests/auth-http.test.ts']);
  const tool=(file,args)=>run(process.execPath,[path.join(tmp,'node_modules',file),...args]);
  tool('next/dist/bin/next',['typegen']);tool('typescript/bin/tsc',['--noEmit']);tool('eslint/bin/eslint.js',['.','--max-warnings=0']);tool('next/dist/bin/next',['build','--webpack']);
  assert.ok(fs.readFileSync(path.join(cwd,'.next/BUILD_ID'),'utf8').trim());

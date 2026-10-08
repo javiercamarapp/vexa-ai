@@ -1,0 +1,47 @@
+{
+  "schema": "rovaq-ci-context-correction-v1",
+  "status": "reviewed_focal_pass_aggregate_pending",
+  "date": "2026-10-08",
+  "formalAcceptance": false,
+  "productionValidated": false,
+  "cause": "Node/tsx outside the Next bundler did not resolve the server-only marker when organization selection imported push-server.",
+  "scope": "Only the HTTP test process resolves the marker to the installed official Next server entry; product unchanged.",
+  "files": {
+    "tests/acceptance/support/ci/web.mjs": "7fdfc65ae6d819d81d4df12090cd86891127a5145303baaf2154bb537936c183",
+    "tests/acceptance/support/ci/server-context.mjs": "087ecd52a950b5200867ceafcff2f6732cb6161e993d93a51381cb594eb577bf",
+    "tests/acceptance/support/ci/server-context.test.mjs": "14f5cec8e99ba96ae29ddf74de4453178d10d43322fb7e095beb9288fe95180c",
+    "tests/acceptance/support/ci/README.md": "9d1abf54af6db7f03d4b72a7124446887163cc9cca1363f1217de9f3723edb16"
+  },
+  "focal": [
+    {
+      "log": "navigation-auth-server-context-v2.tap",
+      "sha256": "a38cae37e777e497b78f57b37bbfbaf6396617c95b9d0fd3bb18f3765f1e0202",
+      "pass": 37,
+      "fail": 0
+    },
+    {
+      "log": "navigation-server-context-calibration-v1.tap",
+      "sha256": "24de1b78a46e120de992117eb8d1e1899353a94d6d0ed1236189089efbee48ef",
+      "pass": 3,
+      "fail": 1
+    },
+    {
+      "log": "navigation-server-context-calibration-v2.tap",
+      "sha256": "fa573a0c75defa004922d5959cfbd62320b674efe5ee533e747055708096b9ac",
+      "pass": 4,
+      "fail": 0
+    }
+  ],
+  "reviewReceiptSha256": "6e013e75174bbfdf897367e543f6178036ddde63463ca61a9c500d2fac28da54",
+  "kernelFailure": "Outer umask077 made five permission mutation fixtures no-ops; reproduced FAIL077/PASS022. Rerun uses022 with private0700 directory and0600 logs. Controller oracles unchanged.",
+  "kernelDiagnosisSha256": "f2e1d028d2fafed1b1fd660a6e3c585f62fa13ab156e16ac69b0b21ccf5844d9",
+  "pending": [
+    "Full aggregate re-execution after original four jobs finish",
+    "Full package suite",
+    "Fresh capacity series"
+  ],
+  "manifest": {
+    "files": 2223,
+    "sha256": "f358619d73cbc133735e4a7d1559f396284a5416d5aa63e285df9607966b5bcd"
+  }
+}

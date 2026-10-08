@@ -89,13 +89,14 @@ export async function inspectPublished(cwd,origin,fixture,{allowUnconfiguredImpo
    const interventions=url.pathname==='/api/interventions'&&envelope?.contract_version==='f06-interventions-v1'&&envelope?.error?.code==='configuration_required';
    const briefs=url.pathname==='/api/briefs'&&envelope?.contract_version==='f06-briefs-v1'&&envelope?.error?.code==='configuration_required';
    const notifications=['/api/notifications','/api/notifications/preferences'].includes(url.pathname)&&envelope?.contract_version==='f06-notifications-v1'&&envelope?.error?.code==='configuration_required';
-   const expected=allowUnconfiguredImports===true&&!required&&response.status===503&&(imports||crm||extraction||aliases||problems||snapshots||economics||priority||workspace||detail||recommendation||explorer||interventions||briefs||notifications)&&!url.search
+   const knownBadgeQuery=url.pathname==='/api/notifications'&&url.search==='?status=unread&limit=1';
+   const expected=allowUnconfiguredImports===true&&!required&&response.status===503&&(imports||crm||extraction||aliases||problems||snapshots||economics||priority||workspace||detail||recommendation||explorer||interventions||briefs||notifications)&&(!url.search||notifications&&knownBadgeQuery)
     &&/^application\/json(?:;|$)/i.test(response.headers.get('content-type')??'')
     &&/(?:^|,)\s*private\s*(?:,|$)/i.test(cache)&&/(?:^|,)\s*no-store\s*(?:,|$)/i.test(cache)
     &&envelope.error.retryable===true&&typeof envelope.error.message==='string'
     &&typeof envelope.meta?.trace_id==='string'&&envelope.meta.trace_id.length>0;
    const legacyExpected=isOfflineLegacyResponse({offline:allowUnconfiguredImports,required,method:'GET',url,status:response.status,contentType:response.headers.get('content-type')??'',cache,envelope});
-   if(!expected&&!legacyExpected)throw new Error('PAGE_HTTP_STATUS:'+url.pathname+':'+response.status+':'+String(envelope?.error?.code));
+   if(!expected&&!legacyExpected)throw new Error('PAGE_HTTP_STATUS:'+url.pathname+url.search+':'+response.status+':'+String(envelope?.error?.code));
   }
   const location=response.headers.get('location');if(location)add(new URL(location,url).href);
   // HTML/CSS assets and literal fetch/import URLs. No browser JS execution.

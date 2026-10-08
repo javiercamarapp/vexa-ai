@@ -92,12 +92,12 @@
     {
       "id": "managed_recovery_barrier",
       "owner": "Operador de infraestructura y proveedor Storage",
-      "exit_condition": "Barrera verificable para URL firmadas previas, permiso específico y nuevo ensayo de recuperación administrada."
+      "exit_condition": "Autorización concedida; demostrar barrera verificable para URL firmadas previas y completar nuevo ensayo de recuperación administrada."
     },
     {
       "id": "external_activation",
-      "owner": "Javier/titulares de cuentas",
-      "exit_condition": "Autorizaciones específicas vigentes para publicación, lotes de datos y activaciones externas; verificación posterior."
+      "owner": "Operación y revisión autorizadas",
+      "exit_condition": "Permisos de piloto100, histórico SENIX completo, recuperación y publicación concedidos; completar ejecución y verificación posterior. Mantener US$50 TOTAL de IA, incluidos procesamiento, evaluaciones y reintentos."
     },
     {
       "id": "human_validation_and_handoff",
@@ -116,7 +116,7 @@
     "technical_tasks_complete": 49,
     "note": "Corte histórico anterior al despliegue y smoke remoto; conservado enGit."
   },
-  "updated": "2026-10-08",
+  "updated": "2026-10-08T23:01:00Z",
   "deployed_source_commit": "b0be6df86a2aad53f46bb6054e192c94d62b13e3",
   "latest_audit": {
     "date": "2026-10-08",
@@ -178,15 +178,34 @@
     "technical_count_increment": 0
   },
   "historical_pilot_preparation": {
-    "status": "locally_verified_specific_approval_pending",
+    "status": "authorized_real_attempt_timed_out_zero_rows_canonically_cancelled",
     "rows": 100,
     "lightTestsPassed": 44,
     "integratedTestsPassed": 8,
     "productionImported": false,
     "startupPolicy": "one explicitly approved canonical heartbeat, temporary worker only",
-    "evidence": "PILOTO-HISTORICO-100-2026-10-08.json"
+    "evidence": "PILOTO-HISTORICO-100-2026-10-08.json",
+    "productionExecuted": true,
+    "real_attempt": {
+      "startedAt": "2026-10-08T13:59:27.146Z",
+      "finishedAt": "2026-10-08T14:00:04.139Z",
+      "consumerBudgetMs": 20000,
+      "verifiedCompleted": false,
+      "result": "timeout",
+      "identityOverlapRowsAt1412": 0,
+      "importRowsAt1418": 0,
+      "checkpointsAt1418": 0,
+      "originalDeadlineExpired": true,
+      "cleanup": "canonical_cancel_verified_with_independent_database_readback",
+      "evidencePrivateRoot": "~/.codex-work/rovaq-cierre-20261007/pilot100-authorized-20261008",
+      "cleanup_observed_at": "2026-10-08T14:32:32.081722Z",
+      "cleanup_receipt_sha256": "f2aff4446527b243b0829dcd86b6bee65d1da53dd6fd40412c4ede78d19cee1a",
+      "cleanup_control_sha256": "ed8705c77c1c185d7f3e8b84e2e94c0952b4661be0bc45aa3ddefdc8f445207a",
+      "cleanup_tests_passed": 26,
+      "cleanup_does_not_accept_pilot": true
+    }
   },
-  "local_preparation_note": "Cola local de este corte terminada, incluida corrección del manifiesto. No equivale a aceptación completa: quedan condiciones externas y humanas en blockers, y verificaciones posteriores a sus autorizaciones.",
+  "local_preparation_note": "Pruebas locales del corte anterior verificadas. Piloto100 real agotó su plazo; diagnóstico registrado y cancelación canónica del intento comprobada por lectura independiente. Falta ejecutar exitosamente el piloto y cerrar evidencias externas; no es aceptación ni100% productivo.",
   "publication_preparation": {
     "status": "local_preparation_verified_external_conditions_pending",
     "source_sha": "73fb9f390ba28d91389a425965f04520e689f4d4",
@@ -196,6 +215,86 @@
     "deployment_executed": false,
     "evidence": "PUBLICACION-PREPARADA-2026-10-08.json",
     "inventoried_migrations": 43,
-    "correction_tests_passed": 7
+    "correction_tests_passed": 7,
+    "authorization": "granted_in_conversation_execution_and_evidence_pending"
+  },
+  "authorization_checkpoint": {
+    "observed_date": "2026-10-08",
+    "source": "Autorización explícita de Javier en esta conversación",
+    "scopes": [
+      "pilot_100_messages_prepared",
+      "all_available_senix_historical_data",
+      "ai_processing_evaluation_retries_usd_50_total",
+      "independent_crm_reference_and_legitimate_review",
+      "managed_recovery",
+      "publication",
+      "human_validation"
+    ],
+    "note": "Autorización recibida para el histórico disponible completo de SENIX, con piloto100 como requisito operativo previo. Límite de US$50 TOTAL para IA, procesamiento, evaluaciones y reintentos; no se reinicia por lote ni por ventana mensual. No acredita ejecución, revisión ni recepción humana."
+  },
+  "crm_independent_ui_checkpoint": {
+    "observed_at": "2026-10-08T21:45:11.785855+00:00",
+    "saved_ui_archives": 43,
+    "mime_integrity_verified": true,
+    "observed_message_bodies": 28,
+    "threads_with_observed_bodies": 20,
+    "target_threads": 20,
+    "target_messages": 28,
+    "complete_reference_review": false,
+    "formal_acceptance_increment": 0,
+    "receipt_sha256": "e01fbb6c28a649cd3d93824eb4426d275199d11232849ee3c886698e0fdbcad2",
+    "remaining": [
+      "COMMENT_inventory_completeness",
+      "reviewed_content_projection_and_complete_reference",
+      "gate_freeze_and_formal_live_verification"
+    ],
+    "threads_with_all_expected_message_ids": 20,
+    "quotes_expanded": 4,
+    "target_quotes": 4,
+    "roles_visibility_ticket_reviewed": true
+  },
+  "latest_history_counts": {
+    "observed_at": "2026-10-08T20:32:32.241973Z",
+    "messages": 137036,
+    "import_rows": 137743,
+    "raw_sync_objects": 481,
+    "remaining_net_count": null
+  },
+  "ai_runtime_checkpoint": {
+    "observed_at": "2026-10-08T21:45:11.785855+00:00",
+    "credential_get_http": 200,
+    "available_usd": "49.85407606",
+    "previous_usage_usd": "0.14592394",
+    "authorized_session_total_usd": "50",
+    "inference_calls_this_segment": 0,
+    "tenant_extraction_runs": 0,
+    "tenant_history_batches": 0,
+    "budget_configured": false,
+    "production_runtime_configured": false
+  },
+  "provider_fidelity_checkpoint": {
+    "observed_at": "2026-10-08T22:31:37.322Z",
+    "status": "provider_plain_and_payload_fidelity_verified",
+    "records": 105,
+    "threads": 20,
+    "messages": 28,
+    "events": 57,
+    "requests": 44,
+    "receipt_sha256": "896cab97fd536bf2faaceebf4706c66f8079381f137c3b41a6aa95baf85c8fef",
+    "formal_acceptance": false,
+    "ui_content_reconciled": false,
+    "metadata_refreshed": false,
+    "crm_writes": false,
+    "database_writes": false
+  },
+  "hubspot_ui_checkpoint": {
+    "at": "2026-10-08T23:01:00Z",
+    "threads_census_complete": 20,
+    "messages_content_actions_match": 28,
+    "independent_profile_and_join_tests_passed": 13,
+    "census_review_sha256": "8d507e72a264189c5f399d879766aa8d2e621d49e0642d8a4d6f847aad6bf2c2",
+    "profile_review_sha256": "49abad7f8a188ecc07b2e53125a81b160cebbf83ca6de57e3c5d700b1b3542ac",
+    "formal_acceptance": false,
+    "remaining": "Independent UI semantics/signature review; official v5 control integration, freeze, verify and accept."
   }
 }

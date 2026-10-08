@@ -1,5 +1,35 @@
 # Progreso
 
+## Actualización — 8 de octubre, 23:01 UTC: censo completo y doble cotejo revisado
+
+Censo independiente de interfaz completo para **20/20 hilos**: trece recorridos segmentados, uno con extensión completa y seis vistas vacías explícitas. No se observaron tarjetas COMMENT en ese alcance. Las notas CRM se mantienen aparte: los hilos 2–14 comparten 27 identificadores; con el primer hilo son 29 identificadores UI únicos, no 353 mensajes nuevos. Recibo maestro privado SHA256 `8d507e72a264189c5f399d879766aa8d2e621d49e0642d8a4d6f847aad6bf2c2`.
+
+El nuevo perfil de contenido y acciones obtiene **28/28 coincidencias**, con 109 pruebas sintéticas de autoría y 13 controles independientes del perfil y su unión con la fidelidad al proveedor. Conserva por separado los resultados anteriores, sin afirmar igualdad HTML/visual. El ensayo real previo verificó 105 registros, incluidos los 28 mensajes, sin errores ni escrituras. La referencia semántica UI está preparada; su firma y la integración del examen oficial siguen pendientes de revisión.
+
+**28/60 aceptadas; fases 4–6 y producción siguen abiertas.** Sin nuevas cargas, inferencia pagada, publicación ni despliegue. Siguiente: congelar el control revisado, verificar y aceptar F03-01 por el runner; después continuar la cola autorizada de histórico y producción.
+
+## Actualización — 8 de octubre, 22:32 UTC: fidelidad real verificada
+
+La lectura real con el observador nativo externo verificó exactamente el texto NFC y el payload de 28 mensajes, 20 hilos y 57 eventos: 105 registros, 44 GET, 20 páginas cerradas y cero errores. El ensayo duró aproximadamente 11 segundos, no escribió en CRM/base de datos ni usó IA. Recibo privado `provider-fidelity-live-v2/receipt-private.json`; conserva el límite de que la introspección de permisos utilizada es previa. Este resultado no sustituye el cotejo UI ni la aceptación oficial.
+
+Los 28 cuerpos de 20 hilos y las cuatro citas siguen capturados y revisados. El recorrido segmentado adicional de notas/comentarios cerró los hilos 2–10; los recibos nuevos se revisan por separado. Cada recorrido conserva continuidad de IDs y extremos Home/End. No se confunden las 27 tarjetas CRM Note de esas vistas con COMMENT de Conversations. Hilo 1 y los seis últimos tienen evidencia de extensión/estado vacío ya revisada. Restan los hilos 11–14 para completar el censo.
+
+El perfil externo SOURCE_DOM con contexto de exportación prefijado obtiene 20 coincidencias y 8 diferencias. Se conserva ese resultado; una propuesta distinta de contenido/acciones sigue en revisión y no declara igualdad HTML, visual ni atribución de citas. Ningún perfil nuevo está adoptado por el gate oficial.
+
+Autorización consolidada: histórico disponible completo de SENIX, piloto 100 previo y US$50 TOTAL para IA, procesamiento, evaluaciones y reintentos. OpenRouter está activo según la lectura de las 21:41 UTC. **Aceptación formal: 28/60; fases 4–6 y producción aún pendientes.**
+
+## Corte vigente — 8-oct, 15:18 UTC
+
+Carpeta y PDF recibidos revisados: casos 18–20 permiten seleccionar veinte hilos nativos y veintiocho mensajes. Los veinticinco correos CRM coinciden con prefijos truncados del export; dieciocho mensajes quedan enlazados inequívocamente y diez requieren cotejo individual. Los once CSV históricos originales contienen esos veinticinco correos, pero ninguno aporta un cuerpo más largo que la muestra.
+
+Acceso real vigente: metadata de cuenta/aplicación y scopes confirmada; adaptador del producto leyó veinte hilos, veintiocho cuerpos completos y cero cuarentenas mediante 44 GET con HTTP 200 a las 14:52 UTC. Javier inició sesión en HubSpot. Computer Use no arranca; alternativa nativa de Chrome en diagnóstico, sin lectura UI completada. Checklist privado de veinte hilos/veintiocho mensajes preparado y revisión independiente del puente en curso. Formal 28/60, sin referencia inventada, nueva carga ni publicación. Los permisos ya concedidos permanecen vigentes.
+
+## Corte vigente — 8-oct, 14:32 UTC
+
+Autorización real recibida para piloto100, referencia CRM/revisión, recuperación gestionada, publicación y validación humana. Piloto ejecutado: confirmación y arranque completados, consumidor detenido por límite20s; 0filas/0checkpoints comprobados, deadline original vencido. Cancelación canónica verificada a14:32UTC por lectura independiente: cuatro estados cerrados,0filas/0checkpoints,deadline/failure_count intactos. Controlv3 revisado26/26; fallo auxiliarv2 preservado y corregido. Sin replay ni nuevo lote. Aceptaciones28/60; siguiente F03-01 requiere referencia independiente y cotejo legítimo. [Estado y límites actualizados](../../ESTADO-VIGENTE.md).
+
+Los cortes siguientes son históricos.
+
 Última actualización: 8 de octubre de 2026 UTC (noche del 7 en Mérida).
 
 ## Hecho y verificado
@@ -100,3 +130,37 @@ Inspección existente del publicador350/350PASS en75,241s, exportación exacta2e
 ## 8-oct, 11:23 UTC — Corrección del manifiesto e integración
 
 La revisión encontró dos migraciones de timestamp omitidas por el filtro de cuatro dígitos. FAIL original preservado. Corrección73fb9f3 revisada sin hallazgos e integrada por fast-forward: cuatro archivos, 7/7 pruebas, dos fallos reproducidos con generador anterior, 43 migraciones y sus hashes comprobados; control externo rechaza inventario de sólo41. Sin SQL ni cambios de aplicación. Exportación nueva e inventario sobre SHA limpio, inspección de historial ampliada a351 por diferencia exacta de ancestros. El ensayo gestionado segmentado no se ejecutó ni se convierte en cobertura de43. Cola local cerrada;28/60 formal y condiciones externas pendientes.
+
+
+## Actualización — 8 de octubre, 16:05 UTC
+
+Se recuperaron trece archivos MHTML de la interfaz autenticada de HubSpot. La comprobación offline verifica MIME sin defectos y coincidencia byte a byte de los trece HTML extraídos. Contienen cuerpos identificables de ocho mensajes pertenecientes a cinco de los veinte hilos objetivo; esta cobertura no acredita todavía cuerpos completos, citas expandidas ni aceptación. El historial de tickets combinados se carga por tramos, por lo que la ausencia en una captura no demuestra que falte el mensaje.
+
+El cotejo detectó una diferencia real de representación: HubSpot muestra HTML con firmas, enlaces y citas que puede diferir del campo de texto plano de la API. El gate vigente exige texto NFC exacto. No se borran diferencias ni se copian expectativas desde el adaptador para producir un PASS. Sigue pendiente completar la referencia independiente y resolver el contrato de comparación mediante control externo revisado.
+
+Computer Use volvió a fallar al iniciar el pipe nativo, también tras reiniciar su sesión. En este corte no se ejecutaron nuevas acciones UI. Evidencia preservada: `ui-evidence-integrity-checkpoint-v1.json`, SHA256 `2e960290adbbadf1924a21b646623ab84ef5d6037f0b18d04d8b0e65176d00a1`, dentro del directorio privado del cotejo. **Aceptación formal: 28/60; F03-01 sigue abierta.** No hubo publicación, despliegue ni escritura CRM.
+
+## Actualización — 8 de octubre, 20:32 UTC y cotejo posterior
+
+Consulta real de sólo lectura, acotada a la organización autorizada: **137.036 mensajes, 137.743 filas de importación y 481 objetos crudos de sincronización**. Hay 44 mensajes más que en el corte previo. No sumar estas categorías ni inferir un porcentaje de histórico cargado; falta reconciliar por identidad los inventarios de origen. Recibo privado `history-reconciliation/counts-20261008T203232Z.json`.
+
+Javier autorizó continuar ante la pregunta concreta sobre AppleScript. El guardado dirigido a la ventana propia funciona. La revisión independiente de 32 MHTML acredita integridad y presencia de **20 hilos / 23 de 28 mensajes**; quince hilos contienen todos los mensajes previstos. Faltan el mensaje más reciente del primer hilo y cuatro mensajes salientes fallidos/rebotados de otros cuatro hilos. También siguen pendientes dos citas, detalles de rol, censo de comentarios internos y asociaciones completas. El filtro Communication facilita la captura, pero no certifica ausencia de comentarios.
+
+Mapa privado revisado `coverage-standards-v2.json`, SHA256 `633de8e21cad25f2466d80bcd3239b075a055465b37b1eed55d77a826ec0d6c6`. **F03-01 abierta, aceptación 28/60 y fases 4–6 sin cierre final.** La propuesta v5 continúa sin implementar ni congelar; no se generó una referencia favorable a partir del adaptador.
+
+
+## Actualización — 8 de octubre, 20:48 UTC: inventario UI completo
+
+La revisión independiente verificó 41 MHTML: están presentes los **28 cuerpos previstos en los 20 hilos**. Contraer cuatro cuerpos largos conserva exactamente su texto y enlaces en DOM y hace aparecer los correos fallidos antes virtualizados. Esto cierra el inventario de la muestra, no acredita aún contenido/citas completos, rol, visibilidad, censo COMMENT ni aceptación. Dos citas siguen pendientes. Los encabezados de cinco correos fallidos permiten corroborar al autor con otra captura UI; el nombre mostrado por sí solo no se trata como prueba definitiva del rol.
+
+Mapa privado `coverage-standards-v3.json`, SHA256 `4e0e550b133edda76f40e5e596a08ac0e999140b482d4d2a91adda4530e8c9aa`. La propuesta v5 revisión 2 preserva por separado la comparación UI/HTML y la fidelidad exacta del texto del proveedor; sigue sin implementar ni congelar. **Aceptación formal 28/60; fases 4–6 todavía sin cierre final.** Último conteo real de histórico: 137.036 mensajes. No existe todavía un total neto pendiente ni porcentaje de carga deduplicado.
+
+## Actualización — 8 de octubre, 21:45 UTC: OpenRouter y referencia CRM
+
+OpenRouter ya tiene clave configurada en producción. Una consulta autenticada de sólo lectura con la clave privada existente respondió HTTP 200: límite mensual US$50, disponible US$49,85407606 y consumo previo US$0,14592394. No se ejecutó inferencia en este tramo. El export de variables de Vercel contiene un marcador de secreto oculto; un intento con ese marcador dio401 y no acredita fallo de la clave real. Metadata actual de Vercel confirma ambas variables de clave y ausencia de las configuraciones/activadores de extracción y problemas. El límite mensual del proveedor no sustituye el tope total autorizado por Javier.
+
+Consulta de la organización a las21:32UTC: cero extracciones y cero lotes de análisis histórico; límites y reservas de IA vacíos. Los137.036 mensajes cargados no están acreditados como analizados. Sigue pendiente configurar presupuesto durable, política y modelos, ejecutar el piloto corregido, reconciliar/cargar el histórico faltante y comprobar resultados antes de activar producción completa. [Plan de cierre y alcance autorizado](../../entrega/PLAN-CIERRE-SENIX-2026-10-11.md): histórico completo, US$50 totales y objetivo de cierre11-oct/pitch12-oct; no es garantía de fecha.
+
+La referencia UI alcanza28/28 mensajes,20/20 hilos y4/4 citas expandidas en43 archivos revisados. Roles, visibilidad y asociaciones TICKET cuentan con revisión independiente. El censo de comentarios sigue abierto. La revisión del nuevo observador detectó tres defectos de plazos/reintento: versión2 corregida,63 pruebas de autor y tres negativos independientes aprobados; esto no concede aceptación del gate. El proyector rico conserva tres defectos a corregir y requiere una definición de contexto verificable. Se obtuvieron22 capturas CSS offline con atributos completos, sin red ni scripts, cero fallos de estilos; su existencia no prueba equivalencia visual.
+
+**Aceptación formal28/60,32 pendientes; fases4–6 sin cierre final.** No hay nuevo despliegue ni producción validada. Recibos privados: `openrouter-connection-checkpoint-v1.json`, `ai-budget-preflight-20261008T213233Z.json`, `coverage-quotes-standards-v4.json` y `review-observer-standards-v2.json`.

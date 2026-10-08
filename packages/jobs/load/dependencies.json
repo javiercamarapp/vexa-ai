@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "a8fb84748c2f614cb265a67560296004e46bbeb3",
-  "composition": "Phase-two local security composition: bounded HTTP readers and triggers, protected export headers, revocable private downloads via migration0041, and reviewed control support. Source baseline contains local commits c5f239d and fd73831 plus frozen F07 controls. Development-only braces advisory remains open with no untrusted product path identified in the current lint configuration. Requires a fresh 10K then50K then150K capacity series; no prior measurement is reused. This manifest is not a security acceptance or deployment.",
+  "baselineSha": "cda9cb836491688a1b91c12ddca6826959602241",
+  "composition": "Phase-three fresh local synthetic ingestion series after Phase 2 global security closure. Public health/version describes build identity only (status ok; meta.state build-identity-only), not backend readiness or production approval. Regenerated deliberately with the route change; prior capacity measurements are not reused. Measure 10K then 50K then 150K with the same immutable sources and unchanged job deadlines.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -317,7 +317,7 @@
     },
     {
       "path": "apps/web/src/app/api/health/version/route.ts",
-      "sha256": "427c362c06c6810be5749713a9f5e3631287794829c78f82c5f7e548d88ae116"
+      "sha256": "07ae6da429deea99c0fb64f517bba13db5622df2fe348ce965f22cbbe31f1a04"
     },
     {
       "path": "apps/web/src/app/api/history/route.ts",

@@ -11,9 +11,9 @@ export function GET() {
         service: "vexa-web",
         version: webPackage.version,
         revision: process.env.VEXA_COMPILED_REVISION || null,
-        status: "under_construction",
+        status: "ok",
       },
-      meta: { state: "scaffold" },
+      meta: { state: "build-identity-only" },
     },
     { headers: { "Cache-Control": "no-store" } },
   );

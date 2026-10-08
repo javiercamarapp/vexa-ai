@@ -1,0 +1,117 @@
+{
+  "status": "local-verified-managed-pending",
+  "candidateSha": "c2d03e2",
+  "controlSha": "907eb8b",
+  "gateEvidence": "/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0706-external-9rC1op",
+  "result": {
+    "status": "local_restore_and_financial_rollback_verified",
+    "candidate": "/private/tmp/rovaq-fase4-candidate-20261007",
+    "restoreEvidence": "/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/f0706-external-9rC1op/restore",
+    "rollbackEvidence": "/private/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-app-rollback-current-iZCRrP",
+    "production": false,
+    "previous_app_not_general_recommendation": true
+  },
+  "cleanupIndependent": [
+    {
+      "kind": "network",
+      "name": "vexa-recovery-312-69262468-53a6-46ce-96a6-cc55cc2d5522",
+      "absent": true,
+      "stderr": "Error response from daemon: network vexa-recovery-312-69262468-53a6-46ce-96a6-cc55cc2d5522 not found"
+    },
+    {
+      "kind": "container",
+      "name": "vexa-recovery-312-69262468-53a6-46ce-96a6-cc55cc2d5522-source",
+      "absent": true,
+      "stderr": "Error response from daemon: No such container: vexa-recovery-312-69262468-53a6-46ce-96a6-cc55cc2d5522-source"
+    },
+    {
+      "kind": "container",
+      "name": "vexa-recovery-312-69262468-53a6-46ce-96a6-cc55cc2d5522-target",
+      "absent": true,
+      "stderr": "Error response from daemon: No such container: vexa-recovery-312-69262468-53a6-46ce-96a6-cc55cc2d5522-target"
+    },
+    {
+      "kind": "network",
+      "name": "vexa-f01-03-c93b79fd-768b-45e2-81b8-54552d7fcaa9",
+      "absent": true,
+      "stderr": "Error response from daemon: network vexa-f01-03-c93b79fd-768b-45e2-81b8-54552d7fcaa9 not found"
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-c93b79fd-768b-45e2-81b8-54552d7fcaa9-db",
+      "absent": true,
+      "stderr": "Error response from daemon: No such container: vexa-f01-03-c93b79fd-768b-45e2-81b8-54552d7fcaa9-db"
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-c93b79fd-768b-45e2-81b8-54552d7fcaa9-auth",
+      "absent": true,
+      "stderr": "Error response from daemon: No such container: vexa-f01-03-c93b79fd-768b-45e2-81b8-54552d7fcaa9-auth"
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-c93b79fd-768b-45e2-81b8-54552d7fcaa9-rest",
+      "absent": true,
+      "stderr": "Error response from daemon: No such container: vexa-f01-03-c93b79fd-768b-45e2-81b8-54552d7fcaa9-rest"
+    },
+    {
+      "kind": "container",
+      "name": "vexa-f01-03-c93b79fd-768b-45e2-81b8-54552d7fcaa9-storage",
+      "absent": true,
+      "stderr": "Error response from daemon: No such container: vexa-f01-03-c93b79fd-768b-45e2-81b8-54552d7fcaa9-storage"
+    }
+  ],
+  "checkedAt": "2026-10-08T05:29:58.617409+00:00",
+  "managedRestore": false,
+  "production": false,
+  "schema": "rovaq-phase4-progress-v1",
+  "localCalibration": {
+    "tests": 2,
+    "pass": 2,
+    "controlOriginal": "907eb8b",
+    "deadlineFix": "99bb1a7",
+    "adopted": [
+      "ab66d41",
+      "542e25d"
+    ]
+  },
+  "captureAdapter": {
+    "tests": 18,
+    "pass": 18,
+    "commit": "179ea8f",
+    "realObjects": 13,
+    "realBytes": 76854,
+    "metadataReviewed": true,
+    "restoreAuthorized": false,
+    "metadataReviewSha256": "14e4b9f89c56e77bbb3cbf7202d03f4a4d505d2bcd69fdbe3e15ecf2d8eb56ef",
+    "realStatus": "capture-verified-metadata-reviewed"
+  },
+  "independentReview": {
+    "restore": "PASS; agent Standards",
+    "bootstrap": "PASS after deadline correction; agent Standards",
+    "adapter": "PASS; agent Standards"
+  },
+  "attempts": [
+    {
+      "log": "/Users/javiercamaraportepetit/.codex-work/rovaq-cierre-20261007/receipts/recovery-full-v1.log",
+      "status": "FAIL",
+      "cause": "ENOTCACHED: locked npm tarballs missing; no restore started",
+      "cleanupResources": 3
+    },
+    {
+      "log": "/Users/javiercamaraportepetit/.codex-work/rovaq-cierre-20261007/receipts/recovery-full-v2.log",
+      "status": "PASS",
+      "durationMs": 80731.604917,
+      "restoreTests": 5,
+      "rollback": "financial-previous-binary-and-roll-forward"
+    }
+  ],
+  "pending": [
+    "Provider-supported quarantine of Storage origin and cached prior signed URLs",
+    "Managed import schema/TOC/current authority and target execution",
+    "Operational owners/retention/alert destination and approved permanent scheduling",
+    "GitHub publisher PR/CI compatibility before applying proposed protection"
+  ],
+  "productionChanges": false,
+  "formalAcceptanceChanged": false
+}

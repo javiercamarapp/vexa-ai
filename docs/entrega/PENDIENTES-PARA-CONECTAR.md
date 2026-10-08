@@ -2,6 +2,8 @@
 
 Actualización8-oct:60/60 alcances técnicos integrados y28/60 aceptaciones formales. HubSpot ya tiene acceso y sincronización autorizados; no volver a pedir API, scopes de correo/archivos, Tracker, febrero ni los20casos. Sigue pendiente la referencia independiente para F03-01 y su ejecución formal. Ver [estado vigente](../ESTADO-VIGENTE.md) y [faltantes concretos para David](PERMISOS-PARA-DAVID.md). El histórico disponible localmente requiere integración y aprobación específica de cada carga; no una nueva petición al cliente.
 
+El piloto histórico de 100 mensajes ya tiene ejecutor instalado y revisado: 44 pruebas ligeras y ocho integradas SYN aprobadas. Su carga y arranque temporal requieren OK específico; cinco pares de contenido igual conservan IDs distintos y necesitan decisión expresa. No se inició operación permanente ni se importó el lote. [Comando y condiciones](PILOTO-HISTORICO-100-2026-10-08.md).
+
 ## Trabajo técnico y operativo que sigue abierto
 
 - Auditoría final: Auth/UI/SQL,CI4/4,paquetes586/586 y serie10K/50K/150K sobre6e8b2b4 aprobados; 60unidades residuales y2casosHTTP con control revisado aprobados.

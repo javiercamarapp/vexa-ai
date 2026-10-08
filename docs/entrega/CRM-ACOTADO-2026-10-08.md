@@ -1,5 +1,7 @@
 # CRM acotado: corrección y verificación local
 
+**Actualización posterior:** la composición final `6e8b2b4`, que incluye esta corrección, aprobó una serie nueva completa 10K → 50K → 150K: 210.000 filas sintéticas y cero pendientes. Ver [capacidad final](CAPACIDAD-FINAL-2026-10-08.md). Las dos escalas de `aff0517` descritas más abajo se conservan como evidencia histórica parcial; no se reutilizaron para aprobar la composición final.
+
 El consumidor alojado permite hasta 100 unidades dentro del plazo existente de 15 segundos. Antes imponía una sola unidad por llamada. Cada commit conserva su checkpoint y vuelve a comprobar la autorización; no se amplían el lease, los plazos del worker ni los parámetros aceptados por HTTP.
 
 Un `Retry-After` válido de un 429 o 5xx reintentable fija el mínimo de espera durable, incluso si supera 300 o 900 segundos. Un valor inválido detiene los reintentos hasta que el propietario revise y guarde la configuración. La fecha sigue siendo serializable por la pantalla de conexiones.

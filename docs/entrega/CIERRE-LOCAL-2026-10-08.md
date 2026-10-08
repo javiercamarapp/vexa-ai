@@ -18,7 +18,7 @@ Para cerrar el100% faltan estas condiciones reales:
 
 - **Aceptación CRM:** referencia UI/export independiente y revisión legítima para HubSpot; después validación real Zendesk y continuación del grafo. No se vuelven a pedir credenciales HubSpot ni materiales ya disponibles.
 - **Recuperación y operación:** procedimiento verificable para bloquear URLs Storage previamente firmadas, autorización del ensayo gestionado y operación permanente comprobada. La consulta al proveedor está preparada y sin enviar.
-- **Conexión e histórico:** autorización concreta de nuevos lotes, activaciones y proveedor/modelos/presupuesto que falten. El lote nativo100 está preparado; falta su ejecutor acotado y aprobación antes de cargar.
+- **Conexión e histórico:** autorización concreta de nuevos lotes, activaciones y proveedor/modelos/presupuesto que falten. El lote nativo de 100 y su ejecutor acotado están preparados y probados (44 ligeras y ocho integradas SYN); faltan aprobación específica del lote/arranque temporal y decisión sobre cinco pares iguales antes de cargar. [Detalle y comando](PILOTO-HISTORICO-100-2026-10-08.md).
 - **Publicación y revisión remota:** autorización específica, release y smoke autenticado de la misma versión. El despliegue observado b0be6df sigue siendo anterior al código local.
 - **Validación humana y recepción:** ensayo de guía, pitch cronometrado, evaluación/gold cuando corresponda, permisos de materiales y recepción por personas reales.
 

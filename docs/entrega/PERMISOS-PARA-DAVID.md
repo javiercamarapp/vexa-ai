@@ -1,4 +1,4 @@
-# Permisos para David — 7 de octubre de 2026
+# Permisos para David — 8 de octubre de 2026
 
 **Preparado; no enviado.** Lista basada en el último traspaso de Javier y en el mensaje local de faltantes del 6-oct. No implica que se haya auditado la cobertura real de las cuentas en esta sesión. El histórico ya disponible localmente requiere trabajo de integración y autorización de carga, no volver a pedirlo al cliente.
 
@@ -16,3 +16,5 @@ Scopes Shopify **condicionales, todavía no solicitados**: si se necesita la API
 Trabajo interno, sin nueva solicitud a David: notas/correos/conversaciones HubSpot, contactos, adjuntos, los pedidos/devoluciones ya disponibles, Tracker y Shopify ampliado local; conciliar los padres y vínculos de los 362 `REFERENCE_MISSING` históricos. El cotejo SQL de sólo lectura del 8-oct confirma que sus 362 mensajes ya existen con una sola revisión; no volver a importarlos como mensajes nuevos. Persisten referencias sin padre en la misma conexión para 251 filas con cliente, 269 con pedido y 211 con SKU (categorías solapadas). Conservar en cuarentena los metadatos/cuerpos incompletos; el corte actual registra 164 `ENTITY_METADATA_ONLY` y tres `BODY_INCOMPLETE`, y la sincronización continúa. Preparar cinco decisiones de revisión y dos de rol para el propietario. No se realizó carga nueva.
 
 No volver a pedir Tracker, API HubSpot, scopes de correo/archivos, febrero, los 20 casos ni costos/márgenes declarados inexistentes. No se ha observado un nuevo 403 de HubSpot en esta sesión; por tanto no se añade ningún scope HubSpot. Las cinco tareas `running` reportadas en otras organizaciones quedan fuera de alcance. Cada escritura en producción requiere presentar lote, conteos esperados y comando exacto, y recibir el OK expreso de Javier.
+
+Actualización de esta pasada: piloto nativo de 100 preparado con ejecutor acotado y verificación local (44 ligeras, ocho integradas SYN); autorización y revisión de cinco pares de contenido igual pendientes de Javier. Es trabajo interno sobre datos ya disponibles, sin nuevas solicitudes de API/scopes a David ni cargas productivas. [Recibo y límites](PILOTO-HISTORICO-100-2026-10-08.md).

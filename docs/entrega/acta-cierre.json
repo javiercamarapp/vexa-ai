@@ -163,8 +163,7 @@
     "production_validated": false
   },
   "local_work_pending": [
-    "Preparar y revisar ejecutor acotado del lote histórico100 sin invocar consumidor global; no cargar antes de autorización específica.",
-    "Preparar publicación y activaciones concretas con sus verificaciones, conservando puertas de autorización y evidencia externa."
+    "Revisar la preparación de publicación y sus guardas; no ejecutar publicación ni activaciones externas sin condiciones y autorización específicas."
   ],
   "historical_evidence_note": "Los checkpoints y métricas remotas con fechas anteriores se conservan como historia de sus SHA; no acreditan el código local actual. La restricción antigua notification_review ya no es un bloqueo activo, y los seis alcances técnicos históricos están integrados.",
   "previous_audit_checkpoint": {
@@ -179,5 +178,14 @@
     "final_post_60_audit": false,
     "evidence": "AUDITORIA-20-RUBROS-2026-09-29.md",
     "technical_count_increment": 0
+  },
+  "historical_pilot_preparation": {
+    "status": "locally_verified_specific_approval_pending",
+    "rows": 100,
+    "lightTestsPassed": 44,
+    "integratedTestsPassed": 8,
+    "productionImported": false,
+    "startupPolicy": "one explicitly approved canonical heartbeat, temporary worker only",
+    "evidence": "PILOTO-HISTORICO-100-2026-10-08.json"
   }
 }

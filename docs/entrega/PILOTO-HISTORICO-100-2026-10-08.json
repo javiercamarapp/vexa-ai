@@ -1,0 +1,77 @@
+{
+  "schema": "rovaq-pilot100-local-preparation-v1",
+  "date": "2026-10-08",
+  "status": "prepared_locally_verified_specific_authorization_pending",
+  "candidateHead": "6e8b2b4203f948408171612080b0bc62fadc19be",
+  "node": "v22.23.2",
+  "batchSha256": "f61f6b6c6d791f7162c0a35d1fc4d1f432d1cb049329516d8c73a0023fd4907c",
+  "rows": 100,
+  "roles": {
+    "customer": 65,
+    "agent": 35
+  },
+  "equalCanonicalContentPairs": 5,
+  "rowsInThosePairs": 10,
+  "semanticDuplicatesConfirmed": false,
+  "lightTests": {
+    "pass": 44,
+    "fail": 0,
+    "skipped": 0
+  },
+  "integratedTests": {
+    "pass": 8,
+    "cases": 7,
+    "fail": 0,
+    "skipped": 0,
+    "seconds": 14.515705834,
+    "scope": "Local SYN HTTP handler + actual Auth SDK / Storage worker download / PostgreSQL RLS / canonical repository and consumer + shared startup/claim guards/readback. Stale heartbeat denies real admission, one approved canonical startup heartbeat restores health,100 rows confirmed/consumed/read back. Production CLI not executed end-to-end."
+  },
+  "counterReadback": {
+    "total": 100,
+    "accepted": 100,
+    "rejected": 0,
+    "duplicates": 0,
+    "pending": 0,
+    "data": "SYNTHETIC"
+  },
+  "canonicalStartupHeartbeat": {
+    "maxStartupEvents": 1,
+    "specificApprovalRequired": true,
+    "condition": "Only NO_HEARTBEAT with zero active import jobs across the entire tenant",
+    "admissionWindowSeconds": 60,
+    "concurrentReservationsPossible": true,
+    "unrelatedJobsConsumed": false,
+    "normalClaimedJobRenewalsSeparate": true,
+    "permanentOperation": false
+  },
+  "installedRuntimeReady": true,
+  "planSha256": "e94263c4496dd063f4c57fafd9b74e8a9bf98ba8174a5fa5c02bc3ba28ec9beb",
+  "snapshotSha256": "ad223a0d92d32dd9dffb72b0993d209dcc300c5059435bcd2c7dc3a5e4a7ded4",
+  "integrationReviewSha256": "0db1bc4d7758e5794836488d112c7eeb23580da8fb2c9f306e22bcd42b6ced04",
+  "rootReviewSha256": "6b9b52e4a6259783e8d1581c6df926915a056fcb4eebb17f2999edfba06c0363",
+  "cleanup": {
+    "resourceIdsAbsent": 5,
+    "portsReleased": [
+      61920,
+      61921,
+      61922,
+      61923,
+      61924
+    ],
+    "scratchRemoved": true,
+    "candidateUnchanged": true
+  },
+  "privateEvidenceRoot": "~/.codex-work/rovaq-cierre-20261007/history-pilot-executor-v6",
+  "productionExecuted": false,
+  "productionWrites": 0,
+  "paidInference": false,
+  "uploadReady": false,
+  "formalAccepted": 28,
+  "formalTotal": 60,
+  "limitations": [
+    "Production CLI not executed end to end",
+    "Requires explicit pilot/startup/data authorization and decision to preserve five equal-content pairs",
+    "Fresh native/carrier overlap, identity, connection, health and version preflight required",
+    "Not commercial pilot, human validation, managed recovery or permanent consumer operation"
+  ]
+}

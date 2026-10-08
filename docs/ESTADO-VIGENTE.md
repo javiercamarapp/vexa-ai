@@ -39,7 +39,7 @@ Lectura de sólo lectura a las 05:35 UTC: 136.992 mensajes y 137.596 filas de im
 
 Los 362 mensajes de rechazos históricos por referencias ya existen con una sola revisión; faltan padres y vínculos en 251 filas con cliente, 269 con pedido y 211 con SKU (categorías solapadas). No reimportar esos mensajes. `:linked-v1` es un recibo de recuperación nativa, no una API de relink CSV. Cinco decisiones de revisión y dos de rol siguen reservadas al propietario. El corte posterior registra 164 metadatos y tres cuerpos incompletos, conservados en cuarentena.
 
-Un piloto de 100 notas nativas está preparado y revisado, sin nueva carga. La mejora local del CRM superó sus pruebas y medición sintética; rendimiento real tras despliegue sigue pendiente. Fuentes, límites y autorización por lote en [CRM acotado](entrega/CRM-ACOTADO-2026-10-08.md).
+Un piloto de 100 mensajes nativos y su ejecutor v6 están preparados: 44 pruebas ligeras y ocho integradas aprobadas con servicios locales y datos sintéticos, más cotejo independiente de fuentes y limpieza. El arranque temporal requiere autorización específica; se conservan cinco pares de contenido igual con IDs distintos para decisión expresa. No hay nueva carga real. [Detalle, comando y recibos](entrega/PILOTO-HISTORICO-100-2026-10-08.md). La mejora local del CRM superó sus pruebas y medición sintética; rendimiento real tras despliegue sigue pendiente. Fuentes, límites y autorización por lote en [CRM acotado](entrega/CRM-ACOTADO-2026-10-08.md).
 
 ### Corte reportado por el usuario el 7 de octubre — histórico
 

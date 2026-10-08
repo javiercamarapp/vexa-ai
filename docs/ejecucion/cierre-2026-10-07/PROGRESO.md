@@ -88,3 +88,7 @@ Sólo quedan en esta cola local cuatro archivos de unidades y dos casos HTTP ser
 Cobertura residual cerrada:60/60unidades,controlservido anterior1/2FAIL preservado,oráculo vigente3/3calibrado y ejecución corregida2/2PASSen0,85s. No se repitieron60unidades; sólo buildnecesario18,69s yservidos. Fuentes/HEAD6e8 ymanifestinvariantes;controles externos porhash yscratch/procesos retirados. Recibo público FASE-6-COBERTURA-RESIDUAL-2026-10-08.json.
 
 CI4/4,paquetes586/586,UI83/83+30/30ycapacidad210KSYNcompleta cerrados en sus alcances. No se suman suites incluidas ni se concede60/60formal. El controlador consultado confirma28accepted/32pending,próximaF03-01. Siguiente preparación local: ejecutor específico del lote histórico100, evitando consumidor global y preservando autorización expresa previa a producción.
+
+## 8-oct, 11:01 UTC — Ejecutor acotado del piloto histórico preparado
+
+V6 privada revisada sin bloqueantes: 44/44 ligeras y 8/8 integradas (siete casos), Auth/Storage worker/PostgreSQL/RLS locales, 100 filas SYN cotejadas, replay sin duplicar, startup único sólo NO_HEARTBEAT y cero import jobs activos en todo el tenant. Root cotejó 12 archivos de control, seis artefactos, 3.285 fuentes y ausencia de cinco IDs/puertos. Copia 6e8 instalada offline. Cinco pares de contenido igual con IDs distintos quedan explícitos; no se fusionan ni se dan por duplicados confirmados. Sin ejecución productiva. [Comando y evidencia](../../entrega/PILOTO-HISTORICO-100-2026-10-08.md). Aprobación específica solicitada; 28/60 formales, sin nueva aceptación.

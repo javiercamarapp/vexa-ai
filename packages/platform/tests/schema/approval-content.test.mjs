@@ -1,3 +1,4 @@
+import {bootstrapStorageFixture} from './storage-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -10,13 +11,13 @@ function docker(args,input){const r=spawnSync('docker',args,{input,encoding:'utf
 test('content-bound approval on PostgreSQL17', {timeout:120000}, async t=>{
  const name='vexa-schema-review-'+randomUUID();
  t.after(()=>docker(['rm','-f','-v',name]));
- docker(['run','--pull','never','--name',name,'-d','-e','POSTGRES_HOST_AUTH_METHOD=trust','public.ecr.aws/supabase/postgres:17.6.1.159']);
+ docker(['run','--pull','never','--network','none','--name',name,'-d','-e','POSTGRES_HOST_AUTH_METHOD=trust','public.ecr.aws/supabase/postgres:17.6.1.159']);
  const args=['exec','-i',name,'psql','-X','-qAt','-U','supabase_admin','-d','postgres','-v','ON_ERROR_STOP=1'];
  const sql=s=>docker(args,s);
  let ready=false;
  for(let i=0;i<100;i++){try{if(spawnSync('docker',['exec',name,'pg_isready','-h','127.0.0.1'],{encoding:'utf8'}).status===0 && sql("select count(*) from pg_roles where rolname='authenticated'")==='1'){ready=true;break;}}catch{} await new Promise(r=>setTimeout(r,100));}
  assert.ok(ready);
- sql(`create schema if not exists storage; create table if not exists storage.buckets(id text primary key,name text,public boolean); create table if not exists storage.objects(id uuid primary key default gen_random_uuid(),bucket_id text,name text); alter table storage.objects enable row level security; grant usage on schema storage to authenticated; grant select,insert,delete on storage.objects to authenticated;`);
+ bootstrapStorageFixture(sql);
  for(const f of fs.readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())sql(fs.readFileSync('supabase/migrations/'+f,'utf8'));
  sql(`insert into auth.users(id) values('${U}'),('${O}'); insert into organizations(id,name) values('${A}','SYNTHETIC review'); insert into memberships(tenant_id,user_id,role,status) values('${A}','${U}','owner','active'),('${A}','${O}','operator','active');
  insert into economic_events(id,tenant_id,kind,status,amount_minor,currency,exponent,effective_at,source_ref) values('${id(1)}','${A}','refund','observed',100,'USD',2,now(),'SYNTHETIC');

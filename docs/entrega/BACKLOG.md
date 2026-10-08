@@ -2,7 +2,7 @@
 
 ## Estado vigente — 7 de octubre de 2026
 
-Consultar [ESTADO-VIGENTE.md](../ESTADO-VIGENTE.md): **Fases 1 y 2 completadas en su alcance local.** F07-01 pasó los 17 componentes sin fallos ni cancelaciones sobre candidato `54be5cf`, control `d6d87d1`; 78 recursos propios ausentes. Cuatro defectos de producto corregidos con regresiones. Auditoría npm de producción sin alertas; cinco alertas altas de desarrollo por braces siguen abiertas. Sin push, despliegue ni cambios externos; producción y aceptación formal no acreditadas. Se mantienen los contadores 59/60 técnicos y 28/60 formales sin alteración manual. Siguiente: fase 3, health/version y nueva serie de capacidad 10K → 50K → 150K.
+**Fases 1, 2 y 3 completadas en su alcance local.** F07-01 pasó 17/17 componentes. La nueva serie de capacidad 10K → 50K → 150K pasó sobre `504a6b6`: 210.000 filas sintéticas, cero pendientes, fuentes invariantes y 15 recursos propios ausentes. Health/version y manifiesto corregidos; revisión independiente de serie PASS. Sin push, despliegue ni cambios externos; producción y aceptación formal pendientes. Contadores sin cambios: 59/60 técnicas y 28/60 formales. Cinco alertas altas de desarrollo por braces siguen abiertas. Siguiente: fase 4, recuperación y operación, aún no iniciada. [Cierre de fase 3](CAPACIDAD-FASE-3-2026-10-07.md).
 
 [Informe de fase 2](SEGURIDAD-GLOBAL-2026-10-07.md) · [Recibo verificable](FASE-2-SEGURIDAD-2026-10-07.json).
 

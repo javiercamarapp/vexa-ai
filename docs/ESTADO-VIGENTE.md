@@ -2,7 +2,7 @@
 
 Corte: 7 de octubre de 2026. Fuente única de estado de la ejecución por fases.
 
-**Fase 1 cerrada al 100 % de su línea base y clasificación. Fase 2 cerrada al 100 % de su alcance local de seguridad: 17/17 componentes PASS, sin fallos ni cancelaciones.** Fase 3 pendiente. Los resultados locales no acreditan producción ni aceptación formal; se conservan los fallos históricos explicados y el riesgo de dependencias de desarrollo.
+**Fases 1, 2 y 3 completadas en su alcance local.** F07-01 pasó 17/17 componentes. La nueva serie de capacidad 10K → 50K → 150K pasó sobre `504a6b6`: 210.000 filas sintéticas, cero pendientes, fuentes invariantes y 15 recursos propios ausentes. Health/version y manifiesto corregidos; revisión independiente de serie PASS. Sin push, despliegue ni cambios externos; producción y aceptación formal pendientes. Contadores sin cambios: 59/60 técnicas y 28/60 formales. Cinco alertas altas de desarrollo por braces siguen abiertas. Siguiente: fase 4, recuperación y operación, aún no iniciada.
 
 | Indicador | Estado |
 |---|---|
@@ -22,12 +22,12 @@ La continuación de aceptación terminó con 1.598/1.627 y los paquetes con 537/
 |---|---|
 | 1. Línea base y limpieza | Cerrada con fallos explicados y deuda del arnés declarada. |
 | 2. Seguridad global F07-01 | Completada localmente: 100 %. Gate PASS 17/17, fuentes invariantes y 78 recursos ausentes. [Informe](entrega/SEGURIDAD-GLOBAL-2026-10-07.md) y [recibo](entrega/FASE-2-SEGURIDAD-2026-10-07.json). Producción npm sin alertas; cinco alertas de desarrollo abiertas. |
-| 3. Capacidad 10K → 50K → 150K | Pendiente. Nuevo manifiesto tras corrección SQL obliga a comenzar de nuevo en 10K; actualizar health/version en esa fase. |
+| 3. Capacidad 10K → 50K → 150K | Completada localmente: 100 %. Tres escalas PASS sobre `504a6b6`, 210.000 filas SYN, cero pendientes, 15 recursos ausentes. [Informe](entrega/CAPACIDAD-FASE-3-2026-10-07.md) y [recibo](entrega/FASE-3-CAPACIDAD-2026-10-07.json). |
 | 4. Recuperación y operación | Restore y rollback locales comprobados; falta recuperación gestionada y operación permanente completas. |
 | 5. Conexiones e histórico completo | Carga real previa reportada; fuentes adicionales, reconciliación y rendimiento real del conector pendientes. |
 | 6. Validación y entrega | Personas reales, smoke remoto final y acta pendientes. |
 
-El 10K de la línea base pasó; 50K quedó contaminado por suspensión del Mac y 150K no comenzó. No se presenta como prueba de capacidad vigente ni se atribuye el timeout al producto. No hay nueva serie acreditada para el commit corregido.
+El 10K de la línea base pasó; 50K quedó contaminado por suspensión del Mac y 150K no comenzó. No se presenta como prueba de capacidad vigente ni se atribuye el timeout al producto. La nueva serie de fase 3 sobre `504a6b6` sí completó las tres escalas, con contabilidad y limpieza verificadas.
 
 Para cerrar Fase 1 no falta una acción de Javier. Las autorizaciones/configuraciones externas se pedirán concretamente cuando corresponda, conservando las ya concedidas. La fase 2 avanzó en mantenimiento independiente de dependencias; no se ejecutó IA de pago.
 
@@ -54,6 +54,6 @@ CSV para volumen; API para incremental/webhooks. Chunks reales por invocación t
 
 ## Límites y próximo paso
 
-La fase 2 de seguridad global F07-01 está completada localmente, con 17 componentes aprobados y revisión de recibos por dos agentes. [Cierre, evidencia y límites](entrega/SEGURIDAD-GLOBAL-2026-10-07.md). El parche de dependencias pasó lint/tipos/build y dos revisiones focales sin hallazgos. La auditoría completa sigue roja por braces de desarrollo; Javier retiró la restricción documental histórica para continuar las pruebas locales; no se ha comprobado un bloqueo activo de plataforma. Fase 3 no iniciada. La deuda del control queda visible: conflicto Node 22/26.7, expectativas antiguas de interfaz/marca/catálogo, un fixture vencido y cinco arneses de paquetes. No se modificaron gates para forzar verde y no se aumentó el conteo formal.
+La fase 2 de seguridad global F07-01 está completada localmente, con 17 componentes aprobados y revisión de recibos por dos agentes. [Cierre, evidencia y límites](entrega/SEGURIDAD-GLOBAL-2026-10-07.md). El parche de dependencias pasó lint/tipos/build y dos revisiones focales sin hallazgos. La auditoría completa sigue roja por braces de desarrollo; Javier retiró la restricción documental histórica para continuar las pruebas locales; no se ha comprobado un bloqueo activo de plataforma. Fase 3 completada localmente; siguiente fase 4, recuperación y operación. La deuda del control queda visible: conflicto Node 22/26.7, expectativas antiguas de interfaz/marca/catálogo, un fixture vencido y cinco arneses de paquetes. No se modificaron gates para forzar verde y no se aumentó el conteo formal.
 
 Los tiempos originales del plan para las seis fases sumaban aproximadamente 7–9 días de trabajo, sin esperas externas. No constituyen una fecha comprometida ni una estimación actualizada de lo pendiente.

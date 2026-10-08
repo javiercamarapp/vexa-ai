@@ -1,0 +1,471 @@
+{
+  "schema": "rovaq-phase3-capacity-v1",
+  "status": "complete-local",
+  "candidateSha": "504a6b68469acfcf345c7fed0acc895a7767a12d",
+  "candidate": "/private/tmp/rovaq-fase3-candidate-20261007",
+  "healthValidation": "/private/tmp/rovaq-fase3-receipts-20261007/health-validation.json",
+  "scales": [
+    {
+      "report": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-load308-aIkd1Y/report.json",
+      "sha256": "f7d2ae684cae62d238ad96fb051f811f377165ef74cf9c60e8d6dffeb2bb40b6",
+      "rows": 10000,
+      "recount": 10000,
+      "chunks": 100,
+      "files": 1,
+      "datasetManifestSha256": "7698490c39f724d4d2822c07a75a534deef5e8ce3b5386fc246a0bbece4fa22f",
+      "metrics": {
+        "inputRowsPerSecond": 74.2320543196769,
+        "acceptedRowsPerSecond": 72.74741323328337,
+        "commitP50Ms": 1082.5111249999973,
+        "commitP95Ms": 2336.1949999999997,
+        "apiP95Ms": 274.64249999999447,
+        "commitSamples": 100,
+        "apiSamples": 5,
+        "workerMaxRssKiB": 160432
+      },
+      "processingMs": 134712.69375,
+      "endToEndMs": 135592.50225,
+      "cleanupResources": 5,
+      "status": "pass",
+      "observed": {
+        "total": 10000,
+        "accepted": 9800,
+        "rejected": 100,
+        "duplicates": 100,
+        "pending": 0
+      },
+      "cleanup": {
+        "ownResourcesRemoved": true,
+        "resources": [
+          {
+            "kind": "network",
+            "name": "vexa-f01-03-af6e13f5-2c0b-4f7c-9798-e5a8dc7018c0",
+            "broker": "520ceb86-e9bf-4273-a9e5-8e831690e3e4",
+            "id": "31d416cc911b21d448290da95a231d4833debdf57b0d4f00b037814c06c4446b",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-af6e13f5-2c0b-4f7c-9798-e5a8dc7018c0-db",
+            "broker": "520ceb86-e9bf-4273-a9e5-8e831690e3e4",
+            "id": "b2a925ca57699117816d005b1f338397a9791e2a51c45701662a4cb0496afe55",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-af6e13f5-2c0b-4f7c-9798-e5a8dc7018c0-auth",
+            "broker": "520ceb86-e9bf-4273-a9e5-8e831690e3e4",
+            "id": "affb4e86c02e1126b80d859318c630fc80d7b11d1e8fcaf8d227eb79602b2712",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-af6e13f5-2c0b-4f7c-9798-e5a8dc7018c0-rest",
+            "broker": "520ceb86-e9bf-4273-a9e5-8e831690e3e4",
+            "id": "29a3309c272ba62da10dfc974e8e0e0fddfd21ca44f665948788c397ffec4a08",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-af6e13f5-2c0b-4f7c-9798-e5a8dc7018c0-storage",
+            "broker": "520ceb86-e9bf-4273-a9e5-8e831690e3e4",
+            "id": "9c114910dfcc18728da26eed29ba7c3c033ea6426bb9ecbbd434ce11c7fd4754",
+            "absent": true
+          }
+        ],
+        "temporaryPathsRemoved": true
+      },
+      "jobDeadlineMs": 900000
+    },
+    {
+      "report": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-load308-d9n9xm/report.json",
+      "sha256": "4b3b2d0c9be54119a8339f0655300bfe41057cc70dacbce9f7a9f6f7b17708bc",
+      "rows": 50000,
+      "recount": 50000,
+      "chunks": 500,
+      "files": 1,
+      "datasetManifestSha256": "7ade77f886788ad41a5f681bd7f84b337e21fefc81cc0c7964cea584ba027b6a",
+      "metrics": {
+        "inputRowsPerSecond": 59.11122282048519,
+        "acceptedRowsPerSecond": 57.92899836407548,
+        "commitP50Ms": 1490.826000000001,
+        "commitP95Ms": 2535.712292000011,
+        "apiP95Ms": 586.325291000001,
+        "commitSamples": 500,
+        "apiSamples": 5,
+        "workerMaxRssKiB": 338048
+      },
+      "processingMs": 845863.063125,
+      "endToEndMs": 846967.070166,
+      "cleanupResources": 5,
+      "status": "pass",
+      "observed": {
+        "total": 50000,
+        "accepted": 49000,
+        "rejected": 500,
+        "duplicates": 500,
+        "pending": 0
+      },
+      "cleanup": {
+        "ownResourcesRemoved": true,
+        "resources": [
+          {
+            "kind": "network",
+            "name": "vexa-f01-03-4df1b851-d5ef-4299-831a-34af19850a92",
+            "broker": "b4aa0ed0-2d5f-4960-a448-65fa50d46b75",
+            "id": "be6a3cbed2545f68452f1d038b49b587f725cf714a3b6722ad05291ebec67e7c",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-4df1b851-d5ef-4299-831a-34af19850a92-db",
+            "broker": "b4aa0ed0-2d5f-4960-a448-65fa50d46b75",
+            "id": "ff6bbeb8879b8c141454ff7b8f97e6a4b2b35306ae7a934ec6188e36acfe57ee",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-4df1b851-d5ef-4299-831a-34af19850a92-auth",
+            "broker": "b4aa0ed0-2d5f-4960-a448-65fa50d46b75",
+            "id": "8e896a32732b4253fba6f5c2002d985fcdd92e21f0e4a25cd5970576e8f189bc",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-4df1b851-d5ef-4299-831a-34af19850a92-rest",
+            "broker": "b4aa0ed0-2d5f-4960-a448-65fa50d46b75",
+            "id": "cee390eaa8d0094c722892a644caddaa26c361b3086fe80fe24501f2a1a2295f",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-4df1b851-d5ef-4299-831a-34af19850a92-storage",
+            "broker": "b4aa0ed0-2d5f-4960-a448-65fa50d46b75",
+            "id": "6e29b56be5f0a2a9ac95dc5c9432a633b788b9f1fadf3e45a91fefcb2f753b73",
+            "absent": true
+          }
+        ],
+        "temporaryPathsRemoved": true
+      },
+      "jobDeadlineMs": 900000
+    },
+    {
+      "report": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-load308-oVBGXR/report.json",
+      "sha256": "e4aa062233ff577b44eee6ffe0f7ffd721d1e493f80f104aa5c15255d81ab248",
+      "rows": 150000,
+      "recount": 150000,
+      "chunks": 1500,
+      "files": 3,
+      "datasetManifestSha256": "df325f3f04ab3ad647ccd6304609d7d2a6e1063e8011c3cd73c0dffd987ae6f1",
+      "metrics": {
+        "inputRowsPerSecond": 86.31499591481194,
+        "acceptedRowsPerSecond": 84.58869599651571,
+        "commitP50Ms": 961.2103329999372,
+        "commitP95Ms": 1810.2942909999983,
+        "apiP95Ms": 466.90341700000135,
+        "commitSamples": 1500,
+        "apiSamples": 15,
+        "workerMaxRssKiB": 398704
+      },
+      "processingMs": 1737820.855,
+      "endToEndMs": 1740366.9392499998,
+      "cleanupResources": 5,
+      "status": "pass",
+      "observed": {
+        "total": 150000,
+        "accepted": 147000,
+        "rejected": 1500,
+        "duplicates": 1500,
+        "pending": 0
+      },
+      "cleanup": {
+        "ownResourcesRemoved": true,
+        "resources": [
+          {
+            "kind": "network",
+            "name": "vexa-f01-03-3bbfd957-32aa-4d2b-90e5-dbeb4d4e9573",
+            "broker": "a5072447-9497-4bf0-af4e-a2660ded7714",
+            "id": "723746286ecdfba5323b0f9525461c1ce447c34f1c793977666d614830e681ce",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-3bbfd957-32aa-4d2b-90e5-dbeb4d4e9573-db",
+            "broker": "a5072447-9497-4bf0-af4e-a2660ded7714",
+            "id": "879264d51808d3007b4842a04933fbb4d0616264e0c632c5bee90f5676890e8a",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-3bbfd957-32aa-4d2b-90e5-dbeb4d4e9573-auth",
+            "broker": "a5072447-9497-4bf0-af4e-a2660ded7714",
+            "id": "91d4a4438b24430b2639be5e0e3c275d3832d32e4f79a8ac34e9c5656e6a2c9c",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-3bbfd957-32aa-4d2b-90e5-dbeb4d4e9573-rest",
+            "broker": "a5072447-9497-4bf0-af4e-a2660ded7714",
+            "id": "951683a3cbbddaad9c693a53639e72dab9abb167a61f1d8929505b07b12bb381",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-3bbfd957-32aa-4d2b-90e5-dbeb4d4e9573-storage",
+            "broker": "a5072447-9497-4bf0-af4e-a2660ded7714",
+            "id": "2cee93e16d136527ae0b0443f291d555b300ddc691177ed114e7635a223e87b8",
+            "absent": true
+          }
+        ],
+        "temporaryPathsRemoved": true
+      },
+      "jobDeadlineMs": 900000
+    }
+  ],
+  "production": false,
+  "paidProviders": false,
+  "pushed": false,
+  "deployed": false,
+  "formalAcceptanceChanged": false,
+  "controlCommit": "a4b92f7",
+  "controlAdoptedCommit": "7a80864",
+  "controlCalibrationTests": 18,
+  "completedAt": "2026-10-08T05:12:51.172950+00:00",
+  "seriesReview": {
+    "schema": "rovaq-load-series-review-v1",
+    "status": "PASS",
+    "candidate": "/private/tmp/rovaq-fase3-candidate-20261007",
+    "dependencyManifestSha256": "99dcdb8b6d120277dc463f8e8a79384aa65fffd061fad17c281cecd826f2d9f8",
+    "benchmarkImplementation": {
+      "generator.mjs": "375d376454e0994d42b720f07f99ea74550b0548717f3f8bedbc65e9b2f7d5e6",
+      "harness.mjs": "b79fc5dac8fa4821f4ceab05e97fe4f50777088146e741640d267da9ebedacf8",
+      "run.mjs": "42e9fd245a293340bdcaeb144fea8f81419906d2a2c5e52d090ad1c838b5031f",
+      "worker.mjs": "e2f0cb53d3e8ca9c62131648c9958c13dd2d918963873c1905bceb4b8700e775",
+      "dependencies.json": "99dcdb8b6d120277dc463f8e8a79384aa65fffd061fad17c281cecd826f2d9f8"
+    },
+    "scales": [
+      {
+        "report": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-load308-aIkd1Y/report.json",
+        "sha256": "f7d2ae684cae62d238ad96fb051f811f377165ef74cf9c60e8d6dffeb2bb40b6",
+        "rows": 10000,
+        "recount": 10000,
+        "chunks": 100,
+        "files": 1,
+        "datasetManifestSha256": "7698490c39f724d4d2822c07a75a534deef5e8ce3b5386fc246a0bbece4fa22f",
+        "metrics": {
+          "inputRowsPerSecond": 74.2320543196769,
+          "acceptedRowsPerSecond": 72.74741323328337,
+          "commitP50Ms": 1082.5111249999973,
+          "commitP95Ms": 2336.1949999999997,
+          "apiP95Ms": 274.64249999999447,
+          "commitSamples": 100,
+          "apiSamples": 5,
+          "workerMaxRssKiB": 160432
+        },
+        "processingMs": 134712.69375,
+        "endToEndMs": 135592.50225,
+        "cleanupResources": 5
+      },
+      {
+        "report": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-load308-d9n9xm/report.json",
+        "sha256": "4b3b2d0c9be54119a8339f0655300bfe41057cc70dacbce9f7a9f6f7b17708bc",
+        "rows": 50000,
+        "recount": 50000,
+        "chunks": 500,
+        "files": 1,
+        "datasetManifestSha256": "7ade77f886788ad41a5f681bd7f84b337e21fefc81cc0c7964cea584ba027b6a",
+        "metrics": {
+          "inputRowsPerSecond": 59.11122282048519,
+          "acceptedRowsPerSecond": 57.92899836407548,
+          "commitP50Ms": 1490.826000000001,
+          "commitP95Ms": 2535.712292000011,
+          "apiP95Ms": 586.325291000001,
+          "commitSamples": 500,
+          "apiSamples": 5,
+          "workerMaxRssKiB": 338048
+        },
+        "processingMs": 845863.063125,
+        "endToEndMs": 846967.070166,
+        "cleanupResources": 5
+      },
+      {
+        "report": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-load308-oVBGXR/report.json",
+        "sha256": "e4aa062233ff577b44eee6ffe0f7ffd721d1e493f80f104aa5c15255d81ab248",
+        "rows": 150000,
+        "recount": 150000,
+        "chunks": 1500,
+        "files": 3,
+        "datasetManifestSha256": "df325f3f04ab3ad647ccd6304609d7d2a6e1063e8011c3cd73c0dffd987ae6f1",
+        "metrics": {
+          "inputRowsPerSecond": 86.31499591481194,
+          "acceptedRowsPerSecond": 84.58869599651571,
+          "commitP50Ms": 961.2103329999372,
+          "commitP95Ms": 1810.2942909999983,
+          "apiP95Ms": 466.90341700000135,
+          "commitSamples": 1500,
+          "apiSamples": 15,
+          "workerMaxRssKiB": 398704
+        },
+        "processingMs": 1737820.855,
+        "endToEndMs": 1740366.9392499998,
+        "cleanupResources": 5
+      }
+    ],
+    "accepted": false,
+    "production": false,
+    "limits": [
+      "Local synthetic ingestion only; no inference or commercial SLO measured.",
+      "Cleanup is checked against original receipts; no new Docker inspection is performed.",
+      "Original failed attempts remain failed; this receipt verifies only the three explicitly supplied reports."
+    ]
+  },
+  "independentCleanup": {
+    "status": "PASS",
+    "checkedAt": "2026-10-08T05:12:17.759040+00:00",
+    "resources": [
+      {
+        "kind": "network",
+        "name": "vexa-f01-03-af6e13f5-2c0b-4f7c-9798-e5a8dc7018c0",
+        "exitCode": 1,
+        "absent": true,
+        "stderr": "Error response from daemon: network vexa-f01-03-af6e13f5-2c0b-4f7c-9798-e5a8dc7018c0 not found"
+      },
+      {
+        "kind": "container",
+        "name": "vexa-f01-03-af6e13f5-2c0b-4f7c-9798-e5a8dc7018c0-db",
+        "exitCode": 1,
+        "absent": true,
+        "stderr": "Error response from daemon: No such container: vexa-f01-03-af6e13f5-2c0b-4f7c-9798-e5a8dc7018c0-db"
+      },
+      {
+        "kind": "container",
+        "name": "vexa-f01-03-af6e13f5-2c0b-4f7c-9798-e5a8dc7018c0-auth",
+        "exitCode": 1,
+        "absent": true,
+        "stderr": "Error response from daemon: No such container: vexa-f01-03-af6e13f5-2c0b-4f7c-9798-e5a8dc7018c0-auth"
+      },
+      {
+        "kind": "container",
+        "name": "vexa-f01-03-af6e13f5-2c0b-4f7c-9798-e5a8dc7018c0-rest",
+        "exitCode": 1,
+        "absent": true,
+        "stderr": "Error response from daemon: No such container: vexa-f01-03-af6e13f5-2c0b-4f7c-9798-e5a8dc7018c0-rest"
+      },
+      {
+        "kind": "container",
+        "name": "vexa-f01-03-af6e13f5-2c0b-4f7c-9798-e5a8dc7018c0-storage",
+        "exitCode": 1,
+        "absent": true,
+        "stderr": "Error response from daemon: No such container: vexa-f01-03-af6e13f5-2c0b-4f7c-9798-e5a8dc7018c0-storage"
+      },
+      {
+        "kind": "network",
+        "name": "vexa-f01-03-4df1b851-d5ef-4299-831a-34af19850a92",
+        "exitCode": 1,
+        "absent": true,
+        "stderr": "Error response from daemon: network vexa-f01-03-4df1b851-d5ef-4299-831a-34af19850a92 not found"
+      },
+      {
+        "kind": "container",
+        "name": "vexa-f01-03-4df1b851-d5ef-4299-831a-34af19850a92-db",
+        "exitCode": 1,
+        "absent": true,
+        "stderr": "Error response from daemon: No such container: vexa-f01-03-4df1b851-d5ef-4299-831a-34af19850a92-db"
+      },
+      {
+        "kind": "container",
+        "name": "vexa-f01-03-4df1b851-d5ef-4299-831a-34af19850a92-auth",
+        "exitCode": 1,
+        "absent": true,
+        "stderr": "Error response from daemon: No such container: vexa-f01-03-4df1b851-d5ef-4299-831a-34af19850a92-auth"
+      },
+      {
+        "kind": "container",
+        "name": "vexa-f01-03-4df1b851-d5ef-4299-831a-34af19850a92-rest",
+        "exitCode": 1,
+        "absent": true,
+        "stderr": "Error response from daemon: No such container: vexa-f01-03-4df1b851-d5ef-4299-831a-34af19850a92-rest"
+      },
+      {
+        "kind": "container",
+        "name": "vexa-f01-03-4df1b851-d5ef-4299-831a-34af19850a92-storage",
+        "exitCode": 1,
+        "absent": true,
+        "stderr": "Error response from daemon: No such container: vexa-f01-03-4df1b851-d5ef-4299-831a-34af19850a92-storage"
+      },
+      {
+        "kind": "network",
+        "name": "vexa-f01-03-3bbfd957-32aa-4d2b-90e5-dbeb4d4e9573",
+        "exitCode": 1,
+        "absent": true,
+        "stderr": "Error response from daemon: network vexa-f01-03-3bbfd957-32aa-4d2b-90e5-dbeb4d4e9573 not found"
+      },
+      {
+        "kind": "container",
+        "name": "vexa-f01-03-3bbfd957-32aa-4d2b-90e5-dbeb4d4e9573-db",
+        "exitCode": 1,
+        "absent": true,
+        "stderr": "Error response from daemon: No such container: vexa-f01-03-3bbfd957-32aa-4d2b-90e5-dbeb4d4e9573-db"
+      },
+      {
+        "kind": "container",
+        "name": "vexa-f01-03-3bbfd957-32aa-4d2b-90e5-dbeb4d4e9573-auth",
+        "exitCode": 1,
+        "absent": true,
+        "stderr": "Error response from daemon: No such container: vexa-f01-03-3bbfd957-32aa-4d2b-90e5-dbeb4d4e9573-auth"
+      },
+      {
+        "kind": "container",
+        "name": "vexa-f01-03-3bbfd957-32aa-4d2b-90e5-dbeb4d4e9573-rest",
+        "exitCode": 1,
+        "absent": true,
+        "stderr": "Error response from daemon: No such container: vexa-f01-03-3bbfd957-32aa-4d2b-90e5-dbeb4d4e9573-rest"
+      },
+      {
+        "kind": "container",
+        "name": "vexa-f01-03-3bbfd957-32aa-4d2b-90e5-dbeb4d4e9573-storage",
+        "exitCode": 1,
+        "absent": true,
+        "stderr": "Error response from daemon: No such container: vexa-f01-03-3bbfd957-32aa-4d2b-90e5-dbeb4d4e9573-storage"
+      }
+    ]
+  },
+  "sourceEquality": {
+    "status": "PASS",
+    "files": 2216,
+    "candidate": "/private/tmp/rovaq-fase3-candidate-20261007",
+    "canonical": "/Users/javiercamaraportepetit/vexa",
+    "mismatches": []
+  },
+  "sourceChecks": {
+    "preflight-10k.json": {
+      "path": "/private/tmp/rovaq-fase3-receipts-20261007/preflight-10k.json",
+      "sha256": "75002b7f74b39d6e01be1bca463ae8b91ffc30d8f01f9db1032d3084481ac567"
+    },
+    "preflight-50k.json": {
+      "path": "/private/tmp/rovaq-fase3-receipts-20261007/preflight-50k.json",
+      "sha256": "f4b22c72120c1f42c4e4067e35370d393a84a41a9836ee39ad9bb584ec3923df"
+    },
+    "preflight-150k.json": {
+      "path": "/private/tmp/rovaq-fase3-receipts-20261007/preflight-150k.json",
+      "sha256": "17601fa5ec3fe39fa4a49bcd54e59bc5390823ec9dcbcb0e8f1e4c12b4b5194e"
+    },
+    "postflight.json": {
+      "path": "/private/tmp/rovaq-fase3-receipts-20261007/postflight.json",
+      "sha256": "75002b7f74b39d6e01be1bca463ae8b91ffc30d8f01f9db1032d3084481ac567"
+    },
+    "health-validation.json": {
+      "path": "/private/tmp/rovaq-fase3-receipts-20261007/health-validation.json",
+      "sha256": "ad1d63028d97faa18782ab6a53f984d63bf40644fe63c287d38996a78e3966a1"
+    },
+    "verify-series-calibration.log": {
+      "path": "/private/tmp/rovaq-fase3-receipts-20261007/verify-series-calibration.log",
+      "sha256": "3278151007709dbae1a3507436e0db8ed18855453a8619ada2fdfdf457a37201"
+    }
+  },
+  "reviews": {
+    "spec": "PASS: zero blocking findings; independent agent",
+    "standards": "PASS: zero findings; independent agent"
+  },
+  "phase4Started": false
+}

@@ -2,7 +2,7 @@
 
 ## Estado vigente — 8 de octubre de 2026
 
-**60/60 fichas con trabajo técnico integrado; 28/60 aceptadas formalmente (46,7 %).** La reconciliación incorpora el cierre local F07-01, probado con 17 componentes; no concede aceptación ni valida producción. Fases 1–3 cerradas localmente para sus versiones. Fase 4: recuperación local aprobada; recuperación gestionada y operación permanente pendientes. Fase 5: corrección CRM integrada y comprobada; histórico reconciliado sin cargas nuevas. Fase 6: controles y corrección de navegación en validación local. La serie anterior10K/50K pasó sobre aff0517; tras integrar los cambios se medirá una serie final nueva10K →50K →150K. Cinco alertas altas de desarrollo por braces siguen abiertas. Sin publicación ni despliegue de estos cambios. [Estado vigente](docs/ESTADO-VIGENTE.md).
+**60/60 fichas con trabajo técnico integrado; 28/60 aceptadas formalmente (46,7 %).** La reconciliación incorpora el cierre local F07-01, probado con 17 componentes; no concede aceptación ni valida producción. Fases 1–3 cerradas localmente para sus versiones. Fase 4: recuperación local aprobada; recuperación gestionada y operación permanente pendientes. Fase 5: corrección CRM integrada y comprobada; histórico reconciliado sin cargas nuevas. Fase 6: navegación y controles integrados; CI4/4, paquetes586/586 y nueva serie10K→50K→150K aprobados sobre6e8b2b4, con revisión independiente. Comprobaciones residuales de unidades/HTTP en curso; entrega humana y remota pendientes. Cinco alertas altas de desarrollo por braces siguen abiertas. Sin publicación ni despliegue de estos cambios. [Estado vigente](docs/ESTADO-VIGENTE.md).
 
 Los cortes fechados que siguen son históricos y no sustituyen el estado vigente.
 

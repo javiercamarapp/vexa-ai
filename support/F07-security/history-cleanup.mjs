@@ -18,7 +18,7 @@ export function recoverOwnedResources({journal,broker,evidence}){
   }
   const command=args=>{
     const remaining=deadline-Date.now();assert.ok(remaining>0,'RECOVERY_DEADLINE');
-    const result=spawnSync('docker',args,{encoding:'utf8',timeout:Math.min(10000,remaining)});
+    const result=spawnSync('docker',args,{encoding:'utf8',timeout:Math.min(10000,remaining),killSignal:'SIGKILL'});
     assert.ok(!result.error,'RECOVERY_DOCKER_COMMAND');return result;
   };
   try{

@@ -18,14 +18,20 @@
       "files": [
         "tests/acceptance/F01-03.test.mjs"
       ],
-      "timeoutMs": 720000,
+      "timeoutMs": 2160000,
       "minTests": 447,
       "covers": [
         "SEC-01",
         "SEC-02",
         "SEC-03",
         "SEC-08"
-      ]
+      ],
+      "timeoutBudget": {
+        "sequentialCases": 3,
+        "caseTimeoutMs": 600000,
+        "cleanupAndLaunchMs": 360000,
+        "basis": "Preserves F01-03 three existing case deadlines; 300s maximum five-resource close plus 60s launch/receipt. Initial 720s exterior run timed out without complete TAP."
+      }
     },
     {
       "id": "storage-download",

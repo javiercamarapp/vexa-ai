@@ -3,10 +3,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import {spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {randomUUID,createHash} from 'node:crypto';
 import {recoverOwnedResources} from './history-cleanup.mjs';
+import {runHistoryChild} from './history-process.mjs';
 
 const expected=[
   'real CRM historical backfill and explicit owner consent before admission',
@@ -25,7 +25,15 @@ test('SEC history: complete existing runtime program, exact inventory and cleanu
   const root=fileURLToPath(new URL('../..',import.meta.url));
   const evidence=fs.mkdtempSync(path.join(os.tmpdir(),'rovaq-f07-history-wrapper-'));fs.chmodSync(evidence,0o700);
   const log=path.join(evidence,'history-runtime.log');
-  const broker=randomUUID(),journal=path.join(evidence,'resources.jsonl');fs.writeFileSync(journal,'',{flag:'wx',mode:0o600});
+  const inheritedBroker=process.env.VEXA_CI_BROKER,inheritedJournal=process.env.VEXA_CI_JOURNAL;
+  assert.equal(inheritedBroker!==undefined,inheritedJournal!==undefined,'HISTORY_BROKER_JOURNAL_PAIR_REQUIRED');
+  const broker=inheritedBroker??randomUUID(),journal=inheritedJournal??path.join(evidence,'resources.jsonl');
+  assert.match(broker,/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,'HISTORY_BROKER_REQUIRED');
+  if(inheritedJournal===undefined)fs.writeFileSync(journal,'',{flag:'wx',mode:0o600});
+  const journalStat=fs.lstatSync(journal);
+  assert.ok(journalStat.isFile()&&!journalStat.isSymbolicLink(),'HISTORY_REGULAR_JOURNAL_REQUIRED');
+  assert.equal(journalStat.mode&0o777,0o600,'HISTORY_JOURNAL_MUST_BE_0600');
+  for(const line of fs.readFileSync(journal,'utf8').split('\n').filter(Boolean))assert.equal(JSON.parse(line).broker,broker,'HISTORY_JOURNAL_BROKER_MISMATCH');
   // Existing history infrastructure reads its evidence-local journal before
   // the inherited broker copies that journal there at cleanup. Adapt only that
   // lookup in a disposable control module, retaining every ownership check.
@@ -38,19 +46,20 @@ test('SEC history: complete existing runtime program, exact inventory and cleanu
   fs.writeFileSync(path.join(evidence,'history-harness-adapter.json'),JSON.stringify({sourceFile,sourceSHA256:sha(original),adapter,adapterSHA256:sha(adapted),change:'Select exclusive inherited resource journal before evidence-local fallback; preserve 0600, broker label and database-ID ownership assertions'},null,2),{mode:0o600});
   const env={...process.env,VEXA_CI_BROKER:broker,VEXA_CI_JOURNAL:journal,F07_HISTORY_HARNESS:adapter};delete env.NODE_TEST_CONTEXT;delete env.NODE_OPTIONS;delete env.HISTORY_FOCAL;
   const fd=fs.openSync(log,'wx',0o600);
-  const child=spawn(process.execPath,[path.join(root,'support/F07-security/history-runtime.mjs')],{cwd:root,env,stdio:['ignore',fd,fd],detached:true});
-  let timedOut=false,spawnError,killTimer,hardKilled=false;
-  const kill=signal=>{if(child.pid)try{process.kill(-child.pid,signal);}catch(error){if(error.code!=='ESRCH')throw error;}};
-  const stop=()=>{if(timedOut)return;timedOut=true;kill('SIGTERM');killTimer=setTimeout(()=>{hardKilled=true;kill('SIGKILL');},60000);};
-  const timer=setTimeout(stop,720000);t.signal.addEventListener('abort',stop,{once:true});
-  process.once('SIGTERM',stop);process.once('SIGINT',stop);
+  const sharedGroup=inheritedBroker!==undefined;
   let result;
-  try{result=await new Promise(resolve=>{child.once('error',error=>{spawnError=error;});child.once('close',(exitCode,signal)=>resolve({exitCode,signal}));});}
-  finally{clearTimeout(timer);clearTimeout(killTimer);kill('SIGKILL');fs.closeSync(fd);}
+  try{result=await runHistoryChild({args:[path.join(root,'support/F07-security/history-runtime.mjs')],cwd:root,env,fd,sharedGroup,abortSignal:t.signal,receiptPath:path.join(evidence,'history-process.json')});}
+  finally{fs.closeSync(fd);}
   console.log('F07_HISTORY_RUNTIME_LOG:'+log);
-  try{if(hardKilled||timedOut||spawnError||result.exitCode!==0||result.signal!==null)recoverOwnedResources({journal,broker,evidence:path.join(evidence,'recovery.json')});}
-  finally{clearTimeout(killTimer);t.signal.removeEventListener('abort',stop);process.off('SIGTERM',stop);process.off('SIGINT',stop);}
-  assert.equal(spawnError,undefined);assert.equal(timedOut,false,'HISTORY_RUNTIME_TIMEOUT');
+  const failed=result.hardKilled||result.timedOut||result.spawnError||result.lifecycleErrors.length||result.exitCode!==0||result.signal!==null;
+  // Delegated mode shares the outer group: only that controller can establish
+  // absence of every descendant before recovering its exclusive resource journal.
+  if(failed&&!sharedGroup){
+    assert.equal(result.processGroupAbsent,true,'HISTORY_RECOVERY_BLOCKED_LIVE_OR_UNKNOWN_GROUP');
+    recoverOwnedResources({journal,broker,evidence:path.join(evidence,'recovery.json')});
+  }
+  assert.equal(result.spawnError,null);assert.deepEqual(result.lifecycleErrors,[]);
+  assert.equal(result.timedOut,false,'HISTORY_RUNTIME_TIMEOUT');
   assert.equal(result.exitCode,0,'HISTORY_RUNTIME_EXIT:'+log);assert.equal(result.signal,null,'HISTORY_RUNTIME_SIGNAL');
   const text=fs.readFileSync(log,'utf8'),markers=[...text.matchAll(/^HISTORY328_EVIDENCE:(.+)$/gm)];
   assert.equal(markers.length,1,'EXACT_HISTORY_EVIDENCE');

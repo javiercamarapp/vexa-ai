@@ -5,7 +5,7 @@
   "formal_runner_accepted": 28,
   "total_tasks": 60,
   "production_validated": false,
-  "source_commit": "972b0f7",
+  "source_commit": "6e8b2b4203f948408171612080b0bc62fadc19be",
   "layers": {
     "documentation": {
       "status": "current_guides_prepared_human_rehearsal_pending",
@@ -18,12 +18,13 @@
       "human_acceptance": "pending_actual_recipients_access_and_dates"
     },
     "local_software": {
-      "status": "technical_inventory_complete_final_regression_in_progress",
+      "status": "ci_and_package_regression_pass_final_capacity_in_progress",
       "evidence": [
         "../../construccion/ESTADO-CONSTRUCCION.json",
         "CRM-ACOTADO-2026-10-08.md",
         "../../docs/ejecucion/cierre-2026-10-07/PROGRESO.md",
-        "CORRECCION-NAVEGACION-2026-10-08.json"
+        "CORRECCION-NAVEGACION-2026-10-08.json",
+        "FASE-6-CI-2026-10-08.json"
       ]
     },
     "synthetic_demo": {
@@ -116,16 +117,18 @@
   "updated": "2026-10-08",
   "deployed_source_commit": "b0be6df86a2aad53f46bb6054e192c94d62b13e3",
   "latest_audit": {
-    "date": "2026-09-29",
-    "source_commit": "94db0848a6c61538508a354ff0715f377364af6d",
+    "date": "2026-10-08",
+    "source_commit": "6e8b2b4203f948408171612080b0bc62fadc19be",
     "rubrics": 20,
-    "kind": "evidence_reconciliation_and_scoped_live_checks",
-    "verdict": "blocked_not_production",
-    "anonymous_routes_denied": 24,
-    "dependency_advisories": 0,
-    "immutable_artifacts_verified": 609,
+    "kind": "evidence_reconciliation_and_scoped_local_checks",
+    "verdict": "in_progress_not_production",
+    "dependency_advisories": {
+      "production": 0,
+      "development_high": 5,
+      "observed": "2026-10-07"
+    },
     "final_post_60_audit": false,
-    "evidence": "AUDITORIA-20-RUBROS-2026-09-29.md",
+    "evidence": "AUDITORIA-20-RUBROS-2026-10-08.md",
     "technical_count_increment": 0
   },
   "crm_webhook_checkpoint": {
@@ -158,9 +161,21 @@
     "production_validated": false
   },
   "local_work_pending": [
-    "Ejecutar F01-05 agregado y suite completa de55archivos de paquetes sobre composición integrada; controles Auth/UI/SQL y navegación ya revisados.",
-    "Congelar composición y completar nueva serie10K/50K/150K con revisión independiente.",
-    "Auditoría final y avance de aceptación exclusivamente mediante controlador y evidencia legítima."
+    "Completar nueva serie10K/50K/150K sobre candidato6e8b2b4 y revisión independiente.",
+    "Concluir reconciliación de auditoría final y avanzar aceptación sólo mediante controlador y evidencia legítima."
   ],
-  "historical_evidence_note": "Los checkpoints y métricas remotas con fechas anteriores se conservan como historia de sus SHA; no acreditan el código local actual. La restricción antigua notification_review ya no es un bloqueo activo, y los seis alcances técnicos históricos están integrados."
+  "historical_evidence_note": "Los checkpoints y métricas remotas con fechas anteriores se conservan como historia de sus SHA; no acreditan el código local actual. La restricción antigua notification_review ya no es un bloqueo activo, y los seis alcances técnicos históricos están integrados.",
+  "previous_audit_checkpoint": {
+    "date": "2026-09-29",
+    "source_commit": "94db0848a6c61538508a354ff0715f377364af6d",
+    "rubrics": 20,
+    "kind": "evidence_reconciliation_and_scoped_live_checks",
+    "verdict": "blocked_not_production",
+    "anonymous_routes_denied": 24,
+    "dependency_advisories": 0,
+    "immutable_artifacts_verified": 609,
+    "final_post_60_audit": false,
+    "evidence": "AUDITORIA-20-RUBROS-2026-09-29.md",
+    "technical_count_increment": 0
+  }
 }

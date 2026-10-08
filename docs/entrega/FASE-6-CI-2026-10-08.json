@@ -1,0 +1,460 @@
+{
+  "schema": "rovaq-final-ci-progress-v1",
+  "date": "2026-10-08",
+  "status": "aggregate_and_package_suite_pass_capacity_pending",
+  "candidate": "6e8b2b4203f948408171612080b0bc62fadc19be",
+  "formalAcceptance": false,
+  "productionValidated": false,
+  "attempts": [
+    {
+      "scope": "aggregate",
+      "receipt": "fase6-final-ci-v1/review.json",
+      "sha256": "85f1f397251f7594d2774e2d27de6980190a133f49740db342a84d93d0e495e0",
+      "exitCode": 1,
+      "sourceInvariance": {
+        "control": true,
+        "candidate": true
+      },
+      "heads": {
+        "control": "06b7bae1d368167f043c52ac0492026197dab3f6",
+        "candidate": "06b7bae1d368167f043c52ac0492026197dab3f6"
+      },
+      "jobs": [
+        {
+          "job": "control-kernel",
+          "status": "failed_unclassified",
+          "commands": [
+            {
+              "seconds": 0.03,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 0.3,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 102.5,
+              "exitCode": 1,
+              "timeout": false,
+              "processCleanup": true
+            }
+          ]
+        },
+        {
+          "job": "web-quality",
+          "status": "failed_unclassified",
+          "commands": [
+            {
+              "seconds": 0.03,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 8.48,
+              "exitCode": 1,
+              "timeout": false,
+              "processCleanup": true
+            }
+          ]
+        },
+        {
+          "job": "sql-integration",
+          "status": "pass",
+          "commands": [
+            {
+              "seconds": 0.03,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 22.94,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 575.06,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            }
+          ]
+        },
+        {
+          "job": "auth-e2e",
+          "status": "pass",
+          "commands": [
+            {
+              "seconds": 0.04,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 69.87,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 275.0,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            }
+          ]
+        }
+      ],
+      "independentOwnedNamesAbsent": 24
+    },
+    {
+      "scope": "aggregate",
+      "receipt": "fase6-final-ci-v2/review.json",
+      "sha256": "703a45897849ba0b16d3ee7153237061d42d520e4dcd68803cb62e824dce724e",
+      "exitCode": 1,
+      "sourceInvariance": {
+        "control": true,
+        "candidate": true
+      },
+      "heads": {
+        "control": "baf62b180777a215408f7cfb0c1fe23a2a209c61",
+        "candidate": "baf62b180777a215408f7cfb0c1fe23a2a209c61"
+      },
+      "jobs": [
+        {
+          "job": "control-kernel",
+          "status": "pass",
+          "commands": [
+            {
+              "seconds": 0.05,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 0.32,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 102.54,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 0.21,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            }
+          ]
+        },
+        {
+          "job": "web-quality",
+          "status": "failed_unclassified",
+          "commands": [
+            {
+              "seconds": 0.04,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 64.03,
+              "exitCode": 1,
+              "timeout": false,
+              "processCleanup": true
+            }
+          ]
+        },
+        {
+          "job": "sql-integration",
+          "status": "pass",
+          "commands": [
+            {
+              "seconds": 0.03,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 24.0,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 578.6,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            }
+          ]
+        },
+        {
+          "job": "auth-e2e",
+          "status": "pass",
+          "commands": [
+            {
+              "seconds": 0.04,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 68.73,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 271.07,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            }
+          ]
+        }
+      ],
+      "independentOwnedNamesAbsent": 24
+    },
+    {
+      "scope": "web-focal",
+      "receipt": "fase6-final-web-focal-v3/review.json",
+      "sha256": "cc7639cf691ed8ae89e11b5b42c91dd8bc9861b66f124616669d6d672807911c",
+      "exitCode": 1,
+      "sourceInvariance": {
+        "control": true,
+        "candidate": true
+      },
+      "head": "075d3fd9213b55093a9b41b894716c7ba99883d0",
+      "job": "web-quality",
+      "status": "failed_unclassified",
+      "cleanupVerified": true
+    },
+    {
+      "scope": "web-focal",
+      "receipt": "fase6-final-web-focal-v4/review.json",
+      "sha256": "37ccb90925717b355f9225dd878a927be35dc5205995aa9edb78a47453135e9b",
+      "exitCode": 0,
+      "sourceInvariance": {
+        "control": true,
+        "candidate": true
+      },
+      "head": "6e8b2b4203f948408171612080b0bc62fadc19be",
+      "job": "web-quality",
+      "status": "pass",
+      "cleanupVerified": true,
+      "commands": [
+        {
+          "seconds": 0.03,
+          "exitCode": 0,
+          "timeout": false,
+          "processCleanup": true
+        },
+        {
+          "seconds": 65.49,
+          "exitCode": 0,
+          "timeout": false,
+          "processCleanup": true
+        },
+        {
+          "seconds": 73.41,
+          "exitCode": 0,
+          "timeout": false,
+          "processCleanup": true
+        }
+      ]
+    },
+    {
+      "scope": "aggregate",
+      "receipt": "fase6-final-ci-v4/review.json",
+      "sha256": "7d09e20027c3f074011d2fc23db00795ef726d5dfb924c080ba951f5cb7ccf46",
+      "exitCode": 0,
+      "aggregatePassed": true,
+      "sourceInvariance": {
+        "control": true,
+        "candidate": true
+      },
+      "heads": {
+        "control": "6e8b2b4203f948408171612080b0bc62fadc19be",
+        "candidate": "6e8b2b4203f948408171612080b0bc62fadc19be"
+      },
+      "jobs": [
+        {
+          "job": "control-kernel",
+          "status": "pass",
+          "commands": [
+            {
+              "seconds": 0.03,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 0.29,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 82.89,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 0.15,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            }
+          ],
+          "sourceInvariance": true
+        },
+        {
+          "job": "web-quality",
+          "status": "pass",
+          "commands": [
+            {
+              "seconds": 0.02,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 41.68,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 34.28,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            }
+          ],
+          "sourceInvariance": true
+        },
+        {
+          "job": "sql-integration",
+          "status": "pass",
+          "commands": [
+            {
+              "seconds": 0.02,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 16.26,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 368.91,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            }
+          ],
+          "sourceInvariance": true
+        },
+        {
+          "job": "auth-e2e",
+          "status": "pass",
+          "commands": [
+            {
+              "seconds": 0.02,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 48.47,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            },
+            {
+              "seconds": 178.3,
+              "exitCode": 0,
+              "timeout": false,
+              "processCleanup": true
+            }
+          ],
+          "sourceInvariance": true
+        }
+      ],
+      "independentOwnedNamesAbsent": 24,
+      "cleanupScope": "Owned names independently absent; harness assertions cover IDs internally. IDs already removed are not independently recoverable from outer receipt."
+    }
+  ],
+  "pending": [
+    "Fresh10K/50K/150Kcapacity series"
+  ],
+  "failureCauses": [
+    "V1: outerumask077 made five permission mutations no-ops; rechecked022 without altering controller oracles.",
+    "V1: Node HTTP process lacked Next server-only marker resolution; server context now scoped to that process.",
+    "V2: offline artifact scanner rejected exact sanitized unconfigured legacy API response; new strict profiles and absent-config guards calibrated.",
+    "Web focalV3: exact bell query was excluded by original no-query policy; single literal versioned query now recognized, other queries remain rejected."
+  ],
+  "webFocalV4": {
+    "buildHealth": 200,
+    "publishedArtifactsScanned": 180,
+    "httpRequestsScanned": 305,
+    "logSha256": "5a2daedeacab5ec99ac982c24db54a26e610a4fac31d1612724785bf61d880fa",
+    "typescriptLintBuild": "PASS",
+    "configuration": "absent;localSYNcanaries;notbackendavailability",
+    "F01_01": "PASS;73.41s"
+  },
+  "independentConsolidationReview": {
+    "receipt": "fase6-ui/consolidation-6e8b2b4-independent.json",
+    "sha256": "135e9816e2e3ac73fa4c214f07eef4991a50a85b8791b1a099d7a18c154b6276",
+    "productFilesIdenticalTo510028a": 832,
+    "uiControlsExact": 15,
+    "capacitySources": 2227,
+    "benchmarkFiles": 9,
+    "packageTestPins": 55,
+    "scope": "Source identity and focal receipts; not aggregate approval"
+  },
+  "aggregatePassed": true,
+  "rootReceiptReview": {
+    "originalArtifactsHashChecked": 34,
+    "aggregateTapPassed": true,
+    "notIndependentIds": true
+  },
+  "packageSuite": {
+    "receipt": "fase6-final-packages-v4/receipt.json",
+    "sha256": "861899713138180e63a56b771d3cb6c27ce32a4a1ededcb4779bc62be59f3b75",
+    "review": "fase6-final-packages-v4/review.json",
+    "reviewSha256": "db637a47f1760298a9ccbbc5fa69ccb17360a41f96d02c384fed696813ea8afd",
+    "candidateSha": "6e8b2b4203f948408171612080b0bc62fadc19be",
+    "nodeVersion": "v22.23.2",
+    "umask": "022",
+    "fileCount": 55,
+    "testCount": 586,
+    "passed": true,
+    "testSeconds": 37.214,
+    "noTimeouts": true,
+    "processGroupsAbsent": true,
+    "sourceInvariance": true,
+    "gitClean": true,
+    "scratchAbsent": true,
+    "scopeLimits": [
+      "Package mjs suite only; excludes platform TS and apps/web tests",
+      "Synthetic local PostgreSQL; no Auth HTTP or provider acceptance"
+    ],
+    "ownContainersIndependentlyAbsentByIdAndName": 4
+  }
+}

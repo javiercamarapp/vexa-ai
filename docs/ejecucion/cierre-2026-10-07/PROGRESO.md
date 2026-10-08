@@ -12,7 +12,7 @@
 Fase6 en auditoría final local. Base/Auth/Node integrada en7547c21, limpieza SQL en a26c4c7. Serie anterior aff0517:10K y50K aprobadas,150K no iniciada. Los cambios de controles requieren una serie completa nueva tras consolidar fuentes. Corrección de navegación510028a: seis flujos afectados83/83 y notificaciones15/15 aprobados; entrada compuesta con recuperación RSC30/30 aprobada. Producto510028a y controles6036597 integrados; wrapper de55paquetes972b0f7 preparado. Una sola suite pesada.
 
 ## Siguiente
-Verificar F01-05 agregado con Node22; completar pruebas de paquetes pertinentes y congelar la nueva serie10K→50K→150K. Fase5 conserva pendientes externos de autorización de lote, referencia UI independiente y proveedores.
+F01-05 agregado4/4 y55archivos de paquetes586/586 aprobados sobre6e8b2b4. Completar serie10K→50K→150K ya congelada;10Ken ejecución. Fase5 conserva pendientes externos de autorización de lote, referencia UI independiente y proveedores.
 
 ## Pendientes
 - Consulta Supabase sobre cuarentena de Storage preparada, autorización de envío solicitada; aún no enviada.
@@ -61,3 +61,16 @@ Email F06-10 entry completo39/39PASS,74,49s, con25/25 puros y siete recursos pro
 ## Corrección integrada y cierre de regresiones UI
 
 Producto510028a integrado por fast-forward, controles6036597 y wrapper972b0f7. Las seis UI afectadas pasan83/83, notificaciones funcional15/15 y entrada compuesta30/30 (181,612s); esta última incluye7escenarios de navegación y recupera tres RSC500 mediante documento200 real. Dos arneses,12IDs propios ausentes, temporales retirados y fuentes invariantes. Se conservan rojos originales y comparación controlada con la versión anterior. [Recibo público](../../entrega/CORRECCION-NAVEGACION-2026-10-08.json). Siguiente: cuatro trabajos CI reales,55archivos de paquetes y serie final10K→50K→150K. No modifica28/60 ni valida producción.
+
+
+## CI compuesto: causas corregidas y web focal aprobada
+
+V1 sobre06b7bae: SQL447 yAuth/rolesPASS; agregadoFAIL por umask077 del lanzador y falta de contexto server-only en NodeHTTP. V2 sobrebaf62b1: kernel137,SQL447,Auth7yroles3PASS; build/APIhealth200, inspección offlineFAIL por contrato legado normalizado. Controles075d3fd distinguen7respuestas reales sinconfig/ceroFetch y prueban ausenciade.env; focalV3reveló consulta exacta de campana. Delta6e8b2b4 conserva las otras queries rechazadas.39calibracionesPASS, revisión independiente y producto sin cambios desde510028a.
+
+Web-quality focal final6e8b2b4PASS completo:65,49s másF01-01 en73,41s; tipos/lint/build,180artefactos y305requests limpios, fuentes invariantes ycleanupverificado. No es aún F01-05 agregado: sus cuatro trabajos actuales están en ejecución. Después55archivos de paquetes y serie final de capacidad. [Recibos y rojos preservados](../../entrega/FASE-6-CI-2026-10-08.json).
+
+
+CI final v4 aprobado: F01-05 PASS4/4 sobre6e8b2b4; kernel137/137, web-quality y F01-01, SQL447/447, Auth7/7 y navegación3/3. Sin timeout/cancelación, dos fuentes/HEAD limpios e invariantes,24nombres propios ausentes comprobados. Root cotejó hashes de originales/copias y TAP del agregado. Suite55en ejecución; capacidad final aún pendiente. Recibo `fase6-final-ci-v4/review.json`, SHA256 `7d09e20027c3f074011d2fc23db00795ef726d5dfb924c080ba951f5cb7ccf46`.
+
+
+Paquetes finales:55archivos,586/586PASS en37,214s (npmci2,986s); ningún skip/cancel/timeout. Cuatro contenedores propios ausentes porID+nombre, scratch eliminado, fuentes/HEAD invariantes. Root cotejó los hashes de artefactos del recibo. La carga10Kfinal ya está en ejecución desde control separado contra el mismo candidato6e8b2b4. [Disposición de las33categorías y65fallos originales](../../entrega/RECONCILIACION-FALLOS-2026-10-08.json): no reetiqueta rojos como verdes ni altera28/60.

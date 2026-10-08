@@ -1,0 +1,323 @@
+{
+  "schema": "rovaq-baseline-failures-reconciliation-v1",
+  "date": "2026-10-08",
+  "status": "in_progress",
+  "baseline": {
+    "receipt": "FASE-1-CIERRE-2026-10-07.json",
+    "sha256": "65cb33692b4f21ce4c0b8072fb36180b6898476b0cfcb43f0cd5c7ed0a1ca0ef",
+    "failureResults": 65,
+    "categories": 33
+  },
+  "formalAcceptance": false,
+  "acceptedTasks": 28,
+  "productionValidated": false,
+  "originalFailuresPreserved": true,
+  "scope": "Disposition of every classified baseline failure, not a fresh run of60gates nor a sum of unique tests. Parent/child failures remain records, not independent defects.",
+  "rows": [
+    {
+      "id": "F01-02",
+      "originalCategory": "Control desactualizado",
+      "originalFailureResults": 4,
+      "status": "local_verified",
+      "evidence": "FASE-6-CI-2026-10-08.json",
+      "note": "Auth7/7 en agregado v4,48,47s."
+    },
+    {
+      "id": "F01-03",
+      "originalCategory": "Entorno / plazo intermitente",
+      "originalFailureResults": 12,
+      "status": "local_verified",
+      "evidence": "FASE-6-CI-2026-10-08.json",
+      "note": "SQL447/447 en agregado v4,368,91s; matriz financiera493/493 conserva su recibo anterior."
+    },
+    {
+      "id": "F01-04",
+      "originalCategory": "Control desactualizado",
+      "originalFailureResults": 3,
+      "status": "local_verified",
+      "evidence": "FASE-6-CI-2026-10-08.json",
+      "note": "Cuatro roles/ocho rutas3/3 en agregado v4,178,30s."
+    },
+    {
+      "id": "F01-05",
+      "originalCategory": "Conflicto de herramientas",
+      "originalFailureResults": 1,
+      "status": "local_verified",
+      "evidence": "FASE-6-CI-2026-10-08.json",
+      "note": "Agregado v4 PASS4/4 sobre6e8b2b4; fuentes invariantes y24nombres propios ausentes."
+    },
+    {
+      "id": "F02-03",
+      "originalCategory": "Control desactualizado y defecto de producto corregido",
+      "originalFailureResults": 1,
+      "status": "local_verified",
+      "evidence": "AUDITORIA-20-RUBROS-2026-10-08.md",
+      "note": "Control actualizado e integrado7547c21;31hijas más entrada1/1. Corrección de selección9399246.",
+      "privateReceipt": {
+        "path": "fase6-base-final-local-v2.json",
+        "sha256": "4a78b06a1219f503b4ba1cc528110ec67fc2129990be5fc25b04656eaf1dbb99",
+        "candidate": "1aea895599a2aec72f56421cd62bc420b018ed8f"
+      }
+    },
+    {
+      "id": "F02-05",
+      "originalCategory": "Plazo intermitente, comportamiento reverificado",
+      "originalFailureResults": 1,
+      "status": "local_reverified_intermittent_cause_unresolved",
+      "evidence": "FASE-1-CIERRE-2026-10-07.json",
+      "note": "Barrera postcommit verde en110,564s sin ampliar plazo. No se aisló la causa exacta del timeout original."
+    },
+    {
+      "id": "F03-01",
+      "originalCategory": "Configuración y autorización externas",
+      "originalFailureResults": 1,
+      "status": "external_pending",
+      "evidence": "PENDIENTES-PARA-CONECTAR.md",
+      "note": "Referencia independiente UI/export y revisor legítimo del ensayo vigente. No faltan de nuevo la API ni los20casos."
+    },
+    {
+      "id": "F03-02",
+      "originalCategory": "Configuración y autorización externas",
+      "originalFailureResults": 1,
+      "status": "external_pending",
+      "evidence": "PENDIENTES-PARA-CONECTAR.md",
+      "note": "Cuenta Zendesk y reconciliación independiente autorizadas."
+    },
+    {
+      "id": "F03-03",
+      "originalCategory": "Defecto de producto corregido",
+      "originalFailureResults": 2,
+      "status": "local_verified",
+      "evidence": "CORRECCION-RECUPERACION-2026-10-07.json",
+      "note": "Corrección ed9f06d; gate original29/29 y12/12unidades afectadas."
+    },
+    {
+      "id": "F05-02",
+      "originalCategory": "Fixture caducado",
+      "originalFailureResults": 2,
+      "status": "local_verified",
+      "evidence": "AUDITORIA-20-RUBROS-2026-10-08.md",
+      "note": "Fixture vigente integrado; control financiero10/10. No se convierte el supuesto vencido en válido.",
+      "privateReceipt": {
+        "path": "fase6-ui/F05-02-v1/receipt.json",
+        "sha256": "baee8058b58e9f2923c2e802fe906b19c8e54c93121f28635a5372654f55a385",
+        "candidate": "1aea895599a2aec72f56421cd62bc420b018ed8f",
+        "counts": {
+          "tests": 10,
+          "pass": 10,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0
+        }
+      }
+    },
+    {
+      "id": "F05-03",
+      "originalCategory": "Entorno interrumpido, reverificado",
+      "originalFailureResults": 2,
+      "status": "local_verified",
+      "evidence": "FASE-1-CIERRE-2026-10-07.json",
+      "note": "Control SQL original15/15; también matriz financiera compuesta con calibración."
+    },
+    {
+      "id": "F05-06",
+      "originalCategory": "Entorno interrumpido, reverificado",
+      "originalFailureResults": 1,
+      "status": "local_verified",
+      "evidence": "FASE-1-CIERRE-2026-10-07.json",
+      "note": "Control SQL original22/22 tras fallo Docker del intento antiguo."
+    },
+    {
+      "id": "F06-01",
+      "originalCategory": "Control desactualizado",
+      "originalFailureResults": 2,
+      "status": "local_verified",
+      "evidence": "CORRECCION-NAVEGACION-2026-10-08.json",
+      "note": "Workspace16/16 sobre510028a; incluido en83afectadas."
+    },
+    {
+      "id": "F06-02",
+      "originalCategory": "Selector no acotado a la publicación financiera",
+      "originalFailureResults": 2,
+      "status": "local_verified",
+      "evidence": "CORRECCION-NAVEGACION-2026-10-08.json",
+      "note": "Detalle11/11 sobre510028a; incluido en83afectadas."
+    },
+    {
+      "id": "F06-03",
+      "originalCategory": "Selector financiero y navegación desactualizados",
+      "originalFailureResults": 2,
+      "status": "local_verified",
+      "evidence": "CORRECCION-NAVEGACION-2026-10-08.json",
+      "note": "Recomendaciones14/14 sobre510028a; incluido en83afectadas."
+    },
+    {
+      "id": "F06-04",
+      "originalCategory": "Control desactualizado",
+      "originalFailureResults": 2,
+      "status": "local_verified",
+      "evidence": "CORRECCION-NAVEGACION-2026-10-08.json",
+      "note": "Explorer13/13 sobre510028a; incluido en83afectadas."
+    },
+    {
+      "id": "F06-05",
+      "originalCategory": "Control desactualizado",
+      "originalFailureResults": 2,
+      "status": "local_verified",
+      "evidence": "CORRECCION-NAVEGACION-2026-10-08.json",
+      "note": "Intervenciones14/14 sobre510028a; incluido en83afectadas."
+    },
+    {
+      "id": "F06-06",
+      "originalCategory": "Control desactualizado",
+      "originalFailureResults": 2,
+      "status": "local_verified",
+      "evidence": "CORRECCION-NAVEGACION-2026-10-08.json",
+      "note": "Briefs15/15 sobre510028a; incluido en83afectadas."
+    },
+    {
+      "id": "F06-07",
+      "originalCategory": "Prerequisitos de evaluación externa",
+      "originalFailureResults": 1,
+      "status": "external_pending",
+      "evidence": "validacion-humana/README.md",
+      "note": "Evidencia y adjudicación humanas independientes; no generar aprobaciones artificiales."
+    },
+    {
+      "id": "F06-08",
+      "originalCategory": "Expectativa anterior a F06-12",
+      "originalFailureResults": 3,
+      "status": "local_verified",
+      "evidence": "CORRECCION-NAVEGACION-2026-10-08.json",
+      "note": "Entrada compuesta30/30; catálogo actualizado y defecto real de navegación corregido con comparación roja/verde."
+    },
+    {
+      "id": "F06-10",
+      "originalCategory": "Marca antigua en el control",
+      "originalFailureResults": 2,
+      "status": "local_verified",
+      "evidence": "AUDITORIA-20-RUBROS-2026-10-08.md",
+      "note": "Entrada email39/39, incluye25puros; marca actual y SMTP local.",
+      "privateReceipt": {
+        "path": "fase6-ui/F06-10-v1/receipt.json",
+        "sha256": "8972dc0b13a808728f1e21a04fa12f891b4d0d99b5ed59de84095ddb48590593",
+        "candidate": "1aea895599a2aec72f56421cd62bc420b018ed8f",
+        "counts": {
+          "tests": 39,
+          "pass": 39,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0
+        }
+      }
+    },
+    {
+      "id": "F06-11",
+      "originalCategory": "Marca antigua en el control",
+      "originalFailureResults": 2,
+      "status": "local_verified",
+      "evidence": "AUDITORIA-20-RUBROS-2026-10-08.md",
+      "note": "Entrada push51/51; handlers/dispositivos locales.",
+      "privateReceipt": {
+        "path": "fase6-ui/F06-11-v1/receipt.json",
+        "sha256": "9b904c0a0f78fbd103e89ad4e3445a35e4c217e37d0bc36b38546c03b3d5ad68",
+        "candidate": "1aea895599a2aec72f56421cd62bc420b018ed8f",
+        "counts": {
+          "tests": 51,
+          "pass": 51,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0
+        }
+      }
+    },
+    {
+      "id": "F07-04",
+      "originalCategory": "Host suspendido; capacidad no acreditada",
+      "originalFailureResults": 1,
+      "status": "in_progress",
+      "evidence": "FASE-3-CAPACIDAD-2026-10-07.json",
+      "note": "Serie completa histórica sobre504a6b6 válida para ese SHA; nueva serie final6e8b2b4 pendiente."
+    },
+    {
+      "id": "F07-06",
+      "originalCategory": "Host suspendido; componentes reverificados",
+      "originalFailureResults": 1,
+      "status": "local_verified_managed_pending",
+      "evidence": "FASE-4-RECUPERACION-2026-10-07.json",
+      "note": "Restore local5/5 y rollback/regreso aprobados; recuperación gestionada pendiente."
+    },
+    {
+      "id": "F07-05",
+      "originalCategory": "Validación humana externa",
+      "originalFailureResults": 1,
+      "status": "external_pending",
+      "evidence": "validacion-humana/README.md",
+      "note": "Piloto observado y revisión humana independiente."
+    },
+    {
+      "id": "F08-01",
+      "originalCategory": "Autorización y evidencia externas",
+      "originalFailureResults": 1,
+      "status": "external_pending",
+      "evidence": "acta-cierre.json",
+      "note": "Autorización y publicación de release, SHA servido y aprobación legítima."
+    },
+    {
+      "id": "F08-02",
+      "originalCategory": "Autorización y evidencia externas",
+      "originalFailureResults": 1,
+      "status": "external_pending",
+      "evidence": "FASE-6-LECTURA-REMOTA-2026-10-08.json",
+      "note": "Smoke autenticado remoto del release actual; lectura anónima no lo sustituye."
+    },
+    {
+      "id": "F08-03",
+      "originalCategory": "Validación humana externa",
+      "originalFailureResults": 1,
+      "status": "external_pending",
+      "evidence": "validacion-humana/README.md",
+      "note": "Ensayo con presentador y cronómetro reales."
+    },
+    {
+      "id": "F08-04",
+      "originalCategory": "Autorización y evidencia externas",
+      "originalFailureResults": 1,
+      "status": "external_pending",
+      "evidence": "acta-cierre.json",
+      "note": "Permisos de materiales revisados por titular."
+    },
+    {
+      "id": "F08-05",
+      "originalCategory": "Validación humana externa",
+      "originalFailureResults": 1,
+      "status": "external_pending",
+      "evidence": "validacion-humana/README.md",
+      "note": "Ensayo de guía y recepción por destinatario real."
+    },
+    {
+      "id": "F08-06",
+      "originalCategory": "Autorización y evidencia externas",
+      "originalFailureResults": 1,
+      "status": "external_pending",
+      "evidence": "acta-cierre.json",
+      "note": "Acta por capas basada en evidencia y recepción legítimas."
+    },
+    {
+      "id": "PKG-SCHEMA",
+      "originalCategory": "Fixture de Storage incompleto",
+      "originalFailureResults": 4,
+      "status": "local_verified",
+      "evidence": "FASE-6-CI-2026-10-08.json",
+      "note": "Cuatro suites21/21 con Storage oficial/112tablas; ahora incluidas en suite conjunta55archivos586/586 sobre6e8b2b4."
+    },
+    {
+      "id": "PKG-CAS",
+      "originalCategory": "Referencia absoluta a runtime histórico",
+      "originalFailureResults": 1,
+      "status": "retired_superseded_not_pass",
+      "evidence": "FASE-6-SCHEMA-2026-10-08.json",
+      "note": "Prototipo retirado explícitamente; intenciones cubiertas por SQL actual y UI moderna. No se cuenta como test aprobado."
+    }
+  ]
+}

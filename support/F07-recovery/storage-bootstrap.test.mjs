@@ -27,16 +27,20 @@ test('Recovery bootstrap reproduces missing-helper rejection and enforces real 0
  fs.chmodSync(evidence,0o700);
  const receipt={candidate,broker,name,migrationSha256:createHash('sha256').update(migration).digest('hex'),checks:[],status:'running'};
  const save=()=>fs.writeFileSync(path.join(evidence,'receipt.json'),JSON.stringify(receipt,null,2)+'\n',{mode:0o600});
- const run=(args,input)=>spawnSync('docker',args,{input,encoding:'utf8',timeout:15000,killSignal:'SIGKILL',maxBuffer:1024*1024});
+ const deadline=Date.now()+55000;let finished=false;
+ const rawRun=(args,input,timeout=15000)=>spawnSync('docker',args,{input,encoding:'utf8',timeout,killSignal:'SIGKILL',maxBuffer:1024*1024});
+ const active=()=>assert.ok(!finished&&!t.signal.aborted&&Date.now()<deadline,'CALIBRATION_DEADLINE_OR_ABORT');
+ const run=(args,input)=>{active();const result=rawRun(args,input,Math.max(1,Math.min(15000,deadline-Date.now())));active();return result;};
  const ok=r=>{assert.ok(!r.error&&r.signal===null&&r.status===0,r.stderr||r.error?.message);return r.stdout.trim();};
  let id;
  t.after(()=>{
+  finished=true;
   try{
    // A lost docker-run reply is recovered only through the unique owned name and label.
-   const found=run(['container','inspect',name,'--format','{{.Id}}|{{index .Config.Labels "vexa.review.broker"}}']);
-   if(found.status===0){const [actual,label]=ok(found).split('|');assert.equal(label,broker);assert.match(actual,/^[a-f0-9]{64}$/);if(id)assert.equal(actual,id);id=actual;ok(run(['rm','-f',id]));}
+   const found=rawRun(['container','inspect',name,'--format','{{.Id}}|{{index .Config.Labels "vexa.review.broker"}}']);
+   if(found.status===0){const [actual,label]=ok(found).split('|');assert.equal(label,broker);assert.match(actual,/^[a-f0-9]{64}$/);if(id)assert.equal(actual,id);id=actual;ok(rawRun(['rm','-f',id]));}
    else assert.match(found.stderr,/No such (object|container)/i,'CLEANUP_INSPECTION_REQUIRED');
-   const absent=run(['container','inspect',id??name]);assert.equal(absent.status,1);assert.match(absent.stderr,/No such (object|container)/i);
+   const absent=rawRun(['container','inspect',id??name]);assert.equal(absent.status,1);assert.match(absent.stderr,/No such (object|container)/i);
    receipt.cleanup={id:id??null,absent:true};
   }catch(error){receipt.status='failed';receipt.cleanupError=error.message;throw error;}
   finally{save();console.log('RECOVERY_BOOTSTRAP_EVIDENCE:'+evidence);}

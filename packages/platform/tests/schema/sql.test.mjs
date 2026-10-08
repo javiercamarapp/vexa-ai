@@ -1,3 +1,4 @@
+import {bootstrapStorageFixture} from './storage-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -10,19 +11,18 @@ function run(args,input){const r=spawnSync('docker',args,{input,encoding:'utf8',
 test('SYNTHETIC PostgreSQL17: migrations, constraints, RLS, backend', {timeout:90000},async t=>{
  const name='vexa-schema-syn-'+randomUUID();
  t.after(()=>run(['rm','-f','-v',name]));
- run(['run','--pull','never','--name',name,'-d','-e','POSTGRES_HOST_AUTH_METHOD=trust','public.ecr.aws/supabase/postgres:17.6.1.159']);
+ run(['run','--pull','never','--network','none','--name',name,'-d','-e','POSTGRES_HOST_AUTH_METHOD=trust','public.ecr.aws/supabase/postgres:17.6.1.159']);
  const sql=s=>run(['exec','-i',name,'psql','-X','-qAt','-U','supabase_admin','-d','postgres','-v','ON_ERROR_STOP=1'],s);
  let ready=false;
  for(let i=0;i<100;i++){const r=spawnSync('docker',['exec',name,'pg_isready','-h','127.0.0.1'],{encoding:'utf8'});if(r.status===0){try{if(sql("select count(*) from pg_roles where rolname='authenticated'")==='1'){ready=true;break;}}catch{}}await new Promise(r=>setTimeout(r,100));}
  assert.ok(ready,'own PostgreSQL ready');
- sql(`create schema if not exists storage;
- create table if not exists storage.buckets(id text primary key,name text,public boolean);
- create table if not exists storage.objects(id uuid primary key default gen_random_uuid(),bucket_id text,name text);
- alter table storage.objects enable row level security; grant usage on schema storage to authenticated;grant select,insert,delete on storage.objects to authenticated;`);
+ bootstrapStorageFixture(sql);
  for(const f of fs.readdirSync('supabase/migrations').filter(x=>x.endsWith('.sql')).sort())sql(fs.readFileSync(path.join('supabase/migrations',f),'utf8'));
  const A='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',B='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',U='11111111-1111-4111-8111-111111111111';
  sql(`insert into auth.users(id) values('${U}');insert into organizations(id,name) values('${A}','SYNTHETIC A'),('${B}','SYNTHETIC B');insert into memberships(tenant_id,user_id,role,status) values('${A}','${U}','owner','active'),('${B}','${U}','owner','active');`);
- assert.equal(sql("select count(*) from pg_tables where schemaname='public' and tablename not in ('organizations','memberships')"),'36');
+ // Reviewed named inventory through migration0041; frozen independently of runtime DDL.
+ const expectedTables=JSON.parse(fs.readFileSync(new URL('./public-tables.json',import.meta.url),'utf8'));
+ assert.deepEqual(JSON.parse(sql("select json_agg(tablename order by tablename) from pg_tables where schemaname='public'")),expectedTables,'PUBLIC_TABLE_INVENTORY');
  const checks=`
  insert into connections(id,tenant_id,source,account_id,status) values('10000000-0000-4000-8000-000000000001','${A}','synthetic','42','active'),('10000000-0000-4000-8000-000000000002','${B}','synthetic','42','active');
  set role authenticated; select set_config('request.jwt.claim.sub','${U}',false);
@@ -94,5 +94,5 @@ test('SYNTHETIC PostgreSQL17: migrations, constraints, RLS, backend', {timeout:9
  begin insert into reversals(tenant_id,reversal_of,amount_minor,currency,exponent) values('${A}','40000000-0000-4000-8000-000000000001',10,'MXN',2);raise exception 'currency reversal';exception when foreign_key_violation then null;end;
  end$$;
  `);
- console.log('PASS SYNTHETIC: 36 tables; migrations; dual-member immutable tenant; fresh revocation; cross FK; money/counters; restricted backend. Storage/Auth HTTP NOT tested.');
+ console.log('PASS SYNTHETIC: 112 named public tables; migrations; dual-member immutable tenant; fresh revocation; cross FK; money/counters; restricted backend. Storage/Auth HTTP NOT tested.');
 });

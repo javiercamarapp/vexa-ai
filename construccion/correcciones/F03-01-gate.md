@@ -41,3 +41,18 @@ El driver exigía `client_id` en config e introspección OAuth. Las fuentes ofic
 Propuesta control-plane aislada, no candidato/producto: config v4 exige `authentication: private_app|oauth` y `app_id` esperado. v3 y client_id fallan cerrados antes de requests; no fallback ni conversión de identidad. Se conserva aprobación referenciada del supervisor, TTL<24h, muestra independiente20threads, HMAC exacto, roles/notas/asociaciones, allowlist thread GET, límites y permisos. Sólo el driver puede consultar POST metadata en la ruta oficial exacta; no hay nuevas escrituras CRM/OAuth. Metadata queda en RAM, errores cerrados y límites1MiB/10s incluyen cuerpo.
 
 Pruebas exclusivamente sintéticas: positivos en ambos modos y negativos cuenta/app/tipos, scopes, redirección, tamaño, timeout headers/cuerpo, config/approval/TTL y nofallback. Este cambio requiere revisión independiente y registro/freeze por principal. No constituye ensayo live, reconciliación de20threads reales ni aceptación S01/F03-01; accepted28 permanece intacto. Se preservan todos los rechazos y correcciones históricos.
+
+
+## Corrección control-plane S01 v5 — pendiente de adopción
+
+Motivo: UI autorizada exporta contenido HTML cuya serialización/markup no equivale al plaintext del proveedor. No fabricar plaintextUI desde API ni silenciar diferencias. Nuevo contrato explícito reconciliará contenido+acciones UI independientes y fidelidad exacta proveedor→producto por separado; conserva originales y todos los rojos de perfilesanteriores. Enmiendas y prototipos revisados fuera del candidato antes de esta composición.
+
+V4 histórico se conserva en su ruta; tests de configuraciónv4 no se cuentan como pruebasv5. Nuevo paquete support/F03-HubSpot-v5 y entry propuesto importan/preparan witness ANTES de local.test.mjs (éste importa producto con top-levelawait). PruebaSYN ejecuta entryexacto y rechaza mutanteordeninverso; bindingnativo real sobrevive cambio posterior de globalfetch.
+
+Orquestación: metadata explícita, cuenta/app/scopes reales; todaspáginas; verifyRecord para TODAS entidades, verifyMessage dual para cada mensaje, assertComplete terminal/inventario; sin earlybreak por found.size. Sharedabort cubre metadata, response y espera de iterador. Cierreobserver exige closed/0bodies/0retained. Scope de envelope preserva tenant/conexión/fuente/cuenta.
+
+Controles nuevos de integración usan únicamente respuestasSYN y adaptadorreal congelado6e8; noHubSpot ni HMAC/secretos reales. Incluyen paginaciónfinalCOMMENT, emisiónthreadprimero, pérdida/event/text/payload/roles/scope, UI/HMACdistinto, cuarentena, metadata/abort/límites, autoridad/archivos/pins, presupuesto callback y bootstraprelocatable/cleanupfallido. No repiten63/109de núcleos inalterados ni los atribuyen al ejecutorlive.
+
+Adopción por principal: copiar adoption-files.json bajo support/F03-HubSpot-v5 y proposed-entry/F03-01.test.mjs a tests/acceptance/F03-01.test.mjs; incorporar bloqueLIVEv5 y esta corrección, conservandohistórico. No copiar node_modules, TAP/recibosprivados, datoscliente ni snapshotsprivados. dependencies.json sólo contiene rutasrelativas y hashes de código/paquetes públicos. Congelar nuevoHEAD/source manifest antes de ejecutar verify/accept. Este documento no declara PASSremote ni aceptación.
+
+Adopción control-plane del 8-oct-2026 completada tras revisión independiente `3687435f061dd552e5460f31d0632a4b7ca3770b06fffcdd5d3bda7b2a943204`. El estado del runner y la aceptación live siguen pendientes; este registro no los altera.

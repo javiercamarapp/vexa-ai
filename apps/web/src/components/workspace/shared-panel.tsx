@@ -1,5 +1,6 @@
 'use client';
-import Link from 'next/link';
+import {useWorkspaceNavigation,workspaceLocation} from './navigation-lifecycle';
+import Link from './navigation-lifecycle';
 import {pinWorkspaceQuery,latestWorkspaceQuery} from '../../../../../packages/workspace-service/navigation.mjs';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {Bundle,Scope} from '../../lib/workspace/contracts';
@@ -19,7 +20,8 @@ function initialScope(query:string):ViewScope{
 export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'|'problems';initialQuery:string}){
  const [query,setQuery]=useState(initialQuery),[reload,setReload]=useState(0),[bundle,setBundle]=useState<ViewBundle|null>(null),[busy,setBusy]=useState(true),[error,setError]=useState('');
  const generation=useRef(0),abort=useRef<AbortController|null>(null),resolved=useRef(initialQuery);
- const invalidate=useCallback(()=>{generation.current++;},[]);
+ const invalidate=useCallback(()=>{abort.current?.abort();generation.current++;},[]);
+ useWorkspaceNavigation(invalidate);
  const navigate=useCallback((next:URLSearchParams)=>{next.delete('resource');next.delete('format');abort.current?.abort();generation.current++;setBundle(null);setError('');setBusy(true);resolved.current=next.toString();window.history.pushState(null,'',window.location.pathname+(next.size?'?'+next.toString():''));setQuery(next.toString());setReload(n=>n+1);},[]);
  useEffect(()=>{
   const back=()=>{abort.current?.abort();generation.current++;setBundle(null);setError('');setBusy(true);const next=window.location.search.slice(1);resolved.current=next;setQuery(next);setReload(n=>n+1);};
@@ -27,13 +29,13 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
  },[]);
  useEffect(()=>{
   const epoch=++generation.current,controller=new AbortController();abort.current=controller;
-  const load=async()=>{if(controller.signal.aborted||epoch!==generation.current)return;setBusy(true);setBundle(null);setError('');const search=new URLSearchParams(query);search.set('resource',resource);
+  const load=async()=>{const sourceLocation=workspaceLocation();if(controller.signal.aborted||epoch!==generation.current)return;setBusy(true);setBundle(null);setError('');const search=new URLSearchParams(query);search.set('resource',resource);
    try{const response=await fetch('/api/workspace?'+search.toString(),{cache:'no-store',signal:controller.signal});if(controller.signal.aborted||epoch!==generation.current)return;
     const json=await response.json();if(controller.signal.aborted||epoch!==generation.current)return;
     if(!response.ok)throw Error(response.status===401||response.status===403?'Tu acceso cambió. Vuelve a iniciar sesión o selecciona una organización autorizada.':response.status===400?'El alcance no es válido. Revisa fechas, moneda, base y snapshot.':response.status===404?'No hay una publicación accesible para ese snapshot y alcance.':'No se pudo consultar la vista. Reintenta cuando el servicio esté disponible.');
     const next=json.data as ViewBundle;if(!next||!Array.isArray(next.items)||!next.meta||!next.meta.scope)throw Error('La respuesta no se pudo verificar.');
     const pinned=pinWorkspaceQuery(query,next.meta);
-    resolved.current=pinned.toString();window.history.replaceState(null,'',window.location.pathname+(pinned.size?'?'+pinned.toString():''));setBundle(next);
+    if(workspaceLocation()!==sourceLocation)return;resolved.current=pinned.toString();window.history.replaceState(null,'',window.location.pathname+(pinned.size?'?'+pinned.toString():'')+window.location.hash);setBundle(next);
    }catch(e){if(!controller.signal.aborted&&epoch===generation.current){setBundle(null);setError(e instanceof Error?e.message:'No se pudo consultar la vista.');}}
    finally{if(!controller.signal.aborted&&epoch===generation.current)setBusy(false);}
   };

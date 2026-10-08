@@ -21,7 +21,7 @@ export async function createReleaseManifest(root){
  const tracked=git(root,['ls-files','-z']).split('\0').filter(Boolean).sort();
  const trackedSet=new Set(tracked);
  for(const required of ['package-lock.json','apps/web/next.config.ts','apps/web/src/app/api/health/version/route.ts'])if(!trackedSet.has(required))throw new Error('RELEASE_INPUT_MISSING');
- const migrations=tracked.filter(p=>/^supabase\/migrations\/\d{4}_[^/]+\.sql$/.test(p));
+ const migrations=tracked.filter(p=>/^supabase\/migrations\/(?:\d{4}|\d{14})_[^/]+\.sql$/.test(p));
  if(!migrations.length)throw new Error('RELEASE_MIGRATIONS_MISSING');
  const configs=tracked.filter(p=>/(?:^|\/)package(?:-lock)?\.json$/.test(p)||/^apps\/web\/(?:next\.config\.ts|tsconfig\.json)$/.test(p));
  const sources=[...configs,...migrations];

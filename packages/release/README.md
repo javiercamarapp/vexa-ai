@@ -13,4 +13,6 @@ El resultado queda blocked: asociar destino, responsables, revisiones y cero P0/
 
 La prueba de autor compiló Next y comprobó por HTTP que cambiar ambas variables de revisión al arrancar no altera la identidad compilada. Usó SHA sintético rotulado, sin cuentas externas. La identidad y el inventario recibieron revisión independiente local. La aceptación completa de F08 y el despliegue real siguen pendientes.
 
+El inventario incluye nombres de migración con prefijo de cuatro dígitos o timestamp de catorce dígitos, seguidos de `_`, nombre no vacío y `.sql`, directamente bajo `supabase/migrations/`. `migration_order` conserva el orden lexicográfico de esos archivos versionados; no reconstruye el historial aplicado del destino ni indica que deba reaplicarse SQL.
+
 El inventario rechaza flags Git `assume-unchanged` y `skip-worktree`: pueden ocultar diferencias locales aunque `git status` esté vacío. Use un checkout completo sin esos flags.

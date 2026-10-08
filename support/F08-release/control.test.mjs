@@ -23,13 +23,24 @@ test('real Git inventory rejects stale SHA, altered migrations, extra sources an
  const folder=await mkdtemp(join(tmpdir(),'f0801-inventory-')),root=join(folder,'candidate');await mkdir(root);
  const git=(...args)=>execFileSync('git',['-C',root,...args],{stdio:'pipe'});
  try{
-  const files={'.gitignore':'.env\n','package-lock.json':'{}','apps/web/next.config.ts':'export default {};','apps/web/src/app/api/health/version/route.ts':'export const revision=process.env.VEXA_COMPILED_REVISION;','packages/runtime.mjs':'const key=env.SYN_SERVER_KEY;','supabase/migrations/0001_fixture.sql':'select 1;'};
+  const files={'.gitignore':'.env\n','package-lock.json':'{}','apps/web/next.config.ts':'export default {};','apps/web/src/app/api/health/version/route.ts':'export const revision=process.env.VEXA_COMPILED_REVISION;','packages/runtime.mjs':'const key=env.SYN_SERVER_KEY;','supabase/migrations/0001_fixture.sql':'select 1;','supabase/migrations/20260930224057_platform_administration.sql':'select 2;','supabase/migrations/20261004061000_member_reusable_plan.sql':'select 3;'};
   for(const [name,value]of Object.entries(files)){await mkdir(join(root,name,'..'),{recursive:true});await writeFile(join(root,name),value);}
   git('init','-q');git('add','.');git('commit','-qm','SYN controller fixture');
   await writeFile(join(root,'.env'),'SYN_SERVER_KEY=DO_NOT_RECORD');
   const inventory=await createReleaseManifest(root),manifest=structuredClone(inventory);
   manifest.environment_names=manifest.environment_names.map(x=>({...x,required_in_target:true,rotation_owner:'SYN operator'}));manifest.owners=Object.fromEntries(['release','database','operations','customer'].map(x=>[x,'SYN owner']));
   compareInventory(manifest,inventory);assert.ok(!JSON.stringify(inventory).includes('DO_NOT_RECORD'));
+  // Reproduce the former manifest: preserve legacy migrations and omit only the
+  // two real timestamp naming forms from both names and byte bindings.
+  const timestamps=['supabase/migrations/20260930224057_platform_administration.sql','supabase/migrations/20261004061000_member_reusable_plan.sql'];
+  const legacyOnly=structuredClone(manifest);
+  legacyOnly.source.migration_order=legacyOnly.source.migration_order.filter(p=>!timestamps.includes(p));
+  legacyOnly.source.files=legacyOnly.source.files.filter(x=>!timestamps.includes(x.path));
+  assert.deepEqual(legacyOnly.source.migration_order,['supabase/migrations/0001_fixture.sql']);
+  assert.throws(()=>compareInventory(legacyOnly,inventory),/F0801_SOURCE_INVENTORY_MISMATCH/,'A legacy-only manifest cannot certify the complete checkout');
+  assert.deepEqual(inventory.source.migration_order,['supabase/migrations/0001_fixture.sql',...timestamps]);
+  for(const path of timestamps)assert.equal(inventory.source.files.find(x=>x.path===path)?.sha256,digest(Buffer.from(files[path])));
+
   const mutations=[x=>x.source.commit_sha='0'.repeat(40),x=>x.source.migration_order=[],x=>x.source.files.push({path:'missing',sha256:'a'.repeat(64)}),x=>x.build.required_value='0'.repeat(40),x=>x.environment_names[0].required_in_target='operator_review_required',x=>x.environment_names[0].rotation_owner=null];
   for(const mutate of mutations){const changed=structuredClone(manifest);mutate(changed);assert.throws(()=>compareInventory(changed,inventory),/F0801_/);}
   await writeFile(join(root,'package-lock.json'),'changed');await assert.rejects(createReleaseManifest(root),/RELEASE_SOURCE_DIRTY/);

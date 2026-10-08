@@ -1,8 +1,10 @@
 # Construcción automática VEXA
 
-## Instrucción vigente — 7 de octubre de 2026
+## Instrucción vigente — 8 de octubre de 2026
 
-**Fases 1, 2 y 3 completadas en su alcance local.** F07-01 pasó 17/17 componentes. La nueva serie de capacidad 10K → 50K → 150K pasó sobre `504a6b6`: 210.000 filas sintéticas, cero pendientes, fuentes invariantes y 15 recursos propios ausentes. Health/version y manifiesto corregidos; revisión independiente de serie PASS. Sin push, despliegue ni cambios externos; producción y aceptación formal pendientes. Contadores sin cambios: 59/60 técnicas y 28/60 formales. Cinco alertas altas de desarrollo por braces siguen abiertas. Siguiente: fase 4, recuperación y operación, aún no iniciada. [Cierre de fase 3](docs/entrega/CAPACIDAD-FASE-3-2026-10-07.md).
+**Fase6 en curso;60/60 alcances técnicos integrados y28/60 aceptaciones formales.** Fases1–3 cerradas localmente para sus versiones. Recuperación local actual PASS; barrera Storage y recuperación gestionada pendientes. CRM acotado integrado y probado, histórico reconciliado sin cargas nuevas. Nuevas cargas10K/50K PASS sobre aff0517; consolidar controles de fase6 antes de congelar y medir la serie final completa10K→50K→150K. Una suite pesada a la vez, candidato inmutable y control externo.
+
+Continuar verificaciones locales y preparar validación humana/entrega. El grafo sólo tiene F03-01 elegible: requiere referencia independiente real de HubSpot; no cambiar dependencias ni contadores para aceptar. Restricción documental antigua de revisión retirada; no es bloqueo vigente. Sin autorización específica no hay push, deploy, cambios remotos, nuevas cargas del cliente ni gasto. Cinco alertas altas de desarrollo por braces siguen abiertas. [Estado vigente](docs/ESTADO-VIGENTE.md) y [progreso verificable](docs/ejecucion/cierre-2026-10-07/PROGRESO.md).
 
 ## Estado histórico — 2 de octubre de 2026 (UTC)
 

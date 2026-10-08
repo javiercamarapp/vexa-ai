@@ -1,0 +1,18 @@
+{
+  "worksheet": "blank_human_record",
+  "status": "not_run",
+  "purpose": "Sólo cuando las dos anotaciones humanas discrepan; conservar ambas.",
+  "candidateSha": null,
+  "dataset_id": null,
+  "dataset_hash": null,
+  "case_id": null,
+  "annotation_a_reference": null,
+  "annotation_b_reference": null,
+  "adjudication": {
+    "adjudicator_id": null,
+    "adjudicated_at": null,
+    "reason": null,
+    "labels": null
+  },
+  "evidence_ref": null
+}

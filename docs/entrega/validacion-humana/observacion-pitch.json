@@ -1,0 +1,26 @@
+{
+  "worksheet": "blank_human_record",
+  "status": "not_run",
+  "purpose": "Observación F08-03; completar únicamente después del ensayo humano.",
+  "candidateSha": null,
+  "observer": null,
+  "evidenceReference": null,
+  "startedAt": null,
+  "finishedAt": null,
+  "comprehensionConfirmed": null,
+  "offlinePlaybackObserved": null,
+  "externalRequests": null,
+  "fallbackLabelObserved": null,
+  "portabilityObserved": null,
+  "materialMode": null,
+  "financial": {
+    "currency": null,
+    "exponent": null,
+    "exposureMinor": null,
+    "refundsMinor": null,
+    "additive": null,
+    "causalSavingClaimed": null
+  },
+  "backupManifestSha256": null,
+  "findings": null
+}

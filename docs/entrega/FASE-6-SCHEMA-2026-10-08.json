@@ -1,0 +1,41 @@
+{
+  "version": 3,
+  "pass": 21,
+  "fail": 0,
+  "cancelled": 0,
+  "skipped": 0,
+  "topLevelSuites": 4,
+  "node": "22.23.2",
+  "seconds": 24.469346416,
+  "logSha256": "d0fdc3898feac05b909c09a12c99998c7b353a681deadf491022c3cd26834569",
+  "cleanup": {
+    "method": "Each test t.after asserts own docker rm -f -v exit0; independent final docker ps -a returned0 with no schema-review/schema-syn containers",
+    "containers": 4,
+    "independentFourIdCheck": false,
+    "limitation": "Docker event ring retained only one create event after exec traffic; no claim of independent lookup of all four IDs"
+  },
+  "retiredControl": "service-cas.test.mjs RETIRED_SUPERSEDED, not PASS; modern successors mandatory",
+  "formalAcceptance": false,
+  "productionValidated": false,
+  "sourceCommit": "3530f92",
+  "controlReview": "Independent sql_spec review:official helpers exact,112inventory names,domain assertions/deadlines preserved;retirement explicitly notPASS",
+  "sourceFiles": {
+    "packages/platform/tests/schema/README.md": "e6fcac4340e1880e1abbba2b14e27685b164493ad42d2794b9747b059f2ceb50",
+    "packages/platform/tests/schema/approval-content.test.mjs": "016a6931b81b2254e648aa06101cda1764da6c0d6a09f9f1c8edbc7ce70e8041",
+    "packages/platform/tests/schema/db.test.ts": "fcf6ba2fd79d90f4721f3d762eb4cfee5c412ca6b99a55d558f3d20254c4da5b",
+    "packages/platform/tests/schema/external-services.mjs": "3678132ad87d2de8e602b514b7ad2f142cd6079c49a0e44b188142052f0de38c",
+    "packages/platform/tests/schema/integration-compat.test.mjs": "f3d6518a29a3fbedfb7a0ea5182399941c2c99db46c93b13b9ef13e22e75819a",
+    "packages/platform/tests/schema/public-tables.json": "8ceee58f03bb55cde468dff3d91386c76ec72c4300a2fec9ccfa1a34032adcea",
+    "packages/platform/tests/schema/review-regressions.test.mjs": "0b38322b185757d57cc44a04692c7a012475172a9a8ef465be654766a53ed56b",
+    "packages/platform/tests/schema/sql.test.mjs": "d42f4635939dd2dff90f0c59bd50dc6a192978cd8848bff7c3789891c40f0c34",
+    "packages/platform/tests/schema/storage-fixture.mjs": "59d930289efb0262472bc764d5126f95c21395e79753b2fe6c3e4c4bae251f3a"
+  },
+  "priorFailuresPreserved": [
+    "phase6-schema-v1.log: auth.sessions missing",
+    "phase6-schema-v2.log: deleted prototype service and obsolete36table count"
+  ],
+  "stillRequiredForRetiredIntent": [
+    "F06-05 current CAS/replay/approval functional",
+    "F01-03 or F06-interventions targeted SQL including INTERVENTION_PROBE_ATOMIC_ROLLBACK"
+  ]
+}

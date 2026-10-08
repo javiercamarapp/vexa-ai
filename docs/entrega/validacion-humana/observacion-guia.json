@@ -1,0 +1,22 @@
+{
+  "worksheet": "blank_human_record",
+  "status": "not_run",
+  "purpose": "Recorrido humano siguiendo sólo GUIA-USUARIO; no equivale a recepción.",
+  "candidateSha": null,
+  "observer": null,
+  "participant": null,
+  "evidenceReference": null,
+  "startedAt": null,
+  "completedAt": null,
+  "guideSha256": null,
+  "followingGuideOnly": null,
+  "login": null,
+  "import": null,
+  "jobTerminal": null,
+  "viewsAndEvidence": null,
+  "export": null,
+  "logoutAndReentry": null,
+  "duplicateImportDeduplicated": null,
+  "revocationObserved": null,
+  "findings": null
+}

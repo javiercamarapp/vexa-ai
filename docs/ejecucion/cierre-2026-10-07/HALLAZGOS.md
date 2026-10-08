@@ -38,3 +38,10 @@
 - Referencia independiente pendiente:12CSV originales/176944filas comprobados no contienen ninguno de los27mensajes nativos por ID o cuerpoNFC. Los paquetesHubSpot son cachesAPI empaquetados, no exportUI. No se inventó origen ni HMAC. CUA devuelve browsers=[],apps=[] y error de arranque nativo; no existe superficie disponible para cotejar UI en esta sesión.
 - Corrección de control3ec0e2b exige implementer string no vacío y distinto de reviewer tras trim; ocho fallos previos reproducidos,71/71PASS y revisión independiente sin bloqueantes. Cambia dos fuentes pineadas, por lo que las mediciones en curso sobreaff0517 no se heredan para el cierre final.
 - Piloto100notas revisado independientemente:33fuentes,3metadatos,7artefactos y proyección100/100. El lector durable deriva la revisión de payload;100revisiones difieren del hash nativo declarado, y84fechas cambian su lexema canónico preservando el original. Usar el contrato durable en readback. Sin carga nueva.
+
+
+## Fase 6: dependencias reales y acta
+
+El controlador confirma 28 de 60 aceptadas y una única ficha elegible: F03-01. Sin su referencia independiente y S02 Zendesk no se pueden tramitar los sucesores locales manteniendo el grafo. F06-07 añade juicio visual humano; F07-05, F08-03 y F08-05 conservan actos humanos y recepción específicos. No se alteran dependencias para subir el contador.
+
+Acta pública reconciliada como borrador a 60 técnicas / 28 formales. Retirados los bloqueos documentales obsoletos de revisión y seis alcances técnicos; checkpoints y pruebas remotas históricas conservan sus SHA. Producción, PMF y ensayo humano siguen false. Paquete de materiales y siete formularios vacíos revisado e integrado, sin resultados ni aprobaciones inventadas.

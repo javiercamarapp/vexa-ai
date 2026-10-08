@@ -738,8 +738,8 @@
   "current_status_document": "docs/ESTADO-VIGENTE.md",
   "phase_execution": {
     "date": "2026-10-08",
-    "phase": 5,
-    "source_sha": "aff0517",
+    "phase": 6,
+    "source_sha": "1aea895",
     "status": "in_progress",
     "locally_closed_phases": [
       1,
@@ -747,13 +747,14 @@
       3
     ],
     "phase4": "local recovery verified; managed recovery and operation pending",
-    "phase5": "CRM correction and local SQL/HTTP verified; history reconciliation and renewed capacity in progress",
+    "phase5": "CRM correction and local SQL/HTTP verified; history reconciled read-only, external acceptance pending",
     "formal_acceptance_changed": false,
     "production_validated": false,
     "external_changes_authorized": false,
-    "report": "docs/entrega/CRM-ACOTADO-2026-10-08.md",
-    "next_phase": 6,
-    "next_phase_started": false
+    "report": "docs/ejecucion/cierre-2026-10-07/PROGRESO.md",
+    "next_phase": null,
+    "next_phase_started": false,
+    "phase6": "control repair and UI/Auth/SQL verification in progress before final capacity series"
   },
   "phase_one_closure": {
     "date": "2026-10-07",

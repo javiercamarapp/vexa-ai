@@ -1,14 +1,14 @@
 {
   "schema": "vexa-layered-close-v1",
-  "status": "consolidated_blocked_not_production",
-  "technical_tasks_complete": 54,
-  "formal_runner_accepted": 25,
+  "status": "draft_closure_in_progress_external_validation_pending",
+  "technical_tasks_complete": 60,
+  "formal_runner_accepted": 28,
   "total_tasks": 60,
   "production_validated": false,
-  "source_commit": "ccf546b3495ec8d8fb0e2c2886e3be842274696a",
+  "source_commit": "1aea895",
   "layers": {
     "documentation": {
-      "status": "reviewed_guides_consolidation_submitted_for_final_review",
+      "status": "current_guides_prepared_human_rehearsal_pending",
       "evidence": [
         "GUIA-USUARIO.md",
         "RUNBOOK.md",
@@ -18,11 +18,11 @@
       "human_acceptance": "pending_actual_recipients_access_and_dates"
     },
     "local_software": {
-      "status": "technical_scopes_verified_remaining_excluded_and_validation_gaps",
+      "status": "technical_inventory_complete_final_regression_in_progress",
       "evidence": [
         "../../construccion/ESTADO-CONSTRUCCION.json",
-        "AUDITORIA-20-RUBROS.md",
-        "../../construccion/F07-05-CIERRE-TECNICO.md"
+        "CRM-ACOTADO-2026-10-08.md",
+        "../../docs/ejecucion/cierre-2026-10-07/PROGRESO.md"
       ]
     },
     "synthetic_demo": {
@@ -43,9 +43,9 @@
       "technical_preparation": "integrated_reviewed_external_inputs_pending"
     },
     "production": {
-      "status": "deployed_synthetic_smoke_pass_global_approval_blocked",
+      "status": "historical_deployment_and_smoke_not_current_release_acceptance",
       "owner": "Operador de infraestructura, revisión y titulares de cuentas",
-      "exit_condition": "Cerrar alcance técnico restante, revisión legítima, cuentas/modelos autorizados y operación real; no confundir deployREADY con aprobación de producción.",
+      "exit_condition": "Completar regresión local actual, autorizaciones específicas, publicación y verificación remota, cuentas/modelos autorizados y recuperación/operación reales.",
       "evidence": [
         "SMOKE-REMOTO-2026-09-28.md",
         "VERCEL-ESTADO-2026-09-25.md",
@@ -59,20 +59,20 @@
       "smoke_views_passed": 8,
       "production_validated": false,
       "smoke_source_commit": "b9ed3db5ef4df825c27ed208722ad2faad4ee9c3",
-      "current_deployment_checks": [
-        "READY",
-        "served_revision",
-        "two_reviewed_sources_sha256",
-        "login200",
-        "dialog_focus_cancel_escape_motion_navigation_1440_390_no_writes"
-      ],
       "previous_remote_authenticated_explorer_scope": {
         "unavailable404_observations": 2,
         "empty_checks_passed": 2,
         "ready_stale_tested": false,
         "full_smoke": false,
         "evidence": "docs/entrega/ACCESIBILIDAD-ESTADOS-2026-09-28.md"
-      }
+      },
+      "historical_deployment_checks": [
+        "READY",
+        "served_revision",
+        "two_reviewed_sources_sha256",
+        "login200",
+        "dialog_focus_cancel_escape_motion_navigation_1440_390_no_writes"
+      ]
     }
   },
   "pmf_validated": false,
@@ -80,19 +80,24 @@
   "next_experiments": "proximos-experimentos.md",
   "blockers": [
     {
-      "id": "notification_review",
-      "owner": "Plataforma de revisión/aprobación",
-      "exit_condition": "Dictamen legítimo del ámbito bloqueado sin reintentar ni transferir el examen rechazado en esta sesión"
+      "id": "formal_crm_independent_reference",
+      "owner": "Titular de la cuenta y revisor independiente",
+      "exit_condition": "Referencia autorizada UI/export y corrida F03-01 vigente; no sustituir por caché del mismo API."
+    },
+    {
+      "id": "managed_recovery_barrier",
+      "owner": "Operador de infraestructura y proveedor Storage",
+      "exit_condition": "Barrera verificable para URL firmadas previas, permiso específico y nuevo ensayo de recuperación administrada."
     },
     {
       "id": "external_activation",
       "owner": "Javier/titulares de cuentas",
-      "exit_condition": "Accesos, datos y aprobaciones legítimos; validación real posterior"
+      "exit_condition": "Autorizaciones específicas vigentes para publicación, lotes de datos y activaciones externas; verificación posterior."
     },
     {
-      "id": "remaining_six_technical_scopes",
-      "owner": "Ingeniería/revisión y evaluadores humanos según ficha",
-      "exit_condition": "Cerrar F06-07,F06-09..12,F07-01 con revisión legítima y evidencia completa. F07-05 está técnicamente preparada; el piloto humano permanece en su capa not_run."
+      "id": "human_validation_and_handoff",
+      "owner": "Participantes, anotadores, sponsor y receptor reales",
+      "exit_condition": "Gold independiente y piloto cuando corresponda, ensayo de guía, pitch cronometrado y recepción legítima; no sustituibles por agentes."
     }
   ],
   "dates": {
@@ -100,13 +105,13 @@
     "reason": "No se inventan acuerdos, fechas, participantes ni pagos"
   },
   "loop_status": "Trabajo supervisado; consultar procesos/recibos vivos. Este documento no acredita un servicio continuo.",
-  "technical_count_note": "54 =25runner+26alcances con validación externa pendiente+3dependencias formales. F07-05 cuenta preparación técnica integrada, no piloto humano ejecutado. Restan seis alcances técnicos; no equivale a producción.",
+  "technical_count_note": "60 alcances técnicos reconciliados con evidencia;28 aceptaciones formales. La auditoría final, las validaciones externas y los actos humanos siguen pendientes; no es recepción ni100% productivo.",
   "previous_checkpoint": {
     "source_commit": "30b5fe1b90a7ca40271c9a9bd29dc31681a916ea",
     "technical_tasks_complete": 49,
     "note": "Corte histórico anterior al despliegue y smoke remoto; conservado enGit."
   },
-  "updated": "2026-09-30",
+  "updated": "2026-10-08",
   "deployed_source_commit": "ccf546b3495ec8d8fb0e2c2886e3be842274696a",
   "latest_audit": {
     "date": "2026-09-29",
@@ -149,5 +154,11 @@
     "remote_dialog_contexts": 2,
     "business_mutations": 0,
     "production_validated": false
-  }
+  },
+  "local_work_pending": [
+    "Consolidar y ejecutar controles actuales Auth/UI/SQL sin rebajar umbrales.",
+    "Congelar composición y completar nueva serie10K/50K/150K con revisión independiente.",
+    "Auditoría final y avance de aceptación exclusivamente mediante controlador y evidencia legítima."
+  ],
+  "historical_evidence_note": "Los checkpoints y métricas remotas con fechas anteriores se conservan como historia de sus SHA; no acreditan el código local actual. La restricción antigua notification_review ya no es un bloqueo activo, y los seis alcances técnicos históricos están integrados."
 }

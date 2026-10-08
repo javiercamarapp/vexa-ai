@@ -1,0 +1,126 @@
+{
+  "schema": "rovaq-partial-capacity-evidence-v1",
+  "candidate": "aff0517f603eac65ccf47e349e176a0b53b82d42",
+  "manifestSha256": "63601c98b8b2dd22ef11390d2ab156b612ce860f8cc9832a9e6727dfed6046aa",
+  "synthetic": true,
+  "completeSeries": false,
+  "formalAcceptance": false,
+  "productionValidated": false,
+  "finalSeriesRequiredAfterControlConsolidation": true,
+  "results": [
+    {
+      "rows": 10000,
+      "reportStatus": "measured",
+      "scaleStatus": "pass",
+      "sourceReport": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-load308-AJSf9h/report.json",
+      "sha256": "d5f3eeb98934e53b46624274a0bad46173e0a72369dbe5e5e6f9042aecc9ec9f",
+      "processingMs": 131996.650375,
+      "endToEndMs": 132570.98620800002,
+      "observed": {
+        "total": 10000,
+        "accepted": 9800,
+        "rejected": 100,
+        "duplicates": 100,
+        "pending": 0
+      },
+      "cleanup": {
+        "ownResourcesRemoved": true,
+        "resources": [
+          {
+            "kind": "network",
+            "name": "vexa-f01-03-cd988466-518e-4c24-8747-c75a2255b969",
+            "broker": "95307ee5-3605-4564-bd25-98330a79d546",
+            "id": "d8b8af976f5ad9b3519585c2f7685d8f2c2c14b93de18ae0c456e4de19e888be",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-cd988466-518e-4c24-8747-c75a2255b969-db",
+            "broker": "95307ee5-3605-4564-bd25-98330a79d546",
+            "id": "42bada8df920d7261ad1497db0e3175488bbc8335ff162c885afac08323c3ada",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-cd988466-518e-4c24-8747-c75a2255b969-auth",
+            "broker": "95307ee5-3605-4564-bd25-98330a79d546",
+            "id": "cf4b5007e7289dc96c903b1cc339e8fdd93fea242b6ca244eab0cea26f2eeb5c",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-cd988466-518e-4c24-8747-c75a2255b969-rest",
+            "broker": "95307ee5-3605-4564-bd25-98330a79d546",
+            "id": "18753ad0eea7caae3d4607ff1aacd6ff2d5bd9bc164b4d716f529abe7b7db032",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-cd988466-518e-4c24-8747-c75a2255b969-storage",
+            "broker": "95307ee5-3605-4564-bd25-98330a79d546",
+            "id": "f211c7c87f8d1143906630c738e7f7d317cc34bff57c05e13d78f53d09e8c1d8",
+            "absent": true
+          }
+        ],
+        "temporaryPathsRemoved": true
+      }
+    },
+    {
+      "rows": 50000,
+      "reportStatus": "measured",
+      "scaleStatus": "pass",
+      "sourceReport": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/vexa-load308-vz9UCA/report.json",
+      "sha256": "01b30f71719491f5cd8bd6d87ddd4d7374ba62644f11cfd825ec636b16e191f9",
+      "processingMs": 610806.1875420001,
+      "endToEndMs": 611717.429625,
+      "observed": {
+        "total": 50000,
+        "accepted": 49000,
+        "rejected": 500,
+        "duplicates": 500,
+        "pending": 0
+      },
+      "cleanup": {
+        "ownResourcesRemoved": true,
+        "resources": [
+          {
+            "kind": "network",
+            "name": "vexa-f01-03-c9ff5b04-cef8-49f1-9a56-2e3bfbbbf240",
+            "broker": "2be77723-530b-44ab-8228-7efda64637d2",
+            "id": "f156899281a1bc47517824aada470dd849ce8160923dbbf6ec474fea5625dd05",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-c9ff5b04-cef8-49f1-9a56-2e3bfbbbf240-db",
+            "broker": "2be77723-530b-44ab-8228-7efda64637d2",
+            "id": "8801ca7393f850f1cfb226ccb5ff2127c040830a1297f965c0b5717489c3aad9",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-c9ff5b04-cef8-49f1-9a56-2e3bfbbbf240-auth",
+            "broker": "2be77723-530b-44ab-8228-7efda64637d2",
+            "id": "cc4b4ebd5304d7d084d0cb1aba1fe45e020fb64d8dafc69831a5aa45cd6afa8d",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-c9ff5b04-cef8-49f1-9a56-2e3bfbbbf240-rest",
+            "broker": "2be77723-530b-44ab-8228-7efda64637d2",
+            "id": "ade370e618197c951d1c0db10bde7101819d985496baefa299d616897c3eb8d7",
+            "absent": true
+          },
+          {
+            "kind": "container",
+            "name": "vexa-f01-03-c9ff5b04-cef8-49f1-9a56-2e3bfbbbf240-storage",
+            "broker": "2be77723-530b-44ab-8228-7efda64637d2",
+            "id": "1dc8dab79c7852f8cfc766fa3fab5c632b220e200c5d42db8561231a466ea647",
+            "absent": true
+          }
+        ],
+        "temporaryPathsRemoved": true
+      }
+    }
+  ]
+}

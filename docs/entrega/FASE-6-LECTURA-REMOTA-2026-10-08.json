@@ -1,0 +1,46 @@
+{
+  "at": "2026-10-08T06:38:14.199167+00:00",
+  "origin": "https://vexa-ai.vercel.app",
+  "method": "GET",
+  "authenticated": false,
+  "writes": 0,
+  "fullSmoke": false,
+  "observations": [
+    {
+      "path": "/api/health/version",
+      "status": 200,
+      "location": null,
+      "cacheControl": "no-store",
+      "publicVersion": {
+        "contract_version": "1",
+        "data": {
+          "service": "vexa-web",
+          "version": "0.0.1",
+          "revision": "b0be6df86a2aad53f46bb6054e192c94d62b13e3",
+          "status": "under_construction"
+        },
+        "meta": {
+          "state": "scaffold"
+        }
+      }
+    },
+    {
+      "path": "/login",
+      "status": 200,
+      "location": null,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate"
+    },
+    {
+      "path": "/overview",
+      "status": 303,
+      "location": "/login",
+      "cacheControl": "private, no-store, max-age=0, must-revalidate"
+    },
+    {
+      "path": "/api/workspace",
+      "status": 401,
+      "location": null,
+      "cacheControl": "private, no-store, max-age=0, must-revalidate"
+    }
+  ]
+}

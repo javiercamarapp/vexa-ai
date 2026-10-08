@@ -1,0 +1,20 @@
+{
+  "worksheet": "blank_human_record",
+  "status": "not_run",
+  "purpose": "Anotación independiente; no constituye gold ni atestación.",
+  "candidateSha": null,
+  "slot": "A",
+  "dataset_id": null,
+  "dataset_hash": null,
+  "taxonomy_version": null,
+  "case_id": null,
+  "content_hash": null,
+  "annotation": {
+    "annotator_id": null,
+    "annotated_at": null,
+    "kind": null,
+    "blind": null,
+    "labels": null
+  },
+  "evidence_ref": null
+}

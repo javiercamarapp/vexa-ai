@@ -1,0 +1,22 @@
+{
+  "worksheet": "blank_human_record",
+  "status": "not_run",
+  "purpose": "Recepción F08-05; no incluir credenciales ni confirmar actos pendientes.",
+  "candidateSha": null,
+  "observer": null,
+  "recipient": null,
+  "evidenceReference": null,
+  "guideObservationReference": null,
+  "completedAt": null,
+  "deliveryChannel": null,
+  "received": null,
+  "owner": null,
+  "deputy": null,
+  "incidentReference": null,
+  "nextReviewAt": null,
+  "backlog": {
+    "sourceSha256": null,
+    "rows": null
+  },
+  "pending": null
+}

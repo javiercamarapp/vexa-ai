@@ -1,0 +1,30 @@
+{
+  "worksheet": "blank_human_record",
+  "status": "not_run",
+  "purpose": "Juicio visual humano F06-07 separado de pruebas automáticas.",
+  "candidateSha": null,
+  "observer": null,
+  "startedAt": null,
+  "finishedAt": null,
+  "evidenceReference": null,
+  "route": null,
+  "role": null,
+  "viewport": {
+    "width": null,
+    "height": null
+  },
+  "state": null,
+  "observations": {
+    "contentAndWarningsAccessible": null,
+    "keyboardAndFocus": null,
+    "labels": null,
+    "contrast": null,
+    "reducedMotion": null,
+    "smallTables": null,
+    "slowLoading": null
+  },
+  "screenshotReference": null,
+  "actionRequestReference": null,
+  "automatedAccessibilityReceiptReference": null,
+  "findings": null
+}

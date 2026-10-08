@@ -2,7 +2,7 @@
 
 Corte: 8 de octubre de 2026. Fuente única de estado de la ejecución por fases.
 
-**60/60 fichas con trabajo técnico integrado; 28/60 aceptadas formalmente (46,7 %).** La reconciliación incorpora el cierre local F07-01, probado con 17 componentes; no concede aceptación ni valida producción. Fases 1–3 cerradas localmente para sus versiones. Fase 4: recuperación local aprobada; recuperación gestionada y operación permanente pendientes. Fase 5: corrección CRM integrada y comprobada; histórico y nueva serie de capacidad en curso. El cambio de fuentes exige 10K → 50K → 150K de nuevo: 10K pasó y 50K está ejecutándose. Cinco alertas altas de desarrollo por braces siguen abiertas. Sin publicación ni despliegue de estos cambios. [Corrección CRM y evidencia](entrega/CRM-ACOTADO-2026-10-08.md).
+**60/60 fichas con trabajo técnico integrado; 28/60 aceptadas formalmente (46,7 %).** La reconciliación incorpora el cierre local F07-01, probado con 17 componentes; no concede aceptación ni valida producción. Fases 1–3 cerradas localmente para sus versiones. Fase 4: recuperación local aprobada; recuperación gestionada y operación permanente pendientes. Fase 5: corrección CRM integrada y comprobada; histórico reconciliado en lectura, con pasos productivos pendientes. Fase 6: reparación y verificación de controles Auth/UI/SQL en curso. Las nuevas cargas10K y50K pasaron sobre aff0517; consolidar los controles antes de congelar y medir la serie final completa10K →50K →150K. Cinco alertas altas de desarrollo por braces siguen abiertas. Sin publicación ni despliegue de estos cambios. [Corrección CRM y evidencia](entrega/CRM-ACOTADO-2026-10-08.md).
 
 | Indicador | Estado |
 |---|---|
@@ -10,7 +10,7 @@ Corte: 8 de octubre de 2026. Fuente única de estado de la ejecución por fases.
 | Aceptación formal en el grafo | 28/60 (46,7 %); sin cambios. |
 | Producción validada | No. |
 | Corrección CRM local | `cbeba0d`, control `aff0517`; 101 pruebas de autoría, seis controles y nueve pruebas SQL/HTTP aprobados. |
-| Nueva capacidad de esta composición | 10K PASS; 50K en ejecución y 150K pendiente. Una corrección del control F03-01 en preparación requerirá nueva identidad de fuentes antes del cierre definitivo. |
+| Nueva capacidad de esta composición | 10K/50K PASS sobre aff0517. Serie final10K/50K/150K pendiente de consolidación de controles e identidad de fuentes actual. |
 | Publicación y operación gestionada | Pendientes de autorización específica y evidencia. |
 | Validación humana y cierre real | Pendientes; no se sustituyen con fixtures. |
 
@@ -26,16 +26,24 @@ La continuación de aceptación terminó con 1.598/1.627 y los paquetes con 537/
 | 2. Seguridad global F07-01 | Completada localmente: 100 %. Gate PASS 17/17, fuentes invariantes y 78 recursos ausentes. [Informe](entrega/SEGURIDAD-GLOBAL-2026-10-07.md) y [recibo](entrega/FASE-2-SEGURIDAD-2026-10-07.json). Producción npm sin alertas; cinco alertas de desarrollo abiertas. |
 | 3. Capacidad 10K → 50K → 150K | Completada localmente: 100 %. Tres escalas PASS sobre `504a6b6`, 210.000 filas SYN, cero pendientes, 15 recursos ausentes. [Informe](entrega/CAPACIDAD-FASE-3-2026-10-07.md) y [recibo](entrega/FASE-3-CAPACIDAD-2026-10-07.json). |
 | 4. Recuperación y operación | En curso: restore local 5/5 y retorno financiero/regreso PASS sobre `c2d03e2`, 8 recursos ausentes. Runbook y propuesta de protección preparados; recuperación gestionada y operación permanente pendientes. [Recibo](entrega/FASE-4-RECUPERACION-2026-10-07.json). |
-| 5. Conexiones e histórico completo | Carga real previa reportada; fuentes adicionales, reconciliación y rendimiento real del conector pendientes. |
-| 6. Validación y entrega | Personas reales, smoke remoto final y acta pendientes. |
+| 5. Conexiones e histórico completo | CRM corregido y verificado localmente; lecturas reales e histórico reconciliados. Referencia independiente CRM, autorización de nuevas cargas y padres/vínculos pendientes. |
+| 6. Validación y entrega | En curso: controles Auth/UI/SQL, paquete humano y acta en borrador preparados. Faltan regresión final, actos humanos, smoke remoto del release final y recepción. |
 
 El 10K de la línea base pasó; 50K quedó contaminado por suspensión del Mac y 150K no comenzó. No se presenta como prueba de capacidad vigente ni se atribuye el timeout al producto. La nueva serie de fase 3 sobre `504a6b6` sí completó las tres escalas, con contabilidad y limpieza verificadas.
 
 Para cerrar Fase 1 no falta una acción de Javier. Las autorizaciones/configuraciones externas se pedirán concretamente cuando corresponda, conservando las ya concedidas. La fase 2 avanzó en mantenimiento independiente de dependencias; no se ejecutó IA de pago.
 
-## Histórico real — corrección posterior del usuario
+## Histórico real — comprobación del 8 de octubre
 
-La actualización posterior sustituye la afirmación anterior de que nunca se había cargado histórico real. Javier reporta una consulta de sólo lectura del 7-oct: **136.956 mensajes y 138.022 import_rows** en la organización objetivo, además de carga económica Shopify previamente comprobada (883 entradas). Esta sesión no ha consultado producción ni revalidado esos conteos; no se equiparan mensajes, filas de importación y entradas económicas.
+Lectura de sólo lectura a las 05:35 UTC: 136.992 mensajes y 137.596 filas de importación; no son categorías equivalentes. La diferencia con el conteo de import_rows reportado el 7-oct aún no tiene causa comprobada. CRM habilitado, sin fallos registrados y 288 unidades en 24 horas en el despliegue anterior. No se modificaron las tareas de otras organizaciones.
+
+Los 362 mensajes de rechazos históricos por referencias ya existen con una sola revisión; faltan padres y vínculos en 251 filas con cliente, 269 con pedido y 211 con SKU (categorías solapadas). No reimportar esos mensajes. `:linked-v1` es un recibo de recuperación nativa, no una API de relink CSV. Cinco decisiones de revisión y dos de rol siguen reservadas al propietario. El corte posterior registra 164 metadatos y tres cuerpos incompletos, conservados en cuarentena.
+
+Un piloto de 100 notas nativas está preparado y revisado, sin nueva carga. La mejora local del CRM superó sus pruebas y medición sintética; rendimiento real tras despliegue sigue pendiente. Fuentes, límites y autorización por lote en [CRM acotado](entrega/CRM-ACOTADO-2026-10-08.md).
+
+### Corte reportado por el usuario el 7 de octubre — histórico
+
+La actualización posterior sustituye la afirmación anterior de que nunca se había cargado histórico real. Javier reporta una consulta de sólo lectura del 7-oct: **136.956 mensajes y 138.022 import_rows** en la organización objetivo, además de carga económica Shopify previamente comprobada (883 entradas). En ese corte inicial aún no se había consultado producción ni revalidado esos conteos; no se equiparan mensajes, filas de importación y entradas económicas.
 
 | Rechazo reportado | Filas | Tratamiento pendiente |
 |---|---:|---|
@@ -56,6 +64,10 @@ CSV para volumen; API para incremental/webhooks. Chunks reales por invocación t
 
 ## Límites y próximo paso
 
-La fase 2 de seguridad global F07-01 está completada localmente, con 17 componentes aprobados y revisión de recibos por dos agentes. [Cierre, evidencia y límites](entrega/SEGURIDAD-GLOBAL-2026-10-07.md). El parche de dependencias pasó lint/tipos/build y dos revisiones focales sin hallazgos. La auditoría completa sigue roja por braces de desarrollo; Javier retiró la restricción documental histórica para continuar las pruebas locales; no se ha comprobado un bloqueo activo de plataforma. Fase 3 completada localmente; fase 4 en curso, con nueva recuperación local verificada. La deuda del control queda visible: conflicto Node 22/26.7, expectativas antiguas de interfaz/marca/catálogo, un fixture vencido y cinco arneses de paquetes. No se modificaron gates para forzar verde y no se aumentó el conteo formal.
+La fase 2 de seguridad global F07-01 está completada localmente, con 17 componentes aprobados y revisión de recibos por dos agentes. [Cierre, evidencia y límites](entrega/SEGURIDAD-GLOBAL-2026-10-07.md). El parche de dependencias pasó lint/tipos/build y dos revisiones focales sin hallazgos. La auditoría completa sigue roja por braces de desarrollo; Javier retiró la restricción documental histórica para continuar las pruebas locales; no se ha comprobado un bloqueo activo de plataforma. Fase 3 completada localmente para su candidato; fases 4/5 conservan condiciones externas. Fase 6 repara y verifica controles antiguos de Node, interfaz, marca, catálogo y fixtures SQL, con revisión independiente y sin bajar umbrales. Sigue la consolidación, la nueva serie completa de capacidad y la auditoría final. El contador formal permanece en 28/60: sólo F03-01 es elegible y necesita evidencia independiente real.
 
 Los tiempos originales del plan para las seis fases sumaban aproximadamente 7–9 días de trabajo, sin esperas externas. No constituyen una fecha comprometida ni una estimación actualizada de lo pendiente.
+
+## Comprobación remota de sólo lectura, 8 de octubre
+
+La web sigue sirviendo `b0be6df86a2aad53f46bb6054e192c94d62b13e3`: health/version200 aún devuelve el estado antiguo under_construction/scaffold; la corrección local no está desplegada. Login200, overview303 hacia login y API workspace401 sin sesión; sin escrituras. [Recibo](entrega/FASE-6-LECTURA-REMOTA-2026-10-08.json). No sustituye el smoke autenticado final ni valida el release local. Un segundo intento de inspección del navegador sigue sin superficies disponibles por fallo del pipe nativo; la referencia independiente HubSpot no se pudo obtener por esa vía.

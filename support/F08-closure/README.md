@@ -1,6 +1,6 @@
 # F08-06: cierre por capas, verificación externa
 
-El acta pública `docs/entrega/acta-cierre.json` es un corte histórico49/60. Se conserva sin reatribuir sus pruebas ni actualizar su SHA retrospectivamente. `proximos-experimentos.md` y la auditoría20 ya revisados se reutilizan. Este control nuevo verifica un expediente de cierre privado; no crea plantillas favorables, entrevistas, pagos, fechas ni permisos.
+El acta pública `docs/entrega/acta-cierre.json` es un borrador actualizado a60/60 alcances técnicos y28/60 aceptaciones formales; conserva los checkpoints remotos históricos con su SHA original. No acredita recepción, cierre formal ni producción. `proximos-experimentos.md` y la auditoría20 ya revisados se reutilizan. Este control nuevo verifica un expediente de cierre privado; no crea plantillas favorables, entrevistas, pagos, fechas ni permisos.
 
 ## Entrada del supervisor
 
@@ -24,4 +24,4 @@ Antes de devolver resultado se releen archivos/hashes, autorización, SHA y limp
 
 ## Pruebas y límite actual
 
-`node --test support/F08-closure/control.test.mjs` usa repos temporales SYN propios; nunca altera el historial del candidato. Verifica negativos de conteo, hashes, mezcla de capas, métricas, autorización, permisos/paths, fechas y procesos. La fixture válida de binding sigue49/60 y **falla cierre formal**, intencionalmente. Estas pruebas verdes acreditan el control local, no un cierre real. El conjunto existenteF08-smoke conserva sus propias evidencias y no se reejecuta por este delta. Revisión independiente371 y supervisor integrados; las pruebas externas/humanas y el bloqueo excluido conservan su estado.
+`node --test support/F08-closure/control.test.mjs` usa repos temporales SYN propios; nunca altera el historial del candidato. Verifica negativos de conteo, hashes, mezcla de capas, métricas, autorización, permisos/paths, fechas y procesos. La fixture válida de binding sigue49/60 y **falla cierre formal**, intencionalmente. Estas pruebas verdes acreditan el control local, no un cierre real. El conjunto existenteF08-smoke conserva sus propias evidencias y no se reejecuta por este delta. Revisión independiente371 y supervisor integrados; las pruebas externas/humanas siguen pendientes; la restricción documental histórica de revisión ya no es un bloqueo activo.

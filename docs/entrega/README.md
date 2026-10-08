@@ -24,3 +24,8 @@ Para retomar: AGENTS.md, cabeceras de README/PROGRESO/PLAN/AUTOMATICO, python3 o
 ## Estado consolidado
 
 [Auditoría de20rubros](AUDITORIA-20-RUBROS.md), [acta por capas](acta-cierre.json) y [pendientes para conectar](PENDIENTES-PARA-CONECTAR.md). Las pruebas locales, preparación del pitch y guías no acreditan piloto ni producción. El [registro del piloto](../blueprint/pilot-evaluation.json) conserva métricas no medidas y denominadores nulos.
+
+
+## Validación humana y cierre vigente
+
+[Paquete de preparación](validacion-humana/README.md): materiales y hojas vacías para doble anotación, revisión visual, pitch, recorrido de guía y recepción. Las observaciones reales siguen pendientes. [Acta en borrador](acta-cierre.json): 60 alcances técnicos y 28 aceptaciones formales; no es una recepción ni aprobación productiva. [Estado único vigente](../ESTADO-VIGENTE.md).

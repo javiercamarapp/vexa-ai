@@ -1,0 +1,478 @@
+{
+  "schema": "rovaq-phase2-security-v1",
+  "phase": 2,
+  "status": "complete-local-security",
+  "candidateSha": "54be5cf",
+  "controlSha": "d6d87d1",
+  "standaloneChecks": [
+    {
+      "id": "sql",
+      "tests": 447,
+      "pass": 447,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "log": "/private/tmp/rovaq-fase2-receipts-20261007/sql-split-final.log",
+      "sha256": "0b392d826843f078cf7eddda77948f0b7d16e824067f1795a9019ea4b7ff6b67"
+    },
+    {
+      "id": "storage",
+      "tests": 8,
+      "pass": 8,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "log": "/private/tmp/rovaq-fase2-receipts-20261007/storage-revocation-after-v2.log",
+      "sha256": "b90591e51f289b3d2a8755bc1fd7f1c38c1851259fdeac1c76493fd17e121b95"
+    },
+    {
+      "id": "http",
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "log": "/private/tmp/rovaq-fase2-receipts-20261007/http-security-final.log",
+      "sha256": "cd159a558ff23c9bb28a649b165ce8d8f6d64713d076deced496ced8365d12a9"
+    },
+    {
+      "id": "webhooks-session-exports",
+      "tests": 8,
+      "pass": 8,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "log": "/private/tmp/rovaq-fase2-receipts-20261007/http-export-after.log",
+      "sha256": "1afd256d1ae3b1e376b8a7a241332c612f3488a35980830cc71e6463c282b4e6"
+    },
+    {
+      "id": "extraction",
+      "tests": 17,
+      "pass": 17,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "log": "/private/tmp/rovaq-fase2-receipts-20261007/extraction-security-final.log",
+      "sha256": "d80d25469082e0b7208337b6b7d897e7ce9e51d63b94e506ac85f89671c5d8c6"
+    },
+    {
+      "id": "notifications",
+      "tests": 58,
+      "pass": 58,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "log": "/private/tmp/rovaq-fase2-receipts-20261007/notification-security-final.log",
+      "sha256": "bf6b7153995a19c2f7d654ddbbd5d2ed1f2b330a20394a6ad42e6a356a8a8f8f"
+    },
+    {
+      "id": "history",
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "log": "/private/tmp/rovaq-fase2-receipts-20261007/history-security-after.log",
+      "sha256": "ddda5f7b3b3af19da6cab01e5aa1a580591c90d5f3811b501100c1d0697b5984"
+    }
+  ],
+  "globalReport": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/report.json",
+  "productionValidated": false,
+  "formalAcceptanceChanged": false,
+  "paidInference": false,
+  "pushed": false,
+  "deployed": false,
+  "pending": [],
+  "dependencyAudit": {
+    "production": "PASS: zero reported alerts",
+    "allDependencies": "FAIL: five high development-only transitives sharing braces advisory",
+    "riskReview": "No untrusted product path identified in current ESLint config; advisory remains open"
+  },
+  "capacity": {
+    "newManifestFiles": 2216,
+    "measured": false,
+    "nextSeries": [
+      10000,
+      50000,
+      150000
+    ]
+  },
+  "globalAttempts": [
+    {
+      "report": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Azrj4g/report.json",
+      "status": "FAIL",
+      "reason": "SQL exterior deadline 720s expired; post-exit kill EPERM prevented child receipt; incomplete TAP is not PASS",
+      "recovery": "/private/tmp/rovaq-fase2-receipts-20261007/global-sql-recovery.json"
+    },
+    {
+      "report": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Bk7gc8/report.json",
+      "status": "FAIL",
+      "reason": "COMPONENT_FAILED:email-webhook-kernels",
+      "passedComponents": 12,
+      "sourcesUnchanged": true,
+      "classification": "Environment: canonical candidate intentionally has no node_modules; email receipts imports resend. Prepare same committed candidate with npm ci offline in isolated worktree."
+    },
+    {
+      "report": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/report.json",
+      "sha256": "f69dbe342f542d68f237e04a41189e03650c36a9855270a4ec2ad3bd7d7a390b",
+      "status": "PASS",
+      "passedComponents": 17,
+      "notRun": [],
+      "sourcesUnchanged": true
+    }
+  ],
+  "controllerCalibration": {
+    "status": "PASS",
+    "tests": 11,
+    "log": "/private/tmp/rovaq-fase2-components-20261007-runner-calibration-v3.log",
+    "review": "Spec reviewed delta, both controller P2 resolved; no new blocking findings"
+  },
+  "candidatePath": "/private/tmp/rovaq-fase2-candidate-20261007",
+  "candidatePreparation": "/private/tmp/rovaq-fase2-receipts-20261007/global-candidate-preparation.json",
+  "phaseProgressPercent": 100,
+  "globalReportSha256": "f69dbe342f542d68f237e04a41189e03650c36a9855270a4ec2ad3bd7d7a390b",
+  "globalExitCode": 0,
+  "sourcesUnchanged": true,
+  "cleanup": {
+    "receipt": "/private/tmp/rovaq-fase2-receipts-20261007/global-cleanup-v3.json",
+    "sha256": "bcbd48987cb8a7acc9f29316fcd6b7b45e3c9a7368300a89ec1dbcfee892610e",
+    "resourcesVerifiedAbsent": 78
+  },
+  "finishedAt": "2026-10-08T00:55:04.850Z",
+  "components": [
+    {
+      "id": "sql-isolation",
+      "status": "PASS",
+      "durationMs": 592502,
+      "tap": {
+        "namedTests": 447,
+        "fileOnlyTests": 0,
+        "tests": 447,
+        "pass": 447,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/sql-isolation.log",
+      "logSha256": "c8be780f76155d4244add05339e7f3034aec4452d241f9a2449e44bcba5b2741",
+      "processGroupAbsent": true
+    },
+    {
+      "id": "storage-download",
+      "status": "PASS",
+      "durationMs": 8926,
+      "tap": {
+        "namedTests": 8,
+        "fileOnlyTests": 0,
+        "tests": 8,
+        "pass": 8,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/storage-download.log",
+      "logSha256": "bdd042dcd10f85ce2b486839716f41b10d26aeada28f69761c61e12b82c37cb6",
+      "processGroupAbsent": true
+    },
+    {
+      "id": "http-security",
+      "status": "PASS",
+      "durationMs": 63528,
+      "tap": {
+        "namedTests": 11,
+        "fileOnlyTests": 0,
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/http-security.log",
+      "logSha256": "85d7002be5c56e2afd1a0a4c2cecb3ed5002b6768c4547131fb7278c769f70fe",
+      "processGroupAbsent": true
+    },
+    {
+      "id": "http-extra",
+      "status": "PASS",
+      "durationMs": 91042,
+      "tap": {
+        "namedTests": 8,
+        "fileOnlyTests": 0,
+        "tests": 8,
+        "pass": 8,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/http-extra.log",
+      "logSha256": "4647c4890de65267aa9471b829aa9eaad6204d13e23674fffc42e5ea53de6eaa",
+      "processGroupAbsent": true
+    },
+    {
+      "id": "extraction-redaction",
+      "status": "PASS",
+      "durationMs": 19790,
+      "tap": {
+        "namedTests": 17,
+        "fileOnlyTests": 0,
+        "tests": 17,
+        "pass": 17,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/extraction-redaction.log",
+      "logSha256": "3cea878fe7e03230624874ff1e0dbe791b45e572bfa4a9178f24a8f5d9468afc",
+      "processGroupAbsent": true
+    },
+    {
+      "id": "extraction-workflow",
+      "status": "PASS",
+      "durationMs": 33838,
+      "tap": {
+        "namedTests": 19,
+        "fileOnlyTests": 0,
+        "tests": 19,
+        "pass": 19,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/extraction-workflow.log",
+      "logSha256": "9304716183be943ed3f723a0f3f9f2b939114ffd960c7daa973d4d201cdc3e3a",
+      "processGroupAbsent": true
+    },
+    {
+      "id": "authorized-evidence",
+      "status": "PASS",
+      "durationMs": 30419,
+      "tap": {
+        "namedTests": 16,
+        "fileOnlyTests": 0,
+        "tests": 16,
+        "pass": 16,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/authorized-evidence.log",
+      "logSha256": "9a62534098ab5f305abfa1948abe024072ed00ebf96cb0dd2a2656bd4ea47572",
+      "processGroupAbsent": true
+    },
+    {
+      "id": "problems-retrieval",
+      "status": "PASS",
+      "durationMs": 42616,
+      "tap": {
+        "namedTests": 15,
+        "fileOnlyTests": 0,
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/problems-retrieval.log",
+      "logSha256": "a8dcb8f496e98dcb4830707f0d6beddd104ece0d390f28e3b4620d5fc6f218bd",
+      "processGroupAbsent": true
+    },
+    {
+      "id": "consumer-dispatch",
+      "status": "PASS",
+      "durationMs": 17366,
+      "tap": {
+        "namedTests": 6,
+        "fileOnlyTests": 0,
+        "tests": 6,
+        "pass": 6,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/consumer-dispatch.log",
+      "logSha256": "7e84f4c93e811bfccd23e138e10c7c7ba8b035c12bc9c300ad28c127f89055a8",
+      "processGroupAbsent": true
+    },
+    {
+      "id": "crm-authorization",
+      "status": "PASS",
+      "durationMs": 18082,
+      "tap": {
+        "namedTests": 5,
+        "fileOnlyTests": 0,
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/crm-authorization.log",
+      "logSha256": "1baf1710fdee517474bd8bdeb2f74d307b739b1ccb7eb2b372884578360dd39f",
+      "processGroupAbsent": true
+    },
+    {
+      "id": "gateway-policy",
+      "status": "PASS",
+      "durationMs": 242,
+      "tap": {
+        "namedTests": 17,
+        "fileOnlyTests": 0,
+        "tests": 17,
+        "pass": 17,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/gateway-policy.log",
+      "logSha256": "a3a4d7bd9017376f87926f580edc3757f5c66e87e75cc5a64b387a866f99ddcc",
+      "processGroupAbsent": true
+    },
+    {
+      "id": "gateway-and-connector-kernels",
+      "status": "PASS",
+      "durationMs": 1098,
+      "tap": {
+        "namedTests": 91,
+        "fileOnlyTests": 0,
+        "tests": 91,
+        "pass": 91,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/gateway-and-connector-kernels.log",
+      "logSha256": "46f384889eb907b8838167ed0d4ffb79630abaccdb140b8d82e00a5b5745ec3a",
+      "processGroupAbsent": true
+    },
+    {
+      "id": "email-webhook-kernels",
+      "status": "PASS",
+      "durationMs": 624,
+      "tap": {
+        "namedTests": 21,
+        "fileOnlyTests": 0,
+        "tests": 21,
+        "pass": 21,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/email-webhook-kernels.log",
+      "logSha256": "7b42b64964a836dd42e1f30e28498f5b232878d06b87adf28b08a841c37d36d8",
+      "processGroupAbsent": true
+    },
+    {
+      "id": "notification-authorization",
+      "status": "PASS",
+      "durationMs": 96201,
+      "tap": {
+        "namedTests": 58,
+        "fileOnlyTests": 0,
+        "tests": 58,
+        "pass": 58,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/notification-authorization.log",
+      "logSha256": "db3185f93055559d7ed94ed39f5e1af15491b1a7073e67940901e24c0e1cc52d",
+      "processGroupAbsent": true
+    },
+    {
+      "id": "outbox-sql-and-kernels",
+      "status": "PASS",
+      "durationMs": 29433,
+      "tap": {
+        "namedTests": 17,
+        "fileOnlyTests": 0,
+        "tests": 17,
+        "pass": 17,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/outbox-sql-and-kernels.log",
+      "logSha256": "b72063bfdc6c8cd2986a1685ab9a5e1c70a16eec93c096c30186a7186e61653d",
+      "processGroupAbsent": true
+    },
+    {
+      "id": "imports-durable-runtime",
+      "status": "PASS",
+      "durationMs": 204490,
+      "tap": {
+        "namedTests": 1,
+        "fileOnlyTests": 0,
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/imports-durable-runtime.log",
+      "logSha256": "b699182db02610ad31b7f3ab607a32944059f9eec18a8db0f71bde7f74ff9ee3",
+      "processGroupAbsent": true
+    },
+    {
+      "id": "history-runtime",
+      "status": "PASS",
+      "durationMs": 222942,
+      "tap": {
+        "namedTests": 14,
+        "fileOnlyTests": 0,
+        "tests": 14,
+        "pass": 14,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/var/folders/l3/czqfpdq5057__w_l5dxpp5pc0000gn/T/rovaq-f07-components-Lntjae/history-runtime.log",
+      "logSha256": "4234b70beef4b671c7169c34f9a7d6bf52021e776c96ec5fec57b5a814e30ccf",
+      "processGroupAbsent": true
+    }
+  ],
+  "outsidePhase2": [
+    "Formal graph acceptance and publication unchanged",
+    "Production, external providers and real customer validation not performed",
+    "Previously issued signed download URLs require transition before deployment",
+    "Five high development dependency alerts remain open; no untrusted product path identified",
+    "Phase 3 capacity and health/version work not started"
+  ],
+  "reviews": [
+    {
+      "reviewer": "/root/sql_spec",
+      "scope": "Independent agent evidence review, not external certification",
+      "verdict": "Local Phase 2 criteria satisfied; no blocking gaps",
+      "verified": "17 receipts/log hashes, 27 imports cases and three mutation checks, seven history steps, unchanged publications/provider calls, fixes and residual limits"
+    },
+    {
+      "reviewer": "/root/sql_standards",
+      "scope": "Independent agent evidence and consistency review",
+      "verdict": "No anomalies; 2688 canonical source files match tested snapshot",
+      "verified": "17 receipts, 771 TAP tests including parents, log hashes, zero failures/cancellations/skips/todo, sources unchanged, previous failures retained"
+    }
+  ]
+}

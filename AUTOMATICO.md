@@ -2,7 +2,7 @@
 
 ## Instrucción vigente — 7 de octubre de 2026
 
-Javier retiró explícitamente la restricción documental que impedía continuar Fase 2. Continuar la validación defensiva local autorizada y registrar resultados reales. El rechazo histórico435 se conserva como antecedente sin dictamen; no es un bloqueo activo comprobado en esta sesión. No se alteran controles de plataforma ni se acredita una revisión aprobada por retirar esta instrucción. Ver [estado vigente](docs/ESTADO-VIGENTE.md).
+**Fases 1 y 2 completadas en su alcance local.** F07-01 pasó los 17 componentes sin fallos ni cancelaciones sobre candidato `54be5cf`, control `d6d87d1`; 78 recursos propios ausentes. Cuatro defectos de producto corregidos con regresiones. Auditoría npm de producción sin alertas; cinco alertas altas de desarrollo por braces siguen abiertas. Sin push, despliegue ni cambios externos; producción y aceptación formal no acreditadas. Se mantienen los contadores 59/60 técnicos y 28/60 formales sin alteración manual. Siguiente: fase 3, health/version y nueva serie de capacidad 10K → 50K → 150K. La restricción documental histórica435 quedó retirada; no hubo rechazo activo observado. Fase 3 no iniciada en esta sesión. Ver [estado vigente](docs/ESTADO-VIGENTE.md).
 
 ## Estado histórico — 2 de octubre de 2026 (UTC)
 

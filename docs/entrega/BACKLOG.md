@@ -2,7 +2,9 @@
 
 ## Estado vigente — 7 de octubre de 2026
 
-Consultar [ESTADO-VIGENTE.md](../ESTADO-VIGENTE.md): **Fase 1 cerrada con fallos explicados; Fase 2 parcial.** Parche local `0913644`: sharp/source-map-js actualizados, lint/tipos/build aprobados; auditoría de producción sin alertas y cinco de desarrollo abiertas. Javier retiró la restricción documental histórica435; continúa la validación defensiva local de fase2. Correcciones locales `ed9f06d` y `9399246`; recuperación original 29/29, selección de conexión 5/5 unidades y 31/31 diagnóstico UI; paquetes 537/542 con cinco arneses antiguos pendientes. Se mantienen 59/60 fichas técnicas y 28/60 formales, producción sin validar. Histórico real previo reportado por Javier; quedan fuentes y reconciliación. Sin push, despliegue ni cambios externos en esta ejecución.
+Consultar [ESTADO-VIGENTE.md](../ESTADO-VIGENTE.md): **Fases 1 y 2 completadas en su alcance local.** F07-01 pasó los 17 componentes sin fallos ni cancelaciones sobre candidato `54be5cf`, control `d6d87d1`; 78 recursos propios ausentes. Cuatro defectos de producto corregidos con regresiones. Auditoría npm de producción sin alertas; cinco alertas altas de desarrollo por braces siguen abiertas. Sin push, despliegue ni cambios externos; producción y aceptación formal no acreditadas. Se mantienen los contadores 59/60 técnicos y 28/60 formales sin alteración manual. Siguiente: fase 3, health/version y nueva serie de capacidad 10K → 50K → 150K.
+
+[Informe de fase 2](SEGURIDAD-GLOBAL-2026-10-07.md) · [Recibo verificable](FASE-2-SEGURIDAD-2026-10-07.json).
 
 Los cortes fechados que siguen son históricos y no sustituyen el estado vigente.
 

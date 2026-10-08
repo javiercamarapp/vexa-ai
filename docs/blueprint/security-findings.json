@@ -1,0 +1,100 @@
+{
+  "schema": "rovaq-security-findings-v1",
+  "date": "2026-10-07",
+  "scope": "Completed Phase 2 local defensive SYN fixtures",
+  "globalVerdict": "PASS-local-security",
+  "productionValidated": false,
+  "findings": [
+    {
+      "id": "F2-HTTP-BODY",
+      "severity": "P2",
+      "status": "fixed-locally-verified",
+      "problem": "HTTP readers could buffer bodies without a byte/deadline/admission bound.",
+      "fix": "Shared byte-bounded request reader, 5s deadline, 64 active readers per Node context, route-specific caps; machine triggers accept only empty or exact {}.",
+      "evidence": [
+        "/private/tmp/rovaq-fase2-receipts-20261007/body-units-final.log",
+        "/private/tmp/rovaq-fase2-receipts-20261007/http-security-final.log",
+        "/private/tmp/rovaq-fase2-receipts-20261007/trigger-final.log",
+        "/private/tmp/rovaq-fase2-receipts-20261007/body-mutant.log"
+      ],
+      "limits": [
+        "64 is per Node context, not a distributed tenant quota."
+      ]
+    },
+    {
+      "id": "F2-PRIVATE-SIGNING",
+      "severity": "P2",
+      "status": "fixed-locally-verified",
+      "problem": "A signed private download remained usable after membership revocation.",
+      "fix": "Migration 0041 prohibits single, bulk and image signed downloads for vexa-private; authenticated downloads recheck current membership.",
+      "evidence": [
+        "/private/tmp/rovaq-fase2-receipts-20261007/storage-revocation-before.log",
+        "/private/tmp/rovaq-fase2-receipts-20261007/storage-revocation-after-v2.log",
+        "/private/tmp/rovaq-fase2-receipts-20261007/storage-signing-mutant.log",
+        "/private/tmp/rovaq-fase2-receipts-20261007/sql-split-final.log"
+      ],
+      "limits": [
+        "No production migration performed.",
+        "Existing issued URLs require proven expiry or separately authorized invalidation before a deployed revocation claim."
+      ]
+    },
+    {
+      "id": "F2-TRIGGER-CLEANUP",
+      "severity": "P2",
+      "status": "fixed-locally-verified",
+      "problem": "A thrown runtime close left the hosted imports admission flag permanently active.",
+      "fix": "Nested finally always releases the flag, including failed close.",
+      "evidence": [
+        "/private/tmp/rovaq-fase2-receipts-20261007/trigger-cleanup-before.log",
+        "/private/tmp/rovaq-fase2-receipts-20261007/trigger-final.log"
+      ]
+    },
+    {
+      "id": "F2-NPM-DEV-BRACES",
+      "severity": "high-advisory",
+      "status": "open",
+      "problem": "Five development-only transitive audit alerts share braces 3.0.3 as root dependency.",
+      "fix": null,
+      "evidence": [
+        "docs/entrega/FASE-2-DEPENDENCIAS-2026-10-07.json"
+      ],
+      "limits": [
+        "No compatible upstream correction found at audit time; production audit reports zero alerts.",
+        "No blanket reachability exemption or downgrade accepted."
+      ],
+      "reachabilityReview": "Current and inherited ESLint config do not configure settings.next.rootDir, the only plugin call site using fast-glob; no untrusted HTTP/CRM input path identified. Reassess if config or dependency use changes. Full audit remains FAIL."
+    },
+    {
+      "id": "F2-EXPORT-CSP",
+      "severity": "P2",
+      "status": "fixed-locally-verified",
+      "problem": "The new global Next header policy replaced the existing stricter brief attachment CSP in actual HTTP responses.",
+      "fix": "A later exact brief-export route entry preserves the strict attachment policy while retaining common headers.",
+      "evidence": [
+        "/private/tmp/rovaq-fase2-receipts-20261007/http-export-final.log",
+        "/private/tmp/rovaq-fase2-receipts-20261007/http-export-after.log"
+      ],
+      "limits": [
+        "Regression introduced during this local phase and caught before deployment; same HTTP oracle passes without weakening the policy."
+      ]
+    }
+  ],
+  "globalReport": "docs/entrega/FASE-2-SEGURIDAD-2026-10-07.json",
+  "candidateSha": "54be5cf07b68667626adda7eda06ccecf075159f",
+  "controlSha": "d6d87d1b416014529b1391970fa47fcbaf86ea20",
+  "controlIncidents": [
+    {
+      "id": "F2-CONTROLLER-LIFECYCLE",
+      "status": "fixed-and-verified",
+      "controlCommit": "d6d87d1",
+      "adoptedCommit": "54be5cf",
+      "calibrationTests": 11,
+      "globalComponentsPassed": 17
+    },
+    {
+      "id": "F2-CANDIDATE-DEPENDENCIES",
+      "status": "environment-prepared-and-verified",
+      "fix": "Same committed source in isolated worktree with npm ci offline; 2688 source hashes unchanged; all 21 email tests then full global gate pass"
+    }
+  ]
+}

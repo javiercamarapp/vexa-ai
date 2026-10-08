@@ -30,7 +30,7 @@ function copy(src,dest){
   }
  }else fs.copyFileSync(src,dest);
 }
-export async function prepare(candidate,{proposal=false}={}){
+export async function prepare(candidate){
  assert.ok(candidate,'VEXA_CANDIDATE explícito obligatorio');
  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'vexa-f01-04-'));
  const broker=resourceBroker();
@@ -38,14 +38,8 @@ export async function prepare(candidate,{proposal=false}={}){
  h.close=async()=>{if(h.child){h.child.kill('SIGTERM');await new Promise(r=>setTimeout(r,300));if(h.child.exitCode===null)h.child.kill('SIGKILL');}if(h.browserReserved)broker.remove('container',h.container);};
  try{
   for(const rel of ['package.json','package-lock.json','apps','packages'])if(fs.existsSync(path.join(candidate,rel)))copy(path.join(candidate,rel),path.join(tmp,rel));
-  if(proposal){
-   // Explicit read-only source allowlist. This is a component oracle probe, NOT a product candidate.
-   const source='/Users/javiercamaraportepetit/vexa/.runtime/closure-1789847917909284000/integrated/apps/web/src/components/workspace';
-   const dest=path.join(tmp,'apps/web/src/components/workspace');fs.mkdirSync(dest,{recursive:true});
-   for(const name of ['navigation.tsx','data-state.tsx'])fs.copyFileSync(path.join(source,name),path.join(dest,name));
-  }
   h.inputs=inputs(tmp);
-  if(proposal){const rel='apps/web/src/lib/workspace/contracts.ts';fs.mkdirSync(path.dirname(path.join(tmp,rel)),{recursive:true});fs.copyFileSync('/Users/javiercamaraportepetit/vexa/.runtime/closure-1789847917909284000/integrated/'+rel,path.join(tmp,rel));}
+
 h.env={...buildEnvironment(process.env,tmp),WATCHPACK_POLLING:'500'};
   command('npm',['ci','--offline','--ignore-scripts','--no-audit','--no-fund'],{cwd:tmp,env:h.env});
   // A test-only mounting route, never implements state handling, navigation or authorization.

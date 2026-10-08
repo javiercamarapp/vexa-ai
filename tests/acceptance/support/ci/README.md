@@ -31,7 +31,7 @@ completas y prueba conversations A/B antes del gate completo protegido F01-03.
 Auth-e2e falla cerrado hasta integrar/revisar adaptador F01-02 propio; no se permite
 fallback a vexa-local. El launcher exige infra.mjs y su import real desde harness.mjs del control; entonces ejecuta F01-02 seguido de F01-04, con corte al primer fallo. La presencia no sustituye la revisión independiente del adaptador.
 
-Python local >=3.9, futuro runner 3.12; Node exacto26.7.0. Perfil futuro
+Python local >=3.9, futuro runner 3.12; Node22.x estable (misma familia que engines; parche exacto registrado por ejecución). Perfil futuro
 ubuntu-24.04-arm; no acredita Ubuntu GitHub, x64 ni ejecución remota.
 Control/candidato separados. Local registra SHA control y fingerprint real del
 working tree antes de verify; candidate_commit_sha=null si no hay evento comprobado.
@@ -94,7 +94,7 @@ Timeout del launcher termina el grupo de procesos (TERM y después KILL); no pro
 que eso ejecute el finally de Docker. Los recibos declaran cleanup delegado al harness,
 no `not_needed` ni limpieza certificada. No liberar recursos ajenos. El gate SQL
 original usa600s y el launcher650s por comando; sobrepasar estos límites no es PASS.
-Python3.9 local/3.12 declarado; Node26.7.0. Bootstrap remoto añade Mailpit ARM por
+Python3.9 local/3.12 declarado; Node22.x estable. Bootstrap remoto añade Mailpit ARM por
 repo digest comprobado localmente, pero no se ha descargado ni ejecutado ese bootstrap.
 
 Web copia los tests session/auth-http desde control al build TMP y ejecuta Node/tsx

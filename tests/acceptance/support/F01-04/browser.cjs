@@ -41,15 +41,18 @@ async function stateOracle(page,kind){
  }
 }
 async function navigationOracle(page){
- const nav=page.getByRole('navigation',{name:'Espacio de trabajo'});
- assert.equal(await nav.getByRole('link').count(),6,'SIX_ENTRIES');
+ const nav=page.getByRole('navigation',{name:'Navegación principal'});
+ const group=nav.getByRole('button',{name:'Espacio de trabajo',exact:true});
+ assert.equal(await group.count(),1,'CORE_NAV_GROUP');
+ if(await group.getAttribute('aria-expanded')!=='true'){await keyboard(page,group,'KEYBOARD_NAV_GROUP');await page.keyboard.press('Enter');}
+ assert.equal(await nav.getByRole('link').count(),6,'SIX_CORE_ENTRIES');
  for(const p of paths){
-  const selector=`nav a[href^="${p}?"]`;const link=page.locator(selector);
+  const link=nav.locator(`a[href^="${p}?"]`);
   assert.equal(await link.count(),1,'NAV_DESTINATION:'+p);
   const url=new URL(await link.getAttribute('href'),base);
   for(const [k] of new URLSearchParams(scope))assert.deepEqual(url.searchParams.getAll(k),new URLSearchParams(scope).getAll(k),'SCOPE_PRESERVED:'+k);
   assert.equal(url.searchParams.has('cursor'),false,'CURSOR_RESET');
-  await keyboard(page,selector,'KEYBOARD_NAV');
+  await keyboard(page,link,'KEYBOARD_NAV');
  }
  await page.keyboard.press('Enter');await page.waitForURL('**/briefs?**');
  assert.equal(new URL(page.url()).pathname,'/briefs','KEYBOARD_ACTIVATION');
@@ -86,10 +89,13 @@ async function authorizedNavigation(page,url,fixture,label){
 async function authorized(page,response,fixture,label){
  assert.ok([200,503].includes(response.status()),'AUTHORIZED_ROUTE:'+label);
  assert.notEqual(new URL(page.url()).pathname,'/login','AUTHORIZED_NO_REDIRECT');
- assert.equal(await page.getByRole('navigation',{name:'Espacio de trabajo'}).count(),1,'AUTHORIZED_SHELL');
- const org=page.getByLabel('Organización activa');assert.equal(await org.inputValue(),fixture.tenant,'AUTHORIZED_ORG');
- assert.equal(await org.locator('option:checked').innerText(),'SYN_AUTHORIZED','AUTHORIZED_ORG_NAME');
- const body=await page.locator('body').innerText();assert.match(body,new RegExp('\\bRol: '+fixture.role+'\\b'),'AUTHORIZED_ROLE_PRESERVED expected='+fixture.role);
+ assert.equal(await page.getByRole('navigation',{name:'Navegación principal'}).count(),1,'AUTHORIZED_SHELL');
+ const org=page.locator('.workspace-context strong');assert.equal(await org.count(),1,'AUTHORIZED_SINGLE_ORG_CONTEXT');
+ assert.equal(await org.innerText(),'SYN_AUTHORIZED','AUTHORIZED_ORG_NAME');
+ assert.equal((await page.context().cookies(base)).find(c=>c.name==='vexa_active_org')?.value,fixture.tenant,'AUTHORIZED_ORG_COOKIE');
+ const labels={owner:'Administrador del espacio',analyst:'Analista',operator:'Operador',viewer:'Lectura'};
+ assert.equal(await page.locator('.sidebar-account .account-copy > span').innerText(),labels[fixture.role],'AUTHORIZED_ROLE_PRESERVED expected='+fixture.role);
+ const body=await page.locator('body').innerText();
  assert.doesNotMatch(body,/ONLY_B_|workspace_identity_unavailable|organizations_unavailable|authentication_required/,'AUTH_NOT_DEPENDENCY');
  const alert=page.locator('[role=alert]:not(#__next-route-announcer__)');
  if(fixture.dependencyMode==='csr-workspace'){
@@ -120,6 +126,13 @@ async function authorized(page,response,fixture,label){
   }
  }else if(process.argv[2]==='validation'){
   for(const [query,code] of invalidQueries){await page.goto(base+'/exam-f01-04?kind=error&'+query);await validation(page,code);}
+ }else if(process.argv[2]==='role-probe'){
+  // Calibration only: one real analyst route; the official routes mode below remains four roles/eight routes.
+  const fixture=JSON.parse(fs.readFileSync('/tmp/fixture.json','utf8'));
+  assert.deepEqual(fixture.sessions.map(s=>s.role),['owner','analyst','operator','viewer'],'FOUR_REAL_ROLES');
+  const session=fixture.sessions.find(s=>s.role==='analyst');fixture.role=session.role;
+  await context.addCookies(session.cookies.map(c=>({...c,url:base})));
+  await authorizedNavigation(page,base+'/overview?date_start=2026-09-01&date_end=2026-10-01&currency=USD&timezone=UTC&date_basis=conversation',fixture,'ROLE_PROBE_ANALYST');
  }else if(process.argv[2]==='dependency-probe'){
   const fixture=JSON.parse(fs.readFileSync('/tmp/fixture.json','utf8')),session=fixture.sessions.find(s=>s.role==='owner');fixture.role=session.role;await context.addCookies(session.cookies.map(c=>({...c,url:base})));await authorizedNavigation(page,base+'/overview?date_start=2026-09-01&date_end=2026-10-01&currency=USD&timezone=UTC&date_basis=conversation',fixture,'DEPENDENCY_PROBE');
  }else{
@@ -129,7 +142,7 @@ async function authorized(page,response,fixture,label){
   for(const p of [...paths,...detailPaths]){
    const r=await page.goto(base+p+'?'+routeScope);
    assert.ok([401,403].includes(r.status())||new URL(page.url()).pathname==='/login','ANONYMOUS_DENIED:'+p);
-   assert.equal(await page.getByRole('navigation',{name:'Espacio de trabajo'}).count(),0,'ANONYMOUS_NO_SHELL');
+   assert.equal(await page.getByRole('navigation',{name:'Navegación principal'}).count(),0,'ANONYMOUS_NO_SHELL');
   }
   assert.deepEqual(fixture.sessions.map(s=>s.role),['owner','analyst','operator','viewer'],'FOUR_REAL_ROLES');
   for(const session of fixture.sessions){
@@ -139,7 +152,7 @@ async function authorized(page,response,fixture,label){
   for(const p of [...paths,...detailPaths]){
    const r=await authorizedNavigation(page,base+p+'?'+routeScope,fixture,p);
    assert.equal(new URL(page.url()).pathname,p,'AUTHORIZED_NO_REDIRECT');
-   assert.equal(await page.getByRole('navigation',{name:'Espacio de trabajo'}).count(),1,'AUTHORIZED_SHELL');
+   assert.equal(await page.getByRole('navigation',{name:'Navegación principal'}).count(),1,'AUTHORIZED_SHELL');
    assert.equal(await page.locator('h1').count(),1,'ROUTE_HEADING');
    assert.doesNotMatch(await page.locator('body').innerText(),/ONLY_B_/,'TENANT_LEAK');
    for(const v of [{width:390,height:844},{width:1440,height:900}]){await page.setViewportSize(v);await responsive(page,`${v.width}-${fixture.role}-${p.slice(1).replaceAll('/','-')}`);}
@@ -169,7 +182,7 @@ async function authorized(page,response,fixture,label){
   for(const p of [...paths,...detailPaths]){
    const r=await page.goto(base+p+'?'+routeScope);
    assert.ok([401,403].includes(r.status())||new URL(page.url()).pathname==='/login','INVALID_SESSION_DENIED:'+p);
-   assert.equal(await page.getByRole('navigation',{name:'Espacio de trabajo'}).count(),0,'INVALID_SESSION_NO_SHELL');
+   assert.equal(await page.getByRole('navigation',{name:'Navegación principal'}).count(),0,'INVALID_SESSION_NO_SHELL');
   }
   } // each real Auth role
 

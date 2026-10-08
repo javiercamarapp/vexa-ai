@@ -14,3 +14,10 @@ export function revocationOracle(status,location,origin) {
   const target=location ? new URL(location,origin) : null;
   assert.ok([401,403,404].includes(status) || ([302,303,307,308].includes(status) && target?.origin===origin && target.pathname==='/login'),'REVOKED: cached membership still grants access');
 }
+
+export function authenticatedRootOracle(status,location,origin){
+ if(status===200)return null;
+ const target=location?new URL(location,origin):null;
+ assert.ok([302,303,307,308].includes(status)&&target?.origin===origin&&target.pathname==='/overview','EXPIRY_POSITIVE_AUTHENTICATED_REDIRECT');
+ return target.href;
+}

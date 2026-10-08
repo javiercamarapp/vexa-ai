@@ -9,6 +9,6 @@ test('F01-04: componentes reales, ocho rutas y autorización independiente del m
  try{
   await h.start();
   await t.test('seis estados, alcance, teclado, foco y dos viewports',()=>components(h));
-  await t.test('rutas protegidas con sesión real y selectores forjados',()=>routes(h,candidate));
+  await t.test('rutas protegidas con sesión real y selectores forjados',()=>routes(h,candidate,{mode:'routes'}));
  }finally{await h.close();console.log('Artifacts: '+h.tmp);}
 });

@@ -24,6 +24,6 @@ class Ownership(unittest.TestCase):
                 self.assertEqual(result.returncode,code,result.stdout+result.stderr);self.assertEqual(marker.read_text(),'preserve')
                 line=next(x for x in result.stdout.splitlines() if x.startswith('EVIDENCE '));art=pathlib.Path(line.split(' ')[1])
                 cleanup=json.loads((art/'cleanup.json').read_text());self.assertTrue(cleanup['verified']);self.assertTrue(cleanup['scratch_absent'])
-                allocations=json.loads((art/'owned-scratch.json').read_text());self.assertEqual(set(allocations),{'next','pg'})
+                allocations=json.loads((art/'owned-scratch.json').read_text());self.assertEqual(set(allocations),{'next','pg','tools'})
                 self.assertTrue(all(not os.path.lexists(x) for x in allocations.values()))
 if __name__=='__main__':unittest.main()

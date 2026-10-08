@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Local/main-trust job runner. Not an untrusted-code sandbox."""
 import argparse, hashlib, json, os, pathlib, platform, re, shutil, subprocess, sys, signal, tempfile, time, uuid
-from contract import JOBS, GATES
+from contract import JOBS, GATES, validate_node_version
 from lifecycle import Lifecycle
 CONTROL = pathlib.Path(__file__).resolve().parents[4]
 EXCLUDED = {'.git', '.runtime', 'private', 'node_modules', '.next', '__pycache__'}
@@ -89,7 +89,7 @@ def main():
                 if subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()!=args.event_sha: raise ValueError('EVENT_SHA_MISMATCH')
                 if subprocess.check_output(['git','status','--porcelain'],cwd=root,text=True).strip(): raise ValueError('DIRTY_EVENT_CHECKOUT')
             receipt['candidate_commit_sha']=args.event_sha
-        if run(['node','--version']).strip()!='v26.7.0': raise ValueError('NODE_VERSION')
+        receipt['node_version']=validate_node_version(run(['node','--version']).strip())
         if sys.version_info < (3,9): raise ValueError('PYTHON_REQUIRES_3_9')
         acceptance=CONTROL/'tests/acceptance'
         if args.job=='control-kernel':

@@ -5,7 +5,7 @@ import path from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {local,sql,startApp,login,origin,authURL,denied,tamper} from './support/F01-02/harness.mjs';
 
-import {revocationOracle,readOnlyNavigation} from './support/F01-02/oracles.mjs';
+import {revocationOracle,readOnlyNavigation,authenticatedRootOracle} from './support/F01-02/oracles.mjs';
 const candidate=process.env.VEXA_CANDIDATE;
 test('F01-02: real SSR callback, membership, invalid sessions, revocation and logout', {timeout:290000},async t=>{
   assert.ok(candidate,'SETUP: set VEXA_CANDIDATE explicitly');
@@ -42,8 +42,11 @@ test('F01-02: real SSR callback, membership, invalid sessions, revocation and lo
       const control=selector();assert.equal(await control.count(),1,'SETUP: expose the real organization select with UUID option values');
       await control.selectOption(target);
       const submit=control.locator('xpath=ancestor::form').locator('button[type="submit"],input[type="submit"]');
-      if(await submit.count())await submit.first().click();
-      await page.waitForLoadState('networkidle');
+      assert.equal(await submit.count(),1,'SETUP: real organization submit missing');
+      const [navigation]=await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),submit.click()]);
+      assert.equal(new URL(page.url()).origin,origin,'ORG_AUTHENTICATED_ORIGIN');
+      assert.equal(new URL(page.url()).pathname,'/overview','ORG_AUTHENTICATED_ROUTE');
+      assert.equal(navigation.status(),200,'ORG_AUTHENTICATED_DESTINATION');
       assert.equal(await selector().inputValue(),target,'ORG_POSITIVE: authorized organization selection did not persist');
     };
     await t.test('valid local callback and local redirect',async()=>{
@@ -70,8 +73,8 @@ test('F01-02: real SSR callback, membership, invalid sessions, revocation and lo
       try{
         await selector().selectOption(a);
         const submit=selector().locator('xpath=ancestor::form').locator('button[type="submit"],input[type="submit"]');
-        if(await submit.count())await submit.first().click();
-        await page.waitForLoadState('networkidle');
+        assert.equal(await submit.count(),1,'SETUP: real organization submit missing');
+        await Promise.all([page.waitForResponse(r=>r.request().method()==='POST'&&new URL(r.url()).origin===origin&&new URL(r.url()).pathname==='/auth/organization'),submit.click()]);
       }finally{await page.unroute(`${origin}/**`,attack);}
       assert.ok(intercepted,'SETUP: no real organization POST captured');
       assert.ok([403,404].includes(attackStatus),'ORG_FORBIDDEN: B selection must be forbidden');
@@ -112,7 +115,10 @@ test('F01-02: real SSR callback, membership, invalid sessions, revocation and lo
       const c0=await browser.newContext();try{
         await c0.addCookies([{name,value:encode(fresh),url:origin}]);
         const r=await c0.request.get(origin,{maxRedirects:0});
-        assert.equal(r.status(),200,'EXPIRY_POSITIVE: equivalent current signed cookie must work in real app');
+        const target=authenticatedRootOracle(r.status(),r.headers().location,origin);
+        const terminal=target?await c0.request.get(target,{maxRedirects:0}):r;
+        assert.equal(terminal.status(),200,'EXPIRY_POSITIVE: equivalent current signed cookie must work in real app');
+        assert.match(await terminal.text(),/SYN_A(?:2)?_/,'EXPIRY_POSITIVE_AUTHENTICATED_CONTENT');
       }finally{await c0.close();}
       for(const value of [null,'corrupt-cookie',encode({...session,access_token:tamper(session.access_token),refresh_token:''}),encode(old)]){
         const c=await browser.newContext();try{
@@ -130,7 +136,7 @@ test('F01-02: real SSR callback, membership, invalid sessions, revocation and lo
       assert.ok(!(await r.text()).includes(`SYN_A_${a}`),'REVOKED_DATA: protected content remains available');
       // Follow the real local chain BEFORE restoring membership. A login redirect
       // that then returns to protected content is not an authorization denial.
-      const terminal=await page.goto(origin);await page.waitForLoadState('networkidle');
+      const terminal=await page.goto(origin);
       assert.equal(new URL(page.url()).origin,origin,'REVOKED_CHAIN: escaped origin');
       assert.ok([401,403,404].includes(terminal?.status()) || new URL(page.url()).pathname==='/login','REVOKED_CHAIN: redirect restored protected access');
       assert.equal(await selector().count(),0,'REVOKED_CHAIN: private selector still available');
@@ -139,13 +145,14 @@ test('F01-02: real SSR callback, membership, invalid sessions, revocation and lo
       sql(`INSERT INTO public.memberships(tenant_id,user_id,role,status,permissions_version) VALUES ('${a}','${A.userId}','analyst','active',2);`);
     });
     await t.test('logout prevents direct return and browser back/cache access',async()=>{
-      await page.goto(origin);assert.equal(await selector().count(),1);
+      await page.goto(origin);assert.equal(await page.getByRole('navigation',{name:'Navegación principal'}).count(),1,'LOGOUT_AUTHENTICATED_POSITIVE');
+      assert.match(await page.locator('body').innerText(),new RegExp('SYN_A_'+a),'LOGOUT_AUTHORIZED_ORGANIZATION');
       const logout=page.getByRole('button',{name:/log.?out|sign.?out|cerrar sesi[oó]n/i});
       assert.equal(await logout.count(),1,'SETUP: real logout button missing');
-      await logout.click();await page.waitForLoadState('networkidle');
+      await Promise.all([page.waitForURL(url=>url.origin===origin&&url.pathname==='/login'),logout.click()]);
       const r=await context.request.get(origin,{maxRedirects:0});denied(r.status(),r.headers().location);
-      await page.goBack();await page.waitForLoadState('networkidle');
-      assert.equal(await selector().count(),0,'LOGOUT_CACHE: browser back restored private selector');
+      await page.goBack();
+      assert.equal(await page.getByRole('navigation',{name:'Navegación principal'}).count(),0,'LOGOUT_CACHE: browser back restored private shell');
       assert.ok(!(await page.content()).includes(`SYN_A_${a}`),'LOGOUT_CACHE: browser back disclosed private data');
     });
     assert.deepEqual(forbidden,[],'NETWORK: browser attempted a forbidden destination');

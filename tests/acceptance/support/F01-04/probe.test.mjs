@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {prepare,components} from './harness.mjs';
 test('F01-04 oracle probe: React/Next/Chromium real y mutantes',{timeout:360000},async t=>{
- const h=await prepare(process.env.VEXA_CANDIDATE,{proposal:true});
+ const h=await prepare(process.env.VEXA_CANDIDATE);
  try{
   await h.start();await components(h);const validation=()=>{const r=h.browser('validation');assert.equal(r.status,0,r.stderr);};validation();
   for(const [name,file,from,to,expected] of [
@@ -12,8 +12,8 @@ test('F01-04 oracle probe: React/Next/Chromium real y mutantes',{timeout:360000}
    ['retry salto Tab',h.inputs.state,'<a href="">','<a href="" tabIndex={-1}>',/ERROR_RETRY_KEYBOARD/],
    ['omite validación','apps/web/src/lib/workspace/contracts.ts'," const allowed=new Set("," return {scope:{} as any,limit:25,cursor:null}; const allowed=new Set(",/VALIDATION_SPECIFIC/],
    ['error a vacío',h.inputs.state,"if(state.kind==='error')","if(false)",/ERROR_VISIBLE/],
-   ['pierde alcance',h.inputs.navigation,"href={href+'?'+query}","href={href+'?'}",/SCOPE_PRESERVED/],
-   ['navegación sin teclado',h.inputs.navigation,'<Link aria-current','<Link tabIndex={-1} aria-current',/KEYBOARD_NAV/],
+   ['pierde alcance',h.inputs.navigation,"href={href+((destinations.some(([destination])=>destination===href)||href==='/imports')&&query?'?'+query:'')}","href={href+'?'}",/SCOPE_PRESERVED/],
+   ['navegación sin teclado',h.inputs.navigation,'<Link title={label}','<Link tabIndex={-1} title={label}',/KEYBOARD_NAV/],
   ])await t.test(name,async()=>{
    const dest=path.join(h.tmp,file),original=fs.readFileSync(dest,'utf8');assert.ok(original.includes(from),'MUTATION_SETUP');
    let mutated=original.replace(from,to);

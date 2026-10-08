@@ -12,11 +12,16 @@ test('F01-04: mutante eleva todos los roles a owner; debe morir por rol real',{t
  try{
   const from='return {user,memberships,active};';
   assert.equal(original.split(from).length,2,'MUTATION_SETUP unique return');
-  fs.writeFileSync(file,original.replace(from,"return {user,memberships,active:{...active,role:'owner' as const}};"));
   await h.start();await components(h);
-  await assert.rejects(()=>routes(h,candidate),error=>{
+  await routes(h,candidate,{mode:'role-probe'});
+  console.log('POSITIVE analyst before mutation');
+  fs.writeFileSync(file,original.replace(from,"return {user,memberships,active:{...active,role:'owner' as const}};"));
+  await assert.rejects(()=>routes(h,candidate,{mode:'role-probe'}),error=>{
    assert.match(error.message,/AUTHORIZED_ROLE_PRESERVED expected=analyst/,'MUTANT_MUST_FAIL_ROLE_NOT_INFRA');
    console.log('KILLED forced-owner: AUTHORIZED_ROLE_PRESERVED expected=analyst');return true;
   });
+  fs.writeFileSync(file,original);
+  await routes(h,candidate,{mode:'role-probe'});
+  console.log('POSITIVE analyst after original restored');
  }finally{fs.writeFileSync(file,original);await h.close();console.log('Artifacts: '+h.tmp);}
 });

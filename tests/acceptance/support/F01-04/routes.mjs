@@ -5,8 +5,10 @@ import http from 'node:http';
 import {randomUUID} from 'node:crypto';
 import {launch} from './services.mjs';
 import {command} from './harness.mjs';
-export async function routes(h,candidate,{mode='routes'}={}){
- assert.ok(['routes','dependency-probe'].includes(mode),'ROUTE_TEST_MODE');
+// Only an explicit control caller selects a narrow calibration; environment never selects scope.
+export function routeMode(options={}){const mode=options.mode??'routes';assert.ok(['routes','dependency-probe','role-probe'].includes(mode),'ROUTE_TEST_MODE');return mode;}
+export async function routes(h,candidate,options){
+ const mode=routeMode(options);
  // Start fresh identity services. Existing Auth product code is never replaced.
  const s=await launch({services:true});let proxy;
  try{
@@ -44,6 +46,7 @@ export async function routes(h,candidate,{mode='routes'}={}){
   // Async child is essential: the local HTTP proxy must keep serving requests.
   const {spawn}=await import('node:child_process');
   const result=await new Promise((resolve,reject)=>{let output='';const p=spawn('docker',['exec',h.container,'node','/tmp/browser.cjs',mode]);p.stdout.on('data',d=>output+=d);p.stderr.on('data',d=>output+=d);p.on('error',reject);p.on('close',code=>resolve({code,output}));});
-  fs.writeFileSync(path.join(h.tmp,mode+'.log'),result.output);assert.equal(result.code,0,result.output);for(const [role,count] of Object.entries(verifiedIdentityRequests)){if(mode==='dependency-probe'&&role!=='owner')continue;assert.ok(count>0,'REAL_IDENTITY_VERIFIED:'+role);console.log('REAL_IDENTITY_VERIFIED role='+role+' requests='+count);}if(mode==='routes')h.screenshots();
+  const logName=mode==='role-probe'?mode+'-'+(h.roleProbeRuns=(h.roleProbeRuns??0)+1)+'.log':mode+'.log';
+  fs.writeFileSync(path.join(h.tmp,logName),result.output);assert.equal(result.code,0,result.output);for(const [role,count] of Object.entries(verifiedIdentityRequests)){if(mode==='dependency-probe'&&role!=='owner'||mode==='role-probe'&&role!=='analyst')continue;assert.ok(count>0,'REAL_IDENTITY_VERIFIED:'+role);console.log('REAL_IDENTITY_VERIFIED role='+role+' requests='+count);}if(mode==='routes')h.screenshots();
  }finally{fs.rmSync(path.join(h.tmp,'fixture.json'),{force:true});command('docker',['exec','--user','root',h.container,'rm','-f','/tmp/fixture.json']);if(proxy)await new Promise(r=>proxy.close(r));s.close();}
 }

@@ -43,6 +43,20 @@ try:
  env.pop('NODE_TEST_CONTEXT',None)
  env['F02_PREVIEW_NEXT_DIR']=str(owned.allocate('next','f0203-next-'))
  env['F02_PREVIEW_PG_DIR']=str(owned.allocate('pg','f0203-pg-'))
+ # Browser client is installed from the trusted control lock, never a vanished absolute runtime.
+ tools=owned.allocate('tools','f0203-tools-')
+ for name in ['package.json','package-lock.json']:
+  shutil.copyfile(root/'tests/acceptance/support/F01-02'/name,tools/name)
+ toolenv={k:os.environ[k] for k in ['PATH','HOME','TMPDIR','LANG','LC_ALL'] if k in os.environ}
+ toolenv.update(NPM_CONFIG_USERCONFIG='/dev/null',NPM_CONFIG_GLOBALCONFIG=str(tools/'empty-global-npmrc'))
+ install=subprocess.run(['npm','ci','--offline','--ignore-scripts','--no-audit','--no-fund'],cwd=tools,env=toolenv,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=60)
+ (art/'browser-tools-install.log').write_text(install.stdout)
+ if install.returncode:raise RuntimeError('SETUP_BROWSER_TOOLS_INSTALL')
+ module=tools/'node_modules/playwright-core/index.mjs'
+ if not module.is_file() or module.is_symlink():raise RuntimeError('SETUP_BROWSER_TOOLS_MODULE')
+ env['F02_PLAYWRIGHT_MODULE']=str(module)
+ (art/'browser-tools.json').write_text(json.dumps({'packageSha256':hashlib.sha256((tools/'package.json').read_bytes()).hexdigest(),'lockSha256':hashlib.sha256((tools/'package-lock.json').read_bytes()).hexdigest(),'playwrightVersion':json.loads((tools/'node_modules/playwright-core/package.json').read_text())['version']}))
+
  (art/'owned-scratch.json').write_text(json.dumps({k:str(v) for k,v in owned.paths.items()}))
  for s in held:s.close()
  held=[]

@@ -15,7 +15,7 @@ export async function browserExam(page,{base,storageOrigin,connectionId}){
  await page.route('**/*',guard);page.on('request',r=>requests.push({method:r.method(),url:r.url(),body:r.postData()}));
  try{
   const response=await page.goto(base+'/imports');assert.equal(response.status(),200,'UI_AUTHENTICATED_PAGE');
-  assert.equal(await page.getByRole('navigation',{name:'Espacio de trabajo'}).count(),1,'REAL_WORKSPACE');
+  assert.equal(await page.getByRole('navigation',{name:'Navegación principal'}).count(),1,'REAL_WORKSPACE');
   const nav=page.getByRole('link',{name:/import/i});assert.ok(await nav.count()>0,'IMPORTS_NAV_LINK');
   await page.getByLabel(/conexi[oó]n/i).selectOption(connectionId);
   await page.locator('input[type=file]').setInputFiles({name:'SYNTHETIC-preview.csv',mimeType:'text/csv',buffer:csv()});

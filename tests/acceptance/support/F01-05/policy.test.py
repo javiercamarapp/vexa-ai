@@ -3,6 +3,14 @@ sys.path.insert(0,str(pathlib.Path(__file__).resolve().parents[1]/'ci'))
 from contract import workflow, validate
 from run import execute, JobFailure, environment, fingerprint
 class Policy(unittest.TestCase):
+ def test_node22_contract_and_runtime_family(self):
+  import contract
+  for job in contract.JOBS:
+   node=next(s for s in workflow()['jobs'][job]['steps'] if s.get('uses')==contract.NODE)
+   self.assertEqual(node['with']['node-version'],'22.x')
+  for version in ['v22.0.0','v22.23.2','v22.99.0']:contract.validate_node_version(version)
+  for version in ['v20.19.0','v26.7.0','v22.23.2-rc.1','22.x','v22.1','v22.1.0 extra']:
+   with self.assertRaisesRegex(ValueError,'NODE_VERSION'):contract.validate_node_version(version)
  def test_policy_mutants(self):
   with tempfile.TemporaryDirectory() as d:
    p=pathlib.Path(d)/'ci.json'; good=workflow()
@@ -75,7 +83,7 @@ class Policy(unittest.TestCase):
   # Disposable tool failure, not a product mutant. Exercises main -> execute -> receipt -> exit.
   with tempfile.TemporaryDirectory() as d:
    p=pathlib.Path(d); candidate=p/'candidate';candidate.mkdir();bin=p/'bin';bin.mkdir()
-   tool=bin/'node';tool.write_text('#!'+sys.executable+'\nimport sys\nif sys.argv[1:] == ["--version"]: print("v26.7.0")\nelse: print("SYN_TOOL_FAILURE_17"); sys.exit(17)\n');tool.chmod(0o700)
+   tool=bin/'node';tool.write_text('#!'+sys.executable+'\nimport sys\nif sys.argv[1:] == ["--version"]: print("v22.23.2")\nelse: print("SYN_TOOL_FAILURE_17"); sys.exit(17)\n');tool.chmod(0o700)
    env={**os.environ,'PATH':str(bin)+os.pathsep+os.environ['PATH']}
    r=subprocess.run([sys.executable,'-B',str(pathlib.Path(__file__).resolve().parents[1]/'ci/run.py'),'--job','web-quality','--candidate',str(candidate)],env=env,capture_output=True,text=True)
    self.assertEqual(r.returncode,17,r.stderr)
@@ -83,7 +91,7 @@ class Policy(unittest.TestCase):
    self.assertEqual(receipt['commands'][-1]['exit_code'],17)
    self.assertEqual(receipt['status'],'failed_unclassified')
    self.assertEqual(receipt['run_id'],'pending')
-   tool.write_text('#!'+sys.executable+'\nimport sys,os,pathlib\nif sys.argv[1:] == ["--version"]: print("v26.7.0")\nelse: pathlib.Path(os.environ["VEXA_CANDIDATE"],"link").symlink_to("/tmp"); sys.exit(17)\n')
+   tool.write_text('#!'+sys.executable+'\nimport sys,os,pathlib\nif sys.argv[1:] == ["--version"]: print("v22.23.2")\nelse: pathlib.Path(os.environ["VEXA_CANDIDATE"],"link").symlink_to("/tmp"); sys.exit(17)\n')
    r=subprocess.run([sys.executable,'-B',str(pathlib.Path(__file__).resolve().parents[1]/'ci/run.py'),'--job','web-quality','--candidate',str(candidate)],env=env,capture_output=True,text=True)
    self.assertEqual(r.returncode,1,r.stderr)
    receipt=json.loads(pathlib.Path(json.loads(r.stdout)['receipt']).read_text())

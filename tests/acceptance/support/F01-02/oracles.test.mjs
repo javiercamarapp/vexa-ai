@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {redirectOracle,revocationOracle,readOnlyNavigation} from './oracles.mjs';
+import {redirectOracle,revocationOracle,readOnlyNavigation,authenticatedRootOracle} from './oracles.mjs';
 const origin='http://127.0.0.1:3640';
 test('observing selection after forbidden POST never replays the browser form',async()=>{
   let active='authorized-A2';const requests=[];
@@ -28,4 +28,10 @@ test('explicit denial and local login remain valid positive controls',()=>{
   for(const status of [401,403,404])revocationOracle(status,undefined,origin);
   revocationOracle(303,'/login?reason=revoked',origin);
   assert.throws(()=>revocationOracle(200,'/login',origin),/REVOKED/);
+});
+
+test('authenticated root permits only the protected overview transition, never login or external redirects',()=>{
+ assert.equal(authenticatedRootOracle(200,undefined,origin),null);
+ assert.equal(authenticatedRootOracle(307,'/overview',origin),origin+'/overview');
+ for(const [status,location] of [[307,'/login'],[307,'https://foreign.invalid/overview'],[307,'/arbitrary'],[401,undefined],[503,undefined]])assert.throws(()=>authenticatedRootOracle(status,location,origin),/EXPIRY_POSITIVE_AUTHENTICATED_REDIRECT/);
 });

@@ -47,7 +47,7 @@ class Tests(unittest.TestCase):
         self.check_cleanup(records[-1]['cleanup']);evidence.append({'test':self._testMethodName,'records':records})
     def signal_case(self,sig):
         p=self.area();f=self.fixture(p);bin=p/'bin';bin.mkdir();scratch=p/'scratch';scratch.mkdir();candidate=p/'candidate';candidate.mkdir()
-        wrapper=bin/'node';wrapper.write_text('#!/bin/sh\nif [ "$1" = "--version" ]; then echo v26.7.0; exit 0; fi\nexec '+shlex_quote(NODE)+' '+shlex_quote(str(f))+'\n');wrapper.chmod(0o700)
+        wrapper=bin/'node';wrapper.write_text('#!/bin/sh\nif [ "$1" = "--version" ]; then echo v22.23.2; exit 0; fi\nexec '+shlex_quote(NODE)+' '+shlex_quote(str(f))+'\n');wrapper.chmod(0o700)
         env=dict(os.environ,PATH=str(bin)+':'+os.environ['PATH'],TMPDIR=str(scratch))
         log=p/'launcher.log'
         with open(log,'w',opener=lambda p,f:os.open(p,f,0o600)) as out:

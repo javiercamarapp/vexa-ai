@@ -1,5 +1,5 @@
 """Closed JSON (YAML 1.2 subset) workflow contract, owned by control checkout."""
-import json
+import json, re
 JOBS = ('control-kernel', 'web-quality', 'sql-integration', 'auth-e2e')
 GATES = ('E00', 'F00-01', 'F00-02', 'F00-03', 'F00-04', 'F00-05', 'F01-01', 'F01-02', 'F01-03', 'F01-04')
 CHECKOUT = 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1'
@@ -16,7 +16,7 @@ def workflow():
                 {'uses': CHECKOUT, 'with': {'ref': '${{ github.sha }}', 'path': p, 'persist-credentials': False}}
                 for p in ('control', 'candidate')
             ] + [
-                {'uses': NODE, 'with': {'node-version': '26.7.0'}},
+                {'uses': NODE, 'with': {'node-version': '22.x'}},
                 {'uses': PYTHON, 'with': {'python-version': '3.12'}},
                 {'name': 'Trusted disposable bootstrap', 'shell': 'bash --noprofile --norc -euo pipefail {0}',
                  'run': 'python3 control/tests/acceptance/support/ci/bootstrap.py --candidate "$GITHUB_WORKSPACE/candidate" --authorized-disposable-runner'},
@@ -39,3 +39,8 @@ def validate(file):
     # arbitrary commands, conditions, services, env, credentials, skip and error swallowing.
     if json.dumps(actual, sort_keys=True) != json.dumps(workflow(), sort_keys=True): raise ValueError('CI_CONTRACT_MISMATCH')
     return actual
+
+def validate_node_version(version):
+    # Match the repository engines contract, excluding prereleases and other majors.
+    if not re.fullmatch(r'v22\.\d+\.\d+',version): raise ValueError('NODE_VERSION')
+    return version

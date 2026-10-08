@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "1aea895599a2aec72f56421cd62bc420b018ed8f",
-  "composition": "Phase-six SQL control fixtures match current Auth/Storage schema; obsolete workspace prototype explicitly retired with mandatory modern CAS/approval/rollback successors. Product CRM remains reviewed bounded implementation. Rebuild complete immutable capacity series after all control changes are consolidated; no prior measurement inheritance.",
+  "baselineSha": "2073177f6491128b207e71f1e6a353bcd8fcb509",
+  "composition": "Phase-six reviewed Node22/Auth/navigation/preview controls and current SQL fixtures. Product remains unchanged. Requires a fresh complete capacity series after integration; no prior measurement inheritance.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -3497,11 +3497,11 @@
     },
     {
       "path": "tests/acceptance/support/F01-02/oracles.mjs",
-      "sha256": "e837571c4d82de29dfdbe3b1e2e2b3ba1e2f6599cde73a61e8d9a9166e6419d1"
+      "sha256": "6987176d01d32c6fc3ff83ba153e26bb2b24057b7766e78817e17d2ee19c4a9a"
     },
     {
       "path": "tests/acceptance/support/F01-02/oracles.test.mjs",
-      "sha256": "478d1eab0d83431748e7327cccf8f35d4161f92d6edc6a9361042dc2a12b1996"
+      "sha256": "bc1167efa913032e17df599dc30ba20dfde95adf09d5a6d505bda2eb5c4a9b68"
     },
     {
       "path": "tests/acceptance/support/F01-02/package-lock.json",
@@ -3693,7 +3693,7 @@
     },
     {
       "path": "tests/acceptance/support/F01-04/browser.cjs",
-      "sha256": "fbb310ca9b466b263b8bc05ba95fab0f490b979b4622410d7a338ac1503a39f4"
+      "sha256": "5919c5b364d9cf0e19d896efeb1b898ce873f02d1f5e5546d1901b5a7bbb98c3"
     },
     {
       "path": "tests/acceptance/support/F01-04/correction-auth-failed-1.txt",
@@ -4041,7 +4041,7 @@
     },
     {
       "path": "tests/acceptance/support/F01-04/harness.mjs",
-      "sha256": "716acebaa3ebf1b4a59a8a1db4453c903f0f45dff9f816c41ff0b5cbaa8370fa"
+      "sha256": "f663336058e28b7d12d1fc88bb8bb89e5d12ecebfd4aaafd678d6946a23937ca"
     },
     {
       "path": "tests/acceptance/support/F01-04/probe-result.txt",
@@ -4049,7 +4049,7 @@
     },
     {
       "path": "tests/acceptance/support/F01-04/probe.test.mjs",
-      "sha256": "fbac89ce58acb2a802be3d9ee58f073a9a0fd94507909e309c2fb40b69f39280"
+      "sha256": "130fa2e584943dc67f05fe4338a7f80cc29ee58ed94eb4a64e54139abd7ab8d8"
     },
     {
       "path": "tests/acceptance/support/F01-04/rejection-preserved.md",
@@ -4397,7 +4397,7 @@
     },
     {
       "path": "tests/acceptance/support/F01-04/role-probe.test.mjs",
-      "sha256": "d9e8e793882c5e7c0b0daa301027cf25612fe752dbfe4a2909051d4268f1eb96"
+      "sha256": "325d7e8bf2e6ef150ee5471e4d555ffa34a8c842bde84ac103190737fc8b12a3"
     },
     {
       "path": "tests/acceptance/support/F01-04/role-rejection-review.txt",
@@ -4413,7 +4413,7 @@
     },
     {
       "path": "tests/acceptance/support/F01-04/routes.mjs",
-      "sha256": "0efc13136e32b2dfb93fe27bcfbf7b544ea123838c4cbe5a2962026153258e3e"
+      "sha256": "d2b09ea225e039a04118555e93dc37d533b7b91afe8270eda0918f5d0107aadb"
     },
     {
       "path": "tests/acceptance/support/F01-04/services.mjs",
@@ -4425,7 +4425,7 @@
     },
     {
       "path": "tests/acceptance/support/F01-05/ci.reference.json",
-      "sha256": "261f3e72cf61483f7d668ead9c9ef81e5ed0a8033dece1ad7220fa2fc076a1ef"
+      "sha256": "609113ac10c6563a8c38c5eee8cc42147e5993343cb518bd7198e3366f8c31d3"
     },
     {
       "path": "tests/acceptance/support/F01-05/exam.py",
@@ -4441,11 +4441,11 @@
     },
     {
       "path": "tests/acceptance/support/F01-05/lifecycle.test.py",
-      "sha256": "7b0e698de2d2d6ccf0796aa646d4767dcd930950d0658b3879a7625517922ee2"
+      "sha256": "71adde0c8ef9aefa6414990997e9f2813b82a95850a893bd1fd8e0d7fba741c0"
     },
     {
       "path": "tests/acceptance/support/F01-05/policy.test.py",
-      "sha256": "2e19c3f9e71c6f4e27c7e813579fb3cc84d82a963d3e4d5c07ddf230cb7abf18"
+      "sha256": "7bffcc260d0ee761063b85f89bd258eed3c90a1d1f63a9f7bb8fcbc0e4a8cc78"
     },
     {
       "path": "tests/acceptance/support/F01-05/probe.py",
@@ -8625,7 +8625,7 @@
     },
     {
       "path": "tests/acceptance/support/F02-preview/browser.mjs",
-      "sha256": "da0c62d2ffc61139e5644a502662e75f59a41da9b0e662cf3b259f3b74f825b1"
+      "sha256": "8b9d3eb118141c8ae443c77162ff8ec7061a5374023fa0db1d4ed4aea5d0cd6e"
     },
     {
       "path": "tests/acceptance/support/F02-preview/client-boundary.mjs",
@@ -8697,7 +8697,7 @@
     },
     {
       "path": "tests/acceptance/support/F02-preview/run.py",
-      "sha256": "f9bb979a8a662014e2a2fdc3e2331db212dad5c9a538bfb9445b6eb5ed193edc"
+      "sha256": "2f35de8d83857ab4f2f1cd717fe30f852bd159a8b0a2b6c438d511897b8dbb34"
     },
     {
       "path": "tests/acceptance/support/F02-preview/scratch.py",
@@ -8705,15 +8705,15 @@
     },
     {
       "path": "tests/acceptance/support/F02-preview/scratch.test.py",
-      "sha256": "7a6132e3ff5ab2c3f3daf54a872dd3378daf0ddcb5a754c3f548b81e1745583e"
+      "sha256": "88872f5ffd19e467de03b8c2c6adab70014b47dfc07a00b264756d5956230248"
     },
     {
       "path": "tests/acceptance/support/F02-preview/ssr.mjs",
-      "sha256": "3f3f9d3b8cd61ff71af6cbee24a476caf5d49e4c37cc1cf18a7fea6b09ef11e1"
+      "sha256": "3fd69b88c57aad063d17b1c13b36e5a9f75e086aa88db67e06b1e65440104881"
     },
     {
       "path": "tests/acceptance/support/F02-preview/ui-states.mjs",
-      "sha256": "a9da684f75fb6372b2738cdd26d093a0a624ffe2b7c89b8b42e465c9941eee41"
+      "sha256": "80fb91dac47526c8ebcb274d190ce24c59b6c54fe0ca218f76f813a13737e392"
     },
     {
       "path": "tests/acceptance/support/F03-HubSpot/LIVE.md",
@@ -8837,7 +8837,7 @@
     },
     {
       "path": "tests/acceptance/support/ci/README.md",
-      "sha256": "97399e23c677fe29e99207618898c18672bcee5606dc507d7afb0dc6e7b4f4a0"
+      "sha256": "14da8ab7cf9feec7eb5eaf1b7cb8d304ec92ebf99a879ba865d919e61b98ee0e"
     },
     {
       "path": "tests/acceptance/support/ci/REPORT.md",
@@ -8853,7 +8853,7 @@
     },
     {
       "path": "tests/acceptance/support/ci/contract.py",
-      "sha256": "cb7384e733b5d0dd429b12b41ad28e1f65b59b389c50aa6948e1e6f5463187ce"
+      "sha256": "41cca8af2cb5ce697b83b01fabfaf2331807a2d0659fa6a9816058c42914fc6b"
     },
     {
       "path": "tests/acceptance/support/ci/crm-unconfigured.test.mjs",
@@ -8869,7 +8869,7 @@
     },
     {
       "path": "tests/acceptance/support/ci/run.py",
-      "sha256": "bcce049a8dedad2ca5d14b94a6480a71801e1f1c38d3ba59a541c63efbc78d19"
+      "sha256": "952c5c1f104a5d26af35fdf466730de842986afbbeaa022532f88b2f4aa29ec7"
     },
     {
       "path": "tests/acceptance/support/ci/sql-preflight.mjs",

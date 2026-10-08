@@ -1,5 +1,10 @@
 # Auditoría integral de20 rubros
 
+## Referencia vigente — 8 de octubre de 2026
+
+[Reconciliación actual de los20rubros](AUDITORIA-20-RUBROS-2026-10-08.md):60alcances técnicos,28/60aceptaciones formales; navegación y controles actuales integrados, CI/paquetes/capacidad final en comprobación. El bloqueo histórico435 fue retirado y F07-01 está cerrado localmente. Los cortes y tablas inferiores son históricos; no representan bloqueos actuales ni el binario06b7bae. [Estado único](../ESTADO-VIGENTE.md).
+
+
 ## Reauditoría actual29-sep
 
 [Mapa vigente de los20rubros y comprobaciones nuevas](AUDITORIA-20-RUBROS-2026-09-29.md):24APIs deniegan acceso anónimo conprivate/no-store, dependenciaaudit sin avisos y609artefactos verificados porhash.54/60técnicas,25formales y aprobación productiva bloqueada. La auditoría final posterior a60/60 no se ha completado. Los cortes siguientes son históricos.

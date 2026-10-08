@@ -1,8 +1,13 @@
 # Pendientes verificables de entrega
 
+## Referencia vigente — 8 de octubre de 2026
+
+[Reconciliación actual de los20rubros](AUDITORIA-20-RUBROS-2026-10-08.md):60alcances técnicos,28/60aceptaciones formales; navegación y controles actuales integrados, CI/paquetes/capacidad final en comprobación. El bloqueo histórico435 fue retirado y F07-01 está cerrado localmente. Los cortes y tablas inferiores son históricos; no representan bloqueos actuales ni el binario06b7bae. [Estado único](../ESTADO-VIGENTE.md).
+
+
 ## Estado vigente — 8 de octubre de 2026
 
-**60/60 fichas con trabajo técnico integrado; 28/60 aceptadas formalmente (46,7 %).** La reconciliación incorpora el cierre local F07-01, probado con 17 componentes; no concede aceptación ni valida producción. Fases 1–3 cerradas localmente para sus versiones. Fase 4: recuperación local aprobada; recuperación gestionada y operación permanente pendientes. Fase 5: corrección CRM integrada y comprobada; histórico y nueva serie de capacidad en curso. El cambio de fuentes exige 10K → 50K → 150K de nuevo: 10K pasó y 50K está ejecutándose. Cinco alertas altas de desarrollo por braces siguen abiertas. Sin publicación ni despliegue de estos cambios. [Estado vigente](../ESTADO-VIGENTE.md).
+**60/60 fichas con trabajo técnico integrado; 28/60 aceptadas formalmente (46,7 %).** La reconciliación incorpora el cierre local F07-01, probado con 17 componentes; no concede aceptación ni valida producción. Fases 1–3 cerradas localmente para sus versiones. Fase 4: recuperación local aprobada; recuperación gestionada y operación permanente pendientes. Fase 5: corrección CRM integrada y comprobada; histórico y nueva serie de capacidad en curso. La serie anterior10K/50K pasó; consolidada la composición06b7bae, falta la serie final nueva10K→50K→150K. Cinco alertas altas de desarrollo por braces siguen abiertas. Sin publicación ni despliegue de estos cambios. [Estado vigente](../ESTADO-VIGENTE.md).
 
 [Informe de fase 2](SEGURIDAD-GLOBAL-2026-10-07.md) · [Recibo verificable](FASE-2-SEGURIDAD-2026-10-07.json).
 

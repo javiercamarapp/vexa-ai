@@ -1,6 +1,10 @@
-import './support/F03-HubSpot/local.test.mjs';
-import test from 'node:test';
-import {runLive} from './support/F03-HubSpot/live.mjs';
-test('F03-01 S01 real account scopes messages and independent UI/export reconciliation',{timeout:270000},async()=>{
- await runLive();
+// Prepare/capture the native witness BEFORE any local test imports the candidate.
+import {prepareLiveControl} from './support/F03-HubSpot-v5/bootstrap.mjs';
+import test, {after} from 'node:test';
+const control=await prepareLiveControl();
+after(()=>control.close());
+try { await import('./support/F03-HubSpot/local.test.mjs'); }
+catch(error){control.close();throw error;}
+test('S01 real-provider dual-oracle witness', {timeout:250000}, async()=>{
+ try { await control.runLive(); } finally { control.close(); }
 });

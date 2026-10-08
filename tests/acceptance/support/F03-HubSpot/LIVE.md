@@ -1,3 +1,7 @@
+## Control v5 adoptado — 8 de octubre de 2026
+
+Integrado después de revisión independiente sin bloqueantes: snapshot externo `acb3faf8a1554f918126b86994c36c741270d7b94d889149d638c627a9c6e653`, revisión `3687435f061dd552e5460f31d0632a4b7ca3770b06fffcdd5d3bda7b2a943204`. Composición sintética29/29; calibración de adopción2/2 independiente. Sin modificar el adaptador ni conceder aceptación. El contrato vigente está en [S01v5](../F03-HubSpot-v5/LIVE-v5-proposed.md); el entry usa el bootstrap v5 y conserva los controles locales del adaptador. Las secciones v4 siguientes son históricas y no describen el entry vigente.
+
 # F03-01: local disponible, S01 remoto bloqueado
 
 El examen local usa HTTP real en 127.0.0.1 con fetch inyectado: valida host HTTPS del proveedor, método GET, redirect manual y señal Abort antes de redirigir al stub. Todos los cuerpos son SYNTHETIC, CC0-1.0. No contiene credenciales ni usa datos cliente. `local.test.mjs` nunca acredita una cuenta HubSpot.

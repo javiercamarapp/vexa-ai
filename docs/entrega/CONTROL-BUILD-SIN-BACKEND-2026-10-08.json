@@ -1,0 +1,45 @@
+{
+  "schema": "rovaq-offline-build-control-v1",
+  "status": "reviewed_calibrated_build_execution_pending",
+  "date": "2026-10-08",
+  "productChanged": false,
+  "formalAcceptance": false,
+  "productionValidated": false,
+  "baseline": "baf62b180777a215408f7cfb0c1fe23a2a209c61",
+  "observedFailure": "Second aggregate compiled and started the real web build but offline artifact scanning rejected GET /api/notifications/push503 push_request_failed.",
+  "classification": "Expected sanitized unconfigured response; not evidence of configured backend failure. Seven real handlers observed with five configuration keys absent and poisoned fetch; zero network requests.",
+  "guard": "Five inputs undefined; .env* case-insensitive absent from repository root and Next workspace before build and before server start.",
+  "profiles": "Seven exact GET paths without query;503,JSON,private/no-store,not public; exact keys/code/message and push trace UUID/retryable. Existing versioned contracts unchanged. Secrets checked before exception. Normal configured mode still rejects.",
+  "calibration": {
+    "tests": 38,
+    "pass": 38,
+    "fail": 0,
+    "log": "fase6-offline-calibrations-integrated-v1.tap",
+    "sha256": "edc99c72a62d48efc9352e4f8587b6914c1fa94712dd17aed895d403e77af813"
+  },
+  "reviews": {
+    "profileProposalSha256": "ce96767fd0bc6efee36253afe15e9c5943cf65fbe5c59cfff30ca0d2f6d2499a",
+    "rootProfileReview": "0 blocking findings after reading diff, strict schemas, negative tests and actual handler observations",
+    "environmentSpecReviewSha256": "cfff8f28a52796030c8139fe7dbf61198d93bfab432cac3771938307b5b58f20",
+    "realHandlerReceiptSha256": "267655fcb9d34909c4ffcecd4cf45273d322a0db84ad782de4516d2f190b6ded"
+  },
+  "manifest": {
+    "files": 2227,
+    "sha256": "dd227f1a458392c0365bb6243d3ab9a93209858093cab89c172fa9def0b829a9"
+  },
+  "files": {
+    "tests/acceptance/support/ci/offline-environment.mjs": "c4f97e9df2575e2b09ff58d240c37074bb35d01b024271fdd65b3b8206ea7618",
+    "tests/acceptance/support/ci/offline-environment.test.mjs": "b7f6ba4f6a4d62e1783f095f058786ca329f6ed61cf6767020388b1313305624",
+    "tests/acceptance/support/ci/offline-legacy.mjs": "affad663d1f9a72c8dfa4cc4b8040ef1111147adf7d3bea8123870e9621625c8",
+    "tests/acceptance/support/ci/offline-legacy.test.mjs": "6d221de096bf37c05e97f3e0d710be9f4e5a197e42cdf74309d03dbe72b0871b",
+    "tests/acceptance/support/ci/artifact-secrets.mjs": "8ede853ca158c8286a86c79aa37dcc9cc709a39b4f8b0007ebdb699d331bbbe3",
+    "tests/acceptance/support/ci/web.mjs": "84444f0034b3eeb0f96366c692d77129a9a52d1a87b38860bac75f1fedb86b80",
+    "tests/acceptance/support/ci/README.md": "a6c111b98e85174f0cfe9bd9c0f3735d0ef59fe1644f3896dc4df4e33007d56c"
+  },
+  "pending": [
+    "Focal web-quality job",
+    "Full aggregate on final composition",
+    "55 package test files",
+    "Fresh complete capacity series"
+  ]
+}

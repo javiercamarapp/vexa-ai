@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {randomUUID} from 'node:crypto';
+import {isOfflineLegacyResponse} from './offline-legacy.mjs';
 
 // Invalid signature: fixtures cannot authenticate against any service.
 export function syntheticJWT(role, nonce) {
@@ -93,7 +94,8 @@ export async function inspectPublished(cwd,origin,fixture,{allowUnconfiguredImpo
     &&/(?:^|,)\s*private\s*(?:,|$)/i.test(cache)&&/(?:^|,)\s*no-store\s*(?:,|$)/i.test(cache)
     &&envelope.error.retryable===true&&typeof envelope.error.message==='string'
     &&typeof envelope.meta?.trace_id==='string'&&envelope.meta.trace_id.length>0;
-   if(!expected)throw new Error('PAGE_HTTP_STATUS:'+url.pathname+':'+response.status+':'+String(envelope?.error?.code));
+   const legacyExpected=isOfflineLegacyResponse({offline:allowUnconfiguredImports,required,method:'GET',url,status:response.status,contentType:response.headers.get('content-type')??'',cache,envelope});
+   if(!expected&&!legacyExpected)throw new Error('PAGE_HTTP_STATUS:'+url.pathname+':'+response.status+':'+String(envelope?.error?.code));
   }
   const location=response.headers.get('location');if(location)add(new URL(location,url).href);
   // HTML/CSS assets and literal fetch/import URLs. No browser JS execution.

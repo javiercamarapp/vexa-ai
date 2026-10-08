@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "a26c4c7f4569b9ff23902b3d88b720cea52afaa6",
-  "composition": "Phase-six reviewed Node22/Auth/navigation/preview/SQL controls and exact Next16.3.6 tool contract. Product unchanged by this control integration. Requires fresh complete capacity series after final consolidation.",
+  "baselineSha": "356c3919d91d2709f33db5123c903e02ffac954c",
+  "composition": "Phase-six navigation race correction: real navigation invalidates obsolete asynchronous loads in six financial panels, preserving query pinning and fragments; reviewed current base/SQL controls. Requires a fresh 10K/50K/150K capacity series; prior measurements remain bound to older sources.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -597,7 +597,7 @@
     },
     {
       "path": "apps/web/src/components/briefs/panel.tsx",
-      "sha256": "0b451e47ef04382131b1d50580acd427a3616db5c0c092b90ba6eca031d6c99e"
+      "sha256": "4fb683fe47190818ba7048f203a90036b8f54ceab4454f46847e98a2e11dde65"
     },
     {
       "path": "apps/web/src/components/candidates-panel.tsx",
@@ -677,7 +677,7 @@
     },
     {
       "path": "apps/web/src/components/explorer/panel.tsx",
-      "sha256": "1156a3faa5030f6cdaf4190568aed3ac70b9d57530bce47a39c76ea9495df77b"
+      "sha256": "5005dea9507f05178eac77302a8451731a0cbed2df682143f7b3fd407c68a5b4"
     },
     {
       "path": "apps/web/src/components/explorer/query-card.module.css",
@@ -705,7 +705,7 @@
     },
     {
       "path": "apps/web/src/components/interventions/panel.tsx",
-      "sha256": "2b2e2e4a37bb493de9da5e9f0e52d48e8ccd1986b2813c9560f71a19a88ecabb"
+      "sha256": "ac09e511df4726fbac3fa1d8d94465690359ea2694dd098acf9f198edf011cd6"
     },
     {
       "path": "apps/web/src/components/job-progress.tsx",
@@ -725,7 +725,7 @@
     },
     {
       "path": "apps/web/src/components/notifications/navigation-link.tsx",
-      "sha256": "ff4c026f465ce6f5a50e968cf42d88001d2fe0d54a2178b48607f176c5f2f052"
+      "sha256": "c9299edd392a56ec9fb163f08005b697ec96a2b690673818c7f0a5e42db9c051"
     },
     {
       "path": "apps/web/src/components/notifications/panel.tsx",
@@ -741,11 +741,11 @@
     },
     {
       "path": "apps/web/src/components/problems-panel.tsx",
-      "sha256": "d40a46c14de8af7cd6806df485a63d98f27ff0a7c792823c5c0afb9be61a03be"
+      "sha256": "7c488f8b086329d1e94610ea5c6122dd48b597779d9779924ff15b3fb6d6990c"
     },
     {
       "path": "apps/web/src/components/recommendations/panel.tsx",
-      "sha256": "9fd38af2f9c3fa788840e010d4bee679d128b686a6dee042273081690330293e"
+      "sha256": "e8ac2debf1f6c590699c833b20038ac2762136f19b18d589ad3acd4a35c4b697"
     },
     {
       "path": "apps/web/src/components/retention-panel.tsx",
@@ -785,7 +785,7 @@
     },
     {
       "path": "apps/web/src/components/workspace/current-problems.tsx",
-      "sha256": "0bb8be519f6bd4a248dc98a27a46d40443f000c643e462a7f3e3fbb52060c909"
+      "sha256": "a64621d87a1f8de1f8b8cbef9445c612e1bacbb36eb34e5269a0cae7144572f0"
     },
     {
       "path": "apps/web/src/components/workspace/customer-bindings.tsx",
@@ -797,7 +797,7 @@
     },
     {
       "path": "apps/web/src/components/workspace/detail-panel.tsx",
-      "sha256": "d54a6f55932c0845270a483ffdf1d456e017a306ae56c8f18bd75f272625dd1f"
+      "sha256": "2dbabd57ba11231929f6b0ff9ebeae060c14a7e080f31652557e7f7fcbf6c2d5"
     },
     {
       "path": "apps/web/src/components/workspace/filters.tsx",
@@ -805,15 +805,19 @@
     },
     {
       "path": "apps/web/src/components/workspace/getting-started.tsx",
-      "sha256": "3b5a0d48160a505c7584d208ed3a4e3544222af1f7ae680026133949e4ac7130"
+      "sha256": "d05e8fb94d7f25615583de0800db20ec7a4460095ad13434ffa801dc202e6ef8"
     },
     {
       "path": "apps/web/src/components/workspace/icon.tsx",
       "sha256": "c87c0fc12532f2899246cedd1634737d1a927bdd3a59a9768f5d2a15063b68c7"
     },
     {
+      "path": "apps/web/src/components/workspace/navigation-lifecycle.tsx",
+      "sha256": "3021b168b2a8bcdf69f283a56a453381c44ac62493f80a04dbcdc52830e594bd"
+    },
+    {
       "path": "apps/web/src/components/workspace/navigation.tsx",
-      "sha256": "3c55ae46c9a2cf3ec53c16ea272948e161ef863bb60d8f2dedf90566b4874682"
+      "sha256": "de8e87c3e6474e2a9d65c352d9cda15a3941d0a97826c85970d725a6ee0fff57"
     },
     {
       "path": "apps/web/src/components/workspace/order-mappings.tsx",
@@ -833,11 +837,11 @@
     },
     {
       "path": "apps/web/src/components/workspace/shared-panel.tsx",
-      "sha256": "bb91e67fdac933c694dbfd604f3b81671c82cac83001db4b961a1c60101e3441"
+      "sha256": "15c334cacff8b612c8d2d3da50e1e73b24aa7169fb52368075f1c60197080d14"
     },
     {
       "path": "apps/web/src/components/workspace/shell.tsx",
-      "sha256": "283831510a284bcb969da5e9d2fc738cbe9db2dca9dbf44333a1e9aa8c830771"
+      "sha256": "9a34309193898a63ead4fee7f81c7dcf89e18af8e3d219cdba3c86ada64aae7c"
     },
     {
       "path": "apps/web/src/lib/auth-http.ts",

@@ -1,5 +1,6 @@
 'use client';
-import Link from 'next/link';
+import {useWorkspaceNavigation,workspaceLocation} from './navigation-lifecycle';
+import Link from './navigation-lifecycle';
 import {useCallback,useEffect,useRef,useState,type ReactNode} from 'react';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
 import type {ComponentSummary,ConversationRef,DetailKind,DetailView,EventSummary} from '../../../../../packages/workspace-service/detail.mjs';
@@ -13,16 +14,17 @@ export function FinancialDetailPanel({kind,id,initialQuery,children}:{kind:'prob
  const [relatedAuthorized,setRelatedAuthorized]=useState(true);
  const generation=useRef(0),controller=useRef<AbortController|null>(null),resolved=useRef(initialQuery);
  const invalidate=useCallback(()=>{controller.current?.abort();generation.current++;},[]);
+ useWorkspaceNavigation(invalidate);
  useEffect(()=>{const back=()=>{invalidate();const next=window.location.search.slice(1);resolved.current=next;setQuery(next);setStep({kind,id});setData(null);setBusy(true);setError('');setReload(n=>n+1);};window.addEventListener('popstate',back);return()=>window.removeEventListener('popstate',back);},[invalidate,kind,id]);
  useEffect(()=>{
   const epoch=++generation.current,abort=new AbortController();controller.current=abort;
-  const load=async()=>{if(abort.signal.aborted||epoch!==generation.current)return;setBusy(true);setData(null);setError('');const params=new URLSearchParams(query);for(const key of ['resource','format','cursor','limit','root_kind','root_id','component_id','event_id'])params.delete(key);
+  const load=async()=>{const sourceLocation=workspaceLocation();if(abort.signal.aborted||epoch!==generation.current)return;setBusy(true);setData(null);setError('');const params=new URLSearchParams(query);for(const key of ['resource','format','cursor','limit','root_kind','root_id','component_id','event_id'])params.delete(key);
    if(!params.get('snapshot_id')||!params.get('scope_hash')){setError('Abre este detalle desde una publicación en Resumen o Problemas para conservar su periodo y sus filtros.');setBusy(false);return;}
    params.set('root_kind',kind);params.set('root_id',id);if(step.componentId)params.set('component_id',step.componentId);if(step.eventId)params.set('event_id',step.eventId);
    try{const response=await fetch('/api/workspace/detail/'+step.kind+'/'+encodeURIComponent(step.id)+'?'+params.toString(),{cache:'no-store',signal:abort.signal});if(abort.signal.aborted||epoch!==generation.current)return;if([401,403,404].includes(response.status))setRelatedAuthorized(false);const body=await response.json();if(abort.signal.aborted||epoch!==generation.current)return;
     if(!response.ok)throw Error(response.status===401||response.status===403?'Tu acceso cambió. Vuelve a iniciar sesión o selecciona una organización autorizada.':response.status===404?'No existe un detalle autorizado para este identificador y alcance.':response.status===409?'La identidad de esta vista no coincide con el alcance. Abre de nuevo el detalle desde la publicación.':response.status===400?'El alcance del detalle no es válido. Abre la publicación y revisa sus filtros.':'No se pudo consultar la evidencia. Reintenta cuando el servicio esté disponible.');
     const next=body.data as DetailView;if(!next||next.kind!==step.kind||next.id!==step.id||next.snapshot_id!==params.get('snapshot_id')||next.scope_hash!==params.get('scope_hash')||!next.detail_hash||params.has('detail_hash')&&next.detail_hash!==params.get('detail_hash'))throw Error('No se pudo verificar la identidad del detalle recibido.');
-    const pinned=new URLSearchParams(query);for(const key of ['resource','format','cursor','limit','root_kind','root_id','component_id','event_id'])pinned.delete(key);pinned.set('detail_hash',next.detail_hash);resolved.current=pinned.toString();window.history.replaceState(null,'',window.location.pathname+'?'+pinned.toString());setData(next);setRelatedAuthorized(true);
+    const pinned=new URLSearchParams(query);for(const key of ['resource','format','cursor','limit','root_kind','root_id','component_id','event_id'])pinned.delete(key);pinned.set('detail_hash',next.detail_hash);if(workspaceLocation()!==sourceLocation)return;resolved.current=pinned.toString();window.history.replaceState(null,'',window.location.pathname+'?'+pinned.toString()+window.location.hash);setData(next);setRelatedAuthorized(true);
    }catch(e){if(!abort.signal.aborted&&epoch===generation.current){setData(null);setError(e instanceof Error?e.message:'No se pudo consultar el detalle.');}}
    finally{if(!abort.signal.aborted&&epoch===generation.current)setBusy(false);}
   };void Promise.resolve().then(load);return()=>{abort.abort();};

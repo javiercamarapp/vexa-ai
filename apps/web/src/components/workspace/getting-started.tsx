@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from './navigation-lifecycle';
 export function GettingStarted({canManage,pending}:{canManage:boolean;pending:boolean}){
  return <section className="getting-started" aria-labelledby="getting-started-title">
   <header><p className="eyebrow">Primeros pasos</p><h2 id="getting-started-title">{pending?'Hay datos pendientes de publicación':'Prepara tu primer resumen'}</h2><p>{pending?'Revisa el procesamiento y la publicación para el periodo seleccionado.':'Este alcance aún no tiene cifras publicadas. Puede faltar la carga, la publicación o un periodo que coincida con tus datos.'}</p></header>

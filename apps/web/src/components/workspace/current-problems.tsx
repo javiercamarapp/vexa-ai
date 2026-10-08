@@ -1,5 +1,5 @@
 'use client';
-import Link from 'next/link';
+import Link from './navigation-lifecycle';
 import {useEffect,useRef,useState} from 'react';
 type Problem={id:string;label:string;version:number;state:string;conversationIds:string[]};
 function problems(value:unknown):Problem[]{

@@ -1,5 +1,6 @@
 'use client';
-import Link from 'next/link';
+import {useWorkspaceNavigation,workspaceLocation} from '../workspace/navigation-lifecycle';
+import Link from '../workspace/navigation-lifecycle';
 import {useCallback,useEffect,useRef,useState,type FormEvent} from 'react';
 import type {Intervention,InterventionPlan,Measurement,SnapshotOption} from '../../../../../packages/interventions/index.mjs';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
@@ -44,9 +45,10 @@ export function InterventionsPanel({initialQuery}:{initialQuery:string}){
  const [query,setQuery]=useState(cleanQuery(initialQuery).toString()),[scope,setScope]=useState(()=>initialScope(initialQuery)),[view,setView]=useState<List|null>(null),[busy,setBusy]=useState(true),[error,setError]=useState(''),[notice,setNotice]=useState(''),[conflict,setConflict]=useState(false),[empty,setEmpty]=useState(false);
  const controller=useRef<AbortController|null>(null),epoch=useRef(0),inFlight=useRef(false),resolved=useRef(query),keys=useRef(new Map<string,string>());
  const invalidate=useCallback(()=>{controller.current?.abort();epoch.current++;inFlight.current=false;},[]);
- const load=useCallback(async(value:string)=>{controller.current?.abort();const abort=new AbortController();controller.current=abort;const generation=++epoch.current;inFlight.current=false;setView(null);setError('');setNotice('');setEmpty(false);setConflict(false);setBusy(true);
+ useWorkspaceNavigation(invalidate);
+ const load=useCallback(async(value:string)=>{const sourceLocation=workspaceLocation();controller.current?.abort();const abort=new AbortController();controller.current=abort;const generation=++epoch.current;inFlight.current=false;setView(null);setError('');setNotice('');setEmpty(false);setConflict(false);setBusy(true);
   try{const requested=cleanQuery(value);requested.set('resource','problems');const pin=await fetch('/api/workspace?'+requested,{cache:'no-store',signal:abort.signal});if(abort.signal.aborted||generation!==epoch.current)return;if(!pin.ok)throw Error(failure(pin.status));const envelope=await pin.json();if(abort.signal.aborted||generation!==epoch.current)return;const meta=envelope.data?.meta;if(!meta?.scope)throw Error('No se pudo verificar la publicación solicitada.');setScope({...meta.scope,exponent:meta.scope.exponent??undefined});if(!meta.snapshot_id||!meta.scope_hash){setEmpty(true);return;}const fixed=pinnedQuery(meta.scope,meta.snapshot_id,meta.scope_hash);
-   const response=await fetch('/api/interventions?'+fixed,{cache:'no-store',signal:abort.signal});if(abort.signal.aborted||generation!==epoch.current)return;if(!response.ok)throw Error(failure(response.status));const listed=await response.json();if(abort.signal.aborted||generation!==epoch.current)return;const next=listed.data as List;if(!validList(next,fixed.toString()))throw Error('No se pudo verificar la respuesta de intervenciones.');resolved.current=fixed.toString();setScope(initialScope(fixed.toString()));setView(next);window.history.replaceState(null,'',window.location.pathname+'?'+fixed+window.location.hash);
+   const response=await fetch('/api/interventions?'+fixed,{cache:'no-store',signal:abort.signal});if(abort.signal.aborted||generation!==epoch.current)return;if(!response.ok)throw Error(failure(response.status));const listed=await response.json();if(abort.signal.aborted||generation!==epoch.current)return;const next=listed.data as List;if(!validList(next,fixed.toString()))throw Error('No se pudo verificar la respuesta de intervenciones.');if(workspaceLocation()!==sourceLocation)return;resolved.current=fixed.toString();setScope(initialScope(fixed.toString()));setView(next);window.history.replaceState(null,'',window.location.pathname+'?'+fixed+window.location.hash);
   }catch(e){if(!abort.signal.aborted&&generation===epoch.current)setError(e instanceof Error?e.message:failure(503));}finally{if(!abort.signal.aborted&&generation===epoch.current)setBusy(false);}
  },[]);
  useEffect(()=>{let active=true;void Promise.resolve().then(()=>{if(active)void load(query);});return()=>{active=false;invalidate();};},[query,load,invalidate]);

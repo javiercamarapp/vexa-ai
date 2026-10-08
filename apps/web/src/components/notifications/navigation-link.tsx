@@ -1,5 +1,5 @@
 'use client';
-import Link from 'next/link';
+import Link from '../workspace/navigation-lifecycle';
 import {useEffect,useState} from 'react';
 import {usePathname} from 'next/navigation';
 import {WorkspaceIcon} from '../workspace/icon';

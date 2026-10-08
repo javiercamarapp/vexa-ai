@@ -1,5 +1,5 @@
 'use client';
-import Link from 'next/link';
+import Link from './workspace/navigation-lifecycle';
 import {EmbeddingBudgetPanel} from './embedding-budget-panel';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {ProblemSnapshot,ProblemDetail,Match} from '../lib/problems/contracts';

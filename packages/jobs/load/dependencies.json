@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "baf62b180777a215408f7cfb0c1fe23a2a209c61",
-  "composition": "Phase-six reviewed navigation correction and current base/SQL/UI/CI controls. Offline build scanning proves configuration absent and recognizes exact sanitized API contracts while retaining secret detection. Full CI and a fresh 10K/50K/150K series remain required; old measurements stay bound to their sources.",
+  "baselineSha": "075d3fd9213b55093a9b41b894716c7ba99883d0",
+  "composition": "Phase-six reviewed navigation and base/SQL/UI/CI controls, including exact offline legacy responses and the literal notification badge query. Configuration absence and secret checks remain mandatory. Full CI and a fresh 10K/50K/150K series remain required; prior measurements retain original source identity.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -8849,7 +8849,7 @@
     },
     {
       "path": "tests/acceptance/support/ci/artifact-secrets.mjs",
-      "sha256": "8ede853ca158c8286a86c79aa37dcc9cc709a39b4f8b0007ebdb699d331bbbe3"
+      "sha256": "f74ae2fc779ccde59b7c232b8a375ce66ee7b9cdd08c80ce69bed84d39423276"
     },
     {
       "path": "tests/acceptance/support/ci/bootstrap.py",
@@ -8861,7 +8861,7 @@
     },
     {
       "path": "tests/acceptance/support/ci/crm-unconfigured.test.mjs",
-      "sha256": "35a15d32ff270232a22428932ca063bd125469ec7f2de7ff16166af0450f37d2"
+      "sha256": "0a4df3dd12aeaa13bf68f7c2aa446e647fc3485bda6fb2e4159df51ed97d703e"
     },
     {
       "path": "tests/acceptance/support/ci/lifecycle.py",

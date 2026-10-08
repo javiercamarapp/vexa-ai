@@ -41,5 +41,35 @@
     "Full aggregate on final composition",
     "55 package test files",
     "Fresh complete capacity series"
-  ]
+  ],
+  "badgeQueryFollowup": {
+    "baseline": "075d3fd9213b55093a9b41b894716c7ba99883d0",
+    "focalFailureReceiptSha256": "cc7639cf691ed8ae89e11b5b42c91dd8bc9861b66f124616669d6d672807911c",
+    "diagnosis": "V3 focal failed on notifications configuration_required. Exact query is inferred from the sole literal badge fetch and its scan/handler callgraph; original error only logged pathname. New diagnostics include query.",
+    "change": "Only /api/notifications?status=unread&limit=1 under its existing versioned offline configuration contract. Other queries remain rejected; product unchanged.",
+    "reviewReceiptSha256": "221c63b96064627e87ade1d185d828630c89c9eefb637e4bd4c86d04041983f8",
+    "logs": [
+      {
+        "file": "fase6-badge-query-before.tap",
+        "sha256": "2cdc44cb14b6a4bd142691458e50e9dae0658e178f77016bb3df8ace81327013",
+        "pass": 0,
+        "fail": 1
+      },
+      {
+        "file": "fase6-badge-query-after.tap",
+        "sha256": "f4b182b8b4559d43437a5247d2fa4c1515ae1fcc761a53142c7432faf861481a",
+        "pass": 39,
+        "fail": 0
+      }
+    ],
+    "files": {
+      "tests/acceptance/support/ci/artifact-secrets.mjs": "f74ae2fc779ccde59b7c232b8a375ce66ee7b9cdd08c80ce69bed84d39423276",
+      "tests/acceptance/support/ci/crm-unconfigured.test.mjs": "0a4df3dd12aeaa13bf68f7c2aa446e647fc3485bda6fb2e4159df51ed97d703e"
+    },
+    "manifest": {
+      "files": 2227,
+      "sha256": "0c3b293d0f416bd1e27cffd97f039f8586c42f5486f25ad00c981cf4915a06fa"
+    },
+    "executionPending": true
+  }
 }

@@ -1,5 +1,6 @@
 import {randomUUID} from 'node:crypto';
 import {createSyncRepository,createCRMAdapterFactory,runSync} from './sync.mjs';
+const latestRetryTimestamp=Date.parse('9999-12-31T23:59:59.999Z');
 const uuid=v=>typeof v==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(v);
 const fail=code=>{throw Object.assign(Error(code),{code});};
 const one=async(s,sql,args)=>(await s.query(sql,args)).rows[0];
@@ -22,7 +23,7 @@ export function createCRMRuntime({database,resolveCredentials,fetch:transport,cl
    });
   },
   async tick({deadlineMs=15000,maxPages=1}={}){
-   if(!Number.isSafeInteger(deadlineMs)||deadlineMs<1||deadlineMs>20000||!Number.isSafeInteger(maxPages)||maxPages<1||maxPages>5)fail('CRM_RUNTIME_LIMIT');
+   if(!Number.isSafeInteger(deadlineMs)||deadlineMs<1||deadlineMs>20000||!Number.isSafeInteger(maxPages)||maxPages<1||maxPages>100)fail('CRM_RUNTIME_LIMIT');
    const chosen=await database.transaction('import',async s=>{
     const row=await one(s,`SELECT c.source,c.account_id,c.credential_ref,r.* FROM public.crm_sync_settings r
      JOIN public.connections c ON c.tenant_id=r.tenant_id AND c.id=r.connection_id
@@ -61,7 +62,14 @@ export function createCRMRuntime({database,resolveCredentials,fetch:transport,cl
     return {state:result.state,connectionId:row.connection_id,pages:result.pages};
    }catch(error){
     const code=error?.code==='CRM_CREDENTIAL_CONFIGURATION_REQUIRED'?error.code:error?.code==='RECONNECT_REQUIRED'?'RECONNECT_REQUIRED':'SYNC_FAILED';
-    await guarded.transaction('import',s=>s.query('UPDATE public.crm_sync_settings SET failure_count=least(4,failure_count+1),error_code=$3,next_attempt_at=clock_timestamp()+least(900,30*power(2,failure_count))*interval \'1 second\',updated_at=clock_timestamp() WHERE tenant_id=$1 AND id=$2',[s.tenantId,row.id,code]));
+    // Never retry sooner than a provider's explicit delay, including delays
+    // beyond the runtime slice. An unrepresentable hint requires owner repair.
+    const hasProviderDelay=error?.retryable===true&&(error.status===429||error.status>=500&&error.status<=599)&&error.retryAfterMs!=null;
+    // Keep persisted dates representable in the settings API. Pausing, rather
+    // than truncating a huge/invalid delay, cannot schedule an early retry.
+    const invalidProviderDelay=hasProviderDelay&&(!Number.isSafeInteger(error.retryAfterMs)||error.retryAfterMs<0||!(clock()+error.retryAfterMs<=latestRetryTimestamp));
+    const retryAfterMs=hasProviderDelay&&!invalidProviderDelay?error.retryAfterMs:0;
+    await guarded.transaction('import',s=>s.query("UPDATE public.crm_sync_settings SET failure_count=CASE WHEN $5::boolean THEN 4 ELSE least(4,failure_count+1) END,error_code=$3,next_attempt_at=clock_timestamp()+greatest(least(900,30*power(2,failure_count))*1000,$4::double precision)*interval '1 millisecond',updated_at=clock_timestamp() WHERE tenant_id=$1 AND id=$2",[s.tenantId,row.id,code,retryAfterMs,invalidProviderDelay]));
     return {state:'blocked',connectionId:row.connection_id,code};
    }
   }

@@ -24,10 +24,10 @@ async function check(response,status,code){
  const value=await response.json();if(code)assert.deepEqual(value,{code});return value;
 }
 for(const method of ['GET','POST']){
- test(`${method}: authenticated request uses unchanged bounded CRM tick and closes`,async()=>{
+ test(`${method}: authenticated request uses 100-chunk CRM time slice and closes`,async()=>{
   const f=setup();const result=await check(await f.handler(request(method)),200);
   assert.deepEqual(result,{data:{state:'continuation',pages:1}});
-  assert.deepEqual(f.calls,{runtime:1,tick:[{deadlineMs:15000,maxPages:1}],close:1});
+  assert.deepEqual(f.calls,{runtime:1,tick:[{deadlineMs:15000,maxPages:100}],close:1});
  });
  test(`${method}: anonymous, incorrect and spoofed scheduler headers never start runtime`,async()=>{
   const f=setup();for(const headers of [{},{authorization:'Bearer SYN-wrong'},

@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "cda9cb836491688a1b91c12ddca6826959602241",
-  "composition": "Phase-three fresh local synthetic ingestion series after Phase 2 global security closure. Public health/version describes build identity only (status ok; meta.state build-identity-only), not backend readiness or production approval. Regenerated deliberately with the route change; prior capacity measurements are not reused. Measure 10K then 50K then 150K with the same immutable sources and unchanged job deadlines.",
+  "baselineSha": "443d91fd2254bc30d1a963d6b087623b38f7e9bb",
+  "composition": "Phase-five CRM bounded hosted loop (100 units within unchanged 15-second deadline) and durable provider Retry-After. Fresh local synthetic ingestion series required after source changes; prior Phase-three capacity measurements retain their original scope and are not reused. Measure 10K then 50K then 150K on immutable sources and unchanged job deadlines.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -1089,7 +1089,7 @@
     },
     {
       "path": "packages/connectors/CRM-RUNTIME.md",
-      "sha256": "4e92567c4e5447760eb46fa9cb773c617614c5c0cd9ff44c60562c4558a13f7d"
+      "sha256": "c0b5673dab5734c89c1e6f864594e80389946684d5c4fef99333d5b679438556"
     },
     {
       "path": "packages/connectors/HEALTH.md",
@@ -1153,19 +1153,19 @@
     },
     {
       "path": "packages/connectors/hosted.d.mts",
-      "sha256": "e5bb2fb30fbe2b9229e64cca7c3ac8fcd304f8f084bb87dd77f7be3916e377de"
+      "sha256": "4b2db18131a00d3ff8ea56f8005252af46e6165725e2ab1a2c5a2213ee505a41"
     },
     {
       "path": "packages/connectors/hosted.mjs",
-      "sha256": "4d7561cf2ffd0b13e3335c767bba72bceb5fc0bd3a307f0258643ee1a1adcfa5"
+      "sha256": "a9cf19c13c58b16aab2d5421b3055f5f9fdd7be2d48cca058d1610bcf6f0efac"
     },
     {
       "path": "packages/connectors/hosted.test.mjs",
-      "sha256": "e471e46f7498ea1b18f7420d0e08486097cc763bbfa5243f18109979d22b6fc8"
+      "sha256": "861e4b6f108c94f4d7fca9d85fd9184908d5e89dace439b414758e3d3fd8ac2a"
     },
     {
       "path": "packages/connectors/hubspot-bounded.test.mjs",
-      "sha256": "0f18e8d2be23608f9ccea71a0d8226122ffc59f49055af1bf80d9130226168d5"
+      "sha256": "ff4dab3485de377c7b485819fcbf380c405c6a18cda2870eb8cb83577ef7bc7a"
     },
     {
       "path": "packages/connectors/hubspot-events.test.mjs",
@@ -1217,11 +1217,15 @@
     },
     {
       "path": "packages/connectors/runtime.d.mts",
-      "sha256": "9ce807fe0fa257a51307b68f3138d424ee7958b8c747d5867692580a5046dd78"
+      "sha256": "baee9533ae31570349e1016717ae7378997a4655f7670a1811d30f68c301ea2a"
     },
     {
       "path": "packages/connectors/runtime.mjs",
-      "sha256": "fbf970784dcdbce5c6e46533b582672703b883587102452bf81bccd88e7ac3b1"
+      "sha256": "aef327f41145a89a72df45f81eea811cfcc13985901cd5cf5cedc03497d803bc"
+    },
+    {
+      "path": "packages/connectors/runtime.test.mjs",
+      "sha256": "3aa64db6c96b4df41255540ec70a7b64ea87d74fe679924b38618ed7d9835c38"
     },
     {
       "path": "packages/connectors/spike-hubspot.mjs",

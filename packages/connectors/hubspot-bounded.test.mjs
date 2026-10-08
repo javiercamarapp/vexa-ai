@@ -76,3 +76,37 @@ test('malformed original without text or richText remains a visible provider sch
 test('notes cursor cycle is remembered across separate association and note chunks',async()=>{const p=provider({transform:(data,u)=>u.pathname.includes('/associations/notes')?{results:[{toObjectId:'N1'}],paging:{next:{after:'SYN-note-loop'}}}:data});let cp=null;for(let i=0;i<10;i++){const page=await step(p,cp);cp=page.checkpoint;if(cp.state.phase==='links'&&cp.state.innerAfter==='SYN-note-loop')break;}assert.equal(cp.state.phase,'links');await assert.rejects(step(p,cp),/CURSOR_LOOP/);});
 
 for(const operation of ['current','commitPage'])test('repository '+operation+' TIMEOUT remains visible after deadline despite prior durable commit',async()=>{const p=provider(),repo=repository();let time=0,calls=0;const original=repo[operation];repo[operation]=async args=>{calls++;if(calls===(operation==='current'?3:2)){time=16000;throw Object.assign(Error('TIMEOUT'),{code:'TIMEOUT'});}return original(args);};const factory=()=>({async *pages(){const first=await step(p);yield first;yield await step(p,first.checkpoint);}});await assert.rejects(run(repo,p,{adapterFactory:factory,clock:()=>time,deadlineMs:15000,maxPages:5}),/TIMEOUT/);assert.equal(repo.committed.length,1);assert.equal(repo.state.version,1);assert.equal(repo.attempts.at(-1).error.code,'TIMEOUT');});
+
+test('one 100-chunk invocation traverses multiple durable HubSpot phases in order',async()=>{
+ const p=provider(),repo=repository();const result=await run(repo,p,{maxPages:100,deadlineMs:15000});
+ assert.equal(result.state,'done');assert.ok(result.pages>5);assert.equal(result.pages,repo.committed.length);
+ assert.equal(repo.unique,8);assert.equal(repo.state.done,true);
+ assert.ok(repo.committed.every(page=>page.records.length+page.errors.length<=1));
+ assert.equal(repo.attempts.at(-1).outcome,'done');
+});
+test('100 is a slice cap and every chunk is committed before requesting the next',async()=>{
+ const repo=repository();let requested=0,released=0;repo.release=async()=>{released++;};
+ const result=await run(repo,provider(),{maxPages:100,deadlineMs:15000,adapterFactory:()=>({async *pages(){
+  for(let i=1;i<=101;i++){assert.equal(repo.state.version,i-1);requested++;yield {records:[],errors:[],checkpoint:{offset:i},done:false};}
+ }})});
+ assert.equal(result.state,'continuation');assert.equal(requested,100);assert.equal(result.pages,100);
+ assert.equal(repo.state.checkpoint.offset,100);assert.equal(released,1);
+});
+test('multi-chunk slice stops at the original deadline with last committed cursor',async()=>{
+ const repo=repository();let now=0,requested=0;const commit=repo.commitPage;
+ repo.commitPage=async args=>{const result=await commit(args);now+=3000;return result;};
+ const result=await run(repo,provider(),{clock:()=>now,maxPages:100,deadlineMs:15000,adapterFactory:()=>({async *pages(){
+  for(let i=1;i<=100;i++){requested++;yield {records:[],errors:[],checkpoint:{offset:i},done:false};}
+ }})});
+ assert.equal(result.state,'continuation');assert.equal(requested,5);assert.equal(result.pages,5);
+ assert.deepEqual(repo.state.checkpoint,{offset:5});assert.equal(repo.attempts.at(-1).error,undefined);
+});
+test('revocation between committed chunks stops the same invocation before another provider page',async()=>{
+ const repo=repository();let requested=0;const current=repo.current;
+ repo.current=async()=>{if(repo.state.version===3)throw Object.assign(Error('SYN revoked'),{code:'CRM_AUTHORIZATION_REVOKED'});return current();};
+ await assert.rejects(run(repo,provider(),{maxPages:100,deadlineMs:15000,adapterFactory:()=>({async *pages(){
+  for(let i=1;i<=100;i++){requested++;yield {records:[],errors:[],checkpoint:{offset:i},done:false};}
+ }})}),error=>error.code==='CRM_AUTHORIZATION_REVOKED');
+ assert.equal(requested,3);assert.deepEqual(repo.state.checkpoint,{offset:3});
+ assert.equal(repo.attempts.at(-1).error.code,'CRM_AUTHORIZATION_REVOKED');
+});

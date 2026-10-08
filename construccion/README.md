@@ -1,8 +1,8 @@
 # VEXA — de la carpeta al producto, paso a paso
 
-## Estado vigente — 7 de octubre de 2026
+## Estado vigente — 8 de octubre de 2026
 
-Consultar [ESTADO-VIGENTE.md](../docs/ESTADO-VIGENTE.md): **Fase 1 cerrada con fallos explicados; Fase 2 parcial.** Parche local `0913644`: sharp/source-map-js actualizados, lint/tipos/build aprobados; auditoría de producción sin alertas y cinco de desarrollo abiertas. Javier retiró la restricción documental histórica435; continúa la validación defensiva local de fase2. Correcciones locales `ed9f06d` y `9399246`; recuperación original 29/29, selección de conexión 5/5 unidades y 31/31 diagnóstico UI; paquetes 537/542 con cinco arneses antiguos pendientes. Se mantienen 59/60 fichas técnicas y 28/60 formales, producción sin validar. Histórico real previo reportado por Javier; quedan fuentes y reconciliación. Sin push, despliegue ni cambios externos en esta ejecución.
+Consultar [ESTADO-VIGENTE.md](../docs/ESTADO-VIGENTE.md): **60 alcances técnicos integrados; 28/60 aceptaciones formales.** Fases 1–3 cerradas localmente para sus versiones. Recuperación local y corrección CRM comprobadas; operación gestionada, nuevas cargas autorizadas y validaciones humanas pendientes. La fase 6 consolida controles actuales y la corrección de navegación, antes de CI agregado, paquetes y una serie nueva de capacidad10K→50K→150K. Producción sin validar; sin publicación ni cambios remotos de esta ejecución. La restricción documental histórica de revisión ya fue retirada y no es un bloqueo vigente.
 
 Los cortes fechados que siguen son históricos y no sustituyen el estado vigente.
 

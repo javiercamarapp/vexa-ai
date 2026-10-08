@@ -5,7 +5,7 @@
   "formal_runner_accepted": 28,
   "total_tasks": 60,
   "production_validated": false,
-  "source_commit": "1aea895",
+  "source_commit": "972b0f7",
   "layers": {
     "documentation": {
       "status": "current_guides_prepared_human_rehearsal_pending",
@@ -22,7 +22,8 @@
       "evidence": [
         "../../construccion/ESTADO-CONSTRUCCION.json",
         "CRM-ACOTADO-2026-10-08.md",
-        "../../docs/ejecucion/cierre-2026-10-07/PROGRESO.md"
+        "../../docs/ejecucion/cierre-2026-10-07/PROGRESO.md",
+        "CORRECCION-NAVEGACION-2026-10-08.json"
       ]
     },
     "synthetic_demo": {
@@ -53,7 +54,8 @@
         "ACCESIBILIDAD-ESTADOS-2026-09-28.md",
         "ACCIONES-UI-2026-09-29.md",
         "CONSENTIMIENTO-ECONOMICO-2026-09-29.md",
-        "UNIFICACION-UI-2026-09-30.md"
+        "UNIFICACION-UI-2026-09-30.md",
+        "FASE-6-LECTURA-REMOTA-2026-10-08.json"
       ],
       "smoke_checks_passed": 8,
       "smoke_views_passed": 8,
@@ -112,7 +114,7 @@
     "note": "Corte histórico anterior al despliegue y smoke remoto; conservado enGit."
   },
   "updated": "2026-10-08",
-  "deployed_source_commit": "ccf546b3495ec8d8fb0e2c2886e3be842274696a",
+  "deployed_source_commit": "b0be6df86a2aad53f46bb6054e192c94d62b13e3",
   "latest_audit": {
     "date": "2026-09-29",
     "source_commit": "94db0848a6c61538508a354ff0715f377364af6d",
@@ -156,7 +158,7 @@
     "production_validated": false
   },
   "local_work_pending": [
-    "Consolidar y ejecutar controles actuales Auth/UI/SQL sin rebajar umbrales.",
+    "Ejecutar F01-05 agregado y suite completa de55archivos de paquetes sobre composición integrada; controles Auth/UI/SQL y navegación ya revisados.",
     "Congelar composición y completar nueva serie10K/50K/150K con revisión independiente.",
     "Auditoría final y avance de aceptación exclusivamente mediante controlador y evidencia legítima."
   ],

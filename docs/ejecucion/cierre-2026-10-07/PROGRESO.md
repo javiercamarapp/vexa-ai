@@ -9,10 +9,10 @@
 - Mejora CRM propuesta con 101 pruebas de autoría y seis controles locales aprobados, preservando los fallos previos.
 
 ## En curso
-CRM y control S01 integrados localmente (cbeba0d, aff0517, 3ec0e2b). Serie aff0517:10K aprobada,50K en ejecución. El control S01 cambió fuentes: nueva serie definitiva deberá comenzar de10K tras consolidar la auditoría. Una sola suite pesada.
+Fase6 en auditoría final local. Base/Auth/Node integrada en7547c21, limpieza SQL en a26c4c7. Serie anterior aff0517:10K y50K aprobadas,150K no iniciada. Los cambios de controles requieren una serie completa nueva tras consolidar fuentes. Corrección de navegación510028a: seis flujos afectados83/83 y notificaciones15/15 aprobados; entrada compuesta con recuperación RSC30/30 aprobada. Producto510028a y controles6036597 integrados; wrapper de55paquetes972b0f7 preparado. Una sola suite pesada.
 
 ## Siguiente
-Cerrar medición50K de su versión y preparar fase6: reparar deuda conocida del control y consolidar fuentes antes de repetir la serie definitiva y auditoría final. Fase5 conserva pendientes externos de autorización de lote, referencia UI independiente y proveedores.
+Verificar F01-05 agregado con Node22; completar pruebas de paquetes pertinentes y congelar la nueva serie10K→50K→150K. Fase5 conserva pendientes externos de autorización de lote, referencia UI independiente y proveedores.
 
 ## Pendientes
 - Consulta Supabase sobre cuarentena de Storage preparada, autorización de envío solicitada; aún no enviada.
@@ -33,3 +33,31 @@ Control UI focal: F06-01 v1 falló por asumir igual etiqueta de exportación en 
 
 
 Schema v3: cuatro suites conservadas, 21/21 PASS en 24,469 s. Cada hook verificó eliminación propia con docker rm exit0; inventario final independiente sin contenedores schema. No se afirma cotejo histórico de cuatro IDs: el buffer de eventos sólo retenía uno. Integrado en3530f92 con inventario de capacidad2.219 y preflight PASS; no capacidad medida. Retirada del prototipo mantiene pendientes sus sucesores modernos. Explorer también PASS13/13 (135,66 s, setup dentro480 s y seis recursos ausentes). Slot transferido a Auth/base; controles UI restantes esperan.
+
+
+## Integración de base y SQL,8-oct
+
+Auth F01-02 pasó7/7 (47,34s), navegación F01-04 pasó3/3 (232,57s; cuatro roles y ocho rutas), preview F02-03 pasó31hijas más entry1/1 (76,16s). Calibración de componentes7/7 (seis defectos introducidos detectados); calibración de rol v2 pasó positivo analyst→forced-owner rechazado por el oráculo exacto→restauración positiva en62,52s. El primer rojo de rol se conserva como fallo de infraestructura, no detección. Fuentes invariantes y16recursos ausentes en la calibración final. Recibo privado fase6-base-final-local-v2.json, SHA2564a78b06a1219f503b4ba1cc528110ec67fc2129990be5fc25b04656eaf1dbb99.
+
+Cuatro matrices financieras ejecutadas juntas sin repetir la dependencia SQL:493/493PASS en529,944s, cero omitidas/canceladas. F01-03 libera servicios antes de iniciar matrices posteriores y conserva sus tres plazos de600s; los recibos dirigidos tienen nombres distintos. Cinco recibos y25IDs de recursos independientemente ausentes; proceso terminado y fuentes invariantes. Recibo privado fase6-ui/financial-matrices-v1/receipt.json SHA25617dfb635ff233e865d3a51d2da6e23a99632bf77ab1a8703de5fe368addd31ae. El rollback SQL moderno de intervenciones ya está cubierto; su flujo UI continúa pendiente.
+
+Integración local7547c21 (base24archivos y manifiesto) y a26c4c7 (lifecycle SQL y recibos). Preflight del inventario2.219fuentes PASS, manifiesto SHA2569718b9811655686c4e879f015bb13210df19b5a7812bc36abe7971ed663cdc0c. No es medición de capacidad, aceptación formal ni despliegue.
+
+
+Contrato web integrado en356c391: Next16.3.6 exacto contra package/lock, TypeScript/ESLint y tres scripts originales conservados. Calibración roja1FAIL/1PASS→verde2/2. Inventario2.220fuentes, preflightPASS, SHA256fea2a5e0cb5a016fdb9c563f239570283cd5663b43615c675ac9fbd9cfa9d014; serie nueva aún pendiente.
+
+Intervenciones F06-05 funcional14/14PASS (94,605s) y Briefs F06-06 funcional15/15PASS (79,371s), seis recursos ausentes por corrida. Junto con SQL493 cubren los sucesores modernos exigidos al retirar el prototipo service-cas. F06-08 notificaciones continúa FAIL: primer intento7PASS/2FAIL no completó transición desde la campana; diagnóstico observacional posterior sí navegó inicialmente y encontró un segundo selector que buscaba campana en una vista donde sólo existe enlace lateral oculto. Se conserva ambos rojos, se corrige el retorno mediante Administración y se investiga una posible carrera de history.replaceState antes de repetir. No hay causa confirmada aún para el primer fallo.
+
+
+## Defecto real de navegación reproducido y propuesta aislada
+
+La reproducción determinista confirmó que un replaceState financiero tardío puede cancelar la transición pendiente de Next a /notifications. Click real, respuesta workspace200 retenida, replaceState de /overview y RSC200 de destino liberada después: la página queda en /overview. Fallo preservado F06-08-navigation-controlled-v1; límites de15s intactos y seis recursos propios ausentes. No se resolvió esperando artificialmente a que terminara el resumen.
+
+Propuesta510028a en rama local fix-fase6-navigation-race y candidato separado `/private/tmp/rovaq-fase6-navigation-candidate-20261008`: WorkspaceLink usa onNavigate público para invalidar seis paneles; cada pin verifica origen y conserva fragmentos. Revisión independiente cerró un enlace omitido de ProblemsPanel; resultado estático0bloqueantes. Instalación offline, tipos y lint PASS con fuentes de componentes idénticas a la copia comprobada. La regresión original→propuesta y las seis UI afectadas siguen pendientes; todavía no integrada en la rama canónica. Manifiesto2.221fuentes, preflightPASS, SHA256334882f392cfccd5eb80ff30cd14071a80c11047cf258ac75ee476e9494adb66.
+
+Email F06-10 entry completo39/39PASS,74,49s, con25/25 puros y siete recursos propios ausentes; Push F06-11 entry51/51PASS,115,511s, seis recursos ausentes. Fuentes y temporales comprobados. No se atribuyen esos resultados a la corrección de navegación posterior.
+
+
+## Corrección integrada y cierre de regresiones UI
+
+Producto510028a integrado por fast-forward, controles6036597 y wrapper972b0f7. Las seis UI afectadas pasan83/83, notificaciones funcional15/15 y entrada compuesta30/30 (181,612s); esta última incluye7escenarios de navegación y recupera tres RSC500 mediante documento200 real. Dos arneses,12IDs propios ausentes, temporales retirados y fuentes invariantes. Se conservan rojos originales y comparación controlada con la versión anterior. [Recibo público](../../entrega/CORRECCION-NAVEGACION-2026-10-08.json). Siguiente: cuatro trabajos CI reales,55archivos de paquetes y serie final10K→50K→150K. No modifica28/60 ni valida producción.

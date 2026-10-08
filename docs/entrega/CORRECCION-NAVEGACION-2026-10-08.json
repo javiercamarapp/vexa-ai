@@ -1,0 +1,197 @@
+{
+  "schema": "rovaq-navigation-correction-v1",
+  "status": "integrated_local_regressions_pass_aggregate_pending",
+  "date": "2026-10-08",
+  "originalCandidate": "1aea895599a2aec72f56421cd62bc420b018ed8f",
+  "proposedCandidate": "510028a926484ae5bed0a1de6d5220bc47b63811",
+  "formalAcceptance": false,
+  "productionValidated": false,
+  "cause": "A late financial history.replaceState superseded the pending Next client navigation. Reproduced by holding real workspace and RSC responses.",
+  "fix": "Actual NextLink onNavigate invalidates loads in six panels; response pinning also checks its source location and preserves current fragments.",
+  "regressionSourceSha256": "cb83ca3aa5ca8108931ce512638f060371d47d02361a2220f15e0013d547482b",
+  "regressionOriginal": {
+    "receipt": "fase6-ui/navigation-original-v2/receipt.json",
+    "sha256": "5231605209dbce2fd98f4abe923801a4de09f74bc446edf2261d1fb756f64563",
+    "candidate": "rovaq-fase6-candidate-20261008",
+    "seconds": 96.492,
+    "exitCode": 1,
+    "tests": {
+      "tests": 7,
+      "pass": 2,
+      "fail": 5,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "ownResourceIdsIndependentlyAbsent": 6,
+    "sourcesUnchanged": true,
+    "controlsUnchanged": true
+  },
+  "regressionFixed": {
+    "receipt": "fase6-ui/navigation-fixed-v1/receipt.json",
+    "sha256": "1d3b936b501da0ef858feaa5b4f006c3d635b43e07a6d2c76445131a7d440671",
+    "candidate": "rovaq-fase6-navigation-candidate-20261008",
+    "seconds": 53.432,
+    "exitCode": 0,
+    "tests": {
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "ownResourceIdsIndependentlyAbsent": 6,
+    "sourcesUnchanged": true,
+    "controlsUnchanged": true
+  },
+  "affected": {
+    "F06-08": {
+      "receipt": "fase6-ui/F06-08-navigation-fixed-v1/receipt.json",
+      "sha256": "4364e81eefe103aef4a3a0278a63c7659d89d5a26ca690a0b4652690349973f9",
+      "candidate": "rovaq-fase6-navigation-candidate-20261008",
+      "seconds": 57.128,
+      "exitCode": 0,
+      "tests": {
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "ownResourceIdsIndependentlyAbsent": 6,
+      "sourcesUnchanged": true,
+      "controlsUnchanged": true
+    },
+    "F06-01": {
+      "receipt": "fase6-ui/F06-01-navigation-fixed-v1/receipt.json",
+      "sha256": "8a2debe8d8e2447dbdfb3bf5b75e1c3befba8d0ec38fe8cdfa28faa2dd53f55f",
+      "candidate": "rovaq-fase6-navigation-candidate-20261008",
+      "seconds": 63.829,
+      "exitCode": 0,
+      "tests": {
+        "tests": 16,
+        "pass": 16,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "ownResourceIdsIndependentlyAbsent": 6,
+      "sourcesUnchanged": true,
+      "controlsUnchanged": true
+    },
+    "F06-02": {
+      "receipt": "fase6-ui/F06-02-navigation-fixed-v1/receipt.json",
+      "sha256": "9ee6ad09a3cbe2244629161f21fd6e975a9c6aa58365cb1c8103c805a4ef2544",
+      "candidate": "rovaq-fase6-navigation-candidate-20261008",
+      "seconds": 78.635,
+      "exitCode": 0,
+      "tests": {
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "ownResourceIdsIndependentlyAbsent": 6,
+      "sourcesUnchanged": true,
+      "controlsUnchanged": true
+    },
+    "F06-03": {
+      "receipt": "fase6-ui/F06-03-navigation-fixed-v1/receipt.json",
+      "sha256": "b18b5414f813f6e3b878e63eed679992c6d10a83223c367a841204474d1bb359",
+      "candidate": "rovaq-fase6-navigation-candidate-20261008",
+      "seconds": 94.402,
+      "exitCode": 0,
+      "tests": {
+        "tests": 14,
+        "pass": 14,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "ownResourceIdsIndependentlyAbsent": 6,
+      "sourcesUnchanged": true,
+      "controlsUnchanged": true
+    },
+    "F06-04": {
+      "receipt": "fase6-ui/F06-04-navigation-fixed-v1/receipt.json",
+      "sha256": "665e02f65db83b46b3f0bf57770940bfd70c52c563407860d132ac917722c446",
+      "candidate": "rovaq-fase6-navigation-candidate-20261008",
+      "seconds": 207.357,
+      "exitCode": 0,
+      "tests": {
+        "tests": 13,
+        "pass": 13,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "ownResourceIdsIndependentlyAbsent": 6,
+      "sourcesUnchanged": true,
+      "controlsUnchanged": true
+    },
+    "F06-05": {
+      "receipt": "fase6-ui/F06-05-navigation-fixed-v1/receipt.json",
+      "sha256": "81ccf8ec5c03c573c90df8d3d50be28768e593b1f28e753dfe38b92cce8dbbf0",
+      "candidate": "rovaq-fase6-navigation-candidate-20261008",
+      "seconds": 146.433,
+      "exitCode": 0,
+      "tests": {
+        "tests": 14,
+        "pass": 14,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "ownResourceIdsIndependentlyAbsent": 6,
+      "sourcesUnchanged": true,
+      "controlsUnchanged": true
+    },
+    "F06-06": {
+      "receipt": "fase6-ui/F06-06-navigation-fixed-v1/receipt.json",
+      "sha256": "8a274d275d157d1c4d2bba9848121251e003e1daa77f46af7afd2e10c1468103",
+      "candidate": "rovaq-fase6-navigation-candidate-20261008",
+      "seconds": 125.447,
+      "exitCode": 0,
+      "tests": {
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "ownResourceIdsIndependentlyAbsent": 6,
+      "sourcesUnchanged": true,
+      "controlsUnchanged": true
+    }
+  },
+  "qualityReceiptSha256": "159848b127f73974b14696ff28743f7d7d54feb7e75dd639de82bcce244fa362",
+  "independentReviewReceiptSha256": "2867906590058ad0d87b4dd6ebe6d22aa271a3d168de08e3ca346e7945ad6572",
+  "pending": [
+    "Aggregate CI, full package suite and fresh capacity series",
+    "External evidence and human acceptance remain required for complete delivery"
+  ],
+  "limits": [
+    "Synthetic fixtures with real local Auth/SQL/Storage/Chromium; no external provider or human acceptance",
+    "Prior failures preserved; no deadlines increased",
+    "Prior SQL/schema/CRM/recovery evidence is reused only where the reviewed sources are identical, not relabeled as a new full binary test"
+  ],
+  "productCommit": "510028a926484ae5bed0a1de6d5220bc47b63811",
+  "controlCommit": "6036597",
+  "finalRegressionSourceSha256": "a28a426d5c59fa6fff7e3790727243a24f117db286e58c324a32984303009552",
+  "composedEntry": {
+    "receipt": "fase6-ui/F06-08-full-final-v1/receipt.json",
+    "sha256": "86ad870a4501d5c3593fa408e9b38da646149ac8f64d288f99597c7d7f429b36",
+    "seconds": 181.612,
+    "exitCode": 0,
+    "tests": {
+      "tests": 30,
+      "pass": 30,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "ownResourceIdsIndependentlyAbsent": 12,
+    "sourcesUnchanged": true,
+    "controlsUnchanged": true
+  }
+}

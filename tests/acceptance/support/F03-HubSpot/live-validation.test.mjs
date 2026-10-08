@@ -20,6 +20,16 @@ const expected={origin:'authorized-ui-or-export',account_id:'123',reviewer:'synt
 const exportPath=path.join(dir,'export.json');fs.writeFileSync(exportPath,JSON.stringify(expected),{mode:0o600});
 const c={version:'v4',authentication:'oauth',app_id:'456',authorization_ref:'SYNTHETIC-LOCAL-REVIEW-NOT-APPROVAL',account_id:'123',reviewer:expected.reviewer,implementer:'synthetic-author',expires_at:new Date(Date.now()+60000).toISOString(),reconciliation_file:exportPath,reconciliation_sha256:createHash('sha256').update(fs.readFileSync(exportPath)).digest('hex'),tenant_id:'11111111-1111-4111-8111-111111111111',connection_id:'22222222-2222-4222-8222-222222222222'};
 if(mode.startsWith('private-'))c.authentication='private_app';
+if(mode==='identity-implementer-missing')delete c.implementer;
+if(mode==='identity-implementer-null')c.implementer=null;
+if(mode==='identity-implementer-number')c.implementer=42;
+if(mode==='identity-implementer-array')c.implementer=[];
+if(mode==='identity-implementer-empty')c.implementer='';
+if(mode==='identity-implementer-whitespace')c.implementer='   ';
+if(mode==='identity-implementer-same')c.implementer=c.reviewer;
+if(mode==='identity-implementer-same-padded')c.implementer='  '+c.reviewer+'  ';
+if(mode==='identity-reviewer-whitespace')c.reviewer='   ';
+
 if(mode==='legacy-v3')c.version='v3';if(mode==='missing-mode')delete c.authentication;if(mode==='wrong-mode')c.authentication='auto';if(mode==='client-id')c.client_id='SYNTHETIC';if(mode==='app-number')c.app_id=456;if(mode==='expired')c.expires_at=new Date(Date.now()-1000).toISOString();if(mode==='long-approval')c.expires_at=new Date(Date.now()+25*3600000).toISOString();
 if(mode.endsWith('timeout')){const original=setTimeout;globalThis.setTimeout=(fn,ms,...args)=>original(fn,Math.min(ms,25),...args);}
 const cfg=path.join(dir,'config.json');fs.writeFileSync(cfg,JSON.stringify(c),{mode:0o600});process.env.VEXA_HUBSPOT_S01_CONFIG=cfg;process.env.VEXA_HUBSPOT_TOKEN='SYNTHETIC-NOT-A-PROVIDER-TOKEN';process.env.VEXA_HUBSPOT_RECONCILIATION_KEY=key;process.env.VEXA_HUBSPOT_APPROVAL_REFERENCE=mode==='mismatched-approval'?'SYNTHETIC-WRONG-APPROVAL':c.authorization_ref;
@@ -52,3 +62,5 @@ test('supervisor approval mismatch fails before ANY provider request',()=>{const
 for(const mode of ['private-valid','oauth-valid'])test('explicit authentication '+mode+' reconciles 20 SYN threads',()=>{const out=runScopedProbe(mode);assert.equal(out.result?.status,'passed',out.error);assert.equal(out.seen.filter(p=>p.startsWith('/oauth/')).length,1);assert.equal(out.seen.filter(p=>p.endsWith('/messages')).length,20);});
 for(const mode of ['legacy-v3','missing-mode','wrong-mode','client-id','app-number','expired','long-approval'])test('configuration fails before metadata: '+mode,()=>{const out=runScopedProbe(mode);assert.ok(out.error);assert.deepEqual(out.seen,[]);});
 for(const mode of ['private-wrong-hub','private-wrong-app','private-app-string','private-hub-string','private-app-unsafe','private-app-null','private-app-zero','private-app-negative','private-app-object','private-oauth-shape','oauth-private-shape','oauth-token-type','private-scope-missing','private-scope-type','private-redirect','private-redirected','private-http','private-oversize','private-invalid-json','private-fetch-timeout','private-body-timeout'])test('metadata rejection with no fallback or conversations: '+mode,()=>{const out=runScopedProbe(mode);assert.match(out.error,/^S01_/);assert.equal(out.seen.length,1);assert.ok(out.seen[0].startsWith('/oauth/'));assert.ok(!JSON.stringify(out).includes('SYNTHETIC_SECRET_SENTINEL'));});
+
+for(const mode of ['identity-implementer-missing','identity-implementer-null','identity-implementer-number','identity-implementer-array','identity-implementer-empty','identity-implementer-whitespace','identity-implementer-same','identity-implementer-same-padded','identity-reviewer-whitespace'])test('explicit independent identity rejected before metadata: '+mode,()=>{const out=runScopedProbe(mode);assert.equal(out.error,'S01_INDEPENDENT_REVIEWER_REQUIRED');assert.deepEqual(out.seen,[]);});

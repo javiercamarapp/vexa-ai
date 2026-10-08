@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "443d91fd2254bc30d1a963d6b087623b38f7e9bb",
-  "composition": "Phase-five CRM bounded hosted loop (100 units within unchanged 15-second deadline) and durable provider Retry-After. Fresh local synthetic ingestion series required after source changes; prior Phase-three capacity measurements retain their original scope and are not reused. Measure 10K then 50K then 150K on immutable sources and unchanged job deadlines.",
+  "baselineSha": "aff0517f603eac65ccf47e349e176a0b53b82d42",
+  "composition": "Phase-five CRM bounded hosted loop and durable Retry-After, plus fail-closed explicit independent reviewer/implementer identities in HubSpot acceptance control. Prior capacity reports remain tied to aff0517; this changed pinned control requires a fresh immutable 10K then 50K then 150K series with unchanged job deadlines before final closure.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -8717,11 +8717,11 @@
     },
     {
       "path": "tests/acceptance/support/F03-HubSpot/live-validation.test.mjs",
-      "sha256": "2f86eb3a38e5001909dbe7dc473282cf7a75efa427a014d73e62c8eec430b008"
+      "sha256": "219d51eabd4cbce9b4e436fa64597856b406252a4de7616dd867cc45d40a0f16"
     },
     {
       "path": "tests/acceptance/support/F03-HubSpot/live.mjs",
-      "sha256": "0dd6ffbed660f1fbe66f0925540c6c23d92bb6dad1e86fa8c168bac308eb2ca1"
+      "sha256": "e8e3c67de4d1c34a0af9d7d32c4030ad54d16495fc0c8a1aa0b53eff292b5c4a"
     },
     {
       "path": "tests/acceptance/support/F03-HubSpot/local.test.mjs",

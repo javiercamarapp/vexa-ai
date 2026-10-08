@@ -1,7 +1,7 @@
 {
   "schema": "vexa-public-load-source-v1",
-  "baselineSha": "74b6ff73c54e5c15b45839fa99e994921054e129",
-  "composition": "Phase-six navigation correction and reviewed current base/SQL/UI controls; Node HTTP tests resolve the official Next server marker in their own server context. Full CI and a fresh 10K/50K/150K capacity series required; earlier results remain bound to their original sources.",
+  "baselineSha": "baf62b180777a215408f7cfb0c1fe23a2a209c61",
+  "composition": "Phase-six reviewed navigation correction and current base/SQL/UI/CI controls. Offline build scanning proves configuration absent and recognizes exact sanitized API contracts while retaining secret detection. Full CI and a fresh 10K/50K/150K series remain required; old measurements stay bound to their sources.",
   "files": [
     {
       "path": "apps/web/ENVIRONMENT.md",
@@ -8841,7 +8841,7 @@
     },
     {
       "path": "tests/acceptance/support/ci/README.md",
-      "sha256": "9d1abf54af6db7f03d4b72a7124446887163cc9cca1363f1217de9f3723edb16"
+      "sha256": "a6c111b98e85174f0cfe9bd9c0f3735d0ef59fe1644f3896dc4df4e33007d56c"
     },
     {
       "path": "tests/acceptance/support/ci/REPORT.md",
@@ -8849,7 +8849,7 @@
     },
     {
       "path": "tests/acceptance/support/ci/artifact-secrets.mjs",
-      "sha256": "b4b4360dc1b8ecb59cdd53f5eba9a533637cf3edffef83097d15487d8697ca01"
+      "sha256": "8ede853ca158c8286a86c79aa37dcc9cc709a39b4f8b0007ebdb699d331bbbe3"
     },
     {
       "path": "tests/acceptance/support/ci/bootstrap.py",
@@ -8866,6 +8866,22 @@
     {
       "path": "tests/acceptance/support/ci/lifecycle.py",
       "sha256": "ca05606aeaeac0df5d926e428e94907eb7a30e436d82ec6c5f07dfebeac0d4a8"
+    },
+    {
+      "path": "tests/acceptance/support/ci/offline-environment.mjs",
+      "sha256": "c4f97e9df2575e2b09ff58d240c37074bb35d01b024271fdd65b3b8206ea7618"
+    },
+    {
+      "path": "tests/acceptance/support/ci/offline-environment.test.mjs",
+      "sha256": "b7f6ba4f6a4d62e1783f095f058786ca329f6ed61cf6767020388b1313305624"
+    },
+    {
+      "path": "tests/acceptance/support/ci/offline-legacy.mjs",
+      "sha256": "affad663d1f9a72c8dfa4cc4b8040ef1111147adf7d3bea8123870e9621625c8"
+    },
+    {
+      "path": "tests/acceptance/support/ci/offline-legacy.test.mjs",
+      "sha256": "6d221de096bf37c05e97f3e0d710be9f4e5a197e42cdf74309d03dbe72b0871b"
     },
     {
       "path": "tests/acceptance/support/ci/resources.mjs",
@@ -8893,7 +8909,7 @@
     },
     {
       "path": "tests/acceptance/support/ci/web.mjs",
-      "sha256": "7fdfc65ae6d819d81d4df12090cd86891127a5145303baaf2154bb537936c183"
+      "sha256": "84444f0034b3eeb0f96366c692d77129a9a52d1a87b38860bac75f1fedb86b80"
     }
   ]
 }

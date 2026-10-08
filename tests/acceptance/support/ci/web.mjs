@@ -8,6 +8,7 @@ import {spawn,spawnSync} from 'node:child_process';
 import {copyBuildInputs,buildEnvironment} from '../../scaffold-copy.mjs';
 import {canaries,inspectPublished,redact} from './artifact-secrets.mjs';
 import {validateWebPackage} from './web-contract.mjs';
+import {assertOfflineBuild} from './offline-environment.mjs';
 const candidate=process.argv[2];
 const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'vexa-ci-web-'));
 const fixture=canaries();
@@ -17,6 +18,7 @@ try {
  validateWebPackage(pkg);
  copyBuildInputs(candidate,tmp);const env=buildEnvironment(process.env,tmp);const cwd=path.join(tmp,'apps/web');
  env.SUPABASE_SERVICE_ROLE_KEY=fixture.service;env.VEXA_SERVER_ONLY_CANARY=fixture.server;
+ assertOfflineBuild(env,tmp);
  fs.mkdirSync(path.join(cwd,'public'),{recursive:true});
  const publicName=`ci-public-${fixture.nonce}.txt`;
  fs.writeFileSync(path.join(cwd,'public',publicName),fixture.anon,{mode:0o600});
@@ -26,19 +28,18 @@ try {
  const control=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../../..');
  for(const rel of ['apps/web/tests/auth-http.test.ts','packages/platform/tests/session.test.ts'])fs.copyFileSync(path.join(control,rel),path.join(tmp,rel));
  run(process.execPath,['--experimental-strip-types','--test','--test-reporter=tap','tests/session.test.ts'],path.join(tmp,'packages/platform'));
- run(process.execPath,['--test','--test-reporter=tap',fileURLToPath(new URL('./server-context.test.mjs',import.meta.url))]);
+ run(process.execPath,['--test','--test-reporter=tap',fileURLToPath(new URL('./server-context.test.mjs',import.meta.url)),fileURLToPath(new URL('./offline-environment.test.mjs',import.meta.url)),fileURLToPath(new URL('./crm-unconfigured.test.mjs',import.meta.url)),fileURLToPath(new URL('./offline-legacy.test.mjs',import.meta.url))]);
  run(process.execPath,['--import',fileURLToPath(new URL('./server-context.mjs',import.meta.url)),'--import','tsx','--test','--test-reporter=tap','tests/auth-http.test.ts']);
  const tool=(file,args)=>run(process.execPath,[path.join(tmp,'node_modules',file),...args]);
  tool('next/dist/bin/next',['typegen']);tool('typescript/bin/tsc',['--noEmit']);tool('eslint/bin/eslint.js',['.','--max-warnings=0']);tool('next/dist/bin/next',['build','--webpack']);
  assert.ok(fs.readFileSync(path.join(cwd,'.next/BUILD_ID'),'utf8').trim());
  // Production smoke: real build, own ephemeral loopback port, no external service credentials.
+ assertOfflineBuild(env,tmp);
  const socket=net.createServer();await new Promise(r=>socket.listen(0,'127.0.0.1',r));const port=socket.address().port;await new Promise(r=>socket.close(r));
  child=spawn(process.execPath,[path.join(tmp,'node_modules/next/dist/bin/next'),'start','--hostname','127.0.0.1','--port',String(port)],{cwd,env,stdio:'ignore'});
  let ok=false;for(let i=0;i<100;i++){assert.equal(child.exitCode,null,'BUILD_START_EXIT');try{const r=await fetch(`http://127.0.0.1:${port}/api/health/version`,{redirect:'manual',signal:AbortSignal.timeout(1000)});if(r.status===200){ok=true;break;}}catch{}await new Promise(r=>setTimeout(r,100));}assert.ok(ok,'BUILD_API_HEALTH');
  console.log('BUILD_API_HEALTH:200');
  const origin=`http://127.0.0.1:${port}`;
- const configurationKeys=['NEXT_PUBLIC_SUPABASE_URL','NEXT_PUBLIC_SUPABASE_ANON_KEY','VEXA_DATABASE_URL','VEXA_IMPORT_CONFIRMATION_SECRET'];
- assert.ok(configurationKeys.every(key=>env[key]===undefined),'OFFLINE_SMOKE_MUST_BE_UNCONFIGURED');
  const result=await inspectPublished(cwd,origin,fixture,{allowUnconfiguredImports:true});
  const publicResponse=await fetch(`${origin}/${publicName}`,{signal:AbortSignal.timeout(10000)});
  assert.ok(publicResponse.status===200 && await publicResponse.text()===fixture.anon,'PUBLIC_ANON_CONTROL');

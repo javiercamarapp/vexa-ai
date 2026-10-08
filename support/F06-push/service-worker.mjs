@@ -11,7 +11,7 @@ export async function exerciseWorker(source,{base,cookie,expectedVisible}){
  const dispatch=async payload=>{handlers.get('push')({data:{json:()=>payload},waitUntil:p=>waited=p});await waited;};
  await dispatch({...scope,title:'SYN PII must be ignored',body:'tenant secret',href:'https://outside.invalid'});
  assert.equal(shown.length,expectedVisible?1:0);
- if(expectedVisible){assert.deepEqual(JSON.parse(JSON.stringify(shown[0])),{title:'VEXA',options:{body:'Tienes avisos disponibles en VEXA.',tag:'vexa-notifications',data:{href:'/notifications'}}});}
+ if(expectedVisible){assert.deepEqual(JSON.parse(JSON.stringify(shown[0])),{title:'Rovaq AI',options:{body:'Tienes avisos disponibles en Rovaq AI.',tag:'vexa-notifications',data:{href:'/notifications'}}});}
  const count=shown.length;for(const payload of [{...scope,version:scope.version+1},{...scope,subscriptionId:'99999999-9999-4999-8999-999999999999'},{title:'SYN missing binding'}]){await dispatch(payload);assert.equal(shown.length,count,'PUSH_STALE_OR_FOREIGN_BINDING_HIDDEN');}
  handlers.get('notificationclick')({notification:{data:{href:'https://outside.invalid'},close:()=>closed++},waitUntil:p=>waited=p});await waited;assert.equal(closed,1);assert.deepEqual(opened,[base+'/notifications']);return{shown:shown.length,opened};
 }

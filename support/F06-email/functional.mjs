@@ -109,7 +109,7 @@ test('F06-10 real local SMTP and durable provider receipt lifecycle',{timeout:60
   await emailSecuritySql(t,h);
   await emailPreSend(t,h,evidence);
   await m.close();m=null;
-  await t.test('actual SMTP captured HTML keeps VEXA appearance and accessibility in available declared browser engines',async()=>{
+  await t.test('actual SMTP captured HTML keeps Rovaq AI appearance and accessibility in available declared browser engines',async()=>{
    await emailPresentation421({templatePath:path.join(h.built,'packages/notifications/email-template.mjs'),evidence,scope:h,capturedHtml:fs.readFileSync(path.join(evidence,'SYN-email.html'),'utf8')});h.verifySources();
   });
  }finally{if(m)await m.close();if(h)await h.close();console.log('F0610_EVIDENCE:'+evidence);}

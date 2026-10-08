@@ -162,9 +162,7 @@
     "business_mutations": 0,
     "production_validated": false
   },
-  "local_work_pending": [
-    "Revisar la preparación de publicación y sus guardas; no ejecutar publicación ni activaciones externas sin condiciones y autorización específicas."
-  ],
+  "local_work_pending": [],
   "historical_evidence_note": "Los checkpoints y métricas remotas con fechas anteriores se conservan como historia de sus SHA; no acreditan el código local actual. La restricción antigua notification_review ya no es un bloqueo activo, y los seis alcances técnicos históricos están integrados.",
   "previous_audit_checkpoint": {
     "date": "2026-09-29",
@@ -187,5 +185,17 @@
     "productionImported": false,
     "startupPolicy": "one explicitly approved canonical heartbeat, temporary worker only",
     "evidence": "PILOTO-HISTORICO-100-2026-10-08.json"
+  },
+  "local_preparation_note": "Cola local de este corte terminada, incluida corrección del manifiesto. No equivale a aceptación completa: quedan condiciones externas y humanas en blockers, y verificaciones posteriores a sus autorizaciones.",
+  "publication_preparation": {
+    "status": "local_preparation_verified_external_conditions_pending",
+    "source_sha": "73fb9f390ba28d91389a425965f04520e689f4d4",
+    "history_commits": 351,
+    "exported_files": 3297,
+    "publication_executed": false,
+    "deployment_executed": false,
+    "evidence": "PUBLICACION-PREPARADA-2026-10-08.json",
+    "inventoried_migrations": 43,
+    "correction_tests_passed": 7
   }
 }

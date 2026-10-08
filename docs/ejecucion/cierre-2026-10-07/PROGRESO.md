@@ -92,3 +92,11 @@ CI4/4,paquetes586/586,UI83/83+30/30ycapacidad210KSYNcompleta cerrados en sus alc
 ## 8-oct, 11:01 UTC — Ejecutor acotado del piloto histórico preparado
 
 V6 privada revisada sin bloqueantes: 44/44 ligeras y 8/8 integradas (siete casos), Auth/Storage worker/PostgreSQL/RLS locales, 100 filas SYN cotejadas, replay sin duplicar, startup único sólo NO_HEARTBEAT y cero import jobs activos en todo el tenant. Root cotejó 12 archivos de control, seis artefactos, 3.285 fuentes y ausencia de cinco IDs/puertos. Copia 6e8 instalada offline. Cinco pares de contenido igual con IDs distintos quedan explícitos; no se fusionan ni se dan por duplicados confirmados. Sin ejecución productiva. [Comando y evidencia](../../entrega/PILOTO-HISTORICO-100-2026-10-08.md). Aprobación específica solicitada; 28/60 formales, sin nueva aceptación.
+
+## 8-oct, 11:12 UTC — Preparación de publicación
+
+Inspección existente del publicador350/350PASS en75,241s, exportación exacta2e38f5b de3.297archivos, manifiesto de fuente bloqueado por condiciones reales. Apps/packages sin delta respecto6e8. Lecturas GitHub/Vercel nuevas sin mutaciones: Actions apagado, mainb0be6dfsinprotección; createDeploymentsenabled, sin link en respuesta, no acreditada exclusión de rama; cronCRM5min existente. No se ejecuta publisher/deploy. Cola local de preparación cerrada;28/60formal, aprobaciones y actos humanos pendientes. [Detalle](../../entrega/PUBLICACION-PREPARADA-2026-10-08.md).
+
+## 8-oct, 11:23 UTC — Corrección del manifiesto e integración
+
+La revisión encontró dos migraciones de timestamp omitidas por el filtro de cuatro dígitos. FAIL original preservado. Corrección73fb9f3 revisada sin hallazgos e integrada por fast-forward: cuatro archivos, 7/7 pruebas, dos fallos reproducidos con generador anterior, 43 migraciones y sus hashes comprobados; control externo rechaza inventario de sólo41. Sin SQL ni cambios de aplicación. Exportación nueva e inventario sobre SHA limpio, inspección de historial ampliada a351 por diferencia exacta de ancestros. El ensayo gestionado segmentado no se ejecutó ni se convierte en cobertura de43. Cola local cerrada;28/60 formal y condiciones externas pendientes.

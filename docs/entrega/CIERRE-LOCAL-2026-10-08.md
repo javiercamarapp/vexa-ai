@@ -25,3 +25,5 @@ Para cerrar el100% faltan estas condiciones reales:
 Permanecen cinco alertas altas de dependencias de desarrollo registradas en la auditoría; la auditoría de dependencias de producción del7-oct no reportó alertas. No se convierte eso en garantía de seguridad ni se oculta la deuda.
 
 Evidencia: [CI y paquetes](FASE-6-CI-2026-10-08.json), [capacidad final](FASE-6-CAPACIDAD-2026-10-08.json), [cobertura residual](FASE-6-COBERTURA-RESIDUAL-2026-10-08.json), [navegación](CORRECCION-NAVEGACION-2026-10-08.json), [fallos originales](RECONCILIACION-FALLOS-2026-10-08.json), [auditoría](AUDITORIA-20-RUBROS-2026-10-08.md) y [acta por capas](acta-cierre.json).
+
+La preparación de publicación también está cerrada en su alcance: historial de 351 commits inspeccionado, exportación de 3.297 archivos y manifiesto corregido con 43 migraciones. La corrección pasó 7/7 pruebas y revisión independiente. No es un bundle desplegado ni una revisión global aceptada. [Guardas y condiciones pendientes](PUBLICACION-PREPARADA-2026-10-08.md).

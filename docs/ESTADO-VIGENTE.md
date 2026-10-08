@@ -84,3 +84,8 @@ Serie fresca contra6e8b2b4:10.000en96,38s;50.000en682,32s;150.000en1.521,95s de 
 
 
 Cierre de cobertura residual:60unidades aprobadas y2casosHTTP aprobados tras revisar el control anónimo. El intento original1/2 permaneceFAIL; no se cambió el producto. El control vigente verifica elPOST de Google en su propio formulario y ausencia de logout sin sesión; logout autenticado conserva su evidencia de navegador/Auth real. [Recibo y límites](entrega/FASE-6-COBERTURA-RESIDUAL-2026-10-08.json). [Resumen local y pendientes para el100%](entrega/CIERRE-LOCAL-2026-10-08.md).
+
+
+## Publicación preparada — corte 11:23 UTC
+
+Historial de 351 commits inspeccionado con las guardas existentes; exportación pública de 3.297 archivos del SHA73fb9f3 preparada. La revisión detectó dos migraciones omitidas del manifiesto: corrección integrada, 43 inventariadas y 7/7 pruebas aprobadas, sin cambiar aplicación ni SQL. GitHub sigue en b0be6df, Actions desactivado y main sin protección. Vercel permite crear despliegues y conserva el cron CRM cada cinco minutos; la respuesta no acredita una conexión Git ni una exclusión de rama. No hubo publicación. El manifiesto conserva bloqueos por evidencias y autorizaciones reales pendientes. [Preparación, límites y secuencia](entrega/PUBLICACION-PREPARADA-2026-10-08.md).

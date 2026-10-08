@@ -1,0 +1,114 @@
+{
+  "schema": "publication-preparation-v1",
+  "date": "2026-10-08",
+  "source_sha": "73fb9f390ba28d91389a425965f04520e689f4d4",
+  "verified_product_candidate": "6e8b2b4203f948408171612080b0bc62fadc19be",
+  "runtime_diff_paths": [
+    "packages/release/README.md",
+    "packages/release/manifest.mjs",
+    "packages/release/manifest.test.mjs"
+  ],
+  "history": {
+    "commits": 351,
+    "passed": true,
+    "scope": "existing publisher inspect_tree only; three credential patterns, path/type restrictions",
+    "method": "350 original commits plus one inspected correction; exact ancestry difference checked"
+  },
+  "export": {
+    "files": 3297,
+    "bytes": 52060160,
+    "is_deployment_bundle": false
+  },
+  "github": {
+    "public": true,
+    "is_fork": false,
+    "actions_enabled": false,
+    "main_protected": false,
+    "rulesets": 0,
+    "main_sha": "b0be6df86a2aad53f46bb6054e192c94d62b13e3"
+  },
+  "vercel": {
+    "node": "22.x",
+    "root": "apps/web",
+    "createDeployments": "enabled",
+    "git_link_in_response": false,
+    "branch_exclusion_verified": false,
+    "existing_crm_cron": "*/5 * * * *"
+  },
+  "release_manifest_status": "blocked",
+  "publication_executed": false,
+  "deployment_executed": false,
+  "external_mutations": false,
+  "formal_accepted": 28,
+  "artifacts": [
+    {
+      "file": "github-readonly.json",
+      "sha256": "204b41ee51145f581aa641ccdf9558bf08bbb6fc18fd840f721fee7ab71931a3"
+    },
+    {
+      "file": "vercel-readonly.json",
+      "sha256": "9181c551c57076a242c8eff0c17ed532fa5878f958c8f945871fb0e784f0cbea"
+    },
+    {
+      "file": "history-inspection.json",
+      "sha256": "02364794697db434600f31452f21cb68d476677ad845f8993fd88e9c3c0e33ef"
+    },
+    {
+      "file": "source-export-receipt.json",
+      "sha256": "9a603d5a1d90521720d160dcf5efd2b4f80e03582a0930bbdf40b11e441a1dce"
+    },
+    {
+      "file": "source-manifest-2e38f5b.json",
+      "sha256": "94fdf7458e504448775571d5e4203f2a2fc3c2d9c6813b39fc4071f0e45113dc"
+    },
+    {
+      "file": "public-source-2e38f5b.tar",
+      "sha256": "debe38f145734599f259da9b2099ecc3d11b0d54f214148cd9bb271751d62357"
+    },
+    {
+      "file": "independent-review-2e38f5b-v1.json",
+      "sha256": "581ca10a9ac919d27a05561da8f72448249ab8d4aecd63940f62ee488558d9e1"
+    },
+    {
+      "file": "v2-73fb9f3/receipt.json",
+      "sha256": "5caa3534f12fec6598fef5dd155d3d1eac45ed4c4586dc12dbe458cf3454533b"
+    },
+    {
+      "file": "v2-73fb9f3/source-manifest.json",
+      "sha256": "440aba9091c62bd14c7e8450f37ed5c24ec03061819ddb6409802ecc6b62aaa4"
+    },
+    {
+      "file": "v2-73fb9f3/public-source.tar",
+      "sha256": "d38fb8e857e61e3dec2519b164dc41778afdff5b00f05c231a4445659275fa7f"
+    },
+    {
+      "file": "receipts/release-migration-inventory/review.json",
+      "sha256": "d6ee0791bf3531af9ab1044ae5de5a35aac92cdc3bd6850c2f5ee0fee0e2d355"
+    },
+    {
+      "file": "receipts/release-migration-inventory/independent-review-73fb9f3.json",
+      "sha256": "46438ef41a66176216330d3bad7047be1709ff85ff31ed119ab94a7c7499b2c0"
+    }
+  ],
+  "status": "local_preparation_verified_external_conditions_pending",
+  "release_manifest_migrations": 43,
+  "tracked_migrations": 43,
+  "known_issue": "Initial manifest omitted two timestamp migrations; corrected in 73fb9f3, original FAIL and manifest preserved.",
+  "initial_source_sha": "2e38f5b53503de398ecef5f55ffe4a0db96a8f11",
+  "runtime_diff_note": "Only release inventory, its test and README differ in apps/packages from 6e8; application code and SQL unchanged.",
+  "correction": {
+    "source": "73fb9f390ba28d91389a425965f04520e689f4d4",
+    "red": {
+      "pass": 5,
+      "fail": 2
+    },
+    "green": {
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0
+    },
+    "independent_findings": 0,
+    "sql_applied": false,
+    "managed_postgres_suite_rerun": false
+  }
+}

@@ -16,7 +16,7 @@ async function executeLive(){
  requireThat(c.version==='v4'&&typeof c.authorization_ref==='string'&&c.authorization_ref.length>10,'S01_AUTHORIZATION_REFERENCE_REQUIRED');
  requireThat(['private_app','oauth'].includes(c.authentication),'S01_AUTHENTICATION_MODE_REQUIRED');
  requireThat(typeof c.account_id==='string'&&/^[1-9]\d*$/.test(c.account_id)&&typeof c.app_id==='string'&&/^[1-9]\d*$/.test(c.app_id)&&!Object.hasOwn(c,'client_id'),'S01_EXPECTED_ACCOUNT_APP_REQUIRED');
- requireThat(typeof c.reviewer==='string'&&c.reviewer.length>2&&c.reviewer!==c.implementer,'S01_INDEPENDENT_REVIEWER_REQUIRED');
+ requireThat(typeof c.reviewer==='string'&&c.reviewer.trim().length>2&&typeof c.implementer==='string'&&c.implementer.trim().length>0&&c.reviewer.trim()!==c.implementer.trim(),'S01_INDEPENDENT_REVIEWER_REQUIRED');
  requireThat(Date.parse(c.expires_at)>Date.now()&&Date.parse(c.expires_at)<Date.now()+24*3600000,'S01_APPROVAL_WINDOW_REQUIRED');
  requireThat(typeof process.env.VEXA_HUBSPOT_APPROVAL_REFERENCE==='string'&&process.env.VEXA_HUBSPOT_APPROVAL_REFERENCE.length>0&&c.authorization_ref===process.env.VEXA_HUBSPOT_APPROVAL_REFERENCE,'S01_SUPERVISOR_APPROVAL_MISMATCH');
  const {value:expected,bytes}=privateJSON(c.reconciliation_file);

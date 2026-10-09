@@ -1,3 +1,7 @@
+## Piloto histórico — 8 de octubre, 23:58 UTC
+
+**100/100 mensajes persistidos y verificados**, sin rechazos, duplicados ni pendientes. El timeout original de cierre se conserva; la conciliación independiente acredita los datos y estados terminales. Temporal retirado, sin IA ni despliegue nuevo. Aceptación formal29/60. [Evidencia](docs/entrega/PILOTO-HISTORICO-100-PERSISTIDO-2026-10-08.json).
+
 ## Estado vigente — 8 de octubre de 2026
 
 **Corte posterior del 8-oct: 29/60 aceptadas (48,3 %).** HubSpot F03-01 completó verificación y aceptación limpia;31pendientes. Fases4–6 y producción siguen abiertas. [Evidencia de aceptación](docs/entrega/HUBSPOT-S01-ACEPTADO-2026-10-08.json). Los cortes anteriores conservan sus cifras históricas.

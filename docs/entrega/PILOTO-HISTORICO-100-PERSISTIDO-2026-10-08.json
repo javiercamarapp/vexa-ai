@@ -1,0 +1,42 @@
+{
+  "schema": "senix-pilot100-persistence-closure-v1",
+  "date_utc": "2026-10-08",
+  "data_persistence_complete": true,
+  "original_executor_passed": false,
+  "original_executor_timeout_preserved": true,
+  "formal_accepted_tasks": 29,
+  "formal_total_tasks": 60,
+  "counts": {"total": 100, "accepted": 100, "rejected": 0, "duplicates": 0, "pending": 0},
+  "independent_readback": {
+    "matched": 100,
+    "identity_content_mapping_and_provenance_verified": true,
+    "terminal_job_import_attempt_and_outbox_verified": true,
+    "checkpoint": {"done": true, "offset": 100},
+    "elapsed_seconds": 1.161,
+    "receipt_sha256": "09520c4b15d7a3f3e97e7b7a32773733556cfd3bc184e93968466024133b90a6"
+  },
+  "timing": {
+    "database_attempt_started_to_finished_seconds": 8.307729,
+    "original_executor_total_seconds": 27.139,
+    "original_consume_watchdog_seconds": 20,
+    "original_executor_sla_passed": false,
+    "scope": "El intervalo del intento en la base no equivale al cierre completo del ejecutor."
+  },
+  "runtime": {
+    "source_revision": "6e8b2b4203f948408171612080b0bc62fadc19be",
+    "web_deployed_revision": "b0be6df86a2aad53f46bb6054e192c94d62b13e3",
+    "temporary_compute_removed": true,
+    "private_inputs_removed_from_temporary_compute": true,
+    "no_snapshots_created": true,
+    "cleanup_receipt_sha256": "405d3c4e3060bfda17c5838433467debd6deb12e8a29d8839921af26bd77b654"
+  },
+  "agent_review_sha256": "86e131d9fcbde6dcc92df87256bd3c9819b81f7a0798e89376d7535002597608",
+  "inference_calls": 0,
+  "limits": [
+    "El ejecutor original excedió su límite; se conserva su fallo y se concilió la persistencia por lectura independiente.",
+    "No repetir, cancelar ni reiniciar el lote completado.",
+    "No acredita histórico completo, calidad del agente, producción integral, aceptación humana ni 60/60.",
+    "La causa exacta de la desconexión original requiere diagnóstico; no se infiere sólo de contadores."
+  ],
+  "next_step": "Usar lectura por UUID validado en el siguiente control y conciliar el inventario neto antes de escalar."
+}

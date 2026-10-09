@@ -1,5 +1,11 @@
 # Estado vigente — Rovaq AI / VEXA
 
+## Actualización — 8 de octubre, 23:58 UTC: piloto histórico persistido y conciliado
+
+**100/100 mensajes históricos cargados y cotejados por identidad, contenido y procedencia; cero rechazados, duplicados o pendientes.** Trabajo, importación e intento completados; registro de salida publicado y checkpoint100 terminado. La lectura independiente tardó1,161s. El intento en DB duró8,308s, pero el ejecutor excedió su límite durante el cierre: su timeout permanece registrado y no acredita SLA global. No se reconsumió el lote.
+
+El entorno temporal y sus datos privados fueron retirados; recibos y marcador del intento preservados. Sin inferencia ni despliegue nuevo. La consulta real posterior del9-oct00:03UTC contó137.145mensajes,137.874filas de importación y512objetos CRM; estos universos se solapan. **La aceptación formal sigue en29/60** y el histórico completo aún requiere inventario neto y carga reconciliada. Evidencia: `docs/entrega/PILOTO-HISTORICO-100-PERSISTIDO-2026-10-08.json`.
+
 ## Actualización — 8 de octubre: HubSpot aceptado oficialmente
 
 **29/60 aceptadas formalmente (48,3 %); 31 pendientes.** F03-01 pasó `verify` y `accept` limpio sobre `0437a27`, con revisión independiente: 29/29 pruebas en cada corrida,20hilos/28mensajes,57eventos y105registros verificados;44GET más una introspección de cuenta/app/scopes vigente por corrida. Los dos oráculos —referencia independiente UI de contenido/acciones y fidelidad exacta de texto/payload del proveedor— coinciden. Las20páginas quedan cerradas y la limpieza está comprobada.

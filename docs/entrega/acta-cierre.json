@@ -105,13 +105,13 @@
     "reason": "No se inventan acuerdos, fechas, participantes ni pagos"
   },
   "loop_status": "Trabajo supervisado; consultar procesos/recibos vivos. Este documento no acredita un servicio continuo.",
-  "technical_count_note": "60 alcances técnicos reconciliados con evidencia;28 aceptaciones formales. La auditoría final, las validaciones externas y los actos humanos siguen pendientes; no es recepción ni100% productivo.",
+  "technical_count_note": "60 alcances técnicos reconciliados con evidencia;29 aceptaciones formales. Auditoría final, validaciones externas y actos humanos siguen pendientes; no es100% productivo.",
   "previous_checkpoint": {
     "source_commit": "30b5fe1b90a7ca40271c9a9bd29dc31681a916ea",
     "technical_tasks_complete": 49,
     "note": "Corte histórico anterior al despliegue y smoke remoto; conservado enGit."
   },
-  "updated": "2026-10-08T23:34:57.572478+00:00",
+  "updated": "2026-10-09T00:46:48.977820+00:00",
   "deployed_source_commit": "b0be6df86a2aad53f46bb6054e192c94d62b13e3",
   "latest_audit": {
     "date": "2026-10-08",
@@ -414,5 +414,101 @@
     "sync_raw_objects": 512,
     "overlap_between_categories": true,
     "historical_missing_percentage_known": false
+  },
+  "historical_source_and_next_batch": {
+    "schema": "senix-historical-source-and-next100-closure-v1",
+    "observed_at_utc": "2026-10-09 00:42:45.293306+00",
+    "formal_accepted_tasks": 29,
+    "formal_total_tasks": 60,
+    "production_validated": false,
+    "inventory": {
+      "eligible_cohort": 151815,
+      "first_pilot_excluded_by_identity": 100,
+      "net_candidates_checked": 151715,
+      "originals_validated": 151715,
+      "recovered_from_verified_archive": 3158,
+      "local_json_originals": 148557,
+      "source_hashes_before_after_equal": true,
+      "quarantine": 0,
+      "database_identity_snapshot_utc": "2026-10-09T00:24:01.395Z",
+      "six_overlap_predicates_all_false": 151715,
+      "pilot_positive_control_found": 100,
+      "not_a_complete_senix_universe": true
+    },
+    "next_batch": {
+      "counts": {
+        "total": 100,
+        "accepted": 100,
+        "rejected": 0,
+        "duplicates": 0,
+        "pending": 0
+      },
+      "roles": {
+        "customer": 66,
+        "agent": 34
+      },
+      "distinct_identities_with_equal_body_preserved": true,
+      "equal_body_groups_in_this_batch": 0,
+      "full_identity_content_mapping_and_provenance_verified": true,
+      "terminal_job_import_attempt_outbox_verified": true,
+      "checkpoint": {
+        "done": true,
+        "offset": 100
+      },
+      "executor_passed": true,
+      "supervisor_exit_code": 0,
+      "supervisor_timed_out": false,
+      "supervisor_elapsed_seconds": 14.532,
+      "database_attempt_seconds": 8.247432,
+      "fresh_overlap_age_at_launch_seconds": 9.327077,
+      "source_revision": "6e8b2b4203f948408171612080b0bc62fadc19be",
+      "web_revision": "b0be6df86a2aad53f46bb6054e192c94d62b13e3"
+    },
+    "new_historical_series": {
+      "verified_persisted_messages": 200,
+      "remaining_candidates_require_load_or_later_reconciliation": 151615,
+      "previous_pilot_timeout_preserved": true,
+      "previous_completed_pilot_not_reconsumed": true
+    },
+    "tenant_counts": {
+      "messages": 137246,
+      "import_rows": 137980,
+      "sync_raw_objects": 518,
+      "categories_overlap": true,
+      "historical_missing_percentage_known": false
+    },
+    "cleanup": {
+      "temporary_compute_removed": true,
+      "private_inputs_removed": true,
+      "snapshots_created": 0,
+      "published_ports": 0,
+      "active_paid_resources": 0
+    },
+    "cost": {
+      "additional_compute_reserved_usd": 0.25,
+      "cumulative_unreconciled_compute_reserve_usd": 0.5,
+      "billing_actual_usd": null,
+      "new_inference_calls": 0,
+      "user_total_budget_usd": 50,
+      "budget_not_reset": true
+    },
+    "evidence_sha256": {
+      "original_validation_snapshot": "bbbeb13311ae19e77c4b83396b5a301bb7f5648a1db2eb86c3015214eb820fc0",
+      "archive_and_validation_review": "60547f3b794522b4265547f28d931e45c75b60217fa644edcdebd42e3a79a71f",
+      "net_reconciliation_review": "fe84036c1d6fbcb007727457b55533949cbdd3cb9cd210765bd666104bde8d70",
+      "batch_review": "bb53ade3c199707f58eea63710d2bd28de14dff9ae6fc96a5cbdc2ffa1d45730",
+      "executor": "c0589b97eb6dde9d545574688cd5bd2b573403f113ed3d858157beb5ebc56058",
+      "supervisor": "f838b80111a546260389e9fb98b9a4fb92981297ec9f6709d168f939d9412ad0",
+      "independent_terminal_readback": "b41b844e5353bbca38e87260fb172e053b13864b533373f7aa127d899911c95c",
+      "cleanup": "a9fab4df3135aa326bcb14c93de90e0a0372d69673d73463e71eb69200ef65da",
+      "execution_cleanup_review": "390efe2889817fad6171d609d0711ebe506d6989edfc743c2a8fd7c0c02f37b5"
+    },
+    "limits": [
+      "La cohorte de correos migrados no es todo el histórico SENIX. No sumar categorías solapadas.",
+      "Las151615 identidades restantes requieren comprobación fresca antes de cada carga; la captura anterior no autoriza efectos futuros.",
+      "Estos100 acreditan su intento acotado; no se extrapola el tiempo observado a toda la carga ni se reescribe el timeout del piloto previo.",
+      "Sin inferencia, evaluación humana, despliegue nuevo ni nuevas aceptaciones formales. Zendesk, operación, recuperación y entrega siguen pendientes."
+    ],
+    "next_step": "Escalar por lotes con manifiestos revisados, admisión fresca y lectura completa posterior; detener y conciliar cualquier resultado incierto."
   }
 }

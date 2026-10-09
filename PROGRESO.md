@@ -1,3 +1,9 @@
+## Histórico — 9 de octubre, 00:42 UTC
+
+**200 mensajes de la nueva carga persistidos y verificados.** El segundo lote100 terminó sin timeout en 14,532 s: 100 aceptados, 0 rechazos, 0 duplicados y 0 pendientes; identidad, contenido, procedencia y cuatro estados terminales comprobados. Los 3.158 originales faltantes se localizaron en el respaldo verificado; 151.715 candidatos pasaron validación completa y cruce de seis predicados al corte. Después del segundo lote quedan 151.615 candidatos para carga o conciliación posterior, no un porcentaje de todo SENIX.
+
+Conteo real: 137.246 mensajes, 137.980 filas de importación y 518 objetos CRM; universos solapados. Temporal retirado, sin IA ni nuevo despliegue. El timeout del primer piloto permanece. **29/60 aceptadas; producción pendiente.** [Evidencia](docs/entrega/HISTORICO-ORIGINALES-Y-CARGA-200-2026-10-09.json).
+
 ## Piloto histórico — 8 de octubre, 23:58 UTC
 
 **100/100 mensajes persistidos y verificados**, sin rechazos, duplicados ni pendientes. El timeout original de cierre se conserva; la conciliación independiente acredita los datos y estados terminales. Temporal retirado, sin IA ni despliegue nuevo. Aceptación formal29/60. [Evidencia](docs/entrega/PILOTO-HISTORICO-100-PERSISTIDO-2026-10-08.json).

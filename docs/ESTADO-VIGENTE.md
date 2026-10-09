@@ -1,5 +1,11 @@
 # Estado vigente — Rovaq AI / VEXA
 
+## Histórico — 9 de octubre, 00:42 UTC
+
+**200 mensajes de la nueva carga persistidos y verificados.** El segundo lote100 terminó sin timeout en 14,532 s: 100 aceptados, 0 rechazos, 0 duplicados y 0 pendientes; identidad, contenido, procedencia y cuatro estados terminales comprobados. Los 3.158 originales faltantes se localizaron en el respaldo verificado; 151.715 candidatos pasaron validación completa y cruce de seis predicados al corte. Después del segundo lote quedan 151.615 candidatos para carga o conciliación posterior, no un porcentaje de todo SENIX.
+
+Conteo real: 137.246 mensajes, 137.980 filas de importación y 518 objetos CRM; universos solapados. Temporal retirado, sin IA ni nuevo despliegue. El timeout del primer piloto permanece. **29/60 aceptadas; producción pendiente.** [Evidencia](entrega/HISTORICO-ORIGINALES-Y-CARGA-200-2026-10-09.json).
+
 ## Actualización — 8 de octubre, 23:58 UTC: piloto histórico persistido y conciliado
 
 **100/100 mensajes históricos cargados y cotejados por identidad, contenido y procedencia; cero rechazados, duplicados o pendientes.** Trabajo, importación e intento completados; registro de salida publicado y checkpoint100 terminado. La lectura independiente tardó1,161s. El intento en DB duró8,308s, pero el ejecutor excedió su límite durante el cierre: su timeout permanece registrado y no acredita SLA global. No se reconsumió el lote.

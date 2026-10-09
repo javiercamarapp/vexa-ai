@@ -1,3 +1,9 @@
+## Histórico — 9 de octubre, 01:29 UTC
+
+**1.200 mensajes nuevos persistidos y verificados.** El último tramo completó diez lotes de 100: 1.000 aceptados, cero rechazos, duplicados y pendientes; texto, identidad, procedencia, estados finales y checkpoints comprobados. Consulta independiente de la base conforme. Un intento previo se rechazó antes de importar por permisos de un archivo de control; corregido, conciliado y conservado.
+
+Quedan 150.615 candidatos de la cohorte estricta para carga o conciliación fresca; no es todo el universo SENIX. Temporal retirado, sin IA ni despliegue nuevo. **29/60 aceptadas; producción pendiente.** [Evidencia](HISTORICO-1200-VERIFICADOS-2026-10-09.json).
+
 # Cierre de Senix: producción e histórico
 
 Objetivo confirmado por Javier el 8 de octubre: terminar el sistema de punta a punta con los datos históricos de Senix visibles y utilizables, mejorar el agente mediante evaluaciones y preparar el pitch. Fecha objetivo: domingo 11 de octubre de 2026 (America/Merida), para presentar desde el lunes 12. Es un objetivo de ejecución, no una fecha certificada antes de completar las pruebas.

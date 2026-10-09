@@ -1,3 +1,9 @@
+## Histórico — 9 de octubre, 01:29 UTC
+
+**1.200 mensajes nuevos persistidos y verificados.** El último tramo completó diez lotes de 100: 1.000 aceptados, cero rechazos, duplicados y pendientes; texto, identidad, procedencia, estados finales y checkpoints comprobados. Consulta independiente de la base conforme. Un intento previo se rechazó antes de importar por permisos de un archivo de control; corregido, conciliado y conservado.
+
+Quedan 150.615 candidatos de la cohorte estricta para carga o conciliación fresca; no es todo el universo SENIX. Temporal retirado, sin IA ni despliegue nuevo. **29/60 aceptadas; producción pendiente.** [Evidencia](docs/entrega/HISTORICO-1200-VERIFICADOS-2026-10-09.json).
+
 ## Histórico — 9 de octubre, 00:42 UTC
 
 **200 mensajes de la nueva carga persistidos y verificados.** El segundo lote100 terminó sin timeout en 14,532 s: 100 aceptados, 0 rechazos, 0 duplicados y 0 pendientes; identidad, contenido, procedencia y cuatro estados terminales comprobados. Los 3.158 originales faltantes se localizaron en el respaldo verificado; 151.715 candidatos pasaron validación completa y cruce de seis predicados al corte. Después del segundo lote quedan 151.615 candidatos para carga o conciliación posterior, no un porcentaje de todo SENIX.

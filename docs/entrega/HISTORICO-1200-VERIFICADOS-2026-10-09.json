@@ -1,0 +1,89 @@
+{
+  "schema": "senix-historical-backfill1000-closure-v1",
+  "observed_at_utc": "2026-10-09 01:29:48.11685+00",
+  "formal_accepted_tasks": 29,
+  "formal_total_tasks": 60,
+  "production_validated": false,
+  "new_batch": {
+    "jobs": 10,
+    "messages": 1000,
+    "accepted": 1000,
+    "rejected": 0,
+    "duplicates": 0,
+    "pending": 0,
+    "roles": {
+      "customer": 636,
+      "agent": 364
+    },
+    "all_identity_content_mapping_and_provenance_verified": true,
+    "independent_terminal_readback_passed": true,
+    "fresh_overlap_checks": 10,
+    "rows_per_fresh_check": 100,
+    "all_six_flags_false_before_each_attempt": true,
+    "four_terminal_states_verified_per_job": true,
+    "all_checkpoints_done_at_offset": 100,
+    "group_elapsed_seconds": 281.023526,
+    "supervisor_seconds_min": 11.65,
+    "supervisor_seconds_max": 16.433,
+    "timeouts": 0,
+    "source_revision": "6e8b2b4203f948408171612080b0bc62fadc19be",
+    "web_revision": "b0be6df86a2aad53f46bb6054e192c94d62b13e3"
+  },
+  "series": {
+    "verified_new_messages": 1200,
+    "remaining_strict_cohort_candidates_for_load_or_later_reconciliation": 150615,
+    "eligible_strict_cohort": 151815,
+    "previous_pilot_timeout_preserved": true,
+    "not_a_complete_senix_universe": true
+  },
+  "tenant_counts": {
+    "observed_at": "2026-10-09 01:29:48.11685+00",
+    "messages": 138248,
+    "import_rows": 138987,
+    "raw_sync_objects": 525,
+    "categories_overlap": true,
+    "historical_missing_percentage_known": false
+  },
+  "corrected_incident": {
+    "first_group_rejected_before_effects": true,
+    "reason": "Copied control receipt had mode0644; executor requires0600. Corrected transport constrains permissions before execution.",
+    "exact_batch_imports_after_rejection": 0,
+    "old_attempts_never_reused": true,
+    "original_failed_journal_retained": true,
+    "local_process_group_timeout_cleanup_corrected_and_tested": true
+  },
+  "cleanup": {
+    "temporary_compute_removed": true,
+    "private_inputs_removed": true,
+    "active_paid_resources": 0,
+    "snapshots_created": 0,
+    "published_ports": 0
+  },
+  "cost": {
+    "additional_compute_reserve_usd": 0.5,
+    "cumulative_unreconciled_compute_reserve_usd": 1.0,
+    "billing_actual_usd": null,
+    "inference_calls": 0,
+    "budget_not_reset": true,
+    "ai_total_authorization_usd": 50,
+    "authorization_scope": "AI processing, evaluation and retries; compute reservation tracked conservatively in addition, not a billing claim"
+  },
+  "evidence_sha256": {
+    "catalog": "102ac3a788500b18acaa771bfcd6573a3e47223defe3875e9f07c3d26045b331",
+    "dataset_control_review": "535aeae423fca6e825a8fd6cfbea608c80ef720e37d07b7b52cad940d6a0d025",
+    "transport_review": "7642c9b9c1ad6e5b406af3e460c8421e24ba7207addf42d112e9fbe381bf0f56",
+    "group": "1fbe051cf00822bed15a8c1ab74dd0fe023890e392c9c042c17fc25539ba6446",
+    "group_journal": "e3e38245eb439cd7020e08f1880ffc5fe8a1cdbf136742448d6e16c6571e045c",
+    "group_binding_review": "d6baeef42a05cbd6a215d1bb40f72d19e405d9321c97757d7394748a3cc0c76e",
+    "independent_readback": "0c8e62945e7321502afa28f143c9112491695886a3c35b4cb15c57afb3515bcb",
+    "cleanup": "7b9d4a208695af745a91ddb4f26e0713dbd2d8e5cb335d69a84e96ee38ef3c02",
+    "final_execution_review": "44e460f2099be18dd1be48756eadc7c8ad884cece2ad215831a1a91b0a741c57"
+  },
+  "limits": [
+    "Cohorte estricta de correos migrados; no representa todo el histórico SENIX.",
+    "Contadores de mensajes, filas y objetos CRM se solapan; no se suman ni permiten inferir un porcentaje global faltante.",
+    "Sin inferencia, evaluación humana, despliegue nuevo ni nuevas aceptaciones formales.",
+    "El rechazo anterior conserva su evidencia y no se convierte en una ejecución aprobada.",
+    "Sólo se acredita este grupo de 1.000; no se extrapola su duración a la carga completa."
+  ]
+}

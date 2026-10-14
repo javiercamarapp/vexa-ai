@@ -11,8 +11,43 @@ const integer=(x,min,max)=>Number.isSafeInteger(x)&&x>=min&&x<=max;
 function validPolicy(p) {
   try{return p?.authorized===true&&Array.isArray(p.allowedModels)&&p.allowedModels.length>0&&p.allowedModels.every(x=>typeof x==='string'&&x.length>0)&&typeof p.version==='string'&&!!p.version&&p.dataCollection==='deny'&&typeof p.requireZdr==='boolean'&&typeof p.residency==='string'&&!!p.residency&&Array.isArray(p.providers)&&p.providers.length>0&&p.providers.every(x=>typeof x==='string'&&x.length>0)&&integer(p.maxAttempts,1,3)&&integer(p.timeoutMs,1,120000)&&integer(p.maxOutputTokens,1,16000)&&integer(p.maxInputBytes,1,1000000)&&integer(p.maxResponseBytes,1,1000000)&&minor(p.maxCostPerCallMinor)>0n&&minor(p.maxCostPerTaskMinor)>0n&&minor(p.tenantLimitMinor)>0n&&typeof p.window==='string'&&!!p.window&&p.currency==='USD'&&p.exponent===6;}catch{return false;}
 }
+const claudeModels=new Set(['anthropic/claude-haiku-5.5','anthropic/claude-sonnet-5.5']);
+const keys=(value,required,optional=[])=>value&&typeof value==='object'&&!Array.isArray(value)&&required.every(k=>Object.hasOwn(value,k))&&Object.keys(value).every(k=>required.includes(k)||optional.includes(k));
+/** Server-owned endpoint receipt; public model metadata alone is not endpoint eligibility. */
+function endpointParameters(c,p,now,catalog){
+ const e=c.endpointCapabilities;
+ if(e===undefined)return c.reasoning===undefined&&!claudeModels.has(c.model)?{temperature:0}:null;
+ if(!claudeModels.has(c.model))return null;
+ if(!keys(e,['version','fetchedAt','expiresAt','model','provider','supportedParameters','contextTokens','maxCompletionTokens','reasoning','pricing'])||typeof e.version!=='string'||!e.version||e.version.length>200||e.model!==c.model||e.provider!==c.provider)return null;
+ const start=Date.parse(e.fetchedAt),end=Date.parse(e.expiresAt);
+ if(!Number.isFinite(start)||!Number.isFinite(end)||start>now||end<=now||end<=start||end-start>86400000||!integer(e.contextTokens,1,10000000)||!integer(e.maxCompletionTokens,1,1000000)||p.maxOutputTokens>e.maxCompletionTokens)return null;
+ if(claudeModels.has(c.model)&&!/^google-vertex\/(global|us|europe)$/.test(c.provider))return null;
+ const params=e.supportedParameters,model=catalogModel(catalog,c.model,now),required=['response_format','max_tokens','reasoning'];
+ if(!model||!Array.isArray(params)||!params.length||params.length>100||new Set(params).size!==params.length||params.some(x=>typeof x!=='string'||!x||x.length>200)||required.some(x=>!params.includes(x)||!model.supportedParameters.includes(x)))return null;
+ const r=e.reasoning,requested=c.reasoning,efforts=['max','xhigh','high','medium','low'];
+ if(!keys(r,['mandatory','supportedEfforts'])||typeof r.mandatory!=='boolean'||!Array.isArray(r.supportedEfforts)||r.supportedEfforts.length>5||new Set(r.supportedEfforts).size!==r.supportedEfforts.length||r.supportedEfforts.some(x=>!efforts.includes(x)))return null;
+ const off=keys(requested,['enabled','exclude'])&&requested.enabled===false&&requested.exclude===true&&!r.mandatory;
+ const on=keys(requested,['effort','exclude'])&&requested.exclude===true&&r.supportedEfforts.includes(requested.effort);
+ if(!off&&!on)return null;
+ // Rate snapshots use decimal USD/token; configured integer micro-USD rates remain
+ // conservative caps. Cover every advertised tier, including writes, not cached discounts.
+ const rateKeys=['prompt','completion','input_cache_read','input_cache_write','input_cache_write_1h'];
+ const rate=x=>typeof x==='string'&&/^\d{1,20}(\.\d{1,18})?$/.test(x)?usageCost({cost:x}):null;
+ const price=e.pricing;
+ if(!keys(price,rateKeys,['discount','web_search','overrides'])||Object.hasOwn(price,'discount')&&price.discount!==0||Object.hasOwn(price,'web_search')&&rate(price.web_search)===null)return null;
+ if(Object.hasOwn(price,'overrides')&&(!Array.isArray(price.overrides)||price.overrides.length>16))return null;
+ let input=0n,output=0n;
+ for(const row of [price,...(price.overrides??[])]){
+  if(row!==price&&(!keys(row,[...rateKeys,'min_prompt_tokens'])||!integer(row.min_prompt_tokens,1,10000000)))return null;
+  const rates=Object.fromEntries(rateKeys.map(k=>[k,rate(row[k])]));
+  if(Object.values(rates).some(x=>x===null)||rates.prompt<=0n||rates.completion<=0n)return null;
+  for(const k of rateKeys)if(k==='completion'){if(rates[k]>output)output=rates[k];}else if(rates[k]>input)input=rates[k];
+ }
+ if(minor(c.pricing.inputMicroUsdPerToken)<input||minor(c.pricing.outputMicroUsdPerToken)<output)return null;
+ return {...(params.includes('temperature')&&model.supportedParameters.includes('temperature')?{temperature:0}:{}),reasoning:structuredClone(requested)};
+}
 function eligible(c,p,now,catalog) {
-  try{return !!catalogModel(catalog,c.model,now)&&p.allowedModels.includes(c.model)&&typeof c.model==='string'&&c.model.length>0&&c.model.length<=200&&p.providers.includes(c.provider)&&c.structuredOutput===true&&c.dataCollection==='deny'&&(!p.requireZdr||c.zdr===true)&&residencyEligible(p,c,now)&&integer(c.contextTokens,1,10000000)&&c.pricing.allChargesIncluded===true&&Date.parse(c.pricing.validUntil)>now&&typeof c.pricing.version==='string'&&!!c.pricing.version&&minor(c.pricing.inputMicroUsdPerToken)>0n&&minor(c.pricing.outputMicroUsdPerToken)>0n&&integer(c.pricing.overheadTokens,1024,100000);}catch{return false;}
+  try{return endpointParameters(c,p,now,catalog)!==null&&!!catalogModel(catalog,c.model,now)&&p.allowedModels.includes(c.model)&&typeof c.model==='string'&&c.model.length>0&&c.model.length<=200&&p.providers.includes(c.provider)&&c.structuredOutput===true&&c.dataCollection==='deny'&&(!p.requireZdr||c.zdr===true)&&residencyEligible(p,c,now)&&integer(c.contextTokens,1,10000000)&&c.pricing.allChargesIncluded===true&&Date.parse(c.pricing.validUntil)>now&&typeof c.pricing.version==='string'&&!!c.pricing.version&&minor(c.pricing.inputMicroUsdPerToken)>0n&&minor(c.pricing.outputMicroUsdPerToken)>0n&&integer(c.pricing.overheadTokens,1024,100000);}catch{return false;}
 }
 // Evidence candidates preserve exact code-point coordinates; model output is still
 // independently validated. Never repair returned spans or normalize source text.
@@ -101,14 +136,21 @@ function decodeReferences(value,refs){
   }
   return decoded;
 }
-// OpenRouter usage.cost is USD; round UP to micro-USD using integer arithmetic.
-// Missing/negative/non-finite/exponential/unsupported values are unknown, never zero.
-function usageCost(usage) {
-  const value=usage?.cost;
-  if(typeof value!=='string'&&typeof value!=='number')return null;
-  const raw=String(value);if(!/^\d{1,20}(\.\d{1,18})?$/.test(raw))return null;
-  const [whole,fraction='']=raw.split('.');
-  return BigInt(whole)*1000000n+BigInt((fraction+'000000').slice(0,6))+( /[1-9]/.test(fraction.slice(6))?1n:0n);
+// Same decimal expansion and ceil semantics as the accepted embedding gateway.
+function usageCost(usage){
+ const value=usage?.cost;
+ let match;
+ if(typeof value==='number'){
+  if(!Number.isFinite(value)||value<0)return null;
+  match=/^(\d+)(?:\.(\d+))?(?:e([+-]?\d{1,3}))?$/.exec(String(value));
+ }else if(typeof value==='string'&&/^\d{1,20}(\.\d{1,18})?$/.test(value))match=/^(\d+)(?:\.(\d+))?$/.exec(value);
+ if(!match)return null;
+ const fraction=match[2]??'',coefficient=BigInt(match[1]+fraction),power=Number(match[3]??0)-fraction.length;
+ if(coefficient===0n)return 0n; // Includes explicit numeric -0; never missing data.
+ if(coefficient.toString().length+power>20||power < -324||power>20)return null;
+ const shift=power+6;
+ if(shift>=0)return coefficient*10n**BigInt(shift);
+ const divisor=10n**BigInt(-shift);return coefficient/divisor+(coefficient%divisor===0n?0n:1n);
 }
 function safeUsage(usage) {return Object.fromEntries(['prompt_tokens','completion_tokens','total_tokens'].filter(k=>integer(usage?.[k],0,100000000)).map(k=>[k,usage[k]]));}
 async function readBounded(response,maxBytes) {
@@ -144,17 +186,18 @@ export function createGateway({apiKey,policy,modelsByRole,catalog,runtime='stub'
       payload={taxonomy:data.taxonomy,revisions:refs.revisions};
       if(Buffer.byteLength(JSON.stringify(payload))>p.maxInputBytes)return error('input_too_large');
     }catch{return error('invalid_input');}
-    const base={messages:[{role:'system',content:PROMPT},{role:'user',content:JSON.stringify(payload)}],response_format:{type:'json_schema',json_schema:{name:'vexa_extraction_v1',strict:true,schema}},max_tokens:p.maxOutputTokens,temperature:0,stream:false};
+    const base={messages:[{role:'system',content:PROMPT},{role:'user',content:JSON.stringify(payload)}],response_format:{type:'json_schema',json_schema:{name:'vexa_extraction_v1',strict:true,schema}},max_tokens:p.maxOutputTokens};
     const plans=[];
     for(const c of (Array.isArray(models?.[data.role])?models[data.role]:[])) {
       if(!eligible(c,p,clock.now(),catalogSnapshot))continue;
       const catalogEntry=catalogModel(catalogSnapshot,c.model,clock.now());
       if(!catalogEntry)continue; // Expiry between synchronous checks still fails closed.
-      const body={...base,model:c.model,provider:{only:[c.provider],allow_fallbacks:false,require_parameters:true,data_collection:'deny',...(p.requireZdr?{zdr:true}:{})}};
+      const parameters=endpointParameters(c,p,clock.now(),catalogSnapshot);if(parameters===null)continue;
+      const body={...base,...parameters,stream:false,model:c.model,provider:{only:[c.provider],allow_fallbacks:false,require_parameters:true,data_collection:'deny',...(p.requireZdr?{zdr:true}:{})}};
       // Conservative byte bound plus attested tokenizer/framing overhead; no live price assumptions.
       const inputTokens=Buffer.byteLength(JSON.stringify(body))+c.pricing.overheadTokens;
       const ceiling=BigInt(inputTokens)*minor(c.pricing.inputMicroUsdPerToken)+BigInt(p.maxOutputTokens)*minor(c.pricing.outputMicroUsdPerToken);
-      if(inputTokens+p.maxOutputTokens>Math.min(c.contextTokens,catalogEntry.contextTokens)||ceiling>minor(p.maxCostPerCallMinor))continue;
+      if(inputTokens+p.maxOutputTokens>Math.min(c.contextTokens,catalogEntry.contextTokens,c.endpointCapabilities?.contextTokens??Infinity)||ceiling>minor(p.maxCostPerCallMinor))continue;
       plans.push({candidate:c,body,ceiling});if(plans.length===p.maxAttempts)break;
     }
     if(!plans.length)return error('policy_blocked');

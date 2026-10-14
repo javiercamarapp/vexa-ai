@@ -1,3 +1,4 @@
+import {CUSTOMER_PROFILE,CUSTOMER_ADAPTER,customerPayload} from '../../ingestion/customer-profile.mjs';
 import {historyMetadata,historicalText,historicalIdentity} from '../../ingestion/history-profile.mjs';
 import {createHash} from 'node:crypto';
 import {parseCSVStream,contentHash,createEnvelope,parseMoney,requiredString,timestamp} from '../../ingestion/index.mjs';
@@ -10,7 +11,7 @@ export async function recordsFromBytes(bytes,row){
  const config=legacy?{columns:{id:'id',text:'text',date:'date',role:'role',conversation:'conversation'},sheet:null}:canonicalMapping(row.provenance.mapping);
  if(config.profile&&mappingVersion(config)!==row.mapping_version)fail('MAPPING_VERSION_MISMATCH',422);
  if(config.profile&&row.content_type!=='text/csv')fail('HISTORY_PROFILE_CSV_ONLY',422);
- if(!config.columns.role||!config.columns.conversation||!config.columns.date)fail('INGESTION_MAPPING_REQUIRED',422);
+ if(config.profile!==CUSTOMER_PROFILE&&(!config.columns.role||!config.columns.conversation||!config.columns.date))fail('INGESTION_MAPPING_REQUIRED',422);
  let parsed;
  if(row.content_type==='text/csv'){
   const rows=[],errors=[];for await(const event of parseCSVStream((async function*(){yield bytes;})())){const {type,...rest}=event;(type==='row'?rows:errors).push(rest);}
@@ -24,6 +25,12 @@ export async function recordsFromBytes(bytes,row){
   const data=Object.fromEntries(Object.entries(config.columns).map(([key,column])=>[key,column?entry.values[parsed.headers.indexOf(column)]:null]));
   try{
    if(entry.values.length!==parsed.headers.length)fail('COLUMN_COUNT',422);
+   if(config.profile===CUSTOMER_PROFILE){
+    const payload=customerPayload(parsed.headers,entry.values,config.columns);
+    const envelope={...createEnvelope(context,{entity_type:'customer',ingestion_profile:CUSTOMER_PROFILE,external_id:payload.external_id,source_revision:'sha256:'+payload.original_object_hash,occurred_at:payload.occurred_at,observed_at:payload.source_observed_at,payload_ref:`csv:${row.file_hash}:line:${entry.line}`},payload),adapter_version:CUSTOMER_ADAPTER};
+    records.push({envelope,raw_payload:payload,row_ref:entry.line,row_hash:contentHash(payload),batch_hash:row.file_hash,mapping_version:row.mapping_version});
+    continue;
+   }
    requiredString(data.id,'id');if(config.profile){historicalText(data.text);historicalIdentity(data.id,data.conversation,data.role);}else if(typeof data.text!=='string'||[...data.text].length>2000)fail('INVALID_TEXT',422);
    const historical_timestamp=config.profile?historyMetadata(data.text,data.date):null;
    const occurred_at=historical_timestamp?historical_timestamp.canonical:legacy?(data.date==null||data.date===''?null:timestamp(data.date,'date')):normalizeDate(data.date,config.timezone,config.dateFormat);

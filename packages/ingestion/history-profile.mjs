@@ -1,7 +1,8 @@
+import {CUSTOMER_PROFILE} from './customer-profile.mjs';
 import {IngestionError,timestamp,contentHash,requiredString} from './index.mjs';
 export const HISTORY_PROFILE='history-message-v1';
 const fail=(code,field=null)=>{throw new IngestionError(code,field);};
-export function checkedProfile(profile){if(profile!==undefined&&profile!==HISTORY_PROFILE)fail('INVALID_INGESTION_PROFILE');return profile;}
+export function checkedProfile(profile){if(profile!==undefined&&profile!==HISTORY_PROFILE&&profile!==CUSTOMER_PROFILE)fail('INVALID_INGESTION_PROFILE');return profile;}
 export function historicalText(text){
  if(typeof text!=='string'||!text.isWellFormed())fail('INVALID_TEXT','text');
  if(!text.trim())fail('HISTORY_EMPTY_BODY','text');

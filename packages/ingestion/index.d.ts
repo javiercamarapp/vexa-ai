@@ -6,10 +6,10 @@ export interface SourceContext {
 export interface SourceEnvelope extends SourceContext {
   entity_type: string; external_id: string; source_revision: string;
   occurred_at: string | null; observed_at: string; content_hash: string;
-  payload_ref: string; deleted_at: string | null; adapter_version?: 'csv-message-v1'; ingestion_profile?: 'history-message-v1';
+  payload_ref: string; deleted_at: string | null; adapter_version?: 'csv-message-v1'|'csv-customer-v1'; ingestion_profile?: 'history-message-v1'|'hubspot-contact-csv-v1';
 }
 export interface EnvelopeInput {
-  ingestion_profile?: 'history-message-v1';
+  ingestion_profile?: 'history-message-v1'|'hubspot-contact-csv-v1';
   entity_type: string; external_id: string; payload_ref: string;
   source_revision?: string | null; occurred_at?: string | null;
   observed_at: string; deleted_at?: string | null;
@@ -47,7 +47,10 @@ export function normalizeCSV(input: string | Uint8Array, options: { context: Sou
   coverage: { accepted: number; rejected: number; unknown_customers: number; unknown_skus: number };
 };
 
-export function adaptCSVRaw(envelope: SourceEnvelope, raw: Record<string,unknown>): CSVRecord['message'];
+export interface CustomerCSVPayload {external_id:string;display_name:string|null;occurred_at:string|null;original_object:Record<string,unknown>;original_object_hash:string;original_provider:'hubspot';provider_account_id:string;source_file:string;source_index:number;source_file_sha256:string;source_observed_at:string;source_headers:string[];source_cells:string[];source_mapping:Record<string,string>}
+export function adaptCSVRaw(envelope:SourceEnvelope & {adapter_version:'csv-customer-v1'},raw:Record<string,unknown>):CustomerCSVPayload;
+export function adaptCSVRaw(envelope:SourceEnvelope & {adapter_version?:'csv-message-v1'},raw:Record<string,unknown>):CSVRecord['message'];
+export function adaptCSVRaw(envelope:SourceEnvelope,raw:Record<string,unknown>):CSVRecord['message']|CustomerCSVPayload;
 
 export type CSVStreamEvent = {type:'row'; values:string[]; line:number} | ({type:'error'} & RowError);
 /** maxRows counts all raw records, including the header. Message normalization counts data records. */

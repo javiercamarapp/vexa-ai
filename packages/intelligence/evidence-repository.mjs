@@ -26,7 +26,7 @@ export function createEvidenceRepository({database}={}){
     current_source.message_revision_id AS current_revision,h.state AS head_state
     FROM public.message_revisions r JOIN public.message_revisions original ON original.tenant_id=r.tenant_id AND original.id::text=r.provenance->>'original_revision_id'
     JOIN public.messages m ON m.tenant_id=r.tenant_id AND m.id=r.message_id
-    JOIN public.source_revisions sr ON sr.tenant_id=original.tenant_id AND sr.message_revision_id=original.id AND sr.entity_type='message'
+    JOIN public.source_revisions sr ON sr.tenant_id=original.tenant_id AND sr.message_revision_id=original.id AND sr.canonical_id=m.id AND sr.entity_type='message'
     LEFT JOIN public.source_heads h ON h.tenant_id=m.tenant_id AND h.id=m.id
     LEFT JOIN public.source_revisions current_source ON current_source.tenant_id=h.tenant_id AND current_source.id=h.selected_revision_id
     WHERE r.tenant_id=$1 AND r.id=ANY($2::uuid[])

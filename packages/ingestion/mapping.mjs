@@ -1,19 +1,22 @@
+import {CUSTOMER_PROFILE,customerFields,customerColumns,customerPayload} from './customer-profile.mjs';
 import {checkedProfile,historyMetadata,historicalText,historicalIdentity} from './history-profile.mjs';
 import {parseCSV,parseXLSX,parseMoney,validateContext,timestamp,contentHash,IngestionError,requiredString} from './index.mjs';
 const legacyFields=['id','text','date','order','sku','amount','currency','customer'];
 const fields=[...legacyFields,'role','conversation'];
 const fail=(code,field=null)=>{throw new IngestionError(code,field);};
 export function canonicalMapping(mapping){
- if(!mapping||typeof mapping!=='object'||!mapping.columns||Object.keys(mapping).some(k=>!['columns','timezone','dateFormat','currency','sheet','profile'].includes(k))||Object.keys(mapping.columns).some(k=>!fields.includes(k)))fail('INVALID_MAPPING');
+ if(!mapping||typeof mapping!=='object'||!mapping.columns||Object.keys(mapping).some(k=>!['columns','timezone','dateFormat','currency','sheet','profile'].includes(k))||Object.keys(mapping.columns).some(k=>!(mapping.profile===CUSTOMER_PROFILE?customerFields:fields).includes(k)))fail('INVALID_MAPPING');
  checkedProfile(mapping.profile);if(mapping.profile&&mapping.dateFormat!=='iso')fail('HISTORY_PROFILE_ISO_REQUIRED');
- const selected=[...legacyFields,...['role','conversation'].filter(k=>Object.hasOwn(mapping.columns,k))];
- const columns=Object.fromEntries(selected.map(k=>[k,mapping.columns[k]??null]));
+ const customer=mapping.profile===CUSTOMER_PROFILE;
+ const selected=customer?customerFields:[...legacyFields,...['role','conversation'].filter(k=>Object.hasOwn(mapping.columns,k))];
+ const columns=customer?customerColumns(mapping.columns):Object.fromEntries(selected.map(k=>[k,mapping.columns[k]??null]));
  for(const k of fields)if(columns[k]!=null&&(typeof columns[k]!=='string'||!columns[k].length))fail('INVALID_COLUMN',k);
- if(!columns.id||!columns.text)fail('REQUIRED_COLUMNS');
+ if(!customer&&(!columns.id||!columns.text))fail('REQUIRED_COLUMNS');
  if(typeof mapping.timezone!=='string'||!mapping.timezone||/^[+-]/.test(mapping.timezone))fail('TIMEZONE_REQUIRED','date');
  try{new Intl.DateTimeFormat('en',{timeZone:mapping.timezone});}catch{fail('INVALID_TIMEZONE','date');}
  if(!['iso','ymd','dmy','mdy'].includes(mapping.dateFormat))fail('DATE_FORMAT_REQUIRED','date');
  const currency=mapping.currency??null;
+ if(customer&&(currency!==null||mapping.sheet!=null))fail('INVALID_MAPPING');
  if(currency!==null)parseMoney('0',currency);
  if(columns.amount&&!columns.currency&&!currency)fail('CURRENCY_REQUIRED','currency');
  if(mapping.sheet!=null&&(typeof mapping.sheet!=='string'||!mapping.sheet))fail('INVALID_SHEET');
@@ -53,12 +56,19 @@ export function previewImport(bytes,{contentType,mapping,context,observedAt,samp
  validateContext(context);timestamp(observedAt,'observedAt');const config=canonicalMapping(mapping);
  if(config.profile&&contentType!=='text/csv')fail('HISTORY_PROFILE_CSV_ONLY');
  if(!Number.isSafeInteger(sampleLimit)||sampleLimit<1||sampleLimit>100)fail('INVALID_SAMPLE_LIMIT');
+ if(config.profile===CUSTOMER_PROFILE&&context.source!=='csv')fail('INVALID_CONTEXT','source');
+ const activeFields=config.profile===CUSTOMER_PROFILE?customerFields:fields;
  const parsed=inspectImport(bytes,{contentType,sheet:config.sheet});
- for(const k of fields)if(config.columns[k]&&!parsed.headers.includes(config.columns[k]))fail('COLUMN_NOT_FOUND',k);
+ for(const k of activeFields)if(config.columns[k]&&!parsed.headers.includes(config.columns[k]))fail('COLUMN_NOT_FOUND',k);
  const errors=parsed.errors.map(e=>({line:e.line,field:null,code:e.code})),rejected=new Set(errors.map(e=>e.line));let accepted=0;const sample=[];
- const indexes=Object.fromEntries(fields.map(k=>[k,parsed.headers.indexOf(config.columns[k])]));
+ const indexes=Object.fromEntries(activeFields.map(k=>[k,parsed.headers.indexOf(config.columns[k])]));
  for(const row of parsed.rows){if(rejected.has(row.line))continue;try{
   if(row.values.length!==parsed.headers.length)fail('COLUMN_COUNT');
+  if(config.profile===CUSTOMER_PROFILE){
+   const payload=customerPayload(parsed.headers,row.values,config.columns);
+   accepted++;if(sample.length<sampleLimit)sample.push({line:row.line,row_ref:row.line,entity_type:'customer',id:payload.external_id,display_name:payload.display_name,occurred_at:payload.occurred_at});
+   continue;
+  }
   const data=Object.fromEntries(fields.map(k=>[k,indexes[k]<0?null:row.values[indexes[k]]]));
   requiredString(data.id,'id');if(config.profile){historicalText(data.text);historicalIdentity(data.id,data.conversation,data.role);}else if(typeof data.text!=='string'||[...data.text].length>2000)fail('INVALID_TEXT','text');
   const historical_timestamp=config.profile?historyMetadata(data.text,data.date):null;

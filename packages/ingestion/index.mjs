@@ -1,3 +1,4 @@
+import {CUSTOMER_PROFILE,CUSTOMER_ADAPTER,validateCustomerEnvelope} from './customer-profile.mjs';
 import {checkedProfile,historyMetadata,validateHistoryPayload,historicalIdentity} from './history-profile.mjs';
 import { parseCSV } from './csv.mjs';
 export { parseCSV, parseCSVStream } from './csv.mjs';
@@ -46,9 +47,10 @@ export function createEnvelope(context, record, payload) {
   envelope.source_revision = record.source_revision == null || record.source_revision === '' ? `sha256:${hash}` : requiredString(record.source_revision,'source_revision');
   envelope.occurred_at = timestamp(record.occurred_at,'occurred_at',true);
   envelope.observed_at = timestamp(record.observed_at,'observed_at');
-  if(record.ingestion_profile!==undefined){envelope.ingestion_profile=checkedProfile(record.ingestion_profile);if(scope.source!=='csv'||envelope.entity_type!=='message')fail('INVALID_INGESTION_PROFILE');}
+  if(record.ingestion_profile!==undefined){envelope.ingestion_profile=checkedProfile(record.ingestion_profile);if(scope.source!=='csv'||envelope.entity_type!==(record.ingestion_profile===CUSTOMER_PROFILE?'customer':'message'))fail('INVALID_INGESTION_PROFILE');}
   envelope.content_hash = hash;
   envelope.deleted_at = timestamp(record.deleted_at,'deleted_at',true);
+  if(record.ingestion_profile===CUSTOMER_PROFILE)validateCustomerEnvelope(envelope,payload);
   return Object.freeze(envelope);
 }
 export function identityKey(e) {
@@ -125,6 +127,11 @@ export class ExplicitAliases {
 // Versioned transformation: content_hash always authenticates the ORIGINAL row.
 // The normalized hash is separate provenance, never a replacement envelope hash.
 export function adaptCSVRaw(envelope, raw) {
+  if(envelope.adapter_version===CUSTOMER_ADAPTER){
+    if(contentHash(raw)!==envelope.content_hash)fail('CSV_RAW_HASH_MISMATCH');
+    return validateCustomerEnvelope(envelope,raw);
+  }
+  if(envelope.ingestion_profile===CUSTOMER_PROFILE)fail('CUSTOMER_PROFILE_MISMATCH');
   if(envelope.adapter_version!=='csv-message-v1'||envelope.source!=='csv'||envelope.entity_type!=='message') fail('CSV_ADAPTER_VERSION');
   if(contentHash(raw)!==envelope.content_hash) fail('CSV_RAW_HASH_MISMATCH');
   validateHistoryPayload(envelope,raw);

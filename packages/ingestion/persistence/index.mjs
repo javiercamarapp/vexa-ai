@@ -1,3 +1,5 @@
+import {CUSTOMER_PROFILE,CUSTOMER_ADAPTER} from '../customer-profile.mjs';
+import {canonicalMapping} from '../mapping.mjs';
 import {mappingVersion as versionForMapping} from '../mapping.mjs';
 import {randomUUID} from 'node:crypto';
 import {contentHash, createEnvelope, identityKey, adaptCSVRaw, IngestionError} from '../index.mjs';
@@ -207,10 +209,12 @@ export async function persistCanonical(scope,{importId,record},internal){
   if(e.content_hash!==raw.content_hash)reject('CONTENT_HASH_MISMATCH');
   if(raw.source_revision!==e.source_revision)reject('REVISION_REQUIRED');
   let p=payload;
+  if((raw.ingestion_profile===CUSTOMER_PROFILE||imported.provenance?.mapping?.profile===CUSTOMER_PROFILE)&&raw.adapter_version!==CUSTOMER_ADAPTER)reject('ADAPTER_UNSUPPORTED');
   if(raw.adapter_version){
    if((raw.ingestion_profile??null)!==(imported.provenance?.mapping?.profile??null))reject('INGESTION_PROFILE_MISMATCH');
    if(raw.ingestion_profile&&versionForMapping(imported.provenance?.mapping)!==imported.mapping_version)reject('MAPPING_VERSION_MISMATCH');
-   if(raw.adapter_version!=='csv-message-v1')reject('ADAPTER_UNSUPPORTED');
+   if(!['csv-message-v1',CUSTOMER_ADAPTER].includes(raw.adapter_version))reject('ADAPTER_UNSUPPORTED');
+   if(raw.adapter_version===CUSTOMER_ADAPTER&&contentHash(payload.source_mapping)!==contentHash(canonicalMapping(imported.provenance?.mapping).columns))reject('MAPPING_VERSION_MISMATCH');
    if(payload.role==='unknown')reject('ROLE_AMBIGUOUS');
     p=adaptCSVRaw({...e,adapter_version:raw.adapter_version},payload);
    if(record.row_hash!==e.content_hash)reject('ROW_HASH_MISMATCH');

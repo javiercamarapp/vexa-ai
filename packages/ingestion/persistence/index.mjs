@@ -17,7 +17,7 @@ async function insert(s,table,row){await s.query(insertStatement(table,row),Obje
 // retention trigger reads messages). Never batch across canonical rows/savepoints.
 async function insertCommunication(s,revision,snapshot,head){
  const primary=snapshot[0],text=snapshot[1];
- if(!['conversation','message'].includes(revision.entity_type)||primary?.table!==tables[revision.entity_type]||snapshot.length!==(revision.entity_type==='message'?2:1)||(text&&text.table!=='message_revisions'))throw Error('SNAPSHOT_INVALID');
+ if(!['customer','conversation','message'].includes(revision.entity_type)||primary?.table!==tables[revision.entity_type]||snapshot.length!==(revision.entity_type==='message'?2:1)||(text&&text.table!=='message_revisions'))throw Error('SNAPSHOT_INVALID');
  const keys=Object.keys(primary.row);
  if(keys.some(k=>! /^[a-z_]+$/.test(k)))throw Error('SNAPSHOT_INVALID');
  const firstValues=Object.values(revision);
@@ -119,7 +119,7 @@ async function persistRevision(s,e,p,mapping){
  const row={id:revisionId,tenant_id:s.tenantId,connection_id:e.connection_id,entity_type:e.entity_type,external_id:e.external_id,source_revision:e.source_revision,content_hash:e.content_hash,fingerprint,mapping_version:mapping,canonical_id:canonical,[e.entity_type+'_id']:canonical,provenance:JSON.stringify(provenance),snapshot:JSON.stringify(snapshot),related_customer_id:snapshot.find(x=>x.row.customer_id)?.row.customer_id??null,related_product_id:snapshot.find(x=>x.row.product_id)?.row.product_id??JSON.parse(snapshot.find(x=>x.table==='messages')?.row.provenance??'{}').product_id??null,related_order_id:snapshot.find(x=>x.row.order_id)?.row.order_id??null,related_conversation_id:snapshot.find(x=>x.row.conversation_id)?.row.conversation_id??null,message_revision_id:snapshot.find(x=>x.table==='message_revisions')?.row.id??null};
  if(!head){
   const initialHead={id:canonical,tenant_id:s.tenantId,connection_id:e.connection_id,entity_type:e.entity_type,external_id:e.external_id,selected_revision_id:revisionId,version:1,state:'unique'};
-  if(['conversation','message'].includes(e.entity_type))await insertCommunication(s,row,snapshot,initialHead);
+  if(['customer','conversation','message'].includes(e.entity_type))await insertCommunication(s,row,snapshot,initialHead);
   else{
    await insert(s,'source_revisions',row);
    await applySnapshot(s,snapshot);

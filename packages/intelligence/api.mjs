@@ -1,3 +1,4 @@
+import {createMetadataConfigResolver,resolveExtractionAdministration} from './metadata/resolve.mjs';
 import {createManagedExtractionResolver} from './candidates/resolve.mjs';
 import {randomUUID} from 'node:crypto';
 import {createExtractionQueue} from './queue.mjs';
@@ -20,15 +21,15 @@ export function createExtractionHandler({database,resolveConfig,runtime='stub',e
  return async request=>{
   try{
    const context=await database.transaction('read',async s=>({tenantId:s.tenantId,role:s.role}));
-   let config;try{config=await effective(context.tenantId);}catch{config=null;}
+   let config,administration;try{config=await effective(context.tenantId);}catch{config=null;}try{administration=resolveExtractionAdministration(resolveConfig,context.tenantId);}catch{administration=null;}
    if(request.method==='GET'){
     const query=new URL(request.url).searchParams;for(const key of query.keys())if(!['conversation_cursor','job_cursor','limit'].includes(key)||query.getAll(key).length!==1)invalid();
     const rawLimit=query.get('limit');if(rawLimit!==null&&!/^(?:[1-9]|[1-9][0-9]|100)$/.test(rawLimit))invalid();const limit=rawLimit===null?100:Number(rawLimit);
     const jobs=await queue.listPage({cursor:query.get('job_cursor'),limit}),conversations=['owner','analyst'].includes(context.role)?await queue.conversationsPage({cursor:query.get('conversation_cursor'),limit}):{items:[],next_cursor:null,hasMore:false};
     if(!['owner','analyst'].includes(context.role)&&query.has('conversation_cursor'))invalid();
-    const limits=config&&context.role==='owner'?await database.transaction('read',async s=>(await s.query('SELECT purpose,limit_minor::text AS limit_minor,version FROM public.ai_budget_limits WHERE tenant_id=$1 AND window_key=$2 AND purpose IN (\'all\',\'extraction\') ORDER BY purpose',[s.tenantId,config.gateway.policy.window])).rows):[];
-    const reservations=config&&context.role==='owner'?await budget().list({window:config.gateway.policy.window}):[];
-    return Response.json({jobs:jobs.items,conversations:conversations.items,pagination:{jobs:{next_cursor:jobs.next_cursor,hasMore:jobs.hasMore},conversations:{next_cursor:conversations.next_cursor,hasMore:conversations.hasMore}},canSubmit:['owner','analyst'].includes(context.role),canConfigure:context.role==='owner',configuration:{ready:!!config&&extractionReadiness(config.gateway),enabled:runtime==='enabled',window:config?.gateway.policy.window??null},limits,reservations},{headers});
+    const limits=administration&&context.role==='owner'?await database.transaction('read',async s=>(await s.query('SELECT purpose,limit_minor::text AS limit_minor,version FROM public.ai_budget_limits WHERE tenant_id=$1 AND window_key=$2 AND purpose IN (\'all\',\'extraction\') ORDER BY purpose',[s.tenantId,administration.window])).rows):[];
+    const reservations=administration&&context.role==='owner'?await budget().list({window:administration.window}):[];
+    return Response.json({jobs:jobs.items,conversations:conversations.items,pagination:{jobs:{next_cursor:jobs.next_cursor,hasMore:jobs.hasMore},conversations:{next_cursor:conversations.next_cursor,hasMore:conversations.hasMore}},canSubmit:['owner','analyst'].includes(context.role),canConfigure:context.role==='owner',configuration:{ready:!!config&&extractionReadiness(config.gateway),enabled:runtime==='enabled',window:administration?.window??null},limits,reservations},{headers});
    }
    if(request.method!=='POST')return new Response(null,{status:405,headers});
    const raw=await request.text();if(Buffer.byteLength(raw)>8192)invalid();let body;try{body=JSON.parse(raw);}catch{invalid();}
@@ -36,12 +37,13 @@ export function createExtractionHandler({database,resolveConfig,runtime='stub',e
    if(body.action==='cancel'){fields(body,['action','jobId']);data=await queue.cancel(body.jobId);}
    else{
     // Deny unauthorized actions before reporting missing runtime configuration.
-    if(['submit','budget','reconcile'].includes(body.action)&&!(body.action==='submit'?['owner','analyst']:['owner']).includes(context.role))throw Object.assign(Error('role_insufficient'),{status:403,code:'role_insufficient'});
-    if(!config)throw Object.assign(Error('configuration_required'),{code:'configuration_required',status:503});
+    if(['submit','budget','reconcile','metadata'].includes(body.action)&&!(body.action==='submit'?['owner','analyst']:['owner']).includes(context.role))throw Object.assign(Error('role_insufficient'),{status:403,code:'role_insufficient'});
+    if(body.action==='submit'?!config:body.action!=='metadata'&&!administration)throw Object.assign(Error('configuration_required'),{code:'configuration_required',status:503});
     if(body.action==='submit'){fields(body,['action','conversationId','requestKey']);if(!extractionReadiness(config.gateway))throw Object.assign(Error('configuration_required'),{code:'configuration_required',status:503});data=await queue.submit({conversationId:body.conversationId,requestKey:body.requestKey,configHash:config.hash});}
+    else if(body.action==='metadata'){fields(body,['action','enabled']);if(typeof body.enabled!=='boolean')invalid();if(env.VEXA_EXTRACTION_METADATA_RUNTIME!=='managed')throw Object.assign(Error('configuration_required'),{code:'configuration_required',status:503});data=await createMetadataConfigResolver({database,resolveTemplate:resolveConfig,runtimeCode}).configure({tenantId:context.tenantId,enabled:body.enabled});}
     else if(body.action==='budget'){
      fields(body,['action','purpose','limitUsd','expectedVersion']);if(!['all','extraction'].includes(body.purpose))invalid();
-     data=await budget().configure({window:config.gateway.policy.window,purpose:body.purpose,limitMinor:dollars(body.limitUsd),expectedVersion:body.expectedVersion});
+     data=await budget().configure({window:administration.window,purpose:body.purpose,limitMinor:dollars(body.limitUsd),expectedVersion:body.expectedVersion});
     }else if(body.action==='reconcile'){
      fields(body,['action','reservationId','expectedVersion','actualUsd','evidenceHash','confirmedProviderEvidence']);
      const linked=await database.transaction('configure',async s=>(await s.query("SELECT job_id FROM public.ai_budget_reservations WHERE tenant_id=$1 AND id=$2 AND purpose='extraction'",[s.tenantId,body.reservationId])).rows[0]);if(!linked)throw Object.assign(Error('extraction_unavailable'),{status:404});

@@ -1,0 +1,1 @@
+export function createMetadataRuntime(options:{database:unknown;resolveTemplate:(tenantId:string)=>unknown;runtimeCode?:Record<string,string>;fetch?:typeof fetch;clock?:()=>number}):{tick():Promise<{state:string;code?:string}>};

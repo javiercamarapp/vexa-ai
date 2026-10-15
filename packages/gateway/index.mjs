@@ -192,14 +192,16 @@ export function extractionReadiness(gateway,now=Date.now()) {
   }catch{return false;}
 }
 /** Server-only factory. Every dependency and policy is server-owned, never body supplied. */
-export function createGateway({apiKey,policy,modelsByRole,catalog,runtime='stub',budgetRepository,fetch:transport=globalThis.fetch,clock={now:()=>Date.now(),setTimeout,clearTimeout},endpoint}={}) {
+export function createGateway({apiKey,policy,modelsByRole,catalog,runtime='stub',budgetRepository,fetch:transport=globalThis.fetch,clock={now:()=>Date.now(),setTimeout,clearTimeout},endpoint,metadataAdmission}={}) {
   // Snapshot config so concurrent requests cannot mutate policy after validation.
+  const admission=metadataAdmission===undefined?undefined:metadataAdmission&&{...metadataAdmission};
   const p=structuredClone(policy),models=structuredClone(modelsByRole),catalogSnapshot=structuredClone(catalog);
   return {async extract(input) {
     if(typeof window!=='undefined')return error('server_only');
     if(runtime!=='enabled')return error('runtime_disabled');
     if(!validCatalog(catalogSnapshot,clock.now()))return error('policy_blocked');
     if(typeof apiKey!=='string'||!apiKey.trim()||/[\r\n]/.test(apiKey))return error('missing_key');
+    if(admission!==undefined&&(!keys(admission,['configHash','admit'])||typeof admission.configHash!=='string'||! /^[a-f0-9]{64}$/.test(admission.configHash)||typeof admission.admit!=='function'))return error('policy_blocked');
     if(!validPolicy(p))return error('policy_blocked');
     // Restrict credentials to official origin/path; alternate deployments require a separate transport.
     const target=residencyEndpoint(p,'chat/completions');
@@ -262,6 +264,7 @@ export function createGateway({apiKey,policy,modelsByRole,catalog,runtime='stub'
       pendingAttempt=i;
       // Planning is not authorization to send after repository/retry waits.
       // No transport occurred for this attempt; reconcile only prior known usage.
+      if(admission!==undefined){let admitTimer;try{const a=await Promise.race([admission.admit({tenantId:data.tenantId,configHash:admission.configHash,model:c.model,provider:c.provider}),new Promise((_,reject)=>{admitTimer=clock.setTimeout(()=>reject(Error('METADATA_TIMEOUT')),5000);})]);if(!keys(a,['configHash','model','provider','eligibilityVersion','headSnapshotHash','expiresAt'])||a.configHash!==admission.configHash||a.model!==c.model||a.provider!==c.provider||!integer(a.eligibilityVersion,1,Number.MAX_SAFE_INTEGER)||! /^[a-f0-9]{64}$/.test(a.headSnapshotHash)||typeof a.expiresAt!=='string'||!Number.isFinite(Date.parse(a.expiresAt))||Date.parse(a.expiresAt)<=clock.now())return finish(error('policy_blocked'));}catch{return finish(error('policy_blocked'));}finally{if(admitTimer!==undefined)clock.clearTimeout(admitTimer);}}
       if(!eligible(c,p,clock.now(),catalogSnapshot))return finish(error('policy_blocked'));
       pendingAttempt=null; // No await between this boundary and invoking the transport.
       attemptMeta={policyVersion:p.version,catalogVersion:catalogSnapshot.version,promptHash:extractionPromptHashFor(semantics?.policy,data.taxonomy),schemaHash:sha256(JSON.stringify(finalSchema)),wireSchemaHash:sha256(JSON.stringify(schema)),model:c.model,provider:c.provider,attempts:i+1};

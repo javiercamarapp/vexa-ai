@@ -2,6 +2,7 @@ import {createManagedExtractionResolver} from './candidates/resolve.mjs';
 import {randomUUID} from 'node:crypto';
 import {createExtractionQueue} from './queue.mjs';
 import {createDurableBudgetRepository} from '../gateway/durable-budget.mjs';
+import {extractionReadiness} from '../gateway/index.mjs';
 const invalid=()=>{throw Object.assign(Error('extraction_input_invalid'),{status:400,code:'extraction_input_invalid'});};
 const fields=(body,allowed)=>{if(!body||Array.isArray(body)||typeof body!=='object'||Object.keys(body).some(k=>!allowed.includes(k)))invalid();};
 const dollars=value=>{if(typeof value!=='string'||! /^\d{1,12}(?:\.\d{1,6})?$/.test(value))invalid();const [whole,fraction='']=value.split('.');return String(BigInt(whole)*1000000n+BigInt(fraction.padEnd(6,'0')));};
@@ -27,7 +28,7 @@ export function createExtractionHandler({database,resolveConfig,runtime='stub',e
     if(!['owner','analyst'].includes(context.role)&&query.has('conversation_cursor'))invalid();
     const limits=config&&context.role==='owner'?await database.transaction('read',async s=>(await s.query('SELECT purpose,limit_minor::text AS limit_minor,version FROM public.ai_budget_limits WHERE tenant_id=$1 AND window_key=$2 AND purpose IN (\'all\',\'extraction\') ORDER BY purpose',[s.tenantId,config.gateway.policy.window])).rows):[];
     const reservations=config&&context.role==='owner'?await budget().list({window:config.gateway.policy.window}):[];
-    return Response.json({jobs:jobs.items,conversations:conversations.items,pagination:{jobs:{next_cursor:jobs.next_cursor,hasMore:jobs.hasMore},conversations:{next_cursor:conversations.next_cursor,hasMore:conversations.hasMore}},canSubmit:['owner','analyst'].includes(context.role),canConfigure:context.role==='owner',configuration:{ready:!!config,enabled:runtime==='enabled',window:config?.gateway.policy.window??null},limits,reservations},{headers});
+    return Response.json({jobs:jobs.items,conversations:conversations.items,pagination:{jobs:{next_cursor:jobs.next_cursor,hasMore:jobs.hasMore},conversations:{next_cursor:conversations.next_cursor,hasMore:conversations.hasMore}},canSubmit:['owner','analyst'].includes(context.role),canConfigure:context.role==='owner',configuration:{ready:!!config&&extractionReadiness(config.gateway),enabled:runtime==='enabled',window:config?.gateway.policy.window??null},limits,reservations},{headers});
    }
    if(request.method!=='POST')return new Response(null,{status:405,headers});
    const raw=await request.text();if(Buffer.byteLength(raw)>8192)invalid();let body;try{body=JSON.parse(raw);}catch{invalid();}
@@ -37,7 +38,7 @@ export function createExtractionHandler({database,resolveConfig,runtime='stub',e
     // Deny unauthorized actions before reporting missing runtime configuration.
     if(['submit','budget','reconcile'].includes(body.action)&&!(body.action==='submit'?['owner','analyst']:['owner']).includes(context.role))throw Object.assign(Error('role_insufficient'),{status:403,code:'role_insufficient'});
     if(!config)throw Object.assign(Error('configuration_required'),{code:'configuration_required',status:503});
-    if(body.action==='submit'){fields(body,['action','conversationId','requestKey']);data=await queue.submit({conversationId:body.conversationId,requestKey:body.requestKey,configHash:config.hash});}
+    if(body.action==='submit'){fields(body,['action','conversationId','requestKey']);if(!extractionReadiness(config.gateway))throw Object.assign(Error('configuration_required'),{code:'configuration_required',status:503});data=await queue.submit({conversationId:body.conversationId,requestKey:body.requestKey,configHash:config.hash});}
     else if(body.action==='budget'){
      fields(body,['action','purpose','limitUsd','expectedVersion']);if(!['all','extraction'].includes(body.purpose))invalid();
      data=await budget().configure({window:config.gateway.policy.window,purpose:body.purpose,limitMinor:dollars(body.limitUsd),expectedVersion:body.expectedVersion});

@@ -1,5 +1,5 @@
 import {createManagedExtractionResolver} from './candidates/resolve.mjs';
-import {sha256,extractionSchema} from './index.mjs';
+import {sha256,extractionSchema,semanticProfile} from './index.mjs';
 import {redactText} from './redact.mjs';
 import {createExtractionQueue} from './queue.mjs';
 import {createExtractionRepository} from './extraction-repository.mjs';
@@ -17,6 +17,7 @@ export function createExtractionConfigResolver(raw='[]'){
   const gateway=entry.gateway;if(!gateway||!gateway.policy||!gateway.modelsByRole||!gateway.catalog)fail();
   // At most 15 seconds transport plus two seconds Retry-After within a 45-second lease.
   if(!Number.isInteger(gateway.policy.timeoutMs)||gateway.policy.timeoutMs<1||!Number.isInteger(gateway.policy.maxAttempts)||gateway.policy.maxAttempts<1||gateway.policy.maxAttempts>3||gateway.policy.timeoutMs*gateway.policy.maxAttempts>15000)fail();
+  if(Object.hasOwn(gateway.policy,'extractionSemantics')){try{if(gateway.policy.maxAttempts!==1)fail();semanticProfile(gateway.policy.extractionSemantics,entry.taxonomy);}catch{fail();}}
   const configuration=structuredClone({taxonomy:entry.taxonomy,redactionPolicy:entry.redactionPolicy,gateway});
   map.set(entry.tenantId,{...configuration,hash:sha256(JSON.stringify(configuration))});
  }
@@ -31,7 +32,7 @@ export function createExtractionRuntime({database,storage,resolveConfig,apiKey,r
   let config;try{config=await effective(claim.tenant_id);}catch{return queue.reject(claim,'configuration_required');}
   if(config.hash!==claim.configHash)return queue.reject(claim,'configuration_changed');
   const scoped=queue.scopedDatabase(claim);
-  const repository=createExtractionRepository({database:scoped,storage});
+  const repository=createExtractionRepository({database:scoped,storage,...(Object.hasOwn(config.gateway.policy,'extractionSemantics')?{extractionSemantics:config.gateway.policy.extractionSemantics}:{})});
   const service=createExtractionService({repository,taxonomy:config.taxonomy,redactionPolicy:config.redactionPolicy,gatewayFor:({jobId})=>createGateway({...config.gateway,runtime,apiKey,fetch,clock,budgetRepository:createDurableBudgetRepository({database:scoped,purpose:'extraction',jobId})})});
   try{
    const result=await service.extract({conversationId:claim.conversationId,jobId:claim.id,taskKey:'extraction:'+claim.id});

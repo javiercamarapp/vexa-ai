@@ -1,4 +1,4 @@
-import {sha256,validateExtraction} from './index.mjs';
+import {sha256,validateExtraction,semanticProfile,validateSemanticBasis} from './index.mjs';
 import {identityKey} from '../ingestion/index.mjs';
 const uuid=value=>typeof value==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(value);
 const fail=()=>{throw Object.assign(Error('EVIDENCE_UNAVAILABLE'),{code:'23514'});};
@@ -44,8 +44,11 @@ export function createEvidenceRepository({database}={}){
    }
    if((await one(s,'SELECT EXISTS(SELECT 1 FROM jsonb_to_recordset($3::jsonb) AS x(kind text,external_id text) WHERE public.retention_source_deleted($1,$2,x.kind,x.external_id)) AS deleted',[s.tenantId,conversation.connection_id,JSON.stringify(identities)]))?.deleted)fail();
    if(await one(s,'SELECT id FROM public.tombstones WHERE tenant_id=$1 AND (connection_id IS NULL OR connection_id=$2) AND deleted_source_key=ANY($3::text[]) LIMIT 1',[s.tenantId,conversation.connection_id,tombstoneKeys]))fail();
-   if(sha256(JSON.stringify({revisions,policyHash:run.provenance.policy_hash,taxonomy:run.provenance.taxonomy}))!==run.input_hash)fail();
+   let semantics;
+   if(Object.hasOwn(run.provenance,'semantic_policy_hash')||Object.hasOwn(run.provenance,'semantic_policy')){try{semantics=semanticProfile(run.provenance.semantic_policy,run.provenance.taxonomy);if(semantics.hash!==run.provenance.semantic_policy_hash)fail();}catch{fail();}}
+   if(sha256(JSON.stringify({revisions,policyHash:run.provenance.policy_hash,taxonomy:run.provenance.taxonomy,...(semantics?{semanticPolicyHash:semantics.hash}:{})}))!==run.input_hash)fail();
    const result=validateExtraction(run.provenance.result,revisions,{taxonomy:run.provenance.taxonomy,tenantId:s.tenantId});if(!result.ok)fail();
+   if(semantics&&!validateSemanticBasis(run.provenance.semanticBasis,result.data,revisions,{taxonomy:run.provenance.taxonomy,tenantId:s.tenantId,profile:semantics}).ok)fail();
    return {runId:run.id,conversationId:run.conversation_id,state:historical?'historical':'current',status:run.status,model:run.model_id,createdAt:run.created_at,...result.data};
   });
  }});

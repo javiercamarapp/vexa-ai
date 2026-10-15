@@ -1,9 +1,9 @@
 import {randomUUID} from 'node:crypto';
-import {sha256,extractionSchema,validateExtraction} from './index.mjs';
+import {sha256,extractionSchema,validateExtraction,semanticProfile,validateSemanticBasis,semanticDiagnostic} from './index.mjs';
 import {redactText} from './redact.mjs';
 import {createExtractionSourceReader} from './source-reader.mjs';
 import {identityKey} from '../ingestion/index.mjs';
-import {extractionPromptHash} from '../gateway/index.mjs';
+import {extractionPromptHashFor} from '../gateway/index.mjs';
 const uuid=v=>typeof v==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(v);
 const fail=code=>{throw Object.assign(Error(code),{code:'23514'});};
 const one=async(s,sql,args)=>(await s.query(sql,args)).rows[0];
@@ -30,13 +30,16 @@ async function currentSources(s,conversationId){
  return rows;
 }
 /** Server-owned repository; original content and redaction maps never leave this boundary. */
-export function createExtractionRepository({database,storage,sourceReader=createExtractionSourceReader({storage}),ownerToken=randomUUID()}={}){
+export function createExtractionRepository(options={}){
+ const {database,storage,sourceReader=createExtractionSourceReader({storage}),ownerToken=randomUUID()}=options;
+ const hasSemantics=Object.hasOwn(options,'extractionSemantics'),semanticConfig=hasSemantics?structuredClone(options.extractionSemantics):undefined;
  if(typeof window!=='undefined'||typeof database?.transaction!=='function'||typeof sourceReader!=='function'||!uuid(ownerToken))fail('EXTRACTION_CONFIGURATION_REQUIRED');
  return Object.freeze({
   async prepare({conversationId,jobId,taskKey,taxonomy,policy}){
    if(!uuid(conversationId)||!uuid(jobId)||typeof taskKey!=='string'||!taskKey||taskKey.length>200)fail('EXTRACTION_INPUT_INVALID');
    const config=structuredClone({taxonomy,policy}),schema=extractionSchema(config.taxonomy,{modelOutput:true}),policyHash=redactText('',config.policy).policyHash;
-   const requestHash=sha256(JSON.stringify({conversationId,jobId,taxonomy:config.taxonomy,policyHash}));
+   const semantics=hasSemantics?semanticProfile(semanticConfig,config.taxonomy):null,semanticBinding=semantics?{semanticPolicyHash:semantics.hash}:{};
+   const requestHash=sha256(JSON.stringify({conversationId,jobId,taxonomy:config.taxonomy,policyHash,...semanticBinding}));
    return database.transaction('import',async s=>{
     await s.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[s.tenantId+':extraction:'+taskKey]);
     const previous=await one(s,`SELECT r.id,r.status,r.provenance FROM public.extraction_claims c JOIN public.extraction_runs r ON r.tenant_id=c.tenant_id AND r.id=c.run_id WHERE c.tenant_id=$1 AND c.task_key=$2`,[s.tenantId,taskKey]);
@@ -56,9 +59,9 @@ export function createExtractionRepository({database,storage,sourceReader=create
     }
     // Recheck authority after source IO; no original text is passed to the gateway.
     const latest=await currentSources(s,conversationId);if(JSON.stringify(latest.map(r=>r.id))!==JSON.stringify(originals.map(r=>r.id)))fail('EXTRACTION_SOURCE_CHANGED');
-    const runId=randomUUID(),inputHash=sha256(JSON.stringify({revisions,policyHash,taxonomy:config.taxonomy}));
+    const runId=randomUUID(),inputHash=sha256(JSON.stringify({revisions,policyHash,taxonomy:config.taxonomy,...semanticBinding}));
     await s.query(`INSERT INTO public.extraction_runs(id,tenant_id,model_id,prompt_hash,schema_hash,input_hash,status,conversation_id,job_id,provenance)
-     VALUES($1,$2,'unattempted',$3,$4,$5,'running',$6,$7,$8)`,[runId,s.tenantId,extractionPromptHash,sha256(JSON.stringify(schema)),inputHash,conversationId,jobId,JSON.stringify({request_hash:requestHash,policy_hash:policyHash,taxonomy:config.taxonomy,input_manifest:inputManifest,offsets:'unicode_code_points'})]);
+     VALUES($1,$2,'unattempted',$3,$4,$5,'running',$6,$7,$8)`,[runId,s.tenantId,extractionPromptHashFor(semantics?.policy,config.taxonomy),sha256(JSON.stringify(schema)),inputHash,conversationId,jobId,JSON.stringify({request_hash:requestHash,policy_hash:policyHash,taxonomy:config.taxonomy,input_manifest:inputManifest,offsets:'unicode_code_points',...(semantics?{semantic_policy_hash:semantics.hash,semantic_policy:semantics.policy}:{})})]);
     await s.query('INSERT INTO public.extraction_claims(tenant_id,run_id,job_id,task_key,actor_id,owner_token) VALUES($1,$2,$3,$4,$5,$6)',[s.tenantId,runId,jobId,taskKey,s.userId,ownerToken]);
     for(const id of mapIds)await s.query('INSERT INTO public.extraction_inputs(tenant_id,run_id,redaction_id) VALUES($1,$2,$3)',[s.tenantId,runId,id]);
     return {acquired:true,runId,input:{tenantId:s.tenantId,role:'extraction',taskKey,taxonomy:config.taxonomy,revisions}};
@@ -74,15 +77,31 @@ export function createExtractionRepository({database,storage,sourceReader=create
      JOIN public.redaction_maps m ON m.tenant_id=i.tenant_id AND m.id=i.redaction_id
      JOIN public.message_revisions r ON r.tenant_id=m.tenant_id AND r.id=m.redacted_revision_id WHERE i.tenant_id=$1 AND i.run_id=$2 ORDER BY m.original_revision_id`,[s.tenantId,runId])).rows;
     const unchanged=saved.length===current.length&&saved.every(r=>allowed.has(r.original_revision_id)&&sha256(r.redacted_text)===r.hash);
-    const revisions=saved.map(r=>({tenant_id:s.tenantId,message_revision_id:r.id,role:allowed.get(r.original_revision_id)?.role,text:r.redacted_text}));
-    const valid=value?.ok===true&&unchanged&&validateExtraction(value.data,revisions,{taxonomy:run.provenance.taxonomy,tenantId:s.tenantId}).ok;
+    const semanticPresent=Object.hasOwn(run.provenance,'semantic_policy_hash')||Object.hasOwn(run.provenance,'semantic_policy');
+    const byId=new Map(saved.map(r=>[r.id,r]));
+    const ordered=semanticPresent&&Array.isArray(run.provenance.input_manifest)?run.provenance.input_manifest.map(m=>byId.get(m.message_revision_id)).filter(Boolean):saved;
+    const revisions=ordered.map(r=>({tenant_id:s.tenantId,message_revision_id:r.id,role:allowed.get(r.original_revision_id)?.role,text:r.redacted_text}));
+    let valid=value?.ok===true&&unchanged&&validateExtraction(value.data,revisions,{taxonomy:run.provenance.taxonomy,tenantId:s.tenantId}).ok;
+    let checkedSemantic,semanticError;
+    if(semanticPresent||hasSemantics){
+      try{
+        if(!semanticPresent||!hasSemantics)throw Error('policy_mismatch');
+        const trusted=semanticProfile(semanticConfig,run.provenance.taxonomy),savedProfile=semanticProfile(run.provenance.semantic_policy,run.provenance.taxonomy);
+        if(trusted.hash!==savedProfile.hash||savedProfile.hash!==run.provenance.semantic_policy_hash)throw Error('policy_mismatch');
+        if(new Set(ordered.map(r=>r.id)).size!==saved.length||ordered.length!==saved.length||run.provenance.input_manifest.some((m,i)=>m.message_revision_id!==ordered[i]?.id||m.original_revision_id!==ordered[i]?.original_revision_id||m.hash!==ordered[i]?.hash||m.role!==revisions[i]?.role)||sha256(JSON.stringify({revisions,policyHash:run.provenance.policy_hash,taxonomy:run.provenance.taxonomy,semanticPolicyHash:trusted.hash}))!==run.input_hash)throw Error('source_binding_mismatch');
+        checkedSemantic=validateSemanticBasis(value?.meta?.semanticBasis,value?.data,revisions,{taxonomy:run.provenance.taxonomy,tenantId:s.tenantId,profile:trusted});
+        if(!checkedSemantic.ok)semanticError=semanticDiagnostic(trusted,checkedSemantic.code);
+        valid=valid&&checkedSemantic.ok;
+      }catch(e){valid=false;try{semanticError=semanticDiagnostic(semanticProfile(semanticConfig,run.provenance.taxonomy),e.message);}catch{semanticError=undefined;}}
+    }
     const meta=value?.meta;const metadataValid=meta?.promptHash===run.prompt_hash&&meta?.schemaHash===run.schema_hash&&typeof meta?.model==='string'&&meta.model.length<=200;
     let status=valid&&metadataValid?(value.data.abstention?'abstained':'succeeded'):'failed';
     if(value?.ok===false&&['policy_blocked','runtime_disabled','missing_key'].includes(value.error?.code))status='policy_blocked';
     const allowedReasons=['invalid_output','policy_blocked','runtime_disabled','missing_key','budget_exceeded','budget_unavailable','timeout','transport_error','provider_error','cost_overrun','retry_deferred','duplicate_task','idempotency_conflict','input_too_large','invalid_input'];
     const reason=!unchanged?'source_changed':valid&&metadataValid?(value.data.abstention?.reason??null):value?.ok===true?'invalid_output':allowedReasons.includes(value?.error?.code)?value.error.code:'extraction_failed';
     const provenance={...run.provenance,reason,quarantined:status==='failed',billing_state:['uncertain','settled'].includes(value?.billingState)?value.billingState:'unknown'};
-    if(valid&&metadataValid)provenance.result=value.data;
+    if(valid&&metadataValid){provenance.result=value.data;if(semanticPresent)provenance.semanticBasis=value.meta.semanticBasis;}
+    else if(semanticError)provenance.semantic_diagnostic=semanticError;
     const usage=Object.fromEntries(['prompt_tokens','completion_tokens','total_tokens'].filter(k=>Number.isSafeInteger(meta?.usage?.[k])&&meta.usage[k]>=0).map(k=>[k,meta.usage[k]]));
     await s.query("SELECT set_config('vexa.extraction_owner_token',$1,true)",[ownerToken]);
     await s.query('UPDATE public.extraction_runs SET status=$3,model_id=$4,usage=$5,provenance=$6,updated_at=now() WHERE tenant_id=$1 AND id=$2',[s.tenantId,runId,status,metadataValid?meta.model:'unattempted',JSON.stringify(usage),JSON.stringify(provenance)]);

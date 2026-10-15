@@ -178,6 +178,19 @@ function extractionCandidates(models,policy,data) {
   const customers=data.revisions.reduce((count,revision)=>count+(revision.role==='customer'?1:0),0);
   return [selected[customers>=2?1:0]];
 }
+/** Configuration eligibility only; no inference, credential checks or budget reservation. */
+export function extractionReadiness(gateway,now=Date.now()) {
+  try {
+    const {policy,modelsByRole,catalog}=gateway;
+    if(!Number.isFinite(now)||!validPolicy(policy)||!validCatalog(catalog,now)||!residencyEndpoint(policy,'chat/completions'))return false;
+    // Before a conversation is selected, every configured routing branch must work.
+    const branches=Object.hasOwn(policy,'extractionRouting')?[[],[{role:'customer'},{role:'customer'}]]:[[]];
+    return branches.every(revisions=>{
+      const candidates=extractionCandidates(modelsByRole,policy,{role:'extraction',revisions});
+      return Array.isArray(candidates)&&candidates.some(candidate=>eligible(candidate,policy,now,catalog));
+    });
+  }catch{return false;}
+}
 /** Server-only factory. Every dependency and policy is server-owned, never body supplied. */
 export function createGateway({apiKey,policy,modelsByRole,catalog,runtime='stub',budgetRepository,fetch:transport=globalThis.fetch,clock={now:()=>Date.now(),setTimeout,clearTimeout},endpoint}={}) {
   // Snapshot config so concurrent requests cannot mutate policy after validation.

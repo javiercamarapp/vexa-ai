@@ -28,9 +28,9 @@ function endpointParameters(c,p,now,catalog){
  const params=e.supportedParameters,model=catalogModel(catalog,c.model,now),required=['response_format','max_tokens','reasoning'];
  if(!model||!Array.isArray(params)||!params.length||params.length>100||new Set(params).size!==params.length||params.some(x=>typeof x!=='string'||!x||x.length>200)||required.some(x=>!params.includes(x)||!model.supportedParameters.includes(x)))return null;
  const r=e.reasoning,requested=c.reasoning,efforts=['max','xhigh','high','medium','low'];
- if(!keys(r,['mandatory','supportedEfforts'])||typeof r.mandatory!=='boolean'||!Array.isArray(r.supportedEfforts)||r.supportedEfforts.length>5||new Set(r.supportedEfforts).size!==r.supportedEfforts.length||r.supportedEfforts.some(x=>!efforts.includes(x)))return null;
+ if(!keys(r,['mandatory','supportedEfforts'])||typeof r.mandatory!=='boolean'||!Array.isArray(r.supportedEfforts)||r.supportedEfforts.length>6||new Set(r.supportedEfforts).size!==r.supportedEfforts.length||r.supportedEfforts.some(x=>!(x==='none'||efforts.includes(x))))return null;
  const off=keys(requested,['enabled','exclude'])&&requested.enabled===false&&requested.exclude===true&&!r.mandatory;
- const on=keys(requested,['effort','exclude'])&&requested.exclude===true&&r.supportedEfforts.includes(requested.effort);
+ const on=keys(requested,['effort','exclude'])&&requested.exclude===true&&efforts.includes(requested.effort)&&r.supportedEfforts.includes(requested.effort);
  if(!off&&!on)return null;
  // Rate snapshots use decimal USD/token; configured integer micro-USD rates remain
  // conservative caps. Cover every advertised tier, including writes, not cached discounts.

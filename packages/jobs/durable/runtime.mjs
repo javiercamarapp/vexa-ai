@@ -2,7 +2,7 @@ import {databasePoolOptions} from './pg-options.mjs';
 import {workerCredentials} from './credentials.mjs';
 import {createJobRepository} from './repository.mjs';
 export async function createRuntime(env=process.env,{createDatabase,pool:providedPool,deadlineAt,consumer='imports'}={}){
- if(!['imports','crm','extraction','problems','history','notifications'].includes(consumer))throw Error('WORKER_CONSUMER_INVALID');
+ if(!['imports','crm','extraction','problems','history','notifications','metadata'].includes(consumer))throw Error('WORKER_CONSUMER_INVALID');
  for(const key of ['VEXA_DATABASE_URL','VEXA_SUPABASE_URL','VEXA_SUPABASE_ANON_KEY','VEXA_WORKER_EMAIL','VEXA_WORKER_PASSWORD','VEXA_WORKER_USER_ID'])if(!env[key])throw Error('CONFIGURATION_REQUIRED');
  if(!createDatabase)({createDatabase}=await import(/* webpackIgnore: true */ '../../platform/db.mjs'));
  const dispatcher=env.VEXA_WORKER_DISPATCHER==='enabled';
@@ -25,7 +25,7 @@ export async function createRuntime(env=process.env,{createDatabase,pool:provide
   if(!tenant)return {idle:true,close:()=>driver.end()};
  }
  const canonical=createDatabase({identity,pool,selectedTenant:tenant});
- const database=deadlineAt?{transaction:async(action,work)=>{if(Date.now()>=deadlineAt)throw Error('CHUNK_TIMEOUT');return canonical.transaction(action,async s=>{const remaining=Math.floor(deadlineAt-Date.now());if(remaining<1)throw Error('CHUNK_TIMEOUT');await s.query("SELECT set_config('transaction_timeout',$1,true),set_config('statement_timeout',$1,true)",[String(remaining)]);return work(s);});}}:canonical;
+ const database=deadlineAt||consumer==='metadata'?{transaction:async(action,work)=>{if(deadlineAt&&Date.now()>=deadlineAt)throw Error('CHUNK_TIMEOUT');return canonical.transaction(action,async s=>{const remaining=Math.min(consumer==='metadata'?5000:Infinity,deadlineAt?Math.floor(deadlineAt-Date.now()):5000);if(remaining<1)throw Error('CHUNK_TIMEOUT');await s.query("SELECT set_config('transaction_timeout',$1,true),set_config('statement_timeout',$1,true)",[String(remaining)]);return work(s);});}}:canonical;
  const storage={async read(scope,row,options){if(scope.tenantId!==row.tenant_id||row.tenant_id!==tenant||!row.object_path.startsWith(scope.tenantId+'/imports/'+row.id+'/'))throw Error('STORAGE_SCOPE');const r=await get('/storage/v1/object/authenticated/vexa-private/'+row.object_path.split('/').map(encodeURIComponent).join('/'),options);const bytes=new Uint8Array(await r.arrayBuffer());if(bytes.length>20971520)throw Error('STORAGE_LIMIT');return bytes;}};
  return {database,chunkSize:Number(env.VEXA_WORKER_CHUNK_SIZE??100),repository:createJobRepository({database,worker:true}),storage,close:()=>driver.end()};
 }

@@ -1,3 +1,4 @@
+import {createMetadataConfigResolver} from './metadata/resolve.mjs';
 import {createManagedExtractionResolver} from './candidates/resolve.mjs';
 import {sha256,extractionSchema,semanticProfile} from './index.mjs';
 import {redactText} from './redact.mjs';
@@ -26,14 +27,15 @@ export function createExtractionConfigResolver(raw='[]'){
 export function createExtractionRuntime({database,storage,resolveConfig,apiKey,runtime='stub',fetch,clock,env=process.env,runtimeCode}={}){
  if(typeof resolveConfig!=='function')fail();
  const queue=createExtractionQueue({database});
+ const metadata=env.VEXA_EXTRACTION_METADATA_RUNTIME==='managed'?createMetadataConfigResolver({database,resolveTemplate:resolveConfig,runtimeCode}):null;
  const effective=createManagedExtractionResolver({database,baseResolver:resolveConfig,env,runtimeCode});
  return Object.freeze({queue,async tick(){
   const claim=await queue.claim();if(!claim)return {state:'idle'};if(claim.recovered)return claim;
-  let config;try{config=await effective(claim.tenant_id);}catch{return queue.reject(claim,'configuration_required');}
+  let config;try{config=await effective(claim.tenant_id,undefined,claim.configHash);}catch{return queue.reject(claim,'configuration_required');}
   if(config.hash!==claim.configHash)return queue.reject(claim,'configuration_changed');
   const scoped=queue.scopedDatabase(claim);
   const repository=createExtractionRepository({database:scoped,storage,...(Object.hasOwn(config.gateway.policy,'extractionSemantics')?{extractionSemantics:config.gateway.policy.extractionSemantics}:{})});
-  const service=createExtractionService({repository,taxonomy:config.taxonomy,redactionPolicy:config.redactionPolicy,gatewayFor:({jobId})=>createGateway({...config.gateway,runtime,apiKey,fetch,clock,budgetRepository:createDurableBudgetRepository({database:scoped,purpose:'extraction',jobId})})});
+  const service=createExtractionService({repository,taxonomy:config.taxonomy,redactionPolicy:config.redactionPolicy,gatewayFor:({jobId})=>createGateway({...config.gateway,...(metadata?{metadataAdmission:{configHash:config.hash,admit:metadata.admit}}:{}),runtime,apiKey,fetch,clock,budgetRepository:createDurableBudgetRepository({database:scoped,purpose:'extraction',jobId})})});
   try{
    const result=await service.extract({conversationId:claim.conversationId,jobId:claim.id,taskKey:'extraction:'+claim.id});
    if(result.reason==='reconciliation_required')return queue.reject(claim,'reconciliation_required');

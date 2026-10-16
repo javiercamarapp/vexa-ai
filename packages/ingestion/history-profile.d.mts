@@ -1,6 +1,6 @@
 import type {SourceEnvelope,HistoricalTimestamp} from './index';
 export const HISTORY_PROFILE:'history-message-v1';
-export function checkedProfile(profile:unknown):'history-message-v1'|'hubspot-contact-csv-v1'|undefined;
+export function checkedProfile(profile:unknown):'history-message-v1'|'hubspot-contact-csv-v1'|'hubspot-ticket-contact-association-v1'|undefined;
 export function historicalText(text:unknown):string;
 export function historicalTimestamp(value:unknown):HistoricalTimestamp;
 export function historyMetadata(text:unknown,original:unknown):HistoricalTimestamp;

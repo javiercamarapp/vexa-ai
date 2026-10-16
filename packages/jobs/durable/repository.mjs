@@ -1,3 +1,5 @@
+import {ASSOCIATION_PROFILE} from '../../ingestion/associations/profile.mjs';
+import {lockAssociationChunk,persistAssociationChunk} from '../../ingestion/associations/repository.mjs';
 import {randomUUID} from 'node:crypto';
 import {persistCanonical,persistNormalizationRejection,readCanonicalHistory,selectCanonicalRevision} from '../../ingestion/persistence/index.mjs';
 import {contentHash} from '../../ingestion/index.mjs';
@@ -54,12 +56,15 @@ export function createJobRepository({database,leaseMs=30000,deadlineMs=900000,qu
   async source(j){return tx(async s=>{await fence(s,j);return one(s,'SELECT i.*,u.size,u.content_type,u.user_id,c.source,c.account_id FROM public.imports i JOIN public.import_uploads u ON u.tenant_id=i.tenant_id AND u.import_id=i.id JOIN public.connections c ON c.tenant_id=i.tenant_id AND c.id=i.connection_id WHERE i.tenant_id=$1 AND i.id=$2',[s.tenantId,j.import_id]);});},
   async checkpoint(j){return tx(async s=>{await fence(s,j);return (await one(s,"SELECT checkpoint FROM public.checkpoints WHERE tenant_id=$1 AND job_id=$2 AND stage='ingestion'",[s.tenantId,j.id]))?.checkpoint??null;});},
   async commitChunk(j,{records,checkpoint,done}){return tx(async s=>{
+   const associations=records.some(record=>record.profile===ASSOCIATION_PROFILE);
+   if(associations)await lockAssociationChunk(s,{jobId:j.id,records});
    await fence(s,j);
    const prior=(await one(s,"SELECT checkpoint FROM public.checkpoints WHERE tenant_id=$1 AND job_id=$2 AND stage='ingestion'",[s.tenantId,j.id]))?.checkpoint;
    const chunkHash=contentHash({records,checkpoint,done});
    if(prior?.offset===checkpoint.offset){if(prior.chunkHash!==chunkHash)fail('CHUNK_REPLAY_CONFLICT');return;}
    if(prior?.done||checkpoint.offset!==(prior?.offset??0)+records.length||prior&&prior.scope!==checkpoint.scope)fail('CHECKPOINT_CONFLICT');
-   for(const record of records){if(record.validation_error){if(!rejectRecord)fail('REJECTION_PERSISTENCE_REQUIRED',503);await rejectRecord(s,{importId:j.import_id,record,error:{code:record.validation_error,field:record.validation_field??null,line:record.row_ref}});}else await persistCanonical(s,{importId:j.import_id,record});}
+   if(associations)await persistAssociationChunk(s,{importId:j.import_id,records});
+   else for(const record of records){if(record.validation_error){if(!rejectRecord)fail('REJECTION_PERSISTENCE_REQUIRED',503);await rejectRecord(s,{importId:j.import_id,record,error:{code:record.validation_error,field:record.validation_field??null,line:record.row_ref}});}else await persistCanonical(s,{importId:j.import_id,record});}
    await fence(s,j); // Clock, saved principal, membership and connection checked before publication.
    await s.query("INSERT INTO public.checkpoints(tenant_id,job_id,stage,fencing_token,checkpoint) VALUES($1,$2,'ingestion',$3,$4) ON CONFLICT(tenant_id,job_id,stage) DO UPDATE SET checkpoint=excluded.checkpoint,fencing_token=excluded.fencing_token,updated_at=clock_timestamp()",[s.tenantId,j.id,j.fencing_token,JSON.stringify({...checkpoint,chunkHash,done})]);
    await s.query('UPDATE public.jobs SET last_progress_at=clock_timestamp(),updated_at=clock_timestamp() WHERE tenant_id=$1 AND id=$2',[s.tenantId,j.id]);

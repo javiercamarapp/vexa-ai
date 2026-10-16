@@ -1,3 +1,4 @@
+import {ASSOCIATION_PROFILE,associationPayload} from '../../ingestion/associations/profile.mjs';
 import {CUSTOMER_PROFILE,CUSTOMER_ADAPTER,customerPayload} from '../../ingestion/customer-profile.mjs';
 import {historyMetadata,historicalText,historicalIdentity} from '../../ingestion/history-profile.mjs';
 import {createHash} from 'node:crypto';
@@ -11,7 +12,7 @@ export async function recordsFromBytes(bytes,row){
  const config=legacy?{columns:{id:'id',text:'text',date:'date',role:'role',conversation:'conversation'},sheet:null}:canonicalMapping(row.provenance.mapping);
  if(config.profile&&mappingVersion(config)!==row.mapping_version)fail('MAPPING_VERSION_MISMATCH',422);
  if(config.profile&&row.content_type!=='text/csv')fail('HISTORY_PROFILE_CSV_ONLY',422);
- if(config.profile!==CUSTOMER_PROFILE&&(!config.columns.role||!config.columns.conversation||!config.columns.date))fail('INGESTION_MAPPING_REQUIRED',422);
+ if(config.profile!==CUSTOMER_PROFILE&&config.profile!==ASSOCIATION_PROFILE&&(!config.columns.role||!config.columns.conversation||!config.columns.date))fail('INGESTION_MAPPING_REQUIRED',422);
  let parsed;
  if(row.content_type==='text/csv'){
   const rows=[],errors=[];for await(const event of parseCSVStream((async function*(){yield bytes;})())){const {type,...rest}=event;(type==='row'?rows:errors).push(rest);}
@@ -25,6 +26,11 @@ export async function recordsFromBytes(bytes,row){
   const data=Object.fromEntries(Object.entries(config.columns).map(([key,column])=>[key,column?entry.values[parsed.headers.indexOf(column)]:null]));
   try{
    if(entry.values.length!==parsed.headers.length)fail('COLUMN_COUNT',422);
+   if(config.profile===ASSOCIATION_PROFILE){
+    const association=associationPayload(parsed.headers,entry.values,config.columns);
+    records.push({profile:ASSOCIATION_PROFILE,association,row_ref:entry.line,row_hash:association.evidenceHash,batch_hash:row.file_hash,mapping_version:row.mapping_version,payload_ref:`csv:${row.file_hash}:line:${entry.line}`});
+    continue;
+   }
    if(config.profile===CUSTOMER_PROFILE){
     const payload=customerPayload(parsed.headers,entry.values,config.columns);
     const envelope={...createEnvelope(context,{entity_type:'customer',ingestion_profile:CUSTOMER_PROFILE,external_id:payload.external_id,source_revision:'sha256:'+payload.original_object_hash,occurred_at:payload.occurred_at,observed_at:payload.source_observed_at,payload_ref:`csv:${row.file_hash}:line:${entry.line}`},payload),adapter_version:CUSTOMER_ADAPTER};
@@ -38,9 +44,9 @@ export async function recordsFromBytes(bytes,row){
    const payload={external_id:data.id,text:data.text,occurred_at,role:data.role,conversation_id:data.conversation,customer_id:data.customer||null,order_id:data.order||null,sku:data.sku||null,source_cells:entry.values,source_headers:parsed.headers,...(historical_timestamp?{historical_timestamp,source_occurred_at:data.date}:{})};
    const envelope={...createEnvelope(context,{entity_type:'message',...(config.profile?{ingestion_profile:config.profile}:{}),external_id:data.id,occurred_at,observed_at:new Date(row.created_at).toISOString(),payload_ref:`csv:${row.file_hash}:line:${entry.line}`},payload),adapter_version:'csv-message-v1'};
    records.push({envelope,raw_payload:payload,row_ref:entry.line,row_hash:contentHash(payload),batch_hash:row.file_hash,mapping_version:row.mapping_version});
-  }catch(error){if(!error.code)throw error;records.push({row_ref:entry.line,mapping_version:row.mapping_version,raw_hash:contentHash(entry.values),batch_hash:row.file_hash,validation_error:error.code,validation_field:error.field??null});}
+  }catch(error){if(!error.code)throw error;records.push({...(config.profile===ASSOCIATION_PROFILE?{profile:ASSOCIATION_PROFILE}:{}),row_ref:entry.line,mapping_version:row.mapping_version,raw_hash:contentHash(entry.values),batch_hash:row.file_hash,validation_error:error.code,validation_field:error.field??null});}
  }
- for(const e of parsed.errors)records.push({row_ref:e.line,mapping_version:row.mapping_version,raw_hash:contentHash(e),batch_hash:row.file_hash,validation_error:e.code});
+ for(const e of parsed.errors)records.push({...(config.profile===ASSOCIATION_PROFILE?{profile:ASSOCIATION_PROFILE}:{}),row_ref:e.line,mapping_version:row.mapping_version,raw_hash:contentHash(e),batch_hash:row.file_hash,validation_error:e.code});
  return records.sort((a,b)=>Number(a.row_ref)-Number(b.row_ref));
 }
 export async function* pagesFromStorage(storage,row,checkpoint,{signal,chunkSize=100}={}){

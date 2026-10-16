@@ -35,7 +35,7 @@ export function createImportHandler({database,storage,confirmationSecret,admissi
      return response(inserted.rows.length?201:200,{connection:{id:row.id,source:row.source,account_id:row.account_id},created:inserted.rows.length===1});
     });
    }
-   const match=url.pathname.match(/^\/api\/imports(?:\/([0-9a-f-]+)(\/(?:confirm|preview|mapping|errors\.csv))?)?$/i);
+   const match=url.pathname.match(/^\/api\/imports(?:\/([0-9a-f-]+)(\/(?:confirm|renew|preview|mapping|errors\.csv))?)?$/i);
    if(!match||match[1]&&!uuid.test(match[1])||(url.search&&(request.method!=='GET'||(match[1]?Boolean(match[2])||[...url.searchParams.keys()].some(k=>k!=='sheet'):[...url.searchParams.keys()].some(k=>!['offset','connection_offset','team_offset'].includes(k))))))fail(404,'route_not_found');
    const owned=async(s,id)=>{const r=await get(s,id);if(r.user_id!==s.userId)fail(404,'import_not_found');return r;};
    const verified=async(s,r)=>{await connection(s,r.connection_id);const owner=(await s.query("SELECT owner_id FROM storage.objects WHERE bucket_id='vexa-private' AND name=$1",[r.object_path])).rows[0];if(!owner||owner.owner_id!==s.userId)fail(422,'object_unavailable');const bytes=await storage.read({tenantId:s.tenantId,userId:s.userId},r);if(!(bytes instanceof Uint8Array)||bytes.byteLength!==Number(r.size)||hash(bytes)!==r.file_hash)fail(422,'object_bytes_invalid');return bytes;};
@@ -86,6 +86,19 @@ export function createImportHandler({database,storage,confirmationSecret,admissi
      if(new Date(current.expires_at)<=new Date())fail(409,'reservation_expired');
      const capability=await storage.createUpload(s,current);
      return response(201,{import_id:current.id,state:current.state,object_path:current.object_path,upload_url:capability.url,upload_token:token(current),expires_at:new Date(current.expires_at).toISOString()});
+    });
+   }
+   if(match[2]==='/renew'){
+    pick(input,['sha256','mapping_version']);
+    if(typeof input.sha256!=='string'||!/^([0-9a-f]{64})$/.test(input.sha256)||typeof input.mapping_version!=='string'||!input.mapping_version.length||input.mapping_version.length>128)fail(400,'invalid_metadata');
+    return await database.transaction('import',async s=>{
+     await s.query('SELECT id FROM public.imports WHERE tenant_id=$1 AND id=$2 FOR UPDATE',[s.tenantId,match[1]]);
+     const r=await owned(s,match[1]);await connection(s,r.connection_id);
+     if(r.job_id||r.state!=='reserved')fail(409,'reservation_not_renewable');
+     if(r.file_hash!==input.sha256||r.mapping_version!==input.mapping_version)fail(409,'confirmation_conflict');
+     const changed=await s.query("UPDATE public.import_uploads SET expires_at=clock_timestamp()+interval '15 minutes' WHERE tenant_id=$1 AND import_id=$2 AND user_id=$3 AND job_id IS NULL AND expires_at<=clock_timestamp() RETURNING import_id",[s.tenantId,r.id,s.userId]);
+     const current=await owned(s,r.id);
+     return response(200,{import_id:current.id,state:current.state,renewed:changed.rows.length===1,upload_token:token(current),expires_at:new Date(current.expires_at).toISOString()});
     });
    }
    if(match[2]==='/preview'||match[2]==='/mapping'){

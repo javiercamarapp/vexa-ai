@@ -18,8 +18,20 @@
 
 .explorer .search{display:grid;grid-template-columns:minmax(160px,2fr) minmax(110px,1fr) minmax(130px,1fr) minmax(90px,.7fr) auto;align-items:end;gap:10px;max-width:none;margin:12px 0}
 .explorer .search label{font-size:11px;gap:4px}.explorer .search input,.explorer .search select{min-height:34px;padding:7px 9px;font-size:12px;border-radius:6px}
-.explorer .search button,.explorer .toolbar button{width:auto;min-height:34px;padding:7px 12px;font-size:12px;margin:0;border-radius:7px;white-space:nowrap}
 .toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0}.explorer>p{font-size:12px;max-width:90ch}
 .explorer .publication{background:transparent;border:0;margin:10px 0;padding:0;font-size:11px;color:var(--muted,#647067)}.explorer .publication>summary{min-height:24px;padding:3px 0;font-size:11px}.publication p{margin:5px 0;overflow-wrap:anywhere}
 @media(max-width:1100px){.explorer .search{grid-template-columns:repeat(2,minmax(0,1fr))}.explorer .search button{justify-self:start}}
-@media(max-width:460px){.explorer .search{grid-template-columns:minmax(0,1fr)}.explorer .search input,.explorer .search select,.explorer .search button,.explorer .toolbar button{min-height:40px}}
+@media(max-width:460px){.explorer .search{grid-template-columns:minmax(0,1fr)}.explorer .search input,.explorer .search select{min-height:40px}}
+.lead{font-size:15px;line-height:1.55;font-weight:500}
+.empty>p{margin:0 0 12px}.suggestions{display:flex;flex-wrap:wrap;gap:8px}
+.metrics dt{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.references h4{font-size:12px;margin:12px 0 8px;color:var(--ui-secondary)}
+.references ul{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.references li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;padding:8px 12px;border:1px solid var(--ui-border);border-radius:10px}
+.refText{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 220px;font-size:13px}
+.refText code{font:500 10px var(--font-mono);color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.inputRow>button{flex:none}
+.explorer .search{display:grid;grid-template-columns:minmax(160px,2fr) minmax(110px,1fr) minmax(130px,1fr) minmax(90px,.7fr) auto;align-items:end;gap:12px;padding:16px 20px}
+
+@media(max-width:1100px){.explorer .search{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.explorer .search{grid-template-columns:minmax(0,1fr)}.explorer .search>button{width:100%}}

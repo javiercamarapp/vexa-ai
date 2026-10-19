@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import "./fonts.css";
 import "./globals.css";
 import "./task-layout.css";
+import "./ui.css";
 
 export const metadata: Metadata = {
   title: "Rovaq AI",

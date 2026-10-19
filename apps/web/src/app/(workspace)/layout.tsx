@@ -7,7 +7,11 @@ import { WorkspaceShell } from '../../components/workspace/shell';
 import { VexaBrand } from '../../components/vexa-brand';
 import { DataState } from '../../components/workspace/data-state';
 export const dynamic='force-dynamic';
+// Local visual QA only: `next dev` with VEXA_UI_FIXTURES=1 renders the real shell with a synthetic organization and no Supabase.
+// Never active in a production build (NODE_ENV is "production" there), so it cannot widen access.
+const UI_FIXTURES=process.env.NODE_ENV==='development'&&process.env.VEXA_UI_FIXTURES==='1';
 export default async function WorkspaceLayout({children}:{children:ReactNode}){
+ if(UI_FIXTURES){const now=new Date();return <><WorkspaceShell brand={<VexaBrand/>} organizations={[{id:'00000000-0000-4000-8000-000000000001',name:'Organización de demostración (sintética)'}]} tenant="00000000-0000-4000-8000-000000000001" role="owner" platformAccess={false} today={{iso:now.toISOString().slice(0,10),label:new Intl.DateTimeFormat('es-MX',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).format(now)}}>{children}</WorkspaceShell></>;}
  let context;try{context=await workspaceSession();}catch(error){if(error instanceof AccessError){if(error.status===401)redirect('/login');if(error.status===403)redirect('/login?error=access_denied');}return <DataState state={{kind:'error',code:'workspace_identity_unavailable',message:'Configura el acceso Supabase y verifica el servicio de identidad para abrir el espacio de trabajo.'}}/>;}
  const {session,client}=context;const {data:organizations,error}=await client.from('organizations').select('id,name').in('id',session.memberships.map(m=>m.tenant_id)).order('name');
  if(error)return <DataState state={{kind:'error',code:'organizations_unavailable',message:'No se pudo verificar la organización. Reintenta cuando se restablezca el servicio.'}}/>;

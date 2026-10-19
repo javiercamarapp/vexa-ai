@@ -1,5 +1,5 @@
 'use client';
-import Link from './navigation-lifecycle';
+import {Button,LinkButton,Refresh,Arrow} from '../ui/button';
 import {useEffect,useRef,useState} from 'react';
 type Problem={id:string;label:string;version:number;state:string;conversationIds:string[]};
 function problems(value:unknown):Problem[]{
@@ -24,12 +24,11 @@ export function CurrentProblems(){
   void load();return()=>{controller.abort();};
  },[revision]);
  function reload(){generation.current++;setRows(null);setError('');setBusy(true);setRevision(n=>n+1);}
- return <section aria-label="Catálogo actual de problemas">
-  <h2>Problemas de las conversaciones</h2>
-  <p>Incluye problemas sin asociación financiera. Este catálogo muestra el estado actual y no cambia con los filtros de la publicación financiera.</p>
-  <button type="button" disabled={busy} onClick={reload}>Actualizar catálogo</button>
-  {busy&&<p role="status">Consultando problemas autorizados…</p>}
-  {error&&<p role="alert">{error}</p>}
-  {!busy&&rows&&(!rows.length?<p>No hay problemas activos con evidencia accesible.</p>:<ul>{rows.map(row=><li key={row.id}><Link href={'/problems/'+row.id}>{row.label}</Link> · {row.conversationIds.length} conversaciones · versión {row.version}</li>)}</ul>)}
+ return <section className="card" aria-label="Catálogo actual de problemas">
+  <div className="card-head"><div><p className="eyebrow">Catálogo</p><h2>Problemas de las conversaciones</h2></div><Button size="sm" icon={<Refresh/>} loading={busy} onClick={reload}>Actualizar catálogo</Button></div>
+  <p className="card-lead">Incluye problemas sin asociación financiera. Muestra el estado actual y no cambia con los filtros de la publicación financiera.</p>
+  {busy&&<div className="skeleton-stack" role="status" aria-label="Consultando problemas autorizados"><span className="skeleton skeleton-line"/><span className="skeleton skeleton-line"/></div>}
+  {error&&<p className="state state-error" role="alert">{error}</p>}
+  {!busy&&rows&&(!rows.length?<p className="state">No hay problemas activos con evidencia accesible.</p>:<ul className="catalog-list">{rows.map(row=><li key={row.id}><div className="catalog-copy"><LinkButton href={'/problems/'+row.id} className="catalog-link" icon={<Arrow/>}>{row.label}</LinkButton><span className="chip">{row.conversationIds.length} {row.conversationIds.length===1?'conversación':'conversaciones'}</span><span className="chip">v{row.version}</span></div></li>)}</ul>)}
  </section>;
 }

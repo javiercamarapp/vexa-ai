@@ -1,5 +1,5 @@
 // External exam bindings, not product schema. See README for unresolved names.
-import {randomUUID} from 'node:crypto';
+import {randomUUID,randomBytes} from 'node:crypto';
 export const q = x => "'" + String(x).replaceAll("'", "''") + "'";
 export const ident = x => '"' + x.replaceAll('"','""') + '"';
 export const insert = (table,row) => `INSERT INTO public.${ident(table)} (${Object.keys(row).map(ident)}) VALUES (${Object.values(row).map(v=>v===null?'NULL':q(typeof v==='object'?JSON.stringify(v):v))})`;
@@ -41,6 +41,11 @@ export const definitions = [
   ['weekly_briefs',{status:'draft',version:1},[['snapshot_id','metric_snapshots']]],
   ['audit_events',{actor:'synthetic',action:'fixture',resource:'synthetic',reason:'exam',trace_id:'syn-trace'}],
   ['tombstones',{deleted_source_key:'syn-deleted'}],
+  // 0053: misma postura que 0002 (authenticated solo lectura con vexa_member, escritura solo vexa_backend con
+  // scope de tenant, FORCE RLS, trigger immutable_tenant, unique(tenant_id,id)). Se clasifican como tablas
+  // tenant-scoped ordinarias; sha256 es único por tenant (nunca dedup entre tenants).
+  ['attachment_blobs',{sha256:'a'.repeat(64),bytes:10,mime_type:'text/plain',state:'planned'}],
+  ['attachment_links',{source_family:'conversation',source_file_id:'SYN-FILE'},[['blob_id','attachment_blobs'],['conversation_id','conversations'],['message_id','messages']]],
 ];
 export const relations = definitions.flatMap(([table,,refs=[]])=>refs.map(([column,parent])=>({table,column,parent})));
 export function fixture(tenant) {
@@ -68,6 +73,9 @@ export function freshRow(source) {
   const n=++serial;
   for(const key of ['external_id','account_id','idempotency_key','input_hash','scope_hash','deleted_source_key','row_ref','source_ref','version','revision','source_revision','attempt_number','stage'])
     if(key in row)row[key]=typeof row[key]==='number'?n:/^\d+$/.test(row[key])?String(n):'synthetic-'+randomUUID();
+  // Identidad de contenido (sha256 único por tenant) e identidad de archivo fuente: cada clon necesita las suyas.
+  if(typeof row.sha256==='string'&&/^[0-9a-f]{64}$/.test(row.sha256))row.sha256=randomBytes(32).toString('hex');
+  if(typeof row.source_file_id==='string')row.source_file_id='SYN-FILE-'+randomUUID();
   // Temporal association clones retain their parents, but get a separate closed
   // historical window. Never reuse the seed's open or bounded interval.
   if('valid_from' in row){

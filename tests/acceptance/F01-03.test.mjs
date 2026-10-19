@@ -23,6 +23,7 @@ import * as budget from './support/F01-03/budget-oracles.mjs';
 import * as health from './support/F01-03/health/oracles.mjs';
 import * as aliases from './support/F01-03/aliases/oracles.mjs';
 import * as sync from './support/F01-03/sync/oracles.mjs';
+import * as tracker from './support/F01-03/tracker/oracles.mjs';
 import test, {after} from 'node:test';
 import assert from 'node:assert/strict';
 import {candidateInputs,launch,write,denied} from './support/F01-03/harness.mjs';
@@ -47,6 +48,7 @@ test('F01-03 part 1: real migrations and core SQL authorization', {timeout:60000
   h.sql("NOTIFY pgrst, 'reload schema';");
   if(migrations.workerDelegationsRequired)assert.ok(workers.present(h),'WORKER_MIGRATION_REQUIRED');
   if(migrations.syncRequired)assert.deepEqual(sync.present(h),sync.tables,'SYNC_MIGRATION_REQUIRED');
+  if(migrations.trackerRequired)assert.deepEqual(tracker.present(h),tracker.tables,'TRACKER_MIGRATION_REQUIRED');
   if(migrations.aliasesRequired)assert.ok(aliases.present(h),'ALIAS_MIGRATION_REQUIRED');
   if(migrations.healthRequired)assert.ok(health.present(h),'HEALTH_MIGRATION_REQUIRED');
   if(migrations.budgetRequired)assert.deepEqual(budget.present(h),budget.tables,'BUDGET_MIGRATION_REQUIRED');
@@ -75,6 +77,7 @@ test('F01-03 part 1: real migrations and core SQL authorization', {timeout:60000
   f=seed(h,actors);
   history.seedHistory(h,f);
   if(sync.present(h).length){f.sync=sync.seed(h,f,actors);await check(t,'sync008 backend raw authorization',()=>sync.access(h,f.sync,actors));}
+  if(tracker.present(h).length){f.tracker=tracker.seed(h,f,actors);await check(t,'tracker0052 backend-only append-only authorization',()=>tracker.access(h,f.tracker,actors));}
   if(health.present(h)){f.health=health.seed(h,f,actors);await check(t,'health0010 summary authorization',()=>health.access(h,f.health,actors));}
   if(history.present(h).length)await check(t,'source history backend authorization',()=>history.access(h,f,actors));
   if(history.present(h).includes('source_heads'))await check(t,'owner selection fence cannot bypass via SQL',()=>history.selectionFence(h,f,actors));

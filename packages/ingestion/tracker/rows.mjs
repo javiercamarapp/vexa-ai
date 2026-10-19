@@ -15,19 +15,28 @@ export function headerColumns(sheet){
 }
 // Evidencia: solo una columna "Hubspot ID" con un id numérico bien formado. Order ID NO enlaza a ticket.
 // linked exige el id en el índice de tickets conocido; sin índice o sin coincidencia es candidate (se muestra, no se enlaza).
+// Los ids de ticket vienen como números en el XML ("3.9503750123E10"): se expanden por texto, sin coma flotante.
+// Solo valen si el resultado es un entero exacto; si la mantisa pierde dígitos, se rechaza (no se adivina).
+export function exactInteger(lexeme){
+ const m=/^\+?(\d+)(?:\.(\d+))?(?:[eE]\+?(\d+))?$/.exec(String(lexeme).trim());
+ if(!m)return null;
+ const [,whole,frac='',exp='0']=m,e=Number(exp);if(!Number.isSafeInteger(e)||e>40)return null;
+ if(frac.length>e){return /^0*$/.test(frac.slice(e))?(whole+frac.slice(0,e)).replace(/^0+(?=\d)/,''):null;}
+ return (whole+frac+'0'.repeat(e-frac.length)).replace(/^0+(?=\d)/,'');
+}
 export function ticketEvidence(cells,hubspotCols,ticketIndex){
  const found=cells.filter(c=>hubspotCols.includes(c.col)&&c.v!=null&&String(c.v).trim()!=='');
  if(!found.length)return {state:'no_ticket'};
  const ids=[];
  for(const c of found){
-  const v=String(c.v).trim();
-  if(!/^\d{6,20}$/.test(v))return {state:'malformed_id',cell:c.ref+''};
-  ids.push({id:v,cell:c.ref,col:colName(c.col)});
+  const v=exactInteger(c.v);
+  if(v===null||!/^\d{6,20}$/.test(v))return {state:'malformed_id',cell:c.ref+''};
+  ids.push({id:v,cell:c.ref,col:colName(c.col),computed:c.f!=null});
  }
  const distinct=[...new Set(ids.map(i=>i.id))];
  if(distinct.length>1)return {state:'conflicting_ids',cell:ids[0].cell};
  const hit=ticketIndex&&ticketIndex.has(distinct[0]);
- return {state:hit?'linked':'candidate',ticket_id:distinct[0],cell:ids[0].cell,column:ids[0].col};
+ return {state:hit?'linked':'candidate',ticket_id:distinct[0],cell:ids[0].cell,column:ids[0].col,...(ids[0].computed?{computed:true}:{})};
 }
 // Devuelve {record} o {rejection:{code,field,row_ref}}. Nunca lanza por datos de cliente.
 export function buildRow(sheet,row,{hubspot,ticketIndex}){

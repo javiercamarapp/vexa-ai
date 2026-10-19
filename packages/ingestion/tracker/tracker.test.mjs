@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {buildXlsx} from './xlsx-fixture.mjs';
 import {readWorkbook,planSheetJob,planWorkbook,manifest,TrackerLedger,buildRow,ticketEvidence} from './index.mjs';
+import {exactInteger} from './rows.mjs';
 const sha=s=>createHash('sha256').update(s).digest('hex');
 const HEAD=['Requester','Hubspot ID','Request Date','Order ID','Notes'];
 const row=(i,{tk=String(10000000000+i),note='n'+i}={})=>['u'+i,tk,45000+i,'ORD-'+i,note];
@@ -76,4 +77,12 @@ test('revisiones: idempotencia, versión nueva, cabeza = más reciente, celdas c
  assert.equal(L.diff(c,b).rowsChanged,2); // fila 3 (cambiada en b) y fila 5 (vieja en c)
  assert.throws(()=>L.addVersion({sha256:a,rank:9}),/VERSION_CONFLICT/);assert.throws(()=>L.addVersion({sha256:sha('z'),rank:2}),/VERSION_RANK_TAKEN/);
  assert.throws(()=>L.applyBatch(a,Array(251).fill({row_ref:'x',row_hash:'h'})),/BATCH_TOO_LARGE/);
+});
+test('ids de ticket en notación científica se expanden exactos, sin flotante',()=>{
+ assert.equal(exactInteger('3.9503750123E10'),'39503750123');assert.equal(exactInteger('4E10'),'40000000000');assert.equal(exactInteger('12345678901'),'12345678901');
+ assert.equal(exactInteger('1.5'),null);assert.equal(exactInteger('1.23E1'),'12.3'.includes('.')?null:null);assert.equal(exactInteger('abc'),null);assert.equal(exactInteger('9.007199254740993E15'),'9007199254740993');
+ const idx=new Set(['39503750123']);
+ const ev=ticketEvidence([{col:1,ref:'B2',v:'3.9503750123E10',f:null}],[1],idx);assert.deepEqual([ev.state,ev.ticket_id],['linked','39503750123']);
+ assert.equal(ticketEvidence([{col:1,ref:'B2',v:'1.5E1',f:null}],[1],idx).state,'malformed_id');
+ assert.equal(ticketEvidence([{col:1,ref:'B2',v:'39503750124',f:'A1+1'}],[1],idx).computed,true);
 });

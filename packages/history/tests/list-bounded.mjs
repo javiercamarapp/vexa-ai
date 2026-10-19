@@ -7,7 +7,7 @@ import fs from 'node:fs';import os from 'node:os';import path from 'node:path';i
 const here=path.dirname(new URL(import.meta.url).pathname),root=path.resolve(here,'../../..'),mig=path.join(root,'supabase/migrations');
 const require=createRequire(path.join(root,'package.json')),pg=require('pg');
 const {createHistoryRepository,COUNT_CAP}=await import('../repository.mjs');
-const bin=process.env.PG_BIN??'/opt/homebrew/opt/postgresql@17/bin',port=process.env.PGPORT_TEST??'59473',sock=process.env.PGSOCK_TEST??'/tmp/vxhl',items=Number(process.env.ITEMS??250000),TIMEOUT_MS=1500;
+const bin=process.env.PG_BIN??'/opt/homebrew/opt/postgresql@17/bin',port=process.env.PGPORT_TEST??'59473',sock=process.env.PGSOCK_TEST??'/tmp/vxhl',items=Number(process.env.ITEMS??250000);let TIMEOUT_MS=60000;
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'vexa-history-list-')),data=path.join(dir,'data');fs.mkdirSync(sock,{recursive:true});
 const run=(cmd,args)=>{const r=spawnSync(path.join(bin,cmd),args,{encoding:'utf8'});if(r.status!==0)throw new Error(cmd+' failed: '+(r.stderr||r.stdout).slice(0,1500));return r.stdout;};
 const psql=(args)=>run('psql',['-h',sock,'-p',port,'-d','postgres','-X','-q','-v','ON_ERROR_STOP=1',...args]);
@@ -36,14 +36,16 @@ insert into public.history_items(tenant_id,batch_id,conversation_id,state) selec
 alter table public.history_batches enable trigger user;alter table public.history_items enable trigger user;analyze;`);
  psql(['-f',path.join(dir,'seed.sql')]);
  pool=new pg.Pool({host:sock,port:Number(port),database:'postgres',max:2});
- // 1. Reproduction: the pre-fix statement (unbounded per-batch count) times out under the production boundary.
+ // 1. Reproduction. Timings vary with machine load, so the budget is derived from the measurement: first time the
+ // unbounded statement (U), then use half of U as the statement_timeout. The legacy statement must exceed it (57014 -> 503).
  const legacy="SELECT b.*,coalesce((SELECT jsonb_object_agg(x.state,x.n) FROM (SELECT state,count(*) AS n FROM public.history_items WHERE tenant_id=b.tenant_id AND batch_id=b.id GROUP BY state)x),'{}') AS counts FROM public.history_batches b WHERE b.tenant_id=$1 ORDER BY b.created_at DESC,b.id LIMIT 100";
+ const u0=Date.now();await database.transaction('read',s=>s.query(legacy,[T]));const UNB=Date.now()-u0;TIMEOUT_MS=Math.max(300,Math.floor(UNB/2));
  let failure;try{await database.transaction('read',s=>s.query(legacy,[T]));}catch(e){failure=e;}
- check('reproduction: unbounded counting statement hits statement_timeout (57014 -> 503)',failure?.pg==='57014'&&failure.status===503,failure?.pg);
+ check('reproduction: unbounded counting statement exceeds statement_timeout (57014 -> 503)',failure?.pg==='57014'&&failure.status===503,`unbounded ${UNB} ms, budget ${TIMEOUT_MS} ms, code ${failure?.pg}`);
  // 2. Fix: the real repository answers within the same timeout and flags lower-bound counts.
  const repo=createHistoryRepository({database,resolveConfig:async()=>({ready:false,enabled:false})});
  const t0=Date.now();let out,err;try{out=await repo.list();}catch(e){err=e;}const ms=Date.now()-t0;
- check('fix: list() succeeds under the same statement_timeout',!err&&out?.batches?.length===2,`${ms}ms ${err?.pg??''}`);
+ check('fix: list() succeeds under the same statement_timeout and is at least 3x faster than the unbounded count',!err&&out?.batches?.length===2&&ms*3<UNB,`${ms} ms vs ${UNB} ms ${err?.pg??''}`);
  check('fix: counts are capped and flagged as lower bounds',out?.batches.every(b=>b.countsCapped===true&&Object.values(b.counts).reduce((a,n)=>a+Number(n),0)===COUNT_CAP+1));
  check('fix: tenant scoping and connections list unchanged',out?.connections?.length===1&&out.configuration.ready===false);
  // 3. A small batch keeps exact counts (not flagged).

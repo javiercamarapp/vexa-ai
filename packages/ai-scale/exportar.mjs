@@ -20,7 +20,7 @@ export function parseRows(stdout){ // tolera {rows:[...]}, [...] o {result:[...]
   const rows=Array.isArray(j)?j:Array.isArray(j?.rows)?j.rows:Array.isArray(j?.result)?j.result:Array.isArray(j?.data)?j.data:null;
   if(!rows)throw Error('forma de salida desconocida');return rows;
 }
-export function groupRows(rows,{doRedact=true,stats=null}={}){ // filas por mensaje -> conversaciones {conversation_id, first_at, last_at, messages[]}
+export function groupRows(rows,{doRedact=true,stats=null,redactFn=redact}={}){ // filas por mensaje -> conversaciones {conversation_id, first_at, last_at, messages[]}
   const by=new Map(),seen=new Set();
   for(const r of rows){
     if(seen.has(r.message_id)){if(stats)stats.duplicados=(stats.duplicados??0)+1;continue;} // NUNCA el mismo mensaje dos veces
@@ -28,9 +28,11 @@ export function groupRows(rows,{doRedact=true,stats=null}={}){ // filas por mens
     if(typeof r.text!=='string'||!r.text.trim())continue;
     if(r.payload_role&&r.payload_role!==r.role)continue; // mismo control que source-reader (rol del payload = rol de la revisión)
     let c=by.get(r.conversation_id);if(!c){c={conversation_id:r.conversation_id,messages:[]};by.set(r.conversation_id,c);}
-    c.messages.push({id:r.message_id,revision_id:r.revision_id,role:r.role,at:r.at,text:doRedact?redact(r.text):r.text});
+    let tx;try{tx=doRedact?redactFn(r.text):r.text;}catch{c.failed=true;if(stats)stats.redaccion_fallida_mensajes=(stats.redaccion_fallida_mensajes??0)+1;continue;}
+    c.messages.push({id:r.message_id,revision_id:r.revision_id,role:r.role,at:r.at,text:tx});
   }
-  return [...by.values()].map(c=>({...c,first_at:c.messages[0]?.at??null,last_at:c.messages.at(-1)?.at??null}));
+  const ok=[...by.values()].filter(c=>{if(c.failed){if(stats)stats.redaccion_fallida=(stats.redaccion_fallida??0)+1;return false;}return true;}); // conversación con redacción fallida: se cuenta y se deja fuera
+  return ok.map(c=>({...c,first_at:c.messages[0]?.at??null,last_at:c.messages.at(-1)?.at??null}));
 }
 export function extractTaxonomy(stdout){
   const rows=parseRows(stdout);let t=rows[0]?.taxonomy;if(typeof t==='string')t=JSON.parse(t);
@@ -92,7 +94,7 @@ export async function main(){
   }
   try{fs.unlinkSync(path.join(out,'.page.sql'));}catch{}
   console.log(`LISTO: ${nConv} conversaciones, ${nMsg} mensajes -> ${file} (texto ya redactado; no lo comparta ni lo suba a git).`);
-  fs.writeFileSync(path.join(out,'recibo-exportacion-hubspot.json'),JSON.stringify({conversaciones:nConv,mensajes:nMsg,duplicados_descartados:hstats.duplicados??0,mensajes_con_varias_filas:hstats.varias_filas??0,ts:new Date().toISOString()},null,1),{mode:0o600});
+  fs.writeFileSync(path.join(out,'recibo-exportacion-hubspot.json'),JSON.stringify({conversaciones:nConv,mensajes:nMsg,duplicados_descartados:hstats.duplicados??0,redaccion_fallida:hstats.redaccion_fallida??0,mensajes_con_varias_filas:hstats.varias_filas??0,ts:new Date().toISOString()},null,1),{mode:0o600});
   if(fuente==='todas')await exportCsvCli({o,ref,out,run:true});
 }
 if(import.meta.url===`file://${process.argv[1]}`)main().catch(e=>{console.error('ERROR',String(e.message).slice(0,200));process.exit(1);});

@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import {redact,cutQuoted,cutSignature,isAutomatic,prepareConversation,learnBoilerplate} from './preprocess.mjs';
+import {MAX_RAW_CHARS,redact,cutQuoted,cutSignature,isAutomatic,prepareConversation,learnBoilerplate} from './preprocess.mjs';
 import {buildRequest,resolveAndValidate,compactSchema,compactPrompt} from './compact.mjs';
 import {runCohort,projectCost,pickPilot,taskKeyFor,configHash} from './cohorte.mjs';
 import {createLedger,BudgetAbort} from './spend.mjs';
@@ -552,4 +552,57 @@ test('preprocesado: un mensaje con el mismo id nunca se envía dos veces',()=>{
   const m={id:'x',role:'customer',text:'Mi pedido no llegó',at:'1'};
   const p=prepareConversation({conversation_id:'c',messages:[m,{...m},{id:'y',role:'agent',text:'Lo reviso',at:'2'}]});
   assert.equal(p.revisions.length,2);assert.equal(p.stats.dup_msgs,1);
+});
+
+// ---- Ajustes tras revisión (piloto/canario)
+import {cohortLedger,windowHash} from './cohorte.mjs';
+test('NFKC no puede reventar el tope: 20k x U+FDFA y texto CJK de 54k se redactan acotados y a tiempo, sin abortar',()=>{
+  for(const t of['ﷺ'.repeat(20000),'漢字かな한글'.repeat(9000),'ﷺ'.repeat(30000)+'tel 5512345678']){
+    const t0=performance.now();const o=redact(t);assert.ok(o.length<=MAX_RAW_CHARS+10,'len '+o.length);assert.ok(performance.now()-t0<1000);
+    const p=prepareConversation({conversation_id:'c',messages:[{id:'1',role:'customer',text:t,at:'1'}]});assert.ok(p.status==='ok'||p.status==='skipped');
+  }
+});
+test('error de redacción por conversación: se omite como redaccion_fallida y la corrida CONTINÚA (no aborta); exportadores lo cuentan',async()=>{
+  const dir=tmp(),c=stubClient();const bomb=t=>{if(t.includes('BOOM'))throw Error('redact');return redact(t);};
+  const convs=mk(6);convs[2].messages[0].text='BOOM';
+  const r=await runCohort(common(dir,{convs,client:c,concurrency:1,batchId:'x',embed:false,redactFn:bomb}));
+  assert.equal(r.receipt.abort,null);assert.equal(r.receipt.ok,5);assert.equal(r.receipt.omitidas_por_regla.redaccion_fallida,1);
+  const st={};const g=groupRows([{conversation_id:'a',message_id:'1',revision_id:'r',role:'customer',at:'1',text:'BOOM'},{conversation_id:'b',message_id:'2',revision_id:'r',role:'customer',at:'1',text:'hola'}],{stats:st,redactFn:bomb});
+  assert.equal(g.length,1);assert.equal(st.redaccion_fallida,1);
+  const w=world();const res=await resolveCsv({runSql:w.runSql,storageGet:w.storageGet,win,redactFn:t=>{throw Error('x');}});
+  assert.equal(res.convs.length,0);assert.ok(res.report.no_resueltas_por_causa.redaccion_fallida>=1);
+});
+test('sobre-redacción: se conservan fechas válidas, versiones con palabra clave y SKUs mixtos; sin fugas de teléfonos/tarjetas cercanos',()=>{
+  const keep='Llegó el 2026-10-18, factura 01-02-2026 y 18/10/2026; firmware v10.2.3.4 y modelo DEWALTDCD771C2K1 (SKU AB12CD34EF56GH).';
+  assert.equal(redact(keep),keep);
+  assert.equal(redact('escríbeme a juan@gmail.com Gracias por todo'),'escríbeme a [PII] Gracias por todo');
+  assert.equal(redact('mi correo es juan@gmail.com. Gracias'),'mi correo es [PII]. Gracias');
+  for(const [t,gone] of[['tel 55-1234-5678 el 2026-10-18',['1234']],['4111 1111 1111 1111 el 2026-10-18',['1111']],['55-12-2026',['55-12']],['12-34-5678',['34-5678']],['ip 10.2.3.4',['10.2.3.4']],['cel 5512345678 v1.2.3',['5512345678']],['tel 55 1234 5678 18/10/2026',['1234 5678']]]){
+    const o=redact(t);for(const g of gone)assert.ok(!o.includes(g),t+' -> '+o);}
+  const raw='Pedido del 2026-10-18 con v2.0.1.5 y cel ５５１２３４５６７８.\n\n--\nFirma';
+  const p=prepareConversation({conversation_id:'c',messages:[{id:'m',role:'customer',text:raw,at:'1'}]});
+  assert.ok(redact(raw).startsWith(p.revisions[0].text));assert.match(p.revisions[0].text,/2026-10-18/);assert.doesNotMatch(p.revisions[0].text,/5512/);
+  assert.doesNotMatch(redact('xay'),//);
+});
+test('boilerplate.json: guarda hash de configuración y ventana; si falta (con resultados) o difiere se ABORTA, no se reaprende',()=>{
+  const C=[{conversation_id:'c',messages:[{id:'m',role:'customer',text:'hola\nPie repetido de la empresa',at:'1'}]}];
+  const W={from:'2026-07-01',to:'2026-11-01',basis:'first'},cfg=configHash({model:'anthropic/claude-haiku-5.5',provider:'azure',taxonomy:TAX});
+  const dir=tmp();loadOrLearnBoilerplate(dir,C,{cfg,window:W});
+  const j=JSON.parse(fs.readFileSync(path.join(dir,'boilerplate.json'),'utf8'));assert.equal(j.config_hash,cfg);assert.equal(j.window_hash,windowHash(W));
+  loadOrLearnBoilerplate(dir,C,{cfg,window:W}); // coherente: ok
+  assert.throws(()=>loadOrLearnBoilerplate(dir,C,{cfg:'x'.repeat(64),window:W}),/OTRA configuración/);
+  assert.throws(()=>loadOrLearnBoilerplate(dir,C,{cfg,window:{...W,from:'2026-08-01'}}),/OTRA ventana/);
+  fs.rmSync(path.join(dir,'boilerplate.json'));fs.writeFileSync(path.join(dir,'resultados.jsonl'),'{"x":1}\n');
+  assert.throws(()=>loadOrLearnBoilerplate(dir,C,{cfg,window:W}),/Falta boilerplate\.json pero ya existen resultados/);
+  assert.throws(()=>loadOrLearnBoilerplate(tmp(),C,{cfg,window:W,allowLearn:false}),/Falta boilerplate\.json/); // persistir nunca aprende
+});
+test('libro de gasto en ruta fija por tenant+ventana: otro --out NO reinicia el tope; ventana distinta es otro libro',()=>{
+  const root=tmp(),W={from:'2026-07-01',to:'2026-11-01',basis:'first'};
+  const l1=cohortLedger({root,window:W,batchId:'a',capTotalUsd:30,capBatchUsd:30,outDir:path.join(root,'out1')});l1.record({task:'t',kind:'chat',usd:29.5});
+  const l2=cohortLedger({root,window:W,batchId:'b',capTotalUsd:30,capBatchUsd:30,outDir:path.join(root,'out2')});
+  assert.ok(Math.abs(l2.total-29.5)<1e-9);assert.throws(()=>l2.reserve(1),BudgetAbort);
+  assert.equal(cohortLedger({root,window:{...W,basis:'last'},batchId:'c',capTotalUsd:30,capBatchUsd:30}).total,0);
+  assert.equal(cohortLedger({root,window:W,batchId:'d',capTotalUsd:1000,capBatchUsd:1000}).capTotalUsd,30); // forzado a 30
+  const out=path.join(root,'old');fs.mkdirSync(out);fs.writeFileSync(path.join(out,'gasto-cohorte.jsonl'),JSON.stringify({usd:2,batch:'z'})+'\n');
+  assert.ok(Math.abs(cohortLedger({root,window:W,batchId:'e',capTotalUsd:30,capBatchUsd:30,outDir:out}).total-31.5)<1e-9); // libro heredado del --out también cuenta
 });

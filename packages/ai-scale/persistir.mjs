@@ -104,7 +104,7 @@ async function cli(){
   const commit=flag('commit'),run=flag('run'),rollbackTest=flag('rollback-test');
   if(run&&commit===rollbackTest)throw Error('con --run indique exactamente uno: --rollback-test o --commit');
   const convs=new Map(inF.split(',').filter(f=>fs.existsSync(f)).flatMap(readJsonl).map(c=>[c.conversation_id,c]));
-  const boilerplate=loadOrLearnBoilerplate(base,[...convs.values()]); // el MISMO archivo congelado que usó cohorte.mjs
+  let boilerplate;try{boilerplate=loadOrLearnBoilerplate(path.dirname(resF),[],{cfg:configHash({model:DEFAULT_MODEL,provider:'azure',taxonomy}),window:null,allowLearn:false});}catch(e){throw Error('ABORTADO: '+e.message);} // el MISMO archivo congelado que usó cohorte.mjs; nunca se reaprende aquí
   const items=[],bad=[];
   for(const [cid,recs] of selectCandidates(readJsonl(resF),convs)){
     if(items.length>=intOpt(a,'max',Infinity))break;

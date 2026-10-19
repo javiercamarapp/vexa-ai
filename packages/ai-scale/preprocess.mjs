@@ -1,3 +1,6 @@
+// SOBRE-REDACCIÓN: se conservan fechas válidas (ISO y d-m-a), versiones precedidas de palabra clave (v/versión/firmware/build) y SKUs
+// alfanuméricos (ya no se redactan por ser largos; sí si contienen 8+ dígitos seguidos). NO se conserva '10.2.3.4' sin palabra clave: es
+// indistinguible de una IPv4 y se prefiere redactar (riesgo de fuga > costo de contexto).
 // NOTA: conversaciones con más de 40 mensajes se truncan a 6 primeros + 34 últimos (LIMITS). Nombres/direcciones NO se redactan (riesgo residual aceptado).
 // Preprocesado LOCAL de una conversación antes de enviar texto a un LLM. Sin red, sin dependencias externas.
 // Orden fijo: (1) REDACCIÓN del texto completo, (2) recorte de cola (historial citado, firmas, avisos legales),
@@ -19,7 +22,10 @@ export function normalizeText(text){
   if(typeof text!=='string')return '';
   let t=text.length>MAX_RAW_CHARS?text.slice(0,MAX_RAW_CHARS):text;
   if(!t.isWellFormed())t=t.toWellFormed();
-  t=t.normalize('NFKC')
+  t=t.normalize('NFKC');
+  // NFKC puede EXPANDIR (U+FDFA -> 18 caracteres): tope final DESPUÉS de normalizar (sin partir un par sustituto).
+  if(t.length>MAX_RAW_CHARS){t=t.slice(0,MAX_RAW_CHARS);if(!t.isWellFormed())t=t.toWellFormed();}
+  t=t.replace(/[\uE000-\uE0FF]/g,'') // uso interno como marcadores de protección
     .replace(/[\u2010-\u2015\u2212\uFE58\uFE63\uFF0D]/g,'-')
     .replace(/[\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]/g,' ')
     .replace(/[\u200B-\u200D\u2060\uFEFF\u00AD]/g,'')
@@ -31,13 +37,12 @@ const PII='[PII]';
 const SENSITIVE_KEY=/(?<![\p{L}\p{N}])(api[_ -]?key|apikey|access[_ -]?token|token|secret|password|passwd|pwd|contrase[ñn]a|clave|pin|bearer)(?![\p{L}\p{N}])(\s*(?:es|is|:|=|de acceso es)?\s*)(\S{4,200})/giu;
 const secretLike=v=>/[\d!@#$%^&*_=+\/-]/.test(v)||/^(eyJ|sk_|pk_)/.test(v);
 const URL_RE=/(?<![\p{L}\p{N}])(?:https?:\/\/|www\.)[^\s<>"')\]]{1,500}/giu;
-const EMAIL_OBF=/[\p{L}\p{N}._%+-]{1,64}\s{0,3}(?:@|\[at\]|\(at\)|\(arroba\)|\[arroba\])\s{0,3}[\p{L}\p{N}-]{1,63}(?:\s{0,3}(?:\.|\[dot\]|\(dot\)|\(punto\)|\s(?:punto|dot)\s)\s{0,3}[\p{L}\p{N}-]{1,63}){0,6}|[\p{L}\p{N}._%+-]{1,64}\s(?:\(arroba\)|arroba)\s[\p{L}\p{N}-]{1,63}(?:\s(?:punto|dot)\s[\p{L}\p{N}-]{1,63}){1,4}/giu;
+const EMAIL_OBF=/[\p{L}\p{N}._%+-]{1,64}\s{0,3}(?:@|\[at\]|\(at\)|\(arroba\)|\[arroba\])\s{0,3}[\p{L}\p{N}-]{1,63}(?:\.[\p{L}\p{N}-]{1,63}|\s{0,3}(?:\[dot\]|\(dot\)|\(punto\)|\s(?:punto|dot)\s)\s{0,3}[\p{L}\p{N}-]{1,63}){0,6}|[\p{L}\p{N}._%+-]{1,64}\s(?:\(arroba\)|arroba)\s[\p{L}\p{N}-]{1,63}(?:\s(?:punto|dot)\s[\p{L}\p{N}-]{1,63}){1,4}/giu;
 const CURP=/(?<![\p{L}\p{N}])[A-ZÑ]{4}\d{6}[HM][A-ZÑ]{5}[A-Z0-9]\d(?![\p{L}\p{N}])/giu;
 const RFC=/(?<![\p{L}\p{N}])[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}(?![\p{L}\p{N}])/giu;
 const BASE64ISH=/(?<![\p{L}\p{N}_-])(?:eyJ[\w-]{5,}\.[\w-]{5,}(?:\.[\w-]*)?|(?:sk|pk|rk)_(?:live|test)_[A-Za-z0-9]+|[A-Za-z0-9_-]{32,})(?![\p{L}\p{N}_-])/gu;
 const TOKEN_WITH_LONG_DIGITS=/[\p{L}\p{N}_#:/.-]{0,40}\d{8,}[\p{L}\p{N}_-]{0,40}/gu;
 const SEPARATED_NUMBER=/(?<![\p{L}\p{N}])\+?\d(?:[ .,/-]{0,2}\d){8,30}(?![\p{L}\p{N}])/gu;
-const MIXED_LONG_ID=/(?<![\p{L}\p{N}])(?=[\p{L}\p{N}]{12,40}(?![\p{L}\p{N}]))(?=[\p{L}\p{N}]*\d)(?=[\p{L}\p{N}]*\p{L})[\p{L}\p{N}]{12,40}(?![\p{L}\p{N}])/gu;
 const IPV4=/(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])/g;
 const DATE_LIKE=/^(?:\d{4}-\d{2}-\d{2}|\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4})(?: \d{1,2})?$/;
 export function redact(text){
@@ -50,10 +55,29 @@ export function redact(text){
     .replace(CURP,PII).replace(RFC,PII)
     .replace(SEPARATED_NUMBER,m=>DATE_LIKE.test(m)?m:PII)
     .replace(TOKEN_WITH_LONG_DIGITS,PII)
-    .replace(MIXED_LONG_ID,PII)
-    .replace(IPV4,PII);
-  return redactText(t,REDACTION_POLICY).text; // emails y teléfonos con la función de producción
+    .replace(IPV4,(m,off,str)=>VERSION_KW_BEFORE.test(str.slice(Math.max(0,off-14),off))?m:PII);
+  // La función de teléfonos de producción toma por número las fechas y las versiones: se protegen con marcadores SIN dígitos
+  // (solo fechas válidas y versiones precedidas de palabra clave; cualquier otra cosa sigue pasando por la redacción) y se restauran.
+  const {text:p,saved}=protect(t);
+  // El regex de correos de producción es cuadrático en rachas largas sin espacios (p. ej. CJK, 20k caracteres = 2.4 s). Se parten
+  // las rachas >300 con un separador invisible interno (U+E0FF) SOLO para esa llamada y se quita después. Teléfonos/correos ya fueron
+  // redactados por las pasadas propias de arriba; la de producción queda como respaldo.
+  const chunked=p.replace(/[\p{L}\p{N}._%+-]{300,}/gu,run=>{const cps=Array.from(run);const parts=[];for(let i=0;i<cps.length;i+=200)parts.push(cps.slice(i,i+200).join(''));return parts.join('\uE0FF');});
+  let out=redactText(chunked,REDACTION_POLICY).text.replace(/\uE0FF/g,'');
+  return restore(out,saved);
 }
+const ISO_DATE=/(?<![\d-])(?:19|20)\d{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])(?![\d-])/g;
+const DMY_DATE=/(?<![\d\/.-])(?:0?[1-9]|[12]\d|3[01])[-\/.](?:0?[1-9]|[12]\d|3[01])[-\/.](?:19|20)\d{2}(?![\d\/.-])/g;
+const VERSION_KW=/(?<![\p{L}\p{N}])((?:v|ver\.?|versi[óo]n|version|firmware|fw|build)\s?)(\d{1,3}(?:\.\d{1,3}){2,3})(?![\d.])/giu;
+const VERSION_KW_BEFORE=/(?:^|[^\p{L}\p{N}])(?:v|ver\.?|versi[óo]n|version|firmware|fw|build)\s?$/iu;
+const L='abcdefghijklmnopqrstuvwxyz';
+const mark=i=>{let s='',n=i;do{s=L[n%26]+s;n=Math.floor(n/26)-1;}while(n>=0);return '\uE000'+s+'\uE001';};
+function protect(t){
+  const saved=[];const keep=m=>{saved.push(m);return mark(saved.length-1);};
+  t=t.replace(ISO_DATE,keep).replace(DMY_DATE,keep).replace(VERSION_KW,(m,kw,num)=>kw+keep(num));
+  return{text:t,saved};
+}
+function restore(t,saved){return saved.length?t.replace(/\uE000([a-z]+)\uE001/g,(m,s)=>{let n=0;for(const ch of s)n=n*26+(ch.charCodeAt(0)-96);return saved[n-1]??m;}):t;}
 
 // ---- Recorte de cola ----
 const QUOTE_HEADERS=[
@@ -96,7 +120,7 @@ export const normLine=l=>l.toLowerCase().replace(/\s+/g,' ').trim();
 export function learnBoilerplate(texts,{minCount=8,minShare=0.003,tailLines=8}={}){
   const counts=new Map();let n=0;
   for(const raw of texts){
-    const t=redact(raw);n++;const lines=t.slice(0,cutQuoted(t)).split('\n').map(normLine).filter(Boolean).slice(-tailLines);
+    let t;try{t=redact(raw);}catch{continue;}n++;const lines=t.slice(0,cutQuoted(t)).split('\n').map(normLine).filter(Boolean).slice(-tailLines);
     for(const l of new Set(lines)){if(l.length>=4&&l.length<=200)counts.set(l,(counts.get(l)??0)+1);}
   }
   const th=Math.max(minCount,Math.ceil(n*minShare));
@@ -118,15 +142,17 @@ export function isAutomatic(text){const head=text.slice(0,1200);return AUTO.some
 
 // ---- Conversación completa ----
 // conv = {conversation_id, messages:[{id, role, text, at?}]} (orden cronológico por `at` si existe).
-export function prepareConversation(conv,{boilerplate=null,skipAutomatic=true,limits=LIMITS}={}){
+export function prepareConversation(conv,{boilerplate=null,skipAutomatic=true,limits=LIMITS,redactFn=redact}={}){
   const stats={msgs_in:conv.messages.length,msgs_out:0,chars_in:0,chars_out:0,auto_dropped:0,truncated_conv:false};
   const seenIds=new Set();const uniq=conv.messages.filter(m=>{if(seenIds.has(m.id))return false;seenIds.add(m.id);return true;}); // jamás el mismo mensaje dos veces
   stats.dup_msgs=conv.messages.length-uniq.length;
   const msgs=[...uniq].sort((a,b)=>String(a.at??'').localeCompare(String(b.at??''))||0);
   const kept=[];
+  let redactFailed=false;
   msgs.forEach((m,i)=>{
+    if(redactFailed)return;
     const raw=typeof m.text==='string'?m.text:'';stats.chars_in+=raw.length;
-    const full=redact(raw);
+    let full;try{full=redactFn(raw);}catch{redactFailed=true;return;}
     let cut=Math.min(cutQuoted(full),full.length);
     let head=full.slice(0,cut);
     cut=Math.min(cut,cutSignature(head,boilerplate));
@@ -139,6 +165,7 @@ export function prepareConversation(conv,{boilerplate=null,skipAutomatic=true,li
     if(pts.length>limits.maxCharsPerMessage)text=pts.slice(0,limits.maxCharsPerMessage).join('');
     kept.push({message_id:m.id,role:m.role,text,orig_index:i,keptLen:Array.from(text).length});
   });
+  if(redactFailed)return{status:'skipped',reason:'redaccion_fallida',revisions:[],stats}; // nada se envía si la redacción falla
   let sel=kept;
   if(sel.length>limits.maxMessages){stats.truncated_conv=true;sel=[...sel.slice(0,limits.headMessages),...sel.slice(sel.length-(limits.maxMessages-limits.headMessages))];}
   let total=0;const fit=[];

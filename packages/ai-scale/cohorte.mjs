@@ -34,7 +34,7 @@ import * as SQL from './sql.mjs';
 import {intOpt,moneyOpt} from './cli-util.mjs';
 
 const HERE=path.dirname(fileURLToPath(import.meta.url));
-const ROOT=path.join(os.homedir(),'.codex-work/rovaq-cierre-20261007/ia-escala-20261019');
+const ROOT=process.env.IA_ESCALA_OUT||path.join(os.homedir(),'.codex-work/rovaq-cierre-20261007/ia-escala-20261019');
 export const DEFAULT_MODEL='anthropic/claude-haiku-5.5';
 export const EMBED_MODEL='openai/text-embedding-3-small';
 // Precios USD/token de Haiku 5.5 en OpenRouter (models-snapshot.json, 18-oct): se usan solo para techos por llamada.
@@ -50,13 +50,32 @@ export function bookedCost(reported,status,ceiling){
 }
 // Pies/firmas repetidos: se aprenden UNA vez sobre TODA la entrada (no sobre el piloto) y se congelan en boilerplate.json;
 // cohorte (piloto y resto) y persistir leen el mismo archivo, así los task_key coinciden.
-export function loadOrLearnBoilerplate(outDir,convsAll){
+export const windowHash=w=>sha256(JSON.stringify({from:w.from,to:w.to,basis:w.basis}));
+// Con `cfg` (hash de configuración) se EXIGE coherencia: si boilerplate.json falta teniendo ya resultados, o su configuración/ventana
+// difiere, se ABORTA (reaprender en silencio cambiaría los task_key y se reenviaría/cobraría de nuevo).
+export function loadOrLearnBoilerplate(outDir,convsAll,{cfg=null,window=null,allowLearn=true}={}){
   const f=path.join(outDir,'boilerplate.json');
-  if(fs.existsSync(f)){const j=JSON.parse(fs.readFileSync(f,'utf8'));return new Set(j.lines);}
+  if(fs.existsSync(f)){
+    const j=JSON.parse(fs.readFileSync(f,'utf8'));
+    if(cfg!==null){
+      if(j.config_hash!==cfg)throw Error('boilerplate.json fue congelado con OTRA configuración (modelo/proveedor/taxonomía/prompt/esquema). Abortado para no reenviar ni cobrar de nuevo: restaure la configuración original o archive el directorio de resultados para empezar una cohorte nueva.');
+      if(window!==null&&j.window_hash!==windowHash(window))throw Error('boilerplate.json fue congelado con OTRA ventana (FROM/TO/BASIS). Abortado: use la misma ventana de la cohorte original o archive el directorio de resultados.');
+    }
+    return new Set(j.lines);
+  }
+  if(cfg!==null){
+    const hasResults=fs.existsSync(path.join(outDir,'resultados.jsonl'))&&fs.statSync(path.join(outDir,'resultados.jsonl')).size>0;
+    if(!allowLearn||hasResults)throw Error('Falta boilerplate.json'+(hasResults?' pero ya existen resultados':'')+': no se reaprende en silencio (cambiaría los task_key y se reenviaría/cobraría de nuevo). Recupere el archivo original.');
+  }
   const set=learnBoilerplate(convsAll.flatMap(c=>c.messages.map(m=>m.text)));
   const lines=[...set].sort();fs.mkdirSync(outDir,{recursive:true,mode:0o700});
-  fs.writeFileSync(f,JSON.stringify({version:1,hash:sha256(JSON.stringify(lines)),n:lines.length,lines},null,1),{mode:0o600});
+  fs.writeFileSync(f,JSON.stringify({version:2,hash:sha256(JSON.stringify(lines)),config_hash:cfg,window_hash:window?windowHash(window):null,window,n:lines.length,lines},null,1),{mode:0o600});
   return set;
+}
+// Libro de gasto en ruta FIJA por tenant+ventana (independiente de --out), para que otro --out no reinicie el tope de la cohorte.
+export function cohortLedger({root=ROOT,tenant=SQL.TENANT,window,batchId,capTotalUsd,capBatchUsd,outDir=null}){
+  const dir=path.join(root,'gasto');const file=`gasto-${tenant}_${window.from}_${window.to}_${window.basis}.jsonl`;
+  return createLedger({dir,file,capTotalUsd:Math.min(capTotalUsd,HARD_CAP_USD),capBatchUsd,batchId,alsoRead:outDir?[path.join(outDir,'gasto-cohorte.jsonl')]:[]});
 }
 const SEV=['unknown','low','medium','high','critical'];
 
@@ -123,7 +142,7 @@ export async function runCohort(o){
   const noteFail=(key,convId,reason,extra={})=>{st.failed++;st.fail_reasons[reason]=(st.fail_reasons[reason]??0)+1;append(resFile,{task_key:key,conversation_id:convId,status:'failed',reason,model,config:cfg.slice(0,12),batch:batchId,ts:new Date().toISOString(),...extra});
     consecutive++;if(consecutive>=maxConsecutiveFailures&&!st.aborted){st.aborted=`${consecutive} fallos consecutivos (último: ${reason})`;stop=true;}};
   async function one(conv){
-    const prep=prepareConversation(conv,{boilerplate,skipAutomatic});
+    const prep=prepareConversation(conv,{boilerplate,skipAutomatic,...(o.redactFn?{redactFn:o.redactFn}:{})});
     if(prep.status==='skipped'){
       const key=taskKeyFor(cfg,conv.conversation_id,sha256('skipped|'+prep.reason+'|'+prep.stats.msgs_in));
       if(done.has(key)){st.already_done++;return;}
@@ -233,7 +252,8 @@ async function cli(){
   const seen=new Set();let convs=inputs.flatMap(readJsonl).filter(c=>!seen.has(c.conversation_id)&&seen.add(c.conversation_id));
   // ventana por fecha de PRIMER/ÚLTIMO mensaje (segundo filtro local, además del SQL)
   const basis=opt('basis',null);if(basis){const from=opt('from'),to=opt('to');convs=convs.filter(c=>{const d=String(basis==='first'?c.first_at:c.last_at??'').slice(0,10);return (!from||d>=from)&&(!to||d<to);});}
-  const boilerplate=loadOrLearnBoilerplate(out,convs); // sobre TODA la entrada, antes de elegir el piloto
+  const model0=opt('model',DEFAULT_MODEL),provider0=opt('provider','azure');
+  let boilerplate;try{boilerplate=loadOrLearnBoilerplate(out,convs,{cfg:configHash({model:model0,provider:provider0,taxonomy}),window:win});}catch(e){console.error('ABORTADO:',e.message);process.exit(2);} // aprendido sobre TODA la entrada, antes de elegir el piloto
   const pilot=intOpt(args,'pilot',0);if(pilot)convs=pickPilot(convs,pilot);
   const model=opt('model',DEFAULT_MODEL),provider=opt('provider','azure');
   if(!ALLOWED_MODELS.includes(model)||!ALLOWED_PROVIDERS.includes(provider)){console.error('Modelo/proveedor fuera de la lista cerrada.');process.exit(2);}
@@ -244,7 +264,7 @@ async function cli(){
   const key=await client.get('/key');const lim=key.json?.data?.limit,use=key.json?.data?.usage;
   if(typeof lim==='number'&&typeof use==='number'&&lim-use<capTotal){console.error(`La llave no tiene margen: límite ${lim}, uso ${use}, tope de cohorte ${capTotal}. Abortado.`);process.exit(3);}
   console.log(`conversaciones: ${convs.length} | lote ${batchId} | tope lote US$${capBatch} | tope cohorte US$${capTotal} | modelo ${model} | provider ${provider}`);
-  const {receipt}=await runCohort({convs,taxonomy,outDir:out,client,model,provider,concurrency:Math.min(intOpt(args,'concurrency',12),16),embed:!flag('no-embed'),capTotalUsd0:capTotal,capBatchUsd0:capBatch,batchId,boilerplate,log:console.log});
+  const {receipt}=await runCohort({convs,taxonomy,outDir:out,client,model,provider,concurrency:Math.min(intOpt(args,'concurrency',12),16),embed:!flag('no-embed'),capTotalUsd0:capTotal,capBatchUsd0:capBatch,batchId,boilerplate,ledger:cohortLedger({window:win,batchId,capTotalUsd:capTotal,capBatchUsd:capBatch,outDir:out}),log:console.log});
   console.log(JSON.stringify(receipt,null,1));
   if(receipt.abort)process.exit(4);
 }

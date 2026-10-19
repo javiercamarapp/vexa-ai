@@ -39,7 +39,7 @@ export function installCleanup(dir,{exit=code=>process.exit(code)}={}){
 
 const pct=(a,p)=>{if(!a.length)return null;const s=[...a].sort((x,y)=>x-y);return s[Math.min(s.length-1,Math.floor(p*s.length))];};
 // runSql(sql) -> filas. storageGet(path) -> Uint8Array|null.
-export async function resolveCsv({runSql,storageGet,win,tenant=TENANT,pageSize=300,maxConv=Infinity,doRedact=true,log=()=>{}}){
+export async function resolveCsv({runSql,storageGet,win,tenant=TENANT,pageSize=300,maxConv=Infinity,doRedact=true,redactFn=redact,log=()=>{}}){
   // 1) metadatos de mensajes por páginas (keyset por conversación)
   const msgs=new Map(),convMeta=new Map(),seenMsg=new Set();let after=null,nConv=0,dupMsgs=0,dupRowsMsgs=0;
   for(;;){
@@ -79,7 +79,8 @@ export async function resolveCsv({runSql,storageGet,win,tenant=TENANT,pageSize=3
       if(m.rev_hash&&contentHash(p)!==m.rev_hash){bad.set(m.message_id,'hash_distinto');continue;}
       if(p.role!==m.role){bad.set(m.message_id,'rol_distinto');continue;}
       if(typeof p.text!=='string'||!p.text.trim()){bad.set(m.message_id,'vacio');continue;}
-      text.set(m.message_id,{t:doRedact?redact(p.text):p.text,raw:p.text.length});
+      let tx;try{tx=doRedact?redactFn(p.text):p.text;}catch{bad.set(m.message_id,'redaccion_fallida');continue;}
+      text.set(m.message_id,{t:tx,raw:p.text.length});
     }
     bytes=null; // se descarta antes del siguiente objeto (un objeto a la vez en memoria)
   }

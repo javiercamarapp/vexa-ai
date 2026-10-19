@@ -196,3 +196,4 @@ export function parseXLSX(input,limits={}){
  return {sheets};
 }
 function columnName(index){let n=index+1,s='';while(n){n--;s=String.fromCharCode(65+n%26)+s;n=Math.floor(n/26);}return s;}
+export { unzip as unzipXLSX };

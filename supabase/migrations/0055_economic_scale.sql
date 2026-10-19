@@ -31,7 +31,7 @@ alter table public.metric_snapshots
  add column refs_ledger_ids uuid[], add column refs_ledger_live_ids uuid[], add column refs_small jsonb;
 
 -- Comprobación única (una pasada) de que el resumen guardado == el que sale del manifiesto. Sobrevive a DISABLE TRIGGER: un resumen alterado por un superusuario con los disparadores
--- deshabilitados es rechazado por el CHECK. Filas sin resumen (snapshots anteriores a 0055, refs_small nulo) no se comprueban: usan el camino lento.
+-- deshabilitados es rechazado por el CHECK. Sin resumen (snapshots anteriores a 0055) TODAS las columnas derivadas deben ser nulas (si no, se podría fijar un resumen parcial); usan el camino lento.
 create function public.economic_manifest_summary_ok(p_manifest jsonb,p_actors uuid[],p_sources uuid[],p_currency uuid[],p_fx uuid[],p_ledger uuid[],p_live uuid[],p_small jsonb) returns boolean language sql immutable set search_path='' as $$
  select p_actors is not distinct from coalesce(array_agg(distinct (r->>'actorId')::uuid) filter(where r->>'authorized'='true'),'{}')
   and p_sources is not distinct from coalesce(array_agg(distinct (r->>'sourceId')::uuid) filter(where r->>'authorized'='true' and r->>'active'='true' and r->>'sourceId' is not null),'{}')
@@ -44,7 +44,7 @@ create function public.economic_manifest_summary_ok(p_manifest jsonb,p_actors uu
 $$;
 revoke all on function public.economic_manifest_summary_ok(jsonb,uuid[],uuid[],uuid[],uuid[],uuid[],uuid[],jsonb) from public,anon,authenticated,service_role;
 grant execute on function public.economic_manifest_summary_ok(jsonb,uuid[],uuid[],uuid[],uuid[],uuid[],uuid[],jsonb) to vexa_backend;
-alter table public.metric_snapshots add constraint economic_snapshot_summary_matches check(refs_small is null or public.economic_manifest_summary_ok(input_manifest,refs_actor_ids,refs_source_ids,refs_currency_ids,refs_fx_ids,refs_ledger_ids,refs_ledger_live_ids,refs_small));
+alter table public.metric_snapshots add constraint economic_snapshot_summary_matches check(case when refs_small is null then refs_actor_ids is null and refs_source_ids is null and refs_currency_ids is null and refs_fx_ids is null and refs_ledger_ids is null and refs_ledger_live_ids is null else public.economic_manifest_summary_ok(input_manifest,refs_actor_ids,refs_source_ids,refs_currency_ids,refs_fx_ids,refs_ledger_ids,refs_ledger_live_ids,refs_small) end);
 
 -- Resumen del manifiesto (nunca se acepta del cliente: el trigger lo recalcula en INSERT y lo congela en UPDATE).
 create function public.economic_manifest_actors(p_manifest jsonb) returns uuid[] language sql immutable set search_path='' as $$

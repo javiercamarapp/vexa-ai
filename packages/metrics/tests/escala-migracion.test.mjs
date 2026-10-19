@@ -159,6 +159,9 @@ test('0055: políticas de lectura, economic_snapshot_visible y resumen inmutable
         for (const set of ["refs_actor_ids='{}'", "refs_ledger_ids='{}'", "refs_ledger_live_ids='{}'", "refs_small='[]'", "refs_source_ids='{}'", "refs_currency_ids=array['12121212-1212-4121-8121-121212121212']::uuid[]", "input_manifest=jsonb_set(input_manifest,'{refs,0,id}','\"12121212-1212-4121-8121-121212121212\"')"]) {
           const r = h.psql(`update public.metric_snapshots set ${set} where id='${id}'`); assert.equal(r.ok, false, set); assert.match(r.err, /economic_snapshot_summary_matches/, set);
         }
+        for (const set of ["refs_actor_ids='{}',refs_small=NULL", "refs_small=NULL", "refs_source_ids='{}',refs_small=NULL,refs_actor_ids=NULL,refs_currency_ids=NULL,refs_fx_ids=NULL,refs_ledger_ids=NULL"]) {
+          const r = h.psql(`update public.metric_snapshots set ${set} where id='${id}'`); assert.equal(r.ok, false, 'evasión: ' + set); assert.match(r.err, /economic_snapshot_summary_matches/, set);
+        }
         assert.equal(h.psql(`update public.metric_snapshots set component_count=component_count where id='${id}'`).ok, true, 'sin cambios en el resumen: permitido');
         const nullRow = psql(`select id from public.metric_snapshots where refs_small is null and economic_schema_version is not null limit 1`).out;
         assert.ok(nullRow, 'hay filas económicas sin resumen (previas a 0055 / simuladas)');

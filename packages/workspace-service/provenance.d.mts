@@ -1,5 +1,5 @@
-export type CoverageSource={key:string;label:string;loaded:boolean;imports:number;openImports:number;total:number;incorporated:number;rejected:number;pending:number;lastUpdate:string|null};
-export type CoverageView={generatedAt:string;basis:'imports';note:string;sources:CoverageSource[]};
+export type CoverageSource={key:string;label:string;loaded:boolean;status:'ok'|'empty'|'timeout';class:'observed'|'estimated';imports:number;openImports:number;total:number;incorporated:number;rejected:number;pending:number;lastUpdate:string|null;detail:string[];sheets?:{closed:number;total:number};topVersion?:{label:string|null;rank:number;sha:string}};
+export type CoverageView={generatedAt:string;basis:'imports+tables';note:string;sources:CoverageSource[]};
 export type OriginStep={step:'message_revision'|'source_record'|'import_row'|'import_file';label:string;hash:string|null;hashShort:string|null;detail:string};
 export type OriginView={messageRevisionId:string;complete:boolean;chain:OriginStep[];gap:string|null};
 export const EXPECTED_SOURCES:readonly {key:string;label:string}[];

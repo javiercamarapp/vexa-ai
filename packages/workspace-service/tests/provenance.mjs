@@ -21,7 +21,7 @@ try{
  run('initdb',['-D',data,'-A','trust','--no-locale','-E','UTF8']);
  run('pg_ctl',['-D',data,'-l',path.join(dir,'pg.log'),'-o',`-k ${sock} -p ${port} -c listen_addresses='' -c shared_buffers=128MB`,'-w','start']);started=true;
  psql(['-f',path.join(root,'supabase/tests/association-candidates/stubs.sql')]);
- for(const n of fs.readdirSync(mig).filter(n=>/^\d{4}_.*\.sql$/.test(n)&&(n<'0050'||n.startsWith('0054'))).sort()){const f=path.join(dir,n);fs.writeFileSync(f,fs.readFileSync(path.join(mig,n),'utf8').replace(/^create extension if not exists vector.*$/m,''));psql(['-f',f]);}
+ for(const n of fs.readdirSync(mig).filter(n=>/^\d{4}_.*\.sql$/.test(n)&&n<'0055').sort()){const f=path.join(dir,n);fs.writeFileSync(f,fs.readFileSync(path.join(mig,n),'utf8').replace(/^create extension if not exists vector.*$/m,''));psql(['-f',f]);}
  fs.writeFileSync(path.join(dir,'seed.sql'),`
 insert into auth.users(id,email) values ('${UA}','a@syn.invalid'),('${UV}','v@syn.invalid'),('${UB}','b@syn.invalid');
 insert into public.organizations(id,name) values ('${TA}','SYN A'),('${TB}','SYN B');
@@ -46,13 +46,41 @@ insert into public.source_revisions(id,tenant_id,provenance,connection_id,entity
  (gen_random_uuid(),'${TA}','{"payload_ref":"payload-17"}','${CA}','message','ext-17','1','${h('e')}','${h('7')}','m1','${REV_FILE}','[]','a0000000-0000-0000-0000-000000000001','a0000000-0000-0000-0000-000000000001'),
  (gen_random_uuid(),'${TA}','{}','${CA}','message','ext-sync','1','${h('f')}','${h('8')}','m1','${REV_SYNC}','[]','a0000000-0000-0000-0000-000000000002','a0000000-0000-0000-0000-000000000002');`);
  psql(['-f',path.join(dir,'seed.sql')]);
+ // Sources that do not create `imports` rows. FKs/triggers are bypassed for seeding only (session_replication_role=replica); the reads below run under real RLS.
+ const R=(n)=>`'${'r'.repeat(30)}'`,rep=(c,n)=>c.repeat(n);
+ fs.writeFileSync(path.join(dir,'seed2.sql'),`set session_replication_role=replica;
+insert into public.tracker_versions(id,tenant_id,connection_id,file_sha256,label,rank) values
+ ('70000000-0000-0000-0000-000000000001','${TA}','${CA2}','${h('a')}','v06',1),
+ ('70000000-0000-0000-0000-000000000002','${TA}','${CA2}','ab12cd34${h('3').slice(8)}','v07b',2),
+ ('70000000-0000-0000-0000-00000000000b','${TB}','${CB}','${h('b')}','vB',1);
+insert into public.tracker_sheet_jobs(id,tenant_id,version_id,sheet_name,sheet_state,expected_rows,expected_cells,state) values
+ (gen_random_uuid(),'${TA}','70000000-0000-0000-0000-000000000002','Hoja 1','visible',40,400,'closed'),(gen_random_uuid(),'${TA}','70000000-0000-0000-0000-000000000002','Hoja 2','visible',0,0,'closed'),(gen_random_uuid(),'${TA}','70000000-0000-0000-0000-000000000002','Hoja 3','hidden',5,50,'open'),
+ (gen_random_uuid(),'${TA}','70000000-0000-0000-0000-000000000001','Hoja 1','visible',30,300,'closed'),(gen_random_uuid(),'${TA}','70000000-0000-0000-0000-000000000001','Hoja 2','visible',0,0,'closed'),
+ (gen_random_uuid(),'${TB}','70000000-0000-0000-0000-00000000000b','Hoja 1','visible',7,70,'closed');
+insert into public.tracker_row_observations(tenant_id,version_id,sheet_name,row_number,revision_id) select '${TA}','70000000-0000-0000-0000-000000000002','Hoja 1',n,gen_random_uuid() from generate_series(1,40) n;
+insert into public.tracker_row_observations(tenant_id,version_id,sheet_name,row_number,revision_id) select '${TA}','70000000-0000-0000-0000-000000000001','Hoja 1',n,gen_random_uuid() from generate_series(1,30) n;
+insert into public.tracker_row_observations(tenant_id,version_id,sheet_name,row_number,revision_id) select '${TB}','70000000-0000-0000-0000-00000000000b','Hoja 1',n,gen_random_uuid() from generate_series(1,7) n;
+insert into public.tracker_row_rejections(tenant_id,version_id,sheet_name,row_number,code,raw_hash) select '${TA}','70000000-0000-0000-0000-000000000002','Hoja 1',100+n,'ROW_MALFORMED','${h('c')}' from generate_series(1,3) n;
+insert into public.attachment_blobs(tenant_id,sha256,bytes,state,verified_at,object_path) select '${TA}',md5(n::text)||md5((n+1000)::text),10,s,case when s='verified' then now() end,case when s in('verified','uploaded') then '${TA}/attachments/'||substr(md5(n::text)||md5((n+1000)::text),1,2)||'/'||md5(n::text)||md5((n+1000)::text) end from (values (1,'verified'),(2,'verified'),(3,'verified'),(4,'verified'),(5,'verified'),(6,'metadata_only'),(7,'metadata_only'),(8,'planned'),(9,'failed')) v(n,s);
+insert into public.economic_source_versions(tenant_id,source_id,version,actor_id,name,evidence_type,active,complete,window_start,window_end,watermark,report,report_hash,attested) values
+ ('${TA}','51000000-0000-0000-0000-000000000001',1,'${UA}','Amazon (CSV)','order_export',true,true,'2026-01-01','2026-12-31','2026-10-18',${R()},'${h('9')}',true),
+ ('${TA}','51000000-0000-0000-0000-000000000002',1,'${UA}','Shopify','order_export',true,true,'2026-01-01','2026-12-31','2026-10-18',${R()},'${h('9')}',true);
+insert into public.economic_ledger_entries(tenant_id,entity_id,source_id,source_version,revision,actor_id,external_id,kind,effective_at,currency,exponent,basis,amount_minor,status,details,report,report_hash,attested)
+ select '${TA}',gen_random_uuid(),src::uuid,1,1,'${UA}',ext||n,kind,'2026-09-01',cur,2,'net',100,st,'{}',${R()},'${h('9')}',true from (values
+  ('51000000-0000-0000-0000-000000000001','A-','order','USD','recorded',3),('51000000-0000-0000-0000-000000000001','AR-','refund','USD','settled',1),('51000000-0000-0000-0000-000000000001','AM-','order','MXN','recorded',2),('51000000-0000-0000-0000-000000000002','S-','order','USD','recorded',2)) v(src,ext,kind,cur,st,cnt) cross join lateral generate_series(1,cnt) n;
+insert into public.native_customer_associations(id,tenant_id,source_connection_id,provider,portal_id,ticket_id,contact_id,first_evidence_hash,immutable_evidence,first_import_row_id,source_version_hash,resolution_state,reason)
+ select ('b0000000-0000-0000-0000-'||lpad(n::text,12,'0'))::uuid,'${TA}','${CA}','hubspot','p','t'||n,'c'||n,'${h('d')}','{}',gen_random_uuid(),'${h('e')}',case when n<=4500 then 'resolved' else 'pending' end,'syn' from generate_series(1,6000) n;
+insert into public.conversation_customer_association_bindings(tenant_id,fact_id,conversation_id,customer_id,conversation_connection_id,customer_connection_id,conversation_revision_id,customer_revision_id,conversation_head_version,customer_head_version,fact_version,evidence_hash,method,decision_id,actor_id,active,provenance)
+ select '${TA}',('b0000000-0000-0000-0000-'||lpad(n::text,12,'0'))::uuid,gen_random_uuid(),gen_random_uuid(),'${CA}','${CA}',gen_random_uuid(),gen_random_uuid(),1,1,1,'${h('d')}','unique_explicit_bridge',gen_random_uuid(),'${UA}',n<=4000,'{}' from generate_series(1,4100) n;
+analyze;`);
+ psql(['-f',path.join(dir,'seed2.sql')]);
  pool=new pg.Pool({host:sock,port:Number(port),database:'postgres',max:2});
  const owner=createProvenanceRepository({database:dbFor(UA,TA)}),viewer=createProvenanceRepository({database:dbFor(UV,TA)}),other=createProvenanceRepository({database:dbFor(UB,TB)});
  const cov=await owner.coverage(),by=Object.fromEntries(cov.sources.map(s=>[s.key,s]));
  check('coverage: hubspot sums only this tenant (80+10 accepted + 5 duplicates = 95 incorporated, 10 rejected, 45 pending of 150)',by.hubspot.incorporated===95&&by.hubspot.rejected===10&&by.hubspot.pending===45&&by.hubspot.total===150,JSON.stringify(by.hubspot));
  check('coverage: open import counted',by.hubspot.openImports===1&&by.hubspot.imports===2);
  check('coverage: csv loaded 20/20',by.csv.loaded&&by.csv.incorporated===20&&by.csv.pending===0);
- check('coverage: sources never imported are "not loaded", not zero',by.excel.loaded===false&&by.zendesk.loaded===false&&by.excel.total===0);
+ check('coverage: sources never imported (zendesk) are "not loaded", not zero',by.zendesk.loaded===false&&by.zendesk.total===0);
  check('coverage: another tenant never leaks (B sees 999, A does not)',(await other.coverage()).sources.find(s=>s.key==='hubspot').total===999);
  check('coverage: viewer role can read',(await viewer.coverage()).sources.length>=4);
  const full=await owner.origin({messageRevisionId:REV_FILE});
@@ -62,6 +90,19 @@ insert into public.source_revisions(id,tenant_id,provenance,connection_id,entity
  let e1,e2,e3;try{await owner.origin({messageRevisionId:REV_B});}catch(e){e1=e;}try{await owner.origin({messageRevisionId:'nope'});}catch(e){e2=e;}try{await other.origin({messageRevisionId:REV_FILE});}catch(e){e3=e;}
  check('origin: cross-tenant revision is 404 (RLS + tenant filter)',e1?.status===404&&e3?.status===404);
  check('origin: invalid id is 400',e2?.status===400);
+ const ext=await owner.coverage(),S=Object.fromEntries(ext.sources.map(x=>[x.key,x]));
+ check('coverage lists every expected source in a fixed order',ext.sources.map(x=>x.key).join()==='hubspot,associations,csv,ledger,excel,attachments,zendesk');
+ check('tracker: current rows of the ruling version, rejections and closed sheets from its own tables (no imports rows)',S.excel.loaded&&S.excel.incorporated===40&&S.excel.rejected===3&&S.excel.sheets.closed===4&&S.excel.sheets.total===5&&S.excel.class==='observed',JSON.stringify(S.excel.detail));
+ check('tracker: the version that rules is the highest rank (v07b, sha prefix ab12cd34)',S.excel.topVersion.label==='v07b'&&S.excel.topVersion.sha==='ab12cd34'&&/v07b · ab12cd34/.test(S.excel.detail[0]));
+ check('tracker: another tenant never leaks (B sees 7 rows)',(await other.coverage()).sources.find(x=>x.key==='excel').incorporated===7);
+ check('attachments: counted by state from attachment_blobs (5 verified, 3 pending incl. metadata-only, 1 failed), exact',S.attachments.loaded&&S.attachments.total===9&&S.attachments.incorporated===5&&S.attachments.pending===3&&S.attachments.rejected===1&&S.attachments.class==='observed');
+ check('ledger: counts per source and currency, currencies never added, exact',S.ledger.loaded&&S.ledger.class==='observed'&&S.ledger.total===8&&S.ledger.detail.some(l=>/^Amazon \(CSV\) · USD: 3 pedidos · 1 reembolsos/.test(l))&&S.ledger.detail.some(l=>/^Amazon \(CSV\) · MXN: 2 pedidos/.test(l))&&S.ledger.detail.some(l=>/^Shopify · USD: 2 pedidos/.test(l)),JSON.stringify(S.ledger.detail));
+ check('associations: a large table is a labelled estimate (10 % sample) within 12 % of the exact 6,000 facts / 4,000 active links',S.associations.class==='estimated'&&Math.abs(S.associations.total-6000)/6000<0.12&&/Estimado con una muestra del 10 %/.test(S.associations.detail.join(' '))&&(()=>{const m=/([\d.,]+) vínculos activos/.exec(S.associations.detail.join(' '));const v=Number(m[1].replace(/[.,]/g,''));return Math.abs(v-4000)/4000<0.15;})(),S.associations.detail.join(' | '));
+ check('sources that never loaded stay "Sin cargar" (zendesk), distinct from "timeout"',S.zendesk.loaded===false&&S.zendesk.status==='empty');
+ const failOn=(re)=>({async transaction(a,w){return dbFor(UA,TA).transaction(a,sc=>w({...sc,query:(t,v)=>re.test(t)&&!/SAVEPOINT|set_config/.test(t)?Promise.reject(Object.assign(new Error('canceling statement due to statement timeout'),{code:'57014'})):sc.query(t,v)}));}});
+ const tov=await createProvenanceRepository({database:failOn(/tracker_versions/)}).coverage();
+ check('a statement timeout on the tracker reports status "timeout" (not "Sin cargar") and the other sources still answer',tov.sources.find(x=>x.key==='excel').status==='timeout'&&tov.sources.find(x=>x.key==='attachments').loaded);
+ check('viewer role can read the extended coverage',(await viewer.coverage()).sources.find(x=>x.key==='excel').incorporated===40);
 }catch(e){console.error(e);results.push(false);}
 finally{await pool?.end().catch(()=>{});if(started)spawnSync(path.join(bin,'pg_ctl'),['-D',data,'-m','fast','-w','stop']);fs.rmSync(dir,{recursive:true,force:true});}
 const ok=results.length>0&&results.every(Boolean);console.log(ok?'ALL PASS':'FAILED');process.exitCode=ok?0:1;

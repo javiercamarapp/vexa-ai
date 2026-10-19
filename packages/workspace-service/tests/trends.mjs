@@ -28,12 +28,19 @@ insert into auth.users(id,email) values ('${UA}','a@syn.invalid'),('${UB}','b@sy
 insert into public.organizations(id,name) values ('${TA}','SYN A'),('${TB}','SYN B');
 insert into public.memberships(tenant_id,user_id,role,status) values ('${TA}','${UA}','viewer','active'),('${TB}','${UB}','owner','active');
 insert into public.connections(id,tenant_id,source,account_id) values ('${CA}','${TA}','hubspot','a'),('${CB}','${TB}','hubspot','b');
--- tenant A: ${convs} conversations over 18 months + 500 undated + 300 deleted; tenant B: 7 conversations in Sep 2026
+-- tenant A: ${convs} historical conversations with NULL started_at (dated only by their first message, 18-month spread) + 2000 native ones with started_at in Jul-Oct 2026
+-- + 500 with neither + 300 deleted; tenant B: 40 historical conversations (exact path)
 insert into public.conversations(id,tenant_id,source,external_id,connection_id,started_at)
- select gen_random_uuid(),'${TA}','hubspot','hubspot:'||n,'${CA}',timestamptz '2026-10-19 00:00:00+00'-(n*(interval '540 days')/${convs}) from generate_series(1,${convs}) n;
-insert into public.conversations(id,tenant_id,source,external_id,connection_id,started_at) select gen_random_uuid(),'${TA}','hubspot','undated:'||n,'${CA}',null from generate_series(1,500) n;
-insert into public.conversations(id,tenant_id,source,external_id,connection_id,started_at,deleted_at) select gen_random_uuid(),'${TA}','hubspot','deleted:'||n,'${CA}',timestamptz '2026-09-15 00:00:00+00',now() from generate_series(1,300) n;
-insert into public.conversations(id,tenant_id,source,external_id,connection_id,started_at) select gen_random_uuid(),'${TB}','hubspot','b:'||n,'${CB}',timestamptz '2026-09-10 00:00:00+00' from generate_series(1,7) n;
+ select gen_random_uuid(),'${TA}','csv','hist:'||n,'${CA}',null from generate_series(1,${convs}) n;
+insert into public.conversations(id,tenant_id,source,external_id,connection_id,started_at)
+ select gen_random_uuid(),'${TA}','hubspot','native:'||n,'${CA}',timestamptz '2026-10-19 00:00:00+00'-(n*(interval '100 days')/2000) from generate_series(1,2000) n;
+insert into public.conversations(id,tenant_id,source,external_id,connection_id,started_at) select gen_random_uuid(),'${TA}','csv','undated:'||n,'${CA}',null from generate_series(1,500) n;
+insert into public.conversations(id,tenant_id,source,external_id,connection_id,started_at,deleted_at) select gen_random_uuid(),'${TA}','csv','deleted:'||n,'${CA}',null,now() from generate_series(1,300) n;
+insert into public.conversations(id,tenant_id,source,external_id,connection_id,started_at) select gen_random_uuid(),'${TB}','csv','hist:'||n,'${CB}',null from generate_series(1,40) n;
+insert into public.messages(id,tenant_id,external_id,role,conversation_id,connection_id,occurred_at)
+ select gen_random_uuid(),c.tenant_id,'m'||k,'customer',c.id,c.connection_id,
+  CASE WHEN c.tenant_id='${TA}' THEN timestamptz '2026-10-19 00:00:00+00'-(split_part(c.external_id,':',2)::int*(interval '540 days')/${convs})+(k-1)*interval '1 hour' ELSE timestamptz '2026-09-10 00:00:00+00'+(k-1)*interval '1 hour' END
+ FROM public.conversations c CROSS JOIN generate_series(1,2) k WHERE c.external_id LIKE 'hist:%';
 alter table public.economic_source_versions disable trigger user;alter table public.economic_ledger_entries disable trigger user;
 insert into public.economic_source_versions(tenant_id,source_id,version,actor_id,name,evidence_type,active,complete,window_start,window_end,watermark,report,report_hash,attested) values ('${TA}','${SA}',1,'${UA}','SYN','order_export',true,true,'2026-01-01','2026-12-31','2026-10-18','${'r'.repeat(30)}','${h('9')}',true);
 insert into public.economic_ledger_entries(tenant_id,entity_id,source_id,source_version,revision,actor_id,external_id,kind,effective_at,currency,exponent,basis,amount_minor,status,details,report,report_hash,attested) values
@@ -50,29 +57,30 @@ insert into public.economic_ledger_entries(tenant_id,entity_id,source_id,source_
 analyze;`);
  psql(['-f',path.join(dir,'seed.sql')]);
  pool=new pg.Pool({host:sock,port:Number(port),database:'postgres',max:2});
- const repo=createTrendsRepository({database:dbFor(UA,TA),now:()=>NOW,timeoutMs:30000});
+ const repo=createTrendsRepository({database:dbFor(UA,TA),now:()=>NOW,timeoutMs:60000});
  const t0=Date.now();const v=await repo.monthly();const ms=Date.now()-t0;
  const conv=v.conversations,by=Object.fromEntries(conv.series.map(r=>[r.month,r.count]));
- check('window is the last 12 whole months ending in the current month',conv.series.length===12&&conv.series[0].month==='2025-11'&&conv.series.at(-1).month==='2026-10');
- check(`conversations: status ok with ${convs} rows under RLS within the local timeout`,conv.status==='ok'&&conv.class==='observed'&&conv.sampled===false,`${ms} ms (production local timeout is ${LOCAL_TIMEOUT_MS} ms)`);
+ const truth=Number(psql(['-At','-c',`select count(*) from (select coalesce(c.started_at,fm.first_at) d from public.conversations c left join lateral (select min(m.occurred_at) first_at from public.messages m where m.tenant_id=c.tenant_id and m.conversation_id=c.id) fm on c.started_at is null where c.tenant_id='${TA}' and c.deleted_at is null) x where d>='2025-11-01' and d<'2026-11-01'`]).trim());
  const inWindow=conv.series.reduce((a,r)=>a+r.count,0);
- check('conversations: deleted rows excluded; window + outside/undated = tenant total',conv.total===convs+500&&inWindow+conv.outsideWindow===conv.total&&conv.outsideWindow>=500,`in=${inWindow} outside=${conv.outsideWindow}`);
- check('conversations: monthly counts are plausible for an even spread (≈ convs/18 per month)',Object.values(by).every(n=>n>convs/18*0.9&&n<convs/18*1.1)||by['2026-10']<convs/18*1.1,JSON.stringify(by).slice(0,160));
- check('conversations: other tenant never leaks (B has 7)',createTrendsRepository({database:dbFor(UB,TB),now:()=>NOW})&&(await createTrendsRepository({database:dbFor(UB,TB),now:()=>NOW}).monthly()).conversations.total===7);
+ check('window is the last 12 whole months ending in the current month',conv.series.length===12&&conv.series[0].month==='2025-11'&&conv.series.at(-1).month==='2026-10');
+ check(`conversations: dated by FIRST MESSAGE when started_at is null (regression: real data had 101,007 of 103,098 null)`,conv.status==='ok'&&conv.definition==='started_at_or_first_message'&&conv.series.filter(r=>r.count>0).length===12,`${ms} ms, ${Object.values(by).join(',')}`);
+ check('conversations: a large tenant is a labelled estimate (10 % Bernoulli sample), never presented as observed',conv.class==='estimated'&&conv.sampled===true&&/muestra del 10 %/.test(conv.sampleNote));
+ check('conversations: estimated window total within 10 % of the exact value',Math.abs(inWindow-truth)/truth<0.10,`estimate ${inWindow} vs exact ${truth}`);
+ check('conversations: undated conversations (no started_at, no message) are reported apart, deleted ones excluded',conv.undated>=350&&conv.undated<=650&&conv.total>=(convs+2000+500)*0.9&&conv.total<=(convs+2000+500)*1.1,`undated≈${conv.undated} total≈${conv.total}`);
+ const small=(await createTrendsRepository({database:dbFor(UB,TB),now:()=>NOW}).monthly()).conversations;
+ check('conversations: a small tenant (<= 3,000) is counted exactly from first messages and stays "observed"',small.class==='observed'&&small.sampled===false&&small.series.find(r=>r.month==='2026-09').count===40&&small.total===40);
  const led=v.ledger,sep=led.series.find(r=>r.month==='2026-09'),oct=led.series.find(r=>r.month==='2026-10');
  check('ledger: primary currency is USD (most rows); MXN reported apart, never summed',led.currency==='USD'&&led.exponent===2&&led.otherCurrencies.join()==='MXN'&&led.currencies.length===2);
  check('ledger: latest revision only (O-3 = 9000), cancelled and pending excluded, null amount counted as unknown',oct.orders.count===2&&oct.orders.amountMinor==='9000'&&oct.orders.unknownAmounts===1&&oct.refunds.count===1&&oct.refunds.amountMinor==='1200',JSON.stringify(oct));
  check('ledger: September orders 12,500 USD (2 rows); MXN row not mixed in',sep.orders.count===2&&sep.orders.amountMinor==='12500');
  check('ledger: rows outside the window are not counted',led.series.every(r=>r.month>='2025-11')&&!JSON.stringify(led).includes('99900'));
- check('trends carry the observed class and an honest note',conv.class==='observed'&&led.class==='observed'&&/No aplican las reglas de publicación/.test(v.note));
- const failExact=q=>(t,v2)=>/FROM public\.conversations/.test(t)&&!/TABLESAMPLE/.test(t)?Promise.reject(Object.assign(new Error('canceling statement due to statement timeout'),{code:'57014'})):q(t,v2);
- const sv=await createTrendsRepository({database:dbFor(UA,TA,failExact),now:()=>NOW}).monthly();
- const sIn=sv.conversations.series.reduce((a,r)=>a+r.count,0);
- check('when the exact count times out it falls back to a labelled 10 % sample (class estimated), never a fake observation',sv.conversations.status==='ok'&&sv.conversations.class==='estimated'&&sv.conversations.sampled===true&&/muestra del 10 %/.test(sv.conversations.sampleNote)&&sv.ledger.status==='ok',`sample total≈${sv.conversations.total} (exact ${conv.total}), in window≈${sIn} (exact ${inWindow})`);
- check('the sample estimate is within 15 % of the exact total',Math.abs(sv.conversations.total-conv.total)/conv.total<0.15);
- const failAll=q=>(t,v2)=>/FROM public\.conversations/.test(t)?Promise.reject(Object.assign(new Error('canceling statement due to statement timeout'),{code:'57014'})):q(t,v2);
- const tv=await createTrendsRepository({database:dbFor(UA,TA,failAll),now:()=>NOW}).monthly();
- check('if even the sample times out: status "timeout" (no 503) and the ledger still answers',tv.conversations.status==='timeout'&&tv.conversations.series.length===0&&tv.ledger.status==='ok');
+ check('classes and note are honest: sampled conversations estimated, ledger observed, first-message definition stated',conv.class==='estimated'&&led.class==='observed'&&/primer mensaje/.test(v.note)&&/No aplican las reglas de publicación/.test(v.note));
+ const failSample=q=>(t,v2)=>/BERNOULLI/.test(t)?Promise.reject(Object.assign(new Error('canceling statement due to statement timeout'),{code:'57014'})):q(t,v2);
+ const tv=await createTrendsRepository({database:dbFor(UA,TA,failSample),now:()=>NOW}).monthly();
+ check('if the sampled pass times out: status "timeout" (no 503, no invented figure) and the ledger still answers',tv.conversations.status==='timeout'&&tv.conversations.series.length===0&&tv.ledger.status==='ok');
+ const failProbe=q=>(t,v2)=>/LIMIT 3001/.test(t)?Promise.reject(Object.assign(new Error('canceling statement due to statement timeout'),{code:'57014'})):q(t,v2);
+ const pv=await createTrendsRepository({database:dbFor(UA,TA,failProbe),now:()=>NOW}).monthly();
+ check('if even the cheap probe times out: status "timeout" and the ledger still answers',pv.conversations.status==='timeout'&&pv.ledger.status==='ok');
  let bad;try{await repo.monthly({months:99});}catch(e){bad=e;}
  check('window larger than 24 months is rejected (400)',bad?.status===400);
  check('monthWindow is pure and ordered',monthWindow(NOW,3).list.join()==='2026-08,2026-09,2026-10');

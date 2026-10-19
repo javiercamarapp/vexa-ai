@@ -5,3 +5,5 @@ export {TrackerLedger} from './ledger.mjs';
 export {ingestVersion,TrackerLedgerRepository,versionId} from './runner.mjs';
 export {TrackerSqlRepository} from './sql-repository.mjs';
 export {emitVersionSql} from './emit-sql.mjs';
+export {loadTracker,VERSIONS,PROJECT_REF,guardSql,parseGuard,Receipts,planVersion} from './loader.mjs';
+export {candidateIds,summarySql,idsSql,parseIdsResult} from './ticket-index.mjs';

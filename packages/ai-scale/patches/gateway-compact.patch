@@ -1,0 +1,51 @@
+--- a/packages/gateway/index.mjs
++++ b/packages/gateway/index.mjs	2026-10-19 00:16:30
+@@ -89,13 +89,14 @@
+   return{atoms:atoms.flat(),phrases,overflow,selected:new Set()};
+ }
+ // Bounded source-scoped reference protocol. Unicode stays server-side on decode.
+-function referenceGrounding(revisions) {
++function referenceGrounding(revisions,{compact=false}={}) {
+   const evidence=new Map(),values=new Map(),sources=new Map(),candidates=[];let totalValues=0;
+   const projected=revisions.map((r,revisionIndex)=>{
+     const available_evidence=availableEvidence(r).map((span,index)=>{const ref='r'+revisionIndex+'s'+index;evidence.set(ref,span);return{ref,...span};});
+     const markers=markerIntervals(r.text);sources.set(r.message_revision_id,{text:r.text,markers});candidates.push(entityCandidates(r.text,markers));
+-    return{message_revision_id:r.message_revision_id,role:r.role,text:r.text,available_evidence,available_values:[],entity_values_limited:false};
++    return compact?{message_revision_id:r.message_revision_id,role:r.role,text:r.text,available_evidence:available_evidence.map(x=>x.ref)}:{message_revision_id:r.message_revision_id,role:r.role,text:r.text,available_evidence,available_values:[],entity_values_limited:false};
+   });
++  if(compact)return{revisions:projected,evidence,values,sources}; // compacto: sin candidatos de entidad (el valor es literal y se valida contra la evidencia)
+   // Allocate atoms across revisions before any phrase consumes the global quota.
+   for(const kind of ['atoms','phrases'])for(let rank=0;rank<(kind==='atoms'?66:33)&&totalValues<96;rank++){
+     for(let index=0;index<projected.length&&totalValues<96;index++){
+@@ -115,9 +116,9 @@
+   for(let at=source.text.indexOf(value,start);at!==-1&&at+value.length<=end;at=source.text.indexOf(value,at+1))if(outsideMarkers(source.markers,at,at+value.length))return true;
+   return false;
+ }
+-function referenceSchema(taxonomy,refs){
++function referenceSchema(taxonomy,refs,{compact=false}={}){
+   const schema=extractionSchema(taxonomy,{modelOutput:true});
+-  for(const field of ['issues','entities']){const evidence=schema.properties[field].items.properties.evidence;if(refs.evidence.size)evidence.items={anyOf:[evidence.items,{type:'string',enum:[...refs.evidence.keys()]}]};}
++  for(const field of ['issues','entities']){const evidence=schema.properties[field].items.properties.evidence;if(refs.evidence.size)evidence.items={anyOf:[evidence.items,compact?{type:'string',pattern:'^r[0-9]{1,3}s[0-9]{1,2}$'}:{type:'string',enum:[...refs.evidence.keys()]}]};}
+   if(refs.values.size){const entity=schema.properties.entities.items.properties;entity.value={anyOf:[entity.value,{type:'object',additionalProperties:false,required:['ref'],properties:{ref:{type:'string',enum:[...refs.values.keys()]}}}]};}
+   return schema;
+ }
+@@ -208,6 +209,7 @@
+     if(!target||endpoint!==undefined&&endpoint!==target||typeof transport!=='function')return error('policy_blocked');
+     if(!budgetRepository||['reserve','recordAttempt','finalize'].some(k=>typeof budgetRepository[k]!=='function'))return error('budget_unavailable');
+     let data,schema,finalSchema,payload,refs,semantics;
++    const compact=p.extractionPayload==='compact'; // opt-in del servidor: carga compacta (misma cita textual, mismo esquema final)
+     try {
+       data=structuredClone(input);
+       if(!data||typeof data.taskKey!=='string'||!data.taskKey||data.taskKey.length>200||data.role!=='extraction'||!validateRevisions(data.revisions,data.tenantId))return error('invalid_input');
+@@ -217,8 +219,9 @@
+       }
+       const sourcePayload={taxonomy:data.taxonomy,revisions:data.revisions.map(({message_revision_id,role,text})=>({message_revision_id,role,text}))};
+       if(Buffer.byteLength(JSON.stringify(sourcePayload))>p.maxInputBytes)return error('input_too_large');
+-      refs=referenceGrounding(data.revisions);
+-      schema=referenceSchema(data.taxonomy,refs);
++      if(compact&&semantics)return error('policy_blocked');
++      refs=referenceGrounding(data.revisions,{compact});
++      schema=referenceSchema(data.taxonomy,refs,{compact});
+       if(semantics)schema=semanticWireSchema(schema,refs);
+       // Explicit projection prevents caller metadata/secrets from entering the prompt.
+       payload={taxonomy:data.taxonomy,revisions:refs.revisions,...(semantics?{semantic_policy:semantics.policy}:{})};

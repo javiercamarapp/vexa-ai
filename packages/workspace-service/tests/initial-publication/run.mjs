@@ -18,6 +18,10 @@ function authorizedScope(records=[snapshot()],options={}){
    return {rows:records.filter(r=>r.tenant_id===args[0]&&r.status==='published'&&r.economic_schema_version==='economic-snapshot-v1').sort((a,b)=>b.published_at.localeCompare(a.published_at)||b.id.localeCompare(a.id)).slice(0,1).map(r=>({id:r.id}))};
   }
   if(sql.startsWith('SELECT * FROM public.metric_snapshots'))return {rows:records.filter(r=>r.tenant_id===args[0]&&r.id===args[1]&&r.economic_schema_version===args[2])};
+  // 0055: el repositorio lee solo las columnas que usa (sin el manifiesto de decenas de MiB) y verifica las referencias por lote; el doble responde a esas sentencias con los mismos datos.
+  if(sql.startsWith('SELECT s.id,s.tenant_id,s.scope_hash')&&sql.includes('FROM public.metric_snapshots'))return {rows:records.filter(r=>r.tenant_id===args[0]&&r.id===args[1]&&r.economic_schema_version===args[2]).map(r=>({...r,models:r.input_manifest.models,watermark_count:r.input_manifest.watermarks.length}))};
+  if(sql.includes('FROM pg_attribute'))return {rows:[{n:0}]};
+  if(sql.startsWith('WITH r AS MATERIALIZED'))return {rows:[{bad:'0'}]};
   if(sql.includes('economic_contributor_active'))return {rows:options.denied?[]:[{ok:1}]};
   if(sql.startsWith('SELECT * FROM public.components'))return {rows:[]};
   if(sql.includes('economic_snapshot_digest'))return {rows:[{hash:options.corrupt?'d'.repeat(64):'c'.repeat(64)}]};

@@ -4,6 +4,8 @@ import {separateComponents} from './components.mjs';
 import {evidence} from '../problems/repository.mjs';
 import {DomainError} from '../problems/contracts.mjs';
 import {EconomicError} from './repository.mjs';
+import {latestRows,latestEntries,memoSection} from './ledger-load.mjs';
+import {evidenceRun} from './evidence-memo.mjs';
 const uuid=x=>typeof x==='string'&&/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(x);
 const requireValue=(ok,code,status=409)=>{if(!ok)throw new EconomicError(code,status);};
 const canonical=x=>Array.isArray(x)?'['+x.map(canonical).join(',')+']':x&&typeof x==='object'?'{'+Object.keys(x).sort().map(k=>JSON.stringify(k)+':'+canonical(x[k])).join(',')+'}':JSON.stringify(x);
@@ -11,7 +13,6 @@ const hash=x=>createHash('sha256').update(canonical(x)).digest('hex');
 const iso=x=>new Date(x).toISOString();
 const instant=x=>{if(typeof x!=='string'||!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,3})?Z$/.test(x)||!Number.isFinite(Date.parse(x)))return false;return iso(x)===(x.includes('.')?x.replace(/\.(\d{1,3})Z$/,(_,n)=>'.'+n.padEnd(3,'0')+'Z'):x.replace('Z','.000Z'));};
 const one=async(s,q,a)=>(await s.query(q,a)).rows[0];
-const latestRows=async(s,table,key)=>(await s.query(`SELECT DISTINCT ON(${key}) *,public.economic_contributor_active(tenant_id,actor_id) AS actor_active FROM public.${table} WHERE tenant_id=$1 ORDER BY ${key},version DESC`,[s.tenantId])).rows;
 const kinds=['order','refund','reversal','replacement','support_model'];
 const report=q=>typeof q.report==='string'&&q.report.length>=20&&q.report.length<=4000&&q.attested===true&&Number.isInteger(q.expectedVersion)&&q.expectedVersion>=0;
 const keys=(q,allowed)=>q&&typeof q==='object'&&!Array.isArray(q)&&Object.keys(q).every(k=>allowed.includes(k));
@@ -23,16 +24,27 @@ async function problemState(s,p){
  try{for(const id of snap.embeddingIds){const m=await one(s,'SELECT extraction_run_id FROM public.problem_embedding_members WHERE tenant_id=$1 AND embedding_id=$2 AND problem_id=$3',[s.tenantId,id,p.problem_id]);requireValue(m,'problem_evidence_unavailable');await evidence(s,m.extraction_run_id);}return {valid:true,reason:null};}
  catch(e){if(e instanceof EconomicError||e instanceof DomainError&&e.code==='source_unavailable'||e.message==='EVIDENCE_UNAVAILABLE')return {valid:false,reason:'problem_evidence_unavailable'};throw e;}
 }
+const evidenceUsable=async(s,runId)=>{const e=await evidenceRun(s,runId);return !!e&&e.state==='current'&&e.status==='succeeded';};
+/** Mismo veredicto que problemState por problema, con UNA consulta de membresías para todos los problemas y la evidencia de cada corrida verificada una sola vez. */
+async function problemStates(s,problems){
+ const wanted=new Set();for(const p of problems){const snap=p.provenance?.snapshot;if(snap&&snap.state==='active'&&Array.isArray(snap.embeddingIds)&&snap.embeddingIds.length)for(const id of snap.embeddingIds)wanted.add(id);}
+ const runs=new Map();if(wanted.size)for(const r of (await s.query('SELECT embedding_id,problem_id,extraction_run_id FROM public.problem_embedding_members WHERE tenant_id=$1 AND embedding_id=ANY($2::uuid[])',[s.tenantId,[...wanted]])).rows){const k=r.embedding_id+':'+r.problem_id;if(!runs.has(k))runs.set(k,r.extraction_run_id);}
+ const bad={valid:false,reason:'problem_evidence_unavailable'};
+ for(const p of problems){const snap=p.provenance?.snapshot;let verdict={valid:true,reason:null};
+  if(!snap||snap.state!=='active'||!Array.isArray(snap.embeddingIds)||!snap.embeddingIds.length)verdict=bad;
+  else for(const id of snap.embeddingIds){const run=runs.get(id+':'+p.problem_id);if(!run||!await evidenceUsable(s,run)){verdict=bad;break;}}
+  Object.assign(p,verdict);}
+}
 const entry=r=>({id:r.entity_id,rowId:r.id,revision:r.revision,sourceId:r.source_id,actorId:r.actor_id,actorActive:r.actor_active,externalId:r.external_id,kind:r.kind,status:r.status,effectiveAt:iso(r.effective_at),recordedAt:iso(r.recorded_at),currency:r.currency,exponent:r.exponent,basis:r.basis,amountMinor:r.amount_minor===null?null:String(r.amount_minor).replace(/\.0+$/,''),orderId:r.order_id,reversalOf:r.reversal_of,details:r.details});
 const source=r=>({id:r.source_id,version:r.version,active:r.active&&r.actor_active,actorActive:r.actor_active,evidenceType:r.evidence_type,complete:r.complete,windowStart:iso(r.window_start),windowEnd:iso(r.window_end),watermark:iso(r.watermark)});
 const compatible=(a,b)=>a&&b&&['currency','exponent','basis','amountMinor','status','effectiveAt'].every(k=>a[k]===b[k]);
 async function state(s){
  const sources=(await latestRows(s,'economic_source_versions','source_id')).map(source);
- const entries=(await s.query('SELECT DISTINCT ON(entity_id) *,public.economic_contributor_active(tenant_id,actor_id) AS actor_active FROM public.economic_ledger_entries WHERE tenant_id=$1 ORDER BY entity_id,revision DESC',[s.tenantId])).rows.map(entry);
+ const entries=(await latestEntries(s)).map(entry);
  const byId=new Map(entries.map(e=>[e.id,e])),sourceById=new Map(sources.map(r=>[r.id,r]));
  const usable=e=>!!e&&e.actorActive&&sourceById.get(e.sourceId)?.active;
  const problems=(await s.query("SELECT DISTINCT ON(problem_id) * FROM public.problem_versions WHERE tenant_id=$1 AND provenance->>'kind'='vector-problem-v1' ORDER BY problem_id,version DESC",[s.tenantId])).rows;
- for(const p of problems)Object.assign(p,await problemState(s,p));
+ await problemStates(s,problems);
  const problemById=new Map(problems.map(p=>[p.problem_id,p]));
  const rawLinks=await latestRows(s,'economic_problem_links','problem_id,entity_id');
  const relations=rawLinks.map(r=>{const e=byId.get(r.entity_id),valid=!!(r.actor_active&&usable(e)&&problemById.get(r.problem_id)?.valid);return {id:r.id,problemId:r.problem_id,entityId:r.entity_id,ledgerRowId:r.ledger_row_id,kind:e?.kind??'unknown',version:r.version,active:r.active,valid,reason:valid?null:'relation_evidence_unavailable',report:valid?r.report:null};});
@@ -59,7 +71,7 @@ async function build(s,scope,st,fixedAsOf){
  const allOrders=st.entries.filter(e=>e.kind==='order'&&st.usable(e));const canonicalOrders=new Map();for(const e of allOrders){const id=canonicalId(e.id);canonicalOrders.set(id,st.byId.get(id));}
  const validRelations=st.relations.filter(r=>r.active&&r.valid);
  const linkMap=new Map();for(const r of validRelations.filter(r=>r.kind==='order')){const l={tenantId:s.tenantId,problemId:r.problemId,orderId:canonicalId(r.entityId),evidenceRef:r.id,relationVersion:String(r.version)};linkMap.set(l.problemId+':'+l.orderId,l);}
- const links=[...linkMap.values()].sort((a,b)=>canonical(a).localeCompare(canonical(b)));
+ const links=[...linkMap.values()].map(l=>[canonical(l),l]).sort((a,b)=>a[0].localeCompare(b[0])).map(x=>x[1]);
  const familySources=type=>st.sources.filter(x=>x.evidenceType===type&&x.active).map(x=>({sourceAccount:x.id,watermark:x.watermark,complete:x.complete&&x.windowStart<=scope.start&&x.windowEnd>=scope.end&&x.watermark>=scope.end}));
  const input={authorization:{tenantId:s.tenantId,permissionsVersion:String(s.permissionsVersion)},snapshot:{tenantId:s.tenantId,id:'economic-exposure:'+inputHash,asOf,sources:familySources('order_export')},scope,orders:[...canonicalOrders.values()].map(e=>baseRow(s,e)),events:[],links};
  const {canonicalAllOrders,...metrics}=calculateExposure(input);
@@ -71,18 +83,24 @@ async function build(s,scope,st,fixedAsOf){
  const customerMap=new Map();for(const c of st.customerBindings.filter(c=>c.valid&&c.customerKey!==null)){const id=canonicalId(c.entityId);const set=customerMap.get(id)??new Set();set.add(c.customerKey);customerMap.set(id,set);}
  const orderFamily=st.sources.filter(x=>x.evidenceType==='order_export');const orderIdentityCoverage=orderFamily.length>0&&orderFamily.every(x=>x.active&&x.complete&&x.windowStart<=scope.start&&x.windowEnd>=scope.end&&x.watermark>=scope.end)&&scope.end<=asOf;
  const customers=ids=>{const customerKeys=new Set();let knownOrderCount=0;for(const id of ids){const set=customerMap.get(id);if(set?.size===1){knownOrderCount++;customerKeys.add([...set][0]);}}const known=uniq([...customerKeys]),complete=covered&&orderIdentityCoverage&&!badIdentity&&!badRelations&&knownOrderCount===ids.length;return {count:complete?known.length:null,knownCount:known.length,knownOrderCount,totalOrderCount:ids.length,status:complete?'complete':ids.length?'partial':'unavailable',customerKeys:known};};
- const problemIds=uniq(validRelations.map(r=>r.problemId));const orderIdsFor=p=>uniq(metrics.membership.filter(l=>p===null||l.problemId===p).map(l=>l.orderId));
+ const problemIds=uniq(validRelations.map(r=>r.problemId));
+ const membersBy=new Map();for(const l of metrics.membership){let a=membersBy.get(l.problemId);if(!a)membersBy.set(l.problemId,a=[]);a.push(l.orderId);}
+ const allMembers=uniq(metrics.membership.map(l=>l.orderId)),orderIdsFor=p=>p===null?allMembers:uniq(membersBy.get(p)??[]);
  metrics.customerExposure={global:customers(orderIdsFor(null)),byProblem:Object.fromEntries(problemIds.map(p=>[p,customers(orderIdsFor(p))]))};
- const eventFor=p=>{const orderIds=new Set(orderIdsFor(p)),ids=new Set(validRelations.filter(r=>r.kind!=='order'&&(p===null||r.problemId===p)).map(r=>r.entityId));for(const e of st.entries.filter(e=>kinds.includes(e.kind)&&e.kind!=='order'&&e.orderId&&orderIds.has(canonicalId(e.orderId))))ids.add(e.id);
+ // Índices construidos una vez (antes se recorría el libro completo por cada problema); mismas pertenencias y mismo orden de entradas.
+ const reversals=st.entries.filter(e=>e.kind==='reversal'),position=new Map(st.entries.map((e,i)=>[e.id,i]));
+ const eventsByOrder=new Map();for(const e of st.entries)if(kinds.includes(e.kind)&&e.kind!=='order'&&e.orderId){const k=canonicalId(e.orderId);let a=eventsByOrder.get(k);if(!a)eventsByOrder.set(k,a=[]);a.push(e.id);}
+ const directAll=[],directBy=new Map();for(const r of validRelations)if(r.kind!=='order'){directAll.push(r.entityId);let a=directBy.get(r.problemId);if(!a)directBy.set(r.problemId,a=[]);a.push(r.entityId);}
+ const eventFor=p=>{const ids=new Set(p===null?directAll:directBy.get(p)??[]);for(const o of orderIdsFor(p))for(const id of eventsByOrder.get(o)??[])ids.add(id);
  // Reversal membership follows its original, and directly linked reversals retain originals.
- let changed=true;while(changed){changed=false;for(const e of st.entries.filter(e=>e.kind==='reversal')){if(ids.has(e.id)&&e.reversalOf&&!ids.has(e.reversalOf)){ids.add(e.reversalOf);changed=true;}if(ids.has(e.reversalOf)&&!ids.has(e.id)){ids.add(e.id);changed=true;}}}
- const chosen=st.entries.filter(e=>ids.has(e.id)&&st.usable(e));const financial=chosen.filter(e=>['refund','reversal'].includes(e.kind));const rb=adaptLedger({...input,snapshot:{...input.snapshot,sources:familySources('payment_ledger')},orders:[],links:[],events:financial.map(e=>({...baseRow(s,e),kind:e.kind,reversalOf:e.reversalOf}))}).metrics.refunds;
- const components=separateComponents({entries:chosen,sources:st.sources,scope,asOf});for(const m of [rb,components.replacement,components.supportModel]){if(!covered)gateMetric(m,'relation_coverage_unconfirmed');if(badRelations||chosen.length<ids.size)gateMetric(m,'event_evidence_unavailable');if(chosen.some(e=>e.orderId&&(!st.usable(st.byId.get(e.orderId))||st.byId.get(e.orderId).kind!=='order'||st.byId.get(e.orderId).currency!==e.currency||st.byId.get(e.orderId).exponent!==e.exponent||st.byId.get(e.orderId).basis!==e.basis)))gateMetric(m,'event_order_reference_unavailable_or_incompatible');if(badIdentity)gateMetric(m,'alias_identity_unavailable_or_conflicting',true);}
+ let changed=true;while(changed){changed=false;for(const e of reversals){if(ids.has(e.id)&&e.reversalOf&&!ids.has(e.reversalOf)){ids.add(e.reversalOf);changed=true;}if(ids.has(e.reversalOf)&&!ids.has(e.id)){ids.add(e.id);changed=true;}}}
+ const chosen=[...ids].map(id=>st.byId.get(id)).filter(e=>e&&st.usable(e)).sort((a,b)=>position.get(a.id)-position.get(b.id));const financial=chosen.filter(e=>['refund','reversal'].includes(e.kind));const rb=adaptLedger({...input,snapshot:{...input.snapshot,sources:familySources('payment_ledger')},orders:[],links:[],events:financial.map(e=>({...baseRow(s,e),kind:e.kind,reversalOf:e.reversalOf}))}).metrics.refunds;
+ const components=separateComponents({entries:chosen,sources:st.sources,scope,asOf});const badOrderRef=chosen.some(e=>e.orderId&&(!st.usable(st.byId.get(e.orderId))||st.byId.get(e.orderId).kind!=='order'||st.byId.get(e.orderId).currency!==e.currency||st.byId.get(e.orderId).exponent!==e.exponent||st.byId.get(e.orderId).basis!==e.basis));for(const m of [rb,components.replacement,components.supportModel]){if(!covered)gateMetric(m,'relation_coverage_unconfirmed');if(badRelations||chosen.length<ids.size)gateMetric(m,'event_evidence_unavailable');if(badOrderRef)gateMetric(m,'event_order_reference_unavailable_or_incompatible');if(badIdentity)gateMetric(m,'alias_identity_unavailable_or_conflicting',true);}
  return {refunds:rb,replacement:components.replacement,supportModel:components.supportModel,eventIds:uniq(chosen.filter(e=>e.currency===scope.currency&&e.exponent===scope.exponent&&e.basis===scope.basis&&e.effectiveAt>=scope.start&&e.effectiveAt<scope.end&&e.recordedAt<=asOf&&!['pending','cancelled'].includes(e.status)).map(e=>e.id))};};
  metrics.eventUnion={global:eventFor(null),byProblem:Object.fromEntries(problemIds.map(p=>[p,eventFor(p)])),problemRowsAreAdditive:false};
  return {inputHash,scope,canonicalAllOrders,coverage,relations:st.relations,aliases:st.aliases,customerBindings:st.customerBindings,problemOptions:st.problems.filter(p=>p.valid).map(p=>({id:p.problem_id,label:p.provenance.snapshot.label,version:p.version})),metrics};
 }
-export async function readExposure(s,{scope,asOf}){scope=normalizeScope(scope);return build(s,scope,await state(s),asOf);}
+export async function readExposure(s,{scope,asOf}){scope=normalizeScope(scope);return memoSection(s,async()=>build(s,scope,await state(s),asOf));}
 const writeLock=async s=>{await s.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[s.tenantId+':economic-ledger']);await s.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[s.tenantId+':economic-relations']);};
 export function createExposureRepository({database}){
  const transact=async work=>{let own;try{return await database.transaction('configure',async s=>{await writeLock(s);try{return await work(s);}catch(e){if(e instanceof EconomicError)own=e;throw e;}});}catch(e){if(own)throw own;throw e;}};

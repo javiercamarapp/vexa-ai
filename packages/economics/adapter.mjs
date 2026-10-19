@@ -6,12 +6,16 @@ const text=x=>typeof x==='string'&&x.trim().length>0;
 const utc=x=>{if(typeof x!=='string'||!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,3})?Z$/.test(x)||!Number.isFinite(Date.parse(x)))return false;const normalized=x.includes('.')?x.replace(/\.(\d{1,3})Z$/,(_,n)=>'.'+n.padEnd(3,'0')+'Z'):x.replace('Z','.000Z');return new Date(x).toISOString()===normalized;};
 const canonical=x=>Array.isArray(x)?'['+x.map(canonical).join(',')+']':x&&typeof x==='object'?'{'+Object.keys(x).sort().map(k=>JSON.stringify(k)+':'+canonical(x[k])).join(',')+'}':JSON.stringify(x);
 const hash=x=>createHash('sha256').update(canonical(x)).digest('hex');
-const sorted=rows=>[...new Map(rows.map(r=>[canonical(r),r])).values()].sort((a,b)=>canonical(a)<canonical(b)?-1:canonical(a)>canonical(b)?1:0);
+// Misma serialización canónica; el memo (por objeto, por llamada) evita recalcularla en cada comparación del ordenamiento,
+// en la detección de conflictos y en el hash final. El resultado es idéntico al algoritmo original: se ordena por la misma cadena canónica.
+const canonicalMemo=memo=>{const f=x=>{if(x===null||typeof x!=='object')return JSON.stringify(x);let s=memo.get(x);if(s===undefined){s=Array.isArray(x)?'['+x.map(f).join(',')+']':'{'+Object.keys(x).sort().map(k=>JSON.stringify(k)+':'+f(x[k])).join(',')+'}';memo.set(x,s);}return s;};return f;};
+const sortedBy=(rows,f)=>{const m=new Map();for(const r of rows)m.set(f(r),r);return [...m.entries()].sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:0).map(e=>e[1]);};
 const blank=()=>({amountMinor:'0',knownSubtotalMinor:'0',knownCount:0,totalCount:0,status:'complete'});
 /** Pure boundary. authorization is supplied by a server-side current-membership check,
  * never accepted as authorization from an HTTP body. This module performs no I/O. */
 export function adaptLedger(input){
  const {authorization:a,snapshot:s,scope:q}=input??{};
+ const cf=canonicalMemo(new WeakMap()),sorted=rows=>sortedBy(rows,cf);
  requireValue(a&&text(a.tenantId)&&text(a.permissionsVersion),'AUTHORIZATION_REQUIRED');
  requireValue(s&&s.tenantId===a.tenantId,'TENANT_MISMATCH');
  requireValue(text(s.id)&&utc(s.asOf)&&Array.isArray(s.sources),'SNAPSHOT_INVALID');
@@ -33,7 +37,7 @@ export function adaptLedger(input){
    return Object.fromEntries(Object.entries({id:r.id,tenantId:r.tenantId,sourceAccount:r.sourceAccount,externalId:r.externalId,sourceRevision:r.sourceRevision,evidenceRef:r.evidenceRef,basis:r.basis,provenance:r.provenance,occurredAt:r.occurredAt,recordedAt:r.recordedAt,currency:r.currency,exponent:r.exponent,status:r.status,amountMinor:amount,...(type==='event'?{kind:r.kind,reversalOf:r.reversalOf??null}:{})}));
   });
   const unique=sorted(valid),byId=new Map(),bySource=new Map();let conflict=false;
-  for(const r of unique){for(const [map,key] of [[byId,r.id],[bySource,canonical([r.sourceAccount,r.externalId])]]){if(map.has(key)&&canonical(map.get(key))!==canonical(r)){conflict=true;issue('IDENTITY_CONFLICT',type,r.id);}else map.set(key,r);}}
+  for(const r of unique){for(const [map,key] of [[byId,r.id],[bySource,canonical([r.sourceAccount,r.externalId])]]){if(map.has(key)&&cf(map.get(key))!==cf(r)){conflict=true;issue('IDENTITY_CONFLICT',type,r.id);}else map.set(key,r);}}
   const selected=unique.filter(r=>{if(Date.parse(r.recordedAt)>Date.parse(s.asOf)){excluded.afterSnapshot++;return false;}if(r.currency!==scope.currency){excluded.otherCurrency++;return false;}if(r.basis!==scope.basis){excluded.otherBasis++;return false;}requireValue(r.exponent===scope.exponent,'EXPONENT_CONFLICT');if(Date.parse(r.occurredAt)<Date.parse(scope.start)||Date.parse(r.occurredAt)>=Date.parse(scope.end)){excluded.outsideWindow++;return false;}if(r.status==='cancelled'){excluded.cancelled++;return false;}if(r.status==='pending'){excluded.pending++;return false;}return true;});
   return {all:unique,selected,conflict};
  }
@@ -57,5 +61,5 @@ export function adaptLedger(input){
  for(const code of orderReasons)issue(code,'order');for(const code of refundReasons)issue(code,'event');
  const refunds=metric(refundRaw,events.selected,refundReasons);
  const snapshot={tenantId:s.tenantId,id:s.id,asOf:s.asOf,sources:sorted([...sources.values()])};
- return {schemaVersion:'vexa-ledger-adapter-v1',tenantId:a.tenantId,snapshotId:s.id,scope,scopeHash:hash({authorization:{tenantId:a.tenantId,permissionsVersion:a.permissionsVersion},scope,sourceAccounts:[...sources.keys()].sort()}),inputHash:hash({authorization:{tenantId:a.tenantId,permissionsVersion:a.permissionsVersion},snapshot,scope,orders:orders.all,events:events.all,links}),metrics:{allOrders,exposure,refunds},issues:sorted(issues),excluded};
+ return {schemaVersion:'vexa-ledger-adapter-v1',tenantId:a.tenantId,snapshotId:s.id,scope,scopeHash:hash({authorization:{tenantId:a.tenantId,permissionsVersion:a.permissionsVersion},scope,sourceAccounts:[...sources.keys()].sort()}),inputHash:createHash('sha256').update(cf({authorization:{tenantId:a.tenantId,permissionsVersion:a.permissionsVersion},snapshot,scope,orders:orders.all,events:events.all,links})).digest('hex'),metrics:{allOrders,exposure,refunds},issues:sorted(issues),excluded};
 }

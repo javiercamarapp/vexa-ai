@@ -22,7 +22,7 @@ export function ConnectionHealthPanel(){
  <dt>Tiempo desde el último éxito</dt><dd>{row.lagSeconds===null?'Sin datos':Math.floor(row.lagSeconds/60)+' minutos'}</dd>
  <dt>Permisos del proveedor</dt><dd>{row.permissions==='revoked'?'Revocados':row.permissions==='available'?'Comprobados en el último éxito':'Sin comprobar'}</dd>
  <dt>Cobertura observada</dt><dd>{row.coverage?`${row.coverage.observed} registros únicos; ${row.coverage.accepted} aceptados, ${row.coverage.rejected} rechazados.`:'Sin datos de cobertura'}</dd>
- <dt>Punto de continuación</dt><dd>{row.watermark?'Huella del checkpoint: '+row.watermark.value:'Sin checkpoint comprobado'}</dd></dl>
+ <dt>Punto de continuación</dt><dd>{row.watermark?'Huella del punto de control: '+row.watermark.value:'Sin punto de control comprobado'}</dd></dl>
  <p>El tiempo mostrado mide la antigüedad del último éxito; no estima el retraso de los datos del proveedor.</p>
  {row.reconnect&&<aside><h3>Pasos para la reconexión</h3><ol>{row.reconnect.steps.map(step=><li key={step}>{step}</li>)}</ol>{row.reconnect.canRequest&&<><label><input type="checkbox" checked={Boolean(row.reconnect?.attemptId&&confirmed[row.id]===row.reconnect.attemptId)} onChange={event=>setConfirmed(previous=>({...previous,[row.id]:event.target.checked?row.reconnect?.attemptId??null:null}))}/>Confirmo la rotación de credenciales de esta cuenta</label><button disabled={busy||!Boolean(row.reconnect?.attemptId&&confirmed[row.id]===row.reconnect.attemptId)} onClick={()=>void recheck(row)}>Permitir nuevo intento</button></>}</aside>}
  </article>)}</section>;

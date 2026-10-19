@@ -9,6 +9,8 @@ const {respond,IDS,HASH}=await import('./fixtures.mjs');
 const base=process.argv[2]??'http://localhost:3107',out=process.argv[3]??path.resolve('ui-captures');fs.mkdirSync(out,{recursive:true});
 const PIN=`?snapshot_id=${IDS.snapshot}&scope_hash=${HASH}&date_start=2026-10-01&date_end=2026-11-01&currency=USD&basis=net`;
 const VIEWS=[['overview','/overview'],['problems','/problems'],['problem-detail',`/problems/${IDS.problemA}${PIN}`],['recommendations','/recommendations'],['explorer','/explorer'],['customer','/customers/'+IDS.customer+PIN],['interventions','/interventions'],['briefs','/briefs'],['brief-detail','/briefs/'+IDS.brief],['history','/history']];
+const EXTRA=[['operacion-economia','/economics'],['operacion-problemas-gestion','/problems/manage'],['operacion-analisis','/analysis'],['datos-importaciones','/imports'],['datos-conexiones','/connections'],['datos-evaluacion','/evaluation'],['datos-candidatos','/evaluation/candidates'],['datos-migracion','/migrations'],['admin-notificaciones','/notifications'],['admin-avisos','/settings/notifications'],['admin-entrega','/settings/notification-delivery'],['admin-equipo','/settings/team'],['admin-retencion','/settings/retention'],['jobs-setup','/jobs/setup'],['login','/login'],['plataforma','/platform'],['404','/ruta-que-no-existe-xyz'],['invitacion','/auth/invitations/'+IDS.snapshot]];
+if(process.env.EXTRA==='1')VIEWS.splice(0,VIEWS.length,...EXTRA);
 const VIEWPORTS=[[375,812],[768,1024],[1440,900]];
 const filter=process.env.ONLY?process.env.ONLY.split(','):null;
 const geometry=()=>{
@@ -39,7 +41,7 @@ const geometry=()=>{
  for(const el of all){
   if(!el.matches('a[href],button'))continue;
   if(el.closest('.workspace-sidebar,.workspace-bottom-nav,.workspace-header,.workspace-mobile-dialog,.sr-only,[role=tablist]')||el.matches('.skip-link'))continue;
-  const s=getComputedStyle(el),r=el.getBoundingClientRect(),system=el.matches('.btn,.id-chip,.icon-button,.catalog-link');
+  const s=getComputedStyle(el),r=el.getBoundingClientRect(),system=el.matches('.btn,.id-chip,.icon-button,.catalog-link,.login-btn')||(el.tagName==='A'&&s.display.includes('flex')&&(parseFloat(s.borderTopLeftRadius)||0)>=10&&r.height>=36);
   const inline=el.tagName==='A'&&!system&&!!el.parentElement&&el.parentElement.matches(textual)&&getComputedStyle(el.parentElement).display!=='flex';
   if(inline){if(!(s.textDecorationLine||'').includes('underline'))issues.push({kind:'inline-link-no-underline',detail:label(el)});continue;}
   if(el.tagName==='A'&&!system){issues.push({kind:'unstyled-link',detail:label(el)+' (use LinkButton)'});continue;}
@@ -49,6 +51,8 @@ const geometry=()=>{
  for(const el of all){if(!el.matches('summary'))continue;if(el.closest('.workspace-sidebar,.nav-group'))continue;const r=el.getBoundingClientRect();if(r.height>0&&r.height<36)issues.push({kind:'click-area-small',detail:label(el)+` summary h=${Math.round(r.height)}`});}
  // text that spills its own box (any element with its own text, not a scroll container)
  for(const el of all){const s=getComputedStyle(el);if(s.display==='inline'||s.overflowX!=='visible'||el.matches('table,tbody,thead,tr,svg,code.ref'))continue;if(el.scrollWidth>el.clientWidth+2&&el.clientWidth>0&&!scrollAncestor(el)&&[...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim()))issues.push({kind:'text-overflow',detail:label(el)+` ${el.scrollWidth}>${el.clientWidth}`});}
+ // a short single word (label, chip, badge) must never be broken across lines
+ for(const el of all){if(el.children.length>0)continue;const t=(el.textContent||'').trim();if(!t||/\s/.test(t)||t.length>14)continue;if(getComputedStyle(el).display==='inline'&&!el.matches('span,strong,small'))continue;const range=document.createRange();range.selectNodeContents(el);const tops=new Set([...range.getClientRects()].filter(r=>r.width>0).map(r=>Math.round(r.top/4)));if(tops.size>1)issues.push({kind:'broken-word',detail:label(el)+` lines=${tops.size}`});}
  // siblings of a flex/grid container must not collide
  const parents=new Set(all.map(e=>e.parentElement).filter(Boolean));
  for(const p of parents){const d=getComputedStyle(p).display;if(!/flex|grid/.test(d))continue;const kids=[...p.children].filter(k=>!hidden(k)&&!['absolute','fixed'].includes(getComputedStyle(k).position)&&!k.matches('.sr-only,svg,option,script,style'));if(kids.length>40||kids.length<2)continue;
@@ -61,9 +65,9 @@ if(process.env.SELFTEST){
  const ctx=await browser.newContext({viewport:{width:375,height:812},reducedMotion:'reduce'});
  await ctx.route('**/api/**',async route=>{const req=route.request(),hit=respond(req.url(),req.method(),req.postData());return hit?route.fulfill({status:hit[0],contentType:'application/json',body:JSON.stringify(hit[1])}):route.fulfill({status:503,body:'{}'});});
  const page=await ctx.newPage();await page.goto(base+'/overview',{waitUntil:'networkidle'});
- await page.evaluate(()=>{const host=document.querySelector('.workspace-content');const d=document.createElement('div');d.innerHTML=`<p>Texto con <a href="/x" style="text-decoration:none">palabra con link</a> suelta.</p><div><a href="/y">enlace sin estilo</a></div><div><button type="button" class="legacy" style="all:unset;cursor:pointer;border:1px solid #000;padding:2px">crudo</button></div><div style="display:flex;width:200px"><button class="btn" style="white-space:nowrap;width:60px;overflow:visible">Un texto de botón demasiado largo para su recuadro</button></div><div style="display:flex"><div style="width:120px;height:40px;background:#eee">A</div><div style="width:120px;height:40px;margin-left:-60px;background:#ddd">B</div></div><div style="width:100px;white-space:nowrap">Una línea que desborda su caja por completo sin saltar</div>`;host.appendChild(d);});
+ await page.evaluate(()=>{const host=document.querySelector('.workspace-content');const d=document.createElement('div');d.innerHTML=`<p>Texto con <a href="/x" style="text-decoration:none">palabra con link</a> suelta.</p><div><a href="/y" style="all:unset;cursor:pointer">enlace sin estilo</a></div><div><button type="button" class="legacy" style="all:unset;cursor:pointer;border:1px solid #000;padding:2px">crudo</button></div><div style="display:flex;width:200px"><button class="btn" style="white-space:nowrap;width:60px;overflow:visible">Un texto de botón demasiado largo para su recuadro</button></div><div style="display:flex"><div style="width:120px;height:40px;background:#eee">A</div><div style="width:120px;height:40px;margin-left:-60px;background:#ddd">B</div></div><div><span style="display:inline-block;width:22px;overflow-wrap:anywhere">FUENTES</span></div><div style="width:100px;white-space:nowrap">Una línea que desborda su caja por completo sin saltar</div>`;host.appendChild(d);});
  const found=new Set((await page.evaluate(geometry)).map(i=>i.kind));
- const need=['inline-link-no-underline','unstyled-link','unstyled-button','sibling-overlap'];const anyOf=[['text-spills-box','text-overflow','content-spills-container']];
+ const need=['inline-link-no-underline','unstyled-link','unstyled-button','sibling-overlap','broken-word'];const anyOf=[['text-spills-box','text-overflow','content-spills-container']];
  const missing=need.filter(k=>!found.has(k)).concat(anyOf.filter(g=>!g.some(k=>found.has(k))).map(g=>g.join('|')));
  console.log(missing.length?'FAIL selftest: reglas que no detectaron el defecto: '+missing.join(', ')+' (detectadas: '+[...found].join(', ')+')':'PASS selftest: las reglas detectan enlaces sin estilo/subrayado, botones crudos, texto desbordado y choques ('+[...found].join(', ')+')');
  await browser.close();process.exit(missing.length?1:0);
@@ -75,10 +79,11 @@ for(const [w,h] of VIEWPORTS){
  await ctx.route('**/api/**',async route=>{const req=route.request(),hit=respond(req.url(),req.method(),req.postData());if(!hit)return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:{code:'fixture_missing'}})});return route.fulfill({status:hit[0],contentType:'application/json',body:JSON.stringify(hit[1])});});
  for(const [name,route] of VIEWS){
   if(filter&&!filter.includes(name))continue;
-  const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push('pageerror: '+e.message));page.on('console',m=>{if(m.type()==='error'&&!/fixture_missing|503|Failed to load resource/.test(m.text()))errors.push('console: '+m.text().slice(0,160));});
+  const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push('pageerror: '+e.message));page.on('console',m=>{if(m.type()==='error'&&!/fixture_missing|503|Failed to load resource|auth_not_configured/.test(m.text()))errors.push('console: '+m.text().slice(0,160));});
   await page.goto(base+route,{waitUntil:'networkidle',timeout:90000}).catch(e=>errors.push('goto: '+e.message));
   await page.waitForTimeout(500);
   const issues=await page.evaluate(geometry).catch(e=>[{kind:'audit-error',detail:String(e)}]);
+  const docTitle=await page.title();if(!/ · Rovaq AI$/.test(docTitle))issues.push({kind:'page-title',detail:'title should be "<vista> · Rovaq AI", got "'+docTitle+'"'});
   const full=await page.evaluate(()=>{const c=document.querySelector('.workspace-content');return Math.min(6000,Math.max(document.documentElement.scrollHeight,c?c.scrollHeight+(c.getBoundingClientRect().top):0));}).catch(()=>h);
   await page.setViewportSize({width:w,height:Math.max(h,full)});await page.waitForTimeout(150);
   await page.screenshot({path:path.join(out,`${name}-${w}.png`)}).catch(()=>{});await page.setViewportSize({width:w,height:h});
@@ -89,7 +94,7 @@ for(const [w,h] of VIEWPORTS){
   for(const i of uniq.slice(0,12))console.log('   - '+i.kind+': '+i.detail);for(const e of errors.slice(0,4))console.log('   ! '+e);
   await page.close();
  }
- if(!filter||filter.includes('overview-trends')){
+ if(process.env.EXTRA!=='1'&&(!filter||filter.includes('overview-trends'))){
   const page=await ctx.newPage(),fail=[],errors=[];page.on('pageerror',e=>errors.push('pageerror: '+e.message));
   try{
    await page.goto(base+'/overview',{waitUntil:'networkidle',timeout:90000});
@@ -99,7 +104,7 @@ for(const [w,h] of VIEWPORTS){
    const tip=await page.locator('.trends .trend-tip').first().innerText();if(!/octubre/i.test(tip)||!/conversaciones/.test(tip))fail.push({kind:'flow',detail:'tooltip did not show the focused month: '+tip.replace(/\n/g,' | ')});
    await page.locator('.trends button[aria-pressed]').nth(1).click();
    if(!(await page.locator('.trends .chart-title',{hasText:'Reembolsos liquidados por mes'}).count()))fail.push({kind:'flow',detail:'refunds toggle did not change the chart'});
-   const kind=await page.locator('.trends .kind-badge').first().innerText();if(!/Observado/.test(kind))fail.push({kind:'flow',detail:'trend chart must carry the observed label'});
+   const kinds=(await page.locator('.trends .kind-badge').allInnerTexts()).join('|');if(!/Estimado/.test(kinds)||!/Observado/.test(kinds))fail.push({kind:'flow',detail:'conversation sample must be labelled Estimado and the ledger Observado: '+kinds});
    const kpi=(await page.locator('[class*=kpiValue]').allInnerTexts()).join('|');if(!/184,523\.00 USD/.test(kpi)||!/1,204,500\.00 USD/.test(kpi))fail.push({kind:'flow',detail:'KPI final values are not the exact figures: '+kpi});
    fail.push(...await page.evaluate(geometry));
   }catch(e){fail.push({kind:'flow',detail:String(e).slice(0,200)});}
@@ -107,7 +112,7 @@ for(const [w,h] of VIEWPORTS){
   report.push({view:'overview-trends',width:w,issues:uniq,errors});console.log(`${uniq.length||errors.length?'FAIL':'PASS'} overview-trends @${w}${uniq.length?' · '+uniq.length+' problemas':''}`);for(const i of uniq.slice(0,12))console.log('   - '+i.kind+': '+i.detail);
   await page.close();
  }
- if(!filter||filter.includes('demo-flow')){
+ if(process.env.EXTRA!=='1'&&(!filter||filter.includes('demo-flow'))){
   const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push('pageerror: '+e.message));
   const fail=[];
   try{

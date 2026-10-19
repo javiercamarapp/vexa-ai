@@ -7,7 +7,7 @@ export function RetentionPanel(){const [snapshot,setSnapshot]=useState<Snapshot|
  const clear=useCallback(()=>{setPreview(null);setConfirmed(false);},[]);
  const load=useCallback(async(signal?:AbortSignal)=>{
   const generation=++epoch.current;setLoading(true);setNotice('');
-  try{const r=await fetch('/api/recovery',{cache:'no-store',signal});if(!r.ok)throw new RetentionRequestError(r.status===403?'Se requiere un owner activo.':'No se pudo consultar la retención.');const data=await r.json();if(!signal?.aborted&&generation===epoch.current){setSnapshot(data);setTtl(String(data.policy?.backupTtlSeconds??2592000));setError('');return true;}return false;
+  try{const r=await fetch('/api/recovery',{cache:'no-store',signal});if(!r.ok)throw new RetentionRequestError(r.status===403?'Se requiere un propietario activo.':'No se pudo consultar la retención.');const data=await r.json();if(!signal?.aborted&&generation===epoch.current){setSnapshot(data);setTtl(String(data.policy?.backupTtlSeconds??2592000));setError('');return true;}return false;
   }catch(e){if(!signal?.aborted&&generation===epoch.current){setSnapshot(null);clear();setError(e instanceof RetentionRequestError?e.message:'No se pudo consultar la retención. Comprueba la conexión y vuelve a actualizar.');}return false;
   }finally{if(!signal?.aborted&&generation===epoch.current)setLoading(false);}
  },[clear]);

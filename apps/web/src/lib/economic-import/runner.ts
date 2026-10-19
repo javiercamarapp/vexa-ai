@@ -34,7 +34,7 @@ export async function runEconomicImport(input:EconomicImport,tenantId:string,{fe
   emit({phase:'checking',message:'Comprobando nuevamente todos los registros y metadatos en el ledger…'});
   snapshot=await load();cancelled();const final=await reconcileImport(doc,snapshot);cancelled();
   if(final.currency||final.sources.length||final.entries.length)throw new EconomicImportError('incomplete','La lectura final no acredita todos los registros. Conserva el archivo y reanuda para comprobar lo pendiente.');
-  emit({phase:'complete',verifiedEntries:doc.entries.length,acknowledgedEntries:doc.entries.length,message:'Todos los registros del archivo coinciden con el ledger. No se publicó ningún snapshot ni se acredita completitud de las fuentes.'});
+  emit({phase:'complete',verifiedEntries:doc.entries.length,acknowledgedEntries:doc.entries.length,message:'Todos los registros del archivo coinciden con el ledger. No se publicó ningún corte ni se acredita completitud de las fuentes.'});
  }catch(error){
   const e=error instanceof EconomicImportError?error:new EconomicImportError('request','No se pudo completar la carga. Reanuda para comprobar el ledger.');
   const unauthorized=e.accessLost||e.code==='tenant'||e.code==='owner';

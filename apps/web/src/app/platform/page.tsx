@@ -6,6 +6,7 @@ import {VexaBrand} from '../../components/vexa-brand';
 import {WorkspaceIcon} from '../../components/workspace/icon';
 import './platform.css';
 import {PlatformPanel} from '../../components/platform-panel';
+export const metadata={title:'Administración de Rovaq AI'};
 export const dynamic='force-dynamic';
 export default async function Page(){
  if(!config())return <section className="home access-flow"><h1>Administración de plataforma</h1><p role="alert">Falta configurar el acceso.</p><Link href="/login">Volver al acceso</Link></section>;

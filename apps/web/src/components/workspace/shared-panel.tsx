@@ -18,6 +18,7 @@ import {TrendCharts} from '../ui/trend-chart';
 import {KindBadge} from '../ui/kind-badge';
 import {Citation} from '../ui/citation';
 import {IdChip} from '../ui/id-chip';
+import {SourceRef} from '../ui/source-ref';
 import {BarChart,type BarDatum} from '../ui/bar-chart';
 import {epistemicKind} from '../../lib/epistemic.mjs';
 type ViewScope=Scope & {basis:string;exponent?:number};
@@ -41,7 +42,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   const load=async()=>{const sourceLocation=workspaceLocation();if(controller.signal.aborted||epoch!==generation.current)return;setBusy(true);setBundle(null);setError('');const search=new URLSearchParams(query);search.set('resource',resource);
    try{const response=await fetch('/api/workspace?'+search.toString(),{cache:'no-store',signal:controller.signal});if(controller.signal.aborted||epoch!==generation.current)return;
     const json=await response.json();if(controller.signal.aborted||epoch!==generation.current)return;
-    if(!response.ok)throw Error(response.status===401||response.status===403?'Tu acceso cambió. Vuelve a iniciar sesión o selecciona una organización autorizada.':response.status===400?'El alcance no es válido. Revisa fechas, moneda, base y snapshot.':response.status===404?'No hay una publicación accesible para ese snapshot y alcance.':'No se pudo consultar la vista. Reintenta cuando el servicio esté disponible.');
+    if(!response.ok)throw Error(response.status===401||response.status===403?'Tu acceso cambió. Vuelve a iniciar sesión o selecciona una organización autorizada.':response.status===400?'El alcance no es válido. Revisa fechas, moneda, base y publicación.':response.status===404?'No hay una publicación accesible para esa publicación y alcance.':'No se pudo consultar la vista. Reintenta cuando el servicio esté disponible.');
     const next=json.data as ViewBundle;if(!next||!Array.isArray(next.items)||!next.meta||!next.meta.scope)throw Error('La respuesta no se pudo verificar.');
     const pinned=pinWorkspaceQuery(query,next.meta);
     if(workspaceLocation()!==sourceLocation)return;resolved.current=pinned.toString();window.history.replaceState(null,'',window.location.pathname+(pinned.size?'?'+pinned.toString():'')+window.location.hash);setBundle(next);
@@ -69,7 +70,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
    {bundle.meta.critical_notice&&<aside className="state-panel partial" role="alert"><strong>Revisión crítica, independiente del importe</strong><p>{bundle.meta.critical_notice}</p></aside>}
    {!bundle.meta.snapshot_id&&<GettingStarted canManage={bundle.meta.can_manage} pending={bundle.meta.state==='partial'}/> }
    <CfoOverview key={`${bundle.meta.snapshot_id}:${bundle.meta.scope_hash}`} bundle={bundle} trends={<TrendCharts/>}/>
-   <div className="btn-group more-row"><details className="more"><summary>Identidad de la publicación</summary><p>Snapshot: {bundle.meta.snapshot_id??'Sin publicación'} · Alcance: {bundle.meta.scope_hash??'Sin vista publicada'}</p>{bundle.meta.mapping_manifest_id&&<p>Snapshot base: {bundle.meta.base_snapshot_id} · Alcance base: {bundle.meta.base_scope_hash} · Versión de clasificación: {bundle.meta.mapping_manifest_id}</p>}</details>{bundle.meta.next_cursor&&<Button icon={<Arrow/>} onClick={()=>{const next=new URLSearchParams(pinned);next.set('cursor',bundle.meta.next_cursor!);navigate(next);}}>Página siguiente</Button>}{bundle.meta.can_manage&&<><LinkButton href="/economics" size="sm" icon={<Arrow/>}>Fuentes y publicaciones</LinkButton><LinkButton href="/problems/manage" size="sm" icon={<Arrow/>}>Catálogo de problemas</LinkButton></>}</div>
+   <div className="btn-group more-row"><details className="more"><summary>Identidad de la publicación</summary><p>Corte: {bundle.meta.snapshot_id??'Sin publicación'} · Alcance: {bundle.meta.scope_hash??'Sin vista publicada'}</p>{bundle.meta.mapping_manifest_id&&<p>Corte base: {bundle.meta.base_snapshot_id} · Alcance base: {bundle.meta.base_scope_hash} · Versión de clasificación: {bundle.meta.mapping_manifest_id}</p>}</details>{bundle.meta.next_cursor&&<Button icon={<Arrow/>} onClick={()=>{const next=new URLSearchParams(pinned);next.set('cursor',bundle.meta.next_cursor!);navigate(next);}}>Página siguiente</Button>}{bundle.meta.can_manage&&<><LinkButton href="/economics" size="sm" icon={<Arrow/>}>Fuentes y publicaciones</LinkButton><LinkButton href="/problems/manage" size="sm" icon={<Arrow/>}>Catálogo de problemas</LinkButton></>}</div>
   </>}
  </section>;
  const statusLabel:Record<string,string>={ready:'Cobertura completa',partial:'Cobertura parcial',stale:'Corte anterior'};
@@ -82,14 +83,14 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   {busy&&<DataState state={{kind:'loading'}}/>}{error&&<DataState state={{kind:'error',code:'workspace_request_failed',message:error}}/>}
   {bundle&&!busy&&<>
    <div className="meta-row"><IdChip value={bundle.meta.snapshot_id??'Sin publicación'} label="Publicación"/><IdChip value={bundle.meta.scope_hash??'Sin vista publicada'} label="Alcance"/></div>
-   {bundle.meta.mapping_manifest_id&&<details><summary>Identidad de esta vista</summary><p className="snapshot">Snapshot base: {bundle.meta.base_snapshot_id} · Alcance base: {bundle.meta.base_scope_hash} · Versión de clasificación: {bundle.meta.mapping_manifest_id}</p></details>}
+   {bundle.meta.mapping_manifest_id&&<details><summary>Identidad de esta vista</summary><p className="snapshot">Corte base: {bundle.meta.base_snapshot_id} · Alcance base: {bundle.meta.base_scope_hash} · Versión de clasificación: {bundle.meta.mapping_manifest_id}</p></details>}
    {bundle.meta.critical_notice&&<aside className="state-panel partial" role="alert"><strong>Revisión crítica, independiente del importe</strong><p>{bundle.meta.critical_notice}</p></aside>}
    {state!=='empty'&&<section className="card" aria-label="Comparación de exposición por problema"><BarChart title="Ingresos expuestos por problema" unit={'longitud proporcional · '+scope.currency} data={chart}/><p className="card-lead">La exposición es una cifra inferida por vínculo de evidencia: no es pérdida y no se suma entre problemas.</p></section>}
    <DataState state={state==='empty'?{kind:'empty'}:{kind:state??'partial',coverage:bundle.meta.coverage,watermark:bundle.meta.watermark}}>
-    <div className="record-grid reveal">{bundle.items.map(item=><article key={item.id} className="card problem-card">
-     <div className="card-head"><div><span className="status-pill" data-tone={item.status==='ready'?'ok':item.status==='stale'?'warn':undefined}>{statusLabel[item.status]??item.status}</span><h2>{item.title}</h2></div>{resource==='problems'&&<LinkButton href={'/problems/'+item.id+'?'+pinned.toString()} variant="secondary" size="sm" icon={<Arrow/>}>Ver detalle</LinkButton>}</div>
+    <div className="record-grid reveal">{bundle.items.map(item=><article key={item.id} className="record-card card problem-card">
+     <div className="card-head"><div><span className="status-pill" data-tone={item.status==='ready'?'ok':item.status==='stale'?'warn':undefined}>{statusLabel[item.status]??item.status}</span><h2>{resource==='problems'?<LinkButton href={'/problems/'+item.id+'?'+pinned.toString()} className="title-link" icon={<Arrow/>}>{item.title}</LinkButton>:item.title}</h2></div></div>
      <p className="card-lead">{item.summary}</p>
-     <dl className="metric-grid">{item.metrics.map((metric,index)=><div key={index}><dt>{metric.label} <KindBadge metric={metric}/></dt><dd>{formatMinorUnits(metric.amount_minor,metric.currency,metric.exponent)}<small>Fuente: <code>{metric.source_ref}</code></small>{metric.amount_minor===null&&metric.known_subtotal!==null&&<p>Subtotal conocido: {formatMinorUnits(metric.known_subtotal,metric.currency,metric.exponent)}; no es el total.</p>}</dd></div>)}</dl>
+     <dl className="metric-grid">{item.metrics.map((metric,index)=><div key={index}><dt>{metric.label} <KindBadge metric={metric}/></dt><dd>{formatMinorUnits(metric.amount_minor,metric.currency,metric.exponent)}<small><SourceRef value={metric.source_ref}/></small>{metric.amount_minor===null&&metric.known_subtotal!==null&&<p>Subtotal conocido: {formatMinorUnits(metric.known_subtotal,metric.currency,metric.exponent)}; no es el total.</p>}</dd></div>)}</dl>
      <dl className="record-details">{item.details.map((detail,index)=><div key={index}><dt>{detail.label}</dt><dd>{detail.value}</dd></div>)}<div><dt>Versión</dt><dd>{item.version}</dd></div></dl>
      {item.evidence.length>0&&<details><summary>Evidencia autorizada ({item.evidence.length})</summary>{item.evidence.map(e=><Citation key={e.id} quote={e.quote} role={e.role} messageRevisionId={e.id}/>)}</details>}
     </article>)}</div>

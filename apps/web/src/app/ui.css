@@ -19,22 +19,22 @@
 .workspace-content .table-wrap{overflow-x:auto;max-width:100%;border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm)}
 .workspace-content .table-wrap:focus-visible{outline:2px solid var(--ui-focus);outline-offset:2px}
 /* ---- Buttons: hierarchy by type. Plain <button type=button> = secondary; submit / .btn-primary = primary; .btn-ghost = tertiary ---- */
-.workspace-content button:not([class]),.workspace-content button.btn,.workspace-content .btn{
+:is(.workspace-content,.access-flow) button:not([class]),:is(.workspace-content,.access-flow) button.btn,:is(.workspace-content,.access-flow) .btn{
  display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-2);width:auto;max-width:100%;min-height:40px;padding:8px 16px;margin:0;
  font:600 13px/1.3 var(--font-ui);letter-spacing:.005em;text-align:center;text-decoration:none;white-space:normal;border-radius:999px;
  border:1px solid var(--ui-input);background:var(--ui-surface);color:var(--ink);box-shadow:none;cursor:pointer;
  transition:background-color var(--ui-fast) ease,border-color var(--ui-fast) ease,color var(--ui-fast) ease,transform var(--ui-fast) ease}
-.workspace-content button:not([class]):not(:disabled):hover,.workspace-content .btn:hover{background:var(--ui-soft);border-color:var(--ui-secondary);color:var(--ink)}
-.workspace-content button[type=submit]:not(.btn-secondary):not(.btn-ghost),.workspace-content form button:not([type]):not(.btn-secondary):not(.btn-ghost),.workspace-content .btn.btn-primary{background:var(--ui-action);border-color:var(--ui-action);color:var(--ui-action-ink)}
-.workspace-content button[type=submit]:not(.btn-secondary):not(.btn-ghost):not(:disabled):hover,.workspace-content form button:not([type]):not(.btn-secondary):not(.btn-ghost):not(:disabled):hover,.workspace-content .btn.btn-primary:hover{background:var(--ui-action-hover);border-color:var(--ui-action-hover);color:var(--ui-action-ink)}
-.workspace-content .btn.btn-secondary{background:var(--ui-surface);border-color:var(--ui-input);color:var(--ink)}
-.workspace-content .btn-ghost,.workspace-content button.btn-ghost{background:transparent;border-color:transparent;color:var(--ui-action)}
-.workspace-content .btn-ghost:hover,.workspace-content button.btn-ghost:not(:disabled):hover{background:var(--ui-soft);border-color:transparent;color:var(--ui-action-hover)}
-.workspace-content .btn-sm,.workspace-content button.btn-sm{min-height:36px;padding:6px 12px;font-size:12px}
-.workspace-content .btn svg{flex:none}
-.workspace-content .btn-label{min-width:0;overflow-wrap:anywhere}
-.workspace-content :is(button,.btn):disabled,.workspace-content .btn[aria-disabled=true]{opacity:.55;cursor:not-allowed;pointer-events:none}
-.workspace-content :is(button,.btn):focus-visible{outline:3px solid var(--ui-focus);outline-offset:2px}
+:is(.workspace-content,.access-flow) button:not([class]):not(:disabled):hover,:is(.workspace-content,.access-flow) .btn:hover{background:var(--ui-soft);border-color:var(--ui-secondary);color:var(--ink)}
+:is(.workspace-content,.access-flow) button[type=submit]:not(.btn-secondary):not(.btn-ghost),.workspace-content form button:not([type]):not(.btn-secondary):not(.btn-ghost),:is(.workspace-content,.access-flow) .btn.btn-primary{background:var(--ui-action);border-color:var(--ui-action);color:var(--ui-action-ink)}
+:is(.workspace-content,.access-flow) button[type=submit]:not(.btn-secondary):not(.btn-ghost):not(:disabled):hover,.workspace-content form button:not([type]):not(.btn-secondary):not(.btn-ghost):not(:disabled):hover,:is(.workspace-content,.access-flow) .btn.btn-primary:hover{background:var(--ui-action-hover);border-color:var(--ui-action-hover);color:var(--ui-action-ink)}
+:is(.workspace-content,.access-flow) .btn.btn-secondary{background:var(--ui-surface);border-color:var(--ui-input);color:var(--ink)}
+:is(.workspace-content,.access-flow) .btn-ghost,:is(.workspace-content,.access-flow) button.btn-ghost{background:transparent;border-color:transparent;color:var(--ui-action)}
+:is(.workspace-content,.access-flow) .btn-ghost:hover,:is(.workspace-content,.access-flow) button.btn-ghost:not(:disabled):hover{background:var(--ui-soft);border-color:transparent;color:var(--ui-action-hover)}
+:is(.workspace-content,.access-flow) .btn-sm,:is(.workspace-content,.access-flow) button.btn-sm{min-height:36px;padding:6px 12px;font-size:12px}
+:is(.workspace-content,.access-flow) .btn svg{flex:none}
+:is(.workspace-content,.access-flow) .btn-label{min-width:0;overflow-wrap:anywhere}
+:is(.workspace-content,.access-flow) :is(button,.btn):disabled,:is(.workspace-content,.access-flow) .btn[aria-disabled=true]{opacity:.55;cursor:not-allowed;pointer-events:none}
+:is(.workspace-content,.access-flow) :is(button,.btn):focus-visible{outline:3px solid var(--ui-focus);outline-offset:2px}
 .btn-spinner{width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:ui-spin 700ms linear infinite}
 .btn-group{display:flex;flex-wrap:wrap;gap:var(--sp-2);align-items:center}
 /* ---- Links: in prose only, always underlined; everything else is a .btn ---- */
@@ -223,3 +223,22 @@ table .num{text-align:right;font-variant-numeric:tabular-nums}
 /* wrappers around expander pills carry no box of their own */
 .workspace-content details:not(.nav-group):not(.fold):not(.detail-admin):not(.card):not(.trend-table-x){border:0!important;background:transparent!important;padding:0!important;box-shadow:none!important;margin-left:0;margin-right:0}
 .workspace-content details:not(.nav-group):not(.fold):not(.detail-admin):not(.card)>:not(summary){margin-top:var(--sp-2)}
+/* Fallback: any standalone link (not inside running text) is an action and looks like one, so no page can ship a bare "palabra con link". */
+:is(.workspace-content,.access-flow,.platform-shell) a:not(.btn):not(.skip-link):not(.id-chip):not(.catalog-link):not(.login-btn):not(.wordmark):not(.sidebar-logo):not(p a):not(li a):not(dd a):not(dt a):not(small a):not(figcaption a):not(blockquote a):not(td a):not(th a):not(label a):not(h1 a):not(h2 a):not(h3 a):not(h4 a):not(summary a):not(nav a){display:inline-flex;align-items:center;gap:var(--sp-2);width:fit-content;max-width:100%;min-height:40px;padding:8px 16px;border:1px solid var(--ui-input);border-radius:999px;background:var(--ui-surface);color:var(--ink);font:600 13px/1.3 var(--font-ui);text-decoration:none;cursor:pointer;transition:background-color var(--ui-fast) ease}
+:is(.workspace-content,.access-flow,.platform-shell) a:not(.btn):not(.skip-link):not(.id-chip):not(.catalog-link):not(.login-btn):not(.wordmark):not(.sidebar-logo):not(p a):not(li a):not(dd a):not(dt a):not(small a):not(figcaption a):not(blockquote a):not(td a):not(th a):not(label a):not(h1 a):not(h2 a):not(h3 a):not(h4 a):not(summary a):not(nav a):hover{background:var(--ui-soft)}
+
+.id-chip-label,.id-chip-copy{white-space:nowrap;flex:none}
+.workspace-content td .id-chip{max-width:100%}
+.trend .card-lead,.trend>.card-lead{font-size:12px}
+
+/* Table cells keep whole words: narrow viewports scroll the table inside its wrapper instead of splitting «Estado» into «Esta/do». */
+.workspace-content :is(th,td){overflow-wrap:break-word;word-break:normal;hyphens:none}
+.workspace-content .table-wrap table,.workspace-content [class*=tableScroll] table{width:max-content;min-width:100%;max-width:none}
+.workspace-content th{white-space:nowrap}
+.workspace-content td small,.workspace-content td code,.workspace-content td .id-chip{white-space:normal}
+
+.cov-detail{list-style:none;margin:var(--sp-2) 0 0;padding:0;display:grid;gap:var(--sp-1);font-size:12px;color:var(--muted)}
+.cov-name .kind-badge{margin-left:var(--sp-2);vertical-align:middle}
+
+:is(.workspace-content,.access-flow) .btn.title-link{justify-content:flex-start;text-align:left;font-size:16px;line-height:1.35;font-weight:600;white-space:normal;border-radius:var(--ui-radius-sm);margin-top:var(--sp-2);padding:10px 14px}
+.record-card.card{overflow-wrap:normal}

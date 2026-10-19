@@ -16,7 +16,7 @@ export function ConnectionSettings(){
  {owner&&<><button disabled={busy} onClick={()=>edit(null)}>Nueva conexión</button><form className="task-fields" onSubmit={event=>void save(event)}>
  <label>Proveedor<select value={source} disabled={busy||selected!==null} onChange={event=>setSource(event.target.value as 'hubspot'|'zendesk')}><option value="zendesk">Zendesk</option><option value="hubspot">HubSpot</option></select></label>
  <label>Identificador de la cuenta<input required maxLength={200} value={account} disabled={busy||selected!==null} onChange={event=>setAccount(event.target.value)}/></label>
- <label>Nombre de la credencial configurada<input required maxLength={120} pattern="[a-zA-Z0-9_.:-]+" value={credential} disabled={busy} onChange={event=>setCredential(event.target.value)}/></label><p>Usa el nombre asignado a la credencial de esta organización. No pegues un token en este campo.</p>
+ <label>Nombre de la credencial configurada<input required maxLength={120} pattern="[a-zA-Z0-9_.:-]+" value={credential} disabled={busy} onChange={event=>setCredential(event.target.value)}/></label><p>Usa el nombre asignado a la credencial de esta organización. No pegues una llave de acceso en este campo.</p>
  <label>Inicio del histórico (UTC)<input required type="datetime-local" value={history} disabled={busy} onChange={event=>setHistory(event.target.value)}/></label><p>Cambiar esta fecha inicia otra carga histórica; los registros repetidos se deduplican. HubSpot puede recorrer todo el histórico disponible.</p>
  <label><input type="checkbox" checked={enabled} disabled={busy} onChange={event=>setEnabled(event.target.checked)}/>Habilitar sincronización</label><button type="submit" disabled={busy}>Guardar conexión</button>
  </form></>}

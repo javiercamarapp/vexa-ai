@@ -30,7 +30,7 @@ export function SharedFilters({scope,onApply}:{scope:Scope & {basis?:string;expo
   <input type="hidden" name="date_basis" value={scope.date_basis}/>
   <label>SKU, uno por línea<textarea name="sku_lines" defaultValue={scope.sku.join('\n')} rows={3}/></label>
   <label>Fuentes<select name="source" multiple defaultValue={scope.source} size={4}><option value="hubspot">HubSpot</option><option value="zendesk">Zendesk</option><option value="csv">CSV</option><option value="excel">Excel</option></select></label>
-  <label>Snapshot (opcional)<input name="snapshot_id" defaultValue={scope.snapshot_id??''} placeholder="Último publicado"/></label>
+  <label>Publicación (opcional)<input name="snapshot_id" defaultValue={scope.snapshot_id??''} placeholder="Último publicado"/></label>
   </div><input type="hidden" name="timezone" value="UTC"/>
   <small>Sin fuentes seleccionadas se incluyen todas. SKU filtra órdenes que contienen el producto; no representa ventas por línea. Cambiar filtros reinicia la paginación.</small></details>
  </form>;

@@ -27,7 +27,7 @@ export function EconomicImportPanel({tenantId,onImported}:{tenantId:string;onImp
  const canStart=!!document&&approved&&phrase===`IMPORTAR ${document.entries.length}`&&!running&&!loading;
  return <section className="task-card economic-import" aria-labelledby="economic-import-title" aria-busy={loading||running}>
   <header className="task-card-header"><div><p className="eyebrow">Importación revisada</p><h2 id="economic-import-title">Cargar órdenes y reembolsos</h2></div><span className="status">JSON · Hasta 2000 registros</span></header>
-  <p>El archivo se valida completo antes de guardar. Se usa tu sesión owner y se compara la organización en cada escritura. No se publica un snapshot.</p>
+  <p>El archivo se valida completo antes de guardar. Se usa tu sesión de propietario y se compara la organización en cada escritura. No se publica ningún corte.</p>
   <label>Archivo económico JSON<input ref={fileInput} type="file" accept=".json,application/json" disabled={running||loading} onChange={event=>void select(event.target.files?.[0])}/></label>
   {loading&&<p role="status">Validando estructura, unidades y procedencia del archivo…</p>}{error&&<p role="alert">{error}</p>}
   {document&&summary&&<>

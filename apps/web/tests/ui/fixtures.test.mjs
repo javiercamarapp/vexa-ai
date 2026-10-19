@@ -1,7 +1,7 @@
 // The synthetic fixtures must be internally coherent: an answer derives from the same figure the card shows.
 import test from 'node:test';import assert from 'node:assert/strict';
 import {formatMinorUnits} from '../../../../packages/metrics/money.mjs';
-import {explorerAnswer,explorerPage,detailProblem,briefs,bundleProblems,bundleMetrics,trends,problems,IDS} from './fixtures.mjs';
+import {coverage,explorerAnswer,explorerPage,detailProblem,briefs,bundleProblems,bundleMetrics,trends,problems,IDS} from './fixtures.mjs';
 const refunds=m=>m.find(x=>x.kind==='refunds');
 test('the answer text, its metric and the problem card show the same refunds figure',()=>{
  const a=explorerAnswer('¿Qué reembolsos constan en este corte?'),m=a.metrics[0],text=formatMinorUnits(m.amount_minor,m.currency,m.exponent);
@@ -24,4 +24,18 @@ test('per-problem refunds never exceed the global refunds figure and October of 
 test('trend series are twelve consecutive months with non-negative counts',()=>{
  const t=trends();assert.equal(t.conversations.series.length,12);assert.equal(t.ledger.series.length,12);
  assert.ok(t.conversations.series.every(r=>r.count>=0&&/^\d{4}-\d{2}$/.test(r.month)));
+});
+test('conversation volume is dated by first message and a sample is labelled as an estimate',()=>{
+ const c=trends().conversations;assert.equal(c.definition,'started_at_or_first_message');assert.equal(c.sampled,true);assert.equal(c.class,'estimated');assert.match(c.sampleNote,/muestra del 10 %/);
+ assert.ok(c.series.filter(r=>r.count>0).length>=10,'a real series is not a single bar');
+});
+
+test('coverage fixtures add up: ledger lines sum to the total, association states sum to the facts, tracker rows are the ruling version',()=>{
+ const S=Object.fromEntries(coverage().sources.map(s=>[s.key,s])),num=x=>Number(x.replace(/,/g,''));
+ const ledger=S.ledger.detail.filter(l=>/pedidos/.test(l)).reduce((a,l)=>{const m=/: ([\d,]+) pedidos · ([\d,]+) reembolsos/.exec(l);return a+num(m[1])+num(m[2]);},0);
+ assert.equal(ledger,S.ledger.total);
+ const st=/resueltos ([\d,]+) · pendientes ([\d,]+) · por revisar ([\d,]+) · retenidos ([\d,]+)/.exec(S.associations.detail[0]);
+ assert.equal(st.slice(1).reduce((a,x)=>a+num(x),0),S.associations.total);
+ assert.equal(S.excel.incorporated+S.excel.rejected,S.excel.total);assert.match(S.excel.detail[0],/v07b · ab12cd34/);
+ for(const s of Object.values(S))if(s.class==='estimated')assert.ok(s.detail.some(l=>/muestra del 10 %/.test(l)),s.key+' estimated must say so');
 });

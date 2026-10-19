@@ -8,7 +8,7 @@ import "./task-layout.css";
 import "./ui.css";
 
 export const metadata: Metadata = {
-  title: "Rovaq AI",
+  title: {default:"Rovaq AI",template:"%s · Rovaq AI"},
   description: "Rovaq AI · Decisiones con evidencia para tu equipo.",
   robots: { index: false, follow: false },
 };

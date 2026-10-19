@@ -64,7 +64,7 @@ export async function entryIdentity(tenantId:string,e:ImportEntry):Promise<strin
 export function readSnapshot(value:unknown,tenantId:string):ImportSnapshot{
  fail(object(value)&&object(value.data),'response','No se pudo verificar la respuesta del ledger.');const data=value.data;
  fail(object(data.bundle)&&data.bundle.tenantId===tenantId,'tenant','El espacio de trabajo cambió. Recarga la página antes de continuar.');
- fail(data.canWrite===true,'owner','Se requiere un owner vigente para importar.');
+ fail(data.canWrite===true,'owner','Se requiere un propietario vigente para importar.');
  fail(Array.isArray(data.sources)&&Array.isArray(data.entries)&&object(data.monetary)&&Array.isArray(data.monetary.currencyVersions),'response','La respuesta del ledger está incompleta.');
  for(const item of [...data.sources,...data.entries,...data.monetary.currencyVersions])fail(object(item),'response','El ledger contiene una respuesta no verificable.');
  return {tenantId,canWrite:true,sources:data.sources as EconomicSource[],entries:data.entries as EconomicEntry[],currencies:data.monetary.currencyVersions as CurrencyVersion[]};

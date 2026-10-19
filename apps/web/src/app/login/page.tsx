@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { authClient, config } from '../../lib/auth';
 import {VexaBrand} from '../../components/vexa-brand';
 import {EmailLogin} from '../../components/email-login';
+export const metadata={title:'Iniciar sesión'};
 export const dynamic='force-dynamic';
 export default async function Login({searchParams}:{searchParams:Promise<{error?:string}>}) {
   let configured=false;

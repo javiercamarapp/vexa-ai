@@ -2,7 +2,9 @@
 import {randomUUID,randomBytes} from 'node:crypto';
 export const q = x => "'" + String(x).replaceAll("'", "''") + "'";
 export const ident = x => '"' + x.replaceAll('"','""') + '"';
-export const insert = (table,row) => `INSERT INTO public.${ident(table)} (${Object.keys(row).map(ident)}) VALUES (${Object.values(row).map(v=>v===null?'NULL':q(typeof v==='object'?JSON.stringify(v):v))})`;
+// 0055: refs_* son columnas DERIVADAS del manifiesto que un trigger recalcula (uuid[] no se serializa con JSON.stringify): no se copian.
+const derived = k => table0 => table0 === 'metric_snapshots' && /^refs_/.test(k);
+export const insert = (table,row0) => { const row = Object.fromEntries(Object.entries(row0).filter(([k]) => !derived(k)(table))); return `INSERT INTO public.${ident(table)} (${Object.keys(row).map(ident)}) VALUES (${Object.values(row).map(v=>v===null?'NULL':q(typeof v==='object'?JSON.stringify(v):v))})`; };
 // Direct user DML is reserved to the backend except source configuration.
 // API permissions do NOT imply table-level grants for imports/jobs/money.
 export const definitions = [

@@ -4,3 +4,4 @@ export {planSheetJob,planWorkbook,manifest,MAPPING_VERSION,sheetFingerprint} fro
 export {TrackerLedger} from './ledger.mjs';
 export {ingestVersion,TrackerLedgerRepository,versionId} from './runner.mjs';
 export {TrackerSqlRepository} from './sql-repository.mjs';
+export {emitVersionSql} from './emit-sql.mjs';

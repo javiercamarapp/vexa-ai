@@ -9,3 +9,4 @@ createdb -h "$D" -p "$PORT" vexa_test
 psql -X -q -h "$D" -p "$PORT" -d vexa_test -v ON_ERROR_STOP=1 -f "$HERE/sql-stub.sql"
 psql -X -q -h "$D" -p "$PORT" -d vexa_test -v ON_ERROR_STOP=1 -f "$REPO/supabase/migrations/0052_tracker_ingestion.sql"
 node "$HERE/sql-check.mjs" "$D" "$PORT"
+node "$HERE/emit-check.mjs" "$D" "$PORT"

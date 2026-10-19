@@ -171,7 +171,55 @@ table .num{text-align:right;font-variant-numeric:tabular-nums}
 .batch-block{padding:var(--sp-4) 0;border-top:1px solid var(--ui-border);display:grid;gap:var(--sp-3)}.batch-block:first-of-type{border-top:0}
 .batch-block h3{margin:var(--sp-2) 0 0;font-size:14px}.batch-block ul{display:flex;flex-wrap:wrap;gap:var(--sp-2);list-style:none;margin:0;padding:0}
 .batch-title,.detail-title{margin:var(--sp-2) 0 0;font-size:15px;line-height:1.35;overflow-wrap:anywhere}
-.workspace-content .catalog-link{flex:1 1 100%;justify-content:flex-start;text-align:left;border-radius:var(--ui-radius-sm);min-height:40px}
+.workspace-content .catalog-link{flex:0 1 auto;justify-content:flex-start;text-align:left;min-height:40px}
 .batch-title,.detail-title{margin:var(--sp-2) 0 0;font-size:15px;line-height:1.35;overflow-wrap:anywhere}
-.workspace-content .catalog-link{flex:1 1 100%;justify-content:flex-start;text-align:left;border-radius:var(--ui-radius-sm);min-height:40px}
+.workspace-content .catalog-link{flex:0 1 auto;justify-content:flex-start;text-align:left;min-height:40px}
 .kind-unclassified{background:var(--ui-soft);border:1px solid var(--ui-input)}
+/* ---- Trends ---- */
+.trend-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--sp-8)}
+.trend-meta{display:inline-flex;align-items:center;gap:var(--sp-2)}
+.trend-plot{position:relative}.trend-plot svg{display:block;width:100%;height:auto;overflow:visible}
+.trend .grid{stroke:var(--ui-border);stroke-width:1}.trend .tick{font:500 10px var(--font-ui);fill:var(--muted)}
+.trend .hit{fill:transparent}.trend .bar-col{outline:none;cursor:default}
+.trend .bar-col:focus-visible .hit,.trend .bar-col.is-active .hit{fill:var(--ui-soft)}
+.trend .bar-col:focus-visible .hit{stroke:var(--ui-focus);stroke-width:2}
+.trend-observed{fill:var(--kind-observed)}.trend-estimated{fill:var(--kind-estimated);opacity:.85}
+.trend .bar-unknown{fill:var(--cov-pen);opacity:.5}
+.trend-tip{display:flex;flex-wrap:wrap;gap:var(--sp-1) var(--sp-3);align-items:baseline;min-height:44px;margin-top:var(--sp-2);padding:var(--sp-2) var(--sp-3);border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm);background:var(--ui-soft);font-size:12px}
+.trend-tip strong{font-size:13px;text-transform:capitalize}.trend-hint{color:var(--muted)}
+.trend-table{margin-top:var(--sp-3)}
+.trend-note{margin:var(--sp-4) 0 0}
+.trend-empty{padding:var(--sp-4);border:1px dashed var(--cov-pen);border-radius:var(--ui-radius-sm);display:grid;gap:var(--sp-3);align-content:start}
+.seg{display:inline-flex;gap:var(--sp-1);margin-bottom:var(--sp-3);padding:var(--sp-1);border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-soft)}
+.workspace-content .seg .btn[aria-pressed=true]{background:var(--ui-action);color:var(--ui-action-ink);border-color:var(--ui-action)}
+.skeleton-chart{height:150px;width:100%;border-radius:var(--ui-radius-sm)}
+@media(prefers-reduced-motion:no-preference){.trend-bar{transform-box:fill-box;transform-origin:bottom;animation:ui-rise-y 480ms var(--ui-ease) both}@keyframes ui-rise-y{from{transform:scaleY(0)}to{transform:scaleY(1)}}}
+.cov-missing{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2);margin:var(--sp-4) 0 0;font-size:12px}
+.cov-missing-label{display:inline-flex;align-items:center;gap:var(--sp-2);font-weight:600;color:var(--ui-secondary)}
+.coverage .cov-list{gap:var(--sp-4)}
+.overview-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp-4);align-items:start}
+@media(min-width:1180px){.overview-grid{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}}
+.workspace-content code.ref{display:block;max-width:26ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:500 11px var(--font-mono);color:var(--muted)}
+/* ---- One expander style everywhere ("Ver como tabla", "Ver referencia", "Evidencia…", filters): outlined pill with chevron ---- */
+.workspace-content details:not(.nav-group):not(.fold):not(.detail-admin)>summary{display:inline-flex;align-items:center;gap:var(--sp-2);width:fit-content;max-width:100%;min-height:36px;padding:6px 14px 6px 12px;margin:0;border:1px solid var(--ui-input);border-radius:999px;background:var(--ui-surface);color:var(--ink);font:600 12px/1.3 var(--font-ui);cursor:pointer;list-style:none;text-align:left}
+.workspace-content details>summary::-webkit-details-marker{display:none}
+.workspace-content details:not(.nav-group):not(.fold):not(.detail-admin)>summary::before{content:'';flex:none;width:6px;height:6px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform var(--ui-fast) ease}
+.workspace-content details[open]:not(.nav-group):not(.fold):not(.detail-admin)>summary::before{transform:rotate(45deg)}
+.workspace-content details:not(.nav-group):not(.fold):not(.detail-admin)>summary:hover{background:var(--ui-soft)}
+.workspace-content details[open]:not(.nav-group):not(.fold):not(.detail-admin)>summary{margin-bottom:var(--sp-3)}
+.workspace-content details>summary:focus-visible{outline:3px solid var(--ui-focus);outline-offset:2px}
+.workspace-content details>summary span{color:var(--muted);font-weight:500;overflow-wrap:anywhere}
+.page details.scopeBox{border:0;background:transparent;margin:0;padding:0}
+.page .scopeBox>summary{padding:6px 14px 6px 12px}
+.workspace-content details.more{margin:0}
+.more-row{margin-top:var(--sp-4);align-items:flex-start}
+.workspace-content details .card-lead,.workspace-content details>p{max-width:78ch}
+.skeleton-panel{display:grid;gap:var(--sp-3);background:var(--ui-surface)}
+.section-title{margin:var(--sp-6) 0 0;font-size:18px}
+.stack{display:grid;gap:var(--sp-5)}
+.stack>*+*{margin-top:0}
+.stack>.card+.card{margin-top:0}
+
+/* wrappers around expander pills carry no box of their own */
+.workspace-content details:not(.nav-group):not(.fold):not(.detail-admin):not(.card):not(.trend-table-x){border:0!important;background:transparent!important;padding:0!important;box-shadow:none!important;margin-left:0;margin-right:0}
+.workspace-content details:not(.nav-group):not(.fold):not(.detail-admin):not(.card)>:not(summary){margin-top:var(--sp-2)}

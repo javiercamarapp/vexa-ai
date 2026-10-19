@@ -14,6 +14,7 @@ import cfo from './cfo-overview.module.css';
 import {PageHeader} from '../ui/page-header';
 import {Button,LinkButton,Refresh,Download,Arrow} from '../ui/button';
 import {CoverageBand} from '../ui/coverage-band';
+import {TrendCharts} from '../ui/trend-chart';
 import {KindBadge} from '../ui/kind-badge';
 import {Citation} from '../ui/citation';
 import {IdChip} from '../ui/id-chip';
@@ -55,22 +56,20 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   if(changedBase&&bundle?.meta.snapshot_id&&next.get('snapshot_id')===bundle.meta.snapshot_id)next.delete('snapshot_id');
   next.delete('cursor');next.delete('scope_hash');navigate(next);
  };
- const update=()=>{setQuery(resolved.current);setReload(n=>n+1);};
+ const update=()=>{setQuery(resolved.current);setReload(n=>n+1);window.dispatchEvent(new Event('vexa:refresh'));};
  const latest=()=>navigate(latestWorkspaceQuery(resolved.current));
  const exportUrl=(format:string)=>{const next=new URLSearchParams(pinned);next.set('resource',resource);next.set('format',format);return '/api/workspace/export?'+next.toString();};
  const state=bundle?.meta.state;
- if(resource==='metrics')return <section className={cfo.page} aria-label="Resumen con alcance compartido">
-  <PageHeader eyebrow="Control financiero" title="Resumen ejecutivo" description="Cifras del corte publicado con su cobertura, su clase (observado, estimado o inferido) y su fuente." actions={<><Button icon={<Refresh/>} loading={busy} onClick={update}>Actualizar</Button><Button disabled={busy} onClick={latest}>Última publicación de este alcance</Button></>}/>
+ if(resource==='metrics')return <section className={cfo.page+' stack'} aria-label="Resumen con alcance compartido">
+  <PageHeader eyebrow="Control financiero" title="Resumen ejecutivo" description="Cifras del corte publicado con su cobertura, su clase (observado, estimado o inferido) y su fuente." actions={<><Button icon={<Refresh/>} loading={busy} onClick={update}>Actualizar</Button><Button disabled={busy} onClick={latest}>Última publicación de este alcance</Button>{bundle?.meta.snapshot_id&&bundle.meta.scope_hash&&<><LinkButton download="workspace.json" href={exportUrl('json')} size="sm" icon={<Download/>}>Exportar JSON</LinkButton><LinkButton download="workspace.csv" href={exportUrl('csv')} size="sm" icon={<Download/>}>Exportar CSV</LinkButton></>}</>}/>
   <CoverageBand/>
   <details className={cfo.scopeBox}><summary>Periodo y filtros <span>{scope.date_start.slice(0,10)} → {scope.date_end.slice(0,10)} (hasta exclusivo) · {scope.currency} · Base {scope.basis}</span></summary><SharedFilters key={JSON.stringify(scope)} scope={scope} onApply={apply}/></details>
   {busy&&<DataState state={{kind:'loading'}}/>}{error&&<DataState state={{kind:'error',code:'workspace_request_failed',message:error}}/>}
   {bundle&&!busy&&<>
    {bundle.meta.critical_notice&&<aside className="state-panel partial" role="alert"><strong>Revisión crítica, independiente del importe</strong><p>{bundle.meta.critical_notice}</p></aside>}
    {!bundle.meta.snapshot_id&&<GettingStarted canManage={bundle.meta.can_manage} pending={bundle.meta.state==='partial'}/> }
-   <CfoOverview key={`${bundle.meta.snapshot_id}:${bundle.meta.scope_hash}`} bundle={bundle}/>
-   <div className={cfo.publication}><details><summary>Identidad de la publicación</summary><p>Snapshot: {bundle.meta.snapshot_id??'Sin publicación'} · Alcance: {bundle.meta.scope_hash??'Sin vista publicada'}</p>{bundle.meta.mapping_manifest_id&&<p>Snapshot base: {bundle.meta.base_snapshot_id} · Alcance base: {bundle.meta.base_scope_hash} · Versión de clasificación: {bundle.meta.mapping_manifest_id}</p>}</details>{bundle.meta.snapshot_id&&bundle.meta.scope_hash&&<div className="btn-group"><LinkButton download="workspace.json" href={exportUrl('json')} variant="secondary" size="sm" icon={<Download/>}>Exportar JSON</LinkButton><LinkButton download="workspace.csv" href={exportUrl('csv')} variant="secondary" size="sm" icon={<Download/>}>Exportar CSV</LinkButton></div>}</div>
-   {bundle.meta.next_cursor&&<div className="btn-group"><Button icon={<Arrow/>} onClick={()=>{const next=new URLSearchParams(pinned);next.set('cursor',bundle.meta.next_cursor!);navigate(next);}}>Página siguiente</Button></div>}
-   {bundle.meta.can_manage&&<div className="btn-group"><LinkButton href="/economics" icon={<Arrow/>}>Fuentes y publicaciones</LinkButton><LinkButton href="/problems/manage" icon={<Arrow/>}>Catálogo de problemas</LinkButton></div>}
+   <CfoOverview key={`${bundle.meta.snapshot_id}:${bundle.meta.scope_hash}`} bundle={bundle} trends={<TrendCharts/>}/>
+   <div className="btn-group more-row"><details className="more"><summary>Identidad de la publicación</summary><p>Snapshot: {bundle.meta.snapshot_id??'Sin publicación'} · Alcance: {bundle.meta.scope_hash??'Sin vista publicada'}</p>{bundle.meta.mapping_manifest_id&&<p>Snapshot base: {bundle.meta.base_snapshot_id} · Alcance base: {bundle.meta.base_scope_hash} · Versión de clasificación: {bundle.meta.mapping_manifest_id}</p>}</details>{bundle.meta.next_cursor&&<Button icon={<Arrow/>} onClick={()=>{const next=new URLSearchParams(pinned);next.set('cursor',bundle.meta.next_cursor!);navigate(next);}}>Página siguiente</Button>}{bundle.meta.can_manage&&<><LinkButton href="/economics" size="sm" icon={<Arrow/>}>Fuentes y publicaciones</LinkButton><LinkButton href="/problems/manage" size="sm" icon={<Arrow/>}>Catálogo de problemas</LinkButton></>}</div>
   </>}
  </section>;
  const statusLabel:Record<string,string>={ready:'Cobertura completa',partial:'Cobertura parcial',stale:'Corte anterior'};

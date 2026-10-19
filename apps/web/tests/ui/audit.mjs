@@ -34,9 +34,41 @@ const geometry=()=>{
  const ctr=all.filter(e=>e.matches('button,a[href],input:not([type=hidden]):not(.sr-only),select,textarea,summary')&&!e.closest('.sr-only')&&!e.matches('.sr-only')&&!pinned(e));
  for(let i=0;i<ctr.length;i++)for(let j=i+1;j<ctr.length;j++){const a=ctr[i],b=ctr[j];if(a.contains(b)||b.contains(a))continue;const ra=a.getBoundingClientRect(),rb=b.getBoundingClientRect();const w=Math.min(ra.right,rb.right)-Math.max(ra.left,rb.left),h=Math.min(ra.bottom,rb.bottom)-Math.max(ra.top,rb.top);if(w>3&&h>3)issues.push({kind:'controls-overlap',detail:label(a)+' ⟂ '+label(b)+` ${Math.round(w)}x${Math.round(h)}`});}
  for(const el of ctr){const r=el.getBoundingClientRect();if(r.height>0&&r.height<24&&!el.matches('summary,input[type=checkbox],input[type=radio],a'))issues.push({kind:'small-target',detail:label(el)+` h=${Math.round(r.height)}`});}
+ // ---- System-style rules (Javier: no stray links, no unstyled buttons, no inline links without underline, 40px-ish click areas) ----
+ const textual='p,li,dd,dt,small,figcaption,blockquote,td,th,span,strong,label';
+ for(const el of all){
+  if(!el.matches('a[href],button'))continue;
+  if(el.closest('.workspace-sidebar,.workspace-bottom-nav,.workspace-header,.workspace-mobile-dialog,.sr-only,[role=tablist]')||el.matches('.skip-link'))continue;
+  const s=getComputedStyle(el),r=el.getBoundingClientRect(),system=el.matches('.btn,.id-chip,.icon-button,.catalog-link');
+  const inline=el.tagName==='A'&&!system&&!!el.parentElement&&el.parentElement.matches(textual)&&getComputedStyle(el.parentElement).display!=='flex';
+  if(inline){if(!(s.textDecorationLine||'').includes('underline'))issues.push({kind:'inline-link-no-underline',detail:label(el)});continue;}
+  if(el.tagName==='A'&&!system){issues.push({kind:'unstyled-link',detail:label(el)+' (use LinkButton)'});continue;}
+  if(el.tagName==='BUTTON'&&!system){const radius=parseFloat(s.borderTopLeftRadius)||0;if(r.height<36||radius<10)issues.push({kind:'unstyled-button',detail:label(el)+` h=${Math.round(r.height)} r=${radius}`});}
+  if(system&&!el.matches('.id-chip,.icon-button')&&r.height>0&&r.height<36)issues.push({kind:'click-area-small',detail:label(el)+` h=${Math.round(r.height)}`});
+ }
+ for(const el of all){if(!el.matches('summary'))continue;if(el.closest('.workspace-sidebar,.nav-group'))continue;const r=el.getBoundingClientRect();if(r.height>0&&r.height<36)issues.push({kind:'click-area-small',detail:label(el)+` summary h=${Math.round(r.height)}`});}
+ // text that spills its own box (any element with its own text, not a scroll container)
+ for(const el of all){const s=getComputedStyle(el);if(s.display==='inline'||s.overflowX!=='visible'||el.matches('table,tbody,thead,tr,svg,code.ref'))continue;if(el.scrollWidth>el.clientWidth+2&&el.clientWidth>0&&!scrollAncestor(el)&&[...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim()))issues.push({kind:'text-overflow',detail:label(el)+` ${el.scrollWidth}>${el.clientWidth}`});}
+ // siblings of a flex/grid container must not collide
+ const parents=new Set(all.map(e=>e.parentElement).filter(Boolean));
+ for(const p of parents){const d=getComputedStyle(p).display;if(!/flex|grid/.test(d))continue;const kids=[...p.children].filter(k=>!hidden(k)&&!['absolute','fixed'].includes(getComputedStyle(k).position)&&!k.matches('.sr-only,svg,option,script,style'));if(kids.length>40||kids.length<2)continue;
+  for(let i=0;i<kids.length;i++)for(let j=i+1;j<kids.length;j++){const a=kids[i].getBoundingClientRect(),b=kids[j].getBoundingClientRect();const w=Math.min(a.right,b.right)-Math.max(a.left,b.left),h=Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top);if(w>3&&h>3&&!pinned(kids[i]))issues.push({kind:'sibling-overlap',detail:label(kids[i])+' ⟂ '+label(kids[j])+` ${Math.round(w)}x${Math.round(h)}`});}}
  return issues;
 };
 const browser=await chromium.launch();const report=[];let failed=0;
+if(process.env.SELFTEST){
+ // Negative control: the rules must FAIL on deliberately broken markup, otherwise a green audit means nothing.
+ const ctx=await browser.newContext({viewport:{width:375,height:812},reducedMotion:'reduce'});
+ await ctx.route('**/api/**',async route=>{const req=route.request(),hit=respond(req.url(),req.method(),req.postData());return hit?route.fulfill({status:hit[0],contentType:'application/json',body:JSON.stringify(hit[1])}):route.fulfill({status:503,body:'{}'});});
+ const page=await ctx.newPage();await page.goto(base+'/overview',{waitUntil:'networkidle'});
+ await page.evaluate(()=>{const host=document.querySelector('.workspace-content');const d=document.createElement('div');d.innerHTML=`<p>Texto con <a href="/x" style="text-decoration:none">palabra con link</a> suelta.</p><div><a href="/y">enlace sin estilo</a></div><div><button type="button" class="legacy" style="all:unset;cursor:pointer;border:1px solid #000;padding:2px">crudo</button></div><div style="display:flex;width:200px"><button class="btn" style="white-space:nowrap;width:60px;overflow:visible">Un texto de botón demasiado largo para su recuadro</button></div><div style="display:flex"><div style="width:120px;height:40px;background:#eee">A</div><div style="width:120px;height:40px;margin-left:-60px;background:#ddd">B</div></div><div style="width:100px;white-space:nowrap">Una línea que desborda su caja por completo sin saltar</div>`;host.appendChild(d);});
+ const found=new Set((await page.evaluate(geometry)).map(i=>i.kind));
+ const need=['inline-link-no-underline','unstyled-link','unstyled-button','sibling-overlap'];const anyOf=[['text-spills-box','text-overflow','content-spills-container']];
+ const missing=need.filter(k=>!found.has(k)).concat(anyOf.filter(g=>!g.some(k=>found.has(k))).map(g=>g.join('|')));
+ console.log(missing.length?'FAIL selftest: reglas que no detectaron el defecto: '+missing.join(', ')+' (detectadas: '+[...found].join(', ')+')':'PASS selftest: las reglas detectan enlaces sin estilo/subrayado, botones crudos, texto desbordado y choques ('+[...found].join(', ')+')');
+ await browser.close();process.exit(missing.length?1:0);
+}
+
 for(const [w,h] of VIEWPORTS){
  const ctx=await browser.newContext({viewport:{width:w,height:h},deviceScaleFactor:1,reducedMotion:'reduce'});
  if(process.env.THEME)await ctx.addInitScript(t=>{try{localStorage.setItem('vexa-theme',t);}catch{/* optional */}},process.env.THEME);
@@ -57,6 +89,24 @@ for(const [w,h] of VIEWPORTS){
   for(const i of uniq.slice(0,12))console.log('   - '+i.kind+': '+i.detail);for(const e of errors.slice(0,4))console.log('   ! '+e);
   await page.close();
  }
+ if(!filter||filter.includes('overview-trends')){
+  const page=await ctx.newPage(),fail=[],errors=[];page.on('pageerror',e=>errors.push('pageerror: '+e.message));
+  try{
+   await page.goto(base+'/overview',{waitUntil:'networkidle',timeout:90000});
+   await page.waitForSelector('.trends .trend-bar',{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'trend bars did not render'}));
+   const bars=await page.locator('.trends .trend-bar').count();if(bars<24)fail.push({kind:'flow',detail:'expected 12 conversation bars + 12 ledger bars, got '+bars});
+   await page.locator('.trends .bar-col').nth(11).focus();
+   const tip=await page.locator('.trends .trend-tip').first().innerText();if(!/octubre/i.test(tip)||!/conversaciones/.test(tip))fail.push({kind:'flow',detail:'tooltip did not show the focused month: '+tip.replace(/\n/g,' | ')});
+   await page.locator('.trends button[aria-pressed]').nth(1).click();
+   if(!(await page.locator('.trends .chart-title',{hasText:'Reembolsos liquidados por mes'}).count()))fail.push({kind:'flow',detail:'refunds toggle did not change the chart'});
+   const kind=await page.locator('.trends .kind-badge').first().innerText();if(!/Observado/.test(kind))fail.push({kind:'flow',detail:'trend chart must carry the observed label'});
+   const kpi=(await page.locator('[class*=kpiValue]').allInnerTexts()).join('|');if(!/184,523\.00 USD/.test(kpi)||!/1,204,500\.00 USD/.test(kpi))fail.push({kind:'flow',detail:'KPI final values are not the exact figures: '+kpi});
+   fail.push(...await page.evaluate(geometry));
+  }catch(e){fail.push({kind:'flow',detail:String(e).slice(0,200)});}
+  const uniq=[...new Map(fail.map(i=>[i.kind+i.detail,i])).values()];if(uniq.length||errors.length)failed++;
+  report.push({view:'overview-trends',width:w,issues:uniq,errors});console.log(`${uniq.length||errors.length?'FAIL':'PASS'} overview-trends @${w}${uniq.length?' · '+uniq.length+' problemas':''}`);for(const i of uniq.slice(0,12))console.log('   - '+i.kind+': '+i.detail);
+  await page.close();
+ }
  if(!filter||filter.includes('demo-flow')){
   const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push('pageerror: '+e.message));
   const fail=[];
@@ -69,6 +119,8 @@ for(const [w,h] of VIEWPORTS){
    await page.waitForSelector('.citation',{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'no citation after the answer'}));
    await page.click('.citation button[aria-controls]').catch(()=>fail.push({kind:'flow',detail:'Ver origen button missing'}));
    await page.waitForSelector('.origin-chain li',{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'origin chain did not render'}));
+   const answerText=await page.locator('[aria-label="Respuesta de la consulta"]').innerText().catch(()=>''),cardAmount=(await page.locator('[aria-label="Respuesta de la consulta"] dd').first().innerText().catch(()=>'')).split('\n')[0].trim();
+   if(!cardAmount||!answerText.includes(cardAmount))fail.push({kind:'flow',detail:'the answer text does not quote the figure shown on its card ('+cardAmount+')'});
    const steps=await page.locator('.origin-chain li').count();if(steps<4)fail.push({kind:'flow',detail:'origin chain has '+steps+' steps, expected 4 (cita, fuente, fila, archivo)'});
    if(!(await page.locator('.origin-chain .id-chip').first().isVisible().catch(()=>false)))fail.push({kind:'flow',detail:'hash chip not visible'});
    await page.waitForTimeout(400);

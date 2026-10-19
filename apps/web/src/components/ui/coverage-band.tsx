@@ -23,17 +23,18 @@ function Row({s}:{s:CoverageSource}){
 export function CoverageBand({endpoint='/api/coverage'}:{endpoint?:string}){
  const [view,setView]=useState<CoverageView|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(true);
  const load=useCallback(async(signal?:AbortSignal)=>{setBusy(true);setError('');try{const r=await fetch(endpoint,{cache:'no-store',signal});if(!r.ok)throw Error(String(r.status));const j=await r.json();if(!Array.isArray(j?.data?.sources))throw Error('shape');if(!signal?.aborted)setView(j.data);}catch{if(!signal?.aborted){setView(null);setError('No se pudo consultar la cobertura. Reintenta.');}}finally{if(!signal?.aborted)setBusy(false);}},[endpoint]);
- useEffect(()=>{const c=new AbortController();void Promise.resolve().then(()=>load(c.signal));return()=>c.abort();},[load]);
+ useEffect(()=>{const c=new AbortController();void Promise.resolve().then(()=>load(c.signal));const again=()=>void load();window.addEventListener('vexa:refresh',again);return()=>{c.abort();window.removeEventListener('vexa:refresh',again);};},[load]);
  const loaded=view?.sources.filter(s=>s.loaded).length??0;
  return <section className="card coverage" aria-labelledby="coverage-title" aria-busy={busy}>
-  <div className="card-head"><div><p className="eyebrow">Cobertura</p><h2 id="coverage-title">Información histórica incorporada</h2></div><Button size="sm" icon={<Refresh/>} disabled={busy} onClick={()=>void load()}>Actualizar cobertura</Button></div>
+  <div className="card-head"><div><p className="eyebrow">Cobertura</p><h2 id="coverage-title">Información histórica incorporada</h2></div></div>
   {busy&&!view&&<div className="skeleton-stack" role="status" aria-label="Cargando cobertura"><span className="skeleton skeleton-line"/><span className="skeleton skeleton-bar"/><span className="skeleton skeleton-line"/><span className="skeleton skeleton-bar"/></div>}
-  {error&&<p className="state state-error" role="alert">{error}</p>}
+  {error&&<p className="state state-error" role="alert">{error} <Button size="sm" icon={<Refresh/>} onClick={()=>void load()}>Reintentar cobertura</Button></p>}
   {view&&<>
-   <p className="card-lead">{loaded} de {view.sources.length} fuentes con datos cargados. {view.note}</p>
-   <ul className="cov-list">{view.sources.map(s=><Row key={s.key} s={s}/>)}</ul>
-   <ul className="legend" aria-label="Leyenda de cobertura"><li><i className="sw cov-in"/>Incorporadas</li><li><i className="sw cov-rej"/>Rechazadas</li><li><i className="sw cov-pen"/>Pendientes</li><li><i className="sw sw-empty"/>Sin cargar</li></ul>
-   <details className="cov-table"><summary>Ver como tabla</summary><div className="table-wrap" tabIndex={0} role="region" aria-label="Cobertura por fuente"><table><thead><tr><th scope="col">Fuente</th><th scope="col" className="num">Filas</th><th scope="col" className="num">Incorporadas</th><th scope="col" className="num">Rechazadas</th><th scope="col" className="num">Pendientes</th></tr></thead><tbody>{view.sources.map(s=><tr key={s.key}><th scope="row">{s.label}</th><td className="num">{s.loaded?nf.format(s.total):'Sin cargar'}</td><td className="num">{s.loaded?nf.format(s.incorporated):'—'}</td><td className="num">{s.loaded?nf.format(s.rejected):'—'}</td><td className="num">{s.loaded?nf.format(s.pending):'—'}</td></tr>)}</tbody></table></div></details>
+   <p className="card-lead">{loaded} de {view.sources.length} fuentes con datos cargados.</p>
+   <ul className="cov-list">{view.sources.filter(s=>s.loaded).map(s=><Row key={s.key} s={s}/>)}</ul>
+   {view.sources.some(s=>!s.loaded)&&<p className="cov-missing"><span className="cov-missing-label"><i className="sw sw-empty"/>Sin cargar</span>{view.sources.filter(s=>!s.loaded).map(s=><span className="chip" key={s.key} title="Aún no hay importaciones de esta fuente; su tamaño no se estima.">{s.label}</span>)}</p>}
+   <ul className="legend" aria-label="Leyenda de cobertura"><li><i className="sw cov-in"/>Incorporadas</li><li><i className="sw cov-rej"/>Rechazadas</li><li><i className="sw cov-pen"/>Pendientes</li></ul>
+   <details className="cov-table"><summary>Ver como tabla</summary><p className="card-lead">{view.note}</p><div className="table-wrap" tabIndex={0} role="region" aria-label="Cobertura por fuente"><table><thead><tr><th scope="col">Fuente</th><th scope="col" className="num">Filas</th><th scope="col" className="num">Incorporadas</th><th scope="col" className="num">Rechazadas</th><th scope="col" className="num">Pendientes</th></tr></thead><tbody>{view.sources.map(s=><tr key={s.key}><th scope="row">{s.label}</th><td className="num">{s.loaded?nf.format(s.total):'Sin cargar'}</td><td className="num">{s.loaded?nf.format(s.incorporated):'—'}</td><td className="num">{s.loaded?nf.format(s.rejected):'—'}</td><td className="num">{s.loaded?nf.format(s.pending):'—'}</td></tr>)}</tbody></table></div></details>
   </>}
  </section>;
 }

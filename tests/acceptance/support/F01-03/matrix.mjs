@@ -5,7 +5,8 @@ export const ident = x => '"' + x.replaceAll('"','""') + '"';
 // 0055: refs_* son columnas DERIVADAS del manifiesto que un trigger recalcula (uuid[] no se serializa con JSON.stringify): no se copian.
 const derived = k => table0 => table0 === 'metric_snapshots' && /^refs_/.test(k);
 export const insert = (table,row0) => { const row = Object.fromEntries(Object.entries(row0).filter(([k]) => !derived(k)(table))); return `INSERT INTO public.${ident(table)} (${Object.keys(row).map(ident)}) VALUES (${Object.values(row).map(v=>v===null?'NULL':q(typeof v==='object'?JSON.stringify(v):v))})`; };
-// Direct user DML is reserved to the backend except source configuration.
+// Direct user DML is reserved to the backend for EVERY table, including connections (0056 revoked the owner write
+// that 0002 granted to authenticated; source configuration is written by vexa_backend with vexa.action).
 // API permissions do NOT imply table-level grants for imports/jobs/money.
 export const definitions = [
   ['connections',{source:'hubspot',account_id:'syn-account',status:'active'}],

@@ -194,10 +194,10 @@ export function tableOracle(h,table,f,actors) {
       try {denied(h.probe(write(`DELETE FROM public.${ident(table)} WHERE id=${q(leaf.id)}`),actor),`DELETE_B:${table}`);}finally{if(!immutable)h.sql(`DELETE FROM public.${ident(table)} WHERE id=${q(leaf.id)};`);}
     }
     for(const key of ['a','viewer','analyst','operator']){
-      if(table==='connections' && key==='a')continue;
       for(const operation of ['INSERT','UPDATE','DELETE'])ownWriteOracle(h,table,operation,actors[key],key,fresh(A),disposable.id);
     }
-    const allowed=table==='connections'?actors.a:'backend';
+    // 0056: ni siquiera owner escribe connections como authenticated; la app escribe por vexa_backend con vexa.action.
+    const allowed='backend';
     const pos=fresh(A);rows(h.probe(write(insert(table,pos)),allowed),[pos.id],`INSERT_POSITIVE:${table}`);
     if(!immutable&&!appendOnly)rows(h.probe(write(`UPDATE public.${ident(table)} SET updated_at=updated_at+interval '1 second' WHERE id=${q(disposable.id)}`),allowed),[disposable.id],`UPDATE_POSITIVE:${table}`);
     if(!immutable&&!appendOnly)rows(h.probe(write(`DELETE FROM public.${ident(table)} WHERE id=${q(disposable.id)}`),allowed),[disposable.id],`DELETE_POSITIVE:${table}`);
@@ -206,6 +206,8 @@ export function tableOracle(h,table,f,actors) {
     const swap=h.probe(write(`UPDATE public.${ident(table)} SET tenant_id=${q(B)} WHERE id=${q(disposable.id)}`),actors.dual);
     // 23503 is deliberately NOT accepted: it can hide a missing immutability rule.
     if(swap.code!=='23514')denied(swap,`TENANT_SWAP:${table}`);
+    // connections ya no es escribible por authenticated: la inmutabilidad de tenant debe probarse en la ruta backend.
+    if(table==='connections')assert.equal(h.probe(write(`UPDATE public.${ident(table)} SET tenant_id=${q(B)} WHERE id=${q(disposable.id)}`),'backend').code,'23514',`TENANT_SWAP_BACKEND:${table}`);
     denied(h.probe(read(table),{...actors.outsider,claims:{user_metadata:{tenant_id:B,role:'owner'}}}),`METADATA:${table}`);
   }finally{if(!immutable)h.sql(`DELETE FROM public.${ident(table)} WHERE id=${q(disposable.id)};`);}
   assert.deepEqual(snapshot(),before,`PERSISTED_EFFECT:${table}`);

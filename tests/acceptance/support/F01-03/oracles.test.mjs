@@ -21,8 +21,7 @@ function reference(h){
   }
   for(const {table,column,parent} of relations)h.sql(`ALTER TABLE ${ident(table)} ADD CONSTRAINT ${ident('fk_'+table+'_'+column)} FOREIGN KEY(tenant_id,${ident(column)}) REFERENCES ${ident(parent)}(tenant_id,id);`);
   h.sql(`ALTER TABLE conversations ADD UNIQUE(tenant_id,connection_id,entity_type,external_id,source_revision);
-    GRANT INSERT,UPDATE,DELETE ON connections TO authenticated;
-    CREATE POLICY owner_write ON connections FOR ALL TO authenticated USING(EXISTS(SELECT 1 FROM memberships m WHERE m.user_id=auth.uid() AND m.tenant_id=connections.tenant_id AND m.status='active' AND m.role='owner')) WITH CHECK(EXISTS(SELECT 1 FROM memberships m WHERE m.user_id=auth.uid() AND m.tenant_id=connections.tenant_id AND m.status='active' AND m.role='owner'));
+    -- 0056: connections NO tiene INSERT/UPDATE/DELETE para authenticated ni politica owner_write.
     CREATE FUNCTION exam_no_move() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF OLD.tenant_id<>NEW.tenant_id THEN RAISE EXCEPTION 'immutable tenant' USING ERRCODE='23514';END IF;RETURN NEW;END $$;
     CREATE TRIGGER no_move BEFORE UPDATE ON connections FOR EACH ROW EXECUTE FUNCTION exam_no_move();`);
 }
@@ -111,7 +110,7 @@ test('SQL exam controls: real PostgreSQL positive matrix and named mutants',{tim
     finally{h.sql(`ALTER TABLE ${ident(r.table)} ADD CONSTRAINT ${ident(constraint)} FOREIGN KEY(tenant_id,${ident(r.column)}) REFERENCES ${ident(r.parent)}(tenant_id,id);`);}
     schemaOracle(h);fkOracle(h,f,r);
   });
-  for(const table of ['connections','jobs'])for(const role of table==='connections'?['viewer','analyst','operator']:['a','viewer','analyst','operator'])
+  for(const table of ['connections','jobs'])for(const role of ['a','viewer','analyst','operator'])
     for(const operation of ['INSERT','UPDATE','DELETE'])await t.test(`mutant: ${role} ${operation} own ${table}`,()=>{
       const leaf={...f.a[table],id:randomUUID(),...(table==='connections'?{account_id:randomUUID()}:{input_hash:randomUUID()})};
       h.sql(insert(table,leaf)+';');
@@ -122,7 +121,7 @@ test('SQL exam controls: real PostgreSQL positive matrix and named mutants',{tim
           CREATE POLICY mutant ON ${ident(table)} FOR ${operation} TO authenticated
           ${operation==='INSERT'?'WITH CHECK':'USING'}(EXISTS(SELECT 1 FROM memberships m WHERE m.user_id=auth.uid() AND m.tenant_id=${ident(table)}.tenant_id AND m.status='active'));`);
         try{assert.throws(()=>ownWriteOracle(h,table,operation,actors[role],role,fresh,leaf.id),new RegExp(`${operation}_OWN_DENIED:${table}:${role}`));}
-        finally{h.sql(`DROP POLICY mutant ON ${ident(table)};`+(table==='jobs'?`REVOKE ${operation} ON jobs FROM authenticated;`:''));}
+        finally{h.sql(`DROP POLICY mutant ON ${ident(table)};`+`REVOKE ${operation} ON ${ident(table)} FROM authenticated;`);}
         ownWriteOracle(h,table,operation,actors[role],role,fresh,leaf.id);
       }finally{h.sql(`DELETE FROM ${ident(table)} WHERE id=${q(leaf.id)};`);}
     });

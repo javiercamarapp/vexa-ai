@@ -28,9 +28,15 @@ test('SYNTHETIC PostgreSQL17: migrations, constraints, RLS, backend', {timeout:9
  set role authenticated; select set_config('request.jwt.claim.sub','${U}',false);
  do $$begin
  if (select count(*) from connections)<>2 then raise exception 'dual read';end if;
- begin update connections set tenant_id='${B}',account_id='new' where tenant_id='${A}';raise exception 'tenant mutable';exception when check_violation then null;end;
+ -- 0056: authenticated ya no tiene INSERT/UPDATE/DELETE sobre connections (la app escribe por vexa_backend con vexa.action).
+ begin update connections set tenant_id='${B}',account_id='new' where tenant_id='${A}';raise exception 'tenant mutable';exception when insufficient_privilege then null;end;
+ begin insert into connections(tenant_id,source,account_id,status) values('${A}','synthetic','direct','active');raise exception 'authenticated direct insert';exception when insufficient_privilege then null;end;
+ begin delete from connections where tenant_id='${A}';raise exception 'authenticated direct delete';exception when insufficient_privilege then null;end;
  end$$;
  reset role;
+ do $$begin
+ begin update connections set tenant_id='${B}',account_id='new' where tenant_id='${A}';raise exception 'tenant mutable';exception when check_violation then null;end;
+ end$$;
  update memberships set status='revoked' where tenant_id='${B}';
  set role authenticated;
  do $$begin

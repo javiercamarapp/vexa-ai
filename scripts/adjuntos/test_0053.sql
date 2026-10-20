@@ -24,7 +24,8 @@ insert into public.conversations(id,tenant_id,source,external_id,connection_id) 
 
 -- 1) backend (tenant A) escribe; no puede escribir en B
 set role vexa_backend;
-select set_config('vexa.tenant_id',:A,false), set_config('request.jwt.claim.sub',:UA,false);
+-- 0056: las escrituras de vexa_backend exigen vexa.action='import' (insert/update) y 'retain' (delete).
+select set_config('vexa.tenant_id',:A,false), set_config('request.jwt.claim.sub',:UA,false), set_config('vexa.action','import',false);
 insert into public.attachment_blobs(tenant_id,sha256,bytes,mime_type,extension,object_path,state)
  values (:A, repeat('a',64), 11, 'text/plain','.txt', :A||'/attachments/aa/'||repeat('a',64),'uploaded');
 insert into public.attachment_blobs(tenant_id,sha256,bytes,state) values (:A, repeat('b',64), 5, 'planned');
@@ -49,10 +50,37 @@ select pg_temp.expect_fail($q$insert into public.attachment_links(tenant_id,blob
 select pg_temp.expect_fail($q$insert into public.attachment_links(tenant_id,blob_id,source_family,source_file_id,conversation_id) select 'aaaaaaaa-0000-0000-0000-000000000001', id,'email','f3','99999999-0000-0000-0000-000000000009' from public.attachment_blobs where sha256=repeat('a',64)$q$,'23503');
 -- mismo hash en otro tenant no se comparte (sin dedup cruzado): otro backend/tenant B
 reset role; set role vexa_backend;
-select set_config('vexa.tenant_id',:B,false), set_config('request.jwt.claim.sub',:UB,false);
+select set_config('vexa.tenant_id',:B,false), set_config('request.jwt.claim.sub',:UB,false), set_config('vexa.action','import',false);
 insert into public.attachment_blobs(tenant_id,sha256,bytes) values (:B, repeat('a',64), 11);
 do $$ begin if exists(select 1 from public.attachment_blobs where tenant_id='aaaaaaaa-0000-0000-0000-000000000001') then raise exception 'B ve blobs de A'; end if; end $$;
 select pg_temp.expect_fail($q$insert into public.attachment_links(tenant_id,blob_id,source_family,source_file_id) values ('bbbbbbbb-0000-0000-0000-000000000002',gen_random_uuid(),'note','x')$q$,'23503');
+reset role;
+
+-- 1b) contrato 0056 (solo si la politica endurecida esta aplicada): sin accion o con accion ajena no hay escritura; DELETE exige 'retain'.
+set role vexa_backend;
+select set_config('vexa.tenant_id',:A,false), set_config('request.jwt.claim.sub',:UA,false), set_config('vexa.action','import',false);
+do $$ declare n bigint; hardened boolean := exists(select 1 from pg_policies where schemaname='public' and tablename='attachment_blobs' and policyname='backend_delete'); begin
+ if not hardened then return; end if;
+ insert into public.attachment_blobs(tenant_id,sha256,bytes,state) values ('aaaaaaaa-0000-0000-0000-000000000001', repeat('7',64), 1, 'planned');
+ -- sin accion: INSERT denegado
+ perform set_config('vexa.action','',true);
+ begin insert into public.attachment_blobs(tenant_id,sha256,bytes,state) values ('aaaaaaaa-0000-0000-0000-000000000001', repeat('8',64), 1, 'planned'); raise exception 'insert sin accion paso';
+ exception when insufficient_privilege then null; end;
+ -- accion read: INSERT denegado, UPDATE y DELETE no afectan filas
+ perform set_config('vexa.action','read',true);
+ begin insert into public.attachment_blobs(tenant_id,sha256,bytes,state) values ('aaaaaaaa-0000-0000-0000-000000000001', repeat('8',64), 1, 'planned'); raise exception 'insert con read paso';
+ exception when insufficient_privilege then null; end;
+ update public.attachment_blobs set state='planned' where sha256=repeat('7',64); get diagnostics n = row_count; if n<>0 then raise exception 'update con read afecto % filas', n; end if;
+ delete from public.attachment_blobs where sha256=repeat('7',64); get diagnostics n = row_count; if n<>0 then raise exception 'delete con read afecto % filas', n; end if;
+ -- accion import: DELETE no afecta filas (solo retain)
+ perform set_config('vexa.action','import',true);
+ delete from public.attachment_blobs where sha256=repeat('7',64); get diagnostics n = row_count; if n<>0 then raise exception 'delete con import afecto % filas', n; end if;
+ -- accion retain: DELETE si; UPDATE no
+ perform set_config('vexa.action','retain',true);
+ update public.attachment_blobs set state='planned' where sha256=repeat('7',64); get diagnostics n = row_count; if n<>0 then raise exception 'update con retain afecto % filas', n; end if;
+ delete from public.attachment_blobs where sha256=repeat('7',64); get diagnostics n = row_count; if n<>1 then raise exception 'delete con retain afecto % filas', n; end if;
+ perform set_config('vexa.action','import',true);
+end $$;
 reset role;
 
 -- 2) lectura authenticated por tenant; sin escritura

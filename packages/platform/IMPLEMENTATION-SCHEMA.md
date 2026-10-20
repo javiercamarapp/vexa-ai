@@ -166,7 +166,7 @@ No probado nuevamente: HTTP Auth/Storage/PostgREST, URLs firmadas, integración 
 
 ## Permisos y restricciones
 
-Los cuatro roles leen dominio del tenant autorizado. Authenticated sólo escribe connections como owner; demás DML usa repositorios servidor y vexa_backend. Filtro tenant no concede membership. service_role pierde grants sobre estas36tablas. No funciones SECURITY DEFINER.
+Los cuatro roles leen dominio del tenant autorizado. Authenticated no escribe ninguna tabla (desde la migración 20261019000000 se revocó el INSERT/UPDATE/DELETE de owner sobre connections); todo DML, incluida la configuración de connections (acción configure, owner), usa repositorios servidor y vexa_backend. Filtro tenant no concede membership. service_role pierde grants sobre estas36tablas. No funciones SECURITY DEFINER.
 
 | action backend | roles | Tablas/efecto |
 |---|---|---|

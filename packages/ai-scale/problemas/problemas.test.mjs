@@ -259,3 +259,36 @@ test('CLI: embeber --dry-count y agrupar --calibrar/--threshold en seco; sin --r
   w('embeddings.jsonl',emb.slice(1));
   r=sh('agrupar.mjs',['--taxonomy',path.join(root,'tax.json'),'--threshold','0.2','--run','--rollback-test','--max','5']);assert.notEqual(r.status,0);assert.match(r.stderr,/faltan vectores/);
 });
+
+// ================================================================== corridas ausentes: --omitir-sin-corrida y diagnóstico
+test('Postgres local: conversaciones sin corrida succeeded abortan el lote; con preflight+omisión se excluyen y se cuentan; idempotente; diagnóstico clasifica la causa',{skip:!pgAvailable()&&'sin postgres local',timeout:300000},async()=>{
+  const world=mundo();
+  await withLocalPg(async({psql,sock})=>{
+    sembrar(psql,world);
+    const by=n=>world.A.find(c=>c.n===n);
+    persistir(sock,[by(1),by(2),by(4),by(5)],TENANT_A);               // 3 y 6 NO se persisten
+    // la conversación 6 ya tenía una corrida oficial (otro id): persistir.mjs no escribe la suya (NOOFF)
+    assert.ok(psql(`insert into public.extraction_runs(id,tenant_id,model_id,prompt_hash,schema_hash,input_hash,status,conversation_id) values('${U(777)}','${TENANT_A}','m','p','s','h','succeeded','${by(6).conv.conversation_id}')`).ok);
+    const cnt=t=>+psql(`select count(*) from public.${t}`).out;
+    const rows=filasDe(world.A,vecDe,{tenant:TENANT_A,version:VERSION});
+    // sin omisión: el guard aborta y no inserta nada (lote atómico)
+    const plan0=planSql(rows,{threshold:0.2,tenant:TENANT_A,version:VERSION,batchSize:50,vectorType:'text'});
+    const g=correr(sock,cerrar(plan0.lotes[0],true));assert.notEqual(g.status,0);assert.match(g.stderr,/faltan corridas/);assert.equal(cnt('embeddings'),0);
+    // preflight (formato agnóstico: psql -At) + filtro
+    const exec=sql=>{const r=spawnSync('psql',['-h',sock,'-U','postgres','-d','t','-At','-v','ON_ERROR_STOP=1','-c',sql],{encoding:'utf8'});assert.equal(r.status,0,r.stderr);return r.stdout;};
+    const ex=N.preflightCorridas([...new Set(rows.map(r=>r.runId))],{tenant:TENANT_A,exec});assert.equal(ex.size,4);
+    const fr=N.filtrarSinCorrida(rows,ex);assert.deepEqual([fr.omitidas.conversaciones,fr.omitidas.filas,fr.kept.length],[2,2,4]);
+    const plan=planSql(fr.kept,{threshold:0.2,tenant:TENANT_A,version:VERSION,batchSize:2,vectorType:'text'});
+    const aplicar=()=>{for(const s of [...plan.lotes,...plan.versiones]){const r=correr(sock,cerrar(s,true));assert.equal(r.status,0,r.stderr);}};
+    aplicar();const est=()=>[cnt('embeddings'),cnt('problems'),cnt('problem_embedding_members'),cnt('problem_versions')];
+    assert.deepEqual(est(),[4,2,4,2]);aplicar();assert.deepEqual(est(),[4,2,4,2]); // idempotente
+    // si NADA existe, el preflight se niega a omitir todo
+    assert.throws(()=>N.preflightCorridas([U(999001)],{tenant:TENANT_A,exec}),/preflight/);
+    // diagnóstico: 4 ok, 1 con otra corrida oficial (6), 1 sin corrida (3)
+    const d=exec(N.diagnosticoSql(world.A.map(c=>c.p),{tenant:TENANT_A})).trim().split('\n');
+    assert.deepEqual(d.map(l=>l.split('|')[0]+'|'+l.split('|').at(-1)),['0 ok: corrida succeeded existe|4','3 sin corrida propia; la conversación tiene otra corrida oficial (succeeded)|1','5 sin corrida: persistir no la escribió (¿recuperada después, o descartada?)|1']);
+    // y las vistas reales siguen coherentes
+    const client=new pg.Client({host:sock,user:'postgres',database:'t'});await client.connect();
+    try{assert.equal((await createProblemRepository({database:baseDatos(client,TENANT_A,OWNER.A)}).list()).length,2);}finally{await client.end();}
+  });
+});

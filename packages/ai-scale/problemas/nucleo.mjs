@@ -243,3 +243,47 @@ where p.tenant_id=${T} and p.provenance->>'source'='${SOURCE}' group by p.id,p.t
 select model_id,dim,version,count(*) from public.embeddings where tenant_id=${T} group by 1,2,3 order by 4 desc;
 ${V==='null'?'':`-- 8. Versión pedida\nselect count(*) as embeddings_de_la_version from public.embeddings where tenant_id=${T} and version=${V};`}`;
 }
+
+// ------------------------------------------------------------------ corridas que NO existen en la base (causa del abort "faltan corridas")
+// Causa raíz: agrupar.mjs y persistir.mjs usan la MISMA selección (selectCandidates + buildPersistence sobre resultados.jsonl), pero persistir.mjs
+// NO inserta la corrida cuando (a) la conversación ya tenía otra corrida oficial succeeded/abstained con id distinto (NOOFF), (b) ya existía una corrida con el
+// mismo input_hash, (c) la conversación no existe/ya no coincide en la base, o (d) el resultado se recuperó DESPUÉS de persistir (pasada `reintentar`).
+// agrupar.mjs exige que cada corrida usada exista como 'succeeded'; con --omitir-sin-corrida las conversaciones sin ella se excluyen y se cuentan.
+const UUID_G=/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/gi;
+export const preflightSql=(runIds,{tenant=TENANT}={})=>`-- SOLO LECTURA: ids de corridas succeeded que existen (de ${runIds.length} pedidas)
+select id from public.extraction_runs where tenant_id=${lit(tenant)}::uuid and status='succeeded' and id=any(array[${runIds.map(lit).join(',')}]::uuid[]);`;
+// exec(sql)->stdout (psql, supabase db query...). Formato agnóstico: se extraen los uuid de la salida y se intersectan con los pedidos.
+export function preflightCorridas(runIds,{tenant=TENANT,exec}){
+  const wanted=new Set(runIds);if(!wanted.size)return new Set();
+  const out=exec(preflightSql([...wanted],{tenant}));
+  const found=new Set((String(out).match(UUID_G)??[]).map(s=>s.toLowerCase()).filter(s=>wanted.has(s)));
+  if(!found.size)throw Error('el preflight no devolvió ninguna corrida succeeded (formato inesperado o persistir no corrió): se aborta en vez de omitir todo');
+  return found;
+}
+export function filtrarSinCorrida(filas,existentes){
+  const kept=[],omConv=new Set();let omFilas=0;
+  for(const f of filas){if(existentes.has(f.runId))kept.push(f);else{omConv.add(f.conversationId);omFilas++;}}
+  return{kept,omitidas:{conversaciones:omConv.size,filas:omFilas,ids:[...omConv].sort()}};
+}
+// Diagnóstico (solo lectura, solo conteos por categoría): por qué la corrida esperada de cada conversación no es succeeded en la base.
+export function diagnosticoSql(items,{tenant=TENANT}={}){
+  const T=lit(tenant)+'::uuid';
+  const v=items.map(p=>`(${lit(p.conversationId)},${lit(p.runId)},${lit(p.inputHash)},${lit(p.status)})`).join(',\n');
+  return `-- SOLO LECTURA. Por cada conversación esperada: ¿existe su corrida? Devuelve conteos por categoría (sin texto).
+with esperado(conv,run_id,input_hash,estado_local) as (values
+${v}),
+x as (select e.*,
+ (select r.status from public.extraction_runs r where r.tenant_id=${T} and r.id=e.run_id::uuid) as estado_corrida_esperada,
+ exists(select 1 from public.conversations c where c.tenant_id=${T} and c.id=e.conv::uuid) as conversacion_existe,
+ (select string_agg(distinct o.status,',') from public.extraction_runs o where o.tenant_id=${T} and o.conversation_id=e.conv::uuid and o.id<>e.run_id::uuid and o.status in ('succeeded','abstained')) as otras_oficiales,
+ exists(select 1 from public.extraction_runs h where h.tenant_id=${T} and h.conversation_id=e.conv::uuid and h.input_hash=e.input_hash and h.id<>e.run_id::uuid) as mismo_input_otro_id
+ from esperado e)
+select case when estado_corrida_esperada='succeeded' then '0 ok: corrida succeeded existe'
+ when estado_corrida_esperada is not null then '1 existe pero con estado '||estado_corrida_esperada
+ when not conversacion_existe then '2 la conversación no existe en la base'
+ when otras_oficiales is not null then '3 sin corrida propia; la conversación tiene otra corrida oficial ('||otras_oficiales||')'
+ when mismo_input_otro_id then '4 sin corrida propia; existe una con el mismo input_hash y otro id'
+ else '5 sin corrida: persistir no la escribió (¿recuperada después, o descartada?)' end as categoria,
+ estado_local,count(*) as conversaciones
+from x group by 1,2 order by 1,2;`;
+}

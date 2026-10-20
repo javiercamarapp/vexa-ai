@@ -16,7 +16,7 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {scrub} from '../openrouter.mjs';
 import {intOpt} from '../cli-util.mjs';
-import {cargarCohorte,construirFilas,leerVectores,adjuntarVectores,agrupar,resumenAgrupacion,calibrar,sentenciasMiembros,sentenciasVersiones,onlyAllowedStatements,verificacionSql,
+import {cargarCohorte,construirFilas,leerVectores,adjuntarVectores,agrupar,resumenAgrupacion,calibrar,sentenciasMiembros,sentenciasVersiones,onlyAllowedStatements,verificacionSql,preflightCorridas,filtrarSinCorrida,diagnosticoSql,
   TENANT,PROJECT_REF,MODES,defaultVersion,EMBED_MODEL} from './nucleo.mjs';
 
 const ROOT=process.env.IA_ESCALA_OUT||path.join(os.homedir(),'.codex-work/rovaq-cierre-20261007/ia-escala-20261019');
@@ -52,10 +52,18 @@ async function cli(){
   if(run&&rollbackTest&&!(max<=50))throw Error('--rollback-test exige --max N (N<=50): se prueba en UNA transacción');
   const excluir=new Set(opt('excluir',null)?fs.readFileSync(opt('excluir'),'utf8').split('\n').map(s=>s.trim()).filter(Boolean):[]);
   const {items,bad}=cargarCohorte({resultsFile:resF,inputFiles:inF,taxonomy,max,excluir,tenant});
+  const supa=sql=>{const f=path.join(os.tmpdir(),'prefl-'+process.pid+'.sql');fs.writeFileSync(f,sql,{mode:0o600});try{const r=spawnSync('supabase',['db','query','--linked','--project-ref',ref,'-f',f],{encoding:'utf8',maxBuffer:64*1024*1024});if(r.status!==0)throw Error('la consulta de solo lectura falló (código '+r.status+')');return r.stdout;}finally{fs.rmSync(f,{force:true});}};
+  if(opt('emit-diagnostico',null)){fs.mkdirSync(path.dirname(opt('emit-diagnostico')),{recursive:true});
+    const lote=intOpt(a,'lote',null),bs=intOpt(a,'batch-size',25);let sel=items;
+    if(lote){const {rows:r0}=construirFilas(items,{mode,tenant,version});const convs=[];for(const f of r0)if(convs.at(-1)!==f.conversationId)convs.push(f.conversationId);const ids=new Set(convs.slice((lote-1)*bs,lote*bs));sel=items.filter(p=>ids.has(p.conversationId));}
+    fs.writeFileSync(opt('emit-diagnostico'),diagnosticoSql(sel,{tenant}));console.log('SQL de diagnóstico (solo lectura) escrito en',opt('emit-diagnostico'),'| conversaciones:',sel.length);return;}
   const {rows:todas,descartadasSeveridad,textoInvalido}=construirFilas(items,{mode,tenant,version});
   const vecs=await leerVectores([path.join(base,'embeddings.jsonl'),path.join(out,'embeddings-problemas.jsonl')],{mode,needed:new Set(todas.map(r=>r.taskKey+'|'+r.prepId))});
   const {sinVector,obsoletos}=adjuntarVectores(todas,vecs,{mode});
-  const rows=todas.filter(r=>r.vec);
+  let rows=todas.filter(r=>r.vec);
+  let omitidas=null;
+  if(flag('omitir-sin-corrida')&&run){const ex=preflightCorridas([...new Set(rows.map(r=>r.runId))],{tenant,exec:supa});const fr=filtrarSinCorrida(rows,ex);rows=fr.kept;omitidas=fr.omitidas;
+    fs.mkdirSync(out,{recursive:true,mode:0o700});fs.writeFileSync(path.join(out,'omitidas-sin-corrida.txt'),omitidas.ids.join('\n')+'\n',{mode:0o600});}
   const base0={conversaciones:items.length,descartadas_por_incoherencia:bad.length,filas_candidatas:todas.length,con_vector:rows.length,sin_vector:sinVector,vectores_obsoletos:obsoletos,descartadas_severidad_desconocida:descartadasSeveridad,texto_invalido:textoInvalido,modo:mode,embedding_version:version};
   if(flag('calibrar')){console.log(JSON.stringify({...base0,calibracion:calibrar(rows,{tenant})}));return;}
   if(opt('emit-verificacion',null)){fs.mkdirSync(path.dirname(opt('emit-verificacion')),{recursive:true});fs.writeFileSync(opt('emit-verificacion'),verificacionSql({tenant,version}));console.log('SQL de verificación (solo lectura) escrito en',opt('emit-verificacion'));return;}
@@ -65,6 +73,7 @@ async function cli(){
   const threshold=Number(thrS);
   if(run&&(sinVector>0||obsoletos>0))throw Error(`faltan vectores (${sinVector} sin vector, ${obsoletos} obsoletos): corra embeber.mjs antes de ejecutar`);
   const t0=Date.now();
+  if(omitidas)base0.omitidas_sin_corrida={conversaciones:omitidas.conversaciones,filas:omitidas.filas};
   const plan=planSql(rows,{threshold,tenant,version,batchSize:intOpt(a,'batch-size',25),onProgress:(i,n)=>process.stderr.write(`agrupando ${i}/${n}\r`)});
   const todos=[...plan.lotes,...plan.versiones];
   for(const s of todos)if(!onlyAllowedStatements(s))throw Error('SQL con sentencias no permitidas');

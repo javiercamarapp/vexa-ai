@@ -24,6 +24,8 @@ case "${1:-}" in
   prueba)   need_threshold; node agrupar.mjs "${COMMON[@]}" --texto "$TEXTO" --threshold "$THRESHOLD" --max 5 --run --rollback-test ;;
   canario)  need_threshold; node agrupar.mjs "${COMMON[@]}" --texto "$TEXTO" --threshold "$THRESHOLD" --max 5 --run --commit ;;
   todo)     need_threshold; node agrupar.mjs "${COMMON[@]}" --texto "$TEXTO" --threshold "$THRESHOLD" --run --commit ;;
+  diagnostico) LOTE="${LOTE:-7}"; node agrupar.mjs "${COMMON[@]}" --texto "$TEXTO" --emit-diagnostico "$OUT/diagnostico-lote-$LOTE.sql" --lote "$LOTE" ;;   # SELECT de solo lectura para MCP
+  reanudar)  need_threshold; node agrupar.mjs "${COMMON[@]}" --texto "$TEXTO" --threshold "$THRESHOLD" --run --commit --omitir-sin-corrida ;;   # preflight de solo lectura + omite conversaciones sin corrida succeeded
   verificar) node agrupar.mjs "${COMMON[@]}" --texto "$TEXTO" --emit-verificacion "$OUT/verificacion.sql" ;;
   *) sed -n 2,12p "$0"; exit 2 ;;
 esac

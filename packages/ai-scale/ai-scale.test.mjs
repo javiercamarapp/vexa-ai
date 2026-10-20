@@ -136,7 +136,7 @@ test('runner: extrae, guarda sin texto, embebe y reanuda sin reenviar',async()=>
 test('runner: aborta tras 3 fallos consecutivos y no sigue enviando',async()=>{
   const dir=tmp(),c=stubClient({failFirst:1000});
   const r=await runCohort(common(dir,{convs:mk(30),client:c,concurrency:1,batchId:'f'}));
-  assert.match(r.receipt.abort,/3 fallos consecutivos/);
+  assert.match(r.receipt.abort,/3 fallos de infraestructura consecutivos/);
   assert.ok(c.calls.length<=5);assert.ok(r.receipt.sin_intentar_por_aborto>=24);
 });
 test('runner: un éxito reinicia el contador de fallos consecutivos',async()=>{
@@ -158,10 +158,10 @@ test('runner: el gasto previo en el libro cuenta contra el tope total',async()=>
   const r=await runCohort(common(dir,{convs:mk(3),client:stubClient(),capTotalUsd0:30,capBatchUsd0:30,batchId:'new'}));
   assert.match(r.receipt.abort,/tope total/);
 });
-test('runner: salida con referencias inválidas del modelo cuenta como fallo y no se persiste como ok',async()=>{
+test('runner: salida con referencias inválidas es fallo de CONTENIDO: 1 reintento, queda fallida y la corrida continúa',async()=>{
   const dir=tmp();
   const r=await runCohort(common(dir,{convs:mk(5),client:stubClient({mutate:()=>({issues:[{category:'Envío: No recibido',severity:'low',evidence:['m7']}],sentiment:'neutral',intent:'question',urgency:'normal',entities:[],abstention:null})}),concurrency:1,batchId:'i'}));
-  assert.equal(r.receipt.ok,0);assert.match(r.receipt.abort,/fallos consecutivos/);assert.equal(r.receipt.fallos_por_causa.invalid_reference,3);
+  assert.equal(r.receipt.ok,0);assert.equal(r.receipt.abort,null);assert.equal(r.receipt.fallidas_contenido,5);assert.equal(r.receipt.fallos_por_causa.invalid_reference,5);assert.equal(r.receipt.reintentos_en_corrida,5);
 });
 test('runner: conversaciones automáticas o sin cliente se omiten sin llamar a la API',async()=>{
   const dir=tmp(),c=stubClient();
@@ -605,4 +605,60 @@ test('libro de gasto en ruta fija por tenant+ventana: otro --out NO reinicia el 
   assert.equal(cohortLedger({root,window:W,batchId:'d',capTotalUsd:1000,capBatchUsd:1000}).capTotalUsd,30); // forzado a 30
   const out=path.join(root,'old');fs.mkdirSync(out);fs.writeFileSync(path.join(out,'gasto-cohorte.jsonl'),JSON.stringify({usd:2,batch:'z'})+'\n');
   assert.ok(Math.abs(cohortLedger({root,window:W,batchId:'e',capTotalUsd:30,capBatchUsd:30,outDir:out}).total-31.5)<1e-9); // libro heredado del --out también cuenta
+});
+
+// ---- Fallos de contenido vs infraestructura (corrida real: aborto por invalid_entity/finish_length)
+function sim(f){const c={calls:[],n:0,async post(ep,body){if(ep==='/embeddings')return{status:200,ms:1,json:{data:body.input.map((_,i)=>({index:i,embedding:Array(1536).fill(.01)})),usage:{prompt_tokens:1,cost:1e-6}}};
+  c.n++;c.calls.push(body.max_tokens);return f(c.n,body,JSON.parse(body.messages[1].content));}};return c;}
+const OKB=()=>({issues:[{category:'Envío: No recibido',severity:'medium',evidence:['m0']}],sentiment:'neutral',intent:'question',urgency:'normal',entities:[],abstention:null});
+const okResp=(raw=OKB())=>({status:200,ms:1,json:{choices:[{finish_reason:'stop',message:{content:JSON.stringify(raw)}}],usage:{prompt_tokens:5000,completion_tokens:300,cost:0.0004}}});
+const lenResp=()=>({status:200,ms:1,json:{choices:[{finish_reason:'length',message:{content:'{'}}],usage:{prompt_tokens:5000,completion_tokens:1500,cost:0.001}}});
+const badEntity=()=>okResp({...OKB(),entities:[{type:'order_mention',value:'NO-ESTA-EN-EL-TEXTO',evidence:['m0']}]});
+const isHard=u=>/pedido número 0[0-4] /.test(u.revisions[0].text); // conversaciones difíciles: las 5 primeras (texto ya incluye el número)
+const mkH=n=>Array.from({length:n},(_,i)=>({conversation_id:'conv-'+i,first_at:'2026-08-01',messages:[{id:'m'+i+'a',role:'customer',text:'Mi pedido número '+String(i).padStart(2,'0')+' no ha llegado',at:'1'},{id:'m'+i+'b',role:'agent',text:'Lo reviso.',at:'2'}]}));
+test('contenido: una racha de 5 finish_length seguidos NO aborta; cada una se reintenta UNA vez con el doble de max_tokens y queda fallida',async()=>{
+  const c=sim((n,b,u)=>isHard(u)?lenResp():okResp());
+  const r=await runCohort(common(tmp(),{convs:mkH(20),client:c,concurrency:1,batchId:'len',embed:false}));
+  assert.equal(r.receipt.abort,null);assert.equal(r.receipt.fallidas_contenido,5);assert.equal(r.receipt.fallidas_infra,0);assert.equal(r.receipt.ok,15);
+  assert.equal(r.receipt.fallos_por_causa.finish_length,5);assert.equal(r.receipt.reintentos_en_corrida,5);
+  assert.equal(c.calls.filter(x=>x===3000).length,5);assert.equal(c.calls.filter(x=>x===1500).length,20); // 20 primeras + 5 reintentos con 3000
+});
+test('contenido: finish_length que se resuelve con más margen queda ok; invalid_entity transitorio se recupera con 1 reintento y el persistente queda fallida sin abortar',async()=>{
+  let seen=new Set();
+  const c=sim((n,b,u)=>{const id=u.revisions[0].text;const first=!seen.has(id);seen.add(id);return /00 /.test(id)?(b.max_tokens>1500?okResp():lenResp()):/01 /.test(id)?(first?badEntity():okResp()):/02 /.test(id)?badEntity():okResp();});
+  const dir=tmp();const r=await runCohort(common(dir,{convs:mkH(10),client:c,concurrency:1,batchId:'x',embed:false}));
+  assert.equal(r.receipt.abort,null);assert.equal(r.receipt.ok,9);assert.equal(r.receipt.fallos_por_causa.invalid_entity,1);assert.equal(r.receipt.fallidas_contenido,1);assert.equal(r.receipt.reintentos_en_corrida,3);
+  const recs=fs.readFileSync(path.join(dir,'resultados.jsonl'),'utf8').split('\n').filter(Boolean).map(JSON.parse).filter(x=>x.status==='failed');
+  assert.equal(recs.length,1);assert.equal(recs[0].kind,'contenido');assert.equal(recs[0].attempts,2);assert.ok(recs[0].cost_usd>0.0007); // se cobran ambos intentos
+});
+test('infraestructura: 3 http_0 seguidos SÍ abortan; un fallo de contenido en medio reinicia la racha; 429/5xx también cuentan',async()=>{
+  const c=sim(()=>({status:0,ms:0,json:null,err:'red'}));
+  let r=await runCohort(common(tmp(),{convs:mkH(20),client:c,concurrency:1,batchId:'h0',embed:false}));
+  assert.match(r.receipt.abort,/3 fallos de infraestructura consecutivos \(último: http_0\)/);assert.equal(r.receipt.fallidas_infra,3);
+  const seq=[()=>({status:0,ms:0,json:null}),()=>({status:0,ms:0,json:null}),lenResp,lenResp,()=>({status:0,ms:0,json:null}),()=>({status:0,ms:0,json:null}),okResp];
+  let k=0;const c2=sim(()=>{const f=seq[Math.min(k++,seq.length-1)];return f();});
+  r=await runCohort(common(tmp(),{convs:mkH(6),client:c2,concurrency:1,batchId:'mix',embed:false}));
+  assert.equal(r.receipt.abort,null);assert.equal(r.receipt.fallidas_infra,4);assert.equal(r.receipt.fallidas_contenido,1);assert.equal(r.receipt.ok,1);
+  for(const st of[429,500,503]){const c3=sim(()=>({status:st,ms:1,json:{error:{message:'x'}}}));const r3=await runCohort(common(tmp(),{convs:mkH(10),client:c3,concurrency:1,batchId:'s'+st,embed:false}));assert.match(r3.receipt.abort,/infraestructura/,String(st));}
+});
+test('contenido: tasa anormal (>40 % en ventana de 100) SÍ aborta como alarma; 30 % no',async()=>{
+  const bad=pct=>sim((n,b,u)=>(Number(/número (\d+)/.exec(u.revisions[0].text)[1])%100)<pct?badEntity():okResp());
+  const mkN=n=>Array.from({length:n},(_,i)=>({conversation_id:'conv-'+i,first_at:'2026-08-01',messages:[{id:'m'+i,role:'customer',text:'Mi pedido número '+i+' no llegó',at:'1'}]}));
+  let r=await runCohort(common(tmp(),{convs:mkN(300),client:bad(30),concurrency:1,batchId:'a',embed:false}));assert.equal(r.receipt.abort,null);assert.equal(r.receipt.fallidas_contenido,90);
+  r=await runCohort(common(tmp(),{convs:mkN(300),client:bad(60),concurrency:1,batchId:'b',embed:false}));assert.match(r.receipt.abort,/tasa anormal de fallos de contenido/);assert.ok(r.receipt.sin_intentar_por_aborto>0);
+});
+test('--reintentar-fallidas: reprocesa SOLO las fallidas por contenido, sin repetir lo hecho ni las de infraestructura, y suma al libro de gasto',async()=>{
+  const dir=tmp();const first=sim((n,b,u)=>isHard(u)?lenResp():okResp());
+  await runCohort(common(dir,{convs:mkH(12),client:first,concurrency:1,batchId:'p1',embed:false}));
+  const gastoAntes=createLedger({dir,capTotalUsd:30,capBatchUsd:30,batchId:'q'}).total;
+  const infra=sim(()=>({status:0,ms:0,json:null}));
+  // una conversación nueva con fallo de infraestructura previo no debe reintentarse en este modo
+  const extra=mkH(13);await runCohort(common(dir,{convs:[extra[12]],client:infra,concurrency:1,batchId:'p2',embed:false}));
+  const second=sim(()=>okResp());
+  const r=await runCohort(common(dir,{convs:extra,client:second,concurrency:1,batchId:'retry',embed:false,retryOnly:true}));
+  assert.equal(r.receipt.ok,5);assert.equal(second.calls.length,5); // solo las 5 difíciles
+  assert.ok(r.receipt.no_aplica_reintentar>=1);assert.ok(r.receipt.gasto.total_usd>gastoAntes);
+  const again=sim(()=>okResp());const r2=await runCohort(common(dir,{convs:extra,client:again,concurrency:1,batchId:'retry2',embed:false,retryOnly:true}));
+  assert.equal(again.calls.length,0); // idempotente: ya no quedan fallidas por contenido
+  const capped=await runCohort({...common(tmp(),{convs:mkH(3),client:sim(()=>okResp()),batchId:'cap'}),capTotalUsd0:1000});assert.equal(capped.receipt.gasto.cap_total_usd,30);
 });

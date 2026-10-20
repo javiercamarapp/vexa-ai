@@ -3,6 +3,7 @@
 #   ./ejecutar-cohorte.sh export    # 1) lee (SOLO LECTURA) taxonomía y mensajes de la cohorte; los guarda ya REDACTADOS en disco local
 #   ./ejecutar-cohorte.sh piloto    # 2) PILOTO de 200 conversaciones (~US$0.1-0.3) + informe de calidad
 #   ./ejecutar-cohorte.sh resto     # 3) resto de la cohorte, REANUDABLE (re-ejecútelo si se corta; no reenvía lo ya hecho)
+#   ./ejecutar-cohorte.sh reintentar # reprocesa solo las fallidas por contenido
 #   ./ejecutar-cohorte.sh agrupar   # 4) agrupación local de embeddings (barrido de umbral)
 #   ./ejecutar-cohorte.sh persistir-prueba | persistir-canario | persistir-todo   # 5) escritura en producción (ver INFORME)
 # Variables: FROM, TO, BASIS (first|last). Ningún paso imprime contenido de clientes.
@@ -44,6 +45,10 @@ case "${1:-}" in
     $NODE cohorte.mjs --input "$BASE/entrada.jsonl,$BASE/entrada-csv.jsonl" --taxonomy "$BASE/taxonomia.json" --from "$FROM" --to "$TO" --basis "$BASIS" \
       --batch resto --cap-batch 30 --cap-total 30 $CONFIRM_FLAG
     node informe-piloto.mjs --dir "$BASE" --batch resto ;;
+  reintentar)   # reprocesa SOLO las fallidas por contenido (no repite lo ya extraído; respeta el libro de gasto)
+    confirmar "reintentar fallidas por contenido" 30
+    $NODE cohorte.mjs --input "$BASE/entrada.jsonl,$BASE/entrada-csv.jsonl" --taxonomy "$BASE/taxonomia.json" --from "$FROM" --to "$TO" --basis "$BASIS" \
+      --batch reintento --cap-batch 30 --cap-total 30 --reintentar-fallidas $CONFIRM_FLAG ;;
   agrupar)
     node cluster.mjs --in "$BASE/embeddings.jsonl" --sweep ;;
   persistir-prueba)   # BEGIN..ROLLBACK de 5 conversaciones contra la base real (no deja nada)

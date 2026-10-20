@@ -6,6 +6,9 @@
 //  node cohorte.mjs --fixtures [--limit N]                                           # valida calidad con las 47 fixtures sintéticas (gasta poco)
 //  node cohorte.mjs --input entrada.jsonl --taxonomy taxonomia.json --pilot 200 --yes-send-real-text
 //  node cohorte.mjs --input entrada.jsonl --taxonomy taxonomia.json --resume --yes-send-real-text
+//  node cohorte.mjs ... --reintentar-fallidas --yes-send-real-text   # reprocesa SOLO las fallidas por contenido (finish_length, invalid_*); respeta taskKey y el libro de gasto
+// ABORTO: solo por fallos de INFRAESTRUCTURA consecutivos (http_0/429/5xx/timeout), costo (tope/cost_overrun) o tasa anormal de fallos de
+// CONTENIDO (>40 % en una ventana de 100). Fallos de contenido: 1 reintento (finish_length con el doble de max_tokens, hasta 4000) y luego `fallida`.
 //
 // Garantías: texto SIEMPRE redactado antes de enviar; provider fijo + data_collection:'deny'; taskKey idempotente por
 // conversación (reanudable sin reenviar); libro de gasto con tope por lote y total (<= US$30 forzado); aborto tras 3 fallos consecutivos.
@@ -77,6 +80,11 @@ export function cohortLedger({root=ROOT,tenant=SQL.TENANT,window,batchId,capTota
   const dir=path.join(root,'gasto');const file=`gasto-${tenant}_${window.from}_${window.to}_${window.basis}.jsonl`;
   return createLedger({dir,file,capTotalUsd:Math.min(capTotalUsd,HARD_CAP_USD),capBatchUsd,batchId,alsoRead:outDir?[path.join(outDir,'gasto-cohorte.jsonl')]:[]});
 }
+export const MAX_RETRY_TOKENS=4000;
+export const CONTENT_WINDOW=100,CONTENT_ALARM=0.4;
+const RETRY_SAME=new Set(['invalid_entity','invalid_output','invalid_reference','json_invalido']);
+export const CONTENT_REASONS=new Set(['finish_length','finish_content_filter','invalid_entity','invalid_output','invalid_reference','json_invalido']);
+const isInfra=reason=>/^http_/.test(reason)||reason==='finish_none';
 const SEV=['unknown','low','medium','high','critical'];
 
 // ---------------------------------------------------------------- proyección (--dry-count)
@@ -124,7 +132,7 @@ const f32b64=v=>Buffer.from(new Float32Array(v).buffer).toString('base64');
 export async function runCohort(o){
   const {convs,taxonomy,outDir,client,model=DEFAULT_MODEL,provider='azure',concurrency=12,embed=true,maxTokens=1500,
     capTotalUsd0=30,capBatchUsd0=30,batchId='lote-'+new Date().toISOString().replace(/[:.]/g,'-'),maxConsecutiveFailures=3,
-    maxAttempts=2,skipAutomatic=true,log=()=>{},scoreFn=null,prices=PRICES,fileTag=''}=o;
+    maxAttempts=2,skipAutomatic=true,retryOnly=false,log=()=>{},scoreFn=null,prices=PRICES,fileTag=''}=o;
   if(!ALLOWED_MODELS.includes(model))throw Error('modelo no permitido (lista cerrada)');
   if(!ALLOWED_PROVIDERS.includes(provider))throw Error('proveedor no permitido (lista cerrada)');
   for(const [n,v] of [['tope total',capTotalUsd0],['tope del lote',capBatchUsd0]])if(!Number.isFinite(v)||v<=0)throw Error(n+' inválido');
@@ -133,14 +141,20 @@ export async function runCohort(o){
   const ledger=o.ledger??createLedger({dir:outDir,capTotalUsd,capBatchUsd,batchId});
   const resFile=path.join(outDir,`resultados${fileTag}.jsonl`),embFile=path.join(outDir,`embeddings${fileTag}.jsonl`);
   const cfg=configHash({model,provider,taxonomy});
-  const prior=readJsonl(resFile),done=new Set(),fails=new Map();
-  for(const r of prior){if(['ok','abstained','skipped'].includes(r.status))done.add(r.task_key);else fails.set(r.task_key,(fails.get(r.task_key)??0)+1);}
+  const prior=readJsonl(resFile),done=new Set(),fails=new Map(),contentFailed=new Set();
+  for(const r of prior){if(['ok','abstained','skipped'].includes(r.status))done.add(r.task_key);else{fails.set(r.task_key,(fails.get(r.task_key)??0)+1);if(CONTENT_REASONS.has(r.reason))contentFailed.add(r.task_key);else contentFailed.delete(r.task_key);}}
   const boilerplate=o.boilerplate??learnBoilerplate(convs.flatMap(c=>c.messages.map(m=>m.text)));
-  const st={total:convs.length,already_done:0,skipped:{},ok:0,abstained:0,failed:0,gave_up:0,not_attempted:0,embedded_rows:0,aborted:null,cached_tokens:0,prompt_tokens:0,completion_tokens:0,cache_write_tokens:0,lat:[],cats:{},issues:0,entities:0,fail_reasons:{},chars_sent:0,msgs_sent:0,invalid_refs:0};
+  const st={total:convs.length,already_done:0,skipped:{},ok:0,abstained:0,failed:0,failed_infra:0,failed_content:0,retries:0,not_applicable:0,gave_up:0,not_attempted:0,embedded_rows:0,aborted:null,cached_tokens:0,prompt_tokens:0,completion_tokens:0,cache_write_tokens:0,lat:[],cats:{},issues:0,entities:0,fail_reasons:{},chars_sent:0,msgs_sent:0,invalid_refs:0};
   let idx=0,consecutive=0,stop=false;const collected=[];
   const append=(f,obj)=>fs.appendFileSync(f,JSON.stringify(obj)+'\n',{mode:0o600});
-  const noteFail=(key,convId,reason,extra={})=>{st.failed++;st.fail_reasons[reason]=(st.fail_reasons[reason]??0)+1;append(resFile,{task_key:key,conversation_id:convId,status:'failed',reason,model,config:cfg.slice(0,12),batch:batchId,ts:new Date().toISOString(),...extra});
-    consecutive++;if(consecutive>=maxConsecutiveFailures&&!st.aborted){st.aborted=`${consecutive} fallos consecutivos (último: ${reason})`;stop=true;}};
+  // Fallos de INFRAESTRUCTURA (http_0, 429, 5xx, timeouts...) cuentan para el aborto por rachas; los de CONTENIDO se registran por
+  // conversación y la corrida continúa (solo una tasa anormal de contenido en la ventana de 100 es alarma).
+  const win=[];const noteOutcome=bad=>{win.push(bad?1:0);if(win.length>CONTENT_WINDOW)win.shift();
+    if(win.length===CONTENT_WINDOW&&win.reduce((a,b)=>a+b,0)/CONTENT_WINDOW>CONTENT_ALARM&&!st.aborted){st.aborted=`tasa anormal de fallos de contenido: ${win.reduce((a,b)=>a+b,0)} de las últimas ${CONTENT_WINDOW} (> ${CONTENT_ALARM*100}%)`;stop=true;}};
+  const noteFail=(key,convId,reason,extra={},infra=true)=>{st.failed++;st.fail_reasons[reason]=(st.fail_reasons[reason]??0)+1;
+    append(resFile,{task_key:key,conversation_id:convId,status:'failed',reason,kind:infra?'infra':'contenido',model,config:cfg.slice(0,12),batch:batchId,ts:new Date().toISOString(),...extra});
+    if(infra){st.failed_infra++;consecutive++;if(consecutive>=maxConsecutiveFailures&&!st.aborted){st.aborted=`${consecutive} fallos de infraestructura consecutivos (último: ${reason})`;stop=true;}}
+    else{st.failed_content++;consecutive=0;noteOutcome(true);}};
   async function one(conv){
     const prep=prepareConversation(conv,{boilerplate,skipAutomatic,...(o.redactFn?{redactFn:o.redactFn}:{})});
     if(prep.status==='skipped'){
@@ -150,23 +164,41 @@ export async function runCohort(o){
     }
     const key=taskKeyFor(cfg,conv.conversation_id,prep.input_hash);
     if(done.has(key)){st.already_done++;return;}
-    if((fails.get(key)??0)>=maxAttempts){st.gave_up++;return;}
-    const body=buildRequest(prep.revisions,taxonomy,{model,provider,maxTokens});
-    const tokUpper=Math.ceil(Buffer.byteLength(JSON.stringify(body))/2)+4000;
-    const ceiling=tokUpper*prices.cacheWrite+maxTokens*prices.out;
-    let release;try{release=ledger.reserve(ceiling);}catch(e){if(e instanceof BudgetAbort){st.aborted=e.message;stop=true;st.not_attempted++;return;}throw e;}
-    let res;try{res=await client.post('/chat/completions',body);}finally{release();}
-    const u=res.json?.usage??{};const usd=bookedCost(u.cost,res.status,ceiling);
-    ledger.record({task:key,kind:'chat',usd,pt:u.prompt_tokens??null,ct:u.completion_tokens??null,cached:u.prompt_tokens_details?.cached_tokens??null,cw:u.prompt_tokens_details?.cache_write_tokens??null,http:res.status});
-    if(usd>ceiling*1.0001&&!st.aborted){st.aborted=`cost_overrun: costo real ${usd.toFixed(5)} > techo ${ceiling.toFixed(5)}`;stop=true;}
-    st.lat.push(res.ms);st.prompt_tokens+=u.prompt_tokens??0;st.completion_tokens+=u.completion_tokens??0;st.cached_tokens+=u.prompt_tokens_details?.cached_tokens??0;st.cache_write_tokens+=u.prompt_tokens_details?.cache_write_tokens??0;
-    st.chars_sent+=prep.stats.chars_out;st.msgs_sent+=prep.stats.msgs_out;
-    const choice=res.json?.choices?.[0];
-    if(res.status!==200||!choice||choice.finish_reason!=='stop'||typeof choice.message?.content!=='string')return noteFail(key,conv.conversation_id,res.status===200?'finish_'+(choice?.finish_reason??'none'):'http_'+res.status,{cost_usd:usd,http_msg:scrub(res.json?.error?.message??res.err??'').slice(0,200)});
-    let raw;try{raw=JSON.parse(choice.message.content);}catch{return noteFail(key,conv.conversation_id,'json_invalido',{cost_usd:usd});}
-    const v=resolveAndValidate(raw,prep.revisions,taxonomy);
-    if(!v.ok){if(v.code==='invalid_reference')st.invalid_refs++;return noteFail(key,conv.conversation_id,v.code,{cost_usd:usd});}
-    consecutive=0;
+    if(!retryOnly&&(fails.get(key)??0)>=maxAttempts){st.gave_up++;return;}
+    if(retryOnly&&!contentFailed.has(key)){st.not_applicable++;return;} // --reintentar-fallidas: solo las fallidas por contenido
+    // Una llamada = reserva de gasto + POST + libro. Clasifica el resultado: ok | fail(infra|contenido) | abort.
+    async function call(mt){
+      const body=buildRequest(prep.revisions,taxonomy,{model,provider,maxTokens:mt});
+      const tokUpper=Math.ceil(Buffer.byteLength(JSON.stringify(body))/2)+4000;
+      const ceiling=tokUpper*prices.cacheWrite+mt*prices.out;
+      let release;try{release=ledger.reserve(ceiling);}catch(e){if(e instanceof BudgetAbort){st.aborted=e.message;stop=true;st.not_attempted++;return{kind:'abort'};}throw e;}
+      let res;try{res=await client.post('/chat/completions',body);}finally{release();}
+      const u=res.json?.usage??{};const usd=bookedCost(u.cost,res.status,ceiling);
+      ledger.record({task:key,kind:'chat',usd,pt:u.prompt_tokens??null,ct:u.completion_tokens??null,cached:u.prompt_tokens_details?.cached_tokens??null,cw:u.prompt_tokens_details?.cache_write_tokens??null,http:res.status});
+      if(usd>ceiling*1.0001&&!st.aborted){st.aborted=`cost_overrun: costo real ${usd.toFixed(5)} > techo ${ceiling.toFixed(5)}`;stop=true;}
+      st.lat.push(res.ms);st.prompt_tokens+=u.prompt_tokens??0;st.completion_tokens+=u.completion_tokens??0;st.cached_tokens+=u.prompt_tokens_details?.cached_tokens??0;st.cache_write_tokens+=u.prompt_tokens_details?.cache_write_tokens??0;
+      st.chars_sent+=prep.stats.chars_out;st.msgs_sent+=prep.stats.msgs_out;
+      const choice=res.json?.choices?.[0];
+      const fail=(reason,extra={})=>({kind:'fail',reason,usd,u,infra:isInfra(reason),http_msg:extra.http_msg});
+      if(res.status!==200)return fail('http_'+res.status,{http_msg:scrub(res.json?.error?.message??res.err??'').slice(0,200)});
+      if(!choice)return fail('finish_none');
+      if(choice.finish_reason!=='stop'||typeof choice.message?.content!=='string')return fail('finish_'+(choice.finish_reason??'none'));
+      let raw;try{raw=JSON.parse(choice.message.content);}catch{return fail('json_invalido');}
+      const v=resolveAndValidate(raw,prep.revisions,taxonomy);
+      if(!v.ok){if(v.code==='invalid_reference')st.invalid_refs++;return fail(v.code);}
+      return{kind:'ok',data:v.data,usd,u};
+    }
+    let r=await call(maxTokens),attempts=1,spent=r.usd??0;
+    if(r.kind==='abort')return;
+    if(r.kind==='fail'&&!r.infra&&!st.aborted){ // un único reintento por conversación, solo por causas de contenido
+      let mt=null;
+      if(r.reason==='finish_length')mt=Math.min(maxTokens*2,MAX_RETRY_TOKENS); // respuesta cortada por max_tokens: más margen de salida
+      else if(RETRY_SAME.has(r.reason))mt=maxTokens;                        // salida inválida: mismo prompt
+      if(mt!==null){st.retries++;const r2=await call(mt);attempts=2;if(r2.kind==='abort')return;spent+=r2.usd??0;r=r2;}
+    }
+    if(r.kind==='fail')return noteFail(key,conv.conversation_id,r.reason,{cost_usd:spent,attempts,...(r.http_msg?{http_msg:r.http_msg}:{})},r.infra);
+    consecutive=0;noteOutcome(false);
+    const usd=spent,u=r.u,v={data:r.data};
     const data=v.data;const status=data.abstention?'abstained':'ok';st[status]++;
     st.issues+=data.issues.length;st.entities+=data.entities.length;for(const i of data.issues)st.cats[i.category]=(st.cats[i.category]??0)+1;
     const rec={task_key:key,conversation_id:conv.conversation_id,status,reason:data.abstention?.reason??null,model,provider,config:cfg.slice(0,12),batch:batchId,ts:new Date().toISOString(),cost_usd:usd,
@@ -203,7 +235,7 @@ export async function runCohort(o){
   process.off('SIGINT',prevSigint);
   st.not_attempted+=Math.max(0,convs.length-Math.min(idx,convs.length));
   const receipt={batch:batchId,model,provider,config:cfg.slice(0,12),prompt_hash:promptHash().slice(0,12),schema_hash:schemaHash(taxonomy).slice(0,12),
-    conversaciones_en_entrada:st.total,ya_hechas_omitidas:st.already_done,omitidas_por_regla:st.skipped,ok:st.ok,abstenciones:st.abstained,fallidas:st.failed,fallos_por_causa:st.fail_reasons,
+    conversaciones_en_entrada:st.total,ya_hechas_omitidas:st.already_done,omitidas_por_regla:st.skipped,ok:st.ok,abstenciones:st.abstained,fallidas:st.failed,fallidas_infra:st.failed_infra,fallidas_contenido:st.failed_content,reintentos_en_corrida:st.retries,no_aplica_reintentar:st.not_applicable,fallos_por_causa:st.fail_reasons,
     sin_intentar_por_aborto:st.not_attempted,abandonadas_tras_reintentos:st.gave_up,abort:st.aborted,issues:st.issues,entidades:st.entities,filas_embedding:st.embedded_rows,categorias:st.cats,
     tokens:{prompt:st.prompt_tokens,completion:st.completion_tokens,cached:st.cached_tokens,cache_write:st.cache_write_tokens,
       tasa_cache:st.prompt_tokens?+(st.cached_tokens/st.prompt_tokens).toFixed(3):null},
@@ -264,7 +296,7 @@ async function cli(){
   const key=await client.get('/key');const lim=key.json?.data?.limit,use=key.json?.data?.usage;
   if(typeof lim==='number'&&typeof use==='number'&&lim-use<capTotal){console.error(`La llave no tiene margen: límite ${lim}, uso ${use}, tope de cohorte ${capTotal}. Abortado.`);process.exit(3);}
   console.log(`conversaciones: ${convs.length} | lote ${batchId} | tope lote US$${capBatch} | tope cohorte US$${capTotal} | modelo ${model} | provider ${provider}`);
-  const {receipt}=await runCohort({convs,taxonomy,outDir:out,client,model,provider,concurrency:Math.min(intOpt(args,'concurrency',12),16),embed:!flag('no-embed'),capTotalUsd0:capTotal,capBatchUsd0:capBatch,batchId,boilerplate,ledger:cohortLedger({window:win,batchId,capTotalUsd:capTotal,capBatchUsd:capBatch,outDir:out}),log:console.log});
+  const {receipt}=await runCohort({convs,taxonomy,outDir:out,client,model,provider,concurrency:Math.min(intOpt(args,'concurrency',12),16),retryOnly:flag('reintentar-fallidas'),embed:!flag('no-embed'),capTotalUsd0:capTotal,capBatchUsd0:capBatch,batchId,boilerplate,ledger:cohortLedger({window:win,batchId,capTotalUsd:capTotal,capBatchUsd:capBatch,outDir:out}),log:console.log});
   console.log(JSON.stringify(receipt,null,1));
   if(receipt.abort)process.exit(4);
 }

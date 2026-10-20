@@ -5,10 +5,10 @@
 // scroll-less container, interactive controls that overlap each other, controls outside the viewport, console errors.
 import fs from 'node:fs';import path from 'node:path';import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);const {chromium}=require('playwright-core');
-const {respond,IDS,HASH}=await import('./fixtures.mjs');
+const {respond,IDS,HASH,agentStateEmpty}=await import('./fixtures.mjs');
 const base=process.argv[2]??'http://localhost:3107',out=process.argv[3]??path.resolve('ui-captures');fs.mkdirSync(out,{recursive:true});
 const PIN=`?snapshot_id=${IDS.snapshot}&scope_hash=${HASH}&date_start=2026-10-01&date_end=2026-11-01&currency=USD&basis=net`;
-const VIEWS=[['overview','/overview'],['problems','/problems'],['problem-detail',`/problems/${IDS.problemA}${PIN}`],['recommendations','/recommendations'],['explorer','/explorer'],['customer','/customers/'+IDS.customer+PIN],['interventions','/interventions'],['briefs','/briefs'],['brief-detail','/briefs/'+IDS.brief],['history','/history']];
+const VIEWS=[['overview','/overview'],['problems','/problems'],['problem-detail',`/problems/${IDS.problemA}${PIN}`],['recommendations','/recommendations'],['explorer','/explorer'],['customer','/customers/'+IDS.customer+PIN],['interventions','/interventions'],['briefs','/briefs'],['brief-detail','/briefs/'+IDS.brief],['history','/history'],['preguntale','/preguntale']];
 const EXTRA=[['operacion-economia','/economics'],['operacion-problemas-gestion','/problems/manage'],['operacion-analisis','/analysis'],['datos-importaciones','/imports'],['datos-conexiones','/connections'],['datos-evaluacion','/evaluation'],['datos-candidatos','/evaluation/candidates'],['datos-migracion','/migrations'],['admin-notificaciones','/notifications'],['admin-avisos','/settings/notifications'],['admin-entrega','/settings/notification-delivery'],['admin-equipo','/settings/team'],['admin-retencion','/settings/retention'],['jobs-setup','/jobs/setup'],['login','/login'],['plataforma','/platform'],['404','/ruta-que-no-existe-xyz'],['invitacion','/auth/invitations/'+IDS.snapshot]];
 if(process.env.EXTRA==='1')VIEWS.splice(0,VIEWS.length,...EXTRA);
 const VIEWPORTS=[[375,812],[768,1024],[1440,900]];
@@ -56,14 +56,14 @@ const geometry=()=>{
  // siblings of a flex/grid container must not collide
  const parents=new Set(all.map(e=>e.parentElement).filter(Boolean));
  for(const p of parents){const d=getComputedStyle(p).display;if(!/flex|grid/.test(d))continue;const kids=[...p.children].filter(k=>!hidden(k)&&!['absolute','fixed'].includes(getComputedStyle(k).position)&&!k.matches('.sr-only,svg,option,script,style'));if(kids.length>40||kids.length<2)continue;
-  for(let i=0;i<kids.length;i++)for(let j=i+1;j<kids.length;j++){const a=kids[i].getBoundingClientRect(),b=kids[j].getBoundingClientRect();const w=Math.min(a.right,b.right)-Math.max(a.left,b.left),h=Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top);if(w>3&&h>3&&!pinned(kids[i]))issues.push({kind:'sibling-overlap',detail:label(kids[i])+' ⟂ '+label(kids[j])+` ${Math.round(w)}x${Math.round(h)}`});}}
+  for(let i=0;i<kids.length;i++)for(let j=i+1;j<kids.length;j++){const a=kids[i].getBoundingClientRect(),b=kids[j].getBoundingClientRect();const w=Math.min(a.right,b.right)-Math.max(a.left,b.left),h=Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top);if(w>3&&h>3&&!pinned(kids[i])&&!pinned(kids[j]))issues.push({kind:'sibling-overlap',detail:label(kids[i])+' ⟂ '+label(kids[j])+` ${Math.round(w)}x${Math.round(h)}`});}}
  return issues;
 };
 const browser=await chromium.launch();const report=[];let failed=0;
 if(process.env.SELFTEST){
  // Negative control: the rules must FAIL on deliberately broken markup, otherwise a green audit means nothing.
  const ctx=await browser.newContext({viewport:{width:375,height:812},reducedMotion:'reduce'});
- await ctx.route('**/api/**',async route=>{const req=route.request(),hit=respond(req.url(),req.method(),req.postData());return hit?route.fulfill({status:hit[0],contentType:'application/json',body:JSON.stringify(hit[1])}):route.fulfill({status:503,body:'{}'});});
+ await ctx.route('**/api/**',async route=>{const req=route.request(),hit=await respond(req.url(),req.method(),req.postData());return hit?route.fulfill({status:hit[0],contentType:'application/json',body:JSON.stringify(hit[1])}):route.fulfill({status:503,body:'{}'});});
  const page=await ctx.newPage();await page.goto(base+'/overview',{waitUntil:'networkidle'});
  await page.evaluate(()=>{const host=document.querySelector('.workspace-content');const d=document.createElement('div');d.innerHTML=`<p>Texto con <a href="/x" style="text-decoration:none">palabra con link</a> suelta.</p><div><a href="/y" style="all:unset;cursor:pointer">enlace sin estilo</a></div><div><button type="button" class="legacy" style="all:unset;cursor:pointer;border:1px solid #000;padding:2px">crudo</button></div><div style="display:flex;width:200px"><button class="btn" style="white-space:nowrap;width:60px;overflow:visible">Un texto de botón demasiado largo para su recuadro</button></div><div style="display:flex"><div style="width:120px;height:40px;background:#eee">A</div><div style="width:120px;height:40px;margin-left:-60px;background:#ddd">B</div></div><div><span style="display:inline-block;width:22px;overflow-wrap:anywhere">FUENTES</span></div><div style="width:100px;white-space:nowrap">Una línea que desborda su caja por completo sin saltar</div>`;host.appendChild(d);});
  const found=new Set((await page.evaluate(geometry)).map(i=>i.kind));
@@ -76,7 +76,7 @@ if(process.env.SELFTEST){
 for(const [w,h] of VIEWPORTS){
  const ctx=await browser.newContext({viewport:{width:w,height:h},deviceScaleFactor:1,reducedMotion:'reduce'});
  if(process.env.THEME)await ctx.addInitScript(t=>{try{localStorage.setItem('vexa-theme',t);}catch{/* optional */}},process.env.THEME);
- await ctx.route('**/api/**',async route=>{const req=route.request(),hit=respond(req.url(),req.method(),req.postData());if(!hit)return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:{code:'fixture_missing'}})});return route.fulfill({status:hit[0],contentType:'application/json',body:JSON.stringify(hit[1])});});
+ await ctx.route('**/api/**',async route=>{const req=route.request(),hit=await respond(req.url(),req.method(),req.postData());if(!hit)return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:{code:'fixture_missing'}})});return route.fulfill({status:hit[0],contentType:'application/json',body:JSON.stringify(hit[1])});});
  for(const [name,route] of VIEWS){
   if(filter&&!filter.includes(name))continue;
   const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push('pageerror: '+e.message));page.on('console',m=>{if(m.type()==='error'&&!/fixture_missing|503|Failed to load resource|auth_not_configured/.test(m.text()))errors.push('console: '+m.text().slice(0,160));});
@@ -136,6 +136,62 @@ for(const [w,h] of VIEWPORTS){
   const uniq=[...new Map(fail.map(i=>[i.kind+i.detail,i])).values()];if(uniq.length||errors.length)failed++;
   report.push({view:'demo-flow',width:w,issues:uniq,errors});console.log(`${uniq.length||errors.length?'FAIL':'PASS'} demo-flow @${w}${uniq.length?' · '+uniq.length+' problemas':''}`);for(const i of uniq.slice(0,12))console.log('   - '+i.kind+': '+i.detail);
   await page.close();
+ }
+
+ if(process.env.EXTRA!=='1'&&(!filter||filter.includes('agente-flow'))){
+  const page=await ctx.newPage(),errors=[],fail=[];page.on('pageerror',e=>errors.push('pageerror: '+e.message));
+  const shot=async(name)=>{const full=await page.evaluate(()=>{const c=document.querySelector('.workspace-content');return Math.min(7000,c?c.scrollHeight+c.getBoundingClientRect().top:document.documentElement.scrollHeight);});await page.setViewportSize({width:w,height:Math.max(h,full)});await page.waitForTimeout(150);await page.screenshot({path:path.join(out,`${name}-${w}.png`)}).catch(()=>{});await page.setViewportSize({width:w,height:h});};
+  const ask=async(q)=>{await page.fill('.agente-composer textarea',q);await page.keyboard.press('Enter');};
+  try{
+   await page.goto(base+'/preguntale',{waitUntil:'networkidle',timeout:90000});
+   await page.waitForSelector('[data-testid=agente-shell] h1',{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'la portada no se dibujó'}));
+   if(await page.locator('.agente-chips button').count()<3)fail.push({kind:'flow',detail:'faltan sugerencias iniciales basadas en la cobertura'});
+   await page.click('.agente-composer button:has-text("Consulta")');
+   await page.waitForSelector('.agente-cats .btn',{timeout:5000}).catch(()=>fail.push({kind:'flow',detail:'las tarjetas de «Consulta» no aparecieron'}));
+   fail.push(...await page.evaluate(geometry));await shot('agente-portada');
+   await ask('¿Cuánto dinero en reembolsos tuvimos por marketplace?');
+   await page.waitForSelector('.agente-answer .agente-block',{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'la respuesta con tabla no apareció'}));
+   const kinds=(await page.locator('.agente-block .kind-badge').allInnerTexts()).join('|');if(!/Observado/.test(kinds))fail.push({kind:'flow',detail:'el bloque no lleva etiqueta Observado: '+kinds});
+   if(!/Cobertura: [\d,]+ de [\d,]+/.test((await page.locator('.agente-cov').first().innerText().catch(()=>''))))fail.push({kind:'flow',detail:'el bloque no muestra su cobertura'});
+   if(!/no se suman/i.test(await page.locator('.agente-answer').first().innerText().catch(()=>'')))fail.push({kind:'flow',detail:'falta la nota de que las monedas no se suman'});
+   await page.click('summary:has-text("Ver cómo lo calculé")');await page.waitForSelector('.agente-calc-step',{timeout:5000}).catch(()=>fail.push({kind:'flow',detail:'«Ver cómo lo calculé» no abrió'}));
+   if(!(await page.locator('.agente-calc-step .id-chip').count()))fail.push({kind:'flow',detail:'«cómo lo calculé» sin herramienta/parámetros'});
+   await page.click('.agente-actions button:has-text("Útil")');await page.waitForSelector('.agente-fb',{timeout:5000}).catch(()=>fail.push({kind:'flow',detail:'el feedback no confirmó'}));
+   await page.click('.agente-actions button:has-text("No fue útil")');await page.waitForSelector('[aria-label="¿Qué falló?"] button',{timeout:5000}).catch(()=>fail.push({kind:'flow',detail:'no aparecieron los motivos del feedback'}));
+   await page.click('[aria-label="¿Qué falló?"] button:has-text("Incompleto")');
+   const dl=page.waitForEvent('download',{timeout:5000}).catch(()=>null);await page.click('.agente-actions button:has-text("Exportar")');if(!(await dl))fail.push({kind:'flow',detail:'Exportar no descargó nada'});
+   await ask('¿Qué dicen los clientes sobre el producto dañado en tránsito?');
+   await page.waitForSelector('.agente-citations .citation',{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'no aparecieron citas verificables'}));
+   await page.click('.agente-citations .citation button[aria-controls]').catch(()=>fail.push({kind:'flow',detail:'«Ver origen» ausente'}));
+   await page.waitForSelector('.agente-citations .origin-chain li',{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'la cadena de origen no apareció'}));
+   await ask('¿Cuántos reembolsos tuvimos en Zendesk?');
+   await page.waitForFunction(()=>document.body.innerText.includes('No tengo ese dato'),null,{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'faltó «No tengo ese dato» para Zendesk'}));
+   if(!(await page.locator('.agente-missing').count()))fail.push({kind:'flow',detail:'no dijo qué falta cargar'});
+   await ask('¿Cuánto voy a vender el próximo trimestre?');
+   await page.waitForFunction(()=>document.body.innerText.includes('No hago proyecciones'),null,{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'no rechazó el pronóstico'}));
+   await page.waitForTimeout(300);fail.push(...await page.evaluate(geometry));await shot('agente-conversacion');
+   await page.click('button:has-text("Historial")');await page.waitForSelector('.agente-history',{timeout:5000}).catch(()=>fail.push({kind:'flow',detail:'el historial no abrió'}));
+   if(await page.locator('.agente-history .agente-history-item').count()<1)fail.push({kind:'flow',detail:'el chat no quedó en el historial'});
+   await page.waitForTimeout(350);fail.push(...await page.evaluate(geometry));await shot('agente-historial');
+   await page.keyboard.press('Escape');await page.waitForSelector('.agente-history',{state:'detached',timeout:3000}).catch(()=>fail.push({kind:'flow',detail:'Esc no cerró el historial'}));
+  }catch(e){fail.push({kind:'flow',detail:String(e).slice(0,200)});}
+  const uniq=[...new Map(fail.map(i=>[i.kind+i.detail,i])).values()];if(uniq.length||errors.length)failed++;
+  report.push({view:'agente-flow',width:w,issues:uniq,errors});console.log(`${uniq.length||errors.length?'FAIL':'PASS'} agente-flow @${w}${uniq.length?' · '+uniq.length+' problemas':''}`);for(const i of uniq.slice(0,12))console.log('   - '+i.kind+': '+i.detail);for(const e of errors.slice(0,4))console.log('   ! '+e);
+  await page.close();
+ }
+ if(process.env.EXTRA!=='1'&&(!filter||filter.includes('agente-estados'))){
+  const states=[['agente-vacio',async route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({data:await agentStateEmpty()})}),/Todavía no hay información cargada/],['agente-sin-permiso',route=>route.fulfill({status:403,contentType:'application/json',body:'{"error":{"code":"forbidden"}}'}),/Sin acceso/],['agente-error',route=>route.fulfill({status:503,contentType:'application/json',body:'{"error":{"code":"agent_unavailable"}}'}),/No se pudo abrir/]];
+  for(const [name,handler,expect] of states){
+   const page=await ctx.newPage(),fail=[],errors=[];page.on('pageerror',e=>errors.push('pageerror: '+e.message));
+   await page.route('**/api/agent/state',handler);
+   try{await page.goto(base+'/preguntale',{waitUntil:'networkidle',timeout:90000});await page.waitForTimeout(400);
+    if(!expect.test(await page.locator('.agente').innerText().catch(()=>'')))fail.push({kind:'flow',detail:name+': el estado esperado no se mostró'});
+    fail.push(...await page.evaluate(geometry));await page.screenshot({path:path.join(out,`${name}-${w}.png`)}).catch(()=>{});}
+   catch(e){fail.push({kind:'flow',detail:String(e).slice(0,200)});}
+   const uniq=[...new Map(fail.map(i=>[i.kind+i.detail,i])).values()];if(uniq.length||errors.length)failed++;
+   report.push({view:name,width:w,issues:uniq,errors});console.log(`${uniq.length||errors.length?'FAIL':'PASS'} ${name} @${w}${uniq.length?' · '+uniq.length+' problemas':''}`);for(const i of uniq.slice(0,12))console.log('   - '+i.kind+': '+i.detail);
+   await page.close();
+  }
  }
  await ctx.close();
 }

@@ -1,6 +1,7 @@
 // Synthetic, clearly fake fixtures for local visual QA of the eight views (no real customer data, no network).
 // Shapes follow the typed contracts in packages/*/**.d.mts. Used by tests/ui/audit.mjs through request interception only.
 import {formatMinorUnits} from '../../../../packages/metrics/money.mjs';
+import {createAgent,createSyntheticStore,createSyntheticPort,SYNTHETIC_TENANTS,SYNTHETIC_NOW,TOOLS,LIMITS,buildSuggestions} from '../../../../packages/agent-datos/index.mjs';
 const u=(n)=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
 export const IDS={snapshot:u(900),problemA:u(101),problemB:u(102),problemC:u(103),problemD:u(104),customer:u(201),rec:u(301),intervention:u(401),brief:u(501),revA:u(601),revB:u(602),revC:u(603),revSync:u(604),run:u(701),conv:u(801)};
 export const HASH='9f2c4a7e1b6d3058a4c1e9b27d6f30a85c4e1b9d2f7a6038c5e4d1b9a7f6c2e0';
@@ -58,8 +59,16 @@ export const coverage=()=>({generatedAt:'2026-10-19T03:00:00.000Z',basis:'import
  {key:'attachments',label:'Adjuntos (archivos)',loaded:false,status:'empty',class:'observed',imports:0,openImports:0,total:0,incorporated:0,rejected:0,pending:0,lastUpdate:null,detail:[]},
  {key:'zendesk',label:'Zendesk',loaded:false,status:'empty',class:'observed',imports:0,openImports:0,total:0,incorporated:0,rejected:0,pending:0,lastUpdate:null,detail:[]}]});
 export const originOf=(id)=>id===IDS.revSync?{messageRevisionId:id,complete:false,chain:[{step:'message_revision',label:'Cita en el mensaje',hash:HASH,hashShort:HASH.slice(0,12),detail:'Revisión 1'},{step:'source_record',label:'HubSpot · mensaje',hash:HASH,hashShort:HASH.slice(0,12),detail:'ext-48213'}],gap:'Esta revisión llegó por sincronización directa de la fuente: no hay fila de archivo que enlazar.'}:{messageRevisionId:id,complete:true,chain:[{step:'message_revision',label:'Cita en el mensaje',hash:HASH,hashShort:HASH.slice(0,12),detail:'Revisión 1'},{step:'source_record',label:'HubSpot · mensaje',hash:HASH,hashShort:'1a2b3c4d5e6f',detail:'ext-17'},{step:'import_row',label:'Fila del archivo',hash:HASH,hashShort:'7e8f9a0b1c2d',detail:'row-17'},{step:'import_file',label:'Archivo importado',hash:HASH,hashShort:'3d4e5f6a7b8c',detail:'Importado 2026-09-28'}]};
+
+// ---- Pregúntale a tus datos: the REAL agent package against synthetic data (async: respond() may return a Promise) ----
+const agentStore=createSyntheticStore(),agentRole=()=>process.env.AUDIT_ROLE||'owner';
+const agentCtx=()=>({tenantId:SYNTHETIC_TENANTS.A,userId:'fixture-user',role:agentRole(),now:new Date(SYNTHETIC_NOW)});
+const agentPort=()=>createSyntheticPort(agentStore,{tenantId:SYNTHETIC_TENANTS.A});
+export async function agentState(){const role=agentRole(),cov=await agentPort().coverage();return {available:true,mode:'deterministic',role,scope:'00000000',toolLabels:Object.fromEntries(TOOLS.map(t=>[t.name,t.label])),canSeeEvidence:role==='analyst'||role==='owner',suggestions:buildSuggestions(cov,role),limits:{maxQuestionChars:LIMITS.maxQuestionChars,maxHistory:LIMITS.maxHistory,maxTurnsPerConversation:LIMITS.maxTurnsPerConversation},note:'Las respuestas salen de herramientas de consulta deterministas sobre datos agregados; nada de texto crudo de clientes se envía a un modelo.'};}
+export async function agentStateEmpty(){const st=await agentState(),cov=await agentPort().coverage();cov.sources.forEach(s=>{s.loaded=false;});return {...st,suggestions:buildSuggestions(cov,st.role)};}
+export async function agentTurn(body){const answer=await createAgent().answer({ctx:agentCtx(),port:agentPort(),question:body?.question,history:body?.history,directa:body?.directa,conversationTurns:body?.conversationTurns});const {violations,...wire}=answer;void violations;return {t:'fin',respuesta:wire};}
 // Route table: returns [status, json] or null when the endpoint is not part of the fixtures (the page then shows its error state).
-export function respond(url,method,bodyText){
+export async function respond(url,method,bodyText){
  const u2=new URL(url,'http://x'),p=u2.pathname,q=u2.searchParams;let body=null;try{body=bodyText?JSON.parse(bodyText):null;}catch{}
  const ok=(data)=>[200,{contract_version:'f06-workspace-v1',data,meta:{trace_id:'fixture'}}];
  if(p==='/api/workspace')return ok(q.get('resource')==='metrics'?bundleMetrics():bundleProblems());
@@ -76,6 +85,9 @@ export function respond(url,method,bodyText){
  if(p==='/api/briefs')return ok(briefs());
  if(/^\/api\/briefs\/[^/]+$/.test(p))return ok(brief());
  if(p==='/api/history')return [200,historySnapshot()];
+ if(p==='/api/agent/state')return [200,{data:await agentState()}];
+ if(p==='/api/agent/turn')return [200,await agentTurn(body)];
+ if(p==='/api/agent/feedback')return [202,{data:{accepted:true,persisted:false}}];
  if(p==='/api/coverage')return ok(coverage());
  if(p==='/api/trends')return ok(trends());
  if(p.startsWith('/api/origin/'))return ok(originOf(p.split('/').pop()));

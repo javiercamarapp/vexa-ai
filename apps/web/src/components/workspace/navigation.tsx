@@ -3,7 +3,7 @@ import Link from './navigation-lifecycle';
 import {useId,useState} from 'react';
 import {usePathname,useSearchParams} from 'next/navigation';
 import {WorkspaceIcon} from './icon';
-export const destinations=[['/overview','Resumen'],['/problems','Problemas'],['/recommendations','Recomendaciones'],['/explorer','Explorador'],['/interventions','Intervenciones'],['/briefs','Brief ejecutivo']] as const;
+export const destinations=[['/overview','Resumen'],['/problems','Problemas'],['/recommendations','Recomendaciones'],['/explorer','Explorador'],['/preguntale','Pregúntale a tus datos'],['/interventions','Intervenciones'],['/briefs','Brief ejecutivo']] as const;
 const groups:ReadonlyArray<readonly [string,ReadonlyArray<readonly [string,string,string]>]> = [
  ['Operación',[['/economics','Gestión económica','economics'],['/problems/manage','Gestionar problemas','problems'],['/analysis','Análisis','analysis']]],
  ['Datos e inteligencia',[['/imports','Importaciones','imports'],['/connections','Conexiones','connections'],['/history','Histórico','history'],['/evaluation','Evaluación histórica','analysis'],['/evaluation/candidates','Candidatos evaluados','recommendations'],['/migrations','Comparación de migración','connections']]],

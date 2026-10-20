@@ -1,0 +1,38 @@
+// Preguntas sugeridas y de demostración. Las sugerencias iniciales salen de la COBERTURA REAL: solo se ofrece lo que hay cargado.
+export const DEMO_QUESTIONS = Object.freeze([
+  { q: '¿Cuáles son los 5 problemas con más incidencias este mes?', tool: 'problemas_top', args: { limit: 5 }, direct: true, need: 'hubspot' },
+  { q: '¿Cuánto dinero en reembolsos tuvimos por marketplace?', tool: 'ledger_por_fuente', args: { kind: 'refund' }, direct: true, need: 'ledger' },
+  { q: '¿Qué cubre y qué falta de mi información?', tool: 'cobertura_datos', args: {}, direct: true, need: null },
+  { q: '¿Qué cambió entre julio y septiembre?', tool: 'comparar_meses', args: { a: '2026-07', b: '2026-09' }, direct: true, need: 'hubspot' },
+  { q: '¿Cómo van las conversaciones por mes?', tool: 'tendencia_conversaciones', args: {}, direct: true, need: 'hubspot' },
+  { q: '¿Cuánto ingreso está expuesto por problema?', tool: 'exposicion_por_problema', args: {}, direct: true, need: 'ledger' },
+  { q: '¿Qué categorías crecieron en los últimos 6 meses?', tool: 'categorias_por_mes', args: { months: 6 }, direct: true, need: 'hubspot' },
+  { q: '¿Qué dicen los clientes sobre el producto dañado en tránsito?', tool: 'evidencias_de_problema', args: { problema: 'producto dañado en tránsito' }, direct: false, need: 'hubspot', roles: ['analyst', 'owner'] },
+  { q: '¿Cuántos clientes se ven afectados por el cobro duplicado?', tool: 'clientes_por_problema', args: { problema: 'cobro duplicado' }, direct: false, need: 'hubspot', roles: ['analyst', 'owner'] },
+  { q: '¿Qué versión del Tracker manda y cuántas hojas están cerradas?', tool: 'estado_tracker', args: {}, direct: true, need: 'excel' },
+  { q: '¿Cómo van las asociaciones ticket–contacto?', tool: 'estado_asociaciones', args: {}, direct: true, need: 'associations' },
+  { q: '¿Cuántos pedidos tuvimos por marketplace en septiembre?', tool: 'ledger_por_fuente', args: { kind: 'order', month: '2026-09' }, direct: false, need: 'ledger' },
+  { q: '¿Cómo evolucionaron los reembolsos mes a mes?', tool: 'ledger_por_mes', args: { kind: 'refund' }, direct: true, need: 'ledger' },
+  { q: '¿Cuántos reembolsos tuvimos en Zendesk?', tool: 'ledger_por_fuente', args: { kind: 'refund', fuente: 'zendesk' }, direct: false, need: null, expect: 'no_data' },
+  { q: '¿Cuánto voy a vender el próximo trimestre?', tool: null, args: {}, direct: false, need: null, expect: 'out_of_catalog' },
+]);
+
+const byQ = (q) => DEMO_QUESTIONS.find((d) => d.q === q);
+export const defaultSuggestions = (role) => ['¿Qué cubre y qué falta de mi información?', '¿Cuáles son los 5 problemas con más incidencias este mes?', '¿Cuánto dinero en reembolsos tuvimos por marketplace?'].filter((q) => !byQ(q)?.roles || byQ(q).roles.includes(role));
+
+/** Sugerencias, tarjetas y consultas directas según lo que hay cargado y el rol. `coverage` es la vista real de cobertura. */
+export function buildSuggestions(coverage, role = 'viewer') {
+  const loaded = new Set((coverage?.sources ?? []).filter((s) => s.loaded).map((s) => s.key));
+  const total = (coverage?.sources ?? []).length;
+  const ok = (d) => (!d.need || loaded.has(d.need)) && (!d.roles || d.roles.includes(role)) && !d.expect;
+  const pool = DEMO_QUESTIONS.filter(ok);
+  const first = ['¿Qué cubre y qué falta de mi información?', ...pool.map((d) => d.q).filter((q) => q !== '¿Qué cubre y qué falta de mi información?')];
+  const pick = (names) => DEMO_QUESTIONS.filter((d) => names.includes(d.tool) && ok(d)).map((d) => d.q);
+  const categorias = [
+    { titulo: 'Cobertura', preguntas: pick(['cobertura_datos', 'estado_tracker', 'estado_asociaciones']) },
+    { titulo: 'Dinero', preguntas: pick(['ledger_por_fuente', 'ledger_por_mes', 'exposicion_por_problema']) },
+    { titulo: 'Problemas y clientes', preguntas: pick(['problemas_top', 'comparar_meses', 'categorias_por_mes', 'clientes_por_problema']) },
+  ].filter((c) => c.preguntas.length).map((c) => ({ ...c, preguntas: c.preguntas.slice(0, 3) }));
+  const directas = Object.fromEntries(DEMO_QUESTIONS.filter((d) => d.direct && d.tool).map((d) => [d.q, { tool: d.tool, args: d.args }]));
+  return { loaded: loaded.size, total, empty: loaded.size === 0, sugerencias: first.slice(0, 5), categorias, directas };
+}

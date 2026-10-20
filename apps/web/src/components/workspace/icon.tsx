@@ -4,6 +4,7 @@ const paths:Record<string,string>={
  problems:'M12 3 2 21h20L12 3Z M12 9v5 M12 17h.01',
  recommendations:'m9 18 6 0 M10 21h4 M8 14a6 6 0 1 1 8 0l-1 2H9Z',
  explorer:'M21 21l-5-5 M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0',
+ preguntale:'M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3Z M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z',
  interventions:'m4 12 5 5L20 6', briefs:'M6 3h9l4 4v14H6Z M14 3v5h5 M9 12h7 M9 16h7',
  notifications:'M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21h4',
  imports:'M12 3v12 m-5-5 5 5 5-5 M4 16v5h16v-5',

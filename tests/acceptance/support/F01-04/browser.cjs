@@ -5,6 +5,8 @@ const {dependencyRoute,dependencyHeaders,dependencyResponse,dependencyPresentati
 const base='http://localhost:57560';
 const scope='date_start=2026-09-01&date_end=2026-10-01&currency=MXN&timezone=UTC&date_basis=conversation&sku=SYN-A&sku=SYN-B&source=csv&source=zendesk&snapshot_id=11111111-1111-4111-8111-111111111111';
 const paths=['/overview','/problems','/recommendations','/explorer','/interventions','/briefs'];
+// El menú además trae «Pregúntale a tus datos» (/preguntale), que no es una ruta con alcance financiero: solo se verifica en el oráculo de navegación, en el orden del DOM.
+const navPaths=['/overview','/problems','/recommendations','/explorer','/preguntale','/interventions','/briefs'];
 async function keyboard(page,selector,label){
  const target=typeof selector==='string'?page.locator(selector):selector;assert.equal(await target.count(),1,`${label}: unique control`);
  await page.evaluate(()=>document.activeElement?.blur());
@@ -45,8 +47,8 @@ async function navigationOracle(page){
  const group=nav.getByRole('button',{name:'Espacio de trabajo',exact:true});
  assert.equal(await group.count(),1,'CORE_NAV_GROUP');
  if(await group.getAttribute('aria-expanded')!=='true'){await keyboard(page,group,'KEYBOARD_NAV_GROUP');await page.keyboard.press('Enter');}
- assert.equal(await nav.getByRole('link').count(),6,'SIX_CORE_ENTRIES');
- for(const p of paths){
+ assert.equal(await nav.getByRole('link').count(),7,'SEVEN_CORE_ENTRIES');
+ for(const p of navPaths){
   const link=nav.locator(`a[href^="${p}?"]`);
   assert.equal(await link.count(),1,'NAV_DESTINATION:'+p);
   const url=new URL(await link.getAttribute('href'),base);

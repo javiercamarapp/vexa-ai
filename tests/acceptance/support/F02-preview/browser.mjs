@@ -30,7 +30,7 @@ export async function browserExam(page,{base,storageOrigin,connectionId}){
   await page.keyboard.press('Enter');assert.equal((await result).status(),200,'UI_PREVIEW_HTTP');
   assert.ok(requests.some(r=>r.method==='PUT'&&new URL(r.url).origin===storageOrigin),'UI_DIRECT_STORAGE');
   assert.ok(requests.filter(r=>r.method==='POST'&&new URL(r.url).pathname==='/api/imports').every(r=>!r.body?.includes('SYNTHETIC <img')),'NO_UPLOAD_PROXY');
-  assert.equal(await page.locator('img[src="x"]').count(),0,'TEXT_NOT_HTML');assert.match(await page.locator('body').innerText(),/SYNTHETIC <img/,'TEXT_VISIBLE');
+  await page.getByRole('button',{name:'Ver muestra normalizada',exact:true}).click();await page.getByRole('dialog',{name:'Muestra normalizada',exact:true}).waitFor();assert.equal(await page.locator('img[src="x"]').count(),0,'TEXT_NOT_HTML');assert.match(await page.locator('body').innerText(),/SYNTHETIC <img/,'TEXT_VISIBLE');await page.keyboard.press('Escape');await page.getByRole('dialog').waitFor({state:'hidden'});
   assert.equal(requests.filter(r=>r.url.endsWith('/confirm')).length,0,'NO_IMPLICIT_CONFIRM');
   const save=page.getByRole('button',{name:/guardar.*mapping|guardar.*mapeo|guardar.*configuraci[oó]n/i});await keyboard(page,save);
   const saved=page.waitForResponse(r=>new URL(r.url()).pathname.endsWith('/mapping')&&r.request().method()==='POST');await page.keyboard.press('Enter');assert.equal((await saved).status(),200,'UI_MAPPING_HTTP');

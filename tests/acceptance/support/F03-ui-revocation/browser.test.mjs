@@ -10,9 +10,9 @@ test('F03 UI authorization revocation clears private state and rejects obsolete 
  const membership=status=>h.sql(`UPDATE memberships SET status=${q(status)} WHERE user_id=${q(h.A.id)} AND tenant_id=${q(h.A.tenant)}`);
  const config=p.locator('section[aria-labelledby="connection-settings-title"]');
  await t.test('health GET403 hides rows and settings own POST403 destroys cached owner configuration',async()=>{
-  try{await p.goto(h.base+'/connections');await p.getByRole('button',{name:'Editar SYN-UI-REVOCATION',exact:true}).click();membership('revoked');
+  try{await p.goto(h.base+'/connections');await p.getByRole('button',{name:'Editar SYN-UI-REVOCATION',exact:true}).click();await p.keyboard.press('Escape');membership('revoked');
    const health=p.waitForResponse(r=>new URL(r.url()).pathname==='/api/connections');await p.getByRole('button',{name:'Actualizar conexiones',exact:true}).click();assert.equal((await health).status(),403);await p.getByText('No tienes acceso a las conexiones de esta organización.',{exact:true}).waitFor();assert.equal(await p.locator('article[aria-label]').count(),0);
-   const post=p.waitForResponse(r=>new URL(r.url()).pathname==='/api/connections/settings'&&r.request().method()==='POST');await p.getByRole('button',{name:'Guardar conexión',exact:true}).click();assert.equal((await post).status(),403);await config.getByRole('alert').waitFor();await settled(p);
+   const post=p.waitForResponse(r=>new URL(r.url()).pathname==='/api/connections/settings'&&r.request().method()==='POST');await p.getByRole('button',{name:'Editar SYN-UI-REVOCATION',exact:true}).click();await p.getByRole('button',{name:'Guardar conexión',exact:true}).click();assert.equal((await post).status(),403);await config.getByRole('alert').waitFor();await settled(p);
    observed.settingsPrivateRows=await config.locator('article').count();observed.settingsOwnerForms=await config.locator('form').count();await p.screenshot({path:path.join(evidence,'settings403.png')});
    assert.equal(observed.settingsPrivateRows,0,'SETTINGS_403_MUST_ERASE_PRIVATE_ROWS');assert.equal(observed.settingsOwnerForms,0,'SETTINGS_403_MUST_ERASE_OWNER_FORM');assert.equal(await config.getByRole('button',{name:'Nueva conexión',exact:true}).count(),0);
   }finally{membership('active');}

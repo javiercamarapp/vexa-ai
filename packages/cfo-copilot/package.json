@@ -1,0 +1,13 @@
+{
+  "name": "@vexa/cfo-copilot",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Modelo CFO (puro), herramientas y runtime de los copilotos de plataforma y CFO. Sin dependencias.",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  }
+}

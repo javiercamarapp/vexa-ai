@@ -32,7 +32,7 @@ function RecommendationCard({item,members,busy,conflict,operate,first}:{item:Rec
  const create=()=>{draftKey.current??=crypto.randomUUID();void operate(endpoint+'/interventions',{expectedVersion:item.version,requestKey:draftKey.current});};
  const evidenceQuery=pinnedQuery(item.scope,item.snapshotId,item.scopeHash);evidenceQuery.set('detail_hash',item.detailHash);
  const pr=PRIORITY[item.priority]??PRIORITY.normal,dismissed=item.status==='dismissed',highlight=first&&!dismissed;
- const close=(ok:Promise<boolean>)=>{void ok.then(()=>setEdit(false));};
+ const close=(ok:Promise<boolean>)=>{void ok.then(saved=>{if(saved)setEdit(false);});};
  return <article className="card insight" aria-label={'Recomendación: '+item.title} data-severity={pr.sev} data-highlight={highlight||undefined} data-dismissed={dismissed||undefined}>
   <header className="insight-head"><span className="insight-icon" aria-hidden="true"><Icon name={highlight?'target':'sparkle'} size={16}/></span><div className="insight-titles"><span className="insight-eyebrow">{highlight?'Hacer primero':dismissed?'Descartada':'Recomendación'}</span><h3>{item.title}</h3></div><StatusChip tone={pr.tone}>{pr.label}</StatusChip></header>
   <p className="insight-sentence"><strong>{item.action}</strong></p>

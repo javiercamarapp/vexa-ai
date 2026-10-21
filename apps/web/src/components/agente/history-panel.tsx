@@ -26,7 +26,7 @@ export function HistoryPanel({id,conversations,activeId,onNew,onOpen,onRename,on
    <label className="sr-only" htmlFor={id+'-q'}>Buscar en el historial</label><input id={id+'-q'} type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar en el historial"/></div>
   <p className="card-lead agente-note">Se guarda solo en este navegador. Las citas de clientes no se guardan.</p>
   {conversations.length===0?<p className="state" role="status">Aún no tienes chats guardados.</p>:shown.length===0?<p className="state" role="status">Ningún chat coincide con «{query}».</p>:
-   groups.map(([label,list])=><section key={label} aria-label={label} className="agente-history-group"><h3 className="eyebrow">{label}</h3><ul>
+   groups.map(([label,list])=><section key={label} aria-label={label} className="agente-history-group"><p className="eyebrow" role="heading" aria-level={3}>{label}</p><ul>
     {list.map(c=><li key={c.id}>{editing===c.id?
      <form className="agente-rename" onSubmit={e=>{e.preventDefault();onRename(c.id,draft);setEditing(null);}}><label className="sr-only" htmlFor={id+'-r'}>Nuevo nombre</label><input id={id+'-r'} autoFocus value={draft} maxLength={80} onChange={e=>setDraft(e.target.value)} onKeyDown={e=>{if(e.key==='Escape'){e.stopPropagation();setEditing(null);}}}/><span className="btn-group"><Button type="submit" size="sm" variant="primary">Guardar</Button><Button size="sm" onClick={()=>setEditing(null)}>Cancelar</Button></span></form>:
      <><Button className="agente-history-item" aria-current={c.id===activeId?'true':undefined} onClick={()=>onOpen(c.id)}><span className="agente-history-title">{c.title}</span></Button>

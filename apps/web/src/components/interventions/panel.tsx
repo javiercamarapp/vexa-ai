@@ -21,7 +21,7 @@ import {nf} from '../ui/format';
 import css from './panel.module.css';
 
 type List={items:Intervention[];unavailableCount:number};
-type Operation=(id:string,body:Record<string,unknown>)=>Promise<void>;
+type Operation=(id:string,body:Record<string,unknown>)=>Promise<boolean>;
 const statusLabel:Record<Intervention['status'],string>={draft:'Borrador',approved:'Plan aprobado',active:'En ejecución',measuring:'En medición',closed:'Medición cerrada',cancelled:'Cancelada'};
 const outcomeLabel={refunds:'Reembolsos observados',exposure:'Ingresos expuestos',allOrders:'Importe de órdenes'};
 function text(data:FormData,key:string){return String(data.get(key)??'').trim();}
@@ -41,7 +41,7 @@ function Stage({status}:{status:Intervention['status']}){const i=STAGES.indexOf(
 function InterventionCard({item,busy,conflict,operate}:{item:Intervention;busy:boolean;conflict:boolean;operate:Operation}){
  const [open,setOpen]=useState(false);
  useEffect(()=>{const sync=()=>{if(window.location.hash==='#intervention-'+item.id)setOpen(true);};sync();window.addEventListener('hashchange',sync);return()=>window.removeEventListener('hashchange',sync);},[item.id]);
- const run:Operation=(id,body)=>operate(id,body).then(()=>setOpen(false));
+ const run:Operation=(id,body)=>operate(id,body).then(ok=>{if(ok)setOpen(false);return ok;});
  return <article id={'intervention-'+item.id} className={css.card} aria-label={'Intervención: '+item.title} data-status={item.status}>
   <h3 className={css.cardTitle}>{item.title}</h3>
   <p className={css.cardText}>{item.hypothesis}</p>
@@ -73,7 +73,7 @@ function InterventionDetail({item,busy,conflict,operate}:{item:Intervention;busy
 }
 function TableRow({item,busy,conflict,operate}:{item:Intervention;busy:boolean;conflict:boolean;operate:Operation}){
  const [open,setOpen]=useState(false);
- const run:Operation=(id,body)=>operate(id,body).then(()=>setOpen(false));
+ const run:Operation=(id,body)=>operate(id,body).then(ok=>{if(ok)setOpen(false);return ok;});
  return <tr id={'intervention-'+item.id} aria-label={'Intervención: '+item.title}><th scope="row">{item.title}</th><td><StatusChip tone={TONE[item.status]}>{statusLabel[item.status]}</StatusChip></td><td><Stage status={item.status}/></td><td>{item.ownerId?'Asignado':'Sin asignar'}</td><td className="num">{nf.format(item.measurements.length)}</td><td><Button size="sm" aria-label={'Abrir detalle de '+item.title} onClick={()=>setOpen(true)}>Abrir detalle</Button>
   <Drawer open={open} onClose={()=>setOpen(false)} width={640} title={item.title} subtitle={<StatusChip tone={TONE[item.status]}>{statusLabel[item.status]} · v{item.version}</StatusChip>}><InterventionDetail item={item} busy={busy} conflict={conflict} operate={run}/></Drawer></td></tr>;
 }
@@ -91,9 +91,9 @@ export function InterventionsPanel({initialQuery}:{initialQuery:string}){
  useEffect(()=>{const back=()=>{invalidate();setView(null);setBusy(true);const value=cleanQuery(window.location.search).toString();resolved.current=value;if(value===query)void load(value);else setQuery(value);};window.addEventListener('popstate',back);return()=>window.removeEventListener('popstate',back);},[query,load,invalidate]);
  useEffect(()=>{if(view&&window.location.hash.startsWith('#intervention-'))document.getElementById(window.location.hash.slice(1))?.scrollIntoView({block:'start'});},[view]);
  const apply=(next:URLSearchParams)=>{next.delete('scope_hash');if(['date_start','date_end','currency','basis','sku','source','exponent'].some(k=>next.getAll(k).join('|')!==new URLSearchParams(resolved.current).getAll(k).join('|'))&&next.get('snapshot_id')===scope.snapshot_id)next.delete('snapshot_id');const value=cleanQuery(next.toString()).toString();controller.current?.abort();epoch.current++;inFlight.current=false;setView(null);setBusy(true);resolved.current=value;window.history.pushState(null,'',window.location.pathname+'?'+value);if(value===query)void load(value);else setQuery(value);};
- const operate:Operation=async(id,body)=>{if(inFlight.current)return;inFlight.current=true;controller.current?.abort();const abort=new AbortController();controller.current=abort;const generation=++epoch.current;setBusy(true);setError('');setNotice('');const fingerprint=JSON.stringify({id,...body});let requestKey=keys.current.get(fingerprint);if(!requestKey){requestKey=crypto.randomUUID();keys.current.set(fingerprint,requestKey);}let saved=false;
-  try{const response=await fetch('/api/interventions/'+id,{method:'POST',cache:'no-store',signal:abort.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({...body,requestKey})});if(abort.signal.aborted||generation!==epoch.current)return;if(!response.ok){if([401,403,404].includes(response.status))setView(null);if(response.status===409)setConflict(true);throw Error(failure(response.status));}const changed=await response.json();if(abort.signal.aborted||generation!==epoch.current)return;if(!changed.data)throw Error('No se pudo verificar el cambio.');saved=true;const refresh=await fetch('/api/interventions?'+resolved.current,{cache:'no-store',signal:abort.signal});if(abort.signal.aborted||generation!==epoch.current)return;if(!refresh.ok){setView(null);throw Error('El cambio se guardó, pero falta verificar el estado actual. Actualiza antes de continuar.');}const next=await refresh.json();if(abort.signal.aborted||generation!==epoch.current)return;if(!validList(next.data,resolved.current))throw Error('La respuesta no contiene un estado verificable.');setView(next.data);setConflict(false);setNotice('Cambio guardado y verificado.');
-  }catch(e){if(!abort.signal.aborted&&generation===epoch.current){if(saved)setView(null);setConflict(true);setError(e instanceof Error?e.message:failure(503));}}finally{if(!abort.signal.aborted&&generation===epoch.current){inFlight.current=false;setBusy(false);}}
+ const operate:Operation=async(id,body)=>{if(inFlight.current)return false;inFlight.current=true;controller.current?.abort();const abort=new AbortController();controller.current=abort;const generation=++epoch.current;setBusy(true);setError('');setNotice('');const fingerprint=JSON.stringify({id,...body});let requestKey=keys.current.get(fingerprint);if(!requestKey){requestKey=crypto.randomUUID();keys.current.set(fingerprint,requestKey);}let saved=false;
+  try{const response=await fetch('/api/interventions/'+id,{method:'POST',cache:'no-store',signal:abort.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({...body,requestKey})});if(abort.signal.aborted||generation!==epoch.current)return false;if(!response.ok){if([401,403,404].includes(response.status))setView(null);if(response.status===409)setConflict(true);throw Error(failure(response.status));}const changed=await response.json();if(abort.signal.aborted||generation!==epoch.current)return false;if(!changed.data)throw Error('No se pudo verificar el cambio.');saved=true;const refresh=await fetch('/api/interventions?'+resolved.current,{cache:'no-store',signal:abort.signal});if(abort.signal.aborted||generation!==epoch.current)return false;if(!refresh.ok){setView(null);throw Error('El cambio se guardó, pero falta verificar el estado actual. Actualiza antes de continuar.');}const next=await refresh.json();if(abort.signal.aborted||generation!==epoch.current)return false;if(!validList(next.data,resolved.current))throw Error('La respuesta no contiene un estado verificable.');setView(next.data);setConflict(false);setNotice('Cambio guardado y verificado.');return true;
+  }catch(e){if(!abort.signal.aborted&&generation===epoch.current){if(saved)setView(null);setConflict(true);setError(e instanceof Error?e.message:failure(503));}return false;}finally{if(!abort.signal.aborted&&generation===epoch.current){inFlight.current=false;setBusy(false);}}
  };
  const [mode,setMode]=useState<'board'|'table'>('board');
  const items=view?.items??[];

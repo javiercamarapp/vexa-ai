@@ -69,7 +69,7 @@ function Chat({data}:{data:AgentState}){
    <div ref={end}/>
   </div>}
 
-  {!has&&consult&&s.categorias.length>0&&<div id={catId} className="agente-cats">{s.categorias.map(c=><section key={c.titulo} className="card" aria-label={c.titulo}><h2 className="eyebrow">{c.titulo}</h2><div className="agente-cat-list">{c.preguntas.map(q=><Button key={q} size="sm" className="agente-q" onClick={()=>ask(q)}>{q}</Button>)}</div></section>)}</div>}
+  {!has&&consult&&s.categorias.length>0&&<div id={catId} className="agente-cats">{s.categorias.map(c=><section key={c.titulo} className="card" aria-label={c.titulo}><p className="eyebrow" role="heading" aria-level={2}>{c.titulo}</p><div className="agente-cat-list">{c.preguntas.map(q=><Button key={q} size="sm" className="agente-q" onClick={()=>ask(q)}>{q}</Button>)}</div></section>)}</div>}
 
   <div className="agente-dock"><Composer value={text} onChange={setText} onSend={()=>ask(text)} onStop={a.stop} onConsult={()=>setConsult(v=>!v)} sending={a.sending} disabled={limitReached} placeholder="Pregunta sobre tus datos…" maxChars={data.limits.maxQuestionChars} categoriesId={catId} categoriesOpen={consult} inputId={inputId}/></div>
 

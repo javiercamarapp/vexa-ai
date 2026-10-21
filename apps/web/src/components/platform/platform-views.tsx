@@ -12,7 +12,8 @@ import {CopilotPanel} from './copilot-panel';
 import {BulkBar, DataTable, downloadCsv, type Column} from './data-table';
 import {PfIcon} from './icons';
 import {Empty, HowTo, Meter, Panel, Pill, Seg, Tile, healthTone, severityTone, Skeleton} from './primitives';
-import {EXPECTED_SOURCES, HEALTH, PLATFORM_SHORTCUTS, SEVERITY_LABEL, type PlatformView} from '../../../../../packages/cfo-copilot/src/index.mjs';
+import {EXPECTED_SOURCES, HEALTH, PLATFORM_SHORTCUTS, SEVERITY_LABEL} from '../../../../../packages/cfo-copilot/src/client.mjs';
+import type {PlatformView} from '../../../../../packages/cfo-copilot/src/index.mjs';
 import {int, pct} from '../../../../../packages/cfo-copilot/src/format.mjs';
 import './platform-ui.css';
 

@@ -5,7 +5,7 @@ import {usePathname,useSearchParams} from 'next/navigation';
 import {WorkspaceIcon} from './icon';
 export const destinations=[['/overview','Resumen'],['/problems','Problemas'],['/recommendations','Recomendaciones'],['/explorer','Explorador'],['/preguntale','Pregúntale a tus datos'],['/interventions','Intervenciones'],['/briefs','Brief ejecutivo']] as const;
 const groups:ReadonlyArray<readonly [string,ReadonlyArray<readonly [string,string,string]>]> = [
- ['Operación',[['/economics','Gestión económica','economics'],['/problems/manage','Gestionar problemas','problems'],['/analysis','Análisis','analysis']]],
+ ['Operación',[['/economics','Gestión económica','economics'],['/cfo','CFO del negocio','economics'],['/problems/manage','Gestionar problemas','problems'],['/analysis','Análisis','analysis']]],
  ['Datos e inteligencia',[['/imports','Importaciones','imports'],['/connections','Conexiones','connections'],['/history','Histórico','history'],['/evaluation','Evaluación histórica','analysis'],['/evaluation/candidates','Candidatos evaluados','recommendations'],['/migrations','Comparación de migración','connections']]],
  ['Administración',[['/notifications','Notificaciones','notifications'],['/settings/notifications','Preferencias de avisos','settings'],['/settings/team','Equipo','team'],['/settings/retention','Retención y borrado','settings']]]
 ] as const;
@@ -13,9 +13,11 @@ export function navigationQuery(pathname:string,raw:string){const query=new URLS
 const extras:ReadonlyArray<readonly [string,string,string]>=[['/customers','Historial del cliente','customers'],['/jobs','Progreso de ingestión','imports'],['/settings/notification-delivery','Entrega de avisos','settings'],['/notifications/push','Avisos en el navegador','notifications']];
 export function workspaceTitle(pathname:string){const links=[...destinations,...extras,...groups.flatMap(([,links])=>links)];return [...links].sort((a,b)=>b[0].length-a[0].length).find(([href])=>pathname===href||pathname.startsWith(href+'/'))?.[1]??'Espacio de trabajo';}
 export function workspaceIconName(pathname:string){const links=[...destinations,...extras,...groups.flatMap(([,links])=>links)];const link=[...links].sort((a,b)=>b[0].length-a[0].length).find(([href])=>pathname===href||pathname.startsWith(href+'/'));return link?.[2]??link?.[0].slice(1)??'overview';}
-export function Navigation({onNavigate,collapsed=false}:{onNavigate?:()=>void;collapsed?:boolean}){
+const cfoRoles=['owner','analyst'];
+export function Navigation({onNavigate,collapsed=false,role}:{onNavigate?:()=>void;collapsed?:boolean;role?:string}){
  const pathname=usePathname(),query=navigationQuery(pathname,useSearchParams().toString()),id=useId();
- const sections=[['Espacio de trabajo',destinations.filter(([href])=>href!=='/overview').map(([href,label])=>[href,label,href.slice(1)] as const)] as const,...groups];
+ const visible=(href:string)=>href!=='/cfo'||(role!==undefined&&cfoRoles.includes(role));
+ const sections=[['Espacio de trabajo',destinations.filter(([href])=>href!=='/overview').map(([href,label])=>[href,label,href.slice(1)] as const)] as const,...groups.map(([group,links])=>[group,links.filter(([href])=>visible(href))] as const)];
  const rootItem=['/overview','Resumen','overview'] as const;
  const current=[{group:null,link:rootItem},...sections.flatMap(([group,links])=>links.map(link=>({group,link})))].sort((a,b)=>b.link[0].length-a.link[0].length).find(({link:[href]})=>pathname===href||pathname.startsWith(href+'/'));
  const [openGroup,setOpenGroup]=useState<string|null>(current?.group??'Espacio de trabajo');

@@ -8,8 +8,10 @@ function authLinkHeaders(request:NextRequest,response:NextResponse) {
 export async function middleware(request:NextRequest) {
   try {
     const c=authConfig();
-    const platformRoute=request.nextUrl.pathname==='/platform';
-    const protectedRoute=platformRoute||request.nextUrl.pathname==='/'||/^\/(overview|problems|customers|recommendations|explorer|interventions|briefs)(\/|$)/.test(request.nextUrl.pathname);
+    const path=request.nextUrl.pathname;
+    const platformRoute=path==='/platform'||path.startsWith('/platform/');
+    const dataRoute=(platformRoute||path==='/cfo'||path.startsWith('/cfo/'))&&/\/data(\/|$)/.test(path);
+    const protectedRoute=platformRoute||path==='/'||/^\/(overview|problems|customers|recommendations|explorer|preguntale|interventions|briefs|cfo)(\/|$)/.test(path);
     if(!c || !protectedRoute)return authLinkHeaders(request,NextResponse.next({headers:PRIVATE_HEADERS}));
     const {client,finish}=requestAuth(request);
     try {
@@ -17,10 +19,11 @@ export async function middleware(request:NextRequest) {
       else await resolveSession(identity(client),request.cookies.get(ACTIVE_ORG)?.value);
       return finish(NextResponse.next({request:{headers:request.headers}}));
     } catch(error) {
+      if(dataRoute&&error instanceof AccessError&&(error.status===401||error.status===403))return finish(failure(error));
       if(error instanceof AccessError && error.status===401)return finish(localRedirect('/login'));
       if(error instanceof AccessError && error.status===403)return finish(localRedirect('/login?error=access_denied'));
       return finish(failure(error));
     }
   } catch(error) {return authLinkHeaders(request,failure(error));}
 }
-export const config = { runtime: 'nodejs', matcher: ['/', '/platform', '/login', '/auth/:path*', '/overview/:path*', '/problems/:path*', '/customers/:path*', '/recommendations/:path*', '/explorer/:path*', '/interventions/:path*', '/briefs/:path*'] };
+export const config = { runtime: 'nodejs', matcher: ['/', '/platform', '/platform/:path*', '/cfo/:path*', '/login', '/auth/:path*', '/overview/:path*', '/problems/:path*', '/customers/:path*', '/recommendations/:path*', '/explorer/:path*', '/preguntale/:path*', '/interventions/:path*', '/briefs/:path*'] };

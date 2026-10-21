@@ -19,6 +19,8 @@ const extractionCode = Object.fromEntries(extractionPaths.map(name => {
 }));
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // `next dev` no debe generar AGENTS.md/CLAUDE.md en el árbol del producto.
+  agentRules: false,
   async headers() {
     return [{ source: '/:path*', headers: [
       { key: 'X-Content-Type-Options', value: 'nosniff' },

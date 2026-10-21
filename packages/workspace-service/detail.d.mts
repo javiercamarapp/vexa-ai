@@ -21,3 +21,5 @@ export type CustomerBinding={id:string;customerKey:string;customerId:string;vers
 export type CustomerBindingsView={customers:{id:string;label:string;source:string}[];declaredKeys:string[];bindings:CustomerBinding[];canWrite:boolean;notice:string};
 export type CustomerBindingInput={customerKey:string;customerId:string;expectedVersion:number;active:boolean;report:string;attested:true};
 export function createDetailService(options:{database:any}):{get(input:DetailContext):Promise<DetailView>;customerBindings():Promise<CustomerBindingsView>;recordCustomerBinding(input:CustomerBindingInput):Promise<CustomerBinding>};
+
+export function sourceCustomer(s:any,customerId:string,revisionId?:string|null):Promise<{row:any;label:string;source:string}|null>;

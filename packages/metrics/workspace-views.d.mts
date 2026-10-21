@@ -1,0 +1,1 @@
+export function createWorkspaceViews(options:{database:any;sourceCustomer:(s:any,id:string)=>Promise<{label:string;source:string}|null>}):{mappings(input?:{limit?:number;cursor?:string;q?:string}):Promise<Record<string,any>>;customerBindings(input?:{limit?:number;cursor?:string;q?:string;customerQ?:string}):Promise<Record<string,any>>};

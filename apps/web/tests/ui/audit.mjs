@@ -8,7 +8,7 @@ const require=createRequire(import.meta.url);const {chromium}=require('playwrigh
 const {respond,IDS,HASH,agentStateEmpty}=await import('./fixtures.mjs');
 const base=process.argv[2]??'http://localhost:3107',out=process.argv[3]??path.resolve('ui-captures');fs.mkdirSync(out,{recursive:true});
 const PIN=`?snapshot_id=${IDS.snapshot}&scope_hash=${HASH}&date_start=2026-10-01&date_end=2026-11-01&currency=USD&basis=net`;
-const VIEWS=[['overview','/overview'],['problems','/problems'],['problem-detail',`/problems/${IDS.problemA}${PIN}`],['recommendations','/recommendations'],['explorer','/explorer'],['customer','/customers/'+IDS.customer+PIN],['interventions','/interventions'],['briefs','/briefs'],['brief-detail','/briefs/'+IDS.brief],['history','/history'],['preguntale','/preguntale']];
+const VIEWS=[['overview','/overview'],['problems','/problems'],['problem-detail',`/problems/${IDS.problemA}${PIN}`],['problem-detail-sin-publicacion',`/problems/${IDS.problemA}`],['recommendations','/recommendations'],['explorer','/explorer'],['customer','/customers/'+IDS.customer+PIN],['interventions','/interventions'],['briefs','/briefs'],['brief-detail','/briefs/'+IDS.brief],['history','/history'],['preguntale','/preguntale']];
 const EXTRA=[['operacion-economia','/economics'],['operacion-problemas-gestion','/problems/manage'],['operacion-analisis','/analysis'],['datos-importaciones','/imports'],['datos-conexiones','/connections'],['datos-evaluacion','/evaluation'],['datos-candidatos','/evaluation/candidates'],['datos-migracion','/migrations'],['admin-notificaciones','/notifications'],['admin-avisos','/settings/notifications'],['admin-entrega','/settings/notification-delivery'],['admin-equipo','/settings/team'],['admin-retencion','/settings/retention'],['jobs-setup','/jobs/setup'],['login','/login'],['plataforma','/platform'],['404','/ruta-que-no-existe-xyz'],['invitacion','/auth/invitations/'+IDS.snapshot]];
 if(process.env.EXTRA==='1')VIEWS.splice(0,VIEWS.length,...EXTRA);
 const VIEWPORTS=[[375,812],[768,1024],[1440,900]];
@@ -41,14 +41,14 @@ const geometry=()=>{
  for(const el of all){
   if(!el.matches('a[href],button'))continue;
   if(el.closest('.workspace-sidebar,.workspace-bottom-nav,.workspace-header,.workspace-mobile-dialog,.sr-only,[role=tablist]')||el.matches('.skip-link'))continue;
-  const s=getComputedStyle(el),r=el.getBoundingClientRect(),system=el.matches('.btn,.id-chip,.icon-button,.catalog-link,.login-btn')||(el.tagName==='A'&&s.display.includes('flex')&&(parseFloat(s.borderTopLeftRadius)||0)>=10&&r.height>=36);
+  const s=getComputedStyle(el),r=el.getBoundingClientRect(),system=el.matches('.btn,.id-chip,.icon-button,.icon-btn,.seg-btn,.fchip-x,.catalog-link,.login-btn,.row-link,.card-link,.row-link-inline,.stat-card,.barlist-link,.tab-link,.check-chip')||(el.tagName==='A'&&s.display.includes('flex')&&(parseFloat(s.borderTopLeftRadius)||0)>=10&&r.height>=32);
   const inline=el.tagName==='A'&&!system&&!!el.parentElement&&el.parentElement.matches(textual)&&getComputedStyle(el.parentElement).display!=='flex';
   if(inline){if(!(s.textDecorationLine||'').includes('underline'))issues.push({kind:'inline-link-no-underline',detail:label(el)});continue;}
   if(el.tagName==='A'&&!system){issues.push({kind:'unstyled-link',detail:label(el)+' (use LinkButton)'});continue;}
-  if(el.tagName==='BUTTON'&&!system){const radius=parseFloat(s.borderTopLeftRadius)||0;if(r.height<36||radius<10)issues.push({kind:'unstyled-button',detail:label(el)+` h=${Math.round(r.height)} r=${radius}`});}
-  if(system&&!el.matches('.id-chip,.icon-button')&&r.height>0&&r.height<36)issues.push({kind:'click-area-small',detail:label(el)+` h=${Math.round(r.height)}`});
+  if(el.tagName==='BUTTON'&&!system){const radius=parseFloat(s.borderTopLeftRadius)||0;if(r.height<32||radius<10)issues.push({kind:'unstyled-button',detail:label(el)+` h=${Math.round(r.height)} r=${radius}`});}
+  if(system&&!el.matches('.id-chip,.icon-button,.icon-btn,.seg-btn,.fchip-x,.row-link,.card-link,.row-link-inline,.barlist-link,.check-chip,.stat-card')&&r.height>0&&r.height<32)issues.push({kind:'click-area-small',detail:label(el)+` h=${Math.round(r.height)}`});
  }
- for(const el of all){if(!el.matches('summary'))continue;if(el.closest('.workspace-sidebar,.nav-group'))continue;const r=el.getBoundingClientRect();if(r.height>0&&r.height<36)issues.push({kind:'click-area-small',detail:label(el)+` summary h=${Math.round(r.height)}`});}
+ for(const el of all){if(!el.matches('summary'))continue;if(el.closest('.workspace-sidebar,.nav-group'))continue;const r=el.getBoundingClientRect();if(r.height>0&&r.height<32)issues.push({kind:'click-area-small',detail:label(el)+` summary h=${Math.round(r.height)}`});}
  // text that spills its own box (any element with its own text, not a scroll container)
  for(const el of all){const s=getComputedStyle(el);if(s.display==='inline'||s.overflowX!=='visible'||el.matches('table,tbody,thead,tr,svg,code.ref'))continue;if(el.scrollWidth>el.clientWidth+2&&el.clientWidth>0&&!scrollAncestor(el)&&[...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim()))issues.push({kind:'text-overflow',detail:label(el)+` ${el.scrollWidth}>${el.clientWidth}`});}
  // a short single word (label, chip, badge) must never be broken across lines
@@ -57,6 +57,9 @@ const geometry=()=>{
  const parents=new Set(all.map(e=>e.parentElement).filter(Boolean));
  for(const p of parents){const d=getComputedStyle(p).display;if(!/flex|grid/.test(d))continue;const kids=[...p.children].filter(k=>!hidden(k)&&!['absolute','fixed'].includes(getComputedStyle(k).position)&&!k.matches('.sr-only,svg,option,script,style'));if(kids.length>40||kids.length<2)continue;
   for(let i=0;i<kids.length;i++)for(let j=i+1;j<kids.length;j++){const a=kids[i].getBoundingClientRect(),b=kids[j].getBoundingClientRect();const w=Math.min(a.right,b.right)-Math.max(a.left,b.left),h=Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top);if(w>3&&h>3&&!pinned(kids[i])&&!pinned(kids[j]))issues.push({kind:'sibling-overlap',detail:label(kids[i])+' ⟂ '+label(kids[j])+` ${Math.round(w)}x${Math.round(h)}`});}}
+ // ---- Unified type scale and compact buttons (rediseño 20-oct): one size per heading level in every view; buttons 30–36 px tall ----
+ for(const h of document.querySelectorAll('.workspace-content h1,.workspace-content h2,.workspace-content h3,.workspace-content h4')){if(hidden(h))continue;const want={H1:'24px',H2:'16px',H3:'14px',H4:'14px'}[h.tagName],fs=getComputedStyle(h).fontSize;if(fs!==want)issues.push({kind:'type-scale',detail:label(h)+' '+fs+' != '+want});}
+ for(const b of document.querySelectorAll('.workspace-content .btn')){if(hidden(b)||b.matches('.title-link,.catalog-link'))continue;const r=b.getBoundingClientRect();if(r.height>0&&(r.height<30||r.height>38)&&b.textContent.trim().length<28)issues.push({kind:'button-height',detail:label(b)+' h='+Math.round(r.height)});}
  return issues;
 };
 const browser=await chromium.launch();const report=[];let failed=0;
@@ -98,14 +101,20 @@ for(const [w,h] of VIEWPORTS){
   const page=await ctx.newPage(),fail=[],errors=[];page.on('pageerror',e=>errors.push('pageerror: '+e.message));
   try{
    await page.goto(base+'/overview',{waitUntil:'networkidle',timeout:90000});
-   await page.waitForSelector('.trends .trend-bar',{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'trend bars did not render'}));
-   const bars=await page.locator('.trends .trend-bar').count();if(bars<24)fail.push({kind:'flow',detail:'expected 12 conversation bars + 12 ledger bars, got '+bars});
-   await page.locator('.trends .bar-col').nth(11).focus();
-   const tip=await page.locator('.trends .trend-tip').first().innerText();if(!/octubre/i.test(tip)||!/conversaciones/.test(tip))fail.push({kind:'flow',detail:'tooltip did not show the focused month: '+tip.replace(/\n/g,' | ')});
-   await page.locator('.trends button[aria-pressed]').nth(1).click();
-   if(!(await page.locator('.trends .chart-title',{hasText:'Reembolsos liquidados por mes'}).count()))fail.push({kind:'flow',detail:'refunds toggle did not change the chart'});
-   const kinds=(await page.locator('.trends .kind-badge').allInnerTexts()).join('|');if(!/Estimado/.test(kinds)||!/Observado/.test(kinds))fail.push({kind:'flow',detail:'conversation sample must be labelled Estimado and the ledger Observado: '+kinds});
-   const kpi=(await page.locator('[class*=kpiValue]').allInnerTexts()).join('|');if(!/184,523\.00 USD/.test(kpi)||!/1,204,500\.00 USD/.test(kpi))fail.push({kind:'flow',detail:'KPI final values are not the exact figures: '+kpi});
+   await page.waitForSelector('.trends .chart-plot svg',{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'area chart did not render'}));
+   await page.waitForSelector('.column-chart .col-bar',{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'conversation columns did not render'}));
+   const cols=await page.locator('.column-chart .col-bar').count();if(cols<12)fail.push({kind:'flow',detail:'expected 12 conversation bars, got '+cols});
+   await page.locator('.trends .chart-plot svg').first().evaluate(e=>e.focus({preventScroll:true}));await page.keyboard.press('ArrowLeft');
+   const tip=await page.locator('.trends .chart-tip').first().innerText().catch(()=>'');if(!/octubre/i.test(tip)||!/pedidos/.test(tip))fail.push({kind:'flow',detail:'tooltip did not show the last month: '+tip.replace(/\n/g,' | ')});
+   await page.locator('.trends [role=radio]').nth(1).click();
+   if(!(await page.locator('.trends h2',{hasText:'Reembolsos liquidados por mes'}).count()))fail.push({kind:'flow',detail:'refunds toggle did not change the chart'});
+   const kinds=(await page.locator('.kind-badge').allInnerTexts()).join('|');if(!/Estimado/.test(kinds)||!/Observado/.test(kinds))fail.push({kind:'flow',detail:'conversation sample must be labelled Estimado and the ledger Observado: '+kinds});
+   const kpi=(await page.locator('.stat-value').allInnerTexts()).join('|');if(!/184,523\.00 USD/.test(kpi)||!/1,204,500\.00 USD/.test(kpi))fail.push({kind:'flow',detail:'KPI final values are not the exact figures: '+kpi});
+   const cov=(await page.locator('.cov-grid').innerText().catch(()=>''));if(!/117,719/.test(cov)||!/13,228/.test(cov)||!/85,383/.test(cov))fail.push({kind:'flow',detail:'coverage must show exact counts 117,719 / 85,383 / 13,228'});
+   if(/estimado con una muestra/i.test(cov))fail.push({kind:'flow',detail:'coverage still shows a sampled estimate'});
+   // overlays: filters drawer opens, traps Esc, restores focus
+   await page.getByRole('button',{name:/^Filtros/}).click();await page.waitForSelector('dialog.drawer[open] form',{timeout:5000}).catch(()=>fail.push({kind:'flow',detail:'filters drawer did not open'}));
+   fail.push(...await page.evaluate(geometry));await page.keyboard.press('Escape');await page.waitForSelector('dialog.drawer[open]',{state:'detached',timeout:3000}).catch(()=>fail.push({kind:'flow',detail:'Esc did not close the drawer'}));
    fail.push(...await page.evaluate(geometry));
   }catch(e){fail.push({kind:'flow',detail:String(e).slice(0,200)});}
   const uniq=[...new Map(fail.map(i=>[i.kind+i.detail,i])).values()];if(uniq.length||errors.length)failed++;
@@ -117,7 +126,7 @@ for(const [w,h] of VIEWPORTS){
   const fail=[];
   try{
    await page.goto(base+'/explorer',{waitUntil:'networkidle',timeout:90000});
-   await page.waitForSelector('.coverage .cov-row',{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'coverage band did not render'}));
+   await page.waitForSelector('.coverage .cov-tile',{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'coverage band did not render'}));
    await page.fill('#explorer-question','¿Qué reembolsos constan en este corte?');
    await page.click('button[aria-label="Consultar datos"]');
    await page.waitForSelector('[aria-label="Respuesta de la consulta"]',{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'answer did not render'}));

@@ -1,10 +1,24 @@
 'use client';
 import {useCallback,useEffect,useRef,useState} from 'react';
+import {PageHeader} from './ui/page-header';
+import {Button,LinkButton,Refresh} from './ui/button';
+import {StatCard} from './ui/stat-card';
+import {StatusChip} from './ui/status-chip';
+import {BarList} from './ui/bar-list';
+import {EmptyState} from './ui/empty-state';
+import {Drawer} from './ui/overlay';
+import {IdChip} from './ui/id-chip';
+import {Timeline} from './ui/timeline';
+import {Icon} from './ui/icons';
+import {SkeletonStats} from './ui/skeletons';
+import {DataState} from './workspace/data-state';
+import {nf} from './ui/format';
+import css from './ops-panels.module.css';
 type Summary={status:string;kind:string;eligibleCases:number;utility:number|null;holdoutHash:string;resultHash:string};
 type Result={id:string;candidateId:string;configHash:string;eligible:boolean;reason:string;summary:Summary|null};
 type History={version:number;candidateId:string|null;configHash:string;operation:string};
 type State={results:Result[];history:History[];version:number;activeCandidateId:string|null;next:{results:string|null;history:number|null}};
-export function CandidatesPanel(){const[data,setData]=useState<State|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState(''),[receipt,setReceipt]=useState(''),[evidence,setEvidence]=useState(''),[confirmed,setConfirmed]=useState(false),[busy,setBusy]=useState(false);const seq=useRef(0),controller=useRef<AbortController|null>(null);
+export function CandidatesPanel(){const[data,setData]=useState<State|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState(''),[receipt,setReceipt]=useState(''),[evidence,setEvidence]=useState(''),[confirmed,setConfirmed]=useState(false),[busy,setBusy]=useState(false),[registering,setRegistering]=useState(false);const seq=useRef(0),controller=useRef<AbortController|null>(null);
  const load=useCallback(async()=>{const id=++seq.current;controller.current?.abort();const c=new AbortController();controller.current=c;setLoading(true);setConfirmed(false);setError('');try{const response=await fetch('/api/candidates',{cache:'no-store',signal:c.signal});if(!response.ok)throw Error('load');const value=await response.json();if(seq.current===id){setData(value);setError('');return true;}}catch{if(seq.current===id&&!c.signal.aborted){setData(null);setError('No se pudieron cargar los candidatos. Reintenta para recuperar el estado confirmado.');}}finally{if(seq.current===id)setLoading(false);}return false;},[]);
  const stop=useCallback(()=>{seq.current++;controller.current?.abort();},[]);
  useEffect(()=>{let disposed=false;void Promise.resolve().then(()=>{if(!disposed)void load();});return()=>{disposed=true;stop();};},[load,stop]);
@@ -15,6 +29,53 @@ export function CandidatesPanel(){const[data,setData]=useState<State|null>(null)
   }catch{if(seq.current===id&&!c.signal.aborted){setData(null);setError('No se pudo verificar la siguiente página. Recarga los candidatos y comprueba tus permisos.');}}finally{if(seq.current===id)setLoading(false);}
  }
  async function mutate(body:object){if(busy||loading)return;setBusy(true);setConfirmed(false);setError('');try{const response=await fetch('/api/candidates',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!response.ok){if(response.status===403)setData(null);if(response.status===409)await load();throw Error('write');}await load();}catch{setError('No se pudo confirmar el cambio. Recarga el estado y verifica los permisos, la versión y el recibo firmado.');}finally{setBusy(false);}}
- const canChange=!!data&&!busy&&!loading&&confirmed&&/^[a-f0-9]{64}$/.test(evidence);
- return <section style={{overflowWrap:'anywhere',minWidth:0}} aria-label="Candidatos de extracción" aria-busy={loading||busy}><h1>Candidatos de extracción</h1><p>La selección requiere una evaluación independiente firmada y la confirmación de un propietario. Los comentarios de desarrollo no acreditan una revisión humana de referencia.</p><a href="/evaluation">Volver a evaluación histórica</a>{loading&&<p role="status">Cargando estado confirmado…</p>}{error&&<p role="alert">{error}</p>}<button onClick={()=>void load()} disabled={busy}>Recargar candidatos</button>{data&&<><p>Versión activa: {data.version}. {data.activeCandidateId??'Configuración predeterminada'}</p><p>Los resultados con holdouts distintos no son comparables directamente. La regla de exposición exige un nuevo holdout por candidato; estos valores no demuestran una mejora estadística.</p><h2>Registrar recibo del custodio</h2><label>Resumen firmado<textarea value={receipt} onChange={e=>setReceipt(e.target.value)} maxLength={18000}/></label><button disabled={busy||loading||!receipt} onClick={()=>{try{void mutate({operation:'register',requestId:crypto.randomUUID(),envelope:JSON.parse(receipt)});}catch{setError('El resumen firmado debe ser JSON válido.');}}}>Registrar evaluación firmada</button><h2>Confirmación humana</h2><p>Criterios: gold humano completo, al menos 30 casos, utilidad mayor al 85% revisada por completo, cobertura y citas del 100%, sin fallos ni costos desconocidos.</p><label>Hash de evidencia revisada<input value={evidence} onChange={e=>setEvidence(e.target.value)} maxLength={64}/></label><label><input type="checkbox" checked={confirmed} onChange={e=>setConfirmed(e.target.checked)}/>Confirmo que revisé la evidencia independiente y autorizo esta selección o rollback.</label><ul>{data.results.map(r=><li key={r.id}><strong>{r.candidateId}</strong><p>Configuración: {r.configHash}</p><p>{r.summary?`${r.summary.status} · ${r.summary.kind} · ${r.summary.eligibleCases} casos · utilidad ${r.summary.utility===null?'desconocida':r.summary.utility}`:'Firma o custodio no disponible'}</p><p>{r.eligible?'Cumple criterios de selección':'Selección bloqueada: '+r.reason}</p><button disabled={!canChange||!r.eligible} onClick={()=>void mutate({operation:'select',resultId:r.id,expectedVersion:data.version,confirmed:true,reason:'validated_evaluation',evidenceHash:evidence})}>Seleccionar {r.candidateId}</button></li>)}</ul>{data.next.results!==null&&<button disabled={busy||loading} onClick={()=>void more('results')}>Cargar más evaluaciones</button>}<h2>Historial y rollback</h2>{data.version>0&&<button disabled={!canChange} onClick={()=>void mutate({operation:'rollback',targetVersion:0,expectedVersion:data.version,confirmed:true,reason:'incident_recovery',evidenceHash:evidence})}>Restaurar configuración predeterminada</button>}<ul>{data.history.map(h=><li key={h.version}>Versión {h.version}: {h.candidateId??'Predeterminada'} · {h.configHash}{h.version<data.version&&<button disabled={!canChange} onClick={()=>void mutate({operation:'rollback',targetVersion:h.version,expectedVersion:data.version,confirmed:true,reason:'quality_regression',evidenceHash:evidence})}>Restaurar versión {h.version}</button>}</li>)}</ul>{data.next.history!==null&&<button disabled={busy||loading} onClick={()=>void more('history')}>Cargar más versiones</button>}</>}</section>;
+ const canChange=!!data&&!busy&&!loading&&confirmed&&/^[a-f0-9]{64}$/.test(evidence); const eligibleCount=data?data.results.filter(r=>r.eligible).length:0;
+ const utilities=data?data.results.map(r=>r.summary?.utility??null):[];
+ return <section className="stack" style={{overflowWrap:'anywhere',minWidth:0}} aria-label="Candidatos de extracción" aria-busy={loading||busy}>
+  <PageHeader title="Candidatos de extracción" description="Selección con evaluación independiente firmada y confirmación de un propietario." actions={<><LinkButton href="/evaluation" size="sm" variant="ghost">Volver a evaluación histórica</LinkButton><Button size="sm" icon={<Refresh/>} onClick={()=>void load()} disabled={busy}>Recargar candidatos</Button>{data&&<Button size="sm" variant="primary" disabled={busy||loading} onClick={()=>setRegistering(true)}>Registrar evaluación</Button>}</>}/>
+  {loading&&<p role="status" className="sr-only">Cargando estado confirmado…</p>}
+  {loading&&!data&&!error&&<SkeletonStats count={4}/>}
+  {error&&!data?<DataState state={{kind:'error',message:error,code:'candidates'}}/>:error&&<div role="alert" className="notice-bar"><Icon name="alert" size={14}/><p>{error}</p></div>}
+  {data&&<>
+   <div className="stat-grid">
+    <StatCard label="Versión activa" icon="target" kind="observed" value={nf.format(data.version)} foot={data.activeCandidateId?<IdChip value={data.activeCandidateId} head={8} tail={4}/>:'Configuración predeterminada'}/>
+    <StatCard label="Evaluaciones firmadas" icon="shield" kind="observed" value={nf.format(data.results.length)+(data.next.results!==null?'+':'')}/>
+    <StatCard label="Cumplen criterios" icon="check" kind="observed" value={nf.format(eligibleCount)} foot={'de '+nf.format(data.results.length)+' cargadas'}/>
+    <StatCard label="Versiones en el historial" icon="clock" kind="observed" value={nf.format(data.history.length)+(data.next.history!==null?'+':'')}/>
+   </div>
+   {!data.results.length?<EmptyState art="shield" title="Aún no hay evaluaciones firmadas" body="Registra el recibo del custodio para comparar candidatos." action={<Button variant="primary" onClick={()=>setRegistering(true)}>Registrar evaluación</Button>}/>
+   :<>
+   <div className="split" data-even>
+    <section className="card" aria-label="Utilidad por candidato">
+     <div className="card-title"><div><h2>Utilidad por candidato</h2><p>Longitud proporcional al valor mayor</p></div></div>
+     <BarList empty="Sin utilidades registradas." max={Math.max(0,...utilities.map(u=>u??0))||1} items={data.results.map(r=>({key:r.id,label:r.candidateId,value:r.summary?r.summary.utility:null,display:r.summary?(r.summary.utility===null?'desconocida':String(r.summary.utility)):'sin firma',kind:'observed' as const,note:r.summary?nf.format(r.summary.eligibleCases)+' casos':undefined}))}/>
+    </section>
+    <section className="card" aria-label="Confirmación humana">
+     <div className="card-title"><div><h2>Confirmación humana</h2><p>Necesaria para seleccionar o restaurar</p></div><StatusChip tone={canChange?'ok':'muted'}>{canChange?'Lista':'Pendiente'}</StatusChip></div>
+     <div className={css.form}>
+      <label>Hash de evidencia revisada<input value={evidence} onChange={e=>setEvidence(e.target.value)} maxLength={64}/></label>
+      <label className="check"><input type="checkbox" checked={confirmed} onChange={e=>setConfirmed(e.target.checked)}/>Confirmo que revisé la evidencia independiente y autorizo esta selección o rollback.</label>
+      <details><summary>Criterios de selección</summary><p className={css.muted}>Gold humano completo, al menos 30 casos, utilidad mayor al 85% revisada por completo, cobertura y citas del 100%, sin fallos ni costos desconocidos.</p></details>
+     </div>
+    </section>
+   </div>
+   <section className="card" aria-label="Comparación de candidatos">
+    <div className="card-title"><div><h2>Candidatos evaluados</h2><p>Holdouts distintos no son comparables directamente</p></div></div>
+    <div className="table-wrap" tabIndex={0} role="region" aria-label="Candidatos evaluados, desplazamiento horizontal"><table className="dtable"><thead><tr><th scope="col">Candidato</th><th scope="col">Evaluación</th><th scope="col" className="num">Casos</th><th scope="col" className="num">Utilidad</th><th scope="col">Selección</th><th scope="col" aria-label="Acción"></th></tr></thead>
+     <tbody>{data.results.map(r=><tr key={r.id}><th scope="row"><strong>{r.candidateId}</strong><div><IdChip value={r.configHash} label="Config." head={6} tail={4}/></div></th><td>{r.summary?<><StatusChip tone={r.summary.status==='passed'||r.summary.status==='ok'?'ok':'info'}>{r.summary.status}</StatusChip> <span className="chip">{r.summary.kind}</span></>:<StatusChip tone="muted">Firma o custodio no disponible</StatusChip>}</td><td className="num">{r.summary?nf.format(r.summary.eligibleCases):'—'}</td><td className="num">{r.summary?(r.summary.utility===null?'desconocida':String(r.summary.utility)):'—'}</td><td>{r.eligible?<StatusChip tone="ok">Cumple criterios</StatusChip>:<><StatusChip tone="warn" title={'Selección bloqueada: '+r.reason}>Bloqueada</StatusChip><p className={css.muted}>{r.reason}</p></>}</td><td><Button size="sm" variant="primary" disabled={!canChange||!r.eligible} onClick={()=>void mutate({operation:'select',resultId:r.id,expectedVersion:data.version,confirmed:true,reason:'validated_evaluation',evidenceHash:evidence})}>Seleccionar {r.candidateId}</Button></td></tr>)}</tbody></table></div>
+    {data.next.results!==null&&<div className={css.pager}><Button size="sm" variant="ghost" disabled={busy||loading} onClick={()=>void more('results')}>Cargar más evaluaciones</Button></div>}
+   <details><summary>Cómo leer la comparación</summary><p className={css.muted}>La regla de exposición exige un nuevo holdout por candidato; estos valores no demuestran una mejora estadística.</p></details></section></>}
+   <section className="card" aria-label="Historial y rollback">
+    <div className="card-title"><div><h2>Historial y rollback</h2><p>Cada cambio conserva su versión anterior</p></div>{data.version>0&&<Button size="sm" disabled={!canChange} onClick={()=>void mutate({operation:'rollback',targetVersion:0,expectedVersion:data.version,confirmed:true,reason:'incident_recovery',evidenceHash:evidence})}>Restaurar configuración predeterminada</Button>}</div>
+    {!data.history.length?<p className="state">Aún no hay versiones registradas; se usa la configuración predeterminada.</p>:<Timeline events={data.history.map(h=>({key:String(h.version),icon:h.version===data.version?'target':'clock',title:<>Versión {h.version}: {h.candidateId??'Predeterminada'}</>,meta:h.version===data.version?<StatusChip tone="ok">Activa</StatusChip>:undefined,body:<IdChip value={h.configHash} label="Config." head={8} tail={4}/>,actions:h.version<data.version?<Button size="sm" disabled={!canChange} onClick={()=>void mutate({operation:'rollback',targetVersion:h.version,expectedVersion:data.version,confirmed:true,reason:'quality_regression',evidenceHash:evidence})}>Restaurar versión {h.version}</Button>:undefined}))}/>}
+    {data.next.history!==null&&<div className={css.pager}><Button size="sm" variant="ghost" disabled={busy||loading} onClick={()=>void more('history')}>Cargar más versiones</Button></div>}
+   </section>
+  </>}
+  <Drawer open={registering} onClose={()=>setRegistering(false)} title="Registrar recibo del custodio" subtitle="Resumen firmado en JSON" footer={<><Button size="sm" variant="ghost" onClick={()=>setRegistering(false)}>Cancelar</Button><Button size="sm" variant="primary" type="submit" form="cand-register" disabled={busy||loading||!receipt}>Registrar evaluación firmada</Button></>}>
+   <form id="cand-register" className={css.form} onSubmit={e=>{e.preventDefault();try{const envelope=JSON.parse(receipt);setRegistering(false);void mutate({operation:'register',requestId:crypto.randomUUID(),envelope});}catch{setRegistering(false);setError('El resumen firmado debe ser JSON válido.');}}}>
+    <label>Resumen firmado<textarea value={receipt} onChange={e=>setReceipt(e.target.value)} maxLength={18000} rows={10}/></label>
+    <p className={css.muted}>Los comentarios de desarrollo no acreditan una revisión humana de referencia.</p>
+   </form>
+  </Drawer>
+ </section>;
 }

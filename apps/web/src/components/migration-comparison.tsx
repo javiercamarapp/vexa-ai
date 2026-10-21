@@ -1,5 +1,16 @@
 'use client';
 import {ScrollTable} from './workspace/scroll-table';
+import {PageHeader} from './ui/page-header';
+import {Button,Refresh} from './ui/button';
+import {StatCard} from './ui/stat-card';
+import {StatusChip} from './ui/status-chip';
+import {BarList} from './ui/bar-list';
+import {EmptyState} from './ui/empty-state';
+import {IdChip} from './ui/id-chip';
+import {Icon} from './ui/icons';
+import {SkeletonStats} from './ui/skeletons';
+import {nf} from './ui/format';
+import css from './ops-panels.module.css';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {ComparisonResult,ComparisonSnapshot} from '../../../../packages/connectors/comparability.mjs';
 const reasonLabels:Record<string,string>={currency_unit_changed:'Cambió la unidad monetaria; los importes no son comparables.',scope_changed:'Cambiaron filtros, ventana, moneda o base temporal.',pipeline_changed:'Cambió la versión del procesamiento.',mapping_changed:'Cambió el mapeo de las fuentes.',taxonomy_changed:'Cambió la taxonomía: documenta el cambio y genera cortes con el mismo método.',channel_coverage_changed:'Cambió la cobertura de canales; menos casos no significa una mejora.',incomplete_evidence:'Hay datos sin versión, fecha o canal verificable.',empty_dataset:'Uno de los cortes no contiene conversaciones.'};
@@ -21,22 +32,52 @@ export function MigrationComparison(){
  const refresh=useCallback(async(signal?:AbortSignal)=>{const body=await api('',undefined,signal);setSnapshots(body.snapshots);setNextCursor(body.nextCursor);setLoaded(true);setDenied(false);},[api]);
  useEffect(()=>{const controller=new AbortController();void Promise.resolve().then(()=>refresh(controller.signal)).catch(e=>{if(!controller.signal.aborted&&e.name!=='AbortError')setError(e.message);});return()=>controller.abort();},[refresh]);
  async function action(work:()=>Promise<void>){setError('');setBusy(true);try{await work();}catch(e){if(!(e instanceof Error&&e.name==='AbortError'))setError(e instanceof Error?e.message:'Error de comparación.');}finally{setBusy(false);}}
- const label=(s:ComparisonSnapshot)=>`${s.id} · ${s.watermark} · ${s.summary.conversations} conversaciones`;
- return <section><h1>Comparación de migración</h1><p>Conserva cortes inmutables del conjunto de datos antes y después. Las diferencias no demuestran ahorro ni efecto causal.</p><p>Ventana UTC por inicio de conversación. Los mensajes y las órdenes vinculadas siguen ese alcance. El corte conserva el método y las versiones de origen disponibles.</p>
- {error&&<p role="alert">{error}</p>}
- <button disabled={busy} onClick={()=>void action(()=>refresh())}>Actualizar cortes</button>
- {!loaded&&!error&&<p role="status">Cargando cortes…</p>}{loaded&&!snapshots.length&&<p>Aún no hay cortes publicados. Congela el conjunto de datos para crear el primero.</p>}
- <form onSubmit={e=>{e.preventDefault();void action(async()=>{const data=await api('',{dateStart:new Date(start+'T00:00:00Z').toISOString(),dateEnd:new Date(end+'T00:00:00Z').toISOString(),timezone,currency,dateBasis:'conversation',sources:sources.split(',').map(x=>x.trim()).filter(Boolean),channels:channels.split(',').map(x=>x.trim()).filter(Boolean)});setAfter(data.snapshot.id);setResult(null);await refresh();});}}><fieldset disabled={busy||denied}><legend>Congelar un corte nuevo — propietario o analista</legend>
- <label>Inicio UTC<input required type="date" value={start} onChange={e=>setStart(e.target.value)}/></label><label>Fin UTC exclusivo<input required type="date" value={end} onChange={e=>setEnd(e.target.value)}/></label>
- <label>Zona horaria del contrato<input required value={timezone} onChange={e=>setTimezone(e.target.value)}/></label><label>Moneda<input required maxLength={3} value={currency} onChange={e=>setCurrency(e.target.value.toUpperCase())}/></label>
- <label>Fuentes, separadas por coma<input value={sources} onChange={e=>setSources(e.target.value)} placeholder="Todas las fuentes si se deja vacío"/></label><label>Canales, separados por coma<input value={channels} onChange={e=>setChannels(e.target.value)} placeholder="Todos los canales si se deja vacío"/></label>
- <button type="submit">Congelar corte</button></fieldset></form>
- <fieldset disabled={busy||denied}><legend>Seleccionar cortes guardados</legend>{nextCursor&&<button onClick={()=>void action(async()=>{const data=await api('?'+new URLSearchParams({cursor:nextCursor}));setSnapshots(previous=>[...previous,...data.snapshots.filter((s:ComparisonSnapshot)=>!previous.some(p=>p.id===s.id))]);setNextCursor(data.nextCursor);})}>Cargar cortes anteriores</button>}<label htmlFor="comparison-before">Antes</label><select id="comparison-before" value={before} onChange={e=>{setBefore(e.target.value);setResult(null);}}><option value="">Selecciona baseline</option>{snapshots.map(s=><option key={s.id} value={s.id}>{label(s)}</option>)}</select><label htmlFor="comparison-after">Después</label><select id="comparison-after" value={after} onChange={e=>{setAfter(e.target.value);setResult(null);}}><option value="">Selecciona corte posterior</option>{snapshots.map(s=><option key={s.id} value={s.id}>{label(s)}</option>)}</select>
- <button disabled={!before||!after||before===after} onClick={()=>void action(async()=>setResult(await api('/compare?'+new URLSearchParams({before,after}))))}>Comparar cortes</button></fieldset>
- {result&&<section aria-label="Resultado de comparación"><h2>{result.state==='comparable'?'Comparable':'No comparable'}</h2><p>{result.notice}</p><p>Antes: {result.before.id} · Después: {result.after.id}</p>{result.reasons.length>0&&<ul>{result.reasons.map(reason=><li key={reason}>{reasonLabels[reason]??reason}</li>)}</ul>}
- <h3>Registros únicos</h3><ScrollTable label="Registros únicos, tabla desplazable"><table><thead><tr><th>Registro</th><th>Antes</th><th>Después</th><th>Diferencia descriptiva</th></tr></thead><tbody>{Object.entries(result.counts).map(([key,v])=><tr key={key}><th>{({conversations:'Conversaciones resueltas',sourceConversations:'Conversaciones fuente',messages:'Mensajes fuente',orders:'Órdenes vinculadas'} as Record<string,string>)[key]}</th><td>{v.before}</td><td>{v.after}</td><td>{v.delta}</td></tr>)}</tbody></table></ScrollTable>
- <h3>Cobertura observada por canal</h3><p>Conteos observados; no acreditan el total disponible en el proveedor. Los canales con prefijo de proveedor conservan su identificador original; no se asumen equivalencias entre HubSpot y Zendesk.</p><ScrollTable label="Cobertura por canal, tabla desplazable"><table><thead><tr><th>Canal</th><th>Antes</th><th>Después</th></tr></thead><tbody>{result.channels.map(c=><tr key={c.channel}><th>{c.channel}</th><td>{c.before}</td><td>{c.after}</td></tr>)}</tbody></table></ScrollTable>
- <h3>Importes de órdenes vinculadas</h3><p>No representan pérdidas, ahorro ni ingresos recuperados. Importes desconocidos permanecen desconocidos.</p>{Object.entries(result.money).map(([code,m])=><p key={code}>{code}: antes {moneyText(m.before?.amountMinor,result.before.method.currencyExponents[code])} (subtotal conocido {moneyText(m.before?.knownSubtotalMinor,result.before.method.currencyExponents[code])}); después {moneyText(m.after?.amountMinor,result.after.method.currencyExponents[code])} (subtotal conocido {moneyText(m.after?.knownSubtotalMinor,result.after.method.currencyExponents[code])}). Delta comparable: {m.deltaMinor===null?'no disponible':moneyText(m.deltaMinor,result.after.method.currencyExponents[code])}.</p>)}
- <details><summary>Método y procedencia congelados</summary><pre>{JSON.stringify({before:{scope:result.before.scope,method:result.before.method,watermark:result.before.watermark,inputHash:result.before.inputHash,warnings:result.before.summary.warnings},after:{scope:result.after.scope,method:result.after.method,watermark:result.after.watermark,inputHash:result.after.inputHash,warnings:result.after.summary.warnings}},null,2)}</pre></details></section>}
+ const label=(s:ComparisonSnapshot)=>`${s.id.slice(0,8)} · ${s.watermark} · ${s.summary.conversations} conversaciones`; const countLabels:Record<string,string>={conversations:'Conversaciones resueltas',sourceConversations:'Conversaciones fuente',messages:'Mensajes fuente',orders:'Órdenes vinculadas'};
+ const countIcons:Record<string,string>={conversations:'message',sourceConversations:'database',messages:'mail',orders:'receipt'};
+ return <section className="stack">
+  <PageHeader title="Comparación de migración" description="Cortes inmutables antes y después; las diferencias no demuestran ahorro ni efecto causal." actions={<Button size="sm" icon={<Refresh/>} disabled={busy} onClick={()=>void action(()=>refresh())}>Actualizar cortes</Button>}/>
+  {error&&<p role="alert" className="notice-bar"><Icon name="alert" size={14}/>{error}</p>}
+  {!loaded&&!error&&<><p role="status" className="sr-only">Cargando cortes…</p><SkeletonStats count={2}/></>}
+  {loaded&&<div className="stat-grid">
+   <StatCard label="Cortes guardados" icon="layers" kind="observed" value={nf.format(snapshots.length)+(nextCursor?'+':'')}/>
+   <StatCard label="Conversaciones del último corte" icon="calendar" kind="observed" value={snapshots[0]?nf.format(snapshots[0].summary.conversations):'—'} foot={snapshots[0]?<IdChip value={snapshots[0].id} head={6} tail={3}/>:'Sin cortes'}/>
+  </div>}
+  {loaded&&!snapshots.length&&<EmptyState art="doc" title="Aún no hay cortes publicados" body="Congela el conjunto de datos para crear el primero." compact/>}
+  <div className="split" data-even>
+   <fieldset className="card" disabled={busy||denied} style={{margin:0}}><legend className="sr-only">Seleccionar cortes guardados</legend>
+    <div className="card-title"><div><h2>Comparar dos cortes</h2><p>Selecciona el baseline y el corte posterior</p></div>{nextCursor&&<Button size="sm" variant="ghost" onClick={()=>void action(async()=>{const data=await api('?'+new URLSearchParams({cursor:nextCursor}));setSnapshots(previous=>[...previous,...data.snapshots.filter((s:ComparisonSnapshot)=>!previous.some(p=>p.id===s.id))]);setNextCursor(data.nextCursor);})}>Cargar cortes anteriores</Button>}</div>
+    <div className={css.form}>
+     <label htmlFor="comparison-before">Antes</label><select id="comparison-before" value={before} onChange={e=>{setBefore(e.target.value);setResult(null);}}><option value="">Selecciona baseline</option>{snapshots.map(s=><option key={s.id} value={s.id}>{label(s)}</option>)}</select>
+     <label htmlFor="comparison-after">Después</label><select id="comparison-after" value={after} onChange={e=>{setAfter(e.target.value);setResult(null);}}><option value="">Selecciona corte posterior</option>{snapshots.map(s=><option key={s.id} value={s.id}>{label(s)}</option>)}</select>
+     <div><Button variant="primary" size="sm" disabled={!before||!after||before===after} onClick={()=>void action(async()=>setResult(await api('/compare?'+new URLSearchParams({before,after}))))}>Comparar cortes</Button></div>
+    </div>
+   </fieldset>
+   <section className="card" aria-label="Cortes por tamaño">
+    <div className="card-title"><div><h2>Cortes guardados</h2><p>Conversaciones por corte, más recientes primero</p></div></div>
+    <BarList empty="Sin cortes todavía." items={snapshots.slice(0,6).map(s=>({key:s.id,label:s.watermark,value:s.summary.conversations,display:nf.format(s.summary.conversations),kind:'observed' as const}))}/>
+   </section>
+  </div>
+  <form className="card" onSubmit={e=>{e.preventDefault();void action(async()=>{const data=await api('',{dateStart:new Date(start+'T00:00:00Z').toISOString(),dateEnd:new Date(end+'T00:00:00Z').toISOString(),timezone,currency,dateBasis:'conversation',sources:sources.split(',').map(x=>x.trim()).filter(Boolean),channels:channels.split(',').map(x=>x.trim()).filter(Boolean)});setAfter(data.snapshot.id);setResult(null);await refresh();});}}><fieldset disabled={busy||denied} className={css.form} style={{margin:0,padding:0,border:0}}><legend className="sr-only">Congelar un corte nuevo — propietario o analista</legend>
+   <div className="card-title"><div><h2>Congelar un corte nuevo</h2><p>Propietario o analista · ventana UTC por inicio de conversación</p></div><Button type="submit" size="sm" variant="primary">Congelar corte</Button></div>
+   <div className={css.cols}><label>Inicio UTC<input required type="date" value={start} onChange={e=>setStart(e.target.value)}/></label><label>Fin UTC exclusivo<input required type="date" value={end} onChange={e=>setEnd(e.target.value)}/></label></div>
+   <details><summary>Opciones del alcance</summary><div className={css.cols}>
+    <label>Zona horaria del contrato<input required value={timezone} onChange={e=>setTimezone(e.target.value)}/></label><label>Moneda<input required maxLength={3} value={currency} onChange={e=>setCurrency(e.target.value.toUpperCase())}/></label>
+    <label>Fuentes, separadas por coma<input value={sources} onChange={e=>setSources(e.target.value)} placeholder="Todas si se deja vacío"/></label><label>Canales, separados por coma<input value={channels} onChange={e=>setChannels(e.target.value)} placeholder="Todos si se deja vacío"/></label></div></details>
+  </fieldset></form>
+  {result&&<section aria-label="Resultado de comparación" className="stack">
+   <div className="card"><div className="card-title"><div><h2>{result.state==='comparable'?'Comparable':'No comparable'}</h2><p>{result.notice}</p></div><StatusChip tone={result.state==='comparable'?'ok':'warn'}>{result.state==='comparable'?'Apto para comparar':'Revisar motivos'}</StatusChip></div>
+    <div className={css.flow}><span className={css.flowNode}><span>Antes</span><IdChip value={result.before.id} head={8} tail={4}/></span><Icon name="arrow-right" size={16}/><span className={css.flowNode}><span>Después</span><IdChip value={result.after.id} head={8} tail={4}/></span></div>
+    {result.reasons.length>0&&<ul className="row-list" style={{marginTop:'var(--sp-3)'}}>{result.reasons.map(reason=><li key={reason} className="notice-bar"><Icon name="info" size={14}/><p>{reasonLabels[reason]??reason}</p></li>)}</ul>}
+   </div>
+   <div className="stat-grid">{Object.entries(result.counts).map(([key,v])=><StatCard key={key} label={countLabels[key]??key} icon={countIcons[key]??'database'} kind="observed" value={nf.format(Number(v.after))} foot={<>Antes {nf.format(Number(v.before))} · diferencia {String(v.delta)}</>}/>)}</div>
+   <div className="split" data-even>
+    <section className="card" aria-label="Cobertura observada por canal"><div className="card-title"><div><h2>Cobertura por canal</h2><p>Conteos observados; no acreditan el total del proveedor</p></div></div>
+     <ScrollTable label="Cobertura por canal, tabla desplazable"><table className="dtable"><thead><tr><th>Canal</th><th className="num">Antes</th><th className="num">Después</th></tr></thead><tbody>{result.channels.map(c=><tr key={c.channel}><th scope="row">{c.channel}</th><td className="num">{c.before}</td><td className="num">{c.after}</td></tr>)}</tbody></table></ScrollTable></section>
+    <section className="card" aria-label="Importes de órdenes vinculadas"><div className="card-title"><div><h2>Importes de órdenes</h2><p>No son pérdidas, ahorro ni ingresos recuperados</p></div></div>
+     {Object.keys(result.money).length===0?<p className="state">Sin importes en estos cortes.</p>:<ScrollTable label="Importes por moneda, tabla desplazable"><table className="dtable"><thead><tr><th>Moneda</th><th className="num">Antes</th><th className="num">Después</th><th className="num">Delta comparable</th></tr></thead><tbody>{Object.entries(result.money).map(([code,m])=>{const bx=result.before.method.currencyExponents[code],ax=result.after.method.currencyExponents[code];return <tr key={code}><th scope="row">{code}</th><td className="num">{moneyText(m.before?.amountMinor,bx)}<br/><small>conocido {moneyText(m.before?.knownSubtotalMinor,bx)}</small></td><td className="num">{moneyText(m.after?.amountMinor,ax)}<br/><small>conocido {moneyText(m.after?.knownSubtotalMinor,ax)}</small></td><td className="num">{m.deltaMinor===null?'no disponible':moneyText(m.deltaMinor,ax)}</td></tr>;})}</tbody></table></ScrollTable>}
+     <p className={css.muted}>Importes desconocidos permanecen desconocidos.</p></section>
+   </div>
+   <details><summary>Método y procedencia congelados</summary><pre className={css.pre}>{JSON.stringify({before:{scope:result.before.scope,method:result.before.method,watermark:result.before.watermark,inputHash:result.before.inputHash,warnings:result.before.summary.warnings},after:{scope:result.after.scope,method:result.after.method,watermark:result.after.watermark,inputHash:result.after.inputHash,warnings:result.after.summary.warnings}},null,2)}</pre></details>
+  </section>}
  </section>;
 }

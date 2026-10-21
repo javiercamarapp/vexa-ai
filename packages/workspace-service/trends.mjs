@@ -14,7 +14,8 @@ export async function guarded(s,work,timeoutMs=LOCAL_TIMEOUT_MS){
  try{const value=await work();await s.query('RELEASE SAVEPOINT trend');return value;}
  catch(e){if(e?.code==='57014'){await s.query('ROLLBACK TO SAVEPOINT trend');return null;}throw e;}
 }
-export const SAMPLE_PERCENT=10;
+// Conversations are dated through a per-row lookup into messages, so the sample is small: 3 % (≈3,000 of 100k) fits a Micro database in ~1 s.
+export const SAMPLE_PERCENT=3;
 export function createTrendsRepository({database,now=()=>new Date(),timeoutMs=LOCAL_TIMEOUT_MS}){
  return {
   async monthly({months=TREND_MONTHS}={}){
@@ -23,7 +24,7 @@ export function createTrendsRepository({database,now=()=>new Date(),timeoutMs=LO
    return database.transaction('read',async s=>{
     // Conversation date = started_at, or the date of its FIRST MESSAGE when started_at is null (historical CSV imports carry no
     // started_at). Messages are RLS-checked per row, so: (1) a cheap probe (<= 3,001 rows) decides whether an exact pass is affordable;
-    // (2) otherwise a 10 % Bernoulli sample of conversations is dated and scaled, and the figure is labelled "Estimado".
+    // (2) otherwise a 3 % Bernoulli sample of conversations is dated and scaled, and the figure is labelled "Estimado".
     const probe=await guarded(s,async()=>Number((await s.query('SELECT count(*) AS n FROM (SELECT 1 FROM public.conversations WHERE tenant_id=$1 AND deleted_at IS NULL LIMIT 3001) p',[s.tenantId])).rows[0].n),timeoutMs);
     const dated=(from)=>`SELECT CASE WHEN d>=$2 AND d<$3 THEN to_char(d AT TIME ZONE 'UTC','YYYY-MM') END AS month,count(*) AS n,count(*) FILTER (WHERE d IS NULL) AS undated
       FROM (SELECT coalesce(c.started_at,fm.first_at) AS d FROM ${from}
@@ -43,7 +44,7 @@ export function createTrendsRepository({database,now=()=>new Date(),timeoutMs=LO
     const rowsOf=rowsRaw,factor=exact?1:100/SAMPLE_PERCENT,definition='started_at_or_first_message';
     if(rowsOf===null)conversations={status:'timeout',class:'observed',series:[],outsideWindow:null,undated:null,total:null,sampled:false,definition};
     else{const by=new Map(rowsOf.filter(r=>r.month).map(r=>[r.month,Math.round(Number(r.n)*factor)])),outside=Math.round(rowsOf.filter(r=>!r.month).reduce((a,r)=>a+Number(r.n),0)*factor),undated=Math.round(rowsOf.reduce((a,r)=>a+Number(r.undated),0)*factor),total=Math.round(rowsOf.reduce((a,r)=>a+Number(r.n),0)*factor);
-     conversations={status:total===0?'empty':'ok',class:exact?'observed':'estimated',sampled:!exact,definition,sampleNote:exact?null:`Estimado con una muestra del ${SAMPLE_PERCENT} % de las conversaciones: fechar todas (por su primer mensaje) no cabe en el tiempo permitido.`,series:win.list.map(m=>({month:m,count:by.get(m)??0})),outsideWindow:outside,undated,total};}
+     conversations={status:total===0?'empty':'ok',class:exact?'observed':'estimated',sampled:!exact,samplePercent:exact?null:SAMPLE_PERCENT,definition,sampleNote:exact?null:`Estimado con una muestra del ${SAMPLE_PERCENT} % de las conversaciones: fechar todas (por su primer mensaje) no cabe en el tiempo permitido.`,series:win.list.map(m=>({month:m,count:by.get(m)??0})),outsideWindow:outside,undated,total};}
     let ledger;
     if(led===null)ledger={status:'timeout',class:'observed',series:[],currencies:[]};
     else{const currencies=[...new Set(led.map(r=>r.currency+':'+r.exponent))].sort();const primary=currencies.map(c=>({c,n:led.filter(r=>r.currency+':'+r.exponent===c).reduce((a,r)=>a+Number(r.n),0)})).sort((a,b)=>b.n-a.n)[0]?.c??null;

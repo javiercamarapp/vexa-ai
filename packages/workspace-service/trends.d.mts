@@ -1,5 +1,5 @@
 export type TrendClass='observed'|'estimated';
-export type ConversationTrend={status:'ok'|'empty'|'timeout';class:TrendClass;series:{month:string;count:number}[];outsideWindow:number|null;total:number|null;sampled?:boolean;sampleNote?:string|null;definition?:string;undated?:number|null};
+export type ConversationTrend={status:'ok'|'empty'|'timeout';class:TrendClass;series:{month:string;count:number}[];outsideWindow:number|null;total:number|null;sampled?:boolean;samplePercent?:number|null;sampleNote?:string|null;definition?:string;undated?:number|null};
 export type LedgerMonth={month:string;orders:{count:number;amountMinor:string;unknownAmounts:number};refunds:{count:number;amountMinor:string;unknownAmounts:number}};
 export type LedgerTrend={status:'ok'|'empty'|'timeout';class:TrendClass;currency?:string|null;exponent?:number|null;otherCurrencies?:string[];series:LedgerMonth[];currencies:string[]};
 export type TrendsView={generatedAt:string;window:{start:string;end:string;months:number};note:string;conversations:ConversationTrend;ledger:LedgerTrend};

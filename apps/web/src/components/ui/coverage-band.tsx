@@ -25,13 +25,14 @@ function Tile({s}:{s:CoverageSource}){
    <p className="cov-meta">{s.detail[0]}</p>
    {s.detail.length>1&&<Popover label={'Desglose de '+head} trigger={<>Ver desglose</>} width={340}><ul className="cov-detail-list">{s.detail.map((l,i)=><li key={i}>{l}</li>)}</ul></Popover>}
   </>:<>
-   <div className="cov-ring-row"><ProgressRing value={s.total>0?s.incorporated/s.total:0} size={52} stroke={6} label={share===null?'—':Math.round(share)+'%'} title={`${head}: ${fmtPct(share)} incorporado`}/><div className="cov-big"><strong>{nf.format(s.incorporated)}</strong><span>de {nf.format(s.total)} filas</span></div></div>
+   <div className="cov-ring-row"><ProgressRing value={s.total>0?s.incorporated/s.total:0} size={52} stroke={6} label={share===null?'—':Math.round(share)+'%'} title={`${head}: ${fmtPct(share)} de las filas leídas está incorporado; el resto son filas rechazadas por diseño o pendientes`}/><div className="cov-big"><strong>{nf.format(s.incorporated)}</strong><span>de {nf.format(s.total)} filas</span></div></div>
    <div className="cov-track" role="img" aria-label={`${head}: ${nf.format(s.incorporated)} incorporadas, ${nf.format(s.rejected)} rechazadas por diseño, ${nf.format(s.pending)} pendientes, de ${nf.format(s.total)}`}>
     {s.incorporated>0&&<span className="cov-seg cov-in" style={{flexBasis:seg(s.incorporated)+'%'}}/>}
     {s.rejected>0&&<span className="cov-seg cov-rej" style={{flexBasis:Math.max(seg(s.rejected),1)+'%'}}/>}
     {s.pending>0&&<span className="cov-seg cov-pen" style={{flexBasis:Math.max(seg(s.pending),1)+'%'}}/>}
    </div>
    <ul className="cov-legend"><li><i className="sw cov-in"/>{nf.format(s.incorporated)} incorporadas</li><li><i className="sw cov-rej"/><Tip label={REJ}>{nf.format(s.rejected)} rechazadas por diseño</Tip></li><li><i className="sw cov-pen"/>{nf.format(s.pending)} pendientes</li></ul>
+   {s.rejectionNote&&<p className="cov-meta cov-rej-note">{s.rejectionNote}</p>}
    <p className="cov-meta">{s.imports} {s.imports===1?'importación':'importaciones'}{s.openImports>0?` (${s.openImports} en curso)`:''}{when(s.lastUpdate)?' · '+when(s.lastUpdate):''}</p>
   </>}
  </li>;

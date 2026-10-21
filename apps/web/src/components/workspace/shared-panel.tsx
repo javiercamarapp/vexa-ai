@@ -7,6 +7,8 @@ import {DataState} from './data-state';
 import {ScopeBar} from './scope-bar';
 import {CurrentProblems} from './current-problems';
 import {OverviewDashboard} from './overview-dashboard';
+import {CoverageBand} from '../ui/coverage-band';
+import {TrendCharts} from '../ui/trend-chart';
 import {ProblemsView} from './problems-view';
 import {PageHeader} from '../ui/page-header';
 import {Button,LinkButton,Refresh,Download,Arrow} from '../ui/button';
@@ -33,7 +35,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   window.addEventListener('popstate',back);return()=>window.removeEventListener('popstate',back);
  },[]);
  useEffect(()=>{
-  const epoch=++generation.current,controller=new AbortController();abort.current=controller;
+  const epoch=++generation.current,controller=new AbortController();abort.current=controller;let timedOut=false;const timer=setTimeout(()=>{timedOut=true;controller.abort();},25000);
   const load=async()=>{const sourceLocation=workspaceLocation();if(controller.signal.aborted||epoch!==generation.current)return;setBusy(true);setBundle(null);setError('');setMissing(false);const search=new URLSearchParams(query);search.set('resource',resource);
    try{const response=await fetch('/api/workspace?'+search.toString(),{cache:'no-store',signal:controller.signal});if(controller.signal.aborted||epoch!==generation.current)return;
     // Absence of a publication is a normal state (404), not a failure.
@@ -43,10 +45,10 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
     const next=json.data as ViewBundle;if(!next||!Array.isArray(next.items)||!next.meta||!next.meta.scope)throw Error('La respuesta no se pudo verificar.');
     const pinned=pinWorkspaceQuery(query,next.meta);
     if(workspaceLocation()!==sourceLocation)return;resolved.current=pinned.toString();window.history.replaceState(null,'',window.location.pathname+(pinned.size?'?'+pinned.toString():'')+window.location.hash);setBundle(next);
-   }catch(e){if(!controller.signal.aborted&&epoch===generation.current){setBundle(null);setError(e instanceof Error&&!(e instanceof Missing)?e.message:'No se pudo consultar la vista.');}}
-   finally{if(!controller.signal.aborted&&epoch===generation.current)setBusy(false);}
+   }catch(e){if(timedOut&&epoch===generation.current){setBundle(null);setError('Las cifras del corte tardaron demasiado en responder (la publicación financiera es grande). La cobertura y la tendencia mensual de abajo sí se calcularon; reintenta con «Actualizar» en unos segundos.');}else if(!controller.signal.aborted&&epoch===generation.current){setBundle(null);setError(e instanceof Error&&!(e instanceof Missing)?e.message:'No se pudo consultar la vista.');}}
+   finally{clearTimeout(timer);if((timedOut||!controller.signal.aborted)&&epoch===generation.current)setBusy(false);}
   };
-  void Promise.resolve().then(load);return()=>{controller.abort();invalidate();};
+  void Promise.resolve().then(load);return()=>{clearTimeout(timer);controller.abort();invalidate();};
  },[query,reload,resource,invalidate]);
  const scope=bundle?.meta.scope??initialScope(query),pinned=bundle?pinWorkspaceQuery(query,bundle.meta):new URLSearchParams(query);pinned.delete('cursor');
  const apply=(next:URLSearchParams)=>{
@@ -73,6 +75,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   {bar}
   {busy&&(isOverview?<div className="stack" role="status" aria-busy="true"><SkeletonStats/><SkeletonChart height={220}/></div>:<div className="stack"><SkeletonCards count={3}/></div>)}
   {error&&<DataState state={{kind:'error',code:'workspace_request_failed',message:error}}/>}
+  {isOverview&&!bundle&&!missing&&<div className="stack"><CoverageBand/><TrendCharts/></div>}
   {missing&&!busy&&<EmptyState art="chart" title="Aún no hay un corte publicado para este alcance" body="Cuando se publique un corte con este periodo y estos filtros, sus cifras aparecerán aquí. Mientras tanto puedes probar con la última publicación disponible." action={<Button variant="primary" size="sm" onClick={latest}>Ver la última publicación</Button>} secondary={<LinkButton href="/imports" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>}/>}
   {bundle&&!busy&&<>
    {notice}

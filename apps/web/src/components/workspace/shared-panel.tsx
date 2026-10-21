@@ -69,7 +69,8 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   {bundle.meta.next_cursor&&<Button icon={<Arrow/>} onClick={()=>{const next=new URLSearchParams(pinned);next.set('cursor',bundle.meta.next_cursor!);navigate(next);}}>Página siguiente</Button>}
   {bundle.meta.can_manage&&<><LinkButton href="/economics" variant="ghost" size="sm" icon={<Arrow/>}>{isOverview?'Fuentes y publicaciones':'Revisar fuentes, clasificación de órdenes y publicaciones'}</LinkButton><LinkButton href="/problems/manage" variant="ghost" size="sm" icon={<Arrow/>}>{isOverview?'Catálogo de problemas':'Gestionar el catálogo de problemas'}</LinkButton></>}
  </div>;
- const notice=bundle?.meta.critical_notice&&<aside className="notice-bar" role="alert"><Icon name="alert" size={14}/><strong>Revisión crítica, independiente del importe</strong><p>{bundle.meta.critical_notice}</p></aside>;
+ const notice=bundle?.meta.critical_notice&&<aside className="notice-bar" role="alert"><Icon name="alert" size={14}/><strong>Revisión crítica, independiente del importe</strong><p>{bundle.meta.critical_notice}</p></aside>
+ const criticalPending=!bundle?.meta.critical_notice&&bundle?.meta.critical_notice_state==='unavailable'&&<aside className="notice-bar" role="status"><Icon name="info" size={14}/><strong>Señales críticas no calculadas ahora</strong><p>No alcanzaron a calcularse en el tiempo permitido; eso no significa que no existan. Revísalas en Problemas.</p></aside>;
  return <section className="stack" aria-label={isOverview?'Resumen con alcance compartido':'Problemas con alcance compartido'}>
   <PageHeader title={isOverview?'Resumen ejecutivo':'Problemas de negocio'} description={isOverview?'Cifras del corte publicado con su cobertura, su clase y su fuente.':'Prioridades con evidencia. La exposición compartida entre problemas no se suma ni equivale a pérdida.'} actions={actions}/>
   {bar}
@@ -78,7 +79,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   {isOverview&&!bundle&&!missing&&<div className="stack"><CoverageBand/><TrendCharts/></div>}
   {missing&&!busy&&<EmptyState art="chart" title="Aún no hay un corte publicado para este alcance" body="Cuando se publique un corte con este periodo y estos filtros, sus cifras aparecerán aquí. Mientras tanto puedes probar con la última publicación disponible." action={<Button variant="primary" size="sm" onClick={latest}>Ver la última publicación</Button>} secondary={<LinkButton href="/imports" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>}/>}
   {bundle&&!busy&&<>
-   {notice}
+   {notice}{criticalPending}
    {isOverview?<>{state!=='empty'&&state&&state!=='ready'&&<DataState state={{kind:state,coverage:bundle.meta.coverage,watermark:bundle.meta.watermark}}/>}<OverviewDashboard key={`${bundle.meta.snapshot_id}:${bundle.meta.scope_hash}`} bundle={bundle} pinned={pinned}/></>
     :<DataState state={state==='empty'?{kind:'empty'}:{kind:state??'partial',coverage:bundle.meta.coverage,watermark:bundle.meta.watermark}}><ProblemsView bundle={bundle} query={pinned.toString()}/></DataState>}
    {footer}

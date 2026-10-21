@@ -4,11 +4,23 @@ import {createSnapshotRepository} from '../metrics/snapshots.mjs';
 import {createPriorityRepository} from '../metrics/priority.mjs';
 import {adaptLedger} from '../economics/adapter.mjs';
 import {EconomicError} from '../metrics/repository.mjs';
-import {memoSection,memoized,hasRefSummary,latestRows,latestEntries} from '../metrics/ledger-load.mjs';
+import {memoSection,memoized,hasRefSummary,latestRows,latestEntries,shareMemo} from '../metrics/ledger-load.mjs';
 import {WorkspaceError,check,canonical,hash,uuid,parseWorkspaceQuery,canonicalScopeHash,cursorAuthHash,encodeCursor,decodeCursor} from './contracts.mjs';
 const VERSION='workspace-projection-v1',one=async(s,q,a=[])=>(await s.query(q,a)).rows[0],iso=x=>new Date(x).toISOString();
 const uniq=x=>[...new Set(x)].sort();
 const scopedDb=s=>({transaction:async(_action,fn)=>fn(s)});
+// «Señales críticas» (priorities.view) recorren TODOS los problemas activos con varias consultas secuenciales por problema y por corrida de extracción (≈4 por problema; con ~400 problemas son
+// miles de viajes a la base). No pueden bloquear el Resumen: se les da un presupuesto de tiempo de pared y, si no alcanzan, la vista responde sin ellas y lo DICE (nunca «cero señales»).
+export const CRITICAL_BUDGET_MS=1500;
+class CriticalBudgetExceeded extends Error{}
+export async function criticalSignals(s,snapshotId,budgetMs=CRITICAL_BUDGET_MS){
+ const deadline=Date.now()+budgetMs;
+ const limited=Object.freeze({...s,query:(text,values)=>Date.now()>deadline?Promise.reject(new CriticalBudgetExceeded('critical_signals_budget_exceeded')):s.query(text,values)});
+ const release=shareMemo(s,limited); // la verificación del snapshot ya hecha en esta transacción se reutiliza, no se repite
+ try{const view=await createPriorityRepository({database:scopedDb(limited)}).view({snapshotId});return {status:'ok',count:view.problemOptions.filter(p=>p.criticalLane).length};}
+ catch(e){if(e instanceof CriticalBudgetExceeded)return {status:'unavailable',count:null};throw e;}
+ finally{release();}
+}
 const filtersFor=(q,snapshot)=>({date_start:q.date_start.slice(0,10),date_end:q.date_end.slice(0,10),timezone:q.timezone,date_basis:q.date_basis,currency:q.currency,basis:q.basis,exponent:snapshot.scope.exponent,sku:uniq(q.sku),source:uniq(q.source),snapshot_id:snapshot.id});
 const exposedScope=(f,scopeHash)=>({...f,date_start:f.date_start+'T00:00:00.000Z',date_end:f.date_end+'T00:00:00.000Z',scope_hash:scopeHash});
 const scopeMatches=(q,snap)=>q.date_start.slice(0,10)===snap.scope.start.slice(0,10)&&q.date_end.slice(0,10)===snap.scope.end.slice(0,10)&&q.currency===snap.scope.currency&&q.basis===snap.scope.basis&&(q.exponent===null||q.exponent===snap.scope.exponent)&&q.timezone===snap.scope.timezone&&q.date_basis===snap.scope.dateBasis;
@@ -105,8 +117,8 @@ export function createWorkspaceService({database}){
  const ref='workspace:'+bound.row.scope_hash,make=(id,title,version,problemId,metrics,valid=true)=>({id,title,summary:problemId?'Filas por problema no aditivas; el global usa la unión de órdenes.':'Importes del snapshot publicado. SKU selecciona órdenes que contienen el producto; no ventas por línea.',status:valid?(metrics.some(m=>m.amount_minor===null)?'partial':'ready'):'stale',version,owner:null,customer_id:null,problem_id:problemId,metrics,evidence:[],details:[{label:'Snapshot',value:base.view.id},{label:'Alcance derivado',value:bound.row.scope_hash},{label:'Asociaciones',value:'Declaradas y aprobadas por un propietario; no validación automática de CRM.'}]});
  let items;if(request.resource==='metrics')items=[make(base.view.id,'Resumen económico',1,null,[metric(global,'Ingresos expuestos','exposure',ref),metric(orders,'Órdenes registradas','allOrders',ref),metric(refunds,'Reembolsos liquidados','refunds',ref)])];else items=ids.map(id=>{const h=history.get(id),m=h.valid?choose('exposure.'+id,p.exposure.byProblem[id]??nullMetric(base.view.scope,'DIMENSION_MEMBERSHIP_UNKNOWN')):nullMetric(base.view.scope,'HISTORICAL_PROBLEM_VERSION_UNAVAILABLE');return make(id,h.label,h.version,id,[metric(m,'Ingresos expuestos','exposure',ref)],h.valid);}).sort((a,b)=>a.id.localeCompare(b.id));
  const authHash=cursorAuthHash(s,bound.row.scope_hash,base.view.id),expected={resource:request.resource,authHash,snapshotId:base.view.id,dataScopeHash:bound.row.scope_hash};const after=decodeCursor(request.cursor,expected);if(after){check(items.some(i=>i.id===after),'cursor_position_invalid',409);items=items.filter(i=>i.id>after);}const more=!all&&items.length>request.limit;items=all?items:items.slice(0,request.limit);
- const priorities=await createPriorityRepository({database:scopedDb(s)}).view({snapshotId:base.view.id});const critical=priorities.problemOptions.filter(p=>p.criticalLane).length;
- return {items,meta:{state:stale?'stale':!items.length?'empty':p.uncertain||items.some(r=>r.status==='partial')?'partial':'ready',snapshot_id:base.view.id,base_snapshot_id:base.view.id,base_scope_hash:base.view.scopeHash,scope_hash:bound.row.scope_hash,cursor_auth_hash:authHash,coverage:p.uncertain?`${p.uncertain} órdenes con pertenencia al filtro desconocida; subtotal de pertenencias confirmadas.`:stale?'La versión actual del problema cambió; esta vista conserva la historia y las cifras publicadas.':'Cobertura financiera según el snapshot; filas por problema no aditivas.',watermark:base.view.watermark,next_cursor:more?encodeCursor({after:items.at(-1).id,...expected}):null,critical_notice:critical?`${critical} señales críticas actuales autorizadas, independientes de los filtros y del importe del snapshot.`:null,scope:exposedScope(f,bound.row.scope_hash),mapping_manifest_id:bound.row.id,can_manage:s.role==='owner'}};
+ const signals=await criticalSignals(s,base.view.id),critical=signals.count??0;
+ return {items,meta:{state:stale?'stale':!items.length?'empty':p.uncertain||items.some(r=>r.status==='partial')?'partial':'ready',snapshot_id:base.view.id,base_snapshot_id:base.view.id,base_scope_hash:base.view.scopeHash,scope_hash:bound.row.scope_hash,cursor_auth_hash:authHash,coverage:p.uncertain?`${p.uncertain} órdenes con pertenencia al filtro desconocida; subtotal de pertenencias confirmadas.`:stale?'La versión actual del problema cambió; esta vista conserva la historia y las cifras publicadas.':'Cobertura financiera según el snapshot; filas por problema no aditivas.',watermark:base.view.watermark,next_cursor:more?encodeCursor({after:items.at(-1).id,...expected}):null,critical_notice:critical?`${critical} señales críticas actuales autorizadas, independientes de los filtros y del importe del snapshot.`:null,critical_notice_state:signals.status,scope:exposedScope(f,bound.row.scope_hash),mapping_manifest_id:bound.row.id,can_manage:s.role==='owner'}};
  });},
  async mappings(){return tx('read',async s=>{
  // Mismas filas que antes: último asiento de cada pedido cuyo contribuyente y cuya fuente vigente siguen activos (economic_record_current), pero evaluado por lote

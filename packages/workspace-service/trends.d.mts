@@ -1,7 +1,8 @@
+export type SummaryMeta={source:'summary'|'direct';freshness:string;refreshedAt:string|null;cutoff:string|null;label:string|null};
 export type TrendClass='observed'|'estimated';
-export type ConversationTrend={status:'ok'|'empty'|'timeout';class:TrendClass;series:{month:string;count:number}[];outsideWindow:number|null;total:number|null;sampled?:boolean;samplePercent?:number|null;sampleNote?:string|null;definition?:string;undated?:number|null};
+export type ConversationTrend={status:'ok'|'empty'|'timeout';class:TrendClass;series:{month:string;count:number}[];outsideWindow:number|null;total:number|null;sampled?:boolean;samplePercent?:number|null;sampleNote?:string|null;definition?:string;undated?:number|null;summary?:SummaryMeta};
 export type LedgerMonth={month:string;orders:{count:number;amountMinor:string;unknownAmounts:number};refunds:{count:number;amountMinor:string;unknownAmounts:number}};
-export type LedgerTrend={status:'ok'|'empty'|'timeout';class:TrendClass;currency?:string|null;exponent?:number|null;otherCurrencies?:string[];series:LedgerMonth[];currencies:string[]};
+export type LedgerTrend={status:'ok'|'empty'|'timeout';class:TrendClass;currency?:string|null;exponent?:number|null;otherCurrencies?:string[];series:LedgerMonth[];currencies:string[];summary?:SummaryMeta};
 export type TrendsView={generatedAt:string;window:{start:string;end:string;months:number};note:string;conversations:ConversationTrend;ledger:LedgerTrend};
 export const TREND_MONTHS:number;export const LOCAL_TIMEOUT_MS:number;export const SAMPLE_PERCENT:number;
 export function monthWindow(now?:Date,months?:number):{start:Date;end:Date;list:string[]};

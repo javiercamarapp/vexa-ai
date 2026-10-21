@@ -3,6 +3,7 @@
 // coverage aggregates only the small `imports` table (never message/conversation tables, which cost a policy call per row).
 import {WorkspaceError,uuid} from './contracts.mjs';
 import {guarded} from './trends.mjs';
+import {readLedgerCounts,readAssociationCounts,summaryLabel,summaryMeta,attempt} from './summaries.mjs';
 const SOURCE_LABELS={hubspot:'HubSpot',zendesk:'Zendesk',csv:'Archivo CSV',excel:'Archivo Excel'};
 // Sources the product is meant to incorporate. A source with no import is reported as "not loaded", never as zero loaded.
 export const EXPECTED_SOURCES=Object.freeze([
@@ -82,22 +83,37 @@ export function createProvenanceRepository({database}){
    const ledgerQuery=(sample)=>async()=>(await s.query(`WITH src AS (SELECT DISTINCT ON(source_id) source_id,name FROM public.economic_source_versions WHERE tenant_id=$1 ORDER BY source_id,version DESC)
       SELECT coalesce(src.name,'Fuente sin nombre') AS name,e.currency AS currency,e.kind AS kind,count(DISTINCT e.entity_id) AS n,count(*) AS revisions
       FROM public.economic_ledger_entries e${sample} LEFT JOIN src ON src.source_id=e.source_id WHERE e.tenant_id=$1 GROUP BY 1,2,3 ORDER BY 1,2,3 LIMIT 60`,[s.tenantId])).rows;
-   let lrows=await g(ledgerQuery(''),Math.min(EXACT_STEP_MS,left())),exact=lrows!==null;
-   if(lrows===null)lrows=await g(ledgerQuery(` TABLESAMPLE BERNOULLI (${SAMPLE_PERCENT}) REPEATABLE (7)`));
-   const factor=exact?1:100/SAMPLE_PERCENT;
+   // Resumen precomputado (20261022000000) primero: conteos exactos a la fecha del refresco, sin escanear el libro. Sin él: conteo directo o muestra (camino anterior).
+   let lrows,exact,factor,ledgerSummary=null;
+   const lsum=await readLedgerCounts(s);
+   if(lsum.availability==='ready'){
+    const names=await attempt(s,async()=>new Map((await s.query('SELECT DISTINCT ON(source_id) source_id,name FROM public.economic_source_versions WHERE tenant_id=$1 ORDER BY source_id,version DESC LIMIT 100',[s.tenantId])).rows.map(r=>[r.source_id,r.name])));
+    if(names.value){lrows=lsum.groups.map(x=>({name:names.value.get(x.sourceId)??'Fuente sin nombre',currency:x.currency,kind:x.kind,n:x.entities,revisions:x.revisions}));exact=lsum.freshness==='fresh';factor=1;ledgerSummary={meta:summaryMeta(lsum),label:summaryLabel(lsum)};}
+   }
+   if(!lrows){lrows=await g(ledgerQuery(''),Math.min(EXACT_STEP_MS,left()));exact=lrows!==null;if(lrows===null)lrows=await g(ledgerQuery(` TABLESAMPLE BERNOULLI (${SAMPLE_PERCENT}) REPEATABLE (7)`));factor=exact?1:100/SAMPLE_PERCENT;}
    let revisions=0;
    if(lrows===null)ledger=none('ledger','timeout');
    else if(lrows.length){const groups=new Map();for(const r of lrows){const k=r.name+' · '+r.currency,o=groups.get(k)??{orders:0,refunds:0,other:0};revisions+=Math.round(Number(r.revisions)*factor);const v=Math.round(Number(r.n)*factor);if(r.kind==='order')o.orders+=v;else if(r.kind==='refund')o.refunds+=v;else o.other+=v;groups.set(k,o);}
     const total=[...groups.values()].reduce((a,o)=>a+o.orders+o.refunds+o.other,0),lines=[...groups.entries()].slice(0,6).map(([k,o])=>`${k}: ${o.orders.toLocaleString('es-MX')} pedidos · ${o.refunds.toLocaleString('es-MX')} reembolsos${o.other?` · ${o.other.toLocaleString('es-MX')} otros`:''}`);
-    ledger=base('ledger',{class:exact?'observed':'estimated',total,incorporated:total,detail:[...lines,...(groups.size>6?[`y ${groups.size-6} grupos más`]:[]),'Conteo de registros por fuente y moneda; las monedas no se suman.',...(exact?[`Conteo exacto del libro: ${total.toLocaleString('es-MX')} registros distintos en ${revisions.toLocaleString('es-MX')} revisiones guardadas.`]:[`Estimado con una muestra del ${SAMPLE_PERCENT} %.`])]});}
+    ledger=base('ledger',{class:exact?'observed':'estimated',total,incorporated:total,detail:[...lines,...(groups.size>6?[`y ${groups.size-6} grupos más`]:[]),'Conteo de registros por fuente y moneda; las monedas no se suman.',...(ledgerSummary?[`${exact?`Conteo exacto del libro: ${total.toLocaleString('es-MX')} registros distintos en ${revisions.toLocaleString('es-MX')} revisiones guardadas.`:`${total.toLocaleString('es-MX')} registros distintos en ${revisions.toLocaleString('es-MX')} revisiones al corte del resumen.`}`,ledgerSummary.label]:exact?[`Conteo exacto del libro: ${total.toLocaleString('es-MX')} registros distintos en ${revisions.toLocaleString('es-MX')} revisiones guardadas.`]:[`Estimado con una muestra del ${SAMPLE_PERCENT} %.`])],...(ledgerSummary?{summary:ledgerSummary.meta}:{})});}
    // 5. HubSpot ticket-contact associations: facts by state and active bindings (links).
    let associations=none('associations');
-   const facts=await tally({table:'public.native_customer_associations',alias:'f',group:'f.resolution_state'});
-   if(facts===null)associations=none('associations','timeout');
-   else if(facts.rows.length){const links=await tally({table:'public.conversation_customer_association_bindings',alias:'b',where:'b.active',group:"'links'"});
+   // Conteos mantenidos (association_counts, 20261022000000): no dependen de la política initplan 20261021000000. Sin ellos: tally exacto o muestra.
+   const asum=await readAssociationCounts(s);
+   const assocBase=(c,total,linkCount,exact,tail,extra={})=>base('associations',{class:exact?'observed':'estimated',total,incorporated:total,
+    detail:[`${total.toLocaleString('es-MX')} hechos (resueltos ${(c.resolved??0).toLocaleString('es-MX')} · pendientes ${(c.pending??0).toLocaleString('es-MX')} · por revisar ${(c.blocked??0).toLocaleString('es-MX')} · retenidos ${(c.retained??0).toLocaleString('es-MX')})`,linkCount===null?'Vínculos: no disponible ahora':`${linkCount.toLocaleString('es-MX')} vínculos activos conversación–cliente`].concat(tail),...extra});
+   if(asum.availability==='ready'&&asum.counts.fact_resolved!==undefined){
+    const k=asum.counts,c={resolved:k.fact_resolved,pending:k.fact_pending,blocked:k.fact_blocked,retained:k.fact_retained},total=c.resolved+c.pending+c.blocked+c.retained;
+    if(total>0)associations=assocBase(c,total,k.binding_active??0,asum.freshness==='fresh',[asum.freshness==='fresh'?'Conteo exacto.':'',summaryLabel(asum)].filter(Boolean),{summary:summaryMeta(asum)});
+   }
+   // Sin resumen, o con resumen no fresco: se intenta el conteo directo; un directo EXACTO manda, uno estimado solo sustituye si no hay resumen.
+   if(associations.loaded===false||associations.class!=='observed'){
+   const hadSummary=associations.loaded!==false,facts=await tally({table:'public.native_customer_associations',alias:'f',group:'f.resolution_state'});
+   if(facts===null){if(!hadSummary)associations=none('associations','timeout');}
+   else if(facts.rows.length&&(facts.exact||!hadSummary)){const links=await tally({table:'public.conversation_customer_association_bindings',alias:'b',where:'b.active',group:"'links'"});
     const c=Object.fromEntries(facts.rows.map(r=>[r.g,r.n])),total=facts.rows.reduce((a,r)=>a+r.n,0),linkCount=links&&links.rows[0]?links.rows[0].n:links===null?null:0,exact=facts.exact&&(links===null||links.exact);
-    associations=base('associations',{class:exact?'observed':'estimated',total,incorporated:total,
-     detail:[`${total.toLocaleString('es-MX')} hechos (resueltos ${(c.resolved??0).toLocaleString('es-MX')} · pendientes ${(c.pending??0).toLocaleString('es-MX')} · por revisar ${(c.blocked??0).toLocaleString('es-MX')} · retenidos ${(c.retained??0).toLocaleString('es-MX')})`,linkCount===null?'Vínculos: no disponible ahora':`${linkCount.toLocaleString('es-MX')} vínculos activos conversación–cliente`].concat(exact?['Conteo exacto.']:[`Estimado con una muestra del ${SAMPLE_PERCENT} %.`])});}
+    if(exact||!hadSummary)associations=assocBase(c,total,linkCount,exact,exact?['Conteo exacto.']:[`Estimado con una muestra del ${SAMPLE_PERCENT} %.`]);}
+   }
    const sources=[by.hubspot,associations,by.csv,ledger,excel,attachments,by.zendesk];
    for(const r of rows)if(!EXPECTED_SOURCES.some(e=>e.key===r.source))sources.push({...fromImports(r.source),label:SOURCE_LABELS[r.source]??r.source,key:r.source});
    return {generatedAt:new Date().toISOString(),basis:'imports+tables',note:'Importaciones registradas más las fuentes que no pasan por importaciones (Tracker, adjuntos, libro de registros, asociaciones), leídas con consultas acotadas; una cifra con «Estimado» viene de una muestra rotulada. Lo que nunca se cargó aparece como «Sin cargar»; no se estima su tamaño.',sources};

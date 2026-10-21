@@ -6,7 +6,7 @@ export type Context = {user:{id:string};active:Membership};
 export type Metric = {label:string;amount_minor:string|null;currency:string;exponent:number;kind:string;source_ref:string;known_subtotal:string|null};
 export type Evidence = {id:string;quote:string;source_ref:string;role:string};
 export type RecordView = {id:string;title:string;summary:string;status:string;version:number;owner:string|null;customer_id:string|null;problem_id:string|null;metrics:Metric[];evidence:Evidence[];details:{label:string;value:string}[]};
-export type Bundle = {items:RecordView[];meta:{state:'empty'|'partial'|'stale'|'ready';snapshot_id:string|null;scope_hash:string|null;base_snapshot_id?:string|null;base_scope_hash?:string|null;cursor_auth_hash?:string|null;scope?:Scope;mapping_manifest_id?:string|null;can_manage?:boolean;coverage:string;watermark:string|null;next_cursor:string|null;critical_notice:string|null}};
+export type Bundle = {items:RecordView[];meta:{state:'empty'|'partial'|'stale'|'ready';snapshot_id:string|null;scope_hash:string|null;base_snapshot_id?:string|null;base_scope_hash?:string|null;cursor_auth_hash?:string|null;scope?:Scope;mapping_manifest_id?:string|null;can_manage?:boolean;coverage:string;watermark:string|null;next_cursor:string|null;critical_notice:string|null;critical_notice_state?:'ok'|'unavailable'}};
 export const UUID=/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 export function bad(code:string):never {throw new AccessError(400,code);}
 export function parseScope(query:URLSearchParams, now=new Date()):{scope:Scope;limit:number;cursor:string|null} {

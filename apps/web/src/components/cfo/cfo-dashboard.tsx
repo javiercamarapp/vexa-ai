@@ -14,7 +14,7 @@ import {changeBps, int, monthLabel, pct, signedPct} from '../../../../../package
 import {MonthBars, type MonthPoint} from './month-bars';
 import './cfo.css';
 
-export type ReportState = {status: 'ok'; report: CfoReport; synthetic: boolean; exposureStatus?: string} | {status: 'empty' | 'timeout'; synthetic?: boolean};
+export type ReportState = {status: 'ok'; report: CfoReport; synthetic: boolean; exposureStatus?: string} | {status: 'empty' | 'timeout'; synthetic?: boolean; summary?: {freshness: string; label: string | null; missingMonths?: string[] | null}};
 type Measure = 'ingresos' | 'pedidos' | 'reembolsos' | 'tasa';
 const MEASURES: ReadonlyArray<{value: Measure; label: string}> = [{value: 'ingresos', label: 'Ingresos'}, {value: 'pedidos', label: 'Pedidos'}, {value: 'reembolsos', label: 'Reembolsos'}, {value: 'tasa', label: 'Tasa de reembolso'}];
 const SEVERITY: Record<string, string> = {alta: 'Alta', media: 'Media', baja: 'Baja', info: 'Informativa'};
@@ -44,7 +44,7 @@ export function CfoDashboard({initial, query = '', organization}: {initial: Repo
   const header = <PageHeader eyebrow="CFO del negocio" title="CFO del negocio" description="Ingresos, reembolsos, mezcla por canal y calidad de datos, por moneda y sin mezclar bases. Cada cifra dice si es observada, estimada o inferida, y cómo se calculó." actions={actions} />;
   if (!report) return <div className="cf-page">{header}{error && <p className="state state-error" role="alert">{error}</p>}
     {state.status === 'timeout'
-      ? <Empty tone="bad" title="No disponible ahora" action={<Button icon={<Refresh />} loading={busy} onClick={() => void load()}>Reintentar</Button>}>La consulta acotada del ledger superó el tiempo permitido. No se muestra ninguna cifra parcial como si fuera completa.</Empty>
+      ? <Empty tone="bad" title="No disponible ahora" action={<Button icon={<Refresh />} loading={busy} onClick={() => void load()}>Reintentar</Button>}>La consulta acotada del ledger superó el tiempo permitido{state.status === 'timeout' && state.summary && ['absent', 'partial', 'unavailable'].includes(state.summary.freshness) ? ' y todavía no hay un resumen precomputado completo de los últimos 12 meses (pide a un operador refrescarlo)' : ''}. No se muestra ninguna cifra parcial como si fuera completa.</Empty>
       : <Empty title="Sin asientos en el ledger" action={<LinkButton href="/economics" icon={<PfIcon name="database" />}>Ir a Gestión económica</LinkButton>}>Aún no hay pedidos ni reembolsos registrados para esta organización en los últimos 12 meses. Carga una fuente para ver el panel financiero.</Empty>}</div>;
 
   const block = report.perCurrency.find(c => c.currency === currency) ?? report.perCurrency[0];
@@ -55,6 +55,7 @@ export function CfoDashboard({initial, query = '', organization}: {initial: Repo
     <div className="pf-statusbar" role="status">
       {ok?.synthetic && <Pill tone="warn">Datos sintéticos de demostración</Pill>}
       <span>{organization ?? 'Organización'}</span><span>Corte de datos: <strong>{when(report.watermark)}</strong></span><span>Último mes completo: <strong>{report.lastComplete ? monthLabel(report.lastComplete) : 'ninguno'}</strong></span><span>{int(report.quality.totalRows)} asientos</span>
+      {report.summary?.source === 'summary' && report.summary.label && <Pill tone={report.summary.freshness === 'fresh' ? 'ok' : 'warn'}>{report.summary.label}</Pill>}
       {!report.complete && <Pill tone="warn">Resultado truncado</Pill>}
     </div>
     <div className="pf-banner" role="note"><PfIcon name="info" /><p><strong>USD, CAD y MXN no se suman ni se convierten.</strong> No hay tipos de cambio aprobados (economic_fx_versions está vacío), así que cada moneda se muestra aparte. Tampoco se restan reembolsos de ingresos: usan bases económicas distintas.</p></div>

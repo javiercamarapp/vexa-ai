@@ -40,5 +40,5 @@ export async function readWorkspace(port:ReadPort,context:Context,resource:Resou
  const watermark=str(meta.watermark,40);if(!Number.isFinite(Date.parse(watermark)))invalid();
  const next=meta.next_after===null?null:id(meta.next_after);
  if(next&&(!items.length||next!==items.at(-1)?.id))invalid();
- return {items,meta:{state:meta.state as Bundle['meta']['state'],scope_hash:hash,snapshot_id,coverage:str(meta.coverage,300),watermark,next_cursor:next?makeCursor(next,hash,resource):null,critical_notice:nullable(meta.critical_notice)}};
+ return {items,meta:{state:meta.state as Bundle['meta']['state'],scope_hash:hash,snapshot_id,coverage:str(meta.coverage,300),watermark,next_cursor:next?makeCursor(next,hash,resource):null,critical_notice:nullable(meta.critical_notice),critical_notice_state:meta.critical_notice_state==='unavailable'?'unavailable':'ok'}};
 }

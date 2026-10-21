@@ -6,7 +6,7 @@ import {requestAuth} from '../../../../lib/auth-http';
 import {serverPool} from '../../../../lib/imports/server';
 import {workspaceSession} from '../../../../lib/workspace/server';
 import {argsHash} from '../../../../components/platform/server/copilot-http';
-import {buildCfoReport, createCfoRepository, exposureFixture, FIXTURE_WATERMARK, ledgerMonthlyFixture, serializeReport, type CfoReport, type Principal} from '../../../../../../../packages/cfo-copilot/src/index.mjs';
+import {buildCfoReport, createCfoRepository, type SummaryMeta, exposureFixture, FIXTURE_WATERMARK, ledgerMonthlyFixture, serializeReport, type CfoReport, type Principal} from '../../../../../../../packages/cfo-copilot/src/index.mjs';
 
 /** Solo `next dev` con VEXA_UI_FIXTURES=1: datos 100 % sintéticos, sin Supabase. Nunca activo en una compilación de producción. */
 export const FIXTURES = process.env.NODE_ENV === 'development' && process.env.VEXA_UI_FIXTURES === '1';
@@ -37,14 +37,14 @@ export async function cfoAccessForRequest(request: NextRequest): Promise<{access
 }
 export const principalOf = (a: CfoAccess): Principal => ({kind: 'tenant_member', verified: true, userId: a.userId, tenantId: a.tenantId, role: a.role});
 
-export type ReportResult = {status: 'ok'; report: CfoReport; synthetic: boolean; exposureStatus: string} | {status: 'empty' | 'timeout'; synthetic: boolean};
+export type ReportResult = {status: 'ok'; report: CfoReport; synthetic: boolean; exposureStatus: string} | {status: 'empty' | 'timeout'; synthetic: boolean; summary?: SummaryMeta};
 export async function loadReport(access: CfoAccess): Promise<ReportResult> {
   if (access.mode === 'fixture') return {status: 'ok', synthetic: true, exposureStatus: 'ok', report: buildCfoReport(ledgerMonthlyFixture(), {watermark: FIXTURE_WATERMARK, now: new Date('2026-10-20T14:00:00Z'), exposure: exposureFixture({attested: access.demo === 'vinculos'})})};
   const repo = createCfoRepository({database: access.database!});
   const led = await repo.ledgerMonthly();
-  if (led.status !== 'ok') return {status: led.status, synthetic: false};
+  if (led.status !== 'ok') return {status: led.status, synthetic: false, summary: led.summary};
   const exp = await repo.exposure(); // una exposición que expira se informa como «sin atestar»; nunca se inventa
-  return {status: 'ok', synthetic: false, exposureStatus: exp.status, report: buildCfoReport(led.rows, {watermark: led.watermark, exposure: exp.status === 'ok' ? exp : undefined, complete: led.complete})};
+  return {status: 'ok', synthetic: false, exposureStatus: exp.status, report: {...buildCfoReport(led.rows, {watermark: led.watermark, exposure: exp.status === 'ok' ? exp : undefined, complete: led.complete}), summary: led.summary}};
 }
 export const publicReport = (r: ReportResult) => r.status === 'ok' ? {...r, report: serializeReport(r.report)} : r;
 

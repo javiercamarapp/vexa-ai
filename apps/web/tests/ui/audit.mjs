@@ -121,6 +121,21 @@ for(const [w,h] of VIEWPORTS){
   report.push({view:'overview-trends',width:w,issues:uniq,errors});console.log(`${uniq.length||errors.length?'FAIL':'PASS'} overview-trends @${w}${uniq.length?' · '+uniq.length+' problemas':''}`);for(const i of uniq.slice(0,12))console.log('   - '+i.kind+': '+i.detail);
   await page.close();
  }
+ if(filter&&filter.includes('overview-slow')&&w===1440){
+  // Production regression (21-oct): /api/workspace?resource=metrics hung for > 30 s on the 85k-row ledger and the Resumen showed nothing else.
+  const page=await ctx.newPage(),fail=[];
+  await page.route('**/api/workspace?resource=metrics*',()=>{/* never answered on purpose */});
+  await page.goto(base+'/overview',{waitUntil:'domcontentloaded',timeout:90000});
+  await page.waitForSelector('text=/Información (histórica )?incorporada/',{timeout:20000}).catch(()=>fail.push({kind:'flow',detail:'coverage band missing while the figures are pending'}));
+  await page.waitForSelector('.trends .trend-bar',{timeout:20000}).catch(()=>fail.push({kind:'flow',detail:'monthly trends missing while the figures are pending'}));
+  await page.waitForSelector('text=tardaron demasiado',{timeout:40000}).catch(()=>fail.push({kind:'flow',detail:'no timeout message after 25 s'}));
+  if(await page.locator('.trends .trend-bar').count()<12)fail.push({kind:'flow',detail:'trends disappeared after the timeout'});
+  fail.push(...await page.evaluate(geometry));
+  await page.screenshot({path:path.join(out,'overview-slow-1440.png'),fullPage:false});
+  const uniq=[...new Map(fail.map(i=>[i.kind+i.detail,i])).values()];if(uniq.length)failed++;
+  report.push({view:'overview-slow',width:w,issues:uniq,errors:[]});console.log(`${uniq.length?'FAIL':'PASS'} overview-slow @${w}${uniq.length?' · '+uniq.length+' problemas':''}`);for(const i of uniq.slice(0,12))console.log('   - '+i.kind+': '+i.detail);
+  await page.close();
+ }
  if(process.env.EXTRA!=='1'&&(!filter||filter.includes('demo-flow'))){
   const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push('pageerror: '+e.message));
   const fail=[];

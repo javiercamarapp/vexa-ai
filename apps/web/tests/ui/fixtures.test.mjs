@@ -26,7 +26,7 @@ test('trend series are twelve consecutive months with non-negative counts',()=>{
  assert.ok(t.conversations.series.every(r=>r.count>=0&&/^\d{4}-\d{2}$/.test(r.month)));
 });
 test('conversation volume is dated by first message and a sample is labelled as an estimate',()=>{
- const c=trends().conversations;assert.equal(c.definition,'started_at_or_first_message');assert.equal(c.sampled,true);assert.equal(c.class,'estimated');assert.match(c.sampleNote,/muestra del 10 %/);
+ const c=trends().conversations;assert.equal(c.definition,'started_at_or_first_message');assert.equal(c.sampled,true);assert.equal(c.class,'estimated');assert.match(c.sampleNote,/muestra del 3 %/);
  assert.ok(c.series.filter(r=>r.count>0).length>=10,'a real series is not a single bar');
 });
 

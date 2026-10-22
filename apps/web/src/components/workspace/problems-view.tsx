@@ -24,6 +24,7 @@ import {nf} from '../ui/format';
 import {EmptyState} from '../ui/empty-state';
 type M=Metric&{coverage?:{known_n:number;eligible_n:number};missing_reasons?:string[]};
 const STATUS:Record<string,{label:string;tone:'ok'|'warn'|'info'}>={ready:{label:'Cobertura completa',tone:'ok'},partial:{label:'Cobertura parcial',tone:'warn'},stale:{label:'Corte anterior',tone:'warn'}};
+const sinVinculos=(item:{metrics:readonly {missing_reasons?:string[]}[]})=>item.metrics.some(m=>m.missing_reasons?.includes('EXPOSURE_NOT_LINKED'));
 const exact=(m:M)=>m.amount_minor!==null&&/^-?\d+$/.test(m.amount_minor);
 const money=(m:M)=>formatMinorUnits(m.amount_minor,m.currency,m.exponent);
 function primary(item:RecordView):M|undefined{return (item.metrics.find(x=>x.kind==='exposure')??item.metrics[0]) as M|undefined;}
@@ -40,7 +41,7 @@ function QuickView({item,query,onClose}:{item:RecordView|null;query:string;onClo
    <p className="card-lead">{item.summary}</p>
    <div className="stat-grid" style={{gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))'}}>{item.metrics.map((m,i)=><div key={i} className="card"><Figure m={m as M}/><Coverage m={m as M}/><small className="pfig-src"><SourceRef value={m.source_ref}/></small></div>)}</div>
    <dl className="record-details">{item.details.map((d,i)=><div key={i}><dt>{d.label}</dt><dd>{d.value}</dd></div>)}<div><dt>Versión</dt><dd>{item.version}</dd></div></dl>
-   {item.evidence.length>0?<section><h3>Evidencia autorizada ({item.evidence.length})</h3>{item.evidence.map(e=><Citation key={e.id} quote={e.quote} role={e.role} messageRevisionId={e.id}/>)}</section>:<p className="state">Sin citas verificables con tu acceso en este corte.</p>}
+   {sinVinculos(item)?<p className="state">La evidencia se verifica al abrir el problema.</p>:item.evidence.length>0?<section><h3>Evidencia autorizada ({item.evidence.length})</h3>{item.evidence.map(e=><Citation key={e.id} quote={e.quote} role={e.role} messageRevisionId={e.id}/>)}</section>:<p className="state">Sin citas verificables con tu acceso en este corte.</p>}
   </div>}
  </Drawer>;
 }
@@ -78,7 +79,7 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
     <p className="pcard-summary">{item.summary}</p>
     {m&&<><Figure m={m} big/><Coverage m={m}/></>}
     {rest.length>0&&<ul className="pcard-rest">{rest.map((r,i)=><li key={i}><span>{r.label}</span><strong>{exact(r)?money(r):'No disponible'}</strong><KindBadge metric={r}/></li>)}</ul>}
-    <footer className="pcard-foot"><span className="pcard-ev"><Icon name="message" size={14}/>{item.evidence.length} {item.evidence.length===1?'cita verificable':'citas verificables'}</span><button type="button" className="btn btn-ghost btn-sm" onClick={()=>setQuick(item)} aria-label={'Vista rápida: '+item.title}>Vista rápida</button></footer>
+    <footer className="pcard-foot"><span className="pcard-ev"><Icon name="message" size={14}/>{sinVinculos(item)?'Evidencia: se verifica al abrir':<>{item.evidence.length} {item.evidence.length===1?'cita verificable':'citas verificables'}</>}</span><button type="button" className="btn btn-ghost btn-sm" onClick={()=>setQuick(item)} aria-label={'Vista rápida: '+item.title}>Vista rápida</button></footer>
    </article>;})}</div>
   :<section className="card" aria-label="Tabla de problemas"><div className="table-wrap" tabIndex={0} role="region" aria-label="Tabla de problemas, desplazamiento horizontal"><table className="dtable"><thead><tr><th scope="col">Problema</th><th scope="col">Estado</th><th scope="col" className="num">Ingresos expuestos</th><th scope="col" className="num">Reembolsos</th><th scope="col">Cobertura</th><th scope="col" className="num">Citas</th><th scope="col"><span className="sr-only">Acciones</span></th></tr></thead><tbody>{items.map(item=>{const m=primary(item),r=item.metrics.find(x=>x.kind==='refunds') as M|undefined,st=STATUS[item.status]??{label:item.status,tone:'info' as const},c=m?.coverage;
    return <tr key={item.id}><th scope="row"><Link href={'/problems/'+item.id+'?'+query} className="row-link-inline">{item.title}</Link></th><td><StatusChip tone={st.tone}>{st.label}</StatusChip></td><td className="num">{m&&exact(m)?money(m):'No disponible'}{m&&<div><KindBadge metric={m}/></div>}</td><td className="num">{r&&exact(r)?money(r):'—'}</td><td>{c&&c.eligible_n>0?<span className="inline-bar" title={`${nf.format(c.known_n)} de ${nf.format(c.eligible_n)} registros`}><i style={{width:Math.round(c.known_n*100/c.eligible_n)+'%'}}/><span className="sr-only">{nf.format(c.known_n)} de {nf.format(c.eligible_n)} registros</span></span>:'—'}</td><td className="num">{item.evidence.length}</td><td><button type="button" className="btn btn-ghost btn-sm" onClick={()=>setQuick(item)} aria-label={'Vista rápida: '+item.title}>Vista rápida</button></td></tr>;})}</tbody></table></div></section>}

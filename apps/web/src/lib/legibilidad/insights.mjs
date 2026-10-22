@@ -107,7 +107,7 @@ export function insightsProblemas({items=[],moneda=null}={}){
  else out.push({id:'mayor',vacio:true,razon:'Ningún problema visible tiene un importe expuesto exacto en este corte.',fuente});
  out.push({id:'importes',texto:`**${nfEs.format(conImporte.length)}** de **${nfEs.format(n)}** problemas agrupados de esta página tienen importe expuesto conocido${conImporte.length<n?'; el resto no muestra cifra en lugar de un cero':''}.`,fuente,cobertura:`Cuenta problemas agrupados de la página actual${moneda?`, en ${moneda}`:''}; no cuenta incidencias.`,clase:'observed'});
  const conCitas=items.filter(i=>(i.evidence?.length??0)>0).length;
- out.push({id:'citas',texto:`**${nfEs.format(conCitas)}** de **${nfEs.format(n)}** problemas agrupados tienen al menos una cita verificable con tu acceso.`,fuente:'Corte publicado: evidencia autorizada',cobertura:'Una cita respalda el problema; no demuestra su causa.',clase:'observed'});
+ if(!items.every(i=>i.metrics?.some(m=>m.missing_reasons?.includes('EXPOSURE_NOT_LINKED'))))out.push({id:'citas',texto:`**${nfEs.format(conCitas)}** de **${nfEs.format(n)}** problemas agrupados tienen al menos una cita verificable con tu acceso.`,fuente:'Corte publicado: evidencia autorizada',cobertura:'Una cita respalda el problema; no demuestra su causa.',clase:'observed'});
  return out.slice(0,MAX);
 }
 

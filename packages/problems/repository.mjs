@@ -2,11 +2,13 @@ import {randomUUID} from 'node:crypto';
 import {hash,stableId,sortedUnique,requireThat,DomainError} from './contracts.mjs';
 import {createEvidenceRepository} from '../intelligence/evidence-repository.mjs';
 import {memoized} from '../metrics/ledger-load.mjs';
+import {evidenceRuns,evidenceCurrent} from '../metrics/evidence-memo.mjs';
 const uuid=x=>typeof x==='string'&&/^[a-f0-9-]{36}$/i.test(x);
 const one=async(s,q,a)=>(await s.query(q,a)).rows[0];
 const scoped=s=>({transaction:async(_,work)=>work(s)});
 export const evidence=async(s,id)=>{const e=await createEvidenceRepository({database:scoped(s)}).get(id);requireThat(e.state==='current'&&e.status==='succeeded','source_unavailable',409);return e;};
-async function accessible(s,p){for(const id of p.embeddingIds){const m=await one(s,'SELECT extraction_run_id FROM public.problem_embedding_members WHERE tenant_id=$1 AND embedding_id=$2',[s.tenantId,id]);requireThat(m,'source_unavailable');await evidence(s,m.extraction_run_id);}return p;}
+// Mismo veredicto que antes (cada miembro con su corrida y evidencia utilizable, el primero que falle decide) pero por LOTE: una consulta de membresías y una verificación de evidencia por lote (antes ~6 sentencias por miembro).
+async function accessible(s,p){const ids=p.embeddingIds,rows=ids.length?(await s.query('SELECT embedding_id,extraction_run_id FROM public.problem_embedding_members WHERE tenant_id=$1 AND embedding_id=ANY($2::uuid[])',[s.tenantId,ids])).rows:[],runOf=new Map();for(const r of rows)if(!runOf.has(r.embedding_id))runOf.set(r.embedding_id,r.extraction_run_id);for(const id of ids)requireThat(runOf.has(id),'source_unavailable');await evidenceRuns(s,[...new Set(runOf.values())]);for(const id of ids)await evidenceCurrent(s,runOf.get(id));return p;}
 /** Corridas utilizables según el veredicto «resumen» (ver list): Set de ids. Sin texto de evidencia; todas las consultas filtran por tenant_id=$1. */
 const UUID_RE="'^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'";
 // Memoizado por (transacción, conjunto de corridas): el catálogo, las señales críticas y el resto de vistas de UNA petición piden el mismo veredicto; dentro de una memoSection se calcula una sola vez
@@ -64,7 +66,8 @@ export function createProblemRepository({database}){
  // verification='summary' (vista «Gestionar problemas»): NO carga texto de evidencia; comprueba por SQL agregado (una consulta por tipo de dato, mismo tenant) que cada miembro
  // tenga una corrida succeeded, conversación vigente y conexión activa, manifiesto completo con revisiones y mensajes no borrados y hash igual al del manifiesto, y sin lápida/retención de la conversación.
  // NO recalcula sha256 del texto, input_hash, validación de la extracción ni lápidas de mensajes: eso se verifica al abrir el problema (detail) y en las exportaciones.
- async list({verification='full'}={}){requireThat(verification==='full'||verification==='summary','input_invalid',400);return read(async s=>{const ps=(await s.query("SELECT DISTINCT ON(problem_id) * FROM public.problem_versions WHERE tenant_id=$1 AND provenance->>'kind'='vector-problem-v1' ORDER BY problem_id,version DESC",[s.tenantId])).rows.map(projection);
+ // only (opcional): ids de problemas a listar; el resto del catálogo NO se lee ni se verifica (detalle de UN problema, recomendación). Mismo veredicto por problema que sin filtro.
+ async list({verification='full',only=null}={}){requireThat(verification==='full'||verification==='summary','input_invalid',400);requireThat(only===null||Array.isArray(only)&&only.every(uuid),'input_invalid',400);return read(async s=>{const ps=(await s.query("SELECT DISTINCT ON(problem_id) * FROM public.problem_versions WHERE tenant_id=$1 AND provenance->>'kind'='vector-problem-v1' AND ($2::uuid[] IS NULL OR problem_id=ANY($2::uuid[])) ORDER BY problem_id,version DESC",[s.tenantId,only])).rows.map(projection);
   // Mismo veredicto que accessible() por problema, con UNA consulta de membresías y la evidencia de las corridas distintas verificada por lote.
   const wanted=[...new Set(ps.flatMap(p=>p.embeddingIds??[]))],runOf=new Map();
   if(wanted.length)for(const m of (await s.query('SELECT embedding_id,extraction_run_id FROM public.problem_embedding_members WHERE tenant_id=$1 AND embedding_id=ANY($2::uuid[])',[s.tenantId,wanted])).rows)if(!runOf.has(m.embedding_id))runOf.set(m.embedding_id,m.extraction_run_id);

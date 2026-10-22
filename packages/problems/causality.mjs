@@ -1,6 +1,7 @@
 import {randomUUID,createHash} from 'node:crypto';
 import {DomainError} from './contracts.mjs';
-import {createProblemRepository,evidence as currentEvidence} from './repository.mjs';
+import {createProblemRepository} from './repository.mjs';
+import {evidenceRuns,evidenceCurrent} from '../metrics/evidence-memo.mjs';
 const fail=(message,status=409)=>{throw new DomainError(message,status);};
 const check=(ok,message,status)=>{if(!ok)fail(message,status);};
 const uuid=x=>typeof x==='string'&&/^[a-f0-9-]{36}$/i.test(x);
@@ -14,7 +15,8 @@ export function createCausalityRepository({database}){
  // Derive current safety risk from authorized extraction citations belonging to these members.
  const members=(await s.query('SELECT m.extraction_run_id,e.message_revision_id FROM public.problem_embedding_members m JOIN public.embeddings e ON e.tenant_id=m.tenant_id AND e.id=m.embedding_id WHERE m.tenant_id=$1 AND m.embedding_id=ANY($2::uuid[])',[s.tenantId,problem.embeddingIds])).rows;
  const runs=new Map();for(const member of members){if(!runs.has(member.extraction_run_id))runs.set(member.extraction_run_id,new Set());runs.get(member.extraction_run_id).add(member.message_revision_id);}
- let currentCritical=false;for(const [runId,revisions] of runs){const run=await currentEvidence(s,runId);if(run.issues.some(issue=>['high','critical'].includes(issue.severity)&&issue.evidence.some(span=>revisions.has(span.message_revision_id))))currentCritical=true;}
+ await evidenceRuns(s,[...runs.keys()]); // verificación de evidencia por lote (antes una corrida por vez)
+ let currentCritical=false;for(const [runId,revisions] of runs){const run=await evidenceCurrent(s,runId);if(run.issues.some(issue=>['high','critical'].includes(issue.severity)&&issue.evidence.some(span=>revisions.has(span.message_revision_id))))currentCritical=true;}
  const history=(await s.query('SELECT * FROM public.problem_causal_versions WHERE tenant_id=$1 AND problem_id=$2 ORDER BY version DESC',[s.tenantId,problemId])).rows.map(claimView);
  const evidence=(await s.query('SELECT * FROM public.problem_operational_evidence WHERE tenant_id=$1 AND problem_id=$2 ORDER BY record_id,version,id',[s.tenantId,problemId])).rows.map(evidenceView);
  const claim=history[0]?structuredClone(history[0]):{version:0,symptom:problem.label,probableCause:null,state:'unassessed',evidenceIds:[],reason:'Sin evaluación causal',actorId:null,facts:{batch:null,carrier:null,sku:null},criticalReview:currentCritical};claim.criticalReview=currentCritical;

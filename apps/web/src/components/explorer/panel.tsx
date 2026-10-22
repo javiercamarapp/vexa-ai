@@ -15,6 +15,8 @@ import {EmptyState} from '../ui/empty-state';
 import {nf} from '../ui/format';
 import {Icon} from '../ui/icons';
 import {SkeletonStats,SkeletonRows} from '../ui/skeletons';
+import {WaitStatus} from '../ui/wait-status';
+import {ESPERA} from '../../lib/legibilidad/espera.mjs';
 import {DataState} from '../workspace/data-state';
 import {QueryCard} from './query-card';
 import {PageHeader} from '../ui/page-header';
@@ -62,7 +64,7 @@ export function ExplorerPanel({initialQuery}:{initialQuery:string}){
  return <section className={styles.explorer+' stack'} aria-label="Explorador de evidencia">
   <PageHeader title="Explorador de evidencia" guide="explorador" actions={<><Button icon={<Refresh/>} loading={busy} onClick={()=>{window.dispatchEvent(new Event('vexa:refresh'));void load(current.current);}}>Actualizar consulta</Button><Button variant="ghost" disabled={busy} onClick={restart}>Reiniciar paginación</Button></>}/>
   <CoverageBand/>
-  {busy&&!page&&<div role="status" aria-label="Verificando consulta"><SkeletonStats count={2}/><SkeletonRows rows={4}/></div>}{error&&<p className="state state-error" role="alert">{error}</p>}{empty&&<EmptyState art="search" title="Aún no hay una publicación para explorar" body="Cuando se publique un corte podrás preguntarle a tus datos y revisar su evidencia." action={<LinkButton href="/economics" variant="primary" icon={<Arrow/>}>Revisar publicaciones</LinkButton>}/>}
+  {busy&&!page&&<div className="stack"><WaitStatus {...ESPERA.explorador}/><div aria-hidden="true"><SkeletonStats count={2}/><SkeletonRows rows={4}/></div></div>}{error&&<p className="state state-error" role="alert">{error}</p>}{empty&&<EmptyState art="search" title="Aún no hay una publicación para explorar" body="Cuando se publique un corte podrás preguntarle a tus datos y revisar su evidencia." action={<LinkButton href="/economics" variant="primary" icon={<Arrow/>}>Revisar publicaciones</LinkButton>}/>}
   {page&&<>
    <QueryCard question={question} onChange={setQuestion} onSubmit={()=>void consult('question')} busy={busy} answer={answer}/>
    {evidence&&answer&&<div className="card">{evidenceBody}</div>}

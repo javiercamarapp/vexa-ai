@@ -15,6 +15,8 @@ import {SegmentedControl} from '../ui/segmented';
 import {Drawer,Modal} from '../ui/overlay';
 import {EmptyState} from '../ui/empty-state';
 import {SkeletonCards} from '../ui/skeletons';
+import {WaitStatus} from '../ui/wait-status';
+import {ESPERA} from '../../lib/legibilidad/espera.mjs';
 import {nf} from '../ui/format';
 import css from './panel.module.css';
 type Filters=Scope & {basis:string;exponent?:number};
@@ -93,7 +95,8 @@ export function RecommendationsPanel({initialQuery}:{initialQuery:string}){
   }catch(e){if(!abort.signal.aborted&&epoch===generation.current){if(saved)setConflict(true);setError(e instanceof Error?e.message:failure(503));}return false;}
   finally{if(!abort.signal.aborted&&epoch===generation.current){inFlight.current=false;setBusy(false);}}
  };
- const generate=()=>{if(!view||!problem||busy||conflict)return;const fingerprint=JSON.stringify({query:resolved.current,problemId:problem,problemVersion:view.problemOptions.find(p=>p.id===problem)?.version});if(generateKey.current?.fingerprint!==fingerprint)generateKey.current={fingerprint,key:crypto.randomUUID()};void operate('/api/recommendations',{operation:'generate',query:resolved.current,problemId:problem,requestKey:generateKey.current.key});};
+ const [proposing,setProposing]=useState(false);
+ const generate=()=>{if(!view||!problem||busy||conflict)return;const fingerprint=JSON.stringify({query:resolved.current,problemId:problem,problemVersion:view.problemOptions.find(p=>p.id===problem)?.version});if(generateKey.current?.fingerprint!==fingerprint)generateKey.current={fingerprint,key:crypto.randomUUID()};setProposing(true);void operate('/api/recommendations',{operation:'generate',query:resolved.current,problemId:problem,requestKey:generateKey.current.key}).finally(()=>setProposing(false));};
  const [seg,setSeg]=useState<'all'|'proposed'|'dismissed'>('all'),[propose,setPropose]=useState(false);
  const items=view?[...view.items].sort((a,b)=>(RANK[a.priority]??2)-(RANK[b.priority]??2)):[];
  const nProposed=items.filter(i=>i.status==='proposed').length,nDismissed=items.filter(i=>i.status==='dismissed').length;
@@ -102,7 +105,7 @@ export function RecommendationsPanel({initialQuery}:{initialQuery:string}){
  return <section aria-label="Recomendaciones con evidencia" className="stack">
   <PageHeader eyebrow="Decisiones y seguimiento" title="Recomendaciones" guide="recomendaciones" actions={<><Button icon={<Refresh/>} loading={busy} onClick={()=>void load(resolved.current)}>Actualizar recomendaciones</Button>{view?.canPropose&&<Button icon={<Icon name="sparkle" size={14}/>} onClick={()=>setPropose(true)}>Proponer una recomendación</Button>}</>}/>
   <ScopeBar scope={scope} onApply={apply} busy={busy}/>
-  {busy&&!view&&<div role="status" aria-label="Verificando recomendaciones"><SkeletonCards count={2}/></div>}{error&&<p className="state state-error" role="alert">{error}</p>}{notice&&<p className="state" role="status">{notice}</p>}{empty&&<DataState state={{kind:'empty'}}/>}
+  {busy&&!view&&<div className="stack"><WaitStatus {...ESPERA.recomendaciones}/><div aria-hidden="true"><SkeletonCards count={2}/></div></div>}{proposing&&view&&<WaitStatus titulo="Proponiendo la recomendación y verificando su evidencia…" detalle="Puede tardar hasta 2 minutos; no cierres esta pestaña."/>}{error&&<p className="state state-error" role="alert">{error}</p>}{notice&&<p className="state" role="status">{notice}</p>}{empty&&<DataState state={{kind:'empty'}}/>}
   {empty&&<EmptyState art="chart" title="Aún no hay un corte publicado" body="Publica un corte financiero para proponer acciones sobre evidencia verificable." action={<LinkButton href="/economics" variant="primary" size="sm" icon={<Arrow/>}>Revisar publicaciones</LinkButton>}/>}
   {view&&<>{view.unavailableCount>0&&<p className="state" role="status">Hay recomendaciones que no pueden mostrarse con la evidencia y los permisos actuales.</p>}
    {view.canPropose&&<Modal open={propose} onClose={()=>setPropose(false)} title="Proponer una recomendación" footer={<Button type="submit" form="recommendation-form" variant="primary" disabled={busy||conflict||!view.problemOptions.some(p=>p.id===problem)}>Proponer recomendación</Button>}>

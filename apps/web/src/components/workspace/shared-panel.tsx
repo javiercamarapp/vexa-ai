@@ -17,6 +17,8 @@ import {IdChip} from '../ui/id-chip';
 import {EmptyState} from '../ui/empty-state';
 import {Icon} from '../ui/icons';
 import {SkeletonStats,SkeletonChart,SkeletonCards} from '../ui/skeletons';
+import {WaitStatus} from '../ui/wait-status';
+import {ESPERA} from '../../lib/legibilidad/espera.mjs';
 type ViewScope=Scope & {basis:string;exponent?:number};
 type ViewBundle=Omit<Bundle,'meta'> & {meta:Omit<Bundle['meta'],'scope_hash'> & {scope_hash:string|null;base_snapshot_id:string|null;base_scope_hash:string|null;cursor_auth_hash:string;scope:ViewScope;mapping_manifest_id:string|null;can_manage:boolean}};
 function initialScope(query:string):ViewScope{
@@ -70,11 +72,11 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   {bundle.meta.can_manage&&<><LinkButton href="/economics" variant="ghost" size="sm" icon={<Arrow/>}>{isOverview?'Fuentes y publicaciones':'Revisar fuentes, clasificación de órdenes y publicaciones'}</LinkButton><LinkButton href="/problems/manage" variant="ghost" size="sm" icon={<Arrow/>}>{isOverview?'Catálogo de problemas':'Gestionar el catálogo de problemas'}</LinkButton></>}
  </div>;
  const notice=bundle?.meta.critical_notice&&<aside className="notice-bar" role="alert"><Icon name="alert" size={14}/><strong>Revisión crítica, independiente del importe</strong><p>{bundle.meta.critical_notice}</p></aside>
- const criticalPending=!bundle?.meta.critical_notice&&bundle?.meta.critical_notice_state==='unavailable'&&<aside className="notice-bar" role="status"><Icon name="info" size={14}/><strong>Señales críticas no calculadas ahora</strong><p>No alcanzaron a calcularse en el tiempo permitido; eso no significa que no existan. Revísalas en Problemas.</p></aside>;
+ const criticalPending=!bundle?.meta.critical_notice&&bundle?.meta.critical_notice_state==='unavailable'&&<aside className="notice-bar" role="status"><Icon name="info" size={14}/><strong>Señales críticas pendientes</strong><p>Aún no se calculan las señales críticas en esta carga; no significa que no existan. Consúltalas en Problemas.</p></aside>;
  return <section className="stack" aria-label={isOverview?'Resumen con alcance compartido':'Problemas con alcance compartido'}>
   <PageHeader title={isOverview?'Resumen ejecutivo':'Problemas de negocio'} guide={isOverview?'resumen':'problemas'} actions={actions}/>
   {bar}
-  {busy&&(isOverview?<div className="stack" role="status" aria-busy="true"><SkeletonStats/><SkeletonChart height={220}/></div>:<div className="stack"><SkeletonCards count={3}/></div>)}
+  {busy&&(isOverview?<div className="stack"><WaitStatus {...ESPERA.resumen}/><div aria-hidden="true"><SkeletonStats/><SkeletonChart height={220}/></div></div>:<div className="stack"><WaitStatus {...ESPERA.problemas}/><div aria-hidden="true"><SkeletonCards count={3}/></div></div>)}
   {error&&<DataState state={{kind:'error',code:'workspace_request_failed',message:error}}/>}
   {isOverview&&!bundle&&!missing&&<div className="stack"><CoverageBand/><TrendCharts/></div>}
   {missing&&!busy&&<EmptyState art="chart" title="Aún no hay un corte publicado para este alcance" body="Cuando se publique un corte con este periodo y estos filtros, sus cifras aparecerán aquí. Mientras tanto puedes probar con la última publicación disponible." action={<Button variant="primary" size="sm" onClick={latest}>Ver la última publicación</Button>} secondary={<LinkButton href="/imports" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>}/>}

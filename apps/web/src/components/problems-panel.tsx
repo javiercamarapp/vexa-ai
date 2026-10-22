@@ -10,6 +10,8 @@ import {IdChip} from './ui/id-chip';
 import {EmptyState} from './ui/empty-state';
 import {Icon} from './ui/icons';
 import {SkeletonStats} from './ui/skeletons';
+import {WaitStatus} from './ui/wait-status';
+import {ESPERA} from '../lib/legibilidad/espera.mjs';
 import {nf} from './ui/format';
 import css from './ops-panels.module.css';
 import {EmbeddingBudgetPanel} from './embedding-budget-panel';
@@ -41,7 +43,7 @@ export function ProblemsPanel({problemId}:{problemId?:string}){
  return <section className="stack" aria-label="Catálogo de problemas">
   {problemId?<div className="card-title"><div><h2>Agrupación y miembros</h2><p>La similitud no confirma una causa ni representa pérdida o ahorro.</p></div><div className={css.actions}><Button size="sm" icon={<Refresh/>} disabled={busy} onClick={()=>void reload()}>Actualizar problemas</Button><LinkButton href="/problems" size="sm" variant="ghost">Volver a problemas</LinkButton></div></div>
   :<PageHeader title="Problemas de negocio" description="Identidades estables y agrupaciones con procedencia; la similitud no confirma una causa." actions={<><Button size="sm" icon={<Refresh/>} disabled={busy} onClick={()=>void reload()}>Actualizar problemas</Button>{snapshot?.canSubmit&&<Button size="sm" variant="primary" disabled={busy} onClick={()=>setGrouping(true)}>Agrupar extracción</Button>}</>}/>}
-  {error&&<p role="alert" className="notice-bar"><Icon name="alert" size={14}/>{error}</p>}{notice&&<p role="status" className="notice-bar" data-tone="info"><Icon name="check" size={14}/>{notice}</p>}{busy&&<p role="status" className="sr-only">Procesando solicitud…</p>}{!snapshot&&!error&&<><p role="status" className="sr-only">Cargando problemas…</p><SkeletonStats count={3}/></>}
+  {error&&<p role="alert" className="notice-bar"><Icon name="alert" size={14}/>{error}</p>}{notice&&<p role="status" className="notice-bar" data-tone="info"><Icon name="check" size={14}/>{notice}</p>}{busy&&<p role="status" className="sr-only">Procesando solicitud…</p>}{!snapshot&&!error&&<><WaitStatus {...ESPERA.problemas}/><div aria-hidden="true"><SkeletonStats count={3}/></div></>}
   {snapshot&&<>
   {!ready&&<p role="status" className="notice-bar"><Icon name="info" size={14}/>La agrupación requiere que el administrador configure el proveedor y autorice su ejecución.</p>}
   {!problemId&&<>

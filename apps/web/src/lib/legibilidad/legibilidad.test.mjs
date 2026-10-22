@@ -210,3 +210,12 @@ test('textos de espera: dicen qué se verifica y que puede tardar, sin prometer 
  assert.match(ESPERA.recomendaciones.detalle,/hasta 2 minutos/);
  assert.match(ESPERA.generarBrief.detalle,/2–3 minutos; no cierres esta pestaña/);
 });
+test('las vistas con espera larga usan WaitStatus y el aviso de señales críticas es neutro',()=>{
+ const leer=r=>readFileSync(new URL('../../components/'+r,import.meta.url),'utf8');
+ for(const f of ['recommendations/panel.tsx','explorer/panel.tsx','briefs/panel.tsx','workspace/shared-panel.tsx','problems-panel.tsx'])assert.match(leer(f),/<WaitStatus /);
+ const wait=leer('ui/wait-status.tsx');assert.match(wait,/role="status"/);assert.match(wait,/aria-live="polite"/);
+ const brief=leer('briefs/panel.tsx');assert.match(brief,/Puede tardar 2–3 minutos; no cierres esta pestaña/);assert.match(brief,/disabled=\{busy\|\|locked\}/);
+ const sp=leer('workspace/shared-panel.tsx');
+ assert.match(sp,/Aún no se calculan las señales críticas en esta carga; no significa que no existan\. Consúltalas en Problemas\./);
+ assert.doesNotMatch(sp,/No alcanzaron a calcularse/);assert.match(sp,/critical_notice_state==='unavailable'/);
+});

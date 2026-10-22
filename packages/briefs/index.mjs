@@ -17,9 +17,10 @@ const strict=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v)
 const scoped=s=>({transaction:async(action,fn)=>{check(action==='read','brief_read_required',403);return memoSection(s,()=>fn(s));}});
 // Selección del brief (rotulada en el documento): del catálogo (verificación de RESUMEN) solo se verifica por completo la evidencia de los problemas que el brief puede mostrar:
 // los POOL con mejor orden (ranking publicado, o nº de citas según el resumen) y TODOS los candidatos críticos (para no perder ninguno fuera del top). Un problema sin evidencia utilizable se excluye, nunca se muestra.
-export const POOL=15;
+export const POOL=15,CRITICAL_N=5,MAX_CITATIONS=3;
 const CRITICAL=/safety|privacy|fraud|seguridad|privacidad|humo|smoke|fire|incendio|quemadura/i;
-export function createBriefRepository({database}){
+export function createBriefRepository({database,limits={}}){
+ const POOL_N=limits.pool??POOL,CRIT_N=limits.criticalN??CRITICAL_N,MAX_C=limits.maxCitations??MAX_CITATIONS;
  const tx=async(action,fn)=>{let domain;try{return await database.transaction(action,async s=>{try{return await fn(s);}catch(e){if(e instanceof WorkspaceError||e instanceof EconomicError)domain=e;throw e;}});}catch(e){if(domain)throw domain;throw e;}};
  const workspace=createWorkspaceService({database}),snapshots=createSnapshotRepository({database});
  function query(input,paging=false){check(input instanceof URLSearchParams,'brief_query_invalid');const q=new URLSearchParams(input);if(!paging)check(!q.has('cursor')&&!q.has('limit'),'brief_query_invalid');check(!q.has('resource')&&!q.has('format'),'brief_query_invalid');const parsed=parseWorkspaceQuery(q);check(parsed.scope.snapshot_id&&parsed.scope.scope_hash,'brief_pins_required');q.delete('cursor');q.delete('limit');return {q,parsed};}
@@ -41,14 +42,19 @@ export function createBriefRepository({database}){
  const rankOf=p=>rank?.entries.find(e=>e.problemId===p.id&&e.problemVersion===p.version)?.rank??null,count=p=>stats.get(p.id)?.evidenceCount??0;
  const ranked=new Map(view.items.map(p=>[p.id,rankOf(p)]));
  const order=(a,b)=>Number(ranked.get(b.id)!==null)-Number(ranked.get(a.id)!==null)||(ranked.get(a.id)!==null?ranked.get(a.id)-ranked.get(b.id):count(b)-count(a))||(a.id<b.id?-1:a.id>b.id?1:0);
- const ordered=[...view.items].sort(order),criticalIds=ordered.filter(p=>stats.get(p.id)?.critical).map(p=>p.id);
+ const ordered=[...view.items].sort(order),critOrdered=ordered.filter(p=>stats.get(p.id)?.critical).sort((a,b)=>count(b)-count(a)||(a.id<b.id?-1:a.id>b.id?1:0)),criticalIds=critOrdered.map(p=>p.id);
  const verified=new Map(),tried=new Set();let pool=0;
  const verify=async ids=>{const todo=ids.filter(id=>!tried.has(id));for(const id of todo)tried.add(id);if(!todo.length)return;for(const [id,refs] of await explorer.verified({view,ids:todo}))if(refs&&refs.length)verified.set(id,refs);};
- await verify([...ordered.slice(0,POOL).map(p=>p.id),...criticalIds]);pool=Math.min(POOL,ordered.length);
- while(ordered.slice(0,pool).filter(p=>verified.has(p.id)).length<3&&pool<ordered.length){await verify(ordered.slice(pool,pool+POOL).map(p=>p.id));pool=Math.min(pool+POOL,ordered.length);}
- const pq=scopeQuery(scope).toString(),shown=ordered.filter(p=>verified.has(p.id));
- const ps=shown.map(p=>{const refs=verified.get(p.id),published=ranked.get(p.id)!==null;return {id:p.id,version:p.version,title:p.title,metrics:p.metrics,critical:refs.some(c=>['high','critical'].includes(c.severity)||CRITICAL.test(c.category)),rank:ranked.get(p.id),rankingBasis:published?'published_priority':'evidence_count',evidenceCount:refs.length,evidence:refs.map(({conversationId,source,...r})=>r),href:'/problems/'+p.id+'?'+pq};});
- const selection={mode:'verified_candidates',catalogProblems:view.items.length,candidatePool:pool,criticalCandidates:criticalIds.length,verifiedProblems:ps.length,rankingVerification:rank?'integrity_only':'none'};
+ await verify(ordered.slice(0,POOL_N).map(p=>p.id));pool=Math.min(POOL_N,ordered.length);
+ while(ordered.slice(0,pool).filter(p=>verified.has(p.id)).length<3&&pool<ordered.length){await verify(ordered.slice(pool,pool+POOL_N).map(p=>p.id));pool=Math.min(pool+POOL_N,ordered.length);}
+ // Carril crítico ROTULADO: solo los CRIT_N críticos con más citas (según el resumen) cuya evidencia verifica por completo y sigue siendo crítica; el resto se resume como conteo (sin importes ni citas).
+ // Cada problema mostrado lleva a lo sumo MAX_C citas (las críticas primero); brief_guard revisa cada cita mostrada contra la base.
+ const isCrit=refs=>refs.some(c=>['high','critical'].includes(c.severity)||CRITICAL.test(c.category)),listed=new Set();
+ for(let i=0;i<critOrdered.length&&listed.size<CRIT_N;i+=CRIT_N){const batch=critOrdered.slice(i,i+CRIT_N);await verify(batch.map(p=>p.id));for(const p of batch)if(listed.size<CRIT_N&&verified.has(p.id)&&isCrit(verified.get(p.id)))listed.add(p.id);}
+ const pq=scopeQuery(scope).toString(),shown=ordered.filter(p=>verified.has(p.id)&&(listed.has(p.id)||ordered.slice(0,pool).includes(p)));
+ const pick=refs=>[...refs.filter(c=>['high','critical'].includes(c.severity)||CRITICAL.test(c.category)),...refs.filter(c=>!(['high','critical'].includes(c.severity)||CRITICAL.test(c.category)))].slice(0,MAX_C);
+ const ps=shown.map(p=>{const refs=verified.get(p.id),shownRefs=pick(refs),published=ranked.get(p.id)!==null;return {id:p.id,version:p.version,title:p.title,metrics:p.metrics,critical:listed.has(p.id),rank:ranked.get(p.id),rankingBasis:published?'published_priority':'evidence_count',evidenceCount:shownRefs.length,evidenceTotal:refs.length,evidence:shownRefs.map(({conversationId,source,...r})=>r),href:'/problems/'+p.id+'?'+pq};});
+ const selection={mode:'verified_candidates',catalogProblems:view.items.length,candidatePool:pool,criticalCandidates:criticalIds.length,criticalListed:listed.size,criticalOmitted:criticalIds.length-listed.size,maxCitationsPerProblem:MAX_C,verifiedProblems:ps.length,rankingVerification:rank?'integrity_only':'none'};
  const recs=await createRecommendationRepository({database:db}).list({query:q}),interventions=await createInterventionRepository({database:db}).list({query:q});
  const actions=[...recs.items.map(r=>({id:r.id,version:r.version,kind:'recommendation',title:r.title,status:r.status,ownerId:r.ownerId,summary:r.action+' '+r.rationale,href:'/recommendations?'+pq})),...interventions.items.map(i=>({id:i.id,version:i.version,kind:'intervention',title:i.title,status:i.status,ownerId:i.ownerId,summary:i.hypothesis,href:'/interventions?'+pq}))];
  const comp=await comparison(comparisonQuery,current,snapshot,ctx);

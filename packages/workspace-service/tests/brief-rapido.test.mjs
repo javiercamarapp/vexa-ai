@@ -19,6 +19,7 @@ import {createRecommendationRepository} from '../../recommendations/index.mjs';
 const read = f => fs.readFileSync(new URL(f, import.meta.url), 'utf8');
 const UP_B = read('../../../supabase/migrations/20261028000000_brief_catalog_cut.sql'), DOWN_B = read('./20261028000000_brief_catalog_cut.down.sql');
 const UP_R = read('../../../supabase/migrations/20261029000000_recommendation_catalog_cut.sql'), DOWN_R = read('./20261029000000_recommendation_catalog_cut.down.sql');
+const UP_G = read('../../../supabase/migrations/20261030000000_brief_guard_uuid_ids.sql'), DOWN_G = read('./20261030000000_brief_guard_uuid_ids.down.sql');
 const SKIP = !pgAvailable() && 'sin postgres local';
 const q = (a, extra = {}) => new URLSearchParams({date_start: a.start.slice(0, 10), date_end: a.end.slice(0, 10), currency: a.currency, basis: a.basis, exponent: String(a.exponent), ...extra});
 const norm = x => String(x?.text ?? x).replace(/\s+/g, ' ').trim();
@@ -46,10 +47,36 @@ test('Brief y recomendación sobre corte sin vínculos: una transacción, sin N+
       const runsOf = id => psql(`select count(distinct m.extraction_run_id) from public.problem_embedding_members m where m.problem_id='${id}'`).trim();
       const brief = (log, extra = {}) => createBriefRepository({database: log ? logged(log) : base()}).generate({query: sp.toString(), comparisonQuery: null, expectedPreviousId: null, requestKey: 'brief-key-0001', ...extra});
 
+      const head = async () => (await createBriefRepository({database: base()}).list({query: sp})).expectedPreviousId;
       let b1;
       await t.test('brief: sin migración el INSERT lo rechaza la guarda (antes: check_violation en el corte sin vínculos); con la 20261028 se guarda', async () => {
         await assert.rejects(brief(null), e => e.status === 409 || e.code === '23514' || /conflict|database/.test(String(e.message)));
         aplicar(UP_B);
+      });
+
+      await t.test('carril crítico acotado y rotulado: N críticos, M citas por problema, el resto solo como conteo; brief_guard recorre pocas citas y el documento es chico', async () => {
+        const refs = d => [...d.top3, ...d.critical].reduce((n, p) => n + p.evidence.length, 0);
+        const todo = await createBriefRepository({database: base()}, ).generate({query: sp.toString(), comparisonQuery: null, expectedPreviousId: null, requestKey: 'brief-key-lim01'});
+        const total = todo.document.critical.length; assert.ok(total >= 2, 'el mundo sintético tiene varios críticos');
+        const antes = [...todo.document.top3, ...todo.document.critical].reduce((n, p) => n + p.evidenceTotal, 0);
+        const acot = await createBriefRepository({database: base(), limits: {criticalN: 1, maxCitations: 1}}).generate({query: sp.toString(), comparisonQuery: null, expectedPreviousId: todo.id, requestKey: 'brief-key-lim02'});
+        const d = acot.document;
+        assert.equal(d.critical.length, 1); assert.equal(d.selection.criticalListed, 1); assert.equal(d.selection.criticalOmitted, d.selection.criticalCandidates - 1); assert.ok(d.selection.criticalOmitted >= 1);
+        assert.ok(d.limits.some(l => new RegExp('\\+' + d.selection.criticalOmitted + ' problemas críticos no listados').test(l)));
+        for (const p of [...d.top3, ...d.critical]) { assert.equal(p.evidence.length, 1); assert.equal(p.evidenceCount, 1); assert.ok(p.evidenceTotal >= 1); }
+        assert.ok(d.critical.every(p => p.critical === true && p.metrics.every(m => m.amount_minor === null)), 'los críticos listados llevan importe No disponible, jamás 0');
+        console.log('# GUARD citas recorridas: sin límite (3 top + críticos) =', antes, '; acotado =', refs(d), '; documento bytes', JSON.stringify(todo.document).length, '->', JSON.stringify(d).length);
+        assert.ok(refs(d) < antes);
+        assert.ok(JSON.stringify(todo.document).length < 200000);
+        const again = await createBriefRepository({database: base(), limits: {criticalN: 1, maxCitations: 1}}).generate({query: sp.toString(), comparisonQuery: null, expectedPreviousId: todo.id, requestKey: 'brief-key-lim02'}); assert.equal(again.id, acot.id, 'misma clave: idempotente');
+        const otra = await createBriefRepository({database: base(), limits: {criticalN: 1, maxCitations: 1}}).generate({query: sp.toString(), comparisonQuery: null, expectedPreviousId: todo.id, requestKey: 'brief-key-lim03'}); assert.equal(otra.id, acot.id, 'mismo input con otra clave reutiliza el brief inmutable');
+      });
+
+      await t.test('brief_guard con ids uuid (20261030): mismos veredictos, rechaza una cita alterada y es reversible', async () => {
+        aplicar(UP_G);
+        const head = (await createBriefRepository({database: base()}).list({query: sp})).expectedPreviousId;
+        const ok = await createBriefRepository({database: base()}).generate({query: sp.toString(), comparisonQuery: null, expectedPreviousId: head, requestKey: 'brief-key-uuid1', }); assert.ok(ok.id);
+        aplicar(DOWN_G); aplicar(UP_G);
       });
 
       await t.test('brief: UNA transacción de armado, un veredicto de resumen, un digest, sin N+1 por corrida (antes: 12 transacciones, 3 resúmenes, 6 digests, una lectura por corrida)', async () => {
@@ -79,7 +106,7 @@ test('Brief y recomendación sobre corte sin vínculos: una transacción, sin N+
         const rev = psql(`select m.extraction_run_id||'|'||r.id from public.problem_embedding_members m join public.extraction_runs x on x.id=m.extraction_run_id, lateral jsonb_array_elements(x.provenance->'input_manifest') e join public.message_revisions r on r.id=(e->>'message_revision_id')::uuid where m.problem_id='${victim}' limit 1`).trim().split('|')[1];
         const original = psql(`select redacted_text from public.message_revisions where id='${rev}'`).trim();
         aplicar(`set session_replication_role=replica; update public.message_revisions set redacted_text=redacted_text||' alterado' where id='${rev}'`);
-        const b2 = await brief(null, {requestKey: 'brief-key-0003', expectedPreviousId: b1.id});
+        const b2 = await brief(null, {requestKey: 'brief-key-0003', expectedPreviousId: await head()});
         const shown = [...b2.document.top3, ...b2.document.critical].map(p => p.id);
         assert.ok(!shown.includes(victim), 'no se muestra un problema con evidencia no verificable');
         assert.ok(b2.document.top3.every(p => p.evidence.length > 0));
@@ -92,14 +119,14 @@ test('Brief y recomendación sobre corte sin vínculos: una transacción, sin N+
         const policy = await owner.recordPolicy({expectedVersion: 0, name: 'Política de prueba', weights: {impact: 2500, frequency: 2500, severity: 2500, actionability: 2500}, frequencyBaseline: 10, impactBaselineMinor: '100000', currency: A1.currency, exponent: A1.exponent, report: 'Política sintética de prueba para el brief.', attested: true});
         const run = await owner.rank({snapshotId: snap.id, policyId: policy.id, expectedPreviousRunId: null});
         assert.ok(run.entries.length >= 3);
-        const log = []; const b = await brief(null, {requestKey: 'brief-key-0004', expectedPreviousId: (await createBriefRepository({database: base()}).list({query: sp})).expectedPreviousId});
+        const log = []; const b = await brief(null, {requestKey: 'brief-key-0004', expectedPreviousId: await head()});
         assert.equal(b.document.selection.rankingVerification, 'integrity_only'); assert.ok(b.document.limits.some(l => /orden publicado se comprobó por integridad/.test(l)));
         assert.deepEqual(b.document.top3.map(p => p.id), run.entries.slice(0, 3).map(e => e.problemId), 'el orden es el publicado');
         assert.ok(b.document.top3.every((p, i) => p.rank === i + 1 && p.rankingBasis === 'published_priority'));
         const view = await createPriorityRepository({database: logged(log)}).publishedRank({snapshotId: snap.id});
         assert.equal(view.verification, 'integrity_only'); assert.equal(stats(log).runGets, 0, 'publishedRank no relee evidencia'); 
         aplicar(`set session_replication_role=replica; update public.priority_entries set rank=rank+10 where run_id='${run.id}' and rank=1`);
-        await assert.rejects(brief(null, {requestKey: 'brief-key-0005'}), e => /integrity|409/.test(String(e.message) + e.status));
+        await assert.rejects(brief(null, {requestKey: 'brief-key-0005', expectedPreviousId: await head()}), e => /integrity|409/.test(String(e.message) + e.status));
         aplicar(`set session_replication_role=replica; update public.priority_entries set rank=rank-10 where run_id='${run.id}' and rank=11`);
       });
 

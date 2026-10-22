@@ -53,13 +53,13 @@ test('Resumen: sin publicación <2 s con 85k asientos; con publicación no recor
     });
 
     await t.test('presupuesto de «señales críticas»: si no alcanzan, responde sin ellas y lo dice; con presupuesto suficiente, igual que antes', async () => {
-      const slowDb = (delay) => { const base = ctx.db(OWNER.A, TENANT_A, 10000); return {transaction: (a, w) => base.transaction(a, s => w(Object.freeze({...s, query: async (q, v) => { if (/priority_|problem_embedding_members m JOIN|SELECT DISTINCT i\.id/.test(q)) await new Promise(r => setTimeout(r, delay)); return s.query(q, v); }})))}; };
+      const slowDb = (delay) => { const base = ctx.db(OWNER.A, TENANT_A, 10000); return {transaction: (a, w) => base.transaction(a, s => w(Object.freeze({...s, query: async (q, v) => { if (/priority_|problem_embedding_members|SELECT DISTINCT i\.id/.test(q)) await new Promise(r => setTimeout(r, delay)); return s.query(q, v); }})))}; };
       // 1) presupuesto 0: nunca lanza, devuelve «unavailable» y NO cero señales
       const r0 = await slowDb(0).transaction('read', s => criticalSignals(s, snap.id, -1)); assert.deepEqual(r0, {status: 'unavailable', count: null});
-      // 2) la vista completa con consultas lentas (como ~400 problemas con latencia de red): vuelve en ~presupuesto y las cifras del snapshot salen intactas
-      const wsSlow = createWorkspaceService({database: slowDb(300)});
+      // 2) la vista completa con consultas lentas (consultas de problemas muy lentas; la vía de resumen ya no hace miles de viajes): vuelve en ~presupuesto y las cifras del snapshot salen intactas
+      const wsSlow = createWorkspaceService({database: slowDb(2000)});
       const {v, ms} = await time(() => wsSlow.query(new URLSearchParams({resource: 'metrics'})));
-      console.log(`# Resumen con consultas de problemas a 300 ms cada una: ${ms.toFixed(0)} ms, critical_notice_state=${v.meta.critical_notice_state}`);
+      console.log(`# Resumen con consultas de problemas a 2000 ms cada una (la vía de resumen usa 2 en total): ${ms.toFixed(0)} ms, critical_notice_state=${v.meta.critical_notice_state}`);
       assert.equal(v.meta.critical_notice_state, 'unavailable'); assert.equal(v.meta.critical_notice, null); assert.equal(v.items[0].metrics.length, 3); assert.ok(ms < 5000, 'acotado por el presupuesto: ' + ms + ' ms');
       // 3) sin lentitud: ok
       const rOk = await slowDb(0).transaction('read', s => criticalSignals(s, snap.id)); assert.equal(rOk.status, 'ok'); assert.equal(typeof rOk.count, 'number');

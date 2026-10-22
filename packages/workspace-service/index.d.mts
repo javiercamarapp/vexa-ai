@@ -5,5 +5,5 @@ export type WorkspaceBundle={items:WorkspaceRecord[];meta:{state:'empty'|'partia
 export type MappingInput={ledgerRowId:string;expectedVersion:number;skus:string[]|null;source:'hubspot'|'zendesk'|'csv'|'excel'|null;active:boolean;report:string;attested:true};
 export type MappingView={id:string;ledgerRowId:string;version:number;skus:string[]|null;source:string|null;active:boolean;valid:boolean;report:string|null};
 export type MappingsView={orders:{ledgerRowId:string;entityId:string;externalId:string;currency:string;exponent:number;amountMinor:string|null;sourceName:string}[];mappings:MappingView[];canWrite:boolean};
-export function createWorkspaceService(options:{database:any}):{query(query:URLSearchParams|{scope:WorkspaceScope;resource:string;limit:number;cursor:string|null},options?:{all?:boolean}):Promise<WorkspaceBundle>;mappings():Promise<MappingsView>;recordMapping(input:MappingInput):Promise<MappingView>};
+export function createWorkspaceService(options:{database:any}):{query(query:URLSearchParams|{scope:WorkspaceScope;resource:string;limit:number;cursor:string|null},options?:{all?:boolean;metaOnly?:boolean;signals?:boolean}):Promise<WorkspaceBundle>;mappings():Promise<MappingsView>;recordMapping(input:MappingInput):Promise<MappingView>};
 export function workspaceCsv(bundle:WorkspaceBundle):string;

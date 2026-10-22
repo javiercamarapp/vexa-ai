@@ -1,7 +1,6 @@
 import {randomUUID} from 'node:crypto';
 import {initialOverviewScope} from './initial-publication.mjs';
 import {createSnapshotRepository} from '../metrics/snapshots.mjs';
-import {createPriorityRepository} from '../metrics/priority.mjs';
 import {createProblemRepository} from '../problems/repository.mjs';
 import {adaptLedger} from '../economics/adapter.mjs';
 import {EconomicError} from '../metrics/repository.mjs';
@@ -14,6 +13,24 @@ const scopedDb=s=>({transaction:async(_action,fn)=>fn(s)});
 // miles de viajes a la base). No pueden bloquear el Resumen: se les da un presupuesto de tiempo de pared y, si no alcanzan, la vista responde sin ellas y lo DICE (nunca «cero señales»).
 export const CRITICAL_BUDGET_MS=1500;
 class CriticalBudgetExceeded extends Error{}
+// Misma regla que priority.inputs() para criticalLane (severidad high/critical o categoría de seguridad/privacidad/fraude/fuego), pero con verificación de RESUMEN:
+// los problemas se listan con verification:'summary' (corrida succeeded, conversación vigente, conexión activa, manifiesto completo, hash del manifiesto) y las incidencias se leen
+// por UNA consulta por lotes. NO se recalcula aquí el sha256 del texto, el input_hash, la validación de la extracción ni las lápidas de mensajes (evidenceCurrent/getMany completos);
+// esa verificación completa sigue en el detalle de cada problema, en priority.view/rank y en las exportaciones. Si no alcanza el presupuesto: «unavailable», nunca 0.
+const CRITICAL_CATEGORY=/safety|privacy|fraud|seguridad|privacidad|humo|smoke|fire|incendio|quemadura/i;
+export async function criticalCount(s){
+ const active=(await createProblemRepository({database:scopedDb(s)}).list({verification:'summary'})).filter(p=>p.state==='active');
+ const pids=[],eids=[];for(const p of active)for(const e of p.embeddingIds??[]){pids.push(p.id);eids.push(e);}
+ if(!pids.length)return 0;
+ const rows=(await s.query(`SELECT w.pid,i.category,i.severity FROM unnest($2::uuid[],$3::uuid[]) w(pid,eid)
+  JOIN public.problem_embedding_members m ON m.tenant_id=$1 AND m.embedding_id=w.eid
+  JOIN public.embeddings e ON e.tenant_id=m.tenant_id AND e.id=m.embedding_id
+  JOIN public.issues i ON i.tenant_id=m.tenant_id AND i.extraction_run_id=m.extraction_run_id
+  JOIN public.evidence_spans es ON es.tenant_id=i.tenant_id AND es.issue_id=i.id AND es.message_revision_id=e.message_revision_id
+  GROUP BY w.pid,i.category,i.severity`,[s.tenantId,pids,eids])).rows;
+ const critical=new Set();for(const r of rows)if(['high','critical'].includes(r.severity)||CRITICAL_CATEGORY.test(r.category??''))critical.add(r.pid);
+ return critical.size;
+}
 export async function criticalSignals(s,snapshotId,budgetMs=CRITICAL_BUDGET_MS){
  const deadline=Date.now()+budgetMs;
  const limited=Object.freeze({...s,query:(text,values)=>Date.now()>deadline?Promise.reject(new CriticalBudgetExceeded('critical_signals_budget_exceeded')):s.query(text,values)});
@@ -23,7 +40,7 @@ export async function criticalSignals(s,snapshotId,budgetMs=CRITICAL_BUDGET_MS){
  let guarded=false,previous=null;
  if(budgetMs>0){previous=(await s.query("SELECT current_setting('statement_timeout') AS v")).rows[0]?.v??null;await s.query('SAVEPOINT critical_signals');await s.query("SELECT set_config('statement_timeout',$1,true)",[Math.ceil(budgetMs)+'ms']);guarded=true;}
  const release=shareMemo(s,limited); // la verificación del snapshot ya hecha en esta transacción se reutiliza, no se repite
- try{const view=await createPriorityRepository({database:scopedDb(limited)}).view({snapshotId});const out={status:'ok',count:view.problemOptions.filter(p=>p.criticalLane).length};
+ try{const out={status:'ok',count:await criticalCount(limited)};
   if(guarded){await s.query("SELECT set_config('statement_timeout',$1,true)",[previous??'0']);await s.query('RELEASE SAVEPOINT critical_signals');}
   return out;}
  catch(e){
@@ -117,11 +134,8 @@ function projectCore(s,base,st,mappings,filters,{authorizedIds,exposureInputHash
 export function createWorkspaceService({database}){
  const tx=async(action,work)=>{let domain;try{return await database.transaction(action,async s=>{try{return await memoSection(s,()=>work(s));}catch(e){if(e instanceof WorkspaceError||e instanceof EconomicError)domain=e;throw e;}});}catch(e){if(domain)throw domain;throw e;}};
  const api={
- async query(query,{all=false,metaOnly=false}={}){const request=query instanceof URLSearchParams?parseWorkspaceQuery(query):query;let requestTenant=null;// Pinned scopes need no materialization; authorization and binding integrity are checked in the final read.
- const prepared=request.scope.snapshot_id&&request.scope.scope_hash?null:await tx('read',async s=>{requestTenant=s.tenantId;const initial=await initialOverviewScope(s,query);if(initial)request.scope=initial;const base=await baseSnapshot(s,request.scope);if(!base)return null;const bound=await binding(s,request.scope,base);return {...bound,role:s.role};});if(prepared?.pending){const p=prepared.pending;await tx('materialize',async s=>{check(s.tenantId===p.tenantId,'tenant_changed',403);await s.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[s.tenantId+':workspace-mappings']);const found=await one(s,'SELECT id FROM public.workspace_scope_bindings WHERE tenant_id=$1 AND scope_hash=$2',[s.tenantId,p.scopeHash]);if(!found)await s.query('INSERT INTO public.workspace_scope_bindings(tenant_id,base_snapshot_id,base_scope_hash,scope_hash,filters,projection_version,mapping_ids,problem_versions,canonical_input,created_by) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',[s.tenantId,p.baseSnapshotId,p.baseScopeHash,p.scopeHash,JSON.stringify(p.filters),VERSION,p.mappingIds,JSON.stringify(p.problemVersions),p.canonicalInput,s.userId]);});request.scope={...request.scope,snapshot_id:p.baseSnapshotId,scope_hash:p.scopeHash};}else if(prepared)request.scope={...request.scope,snapshot_id:prepared.row.base_snapshot_id,scope_hash:prepared.row.scope_hash};
- // Anclaje de alcance (metaOnly): solo identificadores del corte y del alcance derivado; sin catálogo, evidencia ni señales críticas. La lectura real vuelve a verificar todo con el alcance fijado.
- if((metaOnly||request.metaOnly)&&prepared){const pend=prepared.pending,f=pend?pend.filters:prepared.row.filters;return {items:[],meta:{state:'ready',snapshot_id:request.scope.snapshot_id,base_snapshot_id:request.scope.snapshot_id,base_scope_hash:pend?pend.baseScopeHash:prepared.row.base_scope_hash,scope_hash:request.scope.scope_hash,cursor_auth_hash:null,coverage:'Anclaje de alcance: sin cifras.',watermark:null,next_cursor:null,critical_notice:null,critical_notice_state:'unavailable',scope:exposedScope(f,request.scope.scope_hash),mapping_manifest_id:prepared.row?.id??null,can_manage:prepared.role==='owner'}};}
- return tx('read',async s=>{
+ async query(query,{all=false,metaOnly=false,signals=true}={}){const request=query instanceof URLSearchParams?parseWorkspaceQuery(query):query;let requestTenant=null;// Pinned scopes need no materialization; authorization and binding integrity are checked in the final read.
+ const finalRead=async s=>{
  check(requestTenant===null||s.tenantId===requestTenant,'tenant_changed',403);
  const q=request.scope,base=await baseSnapshot(s,q);if(!base)return {items:[],meta:{state:'empty',snapshot_id:null,base_snapshot_id:null,base_scope_hash:null,scope_hash:null,cursor_auth_hash:null,coverage:'Sin snapshot publicado para este alcance.',watermark:null,next_cursor:null,critical_notice:null,scope:q,mapping_manifest_id:null,can_manage:s.role==='owner'}};
  const bound=await binding(s,q,base),f=bound.row.filters,filtered=f.sku.length>0||f.source.length>0;
@@ -140,9 +154,18 @@ export function createWorkspaceService({database}){
  const ref='workspace:'+bound.row.scope_hash,make=(id,title,version,problemId,metrics,valid=true)=>({id,title,summary:problemId?'Filas por problema no aditivas; el global usa la unión de órdenes.':'Importes del snapshot publicado. SKU selecciona órdenes que contienen el producto; no ventas por línea.',status:valid?(metrics.some(m=>m.amount_minor===null)?'partial':'ready'):'stale',version,owner:null,customer_id:null,problem_id:problemId,metrics,evidence:[],details:[{label:'Snapshot',value:base.view.id},{label:'Alcance derivado',value:bound.row.scope_hash},{label:'Asociaciones',value:'Declaradas y aprobadas por un propietario; no validación automática de CRM.'}]});
  let items;if(notLinked){const catalog=await catalogProblems(s);items=catalog.map(c=>({...make(c.id,c.label,c.version,c.id,[metric(nullMetric(base.view.scope,EXPOSURE_NOT_LINKED),'Ingresos expuestos','exposure',ref)]),summary:'Problema vigente del catálogo. Sin vínculos problema–pedido: la exposición no se calcula (desconocida, no cero).',details:[{label:'Incidencias (conversaciones)',value:String(c.incidences)},{label:'Exposición',value:'No disponible: sin vínculos problema–pedido'},{label:'Snapshot',value:base.view.id}]}));}else if(request.resource==='metrics')items=[make(base.view.id,'Resumen económico',1,null,[metric(global,'Ingresos expuestos','exposure',ref),metric(orders,'Órdenes registradas','allOrders',ref),metric(refunds,'Reembolsos liquidados','refunds',ref)])];else items=ids.map(id=>{const h=history.get(id),m=h.valid?choose('exposure.'+id,p.exposure.byProblem[id]??nullMetric(base.view.scope,'DIMENSION_MEMBERSHIP_UNKNOWN')):nullMetric(base.view.scope,'HISTORICAL_PROBLEM_VERSION_UNAVAILABLE');return make(id,h.label,h.version,id,[metric(m,'Ingresos expuestos','exposure',ref)],h.valid);}).sort((a,b)=>a.id.localeCompare(b.id));
  const authHash=cursorAuthHash(s,bound.row.scope_hash,base.view.id),expected={resource:request.resource,authHash,snapshotId:base.view.id,dataScopeHash:bound.row.scope_hash};const after=decodeCursor(request.cursor,expected);if(after){const at=items.findIndex(i=>i.id===after);check(at>=0,'cursor_position_invalid',409);items=notLinked?items.slice(at+1):items.filter(i=>i.id>after);}const more=!all&&items.length>request.limit;items=all?items:items.slice(0,request.limit);
- const signals=await criticalSignals(s,base.view.id),critical=signals.count??0;
- return {items,meta:{state:stale?'stale':!items.length?'empty':p.uncertain||items.some(r=>r.status==='partial')?'partial':'ready',snapshot_id:base.view.id,base_snapshot_id:base.view.id,base_scope_hash:base.view.scopeHash,scope_hash:bound.row.scope_hash,cursor_auth_hash:authHash,coverage:notLinked&&items.length?NOT_LINKED_NOTICE:p.uncertain?`${p.uncertain} órdenes con pertenencia al filtro desconocida; subtotal de pertenencias confirmadas.`:stale?'La versión actual del problema cambió; esta vista conserva la historia y las cifras publicadas.':'Cobertura financiera según el snapshot; filas por problema no aditivas.',watermark:base.view.watermark,next_cursor:more?encodeCursor({after:items.at(-1).id,...expected}):null,critical_notice:critical?`${critical} señales críticas actuales autorizadas, independientes de los filtros y del importe del snapshot.`:null,critical_notice_state:signals.status,scope:exposedScope(f,bound.row.scope_hash),mapping_manifest_id:bound.row.id,can_manage:s.role==='owner'}};
- });},
+ const signalsResult=signals?await criticalSignals(s,base.view.id):{status:'unavailable',count:null},critical=signalsResult.count??0;
+ return {items,meta:{state:stale?'stale':!items.length?'empty':p.uncertain||items.some(r=>r.status==='partial')?'partial':'ready',snapshot_id:base.view.id,base_snapshot_id:base.view.id,base_scope_hash:base.view.scopeHash,scope_hash:bound.row.scope_hash,cursor_auth_hash:authHash,coverage:notLinked&&items.length?NOT_LINKED_NOTICE:p.uncertain?`${p.uncertain} órdenes con pertenencia al filtro desconocida; subtotal de pertenencias confirmadas.`:stale?'La versión actual del problema cambió; esta vista conserva la historia y las cifras publicadas.':'Cobertura financiera según el snapshot; filas por problema no aditivas.',watermark:base.view.watermark,next_cursor:more?encodeCursor({after:items.at(-1).id,...expected}):null,critical_notice:critical?`${critical} señales críticas actuales autorizadas, independientes de los filtros y del importe del snapshot.`:null,critical_notice_state:signalsResult.status,scope:exposedScope(f,bound.row.scope_hash),mapping_manifest_id:bound.row.id,can_manage:s.role==='owner'}};
+ };
+ const prep=async s=>{requestTenant=s.tenantId;const initial=await initialOverviewScope(s,query);if(initial)request.scope=initial;const base=await baseSnapshot(s,request.scope);if(!base)return null;const bound=await binding(s,request.scope,base);return {...bound,role:s.role};};
+ // Alcance sin fijar: la preparación (ids/binding) y la lectura final comparten UNA transacción cuando no hay que materializar nada (antes: dos transacciones, dos verificaciones completas del snapshot,
+ // dos digests de decenas de MiB). La lectura final sigue verificando snapshot, autorización y binding completos; solo se evita repetirlo en una segunda transacción. Si hay que materializar (pending), flujo anterior.
+ const pinnedScope=!!(request.scope.snapshot_id&&request.scope.scope_hash);let prepared=null;
+ if(!pinnedScope){const first=await tx('read',async s=>{const p=await prep(s);if(!p||p.pending||metaOnly||request.metaOnly)return {p};request.scope={...request.scope,snapshot_id:p.row.base_snapshot_id,scope_hash:p.row.scope_hash};return {p,result:await finalRead(s)};});if(first.result)return first.result;prepared=first.p;}
+ if(prepared?.pending){const p=prepared.pending;await tx('materialize',async s=>{check(s.tenantId===p.tenantId,'tenant_changed',403);await s.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[s.tenantId+':workspace-mappings']);const found=await one(s,'SELECT id FROM public.workspace_scope_bindings WHERE tenant_id=$1 AND scope_hash=$2',[s.tenantId,p.scopeHash]);if(!found)await s.query('INSERT INTO public.workspace_scope_bindings(tenant_id,base_snapshot_id,base_scope_hash,scope_hash,filters,projection_version,mapping_ids,problem_versions,canonical_input,created_by) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',[s.tenantId,p.baseSnapshotId,p.baseScopeHash,p.scopeHash,JSON.stringify(p.filters),VERSION,p.mappingIds,JSON.stringify(p.problemVersions),p.canonicalInput,s.userId]);});request.scope={...request.scope,snapshot_id:p.baseSnapshotId,scope_hash:p.scopeHash};}else if(prepared)request.scope={...request.scope,snapshot_id:prepared.row.base_snapshot_id,scope_hash:prepared.row.scope_hash};
+ // Anclaje de alcance (metaOnly): solo identificadores del corte y del alcance derivado; sin catálogo, evidencia ni señales críticas. La lectura real vuelve a verificar todo con el alcance fijado.
+ if((metaOnly||request.metaOnly)&&prepared){const pend=prepared.pending,f=pend?pend.filters:prepared.row.filters;return {items:[],meta:{state:'ready',snapshot_id:request.scope.snapshot_id,base_snapshot_id:request.scope.snapshot_id,base_scope_hash:pend?pend.baseScopeHash:prepared.row.base_scope_hash,scope_hash:request.scope.scope_hash,cursor_auth_hash:null,coverage:'Anclaje de alcance: sin cifras.',watermark:null,next_cursor:null,critical_notice:null,critical_notice_state:'unavailable',scope:exposedScope(f,request.scope.scope_hash),mapping_manifest_id:prepared.row?.id??null,can_manage:prepared.role==='owner'}};}
+ return tx('read',finalRead);},
  async mappings(){return tx('read',async s=>{
  // Mismas filas que antes: último asiento de cada pedido cuyo contribuyente y cuya fuente vigente siguen activos (economic_record_current), pero evaluado por lote
  // (antes: una consulta por pedido, ~85 mil viajes a la base).

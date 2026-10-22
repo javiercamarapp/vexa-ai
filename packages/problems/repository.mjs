@@ -1,6 +1,7 @@
 import {randomUUID} from 'node:crypto';
 import {hash,stableId,sortedUnique,requireThat,DomainError} from './contracts.mjs';
 import {createEvidenceRepository} from '../intelligence/evidence-repository.mjs';
+import {memoized} from '../metrics/ledger-load.mjs';
 const uuid=x=>typeof x==='string'&&/^[a-f0-9-]{36}$/i.test(x);
 const one=async(s,q,a)=>(await s.query(q,a)).rows[0];
 const scoped=s=>({transaction:async(_,work)=>work(s)});
@@ -8,7 +9,10 @@ export const evidence=async(s,id)=>{const e=await createEvidenceRepository({data
 async function accessible(s,p){for(const id of p.embeddingIds){const m=await one(s,'SELECT extraction_run_id FROM public.problem_embedding_members WHERE tenant_id=$1 AND embedding_id=$2',[s.tenantId,id]);requireThat(m,'source_unavailable');await evidence(s,m.extraction_run_id);}return p;}
 /** Corridas utilizables según el veredicto «resumen» (ver list): Set de ids. Sin texto de evidencia; todas las consultas filtran por tenant_id=$1. */
 const UUID_RE="'^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'";
-async function usableRunsSummary(s,runIds){
+// Memoizado por (transacción, conjunto de corridas): el catálogo, las señales críticas y el resto de vistas de UNA petición piden el mismo veredicto; dentro de una memoSection se calcula una sola vez
+// (≈6.5 s en frío para 8,761 corridas). Fuera de una sección (memoized sin memo) se calcula siempre. Nada cruza transacciones.
+const usableRunsSummary=(s,runIds)=>memoized(s,'usable-runs-summary:'+[...runIds].sort().join(','),()=>usableRunsSummaryUncached(s,runIds));
+async function usableRunsSummaryUncached(s,runIds){
  if(!runIds.length)return new Set();
  // Manifiestos expandidos en un solo recorrido (no una subconsulta por corrida): por corrida cuántas entradas de su manifiesto siguen íntegras.
  const rows=(await s.query(`WITH sel AS MATERIALIZED (SELECT r.id,r.conversation_id,r.provenance->'input_manifest' AS manifest FROM public.extraction_runs r

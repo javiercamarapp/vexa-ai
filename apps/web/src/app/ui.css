@@ -322,6 +322,8 @@ body .workspace-content .eyebrow{margin:0 0 var(--sp-1)}
 .chart-grid{stroke:var(--ui-border);stroke-width:1;stroke-dasharray:2 4}
 .chart-tick{font:500 10px var(--font-ui);fill:var(--muted)}
 .chart-tip{position:absolute;top:4px;transform:translateX(-50%);z-index:3;display:grid;gap:2px;min-width:112px;max-width:220px;padding:8px 10px;border-radius:10px;background:var(--surf-tip);color:var(--surf-tip-ink);font-size:12px;line-height:1.35;box-shadow:var(--sh-pop);pointer-events:none}
+/* El globo es role=status: sin esto la regla genérica de [role=status] le pone gris secundario sobre fondo oscuro (ilegible en claro). */
+.workspace-content .chart-tip[role=status]:not(:empty){color:var(--surf-tip-ink);font-size:12px;line-height:1.35}
 .chart-tip-title{font:500 11px var(--font-mono);opacity:.7}
 .chart-tip-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 6px}.chart-tip-row strong{font-weight:600;font-variant-numeric:tabular-nums}.chart-tip-row small{flex:1 1 100%;opacity:.75;font-size:11px}
 .chart-table{margin-top:var(--sp-3)}

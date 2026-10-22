@@ -1,7 +1,7 @@
 // The synthetic fixtures must be internally coherent: an answer derives from the same figure the card shows.
 import test from 'node:test';import assert from 'node:assert/strict';
 import {formatMinorUnits} from '../../../../packages/metrics/money.mjs';
-import {coverage,explorerAnswer,explorerPage,detailProblem,briefs,bundleProblems,bundleMetrics,trends,problems,IDS} from './fixtures.mjs';
+import {incidenceCategories,incidenceMonthly,coverage,explorerAnswer,explorerPage,detailProblem,briefs,bundleProblems,bundleMetrics,trends,problems,IDS} from './fixtures.mjs';
 const refunds=m=>m.find(x=>x.kind==='refunds');
 test('the answer text, its metric and the problem card show the same refunds figure',()=>{
  const a=explorerAnswer('¿Qué reembolsos constan en este corte?'),m=a.metrics[0],text=formatMinorUnits(m.amount_minor,m.currency,m.exponent);
@@ -38,4 +38,11 @@ test('coverage fixtures add up: ledger lines sum to the total, association state
  assert.equal(st.slice(1).reduce((a,x)=>a+num(x),0),S.associations.total);
  assert.equal(S.excel.incorporated+S.excel.rejected,S.excel.total);assert.match(S.excel.detail[0],/v07b · ab12cd34/);
  for(const s of Object.values(S))if(s.class==='estimated')assert.ok(s.detail.some(l=>/muestra del 10 %/.test(l)),s.key+' estimated must say so');
+});
+test('incidence fixtures follow the repository shape (ok / empty / timeout) with ~47 % noise',()=>{
+ const c=incidenceCategories(),noise=c.rows.find(r=>r.category.startsWith('Other: Retailer'));
+ assert.equal(c.status,'ok');assert.ok(noise.count/c.totals.incidences>0.44&&noise.count/c.totals.incidences<0.5);
+ assert.equal(incidenceCategories('timeout').status,'timeout');assert.equal(incidenceCategories('empty').totals.incidences,0);
+ const m=incidenceMonthly('ok',IDS.problemA);assert.equal(m.series.length,12);assert.equal(m.total,m.series.reduce((a,p)=>a+p.count,0));
+ assert.deepEqual(incidenceMonthly('timeout').series,[]);assert.equal(incidenceMonthly('empty').total,0);
 });

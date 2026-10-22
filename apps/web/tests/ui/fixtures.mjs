@@ -49,8 +49,8 @@ const CONV=[5120,5390,5810,5240,6020,6410,6130,6880,7210,6940,7480,6020];
 const ORD=[[480,'58200000'],[560,'67100000'],[420,'49800000'],[390,'46300000'],[610,'73400000'],[700,'84100000'],[680,'81200000'],[760,'91500000'],[820,'98800000'],[790,'94100000'],[870,'104500000'],[1000,'120450000']];
 const REF=[[40,'190000'],[52,'260000'],[31,'150000'],[28,'140000'],[60,'310000'],[66,'350000'],[70,'380000'],[81,'450000'],[90,'520000'],[84,'490000'],[110,'1320000'],[640,'2310050']];
 export const trends=()=>({generatedAt:'2026-10-19T03:00:00.000Z',window:{start:'2025-11-01',end:'2026-11-01',months:12},note:'Conteos de registros cargados (conversaciones por fecha de inicio o, si falta, por la fecha de su primer mensaje; pedidos registrados y reembolsos liquidados por fecha efectiva). No aplican las reglas de publicación del snapshot ni suman monedas distintas.',
- conversations:{status:'ok',class:'estimated',sampled:true,samplePercent:3,definition:'started_at_or_first_message',sampleNote:'Estimado con una muestra del 3 % de las conversaciones: fechar todas (por su primer mensaje) no cabe en el tiempo permitido.',series:MONTHS.map((month,i)=>({month,count:CONV[i]})),outsideWindow:41200,undated:2090,total:CONV.reduce((a,b)=>a+b,0)+41200},
- ledger:{status:'ok',class:'observed',currency:'USD',exponent:2,otherCurrencies:[],currencies:['USD:2'],series:MONTHS.map((month,i)=>({month,orders:{count:ORD[i][0],amountMinor:ORD[i][1],unknownAmounts:0},refunds:{count:REF[i][0],amountMinor:REF[i][1],unknownAmounts:0}}))}});
+ conversations:{status:'ok',class:'estimated',sampled:true,samplePercent:3,definition:'started_at_or_first_message',sampleNote:'Estimado con una muestra del 3 % de las conversaciones: fechar todas (por su primer mensaje) no cabe en el tiempo permitido.',series:INC_MONTHS.map((month,i)=>({month,count:CONV[i]})),outsideWindow:41200,undated:2090,total:CONV.reduce((a,b)=>a+b,0)+41200},
+ ledger:{status:'ok',class:'observed',currency:'USD',exponent:2,otherCurrencies:[],currencies:['USD:2'],series:INC_MONTHS.map((month,i)=>({month,orders:{count:ORD[i][0],amountMinor:ORD[i][1],unknownAmounts:0},refunds:{count:REF[i][0],amountMinor:REF[i][1],unknownAmounts:0}}))}});
 export const coverage=()=>({generatedAt:'2026-10-19T03:00:00.000Z',basis:'imports+tables',note:'Importaciones registradas más las fuentes que no pasan por importaciones (Tracker, adjuntos, libro de registros, asociaciones), leídas con consultas acotadas; una cifra con «Estimado» viene de una muestra rotulada. Lo que nunca se cargó aparece como «Sin cargar»; no se estima su tamaño.',sources:[
  {key:'hubspot',label:'HubSpot (conversaciones, contactos)',loaded:true,status:'ok',class:'observed',imports:24,openImports:1,total:13507,incorporated:6471,rejected:7036,pending:0,rejectionNote:rejectionNote({total:13507,incorporated:6471,rejected:7036,pending:0}),lastUpdate:'2026-10-18T21:40:00.000Z',detail:[]},
  {key:'associations',label:'Asociaciones ticket–contacto (HubSpot)',loaded:true,status:'ok',class:'observed',imports:0,openImports:0,total:117719,incorporated:117719,rejected:0,pending:0,lastUpdate:null,detail:['117,719 hechos (resueltos 15,189 · pendientes 102,530 · por revisar 0 · retenidos 0)','72,720 vínculos activos conversación–cliente']},
@@ -72,6 +72,23 @@ import fs from 'node:fs';import path from 'node:path';import {fileURLToPath,path
 const here=path.dirname(fileURLToPath(import.meta.url));
 const extraModules=await Promise.all(fs.readdirSync(here).filter(f=>/^fixtures-extra-.*\.mjs$/.test(f)).map(f=>import(pathToFileURL(path.join(here,f)).href)));
 // Route table: returns [status, json] or null when the endpoint is not part of the fixtures (the page then shows its error state).
+// ---- Incidencias (GET /api/trends/categories y /api/trends/incidences?problem=): forma de packages/workspace-service/incidences.mjs ----
+// Variantes por problema para probar estados: problemA = ok, problemB = vacío, problemC = timeout. Categorías: ruido ≈47 %.
+const INC_NOTE='Cuenta incidencias (filas de issues), no problemas agrupados. Las categorías las asigna la IA: son Inferido, no un hecho observado.';
+const INC_SOURCE='Incidencias extraídas de las conversaciones y clasificadas por la IA (issues.category)';
+const CAT_ROWS=[['Other: Retailer notifications and system alerts',4521],['Shipping: Delivery Not Received',1204],['Shipping: Damaged in Transit',842],['Order: Wrong Item',655],['Return: No Longer Wanted',588],['Shipping: Arrived Late',471],['Pre-sale: Product Question',402],['Order: Change',318],['Return: Missing Parts',266],['Shipping: Change Address',201],['Warranty: Product Defect',143],['Categoría nueva sin traducir de la IA con un nombre muy largo para probar cortes de texto',61]];
+export const incidenceCategories=(variant='ok')=>{const base={generatedAt:'2026-10-19T03:00:00.000Z',class:'inferred',unit:'incidencias',source:INC_SOURCE,note:INC_NOTE};
+ if(variant==='timeout')return {...base,status:'timeout',rows:[],totals:null,truncated:false};
+ if(variant==='empty')return {...base,status:'empty',rows:[],totals:{incidences:0,categories:0,runs:0},truncated:false};
+ const rows=CAT_ROWS.map(([category,count],i)=>({category,count,runs:Math.max(1,12-i)}));
+ return {...base,status:'ok',rows,totals:{incidences:rows.reduce((a,r)=>a+r.count,0),categories:rows.length,runs:48},truncated:false};};
+const INC_MONTHS=['2025-11','2025-12','2026-01','2026-02','2026-03','2026-04','2026-05','2026-06','2026-07','2026-08','2026-09','2026-10'];
+export const incidenceMonthly=(variant='ok',problemId=null)=>{const base={generatedAt:'2026-10-19T03:00:00.000Z',scope:problemId?'problem':'total',problemId,class:'inferred',unit:'incidencias',definition:'started_at_or_first_message',source:INC_SOURCE,window:{start:'2025-11-01',end:'2026-11-01',months:12},
+  note:'Incidencias de las corridas de extracción vinculadas a este problema, por mes de su conversación (inicio o primer mensaje). Una corrida puede aportar incidencias de otras categorías; no es el volumen de clientes afectados ni una pérdida.'};
+ if(variant==='timeout')return {...base,status:'timeout',series:[],outsideWindow:null,undated:null,total:null,linkedRuns:null};
+ if(variant==='empty')return {...base,status:'empty',series:INC_MONTHS.map(month=>({month,count:0})),outsideWindow:0,undated:0,total:0,linkedRuns:2};
+ const counts=[3,5,4,8,12,9,14,21,17,26,33,19];
+ return {...base,status:'ok',series:INC_MONTHS.map((month,i)=>({month,count:counts[i]})),outsideWindow:6,undated:11,total:counts.reduce((a,c)=>a+c,0),linkedRuns:4};};
 export async function respond(url,method,bodyText){
  const u2=new URL(url,'http://x'),p=u2.pathname,q=u2.searchParams;let body=null;try{body=bodyText?JSON.parse(bodyText):null;}catch{}
  const ok=(data)=>[200,{contract_version:'f06-workspace-v1',data,meta:{trace_id:'fixture'}}];
@@ -94,6 +111,8 @@ export async function respond(url,method,bodyText){
  if(p==='/api/agent/feedback')return [202,{data:{accepted:true,persisted:false}}];
  if(p==='/api/coverage')return ok(coverage());
  if(p==='/api/trends')return ok(trends());
+ if(p==='/api/trends/categories')return ok(incidenceCategories(q.get('variant')??'ok'));
+ if(p==='/api/trends/incidences'){const pid=q.get('problem');return ok(incidenceMonthly(pid===IDS.problemB?'empty':pid===IDS.problemC?'timeout':'ok',pid));}
  if(p.startsWith('/api/origin/'))return ok(originOf(p.split('/').pop()));
  if(p.startsWith('/api/notifications'))return ok({items:[],unread:0,nextCursor:null});
  if(p==='/api/associations')return [200,{data:{items:[],nextCursor:null,canResolve:true,canApprove:true}}];

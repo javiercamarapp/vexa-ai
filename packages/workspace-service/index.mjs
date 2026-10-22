@@ -17,9 +17,18 @@ class CriticalBudgetExceeded extends Error{}
 export async function criticalSignals(s,snapshotId,budgetMs=CRITICAL_BUDGET_MS){
  const deadline=Date.now()+budgetMs;
  const limited=Object.freeze({...s,query:(text,values)=>Date.now()>deadline?Promise.reject(new CriticalBudgetExceeded('critical_signals_budget_exceeded')):s.query(text,values)});
+ // El presupuesto de pared solo se comprueba ENTRE consultas; una sola sentencia (la verificación completa de evidencia de ~400 problemas, ≈13 s en producción) lo excedía y
+ // terminaba en «canceling statement due to statement timeout» (503 en toda la vista). Se acota además cada sentencia con un statement_timeout local dentro de un SAVEPOINT:
+ // si vence, se revierte el savepoint (la transacción de lectura sigue utilizable) y se responde «unavailable», nunca cero señales.
+ let guarded=false,previous=null;
+ if(budgetMs>0){previous=(await s.query("SELECT current_setting('statement_timeout') AS v")).rows[0]?.v??null;await s.query('SAVEPOINT critical_signals');await s.query("SELECT set_config('statement_timeout',$1,true)",[Math.ceil(budgetMs)+'ms']);guarded=true;}
  const release=shareMemo(s,limited); // la verificación del snapshot ya hecha en esta transacción se reutiliza, no se repite
- try{const view=await createPriorityRepository({database:scopedDb(limited)}).view({snapshotId});return {status:'ok',count:view.problemOptions.filter(p=>p.criticalLane).length};}
- catch(e){if(e instanceof CriticalBudgetExceeded)return {status:'unavailable',count:null};throw e;}
+ try{const view=await createPriorityRepository({database:scopedDb(limited)}).view({snapshotId});const out={status:'ok',count:view.problemOptions.filter(p=>p.criticalLane).length};
+  if(guarded){await s.query("SELECT set_config('statement_timeout',$1,true)",[previous??'0']);await s.query('RELEASE SAVEPOINT critical_signals');}
+  return out;}
+ catch(e){
+  if(e instanceof CriticalBudgetExceeded||guarded&&e?.code==='57014'){if(guarded){await s.query('ROLLBACK TO SAVEPOINT critical_signals');await s.query('RELEASE SAVEPOINT critical_signals');}return {status:'unavailable',count:null};}
+  throw e;}
  finally{release();}
 }
 const filtersFor=(q,snapshot)=>({date_start:q.date_start.slice(0,10),date_end:q.date_end.slice(0,10),timezone:q.timezone,date_basis:q.date_basis,currency:q.currency,basis:q.basis,exponent:snapshot.scope.exponent,sku:uniq(q.sku),source:uniq(q.source),snapshot_id:snapshot.id});

@@ -64,6 +64,18 @@ test('Resumen: sin publicación <2 s con 85k asientos; con publicación no recor
       // 3) sin lentitud: ok
       const rOk = await slowDb(0).transaction('read', s => criticalSignals(s, snap.id)); assert.equal(rOk.status, 'ok'); assert.equal(typeof rOk.count, 'number');
     });
+    await t.test('una SOLA sentencia lenta no rompe la vista: statement_timeout acotado por el presupuesto, «unavailable», la transacción sigue utilizable (22-oct: 503 en /problems)', async () => {
+      // La verificación de evidencia de todos los problemas es UNA consulta por lotes (≈13 s en producción): el chequeo entre consultas no la acota.
+      const sleepDb = (secs) => { const base = ctx.db(OWNER.A, TENANT_A, 20000); return {transaction: (a, w) => base.transaction(a, s => w(Object.freeze({...s, query: async (q, v) => { if (/SELECT DISTINCT ON\(problem_id\) \* FROM public\.problem_versions/.test(q)) await s.query('SELECT pg_sleep($1)', [secs]); return s.query(q, v); }})))}; };
+      const t0 = performance.now();
+      const r = await sleepDb(6).transaction('read', async s => { const out = await criticalSignals(s, snap.id, 400); const after = await s.query('SELECT current_setting($1) AS v', ['statement_timeout']); return {out, after: after.rows[0].v}; });
+      const ms = performance.now() - t0;
+      assert.deepEqual(r.out, {status: 'unavailable', count: null}); assert.ok(ms < 4000, 'acotado: ' + ms + ' ms'); assert.equal(r.after, '20s', 'el statement_timeout original se restablece');
+      // y la vista de problemas completa responde (no 503) con las cifras del catálogo intactas
+      const ws = createWorkspaceService({database: sleepDb(6)});
+      const {v} = await time(() => ws.query(new URLSearchParams({resource: 'metrics'})));
+      assert.equal(v.items.length, 1); assert.equal(v.meta.critical_notice_state, 'unavailable'); assert.equal(v.meta.critical_notice, null);
+    });
     await ctx.pool.end();
   }, {name: 'resu', upto: 55, shared: '256MB'});
 });

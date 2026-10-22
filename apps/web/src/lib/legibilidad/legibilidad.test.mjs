@@ -188,3 +188,25 @@ test('lecturas: si la marca de conversaciones no cubre septiembre, septiembre es
  assert.match(c.texto,/julio de 2026/);assert.match(c.texto,/agosto de 2026/);assert.ok(!/septiembre/.test(c.texto.split('(')[0]));
  assert.match(c.cobertura,/septiembre de 2026 y octubre de 2026 son parciales \(datos hasta el 14 de septiembre\)/);
 });
+import {fechaCorteLegible} from './fechas.mjs';
+import {tiempoTranscurrido,ESPERA} from './espera.mjs';
+test('fecha de corte: español, UTC rotulada, sin ISO crudo',()=>{
+ assert.equal(fechaCorteLegible('2026-10-05T00:00:00.000Z'),'5 oct 2026 (UTC)');
+ assert.equal(fechaCorteLegible('2026-10-22T00:00:00.000Z'),'22 oct 2026 (UTC)');
+ assert.equal(fechaCorteLegible('2026-10-22T14:03:11.000Z'),'22 oct 2026, 14:03 UTC');
+ assert.equal(fechaCorteLegible('2026-10-22T14:03:11.000Z',{hora:false}),'22 oct 2026 (UTC)');
+ assert.equal(fechaCorteLegible('2026-01-09'),'9 ene 2026 (UTC)');
+});
+test('fecha de corte: lo no interpretable no se inventa',()=>{
+ assert.equal(fechaCorteLegible(null),'');assert.equal(fechaCorteLegible(''),'');
+ assert.equal(fechaCorteLegible('ayer'),'ayer');assert.equal(fechaCorteLegible('2026-13-40T00:00:00Z'),'2026-13-40T00:00:00Z');
+});
+test('tiempo transcurrido de una espera',()=>{
+ assert.equal(tiempoTranscurrido(0),'0 s');assert.equal(tiempoTranscurrido(59.9),'59 s');assert.equal(tiempoTranscurrido(65),'1 min 05 s');assert.equal(tiempoTranscurrido(120),'2 min');
+ assert.equal(tiempoTranscurrido(-3),'0 s');assert.equal(tiempoTranscurrido(NaN),'0 s');
+});
+test('textos de espera: dicen qué se verifica y que puede tardar, sin prometer una duración exacta',()=>{
+ for(const e of Object.values(ESPERA)){assert.ok(e.titulo.endsWith('…'));assert.match(e.detalle,/puede tardar/i);}
+ assert.match(ESPERA.recomendaciones.detalle,/hasta 2 minutos/);
+ assert.match(ESPERA.generarBrief.detalle,/2–3 minutos; no cierres esta pestaña/);
+});

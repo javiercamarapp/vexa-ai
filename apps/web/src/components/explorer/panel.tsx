@@ -1,4 +1,5 @@
 'use client';
+import {fechaCorteLegible} from '../../lib/legibilidad/fechas.mjs';
 import {useWorkspaceNavigation,workspaceLocation} from '../workspace/navigation-lifecycle';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {ExplorerPage,ExplorerEvidence,ExplorerQuestion} from '../../../../../packages/recommendations/explorer.mjs';
@@ -68,7 +69,7 @@ export function ExplorerPanel({initialQuery}:{initialQuery:string}){
    <Drawer open={!!evidence&&!answer} onClose={()=>setEvidence(null)} width={560} title={evidence?.title??''} subtitle={shown&&<StatusChip tone={STATUS[shown.status]?.tone??'info'}>{STATUS[shown.status]?.label??shown.status}</StatusChip>} footer={shown&&<LinkButton href={'/problems/'+shown.id+'?'+pin(page.meta.scope,page.meta.snapshotId,page.meta.scopeHash)} variant="primary" size="sm" icon={<Arrow/>}>Ver detalle</LinkButton>}>{evidenceBody}</Drawer>
    <div className="stat-grid" style={{gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))'}}>
     <StatCard icon="search" label="Problemas que coinciden" kind="observed" value={nf.format(Number(page.meta.totalMatched))} foot={nf.format(page.items.length)+' en esta página'}/>
-    <StatCard icon="message" label="Citas verificables en esta página" kind="observed" value={nf.format(totalCitations)} foot={<details className={styles.publication}><summary>Publicación y cobertura</summary><div className="meta-row"><IdChip value={page.meta.snapshotId} label="Publicación"/><IdChip value={page.meta.scopeHash} label="Alcance"/></div><p>Cobertura: {page.meta.coverage}</p>{page.meta.watermark&&<p>Actualización de los datos: {page.meta.watermark}</p>}</details>}/>
+    <StatCard icon="message" label="Citas verificables en esta página" kind="observed" value={nf.format(totalCitations)} foot={<details className={styles.publication}><summary>Publicación y cobertura</summary><div className="meta-row"><IdChip value={page.meta.snapshotId} label="Publicación"/><IdChip value={page.meta.scopeHash} label="Alcance"/></div><p>Cobertura: {page.meta.coverage}</p>{page.meta.watermark&&<p>Actualización de los datos: {fechaCorteLegible(page.meta.watermark)}</p>}</details>}/>
    </div>
    <ScopeBar key={JSON.stringify(scope)} scope={scope} onApply={apply} busy={busy}/>
    {page.meta.state==='stale'&&<DataState state={{kind:'stale',coverage:page.meta.coverage,watermark:page.meta.watermark}}/>}

@@ -20,6 +20,7 @@ import {BarList,type BarListItem} from '../ui/bar-list';
 import {Modal} from '../ui/overlay';
 import {EmptyState} from '../ui/empty-state';
 import {SkeletonCards,SkeletonStats} from '../ui/skeletons';
+import {fechaCorteLegible} from '../../lib/legibilidad/fechas.mjs';
 import {nf} from '../ui/format';
 import css from './panel.module.css';
 type Filters=Scope & {basis:string;exponent?:number};
@@ -34,7 +35,7 @@ function validBrief(value:Brief){return Boolean(value?.id&&Number.isInteger(valu
 function Figures({metrics}:{metrics:Metric[]}){return <dl className="metric-grid">{metrics.map((metric,index)=><div key={metric.kind+':'+index}><dt>{metric.label} <KindBadge metric={metric}/></dt><dd>{money(metric.amount_minor,metric.currency,metric.exponent)}{metric.amount_minor===null&&metric.known_subtotal!==null&&<small>Subtotal conocido: {money(metric.known_subtotal,metric.currency,metric.exponent)}; no es el total.</small>}<small><SourceRef value={metric.source_ref}/></small></dd></div>)}</dl>;}
 const safe=(href:string)=>href.startsWith('/')&&!href.startsWith('//');
 const exact=(m:Metric)=>m.amount_minor!==null&&/^-?\d+$/.test(m.amount_minor);
-const stamp=(v:string)=>v.slice(0,16).replace('T',' ')+' UTC';
+const stamp=(v:string)=>fechaCorteLegible(v);
 function Problem({item}:{item:BriefProblem}){return <article className="card problem-card" aria-label={'Problema del brief: '+item.title}><div className="card-head"><div>{item.critical&&<StatusChip tone="warn">Revisión crítica</StatusChip>}<h3>{item.rank!==null?item.rank+'. ':''}{item.title}</h3></div>{safe(item.href)&&<LinkButton href={item.href} size="sm" variant="ghost" icon={<Arrow/>}>Ver problema</LinkButton>}</div><p className="card-lead">Versión {item.version} · {item.rankingBasis==='published_priority'?'Prioridad publicada':'Orden por cantidad de evidencia, sin estimación de riesgo'} · {item.evidenceCount} {item.evidenceCount===1?'cita':'citas'}</p><Figures metrics={item.metrics}/><details><summary>Evidencia de {item.title}</summary>{item.evidence.map((e,i)=><Citation key={e.runId+':'+e.messageRevisionId+':'+i} quote={e.quote} role={e.role} category={e.category} messageRevisionId={e.messageRevisionId}/>)}</details></article>;}
 function Document({brief,busy,exportFile}:{brief:Brief;busy:boolean;exportFile:(kind:'json'|'html')=>void}){
  const d=brief.document,cur=d.scope.currency;
@@ -50,7 +51,7 @@ function Document({brief,busy,exportFile}:{brief:Brief;busy:boolean;exportFile:(
    <div className="card-head"><div><p className="eyebrow">Versión {brief.version} · {brief.stale?'Versión histórica':'Vigente'}</p><h2>Brief ejecutivo</h2></div><div className="btn-group" role="group" aria-label="Exportar brief"><Button icon={<Download/>} variant="primary" size="sm" disabled={busy} onClick={()=>exportFile('html')}>Descargar HTML</Button><Button icon={<Download/>} size="sm" disabled={busy} onClick={()=>exportFile('json')}>Descargar JSON</Button></div></div>
    <p className="headline">{lead?<>Este corte registra <strong>{money(lead.amount_minor,lead.currency,lead.exponent)}</strong> de {lead.label.toLowerCase()}; hay <strong>{nf.format(d.top3.length)}</strong> {d.top3.length===1?'problema prioritario':'problemas prioritarios'}.</>:<>Este corte no tiene cifras exactas; hay <strong>{nf.format(d.top3.length)}</strong> {d.top3.length===1?'problema prioritario':'problemas prioritarios'}.</>}</p>
    <div className="meta-row"><span className="chip">Corte: {stamp(d.asOf)}</span><span className="chip">{d.scope.date_start.slice(0,10)} a {d.scope.date_end.slice(0,10)} (fin exclusivo)</span><span className="chip">{cur} · base {d.scope.basis}</span><span className="chip">Creado: {stamp(brief.createdAt)}</span><IdChip value={d.snapshotId} label="Publicación"/><IdChip value={d.scopeHash} label="Alcance"/></div>
-   <p className="card-lead">Cobertura: {d.coverage}{d.watermark?' · Actualización: '+d.watermark:''}</p>
+   <p className="card-lead">Cobertura: {d.coverage}{d.watermark?' · Actualización: '+fechaCorteLegible(d.watermark):''}</p>
   </div>
   {brief.stale&&<p role="status">Versión histórica: hay cambios posteriores. Conserva las cifras y fuentes de su generación.</p>}
   <section aria-label="Cifras del brief" className="stack"><div className="stat-grid reveal">{d.metrics.map((m,i)=><StatCard key={m.kind+':'+i} label={m.label} icon={m.kind==='refunds'?'refresh':m.kind==='allOrders'?'receipt':'dollar'} kind={epistemicKind(m)} value={exact(m)?money(m.amount_minor,m.currency,m.exponent):'Desconocido'} foot={<>{m.amount_minor===null&&m.known_subtotal!==null&&<>Subtotal conocido: {money(m.known_subtotal,m.currency,m.exponent)}; no es el total. </>}<SourceRef value={m.source_ref}/></>}/>)}</div><p className={css.note}>La exposición no representa pérdida ni ahorro. No se suman los importes de problemas compartidos.</p></section>

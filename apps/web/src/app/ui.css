@@ -303,7 +303,7 @@ body .workspace-content .eyebrow{margin:0 0 var(--sp-1)}
 .stat-icon{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--ui-soft);color:var(--ui-secondary);flex:none}
 .stat-label{font-size:var(--t-small);font-weight:500;color:var(--muted);flex:1 1 90px;min-width:0}
 .stat-main{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--sp-2) var(--sp-3);min-width:0}
-.stat-value{font:600 var(--t-kpi)/1.1 var(--font-display);letter-spacing:-.03em;font-variant-numeric:tabular-nums;min-width:0;white-space:nowrap}
+.stat-value{font:600 var(--t-kpi)/1.1 var(--font-display);letter-spacing:-.03em;font-variant-numeric:tabular-nums;min-width:0;white-space:normal;overflow-wrap:break-word}
 .stat-value strong{font:inherit}
 .stat-foot{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-1) var(--sp-2);font-size:var(--t-small);color:var(--muted)}
 .stat-note{min-width:0}.stat-period{display:block}

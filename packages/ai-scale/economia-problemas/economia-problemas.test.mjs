@@ -318,10 +318,13 @@ async function flujoCompleto(t, {complete}) {
           assert.equal(card.items[0].metrics.find(x => x.kind === 'refunds').known_subtotal, null, 'tarjeta global bloqueada por estados desconocidos');
           assert.equal(card.items[0].metrics.find(x => x.kind === 'refunds').status, 'unavailable');
           const list = await ws.query(WS_Q(A3, {resource: 'problems', snapshot_id: exp.dev.id}), {all: true});
-          // LIMITACIÓN DEL PRODUCTO (caracterización): el Explorador lista solo problemas con vínculos de PEDIDO dentro del alcance; un problema cuyo único vínculo es un
-          // reembolso (Walmart) NO aparece ni se puede abrir en detalle (problem_not_found), aunque el reembolso esté ligado y publicado.
-          assert.equal(list.items.find(i => i.title === 'Garantía: Batería'), undefined);
-          await assert.rejects(detail.get({kind: 'problem', id: psql(`select id from public.problems where tenant_id='${TENANT_A}' and title='Garantía: Batería'`).out, query: WS_Q(A3, {snapshot_id: exp.dev.id, scope_hash: card.meta.scope_hash})}), /problem_not_found/);
+          // Este corte (reembolso directo) no trae membresía de PEDIDOS: la vista ya no queda vacía, lista los problemas vigentes del catálogo con la exposición NO DISPONIBLE
+          // (EXPOSURE_NOT_LINKED, nunca 0.00) y el aviso «Sin vínculos problema–pedido». El reembolso ligado a Garantía sigue sin convertirse en exposición por pedido.
+          const gar = list.items.find(i => i.title === 'Garantía: Batería');
+          assert.ok(gar); assert.equal(gar.metrics[0].amount_minor, null); assert.deepEqual(gar.metrics[0].missing_reasons, ['EXPOSURE_NOT_LINKED']);
+          assert.match(list.meta.coverage, /Sin vínculos problema–pedido/);
+          const dg = await detail.get({kind: 'problem', id: gar.id, query: WS_Q(A3, {snapshot_id: exp.dev.id, scope_hash: card.meta.scope_hash})});
+          assert.ok(dg.components.every(c => c.money.amount_minor === null && c.money.missing_reasons.includes('EXPOSURE_NOT_LINKED')));
         }
         // ---- aislamiento: el owner del tenant B no ve nada del A
         const dbB = crearBaseDatos({pool, tenantId: TENANT_B, userId: OWNER.B, statementTimeoutMs: 10000});

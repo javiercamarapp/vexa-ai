@@ -22,7 +22,7 @@ import {insightsProblemas} from '../../lib/legibilidad/insights.mjs';
 import {separarRuido} from '../../lib/legibilidad/ruido.mjs';
 import {nf} from '../ui/format';
 import {EmptyState} from '../ui/empty-state';
-type M=Metric&{coverage?:{known_n:number;eligible_n:number}};
+type M=Metric&{coverage?:{known_n:number;eligible_n:number};missing_reasons?:string[]};
 const STATUS:Record<string,{label:string;tone:'ok'|'warn'|'info'}>={ready:{label:'Cobertura completa',tone:'ok'},partial:{label:'Cobertura parcial',tone:'warn'},stale:{label:'Corte anterior',tone:'warn'}};
 const exact=(m:M)=>m.amount_minor!==null&&/^-?\d+$/.test(m.amount_minor);
 const money=(m:M)=>formatMinorUnits(m.amount_minor,m.currency,m.exponent);
@@ -31,6 +31,7 @@ function Coverage({m}:{m:M}){const c=m.coverage;if(!c||c.eligible_n<=0)return nu
 function Figure({m,big=false}:{m:M;big?:boolean}){
  return <div className="pfig" data-big={big||undefined}><div className="pfig-label"><span>{m.label}</span><KindBadge metric={m}/></div>
   <strong className="pfig-value">{exact(m)?money(m):'No disponible'}</strong>
+  {!exact(m)&&m.missing_reasons?.includes('EXPOSURE_NOT_LINKED')&&<small>Sin vínculos problema–pedido: la exposición no se calcula.</small>}
   {!exact(m)&&m.known_subtotal!==null&&<small>Subtotal conocido: {formatMinorUnits(m.known_subtotal,m.currency,m.exponent)}; no es el total.</small>}</div>;
 }
 function QuickView({item,query,onClose}:{item:RecordView|null;query:string;onClose:()=>void}){

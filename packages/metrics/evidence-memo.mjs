@@ -1,5 +1,5 @@
 import {createEvidenceRepository} from '../intelligence/evidence-repository.mjs';
-import {memoized,inMemoSection} from './ledger-load.mjs';
+import {memoized,inMemoSection,hasMemo} from './ledger-load.mjs';
 import {requireThat} from '../problems/contracts.mjs';
 // Las cinco lecturas de createEvidenceRepository.get(): determinísticas dentro de la transacción. Dentro de una sección de memo se ejecutan una sola vez por
 // (sentencia, parámetros), aunque varios módulos pidan la evidencia de la misma corrida (autorización del snapshot, prioridades, problemas). Si el texto de una
@@ -20,5 +20,17 @@ export const evidenceDatabase=s=>scoped(s);
  * Cualquier otro error se propaga igual que antes.
  */
 export const evidenceRun=(s,runId)=>memoized(s,'evidence-get:'+runId,async()=>{try{return await createEvidenceRepository({database:scoped(s)}).get(runId);}catch(e){if(e&&e.message==='EVIDENCE_UNAVAILABLE')return null;throw e;}});
+/**
+ * Versión por lote de evidenceRun: Map(runId -> evidencia | null) con la misma verificación (createEvidenceRepository.getMany) y las mismas
+ * entradas de memo por corrida ('evidence-get:'+id). Solo se consulta lo que aún no está memoizado; lo que no vuelve en el lote es null (no utilizable).
+ */
+export async function evidenceRuns(s,runIds){
+ const ids=[...new Set(runIds)],out=new Map();
+ const todo=ids.filter(id=>!hasMemo(s,'evidence-get:'+id));
+ const fresh=todo.length?await createEvidenceRepository({database:scoped(s)}).getMany(todo):new Map();
+ for(const id of todo)memoized(s,'evidence-get:'+id,async()=>fresh.get(id)??null);
+ for(const id of ids)out.set(id,fresh.has(id)?fresh.get(id)??null:await evidenceRun(s,id));
+ return out;
+}
 /** Equivalente memoizado de problems/repository.evidence(): mismos errores (EVIDENCE_UNAVAILABLE o source_unavailable 409) y mismo objeto de evidencia. */
 export const evidenceCurrent=async(s,runId)=>{const e=await evidenceRun(s,runId);if(!e)throw Object.assign(Error('EVIDENCE_UNAVAILABLE'),{code:'23514'});requireThat(e.state==='current'&&e.status==='succeeded','source_unavailable',409);return e;};

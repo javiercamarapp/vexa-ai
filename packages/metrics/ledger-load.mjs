@@ -17,6 +17,7 @@ export function memoized(s, key, load) {
   return m.get(key);
 }
 export const inMemoSection = s => memos.has(s);
+export const hasMemo = (s, key) => memos.get(s)?.has(key) === true;
 /** Comparte el memo de la sección de `from` con `to` (otro objeto de sesión sobre la MISMA transacción, p. ej. uno con tope de tiempo). Devuelve quien lo suelta. */
 export function shareMemo(from, to) { const m = memos.get(from); if (m) memos.set(to, m); return () => { if (m && memos.get(to) === m) memos.delete(to); }; }
 /** Ejecuta `work` sin usar ni poblar el memo de la sección (verificaciones que deben releer la base). */

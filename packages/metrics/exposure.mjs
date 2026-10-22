@@ -5,7 +5,7 @@ import {evidence} from '../problems/repository.mjs';
 import {DomainError} from '../problems/contracts.mjs';
 import {EconomicError} from './repository.mjs';
 import {latestRows,latestEntries,memoSection} from './ledger-load.mjs';
-import {evidenceRun} from './evidence-memo.mjs';
+import {evidenceRuns} from './evidence-memo.mjs';
 const uuid=x=>typeof x==='string'&&/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(x);
 const requireValue=(ok,code,status=409)=>{if(!ok)throw new EconomicError(code,status);};
 const canonical=x=>Array.isArray(x)?'['+x.map(canonical).join(',')+']':x&&typeof x==='object'?'{'+Object.keys(x).sort().map(k=>JSON.stringify(k)+':'+canonical(x[k])).join(',')+'}':JSON.stringify(x);
@@ -24,15 +24,17 @@ async function problemState(s,p){
  try{for(const id of snap.embeddingIds){const m=await one(s,'SELECT extraction_run_id FROM public.problem_embedding_members WHERE tenant_id=$1 AND embedding_id=$2 AND problem_id=$3',[s.tenantId,id,p.problem_id]);requireValue(m,'problem_evidence_unavailable');await evidence(s,m.extraction_run_id);}return {valid:true,reason:null};}
  catch(e){if(e instanceof EconomicError||e instanceof DomainError&&e.code==='source_unavailable'||e.message==='EVIDENCE_UNAVAILABLE')return {valid:false,reason:'problem_evidence_unavailable'};throw e;}
 }
-const evidenceUsable=async(s,runId)=>{const e=await evidenceRun(s,runId);return !!e&&e.state==='current'&&e.status==='succeeded';};
 /** Mismo veredicto que problemState por problema, con UNA consulta de membresías para todos los problemas y la evidencia de cada corrida verificada una sola vez. */
 async function problemStates(s,problems){
  const wanted=new Set();for(const p of problems){const snap=p.provenance?.snapshot;if(snap&&snap.state==='active'&&Array.isArray(snap.embeddingIds)&&snap.embeddingIds.length)for(const id of snap.embeddingIds)wanted.add(id);}
  const runs=new Map();if(wanted.size)for(const r of (await s.query('SELECT embedding_id,problem_id,extraction_run_id FROM public.problem_embedding_members WHERE tenant_id=$1 AND embedding_id=ANY($2::uuid[])',[s.tenantId,[...wanted]])).rows){const k=r.embedding_id+':'+r.problem_id;if(!runs.has(k))runs.set(k,r.extraction_run_id);}
+ // Verificación por lote (getMany) de las corridas distintas necesarias; una corrida ausente del lote es NO utilizable.
+ const loaded=await evidenceRuns(s,[...new Set(runs.values())]);
+ const usable=run=>{const e=loaded.get(run);return !!e&&e.state==='current'&&e.status==='succeeded';};
  const bad={valid:false,reason:'problem_evidence_unavailable'};
  for(const p of problems){const snap=p.provenance?.snapshot;let verdict={valid:true,reason:null};
   if(!snap||snap.state!=='active'||!Array.isArray(snap.embeddingIds)||!snap.embeddingIds.length)verdict=bad;
-  else for(const id of snap.embeddingIds){const run=runs.get(id+':'+p.problem_id);if(!run||!await evidenceUsable(s,run)){verdict=bad;break;}}
+  else for(const id of snap.embeddingIds){const run=runs.get(id+':'+p.problem_id);if(!run||!usable(run)){verdict=bad;break;}}
   Object.assign(p,verdict);}
 }
 const entry=r=>({id:r.entity_id,rowId:r.id,revision:r.revision,sourceId:r.source_id,actorId:r.actor_id,actorActive:r.actor_active,externalId:r.external_id,kind:r.kind,status:r.status,effectiveAt:iso(r.effective_at),recordedAt:iso(r.recorded_at),currency:r.currency,exponent:r.exponent,basis:r.basis,amountMinor:r.amount_minor===null?null:String(r.amount_minor).replace(/\.0+$/,''),orderId:r.order_id,reversalOf:r.reversal_of,details:r.details});

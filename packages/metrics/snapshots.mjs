@@ -2,7 +2,7 @@ import {createHash} from 'node:crypto';
 import {createEconomicRepository,EconomicError} from './repository.mjs';
 import {readExposure} from './exposure.mjs';
 import {latestRows,memoSection,memoized,withoutMemo,hasRefSummary} from './ledger-load.mjs';
-import {evidenceRun} from './evidence-memo.mjs';
+import {evidenceRuns} from './evidence-memo.mjs';
 import {TABLES,TABLE_NAMES,digestsSql,refsSelect,verifyStoredSql,authorizeSql,authorizeFastSql,authorizeSummarySql,EMPTY_DIGEST} from './snapshot-capture.mjs';
 const canonical=x=>Array.isArray(x)?'['+x.map(canonical).join(',')+']':x&&typeof x==='object'?'{'+Object.keys(x).sort().map(k=>JSON.stringify(k)+':'+canonical(x[k])).join(',')+'}':JSON.stringify(x);
 const hash=x=>createHash('sha256').update(canonical(x)).digest('hex');
@@ -35,7 +35,9 @@ async function authorizeCaptured(s,snap){check(await one(s,'SELECT 1 AS ok WHERE
  // disponible de fuentes/configuración. Se hace por lote en la base; la primera referencia (en orden de manifiesto) que falla decide el código, como antes.
  const summary=await hasRefSummary(s)?await one(s,authorizeSummarySql,[s.tenantId,snap.id]):null,bad=summary&&summary.bad!==null?+summary.bad:+(await one(s,authorizeFastSql,[s.tenantId,snap.id])).bad;
  if(bad!==0){const failed=await one(s,authorizeSql,[s.tenantId,snap.id,TABLE_NAMES]);if(failed)check(false,failed.code,failed.code==='snapshot_manifest_invalid'?409:403);}
- for(const run of snap.models??snap.input_manifest.models){if(!await evidenceRun(s,run.id))throw new EconomicError('snapshot_evidence_unavailable',403);}
+ // Evidencia de todos los modelos por lote (misma verificación que evidenceRun); basta que una no sea utilizable.
+ const loaded=await evidenceRuns(s,(snap.models??snap.input_manifest.models).map(run=>run.id));
+ for(const run of snap.models??snap.input_manifest.models){if(!loaded.get(run.id))throw new EconomicError('snapshot_evidence_unavailable',403);}
 }
 const normalizeMoney=(money,inputHash)=>money?{...money,provenance:money.provenance.map(p=>p.source==='authorized_economic_ledger'?{...p,reference:inputHash}:p)}:null;
 function components(data,id,inputHash){const result=[];for(const bundle of data.monetary.nativeBundles)for(const e of bundle.metrics){const money=normalizeMoney(e.money,inputHash);result.push({id:stable([id,bundle.currency,e.key,'native']),metric:e.key,label:e.label,currency:bundle.currency,exponent:bundle.exponent,amountMinor:money?.amount_minor??(money?null:e.native.amountMinor),knownSubtotalMinor:money?.known_subtotal??(money?null:e.native.knownSubtotalMinor),money,display:e.display,configurationStatus:e.configurationStatus,modeled:e.modeled,conversion:null});}for(const e of data.monetary.conversion?.items??[]){const money=normalizeMoney(e.converted,inputHash);result.push({id:stable([id,money.currency,e.key,'converted']),metric:e.key+':converted',label:e.label+' · Conversión explícita',currency:money.currency,exponent:money.exponent,amountMinor:money.amount_minor,knownSubtotalMinor:money.known_subtotal,money,display:e.display,configurationStatus:'ready',modeled:e.modeled,conversion:{original:normalizeMoney(e.original,inputHash),converted:money,fx:e.conversion}});}return result.sort((a,b)=>(a.metric+a.currency+a.id).localeCompare(b.metric+b.currency+b.id));}

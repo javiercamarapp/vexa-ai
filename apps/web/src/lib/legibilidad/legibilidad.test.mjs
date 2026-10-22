@@ -219,3 +219,20 @@ test('las vistas con espera larga usan WaitStatus y el aviso de señales crític
  assert.match(sp,/Aún no se calculan las señales críticas en esta carga; no significa que no existan\. Consúltalas en Problemas\./);
  assert.doesNotMatch(sp,/No alcanzaron a calcularse/);assert.match(sp,/critical_notice_state==='unavailable'/);
 });
+test('contraste no textual (WCAG 1.4.11): las barras inactivas de las gráficas de columnas quedan a >= 3:1 del fondo en claro y oscuro',()=>{
+ const css=readFileSync(new URL('../../app/ui.css',import.meta.url),'utf8'),glob=readFileSync(new URL('../../app/globals.css',import.meta.url),'utf8');
+ const bloques=(txt,re)=>[...txt.matchAll(re)].map(m=>m[1]).join(';');
+ const tok=(b,n)=>{const m=new RegExp('--'+n+':\\s*(#[0-9a-fA-F]{6}|[0-9.]+%)').exec(b);assert.ok(m,'token '+n);return m[1];};
+ const rgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),lin=v=>{v/=255;return v<=0.03928?v/12.92:((v+0.055)/1.055)**2.4;},L=c=>0.2126*lin(c[0])+0.7152*lin(c[1])+0.0722*lin(c[2]);
+ const ratio=(a,b)=>{const x=L(a),y=L(b);return (Math.max(x,y)+0.05)/(Math.min(x,y)+0.05);};
+ const temas={claro:{ui:bloques(css,/(?:^|\n):root\{([^}]*)\}/g),g:bloques(glob,/(?:^|\n):root \{([^}]*)\}/g)},oscuro:{ui:bloques(css,/:root\[data-theme=dark\]\{([^}]*)\}/g),g:bloques(glob,/:root\[data-theme=dark\] \{([^}]*)\}/g)}};
+ for(const [tema,t] of Object.entries(temas)){
+  const surf=rgb(tok(t.g,'ui-surface')),track=rgb(tok(t.ui,'ch-track')),p=parseFloat(tok(t.ui,'col-idle-mix'))/100;
+  for(const k of ['observed','estimated','inferred']){
+   const c=rgb(tok(t.ui,'kind-'+k)),m=c.map((v,i)=>v*p+track[i]*(1-p));
+   assert.ok(ratio(m,surf)>=3,`${tema}/${k}: barra inactiva ${ratio(m,surf).toFixed(2)}:1`);
+   assert.ok(ratio(c,surf)>=3,`${tema}/${k}: barra activa ${ratio(c,surf).toFixed(2)}:1`);
+  }
+ }
+ assert.match(css,/\.col-observed\{fill:color-mix\(in srgb,var\(--kind-observed\) var\(--col-idle-mix\)/);
+});

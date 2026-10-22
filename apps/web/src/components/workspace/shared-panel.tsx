@@ -72,7 +72,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
  const notice=bundle?.meta.critical_notice&&<aside className="notice-bar" role="alert"><Icon name="alert" size={14}/><strong>Revisión crítica, independiente del importe</strong><p>{bundle.meta.critical_notice}</p></aside>
  const criticalPending=!bundle?.meta.critical_notice&&bundle?.meta.critical_notice_state==='unavailable'&&<aside className="notice-bar" role="status"><Icon name="info" size={14}/><strong>Señales críticas no calculadas ahora</strong><p>No alcanzaron a calcularse en el tiempo permitido; eso no significa que no existan. Revísalas en Problemas.</p></aside>;
  return <section className="stack" aria-label={isOverview?'Resumen con alcance compartido':'Problemas con alcance compartido'}>
-  <PageHeader title={isOverview?'Resumen ejecutivo':'Problemas de negocio'} description={isOverview?'Cifras del corte publicado con su cobertura, su clase y su fuente.':'Prioridades con evidencia. La exposición compartida entre problemas no se suma ni equivale a pérdida.'} actions={actions}/>
+  <PageHeader title={isOverview?'Resumen ejecutivo':'Problemas de negocio'} guide={isOverview?'resumen':'problemas'} actions={actions}/>
   {bar}
   {busy&&(isOverview?<div className="stack" role="status" aria-busy="true"><SkeletonStats/><SkeletonChart height={220}/></div>:<div className="stack"><SkeletonCards count={3}/></div>)}
   {error&&<DataState state={{kind:'error',code:'workspace_request_failed',message:error}}/>}

@@ -1,5 +1,5 @@
 'use client';
-import {useState} from 'react';
+import {useMemo,useState} from 'react';
 import type {Bundle,Metric,RecordView} from '../../lib/workspace/contracts';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
 import {ratioBps} from './cfo-model.mjs';
@@ -16,8 +16,12 @@ import {Citation} from '../ui/citation';
 import {SourceRef} from '../ui/source-ref';
 import {LinkButton,Arrow} from '../ui/button';
 import {Icon} from '../ui/icons';
-import {InsightCard} from '../ui/insight-card';
+import {InsightList} from '../ui/insight-list';
+import {NoiseToggle} from '../ui/noise-toggle';
+import {insightsProblemas} from '../../lib/legibilidad/insights.mjs';
+import {separarRuido} from '../../lib/legibilidad/ruido.mjs';
 import {nf} from '../ui/format';
+import {EmptyState} from '../ui/empty-state';
 type M=Metric&{coverage?:{known_n:number;eligible_n:number}};
 const STATUS:Record<string,{label:string;tone:'ok'|'warn'|'info'}>={ready:{label:'Cobertura completa',tone:'ok'},partial:{label:'Cobertura parcial',tone:'warn'},stale:{label:'Corte anterior',tone:'warn'}};
 const exact=(m:M)=>m.amount_minor!==null&&/^-?\d+$/.test(m.amount_minor);
@@ -40,18 +44,22 @@ function QuickView({item,query,onClose}:{item:RecordView|null;query:string;onClo
  </Drawer>;
 }
 export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
- const [mode,setMode]=useState<'cards'|'table'>('cards'),[quick,setQuick]=useState<RecordView|null>(null);
- const items=bundle.items;
+ const [mode,setMode]=useState<'cards'|'table'>('cards'),[quick,setQuick]=useState<RecordView|null>(null),[incluirRuido,setIncluirRuido]=useState(false);
+ // Solo presentación y ranking: las notificaciones automáticas siguen publicadas; el interruptor las devuelve.
+ const sep=useMemo(()=>separarRuido(bundle.items,i=>[i.title,i.summary,...i.details.map(d=>d.value)],incluirRuido),[bundle.items,incluirRuido]);
+ const items=sep.visibles;
+ const insights=useMemo(()=>insightsProblemas({items,moneda:bundle.meta.scope?.currency??null}),[items,bundle.meta.scope?.currency]);
  const known=items.map(i=>primary(i)).filter((m):m is M=>!!m&&exact(m)).map(m=>{const n=BigInt(m.amount_minor!);return n<0n?-n:n;});
  const max=known.reduce((a,n)=>n>a?n:a,0n);
  const bars:BarListItem[]=items.map(item=>{const m=primary(item);const ok=!!m&&exact(m);const n=ok?BigInt(m!.amount_minor!):0n;
   return {key:item.id,label:item.title,value:ok&&max>0n?(ratioBps(n<0n?-n:n,max)??0)/100:ok?0:null,display:m?(ok?money(m):'Sin importe'):'Sin importe',kind:m?epistemicKind(m):'unclassified',href:'/problems/'+item.id+'?'+query,note:m&&!ok&&m.known_subtotal!==null?'Subtotal conocido: '+formatMinorUnits(m.known_subtotal,m.currency,m.exponent)+'; no es el total.':undefined};});
  const by=(s:string)=>items.filter(i=>i.status===s).length;
- const first=items.find(i=>{const m=primary(i);return !!m&&exact(m);});
  return <div className="stack">
+  <NoiseToggle incluir={incluirRuido} onChange={setIncluirRuido} ocultos={sep.ocultosN} unidad="problemas agrupados de esta página"/>
+  <section className="card" aria-label="Lo más importante"><div className="card-title"><div><h2>Lo más importante</h2><p>Hasta tres lecturas con su fuente y su cobertura</p></div></div><InsightList insights={insights}/></section>
   <div className="split" data-even>
    <section className="card" aria-label="Comparación de exposición por problema">
-    <div className="card-title"><div><h2>Ingresos expuestos por problema</h2><p>Longitud proporcional · {bundle.meta.scope?.currency??''} · no se suma entre problemas</p></div></div>
+    <div className="card-title"><div><h2>Ingresos expuestos por problema agrupado</h2><p>Longitud proporcional · {bundle.meta.scope?.currency??''} · no se suma entre problemas</p></div></div>
     <BarList items={bars}/>
    </section>
    <div className="stack">
@@ -59,11 +67,10 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
      <div className="card-title"><div><h2>Estado de la cobertura</h2><p>Problemas del corte</p></div></div>
      <DonutChart title="Problemas por estado de cobertura" centerValue={items.length} centerLabel="problemas" segments={[{key:'ready',label:'Cobertura completa',value:by('ready'),display:String(by('ready')),tone:1},{key:'partial',label:'Cobertura parcial',value:by('partial'),display:String(by('partial')),tone:5},{key:'stale',label:'Corte anterior',value:by('stale'),display:String(by('stale')),tone:'neutral'}]}/>
     </section>
-    {first&&<InsightCard severity="medium" eyebrow="Mayor exposición" title={first.title} sentence={<>Sube a <strong>{money(primary(first)!)}</strong> de ingresos expuestos. Revisa su evidencia antes de actuar.</>} footer={<KindBadge kind="inferred"/>} action={<button type="button" className="btn btn-primary btn-sm" onClick={()=>setQuick(first)}>Vista rápida</button>}/>}
    </div>
   </div>
-  <div className="toolbar"><SegmentedControl label="Vista de problemas" value={mode} onChange={setMode} options={[{value:'cards',label:'Tarjetas'},{value:'table',label:'Tabla'}]}/><span className="chip" aria-live="polite">{items.length} {items.length===1?'problema':'problemas'}</span></div>
-  {mode==='cards'?<div className="cards-grid reveal">{items.map(item=>{const m=primary(item),rest=item.metrics.filter(x=>x!==m) as M[];const st=STATUS[item.status]??{label:item.status,tone:'info' as const};
+  <div className="toolbar"><SegmentedControl label="Vista de problemas" value={mode} onChange={setMode} options={[{value:'cards',label:'Tarjetas'},{value:'table',label:'Tabla'}]}/><span className="chip" aria-live="polite">{items.length} {items.length===1?'problema agrupado':'problemas agrupados'}</span></div>
+  {!items.length?<EmptyState compact art="search" title="Aún sin datos" body={sep.ocultosN?`Los ${nf.format(sep.ocultosN)} problemas agrupados de esta página son notificaciones automáticas, ocultas por defecto. Actívalas con el interruptor para verlas.`:'No hay problemas agrupados en esta página.'}/>:mode==='cards'?<div className="cards-grid reveal">{items.map(item=>{const m=primary(item),rest=item.metrics.filter(x=>x!==m) as M[];const st=STATUS[item.status]??{label:item.status,tone:'info' as const};
    return <article key={item.id} className="card problem-card pcard" data-lift>
     <header className="pcard-head"><StatusChip tone={st.tone}>{st.label}</StatusChip><span className="chip" title="Versión del problema">v{item.version}</span></header>
     <h3 className="pcard-title"><Link href={'/problems/'+item.id+'?'+query} className="card-link">{item.title}</Link></h3>

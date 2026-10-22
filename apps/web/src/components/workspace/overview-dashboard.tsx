@@ -16,11 +16,15 @@ import {KindBadge} from '../ui/kind-badge';
 import {SourceRef} from '../ui/source-ref';
 import {CoverageBand} from '../ui/coverage-band';
 import {EmptyState} from '../ui/empty-state';
-import {SkeletonChart,SkeletonRows} from '../ui/skeletons';
-import {LinkButton,Arrow,Button,Refresh} from '../ui/button';
-import {Icon} from '../ui/icons';
+import {SkeletonRows} from '../ui/skeletons';
+import {LinkButton,Arrow} from '../ui/button';
 import {useJson} from '../ui/use-json';
 import {nf} from '../ui/format';
+import {InsightList} from '../ui/insight-list';
+import {ChartState} from '../ui/chart-state';
+import {NoiseToggle} from '../ui/noise-toggle';
+import {insightsResumen} from '../../lib/legibilidad/insights.mjs';
+import {separarRuido} from '../../lib/legibilidad/ruido.mjs';
 const ICON:Record<string,string>={exposure:'target',allOrders:'receipt',refunds:'refresh',future_scenario:'layers'};
 const monthShort=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
 const monthLong=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
@@ -45,7 +49,8 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
  const trends=useJson<TrendsView>('/api/trends',acceptTrends);
  const query=pinned.toString();
  const probs=useJson<Bundle>(bundle.meta.snapshot_id?'/api/workspace?resource=problems&'+query:null,acceptBundle);
- const [measure,setMeasure]=useState<'orders'|'refunds'>('orders');
+ const [measure,setMeasure]=useState<'orders'|'refunds'>('orders'),[incluirRuido,setIncluirRuido]=useState(false);
+ const insights=useMemo(()=>insightsResumen({trends:trends.data}),[trends.data]);
  if(bundle.meta.state==='empty'||!model.rows.length)return <EmptyState art="chart" title="Sin cifras publicadas para este alcance" body="Revisa el periodo y los filtros, o publica un corte desde las fuentes autorizadas." action={<LinkButton href="/imports" variant="primary" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>} secondary={<LinkButton href="/connections" size="sm">Revisar conexiones</LinkButton>}/>;
  const led=trends.data?.ledger,conv=trends.data?.conversations;
  const ledOk=led&&led.status==='ok'&&led.currency&&led.exponent!==null&&led.exponent!==undefined;
@@ -54,7 +59,8 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
  const headline=exposure&&orders&&exposure.metric.currency===orders.metric.currency?<>El corte expone <strong>{exposure.display}</strong> de ingresos a problemas con evidencia, frente a <strong>{orders.display}</strong> en órdenes registradas.</>:exposure?<>El corte expone <strong>{exposure.display}</strong> de ingresos a problemas con evidencia.</>:<>Cifras del corte publicado, con su cobertura, su clase y su fuente.</>;
  const areaPoints=(m:'orders'|'refunds'):AreaPoint[]=>ledOk?led!.series.map(s=>({label:monthShort(s.month),long:monthLong(s.month),value:num(s[m].amountMinor,led!.exponent!),display:formatMinorUnits(s[m].amountMinor,led!.currency!,led!.exponent!),detail:`${nf.format(s[m].count)} ${m==='orders'?'pedidos':'reembolsos'}${s[m].unknownAmounts?` · ${s[m].unknownAmounts} sin importe conocido (no se suman)`:''}`})):[];
  const convData:ColumnDatum[]=conv&&conv.status==='ok'?conv.series.map(p=>({key:p.month,label:monthShort(p.month),long:monthLong(p.month),value:p.count,display:nf.format(p.count)+(conv.sampled?' (estimado)':'')+' conversaciones'})):[];
- const picks=probs.data?topProblems(probs.data):[],top=picks[0],maxExp=top?top.exposure:0n;
+ const sepRuido=probs.data?separarRuido(probs.data.items,i=>[i.title,i.summary,...i.details.map(d=>d.value)],incluirRuido):null;
+ const picks=probs.data&&sepRuido?topProblems({...probs.data,items:sepRuido.visibles}):[],top=picks[0],maxExp=top?top.exposure:0n;
  const barItems:BarListItem[]=picks.slice(0,5).map(p=>({key:p.id,label:p.title,value:maxExp>0n?(ratioBps(p.exposure<0n?-p.exposure:p.exposure,maxExp)??0)/100:0,display:p.display,kind:'inferred',href:'/problems/'+p.id+'?'+query}));
  const exposureRow=model.rows.find(r=>r.metric.kind==='exposure');
  const share=top&&exposureRow&&exposureRow.state==='known'&&exposureRow.amount&&BigInt(exposureRow.amount)>0n&&top.exposure<=BigInt(exposureRow.amount)?Number(top.exposure*1000n/BigInt(exposureRow.amount))/10:null;
@@ -66,12 +72,14 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
     value={row.state==='known'&&!h.label&&row.amount!==null?<CountUpMoney className="stat-value-money" amountMinor={row.amount} currency={row.metric.currency} exponent={row.metric.exponent}/>:<strong>{h.value}</strong>}
     delta={delta??undefined} deltaLabel="Último mes cargado frente al anterior (libro de registros)" spark={spark} sparkLabel={`${row.metric.label}: últimos ${spark?.length??0} meses`}
     foot={<>{h.label?<><strong>{h.label}</strong> · </>:null}{row.coverage.label}{row.subtotal&&!h.label?` · subtotal ${row.subtotal}`:''}</>}/>;})}</div>
+  <section className="card" aria-label="Lo más importante">
+   <div className="card-title"><div><h2>Lo más importante</h2><p>Hasta tres lecturas con su fuente y su cobertura · no son proyecciones</p></div></div>
+   {trends.busy&&!trends.data?<div role="status" aria-busy="true"><span className="sr-only">Cargando lecturas…</span><SkeletonRows rows={3}/></div>:<InsightList insights={insights}/>}
+  </section>
   <div className="split">
    <section className="card trends" aria-label="Pedidos y reembolsos por mes">
     <div className="card-title"><div><h2>{measure==='orders'?'Pedidos registrados por mes':'Reembolsos liquidados por mes'}</h2><p>Últimos 12 meses{led?.currency?` · ${led.currency}`:''}</p></div><div className="toolbar" style={{margin:0}}>{led&&<KindBadge kind={led.class}/>}<SegmentedControl size="sm" label="Medida del libro económico" value={measure} onChange={setMeasure} options={[{value:'orders',label:'Pedidos'},{value:'refunds',label:'Reembolsos'}]}/></div></div>
-    {trends.busy&&!trends.data&&<SkeletonChart height={220}/>}
-    {trends.error&&<div className="notice-bar" role="alert"><Icon name="info" size={14}/><span>No se pudieron consultar las tendencias.</span><Button size="sm" icon={<Refresh/>} onClick={trends.reload}>Reintentar tendencias</Button></div>}
-    {trends.data&&(ledOk?<AreaChart title={measure==='orders'?'Pedidos registrados por mes':'Reembolsos liquidados por mes'} series={[{name:measure==='orders'?'Pedidos':'Reembolsos',points:areaPoints(measure)}]} unit={led!.currency??''}/>:<EmptyState compact art="chart" title={led?.status==='timeout'?'No disponible ahora':'Sin cargar'} body={led?.status==='timeout'?'La consulta acotada superó el tiempo permitido. Reintenta en unos segundos.':'Aún no hay pedidos ni reembolsos registrados en los últimos 12 meses.'}/>)}
+    <ChartState busy={trends.busy} hasData={!!trends.data} error={trends.error} status={trends.status} que="las tendencias" retryLabel="Reintentar tendencias" onRetry={trends.reload} height={220}>{trends.data&&(ledOk?<AreaChart title={measure==='orders'?'Pedidos registrados por mes':'Reembolsos liquidados por mes'} series={[{name:measure==='orders'?'Pedidos':'Reembolsos',points:areaPoints(measure)}]} unit={led!.currency??''}/>:<EmptyState compact art="chart" title={led?.status==='timeout'?'No disponible ahora':'Sin cargar'} body={led?.status==='timeout'?'La consulta acotada superó el tiempo permitido. Reintenta en unos segundos.':'Aún no hay pedidos ni reembolsos registrados en los últimos 12 meses.'}/>)}</ChartState>
     {led?.otherCurrencies?.length?<p className="card-lead">Otras monedas ({led.otherCurrencies.join(', ')}) no se suman ni se convierten.</p>:null}{led?.summary?.source==='summary'&&led.summary.label?<p className="card-lead">{led.summary.label}</p>:null}
    </section>
    {top?<InsightCard highlight severity="high" eyebrow="Prioridad con evidencia" title={top.title}
@@ -83,14 +91,14 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
   <div className="split" data-even>
    <section className="card" aria-label="Conversaciones por mes">
     <div className="card-title"><div><h2>Conversaciones por mes</h2><p>Últimos 12 meses · conteo de registros cargados</p></div>{conv&&<KindBadge kind={conv.class}/>}</div>
-    {trends.busy&&!trends.data&&<SkeletonChart height={180}/>}
-    {trends.data&&(convData.length?<><ColumnChart title="Conversaciones por mes" unit="conversaciones" kind={conv!.class} data={convData}/><p className="card-lead">{[conv!.sampled?`Estimado con una muestra del ${conv!.samplePercent??''} %.`:null,'Fecha: inicio o primer mensaje.',conv!.outsideWindow?`${nf.format(conv!.outsideWindow)} fuera de la ventana${conv!.undated?` (${nf.format(conv!.undated)} sin fecha)`:''}.`:null,conv!.summary?.source==='summary'?conv!.summary.label:null].filter(Boolean).join(' ')}</p></>:<EmptyState compact art="inbox" title={conv?.status==='timeout'?'No disponible ahora':'Sin cargar'} body={conv?.status==='timeout'?'Reintenta en unos segundos.':'No hay conversaciones con fecha en los últimos 12 meses.'}/>)}
+    <ChartState busy={trends.busy} hasData={!!trends.data} error={trends.error} status={trends.status} que="las conversaciones" retryLabel="Reintentar conversaciones" onRetry={trends.reload} height={180}>{trends.data&&(convData.length?<><ColumnChart title="Conversaciones por mes" unit="conversaciones" kind={conv!.class} data={convData}/><p className="card-lead">{[conv!.sampled?`Estimado con una muestra del ${conv!.samplePercent??''} %.`:null,'Fecha: inicio o primer mensaje.',conv!.outsideWindow?`${nf.format(conv!.outsideWindow)} fuera de la ventana${conv!.undated?` (${nf.format(conv!.undated)} sin fecha)`:''}.`:null,conv!.summary?.source==='summary'?conv!.summary.label:null].filter(Boolean).join(' ')}</p></>:<EmptyState compact art="inbox" title={conv?.status==='timeout'?'No disponible ahora':'Sin cargar'} body={conv?.status==='timeout'?'Reintenta en unos segundos.':'No hay conversaciones con fecha en los últimos 12 meses.'}/>)}</ChartState>
    </section>
    <section className="card" aria-label="Problemas con más exposición">
-    <div className="card-title"><div><h2>Problemas con más exposición</h2><p>Ingresos expuestos · no se suman entre problemas</p></div><LinkButton href={'/problems?'+query} variant="ghost" size="sm" icon={<Arrow/>}>Ver todos</LinkButton></div>
-    {probs.busy&&<SkeletonRows rows={4}/>}
-    {probs.error&&<div className="notice-bar" role="alert"><Icon name="info" size={14}/><span>No se pudieron consultar los problemas.</span><Button size="sm" icon={<Refresh/>} onClick={probs.reload}>Reintentar</Button></div>}
-    {probs.data&&<BarList items={barItems} empty="Aún no hay problemas con importe conocido en este corte."/>}
+    <div className="card-title"><div><h2>Problemas agrupados con más exposición</h2><p>Ingresos expuestos · no se suman entre problemas</p></div><LinkButton href={'/problems?'+query} variant="ghost" size="sm" icon={<Arrow/>}>Ver todos</LinkButton></div>
+    <ChartState busy={probs.busy} hasData={!!probs.data} error={probs.error} status={probs.status} que="los problemas" onRetry={probs.reload} height={160}>
+     {sepRuido&&(sepRuido.ocultosN>0||incluirRuido)&&<NoiseToggle incluir={incluirRuido} onChange={setIncluirRuido} ocultos={sepRuido.ocultosN} unidad="problemas agrupados"/>}
+     {probs.data&&<BarList items={barItems} empty="Aún no hay problemas con importe conocido en este corte."/>}
+    </ChartState>
    </section>
   </div>
   <CoverageBand/>

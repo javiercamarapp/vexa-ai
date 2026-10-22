@@ -100,7 +100,7 @@ export function RecommendationsPanel({initialQuery}:{initialQuery:string}){
  const shown=items.filter(i=>seg==='all'||i.status===seg);
  const firstId=items.find(i=>i.status==='proposed')?.id;
  return <section aria-label="Recomendaciones con evidencia" className="stack">
-  <PageHeader eyebrow="Decisiones y seguimiento" title="Recomendaciones" description="Acciones propuestas, ordenadas por prioridad, con la evidencia que las respalda." actions={<><Button icon={<Refresh/>} loading={busy} onClick={()=>void load(resolved.current)}>Actualizar recomendaciones</Button>{view?.canPropose&&<Button icon={<Icon name="sparkle" size={14}/>} onClick={()=>setPropose(true)}>Proponer una recomendación</Button>}</>}/>
+  <PageHeader eyebrow="Decisiones y seguimiento" title="Recomendaciones" guide="recomendaciones" actions={<><Button icon={<Refresh/>} loading={busy} onClick={()=>void load(resolved.current)}>Actualizar recomendaciones</Button>{view?.canPropose&&<Button icon={<Icon name="sparkle" size={14}/>} onClick={()=>setPropose(true)}>Proponer una recomendación</Button>}</>}/>
   <ScopeBar scope={scope} onApply={apply} busy={busy}/>
   {busy&&!view&&<div role="status" aria-label="Verificando recomendaciones"><SkeletonCards count={2}/></div>}{error&&<p className="state state-error" role="alert">{error}</p>}{notice&&<p className="state" role="status">{notice}</p>}{empty&&<DataState state={{kind:'empty'}}/>}
   {empty&&<EmptyState art="chart" title="Aún no hay un corte publicado" body="Publica un corte financiero para proponer acciones sobre evidencia verificable." action={<LinkButton href="/economics" variant="primary" size="sm" icon={<Arrow/>}>Revisar publicaciones</LinkButton>}/>}

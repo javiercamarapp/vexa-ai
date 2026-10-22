@@ -10,6 +10,8 @@ import {SkeletonStats} from './ui/skeletons';
 import {DataState} from './workspace/data-state';
 import {nf} from './ui/format';
 import {useEffect,useState} from 'react';
+import {etiquetaCategoria} from '../lib/legibilidad/categorias.mjs';
+import {CategoryVolume} from './ui/category-volume';
 import type {EvidenceView,EvidenceSpan} from '../../../../packages/intelligence/evidence-repository.mjs';
 function Quote({span,category}:{span:EvidenceSpan;category?:string}){return <Citation quote={span.quote} role={span.role} messageRevisionId={span.message_revision_id} category={category}/>;}
 export function EvidencePanel({runId}:{runId:string}){
@@ -43,8 +45,9 @@ export function EvidencePanel({runId}:{runId:string}){
    <StatCard label="Menciones respaldadas" icon="link" kind="observed" value={nf.format(data.entities.length)}/>
   </div>
   {data.abstention?<EmptyState art="shield" compact title="Sin clasificación concluyente" body="No hubo evidencia suficiente para clasificar esta conversación."/>:<>
-  {data.issues.length>1&&<section className="card" aria-label="Citas por hallazgo"><div className="card-title"><div><h2>Citas por hallazgo</h2></div></div><BarList items={data.issues.map((issue,i)=>({key:String(i),label:issue.category,value:issue.evidence.length,display:nf.format(issue.evidence.length),kind:'observed' as const}))}/></section>}
-  <div className="cards-grid">{data.issues.map((issue,index)=><article key={index} className="card"><div className="card-title"><div><h2>{issue.category}</h2></div><StatusChip tone={tone(issue.severity)}>Severidad {(sev[issue.severity]??issue.severity).toLowerCase()}</StatusChip></div>{issue.evidence.map((span,i)=><Quote key={i} span={span}/>)}</article>)}</div></>}
+  {data.issues.length>1&&<section className="card" aria-label="Citas por hallazgo"><div className="card-title"><div><h2>Citas por hallazgo</h2></div></div><BarList items={data.issues.map((issue,i)=>({key:String(i),label:etiquetaCategoria(issue.category),value:issue.evidence.length,display:nf.format(issue.evidence.length),kind:'observed' as const}))}/></section>}
+  {data.issues.length>1&&<CategoryVolume title="Incidencias de este análisis por categoría" rows={data.issues.map(i=>({category:i.category,count:1}))}/>}
+  <div className="cards-grid">{data.issues.map((issue,index)=><article key={index} className="card"><div className="card-title"><div><h2>{etiquetaCategoria(issue.category)}</h2></div><StatusChip tone={tone(issue.severity)}>Severidad {(sev[issue.severity]??issue.severity).toLowerCase()}</StatusChip></div>{issue.evidence.map((span,i)=><Quote key={i} span={span}/>)}</article>)}</div></>}
   {data.entities.length>0&&<section className="stack"><h2>Menciones respaldadas</h2><div className="cards-grid">{data.entities.map((entity,index)=><article key={index} className="card"><h3>{entity.value}</h3>{entity.evidence.map((span,i)=><Quote key={i} span={span}/>)}</article>)}</div></section>}
   </>}
  </section>;

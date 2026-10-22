@@ -2,7 +2,7 @@
 import {useState} from 'react';
 import {useWidth} from './use-width';
 import {nfCompact} from './format';
-export type ColumnDatum={key:string;label:string;long?:string;value:number|null;display:string;detail?:string};
+export type ColumnDatum={key:string;label:string;long?:string;value:number|null;display:string;detail?:string;/** Mes con datos incompletos: barra punteada. */partial?:boolean};
 /** Vertical bars anchored at zero; the active bar takes the series colour (rest grey), Estimado = hatched. Tooltip shows the exact figure. */
 export function ColumnChart({data,kind='observed',height=180,title,unit}:{data:ColumnDatum[];kind?:'observed'|'estimated'|'inferred';height?:number;title:string;unit?:string}){
  const [ref,width]=useWidth<HTMLDivElement>(),[active,setActive]=useState<number|null>(null);
@@ -16,8 +16,8 @@ export function ColumnChart({data,kind='observed',height=180,title,unit}:{data:C
     {data.map((d,i)=>{const h=d.value===null?0:Math.max(d.value>0?2:0,d.value/max*plotH),cx=padL+slot*i+slot/2;
      return <g key={d.key} tabIndex={0} role="img" aria-label={`${d.long??d.label}: ${d.display}${d.detail?'. '+d.detail:''}`} className="col" data-active={active===i||undefined} onPointerEnter={()=>setActive(i)} onFocus={()=>setActive(i)} onBlur={()=>setActive(null)}>
       <rect x={padL+slot*i} y={padT} width={slot} height={plotH+padB} className="col-hit"/>
-      {d.value===null?<rect x={cx-bw/2} y={padT+plotH-6} width={bw} height={6} className="col-unknown"/>:<rect x={cx-bw/2} y={padT+plotH-h} width={bw} height={h} rx={5} className={'col-bar col-'+kind} style={{animationDelay:i*20+'ms'}}/>}
-      {i%every===0&&<text x={cx} y={height-6} textAnchor="middle" className="chart-tick">{d.label}</text>}
+      {d.value===null?<rect x={cx-bw/2} y={padT+plotH-6} width={bw} height={6} className="col-unknown"/>:<rect x={cx-bw/2} y={padT+plotH-h} width={bw} height={h} rx={5} className={'col-bar col-'+kind+(d.partial?' col-partial':'')} style={{animationDelay:i*20+'ms'}}/>}
+      {i%every===0&&<text x={cx} y={height-6} textAnchor="middle" className="chart-tick">{d.label}{d.partial?'*':''}</text>}
      </g>;})}
    </svg>}
    {sel&&active!==null&&<div className="chart-tip" role="status" style={{left:Math.min(Math.max(padL+slot*active+slot/2,80),W-80)}}><span className="chart-tip-title">{sel.long??sel.label}</span><span className="chart-tip-row"><strong>{sel.display}</strong>{sel.detail&&<small>{sel.detail}</small>}</span></div>}

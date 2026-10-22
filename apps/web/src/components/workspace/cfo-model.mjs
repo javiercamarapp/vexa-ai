@@ -11,12 +11,14 @@ export function metricCoverage(value){
 export function buildCfoModel(items){
  const rows=items.flatMap((record,recordIndex)=>record.metrics.map((metric,index)=>{
   const validUnit=unit(metric),known=validUnit&&integer(metric.amount_minor),unknown=metric.amount_minor===null;
+  // Desconocido ≠ cero: sin ningún registro con importe conocido no hay subtotal que mostrar (un «0.00» sería un dato inventado).
+  const coverage=metricCoverage(metric.coverage),hasKnown=coverage.known===null||coverage.known>0;
   const validSubtotal=validUnit&&integer(metric.known_subtotal),invalid=!validUnit||!known&&!unknown;
   return {key:`${recordIndex}:${index}`,recordId:record.id,recordTitle:record.title,version:record.version,metric,
    amount:known?metric.amount_minor:null,display:invalid?'No verificable':known?formatMinorUnits(metric.amount_minor,metric.currency,metric.exponent):'No disponible',
-   knownSubtotal:validSubtotal?formatMinorUnits(metric.known_subtotal,metric.currency,metric.exponent):null,
-   subtotal:unknown&&validSubtotal?formatMinorUnits(metric.known_subtotal,metric.currency,metric.exponent):null,
-   state:invalid?'invalid':known?'known':'unknown',coverage:metricCoverage(metric.coverage),
+   knownSubtotal:validSubtotal&&hasKnown?formatMinorUnits(metric.known_subtotal,metric.currency,metric.exponent):null,
+   subtotal:unknown&&validSubtotal&&hasKnown?formatMinorUnits(metric.known_subtotal,metric.currency,metric.exponent):null,
+   state:invalid?'invalid':known?'known':'unknown',coverage,
    reasons:Array.isArray(metric.missing_reasons)?metric.missing_reasons.filter(x=>typeof x==='string'):[],validUnit};
  }));
  const known=rows.filter(r=>r.state==='known'),units=new Set(known.map(r=>`${r.metric.currency}:${r.metric.exponent}`));

@@ -27,16 +27,11 @@ import {CategoryVolume} from '../ui/category-volume';
 import type {CategoriesView} from '../../../../../packages/workspace-service/incidences.mjs';
 import {insightsResumen} from '../../lib/legibilidad/insights.mjs';
 import {separarRuido} from '../../lib/legibilidad/ruido.mjs';
+import {comparacionMensual} from '../../lib/legibilidad/meses.mjs';
 const ICON:Record<string,string>={exposure:'target',allOrders:'receipt',refunds:'refresh',future_scenario:'layers'};
 const monthShort=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
 const monthLong=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
 const num=(minor:string,exponent:number)=>Number(BigInt(minor))/10**exponent;
-/** Last loaded month vs the previous one, exact via BigInt (one decimal). Null when there is nothing honest to compare. */
-function monthDelta(series:LedgerMonth[],measure:'orders'|'refunds'):Delta|null{
- if(series.length<2)return null;const a=BigInt(series[series.length-1][measure].amountMinor),b=BigInt(series[series.length-2][measure].amountMinor);
- if(b<=0n)return null;const tenths=(a-b)*1000n/b,n=Number(tenths)/10;
- return {value:Math.abs(n).toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})+' %',dir:tenths>0n?'up':tenths<0n?'down':'flat',good:measure==='refunds'?'down':'up'};
-}
 const acceptTrends=(j:unknown)=>{const d=(j as {data?:TrendsView})?.data;return d?.conversations&&d?.ledger?d:null;};
 const acceptCategories=(j:unknown)=>{const d=(j as {data?:CategoriesView})?.data;return d&&Array.isArray(d.rows)&&typeof d.status==='string'?d:null;};
 const acceptBundle=(j:unknown)=>{const d=(j as {data?:Bundle})?.data;return d&&Array.isArray(d.items)?d:null;};
@@ -58,11 +53,15 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
  if(bundle.meta.state==='empty'||!model.rows.length)return <EmptyState art="chart" title="Sin cifras publicadas para este alcance" body="Revisa el periodo y los filtros, o publica un corte desde las fuentes autorizadas." action={<LinkButton href="/imports" variant="primary" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>} secondary={<LinkButton href="/connections" size="sm">Revisar conexiones</LinkButton>}/>;
  const led=trends.data?.ledger,conv=trends.data?.conversations;
  const ledOk=led&&led.status==='ok'&&led.currency&&led.exponent!==null&&led.exponent!==undefined;
- const sparkOf=(m:'orders'|'refunds',currency:string)=>ledOk&&led!.currency===currency?led!.series.map(s=>num(s[m].amountMinor,led!.exponent!)):undefined;
+ const ahora=trends.data?.generatedAt?new Date(trends.data.generatedAt):new Date();
+ // Meses completos únicamente: un mes parcial (p. ej. 5 días de octubre) ni se compara ni baja la línea de la tarjeta.
+ const cmpOf=(m:'orders'|'refunds',currency:string)=>ledOk&&led!.currency===currency?comparacionMensual(led!.series,m,led!.completeness,ahora):null;
+ const parcialLed=led?.completeness?.partialMonths??[],parcialConv=conv?.completeness?.partialMonths??[];
+ const dayShort=(d:string)=>new Intl.DateTimeFormat('es-MX',{day:'numeric',month:'long',timeZone:'UTC'}).format(new Date(d+'T00:00:00Z'));
  const exposure=model.rows.find(r=>r.metric.kind==='exposure'&&r.state==='known'),orders=model.rows.find(r=>/^allorders$/i.test(r.metric.kind)&&r.state==='known');
  const headline=exposure&&orders&&exposure.metric.currency===orders.metric.currency?<>El corte expone <strong>{exposure.display}</strong> de ingresos a problemas con evidencia, frente a <strong>{orders.display}</strong> en órdenes registradas.</>:exposure?<>El corte expone <strong>{exposure.display}</strong> de ingresos a problemas con evidencia.</>:<>Cifras del corte publicado, con su cobertura, su clase y su fuente.</>;
- const areaPoints=(m:'orders'|'refunds'):AreaPoint[]=>ledOk?led!.series.map(s=>({label:monthShort(s.month),long:monthLong(s.month),value:num(s[m].amountMinor,led!.exponent!),display:formatMinorUnits(s[m].amountMinor,led!.currency!,led!.exponent!),detail:`${nf.format(s[m].count)} ${m==='orders'?'pedidos':'reembolsos'}${s[m].unknownAmounts?` · ${s[m].unknownAmounts} sin importe conocido (no se suman)`:''}`})):[];
- const convData:ColumnDatum[]=conv&&conv.status==='ok'?conv.series.map(p=>({key:p.month,label:monthShort(p.month),long:monthLong(p.month),value:p.count,display:nf.format(p.count)+(conv.sampled?' (estimado)':'')+' conversaciones'})):[];
+ const areaPoints=(m:'orders'|'refunds'):AreaPoint[]=>ledOk?led!.series.map(s=>({label:monthShort(s.month),long:monthLong(s.month),value:num(s[m].amountMinor,led!.exponent!),display:formatMinorUnits(s[m].amountMinor,led!.currency!,led!.exponent!),detail:`${nf.format(s[m].count)} ${m==='orders'?'pedidos':'reembolsos'}${s[m].unknownAmounts?` · ${s[m].unknownAmounts} sin importe conocido (no se suman)`:''}${parcialLed.includes(s.month)?' · mes parcial: no es una caída':''}`,partial:parcialLed.includes(s.month)||undefined})):[];
+ const convData:ColumnDatum[]=conv&&conv.status==='ok'?conv.series.map(p=>({key:p.month,label:monthShort(p.month),long:monthLong(p.month)+(parcialConv.includes(p.month)?' (parcial)':''),value:p.count,display:nf.format(p.count)+(conv.sampled?' (estimado)':'')+' conversaciones'+(parcialConv.includes(p.month)?' · mes parcial':''),partial:parcialConv.includes(p.month)||undefined})):[];
  const sepRuido=probs.data?separarRuido(probs.data.items,i=>[i.title,i.summary,...i.details.map(d=>d.value)],incluirRuido):null;
  const picks=probs.data&&sepRuido?topProblems({...probs.data,items:sepRuido.visibles}):[],top=picks[0],maxExp=top?top.exposure:0n;
  const barItems:BarListItem[]=picks.slice(0,5).map(p=>({key:p.id,label:p.title,value:maxExp>0n?(ratioBps(p.exposure<0n?-p.exposure:p.exposure,maxExp)??0)/100:0,display:p.display,kind:'inferred',href:'/problems/'+p.id+'?'+query}));
@@ -71,11 +70,12 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
  return <div className="stack overview">
   <p className="headline">{headline}</p>
   <div className="stat-grid">{model.rows.map(row=>{const h=kpiHeadline(row),kind=epistemicKind(row.metric),m=/^allorders$/i.test(row.metric.kind)?'orders':row.metric.kind==='refunds'?'refunds':null;
-   const delta=m&&ledOk&&led!.currency===row.metric.currency?monthDelta(led!.series,m):null,spark=m?sparkOf(m,row.metric.currency):undefined;
+   const cmp=m?cmpOf(m,row.metric.currency):null,sinCobertura=row.coverage.eligible===0||!!cmp?.sinCobertura;
+   const delta:Delta|null=!sinCobertura&&cmp?.delta?{...cmp.delta,good:m==='refunds'?'down':'up'}:null,spark=!sinCobertura&&cmp&&m?cmp.meses.map(s=>num(s[m].amountMinor,led!.exponent!)):undefined;
    return <StatCard key={row.key} label={row.metric.label} kind={kind} icon={ICON[row.metric.kind]??'dollar'} highlight={row.metric.kind==='exposure'}
-    value={row.state==='known'&&!h.label&&row.amount!==null?<CountUpMoney className="stat-value-money" amountMinor={row.amount} currency={row.metric.currency} exponent={row.metric.exponent}/>:<strong>{h.value}</strong>}
-    delta={delta??undefined} deltaLabel="Último mes cargado frente al anterior (libro de registros)" spark={spark} sparkLabel={`${row.metric.label}: últimos ${spark?.length??0} meses`}
-    foot={<>{h.label?<><strong>{h.label}</strong> · </>:null}{row.coverage.label}{row.subtotal&&!h.label?` · subtotal ${row.subtotal}`:''}</>}/>;})}</div>
+    value={sinCobertura&&row.state!=='known'?<strong>Sin cobertura</strong>:row.state==='known'&&!h.label&&row.amount!==null?<CountUpMoney className="stat-value-money" amountMinor={row.amount} currency={row.metric.currency} exponent={row.metric.exponent}/>:<strong>{h.value}</strong>}
+    delta={delta??undefined} deltaLabel={`${cmp?.rotulo??'Meses completos'} (libro de registros)`} spark={spark} sparkLabel={`${row.metric.label}: últimos ${spark?.length??0} meses completos`}
+    foot={<>{h.label?<><strong>{h.label}</strong> · </>:null}{row.coverage.label}{row.subtotal&&!h.label&&!sinCobertura&&row.coverage.known?` · subtotal ${row.subtotal}`:''}{cmp&&!sinCobertura?<> · <span className="stat-period">{cmp.rotulo}</span></>:null}</>}/>;})}</div>
   <section className="card" aria-label="Lo más importante">
    <div className="card-title"><div><h2>Lo más importante</h2><p>Hasta tres lecturas con su fuente y su cobertura · no son proyecciones</p></div></div>
    {(trends.busy&&!trends.data)||(cats.busy&&!cats.data)?<div role="status" aria-busy="true"><span className="sr-only">Cargando lecturas…</span><SkeletonRows rows={3}/></div>:<InsightList insights={insights}/>}
@@ -84,7 +84,7 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
    <section className="card trends" aria-label="Pedidos y reembolsos por mes">
     <div className="card-title"><div><h2>{measure==='orders'?'Pedidos registrados por mes':'Reembolsos liquidados por mes'}</h2><p>Últimos 12 meses{led?.currency?` · ${led.currency}`:''}</p></div><div className="toolbar" style={{margin:0}}>{led&&<KindBadge kind={led.class}/>}<SegmentedControl size="sm" label="Medida del libro económico" value={measure} onChange={setMeasure} options={[{value:'orders',label:'Pedidos'},{value:'refunds',label:'Reembolsos'}]}/></div></div>
     <ChartState busy={trends.busy} hasData={!!trends.data} error={trends.error} status={trends.status} que="las tendencias" retryLabel="Reintentar tendencias" onRetry={trends.reload} height={220}>{trends.data&&(ledOk?<AreaChart title={measure==='orders'?'Pedidos registrados por mes':'Reembolsos liquidados por mes'} series={[{name:measure==='orders'?'Pedidos':'Reembolsos',points:areaPoints(measure)}]} unit={led!.currency??''}/>:<EmptyState compact art="chart" title={led?.status==='timeout'?'No disponible ahora':'Sin cargar'} body={led?.status==='timeout'?'La consulta acotada superó el tiempo permitido. Reintenta en unos segundos.':'Aún no hay pedidos ni reembolsos registrados en los últimos 12 meses.'}/>)}</ChartState>
-    {led?.otherCurrencies?.length?<p className="card-lead">Otras monedas ({led.otherCurrencies.join(', ')}) no se suman ni se convierten.</p>:null}{led?.summary?.source==='summary'&&led.summary.label?<p className="card-lead">{led.summary.label}</p>:null}
+    {parcialLed.length>0?<p className="card-lead">* Mes parcial ({parcialLed.map(monthLong).join(', ')}){led?.completeness?.dataThrough?`: datos hasta el ${dayShort(led.completeness.dataThrough)}`:''}. No es una caída y no se compara con meses completos.</p>:null}{led?.otherCurrencies?.length?<p className="card-lead">Otras monedas ({led.otherCurrencies.join(', ')}) no se suman ni se convierten.</p>:null}{led?.summary?.source==='summary'&&led.summary.label?<p className="card-lead">{led.summary.label}</p>:null}
    </section>
    {top?<InsightCard highlight severity="high" eyebrow="Prioridad con evidencia" title={top.title}
      sentence={<>Concentra <strong>{top.display}</strong> de ingresos expuestos{share!==null?<>, el <strong>{share.toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %</strong> de la exposición global del corte</>:null}. Es una cifra inferida por vínculo de evidencia: no es pérdida.</>}
@@ -95,7 +95,7 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
   <div className="split" data-even>
    <section className="card" aria-label="Conversaciones por mes">
     <div className="card-title"><div><h2>Conversaciones por mes</h2><p>Últimos 12 meses · conteo de registros cargados</p></div>{conv&&<KindBadge kind={conv.class}/>}</div>
-    <ChartState busy={trends.busy} hasData={!!trends.data} error={trends.error} status={trends.status} que="las conversaciones" retryLabel="Reintentar conversaciones" onRetry={trends.reload} height={180}>{trends.data&&(convData.length?<><ColumnChart title="Conversaciones por mes" unit="conversaciones" kind={conv!.class} data={convData}/><p className="card-lead">{[conv!.sampled?`Estimado con una muestra del ${conv!.samplePercent??''} %.`:null,'Fecha: inicio o primer mensaje.',conv!.outsideWindow?`${nf.format(conv!.outsideWindow)} fuera de la ventana${conv!.undated?` (${nf.format(conv!.undated)} sin fecha)`:''}.`:null,conv!.summary?.source==='summary'?conv!.summary.label:null].filter(Boolean).join(' ')}</p></>:<EmptyState compact art="inbox" title={conv?.status==='timeout'?'No disponible ahora':'Sin cargar'} body={conv?.status==='timeout'?'Reintenta en unos segundos.':'No hay conversaciones con fecha en los últimos 12 meses.'}/>)}</ChartState>
+    <ChartState busy={trends.busy} hasData={!!trends.data} error={trends.error} status={trends.status} que="las conversaciones" retryLabel="Reintentar conversaciones" onRetry={trends.reload} height={180}>{trends.data&&(convData.length?<><ColumnChart title="Conversaciones por mes" unit="conversaciones" kind={conv!.class} data={convData}/><p className="card-lead">{[conv!.sampled?`Estimado con una muestra del ${conv!.samplePercent??''} %.`:null,'Fecha: inicio o primer mensaje.',conv!.outsideWindow?`${nf.format(conv!.outsideWindow)} fuera de la ventana${conv!.undated?` (${nf.format(conv!.undated)} sin fecha)`:''}.`:null,conv!.summary?.source==='summary'?conv!.summary.label:null,parcialConv.length?`* Mes parcial (${parcialConv.map(monthLong).join(', ')})${conv!.completeness?.dataThrough?`: datos hasta el ${dayShort(conv!.completeness.dataThrough)}`:''}; no se compara.`:null].filter(Boolean).join(' ')}</p></>:<EmptyState compact art="inbox" title={conv?.status==='timeout'?'No disponible ahora':'Sin cargar'} body={conv?.status==='timeout'?'Reintenta en unos segundos.':'No hay conversaciones con fecha en los últimos 12 meses.'}/>)}</ChartState>
    </section>
    <section className="card" aria-label="Problemas con más exposición">
     <div className="card-title"><div><h2>Problemas agrupados con más exposición</h2><p>Ingresos expuestos · no se suman entre problemas</p></div><LinkButton href={'/problems?'+query} variant="ghost" size="sm" icon={<Arrow/>}>Ver todos</LinkButton></div>

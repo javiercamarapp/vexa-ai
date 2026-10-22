@@ -306,7 +306,7 @@ body .workspace-content .eyebrow{margin:0 0 var(--sp-1)}
 .stat-value{font:600 var(--t-kpi)/1.1 var(--font-display);letter-spacing:-.03em;font-variant-numeric:tabular-nums;min-width:0;white-space:nowrap}
 .stat-value strong{font:inherit}
 .stat-foot{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-1) var(--sp-2);font-size:var(--t-small);color:var(--muted)}
-.stat-note{min-width:0}
+.stat-note{min-width:0}.stat-period{display:block}
 .delta{display:inline-flex;align-items:center;gap:3px;height:20px;padding:0 8px 0 6px;border-radius:999px;font:600 11px/1 var(--font-ui);font-variant-numeric:tabular-nums;background:var(--ui-soft);color:var(--ui-secondary)}
 .delta[data-tone=good]{background:var(--tint-up);color:var(--ink-up)}.delta[data-tone=bad]{background:var(--tint-down);color:var(--ink-down)}
 .spark{flex:none;overflow:visible}
@@ -330,12 +330,14 @@ body .workspace-content .eyebrow{margin:0 0 var(--sp-1)}
 .area-series{color:var(--kind-observed)}.area-series[data-tone=estimated]{color:var(--kind-estimated)}.area-series[data-tone=compare]{color:var(--ch-neutral)}
 .area-line{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.area-series[data-tone=compare] .area-line{stroke-dasharray:4 4;stroke-width:1.5}
 .crosshair line{stroke:var(--ch-neutral);stroke-width:1;stroke-dasharray:3 3}
+.area-line-partial{fill:none;stroke:currentColor;stroke-width:2;stroke-dasharray:3 4;stroke-linecap:round;opacity:.85}.area-partial-dot{fill:var(--ui-surface);stroke:currentColor;stroke-width:2}
 .area-dot{fill:var(--kind-observed);stroke:var(--ui-surface);stroke-width:2}.area-dot[data-tone=estimated]{fill:var(--kind-estimated)}.area-dot[data-tone=compare]{fill:var(--ch-neutral)}
 .col-hit{fill:transparent}.col{outline:none}.col:focus-visible .col-hit{stroke:var(--ui-focus);stroke-width:2;rx:6}
 .col-bar{transform-box:fill-box;transform-origin:bottom;transition:fill var(--ui-fast) ease}
 .col-observed{fill:color-mix(in srgb,var(--kind-observed) 38%,var(--ch-track))}.col-estimated{fill:color-mix(in srgb,var(--kind-estimated) 40%,var(--ch-track))}.col-inferred{fill:color-mix(in srgb,var(--kind-inferred) 40%,var(--ch-track))}
 .col[data-active] .col-observed{fill:var(--kind-observed)}.col[data-active] .col-estimated{fill:var(--kind-estimated)}.col[data-active] .col-inferred{fill:var(--kind-inferred)}
 .col-unknown{fill:var(--cov-pen);opacity:.5}
+.col-bar.col-partial{fill-opacity:.35;stroke:var(--kind-observed);stroke-width:1.5;stroke-dasharray:3 3}.col-bar.col-estimated.col-partial{stroke:var(--kind-estimated)}
 /* ---- BarList ---- */
 .barlist{list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-4)}
 .barlist-row{display:grid;gap:6px;min-width:0}

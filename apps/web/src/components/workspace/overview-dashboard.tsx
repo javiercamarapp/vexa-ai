@@ -106,7 +106,7 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
    </section>
   </div>
   <CategoryVolume title="Top categorías" kind="inferred" rows={cats.data?.status==='ok'?cats.data.rows.map(r=>({category:r.category,count:r.count})):null} totalIncidencias={cats.data?.totals?.incidences}
-   reason={cats.data?.status==='timeout'?'No disponible ahora: la consulta superó el tiempo permitido. Reintenta en unos segundos.':'Aún no hay incidencias clasificadas en este alcance.'}
+   unavailable={cats.data?.status==='timeout'} reason={cats.data?.status==='timeout'?'La consulta superó el tiempo permitido. Reintenta en unos segundos.':'Aún no hay incidencias clasificadas en este alcance.'}
    load={{busy:cats.busy,error:cats.error,status:cats.status,onRetry:cats.reload}}
    foot={cats.data?.status==='ok'?<p className="card-lead">{cats.data.note}</p>:undefined}/>
   <CoverageBand/>

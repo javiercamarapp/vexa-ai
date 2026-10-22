@@ -137,3 +137,54 @@ test('Problema: vacío, timeout o sin vista → Aún sin datos; fuera de ventana
  const sin=insightsProblemaSerie({status:'ok',total:5,outsideWindow:5,undated:0,linkedRuns:null,window:{months:2},series:[{month:'2026-01',count:0},{month:'2026-02',count:0}]},new Date('2026-09-15T00:00:00Z'));
  assert.equal(sin[0].vacio,true);assert.match(sin[0].razon,/ninguna dentro de la ventana/);
 });
+
+// ---- Meses parciales y cobertura (Resumen 22-oct: octubre con 5 días no se compara) ----
+import {comparacionMensual,ledgerConDatos} from './meses.mjs';
+import {esMesCompleto,completitud,ultimoDiaDelMes} from '../../../../../packages/metrics/complete-months.mjs';
+import {trendsOctubreParcial,trendsSinReembolsos} from '../../../tests/ui/fixtures.mjs';
+const HOY=new Date('2026-10-22T12:00:00Z');
+test('esMesCompleto: el mes debe terminar antes del último dato cargado y del mes en curso',()=>{
+ assert.equal(ultimoDiaDelMes('2026-02'),'2026-02-28');
+ assert.equal(esMesCompleto('2026-09',{dataThrough:'2026-10-05',ahora:HOY}),true);
+ assert.equal(esMesCompleto('2026-10',{dataThrough:'2026-10-05',ahora:HOY}),false);
+ assert.equal(esMesCompleto('2026-09',{dataThrough:'2026-09-14',ahora:HOY}),false,'datos hasta mediados de septiembre: septiembre es parcial');
+ assert.equal(esMesCompleto('2026-09',{dataThrough:'2026-09-30T08:00:00Z',ahora:HOY}),true);
+ assert.equal(esMesCompleto('2026-09',{ahora:HOY}),true,'sin marca: solo se descarta el mes en curso');
+ assert.equal(esMesCompleto('2026-10',{ahora:HOY}),false);
+});
+test('completitud rotula la base y lista los meses parciales con datos',()=>{
+ const c=completitud([{month:'2026-09',count:7},{month:'2026-10',count:2},{month:'2026-11',count:0}],{dataThrough:'2026-10-05',ahora:HOY});
+ assert.deepEqual(c,{basis:'data',dataThrough:'2026-10-05',partialMonth:'2026-10',partialMonths:['2026-10']});
+ assert.equal(completitud([{month:'2026-09',count:7}],{ahora:HOY}).basis,'calendar');
+});
+test('tarjeta Órdenes: octubre parcial (5 días) NO se compara; se compara sep vs ago y se rotula',()=>{
+ const t=trendsOctubreParcial(),c=comparacionMensual(t.ledger.series,'orders',t.ledger.completeness,HOY);
+ assert.equal(c.sinCobertura,false);assert.equal(c.parcial.month,'2026-10');
+ assert.equal(c.meses.at(-1).month,'2026-09','la línea de la tarjeta termina en el último mes completo');
+ assert.ok(!c.meses.some(m=>m.month==='2026-10'));
+ assert.equal(c.delta.dir,'up');assert.equal(c.delta.value,'11.0 %','104500000 frente a 94100000 (sep vs ago), no la caída de ~97 % contra octubre');
+ assert.match(c.rotulo,/^sep vs ago/);assert.match(c.rotulo,/oct \(parcial, datos hasta 5 oct\) no comparado/);
+});
+test('sin marca de datos, el criterio cae al mes calendario y no inventa parcialidad',()=>{
+ const t=trendsOctubreParcial(),c=comparacionMensual(t.ledger.series,'orders',null,HOY);
+ assert.equal(c.meses.at(-1).month,'2026-09');assert.match(c.rotulo,/^sep vs ago/);
+});
+test('tarjeta Reembolsos sin registros elegibles: Sin cobertura, sin delta, sin línea',()=>{
+ const t=trendsSinReembolsos(),c=comparacionMensual(t.ledger.series,'refunds',t.ledger.completeness,HOY);
+ assert.equal(c.sinCobertura,true);assert.equal(c.delta,null);assert.deepEqual(c.meses,[]);assert.equal(c.rotulo,'Sin cobertura');
+ assert.equal(comparacionMensual(t.ledger.series,'orders',t.ledger.completeness,HOY).sinCobertura,false,'los pedidos de la misma serie sí tienen cobertura');
+ assert.equal(ledgerConDatos('refunds')({orders:{count:0,unknownAmounts:0},refunds:{count:0,unknownAmounts:3}}),true,'importes desconocidos cuentan como registros');
+});
+test('lecturas «Lo más importante»: compara el último mes completo contra el anterior y avisa del mes parcial',()=>{
+ const t=trendsOctubreParcial(),r=insightsResumen({trends:t,ahora:HOY});
+ const [c,p]=r;
+ assert.match(p.texto,/septiembre de 2026/);assert.match(p.texto,/agosto de 2026/);assert.ok(!/octubre/.test(p.texto));
+ assert.match(p.cobertura,/octubre de 2026 es parcial \(datos hasta el 5 de octubre\) y no se compara/);
+ assert.match(c.texto,/septiembre de 2026/);assert.match(c.cobertura,/octubre de 2026 es parcial \(datos hasta el 18 de octubre\)/);
+});
+test('lecturas: si la marca de conversaciones no cubre septiembre, septiembre es parcial y la comparación retrocede a jul vs ago',()=>{
+ const t=trendsOctubreParcial();t.conversations.completeness={basis:'data',dataThrough:'2026-09-14',partialMonth:'2026-09',partialMonths:['2026-09','2026-10']};
+ const c=insightsResumen({trends:t,ahora:HOY})[0];
+ assert.match(c.texto,/julio de 2026/);assert.match(c.texto,/agosto de 2026/);assert.ok(!/septiembre/.test(c.texto.split('(')[0]));
+ assert.match(c.cobertura,/septiembre de 2026 y octubre de 2026 son parciales \(datos hasta el 14 de septiembre\)/);
+});

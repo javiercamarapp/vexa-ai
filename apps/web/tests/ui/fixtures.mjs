@@ -51,6 +51,12 @@ const REF=[[40,'190000'],[52,'260000'],[31,'150000'],[28,'140000'],[60,'310000']
 export const trends=()=>({generatedAt:'2026-10-19T03:00:00.000Z',window:{start:'2025-11-01',end:'2026-11-01',months:12},note:'Conteos de registros cargados (conversaciones por fecha de inicio o, si falta, por la fecha de su primer mensaje; pedidos registrados y reembolsos liquidados por fecha efectiva). No aplican las reglas de publicación del snapshot ni suman monedas distintas.',
  conversations:{status:'ok',class:'estimated',sampled:true,samplePercent:3,definition:'started_at_or_first_message',sampleNote:'Estimado con una muestra del 3 % de las conversaciones: fechar todas (por su primer mensaje) no cabe en el tiempo permitido.',series:INC_MONTHS.map((month,i)=>({month,count:CONV[i]})),outsideWindow:41200,undated:2090,total:CONV.reduce((a,b)=>a+b,0)+41200},
  ledger:{status:'ok',class:'observed',currency:'USD',exponent:2,otherCurrencies:[],currencies:['USD:2'],series:INC_MONTHS.map((month,i)=>({month,orders:{count:ORD[i][0],amountMinor:ORD[i][1],unknownAmounts:0},refunds:{count:REF[i][0],amountMinor:REF[i][1],unknownAmounts:0}}))}});
+/** Variante de producción (22-oct): octubre trae solo 5 días del libro (220 pedidos) y la marca de datos llega al 5-oct. */
+export const trendsOctubreParcial=()=>{const t=trends();const ser=t.ledger.series.map(p=>p.month==='2026-10'?{...p,orders:{count:220,amountMinor:'2650000',unknownAmounts:0},refunds:{count:12,amountMinor:'45000',unknownAmounts:0}}:p);
+ const compl={basis:'data',dataThrough:'2026-10-05',partialMonth:'2026-10',partialMonths:['2026-10']};
+ return {...t,ledger:{...t.ledger,series:ser,completeness:compl},conversations:{...t.conversations,completeness:{basis:'data',dataThrough:'2026-10-18',partialMonth:'2026-10',partialMonths:['2026-10']}}};};
+/** Variante sin reembolsos elegibles: ningún mes trae registros de reembolso (desconocido ≠ cero: «Sin cobertura»). */
+export const trendsSinReembolsos=()=>{const t=trendsOctubreParcial();return {...t,ledger:{...t.ledger,series:t.ledger.series.map(p=>({...p,refunds:{count:0,amountMinor:'0',unknownAmounts:0}}))}};};
 export const coverage=()=>({generatedAt:'2026-10-19T03:00:00.000Z',basis:'imports+tables',note:'Importaciones registradas más las fuentes que no pasan por importaciones (Tracker, adjuntos, libro de registros, asociaciones), leídas con consultas acotadas; una cifra con «Estimado» viene de una muestra rotulada. Lo que nunca se cargó aparece como «Sin cargar»; no se estima su tamaño.',sources:[
  {key:'hubspot',label:'HubSpot (conversaciones, contactos)',loaded:true,status:'ok',class:'observed',imports:24,openImports:1,total:13507,incorporated:6471,rejected:7036,pending:0,rejectionNote:rejectionNote({total:13507,incorporated:6471,rejected:7036,pending:0}),lastUpdate:'2026-10-18T21:40:00.000Z',detail:[]},
  {key:'associations',label:'Asociaciones ticket–contacto (HubSpot)',loaded:true,status:'ok',class:'observed',imports:0,openImports:0,total:117719,incorporated:117719,rejected:0,pending:0,lastUpdate:null,detail:['117,719 hechos (resueltos 15,189 · pendientes 102,530 · por revisar 0 · retenidos 0)','72,720 vínculos activos conversación–cliente']},
@@ -110,7 +116,7 @@ export async function respond(url,method,bodyText){
  if(p==='/api/agent/turn')return [200,await agentTurn(body)];
  if(p==='/api/agent/feedback')return [202,{data:{accepted:true,persisted:false}}];
  if(p==='/api/coverage')return ok(coverage());
- if(p==='/api/trends')return ok(trends());
+ if(p==='/api/trends'){const v=q.get('variant');return ok(v==='parcial'?trendsOctubreParcial():v==='sinreembolsos'?trendsSinReembolsos():trends());}
  if(p==='/api/trends/categories')return ok(incidenceCategories(q.get('variant')??'ok'));
  if(p==='/api/trends/incidences'){const pid=q.get('problem');return ok(incidenceMonthly(pid===IDS.problemB?'empty':pid===IDS.problemC?'timeout':'ok',pid));}
  if(p.startsWith('/api/origin/'))return ok(originOf(p.split('/').pop()));

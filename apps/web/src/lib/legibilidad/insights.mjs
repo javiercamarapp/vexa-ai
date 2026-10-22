@@ -2,6 +2,7 @@
 // Cada insight lleva fuente, cobertura y clase. Si el dato no existe: {vacio:true, razon} («Aún sin datos»).
 // Los textos marcan con **negritas** las cifras exactas. Importes con BigInt: sin redondeos ni conversión de monedas.
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {esMesCompleto,completitud} from '../../../../../packages/metrics/complete-months.mjs';
 import {etiquetaCategoria} from './categorias.mjs';
 import {separarRuidoCategorias} from './ruido.mjs';
 const MAX=3;
@@ -16,12 +17,21 @@ export function variacion(actual,anterior){
  if(decimas===0n&&a!==b)return {dir:a>b?'sube':'baja',texto:'0.1 %',pequena:true};
  return {dir:decimas>0n?'sube':decimas<0n?'baja':'igual',texto:Math.abs(n).toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})+' %'};
 }
-/** Dos últimos meses COMPLETOS de una serie (descarta el mes en curso si ya apareció). */
-export function dosMesesCompletos(series,ahora=new Date()){
+/** Dos últimos meses COMPLETOS de una serie. Completo = anterior al mes en curso y, si se conoce `completitud.dataThrough`
+ *  (último dato cargado), con datos hasta el último día del mes (criterio único en packages/metrics/complete-months.mjs). */
+export function dosMesesCompletos(series,ahora=new Date(),completitud=null){
  if(!Array.isArray(series))return null;
- const actual=ahora.toISOString().slice(0,7);
- const completos=series.filter(s=>s&&typeof s.month==='string'&&s.month<actual);
+ const dataThrough=completitud?.dataThrough??null;
+ const completos=series.filter(s=>s&&typeof s.month==='string'&&esMesCompleto(s.month,{dataThrough,ahora}));
  return completos.length>=2?[completos[completos.length-2],completos[completos.length-1]]:null;
+}
+const diaLargo=d=>new Intl.DateTimeFormat('es-MX',{day:'numeric',month:'long',timeZone:'UTC'}).format(new Date(d+'T00:00:00Z'));
+/** Frase de cobertura del mes parcial excluido de la comparación, o ''. `conDatos` define si un punto de la serie tiene registros. */
+export function notaMesParcial(series,ahora,completitudPayload,conDatos){
+ const dataThrough=completitudPayload?.dataThrough??null,c=completitud(series,{dataThrough,ahora,conDatos});
+ if(!c.partialMonths.length)return '';
+ const meses=c.partialMonths.map(mesLargo),hasta=c.dataThrough?` (datos hasta el ${diaLargo(c.dataThrough)})`:'';
+ return meses.length===1?`${meses[0]} es parcial${hasta} y no se compara.`:`${meses.join(' y ')} son parciales${hasta} y no se comparan.`;
 }
 const etiquetaVar=v=>v.dir==='igual'?'sin cambio':v.pequena?'variación menor a 0.1 %':(v.dir==='sube'?'+':'−')+v.texto;
 const frase=(v,sube,baja,igual)=>v.dir==='sube'?sube:v.dir==='baja'?baja:igual;
@@ -29,7 +39,7 @@ function conversaciones(conv,ahora){
  const fuente='Conversaciones cargadas, por fecha de inicio o primer mensaje';
  if(!conv)return {id:'conversaciones',vacio:true,razon:'Las tendencias no están disponibles ahora; reintenta.',fuente};
  if(conv.status==='timeout')return {id:'conversaciones',vacio:true,razon:'La consulta superó el tiempo permitido. Reintenta en unos segundos.',fuente};
- const par=conv.status==='ok'?dosMesesCompletos(conv.series,ahora):null;
+ const par=conv.status==='ok'?dosMesesCompletos(conv.series,ahora,conv.completeness):null;
  if(!par)return {id:'conversaciones',vacio:true,razon:'Hacen falta al menos dos meses completos con conversaciones fechadas.',fuente};
  const [a,b]=par,v=variacion(String(b.count),String(a.count));
  const cuerpo=v?`las conversaciones ${frase(v,'subieron','bajaron','se mantuvieron')} de **${nfEs.format(a.count)}** en ${mesLargo(a.month)} a **${nfEs.format(b.count)}** en ${mesLargo(b.month)} (${etiquetaVar(v)}).`:`en ${mesLargo(b.month)} hubo **${nfEs.format(b.count)}** conversaciones; ${mesLargo(a.month)} no ofrece base de comparación.`;
@@ -37,6 +47,8 @@ function conversaciones(conv,ahora){
  if(conv.sampled)partes.push(`Estimado con una muestra del ${conv.samplePercent??''} %.`);
  if(conv.outsideWindow)partes.push(`${nfEs.format(conv.outsideWindow)} conversaciones quedan fuera de la ventana de 12 meses.`);
  if(conv.undated)partes.push(`${nfEs.format(conv.undated)} sin fecha.`);
+ const parcial=notaMesParcial(conv.series,ahora,conv.completeness,p=>p.count>0);
+ if(parcial)partes.push(parcial);
  if(!partes.length)partes.push('Ventana de 12 meses; no incluye el mes en curso.');
  return {id:'conversaciones',texto:cuerpo[0].toUpperCase()+cuerpo.slice(1),fuente,cobertura:partes.join(' '),clase:conv.class==='estimated'?'estimated':'observed'};
 }
@@ -45,7 +57,7 @@ function libro(led,ahora){
  if(!led)return {id:'pedidos',vacio:true,razon:'Las tendencias no están disponibles ahora; reintenta.',fuente};
  if(led.status==='timeout')return {id:'pedidos',vacio:true,razon:'La consulta superó el tiempo permitido. Reintenta en unos segundos.',fuente};
  if(led.status!=='ok'||!led.currency||led.exponent===null||led.exponent===undefined)return {id:'pedidos',vacio:true,razon:'Aún no hay pedidos registrados con moneda definida.',fuente};
- const par=dosMesesCompletos(led.series,ahora);
+ const par=dosMesesCompletos(led.series,ahora,led.completeness);
  if(!par)return {id:'pedidos',vacio:true,razon:'Hacen falta al menos dos meses completos de pedidos.',fuente};
  const [a,b]=par,x=a.orders.amountMinor,y=b.orders.amountMinor;
  if(!entero(x)||!entero(y))return {id:'pedidos',vacio:true,razon:'Algún mes no tiene un importe exacto.',fuente};
@@ -54,6 +66,8 @@ function libro(led,ahora){
  const sin=a.orders.unknownAmounts+b.orders.unknownAmounts;
  const cob=[`Solo ${led.currency}; ${led.otherCurrencies?.length?`otras monedas (${led.otherCurrencies.join(', ')}) no se suman ni se convierten.`:'no se mezclan monedas.'}`];
  if(sin)cob.push(`${nfEs.format(sin)} pedidos sin importe conocido no se suman.`);
+ const parcial=notaMesParcial(led.series,ahora,led.completeness,p=>p.orders.count+p.orders.unknownAmounts>0);
+ if(parcial)cob.push(parcial);
  return {id:'pedidos',texto:cuerpo,fuente,cobertura:cob.join(' '),clase:led.class==='estimated'?'estimated':'observed'};
 }
 const FUENTE_CAT='Incidencias clasificadas por la IA (issues.category)';

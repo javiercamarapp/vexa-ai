@@ -1,7 +1,7 @@
 // The synthetic fixtures must be internally coherent: an answer derives from the same figure the card shows.
 import test from 'node:test';import assert from 'node:assert/strict';
 import {formatMinorUnits} from '../../../../packages/metrics/money.mjs';
-import {incidenceCategories,incidenceMonthly,coverage,explorerAnswer,explorerPage,detailProblem,briefs,bundleProblems,bundleMetrics,trends,problems,IDS} from './fixtures.mjs';
+import {incidenceCategories,incidenceMonthly,coverage,explorerAnswer,explorerPage,detailProblem,briefs,bundleProblems,bundleMetrics,trends,trendsOctubreParcial,trendsSinReembolsos,problems,IDS} from './fixtures.mjs';
 const refunds=m=>m.find(x=>x.kind==='refunds');
 test('the answer text, its metric and the problem card show the same refunds figure',()=>{
  const a=explorerAnswer('¿Qué reembolsos constan en este corte?'),m=a.metrics[0],text=formatMinorUnits(m.amount_minor,m.currency,m.exponent);
@@ -45,4 +45,10 @@ test('incidence fixtures follow the repository shape (ok / empty / timeout) with
  assert.equal(incidenceCategories('timeout').status,'timeout');assert.equal(incidenceCategories('empty').totals.incidences,0);
  const m=incidenceMonthly('ok',IDS.problemA);assert.equal(m.series.length,12);assert.equal(m.total,m.series.reduce((a,p)=>a+p.count,0));
  assert.deepEqual(incidenceMonthly('timeout').series,[]);assert.equal(incidenceMonthly('empty').total,0);
+});
+
+test('variantes de tendencias: octubre parcial (5 días) y reembolsos sin registros elegibles',()=>{
+ const p=trendsOctubreParcial(),oct=p.ledger.series.at(-1);
+ assert.equal(oct.month,'2026-10');assert.equal(oct.orders.count,220);assert.equal(p.ledger.completeness.dataThrough,'2026-10-05');assert.deepEqual(p.ledger.completeness.partialMonths,['2026-10']);
+ const s=trendsSinReembolsos();assert.ok(s.ledger.series.every(r=>r.refunds.count===0&&r.refunds.unknownAmounts===0));assert.ok(s.ledger.series.some(r=>r.orders.count>0));
 });

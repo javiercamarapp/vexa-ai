@@ -3,6 +3,7 @@
 // Los textos marcan con **negritas** las cifras exactas. Importes con BigInt: sin redondeos ni conversión de monedas.
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
 import {etiquetaCategoria} from './categorias.mjs';
+import {separarRuidoCategorias} from './ruido.mjs';
 const MAX=3;
 const entero=s=>typeof s==='string'&&/^-?\d+$/.test(s);
 const nfEs=new Intl.NumberFormat('es-MX');
@@ -55,13 +56,23 @@ function libro(led,ahora){
  if(sin)cob.push(`${nfEs.format(sin)} pedidos sin importe conocido no se suman.`);
  return {id:'pedidos',texto:cuerpo,fuente,cobertura:cob.join(' '),clase:led.class==='estimated'?'estimated':'observed'};
 }
-function categorias(filas,fuente='Incidencias clasificadas por la IA'){
- if(!Array.isArray(filas)||!filas.length)return {id:'categorias',vacio:true,razon:'El resumen aún no recibe conteos de incidencias por categoría. Se ven en la evidencia de cada análisis.',fuente};
- const total=filas.reduce((n,f)=>n+f.count,0);
- if(total<=0)return {id:'categorias',vacio:true,razon:'No hay incidencias clasificadas en este alcance.',fuente};
- const top=[...filas].sort((p,q)=>q.count-p.count)[0];
- const dec=BigInt(top.count)*1000n/BigInt(total);
- return {id:'categorias',texto:`La categoría con más incidencias es **${etiquetaCategoria(top.category)}**: **${nfEs.format(top.count)}** de ${nfEs.format(total)} (${(Number(dec)/10).toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %).`,fuente,cobertura:`${nfEs.format(filas.length)} categorías con al menos una incidencia; se cuentan incidencias, no problemas agrupados.`,clase:'observed'};
+const FUENTE_CAT='Incidencias clasificadas por la IA (issues.category)';
+/** Acepta la vista de la API ({status,rows,totals}) o, por compatibilidad, un arreglo [{category,count}]. null = no se pudo consultar. */
+function categorias(entrada,fuente=FUENTE_CAT){
+ const vista=Array.isArray(entrada)?{status:entrada.length?'ok':'empty',rows:entrada,totals:null}:entrada;
+ if(!vista)return {id:'categorias',vacio:true,razon:'Los conteos por categoría no están disponibles ahora; reintenta.',fuente};
+ if(vista.status==='timeout')return {id:'categorias',vacio:true,razon:'La consulta por categoría superó el tiempo permitido. Reintenta en unos segundos.',fuente};
+ const filas=(vista.rows??[]).filter(f=>f&&Number.isFinite(f.count)&&f.count>0);
+ if(!filas.length)return {id:'categorias',vacio:true,razon:'No hay incidencias clasificadas en este alcance.',fuente};
+ const sep=separarRuidoCategorias(filas),visibles=sep.visibles;
+ const totalTodas=vista.totals?.incidences??filas.reduce((n,f)=>n+f.count,0),totalVisibles=visibles.reduce((n,f)=>n+f.count,0);
+ if(totalVisibles<=0)return {id:'categorias',vacio:true,razon:'Todas las incidencias de este alcance son notificaciones automáticas; actívalas en la gráfica para verlas.',fuente};
+ const top=[...visibles].sort((p,q)=>q.count-p.count||p.category.localeCompare(q.category))[0];
+ const dec=BigInt(top.count)*1000n/BigInt(totalVisibles);
+ const cob=[`${nfEs.format(vista.totals?.categories??filas.length)} categorías en ${nfEs.format(totalTodas)} incidencias; se cuentan incidencias, no problemas agrupados.`];
+ if(sep.incidenciasOcultas>0)cob.push(`El porcentaje excluye ${nfEs.format(sep.incidenciasOcultas)} incidencias de notificaciones automáticas.`);
+ if(vista.truncated)cob.push('Lista recortada a las categorías con más incidencias.');
+ return {id:'categorias',texto:`La categoría con más incidencias es **${etiquetaCategoria(top.category)}**: **${nfEs.format(top.count)}** de ${nfEs.format(totalVisibles)} (${(Number(dec)/10).toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %).`,fuente,cobertura:cob.join(' '),clase:'inferred'};
 }
 /** Resumen: conversaciones, pedidos y categorías (máx. 3). */
 export function insightsResumen({trends=null,categorias:filas=null,ahora=new Date()}={}){
@@ -83,5 +94,29 @@ export function insightsProblemas({items=[],moneda=null}={}){
  out.push({id:'importes',texto:`**${nfEs.format(conImporte.length)}** de **${nfEs.format(n)}** problemas agrupados de esta página tienen importe expuesto conocido${conImporte.length<n?'; el resto no muestra cifra en lugar de un cero':''}.`,fuente,cobertura:`Cuenta problemas agrupados de la página actual${moneda?`, en ${moneda}`:''}; no cuenta incidencias.`,clase:'observed'});
  const conCitas=items.filter(i=>(i.evidence?.length??0)>0).length;
  out.push({id:'citas',texto:`**${nfEs.format(conCitas)}** de **${nfEs.format(n)}** problemas agrupados tienen al menos una cita verificable con tu acceso.`,fuente:'Corte publicado: evidencia autorizada',cobertura:'Una cita respalda el problema; no demuestra su causa.',clase:'observed'});
+ return out.slice(0,MAX);
+}
+
+const mesCorto=m=>new Intl.DateTimeFormat('es-MX',{month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
+/** Evolución mensual de incidencias de UN problema agrupado (máx. 3): total y mes pico, cambio entre meses completos y cobertura de fechas. */
+export function insightsProblemaSerie(vista,ahora=new Date()){
+ const fuente='Incidencias de las corridas vinculadas al problema, por mes de su conversación';
+ if(!vista)return [{id:'evolucion',vacio:true,razon:'La evolución mensual no está disponible ahora; reintenta.',fuente}];
+ if(vista.status==='timeout')return [{id:'evolucion',vacio:true,razon:'La consulta superó el tiempo permitido. Reintenta en unos segundos.',fuente}];
+ if(vista.status==='empty'||!vista.total)return [{id:'evolucion',vacio:true,razon:'Este problema aún no tiene incidencias con conversación fechada.',fuente}];
+ const serie=vista.series??[],enVentana=serie.reduce((n,p)=>n+p.count,0),out=[];
+ const cobFechas=[`Ventana de ${vista.window?.months??12} meses.`];
+ if(vista.outsideWindow)cobFechas.push(`${nfEs.format(vista.outsideWindow)} incidencias quedan fuera de la ventana.`);
+ if(vista.undated)cobFechas.push(`${nfEs.format(vista.undated)} sin fecha de conversación.`);
+ if(enVentana>0){
+  const pico=serie.reduce((b,p)=>!b||p.count>b.count?p:b,null);
+  out.push({id:'pico',texto:`En los últimos ${vista.window?.months??12} meses hay **${nfEs.format(enVentana)}** ${enVentana===1?'incidencia':'incidencias'} vinculadas a este problema; el mes con más fue **${mesCorto(pico.month)}** con **${nfEs.format(pico.count)}**.`,fuente,cobertura:cobFechas.join(' '),clase:'inferred'});
+ }else out.push({id:'pico',vacio:true,razon:`Hay ${nfEs.format(vista.total)} incidencias, pero ninguna dentro de la ventana de ${vista.window?.months??12} meses.`,fuente});
+ const par=dosMesesCompletos(serie,ahora);
+ if(par){const [a,b]=par,v=variacion(String(b.count),String(a.count));
+  out.push(v?{id:'cambio',texto:`Las incidencias ${frase(v,'subieron','bajaron','se mantuvieron')} de **${nfEs.format(a.count)}** en ${mesLargo(a.month)} a **${nfEs.format(b.count)}** en ${mesLargo(b.month)} (${etiquetaVar(v)}).`,fuente,cobertura:'Compara dos meses completos; el mes en curso se excluye. Es una asociación temporal, no una causa.',clase:'inferred'}
+   :{id:'cambio',vacio:true,razon:`${mesLargo(a.month)} no tiene incidencias: no hay base honesta para calcular un porcentaje.`,fuente});}
+ else out.push({id:'cambio',vacio:true,razon:'Hacen falta al menos dos meses completos para comparar.',fuente});
+ if(vista.linkedRuns!==null&&vista.linkedRuns!==undefined)out.push({id:'corridas',texto:`El problema agrupa **${nfEs.format(vista.linkedRuns)}** ${vista.linkedRuns===1?'corrida de extracción':'corridas de extracción'}; en total suman **${nfEs.format(vista.total)}** incidencias.`,fuente:'Vínculos problema-corrida (agrupación por IA)',cobertura:'Una corrida puede traer incidencias de varias categorías; el conteo no es el número de clientes afectados.',clase:'inferred'});
  return out.slice(0,MAX);
 }

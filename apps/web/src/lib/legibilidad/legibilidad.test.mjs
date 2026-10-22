@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 import {CATEGORIAS,CATEGORIA_RUIDO,TOTAL_CATEGORIAS,etiquetaCategoria,categoriaOriginal,esCategoriaRuido} from './categorias.mjs';
 import {esRuido,separarRuido,separarRuidoCategorias} from './ruido.mjs';
 import {GUIAS,IDS_GUIA,guia} from './guias.mjs';
-import {insightsResumen,insightsProblemas,variacion,dosMesesCompletos} from './insights.mjs';
+import {insightsResumen,insightsProblemas,insightsProblemaSerie,variacion,dosMesesCompletos} from './insights.mjs';
 
 test('la tabla cubre la taxonomía de 45 entradas, todas con etiqueta en español sin duplicados',()=>{
  assert.equal(TOTAL_CATEGORIAS,45);assert.equal(Object.keys(CATEGORIAS).length,45);
@@ -67,7 +67,7 @@ test('Resumen: máx. 3, con fuente y cobertura; las monedas no se mezclan; categ
  const r=insightsResumen({trends:trends(),ahora:AHORA});assert.equal(r.length,3);
  const [c,p,k]=r;assert.match(c.texto,/\*\*100\*\*.*\*\*150\*\*.*\+50.0 %/);assert.match(c.cobertura,/fuera de la ventana/);assert.equal(c.clase,'observed');
  assert.match(p.texto,/\*\*1,000\.00 USD\*\*.*\*\*1,500\.00 USD\*\*/);assert.match(p.texto,/\+50\.0 %/);assert.match(p.cobertura,/CAD, MXN\) no se suman ni se convierten/);assert.match(p.cobertura,/2 pedidos sin importe/);
- assert.equal(k.vacio,true);assert.match(k.razon,/aún no recibe conteos/);
+ assert.equal(k.vacio,true);assert.match(k.razon,/no están disponibles ahora/);
  for(const i of r){assert.ok(i.fuente);if(!i.vacio){assert.ok(i.cobertura);assert.ok(['observed','estimated','inferred'].includes(i.clase));}}
 });
 test('Resumen: sin datos o con timeout no inventa nada',()=>{
@@ -100,4 +100,40 @@ test('Problemas: no compara importes de monedas distintas',()=>{
 test('la UI no usa «nf.format» de categorías sin traducir (anclaje de integración)',()=>{
  const src=readFileSync(new URL('../../components/evidence-panel.tsx',import.meta.url),'utf8');
  assert.match(src,/etiquetaCategoria/);
+});
+
+const catVista=(rows,extra={})=>({status:'ok',rows,totals:{incidences:rows.reduce((n,r)=>n+r.count,0),categories:rows.length,runs:5},truncated:false,...extra});
+test('Resumen: categorías reales (vista de la API) → Inferido, excluye ruido del porcentaje y lo dice',()=>{
+ const ruido=Object.keys(CATEGORIAS).find(c=>esCategoriaRuido(c));
+ const v=catVista([{category:'Order: Spare Parts',count:60},{category:'Shipping: Arrived Late',count:20},{category:ruido,count:920}]);
+ const k=insightsResumen({trends:null,categorias:v,ahora:AHORA})[2];
+ assert.equal(k.clase,'inferred');assert.match(k.texto,/\*\*60\*\* de 80 \(75.0 %\)/);assert.match(k.cobertura,/3 categorías en 1,000 incidencias/);assert.match(k.cobertura,/excluye 920 incidencias de notificaciones/);
+});
+test('Resumen: categorías en timeout / vacías / solo ruido → Aún sin datos con razón',()=>{
+ assert.match(insightsResumen({categorias:{status:'timeout',rows:[]},ahora:AHORA})[2].razon,/tiempo permitido/);
+ assert.match(insightsResumen({categorias:{status:'empty',rows:[]},ahora:AHORA})[2].razon,/No hay incidencias clasificadas/);
+ const ruido=Object.keys(CATEGORIAS).find(c=>esCategoriaRuido(c));
+ assert.match(insightsResumen({categorias:catVista([{category:ruido,count:5}]),ahora:AHORA})[2].razon,/notificaciones automáticas/);
+});
+const serieP=(counts,extra={})=>({status:'ok',scope:'problem',total:counts.reduce((a,b)=>a+b,0)+(extra.outsideWindow??0),outsideWindow:0,undated:0,linkedRuns:7,window:{months:counts.length},series:counts.map((c,i)=>({month:`2026-${String(i+1).padStart(2,'0')}`,count:c})),...extra});
+test('Problema: pico, cambio entre dos meses completos y corridas (máx. 3, con fuente y cobertura)',()=>{
+ const r=insightsProblemaSerie(serieP([2,10,4,6,8,3,0,0,0]),new Date('2026-09-15T00:00:00Z'));
+ assert.equal(r.length,3);assert.match(r[0].texto,/\*\*33\*\* incidencias/);assert.match(r[0].texto,/feb 2026\*\* con \*\*10\*\*/);
+ assert.equal(r[1].vacio,true);assert.match(r[1].razon,/base honesta/);
+ for(const i of r){assert.ok(i.fuente);if(!i.vacio){assert.ok(i.cobertura);assert.equal(i.clase,'inferred');}}
+ assert.match(r[2].texto,/\*\*7\*\* corridas de extracción/);assert.match(r[2].texto,/\*\*33\*\* incidencias/);
+});
+test('Problema: cambio calculado con BigInt y sin comparar contra base cero',()=>{
+ const r=insightsProblemaSerie(serieP([0,0,0,0,0,0,4,6,1]),new Date('2026-09-15T00:00:00Z'));
+ const c=r.find(i=>i.id==='cambio');assert.match(c.texto,/subieron de \*\*4\*\* en julio de 2026 a \*\*6\*\* en agosto de 2026 \(\+50.0 %\)/);
+ const z=insightsProblemaSerie(serieP([0,0,0,0,0,0,0,6,1]),new Date('2026-09-15T00:00:00Z')).find(i=>i.id==='cambio');assert.equal(z.vacio,true);assert.match(z.razon,/base honesta/);
+});
+test('Problema: vacío, timeout o sin vista → Aún sin datos; fuera de ventana y sin fecha se declaran',()=>{
+ assert.equal(insightsProblemaSerie(null)[0].vacio,true);
+ assert.match(insightsProblemaSerie({status:'timeout'})[0].razon,/tiempo permitido/);
+ assert.match(insightsProblemaSerie({status:'empty',total:0})[0].razon,/aún no tiene incidencias/);
+ const r=insightsProblemaSerie(serieP([1,2],{outsideWindow:9,undated:4,total:16}),new Date('2026-09-15T00:00:00Z'));
+ assert.match(r[0].cobertura,/9 incidencias quedan fuera/);assert.match(r[0].cobertura,/4 sin fecha/);
+ const sin=insightsProblemaSerie({status:'ok',total:5,outsideWindow:5,undated:0,linkedRuns:null,window:{months:2},series:[{month:'2026-01',count:0},{month:'2026-02',count:0}]},new Date('2026-09-15T00:00:00Z'));
+ assert.equal(sin[0].vacio,true);assert.match(sin[0].razon,/ninguna dentro de la ventana/);
 });

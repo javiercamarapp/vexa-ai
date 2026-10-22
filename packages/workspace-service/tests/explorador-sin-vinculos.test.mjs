@@ -20,7 +20,7 @@ test('Explorador sobre corte sin vínculos', {skip: SKIP, timeout: 600000}, asyn
     const pool = new pg.Pool({host: h.sock, user: 'postgres', database: 't', max: 4});
     try {
       const base = (user = OWNER.A, tenant = TENANT_A) => crearBaseDatos({pool, tenantId: tenant, userId: user, statementTimeoutMs: 60000});
-      const logged = log => { const db = base(); return {transaction: (a, w) => db.transaction(a, s => w(Object.freeze({...s, query: async (text, v) => { log.push(String(text?.text ?? text)); return s.query(text, v); }})))}; };
+      const logged = log => { const db = base(); return {transaction: (a, w) => db.transaction(a, s => w(Object.freeze({...s, query: async (text, v) => { log.push(String(text?.text ?? text) + (/DISTINCT ON\(problem_id\) problem_id,provenance/.test(String(text)) ? ' #ids=' + v[1].length : '')); return s.query(text, v); }})))}; };
       const A1 = alcance('marketplaces-usd');
       let snap = await createSnapshotRepository({database: base()}).stage({scope: A1});
       snap = await createSnapshotRepository({database: base()}).publish({snapshotId: snap.id, expectedContentHash: snap.contentHash});
@@ -35,8 +35,9 @@ test('Explorador sobre corte sin vínculos', {skip: SKIP, timeout: 600000}, asyn
         assert.equal(page.items.length, 1); assert.ok(page.meta.totalMatched >= 3, 'total del catálogo, no de la página');
         assert.ok(page.items[0].evidenceCount > 0 && page.items[0].citations.length === page.items[0].evidenceCount);
         assert.ok(page.meta.nextCursor);
-        const porProblema = log.filter(x => /FROM public\.problem_versions WHERE tenant_id=\$1 AND problem_id=\$2 AND provenance->>'kind'='vector-problem-v1' ORDER BY version DESC LIMIT 1/.test(x.replace(/\s+/g, ' ')));
-        assert.equal(porProblema.length, 1, 'la evidencia se resuelve solo para la página de 1 problema, no para todo el catálogo');
+        // La evidencia se resuelve por LOTE (una sentencia para las versiones de la página) y solo para los problemas de la página (1), no para todo el catálogo.
+        const lotes = log.filter(x => /DISTINCT ON\(problem_id\) problem_id,provenance FROM public\.problem_versions WHERE tenant_id=\$1 AND problem_id=ANY/.test(x.replace(/\s+/g, ' ')));
+        assert.equal(lotes.length, 1); assert.match(lotes[0], /#ids=1$/, 'solo el problema de la página');
         const next = await explorer.search({query: q(A1, {snapshot_id: snap.id, limit: '1', cursor: page.meta.nextCursor, scope_hash: scopeHash})});
         assert.equal(next.items.length, 1); assert.notEqual(next.items[0].id, page.items[0].id);
       });

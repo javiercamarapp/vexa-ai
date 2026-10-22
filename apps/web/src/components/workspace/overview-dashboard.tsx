@@ -23,6 +23,8 @@ import {nf} from '../ui/format';
 import {InsightList} from '../ui/insight-list';
 import {ChartState} from '../ui/chart-state';
 import {NoiseToggle} from '../ui/noise-toggle';
+import {CategoryVolume} from '../ui/category-volume';
+import type {CategoriesView} from '../../../../../packages/workspace-service/incidences.mjs';
 import {insightsResumen} from '../../lib/legibilidad/insights.mjs';
 import {separarRuido} from '../../lib/legibilidad/ruido.mjs';
 const ICON:Record<string,string>={exposure:'target',allOrders:'receipt',refunds:'refresh',future_scenario:'layers'};
@@ -36,6 +38,7 @@ function monthDelta(series:LedgerMonth[],measure:'orders'|'refunds'):Delta|null{
  return {value:Math.abs(n).toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})+' %',dir:tenths>0n?'up':tenths<0n?'down':'flat',good:measure==='refunds'?'down':'up'};
 }
 const acceptTrends=(j:unknown)=>{const d=(j as {data?:TrendsView})?.data;return d?.conversations&&d?.ledger?d:null;};
+const acceptCategories=(j:unknown)=>{const d=(j as {data?:CategoriesView})?.data;return d&&Array.isArray(d.rows)&&typeof d.status==='string'?d:null;};
 const acceptBundle=(j:unknown)=>{const d=(j as {data?:Bundle})?.data;return d&&Array.isArray(d.items)?d:null;};
 type Pick={id:string;title:string;exposure:bigint;display:string;evidence:number;refunds:string|null;coverage:string|null;currency:string;exponent:number};
 function topProblems(bundle:Bundle):Pick[]{
@@ -50,7 +53,8 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
  const query=pinned.toString();
  const probs=useJson<Bundle>(bundle.meta.snapshot_id?'/api/workspace?resource=problems&'+query:null,acceptBundle);
  const [measure,setMeasure]=useState<'orders'|'refunds'>('orders'),[incluirRuido,setIncluirRuido]=useState(false);
- const insights=useMemo(()=>insightsResumen({trends:trends.data}),[trends.data]);
+ const cats=useJson<CategoriesView>('/api/trends/categories',acceptCategories);
+ const insights=useMemo(()=>insightsResumen({trends:trends.data,categorias:cats.data}),[trends.data,cats.data]);
  if(bundle.meta.state==='empty'||!model.rows.length)return <EmptyState art="chart" title="Sin cifras publicadas para este alcance" body="Revisa el periodo y los filtros, o publica un corte desde las fuentes autorizadas." action={<LinkButton href="/imports" variant="primary" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>} secondary={<LinkButton href="/connections" size="sm">Revisar conexiones</LinkButton>}/>;
  const led=trends.data?.ledger,conv=trends.data?.conversations;
  const ledOk=led&&led.status==='ok'&&led.currency&&led.exponent!==null&&led.exponent!==undefined;
@@ -74,7 +78,7 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
     foot={<>{h.label?<><strong>{h.label}</strong> · </>:null}{row.coverage.label}{row.subtotal&&!h.label?` · subtotal ${row.subtotal}`:''}</>}/>;})}</div>
   <section className="card" aria-label="Lo más importante">
    <div className="card-title"><div><h2>Lo más importante</h2><p>Hasta tres lecturas con su fuente y su cobertura · no son proyecciones</p></div></div>
-   {trends.busy&&!trends.data?<div role="status" aria-busy="true"><span className="sr-only">Cargando lecturas…</span><SkeletonRows rows={3}/></div>:<InsightList insights={insights}/>}
+   {(trends.busy&&!trends.data)||(cats.busy&&!cats.data)?<div role="status" aria-busy="true"><span className="sr-only">Cargando lecturas…</span><SkeletonRows rows={3}/></div>:<InsightList insights={insights}/>}
   </section>
   <div className="split">
    <section className="card trends" aria-label="Pedidos y reembolsos por mes">
@@ -101,6 +105,10 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
     </ChartState>
    </section>
   </div>
+  <CategoryVolume title="Top categorías" kind="inferred" rows={cats.data?.status==='ok'?cats.data.rows.map(r=>({category:r.category,count:r.count})):null} totalIncidencias={cats.data?.totals?.incidences}
+   reason={cats.data?.status==='timeout'?'No disponible ahora: la consulta superó el tiempo permitido. Reintenta en unos segundos.':'Aún no hay incidencias clasificadas en este alcance.'}
+   load={{busy:cats.busy,error:cats.error,status:cats.status,onRetry:cats.reload}}
+   foot={cats.data?.status==='ok'?<p className="card-lead">{cats.data.note}</p>:undefined}/>
   <CoverageBand/>
   <section className="card" aria-label="Tabla completa de indicadores">
    <div className="card-title"><div><h2>Detalle financiero</h2><p>Valores exactos · los importes no se suman</p></div></div>

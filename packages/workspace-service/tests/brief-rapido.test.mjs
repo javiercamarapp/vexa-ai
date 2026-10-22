@@ -158,12 +158,24 @@ test('Brief y recomendación sobre corte sin vínculos: una transacción, sin N+
         assert.equal((await createRecommendationRepository({database: base()}).get({id: rec.id})).id, rec.id, 'la recomendación guardada se relee con la verificación completa');
       });
 
+      await t.test('recomendaciones seguidas sobre problemas distintos funcionan (descarta hash/CAS global) y se guarda una muestra acotada de citas (22-oct prod: 1,327 y 5,947 citas > 500 de la guarda => 409/lentitud)', async () => {
+        const brief0 = await createBriefRepository({database: base()}).get({id: await head()});
+        const repo = limits => createRecommendationRepository({database: base(), limits});
+        const sel = brief0.document.top3.find(p => p.evidenceTotal >= 3).id;
+        const a = await repo({maxRefs: 2}).generate({query: sp.toString(), problemId: sel, requestKey: 'rec-key-seq-01'});
+        assert.ok(a.evidenceRefs.length === 2, 'muestra acotada: ' + a.evidenceRefs.length);
+        assert.match(a.rationale, /Se conservan \d citas de muestra/);
+        const total = psql(`select provenance->>'evidenceTotal' from public.recommendations where id='${a.id}'`).trim(); assert.ok(Number(total) > a.evidenceRefs.length, 'el total verificado queda en provenance: ' + total);
+        const again = await repo({maxRefs: 2}).generate({query: sp.toString(), problemId: sel, requestKey: 'rec-key-seq-01'}); assert.equal(again.id, a.id);
+        const list = await repo({}).list({query: sp}); assert.ok(list.items.some(i => i.id === a.id), 'la lista relee y verifica la recomendación con muestra');
+      });
+
       await t.test('recomendación fail-closed: con la evidencia alterada no se propone (falla cerrado, nada se guarda)', async () => {
-        const pid = catalog[1].id;
+        const pid = catalog[1].id, nRec = psql("select count(*) from public.recommendations where recommendation_schema='recommendation-v1'").trim();
         const rev = psql(`select r.id from public.problem_embedding_members m join public.extraction_runs x on x.id=m.extraction_run_id, lateral jsonb_array_elements(x.provenance->'input_manifest') e join public.message_revisions r on r.id=(e->>'message_revision_id')::uuid where m.problem_id='${pid}' limit 1`).trim();
         aplicar(`set session_replication_role=replica; update public.message_revisions set redacted_text=redacted_text||' alterado' where id='${rev}'`);
         await assert.rejects(createRecommendationRepository({database: base()}).generate({query: sp.toString(), problemId: pid, requestKey: 'rec-key-00002'}), e => e.status === 403 || /UNAVAILABLE|unavailable/.test(String(e.message)));
-        assert.equal(psql("select count(*) from public.recommendations where recommendation_schema='recommendation-v1'").trim(), '1', 'nada se guardó');
+        assert.equal(psql("select count(*) from public.recommendations where recommendation_schema='recommendation-v1'").trim(), nRec, 'nada se guardó');
       });
 
       await t.test('reversas: las migraciones propuestas se pueden deshacer', async () => { aplicar(DOWN_R); aplicar(DOWN_B); });

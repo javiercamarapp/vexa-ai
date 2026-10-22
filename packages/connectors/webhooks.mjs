@@ -19,6 +19,12 @@ export function createCRMWebhookBindings(raw,origin){
  }
  return Object.freeze({resolve(id){const row=bindings.get(id);if(!row)throw error('CRM_WEBHOOK_UNAUTHORIZED',401);return row;},origin});
 }
+/** Distingue receptor apagado (sin flag) de configuración inválida; nunca devuelve valores de entorno. */
+export function crmWebhookReadiness(env){
+ if(env.VEXA_CRM_WEBHOOKS_ENABLED!=='true')return {ready:false,code:'CRM_WEBHOOK_DISABLED'};
+ try{const b=createCRMWebhookBindings(env.VEXA_CRM_WEBHOOK_BINDINGS_JSON??'[]',env.NEXT_PUBLIC_SITE_URL??'');return JSON.parse(env.VEXA_CRM_WEBHOOK_BINDINGS_JSON??'[]').length>0&&b?{ready:true}:{ready:false,code:'CRM_WEBHOOK_CONFIGURATION_REQUIRED'};}
+ catch{return {ready:false,code:'CRM_WEBHOOK_CONFIGURATION_REQUIRED'};}
+}
 function signature(bytes,provided){
  if(typeof provided!=='string'||!/^[A-Za-z0-9+/]{43}=$/.test(provided))return false;
  const actual=Buffer.from(provided,'base64');return actual.length===32&&timingSafeEqual(bytes,actual);

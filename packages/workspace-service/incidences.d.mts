@@ -1,0 +1,10 @@
+export type IncidenceClass='inferred';
+export type CategoryRow={category:string;count:number;runs:number};
+export type CategoriesView={generatedAt:string;status:'ok'|'empty'|'timeout';class:IncidenceClass;unit:'incidencias';source:string;note:string;rows:CategoryRow[];totals:{incidences:number;categories:number;runs:number|null}|null;truncated:boolean};
+export type IncidenceMonth={month:string;count:number};
+export type MonthlyIncidencesView={generatedAt:string;scope:'total'|'problem';problemId:string|null;status:'ok'|'empty'|'timeout';class:IncidenceClass;unit:'incidencias';definition:string;source:string;note:string;window:{start:string;end:string;months:number};series:IncidenceMonth[];outsideWindow:number|null;undated:number|null;total:number|null;linkedRuns:number|null};
+export const INCIDENCE_TIMEOUT_MS:number;export const MAX_CATEGORIES:number;export const INCIDENCE_MONTHS:number;
+export const CATEGORIES_SQL:string;export const MONTHLY_SQL:string;
+export function shapeCategories(raw:{category:string|null;n:unknown;runs:unknown;is_total:unknown}[]):{rows:CategoryRow[];totals:{incidences:number;categories:number;runs:number|null};truncated:boolean};
+export function shapeMonthly(raw:{month:string|null;n:unknown;undated:unknown}[],win:{list:string[]}):{series:IncidenceMonth[];outsideWindow:number;undated:number;total:number};
+export function createIncidencesRepository(options:{database:any;now?:()=>Date;timeoutMs?:number}):{categories():Promise<CategoriesView>;monthly(input?:{problemId?:string|null;months?:number}):Promise<MonthlyIncidencesView>};

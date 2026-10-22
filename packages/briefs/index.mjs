@@ -8,6 +8,7 @@ import {createInterventionRepository} from '../interventions/index.mjs';
 import {createSnapshotRepository} from '../metrics/snapshots.mjs';
 import {createPriorityRepository} from '../metrics/priority.mjs';
 import {EconomicError} from '../metrics/repository.mjs';
+import {separarRuido} from '../../apps/web/src/lib/legibilidad/ruido.mjs';
 import {memoSection} from '../metrics/ledger-load.mjs';
 import {WorkspaceError,check,uuid,hash,canonical,parseWorkspaceQuery,cursorAuthHash,encodeCursor,decodeCursor} from '../workspace-service/contracts.mjs';
 const one=async(s,q,a=[])=>(await s.query(q,a)).rows[0],iso=x=>new Date(x).toISOString();
@@ -40,9 +41,11 @@ export function createBriefRepository({database,limits={}}){
  // 2) Ranking publicado: solo el orden, verificado por integridad (no se recalcula ni se relee la evidencia de todo el catálogo). Sin corrida publicada no se toca la evidencia.
  const priority=unfiltered?await createPriorityRepository({database:db}).publishedRank({snapshotId:snapshot.id}):{latestRun:null,verification:'none'};const rank=unfiltered?priority.latestRun:null;
  const rankOf=p=>rank?.entries.find(e=>e.problemId===p.id&&e.problemVersion===p.version)?.rank??null,count=p=>stats.get(p.id)?.evidenceCount??0;
- const ranked=new Map(view.items.map(p=>[p.id,rankOf(p)]));
+ // Ruido (notificaciones automáticas de retailers): misma regla de presentación que el resto de vistas; no entra en el pool, el top3 ni el carril crítico. Solo se excluye de la SELECCIÓN; nada se borra.
+ const {visibles:candidates,ocultosN:noise}=separarRuido(view.items,p=>[p.title,p.summary]);
+ const ranked=new Map(candidates.map(p=>[p.id,rankOf(p)]));
  const order=(a,b)=>Number(ranked.get(b.id)!==null)-Number(ranked.get(a.id)!==null)||(ranked.get(a.id)!==null?ranked.get(a.id)-ranked.get(b.id):count(b)-count(a))||(a.id<b.id?-1:a.id>b.id?1:0);
- const ordered=[...view.items].sort(order),critOrdered=ordered.filter(p=>stats.get(p.id)?.critical).sort((a,b)=>count(b)-count(a)||(a.id<b.id?-1:a.id>b.id?1:0)),criticalIds=critOrdered.map(p=>p.id);
+ const ordered=[...candidates].sort(order),critOrdered=ordered.filter(p=>stats.get(p.id)?.critical).sort((a,b)=>count(b)-count(a)||(a.id<b.id?-1:a.id>b.id?1:0)),criticalIds=critOrdered.map(p=>p.id);
  const verified=new Map(),tried=new Set();let pool=0;
  const verify=async ids=>{const todo=ids.filter(id=>!tried.has(id));for(const id of todo)tried.add(id);if(!todo.length)return;for(const [id,refs] of await explorer.verified({view,ids:todo}))if(refs&&refs.length)verified.set(id,refs);};
  await verify(ordered.slice(0,POOL_N).map(p=>p.id));pool=Math.min(POOL_N,ordered.length);
@@ -54,7 +57,7 @@ export function createBriefRepository({database,limits={}}){
  const pq=scopeQuery(scope).toString(),shown=ordered.filter(p=>verified.has(p.id)&&(listed.has(p.id)||ordered.slice(0,pool).includes(p)));
  const pick=refs=>[...refs.filter(c=>['high','critical'].includes(c.severity)||CRITICAL.test(c.category)),...refs.filter(c=>!(['high','critical'].includes(c.severity)||CRITICAL.test(c.category)))].slice(0,MAX_C);
  const ps=shown.map(p=>{const refs=verified.get(p.id),shownRefs=pick(refs),published=ranked.get(p.id)!==null;return {id:p.id,version:p.version,title:p.title,metrics:p.metrics,critical:listed.has(p.id),rank:ranked.get(p.id),rankingBasis:published?'published_priority':'evidence_count',evidenceCount:shownRefs.length,evidenceTotal:refs.length,evidence:shownRefs.map(({conversationId,source,...r})=>r),href:'/problems/'+p.id+'?'+pq};});
- const selection={mode:'verified_candidates',catalogProblems:view.items.length,candidatePool:pool,criticalCandidates:criticalIds.length,criticalListed:listed.size,criticalOmitted:criticalIds.length-listed.size,maxCitationsPerProblem:MAX_C,verifiedProblems:ps.length,rankingVerification:rank?'integrity_only':'none'};
+ const selection={mode:'verified_candidates',catalogProblems:view.items.length,candidatePool:pool,criticalCandidates:criticalIds.length,criticalListed:listed.size,criticalOmitted:criticalIds.length-listed.size,maxCitationsPerProblem:MAX_C,automaticNotificationsExcluded:noise,verifiedProblems:ps.length,rankingVerification:rank?'integrity_only':'none'};
  const recs=await createRecommendationRepository({database:db}).list({query:q}),interventions=await createInterventionRepository({database:db}).list({query:q});
  const actions=[...recs.items.map(r=>({id:r.id,version:r.version,kind:'recommendation',title:r.title,status:r.status,ownerId:r.ownerId,summary:r.action+' '+r.rationale,href:'/recommendations?'+pq})),...interventions.items.map(i=>({id:i.id,version:i.version,kind:'intervention',title:i.title,status:i.status,ownerId:i.ownerId,summary:i.hypothesis,href:'/interventions?'+pq}))];
  const comp=await comparison(comparisonQuery,current,snapshot,ctx);

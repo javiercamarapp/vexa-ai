@@ -72,6 +72,18 @@ test('Brief y recomendación sobre corte sin vínculos: una transacción, sin N+
         const otra = await createBriefRepository({database: base(), limits: {criticalN: 1, maxCitations: 1}}).generate({query: sp.toString(), comparisonQuery: null, expectedPreviousId: todo.id, requestKey: 'brief-key-lim03'}); assert.equal(otra.id, acot.id, 'mismo input con otra clave reutiliza el brief inmutable');
       });
 
+      await t.test('ruido: las notificaciones automáticas de retailers no entran en el pool, el top3 ni el carril crítico (rotulado)', async () => {
+        const cur = await createBriefRepository({database: base()}).get({id: await head()});
+        const noisy = cur.document.top3[0].id, title = 'Other: Retailer notifications and system alerts';
+        const orig = psql(`select provenance->'snapshot'->>'label' from public.problem_versions where problem_id='${noisy}' and provenance->>'kind'='vector-problem-v1' order by version desc limit 1`).trim();
+        aplicar(`set session_replication_role=replica; update public.problem_versions set provenance=jsonb_set(provenance,'{snapshot,label}','"${title}"') where id=(select id from public.problem_versions where problem_id='${noisy}' and provenance->>'kind'='vector-problem-v1' order by version desc limit 1)`);
+        const b = await createBriefRepository({database: base()}).generate({query: sp.toString(), comparisonQuery: null, expectedPreviousId: await head(), requestKey: 'brief-key-ruido'});
+        const shown = [...b.document.top3, ...b.document.critical].map(p => p.id);
+        assert.ok(!shown.includes(noisy), 'el ruido no se muestra'); assert.equal(b.document.selection.automaticNotificationsExcluded, 1);
+        assert.ok(b.document.limits.some(l => /^No se consideran las 1 notificaciones automáticas de retailers/.test(l)));
+        aplicar(`set session_replication_role=replica; update public.problem_versions set provenance=jsonb_set(provenance,'{snapshot,label}',to_jsonb('${orig.replace(/'/g, "''")}'::text)) where id=(select id from public.problem_versions where problem_id='${noisy}' and provenance->>'kind'='vector-problem-v1' order by version desc limit 1)`);
+      });
+
       await t.test('brief_guard con ids uuid (20261030): mismos veredictos, rechaza una cita alterada y es reversible', async () => {
         aplicar(UP_G);
         const head = (await createBriefRepository({database: base()}).list({query: sp})).expectedPreviousId;

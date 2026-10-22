@@ -11,6 +11,8 @@ export interface SqlConnection {
 }
 export interface SqlPool { connect(): Promise<SqlConnection> }
 export type DatabaseAction = 'read' | 'notify' | 'materialize' | 'import' | 'configure' | 'propose' | 'approve' | 'execute' | 'retain';
+// Las lecturas interactivas conservan 10 s. La preparación y publicación de cortes económicos (import) y la materialización recorren todo el libro (~85 mil asientos) y exceden 10 s bajo RLS; la duración total sigue acotada por maxDuration de la ruta.
+const STATEMENT_TIMEOUT_MS: Record<DatabaseAction, string> = {read:'10000',notify:'10000',materialize:'45000',import:'55000',configure:'10000',propose:'10000',approve:'10000',execute:'10000',retain:'10000'};
 const roles: Record<DatabaseAction, readonly Membership['role'][]> = {
   notify: ['owner','analyst','operator','viewer'],
   read: ['owner','analyst','operator','viewer'], materialize: ['owner','analyst','operator','viewer'], import: ['owner','analyst'], configure: ['owner'],
@@ -48,7 +50,7 @@ export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool;
         connection = await pool.connect();
         await connection.query(action === 'read' ? 'BEGIN READ ONLY' : 'BEGIN'); open = true;
         await connection.query('SET LOCAL ROLE vexa_backend');
-        await connection.query("SELECT set_config('request.jwt.claim.sub',$1,true), set_config('vexa.tenant_id',$2,true), set_config('statement_timeout','10000',true), set_config('vexa.action',$3,true)",[userId,tenantId,action]);
+        await connection.query("SELECT set_config('request.jwt.claim.sub',$1,true), set_config('vexa.tenant_id',$2,true), set_config('statement_timeout',$4,true), set_config('vexa.action',$3,true)",[userId,tenantId,action,STATEMENT_TIMEOUT_MS[action]]);
         const current = await connection.query<Membership>(
           "SELECT tenant_id,user_id,role,status,permissions_version FROM public.memberships WHERE tenant_id=$1 AND user_id=$2 AND status='active'",
           [tenantId,userId]);

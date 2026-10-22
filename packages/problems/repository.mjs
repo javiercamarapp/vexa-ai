@@ -12,7 +12,18 @@ const UUID_RE="'^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'"
 // Memoizado por (transacción, conjunto de corridas): el catálogo, las señales críticas y el resto de vistas de UNA petición piden el mismo veredicto; dentro de una memoSection se calcula una sola vez
 // (≈6.5 s en frío para 8,761 corridas). Fuera de una sección (memoized sin memo) se calcula siempre. Nada cruza transacciones.
 const usableRunsSummary=(s,runIds)=>memoized(s,'usable-runs-summary:'+[...runIds].sort().join(','),()=>usableRunsSummaryUncached(s,runIds));
+// Tope por sentencia: la acción de lectura trae 10 s y esta verificación (8,761 corridas, ~38 mil páginas de message_revisions) tarda 6.5–9 s EN FRÍO; con 10 s a veces la cancelaba
+// y tumbaba la vista (503). Se sube SOLO para esta sentencia acotada y se restaura; un tope deliberadamente menor del llamador (p. ej. señales críticas, 1.5 s) NO se amplía.
+const SUMMARY_VERIFY_TIMEOUT_MS=30000;
 async function usableRunsSummaryUncached(s,runIds){
+ const current=Number((await s.query("SELECT setting FROM pg_settings WHERE name='statement_timeout'")).rows[0]?.setting??0);
+ if(current>0&&current<10000)return usableRunsSummaryBody(s,runIds);
+ const previous=(await s.query("SELECT current_setting('statement_timeout') AS v")).rows[0].v;
+ await s.query("SELECT set_config('statement_timeout',$1,true)",[String(SUMMARY_VERIFY_TIMEOUT_MS)]);
+ try{return await usableRunsSummaryBody(s,runIds);}
+ finally{await s.query("SELECT set_config('statement_timeout',$1,true)",[previous]).catch(()=>{});}
+}
+async function usableRunsSummaryBody(s,runIds){
  if(!runIds.length)return new Set();
  // Manifiestos expandidos en un solo recorrido (no una subconsulta por corrida): por corrida cuántas entradas de su manifiesto siguen íntegras.
  const rows=(await s.query(`WITH sel AS MATERIALIZED (SELECT r.id,r.conversation_id,r.provenance->'input_manifest' AS manifest FROM public.extraction_runs r

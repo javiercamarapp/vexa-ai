@@ -12,17 +12,18 @@ const UUID_RE="'^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'"
 // Memoizado por (transacción, conjunto de corridas): el catálogo, las señales críticas y el resto de vistas de UNA petición piden el mismo veredicto; dentro de una memoSection se calcula una sola vez
 // (≈6.5 s en frío para 8,761 corridas). Fuera de una sección (memoized sin memo) se calcula siempre. Nada cruza transacciones.
 const usableRunsSummary=(s,runIds)=>memoized(s,'usable-runs-summary:'+[...runIds].sort().join(','),()=>usableRunsSummaryUncached(s,runIds));
-// Tope por sentencia: la acción de lectura trae 10 s y esta verificación (8,761 corridas, ~38 mil páginas de message_revisions) tarda 6.5–9 s EN FRÍO; con 10 s a veces la cancelaba
-// y tumbaba la vista (503). Se sube SOLO para esta sentencia acotada y se restaura; un tope deliberadamente menor del llamador (p. ej. señales críticas, 1.5 s) NO se amplía.
-const SUMMARY_VERIFY_TIMEOUT_MS=30000;
-async function usableRunsSummaryUncached(s,runIds){
+// Tope por sentencia: la acción de lectura trae 10 s y las verificaciones de evidencia del catálogo son costosas EN FRÍO (resumen: 8,761 corridas, 6.5–9 s; completa con redacted_text: ~13 s) y a veces
+// las cancelaba y tumbaba la vista (503). Se sube SOLO para esa lectura acotada y se restaura; un tope deliberadamente menor del llamador (p. ej. señales críticas, 1.5 s) NO se amplía.
+const VERIFY_TIMEOUT_MS=45000;
+async function withVerifyTimeout(s,work){
  const current=Number((await s.query("SELECT setting FROM pg_settings WHERE name='statement_timeout'")).rows[0]?.setting??0);
- if(current>0&&current<10000)return usableRunsSummaryBody(s,runIds);
+ if(current>0&&current<10000)return work();
  const previous=(await s.query("SELECT current_setting('statement_timeout') AS v")).rows[0].v;
- await s.query("SELECT set_config('statement_timeout',$1,true)",[String(SUMMARY_VERIFY_TIMEOUT_MS)]);
- try{return await usableRunsSummaryBody(s,runIds);}
+ await s.query("SELECT set_config('statement_timeout',$1,true)",[String(VERIFY_TIMEOUT_MS)]);
+ try{return await work();}
  finally{await s.query("SELECT set_config('statement_timeout',$1,true)",[previous]).catch(()=>{});}
 }
+async function usableRunsSummaryUncached(s,runIds){return withVerifyTimeout(s,()=>usableRunsSummaryBody(s,runIds));}
 async function usableRunsSummaryBody(s,runIds){
  if(!runIds.length)return new Set();
  // Manifiestos expandidos en un solo recorrido (no una subconsulta por corrida): por corrida cuántas entradas de su manifiesto siguen íntegras.
@@ -70,7 +71,7 @@ export function createProblemRepository({database}){
   const runs=[...new Set(runOf.values())];
   let usable;
   if(verification==='summary'){const ok=await usableRunsSummary(s,runs);usable=run=>ok.has(run);}
-  else{const loaded=await createEvidenceRepository({database:scoped(s)}).getMany(runs);usable=run=>{const e=loaded.get(run);return !!e&&e.state==='current'&&e.status==='succeeded';};}
+  else{const loaded=await withVerifyTimeout(s,()=>createEvidenceRepository({database:scoped(s)}).getMany(runs));usable=run=>{const e=loaded.get(run);return !!e&&e.state==='current'&&e.status==='succeeded';};}
   return ps.filter(p=>p.embeddingIds.every(id=>runOf.has(id)&&usable(runOf.get(id))));});},
  async detail({problemId}){requireThat(uuid(problemId),'input_invalid',400);return read(async s=>({...await accessible(s,await latest(s,problemId)),history:(await s.query('SELECT id,version,provenance FROM public.problem_versions WHERE tenant_id=$1 AND problem_id=$2 ORDER BY version DESC',[s.tenantId,problemId])).rows}));},
  async sources(){return read(async s=>{const rows=(await s.query("SELECT id,conversation_id,created_at FROM public.extraction_runs WHERE tenant_id=$1 AND status='succeeded' ORDER BY created_at DESC LIMIT 100",[s.tenantId])).rows;

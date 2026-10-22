@@ -1,7 +1,7 @@
 'use client';
 import {useMemo,useState} from 'react';
 import type {Bundle} from '../../lib/workspace/contracts';
-import type {TrendsView,LedgerMonth} from '../../../../../packages/workspace-service/trends.mjs';
+import type {TrendsView} from '../../../../../packages/workspace-service/trends.mjs';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
 import {buildCfoModel,kpiHeadline,ratioBps} from './cfo-model.mjs';
 import {epistemicKindConCobertura} from '../../lib/epistemic.mjs';

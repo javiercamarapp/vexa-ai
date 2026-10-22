@@ -4,7 +4,7 @@ import type {Bundle} from '../../lib/workspace/contracts';
 import type {TrendsView,LedgerMonth} from '../../../../../packages/workspace-service/trends.mjs';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
 import {buildCfoModel,kpiHeadline,ratioBps} from './cfo-model.mjs';
-import {epistemicKind} from '../../lib/epistemic.mjs';
+import {epistemicKindConCobertura} from '../../lib/epistemic.mjs';
 import {CountUpMoney} from '../ui/count-up';
 import {StatCard,type Delta} from '../ui/stat-card';
 import {AreaChart,type AreaPoint} from '../ui/area-chart';
@@ -69,11 +69,12 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
  const share=top&&exposureRow&&exposureRow.state==='known'&&exposureRow.amount&&BigInt(exposureRow.amount)>0n&&top.exposure<=BigInt(exposureRow.amount)?Number(top.exposure*1000n/BigInt(exposureRow.amount))/10:null;
  return <div className="stack overview">
   <p className="headline">{headline}</p>
-  <div className="stat-grid">{model.rows.map(row=>{const h=kpiHeadline(row),kind=epistemicKind(row.metric),m=/^allorders$/i.test(row.metric.kind)?'orders':row.metric.kind==='refunds'?'refunds':null;
+  <div className="stat-grid">{model.rows.map(row=>{const h=kpiHeadline(row),m=/^allorders$/i.test(row.metric.kind)?'orders':row.metric.kind==='refunds'?'refunds':null;
    const cmp=m?cmpOf(m,row.metric.currency):null,sinCobertura=row.coverage.eligible===0||!!cmp?.sinCobertura;
+   const muestraSinCobertura=row.coverage.eligible===0||(sinCobertura&&row.state!=='known'),kind=epistemicKindConCobertura(row.metric,muestraSinCobertura);
    const delta:Delta|null=!sinCobertura&&cmp?.delta?{...cmp.delta,good:m==='refunds'?'down':'up'}:null,spark=!sinCobertura&&cmp&&m?cmp.meses.map(s=>num(s[m].amountMinor,led!.exponent!)):undefined;
    return <StatCard key={row.key} label={row.metric.label} kind={kind} icon={ICON[row.metric.kind]??'dollar'} highlight={row.metric.kind==='exposure'}
-    value={row.coverage.eligible===0||(sinCobertura&&row.state!=='known')?<strong>Sin cobertura</strong>:row.state==='known'&&!h.label&&row.amount!==null?<CountUpMoney className="stat-value-money" amountMinor={row.amount} currency={row.metric.currency} exponent={row.metric.exponent}/>:<strong>{h.value}</strong>}
+    value={muestraSinCobertura?<strong>Sin cobertura</strong>:row.state==='known'&&!h.label&&row.amount!==null?<CountUpMoney className="stat-value-money" amountMinor={row.amount} currency={row.metric.currency} exponent={row.metric.exponent}/>:<strong>{h.value}</strong>}
     delta={delta??undefined} deltaLabel={`${cmp?.rotulo??'Meses completos'} (libro de registros)`} spark={spark} sparkLabel={`${row.metric.label}: últimos ${spark?.length??0} meses completos`}
     foot={<>{h.label?<><strong>{h.label}</strong> · </>:null}{row.coverage.label}{row.subtotal&&!h.label&&!sinCobertura&&row.coverage.known?` · subtotal ${row.subtotal}`:''}{cmp&&!sinCobertura?<> · <span className="stat-period">{cmp.rotulo}</span></>:null}</>}/>;})}</div>
   <section className="card" aria-label="Lo más importante">
@@ -82,7 +83,7 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
   </section>
   <div className="split">
    <section className="card trends" aria-label="Pedidos y reembolsos por mes">
-    <div className="card-title"><div><h2>{measure==='orders'?'Pedidos registrados por mes':'Reembolsos liquidados por mes'}</h2><p>Últimos 12 meses{led?.currency?` · ${led.currency}`:''}</p></div><div className="toolbar" style={{margin:0}}>{led&&<KindBadge kind={led.class}/>}<SegmentedControl size="sm" label="Medida del libro económico" value={measure} onChange={setMeasure} options={[{value:'orders',label:'Pedidos'},{value:'refunds',label:'Reembolsos'}]}/></div></div>
+    <div className="card-title"><div><h2>{measure==='orders'?'Pedidos registrados por mes':'Reembolsos liquidados por mes'}</h2><p>Últimos 12 meses{led?.currency?` · ${led.currency}`:''}</p></div><div className="toolbar" style={{margin:0}}>{led&&<KindBadge kind={ledOk&&!led.series.some(ledgerConDatos(measure))?'nodata':led.class}/>}<SegmentedControl size="sm" label="Medida del libro económico" value={measure} onChange={setMeasure} options={[{value:'orders',label:'Pedidos'},{value:'refunds',label:'Reembolsos'}]}/></div></div>
     <ChartState busy={trends.busy} hasData={!!trends.data} error={trends.error} status={trends.status} que="las tendencias" retryLabel="Reintentar tendencias" onRetry={trends.reload} height={220}>{trends.data&&(ledOk&&!led!.series.some(ledgerConDatos(measure))?<EmptyState compact art="chart" title="Sin cobertura" body={measure==='orders'?'No hay pedidos registrados en los últimos 12 meses.':'No hay reembolsos registrados en los últimos 12 meses; no se muestra como cero.'}/>:ledOk?<AreaChart title={measure==='orders'?'Pedidos registrados por mes':'Reembolsos liquidados por mes'} series={[{name:measure==='orders'?'Pedidos':'Reembolsos',points:areaPoints(measure)}]} unit={led!.currency??''}/>:<EmptyState compact art="chart" title={led?.status==='timeout'?'No disponible ahora':'Sin cargar'} body={led?.status==='timeout'?'La consulta acotada superó el tiempo permitido. Reintenta en unos segundos.':'Aún no hay pedidos ni reembolsos registrados en los últimos 12 meses.'}/>)}</ChartState>
     {parcialLed.length>0?<p className="card-lead">* Mes parcial ({parcialLed.map(monthLong).join(', ')}){led?.completeness?.dataThrough?`: datos hasta el ${dayShort(led.completeness.dataThrough)}`:''}. No es una caída y no se compara con meses completos.</p>:null}{led?.otherCurrencies?.length?<p className="card-lead">Otras monedas ({led.otherCurrencies.join(', ')}) no se suman ni se convierten.</p>:null}{led?.summary?.source==='summary'&&led.summary.label?<p className="card-lead">{led.summary.label}</p>:null}
    </section>
@@ -94,7 +95,7 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
   </div>
   <div className="split" data-even>
    <section className="card" aria-label="Conversaciones por mes">
-    <div className="card-title"><div><h2>Conversaciones por mes</h2><p>Últimos 12 meses · conteo de registros cargados</p></div>{conv&&<KindBadge kind={conv.class}/>}</div>
+    <div className="card-title"><div><h2>Conversaciones por mes</h2><p>Últimos 12 meses · conteo de registros cargados</p></div>{conv&&<KindBadge kind={convData.length?conv.class:'nodata'}/>}</div>
     <ChartState busy={trends.busy} hasData={!!trends.data} error={trends.error} status={trends.status} que="las conversaciones" retryLabel="Reintentar conversaciones" onRetry={trends.reload} height={180}>{trends.data&&(convData.length?<><ColumnChart title="Conversaciones por mes" unit="conversaciones" kind={conv!.class} data={convData}/><p className="card-lead">{[conv!.sampled?`Estimado con una muestra del ${conv!.samplePercent??''} %.`:null,'Fecha: inicio o primer mensaje.',conv!.outsideWindow?`${nf.format(conv!.outsideWindow)} fuera de la ventana${conv!.undated?` (${nf.format(conv!.undated)} sin fecha)`:''}.`:null,conv!.summary?.source==='summary'?conv!.summary.label:null,parcialConv.length?`* Mes parcial (${parcialConv.map(monthLong).join(', ')})${conv!.completeness?.dataThrough?`: datos hasta el ${dayShort(conv!.completeness.dataThrough)}`:''}; no se compara.`:null].filter(Boolean).join(' ')}</p></>:<EmptyState compact art="inbox" title={conv?.status==='timeout'?'No disponible ahora':'Sin cargar'} body={conv?.status==='timeout'?'Reintenta en unos segundos.':'No hay conversaciones con fecha en los últimos 12 meses.'}/>)}</ChartState>
    </section>
    <section className="card" aria-label="Problemas con más exposición">

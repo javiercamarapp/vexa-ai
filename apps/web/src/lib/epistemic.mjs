@@ -14,3 +14,6 @@ export function epistemicKind(metric){
  if(/^(allorders|orders?|refunds?|reversals?|replacement)$/.test(kind))return 'observed';
  return 'unclassified';
 }
+/** Cuando no hay registros elegibles no hay cifra que clasificar: la insignia dice «Sin datos» (no «Observado»/«Inferido») y nunca se presenta como cero. */
+export const SIN_DATOS={label:'Sin datos',hint:'No hay registros elegibles en este alcance, así que no hay cifra que clasificar. No es cero.'};
+export function epistemicKindConCobertura(metric,sinDatos){return sinDatos?'nodata':epistemicKind(metric);}

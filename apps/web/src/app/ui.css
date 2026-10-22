@@ -590,3 +590,4 @@ a.card-link:hover{text-decoration:underline;text-underline-offset:.2em}
 .wait-elapsed{font-size:13px;color:var(--ui-secondary);font-variant-numeric:tabular-nums;white-space:nowrap}
 @media(max-width:520px){.wait-status{grid-template-columns:1fr}.wait-elapsed{white-space:normal}}
 @media(prefers-reduced-motion:no-preference){.wait-bar>span{animation:wait-slide 1.6s ease-in-out infinite}@keyframes wait-slide{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}}
+.kind-nodata{background:var(--ui-soft);border:1px solid var(--ui-input)}.kind-nodata svg{color:var(--ui-secondary)}

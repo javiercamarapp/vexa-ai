@@ -27,8 +27,8 @@ export async function problems(request:NextRequest,problemId?:string){
   const canSubmit=['owner','analyst'].includes(context.role),canRestructure=context.role==='owner';
   const budget=createProblemBudget({database,window:runtimeConfig?.gateway?.policy?.window});
   if(request.method==='GET'){
-   const [items,sources,jobs,budgetView]=await Promise.all([repository.list(),canSubmit?repository.sources():[],repository.jobs(),canRestructure?budget.read():null]);
-   return finish(NextResponse.json({problems:items,sources,jobs,canSubmit,canRestructure,canConfigureBudget:canRestructure,budget:budgetView,configuration:{ready:!!runtimeConfig,enabled:process.env.VEXA_PROBLEMS_RUNTIME==='enabled'}},{headers}));
+   const [items,sources,jobs,budgetView]=await Promise.all([repository.list({verification:'summary'}),canSubmit?repository.sources():[],repository.jobs(),canRestructure?budget.read():null]);
+   return finish(NextResponse.json({problems:items,sources,jobs,canSubmit,canRestructure,canConfigureBudget:canRestructure,budget:budgetView,configuration:{ready:!!runtimeConfig,enabled:process.env.VEXA_PROBLEMS_RUNTIME==='enabled'},verification:{mode:'summary',note:'Evidencia verificada al abrir cada problema: esta lista solo comprueba que sus corridas de origen existan, estén vigentes y conserven sus hashes; no vuelve a leer el texto.'}},{headers}));
   }
   const raw=await readRequestText(request, 32768);if(Buffer.byteLength(raw)>32768)throw invalid();let parsed:unknown;try{parsed=JSON.parse(raw);}catch{throw invalid();}
   const body=object(parsed,['operation','extractionRunId','requestKey','embeddingId','limit','parents','children','reason','approved','purpose','limitUsd','expectedVersion','expectedWindow','reservationId','actualUsd','evidenceHash','confirmedProviderEvidence']);let data;

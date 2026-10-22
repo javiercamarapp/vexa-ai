@@ -2,7 +2,7 @@ export type ProblemSummary={id:string;label:string;version:number;state:'active'
 export type ProblemDetail=ProblemSummary&{history:Array<{id:string;version:number;provenance:Record<string,unknown>}>};
 export type ProblemJob={id:string;extractionRunId:string;state:string;reason:string|null;createdAt:string};
 export function createProblemRepository(options:{database:any}):{
- list():Promise<ProblemSummary[]>;
+ list(options?:{verification?:'full'|'summary'}):Promise<ProblemSummary[]>;
  detail(input:{problemId:string}):Promise<ProblemDetail>;
  sources():Promise<Array<{id:string;conversationId:string;createdAt:string}>>;
  jobs():Promise<ProblemJob[]>;

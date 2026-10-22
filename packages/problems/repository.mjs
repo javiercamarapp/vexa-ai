@@ -6,6 +6,29 @@ const one=async(s,q,a)=>(await s.query(q,a)).rows[0];
 const scoped=s=>({transaction:async(_,work)=>work(s)});
 export const evidence=async(s,id)=>{const e=await createEvidenceRepository({database:scoped(s)}).get(id);requireThat(e.state==='current'&&e.status==='succeeded','source_unavailable',409);return e;};
 async function accessible(s,p){for(const id of p.embeddingIds){const m=await one(s,'SELECT extraction_run_id FROM public.problem_embedding_members WHERE tenant_id=$1 AND embedding_id=$2',[s.tenantId,id]);requireThat(m,'source_unavailable');await evidence(s,m.extraction_run_id);}return p;}
+/** Corridas utilizables según el veredicto «resumen» (ver list): Set de ids. Sin texto de evidencia; todas las consultas filtran por tenant_id=$1. */
+const UUID_RE="'^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'";
+async function usableRunsSummary(s,runIds){
+ if(!runIds.length)return new Set();
+ // Manifiestos expandidos en un solo recorrido (no una subconsulta por corrida): por corrida cuántas entradas de su manifiesto siguen íntegras.
+ const rows=(await s.query(`WITH sel AS MATERIALIZED (SELECT r.id,r.conversation_id,r.provenance->'input_manifest' AS manifest FROM public.extraction_runs r
+   WHERE r.tenant_id=$1 AND r.id=ANY($2::uuid[]) AND r.status='succeeded' AND jsonb_typeof(r.provenance->'input_manifest')='array' AND jsonb_array_length(r.provenance->'input_manifest') BETWEEN 1 AND 500),
+  ent AS MATERIALIZED (SELECT sel.id,sel.conversation_id,jsonb_array_length(sel.manifest) AS total,CASE WHEN x->>'message_revision_id' ~* ${UUID_RE} THEN (x->>'message_revision_id')::uuid END AS mrid,CASE WHEN x->>'original_revision_id' ~* ${UUID_RE} THEN (x->>'original_revision_id')::uuid END AS oid,x->>'hash' AS hash FROM sel CROSS JOIN LATERAL jsonb_array_elements(sel.manifest) x),
+  ok AS MATERIALIZED (SELECT ent.id,ent.conversation_id FROM ent
+   JOIN public.message_revisions mr ON mr.tenant_id=$1 AND mr.id=ent.mrid AND mr.deleted_at IS NULL AND mr.redaction_version IS NOT NULL AND mr.hash=ent.hash AND mr.provenance->>'original_revision_id'=ent.oid::text
+   JOIN public.messages m ON m.tenant_id=$1 AND m.id=mr.message_id AND m.deleted_at IS NULL
+   JOIN public.message_revisions o ON o.tenant_id=$1 AND o.id=ent.oid AND o.deleted_at IS NULL
+   GROUP BY ent.id,ent.conversation_id,ent.total HAVING count(*)=ent.total)
+  SELECT ok.id,c.id AS conversation_id,c.connection_id,c.external_id FROM ok
+  JOIN public.conversations c ON c.tenant_id=$1 AND c.id=ok.conversation_id AND c.deleted_at IS NULL
+  JOIN public.connections n ON n.tenant_id=$1 AND n.id=c.connection_id AND n.status='active'
+  JOIN public.source_heads h ON h.tenant_id=$1 AND h.id=c.id AND h.state IN ('unique','selected','ambiguous')
+  WHERE NOT EXISTS(SELECT 1 FROM public.tombstones t WHERE t.tenant_id=$1 AND (t.connection_id IS NULL OR t.connection_id=c.connection_id) AND t.deleted_source_key IN (c.id::text,c.external_id))`,[s.tenantId,runIds])).rows;
+ const distinct=new Map();for(const r of rows){const k=r.connection_id+'|'+r.external_id;if(!distinct.has(k))distinct.set(k,{i:distinct.size,connection_id:r.connection_id,kind:'conversation',external_id:r.external_id});}
+ const deleted=new Set();
+ if(distinct.size)for(const r of (await s.query('SELECT x.i FROM jsonb_to_recordset($2::jsonb) AS x(i int,connection_id uuid,kind text,external_id text) WHERE public.retention_source_deleted($1,x.connection_id,x.kind,x.external_id)',[s.tenantId,JSON.stringify([...distinct.values()])])).rows)deleted.add(r.i);
+ return new Set(rows.filter(r=>!deleted.has(distinct.get(r.connection_id+'|'+r.external_id).i)).map(r=>r.id));
+}
 const expected=e=>['EVIDENCE_UNAVAILABLE','source_unavailable'].includes(e.message);
 const projection=r=>({...r.provenance.snapshot,id:r.problem_id,version:r.version});
 const latest=async(s,id)=>{const r=await one(s,"SELECT * FROM public.problem_versions WHERE tenant_id=$1 AND problem_id=$2 AND provenance->>'kind'='vector-problem-v1' ORDER BY version DESC LIMIT 1",[s.tenantId,id]);requireThat(r,'problem_not_found',404);return projection(r);};
@@ -21,15 +44,24 @@ export function createProblemRepository({database}){
  database={transaction:async(action,work)=>{let domainError;try{return await underlying.transaction(action,async scope=>{try{return await work(scope);}catch(error){if(error instanceof DomainError)domainError=error;throw error;}});}catch(error){if(domainError)throw domainError;throw error;}}};
  const read=work=>database.transaction('read',work);
  return Object.freeze({
- async list(){return read(async s=>{const ps=(await s.query("SELECT DISTINCT ON(problem_id) * FROM public.problem_versions WHERE tenant_id=$1 AND provenance->>'kind'='vector-problem-v1' ORDER BY problem_id,version DESC",[s.tenantId])).rows.map(projection);
+ // verification='full' (por omisión): verificación COMPLETA fail-closed de la evidencia de cada miembro (lo que usan prioridades, historia y exportaciones).
+ // verification='summary' (vista «Gestionar problemas»): NO carga texto de evidencia; comprueba por SQL agregado (una consulta por tipo de dato, mismo tenant) que cada miembro
+ // tenga una corrida succeeded, conversación vigente y conexión activa, manifiesto completo con revisiones y mensajes no borrados y hash igual al del manifiesto, y sin lápida/retención de la conversación.
+ // NO recalcula sha256 del texto, input_hash, validación de la extracción ni lápidas de mensajes: eso se verifica al abrir el problema (detail) y en las exportaciones.
+ async list({verification='full'}={}){requireThat(verification==='full'||verification==='summary','input_invalid',400);return read(async s=>{const ps=(await s.query("SELECT DISTINCT ON(problem_id) * FROM public.problem_versions WHERE tenant_id=$1 AND provenance->>'kind'='vector-problem-v1' ORDER BY problem_id,version DESC",[s.tenantId])).rows.map(projection);
   // Mismo veredicto que accessible() por problema, con UNA consulta de membresías y la evidencia de las corridas distintas verificada por lote.
   const wanted=[...new Set(ps.flatMap(p=>p.embeddingIds??[]))],runOf=new Map();
   if(wanted.length)for(const m of (await s.query('SELECT embedding_id,extraction_run_id FROM public.problem_embedding_members WHERE tenant_id=$1 AND embedding_id=ANY($2::uuid[])',[s.tenantId,wanted])).rows)if(!runOf.has(m.embedding_id))runOf.set(m.embedding_id,m.extraction_run_id);
-  const loaded=await createEvidenceRepository({database:scoped(s)}).getMany([...new Set(runOf.values())]);
-  const usable=run=>{const e=loaded.get(run);return !!e&&e.state==='current'&&e.status==='succeeded';};
+  const runs=[...new Set(runOf.values())];
+  let usable;
+  if(verification==='summary'){const ok=await usableRunsSummary(s,runs);usable=run=>ok.has(run);}
+  else{const loaded=await createEvidenceRepository({database:scoped(s)}).getMany(runs);usable=run=>{const e=loaded.get(run);return !!e&&e.state==='current'&&e.status==='succeeded';};}
   return ps.filter(p=>p.embeddingIds.every(id=>runOf.has(id)&&usable(runOf.get(id))));});},
  async detail({problemId}){requireThat(uuid(problemId),'input_invalid',400);return read(async s=>({...await accessible(s,await latest(s,problemId)),history:(await s.query('SELECT id,version,provenance FROM public.problem_versions WHERE tenant_id=$1 AND problem_id=$2 ORDER BY version DESC',[s.tenantId,problemId])).rows}));},
- async sources(){return read(async s=>{const out=[];for(const r of (await s.query("SELECT id,conversation_id,created_at FROM public.extraction_runs WHERE tenant_id=$1 AND status='succeeded' ORDER BY created_at DESC LIMIT 100",[s.tenantId])).rows){try{await evidence(s,r.id);out.push({id:r.id,conversationId:r.conversation_id,createdAt:r.created_at});}catch(e){if(!expected(e))throw e;}}return out;});},
+ async sources(){return read(async s=>{const rows=(await s.query("SELECT id,conversation_id,created_at FROM public.extraction_runs WHERE tenant_id=$1 AND status='succeeded' ORDER BY created_at DESC LIMIT 100",[s.tenantId])).rows;
+  // Misma verificación fail-closed que evidence() por corrida, pero por lote (antes ~7 consultas por corrida, 100 corridas).
+  const loaded=await createEvidenceRepository({database:scoped(s)}).getMany(rows.map(r=>r.id));
+  return rows.filter(r=>{const e=loaded.get(r.id);return !!e&&e.state==='current'&&e.status==='succeeded';}).map(r=>({id:r.id,conversationId:r.conversation_id,createdAt:r.created_at}));});},
  async jobs(){return read(async s=>(await s.query('SELECT j.id,j.state,j.provenance,j.created_at,r.extraction_run_id FROM public.jobs j JOIN public.problem_embedding_requests r ON r.tenant_id=j.tenant_id AND r.job_id=j.id WHERE j.tenant_id=$1 AND (r.actor_id=$2 OR $3) ORDER BY j.created_at DESC LIMIT 100',[s.tenantId,s.userId,s.role==='owner'])).rows.map(r=>({id:r.id,state:r.state,reason:r.provenance?.reason??null,createdAt:r.created_at,extractionRunId:r.extraction_run_id})));},
  async submit({extractionRunId,requestKey,configHash}){requireThat(uuid(extractionRunId)&&uuid(requestKey)&&/^[a-f0-9]{64}$/.test(configHash),'input_invalid',400);return database.transaction('import',async s=>{
  await s.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[s.tenantId+':problem-submit:'+s.userId+requestKey]);
@@ -39,7 +71,8 @@ export function createProblemRepository({database}){
  await s.query('INSERT INTO public.problem_embedding_requests(tenant_id,job_id,extraction_run_id,actor_id,request_key,config_hash) VALUES($1,$2,$3,$4,$5,$6)',[s.tenantId,id,extractionRunId,s.userId,requestKey,configHash]);return {id,state:j.state,reason:null,createdAt:j.created_at,extractionRunId};});},
  async retrieve({embeddingId,limit=10}){requireThat(uuid(embeddingId)&&Number.isInteger(limit)&&limit>0&&limit<=50,'input_invalid',400);return read(async s=>{
  const q=await one(s,'SELECT e.*,m.extraction_run_id FROM public.embeddings e JOIN public.problem_embedding_members m ON m.tenant_id=e.tenant_id AND m.embedding_id=e.id WHERE e.tenant_id=$1 AND e.id=$2',[s.tenantId,embeddingId]);requireThat(q,'embedding_not_found',404);await evidence(s,q.extraction_run_id);
- const allowed=[];for(const r of (await s.query('SELECT DISTINCT extraction_run_id FROM public.problem_embedding_members WHERE tenant_id=$1',[s.tenantId])).rows){try{await evidence(s,r.extraction_run_id);allowed.push(r.extraction_run_id);}catch(e){if(!expected(e))throw e;}}
+ const candidates=(await s.query('SELECT DISTINCT extraction_run_id FROM public.problem_embedding_members WHERE tenant_id=$1',[s.tenantId])).rows.map(r=>r.extraction_run_id),loaded=await createEvidenceRepository({database:scoped(s)}).getMany(candidates);
+ const allowed=candidates.filter(id=>{const e=loaded.get(id);return !!e&&e.state==='current'&&e.status==='succeeded';});
  return (await s.query('SELECT e.id AS "embeddingId",m.problem_id AS "problemId",(e.embedding OPERATOR(extensions.<=>) $2::extensions.vector) AS distance FROM public.embeddings e JOIN public.problem_embedding_members m ON m.tenant_id=e.tenant_id AND m.embedding_id=e.id WHERE e.tenant_id=$1 AND e.model_id=$3 AND e.dim=$4 AND e.version=$5 AND m.extraction_run_id=ANY($6::uuid[]) ORDER BY distance,e.id LIMIT $7',[s.tenantId,q.embedding,q.model_id,q.dim,q.version,allowed,limit])).rows;});},
  async restructure({operation,parents,children,reason,approved}){requireThat(['split','merge'].includes(operation)&&approved===true&&typeof reason==='string'&&reason.trim()&&reason.length<=2000&&Array.isArray(parents)&&Array.isArray(children),'input_invalid',400);requireThat(operation==='split'?parents.length===1&&children.length>=2:parents.length>=2&&children.length===1,'shape_invalid',400);return database.transaction('configure',async s=>{
  requireThat(s.role==='owner','role_forbidden',403);await s.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[s.tenantId+':vector-problems']);const ps=[];for(const parent of parents){const p=await accessible(s,await latest(s,parent.problemId));requireThat(p.version===parent.expectedVersion&&p.state==='active','stale_version');ps.push(p);}requireThat(new Set(ps.map(p=>p.id)).size===ps.length,'duplicate_parent',400);

@@ -2,5 +2,5 @@ import type {ProblemSummary,ProblemDetail,ProblemJob} from '../../../../../packa
 export type {ProblemSummary,ProblemDetail};
 import type {EmbeddingBudget} from '../../../../../packages/problems/budget.mjs';
 export type {EmbeddingBudget};
-export type ProblemSnapshot={problems:ProblemSummary[];sources:{id:string;conversationId:string;createdAt:string}[];jobs:ProblemJob[];canSubmit:boolean;canRestructure:boolean;canConfigureBudget:boolean;budget:EmbeddingBudget|null;configuration:{ready:boolean;enabled:boolean}};
+export type ProblemSnapshot={problems:ProblemSummary[];sources:{id:string;conversationId:string;createdAt:string}[];jobs:ProblemJob[];canSubmit:boolean;canRestructure:boolean;canConfigureBudget:boolean;budget:EmbeddingBudget|null;configuration:{ready:boolean;enabled:boolean};verification?:{mode:'summary'|'full';note:string}};
 export type Match={embeddingId:string;problemId:string|null;distance:number};

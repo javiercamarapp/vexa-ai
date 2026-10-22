@@ -23,6 +23,15 @@ export const problems=[
  {id:IDS.problemC,title:'Cobro duplicado en el pago',summary:'Dos cargos idénticos por un mismo pedido, reembolso pendiente.',status:'ready',version:1,metrics:[metric('Ingresos expuestos','exposure','1450000',null,60,60,'snapshot:exposure.'+IDS.problemC)],ev:[evid(4,'Me cobraron dos veces el mismo pedido.','conv:'+u(804)+'#m1')]},
  {id:IDS.problemD,title:'Talla incorrecta en calzado',summary:'La talla recibida no corresponde a la pedida.',status:'stale',version:1,metrics:[metric('Ingresos expuestos','exposure',null,null,0,40,'snapshot:exposure.'+IDS.problemD,'unavailable',['relacion_sin_cobertura'])],ev:[]}];
 const record=(p)=>({id:p.id,title:p.title,summary:p.summary,status:p.status,version:p.version,owner:null,customer_id:null,problem_id:p.id,metrics:p.metrics,evidence:p.ev,details:[{label:'Conversaciones',value:p.ev.length+' con cita verificable'}]});
+
+/** Variante de producción (22-oct): el corte NO trae vínculos problema–pedido. 14 problemas del catálogo, importe NO DISPONIBLE (EXPOSURE_NOT_LINKED), 2 son notificaciones automáticas. */
+const SIN_VINC='Sin vínculos problema–pedido: la exposición no se calcula. Se listan los problemas vigentes del catálogo ordenados por incidencias; el importe no está disponible (desconocido, no cero).';
+const TITULOS_SV=['Envío: No recibido','Pago: Cobro duplicado','Garantía: Batería defectuosa','Notificaciones automáticas de la tienda','Producto dañado en tránsito',LONG,'Talla incorrecta en calzado','Facturación: factura sin RFC','Devolución: reembolso tardío','Atención: sin respuesta en 48 horas','Alertas del sistema: aviso de inventario','Cuenta: no puedo iniciar sesión','Promoción: cupón no aplicado','Embalaje: caja sin sellar'];
+const metricSV=(id)=>({...metric('Ingresos expuestos','exposure',null,null,0,0,'workspace:'+HASH,'unavailable',['EXPOSURE_NOT_LINKED']),source_ref:'workspace:'+HASH+':'+id});
+const sv=(i)=>({id:u(5100+i),title:TITULOS_SV[i],inc:40-i*2});
+export const bundleProblemsSinVinculos=()=>({items:TITULOS_SV.map((_,i)=>{const p=sv(i);return {id:p.id,title:p.title,summary:'Problema vigente del catálogo. Sin vínculos problema–pedido: la exposición no se calcula (desconocida, no cero).',status:'partial',version:1,owner:null,customer_id:null,problem_id:p.id,metrics:[metricSV(p.id)],evidence:[],details:[{label:'Incidencias (conversaciones)',value:String(p.inc)},{label:'Exposición',value:'No disponible: sin vínculos problema–pedido'}]};}),meta:meta({coverage:SIN_VINC})});
+export const detailProblemSinVinculos=(id)=>{const i=Math.max(0,TITULOS_SV.findIndex((_,k)=>sv(k).id===id)),p=sv(i),rec=bundleProblemsSinVinculos().items[i];return {...base('problem',p.id,p.title),coverage:SIN_VINC,record:rec,components:['exposure','allOrders','refunds'].map((k,j)=>({id:u(5300+j),metric:k,label:{exposure:'Ingresos expuestos',allOrders:'Órdenes registradas',refunds:'Reembolsos liquidados'}[k],money:{...metric({exposure:'Ingresos expuestos',allOrders:'Órdenes registradas',refunds:'Reembolsos liquidados'}[k],k,null,null,0,0,'detail:'+HASH,'unavailable',['EXPOSURE_NOT_LINKED'])},event_count:0,missing_reasons:['EXPOSURE_NOT_LINKED']})),customers:[],conversations:[convRef('Conversación 0001 · pedido dañado')],customer_id:null,causality:{scope:'current_authorized',view:{...causality(),problemId:p.id},unavailableReason:null}};};
+export const bundleMetricsSinReembolsos=()=>{const b=bundleMetrics();b.items[0].metrics=b.items[0].metrics.map(m=>m.kind==='refunds'?{...m,amount_minor:'0',known_subtotal:null,status:'complete',coverage:{known_n:0,eligible_n:0}}:m);return b;};
 export const bundleMetrics=()=>({items:[{id:u(10),title:'Resumen económico',summary:'Cifras del corte publicado, por concepto y sin sumar entre conceptos.',status:'partial',version:1,owner:null,customer_id:null,problem_id:null,metrics:summaryMetrics,evidence:[],details:[{label:'Alcance',value:'Octubre 2026 · USD · neto'}]}],meta:meta()});
 export const bundleProblems=()=>({items:problems.map(record),meta:meta()});
 export const catalog=()=>({problems:problems.map((p,i)=>({id:p.id,label:p.title,version:p.version,state:'active',outlier:false,modelId:'syn-embed-1',dimensions:256,embeddingVersion:'v1',embeddingIds:p.ev.map((_,j)=>u(3000+i*10+j)),conversationIds:p.ev.map((_,j)=>u(2000+i*10+j)),orderIds:[]})),sources:[],jobs:[],canSubmit:true,canRestructure:true,canConfigureBudget:false,budget:null,configuration:{ready:true,enabled:true}});
@@ -98,10 +107,10 @@ export const incidenceMonthly=(variant='ok',problemId=null)=>{const base={genera
 export async function respond(url,method,bodyText){
  const u2=new URL(url,'http://x'),p=u2.pathname,q=u2.searchParams;let body=null;try{body=bodyText?JSON.parse(bodyText):null;}catch{}
  const ok=(data)=>[200,{contract_version:'f06-workspace-v1',data,meta:{trace_id:'fixture'}}];
- if(p==='/api/workspace')return ok(q.get('resource')==='metrics'?bundleMetrics():bundleProblems());
+ if(p==='/api/workspace')return ok(q.get('resource')==='metrics'?(q.get('variant')==='sinreembolsos'?bundleMetricsSinReembolsos():bundleMetrics()):q.get('variant')==='sinvinculos'?bundleProblemsSinVinculos():bundleProblems());
  if(p==='/api/problems')return [200,catalog()];
  if(/^\/api\/problems\/[0-9a-f-]{36}$/.test(p))return [200,{problem:problemDetailRow(p.split('/').pop())}];
- if(p.startsWith('/api/workspace/detail/problem/'))return ok(detailProblem());
+ if(p.startsWith('/api/workspace/detail/problem/'))return ok(q.get('variant')==='sinvinculos'?detailProblemSinVinculos(p.split('/').pop()):detailProblem());
  if(p.startsWith('/api/workspace/detail/customer/'))return ok(detailCustomer());
  if(/^\/api\/problems\/[^/]+\/causality$/.test(p))return ok(causality());
  if(p==='/api/explorer')return ok(explorerPage(q.get('q')??''));

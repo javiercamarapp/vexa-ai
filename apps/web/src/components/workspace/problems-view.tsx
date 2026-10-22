@@ -24,7 +24,7 @@ import {nf} from '../ui/format';
 import {EmptyState} from '../ui/empty-state';
 type M=Metric&{coverage?:{known_n:number;eligible_n:number};missing_reasons?:string[]};
 const STATUS:Record<string,{label:string;tone:'ok'|'warn'|'info'}>={ready:{label:'Cobertura completa',tone:'ok'},partial:{label:'Cobertura parcial',tone:'warn'},stale:{label:'Corte anterior',tone:'warn'}};
-const sinVinculos=(item:{metrics:readonly {missing_reasons?:string[]}[]})=>item.metrics.some(m=>m.missing_reasons?.includes('EXPOSURE_NOT_LINKED'));
+const sinVinculos=(item:{metrics:readonly Metric[]})=>item.metrics.some(m=>(m as M).missing_reasons?.includes('EXPOSURE_NOT_LINKED'));
 const exact=(m:M)=>m.amount_minor!==null&&/^-?\d+$/.test(m.amount_minor);
 const money=(m:M)=>formatMinorUnits(m.amount_minor,m.currency,m.exponent);
 function primary(item:RecordView):M|undefined{return (item.metrics.find(x=>x.kind==='exposure')??item.metrics[0]) as M|undefined;}

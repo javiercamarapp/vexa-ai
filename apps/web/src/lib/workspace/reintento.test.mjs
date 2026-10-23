@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {pedirConReintento} from './reintento.mjs';
+import {pedirConReintento,mensajeDeError,esErrorDeRed,MENSAJE_SIN_CONEXION} from './reintento.mjs';
 const espera=(ms,signal)=>new Promise((res,rej)=>{const t=setTimeout(res,ms);signal.addEventListener('abort',()=>{clearTimeout(t);rej(new DOMException('Aborted','AbortError'));});});
 test('éxito al primer intento: no avisa ni reintenta',async()=>{
  let avisos=0;const r=await pedirConReintento(async()=>({status:200,json:{a:1}}),{onReintentando:()=>avisos++});
@@ -27,4 +27,11 @@ test('abortar desde fuera no reintenta y relanza',async()=>{
  const p=pedirConReintento(async s=>{n++;await espera(500,s);return {status:200};},{plazos:[1000,1000],signal:c.signal});
  setTimeout(()=>c.abort(),10);
  await assert.rejects(p,e=>e.name==='AbortError');assert.equal(n,1);
+});
+test('R2-3-001: «Failed to fetch» se reintenta UNA vez tras una pausa y se traduce; el aviso del reintento lleva la causa',async()=>{
+ const causas=[];let n=0;const t0=Date.now();
+ const r=await pedirConReintento(async()=>{if(++n===1)throw new TypeError('Failed to fetch');return {status:200};},{plazos:[50,50],esperaMs:40,onReintentando:(i,c)=>causas.push(c)});
+ assert.equal(r.intentos,2);assert.ok(Date.now()-t0>=35,'hubo pausa antes del reintento');assert.ok(esErrorDeRed(causas[0]));
+ await assert.rejects(pedirConReintento(async()=>{throw new TypeError('Failed to fetch');},{plazos:[50,50],esperaMs:1}),e=>mensajeDeError(e,'x')===MENSAJE_SIN_CONEXION);
+ assert.equal(mensajeDeError(new Error('Tu acceso cambió'),'x'),'Tu acceso cambió');assert.doesNotMatch(MENSAJE_SIN_CONEXION,/fetch/i);
 });

@@ -24,6 +24,7 @@ import {filasDesdeCatalogo,filasDesdeItems,numerarGrupos,agruparCategorias,resum
 import {DEFINICION,etiquetaMotivo,desgloseCriticos} from '../../../../../packages/workspace-service/critico.mjs';
 import {nf} from '../ui/format';
 import {EmptyState} from '../ui/empty-state';
+import {guardarVista,leerVista} from '../../lib/workspace/cache.mjs';
 import s from './problems-view.module.css';
 type M=Metric&{coverage?:{known_n:number;eligible_n:number};missing_reasons?:string[]};
 const STATUS:Record<string,{label:string;tone:'ok'|'warn'|'info'}>={ready:{label:'Cobertura completa',tone:'ok'},partial:{label:'Cobertura parcial',tone:'warn'},stale:{label:'Corte anterior',tone:'warn'}};
@@ -104,9 +105,12 @@ function Criticas({filas,query,disponible,total}:{filas:FilaProblema[];query:str
 }
 
 export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
- const [modo,setModo]=useState<'tabla'|'tarjetas'>('tabla'),[quick,setQuick]=useState<FilaProblema|null>(null),[incluirRuido,setIncluirRuido]=useState(false);
- const [texto,setTexto]=useState(''),[clave,setClave]=useState<string|null>(null),[soloCriticos,setSoloCriticos]=useState<'todos'|'criticos'>('todos'),[orden,setOrden]=useState<string|null>(null),[mostrar,setMostrar]=useState(PAGINA);
+ // Filtros y orden se restauran al volver «atrás» desde un detalle (R2-1-003): se guardan por alcance en sessionStorage.
+ const claveFiltros='filtros:'+query,[previos]=useState(()=>(leerVista(claveFiltros) as {modo?:'tabla'|'tarjetas';texto?:string;soloCriticos?:'todos'|'criticos';orden?:string|null}|null)??{});
+ const [modo,setModo]=useState<'tabla'|'tarjetas'>(previos.modo??'tabla'),[quick,setQuick]=useState<FilaProblema|null>(null),[incluirRuido,setIncluirRuido]=useState(false);
+ const [texto,setTexto]=useState(previos.texto??''),[clave,setClave]=useState<string|null>(null),[soloCriticos,setSoloCriticos]=useState<'todos'|'criticos'>(previos.soloCriticos??'todos'),[orden,setOrden]=useState<string|null>(previos.orden??null),[mostrar,setMostrar]=useState(PAGINA);
  const tablaRef=useRef<HTMLDivElement>(null);
+ useEffect(()=>{guardarVista(claveFiltros,{modo,texto,soloCriticos,orden});},[claveFiltros,modo,texto,soloCriticos,orden]);
  const catalogo=bundle.meta.catalog;
  // Con resumen del catálogo (corte sin vínculos) las filas son TODOS los problemas vigentes; sin él, los registros de la página (con su importe si lo traen).
  const todas=useMemo(()=>numerarGrupos(catalogo?filasDesdeCatalogo(catalogo):filasDesdeItems(bundle.items)),[catalogo,bundle.items]);

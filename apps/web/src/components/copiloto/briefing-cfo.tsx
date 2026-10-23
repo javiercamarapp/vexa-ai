@@ -1,12 +1,16 @@
 'use client';
 import {useState} from 'react';
-import {KindBadge} from '../ui/kind-badge';
+import {KindBadge as KindBadgeBase} from '../ui/kind-badge';
+import {ContenedorErrores} from './contenedor-errores';
 import {LinkButton, Download} from '../ui/button';
 import {pct, int} from '../../../../../packages/cfo-copilot/src/format.mjs';
 import {lineaDatosHasta} from '../../../../../packages/workspace-service/datos-hasta.mjs';
 import {SerieNegocio} from './serie-negocio';
 import type {BriefingCfo} from './briefing-cfo.mjs';
 
+/** Aísla cada pieza: si una falla se marca con data-fallo en vez de tumbar todo el resumen. */
+const G = ({id, children}: {id: string; children: React.ReactNode}) => <ContenedorErrores alFallar={<span data-fallo={id} />}>{children}</ContenedorErrores>;
+const KindBadge = (p: React.ComponentProps<typeof KindBadgeBase>) => <G id="kind"><KindBadgeBase {...p} /></G>;
 const HREF_EXPORT = (f: 'csv' | 'pdf') => `/cfo/data/export?format=${f}`;
 function Detalle({href, children = 'Ver detalle'}: {href: string; children?: string}) { return <a className="cn-link" href={href}>{children}<span className="sr-only"> en el informe completo</span></a>; }
 
@@ -28,8 +32,8 @@ export function BriefingCfoView({b, informe, onMoneda, sintetico}: {b: BriefingC
       {b.parcial && <p className="cn-parcial" role="note">{b.parcial}</p>}
       <div className="cn-acciones">
         {b.monedas.length > 1 && <div className="cn-seg" role="group" aria-label="Moneda del resumen">{b.monedas.map(m => <button key={m} type="button" aria-pressed={m === b.moneda} onClick={() => onMoneda(m)}>{m}</button>)}</div>}
-        <LinkButton href={informe()} size="sm">Ver detalle</LinkButton>
-        <ExportMenu />
+        <G id="ver-detalle"><LinkButton href={informe()} size="sm">Ver detalle</LinkButton></G>
+        <G id="exportar"><ExportMenu /></G>
       </div>
     </header>
 
@@ -42,7 +46,7 @@ export function BriefingCfoView({b, informe, onMoneda, sintetico}: {b: BriefingC
       {b.alertas.length === 0 ? <p className="cn-vacio">Ninguna regla se activó con los datos actuales.</p> : <ul className="cn-alertas">{b.alertas.map(a => <li key={a.id} data-sev={a.severity}><span className="cn-sev">{a.severidad}</span><div><strong>{a.titulo}</strong><span>{a.detalle}</span></div><KindBadge kind={a.kind} /></li>)}</ul>}</section>
 
     {b.serie && <section className="cn-sec" aria-labelledby="cn-serie"><div className="cn-sec-head"><h2 id="cn-serie" className="cn-h2">Ingresos de los últimos 12 meses · {b.moneda}</h2><Detalle href={informe('tendencias')} /></div>
-      <SerieNegocio serie={b.serie} titulo={`Ingresos por mes en ${b.moneda}`} unidad={b.moneda} /></section>}
+      <G id="serie"><SerieNegocio serie={b.serie} titulo={`Ingresos por mes en ${b.moneda}`} unidad={b.moneda} /></G></section>}
 
     <div className="cn-dos">
       <section className="cn-sec" aria-labelledby="cn-canal"><div className="cn-sec-head"><h2 id="cn-canal" className="cn-h2">Mezcla por canal</h2><Detalle href={informe('mezcla')} /></div>

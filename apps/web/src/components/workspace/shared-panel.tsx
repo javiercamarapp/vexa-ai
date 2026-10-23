@@ -99,8 +99,8 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   {missing&&!busy&&<EmptyState art="chart" title="Aún no hay un corte publicado para este alcance" body="Cuando se publique un corte con este periodo y estos filtros, sus cifras aparecerán aquí. Mientras tanto puedes probar con la última publicación disponible." action={<Button variant="primary" size="sm" onClick={latest}>Ver la última publicación</Button>} secondary={<LinkButton href="/imports" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>}/>}
   {bundle&&!busy&&<>
    {edadCache!==null&&<p className="state" role="status">Mostrando la última carga de este alcance ({hace(edadCache)}). <button type="button" className="row-link-inline" onClick={update}>Actualizar</button> para volver a consultar.</p>}
-   {notice}{criticalPending}
-   {isOverview?<>{state!=='empty'&&state&&state!=='ready'&&<DataState state={{kind:state,coverage:bundle.meta.coverage,watermark:bundle.meta.watermark}}/>}<OverviewDashboard key={`${bundle.meta.snapshot_id}:${bundle.meta.scope_hash}`} bundle={bundle} pinned={pinned}/></>
+   {!isOverview&&<>{notice}{criticalPending}</>}
+   {isOverview?<OverviewDashboard key={`${bundle.meta.snapshot_id}:${bundle.meta.scope_hash}`} bundle={bundle} pinned={pinned} avisos={[...(notice?[{key:'critico',node:notice}]:[]),...(criticalPending?[{key:'pendiente',node:criticalPending}]:[]),...(state&&state!=='empty'&&state!=='ready'?[{key:'parcial',node:<DataState state={{kind:state,coverage:bundle.meta.coverage,watermark:bundle.meta.watermark}}/>}]:[])]}/>
     :bundle.meta.catalog&&state==='partial'?<ProblemsView bundle={bundle} query={pinned.toString()}/>:<DataState state={state==='empty'?{kind:'empty'}:{kind:state??'partial',coverage:bundle.meta.coverage,watermark:bundle.meta.watermark}}><ProblemsView bundle={bundle} query={pinned.toString()}/></DataState>}
    {footer}
   </>}

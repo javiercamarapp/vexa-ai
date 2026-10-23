@@ -1,12 +1,9 @@
 'use client';
-import {useMemo,useState} from 'react';
+import {useMemo,useState,type ReactNode} from 'react';
 import type {Bundle} from '../../lib/workspace/contracts';
 import type {TrendsView} from '../../../../../packages/workspace-service/trends.mjs';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
-import {buildCfoModel,kpiHeadline,ratioBps} from './cfo-model.mjs';
-import {epistemicKindConCobertura} from '../../lib/epistemic.mjs';
-import {CountUpMoney} from '../ui/count-up';
-import {StatCard,type Delta} from '../ui/stat-card';
+import {buildCfoModel,ratioBps} from './cfo-model.mjs';
 import {AreaChart,type AreaPoint} from '../ui/area-chart';
 import {ColumnChart,type ColumnDatum} from '../ui/column-chart';
 import {BarList,type BarListItem} from '../ui/bar-list';
@@ -21,8 +18,6 @@ import {LinkButton,Arrow} from '../ui/button';
 import {useJson} from '../ui/use-json';
 import {nf} from '../ui/format';
 import {Icon} from '../ui/icons';
-import {WaitStatus} from '../ui/wait-status';
-import {ESPERA} from '../../lib/legibilidad/espera.mjs';
 import {InsightList} from '../ui/insight-list';
 import {ChartState} from '../ui/chart-state';
 import {NoiseToggle} from '../ui/noise-toggle';
@@ -31,8 +26,11 @@ import type {CategoriesView} from '../../../../../packages/workspace-service/inc
 import {insightsResumen} from '../../lib/legibilidad/insights.mjs';
 import {separarRuido} from '../../lib/legibilidad/ruido.mjs';
 import {comparacionMensual,ledgerConDatos} from '../../lib/legibilidad/meses.mjs';
+import {StatusStrip,ExecKpis,TopProblems,Attention,HowCalculated,useCriticos,acceptCoverage} from './executive';
+import type {CoverageView} from '../../../../../packages/workspace-service/provenance.mjs';
+import {kpiConversaciones,kpiPedidos,estadoFuentes} from '../../lib/legibilidad/resumen-ejecutivo.mjs';
+import exec from './executive.module.css';
 import {lineaDatosHasta} from '../../../../../packages/workspace-service/datos-hasta.mjs';
-const ICON:Record<string,string>={exposure:'target',allOrders:'receipt',refunds:'refresh',future_scenario:'layers'};
 const monthShort=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
 const monthLong=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
 const num=(minor:string,exponent:number)=>Number(BigInt(minor))/10**exponent;
@@ -46,13 +44,14 @@ function topProblems(bundle:Bundle):Pick[]{
   return [{id:item.id,title:item.title,exposure:BigInt(m.amount_minor),display:formatMinorUnits(m.amount_minor,m.currency,m.exponent),evidence:item.evidence.length,refunds:r&&r.amount_minor!==null?formatMinorUnits(r.amount_minor,r.currency,r.exponent):null,coverage:c?`${nf.format(c.known_n)} de ${nf.format(c.eligible_n)} registros con importe conocido`:null,currency:m.currency,exponent:m.exponent}];
  }).sort((a,b)=>a.exposure>b.exposure?-1:a.exposure<b.exposure?1:0);
 }
-export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearchParams}){
+export function OverviewDashboard({bundle,pinned,avisos=[]}:{bundle:Bundle;pinned:URLSearchParams;avisos?:{key:string;node:ReactNode}[]}){
  const model=useMemo(()=>buildCfoModel(bundle.items),[bundle]);
  const trends=useJson<TrendsView>('/api/trends',acceptTrends);
  const query=pinned.toString();
  const probs=useJson<Bundle>(bundle.meta.snapshot_id?'/api/workspace?resource=problems&slim=1&'+query:null,acceptBundle);
  const [measure,setMeasure]=useState<'orders'|'refunds'>('orders'),[incluirRuido,setIncluirRuido]=useState(false);
  const cats=useJson<CategoriesView>('/api/trends/categories',acceptCategories);
+ const cobertura=useJson<CoverageView>('/api/coverage',acceptCoverage),crit=useCriticos(query),[verCobertura,setVerCobertura]=useState(false);
  const insights=useMemo(()=>insightsResumen({trends:trends.data,categorias:cats.data}),[trends.data,cats.data]);
  if(bundle.meta.state==='empty'||!model.rows.length)return <EmptyState art="chart" title="Sin cifras publicadas para este alcance" body="Revisa el periodo y los filtros, o publica un corte desde las fuentes autorizadas." action={<LinkButton href="/imports" variant="primary" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>} secondary={<LinkButton href="/connections" size="sm">Revisar conexiones</LinkButton>}/>;
  const led=trends.data?.ledger,conv=trends.data?.conversations;
@@ -62,8 +61,7 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
  const cmpOf=(m:'orders'|'refunds',currency:string)=>ledOk&&led!.currency===currency?comparacionMensual(led!.series,m,led!.completeness,ahora):null;
  const parcialLed=led?.completeness?.partialMonths??[],parcialConv=conv?.completeness?.partialMonths??[];
  const dayShort=(d:string)=>new Intl.DateTimeFormat('es-MX',{day:'numeric',month:'long',timeZone:'UTC'}).format(new Date(d+'T00:00:00Z'));
- const exposure=model.rows.find(r=>r.metric.kind==='exposure'&&r.state==='known'),orders=model.rows.find(r=>/^allorders$/i.test(r.metric.kind)&&r.state==='known');
- const headline=exposure&&orders&&exposure.metric.currency===orders.metric.currency?<>El corte expone <strong>{exposure.display}</strong> de ingresos a problemas con evidencia, frente a <strong>{orders.display}</strong> en órdenes registradas.</>:exposure?<>El corte expone <strong>{exposure.display}</strong> de ingresos a problemas con evidencia.</>:<>Cifras del corte publicado, con su cobertura, su clase y su fuente.</>;
+ const exposure=model.rows.find(r=>r.metric.kind==='exposure'&&r.state==='known');
  const areaPoints=(m:'orders'|'refunds'):AreaPoint[]=>ledOk?led!.series.map(s=>({label:monthShort(s.month),long:monthLong(s.month),value:num(s[m].amountMinor,led!.exponent!),display:formatMinorUnits(s[m].amountMinor,led!.currency!,led!.exponent!),detail:`${nf.format(s[m].count)} ${m==='orders'?'pedidos':'reembolsos'}${s[m].unknownAmounts?` · ${s[m].unknownAmounts} sin importe conocido (no se suman)`:''}${parcialLed.includes(s.month)?' · mes parcial: no es una caída':''}`,partial:parcialLed.includes(s.month)||undefined})):[];
  const convData:ColumnDatum[]=conv&&conv.status==='ok'?conv.series.map(p=>({key:p.month,label:monthShort(p.month),long:monthLong(p.month)+(parcialConv.includes(p.month)?' (parcial)':''),value:p.count,display:nf.format(p.count)+(conv.sampled?' (estimado)':'')+' conversaciones'+(parcialConv.includes(p.month)?' · mes parcial':''),partial:parcialConv.includes(p.month)||undefined})):[];
  const sepRuido=probs.data?separarRuido(probs.data.items,i=>[i.title,i.summary,...i.details.map(d=>d.value)],incluirRuido):null;
@@ -74,17 +72,25 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
  // Cifras sin registros elegibles: una sola franja que dice qué falta (no cero, no «desconocido» suelto); las cifras con datos (incluidos subtotales parciales rotulados) siguen como tarjetas.
  const sinCob=(row:typeof model.rows[number])=>{const m=/^allorders$/i.test(row.metric.kind)?'orders':row.metric.kind==='refunds'?'refunds':null,cmp=m?cmpOf(m,row.metric.currency):null;return row.coverage.eligible===0||(!!cmp?.sinCobertura&&row.state!=='known');};
  const faltantes=model.rows.filter(sinCob),QUE_FALTA:Record<string,string>={exposure:'faltan los vínculos entre problemas y pedidos',refunds:'no hay reembolsos liquidados elegibles en este corte',allOrders:'no hay pedidos elegibles en este corte'};
+
+ const kc=kpiConversaciones(conv,ahora),kp=kpiPedidos(led,ahora),fuentes=estadoFuentes(cobertura.data,{libro:led?.completeness?.dataThrough??null,conversaciones:conv?.completeness?.dataThrough??null});
+ const cc=bundle.meta.critical_counts??null,conteoCriticos=crit.datos?{groups:crit.datos.groups??0,signals:crit.datos.signals}:cc&&typeof cc.groups==='number'?{groups:cc.groups,signals:cc.signals??null}:null;
+ const cmpPedidos=kp?cmpOf('orders',kp.currency):null;
+ const NA=<strong>No disponible ahora</strong>;
+ const kpis=[
+  {label:'Conversaciones',kind:(kc?.estimado?'estimated':'observed') as 'observed'|'estimated',icon:'message',value:kc?kc.valor!==null?<strong>{nf.format(kc.valor)}</strong>:NA:NA,delta:kc?.delta??null,foot:kc?kc.rotulo+(kc.estimado?' · estimado con muestra':''):'La serie no está disponible ahora',spark:kc?.spark},
+  {label:'Grupos con revisión crítica',kind:'inferred' as const,icon:'alert',value:conteoCriticos?<strong>{nf.format(conteoCriticos.groups)}</strong>:NA,foot:conteoCriticos?(conteoCriticos.signals!==null?nf.format(conteoCriticos.signals)+' señales críticas (evidencias)':'Grupos con al menos una señal crítica'):'Se calcula al abrir «Qué requiere atención»',href:'#atencion'},
+  {label:'Pedidos del último mes completo',kind:'observed' as const,icon:'receipt',value:kp?kp.amountMinor!==null?<strong>{formatMinorUnits(kp.amountMinor,kp.currency,kp.exponent)}</strong>:NA:NA,delta:kp?.delta?{...kp.delta,good:'up' as const}:null,foot:kp?kp.rotulo:'El libro de pedidos no está disponible ahora',spark:cmpPedidos&&!cmpPedidos.sinCobertura?cmpPedidos.meses.map(m=>num(m.orders.amountMinor,led!.exponent!)):undefined},
+  {label:'Cobertura de análisis',kind:'observed' as const,icon:'database',value:fuentes.analisis?<strong>{fuentes.analisis.pct.toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %</strong>:NA,foot:fuentes.analisis?`${nf.format(fuentes.analisis.incorporadas)} de ${nf.format(fuentes.analisis.de)} conversaciones de HubSpot incorporadas`:'La cobertura no está disponible ahora'}
+ ];
  return <div className="stack overview">
-  <p className="headline">{headline}</p>
-  {faltantes.length>0&&<aside className="notice-bar" data-tone="info" role="note"><Icon name="info" size={14}/><div><strong>{faltantes.length===1?'Una cifra sin cobertura todavía':faltantes.length+' cifras sin cobertura todavía'}</strong><ul>{faltantes.map(f=><li key={f.key}><strong>{f.metric.label}</strong>: {QUE_FALTA[f.metric.kind]??f.coverage.label}. No es cero.</li>)}</ul><p><LinkButton href="/imports" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>{bundle.meta.can_manage&&<> <LinkButton href="/economics" size="sm" variant="ghost" icon={<Arrow/>}>Revisar fuentes y vínculos</LinkButton></>}</p></div></aside>}
-  <div className="stat-grid">{model.rows.filter(row=>!sinCob(row)).map(row=>{const h=kpiHeadline(row),m=/^allorders$/i.test(row.metric.kind)?'orders':row.metric.kind==='refunds'?'refunds':null;
-   const cmp=m?cmpOf(m,row.metric.currency):null,sinCobertura=row.coverage.eligible===0||!!cmp?.sinCobertura;
-   const muestraSinCobertura=row.coverage.eligible===0||(sinCobertura&&row.state!=='known'),kind=epistemicKindConCobertura(row.metric,muestraSinCobertura);
-   const delta:Delta|null=!sinCobertura&&cmp?.delta?{...cmp.delta,good:m==='refunds'?'down':'up'}:null,spark=!sinCobertura&&cmp&&m?cmp.meses.map(s=>num(s[m].amountMinor,led!.exponent!)):undefined;
-   return <StatCard key={row.key} label={row.metric.label} kind={kind} icon={ICON[row.metric.kind]??'dollar'} highlight={row.metric.kind==='exposure'}
-    value={muestraSinCobertura?<strong>Sin cobertura</strong>:row.state==='known'&&!h.label&&row.amount!==null?<CountUpMoney className="stat-value-money" amountMinor={row.amount} currency={row.metric.currency} exponent={row.metric.exponent}/>:<strong>{h.value}</strong>}
-    delta={delta??undefined} deltaLabel={`${cmp?.rotulo??'Meses completos'} (libro de registros)`} spark={spark} sparkLabel={`${row.metric.label}: últimos ${spark?.length??0} meses completos`}
-    foot={<>{h.label?<><strong>{h.label}</strong> · </>:null}{row.coverage.label}{row.subtotal&&!h.label&&!sinCobertura&&row.coverage.known?` · subtotal ${row.subtotal}`:''}{cmp&&!sinCobertura?<> · <span className="stat-period">{cmp.rotulo}</span></>:null}</>}/>;})}</div>
+  <StatusStrip fuentes={fuentes} cargando={cobertura.busy} dineroDisponible={!!exposure} onCobertura={()=>setVerCobertura(v=>!v)} avisos={[...avisos,...(faltantes.length>0?[{key:'faltantes',node:<aside className="notice-bar" data-tone="info" role="note"><Icon name="info" size={14}/><div><strong>{faltantes.length===1?'Una cifra sin cobertura todavía':faltantes.length+' cifras sin cobertura todavía'}</strong><ul>{faltantes.map(f=><li key={f.key}><strong>{f.metric.label}</strong>: {QUE_FALTA[f.metric.kind]??f.coverage.label}. No es cero.</li>)}</ul><p><LinkButton href="/imports" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>{bundle.meta.can_manage&&<> <LinkButton href="/economics" size="sm" variant="ghost" icon={<Arrow/>}>Revisar fuentes y vínculos</LinkButton></>}</p></div></aside>}]:[])]}/>
+  {verCobertura&&<CoverageBand/>}
+  <ExecKpis items={kpis}/>
+  <div className={exec.cols}>
+   <Attention crit={crit} query={query} conteo={conteoCriticos}/>
+   <TopProblems items={probs.data?probs.data.items:null} query={query} cargando={probs.busy} error={probs.error} onRetry={probs.reload}/>
+  </div>
   <section className="card" aria-label="Lo más importante">
    <div className="card-title"><div><h2>Lo más importante</h2><p>Hasta tres lecturas con su fuente y su cobertura · no son proyecciones</p></div></div>
    {(trends.busy&&!trends.data)||(cats.busy&&!cats.data)?<div role="status" aria-busy="true"><span className="sr-only">Cargando lecturas…</span><SkeletonRows rows={3}/></div>:<InsightList insights={insights}/>}
@@ -100,7 +106,7 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
      sentence={<>Concentra <strong>{top.display}</strong> de ingresos expuestos{share!==null?<>, el <strong>{share.toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %</strong> de la exposición global del corte</>:null}. Es una cifra inferida por vínculo de evidencia: no es pérdida.</>}
      signals={[{icon:'message',text:<>{top.evidence} {top.evidence===1?'cita verificable':'citas verificables'}</>},...(top.refunds?[{icon:'refresh',text:<>{top.refunds} en reembolsos liquidados vinculados</>}]:[]),...(top.coverage?[{icon:'database',text:top.coverage}]:[])]}
      footer={<KindBadge kind="inferred"/>} action={<LinkButton href={'/problems/'+top.id+'?'+query} variant="primary" size="sm" icon={<Arrow/>}>Ver evidencia</LinkButton>}/>
-    :<section className="card"><div className="card-title"><div><h2>Prioridad con evidencia</h2></div></div>{probs.busy?<WaitStatus {...ESPERA.problemas}/>:<EmptyState compact art="search" title="Sin problemas con importe conocido" body="Cuando un problema tenga exposición publicada, aparecerá aquí con su evidencia. Mientras tanto, los problemas se ordenan por conversaciones." action={<LinkButton href={'/problems?'+query} size="sm" icon={<Arrow/>}>Ver problemas por conversaciones</LinkButton>}/>}</section>}
+    :null}
   </div>
   <div className="split" data-even>
    <section className="card" aria-label="Conversaciones por mes">
@@ -119,11 +125,10 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
    unavailable={cats.data?.status==='timeout'} reason={cats.data?.status==='timeout'?'La consulta superó el tiempo permitido. Reintenta en unos segundos.':'Aún no hay incidencias clasificadas en este alcance.'}
    load={{busy:cats.busy,error:cats.error,status:cats.status,onRetry:cats.reload}}
    foot={cats.data?.status==='ok'?<p className="card-lead">{cats.data.note}</p>:undefined}/>
-  <CoverageBand/>
-  <section className="card" aria-label="Tabla completa de indicadores">
+  <HowCalculated><section aria-label="Tabla completa de indicadores">
    <div className="card-title"><div><h2>Detalle financiero</h2><p>Valores exactos · los importes no se suman</p></div></div>
    <details className="chart-table"><summary>Ver como tabla</summary><div className="table-wrap" tabIndex={0} role="region" aria-label="Tabla financiera, desplazamiento horizontal"><table><caption className="sr-only">Indicadores del corte y alcance seleccionados. Los importes no se suman.</caption><thead><tr><th scope="col">Indicador</th><th scope="col">Importe total</th><th scope="col">Subtotal conocido</th><th scope="col">Cobertura</th><th scope="col">Procedencia</th></tr></thead><tbody>{model.rows.map(row=><tr key={row.key}><th scope="row">{row.metric.label} <KindBadge metric={row.metric}/><small>{row.recordTitle} · v{row.version}</small></th><td>{row.display}<small>{row.metric.currency} · {String(row.metric.exponent)} decimales</small></td><td>{row.knownSubtotal??'No disponible'}<small>{row.subtotal?'No equivale al total':''}</small></td><td>{row.coverage.label}<small>{(row.metric as {status?:string}).status??(row.state==='known'?'Importe publicado':'No informado')}</small></td><td><SourceRef value={row.metric.source_ref} showLabel={false}/>{row.reasons.length>0&&<small>{row.reasons.join(' · ')}</small>}</td></tr>)}</tbody></table></div></details>
    <details className="chart-table"><summary>Cómo leer estas cifras y su cobertura</summary><p>Los ingresos expuestos no equivalen a pérdida, ahorro ni retorno causal. Órdenes, exposición y reembolsos describen conceptos distintos y no se suman. Un subtotal conocido conserva únicamente los importes disponibles; no sustituye un total desconocido. Un porcentaje de cobertura describe registros con importe conocido, no la proporción del dinero observado.</p><p>{bundle.meta.coverage}</p>{bundle.items.map(item=><div key={item.id}><p>{item.summary}</p><dl className="record-details">{item.details.map((d,i)=><div key={i}><dt>{d.label}</dt><dd>{d.value}</dd></div>)}</dl></div>)}</details>
-  </section>
+  </section></HowCalculated>
  </div>;
 }

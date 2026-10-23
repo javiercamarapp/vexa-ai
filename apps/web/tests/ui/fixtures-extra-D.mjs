@@ -1,7 +1,7 @@
 // Ficha de problema (23-oct): GET /api/problems/:id/facts. Datos sintéticos; variantes por query (?variant=) solo para la auditoría visual:
 //   parcial = partes que no alcanzaron su tope (null/unavailable), sinadjuntos = 0 adjuntos enlazados, crit = grupo con revisión crítica por categoría.
 const LABELS=['Shipping: Delivery Not Received','Payment: Duplicate Charge','Warranty: Battery Replacement','Other: Retailer notifications and system alerts','Shipping: Damaged in Transit','Order: Spare Parts','Return: No Longer Wanted','Billing: Missing Tax ID','Return: Refund Delay','Support: No Reply in 48h'];
-export async function respondExtra(url,method,bodyText,ctx){
+export async function respondExtra(url,method){
  const x=new URL(url,'http://x'),m=/^\/api\/problems\/([0-9a-f-]{36})\/facts$/.exec(x.pathname);
  if(!m||method!=='GET')return null;
  const id=m[1],n=Number(id.slice(-12)),i=n>=5100&&n<5110?n-5100:2,variant=x.searchParams.get('variant')??'';

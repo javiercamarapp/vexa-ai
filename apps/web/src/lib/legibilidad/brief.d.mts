@@ -10,3 +10,4 @@ export function criticosAparte(doc:Pick<BriefDocument,'top3'|'critical'>):{nuevo
 export const ESTADO_ACCION:Readonly<Record<string,string>>;
 export function estadoAccion(s:string):string;
 export function tituloEs(t:string):string;
+export function fraseVigilar(vig:{total:number|null;listados:number},fechaCorte:string|null|undefined,fraseGrupos:(n:number)=>string):string;

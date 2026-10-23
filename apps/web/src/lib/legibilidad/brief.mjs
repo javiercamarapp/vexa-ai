@@ -33,6 +33,12 @@ export function resumenVigilar(doc){
  const total=Number.isSafeInteger(sel?.criticalCandidates)?sel.criticalCandidates:null;
  return {total,listados,omitidos:total!==null?Math.max(0,total-listados):null};
 }
+/** A6: la cifra del brief es la de SU momento (la selección guardada), no un conteo en vivo: se rotula «al guardarse el brief, <fecha>» y remite a Problemas, que cuenta con la definición única (critico.mjs). */
+export function fraseVigilar(vig,fechaCorte,fraseGrupos){
+ const al=fechaCorte?`Al guardarse este brief (${fechaCorte})`:'Al guardarse este brief';
+ if(vig.total===null)return `${al} se listan ${fraseGrupos(vig.listados)}.`;
+ return `${al} había ${fraseGrupos(vig.total)} (sin contar las notificaciones automáticas ocultas, mismo criterio que Problemas); este brief detalla los ${vig.listados} con más citas. Problemas recalcula con los datos de hoy y puede mostrar otra cifra.`;
+}
 /** Problemas críticos que NO están ya entre las prioridades (se muestran como lista breve, sin repetir tarjetas). */
 export function criticosAparte(doc){
  const ya=new Set((doc?.top3??[]).map(p=>p.id));

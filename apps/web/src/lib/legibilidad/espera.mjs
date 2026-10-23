@@ -8,7 +8,9 @@ export function tiempoTranscurrido(segundos){
 }
 export const ESPERA={
  recomendaciones:{titulo:'Verificando la evidencia de cada problema…',detalle:'La primera carga puede tardar hasta 2 minutos.'},
- explorador:{titulo:'Preparando las citas verificables…',detalle:'La primera carga puede tardar hasta 30 segundos.'},
+ explorador:{titulo:'Preparando las citas verificables…',detalle:'La primera carga puede tardar; verificamos solo los problemas que ves. Mostramos cuánto llevas.'},
+ evidencia:{titulo:'Verificando la evidencia…',detalle:'Se comprueba cada cita contra su conversación vigente antes de mostrarla.'},
+ actualizando:{titulo:'Actualizando la lista…',detalle:'Se verifican solo los problemas de esta página.'},
  resumen:{titulo:'Verificando el corte publicado…',detalle:'La primera carga puede tardar más de lo habitual.'},
  problemas:{titulo:'Verificando los problemas y su evidencia…',detalle:'La primera carga puede tardar más de lo habitual.'},
  brief:{titulo:'Verificando el brief…',detalle:'La primera carga puede tardar más de lo habitual.'},

@@ -9,10 +9,10 @@ test('registro: cada modo cumple el contrato documentado', () => {
   for (const m of Object.values(MODOS)) assert.deepEqual(problemasDeModo(m), [], m.clave);
   assert.deepEqual(Object.keys(MODOS).sort(), ['cfo', 'general', 'refunds']);
 });
-test('rutas copiloto: /preguntale, /cfo y /refunds quitan el encabezado; el resto no', () => {
-  assert.deepEqual([...RUTAS_COPILOTO].sort(), ['/cfo', '/preguntale', '/refunds']);
-  for (const r of ['/preguntale', '/cfo', '/refunds']) assert.equal(esRutaCopiloto(r), true, r);
-  for (const r of ['/overview', '/economics', '/cfo/data/report', '/refunds/x', '']) assert.equal(esRutaCopiloto(r), false, r);
+test('rutas copiloto: /preguntale y /cfo quitan el encabezado; /refunds y el resto conservan el de la página', () => {
+  assert.deepEqual([...RUTAS_COPILOTO].sort(), ['/cfo', '/preguntale']);
+  for (const r of ['/preguntale', '/cfo']) assert.equal(esRutaCopiloto(r), true, r);
+  for (const r of ['/overview', '/economics', '/refunds', '/cfo/data/report', '/refunds/x', '']) assert.equal(esRutaCopiloto(r), false, r);
   assert.equal(modoPorRuta('/cfo').clave, 'cfo'); assert.equal(modoPorClave('refunds').ruta, '/refunds'); assert.equal(modoPorClave('nada'), null);
 });
 test('roles: CFO y reembolsos solo para propietario y analista; el general para todos', () => {

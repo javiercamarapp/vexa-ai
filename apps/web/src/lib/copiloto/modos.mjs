@@ -41,7 +41,8 @@ export const MODOS = Object.freeze({
 });
 
 /** Rutas que se pintan con el shell del copiloto (sin encabezado de página). Las demás áreas se añaden registrando su modo. */
-export const RUTAS_COPILOTO = Object.freeze([...new Set(Object.values(MODOS).map(m => m.ruta))]);
+/** Rutas donde la pantalla ES el chat (sin encabezado del espacio): /refunds es una pantalla normal aunque tenga un modo registrado. */
+export const RUTAS_COPILOTO = Object.freeze([...new Set(Object.values(MODOS).filter(m => m.briefing !== 'refunds').map(m => m.ruta))]);
 export const esRutaCopiloto = pathname => RUTAS_COPILOTO.includes(pathname);
 export const modoPorClave = clave => MODOS[clave] ?? null;
 export const modoPorRuta = pathname => Object.values(MODOS).find(m => m.ruta === pathname) ?? null;

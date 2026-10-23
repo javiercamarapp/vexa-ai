@@ -2,9 +2,13 @@
    Nunca el color solo: cada serie lleva nombre y número; lo parcial lleva trama. */
 :root{--gp-s1:#0e0e10;--gp-s2:#8a8a90;--gp-s3:#c9c9cd;--gp-hl:var(--rovaq-rojo,#e8241c);--gp-grid:#e4e4e6}
 :root[data-theme=dark]{--gp-s1:#f4f4f5;--gp-s2:#8b8b93;--gp-s3:#4a4a51;--gp-grid:#2a2a2f}
-.gp-nav{display:flex;flex-wrap:wrap;gap:6px var(--sp-2);margin:0;padding:0;list-style:none}
-.gp-nav a{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border:1px solid var(--ui-border);border-radius:999px;font-size:var(--t-small);font-weight:600;color:var(--ink);text-decoration:none;background:var(--ui-surface)}
-.gp-nav a:hover{background:var(--ui-soft)}.gp-nav a:focus-visible{outline:2px solid var(--ui-focus);outline-offset:2px}
+/* Filtros de sección: una sola línea, compactos; las reglas globales de «nav ul» y de enlaces dentro de listas los apilaban y subrayaban, por eso llevan más especificidad. */
+.workspace-shell nav ul.gp-nav{display:flex;flex-wrap:nowrap;align-items:center;gap:6px;margin:0;padding:2px 0;list-style:none;overflow-x:auto;scrollbar-width:none}
+.gp-nav::-webkit-scrollbar{display:none}
+.gp-nav li{flex:none;margin:0;padding:0}
+.workspace-content .gp-nav li a:not(.btn){display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border:1px solid var(--ui-border);border-radius:999px;font:500 13px/1 var(--font-ui);letter-spacing:0;color:var(--muted);text-decoration:none;white-space:nowrap;background:var(--ui-surface);transition:color .15s,border-color .15s,background .15s}
+.workspace-content .gp-nav li a:not(.btn):hover{background:var(--ui-soft);color:var(--ink);border-color:var(--ui-line-strong)}
+.workspace-content .gp-nav li a:not(.btn):focus-visible{outline:2px solid var(--ui-focus);outline-offset:2px}
 .gp-sec{scroll-margin-top:84px}
 .workspace-content .gp-sub{font:600 14px var(--font-ui);margin:var(--sp-6) 0 var(--sp-2)}
 .gp-nota{margin:var(--sp-3) 0 0;font-size:var(--t-small);color:var(--muted);max-width:80ch}

@@ -33,16 +33,20 @@ test('mínimo 12 px en los primitivos y sin hover rojo', () => {
   for(const r of reglas(UI)){for(const m of r.body.matchAll(/font(?:-size)?:\s*(?:[a-z0-9 ]*?\s)?(\d+(?:\.\d+)?)px/g))assert.ok(+m[1]>=12,`${r.sel}: ${m[0]} < 12 px`);}
   for(const f of TODOS)for(const r of reglas(readFileSync(f,'utf8')))if(/:hover/.test(r.sel)&&/(background|color|border-color)\s*:[^;]*(#e8241c|var\(--ui-highlight\)|var\(--rovaq-rojo)/i.test(r.body)&&!/ui-danger|peligro|danger/.test(r.sel))assert.fail('hover rojo en '+f+': '+r.sel);
 });
-test('escala tipográfica: h1 ≤ 22 px, titular narrativo ≤ 20 px, cifra héroe ≤ 32 px', () => {
+test('escala tipográfica: h1 ≤ 20 px, titular narrativo ≤ 18 px, cifra KPI ≤ 30 px', () => {
   for(const f of TODOS){if(AJENOS.test(f)&&!/globals\.css$/.test(f))continue;
     for(const r of reglas(readFileSync(f,'utf8'))){
       const m=/font(?:-size)?:\s*(?:[a-z0-9 ]*?\s)?(\d+(?:\.\d+)?)px/.exec(r.body),c=/font-size:\s*clamp\(\s*\d+px\s*,[^,]*,\s*(\d+)px/.exec(r.body),v=m?+m[1]:c?+c[1]:null;
       if(v===null)continue;
       if(/\.access-flow|\.login|\.getting-started/.test(r.sel))continue;
-      if(/(^|[\s,>])h1\b/.test(r.sel)&&!/\.access|\.login/.test(r.sel))assert.ok(v<=22,`${f}: ${r.sel} h1 ${v}px > 22`);
-      if(/titular/.test(r.sel)&&!/valor/.test(r.sel))assert.ok(v<=22,`${f}: ${r.sel} ${v}px > 22`);
-      if(/(kpi|stat-value|pfig-value|fg-big|metric-grid dd|component-amount|\.big\b)/.test(r.sel))assert.ok(v<=32,`${f}: ${r.sel} ${v}px > 32`);
+      if(/(^|[\s,>])h1\b/.test(r.sel)&&!/\.access|\.login/.test(r.sel))assert.ok(v<=20,`${f}: ${r.sel} h1 ${v}px > 20`);
+      if(/titular/.test(r.sel)&&!/valor/.test(r.sel))assert.ok(v<=18,`${f}: ${r.sel} ${v}px > 18`);
+      if(/(kpi|stat-value|pfig-value|fg-big|metric-grid dd|component-amount|\.big\b)/.test(r.sel))assert.ok(v<=30,`${f}: ${r.sel} ${v}px > 30`);
     }}
+});
+test('tokens de escala: --t-page 20, --t-section 14, --t-kpi ≤ 30', () => {
+  const g=n=>+new RegExp('--'+n+':(\\d+)px').exec(APPUI)[1];
+  assert.equal(g('t-page'),20);assert.equal(g('t-section'),14);assert.ok(g('t-kpi')<=30);
 });
 test('radios solo del conjunto {0, 8, 12, 999, 50%}', () => {
   for(const f of TODOS){for(const m of readFileSync(f,'utf8').matchAll(/border-radius:\s*([^;}]+)/g)){
@@ -61,12 +65,14 @@ const bloque=sel=>{const m=new RegExp(sel.replace(/[[\]]/g,'\\$&')+'\\{([^}]*)\\
 const tok=(b,p)=>Array.from({length:8},(_,i)=>new RegExp('--'+p+'-'+(i+1)+':(#[0-9a-f]{6})','i').exec(b)[1]);
 test('paleta de datos --chart-1..8 y --soft-1..8 en claro y oscuro', () => {
   for(const [sel,sup] of [[':root','#ffffff'],[':root[data-theme=dark]','#17171a']]){
-    const b=bloque(sel),ch=tok(b,'chart'),so=tok(b,'soft');assert.equal(new Set(ch).size,8);
+    const b=bloque(sel),ch=tok(b,'chart'),so=tok(b,'soft'),tx=tok(b,'ink');assert.equal(new Set(ch).size,8);
     ch.forEach((c,i)=>{
-      // Marcas ≥ 3:1 salvo las tres del «relieve» documentado (aqua, amarillo, magenta en claro): llevan etiqueta visible y tabla equivalente.
-      const min=sel===':root'&&[2,3,4].includes(i)?2:3;assert.ok(ratio(hex(c),hex(sup))>=min,`${sel} chart-${i+1} ${c} contraste ${ratio(hex(c),hex(sup)).toFixed(2)}`);
+      // Marcas ≥ 3:1 salvo las tres del «relieve» documentado (ocre en claro): llevan etiqueta visible y tabla equivalente.
+      const min=sel===':root'&&[3].includes(i)?2:3;if(i===7)return; // 8 = tinta (neutro estructural, no es un matiz de categoría)
+      assert.ok(ratio(hex(c),hex(sup))>=min,`${sel} chart-${i+1} ${c} contraste ${ratio(hex(c),hex(sup)).toFixed(2)}`);
       // El texto en tinta sobre el fondo suave es legible (≥ 4,5:1).
       const ink=sel===':root'?hex('#0e0e10'):hex('#f4f4f5');assert.ok(ratio(ink,hex(so[i]))>=4.5,`${sel} texto sobre soft-${i+1}`);
+      assert.ok(ratio(hex(tx[i]),hex(so[i]))>=4.5,`${sel} --ink-${i+1} sobre soft-${i+1}`);
     });
   }
 });

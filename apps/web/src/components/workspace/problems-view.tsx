@@ -15,7 +15,6 @@ import {Drawer} from '../ui/overlay';
 import {Citation} from '../ui/citation';
 import {SourceRef} from '../ui/source-ref';
 import {LinkButton,Arrow} from '../ui/button';
-import {Icon} from '../ui/icons';
 import {InsightList} from '../ui/insight-list';
 import {NoiseToggle} from '../ui/noise-toggle';
 import {tituloDescriptivo,ROTULO_AUTO,AVISO_AUTO} from '../../lib/legibilidad/titulo-descriptivo.mjs';

@@ -6,8 +6,6 @@ export const color=(i:number)=>`var(--chart-${((i%8)+8)%8+1})`;
 export const suave=(i:number)=>`var(--soft-${((i%8)+8)%8+1})`;
 const fmt=(v:number)=>new Intl.NumberFormat('es-MX',{maximumFractionDigits:1}).format(v);
 function Tabla({titulo,filas}:{titulo:string;filas:[string,string][]}){return <table className="sr-only"><caption>{titulo}</caption><tbody>{filas.map(([a,b],i)=><tr key={i}><th scope="row">{a}</th><td>{b}</td></tr>)}</tbody></table>;}
-/** Definiciones de trama para marcas parciales. Una por gráfica (id único). */
-function Trama({id}:{id:string}){return <defs><pattern id={id} width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--ui-surface)"/><rect width="2.5" height="6" fill="currentColor"/></pattern></defs>;}
 
 /** Barra apilada horizontal 100 %: una fila, segmentos con 2 px de separación y etiqueta directa en los grandes. */
 export function BarraApilada({items,label,h=18}:{items:{label:string;value:number;estado?:Estado}[];label:string;h?:number}){

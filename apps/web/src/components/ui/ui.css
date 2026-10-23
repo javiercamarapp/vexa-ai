@@ -1,6 +1,6 @@
 /* Primitivos compartidos (PageHeader, FilterBar, Chip, Notice, Card, KpiStrip, DataTable, estados). Se carga DESPUÉS de app/ui.css.
    Solo selectores de clase simples: ninguna regla global de globals.css debe ganar a estos (ver docs/SISTEMA-UI.md). Escala de 4 px; mínimo 12 px; hover nunca rojo. */
-:root{--ui-rhythm:16px;--ui-ctl-h:30px}
+:root{--ui-shadow:none;--ui-rhythm:12px;--ui-ctl-h:32px;--ui-pad:14px}
 .ui-reset{all:revert-layer}
 /* Ritmo vertical */
 .ui-stack{display:flex;flex-direction:column;gap:var(--ui-rhythm);min-width:0}
@@ -57,7 +57,7 @@
 .ui-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:16px;margin:0}
 .ui-kpi{display:flex;flex-direction:column;gap:4px;min-width:0;padding:16px;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface)}
 .ui-kpi-label{font-size:12px;font-weight:500;color:var(--muted)}
-.ui-kpi-value{font:600 22px/1.1 var(--font-display);letter-spacing:-.03em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.ui-kpi-value{font:700 26px/1.1 var(--font-display);letter-spacing:-.03em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .ui-kpi-note{font-size:12px;color:var(--muted)}
 /* DataTable */
 .ui-table-wrap{overflow:auto;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface);scrollbar-width:thin}
@@ -77,15 +77,20 @@
 .ui-filterbar-search{flex:0 0 220px;width:220px;min-width:160px}
 .ui-filterbar select{flex:none;width:auto;max-width:240px;min-width:0}
 .ui-filterbar input{flex:none}
-/* ---- Paleta de datos categórica (validada con validate_palette de la skill dataviz; ver docs/SISTEMA-UI.md) ---- */
-:root{--chart-1:#2a78d6;--chart-2:#eb6834;--chart-3:#1baf7a;--chart-4:#eda100;--chart-5:#e87ba4;--chart-6:#008300;--chart-7:#6250d6;--chart-8:#00a0b8;
- --soft-1:#e6eefa;--soft-2:#fdebe3;--soft-3:#e1f5ee;--soft-4:#fdf2da;--soft-5:#fcebf1;--soft-6:#dff0df;--soft-7:#e9e6f9;--soft-8:#dff3f6}
-:root[data-theme=dark]{--chart-1:#3987e5;--chart-2:#d95926;--chart-3:#199e70;--chart-4:#c98500;--chart-5:#d55181;--chart-6:#008300;--chart-7:#9085e9;--chart-8:#00a0b8;
- --soft-1:#1a2433;--soft-2:#2e211b;--soft-3:#14261f;--soft-4:#2b2314;--soft-5:#2e1c25;--soft-6:#12240f;--soft-7:#23203a;--soft-8:#0f2529}
+/* ---- Paleta de datos categórica (ESTILO-ELEGIDO §3; validada con validate_palette de la skill dataviz, ver docs/SISTEMA-UI.md).
+   Orden fijo: 1 azul, 2 naranja, 3 verde, 4 ocre, 5 petróleo, 6 burdeos, 7 violeta, 8 tinta (neutro, fuera del validador de matices).
+   Cada matiz en 3 versiones: sólido --chart-n, tinte 12 % --soft-n (fondos/chips) y texto oscurecido --ink-n (≥4,5:1 sobre el tinte). ---- */
+:root{--chart-1:#2F6BD8;--chart-2:#F25D22;--chart-3:#1F7A55;--chart-4:#D9A441;--chart-5:#0A84A6;--chart-6:#A6264A;--chart-7:#7B5CD6;--chart-8:#0E0E10;
+ --soft-1:#e6edfa;--soft-2:#fdece4;--soft-3:#e4efeb;--soft-4:#faf4e8;--soft-5:#e2f0f4;--soft-6:#f4e5e9;--soft-7:#efebfa;--soft-8:#e2e2e2;
+ --ink-1:#2c65cb;--ink-2:#b14418;--ink-3:#1d7350;--ink-4:#8c6a2a;--ink-5:#087593;--ink-6:#a6264a;--ink-7:#7456c9;--ink-8:#0e0e10;
+ --metric-ingreso:var(--chart-1);--metric-reembolsos:var(--chart-2);--metric-atorado:var(--chart-4);--metric-respuestas:var(--chart-5);--metric-problemas:var(--chart-7);--metric-geografia:var(--chart-3);--metric-recomendaciones:var(--chart-6)}
+:root[data-theme=dark]{--chart-1:#4a85ea;--chart-2:#e8602b;--chart-3:#2a9468;--chart-4:#b98526;--chart-5:#1d93b0;--chart-6:#cc4a6c;--chart-7:#8d75e0;--chart-8:#f4f4f5;
+ --soft-1:#1d2433;--soft-2:#30201c;--soft-3:#192623;--soft-4:#2a241b;--soft-5:#18262c;--soft-6:#2d1d24;--soft-7:#252232;--soft-8:#323234;
+ --ink-1:#558ceb;--ink-2:#e8602b;--ink-3:#43a07a;--ink-4:#b98526;--ink-5:#2b99b5;--ink-6:#d56985;--ink-7:#947de2;--ink-8:#f4f4f5;}
 /* Chips por categoría con su color suave: <Chip categoria={n}> */
-.ui-chip[data-cat]{border-color:transparent;color:var(--ink)}
-.ui-chip[data-cat="1"]{background:var(--soft-1)}.ui-chip[data-cat="2"]{background:var(--soft-2)}.ui-chip[data-cat="3"]{background:var(--soft-3)}.ui-chip[data-cat="4"]{background:var(--soft-4)}
-.ui-chip[data-cat="5"]{background:var(--soft-5)}.ui-chip[data-cat="6"]{background:var(--soft-6)}.ui-chip[data-cat="7"]{background:var(--soft-7)}.ui-chip[data-cat="8"]{background:var(--soft-8)}
+.ui-chip[data-cat]{border-color:transparent;color:var(--ink-c,var(--ink))}
+.ui-chip[data-cat="1"]{background:var(--soft-1);--ink-c:var(--ink-1)}.ui-chip[data-cat="2"]{background:var(--soft-2);--ink-c:var(--ink-2)}.ui-chip[data-cat="3"]{background:var(--soft-3);--ink-c:var(--ink-3)}.ui-chip[data-cat="4"]{background:var(--soft-4);--ink-c:var(--ink-4)}
+.ui-chip[data-cat="5"]{background:var(--soft-5);--ink-c:var(--ink-5)}.ui-chip[data-cat="6"]{background:var(--soft-6);--ink-c:var(--ink-6)}.ui-chip[data-cat="7"]{background:var(--soft-7);--ink-c:var(--ink-7)}.ui-chip[data-cat="8"]{background:var(--soft-8);--ink-c:var(--ink-8)}
 .ui-chip[data-cat]::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--cat);flex:none}
 /* Gráficas pequeñas */
 .mc{display:flex;flex-direction:column;gap:8px;min-width:0}
@@ -120,10 +125,10 @@
 .spark[data-c] .spark-line{stroke:var(--spark)}.spark[data-c] .spark-area{fill:var(--spark);opacity:.12}.spark[data-c] .spark-dot{fill:var(--spark)}
 /* ---- Compacidad: padding 12–16, gaps 12–16, filas 36–40 ---- */
 .stat-grid,.cards-grid,.split{gap:12px}
-.stat-card{padding:12px 16px;gap:4px}
-.ui-card,.ui-kpi{padding:12px 16px;border-radius:12px}
+.stat-card{padding:var(--ui-pad);gap:4px}
+.ui-card,.ui-kpi{padding:var(--ui-pad);border-radius:12px;box-shadow:none}
 .ui-kpi{gap:2px}
-.workspace-content .card,.workspace-content .record-card{padding:12px 16px}
-.ui-table td{padding:8px 12px}.ui-table thead th{padding:8px 12px}
+.workspace-content .card,.workspace-content .record-card{padding:var(--ui-pad);box-shadow:none}
+.ui-table td{padding:0 12px;height:40px}.ui-table thead th{padding:0 12px;height:32px}
 .workspace-shell .workspace-content{padding-inline:24px}
 .ui-card-head{margin:0 0 8px}

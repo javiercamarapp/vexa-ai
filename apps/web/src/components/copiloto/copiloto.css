@@ -15,7 +15,7 @@
 .cn-head{display:grid;gap:8px;min-width:0}
 .cn-eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0;font:600 11px/16px var(--font-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .cn-demo{text-transform:none;letter-spacing:0;font-weight:500}
-.cn-titular{margin:0;font:600 20px/28px var(--font-ui);letter-spacing:-.01em;color:var(--ink);overflow-wrap:anywhere;max-width:44ch}
+.cn-titular{margin:0;font:600 18px/26px var(--font-ui);letter-spacing:-.01em;color:var(--ink);overflow-wrap:anywhere;max-width:44ch}
 @media(max-width:600px){.cn-titular{font-size:18px;line-height:26px}}
 .cn-fuente{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0;font-size:13px;color:var(--muted)}
 .cn-parcial{margin:0;font-size:13px;color:var(--ui-warning);padding-left:10px;border-left:2px solid var(--rovaq-rojo)}
@@ -96,7 +96,7 @@
 .cn-uso strong{color:var(--ink);font-weight:600}.cn-uso-barra{display:inline-block;width:64px;height:4px;border-radius:999px;background:var(--ui-soft);overflow:hidden}.cn-uso-barra span{display:block;height:100%;background:var(--ui-chart)}
 .cn-estado,.cn-espera{display:grid;gap:10px;justify-items:center;text-align:center;padding:48px 16px}.cn-estado h1{margin:0;font:600 20px/28px var(--font-ui)}.cn-estado p{margin:0;max-width:44ch;color:var(--muted)}
 .cn-espera{min-height:50vh;align-content:center}
-.cn-gate{display:grid;gap:12px;justify-items:start;max-width:56ch;margin:64px auto;padding:0 16px}.cn-gate h1{margin:0;font:600 22px/30px var(--font-ui)}.cn-gate p{margin:0;color:var(--muted)}
+.cn-gate{display:grid;gap:12px;justify-items:start;max-width:56ch;margin:64px auto;padding:0 16px}.cn-gate h1{margin:0;font:600 20px/30px var(--font-ui)}.cn-gate p{margin:0;color:var(--muted)}
 .fg-embebido-head{display:grid;gap:8px;margin-bottom:8px}.fg-embebido-head .cn-fuente{max-width:60ch}
 /* La pantalla de reembolsos embebida ocupa el ancho del briefing */
 .cn-portada .fg-page{padding:0;margin:0;max-width:none}

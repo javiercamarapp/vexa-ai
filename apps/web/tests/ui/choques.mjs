@@ -1,11 +1,9 @@
 // Detector de choques de interfaz. Uso (con `next dev` y fixtures en marcha):
 //   VEXA_UI_BASE=http://localhost:3150 node tests/ui/choques.mjs [--routes=/problems,/cfo] [--sizes=375,1440] [--themes=light,dark] [--detalle]
 // Por cada ruta del MENU x ancho x tema detecta: desborde horizontal, texto recortado, hermanos que se solapan,
-// botones sin nombre, h1 != 1 y fuentes < 12 px. Imprime una tabla y sale con código 1 si hay fallas.
+// botones sin nombre, h1 != 1 y fuentes < 12 px (11 px solo en MAYÚSCULAS), h1 > 20 px o cifra KPI > 30 px. Imprime una tabla y sale con código 1 si hay fallas.
 import {createRequire} from 'node:module';
-import {fileURLToPath} from 'node:url';
-import path from 'node:path';
-const here=path.dirname(fileURLToPath(import.meta.url));
+
 const require=createRequire(process.env.VEXA_PW_PACKAGE??'/private/tmp/claude-501/vexa-pw/package.json');
 const {chromium}=require('playwright-core');
 const {respond}=await import('./fixtures.mjs');
@@ -30,14 +28,17 @@ function medir(){
  for(const e of all){
   const cs=getComputedStyle(e);
   const ownText=[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim());
-  if(ownText&&parseFloat(cs.fontSize)<12)out.small.push(desc(e)+' '+cs.fontSize);
-  if((cs.overflowX==='hidden'||cs.overflowX==='clip')&&e.scrollWidth>e.clientWidth+1&&cs.textOverflow!=='ellipsis'&&e.innerText&&e.innerText.trim()&&!scrollers(e)&&e.tagName!=='SELECT'&&e.tagName!=='INPUT')out.clipped.push(desc(e)+' '+e.scrollWidth+'>'+e.clientWidth);
+  const fs=parseFloat(cs.fontSize);
+  if(ownText&&e.matches('h1')&&fs>20.5)out.small.push('h1 '+fs+'px > 20');
+  if(ownText&&e.matches('.stat-value,.ui-kpi-value,.hoy-kpi-valor,.pfig-value')&&fs>30.5)out.small.push('KPI '+fs+'px > 30');
+  if(ownText&&(fs<11||(fs<12&&cs.textTransform!=='uppercase')))out.small.push(desc(e)+' '+cs.fontSize);
+  if((cs.overflowX==='hidden'||cs.overflowX==='clip')&&e.scrollWidth>e.clientWidth+1&&cs.textOverflow!=='ellipsis'&&(e.textContent||'').trim()&&!scrollers(e)&&e.tagName!=='SELECT'&&e.tagName!=='INPUT')out.clipped.push(desc(e)+' '+e.scrollWidth+'>'+e.clientWidth);
   if(e.matches('button,[role=button],a[href],[role=tab],[role=radio]')){
-   const nombre=(e.innerText||'').trim()||e.getAttribute('aria-label')||e.getAttribute('title')||e.getAttribute('aria-labelledby')||e.querySelector('img[alt]:not([alt=""])');
+   const nombre=(e.textContent||'').trim()||e.getAttribute('aria-label')||e.getAttribute('title')||e.getAttribute('aria-labelledby')||e.querySelector('img[alt]:not([alt=""])');
    if(!nombre)out.unnamed.push(desc(e));
   }
-  if(e.children.length>1&&e.children.length<=40){
-   const kids=[...e.children].filter(k=>vis(k)&&!srOnly(k)&&!['absolute','fixed','sticky'].includes(getComputedStyle(k).position));
+  if(e.children.length>1&&e.children.length<=40&&/flex|grid/.test(cs.display)){
+   const kids=[...e.children].filter(k=>vis(k)&&!srOnly(k)&&!/^inline$/.test(getComputedStyle(k).display)&&!['absolute','fixed','sticky'].includes(getComputedStyle(k).position));
    for(let i=0;i<kids.length;i++)for(let j=i+1;j<kids.length;j++){
     const a=kids[i].getBoundingClientRect(),b=kids[j].getBoundingClientRect();
     const w=Math.min(a.right,b.right)-Math.max(a.left,b.left),h=Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top);

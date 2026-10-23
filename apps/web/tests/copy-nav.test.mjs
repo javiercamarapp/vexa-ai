@@ -16,8 +16,8 @@ test('el menú no usa jerga: ni «Gestión económica», ni «Gestionar problema
   assert.ok(rotulos.includes('Acciones') && rotulos.includes('Preparar'));
 });
 test('el título de pestaña de cada pantalla renombrada coincide con el menú', () => {
-  const metas = {'src/app/(workspace)/cfo/page.tsx': 'Dinero', 'src/app/(workspace)/economics/page.tsx': 'Dinero · Preparar', 'src/app/(workspace)/interventions/page.tsx': 'Acciones', 'src/app/(workspace)/connections/page.tsx': 'Fuentes de datos', 'src/app/(workspace)/history/page.tsx': 'Histórico e identidad'};
+  const metas = {'src/app/(workspace)/cfo/page.tsx': 'Dinero', 'src/app/(workspace)/economics/page.tsx': 'Dinero · Preparar', 'src/app/(workspace)/interventions/page.tsx': 'Acciones', 'src/app/(workspace)/connections/page.tsx': 'Fuentes conectadas', 'src/app/(workspace)/history/page.tsx': 'Histórico e identidad'};
   for (const [f, titulo] of Object.entries(metas)) assert.match(leer(f), new RegExp("title: ?'" + titulo + "'"), f);
   assert.equal(tituloDePantalla('/cfo'), 'Dinero'); assert.equal(tituloDePantalla('/economics'), 'Dinero · Preparar'); assert.equal(tituloDePantalla('/interventions'), 'Acciones');
-  assert.equal(tituloDePantalla('/connections'), 'Fuentes de datos'); assert.equal(tituloDePantalla('/history'), 'Histórico e identidad');
+  assert.equal(tituloDePantalla('/connections'), 'Fuentes conectadas'); assert.equal(tituloDePantalla('/history'), 'Histórico e identidad');
 });

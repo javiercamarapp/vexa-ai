@@ -75,7 +75,7 @@ await dormir(LAT*6+2500);
  check(max<=2,'tope de concurrencia ≤ 2 (máximo observado '+max+')');
  void urls;}
 // 3) Ir y volver (fresca): segunda visita instantánea, sin esqueleto, sin red.
-const PANTALLAS=[['Problemas','/problems'],['Recomendaciones','/recommendations'],['Brief ejecutivo','/briefs'],['Explorador','/explorer'],['Dinero','/cfo'],['Fuentes','/connections']];
+const PANTALLAS=[['Problemas','/problems'],['Recomendaciones','/recommendations'],['Brief ejecutivo','/briefs'],['Explorador','/explorer'],['Dinero','/cfo'],['Fuentes conectadas','/connections']];
 const primeras={};
 for(const [,ruta] of PANTALLAS){
  const m1=await muestrear(ruta,LAT*4+1500,()=>irMenu(ruta));primeras[ruta]=m1;

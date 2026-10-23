@@ -49,7 +49,7 @@ export function FuentesDatos(){
  const id=useMemo(()=>identidad(cov.data?.sources.find(s=>s.key==='associations')),[cov.data]);
  const cargadas=tarjetas.filter(t=>t.estado==='cargada').length;
  return <section className="task-page stack dn-page">
-  <PageHeader eyebrow="Datos y fuentes" title="Datos y fuentes" description="De dónde sale lo que ves: qué fuentes están cargadas, hasta cuándo llegan y cuánto del cliente ya está identificado." actions={<><Button icon={<Refresh/>} loading={cov.busy} onClick={()=>{cov.reload();tr.reload();}}>Actualizar</Button><LinkButton href="/imports" variant="primary" icon={<Arrow/>}>Importar datos</LinkButton></>}/>
+  <PageHeader eyebrow="Datos y fuentes" title="Cobertura de datos" description="De dónde sale lo que ves: qué fuentes están cargadas, hasta cuándo llegan y cuánto del cliente ya está identificado." actions={<><Button icon={<Refresh/>} loading={cov.busy} onClick={()=>{cov.reload();tr.reload();}}>Actualizar</Button><LinkButton href="/imports" variant="primary" icon={<Arrow/>}>Importar datos</LinkButton></>}/>
   <IdentidadCard id={id} busy={cov.busy&&!cov.data} error={cov.error} onRetry={()=>cov.reload()} enlaceDetalle/>
   <section aria-labelledby="ds-src-t">
    <div className="card-title"><div><h2 id="ds-src-t">Fuentes</h2><p>{cov.data?`${cargadas} de ${tarjetas.length} fuentes con datos cargados. ${EXPLICACION}`:'Cargando cobertura…'}</p></div></div>

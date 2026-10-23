@@ -41,3 +41,8 @@ test('estado recordado: solo claves de grupo válidas; texto roto = todos abiert
   assert.deepEqual(cerradosGuardados('["datos","inventado",3]'), ['datos']);
   assert.deepEqual(cerradosGuardados('no es json'), []); assert.deepEqual(cerradosGuardados(null), []); assert.deepEqual(cerradosGuardados('{"a":1}'), []);
 });
+test('A6: Cobertura de datos y Fuentes conectadas ya no se confunden en el menú', () => {
+  const items = todosLosItems().map((x) => x.item).filter((i) => ['/sources', '/connections'].includes(i.href));
+  assert.deepEqual(items.map((i) => i.etiqueta), ['Cobertura de datos', 'Fuentes conectadas']);
+  assert.equal(tituloDePantalla('/sources'), 'Cobertura de datos');
+});

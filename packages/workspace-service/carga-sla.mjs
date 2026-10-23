@@ -53,7 +53,7 @@ export function armarCarga(rows, meses) {
   const max = Math.max(0, ...matriz.flat());
   return {total, matriz, porDia, porHora, horasPico, horasValle, celdaPico, diasMenorCarga, max};
 }
-const redond = x => (x == null ? null : Math.round(Number(x) * 10) / 10);
+const redond = x => (x == null ? null : Number(x) < 1 ? Math.round(Number(x) * 1000) / 1000 : Math.round(Number(x) * 10) / 10);
 /** Una fila agregada de SQL -> cifras de SLA con su base. Primera respuesta = primer mensaje de agente posterior al primer mensaje del cliente. */
 export function armarSla(r, {hoy = new Date(), umbralH = 24} = {}) {
   const n = k => Number(r?.[k] ?? 0);

@@ -23,6 +23,7 @@ for(const [w,h] of [[375,812],[768,1024],[1440,900]]){
   check(await page.locator('.global-bar,.workspace-top,.gb-summary').count()===0,`${route}@${w}: no debe haber barra global`);
   check(!(await page.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth+1)),`${route}@${w}: desborde horizontal de página`);
   if(route==='/cfo')await shot(page,'sin-barra-cfo');
+  if(route==='/cfo'){check(!(await page.locator('.workspace-header').isVisible()),`/cfo@${w}: el copiloto de CFO no lleva encabezado de página`);check((await page.locator('.workspace-content h1').count())===1,`/cfo@${w}: un solo h1`);check((await page.getByRole('button',{name:'Copiloto CFO'}).count())===0,`/cfo@${w}: ya no hay cajón «Copiloto CFO»`);check(await page.locator('[data-modo=cfo] textarea').count()===1,`/cfo@${w}: el compositor del copiloto está presente`);}
   await page.close();
  }
  { const page=await open('/preguntale');
@@ -38,7 +39,7 @@ for(const [w,h] of [[375,812],[768,1024],[1440,900]]){
   await shot(page,'preguntale');await page.close(); }
  // 2) El sidebar lleva abajo organización, avisos (con enlace a /notifications), tema claro/sistema/oscuro y cuenta, SIN solaparse con la lista de ítems, que se desplaza por dentro.
  { const page=await open('/cfo?'+SCOPE);
-  if(w<768){await page.getByRole('button',{name:'Abrir menú'}).click();await page.waitForTimeout(300);}
+  if(w<768){await page.getByRole('button',{name:/^(Abrir menú|Más opciones de navegación)$/}).last().click();await page.waitForTimeout(300);}
   const root=w<768?page.locator('.mobile-sidebar'):page.locator('.workspace-sidebar');
   check(await root.locator('input[type=radio][name$="-theme"]').count()===3,`@${w}: falta el selector de tema en el sidebar`);
   check(await root.locator('a[href="/notifications"]').count()===1,`@${w}: falta «Notificaciones» en el sidebar`);
@@ -60,7 +61,7 @@ for(const [w,h] of [[375,812],[768,1024],[1440,900]]){
  // 4) Menú: grupos abiertos por defecto, estado recordado, alcance propagado, ítem activo correcto, sin Notificaciones, Interno según acceso.
  { const page=await open('/cfo?'+SCOPE);
   if(w>=768||true){
-   const abrirMenu=async()=>{if(w<768){await page.getByRole('button',{name:'Abrir menú'}).click();await page.waitForTimeout(300);}};
+   const abrirMenu=async()=>{if(w<768){await page.getByRole('button',{name:/^(Abrir menú|Más opciones de navegación)$/}).last().click();await page.waitForTimeout(300);}};
    await abrirMenu();const root=w<768?page.locator('.mobile-sidebar'):page.locator('.workspace-sidebar');
    const toggles=root.locator('.nav-group-toggle');const n=await toggles.count();check(n===(internal?4:3),`grupos esperados ${internal?4:3}, hay ${n}`);
    const abiertos=async()=>{let k=0;for(let i=0;i<n;i++)if((await toggles.nth(i).getAttribute('aria-expanded'))==='true')k++;return k;};
@@ -77,7 +78,7 @@ for(const [w,h] of [[375,812],[768,1024],[1440,900]]){
   }
   await page.close(); }
  for(const [route,activo] of [['/jobs/00000000-0000-4000-8000-000000000001','Importaciones'],['/problems/manage','Problemas'],['/analysis','Análisis'],['/economics','Preparar'],['/settings/notification-delivery','Preferencias de avisos']]){
-  const page=await open(route);if(w<768){await page.getByRole('button',{name:'Abrir menú'}).click();await page.waitForTimeout(300);}
+  const page=await open(route);if(w<768){await page.getByRole('button',{name:/^(Abrir menú|Más opciones de navegación)$/}).last().click();await page.waitForTimeout(300);}
   const root=w<768?page.locator('.mobile-sidebar'):page.locator('.workspace-sidebar');const cur=await root.locator('nav a[aria-current=page]').allInnerTexts();
   check(cur.length===1&&cur[0].trim()===(activo==='Preferencias de avisos'?'Avisos':activo)||(route.startsWith('/settings')&&cur.length===1),`${route}@${w}: ítem activo ${JSON.stringify(cur)} != ${activo}`);
   if(route==='/problems/manage'){check(await page.locator('.tabs a[aria-current=page]').innerText()==='Gestionar','pestaña Gestionar no activa');check(await page.locator('.tabs a').count()===2,'faltan las pestañas de Problemas');}

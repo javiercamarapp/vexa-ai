@@ -5,6 +5,7 @@
 import {WorkspaceError} from './contracts.mjs';
 import {readConversationMonthly,readLedgerMonthly,summaryMeta} from './summaries.mjs';
 import {completitud} from '../metrics/complete-months.mjs';
+import {readConversationMonthlyFromInsights} from '../insights/adapter.mjs';
 export const TREND_MONTHS=12,LOCAL_TIMEOUT_MS=4000;
 const monthStart=(d)=>new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),1));
 const addMonths=(d,n)=>new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+n,1));
@@ -32,7 +33,8 @@ export function createTrendsRepository({database,now=()=>new Date(),timeoutMs=LO
    const win=monthWindow(now(),months);
    return database.transaction('read',async s=>{
     // 1) Resúmenes precomputados (migración 20261022000000): <200 ms. Solo se usan si existen; «Observado» únicamente cuando no hay registros posteriores al corte.
-    const convSum=await readConversationMonthly(s),ledSum=await readLedgerMonthly(s,win);
+    // Piloto «datos vivos»: primero insight_conversation_volume (se refresca solo al cambiar la fuente); si no existe o no se puede leer, el resumen 20261022000000 y después el camino anterior.
+    const convIns=await readConversationMonthlyFromInsights(s),convSum=convIns.availability==='ready'?convIns:await readConversationMonthly(s),ledSum=await readLedgerMonthly(s,win);
     // Conversation date = started_at, or the date of its FIRST MESSAGE when started_at is null (historical CSV imports carry no
     // started_at). Messages are RLS-checked per row, so: (1) a cheap probe (<= 3,001 rows) decides whether an exact pass is affordable;
     // (2) otherwise a 3 % Bernoulli sample of conversations is dated and scaled, and the figure is labelled "Estimado".

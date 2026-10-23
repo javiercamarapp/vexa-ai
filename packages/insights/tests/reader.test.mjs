@@ -11,6 +11,7 @@ import {TENANT_A, TENANT_B, OWNER} from '../../ai-scale/economia-problemas/mundo
 import {HERE} from '../../metrics/tests/world.mjs';
 import {refunds, insertRefunds, sembrarOtros, sembrarTracker, q, BASE} from './seed.mjs';
 import {createInsightsReader} from '../reader.mjs';
+import {createTrendsRepository} from '../../workspace-service/trends.mjs';
 import {refreshInsights, recordSourceSync} from '../refresh.mjs';
 
 const pg = createRequire(import.meta.url)('pg');
@@ -55,6 +56,18 @@ test('lectura de insights: exacta, con frescura, aislada por tenant y en miliseg
       const c = await reader.conversationVolume({grain: 'week'}); assert.equal(c.points.reduce((a, p) => a + p.n, 0), 30); assert.equal(c.undated, 5);
       const th = await reader.threadResolution({}); assert.equal(th.overall.threads, 6); assert.equal(th.overall.reopenedPercent, 16.7); assert.equal(th.overall.closeP50Hours, 5);
       const tr = await reader.trackerRefundStatus({}); assert.equal(tr.total, 5); assert.equal(tr.byStatus.reembolsado.amountMinor, '14050'); assert.equal(tr.assumedCurrency, 'USD');
+    });
+    await t.test('PILOTO /api/trends: sin conversation_monthly, las conversaciones salen del insight (exactas, no muestra) y con rótulo de corte', async () => {
+      const tr = await createTrendsRepository({database: db(TENANT_A, OWNER.A), now: () => new Date('2026-10-19T12:00:00Z')}).monthly();
+      const c = tr.conversations; assert.equal(c.sampled, false); assert.equal(c.summary.source, 'summary'); assert.equal(c.total, 35); assert.equal(c.undated, 5);
+      assert.equal(c.series.find(x => x.month === '2026-07').count, 20); assert.equal(c.series.find(x => x.month === '2026-08').count, 10);
+      assert.equal(c.class, 'observed', 'sin conversaciones nuevas desde el corte => fresco');
+      h.psql(`insert into public.conversations(id,tenant_id,source,external_id,connection_id,started_at) values(md5('nueva')::uuid,'${TENANT_A}','csv','nueva','cccccccc-0000-4000-8000-0000000000a1',timestamptz '2026-09-01 00:00:00+00')`);
+      const stale = await createTrendsRepository({database: db(TENANT_A, OWNER.A), now: () => new Date('2026-10-19T12:00:00Z')}).monthly();
+      assert.equal(stale.conversations.class, 'estimated', 'con registros posteriores al corte se rotula Estimado hasta el próximo refresco');
+      await refreshInsights(db(TENANT_A, OWNER.A), {source: 'conversations'});
+      const fresh = await createTrendsRepository({database: db(TENANT_A, OWNER.A), now: () => new Date('2026-10-19T12:00:00Z')}).monthly();
+      assert.equal(fresh.conversations.class, 'observed'); assert.equal(fresh.conversations.total, 36);
     });
     await t.test('otro tenant no ve nada (absent) y las tablas no se escriben desde la lectura', async () => {
       const b = createInsightsReader({database: db(TENANT_B, OWNER.B)});

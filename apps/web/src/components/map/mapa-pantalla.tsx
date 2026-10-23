@@ -6,6 +6,7 @@ import {Button,LinkButton,Refresh,Arrow} from '../ui/button';
 import {EmptyState} from '../ui/empty-state';
 import {Icon} from '../ui/icons';
 import {NoDisponible,Seccion,Vacio} from '../refunds/fuga-partes';
+import {KindBadge} from '../ui/kind-badge';
 import {useVista} from './use-vista';
 import {MapaGeo,type Mosaico} from './mapa-geo';
 import {MENSAJE_COMPLETO,NOTA_PROVISIONAL,PAISES,TEXTO_MES,filasTabla,limitesRampa,num,pctTxt,textoCobertura,textoOcultos} from './mapa-modelo.mjs';
@@ -17,23 +18,32 @@ function Esqueleto({segundos}:{segundos:number}){
   <div className="mp-skel-mapa" aria-hidden="true"/>
   <p className="fg-sm">{segundos<2?'Calculando…':segundos<8?`Calculando… ${segundos} s`:`Calculando… ${segundos} s. Está tardando más de lo normal; sigue intentando.`}</p></div>;
 }
-function Lista({titulo,celdas}:{titulo:string;celdas:Celdas}){
+function Lista({titulo,celdas,max=2}:{titulo:string;celdas:Celdas;max?:number}){
   if(celdas.ocultoTodo)return <section className="mp-lista"><h3>{titulo}</h3><p className="fg-sm">Sin desglose: cada categoría tiene menos de 5 casos.</p></section>;
-  const tope=Math.max(1,...celdas.items.map(i=>i.n),celdas.otros);
-  return <section className="mp-lista" aria-label={titulo}><h3>{titulo}</h3>
-   <ul>{celdas.items.map(i=><li key={i.etiqueta}><span>{i.etiqueta}</span><b>{num(i.n)}</b><i style={{inlineSize:`${Math.max(4,(i.n*100)/tope)}%`}} aria-hidden="true"/></li>)}
-    {celdas.otros>0&&<li><span>Otros (menos de 5 cada uno)</span><b>{num(celdas.otros)}</b><i style={{inlineSize:`${Math.max(4,(celdas.otros*100)/tope)}%`}} aria-hidden="true"/></li>}</ul></section>;
+  const vis=celdas.items.slice(0,max),mas=celdas.items.length-vis.length+(celdas.otros>0?1:0);
+  const tope=Math.max(1,...vis.map(i=>i.n));
+  return <section className="mp-lista" aria-label={titulo}><h3>{titulo}{mas>0&&<small> · +{mas} más</small>}</h3>
+   <ul>{vis.map(i=><li key={i.etiqueta}><span>{i.etiqueta}</span><b>{num(i.n)}</b><i style={{inlineSize:`${Math.max(4,(i.n*100)/tope)}%`}} aria-hidden="true"/></li>)}</ul></section>;
 }
-function Panel({e,total}:{e:EstadoMapa|null;total:number}){
- if(!e)return <aside className="mp-panel" aria-live="polite"><p className="fg-sm">Elige un estado del mapa para ver sus casos, motivos y retailers.</p></aside>;
- return <aside className="mp-panel" aria-live="polite" aria-label={`Detalle de ${e.nombre}`}>
-  <p className="eyebrow">{e.pais==='US'?'Estados Unidos':'México'}</p>
-  <p className="mp-panel-t">{e.nombre}</p>
-  <p className="mp-panel-n"><b>{num(e.n)}</b> {e.n===1?'caso':'casos'} <span>· {pctTxt(total>0?Math.round((e.n*1000)/total)/10:null)} de los casos con estado</span></p>
-  <Lista titulo="Tipo de caso" celdas={e.tipos}/><Lista titulo="Motivo" celdas={e.motivos}/><Lista titulo="Retailer" celdas={e.retailers}/>
-  <p className="mp-mes"><b>Mes</b> <span>No disponible</span><small>{TEXTO_MES.replace(/^Mes: no disponible\. /,'')}</small></p>
-  <p className="fg-sm">Casos = filas del Tracker. Las categorías con menos de 5 casos se agrupan para proteger la privacidad.</p>
- </aside>;
+/** Ranking de los estados con más casos: barras finas en el verde de Geografía; el elegido lleva marca roja. */
+function Ranking({estados,sel,onElegir,pais}:{estados:EstadoMapa[];sel:string|null;onElegir:(c:string)=>void;pais:'US'|'MX'}){
+ const top=[...estados].sort((a,b)=>b.n-a.n).slice(0,8),tope=Math.max(1,top[0]?.n??1);
+ return <section className="mp-rank" aria-label={`Los ${top.length} ${pais==='US'?'estados':'estados'} con más casos`}>
+  <h3>Estados con más casos</h3>
+  <ol>{top.map((e,i)=><li key={e.clave}><button type="button" aria-pressed={sel===e.clave} onClick={()=>onElegir(e.clave)}><em>{i+1}</em><span>{e.nombre}</span><i style={{'--w':`${Math.max(4,(e.n*100)/tope)}%`} as React.CSSProperties} aria-hidden="true"/><b>{num(e.n)}</b></button></li>)}</ol>
+ </section>;
+}
+function Panel({e,total,estados,pais,sel,onElegir,ocultos}:{e:EstadoMapa|null;total:number;estados:EstadoMapa[];pais:'US'|'MX';sel:string|null;onElegir:(c:string)=>void;ocultos:string|null}){
+ const d=e??[...estados].sort((a,b)=>b.n-a.n)[0]??null;
+ return <aside className="mp-panel" aria-live="polite" aria-label={d?`Detalle de ${d.nombre}`:'Detalle'}><div className="mp-panel-in">
+  <Ranking estados={estados} sel={sel} onElegir={onElegir} pais={pais}/>
+  {d&&<div className="mp-det">
+   <p className="eyebrow">{e?(d.pais==='US'?'Estados Unidos':'México'):'Mayor concentración · elige otro'}</p>
+   <p className="mp-panel-t">{d.nombre}<span><b>{num(d.n)}</b> {d.n===1?'caso':'casos'} · {pctTxt(total>0?Math.round((d.n*1000)/total)/10:null)} de los casos con estado</span></p>
+   <div className="mp-listas"><Lista titulo="Tipo de caso" celdas={d.tipos}/><Lista titulo="Motivo" celdas={d.motivos}/><Lista titulo="Retailer" celdas={d.retailers}/></div>
+  </div>}
+  <p className="mp-pie">Casos = filas del Tracker; categorías con menos de 5 se agrupan (privacidad). Mes: no disponible, el Tracker no trae la fecha por estado.{ocultos?` ${ocultos}`:''}</p>
+ </div></aside>;
 }
 
 /** Pantalla «Mapa de problemas» (/map): casos por estado, provisional desde el Tracker. Honesta: cobertura a la vista, sin direcciones ni ciudades. */
@@ -58,15 +68,17 @@ export function MapaPantalla({organization}:{organization?:string}){
   {!v&&!f.busy&&f.error&&<EmptyState art="shield" tone="warn" title={f.error.code==='acceso'?'Tu rol no tiene acceso a este panel':'No disponible ahora'} body={f.error.texto} action={f.error.code==='acceso'?undefined:<Button icon={<Refresh/>} onClick={()=>f.reload()}>Reintentar</Button>}/>}
   {v&&<>
    <p className="mp-prov" role="note"><Icon name="info" size={16}/><span><b>Provisional:</b> {NOTA_PROVISIONAL.replace(/^Provisional: /,'')}</span></p>
-   <Seccion id="mp-mapa" titulo="Casos por estado" kind="observed" intro="Cada estado se pinta según los casos del Tracker; más oscuro, más casos. Los estados punteados no tienen dato visible (menos de 5 casos o sin lectura): no son cero.">
-    {v.status==='unavailable'?<NoDisponible onRetry={()=>f.reload()}/>
-     :v.status==='empty'||!v.cobertura?<Vacio>Todavía no hay direcciones interpretables en el Tracker. {MENSAJE_COMPLETO}</Vacio>
+   <section className="card mp-card" aria-labelledby="mp-mapa">
+    {v.status==='unavailable'?<><h2 id="mp-mapa" className="mp-h2">Casos por estado</h2><NoDisponible onRetry={()=>f.reload()}/></>
+     :v.status==='empty'||!v.cobertura?<><h2 id="mp-mapa" className="mp-h2">Casos por estado</h2><Vacio>Todavía no hay direcciones interpretables en el Tracker. {MENSAJE_COMPLETO}</Vacio></>
      :<>
       <div className="mp-barra">
+       <h2 id="mp-mapa" className="mp-h2" title="Cada estado se pinta según los casos del Tracker; más oscuro, más casos. Los estados punteados no tienen dato visible (menos de 5 casos o sin lectura): no son cero.">Casos por estado</h2>
        <div className="mp-seg" role="group" aria-label="País">
         {(['US','MX'] as const).map(p=><button key={p} type="button" aria-pressed={pais===p} onClick={()=>cambiar(p)}>{p==='US'?'Estados Unidos':'México'}<small>{num(v.cobertura!.pais[p])}</small></button>)}
        </div>
        <p className="mp-ayuda">Ctrl/⌘ + rueda o los botones acercan; arrastra para mover.</p>
+       <KindBadge kind="observed"/>
       </div>
       {delPais.length===0?<Vacio>No hay estados de {pais==='US'?'Estados Unidos':'México'} con 5 casos o más.</Vacio>
        :<div className="mp-cuerpo">
@@ -78,13 +90,13 @@ export function MapaPantalla({organization}:{organization?:string}){
            <li><i data-sel="1" aria-hidden="true"/>Elegido</li>
           </ol>
          </div>
-         <Panel e={actual} total={totalPais}/>
+         <Panel e={actual} total={totalPais} estados={delPais} pais={pais} sel={actual?.clave??null} onElegir={elegir} ocultos={textoOcultos(v.ocultos)}/>
         </div>}
-      {textoOcultos(v.ocultos)&&<p className="fg-sm">{textoOcultos(v.ocultos)}</p>}
      </>}
-   </Seccion>
+   </section>
 
-   <Seccion id="mp-cobertura" titulo="Cobertura de la dirección" kind="observed" intro="Qué parte del Tracker permite ubicar un caso. Lo demás no se estima: simplemente no está en el mapa.">
+   <div className="mp-dos">
+   <Seccion id="mp-cobertura" titulo="Cobertura de la dirección" kind="observed" intro="Qué parte del Tracker permite ubicar un caso; lo demás no se estima.">
     {v.status==='unavailable'||!v.cobertura?<NoDisponible onRetry={()=>f.reload()}/>:<>
      <p className="mp-big" aria-label={textoCobertura(v.cobertura)}>{num(v.cobertura.interpretables)}<small>de {num(v.cobertura.filas)} filas del Tracker traen dirección interpretable ({pctTxt(v.cobertura.pctInterpretablesDeFilas)})</small></p>
      <div className="mp-cob" role="img" aria-label={`${num(v.cobertura.interpretables)} filas interpretables, ${num(v.cobertura.conDireccion-v.cobertura.interpretables)} con dirección no interpretable, ${num(v.cobertura.filas-v.cobertura.conDireccion)} sin dirección`}>
@@ -93,6 +105,11 @@ export function MapaPantalla({organization}:{organization?:string}){
      <ul className="mp-cob-l"><li><b>{num(v.cobertura.interpretables)}</b> con estado leído</li><li><b>{num(v.cobertura.conDireccion-v.cobertura.interpretables)}</b> con dirección que no se pudo leer</li><li><b>{num(v.cobertura.filas-v.cobertura.conDireccion)}</b> sin dirección</li></ul>
      <p className="fg-sm">{textoCobertura(v.cobertura)}</p></>}
    </Seccion>
+   <Seccion id="mp-quejas" titulo="Quejas por cada 100 pedidos" intro="La medida que sí compara estados: pedidos que terminan en queja.">
+    <div className="mp-nd"><b>No disponible</b><p>Se necesita el estado de envío de cada pedido y las conversaciones asociadas. {MENSAJE_COMPLETO} El cálculo ya está listo y se enciende solo cuando existan pedidos con estado.</p>
+     <LinkButton href="/connections" variant="secondary" size="sm" icon={<Arrow/>}>Ver fuentes conectadas</LinkButton></div>
+   </Seccion>
+   </div>
 
    {v.status==='ok'&&tabla.length>0&&<details className="card mp-tabla-det" open>
     <summary><Icon name="list" size={16}/> Tabla equivalente del mapa ({pais==='US'?'Estados Unidos':'México'})</summary>
@@ -104,10 +121,6 @@ export function MapaPantalla({organization}:{organization?:string}){
     </div>
    </details>}
 
-   <Seccion id="mp-quejas" titulo="Quejas por cada 100 pedidos" intro="La medida que sí permite comparar estados: cuántos pedidos terminan en queja, no cuántos casos hay.">
-    <EmptyState art="plug" compact title="No disponible" body={<>Se necesita el estado de envío de cada pedido y las conversaciones asociadas. {MENSAJE_COMPLETO} El cálculo ya está listo y se enciende solo cuando existan pedidos con estado.</>}
-     action={<LinkButton href="/connections" variant="secondary" size="sm" icon={<Arrow/>}>Ver fuentes conectadas</LinkButton>}/>
-   </Seccion>
 
    <details className="card fg-como">
     <summary><Icon name="info" size={16}/> Cómo se calculó</summary>

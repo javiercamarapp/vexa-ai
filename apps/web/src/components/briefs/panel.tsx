@@ -22,6 +22,7 @@ import {EmptyState} from '../ui/empty-state';
 import {SkeletonCards,SkeletonStats} from '../ui/skeletons';
 import {WaitStatus} from '../ui/wait-status';
 import {ESPERA} from '../../lib/legibilidad/espera.mjs';
+import {etiquetaBase as baseLegible} from '../../lib/legibilidad/jerga.mjs';
 import {fechaCorteLegible} from '../../lib/legibilidad/fechas.mjs';
 import {cifraBrief,cifraTitular,accionPrincipal,resumenVigilar,criticosAparte,estadoAccion,etiquetaBase,tituloEs} from '../../lib/legibilidad/brief.mjs';
 import {epistemicKindConCobertura} from '../../lib/epistemic.mjs';
@@ -56,7 +57,7 @@ function Document({brief,busy,exportFile}:{brief:Brief;busy:boolean;exportFile:(
   <div className="card">
    <div className="card-head"><div><p className="eyebrow">Versión {brief.version} · {brief.stale?'Versión histórica':'Vigente'}</p><h2>Brief ejecutivo</h2></div><div className="btn-group" role="group" aria-label="Exportar brief"><Button icon={<Download/>} variant="primary" size="sm" disabled={busy} onClick={()=>exportFile('html')}>Descargar HTML</Button><Button icon={<Download/>} size="sm" disabled={busy} onClick={()=>exportFile('json')}>Descargar JSON</Button></div></div>
    <p className="headline">{tit?.tipo==='exacta'?<>Este corte registra <strong>{money(tit.c.valor,tit.m.currency,tit.m.exponent)}</strong> de {tit.m.label.toLowerCase()}; </>:tit?<>Este corte registra un subtotal conocido de <strong>{money(tit.c.valor,tit.m.currency,tit.m.exponent)}</strong> en {tit.m.label.toLowerCase()} (no es el total); </>:<>Este corte no tiene cifras exactas ni subtotales conocidos; </>}hay <strong>{nf.format(d.top3.length)}</strong> {d.top3.length===1?'problema prioritario':'problemas prioritarios'}.</p>
-   <div className="meta-row"><span className="chip">Corte: {stamp(d.asOf)}</span><span className="chip">{d.scope.date_start.slice(0,10)} a {d.scope.date_end.slice(0,10)} (fin exclusivo)</span><span className="chip">{cur} · base {d.scope.basis}</span><span className="chip">Creado: {stamp(brief.createdAt)}</span><IdChip value={d.snapshotId} label="Publicación"/><IdChip value={d.scopeHash} label="Alcance"/></div>
+   <div className="meta-row"><span className="chip">Corte: {stamp(d.asOf)}</span><span className="chip">{d.scope.date_start.slice(0,10)} a {d.scope.date_end.slice(0,10)} (fin exclusivo)</span><span className="chip">{cur} · {baseLegible(d.scope.basis)}</span><span className="chip">Creado: {stamp(brief.createdAt)}</span><IdChip value={d.snapshotId} label="Publicación"/><IdChip value={d.scopeHash} label="Alcance"/></div>
    <p className="card-lead">Cobertura: {d.coverage}{d.watermark?' · Actualización: '+fechaCorteLegible(d.watermark):''}</p>
   </div>
   {brief.stale&&<p role="status">Versión histórica: hay cambios posteriores. Conserva las cifras y fuentes de su generación.</p>}

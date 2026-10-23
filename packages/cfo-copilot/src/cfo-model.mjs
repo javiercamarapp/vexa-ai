@@ -1,6 +1,6 @@
 // Modelo CFO PURO: de filas agregadas del ledger (por mes · canal · tipo · estado · moneda · base) a todo lo que muestra /cfo.
 // Reglas inviolables (también verificadas en tests):
-//  1. USD / CAD / MXN nunca se suman ni se convierten (economic_fx_versions está vacío): todo se agrupa por moneda.
+//  1. USD / CAD / MXN nunca se suman ni se convierten (la tabla de versiones de tipo de cambio está vacía): todo se agrupa por moneda.
 //  2. Las bases del ledger no se mezclan: marketplace_line_price, marketplace_refund_amount y gross_order_including_tax_shipping
 //     son magnitudes distintas. No se resta reembolso de ingreso ni se suma Shopify a marketplaces.
 //  3. Cada cifra lleva clase (Observado / Estimado / Inferido), cobertura y «cómo se calculó».
@@ -14,6 +14,11 @@ export const BASIS_LABEL = Object.freeze({
   [BASIS.shopify]: 'Bruto con impuestos y envío (Shopify)',
   [BASIS.refund]: 'Importe reembolsado de marketplace',
 });
+/** Enlace a /economics CON alcance (moneda y rango de meses completos analizados): sin él la página de operador abre sin contexto. */
+export const economicsHref = (currency, firstMonth, lastMonth) => {
+  const next = ym => { const [y, m] = ym.split('-').map(Number); return new Date(Date.UTC(y, m, 1)).toISOString().slice(0, 10); };
+  return `/economics?currency=${encodeURIComponent(currency)}&date_start=${firstMonth}-01&date_end=${next(lastMonth)}`;
+};
 export const bigintReplacer = (k, v) => (typeof v === 'bigint' ? v.toString() : v);
 /** Copia serializable (BigInt -> cadena) que viaja al navegador. */
 export const serializeReport = report => JSON.parse(JSON.stringify(report, bigintReplacer));
@@ -128,10 +133,10 @@ export function buildCfoReport(input, options = {}) {
   const quality = {
     totalRows,
     figs: {
-      rows: fig('q:rows', 'Asientos en el ledger', int(totalRows), {scope: 'ventana completa', how: 'Última revisión de cada entidad (pedidos y reembolsos), incluidos los apartados «a revisar».', value: totalRows}),
-      noCurrency: fig('q:nocur', 'Filas sin moneda (diferidas)', int(noCurrency), {known: totalRows - noCurrency, eligible: totalRows, scope: `${pct(ratioBps(noCurrency, totalRows))} de los asientos`, how: 'Filas con moneda desconocida (código XXX). No se suman ni se convierten ni se les adivina moneda; quedan fuera de todos los importes.', value: noCurrency}),
-      ordersNoAmount: fig('q:noamt-o', 'Pedidos sin importe', int(ordersNoAmount), {known: sumNum(ordersKnownCur, r => r.known), eligible: sumNum(ordersKnownCur, r => r.n), scope: 'pedidos registrados con moneda', how: 'Pedidos registrados con moneda conocida y importe nulo. Nunca se cuentan como 0.', value: ordersNoAmount}),
-      refundsNoAmount: fig('q:noamt-r', 'Reembolsos sin importe', int(refundsNoAmount), {known: sumNum(refundsKnownCur, r => r.known), eligible: sumNum(refundsKnownCur, r => r.n), scope: 'reembolsos con moneda', how: 'Reembolsos con importe nulo en la fuente (cualquier estado).', value: refundsNoAmount}),
+      rows: fig('q:rows', 'Registros del libro económico', int(totalRows), {scope: 'ventana completa', how: 'Última revisión de cada entidad (pedidos y reembolsos), incluidos los apartados «a revisar».', value: totalRows}),
+      noCurrency: fig('q:nocur', 'Filas sin moneda (diferidas)', int(noCurrency), {known: totalRows - noCurrency, eligible: totalRows, scope: `${pct(ratioBps(noCurrency, totalRows))} de los registros del libro`, how: 'Filas con moneda desconocida (código XXX). No se suman ni se convierten ni se les adivina moneda; quedan fuera de todos los importes.', value: noCurrency}),
+      ordersNoAmount: fig('q:noamt-o', 'Pedidos sin importe', ordersNoAmount === 0 ? 'Ninguno (0)' : int(ordersNoAmount), {known: sumNum(ordersKnownCur, r => r.known), eligible: sumNum(ordersKnownCur, r => r.n), scope: ordersNoAmount === 0 ? `Todos los ${int(sumNum(ordersKnownCur, r => r.n))} pedidos registrados con moneda tienen importe` : 'pedidos registrados con moneda', how: 'Pedidos registrados con moneda conocida y importe nulo. Nunca se cuentan como 0.', value: ordersNoAmount}),
+      refundsNoAmount: fig('q:noamt-r', 'Reembolsos sin importe', refundsNoAmount === 0 ? 'Ninguno (0)' : int(refundsNoAmount), {known: sumNum(refundsKnownCur, r => r.known), eligible: sumNum(refundsKnownCur, r => r.n), scope: 'reembolsos con moneda', how: 'Reembolsos con importe nulo en la fuente (cualquier estado).', value: refundsNoAmount}),
       toReview: fig('q:review', 'Duplicados «a revisar» (fuera de totales)', int(sumNum(toReview, r => r.n)), {scope: 'apartados sin identificador de línea', how: 'Copias excedentes marcadas «a_revisar» al cargar; se conservan pero no entran a ningún total.', value: sumNum(toReview, r => r.n)}),
     },
     nonRecorded, byChannel, unaccounted,
@@ -169,7 +174,7 @@ export function buildCfoReport(input, options = {}) {
       const hist = completeMonths.map(m => ({m, o: sumNum(used.filter(r => isOrderOk(r) && r.currency === pc.currency && r.channel === ch.channel && r.month === m), r => r.n), f: sumNum(used.filter(r => isRefundOk(r) && r.currency === pc.currency && r.channel === ch.channel && r.month === m), r => r.n)})).filter(x => x.o > 0);
       if (hist.length < 5) continue;
       const last = hist.at(-1), prior = hist.slice(0, -1), rates = prior.map(x => x.f / x.o), mean = rates.reduce((a, b) => a + b, 0) / rates.length, sd = Math.sqrt(rates.reduce((a, b) => a + (b - mean) ** 2, 0) / rates.length), rate = last.f / last.o;
-      if (last.f >= 30 && sd > 0 && (rate - mean) / sd >= 2) alerts.push({id: `refund-anomaly:${ch.channel}:${pc.currency}`, severity: (rate - mean) / sd >= 3 ? 'alta' : 'media', title: `Reembolsos anómalos · ${ch.label} (${pc.currency})`, detail: `Tasa de ${monthLabel(last.m)}: ${pct(Math.round(rate * 10000))} frente a ${pct(Math.round(mean * 10000))} de promedio previo (${(rate - mean) / sd >= 10 ? 'más de 10' : ((rate - mean) / sd).toFixed(1)} desviaciones).`, kind: 'observed', how: `Se compara la tasa por conteo del último mes completo con la media y desviación de los ${prior.length} meses completos anteriores del mismo canal y moneda. Alerta si supera 2 desviaciones y hay al menos 30 reembolsos.`, cta: {label: 'Ver reembolsos del canal', href: '/economics'}});
+      if (last.f >= 30 && sd > 0 && (rate - mean) / sd >= 2) alerts.push({id: `refund-anomaly:${ch.channel}:${pc.currency}`, severity: (rate - mean) / sd >= 3 ? 'alta' : 'media', title: `Reembolsos anómalos · ${ch.label} (${pc.currency})`, detail: `Tasa de ${monthLabel(last.m)}: ${pct(Math.round(rate * 10000))} frente a ${pct(Math.round(mean * 10000))} de promedio previo (${(rate - mean) / sd >= 10 ? 'más de 10' : ((rate - mean) / sd).toFixed(1)} desviaciones).`, kind: 'observed', how: `Se compara la tasa por conteo del último mes completo con la media y desviación de los ${prior.length} meses completos anteriores del mismo canal y moneda. Alerta si supera 2 desviaciones y hay al menos 30 reembolsos.`, cta: {label: 'Ver reembolsos del canal', href: economicsHref(pc.currency, prior[0]?.m ?? last.m, last.m)}});
     }
     // caída de pedidos
     const oa = pc.ordersAll.filter(x => completeMonths.includes(x.month));
@@ -179,7 +184,7 @@ export function buildCfoReport(input, options = {}) {
     }
   }
   const ncBps = ratioBps(noCurrency, totalRows);
-  if (ncBps !== null && ncBps >= 100) alerts.push({id: 'quality:no-currency', severity: 'media', title: 'Filas sin moneda diferidas', detail: `${int(noCurrency)} asientos (${pct(ncBps)}) no tienen moneda y quedan fuera de todos los importes.`, kind: 'observed', how: 'Asientos con moneda XXX ÷ asientos totales. Alerta desde 1 %.', cta: {label: 'Ver calidad de datos', href: '#calidad'}});
+  if (ncBps !== null && ncBps >= 100) alerts.push({id: 'quality:no-currency', severity: 'media', title: 'Filas sin moneda diferidas', detail: `${int(noCurrency)} registros del libro (${pct(ncBps)}) no tienen moneda y quedan fuera de todos los importes.`, kind: 'observed', how: 'Registros del libro con moneda XXX ÷ registros totales. Alerta desde 1 %.', cta: {label: 'Ver calidad de datos', href: '#calidad'}});
   const rnBps = ratioBps(refundsNoAmount, sumNum(refundsKnownCur, r => r.n));
   if (rnBps !== null && rnBps >= 500) alerts.push({id: 'quality:refund-no-amount', severity: 'media', title: 'Reembolsos sin importe', detail: `${int(refundsNoAmount)} reembolsos (${pct(rnBps)}) no traen importe: la cifra de reembolsos es un piso.`, kind: 'observed', how: 'Reembolsos con moneda sin importe ÷ reembolsos con moneda. Alerta desde 5 %.', cta: {label: 'Ver calidad de datos', href: '#calidad'}});
   const gap = channels.filter(ch => !refundChannels.has(ch));
@@ -238,12 +243,12 @@ function ols(xs, ys) {
 }
 
 export const GLOSSARY = Object.freeze([
-  {term: 'Observado', body: 'Cifra registrada en una fuente del ledger (pedidos registrados, reembolsos liquidados). Se calcula sumando filas reales.'},
+  {term: 'Observado', body: 'Cifra registrada en una fuente del libro económico (pedidos registrados, reembolsos liquidados). Se calcula sumando filas reales.'},
   {term: 'Estimado', body: 'Cifra calculada con un modelo (proyecciones, ingresos no contabilizados). Siempre lleva su método y nunca se mezcla con las observadas.'},
   {term: 'Inferido', body: 'Cifra obtenida vinculando registros con evidencia atestada (exposición por problema). No equivale a pérdida ni a ahorro y no es aditiva.'},
   {term: 'Cobertura', body: 'Cuántos registros tienen importe conocido frente a los elegibles. Un total con cobertura parcial es un piso, no el total.'},
   {term: 'Base económica', body: 'Qué mide un importe: precio de línea de marketplace, importe reembolsado o bruto de Shopify con impuestos y envío. Bases distintas no se suman ni se restan.'},
-  {term: 'Moneda', body: 'USD, CAD y MXN se muestran por separado. No hay tipos de cambio aprobados (economic_fx_versions está vacío), así que no hay conversión.'},
+  {term: 'Moneda', body: 'USD, CAD y MXN se muestran por separado. No hay tipos de cambio aprobados (la tabla de versiones de tipo de cambio está vacía), así que no hay conversión.'},
   {term: 'Tasa de reembolso', body: 'Reembolsos liquidados ÷ pedidos registrados del mismo mes por conteo, solo en canales con fuente de devoluciones. No usa importes porque las bases difieren.'},
   {term: 'Ticket promedio', body: 'Ingresos ÷ pedidos con importe conocido, de la misma moneda y base.'},
   {term: 'Mes completo', body: 'Mes cuyos datos llegan hasta su final. Las comparativas mes contra mes solo usan meses completos.'},

@@ -2,6 +2,7 @@
 import {SegmentedControl} from '../ui/segmented';
 import {FilterDrawer,type FilterChip} from '../ui/filter-drawer';
 import {SharedFilters} from './shared-filters';
+import {etiquetaBase} from '../../lib/legibilidad/jerga.mjs';
 import type {Scope} from '../../lib/workspace/contracts';
 type ViewScope=Scope & {basis?:string;exponent?:number};
 type Period='month'|'30d'|'90d'|'12m'|'custom';
@@ -22,7 +23,7 @@ export function ScopeBar({scope,onApply,onLatest,busy,extra,formId='scope-filter
  const base=()=>{const q=new URLSearchParams();q.set('date_start',start);q.set('date_end',end);q.set('currency',scope.currency);q.set('basis',scope.basis??'net');q.set('date_basis',scope.date_basis);q.set('timezone','UTC');if(scope.exponent!==undefined&&scope.exponent!==null)q.set('exponent',String(scope.exponent));scope.sku.forEach(s=>q.append('sku',s));scope.source.forEach(s=>q.append('source',s));if(scope.snapshot_id)q.set('snapshot_id',scope.snapshot_id);return q;};
  const pick=(v:Period)=>{if(v==='custom')return;const q=base();q.set('date_start',p[v][0]);q.set('date_end',p[v][1]);onApply(q);};
  const without=(key:'sku'|'source')=>{const q=base();q.delete(key);onApply(q);};
- const chips:FilterChip[]=[{key:'range',label:current==='custom'?`${start} → ${end}`:`${start} → ${end}`},{key:'cur',label:`${scope.currency} · base ${scope.basis??'net'}`}];
+ const chips:FilterChip[]=[{key:'range',label:current==='custom'?`${start} → ${end}`:`${start} → ${end}`},{key:'cur',label:`${scope.currency} · ${etiquetaBase(scope.basis??'net')}`}];
  if(scope.source.length)chips.push({key:'src',label:scope.source.map(s=>LABELS[s]??s).join(', '),onRemove:()=>without('source')});
  if(scope.sku.length)chips.push({key:'sku',label:scope.sku.length===1?'SKU '+scope.sku[0]:scope.sku.length+' SKU',onRemove:()=>without('sku')});
  const count=(current==='month'?0:1)+(scope.source.length?1:0)+(scope.sku.length?1:0)+(scope.currency!=='USD'?1:0)+((scope.basis??'net')!=='net'?1:0);

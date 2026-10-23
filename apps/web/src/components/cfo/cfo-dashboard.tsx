@@ -14,12 +14,12 @@ import {changeBps, int, monthLabel, pct, signedPct} from '../../../../../package
 import {MonthBars} from './month-bars';
 import {seriesPoints, type Measure} from './series';
 import './cfo.css';
+import {lineaDatosHasta} from '../../../../../packages/workspace-service/datos-hasta.mjs';
 
 export type ReportState = {status: 'ok'; report: CfoReport; synthetic: boolean; exposureStatus?: string} | {status: 'empty' | 'timeout'; synthetic?: boolean; summary?: {freshness: string; label: string | null; missingMonths?: string[] | null}};
 const MEASURES: ReadonlyArray<{value: Measure; label: string}> = [{value: 'ingresos', label: 'Ingresos'}, {value: 'pedidos', label: 'Pedidos'}, {value: 'reembolsos', label: 'Reembolsos'}, {value: 'tasa', label: 'Tasa de reembolso'}];
 const SEVERITY: Record<string, string> = {alta: 'Alta', media: 'Media', baja: 'Baja', info: 'Informativa'};
 const AFTER_SAVE = 'Los datos de demostración son sintéticos y no pertenecen a ninguna organización.';
-const when = (iso: string | null) => (iso ? new Intl.DateTimeFormat('es-MX', {day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC'}).format(new Date(iso)) : 'no informado');
 
 export function CfoDashboard({initial, query = '', organization}: {initial: ReportState; query?: string; organization?: string}) {
   const [state, setState] = useState<ReportState>(initial), [busy, setBusy] = useState(false), [error, setError] = useState('');
@@ -44,8 +44,8 @@ export function CfoDashboard({initial, query = '', organization}: {initial: Repo
   const header = <PageHeader eyebrow="CFO del negocio" title="CFO del negocio" description="Ingresos, reembolsos, mezcla por canal y calidad de datos, por moneda y sin mezclar bases. Cada cifra dice si es observada, estimada o inferida, y cómo se calculó." actions={actions} />;
   if (!report) return <div className="cf-page">{header}{error && <p className="state state-error" role="alert">{error}</p>}
     {state.status === 'timeout'
-      ? <Empty tone="bad" title="No disponible ahora" action={<Button icon={<Refresh />} loading={busy} onClick={() => void load()}>Reintentar</Button>}>La consulta acotada del ledger superó el tiempo permitido{state.status === 'timeout' && state.summary && ['absent', 'partial', 'unavailable'].includes(state.summary.freshness) ? ' y todavía no hay un resumen precomputado completo de los últimos 12 meses (pide a un operador refrescarlo)' : ''}. No se muestra ninguna cifra parcial como si fuera completa.</Empty>
-      : <Empty title="Sin asientos en el ledger" action={<LinkButton href="/economics" icon={<PfIcon name="database" />}>Ir a Gestión económica</LinkButton>}>Aún no hay pedidos ni reembolsos registrados para esta organización en los últimos 12 meses. Carga una fuente para ver el panel financiero.</Empty>}</div>;
+      ? <Empty tone="bad" title="No disponible ahora" action={<Button icon={<Refresh />} loading={busy} onClick={() => void load()}>Reintentar</Button>}>La consulta acotada del libro económico superó el tiempo permitido{state.status === 'timeout' && state.summary && ['absent', 'partial', 'unavailable'].includes(state.summary.freshness) ? ' y todavía no hay un resumen precomputado completo de los últimos 12 meses (pide a un operador refrescarlo)' : ''}. No se muestra ninguna cifra parcial como si fuera completa.</Empty>
+      : <Empty title="Sin registros en el libro económico" action={<LinkButton href="/economics" icon={<PfIcon name="database" />}>Ir a Gestión económica</LinkButton>}>Aún no hay pedidos ni reembolsos registrados para esta organización en los últimos 12 meses. Carga una fuente para ver el panel financiero.</Empty>}</div>;
 
   const block = report.perCurrency.find(c => c.currency === currency) ?? report.perCurrency[0];
   const kpis = report.kpis.find(k => k.currency === block.currency)!;
@@ -54,11 +54,11 @@ export function CfoDashboard({initial, query = '', organization}: {initial: Repo
     {error && <p className="state state-error" role="alert">{error}</p>}
     <div className="pf-statusbar" role="status">
       {ok?.synthetic && <Pill tone="warn">Datos sintéticos de demostración</Pill>}
-      <span>{organization ?? 'Organización'}</span><span>Corte de datos: <strong>{when(report.watermark)}</strong></span><span>Último mes completo: <strong>{report.lastComplete ? monthLabel(report.lastComplete) : 'ninguno'}</strong></span><span>{int(report.quality.totalRows)} asientos</span>
+      <span>{organization ?? 'Organización'}</span><span title="Cada fuente tiene su propia fecha de corte: las conversaciones y otras fuentes se informan en el Resumen y el Explorador."><strong>{lineaDatosHasta({libro:report.watermark}).replace(/\.$/,'')}</strong></span><span>Último mes completo: <strong>{report.lastComplete ? monthLabel(report.lastComplete) : 'ninguno'}</strong></span><span>{int(report.quality.totalRows)} registros del libro</span>
       {report.summary?.source === 'summary' && report.summary.label && <Pill tone={report.summary.freshness === 'fresh' ? 'ok' : 'warn'}>{report.summary.label}</Pill>}
       {!report.complete && <Pill tone="warn">Resultado truncado</Pill>}
     </div>
-    <div className="pf-banner" role="note"><PfIcon name="info" /><p><strong>USD, CAD y MXN no se suman ni se convierten.</strong> No hay tipos de cambio aprobados (economic_fx_versions está vacío), así que cada moneda se muestra aparte. Tampoco se restan reembolsos de ingresos: usan bases económicas distintas.</p></div>
+    <div className="pf-banner" role="note"><PfIcon name="info" /><p><strong>USD, CAD y MXN no se suman ni se convierten.</strong> No hay tipos de cambio aprobados (la tabla de versiones de tipo de cambio está vacía), así que cada moneda se muestra aparte. Tampoco se restan reembolsos de ingresos: usan bases económicas distintas.</p></div>
     <nav className="pf-anchors" aria-label="Secciones del panel">{[['resumen', 'Resumen'], ['alertas', 'Alertas'], ['tendencias', 'Tendencias'], ['mezcla', 'Mezcla por canal'], ['calidad', 'Calidad de datos'], ['exposicion', 'Exposición'], ['proyecciones', 'Proyecciones'], ['glosario', 'Glosario']].map(([id, label]) => <LinkButton key={id} href={'#' + id} size="sm">{label}</LinkButton>)}</nav>
 
     <Panel id="resumen" eyebrow={`Último mes completo · ${report.lastComplete ? monthLabel(report.lastComplete) : '—'}`} title="Resumen por moneda" actions={<Seg label="Moneda" value={block.currency} options={report.currencies.map(c => ({value: c, label: c}))} onChange={setCurrency} />}
@@ -84,7 +84,7 @@ export function CfoDashboard({initial, query = '', organization}: {initial: Repo
 
     <Panel id="glosario" eyebrow="Referencia" title="Glosario y cómo leer las cifras">
       <dl className="cf-glossary">{report.glossary.map(g => <div key={g.term}><dt>{g.term}</dt><dd>{g.body}</dd></div>)}</dl>
-      <p className="card-lead">{ok?.synthetic ? AFTER_SAVE : 'Las cifras provienen del ledger económico de esta organización (última revisión de cada asiento). Los exportes CSV y PDF contienen exactamente las mismas cifras que esta pantalla.'}</p>
+      <p className="card-lead">{ok?.synthetic ? AFTER_SAVE : 'Las cifras provienen del libro económico de esta organización (última revisión de cada registro). Los exportes CSV y PDF contienen exactamente las mismas cifras que esta pantalla.'}</p>
     </Panel>
   </div>;
 }
@@ -135,7 +135,7 @@ function Quality({report}: {report: CfoReport}) {
   const q = report.quality, figs = [q.figs.rows, q.figs.noCurrency, q.figs.ordersNoAmount, q.figs.refundsNoAmount, q.figs.toReview];
   const cols: Column<(typeof q.byChannel)[number]>[] = [
     {id: 'channel', header: 'Canal', cell: r => <>{r.label}{!r.hasRefundSource && <small className="pf-sub">Sin fuente de devoluciones</small>}</>, sort: r => r.label},
-    {id: 'rows', header: 'Asientos', align: 'right', cell: r => int(r.rows), sort: r => r.rows},
+    {id: 'rows', header: 'Registros del libro', align: 'right', cell: r => int(r.rows), sort: r => r.rows},
     {id: 'nc', header: 'Sin moneda', align: 'right', cell: r => int(r.noCurrency), sort: r => r.noCurrency},
     {id: 'oa', header: 'Pedidos sin importe', align: 'right', cell: r => int(r.ordersNoAmount), sort: r => r.ordersNoAmount},
     {id: 'ra', header: 'Reembolsos sin importe', align: 'right', cell: r => int(r.refundsNoAmount), sort: r => r.refundsNoAmount},

@@ -18,7 +18,7 @@
 .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:var(--sp-3);min-width:0}
 .pickRow{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp-3);align-items:end}
 @media(min-width:768px){.pickRow{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto}}
-.pre{margin:0;max-height:260px;overflow:auto;padding:var(--sp-3);border-radius:var(--r-inner);background:var(--ui-soft);font:400 11px/1.5 var(--font-mono);white-space:pre-wrap;overflow-wrap:anywhere}
+.pre{margin:0;max-height:260px;overflow:auto;padding:var(--sp-3);border-radius:var(--r-inner);background:var(--ui-soft);font:400 12px/1.5 var(--font-mono);white-space:pre-wrap;overflow-wrap:anywhere}
 .jobList{display:grid;align-items:start;gap:var(--sp-3);grid-template-columns:minmax(0,1fr)}
 @media(min-width:900px){.jobList{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .job{display:grid;gap:var(--sp-3);align-content:start}
@@ -33,7 +33,7 @@
 .members li{min-width:0}
 .factGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:var(--sp-3);margin:0}
 .factGrid div{display:grid;gap:2px;min-width:0}
-.factGrid dt{font-size:11px;color:var(--muted)}
+.factGrid dt{font-size:12px;color:var(--muted)}
 .factGrid dd{margin:0;font-size:var(--t-body);font-weight:600;overflow-wrap:anywhere}
 .tableNum{text-align:right;font-variant-numeric:tabular-nums}
 .actions{display:flex;flex-wrap:wrap;gap:var(--sp-2);align-items:center}

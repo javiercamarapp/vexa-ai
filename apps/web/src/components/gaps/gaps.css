@@ -50,7 +50,7 @@
 .gp-borrador pre{margin:0;white-space:pre-wrap;word-break:break-word;font:13px/1.5 var(--font-ui);max-height:260px;overflow:auto}
 /* Progreso del análisis */
 .gp-prog{display:grid;gap:6px;max-width:520px}
-.gp-prog-track{height:12px;border-radius:6px;background:var(--fg-track);overflow:hidden}
+.gp-prog-track{height:12px;border-radius:10px;background:var(--fg-track);overflow:hidden}
 .gp-prog-fill{display:block;height:100%;background:var(--gp-s1);min-width:2px}
 .gp-prog-fill[data-cero]{min-width:0}
 .gp-rank{font-variant-numeric:tabular-nums;color:var(--muted);font-size:var(--t-small)}

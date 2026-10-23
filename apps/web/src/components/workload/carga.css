@@ -8,7 +8,7 @@
 .cg-leyenda li{display:inline-flex;gap:6px;align-items:center}.cg-leyenda i{display:inline-block;inline-size:24px;block-size:14px;border-radius:3px;border:1px solid var(--mp-borde);background:var(--mp-c)}
 .cg-calor{max-width:100%}
 .workspace-content .cg-tabla{border-collapse:separate;border-spacing:2px;min-width:700px;inline-size:100%;font-variant-numeric:tabular-nums}
-.workspace-content .cg-tabla th,.workspace-content .cg-tabla td{padding:0;border:0;background:transparent;text-align:center;font:500 11px var(--font-ui)}
+.workspace-content .cg-tabla th,.workspace-content .cg-tabla td{padding:0;border:0;background:transparent;text-align:center;font:500 12px var(--font-ui)}
 .workspace-content .cg-tabla thead th.cg-h{color:var(--muted);padding-block:4px;inline-size:26px}
 .workspace-content .cg-tabla tbody th{text-align:left;padding-inline:6px;color:var(--ui-secondary);font-weight:600;font-size:12px;white-space:nowrap}
 .workspace-content .cg-tabla td{block-size:30px;border-radius:5px;background:var(--mp-c);color:var(--mp-tx);border:1px solid var(--mp-borde)}

@@ -25,7 +25,7 @@
 .workspace-content .import-mapping { padding:24px; grid-template-columns:repeat(3,minmax(0,1fr)); }
 .import-mapping>label:first-of-type { grid-column:1/-1; max-width:440px; }
 .task-record-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; padding:0; list-style:none; }
-.workspace-content .task-record-list button { text-align:left; width:100%; padding:14px 16px; border-radius:12px; border-color:var(--ui-border); background:var(--ui-surface); color:var(--ui-secondary); overflow-wrap:anywhere; }
+.workspace-content .task-record-list button { text-align:left; width:100%; padding:14px 16px; border-radius:16px; border-color:var(--ui-border); background:var(--ui-surface); color:var(--ui-secondary); overflow-wrap:anywhere; }
 .connections-page .task-columns { grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); }
 .connection-health>article { overflow-wrap:anywhere; }
 .workspace-content .connection-health dl { display:grid; grid-template-columns:minmax(100px,.9fr) minmax(0,1.1fr); gap:12px 20px; padding:16px 0; border-block:1px solid var(--ui-border); }

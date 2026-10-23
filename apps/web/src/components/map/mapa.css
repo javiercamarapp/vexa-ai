@@ -8,7 +8,7 @@
 .mp-barra{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-3) var(--sp-5);margin-bottom:var(--sp-4)}
 .mp-seg{display:inline-flex;border:1px solid var(--ui-border);border-radius:999px;padding:3px;background:var(--ui-soft)}
 .workspace-content .mp-seg button{box-sizing:border-box;min-height:34px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:var(--ui-secondary);font:600 13px var(--font-ui);display:inline-flex;gap:8px;align-items:center;cursor:pointer;box-shadow:none}
-.workspace-content .mp-seg button small{font:500 11px var(--font-ui);color:var(--muted);font-variant-numeric:tabular-nums}
+.workspace-content .mp-seg button small{font:500 12px var(--font-ui);color:var(--muted);font-variant-numeric:tabular-nums}
 .workspace-content .mp-seg button[aria-pressed=true]{background:var(--ink);color:var(--ui-surface)}
 .workspace-content .mp-seg button[aria-pressed=true] small{color:inherit;opacity:.75}
 .mp-seg button:focus-visible{outline:3px solid var(--ui-focus);outline-offset:2px}

@@ -11,7 +11,7 @@
 .cf-mixcur h3{margin:0 0 var(--sp-2);font-size:14px}
 .cf-mixlist{list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-3)}
 .cf-mixlist li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--sp-1) var(--sp-3);align-items:center;font-size:13px}
-.cf-mixlist li small{grid-column:1/-1;color:var(--muted);font-size:11px}
+.cf-mixlist li small{grid-column:1/-1;color:var(--muted);font-size:12px}
 .cf-mixbar{grid-column:1/-1;grid-row:2;height:8px;border-radius:999px;background:var(--cov-track);overflow:hidden;display:block}
 .cf-mixbar>span{display:block;height:100%;border-radius:0 4px 4px 0;background:var(--kind-observed)}
 .cf-mixlist li strong{justify-self:end;font-variant-numeric:tabular-nums}

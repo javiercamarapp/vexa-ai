@@ -1,5 +1,5 @@
 import type {Metric,RecordView} from '../workspace/contracts';
-export type FilaProblema={id:string;titulo:string;categoria:string;clave:string;conversaciones:number|null;severidad:string|null;critico:boolean|null;citas:number|null;recomendaciones:number|null;ejemplo:string|null;importe:(Metric&{coverage?:{known_n:number;eligible_n:number};missing_reasons?:string[]})|null;metrica?:Metric|null;grupo?:{n:number;de:number}};
+export type FilaProblema={id:string;titulo:string;categoria:string;clave:string;conversaciones:number|null;severidad:string|null;critico:boolean|null;citas:number|null;recomendaciones:number|null;ejemplo:string|null;importe:(Metric&{coverage?:{known_n:number;eligible_n:number};missing_reasons?:string[]})|null;metrica?:Metric|null;registro?:RecordView;grupo?:{n:number;de:number}};
 export type CategoriaProblemas={clave:string;nombre:string;grupos:number;conversaciones:number|null;criticos:number|null;filas:FilaProblema[]};
 export type CatalogoResumen={status:'ok';total:number;rows:{id:string;label:string;conversations:number;severity:string|null;critical:boolean|null;citations:number|null;recommendations:number|null;quote:string|null}[];parts:{signals:'ok'|'unavailable';severity:'ok'|'unavailable';quotes:'ok'|'unavailable'}};
 export type ColumnaOrden='categoria'|'conversaciones'|'severidad'|'critico'|'citas'|'recomendaciones'|'importe';

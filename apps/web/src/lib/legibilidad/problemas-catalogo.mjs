@@ -18,7 +18,7 @@ export function filasDesdeCatalogo(catalogo){
 export function filasDesdeItems(items){
  return (items??[]).map(i=>{
   const inc=i.details?.find(d=>/^Incidencias/.test(d.label))?.value,n=inc!==undefined&&/^\d+$/.test(String(inc))?Number(inc):null,m=primaria(i);
-  return {...base(i.id,i.title),conversaciones:n,severidad:null,critico:null,citas:Array.isArray(i.evidence)?i.evidence.length:null,recomendaciones:null,ejemplo:null,importe:exacto(m)?m:null,metrica:m??null};
+  return {...base(i.id,i.title),conversaciones:n,severidad:null,critico:null,citas:Array.isArray(i.evidence)?i.evidence.length:null,recomendaciones:null,ejemplo:null,importe:exacto(m)?m:null,metrica:m??null,registro:i};
  });
 }
 export const hayImporte=filas=>filas.some(f=>f.importe!==null&&f.importe!==undefined);

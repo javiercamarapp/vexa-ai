@@ -17,6 +17,7 @@ import {EmptyState} from '../ui/empty-state';
 import {SkeletonCards} from '../ui/skeletons';
 import {WaitStatus} from '../ui/wait-status';
 import {ESPERA} from '../../lib/legibilidad/espera.mjs';
+import {etiquetaCategoria} from '../../lib/legibilidad/categorias.mjs';
 import {nf} from '../ui/format';
 import css from './panel.module.css';
 type Filters=Scope & {basis:string;exponent?:number};
@@ -26,7 +27,7 @@ function initialScope(value:string):Filters{const q=cleanQuery(value),now=new Da
 function pinnedQuery(scope:Scope,snapshot:string,hash:string){const q=new URLSearchParams({date_start:scope.date_start.slice(0,10),date_end:scope.date_end.slice(0,10),timezone:scope.timezone,date_basis:scope.date_basis,currency:scope.currency,basis:scope.basis??'net',snapshot_id:snapshot,scope_hash:hash});if(scope.exponent!==null&&scope.exponent!==undefined)q.set('exponent',String(scope.exponent));for(const sku of scope.sku)q.append('sku',sku);for(const source of scope.source)q.append('source',source);return q;}
 function failure(status:number){return status===401||status===403?'Tu acceso cambió. Vuelve a iniciar sesión o selecciona una organización autorizada.':status===404?'No hay una recomendación o evidencia autorizada para este alcance.':status===409?'La versión o la evidencia cambió. Actualiza y revisa la propuesta antes de continuar.':status===400?'Revisa los campos y el alcance de la solicitud.':'No se pudo verificar la operación. Conserva tu borrador y reintenta; no se confirma ningún cambio.';}
 const PRIORITY={critical:{label:'Revisión humana urgente',sev:'high',tone:'bad'},high:{label:'Prioridad alta',sev:'medium',tone:'warn'},normal:{label:'Prioridad normal',sev:'low',tone:'ok'}} as const;
-const CAUSAL:Record<string,string>={hypothesis:'Hipótesis',candidate:'Candidata',supported:'Con respaldo',unsupported:'Sin respaldo',insufficient:'Evidencia insuficiente'};
+const CAUSAL:Record<string,string>={unassessed:'Sin evaluar',confirmed:'Confirmada',retracted:'Retractada',hypothesis:'Hipótesis',candidate:'Candidata',supported:'Con respaldo',unsupported:'Sin respaldo',insufficient:'Evidencia insuficiente'};
 const RANK={critical:0,high:1,normal:2} as const;
 function RecommendationCard({item,members,busy,conflict,operate,first}:{item:Recommendation;members:RecommendationList['members'];busy:boolean;conflict:boolean;operate:Operation;first:boolean}){
  const [action,setAction]=useState(item.action),[conditions,setConditions]=useState(item.preconditions.join('\n')),[rationale,setRationale]=useState(item.rationale),[owner,setOwner]=useState(item.ownerId??''),[reason,setReason]=useState(''),[stateReason,setStateReason]=useState(''),[evidence,setEvidence]=useState(false),[edit,setEdit]=useState(false);
@@ -35,8 +36,8 @@ function RecommendationCard({item,members,busy,conflict,operate,first}:{item:Rec
  const evidenceQuery=pinnedQuery(item.scope,item.snapshotId,item.scopeHash);evidenceQuery.set('detail_hash',item.detailHash);
  const pr=PRIORITY[item.priority]??PRIORITY.normal,dismissed=item.status==='dismissed',highlight=first&&!dismissed;
  const close=(ok:Promise<boolean>)=>{void ok.then(saved=>{if(saved)setEdit(false);});};
- return <article className="card insight" aria-label={'Recomendación: '+item.title} data-severity={pr.sev} data-highlight={highlight||undefined} data-dismissed={dismissed||undefined}>
-  <header className="insight-head"><span className="insight-icon" aria-hidden="true"><Icon name={highlight?'target':'sparkle'} size={16}/></span><div className="insight-titles"><span className="insight-eyebrow">{highlight?'Hacer primero':dismissed?'Descartada':'Recomendación'}</span><h3>{item.title}</h3></div><StatusChip tone={pr.tone}>{pr.label}</StatusChip></header>
+ return <article className="card insight" aria-label={'Recomendación: '+etiquetaCategoria(item.title)} data-severity={pr.sev} data-highlight={highlight||undefined} data-dismissed={dismissed||undefined}>
+  <header className="insight-head"><span className="insight-icon" aria-hidden="true"><Icon name={highlight?'target':'sparkle'} size={16}/></span><div className="insight-titles"><span className="insight-eyebrow">{highlight?'Hacer primero':dismissed?'Descartada':'Recomendación'}</span><h3>{etiquetaCategoria(item.title)}</h3></div><StatusChip tone={pr.tone}>{pr.label}</StatusChip></header>
   <p className="insight-sentence"><strong>{item.action}</strong></p>
   {item.preconditions.length>0&&<ul className="insight-signals" aria-label="Condiciones para considerar esta acción">{item.preconditions.slice(0,3).map((v,i)=><li key={i}><Icon name="check" size={14}/><span>{v}</span></li>)}</ul>}
   <div className={css.chips}><StatusChip tone={dismissed?'muted':'info'}>{dismissed?'Descartada':'Propuesta'} · v{item.version}</StatusChip><span className="chip">Esfuerzo: revisión diagnóstica</span><span className="chip">Estado causal: {CAUSAL[item.causalState]??item.causalState}</span><span className="chip">Responsable: {item.ownerId?'asignado':'sin asignar'}</span></div>
@@ -47,7 +48,7 @@ function RecommendationCard({item,members,busy,conflict,operate,first}:{item:Rec
    {item.canMutate&&item.status==='proposed'&&<Button variant="primary" size="sm" disabled={locked||item.drafts.length>0} onClick={create}>Crear intervención borrador</Button>}
   </footer>
   {!item.canMutate&&<p className="insight-sentence">Esta versión es de consulta con tus permisos y la evidencia vigentes.</p>}
-  <Drawer open={evidence} onClose={()=>setEvidence(false)} width={560} title={item.title} subtitle="Evidencia y contexto de la recomendación" footer={<LinkButton href={'/problems/'+item.problemId+'?'+evidenceQuery.toString()} size="sm" variant="primary" icon={<Arrow/>}>Ver problema y evidencia</LinkButton>}>
+  <Drawer open={evidence} onClose={()=>setEvidence(false)} width={560} title={etiquetaCategoria(item.title)} subtitle="Evidencia y contexto de la recomendación" footer={<LinkButton href={'/problems/'+item.problemId+'?'+evidenceQuery.toString()} size="sm" variant="primary" icon={<Arrow/>}>Ver problema y evidencia</LinkButton>}>
    <div className="stack">
     <p className="card-lead">{item.rationale}</p>
     <p className="card-lead">Esta propuesta no demuestra causalidad ni garantiza un ahorro.</p>
@@ -57,7 +58,7 @@ function RecommendationCard({item,members,busy,conflict,operate,first}:{item:Rec
     <details><summary>{'Historial de versiones ('+item.history.length+')'}</summary><ol>{item.history.map(v=><li key={v.version}><strong>v{v.version} · {v.status==='dismissed'?'Descartada':'Propuesta'}</strong><p>{v.action}</p><p>{v.reason}</p><p>Responsable: {v.ownerId??'Sin asignar'} · Registrado por {v.actorId} · <time>{v.createdAt}</time></p></li>)}</ol></details>
    </div>
   </Drawer>
-  {item.canMutate&&<Drawer open={edit} onClose={()=>setEdit(false)} width={560} title="Editar o gestionar" subtitle={item.title}>
+  {item.canMutate&&<Drawer open={edit} onClose={()=>setEdit(false)} width={560} title="Editar o gestionar" subtitle={etiquetaCategoria(item.title)}>
    <div className="stack">
     <section><h3>Revisar la propuesta</h3><form className="action-form" aria-label="Revisar recomendación" onSubmit={e=>{e.preventDefault();if(!locked)close(operate(endpoint,{operation:'revise',expectedVersion:item.version,action,preconditions:conditions.split(/\r?\n/).map(v=>v.trim()).filter(Boolean),rationale,ownerId:owner||null,reason}));}}>
      <label htmlFor={item.id+'-action'}>Acción propuesta</label><textarea id={item.id+'-action'} required minLength={20} maxLength={2000} value={action} onChange={e=>setAction(e.target.value)} disabled={busy}/>

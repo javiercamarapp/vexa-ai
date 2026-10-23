@@ -145,4 +145,4 @@
 .agente-composer textarea:focus-visible{outline:0}
 
 .chat-theme select{font:inherit;font-size:12px;padding:4px 6px;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-surface);color:var(--ink);max-width:170px}
-@media(max-width:639px){.chat-bar-end .chat-theme{display:block}}
+@media(max-width:900px){.chat-theme select{width:84px}.chat-bar-menu{flex:none}.chat-bar-menu .btn-label{white-space:nowrap}}

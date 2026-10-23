@@ -207,7 +207,7 @@ test('tiempo transcurrido de una espera',()=>{
 });
 test('textos de espera: dicen qué se verifica y que puede tardar, sin prometer una duración exacta',()=>{
  for(const e of Object.values(ESPERA)){assert.ok(e.titulo.endsWith('…'));assert.match(e.detalle,/puede tardar/i);}
- assert.match(ESPERA.recomendaciones.detalle,/hasta 2 minutos/);
+ assert.match(ESPERA.recomendaciones.detalle,/se vuelve a verificar al abrir/);assert.match(ESPERA.actualizando.detalle,/cifra anterior ya no es el resultado/);
  assert.match(ESPERA.generarBrief.detalle,/2–3 minutos; no cierres esta pestaña/);
 });
 test('las vistas con espera larga usan WaitStatus y el aviso de señales críticas es neutro',()=>{

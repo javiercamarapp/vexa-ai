@@ -7,10 +7,10 @@ export function tiempoTranscurrido(segundos){
  return r===0?`${m} min`:`${m} min ${String(r).padStart(2,'0')} s`;
 }
 export const ESPERA={
- recomendaciones:{titulo:'Verificando la evidencia de cada problema…',detalle:'La primera carga puede tardar hasta 2 minutos.'},
+ recomendaciones:{titulo:'Cargando las recomendaciones guardadas…',detalle:'La evidencia se verificó al guardar y se vuelve a verificar al abrir cada una; esa verificación puede tardar.'},
  explorador:{titulo:'Preparando las citas verificables…',detalle:'La primera carga puede tardar; verificamos solo los problemas que ves. Mostramos cuánto llevas.'},
  evidencia:{titulo:'Verificando la evidencia…',detalle:'Se comprueba cada cita contra su conversación vigente antes de mostrarla; puede tardar unos segundos.'},
- actualizando:{titulo:'Actualizando la lista…',detalle:'Se verifican solo los problemas de esta página; puede tardar unos segundos.'},
+ actualizando:{titulo:'Actualizando la lista…',detalle:'Se verifican solo los problemas de esta página. Puede tardar más de un minuto en consultas pesadas: mostramos cuánto llevas, y la cifra anterior ya no es el resultado.'},
  resumen:{titulo:'Verificando el corte publicado…',detalle:'La primera carga puede tardar más de lo habitual.'},
  problemas:{titulo:'Verificando los problemas y su evidencia…',detalle:'La primera carga puede tardar más de lo habitual.'},
  brief:{titulo:'Verificando el brief…',detalle:'La primera carga puede tardar más de lo habitual.'},

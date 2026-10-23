@@ -25,7 +25,6 @@ export function FugaTarjeta({data,query}:{data?:FugaVista|null;query?:string}){
     {per&&<p className="fg-meta"><b>{per.etiqueta}</b>{per.ventanas.length>0&&<> · {per.ventanas.join(' · ')}</>}</p>}
     {per?.nota&&<p className="fg-meta" role="note">{per.nota}</p>}
     <p className="fg-meta">{usd(v.titular.usdNetoMinor)} sin cancelados · ventanas parciales</p>
-    {per?.acumulado?.distinto&&<p className="fg-meta">{per.acumulado.texto}</p>}
     {fraseConcentracion(v)&&<p className="fg-frase">{fraseConcentracion(v)}</p>}
     <div className="fg-tarjeta-pie"><LinkButton href="/refunds" variant="ghost" size="sm" icon={<Arrow/>}>Ver el detalle</LinkButton><KindBadge kind="observed"/></div>
    </>}

@@ -10,7 +10,7 @@ export const mesLargo: (m: string) => string;
 export const dia: (iso: string | null | undefined) => string | null;
 export function fraseConcentracion(v: FugaVista | null): string | null;
 export function lineaCobertura(v: FugaVista | null): string;
-export function periodoDelTitular(v: FugaVista | null): {rango: string | null; etiqueta: string; ventanas: string[]; nota: string | null; pedido: boolean; acumulado: {texto: string; usdBrutoMinor: string; distinto: boolean} | null} | null;
+export function periodoDelTitular(v: FugaVista | null): {rango: string | null; etiqueta: string; ventanas: string[]; nota: string | null; pedido: boolean; acumulado: {texto: string; usdBrutoMinor: string; distinto: boolean} | null; acumuladoOmitido: boolean} | null;
 export function lineaVentanas(v: FugaVista | null): string;
 export function frasesCambios(v: FugaVista | null): {clave: string; texto: string}[];
 export function excluidosTexto(v: FugaVista | null): string[];

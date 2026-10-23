@@ -58,7 +58,8 @@ export function lineaVentanas(v) {
 /**
  * Periodo del titular, SIEMPRE explícito: el rango real de los reembolsos contados («del 1 ago 2026 al 20 sep 2026»), la ventana de cada canal
  * («Walmart desde 4 jul 2026») y, si el periodo pedido no coincide con lo que hay en los datos, una línea que lo dice.
- * `acumulado` es todo el libro (no respeta el periodo) y va rotulado aparte.
+ * El `acumulado` (todo el libro) NO se muestra junto a un periodo elegido: dos titulares con ventanas distintas en la misma pantalla se contradicen. Con filtro activo
+ * el modelo devuelve `acumulado:null` y `acumuladoOmitido:true`; el enlace «Ver todo el libro» quita el filtro. Sin filtro el acumulado es el mismo titular y tampoco se repite.
  */
 export function periodoDelTitular(v) {
   const t = v?.titular; if (!t || t.status !== 'ok') return null;
@@ -74,8 +75,8 @@ export function periodoDelTitular(v) {
     else if (cortoInicio || cortoFin) nota = `El periodo elegido es ${pedidoTxt}, pero los reembolsos cargados cubren ${rango}.`;
   }
   const a = v.acumulado?.status === 'ok' ? v.acumulado : null;
-  const acumulado = a ? {texto: `Acumulado disponible (todo el libro${a.rango ? `, del ${diaLargo(a.rango.desde)} al ${diaLargo(a.rango.hasta)}` : ''}): ${usd(a.usdBrutoMinor)} USD brutos${a.usdNetoMinor!=null?` (${usd(a.usdNetoMinor, {decimals: true})} sin cancelados)`:''} en ${num(a.n)} reembolsos. Mezcla ventanas distintas por canal; no es el total de un periodo.`, usdBrutoMinor: a.usdBrutoMinor, distinto: Boolean(pedido) && a.usdBrutoMinor !== t.usdBrutoMinor} : null;
-  return {rango, etiqueta: rango ? `Reembolsos ${rango}` : 'Periodo de los reembolsos no disponible', ventanas, nota, pedido: Boolean(pedido), acumulado};
+  const acumulado = a && !pedido ? {texto: `Acumulado disponible (todo el libro${a.rango ? `, del ${diaLargo(a.rango.desde)} al ${diaLargo(a.rango.hasta)}` : ''}): ${usd(a.usdBrutoMinor)} USD brutos${a.usdNetoMinor!=null?` (${usd(a.usdNetoMinor, {decimals: true})} sin cancelados)`:''} en ${num(a.n)} reembolsos. Mezcla ventanas distintas por canal; no es el total de un periodo.`, usdBrutoMinor: a.usdBrutoMinor, distinto: false} : null;
+  return {rango, etiqueta: rango ? `Reembolsos ${rango}` : 'Periodo de los reembolsos no disponible', ventanas, nota, pedido: Boolean(pedido), acumulado, acumuladoOmitido: Boolean(pedido && a)};
 }
 
 /** Frases de «Qué cambió» por plantilla; solo meses completos. */

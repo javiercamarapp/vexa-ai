@@ -23,9 +23,10 @@ test('periodo del titular: rango real, ventana por canal, nota si el periodo ped
   assert.equal(p.etiqueta, 'Reembolsos del 3 ago 2026 al 18 sep 2026');
   assert.deepEqual(p.ventanas, ['Walmart desde 3 ago 2026', 'Shopify desde 10 ago 2026']);
   assert.match(p.nota, /^El periodo elegido es 1 ago 2026 al 20 sep 2026, pero los reembolsos cargados cubren del 3 ago 2026 al 18 sep 2026\./);
-  assert.match(p.acumulado.texto, /^Acumulado disponible \(todo el libro, del 1 oct 2025 al 2 oct 2026\): \[omitido: dato de cliente] USD brutos \(\[omitido: dato de cliente]\.84 sin cancelados\) en 6,405 reembolsos\./); assert.equal(p.acumulado.distinto, true);
+  assert.equal(p.acumulado, null, 'con periodo elegido no hay segundo titular con otra ventana'); assert.equal(p.acumuladoOmitido, true);
   const sin = M.periodoDelTitular({...w, scope: {dateStart: null, dateEnd: null}});
-  assert.equal(sin.nota, null); assert.equal(sin.pedido, false);
+  assert.equal(sin.nota, null); assert.equal(sin.pedido, false); assert.equal(sin.acumuladoOmitido, false);
+  assert.match(sin.acumulado.texto, /\[omitido: dato de cliente] USD brutos \(\[omitido: dato de cliente]\.84 sin cancelados\) en 6,405 reembolsos\./);
   assert.match(M.periodoDelTitular({...w, titular: {...t, rango: null}}).nota, /No hay reembolsos cargados en el periodo elegido/);
   assert.equal(M.periodoDelTitular({titular: {status: 'unavailable'}}), null);
 });

@@ -40,3 +40,8 @@ test('h1 con tracking -0.02em y cifras tabulares globales', () => {
   const g = css('app/globals.css');
   assert.match(g, /\.workspace-shell h1 \{[^}]*letter-spacing:-\.02em/); assert.match(g, /font-variant-numeric:tabular-nums/);
 });
+test('titular de Fuga: cifra en tinta plena (nunca gris), 40-56 px y peso 600', () => {
+  const css = readFileSync(join(src, 'components/refunds/fuga.css'), 'utf8');
+  const r = /\.workspace-content \.fg-big\{([^}]*)\}/.exec(css)[1];
+  assert.match(r, /color:var\(--ink\)/); assert.match(r, /font:600 clamp\(40px,6vw,56px\)/);
+});

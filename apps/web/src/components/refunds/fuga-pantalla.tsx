@@ -59,6 +59,7 @@ export function FugaPantalla({organization,embebido=false}:{organization?:string
       <p className="fg-meta">{lineaCobertura(v)}</p>
       <p className="fg-meta">{lineaVentanas(v)}</p>
       {per?.acumulado&&<p className="fg-meta">{per.acumulado.texto}</p>}
+      {per?.acumuladoOmitido&&<p className="fg-meta">El acumulado de todo el libro no se muestra junto a un periodo elegido. <a href="/refunds">Ver todo el libro</a></p>}
      </>}
    </section>
 

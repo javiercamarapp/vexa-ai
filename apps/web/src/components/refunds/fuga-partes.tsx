@@ -38,7 +38,7 @@ export function TablaSkus({v,abierto,onAbrir,onPaquete}:{v:FugaVista;abierto:str
  return <div>
   <LeyendaCanales canales={canales}/>
   <div className="fg-tabla-wrap" role="region" aria-label="Los 10 SKUs que concentran el dinero devuelto" tabIndex={0}>
-   <table className="fg-tabla">
+   <table className="fg-tabla" aria-label="Los 10 SKUs con más dinero devuelto">
     <thead><tr><th scope="col" className="fg-n fg-hide-sm">#</th><th scope="col">SKU</th><th scope="col" className="fg-bar-col">Dinero devuelto (USD bruto)</th><th scope="col" className="fg-r fg-hide-sm">Reembolsos</th><th scope="col" className="fg-r fg-hide-sm">Líneas vendidas</th><th scope="col" className="fg-r fg-hide-sm">% acumulado</th></tr></thead>
     <tbody>{top.map(r=>{
      const abre=abierto===r.sku,rid=`${uid}-${r.pos}`,usdN=Number(BigInt(r.usdBrutoMinor)/100n);
@@ -88,7 +88,7 @@ export function Expediente({v,sku,lineasOk,onPaquete}:{v:FugaVista;sku:string;li
    <Lista titulo="Qué se sabe" items={sabe}/>
    <Lista titulo="Qué no se sabe" tono="no" items={NO_SE_SABE.slice(0,4)}/>
   </div>
-  {meses.length>0&&<details className="fg-mini"><summary>Reembolsos por mes y canal</summary><table><thead><tr><th scope="col">Mes</th><th scope="col">Canal</th><th scope="col" className="fg-r">Reembolsos</th><th scope="col" className="fg-r">USD bruto</th></tr></thead>
+  {meses.length>0&&<details className="fg-mini"><summary>Reembolsos por mes y canal</summary><table aria-label="Reembolsos por mes y canal"><thead><tr><th scope="col">Mes</th><th scope="col">Canal</th><th scope="col" className="fg-r">Reembolsos</th><th scope="col" className="fg-r">USD bruto</th></tr></thead>
    <tbody>{meses.map(m=><tr key={m.mes+m.canal}><td>{mesCorto(m.mes)}</td><td>{NOMBRE[m.canal]??m.canal}</td><td className="fg-r">{num(m.n)}</td><td className="fg-r">{usd(m.usdBrutoMinor)}</td></tr>)}</tbody></table></details>}
  </div>;
 }
@@ -106,7 +106,7 @@ export function SeccionTracker({v,onCola,onReintentar}:{v:FugaVista;onCola:()=>v
   <div className="fg-seg" role="img" aria-label={orden2.map(k=>`${ESTADO_TXT[k]} ${e[k]}`).join(', ')}>{orden2.map(k=><i key={k} style={{flexGrow:e[k],background:ESTADO_COLOR[k]}} title={`${ESTADO_TXT[k]}: ${e[k]}`}/>)}</div>
   <ul className="fg-leyenda fg-leyenda-n">{orden2.map(k=><li key={k}><i style={{background:ESTADO_COLOR[k]}}/>{ESTADO_TXT[k]} <b>{num(e[k])}</b></li>)}</ul>
   <div className="fg-tabla-wrap" role="region" aria-label="Solicitudes de reembolso por motivo" tabIndex={0}>
-   <table className="fg-tabla fg-tabla-t"><thead><tr><th scope="col">Motivo</th><th scope="col" className="fg-r">Solicitudes</th><th scope="col" className="fg-r">Reembolsadas</th><th scope="col" className="fg-r">Negadas</th><th scope="col" className="fg-r">Monto (USD supuesto)</th></tr></thead>
+   <table className="fg-tabla fg-tabla-t" aria-label="Estado de los reembolsos del Tracker por motivo"><thead><tr><th scope="col">Motivo</th><th scope="col" className="fg-r">Solicitudes</th><th scope="col" className="fg-r">Reembolsadas</th><th scope="col" className="fg-r">Negadas</th><th scope="col" className="fg-r">Monto (USD supuesto)</th></tr></thead>
     <tbody>{t.porMotivo.map(m=><tr key={m.motivo}><th scope="row">{m.motivo}</th><td className="fg-r">{num(m.n)}</td><td className="fg-r">{num(m.reembolsados)}</td><td className="fg-r">{num(m.negados)}</td><td className="fg-r">{usd(m.montoMinor)}{m.sinMonto>0&&<small className="fg-sm"> · {num(m.sinMonto)} sin monto</small>}</td></tr>)}</tbody></table>
   </div>
   <div className="fg-fila-acc"><Button size="sm" icon={<Download/>} onClick={onCola}>Cola de reembolsos vencidos o negados</Button><span className="fg-sm">{num(t.negados)} filas en CSV, sin nombres.</span></div>

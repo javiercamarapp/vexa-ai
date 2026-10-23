@@ -24,7 +24,7 @@ function Canal({canal,todos,max}:{canal:string;todos:MesIntensidad[];max:number}
   </div>
   {todos.length>meses.length&&<p className="fg-sm">No se dibuja {mesCorto(todos.at(-1)!.mes)}: es el último mes con datos y puede estar cortado.</p>}
   <details className="fg-mini"><summary>Ver los números de {NOMBRE[canal]}</summary>
-   <table><thead><tr><th scope="col">Mes</th><th scope="col" className="fg-r">Reembolsos</th><th scope="col" className="fg-r">Líneas</th><th scope="col" className="fg-r">Intensidad</th><th scope="col">Calidad</th></tr></thead>
+   <table aria-label="Reembolsos y líneas por mes y canal"><thead><tr><th scope="col">Mes</th><th scope="col" className="fg-r">Reembolsos</th><th scope="col" className="fg-r">Líneas</th><th scope="col" className="fg-r">Intensidad</th><th scope="col">Calidad</th></tr></thead>
     <tbody>{todos.map(m=><tr key={m.mes}><td>{mesCorto(m.mes)}</td><td className="fg-r">{num(m.reembolsos)}</td><td className="fg-r">{num(m.lineas)}</td><td className="fg-r">{pct(m.intensidadPct)}</td><td>{m.calidad==='completo'?'Completo':m.calidad==='parcial'?'Parcial':'Posible hueco'}</td></tr>)}</tbody></table></details>
  </div>;
 }

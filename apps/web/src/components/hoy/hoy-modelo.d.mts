@@ -7,8 +7,8 @@ export type HoyVista = {titular: {texto: string; periodo: string | null; clase: 
   barra: {observado: string; observadoEtiqueta: string; recuperable: null; recuperableEtiqueta: string; recuperableNota: string; href: string} | null;
   siguiente: {titulo: string; detalle: string; cta: string; href: string; secundaria: {texto: string; href: string}} | null; cargando: boolean; vacio: boolean; ctxComo: unknown};
 export function estadoDe(data: unknown, o?: {busy?: boolean; error?: string; status?: number}): EstadoFuente;
-export function comoSeCalculo(id: string, ctx?: any): EntradaComo | null;
-export function atencionDe(a: {fuga?: any; carga?: any}): AtencionHoy[];
-export function barraDe(a: {fuga?: any}): HoyVista['barra'];
-export function siguienteDe(a: {fuga?: any}): HoyVista['siguiente'];
-export function armarHoy(a: {fuga?: any; carga?: any; cfo?: any; estado: {fuga: EstadoFuente; carga: EstadoFuente; cfo: EstadoFuente}; ahora?: number}): HoyVista;
+export function comoSeCalculo(id: string, ctx?: unknown): EntradaComo | null;
+export function atencionDe(a: {fuga?: unknown; carga?: unknown}): AtencionHoy[];
+export function barraDe(a: {fuga?: unknown}): HoyVista['barra'];
+export function siguienteDe(a: {fuga?: unknown}): HoyVista['siguiente'];
+export function armarHoy(a: {fuga?: unknown; carga?: unknown; cfo?: unknown; estado: {fuga: EstadoFuente; carga: EstadoFuente; cfo: EstadoFuente}; ahora?: number}): HoyVista;

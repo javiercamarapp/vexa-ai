@@ -82,7 +82,7 @@ function kpiRespuestas({carga, estado, ahora}) {
 }
 
 /** Titular narrativo con periodo: una frase con una cifra de dinero y lo que significa. */
-function titularDe({fuga, cfo, kpis}) {
+function titularDe({fuga, kpis}) {
   const t = fuga?.titular;
   if (ok(t)) {
     const top10 = t.top10?.pct != null && fuga.skus?.top?.length ? ` ${fuga.skus.top.length} SKUs explican el ${pct(t.top10.pct)}.` : '';
@@ -104,7 +104,7 @@ export function atencionDe({fuga, carga}) {
   if (ok(carga?.sla) && carga.sla.abiertosSinRespuesta24h > 0) c.push({id: 'sin-respuesta', titulo: `${num(carga.sla.abiertosSinRespuesta24h)} hilos sin respuesta de más de 24 h`, detalle: 'Riesgo de reclamo en la plataforma · conteo de HubSpot', dineroMinor: 0, dinero: null, href: '/workload', clase: 'observed'});
   const pico = ok(carga?.carga) ? carga.carga.horasPico?.[0] : null;
   if (pico) c.push({id: 'pico', titulo: `Pico de carga: ${horaTxtSeguro(pico.hora)}`, detalle: `${pico.promedioPorDia} conversaciones por día en promedio a esa hora`, dineroMinor: 0, dinero: null, href: '/workload', clase: 'observed'});
-  return c.sort((a, b) => b.dineroMinor - a.dineroMinor).slice(0, 3).map(({dineroMinor, ...r}) => r);
+  return c.sort((a, b) => b.dineroMinor - a.dineroMinor).slice(0, 3).map(({id, titulo, detalle, dinero, href, clase}) => ({id, titulo, detalle, dinero, href, clase}));
 }
 
 /** Barra «observado vs recuperable»: lo observado es sólido; lo recuperable es [E], rayado y NO tiene cifra hasta que la persona teclee sus supuestos. */
@@ -124,7 +124,7 @@ export function siguienteDe({fuga}) {
 /** @param {{fuga?, carga?, cfo?, estado:{fuga,carga,cfo}, ahora?:number}} a */
 export function armarHoy({fuga = null, carga = null, cfo = null, estado, ahora = Date.now()}) {
   const kpis = [kpiIngreso({cfo, estado, ahora}), kpiReembolsos({fuga, estado, ahora}), kpiAtorado({fuga, estado, ahora}), kpiRespuestas({carga, estado, ahora})];
-  const titular = titularDe({fuga, cfo, kpis});
+  const titular = titularDe({fuga, kpis});
   const cargando = Object.values(estado).every(e => e === 'cargando');
   const sinNada = !cargando && kpis.every(k => k.estado !== 'ok' && k.estado !== 'cargando');
   return {titular, kpis, atencion: atencionDe({fuga, carga}), barra: barraDe({fuga}), siguiente: siguienteDe({fuga}), cargando, vacio: sinNada,

@@ -1,7 +1,7 @@
 import {boundedRequest} from '../request-body';
 import 'server-only';
 import {NextRequest,NextResponse} from 'next/server';
-import {Pool} from 'pg';
+import {Pool,type PoolClient} from 'pg';
 import {databasePoolOptions} from '@vexa/platform/pool-options';
 import {randomUUID} from 'node:crypto';
 import {createDatabase,type SqlPool} from '@vexa/platform/db';
@@ -9,18 +9,22 @@ import {createJobRepository} from '../../../../../packages/jobs/durable/reposito
 import {createImportHandler} from '../../../../../packages/jobs/index.mjs';
 import {ACTIVE_ORG,AccessError,assertOrigin,config,identity,PRIVATE_HEADERS} from '../auth';
 import {requestAuth} from '../auth-http';
+import {conectarConReintento,vigilarPool} from '../db-resiliencia.mjs';
 let pool:SqlPool|undefined;
 export function serverPool():SqlPool {
  if(pool)return pool;
  const connectionString=process.env.VEXA_DATABASE_URL;
  if(!connectionString)throw new AccessError(503,'database_not_configured');
- const driver=new Pool(databasePoolOptions(connectionString,process.env.VEXA_DATABASE_CA_PEM));
+ const driver=vigilarPool(new Pool(databasePoolOptions(connectionString,process.env.VEXA_DATABASE_CA_PEM)));
  // Defense in depth: reject privileged/misprovisioned login before domain work.
- pool={async connect(){const c=await driver.connect();try{
-  const r=await c.query("SELECT rolsuper,rolbypassrls,EXISTS(SELECT 1 FROM pg_class WHERE relnamespace='public'::regnamespace AND relowner=(SELECT oid FROM pg_roles WHERE rolname=current_user)) AS owns FROM pg_roles WHERE rolname=current_user");
-  if(!r.rows[0]||r.rows[0].rolsuper||r.rows[0].rolbypassrls||r.rows[0].owns)throw new AccessError(503,'database_role_unsafe');
+ pool={async connect(){
+  // El pooler puede haber cortado el cliente inactivo: la comprobacion de rol hace de sonda; si la conexion esta muerta se destruye y se pide otra.
+  const c=await conectarConReintento<PoolClient>(driver as unknown as {connect:()=>Promise<PoolClient>},async(cliente)=>{
+   const r=await cliente.query("SELECT rolsuper,rolbypassrls,EXISTS(SELECT 1 FROM pg_class WHERE relnamespace='public'::regnamespace AND relowner=(SELECT oid FROM pg_roles WHERE rolname=current_user)) AS owns FROM pg_roles WHERE rolname=current_user");
+   if(!r.rows[0]||r.rows[0].rolsuper||r.rows[0].rolbypassrls||r.rows[0].owns)throw new AccessError(503,'database_role_unsafe');
+  });
   return {query:async<Row>(text:string,values?:readonly (string|number|bigint|boolean|null|readonly string[])[])=>{const result=await c.query(text,values?[...values]:undefined);return {rows:result.rows as Row[],rowCount:result.rowCount};},release:()=>c.release()};
- }catch(error){c.release();throw error;}}};return pool;
+ }};return pool;
 }
 export async function imports(request:NextRequest) {
  let finish=(r:NextResponse)=>r;

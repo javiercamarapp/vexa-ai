@@ -26,6 +26,12 @@ export interface DatabaseScope {
   /** Trusted repository code only: SQL identifiers are static; all data goes in $n parameters. */
   query<Row = Record<string, unknown>>(text: string, values?: readonly SqlValue[]): Promise<SqlResult<Row>>;
 }
+/** Conexión cortada por el pooler (no un error de SQL). Una lectura se puede repetir entera con otra conexión. */
+export function connectionLost(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+  const e = error as {code?: unknown; message?: unknown};
+  return ['ECONNRESET','EPIPE','57P01','57P02','57P03','08000','08003','08006'].includes(String(e.code ?? '')) || /connection terminated|connection (?:is )?closed|client has encountered a connection error|server closed the connection|socket hang up/i.test(String(e.message ?? ''));
+}
 function databaseError(error: unknown): AccessError {
   if (error instanceof AccessError) return error;
   const code = (error as {code?: string})?.code;
@@ -38,8 +44,16 @@ function databaseError(error: unknown): AccessError {
 export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool; selectedTenant?: string}) {
   if (typeof window !== 'undefined') throw new AccessError(503,'database_server_only');
   const {identity, pool, selectedTenant} = options;
-  return Object.freeze({
+  const lost = new WeakSet<object>();
+  const api = {
     async transaction<T>(action: DatabaseAction, work: (scope: DatabaseScope) => Promise<T>): Promise<T> {
+      // Solo lecturas: si el pooler corta la conexión a mitad, se repite la transacción completa una vez con otra conexión (nada se escribió).
+      try { return await api.attempt(action, work); } catch (error) {
+        if (action === 'read' && typeof error === 'object' && error !== null && lost.has(error)) return api.attempt(action, work);
+        throw error;
+      }
+    },
+    async attempt<T>(action: DatabaseAction, work: (scope: DatabaseScope) => Promise<T>): Promise<T> {
       if (!Object.hasOwn(roles,action)) throw new AccessError(403,'database_action_invalid');
       if (!pool) throw new AccessError(503,'database_not_configured');
       let connection: SqlConnection | undefined;
@@ -70,10 +84,13 @@ export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool;
         return result;
       } catch(error) {
         if(connection && open) { try {await connection.query('ROLLBACK');} catch {/* Original sanitized failure wins. */} }
-        throw databaseError(error);
+        const sanitized = databaseError(error);
+        if (connectionLost(error)) lost.add(sanitized);
+        throw sanitized;
       } finally { if(connection) { try { connection.release(); } catch { /* Never expose driver details during cleanup. */ } } }
     },
-  });
+  };
+  return Object.freeze({transaction: api.transaction});
 }
 /** Absence is distinct from query failure; only an actual empty result becomes 404. */
 export function requireRow<Row>(result:SqlResult<Row>):Row {

@@ -1,0 +1,11 @@
+export const BANDERA: string;
+export const VERSION_GENERADOR_IA: string;
+export const PROMPT_SISTEMA: string;
+export const ESQUEMA_SALIDA: object;
+export const TARIFAS_SUPUESTAS: {supuesta: true; baja: {entrada: number; salida: number}; alta: {entrada: number; salida: number}};
+export function iaHabilitada(env?: Record<string, string | undefined>): boolean;
+export function construirEntrada(i: {problema: {titulo: string; version?: number}; cifras?: any[]; citas?: any[]; moneda?: string; periodo?: any}): any;
+export function verificarSalida(salida: unknown, entrada: any): {ok: boolean; razones: string[]};
+export function estimarCosto(entrada: any, o?: {tarifas?: any; salidaMaxTokens?: number}): {tokensEntrada: number; tokensSalidaMax: number; minMinor: string; maxMinor: string; moneda: string; exponente: number; supuesta: boolean};
+export function clienteSimulado(o?: {respuesta?: unknown; costMinor?: string}): {id: string; visto: any[]; complete(req: any): Promise<{text: string; usage: {costMinor: string}}>};
+export function generarConIA(i: {cliente: any; entrada: any; presupuesto: any; tenantId: string; topeMinor?: string; env?: Record<string, string | undefined>}): Promise<{estado: string; [k: string]: any}>;

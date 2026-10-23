@@ -2,9 +2,7 @@
 import {PageHeader} from './ui/page-header';
 import {Button,LinkButton,Arrow} from './ui/button';
 import {StatCard} from './ui/stat-card';
-import {StatusChip} from './ui/status-chip';
 import {FunnelChart} from './ui/funnel-chart';
-import {Stepper} from './ui/stepper';
 import {Drawer} from './ui/overlay';
 import {IdChip} from './ui/id-chip';
 import {KindBadge} from './ui/kind-badge';
@@ -14,12 +12,12 @@ import {SkeletonStats} from './ui/skeletons';
 import {nf} from './ui/format';
 import css from './ops-panels.module.css';
 import {useCallback,useEffect,useRef,useState} from 'react';
-import {groupJobs,submitBlock} from '../lib/analysis-jobs';
-type Job={id:string;runId:string|null;conversationId:string;state:string;runStatus:string|null;reason:string|null};
+import {submitBlock} from '../lib/analysis-jobs';
+import {HallazgosAnalisis} from './datos/analisis-hallazgos';
+type Job={id:string;runId:string|null;conversationId:string;state:string;runStatus:string|null;reason:string|null;createdAt?:string};
 type Reservation={id:string;state:string;version:number;actualMinor:string|null;heldMinor:string;reportedMinor:string};
 type PageMeta={next_cursor:string|null;hasMore:boolean};
 type Snapshot={pagination:{jobs:PageMeta;conversations:PageMeta};jobs:Job[];conversations:{id:string;source:string}[];canSubmit:boolean;canConfigure:boolean;configuration:{ready:boolean;enabled:boolean;window:string|null};limits:{purpose:string;limit_minor:string;version:number}[];reservations:Reservation[]};
-const stateLabels:Record<string,string>={queued:'En cola',running:'Analizando',succeeded:'Terminado',failed:'Requiere atención',cancelled:'Cancelado'};
 const reasons:Record<string,string>={reconciliation_required:'La ejecución fue interrumpida. Revisa el consumo con el proveedor antes de solicitar otro análisis.',runtime_disabled:'La conexión con el proveedor de IA está desactivada.',configuration_changed:'La configuración cambió. Revisa los límites antes de crear otra solicitud.',budget_exceeded:'No hay saldo disponible en los límites de esta ventana.',ambiguous:'El contenido no permite una clasificación fiable.',invalid_output:'La respuesta del proveedor quedó en cuarentena.',policy_blocked:'La política del proveedor o su catálogo necesitan revisión.'};
 function usd(minor:string){const value=BigInt(minor);return `${value/1000000n}.${String(value%1000000n).padStart(6,'0')}`;}
 export function ExtractionPanel(){
@@ -43,10 +41,8 @@ export function ExtractionPanel(){
  },[pages,clearSelection]);
  useEffect(()=>{const controller=new AbortController();const update=()=>reload(controller.signal).catch(e=>{if(!controller.signal.aborted)setError(e.message);});void update();const timer=setInterval(update,10000);return()=>{controller.abort();clearInterval(timer);};},[reload]);
  async function action(body:Record<string,unknown>){if(busy)return;setBusy(true);setError('');try{const response=await fetch('/api/extraction',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!response.ok){if(response.status===401||response.status===403){++refreshGeneration.current;setSnapshot(null);clearSelection();}const value=await response.json();throw Error(response.status===409?'La configuración cambió o la solicitud entró en conflicto. Actualiza y vuelve a revisar.':value.error?.code==='role_insufficient'?'Esta acción requiere un propietario.':'No se pudo completar la acción.');}if(body.action==='submit')requestKey.current=null;if(body.action==='reconcile'){setConfirmed(false);setEvidence('');setActual('');}await reload();}catch(e){setError(e instanceof Error?e.message:'No se pudo completar la acción.');}finally{setBusy(false);}} const jobs=snapshot?.jobs??[];
- const blocked=snapshot?submitBlock(snapshot.configuration,snapshot.canConfigure,!!selected):null,groups=groupJobs(jobs);
+ const blocked=snapshot?submitBlock(snapshot.configuration,snapshot.canConfigure,!!selected):null;
  const nQueuedRunning=jobs.filter(j=>['queued','running'].includes(j.state)).length,nDone=jobs.filter(j=>j.state==='succeeded').length,nAttention=jobs.filter(j=>j.state==='failed').length,nClassified=jobs.filter(j=>j.runStatus==='succeeded').length;
- const tone=(state:string):'ok'|'warn'|'info'|'muted'=>state==='succeeded'?'ok':state==='failed'?'warn':state==='cancelled'?'muted':'info';
- const stepsFor=(state:string)=>[{key:'queued',label:'En cola'},{key:'running',label:'Analizando'},{key:'succeeded',label:'Terminado'}].map((st,i)=>{const at=state==='queued'?0:state==='running'?1:2;return {...st,state:(state==='succeeded'?'done':i<at?'done':i===at?'current':'todo') as 'done'|'current'|'todo'};});
  const pending=snapshot?.reservations.filter(r=>['reserved','uncertain'].includes(r.state))??[];
  return <section className="stack" aria-labelledby="analysis-title">
   <span id="analysis-title" className="sr-only">Análisis de conversaciones</span>
@@ -62,17 +58,13 @@ export function ExtractionPanel(){
   </div>
   {jobs.length>0&&<section className="card" aria-label="Embudo de análisis"><div className="card-title"><div><h2>Avance de los trabajos</h2><p>Conteos de esta página</p></div></div><FunnelChart title="Trabajos solicitados, terminados y clasificados" stages={[{key:'all',label:'Solicitados',value:jobs.length,display:nf.format(jobs.length)},{key:'done',label:'Terminados',value:nDone,display:nf.format(nDone)},{key:'cls',label:'Con clasificación',value:nClassified,display:nf.format(nClassified)}]}/></section>}
   {snapshot.canSubmit&&<section className="card" id="analysis-request" aria-label="Solicitar análisis"><div className="card-title"><div><h2>Solicitar análisis</h2><p>Elige una conversación</p></div></div>
-   <form className={css.form} onSubmit={event=>{event.preventDefault();requestKey.current??=crypto.randomUUID();void action({action:'submit',conversationId:selected,requestKey:requestKey.current});}}><div className={css.row}><label className={css.grow}>Conversación<select aria-label="Conversación" value={selected} onChange={event=>{setSelected(event.target.value);requestKey.current=null;}}><option value="">Selecciona una conversación</option>{snapshot.conversations.map(c=><option key={c.id} value={c.id}>{c.source} · {c.id.slice(0,8)}</option>)}</select></label><Button type="submit" size="sm" variant="primary" disabled={busy||!selected||!snapshot.configuration.ready||!snapshot.configuration.enabled}>Solicitar análisis</Button></div>{blocked&&<p className={css.muted} role="note">{blocked}</p>}</form>
+   <form className={css.form} onSubmit={event=>{event.preventDefault();requestKey.current??=crypto.randomUUID();void action({action:'submit',conversationId:selected,requestKey:requestKey.current});}}><div className={css.row}><label className={css.grow}>Conversación<select aria-label="Conversación" value={selected} onChange={event=>{setSelected(event.target.value);requestKey.current=null;}}><option value="">Selecciona una conversación</option>{snapshot.conversations.map(c=><option key={c.id} value={c.id}>{c.source} · {c.id.slice(0,8)}</option>)}</select></label><Button type="submit" size="sm" variant="primary" disabled={busy||!selected||!snapshot.configuration.ready||!snapshot.configuration.enabled}>Solicitar análisis</Button></div>{blocked&&snapshot.configuration.ready&&snapshot.configuration.enabled&&<p className={css.muted} role="note">{blocked}</p>}</form>
    <nav aria-label="Páginas de conversaciones" className={css.pager}><p>Página de conversaciones {pages.conversations.length}</p><Button size="sm" variant="ghost" disabled={busy||pages.conversations.length===1} onClick={()=>navigate('conversations',false)}>Conversaciones anteriores</Button><Button size="sm" variant="ghost" disabled={busy||!snapshot.pagination.conversations.hasMore} onClick={()=>navigate('conversations',true)}>Conversaciones siguientes</Button></nav></section>}
   <div className="card-title"><div><h2>Trabajos</h2></div><nav aria-label="Páginas de trabajos" className={css.pager}><p>Página de trabajos {pages.jobs.length}</p><Button size="sm" variant="ghost" disabled={busy||pages.jobs.length===1} onClick={()=>navigate('jobs',false)}>Trabajos anteriores</Button><Button size="sm" variant="ghost" disabled={busy||!snapshot.pagination.jobs.hasMore} onClick={()=>navigate('jobs',true)}>Trabajos siguientes</Button></nav></div>
-  {jobs.length===0?<EmptyState art="search" compact title="Aún no hay análisis solicitados" body="Elige una conversación para lanzar el primero." action={snapshot.canSubmit?<LinkButton href="#analysis-request" size="sm" variant="primary" icon={<Arrow/>}>Elegir una conversación</LinkButton>:undefined}/>:
-  <ul className={css.jobList} style={{listStyle:'none',margin:0,padding:0}}>{groups.map(group=><li key={group.conversationId} className={'card '+css.job}>
-   <div className={css.jobHead}><StatusChip tone={tone(group.state)}>{stateLabels[group.state]??group.state}</StatusChip>{group.jobs.length>1&&<span className="chip">{group.jobs.length} análisis de esta conversación</span>}<IdChip value={group.conversationId} label="Conversación" head={8} tail={4}/></div>
-   {['queued','running','succeeded'].includes(group.state)&&<Stepper label="Avance del análisis" steps={stepsFor(group.state)}/>}
-   {group.jobs.some(job=>job.runStatus==='abstained')&&<span className="chip">Sin clasificación concluyente</span>}
-   {group.jobs.filter(job=>job.reason).slice(0,1).map(job=><p key={job.id} className={css.muted}>{reasons[job.reason as string]??'Revisa la configuración y el registro de la ejecución.'}</p>)}
-   <div className={css.jobFoot}>{group.runIds.map((runId,index)=><LinkButton key={runId} href={'/analysis/'+runId} size="sm" icon={<Arrow/>}>{group.runIds.length>1?'Ver evidencia '+(index+1)+' de '+group.runIds.length:'Ver evidencia'}</LinkButton>)}{group.jobs.filter(job=>['queued','running'].includes(job.state)).map(job=><Button key={job.id} size="sm" variant="ghost" disabled={busy} onClick={()=>void action({action:'cancel',jobId:job.id})}>Cancelar análisis</Button>)}</div>
-  </li>)}</ul>}
+  {jobs.length===0?<EmptyState art="search" compact title="Aún no hay análisis solicitados" body="Elige una conversación para lanzar el primero." action={snapshot.canSubmit?<LinkButton href="#analysis-request" size="sm" variant="primary" icon={<Arrow/>}>Elegir una conversación</LinkButton>:undefined}/>:<>
+  <HallazgosAnalisis jobs={jobs} fuentes={Object.fromEntries(snapshot.conversations.map(c=>[c.id,c.source]))} masPaginas={snapshot.pagination.jobs.hasMore||pages.jobs.length>1}/>
+  {jobs.filter(job=>job.reason).slice(0,2).map(job=><p key={job.id} role="note" className="notice-bar" data-tone="calm"><Icon name="info" size={14}/>{reasons[job.reason as string]??'Revisa la configuración y el registro de la ejecución.'}</p>)}
+  {jobs.some(job=>['queued','running'].includes(job.state))&&<div className={css.jobFoot}>{jobs.filter(job=>['queued','running'].includes(job.state)).map(job=><Button key={job.id} size="sm" variant="ghost" disabled={busy} onClick={()=>void action({action:'cancel',jobId:job.id})}>Cancelar análisis {job.conversationId.slice(0,8)}</Button>)}</div>}</>}
   {snapshot.canConfigure&&snapshot.configuration.window&&<Drawer open={budgetOpen} onClose={()=>setBudgetOpen(false)} title="Límites y conciliación" subtitle={'Ventana: '+snapshot.configuration.window+' · importes en USD'}>
    <div className="stack">
     <div className="cols" style={{display:'grid',gap:'var(--sp-3)',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))'}}>{snapshot.limits.map(item=><StatCard key={item.purpose} label={item.purpose==='all'?'Límite global':'Límite de extracción'} icon="dollar" kind="observed" value={'$'+usd(item.limit_minor)}/>)}</div>

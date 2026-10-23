@@ -1,7 +1,7 @@
 //   node --test apps/web/src/lib/legibilidad/resumen-ejecutivo.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {lineaAvisos,kpiConversaciones,kpiPedidos,topProblemas,estadoFuentes,mesesCoberturaBaja,coberturaDeTendencias} from './resumen-ejecutivo.mjs';
+import {lineaAvisos,kpiConversaciones,kpiPedidos,topProblemas,estadoFuentes,mesesCoberturaBaja,coberturaDeTendencias,avisosCoherentes} from './resumen-ejecutivo.mjs';
 const AHORA=new Date('2026-10-23T00:00:00Z');
 const conv={status:'ok',class:'observed',series:[{month:'2026-07',count:900},{month:'2026-08',count:2575},{month:'2026-09',count:1318},{month:'2026-10',count:77}],completeness:{dataThrough:'2026-10-05T00:00:00.000Z'}};
 test('conversaciones: último mes completo vs anterior; octubre parcial no entra',()=>{
@@ -67,4 +67,12 @@ test('línea de avisos: solo con avisos críticos reales; resume qué falta y qu
  assert.match(l,/^Estado de los datos: hay señales críticas por revisar · faltan 2 cifras por cobertura \(Exposición, Reembolsos\) · conversaciones: septiembre parcial \(datos hasta el 18 de septiembre\), sin comparación\.$/);
  assert.ok(!/libro/.test(l),'el libro con datos hasta el 30-sep no es parcial');
  assert.match(lineaAvisos({faltantes:['Exposición']}),/falta cobertura de Exposición/);
+});
+
+test('A7: el aviso de señales críticas pendientes desaparece cuando la tarjeta ya muestra el conteo (mismo estado)',()=>{
+ const av=[{key:'pendiente'},{key:'parcial'}];
+ assert.deepEqual(avisosCoherentes(av,{groups:53,signals:120}).map(a=>a.key),['parcial']);
+ assert.deepEqual(avisosCoherentes(av,null).map(a=>a.key),['pendiente','parcial'],'sin conteo el aviso sigue');
+ assert.deepEqual(avisosCoherentes(undefined,null),[]);
+ assert.equal(lineaAvisos({critico:false,pendiente:avisosCoherentes(av,{groups:53,signals:null}).some(a=>a.key==='pendiente'),parcialCarga:false,faltantes:[],conv:null,led:null,ahora:AHORA}),null,'la línea de estado tampoco dice «sin calcular»');
 });

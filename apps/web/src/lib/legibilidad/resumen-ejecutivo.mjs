@@ -89,3 +89,9 @@ export function coberturaDeTendencias(conv){
  if(!an||an.status!=='ok')return coberturaAnalisisIA({analizadas:null,base:conv?.total??null});
  return coberturaAnalisisIA({analizadas:an.analyzed,base:conv?.status==='ok'?conv.total:null,estimado:conv?.class==='estimated'&&conv?.sampled===true});
 }
+
+/** A7: el aviso «señales críticas pendientes» sale del MISMO estado que la tarjeta de grupos críticos: si la tarjeta ya tiene un conteo (lectura propia, caché o conteo del bundle), el aviso no existe. */
+export function avisosCoherentes(avisos,conteoCriticos){
+ const lista=Array.isArray(avisos)?avisos:[];
+ return conteoCriticos?lista.filter(a=>a.key!=='pendiente'):lista;
+}

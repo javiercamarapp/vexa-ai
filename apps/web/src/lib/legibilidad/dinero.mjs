@@ -29,7 +29,7 @@ export function resumenCorte(meta) {
     moneda: s.currency ?? null,
     snapshot: String(meta.snapshot_id).slice(0, 8),
     datosHasta: diaCorte(meta.watermark),
-    cobertura: typeof meta.coverage === 'string' ? meta.coverage : null,
+    cobertura: typeof meta.coverage === 'string' && !/^Anclaje de alcance/.test(meta.coverage) ? meta.coverage : null,
   };
 }
 

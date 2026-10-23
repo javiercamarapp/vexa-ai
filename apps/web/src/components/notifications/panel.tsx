@@ -84,7 +84,7 @@ export function NotificationPanel({settings=false}:{settings?:boolean}){
  return <section className="task-page notifications-page" aria-label={heading}>
   <p className="eyebrow">Tu espacio de trabajo</p><h1>{heading}</h1>
   <p>{settings?'Elige los avisos y canales que deseas recibir en esta organización.':'Avisos de esta organización disponibles con tu acceso actual.'}</p>
-  <p><Link href={settings?'/notifications':'/settings/notifications'}>{settings?'Ver notificaciones':'Configurar avisos'}</Link></p>
+  <p><Link prefetch={false} href={settings?'/notifications':'/settings/notifications'}>{settings?'Ver notificaciones':'Configurar avisos'}</Link></p>
   {settings&&<p style={{display:'flex',flexWrap:'wrap',gap:'.5rem'}}><LinkButton size="sm" href="/notifications/push">Notificaciones en este dispositivo</LinkButton><LinkButton size="sm" href="/settings/notification-delivery">Política de envío de la organización</LinkButton></p>}
   <button disabled={busy} onClick={()=>void load()}>{settings?'Actualizar preferencias':'Actualizar notificaciones'}</button>
   {busy&&<p role="status">{settings?'Verificando preferencias…':'Verificando notificaciones…'}</p>}
@@ -107,7 +107,7 @@ export function NotificationPanel({settings=false}:{settings?:boolean}){
     <article className="record-card" aria-label={item.title} data-notification-id={item.id}>
      <p className="muted">{item.readAt?'Leído':'Sin leer'} · <time dateTime={item.createdAt}>{item.createdAt.slice(0,19).replace('T',' ')} UTC</time></p>
      <h2>{item.title}</h2><p>{item.body}</p>
-     <div style={{display:'flex',gap:'1rem',flexWrap:'wrap',alignItems:'center'}}>{item.readAt?<Link href={item.href}>Abrir detalle</Link>:<button style={{width:'auto'}} disabled={busy} onClick={()=>void markRead(item,true)}>Abrir detalle</button>}{!item.readAt&&<button style={{width:'auto'}} disabled={busy} onClick={()=>void markRead(item)}>Marcar como leído</button>}</div>
+     <div style={{display:'flex',gap:'1rem',flexWrap:'wrap',alignItems:'center'}}>{item.readAt?<Link prefetch={false} href={item.href}>Abrir detalle</Link>:<button style={{width:'auto'}} disabled={busy} onClick={()=>void markRead(item,true)}>Abrir detalle</button>}{!item.readAt&&<button style={{width:'auto'}} disabled={busy} onClick={()=>void markRead(item)}>Marcar como leído</button>}</div>
     </article>
    </li>)}</ul>
    {inbox.nextCursor&&<button disabled={busy} onClick={()=>void more()}>Cargar más avisos</button>}

@@ -36,7 +36,7 @@ export function DeliveryPolicies(){
  const change=(channel:string,delta:Partial<DeliveryPolicy>)=>setRows(previous=>previous.map(row=>row.channel===channel?{...row,...delta}:row));
  return <section className="task-page task-grid delivery-page" aria-label="Política de envío" aria-busy={busy}><p className="eyebrow">Configuración de la organización</p><h1 ref={heading} tabIndex={-1}>Política de envío</h1>
   <p>Autoriza canales y define límites para los avisos futuros. Cada persona debe activar sus preferencias; Web Push también requiere permiso del navegador. Habilitar una política no confirma que el proveedor esté conectado.</p>
-  <p><Link href="/settings/notifications">Mis preferencias</Link></p><button disabled={busy} onClick={()=>void load()}>Actualizar políticas</button>
+  <p><Link prefetch={false} href="/settings/notifications">Mis preferencias</Link></p><button disabled={busy} onClick={()=>void load()}>Actualizar políticas</button>
   {busy&&<p role="status">Verificando políticas…</p>}{error&&<p role="alert">{error}</p>}{notice&&<p role="status">{notice}</p>}
   {rows.map(row=><form id={'delivery-policy-'+row.channel} key={row.channel} className="record-card" onSubmit={event=>event.preventDefault()}><fieldset disabled={busy}><legend>{names[row.channel]}</legend>
    <label style={{display:'flex',alignItems:'center',gap:'.75rem',minHeight:44}}><input style={{width:'1.15rem',height:'1.15rem',padding:0,flexShrink:0}} type="checkbox" checked={row.enabled} onChange={event=>change(row.channel,{enabled:event.target.checked})}/> Autorizar este canal</label>

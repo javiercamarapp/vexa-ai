@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <a className="skip-link" href="#contenido">Saltar al contenido</a>
         <header className="site-header">
-          <Link className="brand-link" href="/" aria-label="Rovaq, inicio"><RovaqLogo variante="horizontal" ancho={120} decorativo/></Link>
+          <Link prefetch={false} className="brand-link" href="/" aria-label="Rovaq, inicio"><RovaqLogo variante="horizontal" ancho={120} decorativo/></Link>
           <span className="site-purpose">Decisiones con evidencia</span>
         </header>
         <main id="contenido" tabIndex={-1}>{children}</main>

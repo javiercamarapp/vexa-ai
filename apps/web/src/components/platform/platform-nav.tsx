@@ -7,6 +7,6 @@ export const platformTitle = (path: string) => [...ITEMS].sort((a, b) => b[0].le
 export function PlatformNav() {
   const path = usePathname();
   return <nav className="sidebar-navigation" aria-label="Administración de plataforma"><p className="nav-caption">Gestionar</p><ul>
-    {ITEMS.map(([href, label, icon]) => <li key={href}><Link href={href} aria-current={path === href ? 'page' : undefined}><WorkspaceIcon name={icon} />{label}</Link></li>)}
+    {ITEMS.map(([href, label, icon]) => <li key={href}><Link prefetch={false} href={href} aria-current={path === href ? 'page' : undefined}><WorkspaceIcon name={icon} />{label}</Link></li>)}
   </ul></nav>;
 }

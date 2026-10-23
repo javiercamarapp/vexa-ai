@@ -1,5 +1,6 @@
 // Exportar una respuesta: Markdown (con clase, cobertura, fuentes y «cómo lo calculé») y CSV por bloque. Puro, sin red.
 import { CLASS_LABELS } from './contract.mjs';
+import { enmascararTerceros } from '../workspace-service/enmascarar-terceros.mjs'; // privacidad: el texto de las citas exportadas lleva los mismos patrones ocultos que la pantalla
 const esc = (v) => String(v ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ');
 const covText = (c) => (c.eligible_n === null ? c.note : `${c.known_n.toLocaleString('es-MX')} de ${c.eligible_n.toLocaleString('es-MX')}`);
 export function answerToMarkdown({ question, answer, generatedAt }) {
@@ -11,7 +12,7 @@ export function answerToMarkdown({ question, answer, generatedAt }) {
     if (b.note) out.push('', `_${b.note}_`);
     out.push('');
   }
-  if (answer.citations?.length) { out.push('## Citas', ''); for (const c of answer.citations) out.push(`> ${esc(c.quote)}  \n> — ${c.role}, ${c.source ?? 'fuente'} · revisión ${c.messageRevisionId}`, ''); }
+  if (answer.citations?.length) { out.push('## Citas', ''); for (const c of answer.citations) out.push(`> ${esc(enmascararTerceros(c.quote))}  \n> — ${c.role}, ${c.source ?? 'fuente'} · revisión ${c.messageRevisionId}`, ''); }
   if (answer.missing?.length) out.push('## Falta cargar', '', ...answer.missing.map((m) => `- ${m}`), '');
   out.push('## Cómo lo calculé', '');
   for (const c of answer.calc ?? []) out.push(`- **${c.label}** (\`${c.tool}\`): ${c.method} Parámetros: \`${JSON.stringify(c.args)}\`. Lee: ${(c.reads ?? []).join(', ')}.`);
@@ -63,7 +64,7 @@ export function answerToHtml({ question, answer, generatedAt, userContext = [] }
     if (b.note) out.push(`<p class="note">${h(b.note)}</p>`);
     out.push('</section>');
   }
-  if (answer.citations?.length) out.push('<h2>Citas verificables</h2>' + answer.citations.map((c) => `<blockquote>${h(c.quote)}<br><span class="note">${h(c.role)}${c.source ? ' · ' + h(c.source) : ''} · revisión ${h(c.messageRevisionId)}</span></blockquote>`).join(''));
+  if (answer.citations?.length) out.push('<h2>Citas verificables</h2>' + answer.citations.map((c) => `<blockquote>${h(enmascararTerceros(c.quote))}<br><span class="note">${h(c.role)}${c.source ? ' · ' + h(c.source) : ''} · revisión ${h(c.messageRevisionId)}</span></blockquote>`).join(''));
   if (userContext.length) out.push('<h2>Datos aportados por el usuario</h2><p class="note">No verificados ni parte del corte publicado.</p>' + userContext.map((u) => `<p><span class="tag">Dato aportado por el usuario</span>${h(u)}</p>`).join(''));
   if (answer.missing?.length) out.push('<h2>Falta cargar</h2><ul>' + answer.missing.map((m) => `<li>${h(m)}</li>`).join('') + '</ul>');
   out.push('<h2>Cómo lo calculé</h2><ol>' + (answer.calc ?? []).map((c) => `<li><b>${h(c.label)}</b> (<code>${h(c.tool)}</code>): ${h(c.method)} Parámetros: <code>${h(JSON.stringify(c.args))}</code>. Lee: ${h((c.reads ?? []).join(', '))}.</li>`).join('') + '</ol>');

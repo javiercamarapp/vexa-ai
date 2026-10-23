@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { answerToMarkdown, blockToCsv, parseAssociations, parseTracker, createWorkspacePort, assertPort, PORT_METHODS, createGatewayModel, AgentError } from '../index.mjs';
+import { answerToMarkdown, answerToHtml, blockToCsv, parseAssociations, parseTracker, createWorkspacePort, assertPort, PORT_METHODS, createGatewayModel, AgentError } from '../index.mjs';
 import { ask, portFor } from './helpers.mjs';
 
 test('exportar a Markdown conserva clase, cobertura, fuentes y «cómo lo calculé»', async () => {
@@ -33,4 +33,12 @@ test('con el puerto real a medias (sin consultas de problemas) el agente dice «
 test('el adaptador de modelo del gateway falla de forma explícita mientras no exista el rol data_agent', async () => {
   const m = createGatewayModel({ gateway: { extract() {} }, tenantId: 'x' });
   await assert.rejects(() => m.plan({ question: 'x', history: [], tools: [], vocabulary: {} }), (e) => e instanceof AgentError && e.code === 'model_not_configured');
+});
+
+test('privacidad: Markdown y HTML exportados ocultan nombres/direcciones estructurales de las citas (R2-2-004)', async () => {
+  const q = '¿Qué dicen los clientes?'; const a = await ask(q);
+  const answer = { ...a, citations: [{ quote: 'Hello Frank,\nSend it to 123 Maple Ave, Lakewood, NJ 08701\nThanks, Eli Brook', role: 'customer', source: 'hubspot', messageRevisionId: 'rev-1' }] };
+  const md = answerToMarkdown({ question: q, answer, generatedAt: '2026-10-19' });
+  const html = answerToHtml({ question: q, answer, generatedAt: '2026-10-19' });
+  for (const out of [md, html]) { assert.ok(!/Frank|Maple|Eli Brook/.test(out), 'no deja pasar los patrones'); assert.match(out, /\[nombre\]/); assert.match(out, /\[dirección\]/); }
 });

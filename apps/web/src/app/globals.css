@@ -529,14 +529,12 @@ button:not(:disabled):active { transform:scale(.98); }
 .workspace-shell .gb-org.organization-switch { display:flex; align-items:center; gap:8px; }
 .workspace-shell .gb-org .organization-controls select { width:auto; max-width:200px; }
 .global-bar .notification-bell { flex:none; }
-@media(max-width:767px) {
- .workspace-top .workspace-header { position:static; }
- .global-bar { padding:4px 12px; gap:4px 8px; }
+@media(max-width:1099px) {
+ .global-bar { flex-wrap:wrap; padding:4px 12px; gap:4px 8px; }
  .workspace-shell .global-bar .gb-summary { display:flex; align-items:center; gap:8px; flex:1; min-width:0; width:auto; min-height:44px; padding:4px 14px; border:1px solid var(--ui-border); border-radius:999px; background:var(--ui-surface); color:var(--ink); font:500 12px/1.4 var(--font-ui); text-align:left; }
  .gb-summary-text { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
  .gb-summary .gb-label { margin-right:4px; }
  .gb-summary svg { flex:none; transition:transform .15s; }
- .global-bar { flex-wrap:wrap; }
  .gb-panel { display:none; flex:0 0 100%; order:3; flex-direction:column; align-items:stretch; gap:10px; padding:8px 0 6px; }
  .global-bar[data-open] .gb-panel { display:flex; }
  .global-bar[data-open] .gb-summary svg { transform:rotate(180deg); }
@@ -550,4 +548,7 @@ button:not(:disabled):active { transform:scale(.98); }
  .workspace-shell .gb-org.organization-switch { justify-content:space-between; }
  .gb-org strong { max-width:60%; }
  .workspace-shell .gb-org .organization-controls select,.workspace-shell .gb-org .organization-controls button { min-height:44px; }
+}
+@media(max-width:767px) {
+ .workspace-top .workspace-header { position:static; }
 }

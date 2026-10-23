@@ -29,10 +29,10 @@ export function CategoryVolume({rows,reason='Aún no hay incidencias clasificada
  const sub=noData?(load?'Incidencias por categoría · no son problemas agrupados':null):`${nf.format(view.total)} incidencias${totalIncidencias!==undefined&&totalIncidencias!==view.total?` de ${nf.format(totalIncidencias)}`:''} · ${nf.format(view.sorted.length)} categorías · las incidencias no son problemas agrupados`;
  const head=<div className="card-title"><div><h2>{title}</h2>{sub&&<p>{sub}</p>}</div>{!noData&&<KindBadge kind={kind}/>}</div>;
  const max=view.top[0]?.count??1;
- const items:BarListItem[]=view.top.map(r=>({key:r.category,label:etiquetaCategoria(r.category),value:r.count*100/max,display:nf.format(r.count),kind}));
+ const items:BarListItem[]=view.top.map(r=>({key:r.category,label:etiquetaCategoria(r.category),value:r.count*100/max,display:nf.format(r.count),kind,c:7}));
  const content=<div className="stack">
   {view.hayRuido&&<NoiseToggle incluir={incluir} onChange={setIncluir} ocultos={view.ocultas} unidad="incidencias"/>}
-  {items.length?<BarList items={items} wrap/>:<p className="state">Solo hay notificaciones automáticas en este alcance. Actívalas con el interruptor para verlas.</p>}
+  {items.length?<BarList items={items} wrap sinMeta/>:<p className="state">Solo hay notificaciones automáticas en este alcance. Actívalas con el interruptor para verlas.</p>}
   {view.sorted.length>view.top.length&&<p className="card-lead">Se muestran las {view.top.length} categorías con más incidencias de {nf.format(view.sorted.length)}.</p>}
   {view.sorted.length>0&&<details className="chart-table"><summary>Ver como tabla</summary><div className="table-wrap" tabIndex={0} role="region" aria-label={'Tabla: '+title}><table><thead><tr><th scope="col">Categoría</th><th scope="col" className="num">Incidencias</th></tr></thead><tbody>{view.sorted.map(r=><tr key={r.category}><th scope="row">{etiquetaCategoria(r.category)}</th><td className="num">{nf.format(r.count)}</td></tr>)}</tbody></table></div></details>}
   {!noData&&<p className="card-lead" data-testid="unidad-categorias">{UNIDADES.incidencias}</p>}{foot}

@@ -171,3 +171,22 @@
 .ov-fila>:only-child{grid-column:1/-1}.ov-4-4-4:has(>:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr))}
 .hoy-page .ov-fila>.card>*{min-width:0;max-width:100%}
 .hoy-page [aria-label="Estado de los datos"] .btn-label{white-space:nowrap}
+
+/* Sello de dos líneas controladas bajo cada KPI de Hoy */
+.hoy-kpi .sello-2{display:grid;gap:0;line-height:1.5}
+.hoy-kpi .sello-2>span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Hoy: filas inferiores sin aire. Barras de problemas repartidas, pie de tarjeta al fondo, tablas ocultas en el resumen */
+.hoy-page .ov-fila>.card>.barlist{flex:1 1 auto;align-content:space-evenly;grid-auto-rows:min-content;gap:10px}
+.hoy-page .ov-fila>.card>.barlist .barlist-track{height:6px}
+.hoy-page .ov-fila>.card>.stack{flex:1 1 auto}
+.hoy-page .ov-r3 .chart-table,.hoy-page .ov-r3 .card-lead{display:none}
+.hoy-page .ov-fila>.card>.empty[data-compact]{flex:1 1 auto}
+.hoy-page .ov-tabla>[class*=foot]{margin-top:auto}
+.hoy-page .ov-fila>.card{margin:0}
+.hoy-page .ov-fila>.card>.card-title{flex-wrap:nowrap;margin-bottom:8px}
+.hoy-page .ov-fila>.card>.card-title>div:last-child:not(:first-child){flex:none}
+.hoy-page .ov-r2 .chart-table{display:none}
+.hoy-page .column-chart .col-bar:not(.col-partial){fill:color-mix(in srgb,var(--chart-5) 58%,var(--ui-surface))}
+.hoy-page .column-chart .col[data-last] .col-bar:not(.col-partial),.hoy-page .column-chart .col[data-active] .col-bar:not(.col-partial){fill:var(--chart-5)}
+.hoy-page .state-cache-slot{display:none}
+.hoy-page .ov-pie-link{margin-top:auto;padding-top:4px}

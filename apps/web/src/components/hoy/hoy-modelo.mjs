@@ -49,7 +49,7 @@ function kpiIngreso({cfo, estado, ahora}) {
   const b = cfo?.status === 'ok' ? briefingCfo(cfo.report, 'USD') : null;
   const rev = b?.kpis.find(k => k.id.startsWith('rev:'));
   if (!b || !rev) return {...base, estado: 'no_disponible', valor: null, nota: estado.cfo === 'error' ? 'No disponible ahora. No significa que sea cero.' : 'Todavía no hay un mes completo con importes.'};
-  return {...base, estado: 'ok', valor: rev.display, periodo: b.mesDelResumen, nota: `${b.titular.periodo ?? ''} · ${b.moneda}${rev.cobertura ? ' · ' + rev.cobertura : ''}`.replace(/^ · /, ''),
+  return {...base, estado: 'ok', valor: rev.display, periodo: b.mesDelResumen, nota: `${b.titular.periodo ?? ''} · ${b.moneda}`.replace(/^ · /, ''), notaLarga: `${b.titular.periodo ?? ''} · ${b.moneda}${rev.cobertura ? ' · ' + rev.cobertura : ''}`.replace(/^ · /, ''),
     delta: rev.delta ? `${rev.delta.display} vs ${rev.delta.vs}` : null,
     variacion: rev.delta ? variacion(rev.delta.display, rev.delta.bps ?? (String(rev.delta.display).trim().startsWith('-') ? -1 : 1), 'up') : null,
     serie: (b.serie?.principal ?? []).filter(p => !p.partial && p.value != null).slice(-8).map(p => p.value), serieEtiqueta: 'Ingreso bruto por mes completo', clase: rev.kind === 'estimated' || rev.kind === 'inferred' ? rev.kind : 'observed',
@@ -66,7 +66,7 @@ function kpiReembolsos({fuga, estado, ahora}) {
   const pc = cambio ? ((cambio.reembolsos - cambio.reembolsosPrevio) / cambio.reembolsosPrevio) * 100 : null;
   return {...base, estado: 'ok', valor: usd(t.usdBrutoMinor), periodo: rangoTxt(t.rango), clase: 'observed',
     variacion: pc == null ? null : variacion(`${pc > 0 ? '+' : ''}${pc.toFixed(1)} %`, pc, 'down'), serie: mejor.slice(-8).map(m => m.reembolsos), serieEtiqueta: 'Reembolsos por mes completo',
-    nota: `${num(t.n)} reembolsos${inten.length ? ' · intensidad ' + inten.join(' · ') : ''}`,
+    nota: `${num(t.n)} reembolsos`, notaLarga: `${num(t.n)} reembolsos${inten.length ? ' · intensidad ' + inten.join(' · ') : ''}`,
     sello: sello({clase: 'observed', fuente: 'Libro de reembolsos', hasta: t.rango?.hasta ?? null, actualizado: fuga.generatedAt, ahora})};
 }
 function kpiAtorado({fuga, estado, ahora}) {
@@ -78,7 +78,7 @@ function kpiAtorado({fuga, estado, ahora}) {
   const monto = NEGADOS.reduce((a, k) => a + (t.montoPorEstado?.[k] ?? 0), 0);
   const estados = NEGADOS.map(k => ({id: k, valor: t.estados?.[k] ?? 0})).filter(e => e.valor > 0);
   return {...base, estado: 'ok', valor: `${num(t.negados)} casos`, clase: 'observed', estados,
-    nota: monto > 0 ? `${usd(String(Math.round(monto)))} con monto (USD supuesto) · vencidos, rechazados o no reembolsables` : 'Vencidos, rechazados o no reembolsables · sin monto registrado',
+    nota: monto > 0 ? `${usd(String(Math.round(monto)))} con monto · USD supuesto` : 'Sin monto registrado', notaLarga: monto > 0 ? `${usd(String(Math.round(monto)))} con monto (USD supuesto) · vencidos, rechazados o no reembolsables` : 'Vencidos, rechazados o no reembolsables · sin monto registrado',
     sello: sello({clase: 'observed', fuente: 'Tracker de Excel', hasta: null, actualizado: fuga.generatedAt, ahora})};
 }
 function kpiRespuestas({carga, estado, ahora}) {
@@ -88,7 +88,7 @@ function kpiRespuestas({carga, estado, ahora}) {
   const s = carga?.sla;
   if (!ok(s)) return {...base, estado: 'no_disponible', valor: null, nota: s?.status === 'empty' ? 'Aún no hay hilos de HubSpot cargados.' : 'No disponible ahora. No significa que no haya hilos pendientes.'};
   const porDia = ok(carga?.carga) ? (carga.carga.porDia ?? []).map(d => d.promedioPorDia) : [];
-  return {...base, estado: 'ok', valor: `${num(s.abiertosSinRespuesta24h)} hilos`, clase: 'observed', serie: porDia.length > 1 ? porDia : undefined, serieEtiqueta: 'Conversaciones por día de la semana (promedio)', nota: 'Abiertos sin respuesta de agente registrada · solo conteo · HubSpot',
+  return {...base, estado: 'ok', valor: `${num(s.abiertosSinRespuesta24h)} hilos`, clase: 'observed', serie: porDia.length > 1 ? porDia : undefined, serieEtiqueta: 'Conversaciones por día de la semana (promedio)', nota: 'Sin respuesta de agente · HubSpot', notaLarga: 'Abiertos sin respuesta de agente registrada · solo conteo · HubSpot',
     sello: sello({clase: 'observed', fuente: 'HubSpot API', hasta: s.corte, actualizado: s.generatedAt ?? carga.generatedAt, ahora})};
 }
 

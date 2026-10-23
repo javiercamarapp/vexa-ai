@@ -5,6 +5,6 @@ import s from './legibilidad.module.css';
 export function NoiseToggle({incluir,onChange,ocultos,unidad='elementos'}:{incluir:boolean;onChange:(v:boolean)=>void;ocultos:number;unidad?:string}){
  return <div className={s.noiseBar}>
   <label className={s.switch}><input type="checkbox" role="switch" checked={incluir} onChange={e=>onChange(e.target.checked)}/><span className={s.track} aria-hidden="true"/><span>Incluir notificaciones automáticas</span></label>
-  <span className={s.noiseCount} role="status" aria-live="polite">{incluir?'Se muestran también las notificaciones automáticas (alertas de minoristas y del sistema).':ocultos>0?`${nf.format(ocultos)} ${ocultos===1?'notificación automática oculta':'notificaciones automáticas ocultas'} (${unidad}).`:'Ninguna notificación automática oculta en esta vista.'}</span>
+  <span className={s.noiseCount} role="status" aria-live="polite">{incluir?'Incluye alertas de minoristas y del sistema':ocultos>0?`${nf.format(ocultos)} ${ocultos===1?'automática oculta':'automáticas ocultas'} · ${unidad}`:'Ninguna oculta en esta vista'}</span>
  </div>;
 }

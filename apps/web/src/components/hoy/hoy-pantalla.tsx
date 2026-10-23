@@ -33,9 +33,9 @@ function Kpi({k,ctx,onRetry}:{k:KpiHoy;ctx:unknown;onRetry:()=>void}){
     {k.estado!=='sin_acceso'&&<button type="button" className="btn btn-ghost btn-sm hoy-reintentar" onClick={onRetry}>Reintentar</button>}</>
    :<><div className="hoy-kpi-valor">{k.valor}</div>
     {k.estados&&k.estados.length>0&&<BarraApilada h={8} base={3} sinLeyenda label={'Casos por estado: '+k.estados.map(e=>(ETIQ[e.id]??e.id)+' '+e.valor).join(', ')} items={k.estados.map(e=>({label:ETIQ[e.id]??e.id,value:e.valor}))}/>}
-    <p className="hoy-kpi-nota">{k.variacion&&<DeltaChip delta={{value:k.variacion.texto,dir:k.variacion.dir,good:k.variacion.bueno}} label={k.delta??undefined}/>}{k.variacion?' ':''}{k.nota}</p>
+    <p className="hoy-kpi-nota" title={k.notaLarga??k.nota??undefined}>{k.variacion&&<DeltaChip delta={{value:k.variacion.texto,dir:k.variacion.dir,good:k.variacion.bueno}} label={k.delta??undefined}/>}{k.variacion?' ':''}{k.nota}</p>
     
-    {k.sello&&<SelloProcedencia sello={k.sello}/>}</>}
+    {k.sello&&<SelloProcedencia sello={k.sello} compacto/>}</>}
  </li>;
 }
 

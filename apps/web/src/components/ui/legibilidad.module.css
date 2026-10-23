@@ -18,7 +18,7 @@
 @media(prefers-reduced-motion:no-preference){.insight{animation:insIn var(--t-pop,160ms) ease both}.insight:nth-child(2){animation-delay:60ms}.insight:nth-child(3){animation-delay:120ms}}
 @keyframes insIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
-.noiseBar{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2) var(--sp-4);padding:var(--sp-2) var(--sp-3);border:1px solid var(--ui-border);border-radius:var(--r-inner,12px);background:var(--ui-soft)}
+.noiseBar{display:flex;flex-wrap:wrap;align-items:center;gap:0 var(--sp-4);padding:0 var(--sp-3);border:1px solid var(--ui-border);border-radius:var(--r-inner,12px);background:var(--ui-soft)}
 .switch{display:inline-flex;align-items:center;gap:var(--sp-2);cursor:pointer;font-size:13px;min-height:32px}
 .switch input{position:absolute;opacity:0;width:1px;height:1px}
 .track{position:relative;flex:none;width:34px;height:20px;border-radius:999px;background:var(--ch-track,#ececef);border:1px solid var(--ui-border);transition:background var(--t-fast,120ms) ease}

@@ -69,6 +69,7 @@
 .skel-inline{display:inline-block;height:1em;vertical-align:-0.15em;border-radius:4px}.wait-line{margin:var(--sp-2) 0 0;font-size:12px;color:var(--ink-muted,inherit)}
 .state-cache{padding:var(--sp-2) var(--sp-3);font-size:12px}
 .state-cache[data-estado=viejo]{background:var(--ui-warning-soft);border-color:var(--ui-warning)}
+.state-cache-slot{min-height:36px}
 .legend{display:flex;flex-wrap:wrap;gap:var(--sp-2) var(--sp-4);margin:var(--sp-4) 0 0;padding:0;list-style:none;font-size:12px;color:var(--ui-secondary)}
 .legend li{display:inline-flex;align-items:center;gap:var(--sp-2)}
 .sw{display:inline-block;width:14px;height:10px;border-radius:3px;flex:none}

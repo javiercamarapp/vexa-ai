@@ -40,7 +40,7 @@ test('con modelo simulado hay 2 llamadas (planear y redactar), costo registrado 
 });
 test('pasos de herramienta en vivo: inicio y fin por cada consulta', async () => {
   const events = []; const agent = createAgent();
-  await agent.answer({ ctx: ctxFor(), port: portFor(), question: '¿Qué cubre y qué falta y cómo van las asociaciones?', onEvent: (e) => events.push(`${e.fase}:${e.herramienta}`) });
+  await agent.answer({ ctx: ctxFor(), port: portFor(), question: '¿Qué cubre y qué falta y cómo van las asociaciones?', onEvent: (e) => { if (e.t === 'paso') events.push(`${e.fase}:${e.herramienta}`); } });
   assert.deepEqual(events, ['inicio:cobertura_datos', 'fin:cobertura_datos', 'inicio:estado_asociaciones', 'fin:estado_asociaciones']);
 });
 test('máximo 3 consultas por pregunta', async () => {

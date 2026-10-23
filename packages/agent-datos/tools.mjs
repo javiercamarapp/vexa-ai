@@ -62,7 +62,7 @@ export const TOOLS = [
       const rows = all.map((s) => ({ fuente: s.label, estado: s.loaded ? 'Cargada' : 'Sin cargar', incorporadas: s.loaded ? s.incorporated : null, rechazadas: s.loaded ? s.rejected : null, pendientes: s.loaded ? s.pending : null, clase: CLASS_LABELS[s.class] }));
       return {
         status: 'ok', figures: [f],
-        blocks: [{ tool: 'cobertura_datos', title: 'Cobertura por fuente', columns: [col('fuente', 'Fuente'), col('estado', 'Estado'), col('incorporadas', 'Incorporadas', 'integer'), col('rechazadas', 'Rechazadas', 'integer'), col('pendientes', 'Pendientes', 'integer'), col('clase', 'Clase')], rows, class: 'mixed', coverage: f.coverage, truncated: false, note: 'Las fuentes marcadas «Estimado» vienen de una muestra rotulada.' }],
+        blocks: [{ tool: 'cobertura_datos', title: 'Cobertura por fuente', columns: [col('fuente', 'Fuente'), col('estado', 'Estado'), col('incorporadas', 'Incorporadas', 'integer'), col('rechazadas', 'Rechazadas', 'integer'), col('pendientes', 'Pendientes', 'integer'), col('clase', 'Clase')], rows, chart: { kind: 'donut', additive: true, unit: 'fuentes', series: [{ key: 'cargadas', label: 'Cargadas', value: loaded.length, display: fmtInt(loaded.length) }, { key: 'sin_cargar', label: 'Sin cargar', value: missing.length, display: fmtInt(missing.length) }].filter((x) => x.value > 0) }, class: 'mixed', coverage: f.coverage, truncated: false, note: 'Las fuentes marcadas «Estimado» vienen de una muestra rotulada.' }],
         summary: `Hay datos de ${loaded.length} de ${all.length} fuentes ${tag(f)}. Cargadas: ${loaded.map((s) => s.label).join('; ')}.${missing.length ? ` Falta cargar: ${missing.map((s) => s.label).join('; ')}; su tamaño no se estima.` : ''}`,
         missing: missing.map((s) => s.label), notes: [],
       };
@@ -115,7 +115,7 @@ export const TOOLS = [
       const f2 = fig('tendencia_conversaciones', `Conversaciones en ${s.length} meses`, fmtInt(sum), sum, c.class, cov);
       return {
         status: 'ok', figures: [f, f2],
-        blocks: [{ tool: 'tendencia_conversaciones', title: 'Conversaciones por mes', columns: [col('mes', 'Mes'), col('conversaciones', 'Conversaciones', 'integer')], rows: s.map((x) => ({ mes: monthLabel(x.month), conversaciones: x.count })), chart: { kind: 'bar', unit: 'conversaciones', series: s.map((x) => ({ key: x.month, label: monthShort(x.month), value: x.count, display: fmtInt(x.count) })) }, class: c.class, coverage: cov, truncated: false, note: c.sampleNote ?? undefined }],
+        blocks: [{ tool: 'tendencia_conversaciones', title: 'Conversaciones por mes', columns: [col('mes', 'Mes'), col('conversaciones', 'Conversaciones', 'integer')], rows: s.map((x) => ({ mes: monthLabel(x.month), conversaciones: x.count })), chart: { kind: s.length >= 3 ? 'line' : 'bar', unit: 'conversaciones', series: s.map((x) => ({ key: x.month, label: monthShort(x.month), value: x.count, display: fmtInt(x.count) })) }, class: c.class, coverage: cov, truncated: false, note: c.sampleNote ?? undefined }],
         summary: `En ${monthLabel(last.month)} hubo ${f.display} conversaciones y ${f2.display} en los últimos ${s.length} meses ${tag(f2)}.${c.sampled ? ' La cifra es una estimación a partir de una muestra del 10 %.' : ''}`, missing: [], notes: c.sampleNote ? [c.sampleNote] : [],
       };
     },

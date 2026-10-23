@@ -1,7 +1,7 @@
 // Orquestador de un turno: validar -> límites y presupuesto -> planear (catálogo cerrado) -> ejecutar herramientas -> redactar -> verificar contrato.
 // El texto que redacta un modelo solo se muestra si TODOS sus números salen de los resultados y no contiene enlaces ni citas; si no,
 // se muestra el resumen determinista de las herramientas. Una respuesta que incumple el contrato (cifra sin clase o cobertura) no sale.
-import { AgentError, LIMITS, ROLES, contractViolations, numbersGrounded, numbersIn } from './contract.mjs';
+import { AgentError, CONTRACT_VERSION, LIMITS, ROLES, contractViolations, numbersGrounded, numbersIn } from './contract.mjs';
 import { executeTool, catalogForModel, modelViewOf, monthLabel } from './tools.mjs';
 import { createRuleModel } from './model.mjs';
 import { defaultSuggestions } from './suggestions.mjs';
@@ -21,7 +21,10 @@ export function createAgent({ model = createRuleModel(), budget, limiter, estima
   async function answer({ ctx: raw, port, question, history = [], directa, conversationTurns = 0, onEvent = () => {}, signal }) {
     const started = Date.now();
     const usage = { modelCalls: 0, toolCalls: 0, costMinor: '0', mode: model.kind === 'deterministic' ? 'deterministic' : 'model', fallback: false, guardRejected: false };
-    const base = (status, text, extra = {}) => ({ status, text, figures: [], blocks: [], citations: [], sources: [], calc: [], missing: [], suggestions: [], usage: { ...usage, durationMs: Date.now() - started }, ...extra });
+    // `trace`: pasos REALES del turno (plan, herramientas, redacción, verificación), con tiempos medidos. Nunca texto del modelo.
+    const trace = [];
+    const base = (status, text, extra = {}) => ({ contractVersion: CONTRACT_VERSION, status, text, figures: [], blocks: [], citations: [], sources: [], calc: [], missing: [], suggestions: [], trace: trace.slice(), usage: { ...usage, durationMs: Date.now() - started }, ...extra });
+    const note = (s) => { trace.push(s); onEvent({ t: 'traza', paso: s }); };
     const ctx = { tenantId: raw?.tenantId, userId: raw?.userId, role: raw?.role, now: raw?.now ?? new Date() };
     ctx.month = monthOf(ctx.now);
     if (!ctx.tenantId || !ctx.userId || !ROLES.includes(ctx.role)) return base('forbidden', 'Tu rol no tiene acceso a estas consultas.');
@@ -36,7 +39,7 @@ export function createAgent({ model = createRuleModel(), budget, limiter, estima
     const deadline = Date.now() + LIMITS.turnTimeoutMs;
     try {
       let calls = [];
-      let planned;
+      let planned; const planStart = Date.now();
       if (directa) {
         planned = { calls: [{ tool: directa.tool, args: directa.args ?? {} }] };
       } else {
@@ -57,6 +60,8 @@ export function createAgent({ model = createRuleModel(), budget, limiter, estima
           planned = await createRuleModel().plan({ question: q, history: hist, ctx, vocabulary });
         } finally { budget?.settle(hold?.id ?? null, usage.costMinor); }
       }
+      if (!directa) note({ id: 'plan', kind: 'plan', label: 'Elegí qué consultar', estado: planned?.calls?.length ? 'ok' : 'sin_consulta', ms: Date.now() - planStart, detail: (usage.fallback ? 'El modelo no respondió: usé reglas deterministas. ' : usage.mode === 'deterministic' ? 'Reglas deterministas, sin modelo de lenguaje. ' : 'Un modelo eligió entre las consultas del catálogo cerrado. ') + (planned?.calls?.length ? `Consultas: ${planned.calls.slice(0, maxToolCalls).map((c) => c.tool).join(', ')}.` : 'Ninguna consulta del catálogo aplica.') });
+      else note({ id: 'plan', kind: 'plan', label: 'Consulta directa del catálogo', estado: 'ok', ms: 0, detail: `Sin modelo: ejecuté ${directa.tool}.` });
       if (planned?.clarify) return base('clarify', clean(planned.clarify, 300), { suggestions: defaultSuggestions(ctx.role) });
       if (planned?.outOfCatalog || !Array.isArray(planned?.calls) || !planned.calls.length) return base('out_of_catalog', REFUSAL[planned?.outOfCatalog] ?? REFUSAL.unknown, { suggestions: defaultSuggestions(ctx.role) });
       const seen = new Set();
@@ -67,8 +72,10 @@ export function createAgent({ model = createRuleModel(), budget, limiter, estima
       for (const c of calls) {
         check(); onEvent({ t: 'paso', fase: 'inicio', herramienta: c.tool });
         usage.toolCalls += 1;
-        results.push(await executeTool({ name: c.tool, args: c.args, port, ctx }));
-        onEvent({ t: 'paso', fase: 'fin', herramienta: c.tool });
+        const r = await executeTool({ name: c.tool, args: c.args, port, ctx });
+        results.push(r);
+        const step = { id: `tool:${results.length}`, kind: 'tool', tool: c.tool, label: r.label, estado: r.status, ms: r.durationMs ?? null, cifras: (r.figures ?? []).length, fuentes: (r.sources ?? []).map((x) => x.label), args: r.args ?? {} };
+        trace.push(step); onEvent({ t: 'paso', fase: 'fin', herramienta: c.tool, estado: step.estado, ms: step.ms, cifras: step.cifras, fuentes: step.fuentes });
       }
       const ok = results.filter((r) => r.status === 'ok'), nodata = results.filter((r) => r.status === 'no_data');
       if (!ok.length && !nodata.length) {
@@ -83,10 +90,11 @@ export function createAgent({ model = createRuleModel(), budget, limiter, estima
       let text = (ok.length ? '' : 'No tengo ese dato. ') + lines.join(' ') + (nodata.length && ok.length ? ' Para lo que no tengo: ' + missing.join('; ') + '.' : '') + (!ok.length && missing.length ? ` Qué falta cargar: ${missing.join('; ')}.` : '')
       usage.mode = usage.mode === 'deterministic' ? 'deterministic' : 'determinista+modelo';
       const sourceCitations = results.flatMap((r) => r.citations ?? []);
+      let composeNote = { id: 'compose', kind: 'compose', label: 'Redacté la respuesta', estado: 'ok', ms: 0, detail: 'Resumen determinista de lo que devolvieron las consultas.' };
       if (model.kind !== 'deterministic' && model.compose && !usage.fallback && ok.length) {
         const hold2 = budget ? budget.reserve({ tenantId: ctx.tenantId, amountMinor: estimates.composeMinor }) : { ok: true, id: null };
         if (hold2.ok) {
-          let before = usage.costMinor;
+          let before = usage.costMinor; const composeStart = Date.now();
           try {
             check(); usage.modelCalls += 1;
             const out = await withTimeout(model.compose({ question: q, results: results.map(modelViewOf), ctx: { role: ctx.role } }), Math.max(1000, deadline - Date.now()), 'compose_timeout');
@@ -94,12 +102,13 @@ export function createAgent({ model = createRuleModel(), budget, limiter, estima
             const allowed = numbersIn(results.map((r) => ({ f: r.figures, b: r.blocks, s: r.summary, a: r.args, m: r.missing, n: r.notes })), numbersIn(q));
             const t = typeof out?.text === 'string' ? clean(out.text, 1200) : '';
             const leaks = sourceCitations.some((c) => c.quote.length >= 12 && t.includes(c.quote.slice(0, 40)));
-            if (t && numbersGrounded(t, allowed) && !/https?:\/\/|www\.|\]\(|<\/?[a-z]/i.test(t) && !leaks) text = t; else usage.guardRejected = true;
-          } catch (e) { if (e?.name === 'AbortError') throw e; usage.guardRejected = true; usage.costMinor = before; }
+            if (t && numbersGrounded(t, allowed) && !/https?:\/\/|www\.|\]\(|<\/?[a-z]/i.test(t) && !leaks) { text = t; composeNote = { ...composeNote, ms: Date.now() - composeStart, detail: 'Un modelo redactó el texto; cada número coincide con las consultas.' }; } else { usage.guardRejected = true; composeNote = { ...composeNote, estado: 'descartado', ms: Date.now() - composeStart, detail: 'La redacción del modelo se descartó (números o enlaces no respaldados): mostré el resumen determinista.' }; }
+          } catch (e) { if (e?.name === 'AbortError') throw e; usage.guardRejected = true; usage.costMinor = before; composeNote = { ...composeNote, estado: 'descartado', ms: Date.now() - composeStart, detail: 'El modelo no respondió: mostré el resumen determinista.' }; }
           finally { budget?.settle(hold2.id, String(BigInt(usage.costMinor) - BigInt(before))); }
         }
       }
 
+      note(composeNote);
       if (overflow) text += ` Respondí solo las primeras ${maxToolCalls} consultas.`;
       const answerObj = base(ok.length ? 'ok' : 'no_data', text, {
         figures: ok.flatMap((r) => r.figures), blocks: ok.flatMap((r) => r.blocks), citations: ok.flatMap((r) => r.citations ?? []),
@@ -107,11 +116,13 @@ export function createAgent({ model = createRuleModel(), budget, limiter, estima
         calc: results.filter((r) => r.status === 'ok' || r.status === 'no_data').map((r) => ({ tool: r.tool, label: r.label, status: r.status, args: r.args, method: r.method, reads: r.reads, sources: r.sources, figures: (r.figures ?? []).length, durationMs: r.durationMs })),
         missing, notes: [...new Set(results.flatMap((r) => r.notes ?? []))],
       });
+      answerObj.trace = trace;
       if (!ok.length) answerObj.sources = [];
       if (ok.length) {
         const bad = contractViolations(answerObj);
         if (bad.length) return base('unavailable', 'No pude verificar la clase y la cobertura de las cifras, así que no las muestro. Reintenta o revisa la cobertura de tus datos.', { violations: bad });
       } else if (!answerObj.calc.length) return base('unavailable', text);
+      note({ id: 'verify', kind: 'verify', label: 'Verifiqué clase y cobertura', estado: 'ok', ms: 0, detail: `${answerObj.figures.length} cifras y ${answerObj.blocks.length} bloques con clase y cobertura; las cifras salen de las consultas, no del modelo.` });
       answerObj.usage = { ...usage, durationMs: Date.now() - started };
       return answerObj;
     } catch (e) {

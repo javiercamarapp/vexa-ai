@@ -5,6 +5,9 @@
 //  3. ningún texto crudo de clientes llega al modelo (las citas viajan por un canal solo-UI);
 //  4. un número en la respuesta que no salga de los resultados de las herramientas invalida el texto del modelo.
 
+/** Versión del contrato de la respuesta. 2: `chart.kind` ∈ bar|line|donut, `trace` (pasos reales del turno) y `contractVersion`. */
+export const CONTRACT_VERSION = 2;
+export const CHART_KINDS = Object.freeze(['bar', 'line', 'donut']);
 export const STATUSES = Object.freeze(['ok', 'no_data', 'clarify', 'out_of_catalog', 'rate_limited', 'budget_exceeded', 'unavailable', 'invalid_input', 'forbidden']);
 export const CLASSES = Object.freeze(['observed', 'estimated', 'inferred']);
 export const CLASS_LABELS = Object.freeze({ observed: 'Observado', estimated: 'Estimado', inferred: 'Inferido' });
@@ -88,12 +91,32 @@ export function contractViolations(answer) {
     if (!CLASSES.includes(b.class) && !(b.class === 'mixed' && b.columns?.some((c) => c.key === 'clase'))) v.push(`bloque sin clase: ${b.title}`);
     if (!validCoverage(b.coverage)) v.push(`bloque sin cobertura: ${b.title}`);
     if ((b.rows?.length ?? 0) > LIMITS.maxRowsPerBlock) v.push(`bloque demasiado largo: ${b.title}`);
+    if (b.chart) v.push(...chartViolations(b));
   }
   if (needsLabels && !(answer.figures?.length || answer.blocks?.length || answer.citations?.length)) v.push('respuesta ok sin cifras ni bloques');
   for (const c of answer?.citations ?? []) if (!isUuid(c.messageRevisionId) || typeof c.quote !== 'string') v.push('cita sin origen verificable');
   if (needsLabels && !(answer.sources?.length)) v.push('respuesta ok sin fuentes');
   if (needsLabels && !(answer.calc?.length)) v.push('respuesta ok sin «cómo lo calculé»');
   return v;
+}
+
+/** Una gráfica solo puede dibujar lo que la tabla del mismo bloque ya dice: serie finita, sin ceros inventados y donas solo de partes aditivas. */
+export function chartViolations(b) {
+  const c = b.chart; const out = []; const t = `gráfica de «${b.title}»`;
+  if (!CHART_KINDS.includes(c.kind)) return [`${t}: tipo no soportado`];
+  if (!Array.isArray(c.series) || c.series.length < (c.kind === 'line' ? 3 : 1)) return [`${t}: serie insuficiente`];
+  if (c.series.length > LIMITS.maxRowsPerBlock) out.push(`${t}: demasiados puntos`);
+  for (const s of c.series) {
+    if (typeof s.label !== 'string' || typeof s.display !== 'string') out.push(`${t}: punto sin etiqueta`);
+    if (s.value !== null && !(Number.isFinite(s.value) && s.value >= 0)) out.push(`${t}: valor no válido`);
+    if (s.value === null && s.display !== 'No disponible') out.push(`${t}: un desconocido debe decir «No disponible», no 0`);
+  }
+  if (c.kind === 'donut') {
+    if (c.additive !== true) out.push(`${t}: la dona exige partes aditivas del mismo todo`);
+    if (c.series.some((s) => s.value === null)) out.push(`${t}: la dona no admite desconocidos`);
+    if (!(c.series.reduce((a, s) => a + (s.value ?? 0), 0) > 0)) out.push(`${t}: dona sin total`);
+  }
+  return out;
 }
 
 const NUM = /\d[\d.,   ]*\d|\d/g;

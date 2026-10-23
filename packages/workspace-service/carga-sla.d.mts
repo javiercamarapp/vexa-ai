@@ -1,0 +1,23 @@
+export type Parte = {status: 'ok' | 'empty' | 'unavailable' | 'not_computed'; note?: string};
+export type CargaVista = {
+  generatedAt: string; class: 'observed'; zona: string; nota: string;
+  carga: Parte & {zona?: string; origen?: 'precalculado' | 'en_vivo'; meses?: string[]; excluidos?: {mes: string; motivo: string}[]; total?: number; matriz?: number[][]; max?: number;
+    porDia?: {dia: string; total: number; promedioPorDia: number; dias: number}[]; porHora?: {hora: number; total: number; promedioPorDia: number; pct: number}[];
+    horasPico?: {hora: number; total: number; promedioPorDia: number; pct: number}[]; horasValle?: {hora: number; total: number; promedioPorDia: number; pct: number}[];
+    celdaPico?: {dia: string; hora: number; promedio: number} | null; diasMenorCarga?: {dia: string; total: number; promedioPorDia: number; dias: number}[]};
+  canal: Parte & {total?: number; conCanal?: number; derivable?: boolean};
+  sla: Parte & {fuente?: string; nota?: string; umbralH?: number; rango?: {desde: string; hasta: string} | null; corte?: string | null; hilos?: number; medibles?: number; sinMensajeCliente?: number;
+    conRespuestaRegistrada?: number; dentro?: number; fuera?: number; sinRespuestaRegistrada?: number; pctDentroDeConRespuesta?: number | null; pctDentroDeMedibles?: number | null; pctConRespuesta?: number | null;
+    primeraRespuestaP50h?: number | null; primeraRespuestaP90h?: number | null; abiertosSinRespuesta24h?: number; edadAbiertos?: {d1_7: number; d7_30: number; d30: number}; cerradosSinRespuestaRegistrada?: number};
+  cierre: Parte & {refreshedAt?: string | null; threads?: number; closed?: number; reopenedThreads?: number; reopenedPercent?: number | null; closeP50Hours?: number | null; closeP90Hours?: number | null; closedUnder1h?: number; closedOver7d?: number};
+  parts: Record<string, string>;
+};
+export const TZ: string;
+export const DIAS: readonly string[];
+export const MESES_CARGA: number;
+export const NOTA_FUENTE: string;
+export function mesesParaCarga(meses: {mes: string; n: number}[], max?: number): {usados: string[]; excluidos: {mes: string; motivo: string}[]};
+export function diasPorSemana(meses: string[]): number[];
+export function armarCarga(rows: {dow: number; hour: number; n: number}[], meses: string[]): NonNullable<unknown> & Required<Pick<CargaVista['carga'], 'total' | 'matriz' | 'porDia' | 'porHora' | 'horasPico' | 'horasValle' | 'diasMenorCarga' | 'max'>> & {celdaPico: CargaVista['carga']['celdaPico']};
+export function armarSla(r: Record<string, unknown>, o?: {hoy?: Date; umbralH?: number}): Omit<NonNullable<CargaVista['sla']>, 'status'>;
+export function createWorkloadRepository(o: {database: unknown; now?: () => Date; budgets?: Record<string, number>}): {get(): Promise<CargaVista>};

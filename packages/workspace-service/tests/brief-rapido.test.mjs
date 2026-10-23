@@ -19,6 +19,7 @@ import {createRecommendationRepository} from '../../recommendations/index.mjs';
 const read = f => fs.readFileSync(new URL(f, import.meta.url), 'utf8');
 const UP_B = read('../../../supabase/migrations/20261028000000_brief_catalog_cut.sql'), DOWN_B = read('./20261028000000_brief_catalog_cut.down.sql');
 const UP_R = read('../../../supabase/migrations/20261029000000_recommendation_catalog_cut.sql'), DOWN_R = read('./20261029000000_recommendation_catalog_cut.down.sql');
+const UP_V2 = read('../../../supabase/migrations/20261101000000_recommendation_generator_v2.sql');
 const UP_G = read('../../../supabase/migrations/20261030000000_brief_guard_uuid_ids.sql'), DOWN_G = read('./20261030000000_brief_guard_uuid_ids.down.sql');
 const SKIP = !pgAvailable() && 'sin postgres local';
 const q = (a, extra = {}) => new URLSearchParams({date_start: a.start.slice(0, 10), date_end: a.end.slice(0, 10), currency: a.currency, basis: a.basis, exponent: String(a.exponent), ...extra});
@@ -145,7 +146,7 @@ test('Brief y recomendación sobre corte sin vínculos: una transacción, sin N+
       await t.test('recomendación: en un corte sin vínculos NO falla (antes 404 problem_not_found; luego la guarda); verifica UN problema, no el catálogo', async () => {
         const pid = catalog[0].id;
         await assert.rejects(createRecommendationRepository({database: base()}).generate({query: sp.toString(), problemId: pid, requestKey: 'rec-key-00000'}), e => e.status === 409 || e.code === '23514' || /conflict|database/.test(String(e.message)));
-        aplicar(UP_R);
+        aplicar(UP_R); aplicar(UP_V2);
         const log = [];
         const rec = await createRecommendationRepository({database: logged(log)}).generate({query: sp.toString(), problemId: pid, requestKey: 'rec-key-00001'});
         const st = stats(log); console.log('# REC', JSON.stringify(st));

@@ -157,6 +157,8 @@ body:has(.workspace-shell)>.skip-link { display:none; }
 .workspace-shell .sidebar-account form { margin:0; }
 .workspace-frame { flex:1; min-width:0; min-height:calc(100dvh - 24px); border:1px solid var(--ui-border); border-radius:16px; background:var(--ui-surface); overflow:clip; }
 .workspace-header { height:56px; display:flex; align-items:center; gap:10px; padding:0 20px; border-bottom:1px solid var(--ui-border); }
+/* «Pregúntale a tus datos» no lleva encabezado: el atributo hidden debe ganarle a display:flex. */
+.workspace-header[hidden] { display:none !important; }
 .workspace-heading { font-size:13px; font-weight:500; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
 .workspace-header-actions { margin-left:auto; display:flex; align-items:center; gap:16px; min-width:0; }
 .workspace-date { font:500 11px var(--font-ui); padding:6px 12px; border:1px solid var(--ui-border); border-radius:999px; max-width:200px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; color:var(--muted); }

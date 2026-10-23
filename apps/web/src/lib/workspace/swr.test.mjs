@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {claveSwr,fijarTenant,limpiarTodo,guardarSwr,leerSwr,invalidarSwr,olvidarMemoriaSwr,pedirSwr,enVueloN,precalentar,estadoPrecalentamiento,reiniciarPrecalentamiento,FRESCO_MS,VIDA_MS,hace} from './swr.mjs';
+import {leerConCache,claveSwr,fijarTenant,limpiarTodo,guardarSwr,leerSwr,invalidarSwr,olvidarMemoriaSwr,pedirSwr,enVueloN,precalentar,estadoPrecalentamiento,reiniciarPrecalentamiento,FRESCO_MS,VIDA_MS,hace} from './swr.mjs';
 const almacenFalso=()=>{const m=new Map();return {get length(){return m.size;},key:i=>[...m.keys()][i]??null,getItem:k=>m.has(k)?m.get(k):null,setItem:(k,v)=>m.set(k,v),removeItem:k=>m.delete(k),m};};
 const nuevo=(t='T1')=>{olvidarMemoriaSwr();reiniciarPrecalentamiento();const a=almacenFalso();fijarTenant(t,{almacen:a});return a;};
 test('la clave incluye tenant, ignora el orden de parámetros y distingue recurso y alcance',()=>{
@@ -54,3 +54,27 @@ test('precalentar: tope de concurrencia 2, sin duplicados ni lecturas frescas',a
  assert.equal(precalentar(['/api/1'],{fetchFn:f,almacen:a}),0,'ya está fresca');
 });
 test('texto de edad',()=>{assert.equal(hace(20000),'hace 20 s');assert.equal(hace(180000),'hace 3 min');});
+
+const resp=(status,json)=>async()=>({ok:status>=200&&status<300,status,json:async()=>json});
+test('leerConCache: fresca no toca la red; vieja se pinta ya y se revalida; si la red falla se conserva y se marca fallo',async()=>{
+ const a=nuevo(),url='/api/x?q=1',k=claveSwr(url),valida=j=>j?.data?j:null;let llamadas=0;
+ const f=(status,json)=>async()=>{llamadas++;return resp(status,json)();};
+ guardarSwr(k,{data:'viejo'},{ahora:1000,almacen:a});
+ let pintado=null;
+ let r=await leerConCache(url,{valida,fetchFn:f(200,{data:'fresco'}),almacen:a,ahora:1000+60000,onCache:(j,e,fresca)=>{pintado={j,e,fresca};}});
+ assert.equal(llamadas,0);assert.equal(r.deCache,true);assert.equal(pintado.fresca,true);assert.equal(pintado.e,60000);
+ pintado=null;r=await leerConCache(url,{valida,fetchFn:f(200,{data:'nuevo'}),almacen:a,ahora:1000+FRESCO_MS+5000,onCache:(j,e,fresca)=>{pintado={j,e,fresca};}});
+ assert.equal(pintado.j.data,'viejo','primero se entrega el dato viejo');assert.equal(pintado.fresca,false);assert.equal(llamadas,1);assert.equal(r.json.data,'nuevo');assert.equal(r.deCache,false);
+ guardarSwr(k,{data:'bueno'},{ahora:2000,almacen:a});
+ r=await leerConCache(url,{valida,fetchFn:f(503,{error:1}),almacen:a,ahora:2000+FRESCO_MS+1});
+ assert.equal(r.fallo,true);assert.equal(r.json.data,'bueno','el 503 no reemplaza el dato bueno');
+ r=await leerConCache(url,{valida,fetchFn:async()=>{throw new TypeError('Failed to fetch');},almacen:a,ahora:2000+FRESCO_MS+1});
+ assert.equal(r.fallo,true);assert.equal(r.json.data,'bueno');
+ r=await leerConCache(url,{valida,fetchFn:f(403,{error:1}),almacen:a,ahora:2000+FRESCO_MS+1});
+ assert.equal(r.status,403);assert.equal(r.deCache,false,'un 403 (acceso cambió) no se tapa con caché');
+});
+test('leerConCache: sin dato previo la red que falla lanza; soloFresca no pinta datos viejos de antemano',async()=>{
+ const a=nuevo();await assert.rejects(leerConCache('/api/sin',{fetchFn:async()=>{throw new TypeError('x');},almacen:a}),TypeError);
+ guardarSwr(claveSwr('/api/p'),{data:1},{ahora:1,almacen:a});let n=0;
+ await leerConCache('/api/p',{fetchFn:resp(200,{data:2}),almacen:a,ahora:1+FRESCO_MS+10,soloFresca:true,onCache:()=>n++});assert.equal(n,0);
+});

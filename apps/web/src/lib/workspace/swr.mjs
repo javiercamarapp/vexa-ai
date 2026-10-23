@@ -77,6 +77,27 @@ export function pedirSwr(url,{signal,valida,fetchFn=globalThis.fetch,clave=clave
  }
  return conSenal(p,signal);
 }
+/**
+ * Lectura con caché para paneles con su propio flujo de carga (una sola pasada). Devuelve {status,json,deCache,edadMs,fallo}.
+ *  - dato fresco (≤5 min) y válido: se devuelve sin red (deCache:true);
+ *  - dato viejo (≤30 min) y válido: `onCache(json,edadMs)` lo entrega YA para pintarlo y se revalida por la red; si la red falla (red caída o 5xx),
+ *    se conserva ese dato (deCache:true, fallo:true) en vez de un error. `soloFresca` no entrega ni pinta datos viejos de antemano (p. ej. la fijación del alcance);
+ *  - sin dato: red directa. Un 4xx/404 de la red se devuelve tal cual (no se tapa con caché: el acceso cambió).
+ */
+export async function leerConCache(url,{signal,valida,onCache,soloFresca=false,forzar=false,fetchFn=globalThis.fetch,almacen=almacenDe(),ahora=Date.now()}={}){
+ const g=forzar?null:leerSwr(claveSwr(url),{almacen,ahora}),bueno=!!g&&(!valida||valida(g.datos)!==null);
+ if(bueno&&g.fresca){onCache?.(g.datos,g.edadMs,true);return {status:200,json:g.datos,deCache:true,edadMs:g.edadMs,fallo:false};}
+ const previo=bueno;
+ if(bueno&&!soloFresca)onCache?.(g.datos,g.edadMs,false);
+ try{
+  const r=await pedirSwr(url,{signal,valida,fetchFn,almacen});
+  if(r.status>=500&&previo)return {status:r.status,json:g.datos,deCache:true,edadMs:g.edadMs,fallo:true};
+  return {...r,deCache:false,edadMs:null,fallo:false};
+ }catch(e){
+  if(signal?.aborted||!previo)throw e;
+  return {status:0,json:g.datos,deCache:true,edadMs:g.edadMs,fallo:true};
+ }
+}
 export const enVueloN=()=>enVuelo.size;
 // ---- Precalentamiento ----------------------------------------------------------------------------------------------------------------------
 const cola=[];let activos=0,maxActivos=0;

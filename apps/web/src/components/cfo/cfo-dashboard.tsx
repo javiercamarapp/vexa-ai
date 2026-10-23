@@ -1,5 +1,8 @@
 'use client';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useMemo, useState} from 'react';
+import {useJson} from '../ui/use-json';
+import {LineaCache} from '../ui/linea-cache';
+import {EsperaEsqueleto} from '../ui/wait-status';
 import {PageHeader} from '../ui/page-header';
 import {BarChart, type BarDatum} from '../ui/bar-chart';
 import {Button, LinkButton, Download, Refresh} from '../ui/button';
@@ -22,20 +25,15 @@ const MEASURES: ReadonlyArray<{value: Measure; label: string}> = [{value: 'ingre
 const SEVERITY: Record<string, string> = {alta: 'Alta', media: 'Media', baja: 'Baja', info: 'Informativa'};
 const AFTER_SAVE = 'Los datos de demostración son sintéticos y no pertenecen a ninguna organización.';
 
-export function CfoDashboard({initial, query = '', organization}: {initial: ReportState; query?: string; organization?: string}) {
-  const [state, setState] = useState<ReportState>(initial), [busy, setBusy] = useState(false), [error, setError] = useState('');
-  const [currency, setCurrency] = useState<string>(initial.status === 'ok' ? initial.report.currencies[0] : ''), [measure, setMeasure] = useState<Measure>('ingresos');
-  const load = useCallback(async () => {
-    setBusy(true); setError('');
-    try {
-      const r = await fetch('/cfo/data/report' + query, {cache: 'no-store', signal: AbortSignal.timeout(20000)});
-      const j = await r.json(); if (!r.ok) throw new Error(j?.error?.code ?? 'cfo_unavailable');
-      setState(j.data); if (j.data.status === 'ok' && !j.data.report.currencies.includes(currency)) setCurrency(j.data.report.currencies[0]);
-    } catch { setError('No se pudo actualizar el panel. Conservo las cifras anteriores; reintenta en unos segundos.'); } finally { setBusy(false); }
-  }, [query, currency]);
-  useEffect(() => { const again = () => void load(); window.addEventListener('vexa:refresh', again); return () => window.removeEventListener('vexa:refresh', again); }, [load]);
-
-  const ok = state.status === 'ok' ? state : null, report = ok?.report;
+const acceptReporte = (j: unknown): ReportState | null => { const d = (j as {data?: ReportState})?.data; return d && (d.status === 'ok' || d.status === 'empty' || d.status === 'timeout') ? d : null; };
+export function CfoDashboard({query = '', organization}: {query?: string; organization?: string}) {
+  // Caché stale-while-revalidate (swr.mjs): al volver al panel se pinta al instante el último informe, rotulado, y se revalida sin vaciar la pantalla.
+  const rep = useJson<ReportState>('/cfo/data/report' + query, acceptReporte);
+  const [pick, setPick] = useState<string>(''), [measure, setMeasure] = useState<Measure>('ingresos');
+  const state = rep.data, busy = rep.busy, error = rep.error;
+  const currency = state?.status === 'ok' ? (state.report.currencies.includes(pick) ? pick : state.report.currencies[0]) : pick, setCurrency = setPick;
+  const load = useCallback(async () => { await rep.reload(); }, [rep]);
+  const ok = state?.status === 'ok' ? state : null, report = ok?.report;
   const actions = <>
     <CopilotPanel endpoint={'/cfo/data/copilot' + query} title="Copiloto CFO" subtitle="Tus ingresos, reembolsos y calidad de datos, con la cifra que ya calculó el panel." placeholder="Pregunta sobre tus ingresos, canales o reembolsos…" shortcuts={CFO_SHORTCUTS} openLabel="Copiloto CFO" context="Pregunta a tus cifras" />
     <Button icon={<Refresh />} loading={busy} onClick={() => void load()}>Actualizar</Button>
@@ -43,8 +41,9 @@ export function CfoDashboard({initial, query = '', organization}: {initial: Repo
     <LinkButton href="/cfo/data/export?format=pdf" download="informe-cfo.pdf" icon={<Download />}>Exportar PDF</LinkButton>
   </>;
   const header = <PageHeader eyebrow="CFO del negocio" title="Dinero" description="Ingresos, reembolsos, mezcla por canal y calidad de datos, por moneda y sin mezclar bases. Cada cifra dice si es observada, estimada o inferida, y cómo se calculó." actions={actions} />;
-  if (!report) return <div className="cf-page">{header}{error && <p className="state state-error" role="alert">{error}</p>}
-    {state.status === 'timeout'
+  if (!report) return <div className="cf-page">{header}{error && <p className="state state-error" role="alert">{error} <Button size="sm" icon={<Refresh />} onClick={() => void load()}>Reintentar</Button></p>}
+    {!state ? (busy ? <EsperaEsqueleto que="el informe del negocio" filas={5} /> : null)
+    : state.status === 'timeout'
       ? <Empty tone="bad" title="No disponible ahora" action={<Button icon={<Refresh />} loading={busy} onClick={() => void load()}>Reintentar</Button>}>La consulta acotada del libro económico superó el tiempo permitido{state.status === 'timeout' && state.summary && ['absent', 'partial', 'unavailable'].includes(state.summary.freshness) ? ' y todavía no hay un resumen precomputado completo de los últimos 12 meses (pide a un operador refrescarlo)' : ''}. No se muestra ninguna cifra parcial como si fuera completa.</Empty>
       : <Empty title="Sin registros en el libro económico" action={<LinkButton href="/economics" icon={<PfIcon name="database" />}>Ir a Dinero › Preparar</LinkButton>}>Aún no hay pedidos ni reembolsos registrados para esta organización en los últimos 12 meses. Carga una fuente para ver el panel financiero.</Empty>}</div>;
 
@@ -52,7 +51,7 @@ export function CfoDashboard({initial, query = '', organization}: {initial: Repo
   const kpis = report.kpis.find(k => k.currency === block.currency)!;
   return <div className="cf-page">
     {header}
-    {error && <p className="state state-error" role="alert">{error}</p>}
+    <LineaCache edadMs={rep.edadMs} actualizando={rep.actualizando} viejo={rep.viejo} onActualizar={() => void load()} />
     <div className="pf-statusbar" role="status">
       {ok?.synthetic && <Pill tone="warn">Datos sintéticos de demostración</Pill>}
       <span>{organization ?? 'Organización'}</span><span title="Cada fuente tiene su propia fecha de corte: las conversaciones y otras fuentes se informan en el Resumen y el Explorador."><strong>{lineaDatosHasta({libro:report.watermark}).replace(/\.$/,'')}</strong></span><span>Último mes completo: <strong>{report.lastComplete ? monthLabel(report.lastComplete) : 'ninguno'}</strong></span><span>{int(report.quality.totalRows)} registros del libro</span>

@@ -14,3 +14,4 @@ export function precalentar(lecturas:(string|{url:string;valida?:(json:unknown)=
 export function estadoPrecalentamiento():{activos:number;maxActivos:number;enCola:number};
 export function reiniciarPrecalentamiento():void;
 export function hace(ms:number):string;
+export function leerConCache(url:string,opciones?:{signal?:AbortSignal;valida?:(json:unknown)=>unknown;onCache?:(json:unknown,edadMs:number,fresca:boolean)=>void;soloFresca?:boolean;forzar?:boolean;fetchFn?:typeof fetch;almacen?:Storage|null;ahora?:number}):Promise<{status:number;json:unknown;deCache:boolean;edadMs:number|null;fallo:boolean}>;

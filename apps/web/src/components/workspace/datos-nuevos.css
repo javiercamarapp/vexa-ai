@@ -1,0 +1,4 @@
+.datos-nuevos{display:inline-flex;align-items:center;gap:6px;margin-left:auto;min-height:28px;padding:2px 12px;border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-surface);color:var(--ui-secondary);font:inherit;font-size:var(--t-small);cursor:pointer}
+.datos-nuevos:hover,.datos-nuevos:focus-visible{color:inherit;border-color:currentColor}
+.datos-nuevos-punto{width:8px;height:8px;border-radius:50%;background:var(--cov-in,currentColor)}
+@media (prefers-reduced-motion:no-preference){.datos-nuevos{animation:datos-nuevos-in .25s ease-out}@keyframes datos-nuevos-in{from{opacity:0;transform:translateY(-2px)}to{opacity:1;transform:none}}}

@@ -7,6 +7,7 @@ import {WorkspaceIcon} from './icon';
 import {NotificationNavigationLink} from '../notifications/navigation-link';
 import {AccesoProvider} from './access';
 import {RestaurarVista} from './restaurar-vista';
+import {DatosNuevos} from './datos-nuevos';
 import {fijarTenant,limpiarTodo} from '../../lib/workspace/swr.mjs';
 type Organization={id:string;name:string};
 type Theme='light'|'system'|'dark';
@@ -39,7 +40,7 @@ export function WorkspaceShell({children,brand,organizations,tenant,role,platfor
  const sinEncabezado=pathname==='/preguntale';
  return <div className={'workspace workspace-shell'+(collapsed?' sidebar-collapsed':'')+(sinEncabezado?' workspace-chat':'')}>
    <a className="skip-link workspace-skip" href="#workspace-contenido">Saltar al contenido</a><aside className="workspace-sidebar">{sidebar()}</aside>
-   <div className="workspace-frame"><header className="workspace-header" hidden={sinEncabezado||undefined}><button type="button" className="icon-button mobile-menu-button" aria-label="Abrir menú" onClick={open}><WorkspaceIcon name="menu"/></button><span className="workspace-heading"><WorkspaceIcon name={workspaceIconName(pathname)}/>{workspaceTitle(pathname)}</span></header><div className="workspace-content" id="workspace-contenido" tabIndex={-1}><RestaurarVista/><AccesoProvider value={{role,interno:platformAccess}}>{children}</AccesoProvider></div></div>
+   <div className="workspace-frame"><header className="workspace-header" hidden={sinEncabezado||undefined}><button type="button" className="icon-button mobile-menu-button" aria-label="Abrir menú" onClick={open}><WorkspaceIcon name="menu"/></button><span className="workspace-heading"><WorkspaceIcon name={workspaceIconName(pathname)}/>{workspaceTitle(pathname)}</span><DatosNuevos/></header><div className="workspace-content" id="workspace-contenido" tabIndex={-1}><RestaurarVista/><AccesoProvider value={{role,interno:platformAccess}}>{children}</AccesoProvider></div></div>
    <dialog className="workspace-mobile-dialog" ref={dialog} onClose={()=>setMobileOpen(false)} aria-label="Navegación de Rovaq AI" onClick={event=>{if(event.target===event.currentTarget)close();}}>{mobileOpen&&<div className="mobile-sidebar">{sidebar(true)}</div>}</dialog>
    <nav className="workspace-bottom-nav" aria-label="Navegación móvil">{[['/overview','Resumen','overview'],['/problems','Problemas','problems'],['/preguntale','Pregúntale','preguntale'],['/explorer','Explorador','explorer'],['/briefs','Brief','briefs']].map(([href,label,icon])=><Link key={href} href={href+(query?'?'+query:'')} aria-current={pathname===href?'page':undefined}><WorkspaceIcon name={icon}/><span>{label}</span></Link>)}<button type="button" onClick={open} aria-label="Más opciones de navegación"><WorkspaceIcon name="menu"/><span>Más</span></button></nav>
  </div>;

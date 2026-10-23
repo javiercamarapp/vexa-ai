@@ -13,6 +13,7 @@ import {LinkButton,Arrow,Button,Refresh} from '../ui/button';
 import {useJson} from '../ui/use-json';
 import {nf} from '../ui/format';
 import {IdentidadCard} from './identidad-card';
+import {EstadoSincronizacion} from './estado-sincronizacion';
 import './datos.css';
 
 const acceptCoverage=(j:unknown)=>{const d=(j as {data?:CoverageView})?.data;return Array.isArray(d?.sources)?d as CoverageView:null;};
@@ -55,5 +56,6 @@ export function FuentesDatos(){
    {cov.busy&&!cov.data?<SkeletonCards count={6}/>:cov.error&&!cov.data?<EmptyState art="plug" compact tone="warn" title="No disponible ahora" body={cov.error} action={<Button icon={<Refresh/>} onClick={()=>cov.reload()}>Reintentar</Button>}/>:<ul className="dn-grid">{tarjetas.map(t=><Tarjeta key={t.clave} t={t}/>)}</ul>}
    {tr.error&&<p className="dn-note" role="status">Las fechas «datos hasta» y los rangos no están disponibles ahora: {tr.error}</p>}
   </section>
+  <EstadoSincronizacion/>
  </section>;
 }

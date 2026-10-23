@@ -62,7 +62,6 @@ function QuickView({fila,query,onClose}:{fila:FilaProblema|null;query:string;onC
     <div className={s.tile}><strong>{fila.critico===null?'No disponible':fila.critico?'Sí':'No'}</strong><span>Revisión crítica{textoSenales(fila)?' · '+textoSenales(fila):''}</span></div>
     <div className={s.tile}><strong>{fila.recomendaciones===null?'No disponible':fila.recomendaciones>0?'Sí ('+fila.recomendaciones+')':'No'}</strong><span>Recomendación guardada</span></div>
    </div>
-   {fila.ejemplo&&<figure className={s.blockquote}><blockquote style={{margin:0}}><p>«{fila.ejemplo}»</p></blockquote><small>Extracto de ejemplo, ya redactado. La cita se verifica al abrir el problema.</small></figure>}
    {reg&&<p className="card-lead">{reg.summary}</p>}
    {reg&&reg.metrics.length>0&&<div className="stat-grid" style={{gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))'}}>{reg.metrics.map((m,i)=><div key={i} className="card"><Figure m={m as M}/><Coverage m={m as M}/><small className="pfig-src"><SourceRef value={m.source_ref}/></small></div>)}</div>}
    {reg&&reg.evidence.length>0?<section><h3>Evidencia autorizada ({reg.evidence.length})</h3>{reg.evidence.map(e=><Citation key={e.id} quote={e.quote} role={e.role} messageRevisionId={e.id}/>)}</section>
@@ -166,7 +165,7 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
   {(catalogo||visibles.some(f=>f.critico!==null)||!!bundle.meta.critical_notice)&&<Criticas filas={visibles} query={query} ocultasN={criticasOcultas} disponible={critDisponible} total={catalogo?.critical??null}/>}
   <div ref={tablaRef} className="stack" id="lista-problemas">
    <div className={s.tools} role="search">
-    <label className="grow">Buscar por categoría o texto del ejemplo<input type="search" value={texto} onChange={e=>cambiar(()=>setTexto(e.target.value))} placeholder="Ej.: batería, envío, refacciones"/></label>
+    <label className="grow">Buscar por categoría o grupo<input type="search" value={texto} onChange={e=>cambiar(()=>setTexto(e.target.value))} placeholder="Ej.: batería, envío, refacciones"/></label>
     <label>Ordenar por<select value={ordenVigente} onChange={e=>setOrden(e.target.value)}>{opciones.map(o=><option key={o.v} value={o.v}>{o.label}</option>)}</select></label>
     {critDisponible&&<SegmentedControl label="Qué grupos mostrar" value={soloCriticos} onChange={v=>cambiar(()=>setSoloCriticos(v))} options={[{value:'todos',label:'Todos'},{value:'criticos',label:'Solo críticos'}]}/>}
     <SegmentedControl label="Vista de problemas" value={modo} onChange={setModo} options={[{value:'tabla',label:'Tabla'},{value:'tarjetas',label:'Tarjetas'}]}/>
@@ -180,7 +179,6 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
      <div className={s.gcardHead}><span className="chip">{fraseGrupo(f)}</span>{f.critico&&<StatusChip tone="bad">Revisión crítica</StatusChip>}{st&&<StatusChip tone={st.tone}>{st.label}</StatusChip>}</div>
      <h3><Link href={hrefDe(f,query)} className="card-link">{f.categoria}</Link></h3>
      <div><div className={s.big}>{f.conversaciones===null?'No disponible':nf.format(f.conversaciones)}</div><div className={s.bigLabel}>conversaciones <KindBadge kind="observed"/></div></div>
-     {f.ejemplo?<p className={s.quote}>«{f.ejemplo}»</p>:f.general&&<p className={s.quote}>Sin extracto de ejemplo en esta carga.</p>}
      {f.importe&&<Figure m={f.importe as M} big/>}
      <ul className={s.facts}><li>Severidad: <Severidad f={f}/></li><li>Citas: <Citas f={f}/></li><li>Recomendación: <Recomendacion f={f}/></li></ul>
      <div className={s.foot}><button type="button" className="btn btn-ghost btn-sm" onClick={()=>setQuick(f)} aria-label={'Vista rápida: '+f.categoria+', '+fraseGrupo(f)}>Vista rápida</button></div>
@@ -189,7 +187,7 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
     <thead><tr>{th('categoria','Categoría')}<th scope="col">Grupo</th>{th('conversaciones','Conversaciones',true,'Conversaciones únicas del grupo (Observado)')}{th('severidad','Severidad')}{th('critico','Crítico',false,DEFINICION.grupo)}{th('citas','Citas',true,'Citas registradas; se verifican al abrir el problema')}{th('recomendaciones','Recomendación')}{conImporte&&th('importe','Ingresos expuestos',true)}</tr></thead>
     <tbody>{pagina.map(f=><tr key={f.id}>
      <th scope="row" className={s.cat} data-label="Categoría">{f.categoria}</th>
-     <td data-label="Grupo" className={s.full}><div className={s.group}><Link href={hrefDe(f,query)} className="row-link-inline">{fraseGrupo(f)}</Link>{f.ejemplo?<p className={s.quote}>«{f.ejemplo}»</p>:f.general&&<p className={s.quote}>Sin extracto de ejemplo en esta carga.</p>}<button type="button" className="btn btn-ghost btn-sm" onClick={()=>setQuick(f)} aria-label={'Vista rápida: '+f.categoria+', '+fraseGrupo(f)}>Vista rápida</button></div></td>
+     <td data-label="Grupo" className={s.full}><div className={s.group}><Link href={hrefDe(f,query)} className="row-link-inline">{fraseGrupo(f)}</Link><button type="button" className="btn btn-ghost btn-sm" onClick={()=>setQuick(f)} aria-label={'Vista rápida: '+f.categoria+', '+fraseGrupo(f)}>Vista rápida</button></div></td>
      <td data-label="Conversaciones" className={s.num+' num'}><Conversaciones f={f}/></td>
      <td data-label="Severidad"><Severidad f={f}/></td>
      <td data-label="Crítico"><Critico f={f}/></td>

@@ -4,17 +4,17 @@ import test from 'node:test';import assert from 'node:assert/strict';
 import {filasDesdeCatalogo,filasDesdeItems,agruparCategorias,numerarGrupos,ordenarFilas,filtrarFilas,resumenFilas,hayImporte,etiquetaSeveridad,fraseGrupo,marcarGeneral,ETIQUETA_GENERAL} from './problemas-catalogo.mjs';
 import {separarRuido} from './ruido.mjs';
 
-const R=(id,label,conversations,extra={})=>({id,label,conversations,severity:'medium',critical:false,citations:conversations,recommendations:0,quote:null,...extra});
+const R=(id,label,conversations,extra={})=>({id,label,conversations,severity:'medium',critical:false,citations:conversations,recommendations:0,...extra});
 const catalogo={rows:[
- R('a1','Order: Spare Parts',2338,{severity:'high',critical:true,quote:'Necesito una pieza de repuesto para mi cortadora.'}),
- R('a2','Order: Spare Parts',90),R('a3','Order: Spare Parts',90,{recommendations:1}),R('a4','Order: Spare Parts',4,{quote:null}),
+ R('a1','Order: Spare Parts',2338,{severity:'high',critical:true,quote:'Hello Frank, necesito una pieza de repuesto'}),
+ R('a2','Order: Spare Parts',90),R('a3','Order: Spare Parts',90,{recommendations:1}),R('a4','Order: Spare Parts',4),
  R('w1','Warranty: Battery Replacement',336,{severity:'high',critical:true}),R('w2','Warranty: Battery Replacement',124),
  R('n1','Other: Retailer notifications and system alerts',6190),R('n2','Other: Retailer notifications and system alerts',49),
- R('s1','Shipping: Questions',302)],parts:{signals:'ok',severity:'ok',quotes:'ok'}};
+ R('s1','Shipping: Questions',302)],parts:{signals:'ok',severity:'ok'}};
 
 test('las filas del catálogo traen la categoría en español y los datos tal cual; sin catálogo se usan las incidencias de los registros',()=>{
  const f=filasDesdeCatalogo(catalogo);
- assert.equal(f.length,9);assert.equal(f[0].categoria,'Pedido: Refacciones');assert.equal(f[0].titulo,'Order: Spare Parts');assert.equal(f[0].conversaciones,2338);assert.equal(f[0].ejemplo,'Necesito una pieza de repuesto para mi cortadora.');
+ assert.equal(f.length,9);assert.equal(f[0].categoria,'Pedido: Refacciones');assert.equal(f[0].titulo,'Order: Spare Parts');assert.equal(f[0].conversaciones,2338);assert.equal('ejemplo' in f[0],false,'privacidad: la fila no lleva extracto');assert.ok(!JSON.stringify(f).includes('Frank'),'un quote heredado de un servidor viejo no llega a las filas');
  const items=[{id:'x',title:'Envío: No recibido',summary:'',status:'partial',version:1,metrics:[],evidence:[{id:'e'}],details:[{label:'Incidencias (conversaciones)',value:'5'}]},{id:'y',title:'Pago',summary:'',status:'ready',version:1,metrics:[],evidence:[],details:[]}];
  const g=filasDesdeItems(items);
  assert.equal(g[0].conversaciones,5);assert.equal(g[1].conversaciones,null,'sin dato: desconocido, no 0');assert.equal(g[0].critico,null);assert.equal(g[0].citas,1);
@@ -50,7 +50,7 @@ test('orden por defecto y por columnas, con desconocidos siempre al final',()=>{
 test('búsqueda sin acentos ni mayúsculas, filtro por categoría y solo críticos',()=>{
  const f=numerarGrupos(filasDesdeCatalogo(catalogo));
  assert.deepEqual(filtrarFilas(f,{texto:'garantia bateria'}).map(r=>r.id).sort(),['w1','w2']);
- assert.deepEqual(filtrarFilas(f,{texto:'REPUESTO'}).map(r=>r.id),['a1'],'busca también en el extracto');
+ assert.deepEqual(filtrarFilas(f,{texto:'Frank'}).map(r=>r.id),[],'no busca en texto de conversación (no hay extracto)');assert.deepEqual(filtrarFilas(f,{texto:'REFACCIONES'}).length,4,'busca en categoría/título');
  assert.deepEqual(filtrarFilas(f,{clave:f.find(r=>r.id==='s1').clave}).map(r=>r.id),['s1']);
  assert.deepEqual(filtrarFilas(f,{soloCriticos:true}).map(r=>r.id).sort(),['a1','w1']);
  assert.equal(filtrarFilas(f,{}).length,9);

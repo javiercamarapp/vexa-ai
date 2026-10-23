@@ -1,7 +1,7 @@
 import type {WorkspaceScope} from '../workspace-service/contracts.mjs';
 import type {WorkspaceMetric,WorkspaceBundle} from '../workspace-service/index.mjs';
 export type ExplorerCitation={runId:string;conversationId:string;messageRevisionId:string;quote:string;quoteHash:string;role:string;category:string;severity:string;source:string};
-export type ExplorerItem={id:string;title:string;version:number;status:'ready'|'partial'|'stale';summary:string;metrics:WorkspaceMetric[];evidenceCount:number;citations:ExplorerCitation[];distinctCount:number;categoria:string;grupo:{n:number;de:number}|null;conversaciones:number|null;severidad:string|null;extracto:string|null};
+export type ExplorerItem={id:string;title:string;version:number;status:'ready'|'partial'|'stale';summary:string;metrics:WorkspaceMetric[];evidenceCount:number;citations:ExplorerCitation[];distinctCount:number;categoria:string;grupo:{n:number;de:number}|null;conversaciones:number|null;severidad:string|null};
 export type ExplorerMeta={snapshotId:string;scopeHash:string;baseScopeHash:string;scope:WorkspaceScope;state:'empty'|'partial'|'stale'|'ready';coverage:string;watermark:string|null;nextCursor:string|null;totalMatched:number;unverifiedOmitted:number;catalogSize:number;query:string;statusFilter:'all'|'ready'|'partial'|'stale';order:'title_asc'|'id_asc';limit:number;ai:{available:false;reason:'deterministic_mode'}};
 export type ExplorerPage={items:ExplorerItem[];meta:ExplorerMeta};
 export type ExplorerEvidence={problemId:string;problemVersion:number;title:string;snapshotId:string;scopeHash:string;coverage:string;citations:ExplorerCitation[]};

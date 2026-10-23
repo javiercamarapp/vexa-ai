@@ -30,7 +30,7 @@ test('Explorador: lista sin verificar el catálogo, página verificada, búsqued
       const sp = (extra = {}) => q(A1, {snapshot_id: snap.id, scope_hash: scopeHash, ...extra});
       const summaryRuns = log => log.filter(x => /WITH sel AS MATERIALIZED/.test(x.t));
 
-      await t.test('listar, ordenar y paginar NO ejecutan la verificación de resumen del catálogo; la fila trae categoría, grupo, conversaciones y extracto', async () => {
+      await t.test('listar, ordenar y paginar NO ejecutan la verificación de resumen del catálogo; la fila trae categoría, grupo, conversaciones (sin extracto)', async () => {
         const log = [], explorer = createExplorerRepository({database: logged(log)});
         const page = await explorer.search({query: sp({limit: '2'})});
         assert.equal(summaryRuns(log).length, 0, 'la lista no debe verificar todas las corridas del catálogo');
@@ -40,7 +40,7 @@ test('Explorador: lista sin verificar el catálogo, página verificada, búsqued
           assert.ok(it.grupo && it.grupo.n >= 1 && it.grupo.de >= it.grupo.n, 'grupo N de M');
           assert.ok(Number.isInteger(it.conversaciones) && it.conversaciones > 0, 'conversaciones observadas');
           assert.ok(it.distinctCount >= 1 && it.distinctCount <= it.evidenceCount);
-          assert.ok(typeof it.extracto === 'string' || it.extracto === null);
+          assert.equal('extracto' in it, false, 'privacidad: la fila no lleva texto de conversación');
         }
         const next = await explorer.search({query: sp({limit: '2', cursor: page.meta.nextCursor})});
         assert.equal(summaryRuns(log).length, 0); assert.ok(next.items.length >= 1); assert.ok(!next.items.some(i => page.items.some(p => p.id === i.id)));

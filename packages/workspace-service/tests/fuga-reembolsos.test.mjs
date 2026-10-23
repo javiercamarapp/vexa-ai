@@ -185,6 +185,12 @@ test('servicio completo contra libro y Tracker sintéticos, con RLS real', {skip
       await t.test('corte por fecha: [inicio, fin) sobre la fecha efectiva; entradas inválidas = 400', async () => {
         const corte = await F.createRefundLeakRepository({database: base(), now: () => NOW}).get({dateStart: '2026-09-01', dateEnd: '2026-10-01'});
         assert.equal(corte.titular.usdBrutoMinor, String(2500 + 4000 + 700));
+        const todo = await F.createRefundLeakRepository({database: base(), now: () => NOW}).get();
+        assert.equal(corte.acumulado.usdBrutoMinor, todo.titular.usdBrutoMinor, 'el acumulado ignora el periodo y es el libro completo');
+        assert.equal(todo.acumulado.usdBrutoMinor, todo.titular.usdBrutoMinor, 'sin periodo el acumulado es el titular');
+        assert.ok(BigInt(corte.acumulado.usdBrutoMinor) > BigInt(corte.titular.usdBrutoMinor));
+        assert.ok(corte.titular.rango.desde >= '2026-09-01' && corte.titular.rango.hasta < '2026-10-01', 'rango REAL de los datos dentro del periodo');
+        assert.ok(todo.acumulado.rango.desde <= corte.titular.rango.desde && todo.acumulado.rango.hasta >= corte.titular.rango.hasta);
         for (const bad of [{dateStart: 'ayer'}, {dateEnd: '2026-13-01'}, {dateStart: '2026-10-01', dateEnd: '2026-09-01'}]) await assert.rejects(F.createRefundLeakRepository({database: base(), now: () => NOW}).get(bad), e => e.status === 400);
       });
       await t.test('si una parte no cabe en su tope responde «unavailable», nunca 0, y las demás siguen', async () => {
@@ -225,4 +231,9 @@ test('conversaciones por mes: tabla insight vacía o sin permiso -> respaldo con
     assert.deepEqual(r.meses, [{mes: '2026-07', n: 70}]); assert.equal(r.fuente, 'conversation_monthly');
   }
   assert.equal(await F.conversacionesPorMes(sesionFalsa({}), Date.now() + 5000), false, 'sin ninguna fuente: no calculado, no 0');
+});
+
+test('rangoDe: primer y último día entre canales; sin fechas = null', () => {
+  assert.deepEqual(F.rangoDe({amazon: {desde: '2025-10-01', hasta: '2026-09-30'}, walmart: {desde: '2026-07-04', hasta: '2026-10-02'}, shopify: null}), {desde: '2025-10-01', hasta: '2026-10-02'});
+  assert.equal(F.rangoDe({amazon: null}), null);
 });

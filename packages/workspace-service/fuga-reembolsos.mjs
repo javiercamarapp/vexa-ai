@@ -111,7 +111,7 @@ const usdMinor = (rows, exp = 2) => rows.filter(r => r.currency === 'USD' && Num
 /** rows = grupos del libro {ch,sku,month,status,currency,exponent,n,sinMonto,amount}. */
 export function armarReembolsos(rows) {
   const por = {amazon: null, walmart: null, shopify: null, bestbuy: null, otro: null};
-  const canal = c => (por[c] ??= {n: 0, usdBrutoMinor: 0n, usdNetoMinor: 0n, sinMonto: 0, cancelados: 0, canceladosUsdMinor: 0n, conSku: 0});
+  const canal = c => (por[c] ??= {n: 0, usdBrutoMinor: 0n, usdNetoMinor: 0n, sinMonto: 0, cancelados: 0, canceladosUsdMinor: 0n, conSku: 0, desde: null, hasta: null});
   const otras = new Map();
   const skus = new Map(); // sku -> {sku, canales:{c:{n,usd,usdNeto}}, n, usd, usdNeto}
   const mensual = new Map(); // canal|mes -> {n, cancelados}
@@ -124,6 +124,8 @@ export function armarReembolsos(rows) {
     }
     const c = canal(r.ch), cancelado = r.status === 'cancelled';
     c.n += n; c.usdBrutoMinor += amount; c.sinMonto += Number(r.sinMonto);
+    if (r.first_day && (!c.desde || r.first_day < c.desde)) c.desde = r.first_day;
+    if (r.last_day && (!c.hasta || r.last_day > c.hasta)) c.hasta = r.last_day;
     if (cancelado) { c.cancelados += n; c.canceladosUsdMinor += amount; } else c.usdNetoMinor += amount;
     const m = mensual.get(r.ch + '|' + r.month) ?? {canal: r.ch, mes: r.month, n: 0, cancelados: 0}; m.n += n; if (cancelado) m.cancelados += n; mensual.set(r.ch + '|' + r.month, m);
     const sku = normalizarSku(r.sku);
@@ -263,7 +265,8 @@ export function createRefundLeakRepository({database, now = () => new Date(), bu
         const CH = "CASE WHEN external_id LIKE 'amazon|%' THEN 'amazon' WHEN external_id LIKE 'walmart|%' THEN 'walmart' WHEN external_id LIKE 'gid://shopify/%' THEN 'shopify' WHEN external_id LIKE 'mirakl_bestbuy%' THEN 'bestbuy' ELSE 'otro' END";
         const reembolsos = await guarded(s, dl('refunds'), 'fuga_refunds', async () => (await s.query(
           `SELECT ${CH} AS ch, ${SKU4} AS sku, to_char(effective_at AT TIME ZONE 'UTC','YYYY-MM') AS month, status, currency, exponent::int AS exponent, count(*)::int AS n,
-             count(*) FILTER (WHERE amount_minor IS NULL)::int AS "sinMonto", coalesce(sum(amount_minor),0)::text AS amount
+             count(*) FILTER (WHERE amount_minor IS NULL)::int AS "sinMonto", coalesce(sum(amount_minor),0)::text AS amount,
+             to_char(min(effective_at) AT TIME ZONE 'UTC','YYYY-MM-DD') AS first_day, to_char(max(effective_at) AT TIME ZONE 'UTC','YYYY-MM-DD') AS last_day
            FROM public.economic_ledger_entries e
            WHERE tenant_id=$1 AND kind='refund' AND ($2::timestamptz IS NULL OR effective_at>=$2) AND ($3::timestamptz IS NULL OR effective_at<$3)
              AND NOT EXISTS (SELECT 1 FROM public.economic_ledger_entries l2 WHERE l2.tenant_id=e.tenant_id AND l2.entity_id=e.entity_id AND l2.revision>e.revision)
@@ -311,12 +314,13 @@ export function createRefundLeakRepository({database, now = () => new Date(), bu
           for (const c of Object.values(R.por)) if (c) { bruto += c.usdBrutoMinor; neto += c.usdNetoMinor; canc += c.canceladosUsdMinor; sinMonto += c.sinMonto; n += c.n; }
           const rank = rankingSkus({skus: R.skus, lineas: L, totalBrutoMinor: bruto});
           const top = rank.slice(0, 10), topUsd = top.reduce((a, r) => a + BigInt(r.usdBrutoMinor), 0n);
-          const canalOut = c => R.por[c] ? {n: R.por[c].n, usdBrutoMinor: String(R.por[c].usdBrutoMinor), usdNetoMinor: String(R.por[c].usdNetoMinor), sinMonto: R.por[c].sinMonto, cancelados: R.por[c].cancelados, conSku: R.por[c].conSku} : null;
+          const canalOut = c => R.por[c] ? {n: R.por[c].n, usdBrutoMinor: String(R.por[c].usdBrutoMinor), usdNetoMinor: String(R.por[c].usdNetoMinor), sinMonto: R.por[c].sinMonto, cancelados: R.por[c].cancelados, conSku: R.por[c].conSku, desde: R.por[c].desde, hasta: R.por[c].hasta} : null;
           titular = {
             status: n === 0 ? 'empty' : 'ok', class: 'observed', currency: 'USD', exponent: 2, n,
             usdBrutoMinor: String(bruto), usdNetoMinor: String(neto), canceladosUsdMinor: String(canc), sinMonto,
             canales: Object.fromEntries(CANALES.map(c => [c, canalOut(c)]).filter(([, v]) => v)),
             otrasMonedas: R.otras.map(o => ({currency: o.currency, exponent: o.exponent, n: o.n, amountMinor: String(o.amountMinor)})),
+            rango: rangoDe(R.por),
             top10: {n: top.length, usdBrutoMinor: String(topUsd), pct: bruto > 0n ? Number((topUsd * 1000n) / bruto) / 10 : null},
           };
           const walmartRank = rank.filter(r => r.canales.some(c => c.canal === 'walmart'));
@@ -331,6 +335,21 @@ export function createRefundLeakRepository({database, now = () => new Date(), bu
             intensidad = {status: 'ok', class: 'observed', nota: NOTAS_FIJAS.intensidad, canales: bloques,
               walmartSinCancelados: walmart.some(m => !m.ultimo) ? sinCancelados(walmart.filter(m => !m.ultimo)) : null,
               bestBuy: {reembolsosEnElLibro: R.por.bestbuy?.n ?? 0}};
+          }
+        }
+
+        // ---- acumulado de TODO el libro (rotulado aparte): con periodo elegido se consulta aparte; sin periodo es el mismo titular ----
+        let acumulado = {status: 'unavailable'};
+        if (titular.status !== 'unavailable') {
+          if (!dateStart && !dateEnd) acumulado = {status: titular.status, scope: 'todo_el_libro', n: titular.n, usdBrutoMinor: titular.usdBrutoMinor, usdNetoMinor: titular.usdNetoMinor, rango: titular.rango ?? null, canales: titular.canales};
+          else {
+            const filas = await guarded(s, dl('refunds'), 'fuga_acumulado', async () => (await s.query(
+              `SELECT ${CH} AS ch, status, currency, exponent::int AS exponent, count(*)::int AS n, count(*) FILTER (WHERE amount_minor IS NULL)::int AS "sinMonto", coalesce(sum(amount_minor),0)::text AS amount,
+                 to_char(min(effective_at) AT TIME ZONE 'UTC','YYYY-MM-DD') AS first_day, to_char(max(effective_at) AT TIME ZONE 'UTC','YYYY-MM-DD') AS last_day
+               FROM public.economic_ledger_entries e WHERE tenant_id=$1 AND kind='refund'
+                 AND NOT EXISTS (SELECT 1 FROM public.economic_ledger_entries l2 WHERE l2.tenant_id=e.tenant_id AND l2.entity_id=e.entity_id AND l2.revision>e.revision)
+               GROUP BY 1,2,3,4 LIMIT 500`, [s.tenantId])).rows);
+            if (filas) { const A = armarReembolsos(filas.map(r => ({...r, sku: null, month: 'acumulado'}))); acumulado = acumuladoDe(A); }
           }
         }
 
@@ -365,7 +384,7 @@ export function createRefundLeakRepository({database, now = () => new Date(), bu
         return {
           generatedAt: hoy.toISOString(), scope: {dateStart, dateEnd, currency: 'USD'}, class: 'observed',
           ventanas, todasParciales: ventanas.length > 0 && ventanas.every(v => !v.completa),
-          titular, skus, intensidad, tracker, contactoRepetido, cambios,
+          titular, acumulado, skus, intensidad, tracker, contactoRepetido, cambios,
           parts: {refunds: reembolsos ? 'ok' : 'unavailable', orders: pedidos ? 'ok' : 'unavailable', windows: fuentes ? 'ok' : 'unavailable', tracker: trackerRows ? 'ok' : 'unavailable', repeat: repetido === false ? 'not_computed' : repetido ? 'ok' : 'unavailable', conversations: convs === false ? 'not_computed' : convs ? 'ok' : 'unavailable'},
         };
       });
@@ -411,4 +430,17 @@ export async function conversacionesPorMes(s, deadline) {
     if (!st) return false;
     return {refreshedAt: st.refreshed_at, meses: (await s.query("SELECT to_char(month,'YYYY-MM') AS month, n FROM public.conversation_monthly WHERE tenant_id=$1 ORDER BY month LIMIT 2000", [s.tenantId])).rows.map(r => ({mes: r.month, n: Number(r.n)})), fuente: 'conversation_monthly'};
   });
+}
+
+/** Primer y último día con reembolsos en lo consultado (todos los canales) o null si no hay fechas. */
+export function rangoDe(por) {
+  const d = Object.values(por).filter(Boolean).map(c => c.desde).filter(Boolean).sort(), h = Object.values(por).filter(Boolean).map(c => c.hasta).filter(Boolean).sort();
+  return d.length ? {desde: d[0], hasta: h.at(-1)} : null;
+}
+/** Acumulado de todo el libro (sin periodo) a partir de armarReembolsos: mismas cifras que el titular sin corte, con su rango real. */
+export function acumuladoDe(R) {
+  let bruto = 0n, neto = 0n, n = 0;
+  const canales = {};
+  for (const [k, c] of Object.entries(R.por)) if (c) { bruto += c.usdBrutoMinor; neto += c.usdNetoMinor; n += c.n; if (CANALES.includes(k)) canales[k] = {n: c.n, usdBrutoMinor: String(c.usdBrutoMinor), usdNetoMinor: String(c.usdNetoMinor), desde: c.desde, hasta: c.hasta}; }
+  return {status: n === 0 ? 'empty' : 'ok', scope: 'todo_el_libro', n, usdBrutoMinor: String(bruto), usdNetoMinor: String(neto), rango: rangoDe(R.por), canales};
 }

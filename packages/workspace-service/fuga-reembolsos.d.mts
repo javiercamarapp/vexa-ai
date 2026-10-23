@@ -1,3 +1,4 @@
+export type RangoDias = {desde: string; hasta: string};
 export type FugaCanal = 'amazon' | 'walmart' | 'shopify' | 'bestbuy';
 export type Parte<T> = ({status: 'ok'} & T) | {status: 'empty' | 'unavailable' | 'not_computed'; note?: string};
 export type SkuCanal = {canal: string; n: number; usdBrutoMinor: string; usdNetoMinor: string; lineas: number | null};
@@ -9,8 +10,11 @@ export type FugaVista = {
   generatedAt: string; scope: {dateStart: string | null; dateEnd: string | null; currency: 'USD'}; class: 'observed';
   ventanas: {canal: string; tipo: 'order' | 'refund'; completa: boolean; inicio: string | null; fin: string | null; corte: string | null}[]; todasParciales: boolean;
   titular: Parte<{currency: 'USD'; exponent: 2; n: number; usdBrutoMinor: string; usdNetoMinor: string; canceladosUsdMinor: string; sinMonto: number;
-    canales: Record<string, {n: number; usdBrutoMinor: string; usdNetoMinor: string; sinMonto: number; cancelados: number; conSku: number}>;
+    rango: RangoDias | null;
+    canales: Record<string, {n: number; usdBrutoMinor: string; usdNetoMinor: string; sinMonto: number; cancelados: number; conSku: number; desde: string | null; hasta: string | null}>;
     otrasMonedas: {currency: string; exponent: number; n: number; amountMinor: string}[]; top10: {n: number; usdBrutoMinor: string; pct: number | null}}>;
+  /** Acumulado de TODO el libro (no respeta el periodo); sin periodo elegido es igual al titular. */
+  acumulado: Parte<{scope: 'todo_el_libro'; n: number; usdBrutoMinor: string; usdNetoMinor: string; rango: RangoDias | null; canales: Record<string, {n: number; usdBrutoMinor: string; usdNetoMinor: string; desde?: string | null; hasta?: string | null}>}>;
   skus: Parte<{top: SkuFila[]; total: number; sinSku: {n: number}; walmart: {sku: string; n: number; usdBrutoMinor: string; usdNetoMinor: string; lineas: number | null}[]; lineasStatus: 'ok' | 'unavailable';
     detalleMensual: {sku: string; canal: string; mes: string; n: number; usdBrutoMinor: string}[]}>;
   intensidad: {status: 'unavailable'} | {status: 'ok'; nota: string; canales: Record<string, {meses: MesIntensidad[]}>; walmartSinCancelados: {reembolsos: number; cancelados: number; lineas: number; conPct: number | null; sinPct: number | null} | null; bestBuy: {reembolsosEnElLibro: number}};
@@ -47,3 +51,5 @@ export function armarTracker(filas: any[]): any;
 export function armarCambios(a: any): FugaVista['cambios'];
 export const etiquetaMes: (m: string) => string;
 export function createRefundLeakRepository(a: {database: any; now?: () => Date; budgets?: Record<string, number>}): {get(q?: {dateStart?: string | null; dateEnd?: string | null}): Promise<FugaVista>};
+
+export function rangoDe(por: Record<string, {desde: string | null; hasta: string | null} | null>): RangoDias | null;

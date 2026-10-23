@@ -1,5 +1,5 @@
 'use client';
-import {useMemo,useState,type ReactNode} from 'react';
+import {useEffect,useMemo,useState,type ReactNode} from 'react';
 import type {Bundle} from '../../lib/workspace/contracts';
 import type {TrendsView} from '../../../../../packages/workspace-service/trends.mjs';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
@@ -30,6 +30,8 @@ import {insightsResumen} from '../../lib/legibilidad/insights.mjs';
 import {separarRuido} from '../../lib/legibilidad/ruido.mjs';
 import {comparacionMensual,ledgerConDatos} from '../../lib/legibilidad/meses.mjs';
 import {hace} from '../../lib/workspace/swr.mjs';
+import {precalentarPantallas,PANTALLAS_PRINCIPALES} from '../../lib/workspace/precalentar.mjs';
+import {consultaAlcance} from '../../lib/workspace/alcance.mjs';
 import {StatusStrip,ExecKpis,TopProblems,Attention,HowCalculated,useCriticos,acceptCoverage} from './executive';
 import type {CoverageView} from '../../../../../packages/workspace-service/provenance.mjs';
 import {kpiConversaciones,kpiPedidos,estadoFuentes,mesesCoberturaBaja} from '../../lib/legibilidad/resumen-ejecutivo.mjs';
@@ -56,6 +58,10 @@ export function OverviewDashboard({bundle,pinned,avisos=[]}:{bundle:Bundle;pinne
  const [measure,setMeasure]=useVistaPersistente<'orders'|'refunds'>('resumen:medida','orders'),[incluirRuido,setIncluirRuido]=useState(false);
  const cats=useJson<CategoriesView>('/api/trends/categories',acceptCategories);
  const cobertura=useJson<CoverageView>('/api/coverage',acceptCoverage),crit=useCriticos(query),[verCobertura,setVerCobertura]=useState(false);
+ // Con el Resumen ya pintado, en inactividad: precalienta (prioridad baja, máx. 2 a la vez) las pantallas principales para que abran al instante.
+ // Solo cuando las lecturas propias del Resumen terminaron: el precalentamiento nunca compite con ellas.
+ const quieto=!trends.busy&&!probs.busy&&!cats.busy&&!cobertura.busy;
+ useEffect(()=>{if(!quieto)return;const alcance=consultaAlcance(query);const ir=()=>{precalentarPantallas(PANTALLAS_PRINCIPALES,alcance);};const w=window as Window&{requestIdleCallback?:(f:()=>void,o?:{timeout:number})=>number;cancelIdleCallback?:(h:number)=>void};if(w.requestIdleCallback){const h=w.requestIdleCallback(ir,{timeout:4000});return()=>w.cancelIdleCallback?.(h);}const t=setTimeout(ir,1500);return()=>clearTimeout(t);},[query,quieto]);
  const insights=useMemo(()=>insightsResumen({trends:trends.data,categorias:cats.data}),[trends.data,cats.data]);
  if(bundle.meta.state==='empty'||!model.rows.length)return <EmptyState art="chart" title="Sin cifras publicadas para este alcance" body="Revisa el periodo y los filtros, o publica un corte desde las fuentes autorizadas." action={<LinkButton href="/imports" variant="primary" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>} secondary={<LinkButton href="/connections" size="sm">Revisar conexiones</LinkButton>}/>;
  const led=trends.data?.ledger,conv=trends.data?.conversations;

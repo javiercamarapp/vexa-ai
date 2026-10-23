@@ -4,6 +4,7 @@ import {useWorkspaceNavigation,workspaceLocation} from '../workspace/navigation-
 import {useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {leerConCache,leerSwr,claveSwr} from '../../lib/workspace/swr.mjs';
 import {LineaCache} from '../ui/linea-cache';
+import {consultaFijada} from '../../lib/workspace/precalentar.mjs';
 import {useVistaPersistente} from '../workspace/vista-persistente';
 import type {ExplorerPage,ExplorerEvidence,ExplorerQuestion} from '../../../../../packages/recommendations/explorer.mjs';
 import type {Scope,Metric} from '../../lib/workspace/contracts';
@@ -42,7 +43,7 @@ function Identidad({item}:{item:Item}){const conv=textoConversaciones(item.conve
 function clean(value:string){const q=new URLSearchParams(value);for(const k of ['resource','format','problem_id','detail_hash','root_kind','root_id','component_id','event_id'])q.delete(k);return q;}
 function scopeOnly(value:string){const q=clean(value);for(const k of searchKeys)q.delete(k);return q;}
 function defaults(value:string):Filters{const q=clean(value),now=new Date();return {date_start:q.get('date_start')??new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),1)).toISOString(),date_end:q.get('date_end')??new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()+1,1)).toISOString(),timezone:'UTC',date_basis:q.get('date_basis')??'occurred_at',currency:q.get('currency')??'USD',basis:q.get('basis')??'net',sku:q.getAll('sku'),source:q.getAll('source'),snapshot_id:q.get('snapshot_id'),...(q.has('exponent')?{exponent:Number(q.get('exponent'))}:{})};}
-function pin(scope:Scope,snapshot:string,hash:string){const q=new URLSearchParams({date_start:scope.date_start.slice(0,10),date_end:scope.date_end.slice(0,10),timezone:scope.timezone,date_basis:scope.date_basis,currency:scope.currency,basis:scope.basis??'net',snapshot_id:snapshot,scope_hash:hash});if(scope.exponent!==null&&scope.exponent!==undefined)q.set('exponent',String(scope.exponent));for(const s of scope.sku)q.append('sku',s);for(const s of scope.source)q.append('source',s);return q;}
+const pin=(scope:Scope,snapshot:string,hash:string)=>consultaFijada(scope,snapshot,hash);
 function errorMessage(status:number){return status===401||status===403?'Tu acceso cambió. Vuelve a iniciar sesión o selecciona una organización autorizada.':status===404?'La publicación o su evidencia ya no están disponibles con tus permisos.':status===409?'El alcance o la autorización cambió. Reinicia la búsqueda para obtener una página vigente.':status===400?'Revisa la búsqueda, los filtros y el alcance solicitado.':'No se pudo verificar la consulta. Reintenta sin cambiar tu búsqueda.';}
 const useAntesDePintar=typeof window==='undefined'?useEffect:useLayoutEffect;
 type MetaPin={scope:Scope & {basis:string;exponent?:number|null};snapshot_id:string|null;scope_hash:string|null};

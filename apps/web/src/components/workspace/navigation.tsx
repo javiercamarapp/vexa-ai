@@ -3,6 +3,7 @@ import Link from './navigation-lifecycle';
 import {useEffect,useId,useState} from 'react';
 import {usePathname,useSearchParams} from 'next/navigation';
 import {WorkspaceIcon} from './icon';
+import {precalentarEnlace} from '../../lib/workspace/precalentar.mjs';
 import {consultaAlcance} from '../../lib/workspace/alcance.mjs';
 import {menuVisible,itemActivo,tituloDePantalla,iconoDePantalla,cerradosGuardados,type MenuItem,type MenuEntrada} from '../../lib/workspace/menu.mjs';
 const CLAVE_CERRADOS='vexa-nav-cerrados';
@@ -28,7 +29,7 @@ export function Navigation({onNavigate,collapsed=false,role,interno=false}:{onNa
  const [cerrados,setCerrados]=useState<string[]>([]);
  useEffect(()=>{try{const guardado=cerradosGuardados(window.localStorage.getItem(CLAVE_CERRADOS));if(guardado.length){const frame=requestAnimationFrame(()=>setCerrados(guardado));return()=>cancelAnimationFrame(frame);}}catch{/* El estado recordado es opcional. */}},[]);
  function alternar(clave:string){const siguiente=cerrados.includes(clave)?cerrados.filter(c=>c!==clave):[...cerrados,clave];setCerrados(siguiente);try{window.localStorage.setItem(CLAVE_CERRADOS,JSON.stringify(siguiente));}catch{/* La elección sigue valiendo en esta sesión. */}}
- function item(link:MenuItem){return <li key={link.href}><Link title={link.titulo??link.etiqueta} aria-label={collapsed?link.etiqueta:undefined} onClick={onNavigate} aria-current={activo?.item.href===link.href?'page':undefined} href={link.href+(query&&!sinAlcance(link.href)?'?'+query:'')}><WorkspaceIcon name={link.icono}/><span className="nav-label">{link.etiqueta}</span></Link></li>;}
+ function item(link:MenuItem){const destino=link.href+(query&&!sinAlcance(link.href)?'?'+query:''),calentar=()=>{precalentarEnlace(destino);};return <li key={link.href}><Link title={link.titulo??link.etiqueta} aria-label={collapsed?link.etiqueta:undefined} onClick={onNavigate} onPointerEnter={calentar} onFocus={calentar} aria-current={activo?.item.href===link.href?'page':undefined} href={destino}><WorkspaceIcon name={link.icono}/><span className="nav-label">{link.etiqueta}</span></Link></li>;}
  const grupoCerradoActual=!collapsed&&activo?.grupo&&cerrados.includes(activo.grupo);
  return <nav aria-label="Navegación principal">
   {grupoCerradoActual&&activo&&<div className="nav-current"><p className="nav-caption">Página actual</p><ul>{item(activo.item)}</ul></div>}

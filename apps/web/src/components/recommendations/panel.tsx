@@ -4,6 +4,7 @@ import {useWorkspaceNavigation,workspaceLocation} from '../workspace/navigation-
 import {useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {leerConCache,leerSwr,claveSwr,guardarSwr,invalidarSwr} from '../../lib/workspace/swr.mjs';
 import {LineaCache} from '../ui/linea-cache';
+import {consultaFijada} from '../../lib/workspace/precalentar.mjs';
 import {useVistaPersistente} from '../workspace/vista-persistente';
 import type {Recommendation,RecommendationList} from '../../../../../packages/recommendations/index.mjs';
 import type {Scope} from '../../lib/workspace/contracts';
@@ -29,7 +30,7 @@ type Filters=Scope & {basis:string;exponent?:number};
 type Operation=(url:string,body:unknown)=>Promise<boolean>;
 function cleanQuery(value:string){const q=new URLSearchParams(value);for(const key of ['problem_id','detail_hash','resource','format','cursor','limit','root_kind','root_id','component_id','event_id'])q.delete(key);return q;}
 function initialScope(value:string):Filters{const q=cleanQuery(value),now=new Date(),start=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),1)),end=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()+1,1));return {date_start:q.get('date_start')??start.toISOString(),date_end:q.get('date_end')??end.toISOString(),timezone:'UTC',date_basis:q.get('date_basis')??'occurred_at',currency:q.get('currency')??'USD',basis:q.get('basis')??'net',sku:q.getAll('sku'),source:q.getAll('source'),snapshot_id:q.get('snapshot_id'),...(q.has('exponent')?{exponent:Number(q.get('exponent'))}:{})};}
-function pinnedQuery(scope:Scope,snapshot:string,hash:string){const q=new URLSearchParams({date_start:scope.date_start.slice(0,10),date_end:scope.date_end.slice(0,10),timezone:scope.timezone,date_basis:scope.date_basis,currency:scope.currency,basis:scope.basis??'net',snapshot_id:snapshot,scope_hash:hash});if(scope.exponent!==null&&scope.exponent!==undefined)q.set('exponent',String(scope.exponent));for(const sku of scope.sku)q.append('sku',sku);for(const source of scope.source)q.append('source',source);return q;}
+const pinnedQuery=(scope:Scope,snapshot:string,hash:string)=>consultaFijada(scope,snapshot,hash);
 function failure(status:number){return status===401||status===403?'Tu acceso cambió. Vuelve a iniciar sesión o selecciona una organización autorizada.':status===404?'No hay una recomendación o evidencia autorizada para este alcance.':status===409?'La versión o la evidencia cambió. Actualiza y revisa la propuesta antes de continuar.':status===400?'Revisa los campos y el alcance de la solicitud.':'No se pudo verificar la operación. Conserva tu borrador y reintenta; no se confirma ningún cambio.';}
 const PRIORITY={critical:{label:'Revisión humana urgente',sev:'high',tone:'bad'},high:{label:'Prioridad alta',sev:'medium',tone:'warn'},normal:{label:'Prioridad normal',sev:'low',tone:'ok'}} as const;
 const CAUSAL:Record<string,string>={unassessed:'Sin evaluar',confirmed:'Confirmada',retracted:'Retractada',hypothesis:'Hipótesis',candidate:'Candidata',supported:'Con respaldo',unsupported:'Sin respaldo',insufficient:'Evidencia insuficiente'};

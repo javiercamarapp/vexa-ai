@@ -67,10 +67,10 @@ const conSenal=(p,signal)=>{if(!signal)return p;if(signal.aborted)return Promise
  * GET JSON con de-duplicación por clave. Devuelve {status, json}. Guarda en caché solo respuestas 2xx que `valida` acepte
  * (nunca reemplaza un buen dato por una respuesta mal formada). La petición compartida sigue aunque un lector se desmonte (calienta la caché).
  */
-export function pedirSwr(url,{signal,valida,fetchFn=globalThis.fetch,clave=claveSwr(url),ahora=Date.now,almacen=almacenDe()}={}){
+export function pedirSwr(url,{signal,valida,baja=false,fetchFn=globalThis.fetch,clave=claveSwr(url),ahora=Date.now,almacen=almacenDe()}={}){
  let p=enVuelo.get(clave);
  if(!p){
-  p=(async()=>{const r=await fetchFn(url,{cache:'no-store'});const json=r.status===404?null:await r.json().catch(()=>null);
+  p=(async()=>{const r=await fetchFn(url,baja?{cache:'no-store',priority:'low'}:{cache:'no-store'});const json=r.status===404?null:await r.json().catch(()=>null);
    if(r.ok&&json!==null&&(!valida||valida(json)!==null)&&clave.startsWith(PREFIJO+tenantActual+'|'))guardarSwr(clave,json,{ahora:ahora(),almacen});
    return {status:r.status,json};})().finally(()=>{if(enVuelo.get(clave)===p)enVuelo.delete(clave);});
   enVuelo.set(clave,p);
@@ -103,20 +103,26 @@ export const enVueloN=()=>enVuelo.size;
 const cola=[];let activos=0,maxActivos=0;
 const bombear=(fetchFn,almacen)=>{
  while(activos<TOPE_PREFETCH&&cola.length){
-  const {url,valida}=cola.shift();activos++;maxActivos=Math.max(maxActivos,activos);
-  pedirSwr(url,{valida,fetchFn,almacen}).catch(()=>{}).finally(()=>{activos--;bombear(fetchFn,almacen);});
+  const {url,valida,luego}=cola.shift();activos++;maxActivos=Math.max(maxActivos,activos);
+  pedirSwr(url,{valida,fetchFn,almacen,baja:true}).then(r=>{if(luego&&r.status>=200&&r.status<300){const mas=luego(r.json);if(mas?.length)encolar(mas,{fetchFn,almacen});}}).catch(()=>{}).finally(()=>{activos--;bombear(fetchFn,almacen);});
  }
 };
-/** Pone en cola lecturas de baja prioridad; omite las frescas en caché, las ya en vuelo y las ya encoladas. Máximo 2 a la vez. */
-export function precalentar(lecturas,{fetchFn=globalThis.fetch,almacen=almacenDe(),ahora=Date.now()}={}){
+const encolar=(lecturas,{fetchFn,almacen,ahora=Date.now()})=>{
  let nuevas=0;
  for(const l of lecturas){
-  const {url,valida}=typeof l==='string'?{url:l}:l,k=claveSwr(url);
+  const {url,valida,luego}=typeof l==='string'?{url:l}:l,k=claveSwr(url);
   const g=leerSwr(k,{almacen,ahora});
-  if((g&&g.fresca)||enVuelo.has(k)||cola.some(c=>claveSwr(c.url)===k))continue;
-  cola.push({url,valida});nuevas++;
+  // Fresca en caché: no se pide, pero su continuación (p. ej. la lectura de datos tras fijar el alcance) sí se evalúa con lo que ya hay.
+  if(g&&g.fresca){if(luego){const mas=luego(g.datos);if(mas?.length)nuevas+=encolar(mas,{fetchFn,almacen,ahora});}continue;}
+  if(enVuelo.has(k)||cola.some(c=>claveSwr(c.url)===k))continue;
+  cola.push({url,valida,luego});nuevas++;
  }
- bombear(fetchFn,almacen);return nuevas;
+ return nuevas;
+};
+/** Pone en cola lecturas de baja prioridad; omite las frescas en caché, las ya en vuelo y las ya encoladas. Máximo 2 a la vez.
+ *  Una lectura puede traer `luego(json)`: devuelve las lecturas que dependen de su respuesta (p. ej. fijar el alcance y luego pedir los datos). */
+export function precalentar(lecturas,{fetchFn=globalThis.fetch,almacen=almacenDe(),ahora=Date.now()}={}){
+ const nuevas=encolar(lecturas,{fetchFn,almacen,ahora});bombear(fetchFn,almacen);return nuevas;
 }
 export const estadoPrecalentamiento=()=>({activos,maxActivos,enCola:cola.length});
 export function reiniciarPrecalentamiento(){cola.length=0;activos=0;maxActivos=0;}

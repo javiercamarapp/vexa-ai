@@ -73,7 +73,9 @@ export function buildCfoReport(input, options = {}) {
       const series = months.map(month => { const c = cell(rowsB.filter(r => r.month === month)); return {month, partial: partial.has(month), ...c, ticket: ticket(c), amountDisplay: c.known > 0 ? m$(c.amount.toString()) : 'No disponible', ticketDisplay: c.known > 0 ? m$(ticket(c).toString()) : 'No disponible'}; });
       const total = cell(rowsB);
       const chans = [...new Set(rowsB.map(r => r.channel))].map(channel => { const c = cell(rowsB.filter(r => r.channel === channel)); return {channel, label: channelLabel(channel), ...c, ticket: ticket(c), shareBps: total.amount > 0n ? Number(c.amount * 10000n * 2n + total.amount) / Number(total.amount * 2n) | 0 : null}; }).sort((a, b) => (b.amount > a.amount ? 1 : b.amount < a.amount ? -1 : b.n - a.n));
-      return {base, label: BASIS_LABEL[base] ?? base, additive: true, series, total, ticket: ticket(total), channels: chans};
+      // Serie mensual por canal (misma moneda y base): permite decir qué canal explica un cambio entre meses sin atribuir causas.
+      const channelSeries = chans.map(c => ({channel: c.channel, label: c.label, series: months.map(month => { const x = cell(rowsB.filter(r => r.channel === c.channel && r.month === month)); return {month, n: x.n, known: x.known, amount: x.amount}; })}));
+      return {base, label: BASIS_LABEL[base] ?? base, additive: true, series, total, ticket: ticket(total), channels: chans, channelSeries};
     });
     const refRows = mine.filter(isRefundOk);
     const refundSeries = months.map(month => { const c = cell(refRows.filter(r => r.month === month)); return {month, partial: partial.has(month), ...c, amountDisplay: c.known > 0 ? m$(c.amount.toString()) : 'No disponible'}; });

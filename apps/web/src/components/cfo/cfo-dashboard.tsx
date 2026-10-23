@@ -12,6 +12,7 @@ import {CFO_SHORTCUTS} from '../../../../../packages/cfo-copilot/src/client.mjs'
 import type {CfoReport, CurrencyBlock} from '../../../../../packages/cfo-copilot/src/index.mjs';
 import {changeBps, int, monthLabel, pct, signedPct} from '../../../../../packages/cfo-copilot/src/format.mjs';
 import {MonthBars} from './month-bars';
+import {explicarVariacion} from '../../lib/legibilidad/caida.mjs';
 import {seriesPoints, type Measure} from './series';
 import './cfo.css';
 import {lineaDatosHasta} from '../../../../../packages/workspace-service/datos-hasta.mjs';
@@ -64,6 +65,7 @@ export function CfoDashboard({initial, query = '', organization}: {initial: Repo
     <Panel id="resumen" eyebrow={`Último mes completo · ${report.lastComplete ? monthLabel(report.lastComplete) : '—'}`} title="Resumen por moneda" actions={<Seg label="Moneda" value={block.currency} options={report.currencies.map(c => ({value: c, label: c}))} onChange={setCurrency} />}
       lead={report.prevComplete ? `Variaciones contra ${monthLabel(report.prevComplete)}. Los meses incompletos no se comparan.` : 'Se necesitan dos meses completos para comparar.'}>
       <div className="pf-tiles reveal">{kpis.metrics.map(m => <Tile key={m.id} label={m.label} value={m.display} kind={m.kind} delta={m.delta} foot={m.scope} coverage={m.coverage.eligible === null ? null : m.coverage.label} how={m.how} />)}</div>
+      <CaidaExplicada report={report} moneda={block.currency} />
       {!kpis.metrics.some(m => m.id.startsWith('refund:')) && <p className="pf-banner" role="note"><PfIcon name="info" />Sin reembolsos registrados en {block.currency}: no se calcula la tasa de reembolso (no es 0 %, es «sin fuente»).</p>}
       {block.orderBases.length > 1 && <p className="card-lead">En {block.currency} hay {block.orderBases.length} bases de ingreso que no se suman: {block.orderBases.map(b => b.label).join(' · ')}. El resumen usa «{block.orderBases[0].label}».</p>}
     </Panel>
@@ -154,7 +156,7 @@ function Quality({report}: {report: CfoReport}) {
 function Exposure({report}: {report: CfoReport}) {
   const e = report.exposure;
   return <Panel id="exposicion" eyebrow="Problemas con dinero detrás" title="Exposición económica por problema" actions={<KindBadge kind="inferred" />}>
-    {e.state === 'sin_atestar' ? <Empty title="Sin atestar" action={e.cta && <LinkButton href={e.cta.href} icon={<PfIcon name="user" />}>{e.cta.label}</LinkButton>}>{e.message}</Empty> : <>
+    {e.state === 'sin_atestar' ? <p className="cf-nd" role="note"><strong>No disponible.</strong> Falta vincular cada problema con sus pedidos (hoy hay {int(e.attestedLinks)} vínculos atestados), así que no se calcula dinero por problema ni se estima.{e.cta && <> <LinkButton href={e.cta.href} size="sm" icon={<PfIcon name="user" />}>{e.cta.label}</LinkButton></>}</p> : <>
       <p className="card-lead">{e.note}{e.coverageComplete ? '' : ' La cobertura de vínculos no está declarada completa: son pisos, no totales.'}</p>
       <DataTable caption="Exposición por problema" rows={e.rows} rowKey={r => r.problemId} columns={[
         {id: 'p', header: 'Problema', wrap: true, cell: r => r.title, sort: r => r.title}, {id: 'v', header: 'Exposición', align: 'right', cell: r => r.display},
@@ -170,4 +172,13 @@ function Projections({report, block}: {report: CfoReport; block: CurrencyBlock})
       <MonthBars key={p.id} title={p.label} unit={p.metric === 'ingresos' ? p.currency : 'pedidos'} kind="estimated" points={p.points.map(pt => ({month: pt.month, value: pt.mid, label: pt.midDisplay, detail: `rango ${pt.lowDisplay} a ${pt.highDisplay}`}))} />
       <p className="card-lead"><strong>Método.</strong> {p.method}</p></div>)}</div>}
   </Panel>;
+}
+
+/** Explica una caída mes contra mes solo con lo verificable: meses completos, aporte por canal y ticket. Sin causa verificable: «Causa no determinada». */
+function CaidaExplicada({report, moneda}: {report: CfoReport; moneda: string}) {
+  const x = explicarVariacion(report, moneda);
+  if (!x) return null;
+  return <div className="pf-banner cf-caida" role="note"><PfIcon name="info" /><div><strong>{x.titulo}</strong>
+    <ul>{x.lineas.map((l, i) => <li key={i}>{l}</li>)}</ul>
+    <p><strong>{x.causa.split(':')[0]}.</strong> {(r => r.charAt(0).toUpperCase() + r.slice(1))(x.causa.split(':').slice(1).join(':').trim())}</p></div></div>;
 }

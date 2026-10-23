@@ -21,3 +21,7 @@
 .cf-chart .pf-sub{display:inline}
 @media print{.workspace-sidebar,.workspace-header,.pf-anchors,.btn,.page-header-actions{display:none!important}}
 .cf-page .kind-badge{flex:none}.cf-page .bar-name{flex:1 1 60px;min-width:0}
+
+.cf-nd{margin:0;font-size:var(--t-small);color:var(--ui-secondary)}
+.cf-caida ul{margin:var(--sp-2) 0;padding-left:var(--sp-5);display:grid;gap:4px}
+.cf-caida p{margin:var(--sp-2) 0 0}

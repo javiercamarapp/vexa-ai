@@ -35,8 +35,11 @@ const geometry=()=>{
   if(el.matches('article,section,.record-card,.card,li,td,th,figure,dd')&&s.overflowX==='visible'&&el.scrollWidth>el.clientWidth+2&&!sa&&!el.closest('table'))issues.push({kind:'content-spills-container',detail:label(el)+` ${el.scrollWidth}>${el.clientWidth}`});
  }
  const pinned=(e)=>{for(let p=e;p&&p!==document.body;p=p.parentElement){const ps=getComputedStyle(p).position;if(ps==='fixed'||ps==='sticky')return true;}return false;};
- const ctr=all.filter(e=>e.matches('button,a[href],input:not([type=hidden]):not(.sr-only),select,textarea,summary')&&!e.closest('.sr-only')&&!e.matches('.sr-only')&&!pinned(e));
- for(let i=0;i<ctr.length;i++)for(let j=i+1;j<ctr.length;j++){const a=ctr[i],b=ctr[j];if(a.contains(b)||b.contains(a))continue;const ra=a.getBoundingClientRect(),rb=b.getBoundingClientRect();const w=Math.min(ra.right,rb.right)-Math.max(ra.left,rb.left),h=Math.min(ra.bottom,rb.bottom)-Math.max(ra.top,rb.top);if(w>3&&h>3)issues.push({kind:'controls-overlap',detail:label(a)+' ⟂ '+label(b)+` ${Math.round(w)}x${Math.round(h)}`});}
+ // Un control dentro de un contenedor con desplazamiento que queda fuera de su zona visible (p. ej. ítems del sidebar tras el bloque inferior) no está a la vista: no se compara.
+ const visible=(e)=>{let t=e.getBoundingClientRect(),top=t.top,bottom=t.bottom;for(let p=e.parentElement;p&&p!==document.body;p=p.parentElement){const oy=getComputedStyle(p).overflowY;if(oy==='visible'||oy==='clip')continue;const pr=p.getBoundingClientRect();top=Math.max(top,pr.top);bottom=Math.min(bottom,pr.bottom);}return {left:t.left,right:t.right,top,bottom};};
+ const recortado=(e)=>{const v=visible(e);return v.bottom-v.top<=1;};
+ const ctr=all.filter(e=>e.matches('button,a[href],input:not([type=hidden]):not(.sr-only),select,textarea,summary')&&!e.closest('.sr-only')&&!e.matches('.sr-only')&&!pinned(e)&&!recortado(e));
+ for(let i=0;i<ctr.length;i++)for(let j=i+1;j<ctr.length;j++){const a=ctr[i],b=ctr[j];if(a.contains(b)||b.contains(a))continue;const ra=visible(a),rb=visible(b);const w=Math.min(ra.right,rb.right)-Math.max(ra.left,rb.left),h=Math.min(ra.bottom,rb.bottom)-Math.max(ra.top,rb.top);if(w>3&&h>3)issues.push({kind:'controls-overlap',detail:label(a)+' ⟂ '+label(b)+` ${Math.round(w)}x${Math.round(h)}`});}
  for(const el of ctr){const r=el.getBoundingClientRect();if(r.height>0&&r.height<24&&!el.matches('summary,input[type=checkbox],input[type=radio],a'))issues.push({kind:'small-target',detail:label(el)+` h=${Math.round(r.height)}`});}
  // ---- System-style rules (Javier: no stray links, no unstyled buttons, no inline links without underline, 40px-ish click areas) ----
  const textual='p,li,dd,dt,small,figcaption,blockquote,td,th,span,strong,label';

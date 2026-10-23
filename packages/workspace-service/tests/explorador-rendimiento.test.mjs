@@ -40,6 +40,7 @@ test('Explorador: lista sin verificar el catálogo, página verificada, búsqued
           assert.ok(it.grupo && it.grupo.n >= 1 && it.grupo.de >= it.grupo.n, 'grupo N de M');
           assert.ok(Number.isInteger(it.conversaciones) && it.conversaciones > 0, 'conversaciones observadas');
           assert.ok(it.distinctCount >= 1 && it.distinctCount <= it.evidenceCount);
+          assert.equal(it.verification, 'registered'); assert.deepEqual(it.citations, [], 'la lista no trae citas: se verifican al abrir');
           assert.equal('extracto' in it, false, 'privacidad: la fila no lleva texto de conversación');
         }
         const next = await explorer.search({query: sp({limit: '2', cursor: page.meta.nextCursor})});
@@ -48,11 +49,11 @@ test('Explorador: lista sin verificar el catálogo, página verificada, búsqued
         assert.deepEqual(byId.items.map(i => i.id), [...byId.items.map(i => i.id)].sort());
       });
 
-      await t.test('solo la página se verifica: evidencia por lote de ≤ límite problemas', async () => {
+      await t.test('R2-2-001: la lista (y la búsqueda) NO verifica corridas ni lee evidencia completa de la página: citas registradas por una sentencia, rotuladas', async () => {
         const log = [], explorer = createExplorerRepository({database: logged(log)});
-        await explorer.search({query: sp({limit: '1'})});
-        const lotes = log.filter(x => /DISTINCT ON\(problem_id\) problem_id,provenance FROM public\.problem_versions WHERE tenant_id=\$1 AND problem_id=ANY/.test(x.t));
-        assert.equal(lotes.length, 1); assert.equal(lotes[0].n, 1);
+        const page = await explorer.search({query: sp({limit: '1'})});
+        assert.equal(page.meta.verification, 'registered');
+        assert.equal(log.filter(x => /^SELECT id,status,conversation_id,input_hash,provenance/.test(x.t)).length, 0, 'sin lectura de corridas');
       });
 
       await t.test('«Ver evidencia» verifica solo el resumen de ESE problema, no el catálogo entero', async () => {
@@ -68,7 +69,7 @@ test('Explorador: lista sin verificar el catálogo, página verificada, búsqued
       await t.test('búsqueda de texto: por título/categoría y por texto de la evidencia, sin verificar todo el catálogo; sin coincidencias vacío', async () => {
         const log = [], explorer = createExplorerRepository({database: logged(log)});
         const all = await explorer.search({query: sp({limit: '50'})}), one = all.items[0];
-        const word = one.citations[0].quote.trim().slice(0, 6).toLowerCase();
+        const word = (await createExplorerRepository({database: logged([])}).evidence({query: sp(), problemId: one.id})).citations[0].quote.trim().slice(0, 6).toLowerCase();
         const byQuote = await explorer.search({query: sp({q: word, limit: '50'})});
         assert.ok(byQuote.items.some(i => i.id === one.id), 'encuentra el problema por el texto de su cita: ' + word);
         const byCategory = await explorer.search({query: sp({q: one.categoria.split(':')[0].toLowerCase(), limit: '50'})});
@@ -81,14 +82,13 @@ test('Explorador: lista sin verificar el catálogo, página verificada, búsqued
         assert.ok(lotes.every(l => l.n <= 50));
       });
 
-      await t.test('fail-closed: un problema cuya evidencia deja de ser utilizable se EXCLUYE de la página y se cuenta; nunca se muestra', async () => {
+      await t.test('fail-closed al ABRIR: un problema cuya evidencia deja de ser utilizable sigue en la lista solo con su conteo registrado y sin citas; «Ver evidencia» no muestra nada', async () => {
         const explorer = createExplorerRepository({database: logged([])});
         const all = await explorer.search({query: sp({limit: '50'})}), victim = all.items[0];
         const run = h.psql(`select extraction_run_id from public.problem_embedding_members where tenant_id='${TENANT_A}' and problem_id='${victim.id}' limit 1`).out;
         assert.ok(h.psql(`set session_replication_role=replica; update public.extraction_runs set status='failed' where id='${run}'`).ok);
-        const after = await explorer.search({query: sp({limit: '50'})});
-        assert.ok(!after.items.some(i => i.id === victim.id), 'el problema no verificable no se muestra');
-        assert.equal(after.meta.unverifiedOmitted, 1);
+        const after = await explorer.search({query: sp({limit: '50'})}), row = after.items.find(i => i.id === victim.id);
+        assert.ok(row && row.citations.length === 0 && row.verification === 'registered', 'la lista no afirma verificación');
         await assert.rejects(explorer.evidence({query: sp(), problemId: victim.id}), e => [403, 404].includes(e.status));
       });
     } finally { await pool.end(); }

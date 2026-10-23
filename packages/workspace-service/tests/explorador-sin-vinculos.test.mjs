@@ -33,11 +33,10 @@ test('Explorador sobre corte sin vínculos', {skip: SKIP, timeout: 600000}, asyn
         const sp = q(A1, {snapshot_id: snap.id, scope_hash: scopeHash, limit: '1'});
         const page = await explorer.search({query: sp});
         assert.equal(page.items.length, 1); assert.ok(page.meta.totalMatched >= 3, 'total del catálogo, no de la página');
-        assert.ok(page.items[0].evidenceCount > 0 && page.items[0].citations.length === page.items[0].evidenceCount);
+        assert.ok(page.items[0].evidenceCount > 0 && page.items[0].distinctCount > 0 && page.items[0].citations.length === 0 && page.items[0].verification === 'registered');
         assert.ok(page.meta.nextCursor);
-        // La evidencia se resuelve por LOTE (una sentencia para las versiones de la página) y solo para los problemas de la página (1), no para todo el catálogo.
-        const lotes = log.filter(x => /DISTINCT ON\(problem_id\) problem_id,provenance FROM public\.problem_versions WHERE tenant_id=\$1 AND problem_id=ANY/.test(x.replace(/\s+/g, ' ')));
-        assert.equal(lotes.length, 1); assert.match(lotes[0], /#ids=1$/, 'solo el problema de la página');
+        // R2-2-001: la lista no verifica ni siquiera la página: ninguna lectura de corridas; la verificación completa ocurre en evidence() al abrir.
+        const opened = await explorer.evidence({query: sp, problemId: page.items[0].id}); assert.ok(opened.citations.length > 0);
         const next = await explorer.search({query: q(A1, {snapshot_id: snap.id, limit: '1', cursor: page.meta.nextCursor, scope_hash: scopeHash})});
         assert.equal(next.items.length, 1); assert.notEqual(next.items[0].id, page.items[0].id);
       });

@@ -5,6 +5,7 @@
 // Vocabulario de honestidad: «Observado» = hecho del libro o del Tracker; «intensidad» = reembolsos del mes / líneas del mes (NO es tasa por cohorte); el libro no trae cantidad.
 import {WorkspaceError} from './contracts.mjs';
 import {guarded} from './catalog-overview.mjs';
+import {readConversationVolume} from '../insights/reader.mjs';
 
 export const FUGA_BUDGETS_MS = Object.freeze({refunds: 4000, orders: 8000, windows: 2500, tracker: 6000, repeat: 2500, conversations: 2500});
 export const SKU_SUFFIX = /(-WM[0-9]+|-[0-9]{3}A-[0-9]{3}|-NEW)$/;
@@ -294,11 +295,7 @@ export function createRefundLeakRepository({database, now = () => new Date(), bu
         const repetido = await guarded(s, dl('repeat'), 'fuga_repeat', async () => (await s.query(
           `SELECT refreshed_at, source_watermark, contacts, contacts_ge2_90, contacts_ge3_90, linked_tickets, repeat_tickets_90, total_tickets, by_category FROM public.contact_repeat_summary WHERE tenant_id=$1`, [s.tenantId])).rows[0] ?? false);
 
-        const convs = await guarded(s, dl('conversations'), 'fuga_convs', async () => {
-          const st = (await s.query("SELECT refreshed_at FROM public.summary_refresh_state WHERE tenant_id=$1 AND summary='conversation_monthly'", [s.tenantId])).rows[0];
-          if (!st) return false;
-          return {refreshedAt: st.refreshed_at, meses: (await s.query("SELECT to_char(month,'YYYY-MM') AS month, n FROM public.conversation_monthly WHERE tenant_id=$1 ORDER BY month LIMIT 2000", [s.tenantId])).rows.map(r => ({mes: r.month, n: Number(r.n)}))};
-        });
+        const convs = await conversacionesPorMes(s, dl('conversations'));
 
         const ventanas = (fuentes ?? []).filter(f => f.active !== false && ['order_export', 'payment_ledger'].includes(f.evidence_type)).map(f => ({
           canal: canalDeFuente(f.name), tipo: f.evidence_type === 'payment_ledger' ? 'refund' : 'order', completa: Boolean(f.complete),
@@ -397,3 +394,21 @@ export function armarCambios({intensidad, conversaciones}) {
 }
 const hoyMes = iso => new Date(iso ?? Date.now()).toISOString().slice(0, 7);
 export const etiquetaMes = m => { const [y, mo] = String(m).split('-').map(Number); return MESES[mo - 1] ? `${MESES[mo - 1]} ${y}` : m; };
+
+/**
+ * Conversaciones por mes para «Qué cambió». Primero `insight_conversation_volume` (grain='month', se refresca sola); si esa tabla está vacía, ausente o 'unavailable',
+ * cae al camino anterior (`conversation_monthly`, que ya no refresca el cron). Devuelve {refreshedAt, meses:[{mes,n}], fuente} o false (no calculado) / null (no disponible).
+ */
+export async function conversacionesPorMes(s, deadline) {
+  const ins = await guarded(s, deadline, 'fuga_convs_insight', async () => {
+    const r = await readConversationVolume(s, {grain: 'month'});
+    if (!['ready', 'partial'].includes(r.availability) || !r.points?.length) return false;
+    return {refreshedAt: r.meta?.refreshedAt ?? null, meses: r.points.map(p => ({mes: p.period, n: p.n})), fuente: 'insight_conversation_volume'};
+  });
+  if (ins) return ins;
+  return guarded(s, deadline, 'fuga_convs', async () => {
+    const st = (await s.query("SELECT refreshed_at FROM public.summary_refresh_state WHERE tenant_id=$1 AND summary='conversation_monthly'", [s.tenantId])).rows[0];
+    if (!st) return false;
+    return {refreshedAt: st.refreshed_at, meses: (await s.query("SELECT to_char(month,'YYYY-MM') AS month, n FROM public.conversation_monthly WHERE tenant_id=$1 ORDER BY month LIMIT 2000", [s.tenantId])).rows.map(r => ({mes: r.month, n: Number(r.n)})), fuente: 'conversation_monthly'};
+  });
+}

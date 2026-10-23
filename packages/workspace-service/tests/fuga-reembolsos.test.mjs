@@ -197,3 +197,32 @@ test('servicio completo contra libro y Tracker sintéticos, con RLS real', {skip
     } finally { await pool.end(); }
   }, {name: 'fuga'});
 });
+
+// ------------------------------------------------------------------------------------------------ conversaciones por mes (hallazgo H2)
+function sesionFalsa({insightState = null, insightRows = [], viejoState = null, viejoRows = [], insightError = null}) {
+  const llamadas = [];
+  return {tenantId: 't', llamadas, async query(sql) {
+    llamadas.push(sql);
+    if (/current_setting/.test(sql)) return {rows: [{v: '0'}]};
+    if (/FROM public.insight_state/.test(sql)) { if (insightError) throw Object.assign(Error('x'), {code: insightError}); return {rows: insightState ? [insightState] : []}; }
+    if (/FROM public.insight_conversation_volume/.test(sql)) return {rows: insightRows};
+    if (/FROM public.summary_refresh_state/.test(sql)) return {rows: viejoState ? [viejoState] : []};
+    if (/FROM public.conversation_monthly/.test(sql)) return {rows: viejoRows};
+    return {rows: []};
+  }};
+}
+test('conversaciones por mes: lee insight_conversation_volume (grain=month) y no toca conversation_monthly', async () => {
+  const s = sesionFalsa({insightState: {status: 'ok', refreshed_at: '2026-10-23T10:00:00Z', detail: {}}, insightRows: [{period: '2026-07-01', n: '100'}, {period: '2026-08-01', n: '90'}], viejoRows: [{month: '2026-01', n: 1}]});
+  const r = await F.conversacionesPorMes(s, Date.now() + 5000);
+  assert.deepEqual(r.meses, [{mes: '2026-07', n: 100}, {mes: '2026-08', n: 90}]);
+  assert.equal(r.fuente, 'insight_conversation_volume');
+  assert.ok(!s.llamadas.some(q => /conversation_monthly/.test(q)));
+});
+test('conversaciones por mes: tabla insight vacía o sin permiso -> respaldo conversation_monthly', async () => {
+  const viejo = {viejoState: {refreshed_at: '2026-10-01T00:00:00Z'}, viejoRows: [{month: '2026-07', n: 70}]};
+  for (const caso of [{}, {insightState: {status: 'ok', refreshed_at: '2026-10-23T10:00:00Z'}, insightRows: []}, {insightError: '42P01'}]) {
+    const r = await F.conversacionesPorMes(sesionFalsa({...caso, ...viejo}), Date.now() + 5000);
+    assert.deepEqual(r.meses, [{mes: '2026-07', n: 70}]); assert.equal(r.fuente, 'conversation_monthly');
+  }
+  assert.equal(await F.conversacionesPorMes(sesionFalsa({}), Date.now() + 5000), false, 'sin ninguna fuente: no calculado, no 0');
+});

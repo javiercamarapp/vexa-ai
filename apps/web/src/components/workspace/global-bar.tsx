@@ -5,6 +5,7 @@ import {NotificationNavigationLink} from '../notifications/navigation-link';
 import {WorkspaceIcon} from './icon';
 import {useJson} from '../ui/use-json';
 import {datosHastaPorFuente,EXPLICACION} from '../../../../../packages/workspace-service/datos-hasta.mjs';
+import {limpiarTodo} from '../../lib/workspace/swr.mjs';
 import {etiquetaBase} from '../../lib/legibilidad/jerga.mjs';
 import {alcanceDeConsulta,consultaConPeriodo,periodoAplica,periodosRapidos,ETIQUETAS_PERIODO,periodoLegible} from '../../lib/workspace/alcance.mjs';
 type Organization={id:string;name:string};
@@ -61,7 +62,7 @@ export function GlobalBar({organizations,tenant,theme,onTheme}:{organizations:Or
    </div>
    <div className="gb-end">
    <fieldset className="gb-theme theme-selector"><legend className="sr-only">Tema de la interfaz</legend>{TEMAS.map(([value,label,icon])=><label key={value} title={'Tema '+label.toLowerCase()}><input type="radio" className="sr-only" name="global-theme" value={value} checked={theme===value} onChange={()=>onTheme(value)}/><span aria-hidden="true">{icon}</span><span className="sr-only">{label}</span></label>)}</fieldset>
-   {organizations.length>1?<form className="organization-switch gb-org" action="/auth/organization" method="post"><label className="gb-label" htmlFor={uid+'-org'}>Organización</label><div className="organization-controls"><select id={uid+'-org'} name="tenant_id" defaultValue={tenant}>{organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}</select><button type="submit" title="Cambiar organización" aria-label="Cambiar organización">Ir <span aria-hidden="true">↗</span></button></div></form>
+   {organizations.length>1?<form className="organization-switch gb-org" action="/auth/organization" method="post" onSubmit={()=>limpiarTodo()}><label className="gb-label" htmlFor={uid+'-org'}>Organización</label><div className="organization-controls"><select id={uid+'-org'} name="tenant_id" defaultValue={tenant}>{organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}</select><button type="submit" title="Cambiar organización" aria-label="Cambiar organización">Ir <span aria-hidden="true">↗</span></button></div></form>
     :<div className="gb-item gb-org"><span className="gb-label">Organización</span><strong title={organizacion}>{organizacion}</strong></div>}
    </div>
   </div>

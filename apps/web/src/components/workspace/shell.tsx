@@ -6,9 +6,12 @@ import {Navigation,navigationQuery,workspaceTitle,workspaceIconName} from './nav
 import {WorkspaceIcon} from './icon';
 import {GlobalBar,type Theme} from './global-bar';
 import {AccesoProvider} from './access';
+import {fijarTenant,limpiarTodo} from '../../lib/workspace/swr.mjs';
 type Organization={id:string;name:string};
 const roleLabel:Record<string,string>={owner:'Administrador del espacio',analyst:'Analista',operator:'Operador',viewer:'Lectura'};
 export function WorkspaceShell({children,brand,organizations,tenant,role,platformAccess=false}:{children:ReactNode;brand:ReactNode;organizations:Organization[];tenant:string;role:string;platformAccess?:boolean;today?:{iso:string;label:string}}){
+ // La caché de lecturas se aísla por organización: fijarla antes de que los hijos lean (purga lo de otra organización).
+ fijarTenant(tenant);
  const pathname=usePathname(),query=navigationQuery(pathname,useSearchParams().toString());
  const [collapsed,setCollapsed]=useState(false),[mobileOpen,setMobileOpen]=useState(false),[theme,setTheme]=useState<Theme>('light');const dialog=useRef<HTMLDialogElement>(null);
  useEffect(()=>{try{if(window.localStorage.getItem('vexa-sidebar-collapsed')==='true'){const frame=requestAnimationFrame(()=>setCollapsed(true));return()=>cancelAnimationFrame(frame);}}catch{/* Storage is optional. */}},[]);
@@ -24,7 +27,7 @@ export function WorkspaceShell({children,brand,organizations,tenant,role,platfor
    <div className="sidebar-navigation"><Navigation role={role} interno={platformAccess} collapsed={!mobile&&collapsed} onNavigate={mobile?close:undefined}/></div>
    <div className="sidebar-footer">
     {platformAccess&&<Link className="workspace-platform-link" href="/platform" aria-label="Administración de Rovaq AI" title="Administración de Rovaq AI"><WorkspaceIcon name="settings"/><span className="platform-link-label">Administración de Rovaq AI</span></Link>}
-    <div className="sidebar-account"><span className="account-avatar" aria-hidden="true">{organization.slice(0,1).toUpperCase()}</span><div className="account-copy"><strong title={organization}>{organization}</strong><span>{roleLabel[role]??role}</span></div><form action="/auth/logout" method="post"><button className="icon-button" title="Cerrar sesión" aria-label="Cerrar sesión"><WorkspaceIcon name="logout"/></button></form></div>
+    <div className="sidebar-account"><span className="account-avatar" aria-hidden="true">{organization.slice(0,1).toUpperCase()}</span><div className="account-copy"><strong title={organization}>{organization}</strong><span>{roleLabel[role]??role}</span></div><form action="/auth/logout" method="post" onSubmit={()=>limpiarTodo()}><button className="icon-button" title="Cerrar sesión" aria-label="Cerrar sesión"><WorkspaceIcon name="logout"/></button></form></div>
    </div>
   </>;}
  // «Pregúntale a tus datos» is a full-screen chat with its own sidebar (conversations + the way back): no workspace header, sidebar or bottom bar.

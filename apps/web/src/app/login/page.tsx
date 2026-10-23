@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { authClient, config } from '../../lib/auth';
 import {VexaBrand} from '../../components/vexa-brand';
 import {EmailLogin} from '../../components/email-login';
+import {LimpiarCache} from '../../components/limpiar-cache';
 export const metadata={title:'Iniciar sesión'};
 export const dynamic='force-dynamic';
 export default async function Login({searchParams}:{searchParams:Promise<{error?:string}>}) {
@@ -18,7 +19,7 @@ export default async function Login({searchParams}:{searchParams:Promise<{error?
   const denied=!!loginError;
   const google=configured && process.env.VEXA_GOOGLE_AUTH_ENABLED==='true';
   const email=configured && process.env.VEXA_EMAIL_AUTH_ENABLED==='true';
-  return <div className="login">
+  return <div className="login"><LimpiarCache/>
     <section className="login-column"><div className="login-inner">
       <header className="login-entra auth-brand"><VexaBrand/></header>
       <div className="login-copy">

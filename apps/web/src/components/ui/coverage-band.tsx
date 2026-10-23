@@ -13,7 +13,8 @@ import {nf,pct,fmtPct} from './format';
 import {useJson} from './use-json';
 const ICON:Record<string,string>={hubspot:'message',associations:'link',csv:'file',ledger:'database',excel:'columns',attachments:'file',zendesk:'message'};
 const UNIT:Record<string,string>={associations:'hechos',ledger:'registros',excel:'filas vigentes'};
-const when=(iso:string|null)=>iso?new Intl.DateTimeFormat('es-MX',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(iso)):null;
+// Fecha en la zona horaria de quien mira (antes UTC: a las 8 p. m. de México mostraba «mañana»).
+const when=(iso:string|null)=>iso?new Intl.DateTimeFormat('es-MX',{day:'numeric',month:'short',year:'numeric'}).format(new Date(iso)):null;
 const META='Registros de HubSpot que solo traen metadatos (sin mensajes): no son conversaciones y no se pierden; su relación ticket–contacto se lee en Asociaciones.';
 const DEF='Filas con conversación que las reglas de validación dejan fuera por un defecto real (cuerpo incompleto o rol ambiguo).';
 const REJ='Filas que las reglas de validación dejan fuera por diseño; no son una falla de la carga.';
@@ -28,7 +29,7 @@ function Tile({s}:{s:CoverageSource}){
   {own?<>
    <div className="cov-big"><strong>{nf.format(s.incorporated)}</strong><span>{UNIT[s.key]??'filas'}</span></div>
    <p className="cov-meta">{s.detail[0]}</p>
-   {s.detail.length>1&&<Popover label={'Desglose de '+head} trigger={<>Ver desglose</>} width={340}><ul className="cov-detail-list">{s.detail.map((l,i)=><li key={i}>{l}</li>)}</ul></Popover>}
+   {s.detail.length>1&&<Popover label={'Más detalle de '+head} trigger={<>Más detalle</>} width={340}><ul className="cov-detail-list">{s.detail.slice(1).map((l,i)=><li key={i}>{l}</li>)}</ul></Popover>}
   </>:<>
    <div className="cov-ring-row"><ProgressRing value={ringShare===null?0:ringShare/100} size={52} stroke={6} label={ringShare===null?'—':Math.round(ringShare)+'%'} title={bd?`${head}: ${fmtPct(ringShare)} de las ${nf.format(bd.conversationRows??0)} filas con conversación está incorporado (excluye ${nf.format(bd.metadataOnly??0)} registros solo de metadatos, que no son conversaciones)`:`${head}: ${fmtPct(share)} de las filas leídas está incorporado; el resto son filas rechazadas por diseño o pendientes`}/><div className="cov-big"><strong>{nf.format(s.incorporated)}</strong><span>{bd?`de ${nf.format(bd.conversationRows??0)} filas con conversación`:`de ${nf.format(s.total)} filas`}</span></div></div>
    <div className="cov-track" role="img" aria-label={bd?`${head}: ${nf.format(s.incorporated)} conversaciones incorporadas, ${nf.format(bd.defects??0)} rechazadas con defecto, ${nf.format(bd.metadataOnly??0)} registros solo de metadatos, ${nf.format(s.pending)} pendientes, de ${nf.format(s.total)} filas leídas`:`${head}: ${nf.format(s.incorporated)} incorporadas, ${nf.format(s.rejected)} rechazadas por diseño, ${nf.format(s.pending)} pendientes, de ${nf.format(s.total)}`}>
@@ -41,7 +42,7 @@ function Tile({s}:{s:CoverageSource}){
    :<ul className="cov-legend"><li><i className="sw cov-in"/>{nf.format(s.incorporated)} incorporadas</li><li><i className="sw cov-rej"/><Tip label={REJ}>{nf.format(s.rejected)} rechazadas por diseño</Tip></li><li><i className="sw cov-pen"/>{nf.format(s.pending)} pendientes</li></ul>}
    {s.key==='hubspot'&&s.rejectionBreakdown?.status==='unavailable'&&<p className="cov-meta" role="status">Desglose de rechazadas por motivo: No disponible ahora.</p>}
    {s.rejectionNote&&<p className="cov-meta cov-rej-note">{s.rejectionNote}</p>}
-   <p className="cov-meta">{s.imports} {s.imports===1?'importación':'importaciones'}{s.openImports>0?` (${s.openImports} en curso)`:''}{when(s.lastUpdate)?' · '+when(s.lastUpdate):''}</p>
+   <p className="cov-meta">{s.imports} {s.imports===1?'importación':'importaciones'}{s.openImports>0?` · ${s.openImports} ${s.openImports===1?'sigue procesándose':'siguen procesándose'}`:''}{when(s.lastUpdate)?' · '+when(s.lastUpdate):''}</p>
   </>}
  </li>;
 }

@@ -94,7 +94,7 @@ export function createProvenanceRepository({database}){
     const sheets=await g(async()=>(await s.query("SELECT count(*) AS total,count(*) FILTER (WHERE state='closed') AS closed FROM public.tracker_sheet_jobs WHERE tenant_id=$1",[s.tenantId])).rows[0]);
     if(rowsCurrent===null||rejected===null||sheets===null)excel=none('excel','timeout');
     else excel=base('excel',{imports:versions.length,total:rowsCurrent+rejected,incorporated:rowsCurrent,rejected,
-     detail:[`Versión que manda: ${top.label??'rango '+top.rank} · ${String(top.file_sha256).slice(0,8)} (mayor rango de ${versions.length})`,`${rowsCurrent.toLocaleString('es-MX')} filas vigentes · ${rejected.toLocaleString('es-MX')} rechazadas · ${n(sheets.closed)}/${n(sheets.total)} hojas cerradas`],
+     detail:[`Versión que manda: ${top.label??'rango '+top.rank} (mayor rango de ${versions.length})`,`${rowsCurrent.toLocaleString('es-MX')} filas vigentes · ${rejected.toLocaleString('es-MX')} rechazadas · ${n(sheets.closed)}/${n(sheets.total)} hojas cerradas`,`Huella del archivo de esa versión: ${String(top.file_sha256).slice(0,8)}`],
      sheets:{closed:n(sheets.closed),total:n(sheets.total)},topVersion:{label:top.label,rank:n(top.rank),sha:String(top.file_sha256).slice(0,8)}});}
    // 3. Attachments: blobs by state (index tenant_id,state).
    let attachments=none('attachments');

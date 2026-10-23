@@ -1,0 +1,10 @@
+export type CorteResumen = {disponible: false; estado: string; tono: string} | {disponible: true; estado: string; tono: string; rango: string | null; base: string | null; moneda: string | null; snapshot: string; datosHasta: string | null; cobertura: string | null};
+export function rangoLegible(inicio: string | null | undefined, finExclusivo: string | null | undefined): string | null;
+export function resumenCorte(meta: unknown): CorteResumen;
+export type TarjetaMoneda = {moneda: string; exponente: number; base: string; baseLegible: string; pedidos: number; conImporte: number; subtotalMinor: string | null; cobertura: string; completa: boolean; reembolsos: {n: number; conImporte: number} | null};
+export function tarjetasPorMoneda(report: unknown): TarjetaMoneda[];
+export type PuntoMensual = {mes: string; parcial: boolean; pedidos: number; conImporte: number; valor: number | null; importeMinor: string | null; detalle?: string};
+export function serieMensual(report: unknown, moneda: string, base: string, medida: 'pedidos' | 'subtotal'): PuntoMensual[];
+export type FilaFuente = {clave: string; fuente: string; registros: number; sinMoneda: number; pedidosSinImporte: number; reembolsosSinImporte: number | null; reembolsos: 'Con fuente' | 'Sin cobertura'; completitudBps: number | null; pendientes: number};
+export function filasPorFuente(report: unknown): FilaFuente[];
+export function mesesIncompletos(report: unknown): {meses: string[]; datosHasta: string | null};

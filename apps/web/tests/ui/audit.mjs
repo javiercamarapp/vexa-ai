@@ -11,6 +11,8 @@ const PIN=`?snapshot_id=${IDS.snapshot}&scope_hash=${HASH}&date_start=2026-10-01
 const VIEWS=[['overview','/overview'],['problems','/problems'],['problem-detail',`/problems/${IDS.problemA}${PIN}`],['problem-detail-sin-publicacion',`/problems/${IDS.problemA}`],['recommendations','/recommendations'],['explorer','/explorer'],['customer','/customers/'+IDS.customer+PIN],['interventions','/interventions'],['briefs','/briefs'],['brief-detail','/briefs/'+IDS.brief],['history','/history'],['preguntale','/preguntale']];
 const EXTRA=[['operacion-economia','/economics'],['operacion-problemas-gestion','/problems/manage'],['operacion-analisis','/analysis'],['datos-importaciones','/imports'],['datos-conexiones','/connections'],['datos-evaluacion','/evaluation'],['datos-candidatos','/evaluation/candidates'],['datos-migracion','/migrations'],['admin-notificaciones','/notifications'],['admin-avisos','/settings/notifications'],['admin-entrega','/settings/notification-delivery'],['admin-equipo','/settings/team'],['admin-retencion','/settings/retention'],['jobs-setup','/jobs/setup'],['login','/login'],['plataforma','/platform'],['404','/ruta-que-no-existe-xyz'],['invitacion','/auth/invitations/'+IDS.snapshot]];
 if(process.env.EXTRA==='1')VIEWS.splice(0,VIEWS.length,...EXTRA);
+// VIEWS_EXTRA='nombre=/ruta,otro=/ruta2': audita solo esas pantallas (útil para una ola de rediseño).
+if(process.env.VIEWS_EXTRA)VIEWS.splice(0,VIEWS.length,...process.env.VIEWS_EXTRA.split(',').map(x=>x.split('=')));
 const VIEWPORTS=[[375,812],[768,1024],[1440,900]];
 const filter=process.env.ONLY?process.env.ONLY.split(','):null;
 const geometry=()=>{

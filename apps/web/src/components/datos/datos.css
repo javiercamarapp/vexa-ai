@@ -1,0 +1,43 @@
+/* Pantallas de datos y dinero (Dinero · Preparar, Datos y fuentes, Análisis). Solo composición: los primitivos viven en app/ui.css. */
+.dn-page{min-width:0}
+.dn-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:var(--sp-3) var(--sp-5);margin:0}
+.dn-facts>div{min-width:0}
+.dn-facts dt{font-size:var(--t-small);color:var(--muted);margin:0 0 2px}
+.dn-facts dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+.dn-code{font-family:var(--font-mono);font-size:13px}
+.dn-note{display:flex;gap:var(--sp-2);align-items:flex-start;margin:var(--sp-3) 0 0;font-size:var(--t-small);color:var(--ui-secondary)}
+.dn-note svg{flex:none;margin-top:2px}
+.dn-subtotal{margin:var(--sp-2) 0 0;font-size:var(--t-micro);color:var(--muted)}
+.dn-controls{display:flex;flex-wrap:wrap;gap:var(--sp-3);margin:0 0 var(--sp-3)}
+.dn-preparar>summary{cursor:pointer;list-style:none;display:flex;align-items:center;min-height:36px}
+.dn-preparar>summary::-webkit-details-marker{display:none}
+.dn-preparar>summary span{display:grid;gap:2px;flex:1;min-width:0}
+.dn-preparar>summary small{color:var(--muted);font-size:var(--t-small)}
+.dn-preparar>summary::after{content:"Abrir";margin-left:auto;font-size:var(--t-small);color:var(--ui-secondary);padding-left:var(--sp-3);white-space:nowrap;flex:none}
+.dn-preparar[open]>summary::after{content:"Cerrar"}
+.dn-preparar-body{display:grid;gap:var(--sp-5);margin-top:var(--sp-4);min-width:0}
+/* Tarjetas de fuente, cobertura de identidad y tablas de hallazgos */
+.dn-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:var(--sp-3)}
+.dn-source{display:grid;gap:var(--sp-2);align-content:start;padding:var(--sp-4);border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface);min-width:0}
+.dn-source h3{margin:0;font-size:14px}
+.dn-source-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-2)}
+.dn-big{font-size:var(--t-kpi);font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.dn-big small{font-size:var(--t-small);font-weight:400;color:var(--muted);margin-left:6px}
+.dn-meta{margin:0;font-size:var(--t-small);color:var(--ui-secondary);overflow-wrap:anywhere}
+.dn-bar{display:flex;height:10px;border-radius:999px;background:var(--cov-track);overflow:hidden}
+.dn-bar>span{display:block;height:100%}
+.dn-bar .dn-in{background:var(--cov-in)}.dn-bar .dn-pen{background:var(--cov-pen)}.dn-bar .dn-rej{background:var(--cov-rej)}
+.dn-legend{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px var(--sp-4);font-size:var(--t-small);color:var(--ui-secondary)}
+.dn-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.dn-legend .dn-in{background:var(--cov-in)}.dn-legend .dn-pen{background:var(--cov-pen)}.dn-legend .dn-rej{background:var(--cov-rej)}
+.dn-hero{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp-4);align-items:center}
+@media(min-width:900px){.dn-hero{grid-template-columns:auto minmax(0,1fr)}}
+.dn-hero-fig{display:flex;align-items:center;gap:var(--sp-4)}
+.dn-steps{list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-2)}
+.dn-split{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp-4)}
+@media(min-width:900px){.dn-split{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.dn-tabla th[scope=row]{font-weight:600}
+.dn-tabla .dn-asunto{max-width:360px;white-space:normal;overflow-wrap:anywhere}
+.dn-lead{margin:0 0 var(--sp-3);color:var(--ui-secondary);font-size:var(--t-small)}
+.dn-caida{margin-top:var(--sp-3)}
+.dn-caida ul{margin:var(--sp-2) 0 0;padding-left:var(--sp-5);display:grid;gap:4px}

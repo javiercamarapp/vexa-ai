@@ -1,4 +1,5 @@
 'use client';
+import {UNIDADES} from '../../lib/legibilidad/unidades.mjs';
 import {useMemo,useState,type ReactNode} from 'react';
 import {etiquetaCategoria} from '../../lib/legibilidad/categorias.mjs';
 import {separarRuidoCategorias} from '../../lib/legibilidad/ruido.mjs';
@@ -34,7 +35,7 @@ export function CategoryVolume({rows,reason='Aún no hay incidencias clasificada
   {items.length?<BarList items={items} wrap/>:<p className="state">Solo hay notificaciones automáticas en este alcance. Actívalas con el interruptor para verlas.</p>}
   {view.sorted.length>view.top.length&&<p className="card-lead">Se muestran las {view.top.length} categorías con más incidencias de {nf.format(view.sorted.length)}.</p>}
   {view.sorted.length>0&&<details className="chart-table"><summary>Ver como tabla</summary><div className="table-wrap" tabIndex={0} role="region" aria-label={'Tabla: '+title}><table><thead><tr><th scope="col">Categoría</th><th scope="col" className="num">Incidencias</th></tr></thead><tbody>{view.sorted.map(r=><tr key={r.category}><th scope="row">{etiquetaCategoria(r.category)}</th><td className="num">{nf.format(r.count)}</td></tr>)}</tbody></table></div></details>}
-  {foot}
+  {!noData&&<p className="card-lead" data-testid="unidad-categorias">{UNIDADES.incidencias}</p>}{foot}
  </div>;
  return <section className="card" aria-label={title}>
   {head}

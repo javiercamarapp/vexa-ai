@@ -145,8 +145,8 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
    <details><summary>Qué falta</summary><p>Faltan los vínculos entre cada problema y los pedidos del libro económico: sin ellos no se puede saber cuánto dinero toca cada problema, y por eso no se muestra ninguna cifra (desconocido no es cero).{bundle.meta.can_manage?<> <Link href="/economics" className="row-link-inline">Revisar fuentes y vínculos</Link></>:null}</p></details>
   </div></aside>}
   <div className={s.kpis} role="group" aria-label="Resumen de problemas">
-   <div className={s.kpi}><strong>{nf.format(resumen.grupos)}</strong><span>Grupos de problemas</span><small>Conversaciones agrupadas por parecido</small></div>
-   <div className={s.kpi}><strong>{nf.format(resumen.categorias)}</strong><span>Categorías</span><small>Según la clasificación de la IA</small></div>
+   <div className={s.kpi}><strong>{nf.format(resumen.grupos)}</strong><span>Grupos de problemas</span><small>Conversaciones parecidas agrupadas por la IA; una categoría puede tener varios.</small></div>
+   <div className={s.kpi}><strong>{nf.format(resumen.categorias)}</strong><span>Categorías</span><small>Entre los grupos visibles, sin notificaciones automáticas ocultas. Cada grupo cuenta conversaciones únicas, no incidencias: por eso no coincide con el Resumen.</small></div>
    <div className={s.kpi}>{resumen.criticos===null||!critDisponible?<strong className={s.kpiNA}>No disponible ahora</strong>:<strong>{nf.format(catalogo?.critical?catalogo.critical.groups:resumen.criticos)}</strong>}<span>Grupos con revisión crítica</span><small>{catalogo?.critical&&critDisponible&&<>{desgloseCriticos({total:catalogo.critical.groups,visibles:resumen.criticos??0,senales:catalogo.critical.signals}).texto} · </>}<a className="row-link-inline" href="#senales-criticas">Ver cuáles son</a></small></div>
    <div className={s.kpi}><strong>{sep.ocultosN>0&&!incluirRuido?nf.format(sep.ocultosN):'0'}</strong><span>Notificaciones automáticas ocultas</span><small>Alertas de minoristas y del sistema</small></div>
   </div>

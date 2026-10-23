@@ -34,7 +34,7 @@ export function ColumnPlot({data,kind='observed',height=168,title,axis,deltaMode
      <rect x={padL+slot*i} y={PAD_T-4} width={slot} height={plotH+PAD_B+4} className="col-hit"/>
      {d.value===null?<text x={cx} y={base-6} textAnchor="middle" className="chart-note">s/d</text>
       :<path d={path} className={'col-bar col-'+kind+(d.partial?' col-partial':'')} style={{animationDelay:i*14+'ms',...(d.partial?{fill:`url(#h${uid})`}:{})}}/>}
-     {d.partial&&d.value!==null&&active!==i&&<text x={cx} y={top-5} textAnchor="middle" className="chart-note">parcial</text>}
+     {d.partial&&d.value!==null&&active!==i&&<text x={cx} y={top-5} textAnchor={cx+18>W?'end':'middle'} className="chart-note">parcial</text>}
      {lab&&!d.partial&&<text x={cx} y={top-5} textAnchor={anchor} className="chart-dlabel">{lab}</text>}
      {i%every===0&&<text x={cx} y={height-6} textAnchor="middle" className="chart-tick chart-xtick">{d.label}</text>}
     </g>;})}

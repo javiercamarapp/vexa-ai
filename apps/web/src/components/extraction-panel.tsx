@@ -11,7 +11,10 @@ import {Icon} from './ui/icons';
 import {SkeletonStats} from './ui/skeletons';
 import {nf} from './ui/format';
 import css from './ops-panels.module.css';
-import {useCallback,useEffect,useRef,useState} from 'react';
+import {useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
+import {leerSwr,claveSwr,guardarSwr} from '../lib/workspace/swr.mjs';
+import {LineaCache} from './ui/linea-cache';
+const useAntesDePintar=typeof window==='undefined'?useEffect:useLayoutEffect;
 import {submitBlock} from '../lib/analysis-jobs';
 import {HallazgosAnalisis} from './datos/analisis-hallazgos';
 type Job={id:string;runId:string|null;conversationId:string;state:string;runStatus:string|null;reason:string|null;createdAt?:string};
@@ -22,7 +25,10 @@ const reasons:Record<string,string>={reconciliation_required:'La ejecución fue 
 function usd(minor:string){const value=BigInt(minor);return `${value/1000000n}.${String(value%1000000n).padStart(6,'0')}`;}
 export function ExtractionPanel(){
  const [snapshot,setSnapshot]=useState<Snapshot|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false),[selected,setSelected]=useState(''),[limit,setLimit]=useState(''),[purpose,setPurpose]=useState('extraction'),[reservation,setReservation]=useState(''),[actual,setActual]=useState(''),[evidence,setEvidence]=useState(''),[confirmed,setConfirmed]=useState(false),[budgetOpen,setBudgetOpen]=useState(false);
- const requestKey=useRef<string|null>(null),refreshGeneration=useRef(0);
+ const requestKey=useRef<string|null>(null),refreshGeneration=useRef(0),[edad,setEdad]=useState<number|null>(null),[viejo,setViejo]=useState(false),snapRef=useRef<Snapshot|null>(null);
+ useEffect(()=>{snapRef.current=snapshot;},[snapshot]);
+ // Antes de pintar: la última lectura de la primera página (rotulada) mientras llega la real; el sondeo de 10 s la reemplaza.
+ useAntesDePintar(()=>{const g=leerSwr(claveSwr('/api/extraction')),v=g?.datos as Snapshot|undefined;if(g&&v&&Array.isArray(v.jobs)&&Array.isArray(v.conversations)&&v.pagination){setSnapshot(v);setEdad(g.edadMs);}},[]);
  const [pages,setPages]=useState<{conversations:(string|null)[];jobs:(string|null)[]}>({conversations:[null],jobs:[null]});
  const clearSelection=useCallback(()=>{setSelected('');requestKey.current=null;setReservation('');setActual('');setEvidence('');setConfirmed(false);},[]);
  function firstPage(){++refreshGeneration.current;setSnapshot(null);clearSelection();setError('');setPages({conversations:[null],jobs:[null]});}
@@ -31,9 +37,10 @@ export function ExtractionPanel(){
   const generation=++refreshGeneration.current;
   try{
    const query=new URLSearchParams();const conversationCursor=pages.conversations.at(-1),jobCursor=pages.jobs.at(-1);if(conversationCursor)query.set('conversation_cursor',conversationCursor);if(jobCursor)query.set('job_cursor',jobCursor);
-   const response=await fetch('/api/extraction'+(query.size?'?'+query:''),{cache:'no-store',signal}),body=await response.json();
+   const response=await fetch('/api/extraction'+(query.size?'?'+query:''),{cache:'no-store',signal}).catch(e=>{if(!signal?.aborted&&snapRef.current&&generation===refreshGeneration.current){setViejo(true);return null;}throw e;});if(!response)return;const body=await response.json();
+   if(!response.ok&&response.status>=500&&snapRef.current&&!signal?.aborted&&generation===refreshGeneration.current){setViejo(true);return;}
    if(!response.ok)throw Error(body.error?.code==='configuration_required'?'Falta configurar el servicio de análisis.':'No se pudo consultar el análisis.');
-   if(!signal?.aborted&&generation===refreshGeneration.current){setSnapshot(body);setError('');setSelected(current=>{if(body.conversations.some((c:{id:string})=>c.id===current))return current;requestKey.current=null;return '';});}
+   if(!signal?.aborted&&generation===refreshGeneration.current){setSnapshot(body);setError('');setEdad(null);setViejo(false);if(!query.size)guardarSwr(claveSwr('/api/extraction'),body);setSelected(current=>{if(body.conversations.some((c:{id:string})=>c.id===current))return current;requestKey.current=null;return '';});}
   }catch(e){
    if(signal?.aborted||generation!==refreshGeneration.current)return;
    setSnapshot(null);clearSelection();throw e;
@@ -47,6 +54,7 @@ export function ExtractionPanel(){
  return <section className="stack" aria-labelledby="analysis-title">
   <span id="analysis-title" className="sr-only">Análisis de conversaciones</span>
   <PageHeader title="Análisis de conversaciones" description="Se ejecutan en segundo plano; los importes inciertos quedan reservados hasta contrastarlos con el proveedor." actions={snapshot?.canConfigure&&snapshot.configuration.window?<Button size="sm" onClick={()=>setBudgetOpen(true)}>Límites y conciliación</Button>:undefined}/>
+  {snapshot&&<LineaCache edadMs={edad} viejo={viejo} actualizando={edad!==null&&!viejo}/>}
   {error&&<><p role="alert" className="notice-bar"><Icon name="alert" size={14}/>{error}</p><div><Button size="sm" disabled={busy} onClick={firstPage}>Volver a la primera página</Button></div></>}
   {!snapshot?(error?<p role="status" className="muted">No hay datos verificados para mostrar.</p>:<><p role="status" className="sr-only">Cargando estado…</p><SkeletonStats count={4}/></>):<>
   {blocked&&(!snapshot.configuration.ready||!snapshot.configuration.enabled)?<p role="status" className="notice-bar"><Icon name="info" size={14}/>{blocked}</p>:null}

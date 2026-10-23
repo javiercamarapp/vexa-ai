@@ -48,7 +48,7 @@ export function createWebPushSender({sdk,vapid,timeoutMs=5000,clock=Date.now,req
   const scope={subscriptionId:deliveryScope.subscriptionId,version:deliveryScope.version};
   const options={vapidDetails:{...config},TTL:300,urgency:'normal',contentEncoding:'aes128gcm',topic:createHash('sha256').update(String(idempotencyKey)).digest('base64url').slice(0,32)};
   let details;
-  try{details=sdk.generateRequestDetails(saved,JSON.stringify({title:'VEXA',body:'Tienes avisos disponibles en VEXA.',href:'/notifications',...scope}),options);if(details.endpoint!==saved.endpoint||details.method!=='POST'||!Buffer.isBuffer(details.body))return {kind:'blocked'};}catch{return {kind:'blocked'};}
+  try{details=sdk.generateRequestDetails(saved,JSON.stringify({title:'Rovaq AI',body:'Tienes avisos disponibles en Rovaq AI.',href:'/notifications',...scope}),options);if(details.endpoint!==saved.endpoint||details.method!=='POST'||!Buffer.isBuffer(details.body))return {kind:'blocked'};}catch{return {kind:'blocked'};}
   if(signal?.aborted)return {kind:'blocked'};
   // SDK supplies standard encryption/VAPID. Native HTTPS supplies a real abortable deadline and never follows redirects.
   const controller=new AbortController();let req,timer;

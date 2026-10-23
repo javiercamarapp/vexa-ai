@@ -41,11 +41,11 @@ export function CfoDashboard({initial, query = '', organization}: {initial: Repo
     <LinkButton href="/cfo/data/export?format=csv" download="informe-cfo.csv" icon={<Download />}>Exportar CSV</LinkButton>
     <LinkButton href="/cfo/data/export?format=pdf" download="informe-cfo.pdf" icon={<Download />}>Exportar PDF</LinkButton>
   </>;
-  const header = <PageHeader eyebrow="CFO del negocio" title="CFO del negocio" description="Ingresos, reembolsos, mezcla por canal y calidad de datos, por moneda y sin mezclar bases. Cada cifra dice si es observada, estimada o inferida, y cómo se calculó." actions={actions} />;
+  const header = <PageHeader eyebrow="CFO del negocio" title="Dinero" description="Ingresos, reembolsos, mezcla por canal y calidad de datos, por moneda y sin mezclar bases. Cada cifra dice si es observada, estimada o inferida, y cómo se calculó." actions={actions} />;
   if (!report) return <div className="cf-page">{header}{error && <p className="state state-error" role="alert">{error}</p>}
     {state.status === 'timeout'
       ? <Empty tone="bad" title="No disponible ahora" action={<Button icon={<Refresh />} loading={busy} onClick={() => void load()}>Reintentar</Button>}>La consulta acotada del libro económico superó el tiempo permitido{state.status === 'timeout' && state.summary && ['absent', 'partial', 'unavailable'].includes(state.summary.freshness) ? ' y todavía no hay un resumen precomputado completo de los últimos 12 meses (pide a un operador refrescarlo)' : ''}. No se muestra ninguna cifra parcial como si fuera completa.</Empty>
-      : <Empty title="Sin registros en el libro económico" action={<LinkButton href="/economics" icon={<PfIcon name="database" />}>Ir a Gestión económica</LinkButton>}>Aún no hay pedidos ni reembolsos registrados para esta organización en los últimos 12 meses. Carga una fuente para ver el panel financiero.</Empty>}</div>;
+      : <Empty title="Sin registros en el libro económico" action={<LinkButton href="/economics" icon={<PfIcon name="database" />}>Ir a Dinero › Preparar</LinkButton>}>Aún no hay pedidos ni reembolsos registrados para esta organización en los últimos 12 meses. Carga una fuente para ver el panel financiero.</Empty>}</div>;
 
   const block = report.perCurrency.find(c => c.currency === currency) ?? report.perCurrency[0];
   const kpis = report.kpis.find(k => k.currency === block.currency)!;

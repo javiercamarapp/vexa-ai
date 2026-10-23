@@ -20,7 +20,7 @@ export const MENU = Object.freeze([
   { tipo: 'grupo', clave: 'datos', etiqueta: 'Datos y fuentes', items: [
     { href: '/connections', etiqueta: 'Fuentes', icono: 'connections', titulo: 'Fuentes de datos' },
     { href: '/imports', etiqueta: 'Importaciones', icono: 'imports', alias: ['/jobs'] },
-    { href: '/history', etiqueta: 'Identidad', icono: 'history', titulo: 'Identidad de clientes' },
+    { href: '/history', etiqueta: 'Histórico e identidad', icono: 'history' },
     { href: '/analysis', etiqueta: 'Análisis', icono: 'analysis', titulo: 'Análisis de conversaciones' },
   ] },
   { tipo: 'grupo', clave: 'administracion', etiqueta: 'Administración', roles: SOLO_PROPIETARIO, items: [

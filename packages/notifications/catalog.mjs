@@ -2,7 +2,7 @@
 const entries=[
  ['membership.welcome','Tu acceso está listo','Ya puedes entrar a tu espacio de trabajo y consultar los recursos que tu equipo te haya autorizado.'],
  ['membership.invited','Tu equipo te invita a colaborar','Una persona propietaria debe crear y reservar explícitamente la invitación. Este evento todavía no está conectado.'],
- ['brief.available','Las prioridades, en un solo lugar','Hay un brief disponible para tu equipo. Consulta el análisis, sus fuentes y las decisiones pendientes dentro de VEXA.'],
+ ['brief.available','Las prioridades, en un solo lugar','Hay un brief disponible para tu equipo. Consulta el análisis, sus fuentes y las decisiones pendientes dentro de Rovaq AI.'],
  ['intervention.assigned','Una acción espera tu revisión','Se te ha asignado una intervención. Revisa su objetivo, la evidencia y los próximos pasos antes de registrar una acción.'],
  ['connection.attention','Revisa el estado de tu conexión','Una conexión de tu organización necesita revisión. Consulta su estado antes de decidir cómo continuar.'],
  ['processing.failed','Revisa el procesamiento pendiente','Un procesamiento no pudo completarse. Consulta el error y las opciones disponibles; no se presupone que los datos estén completos.'],

@@ -101,7 +101,7 @@ export function InterventionsPanel({initialQuery}:{initialQuery:string}){
  const columns=[...STAGES.map(s=>({status:s as Intervention['status'],items:by(s)})),...(by('cancelled').length?[{status:'cancelled' as Intervention['status'],items:by('cancelled')}]:[])];
  const running=by('approved').length+by('active').length+by('measuring').length;
  return <section aria-label="Intervenciones y medición" className="stack">
-  <PageHeader eyebrow="Acciones y resultados" title="Intervenciones" guide="intervenciones" actions={<Button icon={<Refresh/>} loading={busy} onClick={()=>void load(resolved.current)}>Actualizar intervenciones</Button>}/>
+  <PageHeader eyebrow="Acciones y resultados" title="Acciones" guide="intervenciones" actions={<Button icon={<Refresh/>} loading={busy} onClick={()=>void load(resolved.current)}>Actualizar intervenciones</Button>}/>
   <ScopeBar scope={scope} onApply={apply} busy={busy}/>
   {busy&&!view&&<div role="status" aria-label="Verificando intervenciones"><SkeletonStats count={3}/><SkeletonCards count={3}/></div>}{error&&<p className="state state-error" role="alert">{error}</p>}{notice&&<p className="state" role="status">{notice}</p>}{empty&&<EmptyState art="chart" title="Aún no hay un corte publicado" body="No hay una publicación disponible para este alcance." action={<LinkButton href="/economics" variant="primary" size="sm" icon={<Arrow/>}>Revisar publicaciones</LinkButton>}/>}
   {view&&<>{view.unavailableCount>0&&<p className="state" role="status">Hay intervenciones que no pueden mostrarse con la evidencia y los permisos actuales.</p>}

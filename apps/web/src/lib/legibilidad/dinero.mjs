@@ -81,3 +81,10 @@ export function mesesIncompletos(report) {
   const lista = Array.isArray(report?.partialMonths) ? report.partialMonths : [];
   return {meses: lista, datosHasta: diaCorte(report?.watermark)};
 }
+
+/**
+ * Lectura del corte publicado para «Dinero · Preparar». Es el corte ACTIVO (el que leen Resumen y Brief), no uno filtrado por la URL:
+ * pasar date_start/date_end/snapshot_id de un enlace viejo daba 409/400 y «Reintentar» repetía la misma consulta fallida (A3, 23-oct).
+ * resource=problems&meta_only=1 es la lectura barata de fijación de alcance (misma URL y misma caché que precalienta el menú).
+ */
+export const URL_CORTE_PUBLICADO = '/api/workspace?resource=problems&meta_only=1';

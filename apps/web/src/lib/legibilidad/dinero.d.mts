@@ -8,3 +8,4 @@ export function serieMensual(report: unknown, moneda: string, base: string, medi
 export type FilaFuente = {clave: string; fuente: string; registros: number; sinMoneda: number; pedidosSinImporte: number; reembolsosSinImporte: number | null; reembolsos: 'Con fuente' | 'Sin cobertura'; completitudBps: number | null; pendientes: number};
 export function filasPorFuente(report: unknown): FilaFuente[];
 export function mesesIncompletos(report: unknown): {meses: string[]; datosHasta: string | null};
+export const URL_CORTE_PUBLICADO: string;

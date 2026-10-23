@@ -3,7 +3,7 @@ import {useMemo,useState,type ReactNode} from 'react';
 import type {Bundle} from '../../lib/workspace/contracts';
 import type {CfoReport} from '../../../../../packages/cfo-copilot/src/index.mjs';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
-import {resumenCorte,serieMensual,tarjetasPorMoneda,filasPorFuente,mesesIncompletos} from '../../lib/legibilidad/dinero.mjs';
+import {URL_CORTE_PUBLICADO,resumenCorte,serieMensual,tarjetasPorMoneda,filasPorFuente,mesesIncompletos} from '../../lib/legibilidad/dinero.mjs';
 import {PageHeader} from '../ui/page-header';
 import {StatCard} from '../ui/stat-card';
 import {KindBadge} from '../ui/kind-badge';
@@ -19,15 +19,15 @@ import {nf} from '../ui/format';
 import './datos.css';
 
 type ReportState={status:'ok';report:CfoReport;synthetic?:boolean}|{status:'empty'|'timeout'};
-const acceptBundle=(j:unknown)=>{const d=(j as {data?:Bundle})?.data;return d&&Array.isArray(d.items)&&d.meta?d:null;};
+const acceptBundle=(j:unknown)=>{const d=(j as {data?:Bundle})?.data;return d&&d.meta&&d.meta.scope?d:null;};
 const acceptReport=(j:unknown)=>{const d=(j as {data?:ReportState})?.data;return d&&typeof d.status==='string'?d:null;};
 const mesCorto=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
 const mesLargo=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
 const pctBps=(b:number|null)=>b===null?'No disponible':(b/100).toLocaleString('es-MX',{maximumFractionDigits:1})+' %';
 
 /** Pantalla «Dinero · Preparar»: primero el estado de lo publicado y su cobertura; los formularios que escriben quedan plegados abajo. */
-export function EconomiaResumen({query,puedePreparar,children}:{query:string;puedePreparar:boolean;children?:ReactNode}){
- const bundle=useJson<Bundle>('/api/workspace?resource=metrics'+(query?'&'+query:''),acceptBundle);
+export function EconomiaResumen({puedePreparar,children}:{query?:string;puedePreparar:boolean;children?:ReactNode}){
+ const bundle=useJson<Bundle>(URL_CORTE_PUBLICADO,acceptBundle);
  const rep=useJson<ReportState>('/cfo/data/report',acceptReport);
  const corte=useMemo(()=>resumenCorte(bundle.data?.meta),[bundle.data]);
  const report=rep.data?.status==='ok'?rep.data.report:null;

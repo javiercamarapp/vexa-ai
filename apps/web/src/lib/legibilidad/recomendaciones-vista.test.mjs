@@ -1,7 +1,7 @@
 //   node --test apps/web/src/lib/legibilidad/recomendaciones-vista.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {traducirTaxonomia,siguientePaso,resumenRecomendaciones,responsable} from './recomendaciones-vista.mjs';
+import {traducirTaxonomia,siguientePaso,resumenRecomendaciones,responsable,textoLegible,etiquetaCausal,esDeGeneradorAnterior} from './recomendaciones-vista.mjs';
 test('traduce solo etiquetas exactas de la taxonomía, sin tocar el resto ni palabras sueltas',()=>{
  assert.equal(traducirTaxonomia('Solicitar revisión humana urgente de «Warranty: Battery Replacement»: contrastar los indicios de Feedback: Negative, Order: Cancel, Not Shipped.'),
   'Solicitar revisión humana urgente de «Garantía: Reemplazo de batería»: contrastar los indicios de Opinión: Negativa, Pedido: Cancelación, aún sin enviar.');
@@ -23,4 +23,28 @@ test('resumen: propuestas, críticas, sin responsable, con borrador',()=>{
  const r=resumenRecomendaciones([{status:'proposed',priority:'critical',ownerId:null},{status:'proposed',priority:'normal',ownerId:'u',drafts:[{}]},{status:'dismissed',priority:'critical'}]);
  assert.deepEqual(r,{total:3,propuestas:2,descartadas:1,criticas:1,sinResponsable:1,conBorrador:1});
  assert.equal(resumenRecomendaciones(null).total,0);
+});
+
+test('A5: texto v1 ilegible se presenta resumido y en español, sin tocar lo guardado',()=>{
+ const accion='Solicitar revisión humana urgente de «Pedido: Refacciones»: contrastar los indicios de Distribuidores: Alianza comercial, Pedido: Refacciones, Garantía: Reemplazo de herramienta O con una inspección operacional independiente antes de cualquier medida externa.';
+ assert.equal(textoLegible(accion),'Solicitar revisión humana urgente de «Pedido: Refacciones»: contrastar los indicios citados con una inspección operativa independiente antes de cualquier medida externa.');
+ const porque='Propuesta condicionada para el problema versión 3, respaldada por 12 citas autorizadas en 12 categorías (Pedido: Refacciones, Garantía: Diagnóstico previo, Envío: Preguntas). Estado causal unassessed: los síntomas citados no acreditan por sí solos una causa. No estima ahorros ni atribuye efectos causales.';
+ const r=textoLegible(porque);
+ assert.match(r,/en 12 categorías \(las más frecuentes están en «Evidencia»\)\./);
+ assert.match(r,/Estado causal: sin evaluar\. Los síntomas citados/);
+ assert.ok(!/unassessed/.test(r));
+ assert.equal(textoLegible('Contrastar los hitos de transporte de «X» con registros; documentar en qué etapa aparece la incidencia de Envío: Preguntas, Envío: Retraso. Fin'),'Contrastar los hitos de transporte de «X» con registros; documentar en qué etapa aparece la incidencia. Fin');
+});
+test('A5: lo que no es plantilla v1 pasa intacto; v2 no se altera',()=>{
+ const v2='Por qué: 12 citas autorizadas en 4 categorías; las más frecuentes son «Pedido: Refacciones» (5 citas). Estado causal: sin evaluar. Los síntomas citados no acreditan por sí solos una causa.';
+ assert.equal(textoLegible(v2),v2);
+ assert.equal(textoLegible('Texto editado por una persona'),'Texto editado por una persona');
+ assert.equal(textoLegible(undefined),undefined);
+ assert.equal(textoLegible(textoLegible('Estado causal unassessed: los síntomas')),'Estado causal: sin evaluar. Los síntomas');
+});
+test('A5: estados causales y generador anterior',()=>{
+ assert.equal(etiquetaCausal('unassessed'),'Sin evaluar');assert.equal(etiquetaCausal('algo_nuevo'),'algo_nuevo');
+ assert.equal(esDeGeneradorAnterior({generatorVersion:'conditioned-rules-v1'}),true);
+ assert.equal(esDeGeneradorAnterior({generatorVersion:'conditioned-rules-v2'}),false);
+ assert.equal(esDeGeneradorAnterior({}),false);
 });

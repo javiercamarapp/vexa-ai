@@ -26,3 +26,29 @@ export function resumenRecomendaciones(items){
  const propuestas=l.filter(i=>i.status==='proposed'),descartadas=l.filter(i=>i.status==='dismissed');
  return {total:l.length,propuestas:propuestas.length,descartadas:descartadas.length,criticas:propuestas.filter(i=>i.priority===PRIORIDAD_URGENTE).length,sinResponsable:propuestas.filter(i=>!i.ownerId).length,conBorrador:propuestas.filter(i=>i.drafts?.length>0).length};
 }
+
+const CAUSAL_ES={unassessed:'sin evaluar',hypothesis:'causa probable, no confirmada',confirmed:'causa confirmada',retracted:'causa retractada',candidate:'candidata',supported:'con respaldo',unsupported:'sin respaldo',insufficient:'evidencia insuficiente'};
+/** «unassessed» -> «Sin evaluar». Un estado desconocido se muestra tal cual (no se inventa una traducción). */
+export function etiquetaCausal(estado){const e=CAUSAL_ES[estado];return e?e.charAt(0).toUpperCase()+e.slice(1):estado;}
+/** Versión del generador vigente: las recomendaciones guardadas con otra son inmutables y se pueden regenerar (flujo de propuesta, con aprobación). */
+export const GENERADOR_VIGENTE='conditioned-rules-v2';
+export const esDeGeneradorAnterior=item=>!!item?.generatorVersion&&item.generatorVersion!==GENERADOR_VIGENTE;
+// Plantillas del generador v1 (guardadas, inmutables): la lista completa de categorías ya está en «Evidencia», así que en la frase se resume. Solo se reescribe lo que
+// calza EXACTO con la plantilla; cualquier otro texto (incluido el editado por una persona) pasa intacto salvo la taxonomía.
+const LISTA='[\\s\\S]{1,2500}?';
+const PLANTILLAS_V1=[
+ [new RegExp('indicios de '+LISTA+' con una inspección operacional independiente','u'),'indicios citados con una inspección operativa independiente'],
+ [new RegExp('incidencia de '+LISTA+'\\.(?=\\s|$)','u'),'incidencia.'],
+ [new RegExp('las citas de '+LISTA+' con registros operacionales independientes','u'),'las citas con registros operativos independientes'],
+ [new RegExp('indicios de '+LISTA+' sin atribuir','u'),'indicios citados sin atribuir'],
+ [new RegExp('en (\\d+) categorías \\('+LISTA+'\\)\\.','u'),'en $1 categorías (las más frecuentes están en «Evidencia»).'],
+];
+const ESTADO_RE=/Estado causal:? (unassessed|hypothesis|confirmed|retracted|candidate|supported|unsupported|insufficient)\b:?\.?/gu;
+/** Texto de una recomendación o brief listo para leer: taxonomía en español, plantillas v1 resumidas y estados causales traducidos. NO modifica lo guardado. */
+export function textoLegible(texto){
+ if(typeof texto!=='string'||!texto)return texto;
+ let t=traducirTaxonomia(texto);
+ for(const [re,por] of PLANTILLAS_V1)t=t.replace(re,por);
+ t=t.replace(ESTADO_RE,(_,e)=>'Estado causal: '+(CAUSAL_ES[e]??e)+'.').replace(/(Estado causal: [^.]+\.) los /u,'$1 Los ');
+ return t;
+}

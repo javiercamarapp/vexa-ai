@@ -23,7 +23,7 @@ import {SkeletonCards} from '../ui/skeletons';
 import {WaitStatus} from '../ui/wait-status';
 import {ESPERA} from '../../lib/legibilidad/espera.mjs';
 import {etiquetaCategoria} from '../../lib/legibilidad/categorias.mjs';
-import {traducirTaxonomia,siguientePaso,responsable,resumenRecomendaciones} from '../../lib/legibilidad/recomendaciones-vista.mjs';
+import {textoLegible,etiquetaCausal,esDeGeneradorAnterior,siguientePaso,responsable,resumenRecomendaciones} from '../../lib/legibilidad/recomendaciones-vista.mjs';
 import {nf} from '../ui/format';
 import css from './panel.module.css';
 type Filters=Scope & {basis:string;exponent?:number};
@@ -35,7 +35,7 @@ function failure(status:number){return status===401||status===403?'Tu acceso cam
 const PRIORITY={critical:{label:'Revisión humana urgente',sev:'high',tone:'bad'},high:{label:'Prioridad alta',sev:'medium',tone:'warn'},normal:{label:'Prioridad normal',sev:'low',tone:'ok'}} as const;
 const CAUSAL:Record<string,string>={unassessed:'Sin evaluar',confirmed:'Confirmada',retracted:'Retractada',hypothesis:'Hipótesis',candidate:'Candidata',supported:'Con respaldo',unsupported:'Sin respaldo',insufficient:'Evidencia insuficiente'};
 const RANK={critical:0,high:1,normal:2} as const;
-function RecommendationCard({item,members,busy,conflict,operate,first}:{item:Recommendation;members:RecommendationList['members'];busy:boolean;conflict:boolean;operate:Operation;first:boolean}){
+function RecommendationCard({item,members,busy,conflict,operate,first,onRegenerate}:{item:Recommendation;members:RecommendationList['members'];busy:boolean;conflict:boolean;operate:Operation;first:boolean;onRegenerate?:(problemId:string)=>void}){
  const [action,setAction]=useState(item.action),[conditions,setConditions]=useState(item.preconditions.join('\n')),[rationale,setRationale]=useState(item.rationale),[owner,setOwner]=useState(item.ownerId??''),[reason,setReason]=useState(''),[stateReason,setStateReason]=useState(''),[evidence,setEvidence]=useState(false),[edit,setEdit]=useState(false),[full,setFull]=useState<Recommendation|null>(item.verification==='full'?item:null),[openState,setOpenState]=useState<'idle'|'loading'|'unavailable'|'error'>('idle');
  const draftKey=useRef<string|null>(null);const locked=busy||conflict||!item.canMutate;const endpoint='/api/recommendations/'+item.id;
  const create=()=>{draftKey.current??=crypto.randomUUID();void operate(endpoint+'/interventions',{expectedVersion:item.version,requestKey:draftKey.current});};
@@ -48,18 +48,19 @@ function RecommendationCard({item,members,busy,conflict,operate,first}:{item:Rec
   <header className="insight-head"><span className="insight-icon" aria-hidden="true"><Icon name={highlight?'target':'sparkle'} size={16}/></span><div className="insight-titles"><span className="insight-eyebrow">{highlight?'Hacer primero':dismissed?'Descartada':'Recomendación'}</span><h3>{etiquetaCategoria(item.title)}</h3><TituloAuto problemId={item.problemId} label={item.title}/></div><StatusChip tone={pr.tone}>{pr.label}</StatusChip></header>
   <div className={css.cols}>
    <div className={css.main}>
-    <p className="insight-sentence"><strong>{traducirTaxonomia(item.action)}</strong></p>
-    <section aria-label="Por qué"><h4 className={css.h4}>Por qué</h4><p className="card-lead">{traducirTaxonomia(item.rationale)}</p></section>
+    <p className="insight-sentence"><strong>{textoLegible(item.action)}</strong></p>
+    <section aria-label="Por qué"><h4 className={css.h4}>Por qué</h4><p className="card-lead">{textoLegible(item.rationale)}</p></section>
     <section aria-label="Evidencia"><h4 className={css.h4}>Evidencia</h4><p className="card-lead"><strong>{nf.format(item.evidenceCount)}</strong> {item.evidenceCount===1?'cita':'citas'} verificadas al guardar; se vuelven a verificar al abrir. Esta propuesta no demuestra causalidad ni garantiza un ahorro.</p></section>
-    {item.preconditions.length>0&&<details className={css.fold}><summary>Condiciones previas ({item.preconditions.length})</summary><ul>{item.preconditions.map((v,i)=><li key={i}>{traducirTaxonomia(v)}</li>)}</ul></details>}
+    {item.preconditions.length>0&&<details className={css.fold}><summary>Condiciones previas ({item.preconditions.length})</summary><ul>{item.preconditions.map((v,i)=><li key={i}>{textoLegible(v)}</li>)}</ul></details>}
    </div>
    <dl className={css.meta} aria-label="Estado y seguimiento">
     <div><dt>Estado</dt><dd><StatusChip tone={dismissed?'muted':'info'}>{dismissed?'Descartada':'Propuesta'} · v{item.version}</StatusChip></dd></div>
     <div><dt>Responsable</dt><dd>{responsable(item)}</dd></div>
     <div><dt>Siguiente paso</dt><dd>{siguientePaso(item)}</dd></div>
     <div><dt>Esfuerzo</dt><dd>Revisión diagnóstica</dd></div>
-    <div><dt>Estado causal</dt><dd>{CAUSAL[item.causalState]??item.causalState}</dd></div>
+    <div><dt>Estado causal</dt><dd>{CAUSAL[item.causalState]??etiquetaCausal(item.causalState)}</dd></div>
     <div><dt>Intervención</dt><dd>{item.drafts.length>0?item.drafts.length===1?'1 borrador':item.drafts.length+' borradores':'Sin intervención'}</dd></div>
+    <div><dt>Dinero</dt><dd>No disponible: aún no hay importe por problema (no se estima un ahorro)</dd></div>
    </dl>
   </div>
   {item.stale&&<p className="state" role="status">El problema o su evidencia ha cambiado. Esta versión se conserva como historial y requiere una propuesta vigente antes de actuar.</p>}
@@ -68,12 +69,13 @@ function RecommendationCard({item,members,busy,conflict,operate,first}:{item:Rec
    <div className={css.secondary}><Button size="sm" icon={<Icon name="eye" size={14}/>} onClick={openEvidence}>{'Ver evidencia ('+item.evidenceCount+')'}</Button>{item.canMutate&&<Button size="sm" variant="ghost" icon={<Icon name="settings" size={14}/>} onClick={()=>setEdit(true)}>Editar o gestionar</Button>}</div>
    {item.canMutate&&item.status==='proposed'&&<Button variant="primary" size="sm" disabled={locked||item.drafts.length>0} onClick={create}>Crear intervención borrador</Button>}
   </footer>
+  {onRegenerate&&esDeGeneradorAnterior(item)&&<p className="state" role="note">Esta recomendación se guardó con un generador anterior y no se modifica (es historial). <Button size="sm" variant="ghost" disabled={busy||conflict} onClick={()=>onRegenerate(item.problemId)}>Regenerar con el generador actual</Button> Se abre la propuesta para que la confirmes; no se ejecuta sola.</p>}
   {!item.canMutate&&<p className="insight-sentence">Esta versión es de consulta con tus permisos y la evidencia vigentes.</p>}
   <Drawer open={evidence} onClose={()=>setEvidence(false)} width={560} title={etiquetaCategoria(item.title)} subtitle="Evidencia y contexto de la recomendación" footer={<LinkButton href={'/problems/'+item.problemId+'?'+evidenceQuery.toString()} size="sm" variant="primary" icon={<Arrow/>}>Ver problema y evidencia</LinkButton>}>
    <div className="stack">
-    <p className="card-lead">{traducirTaxonomia(item.rationale)}</p>
+    <p className="card-lead">{textoLegible(item.rationale)}</p>
     <p className="card-lead">Esta propuesta no demuestra causalidad ni garantiza un ahorro.</p>
-    <section><h3>Condiciones para considerar esta acción</h3><ul>{item.preconditions.map((v,i)=><li key={i}>{traducirTaxonomia(v)}</li>)}</ul></section>
+    <details className={css.fold}><summary>Condiciones para considerar esta acción ({item.preconditions.length})</summary><ul>{item.preconditions.map((v,i)=><li key={i}>{textoLegible(v)}</li>)}</ul></details>
     <section><h3>{'Evidencia de la recomendación ('+(full?full.evidenceRefs.length:item.evidenceCount)+')'}</h3>{openState==='loading'&&<WaitStatus {...ESPERA.evidencia}/>}{openState==='unavailable'&&<p className="state state-error" role="alert">La evidencia de esta recomendación ya no está disponible: no se muestran citas.</p>}{openState==='error'&&<p className="state state-error" role="alert">No se pudo verificar la evidencia ahora; no se muestran citas. Reintenta cerrando y abriendo este panel.</p>}{full&&full.evidenceRefs.map((e,i)=><Citation key={e.runId+':'+e.messageRevisionId+':'+i} quote={e.quote} role={e.role} category={e.category} messageRevisionId={e.messageRevisionId}/>)}</section>
     <div className="meta-row"><span className="chip">Problema v{item.problemVersion}</span><IdChip value={item.snapshotId} label="Publicación"/><IdChip value={item.scopeHash} label="Alcance"/></div>
     <details><summary>{'Historial de versiones ('+item.history.length+')'}</summary><ol>{item.history.map(v=><li key={v.version}><strong>v{v.version} · {v.status==='dismissed'?'Descartada':'Propuesta'}</strong><p>{v.action}</p><p>{v.reason}</p><p>Responsable: {v.ownerId??'Sin asignar'} · Registrado por {v.actorId} · <time>{v.createdAt}</time></p></li>)}</ol></details>
@@ -154,7 +156,7 @@ export function RecommendationsPanel({initialQuery}:{initialQuery:string}){
    {items.length>0&&<section className={css.summary} aria-label="Resumen de recomendaciones"><div><strong>{nf.format(resumen.propuestas)}</strong><span>{resumen.propuestas===1?'propuesta':'propuestas'}</span></div><div data-tone={resumen.criticas>0?'bad':undefined}><strong>{nf.format(resumen.criticas)}</strong><span>{resumen.criticas===1?'requiere revisión humana urgente':'requieren revisión humana urgente'}</span></div><div><strong>{nf.format(resumen.sinResponsable)}</strong><span>sin responsable</span></div><div><strong>{nf.format(resumen.conBorrador)}</strong><span>con intervención en borrador</span></div></section>}
    {!items.length&&<EmptyState art="inbox" title="No hay recomendaciones para este alcance" body={view.canPropose?'Propón la primera sobre un problema publicado.':'Cuando se proponga una, aparecerá aquí.'} action={view.canPropose?<Button variant="primary" size="sm" onClick={()=>setPropose(true)}>Proponer una recomendación</Button>:undefined}/>}
    {items.length>0&&!shown.length&&<p className="state">No hay recomendaciones {seg==='dismissed'?'descartadas':'propuestas'} en este alcance ({nf.format(items.length)} en total).</p>}
-   <div className={css.stack+' reveal'}>{shown.map(item=><RecommendationCard key={item.id+':'+item.version} item={item} members={view.members} busy={busy} conflict={conflict} operate={operate} first={item.id===firstId}/>)}</div>
+   <div className={css.stack+' reveal'}>{shown.map(item=><RecommendationCard key={item.id+':'+item.version} item={item} members={view.members} busy={busy} conflict={conflict} operate={operate} first={item.id===firstId} onRegenerate={view.canPropose?(id)=>{setProblem(id);setPropose(true);}:undefined}/>)}</div>
   </>}
  </section>;
 }

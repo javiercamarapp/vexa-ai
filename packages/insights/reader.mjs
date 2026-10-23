@@ -16,11 +16,11 @@ async function state(s, insight, timeoutMs) {
   if (!r.value || r.value.status === 'failed' || r.value.status === 'skipped') return {availability: 'absent', state: r.value};
   return {availability: 'ready', state: r.value};
 }
-async function rowsOf(s, sql, args, timeoutMs) {
+export async function rowsOf(s, sql, args, timeoutMs) {
   const r = await attempt(s, async () => (await s.query(sql, args)).rows, timeoutMs);
   return r.timeout ? {availability: 'timeout'} : r.unavailable ? {availability: 'unavailable'} : {rows: r.value};
 }
-async function load(s, insight, sql, args, shape, timeoutMs = INSIGHT_TIMEOUT_MS) {
+export async function load(s, insight, sql, args, shape, timeoutMs = INSIGHT_TIMEOUT_MS) {
   const st = await state(s, insight, timeoutMs);
   if (st.availability !== 'ready') return {availability: st.availability, insight, meta: null};
   const rows = await rowsOf(s, sql, args, timeoutMs);

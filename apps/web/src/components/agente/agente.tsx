@@ -4,6 +4,7 @@ import {useCallback,useEffect,useId,useRef,useState} from 'react';
 import {Button,LinkButton} from '../ui/button';
 import {Icon} from './icons';
 import {Composer} from './composer';
+import {ThemeToggle} from './theme-toggle';
 import {ChatSidebar} from './chat-sidebar';
 import {AttachmentCard} from './attachment-card';
 import {LiveTrace} from './trace';
@@ -74,7 +75,7 @@ function Chat({data}:{data:AgentState}){
    <header className="chat-bar">
     <span ref={menuButton} className="chat-bar-menu"><Button size="sm" icon={<Icon name="menu"/>} aria-expanded={menu} aria-controls={sideId} onClick={()=>setMenu(true)}>Chats</Button></span>
     <span className="chat-bar-brand"><RovaqMark size={20} thinking={a.sending}/><span>Pregúntale a tus datos</span></span>
-    <span className="chat-bar-end"><span className="chip" title="Fuentes con datos cargados frente a las que el espacio de trabajo espera.">{s.loaded} de {s.total} fuentes</span><span className="chip agente-mode" title={data.note}>{data.mode==='deterministic'?'Cifras calculadas, sin IA generativa':'Redacción con IA verificada'}</span>
+    <span className="chat-bar-end"><ThemeToggle/><span className="chip" title="Fuentes con datos cargados frente a las que el espacio de trabajo espera.">{s.loaded} de {s.total} fuentes</span><span className="chip agente-mode" title={data.note}>{data.mode==='deterministic'?'Cifras calculadas, sin IA generativa':'Redacción con IA verificada'}</span>
      <LinkButton href="/overview" size="sm" variant="ghost" icon={<Icon name="back"/>}>Espacio de trabajo</LinkButton></span>
    </header>
    <div className="chat-stage" data-has={has}>

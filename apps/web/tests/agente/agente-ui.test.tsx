@@ -104,3 +104,11 @@ test('adjuntos: las columnas identificadoras (ticket_id, ids únicos consecutivo
   const html=renderToStaticMarkup(<AttachmentCard a={r.resumen}/>);
   assert.doesNotMatch(html,/5,015|1,003/);assert.match(html,/identificador/i);
 });
+
+test('tema propio del chat: opciones claro/oscuro/sistema/como la app, sin tocar la preferencia global', () => {
+  const src=readFileSync(new URL('../../src/components/agente/theme-toggle.tsx',import.meta.url),'utf8');
+  assert.doesNotMatch(src,/setItem\(GLOBAL|setItem\('vexa-theme'/);
+  assert.match(src,/removeItem\(CLAVE\)/);
+  assert.match(readFileSync(new URL('../../src/components/agente/agente.tsx',import.meta.url),'utf8'),/<ThemeToggle\/>/);
+  assert.match(readFileSync(new URL('../../src/components/agente/answer-view.tsx',import.meta.url),'utf8'),/vincul/);
+});

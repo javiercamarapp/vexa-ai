@@ -143,3 +143,6 @@
 .workspace-shell.workspace-bare .workspace-content{padding:0;background:var(--ui-surface);overflow:visible;min-height:100dvh;scrollbar-gutter:auto}
 .chat-bar .btn,.chat-bar .btn-label{white-space:nowrap}
 .agente-composer textarea:focus-visible{outline:0}
+
+.chat-theme select{font:inherit;font-size:12px;padding:4px 6px;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-surface);color:var(--ink);max-width:170px}
+@media(max-width:639px){.chat-bar-end .chat-theme{display:block}}

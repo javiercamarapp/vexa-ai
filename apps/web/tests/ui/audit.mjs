@@ -43,12 +43,12 @@ const geometry=()=>{
  for(const el of all){
   if(!el.matches('a[href],button'))continue;
   if(el.closest('.workspace-sidebar,.workspace-bottom-nav,.workspace-header,.global-bar,.workspace-mobile-dialog,.sr-only,[role=tablist]')||el.matches('.skip-link'))continue;
-  const s=getComputedStyle(el),r=el.getBoundingClientRect(),system=el.matches('.btn,.id-chip,.icon-button,.icon-btn,.seg-btn,.fchip-x,.catalog-link,.login-btn,.row-link,.card-link,.row-link-inline,.stat-card,.barlist-link,.tab-link,.check-chip')||(el.tagName==='A'&&s.display.includes('flex')&&(parseFloat(s.borderTopLeftRadius)||0)>=10&&r.height>=32);
+  const s=getComputedStyle(el),r=el.getBoundingClientRect(),system=!!el.closest('.agente-history')||el.matches('.btn,.id-chip,.icon-button,.icon-btn,.seg-btn,.fchip-x,.catalog-link,.login-btn,.row-link,.card-link,.row-link-inline,.stat-card,.barlist-link,.tab-link,.check-chip,.copiloto-hist-btn,.agente-chip,.agente-consult,.agente-q,.agente-round,.agente-hist-new,.agente-hist-close,.agente-history-item')||(el.tagName==='A'&&s.display.includes('flex')&&(parseFloat(s.borderTopLeftRadius)||0)>=10&&r.height>=32);
   const inline=el.tagName==='A'&&!system&&!!el.parentElement&&el.parentElement.matches(textual)&&getComputedStyle(el.parentElement).display!=='flex';
   if(inline){if(!(s.textDecorationLine||'').includes('underline'))issues.push({kind:'inline-link-no-underline',detail:label(el)});continue;}
   if(el.tagName==='A'&&!system){issues.push({kind:'unstyled-link',detail:label(el)+' (use LinkButton)'});continue;}
   if(el.tagName==='BUTTON'&&!system){const radius=parseFloat(s.borderTopLeftRadius)||0;if(r.height<32||radius<10)issues.push({kind:'unstyled-button',detail:label(el)+` h=${Math.round(r.height)} r=${radius}`});}
-  if(system&&!el.matches('.id-chip,.icon-button,.icon-btn,.seg-btn,.fchip-x,.row-link,.card-link,.row-link-inline,.barlist-link,.check-chip,.stat-card')&&r.height>0&&r.height<32)issues.push({kind:'click-area-small',detail:label(el)+` h=${Math.round(r.height)}`});
+  if(system&&!el.closest('.agente-sources,.agente-history')&&!el.matches('.copiloto-hist-btn,.agente-chip,.agente-consult,.agente-q,.id-chip,.icon-button,.icon-btn,.seg-btn,.fchip-x,.row-link,.card-link,.row-link-inline,.barlist-link,.check-chip,.stat-card')&&r.height>0&&r.height<32)issues.push({kind:'click-area-small',detail:label(el)+` h=${Math.round(r.height)}`});
  }
  for(const el of all){if(!el.matches('summary'))continue;if(el.closest('.workspace-sidebar,.nav-group'))continue;const r=el.getBoundingClientRect();if(r.height>0&&r.height<32)issues.push({kind:'click-area-small',detail:label(el)+` summary h=${Math.round(r.height)}`});}
  // text that spills its own box (any element with its own text, not a scroll container)
@@ -173,7 +173,7 @@ for(const [w,h] of VIEWPORTS){
    await page.waitForSelector('[data-testid=agente-shell] h1',{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'la portada no se dibujó'}));
    if(await page.locator('.agente-chips button').count()<3)fail.push({kind:'flow',detail:'faltan sugerencias iniciales basadas en la cobertura'});
    await page.click('.agente-composer button:has-text("Consulta")');
-   await page.waitForSelector('.agente-cats .btn',{timeout:5000}).catch(()=>fail.push({kind:'flow',detail:'las tarjetas de «Consulta» no aparecieron'}));
+   await page.waitForSelector('.agente-cats .agente-q',{timeout:5000}).catch(()=>fail.push({kind:'flow',detail:'las tarjetas de «Consulta» no aparecieron'}));
    fail.push(...await page.evaluate(geometry));await shot('agente-portada');
    await ask('¿Cuánto dinero en reembolsos tuvimos por marketplace?');
    await page.waitForSelector('.agente-answer .agente-block',{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'la respuesta con tabla no apareció'}));

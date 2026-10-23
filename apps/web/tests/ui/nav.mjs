@@ -17,7 +17,7 @@ for(const [w,h] of [[375,812],[768,1024],[1440,900]]){
  const open=async(route)=>{const page=await ctx.newPage();await page.goto(base+route,{waitUntil:'networkidle',timeout:90000});await page.waitForTimeout(400);return page;};
  const shot=(page,name)=>page.screenshot({path:path.join(out,`${name}-${w}-${theme}.png`)});
  console.log(`== ${w}px ${theme}${internal?' (interno)':''}`);
- // 1) La barra está en todas las pantallas del espacio y no desborda; en /preguntale no hay barra.
+ // 1) La barra está en todas las pantallas del espacio y no desborda; en /preguntale no hay barra ni encabezado: vive dentro del shell normal (misma barra lateral).
  for(const route of ['/overview','/problems','/cfo','/imports','/settings/team','/connections','/jobs/00000000-0000-4000-8000-000000000404']){
   const page=await open(route+(route==='/overview'||route==='/problems'||route==='/cfo'?'?'+SCOPE:''));
   check(await page.locator('.global-bar').count()===1,`${route}@${w}: falta la barra global`);
@@ -27,7 +27,17 @@ for(const [w,h] of [[375,812],[768,1024],[1440,900]]){
   if(route==='/cfo')await shot(page,'barra-cfo');
   await page.close();
  }
- { const page=await open('/preguntale');check(await page.locator('.global-bar').count()===0,`/preguntale@${w}: no debe llevar la barra`);await page.close(); }
+ { const page=await open('/preguntale');
+  check(!(await page.locator('.global-bar').isVisible()),`/preguntale@${w}: no debe llevar la barra global`);
+  check(!(await page.locator('.workspace-header').isVisible()),`/preguntale@${w}: no debe llevar encabezado de página`);
+  check((await page.locator('[data-testid=barra-pagina]').count())===0,`/preguntale@${w}: sin barra superior de página`);
+  check((await page.locator('.workspace-content h1').allInnerTexts()).join('|')==='Pregúntale a tus datos',`/preguntale@${w}: el contenido empieza en la portada`);
+  check((await page.locator('.workspace-content a:has-text("Espacio de trabajo")').count())===0,`/preguntale@${w}: ya no lleva el enlace «Espacio de trabajo»`);
+  check((await page.locator('.workspace-content select').count())===0,`/preguntale@${w}: ya no lleva selector de tema propio`);
+  if(w>=768){check(await page.locator('.workspace-sidebar').isVisible(),`/preguntale@${w}: falta la barra lateral de la app`);check(/Pregúntale a tus datos/.test(await page.locator('.workspace-sidebar [aria-current=page]').first().innerText()),`/preguntale@${w}: el menú no marca «Pregúntale a tus datos»`);}
+  else check(await page.locator('.workspace-bottom-nav [aria-current=page]').count()===1,`/preguntale@${w}: la navegación móvil no marca Pregúntale`);
+  check(!(await page.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth+1)),`/preguntale@${w}: desborde horizontal`);
+  await shot(page,'preguntale');await page.close(); }
  // 2) Contenido de la barra con alcance en la URL.
  { const page=await open('/cfo?'+SCOPE);
   if(w<1100){await page.locator('.gb-summary').click();await page.waitForTimeout(150);check(await page.locator('.gb-panel').isVisible(),`compacta@${w}: el resumen tocable no abre el panel`);check((await page.locator('.gb-summary').getAttribute('aria-expanded'))==='true','móvil: aria-expanded');}

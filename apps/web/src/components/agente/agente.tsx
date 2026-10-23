@@ -49,9 +49,10 @@ function Chat({data}:{data:AgentState}){
  const ask=useCallback((q:string)=>{const t=q.trim().slice(0,data.limits.maxQuestionChars);if(!t||a.sending)return;setText('');setConsult(false);setAttachError(null);a.send(t,s.directas[t]);},[a,data.limits.maxQuestionChars,s.directas]);
  const openHist=()=>{clearTimeout(timer.current);setLeaving(false);setHist(true);};
  const closeHist=useCallback(()=>{
-  clearTimeout(timer.current);histButton.current?.focus();
-  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){setHist(false);setLeaving(false);return;}
-  setLeaving(true);timer.current=setTimeout(()=>{setHist(false);setLeaving(false);},480);
+  clearTimeout(timer.current);
+  const back=()=>setTimeout(()=>histButton.current?.focus(),0);
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){setHist(false);setLeaving(false);back();return;}
+  setLeaving(true);back();timer.current=setTimeout(()=>{setHist(false);setLeaving(false);},480);
  },[]);
  const attach=useCallback(async(file:File)=>{
   const bad=validarArchivo(file.name,file.size);if(bad){setAttachError(bad);return;}

@@ -79,7 +79,9 @@
 @media(min-width:768px){.workspace-shell.workspace-chat .workspace-content{padding:14px 20px 20px}}
 .workspace-chat .copiloto{position:relative;min-height:var(--chat-h);overflow:hidden;padding:16px 16px 0}
 .workspace-chat .copiloto-hist-row{position:relative;display:flex;justify-content:flex-end;margin-bottom:24px}
-.workspace-chat .copiloto button{margin:0;min-height:0;max-width:none;letter-spacing:normal}
+.workspace-chat .copiloto button{margin:0}
+.workspace-chat :is(.copiloto-hist-btn,.agente-chip,.agente-consult,.agente-hist-new,.agente-history-item){min-height:0;width:auto;max-width:none;letter-spacing:normal}
+.workspace-chat .copiloto-hist-btn[aria-expanded=true]{visibility:hidden}
 .workspace-chat .copiloto-hist-btn{position:relative;display:flex;align-items:center;gap:6px;font:400 12px/16px var(--font-ui);border:1px solid var(--ui-border);border-radius:999px;padding:6px 10px 6px 12px;background:var(--ui-surface);color:var(--muted);cursor:pointer}
 .workspace-chat .copiloto-hist-btn:hover{background:var(--ui-soft)}
 .copiloto-hist-count{font:400 10px/15px var(--font-mono);background:var(--ui-soft);border-radius:999px;padding:2px 6px;color:var(--ink)}
@@ -105,9 +107,10 @@
 .workspace-chat .agente-sources{gap:6px;font-size:12px;color:var(--muted)}
 .agente-sources-label{font:400 12px var(--font-ui);color:var(--muted)}
 .agente-sources-label::after{content:':'}
-.workspace-chat .agente-sources .btn,.workspace-chat .agente-sources .chip{font-size:12px;line-height:16px;min-height:0;padding:2px 8px;border-radius:999px;border:1px solid var(--ui-border);background:transparent;color:var(--muted);font-weight:400}
+.workspace-chat .agente-sources .chip{white-space:normal;overflow:visible;height:auto}
+.workspace-chat .agente-sources .btn,.workspace-chat .agente-sources .chip{font-size:12px;line-height:16px;min-height:24px;padding:3px 8px;border-radius:999px;border:1px solid var(--ui-border);background:transparent;color:var(--muted);font-weight:400}
 .workspace-chat .agente-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-.workspace-chat .agente-actions .btn{min-height:0;padding:0;gap:6px;border:0;background:transparent;color:var(--muted);font-size:12px;font-weight:400;line-height:16px}
+.workspace-chat .agente-actions .btn{min-height:32px;padding:0 4px;gap:6px;border:0;background:transparent;color:var(--muted);font-size:12px;font-weight:400;line-height:16px}
 .workspace-chat .agente-actions .btn:hover:not(:disabled){background:transparent;color:var(--ink)}
 .workspace-chat .agente-actions .btn[aria-pressed=true]{color:var(--ink);font-weight:600}
 .workspace-chat .agente-actions .btn svg{width:14px;height:14px}
@@ -155,12 +158,12 @@
 .agente-history-group{display:block}
 .agente-hist-group{margin:0;padding:4px 16px 8px;font:400 10px/15px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .agente-history-group ul{list-style:none;margin:0;padding:0 8px;display:block}
-.agente-history-group li{position:relative;display:block;padding:0;border:0}
-.workspace-chat .agente-history-item{display:block;width:100%;padding:8px 72px 8px 12px;border:0;border-radius:8px;background:transparent;color:var(--ink);font:400 14px/20px var(--font-ui);text-align:left;cursor:pointer}
-.workspace-chat .agente-history-item:hover,.workspace-chat .agente-history-item[aria-current=true]{background:var(--ui-soft)}
+.agente-history-group li{display:flex;align-items:center;padding:0;border:0;border-radius:8px}
+.agente-history-group li:hover,.agente-history-group li:has([aria-current=true]){background:var(--ui-soft)}
+.workspace-chat .agente-history-item{display:block;flex:1;min-width:0;width:auto;padding:8px 12px;border:0;border-radius:8px;background:transparent;color:var(--ink);font:400 14px/20px var(--font-ui);text-align:left;cursor:pointer}
 .workspace-chat .agente-history-item[aria-current=true]{font-weight:500}
 .agente-history-title{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.agente-history-actions{position:absolute;right:4px;top:50%;transform:translateY(-50%);display:flex;align-items:center;opacity:0}
+.agente-history-actions{flex:none;display:flex;align-items:center;margin-right:4px;opacity:0}
 .agente-history-group li:hover .agente-history-actions,.agente-history-actions:focus-within{opacity:1}
 @media(max-width:1023px){.agente-history-actions{opacity:1}}
 .workspace-chat .agente-history-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:4px 6px;border:0;border-radius:6px;background:transparent;color:var(--muted);font:400 12px/16px var(--font-ui);cursor:pointer}

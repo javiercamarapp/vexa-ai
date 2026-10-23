@@ -1,5 +1,5 @@
 'use client';
-import {useMemo,useRef,useState} from 'react';
+import {useEffect,useMemo,useRef,useState} from 'react';
 import type {Bundle,Metric} from '../../lib/workspace/contracts';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
 import {ratioBps} from './cfo-model.mjs';
@@ -84,7 +84,7 @@ function Categorias({cats,sel,onSelect}:{cats:ReturnType<typeof agruparCategoria
  </section>;
 }
 
-function Criticas({filas,query,ocultasN,disponible,total}:{filas:FilaProblema[];query:string;ocultasN:number;disponible:boolean;total:{groups:number;signals:number}|null}){
+function Criticas({filas,query,disponible,total}:{filas:FilaProblema[];query:string;disponible:boolean;total:{groups:number;signals:number}|null}){
  const [todas,setTodas]=useState(false);
  const crit=useMemo(()=>ordenarFilas(filas.filter(f=>f.critico===true),{col:'conversaciones',dir:'desc'}),[filas]);
  const cats=useMemo(()=>agruparCategorias(crit),[crit]);
@@ -116,12 +116,13 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
  const conImporte=hayImporte(visibles);
  const cats=useMemo(()=>agruparCategorias(visibles),[visibles]);
  const resumen=useMemo(()=>resumenFilas(visibles),[visibles]);
- const criticasOcultas=useMemo(()=>sep.ocultos.filter(f=>f.critico===true).length,[sep.ocultos]);
  const ordenVigente=orden??(conImporte?'importe:desc':'conversaciones:desc');
  const [col,dir]=ordenVigente.split(':') as [ColumnaOrden,'asc'|'desc'];
  const filtradas=useMemo(()=>ordenarFilas(filtrarFilas(visibles,{texto,clave,soloCriticos:soloCriticos==='criticos'}),{col,dir}),[visibles,texto,clave,soloCriticos,col,dir]);
  const pagina=filtradas.slice(0,mostrar);
  const categoriaSel=clave?cats.find(c=>c.clave===clave)??null:null;
+ // Misma fuente de «citas registradas» para el detalle: se rotula allí junto a las verificadas al abrir.
+ useEffect(()=>{try{const m:Record<string,number>={};for(const f of todas)if(f.citas!==null)m[f.id]=f.citas;sessionStorage.setItem('vexa:citas-registradas',JSON.stringify(m));}catch{/* sin almacenamiento */}},[todas]);
  const critDisponible=catalogo?catalogo.parts.signals==='ok':visibles.some(f=>f.critico!==null);
  const opciones=conImporte?[{v:'importe:desc',label:'Importe: de mayor a menor'},...ORDENES]:ORDENES;
  const cambiar=(fn:()=>void)=>{fn();setMostrar(PAGINA);};
@@ -163,7 +164,7 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
    </div>
   </div>}
   {visibles.length>0&&<Categorias cats={cats} sel={clave} onSelect={elegirCategoria}/>}
-  {(catalogo||visibles.some(f=>f.critico!==null)||!!bundle.meta.critical_notice)&&<Criticas filas={visibles} query={query} ocultasN={criticasOcultas} disponible={critDisponible} total={catalogo?.critical??null}/>}
+  {(catalogo||visibles.some(f=>f.critico!==null)||!!bundle.meta.critical_notice)&&<Criticas filas={visibles} query={query} disponible={critDisponible} total={catalogo?.critical??null}/>}
   <div ref={tablaRef} className="stack" id="lista-problemas">
    <div className={s.tools} role="search">
     <label className="grow">Buscar por categoría o grupo<input type="search" value={texto} onChange={e=>cambiar(()=>setTexto(e.target.value))} placeholder="Ej.: batería, envío, refacciones"/></label>

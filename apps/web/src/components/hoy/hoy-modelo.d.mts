@@ -1,0 +1,14 @@
+import type {Sello} from '../../lib/confianza/sello.mjs';
+export type EstadoFuente = 'ok' | 'cargando' | 'sin_acceso' | 'error' | 'vacio';
+export type KpiHoy = {id: string; etiqueta: string; como: string; estado: 'ok' | 'cargando' | 'no_disponible' | 'sin_acceso'; valor?: string | null; periodo?: string | null; nota?: string; delta?: string | null; clase?: 'observed' | 'estimated' | 'inferred'; sello?: Sello};
+export type EntradaComo = {id: string; titulo: string; clase: 'observed' | 'estimated' | 'inferred'; fuente: string; periodo: string | null; formula: string; cobertura: string | null; noSabemos: string[]};
+export type AtencionHoy = {id: string; titulo: string; detalle: string; dinero: string | null; href: string; clase: 'observed'};
+export type HoyVista = {titular: {texto: string; periodo: string | null; clase: string | null}; kpis: KpiHoy[]; atencion: AtencionHoy[];
+  barra: {observado: string; observadoEtiqueta: string; recuperable: null; recuperableEtiqueta: string; recuperableNota: string; href: string} | null;
+  siguiente: {titulo: string; detalle: string; cta: string; href: string; secundaria: {texto: string; href: string}} | null; cargando: boolean; vacio: boolean; ctxComo: unknown};
+export function estadoDe(data: unknown, o?: {busy?: boolean; error?: string; status?: number}): EstadoFuente;
+export function comoSeCalculo(id: string, ctx?: any): EntradaComo | null;
+export function atencionDe(a: {fuga?: any; carga?: any}): AtencionHoy[];
+export function barraDe(a: {fuga?: any}): HoyVista['barra'];
+export function siguienteDe(a: {fuga?: any}): HoyVista['siguiente'];
+export function armarHoy(a: {fuga?: any; carga?: any; cfo?: any; estado: {fuga: EstadoFuente; carga: EstadoFuente; cfo: EstadoFuente}; ahora?: number}): HoyVista;

@@ -19,6 +19,7 @@ import {Icon} from '../ui/icons';
 import {SkeletonStats,SkeletonChart,SkeletonCards} from '../ui/skeletons';
 import {WaitStatus} from '../ui/wait-status';
 import {ESPERA} from '../../lib/legibilidad/espera.mjs';
+import {lineaProblemas} from '../../lib/legibilidad/guias.mjs';
 import {DEFINICION} from '../../../../../packages/workspace-service/critico.mjs';
 import Link from './navigation-lifecycle';
 import {pedirConReintento} from '../../lib/workspace/reintento.mjs';
@@ -81,7 +82,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
  const notice=bundle?.meta.critical_notice&&<aside className="notice-bar" role="alert"><Icon name="alert" size={14}/><strong>Revisión crítica, independiente del importe</strong><p>{bundle.meta.critical_notice}{bundle.meta.catalog&&<> <a className="row-link-inline" href="#senales-criticas">Ver cuáles son</a></>}</p><details><summary>Qué cuenta como crítico</summary><p>{DEFINICION.senal}</p><p>{DEFINICION.grupo}</p></details></aside>
  const criticalPending=!bundle?.meta.critical_notice&&bundle?.meta.critical_notice_state==='unavailable'&&<aside className="notice-bar" role="status"><Icon name="info" size={14}/><strong>Señales críticas pendientes</strong><p>Aún no se calcularon las señales críticas en esta carga; no significa que no existan.{' '}{isOverview?<>Puedes volver a calcularlas o consultarlas en <Link href={'/problems'+(pinned.size?'?'+pinned.toString():'')} className="row-link-inline">Problemas</Link>.</>:<>Vuelve a calcularlas.</>}</p><Button size="sm" onClick={update}>Volver a calcular</Button></aside>;
  return <section className="stack" aria-label={isOverview?'Resumen con alcance compartido':'Problemas con alcance compartido'}>
-  <PageHeader title={isOverview?'Resumen ejecutivo':'Problemas de negocio'} guide={isOverview?'resumen':'problemas'} actions={actions}/>
+  <PageHeader title={isOverview?'Resumen ejecutivo':'Problemas de negocio'} guide={isOverview?'resumen':'problemas'} linea={isOverview?undefined:lineaProblemas(bundle?bundle.items.some(i=>i.metrics.some(m=>m.kind==='exposure'&&m.amount_minor!==null&&/^-?\d+$/.test(m.amount_minor))):null)} actions={actions}/>
   {bar}
   {busy&&(isOverview?<div className="stack"><WaitStatus {...ESPERA.resumen}>{retrying&&<p className="wait-retry">Reintentando…</p>}</WaitStatus><div aria-hidden="true"><SkeletonStats/><SkeletonChart height={220}/></div></div>:<div className="stack"><WaitStatus {...ESPERA.problemas}>{retrying&&<p className="wait-retry">Reintentando…</p>}</WaitStatus><div aria-hidden="true"><SkeletonCards count={3}/></div></div>)}
   {error&&<DataState state={{kind:'error',code:'workspace_request_failed',message:error}}/>}

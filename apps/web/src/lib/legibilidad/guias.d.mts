@@ -4,3 +4,5 @@ export const GLOSARIO:Readonly<Record<'incidencia'|'problema'|'observado'|'estim
 export const GUIAS:Readonly<Record<GuiaId,Guia>>;
 export const IDS_GUIA:readonly GuiaId[];
 export function guia(id:string):Guia|null;
+
+export function lineaProblemas(conImporte:boolean|null):string;

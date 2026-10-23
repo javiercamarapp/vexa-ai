@@ -20,7 +20,7 @@ import {InsightList} from '../ui/insight-list';
 import {NoiseToggle} from '../ui/noise-toggle';
 import {insightsProblemas} from '../../lib/legibilidad/insights.mjs';
 import {separarRuido} from '../../lib/legibilidad/ruido.mjs';
-import {filasDesdeCatalogo,filasDesdeItems,numerarGrupos,agruparCategorias,resumenFilas,ordenarFilas,filtrarFilas,hayImporte,fraseGrupo,etiquetaSeveridad,type FilaProblema,type ColumnaOrden} from '../../lib/legibilidad/problemas-catalogo.mjs';
+import {filasDesdeCatalogo,filasDesdeItems,numerarGrupos,agruparCategorias,resumenFilas,ordenarFilas,filtrarFilas,hayImporte,fraseGrupo,marcarGeneral,etiquetaSeveridad,type FilaProblema,type ColumnaOrden} from '../../lib/legibilidad/problemas-catalogo.mjs';
 import {DEFINICION,etiquetaMotivo} from '../../../../../packages/workspace-service/critico.mjs';
 import {nf} from '../ui/format';
 import {EmptyState} from '../ui/empty-state';
@@ -112,7 +112,7 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
  const todas=useMemo(()=>numerarGrupos(catalogo?filasDesdeCatalogo(catalogo):filasDesdeItems(bundle.items)),[catalogo,bundle.items]);
  // Solo presentación y ranking: las notificaciones automáticas siguen publicadas; el interruptor las devuelve.
  const sep=useMemo(()=>separarRuido(todas,f=>[f.titulo,f.categoria],incluirRuido),[todas,incluirRuido]);
- const visibles=sep.visibles;
+ const visibles=useMemo(()=>marcarGeneral(sep.visibles),[sep.visibles]);
  const conImporte=hayImporte(visibles);
  const cats=useMemo(()=>agruparCategorias(visibles),[visibles]);
  const resumen=useMemo(()=>resumenFilas(visibles),[visibles]);
@@ -180,7 +180,7 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
      <div className={s.gcardHead}><span className="chip">{fraseGrupo(f)}</span>{f.critico&&<StatusChip tone="bad">Revisión crítica</StatusChip>}{st&&<StatusChip tone={st.tone}>{st.label}</StatusChip>}</div>
      <h3><Link href={hrefDe(f,query)} className="card-link">{f.categoria}</Link></h3>
      <div><div className={s.big}>{f.conversaciones===null?'No disponible':nf.format(f.conversaciones)}</div><div className={s.bigLabel}>conversaciones <KindBadge kind="observed"/></div></div>
-     {f.ejemplo&&<p className={s.quote}>«{f.ejemplo}»</p>}
+     {f.ejemplo?<p className={s.quote}>«{f.ejemplo}»</p>:f.general&&<p className={s.quote}>Sin extracto de ejemplo en esta carga.</p>}
      {f.importe&&<Figure m={f.importe as M} big/>}
      <ul className={s.facts}><li>Severidad: <Severidad f={f}/></li><li>Citas: <Citas f={f}/></li><li>Recomendación: <Recomendacion f={f}/></li></ul>
      <div className={s.foot}><button type="button" className="btn btn-ghost btn-sm" onClick={()=>setQuick(f)} aria-label={'Vista rápida: '+f.categoria+', '+fraseGrupo(f)}>Vista rápida</button></div>
@@ -189,7 +189,7 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
     <thead><tr>{th('categoria','Categoría')}<th scope="col">Grupo</th>{th('conversaciones','Conversaciones',true,'Conversaciones únicas del grupo (Observado)')}{th('severidad','Severidad')}{th('critico','Crítico',false,DEFINICION.grupo)}{th('citas','Citas',true,'Citas registradas; se verifican al abrir el problema')}{th('recomendaciones','Recomendación')}{conImporte&&th('importe','Ingresos expuestos',true)}</tr></thead>
     <tbody>{pagina.map(f=><tr key={f.id}>
      <th scope="row" className={s.cat} data-label="Categoría">{f.categoria}</th>
-     <td data-label="Grupo" className={s.full}><div className={s.group}><Link href={hrefDe(f,query)} className="row-link-inline">{fraseGrupo(f)}</Link>{f.ejemplo&&<p className={s.quote}>«{f.ejemplo}»</p>}<button type="button" className="btn btn-ghost btn-sm" onClick={()=>setQuick(f)} aria-label={'Vista rápida: '+f.categoria+', '+fraseGrupo(f)}>Vista rápida</button></div></td>
+     <td data-label="Grupo" className={s.full}><div className={s.group}><Link href={hrefDe(f,query)} className="row-link-inline">{fraseGrupo(f)}</Link>{f.ejemplo?<p className={s.quote}>«{f.ejemplo}»</p>:f.general&&<p className={s.quote}>Sin extracto de ejemplo en esta carga.</p>}<button type="button" className="btn btn-ghost btn-sm" onClick={()=>setQuick(f)} aria-label={'Vista rápida: '+f.categoria+', '+fraseGrupo(f)}>Vista rápida</button></div></td>
      <td data-label="Conversaciones" className={s.num+' num'}><Conversaciones f={f}/></td>
      <td data-label="Severidad"><Severidad f={f}/></td>
      <td data-label="Crítico"><Critico f={f}/></td>

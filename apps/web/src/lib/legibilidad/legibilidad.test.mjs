@@ -236,3 +236,9 @@ test('contraste no textual (WCAG 1.4.11): las barras inactivas de las gráficas 
  }
  assert.match(css,/\.col-observed\{fill:color-mix\(in srgb,var\(--kind-observed\) var\(--col-idle-mix\)/);
 });
+
+test('la bajada de Problemas no promete ordenar por ingresos si no hay importe (QA1-011)',async()=>{
+ const {lineaProblemas}=await import('./guias.mjs');
+ assert.match(lineaProblemas(false),/ordenados por conversaciones/);assert.doesNotMatch(lineaProblemas(false),/ingresos expuestos/);
+ assert.match(lineaProblemas(true),/ordenados por ingresos expuestos/);assert.doesNotMatch(lineaProblemas(null),/ingresos expuestos|por conversaciones/);
+});

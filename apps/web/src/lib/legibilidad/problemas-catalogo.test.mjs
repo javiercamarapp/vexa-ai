@@ -1,7 +1,7 @@
 // Lógica pura de la pantalla «Problemas»: filas, agrupación por categoría, numeración «grupo n de N», orden, búsqueda y ruido.
 //   node --test apps/web/src/lib/legibilidad/problemas-catalogo.test.mjs
 import test from 'node:test';import assert from 'node:assert/strict';
-import {filasDesdeCatalogo,filasDesdeItems,agruparCategorias,numerarGrupos,ordenarFilas,filtrarFilas,resumenFilas,hayImporte,etiquetaSeveridad,fraseGrupo} from './problemas-catalogo.mjs';
+import {filasDesdeCatalogo,filasDesdeItems,agruparCategorias,numerarGrupos,ordenarFilas,filtrarFilas,resumenFilas,hayImporte,etiquetaSeveridad,fraseGrupo,marcarGeneral,ETIQUETA_GENERAL} from './problemas-catalogo.mjs';
 import {separarRuido} from './ruido.mjs';
 
 const R=(id,label,conversations,extra={})=>({id,label,conversations,severity:'medium',critical:false,citations:conversations,recommendations:0,quote:null,...extra});
@@ -84,4 +84,13 @@ test('la fila trae cuántas señales críticas (evidencias) y el motivo; el resu
  assert.deepEqual(resumenFilas(f),{grupos:3,categorias:2,criticos:2,senalesCriticas:5});
  const sin=filasDesdeCatalogo({rows:[R('a','Order: Spare Parts',3,{critical:null,citations:null})],parts:{}});
  assert.equal(sin[0].senalesCriticas,null);assert.deepEqual(resumenFilas(sin),{grupos:1,categorias:1,criticos:null,senalesCriticas:null});
+});
+
+test('el grupo gigante (2,338 de 2,499 conversaciones) se rotula «Grupo general» sin inventar nombre; los demás conservan «Grupo n de N» (QA1-010)',()=>{
+ const f=marcarGeneral(numerarGrupos(filasDesdeCatalogo({rows:[R('a','Order: Spare Parts',2338),R('b','Order: Spare Parts',90),R('c','Order: Spare Parts',71)],parts:{}})));
+ assert.equal(f[0].general,true);assert.equal(fraseGrupo(f[0]),ETIQUETA_GENERAL);assert.match(ETIQUETA_GENERAL,/conviene re-agrupar/);
+ assert.equal(f[1].general,false);assert.equal(fraseGrupo(f[1]),'Grupo 2 de 3');
+ const solo=marcarGeneral(numerarGrupos(filasDesdeCatalogo({rows:[R('a','Order: Spare Parts',10)],parts:{}})));assert.equal(solo[0].general,false);assert.equal(fraseGrupo(solo[0]),'Único grupo');
+ const parejo=marcarGeneral(filasDesdeCatalogo({rows:[R('a','x',100),R('b','y',100),R('c','z',100),R('d','w',100)],parts:{}}));assert.ok(parejo.every(r=>!r.general));
+ const sinDato=marcarGeneral(filasDesdeCatalogo({rows:[R('a','x',null),R('b','y',null)].map(r=>({...r,conversations:null})),parts:{}}));assert.ok(sinDato.every(r=>!r.general),'desconocido no es grande');
 });

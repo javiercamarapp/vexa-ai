@@ -29,7 +29,13 @@ export function numerarGrupos(filas){
  const pos=new Map();for(const a of por.values()){a.slice().sort(porConversaciones).forEach((f,i)=>pos.set(f.id,{n:i+1,de:a.length}));}
  return filas.map(f=>({...f,grupo:pos.get(f.id)}));
 }
-export const fraseGrupo=f=>!f.grupo||f.grupo.de<=1?'Único grupo':`Grupo ${f.grupo.n} de ${f.grupo.de}`;
+export const ETIQUETA_GENERAL='Grupo general (agrupación amplia; conviene re-agrupar)';
+/** Marca `general:true` en el grupo que concentra una parte desproporcionada de las conversaciones (≥ umbral del total conocido) y hay más de un grupo. No inventa nombres: solo lo rotula. */
+export function marcarGeneral(filas,{umbral=0.3}={}){
+ const total=filas.reduce((n,f)=>n+(f.conversaciones??0),0);
+ return filas.map(f=>({...f,general:filas.length>1&&total>0&&f.conversaciones!==null&&f.conversaciones/total>=umbral}));
+}
+export const fraseGrupo=f=>f.general?ETIQUETA_GENERAL:!f.grupo||f.grupo.de<=1?'Único grupo':`Grupo ${f.grupo.n} de ${f.grupo.de}`;
 const sumaONull=(xs)=>xs.some(x=>x!==null&&x!==undefined)?xs.reduce((n,x)=>n+(x??0),0):null;
 /** Categorías ordenadas por conversaciones (desc). criticos/ conversaciones = null si ninguna fila lo trae. */
 export function agruparCategorias(filas){

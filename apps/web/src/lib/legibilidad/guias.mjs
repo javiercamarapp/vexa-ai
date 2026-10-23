@@ -8,6 +8,8 @@ export const GLOSARIO=Object.freeze({
  inferido:'Inferido: derivado de vínculos de evidencia; no equivale a pérdida, ahorro ni causa.',
  monedas:'Cada moneda se muestra por separado: nunca se suman ni se convierten.'
 });
+/** Bajada de «Problemas» según lo que el corte permite: ordenar por ingresos expuestos solo si hay importe; si no, por conversaciones. conImporte: true | false | null (aún sin cargar). */
+export const lineaProblemas=conImporte=>`Problemas agrupados a partir de incidencias en conversaciones, ordenados ${conImporte===true?'por ingresos expuestos':conImporte===false?'por conversaciones (aún no hay importe por problema)':'según la información disponible'} y con su evidencia.`;
 export const GUIAS=Object.freeze({
  resumen:{titulo:'Resumen ejecutivo',linea:'Cifras del corte publicado: pedidos, reembolsos y conversaciones cargadas, cada una con su clase y su fuente.',como:[GLOSARIO.observado,GLOSARIO.estimado,GLOSARIO.inferido,GLOSARIO.monedas,'La exposición compartida entre problemas no se suma.']},
  problemas:{titulo:'Problemas de negocio',linea:'Problemas agrupados a partir de incidencias en conversaciones, ordenados por ingresos expuestos y con su evidencia.',como:[GLOSARIO.incidencia,GLOSARIO.problema,'Ingresos expuestos: importe de pedidos vinculados a la evidencia del problema. No es pérdida.',GLOSARIO.monedas,'Las notificaciones automáticas se ocultan del ranking por defecto; puedes incluirlas con el interruptor.']},

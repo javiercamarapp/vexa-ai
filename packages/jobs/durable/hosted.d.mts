@@ -1,1 +1,1 @@
-export function createHostedHandler(options:{runtime:()=>Promise<any>;secret?:string;timeoutMs?:number;platformTimeoutMs?:number;intervalMs?:number}):(request:Request)=>Promise<Response>;
+export function createHostedHandler(options:{runtime:()=>Promise<any>;secret?:string;timeoutMs?:number;platformTimeoutMs?:number;intervalMs?:number;afterWork?:(database:any,result:any,info:{startedAt:number})=>Promise<unknown>}):(request:Request)=>Promise<Response>;

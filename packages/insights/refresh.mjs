@@ -4,7 +4,7 @@ export const SOURCES = Object.freeze(['ledger', 'conversations', 'hubspot', 'tra
 /** Fuente de origen de una importación/sincronización -> qué insights recalcular. */
 export const SOURCE_TO_REFRESH = Object.freeze({
   hubspot: ['hubspot', 'conversations', 'contacts'], zendesk: ['conversations', 'contacts'], csv_conversations: ['conversations', 'contacts'],
-  ledger: ['ledger'], economic_import: ['ledger'], tracker: ['tracker'], all: ['all'],
+  imports: ['all'], ledger: ['ledger'], economic_import: ['ledger'], tracker: ['tracker'], all: ['all'],
 });
 export async function refreshInsights(database, {source = 'all', since = null, budgetMs = 8000} = {}) {
   if (!SOURCES.includes(source)) throw Object.assign(Error('INSIGHT_SOURCE_INVALID'), {code: 'INSIGHT_SOURCE_INVALID'});

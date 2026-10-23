@@ -32,6 +32,21 @@ export function connectionLost(error: unknown): boolean {
   const e = error as {code?: unknown; message?: unknown};
   return ['ECONNRESET','EPIPE','57P01','57P02','57P03','08000','08003','08006'].includes(String(e.code ?? '')) || /connection terminated|connection (?:is )?closed|client has encountered a connection error|server closed the connection|socket hang up/i.test(String(e.message ?? ''));
 }
+/** Clase de un fallo de base para el registro del servidor (sin mensajes ni datos: solo una etiqueta fija). */
+export function failureClass(error: unknown): string {
+  if (error instanceof AccessError) return error.code;
+  const e = (error ?? {}) as {code?: unknown; message?: unknown};
+  const code = String(e.code ?? ''), message = String(e.message ?? '');
+  if (code === 'POOL_WAIT') return 'pool_wait_timeout';
+  if (/timeout exceeded when trying to connect/i.test(message)) return 'connect_timeout';
+  if (code === '57014') return 'statement_timeout';
+  if (code === '25P04' || /idle-in-transaction|transaction timeout/i.test(message)) return 'transaction_timeout';
+  if (connectionLost(error)) return 'connection_lost';
+  if (code === '53300' || /too many connections|remaining connection slots/i.test(message)) return 'too_many_connections';
+  if (/EMAXCONN|max client connections/i.test(message)) return 'pooler_saturated';
+  if (code) return 'sqlstate_' + code.slice(0, 5);
+  return 'other';
+}
 function databaseError(error: unknown): AccessError {
   if (error instanceof AccessError) return error;
   const code = (error as {code?: string})?.code;
@@ -54,6 +69,7 @@ export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool;
       }
     },
     async attempt<T>(action: DatabaseAction, work: (scope: DatabaseScope) => Promise<T>): Promise<T> {
+      const started = Date.now();
       if (!Object.hasOwn(roles,action)) throw new AccessError(403,'database_action_invalid');
       if (!pool) throw new AccessError(503,'database_not_configured');
       let connection: SqlConnection | undefined;
@@ -85,6 +101,8 @@ export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool;
       } catch(error) {
         if(connection && open) { try {await connection.query('ROLLBACK');} catch {/* Original sanitized failure wins. */} }
         const sanitized = databaseError(error);
+        // Los 503 de la base eran mudos (el mensaje se sanea y no quedaba rastro de la causa, QA-2 del 23-oct): se registra solo una etiqueta fija y el tiempo.
+        if (sanitized.status === 503) console.warn('db-fallo ' + JSON.stringify({accion: action, clase: failureClass(error), ms: Date.now() - started}));
         if (connectionLost(error)) lost.add(sanitized);
         throw sanitized;
       } finally { if(connection) { try { connection.release(); } catch { /* Never expose driver details during cleanup. */ } } }

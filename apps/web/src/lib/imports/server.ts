@@ -9,21 +9,28 @@ import {createJobRepository} from '../../../../../packages/jobs/durable/reposito
 import {createImportHandler} from '../../../../../packages/jobs/index.mjs';
 import {ACTIVE_ORG,AccessError,assertOrigin,config,identity,PRIVATE_HEADERS} from '../auth';
 import {requestAuth} from '../auth-http';
-import {conectarConReintento,vigilarPool} from '../db-resiliencia.mjs';
+import {conectarConReintento,crearCompuerta,vigilarPool} from '../db-resiliencia.mjs';
 let pool:SqlPool|undefined;
+// Espera máxima de un hueco del pool (la función dura hasta 60–300 s; una pantalla pide ~12 lecturas a la vez).
+const POOL_WAIT_MS=15000;
 export function serverPool():SqlPool {
  if(pool)return pool;
  const connectionString=process.env.VEXA_DATABASE_URL;
  if(!connectionString)throw new AccessError(503,'database_not_configured');
- const driver=vigilarPool(new Pool(databasePoolOptions(connectionString,process.env.VEXA_DATABASE_CA_PEM)));
+ const opciones=databasePoolOptions(connectionString,process.env.VEXA_DATABASE_CA_PEM);
+ const driver=vigilarPool(new Pool(opciones));
+ // Cola FIFO delante del pool: quien espera un hueco no falla a los 5 s (connectionTimeoutMillis solo cubre conectar de verdad).
+ const compuerta=crearCompuerta({max:opciones.max,esperaMs:POOL_WAIT_MS});
  // Defense in depth: reject privileged/misprovisioned login before domain work.
  pool={async connect(){
+  const liberar=await compuerta.adquirir();
   // El pooler puede haber cortado el cliente inactivo: la comprobacion de rol hace de sonda; si la conexion esta muerta se destruye y se pide otra.
-  const c=await conectarConReintento<PoolClient>(driver as unknown as {connect:()=>Promise<PoolClient>},async(cliente)=>{
+  let c:PoolClient;
+  try{c=await conectarConReintento<PoolClient>(driver as unknown as {connect:()=>Promise<PoolClient>},async(cliente)=>{
    const r=await cliente.query("SELECT rolsuper,rolbypassrls,EXISTS(SELECT 1 FROM pg_class WHERE relnamespace='public'::regnamespace AND relowner=(SELECT oid FROM pg_roles WHERE rolname=current_user)) AS owns FROM pg_roles WHERE rolname=current_user");
    if(!r.rows[0]||r.rows[0].rolsuper||r.rows[0].rolbypassrls||r.rows[0].owns)throw new AccessError(503,'database_role_unsafe');
-  });
-  return {query:async<Row>(text:string,values?:readonly (string|number|bigint|boolean|null|readonly string[])[])=>{const result=await c.query(text,values?[...values]:undefined);return {rows:result.rows as Row[],rowCount:result.rowCount};},release:()=>c.release()};
+  });}catch(error){liberar();throw error;}
+  return {query:async<Row>(text:string,values?:readonly (string|number|bigint|boolean|null|readonly string[])[])=>{const result=await c.query(text,values?[...values]:undefined);return {rows:result.rows as Row[],rowCount:result.rowCount};},release:()=>{try{c.release();}finally{liberar();}}};
  }};return pool;
 }
 export async function imports(request:NextRequest) {

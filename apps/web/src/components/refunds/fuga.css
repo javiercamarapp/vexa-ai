@@ -127,7 +127,7 @@
 /* Tarjeta exportable */
 .fg-tarjeta{display:grid;gap:var(--sp-2)}
 .fg-tarjeta-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-2)}
-.fg-tarjeta-top h2{margin:0;font-size:15px}
+.fg-tarjeta-top h2{margin:0;font-size:14px}.fg-tarjeta-pie{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-2);margin-top:var(--sp-1)}
 /* Esqueleto */
 .fg-skel{display:grid;gap:10px}
 .fg-skel-big{height:64px;width:min(320px,70%);border-radius:10px}

@@ -16,7 +16,7 @@ export function FugaTarjeta({data,query}:{data?:FugaVista|null;query?:string}){
  const f=useFuga(data===undefined?endpointFuga(query):null);
  const v=data??f.data,per=v?periodoDelTitular(v):null;
  return <section className="card fg-tarjeta" aria-labelledby="fg-tarjeta-t">
-  <div className="fg-tarjeta-top"><h2 id="fg-tarjeta-t">Fuga de reembolsos</h2><KindBadge kind="observed"/></div>
+  <div className="fg-tarjeta-top"><h2 id="fg-tarjeta-t">Fuga de reembolsos</h2></div>
   {!v&&f.busy?<Skeleton lineas={3} segundos={f.segundos} compacto/>
    :!v?<NoDisponible texto={f.error?.texto??'No disponible ahora.'} onRetry={f.reload}/>
    :v.titular.status!=='ok'?<NoDisponible texto={v.titular.status==='empty'?'Sin reembolsos cargados en este periodo.':'No disponible ahora. No es cero.'}/>
@@ -27,7 +27,7 @@ export function FugaTarjeta({data,query}:{data?:FugaVista|null;query?:string}){
     <p className="fg-meta">{usd(v.titular.usdNetoMinor)} sin cancelados · ventanas parciales</p>
     {per?.acumulado?.distinto&&<p className="fg-meta">{per.acumulado.texto}</p>}
     {fraseConcentracion(v)&&<p className="fg-frase">{fraseConcentracion(v)}</p>}
-    <LinkButton href="/refunds" variant="secondary" size="sm" icon={<Arrow/>}>Ver el detalle y llevarlo a la acción</LinkButton>
+    <div className="fg-tarjeta-pie"><LinkButton href="/refunds" variant="ghost" size="sm" icon={<Arrow/>}>Ver el detalle</LinkButton><KindBadge kind="observed"/></div>
    </>}
  </section>;
 }

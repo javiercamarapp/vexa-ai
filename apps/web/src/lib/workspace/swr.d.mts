@@ -1,0 +1,16 @@
+export const FRESCO_MS:number;export const VIDA_MS:number;export const PREFIJO:string;export const TOPE_PREFETCH:number;
+type Opc={ahora?:number;almacen?:Storage|null};
+export function claveSwr(recursoOUrl:string,consulta?:string,opciones?:{tenant?:string}):string;
+export function tenantFijado():string;
+export function fijarTenant(id:string,opciones?:{almacen?:Storage|null}):void;
+export function limpiarTodo(opciones?:{almacen?:Storage|null}):void;
+export function guardarSwr(clave:string,datos:unknown,opciones?:Opc):void;
+export function leerSwr(clave:string,opciones?:Opc&{fresco?:number;vida?:number}):{datos:unknown;edadMs:number;fresca:boolean;obsoleta:boolean}|null;
+export function invalidarSwr(opciones?:{almacen?:Storage|null;prefijo?:string}):void;
+export function olvidarMemoriaSwr():void;
+export function pedirSwr(url:string,opciones?:{signal?:AbortSignal;valida?:(json:unknown)=>unknown;fetchFn?:typeof fetch;clave?:string;ahora?:()=>number;almacen?:Storage|null}):Promise<{status:number;json:unknown}>;
+export function enVueloN():number;
+export function precalentar(lecturas:(string|{url:string;valida?:(json:unknown)=>unknown})[],opciones?:{fetchFn?:typeof fetch;almacen?:Storage|null;ahora?:number}):number;
+export function estadoPrecalentamiento():{activos:number;maxActivos:number;enCola:number};
+export function reiniciarPrecalentamiento():void;
+export function hace(ms:number):string;

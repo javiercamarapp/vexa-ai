@@ -38,6 +38,9 @@ export function comoSeCalculo(id, ctx = {}) {
   }
 }
 
+const dirDe = n => (n > 0 ? 'up' : n < 0 ? 'down' : 'flat');
+/** Variación para el chip: texto + dirección + qué dirección es buena (ingreso sube = bueno; reembolsos suben = malo). */
+const variacion = (texto, n, bueno) => (texto ? {texto, dir: dirDe(n), bueno} : null);
 /** KPI de ingreso bruto desde el informe del libro (misma fuente que «Dinero»). */
 function kpiIngreso({cfo, estado, ahora}) {
   const base = {id: 'ingreso', etiqueta: 'Ingreso bruto', como: 'ingreso'};
@@ -47,7 +50,9 @@ function kpiIngreso({cfo, estado, ahora}) {
   const rev = b?.kpis.find(k => k.id.startsWith('rev:'));
   if (!b || !rev) return {...base, estado: 'no_disponible', valor: null, nota: estado.cfo === 'error' ? 'No disponible ahora. No significa que sea cero.' : 'Todavía no hay un mes completo con importes.'};
   return {...base, estado: 'ok', valor: rev.display, periodo: b.mesDelResumen, nota: `${b.titular.periodo ?? ''} · ${b.moneda}${rev.cobertura ? ' · ' + rev.cobertura : ''}`.replace(/^ · /, ''),
-    delta: rev.delta ? `${rev.delta.display} vs ${rev.delta.vs}` : null, clase: rev.kind === 'estimated' || rev.kind === 'inferred' ? rev.kind : 'observed',
+    delta: rev.delta ? `${rev.delta.display} vs ${rev.delta.vs}` : null,
+    variacion: rev.delta ? variacion(rev.delta.display, rev.delta.bps ?? (String(rev.delta.display).trim().startsWith('-') ? -1 : 1), 'up') : null,
+    serie: (b.serie?.principal ?? []).filter(p => !p.partial && p.value != null).slice(-8).map(p => p.value), serieEtiqueta: 'Ingreso bruto por mes completo', clase: rev.kind === 'estimated' || rev.kind === 'inferred' ? rev.kind : 'observed',
     sello: sello({clase: rev.kind, fuente: 'Libro económico', hasta: cfo.report.watermark, actualizado: cfo.report.generatedAt, ahora}), cfoInfo: {mes: b.mesDelResumen, how: rev.how, cobertura: rev.cobertura}};
 }
 function kpiReembolsos({fuga, estado, ahora}) {
@@ -56,7 +61,11 @@ function kpiReembolsos({fuga, estado, ahora}) {
   if (estado.fuga === 'cargando') return {...base, estado: 'cargando'};
   if (!ok(fuga?.titular)) return {...base, estado: 'no_disponible', valor: null, nota: fuga?.titular?.status === 'empty' ? 'No hay reembolsos cargados en este periodo.' : 'No disponible ahora. No significa que no haya reembolsos.'};
   const t = fuga.titular, inten = (fuga.cambios?.reembolsos ?? []).filter(x => x.intensidadPct != null).map(x => `${NOMBRE[x.canal] ?? x.canal} ${pct(x.intensidadPct)}`);
+  const cambio = (fuga.cambios?.reembolsos ?? []).find(x => x.reembolsosPrevio > 0), canales = Object.values(fuga.intensidad?.canales ?? {});
+  const mejor = canales.map(c => (c.meses ?? []).filter(m => m.calidad === 'completo')).sort((a, b) => b.reduce((s, m) => s + m.reembolsos, 0) - a.reduce((s, m) => s + m.reembolsos, 0))[0] ?? [];
+  const pc = cambio ? ((cambio.reembolsos - cambio.reembolsosPrevio) / cambio.reembolsosPrevio) * 100 : null;
   return {...base, estado: 'ok', valor: usd(t.usdBrutoMinor), periodo: rangoTxt(t.rango), clase: 'observed',
+    variacion: pc == null ? null : variacion(`${pc > 0 ? '+' : ''}${pc.toFixed(1)} %`, pc, 'down'), serie: mejor.slice(-8).map(m => m.reembolsos), serieEtiqueta: 'Reembolsos por mes completo',
     nota: `${num(t.n)} reembolsos${inten.length ? ' · intensidad ' + inten.join(' · ') : ''}`,
     sello: sello({clase: 'observed', fuente: 'Libro de reembolsos', hasta: t.rango?.hasta ?? null, actualizado: fuga.generatedAt, ahora})};
 }
@@ -67,7 +76,8 @@ function kpiAtorado({fuga, estado, ahora}) {
   const t = fuga?.tracker;
   if (!ok(t)) return {...base, estado: 'no_disponible', valor: null, nota: t?.status === 'empty' ? 'Aún no hay filas del Tracker cargadas.' : 'No disponible ahora. No significa que no haya casos.'};
   const monto = NEGADOS.reduce((a, k) => a + (t.montoPorEstado?.[k] ?? 0), 0);
-  return {...base, estado: 'ok', valor: `${num(t.negados)} casos`, clase: 'observed',
+  const estados = NEGADOS.map(k => ({id: k, valor: t.estados?.[k] ?? 0})).filter(e => e.valor > 0);
+  return {...base, estado: 'ok', valor: `${num(t.negados)} casos`, clase: 'observed', estados,
     nota: monto > 0 ? `${usd(String(Math.round(monto)))} con monto (USD supuesto) · vencidos, rechazados o no reembolsables` : 'Vencidos, rechazados o no reembolsables · sin monto registrado',
     sello: sello({clase: 'observed', fuente: 'Tracker de Excel', hasta: null, actualizado: fuga.generatedAt, ahora})};
 }
@@ -77,7 +87,8 @@ function kpiRespuestas({carga, estado, ahora}) {
   if (estado.carga === 'cargando') return {...base, estado: 'cargando'};
   const s = carga?.sla;
   if (!ok(s)) return {...base, estado: 'no_disponible', valor: null, nota: s?.status === 'empty' ? 'Aún no hay hilos de HubSpot cargados.' : 'No disponible ahora. No significa que no haya hilos pendientes.'};
-  return {...base, estado: 'ok', valor: `${num(s.abiertosSinRespuesta24h)} hilos`, clase: 'observed', nota: 'Abiertos sin respuesta de agente registrada · solo conteo · HubSpot',
+  const porDia = ok(carga?.carga) ? (carga.carga.porDia ?? []).map(d => d.promedioPorDia) : [];
+  return {...base, estado: 'ok', valor: `${num(s.abiertosSinRespuesta24h)} hilos`, clase: 'observed', serie: porDia.length > 1 ? porDia : undefined, serieEtiqueta: 'Conversaciones por día de la semana (promedio)', nota: 'Abiertos sin respuesta de agente registrada · solo conteo · HubSpot',
     sello: sello({clase: 'observed', fuente: 'HubSpot API', hasta: s.corte, actualizado: s.generatedAt ?? carga.generatedAt, ahora})};
 }
 

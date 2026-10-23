@@ -7,6 +7,9 @@ import type {CfoReport} from '../../../../../packages/cfo-copilot/src/index.mjs'
 import {useJson} from '../ui/use-json';
 import {LinkButton,Refresh,Arrow} from '../ui/button';
 import {endpointFuga} from '../refunds/use-fuga';
+import {Sparkline} from '../ui/sparkline';
+import {DeltaChip} from '../ui/stat-card';
+import {BarraApilada} from '../ui/mini-charts';
 import {SelloProcedencia} from '../confianza/sello-procedencia';
 import {ComoSeCalculoProvider,ComoSeCalculoBoton} from '../confianza/como-se-calculo';
 import {armarHoy,comoSeCalculo,estadoDe,type KpiHoy} from './hoy-modelo.mjs';
@@ -18,17 +21,20 @@ const acceptFuga=(j:unknown)=>{const d=(j as {data?:FugaVista})?.data;return d&&
 const acceptCarga=(j:unknown)=>{const d=(j as {data?:Carga})?.data;return d&&typeof d==='object'&&'sla' in d?d:null;};
 const acceptCfo=(j:unknown)=>{const d=(j as {data?:Cfo})?.data;return d&&typeof d.status==='string'?d:null;};
 
+const COLOR:Record<string,number>={ingreso:1,reembolsos:2,atorado:4,respuestas24:5};
+const ETIQ:Record<string,string>={vencido:'Vencidos',no_reembolsable:'No reembolsables',rechazado:'Rechazados'};
 function Kpi({k,ctx,onRetry}:{k:KpiHoy;ctx:unknown;onRetry:()=>void}){
  const vacio=k.estado!=='ok';
  return <li className="hoy-kpi" data-kpi={k.id} aria-busy={k.estado==='cargando'||undefined}>
-  <div className="hoy-kpi-top"><span className="hoy-kpi-label">{k.etiqueta}</span>{k.estado==='ok'&&<ComoSeCalculoBoton entrada={comoSeCalculo(k.como,ctx)}/>}</div>
+  <div className="hoy-kpi-top"><span className="hoy-kpi-label">{k.etiqueta}</span>{k.estado==='ok'&&k.serie&&k.serie.length>1&&<span className="hoy-kpi-spark"><Sparkline data={k.serie} w={60} h={22} color={COLOR[k.id]} label={(k.serieEtiqueta??'Tendencia')+': '+k.serie.join(', ')}/></span>}{k.estado==='ok'&&<ComoSeCalculoBoton entrada={comoSeCalculo(k.como,ctx)}/>}</div>
   {k.estado==='cargando'?<><span className="hoy-skel" data-grande role="status" aria-label={'Cargando '+k.etiqueta}/><span className="hoy-skel" style={{width:'80%'}}/></>
    :vacio?<><div className="hoy-kpi-valor" data-vacio>—</div>
-    <p className="hoy-kpi-nota" data-una-linea title={k.nota??undefined}>{k.estado==='sin_acceso'?'Sin acceso':'No disponible ahora'}{k.nota?' · '+k.nota:''}</p>
-    {k.estado!=='sin_acceso'&&<button type="button" className="hoy-reintentar ui-reset" onClick={onRetry}>Reintentar</button>}</>
+    <p className="hoy-kpi-nota" data-una-linea title={k.nota??undefined}>{k.nota??(k.estado==='sin_acceso'?'Sin acceso':'No disponible ahora')}</p>
+    {k.estado!=='sin_acceso'&&<button type="button" className="btn btn-ghost btn-sm hoy-reintentar" onClick={onRetry}>Reintentar</button>}</>
    :<><div className="hoy-kpi-valor">{k.valor}</div>
-    <p className="hoy-kpi-nota">{k.nota}</p>
-    {k.delta&&<p className="hoy-kpi-delta">{k.delta}</p>}
+    {k.estados&&k.estados.length>0&&<BarraApilada h={8} base={3} sinLeyenda label={'Casos por estado: '+k.estados.map(e=>(ETIQ[e.id]??e.id)+' '+e.valor).join(', ')} items={k.estados.map(e=>({label:ETIQ[e.id]??e.id,value:e.valor}))}/>}
+    <p className="hoy-kpi-nota">{k.variacion&&<DeltaChip delta={{value:k.variacion.texto,dir:k.variacion.dir,good:k.variacion.bueno}} label={k.delta??undefined}/>}{k.variacion?' ':''}{k.nota}</p>
+    
     {k.sello&&<SelloProcedencia sello={k.sello}/>}</>}
  </li>;
 }

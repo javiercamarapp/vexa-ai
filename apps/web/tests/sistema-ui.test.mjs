@@ -88,3 +88,12 @@ test('Hoy: una sola barra de acciones, KPI sin dato compacto con reintento y fil
   assert.match(c,/\.hoy-cols\{grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
   assert.match(c,/\.hoy-kpi \.sello\{[^}]*white-space:nowrap/);
 });
+test('Hoy: sin bloques duplicados, «Actualizar» recarga el panel compartido y la tira lleva datos reales', () => {
+  const ov=leer('components/workspace/overview-dashboard.tsx'),panel=leer('components/workspace/shared-panel.tsx'),hoy=leer('components/hoy/hoy-pantalla.tsx'),mod=leer('components/hoy/hoy-modelo.mjs');
+  for(const dup of ['<FugaTarjeta','<ExecKpis','<Attention'])assert.ok(!ov.includes(dup),'duplicado en el Resumen: '+dup);
+  assert.match(ov,/<TopProblems[^>]*criticos=/);
+  assert.match(panel,/addEventListener\('vexa:refresh',refrescar\)/);
+  assert.match(hoy,/dispatchEvent\(new Event\('vexa:refresh'\)\)/);
+  assert.match(hoy,/<Sparkline[^>]*color=\{COLOR\[k\.id\]\}/);assert.match(hoy,/<DeltaChip/);
+  assert.match(mod,/variacion:/);assert.match(mod,/serie:/);
+});

@@ -83,7 +83,10 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   if(changedBase&&bundle?.meta.snapshot_id&&next.get('snapshot_id')===bundle.meta.snapshot_id)next.delete('snapshot_id');
   next.delete('cursor');next.delete('scope_hash');navigate(next);
  };
- const update=()=>{invalidarCache();frescas.current=true;setQuery(resolved.current);setReload(n=>n+1);window.dispatchEvent(new Event('vexa:refresh'));};
+ // «Actualizar» (botón del Resumen, «Actualizar» de Hoy y aviso de datos nuevos) = evento vexa:refresh: el panel invalida su caché y relee SIN vaciar la pantalla.
+ const refrescar=useCallback(()=>{invalidarCache();frescas.current=true;setQuery(resolved.current);setReload(n=>n+1);},[]);
+ useEffect(()=>{window.addEventListener('vexa:refresh',refrescar);return()=>window.removeEventListener('vexa:refresh',refrescar);},[refrescar]);
+ const update=()=>{window.dispatchEvent(new Event('vexa:refresh'));};
  const latest=()=>navigate(latestWorkspaceQuery(resolved.current));
  const exportUrl=(format:string)=>{const next=new URLSearchParams(pinned);next.set('resource',resource);next.set('format',format);return '/api/workspace/export?'+next.toString();};
  const canExport=!!(bundle?.meta.snapshot_id&&bundle.meta.scope_hash);

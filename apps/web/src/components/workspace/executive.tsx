@@ -53,26 +53,30 @@ function RowSpark({id}:{id:string}){
  const completos=(serie??[]).filter(p=>!p.partial&&p.value!==null).map(p=>p.value as number).slice(-6);
  if(t.busy&&!t.data)return <span className="sr-only">Cargando tendencia</span>;
  if(completos.length<2)return <small title="Sin dos meses completos con datos fechados para dibujar la tendencia">—</small>;
- return <Sparkline data={completos} w={72} h={24} label="Tendencia mensual de conversaciones (meses completos)"/>;
+ return <Sparkline data={completos} w={72} h={24} color={7} label="Tendencia mensual de conversaciones (meses completos)"/>;
 }
 
-/** Top 5 por conversaciones (cifra observada), con mini-tendencia de meses completos y enlace a la ficha. */
-export function TopProblems({items,query,cargando,error,onRetry}:{items:Bundle['items']|null;query:string;cargando:boolean;error:string;onRetry:()=>void}){
+/** Tabla de los 8 grupos con más conversaciones: barra en color de métrica (Problemas = violeta) dentro de la celda, tendencia de meses completos y severidad. */
+export function TopProblems({items,query,cargando,error,onRetry,criticos}:{items:Bundle['items']|null;query:string;cargando:boolean;error:string;onRetry:()=>void;criticos?:{groups:number;signals:number|null}|null}){
  const [ruido,setRuido]=useState(false);
  const lista=items?separarRuido(items,i=>[i.title,i.summary],ruido):null;
- const top=lista?topProblemas(lista.visibles,5) as FilaProblema[]:[];
- return <section className="card" aria-label="Problemas con más conversaciones">
-  <div className={s.cardHead}><div><h2>Problemas con más conversaciones</h2><p>Los 5 grupos con más conversaciones distintas. La categoría la asigna la IA.</p></div><KindBadge kind="observed"/></div>
+ const top=lista?topProblemas(lista.visibles,8) as FilaProblema[]:[];
+ const max=Math.max(1,...top.map(f=>f.conversaciones??0));
+ return <section className="card ov-tabla" aria-label="Problemas con más conversaciones">
+  <div className={s.cardHead}><div><h2>Problemas con más conversaciones</h2><p>Los grupos con más conversaciones distintas. La categoría la asigna la IA.</p></div>
+   <div className={s.headAcc}>{criticos&&<LinkButton href={'/problems?'+query+'#senales-criticas'} size="sm" variant="ghost" icon={<Arrow/>}>{nf.format(criticos.groups)} {criticos.groups===1?'grupo crítico':'grupos críticos'}</LinkButton>}<KindBadge kind="observed"/></div></div>
   {cargando&&!items&&<EsperaEsqueleto que="los problemas" filas={5}/>}
   {error&&!items&&<p className="state state-error" role="alert">{error} <Button size="sm" onClick={onRetry}>Reintentar</Button></p>}
   {items&&top.length===0&&<EmptyState compact art="search" title="Sin conversaciones por problema" body="Cuando los grupos tengan conversaciones registradas aparecerán aquí." action={<LinkButton href={'/problems?'+query} size="sm" icon={<Arrow/>}>Ver problemas</LinkButton>}/>}
-  {top.length>0&&<ol className={s.list}>{top.map((f,i)=><li key={f.id} className={s.row}>
-   <span className={s.rank}>{i+1}</span>
-   <div className={s.name}><Link href={'/problems/'+f.id+'?'+query}>{f.categoria}</Link><small>{fraseGrupo(f)}</small><TituloAuto problemId={f.id} label={f.titulo} conversaciones={f.conversaciones}/></div>
-   <div className={s.num}><strong>{nf.format(f.conversaciones as number)}</strong><small>conversaciones</small><RowSpark id={f.id}/></div>
-  </li>)}</ol>}
-  {lista&&lista.ocultosN>0&&<p className={s.note}>{ruido?'Se incluyen':'Se ocultan'} {nf.format(lista.ocultosN)} grupos de notificaciones automáticas. <button type="button" className="row-link-inline" onClick={()=>setRuido(v=>!v)}>{ruido?'Ocultarlas':'Incluirlas'}</button></p>}
-  <p className={s.note}><LinkButton href={'/problems?'+query} variant="ghost" size="sm" icon={<Arrow/>}>Ver todos los problemas</LinkButton></p>
+  {top.length>0&&<div className="ui-table-wrap" role="region" aria-label="Tabla de problemas con más conversaciones" tabIndex={0} style={{maxHeight:'none'}}><table className="ui-table ov-problemas"><caption className="sr-only">Grupos de problemas con más conversaciones, con su tendencia y severidad.</caption>
+   <thead><tr><th scope="col">Problema</th><th scope="col" data-align="num">Conversaciones</th><th scope="col">Tendencia</th><th scope="col">Severidad</th></tr></thead>
+   <tbody>{top.map(f=><tr key={f.id}>
+    <td><Link href={'/problems/'+f.id+'?'+query}>{f.categoria}</Link> <small>{fraseGrupo(f)}</small></td>
+    <td data-align="num"><span className="ov-celda-barra"><span className="ov-barra"><i style={{width:Math.max(2,(f.conversaciones??0)*100/max)+'%'}}/></span><strong>{f.conversaciones===null?'—':nf.format(f.conversaciones)}</strong></span></td>
+    <td><RowSpark id={f.id}/></td>
+    <td>{f.severidad?<StatusChip tone={f.severidad==='high'||f.severidad==='critical'?'bad':f.severidad==='medium'?'warn':'neutral'}>{etiquetaSeveridad(f.severidad)}</StatusChip>:<small>—</small>}</td>
+   </tr>)}</tbody></table></div>}
+  <div className={s.foot}>{lista&&lista.ocultosN>0&&<span className={s.note}>{ruido?'Se incluyen':'Se ocultan'} {nf.format(lista.ocultosN)} grupos de notificaciones automáticas. <button type="button" className="row-link-inline" onClick={()=>setRuido(v=>!v)}>{ruido?'Ocultarlas':'Incluirlas'}</button></span>}<LinkButton href={'/problems?'+query} variant="ghost" size="sm" icon={<Arrow/>}>Ver todos los problemas</LinkButton></div>
  </section>;
 }
 

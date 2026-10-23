@@ -14,13 +14,13 @@ import {SourceRef} from '../ui/source-ref';
 import {CoverageBand} from '../ui/coverage-band';
 import {EmptyState} from '../ui/empty-state';
 import {SkeletonRows} from '../ui/skeletons';
-import {CifraCargando} from '../ui/wait-status';
 import {LineaCache} from '../ui/linea-cache';
 import {useVistaPersistente} from './vista-persistente';
 import {LinkButton,Arrow} from '../ui/button';
 import {useJson} from '../ui/use-json';
 import {nf} from '../ui/format';
 import {Icon} from '../ui/icons';
+import {Chip,ChipList} from '../ui/chip';
 import {InsightList} from '../ui/insight-list';
 import {ChartState} from '../ui/chart-state';
 import {NoiseToggle} from '../ui/noise-toggle';
@@ -29,15 +29,12 @@ import type {CategoriesView} from '../../../../../packages/workspace-service/inc
 import {insightsResumen} from '../../lib/legibilidad/insights.mjs';
 import {separarRuido} from '../../lib/legibilidad/ruido.mjs';
 import {comparacionMensual,ledgerConDatos} from '../../lib/legibilidad/meses.mjs';
-import {hace} from '../../lib/workspace/swr.mjs';
 import {precalentarPantallas,PANTALLAS_PRINCIPALES} from '../../lib/workspace/precalentar.mjs';
 import {consultaAlcance} from '../../lib/workspace/alcance.mjs';
 import {lineaAvisos} from '../../lib/legibilidad/resumen-ejecutivo.mjs';
-import {FugaTarjeta} from '../refunds/fuga-tarjeta';
-import {StatusStrip,ExecKpis,TopProblems,Attention,HowCalculated,useCriticos,acceptCoverage} from './executive';
+import {StatusStrip,TopProblems,HowCalculated,useCriticos,acceptCoverage} from './executive';
 import type {CoverageView} from '../../../../../packages/workspace-service/provenance.mjs';
-import {kpiConversaciones,kpiPedidos,estadoFuentes,mesesCoberturaBaja,coberturaDeTendencias,avisosCoherentes} from '../../lib/legibilidad/resumen-ejecutivo.mjs';
-import exec from './executive.module.css';
+import {kpiConversaciones,estadoFuentes,mesesCoberturaBaja,coberturaDeTendencias,avisosCoherentes} from '../../lib/legibilidad/resumen-ejecutivo.mjs';
 import {lineaDatosHasta} from '../../../../../packages/workspace-service/datos-hasta.mjs';
 const monthShort=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
 const monthLong=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
@@ -85,50 +82,27 @@ export function OverviewDashboard({bundle,pinned,avisos=[],cache}:{bundle:Bundle
  const sinCob=(row:typeof model.rows[number])=>{const m=/^allorders$/i.test(row.metric.kind)?'orders':row.metric.kind==='refunds'?'refunds':null,cmp=m?cmpOf(m,row.metric.currency):null;return row.coverage.eligible===0||(!!cmp?.sinCobertura&&row.state!=='known');};
  const faltantes=model.rows.filter(sinCob),QUE_FALTA:Record<string,string>={exposure:'faltan los vínculos entre problemas y pedidos',refunds:'no hay reembolsos liquidados elegibles en este corte',allOrders:'no hay pedidos elegibles en este corte'};
 
- const kc=kpiConversaciones(conv,ahora),kp=kpiPedidos(led,ahora),cobA=coberturaDeTendencias(conv),fuentes=estadoFuentes(cobertura.data,{libro:led?.completeness?.dataThrough??null,conversaciones:conv?.completeness?.dataThrough??null});
+ const kc=kpiConversaciones(conv,ahora),cobA=coberturaDeTendencias(conv),fuentes=estadoFuentes(cobertura.data,{libro:led?.completeness?.dataThrough??null,conversaciones:conv?.completeness?.dataThrough??null});
  const cc=bundle.meta.critical_counts??null,conteoCriticos=crit.datos?{groups:crit.datos.groups??0,signals:crit.datos.signals}:cc&&typeof cc.groups==='number'?{groups:cc.groups,signals:cc.signals??null}:null;
  const avisosOk=avisosCoherentes(avisos,conteoCriticos);
- const cmpPedidos=kp?cmpOf('orders',kp.currency):null;
- // «No disponible ahora» solo si la lectura ya terminó y falló; mientras sigue en vuelo la cifra es un esqueleto (no parece incompleto).
- const cargT=trends.busy&&!trends.data,NA=<strong>No disponible ahora</strong>,Esp=<CifraCargando/>;
  // Una sola línea para todo lo que salió de la caché (en vez de una por tarjeta): la más antigua manda.
  const lecturas=[trends,probs,cats,cobertura,...(cache?[cache]:[])],conCache=lecturas.filter(l=>l.edadMs!==null),edadMax=conCache.length?Math.max(...conCache.map(l=>l.edadMs as number)):null,algunaActualizando=conCache.some(l=>l.actualizando),algunaVieja=lecturas.some(l=>l.viejo);
- const kpis=[
-  {label:'Conversaciones',kind:(kc?.estimado?'estimated':'observed') as 'observed'|'estimated',icon:'message',value:kc?kc.valor!==null?<strong>{nf.format(kc.valor)}</strong>:NA:cargT?Esp:NA,delta:kc?.delta??null,foot:kc?kc.rotulo+(kc.estimado?' · estimado con muestra':''):cargT?'Cargando la serie…':'La serie no está disponible ahora',spark:kc?.spark},
-  {label:'Grupos con revisión crítica',kind:'inferred' as const,icon:'alert',value:conteoCriticos?<strong>{nf.format(conteoCriticos.groups)}</strong>:<strong>Sin calcular</strong>,foot:conteoCriticos?(conteoCriticos.signals!==null?nf.format(conteoCriticos.signals)+' señales críticas (evidencias)':'Grupos con al menos una señal crítica')+(crit.edadMs!==null?` · última lectura ${hace(crit.edadMs)}`:''):'Consulta pesada: se calcula a petición con «Calcular ahora»',href:'#atencion'},
-  {label:'Ingresos del último mes completo',kind:'observed' as const,icon:'receipt',value:kp?kp.amountMinor!==null?<strong>{formatMinorUnits(kp.amountMinor,kp.currency,kp.exponent)}</strong>:NA:cargT?Esp:NA,delta:kp?.delta?{...kp.delta,good:'up' as const}:null,foot:kp?kp.rotulo:cargT?'Cargando el libro de pedidos…':'El libro de pedidos no está disponible ahora',spark:cmpPedidos&&!cmpPedidos.sinCobertura?cmpPedidos.meses.map(m=>num(m.orders.amountMinor,led!.exponent!)):undefined},
-  {label:'Conversaciones analizadas por la IA',kind:'observed' as const,icon:'database',value:cobA.pct!==null?<strong>{cobA.pct.toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %</strong>:cargT?Esp:NA,foot:cobA.pct!==null?`${cobA.texto}. Base: ${cobA.base}.`:cargT?'Cargando la cobertura…':'La cobertura no está disponible ahora'}
- ];
  return <div className="stack overview">
   <StatusStrip linea={lineaAvisos({critico:avisos.some(a=>a.key==='critico'),pendiente:avisosOk.some(a=>a.key==='pendiente'),parcialCarga:avisos.some(a=>a.key==='parcial'),faltantes:faltantes.map(f=>f.metric.label),conv,led,ahora})} fuentes={fuentes} cargando={cobertura.busy} dineroDisponible={!!exposure} onCobertura={()=>setVerCobertura(v=>!v)} avisos={[...avisosOk,...(faltantes.length>0?[{key:'faltantes',node:<aside className="notice-bar" data-tone="info" role="note"><Icon name="info" size={14}/><div><strong>{faltantes.length===1?'Una cifra sin cobertura todavía':faltantes.length+' cifras sin cobertura todavía'}</strong><ul>{faltantes.map(f=><li key={f.key}><strong>{f.metric.label}</strong>: {QUE_FALTA[f.metric.kind]??f.coverage.label}. No es cero.</li>)}</ul><p><LinkButton href="/imports" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>{bundle.meta.can_manage&&<> <LinkButton href="/economics" size="sm" variant="ghost" icon={<Arrow/>}>Revisar fuentes y vínculos</LinkButton></>}</p></div></aside>}]:[])]}/>
   {verCobertura&&<CoverageBand/>}
-  <LineaCache edadMs={edadMax} actualizando={algunaActualizando} viejo={algunaVieja} onActualizar={()=>window.dispatchEvent(new Event('vexa:refresh'))}/>
-  <FugaTarjeta query={consultaAlcance(query)}/>
-  <ExecKpis items={kpis}/>
-  <div className={exec.cols}>
-   <Attention crit={crit} query={query} conteo={conteoCriticos}/>
-   <TopProblems items={probs.data?probs.data.items:null} query={query} cargando={probs.busy} error={probs.error} onRetry={probs.reload}/>
-  </div>
-  <section className="card" aria-label="Lo más importante">
-   <div className="card-title"><div><h2>Lo más importante</h2><p>Hasta tres lecturas con su fuente y su cobertura · no son proyecciones</p></div></div>
-   {(trends.busy&&!trends.data)||(cats.busy&&!cats.data)?<div role="status" aria-busy="true"><span className="sr-only">Cargando lecturas…</span><SkeletonRows rows={3}/></div>:<InsightList insights={insights}/>}
-  </section>
-  <div className="split">
+  <div className="ov-fila ov-6-6 ov-r1">
    <section className="card trends" aria-label="Pedidos y reembolsos por mes">
     <div className="card-title"><div><h2>{measure==='orders'?'Pedidos registrados por mes':'Reembolsos liquidados por mes'}</h2><p>Últimos 12 meses{led?.currency?` · ${led.currency}`:''}</p></div><div className="toolbar" style={{margin:0}}>{led&&<KindBadge kind={ledOk&&!led.series.some(ledgerConDatos(measure))?'nodata':led.class}/>}<SegmentedControl size="sm" label="Medida del libro económico" value={measure} onChange={setMeasure} options={[{value:'orders',label:'Pedidos'},{value:'refunds',label:'Reembolsos'}]}/></div></div>
-    <ChartState busy={trends.busy} hasData={!!trends.data} error={trends.error} status={trends.status} que="las tendencias" retryLabel="Reintentar tendencias" onRetry={trends.reload} height={150}>{trends.data&&(ledOk&&!led!.series.some(ledgerConDatos(measure))?<EmptyState compact art="chart" title="Sin cobertura" body={measure==='orders'?'No hay pedidos registrados en los últimos 12 meses.':'No hay reembolsos registrados en los últimos 12 meses; no se muestra como cero.'}/>:ledOk?<AreaChart title={measure==='orders'?'Pedidos registrados por mes':'Reembolsos liquidados por mes'} series={[{name:measure==='orders'?'Pedidos':'Reembolsos',points:areaPoints(measure)}]} unit={led!.currency??''}/>:<EmptyState compact art="chart" title={led?.status==='timeout'?'No disponible ahora':'Sin cargar'} body={led?.status==='timeout'?'La consulta acotada superó el tiempo permitido. Reintenta en unos segundos.':'Aún no hay pedidos ni reembolsos registrados en los últimos 12 meses.'}/>)}</ChartState>
+    <ChartState busy={trends.busy} hasData={!!trends.data} error={trends.error} status={trends.status} que="las tendencias" retryLabel="Reintentar tendencias" onRetry={trends.reload} height={150}>{trends.data&&(ledOk&&!led!.series.some(ledgerConDatos(measure))?<EmptyState compact art="chart" title="Sin cobertura" body={measure==='orders'?'No hay pedidos registrados en los últimos 12 meses.':'No hay reembolsos registrados en los últimos 12 meses; no se muestra como cero.'}/>:ledOk?<AreaChart height={128} title={measure==='orders'?'Pedidos registrados por mes':'Reembolsos liquidados por mes'} series={[{name:measure==='orders'?'Pedidos':'Reembolsos',points:areaPoints(measure)}]} unit={led!.currency??''}/>:<EmptyState compact art="chart" title={led?.status==='timeout'?'No disponible ahora':'Sin cargar'} body={led?.status==='timeout'?'La consulta acotada superó el tiempo permitido. Reintenta en unos segundos.':'Aún no hay pedidos ni reembolsos registrados en los últimos 12 meses.'}/>)}</ChartState>
     {lineaDatosHasta({libro:led?.completeness?.dataThrough,conversaciones:conv?.completeness?.dataThrough})&&<p className="card-lead" data-testid="datos-hasta">{lineaDatosHasta({libro:led?.completeness?.dataThrough,conversaciones:conv?.completeness?.dataThrough})}</p>}
     {parcialLed.length>0?<p className="card-lead">* Mes parcial ({parcialLed.map(monthLong).join(', ')}){led?.completeness?.dataThrough?`: datos hasta el ${dayShort(led.completeness.dataThrough)}`:''}. No es una caída y no se compara con meses completos.</p>:null}{led?.otherCurrencies?.length?<p className="card-lead">Otras monedas ({led.otherCurrencies.join(', ')}) no se suman ni se convierten.</p>:null}{led?.summary?.source==='summary'&&led.summary.label?<p className="card-lead">{led.summary.label}</p>:null}
    </section>
-   {top?<InsightCard highlight severity="high" eyebrow="Prioridad con evidencia" title={top.title}
-     sentence={<>Concentra <strong>{top.display}</strong> de ingresos expuestos{share!==null?<>, el <strong>{share.toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %</strong> de la exposición global del corte</>:null}. Es una cifra inferida por vínculo de evidencia: no es pérdida.</>}
-     signals={[{icon:'message',text:<>{top.evidence} {top.evidence===1?'cita verificable':'citas verificables'}</>},...(top.refunds?[{icon:'refresh',text:<>{top.refunds} en reembolsos liquidados vinculados</>}]:[]),...(top.coverage?[{icon:'database',text:top.coverage}]:[])]}
-     footer={<KindBadge kind="inferred"/>} action={<LinkButton href={'/problems/'+top.id+'?'+query} variant="primary" size="sm" icon={<Arrow/>}>Ver evidencia</LinkButton>}/>
-    :null}
+  <TopProblems items={probs.data?probs.data.items:null} query={query} cargando={probs.busy} error={probs.error} onRetry={probs.reload} criticos={conteoCriticos}/>
   </div>
-  <div className="split" data-even>
+  <div className="ov-fila ov-4-4-4 ov-r2">
    <section className="card" aria-label="Conversaciones por mes">
     <div className="card-title"><div><h2>Conversaciones por mes</h2><p>Últimos 12 meses · conteo de registros cargados</p></div>{conv&&<KindBadge kind={convData.length?conv.class:'nodata'}/>}</div>
+    {(kc||cobA.pct!==null)&&<ChipList label="Cifras de conversaciones" items={[...(kc&&kc.valor!==null?[{key:'v',node:<Chip categoria={5}>{nf.format(kc.valor)} conversaciones{kc.delta?' · '+kc.delta.value:''}</Chip>}]:[]),...(cobA.pct!==null?[{key:'ia',node:<Chip categoria={5}>Analizadas por la IA {cobA.pct.toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %</Chip>}]:[])]}/>}
     <ChartState busy={trends.busy} hasData={!!trends.data} error={trends.error} status={trends.status} que="las conversaciones" retryLabel="Reintentar conversaciones" onRetry={trends.reload} height={180}>{trends.data&&(convData.length?<><ColumnChart title="Conversaciones por mes" unit="conversaciones" kind={conv!.class} data={convData}/><p className="card-lead">{[conv!.sampled?`Estimado con una muestra del ${conv!.samplePercent??''} %.`:null,'Fecha: inicio o primer mensaje.',conv!.outsideWindow?`${nf.format(conv!.outsideWindow)} fuera de la ventana${conv!.undated?` (${nf.format(conv!.undated)} sin fecha)`:''}.`:null,conv!.summary?.source==='summary'?conv!.summary.label:null,parcialConv.length?`* Mes parcial (${parcialConv.map(monthLong).join(', ')})${conv!.completeness?.dataThrough?`: datos hasta el ${dayShort(conv!.completeness.dataThrough)}`:''}; no se compara.`:null,bajaConv.length?`* Cobertura baja (${bajaConv.map(monthLong).join(', ')}): el volumen es menos de la cuarta parte del habitual, probablemente la carga de HubSpot es parcial; no es una caída y no se compara.`:null].filter(Boolean).join(' ')}</p></>:<EmptyState compact art="inbox" title={conv?.status==='timeout'?'No disponible ahora':'Sin cargar'} body={conv?.status==='timeout'?'Reintenta en unos segundos.':'No hay conversaciones con fecha en los últimos 12 meses.'}/>)}</ChartState>
    </section>
    {(probs.busy||!!probs.error||picks.length>0)&&<section className="card" aria-label="Problemas con más exposición">
@@ -138,15 +112,29 @@ export function OverviewDashboard({bundle,pinned,avisos=[],cache}:{bundle:Bundle
      {probs.data&&<BarList items={barItems} empty="Aún no hay problemas con importe conocido en este corte."/>}
     </ChartState>
    </section>}
+   {top?<InsightCard highlight severity="high" eyebrow="Prioridad con evidencia" title={top.title}
+     sentence={<>Concentra <strong>{top.display}</strong> de ingresos expuestos{share!==null?<>, el <strong>{share.toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %</strong> de la exposición global del corte</>:null}. Es una cifra inferida por vínculo de evidencia: no es pérdida.</>}
+     signals={[{icon:'message',text:<>{top.evidence} {top.evidence===1?'cita verificable':'citas verificables'}</>},...(top.refunds?[{icon:'refresh',text:<>{top.refunds} en reembolsos liquidados vinculados</>}]:[]),...(top.coverage?[{icon:'database',text:top.coverage}]:[])]}
+     footer={<KindBadge kind="inferred"/>} action={<LinkButton href={'/problems/'+top.id+'?'+query} variant="primary" size="sm" icon={<Arrow/>}>Ver evidencia</LinkButton>}/>
+    :null}
   </div>
-  <CategoryVolume title="Top categorías" kind="inferred" rows={cats.data?.status==='ok'?cats.data.rows.map(r=>({category:r.category,count:r.count})):null} totalIncidencias={cats.data?.totals?.incidences}
+  <div className="ov-fila ov-6-6 ov-r3">
+  <CategoryVolume limit={6} title="Top categorías" kind="inferred" rows={cats.data?.status==='ok'?cats.data.rows.map(r=>({category:r.category,count:r.count})):null} totalIncidencias={cats.data?.totals?.incidences}
    unavailable={cats.data?.status==='timeout'} reason={cats.data?.status==='timeout'?'La consulta superó el tiempo permitido. Reintenta en unos segundos.':'Aún no hay incidencias clasificadas en este alcance.'}
    load={{busy:cats.busy,error:cats.error,status:cats.status,onRetry:cats.reload}}
    foot={cats.data?.status==='ok'?<p className="card-lead">{cats.data.note}</p>:undefined}/>
+  <section className="card" aria-label="Lo más importante">
+   <div className="card-title"><div><h2>Lo más importante</h2><p>Hasta tres lecturas con su fuente y su cobertura · no son proyecciones</p></div></div>
+   {(trends.busy&&!trends.data)||(cats.busy&&!cats.data)?<div role="status" aria-busy="true"><span className="sr-only">Cargando lecturas…</span><SkeletonRows rows={3}/></div>:<InsightList insights={insights}/>}
+  </section>
+  </div>
+  <div className="ov-pie">
+  <LineaCache edadMs={edadMax} actualizando={algunaActualizando} viejo={algunaVieja} onActualizar={()=>window.dispatchEvent(new Event('vexa:refresh'))}/>
   <HowCalculated><section aria-label="Tabla completa de indicadores">
    <div className="card-title"><div><h2>Detalle financiero</h2><p>Valores exactos · los importes no se suman</p></div></div>
    <details className="chart-table"><summary>Ver como tabla</summary><div className="table-wrap" tabIndex={0} role="region" aria-label="Tabla financiera, desplazamiento horizontal"><table><caption className="sr-only">Indicadores del corte y alcance seleccionados. Los importes no se suman.</caption><thead><tr><th scope="col">Indicador</th><th scope="col">Importe total</th><th scope="col">Subtotal conocido</th><th scope="col">Cobertura</th><th scope="col">Procedencia</th></tr></thead><tbody>{model.rows.map(row=><tr key={row.key}><th scope="row">{row.metric.label} <KindBadge metric={row.metric}/><small>{row.recordTitle} · v{row.version}</small></th><td>{row.display}<small>{row.metric.currency} · {String(row.metric.exponent)} decimales</small></td><td>{row.knownSubtotal??'No disponible'}<small>{row.subtotal?'No equivale al total':''}</small></td><td>{row.coverage.label}<small>{(row.metric as {status?:string}).status??(row.state==='known'?'Importe publicado':'No informado')}</small></td><td><SourceRef value={row.metric.source_ref} showLabel={false}/>{row.reasons.length>0&&<small>{row.reasons.join(' · ')}</small>}</td></tr>)}</tbody></table></div></details>
    <details className="chart-table"><summary>Cómo leer estas cifras y su cobertura</summary><p>Los ingresos expuestos no equivalen a pérdida, ahorro ni retorno causal. Órdenes, exposición y reembolsos describen conceptos distintos y no se suman. Un subtotal conocido conserva únicamente los importes disponibles; no sustituye un total desconocido. Un porcentaje de cobertura describe registros con importe conocido, no la proporción del dinero observado.</p><p>{bundle.meta.coverage}</p>{bundle.items.map(item=><div key={item.id}><p>{item.summary}</p><dl className="record-details">{item.details.map((d,i)=><div key={i}><dt>{d.label}</dt><dd>{d.value}</dd></div>)}</dl></div>)}</details>
   </section></HowCalculated>
+  </div>
  </div>;
 }

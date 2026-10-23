@@ -5,15 +5,15 @@ export type Estado='real'|'parcial'|'estimado'|'desconocido';
 export const color=(i:number)=>`var(--chart-${((i%8)+8)%8+1})`;
 export const suave=(i:number)=>`var(--soft-${((i%8)+8)%8+1})`;
 const fmt=(v:number)=>new Intl.NumberFormat('es-MX',{maximumFractionDigits:1}).format(v);
-function Tabla({titulo,filas}:{titulo:string;filas:[string,string][]}){return <table className="sr-only"><caption>{titulo}</caption><tbody>{filas.map(([a,b],i)=><tr key={i}><th scope="row">{a}</th><td>{b}</td></tr>)}</tbody></table>;}
+function Tabla({titulo,filas}:{titulo:string;filas:[string,string][]}){return <div className="sr-only"><table><caption>{titulo}</caption><tbody>{filas.map(([a,b],i)=><tr key={i}><th scope="row">{a}</th><td>{b}</td></tr>)}</tbody></table></div>;}
 
 /** Barra apilada horizontal 100 %: una fila, segmentos con 2 px de separación y etiqueta directa en los grandes. */
-export function BarraApilada({items,label,h=18}:{items:{label:string;value:number;estado?:Estado}[];label:string;h?:number}){
+export function BarraApilada({items,label,h=18,base=0,sinLeyenda=false}:{items:{label:string;value:number;estado?:Estado}[];label:string;h?:number;/** índice del primer color (0..7) para mantener el color fijo de la métrica */base?:number;sinLeyenda?:boolean}){
  const total=items.reduce((a,i)=>a+Math.max(0,i.value),0);
  if(total<=0)return <div className="mc-vacio" role="img" aria-label={label+': sin datos'}/>;
  return <div className="mc"><div className="mc-stack" role="img" aria-label={label+': '+items.map(i=>i.label+' '+fmt(i.value*100/total)+' %').join(', ')} style={{height:h}}>
-  {items.map((it,i)=>{const p=Math.max(0,it.value)*100/total;return <span key={it.label} className="mc-seg" data-estado={it.estado??'real'} title={it.label+': '+fmt(p)+' %'} style={{flexBasis:p+'%',['--c' as string]:color(i)}}>{p>=14&&<b>{fmt(p)} %</b>}</span>;})}</div>
-  <ul className="mc-leyenda ui-reset">{items.map((it,i)=><li key={it.label}><i style={{background:color(i)}}/>{it.label}</li>)}</ul>
+  {items.map((it,i)=>{const p=Math.max(0,it.value)*100/total;return <span key={it.label} className="mc-seg" data-estado={it.estado??'real'} title={it.label+': '+fmt(p)+' %'} style={{flexBasis:p+'%',['--c' as string]:color(i+base)}}>{p>=14&&h>=14&&<b>{fmt(p)} %</b>}</span>;})}</div>
+  {!sinLeyenda&&<ul className="mc-leyenda ui-reset">{items.map((it,i)=><li key={it.label}><i style={{background:color(i+base)}}/>{it.label}</li>)}</ul>}
   <Tabla titulo={label} filas={items.map(i=>[i.label,fmt(i.value)])}/></div>;
 }
 /** Dona pequeña: SOLO hasta 5 categorías (con más se usa BarraApilada). Total al centro. */

@@ -18,3 +18,5 @@
 .twocol{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp-4)}
 @media(min-width:1000px){.twocol{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}}
 .originRow{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);flex-wrap:wrap}
+
+.tech{font-size:12px;color:var(--muted)}.tech summary{cursor:pointer;min-height:24px}.tech p{margin:4px 0}.tech code{font-family:var(--font-mono);overflow-wrap:anywhere;word-break:break-all}

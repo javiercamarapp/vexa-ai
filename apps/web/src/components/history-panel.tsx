@@ -15,13 +15,14 @@ import {Icon} from './ui/icons';
 import {SkeletonStats,SkeletonRows} from './ui/skeletons';
 import {nf} from './ui/format';
 import styles from './history.module.css';
+import {estadoProcesamiento,tituloLote} from '../lib/history/historico.mjs';
+import {nombreFuente} from '../lib/connections/estado.mjs';
 type Batch={id:string;createdAt?:string;connectionId:string;state:string;reason:string|null;version:number;enumerated:boolean;counts:Record<string,number>;countsCapped?:boolean};
 type Snapshot={batches:Batch[];connections:Array<{id:string;source:string;account_id:string}>;configuration:{ready:boolean;enabled:boolean}};
 const GROUP:Record<string,string>={completed:'var(--ink-up)',pending:'var(--ch-4)',extracting:'var(--ch-4)',grouping:'var(--ch-4)',failed:'var(--ink-down)',skipped:'var(--ch-neutral)'};
 const DAY=86400000,WEEKDAYS=['L','M','X','J','V','S','D'];
 const day=(iso:string)=>{const d=new Date(iso);return Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate());};
 const tone=(state:string)=>state==='completed'?'ok':state==='paused'||state==='cancelled'?'warn':state==='active'?'info':'neutral';
-const when=(iso?:string)=>iso?new Intl.DateTimeFormat('es-MX',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(iso)):'';
 /** Calendar heat: batches created per day (UTC), weeks as columns, Monday first. Exact counts only; needs real dates. */
 function batchCalendar(batches:Batch[]){
  const dated=batches.filter(b=>b.createdAt&&!Number.isNaN(Date.parse(b.createdAt)));
@@ -43,19 +44,21 @@ export function HistoryPanel(){const [snapshot,setSnapshot]=useState<Snapshot|nu
  for(const b of snapshot?.batches??[]){if(b.countsCapped)capped=true;for(const [state,n] of Object.entries(b.counts))totals[state]=(totals[state]??0)+Number(n);}
  const at=capped?'al menos ':'',inFlight=(totals.pending??0)+(totals.extracting??0)+(totals.grouping??0);
  const donut=Object.entries(totals).filter(([,n])=>n>0).map(([state,n],i)=>({key:state,label:historyStates[state]??state,value:n,display:at+nf.format(n),tone:(state==='completed'?1:state==='failed'?5:state==='skipped'?'neutral':(['pending','extracting','grouping'].includes(state)?2:3+i%2)) as 1|2|3|4|5|'neutral'}));
- const calendar=snapshot?batchCalendar(snapshot.batches):null;
- const connectionLabel=(id:string)=>{const c=snapshot?.connections.find(x=>x.id===id);return c?c.source+' · '+c.account_id:'Conexión';};
+ const calendar=snapshot?batchCalendar(snapshot.batches):null,estado=estadoProcesamiento({lotes:snapshot?.batches.length??0,lista:ready});
+ const connectionLabel=(id:string)=>{const c=snapshot?.connections.find(x=>x.id===id);return c?nombreFuente(c.source)+' · '+c.account_id:'Conexión';};
  const events:TimelineEvent[]=(snapshot?.batches??[]).map(b=>({key:b.id,icon:b.state==='completed'?'check':b.state==='paused'?'pause':'clock',
-  title:<span className={styles.batchHead}><span>Lote {b.id}</span><StatusChip tone={tone(b.state)}>{historyStates[b.state]??b.state}</StatusChip></span>,
-  meta:<>{connectionLabel(b.connectionId)}{b.createdAt?' · '+when(b.createdAt):''} · {b.enumerated?'Selección completa':'Selección en curso'}</>,
+  title:<span className={styles.batchHead}><span>{tituloLote(b.createdAt)}</span><StatusChip tone={tone(b.state)}>{historyStates[b.state]??b.state}</StatusChip></span>,
+  meta:<>{connectionLabel(b.connectionId)} · {b.enumerated?'Selección completa':'Selección en curso'}</>,
   body:<div className={styles.batch}>{b.reason&&<p className="state">{historyReasons[b.reason]??'Requiere revisión.'}</p>}
    {Object.keys(b.counts).length>0&&<><div className={styles.stateBar} role="img" aria-label={'Avance del lote: '+Object.entries(b.counts).map(([state,n])=>(historyStates[state]??state)+' '+(b.countsCapped?'al menos ':'')+n).join(', ')}>{Object.entries(b.counts).filter(([,n])=>Number(n)>0).map(([state,n])=><i key={state} style={{flexGrow:Number(n),background:GROUP[state]??'var(--ch-neutral)'}}/>)}</div>
    <ul className={styles.legend}>{Object.entries(b.counts).map(([state,n])=><li key={state}><span className={styles.dot} style={{background:GROUP[state]??'var(--ch-neutral)'}}/><span className="chip">{historyStates[state]??state}: {b.countsCapped?'al menos ':''}{n}</span></li>)}</ul></>}
    {b.countsCapped&&<p className={styles.note}>Lote grande: los conteos son un mínimo (se cuentan hasta 1,000 conversaciones por lote para mantener la vista rápida).</p>}{b.state==='cancelled'&&<p className={styles.note}>Los trabajos pendientes quedan sin autorización para continuar.</p>}
-   <div className="btn-group"><Button size="sm" aria-label={'Ver conversaciones del lote '+b.id} onClick={()=>setSelectedBatch(selectedBatch===b.id?null:b.id)}>{selectedBatch===b.id?'Ocultar conversaciones':'Ver conversaciones'}</Button>{['active','paused'].includes(b.state)&&<Button size="sm" variant="ghost" aria-label={'Cancelar lote '+b.id} disabled={busy} onClick={()=>void action({operation:'cancel',batchId:b.id,expectedVersion:b.version})}>Cancelar lote</Button>}{b.state==='paused'&&<ConfirmationDialog returnFocusRef={heading} triggerLabel={'Reautorizar lote '+b.id} title="¿Reautorizar este lote?" description={'El lote '+b.id+' continuará con su configuración original y los límites autorizados. Esta acción renueva su autorización.'} confirmLabel="Reautorizar lote" disabled={busy} onConfirm={()=>action({operation:'resume',batchId:b.id,expectedVersion:b.version,confirmed:true})}/>}</div>
+   <div className="btn-group"><Button size="sm" aria-label={'Ver conversaciones del '+tituloLote(b.createdAt).toLowerCase()+' (ref. '+b.id.slice(0,6)+')'} onClick={()=>setSelectedBatch(selectedBatch===b.id?null:b.id)}>{selectedBatch===b.id?'Ocultar conversaciones':'Ver conversaciones'}</Button>{['active','paused'].includes(b.state)&&<Button size="sm" variant="ghost" aria-label={'Cancelar el '+tituloLote(b.createdAt).toLowerCase()+' (ref. '+b.id.slice(0,6)+')'} disabled={busy} onClick={()=>void action({operation:'cancel',batchId:b.id,expectedVersion:b.version})}>Cancelar lote</Button>}{b.state==='paused'&&<ConfirmationDialog returnFocusRef={heading} triggerLabel={'Reautorizar el '+tituloLote(b.createdAt).toLowerCase()+' (ref. '+b.id.slice(0,6)+')'} title="¿Reautorizar este lote?" description={'El '+tituloLote(b.createdAt).toLowerCase()+' continuará con su configuración original y los límites autorizados. Esta acción renueva su autorización.'} confirmLabel="Reautorizar lote" disabled={busy} onConfirm={()=>action({operation:'resume',batchId:b.id,expectedVersion:b.version,confirmed:true})}/>}</div>
+   <details className={styles.tech}><summary>Ver detalle técnico</summary><p>Identificador del lote: <code>{b.id}</code></p></details>
    {selectedBatch===b.id&&<HistoryItems key={b.id} batchId={b.id}/>}</div>}));
- return <section className="task-page history-page stack" aria-label="Histórico de conversaciones" aria-busy={loading||busy}><PageHeader title="Procesar histórico" guide="historial" actions={<><Button icon={<Refresh/>} loading={loading||busy} onClick={()=>void load()}>Actualizar histórico</Button>{snapshot&&<Button variant="primary" icon={<Icon name="play" size={14}/>} onClick={()=>setOpenStart(true)}>Autorizar procesamiento</Button>}</>}/><h2 ref={heading} tabIndex={-1} className="sr-only">Acciones del histórico</h2>{loading&&!snapshot&&<div role="status" aria-label="Cargando histórico"><SkeletonStats count={4}/><SkeletonRows rows={3}/></div>}{error&&<p className="state state-error" role="alert">{error}</p>}{snapshot&&<>
-  <div className="notice-bar" role="status" data-tone={ready?'info':'warn'}><Icon name={ready?'check':'info'} size={14}/><strong>{ready?'Servicio autorizado y configurado.':'Falta configuración o habilitación explícita del servicio.'}</strong></div>
+ return <section className="task-page history-page stack" aria-label="Histórico de conversaciones" aria-busy={loading||busy}><PageHeader title="Procesar histórico" guide="historial" actions={<><Button icon={<Refresh/>} loading={loading||busy} onClick={()=>void load()}>Actualizar histórico</Button>{snapshot&&estado.puedeAutorizar&&<Button variant="primary" icon={<Icon name="play" size={14}/>} onClick={()=>setOpenStart(true)}>Autorizar procesamiento</Button>}</>}/><h2 ref={heading} tabIndex={-1} className="sr-only">Acciones del histórico</h2>{loading&&!snapshot&&<div role="status" aria-label="Cargando histórico"><SkeletonStats count={4}/><SkeletonRows rows={3}/></div>}{error&&<p className="state state-error" role="alert">{error}</p>}{snapshot&&<>
+  <div className="notice-bar" role="status" data-tone={estado.tone==='ok'?'info':estado.tone}><Icon name={estado.tone==='warn'?'info':'check'} size={14}/><span><strong>{estado.titulo}</strong> {estado.texto}</span></div>
+  {snapshot.batches.length===0?<section className="task-card history-batches" aria-label="Lotes históricos"><EmptyState art="inbox" compact title="Aún no hay lotes de procesamiento" body={estado.puedeAutorizar?'Usa «Autorizar procesamiento» para analizar el histórico de una conexión.':'Cuando se active el análisis del histórico, sus lotes aparecerán aquí.'}/></section>:<>
   <div className="stat-grid">
    <StatCard icon="layers" label="Lotes" kind="observed" value={nf.format(snapshot.batches.length)} foot={nf.format(snapshot.batches.filter(b=>b.state==='active').length)+' en curso'}/>
    <StatCard icon="check" label="Conversaciones completadas" kind="observed" value={(totals.completed?at:'')+nf.format(totals.completed??0)} foot={capped?'Mínimo por lote grande':undefined}/>
@@ -64,16 +67,16 @@ export function HistoryPanel(){const [snapshot,setSnapshot]=useState<Snapshot|nu
   </div>
   <div className={styles.twocol}>
    <section className="task-card history-batches" aria-label="Lotes históricos"><div className="card-title"><div><h2>Lotes históricos</h2><p>Del más reciente al más antiguo</p></div></div>
-    {snapshot.batches.length===0?<EmptyState art="inbox" compact title="No hay lotes disponibles" body="Autoriza un procesamiento para analizar el histórico de una conexión." action={<Button variant="primary" onClick={()=>setOpenStart(true)}>Autorizar procesamiento</Button>}/>:<Timeline events={events}/>}
+    <Timeline events={events}/>
    </section>
    <div className="stack">
     {donut.length>0&&<section className="card" aria-label="Conversaciones por estado"><div className="card-title"><div><h2>Estado de las conversaciones</h2><p>{capped?'Mínimos: lotes grandes':'Conteos exactos'}</p></div></div><DonutChart title="Conversaciones por estado" centerValue={at+nf.format(Object.values(totals).reduce((a,n)=>a+n,0))} centerLabel="en total" segments={donut}/></section>}
     {calendar&&<section className="card" aria-label="Calendario de lotes"><div className="card-title"><div><h2>Lotes por día</h2><p>Fecha de creación (UTC)</p></div></div><Heatmap title="Lotes creados por día" columns={calendar.columns} rows={calendar.rows} cells={calendar.cells} unit="lotes"/></section>}
    </div>
-  </div>
+  </div></>}
   <Drawer open={openStart} onClose={()=>setOpenStart(false)} title="Autorizar procesamiento" subtitle="Elige la conexión y confirma los límites configurados." footer={<Button type="submit" form="history-start" variant="primary" disabled={busy||!confirmed||!connection||!snapshot.configuration.ready||!snapshot.configuration.enabled}>Autorizar lote histórico</Button>}>
    <form id="history-start" className="form-grid history-start" onSubmit={e=>{e.preventDefault();if(!confirmed)return;requestKey.current??=crypto.randomUUID();void action({operation:'start',connectionId:connection,requestKey:requestKey.current,confirmed:true});}}>
-    <label className="field field-wide">Conexión del histórico<select aria-label="Conexión del histórico" required disabled={busy} value={connection} onChange={e=>{setConnection(e.target.value);setConfirmed(false);requestKey.current=null;}}><option value="">Selecciona una conexión</option>{snapshot.connections.map(c=><option key={c.id} value={c.id}>{c.source} · {c.account_id}</option>)}</select></label>
+    <label className="field field-wide">Conexión del histórico<select aria-label="Conexión del histórico" required disabled={busy} value={connection} onChange={e=>{setConnection(e.target.value);setConfirmed(false);requestKey.current=null;}}><option value="">Selecciona una conexión</option>{snapshot.connections.map(c=><option key={c.id} value={c.id}>{nombreFuente(c.source)} · {c.account_id}</option>)}</select></label>
     <label className="check-chip field-wide"><input type="checkbox" disabled={busy||!connection} checked={confirmed} onChange={e=>setConfirmed(e.target.checked)}/><span>Autorizo el análisis y la agrupación de este histórico con los límites configurados.</span></label>
    </form>
   </Drawer>

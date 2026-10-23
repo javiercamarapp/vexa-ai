@@ -76,3 +76,26 @@ test('QA3-007: Importaciones totaliza con la cobertura, rotula las cargas listad
  const kpis=t.slice(t.indexOf('<div className="stat-grid">'),t.indexOf('<div className="task-columns import-start">'));
  assert.equal((kpis.match(/<StatCard /g)??[]).length,(kpis.match(/kindHint=/g)??[]).length,'todos los KPI de importaciones tienen tooltip propio');
 });
+import {motivoVinculo,estadoProcesamiento,tituloLote,detalleAsociaciones,ESTADO_VINCULO} from '../history/historico.mjs';
+test('QA3-004: los códigos internos de vínculo se traducen al español y un código desconocido no sale crudo',()=>{
+ for(const c of ['UNIQUE_EXPLICIT_BRIDGE','ENDPOINT_UNRESOLVED','EVIDENCE_CONFLICT','OWNER_DECISION','SOURCE_RETAINED','RETENTION_POLICY_REQUIRED','RETENTION_SCOPE_LIMIT']){const t=motivoVinculo(c);assert.ok(t.length>20&&!/[A-Z]{3,}_[A-Z]/.test(t),c+' -> '+t);}
+ assert.match(motivoVinculo('UNIQUE_EXPLICIT_BRIDGE'),/^Vinculado con certeza/);assert.match(motivoVinculo('ENDPOINT_UNRESOLVED'),/^Sin identificar/);
+ assert.doesNotMatch(motivoVinculo('NUEVO_CODIGO_X'),/NUEVO_CODIGO_X/);assert.equal(motivoVinculo(null),'');
+ assert.equal(ESTADO_VINCULO.pending,'Sin identificar');assert.match(detalleAsociaciones('117,719 hechos (resueltos 15,189 · pendientes 102,530)'),/relaciones \(vinculadas 15,189 · sin identificar 102,530\)/);
+});
+test('QA3-003: sin lotes el estado es informativo, nunca «falta configuración»; la acción de autorizar exige capacidad real',()=>{
+ const a=estadoProcesamiento({lotes:0,lista:false}),b=estadoProcesamiento({lotes:0,lista:true});
+ for(const e of [a,b]){assert.equal(e.tone,'info');assert.doesNotMatch(e.titulo+e.texto,/Falta configuración|habilitación explícita/);}
+ assert.equal(a.puedeAutorizar,false);assert.equal(b.puedeAutorizar,true);
+ const c=estadoProcesamiento({lotes:3,lista:false});assert.equal(c.tone,'warn');assert.equal(c.puedeAutorizar,false);
+ assert.equal(estadoProcesamiento({lotes:3,lista:true}).tone,'ok');
+ assert.equal(tituloLote('2026-10-18T10:00:00.000Z'),'Lote del 18 oct 2026');assert.equal(tituloLote(undefined),'Lote sin fecha');
+});
+test('QA3-003/004: Histórico ya no imprime ids, códigos ni el banner de configuración, y las acciones del propietario están tras capacidad',()=>{
+ const h=leer('../../components/history-panel.tsx'),a=leer('../../components/association-panel.tsx'),i=leer('../../components/history-items.tsx');
+ assert.doesNotMatch(h,/Falta configuración o habilitación explícita del servicio/);assert.doesNotMatch(h,/<span>Lote \{b\.id\}<\/span>/);
+ assert.match(h,/estadoProcesamiento\(/);assert.match(h,/estado\.puedeAutorizar&&/);assert.match(h,/Ver detalle técnico/);
+ assert.doesNotMatch(a,/> \{f\.reason\}<\/small>/);assert.match(a,/motivoVinculo\(f\.reason\)/);assert.match(a,/Ver detalle técnico/);
+ assert.match(a,/\{canResolveFacts&&<td><Button size="sm"/);assert.match(a,/\{canApprove&&<details/);
+ assert.match(i,/<details[^>]*>\s*<summary>Ver detalle técnico/);
+});

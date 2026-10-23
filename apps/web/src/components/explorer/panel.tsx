@@ -1,5 +1,5 @@
 'use client';
-import {fechaCorteLegible} from '../../lib/legibilidad/fechas.mjs';
+import {lineaDatosHasta} from '../../../../../packages/workspace-service/datos-hasta.mjs';
 import {useWorkspaceNavigation,workspaceLocation} from '../workspace/navigation-lifecycle';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {ExplorerPage,ExplorerEvidence,ExplorerQuestion} from '../../../../../packages/recommendations/explorer.mjs';
@@ -82,7 +82,7 @@ export function ExplorerPanel({initialQuery}:{initialQuery:string}){
    <Drawer open={(!!evidence||!!opening||!!evErr)&&!answer} onClose={()=>{invalidate();setEvidence(null);setOpening(null);setEvErr('');setBusy(false);}} width={560} title={evidence?(etiquetaCategoria(evidence.title)+(shown?.grupo?' · '+fraseGrupo(shown as never):'')):opening?.title??'Evidencia'} subtitle={shown&&<StatusChip tone={STATUS[shown.status]?.tone??'info'}>{STATUS[shown.status]?.label??shown.status}</StatusChip>} footer={shown&&<LinkButton href={'/problems/'+shown.id+'?'+pin(page.meta.scope,page.meta.snapshotId,page.meta.scopeHash)} variant="primary" size="sm" icon={<Arrow/>}>Ver detalle</LinkButton>}>{waiting}{failed}{evidenceBody}</Drawer>
    <div className="stat-grid" style={{gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))'}}>
     <StatCard icon="search" label="Problemas que coinciden" kind="observed" value={nf.format(Number(page.meta.totalMatched))} foot={nf.format(page.items.length)+' en esta página'+(page.meta.unverifiedOmitted>0?' · '+nf.format(page.meta.unverifiedOmitted)+' sin verificar, no se muestran':'')}/>
-    <StatCard icon="message" label="Citas distintas en esta página" kind="observed" value={nf.format(totalCitations)} foot={<details className={styles.publication}><summary>Publicación y cobertura</summary><div className="meta-row"><IdChip value={page.meta.snapshotId} label="Publicación"/><IdChip value={page.meta.scopeHash} label="Alcance"/></div><p>Cobertura: {page.meta.coverage}</p>{page.meta.watermark&&<p>Actualización de los datos: {fechaCorteLegible(page.meta.watermark)}</p>}</details>}/>
+    <StatCard icon="message" label="Citas distintas en esta página" kind="observed" value={nf.format(totalCitations)} foot={<details className={styles.publication}><summary>Publicación y cobertura</summary><div className="meta-row"><IdChip value={page.meta.snapshotId} label="Publicación"/><IdChip value={page.meta.scopeHash} label="Alcance"/></div><p>Cobertura: {page.meta.coverage}</p>{page.meta.watermark&&<p>{lineaDatosHasta({conversaciones:page.meta.watermark})}</p>}</details>}/>
    </div>
    <ScopeBar key={JSON.stringify(scope)} scope={scope} onApply={apply} busy={busy}/>
    {page.meta.state==='stale'&&<DataState state={{kind:'stale',coverage:page.meta.coverage,watermark:page.meta.watermark}}/>}

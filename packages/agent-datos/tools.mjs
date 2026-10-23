@@ -3,6 +3,7 @@
 // rol, SQL ni identificadores de otras organizaciones. Cada resultado trae sus cifras con clase y cobertura, sus fuentes y el
 // método de cálculo; las citas de clientes viajan por un canal aparte (`citations`) que NUNCA se envía al modelo.
 import { formatMinorUnits } from '../metrics/money.mjs';
+import { lineaDatosHasta } from '../workspace-service/datos-hasta.mjs';
 import { estadoMes, estadosDeSerie, comparables, avisoMes, detalleMes, NO_COMPARABLE } from './meses.mjs';
 import { CLASS_LABELS, LIMITS, coverageOf, toJsonSchema, validateArgs } from './contract.mjs';
 
@@ -130,7 +131,7 @@ export const TOOLS = [
       return {
         status: 'ok', figures: [f, f2],
         blocks: [{ tool: 'tendencia_conversaciones', title: 'Conversaciones por mes', columns: [col('mes', 'Mes'), col('conversaciones', 'Conversaciones', 'integer')], rows: s.map((x) => ({ mes: monthLabel(x.month), conversaciones: cell(x) })), chart: { kind: s.length >= 3 ? 'line' : 'bar', unit: 'conversaciones', series: s.map((x) => ({ key: x.month, label: monthShort(x.month) + (x.st.estado === 'parcial' ? '*' : ''), value: x.st.estado === 'sin_datos' ? null : x.count, display: x.st.estado === 'sin_datos' ? 'No disponible' : fmtInt(x.count) + (x.st.estado === 'parcial' ? ' (mes incompleto)' : ''), ...(x.st.estado === 'parcial' ? { partial: true } : {}) })) }, class: c.class, coverage: cov, truncated: false, note }],
-        summary: `${lastParcial ? `${monthLabel(last.month)}: ${lastDisplay} (${NO_COMPARABLE}: ${avisoMes(monthLabel(last.month), last.st).replace(/^[^(]*\(/, '').replace(/\)$/, '')})` : `En ${monthLabel(last.month)} hubo ${f.display} conversaciones`}; ${f2.display} conversaciones en los últimos ${dato.length} meses con datos ${tag(f2)}.${c.sampled ? ' La cifra es una estimación a partir de una muestra del 10 %.' : ''}${s.some((x) => x.st.estado === 'sin_datos') ? ` Los meses posteriores al corte no tienen datos cargados (no son cero).` : ''}`, missing: [], notes: [...(c.sampleNote ? [c.sampleNote] : []), ...avisos],
+        summary: `${lastParcial ? `${monthLabel(last.month)}: ${lastDisplay} (${NO_COMPARABLE}: ${avisoMes(monthLabel(last.month), last.st).replace(/^[^(]*\(/, '').replace(/\)$/, '')})` : `En ${monthLabel(last.month)} hubo ${f.display} conversaciones`}; ${f2.display} conversaciones en los últimos ${dato.length} meses con datos ${tag(f2)}.${c.sampled ? ' La cifra es una estimación a partir de una muestra del 10 %.' : ''}${s.some((x) => x.st.estado === 'sin_datos') ? ` Los meses posteriores al corte no tienen datos cargados (no son cero).` : ''}`, missing: [], notes: [...(c.sampleNote ? [c.sampleNote] : []), ...avisos, lineaDatosHasta({ conversaciones: c.completeness?.dataThrough })].filter(Boolean),
       };
     },
   },
@@ -302,7 +303,7 @@ export const TOOLS = [
       const resumen = todoOk
         ? `Entre ${monthLabel(a)} y ${monthLabel(b)}, las conversaciones cambiaron ${c0.display} ${tag(c0)}${figs[2] ? `; los reembolsos liquidados, ${figs[2].display} ${tag(figs[2])}` : ''}.${probText}`
         : `Entre ${monthLabel(a)} y ${monthLabel(b)} no hay variación que reportar: ${NO_COMPARABLE}. ${avisos.join('. ')}. ${comparables(sc.a, sc.b) ? `Las conversaciones cambiaron ${c0.display} ${tag(c0)}. ` : ''}Un mes incompleto no se lee como caída ni como alza; los valores con * son parciales.${probText}`;
-      return { status: 'ok', figures: figs, blocks, summary: resumen, missing: pa.status === 'ok' ? [] : ['La clasificación de las conversaciones de esos meses'], notes: avisos };
+      return { status: 'ok', figures: figs, blocks, summary: resumen, missing: pa.status === 'ok' ? [] : ['La clasificación de las conversaciones de esos meses'], notes: [...avisos, lineaDatosHasta({ libro: t.ledger?.completeness?.dataThrough, conversaciones: t.conversations.completeness?.dataThrough })].filter(Boolean) };
     },
   },
   {

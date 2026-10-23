@@ -70,7 +70,7 @@
 
 
 /* ---- «Pregúntale a tus datos» vive dentro del shell del espacio de trabajo (misma barra lateral), sin encabezado ni barra global.
-   La estructura y las medidas siguen a ChatDatosShell de Atiende (portada, Historial, compositor rounded-3xl, chips, hilo); el acento es el azul de Rovaq. ---- */
+   La estructura y las medidas siguen a ChatDatosShell de Atiende (portada, Historial, compositor rounded-3xl, chips, hilo); el acento es el negro de Rovaq (neutro tintado, sin azul). ---- */
 .workspace-chat{--chat-h:calc(100dvh - 66px);--copiloto-acento:var(--ui-action)}
 @media(max-width:767px){.workspace-chat{--chat-h:calc(100dvh - 120px)}}
 @media(min-width:768px){.workspace-shell.workspace-chat .workspace-content{padding:14px 20px 20px}}

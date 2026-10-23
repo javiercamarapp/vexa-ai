@@ -21,7 +21,7 @@ export default async function Login({searchParams}:{searchParams:Promise<{error?
   const email=configured && process.env.VEXA_EMAIL_AUTH_ENABLED==='true';
   return <div className="login"><LimpiarCache/>
     <section className="login-column"><div className="login-inner">
-      <header className="login-entra auth-brand"><RovaqLogo variante="horizontal" ancho={132}/></header>
+      <header className="login-entra auth-brand"><RovaqLogo variante="horizontal" ancho={132} espacioLibre={false}/></header>
       <div className="login-copy">
         <p className="login-kicker login-entra">Tu espacio de trabajo</p>
         <h1 className="login-serif login-entra">Bienvenido a Rovaq AI</h1>

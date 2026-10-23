@@ -1,6 +1,6 @@
 /* Piezas compartidas de /platform y /cfo (prefijo pf-). Solo tokens existentes (--ui-*, --sp-*, --kind-*). */
-:root{--pf-ok:#1f7a4a;--pf-ok-soft:#e6f4ec;--pf-bad:#b3261e;--pf-bad-soft:#fdecea}
-:root[data-theme=dark]{--pf-ok:#5fd09a;--pf-ok-soft:#15281f;--pf-bad:#ff8a80;--pf-bad-soft:#341a18}
+:root{--pf-ok:#1f7a4a;--pf-ok-soft:#e6f4ec;--pf-bad:#ac2440;--pf-bad-soft:#fdecea}
+:root[data-theme=dark]{--pf-ok:#5fd09a;--pf-ok-soft:#15281f;--pf-bad:#ffb3c3;--pf-bad-soft:#341a18}
 .pf-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:var(--sp-4);margin:0 0 var(--sp-6)}
 .pf-tile{display:flex;flex-direction:column;gap:var(--sp-2);min-width:0;padding:var(--sp-5);border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface);box-shadow:var(--ui-shadow)}
 .pf-tile>header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-2)}

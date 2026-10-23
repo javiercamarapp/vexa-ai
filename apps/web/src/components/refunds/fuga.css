@@ -1,7 +1,7 @@
 /* «Fuga de reembolsos» (/refunds): composición sobre los primitivos de app/ui.css. Colores de canal: azul (Walmart) y ámbar (Amazon), el par más seguro para daltonismo;
    nunca el color solo: cada serie lleva nombre, número y leyenda. Los estados negados usan tonos cálidos con texto y conteo. */
-:root{--fg-walmart:#2a78d6;--fg-amazon:#c79a1b;--fg-otro:#707078;--fg-neg-2:#a8441c;--fg-neg-3:#7c2f12;--fg-track:#ececef}
-:root[data-theme=dark]{--fg-walmart:#3987e5;--fg-amazon:#e0b84a;--fg-otro:#a1a1aa;--fg-neg-2:#f08a5d;--fg-neg-3:#b85a35;--fg-track:#232328}
+:root{--fg-walmart:#0e0e10;--fg-amazon:#8a8a90;--fg-otro:#5a5a61;--fg-neg-2:#5a5a61;--fg-neg-3:#8a8a90;--fg-track:#e4e4e6}
+:root[data-theme=dark]{--fg-walmart:#f4f4f5;--fg-amazon:#8b8b93;--fg-otro:#a3a3ab;--fg-neg-2:#a3a3ab;--fg-neg-3:#7a7a82;--fg-track:#2a2a2f}
 .fg-page{min-width:0}
 .fg-sm{font-size:var(--t-small);color:var(--muted);margin:0}
 .fg-intro{font-size:var(--t-body);color:var(--ui-secondary);margin:0 0 var(--sp-3);max-width:70ch}

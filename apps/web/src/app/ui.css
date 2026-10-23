@@ -2,18 +2,18 @@
    Tokens extend the existing --ui-* set; spacing uses the 4/8 px scale. Motion only under prefers-reduced-motion: no-preference. */
 :root{
  --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:20px;--sp-6:24px;--sp-8:32px;--sp-10:40px;--sp-12:48px;
- --kind-observed:#2a78d6;--kind-estimated:#d9541f;--kind-inferred:#6250d6;
+ --kind-observed:#0e0e10;--kind-estimated:#4a4a51;--kind-inferred:#75757c;
  /* Barras inactivas: mezcla de la clase con la pista; el porcentaje se fija para que sigan a >= 3:1 del fondo (WCAG 1.4.11) en cada tema. */
  --col-idle-mix:80%;
- --kind-observed-soft:#e8f1fc;--kind-estimated-soft:#fdeee8;--kind-inferred-soft:#eeecfb;
- --cov-in:#2a78d6;--cov-rej:#eb6834;--cov-pen:#8f8f98;--cov-track:#ececef;
+ --kind-observed-soft:#f1f1f2;--kind-estimated-soft:#e4e4e6;--kind-inferred-soft:#f7f7f8;
+ --cov-in:#0e0e10;--cov-rej:#5a5a61;--cov-pen:#8a8a90;--cov-track:#e4e4e6;
  --ui-radius:16px;--ui-radius-sm:10px;
 }
 :root[data-theme=dark]{
- --kind-observed:#3987e5;--kind-estimated:#d95926;--kind-inferred:#9085e9;
+ --kind-observed:#f4f4f5;--kind-estimated:#a3a3ab;--kind-inferred:#7a7a82;
  --col-idle-mix:75%;
- --kind-observed-soft:#17263a;--kind-estimated-soft:#33201a;--kind-inferred-soft:#25213f;
- --cov-in:#3987e5;--cov-rej:#d95926;--cov-pen:#7a7a84;--cov-track:#232328;
+ --kind-observed-soft:#1f1f23;--kind-estimated-soft:#2a2a2f;--kind-inferred-soft:#17171a;
+ --cov-in:#f4f4f5;--cov-rej:#a3a3ab;--cov-pen:#7a7a82;--cov-track:#2a2a2f;
 }
 /* ---- Overflow safety net: nothing leaves its box ---- */
 .workspace-content :is(p,li,dd,dt,td,th,figcaption,blockquote,h1,h2,h3,h4,summary,label,small,span,strong,code,a){overflow-wrap:anywhere;min-width:0}
@@ -173,7 +173,7 @@ table .num{text-align:right;font-variant-numeric:tabular-nums}
 .workspace-content .fold{margin:var(--sp-3) 0;border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm);background:var(--ui-surface)}
 .fold>summary{cursor:pointer;padding:var(--sp-3) var(--sp-4);font-weight:600;font-size:14px}
 .fold>form{padding:0 var(--sp-4) var(--sp-4)}
-.rec-action{margin:0;padding:var(--sp-3) var(--sp-4);border-left:3px solid var(--ui-action);background:var(--ui-soft);border-radius:0 var(--ui-radius-sm) var(--ui-radius-sm) 0;font-size:14px}
+.rec-action{margin:0;padding:var(--sp-3) var(--sp-4);border-left:3px solid var(--ui-highlight);background:var(--ui-soft);border-radius:0 var(--ui-radius-sm) var(--ui-radius-sm) 0;font-size:14px}
 .rec-action strong{display:block;font:600 11px var(--font-ui);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:var(--sp-1)}
 .fold .action-form{max-width:none}
 .batch-block{padding:var(--sp-4) 0;border-top:1px solid var(--ui-border);display:grid;gap:var(--sp-3)}.batch-block:first-of-type{border-top:0}
@@ -261,17 +261,17 @@ table .num{text-align:right;font-variant-numeric:tabular-nums}
  /* escala única (títulos): página 24 · sección 16 · tarjeta 14 */
  --t-page:24px;--t-section:16px;--t-card:14px;--t-body:13px;--t-small:12px;--t-micro:11px;--t-kpi:24px;
  --sh-rest:0 1px 2px #17181c05;--sh-hover:0 1px 2px #17181c06,0 10px 28px -14px #17181c26;--sh-pop:0 12px 32px -8px #17181c2e,0 2px 6px #17181c0f;
- --surf-tip:#17181c;--surf-tip-ink:#f4f4f5;
- --tint-up:#ecf8f1;--ink-up:#16784a;--tint-down:#fdeef0;--ink-down:#ac2440;--tint-warn:#fff7e5;--ink-warn:#86580d;--tint-info:#e8f1fc;--ink-info:#1f5fb0;
- --ch-4:#1f9d77;--ch-5:#c79a1b;--ch-neutral:#a1a1aa;--ch-track:#ececef;--scrim:#17181c66;
- --cell:12px;--cell-gap:3px;--heat-0:#ececef;--heat-1:#cfe0f7;--heat-2:#9cc0ee;--heat-3:#5e9be0;--heat-4:#2a78d6;
+ --surf-tip:#0e0e10;--surf-tip-ink:#f4f4f5;
+ --tint-up:#ecf8f1;--ink-up:#16784a;--tint-down:#fdeef0;--ink-down:#ac2440;--tint-warn:#fff7e5;--ink-warn:#86580d;--tint-info:#f1f1f2;--ink-info:#3a3a40;
+ --ch-4:#3a3a40;--ch-5:#7a7a82;--ch-neutral:#8a8a90;--ch-track:#e4e4e6;--scrim:#0e0e1066;
+ --cell:12px;--cell-gap:3px;--heat-0:#ececee;--heat-1:#c9c9cd;--heat-2:#98989f;--heat-3:#5a5a61;--heat-4:#0e0e10;
  --t-bar:420ms;--t-pop:160ms;--t-drawer:260ms;--t-draw:900ms;
 }
 :root[data-theme=dark]{
- --surf-tip:#f4f4f5;--surf-tip-ink:#17181c;--sh-hover:0 1px 2px #0003,0 10px 28px -14px #000a;--sh-pop:0 12px 32px -8px #000c,0 2px 6px #0006;
- --tint-up:#12261c;--ink-up:#6fd6a3;--tint-down:#342127;--ink-down:#ffb3c3;--tint-warn:#33281a;--ink-warn:#f0c987;--tint-info:#17263a;--ink-info:#9cc4f5;
- --ch-4:#41c5a0;--ch-5:#e0b84a;--ch-neutral:#707078;--ch-track:#232328;--scrim:#000a;
- --heat-0:#232328;--heat-1:#1b3252;--heat-2:#245089;--heat-3:#2f6fc2;--heat-4:#5fa1f2;
+ --surf-tip:#f4f4f5;--surf-tip-ink:#0e0e10;--sh-hover:0 1px 2px #0003,0 10px 28px -14px #000a;--sh-pop:0 12px 32px -8px #000c,0 2px 6px #0006;
+ --tint-up:#12261c;--ink-up:#6fd6a3;--tint-down:#342127;--ink-down:#ffb3c3;--tint-warn:#33281a;--ink-warn:#f0c987;--tint-info:#1f1f23;--ink-info:#d4d4d8;
+ --ch-4:#d4d4d8;--ch-5:#8b8b93;--ch-neutral:#7a7a82;--ch-track:#2a2a2f;--scrim:#000a;
+ --heat-0:#2a2a2f;--heat-1:#3e3e45;--heat-2:#62626a;--heat-3:#9a9aa2;--heat-4:#f4f4f5;
 }
 /* ---- Escala tipográfica única (misma en todas las vistas; familias heredadas) ---- */
 body .workspace-content h1{font:600 var(--t-page)/1.2 var(--font-display);letter-spacing:-.025em;margin:0}
@@ -608,3 +608,6 @@ a.card-link:hover{text-decoration:underline;text-underline-offset:.2em}
 .tab-link { display:inline-flex; align-items:center; min-height:40px; padding:6px 14px; margin-bottom:-1px; border-bottom:2px solid transparent; color:var(--ui-secondary); font-weight:500; text-decoration:none; white-space:nowrap; }
 .tab-link:hover { color:var(--ink); }
 .tab-link[aria-current=page] { color:var(--ink); border-bottom-color:var(--accent); font-weight:600; }
+
+/* Resaltado de gráficas: el rojo señal de marca marca UNA cosa (el dato que importa). Principal = negro, comparativas = grises. Nunca para error: eso es --ui-danger/--ink-down con ícono y texto. */
+.sw[data-tone=highlight]{background:var(--ui-highlight)}.area-series[data-tone=highlight]{color:var(--ui-highlight)}.area-dot[data-tone=highlight]{fill:var(--ui-highlight)}.donut-seg[data-tone=highlight]{stroke:var(--ui-highlight)}.donut-sw[data-tone=highlight]{background:var(--ui-highlight)}.barlist-fill.bar-highlight{background:var(--ui-highlight)}

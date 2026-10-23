@@ -44,3 +44,26 @@ export function avisoMes(label, st) {
   if (st.estado === 'sin_datos') return `${label}: sin datos cargados (${detalleMes(st)}); no es cero, es dato ausente`;
   return `${label}: ${NO_COMPARABLE} (${detalleMes(st)})`;
 }
+
+const etiquetaMes = (m) => new Intl.DateTimeFormat('es-MX', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(m + '-01T00:00:00Z'));
+const mesAnterior = (m) => { const [y, mo] = m.split('-').map(Number); const t = y * 12 + (mo - 1) - 1; return `${Math.floor(t / 12)}-${String((t % 12) + 1).padStart(2, '0')}`; };
+/**
+ * «Este mes» sin mes explícito: el mes en curso casi nunca tiene datos completos (A4, 23-oct: octubre sin datos, septiembre parcial, y la pregunta
+ * estrella respondía «No tengo ese dato»). Se resuelve al último mes COMPLETO con datos (mismo criterio único de estadoMes) y se dice qué se saltó.
+ * Sin fecha de corte verificable no se inventa nada: se conserva el mes en curso.
+ * @returns {{month:string, nota:string|null, resuelto:boolean}}
+ */
+export function mesPorDefecto(completeness, ahora = new Date()) {
+  const actual = ahora.toISOString().slice(0, 7), dt = diaIso(completeness?.dataThrough ?? null);
+  if (!dt) return { month: actual, nota: null, resuelto: false };
+  const mesDato = dt.slice(0, 7), saltos = [];
+  if (actual > mesDato) saltos.push(`${etiquetaMes(actual)} aún no tiene datos`);
+  let m = mesDato < actual ? mesDato : actual;
+  for (let i = 0; i < 24 && estadoMes(m, completeness, ahora).estado !== 'completo'; i++) {
+    const st = estadoMes(m, completeness, ahora);
+    if (st.estado === 'parcial') saltos.push(`${etiquetaMes(m)} está parcial`);
+    m = mesAnterior(m);
+  }
+  const nota = `${[...saltos, `uso ${etiquetaMes(m)}`].join('; ')}`;
+  return { month: m, nota: m === actual ? null : nota.charAt(0).toUpperCase() + nota.slice(1), resuelto: m !== actual };
+}

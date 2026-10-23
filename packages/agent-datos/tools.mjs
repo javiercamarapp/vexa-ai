@@ -4,7 +4,7 @@
 // método de cálculo; las citas de clientes viajan por un canal aparte (`citations`) que NUNCA se envía al modelo.
 import { formatMinorUnits } from '../metrics/money.mjs';
 import { lineaDatosHasta } from '../workspace-service/datos-hasta.mjs';
-import { estadoMes, estadosDeSerie, comparables, avisoMes, detalleMes, NO_COMPARABLE } from './meses.mjs';
+import { estadoMes, estadosDeSerie, comparables, avisoMes, detalleMes, NO_COMPARABLE, mesPorDefecto } from './meses.mjs';
 import { CLASS_LABELS, LIMITS, coverageOf, toJsonSchema, validateArgs } from './contract.mjs';
 
 /** Importe en unidades menores -> unidades mayores (solo para altura/eje de gráficas; el dinero mostrado sale de money()). */
@@ -140,15 +140,22 @@ export const TOOLS = [
     description: 'Los problemas con más incidencias en un mes (por defecto, el mes en curso).',
     reads: ['problemas publicados', 'vínculos conversación–problema (conteo por mes)'], method: 'Una incidencia es una conversación clasificada con ese problema en el mes. Una conversación puede aportar a varios problemas, por eso las filas no se suman.', source: SRC.problems,
     async run({ port, ctx }, { month, limit }) {
-      const m = month ?? ctx.month; const r = await port.problemIncidents({ month: m });
-      if (r.status !== 'ok' || !r.rows?.length) return noData(`No tengo incidencias clasificadas para ${monthLabel(m)}.`, ['La clasificación de las conversaciones del mes']);
+      // «Este mes» (sin mes o el mes calendario en curso): se resuelve al último mes completo con datos y se dice (A4).
+      let m = month ?? ctx.month, aviso = null;
+      if (!month || month === ctx.month) {
+        const completeness = await port.trends().then((t) => t?.conversations?.completeness ?? null).catch(() => null);
+        const d = mesPorDefecto(completeness, new Date(ctx.now ?? Date.now()));
+        if (d.resuelto) { m = d.month; aviso = d.nota; }
+      }
+      const r = await port.problemIncidents({ month: m });
+      if (r.status !== 'ok' || !r.rows?.length) return noData(`${aviso ? aviso + '. ' : ''}No tengo incidencias clasificadas para ${monthLabel(m)}.`, ['La clasificación de las conversaciones del mes']);
       const rows = [...r.rows].sort((a, b) => b.incidents - a.incidents || a.title.localeCompare(b.title, 'es')).slice(0, limit);
       const cov = coverageOf(r.classified, r.eligible);
       const fs = rows.map((p, i) => fig('problemas_top', p.title, fmtInt(p.incidents), p.incidents, 'inferred', cov, { rank: i + 1 }));
       return {
         status: 'ok', figures: fs,
         blocks: [{ tool: 'problemas_top', title: `Problemas con más incidencias · ${monthLabel(m)}`, columns: [col('problema', 'Problema'), col('incidencias', 'Incidencias', 'integer'), col('clientes', 'Clientes', 'integer')], rows: rows.map((p) => ({ problema: p.title, incidencias: p.incidents, clientes: p.customers })), chart: { kind: 'bar', unit: 'incidencias', series: rows.map((p) => ({ key: p.problemId, label: p.title, value: p.incidents, display: fmtInt(p.incidents) })) }, class: 'inferred', coverage: cov, truncated: r.rows.length > rows.length, note: 'Inferido: cada incidencia es una conversación vinculada al problema por su evidencia; las filas no se suman entre sí.' }],
-        summary: `En ${monthLabel(m)}, los ${rows.length} problemas con más incidencias son: ${rows.map((p, i) => `${i + 1}. ${p.title} (${fmtInt(p.incidents)})`).join('; ')} ${tag(fs[0])}.`, missing: [], notes: [],
+        summary: `${aviso ? aviso + '. ' : ''}En ${monthLabel(m)}, los ${rows.length} problemas con más incidencias son: ${rows.map((p, i) => `${i + 1}. ${p.title} (${fmtInt(p.incidents)})`).join('; ')} ${tag(fs[0])}.`, missing: [], notes: aviso ? [aviso] : [],
       };
     },
   },

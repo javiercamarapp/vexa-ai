@@ -1,0 +1,10 @@
+import type {CoverageSource} from '../../../../../packages/workspace-service/provenance.mjs';
+export type Tono='ok'|'warn'|'bad'|'muted';
+export type EstadoConexion={ok:boolean;tone:Tono;chip:string;estado:string;lineas:string[];anillo:{valor:number;pct:number}|null;ultimo:{rotulo:string;valor:string|null;vacio:string}};
+export function mil(n:number):string;
+export const CLAVE_COBERTURA:Readonly<Record<string,string>>;
+export const ETIQUETA_SALUD:Readonly<Record<string,string>>;
+export function estadoConexion(row:{source:string;state:string;errorCode:string|null;lastSuccess:string|null;coverage:{observed:number;accepted:number;rejected:number}|null},sources:CoverageSource[]|null):EstadoConexion;
+export type AgregadoImportaciones={cargas:number;incorporadas:number;rechazadas:number;soloMetadatos:number;pendientes:number;sinDesglose:number;fuentes:number};
+export function agregadoImportaciones(sources:CoverageSource[]|null|undefined):AgregadoImportaciones|null;
+export function nombreFuente(source:string):string;

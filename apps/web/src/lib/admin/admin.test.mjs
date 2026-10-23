@@ -20,3 +20,50 @@ test('QA3-001: tinta y subtítulo de la lista cumplen 4.5:1 sobre superficie y f
   const r=ratio(tok(b,'ui-focus'),tok(b,'ui-surface'));assert.ok(r>=3,`${tema}: borde activo ${r.toFixed(2)}:1`);
  }
 });
+import {estadoConexion,agregadoImportaciones,mil} from '../connections/estado.mjs';
+import {rejectionBreakdown} from '../../../../../packages/workspace-service/provenance.mjs';
+const hubspotSrc=(extra={})=>({key:'hubspot',label:'HubSpot',loaded:true,status:'ok',class:'observed',imports:24,openImports:1,total:16491,incorporated:7930,rejected:8561,pending:0,lastUpdate:'2026-10-22T19:25:00.000Z',detail:[],rejectionNote:null,
+ rejectionBreakdown:rejectionBreakdown({total:16491,incorporated:7930,rejected:8561,codes:{ENTITY_METADATA_ONLY:8400,BODY_INCOMPLETE:100,ROLE_AMBIGUOUS:30,OTRO:31}}),...extra});
+const csvSrc={key:'csv',label:'Archivos CSV',loaded:true,status:'ok',class:'observed',imports:50,openImports:0,total:482200,incorporated:482136,rejected:64,pending:0,lastUpdate:'2026-10-18T22:34:59.000Z',detail:[],rejectionNote:null};
+const salud=(o)=>({id:'x',source:'csv',accountId:'a',connectionStatus:'active',state:'unknown',lastAttempt:null,lastSuccess:null,watermark:null,coverage:null,lagSeconds:null,lagBasis:'time_since_success',permissions:'unknown',errorCode:null,reconnect:null,...o});
+test('QA3-002: mil() redondea a «7,9 mil» sin inventar decimales',()=>{assert.equal(mil(7930),'7,9 mil');assert.equal(mil(8091),'8,1 mil');assert.equal(mil(8400),'8,4 mil');assert.equal(mil(950),'950');assert.equal(mil(482136),'482 mil');});
+test('QA3-002: CSV con 50 cargas completadas dice «Cargado · 482,136 filas», no «Pendiente»',()=>{
+ const e=estadoConexion(salud({source:'csv',state:'unknown'}),[csvSrc,hubspotSrc()]);
+ assert.equal(e.estado,'Cargado · 482,136 filas');assert.equal(e.chip,'Cargado');assert.equal(e.ok,true);assert.equal(e.tone,'ok');
+ assert.deepEqual([e.ultimo.rotulo,e.ultimo.valor],['Última carga','2026-10-18T22:34:59.000Z']);
+});
+test('QA3-002: un archivo sin cargas se dice sin cargas y, si la cobertura no se pudo consultar, «sin comprobar» (nunca cero ni cargado)',()=>{
+ assert.equal(estadoConexion(salud({source:'xlsx'}),[csvSrc]).chip,'Sin cargas');
+ const e=estadoConexion(salud({source:'csv'}),null);assert.equal(e.chip,'Sin comprobar');assert.equal(e.ok,false);assert.doesNotMatch(e.estado,/Cargado|0 filas/);
+});
+test('QA3-002: HubSpot conectada muestra conversaciones incorporadas, metadatos aparte y nunca «rechazados» sin desglose',()=>{
+ const e=estadoConexion(salud({source:'hubspot',state:'partial',coverage:{observed:16491,accepted:7930,rejected:8561}}),[csvSrc,hubspotSrc()]);
+ assert.equal(e.estado,'Conectada · importación en curso');assert.equal(e.chip,'Conectada');
+ assert.equal(e.lineas[0],'7,9 mil conversaciones incorporadas de ≈8,1 mil con conversación (≈98 %)');
+ assert.match(e.lineas[1],/^8,4 mil registros solo de metadatos/);
+ assert.equal(e.lineas.join('|').includes('8,561')||/rechazad/i.test(e.lineas.join('|')),false);
+ assert.deepEqual([e.ultimo.rotulo,e.ultimo.valor],['Última actualización de datos','2026-10-22T19:25:00.000Z']);
+});
+test('QA3-002: el último éxito real manda; sin ninguno y sin cobertura se dice que no hay sincronización completa',()=>{
+ const e=estadoConexion(salud({source:'hubspot',state:'healthy',lastSuccess:'2026-10-22T10:00:00.000Z'}),[hubspotSrc({openImports:0})]);
+ assert.equal(e.estado,'Conectada');assert.deepEqual([e.ultimo.rotulo,e.ultimo.valor],['Último éxito','2026-10-22T10:00:00.000Z']);
+ const v=estadoConexion(salud({source:'hubspot',state:'partial',coverage:{observed:16491,accepted:7930,rejected:8561}}),null);
+ assert.equal(v.ultimo.valor,null);assert.match(v.ultimo.vacio,/sincronización completa/);assert.doesNotMatch(v.lineas.join(' '),/rechazad/i);
+});
+test('QA3-002: sin desglose de HubSpot se dice «no disponible» en lugar de rechazados',()=>{
+ const e=estadoConexion(salud({source:'hubspot',state:'partial'}),[hubspotSrc({rejectionBreakdown:rejectionBreakdown({total:16491,incorporated:7930,rejected:8561,codes:null})})]);
+ assert.match(e.lineas[0],/7,930 de 16,491 filas leídas están incorporadas; el desglose del resto no está disponible ahora/);assert.doesNotMatch(e.lineas.join(' '),/rechazad/i);
+});
+test('QA3-002: los KPI de Importaciones suman todas las cargas, separan metadatos de defectos y no cuentan lo desglosado como falla',()=>{
+ const a=agregadoImportaciones([csvSrc,hubspotSrc(),{...csvSrc,key:'ledger',imports:0,incorporated:85383,rejected:0}]);
+ assert.deepEqual(a,{cargas:74,incorporadas:490066,rechazadas:64+161,soloMetadatos:8400,pendientes:0,sinDesglose:0,fuentes:2});
+ const b=agregadoImportaciones([hubspotSrc({rejectionBreakdown:rejectionBreakdown({total:16491,incorporated:7930,rejected:8561,codes:null})})]);
+ assert.equal(b.sinDesglose,8561);assert.equal(b.rechazadas,0);assert.equal(agregadoImportaciones(null),null);
+});
+test('QA3-002: el panel de Conexiones deriva su estado del resumen de cobertura y ya no imprime «rechazados» ni el hash a la vista',()=>{
+ const t=leer('../../components/connection-health.tsx');
+ assert.match(t,/useJson<CoverageView>\('\/api\/coverage'/);assert.match(t,/estadoConexion\(r,sources\)/);
+ assert.doesNotMatch(t,/rechazados/);assert.doesNotMatch(t,/Sin sincronización comprobada/);
+ assert.match(t,/<details className=\{styles\.tech\}><summary>Detalle técnico<\/summary>/);
+ assert.doesNotMatch(t,/Configuración: \{row\.connectionStatus\}/);
+});

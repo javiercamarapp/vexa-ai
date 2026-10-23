@@ -3,8 +3,7 @@ import assert from 'node:assert/strict';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {seriesPoints} from '../src/components/cfo/series';
 import {MonthBars, type MonthPoint} from '../src/components/cfo/month-bars';
-import {buildCfoReport} from '../../../packages/cfo-copilot/src/cfo-model.mjs';
-import {ledgerMonthlyFixture, FIXTURE_WATERMARK} from '../../../packages/cfo-copilot/src/fixtures.mjs';
+import {buildCfoReport, ledgerMonthlyFixture, FIXTURE_WATERMARK, type CurrencyBlock} from '../../../packages/cfo-copilot/src/index.mjs';
 import {axisLabel} from '../../../packages/cfo-copilot/src/format.mjs';
 
 // QA2-001: el eje debe estar en la misma unidad que la tarjeta y el tooltip (unidades mayores), no en centavos.
@@ -17,13 +16,13 @@ test('ejes de Ingresos y Reembolsos: el tick máximo coincide con el mayor valor
   for (const pc of report.perCurrency) {
     const line = pc.orderBases[0];
     for (const [title, series] of [['Ingresos por mes', line.series], ['Importe reembolsado por mes', pc.refunds.series]] as const) {
-      const points: MonthPoint[] = series.map((s: any) => ({month: s.month, partial: s.partial, value: s.known > 0 ? Number(BigInt(s.amount)) : null, label: s.amountDisplay}));
-      const known = series.filter((s: any) => s.known > 0);
+      const points: MonthPoint[] = series.map((s) => ({month: s.month, partial: s.partial, value: s.known > 0 ? Number(BigInt(s.amount)) : null, label: s.amountDisplay}));
+      const known = series.filter((s) => s.known > 0);
       if (!known.length) continue;
       const html = renderToStaticMarkup(<MonthBars title={title} unit={pc.currency} points={points} exponent={pc.exponent} />);
       const top = ticksOf(html).at(-1)!;
-      const maxMinor = known.reduce((a: bigint, s: any) => (BigInt(s.amount) > a ? BigInt(s.amount) : a), 0n);
-      const maxDisplay = known.find((s: any) => BigInt(s.amount) === maxMinor).amountDisplay as string;
+      const maxMinor = known.reduce((a: bigint, s) => (BigInt(s.amount) > a ? BigInt(s.amount) : a), 0n);
+      const maxDisplay = known.find((s) => BigInt(s.amount) === maxMinor).amountDisplay as string;
       assert.equal(top, axisLabel(Number(maxMinor), pc.exponent), `${pc.currency} ${title}`);
       // El número del eje es del orden de magnitud del tooltip (no 100x): compacto == display redondeado.
       const shown = parseDisplay(maxDisplay);
@@ -37,7 +36,7 @@ test('ejes de Ingresos y Reembolsos: el tick máximo coincide con el mayor valor
 
 test('cableado real del tablero CFO: seriesPoints entrega exponente y el eje cuadra con el tooltip en cada medida y moneda', () => {
   for (const pc of report.perCurrency) for (const measure of ['ingresos', 'reembolsos', 'pedidos', 'tasa'] as const) {
-    const v = seriesPoints(pc as any, measure);
+    const v = seriesPoints(pc, measure);
     const html = renderToStaticMarkup(<MonthBars title={v.title} unit={v.unit} points={v.points} exponent={v.exponent} />);
     const top = ticksOf(html).at(-1)!;
     const best = v.points.filter(p => p.value !== null).sort((a, b) => b.value! - a.value!)[0];

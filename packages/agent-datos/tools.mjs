@@ -3,6 +3,7 @@
 // rol, SQL ni identificadores de otras organizaciones. Cada resultado trae sus cifras con clase y cobertura, sus fuentes y el
 // método de cálculo; las citas de clientes viajan por un canal aparte (`citations`) que NUNCA se envía al modelo.
 import { formatMinorUnits } from '../metrics/money.mjs';
+import { estadoMes, comparables, avisoMes, detalleMes, NO_COMPARABLE } from './meses.mjs';
 import { CLASS_LABELS, LIMITS, coverageOf, toJsonSchema, validateArgs } from './contract.mjs';
 
 /** Importe en unidades menores -> unidades mayores (solo para altura/eje de gráficas; el dinero mostrado sale de money()). */
@@ -107,18 +108,24 @@ export const TOOLS = [
     name: 'tendencia_conversaciones', label: 'Contando conversaciones por mes', roles: 'all', parameters: { properties: { months: { type: 'integer', minimum: 2, maximum: 12, default: 12 } } },
     description: 'Conversaciones cargadas por mes (fecha de inicio o de su primer mensaje).',
     reads: ['public.conversations', 'public.messages (fecha del primer mensaje)'], method: 'Cuenta conversaciones por mes en una ventana fija; si el conteo exacto no cabe en el tiempo, usa una muestra del 10 % escalada y la rotula Estimado.', source: SRC.trends,
-    async run({ port }, { months }) {
+    async run({ port, ctx }, { months }) {
       const t = await port.trends(); const c = t.conversations;
       if (!c || c.status === 'timeout') return unavailable('tendencia_conversaciones');
       if (c.status === 'empty' || !c.series?.length) return noData('No hay conversaciones cargadas en la ventana.', ['Conversaciones importadas (HubSpot o CSV)']);
-      const s = c.series.slice(-months), sum = s.reduce((a, x) => a + x.count, 0), last = s[s.length - 1];
+      const ahora = new Date(ctx.now ?? Date.now());
+      const s = c.series.slice(-months).map((x) => ({ ...x, st: estadoMes(x.month, c.completeness, ahora) }));
+      const dato = s.filter((x) => x.st.estado !== 'sin_datos'), sum = dato.reduce((a, x) => a + x.count, 0), last = dato[dato.length - 1];
+      if (!last) return noData('No hay conversaciones con datos en la ventana.', ['Conversaciones importadas (HubSpot o CSV)']);
+      const avisos = s.map((x) => avisoMes(monthLabel(x.month), x.st)).filter(Boolean);
       const cov = coverageOf(sum, (c.total ?? sum) + (c.undated ?? 0));
-      const f = fig('tendencia_conversaciones', `Conversaciones en ${monthLabel(last.month)}`, fmtInt(last.count), last.count, c.class, cov);
-      const f2 = fig('tendencia_conversaciones', `Conversaciones en ${s.length} meses`, fmtInt(sum), sum, c.class, cov);
+      const f = fig('tendencia_conversaciones', `Conversaciones en ${monthLabel(last.month)}${last.st.estado === 'parcial' ? ' (mes incompleto)' : ''}`, fmtInt(last.count), last.count, c.class, cov);
+      const f2 = fig('tendencia_conversaciones', `Conversaciones en ${dato.length} meses`, fmtInt(sum), sum, c.class, cov);
+      const cell = (x) => (x.st.estado === 'sin_datos' ? 'No disponible' : x.st.estado === 'parcial' ? `${fmtInt(x.count)}*` : x.count);
+      const note = [c.sampleNote, avisos.length ? `* ${avisos.join('. ')}. Un mes incompleto no se compara con otro ni se lee como caída.` : null].filter(Boolean).join(' ') || undefined;
       return {
         status: 'ok', figures: [f, f2],
-        blocks: [{ tool: 'tendencia_conversaciones', title: 'Conversaciones por mes', columns: [col('mes', 'Mes'), col('conversaciones', 'Conversaciones', 'integer')], rows: s.map((x) => ({ mes: monthLabel(x.month), conversaciones: x.count })), chart: { kind: s.length >= 3 ? 'line' : 'bar', unit: 'conversaciones', series: s.map((x) => ({ key: x.month, label: monthShort(x.month), value: x.count, display: fmtInt(x.count) })) }, class: c.class, coverage: cov, truncated: false, note: c.sampleNote ?? undefined }],
-        summary: `En ${monthLabel(last.month)} hubo ${f.display} conversaciones y ${f2.display} en los últimos ${s.length} meses ${tag(f2)}.${c.sampled ? ' La cifra es una estimación a partir de una muestra del 10 %.' : ''}`, missing: [], notes: c.sampleNote ? [c.sampleNote] : [],
+        blocks: [{ tool: 'tendencia_conversaciones', title: 'Conversaciones por mes', columns: [col('mes', 'Mes'), col('conversaciones', 'Conversaciones', 'integer')], rows: s.map((x) => ({ mes: monthLabel(x.month), conversaciones: cell(x) })), chart: { kind: s.length >= 3 ? 'line' : 'bar', unit: 'conversaciones', series: s.map((x) => ({ key: x.month, label: monthShort(x.month) + (x.st.estado === 'parcial' ? '*' : ''), value: x.st.estado === 'sin_datos' ? null : x.count, display: x.st.estado === 'sin_datos' ? 'No disponible' : fmtInt(x.count) + (x.st.estado === 'parcial' ? ' (mes incompleto)' : ''), ...(x.st.estado === 'parcial' ? { partial: true } : {}) })) }, class: c.class, coverage: cov, truncated: false, note }],
+        summary: `En ${monthLabel(last.month)} hubo ${f.display} conversaciones${last.st.estado === 'parcial' ? ` (${NO_COMPARABLE}: ${avisoMes(monthLabel(last.month), last.st).replace(/^[^(]*\(/, '').replace(/\)$/, '')})` : ''} y ${f2.display} en los últimos ${dato.length} meses con datos ${tag(f2)}.${c.sampled ? ' La cifra es una estimación a partir de una muestra del 10 %.' : ''}${s.some((x) => x.st.estado === 'sin_datos') ? ` Los meses posteriores al corte no tienen datos cargados (no son cero).` : ''}`, missing: [], notes: [...(c.sampleNote ? [c.sampleNote] : []), ...avisos],
       };
     },
   },
@@ -160,20 +167,36 @@ export const TOOLS = [
   {
     name: 'categorias_por_mes', label: 'Comparando categorías por mes', roles: 'all', parameters: { properties: { months: { type: 'integer', minimum: 2, maximum: 12, default: 6 } } },
     description: 'Frecuencia de incidencias por categoría y por mes (últimos N meses).',
-    reads: ['incidencias clasificadas por categoría y mes'], method: 'Cuenta incidencias clasificadas por categoría en cada mes; el cambio compara el primer y el último mes de la ventana.', source: SRC.problems,
-    async run({ port }, { months }) {
+    reads: ['incidencias clasificadas por categoría y mes'], method: 'Cuenta incidencias clasificadas por categoría en cada mes; el cambio compara el primer y el último mes COMPLETO de la ventana (un mes incompleto se rotula y no se compara).', source: SRC.problems,
+    async run({ port, ctx }, { months }) {
       const r = await port.categoryMonthly({ months });
       if (r.status !== 'ok' || !r.rows?.length) return noData('No tengo incidencias clasificadas por categoría.', ['La clasificación de las conversaciones']);
-      const cats = [...new Set(r.rows.map((x) => x.category))]; const first = r.months[0], last = r.months[r.months.length - 1];
+      // Las incidencias salen de conversaciones: heredan la completitud de las conversaciones (mismo corte).
+      const completeness = await port.trends().then((t) => t?.conversations?.completeness ?? null).catch(() => null), ahora = new Date(ctx.now ?? Date.now());
+      const st = Object.fromEntries(r.months.map((m) => [m, estadoMes(m, completeness, ahora)]));
+      const cats = [...new Set(r.rows.map((x) => x.category))];
+      const done = r.months.filter((m) => st[m].estado === 'completo'), first = done[0], last = done[done.length - 1];
       const get = (c, m) => r.rows.find((x) => x.category === c && x.month === m)?.count ?? 0;
       const cov = coverageOf(r.classified, r.eligible);
-      const table = cats.map((c) => ({ categoria: c.charAt(0).toUpperCase() + c.slice(1), ...Object.fromEntries(r.months.map((m) => [m, get(c, m)])), cambio: `${signed(get(c, last) - get(c, first))} (${fmtPct(pct(get(c, first), get(c, last)))})` }));
-      const ranked = cats.map((c) => ({ c, d: get(c, last) - get(c, first), p: pct(get(c, first), get(c, last)) })).sort((a, b) => b.d - a.d);
+      const avisos = r.months.map((m) => avisoMes(monthLabel(m), st[m])).filter(Boolean);
+      const cell = (c, m) => (st[m].estado === 'sin_datos' ? 'No disponible' : st[m].estado === 'parcial' ? `${get(c, m)}*` : get(c, m));
+      const comparable = done.length >= 2;
+      const cambioDe = (c) => (comparable ? `${signed(get(c, last) - get(c, first))} (${fmtPct(pct(get(c, first), get(c, last)))})` : NO_COMPARABLE);
+      const table = cats.map((c) => ({ categoria: c.charAt(0).toUpperCase() + c.slice(1), ...Object.fromEntries(r.months.map((m) => [m, cell(c, m)])), cambio: cambioDe(c) }));
+      const nota = ['Inferido: incidencias vinculadas por evidencia a cada categoría.', avisos.length ? `* ${avisos.join('. ')}. El cambio compara solo meses completos${comparable ? ` (${monthLabel(first)} a ${monthLabel(last)})` : ''}; un mes incompleto no se compara.` : null].filter(Boolean).join(' ');
+      const colLabel = (m) => monthShort(m) + (st[m].estado === 'parcial' ? ' (parcial)' : st[m].estado === 'sin_datos' ? ' (sin datos)' : '');
+      const title = `Incidencias por categoría · ${monthShort(r.months[0])} a ${monthShort(r.months[r.months.length - 1])}`;
+      const columns = [col('categoria', 'Categoría'), ...r.months.map((m) => col(m, colLabel(m), 'integer')), col('cambio', 'Cambio')];
+      if (!comparable) {
+        const f0 = fig('categorias_por_mes', 'Cambio por categoría', NO_COMPARABLE, null, 'inferred', cov);
+        return { status: 'ok', figures: [f0], blocks: [{ tool: 'categorias_por_mes', title, columns, rows: table, class: 'inferred', coverage: cov, truncated: false, note: nota }], summary: `No hay dos meses completos en la ventana para comparar categorías: ${NO_COMPARABLE} ${tag(f0)}. ${avisos.join('. ')}.`, missing: [], notes: avisos };
+      }
+      const ranked = cats.map((c) => ({ c, d: get(c, last) - get(c, first), p: pct(get(c, first), get(c, last)) })).sort((x, y) => y.d - x.d);
       const f = fig('categorias_por_mes', `Cambio de «${ranked[0].c}»`, `${signed(ranked[0].d)} (${fmtPct(ranked[0].p)})`, ranked[0].d, 'inferred', cov);
       return {
         status: 'ok', figures: [f],
-        blocks: [{ tool: 'categorias_por_mes', title: `Incidencias por categoría · ${monthShort(first)} a ${monthShort(last)}`, columns: [col('categoria', 'Categoría'), ...r.months.map((m) => col(m, monthShort(m), 'integer')), col('cambio', 'Cambio')], rows: table, class: 'inferred', coverage: cov, truncated: false, note: 'Inferido: incidencias vinculadas por evidencia a cada categoría.' }],
-        summary: `Entre ${monthLabel(first)} y ${monthLabel(last)}, la categoría que más creció es «${ranked[0].c}»: ${f.display} ${tag(f)}. La que menos: «${ranked[ranked.length - 1].c}» (${signed(ranked[ranked.length - 1].d)}).`, missing: [], notes: [],
+        blocks: [{ tool: 'categorias_por_mes', title, columns, rows: table, class: 'inferred', coverage: cov, truncated: false, note: nota }],
+        summary: `Entre ${monthLabel(first)} y ${monthLabel(last)} (meses completos), la categoría que más creció es «${ranked[0].c}»: ${f.display} ${tag(f)}. La que menos: «${ranked[ranked.length - 1].c}» (${signed(ranked[ranked.length - 1].d)}).${avisos.length ? ' ' + avisos.join('. ') + '.' : ''}`, missing: [], notes: avisos,
       };
     },
   },
@@ -235,31 +258,45 @@ export const TOOLS = [
     name: 'comparar_meses', label: 'Comparando los dos meses', roles: 'all', parameters: { properties: { a: { ...MONTH_PROP, description: 'Mes base AAAA-MM.' }, b: { ...MONTH_PROP, description: 'Mes a comparar AAAA-MM.' } }, required: ['a', 'b'] },
     description: 'Qué cambió entre dos meses: conversaciones, pedidos, reembolsos y problemas.',
     reads: ['tendencias mensuales de registros', 'incidencias por problema y mes'], method: 'Resta el mes base al mes comparado en cada medida (registros e incidencias); el porcentaje usa el mes base. No explica causas.', source: SRC.trends,
-    async run({ port }, { a, b }) {
+    async run({ port, ctx }, { a, b }) {
       const t = await port.trends(); const win = (t.conversations?.series ?? []).map((x) => x.month);
       if (!win.includes(a) || !win.includes(b)) return noData(`Solo tengo datos de ${win.length ? `${monthLabel(win[0])} a ${monthLabel(win[win.length - 1])}` : 'ningún mes'}; no puedo comparar ${monthLabel(a)} con ${monthLabel(b)}.`, ['Los meses que faltan']);
       const conv = (m) => t.conversations.series.find((x) => x.month === m).count, led = (m, k) => t.ledger.series.find((x) => x.month === m)?.[k];
       const covC = coverageOf(conv(a) + conv(b), (t.conversations.total ?? 0) + (t.conversations.undated ?? 0) || conv(a) + conv(b));
+      // Un mes incompleto (corte a mitad de mes) o sin datos NO se compara: ni variación %, ni «0» presentado como dato. Misma regla que el Resumen y /cfo.
+      const ahora = new Date(ctx.now ?? Date.now());
+      const sc = { a: estadoMes(a, t.conversations.completeness, ahora), b: estadoMes(b, t.conversations.completeness, ahora) };
+      const sl = { a: estadoMes(a, t.ledger?.completeness, ahora), b: estadoMes(b, t.ledger?.completeness, ahora) };
+      const avisos = [...new Set([[a, sc.a], [b, sc.b]].map(([m, st]) => avisoMes(monthLabel(m), st)).concat([[a, sl.a], [b, sl.b]].map(([m, st]) => avisoMes(monthLabel(m) + ' (pedidos y reembolsos)', st))).filter(Boolean))];
       const rows = [], figs = [];
-      const add = (label, cls, va, vb, cov, fmt = fmtInt) => {
-        const d = vb - va; rows.push({ medida: label, [a]: fmt(va), [b]: fmt(vb), cambio: `${signed(d)} (${fmtPct(pct(va, vb))})`, clase: CLASS_LABELS[cls] });
-        figs.push(fig('comparar_meses', label, `${signed(d)} (${fmtPct(pct(va, vb))})`, d, cls, cov));
+      const shown = (st, v, fmt) => (st.estado === 'sin_datos' ? 'No disponible' : fmt(v) + (st.estado === 'parcial' ? '*' : ''));
+      const add = (label, cls, va, vb, cov, sta, stb, fmt = fmtInt) => {
+        const ok = comparables(sta, stb), d = vb - va;
+        const cambio = ok ? `${signed(d)} (${fmtPct(pct(va, vb))})` : NO_COMPARABLE;
+        rows.push({ medida: label, [a]: shown(sta, va, fmt), [b]: shown(stb, vb, fmt), cambio, clase: CLASS_LABELS[cls] });
+        figs.push(fig('comparar_meses', label, cambio, ok ? d : null, cls, cov));
       };
-      add('Conversaciones', t.conversations.class, conv(a), conv(b), covC);
-      if (t.ledger?.series?.length) { for (const [k, name] of [['orders', 'Pedidos registrados'], ['refunds', 'Reembolsos liquidados']]) add(name, 'observed', led(a, k).count, led(b, k).count, coverageOf(led(a, k).count + led(b, k).count - led(a, k).unknownAmounts - led(b, k).unknownAmounts, led(a, k).count + led(b, k).count)); }
+      add('Conversaciones', t.conversations.class, conv(a), conv(b), covC, sc.a, sc.b);
+      if (t.ledger?.series?.length) { for (const [k, name] of [['orders', 'Pedidos registrados'], ['refunds', 'Reembolsos liquidados']]) add(name, 'observed', led(a, k).count, led(b, k).count, coverageOf(led(a, k).count + led(b, k).count - led(a, k).unknownAmounts - led(b, k).unknownAmounts, led(a, k).count + led(b, k).count), sl.a, sl.b); }
       const pa = await port.problemIncidents({ month: a }), pb = await port.problemIncidents({ month: b });
-      const blocks = [{ tool: 'comparar_meses', title: `Registros · ${monthLabel(a)} frente a ${monthLabel(b)}`, columns: [col('medida', 'Medida'), col(a, monthShort(a), 'integer'), col(b, monthShort(b), 'integer'), col('cambio', 'Cambio'), col('clase', 'Clase')], rows, class: 'mixed', coverage: covC, truncated: false, note: 'Solo describe el cambio; no explica sus causas.' }];
+      const nota = ['Solo describe el cambio; no explica sus causas.', avisos.length ? `* ${avisos.join('. ')}. Una variación solo se calcula entre dos meses completos.` : null].filter(Boolean).join(' ');
+      const blocks = [{ tool: 'comparar_meses', title: `Registros · ${monthLabel(a)} frente a ${monthLabel(b)}`, columns: [col('medida', 'Medida'), col(a, monthShort(a), 'integer'), col(b, monthShort(b), 'integer'), col('cambio', 'Cambio'), col('clase', 'Clase')], rows, class: 'mixed', coverage: covC, truncated: false, note: nota }];
       let probText = '';
       if (pa.status === 'ok' && pb.status === 'ok') {
-        const covP = coverageOf(pb.classified, pb.eligible);
+        const covP = coverageOf(pb.classified, pb.eligible), okP = comparables(sc.a, sc.b);
         const diff = pb.rows.map((p) => { const x = pa.rows.find((r) => r.problemId === p.problemId)?.incidents ?? 0; return { title: p.title, a: x, b: p.incidents, d: p.incidents - x }; }).sort((p, q) => q.d - p.d).slice(0, 5);
-        const pf = diff.map((x) => fig('comparar_meses', x.title, `${signed(x.d)} (${fmtPct(pct(x.a, x.b))})`, x.d, 'inferred', covP));
+        const cambioP = (x) => (okP ? `${signed(x.d)} (${fmtPct(pct(x.a, x.b))})` : NO_COMPARABLE);
+        const pf = diff.map((x) => fig('comparar_meses', x.title, cambioP(x), okP ? x.d : null, 'inferred', covP));
         figs.push(...pf);
-        blocks.push({ tool: 'comparar_meses', title: 'Problemas que más cambiaron (incidencias)', columns: [col('problema', 'Problema'), col(a, monthShort(a), 'integer'), col(b, monthShort(b), 'integer'), col('cambio', 'Cambio')], rows: diff.map((x) => ({ problema: x.title, [a]: x.a, [b]: x.b, cambio: `${signed(x.d)} (${fmtPct(pct(x.a, x.b))})` })), class: 'inferred', coverage: covP, truncated: false, note: 'Inferido: incidencias vinculadas por evidencia.' });
-        probText = ` El problema que más creció es «${diff[0].title}»: de ${fmtInt(diff[0].a)} a ${fmtInt(diff[0].b)} incidencias, ${pf[0].display} ${tag(pf[0])}.`;
+        blocks.push({ tool: 'comparar_meses', title: 'Problemas que más cambiaron (incidencias)', columns: [col('problema', 'Problema'), col(a, monthShort(a), 'integer'), col(b, monthShort(b), 'integer'), col('cambio', 'Cambio')], rows: diff.map((x) => ({ problema: x.title, [a]: shown(sc.a, x.a, fmtInt), [b]: shown(sc.b, x.b, fmtInt), cambio: cambioP(x) })), class: 'inferred', coverage: covP, truncated: false, note: okP ? 'Inferido: incidencias vinculadas por evidencia.' : `Inferido: incidencias vinculadas por evidencia. ${NO_COMPARABLE}: no se ordena por crecimiento.` });
+        if (okP) probText = ` El problema que más creció es «${diff[0].title}»: de ${fmtInt(diff[0].a)} a ${fmtInt(diff[0].b)} incidencias, ${pf[0].display} ${tag(pf[0])}.`;
       }
+      const todoOk = comparables(sc.a, sc.b) && comparables(sl.a, sl.b);
       const c0 = figs[0];
-      return { status: 'ok', figures: figs, blocks, summary: `Entre ${monthLabel(a)} y ${monthLabel(b)}, las conversaciones cambiaron ${c0.display} ${tag(c0)}${figs[2] ? `; los reembolsos liquidados, ${figs[2].display} ${tag(figs[2])}` : ''}.${probText}`, missing: pa.status === 'ok' ? [] : ['La clasificación de las conversaciones de esos meses'], notes: [] };
+      const resumen = todoOk
+        ? `Entre ${monthLabel(a)} y ${monthLabel(b)}, las conversaciones cambiaron ${c0.display} ${tag(c0)}${figs[2] ? `; los reembolsos liquidados, ${figs[2].display} ${tag(figs[2])}` : ''}.${probText}`
+        : `Entre ${monthLabel(a)} y ${monthLabel(b)} no hay variación que reportar: ${NO_COMPARABLE}. ${avisos.join('. ')}. ${comparables(sc.a, sc.b) ? `Las conversaciones cambiaron ${c0.display} ${tag(c0)}. ` : ''}Un mes incompleto no se lee como caída ni como alza; los valores con * son parciales.${probText}`;
+      return { status: 'ok', figures: figs, blocks, summary: resumen, missing: pa.status === 'ok' ? [] : ['La clasificación de las conversaciones de esos meses'], notes: avisos };
     },
   },
   {

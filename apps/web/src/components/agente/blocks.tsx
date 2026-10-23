@@ -14,7 +14,7 @@ export function DataTable({block}:{block:Block}){
 function Chart({block}:{block:Block}){
  const chart=block.chart;if(!chart)return null;
  const kind=block.class==='mixed'?'observed':block.class;
- if(chart.kind==='line')return <AreaChart title={block.title} unit={chart.unit} series={[{name:chart.unit,tone:kind==='estimated'?'estimated':'primary',points:chart.series.map(s=>({label:s.label,value:s.value,display:s.display}))}]}/>;
+ if(chart.kind==='line')return <AreaChart title={block.title} unit={chart.unit} series={[{name:chart.unit,tone:kind==='estimated'?'estimated':'primary',points:chart.series.map(s=>({label:s.label,value:s.value,display:s.display,partial:s.partial||undefined}))}]}/>;
  if(chart.kind==='donut'){
   const total=chart.series.reduce((a,s)=>a+(s.value??0),0);
   return <DonutChart title={block.title} centerValue={total.toLocaleString('es-MX')} centerLabel={chart.unit} segments={chart.series.map((s,i)=>({key:s.key,label:s.label,value:s.value??0,display:s.display,tone:(i===0?4:i===1?5:'neutral') as 4|5|'neutral'}))}/>;

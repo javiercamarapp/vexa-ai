@@ -35,18 +35,15 @@
 .agente-rename{display:grid;gap:var(--sp-2)}
 
 /* ---- Rovaq mark + «thinking» ---- */
-.rovaq-mark{display:inline-grid;place-items:center;flex:none;line-height:0}
-.rovaq-tile{fill:var(--ui-action)}.rovaq-r{fill:var(--ui-action-ink)}
-.rovaq-orbit{stroke:var(--ui-action);transform-origin:32px 32px;opacity:.9}
-.rovaq-mark.is-thinking .rovaq-orbit{stroke-dasharray:26 74}
+.rovaq-mark{position:relative;display:inline-grid;place-items:center;flex:none;line-height:0}
+.rovaq-mark>.rovaq-logo{grid-area:1/1}
+.rovaq-orbit-svg{position:absolute;inset:0}
+.rovaq-orbit{stroke:var(--ink);transform-origin:32px 32px;opacity:.9}
 @media(prefers-reduced-motion:no-preference){
- .rovaq-mark.is-thinking .rovaq-glyph{transform-origin:32px 32px;animation:rovaq-breathe 1.6s ease-in-out infinite}
  .rovaq-mark.is-thinking .rovaq-orbit{animation:rovaq-spin 1.4s linear infinite}
- @keyframes rovaq-breathe{50%{transform:scale(.88)}}
  @keyframes rovaq-spin{to{transform:rotate(360deg)}}
 }
 .rovaq-wordmark{display:inline-flex;align-items:center;gap:var(--sp-2)}
-.rovaq-name{font:700 1.15em var(--font-display);letter-spacing:-.05em;color:var(--ink)}.rovaq-ai{margin-left:3px;color:var(--muted);font-size:.52em;font-weight:500;letter-spacing:0}
 /* ---- Thinking breakdown ---- */
 .trace-main{min-width:0;display:grid;gap:var(--sp-1)}
 .trace-phase{margin:0;color:var(--ink);font-weight:500}
@@ -91,7 +88,7 @@
 @media(min-width:768px){.workspace-chat .agente[data-has=false]{padding-top:96px}}
 .workspace-chat .agente[data-has=true]{justify-content:flex-end}
 .workspace-chat .agente-hero{display:flex;flex-direction:column;align-items:center;gap:0;padding:0;text-align:center}
-.workspace-chat .agente-hero .rovaq-wordmark{margin-bottom:24px;font-size:22px}
+.workspace-chat .agente-hero .rovaq-wordmark{margin-bottom:24px}
 .workspace-chat .agente-hero h1{margin:0 0 8px;font:600 24px/32px var(--font-ui);letter-spacing:normal;color:var(--ink)}
 .workspace-chat .agente-sub{margin:0 0 32px;max-width:28rem;font-size:14px;line-height:20px;text-align:center;color:var(--muted)}
 .workspace-chat .agente-empty{margin:0 0 24px}

@@ -1,5 +1,5 @@
  'use client';
-import {VexaBrand} from './vexa-brand';
+import {RovaqLogo} from './rovaq-logo';
 import {FormEvent,useEffect,useRef,useState} from 'react';
 export function EmailLogin({enabled=true}:{enabled?:boolean}){const [busy,setBusy]=useState(false),[message,setMessage]=useState(''),[remaining,setRemaining]=useState(0);const active=useRef(true),inFlight=useRef(false);
 useEffect(()=>{active.current=true;return()=>{active.current=false;};},[]);
@@ -8,6 +8,6 @@ async function submit(event:FormEvent<HTMLFormElement>){event.preventDefault();i
 return <form className="login-email login-entra" onSubmit={submit} aria-busy={busy} aria-label="Acceder por correo">
 <label className="sr-only" htmlFor="email-login-address">Correo</label>
 <input className="login-campo" id="email-login-address" name="email" type="email" placeholder="tu@empresa.com" autoComplete="email" required maxLength={254} disabled={!enabled||busy} aria-describedby={!enabled?'email-availability':undefined}/>
-<button className="login-btn login-btn-tinta" aria-busy={busy} disabled={!enabled||busy||remaining>0}><span className="login-glifo" aria-hidden="true"><VexaBrand/></span><span>{busy?'Solicitando…':remaining>0?`Reintentar en ${remaining} s`:'Continuar con correo'}</span></button>
+<button className="login-btn login-btn-tinta" aria-busy={busy} disabled={!enabled||busy||remaining>0}><span className="login-glifo" aria-hidden="true"><RovaqLogo variante="simbolo" tono="contraste" ancho={16} espacioLibre={false} decorativo/></span><span>{busy?'Solicitando…':remaining>0?`Reintentar en ${remaining} s`:'Continuar con correo'}</span></button>
 {!enabled&&<p id="email-availability" className="login-hint">El acceso por correo no está disponible por ahora.</p>}
 <p className="login-message login-email-status" role="status">{message}</p></form>;}

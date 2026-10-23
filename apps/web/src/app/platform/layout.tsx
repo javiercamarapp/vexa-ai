@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type {ReactNode} from 'react';
-import {VexaBrand} from '../../components/vexa-brand';
+import {RovaqLogo} from '../../components/rovaq-logo';
 import {WorkspaceIcon} from '../../components/workspace/icon';
 import {PlatformNav} from '../../components/platform/platform-nav';
 import {platformAccessForPage} from './_lib/access';
@@ -12,7 +12,7 @@ export default async function PlatformLayout({children}: {children: ReactNode}) 
   return <div className="workspace workspace-shell platform-shell">
     <a className="skip-link workspace-skip" href="#platform-contenido">Saltar al contenido</a>
     <aside className="workspace-sidebar platform-sidebar" aria-label="Plataforma">
-      <div className="sidebar-brand"><Link href="/platform" className="sidebar-logo" aria-label="Rovaq AI, administración"><VexaBrand /></Link></div>
+      <div className="sidebar-brand"><Link href="/platform" className="sidebar-logo" aria-label="Rovaq, administración"><RovaqLogo variante="horizontal" ancho={112} espacioLibre={false} decorativo/></Link></div>
       <div className="workspace-context"><span>Consola de administración</span><strong>Plataforma</strong><small>Organizaciones, fuentes y costos</small></div>
       <PlatformNav />
       <div className="sidebar-footer">

@@ -1,6 +1,19 @@
 /* Rovaq AI — shared tokens and component contracts; responsive rules retain their scope. */
 :root { color-scheme:light; --background:#fbfbfd; --ink:#17100d; --muted:#616876; --accent:#254edb; --ui-canvas:#f9f9fa; --ui-surface:#ffffff; --ui-soft:#f4f4f5; --ui-sunken:#f4f4f5; --ui-border:#ececef; --ui-line-strong:#e4e4e7; --ui-input:#8a8a93; --ui-secondary:#3f3f46; --ui-action:#254edb; --ui-action-hover:#1d3fb6; --ui-action-ink:#ffffff; --ui-nav-active:#254edb; --ui-nav-text:#ffffff; --ui-focus:#254edb; --ui-danger:#ac2440; --ui-danger-soft:#fff3f5; --ui-danger-border:#ecc7d0; --ui-warning:#86580d; --ui-warning-soft:#fff7e5; --ui-chart:#3f3f46; --ui-chart-muted:#a1a1aa; --ui-shadow:0 1px 2px #17181c04,0 8px 24px -16px #17181c20; --ui-fast:120ms; --ui-motion:180ms; --ui-slow:250ms; --ui-ease:cubic-bezier(.22,1,.36,1); --font-ui:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; --font-display:'Inter Tight',Inter,sans-serif; --font-mono:'IBM Plex Mono',monospace; }
 :root[data-theme=dark] { color-scheme:dark; --background:#09090b; --ink:#f4f4f5; --muted:#a6a6ae; --accent:#a3bbff; --ui-canvas:#0e0e11; --ui-surface:#131316; --ui-soft:#1b1b1f; --ui-sunken:#1b1b1f; --ui-border:#232328; --ui-line-strong:#29292e; --ui-input:#7d8595; --ui-secondary:#d1d5de; --ui-action:#6aaff0; --ui-action-hover:#8ac0f4; --ui-action-ink:#131316; --ui-nav-active:#6aaff0; --ui-nav-text:#131316; --ui-focus:#a3bbff; --ui-danger:#ffb3c3; --ui-danger-soft:#342127; --ui-danger-border:#744251; --ui-warning:#ffdc9a; --ui-warning-soft:#342c20; --ui-chart:#d4d4d8; --ui-chart-muted:#707078; --ui-shadow:0 1px 2px #0002,0 8px 24px -16px #0005; }
+/* Marca Rovaq — logotipo (kit): tinta según tema, el punto siempre rojo señal. */
+:root { --rovaq-negro:#0E0E10; --rovaq-rojo:#E8241C; --rovaq-blanco:#FFFFFF; --rovaq-logo-tinta:var(--rovaq-negro); --rovaq-logo-tinta-inverso:var(--rovaq-blanco); }
+:root[data-theme=dark] { --rovaq-logo-tinta:var(--rovaq-blanco); --rovaq-logo-tinta-inverso:var(--rovaq-negro); }
+.rovaq-logo { display:inline-flex; flex:none; line-height:0; max-width:100%; --rovaq-tinta:var(--rovaq-logo-tinta); }
+.rovaq-logo[data-tono=contraste] { --rovaq-tinta:var(--rovaq-logo-tinta-inverso); }
+.rovaq-logo[data-tono=positivo] { --rovaq-tinta:var(--rovaq-negro); }
+.rovaq-logo[data-tono=negativo] { --rovaq-tinta:var(--rovaq-blanco); }
+.rovaq-logo svg { display:block; max-width:100%; height:auto; }
+.rovaq-logo-tinta { fill:var(--rovaq-tinta); }
+.rovaq-logo-colapsado { display:none; }
+.brand-link { display:inline-flex; align-items:center; text-decoration:none; }
+.sidebar-collapsed .workspace-sidebar .rovaq-logo-expandido { display:none; }
+.sidebar-collapsed .workspace-sidebar .rovaq-logo-colapsado { display:inline-flex; }
 * { box-sizing:border-box; }
 html { scroll-padding-top:72px; }
 body { margin:0; background:var(--background); color:var(--ink); font:400 14px/1.6 var(--font-ui); -webkit-font-smoothing:antialiased; letter-spacing:-.011em; }
@@ -17,8 +30,6 @@ button:disabled { cursor:not-allowed; }
 .site-header,.site-footer { max-width:76rem; margin:auto; padding:28px clamp(20px,5vw,64px); display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; }
 .site-header { border-bottom:1px solid var(--ui-border); }
 .site-footer { border-top:1px solid var(--ui-border); color:var(--muted); font-size:12px; }
-.wordmark { font-weight:700; font-size:26px; letter-spacing:-.06em; text-decoration:none; color:var(--ink); }
-.wordmark .brand-ai { margin-left:5px; color:var(--muted); font-size:.52em; font-weight:500; letter-spacing:0; }
 .site-purpose { color:var(--muted); font-size:12px; }
 .status { font:500 11px/1.5 var(--font-mono); padding:5px 10px; background:var(--ui-soft); border:1px solid var(--ui-border); border-radius:999px; color:var(--muted); }
 main { max-width:76rem; margin:auto; padding:clamp(48px,8vw,112px) clamp(20px,5vw,64px); }
@@ -62,7 +73,6 @@ main:has(.login),main:has(.workspace-shell) { max-width:none; padding:0; margin:
 .login-column { min-height:100dvh; padding:28px 24px; display:flex; flex-direction:column; }
 .login-inner { width:100%; max-width:392px; margin:0 auto; flex:1; display:flex; flex-direction:column; }
 .auth-brand { display:flex; align-items:center; min-height:32px; }
-.auth-brand .wordmark { font:700 27px Inter,sans-serif; letter-spacing:-1.2px; color:var(--ink); }
 .login-copy { margin:auto 0; padding:48px 0; }
 .login-kicker { font:500 11px 'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); margin:0; }
 .login-serif { font-family:Fraunces,Georgia,serif; font-weight:400; letter-spacing:-.015em; line-height:1.06; text-wrap:balance; }
@@ -126,7 +136,6 @@ main:has(.login),main:has(.workspace-shell) { max-width:none; padding:0; margin:
 .workspace-shell { display:flex; align-items:stretch; gap:16px; padding:16px; min-height:100dvh; font-size:13px; line-height:1.5; }
 .workspace-shell .workspace-sidebar { position:sticky; top:12px; width:232px; flex:0 0 232px; height:calc(100dvh - 24px); border:1px solid var(--ui-border); border-radius:16px; background:var(--ui-surface); padding:0; display:flex; flex-direction:column; overflow:hidden; }
 .sidebar-logo { display:flex; align-items:center; min-width:0; text-decoration:none; max-width:180px; }
-.sidebar-logo .wordmark { font:700 18px Inter,sans-serif; letter-spacing:-.8px; }
 .workspace-shell .icon-button { display:inline-flex; justify-content:center; align-items:center; width:32px; min-width:32px; min-height:32px; height:32px; padding:6px; border:0; background:transparent; color:var(--muted); border-radius:8px; cursor:pointer; }
 .workspace-shell .icon-button:hover { background:var(--ui-soft); color:var(--ui-action); }
 .workspace-shell .organization-switch label { font:500 10px 'IBM Plex Mono',monospace; letter-spacing:.08em; text-transform:uppercase; }
@@ -176,8 +185,9 @@ body:has(.workspace-shell)>.skip-link { display:none; }
 
 @media(min-width:768px) {
 .sidebar-collapsed .workspace-sidebar { width:72px; flex-basis:72px; }
-.sidebar-collapsed .workspace-sidebar .sidebar-brand { padding:12px 15px; justify-content:center; }
-.sidebar-collapsed .workspace-sidebar .sidebar-logo,.sidebar-collapsed .workspace-sidebar .organization-switch,.sidebar-collapsed .workspace-sidebar .nav-label,.sidebar-collapsed .workspace-sidebar .nav-caption,.sidebar-collapsed .workspace-sidebar .account-copy,.sidebar-collapsed .workspace-sidebar .account-avatar { display:none; }
+.sidebar-collapsed .workspace-sidebar .sidebar-brand { padding:12px 15px; justify-content:center; flex-direction:column; gap:12px; }
+.sidebar-collapsed .workspace-sidebar .sidebar-logo { justify-content:center; }
+.sidebar-collapsed .workspace-sidebar .organization-switch,.sidebar-collapsed .workspace-sidebar .nav-label,.sidebar-collapsed .workspace-sidebar .nav-caption,.sidebar-collapsed .workspace-sidebar .account-copy,.sidebar-collapsed .workspace-sidebar .account-avatar { display:none; }
 .sidebar-collapsed .workspace-sidebar .sidebar-navigation a { justify-content:center; min-height:40px; padding:8px; }
 .sidebar-collapsed .workspace-sidebar .nav-group summary { display:none; }
 .sidebar-collapsed .workspace-sidebar .nav-group ul { display:block; }
@@ -392,12 +402,9 @@ body:has(.workspace-shell) { height:100dvh; overflow:hidden; }
 body label:has(>input:is([type=checkbox],[type=radio])) { min-height:44px; }
 }
 .login .auth-brand { width:fit-content; padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; }
-.login .auth-brand .wordmark { font-size:24px; letter-spacing:-1px; }
 .login .login-btn { white-space:normal; text-align:center; }
 .login-email .login-btn { position:relative; gap:8px; }
 .login-glifo { display:inline-flex; align-items:center; justify-content:center; width:0; overflow:hidden; opacity:0; max-height:18px; }
-.login-glifo .wordmark { font:700 12px/1 Inter,sans-serif; letter-spacing:-.5px; color:inherit; white-space:nowrap; }
-.login-glifo .wordmark span { color:inherit; }
 .login-glifo img { max-height:17px; max-width:44px; object-fit:contain; }
 .login-btn:is(:hover,:focus-visible,[aria-busy=true]) .login-glifo { width:44px; opacity:1; }
 .login-foto-marca { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; animation:none; transform:none; }
@@ -406,7 +413,6 @@ body label:has(>input:is([type=checkbox],[type=radio])) { min-height:44px; }
 .access-selection>header,.access-selection>.login-kicker,.access-selection>h1,.access-selection>[role],.access-selection>.access-back { grid-column:1/-1; }
 .access-selection>.access-destination:only-of-type { grid-column:1/-1; }
 .access-selection .access-brand { display:flex; align-items:center; margin-bottom:28px; }
-.access-brand .wordmark { font-size:23px; }
 .access-selection h1 { margin:10px 0 24px; }
 .access-selection .access-destination { padding:24px; border:1px solid var(--ui-border); border-radius:14px; margin:12px 0; background:var(--ui-surface); }
 .access-destination-heading { display:flex; align-items:flex-start; gap:12px; }

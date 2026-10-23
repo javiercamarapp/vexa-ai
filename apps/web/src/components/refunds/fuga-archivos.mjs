@@ -1,5 +1,6 @@
 // Archivos de «un clic» de Fuga de reembolsos. Se generan EN EL NAVEGADOR a partir de lo que la pantalla ya tiene; no se envía nada a ningún lado.
 // Sin PII por construcción: solo salen SKU, canal, mes, conteos, montos agregados y estados del Tracker de un catálogo cerrado (nunca nombres, correos, pedidos ni texto libre).
+import {rovaqLogoSvg} from '../../../../../packages/workspace-service/marca.mjs';
 import {NOMBRE, ESTADO_TXT, HOJA_TXT, usd, num, pct, mesLargo, dia} from './fuga-modelo.mjs';
 
 /** Una celda de CSV: comillas dobles escapadas y, si empieza con = + - @ (fórmula en una hoja de cálculo), se antepone una comilla simple. Los números pasan tal cual. */
@@ -48,6 +49,7 @@ export function paqueteEvidencia(v, sku) {
   const est = tr ? Object.entries(tr.estados).map(([k, n]) => [ESTADO_TXT[k] ?? k, num(n)]) : [];
   const html = `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Paquete de evidencia · ${esc(sku)}</title>
 <style>body{font:14px/1.55 system-ui,sans-serif;color:#17100d;max-width:860px;margin:32px auto;padding:0 20px}h1{font-size:22px;margin:0 0 4px}h2{font-size:15px;margin:28px 0 8px}p{margin:6px 0}.m{color:#616876;font-size:12.5px}table{border-collapse:collapse;width:100%;margin:6px 0;font-size:13px}th,td{border-bottom:1px solid #dcdde2;padding:6px 8px;text-align:left}th{font-size:12px;color:#616876}td.n{font-variant-numeric:tabular-nums}.k{display:inline-block;border:1px solid #2a78d6;color:#17100d;background:#e8f1fc;border-radius:999px;padding:1px 9px;font-size:11.5px}ul{padding-left:20px}@media print{body{margin:12px}}</style></head><body>
+<header style="padding:14px 0 14px">${rovaqLogoSvg({ancho: 120})}</header>
 <h1>Paquete de evidencia · SKU ${esc(sku)}</h1><p class="m"><span class="k">Observado</span> ${esc(proveniencia(v)[3])}</p>
 <h2>Resumen</h2><p>${num(fila.n)} reembolsos por ${esc(usd(fila.usdBrutoMinor, {decimals: true}))} brutos (${esc(usd(fila.usdNetoMinor, {decimals: true}))} sin reembolsos cancelados). Posición ${fila.pos} entre los SKU del libro; ${pct(fila.acumPct)} acumulado del dinero devuelto hasta este SKU.</p>
 <h2>Por canal</h2>${t1(['Canal', 'Reembolsos', 'USD bruto', 'USD sin cancelados', 'Líneas vendidas en la ventana'], canales)}

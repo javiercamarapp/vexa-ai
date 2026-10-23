@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { authClient, config } from '../../lib/auth';
-import {VexaBrand} from '../../components/vexa-brand';
+import {RovaqLogo} from '../../components/rovaq-logo';
 import {EmailLogin} from '../../components/email-login';
 import {LimpiarCache} from '../../components/limpiar-cache';
 export const metadata={title:'Iniciar sesión'};
@@ -21,7 +21,7 @@ export default async function Login({searchParams}:{searchParams:Promise<{error?
   const email=configured && process.env.VEXA_EMAIL_AUTH_ENABLED==='true';
   return <div className="login"><LimpiarCache/>
     <section className="login-column"><div className="login-inner">
-      <header className="login-entra auth-brand"><VexaBrand/></header>
+      <header className="login-entra auth-brand"><RovaqLogo variante="horizontal" ancho={132}/></header>
       <div className="login-copy">
         <p className="login-kicker login-entra">Tu espacio de trabajo</p>
         <h1 className="login-serif login-entra">Bienvenido a Rovaq AI</h1>

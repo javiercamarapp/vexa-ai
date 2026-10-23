@@ -1,7 +1,7 @@
 //   node --test apps/web/src/lib/legibilidad/resumen-ejecutivo.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {kpiConversaciones,kpiPedidos,topProblemas,estadoFuentes} from './resumen-ejecutivo.mjs';
+import {kpiConversaciones,kpiPedidos,topProblemas,estadoFuentes,mesesCoberturaBaja} from './resumen-ejecutivo.mjs';
 const AHORA=new Date('2026-10-23T00:00:00Z');
 const conv={status:'ok',class:'observed',series:[{month:'2026-07',count:900},{month:'2026-08',count:2575},{month:'2026-09',count:1318},{month:'2026-10',count:77}],completeness:{dataThrough:'2026-10-05T00:00:00.000Z'}};
 test('conversaciones: último mes completo vs anterior; octubre parcial no entra',()=>{
@@ -9,6 +9,28 @@ test('conversaciones: último mes completo vs anterior; octubre parcial no entra
  assert.equal(k.valor,1318);assert.equal(k.mes,'2026-09');assert.equal(k.delta.dir,'down');assert.equal(k.delta.value,'48.8 %');assert.match(k.rotulo,/septiembre de 2026 vs ago/);
  assert.equal(kpiConversaciones({status:'timeout'},AHORA),null);
  assert.equal(kpiConversaciones({...conv,series:[{month:'2026-10',count:5}]},AHORA).valor,null,'sin mes completo no hay cifra');
+});
+// Serie real de vexa-ai (conversation_monthly, leída 23-oct-2026): nov-25 … sep-26; octubre en curso sin conversaciones cargadas.
+const REAL=[['2025-11',3403],['2025-12',5807],['2026-01',5806],['2026-02',1961],['2026-03',3263],['2026-04',4201],['2026-05',5370],['2026-06',6047],['2026-07',8810],['2026-08',2576],['2026-09',1318],['2026-10',0]].map(([month,count])=>({month,count}));
+const CORTE={dataThrough:'2026-10-18T00:00:00.000Z'};
+test('cobertura baja: un mes completo con < 25 % de la mediana no da delta ni flecha, y lo dice con su nombre',()=>{
+ const serie=REAL.map(p=>p.month==='2026-09'?{...p,count:1100}:p);// 1,100 < 25 % de 4,786
+ const k=kpiConversaciones({status:'ok',class:'estimated',sampled:true,series:serie,completeness:CORTE},AHORA);
+ assert.equal(k.delta,null);assert.equal(k.mes,'2026-09');assert.equal(k.valor,1100);assert.deepEqual(k.coberturaBaja,['septiembre']);
+ assert.equal(k.rotulo,'Cobertura baja en septiembre (carga de HubSpot parcial); sin comparación');
+ assert.ok(!k.spark.includes(1100),'la serie de la tarjeta no baja con el mes de cobertura baja');assert.equal(k.estimado,true);
+ assert.deepEqual([...mesesCoberturaBaja({series:serie,completeness:CORTE},AHORA).keys()],['2026-09']);
+});
+test('cobertura baja en el mes BASE de la comparación tampoco da delta (el % saldría inflado)',()=>{
+ const serie=REAL.map(p=>p.month==='2026-08'?{...p,count:900}:p);
+ const k=kpiConversaciones({status:'ok',class:'observed',series:serie,completeness:CORTE},AHORA);
+ assert.equal(k.delta,null);assert.match(k.rotulo,/^Cobertura baja en agosto/);
+});
+test('números reales (jul 8,810 · ago 2,576 · sep 1,318): la regla del 25 % NO marca septiembre (27.5 % de la mediana 4,786) ni agosto (53.8 %)',()=>{
+ const baja=mesesCoberturaBaja({series:REAL,completeness:CORTE},AHORA);
+ assert.equal(baja.size,0,'ningún mes del año queda marcado con los números reales');
+ const k=kpiConversaciones({status:'ok',class:'estimated',sampled:true,series:REAL,completeness:CORTE},AHORA);
+ assert.equal(k.delta.value,'48.8 %');assert.equal(k.delta.dir,'down');
 });
 test('pedidos: monto exacto del último mes completo con su base rotulada, sin convertir monedas',()=>{
  const led={status:'ok',currency:'USD',exponent:2,completeness:{dataThrough:'2026-10-05T00:00:00.000Z'},series:[{month:'2026-08',orders:{count:10,amountMinor:'120000',unknownAmounts:0}},{month:'2026-09',orders:{count:8,amountMinor:'87200700',unknownAmounts:1}},{month:'2026-10',orders:{count:1,amountMinor:'500',unknownAmounts:0}}]};

@@ -33,30 +33,30 @@ const peso=(c:Cita)=>c.severity==='critical'?3:c.severity==='high'?2:c.severity=
 
 /** Citas verificadas al abrir: la evidencia viva con la versión vigente del problema (misma herramienta que el Explorador). Si no llega, se usan las del corte (si las hay). */
 function useEvidencia(id:string,shared:string,captured:ConversationRef[]|null){
- const [citas,setCitas]=useState<Cita[]|null>(null),[fallo,setFallo]=useState(false),[reload,setReload]=useState(0);
+ const [citas,setCitas]=useState<Cita[]|null>(null),[fallo,setFallo]=useState(false),[reload,setReload]=useState(0),[cobertura,setCobertura]=useState<{runsVerified:number;runsTotal:number}|null>(null);
  const sinAlcance=!new URLSearchParams(shared).get('snapshot_id');
  useEffect(()=>{
   if(sinAlcance)return;
   const abort=new AbortController(),params=new URLSearchParams(shared),q=new URLSearchParams();
   for(const key of ['date_start','date_end','timezone','date_basis','currency','basis','exponent','snapshot_id','scope_hash'])if(params.get(key)!==null)q.set(key,params.get(key)!);
   for(const key of ['sku','source'])for(const v of params.getAll(key))q.append(key,v);
-  void Promise.resolve().then(()=>{setCitas(null);setFallo(false);});
+  void Promise.resolve().then(()=>{setCitas(null);setCobertura(null);setFallo(false);});
   void (async()=>{try{
    const pedir=()=>fetch('/api/explorer/tools',{method:'POST',cache:'no-store',signal:abort.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'get_evidence',args:{query:q.toString(),problemId:id}})});
    let response=await pedir();
    // Un reintento silencioso ante 5xx (conexión cortada por el pooler) antes de mostrar «No se pudo verificar».
    if(response.status>=500){await new Promise(r=>setTimeout(r,1200));if(abort.signal.aborted)return;response=await pedir();}
    if(!response.ok)throw Error(String(response.status));
-   const result=(await response.json()).data?.result as {problemId:string;citations:Cita[]}|undefined;
+   const result=(await response.json()).data?.result as {problemId:string;citations:Cita[];verification?:{runsVerified:number;runsTotal:number}|null}|undefined;
    if(abort.signal.aborted)return;
    if(!result||result.problemId!==id||!Array.isArray(result.citations))throw Error('shape');
-   setCitas(result.citations);
+   setCobertura(result.verification&&result.verification.runsTotal>result.verification.runsVerified?result.verification:null);setCitas(result.citations);
   }catch{if(!abort.signal.aborted)setFallo(true);}})();
   return()=>abort.abort();
  },[id,shared,sinAlcance,reload]);
  const delCorte=useMemo<Cita[]|null>(()=>captured&&captured.length?captured.flatMap(c=>('citations' in c&&Array.isArray(c.citations)?c.citations:[]).map((q:{message_revision_id:string;quote:string;quote_hash:string;role:string})=>({conversationId:c.id,messageRevisionId:q.message_revision_id,quote:q.quote,quoteHash:q.quote_hash,role:q.role,source:c.source}))):null,[captured]);
  const usable=citas??(fallo?delCorte:null);
- return {citas:usable,esperando:!sinAlcance&&citas===null&&!fallo,fallo:fallo&&usable===null,sinAlcance,reintentar:()=>setReload(n=>n+1)};
+ return {citas:usable,cobertura,esperando:!sinAlcance&&citas===null&&!fallo,fallo:fallo&&usable===null,sinAlcance,reintentar:()=>setReload(n=>n+1)};
 }
 
 function Kpi({label,kind,children,foot}:{label:string;kind?:Parameters<typeof KindBadge>[0]['kind'];children:ReactNode;foot?:ReactNode}){
@@ -127,6 +127,7 @@ export function ProblemSheet({id,shared,captured,dinero,facts,onTitle}:{id:strin
     <p className={s.privacy} role="note"><Icon name="info" size={14}/><span>{AVISO_TERCEROS}</span></p>
     <div className={s.evi}>{lista.map((c,i)=><Citation key={c.messageRevisionId+':'+c.quoteHash+':'+i} quote={c.quote} role={c.role} category={c.category} source={c.source} messageRevisionId={c.messageRevisionId} times={c.veces}/>)}</div>
     {distintas.length>VISIBLES&&<div style={{marginTop:'var(--sp-3)'}}><Button size="sm" aria-expanded={todas} onClick={()=>setTodas(v=>!v)}>{todas?`Ver solo las ${VISIBLES} primeras`:`Ver ${nf.format(Math.min(TOPE,distintas.length))} de ${nf.format(distintas.length)} citas distintas`}</Button></div>}
+    {ev.cobertura&&<p className="state" role="note">Citas verificadas de {nf.format(ev.cobertura.runsVerified)} de {nf.format(ev.cobertura.runsTotal)} extracciones del grupo: así la ficha abre rápido. Las demás siguen registradas, pero no se leen en esta vista.</p>}
     {ev.citas&&ev.citas.length>distintas.length&&<p className="state" role="note">{nf.format(ev.citas.length)} registros; las citas idénticas se muestran una vez con «×N».</p>}
    </>}
   </section>

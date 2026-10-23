@@ -42,7 +42,10 @@ function useEvidencia(id:string,shared:string,captured:ConversationRef[]|null){
   for(const key of ['sku','source'])for(const v of params.getAll(key))q.append(key,v);
   void Promise.resolve().then(()=>{setCitas(null);setFallo(false);});
   void (async()=>{try{
-   const response=await fetch('/api/explorer/tools',{method:'POST',cache:'no-store',signal:abort.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'get_evidence',args:{query:q.toString(),problemId:id}})});
+   const pedir=()=>fetch('/api/explorer/tools',{method:'POST',cache:'no-store',signal:abort.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'get_evidence',args:{query:q.toString(),problemId:id}})});
+   let response=await pedir();
+   // Un reintento silencioso ante 5xx (conexión cortada por el pooler) antes de mostrar «No se pudo verificar».
+   if(response.status>=500){await new Promise(r=>setTimeout(r,1200));if(abort.signal.aborted)return;response=await pedir();}
    if(!response.ok)throw Error(String(response.status));
    const result=(await response.json()).data?.result as {problemId:string;citations:Cita[]}|undefined;
    if(abort.signal.aborted)return;

@@ -8,6 +8,7 @@ const SKUS = [['DEMO-LSA-1', 'walmart', 394, 198], ['DEMO-LSB-10', 'walmart', 24
 const COLA = Array.from({length: 80}, (_, i) => ['DEMO-T' + String(i + 1).padStart(2, '0'), i % 3 ? 'walmart' : 'amazon', 24 + (i % 7), 150 + (i % 5) * 10]);
 const TODOS = [...SKUS, ...COLA];
 const MESES_R = {walmart: ['2026-07', '2026-08', '2026-09', '2026-10'], amazon: ['2026-05', '2026-06', '2026-07', '2026-08', '2026-09', '2026-10']};
+const dias = m => ({first_day: m + '-03', last_day: m === '2026-10' ? '2026-10-02' : m + '-28'});
 export function filasReembolsos() {
   const r = lcg(7), out = [];
   for (const [sku, ch, n, cents] of TODOS) {
@@ -19,12 +20,12 @@ export function filasReembolsos() {
       if (!q) return;
       const cancelados = ch === 'walmart' ? Math.round(q * 0.14) : 0, sinMonto = ch === 'amazon' ? Math.round(q * 0.23) : 0;
       const ok = q - cancelados;
-      if (ok > 0) out.push({ch, sku, month: m, status: ch === 'walmart' ? 'settled' : 'unknown', currency: 'USD', exponent: 2, n: ok, sinMonto, amount: String((ok - sinMonto) * cents * 100)});
-      if (cancelados > 0) out.push({ch, sku, month: m, status: 'cancelled', currency: 'USD', exponent: 2, n: cancelados, sinMonto: 0, amount: String(cancelados * cents * 100)});
+      if (ok > 0) out.push({ch, sku, month: m, status: ch === 'walmart' ? 'settled' : 'unknown', currency: 'USD', exponent: 2, n: ok, sinMonto, amount: String((ok - sinMonto) * cents * 100), ...dias(m)});
+      if (cancelados > 0) out.push({ch, sku, month: m, status: 'cancelled', currency: 'USD', exponent: 2, n: cancelados, sinMonto: 0, amount: String(cancelados * cents * 100), ...dias(m)});
     });
   }
-  out.push({ch: 'shopify', sku: '', month: '2026-09', status: 'settled', currency: 'USD', exponent: 2, n: 13, sinMonto: 0, amount: '108000'});
-  out.push({ch: 'amazon', sku: 'DEMO-STX-1', month: '2026-09', status: 'unknown', currency: 'CAD', exponent: 2, n: 4, sinMonto: 0, amount: '52000'});
+  out.push({ch: 'shopify', sku: '', month: '2026-09', status: 'settled', currency: 'USD', exponent: 2, n: 13, sinMonto: 0, amount: '108000', ...dias('2026-09')});
+  out.push({ch: 'amazon', sku: 'DEMO-STX-1', month: '2026-09', status: 'unknown', currency: 'CAD', exponent: 2, n: 4, sinMonto: 0, amount: '52000', ...dias('2026-09')});
   return out;
 }
 const LINEAS_MES = {amazon: {'2025-10': 4417, '2025-11': 7934, '2025-12': 13250, '2026-01': 11053, '2026-02': 1202, '2026-03': 1795, '2026-04': 2087, '2026-05': 1988, '2026-06': 2457, '2026-07': 2082, '2026-08': 4270, '2026-09': 3354, '2026-10': 52},

@@ -124,3 +124,9 @@ test('QA3-005: TeamPanel usa las guardas y el servidor entrega la identidad de q
  assert.match(t,/visibles\(items\)/);assert.match(t,/puedeRevocar\(item,/);assert.match(t,/rolEs\(role\)/);assert.doesNotMatch(t,/<option key=\{role\}>\{role\}<\/option>/);assert.doesNotMatch(t,/\{item\.role\} · \{item\.status\}/);
  assert.match(s,/viewerId:verified\.data\.user\.id/);
 });
+test('QA3-006: /login con sesión válida redirige a /overview y no muestra «pendiente de configurar»',()=>{
+ const l=leer('../../app/login/page.tsx'),e=leer('../../components/email-login.tsx');
+ assert.match(l,/if\(signedIn&&!loginError\)redirect\('\/overview'\)/);assert.match(l,/import \{ redirect \} from 'next\/navigation'/);
+ assert.ok(l.indexOf("redirect('/overview')")>l.indexOf('signedIn=!error&&!!data.user'),'la redirección va después de leer la sesión');
+ assert.doesNotMatch(l+e,/pendiente de configurar/i);assert.match(l,/\{google&&<>/);
+});

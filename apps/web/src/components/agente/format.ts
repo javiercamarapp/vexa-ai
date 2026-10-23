@@ -21,3 +21,8 @@ export function paramValue(key:string,v:unknown):string{
 export function download(name:string,text:string,type:string){
  try{const url=URL.createObjectURL(new Blob([text],{type}));const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),0);return true;}catch{return false;}
 }
+/** Opens a standalone HTML report in a new tab (so «Imprimir» saves a PDF); if the browser blocks the pop-up, downloads it instead. */
+export function openReport(name:string,html:string){
+ try{const url=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));const w=window.open(url,'_blank');if(w)w.opener=null;setTimeout(()=>URL.revokeObjectURL(url),60000);if(w)return true;URL.revokeObjectURL(url);}catch{/* falls back to download */}
+ return download(name,html,'text/html;charset=utf-8');
+}

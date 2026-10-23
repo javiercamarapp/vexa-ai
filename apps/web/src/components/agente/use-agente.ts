@@ -1,15 +1,24 @@
 'use client';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {Answer,ChatMessage,Conversation,Direct,Step} from './types';
+import type {AdjuntoResumen} from './attachments';
 import {loadConversations,saveConversations,titleOf} from './store';
 export const PHASES:ReadonlyArray<readonly [number,string]>=[[0,'Entendiendo tu pregunta…'],[2500,'Consultando tus datos…'],[8000,'Armando la respuesta…'],[20000,'Sigo trabajando en esto…']];
 const TIMEOUT_MS=75000;
 const phaseAt=(ms:number)=>{let t=PHASES[0][1];for(const [from,text] of PHASES)if(ms>=from)t=text;return t;};
 let counter=0;const uid=(p:string)=>`${p}-${Date.now().toString(36)}-${++counter}`;
+/** Folds one server event into the live step list. Pure: exported for tests. */
+export function applyEvent(prev:Step[],e:TurnEvent,labels:Record<string,string>):Step[]{
+ if(e.t==='traza'&&e.paso)return [...prev,{id:e.paso.id,kind:e.paso.kind,label:e.paso.label,done:true,estado:e.paso.estado,ms:e.paso.ms,detail:e.paso.detail}];
+ const tool=e.herramienta;if(e.t!=='paso'||!tool)return prev;
+ if(e.fase==='fin')return prev.map(s=>s.kind==='tool'&&s.tool===tool&&!s.done?{...s,done:true,estado:e.estado,ms:e.ms,cifras:e.cifras,fuentes:e.fuentes}:s);
+ return [...prev,{id:`tool:${prev.filter(s=>s.kind==='tool').length+1}`,kind:'tool',tool,label:labels[tool]??tool,done:false}];
+}
 const failAnswer=(status:Answer['status'],text:string):Answer=>({status,text,figures:[],blocks:[],citations:[],sources:[],calc:[],missing:[],suggestions:[],usage:{modelCalls:0,toolCalls:0,costMinor:'0',mode:'deterministic',fallback:false,guardRejected:false}});
 
 /** Reads the NDJSON turn stream: `paso` events while tools run, then `fin` (or `error`). Also accepts a single JSON line. */
-async function runTurn(body:unknown,signal:AbortSignal,onStep:(tool:string,done:boolean)=>void):Promise<Answer>{
+export type TurnEvent={t?:string;fase?:string;herramienta?:string;estado?:string;ms?:number|null;cifras?:number;fuentes?:string[];paso?:{id:string;kind:Step['kind'];label:string;estado:string;ms:number|null;detail?:string}};
+async function runTurn(body:unknown,signal:AbortSignal,onEvent:(e:TurnEvent)=>void):Promise<Answer>{
  const res=await fetch('/api/agent/turn',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal,cache:'no-store'});
  if(!res.ok){
   if(res.status===401||res.status===403)return failAnswer('forbidden','Tu rol no tiene acceso a estas consultas.');
@@ -18,8 +27,9 @@ async function runTurn(body:unknown,signal:AbortSignal,onStep:(tool:string,done:
  }
  let final:Answer|null=null;
  const handle=(line:string)=>{
-  if(!line.trim())return;let e:{t?:string;fase?:string;herramienta?:string;respuesta?:Answer;status?:Answer['status'];mensaje?:string};try{e=JSON.parse(line);}catch{return;}
-  if(e.t==='paso'&&e.herramienta)onStep(e.herramienta,e.fase==='fin');
+  if(!line.trim())return;let e:TurnEvent&{respuesta?:Answer;status?:Answer['status'];mensaje?:string};try{e=JSON.parse(line);}catch{return;}
+  if(e.t==='paso'&&e.herramienta)onEvent(e);
+  else if(e.t==='traza'&&e.paso)onEvent(e);
   else if(e.t==='fin'&&e.respuesta)final=e.respuesta;
   else if(e.t==='error')final=failAnswer(e.status??'unavailable',e.mensaje??'');
  };
@@ -31,7 +41,7 @@ async function runTurn(body:unknown,signal:AbortSignal,onStep:(tool:string,done:
  return final??failAnswer('unavailable','');
 }
 
-export function useAgente(scope:string,maxChars:number,maxTurns:number){
+export function useAgente(scope:string,maxChars:number,maxTurns:number,toolLabels:Record<string,string>={}){
  const [conversations,setConversations]=useState<Conversation[]>([]);
  const [activeId,setActiveId]=useState<string|null>(null);
  const [messages,setMessages]=useState<ChatMessage[]>([]);
@@ -60,11 +70,11 @@ export function useAgente(scope:string,maxChars:number,maxTurns:number){
   const id=activeRef.current??uid('c');if(!activeRef.current){activeRef.current=id;setActiveId(id);}
   const userMsg:ChatMessage={id:uid('u'),role:'user',text:q,at:new Date().toISOString(),...(directa?{directa}:{})};
   const withUser=[...base,userMsg];setMessages(withUser);setSteps([]);setPhase(PHASES[0][1]);setSending(true);
-  const history=base.slice(-8).map(m=>({role:m.role,text:m.role==='assistant'?(m.answer?.text??m.text):m.text})).filter(h=>h.text);
-  const turns=base.filter(m=>m.role==='user').length;
+  const history=base.filter(m=>m.kind!=='adjunto').slice(-8).map(m=>({role:m.role,text:m.role==='assistant'?(m.answer?.text??m.text):m.text})).filter(h=>h.text);
+  const turns=base.filter(m=>m.role==='user'&&m.kind!=='adjunto').length;
   let answer:Answer,cancelled=false;
   try{
-   answer=await runTurn({question:q,history,conversationTurns:turns,...(directa?{directa}:{})},ctl.signal,(tool,done)=>{if(ctl.signal.aborted)return;setSteps(prev=>done?prev.map(s=>s.tool===tool&&!s.done?{...s,done:true}:s):[...prev,{tool,done:false}]);});
+   answer=await runTurn({question:q,history,conversationTurns:turns,...(directa?{directa}:{})},ctl.signal,e=>{if(ctl.signal.aborted)return;setSteps(prev=>applyEvent(prev,e,toolLabels));});
   }catch(e){
    if(e instanceof DOMException&&e.name==='AbortError'&&!timedOut){cancelled=true;answer=failAnswer('unavailable','');}
    else answer=failAnswer('unavailable','');
@@ -73,15 +83,21 @@ export function useAgente(scope:string,maxChars:number,maxTurns:number){
   const reply:ChatMessage={id:uid('a'),role:'assistant',text:cancelled?'Cancelado.':answer.text,at:new Date().toISOString(),question:q,...(directa?{directa}:{}),...(cancelled?{cancelled:true}:{answer})};
   const all=[...withUser,reply];setMessages(all);persist(id,all);
   busy.current=false;control.current=null;setSending(false);setSteps([]);
- },[maxChars,persist]);
+ },[maxChars,persist,toolLabels]);
 
  const send=useCallback((q:string,directa?:Direct)=>{
-  if(messagesRef.current.filter(m=>m.role==='user').length>=maxTurns)return false;
+  if(messagesRef.current.filter(m=>m.role==='user'&&m.kind!=='adjunto').length>=maxTurns)return false;
   void turn(q,messagesRef.current,directa);return true;
  },[turn,maxTurns]);
+ /** Adds a LOCAL attachment card to the thread. It never reaches the server and is never part of `history`. */
+ const attach=useCallback((resumen:AdjuntoResumen)=>{
+  const msg:ChatMessage={id:uid('f'),role:'user',kind:'adjunto',text:`Adjunto: ${resumen.name}`,at:new Date().toISOString(),adjunto:resumen};
+  const id=activeRef.current??uid('c');if(!activeRef.current){activeRef.current=id;setActiveId(id);}
+  const all=[...messagesRef.current,msg];setMessages(all);persist(id,all);
+ },[persist]);
  const stop=useCallback(()=>control.current?.abort(),[]);
  const regenerate=useCallback(()=>{
-  const list=messagesRef.current;let i=list.length-1;while(i>=0&&list[i].role!=='user')i--;
+  const list=messagesRef.current;let i=list.length-1;while(i>=0&&(list[i].role!=='user'||list[i].kind==='adjunto'))i--;
   if(i<0||busy.current)return;const last=list[i];void turn(last.text,list.slice(0,i),last.directa);
  },[turn]);
  const newChat=useCallback(()=>{gen.current++;control.current?.abort();busy.current=false;setSending(false);setSteps([]);activeRef.current=null;setActiveId(null);setMessages([]);},[]);
@@ -91,5 +107,5 @@ export function useAgente(scope:string,maxChars:number,maxTurns:number){
  const setFeedback=useCallback((messageId:string,fb:ChatMessage['feedback'])=>{
   const next=messagesRef.current.map(m=>m.id===messageId?{...m,feedback:fb}:m);setMessages(next);if(activeRef.current)persist(activeRef.current,next);
  },[persist]);
- return {conversations,activeId,messages,sending,phase,steps,send,stop,regenerate,newChat,open,rename,remove,setFeedback,turnsUsed:messages.filter(m=>m.role==='user').length};
+ return {conversations,activeId,messages,sending,phase,steps,send,stop,regenerate,newChat,open,rename,remove,setFeedback,turnsUsed:messages.filter(m=>m.role==='user'&&m.kind!=='adjunto').length,attach};
 }

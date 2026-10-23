@@ -5,6 +5,8 @@ const P:Record<string,string>={
  sheet:'M4 4h16v16H4z M4 10h16 M10 4v16', download:'M12 4v11m-5-5 5 5 5-5M5 20h14', refresh:'M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5',
  up:'M7 11v9H4v-9h3Z M7 11l4-8a2 2 0 0 1 3 2v4h5a2 2 0 0 1 2 2l-1 6a2 2 0 0 1-2 2H7', down:'M7 13V4H4v9h3Z M7 13l4 8a2 2 0 0 0 3-2v-4h5a2 2 0 0 0 2-2l-1-6a2 2 0 0 0-2-2H7',
  arrow:'M5 12h14M13 6l6 6-6 6', alert:'M12 3 2 21h20L12 3Z M12 9v5 M12 17h.01', info:'M12 8h.01 M11 12h1v5h1 M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0', lock:'M6 11h12v10H6z M8 11V7a4 4 0 0 1 8 0v4',
+ back:'M19 12H5 M11 6l-6 6 6 6',
+ clip:'M21 12.5 12.6 21a5.5 5.5 0 0 1-7.8-7.8l9-9a3.7 3.7 0 0 1 5.2 5.2l-9 9a1.8 1.8 0 0 1-2.6-2.6l8.2-8.2', menu:'M4 7h16 M4 12h16 M4 17h16', report:'M7 3h8l4 4v14H7z M14 3v5h5 M10 13h6 M10 17h6',
  edit:'M4 20h4L19 9l-4-4L4 16v4Z', trash:'M4 7h16 M9 7V4h6v3 M6 7l1 13h10l1-13', close:'m6 6 12 12 M6 18 18 6',
 };
 export function Icon({name,size=16}:{name:keyof typeof P|string;size?:number}){return <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={P[name]??P.info}/></svg>;}

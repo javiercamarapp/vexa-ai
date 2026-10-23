@@ -126,7 +126,7 @@ export function createProvenanceRepository({database}){
    let associations=none('associations');
    // Conteos mantenidos (association_counts, 20261022000000): no dependen de la política initplan 20261021000000. Sin ellos: tally exacto o muestra.
    const asum=await readAssociationCounts(s);
-   const assocBase=(c,total,linkCount,exact,tail,extra={})=>base('associations',{class:exact?'observed':'estimated',total,incorporated:total,
+   const assocBase=(c,total,linkCount,exact,tail,extra={})=>base('associations',{class:exact?'observed':'estimated',total,incorporated:total,counts:{facts:total,resolved:c.resolved??0,pending:c.pending??0,blocked:c.blocked??0,retained:c.retained??0,links:linkCount},
     detail:[`${total.toLocaleString('es-MX')} hechos (resueltos ${(c.resolved??0).toLocaleString('es-MX')} · pendientes ${(c.pending??0).toLocaleString('es-MX')} · por revisar ${(c.blocked??0).toLocaleString('es-MX')} · retenidos ${(c.retained??0).toLocaleString('es-MX')})`,linkCount===null?'Vínculos: no disponible ahora':`${linkCount.toLocaleString('es-MX')} vínculos activos conversación–cliente`].concat(tail),...extra});
    if(asum.availability==='ready'&&asum.counts.fact_resolved!==undefined){
     const k=asum.counts,c={resolved:k.fact_resolved,pending:k.fact_pending,blocked:k.fact_blocked,retained:k.fact_retained},total=c.resolved+c.pending+c.blocked+c.retained;

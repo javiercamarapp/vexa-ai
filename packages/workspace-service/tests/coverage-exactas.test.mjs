@@ -74,6 +74,7 @@ test('cobertura exacta a escala real (libro, hechos y vínculos): Observado, cif
       assert.equal(S.associations.class, 'observed'); assert.equal(S.associations.total, FACTS);
       assert.match(S.associations.detail[0], /117[.,]719 hechos/); assert.match(S.associations.detail[0], /resueltos 72[.,]720/);
       assert.match(S.associations.detail[1], /72[.,]720 vínculos activos/); assert.ok(S.associations.detail.includes('Conteo exacto.'));
+      { const c = S.associations.counts; assert.equal(c.facts, FACTS); assert.equal(c.resolved, 72720); assert.equal(c.links, 72720); assert.equal(c.resolved + c.pending + c.blocked + c.retained, FACTS); } // conteos estructurados para «Datos y fuentes» (62 %)
       assert.ok(!S.associations.detail.some(l => /Estimado/.test(l)));
     });
     await t.test('libro: conteo exacto de entidades, clase Observado', () => {

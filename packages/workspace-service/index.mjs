@@ -5,6 +5,7 @@ import {createProblemRepository} from '../problems/repository.mjs';
 import {adaptLedger} from '../economics/adapter.mjs';
 import {EconomicError} from '../metrics/repository.mjs';
 import {memoSection,memoized,hasRefSummary,latestRows,latestEntries,shareMemo} from '../metrics/ledger-load.mjs';
+import {catalogOverview} from './catalog-overview.mjs';
 import {WorkspaceError,check,canonical,hash,uuid,parseWorkspaceQuery,canonicalScopeHash,cursorAuthHash,encodeCursor,decodeCursor} from './contracts.mjs';
 const VERSION='workspace-projection-v1',one=async(s,q,a=[])=>(await s.query(q,a)).rows[0],iso=x=>new Date(x).toISOString();
 const uniq=x=>[...new Set(x)].sort();
@@ -18,20 +19,23 @@ class CriticalBudgetExceeded extends Error{}
 // por UNA consulta por lotes. NO se recalcula aquí el sha256 del texto, el input_hash, la validación de la extracción ni las lápidas de mensajes (evidenceCurrent/getMany completos);
 // esa verificación completa sigue en el detalle de cada problema, en priority.view/rank y en las exportaciones. Si no alcanza el presupuesto: «unavailable», nunca 0.
 const CRITICAL_CATEGORY=/safety|privacy|fraud|seguridad|privacidad|humo|smoke|fire|incendio|quemadura/i;
-export async function criticalCount(s){
+export const isCriticalIssue=r=>['high','critical'].includes(r.severity)||CRITICAL_CATEGORY.test(r.category??'');
+// `collect` (opcional): recibe las filas {pid,category,severity,spans} que ya se leyeron, para que el resumen del catálogo no repita la consulta.
+export async function criticalCount(s,collect=null){
  const active=(await createProblemRepository({database:scopedDb(s)}).list({verification:'summary'})).filter(p=>p.state==='active');
  const pids=[],eids=[];for(const p of active)for(const e of p.embeddingIds??[]){pids.push(p.id);eids.push(e);}
- if(!pids.length)return 0;
- const rows=(await s.query(`SELECT w.pid,i.category,i.severity FROM unnest($2::uuid[],$3::uuid[]) w(pid,eid)
+ if(!pids.length){if(collect)collect.rows=[];return 0;}
+ const rows=(await s.query(`SELECT w.pid,i.category,i.severity,count(DISTINCT es.id)::int AS spans FROM unnest($2::uuid[],$3::uuid[]) w(pid,eid)
   JOIN public.problem_embedding_members m ON m.tenant_id=$1 AND m.embedding_id=w.eid
   JOIN public.embeddings e ON e.tenant_id=m.tenant_id AND e.id=m.embedding_id
   JOIN public.issues i ON i.tenant_id=m.tenant_id AND i.extraction_run_id=m.extraction_run_id
   JOIN public.evidence_spans es ON es.tenant_id=i.tenant_id AND es.issue_id=i.id AND es.message_revision_id=e.message_revision_id
   GROUP BY w.pid,i.category,i.severity`,[s.tenantId,pids,eids])).rows;
- const critical=new Set();for(const r of rows)if(['high','critical'].includes(r.severity)||CRITICAL_CATEGORY.test(r.category??''))critical.add(r.pid);
+ const critical=new Set();for(const r of rows)if(isCriticalIssue(r))critical.add(r.pid);
+ if(collect)collect.rows=rows;
  return critical.size;
 }
-export async function criticalSignals(s,snapshotId,budgetMs=CRITICAL_BUDGET_MS){
+export async function criticalSignals(s,snapshotId,budgetMs=CRITICAL_BUDGET_MS,collect=null){
  const deadline=Date.now()+budgetMs;
  const limited=Object.freeze({...s,query:(text,values)=>Date.now()>deadline?Promise.reject(new CriticalBudgetExceeded('critical_signals_budget_exceeded')):s.query(text,values)});
  // El presupuesto de pared solo se comprueba ENTRE consultas; una sola sentencia (la verificación completa de evidencia de ~400 problemas, ≈13 s en producción) lo excedía y
@@ -40,7 +44,7 @@ export async function criticalSignals(s,snapshotId,budgetMs=CRITICAL_BUDGET_MS){
  let guarded=false,previous=null;
  if(budgetMs>0){previous=(await s.query("SELECT current_setting('statement_timeout') AS v")).rows[0]?.v??null;await s.query('SAVEPOINT critical_signals');await s.query("SELECT set_config('statement_timeout',$1,true)",[Math.ceil(budgetMs)+'ms']);guarded=true;}
  const release=shareMemo(s,limited); // la verificación del snapshot ya hecha en esta transacción se reutiliza, no se repite
- try{const out={status:'ok',count:await criticalCount(limited)};
+ try{const out={status:'ok',count:await criticalCount(limited,collect)};
   if(guarded){await s.query("SELECT set_config('statement_timeout',$1,true)",[previous??'0']);await s.query('RELEASE SAVEPOINT critical_signals');}
   return out;}
  catch(e){
@@ -135,7 +139,7 @@ export function createWorkspaceService({database}){
  const tx=async(action,work)=>{let domain;try{return await database.transaction(action,async s=>{try{return await memoSection(s,()=>work(s));}catch(e){if(e instanceof WorkspaceError||e instanceof EconomicError)domain=e;throw e;}});}catch(e){if(domain)throw domain;throw e;}};
  const api={
  // problemIds (solo corte sin vínculos): lista y verifica (resumen) únicamente esos problemas del catálogo; lo usa el detalle de UN problema para no verificar las ~400 corridas-problema del catálogo entero.
- async query(query,{all=false,metaOnly=false,signals=true,problemIds=null}={}){const request=query instanceof URLSearchParams?parseWorkspaceQuery(query):query;let requestTenant=null;// Pinned scopes need no materialization; authorization and binding integrity are checked in the final read.
+ async query(query,{all=false,metaOnly=false,signals=true,problemIds=null,catalog:wantCatalog=false}={}){const request=query instanceof URLSearchParams?parseWorkspaceQuery(query):query;let requestTenant=null;// Pinned scopes need no materialization; authorization and binding integrity are checked in the final read.
  const finalRead=async s=>{
  check(requestTenant===null||s.tenantId===requestTenant,'tenant_changed',403);
  const q=request.scope,base=await baseSnapshot(s,q);if(!base)return {items:[],meta:{state:'empty',snapshot_id:null,base_snapshot_id:null,base_scope_hash:null,scope_hash:null,cursor_auth_hash:null,coverage:'Sin snapshot publicado para este alcance.',watermark:null,next_cursor:null,critical_notice:null,scope:q,mapping_manifest_id:null,can_manage:s.role==='owner'}};
@@ -153,10 +157,12 @@ export function createWorkspaceService({database}){
  const global=choose('exposure.global',p.exposure.global),orders=choose('allOrders',p.allOrders),refunds=choose('refunds',p.refunds);
  const ids=filtered?p.problemIds:memberIds;const history=await historicalProblems(s,base,ids,bound);const stale=[...history.values()].some(p=>p.stale);
  const ref='workspace:'+bound.row.scope_hash,make=(id,title,version,problemId,metrics,valid=true)=>({id,title,summary:problemId?'Filas por problema no aditivas; el global usa la unión de órdenes.':'Importes del snapshot publicado. SKU selecciona órdenes que contienen el producto; no ventas por línea.',status:valid?(metrics.some(m=>m.amount_minor===null)?'partial':'ready'):'stale',version,owner:null,customer_id:null,problem_id:problemId,metrics,evidence:[],details:[{label:'Snapshot',value:base.view.id},{label:'Alcance derivado',value:bound.row.scope_hash},{label:'Asociaciones',value:'Declaradas y aprobadas por un propietario; no validación automática de CRM.'}]});
- let items;if(notLinked){const catalog=await catalogProblems(s,problemIds);items=catalog.map(c=>({...make(c.id,c.label,c.version,c.id,[metric(nullMetric(base.view.scope,EXPOSURE_NOT_LINKED),'Ingresos expuestos','exposure',ref)]),summary:'Problema vigente del catálogo. Sin vínculos problema–pedido: la exposición no se calcula (desconocida, no cero).',details:[{label:'Incidencias (conversaciones)',value:String(c.incidences)},{label:'Exposición',value:'No disponible: sin vínculos problema–pedido'},{label:'Snapshot',value:base.view.id}]}));}else if(request.resource==='metrics')items=[make(base.view.id,'Resumen económico',1,null,[metric(global,'Ingresos expuestos','exposure',ref),metric(orders,'Órdenes registradas','allOrders',ref),metric(refunds,'Reembolsos liquidados','refunds',ref)])];else items=ids.map(id=>{const h=history.get(id),m=h.valid?choose('exposure.'+id,p.exposure.byProblem[id]??nullMetric(base.view.scope,'DIMENSION_MEMBERSHIP_UNKNOWN')):nullMetric(base.view.scope,'HISTORICAL_PROBLEM_VERSION_UNAVAILABLE');return make(id,h.label,h.version,id,[metric(m,'Ingresos expuestos','exposure',ref)],h.valid);}).sort((a,b)=>a.id.localeCompare(b.id));
+ let items,catalog=null;if(notLinked){catalog=await catalogProblems(s,problemIds);items=catalog.map(c=>({...make(c.id,c.label,c.version,c.id,[metric(nullMetric(base.view.scope,EXPOSURE_NOT_LINKED),'Ingresos expuestos','exposure',ref)]),summary:'Problema vigente del catálogo. Sin vínculos problema–pedido: la exposición no se calcula (desconocida, no cero).',details:[{label:'Incidencias (conversaciones)',value:String(c.incidences)},{label:'Exposición',value:'No disponible: sin vínculos problema–pedido'},{label:'Snapshot',value:base.view.id}]}));}else if(request.resource==='metrics')items=[make(base.view.id,'Resumen económico',1,null,[metric(global,'Ingresos expuestos','exposure',ref),metric(orders,'Órdenes registradas','allOrders',ref),metric(refunds,'Reembolsos liquidados','refunds',ref)])];else items=ids.map(id=>{const h=history.get(id),m=h.valid?choose('exposure.'+id,p.exposure.byProblem[id]??nullMetric(base.view.scope,'DIMENSION_MEMBERSHIP_UNKNOWN')):nullMetric(base.view.scope,'HISTORICAL_PROBLEM_VERSION_UNAVAILABLE');return make(id,h.label,h.version,id,[metric(m,'Ingresos expuestos','exposure',ref)],h.valid);}).sort((a,b)=>a.id.localeCompare(b.id));
  const authHash=cursorAuthHash(s,bound.row.scope_hash,base.view.id),expected={resource:request.resource,authHash,snapshotId:base.view.id,dataScopeHash:bound.row.scope_hash};const after=decodeCursor(request.cursor,expected);if(after){const at=items.findIndex(i=>i.id===after);check(at>=0,'cursor_position_invalid',409);items=notLinked?items.slice(at+1):items.filter(i=>i.id>after);}const more=!all&&items.length>request.limit;items=all?items:items.slice(0,request.limit);
- const signalsResult=signals?await criticalSignals(s,base.view.id):{status:'unavailable',count:null},critical=signalsResult.count??0;
- return {items,meta:{state:stale?'stale':!items.length?'empty':p.uncertain||items.some(r=>r.status==='partial')?'partial':'ready',snapshot_id:base.view.id,base_snapshot_id:base.view.id,base_scope_hash:base.view.scopeHash,scope_hash:bound.row.scope_hash,cursor_auth_hash:authHash,coverage:notLinked&&items.length?NOT_LINKED_NOTICE:p.uncertain?`${p.uncertain} órdenes con pertenencia al filtro desconocida; subtotal de pertenencias confirmadas.`:stale?'La versión actual del problema cambió; esta vista conserva la historia y las cifras publicadas.':'Cobertura financiera según el snapshot; filas por problema no aditivas.',watermark:base.view.watermark,next_cursor:more?encodeCursor({after:items.at(-1).id,...expected}):null,critical_notice:critical?`${critical} señales críticas actuales autorizadas, independientes de los filtros y del importe del snapshot.`:null,critical_notice_state:signalsResult.status,scope:exposedScope(f,bound.row.scope_hash),mapping_manifest_id:bound.row.id,can_manage:s.role==='owner'}};
+ const collect={},signalsResult=signals?await criticalSignals(s,base.view.id,CRITICAL_BUDGET_MS,collect):{status:'unavailable',count:null},critical=signalsResult.count??0;
+ // Resumen del catálogo (todos los problemas vigentes, no solo la página): solo en la vista interactiva y sin cursor; cada parte opcional tiene su tope y su «no disponible ahora».
+ const overview=wantCatalog&&notLinked&&catalog&&!request.cursor?await catalogOverview(s,catalog,{signalRows:signalsResult.status==='ok'?collect.rows??null:null,isCritical:isCriticalIssue}):null;
+ return {items,meta:{state:stale?'stale':!items.length?'empty':p.uncertain||items.some(r=>r.status==='partial')?'partial':'ready',snapshot_id:base.view.id,base_snapshot_id:base.view.id,base_scope_hash:base.view.scopeHash,scope_hash:bound.row.scope_hash,cursor_auth_hash:authHash,coverage:notLinked&&items.length?NOT_LINKED_NOTICE:p.uncertain?`${p.uncertain} órdenes con pertenencia al filtro desconocida; subtotal de pertenencias confirmadas.`:stale?'La versión actual del problema cambió; esta vista conserva la historia y las cifras publicadas.':'Cobertura financiera según el snapshot; filas por problema no aditivas.',watermark:base.view.watermark,next_cursor:more?encodeCursor({after:items.at(-1).id,...expected}):null,critical_notice:critical?`${critical} señales críticas actuales autorizadas, independientes de los filtros y del importe del snapshot.`:null,critical_notice_state:signalsResult.status,...(overview?{catalog:overview}:{}),scope:exposedScope(f,bound.row.scope_hash),mapping_manifest_id:bound.row.id,can_manage:s.role==='owner'}};
  };
  const prep=async s=>{requestTenant=s.tenantId;const initial=await initialOverviewScope(s,query);if(initial)request.scope=initial;const base=await baseSnapshot(s,request.scope);if(!base)return null;const bound=await binding(s,request.scope,base);return {...bound,role:s.role};};
  // Alcance sin fijar: la preparación (ids/binding) y la lectura final comparten UNA transacción cuando no hay que materializar nada (antes: dos transacciones, dos verificaciones completas del snapshot,

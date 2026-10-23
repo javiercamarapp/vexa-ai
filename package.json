@@ -23,7 +23,7 @@
     "test:cfo": "node --test packages/cfo-copilot/tests/*.test.mjs",
     "test:agent-datos": "node --test packages/agent-datos/tests/*.test.mjs",
     "test:metrics": "node --test packages/metrics/tests/*.test.mjs",
-    "test:workspace-service": "node --test packages/workspace-service/tests/provenance.mjs packages/workspace-service/tests/trends.mjs packages/workspace-service/tests/coverage-exactas.test.mjs packages/workspace-service/tests/agregados.test.mjs packages/workspace-service/tests/resumen-sin-bloqueo.test.mjs packages/workspace-service/tests/problemas-sin-vinculos.test.mjs",
+    "test:workspace-service": "node --test packages/workspace-service/tests/provenance.mjs packages/workspace-service/tests/trends.mjs packages/workspace-service/tests/coverage-exactas.test.mjs packages/workspace-service/tests/agregados.test.mjs packages/workspace-service/tests/resumen-sin-bloqueo.test.mjs packages/workspace-service/tests/problemas-sin-vinculos.test.mjs packages/workspace-service/tests/problemas-catalogo-resumen.test.mjs",
     "test:problems": "node --test packages/problems/tests/escala-lista.test.mjs packages/ai-scale/problemas/problemas.test.mjs"
   },
   "workspaces": [

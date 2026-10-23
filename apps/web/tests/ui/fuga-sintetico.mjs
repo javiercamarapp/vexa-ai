@@ -58,7 +58,7 @@ const CONVS = [['2025-08', 4183], ['2025-09', 2672], ['2026-06', 6047], ['2026-0
 /** @param {{sinTracker?:boolean,sinRepetido?:boolean,vacio?:boolean}} o */
 export async function vistaSintetica(o = {}) {
   const database = {async transaction(_a, work) {
-    const query = async (text) => {
+    const query = async (text, params) => {
       const t = String(text);
       if (/current_setting\('statement_timeout'\)/.test(t)) return {rows: [{v: '0'}]};
       if (/^(SAVEPOINT|RELEASE|ROLLBACK)/.test(t) || /set_config/.test(t)) return {rows: []};
@@ -70,7 +70,8 @@ export async function vistaSintetica(o = {}) {
       if (/contact_repeat_summary/.test(t)) return {rows: o.sinRepetido ? [] : [{refreshed_at: '2026-10-22T06:00:00Z', source_watermark: '2026-10-19T04:37:31Z', contacts: 46661, contacts_ge2_90: 8067, contacts_ge3_90: 3230, linked_tickets: 72720, repeat_tickets_90: 25168, total_tickets: 103744,
         by_category: [{category: 'Subscription: Product Registration', customers: 149, repeaters: 64}, {category: 'Warranty: Part Replacement OT', customers: 88, repeaters: 24}, {category: 'Warranty: Battery Replacement', customers: 202, repeaters: 52}, {category: 'Order: Spare Parts', customers: 394, repeaters: 65}, {category: 'Other: Retailer notifications and system alerts', customers: 483, repeaters: 77}]}]};
       if (/summary_refresh_state/.test(t)) return {rows: [{refreshed_at: '2026-10-22T05:53:59Z'}]};
-      if (/conversation_monthly/.test(t)) return {rows: CONVS.map(([month, n]) => ({month, n}))};
+      if (/FROM public\.insight_state/.test(t)) return params?.[1] === 'conversation_volume' ? {rows: [{status: 'ready', refreshed_at: '2026-10-22T05:53:59Z', source_watermark: '2026-10-19T04:37:31Z', computed_from: {}, detail: {}}]} : {rows: []};
+      if (/FROM public\.insight_conversation_volume/.test(t)) return {rows: CONVS.map(([month, n]) => ({period: month + '-01', n}))};
       return {rows: []};
     };
     return work({tenantId: 'syn', query});

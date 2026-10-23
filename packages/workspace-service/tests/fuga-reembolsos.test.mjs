@@ -224,11 +224,11 @@ test('conversaciones por mes: lee insight_conversation_volume (grain=month) y no
   assert.equal(r.fuente, 'insight_conversation_volume');
   assert.ok(!s.llamadas.some(q => /conversation_monthly/.test(q)));
 });
-test('conversaciones por mes: tabla insight vacía o sin permiso -> respaldo conversation_monthly', async () => {
+test('conversaciones por mes: insight vacío o sin permiso NO cae a conversation_monthly (obsoleta): no calculado, nunca una cifra vieja', async () => {
   const viejo = {viejoState: {refreshed_at: '2026-10-01T00:00:00Z'}, viejoRows: [{month: '2026-07', n: 70}]};
   for (const caso of [{}, {insightState: {status: 'ok', refreshed_at: '2026-10-23T10:00:00Z'}, insightRows: []}, {insightError: '42P01'}]) {
-    const r = await F.conversacionesPorMes(sesionFalsa({...caso, ...viejo}), Date.now() + 5000);
-    assert.deepEqual(r.meses, [{mes: '2026-07', n: 70}]); assert.equal(r.fuente, 'conversation_monthly');
+    const s = sesionFalsa({...caso, ...viejo}), r = await F.conversacionesPorMes(s, Date.now() + 5000);
+    assert.ok(!r || !r.meses, 'sin insight no hay serie'); assert.ok(!s.llamadas.some(q => /conversation_monthly/.test(q)));
   }
   assert.equal(await F.conversacionesPorMes(sesionFalsa({}), Date.now() + 5000), false, 'sin ninguna fuente: no calculado, no 0');
 });

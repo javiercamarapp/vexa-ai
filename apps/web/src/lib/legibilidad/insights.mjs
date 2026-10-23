@@ -4,6 +4,7 @@
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
 import {esMesCompleto,completitud} from '../../../../../packages/metrics/complete-months.mjs';
 import {etiquetaCategoria} from './categorias.mjs';
+import {porcentaje,variacionDecimas} from '../formato/es-mx.mjs';
 import {separarRuidoCategorias} from './ruido.mjs';
 const MAX=3;
 const entero=s=>typeof s==='string'&&/^-?\d+$/.test(s);
@@ -11,11 +12,9 @@ const nfEs=new Intl.NumberFormat('es-MX');
 const mesLargo=m=>new Intl.DateTimeFormat('es-MX',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
 /** Variación porcentual exacta con un decimal (BigInt). null si no hay base honesta (anterior ≤ 0). */
 export function variacion(actual,anterior){
- let a,b;try{a=BigInt(actual);b=BigInt(anterior);}catch{return null;}
- if(b<=0n)return null;
- const decimas=(a-b)*1000n/b;const n=Number(decimas)/10;
- if(decimas===0n&&a!==b)return {dir:a>b?'sube':'baja',texto:'0.1 %',pequena:true};
- return {dir:decimas>0n?'sube':decimas<0n?'baja':'igual',texto:Math.abs(n).toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})+' %'};
+ const d=variacionDecimas(actual,anterior);if(d===null)return null;
+ if(d===0&&BigInt(actual)!==BigInt(anterior))return {dir:BigInt(actual)>BigInt(anterior)?'sube':'baja',texto:'0.1 %',pequena:true};
+ return {dir:d>0?'sube':d<0?'baja':'igual',texto:porcentaje(Math.abs(d)/10)};
 }
 /** Dos últimos meses COMPLETOS de una serie. Completo = anterior al mes en curso y, si se conoce `completitud.dataThrough`
  *  (último dato cargado), con datos hasta el último día del mes (criterio único en packages/metrics/complete-months.mjs). */

@@ -1,0 +1,11 @@
+export const VACIO: string;
+export function entero(n: number | bigint | null | undefined): string;
+export function redondear(x: number, decimales?: number): number;
+export function porcentaje(p: number | null | undefined, o?: {conSigno?: boolean}): string;
+export function proporcion(parte: number, todo: number): number | null;
+export function variacionDecimas(actual: string | number | bigint, anterior: string | number | bigint): number | null;
+export function variacionTexto(actual: string | number | bigint, anterior: string | number | bigint, o?: {conSigno?: boolean}): string;
+export function usd(minor: string | number | bigint | null | undefined, o?: {decimales?: boolean}): string;
+export function dia(iso: string | null | undefined): string | null;
+export function mes(m: string | null | undefined): string | null;
+export function diaDeCorte(valor: string | Date | null | undefined): string | null;

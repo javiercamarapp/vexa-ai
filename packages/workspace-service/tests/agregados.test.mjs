@@ -143,10 +143,11 @@ test('resúmenes precomputados: paridad exacta, RLS, idempotencia, obsolescencia
       await trends().monthly();
       const {v, ms} = await time(() => trends().monthly());
       assert.ok(ms < 200, 'tendencias ' + ms + ' ms');
-      assert.equal(v.conversations.class, 'observed'); assert.equal(v.conversations.sampled, false); assert.equal(v.conversations.summary.freshness, 'fresh'); assert.equal(v.conversations.total, CONVS - 200);
-      const direct = h.psql(`select to_char(m,'YYYY-MM')||':'||n from (select (date_trunc('month',d at time zone 'UTC'))::date m,count(*) n from (select coalesce(c.started_at,(select min(m.occurred_at) from public.messages m where m.tenant_id=c.tenant_id and m.conversation_id=c.id and m.deleted_at is null)) d from public.conversations c where c.tenant_id='${TENANT_A}' and c.deleted_at is null) z where d>=timestamptz '${win.start.toISOString()}' and d<timestamptz '${win.end.toISOString()}' group by 1 order by 1) q`).out.split('\n');
-      const got = v.conversations.series.filter(p => p.count > 0).map(p => p.month + ':' + p.count); assert.deepEqual(got, direct);
-      assert.equal(v.conversations.undated, Number(h.psql(`select count(*) from public.conversations c where c.tenant_id='${TENANT_A}' and c.deleted_at is null and c.started_at is null and not exists(select 1 from public.messages m where m.conversation_id=c.id and m.deleted_at is null)`).out));
+      // conversation_monthly está retirada: las conversaciones ya no salen de ese resumen (solo de insight_conversation_volume o del camino en vivo, que aquí se rotula).
+      assert.notEqual(v.conversations.summary?.source, 'summary'); assert.ok(['observed', 'estimated'].includes(v.conversations.class));
+      // (la paridad exacta de la serie de conversaciones contra el cálculo directo se verifica ahora en packages/insights, sobre insight_conversation_volume)
+
+
       assert.equal(v.ledger.class, 'observed'); assert.equal(v.ledger.summary.freshness, 'fresh');
       const dl = h.psql(`with latest as (select distinct on (entity_id) * from public.economic_ledger_entries where tenant_id='${TENANT_A}' and kind in('order','refund') order by entity_id,revision desc) select m||':'||n||':'||a from (select to_char(effective_at at time zone 'UTC','YYYY-MM') m,count(*) n,coalesce(sum(amount_minor),0) a from latest where kind='order' and status='recorded' and currency='${v.ledger.currency}' and effective_at>=timestamptz '${win.start.toISOString()}' and effective_at<timestamptz '${win.end.toISOString()}' group by 1 order by 1) q`).out.split('\n');
       const lg = v.ledger.series.filter(p => p.orders.count > 0).map(p => p.month + ':' + p.orders.count + ':' + p.orders.amountMinor); assert.deepEqual(lg, dl);
@@ -213,7 +214,7 @@ test('resúmenes precomputados: paridad exacta, RLS, idempotencia, obsolescencia
     await t.test('obsolescencia de conversaciones y asociaciones', async () => {
       const prov = () => createProvenanceRepository({database: db(TENANT_A, OWNER.A)}).coverage();
       psqlFile(h.sock, `set session_replication_role=replica;insert into public.conversations(id,tenant_id,source,external_id,connection_id) values(gen_random_uuid(),'${TENANT_A}','csv','nueva','${C}');`);
-      const tr = await createTrendsRepository({database: db(TENANT_A, OWNER.A), now: () => NOW}).monthly(); assert.equal(tr.conversations.summary.freshness, 'stale'); assert.equal(tr.conversations.class, 'estimated');
+      const tr = await createTrendsRepository({database: db(TENANT_A, OWNER.A), now: () => NOW}).monthly(); assert.notEqual(tr.conversations.summary?.source, 'summary'); assert.ok(['observed', 'estimated'].includes(tr.conversations.class));
       psqlFile(h.sock, `set session_replication_role=replica;update public.native_customer_associations set updated_at=clock_timestamp() where id=md5('f5')::uuid;`);
       const cv = await prov(); const as = cv.sources.find(s => s.key === 'associations');
       // sin la migración de políticas el directo exacto no cabe: se queda el resumen, rotulado, nunca «Observado»

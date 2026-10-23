@@ -41,6 +41,8 @@ export function filasCarga() {
 export async function vistaCarga(o = {}) {
   const db = dbBase((t, params) => {
     if (o.error) throw new Error('57014');
+    if (/FROM public\.insight_conversation_volume/.test(t)) return {rows: MESES.map(([month, n]) => ({period: month + '-01', n}))};
+    if (/FROM public\.insight_state/.test(t) && params?.[1] === 'conversation_volume') return {rows: [{status: 'ready', refreshed_at: '2026-10-22T05:53:59Z', source_watermark: '2026-10-19T04:37:31Z', computed_from: {}, detail: {}}]};
     if (/FROM public\.insight_state/.test(t)) return params?.[1] === 'thread_resolution' ? {rows: [{status: 'ready', refreshed_at: '2026-10-23T19:10:47Z', source_watermark: '2026-10-23T19:00:00Z', computed_from: {}}]} : {rows: []};
     if (/FROM public\.insight_thread_resolution/.test(t)) return {rows: [{grain: 'all', period: '0001-01-01', threads: 3017, closed: 1744, reopened_threads: 175, close_p50_hours: '44.2', close_p90_hours: '1001.3', closed_lt_1h: 300, closed_gt_7d: 400, status_events: 5000}]};
     if (/summary_refresh_state/.test(t)) return {rows: [{refreshed_at: '2026-10-22T05:53:59Z'}]};

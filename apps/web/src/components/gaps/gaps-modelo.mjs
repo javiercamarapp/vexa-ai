@@ -1,12 +1,13 @@
 // Presentación de «Brechas de ingreso»: textos por plantilla (nunca IA libre) y formato. Reutiliza el formato de «Fuga de reembolsos».
 // Regla: TODO es ingreso bruto; la palabra margen/utilidad/ganancia no aparece en ninguna cifra. Cada cifra con su clase, periodo y cobertura.
 import {NOMBRE, usd, num, pct, mesCorto, mesLargo, dia} from '../refunds/fuga-modelo.mjs';
+import {porcentaje as porcentajeEs} from '../../lib/formato/es-mx.mjs';
 export {NOMBRE, usd, num, pct, mesCorto, mesLargo, dia};
 export {porcentaje, dinero, estimar, formulaA, usdNum} from '../refunds/fuga-modelo.mjs';
 
 export const TIPO_REC = Object.freeze({revisar_proveedor: 'Revisar con proveedor', empujar: 'Empujar', revisar_canal: 'Revisar en un canal', cross_sell: 'Venta cruzada'});
 export const CALIDAD_TXT = Object.freeze({completo: 'Mes completo', parcial: 'Mes parcial', posible_hueco: 'Posible hueco de exportación'});
-export const variacion = p => (p === null || p === undefined ? '—' : `${p > 0 ? '+' : p < 0 ? '−' : ''}${new Intl.NumberFormat('es-MX', {maximumFractionDigits: 1}).format(Math.abs(p))} %`);
+export const variacion = p => porcentajeEs(p, {conSigno: true});
 
 /** Periodo del titular, siempre explícito: rango real del libro y ventana de cada canal. */
 export function periodoIngresos(v) {

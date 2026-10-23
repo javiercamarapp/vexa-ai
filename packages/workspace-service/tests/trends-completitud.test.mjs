@@ -61,9 +61,10 @@ test('conversaciones con resumen: «datos hasta» es el mensaje n.º 200 más re
   const seen = [];
   const db = {async transaction(_a, work) { return work({tenantId: 't', query: async (text, args = []) => {
     if (/current_setting/.test(text)) return {rows: [{v: '0'}]};
-    if (/summary_refresh_state/.test(text)) return {rows: args[1] === 'conversation_monthly' ? st : []};
-    if (/AS wm/.test(text)) return {rows: [{wm: '2026-10-19 12:00:00.000000', n: '1'}]};
-    if (/FROM public\.conversation_monthly/.test(text)) { return {rows: [{month: '2026-08', n: 2576, undated: 0}, {month: '2026-09', n: 1318, undated: 0}]}; }
+    if (/summary_refresh_state/.test(text)) return {rows: []};
+    if (/AS wm/.test(text)) return {rows: [{wm: '2026-10-19 12:00:00.000000', saved: '2026-10-19 12:00:00.000000', n: '1'}]};
+    if (/FROM public\.insight_state/.test(text)) return {rows: args[1] === 'conversation_volume' ? [{status: 'ready', refreshed_at: '2026-10-19T12:00:00Z', source_watermark: '2026-10-19T12:00:00Z', computed_from: {}, detail: {undated: 0, total: 3894}}] : []};
+    if (/FROM public\.insight_conversation_volume/.test(text)) return {rows: [{period: '2026-08-01', n: 2576}, {period: '2026-09-01', n: 1318}]};
     if (/FROM public\.messages WHERE tenant_id=\$1 AND deleted_at IS NULL AND occurred_at IS NOT NULL/.test(text)) { seen.push(text); return {rows: [{last_at: new Date('2026-09-18T20:00:00Z')}]}; }
     return {rows: []};
   }}); }};

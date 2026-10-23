@@ -1,4 +1,5 @@
 'use client';
+import {porcentaje} from '../../lib/formato/es-mx.mjs';
 import {useMemo,useState,type ReactNode} from 'react';
 import type {Bundle} from '../../lib/workspace/contracts';
 import type {CfoReport} from '../../../../../packages/cfo-copilot/src/index.mjs';
@@ -23,7 +24,7 @@ const acceptBundle=(j:unknown)=>{const d=(j as {data?:Bundle})?.data;return d&&d
 const acceptReport=(j:unknown)=>{const d=(j as {data?:ReportState})?.data;return d&&typeof d.status==='string'?d:null;};
 const mesCorto=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
 const mesLargo=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
-const pctBps=(b:number|null)=>b===null?'No disponible':(b/100).toLocaleString('es-MX',{maximumFractionDigits:1})+' %';
+const pctBps=(b:number|null)=>b===null?'No disponible':porcentaje(b/100);
 
 /** Pantalla «Dinero · Preparar»: primero el estado de lo publicado y su cobertura; los formularios que escriben quedan plegados abajo. */
 export function EconomiaResumen({query='',puedePreparar,children}:{query?:string;puedePreparar:boolean;children?:ReactNode}){

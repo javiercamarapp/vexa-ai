@@ -1,5 +1,5 @@
 // (microsegundos: Date de JS los trunca a ms y confundiría «posterior» con «igual», igual que summaries.mjs)
-// Adaptador PILOTO: entrega las conversaciones por mes desde insight_conversation_volume con la MISMA forma que readConversationMonthly (summaries.mjs),
+// Adaptador PILOTO: entrega las conversaciones por mes desde insight_conversation_volume con la forma {months,undated,total} que consume /api/trends (el lector antiguo sobre conversation_monthly se retiró),
 // para que /api/trends lo use sin cambiar su lógica. Si el insight no existe, está parcial o no se puede leer: {availability:'absent'|...} y el llamador cae al camino actual.
 import {attempt} from '../workspace-service/summaries.mjs';
 import {readConversationVolume} from './reader.mjs';

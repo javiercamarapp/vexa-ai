@@ -3,7 +3,7 @@
 // reported as status "timeout" instead of surfacing a 503. RLS evaluates vexa_member() per row, so scans are never unbounded
 // and the result says what it is (raw registered rows, not the published-snapshot rules).
 import {WorkspaceError} from './contracts.mjs';
-import {attempt,readConversationMonthly,readLedgerMonthly,summaryMeta} from './summaries.mjs';
+import {attempt,readLedgerMonthly,summaryMeta} from './summaries.mjs';
 import {completitud} from '../metrics/complete-months.mjs';
 import {ingresosDelLibro} from './cifras-libro.mjs';
 import {SQL_ANALIZADAS} from './cifras-cobertura.mjs';
@@ -35,8 +35,8 @@ export function createTrendsRepository({database,now=()=>new Date(),timeoutMs=LO
    const win=monthWindow(now(),months);
    return database.transaction('read',async s=>{
     // 1) Resúmenes precomputados (migración 20261022000000): <200 ms. Solo se usan si existen; «Observado» únicamente cuando no hay registros posteriores al corte.
-    // Piloto «datos vivos»: primero insight_conversation_volume (se refresca solo al cambiar la fuente); si no existe o no se puede leer, el resumen 20261022000000 y después el camino anterior.
-    const convIns=await readConversationMonthlyFromInsights(s),convSum=convIns.availability==='ready'?convIns:await readConversationMonthly(s),ledSum=await readLedgerMonthly(s,win);
+    // insight_conversation_volume (se refresca solo al cambiar la fuente); si no existe o no se puede leer, el camino en vivo. conversation_monthly (obsoleta) ya no se lee.
+    const convIns=await readConversationMonthlyFromInsights(s),convSum=convIns.availability==='ready'?convIns:{availability:convIns.availability??'absent',months:[]},ledSum=await readLedgerMonthly(s,win);
     // Conversation date = started_at, or the date of its FIRST MESSAGE when started_at is null (historical CSV imports carry no
     // started_at). Messages are RLS-checked per row, so: (1) a cheap probe (<= 3,001 rows) decides whether an exact pass is affordable;
     // (2) otherwise a 3 % Bernoulli sample of conversations is dated and scaled, and the figure is labelled "Estimado".

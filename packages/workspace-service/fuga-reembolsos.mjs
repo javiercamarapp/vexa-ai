@@ -415,8 +415,8 @@ const hoyMes = iso => new Date(iso ?? Date.now()).toISOString().slice(0, 7);
 export const etiquetaMes = m => { const [y, mo] = String(m).split('-').map(Number); return MESES[mo - 1] ? `${MESES[mo - 1]} ${y}` : m; };
 
 /**
- * Conversaciones por mes para «Qué cambió». Primero `insight_conversation_volume` (grain='month', se refresca sola); si esa tabla está vacía, ausente o 'unavailable',
- * cae al camino anterior (`conversation_monthly`, que ya no refresca el cron). Devuelve {refreshedAt, meses:[{mes,n}], fuente} o false (no calculado) / null (no disponible).
+ * Conversaciones por mes para «Qué cambió». Solo `insight_conversation_volume` (grain='month', se refresca sola); si esa tabla está vacía, ausente o 'unavailable',
+ * sin respaldo en `conversation_monthly` (retirada: ya no la refresca el cron). Devuelve {refreshedAt, meses:[{mes,n}], fuente} o false (no calculado) / null (no disponible).
  */
 export async function conversacionesPorMes(s, deadline) {
   const ins = await guarded(s, deadline, 'fuga_convs_insight', async () => {
@@ -424,12 +424,7 @@ export async function conversacionesPorMes(s, deadline) {
     if (!['ready', 'partial'].includes(r.availability) || !r.points?.length) return false;
     return {refreshedAt: r.meta?.refreshedAt ?? null, meses: r.points.map(p => ({mes: p.period, n: p.n})), fuente: 'insight_conversation_volume'};
   });
-  if (ins) return ins;
-  return guarded(s, deadline, 'fuga_convs', async () => {
-    const st = (await s.query("SELECT refreshed_at FROM public.summary_refresh_state WHERE tenant_id=$1 AND summary='conversation_monthly'", [s.tenantId])).rows[0];
-    if (!st) return false;
-    return {refreshedAt: st.refreshed_at, meses: (await s.query("SELECT to_char(month,'YYYY-MM') AS month, n FROM public.conversation_monthly WHERE tenant_id=$1 ORDER BY month LIMIT 2000", [s.tenantId])).rows.map(r => ({mes: r.month, n: Number(r.n)})), fuente: 'conversation_monthly'};
-  });
+  return ins; // false = no calculado, null = no disponible; nunca una cifra de conversation_monthly (obsoleta)
 }
 
 /** Primer y último día con reembolsos en lo consultado (todos los canales) o null si no hay fechas. */

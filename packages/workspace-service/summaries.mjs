@@ -1,4 +1,4 @@
-// Lectura de los RESÚMENES PRECOMPUTADOS (migración 20261022000000): tablas economic_ledger_monthly, economic_ledger_counts, conversation_monthly y association_counts,
+// Lectura de los RESÚMENES PRECOMPUTADOS (migración 20261022000000): tablas economic_ledger_monthly, economic_ledger_counts y association_counts (conversation_monthly quedó obsoleta: las conversaciones por mes salen de insight_conversation_volume),
 // con summary_refresh_state. Corre BAJO la sesión y RLS del usuario (nunca rol de servicio) y es de solo lectura; el refresco lo hace un operador (public.refresh_*).
 // Reglas de honestidad:
 //  - sin tablas (migración sin aplicar), sin permiso o sin fila de estado => 'absent'/'unavailable': el llamador usa su camino anterior; JAMÁS se infiere un cero.
@@ -76,17 +76,6 @@ export async function readLedgerMonthly(s, win, {timeoutMs = SUMMARY_TIMEOUT_MS}
   if (rows.timeout) return {availability: 'timeout', rows: []};
   if (rows.unavailable) return {availability: 'unavailable', rows: []};
   return {...r, missingMonths: [], rows: rows.value};
-}
-
-/** Conversaciones por mes (todas las fechas) + sin fecha. */
-export async function readConversationMonthly(s, {timeoutMs = SUMMARY_TIMEOUT_MS} = {}) {
-  const r = await readState(s, {summary: 'conversation_monthly', current: `greatest((SELECT max(created_at) FROM public.conversations WHERE tenant_id=$1),(SELECT max(created_at) FROM public.messages WHERE tenant_id=$1))`, timeoutMs});
-  if (r.availability !== 'ready') return {...r, months: []};
-  const rows = await attempt(s, async () => (await s.query(`SELECT to_char(month,'YYYY-MM') AS month,n FROM public.conversation_monthly WHERE tenant_id=$1 ORDER BY month LIMIT 2000`, [s.tenantId])).rows, timeoutMs);
-  if (rows.timeout) return {availability: 'timeout', months: []};
-  if (rows.unavailable) return {availability: 'unavailable', months: []};
-  const d = r.states[0].detail ?? {};
-  return {...r, months: rows.value.map(x => ({month: x.month, n: Number(x.n)})), undated: Number(d.undated ?? 0), total: Number(d.total ?? 0)};
 }
 
 /** Conteos del libro por fuente·moneda·tipo (cobertura). */

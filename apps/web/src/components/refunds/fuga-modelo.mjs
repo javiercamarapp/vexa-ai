@@ -1,6 +1,8 @@
 // Modelo de presentación de «Fuga de reembolsos»: textos por plantilla (nunca IA libre), formato de dinero y el estimador con candado. Puro y probado.
 // Regla: ninguna cifra sin su clase (Observado / Estimado / Inferido), periodo y cobertura. El estimador NO propone valores: sin supuestos tecleados no hay número.
 const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+import {usd as usdEs, entero, porcentaje as pctEs, dia as diaEs} from '../../lib/formato/es-mx.mjs';
+// Fórmulas del estimador (valores tecleados, no cifras observadas): mismo es-MX/«$» que usdEs.
 const USD0 = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0});
 const USD2 = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 2});
 const NUM = new Intl.NumberFormat('es-MX');
@@ -9,17 +11,13 @@ export const NOMBRE = Object.freeze({amazon: 'Amazon', walmart: 'Walmart', shopi
 export const ESTADO_TXT = Object.freeze({reembolsado: 'Reembolsado', vencido: 'Más de 180 días', no_reembolsable: 'No reembolsable', rechazado: 'Rechazado', enviado: 'Enviado', otro: 'Otro estado', sin_estado: 'Sin estado'});
 export const HOJA_TXT = Object.freeze({reembolsos: 'Reembolsos', garantiaHerramientas: 'Garantía de herramientas', garantiaPartes: 'Garantía de partes', etiquetas: 'Etiquetas de devolución'});
 
-/** centavos (string|number|bigint) -> «[omitido: dato de cliente]» (sin decimales) o con decimales. */
-export function usd(minor, {decimals = false} = {}) {
-  if (minor === null || minor === undefined || minor === '') return '—';
-  const v = Number(BigInt(String(minor).split('.')[0])) / 100;
-  return (decimals ? USD2 : USD0).format(v);
-}
-export const num = n => (n === null || n === undefined ? '—' : NUM.format(n));
-export const pct = p => (p === null || p === undefined ? '—' : PCT.format(p) + ' %');
+/** centavos (string|number|bigint) -> «[omitido: dato de cliente]» (sin decimales) o con decimales. Misma función que Resumen, CFO y Brechas (lib/formato/es-mx.mjs). */
+export const usd = (minor, {decimals = false} = {}) => usdEs(minor, {decimales: decimals});
+export const num = n => entero(n);
+export const pct = p => pctEs(p);
 export const mesCorto = m => { const [y, mo] = String(m).split('-').map(Number); return MESES[mo - 1] ? `${MESES[mo - 1]} ${String(y).slice(2)}` : String(m); };
 export const mesLargo = m => { const [y, mo] = String(m).split('-').map(Number); return MESES[mo - 1] ? `${MESES[mo - 1]} ${y}` : String(m); };
-const diaLargo = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso ?? '')); return m ? `${Number(m[3])} ${MESES[Number(m[2]) - 1]} ${m[1]}` : null; };
+const diaLargo = diaEs;
 export const dia = diaLargo;
 
 /** Frase de concentración por plantilla: «10 SKUs concentran el 59.3 % del dinero devuelto. Los 4 primeros son de Walmart (familias SKUP y SKUS).» */

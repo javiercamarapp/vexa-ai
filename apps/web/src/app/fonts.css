@@ -1,63 +1,32 @@
+/* Hanken Grotesk (SIL OFL 1.1, licencia en public/fonts/hankengrotesk-OFL.txt): fuente de interfaz de Rovaq, autoalojada, subset latino con los acentos y signos del español.
+   Sin CDN en tiempo de ejecución. IBM Plex Mono se conserva solo para datos tabulares, identificadores y código. */
 @font-face {
-  font-family: 'Fraunces';
+  font-family: 'Hanken Grotesk';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url(/fonts/fraunces-0.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: 'Instrument Sans';
-  font-style: normal;
-  font-weight: 400;
-  font-stretch: normal;
-  font-display: swap;
-  src: url(/fonts/instrumentsans-0.ttf) format('truetype');
+  src: url(/fonts/hankengrotesk-400.woff2) format('woff2');
 }
 @font-face {
-  font-family: 'Instrument Sans';
-  font-style: normal;
-  font-weight: 500;
-  font-stretch: normal;
-  font-display: swap;
-  src: url(/fonts/instrumentsans-1.ttf) format('truetype');
-}
-@font-face {
-  font-family: 'Instrument Sans';
-  font-style: normal;
-  font-weight: 600;
-  font-stretch: normal;
-  font-display: swap;
-  src: url(/fonts/instrumentsans-2.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(/fonts/inter-0.ttf) format('truetype');
-}
-@font-face {
-  font-family: 'Inter';
+  font-family: 'Hanken Grotesk';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url(/fonts/inter-1.ttf) format('truetype');
+  src: url(/fonts/hankengrotesk-500.woff2) format('woff2');
 }
 @font-face {
-  font-family: 'Inter';
+  font-family: 'Hanken Grotesk';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url(/fonts/inter-2.ttf) format('truetype');
+  src: url(/fonts/hankengrotesk-600.woff2) format('woff2');
 }
 @font-face {
-  font-family: 'Inter';
+  font-family: 'Hanken Grotesk';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url(/fonts/inter-3.ttf) format('truetype');
+  src: url(/fonts/hankengrotesk-700.woff2) format('woff2');
 }
 
 @font-face {
@@ -73,26 +42,4 @@
   font-weight: 500;
   font-display: swap;
   src: url(/fonts/ibmplexmono-1.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: 'Inter Tight';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url(/fonts/intertight-500.ttf) format('truetype');
-}
-@font-face {
-  font-family: 'Inter Tight';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url(/fonts/intertight-600.ttf) format('truetype');
-}
-@font-face {
-  font-family: 'Inter Tight';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url(/fonts/intertight-700.ttf) format('truetype');
 }

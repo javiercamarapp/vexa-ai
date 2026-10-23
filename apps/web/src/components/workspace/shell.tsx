@@ -8,6 +8,7 @@ import {NotificationNavigationLink} from '../notifications/navigation-link';
 import {AccesoProvider} from './access';
 import {RestaurarVista} from './restaurar-vista';
 import {DatosNuevos} from './datos-nuevos';
+import './encabezado.css';
 import {esRutaCopiloto} from '../../lib/copiloto/modos.mjs';
 import {fijarTenant,limpiarTodo} from '../../lib/workspace/swr.mjs';
 type Organization={id:string;name:string};

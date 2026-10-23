@@ -10,8 +10,8 @@ test('el aviso de caché y su hueco reservado miden lo mismo (misma variable de 
   assert.match(ui, /@media \(max-width:520px\)\{:root\{--cache-alto:(\d+)px\}\}/);
   assert.match(ui, /\.state-cache\{[^}]*box-sizing:border-box/); assert.match(ui, /\.state-cache-slot\{[^}]*box-sizing:border-box/);
 });
-test('la píldora no encoge ni parte el encabezado: no se encoge y el título recorta con puntos suspensivos en vez de saltar de línea', () => {
-  const dn = css('components/workspace/datos-nuevos.css');
-  assert.match(dn, /\.datos-nuevos\{flex:none;white-space:nowrap\}/); assert.match(dn, /\.workspace-heading\{[^}]*text-overflow:ellipsis/);
+test('el encabezado no se parte: el título recorta con puntos suspensivos en vez de saltar de línea y ya no hay píldora de datos nuevos', () => {
+  const dn = css('components/workspace/encabezado.css');
+  assert.match(dn, /\.workspace-heading\{[^}]*text-overflow:ellipsis/);
   assert.match(css('app/globals.css'), /\.workspace-header \{ height:56px;/);
 });

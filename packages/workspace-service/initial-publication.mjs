@@ -1,9 +1,9 @@
 import {createSnapshotRepository} from '../metrics/snapshots.mjs';
 import {check,parseWorkspaceQuery} from './contracts.mjs';
 import {publicationQuery} from './navigation.mjs';
-/** Only a bare overview may adopt another period. Never reinterpret an explicit filter or pin. */
+/** Only a bare overview or bare problems list (no filters) may adopt another period. Never reinterpret an explicit filter or pin. */
 export async function initialOverviewScope(scope,query){
- if(!(query instanceof URLSearchParams)||[...query.keys()].some(key=>key!=='resource')||(query.get('resource')??'metrics')!=='metrics')return null;
+ if(!(query instanceof URLSearchParams)||[...query.keys()].some(key=>key!=='resource')||!['metrics','problems'].includes(query.get('resource')??'metrics'))return null;
  const {rows}=await scope.query("SELECT id FROM public.metric_snapshots WHERE tenant_id=$1 AND status='published' AND economic_schema_version='economic-snapshot-v1' ORDER BY published_at DESC,id DESC LIMIT 1",[scope.tenantId]);
  if(!rows.length)return null;
  // The selected row is not trusted until the existing repository rechecks contributors,

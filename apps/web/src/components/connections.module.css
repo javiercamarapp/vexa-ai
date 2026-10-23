@@ -1,10 +1,12 @@
 .master{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp-4);margin-top:var(--sp-3);min-width:0}
 @media(min-width:900px){.master{grid-template-columns:minmax(200px,.8fr) minmax(0,1.4fr)}}
 .list{list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-2);align-content:start}
-.item{width:100%;display:flex;align-items:center;gap:var(--sp-3);padding:10px 12px;border:1px solid var(--ui-border);border-radius:var(--r-md,10px);background:var(--ui-surface);color:inherit;font:inherit;text-align:left;cursor:pointer;transition:background .15s,border-color .15s}
-.item:hover{background:var(--ui-soft)}.item[aria-pressed=true]{border-color:var(--ui-focus);background:var(--ui-soft)}
-.item:focus-visible{outline:2px solid var(--ui-focus);outline-offset:2px}.item svg{flex:none;color:var(--muted)}
-.name{display:grid;min-width:0;flex:1}.name strong,.name small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.name small{font-size:11px;color:var(--muted)}
+/* Especificidad (0,2,0): gana a las reglas globales de button (`.workspace-shell :where(button)` pinta el fondo de acción y hereda tinta clara). Colores solo con tokens del tema. */
+.list .item{width:100%;display:flex;align-items:center;gap:var(--sp-3);padding:10px 12px;border:1px solid var(--ui-border);border-radius:var(--r-md,10px);background:var(--ui-surface);color:var(--ink);font:inherit;text-align:left;cursor:pointer;transition:background .15s,border-color .15s}
+.list .item:hover:not(:disabled){background:var(--ui-soft);color:var(--ink);border-color:var(--ui-line-strong)}
+.list .item[aria-pressed=true],.list .item[aria-pressed=true]:hover:not(:disabled){border-color:var(--ui-focus);box-shadow:inset 3px 0 0 var(--ui-focus);background:var(--ui-soft);color:var(--ink)}
+.list .item:focus-visible{outline:2px solid var(--ui-focus);outline-offset:2px}.list .item svg{flex:none;color:var(--muted)}
+.name{display:grid;min-width:0;flex:1}.name strong,.name small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.name strong{color:var(--ink)}.name small{font-size:11px;color:var(--muted)}
 .none{font-size:12px;color:var(--muted);padding:8px}
 .detail{border:1px solid var(--ui-border);border-radius:var(--r-card,14px);padding:var(--sp-4);display:grid;gap:var(--sp-3);min-width:0;align-content:start}
 .dhead{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);flex-wrap:wrap}.dhead h2{margin:0;overflow-wrap:anywhere}

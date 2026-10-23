@@ -25,7 +25,7 @@
 .cf-nd{margin:0;font-size:var(--t-small);color:var(--ui-secondary)}
 .cf-caida ul{margin:var(--sp-2) 0;padding-left:var(--sp-5);display:grid;gap:4px}
 .cf-caida p{margin:var(--sp-2) 0 0}
-.cf-glossary>div:last-child:nth-child(3n+2){grid-column:span 2}
+@media(min-width:700px){.cf-glossary>div:last-child:nth-child(3n+2){grid-column:span 2}}
 /* Barras del informe con el color de su métrica: meses anteriores tinte, último completo pleno; estimado = trama discontinua */
 .cf-chart[data-c] .col-observed:not(.col-partial){fill:color-mix(in srgb,var(--cfc) 58%,var(--ui-surface))}
 .cf-chart[data-c] .col[data-last] .col-observed:not(.col-partial),.cf-chart[data-c] .col[data-active] .col-observed:not(.col-partial){fill:var(--cfc)}

@@ -85,7 +85,7 @@ export function EconomiaResumen({query='',puedePreparar,children}:{query?:string
        {claves.length>1&&<SegmentedControl label="Moneda y base" size="sm" value={clave} onChange={setElegida} options={tarjetas.map(t=>({value:t.moneda+'|'+t.base,label:t.moneda+(tarjetas.filter(x=>x.moneda===t.moneda).length>1?' · '+(t.base.includes('gross')?'Shopify':'Marketplace'):'')}))}/>}
        <SegmentedControl label="Medida" size="sm" value={medida} onChange={setMedida} options={[{value:'pedidos',label:'Pedidos'},{value:'subtotal',label:'Subtotal conocido'}]}/>
       </div>
-      {datos.length>0?<ColumnChart key={clave+medida} title={medida==='pedidos'?'Pedidos por mes':'Subtotal conocido por mes'} data={datos} unit={medida==='pedidos'?'pedidos':actual?.moneda}/>:<EmptyState art="chart" compact title="Sin meses para mostrar"/>}
+      {datos.length>0?<div className="dg-colcolor" data-c={medida==='pedidos'?5:1}><ColumnChart height={240} key={clave+medida} title={medida==='pedidos'?'Pedidos por mes':'Subtotal conocido por mes'} data={datos} unit={medida==='pedidos'?'pedidos':actual?.moneda}/></div>:<EmptyState art="chart" compact title="Sin meses para mostrar"/>}
       {incompletos.meses.length>0&&<p className="dg-nota" role="note">* {incompletos.meses.map(mesLargo).join(', ')}: mes incompleto, los datos llegan {incompletos.datosHasta?'hasta el '+incompletos.datosHasta:'hasta una fecha de corte sin determinar'}. La barra punteada no es una caída.</p>}
      </Card>
      <Card title="Completitud por fuente" description="Lo que falta nunca se cuenta como cero" actions={<KindBadge kind="observed"/>}>

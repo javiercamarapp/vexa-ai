@@ -1,5 +1,5 @@
 'use client';
-import {useMemo,useState} from 'react';
+import {useState} from 'react';
 import {PageHeader} from '../ui/page-header';
 import {FilterBar,FilterSpacer} from '../ui/filter-bar';
 import {SegmentedControl} from '../ui/segmented';
@@ -35,7 +35,7 @@ export function GapsPantalla({organization}:{organization?:string}){
  const CANAL_C:Record<string,number>={amazon:1,walmart:5,bestbuy:4,shopify:3};
  const todosCanales=ok?[...new Set(ok.meses.flatMap(m=>Object.keys(m.canales)))].sort((a,b)=>(CANAL_C[a]??8)-(CANAL_C[b]??8)):[];
  const activos=todosCanales.filter(c=>!off.includes(c));
- const filtrado=useMemo(()=>ok?filtrarIngresos(ok,per==='todo'?null:Number(per),activos):null,[ok,per,activos.join('|')]);// eslint-disable-line react-hooks/exhaustive-deps
+ const filtrado=ok?filtrarIngresos(ok,per==='todo'?null:Number(per),activos):null;
  const r=v?.perdidas.reembolsos,c=v?.perdidas.cancelaciones,t=v?.perdidas.tracker;
  const ventas=ok&&c?.status==='ok'?big(ok.activoMinor)+big(c.canceladoMinor):null;
  const kpis:Kpi[]=v?[

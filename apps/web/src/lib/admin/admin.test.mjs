@@ -149,3 +149,10 @@ test('QA3-013: la retención de copias se edita en días y se envía en segundos
  assert.match(textoVersionPolitica(0),/Aún no hay una política guardada/);assert.match(textoVersionPolitica(2),/versión 2/);
  const t=leer('../../components/retention-panel.tsx');assert.doesNotMatch(t,/en segundos/);assert.match(t,/backupTtlSeconds:diasASegundos\(ttl\)/);assert.doesNotMatch(t,/Versión: \{snapshot/);
 });
+import {eventosVisibles,textoCanal} from '../notifications/avisos.mjs';
+import {catalog as catalogoAvisos,channels as canalesAvisos} from '../../../../../packages/notifications/catalog.mjs';
+test('QA3-012: las preferencias de avisos no ofrecen eventos sin conectar ni jerga de ingeniería',()=>{
+ const v=eventosVisibles(catalogoAvisos);assert.equal(v.length,catalogoAvisos.length-1);assert.ok(v.every(e=>e.connected&&e.type!=='membership.invited'));
+ for(const c of canalesAvisos){const t=textoCanal(c);assert.doesNotMatch(t,/adaptador|consumidor|servidor/i);assert.ok(t.length>20);}
+ const p=leer('../../components/notifications/panel.tsx');assert.doesNotMatch(p,/Este aviso todavía no está activado/);assert.doesNotMatch(p,/\{channel\.reason\}/);
+});

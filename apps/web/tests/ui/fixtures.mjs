@@ -2,6 +2,7 @@
 // Shapes follow the typed contracts in packages/*/**.d.mts. Used by tests/ui/audit.mjs through request interception only.
 import {rejectionNote,rejectionBreakdown} from '../../../../packages/workspace-service/provenance.mjs';
 import {formatMinorUnits} from '../../../../packages/metrics/money.mjs';
+import {decorarRecomendaciones} from './fixtures-flujo.mjs';
 import {etiquetaCategoria} from '../../src/lib/legibilidad/categorias.mjs';
 import {createAgent,createSyntheticStore,createSyntheticPort,SYNTHETIC_TENANTS,SYNTHETIC_NOW,TOOLS,LIMITS,buildSuggestions} from '../../../../packages/agent-datos/index.mjs';
 const u=(n)=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
@@ -134,8 +135,9 @@ export async function respond(url,method,bodyText){
  if(p==='/api/explorer')return ok(explorerPage(q.get('q')??''));
  if(p==='/api/explorer/tools')return ok({name:'get_evidence',result:{...explorerEvidence(body?.args?.problemId),problemId:body?.args?.problemId}});
  if(p==='/api/explorer/query')return ok(explorerAnswer(body?.question??''));
- const recsData=()=>q.get('variant')==='ingles'?recommendationsIngles():recommendations();
+ const recsData=()=>decorarRecomendaciones(q.get('variant')==='ingles'?recommendationsIngles():recommendations(),q.get('variant'),{u});
  if(p==='/api/recommendations'){const r=recsData();return ok({...r,items:r.items.map(i=>({...i,evidenceCount:i.evidenceRefs.length,evidenceTotal:i.evidenceRefs.length,verification:'saved',evidenceRefs:[]}))});}
+ if(/^\/api\/recommendations\/[0-9a-f-]{36}\/flow$/.test(p)&&method==='POST')return ok({ok:true});
  if(p.startsWith('/api/recommendations/')&&!p.endsWith('/interventions')){const i=recsData().items.find(x=>p.endsWith(x.id));return i?ok({...i,evidenceCount:i.evidenceRefs.length,evidenceTotal:i.evidenceRefs.length,verification:'full'}):[404,{error:{code:'recommendation_request_failed'}}];}
  if(p==='/api/interventions')return ok(interventions());
  if(p==='/api/briefs')return ok(q.get('variant')==='produccion'?briefsProduccion():briefs());

@@ -12,7 +12,7 @@ const VIEWS=[['overview','/overview'],['problems','/problems'],['problem-detail'
 const EXTRA=[['operacion-economia','/economics'],['operacion-problemas-gestion','/problems/manage'],['operacion-analisis','/analysis'],['datos-importaciones','/imports'],['datos-conexiones','/connections'],['datos-evaluacion','/evaluation'],['datos-candidatos','/evaluation/candidates'],['datos-migracion','/migrations'],['admin-notificaciones','/notifications'],['admin-avisos','/settings/notifications'],['admin-entrega','/settings/notification-delivery'],['admin-equipo','/settings/team'],['admin-retencion','/settings/retention'],['jobs-setup','/jobs/setup'],['login','/login'],['plataforma','/platform'],['404','/ruta-que-no-existe-xyz'],['invitacion','/auth/invitations/'+IDS.snapshot]];
 if(process.env.EXTRA==='1')VIEWS.splice(0,VIEWS.length,...EXTRA);
 // VIEWS_EXTRA='nombre=/ruta,otro=/ruta2': audita solo esas pantallas (útil para una ola de rediseño).
-if(process.env.VIEWS_EXTRA)VIEWS.splice(0,VIEWS.length,...process.env.VIEWS_EXTRA.split(',').map(x=>x.split('=')));
+if(process.env.VIEWS_EXTRA)VIEWS.splice(0,VIEWS.length,...process.env.VIEWS_EXTRA.split(',').map(x=>[x.slice(0,x.indexOf('=')),x.slice(x.indexOf('=')+1)]));
 const VIEWPORTS=[[375,812],[768,1024],[1440,900]];
 const filter=process.env.ONLY?process.env.ONLY.split(','):null;
 const geometry=()=>{
@@ -71,7 +71,7 @@ const browser=await chromium.launch();const report=[];let failed=0;
 if(process.env.SELFTEST){
  // Negative control: the rules must FAIL on deliberately broken markup, otherwise a green audit means nothing.
  const ctx=await browser.newContext({viewport:{width:375,height:812},reducedMotion:'reduce'});
- await ctx.route('**/api/**',async route=>{const req=route.request();let u=req.url();if(process.env.WVARIANT&&/\/api\/workspace(\?|$)/.test(u))u+=(u.includes('?')?'&':'?')+'variant='+process.env.WVARIANT;const hit=await respond(u,req.method(),req.postData());return hit?route.fulfill({status:hit[0],contentType:'application/json',body:JSON.stringify(hit[1])}):route.fulfill({status:503,body:'{}'});});
+ await ctx.route('**/api/**',async route=>{const req=route.request();let u=req.url();if(process.env.WVARIANT&&/\/api\/workspace(\?|$)/.test(u))u+=(u.includes('?')?'&':'?')+'variant='+process.env.WVARIANT;if(process.env.RVARIANT&&/\/api\/recommendations(\/[0-9a-f-]{36})?(\?|$)/.test(u))u+=(u.includes('?')?'&':'?')+'variant='+process.env.RVARIANT;const hit=await respond(u,req.method(),req.postData());return hit?route.fulfill({status:hit[0],contentType:'application/json',body:JSON.stringify(hit[1])}):route.fulfill({status:503,body:'{}'});});
  const page=await ctx.newPage();await page.goto(base+'/overview',{waitUntil:'networkidle'});
  await page.evaluate(()=>{const host=document.querySelector('.workspace-content');const d=document.createElement('div');d.innerHTML=`<p>Texto con <a href="/x" style="text-decoration:none">palabra con link</a> suelta.</p><div><a href="/y" style="all:unset;cursor:pointer">enlace sin estilo</a></div><div><button type="button" class="legacy" style="all:unset;cursor:pointer;border:1px solid #000;padding:2px">crudo</button></div><div style="display:flex;width:200px"><button class="btn" style="white-space:nowrap;width:60px;overflow:visible">Un texto de botón demasiado largo para su recuadro</button></div><div style="display:flex"><div style="width:120px;height:40px;background:#eee">A</div><div style="width:120px;height:40px;margin-left:-60px;background:#ddd">B</div></div><div><span style="display:inline-block;width:22px;overflow-wrap:anywhere">FUENTES</span></div><div style="width:100px;white-space:nowrap">Una línea que desborda su caja por completo sin saltar</div>`;host.appendChild(d);});
  const found=new Set((await page.evaluate(geometry)).map(i=>i.kind));
@@ -84,7 +84,7 @@ if(process.env.SELFTEST){
 for(const [w,h] of VIEWPORTS){
  const ctx=await browser.newContext({viewport:{width:w,height:h},deviceScaleFactor:1,reducedMotion:'reduce'});
  if(process.env.THEME)await ctx.addInitScript(t=>{try{localStorage.setItem('vexa-theme',t);}catch{/* optional */}},process.env.THEME);
- await ctx.route('**/api/**',async route=>{const req=route.request(),hit=await respond(req.url(),req.method(),req.postData());if(!hit)return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:{code:'fixture_missing'}})});return route.fulfill({status:hit[0],contentType:'application/json',body:JSON.stringify(hit[1])});});
+ await ctx.route('**/api/**',async route=>{const req=route.request();let ru=req.url();if(process.env.RVARIANT&&/\/api\/recommendations(\/[0-9a-f-]{36})?(\?|$)/.test(ru))ru+=(ru.includes('?')?'&':'?')+'variant='+process.env.RVARIANT;const hit=await respond(ru,req.method(),req.postData());if(!hit)return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:{code:'fixture_missing'}})});return route.fulfill({status:hit[0],contentType:'application/json',body:JSON.stringify(hit[1])});});
  for(const [name,route] of VIEWS){
   if(filter&&!filter.includes(name))continue;
   const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push('pageerror: '+e.message));page.on('console',m=>{if(m.type()==='error'&&!/fixture_missing|503|Failed to load resource|auth_not_configured/.test(m.text()))errors.push('console: '+m.text().slice(0,160));});

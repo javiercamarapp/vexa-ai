@@ -25,7 +25,12 @@ import {ESPERA} from '../../lib/legibilidad/espera.mjs';
 import {etiquetaCategoria} from '../../lib/legibilidad/categorias.mjs';
 import {textoLegible,etiquetaCausal,esDeGeneradorAnterior,siguientePaso,responsable,resumenRecomendaciones} from '../../lib/legibilidad/recomendaciones-vista.mjs';
 import {nf} from '../ui/format';
+import {accionesPermitidas,etapaActual,ETAPA_TXT} from '../../../../../packages/recommendations/flujo.mjs';
+import {EtapasFlujo,LineaFlujo,SeguimientoBloque,etapaTono,persona,type FlowItem} from './flujo-vista';
+import {ProcederDrawer,AjustarDrawer,DescartarDrawer,ResultadoDrawer,IniciarBoton} from './flujo-acciones';
+import {BorradoresDrawer} from './flujo-borradores';
 import css from './panel.module.css';
+import fx from './flujo.module.css';
 type Filters=Scope & {basis:string;exponent?:number};
 type Operation=(url:string,body:unknown)=>Promise<boolean>;
 function cleanQuery(value:string){const q=new URLSearchParams(value);for(const key of ['problem_id','detail_hash','resource','format','cursor','limit','root_kind','root_id','component_id','event_id'])q.delete(key);return q;}
@@ -35,12 +40,15 @@ function failure(status:number){return status===401||status===403?'Tu acceso cam
 const PRIORITY={critical:{label:'Revisión humana urgente',sev:'high',tone:'bad'},high:{label:'Prioridad alta',sev:'medium',tone:'warn'},normal:{label:'Prioridad normal',sev:'low',tone:'ok'}} as const;
 const CAUSAL:Record<string,string>={unassessed:'Sin evaluar',confirmed:'Confirmada',retracted:'Retractada',hypothesis:'Hipótesis',candidate:'Candidata',supported:'Con respaldo',unsupported:'Sin respaldo',insufficient:'Evidencia insuficiente'};
 const RANK={critical:0,high:1,normal:2} as const;
-function RecommendationCard({item,members,busy,conflict,operate,first,onRegenerate}:{item:Recommendation;members:RecommendationList['members'];busy:boolean;conflict:boolean;operate:Operation;first:boolean;onRegenerate?:(problemId:string)=>void}){
+function RecommendationCard({item,members,busy,conflict,operate,first,onRegenerate,flowAvailable}:{item:FlowItem;members:RecommendationList['members'];busy:boolean;conflict:boolean;operate:Operation;first:boolean;onRegenerate?:(problemId:string)=>void;flowAvailable:boolean}){
  const [action,setAction]=useState(item.action),[conditions,setConditions]=useState(item.preconditions.join('\n')),[rationale,setRationale]=useState(item.rationale),[owner,setOwner]=useState(item.ownerId??''),[reason,setReason]=useState(''),[stateReason,setStateReason]=useState(''),[evidence,setEvidence]=useState(false),[edit,setEdit]=useState(false),[full,setFull]=useState<Recommendation|null>(item.verification==='full'?item:null),[openState,setOpenState]=useState<'idle'|'loading'|'unavailable'|'error'>('idle');
  const draftKey=useRef<string|null>(null);const locked=busy||conflict||!item.canMutate;const endpoint='/api/recommendations/'+item.id;
  const create=()=>{draftKey.current??=crypto.randomUUID();void operate(endpoint+'/interventions',{expectedVersion:item.version,requestKey:draftKey.current});};
  const evidenceQuery=pinnedQuery(item.scope,item.snapshotId,item.scopeHash);evidenceQuery.set('detail_hash',item.detailHash);
  const pr=PRIORITY[item.priority]??PRIORITY.normal,dismissed=item.status==='dismissed',highlight=first&&!dismissed;
+ const eventos=item.flow?.events??[],etapa=etapaActual(item,eventos),permisos=accionesPermitidas({item,eventos,rol:item.flow?.role,flujoDisponible:flowAvailable}),[abierto,setAbierto]=useState<''|'proceder'|'ajustar'|'descartar'|'reabrir'|'resultado'|'borradores'>('');
+ const bloqueo=(etapa==='propuesta'||etapa==='ajustada')?permisos.proceder.motivo:null,decide=item.flow?.role!=='viewer'&&!!item.flow,conFlujo=flowAvailable&&!!item.flow;
+ const cierra=()=>setAbierto('');
  // La lista solo trae el vínculo verificado al guardar; la verificación COMPLETA (fail-closed) ocurre al abrir. Si ya no verifica, no se muestra ninguna cita.
  const openEvidence=()=>{setEvidence(true);if(full||openState==='loading')return;setOpenState('loading');void fetch(endpoint,{cache:'no-store'}).then(async r=>{if(r.status===403||r.status===404){setOpenState('unavailable');return;}if(!r.ok)throw Error('x');const j=await r.json();if(!j.data||j.data.id!==item.id)throw Error('x');setFull(j.data as Recommendation);setOpenState('idle');}).catch(()=>setOpenState('error'));};
  const close=(ok:Promise<boolean>)=>{void ok.then(saved=>{if(saved)setEdit(false);});};
@@ -51,26 +59,39 @@ function RecommendationCard({item,members,busy,conflict,operate,first,onRegenera
     <p className="insight-sentence"><strong>{textoLegible(item.action)}</strong></p>
     <section aria-label="Por qué"><h4 className={css.h4}>Por qué</h4><p className="card-lead">{textoLegible(item.rationale)}</p></section>
     <section aria-label="Evidencia"><h4 className={css.h4}>Evidencia</h4><p className="card-lead"><strong>{nf.format(item.evidenceCount)}</strong> {item.evidenceCount===1?'cita':'citas'} verificadas al guardar; se vuelven a verificar al abrir. Esta propuesta no demuestra causalidad ni garantiza un ahorro.</p></section>
-    {item.preconditions.length>0&&<details className={css.fold}><summary>Condiciones previas ({item.preconditions.length})</summary><ul>{item.preconditions.map((v,i)=><li key={i}>{textoLegible(v)}</li>)}</ul></details>}
+    {conFlujo&&<EtapasFlujo etapa={etapa}/>}
+    {item.preconditions.length>0&&<details className={css.fold}><summary>{conFlujo?'Supuestos y condiciones previas':'Condiciones previas'} ({item.preconditions.length})</summary><ul>{item.preconditions.map((v,i)=><li key={i}>{textoLegible(v)}</li>)}</ul></details>}
    </div>
    <dl className={css.meta} aria-label="Estado y seguimiento">
-    <div><dt>Estado</dt><dd><StatusChip tone={dismissed?'muted':'info'}>{dismissed?'Descartada':'Propuesta'} · v{item.version}</StatusChip></dd></div>
-    <div><dt>Responsable</dt><dd>{responsable(item)}</dd></div>
+    <div><dt>Estado</dt><dd><StatusChip tone={conFlujo?etapaTono(etapa):dismissed?'muted':'info'}>{conFlujo?ETAPA_TXT[etapa]:dismissed?'Descartada':'Propuesta'} · v{item.version}</StatusChip></dd></div>
+    <div><dt>Responsable</dt><dd>{conFlujo&&item.ownerId?persona(item.ownerId,members):responsable(item)}</dd></div>
     <div><dt>Siguiente paso</dt><dd>{siguientePaso(item)}</dd></div>
     <div><dt>Esfuerzo</dt><dd>Revisión diagnóstica</dd></div>
     <div><dt>Estado causal</dt><dd>{CAUSAL[item.causalState]??etiquetaCausal(item.causalState)}</dd></div>
     <div><dt>Intervención</dt><dd>{item.drafts.length>0?item.drafts.length===1?'1 borrador':item.drafts.length+' borradores':'Sin intervención'}</dd></div>
-    <div><dt>Dinero</dt><dd>No disponible: aún no hay importe por problema (no se estima un ahorro)</dd></div>
+    <div><dt>Impacto en ingreso</dt><dd>Sin estimación: aún no hay importe por problema y no se estima un ahorro</dd></div>
    </dl>
   </div>
   {item.stale&&<p className="state" role="status">El problema o su evidencia ha cambiado. Esta versión se conserva como historial y requiere una propuesta vigente antes de actuar.</p>}
+  {conFlujo&&<SeguimientoBloque item={item} miembros={members} acciones={decide&&(etapa==='aprobada'||etapa==='en_curso')?<div className={fx.acciones}><Button size="sm" variant="secondary" onClick={()=>setAbierto('borradores')}>Ver borradores de la acción</Button>{permisos.iniciar.permitido&&<IniciarBoton item={item} busy={busy||conflict} operate={operate}/>}{permisos.resultado.permitido&&<Button size="sm" variant="primary" disabled={busy||conflict} onClick={()=>setAbierto('resultado')}>Registrar resultado</Button>}</div>:undefined}/>}
+  {conFlujo&&<LineaFlujo item={item} miembros={members}/>}
   {item.drafts.length>0&&<section aria-label="Borradores de intervención" className={css.drafts}><h4>Intervención guardada como borrador</h4><ul className="row-list">{item.drafts.map(d=><li key={d.id} className={css.draft}><span className={css.draftTitle}>{d.hypothesis}</span><span className="chip">{d.status}</span><LinkButton href={'/interventions?'+pinnedQuery(item.scope,item.snapshotId,item.scopeHash).toString()+'#intervention-'+d.id} size="sm" variant="ghost" icon={<Arrow/>}>Abrir intervención</LinkButton></li>)}</ul></section>}
   <footer className="insight-foot">
-   <div className={css.secondary}><Button size="sm" icon={<Icon name="eye" size={14}/>} onClick={openEvidence}>{'Ver evidencia ('+item.evidenceCount+')'}</Button>{item.canMutate&&<Button size="sm" variant="ghost" icon={<Icon name="settings" size={14}/>} onClick={()=>setEdit(true)}>Editar o gestionar</Button>}</div>
-   {item.canMutate&&item.status==='proposed'&&<Button variant="primary" size="sm" disabled={locked||item.drafts.length>0} onClick={create}>Crear intervención borrador</Button>}
+   <div className={css.secondary}><Button size="sm" icon={<Icon name="eye" size={14}/>} onClick={openEvidence}>{'Ver evidencia ('+item.evidenceCount+')'}</Button>{!conFlujo&&item.canMutate&&<Button size="sm" variant="ghost" icon={<Icon name="settings" size={14}/>} onClick={()=>setEdit(true)}>Editar o gestionar</Button>}{conFlujo&&decide&&(etapa==='aprobada'||etapa==='en_curso'||etapa==='resultado')&&<Button size="sm" variant="ghost" onClick={()=>setAbierto('borradores')}>Borradores de la acción</Button>}</div>
+   {!conFlujo&&item.canMutate&&item.status==='proposed'&&<Button variant="primary" size="sm" disabled={locked||item.drafts.length>0} onClick={create}>Crear intervención borrador</Button>}
+   {conFlujo&&decide&&(etapa==='propuesta'||etapa==='ajustada')&&<div className={fx.accionesBloque}><div className={fx.acciones} role="group" aria-label="Decidir sobre la recomendación"><Button size="sm" variant="ghost" disabled={!permisos.descartar.permitido||busy||conflict} onClick={()=>setAbierto('descartar')}>Descartar</Button><Button size="sm" disabled={!permisos.ajustar.permitido||busy||conflict} onClick={()=>setAbierto('ajustar')}>Ajustar</Button><Button size="sm" variant="primary" disabled={!permisos.proceder.permitido||busy||conflict} onClick={()=>setAbierto('proceder')}>Proceder</Button></div>{bloqueo&&<p className={fx.motivo} role="note">{bloqueo}</p>}</div>}
+   {conFlujo&&decide&&etapa==='descartada'&&<Button size="sm" disabled={busy||conflict||!item.canMutate} onClick={()=>setAbierto('reabrir')}>Reabrir</Button>}
   </footer>
   {onRegenerate&&esDeGeneradorAnterior(item)&&<p className="state" role="note">Esta recomendación se guardó con un generador anterior y no se modifica (es historial). <Button size="sm" variant="ghost" disabled={busy||conflict} onClick={()=>onRegenerate(item.problemId)}>Regenerar con el generador actual</Button> Se abre la propuesta para que la confirmes; no se ejecuta sola.</p>}
-  {!item.canMutate&&<p className="insight-sentence">Esta versión es de consulta con tus permisos y la evidencia vigentes.</p>}
+  {!item.canMutate&&!(conFlujo&&decide)&&<p className="insight-sentence">Esta versión es de consulta con tus permisos y la evidencia vigentes.</p>}
+  {conFlujo&&!decide&&<p className="insight-sentence">Tu rol solo permite consultar. Aprobar, ajustar o descartar requiere ser propietario, analista u operador.</p>}
+  {conFlujo&&decide&&<>
+   <ProcederDrawer open={abierto==='proceder'} onClose={cierra} item={item} miembros={members} busy={busy||conflict} operate={operate}/>
+   <AjustarDrawer open={abierto==='ajustar'} onClose={cierra} item={item} miembros={members} busy={busy||conflict} operate={operate} prioridad={item.priority}/>
+   <DescartarDrawer open={abierto==='descartar'||abierto==='reabrir'} reabrir={abierto==='reabrir'} onClose={cierra} item={item} busy={busy||conflict} operate={operate}/>
+   <ResultadoDrawer open={abierto==='resultado'} onClose={cierra} item={item} busy={busy||conflict} operate={operate}/>
+   <BorradoresDrawer open={abierto==='borradores'} onClose={cierra} item={item} miembros={members}/>
+  </>}
   <Drawer open={evidence} onClose={()=>setEvidence(false)} width={560} title={etiquetaCategoria(item.title)} subtitle="Evidencia y contexto de la recomendación" footer={<LinkButton href={'/problems/'+item.problemId+'?'+evidenceQuery.toString()} size="sm" variant="primary" icon={<Arrow/>}>Ver problema y evidencia</LinkButton>}>
    <div className="stack">
     <p className="card-lead">{textoLegible(item.rationale)}</p>
@@ -135,10 +156,11 @@ export function RecommendationsPanel({initialQuery}:{initialQuery:string}){
  };
  const [proposing,setProposing]=useState(false);
  const generate=()=>{if(!view||!problem||busy||conflict)return;const fingerprint=JSON.stringify({query:resolved.current,problemId:problem,problemVersion:view.problemOptions.find(p=>p.id===problem)?.version});if(generateKey.current?.fingerprint!==fingerprint)generateKey.current={fingerprint,key:crypto.randomUUID()};setProposing(true);void operate('/api/recommendations',{operation:'generate',query:resolved.current,problemId:problem,requestKey:generateKey.current.key}).finally(()=>setProposing(false));};
- const [seg,setSeg]=useVistaPersistente<'all'|'proposed'|'dismissed'>('recomendaciones:seg','all'),[propose,setPropose]=useState(false);
- const items=view?[...view.items].sort((a,b)=>(RANK[a.priority]??2)-(RANK[b.priority]??2)):[];
- const nProposed=items.filter(i=>i.status==='proposed').length,nDismissed=items.filter(i=>i.status==='dismissed').length;
- const shown=items.filter(i=>seg==='all'||i.status===seg);
+ const [seg,setSeg]=useVistaPersistente<'all'|'decidir'|'curso'|'resultado'|'dismissed'>('recomendaciones:seg2','all'),[propose,setPropose]=useState(false);
+ const flowAvailable=(view as (RecommendationList&{flowAvailable?:boolean})|null)?.flowAvailable===true;
+ const items=view?([...view.items] as FlowItem[]).sort((a,b)=>(RANK[a.priority]??2)-(RANK[b.priority]??2)):[];
+ const et=(i:FlowItem)=>etapaActual(i,i.flow?.events??[]);const nDecidir=items.filter(i=>['propuesta','ajustada'].includes(et(i))).length,nCurso=items.filter(i=>['aprobada','en_curso'].includes(et(i))).length,nResultado=items.filter(i=>et(i)==='resultado').length,nDismissed=items.filter(i=>i.status==='dismissed').length;
+ const shown=items.filter(i=>seg==='all'||(seg==='decidir'&&['propuesta','ajustada'].includes(et(i)))||(seg==='curso'&&['aprobada','en_curso'].includes(et(i)))||(seg==='resultado'&&et(i)==='resultado')||(seg==='dismissed'&&i.status==='dismissed'));
  const resumen=resumenRecomendaciones(items);
  const firstId=items.find(i=>i.status==='proposed')?.id;
  return <section aria-label="Recomendaciones con evidencia" className="stack">
@@ -147,16 +169,17 @@ export function RecommendationsPanel({initialQuery}:{initialQuery:string}){
   {view&&<LineaCache edadMs={edad} actualizando={busy} viejo={viejo} onActualizar={()=>void load(resolved.current,true)}/>}
   {busy&&!view&&<div className="stack"><WaitStatus {...ESPERA.recomendaciones}/><div aria-hidden="true"><SkeletonCards count={esperadas}/></div></div>}{proposing&&view&&<WaitStatus titulo="Proponiendo la recomendación y verificando su evidencia…" detalle="Puede tardar hasta 2 minutos; no cierres esta pestaña."/>}{error&&<p className="state state-error" role="alert">{error}</p>}{notice&&<p className="state" role="status">{notice}</p>}{empty&&<DataState state={{kind:'empty'}}/>}
   {empty&&<EmptyState art="chart" title="Aún no hay un corte publicado" body="Publica un corte financiero para proponer acciones sobre evidencia verificable." action={<LinkButton href="/economics" variant="primary" size="sm" icon={<Arrow/>}>Revisar publicaciones</LinkButton>}/>}
-  {view&&<>{view.unavailableCount>0&&<p className="state" role="status">Hay recomendaciones que no pueden mostrarse con la evidencia y los permisos actuales.</p>}
+  {view&&<>{!flowAvailable&&items.length>0&&<p className={fx.aviso} role="status">El flujo de aprobación (Proceder, Ajustar y Resultado) aún no está habilitado en esta cuenta. Puedes leer las recomendaciones y usar las acciones anteriores; pide al responsable técnico aplicar la actualización pendiente.</p>}
+   {view.unavailableCount>0&&<p className="state" role="status">Hay recomendaciones que no pueden mostrarse con la evidencia y los permisos actuales.</p>}
    {view.canPropose&&<Modal open={propose} onClose={()=>setPropose(false)} title="Proponer una recomendación" footer={<Button type="submit" form="recommendation-form" variant="primary" disabled={busy||conflict||!view.problemOptions.some(p=>p.id===problem)}>Proponer recomendación</Button>}>
     <form id="recommendation-form" className="stack" aria-label="Proponer una recomendación" onSubmit={e=>{e.preventDefault();generate();setPropose(false);}}><label htmlFor="recommendation-problem">Problema para recomendar</label><select id="recommendation-problem" required disabled={busy} value={problem} onChange={e=>setProblem(e.target.value)}><option value="">Seleccionar problema</option>{view.problemOptions.map(p=><option key={p.id} value={p.id}>{p.label} · v{p.version}</option>)}</select><p className="card-lead">Se genera con reglas explícitas y evidencia autorizada. Requiere revisión humana.</p></form>
    </Modal>}
    {!view.canPropose&&<p className="state">Tu rol permite consultar las recomendaciones. Proponer o modificar requiere permisos de analista, operador o propietario.</p>}
-   {items.length>0&&<div className="toolbar"><SegmentedControl label="Estado de las recomendaciones" value={seg} onChange={setSeg} options={[{value:'all',label:'Todas',count:items.length},{value:'proposed',label:'Propuestas',count:nProposed},{value:'dismissed',label:'Descartadas',count:nDismissed}]}/><span className="toolbar-spacer"/><IdChip value={view.snapshotId} label="Publicación"/></div>}
-   {items.length>0&&<section className={css.summary} aria-label="Resumen de recomendaciones"><div><strong>{nf.format(resumen.propuestas)}</strong><span>{resumen.propuestas===1?'propuesta':'propuestas'}</span></div><div data-tone={resumen.criticas>0?'bad':undefined}><strong>{nf.format(resumen.criticas)}</strong><span>{resumen.criticas===1?'requiere revisión humana urgente':'requieren revisión humana urgente'}</span></div><div><strong>{nf.format(resumen.sinResponsable)}</strong><span>sin responsable</span></div><div><strong>{nf.format(resumen.conBorrador)}</strong><span>con intervención en borrador</span></div></section>}
+   {items.length>0&&<div className="toolbar"><div className={fx.segmentos}><SegmentedControl label="Estado de las recomendaciones" value={seg} onChange={setSeg} options={[{value:'all',label:'Todas',count:items.length},{value:'decidir',label:'Por decidir',count:nDecidir},{value:'curso',label:'Seguimiento',count:nCurso},{value:'resultado',label:'Resultado',count:nResultado},{value:'dismissed',label:'Descartadas',count:nDismissed}]}/></div><span className="toolbar-spacer"/><IdChip value={view.snapshotId} label="Publicación"/></div>}
+   {items.length>0&&<section className={css.summary} aria-label="Resumen de recomendaciones"><div><strong>{nf.format(flowAvailable?nDecidir:resumen.propuestas)}</strong><span>por decidir</span></div><div data-tone={resumen.criticas>0?'bad':undefined}><strong>{nf.format(resumen.criticas)}</strong><span>{resumen.criticas===1?'requiere revisión humana urgente':'requieren revisión humana urgente'}</span></div><div><strong>{nf.format(resumen.sinResponsable)}</strong><span>sin responsable</span></div><div><strong>{nf.format(flowAvailable?nCurso:resumen.conBorrador)}</strong><span>{flowAvailable?'en seguimiento (aprobadas o en curso)':'con intervención en borrador'}</span></div></section>}
    {!items.length&&<EmptyState art="inbox" title="No hay recomendaciones para este alcance" body={view.canPropose?'Propón la primera sobre un problema publicado.':'Cuando se proponga una, aparecerá aquí.'} action={view.canPropose?<Button variant="primary" size="sm" onClick={()=>setPropose(true)}>Proponer una recomendación</Button>:undefined}/>}
-   {items.length>0&&!shown.length&&<p className="state">No hay recomendaciones {seg==='dismissed'?'descartadas':'propuestas'} en este alcance ({nf.format(items.length)} en total).</p>}
-   <div className={css.stack+' reveal'}>{shown.map(item=><RecommendationCard key={item.id+':'+item.version} item={item} members={view.members} busy={busy} conflict={conflict} operate={operate} first={item.id===firstId} onRegenerate={view.canPropose?(id)=>{setProblem(id);setPropose(true);}:undefined}/>)}</div>
+   {items.length>0&&!shown.length&&<p className="state">No hay recomendaciones {seg==='dismissed'?'descartadas':seg==='curso'?'en seguimiento':seg==='resultado'?'con resultado':'por decidir'} en este alcance ({nf.format(items.length)} en total).</p>}
+   <div className={css.stack+' reveal'}>{shown.map(item=><RecommendationCard key={item.id+':'+item.version} item={item} members={view.members} busy={busy} conflict={conflict} operate={operate} first={item.id===firstId} flowAvailable={flowAvailable} onRegenerate={view.canPropose?(id)=>{setProblem(id);setPropose(true);}:undefined}/>)}</div>
   </>}
  </section>;
 }

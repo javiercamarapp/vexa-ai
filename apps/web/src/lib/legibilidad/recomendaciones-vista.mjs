@@ -15,6 +15,11 @@ export function siguientePaso(item){
  if(!item)return null;
  if(item.status==='dismissed')return 'Descartada: reábrela solo si el problema reaparece.';
  if(item.stale)return 'Pedir una propuesta vigente: el problema o su evidencia cambió.';
+ const tipos=new Set((item.flow?.events??[]).map(e=>e.kind));
+ if(tipos.has('resolved'))return 'Resultado registrado: revisa la comparación si existe y cierra el seguimiento.';
+ if(tipos.has('started'))return 'Registrar el resultado cuando la acción termine.';
+ if(tipos.has('approved'))return 'Revisar los borradores de la acción, enviarlos por tu cuenta y marcar en curso.';
+ if(item.flow?.available&&item.canMutate)return 'Decidir: Proceder, Ajustar o Descartar.';
  if(item.drafts?.length>0)return 'Revisar el borrador de intervención y aprobar su plan.';
  if(!item.canMutate)return 'Consulta: un analista, operador o propietario debe decidir.';
  return item.ownerId?'Crear una intervención borrador a partir de esta recomendación.':'Asignar un responsable y crear una intervención borrador.';

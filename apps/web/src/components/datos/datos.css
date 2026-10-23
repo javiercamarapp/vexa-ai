@@ -49,3 +49,6 @@
 .notification-matrix .matrix-check{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px}
 .notification-matrix th[scope=row]{min-width:220px;max-width:420px;white-space:normal}
 @media(max-width:700px){.workspace-content .table-wrap .notification-matrix{width:100%;min-width:0;max-width:100%;table-layout:fixed}.notification-matrix th[scope=col]:not(:first-child){width:72px;font-size:12px;white-space:normal;overflow-wrap:anywhere}.notification-matrix th[scope=row]{min-width:0;max-width:none}.notification-matrix td{padding-inline:2px}}
+/* F3-B: color de datos en las barras de cobertura (antes tinta/blanco) */
+.dn-bar .dn-in,.dn-legend .dn-in{background:var(--chart-3)}
+.dn-bar .dn-pen,.dn-legend .dn-pen{background:var(--chart-4)}

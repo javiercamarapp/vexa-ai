@@ -114,3 +114,9 @@
 .pc-card[data-flush] .ui-table tbody th[scope=row]{padding-left:14px}
 .pc-card-head select{width:auto;max-width:220px;flex:none}
 .pc-estado-nota{margin:0}
+/* F3-B: las tarjetas de una rejilla no heredan el margen de «.card+.card» (quedaban desalineadas) */
+.pc-grid>*{margin-top:0!important}
+.pc-grid>.card{align-self:stretch}
+.an-embudo{--kind-observed:var(--chart-7)}
+.an-cancel{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:12px;color:var(--muted)}
+.an-pager{margin:0}

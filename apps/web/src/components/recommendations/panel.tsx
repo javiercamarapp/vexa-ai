@@ -19,6 +19,7 @@ import {SkeletonCards} from '../ui/skeletons';
 import {WaitStatus} from '../ui/wait-status';
 import {ESPERA} from '../../lib/legibilidad/espera.mjs';
 import {etiquetaCategoria} from '../../lib/legibilidad/categorias.mjs';
+import {traducirTaxonomia,siguientePaso,responsable,resumenRecomendaciones} from '../../lib/legibilidad/recomendaciones-vista.mjs';
 import {nf} from '../ui/format';
 import css from './panel.module.css';
 type Filters=Scope & {basis:string;exponent?:number};
@@ -41,10 +42,22 @@ function RecommendationCard({item,members,busy,conflict,operate,first}:{item:Rec
  const close=(ok:Promise<boolean>)=>{void ok.then(saved=>{if(saved)setEdit(false);});};
  return <article className="card insight" aria-label={'Recomendación: '+etiquetaCategoria(item.title)} data-severity={pr.sev} data-highlight={highlight||undefined} data-dismissed={dismissed||undefined}>
   <header className="insight-head"><span className="insight-icon" aria-hidden="true"><Icon name={highlight?'target':'sparkle'} size={16}/></span><div className="insight-titles"><span className="insight-eyebrow">{highlight?'Hacer primero':dismissed?'Descartada':'Recomendación'}</span><h3>{etiquetaCategoria(item.title)}</h3><TituloAuto problemId={item.problemId} label={item.title}/></div><StatusChip tone={pr.tone}>{pr.label}</StatusChip></header>
-  <p className="insight-sentence"><strong>{item.action}</strong></p>
-  {item.preconditions.length>0&&<ul className="insight-signals" aria-label="Condiciones para considerar esta acción">{item.preconditions.slice(0,3).map((v,i)=><li key={i}><Icon name="check" size={14}/><span>{v}</span></li>)}</ul>}
-  <p className="card-lead">Evidencia verificada al guardar · se vuelve a verificar al abrir.</p>
-  <div className={css.chips}><StatusChip tone={dismissed?'muted':'info'}>{dismissed?'Descartada':'Propuesta'} · v{item.version}</StatusChip><span className="chip">Esfuerzo: revisión diagnóstica</span><span className="chip">Estado causal: {CAUSAL[item.causalState]??item.causalState}</span><span className="chip">Responsable: {item.ownerId?'asignado':'sin asignar'}</span></div>
+  <div className={css.cols}>
+   <div className={css.main}>
+    <p className="insight-sentence"><strong>{traducirTaxonomia(item.action)}</strong></p>
+    <section aria-label="Por qué"><h4 className={css.h4}>Por qué</h4><p className="card-lead">{traducirTaxonomia(item.rationale)}</p></section>
+    <section aria-label="Evidencia"><h4 className={css.h4}>Evidencia</h4><p className="card-lead"><strong>{nf.format(item.evidenceCount)}</strong> {item.evidenceCount===1?'cita':'citas'} verificadas al guardar; se vuelven a verificar al abrir. Esta propuesta no demuestra causalidad ni garantiza un ahorro.</p></section>
+    {item.preconditions.length>0&&<details className={css.fold}><summary>Condiciones previas ({item.preconditions.length})</summary><ul>{item.preconditions.map((v,i)=><li key={i}>{traducirTaxonomia(v)}</li>)}</ul></details>}
+   </div>
+   <dl className={css.meta} aria-label="Estado y seguimiento">
+    <div><dt>Estado</dt><dd><StatusChip tone={dismissed?'muted':'info'}>{dismissed?'Descartada':'Propuesta'} · v{item.version}</StatusChip></dd></div>
+    <div><dt>Responsable</dt><dd>{responsable(item)}</dd></div>
+    <div><dt>Siguiente paso</dt><dd>{siguientePaso(item)}</dd></div>
+    <div><dt>Esfuerzo</dt><dd>Revisión diagnóstica</dd></div>
+    <div><dt>Estado causal</dt><dd>{CAUSAL[item.causalState]??item.causalState}</dd></div>
+    <div><dt>Intervención</dt><dd>{item.drafts.length>0?item.drafts.length===1?'1 borrador':item.drafts.length+' borradores':'Sin intervención'}</dd></div>
+   </dl>
+  </div>
   {item.stale&&<p className="state" role="status">El problema o su evidencia ha cambiado. Esta versión se conserva como historial y requiere una propuesta vigente antes de actuar.</p>}
   {item.drafts.length>0&&<section aria-label="Borradores de intervención" className={css.drafts}><h4>Intervención guardada como borrador</h4><ul className="row-list">{item.drafts.map(d=><li key={d.id} className={css.draft}><span className={css.draftTitle}>{d.hypothesis}</span><span className="chip">{d.status}</span><LinkButton href={'/interventions?'+pinnedQuery(item.scope,item.snapshotId,item.scopeHash).toString()+'#intervention-'+d.id} size="sm" variant="ghost" icon={<Arrow/>}>Abrir intervención</LinkButton></li>)}</ul></section>}
   <footer className="insight-foot">
@@ -54,9 +67,9 @@ function RecommendationCard({item,members,busy,conflict,operate,first}:{item:Rec
   {!item.canMutate&&<p className="insight-sentence">Esta versión es de consulta con tus permisos y la evidencia vigentes.</p>}
   <Drawer open={evidence} onClose={()=>setEvidence(false)} width={560} title={etiquetaCategoria(item.title)} subtitle="Evidencia y contexto de la recomendación" footer={<LinkButton href={'/problems/'+item.problemId+'?'+evidenceQuery.toString()} size="sm" variant="primary" icon={<Arrow/>}>Ver problema y evidencia</LinkButton>}>
    <div className="stack">
-    <p className="card-lead">{item.rationale}</p>
+    <p className="card-lead">{traducirTaxonomia(item.rationale)}</p>
     <p className="card-lead">Esta propuesta no demuestra causalidad ni garantiza un ahorro.</p>
-    <section><h3>Condiciones para considerar esta acción</h3><ul>{item.preconditions.map((v,i)=><li key={i}>{v}</li>)}</ul></section>
+    <section><h3>Condiciones para considerar esta acción</h3><ul>{item.preconditions.map((v,i)=><li key={i}>{traducirTaxonomia(v)}</li>)}</ul></section>
     <section><h3>{'Evidencia de la recomendación ('+(full?full.evidenceRefs.length:item.evidenceCount)+')'}</h3>{openState==='loading'&&<WaitStatus {...ESPERA.evidencia}/>}{openState==='unavailable'&&<p className="state state-error" role="alert">La evidencia de esta recomendación ya no está disponible: no se muestran citas.</p>}{openState==='error'&&<p className="state state-error" role="alert">No se pudo verificar la evidencia ahora; no se muestran citas. Reintenta cerrando y abriendo este panel.</p>}{full&&full.evidenceRefs.map((e,i)=><Citation key={e.runId+':'+e.messageRevisionId+':'+i} quote={e.quote} role={e.role} category={e.category} messageRevisionId={e.messageRevisionId}/>)}</section>
     <div className="meta-row"><span className="chip">Problema v{item.problemVersion}</span><IdChip value={item.snapshotId} label="Publicación"/><IdChip value={item.scopeHash} label="Alcance"/></div>
     <details><summary>{'Historial de versiones ('+item.history.length+')'}</summary><ol>{item.history.map(v=><li key={v.version}><strong>v{v.version} · {v.status==='dismissed'?'Descartada':'Propuesta'}</strong><p>{v.action}</p><p>{v.reason}</p><p>Responsable: {v.ownerId??'Sin asignar'} · Registrado por {v.actorId} · <time>{v.createdAt}</time></p></li>)}</ol></details>
@@ -107,6 +120,7 @@ export function RecommendationsPanel({initialQuery}:{initialQuery:string}){
  const items=view?[...view.items].sort((a,b)=>(RANK[a.priority]??2)-(RANK[b.priority]??2)):[];
  const nProposed=items.filter(i=>i.status==='proposed').length,nDismissed=items.filter(i=>i.status==='dismissed').length;
  const shown=items.filter(i=>seg==='all'||i.status===seg);
+ const resumen=resumenRecomendaciones(items);
  const firstId=items.find(i=>i.status==='proposed')?.id;
  return <section aria-label="Recomendaciones con evidencia" className="stack">
   <PageHeader eyebrow="Decisiones y seguimiento" title="Recomendaciones" guide="recomendaciones" actions={<><Button icon={<Refresh/>} loading={busy} onClick={()=>void load(resolved.current)}>Actualizar recomendaciones</Button>{view?.canPropose&&<Button icon={<Icon name="sparkle" size={14}/>} onClick={()=>setPropose(true)}>Proponer una recomendación</Button>}</>}/>
@@ -119,6 +133,7 @@ export function RecommendationsPanel({initialQuery}:{initialQuery:string}){
    </Modal>}
    {!view.canPropose&&<p className="state">Tu rol permite consultar las recomendaciones. Proponer o modificar requiere permisos de analista, operador o propietario.</p>}
    {items.length>0&&<div className="toolbar"><SegmentedControl label="Estado de las recomendaciones" value={seg} onChange={setSeg} options={[{value:'all',label:'Todas',count:items.length},{value:'proposed',label:'Propuestas',count:nProposed},{value:'dismissed',label:'Descartadas',count:nDismissed}]}/><span className="toolbar-spacer"/><IdChip value={view.snapshotId} label="Publicación"/></div>}
+   {items.length>0&&<section className={css.summary} aria-label="Resumen de recomendaciones"><div><strong>{nf.format(resumen.propuestas)}</strong><span>{resumen.propuestas===1?'propuesta':'propuestas'}</span></div><div data-tone={resumen.criticas>0?'bad':undefined}><strong>{nf.format(resumen.criticas)}</strong><span>{resumen.criticas===1?'requiere revisión humana urgente':'requieren revisión humana urgente'}</span></div><div><strong>{nf.format(resumen.sinResponsable)}</strong><span>sin responsable</span></div><div><strong>{nf.format(resumen.conBorrador)}</strong><span>con intervención en borrador</span></div></section>}
    {!items.length&&<EmptyState art="inbox" title="No hay recomendaciones para este alcance" body={view.canPropose?'Propón la primera sobre un problema publicado.':'Cuando se proponga una, aparecerá aquí.'} action={view.canPropose?<Button variant="primary" size="sm" onClick={()=>setPropose(true)}>Proponer una recomendación</Button>:undefined}/>}
    {items.length>0&&!shown.length&&<p className="state">No hay recomendaciones {seg==='dismissed'?'descartadas':'propuestas'} en este alcance ({nf.format(items.length)} en total).</p>}
    <div className={css.stack+' reveal'}>{shown.map(item=><RecommendationCard key={item.id+':'+item.version} item={item} members={view.members} busy={busy} conflict={conflict} operate={operate} first={item.id===firstId}/>)}</div>

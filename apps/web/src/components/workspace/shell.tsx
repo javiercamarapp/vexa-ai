@@ -4,11 +4,12 @@ import {useEffect,useRef,useState,type ReactNode} from 'react';
 import {usePathname,useSearchParams} from 'next/navigation';
 import {Navigation,navigationQuery,workspaceTitle,workspaceIconName} from './navigation';
 import {WorkspaceIcon} from './icon';
-import {GlobalBar,type Theme} from './global-bar';
+import {NotificationNavigationLink} from '../notifications/navigation-link';
 import {AccesoProvider} from './access';
 import {RestaurarVista} from './restaurar-vista';
 import {fijarTenant,limpiarTodo} from '../../lib/workspace/swr.mjs';
 type Organization={id:string;name:string};
+type Theme='light'|'system'|'dark';
 const roleLabel:Record<string,string>={owner:'Administrador del espacio',analyst:'Analista',operator:'Operador',viewer:'Lectura'};
 export function WorkspaceShell({children,brand,organizations,tenant,role,platformAccess=false}:{children:ReactNode;brand:ReactNode;organizations:Organization[];tenant:string;role:string;platformAccess?:boolean;today?:{iso:string;label:string}}){
  // La caché de lecturas se aísla por organización: fijarla antes de que los hijos lean (purga lo de otra organización).
@@ -27,7 +28,10 @@ export function WorkspaceShell({children,brand,organizations,tenant,role,platfor
    <div className="sidebar-brand"><Link href="/overview" aria-label="Rovaq AI, resumen" className="sidebar-logo">{brand}</Link><button className="icon-button" type="button" aria-label={mobile?'Cerrar menú':collapsed?'Expandir menú':'Contraer menú'} aria-expanded={mobile?undefined:!collapsed} onClick={mobile?close:toggle}><WorkspaceIcon name={mobile?'close':collapsed?'expand':'collapse'}/></button></div>
    <div className="sidebar-navigation"><Navigation role={role} interno={platformAccess} collapsed={!mobile&&collapsed} onNavigate={mobile?close:undefined}/></div>
    <div className="sidebar-footer">
+    {organizations.length>1?<form className="organization-switch" action="/auth/organization" method="post" onSubmit={()=>limpiarTodo()}><label className="nav-caption" htmlFor={mobile?'mobile-workspace-org':'workspace-org'}>Organización</label><div className="organization-controls"><select id={mobile?'mobile-workspace-org':'workspace-org'} name="tenant_id" defaultValue={tenant}>{organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}</select><button type="submit" title="Cambiar organización" aria-label="Cambiar organización">Ir <span aria-hidden="true">↗</span></button></div></form>:<div className="workspace-context"><span className="nav-caption">Espacio de cliente</span><strong>{organization}</strong></div>}
+    <div className="sidebar-notifications"><NotificationNavigationLink/></div>
     {platformAccess&&<Link className="workspace-platform-link" href="/platform" aria-label="Administración de Rovaq AI" title="Administración de Rovaq AI"><WorkspaceIcon name="settings"/><span className="platform-link-label">Administración de Rovaq AI</span></Link>}
+    <fieldset className="theme-selector"><legend className="sr-only">Tema de la interfaz</legend>{([['light','Claro','☀'],['system','Sistema','▣'],['dark','Oscuro','☾']] as const).map(([value,label,icon])=><label key={value} title={'Tema '+label.toLowerCase()}><input type="radio" className="sr-only" name={mobile?'mobile-theme':'workspace-theme'} value={value} checked={theme===value} onChange={()=>chooseTheme(value)}/><span aria-hidden="true">{icon}</span><span className="sr-only">{label}</span></label>)}</fieldset>
     <div className="sidebar-account"><span className="account-avatar" aria-hidden="true">{organization.slice(0,1).toUpperCase()}</span><div className="account-copy"><strong title={organization}>{organization}</strong><span>{roleLabel[role]??role}</span></div><form action="/auth/logout" method="post" onSubmit={()=>limpiarTodo()}><button className="icon-button" title="Cerrar sesión" aria-label="Cerrar sesión"><WorkspaceIcon name="logout"/></button></form></div>
    </div>
   </>;}
@@ -35,7 +39,7 @@ export function WorkspaceShell({children,brand,organizations,tenant,role,platfor
  const sinEncabezado=pathname==='/preguntale';
  return <div className={'workspace workspace-shell'+(collapsed?' sidebar-collapsed':'')+(sinEncabezado?' workspace-chat':'')}>
    <a className="skip-link workspace-skip" href="#workspace-contenido">Saltar al contenido</a><aside className="workspace-sidebar">{sidebar()}</aside>
-   <div className="workspace-frame"><div className="workspace-top" hidden={sinEncabezado||undefined}><header className="workspace-header"><button type="button" className="icon-button mobile-menu-button" aria-label="Abrir menú" onClick={open}><WorkspaceIcon name="menu"/></button><span className="workspace-heading"><WorkspaceIcon name={workspaceIconName(pathname)}/>{workspaceTitle(pathname)}</span></header><GlobalBar organizations={organizations} tenant={tenant} theme={theme} onTheme={chooseTheme}/></div><div className="workspace-content" id="workspace-contenido" tabIndex={-1}><RestaurarVista/><AccesoProvider value={{role,interno:platformAccess}}>{children}</AccesoProvider></div></div>
+   <div className="workspace-frame"><header className="workspace-header" hidden={sinEncabezado||undefined}><button type="button" className="icon-button mobile-menu-button" aria-label="Abrir menú" onClick={open}><WorkspaceIcon name="menu"/></button><span className="workspace-heading"><WorkspaceIcon name={workspaceIconName(pathname)}/>{workspaceTitle(pathname)}</span></header><div className="workspace-content" id="workspace-contenido" tabIndex={-1}><RestaurarVista/><AccesoProvider value={{role,interno:platformAccess}}>{children}</AccesoProvider></div></div>
    <dialog className="workspace-mobile-dialog" ref={dialog} onClose={()=>setMobileOpen(false)} aria-label="Navegación de Rovaq AI" onClick={event=>{if(event.target===event.currentTarget)close();}}>{mobileOpen&&<div className="mobile-sidebar">{sidebar(true)}</div>}</dialog>
    <nav className="workspace-bottom-nav" aria-label="Navegación móvil">{[['/overview','Resumen','overview'],['/problems','Problemas','problems'],['/preguntale','Pregúntale','preguntale'],['/explorer','Explorador','explorer'],['/briefs','Brief','briefs']].map(([href,label,icon])=><Link key={href} href={href+(query?'?'+query:'')} aria-current={pathname===href?'page':undefined}><WorkspaceIcon name={icon}/><span>{label}</span></Link>)}<button type="button" onClick={open} aria-label="Más opciones de navegación"><WorkspaceIcon name="menu"/><span>Más</span></button></nav>
  </div>;

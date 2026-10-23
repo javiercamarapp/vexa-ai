@@ -1,4 +1,4 @@
-// Navegación y barra global contra fixtures sintéticos, a 375 / 768 / 1440 px.
+// Navegación y sidebar contra fixtures sintéticos, a 375 / 768 / 1440 px.
 //   VEXA_UI_FIXTURES=1 [VEXA_UI_FIXTURES_PLATFORM=1] next dev -p 3137   (otra terminal)   luego
 //   NODE_PATH=<dir con playwright-core>/node_modules [EXPECT_INTERNAL=1] [THEME=dark] node apps/web/tests/ui/nav.mjs [baseUrl] [outDir]
 // Sale 1 si algo falla. EXPECT_INTERNAL=1 solo si el servidor corre con VEXA_UI_FIXTURES_PLATFORM=1.
@@ -17,14 +17,12 @@ for(const [w,h] of [[375,812],[768,1024],[1440,900]]){
  const open=async(route)=>{const page=await ctx.newPage();await page.goto(base+route,{waitUntil:'networkidle',timeout:90000});await page.waitForTimeout(400);return page;};
  const shot=(page,name)=>page.screenshot({path:path.join(out,`${name}-${w}-${theme}.png`)});
  console.log(`== ${w}px ${theme}${internal?' (interno)':''}`);
- // 1) La barra está en todas las pantallas del espacio y no desborda; en /preguntale no hay barra ni encabezado: vive dentro del shell normal (misma barra lateral).
- for(const route of ['/overview','/problems','/cfo','/imports','/settings/team','/connections','/jobs/00000000-0000-4000-8000-000000000404']){
+ // 1) Ya no hay barra global en ninguna pantalla del espacio (ni en /preguntale); nada desborda; el título sigue en el encabezado de cada pantalla.
+ for(const route of ['/overview','/problems','/cfo','/imports','/settings/team','/connections','/jobs/00000000-0000-4000-8000-000000000404','/preguntale']){
   const page=await open(route+(route==='/overview'||route==='/problems'||route==='/cfo'?'?'+SCOPE:''));
-  check(await page.locator('.global-bar').count()===1,`${route}@${w}: falta la barra global`);
-  const m=await page.evaluate(()=>{const b=document.querySelector('.global-bar')?.getBoundingClientRect(),vw=document.documentElement.clientWidth;return {over:document.documentElement.scrollWidth>vw+1,right:b?Math.round(b.right):0,vw,h:b?Math.round(b.height):0,pos:getComputedStyle(document.querySelector('.workspace-top')).position};});
-  check(!m.over,`${route}@${w}: desborde horizontal de página`);check(m.right<=m.vw+1,`${route}@${w}: la barra se sale del viewport`);check(m.pos==='sticky',`${route}@${w}: la barra no es fija (sticky)`);
-  check(m.h<=(w>=1100?130:64),`${route}@${w}: barra demasiado alta (${m.h}px)`);
-  if(route==='/cfo')await shot(page,'barra-cfo');
+  check(await page.locator('.global-bar,.workspace-top,.gb-summary').count()===0,`${route}@${w}: no debe haber barra global`);
+  check(!(await page.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth+1)),`${route}@${w}: desborde horizontal de página`);
+  if(route==='/cfo')await shot(page,'sin-barra-cfo');
   await page.close();
  }
  { const page=await open('/preguntale');
@@ -38,20 +36,27 @@ for(const [w,h] of [[375,812],[768,1024],[1440,900]]){
   else check(await page.locator('.workspace-bottom-nav [aria-current=page]').count()===1,`/preguntale@${w}: la navegación móvil no marca Pregúntale`);
   check(!(await page.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth+1)),`/preguntale@${w}: desborde horizontal`);
   await shot(page,'preguntale');await page.close(); }
- // 2) Contenido de la barra con alcance en la URL.
+ // 2) El sidebar lleva abajo organización, avisos (con enlace a /notifications), tema claro/sistema/oscuro y cuenta, SIN solaparse con la lista de ítems, que se desplaza por dentro.
  { const page=await open('/cfo?'+SCOPE);
-  if(w<1100){await page.locator('.gb-summary').click();await page.waitForTimeout(150);check(await page.locator('.gb-panel').isVisible(),`compacta@${w}: el resumen tocable no abre el panel`);check((await page.locator('.gb-summary').getAttribute('aria-expanded'))==='true','móvil: aria-expanded');}
-  else check(!(await page.locator('.gb-summary').isVisible()),`@${w}: el resumen móvil no debe verse`);
-  const txt=await page.locator('.global-bar').innerText();
-  check(/1 ago – 20 sep 2026/.test(txt),`periodo legible ausente: ${txt.replace(/\n/g,' | ').slice(0,200)}`);check(/USD/.test(txt),'moneda ausente');check(/Precio de línea de marketplace/.test(txt),'base legible ausente');check(!/marketplace_line_price/.test(txt),'la base se ve en jerga');
-  check(/Libro económico\s*5 oct 2026/.test(txt)&&/Conversaciones\s*18 oct 2026/.test(txt),`«Datos hasta» por fuente ausente: ${txt.replace(/\n/g,' | ').slice(0,300)}`);
-  check(await page.locator('.global-bar a[href="/notifications"]').count()===1,'campana ausente');
-  check(await page.locator('.global-bar input[name=global-theme]').count()===3,'selector de tema ausente');
-  check(await page.locator('.global-bar [class*=gb-org]').count()>=1,'organización ausente');
-  if(w<1100)await shot(page,'barra-abierta');
+  if(w<768){await page.getByRole('button',{name:'Abrir menú'}).click();await page.waitForTimeout(300);}
+  const root=w<768?page.locator('.mobile-sidebar'):page.locator('.workspace-sidebar');
+  check(await root.locator('input[type=radio][name$="-theme"]').count()===3,`@${w}: falta el selector de tema en el sidebar`);
+  check(await root.locator('a[href="/notifications"]').count()===1,`@${w}: falta «Notificaciones» en el sidebar`);
+  check(await root.locator('.organization-switch,.workspace-context').count()===1,`@${w}: falta la organización en el sidebar`);
+  const g=await root.evaluate(r=>{const rc=s=>r.querySelector(s)?.getBoundingClientRect();const nav=rc('.sidebar-navigation'),foot=rc('.sidebar-footer'),box=r.getBoundingClientRect(),out=r.querySelector('button[aria-label="Cerrar sesión"]')?.getBoundingClientRect(),nv=r.querySelector('.sidebar-navigation');return {navBottom:nav.bottom,footTop:foot.top,footBottom:foot.bottom,boxBottom:box.bottom,outBottom:out?.bottom,outTop:out?.top,scroll:nv.scrollHeight>nv.clientHeight,ov:getComputedStyle(nv).overflowY};});
+  check(g.navBottom<=g.footTop+1,`@${w}: la lista de ítems se solapa con el bloque inferior (${g.navBottom} > ${g.footTop})`);
+  check(g.outBottom<=g.boxBottom+1&&g.outTop>=g.footTop-1,`@${w}: «Cerrar sesión» queda fuera del bloque inferior`);
+  check(/auto|scroll/.test(g.ov),`@${w}: la lista de ítems no se desplaza por dentro`);
+  await page.evaluate(()=>{for(const n of document.querySelectorAll('.sidebar-navigation'))n.scrollTop=n.scrollHeight;});await page.waitForTimeout(150);
+  const last=await root.evaluate(r=>{const a=[...r.querySelectorAll('.sidebar-navigation a')].filter(x=>x.getBoundingClientRect().height>0).pop().getBoundingClientRect(),f=r.querySelector('.sidebar-footer').getBoundingClientRect();return {b:a.bottom,t:f.top};});
+  check(last.b<=last.t+1,`@${w}: el último enlace (Retención) queda bajo el bloque inferior (${last.b} > ${last.t})`);
+  await shot(page,'sidebar');
+  // el tema se cambia desde el sidebar
+  await root.locator('label[title="Tema oscuro"]').click();await page.waitForTimeout(150);check(await page.evaluate(()=>document.documentElement.dataset.theme)==='dark',`@${w}: el botón de tema oscuro no aplica`);
+  await root.locator('label[title="Tema claro"]').click();await page.waitForTimeout(150);check(await page.evaluate(()=>document.documentElement.dataset.theme)==='light',`@${w}: el botón de tema claro no aplica`);
   await page.close(); }
- // 3) Cambiar el periodo conserva moneda y base y suelta la publicación fijada.
- if(w>=768){const page=await open('/problems?'+SCOPE);if(w<1100)await page.locator('.gb-summary').click();await page.locator('.gb-select').selectOption('30d');await page.waitForTimeout(800);const u=new URL(page.url());check(u.pathname==='/problems'&&u.searchParams.get('currency')==='USD'&&u.searchParams.get('basis')==='marketplace_line_price'&&!u.searchParams.has('snapshot_id')&&u.searchParams.get('date_start')!=='2026-08-01',`cambio de periodo: URL ${u.search}`);await page.close();}
+ // 3) (reservado: el periodo se cambia en la barra propia de cada pantalla, no en una barra global)
+
  // 4) Menú: grupos abiertos por defecto, estado recordado, alcance propagado, ítem activo correcto, sin Notificaciones, Interno según acceso.
  { const page=await open('/cfo?'+SCOPE);
   if(w>=768||true){
@@ -89,4 +94,4 @@ for(const [w,h] of [[375,812],[768,1024],[1440,900]]){
  await ctx.close();
 }
 await browser.close();
-console.log(fails.length?`FAIL: ${fails.length} comprobaciones`:'PASS: navegación y barra global');process.exit(fails.length?1:0);
+console.log(fails.length?`FAIL: ${fails.length} comprobaciones`:'PASS: navegación y sidebar');process.exit(fails.length?1:0);

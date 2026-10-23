@@ -98,3 +98,40 @@
 .hoy-kpi:nth-child(1){--kc:var(--chart-1)}.hoy-kpi:nth-child(2){--kc:var(--chart-2)}.hoy-kpi:nth-child(3){--kc:var(--chart-3)}.hoy-kpi:nth-child(4){--kc:var(--chart-7)}
 .hoy-kpi-label::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--kc);margin-right:6px}
 .hoy-kpi-top{min-height:24px}
+
+/* ---- Hoy: UNA pantalla sin huecos (ESTILO-ELEGIDO §4). Filas siempre al 100 % del ancho; KPI no disponible con la misma altura compacta. ---- */
+.hoy-cols{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
+.hoy-cols>:only-child{grid-column:1/-1}
+.hoy-cols:has(>:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:1100px){.hoy-cols,.hoy-cols:has(>:nth-child(2):last-child){grid-template-columns:minmax(0,1fr)}}
+.hoy-titular{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px}
+.hoy-titular h1{flex:1 1 360px;min-width:0}
+.hoy-kpi-valor[data-vacio]{font-size:26px;font-weight:700;color:var(--muted)}
+.hoy-kpi-nota[data-una-linea]{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.hoy-reintentar{all:unset;box-sizing:border-box;cursor:pointer;font:500 12px var(--font-ui);color:var(--ui-secondary);text-decoration:underline;text-underline-offset:2px;width:fit-content}
+.hoy-reintentar:hover{color:var(--ink)}.hoy-reintentar:focus-visible{outline:2px solid var(--ui-focus);outline-offset:2px;border-radius:8px}
+.hoy-kpi .sello{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hoy-kpi .sello li{display:inline}
+.btn.icon-only{width:32px;min-width:32px;padding:0;justify-content:center}
+/* La página Hoy compone sus bloques en una sola rejilla: encabezado, filtros de una línea, KPI, fila 4+4+4 y el resto */
+.hoy-page>.hoy,.hoy-page>.stack{display:contents}
+.hoy-page{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-content:start}
+.hoy-page>.stack>*,.hoy-page .overview{order:9}
+.hoy-page .hoy-titular{order:1}
+.hoy-page .ui-filterbar{order:2;margin:0}
+.hoy-page .hoy-estado{order:3}.hoy-page .hoy-kpis{order:4}.hoy-page .hoy-cols{order:5}
+.hoy-page .overview{display:contents}
+.hoy-page .overview>*{order:10}
+.hoy-page .overview>[aria-label="Estado de los datos"]{order:3}
+.hoy-page .overview>.split:has(.trends){order:6}
+.hoy-page .overview>div:has([aria-label="Problemas con más conversaciones"]){order:7}
+.hoy-page .overview>.split[data-even]{order:8}
+.hoy-page .overview>[aria-label="Indicadores principales"]{order:9}
+.hoy-page .overview>[aria-label="Fuga de reembolsos"],.hoy-page .overview>.card:has(.fg-big){order:12}
+.hoy-kpi-nota{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;font-size:12px;color:var(--ui-secondary)}
+.hoy-kpi{gap:2px}
+.hoy-fila-d{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.hoy-fila{padding:6px 0}
+.hoy-sig-t{font-size:16px!important}
+.hoy-sig p{font-size:12px}
+.hoy-card{gap:6px}

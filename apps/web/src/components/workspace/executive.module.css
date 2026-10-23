@@ -1,11 +1,13 @@
 /* Resumen como panel ejecutivo: franja de estado, KPI, atención y top de problemas. Solo tokens del sistema (claro/oscuro por variables). */
-.strip{display:grid;gap:var(--sp-2);padding:var(--sp-3) var(--sp-4);border:1px solid var(--ui-border);border-radius:var(--r-inner,12px);background:var(--ui-surface)}
-.stripRow{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2) var(--sp-5);min-width:0}
-.stripItem{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline;font-size:var(--t-small,12px);color:var(--muted);min-width:0}
+.strip{display:flex;flex-wrap:nowrap;overflow:hidden;white-space:nowrap;align-items:center;gap:4px 20px;padding:8px 14px;border:1px solid var(--ui-border);border-radius:var(--r-inner,12px);background:var(--ui-surface)}
+.stripRow{display:contents}
+.stripItem{display:flex;flex-wrap:nowrap;flex:none;gap:2px 8px;align-items:baseline;font-size:var(--t-small,12px);color:var(--muted);min-width:0}
 .stripItem strong{color:var(--ink,inherit);font-weight:600;font-variant-numeric:tabular-nums}
-.lineaAvisos{margin:0;font-size:var(--t-small,12px);line-height:1.45;color:var(--ink,inherit);overflow-wrap:anywhere}
+.lineaAvisos{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;margin:0;font-size:var(--t-small,12px);line-height:1.45;color:var(--ink,inherit);overflow-wrap:anywhere}
 .avisos summary{cursor:pointer;font-size:var(--t-small,12px);font-weight:600}
 .avisos>div{display:grid;gap:var(--sp-2);margin-top:var(--sp-2)}
+.avisos{margin-left:auto}
+.avisos[open]{flex-basis:100%;margin-left:0}
 .kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-3)}
 @media(min-width:1100px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .cols{display:grid;gap:var(--sp-4);grid-template-columns:minmax(0,1fr)}
@@ -27,3 +29,7 @@
 .note{margin:var(--sp-3) 0 0;color:var(--muted);font-size:var(--t-small,12px)}
 .fold summary{cursor:pointer;font-weight:600}
 .fold>div{display:grid;gap:var(--sp-3);margin-top:var(--sp-3)}
+
+.strip :is(button,summary){white-space:nowrap;min-height:24px;padding-block:0}
+.strip{padding:4px 14px}
+@media(max-width:700px){.strip{flex-wrap:wrap;white-space:normal;overflow:visible}.stripItem{flex:1 1 auto;flex-wrap:wrap}.lineaAvisos{flex:1 1 100%;white-space:normal}}

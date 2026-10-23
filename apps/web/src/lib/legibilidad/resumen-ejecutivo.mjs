@@ -1,5 +1,6 @@
 // Lógica PURA del Resumen como panel ejecutivo (sin red, sin React). Honestidad: lo desconocido es null y nunca se convierte en 0;
 // los deltas solo comparan meses COMPLETOS (criterio único en packages/metrics/complete-months.mjs).
+import {coberturaIncorporacion,coberturaAnalisisIA} from '../../../../../packages/workspace-service/cifras-cobertura.mjs';
 import {esMesCompleto} from '../../../../../packages/metrics/complete-months.mjs';
 import {variacion} from './insights.mjs';
 import {estadosDeSerie} from '../../../../../packages/agent-datos/meses.mjs';
@@ -53,16 +54,14 @@ export function topProblemas(items,n=5){
  const filas=numerarGrupos(filasDesdeItems(items));
  return ordenarFilas(filas.filter(f=>f.conversaciones!==null),{col:'conversaciones',dir:'desc'}).slice(0,n);
 }
-/** Cobertura de fuentes: «6 de 7», incorporación de conversaciones y «datos hasta» por fuente (cada una con su propia fecha). */
+/** Cobertura de fuentes: «6 de 7», incorporación de conversaciones de HubSpot (definición única: workspace-service/cifras-cobertura.mjs; sin desglose no hay %) y «datos hasta» por fuente (cada una con su propia fecha). */
 export function estadoFuentes(view,{libro=null,conversaciones=null}={}){
  const fuentes=Array.isArray(view?.sources)?view.sources:null;
  const cargadas=fuentes?fuentes.filter(s=>s.loaded).length:null;
  const hub=fuentes?.find(s=>s.key==='hubspot'&&s.loaded)??null;
- const cuerpo=hub?.rejectionBreakdown?.status==='ok'?hub.rejectionBreakdown:null;
- const base=cuerpo?.conversationRows??hub?.total??null,inc=cuerpo?.conversationIncorporated??hub?.incorporated??null;
  const cortes=[['Conversaciones',conversaciones],['Libro de pedidos',libro]].map(([etiqueta,v])=>({etiqueta,dia:diaCorte(v)}));
  return {cargadas,total:fuentes?fuentes.length:null,sinCargar:fuentes?fuentes.filter(s=>!s.loaded&&s.status!=='timeout').map(s=>s.label):[],
-  analisis:base&&inc!==null?{incorporadas:inc,de:base,pct:Math.round(inc*1000/base)/10}:null,cortes};
+  incorporacion:coberturaIncorporacion(hub),cortes};
 }
 
 /** Una línea de estado con lo clave de los avisos críticos reales del Resumen (qué falta / qué ajustar); el detalle queda en el plegable.
@@ -82,4 +81,11 @@ export function lineaAvisos({critico=false,pendiente=false,parcialCarga=false,fa
   if(meses.length)partes.push(`${nombre}: ${meses.join(' y ')} parcial (datos hasta el ${diaLargoUtc(corte)}), sin comparación`);
  }
  return partes.length?'Estado de los datos: '+partes.join(' · ')+'.':null;
+}
+
+/** Cobertura de análisis de la IA para Resumen y /analysis: analizadas (trends.conversations.analysis) sobre las conversaciones cargadas (trends.conversations.total). */
+export function coberturaDeTendencias(conv){
+ const an=conv?.analysis;
+ if(!an||an.status!=='ok')return coberturaAnalisisIA({analizadas:null,base:conv?.total??null});
+ return coberturaAnalisisIA({analizadas:an.analyzed,base:conv?.status==='ok'?conv.total:null,estimado:conv?.class==='estimated'&&conv?.sampled===true});
 }

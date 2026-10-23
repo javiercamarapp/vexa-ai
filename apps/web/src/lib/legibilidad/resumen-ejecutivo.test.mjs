@@ -1,7 +1,7 @@
 //   node --test apps/web/src/lib/legibilidad/resumen-ejecutivo.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {lineaAvisos,kpiConversaciones,kpiPedidos,topProblemas,estadoFuentes,mesesCoberturaBaja} from './resumen-ejecutivo.mjs';
+import {lineaAvisos,kpiConversaciones,kpiPedidos,topProblemas,estadoFuentes,mesesCoberturaBaja,coberturaDeTendencias} from './resumen-ejecutivo.mjs';
 const AHORA=new Date('2026-10-23T00:00:00Z');
 const conv={status:'ok',class:'observed',series:[{month:'2026-07',count:900},{month:'2026-08',count:2575},{month:'2026-09',count:1318},{month:'2026-10',count:77}],completeness:{dataThrough:'2026-10-05T00:00:00.000Z'}};
 test('conversaciones: último mes completo vs anterior; octubre parcial no entra',()=>{
@@ -48,7 +48,9 @@ test('top de problemas: por conversaciones, desconocidos fuera, con grupo numera
 test('fuentes: «6 de 7», análisis incorporado y «datos hasta» con su propia fecha (sin fecha = desconocida)',()=>{
  const view={sources:[{key:'hubspot',label:'HubSpot',loaded:true,status:'ok',total:8200,incorporated:8033,rejectionBreakdown:{status:'ok',conversationRows:8200,conversationIncorporated:8033}},{key:'zendesk',label:'Zendesk',loaded:false,status:'empty'},{key:'csv',label:'CSV',loaded:true,status:'ok',total:1,incorporated:1}]};
  const e=estadoFuentes(view,{libro:'2026-10-05T00:00:00Z',conversaciones:null});
- assert.equal(e.cargadas,2);assert.equal(e.total,3);assert.deepEqual(e.sinCargar,['Zendesk']);assert.equal(e.analisis.pct,98);
+ assert.equal(e.cargadas,2);assert.equal(e.total,3);assert.deepEqual(e.sinCargar,['Zendesk']);assert.equal(e.incorporacion.pct,98);assert.equal(e.incorporacion.texto,'8,033 de 8,200 conversaciones de HubSpot (98.0 %)');
+ {const sin=estadoFuentes({sources:[{key:'hubspot',label:'HubSpot',loaded:true,status:'ok',total:17163,incorporated:8287,rejectionBreakdown:{status:'unavailable'}}]});assert.equal(sin.incorporacion,null,'sin desglose no se inventa un porcentaje sobre otra base');}
+ {const c=coberturaDeTendencias({status:'ok',class:'observed',total:104018,analysis:{status:'ok',analyzed:9994}});assert.equal(c.texto,'9,994 de 104,018 conversaciones (9.6 %)');assert.equal(coberturaDeTendencias({status:'ok',total:100,analysis:{status:'timeout',analyzed:null}}).pct,null);assert.equal(coberturaDeTendencias(null).pct,null);}
  assert.equal(e.cortes.find(c=>c.etiqueta==='Libro de pedidos').dia,'5 oct 2026');assert.equal(e.cortes.find(c=>c.etiqueta==='Conversaciones').dia,null);
  assert.equal(estadoFuentes(null).cargadas,null);
 });

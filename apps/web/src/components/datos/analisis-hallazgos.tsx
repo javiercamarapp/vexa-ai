@@ -1,7 +1,8 @@
 'use client';
 import {useEffect,useMemo,useState} from 'react';
 import type {TrendsView} from '../../../../../packages/workspace-service/trends.mjs';
-import {resumenEvidencia,coberturaAnalisis,SEVERIDAD,tonoSeveridad,type ResumenEvidencia} from '../../lib/legibilidad/hallazgos.mjs';
+import {resumenEvidencia,SEVERIDAD,tonoSeveridad,type ResumenEvidencia} from '../../lib/legibilidad/hallazgos.mjs';
+import {coberturaDeTendencias} from '../../lib/legibilidad/resumen-ejecutivo.mjs';
 import {fechaCorteLegible} from '../../lib/legibilidad/fechas.mjs';
 import {StatusChip} from '../ui/status-chip';
 import {KindBadge} from '../ui/kind-badge';
@@ -28,15 +29,14 @@ export function HallazgosAnalisis({jobs,fuentes,masPaginas}:{jobs:JobFila[];fuen
   return()=>c.abort();
  },[runs]);
  const trends=useJson<TrendsView>('/api/trends',acceptTrends);
- const conv=trends.data?.conversations,total=conv?.status==='ok'?conv.total:null;
- const analizadas=new Set(jobs.filter(j=>j.runStatus==='succeeded').map(j=>j.conversationId)).size;
- const cob=coberturaAnalisis({analizadas,total,estimado:conv?.class==='estimated'});
+ const conv=trends.data?.conversations,cob=coberturaDeTendencias(conv),total=cob.de;
+ const enPagina=new Set(jobs.filter(j=>j.runStatus==='succeeded').map(j=>j.conversationId)).size;
  const conHallazgo=Object.values(ev).filter(x=>x&&x!=='error'&&!x.sinConclusion).length;
  return <>
   <section className="card" aria-labelledby="an-cob-t">
-   <div className="card-title"><div><h2 id="an-cob-t">Cobertura del análisis</h2><p>{cob.texto}{masPaginas?' (hay más trabajos en otras páginas)':''}</p></div>{total!==null&&<KindBadge kind={conv?.class==='estimated'?'estimated':'observed'}/>}</div>
-   <div className="dn-bar" role="img" aria-label={cob.bps===null?'Cobertura no disponible':`Analizadas: ${(cob.bps/100).toFixed(2)} % de las conversaciones cargadas`}>{cob.bps!==null&&<span className="dn-in" style={{width:Math.max(1,Math.min(100,cob.bps/100))+'%'}}/>}</div>
-   <p className="dn-meta">{cob.nota} Con hallazgo concluyente: {nf.format(conHallazgo)} de {nf.format(runs.length)} análisis terminados que se pudieron leer.</p>
+   <div className="card-title"><div><h2 id="an-cob-t">Cobertura del análisis</h2><p>{cob.pct===null&&trends.busy?'Calculando la cobertura…':cob.texto}</p></div>{total!==null&&<KindBadge kind={cob.estimado?'estimated':'observed'}/>}</div>
+   <div className="dn-bar" role="img" aria-label={cob.pct===null?'Cobertura no disponible':`Analizadas: ${cob.pct.toLocaleString('es-MX')} % de las conversaciones cargadas`}>{cob.pct!==null&&<span className="dn-in" style={{width:Math.max(1,Math.min(100,cob.pct))+'%'}}/>}</div>
+   <p className="dn-meta">{cob.nota} Esta lista muestra {nf.format(enPagina)} {enPagina===1?'conversación analizada':'conversaciones analizadas'} en la página actual{masPaginas?' (hay más trabajos en otras páginas)':''}; no es la cobertura. Con hallazgo concluyente: {nf.format(conHallazgo)} de {nf.format(runs.length)} análisis terminados que se pudieron leer.</p>
   </section>
   <section className="card" aria-labelledby="an-tab-t">
    <div className="card-title"><div><h2 id="an-tab-t">Hallazgos por análisis</h2><p>Lo que encontró cada análisis, con su evidencia citada.</p></div></div>

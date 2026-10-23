@@ -12,9 +12,3 @@ export function resumenEvidencia(ev) {
   const top = ordenados[0];
   return {titulo: etiquetaCategoria(top.category), otros: issues.length - 1, severidad: ORDEN.includes(top.severity) ? top.severity : 'unknown', citas: issues.reduce((n, i) => n + (i.evidence?.length ?? 0), 0), sinConclusion: false};
 }
-/** «6 de ≈41,200 conversaciones cargadas». `total` viene de una muestra (Estimado) o es null (No disponible): nunca se inventa. */
-export function coberturaAnalisis({analizadas, total, estimado = true}) {
-  const n = Number(analizadas) || 0, f = (v) => Number(v).toLocaleString('es-MX');
-  if (total === null || total === undefined || !Number.isFinite(Number(total)) || Number(total) <= 0) return {texto: `${f(n)} conversaciones analizadas`, nota: 'El total de conversaciones cargadas no está disponible ahora.', bps: null};
-  return {texto: `${f(n)} de ${estimado ? '≈' : ''}${f(total)} conversaciones cargadas`, nota: estimado ? 'El total sale de una muestra rotulada como Estimado.' : '', bps: Math.round((n * 10000) / Number(total))};
-}

@@ -3,9 +3,10 @@
 // reported as status "timeout" instead of surfacing a 503. RLS evaluates vexa_member() per row, so scans are never unbounded
 // and the result says what it is (raw registered rows, not the published-snapshot rules).
 import {WorkspaceError} from './contracts.mjs';
-import {readConversationMonthly,readLedgerMonthly,summaryMeta} from './summaries.mjs';
+import {attempt,readConversationMonthly,readLedgerMonthly,summaryMeta} from './summaries.mjs';
 import {completitud} from '../metrics/complete-months.mjs';
 import {ingresosDelLibro} from './cifras-libro.mjs';
+import {SQL_ANALIZADAS} from './cifras-cobertura.mjs';
 import {readConversationMonthlyFromInsights} from '../insights/adapter.mjs';
 export const TREND_MONTHS=12,LOCAL_TIMEOUT_MS=4000;
 const monthStart=(d)=>new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),1));
@@ -69,6 +70,9 @@ export function createTrendsRepository({database,now=()=>new Date(),timeoutMs=LO
     else if(rowsOf===null)conversations={status:'timeout',class:'observed',series:[],outsideWindow:null,undated:null,total:null,sampled:false,definition,summary:summaryMeta(convSum)};
     else{const by=new Map(rowsOf.filter(r=>r.month).map(r=>[r.month,Math.round(Number(r.n)*factor)])),outside=Math.round(rowsOf.filter(r=>!r.month).reduce((a,r)=>a+Number(r.n),0)*factor),undated=Math.round(rowsOf.reduce((a,r)=>a+Number(r.undated),0)*factor),total=Math.round(rowsOf.reduce((a,r)=>a+Number(r.n),0)*factor);
      conversations={status:total===0?'empty':'ok',class:exact?'observed':'estimated',sampled:!exact,samplePercent:exact?null:SAMPLE_PERCENT,definition,sampleNote:exact?null:`Estimado con una muestra del ${SAMPLE_PERCENT} % de las conversaciones: fechar todas (por su primer mensaje) no cabe en el tiempo permitido.`,series:win.list.map(m=>({month:m,count:by.get(m)??0})),outsideWindow:outside,undated,total,summary:summaryMeta(convSum),completeness:completitud(win.list.map(m=>({month:m,count:by.get(m)??0})),{dataThrough:maxDate(rowsOf.map(r=>r.last_at)),ahora:now()})};}
+    // Conversaciones analizadas por la IA (distintas, terminadas): numerador de la cobertura de análisis; la base es `conversations.total`. Ver cifras-cobertura.mjs.
+    const an=await attempt(s,async()=>Number((await s.query(SQL_ANALIZADAS,[s.tenantId])).rows[0]?.n??0),timeoutMs);
+    conversations.analysis=an.timeout?{status:'timeout',analyzed:null}:an.unavailable?{status:'unavailable',analyzed:null}:{status:'ok',analyzed:an.value};
     let ledger;
     if(led===null)ledger={status:'timeout',class:'observed',series:[],currencies:[],summary:summaryMeta(ledSum)};
     else{const primary=ingresos.moneda===null?null:ingresos.moneda+':'+ingresos.exponente,currencies=primary?[primary,...ingresos.otrasMonedas.map(c=>c+':')]:[];

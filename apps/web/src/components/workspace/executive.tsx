@@ -86,16 +86,18 @@ function desdeCatalogo(b:Bundle):Criticos|null{
 /** Grupos con revisión crítica: se leen de la lista de Problemas ya cargada (caché de 5 min) o, a petición, de la misma consulta; el Resumen no la dispara solo (es la pesada). */
 export function useCriticos(query:string){
  const clave=claveCache('problems',query);
- const [datos,setDatos]=useState<Criticos|null>(()=>{const c=leerCache(clave);return c?desdeCatalogo(c.datos as Bundle):null;});
+ const desde=(c:ReturnType<typeof leerCache>)=>c?{d:desdeCatalogo(c.datos as Bundle),edad:c.edadMs}:null;
+ const [lectura,setLectura]=useState<{d:Criticos|null;edad:number|null}|null>(()=>{const c=desde(leerCache(clave));return c?{d:c.d,edad:c.edad}:null;});
  const [busy,setBusy]=useState(false),[error,setError]=useState('');
- useEffect(()=>{const c=leerCache(clave);void Promise.resolve().then(()=>setDatos(c?desdeCatalogo(c.datos as Bundle):null));},[clave]);
+ useEffect(()=>{const c=desde(leerCache(clave));void Promise.resolve().then(()=>setLectura(c?{d:c.d,edad:c.edad}:null));},[clave]);
  const cargar=async()=>{
   setBusy(true);setError('');
   try{const q=new URLSearchParams(query);q.set('resource','problems');const r=await fetch('/api/workspace?'+q.toString(),{cache:'no-store'});if(!r.ok)throw Error(String(r.status));
-   const b=(await r.json()).data as Bundle;if(!b||!Array.isArray(b.items))throw Error('shape');guardarCache(clave,b);const d=desdeCatalogo(b);if(!d)setError('Las señales críticas no se calcularon en esta carga; reintenta en unos segundos.');setDatos(d);
+   const b=(await r.json()).data as Bundle;if(!b||!Array.isArray(b.items))throw Error('shape');guardarCache(clave,b);const d=desdeCatalogo(b);if(!d)setError('Las señales críticas no se calcularon en esta carga; reintenta en unos segundos.');setLectura(d?{d,edad:null}:null);
   }catch{setError('No se pudo consultar la revisión crítica ahora.');}finally{setBusy(false);}
  };
- return {datos,busy,error,cargar};
+ // `edadMs`: antigüedad de la última lectura guardada (null = recién calculada); nunca se presenta una lectura vieja como actual.
+ return {datos:lectura?.d??null,edadMs:lectura?.edad??null,busy,error,cargar};
 }
 export function Attention({crit,query,conteo}:{crit:ReturnType<typeof useCriticos>;query:string;conteo:{groups:number;signals:number|null}|null}){
  const d=crit.datos,total=d?.groups??conteo?.groups??null;

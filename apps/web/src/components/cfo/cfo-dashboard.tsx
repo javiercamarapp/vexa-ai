@@ -101,7 +101,7 @@ export function CfoDashboard({query = '', organization, roleOverride, volverA = 
     <CaidaExplicada report={report} moneda={block.currency} />
     <Fila split="8-4">
       <Card title="Tendencia mensual" description={`Últimos ${report.months.length} meses · ${block.currency}`}>
-        <MonthBars key={measure + block.currency} title={seriesPoints(block, measure).title} unit={seriesPoints(block, measure).unit} points={seriesPoints(block, measure).points} note={seriesPoints(block, measure).note} exponent={seriesPoints(block, measure).exponent} />
+        <MonthBars key={measure + block.currency} title={seriesPoints(block, measure).title} unit={seriesPoints(block, measure).unit} points={seriesPoints(block, measure).points} note={seriesPoints(block, measure).note} exponent={seriesPoints(block, measure).exponent} c={measure === 'reembolsos' || measure === 'tasa' ? 2 : measure === 'pedidos' ? 5 : 1} height={290} />
       </Card>
       <Card title={`Alertas (${alertas.length} activas)`} description="Reglas deterministas sobre cifras observadas" actions={<KindBadge kind="observed" />}>
         {alertas.length === 0 ? <Vacio>Ninguna regla se activó con los datos actuales.</Vacio> :
@@ -152,9 +152,9 @@ function Mix({report, currency}: {report: CfoReport; currency: string}) {
   const pedidos: ItemBarra[] = report.mix.orders.map(o => ({key: o.channel, label: o.label, etiqueta: o.label, sub: `${int(o.n)} pedidos`, valor: (o.shareBps ?? 0) / 100, texto: pct(o.shareBps)}));
   const grupos = report.mix.byCurrency.filter(g => g.currency === currency);
   return <Card title="Mezcla por canal" description={`Pedidos (conteo, sin moneda) e importes en ${currency} por base: no se suman entre sí`} actions={<KindBadge kind="observed" />}>
-    <div className="dg-dos" style={{alignItems: 'start'}}>
+    <div className="dg-dos dg-dos-fill">
       <div><p className="dg-lab" style={{margin: '0 0 2px'}}><b>Pedidos por canal</b></p><ListaBarras c={1} max={100} label="Pedidos por canal" apilado items={pedidos} /></div>
-      <div>{grupos.length === 0 ? <Vacio>Sin importes en {currency}.</Vacio> : grupos.map(g => <div key={g.currency + g.base} style={{marginBottom: 8}}><p className="dg-lab" style={{margin: '0 0 2px'}}><b>{g.baseLabel}</b><small>total {g.total}</small></p>
+      <div>{grupos.length === 0 ? <Vacio>Sin importes en {currency}.</Vacio> : grupos.map(g => <div key={g.currency + g.base} className="dg-g"><p className="dg-lab" style={{margin: '0 0 2px'}}><b>{g.baseLabel}</b><small>total {g.total}</small></p>
         <ListaBarras c={2} max={100} label={`${g.currency} ${g.baseLabel}`} apilado items={g.items.map(i => ({key: i.channel, etiqueta: i.label, sub: i.display, valor: (i.shareBps ?? 0) / 100, texto: pct(i.shareBps)}))} /></div>)}</div>
     </div>
     <div className="dg-pie"><HowTo text={report.mix.ordersFig.how} /></div></Card>;

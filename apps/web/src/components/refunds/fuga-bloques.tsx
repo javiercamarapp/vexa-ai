@@ -30,7 +30,7 @@ export function Pareto({v,onReintentar}:{v:FugaVista;onReintentar:()=>void}){
  const top:SkuFila[]=v.skus.status==='ok'?v.skus.top:[];
  if(!top.length)return <Vacio>No hay reembolsos con SKU en este periodo.</Vacio>;
  const max=Math.max(1,...top.map(r=>big(r.usdBrutoMinor)));
- return <div className="dg-fill"><ListaBarras c={2} max={max} label="Los 10 SKUs con más dinero devuelto" items={top.map(r=>({key:r.sku,etiqueta:`${r.pos}. ${r.sku}`,sub:r.canales.map(c=>`${NOMBRE[c.canal]??c.canal} ${num(c.n)}`).join(' · '),valor:big(r.usdBrutoMinor),texto:corto(big(r.usdBrutoMinor)),sub2:`${pct(r.acumPct)} acumulado`}))}/>
+ return <div className="dg-fill"><ListaBarras c={2} vw max={max} label="Los 10 SKUs con más dinero devuelto" items={top.map(r=>({key:r.sku,etiqueta:`${r.pos}. ${r.sku}`,sub:r.canales.map(c=>`${NOMBRE[c.canal]??c.canal} ${num(c.n)}`).join(' · '),valor:big(r.usdBrutoMinor),texto:corto(big(r.usdBrutoMinor)),sub2:`${pct(r.acumPct)} acumulado`}))}/>
   {v.skus.status==='ok'&&v.skus.top.length>0&&<p className="dg-nota">{top.length} de {num(v.skus.total??top.length)} SKUs. El % acumulado va en la segunda línea de cada valor; el dinero de Amazon sin monto no suma.</p>}</div>;
 }
 
@@ -45,13 +45,13 @@ export function IntensidadCanales({v,onReintentar}:{v:FugaVista;onReintentar:()=
  return <div className="dg-fill">
   <Leyenda items={[...canales.map(([c])=>({label:NOMBRE[c]??c,c:cc(c)})),{label:'Mes parcial',hatch:true}]}/>
   {canales.map(([c,b])=>{const meses=b.meses.filter(m=>!m.ultimo);
-   return <div key={c} style={{marginBottom:10}}><p className="dg-lab" style={{margin:'0 0 4px'}}><b>{NOMBRE[c]??c}</b></p>
+   return <div key={c} style={{marginBottom:10,flex:'1 1 auto',display:'flex',flexDirection:'column'}}><p className="dg-lab" style={{margin:'0 0 4px'}}><b>{NOMBRE[c]??c}</b></p>
     {!meses.length?<Vacio>Sin meses con reembolsos registrados.</Vacio>:
-    <div className="dg-meses" style={{height:132,gridTemplateColumns:`repeat(${meses.length},minmax(0,1fr))`}} role="img" aria-label={`Intensidad mensual de ${NOMBRE[c]??c}: ${meses.map(m=>`${mesCorto(m.mes)} ${m.intensidadPct===null?'sin dato':pct(m.intensidadPct)}`).join(', ')}`}>
+    <div className="dg-meses" style={{height:'auto',minHeight:120,flex:'1 1 auto',gridTemplateColumns:`repeat(${meses.length},minmax(0,1fr))`}} role="img" aria-label={`Intensidad mensual de ${NOMBRE[c]??c}: ${meses.map(m=>`${mesCorto(m.mes)} ${m.intensidadPct===null?'sin dato':pct(m.intensidadPct)}`).join(', ')}`}>
      {meses.map(m=><div key={m.mes} className="dg-mes" style={{gridTemplateRows:'14px 1fr 16px'}} data-q={m.calidad} title={`${mesCorto(m.mes)}: ${num(m.reembolsos)} reembolsos / ${num(m.lineas)} líneas = ${m.intensidadPct===null?'sin dato':pct(m.intensidadPct)}${m.calidad==='parcial'?' · mes parcial':m.calidad==='posible_hueco'?' · posible hueco de exportación':''}`}>
       <span className="dg-mes-v">{m.calidad==='posible_hueco'?'?':''}</span>
       <span className="dg-mes-a">{m.calidad!=='posible_hueco'&&m.intensidadPct!==null&&<i style={{height:Math.max(3,m.intensidadPct*100/max)+'%',background:color(cc(c)-1)}}/>}</span>
-      <span className="dg-mes-m" style={{paddingTop:0}}>{mesCorto(m.mes).slice(0,1)}</span></div>)}</div>}</div>;})}
+      <span className="dg-mes-m" style={{paddingTop:0}}>{mesCorto(m.mes).slice(0,3)}</span></div>)}</div>}</div>;})}
   <p className="dg-nota">{w&&w.conPct!==null?`Walmart: ~${Math.round(w.conPct)} reembolsos por cada 100 líneas (${pct(w.sinPct)} sin los ${num(w.cancelados)} cancelados). `:''}{a?`Amazon: ~${Math.round(a.intensidadPct as number)} en ${mesCorto(a.mes)}. `:''}Intensidad, no tasa por cohorte; «?» = posible hueco de exportación.</p></div>;
 }
 
@@ -97,7 +97,7 @@ export function Expediente({v,sku,onPaquete}:{v:FugaVista;sku:string;onPaquete:(
    <div className="dg-caja" data-t="no"><h3>Qué no se sabe</h3><ul>{NO_SE_SABE.slice(0,5).map((x,i)=><li key={i}>{x}</li>)}</ul></div>
   </div>
   {meses.length>0&&<div style={{marginTop:12}}><p className="dg-lab" style={{margin:'0 0 4px'}}><b>Reembolsos por mes y canal</b></p>
-   <ListaBarras c={2} max={maxM} label={`Reembolsos de ${sku} por mes`} items={meses.slice(-6).map(m=>({key:m.mes+m.canal,c:cc(m.canal),etiqueta:`${mesCorto(m.mes)} · ${NOMBRE[m.canal]??m.canal}`,valor:big(m.usdBrutoMinor),texto:usd(m.usdBrutoMinor),sub2:`${num(m.n)} reembolsos`}))}/></div>}
+   <ListaBarras c={2} vw max={maxM} label={`Reembolsos de ${sku} por mes`} items={meses.slice(-6).map(m=>({key:m.mes+m.canal,c:cc(m.canal),etiqueta:`${mesCorto(m.mes)} · ${NOMBRE[m.canal]??m.canal}`,valor:big(m.usdBrutoMinor),texto:usd(m.usdBrutoMinor),sub2:`${num(m.n)} reembolsos`}))}/></div>}
   <div style={{marginTop:'auto',paddingTop:12}}><Button variant="primary" size="sm" icon={<Download/>} onClick={()=>onPaquete(sku)}>Paquete de evidencia para proveedor</Button></div>
  </div>;
 }
@@ -121,7 +121,7 @@ export function PanelRepetido({v,onReintentar}:{v:FugaVista;onReintentar:()=>voi
  if(c.status==='not_computed')return <Vacio>{c.note??'El resumen de contacto repetido todavía no se ha calculado.'}</Vacio>;
  if(c.status!=='ok')return <Vacio>No hay contactos con tickets vinculados para calcular repeticiones.</Vacio>;
  return <div className="dg-fill">
-  <ListaBarras c={7} max={100} label="Contactos que repiten" items={[{key:'a',etiqueta:'2 o más veces en 90 días',sub:`${num(c.contactosDosOMas90)} de ${num(c.contactos)} contactos`,valor:c.pctDosOMas,texto:pct(c.pctDosOMas)},{key:'b',etiqueta:'3 o más veces',sub:`${num(c.contactosTresOMas90)} contactos`,valor:c.pctTresOMas,texto:pct(c.pctTresOMas)}]}/>
+  <ListaBarras c={7} vw max={100} label="Contactos que repiten" items={[{key:'a',etiqueta:'2 o más veces en 90 días',sub:`${num(c.contactosDosOMas90)} de ${num(c.contactos)} contactos`,valor:c.pctDosOMas,texto:pct(c.pctDosOMas)},{key:'b',etiqueta:'3 o más veces',sub:`${num(c.contactosTresOMas90)} contactos`,valor:c.pctTresOMas,texto:pct(c.pctTresOMas)}]}/>
   {c.porCategoria.length>0&&<ListaBarras c={7} apilado label="Categorías con más repetición" max={Math.max(1,...c.porCategoria.map(x=>x.pct??0))} items={c.porCategoria.slice(0,4).map(x=>({key:x.categoria,etiqueta:<span>{etiquetaCategoria(x.categoria)}</span>,sub:`${num(x.repiten)} de ${num(x.clientes)} clientes`,valor:x.pct,texto:pct(x.pct)}))}/>}
   <p className="dg-pie">Resumen del {String(c.refreshedAt).slice(0,10)}. Categorías de la IA, solo conversaciones con extracción.</p></div>;
 }
@@ -130,6 +130,6 @@ export function PanelRepetido({v,onReintentar}:{v:FugaVista;onReintentar:()=>voi
 export function PanelCambios({v}:{v:FugaVista}){
  const fr=frasesCambios(v),ex=excluidosTexto(v);
  if(!fr.length)return <Vacio>Todavía no hay dos meses completos y comparables para decir qué cambió.</Vacio>;
- return <div className="dg-fill"><ul className="ui-reset" style={{listStyle:'none',margin:0,padding:0,display:'grid',gap:8}}>{fr.map((f,i)=><li key={f.clave} className="dg-caja" style={{borderLeft:`3px solid ${color(i%2?1:2)}`}}><span className="dg-lab"><small style={{color:'var(--ink)',fontSize:13}}>{f.texto}</small></span></li>)}</ul>
+ return <div className="dg-fill"><ul className="ui-reset" style={{listStyle:'none',margin:0,padding:0,display:'grid',gap:8,flex:'1 1 auto',gridAutoRows:'1fr'}}>{fr.map((f,i)=><li key={f.clave} className="dg-caja" style={{borderLeft:`3px solid ${color(i%2?1:2)}`,display:'flex',alignItems:'center'}}><span className="dg-lab"><small style={{color:'var(--ink)',fontSize:13}}>{f.texto}</small></span></li>)}</ul>
   {ex.length>0&&<p className="dg-pie">No se usan como señal: {ex.join('; ')}.</p>}</div>;
 }

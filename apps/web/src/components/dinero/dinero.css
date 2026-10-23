@@ -106,5 +106,13 @@
 .dg-res b{margin-left:auto;font:700 13px var(--font-ui);font-variant-numeric:tabular-nums}
 /* Listas que reparten la altura sobrante de la fila (sin aire al pie de la tarjeta más corta) */
 .dg-row>.ui-card>.dg-fill{display:flex;flex-direction:column}
-.dg-row>.ui-card>.dg-lista,.dg-row>.ui-card>.dg-fill>.dg-lista:last-child{flex:1 1 auto}
-.dg-row>.ui-card>.dg-lista>li,.dg-row>.ui-card>.dg-fill>.dg-lista:last-child>li{flex:1 1 auto;max-height:76px}
+.dg-row>.ui-card>.dg-lista,.dg-row>.ui-card>.dg-fill>.dg-lista{flex:1 1 auto}
+.dg-row>.ui-card>.dg-lista>li,.dg-row>.ui-card>.dg-fill>.dg-lista>li{flex:1 1 auto}
+.dg-nota>.kind,.dg-nota>[class*=kind]{vertical-align:middle;margin:0 6px 2px 0}
+.dg-page .ui-kpis:has(>:nth-child(5)) .ui-kpi-value{font-size:23px;letter-spacing:-.03em}
+.dg-dos-fill{flex:1 1 auto;align-items:stretch}
+.dg-dos-fill>div,.dg-dos-fill .dg-g{display:flex;flex-direction:column}
+.dg-dos-fill .dg-g{flex:1 1 auto;margin-bottom:8px}
+.dg-dos-fill>div>.dg-lista,.dg-dos-fill .dg-g>.dg-lista{flex:1 1 auto}
+.dg-dos-fill .dg-lista>li{flex:1 1 auto}
+.dg-row>.ui-card:has(>.dg-dos-fill){display:flex;flex-direction:column}

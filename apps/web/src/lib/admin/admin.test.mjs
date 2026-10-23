@@ -142,3 +142,10 @@ test('QA3-010: el detalle de la carga habla español: estado, filas con separado
  assert.equal(ultimoProgreso('2026-10-19T04:37:31.595Z'),'19 oct 2026, 04:37 UTC');assert.equal(ultimoProgreso(null),'Aún sin progreso registrado');
  const t=leer('../../components/job-progress.tsx');assert.doesNotMatch(t,/Un 202/);assert.doesNotMatch(t,/\{job\.state\} ·/);assert.doesNotMatch(t,/\{job\.last_progress_at\?\?/);
 });
+import {segundosADias,diasASegundos,textoVersionPolitica} from '../recovery/retencion.mjs';
+test('QA3-013: la retención de copias se edita en días y se envía en segundos sin perder precisión',()=>{
+ assert.equal(segundosADias(2592000),'30');assert.equal(segundosADias(43200),'0.5');assert.equal(diasASegundos('30'),2592000);assert.equal(diasASegundos('0.5'),43200);
+ assert.ok(Number.isNaN(diasASegundos('')));assert.ok(Number.isNaN(diasASegundos('-3')));
+ assert.match(textoVersionPolitica(0),/Aún no hay una política guardada/);assert.match(textoVersionPolitica(2),/versión 2/);
+ const t=leer('../../components/retention-panel.tsx');assert.doesNotMatch(t,/en segundos/);assert.match(t,/backupTtlSeconds:diasASegundos\(ttl\)/);assert.doesNotMatch(t,/Versión: \{snapshot/);
+});

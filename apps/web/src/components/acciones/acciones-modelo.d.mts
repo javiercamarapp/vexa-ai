@@ -1,0 +1,13 @@
+import type {FlowItem} from '../recommendations/flujo-vista';
+export const VISTAS:readonly ['por-decidir','en-curso','resultados'];
+export const GRUPO_DE_VISTA:Readonly<Record<'por-decidir'|'en-curso'|'resultados','decidir'|'curso'|'resultado'>>;
+export const GRUPO_DE_ETAPA:Readonly<Record<string,'decidir'|'curso'|'resultado'|'descartada'>>;
+export function etapaDe(i:FlowItem):string;
+export function grupoDe(i:FlowItem):'decidir'|'curso'|'resultado'|'descartada';
+export function agrupar(items:FlowItem[]):{decidir:FlowItem[];curso:FlowItem[];resultado:FlowItem[];descartada:FlowItem[]};
+export function filtrar(items:FlowItem[],f?:{responsable?:string;prioridad?:string}):FlowItem[];
+export type ResumenAcciones={total:number;decidir:{n:number;urgentes:number;altas:number;normales:number;sinResponsable:number;citas:number};curso:{n:number;aprobadas:number;enCurso:number;vencidas:number;proximas:number;sinFecha:number};resultado:{n:number;si:number;parcial:number;no:number;conComparacion:number};descartadas:number};
+export function resumir(items:FlowItem[],hoy?:Date):ResumenAcciones;
+export function actividadReciente(items:FlowItem[],limite?:number):{clave:string;cuando:string;tipo:string;titulo:string;accionId:string;titulo2:string}[];
+export function evidenciaPorAccion(items:FlowItem[]):{id:string;titulo:string;citas:number;prioridad:string}[];
+export function comparaciones(items:FlowItem[]):{id:string;titulo:string;resultado:string|null;antes:number|null;despues:number|null;moneda:string|null;completa:boolean}[];

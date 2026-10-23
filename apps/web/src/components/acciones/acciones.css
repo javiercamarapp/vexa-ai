@@ -1,0 +1,66 @@
+/* Acciones (Por decidir | En curso | Resultados). Color fijo de la métrica: burdeos (--chart-6). Filas de 40+ px, sin tarjetas con aire. */
+.ac-lista{display:flex;flex-direction:column;margin:0}
+.ac-fila{display:grid;gap:8px 20px;align-items:start;padding:14px;margin:0;border:0;border-top:1px solid var(--ui-border);border-radius:0;background:transparent;box-shadow:none;min-width:0;position:relative}
+.ac-lista>.ac-fila:first-child{border-top:0}
+.ac-fila[data-vista=por-decidir]{grid-template-columns:minmax(0,4fr) minmax(0,4fr) 140px 236px}
+.ac-fila[data-vista=en-curso]{grid-template-columns:minmax(0,4fr) minmax(0,4fr) 392px}
+.ac-fila[data-vista=resultados]{grid-template-columns:minmax(0,4fr) minmax(0,4fr) 150px}
+.ac-fila[data-descartada]{grid-template-columns:minmax(0,1fr)}.ac-fila[data-descartada] .ac-botones,.ac-fila[data-descartada] .ac-grupo{align-items:flex-start;justify-content:flex-start}
+.ac-fila[data-prio=critical][data-vista=por-decidir]::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;background:var(--rovaq-rojo,#e8241c)}
+.ac-main{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ac-linea{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+.ac-etapa{font-size:12px;color:var(--muted)}
+.ac-t{margin:0;font:600 14px/1.35 var(--font-ui);color:var(--ink);overflow-wrap:anywhere}
+.ac-a{margin:0;font-size:13px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere}
+.ac-w{margin:0;font-size:12px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere}
+.ac-w b{color:var(--ink);font-weight:600}.ac-w i{font-style:normal}
+.ac-cifras{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0;padding:0 0 0 16px;border-left:1px solid var(--ui-border);min-width:0}
+.ac-cifra{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ac-cifra dt,.ac-et{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ac-cifra dd{margin:0;font-size:18px;font-weight:700;line-height:1.2;color:var(--ink);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.ac-cifra[style] dd{color:var(--cat)}
+.ac-cifra small,.ac-dinero small{font-size:12px;color:var(--muted);line-height:1.35}
+.ac-dinero{display:flex;flex-direction:column;gap:2px;padding-left:16px;border-left:1px solid var(--ui-border);min-width:0}
+.ac-dinero strong{font-size:18px;font-weight:700;color:var(--ink)}
+.ac-dinero strong[data-vacio]{color:var(--muted)}
+.ac-dinero .ac-et+.ac-et,.ac-dinero small+.ac-et{margin-top:6px}
+.ac-dinero b{font-size:13px;font-weight:500;color:var(--ink);overflow-wrap:anywhere}
+.ac-botones{display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-width:0}
+.ac-grupo{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.ac-bloqueo{margin:0;font-size:12px;color:var(--muted);max-width:30ch;text-align:right}
+.ac-curso{display:flex;flex-direction:column;gap:8px;min-width:0;padding-left:16px;border-left:1px solid var(--ui-border)}
+.ac-datos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0}
+.ac-datos div{min-width:0}.ac-datos dt{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ac-datos dd{margin:2px 0 0;font-size:13px;font-weight:500;color:var(--ink);overflow-wrap:anywhere}
+.ac-cmp{display:flex;flex-direction:column;gap:2px;min-width:0;padding-left:16px;border-left:1px solid var(--ui-border)}
+.ac-cmp small{font-size:12px;color:var(--muted);line-height:1.4;margin-top:4px}
+.ac-cmp .pc-pista{height:8px}
+.ac-pie{grid-column:1/-1;min-width:0}
+.ac-nota{margin:0;font-size:12px;color:var(--muted)}
+.ac-drafts{display:flex;flex-direction:column;gap:2px}
+.ac-draft{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px;font-size:12px;color:var(--muted);min-height:32px}
+.ac-pie details{border:0;padding:0}
+.ac-pie details>summary{font-size:12px;font-weight:500;color:var(--muted);cursor:pointer}
+.ac-pie details[open]>summary{margin-bottom:8px}
+/* Estados y tarjetas de apoyo */
+.ac-vacio{margin:0;padding:20px 14px;font-size:13px;color:var(--muted);border:1px dashed var(--ui-border);border-radius:8px;text-align:center}
+.ac-tarjeta-lista{padding:0 14px 4px}
+.ac-badge{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:600;background:var(--soft-6);color:var(--ink-6);white-space:nowrap}
+@media(max-width:1100px){
+ .ac-fila[data-vista]{grid-template-columns:minmax(0,1fr)}
+ .ac-cifras,.ac-dinero,.ac-curso,.ac-cmp{padding-left:0;border-left:0}
+ .ac-botones{align-items:stretch}.ac-grupo{justify-content:flex-start}.ac-bloqueo{text-align:left;max-width:none}
+}
+
+.pc-card[data-flush]{gap:0}
+.pc-card[data-flush]>.pc-card-head{padding:12px 14px 10px}
+.ac-curso [class*=etapaTitulo]{display:none}
+.ac-curso [class*=etapas]{gap:0}
+.ac-pie [class*=linea]{border:0;padding:0;background:none}
+.ac-pie [class*=linea]>summary{font-size:12px;font-weight:500;color:var(--muted)}
+.ac-cifra dd{font-size:16px}
+.ac-cifras{grid-template-columns:auto auto minmax(0,1fr);gap:16px}
+
+.workspace-content .ac-pie details:not(.nav-group):not(.fold):not(.detail-admin)>summary{border:0;padding:0 4px 0 0;min-height:28px;background:none;font-size:12px;font-weight:500;color:var(--muted)}
+.workspace-content .ac-pie details:not(.nav-group):not(.fold):not(.detail-admin)>summary:hover{background:none;color:var(--ink)}
+.pc-card[data-flush]>.ac-vacio{flex:1 1 auto;display:flex;align-items:center;justify-content:center;margin:0 14px 14px!important}

@@ -1,25 +1,19 @@
 'use client';
-import {useWorkspaceNavigation,workspaceLocation} from '../workspace/navigation-lifecycle';
-import Link from '../workspace/navigation-lifecycle';
 import {useCallback,useEffect,useRef,useState,type FormEvent} from 'react';
 import type {Intervention,InterventionPlan,Measurement,SnapshotOption} from '../../../../../packages/interventions/index.mjs';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
-import type {Scope} from '../../lib/workspace/contracts';
-import {ScopeBar} from '../workspace/scope-bar';
-import {PageHeader} from '../ui/page-header';
-import {Button,LinkButton,Refresh,Arrow} from '../ui/button';
+import {Button} from '../ui/button';
+import Link from '../workspace/navigation-lifecycle';
 import {KindBadge} from '../ui/kind-badge';
 import {IdChip} from '../ui/id-chip';
-import {Icon} from '../ui/icons';
-import {StatCard} from '../ui/stat-card';
 import {StatusChip} from '../ui/status-chip';
-import {SegmentedControl} from '../ui/segmented';
 import {Drawer} from '../ui/overlay';
-import {EmptyState} from '../ui/empty-state';
-import {SkeletonCards,SkeletonStats} from '../ui/skeletons';
+import {ErrorState} from '../ui/error-state';
+import {Loading} from '../ui/loading';
 import {nf} from '../ui/format';
-import {AccionesTabs,vistaDe,ESTADOS_VISTA} from './acciones-tabs';
+import {ESTADOS_VISTA} from './acciones-tabs';
 import css from './panel.module.css';
+import '../panel-comun/panel-comun.css';
 
 type List={items:Intervention[];unavailableCount:number};
 type Operation=(id:string,body:Record<string,unknown>)=>Promise<boolean>;
@@ -30,30 +24,12 @@ function utc(value:string){return value?new Date(value+'Z').toISOString():'';}
 function inputTime(value:string|undefined|null){return value?.slice(0,19)??'';}
 function money(value:string|null,m:Measurement){return value===null?'Desconocido':formatMinorUnits(value,m.currency,m.exponent);}
 function optionLabel(s:SnapshotOption){return s.start+' → '+s.end+' · '+s.currency+' · '+s.basis+' · '+s.id;}
-function cleanQuery(value:string){const q=new URLSearchParams(value);for(const key of ['problem_id','detail_hash','resource','format','cursor','limit','root_kind','root_id','component_id','event_id','q','status','order','vista'])q.delete(key);return q;}
-function initialScope(value:string):Scope & {basis:string;exponent?:number}{const q=cleanQuery(value),now=new Date();return {date_start:q.get('date_start')??new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),1)).toISOString(),date_end:q.get('date_end')??new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()+1,1)).toISOString(),timezone:'UTC',date_basis:q.get('date_basis')??'occurred_at',currency:q.get('currency')??'USD',basis:q.get('basis')??'net',sku:q.getAll('sku'),source:q.getAll('source'),snapshot_id:q.get('snapshot_id'),...(q.has('exponent')?{exponent:Number(q.get('exponent'))}:{})};}
-function pinnedQuery(scope:Scope,snapshot:string,hash:string){const q=new URLSearchParams({date_start:scope.date_start.slice(0,10),date_end:scope.date_end.slice(0,10),timezone:scope.timezone,date_basis:scope.date_basis,currency:scope.currency,basis:scope.basis??'net',snapshot_id:snapshot,scope_hash:hash});if(scope.exponent!==null&&scope.exponent!==undefined)q.set('exponent',String(scope.exponent));for(const sku of scope.sku)q.append('sku',sku);for(const source of scope.source)q.append('source',source);return q;}
 function validList(value:List,query:string){const q=new URLSearchParams(query);return !!value&&Array.isArray(value.items)&&value.items.every(item=>item.recommendationSnapshotId===q.get('snapshot_id')&&item.scopeHash===q.get('scope_hash'));}
 function failure(status:number){return status===401||status===403?'Tu acceso cambió. Vuelve a iniciar sesión o selecciona una organización autorizada.':status===404?'No se puede consultar esta intervención o su evidencia con los permisos actuales.':status===409?'La versión, el plan o los cortes no permiten esta operación. Actualiza y revisa la cobertura, las fechas y el resultado antes de continuar.':status===400?'Revisa los campos y las fechas de la solicitud.':'No se pudo verificar la operación. Actualiza para comprobar su estado antes de continuar.';}
 function Result({value}:{value:Measurement}){return <section className="card" aria-label="Resultado medido"><div className="meta-row"><KindBadge kind="observed"/></div><h3>Comparación antes y después</h3><p>{value.status==='complete'?'Medición completa':value.status==='partial'?'Medición parcial':'Medición no disponible'} · <time>{value.measuredAt}</time></p><dl><dt>Antes</dt><dd>{money(value.baselineAmountMinor,value)}</dd><dt>Después</dt><dd>{money(value.postAmountMinor,value)}</dd><dt>Diferencia observada</dt><dd>{money(value.deltaMinor,value)}</dd><dt>Población antes / después</dt><dd>{value.baselineDenominator??'Desconocida'} / {value.postDenominator??'Desconocida'}</dd></dl>{value.baselineAmountMinor===null&&<p>Subtotal conocido antes: {money(value.baselineKnownSubtotalMinor,value)}</p>}{value.postAmountMinor===null&&<p>Subtotal conocido después: {money(value.postKnownSubtotalMinor,value)}</p>}<p>La comparación describe una asociación. No demuestra ahorro causado por la intervención; una caída del importe puede reflejar cambios de volumen o composición.</p>{value.reasons.length>0&&<ul aria-label="Limitaciones de la medición">{value.reasons.map(reason=><li key={reason}>{reason}</li>)}</ul>}<details><summary>Publicaciones de la medición</summary><p>Referencia: {value.baselineSnapshotId}</p><p>Posterior: {value.postSnapshotId}</p></details></section>;}
 const STAGES=['draft','approved','active','measuring','closed'] as const;
 const TONE:Record<Intervention['status'],'ok'|'warn'|'info'|'neutral'|'muted'>={draft:'neutral',approved:'info',active:'info',measuring:'warn',closed:'ok',cancelled:'muted'};
 function Stage({status}:{status:Intervention['status']}){const i=STAGES.indexOf(status as typeof STAGES[number]);if(i<0)return <span className="chip">Cancelada</span>;return <div className={css.stage} role="img" aria-label={'Etapa '+(i+1)+' de '+STAGES.length+': '+statusLabel[status]}>{STAGES.map((s,k)=><i key={s} data-on={k<=i||undefined}/>)}</div>;}
-function InterventionCard({item,busy,conflict,operate}:{item:Intervention;busy:boolean;conflict:boolean;operate:Operation}){
- const [open,setOpen]=useState(false);
- useEffect(()=>{const sync=()=>{if(window.location.hash==='#intervention-'+item.id)setOpen(true);};sync();window.addEventListener('hashchange',sync);return()=>window.removeEventListener('hashchange',sync);},[item.id]);
- const run:Operation=(id,body)=>operate(id,body).then(ok=>{if(ok)setOpen(false);return ok;});
- return <article id={'intervention-'+item.id} className={css.card} aria-label={'Intervención: '+item.title} data-status={item.status}>
-  <h3 className={css.cardTitle}>{item.title}</h3>
-  <p className={css.cardText}>{item.hypothesis}</p>
-  <Stage status={item.status}/>
-  <div className={css.cardMeta}><span className="chip">Responsable: {item.ownerId?'asignado':'sin asignar'}</span>{item.measurements.length>0&&<span className="chip">{nf.format(item.measurements.length)} {item.measurements.length===1?'medición':'mediciones'}</span>}</div>
-  <Button size="sm" icon={<Icon name="eye" size={14}/>} aria-label={'Abrir detalle de '+item.title} onClick={()=>setOpen(true)}>Abrir detalle</Button>
-  <Drawer open={open} onClose={()=>setOpen(false)} width={640} title={item.title} subtitle={<StatusChip tone={TONE[item.status]}>{statusLabel[item.status]} · v{item.version}</StatusChip>}>
-   <InterventionDetail item={item} busy={busy} conflict={conflict} operate={run}/>
-  </Drawer>
- </article>;
-}
 function InterventionDetail({item,busy,conflict,operate}:{item:Intervention;busy:boolean;conflict:boolean;operate:Operation}){
  const [baseline,setBaseline]=useState(item.plan?.baselineSnapshotId??item.baselineOptions.find(x=>x.eligible)?.id??'');
  const locked=busy||conflict;const p=item.plan;const selected=item.baselineOptions.find(x=>x.id===baseline);
@@ -72,51 +48,40 @@ function InterventionDetail({item,busy,conflict,operate}:{item:Intervention;busy
  <details><summary>Versiones del plan ({item.planHistory.length})</summary>{item.planHistory.map(version=><section key={version.version} aria-label={'Plan versión '+version.version}><h3>Plan v{version.version}</h3><p>Registrado por {version.actorId} · <time>{version.createdAt}</time></p><p>{version.plan.hypothesis}</p><dl><dt>Responsable original</dt><dd>{version.plan.ownerId}</dd><dt>Referencia de medición</dt><dd>{version.plan.baselineSnapshotId}</dd><dt>Periodo previsto</dt><dd>{version.plan.start} → {version.plan.end}</dd><dt>Población y unidad</dt><dd>{version.plan.population} · {version.plan.unit==='order'?'Orden':'Cliente'}</dd><dt>Resultado</dt><dd>{outcomeLabel[version.plan.outcome]}</dd><dt>Plan de control</dt><dd>{version.plan.controlPlan}</dd><dt>Madurez</dt><dd>{version.plan.maturityDays} días</dd><dt>Cambios concurrentes</dt><dd>{version.plan.concurrentChanges}</dd></dl></section>)}</details>
  <details><summary>Historial de la intervención ({item.history.length})</summary><ol>{item.history.map(event=><li key={event.version}><p>v{event.version} · {statusLabel[event.status as Intervention['status']]??event.status} · <time>{event.createdAt}</time></p><p>{event.reason}</p><p>Responsable del registro: {event.actorId}</p></li>)}</ol></details></div>;
 }
-function TableRow({item,busy,conflict,operate}:{item:Intervention;busy:boolean;conflict:boolean;operate:Operation}){
+/** Fila de la tabla de intervenciones; abre el detalle en un cajón y respeta el ancla #intervention-<id> que dejan las acciones. */
+function FilaIntervencion({item,busy,conflict,operate}:{item:Intervention;busy:boolean;conflict:boolean;operate:Operation}){
  const [open,setOpen]=useState(false);
+ useEffect(()=>{const sync=()=>{if(window.location.hash==='#intervention-'+item.id){setOpen(true);document.getElementById('intervention-'+item.id)?.scrollIntoView({block:'nearest'});}};sync();window.addEventListener('hashchange',sync);return()=>window.removeEventListener('hashchange',sync);},[item.id]);
  const run:Operation=(id,body)=>operate(id,body).then(ok=>{if(ok)setOpen(false);return ok;});
- return <tr id={'intervention-'+item.id} aria-label={'Intervención: '+item.title}><th scope="row">{item.title}</th><td><StatusChip tone={TONE[item.status]}>{statusLabel[item.status]}</StatusChip></td><td><Stage status={item.status}/></td><td>{item.ownerId?'Asignado':'Sin asignar'}</td><td className="num">{nf.format(item.measurements.length)}</td><td><Button size="sm" aria-label={'Abrir detalle de '+item.title} onClick={()=>setOpen(true)}>Abrir detalle</Button>
+ return <tr id={'intervention-'+item.id} aria-label={'Intervención: '+item.title}><th scope="row" data-align="start"><span className="pc-t" style={{display:'block'}}>{item.title}</span><span className="pc-s" style={{display:'block',fontWeight:400}}>{item.hypothesis}</span></th><td><StatusChip tone={TONE[item.status]}>{statusLabel[item.status]}</StatusChip></td><td><Stage status={item.status}/></td><td>{item.ownerId?'Asignado':'Sin asignar'}</td><td data-align="num">{nf.format(item.measurements.length)}</td><td data-align="num"><Button size="sm" aria-label={'Abrir detalle de '+item.title} onClick={()=>setOpen(true)}>Abrir detalle</Button>
   <Drawer open={open} onClose={()=>setOpen(false)} width={640} title={item.title} subtitle={<StatusChip tone={TONE[item.status]}>{statusLabel[item.status]} · v{item.version}</StatusChip>}><InterventionDetail item={item} busy={busy} conflict={conflict} operate={run}/></Drawer></td></tr>;
 }
-export function InterventionsPanel({initialQuery}:{initialQuery:string}){
- const [query,setQuery]=useState(cleanQuery(initialQuery).toString()),[scope,setScope]=useState(()=>initialScope(initialQuery)),[view,setView]=useState<List|null>(null),[busy,setBusy]=useState(true),[error,setError]=useState(''),[notice,setNotice]=useState(''),[conflict,setConflict]=useState(false),[empty,setEmpty]=useState(false);
- const controller=useRef<AbortController|null>(null),epoch=useRef(0),inFlight=useRef(false),resolved=useRef(query),keys=useRef(new Map<string,string>());
- const invalidate=useCallback(()=>{controller.current?.abort();epoch.current++;inFlight.current=false;},[]);
- useWorkspaceNavigation(invalidate);
- const load=useCallback(async(value:string)=>{const sourceLocation=workspaceLocation();controller.current?.abort();const abort=new AbortController();controller.current=abort;const generation=++epoch.current;inFlight.current=false;setView(null);setError('');setNotice('');setEmpty(false);setConflict(false);setBusy(true);
-  try{const requested=cleanQuery(value);requested.set('resource','problems');requested.set('meta_only','1');const pin=await fetch('/api/workspace?'+requested,{cache:'no-store',signal:abort.signal});if(abort.signal.aborted||generation!==epoch.current)return;if(!pin.ok)throw Error(failure(pin.status));const envelope=await pin.json();if(abort.signal.aborted||generation!==epoch.current)return;const meta=envelope.data?.meta;if(!meta?.scope)throw Error('No se pudo verificar la publicación solicitada.');setScope({...meta.scope,exponent:meta.scope.exponent??undefined});if(!meta.snapshot_id||!meta.scope_hash){setEmpty(true);return;}const fixed=pinnedQuery(meta.scope,meta.snapshot_id,meta.scope_hash);
-   const response=await fetch('/api/interventions?'+fixed,{cache:'no-store',signal:abort.signal});if(abort.signal.aborted||generation!==epoch.current)return;if(!response.ok)throw Error(failure(response.status));const listed=await response.json();if(abort.signal.aborted||generation!==epoch.current)return;const next=listed.data as List;if(!validList(next,fixed.toString()))throw Error('No se pudo verificar la respuesta de intervenciones.');if(workspaceLocation()!==sourceLocation)return;resolved.current=fixed.toString();setScope(initialScope(fixed.toString()));setView(next);window.history.replaceState(null,'',window.location.pathname+'?'+fixed+window.location.hash);
-  }catch(e){if(!abort.signal.aborted&&generation===epoch.current)setError(e instanceof Error?e.message:failure(503));}finally{if(!abort.signal.aborted&&generation===epoch.current)setBusy(false);}
- },[]);
- useEffect(()=>{let active=true;void Promise.resolve().then(()=>{if(active)void load(query);});return()=>{active=false;invalidate();};},[query,load,invalidate]);
- useEffect(()=>{const back=()=>{invalidate();setView(null);setBusy(true);const value=cleanQuery(window.location.search).toString();resolved.current=value;if(value===query)void load(value);else setQuery(value);};window.addEventListener('popstate',back);return()=>window.removeEventListener('popstate',back);},[query,load,invalidate]);
- useEffect(()=>{if(view&&window.location.hash.startsWith('#intervention-'))document.getElementById(window.location.hash.slice(1))?.scrollIntoView({block:'start'});},[view]);
- const apply=(next:URLSearchParams)=>{next.delete('scope_hash');if(['date_start','date_end','currency','basis','sku','source','exponent'].some(k=>next.getAll(k).join('|')!==new URLSearchParams(resolved.current).getAll(k).join('|'))&&next.get('snapshot_id')===scope.snapshot_id)next.delete('snapshot_id');const value=cleanQuery(next.toString()).toString();controller.current?.abort();epoch.current++;inFlight.current=false;setView(null);setBusy(true);resolved.current=value;window.history.pushState(null,'',window.location.pathname+'?'+value);if(value===query)void load(value);else setQuery(value);};
- const operate:Operation=async(id,body)=>{if(inFlight.current)return false;inFlight.current=true;controller.current?.abort();const abort=new AbortController();controller.current=abort;const generation=++epoch.current;setBusy(true);setError('');setNotice('');const fingerprint=JSON.stringify({id,...body});let requestKey=keys.current.get(fingerprint);if(!requestKey){requestKey=crypto.randomUUID();keys.current.set(fingerprint,requestKey);}let saved=false;
-  try{const response=await fetch('/api/interventions/'+id,{method:'POST',cache:'no-store',signal:abort.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({...body,requestKey})});if(abort.signal.aborted||generation!==epoch.current)return false;if(!response.ok){if([401,403,404].includes(response.status))setView(null);if(response.status===409)setConflict(true);throw Error(failure(response.status));}const changed=await response.json();if(abort.signal.aborted||generation!==epoch.current)return false;if(!changed.data)throw Error('No se pudo verificar el cambio.');saved=true;const refresh=await fetch('/api/interventions?'+resolved.current,{cache:'no-store',signal:abort.signal});if(abort.signal.aborted||generation!==epoch.current)return false;if(!refresh.ok){setView(null);throw Error('El cambio se guardó, pero falta verificar el estado actual. Actualiza antes de continuar.');}const next=await refresh.json();if(abort.signal.aborted||generation!==epoch.current)return false;if(!validList(next.data,resolved.current))throw Error('La respuesta no contiene un estado verificable.');setView(next.data);setConflict(false);setNotice('Cambio guardado y verificado.');return true;
-  }catch(e){if(!abort.signal.aborted&&generation===epoch.current){if(saved)setView(null);setConflict(true);setError(e instanceof Error?e.message:failure(503));}return false;}finally{if(!abort.signal.aborted&&generation===epoch.current){inFlight.current=false;setBusy(false);}}
+export type ResumenIntervenciones={total:number;porEstado:Record<string,number>};
+/** Intervenciones de la pestaña activa (En curso o Resultados) con el MISMO alcance fijado que la lista de acciones. Una sola tabla compacta; sin tablero de columnas vacías. */
+export function IntervencionesSeccion({fixedQuery,vista,onResumen}:{fixedQuery:string|null;vista:'en-curso'|'resultados';onResumen?:(r:ResumenIntervenciones|null)=>void}){
+ const [view,setView]=useState<List|null>(null),[busy,setBusy]=useState(true),[error,setError]=useState(''),[notice,setNotice]=useState(''),[conflict,setConflict]=useState(false);
+ const controller=useRef<AbortController|null>(null),epoch=useRef(0),inFlight=useRef(false),keys=useRef(new Map<string,string>());
+ const resumen=useRef(onResumen);useEffect(()=>{resumen.current=onResumen;},[onResumen]);
+ const publicar=useCallback((v:List|null)=>{if(!v){resumen.current?.(null);return;}const porEstado:Record<string,number>={};for(const i of v.items)porEstado[i.status]=(porEstado[i.status]??0)+1;resumen.current?.({total:v.items.length,porEstado});},[]);
+ const load=useCallback(async(query:string)=>{controller.current?.abort();const abort=new AbortController();controller.current=abort;const generation=++epoch.current;setBusy(true);setError('');
+  try{const response=await fetch('/api/interventions?'+query,{cache:'no-store',signal:abort.signal});if(abort.signal.aborted||generation!==epoch.current)return;if(!response.ok)throw Error(failure(response.status));const listed=await response.json();if(abort.signal.aborted||generation!==epoch.current)return;const next=listed.data as List;if(!validList(next,query))throw Error('La lista de intervenciones no corresponde al alcance fijado.');setView(next);publicar(next);}
+  catch(e){if(!abort.signal.aborted&&generation===epoch.current){setError(e instanceof Error?e.message:failure(503));publicar(null);}}
+  finally{if(!abort.signal.aborted&&generation===epoch.current)setBusy(false);}
+ },[publicar]);
+ useEffect(()=>{if(!fixedQuery)return;let active=true;void Promise.resolve().then(()=>{if(active)void load(fixedQuery);});const ep=epoch;return()=>{active=false;controller.current?.abort();ep.current++;};},[fixedQuery,load]);
+ const operate:Operation=async(id,body)=>{if(inFlight.current||!fixedQuery)return false;inFlight.current=true;controller.current?.abort();const abort=new AbortController();controller.current=abort;const generation=++epoch.current;setBusy(true);setError('');setNotice('');const fingerprint=JSON.stringify({id,...body});let requestKey=keys.current.get(fingerprint);if(!requestKey){requestKey=crypto.randomUUID();keys.current.set(fingerprint,requestKey);}let saved=false;
+  try{const response=await fetch('/api/interventions/'+id,{method:'POST',cache:'no-store',signal:abort.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({...body,requestKey})});if(abort.signal.aborted||generation!==epoch.current)return false;if(!response.ok){if([401,403,404].includes(response.status))setView(null);if(response.status===409)setConflict(true);throw Error(failure(response.status));}const changed=await response.json();if(abort.signal.aborted||generation!==epoch.current)return false;if(!changed.data)throw Error('No se pudo verificar el cambio.');saved=true;const refresh=await fetch('/api/interventions?'+fixedQuery,{cache:'no-store',signal:abort.signal});if(abort.signal.aborted||generation!==epoch.current)return false;if(!refresh.ok){setView(null);throw Error('El cambio se guardó, pero falta verificar el estado actual. Actualiza antes de continuar.');}const next=await refresh.json();if(abort.signal.aborted||generation!==epoch.current)return false;if(!validList(next.data,fixedQuery))throw Error('La respuesta no contiene un estado verificable.');setView(next.data);publicar(next.data);setConflict(false);setNotice('Cambio guardado y verificado.');return true;}
+  catch(e){if(!abort.signal.aborted&&generation===epoch.current){if(saved)setView(null);setConflict(true);setError(e instanceof Error?e.message:failure(503));}return false;}finally{if(!abort.signal.aborted&&generation===epoch.current){inFlight.current=false;setBusy(false);}}
  };
- const [mode,setMode]=useState<'board'|'table'>('board');
- const vista=vistaDe(initialQuery),todas=view?.items??[],items=vista&&vista!=='por-decidir'?todas.filter(i=>ESTADOS_VISTA[vista].includes(i.status)):todas;
- const by=(s:Intervention['status'])=>items.filter(i=>i.status===s);
- const columns=[...STAGES.map(s=>({status:s as Intervention['status'],items:by(s)})),...(by('cancelled').length?[{status:'cancelled' as Intervention['status'],items:by('cancelled')}]:[])];
- const running=by('approved').length+by('active').length+by('measuring').length;
- return <section aria-label="Intervenciones y medición" className="stack">
-  <PageHeader eyebrow="Acciones y resultados" title="Acciones" guide="intervenciones" actions={<Button icon={<Refresh/>} loading={busy} onClick={()=>void load(resolved.current)}>Actualizar intervenciones</Button>}/>
-  <AccionesTabs actual={vista??'en-curso'}/>
-  <ScopeBar scope={scope} onApply={apply} busy={busy}/>
-  {busy&&!view&&<div role="status" aria-label="Verificando intervenciones"><SkeletonStats count={3}/><SkeletonCards count={3}/></div>}{error&&<p className="state state-error" role="alert">{error}</p>}{notice&&<p className="state" role="status">{notice}</p>}{empty&&<EmptyState art="chart" title="Aún no hay un corte publicado" body="No hay una publicación disponible para este alcance." action={<LinkButton href="/economics" variant="primary" size="sm" icon={<Arrow/>}>Revisar publicaciones</LinkButton>}/>}
-  {view&&<>{view.unavailableCount>0&&<p className="state" role="status">Hay intervenciones que no pueden mostrarse con la evidencia y los permisos actuales.</p>}
-   {!items.length?<EmptyState art="inbox" title="Aún no hay acciones en seguimiento" body="Una acción es el seguimiento de una recomendación: responsable, plan y resultado. Siguiente paso: abre una recomendación, revisa su evidencia y pulsa «Crear intervención borrador»." action={<LinkButton href={'/recommendations?'+query} variant="primary" size="sm" icon={<Arrow/>}>Recomendaciones</LinkButton>}/>:<>
-    <div className={"stat-grid "+css.stats}>
-     <StatCard label="Intervenciones" value={nf.format(items.length)} kind="observed" icon="target" foot={nf.format(by('draft').length)+(by('draft').length===1?' borrador':' borradores')}/>
-     <StatCard label="En curso" value={nf.format(running)} kind="observed" icon="play" foot="Plan aprobado, ejecución o medición"/>
-     <StatCard label="Medición cerrada" value={nf.format(by('closed').length)} kind="observed" icon="check" foot={by('cancelled').length?nf.format(by('cancelled').length)+(by('cancelled').length===1?' cancelada':' canceladas'):undefined}/>
-    </div>
-    <div className="toolbar"><SegmentedControl label="Vista de intervenciones" value={mode} onChange={setMode} options={[{value:'board',label:'Tablero'},{value:'table',label:'Tabla'}]}/></div>
-    {mode==='board'?<div className={css.board+' reveal'}>{columns.map(col=><section key={col.status} className={css.column} aria-label={'Columna: '+statusLabel[col.status]}><header className={css.colHead}><StatusChip tone={TONE[col.status]}>{statusLabel[col.status]}</StatusChip><span className={css.count}>{nf.format(col.items.length)}</span></header>{col.items.length?col.items.map(item=><InterventionCard key={item.id+':'+item.version} item={item} busy={busy} conflict={conflict} operate={operate}/>):<p className={css.none}>Sin intervenciones</p>}</section>)}</div>
-    :<section className="card" aria-label="Tabla de intervenciones"><div className="table-wrap" tabIndex={0} role="region" aria-label="Tabla de intervenciones, desplazamiento horizontal"><table className="dtable"><thead><tr><th scope="col">Intervención</th><th scope="col">Estado</th><th scope="col">Etapa</th><th scope="col">Responsable</th><th scope="col" className="num">Mediciones</th><th scope="col"><span className="sr-only">Acciones</span></th></tr></thead><tbody>{items.map(item=><TableRow key={item.id+':'+item.version} item={item} busy={busy} conflict={conflict} operate={operate}/>)}</tbody></table></div></section>}
-   </>}
-  </>}
+ const todas=view?.items??[],items=todas.filter(i=>ESTADOS_VISTA[vista].includes(i.status)||(vista==='en-curso'&&false));
+ const titulo=vista==='en-curso'?'Intervenciones en curso':'Mediciones cerradas';
+ return <section className="pc-card" data-flush aria-label="Intervenciones y medición">
+  <header className="pc-card-head"><div><h2>{titulo}{view&&<> <span className="pc-count" style={{marginLeft:6}}>{nf.format(items.length)}</span></>}</h2><p>Plan, avance y medición antes/después de cada intervención.</p></div></header>
+  {notice&&<p className="ac-nota" role="status" style={{padding:'0 14px'}}>{notice}</p>}
+  {error&&<ErrorState title="No se pudieron cargar las intervenciones" body={error} onRetry={fixedQuery?()=>void load(fixedQuery):undefined}/>}
+  {!error&&(busy&&!view)&&<div style={{padding:'0 14px 14px'}}><Loading compact/></div>}
+  {!error&&view&&view.unavailableCount>0&&<p className="ac-nota" role="status" style={{padding:'0 14px'}}>Hay intervenciones que no pueden mostrarse con la evidencia y los permisos actuales.</p>}
+  {!error&&view&&(items.length===0?<p className="ac-vacio" style={{margin:'0 14px 14px'}}>{vista==='en-curso'?'Aún no hay intervenciones en curso: aparecen cuando apruebas una recomendación.':'Aún no hay mediciones cerradas: cierra la medición de una intervención para verla aquí.'}</p>
+   :<div className="ui-table-wrap" tabIndex={0} role="region" aria-label="Tabla de intervenciones"><table className="ui-table"><caption className="sr-only">Intervenciones</caption><thead><tr><th scope="col">Intervención</th><th scope="col">Estado</th><th scope="col">Etapa</th><th scope="col">Responsable</th><th scope="col" data-align="num">Mediciones</th><th scope="col"><span className="sr-only">Acción</span></th></tr></thead><tbody>{items.map(item=><FilaIntervencion key={item.id+':'+item.version} item={item} busy={busy} conflict={conflict} operate={operate}/>)}</tbody></table></div>)}
  </section>;
 }

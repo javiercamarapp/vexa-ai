@@ -1,134 +1,44 @@
 'use client';
-import {TituloAuto} from '../ui/titulo-auto';
 import {useWorkspaceNavigation,workspaceLocation} from '../workspace/navigation-lifecycle';
-import {useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
+import {useCallback,useEffect,useLayoutEffect,useMemo,useRef,useState} from 'react';
 import {leerConCache,leerSwr,claveSwr,guardarSwr,invalidarSwr} from '../../lib/workspace/swr.mjs';
 import {LineaCache} from '../ui/linea-cache';
 import {consultaFijada} from '../../lib/workspace/precalentar.mjs';
 import {useVistaPersistente} from '../workspace/vista-persistente';
-import type {Recommendation,RecommendationList} from '../../../../../packages/recommendations/index.mjs';
+import type {RecommendationList} from '../../../../../packages/recommendations/index.mjs';
 import type {Scope} from '../../lib/workspace/contracts';
 import {ScopeBar} from '../workspace/scope-bar';
-import {DataState} from '../workspace/data-state';
-import {PageHeader} from '../ui/page-header';
 import {Button,LinkButton,Refresh,Arrow} from '../ui/button';
-import {Citation} from '../ui/citation';
-import {IdChip} from '../ui/id-chip';
 import {Icon} from '../ui/icons';
-import {StatusChip} from '../ui/status-chip';
-import {SegmentedControl} from '../ui/segmented';
-import {Drawer,Modal} from '../ui/overlay';
+import {Modal} from '../ui/overlay';
 import {EmptyState} from '../ui/empty-state';
-import {SkeletonCards} from '../ui/skeletons';
+import {ErrorState} from '../ui/error-state';
+import {Notice} from '../ui/notice';
+import {Loading} from '../ui/loading';
 import {WaitStatus} from '../ui/wait-status';
 import {ESPERA} from '../../lib/legibilidad/espera.mjs';
-import {etiquetaCategoria} from '../../lib/legibilidad/categorias.mjs';
-import {textoLegible,etiquetaCausal,esDeGeneradorAnterior,siguientePaso,responsable,resumenRecomendaciones} from '../../lib/legibilidad/recomendaciones-vista.mjs';
 import {nf} from '../ui/format';
-import {accionesPermitidas,etapaActual,ETAPA_TXT} from '../../../../../packages/recommendations/flujo.mjs';
-import {EtapasFlujo,LineaFlujo,SeguimientoBloque,etapaTono,persona,type FlowItem} from './flujo-vista';
-import {ProcederDrawer,AjustarDrawer,DescartarDrawer,ResultadoDrawer,IniciarBoton} from './flujo-acciones';
-import {BorradoresDrawer} from './flujo-borradores';
-import {AccionesTabs} from '../interventions/acciones-tabs';
-import css from './panel.module.css';
-import fx from './flujo.module.css';
+import {persona,type FlowItem} from './flujo-vista';
+import {AccionesCabecera} from '../acciones/acciones-cabecera';
+import {AccionFila,type VistaAccion} from '../acciones/accion-fila';
+import {agrupar,filtrar,resumir,actividadReciente,evidenciaPorAccion} from '../acciones/acciones-modelo.mjs';
+import {KpiLinea,BarraParte} from '../panel-comun/kpi-linea';
+import {IntervencionesSeccion,type ResumenIntervenciones} from '../interventions/panel';
+import {etiquetaCategoria} from '../../lib/legibilidad/categorias.mjs';
 import {fetchCupo} from '../../lib/workspace/cupo.mjs';
+import '../acciones/acciones.css';
 type Filters=Scope & {basis:string;exponent?:number};
 type Operation=(url:string,body:unknown)=>Promise<boolean>;
-function cleanQuery(value:string){const q=new URLSearchParams(value);for(const key of ['problem_id','detail_hash','resource','format','cursor','limit','root_kind','root_id','component_id','event_id'])q.delete(key);return q;}
+function cleanQuery(value:string){const q=new URLSearchParams(value);for(const key of ['problem_id','detail_hash','resource','format','cursor','limit','root_kind','root_id','component_id','event_id','vista'])q.delete(key);return q;}
 function initialScope(value:string):Filters{const q=cleanQuery(value),now=new Date(),start=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),1)),end=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()+1,1));return {date_start:q.get('date_start')??start.toISOString(),date_end:q.get('date_end')??end.toISOString(),timezone:'UTC',date_basis:q.get('date_basis')??'occurred_at',currency:q.get('currency')??'USD',basis:q.get('basis')??'net',sku:q.getAll('sku'),source:q.getAll('source'),snapshot_id:q.get('snapshot_id'),...(q.has('exponent')?{exponent:Number(q.get('exponent'))}:{})};}
 const pinnedQuery=(scope:Scope,snapshot:string,hash:string)=>consultaFijada(scope,snapshot,hash);
 function failure(status:number){return status===401||status===403?'Tu acceso cambió. Vuelve a iniciar sesión o selecciona una organización autorizada.':status===404?'No hay una recomendación o evidencia autorizada para este alcance.':status===409?'La versión o la evidencia cambió. Actualiza y revisa la propuesta antes de continuar.':status===400?'Revisa los campos y el alcance de la solicitud.':'No se pudo verificar la operación. Conserva tu borrador y reintenta; no se confirma ningún cambio.';}
-const PRIORITY={critical:{label:'Revisión humana urgente',sev:'high',tone:'bad'},high:{label:'Prioridad alta',sev:'medium',tone:'warn'},normal:{label:'Prioridad normal',sev:'low',tone:'ok'}} as const;
-const CAUSAL:Record<string,string>={unassessed:'Sin evaluar',confirmed:'Confirmada',retracted:'Retractada',hypothesis:'Hipótesis',candidate:'Candidata',supported:'Con respaldo',unsupported:'Sin respaldo',insufficient:'Evidencia insuficiente'};
 const RANK={critical:0,high:1,normal:2} as const;
-function RecommendationCard({item,members,busy,conflict,operate,first,onRegenerate,flowAvailable}:{item:FlowItem;members:RecommendationList['members'];busy:boolean;conflict:boolean;operate:Operation;first:boolean;onRegenerate?:(problemId:string)=>void;flowAvailable:boolean}){
- const [action,setAction]=useState(item.action),[conditions,setConditions]=useState(item.preconditions.join('\n')),[rationale,setRationale]=useState(item.rationale),[owner,setOwner]=useState(item.ownerId??''),[reason,setReason]=useState(''),[stateReason,setStateReason]=useState(''),[evidence,setEvidence]=useState(false),[edit,setEdit]=useState(false),[full,setFull]=useState<Recommendation|null>(item.verification==='full'?item:null),[openState,setOpenState]=useState<'idle'|'loading'|'unavailable'|'error'>('idle');
- const draftKey=useRef<string|null>(null);const locked=busy||conflict||!item.canMutate;const endpoint='/api/recommendations/'+item.id;
- const create=()=>{draftKey.current??=crypto.randomUUID();void operate(endpoint+'/interventions',{expectedVersion:item.version,requestKey:draftKey.current});};
- const evidenceQuery=pinnedQuery(item.scope,item.snapshotId,item.scopeHash);evidenceQuery.set('detail_hash',item.detailHash);
- const pr=PRIORITY[item.priority]??PRIORITY.normal,dismissed=item.status==='dismissed',highlight=first&&!dismissed;
- const eventos=item.flow?.events??[],etapa=etapaActual(item,eventos),permisos=accionesPermitidas({item,eventos,rol:item.flow?.role,flujoDisponible:flowAvailable}),[abierto,setAbierto]=useState<''|'proceder'|'ajustar'|'descartar'|'reabrir'|'resultado'|'borradores'>('');
- const bloqueo=(etapa==='propuesta'||etapa==='ajustada')?permisos.proceder.motivo:null,decide=item.flow?.role!=='viewer'&&!!item.flow,conFlujo=flowAvailable&&!!item.flow;
- const cierra=()=>setAbierto('');
- // La lista solo trae el vínculo verificado al guardar; la verificación COMPLETA (fail-closed) ocurre al abrir. Si ya no verifica, no se muestra ninguna cita.
- // Con tope de espera (45 s): si la verificación no llega, el cajón dice «No disponible ahora» con un botón para reintentar, no «Verificando…» sin fin (QA-2, N2).
- const openEvidence=()=>{setEvidence(true);if(full||openState==='loading')return;setOpenState('loading');const corte=new AbortController(),t=window.setTimeout(()=>corte.abort(),45000);void fetchCupo(endpoint,{cache:'no-store',signal:corte.signal}).then(async r=>{if(r.status===403||r.status===404){setOpenState('unavailable');return;}if(!r.ok)throw Error('x');const j=await r.json();if(!j.data||j.data.id!==item.id)throw Error('x');setFull(j.data as Recommendation);setOpenState('idle');}).catch(()=>setOpenState('error')).finally(()=>window.clearTimeout(t));};
- const close=(ok:Promise<boolean>)=>{void ok.then(saved=>{if(saved)setEdit(false);});};
- return <article className="card insight" aria-label={'Recomendación: '+etiquetaCategoria(item.title)} data-severity={pr.sev} data-highlight={highlight||undefined} data-dismissed={dismissed||undefined}>
-  <header className="insight-head"><span className="insight-icon" aria-hidden="true"><Icon name={highlight?'target':'sparkle'} size={16}/></span><div className="insight-titles"><span className="insight-eyebrow">{highlight?'Hacer primero':dismissed?'Descartada':'Recomendación'}</span><h3>{etiquetaCategoria(item.title)}</h3><TituloAuto problemId={item.problemId} label={item.title}/></div><StatusChip tone={pr.tone}>{pr.label}</StatusChip></header>
-  <div className={css.cols}>
-   <div className={css.main}>
-    <p className="insight-sentence"><strong>{textoLegible(item.action)}</strong></p>
-    <section aria-label="Por qué"><h4 className={css.h4}>Por qué</h4><p className="card-lead">{textoLegible(item.rationale)}</p></section>
-    <section aria-label="Evidencia"><h4 className={css.h4}>Evidencia</h4><p className="card-lead"><strong>{nf.format(item.evidenceCount)}</strong> {item.evidenceCount===1?'cita':'citas'} verificadas al guardar; se vuelven a verificar al abrir. Esta propuesta no demuestra causalidad ni garantiza un ahorro.</p></section>
-    {conFlujo&&<EtapasFlujo etapa={etapa}/>}
-    {item.preconditions.length>0&&<details className={css.fold}><summary>{conFlujo?'Supuestos y condiciones previas':'Condiciones previas'} ({item.preconditions.length})</summary><ul>{item.preconditions.map((v,i)=><li key={i}>{textoLegible(v)}</li>)}</ul></details>}
-   </div>
-   <dl className={css.meta} aria-label="Estado y seguimiento">
-    <div><dt>Estado</dt><dd><StatusChip tone={conFlujo?etapaTono(etapa):dismissed?'muted':'info'}>{conFlujo?ETAPA_TXT[etapa]:dismissed?'Descartada':'Propuesta'} · v{item.version}</StatusChip></dd></div>
-    <div><dt>Responsable</dt><dd>{conFlujo&&item.ownerId?persona(item.ownerId,members):responsable(item)}</dd></div>
-    <div><dt>Siguiente paso</dt><dd>{siguientePaso(item)}</dd></div>
-    <div><dt>Esfuerzo</dt><dd>Revisión diagnóstica</dd></div>
-    <div><dt>Estado causal</dt><dd>{CAUSAL[item.causalState]??etiquetaCausal(item.causalState)}</dd></div>
-    <div><dt>Intervención</dt><dd>{item.drafts.length>0?item.drafts.length===1?'1 borrador':item.drafts.length+' borradores':'Sin intervención'}</dd></div>
-    <div><dt>Impacto en ingreso</dt><dd>Sin estimación: aún no hay importe por problema y no se estima un ahorro</dd></div>
-   </dl>
-  </div>
-  {item.stale&&<p className="state" role="status">El problema o su evidencia ha cambiado. Esta versión se conserva como historial y requiere una propuesta vigente antes de actuar.</p>}
-  {conFlujo&&<SeguimientoBloque item={item} miembros={members} acciones={decide&&(etapa==='aprobada'||etapa==='en_curso')?<div className={fx.acciones}><Button size="sm" variant="secondary" onClick={()=>setAbierto('borradores')}>Ver borradores de la acción</Button>{permisos.iniciar.permitido&&<IniciarBoton item={item} busy={busy||conflict} operate={operate}/>}{permisos.resultado.permitido&&<Button size="sm" variant="primary" disabled={busy||conflict} onClick={()=>setAbierto('resultado')}>Registrar resultado</Button>}</div>:undefined}/>}
-  {conFlujo&&<LineaFlujo item={item} miembros={members}/>}
-  {item.drafts.length>0&&<section aria-label="Borradores de intervención" className={css.drafts}><h4>Intervención guardada como borrador</h4><ul className="row-list">{item.drafts.map(d=><li key={d.id} className={css.draft}><span className={css.draftTitle}>{d.hypothesis}</span><span className="chip">{d.status}</span><LinkButton href={'/interventions?'+pinnedQuery(item.scope,item.snapshotId,item.scopeHash).toString()+'#intervention-'+d.id} size="sm" variant="ghost" icon={<Arrow/>}>Abrir intervención</LinkButton></li>)}</ul></section>}
-  <footer className="insight-foot">
-   <div className={css.secondary}><Button size="sm" icon={<Icon name="eye" size={14}/>} onClick={openEvidence}>{'Ver evidencia ('+item.evidenceCount+')'}</Button>{!conFlujo&&item.canMutate&&<Button size="sm" variant="ghost" icon={<Icon name="settings" size={14}/>} onClick={()=>setEdit(true)}>Editar o gestionar</Button>}{conFlujo&&decide&&(etapa==='aprobada'||etapa==='en_curso'||etapa==='resultado')&&<Button size="sm" variant="ghost" onClick={()=>setAbierto('borradores')}>Borradores de la acción</Button>}</div>
-   {!conFlujo&&item.canMutate&&item.status==='proposed'&&<Button variant="primary" size="sm" disabled={locked||item.drafts.length>0} onClick={create}>Crear intervención borrador</Button>}
-   {conFlujo&&decide&&(etapa==='propuesta'||etapa==='ajustada')&&<div className={fx.accionesBloque}><div className={fx.acciones} role="group" aria-label="Decidir sobre la recomendación"><Button size="sm" variant="ghost" disabled={!permisos.descartar.permitido||busy||conflict} onClick={()=>setAbierto('descartar')}>Descartar</Button><Button size="sm" disabled={!permisos.ajustar.permitido||busy||conflict} onClick={()=>setAbierto('ajustar')}>Ajustar</Button><Button size="sm" variant="primary" disabled={!permisos.proceder.permitido||busy||conflict} onClick={()=>setAbierto('proceder')}>Proceder</Button></div>{bloqueo&&<p className={fx.motivo} role="note">{bloqueo}</p>}</div>}
-   {conFlujo&&decide&&etapa==='descartada'&&<Button size="sm" disabled={busy||conflict||!item.canMutate} onClick={()=>setAbierto('reabrir')}>Reabrir</Button>}
-  </footer>
-  {onRegenerate&&esDeGeneradorAnterior(item)&&<p className="state" role="note">Esta recomendación se guardó con un generador anterior y no se modifica (es historial). <Button size="sm" variant="ghost" disabled={busy||conflict} onClick={()=>onRegenerate(item.problemId)}>Regenerar con el generador actual</Button> Se abre la propuesta para que la confirmes; no se ejecuta sola.</p>}
-  {!item.canMutate&&!(conFlujo&&decide)&&<p className="insight-sentence">Esta versión es de consulta con tus permisos y la evidencia vigentes.</p>}
-  {conFlujo&&!decide&&<p className="insight-sentence">Tu rol solo permite consultar. Aprobar, ajustar o descartar requiere ser propietario, analista u operador.</p>}
-  {conFlujo&&decide&&<>
-   <ProcederDrawer open={abierto==='proceder'} onClose={cierra} item={item} miembros={members} busy={busy||conflict} operate={operate}/>
-   <AjustarDrawer open={abierto==='ajustar'} onClose={cierra} item={item} miembros={members} busy={busy||conflict} operate={operate} prioridad={item.priority}/>
-   <DescartarDrawer open={abierto==='descartar'||abierto==='reabrir'} reabrir={abierto==='reabrir'} onClose={cierra} item={item} busy={busy||conflict} operate={operate}/>
-   <ResultadoDrawer open={abierto==='resultado'} onClose={cierra} item={item} busy={busy||conflict} operate={operate}/>
-   <BorradoresDrawer open={abierto==='borradores'} onClose={cierra} item={item} miembros={members}/>
-  </>}
-  <Drawer open={evidence} onClose={()=>setEvidence(false)} width={560} title={etiquetaCategoria(item.title)} subtitle="Evidencia y contexto de la recomendación" footer={<LinkButton href={'/problems/'+item.problemId+'?'+evidenceQuery.toString()} size="sm" variant="primary" icon={<Arrow/>}>Ver problema y evidencia</LinkButton>}>
-   <div className="stack">
-    <p className="card-lead">{textoLegible(item.rationale)}</p>
-    <p className="card-lead">Esta propuesta no demuestra causalidad ni garantiza un ahorro.</p>
-    <details className={css.fold}><summary>Condiciones para considerar esta acción ({item.preconditions.length})</summary><ul>{item.preconditions.map((v,i)=><li key={i}>{textoLegible(v)}</li>)}</ul></details>
-    <section><h3>{'Evidencia de la recomendación ('+(full?full.evidenceRefs.length:item.evidenceCount)+')'}</h3>{openState==='loading'&&<WaitStatus {...ESPERA.evidencia}/>}{openState==='unavailable'&&<p className="state state-error" role="alert">La evidencia de esta recomendación ya no está disponible: no se muestran citas.</p>}{openState==='error'&&<p className="state state-error" role="alert">No disponible ahora: la evidencia no se pudo verificar a tiempo y no se muestran citas. <Button size="sm" icon={<Refresh/>} onClick={openEvidence}>Reintentar</Button></p>}{full&&full.evidenceRefs.map((e,i)=><Citation key={e.runId+':'+e.messageRevisionId+':'+i} quote={e.quote} role={e.role} category={e.category} messageRevisionId={e.messageRevisionId}/>)}</section>
-    <div className="meta-row"><span className="chip">Problema v{item.problemVersion}</span><IdChip value={item.snapshotId} label="Publicación"/><IdChip value={item.scopeHash} label="Alcance"/></div>
-    <details><summary>{'Historial de versiones ('+item.history.length+')'}</summary><ol>{item.history.map(v=><li key={v.version}><strong>v{v.version} · {v.status==='dismissed'?'Descartada':'Propuesta'}</strong><p>{v.action}</p><p>{v.reason}</p><p>Responsable: {v.ownerId??'Sin asignar'} · Registrado por {v.actorId} · <time>{v.createdAt}</time></p></li>)}</ol></details>
-   </div>
-  </Drawer>
-  {item.canMutate&&<Drawer open={edit} onClose={()=>setEdit(false)} width={560} title="Editar o gestionar" subtitle={etiquetaCategoria(item.title)}>
-   <div className="stack">
-    <section><h3>Revisar la propuesta</h3><form className="action-form" aria-label="Revisar recomendación" onSubmit={e=>{e.preventDefault();if(!locked)close(operate(endpoint,{operation:'revise',expectedVersion:item.version,action,preconditions:conditions.split(/\r?\n/).map(v=>v.trim()).filter(Boolean),rationale,ownerId:owner||null,reason}));}}>
-     <label htmlFor={item.id+'-action'}>Acción propuesta</label><textarea id={item.id+'-action'} required minLength={20} maxLength={2000} value={action} onChange={e=>setAction(e.target.value)} disabled={busy}/>
-     <label htmlFor={item.id+'-conditions'}>Condiciones previas, una por línea</label><textarea id={item.id+'-conditions'} required value={conditions} onChange={e=>setConditions(e.target.value)} disabled={busy}/>
-     <label htmlFor={item.id+'-rationale'}>Justificación de la recomendación</label><textarea id={item.id+'-rationale'} required minLength={20} maxLength={4000} value={rationale} onChange={e=>setRationale(e.target.value)} disabled={busy}/>
-     <label htmlFor={item.id+'-owner'}>Responsable de la recomendación</label><select id={item.id+'-owner'} value={owner} onChange={e=>setOwner(e.target.value)} disabled={busy}><option value="">Sin asignar</option>{members.map(m=><option key={m.id} value={m.id}>{m.id} · {m.role}</option>)}</select>
-     <label htmlFor={item.id+'-reason'}>Razón del cambio</label><textarea id={item.id+'-reason'} required minLength={20} maxLength={2000} value={reason} onChange={e=>setReason(e.target.value)} disabled={busy}/>
-     <div className="btn-group"><Button type="submit" variant="primary" size="sm" disabled={locked}>Guardar revisión</Button></div>
-    </form></section>
-    <details className={css.fold}><summary>{item.status==='dismissed'?'Reabrir':'Descartar'} la recomendación</summary><form className="action-form" aria-label="Cambiar estado de la recomendación" onSubmit={e=>{e.preventDefault();if(!locked)close(operate(endpoint,{operation:'state',expectedVersion:item.version,status:item.status==='dismissed'?'proposed':'dismissed',reason:stateReason}));}}>
-     <label htmlFor={item.id+'-state-reason'}>Razón para cambiar el estado</label><textarea id={item.id+'-state-reason'} required minLength={20} maxLength={2000} value={stateReason} onChange={e=>setStateReason(e.target.value)} disabled={busy}/>
-     <div className="btn-group"><Button type="submit" size="sm" disabled={locked}>{item.status==='dismissed'?'Reabrir recomendación':'Descartar recomendación'}</Button></div>
-    </form></details>
-   </div>
-  </Drawer>}
- </article>;
-}
 const useAntesDePintar=typeof window==='undefined'?useEffect:useLayoutEffect;
 const validaMeta=(j:unknown)=>(j as {data?:{meta?:{scope?:unknown}}})?.data?.meta?.scope?j:null;
 const validaLista=(j:unknown)=>{const d=(j as {data?:RecommendationList})?.data;return d&&Array.isArray(d.items)&&Array.isArray(d.problemOptions)&&Array.isArray(d.members)?j:null;};
-export function RecommendationsPanel({initialQuery}:{initialQuery:string}){
+export function RecommendationsPanel({initialQuery,vista='por-decidir'}:{initialQuery:string;vista?:VistaAccion}){
  const [query,setQuery]=useState(cleanQuery(initialQuery).toString()),[scope,setScope]=useState<Filters>(()=>initialScope(initialQuery)),[view,setView]=useState<RecommendationList|null>(null),[busy,setBusy]=useState(true),[empty,setEmpty]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState(''),[conflict,setConflict]=useState(false),[problem,setProblem]=useState(new URLSearchParams(initialQuery).get('problem_id')??''),[edad,setEdad]=useState<number|null>(null),[viejo,setViejo]=useState(false);
- const [esperadas,setEsperadas]=useState(2);useEffect(()=>{void Promise.resolve().then(()=>{try{const n=Number(sessionStorage.getItem('vexa:rec-count'));if(n>=1&&n<=12)setEsperadas(n);}catch{/* sin almacenamiento: esqueleto por omisión */}});},[]);
  const viewRef=useRef<RecommendationList|null>(null);useEffect(()=>{viewRef.current=view;},[view]);
  const generation=useRef(0),controller=useRef<AbortController|null>(null),resolved=useRef(query),inFlight=useRef(false),generateKey=useRef<{fingerprint:string;key:string}|null>(null);
  const invalidate=useCallback(()=>{controller.current?.abort();generation.current++;inFlight.current=false;},[]);
@@ -144,13 +54,13 @@ export function RecommendationsPanel({initialQuery}:{initialQuery:string}){
    const fixed=pinnedQuery(meta.scope,meta.snapshot_id,meta.scope_hash);const ok=(d:RecommendationList|undefined)=>!!d&&Array.isArray(d.items)&&Array.isArray(d.problemOptions)&&Array.isArray(d.members)&&d.snapshotId===meta.snapshot_id&&d.scopeHash===meta.scope_hash;
    const response=await leerConCache('/api/recommendations?'+fixed.toString(),{signal:abort.signal,valida:validaLista,forzar,onCache:(j,e)=>{const d=(j as {data?:RecommendationList}).data;if(ok(d)&&!abort.signal.aborted&&epoch===generation.current){setView(d!);setEdad(e);pintado=true;}}});if(abort.signal.aborted||epoch!==generation.current)return;
    if(response.fallo){if(pintado){setViejo(true);return;}throw Error(failure(response.status||503));}
-   if(response.status<200||response.status>=300)throw Error(failure(response.status));const data=(response.json as {data?:RecommendationList}).data;if(!ok(data))throw Error('No se pudo verificar el alcance de las recomendaciones.');if(workspaceLocation()!==sourceLocation)return;resolved.current=fixed.toString();window.history.replaceState(null,'',window.location.pathname+'?'+fixed.toString()+window.location.hash);setView(data!);setEdad(response.deCache?response.edadMs:null);try{sessionStorage.setItem('vexa:rec-count',String(data!.items.length));}catch{/* opcional */}
+   if(response.status<200||response.status>=300)throw Error(failure(response.status));const data=(response.json as {data?:RecommendationList}).data;if(!ok(data))throw Error('No se pudo verificar el alcance de las recomendaciones.');if(workspaceLocation()!==sourceLocation)return;resolved.current=fixed.toString();window.history.replaceState(null,'',window.location.pathname+'?'+fixed.toString()+(vista==='por-decidir'?'':'&vista='+vista)+window.location.hash);setView(data!);setEdad(response.deCache?response.edadMs:null);try{sessionStorage.setItem('vexa:rec-count',String(data!.items.length));}catch{/* opcional */}
   }catch(e){if(!abort.signal.aborted&&epoch===generation.current){if(pintado){setViejo(true);return;}setView(null);setError(e instanceof Error?e.message:'No se pudo consultar las recomendaciones.');}}
   finally{if(!abort.signal.aborted&&epoch===generation.current){inFlight.current=false;setBusy(false);}}
- },[]);
+ },[vista]);
  useEffect(()=>{let active=true;void Promise.resolve().then(()=>{if(active)void load(query);});return()=>{active=false;invalidate();};},[query,load,invalidate]);
  useEffect(()=>{const back=()=>{invalidate();const next=cleanQuery(window.location.search.slice(1)).toString();resolved.current=next;setProblem('');if(next===query)void load(next);else setQuery(next);};window.addEventListener('popstate',back);return()=>window.removeEventListener('popstate',back);},[invalidate,load,query]);
- const apply=(next:URLSearchParams)=>{invalidate();const changed=['date_start','date_end','currency','basis','exponent'].some(k=>{const old=new URLSearchParams(resolved.current).get(k)??'';return(next.get(k)??'')!==old;});if(changed&&next.get('snapshot_id')===scope.snapshot_id)next.delete('snapshot_id');next.delete('scope_hash');setView(null);setProblem('');setError('');setBusy(true);const value=cleanQuery(next.toString()).toString();resolved.current=value;window.history.pushState(null,'',window.location.pathname+'?'+value);if(value===query)void load(value);else setQuery(value);};
+ const apply=(next:URLSearchParams)=>{invalidate();const changed=['date_start','date_end','currency','basis','exponent'].some(k=>{const old=new URLSearchParams(resolved.current).get(k)??'';return(next.get(k)??'')!==old;});if(changed&&next.get('snapshot_id')===scope.snapshot_id)next.delete('snapshot_id');next.delete('scope_hash');setView(null);setProblem('');setError('');setBusy(true);const value=cleanQuery(next.toString()).toString();resolved.current=value;window.history.pushState(null,'',window.location.pathname+'?'+value+(vista==='por-decidir'?'':'&vista='+vista));if(value===query)void load(value);else setQuery(value);};
  const operate:Operation=async(url,body)=>{if(inFlight.current)return false;inFlight.current=true;controller.current?.abort();const abort=new AbortController();controller.current=abort;const epoch=++generation.current;setBusy(true);setError('');setNotice('');let saved=false;
   try{const response=await fetchCupo(url,{method:'POST',cache:'no-store',signal:abort.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(abort.signal.aborted||epoch!==generation.current)return false;if(!response.ok){if([401,403,404].includes(response.status)){setView(null);setProblem('');}if(response.status===409)setConflict(true);throw Error(failure(response.status));}const result=await response.json();if(abort.signal.aborted||epoch!==generation.current)return false;if(!result.data)throw Error('No se pudo verificar el resultado de la operación.');saved=true;invalidarSwr({prefijo:'/api/recommendations'});
    const refreshed=await fetchCupo('/api/recommendations?'+resolved.current,{cache:'no-store',signal:abort.signal});if(abort.signal.aborted||epoch!==generation.current)return false;if(!refreshed.ok){if([401,403,404].includes(refreshed.status))setView(null);throw Error('La operación se guardó, pero no se pudo verificar la vista actual. Actualiza antes de continuar.');}const json=await refreshed.json();if(abort.signal.aborted||epoch!==generation.current)return false;const next=json.data as RecommendationList;const fixed=new URLSearchParams(resolved.current);if(!next||!Array.isArray(next.items)||next.snapshotId!==fixed.get('snapshot_id')||next.scopeHash!==fixed.get('scope_hash'))throw Error('La operación se guardó, pero la vista recibida no coincide con su alcance.');setView(next);setEdad(null);setViejo(false);guardarSwr(claveSwr('/api/recommendations?'+resolved.current),{data:next});setNotice('Cambio guardado y verificado.');return true;
@@ -159,31 +69,79 @@ export function RecommendationsPanel({initialQuery}:{initialQuery:string}){
  };
  const [proposing,setProposing]=useState(false);
  const generate=()=>{if(!view||!problem||busy||conflict)return;const fingerprint=JSON.stringify({query:resolved.current,problemId:problem,problemVersion:view.problemOptions.find(p=>p.id===problem)?.version});if(generateKey.current?.fingerprint!==fingerprint)generateKey.current={fingerprint,key:crypto.randomUUID()};setProposing(true);void operate('/api/recommendations',{operation:'generate',query:resolved.current,problemId:problem,requestKey:generateKey.current.key}).finally(()=>setProposing(false));};
- const [seg,setSeg]=useVistaPersistente<'all'|'decidir'|'curso'|'resultado'|'dismissed'>('recomendaciones:seg2','all'),[propose,setPropose]=useState(false);
+ const [propose,setPropose]=useState(false),[responsable,setResponsable]=useVistaPersistente('acciones:resp',''),[prioridad,setPrioridad]=useVistaPersistente('acciones:prio',''),[intv,setIntv]=useState<ResumenIntervenciones|null>(null);
  const flowAvailable=(view as (RecommendationList&{flowAvailable?:boolean})|null)?.flowAvailable===true;
- const items=view?([...view.items] as FlowItem[]).sort((a,b)=>(RANK[a.priority]??2)-(RANK[b.priority]??2)):[];
- const et=(i:FlowItem)=>etapaActual(i,i.flow?.events??[]);const nDecidir=items.filter(i=>['propuesta','ajustada'].includes(et(i))).length,nCurso=items.filter(i=>['aprobada','en_curso'].includes(et(i))).length,nResultado=items.filter(i=>et(i)==='resultado').length,nDismissed=items.filter(i=>i.status==='dismissed').length;
- const shown=items.filter(i=>seg==='all'||(seg==='decidir'&&['propuesta','ajustada'].includes(et(i)))||(seg==='curso'&&['aprobada','en_curso'].includes(et(i)))||(seg==='resultado'&&et(i)==='resultado')||(seg==='dismissed'&&i.status==='dismissed'));
- const resumen=resumenRecomendaciones(items);
- const firstId=items.find(i=>i.status==='proposed')?.id;
- return <section aria-label="Recomendaciones con evidencia" className="stack">
-  <PageHeader eyebrow="Decisiones y seguimiento" title="Acciones · Por decidir" guide="recomendaciones" actions={<><Button icon={<Refresh/>} loading={busy} onClick={()=>void load(resolved.current,true)}>Actualizar recomendaciones</Button>{view?.canPropose&&<Button icon={<Icon name="sparkle" size={14}/>} onClick={()=>setPropose(true)}>Proponer una recomendación</Button>}</>}/>
-  <AccionesTabs actual="por-decidir"/>
-  <ScopeBar scope={scope} onApply={apply} busy={busy}/>
+ const todos=useMemo(()=>view?([...view.items] as FlowItem[]).sort((a,b)=>(RANK[a.priority]??2)-(RANK[b.priority]??2)):[],[view]);
+ const hoy=useMemo(()=>new Date(),[]);
+ const visibles=useMemo(()=>filtrar(todos,{responsable,prioridad}) as FlowItem[],[todos,responsable,prioridad]);
+ const g=useMemo(()=>agrupar(visibles) as {decidir:FlowItem[];curso:FlowItem[];resultado:FlowItem[];descartada:FlowItem[]},[visibles]);
+ const rs=useMemo(()=>resumir(todos,hoy),[todos,hoy]),rf=useMemo(()=>resumir(visibles,hoy),[visibles,hoy]);
+ const fixedQuery=useMemo(()=>view?pinnedQuery(scope,view.snapshotId,view.scopeHash).toString():null,[view,scope]);
+ const filtrosActivos=!!(responsable||prioridad);
+ const onRegenerate=view?.canPropose&&vista==='por-decidir'?(id:string)=>{setProblem(id);setPropose(true);}:undefined;
+ const fila=(item:FlowItem,v:VistaAccion,descartada=false)=><AccionFila key={item.id+':'+item.version} item={item} members={view!.members} busy={busy} conflict={conflict} operate={operate} vista={v} descartada={descartada} flowAvailable={flowAvailable} onRegenerate={onRegenerate}/>;
+ const lista=(titulo:string,sub:string,items:FlowItem[],v:VistaAccion,vacio:string,descartada=false)=><section className="pc-card" data-flush aria-label={titulo}><header className="pc-card-head"><div><h2>{titulo} <span className="pc-count">{nf.format(items.length)}</span></h2><p>{sub}</p></div></header>{items.length?<div className="ac-lista">{items.map(i=>fila(i,v,descartada))}</div>:<p className="ac-vacio" style={{margin:'0 14px 14px'}}>{vacio}</p>}</section>;
+ const partes=(...l:[string,number][])=>l.map(([label,value])=>({label,value}));
+ const kpis=vista==='por-decidir'?[
+  {label:'Por decidir',value:nf.format(rf.decidir.n),c:6,chip:rf.decidir.urgentes>0?{texto:nf.format(rf.decidir.urgentes)+(rf.decidir.urgentes===1?' urgente':' urgentes'),tono:'bad' as const}:undefined,partes:partes(['Urgentes',rf.decidir.urgentes],['Altas',rf.decidir.altas],['Normales',rf.decidir.normales]),nota:'Urgentes '+rf.decidir.urgentes+' · altas '+rf.decidir.altas+' · normales '+rf.decidir.normales},
+  {label:'Evidencia',value:nf.format(rf.decidir.citas),c:6,partes:evidenciaPorAccion(g.decidir).map(e=>({label:etiquetaCategoria(e.titulo),value:e.citas})),nota:'citas verificadas al guardar; se vuelven a verificar al abrir'},
+  {label:'Sin responsable',value:nf.format(rf.decidir.sinResponsable)+' de '+nf.format(rf.decidir.n),c:6,partes:partes(['Con responsable',rf.decidir.n-rf.decidir.sinResponsable],['Sin responsable',rf.decidir.sinResponsable]),nota:'Quien aprueba asigna responsable y fecha'},
+  {label:'Dinero en juego',value:'—',vacio:true,c:6,chip:{texto:'Sin estimar'},nota:'Aún no hay importe por problema: no se estima un ahorro'}]
+ :vista==='en-curso'?[
+  {label:'En curso',value:nf.format(rf.curso.n),c:6,partes:partes(['Aprobadas',rf.curso.aprobadas],['En curso',rf.curso.enCurso]),nota:rf.curso.aprobadas+' aprobadas · '+rf.curso.enCurso+' en curso'},
+  {label:'Compromisos ≤ 7 días',value:nf.format(rf.curso.proximas+rf.curso.vencidas),c:6,chip:rf.curso.vencidas>0?{texto:nf.format(rf.curso.vencidas)+(rf.curso.vencidas===1?' vencida':' vencidas'),tono:'bad' as const}:undefined,partes:partes(['Vencidas',rf.curso.vencidas],['Próximas',rf.curso.proximas],['Más adelante',rf.curso.n-rf.curso.vencidas-rf.curso.proximas-rf.curso.sinFecha]),nota:rf.curso.sinFecha?rf.curso.sinFecha+' sin fecha de compromiso':'Fecha fijada al aprobar'},
+  {label:'Intervenciones',value:intv?nf.format((intv.porEstado.draft??0)+(intv.porEstado.approved??0)+(intv.porEstado.active??0)+(intv.porEstado.measuring??0)):'—',vacio:!intv,c:6,partes:partes(['Borrador',intv?.porEstado.draft??0],['Plan aprobado',intv?.porEstado.approved??0],['En ejecución',intv?.porEstado.active??0],['En medición',intv?.porEstado.measuring??0]),nota:intv?'Borrador, plan aprobado, ejecución o medición':'Cargando intervenciones…'},
+  {label:'Con borradores',value:nf.format(g.curso.filter(i=>i.drafts.length>0).length),c:6,partes:partes(['Con borrador',g.curso.filter(i=>i.drafts.length>0).length],['Sin borrador',g.curso.filter(i=>i.drafts.length===0).length]),nota:'Correo, FAQ y listas de SKU: los envía una persona'}]
+ :[
+  {label:'Con resultado',value:nf.format(rf.resultado.n),c:6,partes:partes(['Sí se resolvió',rf.resultado.si],['En parte',rf.resultado.parcial],['No',rf.resultado.no]),nota:rf.resultado.si+' sí · '+rf.resultado.parcial+' en parte · '+rf.resultado.no+' no'},
+  {label:'Con antes y después',value:nf.format(rf.resultado.conComparacion)+' de '+nf.format(rf.resultado.n),c:6,partes:partes(['Con medición',rf.resultado.conComparacion],['Sin medición',rf.resultado.n-rf.resultado.conComparacion]),nota:'Solo con ingreso observado en dos periodos'},
+  {label:'Descartadas',value:nf.format(rf.descartadas),c:6,partes:partes(['Descartadas',rf.descartadas],['Vigentes',rf.total-rf.descartadas]),nota:'Reversibles: reabrir crea un evento nuevo'},
+  {label:'Mediciones cerradas',value:intv?nf.format(intv.porEstado.closed??0):'—',vacio:!intv,c:6,partes:partes(['Cerradas',intv?.porEstado.closed??0],['Abiertas',intv?intv.total-(intv.porEstado.closed??0):0]),nota:intv?'Intervenciones con medición cerrada':'Cargando intervenciones…'}];
+ const cuentas={'por-decidir':rs.decidir.n,'en-curso':rs.curso.n,resultados:rs.resultado.n};
+ const sinFlujoAviso=view&&!flowAvailable&&todos.length>0;
+ const actividad=actividadReciente(todos,6),evidencia=evidenciaPorAccion(g.decidir),maxCitas=Math.max(1,...evidencia.map(e=>e.citas));
+ const compromisos=g.curso.map(i=>({i,e:(i.flow?.events??[]).find(x=>x.kind==='approved')})).filter(x=>x.e?.dueDate).sort((a,b)=>String(a.e!.dueDate).localeCompare(String(b.e!.dueDate)));
+ const dias=(f:string)=>Math.floor((new Date(f+'T12:00:00Z').getTime()-hoy.getTime())/86400000);
+ return <section aria-label="Acciones con evidencia" className="stack">
+  <AccionesCabecera actual={vista} cuentas={view?cuentas:undefined} acciones={view?.canPropose?<Button variant="primary" icon={<Icon name="sparkle" size={14}/>} onClick={()=>setPropose(true)}>Proponer una recomendación</Button>:undefined}/>
+  <ScopeBar scope={scope} onApply={apply} busy={busy} extra={view&&todos.length>0?<>
+   <select aria-label="Responsable" value={responsable} onChange={e=>setResponsable(e.target.value)}><option value="">Responsable: todos</option><option value="sin">Sin responsable</option>{view.members.map(m=><option key={m.id} value={m.id}>{persona(m.id,view.members)}</option>)}</select>
+   {filtrosActivos&&<button type="button" className="btn btn-ghost btn-sm" onClick={()=>{setResponsable('');setPrioridad('');}}>Limpiar</button>}
+   <button type="button" className="btn btn-ghost btn-sm" aria-label="Actualizar" title="Actualizar" disabled={busy} onClick={()=>void load(resolved.current,true)}><Refresh/></button></>:undefined}/>
   {view&&<LineaCache edadMs={edad} actualizando={busy} viejo={viejo} onActualizar={()=>void load(resolved.current,true)}/>}
-  {busy&&!view&&<div className="stack"><WaitStatus {...ESPERA.recomendaciones}/><div aria-hidden="true"><SkeletonCards count={esperadas}/></div></div>}{proposing&&view&&<WaitStatus titulo="Proponiendo la recomendación y verificando su evidencia…" detalle="Puede tardar hasta 2 minutos; no cierres esta pestaña."/>}{error&&<p className="state state-error" role="alert">{error}</p>}{notice&&<p className="state" role="status">{notice}</p>}{empty&&<DataState state={{kind:'empty'}}/>}
+  {busy&&!view&&!error&&!empty&&<section className="pc-card" aria-busy="true"><Loading message="Cargando las acciones…"/><WaitStatus {...ESPERA.recomendaciones}/></section>}
+  {proposing&&view&&<WaitStatus titulo="Proponiendo la recomendación y verificando su evidencia…" detalle="Puede tardar hasta 2 minutos; no cierres esta pestaña."/>}
+  {error&&<ErrorState title="No se pudieron cargar las acciones" body={error} onRetry={()=>void load(resolved.current,true)}/>}
+  {notice&&<Notice tone="info">{notice}</Notice>}
   {empty&&<EmptyState art="chart" title="Aún no hay un corte publicado" body="Publica un corte financiero para proponer acciones sobre evidencia verificable." action={<LinkButton href="/economics" variant="primary" size="sm" icon={<Arrow/>}>Revisar publicaciones</LinkButton>}/>}
-  {view&&<>{!flowAvailable&&items.length>0&&<p className={fx.aviso} role="status">El flujo de aprobación (Proceder, Ajustar y Resultado) aún no está habilitado en esta cuenta. Puedes leer las recomendaciones y usar las acciones anteriores; pide al responsable técnico aplicar la actualización pendiente.</p>}
-   {view.unavailableCount>0&&<p className="state" role="status">Hay recomendaciones que no pueden mostrarse con la evidencia y los permisos actuales.</p>}
+  {view&&<>
+   {sinFlujoAviso&&<Notice tone="warn" title="El flujo de aprobación no está habilitado en esta base de datos">Puedes leer las recomendaciones y crear intervenciones en borrador; Proceder, Ajustar y Descartar se activan al aplicar la migración del flujo.</Notice>}
+   {view.unavailableCount>0&&<Notice tone="info">Hay recomendaciones que no pueden mostrarse con la evidencia y los permisos actuales.</Notice>}
+   {!view.canPropose&&<Notice tone="info">Tu rol permite consultar las recomendaciones. Proponer o modificar requiere permisos de analista, operador o propietario.</Notice>}
    {view.canPropose&&<Modal open={propose} onClose={()=>setPropose(false)} title="Proponer una recomendación" footer={<Button type="submit" form="recommendation-form" variant="primary" disabled={busy||conflict||!view.problemOptions.some(p=>p.id===problem)}>Proponer recomendación</Button>}>
     <form id="recommendation-form" className="stack" aria-label="Proponer una recomendación" onSubmit={e=>{e.preventDefault();generate();setPropose(false);}}><label htmlFor="recommendation-problem">Problema para recomendar</label><select id="recommendation-problem" required disabled={busy} value={problem} onChange={e=>setProblem(e.target.value)}><option value="">Seleccionar problema</option>{view.problemOptions.map(p=><option key={p.id} value={p.id}>{p.label} · v{p.version}</option>)}</select><p className="card-lead">Se genera con reglas explícitas y evidencia autorizada. Requiere revisión humana.</p></form>
    </Modal>}
-   {!view.canPropose&&<p className="state">Tu rol permite consultar las recomendaciones. Proponer o modificar requiere permisos de analista, operador o propietario.</p>}
-   {items.length>0&&<div className="toolbar"><div className={fx.segmentos}><SegmentedControl label="Estado de las recomendaciones" value={seg} onChange={setSeg} options={[{value:'all',label:'Todas',count:items.length},{value:'decidir',label:'Por decidir',count:nDecidir},{value:'curso',label:'Seguimiento',count:nCurso},{value:'resultado',label:'Resultado',count:nResultado},{value:'dismissed',label:'Descartadas',count:nDismissed}]}/></div><span className="toolbar-spacer"/><IdChip value={view.snapshotId} label="Publicación"/></div>}
-   {items.length>0&&<section className={css.summary} aria-label="Resumen de recomendaciones"><div><strong>{nf.format(flowAvailable?nDecidir:resumen.propuestas)}</strong><span>por decidir</span></div><div data-tone={resumen.criticas>0?'bad':undefined}><strong>{nf.format(resumen.criticas)}</strong><span>{resumen.criticas===1?'requiere revisión humana urgente':'requieren revisión humana urgente'}</span></div><div><strong>{nf.format(resumen.sinResponsable)}</strong><span>sin responsable</span></div><div><strong>{nf.format(flowAvailable?nCurso:resumen.conBorrador)}</strong><span>{flowAvailable?'en seguimiento (aprobadas o en curso)':'con intervención en borrador'}</span></div></section>}
-   {!items.length&&<EmptyState art="inbox" title="No hay recomendaciones para este alcance" body={view.canPropose?'Propón la primera sobre un problema publicado.':'Cuando se proponga una, aparecerá aquí.'} action={view.canPropose?<Button variant="primary" size="sm" onClick={()=>setPropose(true)}>Proponer una recomendación</Button>:undefined}/>}
-   {items.length>0&&!shown.length&&<p className="state">No hay recomendaciones {seg==='dismissed'?'descartadas':seg==='curso'?'en seguimiento':seg==='resultado'?'con resultado':'por decidir'} en este alcance ({nf.format(items.length)} en total).</p>}
-   <div className={css.stack+' reveal'}>{shown.map(item=><RecommendationCard key={item.id+':'+item.version} item={item} members={view.members} busy={busy} conflict={conflict} operate={operate} first={item.id===firstId} flowAvailable={flowAvailable} onRegenerate={view.canPropose?(id)=>{setProblem(id);setPropose(true);}:undefined}/>)}</div>
+   {!todos.length?<EmptyState art="inbox" title="No hay recomendaciones para este alcance" body={view.canPropose?'Propón la primera sobre un problema publicado.':'Cuando se proponga una, aparecerá aquí.'} action={view.canPropose?<Button variant="primary" size="sm" onClick={()=>setPropose(true)}>Proponer una recomendación</Button>:undefined}/>:<>
+    <KpiLinea items={kpis} label={'Indicadores de '+(vista==='por-decidir'?'por decidir':vista==='en-curso'?'en curso':'resultados')}/>
+    {vista==='por-decidir'&&<>
+     {lista('Por decidir','Cada una con su evidencia; Proceder crea la intervención y los borradores, que una persona revisa y envía.',g.decidir,'por-decidir',filtrosActivos?'Nada con este filtro.':'Nada por decidir. Revisa las brechas de ingreso para proponer la siguiente acción.')}
+     <div className="pc-grid" data-cols="6-6">
+      <section className="pc-card" aria-label="Evidencia por recomendación"><header className="pc-card-head"><div><h2>Evidencia por recomendación</h2><p>Citas verificadas al guardar</p></div></header><div className="pc-fill">{evidencia.length?evidencia.map(e=><BarraParte key={e.id} etiqueta={etiquetaCategoria(e.titulo)} valor={e.citas} max={maxCitas} c={6} fin={nf.format(e.citas)}/>):<p className="ac-vacio">Sin recomendaciones por decidir.</p>}</div></section>
+      <section className="pc-card" aria-label="Última actividad"><header className="pc-card-head"><div><h2>Última actividad</h2><p>Cada decisión es un evento nuevo; nada se borra</p></div></header><div className="pc-fill">{actividad.length?<ul className="pc-lista ui-reset">{actividad.map(a=><li key={a.clave}><i className="pc-punto" data-tono={a.tipo==='dismissed'?'off':a.tipo==='resolved'?'ok':undefined} style={{['--c' as string]:'var(--chart-6)'}}/><span className="pc-grow"><span className="pc-t">{a.titulo} · {etiquetaCategoria(a.titulo2)}</span><span className="pc-s"><time dateTime={a.cuando}>{new Date(a.cuando).toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'})}</time></span></span></li>)}</ul>:<p className="ac-vacio">Aún no hay decisiones registradas.</p>}</div></section>
+     </div></>}
+    {vista==='en-curso'&&<>
+     {lista('En curso','Aprobadas y en marcha, con responsable, compromiso y borradores listos para revisar.',g.curso,'en-curso',filtrosActivos?'Nada con este filtro.':'Nada en curso. Cuando apruebes una recomendación aparece aquí con sus borradores.')}
+     <div className="pc-grid" data-cols="8-4">
+      <IntervencionesSeccion fixedQuery={fixedQuery} vista="en-curso" onResumen={setIntv}/>
+      <section className="pc-card" aria-label="Compromisos"><header className="pc-card-head"><div><h2>Compromisos</h2><p>Por fecha de compromiso</p></div></header><div className="pc-fill">{compromisos.length?<ul className="pc-lista ui-reset">{compromisos.map(({i,e})=>{const d=dias(e!.dueDate!);return <li key={i.id}><i className="pc-punto" data-tono={d<0?'bad':d<=7?'warn':undefined} style={{['--c' as string]:'var(--chart-6)'}}/><span className="pc-grow"><span className="pc-t">{etiquetaCategoria(i.title)}</span><span className="pc-s">{new Date(e!.dueDate+'T12:00:00Z').toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'})}</span></span><span className="pc-estado" data-tono={d<0?'bad':d<=7?'warn':'off'}>{d<0?'Vencida '+Math.abs(d)+' d':d===0?'Hoy':'En '+d+' d'}</span></li>;})}</ul>:<p className="ac-vacio">Sin compromisos con fecha.</p>}</div></section>
+     </div></>}
+    {vista==='resultados'&&<>
+     {lista('Resultados','Lo que pasó con lo aprobado: antes y después solo con dato observado; nunca un ahorro supuesto.',g.resultado,'resultados',filtrosActivos?'Nada con este filtro.':'Aún no hay resultados registrados: registra uno desde En curso.')}
+     <div className="pc-grid" data-cols="8-4">
+      <IntervencionesSeccion fixedQuery={fixedQuery} vista="resultados" onResumen={setIntv}/>
+      {lista('Descartadas','Reabrir deja constancia',g.descartada,'resultados','Ninguna descartada.',true)}
+     </div></>}
+   </>}
   </>}
  </section>;
 }

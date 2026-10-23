@@ -48,3 +48,15 @@ export function fraseCriticos({grupos, senales = null}) {
   return senales === null || senales === undefined ? g : `${g} (${plural(senales, 'señal crítica, evidencia', 'señales críticas, evidencias')})`;
 }
 export const etiquetaMotivo = m => m === 'both' ? 'severidad alta o crítica y categoría sensible' : m === 'severity' ? 'una conversación con severidad alta o crítica' : m === 'category' ? 'categoría de seguridad, privacidad, fraude o fuego' : null;
+
+/** UNA cifra de críticos con su desglose: total de grupos = a la vista + ocultos en notificaciones automáticas. Desconocido no es 0: sin total se usa lo visible y sin señales no se inventan. */
+export function desgloseCriticos({total = null, visibles = 0, senales = null}) {
+  const t = Number.isFinite(total) ? total : visibles, ocultos = Math.max(0, t - visibles);
+  const sen = Number.isFinite(senales) && senales !== null ? ` · ${plural(senales, 'señal crítica', 'señales críticas')} (evidencias)`.replace('señal crítica (evidencias)', 'señal crítica (evidencia)') : '';
+  const base = ocultos > 0
+    ? `${plural(visibles, 'grupo', 'grupos')} con revisión crítica a la vista + ${nf(ocultos)} ocultos en notificaciones automáticas = ${plural(t, 'grupo', 'grupos')}`
+    : `${plural(t, 'grupo', 'grupos')} con revisión crítica`;
+  return {grupos: t, visibles, ocultos, senales, texto: base + sen};
+}
+/** Aviso corto del banner: la cifra, su unidad y por qué no depende de filtros ni de importe. */
+export const avisoCriticos = ({grupos, senales = null}) => `${fraseCriticos({grupos, senales})}. Cuentan siempre: no dependen de los filtros ni del importe.`;

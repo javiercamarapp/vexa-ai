@@ -20,7 +20,7 @@ import {SkeletonStats,SkeletonChart,SkeletonCards} from '../ui/skeletons';
 import {WaitStatus} from '../ui/wait-status';
 import {ESPERA} from '../../lib/legibilidad/espera.mjs';
 import {lineaProblemas} from '../../lib/legibilidad/guias.mjs';
-import {DEFINICION} from '../../../../../packages/workspace-service/critico.mjs';
+import {DEFINICION,fraseCriticos} from '../../../../../packages/workspace-service/critico.mjs';
 import Link from './navigation-lifecycle';
 import {pedirConReintento} from '../../lib/workspace/reintento.mjs';
 type ViewScope=Scope & {basis:string;exponent?:number};
@@ -79,8 +79,10 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   {bundle.meta.next_cursor&&!bundle.meta.catalog&&<Button icon={<Arrow/>} onClick={()=>{const next=new URLSearchParams(pinned);next.set('cursor',bundle.meta.next_cursor!);navigate(next);}}>Página siguiente</Button>}
   {bundle.meta.can_manage&&<><LinkButton href="/economics" variant="ghost" size="sm" icon={<Arrow/>}>{isOverview?'Fuentes y publicaciones':'Revisar fuentes, clasificación de órdenes y publicaciones'}</LinkButton><LinkButton href="/problems/manage" variant="ghost" size="sm" icon={<Arrow/>}>{isOverview?'Catálogo de problemas':'Gestionar el catálogo de problemas'}</LinkButton></>}
  </div>;
+ const clave=bundle?.meta.scope_hash?'vexa:criticos:'+bundle.meta.scope_hash:null,[ultimo,setUltimo]=useState<{groups:number;signals:number|null}|null>(null);
+ useEffect(()=>{if(!clave)return;try{if(bundle?.meta.critical_counts){sessionStorage.setItem(clave,JSON.stringify(bundle.meta.critical_counts));setUltimo(null);}else{const v=sessionStorage.getItem(clave);setUltimo(v?JSON.parse(v):null);}}catch{setUltimo(null);}},[clave,bundle?.meta.critical_counts]);
  const notice=bundle?.meta.critical_notice&&<aside className="notice-bar" role="alert"><Icon name="alert" size={14}/><strong>Revisión crítica, independiente del importe</strong><p>{bundle.meta.critical_notice}{bundle.meta.catalog&&<> <a className="row-link-inline" href="#senales-criticas">Ver cuáles son</a></>}</p><details><summary>Qué cuenta como crítico</summary><p>{DEFINICION.senal}</p><p>{DEFINICION.grupo}</p></details></aside>
- const criticalPending=!bundle?.meta.critical_notice&&bundle?.meta.critical_notice_state==='unavailable'&&<aside className="notice-bar" role="status"><Icon name="info" size={14}/><strong>Señales críticas pendientes</strong><p>Aún no se calcularon las señales críticas en esta carga; no significa que no existan.{' '}{isOverview?<>Puedes volver a calcularlas o consultarlas en <Link href={'/problems'+(pinned.size?'?'+pinned.toString():'')} className="row-link-inline">Problemas</Link>.</>:<>Vuelve a calcularlas.</>}</p><Button size="sm" onClick={update}>Volver a calcular</Button></aside>;
+ const criticalPending=!bundle?.meta.critical_notice&&bundle?.meta.critical_notice_state==='unavailable'&&<aside className="notice-bar" role="status"><Icon name="info" size={14}/><strong>{ultimo?'Revisión crítica (última lectura)':'Señales críticas pendientes'}</strong><p>{ultimo?<>{fraseCriticos({grupos:ultimo.groups,senales:ultimo.signals})} en la última lectura de este alcance; en esta carga aún no se recalcularon. </>:<>Aún no se calcularon las señales críticas en esta carga; no significa que no existan.{' '}</>}{isOverview?<>Puedes volver a calcularlas o consultarlas en <Link href={'/problems'+(pinned.size?'?'+pinned.toString():'')} className="row-link-inline">Problemas</Link>.</>:<>Vuelve a calcularlas.</>}</p>{!ultimo&&<Button size="sm" onClick={update}>Volver a calcular</Button>}{ultimo&&<Button size="sm" variant="ghost" onClick={update}>Actualizar</Button>}</aside>;
  return <section className="stack" aria-label={isOverview?'Resumen con alcance compartido':'Problemas con alcance compartido'}>
   <PageHeader title={isOverview?'Resumen ejecutivo':'Problemas de negocio'} guide={isOverview?'resumen':'problemas'} linea={isOverview?undefined:lineaProblemas(bundle?bundle.items.some(i=>i.metrics.some(m=>m.kind==='exposure'&&m.amount_minor!==null&&/^-?\d+$/.test(m.amount_minor))):null)} actions={actions}/>
   {bar}

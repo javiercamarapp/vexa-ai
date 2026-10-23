@@ -21,7 +21,7 @@ import {NoiseToggle} from '../ui/noise-toggle';
 import {insightsProblemas} from '../../lib/legibilidad/insights.mjs';
 import {separarRuido} from '../../lib/legibilidad/ruido.mjs';
 import {filasDesdeCatalogo,filasDesdeItems,numerarGrupos,agruparCategorias,resumenFilas,ordenarFilas,filtrarFilas,hayImporte,fraseGrupo,marcarGeneral,etiquetaSeveridad,type FilaProblema,type ColumnaOrden} from '../../lib/legibilidad/problemas-catalogo.mjs';
-import {DEFINICION,etiquetaMotivo} from '../../../../../packages/workspace-service/critico.mjs';
+import {DEFINICION,etiquetaMotivo,desgloseCriticos} from '../../../../../packages/workspace-service/critico.mjs';
 import {nf} from '../ui/format';
 import {EmptyState} from '../ui/empty-state';
 import s from './problems-view.module.css';
@@ -89,15 +89,16 @@ function Criticas({filas,query,ocultasN,disponible,total}:{filas:FilaProblema[];
  const crit=useMemo(()=>ordenarFilas(filas.filter(f=>f.critico===true),{col:'conversaciones',dir:'desc'}),[filas]);
  const cats=useMemo(()=>agruparCategorias(crit),[crit]);
  const lista=todas?crit:crit.slice(0,CRITICAS_VISIBLES);
+ const desg=desgloseCriticos({total:total?.groups??null,visibles:crit.length,senales:total?.signals??null});
  return <section className="card" id="senales-criticas" aria-label="Grupos con revisión crítica">
-  <div className={s.cardHead}><div><h2>Grupos con revisión crítica{disponible?' ('+nf.format(crit.length)+')':''}</h2><p>{DEFINICION.grupo} Se revisan sin importar el dinero.</p><p className="state">{DEFINICION.senal}{total&&<> En total, con las notificaciones automáticas ocultas incluidas: <strong>{nf.format(total.groups)} {total.groups===1?'grupo':'grupos'}</strong> y <strong>{nf.format(total.signals)} {total.signals===1?'señal crítica (evidencia)':'señales críticas (evidencias)'}</strong>.</>}</p></div></div>
+  <div className={s.cardHead}><div><h2>Grupos con revisión crítica{disponible?' ('+nf.format(desg.grupos)+')':''}</h2><p>{DEFINICION.grupo} Se revisan sin importar el dinero.</p><p className="state">{DEFINICION.senal}</p>{disponible&&<p className="state"><strong>{desg.texto}</strong></p>}</div></div>
   {!disponible?<p className="state" role="status">No disponible ahora: las señales críticas no se calcularon en esta carga. No significa que no existan; reintenta con «Actualizar».</p>
    :!crit.length?<p className="state">Ningún grupo visible cumple el criterio crítico en este corte.</p>
    :<div className={s.crit}>
     <ul className={s.critCats} aria-label="Categorías con señales críticas">{cats.map(c=><li key={c.clave}><span className="chip">{c.nombre}: {nf.format(c.grupos)}</span></li>)}</ul>
-    <ul className={s.critList}>{lista.map(f=><li key={f.id} className={s.critItem}><Link href={hrefDe(f,query)} className="row-link-inline">{f.categoria} · {fraseGrupo(f)}</Link><span className={s.critNum}>{f.conversaciones===null?'No disponible':nf.format(f.conversaciones)+' conv.'}</span>{textoSenales(f)&&<span className={s.critMeta}>{textoSenales(f)}{motivoDe(f)?' · '+motivoDe(f):''}</span>}{f.ejemplo&&<span className={s.critMeta}>«{f.ejemplo}»</span>}</li>)}</ul>
+    <ul className={s.critList}>{lista.map(f=><li key={f.id} className={s.critItem}><Link href={hrefDe(f,query)} className="row-link-inline">{f.categoria} · {fraseGrupo(f)}</Link><span className={s.critNum}>{f.conversaciones===null?'No disponible':nf.format(f.conversaciones)+' conv.'}</span>{textoSenales(f)&&<span className={s.critMeta}>{textoSenales(f)}{motivoDe(f)?' · '+motivoDe(f):''}</span>}</li>)}</ul>
     {crit.length>CRITICAS_VISIBLES&&<div><button type="button" className="btn btn-ghost btn-sm" onClick={()=>setTodas(v=>!v)} aria-expanded={todas}>{todas?'Ver solo las '+CRITICAS_VISIBLES+' con más conversaciones':'Ver los '+nf.format(crit.length)+' grupos'}</button></div>}
-    {ocultasN>0&&<p className="state">{nf.format(ocultasN)} {ocultasN===1?'grupo con revisión crítica más está':'grupos con revisión crítica más están'} en notificaciones automáticas ocultas; el aviso de arriba los cuenta.</p>}
+    {desg.ocultos>0&&<p className="state">Se listan los {nf.format(crit.length)} a la vista; los otros {nf.format(desg.ocultos)} están en notificaciones automáticas ocultas y ya cuentan en el total de {nf.format(desg.grupos)}.</p>}
    </div>}
  </section>;
 }
@@ -145,7 +146,7 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
   <div className={s.kpis} role="group" aria-label="Resumen de problemas">
    <div className={s.kpi}><strong>{nf.format(resumen.grupos)}</strong><span>Grupos de problemas</span><small>Conversaciones agrupadas por parecido</small></div>
    <div className={s.kpi}><strong>{nf.format(resumen.categorias)}</strong><span>Categorías</span><small>Según la clasificación de la IA</small></div>
-   <div className={s.kpi}>{resumen.criticos===null||!critDisponible?<strong className={s.kpiNA}>No disponible ahora</strong>:<strong>{nf.format(resumen.criticos)}</strong>}<span>Grupos con revisión crítica</span><small>{catalogo?.critical&&critDisponible&&<>de {nf.format(catalogo.critical.groups)} en total ({nf.format(catalogo.critical.signals)} señales críticas, evidencias) · </>}<a className="row-link-inline" href="#senales-criticas">Ver cuáles son</a></small></div>
+   <div className={s.kpi}>{resumen.criticos===null||!critDisponible?<strong className={s.kpiNA}>No disponible ahora</strong>:<strong>{nf.format(catalogo?.critical?catalogo.critical.groups:resumen.criticos)}</strong>}<span>Grupos con revisión crítica</span><small>{catalogo?.critical&&critDisponible&&<>{desgloseCriticos({total:catalogo.critical.groups,visibles:resumen.criticos??0,senales:catalogo.critical.signals}).texto} · </>}<a className="row-link-inline" href="#senales-criticas">Ver cuáles son</a></small></div>
    <div className={s.kpi}><strong>{sep.ocultosN>0&&!incluirRuido?nf.format(sep.ocultosN):'0'}</strong><span>Notificaciones automáticas ocultas</span><small>Alertas de minoristas y del sistema</small></div>
   </div>
   {conImporte&&<div className="split" data-even>

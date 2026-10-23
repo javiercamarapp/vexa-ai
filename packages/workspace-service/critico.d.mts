@@ -8,3 +8,5 @@ export function motivoSenal(r:{severity?:string|null;category?:string|null}|null
 export function resumirSenales(filas:readonly {pid:string;category?:string|null;severity?:string|null;spans?:number|string}[]|null|undefined):{grupos:number;senales:number;porGrupo:Map<string,{signals:number;reason:MotivoCritico}>};
 export function fraseCriticos(x:{grupos:number;senales?:number|null}):string;
 export function etiquetaMotivo(m:MotivoCritico|null|undefined):string|null;
+export function desgloseCriticos(x:{total?:number|null;visibles?:number;senales?:number|null}):{grupos:number;visibles:number;ocultos:number;senales:number|null;texto:string};
+export function avisoCriticos(x:{grupos:number;senales?:number|null}):string;

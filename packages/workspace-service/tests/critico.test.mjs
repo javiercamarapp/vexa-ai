@@ -41,3 +41,13 @@ test('la frase rotula la unidad de cada cifra (grupos y evidencias) y empieza po
 test('la definición explica por qué una severidad baja puede tener una señal crítica',()=>{
  assert.match(DEFINICION.grupo,/severidad baja/);assert.match(DEFINICION.senal,/evidencia/);
 });
+test('desgloseCriticos: UNA cifra (total) con su desglose a la vista + ocultos, y frase de banner corta',async()=>{
+ const m=await import('../critico.mjs');
+ const d=m.desgloseCriticos({total:53,visibles:49,senales:364});
+ assert.equal(d.grupos,53);assert.equal(d.ocultos,4);
+ assert.equal(d.texto,'49 grupos con revisión crítica a la vista + 4 ocultos en notificaciones automáticas = 53 grupos · 364 señales críticas (evidencias)');
+ assert.equal(m.desgloseCriticos({total:3,visibles:3,senales:null}).texto,'3 grupos con revisión crítica');
+ assert.equal(m.desgloseCriticos({total:null,visibles:5}).grupos,5);
+ const b=m.avisoCriticos({grupos:53,senales:1053});
+ assert.doesNotMatch(b,/actuales autorizados/);assert.match(b,/^53 grupos de problemas con revisión crítica \(1,053 señales críticas, evidencias\)\. /);
+});

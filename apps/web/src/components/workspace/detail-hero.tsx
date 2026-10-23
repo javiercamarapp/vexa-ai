@@ -9,11 +9,12 @@ import {Drawer} from '../ui/overlay';
 import {InsightCard} from '../ui/insight-card';
 import {Icon} from '../ui/icons';
 import {nf} from '../ui/format';
+import {etiquetaCategoria} from '../../lib/legibilidad/categorias.mjs';
 const STATE={ready:{l:'Cobertura completa',t:'ok'},partial:{l:'Cobertura parcial',t:'warn'},stale:{l:'Corte anterior',t:'warn'},empty:{l:'Sin datos',t:'muted'}} as const;
 const CAUSE:Record<string,{l:string;sev:'high'|'medium'|'low'|'info'}>={unassessed:{l:'Sin evaluar',sev:'info'},hypothesis:{l:'Causa probable, no confirmada',sev:'medium'},confirmed:{l:'Causa confirmada con evidencia operativa',sev:'low'},retracted:{l:'Causa retractada',sev:'info'}};
 function Fig({label,value,kind,note}:{label:string;value:ReactNode;kind?:Parameters<typeof KindBadge>[0];note?:ReactNode}){return <div className="hero-fig"><span className="hero-fig-label">{label}</span><strong>{value}</strong>{kind&&<KindBadge {...kind}/>}{note&&<small>{note}</small>}</div>;}
 /** Entity hero: title + status, 3 exact figures with their class, lifecycle stepper (only steps the data can prove), evidence in a drawer. */
-export function DetailHero({data,evidence,children}:{data:ProblemDetail|CustomerDetail;evidence:ReactNode;children?:ReactNode}){
+export function DetailHero({data,evidence,nota,children}:{data:ProblemDetail|CustomerDetail;evidence:ReactNode;nota?:string;children?:ReactNode}){
  const [open,setOpen]=useState(false);
  const st=STATE[data.state];
  const cites=data.conversations.reduce((a,c)=>a+('citations' in c&&Array.isArray(c.citations)?c.citations.length:0),0);
@@ -27,13 +28,14 @@ export function DetailHero({data,evidence,children}:{data:ProblemDetail|Customer
  ]:[];
  return <>
   <section className="card hero" aria-label="Resumen del detalle">
-   <div className="hero-main"><div className="hero-title"><StatusChip tone={st.t}>{st.l}</StatusChip><h2 className="detail-title">{data.title}</h2><p className="hero-sub">Corte financiero <time>{data.as_of.replace('T',' ').replace(/\.\d{3}Z$/,' UTC')}</time></p></div>
+   <div className="hero-main"><div className="hero-title"><StatusChip tone={st.t}>{st.l}</StatusChip><h2 className="detail-title">{data.kind==='problem'?etiquetaCategoria(data.title):data.title}</h2><p className="hero-sub">Corte financiero <time>{data.as_of.replace('T',' ').replace(/\.\d{3}Z$/,' UTC')}</time></p></div>
     <div className="hero-figs">
      {metrics.slice(0,2).map((m,i)=><Fig key={i} label={m.label} value={money(m)} kind={{metric:m}} note={m.amount_minor===null&&m.known_subtotal!==null?'Subtotal conocido: '+formatMinorUnits(m.known_subtotal,m.currency,m.exponent)+'; no es el total.':undefined}/>)}
      {data.kind==='customer'&&<Fig label="Órdenes atribuidas" value={nf.format(data.orders.length)} kind={{kind:'observed'}}/>}
      <Fig label="Conversaciones" value={nf.format(data.conversations.length)} note={`${nf.format(cites)} ${cites===1?'cita':'citas'}`}/>
     </div>
    </div>
+   {nota&&<p className="state" role="note">{nota}</p>}
    {steps.length>0&&<div className="hero-steps"><Stepper label="Ciclo de vida del problema" steps={steps}/></div>}
    <div className="hero-actions"><button type="button" className="btn btn-primary btn-sm" onClick={()=>setOpen(true)}><Icon name="message" size={14}/><span className="btn-label">Ver evidencia ({nf.format(cites)})</span></button></div>
   </section>

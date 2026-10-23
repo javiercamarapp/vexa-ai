@@ -130,7 +130,7 @@ export async function respond(url,method,bodyText){
  if(p.startsWith('/api/workspace/detail/customer/'))return ok(detailCustomer());
  if(/^\/api\/problems\/[^/]+\/causality$/.test(p))return ok(causality());
  if(p==='/api/explorer')return ok(explorerPage(q.get('q')??''));
- if(p==='/api/explorer/tools')return ok({name:'get_evidence',result:explorerEvidence(body?.args?.problemId)});
+ if(p==='/api/explorer/tools')return ok({name:'get_evidence',result:{...explorerEvidence(body?.args?.problemId),problemId:body?.args?.problemId}});
  if(p==='/api/explorer/query')return ok(explorerAnswer(body?.question??''));
  if(p==='/api/recommendations')return ok(recommendations());
  if(p==='/api/interventions')return ok(interventions());

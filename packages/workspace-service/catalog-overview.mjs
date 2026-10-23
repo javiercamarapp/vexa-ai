@@ -38,8 +38,9 @@ export async function catalogOverview(s, catalog, {signalRows = null, isCritical
   // Regla única de «crítico» (critico.mjs): grupos con revisión crítica, señales críticas (evidencias) y motivo por grupo.
   const crit = signalRows ? resumirSenales(signalRows) : null;
   if (signalRows) for (const r of signalRows) {
-    const o = per.get(r.pid) ?? {critical: false, spans: 0};
+    const o = per.get(r.pid) ?? {critical: false, spans: 0, themes: new Map()};
     o.spans += Number(r.spans) || 0;
+    if (r.category) o.themes.set(r.category, (o.themes.get(r.category) ?? 0) + (Number(r.spans) || 0));
     if (isCritical ? isCritical(r) : crit.porGrupo.has(r.pid)) o.critical = true;
     per.set(r.pid, o);
   }
@@ -55,6 +56,8 @@ export async function catalogOverview(s, catalog, {signalRows = null, isCritical
       critical_signals: signalRows ? (crit.porGrupo.get(c.id)?.signals ?? 0) : null,
       critical_reason: signalRows ? (crit.porGrupo.get(c.id)?.reason ?? null) : null,
       citations: signalRows ? (g?.spans ?? 0) : null,
+      // Categorías más frecuentes de las citas del grupo (para la descripción automática del título); no trae texto de conversación.
+      themes: signalRows ? [...(g?.themes ?? [])].map(([category, count]) => ({category, count})).sort((a, b) => b.count - a.count || a.category.localeCompare(b.category)).slice(0, 3) : null,
       recommendations: meta ? (m?.recs ?? 0) : null,
     };
   });

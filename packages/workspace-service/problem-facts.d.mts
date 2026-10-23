@@ -7,4 +7,4 @@ export type ProblemFacts={problemId:string;generatedAt:string;class:'observed';l
  parts:{catalog:PartState;signals:PartState;meta:PartState};note:string};
 export function posicionGrupo(filas:{id:string;label:string;n:number|null}[],id:string):{n:number;de:number}|null;
 export function resumirAdjuntos(rows:{kind:string;n:unknown;convs:unknown;is_total:unknown}[],cobertura:{linked:unknown;total:unknown}|null):{total:number;conversaciones:number;porClase:Record<'imagen'|'video'|'audio'|'documento'|'otro',number>;cobertura:{enlazados:number;total:number}|null};
-export function createProblemFactsRepository(options:{database:any;now?:()=>Date;budgetMs?:number}):{get(input:{problemId:string}):Promise<ProblemFacts>};
+export function createProblemFactsRepository(options:{database:any;now?:()=>Date;budgetMs?:number}):{get(input:{problemId:string;parts?:['themes']|null}):Promise<ProblemFacts>};

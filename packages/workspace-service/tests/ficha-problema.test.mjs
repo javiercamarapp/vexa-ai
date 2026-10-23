@@ -89,3 +89,12 @@ test('la serie mensual del grupo trae conversaciones distintas y rotula el mes p
   assert.deepEqual(v.completeness.partialMonths, ['2026-09'], 'septiembre llega al día 21: parcial');
   assert.equal(v.completeness.basis, 'data');
 });
+
+test('parts=["themes"]: solo conversaciones y temas; no consulta catálogo, recomendaciones ni adjuntos', async () => {
+  const {db, log} = fake();
+  const f = await createProblemFactsRepository({database: db}).get({problemId: P1, parts: ['themes']});
+  assert.equal(f.conversations, CONV.length);
+  assert.deepEqual(f.themes.map(t => t.category), ['Warranty: Battery Replacement', 'Warranty: Charger Replacement']);
+  assert.ok(!log.some(x => /recommendations|attachment_links|DISTINCT ON \(problem_id\) problem_id AS id|FROM public\.problems/.test(x)));
+  await assert.rejects(() => createProblemFactsRepository({database: db}).get({problemId: P1, parts: ['otra']}), e => e.status === 400);
+});

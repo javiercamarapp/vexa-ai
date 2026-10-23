@@ -9,6 +9,7 @@ import Link from './navigation-lifecycle';
 import {StatCard,type Delta} from '../ui/stat-card';
 import {Sparkline} from '../ui/sparkline';
 import {KindBadge} from '../ui/kind-badge';
+import {TituloAuto} from '../ui/titulo-auto';
 import {StatusChip} from '../ui/status-chip';
 import {Button,LinkButton,Arrow} from '../ui/button';
 import {WaitStatus} from '../ui/wait-status';
@@ -66,7 +67,7 @@ export function TopProblems({items,query,cargando,error,onRetry}:{items:Bundle['
   {items&&top.length===0&&<EmptyState compact art="search" title="Sin conversaciones por problema" body="Cuando los grupos tengan conversaciones registradas aparecerán aquí." action={<LinkButton href={'/problems?'+query} size="sm" icon={<Arrow/>}>Ver problemas</LinkButton>}/>}
   {top.length>0&&<ol className={s.list}>{top.map((f,i)=><li key={f.id} className={s.row}>
    <span className={s.rank}>{i+1}</span>
-   <div className={s.name}><Link href={'/problems/'+f.id+'?'+query}>{f.categoria}</Link><small>{fraseGrupo(f)}</small></div>
+   <div className={s.name}><Link href={'/problems/'+f.id+'?'+query}>{f.categoria}</Link><small>{fraseGrupo(f)}</small><TituloAuto problemId={f.id} label={f.titulo} conversaciones={f.conversaciones}/></div>
    <div className={s.num}><strong>{nf.format(f.conversaciones as number)}</strong><small>conversaciones</small><RowSpark id={f.id}/></div>
   </li>)}</ol>}
   {lista&&lista.ocultosN>0&&<p className={s.note}>{ruido?'Se incluyen':'Se ocultan'} {nf.format(lista.ocultosN)} grupos de notificaciones automáticas. <button type="button" className="row-link-inline" onClick={()=>setRuido(v=>!v)}>{ruido?'Ocultarlas':'Incluirlas'}</button></p>}
@@ -103,7 +104,7 @@ export function Attention({crit,query,conteo}:{crit:ReturnType<typeof useCritico
   {total!==null&&<p className={s.note}><strong>{nf.format(total)}</strong> {total===1?'grupo con revisión crítica':'grupos con revisión crítica'}{(d?.signals??conteo?.signals)!=null&&<> · {nf.format((d?.signals??conteo?.signals) as number)} señales críticas (evidencias)</>}</p>}
   {d&&d.filas.length>0&&<ol className={s.list}>{d.filas.slice(0,CRIT_VISIBLES).map((f,i)=><li key={f.id} className={s.row}>
    <span className={s.rank}>{i+1}</span>
-   <div className={s.name}><Link href={'/problems/'+f.id+'?'+query}>{f.categoria}</Link><small>{fraseGrupo(f)}{f.motivoCritico?' · '+etiquetaMotivo(f.motivoCritico):''}</small></div>
+   <div className={s.name}><Link href={'/problems/'+f.id+'?'+query}>{f.categoria}</Link><small>{fraseGrupo(f)}{f.motivoCritico?' · '+etiquetaMotivo(f.motivoCritico):''}</small><TituloAuto problemId={f.id} label={f.titulo} conversaciones={f.conversaciones} temas={f.temas??null}/></div>
    <div className={s.num}><strong>{f.conversaciones===null?'—':nf.format(f.conversaciones)}</strong><small>conversaciones</small>{f.severidad&&<StatusChip tone={f.severidad==='high'||f.severidad==='critical'?'bad':f.severidad==='medium'?'warn':'neutral'}>{etiquetaSeveridad(f.severidad)}</StatusChip>}</div>
   </li>)}</ol>}
   {!d&&<>

@@ -37,8 +37,8 @@ test('el resumen une catálogo, señales ya leídas, severidad y recomendaciones
   assert.ok(!log.some(x => /redacted_text|message_revisions/.test(x)), 'privacidad: la lista ya no selecciona texto de conversación en SQL');
   assert.ok(o.rows.every(r => !('quote' in r)), 'las filas no llevan extracto');
   assert.deepEqual(o.critical, {groups: 1, signals: 5}, 'grupos con revisión crítica y señales críticas (evidencias), cada uno con su unidad');
-  assert.deepEqual(o.rows.find(r => r.id === 'p1'), {id: 'p1', label: 'Order: Spare Parts', conversations: 7, severity: 'high', critical: true, critical_signals: 5, critical_reason: 'severity', citations: 7, recommendations: 2});
-  assert.deepEqual(o.rows.find(r => r.id === 'p2'), {id: 'p2', label: 'Order: Spare Parts', conversations: 3, severity: 'low', critical: false, critical_signals: 0, critical_reason: null, citations: 4, recommendations: 0});
+  assert.deepEqual(o.rows.find(r => r.id === 'p1'), {id: 'p1', label: 'Order: Spare Parts', conversations: 7, severity: 'high', critical: true, critical_signals: 5, critical_reason: 'severity', citations: 7, recommendations: 2, themes: [{category: 'Order: Spare Parts', count: 7}]});
+  assert.deepEqual(o.rows.find(r => r.id === 'p2'), {id: 'p2', label: 'Order: Spare Parts', conversations: 3, severity: 'low', critical: false, critical_signals: 0, critical_reason: null, citations: 4, recommendations: 0, themes: [{category: 'Order: Spare Parts', count: 4}]});
   assert.equal(o.total, 2);
 });
 

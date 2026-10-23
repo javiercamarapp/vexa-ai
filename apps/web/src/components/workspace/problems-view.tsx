@@ -18,6 +18,7 @@ import {LinkButton,Arrow} from '../ui/button';
 import {Icon} from '../ui/icons';
 import {InsightList} from '../ui/insight-list';
 import {NoiseToggle} from '../ui/noise-toggle';
+import {tituloDescriptivo,ROTULO_AUTO,AVISO_AUTO} from '../../lib/legibilidad/titulo-descriptivo.mjs';
 import {insightsProblemas} from '../../lib/legibilidad/insights.mjs';
 import {separarRuido} from '../../lib/legibilidad/ruido.mjs';
 import {filasDesdeCatalogo,filasDesdeItems,numerarGrupos,agruparCategorias,resumenFilas,ordenarFilas,filtrarFilas,hayImporte,fraseGrupo,marcarGeneral,etiquetaSeveridad,type FilaProblema,type ColumnaOrden} from '../../lib/legibilidad/problemas-catalogo.mjs';
@@ -48,6 +49,8 @@ const Citas=({f}:{f:FilaProblema})=>f.citas===null?NA:<span title="Citas registr
 const Recomendacion=({f}:{f:FilaProblema})=>f.recomendaciones===null?NA:f.recomendaciones>0?<span>Sí ({f.recomendaciones})</span>:<span>No</span>;
 const Conversaciones=({f}:{f:FilaProblema})=>f.conversaciones===null?NA:<strong>{nf.format(f.conversaciones)}</strong>;
 const hrefDe=(f:FilaProblema,query:string)=>'/problems/'+f.id+'?'+query;
+/** Descripción automática (sin IA): categoría + 2 temas más frecuentes de las citas del grupo. Solo si hay temas; no inventa nada. */
+const Auto=({f}:{f:FilaProblema})=>{const t=tituloDescriptivo({label:f.titulo,temas:f.temas??null,conversaciones:f.conversaciones});return t&&t.temas.length>0?<small className={s.auto} title={AVISO_AUTO}>{t.texto} · <em>{ROTULO_AUTO}</em></small>:null;};
 const ORDENES:{v:string;label:string}[]=[
  {v:'conversaciones:desc',label:'Conversaciones: de más a menos'},{v:'conversaciones:asc',label:'Conversaciones: de menos a más'},{v:'categoria:asc',label:'Categoría: A–Z'},
  {v:'severidad:desc',label:'Severidad: alta primero'},{v:'critico:desc',label:'Revisión crítica primero'},{v:'citas:desc',label:'Citas: de más a menos'},{v:'recomendaciones:desc',label:'Con recomendación primero'}];
@@ -183,7 +186,7 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
    :modo==='tarjetas'?<div className={s.cardsGrid}>{pagina.map(f=>{const st=f.registro?(STATUS[f.registro.status]??{label:f.registro.status,tone:'info' as const}):null;
     return <article key={f.id} className={s.gcard}>
      <div className={s.gcardHead}><span className="chip">{fraseGrupo(f)}</span>{f.critico&&<StatusChip tone="bad">Revisión crítica</StatusChip>}{st&&<StatusChip tone={st.tone}>{st.label}</StatusChip>}</div>
-     <h3><Link href={hrefDe(f,query)} className="card-link">{f.categoria}</Link></h3>
+     <h3><Link href={hrefDe(f,query)} className="card-link">{f.categoria}</Link></h3><Auto f={f}/>
      <div><div className={s.big}>{f.conversaciones===null?'No disponible':nf.format(f.conversaciones)}</div><div className={s.bigLabel}>conversaciones <KindBadge kind="observed"/></div></div>
      {f.importe&&<Figure m={f.importe as M} big/>}
      <ul className={s.facts}><li>Severidad: <Severidad f={f}/></li><li>Citas: <Citas f={f}/></li><li>Recomendación: <Recomendacion f={f}/></li></ul>
@@ -193,7 +196,7 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
     <thead><tr>{th('categoria','Categoría')}<th scope="col">Grupo</th>{th('conversaciones','Conversaciones',true,'Conversaciones únicas del grupo (Observado)')}{th('severidad','Severidad')}{th('critico','Crítico',false,DEFINICION.grupo)}{th('citas','Citas',true,'Citas registradas; se verifican al abrir el problema')}{th('recomendaciones','Recomendación')}{conImporte&&th('importe','Ingresos expuestos',true)}</tr></thead>
     <tbody>{pagina.map(f=><tr key={f.id}>
      <th scope="row" className={s.cat} data-label="Categoría">{f.categoria}</th>
-     <td data-label="Grupo" className={s.full}><div className={s.group}><Link href={hrefDe(f,query)} className="row-link-inline">{fraseGrupo(f)}</Link><button type="button" className="btn btn-ghost btn-sm" onClick={()=>setQuick(f)} aria-label={'Vista rápida: '+f.categoria+', '+fraseGrupo(f)}>Vista rápida</button></div></td>
+     <td data-label="Grupo" className={s.full}><div className={s.group}><Link href={hrefDe(f,query)} className="row-link-inline">{fraseGrupo(f)}</Link><button type="button" className="btn btn-ghost btn-sm" onClick={()=>setQuick(f)} aria-label={'Vista rápida: '+f.categoria+', '+fraseGrupo(f)}>Vista rápida</button></div><Auto f={f}/></td>
      <td data-label="Conversaciones" className={s.num+' num'}><Conversaciones f={f}/></td>
      <td data-label="Severidad"><Severidad f={f}/></td>
      <td data-label="Crítico"><Critico f={f}/></td>

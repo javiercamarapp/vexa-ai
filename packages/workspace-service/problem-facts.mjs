@@ -34,11 +34,14 @@ export function resumirAdjuntos(rows, cobertura) {
 
 export function createProblemFactsRepository({database, now = () => new Date(), budgetMs = FACTS_BUDGET_MS}) {
   return {
-    async get({problemId}) {
+    /** parts (opcional): ['themes'] = solo conversaciones y temas de las citas (la descripción automática del título); por omisión, la ficha completa. */
+    async get({problemId, parts = null}) {
       if (!uuid(problemId)) throw new WorkspaceError('problem_input_invalid', 400);
+      if (parts !== null && !(Array.isArray(parts) && parts.length === 1 && parts[0] === 'themes')) throw new WorkspaceError('problem_input_invalid', 400);
+      const solo = parts !== null;
       return database.transaction('read', async s => {
         const deadline = () => Date.now() + budgetMs;
-        const cat = await guarded(s, deadline(), 'facts_catalog', async () => (await s.query(
+        const cat = solo ? null : await guarded(s, deadline(), 'facts_catalog', async () => (await s.query(
           `SELECT DISTINCT ON (problem_id) problem_id AS id, provenance->'snapshot'->>'label' AS label, provenance->'snapshot'->>'state' AS state,
             jsonb_array_length(coalesce(provenance->'snapshot'->'conversationIds','[]'::jsonb)) AS n
            FROM public.problem_versions WHERE tenant_id=$1 AND provenance->>'kind'='vector-problem-v1' ORDER BY problem_id, version DESC`, [s.tenantId])).rows);
@@ -70,12 +73,12 @@ export function createProblemFactsRepository({database, now = () => new Date(), 
           for (const r of senales) sev[r.severity ?? 'unknown'] = (sev[r.severity ?? 'unknown'] ?? 0) + Number(r.spans);
           severidades = sev;
         }
-        const meta = await guarded(s, deadline(), 'facts_meta', async () => (await s.query('SELECT severity FROM public.problems WHERE tenant_id=$1 AND id=$2', [s.tenantId, problemId])).rows[0] ?? null);
-        const recs = await guarded(s, deadline(), 'facts_recs', async () => (await s.query(
+        const meta = solo ? null : await guarded(s, deadline(), 'facts_meta', async () => (await s.query('SELECT severity FROM public.problems WHERE tenant_id=$1 AND id=$2', [s.tenantId, problemId])).rows[0] ?? null);
+        const recs = solo ? null : await guarded(s, deadline(), 'facts_recs', async () => (await s.query(
           `SELECT * FROM (SELECT DISTINCT ON (r.id) r.id,r.title,r.status,r.version,left(r.action,400) AS action,r.created_at,
              (SELECT i.status FROM public.interventions i WHERE i.tenant_id=r.tenant_id AND i.recommendation_id=r.id ORDER BY i.version DESC, i.created_at DESC LIMIT 1) AS intervention
             FROM public.recommendations r WHERE r.tenant_id=$1 AND r.problem_id=$2 AND r.status<>'dismissed' ORDER BY r.id, r.version DESC) x ORDER BY created_at DESC LIMIT 5`, [s.tenantId, problemId])).rows);
-        const adj = cids ? await guarded(s, deadline(), 'facts_attach', async () => {
+        const adj = cids && !solo ? await guarded(s, deadline(), 'facts_attach', async () => {
           const rows = (await s.query(
             `SELECT split_part(coalesce(b.mime_type,'?'),'/',1) AS kind,count(DISTINCT l.id)::int AS n,count(DISTINCT l.conversation_id)::int AS convs,grouping(split_part(coalesce(b.mime_type,'?'),'/',1)) AS is_total
              FROM public.attachment_links l JOIN public.attachment_blobs b ON b.tenant_id=l.tenant_id AND b.id=l.blob_id
@@ -88,7 +91,7 @@ export function createProblemFactsRepository({database, now = () => new Date(), 
           problemId, generatedAt: now().toISOString(), class: 'observed',
           label: yo?.label ?? null,
           grupo: cat && yo ? posicionGrupo(filas, problemId) : null,
-          conversations: yo ? yo.n : null,
+          conversations: yo ? yo.n : solo && cids ? cids.length : null,
           citations: citas,
           severity: meta ? (meta.severity ?? null) : null,
           severityMix: severidades,

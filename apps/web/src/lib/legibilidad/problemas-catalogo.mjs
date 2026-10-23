@@ -12,7 +12,7 @@ export const etiquetaSeveridad=v=>v===null||v===undefined||v===''?null:(SEV_ES[v
 const base=(id,titulo)=>({id,titulo,categoria:etiquetaCategoria(titulo),clave:clave(titulo)});
 /** Filas desde meta.catalog.rows (todos los problemas vigentes). */
 export function filasDesdeCatalogo(catalogo){
- return (catalogo?.rows??[]).map(r=>({...base(r.id,r.label),conversaciones:Number.isFinite(r.conversations)?r.conversations:null,severidad:r.severity??null,critico:typeof r.critical==='boolean'?r.critical:null,senalesCriticas:Number.isFinite(r.critical_signals)?r.critical_signals:null,motivoCritico:r.critical_reason??null,citas:Number.isFinite(r.citations)?r.citations:null,recomendaciones:Number.isFinite(r.recommendations)?r.recommendations:null,importe:null}));
+ return (catalogo?.rows??[]).map(r=>({...base(r.id,r.label),conversaciones:Number.isFinite(r.conversations)?r.conversations:null,severidad:r.severity??null,critico:typeof r.critical==='boolean'?r.critical:null,senalesCriticas:Number.isFinite(r.critical_signals)?r.critical_signals:null,motivoCritico:r.critical_reason??null,citas:Number.isFinite(r.citations)?r.citations:null,recomendaciones:Number.isFinite(r.recommendations)?r.recommendations:null,temas:Array.isArray(r.themes)?r.themes:null,importe:null}));
 }
 /** Filas desde los registros de la página (con importe cuando el corte trae vínculos). Lo que el registro no trae queda null. */
 export function filasDesdeItems(items){

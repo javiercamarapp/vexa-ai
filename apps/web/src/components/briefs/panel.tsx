@@ -1,4 +1,5 @@
 'use client';
+import {TituloAuto} from '../ui/titulo-auto';
 import {useWorkspaceNavigation,workspaceLocation} from '../workspace/navigation-lifecycle';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {Brief,BriefList,BriefProblem} from '../../../../../packages/briefs/index.mjs';
@@ -43,7 +44,7 @@ function Figures({metrics}:{metrics:Metric[]}){return <dl className="metric-grid
 const safe=(href:string)=>href.startsWith('/')&&!href.startsWith('//');
 const exact=(m:Metric)=>m.amount_minor!==null&&/^-?\d+$/.test(m.amount_minor);
 const stamp=(v:string)=>fechaCorteLegible(v);
-function Problem({item}:{item:BriefProblem}){const titulo=tituloEs(item.title);return <article className="card problem-card" aria-label={'Problema del brief: '+titulo}><div className="card-head"><div>{item.critical&&<StatusChip tone="warn">Revisión crítica</StatusChip>}<h3>{item.rank!==null?item.rank+'. ':''}{titulo}</h3></div>{safe(item.href)&&<LinkButton href={item.href} size="sm" variant="ghost" icon={<Arrow/>}>Ver problema</LinkButton>}</div><p className="card-lead">Versión {item.version} · {etiquetaBase(item)} · {item.evidenceCount} {item.evidenceCount===1?'cita':'citas'}</p><Figures metrics={item.metrics}/><details><summary>Evidencia de {titulo}</summary>{item.evidence.map((e,i)=><Citation key={e.runId+':'+e.messageRevisionId+':'+i} quote={e.quote} role={e.role} category={e.category} messageRevisionId={e.messageRevisionId}/>)}</details></article>;}
+function Problem({item}:{item:BriefProblem}){const titulo=tituloEs(item.title);return <article className="card problem-card" aria-label={'Problema del brief: '+titulo}><div className="card-head"><div>{item.critical&&<StatusChip tone="warn">Revisión crítica</StatusChip>}<h3>{item.rank!==null?item.rank+'. ':''}{titulo}</h3><TituloAuto problemId={item.id} label={item.title}/></div>{safe(item.href)&&<LinkButton href={item.href} size="sm" variant="ghost" icon={<Arrow/>}>Ver problema</LinkButton>}</div><p className="card-lead">Versión {item.version} · {etiquetaBase(item)} · {item.evidenceCount} {item.evidenceCount===1?'cita':'citas'}</p><Figures metrics={item.metrics}/><details><summary>Evidencia de {titulo}</summary>{item.evidence.map((e,i)=><Citation key={e.runId+':'+e.messageRevisionId+':'+i} quote={e.quote} role={e.role} category={e.category} messageRevisionId={e.messageRevisionId}/>)}</details></article>;}
 function Document({brief,busy,exportFile}:{brief:Brief;busy:boolean;exportFile:(kind:'json'|'html')=>void}){
  const d=brief.document,cur=d.scope.currency;
  const tit=cifraTitular(d.metrics),acc=accionPrincipal(d.top3,d.actions),vig=resumenVigilar(d),{nuevos:criticosNuevos,repetidos:criticosYaArriba}=criticosAparte(d);

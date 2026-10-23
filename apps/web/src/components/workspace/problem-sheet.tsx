@@ -11,6 +11,7 @@ import {ColumnChart,type ColumnDatum} from '../ui/column-chart';
 import {EmptyState} from '../ui/empty-state';
 import {Button,LinkButton,Refresh,Arrow} from '../ui/button';
 import {KindBadge} from '../ui/kind-badge';
+import {TituloAuto} from '../ui/titulo-auto';
 import {StatusChip} from '../ui/status-chip';
 import {Icon} from '../ui/icons';
 import {WaitStatus} from '../ui/wait-status';
@@ -84,6 +85,7 @@ export function ProblemSheet({id,shared,captured,dinero,facts,onTitle}:{id:strin
      {head?.critico===false&&<span className="chip">Sin revisión crítica</span>}
      {f&&<KindBadge kind="inferred" hint="La categoría y la severidad las asigna la IA al extraer cada conversación: son Inferido, no un hecho observado."/>}
     </div>
+    {f&&<TituloAuto problemId={id} label={f.label??''} conversaciones={f.conversations} temas={f.themes??null}/>}
     {head?.critico===true&&head.motivo&&<p className={s.sub}><strong>Motivo de la revisión crítica:</strong> {head.motivo}{head.senales!==null&&<> · {nf.format(head.senales)} {head.senales===1?'señal crítica':'señales críticas'} (evidencias).</>}</p>}
     {facts.busy&&!f&&<div role="status" aria-busy="true"><span className="sr-only">Cargando la ficha…</span><div className="skel-rows"><span/></div></div>}
     {facts.error&&!f&&<p className="state state-error" role="alert">{facts.error} <Button size="sm" icon={<Refresh/>} onClick={facts.reload}>Reintentar</Button></p>}

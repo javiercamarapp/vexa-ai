@@ -1,4 +1,5 @@
 'use client';
+import {TituloAuto} from '../ui/titulo-auto';
 import {useWorkspaceNavigation,workspaceLocation} from '../workspace/navigation-lifecycle';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {Recommendation,RecommendationList} from '../../../../../packages/recommendations/index.mjs';
@@ -39,7 +40,7 @@ function RecommendationCard({item,members,busy,conflict,operate,first}:{item:Rec
  const openEvidence=()=>{setEvidence(true);if(full||openState==='loading')return;setOpenState('loading');void fetch(endpoint,{cache:'no-store'}).then(async r=>{if(r.status===403||r.status===404){setOpenState('unavailable');return;}if(!r.ok)throw Error('x');const j=await r.json();if(!j.data||j.data.id!==item.id)throw Error('x');setFull(j.data as Recommendation);setOpenState('idle');}).catch(()=>setOpenState('error'));};
  const close=(ok:Promise<boolean>)=>{void ok.then(saved=>{if(saved)setEdit(false);});};
  return <article className="card insight" aria-label={'Recomendación: '+etiquetaCategoria(item.title)} data-severity={pr.sev} data-highlight={highlight||undefined} data-dismissed={dismissed||undefined}>
-  <header className="insight-head"><span className="insight-icon" aria-hidden="true"><Icon name={highlight?'target':'sparkle'} size={16}/></span><div className="insight-titles"><span className="insight-eyebrow">{highlight?'Hacer primero':dismissed?'Descartada':'Recomendación'}</span><h3>{etiquetaCategoria(item.title)}</h3></div><StatusChip tone={pr.tone}>{pr.label}</StatusChip></header>
+  <header className="insight-head"><span className="insight-icon" aria-hidden="true"><Icon name={highlight?'target':'sparkle'} size={16}/></span><div className="insight-titles"><span className="insight-eyebrow">{highlight?'Hacer primero':dismissed?'Descartada':'Recomendación'}</span><h3>{etiquetaCategoria(item.title)}</h3><TituloAuto problemId={item.problemId} label={item.title}/></div><StatusChip tone={pr.tone}>{pr.label}</StatusChip></header>
   <p className="insight-sentence"><strong>{item.action}</strong></p>
   {item.preconditions.length>0&&<ul className="insight-signals" aria-label="Condiciones para considerar esta acción">{item.preconditions.slice(0,3).map((v,i)=><li key={i}><Icon name="check" size={14}/><span>{v}</span></li>)}</ul>}
   <p className="card-lead">Evidencia verificada al guardar · se vuelve a verificar al abrir.</p>

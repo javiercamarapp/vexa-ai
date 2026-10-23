@@ -99,3 +99,28 @@ test('QA3-003/004: Histórico ya no imprime ids, códigos ni el banner de config
  assert.match(a,/\{canResolveFacts&&<td><Button size="sm"/);assert.match(a,/\{canApprove&&<details/);
  assert.match(i,/<details[^>]*>\s*<summary>Ver detalle técnico/);
 });
+import {esCuentaTecnica,visibles,puedeRevocar,rolEs,ROLES,ROL_ES} from '../team/vista.mjs';
+const miembro=(id,role,email='x@y.com',status='active')=>({id,role,email,status});
+test('QA3-005: las cuentas técnicas (.invalid / worker-) no se muestran y las personas sí',()=>{
+ assert.equal(esCuentaTecnica('worker-5b000ff068@vexa.invalid'),true);assert.equal(esCuentaTecnica('worker-abc@empresa.com'),true);assert.equal(esCuentaTecnica('bot@sistema.INVALID'),true);
+ assert.equal(esCuentaTecnica('javier@empresax.com'),false);assert.equal(esCuentaTecnica('network-worker@x.com'),false);
+ assert.deepEqual(visibles([miembro('1','owner','a@b.com'),miembro('2','analyst','worker-1@vexa.invalid')]).map(i=>i.id),['1']);
+});
+test('QA3-005: los roles se traducen y los valores internos no cambian',()=>{
+ assert.deepEqual(ROLES,['owner','analyst','operator','viewer']);assert.deepEqual(ROLES.map(rolEs),['Propietario','Analista','Operador','Lector']);assert.equal(rolEs('otro'),'Rol desconocido');assert.equal(Object.keys(ROL_ES).length,4);
+});
+test('QA3-005: no se ofrece Revocar sobre uno mismo ni sobre el último propietario; sí sobre otros',()=>{
+ const items=[miembro('yo','owner'),miembro('ana','analyst'),miembro('otro','owner')];
+ assert.equal(puedeRevocar(items[0],{viewerId:'yo',items}),false,'uno mismo');
+ assert.equal(puedeRevocar(items[1],{viewerId:'yo',items}),true);assert.equal(puedeRevocar(items[2],{viewerId:'yo',items}),true,'hay dos propietarios');
+ const unico=[miembro('yo','owner'),miembro('ana','analyst')];
+ assert.equal(puedeRevocar(unico[0],{viewerId:'ana',items:unico}),false,'último propietario');
+ assert.equal(puedeRevocar(unico[0],{viewerId:'ana',items:unico,hayMas:true}),true,'con más páginas no se sabe: decide el servicio');
+ assert.equal(puedeRevocar(miembro('z','viewer','a@b.c','revoked'),{viewerId:'yo',items}),false);
+ assert.equal(puedeRevocar(items[1],{items}),true,'sin identidad conocida solo rigen las demás guardas');
+});
+test('QA3-005: TeamPanel usa las guardas y el servidor entrega la identidad de quien consulta',()=>{
+ const t=leer('../../components/team-panel.tsx'),s=leer('../team/server.ts');
+ assert.match(t,/visibles\(items\)/);assert.match(t,/puedeRevocar\(item,/);assert.match(t,/rolEs\(role\)/);assert.doesNotMatch(t,/<option key=\{role\}>\{role\}<\/option>/);assert.doesNotMatch(t,/\{item\.role\} · \{item\.status\}/);
+ assert.match(s,/viewerId:verified\.data\.user\.id/);
+});

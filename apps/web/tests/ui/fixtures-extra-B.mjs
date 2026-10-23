@@ -11,5 +11,9 @@ export function respondExtra(url,method,bodyText,{u}){
   {id:u(3008),source:'xlsx',accountId:'Tracker Excel',connectionStatus:'active',state:'unknown',lastAttempt:null,lastSuccess:null,watermark:null,coverage:null,lagSeconds:null,lagBasis:'time_since_success',permissions:'unknown',errorCode:null,reconnect:null},
   {id:u(3005),source:'zendesk',accountId:'soporte-mx',connectionStatus:'active',state:'reconnect_required',lastAttempt:'2026-10-17T10:00:00.000Z',lastSuccess:null,watermark:null,coverage:null,lagSeconds:null,lagBasis:'time_since_success',permissions:'revoked',errorCode:'RECONNECT_REQUIRED',reconnect:{ownerRequired:true,canRequest:true,attemptId:u(3006),steps:['Rota la credencial en Zendesk','Guarda el nuevo nombre de credencial','Permite un nuevo intento']}}]}];
  if(p==='/api/connections/settings'&&method==='GET')return [200,{canConfigure:true,settings:[{connectionId:conn,source:'hubspot',accountId:'demo-portal',credentialRef:'hs-demo',historyFrom:'2026-01-01T00:00:00.000Z',enabled:true,overlapSeconds:60,pollSeconds:300,version:1,errorCode:null,failureCount:0}]}];
+ if(p==='/api/team'&&method==='GET'){const me=u(5001);return [200,{viewerId:me,data:{nextCursor:null,items:[
+  {id:me,email:'propietario@cliente.com',role:'owner',status:'active',version:1},
+  {id:u(5002),email:'analista@cliente.com',role:'analyst',status:'active',version:2},
+  {id:u(5003),email:'worker-5b000ff068@vexa.invalid',role:'analyst',status:'active',version:1}]}}];}
  return null;
 }

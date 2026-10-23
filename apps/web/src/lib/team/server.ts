@@ -34,5 +34,5 @@ export async function handleTeam(request:NextRequest,invitationId?:string,platfo
  else {if(!input||!['invite','role','revoke','cancel'].includes(input.operation))throw new AccessError(400,'team_input_invalid');data=input.operation==='invite'?await team.invite(input):await team.call(input);}
  // A rejected invitation session must not deliver refreshed credentials.
  if(sessionExchange)finish=commitCookies;
- return finish(NextResponse.json({data},{headers}));
+ return finish(NextResponse.json({data,...(invitationId?{}:{viewerId:verified.data.user.id})},{headers}));
  }catch(error){const e=error as {status?:number;code?:string};const status=[400,401,403,408,409,413,429,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({error:{code:e.code?.startsWith('team_')?e.code:'team_unavailable'}},{status,headers}));}}

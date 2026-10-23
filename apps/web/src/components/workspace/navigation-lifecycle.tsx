@@ -1,13 +1,17 @@
 'use client';
 import NextLink from 'next/link';
+import {useSearchParams} from 'next/navigation';
 import {useEffect,type ComponentProps} from 'react';
+import {hrefConAlcance} from '../../lib/workspace/alcance.mjs';
 
 const navigationEvent='rovaq:workspace-navigation';
 type Props=Omit<ComponentProps<typeof NextLink>,'href'> & {href:string};
 
 // Next calls onNavigate only for an uncancelled client navigation: modified
 // clicks, external destinations and downloads keep their ordinary behavior.
-export default function WorkspaceLink({href,onNavigate,...props}:Props){
+export default function WorkspaceLink({href:crudo,onNavigate,...props}:Props){
+ // Un enlace interno sin query conserva el alcance de la pantalla (periodo y corte), igual que el menú.
+ const href=hrefConAlcance(crudo,useSearchParams().toString());
  return <NextLink {...props} href={href} onNavigate={event=>{
   let cancelled=false;
   onNavigate?.({preventDefault:()=>{cancelled=true;event.preventDefault();}});

@@ -50,3 +50,16 @@ export function consultaConPeriodo(raw, inicio, fin) {
   q.set('date_start', inicio); q.set('date_end', fin);
   return q;
 }
+
+/** Rutas que no usan el alcance del corte: su enlace va limpio. */
+const SIN_ALCANCE = ['/settings', '/evaluation', '/migrations', '/jobs', '/notifications', '/api', '/login'];
+/** Enlace interno de una pantalla: conserva el alcance de la URL actual (periodo, corte, moneda) como hace el menú. Sin esto, «Ver el detalle» o «Importar datos» soltaban la publicación y el Explorador decía «aún no hay una publicación». */
+export function hrefConAlcance(href, raw) {
+  if (typeof href !== 'string' || !href.startsWith('/') || href.startsWith('//')) return href;
+  const [sinAncla, ...resto] = href.split('#');
+  if (sinAncla.includes('?')) return href;
+  if (SIN_ALCANCE.some((p) => sinAncla === p || sinAncla.startsWith(p + '/'))) return href;
+  const consulta = consultaAlcance(raw);
+  if (!consulta) return href;
+  return sinAncla + '?' + consulta + (resto.length ? '#' + resto.join('#') : '');
+}

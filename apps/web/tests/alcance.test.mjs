@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {consultaAlcance, periodoLegible, alcanceDeConsulta, consultaConPeriodo, periodosRapidos, periodoAplica} from '../src/lib/workspace/alcance.mjs';
+import {consultaAlcance, periodoLegible, alcanceDeConsulta, consultaConPeriodo, periodosRapidos, periodoAplica, hrefConAlcance} from '../src/lib/workspace/alcance.mjs';
 
 test('el menú conserva solo el alcance: periodo, moneda, base, corte y filtros compartidos; no los filtros de cada pantalla', () => {
   const q = consultaAlcance('date_start=2026-08-01&date_end=2026-09-21&currency=USD&basis=marketplace_line_price&snapshot_id=s1&scope_hash=h1&q=hola&cursor=zz&status=open&source=hubspot&source=csv');
@@ -35,4 +35,19 @@ test('cambiar el periodo suelta la publicación fijada pero conserva moneda y ba
 test('el selector de periodo solo aplica donde el periodo cambia la vista', () => {
   for (const p of ['/overview', '/problems/manage', '/problems/abc', '/cfo', '/refunds', '/economics', '/briefs/1']) assert.equal(periodoAplica(p), true, p);
   for (const p of ['/imports', '/jobs/9', '/settings/team', '/notifications', '/connections', '/history']) assert.equal(periodoAplica(p), false, p);
+});
+
+test('los enlaces dentro de una pantalla conservan el alcance (periodo, corte) y no se quedan sin publicación', () => {
+  const q = 'date_start=2026-08-01&date_end=2026-09-21&currency=USD&snapshot_id=s1&scope_hash=h1&q=hola';
+  for (const ruta of ['/history', '/imports', '/economics', '/explorer', '/connections', '/sources']) {
+    const h = hrefConAlcance(ruta, q), u = new URL(h, 'https://x.test');
+    assert.equal(u.pathname, ruta);
+    assert.equal(u.searchParams.get('snapshot_id'), 's1', ruta);
+    assert.equal(u.searchParams.get('q'), null, 'los filtros propios no viajan');
+  }
+  assert.equal(hrefConAlcance('/economics#fuentes', q).endsWith('#fuentes'), true);
+  // Lo que ya trae query, las pantallas internas, externos y anclas quedan igual.
+  for (const h of ['/history?cursor=2', '/settings/team', '/jobs/setup', '/jobs/9', '/notifications', '/api/jobs/1/errors', 'https://otro.test/x', '#atencion', 'mailto:a@b.c']) assert.equal(hrefConAlcance(h, q), h, h);
+  // Sin alcance en la URL actual no se inventa nada.
+  assert.equal(hrefConAlcance('/history', 'q=hola'), '/history');
 });

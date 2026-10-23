@@ -6,3 +6,4 @@ export function periodosRapidos(ahora?:Date):Record<'month'|'30d'|'90d'|'12m',[s
 export const ETIQUETAS_PERIODO:Readonly<Record<'month'|'30d'|'90d'|'12m',string>>;
 export function alcanceDeConsulta(raw:string|URLSearchParams,ahora?:Date):{inicio:string|null;fin:string|null;periodo:string|null;clave:string|null;moneda:string|null;base:string|null;snapshot:string|null;hayAlcance:boolean};
 export function consultaConPeriodo(raw:string|URLSearchParams,inicio:string,fin:string):URLSearchParams;
+export function hrefConAlcance(href: string, raw: string | URLSearchParams): string;

@@ -139,6 +139,6 @@
 /* F2-CLIENTES: la descripcion del encabezado es de UNA linea (sin tope de 62ch); solo envuelve en pantallas angostas. */
 .page-header .page-header-description{max-width:none}
 .ui-notice{padding:8px 12px;margin:12px 0}.ui-notice-body{flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:0 8px}.ui-notice-title{flex:none}
-.btn-label{white-space:nowrap}
+.ui-filterbar .btn-label,.page-header-actions .btn-label,.hoy-acciones .btn-label,.ov-fila .btn-label{white-space:nowrap}
 .ov-fila>:only-child{grid-column:1/-1}
 .ov-4-4-4:has(>:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr))}

@@ -170,3 +170,4 @@
 .hoy-page [aria-label="Estado de los datos"] details[open]{flex-basis:100%;margin:0}
 .ov-fila>:only-child{grid-column:1/-1}.ov-4-4-4:has(>:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr))}
 .hoy-page .ov-fila>.card>*{min-width:0;max-width:100%}
+.hoy-page [aria-label="Estado de los datos"] .btn-label{white-space:nowrap}

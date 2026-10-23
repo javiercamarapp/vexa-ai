@@ -25,6 +25,7 @@ function medir(){
  const wc=document.querySelector('.workspace-content');
  if(document.documentElement.scrollWidth>innerWidth+1)out.overflowX.push('documento '+document.documentElement.scrollWidth+'>'+innerWidth);
  if(wc&&wc.scrollWidth>wc.clientWidth+1)out.overflowX.push('.workspace-content '+wc.scrollWidth+'>'+wc.clientWidth);
+ if(out.overflowX.length){const clip=e=>{for(let q=e.parentElement;q&&q!==document.body;q=q.parentElement){if(getComputedStyle(q).overflowX!=='visible')return true;}return false;};for(const e of [...document.querySelectorAll('.workspace-content *')].filter(e=>e.getBoundingClientRect().right>innerWidth+1&&!clip(e)).slice(0,3))out.overflowX.push('  culpable: '+desc(e)+' r='+Math.round(e.getBoundingClientRect().right));}
  for(const e of all){
   const cs=getComputedStyle(e);
   const ownText=[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim());

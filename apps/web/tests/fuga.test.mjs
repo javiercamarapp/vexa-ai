@@ -18,12 +18,12 @@ test('formato de dinero y textos: bruto y sin cancelados, concentración, cobert
 });
 test('periodo del titular: rango real, ventana por canal, nota si el periodo pedido no coincide y acumulado rotulado aparte', () => {
   const t = {status: 'ok', usdBrutoMinor: '5000000', n: 300, rango: {desde: '2026-08-03', hasta: '2026-09-18'}, canales: {walmart: {n: 200, desde: '2026-08-03', hasta: '2026-09-18'}, shopify: {n: 5, desde: '2026-08-10', hasta: '2026-09-02'}}};
-  const w = {titular: t, acumulado: {status: 'ok', scope: 'todo_el_libro', n: 6405, usdBrutoMinor: '85472777', rango: {desde: '2025-10-01', hasta: '2026-10-02'}}, scope: {dateStart: '2026-08-01', dateEnd: '2026-09-21'}};
+  const w = {titular: t, acumulado: {status: 'ok', scope: 'todo_el_libro', n: 6405, usdBrutoMinor: '85472777', usdNetoMinor: '73972184', rango: {desde: '2025-10-01', hasta: '2026-10-02'}}, scope: {dateStart: '2026-08-01', dateEnd: '2026-09-21'}};
   const p = M.periodoDelTitular(w);
   assert.equal(p.etiqueta, 'Reembolsos del 3 ago 2026 al 18 sep 2026');
   assert.deepEqual(p.ventanas, ['Walmart desde 3 ago 2026', 'Shopify desde 10 ago 2026']);
   assert.match(p.nota, /^El periodo elegido es 1 ago 2026 al 20 sep 2026, pero los reembolsos cargados cubren del 3 ago 2026 al 18 sep 2026\./);
-  assert.match(p.acumulado.texto, /^Acumulado disponible \(todo el libro, del 1 oct 2025 al 2 oct 2026\): \[omitido: dato de cliente] USD brutos en 6,405 reembolsos\./); assert.equal(p.acumulado.distinto, true);
+  assert.match(p.acumulado.texto, /^Acumulado disponible \(todo el libro, del 1 oct 2025 al 2 oct 2026\): \[omitido: dato de cliente] USD brutos \(\[omitido: dato de cliente]\.84 sin cancelados\) en 6,405 reembolsos\./); assert.equal(p.acumulado.distinto, true);
   const sin = M.periodoDelTitular({...w, scope: {dateStart: null, dateEnd: null}});
   assert.equal(sin.nota, null); assert.equal(sin.pedido, false);
   assert.match(M.periodoDelTitular({...w, titular: {...t, rango: null}}).nota, /No hay reembolsos cargados en el periodo elegido/);
@@ -83,4 +83,13 @@ test('el titular y la tarjeta respetan el periodo: /api/refunds recibe solo date
   assert.equal(endpointFuga(''), '/api/refunds'); assert.equal(endpointFuga(null), '/api/refunds');
   assert.equal(endpointFuga('date_start=ayer&date_end=2026-09-21'), '/api/refunds', 'fecha inválida = sin periodo, nunca un corte inventado');
   assert.equal(endpointFuga('date_start=2026-09-21&date_end=2026-08-01'), '/api/refunds');
+});
+
+test('Contacto repetido muestra las categorías en español (la IA las emite en inglés)', async () => {
+  const {readFileSync} = await import('node:fs');
+  const {etiquetaCategoria} = await import('../src/lib/legibilidad/categorias.mjs');
+  assert.equal(etiquetaCategoria('Warranty: Part Replacement OT'), 'Garantía: Reemplazo de pieza (OT)');
+  assert.match(etiquetaCategoria('Subscription: Product Registration'), /^Suscripción: /);
+  const src = readFileSync(new URL('../src/components/refunds/fuga-partes.tsx', import.meta.url), 'utf8');
+  assert.match(src, /<span>\{etiquetaCategoria\(x\.categoria\)\}<\/span>/);
 });

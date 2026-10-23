@@ -7,6 +7,7 @@ import {Button,Download,Refresh} from '../ui/button';
 import {Icon} from '../ui/icons';
 import {ESTADO_TXT,HOJA_TXT,NOMBRE,frasesCambios,excluidosTexto,mesCorto,num,pct,usd} from './fuga-modelo.mjs';
 import {datosSku,NO_SE_SABE} from './fuga-archivos.mjs';
+import {etiquetaCategoria} from '../../lib/legibilidad/categorias.mjs';
 import './fuga.css';
 
 type Kind='observed'|'estimated'|'inferred';
@@ -126,7 +127,7 @@ export function SeccionRepetido({v,onReintentar}:{v:FugaVista;onReintentar:()=>v
    <div><b className="fg-stat">{pct(c.pctTresOMas)}</b><span>escribió 3 o más veces ({num(c.contactosTresOMas90)})</span></div>
    <div><b className="fg-stat">{num(c.ticketsQueRepiten90)}</b><span>tickets repiten un contacto de los 90 días previos</span></div>
   </div>
-  {c.porCategoria.length>0&&<><h3 className="fg-h3">Categorías con más repetición</h3><ul className="fg-rank">{c.porCategoria.map(x=><li key={x.categoria}><span>{x.categoria}</span><b>{pct(x.pct)}</b><small>{num(x.repiten)} de {num(x.clientes)} clientes</small></li>)}</ul></>}
+  {c.porCategoria.length>0&&<><h3 className="fg-h3">Categorías con más repetición</h3><ul className="fg-rank">{c.porCategoria.map(x=><li key={x.categoria}><span>{etiquetaCategoria(x.categoria)}</span><b>{pct(x.pct)}</b><small>{num(x.repiten)} de {num(x.clientes)} clientes</small></li>)}</ul></>}
   <p className="fg-pie">{c.pctSinVincular!==null?`${pct(c.pctSinVincular)} de los tickets no está vinculado a un contacto: puede subestimar o inflar. `:''}Resumen calculado el {String(c.refreshedAt).slice(0,10)}. Las categorías son de la IA y solo cubren las conversaciones con extracción (jul-sep 2026); excluye avisos automáticos de marketplaces.</p>
  </div>;
 }

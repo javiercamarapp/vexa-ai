@@ -58,7 +58,7 @@ export function FugaPantalla({organization,embebido=false}:{organization?:string
       {fraseConcentracion(v)&&<p className="fg-frase">{fraseConcentracion(v)}</p>}
       <p className="fg-meta">{lineaCobertura(v)}</p>
       <p className="fg-meta">{lineaVentanas(v)}</p>
-      {per?.acumulado&&(per.acumulado.distinto||per.pedido)&&<p className="fg-meta">{per.acumulado.texto}</p>}
+      {per?.acumulado&&<p className="fg-meta">{per.acumulado.texto}</p>}
      </>}
    </section>
 

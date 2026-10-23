@@ -76,7 +76,7 @@ export function periodoDelTitular(v) {
     else if (cortoInicio || cortoFin) nota = `El periodo elegido es ${pedidoTxt}, pero los reembolsos cargados cubren ${rango}.`;
   }
   const a = v.acumulado?.status === 'ok' ? v.acumulado : null;
-  const acumulado = a ? {texto: `Acumulado disponible (todo el libro${a.rango ? `, del ${diaLargo(a.rango.desde)} al ${diaLargo(a.rango.hasta)}` : ''}): ${usd(a.usdBrutoMinor)} USD brutos en ${num(a.n)} reembolsos. Mezcla ventanas distintas por canal; no es el total de un periodo.`, usdBrutoMinor: a.usdBrutoMinor, distinto: Boolean(pedido) && a.usdBrutoMinor !== t.usdBrutoMinor} : null;
+  const acumulado = a ? {texto: `Acumulado disponible (todo el libro${a.rango ? `, del ${diaLargo(a.rango.desde)} al ${diaLargo(a.rango.hasta)}` : ''}): ${usd(a.usdBrutoMinor)} USD brutos${a.usdNetoMinor!=null?` (${usd(a.usdNetoMinor, {decimals: true})} sin cancelados)`:''} en ${num(a.n)} reembolsos. Mezcla ventanas distintas por canal; no es el total de un periodo.`, usdBrutoMinor: a.usdBrutoMinor, distinto: Boolean(pedido) && a.usdBrutoMinor !== t.usdBrutoMinor} : null;
   return {rango, etiqueta: rango ? `Reembolsos ${rango}` : 'Periodo de los reembolsos no disponible', ventanas, nota, pedido: Boolean(pedido), acumulado};
 }
 

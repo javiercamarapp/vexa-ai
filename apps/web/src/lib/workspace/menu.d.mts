@@ -7,3 +7,4 @@ export function itemActivo(pathname:string):{item:MenuItem;grupo:string|null}|nu
 export function tituloDePantalla(pathname:string):string;
 export function iconoDePantalla(pathname:string):string;
 export function cerradosGuardados(texto:string|null|undefined):string[];
+export function grupoAbiertoPorDefecto(entradas:readonly MenuEntrada[],activo:{item:MenuItem;grupo:string|null}|null):string|null;

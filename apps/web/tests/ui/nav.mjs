@@ -63,14 +63,16 @@ for(const [w,h] of [[375,812],[768,1024],[1440,900]]){
    const abrirMenu=async()=>{if(w<768){await page.getByRole('button',{name:'Abrir menú'}).click();await page.waitForTimeout(300);}};
    await abrirMenu();const root=w<768?page.locator('.mobile-sidebar'):page.locator('.workspace-sidebar');
    const toggles=root.locator('.nav-group-toggle');const n=await toggles.count();check(n===(internal?5:4)-0||n===(internal?5:4)+0,`grupos esperados ${internal?5:4}, hay ${n}`);
-   for(let i=0;i<n;i++)check((await toggles.nth(i).getAttribute('aria-expanded'))==='true',`grupo ${i} no está abierto por defecto`);
+   const abiertos=async()=>{let k=0;for(let i=0;i<n;i++)if((await toggles.nth(i).getAttribute('aria-expanded'))==='true')k++;return k;};
+   check((await abiertos())===1,`acordeón: debe haber exactamente 1 grupo abierto por defecto, hay ${await abiertos()}`);
+   check((await toggles.nth(0).getAttribute('aria-expanded'))==='true',`en /overview el grupo abierto por defecto es el primero (${await toggles.nth(0).innerText()})`);
    const labels=(await root.locator('nav a').allInnerTexts()).map(t=>t.trim());
    check(!labels.includes('Notificaciones')&&!labels.includes('Gestionar problemas')&&!labels.includes('Gestión económica'),`ítems que ya no van: ${labels}`);
    check(internal===labels.includes('Evaluación histórica'),`Interno ${internal?'debía':'no debía'} verse: ${labels}`);
    check(labels.indexOf('Resumen')<labels.indexOf('Problemas')&&labels.indexOf('Problemas')<labels.indexOf('Panorama')&&labels.indexOf('Panorama')<labels.indexOf('Recomendaciones')&&labels.indexOf('Acciones')<labels.indexOf('Explorador')&&labels.indexOf('Brief ejecutivo')<labels.indexOf('Fuentes conectadas'),`orden del menú: ${labels}`);
    const href=await root.locator('nav a',{hasText:'Problemas'}).first().getAttribute('href');const p=new URLSearchParams(href.split('?')[1]??'');
    check(['date_start','date_end','currency','basis','snapshot_id','scope_hash'].every(k=>p.get(k)===new URLSearchParams(SCOPE).get(k)),`el menú no propaga el alcance: ${href}`);
-   if(w>=768){await toggles.filter({hasText:'Datos y fuentes'}).click();check((await toggles.filter({hasText:'Datos y fuentes'}).getAttribute('aria-expanded'))==='false','el grupo no se cierra');await page.reload({waitUntil:'networkidle'});await page.waitForTimeout(500);check((await page.locator('.workspace-sidebar .nav-group-toggle',{hasText:'Datos y fuentes'}).getAttribute('aria-expanded'))==='false','el grupo cerrado no se recuerda');await page.evaluate(()=>localStorage.removeItem('vexa-nav-cerrados'));}
+   {await toggles.filter({hasText:'Datos y fuentes'}).click();check((await toggles.filter({hasText:'Datos y fuentes'}).getAttribute('aria-expanded'))==='true','acordeón: «Datos y fuentes» no se abre');check((await toggles.nth(0).getAttribute('aria-expanded'))==='false','acordeón: al abrir otro grupo se debe cerrar el anterior');check((await abiertos())===1,'acordeón: nunca más de un grupo abierto');await toggles.filter({hasText:'Datos y fuentes'}).click();check((await abiertos())===0,'acordeón: pulsar el grupo abierto lo cierra');}
    await shot(page,'menu');
   }
   await page.close(); }

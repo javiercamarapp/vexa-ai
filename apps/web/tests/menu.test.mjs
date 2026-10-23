@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {MENU, menuVisible, itemActivo, tituloDePantalla, todosLosItems, cerradosGuardados} from '../src/lib/workspace/menu.mjs';
+import {MENU, menuVisible, itemActivo, tituloDePantalla, todosLosItems, cerradosGuardados, grupoAbiertoPorDefecto} from '../src/lib/workspace/menu.mjs';
 const etiquetas = (acceso) => menuVisible(acceso).map((e) => e.etiqueta);
 const hrefs = (acceso) => menuVisible(acceso).flatMap((e) => (e.tipo === 'grupo' ? e.items : [e]).map((i) => i.href));
 
@@ -45,4 +45,14 @@ test('A6: Cobertura de datos y Fuentes conectadas ya no se confunden en el menú
   const items = todosLosItems().map((x) => x.item).filter((i) => ['/sources', '/connections'].includes(i.href));
   assert.deepEqual(items.map((i) => i.etiqueta), ['Cobertura de datos', 'Fuentes conectadas']);
   assert.equal(tituloDePantalla('/sources'), 'Cobertura de datos');
+});
+
+test('acordeón: un solo grupo abierto por defecto; el de la página actual o el primero', () => {
+  const menu = menuVisible({ role: 'owner', interno: false });
+  const primero = menu.find((e) => e.tipo === 'grupo').clave;
+  assert.equal(grupoAbiertoPorDefecto(menu, itemActivo('/overview')), primero);
+  assert.equal(grupoAbiertoPorDefecto(menu, null), primero);
+  assert.equal(grupoAbiertoPorDefecto(menu, itemActivo('/connections')), 'datos');
+  assert.equal(grupoAbiertoPorDefecto(menu, itemActivo('/settings/team')), 'administracion');
+  assert.equal(grupoAbiertoPorDefecto([], null), null);
 });

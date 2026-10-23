@@ -67,6 +67,12 @@ export function iconoDePantalla(pathname) {
   if (a) return a.item.icono;
   return SIN_ITEM.find((s) => coincide(pathname, s.href))?.icono ?? 'overview';
 }
+/** Acordeón: UN solo grupo abierto a la vez. Por defecto el de la página actual; si la página no está en un grupo, el primero del menú visible. */
+export function grupoAbiertoPorDefecto(entradas, activo) {
+  const claves = entradas.filter((e) => e.tipo === 'grupo').map((g) => g.clave);
+  if (activo?.grupo && claves.includes(activo.grupo)) return activo.grupo;
+  return claves[0] ?? null;
+}
 /** Grupos cerrados por el usuario (por defecto todos abiertos). Lee y valida lo guardado; cualquier cosa rara = todos abiertos. */
 export function cerradosGuardados(texto) {
   try {

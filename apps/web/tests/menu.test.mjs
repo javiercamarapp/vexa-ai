@@ -4,8 +4,8 @@ import {MENU, menuVisible, itemActivo, tituloDePantalla, todosLosItems, cerrados
 const etiquetas = (acceso) => menuVisible(acceso).map((e) => e.etiqueta);
 const hrefs = (acceso) => menuVisible(acceso).flatMap((e) => (e.tipo === 'grupo' ? e.items : [e]).map((i) => i.href));
 
-test('orden de la historia: Resumen, Problemas, Dinero, Recomendaciones, Acciones, Preguntar, Brief, Datos y fuentes, Administración, Interno', () => {
-  assert.deepEqual(etiquetas({role: 'owner', interno: true}), ['Resumen', 'Problemas', 'Dinero', 'Recomendaciones', 'Acciones', 'Preguntar', 'Brief ejecutivo', 'Datos y fuentes', 'Administración', 'Interno']);
+test('orden de la historia: Resumen, Problemas, Pregúntale a tus datos, Dinero, Recomendaciones, Acciones, Explorador, Brief, Datos y fuentes, Administración, Interno', () => {
+  assert.deepEqual(etiquetas({role: 'owner', interno: true}), ['Resumen', 'Problemas', 'Pregúntale a tus datos', 'Dinero', 'Recomendaciones', 'Acciones', 'Explorador', 'Brief ejecutivo', 'Datos y fuentes', 'Administración', 'Interno']);
 });
 test('Interno solo con acceso de plataforma; un propietario cliente no lo ve', () => {
   assert.ok(!etiquetas({role: 'owner'}).includes('Interno'));

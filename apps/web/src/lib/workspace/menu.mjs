@@ -6,6 +6,7 @@ const DINERO = ['owner', 'analyst'];
 export const MENU = Object.freeze([
   { tipo: 'item', href: '/overview', etiqueta: 'Resumen', icono: 'overview' },
   { tipo: 'item', href: '/problems', etiqueta: 'Problemas', icono: 'problems', alias: ['/problems/manage'] },
+  { tipo: 'item', href: '/preguntale', etiqueta: 'Pregúntale a tus datos', icono: 'preguntale' },
   { tipo: 'grupo', clave: 'dinero', etiqueta: 'Dinero', roles: DINERO, items: [
     { href: '/cfo', etiqueta: 'Panorama', icono: 'economics', titulo: 'Dinero' },
     { href: '/refunds', etiqueta: 'Fuga de reembolsos', icono: 'economics', titulo: 'Fuga de reembolsos' },
@@ -13,10 +14,7 @@ export const MENU = Object.freeze([
   ] },
   { tipo: 'item', href: '/recommendations', etiqueta: 'Recomendaciones', icono: 'recommendations' },
   { tipo: 'item', href: '/interventions', etiqueta: 'Acciones', icono: 'interventions' },
-  { tipo: 'grupo', clave: 'preguntar', etiqueta: 'Preguntar', items: [
-    { href: '/explorer', etiqueta: 'Explorador', icono: 'explorer' },
-    { href: '/preguntale', etiqueta: 'Pregúntale a tus datos', icono: 'preguntale' },
-  ] },
+  { tipo: 'item', href: '/explorer', etiqueta: 'Explorador', icono: 'explorer' },
   { tipo: 'item', href: '/briefs', etiqueta: 'Brief ejecutivo', icono: 'briefs' },
   { tipo: 'grupo', clave: 'datos', etiqueta: 'Datos y fuentes', items: [
     { href: '/sources', etiqueta: 'Cobertura de datos', icono: 'history', titulo: 'Cobertura de datos' },

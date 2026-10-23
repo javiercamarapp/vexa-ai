@@ -38,3 +38,18 @@
 .privacy svg{flex:none;margin-top:2px}
 .results{margin:0;font-size:13px;color:var(--muted);scroll-margin-top:72px}
 .results:focus{outline:none}
+
+.card{border-radius:12px;box-shadow:none}
+.composer{padding:12px 14px;gap:8px}
+.prop{display:block;inline-size:100%;block-size:8px;border-radius:999px;background:var(--soft-1);overflow:hidden;margin-top:6px}.prop>span{display:block;block-size:100%;background:var(--chart-1);border-radius:999px;animation:qcgrow .5s ease-out both;transform-origin:left}
+.cols{display:flex;align-items:flex-end;gap:3px;block-size:22px;margin-top:6px}.cols>span{flex:1 1 0;min-inline-size:2px;background:var(--chart-1);border-radius:2px 2px 0 0;opacity:.85}
+.de{font-size:13px;font-weight:500;color:var(--muted)}
+.convCell{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end;min-inline-size:120px}.convBar{display:block;inline-size:64px;block-size:6px;border-radius:999px;background:var(--soft-1);overflow:hidden}.convBar>span{display:block;block-size:100%;background:var(--chart-1);border-radius:999px}
+.searchRow{max-width:240px;flex:0 0 220px}.searchRow input{min-height:32px;height:32px}
+.cell{inline-size:min(56ch,50vw)}
+@keyframes qcgrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){.prop>span{animation:none}}
+.sum{all:unset;cursor:pointer;font-size:12px;color:var(--muted);display:inline-block;margin-top:4px}.sum:hover{text-decoration:underline}.searchRow{flex:0 0 180px;max-width:180px}
+.explorer details.publication>summary.sum{all:unset!important;cursor:pointer;font-size:12px;color:var(--muted);display:inline-block;margin-top:4px;border:0!important;background:none!important;padding:0!important}
+.searchRow{flex:0 0 150px;max-width:150px}
+.searchRow{position:relative}

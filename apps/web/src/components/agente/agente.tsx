@@ -72,7 +72,7 @@ export function Chat({data,modo}:{data:AgentState;modo?:ModoChat}){
  const count=a.conversations.length;
  const chips=<p className="agente-meta"><span className="chip" title="Fuentes con datos cargados frente a las que el espacio de trabajo espera.">{s.loaded} de {s.total} fuentes</span><span className="chip agente-mode" title={data.note}>{data.mode==='deterministic'?'Cifras calculadas, sin IA generativa':'Redacción con IA verificada'}</span></p>;
  return <div className={'copiloto'+(modo?' copiloto-negocio':'')} data-testid="agente-shell" data-has={has} data-modo={modo?.modo}>
-  {!has&&<ParticleField/>}
+  {!has&&!!modo&&<ParticleField/>}
   <div className="copiloto-hist-row"><button ref={histButton} type="button" className="copiloto-hist-btn" aria-label="Historial de chats" aria-expanded={hist&&!leaving} aria-controls={histId} onClick={hist&&!leaving?closeHist:openHist}><Icon name="history" size={14}/>Historial{count>0&&<span className="copiloto-hist-count">{count>=50?'50+':count}</span>}</button></div>
   <div className="agente" data-has={has} data-negocio={modo?true:undefined}>
    {modo&&modo.portada(ask,has)}
@@ -96,7 +96,8 @@ export function Chat({data,modo}:{data:AgentState;modo?:ModoChat}){
 
    {modo?.pie}
    {!modo&&!has&&<>
-    {s.sugerencias.length>0&&<div className="agente-chips agente-chips-center" role="group" aria-label="Preguntas sugeridas según lo que tienes cargado">{s.sugerencias.slice(0,5).map(q=><button type="button" key={q} className="agente-chip" onClick={()=>ask(q)}>{q}</button>)}</div>}
+    {s.categorias.length>0?<div className="agente-temas" role="group" aria-label="Preguntas por tema" style={{['--n' as string]:Math.min(4,s.categorias.length)}}>{s.categorias.slice(0,4).map((c,i)=><section key={c.titulo} className="agente-tema" style={{['--cat' as string]:`var(--chart-${i+1})`,animationDelay:i*70+'ms'}} aria-label={c.titulo}><header><i aria-hidden="true"/><h2>{c.titulo}</h2></header><ul>{c.preguntas.slice(0,3).map(q=><li key={q}><button type="button" className="agente-tema-q" onClick={()=>ask(q)}>{q}</button></li>)}</ul></section>)}</div>
+    :s.sugerencias.length>0&&<div className="agente-chips agente-chips-center" role="group" aria-label="Preguntas sugeridas según lo que tienes cargado">{s.sugerencias.slice(0,5).map(q=><button type="button" key={q} className="agente-chip" onClick={()=>ask(q)}>{q}</button>)}</div>}
     <p className="agente-foot">Cargado: {pct} % de las fuentes esperadas. {data.note}</p>
    </>}
    {!modo&&chips}

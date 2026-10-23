@@ -22,8 +22,7 @@ import {filasDesdeCatalogo,filasDesdeItems,numerarGrupos,agruparCategorias,resum
 import {DEFINICION,etiquetaMotivo,desgloseCriticos} from '../../../../../packages/workspace-service/critico.mjs';
 import {nf} from '../ui/format';
 import {EmptyState} from '../ui/empty-state';
-import {FilterBar,FilterSpacer} from '../ui/filter-bar';
-import {Chip,ChipList} from '../ui/chip';
+import {Chip} from '../ui/chip';
 import {Notice} from '../ui/notice';
 import {guardarVista,leerVista} from '../../lib/workspace/cache.mjs';
 import s from './problems-view.module.css';
@@ -46,9 +45,6 @@ const motivoDe=(f:FilaProblema)=>etiquetaMotivo(f.motivoCritico)??undefined;
 const Citas=({f}:{f:FilaProblema})=>f.citas===null?NA:<span title="Citas registradas; se verifican al abrir el problema">{nf.format(f.citas)}</span>;
 const Recomendacion=({f}:{f:FilaProblema})=>f.recomendaciones===null?NA:f.recomendaciones>0?<span>Sí ({f.recomendaciones})</span>:<span>No</span>;
 const hrefDe=(f:FilaProblema,query:string)=>'/problems/'+f.id+'?'+query;
-const ORDENES:{v:string;label:string}[]=[
- {v:'conversaciones:desc',label:'Conversaciones: de más a menos'},{v:'conversaciones:asc',label:'Conversaciones: de menos a más'},{v:'categoria:asc',label:'Categoría: A–Z'},
- {v:'severidad:desc',label:'Severidad: alta primero'},{v:'critico:desc',label:'Revisión crítica primero'},{v:'citas:desc',label:'Citas: de más a menos'},{v:'recomendaciones:desc',label:'Con recomendación primero'}];
 const COLUMNA_DIR:Record<ColumnaOrden,'asc'|'desc'>={categoria:'asc',conversaciones:'desc',severidad:'desc',critico:'desc',citas:'desc',recomendaciones:'desc',importe:'desc'};
 
 function QuickView({fila,query,onClose}:{fila:FilaProblema|null;query:string;onClose:()=>void}){
@@ -149,7 +145,7 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
  const by=(st:string)=>items.filter(i=>i.status===st).length;
  // Cifras de las tarjetas (solo lo observado: un desconocido no suma cero).
  const convTotal=useMemo(()=>visibles.reduce((a,f)=>a+(f.conversaciones??0),0),[visibles]);
- const convDesconocidas=visibles.some(f=>f.conversaciones===null);
+ const convDesconocidas=visibles.some(f=>f.conversaciones===null),hayConv=visibles.some(f=>f.conversaciones!==null);
  const top4=cats.slice(0,4).reduce((a,c)=>a+(c.conversaciones??0),0);
  const nCrit=catalogo?.critical?catalogo.critical.groups:resumen.criticos;
  const maxConv=Math.max(1,...pagina.map(f=>f.conversaciones??0));
@@ -158,10 +154,10 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
  return <div className="stack">
   {!conImporte&&<Notice tone="info" title="Importe por problema: aún no disponible">Se ordena por conversaciones hasta que se conecten los pedidos con los clientes (desconocido no es cero).{bundle.meta.can_manage?<> <Link href="/economics" className="row-link-inline">Revisar fuentes y vínculos</Link></>:null}</Notice>}
   <div className="ui-kpis" role="group" aria-label="Resumen de problemas">
-   <Kpi label="Conversaciones en grupos" value={nf.format(convTotal)+(convDesconocidas?'+':'')} note={cats.length?`Las 4 mayores categorías: ${Math.round(top4*100/Math.max(1,convTotal))} %`:undefined}><Prop parte={top4} total={convTotal} label="Peso de las 4 categorías mayores"/></Kpi>
-   <Kpi label="Grupos de problemas" value={nf.format(resumen.grupos)} note="Conversaciones parecidas agrupadas por la IA"><Prop parte={nCrit??0} total={resumen.grupos} alerta label="Grupos con revisión crítica sobre el total"/></Kpi>
-   <Kpi label="Categorías" value={nf.format(resumen.categorias)} note={ocultosTxt?`Notificaciones automáticas: ${ocultosTxt}`:'Sin notificaciones automáticas ocultas'}><Columnas valores={cats.slice(0,12).map(c=>c.conversaciones??0)} label="Conversaciones de las 12 categorías mayores"/></Kpi>
-   <Kpi label="Revisión crítica" value={nCrit===null||!critDisponible?<span className={s.kpiNA}>No disponible</span>:nf.format(nCrit)} note={catalogo?.critical&&critDisponible?`${nf.format(catalogo.critical.signals)} señales críticas`:'Se calcula al abrir'}><Columnas valores={cats.slice(0,12).map(c=>c.criticos??0)} label="Grupos críticos por categoría"/></Kpi>
+   <Kpi label="Conversaciones en grupos" value={hayConv?nf.format(convTotal)+(convDesconocidas?'+':''):'—'} note={hayConv?(cats.length?`Las 4 mayores categorías: ${Math.round(top4*100/Math.max(1,convTotal))} %`:undefined):'Sin conteo de conversaciones en este corte'}>{hayConv&&<Prop parte={top4} total={convTotal} label="Peso de las 4 categorías mayores"/>}</Kpi>
+   <Kpi label="Grupos de problemas" value={nf.format(resumen.grupos)} note="Conversaciones parecidas agrupadas por la IA">{nCrit!==null&&critDisponible&&<Prop parte={nCrit} total={resumen.grupos} alerta label="Grupos con revisión crítica sobre el total"/>}</Kpi>
+   <Kpi label="Categorías" value={nf.format(resumen.categorias)} note={ocultosTxt?`Notificaciones automáticas: ${ocultosTxt}`:'Sin notificaciones automáticas ocultas'}><Columnas valores={cats.slice(0,12).map(c=>c.grupos)} label="Grupos de las 12 categorías mayores"/></Kpi>
+   <Kpi label="Revisión crítica" value={nCrit===null||!critDisponible?<span className={s.kpiNA}>No disponible</span>:nf.format(nCrit)} note={catalogo?.critical&&critDisponible?`${nf.format(catalogo.critical.signals)} señales críticas`:'Se calcula al abrir'}>{critDisponible&&<Columnas valores={cats.slice(0,12).map(c=>c.criticos??0)} label="Grupos críticos por categoría"/>}</Kpi>
   </div>
   {conImporte&&<div className={s.row84}>
    <section className="ui-card" aria-label="Comparación de exposición por problema"><header className="ui-card-head"><div className="ui-card-copy"><h2 className="ui-card-title">Ingresos expuestos por problema</h2><p className="ui-card-desc">{bundle.meta.scope?.currency??''} · no se suma entre problemas</p></div></header><BarList items={bars}/></section>

@@ -57,7 +57,7 @@ function Tarjeta({id,titulo,desc,kind='observed',children,clase}:{id:string;titu
 }
 
 /** Pantalla «Carga y SLA» (/workload): lo que SÍ es medible con HubSpot; cada bloque con su cobertura y su «No disponible ahora». Mediana y p90, nunca promedio. */
-export function CargaPantalla({organization:_organization}:{organization?:string}){
+export function CargaPantalla({organization}:{organization?:string}){ void organization;
  const f=useVista<CargaVista>('/api/workload',forma);
  const v=f.data,reintentar=()=>f.reload();
  const c=v?.carga,s=v?.sla,ci=v?.cierre;

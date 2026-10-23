@@ -63,9 +63,6 @@ function useEvidencia(id:string,shared:string,captured:ConversationRef[]|null){
  return {citas:usable,cobertura,esperando:!sinAlcance&&citas===null&&!fallo,fallo:fallo&&usable===null,sinAlcance,reintentar:()=>setReload(n=>n+1)};
 }
 
-function Kpi({label,kind,children,foot}:{label:string;kind?:Parameters<typeof KindBadge>[0]['kind'];children:ReactNode;foot?:ReactNode}){
- return <div className={s.kpi}><span>{label}{kind&&<KindBadge kind={kind}/>}</span>{children}{foot&&<small>{foot}</small>}</div>;
-}
 const NA=<strong className={s.na}>No disponible ahora</strong>;
 
 export function ProblemSheet({id,shared,captured,dinero,facts,onTitle,causa=null}:{causa?:ReactNode;id:string;shared:string;captured:ConversationRef[]|null;dinero:ReactNode|null;facts:ReturnType<typeof useJson<ProblemFacts>>;onTitle?:(t:string|null)=>void}){

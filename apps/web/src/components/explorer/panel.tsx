@@ -77,7 +77,6 @@ export function ExplorerPanel({initialQuery}:{initialQuery:string}){
   catch(e){if(!abort.signal.aborted&&epoch===generation.current){const m=e instanceof Error?e.message:errorMessage(503);if(kind==='evidence')setEvErr(m);else setError(m);}}
   finally{if(!abort.signal.aborted&&epoch===generation.current){pending.current=false;setOpening(null);setBusy(false);}}
  };
- const restart=()=>{const q=clean(current.current);q.delete('cursor');scrollAfter.current=true;navigate(q,true);};
  const qs=clean(query),status=qs.get('status')??'all',order=qs.get('order')??'title_asc',limit=qs.get('limit')??'25',text=needle??qs.get('q')??'';
  const go=(patch:Record<string,string>)=>{const q=scopeOnly(current.current);for(const key of ['q','status','order','limit']){const value=key in patch?patch[key]:clean(current.current).get(key)??'';if(value&&!(key==='status'&&value==='all'))q.set(key,value);}scrollAfter.current=true;navigate(q,true);setNeedle(null);};
  const STATUS:Record<string,{label:string;tone:'ok'|'warn'|'info'}>={ready:{label:'Cobertura completa',tone:'ok'},partial:{label:'Cobertura parcial',tone:'warn'},stale:{label:'Corte anterior',tone:'warn'}};

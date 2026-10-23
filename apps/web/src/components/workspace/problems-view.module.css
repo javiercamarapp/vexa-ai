@@ -7,7 +7,7 @@
 .propFill{display:block;height:100%;border-radius:999px;background:var(--chart-7);animation:pvgrow .5s ease-out both;transform-origin:left}
 .propFill[data-alerta]{background:var(--chart-6)}
 .cols{display:flex;align-items:flex-end;gap:3px;height:22px;width:100%}
-.cols span{flex:1 1 0;min-width:2px;border-radius:2px 2px 0 0;background:var(--chart-7);opacity:.85;animation:pvrise .5s ease-out both;transform-origin:bottom}
+.cols span{flex:1 1 0;min-width:2px;max-width:18px;border-radius:8px 8px 0 0;background:var(--chart-7);opacity:.85;animation:pvrise .5s ease-out both;transform-origin:bottom}
 @keyframes pvgrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 @keyframes pvrise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @media(prefers-reduced-motion:reduce){.propFill,.cols span{animation:none}}
@@ -50,7 +50,7 @@
 .table th[scope=row]{font-weight:400;color:inherit;text-transform:none;font-size:13px;letter-spacing:0;white-space:normal;min-width:260px;padding-block:6px;overflow-wrap:anywhere}
 .table td{white-space:nowrap}
 .table tbody tr:hover{background:var(--ui-soft)}
-.table thead th button.sortBtn{all:unset;background:none!important;color:inherit!important;box-shadow:none!important;padding:0!important;min-height:0!important;border-radius:4px;font:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.table thead th button.sortBtn{all:unset;background:none!important;color:inherit!important;box-shadow:none!important;padding:0!important;min-height:0!important;border-radius:8px;font:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
 .table thead th button.sortBtn:focus-visible{outline:3px solid var(--ui-focus);outline-offset:2px}
 .act{text-align:right}
 .convCell{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end;min-width:120px}

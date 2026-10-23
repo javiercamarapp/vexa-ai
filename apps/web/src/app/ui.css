@@ -592,6 +592,7 @@ a.card-link:hover{text-decoration:underline;text-underline-offset:.2em}
 .wait-status{display:grid;grid-template-columns:1fr auto;gap:var(--sp-2) var(--sp-4);align-items:center;padding:var(--sp-4);border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm);background:var(--ui-soft);color:var(--ink)}
 .wait-bar{grid-column:1/-1;display:block;height:4px;border-radius:999px;background:var(--ui-border);overflow:hidden}
 .wait-bar>span{display:block;height:100%;width:35%;border-radius:999px;background:var(--ui-action)}
+.wait-text .wait-retry{font-weight:600;color:var(--ink-info,var(--ui-secondary))}
 .wait-text{min-width:0}.wait-text strong{display:block;font-size:14px}.wait-text p{margin:2px 0 0;font-size:13px;color:var(--ui-secondary)}
 .wait-elapsed{font-size:13px;color:var(--ui-secondary);font-variant-numeric:tabular-nums;white-space:nowrap}
 @media(max-width:520px){.wait-status{grid-template-columns:1fr}.wait-elapsed{white-space:normal}}

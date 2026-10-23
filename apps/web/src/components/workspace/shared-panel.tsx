@@ -19,6 +19,7 @@ import {Icon} from '../ui/icons';
 import {SkeletonStats,SkeletonChart,SkeletonCards} from '../ui/skeletons';
 import {WaitStatus} from '../ui/wait-status';
 import {ESPERA} from '../../lib/legibilidad/espera.mjs';
+import {pedirConReintento} from '../../lib/workspace/reintento.mjs';
 type ViewScope=Scope & {basis:string;exponent?:number};
 type ViewBundle=Omit<Bundle,'meta'> & {meta:Omit<Bundle['meta'],'scope_hash'> & {scope_hash:string|null;base_snapshot_id:string|null;base_scope_hash:string|null;cursor_auth_hash:string;scope:ViewScope;mapping_manifest_id:string|null;can_manage:boolean}};
 function initialScope(query:string):ViewScope{
@@ -27,7 +28,7 @@ function initialScope(query:string):ViewScope{
 }
 class Missing extends Error{}
 export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'|'problems';initialQuery:string}){
- const [query,setQuery]=useState(initialQuery),[reload,setReload]=useState(0),[bundle,setBundle]=useState<ViewBundle|null>(null),[busy,setBusy]=useState(true),[error,setError]=useState(''),[missing,setMissing]=useState(false);
+ const [query,setQuery]=useState(initialQuery),[reload,setReload]=useState(0),[bundle,setBundle]=useState<ViewBundle|null>(null),[busy,setBusy]=useState(true),[error,setError]=useState(''),[missing,setMissing]=useState(false),[retrying,setRetrying]=useState(false);
  const generation=useRef(0),abort=useRef<AbortController|null>(null),resolved=useRef(initialQuery);
  const invalidate=useCallback(()=>{abort.current?.abort();generation.current++;},[]);
  useWorkspaceNavigation(invalidate);
@@ -37,20 +38,24 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   window.addEventListener('popstate',back);return()=>window.removeEventListener('popstate',back);
  },[]);
  useEffect(()=>{
-  const epoch=++generation.current,controller=new AbortController();abort.current=controller;let timedOut=false;const timer=setTimeout(()=>{timedOut=true;controller.abort();},25000);
-  const load=async()=>{const sourceLocation=workspaceLocation();if(controller.signal.aborted||epoch!==generation.current)return;setBusy(true);setBundle(null);setError('');setMissing(false);const search=new URLSearchParams(query);search.set('resource',resource);
-   try{const response=await fetch('/api/workspace?'+search.toString(),{cache:'no-store',signal:controller.signal});if(controller.signal.aborted||epoch!==generation.current)return;
+  const epoch=++generation.current,controller=new AbortController();abort.current=controller;
+  const load=async()=>{const sourceLocation=workspaceLocation();if(controller.signal.aborted||epoch!==generation.current)return;setBusy(true);setBundle(null);setError('');setMissing(false);setRetrying(false);const search=new URLSearchParams(query);search.set('resource',resource);
+   try{
+    // La primera carga en frío puede pasar de 25 s: plazos más largos y UN reintento automático («Reintentando…») antes de mostrar el error.
+    const result=await pedirConReintento(async signal=>{const r=await fetch('/api/workspace?'+search.toString(),{cache:'no-store',signal});return {status:r.status,json:r.status===404?null:await r.json().catch(()=>null)};},{signal:controller.signal,onReintentando:()=>{if(epoch===generation.current)setRetrying(true);}});
+    if(controller.signal.aborted||epoch!==generation.current)return;
+    if(result.timedOut){setBundle(null);setError('Las cifras del corte tardaron demasiado en responder, incluso después de reintentar (la publicación financiera es grande). La cobertura y la tendencia mensual de abajo sí se calcularon; reintenta con «Actualizar» en unos segundos.');return;}
     // Absence of a publication is a normal state (404), not a failure.
-    if(response.status===404){setMissing(true);return;}
-    const json=await response.json();if(controller.signal.aborted||epoch!==generation.current)return;
-    if(!response.ok)throw Error(response.status===401||response.status===403?'Tu acceso cambió. Vuelve a iniciar sesión o selecciona una organización autorizada.':response.status===400?'El alcance no es válido. Revisa fechas, moneda, base y publicación.':'No se pudo consultar la vista. Reintenta cuando el servicio esté disponible.');
-    const next=json.data as ViewBundle;if(!next||!Array.isArray(next.items)||!next.meta||!next.meta.scope)throw Error('La respuesta no se pudo verificar.');
+    if(result.status===404){setMissing(true);return;}
+    const json=result.json as {data?:unknown}|null;
+    if(result.status<200||result.status>=300)throw Error(result.status===401||result.status===403?'Tu acceso cambió. Vuelve a iniciar sesión o selecciona una organización autorizada.':result.status===400?'El alcance no es válido. Revisa fechas, moneda, base y publicación.':'No se pudo consultar la vista. Reintenta cuando el servicio esté disponible.');
+    const next=json?.data as ViewBundle;if(!next||!Array.isArray(next.items)||!next.meta||!next.meta.scope)throw Error('La respuesta no se pudo verificar.');
     const pinned=pinWorkspaceQuery(query,next.meta);
     if(workspaceLocation()!==sourceLocation)return;resolved.current=pinned.toString();window.history.replaceState(null,'',window.location.pathname+(pinned.size?'?'+pinned.toString():'')+window.location.hash);setBundle(next);
-   }catch(e){if(timedOut&&epoch===generation.current){setBundle(null);setError('Las cifras del corte tardaron demasiado en responder (la publicación financiera es grande). La cobertura y la tendencia mensual de abajo sí se calcularon; reintenta con «Actualizar» en unos segundos.');}else if(!controller.signal.aborted&&epoch===generation.current){setBundle(null);setError(e instanceof Error&&!(e instanceof Missing)?e.message:'No se pudo consultar la vista.');}}
-   finally{clearTimeout(timer);if((timedOut||!controller.signal.aborted)&&epoch===generation.current)setBusy(false);}
+   }catch(e){if(!controller.signal.aborted&&epoch===generation.current){setBundle(null);setError(e instanceof Error&&!(e instanceof Missing)?e.message:'No se pudo consultar la vista.');}}
+   finally{if(!controller.signal.aborted&&epoch===generation.current){setBusy(false);setRetrying(false);}}
   };
-  void Promise.resolve().then(load);return()=>{clearTimeout(timer);controller.abort();invalidate();};
+  void Promise.resolve().then(load);return()=>{controller.abort();invalidate();};
  },[query,reload,resource,invalidate]);
  const scope=bundle?.meta.scope??initialScope(query),pinned=bundle?pinWorkspaceQuery(query,bundle.meta):new URLSearchParams(query);pinned.delete('cursor');
  const apply=(next:URLSearchParams)=>{
@@ -76,7 +81,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
  return <section className="stack" aria-label={isOverview?'Resumen con alcance compartido':'Problemas con alcance compartido'}>
   <PageHeader title={isOverview?'Resumen ejecutivo':'Problemas de negocio'} guide={isOverview?'resumen':'problemas'} actions={actions}/>
   {bar}
-  {busy&&(isOverview?<div className="stack"><WaitStatus {...ESPERA.resumen}/><div aria-hidden="true"><SkeletonStats/><SkeletonChart height={220}/></div></div>:<div className="stack"><WaitStatus {...ESPERA.problemas}/><div aria-hidden="true"><SkeletonCards count={3}/></div></div>)}
+  {busy&&(isOverview?<div className="stack"><WaitStatus {...ESPERA.resumen}>{retrying&&<p className="wait-retry">Reintentando…</p>}</WaitStatus><div aria-hidden="true"><SkeletonStats/><SkeletonChart height={220}/></div></div>:<div className="stack"><WaitStatus {...ESPERA.problemas}>{retrying&&<p className="wait-retry">Reintentando…</p>}</WaitStatus><div aria-hidden="true"><SkeletonCards count={3}/></div></div>)}
   {error&&<DataState state={{kind:'error',code:'workspace_request_failed',message:error}}/>}
   {isOverview&&!bundle&&!missing&&<div className="stack"><CoverageBand/><TrendCharts/></div>}
   {missing&&!busy&&<EmptyState art="chart" title="Aún no hay un corte publicado para este alcance" body="Cuando se publique un corte con este periodo y estos filtros, sus cifras aparecerán aquí. Mientras tanto puedes probar con la última publicación disponible." action={<Button variant="primary" size="sm" onClick={latest}>Ver la última publicación</Button>} secondary={<LinkButton href="/imports" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>}/>}

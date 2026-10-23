@@ -20,6 +20,9 @@ import {SkeletonRows} from '../ui/skeletons';
 import {LinkButton,Arrow} from '../ui/button';
 import {useJson} from '../ui/use-json';
 import {nf} from '../ui/format';
+import {Icon} from '../ui/icons';
+import {WaitStatus} from '../ui/wait-status';
+import {ESPERA} from '../../lib/legibilidad/espera.mjs';
 import {InsightList} from '../ui/insight-list';
 import {ChartState} from '../ui/chart-state';
 import {NoiseToggle} from '../ui/noise-toggle';
@@ -67,9 +70,13 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
  const barItems:BarListItem[]=picks.slice(0,5).map(p=>({key:p.id,label:p.title,value:maxExp>0n?(ratioBps(p.exposure<0n?-p.exposure:p.exposure,maxExp)??0)/100:0,display:p.display,kind:'inferred',href:'/problems/'+p.id+'?'+query}));
  const exposureRow=model.rows.find(r=>r.metric.kind==='exposure');
  const share=top&&exposureRow&&exposureRow.state==='known'&&exposureRow.amount&&BigInt(exposureRow.amount)>0n&&top.exposure<=BigInt(exposureRow.amount)?Number(top.exposure*1000n/BigInt(exposureRow.amount))/10:null;
+ // Cifras sin registros elegibles: una sola franja que dice qué falta (no cero, no «desconocido» suelto); las cifras con datos (incluidos subtotales parciales rotulados) siguen como tarjetas.
+ const sinCob=(row:typeof model.rows[number])=>{const m=/^allorders$/i.test(row.metric.kind)?'orders':row.metric.kind==='refunds'?'refunds':null,cmp=m?cmpOf(m,row.metric.currency):null;return row.coverage.eligible===0||(!!cmp?.sinCobertura&&row.state!=='known');};
+ const faltantes=model.rows.filter(sinCob),QUE_FALTA:Record<string,string>={exposure:'faltan los vínculos entre problemas y pedidos',refunds:'no hay reembolsos liquidados elegibles en este corte',allOrders:'no hay pedidos elegibles en este corte'};
  return <div className="stack overview">
   <p className="headline">{headline}</p>
-  <div className="stat-grid">{model.rows.map(row=>{const h=kpiHeadline(row),m=/^allorders$/i.test(row.metric.kind)?'orders':row.metric.kind==='refunds'?'refunds':null;
+  {faltantes.length>0&&<aside className="notice-bar" data-tone="info" role="note"><Icon name="info" size={14}/><div><strong>{faltantes.length===1?'Una cifra sin cobertura todavía':faltantes.length+' cifras sin cobertura todavía'}</strong><ul>{faltantes.map(f=><li key={f.key}><strong>{f.metric.label}</strong>: {QUE_FALTA[f.metric.kind]??f.coverage.label}. No es cero.</li>)}</ul><p><LinkButton href="/imports" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>{bundle.meta.can_manage&&<> <LinkButton href="/economics" size="sm" variant="ghost" icon={<Arrow/>}>Revisar fuentes y vínculos</LinkButton></>}</p></div></aside>}
+  <div className="stat-grid">{model.rows.filter(row=>!sinCob(row)).map(row=>{const h=kpiHeadline(row),m=/^allorders$/i.test(row.metric.kind)?'orders':row.metric.kind==='refunds'?'refunds':null;
    const cmp=m?cmpOf(m,row.metric.currency):null,sinCobertura=row.coverage.eligible===0||!!cmp?.sinCobertura;
    const muestraSinCobertura=row.coverage.eligible===0||(sinCobertura&&row.state!=='known'),kind=epistemicKindConCobertura(row.metric,muestraSinCobertura);
    const delta:Delta|null=!sinCobertura&&cmp?.delta?{...cmp.delta,good:m==='refunds'?'down':'up'}:null,spark=!sinCobertura&&cmp&&m?cmp.meses.map(s=>num(s[m].amountMinor,led!.exponent!)):undefined;
@@ -91,20 +98,20 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
      sentence={<>Concentra <strong>{top.display}</strong> de ingresos expuestos{share!==null?<>, el <strong>{share.toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %</strong> de la exposición global del corte</>:null}. Es una cifra inferida por vínculo de evidencia: no es pérdida.</>}
      signals={[{icon:'message',text:<>{top.evidence} {top.evidence===1?'cita verificable':'citas verificables'}</>},...(top.refunds?[{icon:'refresh',text:<>{top.refunds} en reembolsos liquidados vinculados</>}]:[]),...(top.coverage?[{icon:'database',text:top.coverage}]:[])]}
      footer={<KindBadge kind="inferred"/>} action={<LinkButton href={'/problems/'+top.id+'?'+query} variant="primary" size="sm" icon={<Arrow/>}>Ver evidencia</LinkButton>}/>
-    :<section className="card"><div className="card-title"><div><h2>Prioridad con evidencia</h2></div></div>{probs.busy?<SkeletonRows rows={3}/>:<EmptyState compact art="search" title="Sin problemas con importe conocido" body="Cuando un problema tenga exposición publicada, aparecerá aquí con su evidencia."/>}</section>}
+    :<section className="card"><div className="card-title"><div><h2>Prioridad con evidencia</h2></div></div>{probs.busy?<WaitStatus {...ESPERA.problemas}/>:<EmptyState compact art="search" title="Sin problemas con importe conocido" body="Cuando un problema tenga exposición publicada, aparecerá aquí con su evidencia. Mientras tanto, los problemas se ordenan por conversaciones." action={<LinkButton href={'/problems?'+query} size="sm" icon={<Arrow/>}>Ver problemas por conversaciones</LinkButton>}/>}</section>}
   </div>
   <div className="split" data-even>
    <section className="card" aria-label="Conversaciones por mes">
     <div className="card-title"><div><h2>Conversaciones por mes</h2><p>Últimos 12 meses · conteo de registros cargados</p></div>{conv&&<KindBadge kind={convData.length?conv.class:'nodata'}/>}</div>
     <ChartState busy={trends.busy} hasData={!!trends.data} error={trends.error} status={trends.status} que="las conversaciones" retryLabel="Reintentar conversaciones" onRetry={trends.reload} height={180}>{trends.data&&(convData.length?<><ColumnChart title="Conversaciones por mes" unit="conversaciones" kind={conv!.class} data={convData}/><p className="card-lead">{[conv!.sampled?`Estimado con una muestra del ${conv!.samplePercent??''} %.`:null,'Fecha: inicio o primer mensaje.',conv!.outsideWindow?`${nf.format(conv!.outsideWindow)} fuera de la ventana${conv!.undated?` (${nf.format(conv!.undated)} sin fecha)`:''}.`:null,conv!.summary?.source==='summary'?conv!.summary.label:null,parcialConv.length?`* Mes parcial (${parcialConv.map(monthLong).join(', ')})${conv!.completeness?.dataThrough?`: datos hasta el ${dayShort(conv!.completeness.dataThrough)}`:''}; no se compara.`:null].filter(Boolean).join(' ')}</p></>:<EmptyState compact art="inbox" title={conv?.status==='timeout'?'No disponible ahora':'Sin cargar'} body={conv?.status==='timeout'?'Reintenta en unos segundos.':'No hay conversaciones con fecha en los últimos 12 meses.'}/>)}</ChartState>
    </section>
-   <section className="card" aria-label="Problemas con más exposición">
+   {(probs.busy||!!probs.error||picks.length>0)&&<section className="card" aria-label="Problemas con más exposición">
     <div className="card-title"><div><h2>Problemas agrupados con más exposición</h2><p>Ingresos expuestos · no se suman entre problemas</p></div><LinkButton href={'/problems?'+query} variant="ghost" size="sm" icon={<Arrow/>}>Ver todos</LinkButton></div>
     <ChartState busy={probs.busy} hasData={!!probs.data} error={probs.error} status={probs.status} que="los problemas" onRetry={probs.reload} height={160}>
      {sepRuido&&(sepRuido.ocultosN>0||incluirRuido)&&<NoiseToggle incluir={incluirRuido} onChange={setIncluirRuido} ocultos={sepRuido.ocultosN} unidad="problemas agrupados"/>}
      {probs.data&&<BarList items={barItems} empty="Aún no hay problemas con importe conocido en este corte."/>}
     </ChartState>
-   </section>
+   </section>}
   </div>
   <CategoryVolume title="Top categorías" kind="inferred" rows={cats.data?.status==='ok'?cats.data.rows.map(r=>({category:r.category,count:r.count})):null} totalIncidencias={cats.data?.totals?.incidences}
    unavailable={cats.data?.status==='timeout'} reason={cats.data?.status==='timeout'?'La consulta superó el tiempo permitido. Reintenta en unos segundos.':'Aún no hay incidencias clasificadas en este alcance.'}

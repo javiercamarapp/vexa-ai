@@ -12,13 +12,13 @@ export const etiquetaSeveridad=v=>v===null||v===undefined||v===''?null:(SEV_ES[v
 const base=(id,titulo)=>({id,titulo,categoria:etiquetaCategoria(titulo),clave:clave(titulo)});
 /** Filas desde meta.catalog.rows (todos los problemas vigentes). */
 export function filasDesdeCatalogo(catalogo){
- return (catalogo?.rows??[]).map(r=>({...base(r.id,r.label),conversaciones:Number.isFinite(r.conversations)?r.conversations:null,severidad:r.severity??null,critico:typeof r.critical==='boolean'?r.critical:null,citas:Number.isFinite(r.citations)?r.citations:null,recomendaciones:Number.isFinite(r.recommendations)?r.recommendations:null,ejemplo:r.quote||null,importe:null}));
+ return (catalogo?.rows??[]).map(r=>({...base(r.id,r.label),conversaciones:Number.isFinite(r.conversations)?r.conversations:null,severidad:r.severity??null,critico:typeof r.critical==='boolean'?r.critical:null,senalesCriticas:Number.isFinite(r.critical_signals)?r.critical_signals:null,motivoCritico:r.critical_reason??null,citas:Number.isFinite(r.citations)?r.citations:null,recomendaciones:Number.isFinite(r.recommendations)?r.recommendations:null,ejemplo:r.quote||null,importe:null}));
 }
 /** Filas desde los registros de la página (con importe cuando el corte trae vínculos). Lo que el registro no trae queda null. */
 export function filasDesdeItems(items){
  return (items??[]).map(i=>{
   const inc=i.details?.find(d=>/^Incidencias/.test(d.label))?.value,n=inc!==undefined&&/^\d+$/.test(String(inc))?Number(inc):null,m=primaria(i);
-  return {...base(i.id,i.title),conversaciones:n,severidad:null,critico:null,citas:Array.isArray(i.evidence)?i.evidence.length:null,recomendaciones:null,ejemplo:null,importe:exacto(m)?m:null,metrica:m??null,registro:i};
+  return {...base(i.id,i.title),conversaciones:n,severidad:null,critico:null,senalesCriticas:null,motivoCritico:null,citas:Array.isArray(i.evidence)?i.evidence.length:null,recomendaciones:null,ejemplo:null,importe:exacto(m)?m:null,metrica:m??null,registro:i};
  });
 }
 export const hayImporte=filas=>filas.some(f=>f.importe!==null&&f.importe!==undefined);
@@ -38,7 +38,8 @@ export function agruparCategorias(filas){
   .sort((a,b)=>(b.conversaciones??-1)-(a.conversaciones??-1)||a.nombre.localeCompare(b.nombre,'es'));
 }
 export function resumenFilas(filas){
- return {grupos:filas.length,categorias:new Set(filas.map(f=>f.clave)).size,criticos:filas.some(f=>f.critico!==null)?filas.filter(f=>f.critico===true).length:null};
+ const conocido=filas.some(f=>f.critico!==null);
+ return {grupos:filas.length,categorias:new Set(filas.map(f=>f.clave)).size,criticos:conocido?filas.filter(f=>f.critico===true).length:null,senalesCriticas:conocido&&filas.some(f=>f.senalesCriticas!==null)?filas.reduce((n,f)=>n+(f.critico===true?(f.senalesCriticas??0):0),0):null};
 }
 const VALOR={
  conversaciones:f=>f.conversaciones,citas:f=>f.citas,recomendaciones:f=>f.recomendaciones,

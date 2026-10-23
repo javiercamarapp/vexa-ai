@@ -89,3 +89,4 @@
 .blockquote{margin:0;padding:var(--sp-3) var(--sp-4);border-left:3px solid var(--ui-border);background:var(--ui-soft);border-radius:0 10px 10px 0}
 .blockquote p{margin:0 0 4px}
 .blockquote small{color:var(--muted)}
+.critWhy{display:block;margin-top:2px;font-size:var(--t-small,12px);color:var(--muted);font-weight:400}

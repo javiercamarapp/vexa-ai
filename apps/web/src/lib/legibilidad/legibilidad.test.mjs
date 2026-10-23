@@ -216,7 +216,7 @@ test('las vistas con espera larga usan WaitStatus y el aviso de señales crític
  const wait=leer('ui/wait-status.tsx');assert.match(wait,/role="status"/);assert.match(wait,/aria-live="polite"/);
  const brief=leer('briefs/panel.tsx');assert.match(brief,/Puede tardar 2–3 minutos; no cierres esta pestaña/);assert.match(brief,/disabled=\{busy\|\|locked\}/);
  const sp=leer('workspace/shared-panel.tsx');
- assert.match(sp,/Aún no se calculan las señales críticas en esta carga; no significa que no existan\. Consúltalas en Problemas\./);
+ assert.match(sp,/Aún no se calcularon las señales críticas en esta carga; no significa que no existan\./);assert.match(sp,/Volver a calcular/,'el aviso trae su botón de reintento');assert.match(sp,/DEFINICION\.grupo/);
  assert.doesNotMatch(sp,/No alcanzaron a calcularse/);assert.match(sp,/critical_notice_state==='unavailable'/);
 });
 test('contraste no textual (WCAG 1.4.11): las barras inactivas de las gráficas de columnas quedan a >= 3:1 del fondo en claro y oscuro',()=>{

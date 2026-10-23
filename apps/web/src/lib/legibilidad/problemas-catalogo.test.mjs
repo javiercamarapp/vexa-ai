@@ -77,3 +77,11 @@ test('etiquetas de severidad: valores conocidos en español, desconocido tal cua
  assert.equal(etiquetaSeveridad('high'),'Alta');assert.equal(etiquetaSeveridad('medium'),'Media');assert.equal(etiquetaSeveridad('low'),'Baja');assert.equal(etiquetaSeveridad('critical'),'Crítica');
  assert.equal(etiquetaSeveridad(null),null);assert.equal(etiquetaSeveridad('rara'),'rara');
 });
+
+test('la fila trae cuántas señales críticas (evidencias) y el motivo; el resumen suma señales solo de los grupos críticos y lo desconocido sigue null (QA1-009)',()=>{
+ const f=filasDesdeCatalogo({rows:[R('a','Order: Spare Parts',2338,{severity:'low',critical:true,critical_signals:1,critical_reason:'severity'}),R('b','Order: Spare Parts',10,{critical:false,critical_signals:0,critical_reason:null}),R('c','Shipping: Questions',5,{critical:true,critical_signals:4,critical_reason:'both'})],parts:{}});
+ assert.equal(f[0].severidad,'low');assert.equal(f[0].critico,true);assert.equal(f[0].senalesCriticas,1);assert.equal(f[0].motivoCritico,'severity');
+ assert.deepEqual(resumenFilas(f),{grupos:3,categorias:2,criticos:2,senalesCriticas:5});
+ const sin=filasDesdeCatalogo({rows:[R('a','Order: Spare Parts',3,{critical:null,citations:null})],parts:{}});
+ assert.equal(sin[0].senalesCriticas,null);assert.deepEqual(resumenFilas(sin),{grupos:1,categorias:1,criticos:null,senalesCriticas:null});
+});

@@ -21,6 +21,7 @@ import {NoiseToggle} from '../ui/noise-toggle';
 import {insightsProblemas} from '../../lib/legibilidad/insights.mjs';
 import {separarRuido} from '../../lib/legibilidad/ruido.mjs';
 import {filasDesdeCatalogo,filasDesdeItems,numerarGrupos,agruparCategorias,resumenFilas,ordenarFilas,filtrarFilas,hayImporte,fraseGrupo,etiquetaSeveridad,type FilaProblema,type ColumnaOrden} from '../../lib/legibilidad/problemas-catalogo.mjs';
+import {DEFINICION,etiquetaMotivo} from '../../../../../packages/workspace-service/critico.mjs';
 import {nf} from '../ui/format';
 import {EmptyState} from '../ui/empty-state';
 import s from './problems-view.module.css';
@@ -39,7 +40,9 @@ function Figure({m,big=false}:{m:M;big?:boolean}){
 const NA=<span className={s.na}>No disponible</span>;
 const sevTone=(v:string|null)=>v==='high'||v==='critical'?'bad' as const:v==='medium'?'warn' as const:'neutral' as const;
 const Severidad=({f}:{f:FilaProblema})=>f.severidad===null?NA:<StatusChip tone={sevTone(f.severidad)}>{etiquetaSeveridad(f.severidad)}</StatusChip>;
-const Critico=({f}:{f:FilaProblema})=>f.critico===null?NA:f.critico?<StatusChip tone="bad">Revisión crítica</StatusChip>:<span>No</span>;
+const textoSenales=(f:FilaProblema)=>f.senalesCriticas===null||f.conversaciones===null?null:`${nf.format(f.senalesCriticas)} ${f.senalesCriticas===1?'señal crítica':'señales críticas'} en ${nf.format(f.conversaciones)} conv.`;
+const motivoDe=(f:FilaProblema)=>etiquetaMotivo(f.motivoCritico)??undefined;
+const Critico=({f}:{f:FilaProblema})=>f.critico===null?NA:f.critico?<span title={motivoDe(f)}><StatusChip tone="bad">Revisión crítica</StatusChip>{textoSenales(f)&&<small className={s.critWhy}>{textoSenales(f)}</small>}</span>:<span>No</span>;
 const Citas=({f}:{f:FilaProblema})=>f.citas===null?NA:<span title="Citas registradas; se verifican al abrir el problema">{nf.format(f.citas)}</span>;
 const Recomendacion=({f}:{f:FilaProblema})=>f.recomendaciones===null?NA:f.recomendaciones>0?<span>Sí ({f.recomendaciones})</span>:<span>No</span>;
 const Conversaciones=({f}:{f:FilaProblema})=>f.conversaciones===null?NA:<strong>{nf.format(f.conversaciones)}</strong>;
@@ -56,7 +59,7 @@ function QuickView({fila,query,onClose}:{fila:FilaProblema|null;query:string;onC
    <div className={s.tiles}>
     <div className={s.tile}><strong>{fila.conversaciones===null?'No disponible':nf.format(fila.conversaciones)}</strong><span>Conversaciones <KindBadge kind="observed"/></span></div>
     <div className={s.tile}><strong>{fila.severidad===null?'No disponible':etiquetaSeveridad(fila.severidad)}</strong><span>Severidad registrada</span></div>
-    <div className={s.tile}><strong>{fila.critico===null?'No disponible':fila.critico?'Sí':'No'}</strong><span>Revisión crítica</span></div>
+    <div className={s.tile}><strong>{fila.critico===null?'No disponible':fila.critico?'Sí':'No'}</strong><span>Revisión crítica{textoSenales(fila)?' · '+textoSenales(fila):''}</span></div>
     <div className={s.tile}><strong>{fila.recomendaciones===null?'No disponible':fila.recomendaciones>0?'Sí ('+fila.recomendaciones+')':'No'}</strong><span>Recomendación guardada</span></div>
    </div>
    {fila.ejemplo&&<figure className={s.blockquote}><blockquote style={{margin:0}}><p>«{fila.ejemplo}»</p></blockquote><small>Extracto de ejemplo, ya redactado. La cita se verifica al abrir el problema.</small></figure>}
@@ -76,26 +79,26 @@ function Categorias({cats,sel,onSelect}:{cats:ReturnType<typeof agruparCategoria
   <ul className={s.cats}>{lista.map(c=><li key={c.clave}><button type="button" className={s.catBtn} aria-pressed={sel===c.clave} onClick={()=>onSelect(sel===c.clave?null:c.clave)}>
    <span className={s.catTop}><span className={s.catName}>{c.nombre}</span><span className={s.catNum}>{c.conversaciones===null?'No disponible':nf.format(c.conversaciones)+' conv.'}</span></span>
    <span className={s.catTrack} aria-hidden="true"><span className={s.catFill} style={{width:c.conversaciones===null?'0%':Math.max(1,c.conversaciones*100/max)+'%'}}/></span>
-   <span className={s.catSub}><span>{nf.format(c.grupos)} {c.grupos===1?'grupo':'grupos'}</span>{c.criticos!==null&&c.criticos>0&&<span>{nf.format(c.criticos)} con revisión crítica</span>}</span>
+   <span className={s.catSub}><span>{nf.format(c.grupos)} {c.grupos===1?'grupo':'grupos'}</span>{c.criticos!==null&&c.criticos>0&&<span>{nf.format(c.criticos)} {c.criticos===1?'grupo':'grupos'} con revisión crítica</span>}</span>
   </button></li>)}</ul>
   {cats.length>CATEGORIAS_VISIBLES&&<div className={s.more}><button type="button" className="btn btn-ghost btn-sm" onClick={()=>setTodas(v=>!v)} aria-expanded={todas}>{todas?'Ver solo las '+CATEGORIAS_VISIBLES+' principales':'Ver las '+nf.format(cats.length)+' categorías'}</button></div>}
  </section>;
 }
 
-function Criticas({filas,query,ocultasN,disponible}:{filas:FilaProblema[];query:string;ocultasN:number;disponible:boolean}){
+function Criticas({filas,query,ocultasN,disponible,total}:{filas:FilaProblema[];query:string;ocultasN:number;disponible:boolean;total:{groups:number;signals:number}|null}){
  const [todas,setTodas]=useState(false);
  const crit=useMemo(()=>ordenarFilas(filas.filter(f=>f.critico===true),{col:'conversaciones',dir:'desc'}),[filas]);
  const cats=useMemo(()=>agruparCategorias(crit),[crit]);
  const lista=todas?crit:crit.slice(0,CRITICAS_VISIBLES);
- return <section className="card" id="senales-criticas" aria-label="Señales críticas">
-  <div className={s.cardHead}><div><h2>Señales críticas{disponible?' ('+nf.format(crit.length)+')':''}</h2><p>Grupos que piden revisión sin importar el dinero: alguna conversación con severidad alta o crítica, o una categoría de seguridad, privacidad, fraude o fuego.</p></div></div>
+ return <section className="card" id="senales-criticas" aria-label="Grupos con revisión crítica">
+  <div className={s.cardHead}><div><h2>Grupos con revisión crítica{disponible?' ('+nf.format(crit.length)+')':''}</h2><p>{DEFINICION.grupo} Se revisan sin importar el dinero.</p><p className="state">{DEFINICION.senal}{total&&<> En total, con las notificaciones automáticas ocultas incluidas: <strong>{nf.format(total.groups)} {total.groups===1?'grupo':'grupos'}</strong> y <strong>{nf.format(total.signals)} {total.signals===1?'señal crítica (evidencia)':'señales críticas (evidencias)'}</strong>.</>}</p></div></div>
   {!disponible?<p className="state" role="status">No disponible ahora: las señales críticas no se calcularon en esta carga. No significa que no existan; reintenta con «Actualizar».</p>
    :!crit.length?<p className="state">Ningún grupo visible cumple el criterio crítico en este corte.</p>
    :<div className={s.crit}>
     <ul className={s.critCats} aria-label="Categorías con señales críticas">{cats.map(c=><li key={c.clave}><span className="chip">{c.nombre}: {nf.format(c.grupos)}</span></li>)}</ul>
-    <ul className={s.critList}>{lista.map(f=><li key={f.id} className={s.critItem}><Link href={hrefDe(f,query)} className="row-link-inline">{f.categoria} · {fraseGrupo(f)}</Link><span className={s.critNum}>{f.conversaciones===null?'No disponible':nf.format(f.conversaciones)+' conv.'}</span>{f.ejemplo&&<span className={s.critMeta}>«{f.ejemplo}»</span>}</li>)}</ul>
-    {crit.length>CRITICAS_VISIBLES&&<div><button type="button" className="btn btn-ghost btn-sm" onClick={()=>setTodas(v=>!v)} aria-expanded={todas}>{todas?'Ver solo las '+CRITICAS_VISIBLES+' con más conversaciones':'Ver las '+nf.format(crit.length)+' señales'}</button></div>}
-    {ocultasN>0&&<p className="state">{nf.format(ocultasN)} {ocultasN===1?'señal crítica más está':'señales críticas más están'} en notificaciones automáticas ocultas; el aviso de arriba las cuenta.</p>}
+    <ul className={s.critList}>{lista.map(f=><li key={f.id} className={s.critItem}><Link href={hrefDe(f,query)} className="row-link-inline">{f.categoria} · {fraseGrupo(f)}</Link><span className={s.critNum}>{f.conversaciones===null?'No disponible':nf.format(f.conversaciones)+' conv.'}</span>{textoSenales(f)&&<span className={s.critMeta}>{textoSenales(f)}{motivoDe(f)?' · '+motivoDe(f):''}</span>}{f.ejemplo&&<span className={s.critMeta}>«{f.ejemplo}»</span>}</li>)}</ul>
+    {crit.length>CRITICAS_VISIBLES&&<div><button type="button" className="btn btn-ghost btn-sm" onClick={()=>setTodas(v=>!v)} aria-expanded={todas}>{todas?'Ver solo las '+CRITICAS_VISIBLES+' con más conversaciones':'Ver los '+nf.format(crit.length)+' grupos'}</button></div>}
+    {ocultasN>0&&<p className="state">{nf.format(ocultasN)} {ocultasN===1?'grupo con revisión crítica más está':'grupos con revisión crítica más están'} en notificaciones automáticas ocultas; el aviso de arriba los cuenta.</p>}
    </div>}
  </section>;
 }
@@ -143,7 +146,7 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
   <div className={s.kpis} role="group" aria-label="Resumen de problemas">
    <div className={s.kpi}><strong>{nf.format(resumen.grupos)}</strong><span>Grupos de problemas</span><small>Conversaciones agrupadas por parecido</small></div>
    <div className={s.kpi}><strong>{nf.format(resumen.categorias)}</strong><span>Categorías</span><small>Según la clasificación de la IA</small></div>
-   <div className={s.kpi}>{resumen.criticos===null||!critDisponible?<strong className={s.kpiNA}>No disponible ahora</strong>:<strong>{nf.format(resumen.criticos)}</strong>}<span>Con revisión crítica</span><small><a className="row-link-inline" href="#senales-criticas">Ver cuáles son</a></small></div>
+   <div className={s.kpi}>{resumen.criticos===null||!critDisponible?<strong className={s.kpiNA}>No disponible ahora</strong>:<strong>{nf.format(resumen.criticos)}</strong>}<span>Grupos con revisión crítica</span><small>{catalogo?.critical&&critDisponible&&<>de {nf.format(catalogo.critical.groups)} en total ({nf.format(catalogo.critical.signals)} señales críticas, evidencias) · </>}<a className="row-link-inline" href="#senales-criticas">Ver cuáles son</a></small></div>
    <div className={s.kpi}><strong>{sep.ocultosN>0&&!incluirRuido?nf.format(sep.ocultosN):'0'}</strong><span>Notificaciones automáticas ocultas</span><small>Alertas de minoristas y del sistema</small></div>
   </div>
   {conImporte&&<div className="split" data-even>
@@ -160,7 +163,7 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
    </div>
   </div>}
   {visibles.length>0&&<Categorias cats={cats} sel={clave} onSelect={elegirCategoria}/>}
-  {(catalogo||visibles.some(f=>f.critico!==null)||!!bundle.meta.critical_notice)&&<Criticas filas={visibles} query={query} ocultasN={criticasOcultas} disponible={critDisponible}/>}
+  {(catalogo||visibles.some(f=>f.critico!==null)||!!bundle.meta.critical_notice)&&<Criticas filas={visibles} query={query} ocultasN={criticasOcultas} disponible={critDisponible} total={catalogo?.critical??null}/>}
   <div ref={tablaRef} className="stack" id="lista-problemas">
    <div className={s.tools} role="search">
     <label className="grow">Buscar por categoría o texto del ejemplo<input type="search" value={texto} onChange={e=>cambiar(()=>setTexto(e.target.value))} placeholder="Ej.: batería, envío, refacciones"/></label>
@@ -183,7 +186,7 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
      <div className={s.foot}><button type="button" className="btn btn-ghost btn-sm" onClick={()=>setQuick(f)} aria-label={'Vista rápida: '+f.categoria+', '+fraseGrupo(f)}>Vista rápida</button></div>
     </article>;})}</div>
    :<div className={s.tableWrap}><table className={s.table} aria-label="Tabla de problemas"><colgroup>{(conImporte?[14,24,10,8,10,7,10,17]:[19,28,12,10,12,8,11]).map((w,i)=><col key={i} style={{width:w+'%'}}/>)}</colgroup>
-    <thead><tr>{th('categoria','Categoría')}<th scope="col">Grupo</th>{th('conversaciones','Conversaciones',true,'Conversaciones únicas del grupo (Observado)')}{th('severidad','Severidad')}{th('critico','Crítico')}{th('citas','Citas',true,'Citas registradas; se verifican al abrir el problema')}{th('recomendaciones','Recomendación')}{conImporte&&th('importe','Ingresos expuestos',true)}</tr></thead>
+    <thead><tr>{th('categoria','Categoría')}<th scope="col">Grupo</th>{th('conversaciones','Conversaciones',true,'Conversaciones únicas del grupo (Observado)')}{th('severidad','Severidad')}{th('critico','Crítico',false,DEFINICION.grupo)}{th('citas','Citas',true,'Citas registradas; se verifican al abrir el problema')}{th('recomendaciones','Recomendación')}{conImporte&&th('importe','Ingresos expuestos',true)}</tr></thead>
     <tbody>{pagina.map(f=><tr key={f.id}>
      <th scope="row" className={s.cat} data-label="Categoría">{f.categoria}</th>
      <td data-label="Grupo" className={s.full}><div className={s.group}><Link href={hrefDe(f,query)} className="row-link-inline">{fraseGrupo(f)}</Link>{f.ejemplo&&<p className={s.quote}>«{f.ejemplo}»</p>}<button type="button" className="btn btn-ghost btn-sm" onClick={()=>setQuick(f)} aria-label={'Vista rápida: '+f.categoria+', '+fraseGrupo(f)}>Vista rápida</button></div></td>

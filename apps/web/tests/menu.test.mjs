@@ -22,7 +22,7 @@ test('Notificaciones y Gestionar problemas ya no son ítems; Gestión económica
   const todos = todosLosItems().map(({item}) => item.href);
   assert.ok(!todos.includes('/notifications') && !todos.includes('/problems/manage'));
   const dinero = MENU.find((e) => e.clave === 'dinero');
-  assert.deepEqual(dinero.items.map((i) => [i.href, i.etiqueta]), [['/cfo', 'Panorama'], ['/gaps', 'Brechas de ingreso'], ['/refunds', 'Fuga de reembolsos'], ['/economics', 'Preparar']]);
+  assert.deepEqual(dinero.items.map((i) => [i.href, i.etiqueta]), [['/cfo', 'CFO'], ['/gaps', 'Brechas de ingreso'], ['/refunds', 'Fuga de reembolsos'], ['/economics', 'Preparar']]);
 });
 test('ítem activo: /jobs/:id -> Importaciones, /analysis/:id -> Análisis, /problems/manage -> Problemas, el más específico gana', () => {
   const act = (p) => itemActivo(p)?.item.href;

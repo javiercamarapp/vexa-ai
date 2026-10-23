@@ -9,11 +9,9 @@ import {PageHeader} from '../ui/page-header';
 import {BarChart, type BarDatum} from '../ui/bar-chart';
 import {Button, LinkButton, Download, Refresh} from '../ui/button';
 import {KindBadge} from '../ui/kind-badge';
-import {CopilotPanel} from '../platform/copilot-panel';
 import {DataTable, type Column} from '../platform/data-table';
 import {PfIcon} from '../platform/icons';
 import {Empty, HowTo, Panel, Pill, Seg, Tile, severityTone} from '../platform/primitives';
-import {CFO_SHORTCUTS} from '../../../../../packages/cfo-copilot/src/client.mjs';
 import type {CfoReport, CurrencyBlock} from '../../../../../packages/cfo-copilot/src/index.mjs';
 import {changeBps, int, monthLabel, pct, signedPct} from '../../../../../packages/cfo-copilot/src/format.mjs';
 import {MonthBars} from './month-bars';
@@ -29,7 +27,8 @@ const AFTER_SAVE = 'Los datos de demostración son sintéticos y no pertenecen a
 
 const acceptReporte = (j: unknown): ReportState | null => { const d = (j as {data?: ReportState})?.data; return d && (d.status === 'ok' || d.status === 'empty' || d.status === 'timeout') ? d : null; };
 const ROLES_CFO = ['owner', 'analyst'];
-export function CfoDashboard({query = '', organization, roleOverride}: {query?: string; organization?: string; roleOverride?: string}) {
+/** Informe clásico de CFO (se abre desde el copiloto con «Ver detalle» / «Ver informe completo»: /cfo?vista=informe). */
+export function CfoDashboard({query = '', organization, roleOverride, volverA = '/cfo'}: {query?: string; organization?: string; roleOverride?: string; volverA?: string}) {
   const {role} = useAcceso();
   // Caché stale-while-revalidate (swr.mjs): al volver al panel se pinta al instante el último informe, rotulado, y se revalida sin vaciar la pantalla.
   const permitido = ROLES_CFO.includes(roleOverride ?? role);
@@ -40,13 +39,13 @@ export function CfoDashboard({query = '', organization, roleOverride}: {query?: 
   const load = useCallback(async () => { await rep.reload(); }, [rep]);
   const ok = state?.status === 'ok' ? state : null, report = ok?.report;
   const actions = <>
-    <CopilotPanel endpoint={'/cfo/data/copilot' + query} title="Copiloto CFO" subtitle="Tus ingresos, reembolsos y calidad de datos, con la cifra que ya calculó el panel." placeholder="Pregunta sobre tus ingresos, canales o reembolsos…" shortcuts={CFO_SHORTCUTS} openLabel="Copiloto CFO" context="Pregunta a tus cifras" />
+    <LinkButton href={volverA} variant="primary" icon={<PfIcon name="sparkles" />}>Volver al copiloto CFO</LinkButton>
     <Button icon={<Refresh />} loading={busy} onClick={() => void load()}>Actualizar</Button>
     <LinkButton href="/cfo/data/export?format=csv" download="informe-cfo.csv" icon={<Download />}>Exportar CSV</LinkButton>
     <LinkButton href="/cfo/data/export?format=pdf" download="informe-cfo.pdf" icon={<Download />}>Exportar PDF</LinkButton>
   </>;
-  const header = <PageHeader eyebrow="CFO del negocio" title="Dinero" description="Ingresos, reembolsos, mezcla por canal y calidad de datos, por moneda y sin mezclar bases. Cada cifra dice si es observada, estimada o inferida, y cómo se calculó." actions={actions} />;
-  if (!permitido) return <div className="cf-page"><PageHeader eyebrow="CFO del negocio" title="Dinero" description="Panel financiero del negocio para propietarios y analistas." />
+  const header = <PageHeader eyebrow="CFO del negocio" title="Informe completo de CFO" description="Ingresos, reembolsos, mezcla por canal y calidad de datos, por moneda y sin mezclar bases. Cada cifra dice si es observada, estimada o inferida, y cómo se calculó." actions={actions} />;
+  if (!permitido) return <div className="cf-page"><PageHeader eyebrow="CFO del negocio" title="Informe completo de CFO" description="Panel financiero del negocio para propietarios y analistas." />
     <Empty title="Tu rol no tiene acceso a este panel" tone="muted" action={<LinkButton href="/overview">Volver al resumen</LinkButton>}>El panel CFO muestra ingresos, reembolsos y exposición económica. Solo lo ven los propietarios y analistas de la organización; pide acceso a un propietario.</Empty></div>;
   if (!report) return <div className="cf-page">{header}{error && <p className="state state-error" role="alert">{error} <Button size="sm" icon={<Refresh />} onClick={() => void load()}>Reintentar</Button></p>}
     {!state ? (busy ? <EsperaEsqueleto que="el informe del negocio" filas={5} /> : null)

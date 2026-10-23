@@ -23,7 +23,7 @@ export function bajar(a:Archivo){
 }
 
 /** Pantalla «Fuga de reembolsos»: insight -> dinero -> acción, con datos reales cargados; cada cifra con su clase, periodo y cobertura. */
-export function FugaPantalla({organization}:{organization?:string}){
+export function FugaPantalla({organization,embebido=false}:{organization?:string;/** Dentro del copiloto de negocio: sin PageHeader del espacio de trabajo; el h1 es el titular de la pantalla. */embebido?:boolean}){
  const sp=useSearchParams(),f=useFuga(endpointFuga(sp?.toString()));
  const per=f.data?periodoDelTitular(f.data):null;
  const [abierto,setAbierto]=useState<string|null>(null),[skuPaquete,setSkuPaquete]=useState<string>(''),[aviso,setAviso]=useState('');
@@ -41,8 +41,8 @@ export function FugaPantalla({organization}:{organization?:string}){
  const skuSel=skuPaquete||top[0]?.sku||'';
  const est=v?.tracker.status==='ok'?v.tracker.estados:null;
  return <div className="task-page stack fg-page">
-  <PageHeader eyebrow="Dinero" title="Fuga de reembolsos" description={<>Dónde se concentra el dinero devuelto, cuánto está negado o atorado y qué llevarte a la reunión con el proveedor o con Walmart.{organization?` ${organization}.`:''}</>}
-   actions={<Button icon={<Refresh/>} onClick={()=>f.reload()} loading={f.busy&&!!v}>Actualizar</Button>}/>
+  {embebido?<header className="fg-embebido-head"><p className="cn-eyebrow">Dinero · tu copiloto de reembolsos</p><h1 className="cn-titular">Fuga de reembolsos</h1><p className="cn-fuente">Dónde se concentra el dinero devuelto, cuánto está negado o atorado y qué llevarte a la reunión con el proveedor o con Walmart.{organization?` ${organization}.`:''}</p><div className="cn-acciones"><Button size="sm" icon={<Refresh/>} onClick={()=>f.reload()} loading={f.busy&&!!v}>Actualizar</Button></div></header>:<PageHeader eyebrow="Dinero" title="Fuga de reembolsos" description={<>Dónde se concentra el dinero devuelto, cuánto está negado o atorado y qué llevarte a la reunión con el proveedor o con Walmart.{organization?` ${organization}.`:''}</>}
+   actions={<Button icon={<Refresh/>} onClick={()=>f.reload()} loading={f.busy&&!!v}>Actualizar</Button>}/>}
   {!v&&f.busy&&<section className="card"><Skeleton lineas={6} segundos={f.segundos}/></section>}
   {!v&&!f.busy&&f.error&&<EmptyState art="shield" tone="warn" title={f.error.code==='acceso'?'Tu rol no tiene acceso a este panel':'No disponible ahora'} body={f.error.texto} action={f.error.code==='acceso'?undefined:<Button icon={<Refresh/>} onClick={()=>f.reload()}>Reintentar</Button>}/>}
   {v&&<>

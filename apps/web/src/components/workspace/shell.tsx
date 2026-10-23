@@ -8,6 +8,7 @@ import {NotificationNavigationLink} from '../notifications/navigation-link';
 import {AccesoProvider} from './access';
 import {RestaurarVista} from './restaurar-vista';
 import {DatosNuevos} from './datos-nuevos';
+import {esRutaCopiloto} from '../../lib/copiloto/modos.mjs';
 import {fijarTenant,limpiarTodo} from '../../lib/workspace/swr.mjs';
 type Organization={id:string;name:string};
 type Theme='light'|'system'|'dark';
@@ -37,7 +38,7 @@ export function WorkspaceShell({children,brand,organizations,tenant,role,platfor
    </div>
   </>;}
  // «Pregúntale a tus datos» lives inside the normal shell (same sidebar) but has NO page header and no global scope bar: the content starts at the cover.
- const sinEncabezado=pathname==='/preguntale';
+ const sinEncabezado=esRutaCopiloto(pathname);
  return <div className={'workspace workspace-shell'+(collapsed?' sidebar-collapsed':'')+(sinEncabezado?' workspace-chat':'')}>
    <a className="skip-link workspace-skip" href="#workspace-contenido">Saltar al contenido</a><aside className="workspace-sidebar">{sidebar()}</aside>
    <div className="workspace-frame"><header className="workspace-header" hidden={sinEncabezado||undefined}><button type="button" className="icon-button mobile-menu-button" aria-label="Abrir menú" onClick={open}><WorkspaceIcon name="menu"/></button><span className="workspace-heading"><WorkspaceIcon name={workspaceIconName(pathname)}/>{workspaceTitle(pathname)}</span><DatosNuevos/></header><div className="workspace-content" id="workspace-contenido" tabIndex={-1}><RestaurarVista/><AccesoProvider value={{role,interno:platformAccess}}>{children}</AccesoProvider></div></div>

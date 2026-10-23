@@ -79,6 +79,7 @@
 .cov-track-empty{background:transparent;border:1px dashed var(--cov-pen)}
 .cov-seg{display:block;height:100%;flex:0 0 auto;min-width:3px;border-radius:2px}
 .cov-in{background:var(--cov-in)}.cov-rej{background:var(--cov-rej)}
+.cov-metaonly{background:var(--cov-pen)}
 .cov-pen{background:repeating-linear-gradient(135deg,var(--cov-pen) 0 3px,transparent 3px 6px);background-color:var(--cov-track)}
 .cov-meta{margin:var(--sp-2) 0 0;font-size:12px;color:var(--muted)}
 .cov-table{margin-top:var(--sp-4)}.cov-table summary{cursor:pointer;font-size:13px;font-weight:600;padding:var(--sp-2) 0}

@@ -67,3 +67,12 @@ test('QA3-002: el panel de Conexiones deriva su estado del resumen de cobertura 
  assert.match(t,/<details className=\{styles\.tech\}><summary>Detalle técnico<\/summary>/);
  assert.doesNotMatch(t,/Configuración: \{row\.connectionStatus\}/);
 });
+test('QA3-007: Importaciones totaliza con la cobertura, rotula las cargas listadas y no reutiliza el tooltip de Economía',()=>{
+ const t=leer('../../components/import-preview.tsx'),k=leer('../../components/ui/kind-badge.tsx'),c=leer('../../components/ui/stat-card.tsx');
+ assert.match(t,/agregadoImportaciones\(coverage\?\.sources\)/);assert.match(t,/Mostrando las \$\{nf\.format\(teamJobs\.length\)\} cargas más recientes/);
+ assert.doesNotMatch(t,/cuenta técnica/);assert.doesNotMatch(t,/foot="En las cargas listadas"/);
+ assert.match(t,/ref\. \{j\.id\.slice\(0,6\)\}/,'cada trabajo lleva una referencia distinta');
+ assert.match(k,/title=\{hint\?\?info\.hint\}/);assert.match(c,/kindHint/);
+ const kpis=t.slice(t.indexOf('<div className="stat-grid">'),t.indexOf('<div className="task-columns import-start">'));
+ assert.equal((kpis.match(/<StatCard /g)??[]).length,(kpis.match(/kindHint=/g)??[]).length,'todos los KPI de importaciones tienen tooltip propio');
+});

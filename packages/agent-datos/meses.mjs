@@ -18,9 +18,23 @@ export function estadoMes(month, completeness, ahora = new Date()) {
   if (month > corte) return { estado: 'sin_datos', dataThrough: dt, cubierto: 0 };
   return { estado: 'parcial', dataThrough: dt, cubierto: dt && dt.slice(0, 7) === month ? Math.floor((Number(dt.slice(8)) * 100) / diasDelMes(month)) : null };
 }
+const UMBRAL_DENSIDAD = 0.25;
+/** Estados por mes de una serie de conteos. Un mes «completo» por fecha cuyo volumen es < 25 % de la mediana de los demás meses completos (≥ 2) se trata como parcial por cobertura baja:
+ *  probablemente la carga de ese mes está incompleta. Heurística explícita y rotulada; nunca emite 0 ni variación %. */
+export function estadosDeSerie(series, completeness, ahora = new Date()) {
+  const base = (series ?? []).map((x) => ({ x, st: estadoMes(x.month, completeness, ahora) }));
+  const completos = base.filter((b) => b.st.estado === 'completo').map((b) => Number(b.x.count)).filter(Number.isFinite);
+  return new Map(base.map(({ x, st }) => {
+    const otros = completos.filter((n, i, arr) => !(n === Number(x.count) && arr.indexOf(n) === i));
+    if (st.estado !== 'completo' || otros.length < 2) return [x.month, st];
+    const o = [...otros].sort((p, q) => p - q), med = o.length % 2 ? o[(o.length - 1) / 2] : (o[o.length / 2 - 1] + o[o.length / 2]) / 2;
+    return med > 0 && Number(x.count) < UMBRAL_DENSIDAD * med ? [x.month, { ...st, estado: 'parcial', baja: true, proporcion: Math.round((Number(x.count) * 100) / med) }] : [x.month, st];
+  }));
+}
 export const comparables = (...estados) => estados.every((e) => e.estado === 'completo');
 /** Detalle entre paréntesis: hasta qué fecha llegan los datos y qué parte del mes cubren. */
 export function detalleMes(st) {
+  if (st.baja) return `cobertura baja: el volumen del mes es ≈ ${st.proporcion} % del habitual; posible carga incompleta`;
   const hasta = st.dataThrough ? `datos hasta el ${largo(st.dataThrough)}` : 'sin fecha de corte verificable: se trata como en curso';
   return st.estado === 'parcial' && st.cubierto !== null ? `${hasta}, ${st.cubierto} % del mes` : hasta;
 }

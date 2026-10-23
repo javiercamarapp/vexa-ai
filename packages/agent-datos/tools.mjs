@@ -3,7 +3,7 @@
 // rol, SQL ni identificadores de otras organizaciones. Cada resultado trae sus cifras con clase y cobertura, sus fuentes y el
 // método de cálculo; las citas de clientes viajan por un canal aparte (`citations`) que NUNCA se envía al modelo.
 import { formatMinorUnits } from '../metrics/money.mjs';
-import { estadoMes, comparables, avisoMes, detalleMes, NO_COMPARABLE } from './meses.mjs';
+import { estadoMes, estadosDeSerie, comparables, avisoMes, detalleMes, NO_COMPARABLE } from './meses.mjs';
 import { CLASS_LABELS, LIMITS, coverageOf, toJsonSchema, validateArgs } from './contract.mjs';
 
 /** Importe en unidades menores -> unidades mayores (solo para altura/eje de gráficas; el dinero mostrado sale de money()). */
@@ -116,19 +116,21 @@ export const TOOLS = [
       if (!c || c.status === 'timeout') return unavailable('tendencia_conversaciones');
       if (c.status === 'empty' || !c.series?.length) return noData('No hay conversaciones cargadas en la ventana.', ['Conversaciones importadas (HubSpot o CSV)']);
       const ahora = new Date(ctx.now ?? Date.now());
-      const s = c.series.slice(-months).map((x) => ({ ...x, st: estadoMes(x.month, c.completeness, ahora) }));
+      const est = estadosDeSerie(c.series, c.completeness, ahora);
+      const s = c.series.slice(-months).map((x) => { const st = est.get(x.month); return { ...x, st: st.estado === 'parcial' && Number(x.count) === 0 ? { ...st, estado: 'sin_datos' } : st }; }); // un mes parcial con 0 es dato ausente, no cero
       const dato = s.filter((x) => x.st.estado !== 'sin_datos'), sum = dato.reduce((a, x) => a + x.count, 0), last = dato[dato.length - 1];
       if (!last) return noData('No hay conversaciones con datos en la ventana.', ['Conversaciones importadas (HubSpot o CSV)']);
       const avisos = s.map((x) => avisoMes(monthLabel(x.month), x.st)).filter(Boolean);
       const cov = coverageOf(sum, (c.total ?? sum) + (c.undated ?? 0));
-      const f = fig('tendencia_conversaciones', `Conversaciones en ${monthLabel(last.month)}${last.st.estado === 'parcial' ? ' (mes incompleto)' : ''}`, fmtInt(last.count), last.count, c.class, cov);
+      const lastParcial = last.st.estado === 'parcial', lastDisplay = !lastParcial ? fmtInt(last.count) : last.count > 0 ? `${fmtInt(last.count)} (mes incompleto)` : 'sin datos completos';
+      const f = fig('tendencia_conversaciones', `Conversaciones en ${monthLabel(last.month)}${lastParcial ? ' (mes incompleto)' : ''}`, lastDisplay, lastParcial ? null : last.count, c.class, cov);
       const f2 = fig('tendencia_conversaciones', `Conversaciones en ${dato.length} meses`, fmtInt(sum), sum, c.class, cov);
       const cell = (x) => (x.st.estado === 'sin_datos' ? 'No disponible' : x.st.estado === 'parcial' ? `${fmtInt(x.count)}*` : x.count);
       const note = [c.sampleNote, `${ALCANCE_CONV} Ventana: ${s.length} meses; ${fmtInt(sum)} con fecha de ${fmtInt((c.total ?? sum) + (c.undated ?? 0))} conversaciones cargadas.`, avisos.length ? `* ${avisos.join('. ')}. Un mes incompleto no se compara con otro ni se lee como caída.` : null].filter(Boolean).join(' ') || undefined;
       return {
         status: 'ok', figures: [f, f2],
         blocks: [{ tool: 'tendencia_conversaciones', title: 'Conversaciones por mes', columns: [col('mes', 'Mes'), col('conversaciones', 'Conversaciones', 'integer')], rows: s.map((x) => ({ mes: monthLabel(x.month), conversaciones: cell(x) })), chart: { kind: s.length >= 3 ? 'line' : 'bar', unit: 'conversaciones', series: s.map((x) => ({ key: x.month, label: monthShort(x.month) + (x.st.estado === 'parcial' ? '*' : ''), value: x.st.estado === 'sin_datos' ? null : x.count, display: x.st.estado === 'sin_datos' ? 'No disponible' : fmtInt(x.count) + (x.st.estado === 'parcial' ? ' (mes incompleto)' : ''), ...(x.st.estado === 'parcial' ? { partial: true } : {}) })) }, class: c.class, coverage: cov, truncated: false, note }],
-        summary: `En ${monthLabel(last.month)} hubo ${f.display} conversaciones${last.st.estado === 'parcial' ? ` (${NO_COMPARABLE}: ${avisoMes(monthLabel(last.month), last.st).replace(/^[^(]*\(/, '').replace(/\)$/, '')})` : ''} y ${f2.display} en los últimos ${dato.length} meses con datos ${tag(f2)}.${c.sampled ? ' La cifra es una estimación a partir de una muestra del 10 %.' : ''}${s.some((x) => x.st.estado === 'sin_datos') ? ` Los meses posteriores al corte no tienen datos cargados (no son cero).` : ''}`, missing: [], notes: [...(c.sampleNote ? [c.sampleNote] : []), ...avisos],
+        summary: `${lastParcial ? `${monthLabel(last.month)}: ${lastDisplay} (${NO_COMPARABLE}: ${avisoMes(monthLabel(last.month), last.st).replace(/^[^(]*\(/, '').replace(/\)$/, '')})` : `En ${monthLabel(last.month)} hubo ${f.display} conversaciones`}; ${f2.display} conversaciones en los últimos ${dato.length} meses con datos ${tag(f2)}.${c.sampled ? ' La cifra es una estimación a partir de una muestra del 10 %.' : ''}${s.some((x) => x.st.estado === 'sin_datos') ? ` Los meses posteriores al corte no tienen datos cargados (no son cero).` : ''}`, missing: [], notes: [...(c.sampleNote ? [c.sampleNote] : []), ...avisos],
       };
     },
   },
@@ -268,7 +270,8 @@ export const TOOLS = [
       const covC = coverageOf(conv(a) + conv(b), (t.conversations.total ?? 0) + (t.conversations.undated ?? 0) || conv(a) + conv(b));
       // Un mes incompleto (corte a mitad de mes) o sin datos NO se compara: ni variación %, ni «0» presentado como dato. Misma regla que el Resumen y /cfo.
       const ahora = new Date(ctx.now ?? Date.now());
-      const sc = { a: estadoMes(a, t.conversations.completeness, ahora), b: estadoMes(b, t.conversations.completeness, ahora) };
+      const estC = estadosDeSerie(t.conversations.series, t.conversations.completeness, ahora);
+      const sc = { a: estC.get(a), b: estC.get(b) };
       const sl = { a: estadoMes(a, t.ledger?.completeness, ahora), b: estadoMes(b, t.ledger?.completeness, ahora) };
       const avisos = [...new Set([[a, sc.a], [b, sc.b]].map(([m, st]) => avisoMes(monthLabel(m), st)).concat([[a, sl.a], [b, sl.b]].map(([m, st]) => avisoMes(monthLabel(m) + ' (pedidos y reembolsos)', st))).filter(Boolean))];
       const rows = [], figs = [];

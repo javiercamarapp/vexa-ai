@@ -1,0 +1,11 @@
+export type Tema = {titulo: string; preguntas: readonly string[]};
+export type Directa = {tool: string; args: Record<string, unknown>};
+export type Modo = {clave: string; ruta: string; titulo: string; subtitulo: string; rolesPermitidos: readonly string[]; briefing: string | null; chipsPorTema: readonly Tema[]; directas: Readonly<Record<string, Directa>>; consulta: 'cfo' | 'agente'; endpointDeConsulta: string; endpointInforme: string | null; presupuesto: {mostrar: boolean; topeUsd: number}; informeCompleto: string | null};
+export const MODOS: Readonly<Record<'general' | 'cfo' | 'refunds', Modo>> & Readonly<Record<string, Modo>>;
+export const RUTAS_COPILOTO: readonly string[];
+export function esRutaCopiloto(pathname: string): boolean;
+export function modoPorClave(clave: string): Modo | null;
+export function modoPorRuta(pathname: string): Modo | null;
+export function puedeUsarModo(modo: Modo | null, role: string): boolean;
+export function textoSoloPara(modo: Modo): string;
+export function problemasDeModo(modo: unknown): string[];

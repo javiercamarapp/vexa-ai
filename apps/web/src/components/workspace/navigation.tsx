@@ -3,13 +3,15 @@ import Link from './navigation-lifecycle';
 import {useId,useState} from 'react';
 import {usePathname,useSearchParams} from 'next/navigation';
 import {WorkspaceIcon} from './icon';
+import {consultaAlcance} from '../../lib/workspace/alcance.mjs';
 export const destinations=[['/overview','Resumen'],['/problems','Problemas'],['/recommendations','Recomendaciones'],['/explorer','Explorador'],['/preguntale','Pregúntale a tus datos'],['/interventions','Intervenciones'],['/briefs','Brief ejecutivo']] as const;
 export const navGroups:ReadonlyArray<readonly [string,ReadonlyArray<readonly [string,string,string]>]> = [
  ['Operación',[['/cfo','CFO del negocio','economics'],['/problems/manage','Gestionar problemas','problems'],['/analysis','Análisis','analysis']]],
  ['Datos e inteligencia',[['/imports','Importaciones','imports'],['/connections','Conexiones','connections'],['/history','Histórico','history'],['/evaluation','Evaluación histórica','analysis'],['/evaluation/candidates','Candidatos evaluados','recommendations'],['/migrations','Comparación de migración','connections']]],
  ['Administración',[['/economics','Gestión económica','economics'],['/notifications','Notificaciones','notifications'],['/settings/notifications','Preferencias de avisos','settings'],['/settings/team','Equipo','team'],['/settings/retention','Retención y borrado','settings']]]
 ] as const;
-export function navigationQuery(pathname:string,raw:string){const query=new URLSearchParams(raw);for(const key of ['cursor','detail_hash','root_kind','root_id','component_id','event_id'])query.delete(key);if(pathname==='/explorer')for(const key of ['q','status','order','limit'])query.delete(key);return query.toString();}
+/** El menú conserva solo el alcance (periodo, moneda, base, corte, filtros compartidos); los filtros propios de cada pantalla no viajan. */
+export function navigationQuery(_pathname:string,raw:string){return consultaAlcance(raw);}
 const extras:ReadonlyArray<readonly [string,string,string]>=[['/customers','Historial del cliente','customers'],['/jobs','Progreso de ingestión','imports'],['/settings/notification-delivery','Entrega de avisos','settings'],['/notifications/push','Avisos en el navegador','notifications']];
 export function workspaceTitle(pathname:string){const links=[...destinations,...extras,...navGroups.flatMap(([,links])=>links)];return [...links].sort((a,b)=>b[0].length-a[0].length).find(([href])=>pathname===href||pathname.startsWith(href+'/'))?.[1]??'Espacio de trabajo';}
 export function workspaceIconName(pathname:string){const links=[...destinations,...extras,...navGroups.flatMap(([,links])=>links)];const link=[...links].sort((a,b)=>b[0].length-a[0].length).find(([href])=>pathname===href||pathname.startsWith(href+'/'));return link?.[2]??link?.[0].slice(1)??'overview';}
@@ -25,7 +27,7 @@ export function Navigation({onNavigate,collapsed=false,role}:{onNavigate?:()=>vo
  const [openGroup,setOpenGroup]=useState<string|null>(current?.group??'Espacio de trabajo');
  const [previousPath,setPreviousPath]=useState(pathname);
  if(previousPath!==pathname){setPreviousPath(pathname);setOpenGroup(current?.group??'Espacio de trabajo');}
- function item([href,label,icon]:readonly [string,string,string]){return <li key={href}><Link title={label} aria-label={collapsed?label:undefined} onClick={onNavigate} aria-current={current?.link[0]===href?'page':undefined} href={href+((destinations.some(([destination])=>destination===href)||href==='/imports'||href==='/economics')&&query?'?'+query:'')}><WorkspaceIcon name={icon}/><span className="nav-label">{label}</span></Link></li>;}
+ function item([href,label,icon]:readonly [string,string,string]){return <li key={href}><Link title={label} aria-label={collapsed?label:undefined} onClick={onNavigate} aria-current={current?.link[0]===href?'page':undefined} href={href+(!href.startsWith('/settings')&&href!=='/notifications'&&query?'?'+query:'')}><WorkspaceIcon name={icon}/><span className="nav-label">{label}</span></Link></li>;}
  return <nav aria-label="Navegación principal">
   <ul className="nav-root">{item(rootItem)}</ul>
   {!collapsed&&current?.group&&openGroup!==current.group&&<div className="nav-current"><p className="nav-caption">Página actual</p><ul>{item(current.link)}</ul></div>}

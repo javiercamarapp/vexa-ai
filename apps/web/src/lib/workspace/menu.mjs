@@ -30,8 +30,8 @@ export const MENU = Object.freeze([
   ] },
   { tipo: 'grupo', clave: 'administracion', etiqueta: 'Administración', roles: SOLO_PROPIETARIO, items: [
     { href: '/settings/team', etiqueta: 'Equipo', icono: 'team' },
-    { href: '/settings/notifications', etiqueta: 'Avisos', icono: 'settings', titulo: 'Preferencias de avisos', alias: ['/settings/notification-delivery', '/notifications/push'] },
-    { href: '/settings/retention', etiqueta: 'Retención', icono: 'settings', titulo: 'Retención y borrado' },
+    { href: '/settings/notifications', etiqueta: 'Avisos', icono: 'avisos', titulo: 'Preferencias de avisos', alias: ['/settings/notification-delivery', '/notifications/push'] },
+    { href: '/settings/retention', etiqueta: 'Retención', icono: 'retention', titulo: 'Retención y borrado' },
   ] },
   { tipo: 'grupo', clave: 'interno', etiqueta: 'Interno', interno: true, items: [
     { href: '/evaluation', etiqueta: 'Evaluación histórica', icono: 'analysis' },

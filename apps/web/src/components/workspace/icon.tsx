@@ -13,6 +13,8 @@ const paths:Record<string,string>={
  team:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M17 4a4 4 0 0 1 0 8 M22 21v-2a4 4 0 0 0-3-4',
  settings:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M12 2v3 M12 19v3 M2 12h3 M19 12h3 M5 5l2 2 M17 17l2 2 M5 19l2-2 M17 7l2-2',
  menu:'M4 6h16 M4 12h16 M4 18h16', close:'m6 6 12 12 M6 18 18 6', collapse:'M9 3H3v18h6 M14 8l-4 4 4 4 M10 12h11', expand:'M9 3H3v18h6 M16 8l4 4-4 4 M11 12h9', logout:'M9 4H3v16h6 M14 8l4 4-4 4 M7 12h14',chevron:'m8 10 4 4 4-4',
+ avisos:'M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21h4 M2 8c0-2 .8-3.6 2-5 M22 8c0-2-.8-3.6-2-5',
+ retention:'M3 4h18v4H3z M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8 M10 12h4',
  analysis:'M4 20V10 M10 20V4 M16 20v-8 M22 20V7',economics:'M12 2v20 M17 5H9a4 4 0 0 0 0 8h6a4 4 0 0 1 0 8H5'
 };
 export function WorkspaceIcon({name}:{name:string}){return <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]??paths.briefs}/></svg>;}

@@ -8,6 +8,7 @@ import {diaCorte} from '../../../../../packages/workspace-service/datos-hasta.mj
 const largo=m=>new Intl.DateTimeFormat('es-MX',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
 const corto=m=>new Intl.DateTimeFormat('es-MX',{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
 const nombreMes=m=>new Intl.DateTimeFormat('es-MX',{month:'long',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
+const diaLargoUtc=d=>new Intl.DateTimeFormat('es-MX',{day:'numeric',month:'long',timeZone:'UTC'}).format(new Date(d+'T00:00:00Z'));
 const dir=v=>v.dir==='sube'?'up':v.dir==='baja'?'down':'flat';
 
 /** Meses «completos» por fecha pero con cobertura baja (volumen < 25 % de la mediana de los demás meses completos: la carga de ese mes probablemente es parcial).
@@ -25,6 +26,10 @@ export function kpiConversaciones(conv,ahora=new Date()){
  const completos=conv.series.filter(p=>esMesCompleto(p.month,{dataThrough:conv.completeness?.dataThrough??null,ahora}));
  const ult=completos.at(-1)??null;
  if(!ult)return {valor:null,mes:null,delta:null,rotulo:'Aún no hay un mes completo con conversaciones fechadas',estimado:conv.class==='estimated'};
+ // Mes con datos que ya terminó (calendario) pero cuyo último dato no llega a su último día: cobertura parcial, no se compara.
+ const mesActual=ahora.toISOString().slice(0,7),corte=conv.completeness?.dataThrough?String(conv.completeness.dataThrough).slice(0,10):null;
+ const parciales=conv.series.filter(p=>p.month<mesActual&&p.count>0&&!esMesCompleto(p.month,{dataThrough:corte,ahora})).map(p=>p.month);
+ if(parciales.length){const nombres=parciales.map(nombreMes);return {valor:ult.count,mes:ult.month,delta:null,coberturaParcial:nombres,datosHasta:corte,rotulo:`Cobertura parcial en ${nombres.join(' y ')}${corte?` (datos hasta el ${diaLargoUtc(corte)})`:''}; sin comparación`,estimado:conv.class==='estimated'||!!conv.sampled,spark:completos.filter(p=>!baja.has(p.month)).map(p=>p.count)};}
  const prev=completos.at(-2)??null,bajos=[prev,ult].filter(p=>p&&baja.has(p.month)).map(p=>nombreMes(p.month));
  const estimado=conv.class==='estimated'||!!conv.sampled,spark=completos.filter(p=>!baja.has(p.month)).map(p=>p.count);
  if(bajos.length)return {valor:ult.count,mes:ult.month,delta:null,coberturaBaja:bajos,rotulo:`Cobertura baja en ${bajos.join(' y ')} (carga de HubSpot parcial); sin comparación`,estimado,spark};

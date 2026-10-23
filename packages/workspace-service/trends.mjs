@@ -18,6 +18,11 @@ export async function guarded(s,work,timeoutMs=LOCAL_TIMEOUT_MS){
 }
 // Conversations are dated through a per-row lookup into messages, so the sample is small: 3 % (≈3,000 of 100k) fits a Micro database in ~1 s.
 export const SAMPLE_PERCENT=3;
+// «Datos hasta» de conversaciones = fecha del mensaje n.º 200 más reciente (no la marca del resumen precomputado ni el último mensaje suelto):
+// tras el corte de una carga masiva suele quedar un goteo de mensajes sueltos (p. ej. hilos viejos de HubSpot que reciben eventos) que no cubre el mes.
+// Es un recorrido hacia atrás del índice messages(tenant_id, occurred_at, id): ~0.4 ms y acotado por OFFSET.
+export const ANCLA_MENSAJES=200;
+export const LAST_MESSAGE_SQL=`SELECT occurred_at AS last_at FROM public.messages WHERE tenant_id=$1 AND deleted_at IS NULL AND occurred_at IS NOT NULL AND occurred_at<=now() ORDER BY occurred_at DESC OFFSET ${ANCLA_MENSAJES-1} LIMIT 1`;
 /** Fecha más reciente de una lista (Date o ISO); null si no hay ninguna. */
 const maxDate=(xs)=>{const t=xs.filter(x=>x!==null&&x!==undefined).map(x=>Date.parse(x instanceof Date?x.toISOString():String(x))).filter(Number.isFinite);return t.length?new Date(Math.max(...t)).toISOString():null;};
 export function createTrendsRepository({database,now=()=>new Date(),timeoutMs=LOCAL_TIMEOUT_MS}){
@@ -40,6 +45,7 @@ export function createTrendsRepository({database,now=()=>new Date(),timeoutMs=LO
     const args=[win.start.toISOString(),win.end.toISOString()];
     const exact=probe!==null&&probe<=3000;
     const rowsRaw=useConvSum||probe===null?null:await guarded(s,async()=>(await s.query(exact?dated('public.conversations c'):dated(`public.conversations c TABLESAMPLE BERNOULLI (${SAMPLE_PERCENT}) REPEATABLE (7)`),[s.tenantId,...args])).rows,timeoutMs);
+    const convLast=useConvSum?await guarded(s,async()=>(await s.query(LAST_MESSAGE_SQL,[s.tenantId])).rows[0]?.last_at??null,timeoutMs):null;
     const useLedSum=ledSum.availability==='ready';
     // Fecha efectiva más reciente del libro (pedidos/reembolsos): es lo que dice hasta dónde llegan los datos. Con resumen, una consulta acotada; si no cabe, se usa la marca de agua del resumen.
     const ledLast=useLedSum?await guarded(s,async()=>(await s.query("SELECT max(effective_at) AS last_at FROM public.economic_ledger_entries WHERE tenant_id=$1 AND kind IN ('order','refund')",[s.tenantId])).rows[0]?.last_at??null,timeoutMs):undefined;
@@ -53,7 +59,7 @@ export function createTrendsRepository({database,now=()=>new Date(),timeoutMs=LO
     let conversations;
     const rowsOf=rowsRaw,factor=exact?1:100/SAMPLE_PERCENT,definition='started_at_or_first_message';
     if(useConvSum){const by=new Map(convSum.months.map(m=>[m.month,m.n])),inWindow=win.list.reduce((a,m)=>a+(by.get(m)??0),0),meta=summaryMeta(convSum),fresh=convSum.freshness==='fresh';
-     conversations={status:convSum.total===0?'empty':'ok',class:fresh?'observed':'estimated',sampled:false,samplePercent:null,definition,sampleNote:null,series:win.list.map(m=>({month:m,count:by.get(m)??0})),outsideWindow:convSum.total-inWindow,undated:convSum.undated,total:convSum.total,summary:meta,completeness:completitud(win.list.map(m=>({month:m,count:by.get(m)??0})),{dataThrough:meta.cutoff,ahora:now()})};}
+     conversations={status:convSum.total===0?'empty':'ok',class:fresh?'observed':'estimated',sampled:false,samplePercent:null,definition,sampleNote:null,series:win.list.map(m=>({month:m,count:by.get(m)??0})),outsideWindow:convSum.total-inWindow,undated:convSum.undated,total:convSum.total,summary:meta,completeness:completitud(win.list.map(m=>({month:m,count:by.get(m)??0})),{dataThrough:convLast??meta.cutoff,ahora:now()})};}
     else if(rowsOf===null)conversations={status:'timeout',class:'observed',series:[],outsideWindow:null,undated:null,total:null,sampled:false,definition,summary:summaryMeta(convSum)};
     else{const by=new Map(rowsOf.filter(r=>r.month).map(r=>[r.month,Math.round(Number(r.n)*factor)])),outside=Math.round(rowsOf.filter(r=>!r.month).reduce((a,r)=>a+Number(r.n),0)*factor),undated=Math.round(rowsOf.reduce((a,r)=>a+Number(r.undated),0)*factor),total=Math.round(rowsOf.reduce((a,r)=>a+Number(r.n),0)*factor);
      conversations={status:total===0?'empty':'ok',class:exact?'observed':'estimated',sampled:!exact,samplePercent:exact?null:SAMPLE_PERCENT,definition,sampleNote:exact?null:`Estimado con una muestra del ${SAMPLE_PERCENT} % de las conversaciones: fechar todas (por su primer mensaje) no cabe en el tiempo permitido.`,series:win.list.map(m=>({month:m,count:by.get(m)??0})),outsideWindow:outside,undated,total,summary:summaryMeta(convSum),completeness:completitud(win.list.map(m=>({month:m,count:by.get(m)??0})),{dataThrough:maxDate(rowsOf.map(r=>r.last_at)),ahora:now()})};}

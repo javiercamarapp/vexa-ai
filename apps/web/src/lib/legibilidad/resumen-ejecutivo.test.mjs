@@ -51,3 +51,9 @@ test('fuentes: «6 de 7», análisis incorporado y «datos hasta» con su propia
  assert.equal(e.cortes.find(c=>c.etiqueta==='Libro de pedidos').dia,'5 oct 2026');assert.equal(e.cortes.find(c=>c.etiqueta==='Conversaciones').dia,null);
  assert.equal(estadoFuentes(null).cargadas,null);
 });
+
+test('datos hasta el 18-sep (último mensaje real): septiembre es parcial, sin flecha ni delta; agosto sigue siendo el último mes completo',()=>{
+ const k=kpiConversaciones({status:'ok',class:'observed',series:REAL,completeness:{dataThrough:'2026-09-18'}},AHORA);
+ assert.equal(k.delta,null);assert.equal(k.mes,'2026-08');assert.equal(k.valor,2576);assert.deepEqual(k.coberturaParcial,['septiembre']);assert.equal(k.datosHasta,'2026-09-18');
+ assert.equal(k.rotulo,'Cobertura parcial en septiembre (datos hasta el 18 de septiembre); sin comparación');
+});

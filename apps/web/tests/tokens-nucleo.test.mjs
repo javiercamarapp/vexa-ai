@@ -42,6 +42,6 @@ test('h1 con tracking -0.02em y cifras tabulares globales', () => {
 });
 test('titular de Fuga: cifra en tinta plena (nunca gris), 40-56 px y peso 600', () => {
   const css = readFileSync(join(src, 'components/refunds/fuga.css'), 'utf8');
-  const r = /\.workspace-content \.fg-big\{([^}]*)\}/.exec(css)[1];
+  const r = /\.workspace-content \.fg-big(?:,\.workspace-content section>p\.fg-big)?\{([^}]*)\}/.exec(css)[1];
   assert.match(r, /color:var\(--ink\)/); assert.match(r, /font:600 clamp\(40px,6vw,56px\)/);
 });

@@ -15,14 +15,14 @@ test('Interno solo con acceso de plataforma; un propietario cliente no lo ve', (
 test('Administración solo propietarios; Dinero solo propietario y analista', () => {
   for (const role of ['analyst', 'operator', 'viewer', undefined]) assert.ok(!etiquetas({role}).includes('Administración'), String(role));
   assert.ok(etiquetas({role: 'owner'}).includes('Administración'));
-  for (const role of ['owner', 'analyst']) assert.ok(hrefs({role}).includes('/economics') && hrefs({role}).includes('/cfo') && hrefs({role}).includes('/refunds'));
-  for (const role of ['operator', 'viewer', undefined]) assert.ok(!hrefs({role}).includes('/economics') && !hrefs({role}).includes('/cfo') && !hrefs({role}).includes('/refunds'));
+  for (const role of ['owner', 'analyst']) assert.ok(hrefs({role}).includes('/economics') && hrefs({role}).includes('/cfo') && hrefs({role}).includes('/refunds') && hrefs({role}).includes('/gaps'));
+  for (const role of ['operator', 'viewer', undefined]) assert.ok(!hrefs({role}).includes('/economics') && !hrefs({role}).includes('/cfo') && !hrefs({role}).includes('/refunds') && !hrefs({role}).includes('/gaps'));
 });
 test('Notificaciones y Gestionar problemas ya no son ítems; Gestión económica pasa a Dinero > Preparar', () => {
   const todos = todosLosItems().map(({item}) => item.href);
   assert.ok(!todos.includes('/notifications') && !todos.includes('/problems/manage'));
   const dinero = MENU.find((e) => e.clave === 'dinero');
-  assert.deepEqual(dinero.items.map((i) => [i.href, i.etiqueta]), [['/cfo', 'Panorama'], ['/refunds', 'Fuga de reembolsos'], ['/economics', 'Preparar']]);
+  assert.deepEqual(dinero.items.map((i) => [i.href, i.etiqueta]), [['/cfo', 'Panorama'], ['/gaps', 'Brechas de ingreso'], ['/refunds', 'Fuga de reembolsos'], ['/economics', 'Preparar']]);
 });
 test('ítem activo: /jobs/:id -> Importaciones, /analysis/:id -> Análisis, /problems/manage -> Problemas, el más específico gana', () => {
   const act = (p) => itemActivo(p)?.item.href;
@@ -34,7 +34,7 @@ test('ítem activo: /jobs/:id -> Importaciones, /analysis/:id -> Análisis, /pro
   assert.equal(itemActivo('/notifications'), null); assert.equal(itemActivo('/ruta-rara'), null);
 });
 test('ninguna ruta del menú anterior se pierde: todas siguen teniendo ítem o título propio', () => {
-  for (const ruta of ['/overview', '/problems', '/problems/manage', '/recommendations', '/explorer', '/preguntale', '/interventions', '/briefs', '/cfo', '/refunds', '/analysis', '/imports', '/connections', '/sources', '/history', '/evaluation', '/evaluation/candidates', '/migrations', '/economics', '/notifications', '/settings/notifications', '/settings/team', '/settings/retention', '/settings/notification-delivery', '/notifications/push', '/jobs/setup', '/customers/1'])
+  for (const ruta of ['/overview', '/problems', '/problems/manage', '/recommendations', '/explorer', '/preguntale', '/interventions', '/briefs', '/cfo', '/gaps', '/refunds', '/analysis', '/imports', '/connections', '/sources', '/history', '/evaluation', '/evaluation/candidates', '/migrations', '/economics', '/notifications', '/settings/notifications', '/settings/team', '/settings/retention', '/settings/notification-delivery', '/notifications/push', '/jobs/setup', '/customers/1'])
     assert.notEqual(tituloDePantalla(ruta), 'Espacio de trabajo', ruta);
 });
 test('estado recordado: solo claves de grupo válidas; texto roto = todos abiertos', () => {

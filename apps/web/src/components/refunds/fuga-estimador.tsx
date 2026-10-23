@@ -6,7 +6,7 @@ import {Icon} from '../ui/icons';
 import {dinero,estimar,formulaA,formulaB,num,porcentaje,usd,usdNum} from './fuga-modelo.mjs';
 import './fuga.css';
 
-function Campo({etiqueta,ayuda,valor,onChange,sufijo,modo,entrada}:{etiqueta:string;ayuda:string;valor:string;onChange:(v:string)=>void;sufijo:string;modo:'decimal'|'numeric';entrada:{error?:string}}){
+export function Campo({etiqueta,ayuda,valor,onChange,sufijo,modo,entrada}:{etiqueta:string;ayuda:string;valor:string;onChange:(v:string)=>void;sufijo:string;modo:'decimal'|'numeric';entrada:{error?:string}}){
  const id=useId();
  return <div className="fg-campo"><label htmlFor={id}>{etiqueta}</label>
   <div className="fg-campo-in"><input id={id} inputMode={modo} autoComplete="off" value={valor} onChange={e=>onChange(e.target.value)} aria-describedby={id+'-a'} aria-invalid={entrada.error?true:undefined} placeholder="Escribe tu supuesto"/><span aria-hidden="true">{sufijo}</span></div>

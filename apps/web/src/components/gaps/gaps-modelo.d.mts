@@ -1,0 +1,14 @@
+import type {BrechasVista, FilaFamilia} from '../../../../../packages/workspace-service/brechas.mjs';
+export {NOMBRE, usd, num, pct, mesCorto, mesLargo, dia} from '../refunds/fuga-modelo.mjs';
+export {porcentaje, dinero, estimar, formulaA, usdNum} from '../refunds/fuga-modelo.mjs';
+export const TIPO_REC: Readonly<Record<string, string>>;
+export const CALIDAD_TXT: Readonly<Record<string, string>>;
+export const variacion: (p: number | null | undefined) => string;
+export function periodoIngresos(v: BrechasVista | null): {etiqueta: string; ventanas: string[]; linea: string} | null;
+export function lineaCobertura(v: BrechasVista | null): string;
+export function fraseConcentracionIngreso(v: BrechasVista | null): string | null;
+export function fraseConcentracionReembolsos(v: BrechasVista | null): string | null;
+export function frasesMesContraMes(v: BrechasVista | null): string[];
+export const mesesExcluidos: (v: BrechasVista | null) => string[];
+export function textoAvance(f: {progreso: BrechasVista['familias']['progreso']} | null | undefined): string;
+export type {FilaFamilia};

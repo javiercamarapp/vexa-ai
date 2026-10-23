@@ -17,7 +17,7 @@ import {createRevenueGapsRepository} from '../brechas.mjs';
 const pg = createRequire(import.meta.url)('pg');
 const SKIP = !pgAvailable() && 'sin postgres local';
 const MIG0 = path.join(HERE, '../../../supabase/migrations/20261104000000_insights_engine.sql');
-const UP = path.join(HERE, '../../../supabase/propuestas/20261110000000_insight_gaps.sql');
+const UP = path.join(HERE, '../../../supabase/migrations/20261110000000_insight_gaps.sql');
 const DOWN = path.join(HERE, '../../workspace-service/tests/20261110000000_insight_gaps.down.sql');
 
 /** Pedidos deterministas: [{i, ext, ch, sku, month, cur, amt, status, rev}] */

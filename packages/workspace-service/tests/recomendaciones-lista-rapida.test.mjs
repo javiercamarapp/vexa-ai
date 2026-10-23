@@ -57,7 +57,7 @@ test('Lista de recomendaciones: sin verificación completa; get() la hace al abr
       });
 
       await t.test('fail-closed: con la evidencia alterada la lista conserva la tarjeta pero get() no muestra citas (403)', async () => {
-        const rev = psql(`select r.id from public.problem_embedding_members m join public.extraction_runs x on x.id=m.extraction_run_id, lateral jsonb_array_elements(x.provenance->'input_manifest') e join public.message_revisions r on r.id=(e->>'message_revision_id')::uuid where m.problem_id='${catalog[0].id}' limit 1`).trim();
+        const rev = psql(`select r.id from public.problem_embedding_members m join public.extraction_runs x on x.id=m.extraction_run_id, lateral jsonb_array_elements(x.provenance->'input_manifest') e join public.message_revisions r on r.id=(e->>'message_revision_id')::uuid where m.problem_id='${catalog[0].id}' and m.extraction_run_id in (${saved.evidenceRefs.map(e => `'${e.runId}'`).join(',')}) limit 1`).trim(); // una corrida CITADA por la recomendación guardada: get() verifica solo las citas guardadas (acotado desde 3220460), alterar una de ellas debe seguir fallando cerrado
         const r = psqlFile(h.sock, `set session_replication_role=replica; update public.message_revisions set redacted_text=redacted_text||' alterado' where id='${rev}'`); assert.equal(r.status, 0);
         const repo = createRecommendationRepository({database: base()});
         assert.ok((await repo.list({query: sp})).items.some(i => i.id === saved.id), 'la lista no re-verifica: sigue mostrando el vínculo guardado');

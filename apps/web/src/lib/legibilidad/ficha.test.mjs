@@ -22,6 +22,15 @@ test('la serie rotula los meses incompletos y el cambio mensual los excluye', ()
   assert.equal(cambioMensual([{month:'a',value:0,partial:false},{month:'b',value:5,partial:false}]).pct,null,'base cero: sin porcentaje');
   assert.equal(cambioMensual([{month:'a',value:3,partial:false}]),null);
 });
+test('A2: un mes sin datos (posterior al último dato cargado o en curso) es «sin datos», nunca 0 ni −100 %', () => {
+  const v = {status: 'ok', series: [{month: '2026-07', conversations: 120}, {month: '2026-08', conversations: 137}, {month: '2026-09', conversations: 90}, {month: '2026-10', conversations: 0}], completeness: {dataThrough: '2026-09-18', partialMonths: ['2026-09']}};
+  const s = serieConversaciones(v, new Date('2026-10-23T12:00:00Z'));
+  assert.deepEqual(s.map(p => [p.month, p.value, p.sinDatos]), [['2026-07', 120, false], ['2026-08', 137, false], ['2026-09', 90, false], ['2026-10', null, true]]);
+  const c = cambioMensual(s);
+  assert.equal(c.de.month, '2026-07'); assert.equal(c.a.month, '2026-08'); assert.equal(c.pct, 14.2, 'jul->ago entre meses completos; octubre ni septiembre entran');
+  const sin = serieConversaciones({status: 'ok', series: [{month: '2026-08', conversations: 137}, {month: '2026-09', conversations: 0}, {month: '2026-10', conversations: 0}], completeness: {dataThrough: '2026-08-31', partialMonths: []}}, new Date('2026-11-05T00:00:00Z'));
+  assert.deepEqual(sin.map(p => p.sinDatos), [false, true, true]); assert.equal(cambioMensual(sin), null, 'con un solo mes con datos no hay cambio');
+});
 test('intervención: sin intervención solo cuando hay recomendación; el encabezado traduce categoría y motivo', () => {
   assert.equal(estadoIntervencion(null),null);
   assert.equal(estadoIntervencion({intervention:null}),'Sin intervención');

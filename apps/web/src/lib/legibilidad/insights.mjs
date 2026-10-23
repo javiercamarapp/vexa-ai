@@ -126,7 +126,7 @@ export function insightsProblemaSerie(vista,ahora=new Date()){
   const pico=serie.reduce((b,p)=>!b||p.count>b.count?p:b,null);
   out.push({id:'pico',texto:`En los últimos ${vista.window?.months??12} meses hay **${nfEs.format(enVentana)}** ${enVentana===1?'incidencia':'incidencias'} vinculadas a este problema; el mes con más fue **${mesCorto(pico.month)}** con **${nfEs.format(pico.count)}**.`,fuente,cobertura:cobFechas.join(' '),clase:'inferred'});
  }else out.push({id:'pico',vacio:true,razon:`Hay ${nfEs.format(vista.total)} incidencias, pero ninguna dentro de la ventana de ${vista.window?.months??12} meses.`,fuente});
- const par=dosMesesCompletos(serie,ahora);
+ const par=dosMesesCompletos(serie,ahora,vista.completeness??null);
  if(par){const [a,b]=par,v=variacion(String(b.count),String(a.count));
   out.push(v?{id:'cambio',texto:`Las incidencias ${frase(v,'subieron','bajaron','se mantuvieron')} de **${nfEs.format(a.count)}** en ${mesLargo(a.month)} a **${nfEs.format(b.count)}** en ${mesLargo(b.month)} (${etiquetaVar(v)}).`,fuente,cobertura:'Compara dos meses completos; el mes en curso se excluye. Es una asociación temporal, no una causa.',clase:'inferred'}
    :{id:'cambio',vacio:true,razon:`${mesLargo(a.month)} no tiene incidencias: no hay base honesta para calcular un porcentaje.`,fuente});}

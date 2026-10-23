@@ -242,3 +242,9 @@ test('la bajada de Problemas no promete ordenar por ingresos si no hay importe (
  assert.match(lineaProblemas(false),/ordenados por conversaciones/);assert.doesNotMatch(lineaProblemas(false),/ingresos expuestos/);
  assert.match(lineaProblemas(true),/ordenados por ingresos expuestos/);assert.doesNotMatch(lineaProblemas(null),/ingresos expuestos|por conversaciones/);
 });
+
+test('A2 (incidencias): el cambio entre meses completos respeta el último dato cargado; un mes posterior no es un 0 comparable',()=>{
+ const v={status:'ok',total:300,outsideWindow:0,undated:0,linkedRuns:2,window:{months:4},series:[{month:'2026-07',count:100},{month:'2026-08',count:137},{month:'2026-09',count:60},{month:'2026-10',count:0}],completeness:{dataThrough:'2026-09-18',partialMonths:['2026-09']}};
+ const c=insightsProblemaSerie(v,new Date('2026-11-05T00:00:00Z')).find(i=>i.id==='cambio');
+ assert.match(c.texto,/de \*\*100\*\* en julio de 2026 a \*\*137\*\* en agosto de 2026/);assert.doesNotMatch(c.texto,/octubre/);
+});

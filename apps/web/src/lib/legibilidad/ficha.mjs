@@ -16,11 +16,17 @@ export function resumenAdjuntos(att){
  const nota=att.cobertura&&att.cobertura.total>0?`Solo ${nf.format(att.cobertura.enlazados)} de ${nf.format(att.cobertura.total)} adjuntos de conversación están enlazados a una conversación; la cifra no incluye el resto.`:null;
  return {valor:att.total,detalle:att.total>0?partes.join(' · ')+` en ${nf.format(att.conversaciones)} ${att.conversaciones===1?'conversación':'conversaciones'}`:'Ninguno enlazado a las conversaciones de este grupo',nota};
 }
-/** Serie mensual de conversaciones del grupo para la gráfica; los meses incompletos (completeness.partialMonths) quedan rotulados y NO entran en la comparación. */
-export function serieConversaciones(vista){
+/** Serie mensual de conversaciones del grupo para la gráfica; los meses incompletos (completeness.partialMonths) quedan rotulados y NO entran en la comparación.
+ *  Un mes POSTERIOR al último dato cargado (completeness.dataThrough) o el mes en curso sin registros es «sin datos» (sinDatos, value null): nunca un 0 comparable. */
+export function serieConversaciones(vista,ahora=new Date()){
  if(!vista||vista.status!=='ok'||!Array.isArray(vista.series))return null;
  const parciales=new Set(vista.completeness?.partialMonths??[]);
- return vista.series.map(p=>({month:p.month,value:Number.isFinite(p.conversations)?p.conversations:null,partial:parciales.has(p.month)}));
+ const hasta=typeof vista.completeness?.dataThrough==='string'?vista.completeness.dataThrough.slice(0,7):null,mesActual=ahora.toISOString().slice(0,7);
+ return vista.series.map(p=>{
+  const value=Number.isFinite(p.conversations)?p.conversations:null;
+  const sinDatos=!parciales.has(p.month)&&((hasta!==null&&p.month>hasta)||(p.month>=mesActual&&!(value>0)));
+  return {month:p.month,value:sinDatos?null:value,partial:parciales.has(p.month)||sinDatos,sinDatos};
+ });
 }
 /** Cambio entre los dos últimos meses COMPLETOS con datos: null si no hay base honesta. */
 export function cambioMensual(serie){

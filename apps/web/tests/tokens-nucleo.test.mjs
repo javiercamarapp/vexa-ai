@@ -19,11 +19,11 @@ test('rojo señal: un solo valor #E8241C en ambos temas; #FF5A52 retirado', () =
   for (const f of todos()) assert.ok(!/ff5a52/i.test(readFileSync(f, 'utf8')), 'queda #ff5a52 en ' + f);
   assert.equal(tok('ui-highlight'), '#e8241c'); assert.equal(tok('chart-accent'), '#e8241c');
 });
-test('radios: conjunto cerrado (3-4 barra, 8 tooltip, 10, 16, 999, 50 %), sin 6/9/12/14/18 px sueltos fuera del login', () => {
+test('radios: conjunto cerrado {8 controles, 12 tarjetas, 999 chips, 50 %}, sin otros px sueltos fuera del login', () => {
   const malos = [];
   for (const f of todos()) for (const l of readFileSync(f, 'utf8').split('\n')) {
     if (/^\.login|\.access-symbol/.test(l)) continue;
-    for (const m of l.matchAll(/border-radius:\s*(6|9|12|14|18)px/g)) malos.push(f.replace(src, '') + ' ' + m[0]);
+    for (const m of l.matchAll(/border-radius:\s*(1|2|3|4|5|6|7|9|10|11|13|14|15|16|18|20|22|24)px/g)) malos.push(f.replace(src, '') + ' ' + m[0]);
   }
   assert.deepEqual(malos, []);
 });
@@ -40,8 +40,8 @@ test('h1 con tracking -0.02em y cifras tabulares globales', () => {
   const g = css('app/globals.css');
   assert.match(g, /\.workspace-shell h1 \{[^}]*letter-spacing:-\.02em/); assert.match(g, /font-variant-numeric:tabular-nums/);
 });
-test('titular de Fuga: cifra en tinta plena (nunca gris), 40-56 px y peso 600', () => {
+test('titular de Fuga: cifra en tinta plena (nunca gris), 24-28 px y peso 600 (escala compacta)', () => {
   const css = readFileSync(join(src, 'components/refunds/fuga.css'), 'utf8');
   const r = /\.workspace-content \.fg-big(?:,\.workspace-content section>p\.fg-big)?\{([^}]*)\}/.exec(css)[1];
-  assert.match(r, /color:var\(--ink\)/); assert.match(r, /font:600 clamp\(40px,6vw,56px\)/);
+  assert.match(r, /color:var\(--ink\)/); assert.match(r, /font:600 clamp\(24px,3vw,28px\)/);
 });

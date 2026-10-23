@@ -1,6 +1,6 @@
 /* Primitivos compartidos (PageHeader, FilterBar, Chip, Notice, Card, KpiStrip, DataTable, estados). Se carga DESPUÉS de app/ui.css.
    Solo selectores de clase simples: ninguna regla global de globals.css debe ganar a estos (ver docs/SISTEMA-UI.md). Escala de 4 px; mínimo 12 px; hover nunca rojo. */
-:root{--ui-rhythm:24px;--ui-ctl-h:30px}
+:root{--ui-rhythm:16px;--ui-ctl-h:30px}
 .ui-reset{all:revert-layer}
 /* Ritmo vertical */
 .ui-stack{display:flex;flex-direction:column;gap:var(--ui-rhythm);min-width:0}
@@ -77,3 +77,53 @@
 .ui-filterbar-search{flex:0 0 220px;width:220px;min-width:160px}
 .ui-filterbar select{flex:none;width:auto;max-width:240px;min-width:0}
 .ui-filterbar input{flex:none}
+/* ---- Paleta de datos categórica (validada con validate_palette de la skill dataviz; ver docs/SISTEMA-UI.md) ---- */
+:root{--chart-1:#2a78d6;--chart-2:#eb6834;--chart-3:#1baf7a;--chart-4:#eda100;--chart-5:#e87ba4;--chart-6:#008300;--chart-7:#6250d6;--chart-8:#00a0b8;
+ --soft-1:#e6eefa;--soft-2:#fdebe3;--soft-3:#e1f5ee;--soft-4:#fdf2da;--soft-5:#fcebf1;--soft-6:#dff0df;--soft-7:#e9e6f9;--soft-8:#dff3f6}
+:root[data-theme=dark]{--chart-1:#3987e5;--chart-2:#d95926;--chart-3:#199e70;--chart-4:#c98500;--chart-5:#d55181;--chart-6:#008300;--chart-7:#9085e9;--chart-8:#00a0b8;
+ --soft-1:#1a2433;--soft-2:#2e211b;--soft-3:#14261f;--soft-4:#2b2314;--soft-5:#2e1c25;--soft-6:#12240f;--soft-7:#23203a;--soft-8:#0f2529}
+/* Chips por categoría con su color suave: <Chip categoria={n}> */
+.ui-chip[data-cat]{border-color:transparent;color:var(--ink)}
+.ui-chip[data-cat="1"]{background:var(--soft-1)}.ui-chip[data-cat="2"]{background:var(--soft-2)}.ui-chip[data-cat="3"]{background:var(--soft-3)}.ui-chip[data-cat="4"]{background:var(--soft-4)}
+.ui-chip[data-cat="5"]{background:var(--soft-5)}.ui-chip[data-cat="6"]{background:var(--soft-6)}.ui-chip[data-cat="7"]{background:var(--soft-7)}.ui-chip[data-cat="8"]{background:var(--soft-8)}
+.ui-chip[data-cat]::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--cat);flex:none}
+/* Gráficas pequeñas */
+.mc{display:flex;flex-direction:column;gap:8px;min-width:0}
+.mc-stack{display:flex;gap:2px;border-radius:8px;overflow:hidden}
+.mc-seg{display:flex;align-items:center;justify-content:center;min-width:3px;background:var(--c);color:#fff;font-size:12px;transform-origin:left;animation:mc-grow 480ms var(--ui-ease) both}
+.mc-seg b{font-weight:600;font-variant-numeric:tabular-nums;text-shadow:0 0 2px #0006}
+.mc-seg[data-estado=parcial]{background-image:repeating-linear-gradient(45deg,#fff5 0 2px,transparent 2px 6px)}
+.mc-seg[data-estado=estimado]{background:transparent;border:1.5px dashed var(--c);color:var(--ink)}
+.mc-seg[data-estado=desconocido]{background:transparent;border:1.5px dotted var(--ui-line-strong);color:var(--muted)}
+.mc-vacio{height:18px;border:1.5px dotted var(--ui-line-strong);border-radius:8px}
+.mc-leyenda{display:flex;flex-wrap:wrap;gap:4px 12px;margin:0;padding:0;list-style:none;font-size:12px;color:var(--ui-secondary)}
+.mc-leyenda li{display:inline-flex;align-items:center;gap:6px;margin:0}.mc-leyenda i{width:8px;height:8px;border-radius:50%;flex:none}
+.mc-dona{flex-direction:row;align-items:center;gap:12px;position:relative}.mc-dona .mc-leyenda{flex-direction:column}
+.mc-centro{position:absolute;left:0;top:0;width:72px;height:72px;display:flex;align-items:center;justify-content:center;font:600 13px var(--font-ui);pointer-events:none}
+.mc-arc,.mc-bar,.mc-line,.mc-area{transform-box:fill-box}
+.mc-bar{transform-origin:bottom;animation:mc-up 480ms var(--ui-ease) both}
+.mc-line{stroke-dashoffset:0}.mc-area{animation:mc-fade 600ms ease both}
+.mc-arc{animation:mc-fade 500ms ease both}
+.mc-tree{display:flex;flex-direction:column;gap:2px}.mc-tree-row{display:flex;gap:2px;min-height:0}
+.mc-tree-cell{display:flex;flex-direction:column;justify-content:center;gap:2px;min-width:0;padding:4px 8px;border-left:3px solid;border-radius:8px;overflow:hidden;font-size:12px}
+.mc-tree-cell b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mc-tree-cell small{color:var(--muted);font-variant-numeric:tabular-nums}
+.mc-bullet-track{position:relative;display:block;height:8px;border-radius:999px;background:var(--ui-soft)}
+.mc-bullet-bar{position:absolute;left:0;top:0;bottom:0;border-radius:999px;animation:mc-grow 480ms var(--ui-ease) both;transform-origin:left}
+.mc-bullet-target{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink)}
+@keyframes mc-grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes mc-up{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes mc-fade{from{opacity:0}}
+@media(prefers-reduced-motion:reduce){.mc-seg,.mc-bar,.mc-area,.mc-arc,.mc-bullet-bar{animation:none}}
+/* Acento de color propio por KPI (filete superior) */
+.ui-kpi[data-c]{border-top:3px solid var(--cat)}
+.ui-kpi-row{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;min-width:0}
+.spark[data-c] .spark-line{stroke:var(--spark)}.spark[data-c] .spark-area{fill:var(--spark);opacity:.12}.spark[data-c] .spark-dot{fill:var(--spark)}
+/* ---- Compacidad: padding 12–16, gaps 12–16, filas 36–40 ---- */
+.stat-grid,.cards-grid,.split{gap:12px}
+.stat-card{padding:12px 16px;gap:4px}
+.ui-card,.ui-kpi{padding:12px 16px;border-radius:12px}
+.ui-kpi{gap:2px}
+.workspace-content .card,.workspace-content .record-card{padding:12px 16px}
+.ui-table td{padding:8px 12px}.ui-table thead th{padding:8px 12px}
+.workspace-shell .workspace-content{padding-inline:24px}
+.ui-card-head{margin:0 0 8px}

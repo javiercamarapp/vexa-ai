@@ -9,8 +9,9 @@ const mayor = (a, b) => { for (let i = 0; i < 3; i++) if (a[i] !== b[i]) return 
 test('el titular de Fuga usa --ink y su selector gana a la regla de párrafo gris de globals.css', () => {
   const regla = css.match(/(\.workspace-content \.fg-big,[^{]*)\{margin:0;color:var\(--ink\)/);
   assert.ok(regla, 'regla del titular con color --ink');
-  const gris = globals.match(/(\.workspace-content :where\(section,article,fieldset\)>p:first-of-type)\s*\{\s*color:var\(--muted\)/);
-  assert.ok(gris, 'regla gris de globals.css');
+  // Desde el sistema de UI la regla gris de globals.css es de especificidad CERO (:where completo): cualquier clase de componente la supera.
+  const gris = globals.match(/(:where\(\.workspace-content :where\(section,article,fieldset\):not\(\.ui-reset\)\)>p:first-of-type)\s*\{\s*color:var\(--muted\)/);
+  assert.ok(gris, 'regla gris de globals.css (en :where)');
   const selectores = regla[1].split(','), mejor = selectores.map(especificidad).reduce((m, e) => mayor(e, m) ? e : m, [0, 0, 0]);
-  assert.ok(mayor(mejor, especificidad(gris[1])), `la especificidad del titular ${mejor} debe superar a ${especificidad(gris[1])}`);
+  assert.ok(mayor(mejor, [0, 1, 1]) || mejor[1] >= 2, `la especificidad del titular ${mejor} debe superar a la regla gris (0,1,1)`);
 });

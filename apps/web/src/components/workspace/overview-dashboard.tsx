@@ -89,7 +89,7 @@ export function OverviewDashboard({bundle,pinned,avisos=[],cache}:{bundle:Bundle
  const cc=bundle.meta.critical_counts??null,conteoCriticos=crit.datos?{groups:crit.datos.groups??0,signals:crit.datos.signals}:cc&&typeof cc.groups==='number'?{groups:cc.groups,signals:cc.signals??null}:null;
  const cmpPedidos=kp?cmpOf('orders',kp.currency):null;
  // «No disponible ahora» solo si la lectura ya terminó y falló; mientras sigue en vuelo la cifra es un esqueleto (no parece incompleto).
- const cargT=trends.busy&&!trends.data,cargC=cobertura.busy&&!cobertura.data,NA=<strong>No disponible ahora</strong>,Esp=<CifraCargando/>;
+ const cargT=trends.busy&&!trends.data,NA=<strong>No disponible ahora</strong>,Esp=<CifraCargando/>;
  // Una sola línea para todo lo que salió de la caché (en vez de una por tarjeta): la más antigua manda.
  const lecturas=[trends,probs,cats,cobertura,...(cache?[cache]:[])],conCache=lecturas.filter(l=>l.edadMs!==null),edadMax=conCache.length?Math.max(...conCache.map(l=>l.edadMs as number)):null,algunaActualizando=conCache.some(l=>l.actualizando),algunaVieja=lecturas.some(l=>l.viejo);
  const kpis=[

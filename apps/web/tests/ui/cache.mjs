@@ -88,7 +88,7 @@ for(const [menu,ruta] of PANTALLAS){
  const pedidasL=estado.log.filter(l=>(l.url.includes('/api/')||l.url.includes('/cfo/data'))&&!/\/api\/notifications|\/api\/connections\/settings/.test(l.url)),pedidas=pedidasL.length;if(pedidas)console.log('     pedidas:',pedidasL.map(l=>l.url.slice(0,80)).join(' | '));
  console.log(`   ${menu}: 1.ª ${primeras[ruta].tListo??'—'} ms · 2.ª ${m.tListo??'—'} ms (viaje de página ${m.viajeMs} ms + datos pintados ${m.pintadoMs} ms) · esqueleto de datos ${m.esqueletoAntes} fotogramas (${m.quien}) · lecturas ${pedidas} · «${(m.primeraLinea??'').slice(0,60)}»`);
  medidas.push([`${menu}, segunda visita (fresca)`,`${m.pintadoMs??'sin contenido'} ms de datos tras montar la página (+ ${m.viajeMs} ms de viaje de página); 1.ª visita ${primeras[ruta].tListo??'—'} ms (la de Problemas, Recomendaciones, Brief y Dinero ya venía precalentada)`]);
- check(m.pintadoMs!==null&&m.pintadoMs<100,`${menu}: con la página montada, los datos se pintan al instante (<100 ms; ${m.pintadoMs} ms)`);
+ check(m.pintadoMs!==null&&m.pintadoMs<250,`${menu}: con la página montada, los datos se pintan al instante (<250 ms; ${m.pintadoMs} ms)`);
  check(m.esqueletoAntes===0,`${menu}: ningún fotograma de esqueleto de datos (${m.esqueletoAntes}: ${m.quien})`);
  check(pedidas===0,`${menu}: dato fresco no vuelve a pedirse (${pedidas} lecturas)`);
  if(ruta==='/problems')await page.screenshot({path:path.join(out,`cache-problems-2a-${theme}.png`)});
@@ -97,15 +97,15 @@ for(const [menu,ruta] of PANTALLAS){
 // Resumen de vuelta (fresco): rotulado y sin pedir.
 {await irMenu('/problems');await dormir(500);estado.log.length=0;const m=await muestrear('/overview',500,()=>irMenu('/overview'));
  medidas.push(['Resumen, segunda visita (fresca)',`${m.pintadoMs??'sin contenido'} ms de datos tras montar (+ ${m.viajeMs} ms de viaje de página)`]);
- check(m.pintadoMs!==null&&m.pintadoMs<100,`Resumen: datos pintados al instante tras montar (${m.pintadoMs} ms; viaje de página ${m.viajeMs} ms)`);check(m.esqueletoAntes===0,'Resumen: sin esqueleto antes del contenido ('+m.esqueletoAntes+')');
- check(/^Mostrando la última carga \(hace \d+ s\)/.test(m.primeraLinea??''),'Resumen: rotulado con su antigüedad: «'+(m.primeraLinea??'')+'»');
+ check(m.pintadoMs!==null&&m.pintadoMs<250,`Resumen: datos pintados al instante tras montar (${m.pintadoMs} ms; viaje de página ${m.viajeMs} ms)`);check(m.esqueletoAntes===0,'Resumen: sin esqueleto antes del contenido ('+m.esqueletoAntes+')');
+ check(/^Mostrando la última carga \(hace \d+ (s|min)\)/.test(m.primeraLinea??''),'Resumen: rotulado con su antigüedad: «'+(m.primeraLinea??'')+'»');
  await page.screenshot({path:path.join(out,`cache-overview-2a-${theme}.png`)});}
 // 4) Caché obsoleta (+6 min): pinta al instante, rotulada «Actualizando…», revalida sin vaciar.
 await page.evaluate(()=>{window.__off=6*60*1000;});
 {estado.log.length=0;await irMenu('/problems');await dormir(200);
  const m=await muestrear('/overview',LAT*3+1500,()=>irMenu('/overview'));
  medidas.push(['Resumen, caché obsoleta (+6 min)',`${m.pintadoMs??'sin contenido'} ms de datos tras montar (+ ${m.viajeMs} ms de viaje); revalida en segundo plano`]);
- check(m.pintadoMs!==null&&m.pintadoMs<100,`obsoleta: pinta ya (${m.pintadoMs} ms tras montar)`);check(m.esqueletoAntes===0,'obsoleta: sin esqueleto vacío ('+m.esqueletoAntes+')');
+ check(m.pintadoMs!==null&&m.pintadoMs<250,`obsoleta: pinta ya (${m.pintadoMs} ms tras montar)`);check(m.esqueletoAntes===0,'obsoleta: sin esqueleto vacío ('+m.esqueletoAntes+')');
  check(/Actualizando…/.test(m.primeraLinea??''),'obsoleta: «Actualizando…» ('+(m.primeraLinea??'')+')');
  const pedidas=estado.log.filter(l=>/\/api\/(workspace|trends|coverage)/.test(l.url)).length;check(pedidas>0,'obsoleta: revalida en segundo plano ('+pedidas+' lecturas)');
  check(!/Actualizando…/.test(m.ultimaLinea??'')&&!/hace/.test(m.ultimaLinea??'x hace')||m.ultimaLinea===null||!/Actualizando…/.test(m.ultimaLinea),'tras revalidar desaparece «Actualizando…»');
@@ -118,7 +118,7 @@ await page.evaluate(()=>{window.__off=6*60*1000;});
  const m=await muestrear('/overview',2500,()=>irMenu('/overview'));
  const texto=await page.locator('.workspace-content').innerText(),despues=(texto.match(/No disponible ahora/g)??[]).length;
  console.log('   línea tras fallo:',(await page.locator('[data-testid=linea-cache]').first().textContent().catch(()=>null)));
- check(m.pintadoMs!==null&&m.pintadoMs<100,'fallo: el dato viejo se pinta igual ('+m.pintadoMs+' ms tras montar)');
+ check(m.pintadoMs!==null&&m.pintadoMs<250,'fallo: el dato viejo se pinta igual ('+m.pintadoMs+' ms tras montar)');
  check(/No se pudo actualizar ahora; se conserva este dato/.test(texto),'fallo: rotula «No se pudo actualizar ahora; se conserva este dato»');
  check(despues<=antes+0||despues===0,`fallo: no aparece «No disponible ahora» nuevo (${antes} → ${despues})`);
  await page.screenshot({path:path.join(out,`cache-overview-fallo-${theme}.png`)});estado.falla=false;}

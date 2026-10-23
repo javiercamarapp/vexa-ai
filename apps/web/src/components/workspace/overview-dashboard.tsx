@@ -50,7 +50,7 @@ function topProblems(bundle:Bundle):Pick[]{
   return [{id:item.id,title:item.title,exposure:BigInt(m.amount_minor),display:formatMinorUnits(m.amount_minor,m.currency,m.exponent),evidence:item.evidence.length,refunds:r&&r.amount_minor!==null?formatMinorUnits(r.amount_minor,r.currency,r.exponent):null,coverage:c?`${nf.format(c.known_n)} de ${nf.format(c.eligible_n)} registros con importe conocido`:null,currency:m.currency,exponent:m.exponent}];
  }).sort((a,b)=>a.exposure>b.exposure?-1:a.exposure<b.exposure?1:0);
 }
-export function OverviewDashboard({bundle,pinned,avisos=[]}:{bundle:Bundle;pinned:URLSearchParams;avisos?:{key:string;node:ReactNode}[]}){
+export function OverviewDashboard({bundle,pinned,avisos=[],cache}:{bundle:Bundle;pinned:URLSearchParams;avisos?:{key:string;node:ReactNode}[];cache?:{edadMs:number|null;actualizando:boolean;viejo:boolean}}){
  const model=useMemo(()=>buildCfoModel(bundle.items),[bundle]);
  const trends=useJson<TrendsView>('/api/trends',acceptTrends);
  const query=pinned.toString();
@@ -89,7 +89,7 @@ export function OverviewDashboard({bundle,pinned,avisos=[]}:{bundle:Bundle;pinne
  // «No disponible ahora» solo si la lectura ya terminó y falló; mientras sigue en vuelo la cifra es un esqueleto (no parece incompleto).
  const cargT=trends.busy&&!trends.data,cargC=cobertura.busy&&!cobertura.data,NA=<strong>No disponible ahora</strong>,Esp=<CifraCargando/>;
  // Una sola línea para todo lo que salió de la caché (en vez de una por tarjeta): la más antigua manda.
- const lecturas=[trends,probs,cats,cobertura],conCache=lecturas.filter(l=>l.edadMs!==null),edadMax=conCache.length?Math.max(...conCache.map(l=>l.edadMs as number)):null,algunaActualizando=conCache.some(l=>l.actualizando),algunaVieja=lecturas.some(l=>l.viejo);
+ const lecturas=[trends,probs,cats,cobertura,...(cache?[cache]:[])],conCache=lecturas.filter(l=>l.edadMs!==null),edadMax=conCache.length?Math.max(...conCache.map(l=>l.edadMs as number)):null,algunaActualizando=conCache.some(l=>l.actualizando),algunaVieja=lecturas.some(l=>l.viejo);
  const kpis=[
   {label:'Conversaciones',kind:(kc?.estimado?'estimated':'observed') as 'observed'|'estimated',icon:'message',value:kc?kc.valor!==null?<strong>{nf.format(kc.valor)}</strong>:NA:cargT?Esp:NA,delta:kc?.delta??null,foot:kc?kc.rotulo+(kc.estimado?' · estimado con muestra':''):cargT?'Cargando la serie…':'La serie no está disponible ahora',spark:kc?.spark},
   {label:'Grupos con revisión crítica',kind:'inferred' as const,icon:'alert',value:conteoCriticos?<strong>{nf.format(conteoCriticos.groups)}</strong>:<strong>Sin calcular</strong>,foot:conteoCriticos?(conteoCriticos.signals!==null?nf.format(conteoCriticos.signals)+' señales críticas (evidencias)':'Grupos con al menos una señal crítica')+(crit.edadMs!==null?` · última lectura ${hace(crit.edadMs)}`:''):'Consulta pesada: se calcula a petición con «Calcular ahora»',href:'#atencion'},

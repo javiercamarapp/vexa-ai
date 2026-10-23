@@ -108,9 +108,9 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   {isOverview&&!bundle&&!missing&&<div className="stack"><CoverageBand/><TrendCharts/></div>}
   {missing&&!busy&&!bundle&&<EmptyState art="chart" title="Aún no hay un corte publicado para este alcance" body="Cuando se publique un corte con este periodo y estos filtros, sus cifras aparecerán aquí. Mientras tanto puedes probar con la última publicación disponible." action={<Button variant="primary" size="sm" onClick={latest}>Ver la última publicación</Button>} secondary={<LinkButton href="/imports" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>}/>}
   {bundle&&<>
-   <LineaCache edadMs={edadCache} actualizando={busy} viejo={viejo} onActualizar={update}/>
+   {!isOverview&&<LineaCache edadMs={edadCache} actualizando={busy} viejo={viejo} onActualizar={update}/>}
    {!isOverview&&<>{notice}{criticalPending}</>}
-   {isOverview?<OverviewDashboard key={`${bundle.meta.snapshot_id}:${bundle.meta.scope_hash}`} bundle={bundle} pinned={pinned} avisos={[...(notice?[{key:'critico',node:notice}]:[]),...(criticalPending?[{key:'pendiente',node:criticalPending}]:[]),...(state&&state!=='empty'&&state!=='ready'?[{key:'parcial',node:<DataState state={{kind:state,coverage:bundle.meta.coverage,watermark:bundle.meta.watermark}}/>}]:[])]}/>
+   {isOverview?<OverviewDashboard key={`${bundle.meta.snapshot_id}:${bundle.meta.scope_hash}`} bundle={bundle} pinned={pinned} cache={{edadMs:edadCache,actualizando:busy,viejo}} avisos={[...(notice?[{key:'critico',node:notice}]:[]),...(criticalPending?[{key:'pendiente',node:criticalPending}]:[]),...(state&&state!=='empty'&&state!=='ready'?[{key:'parcial',node:<DataState state={{kind:state,coverage:bundle.meta.coverage,watermark:bundle.meta.watermark}}/>}]:[])]}/>
     :bundle.meta.catalog&&state==='partial'?<ProblemsView bundle={bundle} query={pinned.toString()}/>:<DataState state={state==='empty'?{kind:'empty'}:{kind:state??'partial',coverage:bundle.meta.coverage,watermark:bundle.meta.watermark}}><ProblemsView bundle={bundle} query={pinned.toString()}/></DataState>}
    {footer}
   </>}

@@ -1,6 +1,7 @@
 'use client';
 import {useCallback, useMemo} from 'react';
 import {useJson} from '../ui/use-json';
+import {useAcceso} from '../workspace/access';
 import {LineaCache} from '../ui/linea-cache';
 import {useVistaPersistente} from '../workspace/vista-persistente';
 import {EsperaEsqueleto} from '../ui/wait-status';
@@ -27,9 +28,12 @@ const SEVERITY: Record<string, string> = {alta: 'Alta', media: 'Media', baja: 'B
 const AFTER_SAVE = 'Los datos de demostración son sintéticos y no pertenecen a ninguna organización.';
 
 const acceptReporte = (j: unknown): ReportState | null => { const d = (j as {data?: ReportState})?.data; return d && (d.status === 'ok' || d.status === 'empty' || d.status === 'timeout') ? d : null; };
-export function CfoDashboard({query = '', organization}: {query?: string; organization?: string}) {
+const ROLES_CFO = ['owner', 'analyst'];
+export function CfoDashboard({query = '', organization, roleOverride}: {query?: string; organization?: string; roleOverride?: string}) {
+  const {role} = useAcceso();
   // Caché stale-while-revalidate (swr.mjs): al volver al panel se pinta al instante el último informe, rotulado, y se revalida sin vaciar la pantalla.
-  const rep = useJson<ReportState>('/cfo/data/report' + query, acceptReporte);
+  const permitido = ROLES_CFO.includes(roleOverride ?? role);
+  const rep = useJson<ReportState>(permitido ? '/cfo/data/report' + query : null, acceptReporte);
   const [pick, setPick] = useVistaPersistente<string>('cfo:moneda', ''), [measure, setMeasure] = useVistaPersistente<Measure>('cfo:medida', 'ingresos');
   const state = rep.data, busy = rep.busy, error = rep.error;
   const currency = state?.status === 'ok' ? (state.report.currencies.includes(pick) ? pick : state.report.currencies[0]) : pick, setCurrency = setPick;
@@ -42,6 +46,8 @@ export function CfoDashboard({query = '', organization}: {query?: string; organi
     <LinkButton href="/cfo/data/export?format=pdf" download="informe-cfo.pdf" icon={<Download />}>Exportar PDF</LinkButton>
   </>;
   const header = <PageHeader eyebrow="CFO del negocio" title="Dinero" description="Ingresos, reembolsos, mezcla por canal y calidad de datos, por moneda y sin mezclar bases. Cada cifra dice si es observada, estimada o inferida, y cómo se calculó." actions={actions} />;
+  if (!permitido) return <div className="cf-page"><PageHeader eyebrow="CFO del negocio" title="Dinero" description="Panel financiero del negocio para propietarios y analistas." />
+    <Empty title="Tu rol no tiene acceso a este panel" tone="muted" action={<LinkButton href="/overview">Volver al resumen</LinkButton>}>El panel CFO muestra ingresos, reembolsos y exposición económica. Solo lo ven los propietarios y analistas de la organización; pide acceso a un propietario.</Empty></div>;
   if (!report) return <div className="cf-page">{header}{error && <p className="state state-error" role="alert">{error} <Button size="sm" icon={<Refresh />} onClick={() => void load()}>Reintentar</Button></p>}
     {!state ? (busy ? <EsperaEsqueleto que="el informe del negocio" filas={5} /> : null)
     : state.status === 'timeout'

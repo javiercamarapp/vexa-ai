@@ -18,7 +18,9 @@ const failAnswer=(status:Answer['status'],text:string):Answer=>({status,text,fig
 
 /** Reads the NDJSON turn stream: `paso` events while tools run, then `fin` (or `error`). Also accepts a single JSON line. */
 export type TurnEvent={t?:string;fase?:string;herramienta?:string;estado?:string;ms?:number|null;cifras?:number;fuentes?:string[];paso?:{id:string;kind:Step['kind'];label:string;estado:string;ms:number|null;detail?:string}};
-async function runTurn(body:unknown,signal:AbortSignal,onEvent:(e:TurnEvent)=>void):Promise<Answer>{
+export type Runner=(body:{question:string;history:{role:'user'|'assistant';text:string}[];conversationTurns:number;directa?:Direct},signal:AbortSignal,onEvent:(e:TurnEvent)=>void)=>Promise<Answer>;
+export const failAnswerOf=failAnswer;
+export async function runTurn(body:unknown,signal:AbortSignal,onEvent:(e:TurnEvent)=>void):Promise<Answer>{
  const res=await fetch('/api/agent/turn',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal,cache:'no-store'});
  if(!res.ok){
   if(res.status===401||res.status===403)return failAnswer('forbidden','Tu rol no tiene acceso a estas consultas.');
@@ -41,7 +43,10 @@ async function runTurn(body:unknown,signal:AbortSignal,onEvent:(e:TurnEvent)=>vo
  return final??failAnswer('unavailable','');
 }
 
-export function useAgente(scope:string,maxChars:number,maxTurns:number,toolLabels:Record<string,string>={}){
+/** `opts.runner` cambia el transporte de los turnos (el copiloto de CFO usa su propio motor); `opts.modo` marca cada mensaje con el modo que lo produjo. */
+export function useAgente(scope:string,maxChars:number,maxTurns:number,toolLabels:Record<string,string>={},opts:{runner?:Runner;modo?:string}={}){
+ const runnerRef=useRef<Runner|undefined>(opts.runner),modoRef=useRef(opts.modo);
+ useEffect(()=>{runnerRef.current=opts.runner;modoRef.current=opts.modo;});
  const [conversations,setConversations]=useState<Conversation[]>([]);
  const [activeId,setActiveId]=useState<string|null>(null);
  const [messages,setMessages]=useState<ChatMessage[]>([]);
@@ -68,19 +73,19 @@ export function useAgente(scope:string,maxChars:number,maxTurns:number,toolLabel
   if(busy.current)return;const q=question.trim().slice(0,maxChars);if(!q)return;busy.current=true;
   const g=++gen.current,ctl=new AbortController();control.current=ctl;let timedOut=false;const timer=setTimeout(()=>{timedOut=true;ctl.abort();},TIMEOUT_MS);
   const id=activeRef.current??uid('c');if(!activeRef.current){activeRef.current=id;setActiveId(id);}
-  const userMsg:ChatMessage={id:uid('u'),role:'user',text:q,at:new Date().toISOString(),...(directa?{directa}:{})};
+  const modo=modoRef.current,userMsg:ChatMessage={id:uid('u'),role:'user',text:q,at:new Date().toISOString(),...(directa?{directa}:{}),...(modo?{modo}:{})};
   const withUser=[...base,userMsg];setMessages(withUser);setSteps([]);setPhase(PHASES[0][1]);setSending(true);
   const history=base.filter(m=>m.kind!=='adjunto').slice(-8).map(m=>({role:m.role,text:m.role==='assistant'?(m.answer?.text??m.text):m.text})).filter(h=>h.text);
   const turns=base.filter(m=>m.role==='user'&&m.kind!=='adjunto').length;
   let answer:Answer,cancelled=false;
   try{
-   answer=await runTurn({question:q,history,conversationTurns:turns,...(directa?{directa}:{})},ctl.signal,e=>{if(ctl.signal.aborted)return;setSteps(prev=>applyEvent(prev,e,toolLabels));});
+   answer=await (runnerRef.current??runTurn)({question:q,history,conversationTurns:turns,...(directa?{directa}:{})},ctl.signal,e=>{if(ctl.signal.aborted)return;setSteps(prev=>applyEvent(prev,e,toolLabels));});
   }catch(e){
    if(e instanceof DOMException&&e.name==='AbortError'&&!timedOut){cancelled=true;answer=failAnswer('unavailable','');}
    else answer=failAnswer('unavailable','');
   }finally{clearTimeout(timer);}
   if(g!==gen.current)return;
-  const reply:ChatMessage={id:uid('a'),role:'assistant',text:cancelled?'Cancelado.':answer.text,at:new Date().toISOString(),question:q,...(directa?{directa}:{}),...(cancelled?{cancelled:true}:{answer})};
+  const reply:ChatMessage={id:uid('a'),role:'assistant',text:cancelled?'Cancelado.':answer.text,at:new Date().toISOString(),question:q,...(directa?{directa}:{}),...(modo?{modo}:{}),...(cancelled?{cancelled:true}:{answer})};
   const all=[...withUser,reply];setMessages(all);persist(id,all);
   busy.current=false;control.current=null;setSending(false);setSteps([]);
  },[maxChars,persist,toolLabels]);

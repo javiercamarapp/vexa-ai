@@ -58,6 +58,7 @@ export function AnswerView({message,question,isLast,busy,labels,userContext,onAs
   {message.citationsOmitted&&<p className="card-lead agente-note">Las citas de clientes no se guardan en el historial de este navegador; vuelve a preguntar para verlas.</p>}
   {a.missing.length>0&&ok&&<section className="agente-missing card" aria-label="Qué falta cargar"><p className="eyebrow" role="heading" aria-level={3}>Qué falta cargar</p><ul>{a.missing.map(m=><li key={m}>{m}</li>)}</ul>{a.missing.some(m=>!/vincul/i.test(m))&&<LinkButton href="/imports" size="sm" icon={<Icon name="arrow"/>}>Ir a Importaciones</LinkButton>}{a.missing.some(m=>/vincul/i.test(m))&&<LinkButton href="/history" size="sm" icon={<Icon name="arrow"/>}>Ver vínculos pedido–conversación</LinkButton>}</section>}
   {a.status==='ok'&&a.sources.length>0&&<div className="agente-sources" aria-label="Fuentes"><span className="agente-sources-label">Fuentes</span>{a.sources.map(s=>{const href=safeInternal(s.href);return href?<LinkButton key={s.ref} href={href} size="sm" icon={<Icon name="arrow"/>}>{s.label}</LinkButton>:<span className="chip" key={s.ref}>{s.label}</span>;})}</div>}
+  {a.notes&&a.notes.length>0&&ok&&a.notes.map(n=><p key={n} className="card-lead agente-note">{n}</p>)}
   {ok&&a.trace&&a.trace.length>0&&<TraceDisclosure trace={a.trace} labels={labels}/>}
   {ok&&a.calc.length>0&&<CalcView answer={a}/>}
   {a.status==='ok'&&a.text.trim()&&<div className="agente-actions" role="group" aria-label="Acciones de la respuesta">

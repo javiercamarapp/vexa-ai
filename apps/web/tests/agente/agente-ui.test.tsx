@@ -110,7 +110,7 @@ test('«Pregúntale a tus datos» vive en el shell normal: sin encabezado, sin b
   const chat=read('../../src/components/agente/agente.tsx'),shell=read('../../src/components/workspace/shell.tsx');
   assert.doesNotMatch(chat,/ThemeToggle|ChatSidebar|chat-bar|Espacio de trabajo/);
   assert.match(chat,/<HistoryPanel/);assert.match(chat,/aria-label="Historial de chats"/);
-  assert.match(shell,/sinEncabezado=pathname==='\/preguntale'/);assert.match(shell,/workspace-header" hidden=\{sinEncabezado/);assert.doesNotMatch(shell,/GlobalBar|workspace-top/);
+  assert.match(shell,/sinEncabezado=esRutaCopiloto\(pathname\)/);assert.match(shell,/workspace-header" hidden=\{sinEncabezado/);assert.doesNotMatch(shell,/GlobalBar|workspace-top/);
   assert.doesNotMatch(shell,/workspace-bare/);
   const hist=read('../../src/components/agente/historial.tsx');
   assert.match(hist,/ConfirmationDialog/);assert.match(hist,/Buscar chats/);assert.match(hist,/onRename/);

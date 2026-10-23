@@ -27,6 +27,18 @@ export function variacionVentas(ing:Ing|null):number|null{
  if(!ing)return null;const c=ing.meses.filter(m=>calidadMes(m)==='completo');if(c.length<2)return null;
  const a=big(c[c.length-2].totalMinor),b=big(c[c.length-1].totalMinor);return a>0?(b-a)*100/a:null;
 }
+/** Recorta el ingreso a los últimos `meses` meses (null = todos) y a los canales activos; recalcula totales y participación con BigInt (importes en minor como texto). */
+export function filtrarIngresos(ing:Ing,meses:number|null,activos:string[]):Ing{
+ const todos=ing.meses.slice().sort((a,b)=>a.mes.localeCompare(b.mes)),ms=(meses?todos.slice(-meses):todos).map(m=>{
+  const canales=Object.fromEntries(Object.entries(m.canales).filter(([c])=>activos.includes(c)));
+  return {...m,canales,totalMinor:String(Object.values(canales).reduce((a,c)=>a+BigInt(c.activoMinor),0n))};
+ }) as Ing['meses'];
+ const lin:Record<string,number>={},act:Record<string,bigint>={};
+ for(const m of ms)for(const [c,v] of Object.entries(m.canales)){lin[c]=(lin[c]??0)+v.lineas;act[c]=(act[c]??0n)+BigInt(v.activoMinor);}
+ const total=Object.values(act).reduce((a,b)=>a+b,0n);
+ const canales=ing.canales.filter(c=>activos.includes(c.canal)&&(act[c.canal]??0n)>0n).map(c=>({...c,lineas:lin[c.canal]??0,activoMinor:String(act[c.canal]),participacionPct:total>0n?Math.round(Number(act[c.canal]*1000n/total))/10:0})).sort((a,b)=>b.participacionPct-a.participacionPct) as Ing['canales'];
+ return {...ing,meses:ms,canales,activoMinor:String(total)} as Ing;
+}
 export const serieVentas=(ing:Ing|null)=>ing?ing.meses.filter(m=>calidadMes(m)==='completo').map(m=>big(m.totalMinor)):[];
 
 // ---------- Ingreso por mes y canal (columnas apiladas con color por canal)
@@ -50,7 +62,7 @@ export function GraficoMeses({ing}:{ing:Ing}){
 export function PanelCanales({ing}:{ing:Ing}){
  const cs=ing.canales;
  return <div className="dg-fill">
-  <DonaMini label="Ingreso bruto por canal" size={96} items={cs.slice(0,5).map(c=>({label:NOMBRE[c.canal]??c.canal,value:big(c.activoMinor)}))} centro={<b>{corto(big(ing.activoMinor))}</b>}/>
+  <DonaMini label="Ingreso bruto por canal" size={112} sinLeyenda items={cs.slice(0,5).map(c=>({label:NOMBRE[c.canal]??c.canal,value:big(c.activoMinor),c:cc(c.canal)}))} centro={<span className="dg-dona-c"><b>{corto(big(ing.activoMinor))}</b><small>bruto</small></span>}/>
   <ListaBarras label="Participación por canal" max={100} items={cs.map(c=>({key:c.canal,c:cc(c.canal),etiqueta:NOMBRE[c.canal]??c.canal,sub:`${num(c.lineas)} líneas`,valor:c.participacionPct,texto:pct(c.participacionPct),sub2:corto(big(c.activoMinor))}))}/>
  </div>;
 }
@@ -67,7 +79,12 @@ export function Puente({v}:{v:BrechasVista}){
   {key:'i',label:'Retenido',valor:Math.max(0,activo-reem),texto:corto(Math.max(0,activo-reem)),tipo:'total',c:3},
   ...(t.status==='ok'&&t.negadosMinor?[{key:'n',label:'No recuperado',valor:big(t.negadosMinor),texto:corto(big(t.negadosMinor)),tipo:'aparte' as const,c:4}]:[]),
  ];
+ const ventas=activo+canc,p=(x:number)=>ventas>0?pct(Math.round(x*1000/ventas)/10):'—';
  return <div className="dg-fill"><Cascada pasos={pasos} label="Puente de ventas brutas a ingreso retenido"/>
+  <ul className="dg-res ui-reset" aria-label="Qué parte de las ventas brutas queda">
+   <li style={{['--cat' as string]:'var(--chart-3)'}}><i/><span>Se queda</span><b>{p(Math.max(0,activo-reem))}</b></li>
+   <li style={{['--cat' as string]:'var(--chart-2)'}}><i/><span>Cancelaciones</span><b>{p(canc)}</b></li>
+   <li style={{['--cat' as string]:'var(--chart-2)'}}><i/><span>Reembolsos</span><b>{p(reem)}</b></li></ul>
   <p className="dg-nota">Ingreso bruto, USD. «No recuperado» es una muestra del Tracker (con trama): no se resta otra vez. Las ventanas de pedidos y de reembolsos no coinciden por canal, así que el retenido es una cota, no un cierre contable.</p></div>;
 }
 
@@ -106,7 +123,7 @@ export function Intensidad({v,onReintentar}:{v:BrechasVista;onReintentar:()=>voi
  const filas=i.status==='ok'?i.filas.filter(f=>f.significativa).sort((a,b)=>(b.intensidadPct??0)-(a.intensidadPct??0)).slice(0,7):[];
  if(!filas.length)return <Vacio>Aún no hay pares SKU-canal con suficiente ingreso y reembolsos en meses completos para medir intensidad.</Vacio>;
  const max=Math.max(1,...filas.map(f=>f.intensidadPct??0));
- return <div className="dg-fill"><ListaBarras c={2} max={max} label="Intensidad de reembolso por SKU y canal" items={filas.map(f=>{const med=i.medianaCanal?.[f.canal]??null,alta=med!==null&&med>0&&(f.intensidadPct??0)>=med*v.umbrales.multiplicadorMediana;
+ return <div className="dg-fill"><ListaBarras c={2} vw max={max} label="Intensidad de reembolso por SKU y canal" items={filas.map(f=>{const med=i.medianaCanal?.[f.canal]??null,alta=med!==null&&med>0&&(f.intensidadPct??0)>=med*v.umbrales.multiplicadorMediana;
   return {key:f.sku+f.canal,etiqueta:f.sku,sub:`${NOMBRE[f.canal]??f.canal} · ${num(f.reembolsos)} reembolsos`,valor:f.intensidadPct??0,marca:med,c:alta?7:2,texto:pct(f.intensidadPct),sub2:alta?`${((f.intensidadPct??0)/(med??1)).toFixed(1)}× la mediana`:undefined};})}/>
   <p className="dg-nota">Intensidad, no tasa por cohorte: reembolsos sin cancelados entre ingreso bruto del mismo SKU, canal y mes. La raya es la mediana del canal ({Object.entries(i.medianaCanal??{}).map(([c,m])=>`${NOMBRE[c]??c} ${pct(m)}`).join(' · ')||'sin datos'}). Violeta = al menos {v.umbrales.multiplicadorMediana}× la mediana.</p></div>;
 }

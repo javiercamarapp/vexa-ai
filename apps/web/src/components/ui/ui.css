@@ -105,7 +105,9 @@
 .mc-leyenda{display:flex;flex-wrap:wrap;gap:4px 12px;margin:0;padding:0;list-style:none;font-size:12px;color:var(--ui-secondary)}
 .mc-leyenda li{display:inline-flex;align-items:center;gap:6px;margin:0}.mc-leyenda i{width:8px;height:8px;border-radius:50%;flex:none}
 .mc-dona{flex-direction:row;align-items:center;gap:12px;position:relative}.mc-dona .mc-leyenda{flex-direction:column}
-.mc-centro{position:absolute;left:0;top:0;width:72px;height:72px;display:flex;align-items:center;justify-content:center;font:600 13px var(--font-ui);pointer-events:none}
+.mc-centro{position:absolute;left:0;top:0;width:var(--sz,72px);height:var(--sz,72px);display:flex;align-items:center;justify-content:center;font:600 12px var(--font-ui);font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none}
+.mc-dona-g{position:relative;display:inline-flex;flex:none}
+.mc-dona:not(:has(.mc-leyenda)){justify-content:center}
 .mc-arc,.mc-bar,.mc-line,.mc-area{transform-box:fill-box}
 .mc-bar{transform-origin:bottom;animation:mc-up 480ms var(--ui-ease) both}
 .mc-line{stroke-dashoffset:0}.mc-area{animation:mc-fade 600ms ease both}

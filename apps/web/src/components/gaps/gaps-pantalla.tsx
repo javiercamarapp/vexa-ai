@@ -1,6 +1,8 @@
 'use client';
-import {useState} from 'react';
+import {useMemo,useState} from 'react';
 import {PageHeader} from '../ui/page-header';
+import {FilterBar,FilterSpacer} from '../ui/filter-bar';
+import {SegmentedControl} from '../ui/segmented';
 import {Button,Download,LinkButton,Refresh} from '../ui/button';
 import {Card} from '../ui/card';
 import {KpiStrip,type Kpi} from '../ui/kpi-strip';
@@ -12,10 +14,10 @@ import {Icon} from '../ui/icons';
 import {NoDisponible} from '../refunds/fuga-partes';
 import {bajar} from '../refunds/fuga-pantalla';
 import {Delta,Fila,MiniPct,Vacio} from '../dinero/partes';
-import {CierraBrecha,Familias,GraficoMeses,Intensidad,PanelCanales,PanelFamilias,Puente,TresColumnas,serieVentas,variacionVentas} from './gaps-bloques';
+import {CierraBrecha,filtrarIngresos,Familias,GraficoMeses,Intensidad,PanelCanales,PanelFamilias,Puente,TresColumnas,serieVentas,variacionVentas} from './gaps-bloques';
 import {EstimadorBrecha,type Supuesto} from './gaps-recs';
 import {csvIngresos,csvIntensidad,csvRecomendaciones,proveniencia,resumenHtml} from './gaps-archivos.mjs';
-import {num} from './gaps-modelo.mjs';
+import {NOMBRE,num} from './gaps-modelo.mjs';
 import {useGaps} from './use-gaps';
 import '../dinero/dinero.css';
 
@@ -25,10 +27,15 @@ const corto=(n:number)=>n>=1_000_000?`$${(n/1_000_000).toFixed(2)}M`:n>=1000?`$$
 /** Pantalla «Brechas de ingreso»: titular, KPI en color, puente de ventas a ingreso retenido, dónde gano / pierdo / podría ganar, tabla «Cierra esta brecha» y ventas vs quejas. Siempre ingreso bruto, nunca margen. */
 export function GapsPantalla({organization}:{organization?:string}){
  const g=useGaps(),v=g.data;
+ const [per,setPer]=useState<'1'|'3'|'6'|'12'|'todo'>('todo'),[off,setOff]=useState<string[]>([]);
  const [aviso,setAviso]=useState(''),[supuesto,setSupuesto]=useState<Supuesto|null>(null);
  const irA=(id:string)=>{const el=document.getElementById('rec-'+id)??document.getElementById('gp-brecha');el?.scrollIntoView({behavior:'smooth',block:'center'});};
  const bajarArchivo=(a:{nombre:string;mime:string;contenido:string;total:number})=>{bajar(a);setAviso(`Descargado: ${a.nombre}. No se envió nada.`);};
  const ok=v?.ingresos.status==='ok'?v.ingresos:null;
+ const CANAL_C:Record<string,number>={amazon:1,walmart:5,bestbuy:4,shopify:3};
+ const todosCanales=ok?[...new Set(ok.meses.flatMap(m=>Object.keys(m.canales)))].sort((a,b)=>(CANAL_C[a]??8)-(CANAL_C[b]??8)):[];
+ const activos=todosCanales.filter(c=>!off.includes(c));
+ const filtrado=useMemo(()=>ok?filtrarIngresos(ok,per==='todo'?null:Number(per),activos):null,[ok,per,activos.join('|')]);// eslint-disable-line react-hooks/exhaustive-deps
  const r=v?.perdidas.reembolsos,c=v?.perdidas.cancelaciones,t=v?.perdidas.tracker;
  const ventas=ok&&c?.status==='ok'?big(ok.activoMinor)+big(c.canceladoMinor):null;
  const kpis:Kpi[]=v?[
@@ -52,10 +59,15 @@ export function GapsPantalla({organization}:{organization?:string}){
   {v&&<>
    {titular&&<p className="dg-titular">{titular}</p>}
    <KpiStrip items={kpis} label="Indicadores de brechas de ingreso"/>
+   {ok&&todosCanales.length>0&&<FilterBar label="Filtros de ingreso por mes y canal">
+    <SegmentedControl size="sm" label="Periodo" value={per} onChange={setPer} options={[{value:'1',label:'1 mes'},{value:'3',label:'3 meses'},{value:'6',label:'6 meses'},{value:'12',label:'12 meses'},{value:'todo',label:'Todo'}]}/>
+    {todosCanales.map(c=>{const on=!off.includes(c);return <button key={c} type="button" className="dg-fchip ui-reset" aria-pressed={on} style={{['--cat' as string]:`var(--chart-${CANAL_C[c]??8})`}} onClick={()=>setOff(on?(activos.length>1?[...off,c]:off):off.filter(x=>x!==c))}>{NOMBRE[c]??c}</button>;})}
+    <FilterSpacer/><span className="dg-sello">Aplica a la gráfica mensual y a «Por canal»</span>
+   </FilterBar>}
    <Fila split="8-4">
     <Card title="Ingreso bruto por mes y canal" description="Un color por canal; lo parcial lleva trama" actions={<KindBadge kind="observed"/>}>
-     {v.ingresos.status==='unavailable'?<NoDisponible onRetry={()=>g.reload()}/>:!ok?<Vacio>Todavía no hay pedidos en el libro. Carga el export de Amazon o Walmart.</Vacio>:<GraficoMeses ing={ok}/>}</Card>
-    <Card title="Por canal" description="Ingreso bruto, sin cancelados" actions={<KindBadge kind="observed"/>}>{ok?<PanelCanales ing={ok}/>:<Vacio>Sin canales con pedidos.</Vacio>}</Card>
+     {v.ingresos.status==='unavailable'?<NoDisponible onRetry={()=>g.reload()}/>:!ok?<Vacio>Todavía no hay pedidos en el libro. Carga el export de Amazon o Walmart.</Vacio>:<GraficoMeses ing={filtrado??ok}/>}</Card>
+    <Card title="Por canal" description="Ingreso bruto, sin cancelados" actions={<KindBadge kind="observed"/>}>{ok?<PanelCanales ing={filtrado??ok}/>:<Vacio>Sin canales con pedidos.</Vacio>}</Card>
    </Fila>
    <Fila split="6-6">
     <Card title="Puente: de ventas a ingreso retenido" description="Cancelaciones y reembolsos restados de las ventas brutas" actions={<KindBadge kind="inferred"/>}><Puente v={v}/></Card>

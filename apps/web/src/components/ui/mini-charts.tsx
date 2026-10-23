@@ -17,14 +17,14 @@ export function BarraApilada({items,label,h=18,base=0,sinLeyenda=false}:{items:{
   <Tabla titulo={label} filas={items.map(i=>[i.label,fmt(i.value)])}/></div>;
 }
 /** Dona pequeña: SOLO hasta 5 categorías (con más se usa BarraApilada). Total al centro. */
-export function DonaMini({items,label,size=72,centro}:{items:{label:string;value:number}[];label:string;size?:number;centro?:ReactNode}){
+export function DonaMini({items,label,size=72,centro,sinLeyenda=false}:{items:{label:string;value:number;/** 1..8: color fijo de la métrica (si falta, por posición) */c?:number}[];label:string;size?:number;centro?:ReactNode;sinLeyenda?:boolean}){
  if(items.length>5)throw new Error('DonaMini admite como máximo 5 categorías; usa BarraApilada');
- const total=items.reduce((a,i)=>a+Math.max(0,i.value),0),r=size/2-5,c=2*Math.PI*r;let acc=0;
- return <div className="mc mc-dona"><svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={label+': '+items.map(i=>i.label+' '+fmt(i.value)).join(', ')}>
+ const total=items.reduce((a,i)=>a+Math.max(0,i.value),0),r=size/2-5,c=2*Math.PI*r,col=(it:{c?:number},i:number)=>color(it.c?it.c-1:i);let acc=0;
+ return <div className="mc mc-dona" style={{['--sz' as string]:size+'px'}}><span className="mc-dona-g"><svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={label+': '+items.map(i=>i.label+' '+fmt(i.value)).join(', ')}>
   <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="var(--ui-soft)" strokeWidth="8"/>
-  {total>0&&items.map((it,i)=>{const len=Math.max(0,it.value)/total*c,el=<circle key={it.label} className="mc-arc" cx={size/2} cy={size/2} r={r} fill="none" stroke={color(i)} strokeWidth="8" strokeDasharray={`${Math.max(0,len-2)} ${c}`} strokeDashoffset={-acc} transform={`rotate(-90 ${size/2} ${size/2})`}><title>{it.label+': '+fmt(it.value)}</title></circle>;acc+=len;return el;})}
- </svg>{centro&&<span className="mc-centro">{centro}</span>}
- <ul className="mc-leyenda ui-reset">{items.map((it,i)=><li key={it.label}><i style={{background:color(i)}}/>{it.label} <b>{fmt(it.value)}</b></li>)}</ul><Tabla titulo={label} filas={items.map(i=>[i.label,fmt(i.value)])}/></div>;
+  {total>0&&items.map((it,i)=>{const len=Math.max(0,it.value)/total*c,el=<circle key={it.label} className="mc-arc" cx={size/2} cy={size/2} r={r} fill="none" stroke={col(it,i)} strokeWidth="8" strokeDasharray={`${Math.max(0,len-2)} ${c}`} strokeDashoffset={-acc} transform={`rotate(-90 ${size/2} ${size/2})`}><title>{it.label+': '+fmt(it.value)}</title></circle>;acc+=len;return el;})}
+ </svg>{centro&&<span className="mc-centro">{centro}</span>}</span>
+ {!sinLeyenda&&<ul className="mc-leyenda ui-reset">{items.map((it,i)=><li key={it.label}><i style={{background:col(it,i)}}/>{it.label} <b>{fmt(it.value)}</b></li>)}</ul>}<Tabla titulo={label} filas={items.map(i=>[i.label,fmt(i.value)])}/></div>;
 }
 /** Barras agrupadas: categorías en X, hasta 3-4 series con color propio; etiqueta directa de la serie en la leyenda. null = desconocido (vacío punteado, no cero). */
 export function BarrasAgrupadas({categorias,series,label,h=96,w=320}:{categorias:string[];series:{label:string;values:(number|null)[]}[];label:string;h?:number;w?:number}){

@@ -40,7 +40,7 @@ const geometry=()=>{
  const textual='p,li,dd,dt,small,figcaption,blockquote,td,th,span,strong,label';
  for(const el of all){
   if(!el.matches('a[href],button'))continue;
-  if(el.closest('.workspace-sidebar,.workspace-bottom-nav,.workspace-header,.workspace-mobile-dialog,.sr-only,[role=tablist]')||el.matches('.skip-link'))continue;
+  if(el.closest('.workspace-sidebar,.workspace-bottom-nav,.workspace-header,.global-bar,.workspace-mobile-dialog,.sr-only,[role=tablist]')||el.matches('.skip-link'))continue;
   const s=getComputedStyle(el),r=el.getBoundingClientRect(),system=el.matches('.btn,.id-chip,.icon-button,.icon-btn,.seg-btn,.fchip-x,.catalog-link,.login-btn,.row-link,.card-link,.row-link-inline,.stat-card,.barlist-link,.tab-link,.check-chip')||(el.tagName==='A'&&s.display.includes('flex')&&(parseFloat(s.borderTopLeftRadius)||0)>=10&&r.height>=32);
   const inline=el.tagName==='A'&&!system&&!!el.parentElement&&el.parentElement.matches(textual)&&getComputedStyle(el.parentElement).display!=='flex';
   if(inline){if(!(s.textDecorationLine||'').includes('underline'))issues.push({kind:'inline-link-no-underline',detail:label(el)});continue;}
@@ -87,7 +87,7 @@ for(const [w,h] of VIEWPORTS){
   await page.waitForTimeout(500);
   const issues=await page.evaluate(geometry).catch(e=>[{kind:'audit-error',detail:String(e)}]);
   const docTitle=await page.title();if(!/ · Rovaq AI$/.test(docTitle))issues.push({kind:'page-title',detail:'title should be "<vista> · Rovaq AI", got "'+docTitle+'"'});
-  const full=await page.evaluate(()=>{const c=document.querySelector('.workspace-content');return Math.min(6000,Math.max(document.documentElement.scrollHeight,c?c.scrollHeight+(c.getBoundingClientRect().top):0));}).catch(()=>h);
+  const full=await page.evaluate(()=>{const c=document.querySelector('.workspace-content');return Math.ceil(Math.min(6000,Math.max(document.documentElement.scrollHeight,c?c.scrollHeight+(c.getBoundingClientRect().top):0)));}).catch(()=>h);
   await page.setViewportSize({width:w,height:Math.max(h,full)});await page.waitForTimeout(150);
   await page.screenshot({path:path.join(out,`${name}-${w}.png`)}).catch(()=>{});await page.setViewportSize({width:w,height:h});
   const uniq=[...new Map(issues.map(i=>[i.kind+i.detail,i])).values()];

@@ -87,10 +87,10 @@ begin
   delete from public.insight_order_revenue_month where tenant_id=p_tenant;
   insert into public.insight_order_revenue_month(tenant_id,month,channel,sku_base,currency,exponent,n,n_cancelled,n_review,amount_minor,amount_cancelled_minor,amount_review_minor,first_day,last_day,refreshed_at,source_watermark,computed_from)
   with latest as (select distinct on(entity_id) external_id,status,effective_at,currency,exponent,amount_minor from public.economic_ledger_entries where tenant_id=p_tenant and kind='order' order by entity_id,revision desc),
-  k as (select (date_trunc('month',effective_at at time zone 'UTC'))::date month,
+  k as (select (date_trunc('month',effective_at at time zone 'UTC'))::date as month,
     case when external_id like 'amazon|%' then 'amazon' when external_id like 'walmart|%' then 'walmart' when external_id like 'gid://shopify/%' then 'shopify' when external_id like 'mirakl_bestbuy%' then 'bestbuy' else 'otro' end channel,
     case when external_id like 'amazon|%' or external_id like 'walmart|%' then left(regexp_replace(upper(btrim(split_part(external_id,'|',3))),'(-WM[0-9]+|-[0-9]{3}A-[0-9]{3}|-NEW)$',''),80) else '' end sku_base,
-    currency,exponent,status,amount_minor,(effective_at at time zone 'UTC')::date day from latest where amount_minor is not null)
+    currency,exponent,status,amount_minor,(effective_at at time zone 'UTC')::date as day from latest where amount_minor is not null)
   select p_tenant,month,channel,sku_base,currency,exponent,count(*),count(*) filter(where status='cancelled'),count(*) filter(where status='unknown'),sum(amount_minor),
    coalesce(sum(amount_minor) filter(where status='cancelled'),0),coalesce(sum(amount_minor) filter(where status='unknown'),0),min(day),max(day),t0,wm,cf
   from k group by month,channel,sku_base,currency,exponent;
@@ -110,18 +110,18 @@ begin
   delete from public.insight_complaint_family_month where tenant_id=p_tenant;
   delete from public.insight_family_pair where tenant_id=p_tenant;
   insert into public.insight_complaint_family_month(tenant_id,month,family,conversations,refreshed_at,source_watermark)
-  with base as (select distinct r.conversation_id,(date_trunc('month',c.started_at at time zone 'UTC'))::date month,
+  with base as (select distinct r.conversation_id,(date_trunc('month',c.started_at at time zone 'UTC'))::date as month,
      case when jsonb_typeof(r.provenance->'product_families')='array' then r.provenance->'product_families' else '[]'::jsonb end fam
    from public.extraction_runs r join public.conversations c on c.id=r.conversation_id and c.tenant_id=r.tenant_id
    where r.tenant_id=p_tenant and r.provenance->>'taxonomy_version' like 'v2%' and r.status in('succeeded','abstained') and c.started_at is not null and c.deleted_at is null)
-  select p_tenant,month,'*',count(*),t0,wm2 from base group by month
-  union all select p_tenant,month,'+',count(*),t0,wm2 from base where jsonb_array_length(fam)>0 group by month
-  union all select p_tenant,month,f,count(*),t0,wm2 from base cross join lateral jsonb_array_elements_text(fam) f where f ~ '^(cat|cod):[A-Za-z0-9_-]{1,24}$' group by month,f;
+  select p_tenant,month,'*',count(distinct conversation_id),t0,wm2 from base group by month
+  union all select p_tenant,month,'+',count(distinct conversation_id),t0,wm2 from base where jsonb_array_length(fam)>0 group by month
+  union all select p_tenant,month,f,count(distinct conversation_id),t0,wm2 from base cross join lateral jsonb_array_elements_text(fam) f where f ~ '^(cat|cod):[A-Za-z0-9_-]{1,24}$' group by month,f;
   insert into public.insight_family_pair(tenant_id,family_a,family_b,conversations,refreshed_at)
   with fam as (select distinct r.conversation_id,f from public.extraction_runs r join public.conversations c on c.id=r.conversation_id and c.tenant_id=r.tenant_id
     cross join lateral jsonb_array_elements_text(case when jsonb_typeof(r.provenance->'product_families')='array' then r.provenance->'product_families' else '[]'::jsonb end) f
     where r.tenant_id=p_tenant and r.provenance->>'taxonomy_version' like 'v2%' and r.status='succeeded' and c.deleted_at is null and f ~ '^(cat|cod):[A-Za-z0-9_-]{1,24}$')
-  select p_tenant,x.f,y.f,count(*),t0 from fam x join fam y on x.conversation_id=y.conversation_id and x.f<y.f group by x.f,y.f having count(*)>=5;
+  select p_tenant,x.f,y.f,count(distinct x.conversation_id),t0 from fam x join fam y on x.conversation_id=y.conversation_id and x.f<y.f group by x.f,y.f having count(distinct x.conversation_id)>=5;
   get diagnostics done_n=row_count;
   insert into public.insight_state(tenant_id,insight,status,refreshed_at,source_watermark,source_rows,duration_ms,computed_from,detail,error_code)
   values(p_tenant,'complaint_family_month','ready',t0,wm2,runs,(extract(epoch from clock_timestamp()-t0)*1000)::int,cf2,jsonb_build_object('pairs',done_n),null)

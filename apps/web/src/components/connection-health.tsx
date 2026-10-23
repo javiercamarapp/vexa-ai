@@ -2,6 +2,7 @@
 import {useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {pedirSwr,leerSwr,claveSwr,invalidarSwr} from '../lib/workspace/swr.mjs';
 import {LineaCache} from './ui/linea-cache';
+import {useVistaPersistente} from './workspace/vista-persistente';
 const useAntesDePintar=typeof window==='undefined'?useEffect:useLayoutEffect;
 const validaConexiones=(j:unknown)=>Array.isArray((j as {connections?:unknown})?.connections)?j:null;
 import {Button,Refresh} from './ui/button';
@@ -29,7 +30,7 @@ export function ConnectionHealthPanel(){
  const recheckPending=useRef(false),rowsRef=useRef<ConnectionHealth[]>([]);
  const {data:coverage,busy:coverageBusy}=useJson<CoverageView>('/api/coverage',j=>{const d=(j as {data?:CoverageView})?.data;return Array.isArray(d?.sources)?d as CoverageView:null;});
  const sources=coverage?.sources??null,est=(r:ConnectionHealth):EstadoConexion=>estadoConexion(r,sources);
- const [rows,setRows]=useState<ConnectionHealth[]>([]),[busy,setBusy]=useState(true),[error,setError]=useState(''),[confirmed,setConfirmed]=useState<Record<string,string|null>>({}),[tab,setTab]=useState<'all'|'ok'|'pending'>('all'),[picked,setPicked]=useState<string|null>(null),[edad,setEdad]=useState<number|null>(null),[viejo,setViejo]=useState(false);
+ const [rows,setRows]=useState<ConnectionHealth[]>([]),[busy,setBusy]=useState(true),[error,setError]=useState(''),[confirmed,setConfirmed]=useState<Record<string,string|null>>({}),[tab,setTab]=useVistaPersistente<'all'|'ok'|'pending'>('conexiones:pestana','all'),[picked,setPicked]=useVistaPersistente<string|null>('conexiones:elegida',null),[edad,setEdad]=useState<number|null>(null),[viejo,setViejo]=useState(false);
  useAntesDePintar(()=>{const g=leerSwr(claveSwr('/api/connections')),v=(g?.datos as {connections?:ConnectionHealth[]}|undefined)?.connections;if(g&&Array.isArray(v)){setRows(v);setEdad(g.edadMs);if(g.fresca)setBusy(false);}},[]);
  useEffect(()=>{const controller=new AbortController();async function load(){try{const g=leerSwr(claveSwr('/api/connections'));if(g?.fresca){setBusy(false);return;}const data=await read(controller.signal);if(!controller.signal.aborted){setRows(data);setEdad(null);setViejo(false);}}catch(e){if(!controller.signal.aborted){const st=(e as {estado?:number}).estado;if(rowsRef.current.length>0&&(st===undefined||st>=500))setViejo(true);else setError(e instanceof Error?e.message:'No se pudo consultar el estado.');}}finally{if(!controller.signal.aborted)setBusy(false);}}void load();return()=>controller.abort();},[]);
 useEffect(()=>{rowsRef.current=rows;},[rows]);

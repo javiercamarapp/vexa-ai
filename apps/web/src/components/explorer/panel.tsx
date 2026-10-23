@@ -4,6 +4,7 @@ import {useWorkspaceNavigation,workspaceLocation} from '../workspace/navigation-
 import {useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {leerConCache,leerSwr,claveSwr} from '../../lib/workspace/swr.mjs';
 import {LineaCache} from '../ui/linea-cache';
+import {useVistaPersistente} from '../workspace/vista-persistente';
 import type {ExplorerPage,ExplorerEvidence,ExplorerQuestion} from '../../../../../packages/recommendations/explorer.mjs';
 import type {Scope,Metric} from '../../lib/workspace/contracts';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
@@ -48,7 +49,7 @@ type MetaPin={scope:Scope & {basis:string;exponent?:number|null};snapshot_id:str
 const validaMeta=(j:unknown)=>(j as {data?:{meta?:{scope?:unknown}}})?.data?.meta?.scope?j:null;
 const validaPagina=(j:unknown)=>{const d=(j as {data?:ExplorerPage})?.data;return d&&d.meta&&Array.isArray(d.items)?j:null;};
 export function ExplorerPanel({initialQuery}:{initialQuery:string}){
- const [query,setQuery]=useState(clean(initialQuery).toString()),[scope,setScope]=useState<Filters>(()=>defaults(initialQuery)),[page,setPage]=useState<ExplorerPage|null>(null),[evidence,setEvidence]=useState<ExplorerEvidence|null>(null),[answer,setAnswer]=useState<ExplorerQuestion|null>(null),[question,setQuestion]=useState(''),[busy,setBusy]=useState(true),[empty,setEmpty]=useState(false),[error,setError]=useState(''),[mode,setMode]=useState<'table'|'cards'>('table'),[needle,setNeedle]=useState<string|null>(null),[opening,setOpening]=useState<{id:string;title:string}|null>(null),[evErr,setEvErr]=useState(''),[edad,setEdad]=useState<number|null>(null),[viejo,setViejo]=useState(false);
+ const [query,setQuery]=useState(clean(initialQuery).toString()),[scope,setScope]=useState<Filters>(()=>defaults(initialQuery)),[page,setPage]=useState<ExplorerPage|null>(null),[evidence,setEvidence]=useState<ExplorerEvidence|null>(null),[answer,setAnswer]=useState<ExplorerQuestion|null>(null),[question,setQuestion]=useState(''),[busy,setBusy]=useState(true),[empty,setEmpty]=useState(false),[error,setError]=useState(''),[mode,setMode]=useVistaPersistente<'table'|'cards'>('explorador:modo','table'),[needle,setNeedle]=useState<string|null>(null),[opening,setOpening]=useState<{id:string;title:string}|null>(null),[evErr,setEvErr]=useState(''),[edad,setEdad]=useState<number|null>(null),[viejo,setViejo]=useState(false);
  const generation=useRef(0),controller=useRef<AbortController|null>(null),current=useRef(query),pending=useRef(false),keepPage=useRef(false),scrollAfter=useRef(false),resultsRef=useRef<HTMLParagraphElement|null>(null);
  const invalidate=useCallback(()=>{controller.current?.abort();generation.current++;pending.current=false;},[]);
  useWorkspaceNavigation(invalidate);

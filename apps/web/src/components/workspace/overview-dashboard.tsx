@@ -16,6 +16,7 @@ import {EmptyState} from '../ui/empty-state';
 import {SkeletonRows} from '../ui/skeletons';
 import {CifraCargando} from '../ui/wait-status';
 import {LineaCache} from '../ui/linea-cache';
+import {useVistaPersistente} from './vista-persistente';
 import {LinkButton,Arrow} from '../ui/button';
 import {useJson} from '../ui/use-json';
 import {nf} from '../ui/format';
@@ -52,7 +53,7 @@ export function OverviewDashboard({bundle,pinned,avisos=[]}:{bundle:Bundle;pinne
  const trends=useJson<TrendsView>('/api/trends',acceptTrends);
  const query=pinned.toString();
  const probs=useJson<Bundle>(bundle.meta.snapshot_id?'/api/workspace?resource=problems&slim=1&'+query:null,acceptBundle);
- const [measure,setMeasure]=useState<'orders'|'refunds'>('orders'),[incluirRuido,setIncluirRuido]=useState(false);
+ const [measure,setMeasure]=useVistaPersistente<'orders'|'refunds'>('resumen:medida','orders'),[incluirRuido,setIncluirRuido]=useState(false);
  const cats=useJson<CategoriesView>('/api/trends/categories',acceptCategories);
  const cobertura=useJson<CoverageView>('/api/coverage',acceptCoverage),crit=useCriticos(query),[verCobertura,setVerCobertura]=useState(false);
  const insights=useMemo(()=>insightsResumen({trends:trends.data,categorias:cats.data}),[trends.data,cats.data]);

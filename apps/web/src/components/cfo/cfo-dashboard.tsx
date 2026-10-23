@@ -1,7 +1,8 @@
 'use client';
-import {useCallback, useMemo, useState} from 'react';
+import {useCallback, useMemo} from 'react';
 import {useJson} from '../ui/use-json';
 import {LineaCache} from '../ui/linea-cache';
+import {useVistaPersistente} from '../workspace/vista-persistente';
 import {EsperaEsqueleto} from '../ui/wait-status';
 import {PageHeader} from '../ui/page-header';
 import {BarChart, type BarDatum} from '../ui/bar-chart';
@@ -29,7 +30,7 @@ const acceptReporte = (j: unknown): ReportState | null => { const d = (j as {dat
 export function CfoDashboard({query = '', organization}: {query?: string; organization?: string}) {
   // Caché stale-while-revalidate (swr.mjs): al volver al panel se pinta al instante el último informe, rotulado, y se revalida sin vaciar la pantalla.
   const rep = useJson<ReportState>('/cfo/data/report' + query, acceptReporte);
-  const [pick, setPick] = useState<string>(''), [measure, setMeasure] = useState<Measure>('ingresos');
+  const [pick, setPick] = useVistaPersistente<string>('cfo:moneda', ''), [measure, setMeasure] = useVistaPersistente<Measure>('cfo:medida', 'ingresos');
   const state = rep.data, busy = rep.busy, error = rep.error;
   const currency = state?.status === 'ok' ? (state.report.currencies.includes(pick) ? pick : state.report.currencies[0]) : pick, setCurrency = setPick;
   const load = useCallback(async () => { await rep.reload(); }, [rep]);

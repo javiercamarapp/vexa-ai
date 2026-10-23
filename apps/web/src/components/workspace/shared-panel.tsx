@@ -23,7 +23,7 @@ import {lineaProblemas} from '../../lib/legibilidad/guias.mjs';
 import {DEFINICION,fraseCriticos} from '../../../../../packages/workspace-service/critico.mjs';
 import Link from './navigation-lifecycle';
 import {pedirConReintento,mensajeDeError,esErrorDeRed,MENSAJE_REINTENTANDO} from '../../lib/workspace/reintento.mjs';
-import {claveCache,guardarCache,leerCache,invalidarCache,guardarVista,leerVista} from '../../lib/workspace/cache.mjs';
+import {claveCache,guardarCache,leerCache,invalidarCache} from '../../lib/workspace/cache.mjs';
 import {pedirSwr} from '../../lib/workspace/swr.mjs';
 import {LineaCache} from '../ui/linea-cache';
 type ViewScope=Scope & {basis:string;exponent?:number};
@@ -36,7 +36,7 @@ class Missing extends Error{}
 const useAntesDePintar=typeof window==='undefined'?useEffect:useLayoutEffect;
 export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'|'problems';initialQuery:string}){
  const [query,setQuery]=useState(initialQuery),[reload,setReload]=useState(0),[bundle,setBundle]=useState<ViewBundle|null>(null),[busy,setBusy]=useState(true),[error,setError]=useState(''),[missing,setMissing]=useState(false),[retrying,setRetrying]=useState(false),[sinRed,setSinRed]=useState(false),[edadCache,setEdadCache]=useState<number|null>(null),[viejo,setViejo]=useState(false);
- const generation=useRef(0),abort=useRef<AbortController|null>(null),resolved=useRef(initialQuery),frescas=useRef(false),scrollY=useRef(0),bundleRef=useRef<ViewBundle|null>(null);
+ const generation=useRef(0),abort=useRef<AbortController|null>(null),resolved=useRef(initialQuery),frescas=useRef(false),bundleRef=useRef<ViewBundle|null>(null);
  useEffect(()=>{bundleRef.current=bundle;},[bundle]);
  const invalidate=useCallback(()=>{abort.current?.abort();generation.current++;},[]);
  useWorkspaceNavigation(invalidate);
@@ -95,10 +95,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   {bundle.meta.next_cursor&&!bundle.meta.catalog&&<Button icon={<Arrow/>} onClick={()=>{const next=new URLSearchParams(pinned);next.set('cursor',bundle.meta.next_cursor!);navigate(next);}}>Página siguiente</Button>}
   {bundle.meta.can_manage&&<><LinkButton href="/economics" variant="ghost" size="sm" icon={<Arrow/>}>{isOverview?'Fuentes y publicaciones':'Revisar fuentes, clasificación de órdenes y publicaciones'}</LinkButton><LinkButton href="/problems/manage" variant="ghost" size="sm" icon={<Arrow/>}>{isOverview?'Catálogo de problemas':'Gestionar el catálogo de problemas'}</LinkButton></>}
  </div>;
- const claveVista=claveCache(resource,pinned.toString());
- useEffect(()=>{let t:ReturnType<typeof setTimeout>|undefined;const al=()=>{scrollY.current=window.scrollY;clearTimeout(t);t=setTimeout(()=>guardarVista(claveVista,{y:scrollY.current}),150);};window.addEventListener('scroll',al,{passive:true});return()=>{window.removeEventListener('scroll',al);clearTimeout(t);if(scrollY.current>0)guardarVista(claveVista,{y:scrollY.current});};},[claveVista]);
- const restaurado=useRef('');
- useEffect(()=>{if(!bundle||edadCache===null||restaurado.current===claveVista)return;restaurado.current=claveVista;const v=leerVista(claveVista) as {y?:number}|null;if(v?.y&&v.y>0)window.requestAnimationFrame(()=>window.requestAnimationFrame(()=>window.scrollTo(0,v.y!)));},[bundle,edadCache,claveVista]);
+ // El desplazamiento lo restaura RestaurarVista (shell) para todas las pantallas.
  const clave=bundle?.meta.scope_hash?'vexa:criticos:'+bundle.meta.scope_hash:null,[ultimo,setUltimo]=useState<{groups:number;signals:number|null}|null>(null);
  useEffect(()=>{if(!clave)return;let nuevo:{groups:number;signals:number|null}|null=null;try{if(bundle?.meta.critical_counts)sessionStorage.setItem(clave,JSON.stringify(bundle.meta.critical_counts));else{const v=sessionStorage.getItem(clave);nuevo=v?JSON.parse(v):null;}}catch{nuevo=null;}void Promise.resolve().then(()=>setUltimo(nuevo));},[clave,bundle?.meta.critical_counts]);
  const notice=bundle?.meta.critical_notice&&<aside className="notice-bar" role="alert"><Icon name="alert" size={14}/><strong>Revisión crítica, independiente del importe</strong><p>{bundle.meta.critical_notice}{bundle.meta.catalog&&<> <a className="row-link-inline" href="#senales-criticas">Ver cuáles son</a></>}</p><details><summary>Qué cuenta como crítico</summary><p>{DEFINICION.senal}</p><p>{DEFINICION.grupo}</p></details></aside>

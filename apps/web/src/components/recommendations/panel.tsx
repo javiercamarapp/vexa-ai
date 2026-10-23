@@ -4,6 +4,7 @@ import {useWorkspaceNavigation,workspaceLocation} from '../workspace/navigation-
 import {useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {leerConCache,leerSwr,claveSwr,guardarSwr,invalidarSwr} from '../../lib/workspace/swr.mjs';
 import {LineaCache} from '../ui/linea-cache';
+import {useVistaPersistente} from '../workspace/vista-persistente';
 import type {Recommendation,RecommendationList} from '../../../../../packages/recommendations/index.mjs';
 import type {Scope} from '../../lib/workspace/contracts';
 import {ScopeBar} from '../workspace/scope-bar';
@@ -131,7 +132,7 @@ export function RecommendationsPanel({initialQuery}:{initialQuery:string}){
  };
  const [proposing,setProposing]=useState(false);
  const generate=()=>{if(!view||!problem||busy||conflict)return;const fingerprint=JSON.stringify({query:resolved.current,problemId:problem,problemVersion:view.problemOptions.find(p=>p.id===problem)?.version});if(generateKey.current?.fingerprint!==fingerprint)generateKey.current={fingerprint,key:crypto.randomUUID()};setProposing(true);void operate('/api/recommendations',{operation:'generate',query:resolved.current,problemId:problem,requestKey:generateKey.current.key}).finally(()=>setProposing(false));};
- const [seg,setSeg]=useState<'all'|'proposed'|'dismissed'>('all'),[propose,setPropose]=useState(false);
+ const [seg,setSeg]=useVistaPersistente<'all'|'proposed'|'dismissed'>('recomendaciones:seg','all'),[propose,setPropose]=useState(false);
  const items=view?[...view.items].sort((a,b)=>(RANK[a.priority]??2)-(RANK[b.priority]??2)):[];
  const nProposed=items.filter(i=>i.status==='proposed').length,nDismissed=items.filter(i=>i.status==='dismissed').length;
  const shown=items.filter(i=>seg==='all'||i.status===seg);

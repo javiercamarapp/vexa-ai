@@ -7,6 +7,7 @@ import {createProblemBudget} from '../../../../../packages/problems/budget.mjs';
 import {createProblemRepository} from '../../../../../packages/problems/repository.mjs';
 import {createProblemConfigResolver} from '../../../../../packages/problems/runtime.mjs';
 import {serverPool} from '../imports/server';
+import {proyectarProblema} from './proyeccion.mjs';
 import {ACTIVE_ORG,AccessError,assertOrigin,config,identity,PRIVATE_HEADERS} from '../auth';
 import {requestAuth} from '../auth-http';
 const headers={...PRIVATE_HEADERS,Vary:'Cookie'};
@@ -22,14 +23,14 @@ export async function problems(request:NextRequest,problemId?:string){
   const database=createDatabase({identity:identity(auth.client),pool:serverPool(),selectedTenant:request.cookies.get(ACTIVE_ORG)?.value});
   const repository=createProblemRepository({database});const context=await database.transaction('read',async s=>({tenantId:s.tenantId,role:s.role}));
   if([...request.nextUrl.searchParams].length)throw invalid();
-  if(problemId!==undefined){if(!uuid(problemId)||request.method!=='GET')throw invalid();return finish(NextResponse.json({problem:await repository.detail({problemId})},{headers}));}
+  if(problemId!==undefined){if(!uuid(problemId)||request.method!=='GET')throw invalid();return finish(NextResponse.json({problem:proyectarProblema(await repository.detail({problemId}),{auditoria:context.role==='owner'})},{headers}));}
   let runtimeConfig:ReturnType<ReturnType<typeof createProblemConfigResolver>>|null;try{runtimeConfig=createProblemConfigResolver(process.env.VEXA_PROBLEMS_CONFIG_JSON??'[]')(context.tenantId);}catch{runtimeConfig=null;}
   const canSubmit=['owner','analyst'].includes(context.role),canRestructure=context.role==='owner';
   const budget=createProblemBudget({database,window:runtimeConfig?.gateway?.policy?.window});
   if(request.method==='GET'){
    // En serie, no con Promise.all: cada lectura abre su propia transacción y las cuatro juntas ocupaban 4 de las 5 conexiones del pool durante toda la lista (QA-2, 23-oct).
    const items=await repository.list({verification:'summary'});const sources=canSubmit?await repository.sources():[];const jobs=await repository.jobs();const budgetView=canRestructure?await budget.read():null;
-   return finish(NextResponse.json({problems:items,sources,jobs,canSubmit,canRestructure,canConfigureBudget:canRestructure,budget:budgetView,configuration:{ready:!!runtimeConfig,enabled:process.env.VEXA_PROBLEMS_RUNTIME==='enabled'},verification:{mode:'summary',note:'Evidencia verificada al abrir cada problema: esta lista solo comprueba que sus corridas de origen existan, estén vigentes y conserven sus hashes; no vuelve a leer el texto.'}},{headers}));
+   return finish(NextResponse.json({problems:items.map(p=>proyectarProblema(p,{auditoria:canRestructure})),sources,jobs,canSubmit,canRestructure,canConfigureBudget:canRestructure,budget:budgetView,configuration:{ready:!!runtimeConfig,enabled:process.env.VEXA_PROBLEMS_RUNTIME==='enabled'},verification:{mode:'summary',note:'Evidencia verificada al abrir cada problema: esta lista solo comprueba que sus corridas de origen existan, estén vigentes y conserven sus hashes; no vuelve a leer el texto.'}},{headers}));
   }
   const raw=await readRequestText(request, 32768);if(Buffer.byteLength(raw)>32768)throw invalid();let parsed:unknown;try{parsed=JSON.parse(raw);}catch{throw invalid();}
   const body=object(parsed,['operation','extractionRunId','requestKey','embeddingId','limit','parents','children','reason','approved','purpose','limitUsd','expectedVersion','expectedWindow','reservationId','actualUsd','evidenceHash','confirmedProviderEvidence']);let data;

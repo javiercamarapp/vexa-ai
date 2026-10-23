@@ -35,7 +35,8 @@ const peso=(c:Cita)=>c.severity==='critical'?3:c.severity==='high'?2:c.severity=
 /** Citas verificadas al abrir: la evidencia viva con la versión vigente del problema (misma herramienta que el Explorador). Si no llega, se usan las del corte (si las hay). */
 function useEvidencia(id:string,shared:string,captured:ConversationRef[]|null){
  const [citas,setCitas]=useState<Cita[]|null>(null),[fallo,setFallo]=useState(false),[reload,setReload]=useState(0),[cobertura,setCobertura]=useState<{runsVerified:number;runsTotal:number}|null>(null);
- const sinAlcance=!new URLSearchParams(shared).get('snapshot_id');
+ // El servidor exige AMBOS (snapshot_id y scope_hash) para la herramienta de evidencia: con solo el primero respondía 400 (published_scope_required) en cada apertura de la ficha (QA-2, N6).
+ const alcance=new URLSearchParams(shared),sinAlcance=!alcance.get('snapshot_id')||!alcance.get('scope_hash');
  useEffect(()=>{
   if(sinAlcance)return;
   const abort=new AbortController(),params=new URLSearchParams(shared),q=new URLSearchParams();

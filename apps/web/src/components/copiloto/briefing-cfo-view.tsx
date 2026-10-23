@@ -1,6 +1,14 @@
 'use client';
-import {useState} from 'react';
 import {KindBadge as KindBadgeBase} from '../ui/kind-badge';
+import {Card} from '../ui/card';
+import {Chip} from '../ui/chip';
+import {FilterBar, FilterSpacer} from '../ui/filter-bar';
+import {KpiStrip, type Kpi} from '../ui/kpi-strip';
+import {Notice} from '../ui/notice';
+import {Popover} from '../ui/overlay';
+import {SegmentedControl} from '../ui/segmented';
+import {Fila, ListaBarras, Vacio} from '../dinero/partes';
+import '../dinero/dinero.css';
 import {ContenedorErrores} from './contenedor-errores';
 import {LinkButton, Download} from '../ui/button';
 import {pct, int} from '../../../../../packages/cfo-copilot/src/format.mjs';
@@ -15,62 +23,51 @@ const HREF_EXPORT = (f: 'csv' | 'pdf') => `/cfo/data/export?format=${f}`;
 function Detalle({href, children = 'Ver detalle'}: {href: string; children?: string}) { return <a className="cn-link" href={href}>{children}<span className="sr-only"> en el informe completo</span></a>; }
 
 function ExportMenu() {
-  const [abierto, setAbierto] = useState(false);
-  return <div className="cn-menu" onKeyDown={e => { if (e.key === 'Escape') setAbierto(false); }}>
-    <button type="button" className="btn btn-sm" aria-expanded={abierto} aria-haspopup="true" onClick={() => setAbierto(v => !v)}><Download /><span className="btn-label">Exportar</span></button>
-    {abierto && <div className="cn-menu-list"><a href={HREF_EXPORT('csv')} download="informe-cfo.csv" onClick={() => setAbierto(false)}>Hoja de cálculo (CSV)</a><a href={HREF_EXPORT('pdf')} download="informe-cfo.pdf" onClick={() => setAbierto(false)}>Documento (PDF)</a></div>}
-  </div>;
+  return <Popover label="Exportar" align="end" width={220} triggerClassName="btn btn-secondary btn-sm" trigger={<><Download /><span className="btn-label">Exportar</span></>}>
+    <ul className="ui-reset" style={{listStyle: 'none', margin: 0, padding: 4, display: 'grid', gap: 4}}>
+      <li><a className="btn btn-sm" href={HREF_EXPORT('csv')} download="informe-cfo.csv">Hoja de cálculo (CSV)</a></li>
+      <li><a className="btn btn-sm" href={HREF_EXPORT('pdf')} download="informe-cfo.pdf">Documento (PDF)</a></li></ul></Popover>;
 }
-/** Briefing de CFO: el primer bloque del copiloto. Un solo titular (h1); el resto son secciones h2 con su clase epistémica, fuente y cobertura. */
+/** Resumen del mes de CFO (dentro del copiloto): titular, KPI en color, serie de 12 meses, alertas, mezcla por canal, calidad y proyección, con los mismos primitivos que el informe completo. */
 export function BriefingCfoView({b, informe, onMoneda, sintetico}: {b: BriefingCfo; informe: (ancla?: string) => string; onMoneda: (m: string) => void; sintetico?: boolean}) {
-  const maxCanal = Math.max(1, ...b.canales.map(c => c.shareBps ?? 0));
-  return <article className="cn-briefing" aria-label="Informe de CFO">
-    <header className="cn-head">
-      <p className="cn-eyebrow">CFO · tu copiloto de dinero{sintetico && <span className="chip cn-demo">Datos sintéticos de demostración</span>}</p>
-      <h2 className="cn-titular">{b.titular.texto}</h2>
-      <p className="cn-fuente"><KindBadge kind={b.titular.kind} /><span>Fuente: {lineaDatosHasta({libro: b.corte})}</span></p>
-      {b.parcial && <p className="cn-parcial" role="note">{b.parcial}</p>}
-      <div className="cn-acciones">
-        {b.monedas.length > 1 && <div className="cn-seg" role="group" aria-label="Moneda del resumen">{b.monedas.map(m => <button key={m} type="button" aria-pressed={m === b.moneda} onClick={() => onMoneda(m)}>{m}</button>)}</div>}
-        <G id="ver-detalle"><LinkButton href={informe()} size="sm">Ver detalle</LinkButton></G>
-        <G id="exportar"><ExportMenu /></G>
-      </div>
-    </header>
-
-    <section className="cn-sec" aria-labelledby="cn-kpi"><h2 id="cn-kpi" className="cn-h2">Último mes completo · {b.moneda}</h2>
-      <ul className="cn-kpis">{b.kpis.map(k => <li key={k.id} className="cn-kpi"><span className="cn-kpi-l">{k.label}</span><strong className="cn-kpi-v">{k.display}</strong>
-        <span className="cn-kpi-d">{k.delta ? <>{k.delta.display} contra {k.delta.vs}</> : 'Sin comparación'}</span><KindBadge kind={k.kind} />{k.cobertura && <small className="cn-kpi-c">{k.cobertura}</small>}</li>)}</ul>
-      <p className="cn-nota">{b.avisoMonedas}</p></section>
-
-    <section className="cn-sec" aria-labelledby="cn-alertas"><div className="cn-sec-head"><h2 id="cn-alertas" className="cn-h2">Alertas activas ({b.alertasActivas})</h2><Detalle href={informe('alertas')} /></div>
-      {b.alertas.length === 0 ? <p className="cn-vacio">Ninguna regla se activó con los datos actuales.</p> : <ul className="cn-alertas">{b.alertas.map(a => <li key={a.id} data-sev={a.severity}><span className="cn-sev">{a.severidad}</span><div><strong>{a.titulo}</strong><span>{a.detalle}</span></div><KindBadge kind={a.kind} /></li>)}</ul>}</section>
-
-    {b.serie && <section className="cn-sec" aria-labelledby="cn-serie"><div className="cn-sec-head"><h2 id="cn-serie" className="cn-h2">Ingresos de los últimos 12 meses · {b.moneda}</h2><Detalle href={informe('tendencias')} /></div>
-      <G id="serie"><SerieNegocio serie={b.serie} titulo={`Ingresos por mes en ${b.moneda}`} unidad={b.moneda} /></G></section>}
-
-    <div className="cn-dos">
-      <section className="cn-sec" aria-labelledby="cn-canal"><div className="cn-sec-head"><h2 id="cn-canal" className="cn-h2">Mezcla por canal</h2><Detalle href={informe('mezcla')} /></div>
-        <p className="cn-nota">Participación por número de pedidos, 12 meses (no depende de la moneda).</p>
-        <ul className="cn-canales">{b.canales.map(c => <li key={c.canal}><span>{c.label}</span><span className="cn-barra" role="img" aria-label={`${c.label}: ${pct(c.shareBps)}`}><span style={{width: Math.max(1, (c.shareBps ?? 0) / maxCanal * 100) + '%'}} /></span><strong>{pct(c.shareBps)}</strong><small>{int(c.n)} pedidos</small></li>)}</ul></section>
-      <section className="cn-sec" aria-labelledby="cn-calidad"><div className="cn-sec-head"><h2 id="cn-calidad" className="cn-h2">Calidad de datos</h2><Detalle href={informe('calidad')} /></div>
-        <dl className="cn-cal">{b.calidad.cifras.map(f => <div key={f.id}><dt>{f.label}</dt><dd>{f.display}</dd></div>)}<div><dt>Registros del libro</dt><dd>{int(b.calidad.filas)}</dd></div></dl>
-        {b.calidad.costo.length > 0 && <div className="cn-costo"><p className="cn-sub">Costo de la mala calidad <KindBadge kind="estimated" /></p>
-          <ul>{b.calidad.costo.map(c => <li key={c.id}><span>{c.label}</span><strong>{c.display}</strong></li>)}</ul>
-          <p className="cn-nota">Estimado con el ticket promedio conocido de cada canal. No se suma a los ingresos observados.</p></div>}
-        {b.calidad.canalMenosCompleto && <p className="cn-nota">Cobertura: {b.calidad.canalesIncompletos} canal(es) con registros incompletos; el menos completo es {b.calidad.canalMenosCompleto.label} ({pct(b.calidad.canalMenosCompleto.completenessBps)}).</p>}</section>
-    </div>
-
-    <section className="cn-sec" aria-labelledby="cn-proy"><div className="cn-sec-head"><h2 id="cn-proy" className="cn-h2">Proyección de ingresos · {b.moneda}</h2><Detalle href={informe('proyecciones')} /></div>
-      {b.proyeccion ? <>
-        <p className="cn-sub"><KindBadge kind="estimated" /> Estimado, nunca observado.</p>
-        <ul className="cn-proy">{b.proyeccion.puntos.map(p => <li key={p.month}><span>{p.mes}</span><strong>{p.medio}</strong><small>rango {p.rango}</small></li>)}</ul>
-        <details className="cn-supuestos"><summary>Supuestos y método</summary><p>{b.proyeccion.metodo}</p></details>
-      </> : <p className="cn-vacio">No estimable: se necesitan al menos 4 meses completos en {b.moneda} para estimar una tendencia.</p>}</section>
-
-    {b.caida && <section className="cn-sec cn-caida" aria-labelledby="cn-caida"><h2 id="cn-caida" className="cn-h2">{b.caida.titulo}</h2>
-      <ul>{b.caida.lineas.map((l, i) => <li key={i}>{l}</li>)}</ul>
-      <p className="cn-causa"><strong>{b.caida.causa.split(':')[0]}.</strong> {(r => r.charAt(0).toUpperCase() + r.slice(1))(b.caida.causa.split(':').slice(1).join(':').trim())}</p></section>}
-
-    <p className="cn-pie"><a className="cn-link" href={informe()}>Ver informe completo</a> · Observado, Estimado e Inferido se distinguen en cada cifra; si un dato falta se dice «No disponible», nunca 0.</p>
+  const spark = b.serie ? b.serie.principal.filter(p => !p.partial && p.value != null).map(p => p.value as number) : [];
+  const kpis: Kpi[] = b.kpis.map(k => {
+    const refund = k.id.startsWith('refund'), t = (k.delta as {bps?: number | null} | null)?.bps ?? null;
+    return {key: k.id, label: k.label, c: refund ? 2 : 1, value: k.display, spark: !refund && k.id.includes('ingres') ? spark : undefined,
+      note: <span className="dg-kpi-nota"><span className="dg-delta" data-t={refund || t == null ? undefined : t > 0 ? 'up' : t < 0 ? 'down' : undefined}>{k.delta ? k.delta.display : 'sin comparar'}</span><span>{k.delta ? 'vs ' + k.delta.vs : 'Sin comparación'}</span></span>};
+  });
+  return <article className="dg-page" aria-label="Informe de CFO">
+    <h2 className="dg-titular">{b.titular.texto}</h2>
+    <FilterBar label="Moneda y acciones">
+      {b.monedas.length > 1 && <SegmentedControl label="Moneda del resumen" size="sm" value={b.moneda} options={b.monedas.map(m => ({value: m, label: m}))} onChange={onMoneda} />}
+      <G id="kind-t"><KindBadgeBase kind={b.titular.kind} /></G>
+      {sintetico && <Chip tone="warn">Datos sintéticos de demostración</Chip>}
+      <FilterSpacer />
+      <G id="ver-detalle"><LinkButton href={informe()} size="sm">Ver detalle</LinkButton></G>
+      <G id="exportar"><ExportMenu /></G>
+    </FilterBar>
+    {b.parcial && <Notice tone="info">{b.parcial}</Notice>}
+    <KpiStrip items={kpis} label={`Último mes completo en ${b.moneda}`} />
+    <p className="dg-nota" style={{margin: 0}}>{b.avisoMonedas} Fuente: {lineaDatosHasta({libro: b.corte})}</p>
+    <Fila split="8-4">
+      <Card title={`Ingresos de los últimos 12 meses · ${b.moneda}`} actions={<Detalle href={informe('tendencias')} />}>
+        {b.serie ? <G id="serie"><SerieNegocio serie={b.serie} titulo={`Ingresos por mes en ${b.moneda}`} unidad={b.moneda} /></G> : <Vacio>Sin serie de ingresos en {b.moneda}.</Vacio>}</Card>
+      <Card title={`Alertas activas (${b.alertasActivas})`} actions={<Detalle href={informe('alertas')} />}>
+        {b.alertas.length === 0 ? <Vacio>Ninguna regla se activó con los datos actuales.</Vacio> : <ul className="dg-lista" data-cols="dos" aria-label="Alertas">{b.alertas.map(a => <li key={a.id}><span className="dg-lab"><b>{a.titulo}</b><small>{a.detalle}</small></span><Chip tone={a.severity === 'alta' ? 'bad' : a.severity === 'media' ? 'warn' : 'info'}>{a.severidad}</Chip></li>)}</ul>}</Card>
+    </Fila>
+    <Fila split="4-4-4">
+      <Card title="Mezcla por canal" description="Participación por pedidos, 12 meses" actions={<Detalle href={informe('mezcla')} />}>
+        <ListaBarras c={1} max={100} label="Pedidos por canal" items={b.canales.map(c => ({key: c.canal, etiqueta: c.label, sub: `${int(c.n)} pedidos`, valor: (c.shareBps ?? 0) / 100, texto: pct(c.shareBps)}))} /></Card>
+      <Card title="Calidad de datos" actions={<Detalle href={informe('calidad')} />}>
+        <ul className="dg-lista" data-cols="dos" aria-label="Cifras de calidad">{[...b.calidad.cifras.map(f => ({id: f.id, label: f.label, display: f.display})), {id: 'filas', label: 'Registros del libro', display: int(b.calidad.filas)}].map(f => <li key={f.id}><span className="dg-lab"><b>{f.label}</b></span><span className="dg-val">{f.display}</span></li>)}</ul>
+        {b.calidad.canalMenosCompleto && <p className="dg-nota">{b.calidad.canalesIncompletos} canal(es) incompletos; el menos completo es {b.calidad.canalMenosCompleto.label} ({pct(b.calidad.canalMenosCompleto.completenessBps)}).</p>}
+        {b.calidad.costo.length > 0 && <p className="dg-nota"><KindBadge kind="estimated" /> {b.calidad.costo.map(c => `${c.label}: ${c.display}`).join(' · ')}. Estimado; no suma a lo observado.</p>}</Card>
+      <Card title={`Proyección · ${b.moneda}`} description="Estimado, nunca observado" actions={<Detalle href={informe('proyecciones')} />}>
+        {b.proyeccion ? <><ul className="dg-lista" data-cols="dos" aria-label="Proyección de ingresos">{b.proyeccion.puntos.map(p => <li key={p.month}><span className="dg-lab"><b>{p.mes}</b><small>rango {p.rango}</small></span><span className="dg-val">{p.medio}</span></li>)}</ul><p className="dg-nota">{b.proyeccion.metodo}</p></>
+          : <Vacio>No estimable: se necesitan al menos 4 meses completos en {b.moneda}.</Vacio>}</Card>
+    </Fila>
+    {b.caida && <Notice tone="warn" title={b.caida.titulo}><ul style={{margin: '4px 0', paddingLeft: 18}}>{b.caida.lineas.map((l, i) => <li key={i}>{l}</li>)}</ul>
+      <strong>{b.caida.causa.split(':')[0]}.</strong> {(r => r.charAt(0).toUpperCase() + r.slice(1))(b.caida.causa.split(':').slice(1).join(':').trim())}</Notice>}
+    <p className="dg-nota" style={{margin: 0}}><a className="cn-link" href={informe()}>Ver informe completo</a> · Observado, Estimado e Inferido se distinguen en cada cifra; si un dato falta se dice «No disponible», nunca 0.</p>
   </article>;
 }

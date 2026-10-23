@@ -6,18 +6,27 @@ import {LineaCache} from '../ui/linea-cache';
 import {useVistaPersistente} from '../workspace/vista-persistente';
 import {EsperaEsqueleto} from '../ui/wait-status';
 import {PageHeader} from '../ui/page-header';
-import {BarChart, type BarDatum} from '../ui/bar-chart';
 import {Button, LinkButton, Download, Refresh} from '../ui/button';
 import {KindBadge} from '../ui/kind-badge';
-import {DataTable, type Column} from '../platform/data-table';
-import {PfIcon} from '../platform/icons';
-import {Empty, HowTo, Panel, Pill, Seg, Tile, severityTone} from '../platform/primitives';
+import {Card} from '../ui/card';
+import {Chip} from '../ui/chip';
+import {FilterBar, FilterSpacer} from '../ui/filter-bar';
+import {KpiStrip, type Kpi} from '../ui/kpi-strip';
+import {Notice} from '../ui/notice';
+import {Popover} from '../ui/overlay';
+import {ErrorState} from '../ui/error-state';
+import {SegmentedControl} from '../ui/segmented';
+import {DataTable, type Column} from '../ui/data-table';
+import {EmptyState} from '../ui/empty-state';
+import {Fila, ListaBarras, Vacio, type ItemBarra} from '../dinero/partes';
+import {HowTo} from '../platform/primitives';
 import type {CfoReport, CurrencyBlock} from '../../../../../packages/cfo-copilot/src/index.mjs';
 import {changeBps, int, monthLabel, pct, signedPct} from '../../../../../packages/cfo-copilot/src/format.mjs';
 import {MonthBars} from './month-bars';
 import {explicarVariacion} from '../../lib/legibilidad/caida.mjs';
 import {seriesPoints, type Measure} from './series';
 import './cfo.css';
+import '../dinero/dinero.css';
 import {lineaDatosHasta} from '../../../../../packages/workspace-service/datos-hasta.mjs';
 
 export type ReportState = {status: 'ok'; report: CfoReport; synthetic: boolean; exposureStatus?: string} | {status: 'empty' | 'timeout'; synthetic?: boolean; summary?: {freshness: string; label: string | null; missingMonths?: string[] | null}};
@@ -39,151 +48,151 @@ export function CfoDashboard({query = '', organization, roleOverride, volverA = 
   const load = useCallback(async () => { await rep.reload(); }, [rep]);
   const ok = state?.status === 'ok' ? state : null, report = ok?.report;
   const actions = <>
-    <LinkButton href={volverA} variant="primary" icon={<PfIcon name="sparkles" />}>Volver al copiloto CFO</LinkButton>
+    <LinkButton href={volverA} variant="primary">Volver al copiloto CFO</LinkButton>
+    <Popover label="Exportar" align="end" width={220} triggerClassName="btn btn-secondary" trigger={<><Download /><span className="btn-label">Exportar</span></>}>
+      <ul className="ui-reset" style={{listStyle: 'none', margin: 0, padding: 4, display: 'grid', gap: 4}}>
+        <li><LinkButton size="sm" href="/cfo/data/export?format=csv" download="informe-cfo.csv" icon={<Download />}>Informe CSV</LinkButton></li>
+        <li><LinkButton size="sm" href="/cfo/data/export?format=pdf" download="informe-cfo.pdf" icon={<Download />}>Informe PDF</LinkButton></li></ul></Popover>
     <Button icon={<Refresh />} loading={busy} onClick={() => void load()}>Actualizar</Button>
-    <LinkButton href="/cfo/data/export?format=csv" download="informe-cfo.csv" icon={<Download />}>Exportar CSV</LinkButton>
-    <LinkButton href="/cfo/data/export?format=pdf" download="informe-cfo.pdf" icon={<Download />}>Exportar PDF</LinkButton>
   </>;
-  const header = <PageHeader eyebrow="CFO del negocio" title="Informe completo de CFO" description="Ingresos, reembolsos, mezcla por canal y calidad de datos, por moneda y sin mezclar bases. Cada cifra dice si es observada, estimada o inferida, y cómo se calculó." actions={actions} />;
-  if (!permitido) return <div className="cf-page"><PageHeader eyebrow="CFO del negocio" title="Informe completo de CFO" description="Panel financiero del negocio para propietarios y analistas." />
-    <Empty title="Tu rol no tiene acceso a este panel" tone="muted" action={<LinkButton href="/overview">Volver al resumen</LinkButton>}>El panel CFO muestra ingresos, reembolsos y exposición económica. Solo lo ven los propietarios y analistas de la organización; pide acceso a un propietario.</Empty></div>;
-  if (!report) return <div className="cf-page">{header}{error && <p className="state state-error" role="alert">{error} <Button size="sm" icon={<Refresh />} onClick={() => void load()}>Reintentar</Button></p>}
+  const header = <PageHeader eyebrow="Dinero · CFO" title="Informe de CFO" description="Ingresos, reembolsos, canales y calidad de datos por moneda, sin mezclar bases; cada cifra dice cómo se calculó." actions={actions} />;
+  if (!permitido) return <div className="dg-page"><PageHeader eyebrow="Dinero · CFO" title="Informe de CFO" description="Panel financiero para propietarios y analistas." />
+    <Card><EmptyState art="shield" title="Tu rol no tiene acceso a este panel" body="El informe CFO muestra ingresos, reembolsos y exposición económica. Solo lo ven los propietarios y analistas; pide acceso a un propietario." action={<LinkButton href="/overview">Volver al resumen</LinkButton>} /></Card></div>;
+  if (!report) return <div className="dg-page">{header}{error && <ErrorState title="No disponible ahora" body={error} onRetry={() => void load()} />}
     {!state ? (busy ? <EsperaEsqueleto que="el informe del negocio" filas={5} /> : null)
     : state.status === 'timeout'
-      ? <Empty tone="bad" title="No disponible ahora" action={<Button icon={<Refresh />} loading={busy} onClick={() => void load()}>Reintentar</Button>}>La consulta acotada del libro económico superó el tiempo permitido{state.status === 'timeout' && state.summary && ['absent', 'partial', 'unavailable'].includes(state.summary.freshness) ? ' y todavía no hay un resumen precomputado completo de los últimos 12 meses (pide a un operador refrescarlo)' : ''}. No se muestra ninguna cifra parcial como si fuera completa.</Empty>
-      : <Empty title="Sin registros en el libro económico" action={<LinkButton href="/economics" icon={<PfIcon name="database" />}>Ir a Dinero › Preparar</LinkButton>}>Aún no hay pedidos ni reembolsos registrados para esta organización en los últimos 12 meses. Carga una fuente para ver el panel financiero.</Empty>}</div>;
+      ? <Card><ErrorState title="No disponible ahora" body="La consulta acotada del libro económico superó el tiempo permitido. No significa que no haya datos: reintenta en un momento." onRetry={() => void load()} busy={busy} /></Card>
+      : <Card><EmptyState art="inbox" title="Sin registros en el libro económico" body="Aún no hay pedidos ni reembolsos registrados en los últimos 12 meses. Carga una fuente para ver el panel financiero." action={<LinkButton href="/economics">Ir a Dinero › Preparar</LinkButton>} /></Card>}</div>;
 
   const block = report.perCurrency.find(c => c.currency === currency) ?? report.perCurrency[0];
   const kpis = report.kpis.find(k => k.currency === block.currency)!;
-  return <div className="cf-page">
+  const line = block.orderBases[0];
+  const sparkDe = (id: string): number[] => {
+    const lleno = (xs: {partial: boolean}[]) => xs.length;
+    void lleno;
+    if (id.startsWith('refund:rate') || id.includes('rate')) return block.rate.series.filter(s => !s.partial && s.bps !== null).map(s => s.bps as number);
+    if (id.startsWith('refund')) return block.refunds.series.filter(s => !s.partial).map(s => Number(BigInt(s.amount)));
+    if (id.includes('ticket')) return line.series.filter(s => !s.partial && s.known > 0).map(s => Number(BigInt(s.amount)) / s.known);
+    if (id.includes('order') || id.includes('pedidos')) return block.ordersAll.filter(s => !s.partial).map(s => s.n);
+    return line.series.filter(s => !s.partial && s.known > 0).map(s => Number(BigInt(s.amount)));
+  };
+  const stripKpis: Kpi[] = kpis.metrics.map(m => {
+    const refund = m.id.startsWith('refund');
+    const t = m.delta?.bps == null || refund ? undefined : m.delta.bps > 0 ? 'up' : m.delta.bps < 0 ? 'down' : undefined;
+    return {key: m.id, label: m.label, c: refund ? 2 : 1, value: <span title={m.display}>{(m.display.length>9?m.display.replace(/\.\d+/,''):m.display).replace(/\s?(USD|CAD|MXN)$/,'')}</span>, spark: sparkDe(m.id),
+      note: <span className="dg-kpi-nota">{m.delta ? <span className="dg-delta" data-t={t}>{m.delta.display}</span> : <span className="dg-delta">sin comparar</span>}<span>{m.delta ? 'vs ' + m.delta.vs : m.scope}</span></span>};
+  });
+  const alertas = report.alerts.filter(a => a.severity !== 'info');
+  const TONO: Record<string, 'bad' | 'warn' | 'info'> = {alta: 'bad', media: 'warn', baja: 'info', info: 'info'};
+  return <div className="dg-page">
     {header}
     <LineaCache edadMs={rep.edadMs} actualizando={rep.actualizando} viejo={rep.viejo} onActualizar={() => void load()} />
-    <div className="pf-statusbar" role="status">
-      {ok?.synthetic && <Pill tone="warn">Datos sintéticos de demostración</Pill>}
-      <span>{organization ?? 'Organización'}</span><span title="Cada fuente tiene su propia fecha de corte: las conversaciones y otras fuentes se informan en el Resumen y el Explorador."><strong>{lineaDatosHasta({libro:report.watermark}).replace(/\.$/,'')}</strong></span><span>Último mes completo: <strong>{report.lastComplete ? monthLabel(report.lastComplete) : 'ninguno'}</strong></span><span>{int(report.quality.totalRows)} registros del libro</span>
-      {report.summary?.source === 'summary' && report.summary.label && <Pill tone={report.summary.freshness === 'fresh' ? 'ok' : 'warn'}>{report.summary.label}</Pill>}
-      {!report.complete && <Pill tone="warn">Resultado truncado</Pill>}
-    </div>
-    <div className="pf-banner" role="note"><PfIcon name="info" /><p><strong>USD, CAD y MXN no se suman ni se convierten.</strong> No hay tipos de cambio aprobados (la tabla de versiones de tipo de cambio está vacía), así que cada moneda se muestra aparte. Tampoco se restan reembolsos de ingresos: usan bases económicas distintas.</p></div>
-    <nav className="pf-anchors" aria-label="Secciones del panel">{[['resumen', 'Resumen'], ['alertas', 'Alertas'], ['tendencias', 'Tendencias'], ['mezcla', 'Mezcla por canal'], ['calidad', 'Calidad de datos'], ['exposicion', 'Exposición'], ['proyecciones', 'Proyecciones'], ['glosario', 'Glosario']].map(([id, label]) => <LinkButton key={id} href={'#' + id} size="sm">{label}</LinkButton>)}</nav>
-
-    <Panel id="resumen" eyebrow={`Último mes completo · ${report.lastComplete ? monthLabel(report.lastComplete) : '—'}`} title="Resumen por moneda" actions={<Seg label="Moneda" value={block.currency} options={report.currencies.map(c => ({value: c, label: c}))} onChange={setCurrency} />}
-      lead={report.prevComplete ? `Variaciones contra ${monthLabel(report.prevComplete)}. Los meses incompletos no se comparan.` : 'Se necesitan dos meses completos para comparar.'}>
-      <div className="pf-tiles reveal">{kpis.metrics.map(m => <Tile key={m.id} label={m.label} value={m.display} kind={m.kind} delta={m.delta} foot={m.scope} coverage={m.coverage.eligible === null ? null : m.coverage.label} how={m.how} />)}</div>
-      <CaidaExplicada report={report} moneda={block.currency} />
-      {!kpis.metrics.some(m => m.id.startsWith('refund:')) && <p className="pf-banner" role="note"><PfIcon name="info" />Sin reembolsos registrados en {block.currency}: no se calcula la tasa de reembolso (no es 0 %, es «sin fuente»).</p>}
-      {block.orderBases.length > 1 && <p className="card-lead">En {block.currency} hay {block.orderBases.length} bases de ingreso que no se suman: {block.orderBases.map(b => b.label).join(' · ')}. El resumen usa «{block.orderBases[0].label}».</p>}
-    </Panel>
-
-    <Panel id="alertas" eyebrow="Atención" title={`Alertas (${report.alerts.filter(a => a.severity !== 'info').length} activas)`} lead="Reglas deterministas sobre las cifras observadas; cada una dice cómo se calculó.">
-      {report.alerts.length === 0 ? <Empty title="Sin alertas">Ninguna regla se activó con los datos actuales.</Empty> :
-        <ul className="pf-list">{report.alerts.map(a => <li key={a.id}>
-          <div className="pf-li-main"><div className="pf-li-head"><Pill tone={severityTone(a.severity)}>{SEVERITY[a.severity]}</Pill><KindBadge kind={a.kind} /></div><strong>{a.title}</strong><span>{a.detail}</span><HowTo text={a.how} /></div>
-          {a.cta && <LinkButton href={a.cta.href} size="sm" icon={<PfIcon name="chevron" size={14} />}>{a.cta.label}</LinkButton>}
-        </li>)}</ul>}
-    </Panel>
-
-    <Trends report={report} block={block} measure={measure} setMeasure={setMeasure} />
-    <Mix report={report} />
-    <Quality report={report} />
-    <Exposure report={report} />
+    <FilterBar label="Moneda y medida">
+      <SegmentedControl label="Moneda" size="sm" value={block.currency} options={report.currencies.map(c => ({value: c, label: c}))} onChange={setCurrency} />
+      <SegmentedControl label="Medida" size="sm" value={measure} options={MEASURES.map(m => ({value: m.value, label: m.label}))} onChange={v => setMeasure(v as Measure)} />
+      <FilterSpacer />
+      {ok?.synthetic && <Chip tone="warn">Datos sintéticos de demostración</Chip>}
+      <Chip>{lineaDatosHasta({libro: report.watermark}).replace(/\.$/, '')}</Chip>
+      <Chip categoria={1}>Último mes completo: {report.lastComplete ? monthLabel(report.lastComplete) : 'ninguno'}</Chip>
+      {!report.complete && <Chip tone="warn">Resultado truncado</Chip>}
+    </FilterBar>
+    <Notice tone="info">USD, CAD y MXN no se suman ni se convierten: no hay tipos de cambio aprobados. Tampoco se restan reembolsos de ingresos (bases distintas). {organization ?? ''}</Notice>
+    <KpiStrip items={stripKpis} label={`Indicadores de ${block.currency}`} />
+    <CaidaExplicada report={report} moneda={block.currency} />
+    <Fila split="8-4">
+      <Card title="Tendencia mensual" description={`Últimos ${report.months.length} meses · ${block.currency}`}>
+        <MonthBars key={measure + block.currency} title={seriesPoints(block, measure).title} unit={seriesPoints(block, measure).unit} points={seriesPoints(block, measure).points} note={seriesPoints(block, measure).note} exponent={seriesPoints(block, measure).exponent} />
+      </Card>
+      <Card title={`Alertas (${alertas.length} activas)`} description="Reglas deterministas sobre cifras observadas" actions={<KindBadge kind="observed" />}>
+        {alertas.length === 0 ? <Vacio>Ninguna regla se activó con los datos actuales.</Vacio> :
+          <ul className="dg-lista" aria-label="Alertas" data-cols="dos">{alertas.slice(0, 4).map(a => <li key={a.id}>
+            <span className="dg-lab"><b>{a.title}</b><small>{a.detail}</small></span>
+            <span style={{display: 'grid', gap: 4, justifyItems: 'end'}}><Chip tone={TONO[a.severity]}>{SEVERITY[a.severity]}</Chip>{a.cta && <LinkButton href={a.cta.href} size="sm">{a.cta.label}</LinkButton>}</span></li>)}</ul>}
+      </Card>
+    </Fila>
+    <Fila split="6-6">
+      <Mix report={report} currency={block.currency} />
+      <Quality report={report} />
+    </Fila>
     <Projections report={report} block={block} />
-
-    <Panel id="glosario" eyebrow="Referencia" title="Glosario y cómo leer las cifras">
+    <Exposure report={report} />
+    <Comparativa block={block} />
+    <Card title="Glosario y cómo leer las cifras" description={ok?.synthetic ? AFTER_SAVE : 'Las cifras provienen del libro económico de esta organización; los CSV y PDF llevan exactamente las mismas.'}>
       <dl className="cf-glossary">{report.glossary.map(g => <div key={g.term}><dt>{g.term}</dt><dd>{g.body}</dd></div>)}</dl>
-      <p className="card-lead">{ok?.synthetic ? AFTER_SAVE : 'Las cifras provienen del libro económico de esta organización (última revisión de cada registro). Los exportes CSV y PDF contienen exactamente las mismas cifras que esta pantalla.'}</p>
-    </Panel>
+    </Card>
   </div>;
 }
 
-
 type Row = {month: string; partial: boolean; orders: number; revenue: string; ticket: string; refunds: number; refundAmount: string; rate: string; mom: string | null};
-function Trends({report, block, measure, setMeasure}: {report: CfoReport; block: CurrencyBlock; measure: Measure; setMeasure: (m: Measure) => void}) {
-  const view = seriesPoints(block, measure), line = block.orderBases[0];
+function Comparativa({block}: {block: CurrencyBlock}) {
+  const line = block.orderBases[0];
   const rows: Row[] = useMemo(() => line.series.map((s, i) => {
     const prev = i > 0 ? line.series[i - 1] : null, ref = block.refunds.series[i], rate = block.rate.series[i];
     const mom = prev && !s.partial && !prev.partial && s.known > 0 && prev.known > 0 ? signedPct(changeBps(BigInt(s.amount), BigInt(prev.amount))) : null;
     return {month: s.month, partial: s.partial, orders: s.n, revenue: s.amountDisplay, ticket: s.ticketDisplay ?? 'No disponible', refunds: ref.n, refundAmount: ref.n ? ref.amountDisplay : '—', rate: rate.display, mom};
-  }), [line, block]);
+  }).reverse(), [line, block]);
   const cols: Column<Row>[] = [
-    {id: 'month', header: 'Mes', cell: r => <>{monthLabel(r.month)}{r.partial && <Pill tone="warn">Incompleto</Pill>}</>, sort: r => r.month},
-    {id: 'orders', header: 'Pedidos', align: 'right', cell: r => int(r.orders), sort: r => r.orders},
-    {id: 'revenue', header: 'Ingresos', align: 'right', cell: r => r.revenue},
-    {id: 'ticket', header: 'Ticket promedio', align: 'right', cell: r => r.ticket},
-    {id: 'mom', header: 'Ingresos vs mes anterior', align: 'right', cell: r => r.mom ?? '—'},
-    {id: 'refunds', header: 'Reembolsos', align: 'right', cell: r => int(r.refunds), sort: r => r.refunds},
-    {id: 'refundAmount', header: 'Importe reembolsado', align: 'right', cell: r => r.refundAmount},
-    {id: 'rate', header: 'Tasa', align: 'right', cell: r => r.rate},
+    {key: 'month', header: 'Mes', render: r => <>{monthLabel(r.month)}{r.partial && <> <Chip tone="warn">Incompleto</Chip></>}</>},
+    {key: 'orders', header: 'Pedidos', align: 'num', render: r => int(r.orders)},
+    {key: 'revenue', header: 'Ingresos', align: 'num', render: r => r.revenue},
+    {key: 'mom', header: 'vs mes anterior', align: 'num', render: r => r.mom ?? '—'},
+    {key: 'ticket', header: 'Ticket promedio', align: 'num', render: r => r.ticket},
+    {key: 'refunds', header: 'Reembolsos', align: 'num', render: r => int(r.refunds)},
+    {key: 'refundAmount', header: 'Importe reembolsado', align: 'num', render: r => r.refundAmount},
+    {key: 'rate', header: 'Tasa', align: 'num', render: r => r.rate},
   ];
   const others = block.orderBases.slice(1);
-  return <Panel id="tendencias" eyebrow={`Últimos ${report.months.length} meses · ${block.currency}`} title="Tendencias y comparativa mes contra mes" actions={<Seg label="Medida" value={measure} options={MEASURES} onChange={setMeasure} />}>
-    <MonthBars key={measure + block.currency} title={view.title} unit={view.unit} points={view.points} note={view.note} exponent={view.exponent} />
-    <details className="trend-table cf-monthly"><summary>Ver comparativa mensual completa</summary>
-      <DataTable caption={`Comparativa mensual en ${block.currency}`} rows={rows} columns={cols} rowKey={r => r.month} pageSize={24} initialSort={{id: 'month', dir: 'desc'}} />
-      <p className="card-lead">La variación solo se calcula entre dos meses completos. «—» significa que no es comparable o que falta el importe.</p></details>
-    {others.length > 0 && <div className="cf-others"><h3>Otras bases en {block.currency} (no se suman a las de arriba)</h3><ul className="pf-list">{others.map(b => <li key={b.base}><div className="pf-li-main"><strong>{b.label}</strong><span>{b.channels.map(c => c.label).join(', ')} · {int(b.total.n)} pedidos · {b.series.at(-2)?.amountDisplay ?? '—'} en {monthLabel(b.series.at(-2)?.month ?? '')}</span></div><KindBadge kind="observed" /></li>)}</ul></div>}
-  </Panel>;
+  return <Card title="Comparativa mensual" description={`${block.currency} · la variación solo se calcula entre meses completos; «—» = no comparable o sin importe`}>
+    <DataTable caption={`Comparativa mensual en ${block.currency}`} rows={rows} columns={cols} rowKey={r => r.month} maxHeight="none" />
+    {others.length > 0 && <p className="dg-nota">Otras bases en {block.currency} (no se suman): {others.map(b => `${b.label} · ${b.channels.map(c => c.label).join(', ')} · ${int(b.total.n)} pedidos`).join(' | ')}.</p>}
+  </Card>;
 }
 
-function Mix({report}: {report: CfoReport}) {
-  const data: BarDatum[] = report.mix.orders.map(o => ({key: o.channel, label: o.label, value: o.shareBps ?? 0, display: `${int(o.n)} · ${pct(o.shareBps)}`, kind: 'observed'}));
-  return <Panel id="mezcla" eyebrow="12 meses · pedidos registrados" title="Mezcla por canal" lead="Participación por conteo de pedidos (no depende de moneda). Los importes se reparten solo dentro de la misma moneda y la misma base.">
-    <div className="pf-grid-2">
-      <div><BarChart title="Pedidos por canal" unit="% de pedidos" data={data} /><HowTo text={report.mix.ordersFig.how} /></div>
-      <div className="cf-mixcur">{report.mix.byCurrency.map(g => <section key={g.currency + g.base} aria-label={`${g.currency} ${g.baseLabel}`}>
-        <h3>{g.currency} <span className="pf-sub">{g.baseLabel} · total {g.total}</span></h3>
-        <ul className="cf-mixlist">{g.items.map(i => <li key={i.channel}><span>{i.label}</span><span className="cf-mixbar" role="img" aria-label={`${i.label}: ${pct(i.shareBps)}`}><span style={{width: Math.max(1, (i.shareBps ?? 0) / 100) + '%'}} /></span><strong>{pct(i.shareBps)}</strong><small>{i.display}</small></li>)}</ul>
-      </section>)}</div>
+function Mix({report, currency}: {report: CfoReport; currency: string}) {
+  const pedidos: ItemBarra[] = report.mix.orders.map(o => ({key: o.channel, label: o.label, etiqueta: o.label, sub: `${int(o.n)} pedidos`, valor: (o.shareBps ?? 0) / 100, texto: pct(o.shareBps)}));
+  const grupos = report.mix.byCurrency.filter(g => g.currency === currency);
+  return <Card title="Mezcla por canal" description={`Pedidos (conteo, sin moneda) e importes en ${currency} por base: no se suman entre sí`} actions={<KindBadge kind="observed" />}>
+    <div className="dg-dos" style={{alignItems: 'start'}}>
+      <div><p className="dg-lab" style={{margin: '0 0 2px'}}><b>Pedidos por canal</b></p><ListaBarras c={1} max={100} label="Pedidos por canal" apilado items={pedidos} /></div>
+      <div>{grupos.length === 0 ? <Vacio>Sin importes en {currency}.</Vacio> : grupos.map(g => <div key={g.currency + g.base} style={{marginBottom: 8}}><p className="dg-lab" style={{margin: '0 0 2px'}}><b>{g.baseLabel}</b><small>total {g.total}</small></p>
+        <ListaBarras c={2} max={100} label={`${g.currency} ${g.baseLabel}`} apilado items={g.items.map(i => ({key: i.channel, etiqueta: i.label, sub: i.display, valor: (i.shareBps ?? 0) / 100, texto: pct(i.shareBps)}))} /></div>)}</div>
     </div>
-  </Panel>;
+    <div className="dg-pie"><HowTo text={report.mix.ordersFig.how} /></div></Card>;
 }
 
 function Quality({report}: {report: CfoReport}) {
-  const q = report.quality, figs = [q.figs.rows, q.figs.noCurrency, q.figs.ordersNoAmount, q.figs.refundsNoAmount, q.figs.toReview];
-  const cols: Column<(typeof q.byChannel)[number]>[] = [
-    {id: 'channel', header: 'Canal', cell: r => <>{r.label}{!r.hasRefundSource && <small className="pf-sub">Sin fuente de devoluciones</small>}</>, sort: r => r.label},
-    {id: 'rows', header: 'Registros del libro', align: 'right', cell: r => int(r.rows), sort: r => r.rows},
-    {id: 'nc', header: 'Sin moneda', align: 'right', cell: r => int(r.noCurrency), sort: r => r.noCurrency},
-    {id: 'oa', header: 'Pedidos sin importe', align: 'right', cell: r => int(r.ordersNoAmount), sort: r => r.ordersNoAmount},
-    {id: 'ra', header: 'Reembolsos sin importe', align: 'right', cell: r => int(r.refundsNoAmount), sort: r => r.refundsNoAmount},
-    {id: 'comp', header: 'Completitud', cell: r => <span className="cf-comp"><span className="cov-track" role="img" aria-label={`Completitud ${pct(r.completenessBps)}`}><span className="cov-seg cov-in" style={{flexBasis: (r.completenessBps ?? 0) / 100 + '%'}} />{(r.completenessBps ?? 0) < 10000 && <span className="cov-seg cov-rej" style={{flexBasis: Math.max(1, 100 - (r.completenessBps ?? 0) / 100) + '%'}} />}</span><strong>{pct(r.completenessBps)}</strong></span>, sort: r => r.completenessBps},
-  ];
-  return <Panel id="calidad" eyebrow="Qué tan completo está lo que ves" title="Calidad de datos y su costo" lead="Cada fila sin moneda o sin importe queda fuera de los totales. Aquí se cuenta y se estima cuánto representa.">
-    <div className="pf-tiles">{figs.map(f => <Tile key={f.id} label={f.label} value={f.display} kind={f.kind} foot={f.scope} coverage={f.coverage.eligible === null ? null : f.coverage.label} how={f.how} />)}</div>
-    <DataTable caption="Calidad de datos por canal" rows={q.byChannel} columns={cols} rowKey={r => r.channel} />
-    <h3 className="cf-h3">Costo de la mala calidad <KindBadge kind="estimated" /></h3>
-    <p className="card-lead">Estimado: lo que valdrían los registros sin importe si tuvieran el ticket promedio conocido de su canal. No se suma a los ingresos observados.</p>
-    <div className="pf-tiles">{q.unaccounted.flatMap(u => [u.orderFig, u.refundFig]).map(f => <Tile key={f.id} label={f.label} value={f.display} kind="estimated" foot={f.scope} how={f.how} />)}
-      <Tile label="Filas sin moneda" value={int(q.notEstimable.rows)} kind="observed" foot="No estimable" how={q.notEstimable.reason} /></div>
-  </Panel>;
+  const q = report.quality;
+  return <Card title="Calidad de datos" description="Qué tan completo está lo que ves; lo incompleto queda fuera de los totales" actions={<KindBadge kind="observed" />}>
+    <div className="dg-fill">
+      <ListaBarras c={5} max={100} label="Completitud por canal" items={q.byChannel.map(r => ({key: r.channel, etiqueta: r.label, sub: !r.hasRefundSource ? `${int(r.rows)} registros · sin fuente de devoluciones` : `${int(r.rows)} registros · ${int(r.noCurrency)} sin moneda · ${int(r.ordersNoAmount + r.refundsNoAmount)} sin importe`, valor: (r.completenessBps ?? 0) / 100, texto: pct(r.completenessBps)}))} />
+      <ul className="dg-leyenda" style={{marginTop: 8}} aria-label="Cifras de calidad">{[q.figs.rows, q.figs.noCurrency, q.figs.ordersNoAmount, q.figs.refundsNoAmount, q.figs.toReview].map(f => <li key={f.id}><i style={{['--cat' as string]: 'var(--chart-5)'}} />{f.label}: <b>{f.display}</b></li>)}</ul>
+      <p className="dg-nota">Estimado, no suma a lo observado: lo que valdrían los registros sin importe con el ticket promedio de su canal. {q.unaccounted.flatMap(u => [u.orderFig, u.refundFig]).filter(f => f.display && !f.display.startsWith('Sin')).map(f => `${f.label}: ${f.display}`).join(' · ')}</p>
+    </div></Card>;
 }
 
 function Exposure({report}: {report: CfoReport}) {
   const e = report.exposure;
-  return <Panel id="exposicion" eyebrow="Problemas con dinero detrás" title="Exposición económica por problema" actions={<KindBadge kind="inferred" />}>
-    {e.state === 'sin_atestar' ? <p className="cf-nd" role="note"><strong>No disponible.</strong> Falta vincular cada problema con sus pedidos (hoy hay {int(e.attestedLinks)} vínculos atestados), así que no se calcula dinero por problema ni se estima.{e.cta && <> <LinkButton href={e.cta.href} size="sm" icon={<PfIcon name="user" />}>{e.cta.label}</LinkButton></>}</p> : <>
-      <p className="card-lead">{e.note}{e.coverageComplete ? '' : ' La cobertura de vínculos no está declarada completa: son pisos, no totales.'}</p>
-      <DataTable caption="Exposición por problema" rows={e.rows} rowKey={r => r.problemId} columns={[
-        {id: 'p', header: 'Problema', wrap: true, cell: r => r.title, sort: r => r.title}, {id: 'v', header: 'Exposición', align: 'right', cell: r => r.display},
-        {id: 'o', header: 'Pedidos vinculados', align: 'right', cell: r => `${int(r.linkedOrders)} (${r.coverage.known} con importe)`, sort: r => r.linkedOrders}]} />
-      <HowTo text={e.rows[0]?.how ?? ''} /></>}
-  </Panel>;
+  return <Card title="Exposición económica por problema" description="Problemas con dinero detrás" actions={<KindBadge kind="inferred" />}>
+    {e.state === 'sin_atestar' ? <div className="dg-fill"><Vacio>No disponible: falta vincular cada problema con sus pedidos (hoy hay {int(e.attestedLinks)} vínculos atestados), así que no se calcula dinero por problema ni se estima.</Vacio>{e.cta && <div style={{marginTop: 12}}><LinkButton href={e.cta.href} size="sm">{e.cta.label}</LinkButton></div>}</div> : <div className="dg-fill">
+      <p className="dg-nota" style={{marginTop: 0}}>{e.note}{e.coverageComplete ? '' : ' La cobertura de vínculos no está declarada completa: son pisos, no totales.'}</p>
+      <ul className="dg-lista" aria-label="Exposición por problema" data-cols="dos">{e.rows.map(r => <li key={r.problemId}><span className="dg-lab"><b>{r.title}</b><small>{int(r.linkedOrders)} pedidos vinculados ({r.coverage.known} con importe)</small></span><span className="dg-val">{r.display}</span></li>)}</ul></div>}
+  </Card>;
 }
 
 function Projections({report, block}: {report: CfoReport; block: CurrencyBlock}) {
   const list = report.projections.filter(p => p.currency === block.currency);
-  return <Panel id="proyecciones" eyebrow="Estimado · nunca presentado como observado" title="Proyecciones a 3 meses" actions={<KindBadge kind="estimated" />}>
-    {list.length === 0 ? <Empty title="No estimable">Se necesitan al menos 4 meses completos de {block.currency} para estimar una tendencia.</Empty> : <div className="pf-grid-2">{list.map(p => <div key={p.id}>
+  return <Card title="Proyección a 3 meses" description="Estimado: nunca presentado como observado" actions={<KindBadge kind="estimated" />}>
+    {list.length === 0 ? <Vacio>No estimable: se necesitan al menos 4 meses completos de {block.currency}.</Vacio> : <div className="dg-dos">{list.map(p => <div key={p.id}>
       <MonthBars key={p.id} title={p.label} unit={p.metric === 'ingresos' ? p.currency : 'pedidos'} kind="estimated" points={p.points.map(pt => ({month: pt.month, value: pt.mid, label: pt.midDisplay, detail: `rango ${pt.lowDisplay} a ${pt.highDisplay}`}))} />
-      <p className="card-lead"><strong>Método.</strong> {p.method}</p></div>)}</div>}
-  </Panel>;
+      <p className="dg-nota"><strong>Método.</strong> {p.method}</p></div>)}</div>}
+  </Card>;
 }
 
 /** Explica una caída mes contra mes solo con lo verificable: meses completos, aporte por canal y ticket. Sin causa verificable: «Causa no determinada». */
 function CaidaExplicada({report, moneda}: {report: CfoReport; moneda: string}) {
   const x = explicarVariacion(report, moneda);
   if (!x) return null;
-  return <div className="pf-banner cf-caida" role="note"><PfIcon name="info" /><div><strong>{x.titulo}</strong>
-    <ul>{x.lineas.map((l, i) => <li key={i}>{l}</li>)}</ul>
-    <p><strong>{x.causa.split(':')[0]}.</strong> {(r => r.charAt(0).toUpperCase() + r.slice(1))(x.causa.split(':').slice(1).join(':').trim())}</p></div></div>;
+  return <Notice tone="warn" title={x.titulo}>
+    <ul style={{margin: '4px 0', paddingLeft: 18}}>{x.lineas.map((l, i) => <li key={i}>{l}</li>)}</ul>
+    <strong>{x.causa.split(':')[0]}.</strong> {(r => r.charAt(0).toUpperCase() + r.slice(1))(x.causa.split(':').slice(1).join(':').trim())}</Notice>;
 }

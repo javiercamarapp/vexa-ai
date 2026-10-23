@@ -6,15 +6,19 @@ import type {CfoReport} from '../../../../../packages/cfo-copilot/src/index.mjs'
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
 import {urlCortePublicado,resumenCorte,serieMensual,tarjetasPorMoneda,filasPorFuente,mesesIncompletos} from '../../lib/legibilidad/dinero.mjs';
 import {PageHeader} from '../ui/page-header';
-import {StatCard} from '../ui/stat-card';
+import {Card} from '../ui/card';
+import {KpiStrip,type Kpi} from '../ui/kpi-strip';
+import {Notice} from '../ui/notice';
+import {DataTable} from '../ui/data-table';
+import {Fila,ListaBarras} from '../dinero/partes';
 import {KindBadge} from '../ui/kind-badge';
 import {StatusChip} from '../ui/status-chip';
 import {ColumnChart,type ColumnDatum} from '../ui/column-chart';
 import {SegmentedControl} from '../ui/segmented';
 import {EmptyState} from '../ui/empty-state';
 import {SkeletonStats,SkeletonChart} from '../ui/skeletons';
+import '../dinero/dinero.css';
 import {LinkButton,Arrow,Button,Refresh} from '../ui/button';
-import {Icon} from '../ui/icons';
 import {useJson} from '../ui/use-json';
 import {nf} from '../ui/format';
 import './datos.css';
@@ -46,11 +50,10 @@ export function EconomiaResumen({query='',puedePreparar,children}:{query?:string
  const ocupado=(bundle.busy&&!bundle.data)||(rep.busy&&!rep.data);
  const noDisponible=(rep.data&&rep.data.status!=='ok')||Boolean(rep.error);
  const reintentar=()=>{bundle.reload();rep.reload();};
- return <section className="task-page stack dn-page">
+ return <section className="dg-page">
   <PageHeader eyebrow="Dinero" title="Dinero · Preparar" description="Qué está publicado, qué tan completo es y qué falta antes de publicar un corte nuevo." actions={<Button icon={<Refresh/>} loading={ocupado} onClick={reintentar}>Actualizar</Button>}/>
 
-  <section className="card dn-corte" aria-labelledby="dn-corte-t">
-   <div className="card-title"><div><h2 id="dn-corte-t">Corte publicado</h2><p>Lo que hoy leen el Resumen y el Brief ejecutivo.</p></div>{corte.disponible&&<KindBadge kind="observed"/>}</div>
+  <Card title="Corte publicado" description="Lo que hoy leen el Resumen y el Brief ejecutivo" actions={corte.disponible?<KindBadge kind="observed"/>:undefined}>
    {bundle.busy&&!bundle.data?<SkeletonStats count={4}/>
     :!corte.disponible?<EmptyState art="doc" compact title={bundle.error?'No disponible ahora':'Aún no hay un corte publicado'} body={bundle.error?bundle.error:'Cuando un propietario publique un corte, aquí verás su periodo, su base de cálculo y hasta qué fecha llegan los datos.'} action={bundle.error?<Button icon={<Refresh/>} onClick={()=>bundle.reload()}>Reintentar</Button>:puedePreparar?<a className="btn btn-primary btn-sm" href="#preparar"><span className="btn-label">Preparar un corte</span></a>:undefined}/>
     :<>
@@ -64,39 +67,41 @@ export function EconomiaResumen({query='',puedePreparar,children}:{query?:string
      </dl>
      {corte.cobertura&&<p className="dn-note">{corte.cobertura}</p>}
     </>}
-  </section>
+  </Card>
 
   {ocupado&&!report?<><SkeletonStats count={4}/><SkeletonChart/></>
    :noDisponible||!report?<EmptyState art="chart" tone="warn" compact title={rep.data?.status==='empty'?'Sin registros en el libro':'No disponible ahora'} body={rep.data?.status==='empty'?'Aún no hay pedidos ni reembolsos registrados para esta organización. Importa una fuente para ver cifras aquí.':rep.error||'La consulta del libro económico no respondió a tiempo o tu rol no puede verla. Reintenta en unos segundos.'} action={rep.data?.status==='empty'?<LinkButton href="/imports" variant="primary" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>:<Button icon={<Refresh/>} onClick={()=>rep.reload()}>Reintentar</Button>}/>
    :<>
-    <div className="stat-grid" aria-label="Cifras del libro de registros">
-     <StatCard label="Registros del libro" icon="database" kind="observed" value={nf.format(report.quality.totalRows)} foot="Pedidos y reembolsos, última revisión de cada uno · solo los últimos 12 meses (Fuentes cuenta todo el historial)"/>
-     {tarjetas.map(t=><StatCard key={t.moneda+t.base} label={t.moneda+' · '+t.baseLegible} icon="dollar" kind="observed"
-       value={t.subtotalMinor===null?'No disponible':formatMinorUnits(t.subtotalMinor,t.moneda,t.exponente)}
-       foot={<>Subtotal conocido: {nf.format(t.pedidos)} pedidos, {t.cobertura}.{t.base!=='gross_order_including_tax_shipping'&&<> Reembolsos registrados: {t.reembolsos?nf.format(t.reembolsos.n):'Sin cobertura'}.</>}</>}>
-     </StatCard>)}
-    </div>
-    <p className="dn-note"><Icon name="info" size={14}/> USD, CAD y MXN no se suman ni se convierten (no hay tipos de cambio aprobados). Cada moneda y cada base de cálculo se muestra por separado.</p>
-
-    <section className="card" aria-labelledby="dn-serie-t">
-     <div className="card-title"><div><h2 id="dn-serie-t">{medida==='pedidos'?'Pedidos por mes':'Subtotal conocido por mes'}</h2><p>Últimos {report.months.length} meses{actual?' · '+actual.moneda+' · '+actual.baseLegible:''}</p></div><KindBadge kind="observed"/></div>
-     <div className="dn-controls">
-      {claves.length>1&&<SegmentedControl label="Moneda y base" size="sm" value={clave} onChange={setElegida} options={tarjetas.map(t=>({value:t.moneda+'|'+t.base,label:t.moneda+(tarjetas.filter(x=>x.moneda===t.moneda).length>1?' · '+(t.base.includes('gross')?'Shopify':'Marketplace'):'')}))}/>}
-      <SegmentedControl label="Medida" size="sm" value={medida} onChange={setMedida} options={[{value:'pedidos',label:'Pedidos'},{value:'subtotal',label:'Subtotal conocido'}]}/>
-     </div>
-     {datos.length>0?<ColumnChart key={clave+medida} title={medida==='pedidos'?'Pedidos por mes':'Subtotal conocido por mes'} data={datos} unit={medida==='pedidos'?'pedidos':actual?.moneda}/>:<EmptyState art="chart" compact title="Sin meses para mostrar"/>}
-     {incompletos.meses.length>0&&<p className="dn-note" role="note">* {incompletos.meses.map(mesLargo).join(', ')}: mes incompleto, los datos llegan {incompletos.datosHasta?'hasta el '+incompletos.datosHasta:'hasta una fecha de corte sin determinar'}. La barra punteada no es una caída ni se compara con meses completos.</p>}
-    </section>
-
-    <section className="card" aria-labelledby="dn-cob-t">
-     <div className="card-title"><div><h2 id="dn-cob-t">Cobertura y pendientes por fuente</h2><p>Qué tan completo está lo que cargó cada fuente. Lo que falta nunca se cuenta como cero.</p></div></div>
-     <div className="table-wrap" tabIndex={0} role="region" aria-label="Tabla de cobertura por fuente">
-      <table><thead><tr><th scope="col">Fuente</th><th scope="col" className="num">Registros</th><th scope="col" className="num">Sin moneda</th><th scope="col" className="num">Pedidos sin importe</th><th scope="col" className="num">Reembolsos sin importe</th><th scope="col">Reembolsos</th><th scope="col" className="num">Completitud</th></tr></thead>
-       <tbody>{fuentes.map(f=><tr key={f.clave}><th scope="row">{f.fuente}</th><td className="num">{nf.format(f.registros)}</td><td className="num">{nf.format(f.sinMoneda)}</td><td className="num">{nf.format(f.pedidosSinImporte)}</td><td className="num">{f.reembolsosSinImporte===null?'—':nf.format(f.reembolsosSinImporte)}</td>
-        <td>{f.reembolsos==='Sin cobertura'?<StatusChip tone="warn" title="Esta fuente no tiene reembolsos cargados: no se sabe cuántos hubo, no es cero.">Sin cobertura</StatusChip>:<StatusChip tone="ok">Con fuente</StatusChip>}</td>
-        <td className="num">{pctBps(f.completitudBps)}</td></tr>)}</tbody></table>
-     </div>
-    </section>
+    <KpiStrip label="Cifras del libro de registros" items={[
+     {key:'reg',label:'Registros del libro',c:8,value:nf.format(report.quality.totalRows),note:'Pedidos y reembolsos de los últimos 12 meses'},
+     ...tarjetas.map((t):Kpi=>({key:t.moneda+t.base,label:t.moneda+' · '+t.baseLegible,c:t.base.includes('gross')?3:t.moneda==='USD'?1:t.moneda==='CAD'?5:4,
+      value:<span title={t.subtotalMinor===null?undefined:formatMinorUnits(t.subtotalMinor,t.moneda,t.exponente)}>{t.subtotalMinor===null?'No disponible':formatMinorUnits(t.subtotalMinor,t.moneda,t.exponente).replace(/\.\d+/,'').replace(/\s?(USD|CAD|MXN)$/,'')}</span>,
+      spark:serieMensual(report,t.moneda,t.base,'pedidos').filter(p=>!p.parcial&&p.valor!==null).map(p=>p.valor as number),
+      note:<>{nf.format(t.pedidos)} pedidos · {t.cobertura}{t.base!=='gross_order_including_tax_shipping'?` · reembolsos: ${t.reembolsos?nf.format(t.reembolsos.n):'sin cobertura'}`:''}</>}))]}/>
+    <Notice tone="info">USD, CAD y MXN no se suman ni se convierten (no hay tipos de cambio aprobados). Cada moneda y cada base de cálculo se muestra por separado.</Notice>
+    <Fila split="8-4">
+     <Card title={medida==='pedidos'?'Pedidos por mes':'Subtotal conocido por mes'} description={`Últimos ${report.months.length} meses${actual?' · '+actual.moneda+' · '+actual.baseLegible:''}`} actions={<KindBadge kind="observed"/>}>
+      <div className="dn-controls">
+       {claves.length>1&&<SegmentedControl label="Moneda y base" size="sm" value={clave} onChange={setElegida} options={tarjetas.map(t=>({value:t.moneda+'|'+t.base,label:t.moneda+(tarjetas.filter(x=>x.moneda===t.moneda).length>1?' · '+(t.base.includes('gross')?'Shopify':'Marketplace'):'')}))}/>}
+       <SegmentedControl label="Medida" size="sm" value={medida} onChange={setMedida} options={[{value:'pedidos',label:'Pedidos'},{value:'subtotal',label:'Subtotal conocido'}]}/>
+      </div>
+      {datos.length>0?<ColumnChart key={clave+medida} title={medida==='pedidos'?'Pedidos por mes':'Subtotal conocido por mes'} data={datos} unit={medida==='pedidos'?'pedidos':actual?.moneda}/>:<EmptyState art="chart" compact title="Sin meses para mostrar"/>}
+      {incompletos.meses.length>0&&<p className="dg-nota" role="note">* {incompletos.meses.map(mesLargo).join(', ')}: mes incompleto, los datos llegan {incompletos.datosHasta?'hasta el '+incompletos.datosHasta:'hasta una fecha de corte sin determinar'}. La barra punteada no es una caída.</p>}
+     </Card>
+     <Card title="Completitud por fuente" description="Lo que falta nunca se cuenta como cero" actions={<KindBadge kind="observed"/>}>
+      <ListaBarras c={5} max={100} label="Completitud por fuente" apilado items={fuentes.map(f=>({key:f.clave,etiqueta:f.fuente,sub:f.reembolsos==='Sin cobertura'?'Sin fuente de reembolsos':'Con fuente de reembolsos',valor:f.completitudBps===null?null:f.completitudBps/100,texto:pctBps(f.completitudBps)}))}/>
+     </Card>
+    </Fila>
+    <Card title="Cargas y pendientes por fuente" description="Qué tan completo está lo que cargó cada fuente">
+     <DataTable caption="Cobertura por fuente" rows={fuentes} rowKey={f=>f.clave} maxHeight="none" columns={[
+      {key:'f',header:'Fuente',render:f=><b>{f.fuente}</b>},
+      {key:'r',header:'Registros',align:'num',render:f=>nf.format(f.registros)},
+      {key:'m',header:'Sin moneda',align:'num',render:f=>nf.format(f.sinMoneda)},
+      {key:'p',header:'Pedidos sin importe',align:'num',render:f=>nf.format(f.pedidosSinImporte)},
+      {key:'x',header:'Reembolsos sin importe',align:'num',render:f=>f.reembolsosSinImporte===null?'—':nf.format(f.reembolsosSinImporte)},
+      {key:'e',header:'Reembolsos',render:f=>f.reembolsos==='Sin cobertura'?<StatusChip tone="warn" title="Esta fuente no tiene reembolsos cargados: no se sabe cuántos hubo, no es cero.">Sin cobertura</StatusChip>:<StatusChip tone="ok">Con fuente</StatusChip>},
+      {key:'c',header:'Completitud',align:'num',render:f=>pctBps(f.completitudBps)}]}/>
+    </Card>
    </>}
 
   {puedePreparar&&<Preparar>{children}</Preparar>}

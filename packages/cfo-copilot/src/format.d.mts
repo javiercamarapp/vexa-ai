@@ -10,3 +10,4 @@ export function ratioBps(n: number | bigint, d: number | bigint): number | null;
 export function changeBps(current: bigint | string | number, previous: bigint | string | number): number | null;
 export function baseOf(basis: string): string;
 export function toReviewBasis(basis: string): boolean;
+export function axisLabel(value: number | bigint | string, exponent?: number): string;

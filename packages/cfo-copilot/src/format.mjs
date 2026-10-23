@@ -29,5 +29,8 @@ export function changeBps(current, previous) {
   const diff = (c - p) * 10000n, neg = diff < 0n, a = neg ? -diff : diff, q = (a * 2n + p) / (p * 2n);
   return Number(neg ? -q : q);
 }
+const axisCompact = new Intl.NumberFormat('es-MX', {notation: 'compact', maximumFractionDigits: 1});
+/** Etiqueta compacta de eje para un importe en unidades menores (centavos): divide entre 10^exponent para coincidir con tarjeta y tooltip. exponent=0 si el valor ya está en unidades mayores o es un conteo. */
+export const axisLabel = (value, exponent = 0) => axisCompact.format(Number(value) / 10 ** exponent);
 export const baseOf = basis => String(basis ?? '').split('|')[0];
 export const toReviewBasis = basis => String(basis ?? '').includes('|a_revisar');

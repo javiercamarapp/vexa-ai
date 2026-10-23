@@ -1,13 +1,12 @@
 'use client';
 import {useState} from 'react';
 import {KindBadge} from '../ui/kind-badge';
-import {monthLabel, monthShort} from '../../../../../packages/cfo-copilot/src/format.mjs';
+import {axisLabel, monthLabel, monthShort} from '../../../../../packages/cfo-copilot/src/format.mjs';
 import type {Kind} from '../../../../../packages/cfo-copilot/src/index.mjs';
 
 export type MonthPoint = {month: string; value: number | null; label: string; detail?: string; partial?: boolean};
-const compact = new Intl.NumberFormat('es-MX', {notation: 'compact', maximumFractionDigits: 1});
 /** Barras SVG propias, ancladas a cero, un eje, dato exacto por foco/hover, mes parcial rayado, tabla equivalente. Misma gramática que TrendCharts. */
-export function MonthBars({title, unit, points, kind = 'observed', note}: {title: string; unit: string; points: MonthPoint[]; kind?: Exclude<Kind, 'unclassified'>; note?: string}) {
+export function MonthBars({title, unit, points, kind = 'observed', note, exponent = 0}: {title: string; unit: string; points: MonthPoint[]; /** Decimales de la moneda cuando `value` viene en unidades menores (centavos); 0 si ya está en unidades mayores o son conteos. */ exponent?: number; kind?: Exclude<Kind, 'unclassified'>; note?: string}) {
   const [active, setActive] = useState<number | null>(null);
   const max = Math.max(0, ...points.map(p => p.value ?? 0)), W = 480, H = 160, top = 10, left = 40, bottom = 22, bw = (W - left) / Math.max(1, points.length), plot = H - top - bottom;
   const sel = active === null ? null : points[active];
@@ -17,7 +16,7 @@ export function MonthBars({title, unit, points, kind = 'observed', note}: {title
     <div className="trend-plot">
       <svg viewBox={`0 0 ${W} ${H}`} role="group" aria-label={title} preserveAspectRatio="xMidYMid meet">
         <defs><pattern id="cf-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--cov-track)" /><line x1="0" y1="0" x2="0" y2="6" stroke="var(--cov-pen)" strokeWidth="3" /></pattern></defs>
-        {ticks.map((t, i) => { const y = top + plot - (max > 0 ? t / max * plot : 0); return <g key={i}><line x1={left} x2={W} y1={y} y2={y} className="grid" /><text x={left - 6} y={y + 3} textAnchor="end" className="tick">{compact.format(t)}</text></g>; })}
+        {ticks.map((t, i) => { const y = top + plot - (max > 0 ? t / max * plot : 0); return <g key={i}><line x1={left} x2={W} y1={y} y2={y} className="grid" /><text x={left - 6} y={y + 3} textAnchor="end" className="tick">{axisLabel(t, exponent)}</text></g>; })}
         {points.map((p, i) => {
           const h = p.value !== null && max > 0 ? Math.max(p.value > 0 ? 2 : 0, p.value / max * plot) : 0, x = left + i * bw + bw * 0.16, w = bw * 0.68;
           return <g key={p.month} tabIndex={0} role="img" aria-label={`${monthLabel(p.month)}${p.partial ? ' (mes incompleto)' : ''}: ${p.label}${p.detail ? '. ' + p.detail : ''}`} className={'bar-col' + (active === i ? ' is-active' : '')} onMouseEnter={() => setActive(i)} onMouseLeave={() => setActive(null)} onFocus={() => setActive(i)} onBlur={() => setActive(null)}>

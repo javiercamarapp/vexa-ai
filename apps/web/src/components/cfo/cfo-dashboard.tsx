@@ -11,11 +11,11 @@ import {Empty, HowTo, Panel, Pill, Seg, Tile, severityTone} from '../platform/pr
 import {CFO_SHORTCUTS} from '../../../../../packages/cfo-copilot/src/client.mjs';
 import type {CfoReport, CurrencyBlock} from '../../../../../packages/cfo-copilot/src/index.mjs';
 import {changeBps, int, monthLabel, pct, signedPct} from '../../../../../packages/cfo-copilot/src/format.mjs';
-import {MonthBars, type MonthPoint} from './month-bars';
+import {MonthBars} from './month-bars';
+import {seriesPoints, type Measure} from './series';
 import './cfo.css';
 
 export type ReportState = {status: 'ok'; report: CfoReport; synthetic: boolean; exposureStatus?: string} | {status: 'empty' | 'timeout'; synthetic?: boolean; summary?: {freshness: string; label: string | null; missingMonths?: string[] | null}};
-type Measure = 'ingresos' | 'pedidos' | 'reembolsos' | 'tasa';
 const MEASURES: ReadonlyArray<{value: Measure; label: string}> = [{value: 'ingresos', label: 'Ingresos'}, {value: 'pedidos', label: 'Pedidos'}, {value: 'reembolsos', label: 'Reembolsos'}, {value: 'tasa', label: 'Tasa de reembolso'}];
 const SEVERITY: Record<string, string> = {alta: 'Alta', media: 'Media', baja: 'Baja', info: 'Informativa'};
 const AFTER_SAVE = 'Los datos de demostración son sintéticos y no pertenecen a ninguna organización.';
@@ -89,13 +89,6 @@ export function CfoDashboard({initial, query = '', organization}: {initial: Repo
   </div>;
 }
 
-function seriesPoints(block: CurrencyBlock, measure: Measure): {points: MonthPoint[]; title: string; unit: string; note?: string} {
-  const line = block.orderBases[0];
-  if (measure === 'ingresos') return {title: 'Ingresos por mes', unit: block.currency, note: `Base: ${line.label}. Pedidos sin importe no suman (ver Calidad de datos).`, points: line.series.map(s => ({month: s.month, partial: s.partial, value: s.known > 0 ? Number(BigInt(s.amount)) : null, label: s.amountDisplay, detail: `${int(s.known)} de ${int(s.n)} pedidos con importe`}))};
-  if (measure === 'pedidos') return {title: 'Pedidos registrados por mes', unit: 'pedidos', points: block.ordersAll.map(s => ({month: s.month, partial: s.partial, value: s.n, label: int(s.n) + ' pedidos'}))};
-  if (measure === 'reembolsos') return {title: 'Importe reembolsado por mes', unit: block.currency, note: `Base: ${block.refunds.label}. No se resta de los ingresos.`, points: block.refunds.series.map(s => ({month: s.month, partial: s.partial, value: s.known > 0 ? Number(BigInt(s.amount)) : null, label: s.amountDisplay, detail: `${int(s.n)} reembolsos${s.n - s.known ? ` · ${int(s.n - s.known)} sin importe` : ''}`}))};
-  return {title: 'Tasa de reembolso por mes', unit: '% por conteo', note: `Canales incluidos: ${block.rate.channels.join(', ') || 'ninguno'}${block.rate.excluded.length ? `. Sin fuente de devoluciones: ${block.rate.excluded.join(', ')}` : ''}.`, points: block.rate.series.map(s => ({month: s.month, partial: s.partial, value: s.bps, label: s.display, detail: `${int(s.refunds)} reembolsos de ${int(s.orders)} pedidos`}))};
-}
 
 type Row = {month: string; partial: boolean; orders: number; revenue: string; ticket: string; refunds: number; refundAmount: string; rate: string; mom: string | null};
 function Trends({report, block, measure, setMeasure}: {report: CfoReport; block: CurrencyBlock; measure: Measure; setMeasure: (m: Measure) => void}) {
@@ -117,7 +110,7 @@ function Trends({report, block, measure, setMeasure}: {report: CfoReport; block:
   ];
   const others = block.orderBases.slice(1);
   return <Panel id="tendencias" eyebrow={`Últimos ${report.months.length} meses · ${block.currency}`} title="Tendencias y comparativa mes contra mes" actions={<Seg label="Medida" value={measure} options={MEASURES} onChange={setMeasure} />}>
-    <MonthBars key={measure + block.currency} title={view.title} unit={view.unit} points={view.points} note={view.note} />
+    <MonthBars key={measure + block.currency} title={view.title} unit={view.unit} points={view.points} note={view.note} exponent={view.exponent} />
     <details className="trend-table cf-monthly"><summary>Ver comparativa mensual completa</summary>
       <DataTable caption={`Comparativa mensual en ${block.currency}`} rows={rows} columns={cols} rowKey={r => r.month} pageSize={24} initialSort={{id: 'month', dir: 'desc'}} />
       <p className="card-lead">La variación solo se calcula entre dos meses completos. «—» significa que no es comparable o que falta el importe.</p></details>

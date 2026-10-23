@@ -96,3 +96,11 @@ test('los datos sintéticos son coherentes entre sí', () => {
   assert.equal(cat.calidad, A.problems[0].series[11] + A.problems[5].series[11]);
   for (const c of A.classified) assert.ok(c.classified <= c.eligible);
 });
+test('QA2-001: el valor de las gráficas de importes sale de unidades menores / 10^exponente (no un 100 fijo) en ledger_por_mes y ledger_por_fuente', async () => {
+  const base = portFor(SYNTHETIC_TENANTS.A);
+  const mk = (exponent, amountMinor) => ({ ...base, trends: async () => ({ ...(await base.trends()), ledger: { status: 'ok', class: 'observed', currency: 'JPY', exponent, otherCurrencies: [], series: [{ month: '2026-08', orders: { count: 2, unknownAmounts: 0, amountMinor }, refunds: { count: 0, unknownAmounts: 0, amountMinor: '0' } }, { month: '2026-09', orders: { count: 4, unknownAmounts: 0, amountMinor: String(BigInt(amountMinor) * 2n) }, refunds: { count: 0, unknownAmounts: 0, amountMinor: '0' } }] } }) });
+  const chartOf = async (exponent, amountMinor) => (await executeTool({ name: 'ledger_por_mes', args: { kind: 'order' }, port: mk(exponent, amountMinor), ctx: ctxFor('owner', SYNTHETIC_TENANTS.A) })).blocks[0].chart.series;
+  assert.deepEqual((await chartOf(0, '5000')).map((s) => s.value), [5000, 10000]);
+  assert.deepEqual((await chartOf(2, '80398216')).map((s) => s.value), [803982.16, 1607964.32]);
+  assert.deepEqual((await chartOf(3, '1500')).map((s) => s.value), [1.5, 3]);
+});

@@ -5,6 +5,6 @@ import {RovaqLogo} from './rovaq-logo';
 export function RovaqCargando({mensaje = 'Cargando…', compacto = false}: {mensaje?: string; compacto?: boolean}) {
   return <div role="status" aria-busy="true" aria-live="polite" className={'rovaq-cargando' + (compacto ? ' rovaq-cargando-compacto' : '')}>
     <RovaqLogo variante={compacto ? 'simbolo' : 'horizontal'} ancho={compacto ? 44 : 168} animado decorativo espacioLibre={false}/>
-    <p className="rovaq-cargando-texto">{mensaje}</p>
+    {mensaje!==''&&<p className="rovaq-cargando-texto">{mensaje}</p>}
   </div>;
 }

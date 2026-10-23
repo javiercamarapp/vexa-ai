@@ -90,7 +90,7 @@ export function CopilotoNegocio({modo: clave, organization, roleOverride, query 
   }, [esCfo, modo, query, sugerenciasCfo]);
 
   if (!permitido || estado.kind === 'sin_acceso' || sinAccesoMotor) return <AreaRestringida modo={modo} />;
-  if (estado.kind === 'cargando') return <div className="copiloto copiloto-negocio" aria-busy="true"><div className="cn-espera"><RovaqCargando mensaje={`Preparando ${modo.titulo}…`} /></div></div>;
+  if (estado.kind === 'cargando') return <div className="copiloto copiloto-negocio" aria-busy="true"><div className="cn-espera"><RovaqCargando mensaje="" /></div></div>;
   if (estado.kind === 'error') return <div className="cn-gate" role="alert"><h1>No se pudo abrir «{modo.titulo}»</h1><p>No pude verificar si la consulta está disponible. Revisa tu conexión e inténtalo de nuevo.</p><Button icon={<Refresh />} onClick={() => { setEstado({kind: 'cargando'}); setIntento(n => n + 1); }}>Reintentar</Button></div>;
 
   const base = estado.base, siguientes = brief?.siguientes ?? [];

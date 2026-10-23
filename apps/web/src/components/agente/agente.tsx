@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import './agente.css';
 import {useCallback,useEffect,useId,useRef,useState,type ReactNode} from 'react';
 import {Button,LinkButton} from '../ui/button';
@@ -31,7 +32,7 @@ export function Agente(){
   })();
   return()=>ctl.abort();
  },[attempt]);
- if(load.kind==='loading')return <div className="agente" aria-busy="true"><div role="status" className="state-panel skeleton-panel"><span className="sr-only">Preparando la consulta…</span><span className="skeleton skeleton-line"/><span className="skeleton skeleton-bar"/><span className="skeleton skeleton-line"/></div></div>;
+ if(load.kind==='loading')return <div className="agente" aria-busy="true" style={{display:'grid',placeItems:'center',minHeight:'60vh'}}><RovaqCargando mensaje=""/></div>;
  if(load.kind==='error')return <div className="agente"><div role="alert" className="state state-error agente-gate"><h1>No se pudo abrir «Pregúntale a tus datos»</h1><p>No pude verificar si la consulta está disponible. Revisa tu conexión e inténtalo de nuevo.</p><Button icon={<Icon name="refresh"/>} onClick={()=>{setLoad({kind:'loading'});setAttempt(n=>n+1);}}>Reintentar</Button></div></div>;
  if(load.kind==='forbidden')return <div className="agente"><div role="status" className="state agente-gate"><span className="agente-mark" aria-hidden="true"><Icon name="lock" size={22}/></span><h1>Sin acceso</h1><p>Tu rol no tiene acceso a estas consultas. Pídele acceso al administrador de tu espacio de trabajo.</p><LinkButton href="/overview" icon={<Icon name="arrow"/>}>Volver al resumen</LinkButton></div></div>;
  return <Chat data={load.data}/>;

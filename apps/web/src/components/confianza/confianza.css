@@ -1,17 +1,18 @@
 /* Sello de procedencia, panel «Cómo se calculó», «Hoy» y «Datos y confianza». Solo composición con los tokens de la marca (negro/rojo/blanco, Hanken Grotesk):
    sin degradados, sin hover rojo; el rojo solo marca lo que pide atención. La trama a 45° significa «estimado / parcial». */
 .page-header h2{margin:0;font-size:24px;line-height:1.2;letter-spacing:-.01em;font-weight:600}
-.sello{display:flex;flex-wrap:wrap;gap:2px 0;margin:0;padding:0;list-style:none;font-size:12px;line-height:1.5;color:var(--muted)}
-.sello li{display:inline-flex;align-items:center}
-.sello li+li::before{content:'·';margin:0 6px;color:var(--ui-line-strong)}
+.sello{display:block;margin:0;padding:0;list-style:none;font-size:12px;line-height:1.6;color:var(--muted)}
+.sello li{display:inline;margin:0;padding:0}
+.sello li+li::before{content:' · ';white-space:pre;color:var(--muted)}
+.sello li.sello-clase+li::before{content:' · '}
 .sello .sello-clase{color:var(--ink);font-weight:500}
-.sello .sello-clase::before{content:'';display:inline-block;width:6px;height:6px;border-radius:999px;margin-right:6px;background:var(--ink)}
+.sello .sello-clase::before{content:'';display:inline-block;width:6px;height:6px;border-radius:999px;margin-right:6px;background:var(--ink);vertical-align:middle}
 .sello[data-clase=estimated] .sello-clase::before{background:repeating-linear-gradient(45deg,var(--ink) 0 1px,transparent 1px 2px);border:1px dashed var(--ink)}
 .sello[data-clase=inferred] .sello-clase::before{background:transparent;border:1px solid var(--ink)}
-button.cc-btn,.hoy-kpi-top button.cc-btn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;min-width:24px;min-height:24px;border-radius:999px;border:1px solid var(--ui-border);background:transparent;color:var(--muted);cursor:pointer;padding:0;box-shadow:none}
-button.cc-btn svg{width:14px;height:14px;flex:none}
-button.cc-btn:hover{color:var(--ink);border-color:var(--ink)}
-.cc-btn:focus-visible{outline:2px solid var(--ui-focus);outline-offset:2px}
+.dc-info,.hoy-kpi-top button.dc-info{flex:none;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;min-width:24px;min-height:24px;border-radius:999px;border:1px solid var(--ui-border);background:transparent;color:var(--muted);cursor:pointer;padding:0;box-shadow:none}
+.dc-info svg{width:14px;height:14px;flex:none}
+.dc-info:hover{color:var(--ink);border-color:var(--ink)}
+.dc-info:focus-visible{outline:2px solid var(--ui-focus);outline-offset:2px}
 .cc-body{display:grid;gap:var(--sp-4,16px);font-size:14px}
 .cc-body h3{margin:0 0 4px;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:500}
 .cc-body p,.cc-body ul{margin:0}
@@ -58,8 +59,8 @@ button.cc-btn:hover{color:var(--ink);border-color:var(--ink)}
 .hoy-sig{background:var(--ink);color:#fff;border-color:var(--ink)}
 :root[data-theme=dark] .hoy-sig{background:var(--ui-soft);color:var(--ink);border-color:var(--ui-line-strong)}
 .hoy-sig h2{color:inherit}
-.hoy-sig p{margin:0;font-size:13px;opacity:.85}
-.hoy-sig-t{font-size:18px!important;font-weight:600;opacity:1!important}
+.hoy-sig p{margin:0;font-size:13px;color:inherit;opacity:.85}
+.hoy-sig-t{font-size:18px!important;font-weight:600;opacity:1!important;color:inherit}
 .hoy-sig .btn-primary{background:#fff;color:#0e0e10;border-color:#fff}
 :root[data-theme=dark] .hoy-sig .btn-primary{background:var(--ink);color:var(--ui-canvas)}
 .hoy-sig .btn-secondary{background:transparent;color:inherit;border-color:currentColor}

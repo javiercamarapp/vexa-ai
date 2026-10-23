@@ -63,7 +63,7 @@ for(const [w,h] of [[375,812],[768,1024],[1440,900]]){
   if(w>=768||true){
    const abrirMenu=async()=>{if(w<768){await page.getByRole('button',{name:/^(Abrir menú|Más opciones de navegación)$/}).last().click();await page.waitForTimeout(300);}};
    await abrirMenu();const root=w<768?page.locator('.mobile-sidebar'):page.locator('.workspace-sidebar');
-   const toggles=root.locator('.nav-group-toggle');const n=await toggles.count();check(n===(internal?6:5),`grupos esperados ${internal?6:5}, hay ${n}`);
+   const toggles=root.locator('.nav-group-toggle');const n=await toggles.count();check(n===(internal?7:6),`grupos esperados ${internal?7:6}, hay ${n}`);
    const abiertos=async()=>{let k=0;for(let i=0;i<n;i++)if((await toggles.nth(i).getAttribute('aria-expanded'))==='true')k++;return k;};
    check((await abiertos())===1,`acordeón: debe haber exactamente 1 grupo abierto por defecto, hay ${await abiertos()}`);
    check((await toggles.nth(0).getAttribute('aria-expanded'))==='true',`en /overview el grupo abierto por defecto es el primero (${await toggles.nth(0).innerText()})`);

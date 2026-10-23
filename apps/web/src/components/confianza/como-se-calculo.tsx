@@ -24,5 +24,5 @@ export function ComoSeCalculoProvider({children}:{children:ReactNode}){
 export function ComoSeCalculoBoton({entrada}:{entrada:EntradaComo|null}){
  const abrir=useContext(Ctx);
  if(!entrada||!abrir)return null;
- return <button type="button" className="cc-btn" aria-label={'Cómo se calculó: '+entrada.titulo} onClick={()=>abrir(entrada)}><Icon name="info" size={14}/></button>;
+ return <button type="button" className="dc-info" aria-label={'Cómo se calculó: '+entrada.titulo} onClick={()=>abrir(entrada)}><Icon name="info" size={14}/></button>;
 }

@@ -5,7 +5,7 @@
 // scroll-less container, interactive controls that overlap each other, controls outside the viewport, console errors.
 import fs from 'node:fs';import path from 'node:path';import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);const {chromium}=require('playwright-core');
-const {respond,IDS,HASH,agentStateEmpty}=await import('./fixtures.mjs');
+const {respond,IDS,HASH,agentStateEmpty,CONV,ORD}=await import('./fixtures.mjs');
 const base=process.argv[2]??'http://localhost:3107',out=process.argv[3]??path.resolve('ui-captures');fs.mkdirSync(out,{recursive:true});
 const PIN=`?snapshot_id=${IDS.snapshot}&scope_hash=${HASH}&date_start=2026-10-01&date_end=2026-11-01&currency=USD&basis=net`;
 const VIEWS=[['overview','/overview'],['problems','/problems'],['problem-detail',`/problems/${IDS.problemA}${PIN}`],['problem-detail-sin-publicacion',`/problems/${IDS.problemA}`],['recommendations','/recommendations'],['explorer','/explorer'],['customer','/customers/'+IDS.customer+PIN],['interventions','/interventions'],['briefs','/briefs'],['brief-detail','/briefs/'+IDS.brief],['history','/history'],['preguntale','/preguntale']];
@@ -110,13 +110,24 @@ for(const [w,h] of VIEWPORTS){
    await page.waitForSelector('.column-chart .col-bar',{timeout:15000}).catch(()=>fail.push({kind:'flow',detail:'conversation columns did not render'}));
    const cols=await page.locator('.column-chart .col-bar').count();if(cols<12)fail.push({kind:'flow',detail:'expected 12 conversation bars, got '+cols});
    await page.locator('.trends .chart-plot svg').first().evaluate(e=>e.focus({preventScroll:true}));await page.keyboard.press('ArrowLeft');
-   const tip=await page.locator('.trends .chart-tip').first().innerText().catch(()=>'');if(!/octubre/i.test(tip)||!/pedidos/.test(tip))fail.push({kind:'flow',detail:'tooltip did not show the last month: '+tip.replace(/\n/g,' | ')});
+   const tip=await page.locator('.trends .chart-tip').first().innerText().catch(()=>'');if(!new RegExp(new Date(Date.UTC(2026,9,1)).toLocaleString('es-MX',{month:'long',timeZone:'UTC'}),'i').test(tip)||!/pedidos/i.test(tip))fail.push({kind:'flow',detail:'tooltip did not show the last month: '+tip.replace(/\n/g,' | ')});
    await page.locator('.trends [role=radio]').nth(1).click();
    if(!(await page.locator('.trends h2',{hasText:'Reembolsos liquidados por mes'}).count()))fail.push({kind:'flow',detail:'refunds toggle did not change the chart'});
    const kinds=(await page.locator('.kind-badge').allInnerTexts()).join('|');if(!/Estimado/.test(kinds)||!/Observado/.test(kinds))fail.push({kind:'flow',detail:'conversation sample must be labelled Estimado and the ledger Observado: '+kinds});
-   const kpi=(await page.locator('.stat-value').allInnerTexts()).join('|');if(!/184,523\.00 USD/.test(kpi)||!/1,204,500\.00 USD/.test(kpi))fail.push({kind:'flow',detail:'KPI final values are not the exact figures: '+kpi});
-   const cov=(await page.locator('.cov-grid').innerText().catch(()=>''));if(!/117,719/.test(cov)||!/13,228/.test(cov)||!/85,383/.test(cov))fail.push({kind:'flow',detail:'coverage must show exact counts 117,719 / 85,383 / 13,228'});
-   if(/estimado con una muestra/i.test(cov))fail.push({kind:'flow',detail:'coverage still shows a sampled estimate'});
+   // Resumen ejecutivo actual. Los valores esperados salen de las fixtures (CONV/ORD), no de números fijos: el último mes COMPLETO es el penúltimo (el último es parcial y no se compara).
+   const full=CONV.length-2,convEsperada=CONV[full].toLocaleString('en-US'),pedidosEsperados=(Number(ORD[full][1])/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' USD';
+   const kpis=await page.locator('.stat-value').allInnerTexts();
+   if(kpis.length!==4)fail.push({kind:'flow',detail:'se esperaban 4 KPI, hay '+kpis.length+': '+kpis.join('|')});
+   if(!kpis.includes(convEsperada))fail.push({kind:'flow',detail:'KPI de conversaciones del último mes completo debe ser '+convEsperada+': '+kpis.join('|')});
+   if(!kpis.includes(pedidosEsperados))fail.push({kind:'flow',detail:'KPI de ingresos del último mes completo debe ser '+pedidosEsperados+' (misma cifra que Dinero): '+kpis.join('|')});
+   if(!/%$/.test(kpis[3]??''))fail.push({kind:'flow',detail:'el cuarto KPI (conversaciones analizadas por la IA) debe ser un porcentaje: '+kpis[3]});
+   const cuerpo=await page.locator('main').innerText();
+   if(!/Conversaciones analizadas por la IA/.test(cuerpo)||!/\d[\d,]* de ≈?[\d,]+ conversaciones/.test(cuerpo))fail.push({kind:'flow',detail:'falta «Conversaciones analizadas por la IA» con «N de M conversaciones»'});
+   if((cuerpo.match(/Fuentes con datos:/g)??[]).length!==1)fail.push({kind:'flow',detail:'debe haber una sola franja de estado («Fuentes con datos:» aparece '+(cuerpo.match(/Fuentes con datos:/g)??[]).length+' veces)'});
+   const orden=await page.evaluate(()=>{const y=t=>{const h=[...document.querySelectorAll('main h2')].find(e=>e.textContent.trim()===t);return h?h.getBoundingClientRect().top+scrollY:null;};const kpi=document.querySelector('.stat-value');return {fuga:y('Fuga de reembolsos'),kpi:kpi?kpi.getBoundingClientRect().top+scrollY:null,atencion:y('Qué requiere atención'),top5:y('Problemas con más conversaciones')};});
+   if(orden.fuga===null||orden.kpi===null||!(orden.fuga<orden.kpi))fail.push({kind:'flow',detail:'la tarjeta «Fuga de reembolsos» debe ir arriba de los KPI: '+JSON.stringify(orden)});
+   if(orden.atencion===null)fail.push({kind:'flow',detail:'falta «Qué requiere atención»'});
+   if(orden.top5===null)fail.push({kind:'flow',detail:'falta el top 5 «Problemas con más conversaciones»'});
    // overlays: filters drawer opens, traps Esc, restores focus
    await page.getByRole('button',{name:/^Filtros/}).click();await page.waitForSelector('dialog.drawer[open] form',{timeout:5000}).catch(()=>fail.push({kind:'flow',detail:'filters drawer did not open'}));
    fail.push(...await page.evaluate(geometry));await page.keyboard.press('Escape');await page.waitForSelector('dialog.drawer[open]',{state:'detached',timeout:3000}).catch(()=>fail.push({kind:'flow',detail:'Esc did not close the drawer'}));

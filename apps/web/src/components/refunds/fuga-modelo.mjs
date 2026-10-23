@@ -57,6 +57,29 @@ export function lineaVentanas(v) {
   return `${v.todasParciales ? 'Ninguna ventana de exportación está marcada como completa' : 'Hay ventanas de exportación parciales'} (reembolsos: ${lista}).${hasta}`;
 }
 
+/**
+ * Periodo del titular, SIEMPRE explícito: el rango real de los reembolsos contados («del 1 ago 2026 al 20 sep 2026»), la ventana de cada canal
+ * («Walmart desde 4 jul 2026») y, si el periodo pedido no coincide con lo que hay en los datos, una línea que lo dice.
+ * `acumulado` es todo el libro (no respeta el periodo) y va rotulado aparte.
+ */
+export function periodoDelTitular(v) {
+  const t = v?.titular; if (!t || t.status !== 'ok') return null;
+  const r = t.rango, pedido = v.scope?.dateStart || v.scope?.dateEnd ? v.scope : null;
+  const rango = r?.desde && r?.hasta ? `del ${diaLargo(r.desde)} al ${diaLargo(r.hasta)}` : null;
+  const ventanas = Object.entries(t.canales ?? {}).filter(([, c]) => c?.desde).map(([k, c]) => `${NOMBRE[k] ?? k} desde ${diaLargo(c.desde)}`);
+  let nota = null;
+  if (pedido) {
+    const ini = pedido.dateStart, finIncl = pedido.dateEnd ? new Date(Date.parse(pedido.dateEnd + 'T00:00:00Z') - 86400000).toISOString().slice(0, 10) : null;
+    const pedidoTxt = `${ini ? diaLargo(ini) : 'el inicio'} al ${finIncl ? diaLargo(finIncl) : 'hoy'}`;
+    const cortoInicio = ini && r?.desde && r.desde > ini, cortoFin = finIncl && r?.hasta && r.hasta < finIncl;
+    if (!r) nota = `No hay reembolsos cargados en el periodo elegido (${pedidoTxt}).`;
+    else if (cortoInicio || cortoFin) nota = `El periodo elegido es ${pedidoTxt}, pero los reembolsos cargados cubren ${rango}.`;
+  }
+  const a = v.acumulado?.status === 'ok' ? v.acumulado : null;
+  const acumulado = a ? {texto: `Acumulado disponible (todo el libro${a.rango ? `, del ${diaLargo(a.rango.desde)} al ${diaLargo(a.rango.hasta)}` : ''}): ${usd(a.usdBrutoMinor)} USD brutos en ${num(a.n)} reembolsos. Mezcla ventanas distintas por canal; no es el total de un periodo.`, usdBrutoMinor: a.usdBrutoMinor, distinto: Boolean(pedido) && a.usdBrutoMinor !== t.usdBrutoMinor} : null;
+  return {rango, etiqueta: rango ? `Reembolsos ${rango}` : 'Periodo de los reembolsos no disponible', ventanas, nota, pedido: Boolean(pedido), acumulado};
+}
+
 /** Frases de «Qué cambió» por plantilla; solo meses completos. */
 export function frasesCambios(v) {
   const c = v?.cambios; if (!c) return [];

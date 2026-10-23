@@ -1,6 +1,14 @@
 'use client';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {FugaVista} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
+/** Endpoint de /api/refunds con SOLO el periodo del alcance (date_start/date_end válidos); sin periodo = todo el libro. */
+export function endpointFuga(raw:string|URLSearchParams|null|undefined){
+ const q=new URLSearchParams(typeof raw==='string'?raw:raw?.toString()??''),out=new URLSearchParams();
+ const ok=(v:string|null)=>v&&/^\d{4}-\d{2}-\d{2}/.test(v)?v.slice(0,10):null;
+ const a=ok(q.get('date_start')),b=ok(q.get('date_end'));
+ if(a&&b&&a<b){out.set('date_start',a);out.set('date_end',b);}
+ const s=out.toString();return '/api/refunds'+(s?'?'+s:'');
+}
 /** GET /api/refunds con cronómetro (para el esqueleto «Calculando… N s»). Un 403 o 503 se dice en español; jamás se muestra un 0 por un fallo. */
 export function useFuga(endpoint:string|null='/api/refunds'){
  const [data,setData]=useState<FugaVista|null>(null),[error,setError]=useState<{code:'acceso'|'red'|'forma';texto:string}|null>(null),[busy,setBusy]=useState(Boolean(endpoint)),[segundos,setSegundos]=useState(0);

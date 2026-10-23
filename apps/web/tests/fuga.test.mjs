@@ -16,6 +16,19 @@ test('formato de dinero y textos: bruto y sin cancelados, concentración, cobert
   assert.match(ven, /Ninguna ventana de exportación está marcada como completa/); assert.match(ven, /Walmart desde 4 jul 2026/); assert.match(ven, /Datos hasta el 5 oct 2026\./);
   assert.equal(M.fraseConcentracion({titular: {status: 'unavailable'}}), null);
 });
+test('periodo del titular: rango real, ventana por canal, nota si el periodo pedido no coincide y acumulado rotulado aparte', () => {
+  const t = {status: 'ok', usdBrutoMinor: '5000000', n: 300, rango: {desde: '2026-08-03', hasta: '2026-09-18'}, canales: {walmart: {n: 200, desde: '2026-08-03', hasta: '2026-09-18'}, shopify: {n: 5, desde: '2026-08-10', hasta: '2026-09-02'}}};
+  const w = {titular: t, acumulado: {status: 'ok', scope: 'todo_el_libro', n: 6405, usdBrutoMinor: '85472777', rango: {desde: '2025-10-01', hasta: '2026-10-02'}}, scope: {dateStart: '2026-08-01', dateEnd: '2026-09-21'}};
+  const p = M.periodoDelTitular(w);
+  assert.equal(p.etiqueta, 'Reembolsos del 3 ago 2026 al 18 sep 2026');
+  assert.deepEqual(p.ventanas, ['Walmart desde 3 ago 2026', 'Shopify desde 10 ago 2026']);
+  assert.match(p.nota, /^El periodo elegido es 1 ago 2026 al 20 sep 2026, pero los reembolsos cargados cubren del 3 ago 2026 al 18 sep 2026\./);
+  assert.match(p.acumulado.texto, /^Acumulado disponible \(todo el libro, del 1 oct 2025 al 2 oct 2026\): \[omitido: dato de cliente] USD brutos en 6,405 reembolsos\./); assert.equal(p.acumulado.distinto, true);
+  const sin = M.periodoDelTitular({...w, scope: {dateStart: null, dateEnd: null}});
+  assert.equal(sin.nota, null); assert.equal(sin.pedido, false);
+  assert.match(M.periodoDelTitular({...w, titular: {...t, rango: null}}).nota, /No hay reembolsos cargados en el periodo elegido/);
+  assert.equal(M.periodoDelTitular({titular: {status: 'unavailable'}}), null);
+});
 test('qué cambió: solo meses completos; septiembre y huecos no son señal', () => {
   const f = M.frasesCambios(v).map(x => x.texto).join('\n');
   assert.match(f, /ago 2026: 2,576 conversaciones cargadas, frente a 4,183 en ago 2025 \(-38 %\)/);
@@ -63,4 +76,11 @@ test('degradados: sin Tracker y sin resumen de contacto no inventan cifras', asy
   assert.equal(A.colaVencidos(sinT).total, 0);
   const vacio = await vistaSintetica({vacio: true});
   assert.equal(vacio.titular.status, 'empty'); assert.equal(M.fraseConcentracion(vacio), null);
+});
+test('el titular y la tarjeta respetan el periodo: /api/refunds recibe solo date_start/date_end válidos', async () => {
+  const {endpointFuga} = await import('../src/components/refunds/use-fuga.ts');
+  assert.equal(endpointFuga('date_start=2026-08-01&date_end=2026-09-21&snapshot_id=x&currency=USD'), '/api/refunds?date_start=2026-08-01&date_end=2026-09-21');
+  assert.equal(endpointFuga(''), '/api/refunds'); assert.equal(endpointFuga(null), '/api/refunds');
+  assert.equal(endpointFuga('date_start=ayer&date_end=2026-09-21'), '/api/refunds', 'fecha inválida = sin periodo, nunca un corte inventado');
+  assert.equal(endpointFuga('date_start=2026-09-21&date_end=2026-08-01'), '/api/refunds');
 });

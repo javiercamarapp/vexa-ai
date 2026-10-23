@@ -33,6 +33,6 @@ test('cambiar el periodo suelta la publicación fijada pero conserva moneda y ba
   for (const k of ['snapshot_id', 'scope_hash', 'cursor']) assert.equal(q.has(k), false);
 });
 test('el selector de periodo solo aplica donde el periodo cambia la vista', () => {
-  for (const p of ['/overview', '/problems/manage', '/problems/abc', '/cfo', '/economics', '/briefs/1']) assert.equal(periodoAplica(p), true, p);
+  for (const p of ['/overview', '/problems/manage', '/problems/abc', '/cfo', '/refunds', '/economics', '/briefs/1']) assert.equal(periodoAplica(p), true, p);
   for (const p of ['/imports', '/jobs/9', '/settings/team', '/notifications', '/connections', '/history']) assert.equal(periodoAplica(p), false, p);
 });

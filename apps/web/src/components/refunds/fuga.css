@@ -135,3 +135,4 @@
 
 @media(max-width:700px){.fg-col-v{display:none}.fg-col[data-q=posible_hueco] .fg-col-v{display:block;font-size:12px}}
 .workspace-content .fg-hero-top p.eyebrow{margin:0}
+.fg-periodo{margin:var(--sp-2) 0 0;font-size:var(--t-small);color:var(--ui-secondary)}.fg-periodo b{color:var(--ui-primary,inherit);font-weight:600}

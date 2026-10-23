@@ -1,5 +1,6 @@
 'use client';
 import {useState} from 'react';
+import {useSearchParams} from 'next/navigation';
 import type {SkuFila} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
 import {PageHeader} from '../ui/page-header';
 import {Button,Download,Refresh} from '../ui/button';
@@ -10,9 +11,9 @@ import {NoDisponible,Seccion,TablaSkus,SeccionTracker,SeccionRepetido,SeccionCam
 import {SeccionIntensidad} from './fuga-intensidad';
 import {Estimador} from './fuga-estimador';
 import {Skeleton} from './fuga-esqueleto';
-import {useFuga} from './use-fuga';
+import {endpointFuga,useFuga} from './use-fuga';
 import {colaVencidos,listaWalmart,paqueteEvidencia,proveniencia,type Archivo} from './fuga-archivos.mjs';
-import {fraseConcentracion,lineaCobertura,lineaVentanas,num,usd} from './fuga-modelo.mjs';
+import {fraseConcentracion,lineaCobertura,lineaVentanas,num,periodoDelTitular,usd} from './fuga-modelo.mjs';
 import './fuga.css';
 
 /** Descarga local (Blob): no hay ninguna petición de red. */
@@ -23,7 +24,8 @@ export function bajar(a:Archivo){
 
 /** Pantalla «Fuga de reembolsos»: insight -> dinero -> acción, con datos reales cargados; cada cifra con su clase, periodo y cobertura. */
 export function FugaPantalla({organization}:{organization?:string}){
- const f=useFuga();
+ const sp=useSearchParams(),f=useFuga(endpointFuga(sp?.toString()));
+ const per=f.data?periodoDelTitular(f.data):null;
  const [abierto,setAbierto]=useState<string|null>(null),[skuPaquete,setSkuPaquete]=useState<string>(''),[aviso,setAviso]=useState('');
  const v=f.data;
  const sinLibro=v?.titular.status==='empty'&&v.skus.status!=='ok';
@@ -50,10 +52,13 @@ export function FugaPantalla({organization}:{organization?:string}){
      :v.titular.status!=='ok'?<Vacio>Sin libro de reembolsos cargado para este periodo. Carga el export de Amazon o Walmart para ver este número.</Vacio>
      :<>
       <p className="fg-big" aria-label={`${usd(v.titular.usdBrutoMinor)} devueltos, brutos, en dólares`}>{usd(v.titular.usdBrutoMinor)}<small>USD devueltos, brutos</small></p>
+      {per&&<p className="fg-periodo"><b>{per.etiqueta}</b>{per.ventanas.length>0&&<> · Ventana por canal: {per.ventanas.join(' · ')}</>}</p>}
+      {per?.nota&&<p className="fg-aviso" role="note">{per.nota}</p>}
       <p className="fg-range">Rango observado: de <b>{usd(v.titular.usdNetoMinor)}</b> sin reembolsos cancelados a <b>{usd(v.titular.usdBrutoMinor)}</b> con ellos.</p>
       {fraseConcentracion(v)&&<p className="fg-frase">{fraseConcentracion(v)}</p>}
       <p className="fg-meta">{lineaCobertura(v)}</p>
       <p className="fg-meta">{lineaVentanas(v)}</p>
+      {per?.acumulado&&(per.acumulado.distinto||per.pedido)&&<p className="fg-meta">{per.acumulado.texto}</p>}
      </>}
    </section>
 

@@ -3,7 +3,7 @@
 /** Claves de alcance que viajan entre pantallas. Los filtros propios de cada pantalla (q, status, cursor...) NO viajan. */
 export const CLAVES_ALCANCE = Object.freeze(['date_start', 'date_end', 'currency', 'basis', 'snapshot_id', 'scope_hash', 'date_basis', 'timezone', 'exponent', 'sku', 'source']);
 /** Pantallas donde el periodo cambia lo que se ve (en el resto la barra lo muestra como referencia, sin selector). */
-const CON_PERIODO = ['/overview', '/problems', '/recommendations', '/explorer', '/interventions', '/briefs', '/cfo', '/economics', '/customers'];
+const CON_PERIODO = ['/overview', '/problems', '/recommendations', '/explorer', '/interventions', '/briefs', '/cfo', '/refunds', '/economics', '/customers'];
 export const periodoAplica = (pathname) => CON_PERIODO.some((p) => pathname === p || pathname.startsWith(p + '/'));
 /** Query solo con el alcance (valores repetidos incluidos). Devuelve '' si no hay nada que conservar. */
 export function consultaAlcance(raw) {

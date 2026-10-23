@@ -41,3 +41,49 @@ export function resumenEstado(e) {
   if (!e) return 'Elige un estado para ver sus casos, motivos y retailers.';
   return `${e.nombre}: ${num(e.n)} ${e.n === 1 ? 'caso' : 'casos'}.`;
 }
+
+// ── Mapa con geometrías reales: cámara, color y textos (funciones puras; la pantalla solo las llama). ──
+/** Proporción (ancho, alto) del viewBox de cada país: reserva el espacio antes de cargar la geometría (sin salto de layout). */
+export const VISTA_PAIS = Object.freeze({US: {w: 975, h: 610}, MX: {w: 1000, h: 629}});
+export const ZOOM_MIN = 1;
+export const ZOOM_MAX = 16;
+const entre = (v, a, b) => Math.min(b, Math.max(a, v));
+
+/** Mantiene el mapa cubriendo el visor: sin márgenes vacíos al arrastrar. Con k = 1 la cámara queda en el origen. */
+export function limitarCamara(cam, vb) {
+  const k = entre(cam.k, ZOOM_MIN, ZOOM_MAX);
+  return {k, x: entre(cam.x, vb.w - k * vb.w, 0), y: entre(cam.y, vb.h - k * vb.h, 0)};
+}
+/** Cámara que encuadra una región (bbox) en el centro del visor; zoom máximo 8 para no pixelar un estado diminuto. */
+export function camaraParaRegion(r, vb, {margen = 1.6, kMax = 8} = {}) {
+  if (!r) return {x: 0, y: 0, k: 1};
+  const k = entre(Math.min(vb.w / (r.bw * margen), vb.h / (r.bh * margen)), 1.6, kMax);
+  return limitarCamara({k, x: vb.w / 2 - k * r.cx, y: vb.h / 2 - k * r.cy}, vb);
+}
+/** Zoom anclado al punto (px, py) en unidades del viewBox: el punto bajo el cursor no se mueve. */
+export function zoomEnPunto(cam, px, py, factor, vb) {
+  const k2 = entre(cam.k * factor, ZOOM_MIN, ZOOM_MAX);
+  if (k2 === 1) return {x: 0, y: 0, k: 1};
+  return limitarCamara({k: k2, x: px - ((px - cam.x) * k2) / cam.k, y: py - ((py - cam.y) * k2) / cam.k}, vb);
+}
+/** Estado visual de una región: con dato (paso 1..5) o «sin dato» (nunca cero). */
+export function estadoRegion(d, max) {
+  if (!d || !(d.n > 0)) return {tipo: 'sin-dato', paso: 0};
+  return {tipo: 'dato', paso: pasoDeRampa(d.n, max)};
+}
+/** ¿Cabe la etiqueta (código) dentro de la región al zoom k? (bbox en unidades del viewBox) */
+export function cabeEtiqueta(r, k) {
+  return r.bw * k >= 30 && r.bh * k >= 20;
+}
+/** Texto del tooltip y del aria-label: una sola fuente para que lo visible y lo leído coincidan. Sin dato nunca dice 0. */
+export function textoRegion(nombre, d, total) {
+  if (!d || !(d.n > 0)) return `${nombre}: sin dato (menos de 5 casos o sin lectura)`;
+  const pct = total > 0 ? ` · ${pctTxt(Math.round((d.n * 1000) / total) / 10)}` : '';
+  return `${nombre}: ${num(d.n)} ${d.n === 1 ? 'caso' : 'casos'}${pct}`;
+}
+/** Une la geometría con los datos visibles: una entrada por región, en el orden de la geometría. */
+export function regionesPintadas(geo, datos, max) {
+  return geo.regiones.map(r => ({r, d: datos.get(r.clave) ?? null, ...estadoRegion(datos.get(r.clave), max)}));
+}
+export const NOTA_PROVISIONAL = 'Provisional: fuente Tracker, no todos los tickets traen dirección; mapa real cuando se conecten Amazon, Walmart y Shopify.';
+export const TEXTO_MES = 'Mes: no disponible. El Tracker no trae la fecha del caso por estado; aparece cuando se conecten los pedidos con estado de envío.';

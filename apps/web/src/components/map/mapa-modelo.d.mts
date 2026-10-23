@@ -10,3 +10,19 @@ export function textoCobertura(c: {filas: number; conDireccion: number; interpre
 export function textoOcultos(o: {estados: number; casos: number; minimo: number} | null | undefined): string | null;
 export function filasTabla(estados: {clave: string; nombre: string; pais: string; n: number}[], total: number): {clave: string; estado: string; pais: string; casos: number; pct: number | null}[];
 export function resumenEstado(e: {nombre: string; n: number} | null | undefined): string;
+
+export type Region = {clave: string; codigo: string; cx: number; cy: number; bx: number; by: number; bw: number; bh: number; path: string};
+export type GeoPais = {pais: 'US' | 'MX'; viewBox: {w: number; h: number}; regiones: Region[]};
+export type Camara = {x: number; y: number; k: number};
+export const VISTA_PAIS: Readonly<Record<'US' | 'MX', {w: number; h: number}>>;
+export const ZOOM_MIN: number;
+export const ZOOM_MAX: number;
+export const NOTA_PROVISIONAL: string;
+export const TEXTO_MES: string;
+export function limitarCamara(cam: Camara, vb: {w: number; h: number}): Camara;
+export function camaraParaRegion(r: Region | null | undefined, vb: {w: number; h: number}, o?: {margen?: number; kMax?: number}): Camara;
+export function zoomEnPunto(cam: Camara, px: number, py: number, factor: number, vb: {w: number; h: number}): Camara;
+export function estadoRegion(d: {n: number} | null | undefined, max: number): {tipo: 'dato' | 'sin-dato'; paso: 0 | 1 | 2 | 3 | 4 | 5};
+export function cabeEtiqueta(r: Pick<Region, 'bw' | 'bh'>, k: number): boolean;
+export function textoRegion(nombre: string, d: {n: number} | null | undefined, total: number): string;
+export function regionesPintadas<D extends {n: number}>(geo: GeoPais, datos: Map<string, D>, max: number): {r: Region; d: D | null; tipo: 'dato' | 'sin-dato'; paso: 0 | 1 | 2 | 3 | 4 | 5}[];

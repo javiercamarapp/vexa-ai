@@ -1,0 +1,96 @@
+'use client';
+// Mapa con geometrías reales (SVG puro, sin librerías, sin teselas, sin red). Cámara, entrada escalonada y vuelo adaptados del «Cerebro de ventas»
+// de Likida (repo propio, src/app/admin/mapa-prospectos/cerebro.tsx): cámara imperativa en un <g>, curva cubic-bezier(.22,1,.36,1), borde que se engrosa al elegir.
+import {useCallback,useEffect,useId,useMemo,useRef,useState} from 'react';
+import type {KeyboardEvent,PointerEvent as RPointerEvent} from 'react';
+import {VISTA_PAIS,ZOOM_MAX,cabeEtiqueta,camaraParaRegion,limitarCamara,regionesPintadas,textoRegion,zoomEnPunto,type Camara,type GeoPais} from './mapa-modelo.mjs';
+
+export type Mosaico={clave:string;nombre:string;n:number};
+type Pais='US'|'MX';
+const CARGAS:Record<Pais,()=>Promise<{default:GeoPais}>>={US:()=>import('./geo/geo-us.mjs'),MX:()=>import('./geo/geo-mx.mjs')};
+const CURVA='cubic-bezier(.22,1,.36,1)';
+const reducido=()=>typeof window!=='undefined'&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+type Tip={clave:string;x:number;y:number};
+
+export function MapaGeo({pais,datos,max,total,nombres,seleccion,onElegir,etiqueta}:{pais:Pais;datos:Map<string,Mosaico>;max:number;total:number;nombres:Readonly<Record<string,string>>;seleccion:string|null;onElegir:(clave:string)=>void;etiqueta:string}){
+ const uid=useId().replace(/[^a-zA-Z0-9]/g,''),idPunto=`mp-punto-${uid}`;
+ const [cargado,setCargado]=useState<{pais:Pais;geo:GeoPais}|null>(null),[falloDe,setFalloDe]=useState<Pais|null>(null),[k,setK]=useState(1),[tip,setTip]=useState<Tip|null>(null),[ancho,setAncho]=useState(0);
+ const caja=useRef<HTMLDivElement>(null),svg=useRef<SVGSVGElement>(null),g=useRef<SVGGElement>(null);
+ const cam=useRef<Camara>({x:0,y:0,k:1}),gesto=useRef<{cx:number;cy:number;mov:number;captura:boolean}|null>(null),arrastro=useRef(false),sync=useRef<ReturnType<typeof setTimeout>|null>(null);
+ const geo=cargado?.pais===pais?cargado.geo:null,fallo=falloDe===pais;
+ const vb=geo?.viewBox??VISTA_PAIS[pais];
+ useEffect(()=>{const el=caja.current;if(!el)return;const ro=new ResizeObserver(()=>setAncho(el.clientWidth));ro.observe(el);return()=>ro.disconnect();},[]);
+
+ useEffect(()=>{let vivo=true;
+  CARGAS[pais]().then(m=>{if(vivo)setCargado({pais,geo:m.default});}).catch(()=>{if(vivo)setFalloDe(pais);});
+  return()=>{vivo=false;};},[pais]);
+
+ const aplicar=useCallback((animar:boolean)=>{const el=g.current;if(!el)return;
+  el.style.transition=animar&&!reducido()?`transform 700ms ${CURVA}`:'none';
+  el.style.transform=`translate(${cam.current.x}px,${cam.current.y}px) scale(${cam.current.k})`;
+ },[]);
+ const sincronizar=useCallback((ya:boolean)=>{if(sync.current)clearTimeout(sync.current);if(ya)setK(cam.current.k);else sync.current=setTimeout(()=>setK(cam.current.k),140);},[]);
+ const mover=useCallback((c:Camara,animar:boolean)=>{cam.current=limitarCamara(c,vb);aplicar(animar);sincronizar(animar);},[vb,aplicar,sincronizar]);
+ useEffect(()=>()=>{if(sync.current)clearTimeout(sync.current);},[]);
+
+ // Al elegir (o quitar) un estado la cámara vuela hacia él; al cambiar de geometría se reinicia.
+ const region=useMemo(()=>geo?.regiones.find(r=>r.clave===seleccion)??null,[geo,seleccion]);
+ useEffect(()=>{if(!geo)return;mover(region?camaraParaRegion(region,geo.viewBox):{x:0,y:0,k:1},true);},[geo,region,mover]);
+
+ const aViewBox=(cx:number,cy:number)=>{const r=svg.current?.getBoundingClientRect();if(!r||!r.width)return{px:vb.w/2,py:vb.h/2};const f=r.width/vb.w;return{px:(cx-r.left)/f,py:(cy-r.top)/f};};
+ const centro=():[number,number]=>{const r=svg.current?.getBoundingClientRect();return r?[r.left+r.width/2,r.top+r.height/2]:[0,0];};
+ const zoom=(factor:number)=>{const{px,py}=aViewBox(...centro());mover(zoomEnPunto(cam.current,px,py,factor,vb),true);};
+
+ // Rueda: solo con Ctrl/⌘ (también es el gesto de pellizco del trackpad) para no secuestrar el scroll de la página. Listener no pasivo.
+ useEffect(()=>{const el=svg.current;if(!el)return;
+  const rueda=(ev:WheelEvent)=>{if(!ev.ctrlKey&&!ev.metaKey)return;ev.preventDefault();const{px,py}=aViewBox(ev.clientX,ev.clientY);mover(zoomEnPunto(cam.current,px,py,Math.exp(-ev.deltaY*0.0022),vb),false);};
+  el.addEventListener('wheel',rueda,{passive:false});return()=>el.removeEventListener('wheel',rueda);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- aViewBox solo lee refs
+ },[vb,mover,geo]);
+
+ const abajo=(e:RPointerEvent<SVGSVGElement>)=>{arrastro.current=false;gesto.current={cx:e.clientX,cy:e.clientY,mov:0,captura:false};};
+ const mueve=(e:RPointerEvent<SVGSVGElement>)=>{
+  const a=gesto.current;
+  if(a){const r=svg.current?.getBoundingClientRect(),f=r&&r.width?r.width/vb.w:1,dx=e.clientX-a.cx,dy=e.clientY-a.cy;a.cx=e.clientX;a.cy=e.clientY;a.mov+=Math.abs(dx)+Math.abs(dy);
+   if(a.mov>5&&cam.current.k>1){arrastro.current=true;if(!a.captura){a.captura=true;svg.current?.setPointerCapture?.(e.pointerId);}
+    cam.current=limitarCamara({...cam.current,x:cam.current.x+dx/f,y:cam.current.y+dy/f},vb);aplicar(false);setTip(null);}}
+ };
+ const suelta=()=>{if(gesto.current?.captura)sincronizar(true);gesto.current=null;};
+ const sobre=(clave:string)=>(e:RPointerEvent<SVGPathElement>)=>{if(e.pointerType!=='mouse'||gesto.current?.captura)return;const c=caja.current?.getBoundingClientRect();if(c)setTip({clave,x:e.clientX-c.left,y:e.clientY-c.top});};
+ const tecla=(clave:string)=>(e:KeyboardEvent<SVGPathElement>)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onElegir(clave);}};
+ const clic=(clave:string)=>()=>{if(arrastro.current)return;onElegir(clave);};
+
+ const pintadas=useMemo(()=>geo?regionesPintadas(geo,datos,max):[],[geo,datos,max]);
+ const nombreDe=(r:{codigo:string})=>nombres[r.codigo]??r.codigo;
+ const tipReg=tip?pintadas.find(p=>p.r.clave===tip.clave):null;
+ const elegida=pintadas.find(p=>p.r.clave===seleccion)??null;
+ const pxPorU=ancho?ancho/vb.w:0.5;
+
+ return <div className="mp-lienzo" ref={caja}>
+  <div className="mp-zoom" role="group" aria-label="Acercar o alejar el mapa">
+   <button type="button" onClick={()=>zoom(1.6)} disabled={!geo||k>=ZOOM_MAX} aria-label="Acercar">+</button>
+   <button type="button" onClick={()=>zoom(1/1.6)} disabled={!geo||k<=1} aria-label="Alejar">−</button>
+   <button type="button" onClick={()=>mover({x:0,y:0,k:1},true)} disabled={!geo||k<=1} aria-label="Ver todo el país">⤢</button>
+  </div>
+  <svg ref={svg} className="mp-svg" viewBox={`0 0 ${vb.w} ${vb.h}`} role="group" aria-label={etiqueta} data-zoom={k>1?'on':'off'} data-listo={geo?'si':'no'}
+   onPointerDown={abajo} onPointerMove={mueve} onPointerUp={suelta} onPointerCancel={suelta} onPointerLeave={()=>{setTip(null);}}>
+   <defs><pattern id={idPunto} width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="1.6" cy="1.6" r="0.9" className="mp-punto"/></pattern></defs>
+   <g ref={g} className="mp-g">
+    {pintadas.map(({r,d,tipo,paso},i)=>{
+     const nombre=nombreDe(r),sel=seleccion===r.clave,txt=textoRegion(nombre,d,total);
+     const base={d:r.path,className:'mp-reg',style:{'--i':i,...(tipo==='sin-dato'?{fill:`url(#${idPunto})`}:{})} as React.CSSProperties,'data-paso':paso,'data-tipo':tipo,'data-sel':sel||undefined,vectorEffect:'non-scaling-stroke' as const};
+     return tipo==='dato'
+      ?<path key={r.clave} {...base} role="button" tabIndex={0} aria-pressed={sel} aria-label={txt} onClick={clic(r.clave)} onKeyDown={tecla(r.clave)} onPointerEnter={sobre(r.clave)} onPointerMove={sobre(r.clave)} onPointerLeave={()=>setTip(null)}/>
+      :<path key={r.clave} {...base} aria-hidden="true" onPointerEnter={sobre(r.clave)} onPointerMove={sobre(r.clave)} onPointerLeave={()=>setTip(null)}/>;
+    })}
+    {/* El elegido se repite encima, sin foco ni puntero, para que su borde rojo no lo tapen los vecinos. */}
+    {elegida&&<path d={elegida.r.path} className="mp-reg mp-sobre" vectorEffect="non-scaling-stroke" aria-hidden="true"/>}
+    {pintadas.filter(p=>p.tipo==='dato'&&cabeEtiqueta(p.r,k*pxPorU)).map(({r,paso})=>
+     <text key={r.clave} x={r.cx} y={r.cy} className="mp-cod" data-paso={paso} style={{fontSize:`${11/(k*pxPorU)}px`}} textAnchor="middle" dominantBaseline="central" aria-hidden="true">{r.codigo}</text>)}
+   </g>
+  </svg>
+  {!geo&&<div className={'mp-carga'+(fallo?' mp-carga-fallo':'')} role="status">{fallo?'No se pudo cargar el mapa. La tabla de abajo tiene los mismos datos.':'Cargando el mapa…'}</div>}
+  {tip&&tipReg&&<div className="mp-tip" role="presentation" style={{left:Math.min(tip.x+14,Math.max(0,ancho-190)),top:Math.max(0,tip.y-8)}}>{textoRegion(nombreDe(tipReg.r),tipReg.d,total)}</div>}
+ </div>;
+}

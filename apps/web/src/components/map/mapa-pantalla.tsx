@@ -7,8 +7,8 @@ import {EmptyState} from '../ui/empty-state';
 import {Icon} from '../ui/icons';
 import {NoDisponible,Seccion,Vacio} from '../refunds/fuga-partes';
 import {useVista} from './use-vista';
-import {MapaCuadricula,type Mosaico} from './mapa-cuadricula';
-import {MENSAJE_COMPLETO,filasTabla,limitesRampa,num,pctTxt,textoCobertura,textoOcultos} from './mapa-modelo.mjs';
+import {MapaGeo,type Mosaico} from './mapa-geo';
+import {MENSAJE_COMPLETO,NOTA_PROVISIONAL,PAISES,TEXTO_MES,filasTabla,limitesRampa,num,pctTxt,textoCobertura,textoOcultos} from './mapa-modelo.mjs';
 import './mapa.css';
 
 const forma=(d:unknown)=>typeof d==='object'&&d!==null&&'status' in d&&'provisional' in d;
@@ -31,6 +31,7 @@ function Panel({e,total}:{e:EstadoMapa|null;total:number}){
   <p className="mp-panel-t">{e.nombre}</p>
   <p className="mp-panel-n"><b>{num(e.n)}</b> {e.n===1?'caso':'casos'} <span>· {pctTxt(total>0?Math.round((e.n*1000)/total)/10:null)} de los casos con estado</span></p>
   <Lista titulo="Tipo de caso" celdas={e.tipos}/><Lista titulo="Motivo" celdas={e.motivos}/><Lista titulo="Retailer" celdas={e.retailers}/>
+  <p className="mp-mes"><b>Mes</b> <span>No disponible</span><small>{TEXTO_MES.replace(/^Mes: no disponible\. /,'')}</small></p>
   <p className="fg-sm">Casos = filas del Tracker. Las categorías con menos de 5 casos se agrupan para proteger la privacidad.</p>
  </aside>;
 }
@@ -45,7 +46,7 @@ export function MapaPantalla({organization}:{organization?:string}){
  const datos=useMemo(()=>new Map<string,Mosaico>(delPais.map(e=>[e.clave,{clave:e.clave,nombre:e.nombre,n:e.n}])),[delPais]);
  const max=Math.max(0,...delPais.map(e=>e.n));
  const totalPais=delPais.reduce((a,e)=>a+e.n,0);
- const actual=delPais.find(e=>e.clave===sel)??delPais[0]??null;
+ const actual=delPais.find(e=>e.clave===sel)??null;
  const elegir=(c:string)=>setSel(c);
  const cambiar=(p:'US'|'MX')=>{setPais(p);setSel(null);};
  const lim=limitesRampa(max);
@@ -56,8 +57,8 @@ export function MapaPantalla({organization}:{organization?:string}){
   {!v&&f.busy&&<section className="card"><Esqueleto segundos={f.segundos}/></section>}
   {!v&&!f.busy&&f.error&&<EmptyState art="shield" tone="warn" title={f.error.code==='acceso'?'Tu rol no tiene acceso a este panel':'No disponible ahora'} body={f.error.texto} action={f.error.code==='acceso'?undefined:<Button icon={<Refresh/>} onClick={()=>f.reload()}>Reintentar</Button>}/>}
   {v&&<>
-   <p className="mp-prov" role="note"><Icon name="info" size={16}/><span><b>Provisional.</b> Fuente: el Tracker de Excel, no todos los tickets ni todos los pedidos. {MENSAJE_COMPLETO}</span></p>
-   <Seccion id="mp-mapa" titulo="Casos por estado" kind="observed" intro="Cada mosaico es un estado; el número es la cantidad de casos del Tracker. Es un cartograma: todos los estados pesan igual, no es un mapa a escala.">
+   <p className="mp-prov" role="note"><Icon name="info" size={16}/><span><b>Provisional:</b> {NOTA_PROVISIONAL.replace(/^Provisional: /,'')}</span></p>
+   <Seccion id="mp-mapa" titulo="Casos por estado" kind="observed" intro="Cada estado se pinta según los casos del Tracker; más oscuro, más casos. Los estados punteados no tienen dato visible (menos de 5 casos o sin lectura): no son cero.">
     {v.status==='unavailable'?<NoDisponible onRetry={()=>f.reload()}/>
      :v.status==='empty'||!v.cobertura?<Vacio>Todavía no hay direcciones interpretables en el Tracker. {MENSAJE_COMPLETO}</Vacio>
      :<>
@@ -65,15 +66,17 @@ export function MapaPantalla({organization}:{organization?:string}){
        <div className="mp-seg" role="group" aria-label="País">
         {(['US','MX'] as const).map(p=><button key={p} type="button" aria-pressed={pais===p} onClick={()=>cambiar(p)}>{p==='US'?'Estados Unidos':'México'}<small>{num(v.cobertura!.pais[p])}</small></button>)}
        </div>
-       <ol className="mp-leyenda" aria-label="Leyenda de la escala de casos">
-        {lim.length===0?<li>Sin casos visibles</li>:lim.map(l=><li key={l.paso}><i data-paso={l.paso} aria-hidden="true"/>{l.desde===l.hasta?num(l.desde):`${num(l.desde)}–${num(l.hasta)}`}</li>)}
-        <li><i data-paso="0" aria-hidden="true"/>Sin casos visibles</li>
-       </ol>
+       <p className="mp-ayuda">Ctrl/⌘ + rueda o los botones acercan; arrastra para mover.</p>
       </div>
       {delPais.length===0?<Vacio>No hay estados de {pais==='US'?'Estados Unidos':'México'} con 5 casos o más.</Vacio>
        :<div className="mp-cuerpo">
          <div className="mp-mapa-col">
-          <MapaCuadricula pais={pais} datos={datos} max={max} seleccion={actual?.clave??null} onElegir={elegir} etiqueta={`Mapa de casos por estado de ${pais==='US'?'Estados Unidos':'México'}`}/>
+          <MapaGeo pais={pais} datos={datos} max={max} total={totalPais} nombres={PAISES[pais].nombres} seleccion={actual?.clave??null} onElegir={elegir} etiqueta={`Mapa de casos por estado de ${pais==='US'?'Estados Unidos':'México'}`}/>
+          <ol className="mp-leyenda" aria-label="Leyenda de la escala de casos">
+           {lim.map(l=><li key={l.paso}><i data-paso={l.paso} aria-hidden="true"/>{l.desde===l.hasta?num(l.desde):`${num(l.desde)}–${num(l.hasta)}`}</li>)}
+           <li><i data-paso="0" aria-hidden="true"/>Sin dato (no es cero)</li>
+           <li><i data-sel="1" aria-hidden="true"/>Elegido</li>
+          </ol>
          </div>
          <Panel e={actual} total={totalPais}/>
         </div>}

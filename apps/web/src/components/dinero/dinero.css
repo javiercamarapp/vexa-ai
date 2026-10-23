@@ -1,0 +1,89 @@
+/* Espacio «Dinero» (Brechas, Fuga, CFO, Preparar): rejilla de 12 columnas, listas con barras de color por métrica y gráficas propias.
+   Medidas de ESTILO-ELEGIDO: gap 12, tarjeta 14, fila 40, cuerpo 13. Color por métrica: --chart-1 ingreso, --chart-2 reembolsos, --chart-4 atorado, --chart-7 problemas. */
+.dg-page{display:flex;flex-direction:column;gap:var(--ui-rhythm);min-width:0}
+.dg-row{display:grid;gap:var(--ui-rhythm);grid-template-columns:repeat(12,minmax(0,1fr));align-items:stretch;min-width:0}
+.dg-row>*{min-width:0}
+.dg-row[data-split="8-4"]>:nth-child(1){grid-column:span 8}.dg-row[data-split="8-4"]>:nth-child(2){grid-column:span 4}
+.dg-row[data-split="6-6"]>*{grid-column:span 6}
+.dg-row[data-split="4-4-4"]>*{grid-column:span 4}
+.dg-row[data-split="3-3-3-3"]>*{grid-column:span 3}
+.dg-row[data-split="12"]>*{grid-column:span 12}
+.dg-row>.ui-card{display:flex;flex-direction:column}
+.dg-row>.ui-card>.dg-fill{flex:1 1 auto}
+@media(max-width:1100px){.dg-row[data-split="3-3-3-3"]>*{grid-column:span 6}}
+@media(max-width:900px){.dg-row>*{grid-column:1/-1!important}}
+.dg-sello{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.dg-pie{margin:auto 0 0;padding-top:8px;font-size:12px;line-height:1.5;color:var(--muted)}
+.dg-nota{margin:8px 0 0;font-size:12px;line-height:1.5;color:var(--muted)}
+.dg-titular{margin:0;font:600 18px/1.35 var(--font-ui);letter-spacing:-.01em;color:var(--ink);max-width:90ch}
+.dg-delta{display:inline-flex;align-items:center;min-height:20px;padding:0 8px;border-radius:999px;font:600 12px/1 var(--font-ui);font-variant-numeric:tabular-nums;white-space:nowrap;background:var(--ui-soft);color:var(--ui-secondary)}
+.dg-delta[data-t=up]{background:var(--tint-up,var(--ui-soft));color:var(--ink-up,var(--ink))}
+.dg-delta[data-t=down]{background:var(--tint-down,var(--ui-soft));color:var(--ink-down,var(--ink))}
+.dg-kpi-nota{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+/* Barra fina de porcentaje dentro de la nota de un KPI */
+.dg-mini{display:block;width:100%;height:6px;border-radius:999px;background:var(--ui-soft);overflow:hidden}
+.dg-mini>i{display:block;height:100%;border-radius:999px;background:var(--cat,var(--chart-1));transform-origin:left;animation:dg-grow 480ms var(--ui-ease) both}
+/* Lista con barras: etiqueta | barra | valor */
+.dg-lista{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.dg-lista>li{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) auto;align-items:center;gap:4px 12px;min-height:40px;padding:6px 0;border-bottom:1px solid var(--ui-border)}
+.dg-lista>li:last-child{border-bottom:0}
+.dg-lista[data-ap]>li{grid-template-columns:minmax(0,1fr) auto;min-height:48px}
+.dg-lista[data-ap]>li>.dg-bar{grid-column:1/-1;grid-row:2}
+.dg-lista[data-cols=dos]>li{grid-template-columns:minmax(0,1fr) auto}
+.dg-lab{min-width:0;display:flex;flex-direction:column;gap:2px;font-size:13px;line-height:1.35;color:var(--ink)}
+.dg-lab b{font-weight:600;overflow-wrap:anywhere}
+.dg-lab small{font-size:12px;color:var(--muted);line-height:1.4}
+.dg-bar{display:block;position:relative;height:8px;border-radius:999px;background:var(--ui-soft)}
+.dg-bar>i{position:absolute;inset:0 auto 0 0;border-radius:999px;background:var(--cat,var(--chart-1));transform-origin:left;animation:dg-grow 480ms var(--ui-ease) both}
+.dg-bar[data-estado=parcial]>i{background-image:repeating-linear-gradient(45deg,#fff6 0 2px,transparent 2px 6px)}
+.dg-bar>u{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);opacity:.55;text-decoration:none}
+.dg-val{font:600 13px/1.2 var(--font-ui);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;color:var(--ink)}
+.dg-val small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+/* Tres columnas «gano / pierdo / podría ganar» */
+.dg-col-t{display:flex;align-items:center;gap:8px;margin:0 0 8px}
+.dg-col-t i{width:8px;height:8px;border-radius:50%;background:var(--cat)}
+/* Cascada (puente) */
+.dg-cascada{display:block;width:100%;height:auto}
+.dg-cascada text{font:12px var(--font-ui);fill:var(--muted)}
+.dg-cascada .dg-c-v{font-weight:600;fill:var(--ink)}
+.dg-cascada rect.dg-c-b{transform-box:fill-box;transform-origin:bottom;animation:dg-up 480ms var(--ui-ease) both}
+/* Columnas por mes */
+.dg-meses{display:grid;gap:4px;align-items:end;height:190px;border-bottom:1px solid var(--ui-border)}
+.dg-mes{display:grid;grid-template-rows:16px 1fr 30px;height:100%;min-width:0;text-align:center}
+.dg-mes-v{font:600 12px var(--font-ui);color:var(--ink);align-self:end;white-space:nowrap;font-variant-numeric:tabular-nums}
+.dg-mes-a{display:flex;flex-direction:column-reverse;justify-content:flex-start;align-items:center;min-height:0}
+.dg-mes-a>i{display:block;width:100%;max-width:34px;border-top:2px solid var(--ui-surface);transform-origin:bottom;animation:dg-up 480ms var(--ui-ease) both}
+.dg-mes-a>i:last-child{border-radius:8px 8px 0 0}
+.dg-mes[data-q=parcial] .dg-mes-a>i,.dg-mes[data-q=posible_hueco] .dg-mes-a>i{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.55) 0 2px,transparent 2px 5px);opacity:.85}
+.dg-mes-m{font-size:12px;color:var(--muted);line-height:1.2;padding-top:4px;display:grid;justify-items:center}
+.dg-leyenda{list-style:none;display:flex;flex-wrap:wrap;gap:4px 14px;margin:0 0 8px;padding:0;font-size:12px;color:var(--muted)}
+.dg-leyenda li{display:inline-flex;align-items:center;gap:6px}
+.dg-leyenda i{width:10px;height:10px;border-radius:8px;background:var(--cat)}
+.dg-leyenda i[data-hatch]{background:repeating-linear-gradient(135deg,var(--ui-line-strong) 0 2px,transparent 2px 5px);border:1px solid var(--ui-line-strong)}
+/* Expediente por SKU: qué se sabe | qué no se sabe */
+.dg-dos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:700px){.dg-dos{grid-template-columns:1fr}}
+.dg-caja{border:1px solid var(--ui-border);border-radius:12px;padding:12px;background:var(--ui-surface);min-width:0}
+.dg-caja[data-t=no]{background:var(--ui-soft);border-style:dashed}
+.dg-caja h3{margin:0 0 6px;font:600 13px/1.3 var(--font-ui);color:var(--ink)}
+.dg-caja ul{margin:0;padding-left:16px;font-size:13px;line-height:1.5;color:var(--ink)}
+.dg-caja li+li{margin-top:4px}
+/* Acciones en fila de tabla */
+.dg-sku{display:inline-flex;align-items:center;gap:6px;width:auto;min-height:0;padding:0;border:0;border-radius:8px;box-shadow:none;background:transparent!important;font:600 13px/1.3 var(--font-ui);color:var(--ink)!important;cursor:pointer;text-align:left}
+.ui-table .ui-chip,.ui-table .btn{white-space:nowrap}
+.dg-sku:focus-visible{outline:2px solid var(--ui-focus);outline-offset:2px;border-radius:8px}
+.dg-detalle{border:1px solid var(--ui-border);border-radius:12px;padding:0 14px;background:var(--ui-surface)}
+.dg-detalle>summary{cursor:pointer;min-height:40px;display:flex;align-items:center;gap:8px;font:600 13px var(--font-ui);list-style:none}
+.dg-detalle>summary::-webkit-details-marker{display:none}
+.dg-detalle[open]>summary{border-bottom:1px solid var(--ui-border);margin-bottom:8px}
+.dg-detalle ul{margin:0 0 12px;padding-left:18px;font-size:13px;line-height:1.55;color:var(--ui-secondary)}
+.dg-vacio{display:flex;align-items:center;gap:10px;min-height:56px;padding:10px 12px;border:1.5px dotted var(--ui-line-strong);border-radius:12px;color:var(--muted);font-size:13px;line-height:1.5}
+.dg-vacio p{margin:0}
+.dg-estim{display:grid;gap:10px}
+@keyframes dg-grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes dg-up{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@media(prefers-reduced-motion:reduce){.dg-bar>i,.dg-mini>i,.dg-mes-a>i,.dg-cascada rect.dg-c-b{animation:none}}
+
+.dg-page .ui-kpis{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:var(--ui-rhythm)}
+@media(min-width:901px){.dg-page .ui-kpi-value{overflow-wrap:normal;white-space:nowrap}}
+.dg-page,.dg-fill,.ui-card{position:relative}

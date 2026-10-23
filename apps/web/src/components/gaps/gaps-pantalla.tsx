@@ -2,92 +2,80 @@
 import {useState} from 'react';
 import {PageHeader} from '../ui/page-header';
 import {Button,Download,LinkButton,Refresh} from '../ui/button';
-import {EmptyState} from '../ui/empty-state';
+import {Card} from '../ui/card';
+import {KpiStrip,type Kpi} from '../ui/kpi-strip';
+import {Popover} from '../ui/overlay';
+import {ErrorState} from '../ui/error-state';
+import {Loading} from '../ui/loading';
 import {KindBadge} from '../ui/kind-badge';
 import {Icon} from '../ui/icons';
-import {NoDisponible,Seccion,Vacio} from '../refunds/fuga-partes';
+import {NoDisponible} from '../refunds/fuga-partes';
 import {bajar} from '../refunds/fuga-pantalla';
-import {SeccionGano,SeccionPierdo,SeccionPorQue} from './gaps-secciones';
-import {SeccionFamilias} from './gaps-familias';
-import {SeccionRecomendaciones,type Supuesto} from './gaps-recs';
+import {Delta,Fila,MiniPct,Vacio} from '../dinero/partes';
+import {CierraBrecha,Familias,GraficoMeses,Intensidad,PanelCanales,PanelFamilias,Puente,TresColumnas,serieVentas,variacionVentas} from './gaps-bloques';
+import {EstimadorBrecha,type Supuesto} from './gaps-recs';
 import {csvIngresos,csvIntensidad,csvRecomendaciones,proveniencia,resumenHtml} from './gaps-archivos.mjs';
-import {lineaCobertura,num,periodoIngresos,usd} from './gaps-modelo.mjs';
+import {num} from './gaps-modelo.mjs';
 import {useGaps} from './use-gaps';
-import '../refunds/fuga.css';
-import './gaps.css';
+import '../dinero/dinero.css';
 
-const ANCLAS:[string,string][]=[['gp-gano','Dónde gano'],['gp-pierdo','Dónde pierdo'],['gp-porque','Por qué y dónde ganar más'],['gp-familias','Ventas vs quejas'],['gp-recs','Recomendaciones']];
+const big=(m:string)=>Number(BigInt(m)/100n);
+const corto=(n:number)=>n>=1_000_000?`$${(n/1_000_000).toFixed(2)}M`:n>=1000?`$${Math.round(n/1000)}k`:`$${n}`;
 
-function Esqueleto({segundos}:{segundos:number}){
- return <section className="card" aria-busy="true"><div className="fg-skel" role="status"><span className="sr-only">Cargando brechas de ingreso…</span>
-  <div className="fg-skel-big" aria-hidden="true"/>{[0,1,2,3,4].map(i=><div key={i} className="fg-skel-l" style={{width:`${92-i*9}%`}} aria-hidden="true"/>)}
-  <p className="fg-sm">{segundos<2?'Calculando…':segundos<8?`Calculando… ${segundos} s`:`Calculando… ${segundos} s. Está tardando más de lo normal; sigue intentando.`}</p></div></section>;
-}
-
-/** Pantalla «Brechas de ingreso»: UN titular de dinero (ingreso bruto observado) y luego dónde gano, dónde pierdo, por qué y dónde podría ganar más. Sin margen: todo es ingreso bruto. */
+/** Pantalla «Brechas de ingreso»: titular, KPI en color, puente de ventas a ingreso retenido, dónde gano / pierdo / podría ganar, tabla «Cierra esta brecha» y ventas vs quejas. Siempre ingreso bruto, nunca margen. */
 export function GapsPantalla({organization}:{organization?:string}){
  const g=useGaps(),v=g.data;
  const [aviso,setAviso]=useState(''),[supuesto,setSupuesto]=useState<Supuesto|null>(null);
- const per=v?periodoIngresos(v):null;
- const irA=(id:string)=>{const el=document.getElementById('rec-'+id)??document.getElementById('gp-recs');el?.scrollIntoView({behavior:'smooth',block:'start'});(el as HTMLElement|null)?.focus?.({preventScroll:true});};
- const bajarArchivo=(a:{nombre:string;mime:string;contenido:string;total:number})=>{bajar(a);setAviso(`Archivo descargado en tu equipo: ${a.nombre}. No se envió nada.`);};
+ const irA=(id:string)=>{const el=document.getElementById('rec-'+id)??document.getElementById('gp-brecha');el?.scrollIntoView({behavior:'smooth',block:'center'});};
+ const bajarArchivo=(a:{nombre:string;mime:string;contenido:string;total:number})=>{bajar(a);setAviso(`Descargado: ${a.nombre}. No se envió nada.`);};
  const ok=v?.ingresos.status==='ok'?v.ingresos:null;
- return <div className="task-page stack fg-page">
-  <PageHeader eyebrow="Dinero" title="Brechas de ingreso" description={<>Dónde estás ganando más, dónde estás perdiendo y por qué, y dónde podrías ganar más. Todo es ingreso bruto: no hay costo ni margen por producto.{organization?` ${organization}.`:''}</>}
-   actions={<><LinkButton href="/refunds" variant="secondary">Ver fuga de reembolsos</LinkButton><Button icon={<Refresh/>} onClick={()=>g.reload()} loading={g.busy&&!!v}>Actualizar</Button></>}/>
-  {!v&&g.busy&&<Esqueleto segundos={g.segundos}/>}
-  {!v&&!g.busy&&g.error&&<EmptyState art="shield" tone="warn" title={g.error.code==='acceso'?'Tu rol no tiene acceso a este panel':'No disponible ahora'} body={g.error.texto} action={g.error.code==='acceso'?undefined:<Button icon={<Refresh/>} onClick={()=>g.reload()}>Reintentar</Button>}/>}
+ const r=v?.perdidas.reembolsos,c=v?.perdidas.cancelaciones,t=v?.perdidas.tracker;
+ const ventas=ok&&c?.status==='ok'?big(ok.activoMinor)+big(c.canceladoMinor):null;
+ const kpis:Kpi[]=v?[
+  {label:'Ventas brutas',c:1,value:ok?corto(ventas??big(ok.activoMinor)):'—',spark:serieVentas(ok),note:<span className="dg-kpi-nota"><Delta p={variacionVentas(ok)} sufijo="vs mes completo previo"/></span>},
+  {label:'Cancelaciones',c:2,value:c?.status==='ok'?corto(big(c.canceladoMinor)):'—',note:c?.status==='ok'?<><MiniPct c={2} p={ventas?big(c.canceladoMinor)*100/ventas:null} label="Cancelado sobre ventas brutas"/><span>{num(c.lineas)} líneas · {c.pct!==null?c.pct.toLocaleString('es-MX',{maximumFractionDigits:1})+' % de las líneas':'sin dato'}</span></>:'No disponible ahora'},
+  {label:'Reembolsos',c:2,value:r?.status==='ok'?corto(big(r.brutoMinor)):'—',note:r?.status==='ok'?<><MiniPct c={2} p={ok?big(r.activoMinor)*100/Math.max(1,big(ok.activoMinor)):null} label="Reembolsos sobre ingreso"/><span>{num(r.n)} reembolsos{r.sinMonto>0?` · ${num(r.sinMonto)} sin monto`:''}</span></>:'No disponible ahora'},
+  {label:'No recuperado (Tracker)',c:4,value:t?.status==='ok'?corto(big(t.negadosMinor)):'—',note:t?.status==='ok'?<><MiniPct c={4} p={t.total?t.negados*100/t.total:null} label="Solicitudes negadas o vencidas"/><span>{num(t.negados)} de {num(t.total)} solicitudes · muestra</span></>:'Sin Tracker cargado'},
+ ]:[];
+ const titular=v&&ok&&r?.status==='ok'&&ventas?`De ${corto(ventas)} vendidos, ${corto(Math.max(0,big(ok.activoMinor)-big(r.activoMinor)))} se quedan tras cancelaciones y reembolsos; el dinero devuelto pesa ${(big(r.activoMinor)*100/Math.max(1,big(ok.activoMinor))).toLocaleString('es-MX',{maximumFractionDigits:1})} % del ingreso.`:null;
+ const exportar=v&&<Popover label="Exportar archivos" align="end" width={260} triggerClassName="btn btn-secondary" trigger={<><Download/><span className="btn-label">Exportar</span></>}>
+  <ul className="ui-reset" style={{listStyle:'none',margin:0,padding:4,display:'grid',gap:4}}>
+   <li><Button size="sm" icon={<Download/>} disabled={!ok} onClick={()=>bajarArchivo(resumenHtml(v))}>Resumen (HTML)</Button></li>
+   <li><Button size="sm" icon={<Download/>} disabled={v.ranking.status!=='ok'} onClick={()=>bajarArchivo(csvIngresos(v))}>Ingreso por SKU (CSV)</Button></li>
+   <li><Button size="sm" icon={<Download/>} disabled={v.intensidad.status!=='ok'} onClick={()=>bajarArchivo(csvIntensidad(v))}>Intensidad (CSV)</Button></li>
+   <li><Button size="sm" icon={<Download/>} disabled={v.recomendaciones.items.length===0} onClick={()=>bajarArchivo(csvRecomendaciones(v))}>Recomendaciones (CSV)</Button></li></ul></Popover>;
+ return <div className="dg-page">
+  <PageHeader eyebrow={'Dinero'+(organization?' · datos sintéticos de demostración':'')} title="Brechas de ingreso" description="Dónde ganas, dónde pierdes y por qué. Siempre ingreso bruto: no hay costo ni margen por producto."
+   actions={<><LinkButton href="/refunds" variant="secondary">Ver fuga de reembolsos</LinkButton>{exportar}<Button icon={<Refresh/>} onClick={()=>g.reload()} loading={g.busy&&!!v}>Actualizar</Button></>}/>
+  {!v&&g.busy&&<Card><Loading message={g.segundos<8?'Calculando brechas…':`Calculando… ${g.segundos} s. Está tardando más de lo normal.`}/></Card>}
+  {!v&&!g.busy&&g.error&&<Card><ErrorState title={g.error.code==='acceso'?'Tu rol no tiene acceso a este panel':'No disponible ahora'} body={g.error.texto} onRetry={g.error.code==='acceso'?undefined:()=>g.reload()}/></Card>}
   {v&&<>
-   <section className="card fg-hero" aria-labelledby="gp-hero-t">
-    <div className="fg-hero-top"><p id="gp-hero-t" className="eyebrow">Ingreso bruto observado</p><KindBadge kind="observed"/></div>
-    {v.ingresos.status==='unavailable'?<NoDisponible onRetry={()=>g.reload()}/>
-     :!ok?<Vacio>Todavía no hay pedidos cargados en el libro. Carga el export de Amazon o Walmart para ver este número.</Vacio>
-     :<>
-      <p className="fg-big" aria-label={`${usd(ok.activoMinor)} de ingreso bruto observado, en dólares, sin cancelados`}>{usd(ok.activoMinor)}<small>USD de ingreso bruto, sin cancelados</small></p>
-      {per&&<p className="fg-periodo"><b>{per.etiqueta}</b></p>}
-      <p className="fg-aviso" role="note">{per?.linea}</p>
-      <p className="fg-meta">{lineaCobertura(v)}</p>
-     </>}
-   </section>
-
-   <nav aria-label="Secciones de esta pantalla"><ul className="gp-nav">{ANCLAS.map(([id,t])=><li key={id}><a href={'#'+id}>{t}</a></li>)}</ul></nav>
-
-   <Seccion id="gp-gano" titulo="Dónde gano" kind="observed" intro="Ingreso bruto por mes, canal y SKU, con su crecimiento mes contra mes entre meses completos.">
-    <SeccionGano v={v} onReintentar={()=>g.reload()}/>
-   </Seccion>
-   <Seccion id="gp-pierdo" titulo="Dónde pierdo" kind="observed" intro="Reembolsos, cancelaciones y reembolsos negados o vencidos, y cuánto pesan sobre el ingreso del mismo SKU, canal y mes.">
-    <SeccionPierdo v={v} onReintentar={()=>g.reload()}/>
-   </Seccion>
-   <Seccion id="gp-porque" titulo="Por qué y dónde podría ganar más" kind="inferred" intro="Concentración, candidatos a revisar y a empujar (reglas sobre datos observados) y los motivos que registra el Tracker.">
-    <SeccionPorQue v={v} onReintentar={()=>g.reload()} irA={irA}/>
-   </Seccion>
-   <Seccion id="gp-familias" titulo="Ventas vs quejas por familia de producto" kind="observed" intro="¿La herramienta que más se vende es la que más contactos de soporte genera? Cruce de ingreso con conversaciones por familia de producto.">
-    <SeccionFamilias v={v} onReintentar={()=>g.reload()}/>
-   </Seccion>
-   <Seccion id="gp-recs" titulo="Recomendaciones con evidencia" kind="inferred" intro="Reglas, sin IA: solo aparece una recomendación si los datos la respaldan. Cada una dice qué hacer, por qué, con qué evidencia y cuánto ingreso está en juego.">
-    <SeccionRecomendaciones v={v} onReintentar={()=>g.reload()} supuesto={supuesto} onSupuestos={setSupuesto}/>
-   </Seccion>
-   <Seccion id="gp-descargas" titulo="Llévalo a tu reunión" intro="Archivos que se generan aquí mismo, en tu navegador. Sin PII, sin nombres de clientes y sin enviar nada.">
-    <div className="gp-descargas">
-     <Button icon={<Download/>} disabled={!ok} onClick={()=>bajarArchivo(resumenHtml(v))}>Resumen (HTML)</Button>
-     <Button icon={<Download/>} disabled={v.ranking.status!=='ok'} onClick={()=>bajarArchivo(csvIngresos(v))}>Ingreso por SKU (CSV)</Button>
-     <Button icon={<Download/>} disabled={v.intensidad.status!=='ok'} onClick={()=>bajarArchivo(csvIntensidad(v))}>Intensidad de reembolso (CSV)</Button>
-     <Button icon={<Download/>} disabled={v.recomendaciones.items.length===0} onClick={()=>bajarArchivo(csvRecomendaciones(v))}>Recomendaciones (CSV)</Button>
-    </div>
-    <p className="fg-aviso fg-ok" role="status" aria-live="polite">{aviso}</p>
-   </Seccion>
-
-   <details className="card fg-como">
-    <summary><Icon name="info" size={16}/> Cómo se calculó</summary>
-    <ul>
-     {proveniencia(v).map((t,i)=><li key={i}>{t}</li>)}
-     <li>Mes completo: empieza el día 1 a 3 (si es el primero del canal), termina a menos de 3 días de su fin (si es el último) y sus líneas no caen a menos de la mitad del mes previo. Solo los meses completos entran a comparaciones mes contra mes; el cruce con reembolsos usa meses completos desde que existe el libro de reembolsos del canal.</li>
-     <li>Reglas de recomendación (umbrales de trabajo, no hallazgos): intensidad {v.umbrales.multiplicadorMediana} veces la mediana del canal con al menos {usd(String(v.umbrales.minIngresoCruceUsd*100))} de ingreso, {num(v.umbrales.minLineasCruce)} líneas y {num(v.umbrales.minReembolsosCruce)} reembolsos para «revisar»; crecimiento de {v.umbrales.minCrecimientoPct} % o más con devolución no mayor a la mediana para «empujar»; venta cruzada con {num(v.umbrales.minParConversaciones)} conversaciones y el análisis al menos al {v.umbrales.minAvanceCrossPct} %. «Mercado» significa canal: todavía no hay geografía.</li>
-     <li>Familias de producto: la IA anota la familia mencionada en cada conversación (prefijo del código de modelo o categoría de herramienta). Solo las familias con prefijo de SKU se cruzan con ventas; las categorías no se mezclan. «Quejas» son conversaciones de soporte que mencionan la familia.</li>
-     <li>Lo que no se puede calcular hoy: margen o utilidad (no hay costo por producto), tasa de reembolso por cohorte de pedido, unidades (el libro trae líneas, no cantidad), causa raíz, geografía.</li>
-     <li>Lectura: tablas precalculadas que se refrescan solas; ingresos al {v.frescura.ordenes?.refreshedAt?.slice(0,10)??'(sin fecha)'}, reembolsos al {v.frescura.reembolsos?.refreshedAt?.slice(0,10)??'(sin fecha)'}; consulta del {v.generatedAt.slice(0,10)}.</li>
-    </ul>
-   </details>
+   {titular&&<p className="dg-titular">{titular}</p>}
+   <KpiStrip items={kpis} label="Indicadores de brechas de ingreso"/>
+   <Fila split="8-4">
+    <Card title="Ingreso bruto por mes y canal" description="Un color por canal; lo parcial lleva trama" actions={<KindBadge kind="observed"/>}>
+     {v.ingresos.status==='unavailable'?<NoDisponible onRetry={()=>g.reload()}/>:!ok?<Vacio>Todavía no hay pedidos en el libro. Carga el export de Amazon o Walmart.</Vacio>:<GraficoMeses ing={ok}/>}</Card>
+    <Card title="Por canal" description="Ingreso bruto, sin cancelados" actions={<KindBadge kind="observed"/>}>{ok?<PanelCanales ing={ok}/>:<Vacio>Sin canales con pedidos.</Vacio>}</Card>
+   </Fila>
+   <Fila split="6-6">
+    <Card title="Puente: de ventas a ingreso retenido" description="Cancelaciones y reembolsos restados de las ventas brutas" actions={<KindBadge kind="inferred"/>}><Puente v={v}/></Card>
+    <Card title="Intensidad de reembolso por SKU y canal" description="Los pares con más devolución por cada peso vendido" actions={<KindBadge kind="observed"/>}><Intensidad v={v} onReintentar={()=>g.reload()}/></Card>
+   </Fila>
+   <TresColumnas v={v} onReintentar={()=>g.reload()} irA={irA}/>
+   <Card id="gp-brecha" title="Cierra esta brecha" description="Reglas sin IA sobre datos observados; cada una dice qué hacer, por qué y cuánto ingreso está en juego" actions={<KindBadge kind="inferred"/>}><CierraBrecha v={v} onReintentar={()=>g.reload()} supuesto={supuesto}/></Card>
+   <Fila split="8-4">
+    <Card title="Ventas vs quejas por familia de producto" description="Ingreso (azul) frente a conversaciones de soporte por cada 100 líneas (violeta)" actions={<KindBadge kind="observed"/>}><Familias v={v} onReintentar={()=>g.reload()}/></Card>
+    <Card title="Cobertura del análisis" description="Qué parte del histórico se puede cruzar"><PanelFamilias v={v}/></Card>
+   </Fila>
+   <Fila split="6-6">
+    <Card title="¿Cuánto podrías recuperar?" description="Estimador con candado: tú tecleas los supuestos" actions={<KindBadge kind="estimated"/>}><EstimadorBrecha recs={v.recomendaciones.items} onSupuestos={setSupuesto}/></Card>
+    <Card title="Cómo se calculó" description={`Consulta del ${v.generatedAt.slice(0,10)}`}>
+     <ul style={{margin:0,paddingLeft:18,fontSize:13,lineHeight:1.55,color:'var(--ui-secondary)'}}>
+      {proveniencia(v).map((x,i)=><li key={i}>{x}</li>)}
+      <li>Mes completo: empieza el día 1 a 3, termina a menos de 3 días de su fin y no cae a menos de la mitad del mes previo. Solo los completos entran a comparaciones.</li>
+      <li>Lo que no se puede calcular hoy: margen o utilidad, tasa por cohorte, unidades, causa raíz, geografía.</li></ul>
+     <p className="dg-nota" role="status" aria-live="polite"><Icon name="info" size={12}/> {aviso||'Los archivos se generan en tu navegador; no se envía nada.'}</p></Card>
+   </Fila>
   </>}
  </div>;
 }

@@ -23,9 +23,9 @@ const fakeDb = ({ledger, conv, states = {}, monthly = [], last = null}) => ({asy
 
 test('libro: octubre con 5 días queda como mes parcial y la marca de datos es el último asiento', async () => {
   const ledger = [
-    {month: '2026-08', kind: 'order', currency: 'USD', exponent: 2, n: 300, amount: '94100000', unknown: 0, last_at: new Date('2026-08-31T20:00:00Z')},
-    {month: '2026-09', kind: 'order', currency: 'USD', exponent: 2, n: 320, amount: '104500000', unknown: 0, last_at: new Date('2026-09-30T22:00:00Z')},
-    {month: '2026-10', kind: 'order', currency: 'USD', exponent: 2, n: 220, amount: '2650000', unknown: 0, last_at: new Date('2026-10-05T10:00:00Z')},
+    {month: '2026-08', kind: 'order', status: 'recorded', currency: 'USD', exponent: 2, n: 300, amount: '94100000', unknown: 0, last_at: new Date('2026-08-31T20:00:00Z')},
+    {month: '2026-09', kind: 'order', status: 'recorded', currency: 'USD', exponent: 2, n: 320, amount: '104500000', unknown: 0, last_at: new Date('2026-09-30T22:00:00Z')},
+    {month: '2026-10', kind: 'order', status: 'recorded', currency: 'USD', exponent: 2, n: 220, amount: '2650000', unknown: 0, last_at: new Date('2026-10-05T10:00:00Z')},
   ];
   const v = await createTrendsRepository({database: fakeDb({ledger, conv: []}), now: () => NOW}).monthly();
   assert.deepEqual(v.ledger.completeness, {basis: 'data', dataThrough: '2026-10-05', partialMonth: '2026-10', partialMonths: ['2026-10']});

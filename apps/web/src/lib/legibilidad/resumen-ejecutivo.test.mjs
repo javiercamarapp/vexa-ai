@@ -36,6 +36,7 @@ test('pedidos: monto exacto del último mes completo con su base rotulada, sin c
  const led={status:'ok',currency:'USD',exponent:2,completeness:{dataThrough:'2026-10-05T00:00:00.000Z'},series:[{month:'2026-08',orders:{count:10,amountMinor:'120000',unknownAmounts:0}},{month:'2026-09',orders:{count:8,amountMinor:'87200700',unknownAmounts:1}},{month:'2026-10',orders:{count:1,amountMinor:'500',unknownAmounts:0}}]};
  const k=kpiPedidos(led,AHORA);
  assert.equal(k.mes,'2026-09');assert.equal(k.amountMinor,'87200700');assert.equal(k.delta.dir,'up');assert.match(k.rotulo,/Libro de registros, septiembre de 2026/);
+ {const k2=kpiPedidos({...led,orderBasis:{base:'marketplace_line_price',label:'Precio de línea de marketplace'}},new Date('2026-10-22T12:00:00Z'));assert.equal(k2.base,'Precio de línea de marketplace');assert.match(k2.rotulo,/^Precio de línea de marketplace, septiembre de 2026/);}
  assert.equal(kpiPedidos({status:'ok',currency:'USD',exponent:2,series:[]},AHORA).amountMinor,null);
  assert.equal(kpiPedidos(null,AHORA),null);
 });

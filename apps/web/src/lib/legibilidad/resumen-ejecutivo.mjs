@@ -46,7 +46,7 @@ export function kpiPedidos(led,ahora=new Date()){
  if(!ult)return {amountMinor:null,mes:null,currency:led.currency,exponent:led.exponent,delta:null,rotulo:'Aún no hay un mes completo con pedidos registrados'};
  const prev=completos.at(-2)??null,v=prev?variacion(ult.orders.amountMinor,prev.orders.amountMinor):null;
  return {amountMinor:ult.orders.amountMinor,mes:ult.month,currency:led.currency,exponent:led.exponent,count:ult.orders.count,unknown:ult.orders.unknownAmounts,
-  delta:v?{value:v.texto,dir:dir(v)}:null,rotulo:`Libro de registros, ${largo(ult.month)}${prev?` vs ${corto(prev.month)}`:''}; importes conocidos, sin convertir monedas`};
+  delta:v?{value:v.texto,dir:dir(v)}:null,base:led.orderBasis?.label??null,rotulo:`${led.orderBasis?.label??'Libro de registros'}, ${largo(ult.month)}${prev?` vs ${corto(prev.month)}`:''}; misma cifra que Dinero; importes conocidos, una sola base y moneda, sin convertir ni sumar bases`};
 }
 /** Top N problemas por conversaciones (excluye las notificaciones automáticas si `visibles` ya viene filtrado). */
 export function topProblemas(items,n=5){

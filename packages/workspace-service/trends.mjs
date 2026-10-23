@@ -5,6 +5,7 @@
 import {WorkspaceError} from './contracts.mjs';
 import {readConversationMonthly,readLedgerMonthly,summaryMeta} from './summaries.mjs';
 import {completitud} from '../metrics/complete-months.mjs';
+import {ingresosDelLibro} from './cifras-libro.mjs';
 import {readConversationMonthlyFromInsights} from '../insights/adapter.mjs';
 export const TREND_MONTHS=12,LOCAL_TIMEOUT_MS=4000;
 const monthStart=(d)=>new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),1));
@@ -51,13 +52,16 @@ export function createTrendsRepository({database,now=()=>new Date(),timeoutMs=LO
     const useLedSum=ledSum.availability==='ready';
     // Fecha efectiva más reciente del libro (pedidos/reembolsos): es lo que dice hasta dónde llegan los datos. Con resumen, una consulta acotada; si no cabe, se usa la marca de agua del resumen.
     const ledLast=useLedSum?await guarded(s,async()=>(await s.query("SELECT max(effective_at) AS last_at FROM public.economic_ledger_entries WHERE tenant_id=$1 AND kind IN ('order','refund')",[s.tenantId])).rows[0]?.last_at??null,timeoutMs):undefined;
-    const led=useLedSum?[...ledSum.rows.filter(r=>(r.kind==='order'&&r.status==='recorded')||(r.kind==='refund'&&r.status==='settled')).reduce((acc,r)=>{const k=r.month+'|'+r.kind+'|'+r.currency+'|'+r.exponent;let o=acc.get(k);if(!o)acc.set(k,o={month:r.month,kind:r.kind,currency:r.currency,exponent:r.exponent,n:0,amount:0n,unknown:0});o.n+=Number(r.n);o.amount+=BigInt(r.amount);o.unknown+=Number(r.n)-Number(r.known);return acc;},new Map()).values()].map(o=>({...o,amount:String(o.amount)})):await guarded(s,async()=>(await s.query(
-     `WITH latest AS (SELECT DISTINCT ON(entity_id) entity_id,kind,status,effective_at,currency,exponent,amount_minor
+    // Una sola definición de ingresos para todas las pantallas (cifras-libro.mjs, la misma que Dinero): sin filas «a revisar» y pedidos de UNA base por moneda.
+    const ledRaw=useLedSum?ledSum.rows:await guarded(s,async()=>(await s.query(
+     `WITH latest AS (SELECT DISTINCT ON(entity_id) entity_id,kind,status,basis,effective_at,currency,exponent,amount_minor
         FROM public.economic_ledger_entries WHERE tenant_id=$1 AND kind IN ('order','refund') ORDER BY entity_id,revision DESC)
-      SELECT to_char(effective_at AT TIME ZONE 'UTC','YYYY-MM') AS month,kind,currency,exponent,count(*) AS n,
+      SELECT to_char(effective_at AT TIME ZONE 'UTC','YYYY-MM') AS month,kind,status,basis,currency,exponent,count(*) AS n,
         coalesce(sum(amount_minor) FILTER (WHERE amount_minor IS NOT NULL),0)::text AS amount,count(*) FILTER (WHERE amount_minor IS NULL) AS unknown,max(effective_at) AS last_at
       FROM latest WHERE ((kind='order' AND status='recorded') OR (kind='refund' AND status='settled')) AND effective_at>=$2 AND effective_at<$3
-      GROUP BY 1,2,3,4 ORDER BY 1,2,3 LIMIT 600`,[s.tenantId,win.start.toISOString(),win.end.toISOString()])).rows,timeoutMs);
+      GROUP BY 1,2,3,4,5,6 ORDER BY 1,2,3 LIMIT 1200`,[s.tenantId,win.start.toISOString(),win.end.toISOString()])).rows,timeoutMs);
+    const ingresos=ledRaw===null?null:ingresosDelLibro(ledRaw);
+    const led=ingresos===null?null:[...ingresos.filas.reduce((acc,r)=>{const k=r.month+'|'+r.kind+'|'+r.currency+'|'+r.exponent;let o=acc.get(k);if(!o)acc.set(k,o={month:r.month,kind:r.kind,currency:r.currency,exponent:r.exponent,n:0,amount:0n,unknown:0,last_at:null});o.n+=Number(r.n);o.amount+=BigInt(r.amount);o.unknown+=useLedSum?Number(r.n)-Number(r.known):Number(r.unknown);if(r.last_at&&(!o.last_at||r.last_at>o.last_at))o.last_at=r.last_at;return acc;},new Map()).values()].map(o=>({...o,amount:String(o.amount)}));
     let conversations;
     const rowsOf=rowsRaw,factor=exact?1:100/SAMPLE_PERCENT,definition='started_at_or_first_message';
     if(useConvSum){const by=new Map(convSum.months.map(m=>[m.month,m.n])),inWindow=win.list.reduce((a,m)=>a+(by.get(m)??0),0),meta=summaryMeta(convSum),fresh=convSum.freshness==='fresh';
@@ -67,10 +71,10 @@ export function createTrendsRepository({database,now=()=>new Date(),timeoutMs=LO
      conversations={status:total===0?'empty':'ok',class:exact?'observed':'estimated',sampled:!exact,samplePercent:exact?null:SAMPLE_PERCENT,definition,sampleNote:exact?null:`Estimado con una muestra del ${SAMPLE_PERCENT} % de las conversaciones: fechar todas (por su primer mensaje) no cabe en el tiempo permitido.`,series:win.list.map(m=>({month:m,count:by.get(m)??0})),outsideWindow:outside,undated,total,summary:summaryMeta(convSum),completeness:completitud(win.list.map(m=>({month:m,count:by.get(m)??0})),{dataThrough:maxDate(rowsOf.map(r=>r.last_at)),ahora:now()})};}
     let ledger;
     if(led===null)ledger={status:'timeout',class:'observed',series:[],currencies:[],summary:summaryMeta(ledSum)};
-    else{const currencies=[...new Set(led.map(r=>r.currency+':'+r.exponent))].sort();const primary=currencies.map(c=>({c,n:led.filter(r=>r.currency+':'+r.exponent===c).reduce((a,r)=>a+Number(r.n),0)})).sort((a,b)=>b.n-a.n)[0]?.c??null;
+    else{const primary=ingresos.moneda===null?null:ingresos.moneda+':'+ingresos.exponente,currencies=primary?[primary,...ingresos.otrasMonedas.map(c=>c+':')]:[];
      const [currency,exponent]=primary?primary.split(':'):[null,null];
      const rows=led.filter(r=>r.currency+':'+r.exponent===primary);
-     ledger={status:led.length===0?'empty':'ok',class:useLedSum&&ledSum.freshness!=='fresh'?'estimated':'observed',summary:summaryMeta(ledSum),currency,exponent:exponent===null?null:Number(exponent),otherCurrencies:currencies.filter(c=>c!==primary).map(c=>c.split(':')[0]),
+     ledger={status:led.length===0?'empty':'ok',class:useLedSum&&ledSum.freshness!=='fresh'?'estimated':'observed',summary:summaryMeta(ledSum),currency,exponent:exponent===null?null:Number(exponent),orderBasis:ingresos.base?{base:ingresos.base,label:ingresos.etiquetaBase}:null,otherBases:ingresos.otrasBases,toReviewRows:ingresos.aRevisar,otherCurrencies:currencies.filter(c=>c!==primary).map(c=>c.split(':')[0]),
       series:win.list.map(m=>{const o=rows.find(r=>r.month===m&&r.kind==='order'),f=rows.find(r=>r.month===m&&r.kind==='refund');return {month:m,orders:{count:Number(o?.n??0),amountMinor:o?o.amount:'0',unknownAmounts:Number(o?.unknown??0)},refunds:{count:Number(f?.n??0),amountMinor:f?f.amount:'0',unknownAmounts:Number(f?.unknown??0)}};}),currencies};
      const ledThrough=useLedSum?(ledLast??ledSum.cutoff??null):maxDate(led.map(r=>r.last_at));
      ledger.completeness=completitud(ledger.series,{dataThrough:ledThrough,ahora:now(),conDatos:p=>p.orders.count+p.orders.unknownAmounts+p.refunds.count+p.refunds.unknownAmounts>0});}

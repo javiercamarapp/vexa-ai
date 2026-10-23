@@ -14,7 +14,7 @@ import type {CfoReport} from '../../../../../packages/cfo-copilot/src/index.mjs'
 import {FugaPantalla} from '../refunds/fuga-pantalla';
 import {MODOS, puedeUsarModo} from '../../lib/copiloto/modos.mjs';
 import {AreaRestringida} from './area-restringida';
-import {BriefingCfoView} from './briefing-cfo';
+import {BriefingCfoView} from './briefing-cfo-view';
 import {ContenedorErrores} from './contenedor-errores';
 import {briefingCfo, monedaElegida} from './briefing-cfo.mjs';
 import {adaptarRespuestaCfo, cuerpoConsultaCfo, esFueraDeCfo, esPreguntaDeCfo} from './adaptador-cfo.mjs';

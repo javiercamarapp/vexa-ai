@@ -27,7 +27,6 @@
 @keyframes pc-grow{from{transform:scaleX(0)}}
 @media(prefers-reduced-motion:reduce){.pc-seg>i{animation:none}}
 @media(max-width:1000px){.pc-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.pc-kpi:nth-child(3){border-left:0}.pc-kpi:nth-child(n+3){border-top:1px solid var(--ui-border)}}
-@media(max-width:560px){.pc-kpis{grid-template-columns:minmax(0,1fr)}.pc-kpi+.pc-kpi{border-left:0;border-top:1px solid var(--ui-border)}}
 /* Rejillas 8+4, 6+6, 4+4+4: las dos tarjetas de una fila miden lo mismo */
 .pc-grid{display:grid;gap:var(--ui-rhythm);margin:0 0 var(--ui-rhythm);align-items:stretch;min-width:0}
 .pc-grid[data-cols="8-4"]{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}

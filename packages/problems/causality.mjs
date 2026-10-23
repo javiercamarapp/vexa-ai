@@ -1,7 +1,8 @@
 import {randomUUID,createHash} from 'node:crypto';
 import {DomainError} from './contracts.mjs';
 import {createProblemRepository} from './repository.mjs';
-import {evidenceRuns,evidenceCurrent} from '../metrics/evidence-memo.mjs';
+import {evidenceRuns} from '../metrics/evidence-memo.mjs';
+import {memoSection} from '../metrics/ledger-load.mjs';
 const fail=(message,status=409)=>{throw new DomainError(message,status);};
 const check=(ok,message,status)=>{if(!ok)fail(message,status);};
 const uuid=x=>typeof x==='string'&&/^[a-f0-9-]{36}$/i.test(x);
@@ -9,14 +10,22 @@ const text=(x,max)=>typeof x==='string'&&x.trim().length>0&&x.length<=max;
 const one=async(s,q,a)=>(await s.query(q,a)).rows[0];
 const evidenceView=r=>({id:r.id,recordId:r.record_id,version:r.version,status:r.status,sourceKind:r.source_kind,observedAt:r.observed_at,report:r.report,digest:r.digest,stance:r.stance,facts:r.facts,actorId:r.actor_id,createdAt:r.created_at});
 const claimView=r=>({version:r.version,symptom:r.symptom,probableCause:r.probable_cause,state:r.state,evidenceIds:r.evidence_ids,reason:r.reason,actorId:r.actor_id,facts:r.facts,criticalReview:r.critical_review});
-export function createCausalityRepository({database}){
+export function createCausalityRepository({database},{verifyMaxRuns}={}){
  const underlying=database;database={transaction:async(action,work)=>{let domainError;try{return await underlying.transaction(action,async scope=>{try{return await work(scope);}catch(error){if(error instanceof DomainError)domainError=error;throw error;}});}catch(error){if(domainError)throw domainError;throw error;}}};
- async function view(s,problemId){check(uuid(problemId),'input_invalid',400);const problem=await createProblemRepository({database:{transaction:async(_,work)=>work(s)}}).detail({problemId});
+ // memoSection: la verificación de evidencia del detalle y la de aquí comparten UNA evaluación por corrida (antes se repetía por miembro y por corrida).
+ const view=(s,problemId)=>memoSection(s,()=>viewBody(s,problemId));
+ async function viewBody(s,problemId){check(uuid(problemId),'input_invalid',400);const problem=await createProblemRepository({database:{transaction:async(_,work)=>work(s)}},{verifyMaxRuns}).detail({problemId});
  // Derive current safety risk from authorized extraction citations belonging to these members.
  const members=(await s.query('SELECT m.extraction_run_id,e.message_revision_id FROM public.problem_embedding_members m JOIN public.embeddings e ON e.tenant_id=m.tenant_id AND e.id=m.embedding_id WHERE m.tenant_id=$1 AND m.embedding_id=ANY($2::uuid[])',[s.tenantId,problem.embeddingIds])).rows;
  const runs=new Map();for(const member of members){if(!runs.has(member.extraction_run_id))runs.set(member.extraction_run_id,new Set());runs.get(member.extraction_run_id).add(member.message_revision_id);}
- await evidenceRuns(s,[...runs.keys()]); // verificación de evidencia por lote (antes una corrida por vez)
- let currentCritical=false;for(const [runId,revisions] of runs){const run=await evidenceCurrent(s,runId);if(run.issues.some(issue=>['high','critical'].includes(issue.severity)&&issue.evidence.some(span=>revisions.has(span.message_revision_id))))currentCritical=true;}
+ let currentCritical=false;
+ if(problem.verification==='summary'){
+  // Grupo con muchas corridas: la bandera crítica se deriva por SQL agregado de las citas registradas de sus miembros (sin releer texto); puede incluir una corrida que luego se descarte, nunca omite una crítica.
+  currentCritical=(await one(s,"SELECT EXISTS(SELECT 1 FROM public.problem_embedding_members m JOIN public.embeddings e ON e.tenant_id=m.tenant_id AND e.id=m.embedding_id JOIN public.issues i ON i.tenant_id=m.tenant_id AND i.extraction_run_id=m.extraction_run_id AND i.severity IN ('high','critical') JOIN public.evidence_spans es ON es.tenant_id=i.tenant_id AND es.issue_id=i.id AND es.message_revision_id=e.message_revision_id WHERE m.tenant_id=$1 AND m.embedding_id=ANY($2::uuid[])) AS critical",[s.tenantId,problem.embeddingIds])).critical===true;
+ }else{
+  const loaded=await evidenceRuns(s,[...runs.keys()]); // misma verificación por lote que ya hizo el detalle (memoizada)
+  for(const [runId,revisions] of runs){const run=loaded.get(runId);if(!run)throw Object.assign(Error('EVIDENCE_UNAVAILABLE'),{code:'23514'});check(run.state==='current'&&run.status==='succeeded','source_unavailable',409);if(run.issues.some(issue=>['high','critical'].includes(issue.severity)&&issue.evidence.some(span=>revisions.has(span.message_revision_id))))currentCritical=true;}
+ }
  const history=(await s.query('SELECT * FROM public.problem_causal_versions WHERE tenant_id=$1 AND problem_id=$2 ORDER BY version DESC',[s.tenantId,problemId])).rows.map(claimView);
  const evidence=(await s.query('SELECT * FROM public.problem_operational_evidence WHERE tenant_id=$1 AND problem_id=$2 ORDER BY record_id,version,id',[s.tenantId,problemId])).rows.map(evidenceView);
  const claim=history[0]?structuredClone(history[0]):{version:0,symptom:problem.label,probableCause:null,state:'unassessed',evidenceIds:[],reason:'Sin evaluación causal',actorId:null,facts:{batch:null,carrier:null,sku:null},criticalReview:currentCritical};claim.criticalReview=currentCritical;

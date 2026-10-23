@@ -2,13 +2,19 @@ import {randomUUID} from 'node:crypto';
 import {hash,stableId,sortedUnique,requireThat,DomainError} from './contracts.mjs';
 import {createEvidenceRepository} from '../intelligence/evidence-repository.mjs';
 import {memoized} from '../metrics/ledger-load.mjs';
-import {evidenceRuns,evidenceCurrent} from '../metrics/evidence-memo.mjs';
+import {evidenceRuns} from '../metrics/evidence-memo.mjs';
 const uuid=x=>typeof x==='string'&&/^[a-f0-9-]{36}$/i.test(x);
 const one=async(s,q,a)=>(await s.query(q,a)).rows[0];
 const scoped=s=>({transaction:async(_,work)=>work(s)});
 export const evidence=async(s,id)=>{const e=await createEvidenceRepository({database:scoped(s)}).get(id);requireThat(e.state==='current'&&e.status==='succeeded','source_unavailable',409);return e;};
 // Mismo veredicto que antes (cada miembro con su corrida y evidencia utilizable, el primero que falle decide) pero por LOTE: una consulta de membresías y una verificación de evidencia por lote (antes ~6 sentencias por miembro).
-async function accessible(s,p){const ids=p.embeddingIds,rows=ids.length?(await s.query('SELECT embedding_id,extraction_run_id FROM public.problem_embedding_members WHERE tenant_id=$1 AND embedding_id=ANY($2::uuid[])',[s.tenantId,ids])).rows:[],runOf=new Map();for(const r of rows)if(!runOf.has(r.embedding_id))runOf.set(r.embedding_id,r.extraction_run_id);for(const id of ids)requireThat(runOf.has(id),'source_unavailable');await evidenceRuns(s,[...new Set(runOf.values())]);for(const id of ids)await evidenceCurrent(s,runOf.get(id));return p;}
+// Antes: getMany por lote y luego evidenceCurrent POR MIEMBRO, fuera de una sección de memo (cada llamada volvía a evaluar la corrida: 4,195 miembros = ~21 mil consultas y 300 s de conexión retenida; QA-2 del 23-oct).
+// Ahora una verificación por corrida distinta. Con más corridas que `maxRuns` (≈100: un lote, ~2 s) se usa el veredicto de resumen por SQL agregado (sin texto), igual que la lista; sigue siendo fail-closed.
+export const VERIFY_MAX_RUNS=100;
+async function accessible(s,p,{maxRuns=VERIFY_MAX_RUNS}={}){const ids=p.embeddingIds,rows=ids.length?(await s.query('SELECT embedding_id,extraction_run_id FROM public.problem_embedding_members WHERE tenant_id=$1 AND embedding_id=ANY($2::uuid[])',[s.tenantId,ids])).rows:[],runOf=new Map();for(const r of rows)if(!runOf.has(r.embedding_id))runOf.set(r.embedding_id,r.extraction_run_id);for(const id of ids)requireThat(runOf.has(id),'source_unavailable');const runs=[...new Set(runOf.values())];
+ if(runs.length>maxRuns){const ok=await usableRunsSummary(s,runs);for(const run of runs)requireThat(ok.has(run),'source_unavailable');return {...p,verification:'summary'};}
+ const loaded=await withVerifyTimeout(s,()=>evidenceRuns(s,runs));for(const run of runs){const e=loaded.get(run);if(!e)throw Object.assign(Error('EVIDENCE_UNAVAILABLE'),{code:'23514'});requireThat(e.state==='current'&&e.status==='succeeded','source_unavailable',409);}
+ return {...p,verification:'full'};}
 /** Corridas utilizables según el veredicto «resumen» (ver list): Set de ids. Sin texto de evidencia; todas las consultas filtran por tenant_id=$1. */
 const UUID_RE="'^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'";
 // Memoizado por (transacción, conjunto de corridas): el catálogo, las señales críticas y el resto de vistas de UNA petición piden el mismo veredicto; dentro de una memoSection se calcula una sola vez
@@ -55,7 +61,7 @@ export async function snapshot(s,p,event){
  p={...p,version:(prev?.version??0)+1};
  await s.query('INSERT INTO public.problem_versions(id,tenant_id,problem_id,previous_version_id,version,title,rationale,change_kind,provenance) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',[randomUUID(),s.tenantId,p.id,prev?.id??null,p.version,p.label,event.reason??'Agrupación por vectores',event.operation??(prev?'edit':'create'),JSON.stringify({kind:'vector-problem-v1',snapshot:p,actorId:s.userId,...event})]);return p;
 }
-export function createProblemRepository({database}){
+export function createProblemRepository({database},{verifyMaxRuns=VERIFY_MAX_RUNS}={}){
  // Preserve only our own domain failures after the platform has rolled back.
  // Driver errors and untrusted status/code fields retain the platform sanitizer.
  const underlying=database;
@@ -78,7 +84,7 @@ export function createProblemRepository({database}){
   if(verification==='summary'){const ok=await usableRunsSummary(s,runs);usable=run=>ok.has(run);}
   else{const loaded=await withVerifyTimeout(s,()=>createEvidenceRepository({database:scoped(s)}).getMany(runs));usable=run=>{const e=loaded.get(run);return !!e&&e.state==='current'&&e.status==='succeeded';};}
   return ps.filter(p=>p.embeddingIds.every(id=>runOf.has(id)&&usable(runOf.get(id))));});},
- async detail({problemId}){requireThat(uuid(problemId),'input_invalid',400);return read(async s=>({...await accessible(s,await latest(s,problemId)),history:(await s.query('SELECT id,version,provenance FROM public.problem_versions WHERE tenant_id=$1 AND problem_id=$2 ORDER BY version DESC',[s.tenantId,problemId])).rows}));},
+ async detail({problemId}){requireThat(uuid(problemId),'input_invalid',400);return read(async s=>({...await accessible(s,await latest(s,problemId),{maxRuns:verifyMaxRuns}),history:(await s.query('SELECT id,version,provenance FROM public.problem_versions WHERE tenant_id=$1 AND problem_id=$2 ORDER BY version DESC',[s.tenantId,problemId])).rows}));},
  async sources(){return read(async s=>{const rows=(await s.query("SELECT id,conversation_id,created_at FROM public.extraction_runs WHERE tenant_id=$1 AND status='succeeded' ORDER BY created_at DESC LIMIT 100",[s.tenantId])).rows;
   // Misma verificación fail-closed que evidence() por corrida, pero por lote (antes ~7 consultas por corrida, 100 corridas).
   const loaded=await createEvidenceRepository({database:scoped(s)}).getMany(rows.map(r=>r.id));

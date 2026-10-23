@@ -54,6 +54,7 @@ function Chat({data}:{data:AgentState}){
  useEffect(()=>{end.current?.scrollIntoView?.({block:'end'});},[a.messages.length,a.sending]);
  const ask=useCallback((q:string)=>{const t=q.trim().slice(0,data.limits.maxQuestionChars);if(!t||a.sending)return;setText('');setConsult(false);setAttachError(null);a.send(t,s.directas[t]);},[a,data.limits.maxQuestionChars,s.directas]);
  const closeMenu=useCallback(()=>{setMenu(false);menuButton.current?.querySelector('button')?.focus();},[]);
+ useEffect(()=>{if(!(narrow&&menu))return;const k=(e:KeyboardEvent)=>{if(e.key==='Escape')closeMenu();};document.addEventListener('keydown',k);return()=>document.removeEventListener('keydown',k);},[narrow,menu,closeMenu]);
  const attach=useCallback(async(file:File)=>{
   const bad=validarArchivo(file.name,file.size);if(bad){setAttachError(bad);return;}
   try{

@@ -57,6 +57,8 @@ test('RovaqMark: idle sin órbita, thinking con órbita; el CSS de movimiento vi
   assert.ok(!renderToStaticMarkup(<RovaqMark/>).includes('rovaq-orbit'));
   assert.match(renderToStaticMarkup(<RovaqMark thinking/>),/data-state="thinking"[\s\S]*rovaq-orbit/);
   const css=readFileSync(new URL('../../src/components/agente/agente.css',import.meta.url),'utf8');
+  assert.equal(css.split('{').length,css.split('}').length,'llaves del CSS desbalanceadas');
+  assert.ok(!/@media\(max-width:\d+px\)\{@media/.test(css),'media anidado por error');
   let inMotion=false;
   for(const line of css.split('\n')){
    if(line.startsWith('@media(prefers-reduced-motion:no-preference)'))inMotion=true;else if(line&&!line.startsWith(' ')&&!line.startsWith('}')&&!line.startsWith('@keyframes'))inMotion=false;

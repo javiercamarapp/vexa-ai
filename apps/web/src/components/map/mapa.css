@@ -1,0 +1,48 @@
+/* «Mapa de problemas» (/map). Rampa gris -> negro en claro, gris -> blanco en oscuro (un solo tono: magnitud). El rojo de marca solo resalta el estado elegido. Nunca el color solo: cada mosaico lleva código y número. */
+:root{--mp-0:transparent;--mp-1:#e4e4e6;--mp-2:#c4c4c9;--mp-3:#8a8a90;--mp-4:#4a4a50;--mp-5:#0e0e10;--mp-t1:#0e0e10;--mp-t2:#0e0e10;--mp-t3:#0e0e10;--mp-t4:#ffffff;--mp-t5:#ffffff;--mp-borde:#c9c9ce;--mp-sel:var(--rovaq-rojo,#e8241c)}
+:root[data-theme=dark]{--mp-0:transparent;--mp-1:#2a2a2f;--mp-2:#44444b;--mp-3:#7a7a82;--mp-4:#b8b8be;--mp-5:#f4f4f5;--mp-t1:#ffffff;--mp-t2:#ffffff;--mp-t3:#0e0e10;--mp-t4:#0e0e10;--mp-t5:#0e0e10;--mp-borde:#3a3a40}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--mp-0:transparent;--mp-1:#2a2a2f;--mp-2:#44444b;--mp-3:#7a7a82;--mp-4:#b8b8be;--mp-5:#f4f4f5;--mp-t1:#ffffff;--mp-t2:#ffffff;--mp-t3:#0e0e10;--mp-t4:#0e0e10;--mp-t5:#0e0e10;--mp-borde:#3a3a40}}
+.mp-page{min-width:0}
+.mp-prov{display:flex;gap:var(--sp-3);align-items:flex-start;margin:0;padding:12px 16px;border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm);background:var(--ui-soft);font-size:var(--t-small);color:var(--ui-secondary)}
+.mp-prov svg{flex:none;margin-top:2px;color:var(--muted)}.mp-prov b{color:var(--ink)}
+.mp-barra{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-3) var(--sp-5);margin-bottom:var(--sp-4)}
+.mp-seg{display:inline-flex;border:1px solid var(--ui-border);border-radius:999px;padding:3px;background:var(--ui-soft)}
+.workspace-content .mp-seg button{box-sizing:border-box;min-height:34px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:var(--ui-secondary);font:600 13px var(--font-ui);display:inline-flex;gap:8px;align-items:center;cursor:pointer;box-shadow:none}
+.workspace-content .mp-seg button small{font:500 11px var(--font-ui);color:var(--muted);font-variant-numeric:tabular-nums}
+.workspace-content .mp-seg button[aria-pressed=true]{background:var(--ink);color:var(--ui-surface)}
+.workspace-content .mp-seg button[aria-pressed=true] small{color:inherit;opacity:.75}
+.mp-seg button:focus-visible{outline:3px solid var(--ui-focus);outline-offset:2px}
+.mp-leyenda{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px var(--sp-4);font-size:var(--t-small);color:var(--ui-secondary)}
+.mp-leyenda li{display:inline-flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+.mp-leyenda i{display:inline-block;inline-size:16px;block-size:12px;border-radius:3px;border:1px solid var(--mp-borde)}
+[data-paso="0"]{--mp-c:var(--mp-0);--mp-tx:var(--muted)}[data-paso="1"]{--mp-c:var(--mp-1);--mp-tx:var(--mp-t1)}[data-paso="2"]{--mp-c:var(--mp-2);--mp-tx:var(--mp-t2)}[data-paso="3"]{--mp-c:var(--mp-3);--mp-tx:var(--mp-t3)}[data-paso="4"]{--mp-c:var(--mp-4);--mp-tx:var(--mp-t4)}[data-paso="5"]{--mp-c:var(--mp-5);--mp-tx:var(--mp-t5)}
+.mp-leyenda i[data-paso]{background:var(--mp-c)}
+.mp-leyenda i[data-paso="0"]{background:repeating-linear-gradient(135deg,var(--mp-borde) 0 2px,transparent 2px 5px)}
+.mp-cuerpo{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp-5);align-items:start}
+@media(min-width:1000px){.mp-cuerpo{grid-template-columns:minmax(0,1fr) 340px}}
+.mp-mapa-col{min-width:0;overflow-x:auto;border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm);padding:var(--sp-3)}
+.workspace-content .mp-lienzo{min-width:560px}
+.mp-svg{display:block;inline-size:100%;block-size:auto;max-inline-size:700px;margin-inline:auto}
+.mp-m rect{fill:var(--mp-c);stroke:var(--mp-borde);stroke-width:1}
+.mp-m[data-paso="0"] rect{stroke-dasharray:3 3}
+.mp-cod{font:700 13px var(--font-ui);fill:var(--mp-tx)}.mp-num{font:600 12px var(--font-ui);fill:var(--mp-tx);font-variant-numeric:tabular-nums}
+.mp-activo{cursor:pointer}.mp-activo:hover rect{stroke:var(--ink);stroke-width:2}
+.mp-activo:focus-visible{outline:none}.mp-activo:focus-visible rect{stroke:var(--ui-focus);stroke-width:3}
+.mp-m[data-sel] rect{stroke:var(--mp-sel);stroke-width:3.5}
+.mp-panel{border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm);padding:var(--sp-4);display:grid;gap:var(--sp-3);min-width:0;background:var(--ui-surface)}
+.mp-panel .eyebrow{margin:0}.workspace-content .mp-panel .mp-panel-t{margin:0;font:700 22px/1.15 var(--font-display)}
+.mp-panel-n{margin:0;font-size:var(--t-body);color:var(--ui-secondary)}.mp-panel-n b{color:var(--ink);font-size:20px;font-variant-numeric:tabular-nums}.mp-panel-n span{font-size:var(--t-small)}
+.mp-lista h3{margin:0 0 6px}.mp-lista ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.mp-lista li{position:relative;display:flex;justify-content:space-between;gap:var(--sp-3);padding:6px 8px;font-size:var(--t-small);border-radius:8px;overflow:hidden;isolation:isolate}
+.mp-lista li i{position:absolute;inset:0 auto 0 0;background:var(--ui-soft);z-index:-1;border-radius:8px}
+.mp-lista li span{min-width:0;overflow-wrap:anywhere}.mp-lista li b{font-variant-numeric:tabular-nums}
+.workspace-content .mp-big{margin:0;font:700 clamp(40px,7vw,60px)/1.02 var(--font-display);letter-spacing:-.03em;color:var(--ink);font-variant-numeric:tabular-nums}
+.workspace-content .mp-big small{display:block;margin-top:6px;font:500 var(--t-small)/1.35 var(--font-ui);letter-spacing:0;color:var(--muted);max-width:60ch}
+.mp-cob{display:flex;gap:2px;block-size:14px;margin:var(--sp-3) 0;border-radius:4px;overflow:hidden;background:var(--ui-soft)}
+.mp-cob i{display:block;block-size:100%}.mp-cob i[data-t=ok]{background:var(--ink)}.mp-cob i[data-t=mal]{background:repeating-linear-gradient(135deg,var(--muted) 0 2px,transparent 2px 5px)}
+.mp-cob-l{list-style:none;margin:0 0 var(--sp-3);padding:0;display:flex;flex-wrap:wrap;gap:4px var(--sp-5);font-size:var(--t-small);color:var(--ui-secondary)}.mp-cob-l b{color:var(--ink);font-variant-numeric:tabular-nums}
+.mp-tabla-det>summary{cursor:pointer;display:flex;gap:8px;align-items:center;font-weight:600;min-height:36px}
+.mp-tabla-det .fg-tabla-wrap{margin-top:var(--sp-3)}
+.mp-skel-mapa{block-size:260px;border-radius:var(--ui-radius-sm);background:linear-gradient(90deg,var(--ui-soft),var(--ui-border),var(--ui-soft));background-size:200% 100%;animation:mp-pulso 1.6s ease-in-out infinite}
+@keyframes mp-pulso{from{background-position:200% 0}to{background-position:-200% 0}}
+@media(prefers-reduced-motion:reduce){.mp-skel-mapa{animation:none}}

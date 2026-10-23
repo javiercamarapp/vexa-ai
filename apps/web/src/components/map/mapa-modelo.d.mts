@@ -1,0 +1,12 @@
+export const MOSAICOS_US: readonly (readonly [string, number, number])[];
+export const MOSAICOS_MX: readonly (readonly [string, number, number])[];
+export const PAISES: Readonly<Record<'US' | 'MX', {nombre: string; mosaicos: readonly (readonly [string, number, number])[]; nombres: Readonly<Record<string, string>>; columnas: number; filas: number}>>;
+export const MENSAJE_COMPLETO: string;
+export function pasoDeRampa(n: number | null | undefined, max: number): 0 | 1 | 2 | 3 | 4 | 5;
+export function limitesRampa(max: number): {paso: number; desde: number; hasta: number}[];
+export function num(n: number | null | undefined): string;
+export function pctTxt(p: number | null | undefined): string;
+export function textoCobertura(c: {filas: number; conDireccion: number; interpretables: number; pctInterpretablesDeDireccion: number | null} | null | undefined): string;
+export function textoOcultos(o: {estados: number; casos: number; minimo: number} | null | undefined): string | null;
+export function filasTabla(estados: {clave: string; nombre: string; pais: string; n: number}[], total: number): {clave: string; estado: string; pais: string; casos: number; pct: number | null}[];
+export function resumenEstado(e: {nombre: string; n: number} | null | undefined): string;

@@ -6,6 +6,7 @@ import {join} from 'node:path';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {RovaqLogo, RovaqLogoLateral} from '../src/components/rovaq-logo';
 import {RovaqMark} from '../src/components/agente/rovaq-mark';
+import {RovaqCargando} from '../src/components/rovaq-cargando';
 import {LOGOS, MINIMOS, ROVAQ, rovaqLogoSvg, espacioLibreEn} from '../../../packages/workspace-service/marca.mjs';
 
 const pub = (f: string) => readFileSync(join(import.meta.dirname, '../public', f), 'utf8');
@@ -71,4 +72,22 @@ test('no queda la marca anterior (la «R» azul): ni componentes, ni íconos, ni
   recorrer(join(raiz, 'src')); recorrer(join(raiz, 'public'));
   const viejo = /VexaBrand|vexa-brand|rovaq-tile|rovaq-r\b|M20 47V17h14\.5|fill="#254edb"|#166534/;
   assert.deepEqual(archivos.filter(f => viejo.test(readFileSync(f, 'utf8'))).map(f => f.replace(raiz, '')), []);
+});
+
+test('pantalla de carga: logo de Rovaq animado, accesible, con el punto rojo dentro del mismo SVG (no se separa del anillo)', () => {
+  const html = renderToStaticMarkup(<RovaqCargando mensaje="Cargando tu espacio de trabajo…"/>);
+  assert.match(html, /role="status"/); assert.match(html, /aria-busy="true"/);
+  assert.match(html, /rovaq-logo-animado/); assert.match(html, /Cargando tu espacio de trabajo…/);
+  assert.equal((html.match(/<svg/g) ?? []).length, 1, 'un solo logo');
+  assert.equal((html.match(new RegExp('fill="' + ROVAQ.rojo + '"', 'g')) ?? []).length, 1, 'un solo punto rojo, en el mismo SVG');
+  assert.doesNotMatch(html, /#254edb|#6aaff0/i, 'sin azul de la marca anterior');
+  const compacto = renderToStaticMarkup(<RovaqCargando compacto/>);
+  assert.match(compacto, /rovaq-cargando-compacto/); assert.match(compacto, /rovaq-logo-simbolo/);
+});
+
+test('la animación del logo respeta reducir movimiento y no mueve ni deforma el trazo', () => {
+  const css = readFileSync(join(import.meta.dirname, '../src/app/globals.css'), 'utf8');
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[^}]*rovaq-logo-animado/s);
+  const anim = css.slice(css.indexOf('@keyframes rovaq-barrido'), css.indexOf('@media (prefers-reduced-motion: reduce) { .rovaq-logo-animado'));
+  assert.doesNotMatch(anim, /rotate|translate|skew/, 'el kit prohíbe rotar o deformar el logo');
 });

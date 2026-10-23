@@ -10,11 +10,11 @@ const DEFECTO: Record<RovaqVariante, number> = {horizontal: 120, simbolo: 32};
 
 /** Único componente de marca de Rovaq (kit de logotipo): trazos inline, sin fuente. El punto es siempre rojo señal y no se separa del anillo.
  *  Respeta el tamaño mínimo del kit (100 px el horizontal, 16 px el símbolo) y el espacio libre de 2 diámetros del punto (desactívalo solo si el contenedor ya lo da). */
-export function RovaqLogo({variante = 'horizontal', tono = 'auto', ancho, espacioLibre = true, decorativo = false, className}: {variante?: RovaqVariante; tono?: RovaqTono; ancho?: number; espacioLibre?: boolean; decorativo?: boolean; className?: string}) {
+export function RovaqLogo({variante = 'horizontal', tono = 'auto', ancho, espacioLibre = true, decorativo = false, animado = false, className}: {variante?: RovaqVariante; tono?: RovaqTono; ancho?: number; espacioLibre?: boolean; decorativo?: boolean; animado?: boolean; className?: string}) {
   const logo = LOGOS[variante], [, , w, h] = logo.viewBox.split(' ').map(Number);
   const width = Math.max(ancho ?? DEFECTO[variante], MINIMOS[variante]), height = Math.round((width * h) / w * 100) / 100;
   const estilo: CSSProperties | undefined = espacioLibre ? {padding: espacioLibreEn(variante, width)} : undefined;
-  return <span className={'rovaq-logo rovaq-logo-' + variante + (className ? ' ' + className : '')} data-tono={tono} style={estilo}>
+  return <span className={'rovaq-logo rovaq-logo-' + variante + (animado ? ' rovaq-logo-animado' : '') + (className ? ' ' + className : '')} data-tono={tono} style={estilo}>
     <svg viewBox={logo.viewBox} width={width} height={height} role={decorativo ? undefined : 'img'} aria-label={decorativo ? undefined : 'Rovaq'} aria-hidden={decorativo ? true : undefined} focusable="false">
       {logo.tinta.map((d, i) => <path key={i} className="rovaq-logo-tinta" fill={ROVAQ.negro} d={d}/>)}
       <circle className="rovaq-logo-punto" fill={ROVAQ.rojo} cx={logo.punto.cx} cy={logo.punto.cy} r={logo.punto.r}/>

@@ -5,14 +5,14 @@ import assert from 'node:assert/strict';
 import {enmascararTerceros as m, enmascararConConteo, AVISO_ENMASCARADO} from '../enmascarar-terceros.mjs';
 
 test('encabezado de correo citado: oculta el nombre y conserva fecha, marcador y «wrote:»', () => {
-  assert.equal(m('On Wed, Jul 15, 2026 at 11:53 AM Maria Lopezano <[PII]> wrote:'), 'On Wed, Jul 15, 2026 at 11:53 AM [nombre] <[PII]> wrote:');
+  assert.equal(m('On Wed, Jul 15, 2026 at 11:53 AM Maria Lopezano <[PII]> wrote:'), 'On Wed, Jul 15, 2026 at 11:53 AM [nombre] <[dato personal oculto]> wrote:');
   assert.equal(m('> On Mon, Jan 5, 2026 at 9:00 PM, Jon Smythe wrote:\n> hola'), '> On Mon, Jan 5, 2026 at 9:00 PM, [nombre] wrote:\n> hola');
-  assert.equal(m('El 15 jul 2026, 11:53, Ana Pérez García <[PII]> escribió:'), 'El 15 jul 2026, 11:53, [nombre] <[PII]> escribió:');
-  assert.equal(m('On Jul 15, 2026 "Pat Quill" <[PII]> wrote:'), 'On Jul 15, 2026 "[nombre]" <[PII]> wrote:');
+  assert.equal(m('El 15 jul 2026, 11:53, Ana Pérez García <[PII]> escribió:'), 'El 15 jul 2026, 11:53, [nombre] <[dato personal oculto]> escribió:');
+  assert.equal(m('On Jul 15, 2026 "Pat Quill" <[PII]> wrote:'), 'On Jul 15, 2026 "[nombre]" <[dato personal oculto]> wrote:');
 });
 test('From/To/Cc/De/Para: nombre antes de <correo> o [PII]', () => {
-  assert.equal(m('From: Rosa Almeda <[PII]>\nTo: Luis Vega <[PII]>, Eva Rios <[PII]>\nSubject: Pedido'), 'From: [nombre] <[PII]>\nTo: [nombre] <[PII]>, [nombre] <[PII]>\nSubject: Pedido');
-  assert.equal(m('De: Ana Ruiz [PII]'), 'De: [nombre] [PII]');
+  assert.equal(m('From: Rosa Almeda <[PII]>\nTo: Luis Vega <[PII]>, Eva Rios <[PII]>\nSubject: Pedido'), 'From: [nombre] <[dato personal oculto]>\nTo: [nombre] <[dato personal oculto]>, [nombre] <[dato personal oculto]>\nSubject: Pedido');
+  assert.equal(m('De: Ana Ruiz [PII]'), 'De: [nombre] [dato personal oculto]');
   assert.equal(m('Cc: Mario Soto'), 'Cc: [nombre]');
 });
 test('saludos al inicio de línea', () => {
@@ -59,4 +59,54 @@ test('rendimiento: texto largo sin coincidencias no se cuelga', () => {
   const t0 = Date.now(); m(largo); assert.ok(Date.now() - t0 < 2000);
   const patologico = 'On ' + 'Aa '.repeat(3000) + 'x';
   const t1 = Date.now(); m(patologico); assert.ok(Date.now() - t1 < 2000);
+});
+
+// ---- A8 (23-oct): citas con nombres de clientes, ciudad y correos crudos con «[PII]» ----
+test('saludo a mitad de línea o de frase y tras comillas de cita', () => {
+  assert.equal(m('Thank you for writing. Hello Bob, your order shipped'), 'Thank you for writing. Hello [nombre], your order shipped');
+  assert.equal(m('"Hello George, we received it"'), '"Hello [nombre], we received it"');
+  assert.equal(m('> Hello Bob,\n> thanks'), '> Hello [nombre],\n> thanks');
+  assert.equal(m('Good morning Frank,'), 'Good morning [nombre],');
+  assert.equal(m('Hi Bob.'), 'Hi [nombre].');
+});
+test('saludos y cierres en francés, portugués, alemán, italiano y español', () => {
+  assert.equal(m('Bonjour Marie,'), 'Bonjour [nombre],');
+  assert.equal(m('Olá João,'), 'Olá [nombre],');
+  assert.equal(m('Prezado Carlos,'), 'Prezado [nombre],');
+  assert.equal(m('Hallo Hans,'), 'Hallo [nombre],');
+  assert.equal(m('Caro Luca,'), 'Caro [nombre],');
+  assert.equal(m('Cordialement,\nPierre Dupont'), 'Cordialement,\n[nombre]');
+  assert.equal(m('Obrigado, João Silva'), 'Obrigado, [nombre]');
+  assert.equal(m('Mit freundlichen Grüßen,\nHans Meyer'), 'Mit freundlichen Grüßen,\n[nombre]');
+  assert.equal(m('Grazie, Luca Rossi'), 'Grazie, [nombre]');
+});
+test('nombre tras Thanks/Regards/Sincerely, con o sin coma, y firma en la línea siguiente sin coma', () => {
+  assert.equal(m('Thanks Bob'), 'Thanks [nombre]');
+  assert.equal(m('Thank you,\nBob Resciniti'), 'Thank you,\n[nombre]');
+  assert.equal(m('Best regards Maria Lopez'), 'Best regards [nombre]');
+  assert.equal(m('Sincerely\nGeorge Hart'), 'Sincerely\n[nombre]');
+  assert.equal(m('It broke again. Thanks, Bob'), 'It broke again. Thanks, [nombre]');
+});
+test('cabeceras de correo citado en otros idiomas y líneas Reply-To/Von', () => {
+  assert.equal(m('Le 15 juil. 2026 à 11:53, Marie Dupont <[PII]> a écrit :'), 'Le 15 juil. 2026 à 11:53, [nombre] <[dato personal oculto]> a écrit :');
+  assert.equal(m('Am 15.07.2026 um 11:53 schrieb Hans Meyer <[PII]>:'), 'Am 15.07.2026 um 11:53 schrieb [nombre] <[dato personal oculto]>:');
+  assert.equal(m('Em qua., 15 de jul. de 2026 11:53, João Silva <[PII]> escreveu:'), 'Em qua., 15 de jul. de 2026 11:53, [nombre] <[dato personal oculto]> escreveu:');
+  assert.equal(m('Reply-To: Rosa Almeda <[PII]>'), 'Reply-To: [nombre] <[dato personal oculto]>');
+  assert.equal(m('Von: Hans Meyer <[PII]>'), 'Von: [nombre] <[dato personal oculto]>');
+});
+test('ciudad, estado y CP sin calle', () => {
+  assert.equal(m('Ship to Lakewood, NJ 08701 please'), 'Ship to [dirección] please');
+  assert.equal(m('Located in Fort Worth, TX 76102-1234.'), 'Located in [dirección].');
+});
+test('los marcadores [PII] y [REDACTED] se muestran como «dato personal oculto» (idempotente)', () => {
+  assert.equal(m('Contact me at [PII] or [REDACTED]'), 'Contact me at [dato personal oculto] or [dato personal oculto]');
+  const t = 'On Wed, Jul 15, 2026 at 11:53 AM Maria Lopezano <[PII]> wrote:\nHello Bob,\n[PII]';
+  assert.equal(m(m(t)), m(t));
+  assert.ok(!m(t).includes('[PII]'));
+});
+test('FALSOS POSITIVOS (lote ampliado): texto ordinario y marcas comerciales no se tocan', () => {
+  for (const t of ['Thanks Amazon', 'Thanks again', 'Thank you so much', 'Thanks Support', 'Hello. Order 4521 arrived late. Hi there,', 'Good morning team,', 'Bonjour à tous,',
+    'Sent 42 packages to Austin, TX', 'Austin, TX', 'We ship from Dallas, TX on Mondays', 'Call 555-0100, ext 4', 'Best Buy sent it late', 'Dear Customer,', 'Hello Walmart,',
+    'The tool broke. Regards the warranty claim', 'Cheers!', 'Gracias por su ayuda', 'Hallo zusammen', 'Ciao a tutti', 'On the 5th, we wrote back', 'Am Montag kam das Paket'])
+    assert.equal(m(t), t, t);
 });

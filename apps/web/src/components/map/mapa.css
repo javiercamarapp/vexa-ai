@@ -14,7 +14,7 @@
 .mp-seg button:focus-visible{outline:3px solid var(--ui-focus);outline-offset:2px}
 .mp-leyenda{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px var(--sp-4);font-size:var(--t-small);color:var(--ui-secondary)}
 .mp-leyenda li{display:inline-flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
-.mp-leyenda i{display:inline-block;inline-size:16px;block-size:12px;border-radius:3px;border:1px solid var(--mp-borde)}
+.mp-leyenda i{display:inline-block;inline-size:16px;block-size:12px;border-radius:8px;border:1px solid var(--mp-borde)}
 [data-paso="0"]{--mp-c:var(--mp-0);--mp-tx:var(--muted)}[data-paso="1"]{--mp-c:var(--mp-1);--mp-tx:var(--mp-t1)}[data-paso="2"]{--mp-c:var(--mp-2);--mp-tx:var(--mp-t2)}[data-paso="3"]{--mp-c:var(--mp-3);--mp-tx:var(--mp-t3)}[data-paso="4"]{--mp-c:var(--mp-4);--mp-tx:var(--mp-t4)}[data-paso="5"]{--mp-c:var(--mp-5);--mp-tx:var(--mp-t5)}
 .mp-leyenda i[data-paso]{background:var(--mp-c)}
 .mp-leyenda i[data-paso="0"]{background:repeating-linear-gradient(135deg,var(--mp-borde) 0 2px,transparent 2px 5px)}
@@ -38,7 +38,7 @@
 .mp-lista li span{min-width:0;overflow-wrap:anywhere}.mp-lista li b{font-variant-numeric:tabular-nums}
 .workspace-content .mp-big{margin:0;font:700 clamp(40px,7vw,60px)/1.02 var(--font-display);letter-spacing:-.03em;color:var(--ink);font-variant-numeric:tabular-nums}
 .workspace-content .mp-big small{display:block;margin-top:6px;font:500 var(--t-small)/1.35 var(--font-ui);letter-spacing:0;color:var(--muted);max-width:60ch}
-.mp-cob{display:flex;gap:2px;block-size:14px;margin:var(--sp-3) 0;border-radius:4px;overflow:hidden;background:var(--ui-soft)}
+.mp-cob{display:flex;gap:2px;block-size:14px;margin:var(--sp-3) 0;border-radius:8px;overflow:hidden;background:var(--ui-soft)}
 .mp-cob i{display:block;block-size:100%}.mp-cob i[data-t=ok]{background:var(--ink)}.mp-cob i[data-t=mal]{background:repeating-linear-gradient(135deg,var(--muted) 0 2px,transparent 2px 5px)}
 .mp-cob-l{list-style:none;margin:0 0 var(--sp-3);padding:0;display:flex;flex-wrap:wrap;gap:4px var(--sp-5);font-size:var(--t-small);color:var(--ui-secondary)}.mp-cob-l b{color:var(--ink);font-variant-numeric:tabular-nums}
 .mp-tabla-det>summary{cursor:pointer;display:flex;gap:8px;align-items:center;font-weight:600;min-height:36px}

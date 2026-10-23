@@ -25,6 +25,9 @@ import {filasDesdeCatalogo,filasDesdeItems,numerarGrupos,agruparCategorias,resum
 import {DEFINICION,etiquetaMotivo,desgloseCriticos} from '../../../../../packages/workspace-service/critico.mjs';
 import {nf} from '../ui/format';
 import {EmptyState} from '../ui/empty-state';
+import {FilterBar,FilterSpacer} from '../ui/filter-bar';
+import {Chip,ChipList} from '../ui/chip';
+import {Notice} from '../ui/notice';
 import {guardarVista,leerVista} from '../../lib/workspace/cache.mjs';
 import s from './problems-view.module.css';
 type M=Metric&{coverage?:{known_n:number;eligible_n:number};missing_reasons?:string[]};
@@ -99,7 +102,7 @@ function Criticas({filas,query,disponible,total}:{filas:FilaProblema[];query:str
   {!disponible?<p className="state" role="status">No disponible ahora: las señales críticas no se calcularon en esta carga. No significa que no existan; reintenta con «Actualizar».</p>
    :!crit.length?<p className="state">Ningún grupo visible cumple el criterio crítico en este corte.</p>
    :<div className={s.crit}>
-    <ul className={s.critCats} aria-label="Categorías con señales críticas">{cats.map(c=><li key={c.clave}><span className="chip">{c.nombre}: {nf.format(c.grupos)}</span></li>)}</ul>
+    <ChipList label="Categorías con señales críticas" items={cats.map(c=>({key:c.clave,node:<Chip>{c.nombre}: {nf.format(c.grupos)}</Chip>}))}/>
     <ul className={s.critList}>{lista.map(f=><li key={f.id} className={s.critItem}><Link href={hrefDe(f,query)} className="row-link-inline">{f.categoria} · {fraseGrupo(f)}</Link><span className={s.critNum}>{f.conversaciones===null?'No disponible':nf.format(f.conversaciones)+' conv.'}</span>{textoSenales(f)&&<span className={s.critMeta}>{textoSenales(f)}{motivoDe(f)?' · '+motivoDe(f):''}</span>}</li>)}</ul>
     {crit.length>CRITICAS_VISIBLES&&<div><button type="button" className="btn btn-ghost btn-sm" onClick={()=>setTodas(v=>!v)} aria-expanded={todas}>{todas?'Ver solo las '+CRITICAS_VISIBLES+' con más conversaciones':'Ver los '+nf.format(crit.length)+' grupos'}</button></div>}
     {desg.ocultos>0&&<p className="state">Se listan los {nf.format(crit.length)} a la vista; los otros {nf.format(desg.ocultos)} están en notificaciones automáticas ocultas y ya cuentan en el total de {nf.format(desg.grupos)}.</p>}
@@ -147,10 +150,9 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
  const th=(c:ColumnaOrden,label:string,num=false,title?:string)=>{const activa=col===c;return <th scope="col" className={num?s.num+' num':undefined} aria-sort={activa?(dir==='asc'?'ascending':'descending'):'none'} title={title}><button type="button" className={'btn btn-ghost btn-sm '+s.sortBtn} onClick={()=>ordenarPor(c)}>{label}<span aria-hidden="true">{activa?(dir==='asc'?'▲':'▼'):''}</span></button></th>;};
  return <div className="stack">
   <NoiseToggle incluir={incluirRuido} onChange={v=>cambiar(()=>setIncluirRuido(v))} ocultos={sep.ocultosN} unidad="grupos de problemas"/>
-  {!conImporte&&<aside className="notice-bar" data-tone="info" role="note"><Icon name="info" size={14}/><div className={s.explain}>
-   <p><strong>Importe por problema: aún no disponible.</strong> Aparece cuando se conecten los pedidos con los clientes; mientras tanto se ordena por conversaciones.</p>
+  {!conImporte&&<Notice tone="info"><div className={s.explain}><p><strong>Importe por problema: aún no disponible.</strong> Aparece cuando se conecten los pedidos con los clientes; mientras tanto se ordena por conversaciones.</p>
    <details><summary>Qué falta</summary><p>Faltan los vínculos entre cada problema y los pedidos del libro económico: sin ellos no se puede saber cuánto dinero toca cada problema, y por eso no se muestra ninguna cifra (desconocido no es cero).{bundle.meta.can_manage?<> <Link href="/economics" className="row-link-inline">Revisar fuentes y vínculos</Link></>:null}</p></details>
-  </div></aside>}
+  </div></Notice>}
   <div className={s.kpis} role="group" aria-label="Resumen de problemas">
    <div className={s.kpi}><strong>{nf.format(resumen.grupos)}</strong><span>Grupos de problemas</span><small>Conversaciones parecidas agrupadas por la IA; una categoría puede tener varios.</small></div>
    <div className={s.kpi}><strong>{nf.format(resumen.categorias)}</strong><span>Categorías</span><small>Entre los grupos visibles, sin notificaciones automáticas ocultas. Cada grupo cuenta conversaciones únicas, no incidencias: por eso no coincide con el Resumen.</small></div>
@@ -173,14 +175,16 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
   {visibles.length>0&&<Categorias cats={cats} sel={clave} onSelect={elegirCategoria}/>}
   {(catalogo||visibles.some(f=>f.critico!==null)||!!bundle.meta.critical_notice)&&<Criticas filas={visibles} query={query} disponible={critDisponible} total={catalogo?.critical??null}/>}
   <div ref={tablaRef} className="stack" id="lista-problemas">
-   <div className={s.tools} role="search">
-    <label className="grow">Buscar por categoría o grupo<input type="search" value={texto} onChange={e=>cambiar(()=>setTexto(e.target.value))} placeholder="Ej.: batería, envío, refacciones"/></label>
-    <label>Ordenar por<select value={ordenVigente} onChange={e=>setOrden(e.target.value)}>{opciones.map(o=><option key={o.v} value={o.v}>{o.label}</option>)}</select></label>
+   <FilterBar label="Buscar y ordenar grupos">
+    <input type="search" className="ui-filterbar-search" aria-label="Buscar por categoría o grupo" value={texto} onChange={e=>cambiar(()=>setTexto(e.target.value))} placeholder="Buscar categoría o grupo"/>
+    <select aria-label="Ordenar por" value={ordenVigente} onChange={e=>setOrden(e.target.value)}>{opciones.map(o=><option key={o.v} value={o.v}>{o.label}</option>)}</select>
     {critDisponible&&<SegmentedControl label="Qué grupos mostrar" value={soloCriticos} onChange={v=>cambiar(()=>setSoloCriticos(v))} options={[{value:'todos',label:'Todos'},{value:'criticos',label:'Solo críticos'}]}/>}
     <SegmentedControl label="Vista de problemas" value={modo} onChange={setModo} options={[{value:'tabla',label:'Tabla'},{value:'tarjetas',label:'Tarjetas'}]}/>
-   </div>
+    <FilterSpacer/>
+    <Chip>{nf.format(filtradas.length)} {filtradas.length===1?'grupo':'grupos'}{filtradas.length<visibles.length?' de '+nf.format(visibles.length):''}</Chip>
+   </FilterBar>
    {categoriaSel&&<div className={s.filterChip} role="status"><strong>{categoriaSel.nombre}</strong><span>{nf.format(categoriaSel.grupos)} {categoriaSel.grupos===1?'grupo':'grupos'}{categoriaSel.conversaciones!==null&&<> · {nf.format(categoriaSel.conversaciones)} conversaciones</>}</span><button type="button" className="btn btn-ghost btn-sm" onClick={()=>elegirCategoria(null)}>Quitar filtro</button></div>}
-   <div className="toolbar"><span className="chip" aria-live="polite">{nf.format(filtradas.length)} {filtradas.length===1?'grupo':'grupos'}{filtradas.length<visibles.length?' de '+nf.format(visibles.length):''}</span></div>
+   
    {!visibles.length?<EmptyState compact art="search" title="Aún sin datos" body={sep.ocultosN?`Los ${nf.format(sep.ocultosN)} grupos de problemas de esta página son notificaciones automáticas, ocultas por defecto. Actívalas con el interruptor para verlas.`:'No hay problemas agrupados en esta página.'}/>
    :!filtradas.length?<EmptyState compact art="search" title="Ningún grupo coincide" body="Cambia la búsqueda o quita el filtro de categoría para ver más grupos."/>
    :modo==='tarjetas'?<div className={s.cardsGrid}>{pagina.map(f=>{const st=f.registro?(STATUS[f.registro.status]??{label:f.registro.status,tone:'info' as const}):null;

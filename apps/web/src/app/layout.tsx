@@ -6,6 +6,7 @@ import "./fonts.css";
 import "./globals.css";
 import "./task-layout.css";
 import "./ui.css";
+import "../components/ui/ui.css";
 
 export const metadata: Metadata = {
   title: {default:"Rovaq AI",template:"%s · Rovaq AI"},

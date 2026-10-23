@@ -1,6 +1,6 @@
 .workspace-content .economic-import { margin:24px 0 32px; }
 .economic-import>label { max-width:640px; margin:24px 0; }
-.economic-import-summary>div { min-width:0; padding:20px; background:var(--ui-canvas); border:1px solid var(--ui-border); border-radius:16px; }
+.economic-import-summary>div { min-width:0; padding:20px; background:var(--ui-canvas); border:1px solid var(--ui-border); border-radius:12px; }
 .economic-import code,.economic-import dd { overflow-wrap:anywhere; }
 .economic-import h3 { font-size:15px; margin:0 0 14px; }
 .economic-import-summary p { font-size:12px; color:var(--muted); }

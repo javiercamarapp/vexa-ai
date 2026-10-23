@@ -18,7 +18,7 @@
 
 .cats{list-style:none;margin:var(--sp-4) 0 0;padding:0;display:grid;gap:var(--sp-1)}
 @media(min-width:1100px){.cats{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--sp-6)}}
-.cats button.catBtn{all:unset;box-sizing:border-box;display:grid;gap:6px;width:100%;min-height:44px;padding:6px 10px;border-radius:10px;cursor:pointer;border:1px solid transparent}
+.cats button.catBtn{all:unset;box-sizing:border-box;display:grid;gap:6px;width:100%;min-height:44px;padding:6px 10px;border-radius:8px;cursor:pointer;border:1px solid transparent}
 .cats button.catBtn:hover{background:var(--ui-soft)}
 .cats button.catBtn:focus-visible{outline:3px solid var(--ui-focus);outline-offset:1px}
 .cats button.catBtn[aria-pressed=true]{background:var(--kind-observed-soft);border-color:var(--kind-observed)}
@@ -44,7 +44,7 @@
 .filterChip{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2);padding:var(--sp-2) var(--sp-3);border:1px solid var(--kind-observed);border-radius:var(--r-inner,12px);background:var(--kind-observed-soft)}
 .filterChip strong{overflow-wrap:anywhere}
 
-.tableWrap{overflow-x:auto;max-width:100%;border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm,10px);background:var(--ui-surface)}
+.tableWrap{overflow-x:auto;max-width:100%;border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm,8px);background:var(--ui-surface)}
 .table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:var(--t-body,13px)}
 .table th,.table td{padding:10px 12px;text-align:left;vertical-align:top;border-top:1px solid var(--ui-border)}
 .table thead th{border-top:0;white-space:nowrap}
@@ -73,7 +73,7 @@
 .cardsGrid{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp-4)}
 @media(min-width:700px){.cardsGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(min-width:1200px){.cardsGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.gcard{display:grid;gap:var(--sp-3);align-content:start;padding:var(--sp-4);border:1px solid var(--ui-border);border-radius:var(--ui-radius,16px);background:var(--ui-surface);min-width:0}
+.gcard{display:grid;gap:var(--sp-3);align-content:start;padding:var(--sp-4);border:1px solid var(--ui-border);border-radius:var(--ui-radius,12px);background:var(--ui-surface);min-width:0}
 .gcard h3{margin:0;font-size:15px}
 .gcardHead{display:flex;flex-wrap:wrap;gap:var(--sp-2);align-items:center}
 .big{font-size:28px;font-weight:650;line-height:1.1;font-variant-numeric:tabular-nums}
@@ -86,7 +86,7 @@
 .tile{display:grid;gap:2px;padding:var(--sp-3);border:1px solid var(--ui-border);border-radius:var(--r-inner,12px);min-width:0}
 .tile strong{font-size:20px;font-variant-numeric:tabular-nums}
 .tile span{font-size:var(--t-small,12px);color:var(--muted)}
-.blockquote{margin:0;padding:var(--sp-3) var(--sp-4);border-left:3px solid var(--ui-border);background:var(--ui-soft);border-radius:0 10px 10px 0}
+.blockquote{margin:0;padding:var(--sp-3) var(--sp-4);border-left:3px solid var(--ui-border);background:var(--ui-soft);border-radius:0 8px 8px 0}
 .blockquote p{margin:0 0 4px}
 .blockquote small{color:var(--muted)}
 .critWhy{display:block;margin-top:2px;font-size:var(--t-small,12px);color:var(--muted);font-weight:400}

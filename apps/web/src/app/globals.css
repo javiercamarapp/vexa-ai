@@ -132,7 +132,9 @@ main:has(.login),main:has(.workspace-shell) { max-width:none; padding:0; margin:
 .workspace-shell .organization-switch label { font:500 10px 'IBM Plex Mono',monospace; letter-spacing:.08em; text-transform:uppercase; }
 .workspace-shell .organization-switch select { padding:6px; border:1px solid var(--ui-border); border-radius:6px; font-size:12px; background:var(--ui-surface); }
 .workspace-shell .organization-switch button { min-height:30px; padding:5px; background:var(--ui-surface); color:var(--ui-action); border:1px solid var(--ui-border); border-radius:6px; font-size:11px; }
-.sidebar-navigation { overflow-y:auto; min-height:0; flex:1; padding:0 8px 8px; scrollbar-width:thin; }
+.sidebar-navigation { overflow-y:auto; min-height:0; flex:1; padding:0 8px 8px; scrollbar-width:thin; scrollbar-color:var(--ui-border) transparent; overscroll-behavior:contain; /* Indicio de «hay más»: sombras que aparecen solo cuando queda contenido arriba o abajo. */ background:linear-gradient(var(--ui-surface) 30%,transparent) center top/100% 24px no-repeat local,linear-gradient(transparent,var(--ui-surface) 70%) center bottom/100% 24px no-repeat local,radial-gradient(farthest-side at 50% 0,var(--ui-border),transparent) center top/100% 10px no-repeat scroll,radial-gradient(farthest-side at 50% 100%,var(--ui-border),transparent) center bottom/100% 10px no-repeat scroll; }
+/* Un solo enlace «Saltar al contenido» dentro del espacio de trabajo: el del shell apunta al contenido real. */
+body:has(.workspace-shell)>.skip-link { display:none; }
 .workspace-shell nav ul { list-style:none; margin:4px 0 12px; padding:0; display:block; }
 .workspace-shell .nav-caption { font:500 10px 'IBM Plex Mono',monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:12px 8px 6px; }
 .sidebar-navigation svg { width:16px; height:16px; flex:none; }

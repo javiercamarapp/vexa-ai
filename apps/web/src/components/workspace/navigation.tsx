@@ -1,6 +1,6 @@
 'use client';
 import Link from './navigation-lifecycle';
-import {useEffect,useId,useState} from 'react';
+import {useEffect,useId,useRef,useState} from 'react';
 import {usePathname,useSearchParams} from 'next/navigation';
 import {WorkspaceIcon} from './icon';
 import {precalentarEnlace} from '../../lib/workspace/precalentar.mjs';
@@ -24,14 +24,16 @@ function corridas(menu:MenuEntrada[]):Corrida[]{
 }
 export function Navigation({onNavigate,collapsed=false,role,interno=false}:{onNavigate?:()=>void;collapsed?:boolean;role?:string;interno?:boolean}){
  const pathname=usePathname(),query=navigationQuery(pathname,useSearchParams().toString()),id=useId();
- const menu=menuVisible({role,interno}),activo=itemActivo(pathname);
+ const menu=menuVisible({role,interno}),activo=itemActivo(pathname),raiz=useRef<HTMLElement>(null);
  // Todos los grupos abiertos por defecto; lo que cierre la persona se recuerda en este navegador.
  const [cerrados,setCerrados]=useState<string[]>([]);
  useEffect(()=>{try{const guardado=cerradosGuardados(window.localStorage.getItem(CLAVE_CERRADOS));if(guardado.length){const frame=requestAnimationFrame(()=>setCerrados(guardado));return()=>cancelAnimationFrame(frame);}}catch{/* El estado recordado es opcional. */}},[]);
+ // La lista del menú puede desplazarse: el ítem activo siempre debe quedar a la vista al navegar.
+ useEffect(()=>{const actual=raiz.current?.querySelector<HTMLElement>('a[aria-current="page"]');if(actual&&typeof actual.scrollIntoView==='function')actual.scrollIntoView({block:'nearest'});},[pathname,cerrados]);
  function alternar(clave:string){const siguiente=cerrados.includes(clave)?cerrados.filter(c=>c!==clave):[...cerrados,clave];setCerrados(siguiente);try{window.localStorage.setItem(CLAVE_CERRADOS,JSON.stringify(siguiente));}catch{/* La elección sigue valiendo en esta sesión. */}}
  function item(link:MenuItem){const destino=link.href+(query&&!sinAlcance(link.href)?'?'+query:''),calentar=()=>{precalentarEnlace(destino);};return <li key={link.href}><Link title={link.titulo??link.etiqueta} aria-label={collapsed?link.etiqueta:undefined} onClick={onNavigate} onPointerEnter={calentar} onFocus={calentar} aria-current={activo?.item.href===link.href?'page':undefined} href={destino}><WorkspaceIcon name={link.icono}/><span className="nav-label">{link.etiqueta}</span></Link></li>;}
  const grupoCerradoActual=!collapsed&&activo?.grupo&&cerrados.includes(activo.grupo);
- return <nav aria-label="Navegación principal">
+ return <nav aria-label="Navegación principal" ref={raiz}>
   {grupoCerradoActual&&activo&&<div className="nav-current"><p className="nav-caption">Página actual</p><ul>{item(activo.item)}</ul></div>}
   {corridas(menu).map((corrida,index)=>{
    if(corrida.tipo==='sueltos')return <ul className="nav-root" key={'s'+index}>{corrida.items.map(item)}</ul>;

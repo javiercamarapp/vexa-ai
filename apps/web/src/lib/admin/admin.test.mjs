@@ -130,3 +130,15 @@ test('QA3-006: /login con sesión válida redirige a /overview y no muestra «pe
  assert.ok(l.indexOf("redirect('/overview')")>l.indexOf('signedIn=!error&&!!data.user'),'la redirección va después de leer la sesión');
  assert.doesNotMatch(l+e,/pendiente de configurar/i);assert.match(l,/\{google&&<>/);
 });
+test('QA3-016: el 404 respeta el tema guardado y no ofrece iniciar sesión a quien ya la tiene',()=>{
+ const n=leer('../../app/not-found.tsx'),b=leer('../../components/theme-boot.tsx');
+ assert.match(n,/<ThemeBoot\/>/);assert.doesNotMatch(n,/Iniciar sesión con otra cuenta/);
+ assert.match(b,/localStorage\.getItem\('vexa-theme'\)/);assert.match(b,/documentElement\.dataset\.theme/);
+});
+import {estadoCarga,tonoCarga,filasConfirmadas,ultimoProgreso} from '../jobs/progreso.mjs';
+test('QA3-010: el detalle de la carga habla español: estado, filas con separador y fecha legible, sin «202» ni ISO crudo',()=>{
+ assert.equal(estadoCarga('succeeded'),'Completada');assert.equal(estadoCarga('raro'),'Estado por revisar');assert.equal(tonoCarga('failed'),'bad');
+ assert.equal(filasConfirmadas(12446),'12,446 filas confirmadas');assert.equal(filasConfirmadas(1),'1 fila confirmada');
+ assert.equal(ultimoProgreso('2026-10-19T04:37:31.595Z'),'19 oct 2026, 04:37 UTC');assert.equal(ultimoProgreso(null),'Aún sin progreso registrado');
+ const t=leer('../../components/job-progress.tsx');assert.doesNotMatch(t,/Un 202/);assert.doesNotMatch(t,/\{job\.state\} ·/);assert.doesNotMatch(t,/\{job\.last_progress_at\?\?/);
+});

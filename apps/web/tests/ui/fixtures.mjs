@@ -117,9 +117,9 @@ const INC_MONTHS=['2025-11','2025-12','2026-01','2026-02','2026-03','2026-04','2
 export const incidenceMonthly=(variant='ok',problemId=null)=>{const base={generatedAt:'2026-10-19T03:00:00.000Z',scope:problemId?'problem':'total',problemId,class:'inferred',unit:'incidencias',definition:'started_at_or_first_message',source:INC_SOURCE,window:{start:'2025-11-01',end:'2026-11-01',months:12},
   note:'Incidencias de las corridas de extracción vinculadas a este problema, por mes de su conversación (inicio o primer mensaje). Una corrida puede aportar incidencias de otras categorías; no es el volumen de clientes afectados ni una pérdida.'};
  if(variant==='timeout')return {...base,status:'timeout',series:[],outsideWindow:null,undated:null,total:null,linkedRuns:null};
- if(variant==='empty')return {...base,status:'empty',series:INC_MONTHS.map(month=>({month,count:0})),outsideWindow:0,undated:0,total:0,linkedRuns:2};
+ if(variant==='empty')return {...base,status:'empty',series:INC_MONTHS.map(month=>({month,count:0,conversations:0})),outsideWindow:0,undated:0,total:0,linkedRuns:2};
  const counts=[3,5,4,8,12,9,14,21,17,26,33,19];
- return {...base,status:'ok',series:INC_MONTHS.map((month,i)=>({month,count:counts[i]})),outsideWindow:6,undated:11,total:counts.reduce((a,c)=>a+c,0),linkedRuns:4};};
+ return {...base,status:'ok',series:INC_MONTHS.map((month,i)=>({month,count:counts[i],conversations:Math.round(counts[i]*.8)})),outsideWindow:6,undated:11,total:counts.reduce((a,c)=>a+c,0),linkedRuns:4,completeness:{basis:'data',dataThrough:'2026-10-05T00:00:00.000Z',partialMonth:'2026-10',partialMonths:['2026-10']}};};
 export async function respond(url,method,bodyText){
  const u2=new URL(url,'http://x'),p=u2.pathname,q=u2.searchParams;let body=null;try{body=bodyText?JSON.parse(bodyText):null;}catch{}
  const ok=(data)=>[200,{contract_version:'f06-workspace-v1',data,meta:{trace_id:'fixture'}}];

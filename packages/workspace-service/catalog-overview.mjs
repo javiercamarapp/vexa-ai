@@ -7,7 +7,7 @@ import {resumirSenales} from './critico.mjs';
 export const OVERVIEW_BUDGET_MS = 2500;
 
 // Ejecuta una consulta opcional dentro de un SAVEPOINT con statement_timeout local; si vence o falla, revierte el savepoint (la transacción de lectura sigue utilizable) y devuelve null.
-async function guarded(s, deadline, name, work) {
+export async function guarded(s, deadline, name, work) {
   const left = deadline - Date.now();
   if (left < 50) return null;
   const previous = (await s.query("SELECT current_setting('statement_timeout') AS v")).rows[0]?.v ?? '0';

@@ -1,0 +1,27 @@
+/* Ficha de problema: lo que el sistema sabe (conversaciones, citas, adjuntos, tendencia, recomendación). Solo tokens del sistema (claro/oscuro por variables). */
+.sheet{display:grid;gap:var(--sp-4);min-width:0}
+.head{display:grid;gap:var(--sp-2)}
+.head h2{margin:0;overflow-wrap:anywhere}
+.chips{display:flex;flex-wrap:wrap;gap:var(--sp-2);align-items:center}
+.sub{margin:0;color:var(--muted);font-size:var(--t-small,12px);max-width:78ch}
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-3)}
+@media(min-width:900px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.kpi{display:grid;align-content:start;gap:2px;padding:var(--sp-3) var(--sp-4);border:1px solid var(--ui-border);border-radius:var(--r-inner,12px);background:var(--ui-surface);min-width:0}
+.kpi strong{font-size:26px;line-height:1.15;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.kpi>span{font-size:var(--t-small,12px);color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center}
+.kpi small{font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+.na{font-size:15px!important;font-weight:600;color:var(--muted)}
+.cardHead{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:var(--sp-2) var(--sp-4)}
+.cardHead h2,.cardHead h3{margin:0}
+.cardHead p{margin:2px 0 0;color:var(--muted);font-size:var(--t-small,12px);max-width:72ch}
+.delta{margin:var(--sp-2) 0 0;font-size:var(--t-small,12px)}
+.evi{display:grid;gap:var(--sp-3);margin-top:var(--sp-3)}
+.evi .citation{margin:0}
+.privacy{display:flex;gap:var(--sp-2);align-items:flex-start;margin:var(--sp-3) 0 0;font-size:var(--t-small,12px);color:var(--muted)}
+.recs{list-style:none;margin:var(--sp-3) 0 0;padding:0;display:grid;gap:var(--sp-2)}
+.rec{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--sp-2) var(--sp-4);align-items:center;padding:var(--sp-3);border:1px solid var(--ui-border);border-radius:var(--r-inner,12px)}
+.rec .chips{grid-column:1/-1}
+@media(max-width:560px){.rec{grid-template-columns:minmax(0,1fr)}}
+.impact{margin:0;padding:var(--sp-2) var(--sp-3);border:1px dashed var(--ui-border);border-radius:var(--r-inner,12px);color:var(--muted);font-size:var(--t-small,12px)}
+.tech summary{cursor:pointer;font-weight:600}
+.tech>div{display:grid;gap:var(--sp-4);margin-top:var(--sp-3)}

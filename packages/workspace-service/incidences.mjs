@@ -8,6 +8,7 @@
 // messages(tenant_id,conversation_id)); la migración propuesta 20261023000000 solo los acelera y NO es necesaria.
 import {WorkspaceError,uuid} from './contracts.mjs';
 import {monthWindow,guarded} from './trends.mjs';
+import {completitud} from '../metrics/complete-months.mjs';
 export const INCIDENCE_TIMEOUT_MS=2500,MAX_CATEGORIES=100,INCIDENCE_MONTHS=12;
 const SOURCE='Incidencias extraídas de las conversaciones y clasificadas por la IA (issues.category)';
 const num=v=>Number(v??0);
@@ -24,7 +25,7 @@ export const MONTHLY_SQL=`WITH scoped AS (
   SELECT s.n,coalesce(c.started_at,fm.first_at) AS d
   FROM scoped s JOIN public.conversations c ON c.tenant_id=$1 AND c.id=s.conversation_id AND c.deleted_at IS NULL
   LEFT JOIN LATERAL (SELECT min(m.occurred_at) AS first_at FROM public.messages m WHERE m.tenant_id=$1 AND m.conversation_id=c.id AND m.deleted_at IS NULL) fm ON c.started_at IS NULL)
- SELECT CASE WHEN d>=$2 AND d<$3 THEN to_char(d AT TIME ZONE 'UTC','YYYY-MM') END AS month,sum(n) AS n,sum(n) FILTER (WHERE d IS NULL) AS undated,
+ SELECT CASE WHEN d>=$2 AND d<$3 THEN to_char(d AT TIME ZONE 'UTC','YYYY-MM') END AS month,sum(n) AS n,count(*) AS convs,max(d) AS last_at,sum(n) FILTER (WHERE d IS NULL) AS undated,
   (SELECT count(DISTINCT extraction_run_id) FROM public.problem_embedding_members WHERE tenant_id=$1 AND problem_id=$4::uuid) AS linked_runs
  FROM dated GROUP BY 1`;
 /** Normaliza las filas del GROUPING SETS: la fila con is_total=1 trae el total y las corridas distintas. */
@@ -35,9 +36,9 @@ export function shapeCategories(raw){
 }
 /** Serie de 12 meses (ceros explícitos: es un conteo de incidencias detectadas) + fuera de ventana + sin fecha. */
 export function shapeMonthly(raw,win){
- const by=new Map(raw.filter(r=>r.month).map(r=>[r.month,num(r.n)]));
+ const by=new Map(raw.filter(r=>r.month).map(r=>[r.month,num(r.n)])),byConv=new Map(raw.filter(r=>r.month).map(r=>[r.month,num(r.convs)]));
  const nullRows=raw.filter(r=>!r.month),undated=raw.reduce((a,r)=>a+num(r.undated),0);
- return {series:win.list.map(m=>({month:m,count:by.get(m)??0})),outsideWindow:nullRows.reduce((a,r)=>a+num(r.n),0)-nullRows.reduce((a,r)=>a+num(r.undated),0),undated,total:raw.reduce((a,r)=>a+num(r.n),0)};
+ return {series:win.list.map(m=>({month:m,count:by.get(m)??0,conversations:byConv.get(m)??0})),outsideWindow:nullRows.reduce((a,r)=>a+num(r.n),0)-nullRows.reduce((a,r)=>a+num(r.undated),0),undated,total:raw.reduce((a,r)=>a+num(r.n),0)};
 }
 export function createIncidencesRepository({database,now=()=>new Date(),timeoutMs=INCIDENCE_TIMEOUT_MS}){
  return {
@@ -63,7 +64,10 @@ export function createIncidencesRepository({database,now=()=>new Date(),timeoutM
       :'Incidencias por mes de su conversación (inicio o primer mensaje). No son problemas agrupados.'};
     if(raw===null)return {...base,status:'timeout',series:[],outsideWindow:null,undated:null,total:null,linkedRuns:null};
     const shaped=shapeMonthly(raw,win),linkedRuns=problemId?num(raw[0]?.linked_runs):null;
-    return {...base,status:shaped.total===0?'empty':'ok',...shaped,linkedRuns};
+    // Meses completos: el último dato fechado del grupo dice hasta dónde llegan sus conversaciones (criterio único de packages/metrics/complete-months.mjs).
+    const last=raw.map(r=>r.last_at).filter(Boolean).map(x=>Date.parse(x instanceof Date?x.toISOString():String(x))).filter(Number.isFinite),through=last.length?new Date(Math.max(...last)).toISOString():null;
+    const completeness=completitud(shaped.series.map(p=>({month:p.month,count:p.conversations})),{dataThrough:through,ahora:now()});
+    return {...base,status:shaped.total===0?'empty':'ok',...shaped,linkedRuns,completeness};
    });
   }
  };

@@ -1,8 +1,12 @@
 import type {ReactNode} from 'react';
+import {BarList} from './bar-list';
+/** Máximo de categorías para dibujar dona. */
+export const MAX_DONA=5;
 export type DonutSegment={key:string;label:string;value:number;display:string;tone?:1|2|3|4|5|'neutral';hatched?:boolean;hint?:string};
-/** Donut with total at the centre and a legend that repeats every exact figure (colour is never the only carrier). Segments sweep in. */
-export function DonutChart({segments,centerValue,centerLabel,size=152,stroke=14,title}:{segments:DonutSegment[];centerValue:ReactNode;centerLabel:string;size?:number;stroke?:number;title:string}){
+/** Dona con el total al centro y una leyenda que repite cada cifra exacta (el color nunca es el único portador). Solo con ≤5 categorías: con más, se sustituye por barras horizontales ordenadas con etiqueta directa (más legibles que una dona de muchos cortes). */
+export function DonutChart({segments,centerValue,centerLabel,size=132,stroke=10,title}:{segments:DonutSegment[];centerValue:ReactNode;centerLabel:string;size?:number;stroke?:number;title:string}){
  const total=segments.reduce((a,s)=>a+Math.max(0,s.value),0),r=(size-stroke)/2,gap=segments.filter(s=>s.value>0).length>1?1.4:0;
+ if(segments.length>MAX_DONA)return <figure className="donut donut-barras" aria-label={title}><figcaption className="donut-total"><strong>{centerValue}</strong> <span>{centerLabel}</span></figcaption><BarList wrap items={[...segments].sort((a,b)=>b.value-a.value).map(sg=>({key:sg.key,label:sg.label,value:total>0?sg.value*100/total:0,display:sg.display+(total>0?' · '+(sg.value/total*100).toLocaleString('es-MX',{maximumFractionDigits:1})+' %':''),note:sg.hint}))}/></figure>;
  let acc=0;
  return <figure className="donut" aria-label={title}>
   <div className="donut-ring" style={{width:size,height:size}}>

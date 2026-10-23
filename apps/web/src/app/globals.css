@@ -4,6 +4,9 @@
 /* Marca Rovaq — neutros derivados del Negro Rovaq #0E0E10 (mismo matiz frío, 240°, crecen en luminosidad): 950 #0e0e10 · 900 #17171a · 850 #1f1f23 · 800 #2a2a2f · 700 #3a3a40 · 600 #5a5a61 · 500 #8a8a90 · 400 #a3a3ab · 300 #d6d6d9 · 200 #e4e4e6 · 100 #f1f1f2 · 50 #f7f7f8. Los tokens --ui-* de abajo salen de esta escala. */
 /* Marca Rovaq — logotipo (kit): tinta según tema, el punto siempre rojo señal. */
 :root { --rovaq-negro:#0E0E10; --rovaq-rojo:#E8241C; --rovaq-blanco:#FFFFFF; --rovaq-logo-tinta:var(--rovaq-negro); --rovaq-logo-tinta-inverso:var(--rovaq-blanco); }
+/* ---- Tokens de gráfica (único lugar). Tinta de marca con baja densidad; el rojo SOLO resalta el valor seleccionado. ---- */
+:root { --chart-bar:#2f2f33; --chart-bar-strong:#0e0e10; --chart-bar-estimated:#5a5a61; --chart-bar-inferred:#6f6f76; --chart-accent:#e8241c; --chart-grid:#0e0e1014; --chart-axis:#0e0e1033; --chart-hover:#0e0e100d; --chart-label:#0e0e10; --chart-tick:#5a5a61; --chart-hatch:#6f6f76; --chart-surface:#ffffff; --chart-h:168px; --chart-h-sm:140px; --chart-bar-ratio:.6; --chart-bar-max:22px; --chart-enter:360ms; }
+:root[data-theme=dark] { --chart-bar:#d2d2d6; --chart-bar-strong:#f4f4f5; --chart-bar-estimated:#a3a3ab; --chart-bar-inferred:#8b8b93; --chart-accent:#ff5a52; --chart-grid:#f4f4f514; --chart-axis:#f4f4f533; --chart-hover:#f4f4f50d; --chart-label:#f4f4f5; --chart-tick:#a3a3ab; --chart-hatch:#8b8b93; --chart-surface:#17171a; }
 :root[data-theme=dark] { --rovaq-logo-tinta:var(--rovaq-blanco); --rovaq-logo-tinta-inverso:var(--rovaq-negro); }
 .rovaq-logo { display:inline-flex; flex:none; line-height:0; max-width:100%; --rovaq-tinta:var(--rovaq-logo-tinta); }
 .rovaq-logo[data-tono=contraste] { --rovaq-tinta:var(--rovaq-logo-tinta-inverso); }

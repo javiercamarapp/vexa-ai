@@ -2,6 +2,7 @@
 import {useMemo} from 'react';
 import type {MonthlyIncidencesView} from '../../../../../packages/workspace-service/incidences.mjs';
 import {insightsProblemaSerie} from '../../lib/legibilidad/insights.mjs';
+import {mesAbrev} from '../../lib/charts/escala.mjs';
 import {Button,Refresh} from './button';
 import {ChartState} from './chart-state';
 import {ColumnChart,type ColumnDatum} from './column-chart';
@@ -10,7 +11,7 @@ import {InsightList} from './insight-list';
 import {KindBadge} from './kind-badge';
 import {useJson} from './use-json';
 import {nf} from './format';
-const monthShort=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
+const monthShort=(m:string)=>mesAbrev(m);
 const monthLong=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
 const accept=(j:unknown)=>{const d=(j as {data?:MonthlyIncidencesView})?.data;return d&&Array.isArray(d.series)&&typeof d.status==='string'?d:null;};
 /** Mini-gráfica de evolución mensual de INCIDENCIAS de un problema agrupado, con lecturas (máx. 3), estados de carga/vacío/error y tabla equivalente. */

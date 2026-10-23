@@ -143,9 +143,9 @@ for(const [w,h] of VIEWPORTS){
   await page.route('**/api/workspace?resource=metrics*',()=>{/* never answered on purpose */});
   await page.goto(base+'/overview',{waitUntil:'domcontentloaded',timeout:90000});
   await page.waitForSelector('text=/Información (histórica )?incorporada/',{timeout:20000}).catch(()=>fail.push({kind:'flow',detail:'coverage band missing while the figures are pending'}));
-  await page.waitForSelector('.trends .trend-bar',{timeout:20000}).catch(()=>fail.push({kind:'flow',detail:'monthly trends missing while the figures are pending'}));
+  await page.waitForSelector('.trends .col-bar',{timeout:20000}).catch(()=>fail.push({kind:'flow',detail:'monthly trends missing while the figures are pending'}));
   await page.waitForSelector('text=tardaron demasiado',{timeout:40000}).catch(()=>fail.push({kind:'flow',detail:'no timeout message after 25 s'}));
-  if(await page.locator('.trends .trend-bar').count()<12)fail.push({kind:'flow',detail:'trends disappeared after the timeout'});
+  if(await page.locator('.trends .col-bar').count()<12)fail.push({kind:'flow',detail:'trends disappeared after the timeout'});
   fail.push(...await page.evaluate(geometry));
   await page.screenshot({path:path.join(out,'overview-slow-1440.png'),fullPage:false});
   const uniq=[...new Map(fail.map(i=>[i.kind+i.detail,i])).values()];if(uniq.length)failed++;

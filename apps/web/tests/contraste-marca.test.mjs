@@ -43,6 +43,7 @@ const PAREJAS = [
   ['cov-in', 'ui-surface', 3, 'cobertura'], ['cov-rej', 'ui-surface', 3, 'cobertura rechazada'], ['cov-pen', 'ui-surface', 3, 'cobertura pendiente'],
   ['ch-4', 'ui-surface', 3, 'categoría 4'], ['ch-5', 'ui-surface', 3, 'categoría 5'], ['ch-neutral', 'ui-surface', 3, 'comparativa'],
   ['heat-4', 'ui-surface', 3, 'mapa de calor, extremo'], ['heat-3', 'ui-surface', 3, 'mapa de calor'],
+  ['chart-bar', 'ui-surface', 3, 'barras (tinta al 85 %)'], ['chart-bar-strong', 'ui-surface', 3, 'barra del último mes completo'], ['chart-bar-estimated', 'ui-surface', 3, 'barras estimadas'], ['chart-bar-inferred', 'ui-surface', 3, 'barras inferidas'], ['chart-accent', 'ui-surface', 3, 'rojo de marca: valor seleccionado'], ['chart-hatch', 'ui-surface', 3, 'trama de mes parcial'], ['chart-tick', 'ui-surface', 4.5, 'texto de ejes de 11 px'], ['chart-label', 'ui-surface', 4.5, 'etiquetas directas'],
   ['fg-walmart', 'ui-surface', 3, 'canal 1'], ['fg-amazon', 'ui-surface', 3, 'canal 2'], ['fg-otro', 'ui-surface', 3, 'otros canales'],
 ];
 for (const [nombre, T] of [['claro', LIGHT], ['oscuro', DARK]]) {
@@ -51,9 +52,10 @@ for (const [nombre, T] of [['claro', LIGHT], ['oscuro', DARK]]) {
     for (const [fg, bg, min, motivo] of PAREJAS) { const r = ratio(val(T, fg), val(T, bg)); if (r < min) fallos.push(`--${fg} sobre --${bg}: ${r.toFixed(2)}:1 < ${min} (${motivo})`); }
     assert.deepEqual(fallos, []);
   });
-  test(`barras inactivas (mezcla con la pista) siguen a >= 3:1 del fondo, tema ${nombre}`, () => {
-    const p = parseFloat(T['col-idle-mix']) / 100;
-    for (const k of ['observed', 'estimated', 'inferred']) assert.ok(ratio(mezcla(val(T, 'kind-' + k), val(T, 'ch-track'), p), val(T, 'ui-surface')) >= 3, k);
+  test(`barras de gráfica (inactiva, estimada, inferida, plena y resaltado) a >= 3:1 del fondo y la plena más contrastada que la inactiva, tema ${nombre}`, () => {
+    const fondo = val(T, 'ui-surface');
+    for (const k of ['chart-bar', 'chart-bar-estimated', 'chart-bar-inferred', 'chart-bar-strong', 'chart-accent']) assert.ok(ratio(val(T, k), fondo) >= 3, k);
+    assert.ok(ratio(val(T, 'chart-bar-strong'), fondo) >= ratio(val(T, 'chart-bar'), fondo), 'el último mes completo no puede verse más débil que el resto');
   });
   test(`la rampa de calor crece monótona en luminosidad (gris a negro / a blanco), tema ${nombre}`, () => {
     const L = [0, 1, 2, 3, 4].map(i => lum(val(T, 'heat-' + i)));

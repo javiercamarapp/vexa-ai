@@ -4,8 +4,8 @@ import {MENU, menuVisible, itemActivo, tituloDePantalla, todosLosItems, cerrados
 const etiquetas = (acceso) => menuVisible(acceso).map((e) => e.etiqueta);
 const hrefs = (acceso) => menuVisible(acceso).flatMap((e) => (e.tipo === 'grupo' ? e.items : [e]).map((i) => i.href));
 
-test('orden de la historia: Resumen, Problemas, Pregúntale a tus datos, Dinero, Recomendaciones, Acciones, Explorador, Brief, Datos y fuentes, Administración, Interno', () => {
-  assert.deepEqual(etiquetas({role: 'owner', interno: true}), ['Resumen', 'Problemas', 'Pregúntale a tus datos', 'Dinero', 'Recomendaciones', 'Acciones', 'Explorador', 'Brief ejecutivo', 'Datos y fuentes', 'Administración', 'Interno']);
+test('orden de la historia: Resumen, Problemas, Pregúntale a tus datos, Dinero, Recomendaciones, Acciones, Explorador, Brief, Operación, Datos y fuentes, Administración, Interno', () => {
+  assert.deepEqual(etiquetas({role: 'owner', interno: true}), ['Resumen', 'Problemas', 'Pregúntale a tus datos', 'Dinero', 'Recomendaciones', 'Acciones', 'Explorador', 'Brief ejecutivo', 'Operación', 'Datos y fuentes', 'Administración', 'Interno']);
 });
 test('Interno solo con acceso de plataforma; un propietario cliente no lo ve', () => {
   assert.ok(!etiquetas({role: 'owner'}).includes('Interno'));
@@ -55,4 +55,10 @@ test('acordeón: un solo grupo abierto por defecto; el de la página actual o el
   assert.equal(grupoAbiertoPorDefecto(menu, itemActivo('/connections')), 'datos');
   assert.equal(grupoAbiertoPorDefecto(menu, itemActivo('/settings/team')), 'administracion');
   assert.equal(grupoAbiertoPorDefecto([], null), null);
+});
+
+test('Operación (Mapa de problemas, Carga y SLA): solo propietario y analista; el ítem activo resuelve /map y /workload', () => {
+  for (const role of ['owner', 'analyst']) assert.ok(hrefs({role}).includes('/map') && hrefs({role}).includes('/workload'));
+  for (const role of ['operator', 'viewer', undefined]) assert.ok(!hrefs({role}).includes('/map') && !hrefs({role}).includes('/workload'));
+  assert.equal(itemActivo('/map')?.item.href, '/map'); assert.equal(tituloDePantalla('/workload'), 'Carga y SLA');
 });

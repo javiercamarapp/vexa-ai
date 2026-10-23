@@ -17,6 +17,10 @@ export const MENU = Object.freeze([
   { tipo: 'item', href: '/interventions', etiqueta: 'Acciones', icono: 'interventions' },
   { tipo: 'item', href: '/explorer', etiqueta: 'Explorador', icono: 'explorer' },
   { tipo: 'item', href: '/briefs', etiqueta: 'Brief ejecutivo', icono: 'briefs' },
+  { tipo: 'grupo', clave: 'operacion', etiqueta: 'Operación', roles: DINERO, items: [
+    { href: '/map', etiqueta: 'Mapa de problemas', icono: 'grid', titulo: 'Mapa de problemas' },
+    { href: '/workload', etiqueta: 'Carga y SLA', icono: 'clock', titulo: 'Carga y SLA' },
+  ] },
   { tipo: 'grupo', clave: 'datos', etiqueta: 'Datos y fuentes', items: [
     { href: '/sources', etiqueta: 'Cobertura de datos', icono: 'history', titulo: 'Cobertura de datos' },
     { href: '/connections', etiqueta: 'Fuentes conectadas', icono: 'connections', titulo: 'Fuentes conectadas' },

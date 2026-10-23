@@ -1,0 +1,20 @@
+import type {CfoReport, Kind} from '../../../../../packages/cfo-copilot/src/index.mjs';
+export type Directa = {tool: string; args: Record<string, unknown>};
+export type PuntoSerie = {month: string; partial: boolean; value: number | null; display: string; detail: string};
+export type SerieIngresos = {moneda: string; etiquetaPrincipal: string; principal: PuntoSerie[]; comparativas: {etiqueta: string; puntos: PuntoSerie[]}[]; resaltado: string | null; motivoResaltado: 'caida' | 'ultimo'; exponente: number};
+export type KpiBriefing = {id: string; label: string; display: string; kind: Kind; delta: {display: string; vs: string; bps: number | null; pp: boolean} | null; cobertura: string | null; how: string};
+export type BriefingCfo = {
+  moneda: string; monedas: string[]; vacio: false;
+  titular: {texto: string; kind: Kind; periodo: string | null; fuente: string; moneda: string}; parcial: string | null; corte: string | null;
+  kpis: KpiBriefing[]; mesDelResumen: string | null; avisoMonedas: string;
+  alertas: {id: string; severidad: string; severity: string; titulo: string; detalle: string; kind: Kind; how: string; cta: {label: string; href: string} | null}[]; alertasActivas: number;
+  serie: SerieIngresos | null; canales: {canal: string; label: string; n: number; shareBps: number | null}[];
+  calidad: {filas: number; cifras: {id: string; label: string; display: string; kind: Kind; how: string}[]; costo: {id: string; label: string; display: string; how: string}[]; canalesIncompletos: number; canalMenosCompleto: {label: string; completenessBps: number | null} | null};
+  proyeccion: {id: string; label: string; kind: 'estimated'; metodo: string; puntos: {month: string; mes: string; medio: string; rango: string}[]} | null;
+  caida: {titulo: string; lineas: string[]; causa: string} | null;
+  siguientes: {pregunta: string; directa: Directa; motivo: string}[];
+};
+export function monedaElegida(report: CfoReport | null | undefined, pedida?: string | null): string | null;
+export function serieIngresos(report: CfoReport, moneda: string): SerieIngresos | null;
+export function briefingCfo(report: CfoReport, monedaPedida?: string | null): BriefingCfo | null;
+export function mesLargo(key: string | null | undefined): string;

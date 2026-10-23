@@ -149,7 +149,7 @@ export async function respond(url,method,bodyText){
  if(p==='/api/trends/categories')return ok(incidenceCategories(q.get('variant')??'ok'));
  if(p==='/api/trends/incidences'){const pid=q.get('problem');return ok(incidenceMonthly(pid===IDS.problemB?'empty':pid===IDS.problemC?'timeout':'ok',pid));}
  if(p.startsWith('/api/origin/'))return ok(originOf(p.split('/').pop()));
- if(p.startsWith('/api/notifications'))return ok({items:[],unread:0,nextCursor:null});
+ if(p.startsWith('/api/notifications')&&!p.endsWith('/preferences'))return ok({items:[],unread:0,nextCursor:null});
  if(p==='/api/associations')return [200,{data:{items:[],nextCursor:null,canResolve:true,canApprove:true}}];
  // Per-view extension fixtures (wave 2): tests/ui/fixtures-extra-*.mjs export respondExtra(url,method,bodyText,ctx) -> [status,json] | null
  for(const f of extraModules){const hit=await f.respondExtra?.(url,method,bodyText,{ok,IDS,HASH,SCOPE,u});if(hit)return hit;}

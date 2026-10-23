@@ -1,5 +1,7 @@
 'use client';
 import {eventosVisibles,textoCanal} from '../../lib/notifications/avisos.mjs';
+import {LinkButton} from '../ui/button';
+import '../datos/datos.css';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {useCallback,useEffect,useRef,useState} from 'react';
@@ -83,21 +85,20 @@ export function NotificationPanel({settings=false}:{settings?:boolean}){
   <p className="eyebrow">Tu espacio de trabajo</p><h1>{heading}</h1>
   <p>{settings?'Elige los avisos y canales que deseas recibir en esta organización.':'Avisos de esta organización disponibles con tu acceso actual.'}</p>
   <p><Link href={settings?'/notifications':'/settings/notifications'}>{settings?'Ver notificaciones':'Configurar avisos'}</Link></p>
-  {settings&&<p><Link href="/notifications/push">Notificaciones en este dispositivo</Link>{' · '}<Link href="/settings/notification-delivery">Política de envío de la organización</Link></p>}
+  {settings&&<p style={{display:'flex',flexWrap:'wrap',gap:'.5rem'}}><LinkButton size="sm" href="/notifications/push">Notificaciones en este dispositivo</LinkButton><LinkButton size="sm" href="/settings/notification-delivery">Política de envío de la organización</LinkButton></p>}
   <button disabled={busy} onClick={()=>void load()}>{settings?'Actualizar preferencias':'Actualizar notificaciones'}</button>
   {busy&&<p role="status">{settings?'Verificando preferencias…':'Verificando notificaciones…'}</p>}
   {error&&<p role="alert">{error}</p>}{notice&&<p role="status">{notice}</p>}
   {!settings&&<label style={labelStyle}><input type="checkbox" style={checkboxStyle} checked={status==='unread'} disabled={busy} onChange={event=>filter(event.target.checked)}/>Mostrar sólo avisos sin leer</label>}
   {settings&&preferences&&<>
    
-   <div className="task-columns notification-channels">{preferences.channels.map(channel=><fieldset key={channel.id} className="record-card" disabled={busy}>
-    <legend>{channel.label}</legend><p>{textoCanal(channel)}</p>
-    <label style={labelStyle}><input type="checkbox" style={checkboxStyle} checked={preferences.preferences.some(p=>p.channel===channel.id&&p.eventType==='*'&&p.enabled)} onChange={event=>void save(channel.id,'*',event.target.checked)}/>{'Activar '+channel.label}</label>
-    {eventosVisibles(preferences.catalog).map(entry=><div key={entry.type}>
-     <label style={labelStyle}><input type="checkbox" style={checkboxStyle} checked={preferences.preferences.some(p=>p.channel===channel.id&&p.eventType===entry.type&&p.enabled)} onChange={event=>void save(channel.id,entry.type,event.target.checked)}/>{entry.label}</label>
-     <p className="muted">{entry.description}</p>
-    </div>)}
-   </fieldset>)}</div>
+   <div className="table-wrap" tabIndex={0} role="region" aria-label="Matriz de avisos y canales, desplazamiento horizontal"><table className="dn-tabla notification-matrix"><caption className="sr-only">Avisos por canal</caption>
+    <thead><tr><th scope="col">Aviso</th>{preferences.channels.map(channel=><th scope="col" key={channel.id} className="num" title={channel.label}><span aria-hidden="true">{({inapp:'Centro',email:'Correo',push:'Push'} as Record<string,string>)[channel.id]??channel.label}</span><span className="sr-only">{channel.label}</span></th>)}</tr></thead>
+    <tbody>
+     <tr><th scope="row">Activar el canal<small className="muted" style={{display:'block',fontWeight:400}}>Interruptor general de cada canal</small></th>{preferences.channels.map(channel=><td key={channel.id} className="num"><label className="matrix-check"><input type="checkbox" style={checkboxStyle} disabled={busy} aria-label={'Activar '+channel.label} checked={preferences.preferences.some(p=>p.channel===channel.id&&p.eventType==='*'&&p.enabled)} onChange={event=>void save(channel.id,'*',event.target.checked)}/></label></td>)}</tr>
+     {eventosVisibles(preferences.catalog).map(entry=><tr key={entry.type}><th scope="row">{entry.label}<small className="muted" style={{display:'block',fontWeight:400}}>{entry.description}</small></th>{preferences.channels.map(channel=><td key={channel.id} className="num"><label className="matrix-check"><input type="checkbox" style={checkboxStyle} disabled={busy} aria-label={entry.label+' · '+channel.label} checked={preferences.preferences.some(p=>p.channel===channel.id&&p.eventType===entry.type&&p.enabled)} onChange={event=>void save(channel.id,entry.type,event.target.checked)}/></label></td>)}</tr>)}
+    </tbody></table></div>
+   <ul className="muted" aria-label="Estado de cada canal">{preferences.channels.map(channel=><li key={channel.id}><strong>{channel.label}:</strong> {textoCanal(channel)}</li>)}</ul>
   </>}
   {!settings&&inbox&&<>
    <p role="status">{inbox.unreadCount} {inbox.unreadCount===1?'aviso sin leer':'avisos sin leer'}</p>

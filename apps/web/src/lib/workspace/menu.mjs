@@ -18,6 +18,7 @@ export const MENU = Object.freeze([
   ] },
   { tipo: 'item', href: '/briefs', etiqueta: 'Brief ejecutivo', icono: 'briefs' },
   { tipo: 'grupo', clave: 'datos', etiqueta: 'Datos y fuentes', items: [
+    { href: '/sources', etiqueta: 'Cobertura', icono: 'history', titulo: 'Datos y fuentes' },
     { href: '/connections', etiqueta: 'Fuentes', icono: 'connections', titulo: 'Fuentes de datos' },
     { href: '/imports', etiqueta: 'Importaciones', icono: 'imports', alias: ['/jobs'] },
     { href: '/history', etiqueta: 'Histórico e identidad', icono: 'history' },

@@ -34,7 +34,7 @@ test('ítem activo: /jobs/:id -> Importaciones, /analysis/:id -> Análisis, /pro
   assert.equal(itemActivo('/notifications'), null); assert.equal(itemActivo('/ruta-rara'), null);
 });
 test('ninguna ruta del menú anterior se pierde: todas siguen teniendo ítem o título propio', () => {
-  for (const ruta of ['/overview', '/problems', '/problems/manage', '/recommendations', '/explorer', '/preguntale', '/interventions', '/briefs', '/cfo', '/analysis', '/imports', '/connections', '/history', '/evaluation', '/evaluation/candidates', '/migrations', '/economics', '/notifications', '/settings/notifications', '/settings/team', '/settings/retention', '/settings/notification-delivery', '/notifications/push', '/jobs/setup', '/customers/1'])
+  for (const ruta of ['/overview', '/problems', '/problems/manage', '/recommendations', '/explorer', '/preguntale', '/interventions', '/briefs', '/cfo', '/analysis', '/imports', '/connections', '/sources', '/history', '/evaluation', '/evaluation/candidates', '/migrations', '/economics', '/notifications', '/settings/notifications', '/settings/team', '/settings/retention', '/settings/notification-delivery', '/notifications/push', '/jobs/setup', '/customers/1'])
     assert.notEqual(tituloDePantalla(ruta), 'Espacio de trabajo', ruta);
 });
 test('estado recordado: solo claves de grupo válidas; texto roto = todos abiertos', () => {

@@ -135,3 +135,7 @@
 .ui-card-head{margin:0 0 8px}
 /* Una columna que NUNCA se ensancha por el contenido (evita desborde horizontal en móvil) y ritmo único de 12 px */
 .stack{grid-template-columns:minmax(0,1fr);gap:var(--ui-rhythm)}
+
+/* F2-CLIENTES: la descripcion del encabezado es de UNA linea (sin tope de 62ch); solo envuelve en pantallas angostas. */
+.page-header .page-header-description{max-width:none}
+.ui-notice{padding:8px 12px;margin:12px 0}.ui-notice-body{flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:0 8px}.ui-notice-title{flex:none}

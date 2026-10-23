@@ -13,6 +13,8 @@ import {Button,LinkButton,Refresh,Arrow} from '../ui/button';
 import {KindBadge} from '../ui/kind-badge';
 import {TituloAuto} from '../ui/titulo-auto';
 import {StatusChip} from '../ui/status-chip';
+import {KpiStrip} from '../ui/kpi-strip';
+import {Chip} from '../ui/chip';
 import {Icon} from '../ui/icons';
 import {WaitStatus} from '../ui/wait-status';
 import {useJson} from '../ui/use-json';
@@ -66,7 +68,7 @@ function Kpi({label,kind,children,foot}:{label:string;kind?:Parameters<typeof Ki
 }
 const NA=<strong className={s.na}>No disponible ahora</strong>;
 
-export function ProblemSheet({id,shared,captured,dinero,facts,onTitle}:{id:string;shared:string;captured:ConversationRef[]|null;dinero:ReactNode|null;facts:ReturnType<typeof useJson<ProblemFacts>>;onTitle?:(t:string|null)=>void}){
+export function ProblemSheet({id,shared,captured,dinero,facts,onTitle,causa=null}:{causa?:ReactNode;id:string;shared:string;captured:ConversationRef[]|null;dinero:ReactNode|null;facts:ReturnType<typeof useJson<ProblemFacts>>;onTitle?:(t:string|null)=>void}){
  const trend=useJson<MonthlyIncidencesView>('/api/trends/incidences?problem='+encodeURIComponent(id),acceptTrend);
  const ev=useEvidencia(id,shared,captured);
  const [todas,setTodas]=useState(false);
@@ -81,13 +83,13 @@ export function ProblemSheet({id,shared,captured,dinero,facts,onTitle}:{id:strin
  const rec=f?.recommendations.items[0]??null;
  const verificadas=ev.citas?distintas.length:null;
  return <div className={s.sheet}>
-  <section className="card" aria-label="Identificación del problema">
+  <section className="ui-card" aria-label="Identificación del problema">
    <div className={s.head}>
     <div className={s.chips}>
-     {head?.grupo&&<span className="chip">{head.grupo}</span>}
+     {head?.grupo&&<Chip categoria={7}>{head.grupo}</Chip>}
      {f?.severity&&<StatusChip tone={sevTone(f.severity)}>Severidad {etiquetaSeveridad(f.severity)?.toLowerCase()}</StatusChip>}
      {head?.critico===true&&<StatusChip tone="bad" title={head.motivo??undefined}>Revisión crítica</StatusChip>}
-     {head?.critico===false&&<span className="chip">Sin revisión crítica</span>}
+     {head?.critico===false&&<Chip>Sin revisión crítica</Chip>}
      {f&&<KindBadge kind="inferred" hint="La categoría y la severidad las asigna la IA al extraer cada conversación: son Inferido, no un hecho observado."/>}
     </div>
     {f&&<TituloAuto problemId={id} label={f.label??''} conversaciones={f.conversations} temas={f.themes??null}/>}
@@ -98,29 +100,43 @@ export function ProblemSheet({id,shared,captured,dinero,facts,onTitle}:{id:strin
    </div>
   </section>
 
-  <section className={s.kpis} aria-label="Cifras del problema">
-   <Kpi label="Conversaciones" kind="observed" foot="Conversaciones distintas del grupo">{!f&&facts.busy?<strong>…</strong>:f?.conversations!=null?<strong>{nf.format(f.conversations)}</strong>:NA}</Kpi>
-   <Kpi label="Citas registradas" kind="observed" foot={ev.esperando?'Verificando al abrir…':verificadas!==null?`${textoCitas(verificadas)} verificadas al abrir`:ev.sinAlcance?'Se verifican al abrir desde una publicación':'Verificación no disponible ahora'}>{!f&&facts.busy?<strong>…</strong>:f?.citations!=null?<strong>{nf.format(f.citations)}</strong>:NA}</Kpi>
-   <Kpi label="Adjuntos asociados" kind="observed" foot={adj.detalle}>{!f&&facts.busy?<strong>…</strong>:adj.valor!==null?<strong>{nf.format(adj.valor)}</strong>:NA}</Kpi>
-   <Kpi label="Señales críticas" kind="inferred" foot={f?.critical?(f.critical.critical?'Evidencias de severidad alta, crítica o de categoría sensible':'Ninguna evidencia crítica en este grupo'):undefined}>{!f&&facts.busy?<strong>…</strong>:f?.critical?<strong>{nf.format(f.critical.signals)}</strong>:NA}</Kpi>
-  </section>
+  <KpiStrip label="Cifras del problema" items={[
+   {label:'Conversaciones',c:7,spark:serie?serie.map(p=>p.value??0):undefined,value:!f&&facts.busy?'…':f?.conversations!=null?nf.format(f.conversations):NA,note:cambio&&cambio.pct!==null?<>{cambio.pct>0?'+':cambio.pct<0?'−':''}{Math.abs(cambio.pct).toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} % vs mes previo · Observado</>:'Distintas del grupo · Observado'},
+   {label:'Citas registradas',c:7,value:!f&&facts.busy?'…':f?.citations!=null?nf.format(f.citations):NA,note:ev.esperando?'Verificando al abrir…':verificadas!==null?`${textoCitas(verificadas)} verificadas al abrir`:ev.sinAlcance?'Se verifican al abrir desde una publicación':'Verificación no disponible ahora'},
+   {label:'Adjuntos asociados',c:7,value:!f&&facts.busy?'…':adj.valor!==null?nf.format(adj.valor):NA,note:adj.detalle},
+   {label:'Señales críticas',c:6,value:!f&&facts.busy?'…':f?.critical?nf.format(f.critical.signals):NA,note:f?.critical?(f.critical.critical?'Severidad alta, crítica o sensible · Inferido':'Ninguna evidencia crítica · Inferido'):undefined}
+  ]}/>
   {adj.nota&&<p className={s.sub} role="note">{adj.nota}</p>}
 
-  <section className="card" aria-label="Tendencia mensual de conversaciones">
-   <div className={s.cardHead}><div><h3>Conversaciones por mes</h3><p>Últimos 12 meses, por fecha de inicio o primer mensaje de la conversación.</p></div><KindBadge kind="observed"/></div>
+  <div className={s.row84}>
+  <section className={"ui-card "+s.violeta} aria-label="Tendencia mensual de conversaciones">
+   <header className="ui-card-head"><div className="ui-card-copy"><h2 className="ui-card-title">Conversaciones por mes</h2><p className="ui-card-desc">Últimos 12 meses, por fecha de inicio de la conversación</p></div><KindBadge kind="observed"/></header>
    <div className="stack">
     <ChartState busy={trend.busy} hasData={!!serie} error={trend.error} status={trend.status} que="la tendencia" retryLabel="Reintentar tendencia" onRetry={trend.reload} height={150}
      empty={trend.data?.status==='timeout'?<EmptyState compact art="chart" tone="warn" title="No disponible ahora" body="La consulta superó el tiempo permitido. Reintenta en unos segundos." action={<Button size="sm" icon={<Refresh/>} loading={trend.busy} onClick={trend.reload}>Reintentar tendencia</Button>}/>:<EmptyState compact art="chart" title="Aún sin datos" body="Este grupo no tiene conversaciones con fecha en los últimos 12 meses."/>}>
      {serie&&<><ColumnChart title="Conversaciones por mes de este problema" kind="observed" height={150} data={datos} unit="conversaciones"/>
-      {cambio&&<p className={s.delta}>{cambio.pct===null?`${mesLargo(cambio.a.month)}: ${nf.format(cambio.a.value!)} conversaciones; ${mesLargo(cambio.de.month)} no ofrece base de comparación.`:<>De {mesLargo(cambio.de.month)} a {mesLargo(cambio.a.month)}: <strong>{cambio.pct>0?'+':cambio.pct<0?'−':''}{Math.abs(cambio.pct).toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %</strong> ({nf.format(cambio.de.value!)} → {nf.format(cambio.a.value!)}), entre meses completos.</>}</p>}
-      {parciales.length>0&&<p className="state" role="note">* {parciales.map(mesLargo).join(' y ')} {parciales.length===1?'es un mes incompleto':'son meses incompletos'} (datos hasta {diaCorte(trend.data?.completeness?.dataThrough)??'fecha desconocida'}) y no se compara.</p>}
-      {trend.data!.undated!==null&&trend.data!.undated>0&&<p className="state" role="note">{nf.format(trend.data!.undated)} registros sin fecha no entran en la gráfica.</p>}</>}
+      {cambio&&<p className={s.nota}>{cambio.pct===null?`${mesLargo(cambio.a.month)}: ${nf.format(cambio.a.value!)} conversaciones; ${mesLargo(cambio.de.month)} no ofrece base de comparación.`:<>De {mesLargo(cambio.de.month)} a {mesLargo(cambio.a.month)}: <strong>{cambio.pct>0?'+':cambio.pct<0?'−':''}{Math.abs(cambio.pct).toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %</strong> ({nf.format(cambio.de.value!)} → {nf.format(cambio.a.value!)}), entre meses completos.</>}</p>}
+      {parciales.length>0&&<p className={s.nota} role="note">* {parciales.map(mesLargo).join(' y ')} {parciales.length===1?'es un mes incompleto':'son meses incompletos'} (datos hasta {diaCorte(trend.data?.completeness?.dataThrough)??'fecha desconocida'}) y no se compara.</p>}
+      {trend.data!.undated!==null&&trend.data!.undated>0&&<p className={s.nota} role="note">{nf.format(trend.data!.undated)} registros sin fecha no entran en la gráfica.</p>}</>}
     </ChartState>
    </div>
   </section>
+  <div className={s.col}>
+   {causa}
+   <section className="ui-card" aria-label="Qué hacer">
+   <header className="ui-card-head"><div className="ui-card-copy"><h2 className="ui-card-title">Siguiente paso</h2><p className="ui-card-desc">Recomendación e intervención</p></div></header>
+   {f&&f.recommendations.state==='unavailable'&&<p className="state" role="status">No disponible ahora. <Button size="sm" icon={<Refresh/>} onClick={facts.reload}>Reintentar</Button></p>}
+   {f&&f.recommendations.state==='ok'&&!rec&&<p className="state">Aún sin recomendación. <LinkButton href={'/recommendations?'+shared+'&problem_id='+encodeURIComponent(id)} size="sm" icon={<Arrow/>}>Ir a Recomendaciones</LinkButton></p>}
+   {f&&f.recommendations.state==='ok'&&f.recommendations.items.length>0&&<ul className={s.recs}>{f.recommendations.items.map(r=><li key={r.id} className={s.rec}>
+    <div style={{minWidth:0}}><strong>{etiquetaRecomendacion(r.status)} · versión {r.version}</strong><div className={s.chips}><Chip>Intervención: {estadoIntervencion(r)}</Chip></div></div>
+    <LinkButton href={'/recommendations?'+shared+'&problem_id='+encodeURIComponent(id)} size="sm" icon={<Arrow/>} aria-label="Ver la recomendación de este problema">Ver</LinkButton>
+   </li>)}</ul>}
+   </section>
+  </div>
+  </div>
 
-  <section className="card" aria-label="Evidencia citada">
-   <div className={s.cardHead}><div><h3>Lo que dicen los clientes</h3><p>Citas textuales verificadas al abrir contra su conversación vigente. «Ver origen» muestra la cadena hasta el archivo cargado.</p></div><KindBadge kind="observed"/></div>
+  <section className="ui-card" aria-label="Evidencia citada">
+   <header className="ui-card-head"><div className="ui-card-copy"><h2 className="ui-card-title">Lo que dicen los clientes</h2><p className="ui-card-desc">Citas textuales verificadas al abrir contra su conversación vigente</p></div><KindBadge kind="observed"/></header>
    {ev.esperando&&<WaitStatus {...ESPERA.evidencia}/>}
    {ev.sinAlcance&&!ev.citas&&<EmptyState compact art="doc" title="Abre este problema desde una publicación" body="Las citas se verifican con el periodo y los filtros de la publicación." action={<LinkButton href="/problems" size="sm" icon={<Arrow/>}>Ir a Problemas</LinkButton>}/>}
    {ev.fallo&&<p className="state state-error" role="alert">No se pudo verificar la evidencia ahora. <Button size="sm" icon={<Refresh/>} onClick={ev.reintentar}>Reintentar</Button></p>}
@@ -132,17 +148,6 @@ export function ProblemSheet({id,shared,captured,dinero,facts,onTitle}:{id:strin
     {ev.cobertura&&<p className="state" role="note">Citas verificadas de {nf.format(ev.cobertura.runsVerified)} de {nf.format(ev.cobertura.runsTotal)} extracciones del grupo: así la ficha abre rápido. Las demás siguen registradas, pero no se leen en esta vista.</p>}
     {ev.citas&&ev.citas.length>distintas.length&&<p className="state" role="note">{nf.format(ev.citas.length)} registros; las citas idénticas se muestran una vez con «×N».</p>}
    </>}
-  </section>
-
-  <section className="card" aria-label="Qué hacer">
-   <div className={s.cardHead}><div><h3>Recomendación e intervención</h3><p>Qué propone el sistema para este problema y en qué estado está su seguimiento.</p></div></div>
-   {f&&f.recommendations.state==='unavailable'&&<p className="state" role="status">No disponible ahora. <Button size="sm" icon={<Refresh/>} onClick={facts.reload}>Reintentar</Button></p>}
-   {f&&f.recommendations.state==='ok'&&!rec&&<EmptyState compact art="inbox" title="Aún sin recomendación" body="Cuando se genere una recomendación para este problema aparecerá aquí." action={<LinkButton href={'/recommendations?'+shared+'&problem_id='+encodeURIComponent(id)} size="sm" icon={<Arrow/>}>Ir a Recomendaciones</LinkButton>}/>}
-   {f&&f.recommendations.state==='ok'&&f.recommendations.items.length>0&&<ul className={s.recs}>{f.recommendations.items.map(r=><li key={r.id} className={s.rec}>
-    <div style={{minWidth:0}}><strong>{etiquetaRecomendacion(r.status)} · versión {r.version}</strong></div>
-    <LinkButton href={'/recommendations?'+shared+'&problem_id='+encodeURIComponent(id)} size="sm" icon={<Arrow/>} aria-label="Ver la recomendación de este problema">Ver recomendación</LinkButton>
-    <div className={s.chips}><span className="chip">Intervención: {estadoIntervencion(r)}</span></div>
-   </li>)}</ul>}
   </section>
 
   {dinero??<p className={s.impact} role="note">{IMPACTO_NO_DISPONIBLE}</p>}

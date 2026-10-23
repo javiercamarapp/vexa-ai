@@ -83,8 +83,17 @@ export function mesesIncompletos(report) {
 }
 
 /**
- * Lectura del corte publicado para «Dinero · Preparar». Es el corte ACTIVO (el que leen Resumen y Brief), no uno filtrado por la URL:
- * pasar date_start/date_end/snapshot_id de un enlace viejo daba 409/400 y «Reintentar» repetía la misma consulta fallida (A3, 23-oct).
- * resource=problems&meta_only=1 es la lectura barata de fijación de alcance (misma URL y misma caché que precalienta el menú).
+ * Lectura del corte publicado para «Dinero · Preparar» (resource=problems&meta_only=1: la lectura barata de fijación de alcance que usan Resumen y Brief).
+ * El servidor localiza el corte por periodo + moneda + base + exponente. Sin esos parámetros usa el MES EN CURSO con base «net», que no coincide con los cortes
+ * publicados (12 meses, base de marketplace): Preparar decía «Aún no hay un corte publicado» mientras Resumen y Brief sí lo leían (A3, QA-2 del 23-oct; el arreglo
+ * anterior había quitado también el periodo y la base de la URL). Aquí viajan el periodo, la moneda, la base, el exponente y los filtros del alcance; NO viajan
+ * snapshot_id ni scope_hash (un identificador viejo daba 409/400 y «Reintentar» repetía la misma consulta fallida): el corte vigente de ese alcance se resuelve solo.
  */
 export const URL_CORTE_PUBLICADO = '/api/workspace?resource=problems&meta_only=1';
+const CLAVES_LECTURA = ['date_start', 'date_end', 'currency', 'basis', 'exponent', 'timezone', 'date_basis', 'sku', 'source'];
+export function urlCortePublicado(consulta) {
+  const origen = new URLSearchParams(typeof consulta === 'string' ? consulta : consulta?.toString?.() ?? '');
+  const q = new URLSearchParams({resource: 'problems', meta_only: '1'});
+  for (const clave of CLAVES_LECTURA) for (const valor of origen.getAll(clave)) if (valor !== '') q.append(clave, valor);
+  return '/api/workspace?' + q.toString();
+}

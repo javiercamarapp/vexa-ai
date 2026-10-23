@@ -9,3 +9,4 @@ export type FilaFuente = {clave: string; fuente: string; registros: number; sinM
 export function filasPorFuente(report: unknown): FilaFuente[];
 export function mesesIncompletos(report: unknown): {meses: string[]; datosHasta: string | null};
 export const URL_CORTE_PUBLICADO: string;
+export function urlCortePublicado(consulta?: string | URLSearchParams): string;

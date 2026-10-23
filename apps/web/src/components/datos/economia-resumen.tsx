@@ -3,7 +3,7 @@ import {useMemo,useState,type ReactNode} from 'react';
 import type {Bundle} from '../../lib/workspace/contracts';
 import type {CfoReport} from '../../../../../packages/cfo-copilot/src/index.mjs';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
-import {URL_CORTE_PUBLICADO,resumenCorte,serieMensual,tarjetasPorMoneda,filasPorFuente,mesesIncompletos} from '../../lib/legibilidad/dinero.mjs';
+import {urlCortePublicado,resumenCorte,serieMensual,tarjetasPorMoneda,filasPorFuente,mesesIncompletos} from '../../lib/legibilidad/dinero.mjs';
 import {PageHeader} from '../ui/page-header';
 import {StatCard} from '../ui/stat-card';
 import {KindBadge} from '../ui/kind-badge';
@@ -26,8 +26,8 @@ const mesLargo=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'long',year:'n
 const pctBps=(b:number|null)=>b===null?'No disponible':(b/100).toLocaleString('es-MX',{maximumFractionDigits:1})+' %';
 
 /** Pantalla «Dinero · Preparar»: primero el estado de lo publicado y su cobertura; los formularios que escriben quedan plegados abajo. */
-export function EconomiaResumen({puedePreparar,children}:{query?:string;puedePreparar:boolean;children?:ReactNode}){
- const bundle=useJson<Bundle>(URL_CORTE_PUBLICADO,acceptBundle);
+export function EconomiaResumen({query='',puedePreparar,children}:{query?:string;puedePreparar:boolean;children?:ReactNode}){
+ const bundle=useJson<Bundle>(urlCortePublicado(query),acceptBundle);
  const rep=useJson<ReportState>('/cfo/data/report',acceptReport);
  const corte=useMemo(()=>resumenCorte(bundle.data?.meta),[bundle.data]);
  const report=rep.data?.status==='ok'?rep.data.report:null;

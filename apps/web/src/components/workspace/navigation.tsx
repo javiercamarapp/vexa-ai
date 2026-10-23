@@ -1,39 +1,44 @@
 'use client';
 import Link from './navigation-lifecycle';
-import {useId,useState} from 'react';
+import {useEffect,useId,useState} from 'react';
 import {usePathname,useSearchParams} from 'next/navigation';
 import {WorkspaceIcon} from './icon';
 import {consultaAlcance} from '../../lib/workspace/alcance.mjs';
-export const destinations=[['/overview','Resumen'],['/problems','Problemas'],['/recommendations','Recomendaciones'],['/explorer','Explorador'],['/preguntale','Pregúntale a tus datos'],['/interventions','Intervenciones'],['/briefs','Brief ejecutivo']] as const;
-export const navGroups:ReadonlyArray<readonly [string,ReadonlyArray<readonly [string,string,string]>]> = [
- ['Operación',[['/cfo','CFO del negocio','economics'],['/problems/manage','Gestionar problemas','problems'],['/analysis','Análisis','analysis']]],
- ['Datos e inteligencia',[['/imports','Importaciones','imports'],['/connections','Conexiones','connections'],['/history','Histórico','history'],['/evaluation','Evaluación histórica','analysis'],['/evaluation/candidates','Candidatos evaluados','recommendations'],['/migrations','Comparación de migración','connections']]],
- ['Administración',[['/economics','Gestión económica','economics'],['/notifications','Notificaciones','notifications'],['/settings/notifications','Preferencias de avisos','settings'],['/settings/team','Equipo','team'],['/settings/retention','Retención y borrado','settings']]]
-] as const;
+import {menuVisible,itemActivo,tituloDePantalla,iconoDePantalla,cerradosGuardados,type MenuItem,type MenuEntrada} from '../../lib/workspace/menu.mjs';
+const CLAVE_CERRADOS='vexa-nav-cerrados';
 /** El menú conserva solo el alcance (periodo, moneda, base, corte, filtros compartidos); los filtros propios de cada pantalla no viajan. */
 export function navigationQuery(_pathname:string,raw:string){return consultaAlcance(raw);}
-const extras:ReadonlyArray<readonly [string,string,string]>=[['/customers','Historial del cliente','customers'],['/jobs','Progreso de ingestión','imports'],['/settings/notification-delivery','Entrega de avisos','settings'],['/notifications/push','Avisos en el navegador','notifications']];
-export function workspaceTitle(pathname:string){const links=[...destinations,...extras,...navGroups.flatMap(([,links])=>links)];return [...links].sort((a,b)=>b[0].length-a[0].length).find(([href])=>pathname===href||pathname.startsWith(href+'/'))?.[1]??'Espacio de trabajo';}
-export function workspaceIconName(pathname:string){const links=[...destinations,...extras,...navGroups.flatMap(([,links])=>links)];const link=[...links].sort((a,b)=>b[0].length-a[0].length).find(([href])=>pathname===href||pathname.startsWith(href+'/'));return link?.[2]??link?.[0].slice(1)??'overview';}
-/** Vistas de operador: solo owner/analyst las ven en el menú; el acceso directo por URL sigue funcionando según los permisos de la propia página. */
-const operatorOnly=['/cfo','/economics'],cfoRoles=['owner','analyst'];
-export const navVisible=(href:string,role?:string)=>!operatorOnly.includes(href)||(role!==undefined&&cfoRoles.includes(role));
-export function Navigation({onNavigate,collapsed=false,role}:{onNavigate?:()=>void;collapsed?:boolean;role?:string}){
+export const workspaceTitle=tituloDePantalla;
+export const workspaceIconName=iconoDePantalla;
+/** Settings y las pantallas internas no usan el alcance del corte: su enlace va limpio. */
+const sinAlcance=(href:string)=>href.startsWith('/settings')||['/evaluation','/migrations'].some(p=>href===p||href.startsWith(p+'/'));
+type Corrida={tipo:'sueltos';items:MenuItem[]}|{tipo:'grupo';grupo:Extract<MenuEntrada,{tipo:'grupo'}>};
+function corridas(menu:MenuEntrada[]):Corrida[]{
+ const salida:Corrida[]=[];
+ for(const e of menu){
+  if(e.tipo==='grupo')salida.push({tipo:'grupo',grupo:e});
+  else{const ultimo=salida[salida.length-1];if(ultimo?.tipo==='sueltos')ultimo.items.push(e);else salida.push({tipo:'sueltos',items:[e]});}
+ }
+ return salida;
+}
+export function Navigation({onNavigate,collapsed=false,role,interno=false}:{onNavigate?:()=>void;collapsed?:boolean;role?:string;interno?:boolean}){
  const pathname=usePathname(),query=navigationQuery(pathname,useSearchParams().toString()),id=useId();
- const visible=(href:string)=>navVisible(href,role);
- const sections=[['Espacio de trabajo',destinations.filter(([href])=>href!=='/overview').map(([href,label])=>[href,label,href.slice(1)] as const)] as const,...navGroups.map(([group,links])=>[group,links.filter(([href])=>visible(href))] as const)];
- const rootItem=['/overview','Resumen','overview'] as const;
- const current=[{group:null,link:rootItem},...sections.flatMap(([group,links])=>links.map(link=>({group,link})))].sort((a,b)=>b.link[0].length-a.link[0].length).find(({link:[href]})=>pathname===href||pathname.startsWith(href+'/'));
- const [openGroup,setOpenGroup]=useState<string|null>(current?.group??'Espacio de trabajo');
- const [previousPath,setPreviousPath]=useState(pathname);
- if(previousPath!==pathname){setPreviousPath(pathname);setOpenGroup(current?.group??'Espacio de trabajo');}
- function item([href,label,icon]:readonly [string,string,string]){return <li key={href}><Link title={label} aria-label={collapsed?label:undefined} onClick={onNavigate} aria-current={current?.link[0]===href?'page':undefined} href={href+(!href.startsWith('/settings')&&href!=='/notifications'&&query?'?'+query:'')}><WorkspaceIcon name={icon}/><span className="nav-label">{label}</span></Link></li>;}
+ const menu=menuVisible({role,interno}),activo=itemActivo(pathname);
+ // Todos los grupos abiertos por defecto; lo que cierre la persona se recuerda en este navegador.
+ const [cerrados,setCerrados]=useState<string[]>([]);
+ useEffect(()=>{try{const guardado=cerradosGuardados(window.localStorage.getItem(CLAVE_CERRADOS));if(guardado.length){const frame=requestAnimationFrame(()=>setCerrados(guardado));return()=>cancelAnimationFrame(frame);}}catch{/* El estado recordado es opcional. */}},[]);
+ function alternar(clave:string){const siguiente=cerrados.includes(clave)?cerrados.filter(c=>c!==clave):[...cerrados,clave];setCerrados(siguiente);try{window.localStorage.setItem(CLAVE_CERRADOS,JSON.stringify(siguiente));}catch{/* La elección sigue valiendo en esta sesión. */}}
+ function item(link:MenuItem){return <li key={link.href}><Link title={link.titulo??link.etiqueta} aria-label={collapsed?link.etiqueta:undefined} onClick={onNavigate} aria-current={activo?.item.href===link.href?'page':undefined} href={link.href+(query&&!sinAlcance(link.href)?'?'+query:'')}><WorkspaceIcon name={link.icono}/><span className="nav-label">{link.etiqueta}</span></Link></li>;}
+ const grupoCerradoActual=!collapsed&&activo?.grupo&&cerrados.includes(activo.grupo);
  return <nav aria-label="Navegación principal">
-  <ul className="nav-root">{item(rootItem)}</ul>
-  {!collapsed&&current?.group&&openGroup!==current.group&&<div className="nav-current"><p className="nav-caption">Página actual</p><ul>{item(current.link)}</ul></div>}
-  {sections.map(([label,links],index)=>{const expanded=openGroup===label,controls=id+'-group-'+index;return <div className="nav-group" key={label}>
-   {!collapsed&&<button className="nav-group-toggle" type="button" aria-expanded={expanded} aria-controls={controls} onClick={()=>setOpenGroup(expanded?null:label)}><span>{label}</span><WorkspaceIcon name="chevron"/></button>}
-   <ul id={controls} hidden={!collapsed&&!expanded}>{links.map(item)}</ul>
-  </div>;})}
+  {grupoCerradoActual&&activo&&<div className="nav-current"><p className="nav-caption">Página actual</p><ul>{item(activo.item)}</ul></div>}
+  {corridas(menu).map((corrida,index)=>{
+   if(corrida.tipo==='sueltos')return <ul className="nav-root" key={'s'+index}>{corrida.items.map(item)}</ul>;
+   const {grupo}=corrida,expanded=!cerrados.includes(grupo.clave),controls=id+'-group-'+grupo.clave;
+   return <div className="nav-group" key={grupo.clave}>
+    {!collapsed&&<button className="nav-group-toggle" type="button" aria-expanded={expanded} aria-controls={controls} onClick={()=>alternar(grupo.clave)}><span>{grupo.etiqueta}</span><WorkspaceIcon name="chevron"/></button>}
+    <ul id={controls} hidden={!collapsed&&!expanded}>{grupo.items.map(item)}</ul>
+   </div>;
+  })}
  </nav>;
 }

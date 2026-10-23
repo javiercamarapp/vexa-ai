@@ -1,0 +1,9 @@
+export type MenuItem={href:string;etiqueta:string;icono:string;titulo?:string;alias?:readonly string[]};
+export type MenuEntrada=({tipo:'item'}&MenuItem&{roles?:readonly string[];interno?:boolean})|{tipo:'grupo';clave:string;etiqueta:string;roles?:readonly string[];interno?:boolean;items:readonly MenuItem[]};
+export const MENU:readonly MenuEntrada[];
+export function menuVisible(acceso?:{role?:string;interno?:boolean}):MenuEntrada[];
+export function todosLosItems():{item:MenuItem;grupo:string|null}[];
+export function itemActivo(pathname:string):{item:MenuItem;grupo:string|null}|null;
+export function tituloDePantalla(pathname:string):string;
+export function iconoDePantalla(pathname:string):string;
+export function cerradosGuardados(texto:string|null|undefined):string[];

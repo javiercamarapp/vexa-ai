@@ -2,7 +2,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {economicInitialScope} from '../src/lib/economic-scope';
-import {navGroups, navVisible} from '../src/components/workspace/navigation';
+import {MENU, menuVisible} from '../src/lib/workspace/menu.mjs';
 
 test('sin query: ventana de 12 meses y base de marketplace, nunca el mes fijo sep-2026', () => {
   const s = economicInitialScope(new URLSearchParams(''), new Date('2026-10-22T12:00:00Z'));
@@ -17,12 +17,11 @@ test('fechas o moneda inválidas en la query no se heredan', () => {
   const s = economicInitialScope(new URLSearchParams('date_start=ayer&date_end=2026-09-21&currency=pesos&exponent=22'), new Date('2026-10-22T12:00:00Z'));
   assert.equal(s.start, '2025-11-01'); assert.equal(s.currency, 'USD'); assert.equal(s.exponent, 2);
 });
-test('/economics no está en Operación y solo lo ven owner/analyst; operator y viewer no', () => {
-  const op = navGroups.find(([g]) => g === 'Operación')![1].map(([h]) => h);
-  assert.ok(!op.includes('/economics'));
-  const adm = navGroups.find(([g]) => g === 'Administración')![1].map(([h]) => h);
-  assert.ok(adm.includes('/economics'));
-  for (const r of ['owner', 'analyst']) assert.equal(navVisible('/economics', r), true);
-  for (const r of ['operator', 'viewer', undefined]) assert.equal(navVisible('/economics', r), false);
-  assert.equal(navVisible('/problems', 'viewer'), true);
+test('/economics es vista de operador: «Dinero > Preparar», solo para owner/analyst (el menú no protege la ruta; el servidor sí)', () => {
+  const dinero = MENU.find((e) => e.tipo === 'grupo' && e.clave === 'dinero');
+  assert.ok(dinero && dinero.tipo === 'grupo' && dinero.items.some((i) => i.href === '/economics'));
+  const ve = (role?: string) => menuVisible({ role }).flatMap((e) => (e.tipo === 'grupo' ? e.items : [e]).map((i) => i.href));
+  for (const r of ['owner', 'analyst']) assert.ok(ve(r).includes('/economics'));
+  for (const r of ['operator', 'viewer', undefined]) assert.ok(!ve(r).includes('/economics'));
+  assert.ok(ve('viewer').includes('/problems'));
 });

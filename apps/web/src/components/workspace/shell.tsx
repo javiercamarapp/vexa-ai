@@ -20,9 +20,8 @@ export function WorkspaceShell({children,brand,organizations,tenant,role,platfor
  function toggle(){setCollapsed(value=>{const next=!value;try{window.localStorage.setItem('vexa-sidebar-collapsed',String(next));}catch{/* Storage is optional. */}return next;});}
  function sidebar(mobile=false){return <>
    <div className="sidebar-brand"><Link href="/overview" aria-label="Rovaq AI, resumen" className="sidebar-logo">{brand}</Link><button className="icon-button" type="button" aria-label={mobile?'Cerrar menú':collapsed?'Expandir menú':'Contraer menú'} aria-expanded={mobile?undefined:!collapsed} onClick={mobile?close:toggle}><WorkspaceIcon name={mobile?'close':collapsed?'expand':'collapse'}/></button></div>
-   <div className="sidebar-navigation"><Navigation role={role} collapsed={!mobile&&collapsed} onNavigate={mobile?close:undefined}/></div>
+   <div className="sidebar-navigation"><Navigation role={role} interno={platformAccess} collapsed={!mobile&&collapsed} onNavigate={mobile?close:undefined}/></div>
    <div className="sidebar-footer">
-    <div className="workspace-context"><span className="nav-caption">Espacio de cliente</span><strong>{organization}</strong></div>
     {platformAccess&&<Link className="workspace-platform-link" href="/platform" aria-label="Administración de Rovaq AI" title="Administración de Rovaq AI"><WorkspaceIcon name="settings"/><span className="platform-link-label">Administración de Rovaq AI</span></Link>}
     <div className="sidebar-account"><span className="account-avatar" aria-hidden="true">{organization.slice(0,1).toUpperCase()}</span><div className="account-copy"><strong title={organization}>{organization}</strong><span>{roleLabel[role]??role}</span></div><form action="/auth/logout" method="post"><button className="icon-button" title="Cerrar sesión" aria-label="Cerrar sesión"><WorkspaceIcon name="logout"/></button></form></div>
    </div>

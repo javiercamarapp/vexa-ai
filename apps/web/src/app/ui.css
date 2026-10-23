@@ -598,3 +598,9 @@ a.card-link:hover{text-decoration:underline;text-underline-offset:.2em}
 @media(max-width:520px){.wait-status{grid-template-columns:1fr}.wait-elapsed{white-space:normal}}
 @media(prefers-reduced-motion:no-preference){.wait-bar>span{animation:wait-slide 1.6s ease-in-out infinite}@keyframes wait-slide{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}}
 .kind-nodata{background:var(--ui-soft);border:1px solid var(--ui-input)}.kind-nodata svg{color:var(--ui-secondary)}
+
+/* Pestañas de navegación entre vistas hermanas (enlaces, no paneles): p. ej. Problemas > Prioridades | Gestionar. */
+.tabs { display:flex; gap:4px; margin:0 0 var(--sp-4); border-bottom:1px solid var(--ui-border); overflow-x:auto; }
+.tab-link { display:inline-flex; align-items:center; min-height:40px; padding:6px 14px; margin-bottom:-1px; border-bottom:2px solid transparent; color:var(--ui-secondary); font-weight:500; text-decoration:none; white-space:nowrap; }
+.tab-link:hover { color:var(--ink); }
+.tab-link[aria-current=page] { color:var(--ink); border-bottom-color:var(--accent); font-weight:600; }

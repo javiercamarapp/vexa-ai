@@ -85,8 +85,8 @@
 .pc-vent>li{display:grid;grid-template-columns:minmax(120px,1.2fr) minmax(0,4fr) minmax(88px,auto);gap:10px;align-items:center;min-height:36px}
 .pc-vent-n{font-size:13px;color:var(--ink);overflow-wrap:anywhere}.pc-vent-n small{display:block;font-size:12px;color:var(--muted)}
 .pc-vent-pista{position:relative;height:12px;border-radius:999px;background:var(--ui-sunken)}
-.pc-vent-barra{position:absolute;top:0;bottom:0;border-radius:999px;background:var(--c,var(--chart-8));animation:pc-grow .5s ease-out both;transform-origin:left}
-.pc-vent-barra[data-parcial]{background:repeating-linear-gradient(45deg,var(--c,var(--chart-8)) 0 2px,transparent 2px 5px);border:1px solid var(--c,var(--chart-8));opacity:.75}
+.pc-vent-barra{position:absolute;top:0;bottom:0;border-radius:999px;background:var(--c,var(--chart-3));animation:pc-grow .5s ease-out both;transform-origin:left}
+.pc-vent-barra[data-parcial]{background:repeating-linear-gradient(45deg,var(--c,var(--chart-3)) 0 2px,transparent 2px 5px);border:1px solid var(--c,var(--chart-3));opacity:.75}
 .pc-vent-barra[data-sin]{border:1px dashed var(--muted);background:none}
 .pc-vent-f{font-size:12px;color:var(--muted);text-align:right;white-space:nowrap}
 .pc-eje{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}.pc-vent>li.pc-vent-eje{min-height:20px}
@@ -94,8 +94,8 @@
 @media(max-width:720px){.pc-vent>li{grid-template-columns:minmax(0,1fr);gap:2px;padding:6px 0}.pc-vent-f{text-align:left}}
 .pc-leyenda{display:flex;flex-wrap:wrap;gap:4px 14px;margin:0;padding:0;list-style:none;font-size:12px;color:var(--muted)}
 .pc-leyenda li{display:inline-flex;align-items:center;gap:6px}
-.pc-leyenda i{display:inline-block;width:14px;height:8px;border-radius:999px;background:var(--c,var(--chart-8))}
-.pc-leyenda i[data-parcial]{background:repeating-linear-gradient(45deg,var(--c,var(--chart-8)) 0 3px,transparent 3px 6px);border:1px solid var(--c,var(--chart-8))}
+.pc-leyenda i{display:inline-block;width:14px;height:8px;border-radius:999px;background:var(--c,var(--chart-3))}
+.pc-leyenda i[data-parcial]{background:repeating-linear-gradient(45deg,var(--c,var(--chart-3)) 0 3px,transparent 3px 6px);border:1px solid var(--c,var(--chart-3))}
 /* Tabla dentro de una tarjeta plana */
 .pc-card[data-flush] .ui-table-wrap{border:0;border-radius:0}
 .pc-card[data-flush] .ui-table th:first-child,.pc-card[data-flush] .ui-table td:first-child{padding-left:14px}
@@ -120,3 +120,4 @@
 .an-embudo{--kind-observed:var(--chart-7)}
 .an-cancel{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:12px;color:var(--muted)}
 .an-pager{margin:0}
+.pc-card td,.pc-card tbody th,.pc-card[data-flush] td,.pc-card[data-flush] tbody th{vertical-align:middle}

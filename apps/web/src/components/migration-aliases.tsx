@@ -61,9 +61,9 @@ export function MigrationAliases({onChange}:{onChange:()=>void}){
   {listing&&<>
   <div className="split" data-even>
    <KpiLinea label="Indicadores de identidades" items={[
-    {label:'Conversaciones cargadas',value:nf.format(listing.conversations.length)+(listing.nextCursor?'+':''),c:8,partes:[{label:'Sin ambigüedad',value:listing.conversations.length-ambiguous},{label:'Ambiguas',value:ambiguous}],nota:'En esta página'},
-    {label:'Identidades resueltas',value:listing.groups===null?'Sin resolver':nf.format(listing.groups.length),vacio:listing.groups===null,c:8,partes:listing.groups===null?undefined:[{label:'Resueltas',value:listing.groups.length}],nota:listing.groups===null?'Hay identidades ambiguas o procedencia pendiente.':'en esta organización'},
-    {label:'Ambiguas',value:nf.format(ambiguous),c:8,chip:ambiguous>0?{texto:'Revisar',tono:'warn'}:{texto:'Ninguna',tono:'ok'},partes:[{label:'Ambiguas',value:ambiguous},{label:'Sin ambigüedad',value:listing.conversations.length-ambiguous}],nota:'en las cargadas'}]}/>
+    {label:'Conversaciones cargadas',value:nf.format(listing.conversations.length)+(listing.nextCursor?'+':''),c:5,partes:[{label:'Sin ambigüedad',value:listing.conversations.length-ambiguous},{label:'Ambiguas',value:ambiguous}],nota:'En esta página'},
+    {label:'Identidades resueltas',value:listing.groups===null?'Sin resolver':nf.format(listing.groups.length),vacio:listing.groups===null,c:3,partes:listing.groups===null?undefined:[{label:'Resueltas',value:listing.groups.length}],nota:listing.groups===null?'Hay identidades ambiguas o procedencia pendiente.':'en esta organización'},
+    {label:'Ambiguas',value:nf.format(ambiguous),c:2,chip:ambiguous>0?{texto:'Revisar',tono:'warn'}:{texto:'Ninguna',tono:'ok'},partes:[{label:'Ambiguas',value:ambiguous},{label:'Sin ambigüedad',value:listing.conversations.length-ambiguous}],nota:'en las cargadas'}]}/>
    <section className="card" aria-label="Estado de las identidades"><div className="card-title"><div><h2>Estado de identidades</h2><p>Conversaciones cargadas</p></div></div>
     <DonutChart title="Identidades por estado de revisión" centerValue={nf.format(listing.conversations.length)} centerLabel="en total" segments={[{key:'clear',label:'Sin ambigüedad',value:listing.conversations.length-ambiguous,display:nf.format(listing.conversations.length-ambiguous),tone:1},{key:'amb',label:'Identidad ambigua',value:ambiguous,display:nf.format(ambiguous),tone:5}]}/>
    </section>

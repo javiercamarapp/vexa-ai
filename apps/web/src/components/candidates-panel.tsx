@@ -39,16 +39,16 @@ export function CandidatesPanel(){const[data,setData]=useState<State|null>(null)
   {error&&!data?<DataState state={{kind:'error',message:error,code:'candidates'}}/>:error&&<div role="alert" className="notice-bar"><Icon name="alert" size={14}/><p>{error}</p></div>}
   {data&&<>
    <KpiLinea label="Indicadores de candidatos" items={[
-    {label:'Versión activa',value:nf.format(data.version),c:8,partes:[{label:'Activa',value:1}],nota:data.activeCandidateId?'Candidato '+data.activeCandidateId.slice(0,8):'Configuración predeterminada'},
-    {label:'Evaluaciones firmadas',value:nf.format(data.results.length)+(data.next.results!==null?'+':''),c:8,partes:[{label:'Cumplen',value:eligibleCount},{label:'No cumplen',value:data.results.length-eligibleCount}],nota:'Con evaluación independiente'},
-    {label:'Cumplen criterios',value:nf.format(eligibleCount),c:8,partes:[{label:'Cumplen',value:eligibleCount},{label:'No cumplen',value:data.results.length-eligibleCount}],nota:'de '+nf.format(data.results.length)+' cargadas'},
-    {label:'Versiones en el historial',value:nf.format(data.history.length)+(data.next.history!==null?'+':''),c:8,partes:data.history.map((h,i)=>({label:'v'+i,value:1})),nota:'Cada cambio es un registro nuevo'}]}/>
+    {label:'Versión activa',value:nf.format(data.version),c:5,partes:[{label:'Activa',value:1}],nota:data.activeCandidateId?'Candidato '+data.activeCandidateId.slice(0,8):'Configuración predeterminada'},
+    {label:'Evaluaciones firmadas',value:nf.format(data.results.length)+(data.next.results!==null?'+':''),c:3,partes:[{label:'Cumplen',value:eligibleCount},{label:'No cumplen',value:data.results.length-eligibleCount}],nota:'Con evaluación independiente'},
+    {label:'Cumplen criterios',value:nf.format(eligibleCount),c:1,partes:[{label:'Cumplen',value:eligibleCount},{label:'No cumplen',value:data.results.length-eligibleCount}],nota:'de '+nf.format(data.results.length)+' cargadas'},
+    {label:'Versiones en el historial',value:nf.format(data.history.length)+(data.next.history!==null?'+':''),c:7,partes:data.history.map((h,i)=>({label:'v'+i,value:1})),nota:'Cada cambio es un registro nuevo'}]}/>
    {!data.results.length?<EmptyState art="shield" title="Aún no hay evaluaciones firmadas" body="Registra el recibo del custodio para comparar candidatos." action={<Button variant="primary" onClick={()=>setRegistering(true)}>Registrar evaluación</Button>}/>
    :<>
    <div className="split" data-even>
     <section className="card" aria-label="Utilidad por candidato">
      <div className="card-title"><div><h2>Utilidad por candidato</h2><p>Longitud proporcional al valor mayor</p></div></div>
-     <BarList empty="Sin utilidades registradas." max={Math.max(0,...utilities.map(u=>u??0))||1} items={data.results.map(r=>({key:r.id,label:r.candidateId,value:r.summary?r.summary.utility:null,display:r.summary?(r.summary.utility===null?'desconocida':String(r.summary.utility)):'sin firma',kind:'observed' as const,note:r.summary?nf.format(r.summary.eligibleCases)+' casos':undefined}))}/>
+     <BarList c={6} empty="Sin utilidades registradas." max={Math.max(0,...utilities.map(u=>u??0))||1} items={data.results.map(r=>({key:r.id,label:r.candidateId,value:r.summary?r.summary.utility:null,display:r.summary?(r.summary.utility===null?'desconocida':String(r.summary.utility)):'sin firma',kind:'observed' as const,note:r.summary?nf.format(r.summary.eligibleCases)+' casos':undefined}))}/>
     </section>
     <section className="card" aria-label="Confirmación humana">
      <div className="card-title"><div><h2>Confirmación humana</h2><p>Necesaria para seleccionar o restaurar</p></div><StatusChip tone={canChange?'ok':'muted'}>{canChange?'Lista':'Pendiente'}</StatusChip></div>

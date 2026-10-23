@@ -160,13 +160,13 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
    <Kpi label="Revisión crítica" value={nCrit===null||!critDisponible?<span className={s.kpiNA}>No disponible</span>:nf.format(nCrit)} note={catalogo?.critical&&critDisponible?`${nf.format(catalogo.critical.signals)} señales críticas`:'Se calcula al abrir'}>{critDisponible&&<Columnas valores={cats.slice(0,12).map(c=>c.criticos??0)} label="Grupos críticos por categoría"/>}</Kpi>
   </div>
   {conImporte&&<div className={s.row84}>
-   <section className="ui-card" aria-label="Comparación de exposición por problema"><header className="ui-card-head"><div className="ui-card-copy"><h2 className="ui-card-title">Ingresos expuestos por problema</h2><p className="ui-card-desc">{bundle.meta.scope?.currency??''} · no se suma entre problemas</p></div></header><BarList items={bars}/></section>
    <div className="stack">
-    <section className="ui-card" aria-label="Lo más importante"><header className="ui-card-head"><div className="ui-card-copy"><h2 className="ui-card-title">Lo más importante</h2></div></header><InsightList insights={insights}/></section>
-    <section className="ui-card" aria-label="Problemas por estado"><header className="ui-card-head"><div className="ui-card-copy"><h2 className="ui-card-title">Estado de la cobertura</h2></div></header>
+   <section className="ui-card" aria-label="Comparación de exposición por problema"><header className="ui-card-head"><div className="ui-card-copy"><h2 className="ui-card-title">Ingresos expuestos por problema</h2><p className="ui-card-desc">{bundle.meta.scope?.currency??''} · no se suma entre problemas</p></div></header><BarList items={bars} c={1}/></section>
+<section className="ui-card" aria-label="Problemas por estado"><header className="ui-card-head"><div className="ui-card-copy"><h2 className="ui-card-title">Estado de la cobertura</h2></div></header>
      <DonutChart title="Problemas por estado de cobertura" centerValue={items.length} centerLabel="problemas" segments={[{key:'ready',label:'Cobertura completa',value:by('ready'),display:String(by('ready')),tone:1},{key:'partial',label:'Cobertura parcial',value:by('partial'),display:String(by('partial')),tone:5},{key:'stale',label:'Corte anterior',value:by('stale'),display:String(by('stale')),tone:'neutral'}]}/>
     </section>
    </div>
+    <section className="ui-card" aria-label="Lo más importante"><header className="ui-card-head"><div className="ui-card-copy"><h2 className="ui-card-title">Lo más importante</h2></div></header><InsightList insights={insights}/></section>
   </div>}
   {visibles.length>0&&<div className={s.row84}>
    <Categorias cats={cats} sel={clave} onSelect={elegirCategoria}/>

@@ -64,3 +64,21 @@
 .workspace-content .ac-pie details:not(.nav-group):not(.fold):not(.detail-admin)>summary{border:0;padding:0 4px 0 0;min-height:28px;background:none;font-size:12px;font-weight:500;color:var(--muted)}
 .workspace-content .ac-pie details:not(.nav-group):not(.fold):not(.detail-admin)>summary:hover{background:none;color:var(--ink)}
 .pc-card[data-flush]>.ac-vacio{flex:1 1 auto;display:flex;align-items:center;justify-content:center;margin:0 14px 14px!important}
+/* F3-B: «Por decidir» sin columna de texto estrecha: texto ancho | cifras y dinero apilados | botones */
+@media(min-width:1000px){
+ .ac-fila[data-vista=por-decidir]:not([data-descartada]){grid-template-columns:minmax(0,1fr) minmax(0,340px) 210px;grid-template-areas:"main cifras botones" "main dinero botones"}
+ .ac-fila[data-vista=por-decidir] .ac-main{grid-area:main}
+ .ac-fila[data-vista=por-decidir] .ac-cifras{grid-area:cifras;gap:8px}
+ .ac-fila[data-vista=por-decidir] .ac-dinero{grid-area:dinero;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:2px 12px;align-content:start;padding-top:8px;border-top:1px solid var(--ui-border);margin-left:16px;padding-left:0;border-left:0}
+ .ac-fila[data-vista=por-decidir] .ac-dinero>small{grid-column:1}
+ .ac-fila[data-vista=por-decidir] .ac-botones{grid-area:botones}
+}
+.ac-cifra small{font-size:12px}
+@media(min-width:1000px){
+ .ac-fila[data-vista=por-decidir]:not([data-descartada]){grid-template-columns:minmax(0,1fr) minmax(0,340px) 260px}
+ .ac-fila[data-vista=por-decidir] .ac-dinero>:nth-child(1){grid-column:1;grid-row:1}
+ .ac-fila[data-vista=por-decidir] .ac-dinero>:nth-child(2){grid-column:1;grid-row:2}
+ .ac-fila[data-vista=por-decidir] .ac-dinero>:nth-child(3){grid-column:1;grid-row:3}
+ .ac-fila[data-vista=por-decidir] .ac-dinero>:nth-child(4){grid-column:2;grid-row:1;margin-top:0}
+ .ac-fila[data-vista=por-decidir] .ac-dinero>:nth-child(5){grid-column:2;grid-row:2}
+}

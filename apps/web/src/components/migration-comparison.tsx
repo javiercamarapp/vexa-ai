@@ -41,8 +41,8 @@ export function MigrationComparison(){
   {error&&<p role="alert" className="notice-bar"><Icon name="alert" size={14}/>{error}</p>}
   {!loaded&&!error&&<><p role="status" className="sr-only">Cargando cortes…</p><SkeletonStats count={2}/></>}
   {loaded&&<KpiLinea label="Indicadores de cortes" items={[
-   {label:'Cortes guardados',value:nf.format(snapshots.length)+(nextCursor?'+':''),c:8,partes:snapshots.map(x=>({label:x.id.slice(0,6),value:Number(x.summary.conversations)})),nota:snapshots.length?'Conversaciones por corte':'Sin cortes'},
-   {label:'Conversaciones del último corte',value:snapshots[0]?nf.format(snapshots[0].summary.conversations):'—',vacio:!snapshots[0],c:8,partes:snapshots[0]?[{label:'Último',value:Number(snapshots[0].summary.conversations)}]:undefined,nota:snapshots[0]?'Corte '+snapshots[0].id.slice(0,6)+'…'+snapshots[0].id.slice(-3):'Sin cortes'}]}/>}
+   {label:'Cortes guardados',value:nf.format(snapshots.length)+(nextCursor?'+':''),c:5,partes:snapshots.map(x=>({label:x.id.slice(0,6),value:Number(x.summary.conversations)})),nota:snapshots.length?'Conversaciones por corte':'Sin cortes'},
+   {label:'Conversaciones del último corte',value:snapshots[0]?nf.format(snapshots[0].summary.conversations):'—',vacio:!snapshots[0],c:3,partes:snapshots[0]?[{label:'Último',value:Number(snapshots[0].summary.conversations)}]:undefined,nota:snapshots[0]?'Corte '+snapshots[0].id.slice(0,6)+'…'+snapshots[0].id.slice(-3):'Sin cortes'}]}/>}
   {loaded&&!snapshots.length&&<EmptyState art="doc" title="Aún no hay cortes publicados" body="Congela el conjunto de datos para crear el primero." compact/>}
   <div className="split" data-even>
    <fieldset className="card" disabled={busy||denied} style={{margin:0}}><legend className="sr-only">Seleccionar cortes guardados</legend>
@@ -55,7 +55,7 @@ export function MigrationComparison(){
    </fieldset>
    <section className="card" aria-label="Cortes por tamaño">
     <div className="card-title"><div><h2>Cortes guardados</h2><p>Conversaciones por corte, más recientes primero</p></div></div>
-    <BarList empty="Sin cortes todavía." items={snapshots.slice(0,6).map(s=>({key:s.id,label:s.watermark,value:s.summary.conversations,display:nf.format(s.summary.conversations),kind:'observed' as const}))}/>
+    <BarList c={5} empty="Sin cortes todavía." items={snapshots.slice(0,6).map(s=>({key:s.id,label:s.watermark,value:s.summary.conversations,display:nf.format(s.summary.conversations),kind:'observed' as const}))}/>
    </section>
   </div>
   <form className="card" onSubmit={e=>{e.preventDefault();void action(async()=>{const data=await api('',{dateStart:new Date(start+'T00:00:00Z').toISOString(),dateEnd:new Date(end+'T00:00:00Z').toISOString(),timezone,currency,dateBasis:'conversation',sources:sources.split(',').map(x=>x.trim()).filter(Boolean),channels:channels.split(',').map(x=>x.trim()).filter(Boolean)});setAfter(data.snapshot.id);setResult(null);await refresh();});}}><fieldset disabled={busy||denied} className={css.form} style={{margin:0,padding:0,border:0}}><legend className="sr-only">Congelar un corte nuevo — propietario o analista</legend>

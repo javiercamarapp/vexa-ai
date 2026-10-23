@@ -149,3 +149,15 @@
 .page-header-description{max-width:none;margin:2px 0 0;font-size:13px;line-height:1.4}
 .page-header h1{margin:0}
 .stack>.page-header{margin-bottom:0}
+
+/* F3-B: BarList con color de métrica (prop c): la barra toma --chart-n sea cual sea el tipo de dato; el estimado conserva la trama */
+.barlist[data-c] .barlist-fill.bar-observed,.barlist[data-c] .barlist-fill.bar-inferred,.barlist[data-c] .barlist-fill.bar-unclassified{background:var(--chart-bar)}
+.barlist[data-c] .barlist-fill.bar-estimated{background:repeating-linear-gradient(135deg,var(--chart-bar) 0 4px,color-mix(in srgb,var(--chart-bar) 50%,var(--ui-surface)) 4px 8px)}
+.barlist[data-c] .barlist-track{height:6px}
+
+/* F3-B: tonos de dona con color de métrica (antes escala de grises) */
+.donut-seg[data-tone="1"]{stroke:var(--chart-1)}.donut-sw[data-tone="1"]{background:var(--chart-1)}
+.donut-seg[data-tone="2"]{stroke:var(--chart-2)}.donut-sw[data-tone="2"]{background:var(--chart-2)}
+.donut-seg[data-tone="3"]{stroke:var(--chart-3)}.donut-sw[data-tone="3"]{background:var(--chart-3)}
+.donut-seg[data-tone="4"]{stroke:var(--chart-4)}.donut-sw[data-tone="4"]{background:var(--chart-4)}
+.donut-seg[data-tone="5"]{stroke:var(--chart-5)}.donut-sw[data-tone="5"]{background:var(--chart-5)}

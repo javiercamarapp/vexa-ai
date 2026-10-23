@@ -42,10 +42,10 @@ export function EvaluationPanel(){const [cohortCursor,setCohortCursor]=useState<
   {!state&&loading&&!error&&<SkeletonStats count={2}/>}
   {state&&<>
    <KpiLinea label="Indicadores de evaluación" items={[
-    {label:'Cohortes guardadas',value:nf.format(state.cohorts.length)+(state.cohortNextCursor?'+':''),c:8,partes:state.cohorts.map(c=>({label:when(c.cutoff),value:c.count})),nota:state.cohortNextCursor?'Hay más cohortes en la siguiente página.':'Conversaciones por cohorte'},
-    {label:'Conexiones históricas',value:nf.format(state.connections.length),c:8,partes:state.connections.map(c=>({label:c.source,value:1})),nota:state.connections.map(c=>c.source).join(', ')||'Sin conexiones'},
-    {label:'Conversaciones en la cohorte',value:page?nf.format(page.cohort.count):'—',vacio:!page,c:8,partes:page?[{label:'Elegibles',value:okCount},{label:'Excluidas',value:excludedCount}]:undefined,nota:page?'Corte '+when(page.cohort.cutoff):'Elige una cohorte para revisarla'},
-    {label:'Elegibles en esta página',value:page?nf.format(okCount):'—',vacio:!page,c:8,partes:page?[{label:'Elegibles',value:okCount},{label:'Excluidos',value:excludedCount}]:undefined,nota:page?'de '+nf.format(items.length)+' casos mostrados':'Sin cohorte abierta'}]}/>
+    {label:'Cohortes guardadas',value:nf.format(state.cohorts.length)+(state.cohortNextCursor?'+':''),c:5,partes:state.cohorts.map(c=>({label:when(c.cutoff),value:c.count})),nota:state.cohortNextCursor?'Hay más cohortes en la siguiente página.':'Conversaciones por cohorte'},
+    {label:'Conexiones históricas',value:nf.format(state.connections.length),c:3,partes:state.connections.map(c=>({label:c.source,value:1})),nota:state.connections.map(c=>c.source).join(', ')||'Sin conexiones'},
+    {label:'Conversaciones en la cohorte',value:page?nf.format(page.cohort.count):'—',vacio:!page,c:1,partes:page?[{label:'Elegibles',value:okCount},{label:'Excluidas',value:excludedCount}]:undefined,nota:page?'Corte '+when(page.cohort.cutoff):'Elige una cohorte para revisarla'},
+    {label:'Elegibles en esta página',value:page?nf.format(okCount):'—',vacio:!page,c:7,partes:page?[{label:'Elegibles',value:okCount},{label:'Excluidos',value:excludedCount}]:undefined,nota:page?'de '+nf.format(items.length)+' casos mostrados':'Sin cohorte abierta'}]}/>
    {!state.cohorts.length?<EmptyState art="doc" title="Aún no hay cohortes de desarrollo" body="Crea una cohorte con un corte de fecha para revisar resultados existentes." action={<Button variant="primary" onClick={()=>setCreating(true)}>Crear cohorte</Button>}/>
    :<section className="card" aria-label="Cohortes guardadas">
     <div className="card-title"><div><h2>Cohortes guardadas</h2><p>Elige una para revisar sus casos</p></div></div>
@@ -61,7 +61,7 @@ export function EvaluationPanel(){const [cohortCursor,setCohortCursor]=useState<
      </section>
      <section className="card" aria-label="Motivos de exclusión">
       <div className="card-title"><div><h2>Motivos de exclusión</h2><p>{nf.format(withFeedback)} con comentario versionado</p></div></div>
-      <BarList empty="Ningún caso de esta página fue excluido." items={reasonRows.map(([key,n])=>({key,label:reasonText(key==='unknown'?null:key),value:n,display:nf.format(n),kind:'observed' as const}))}/>
+      <BarList c={5} empty="Ningún caso de esta página fue excluido." items={reasonRows.map(([key,n])=>({key,label:reasonText(key==='unknown'?null:key),value:n,display:nf.format(n),kind:'observed' as const}))}/>
      </section>
     </div>
     <section className="card" aria-label="Casos de la cohorte">

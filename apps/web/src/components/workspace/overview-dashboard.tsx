@@ -32,6 +32,7 @@ import {comparacionMensual,ledgerConDatos} from '../../lib/legibilidad/meses.mjs
 import {hace} from '../../lib/workspace/swr.mjs';
 import {precalentarPantallas,PANTALLAS_PRINCIPALES} from '../../lib/workspace/precalentar.mjs';
 import {consultaAlcance} from '../../lib/workspace/alcance.mjs';
+import {lineaAvisos} from '../../lib/legibilidad/resumen-ejecutivo.mjs';
 import {StatusStrip,ExecKpis,TopProblems,Attention,HowCalculated,useCriticos,acceptCoverage} from './executive';
 import type {CoverageView} from '../../../../../packages/workspace-service/provenance.mjs';
 import {kpiConversaciones,kpiPedidos,estadoFuentes,mesesCoberturaBaja} from '../../lib/legibilidad/resumen-ejecutivo.mjs';
@@ -97,7 +98,7 @@ export function OverviewDashboard({bundle,pinned,avisos=[],cache}:{bundle:Bundle
   {label:'Cobertura de análisis',kind:'observed' as const,icon:'database',value:fuentes.analisis?<strong>{fuentes.analisis.pct.toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %</strong>:cargC?Esp:NA,foot:fuentes.analisis?`${nf.format(fuentes.analisis.incorporadas)} de ${nf.format(fuentes.analisis.de)} conversaciones de HubSpot incorporadas`:cargC?'Cargando la cobertura…':'La cobertura no está disponible ahora'}
  ];
  return <div className="stack overview">
-  <StatusStrip fuentes={fuentes} cargando={cobertura.busy} dineroDisponible={!!exposure} onCobertura={()=>setVerCobertura(v=>!v)} avisos={[...avisos,...(faltantes.length>0?[{key:'faltantes',node:<aside className="notice-bar" data-tone="info" role="note"><Icon name="info" size={14}/><div><strong>{faltantes.length===1?'Una cifra sin cobertura todavía':faltantes.length+' cifras sin cobertura todavía'}</strong><ul>{faltantes.map(f=><li key={f.key}><strong>{f.metric.label}</strong>: {QUE_FALTA[f.metric.kind]??f.coverage.label}. No es cero.</li>)}</ul><p><LinkButton href="/imports" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>{bundle.meta.can_manage&&<> <LinkButton href="/economics" size="sm" variant="ghost" icon={<Arrow/>}>Revisar fuentes y vínculos</LinkButton></>}</p></div></aside>}]:[])]}/>
+  <StatusStrip linea={lineaAvisos({critico:avisos.some(a=>a.key==='critico'),pendiente:avisos.some(a=>a.key==='pendiente'),parcialCarga:avisos.some(a=>a.key==='parcial'),faltantes:faltantes.map(f=>f.metric.label),conv,led,ahora})} fuentes={fuentes} cargando={cobertura.busy} dineroDisponible={!!exposure} onCobertura={()=>setVerCobertura(v=>!v)} avisos={[...avisos,...(faltantes.length>0?[{key:'faltantes',node:<aside className="notice-bar" data-tone="info" role="note"><Icon name="info" size={14}/><div><strong>{faltantes.length===1?'Una cifra sin cobertura todavía':faltantes.length+' cifras sin cobertura todavía'}</strong><ul>{faltantes.map(f=><li key={f.key}><strong>{f.metric.label}</strong>: {QUE_FALTA[f.metric.kind]??f.coverage.label}. No es cero.</li>)}</ul><p><LinkButton href="/imports" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>{bundle.meta.can_manage&&<> <LinkButton href="/economics" size="sm" variant="ghost" icon={<Arrow/>}>Revisar fuentes y vínculos</LinkButton></>}</p></div></aside>}]:[])]}/>
   {verCobertura&&<CoverageBand/>}
   <LineaCache edadMs={edadMax} actualizando={algunaActualizando} viejo={algunaVieja} onActualizar={()=>window.dispatchEvent(new Event('vexa:refresh'))}/>
   <ExecKpis items={kpis}/>

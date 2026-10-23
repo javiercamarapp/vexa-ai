@@ -64,3 +64,22 @@ export function estadoFuentes(view,{libro=null,conversaciones=null}={}){
  return {cargadas,total:fuentes?fuentes.length:null,sinCargar:fuentes?fuentes.filter(s=>!s.loaded&&s.status!=='timeout').map(s=>s.label):[],
   analisis:base&&inc!==null?{incorporadas:inc,de:base,pct:Math.round(inc*1000/base)/10}:null,cortes};
 }
+
+/** Una línea de estado con lo clave de los avisos críticos reales del Resumen (qué falta / qué ajustar); el detalle queda en el plegable.
+ *  null si no hay ningún aviso crítico real. Entrada: `critico` y `pendiente` (booleanos), `parcialCarga` (la carga misma es parcial),
+ *  `faltantes` (etiquetas de cifras sin cobertura), `conv`/`led` (payloads de tendencias): meses YA TERMINADOS cuyo último dato no llega a su último día. */
+export function lineaAvisos({critico=false,pendiente=false,parcialCarga=false,faltantes=[],conv=null,led=null,ahora=new Date()}={}){
+ const partes=[];
+ if(critico)partes.push('hay señales críticas por revisar');
+ if(pendiente)partes.push('señales críticas sin calcular en esta carga');
+ if(parcialCarga)partes.push('la carga de datos es parcial');
+ if(faltantes.length)partes.push(faltantes.length===1?`falta cobertura de ${faltantes[0]}`:`faltan ${faltantes.length} cifras por cobertura (${faltantes.slice(0,3).join(', ')}${faltantes.length>3?'…':''})`);
+ const mesActual=ahora.toISOString().slice(0,7);
+ for(const [nombre,src] of [['conversaciones',conv],['libro',led]]){
+  const corte=src?.completeness?.dataThrough?String(src.completeness.dataThrough).slice(0,10):null;
+  if(!corte||!Array.isArray(src?.series))continue;
+  const meses=src.series.filter(p=>p.month<mesActual&&!esMesCompleto(p.month,{dataThrough:corte,ahora})&&(Number(p.count??p.orders?.count??0)>0)).map(p=>nombreMes(p.month));
+  if(meses.length)partes.push(`${nombre}: ${meses.join(' y ')} parcial (datos hasta el ${diaLargoUtc(corte)}), sin comparación`);
+ }
+ return partes.length?'Estado de los datos: '+partes.join(' · ')+'.':null;
+}

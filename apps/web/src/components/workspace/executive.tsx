@@ -29,7 +29,7 @@ const acceptTrend=(j:unknown)=>{const d=(j as {data?:MonthlyIncidencesView})?.da
 type Fuentes=NonNullable<ReturnType<typeof import('../../lib/legibilidad/resumen-ejecutivo.mjs').estadoFuentes>>;
 
 /** UNA franja de estado: cobertura de fuentes, «datos hasta» por fuente, dinero por problema y avisos plegables (antes 3 banners antes de la primera cifra). */
-export function StatusStrip({fuentes,cargando,avisos,onCobertura,dineroDisponible}:{fuentes:Fuentes|null;cargando:boolean;avisos:{key:string;node:ReactNode}[];onCobertura:()=>void;dineroDisponible:boolean}){
+export function StatusStrip({linea=null,fuentes,cargando,avisos,onCobertura,dineroDisponible}:{linea?:string|null;fuentes:Fuentes|null;cargando:boolean;avisos:{key:string;node:ReactNode}[];onCobertura:()=>void;dineroDisponible:boolean}){
  return <section className={s.strip} aria-label="Estado de los datos">
   <div className={s.stripRow}>
    <span className={s.stripItem}>Fuentes con datos: {fuentes&&fuentes.cargadas!==null?<strong>{fuentes.cargadas} de {fuentes.total}</strong>:cargando?<CifraCargando/>:<strong>No disponible ahora</strong>}{fuentes&&fuentes.sinCargar.length>0&&<span>(sin cargar: {fuentes.sinCargar.join(', ')})</span>}</span>
@@ -37,6 +37,7 @@ export function StatusStrip({fuentes,cargando,avisos,onCobertura,dineroDisponibl
    {!dineroDisponible&&<span className={s.stripItem}>Dinero por problema: <strong>No disponible</strong></span>}
    <Button size="sm" variant="ghost" onClick={onCobertura}>Ver cobertura</Button>
   </div>
+  {linea&&<p className={s.lineaAvisos} role="status" data-testid="linea-avisos">{linea}</p>}
   {avisos.length>0&&<details className={s.avisos}><summary>{avisos.length===1?'1 aviso':`${avisos.length} avisos`}</summary><div>{avisos.map(a=><div key={a.key}>{a.node}</div>)}</div></details>}
  </section>;
 }

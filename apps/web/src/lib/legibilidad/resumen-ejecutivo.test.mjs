@@ -1,7 +1,7 @@
 //   node --test apps/web/src/lib/legibilidad/resumen-ejecutivo.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {kpiConversaciones,kpiPedidos,topProblemas,estadoFuentes,mesesCoberturaBaja} from './resumen-ejecutivo.mjs';
+import {lineaAvisos,kpiConversaciones,kpiPedidos,topProblemas,estadoFuentes,mesesCoberturaBaja} from './resumen-ejecutivo.mjs';
 const AHORA=new Date('2026-10-23T00:00:00Z');
 const conv={status:'ok',class:'observed',series:[{month:'2026-07',count:900},{month:'2026-08',count:2575},{month:'2026-09',count:1318},{month:'2026-10',count:77}],completeness:{dataThrough:'2026-10-05T00:00:00.000Z'}};
 test('conversaciones: último mes completo vs anterior; octubre parcial no entra',()=>{
@@ -56,4 +56,12 @@ test('datos hasta el 18-sep (último mensaje real): septiembre es parcial, sin f
  const k=kpiConversaciones({status:'ok',class:'observed',series:REAL,completeness:{dataThrough:'2026-09-18'}},AHORA);
  assert.equal(k.delta,null);assert.equal(k.mes,'2026-08');assert.equal(k.valor,2576);assert.deepEqual(k.coberturaParcial,['septiembre']);assert.equal(k.datosHasta,'2026-09-18');
  assert.equal(k.rotulo,'Cobertura parcial en septiembre (datos hasta el 18 de septiembre); sin comparación');
+});
+
+test('línea de avisos: solo con avisos críticos reales; resume qué falta y qué mes es parcial',()=>{
+ assert.equal(lineaAvisos({conv:{series:REAL,completeness:{dataThrough:'2026-10-18'}},ahora:AHORA}),null,'sin avisos y con datos completos no hay línea');
+ const l=lineaAvisos({critico:true,faltantes:['Exposición','Reembolsos'],conv:{series:REAL,completeness:{dataThrough:'2026-09-18'}},led:{series:[{month:'2026-09',orders:{count:5}}],completeness:{dataThrough:'2026-09-30'}},ahora:AHORA});
+ assert.match(l,/^Estado de los datos: hay señales críticas por revisar · faltan 2 cifras por cobertura \(Exposición, Reembolsos\) · conversaciones: septiembre parcial \(datos hasta el 18 de septiembre\), sin comparación\.$/);
+ assert.ok(!/libro/.test(l),'el libro con datos hasta el 30-sep no es parcial');
+ assert.match(lineaAvisos({faltantes:['Exposición']}),/falta cobertura de Exposición/);
 });

@@ -37,7 +37,7 @@ const page=await ctx.newPage();const errores=[];page.on('pageerror',e=>errores.p
 page.on('console',m=>{if(m.type()==='error'&&!/Failed to load resource|fixture_missing|503/.test(m.text()))errores.push(m.text().slice(0,200));});
 const claves=()=>page.evaluate(()=>Object.keys(sessionStorage).filter(k=>k.startsWith('vexa:swr:')).length);
 const muestrear=async(destino,esperaMs,accion)=>{
- await page.evaluate(d=>{window.__s={t0:performance.now(),frames:[],stop:false};const f=()=>{const root=document.querySelector('.workspace-content');const cargando=root?root.querySelectorAll('.skeleton,.skel-chart,.wait-status,.skel-rows,:not(button)[aria-busy="true"]').length:99;
+ await page.evaluate(d=>{window.__s={t0:performance.now(),frames:[],stop:false};const f=()=>{const root=document.querySelector('.workspace-content');
   const fb=!!root?.querySelector('.state-loading');const sel='.skeleton,.skel-chart,.wait-status,.skel-rows,:not(button)[aria-busy="true"]';const todos=root?[...root.querySelectorAll(sel)].filter(e=>!e.closest('.state-loading')):[];const q=todos[0];
   window.__s.frames.push({t:performance.now()-window.__s.t0,quien:q?(q.className||q.tagName)+' <'+(q.parentElement?.className||q.parentElement?.tagName)+'>':null,ruta:location.pathname===d,fb,cargando:todos.length,len:root?root.innerText.length:0,linea:root?.querySelector('[data-testid=linea-cache]')?.textContent??null});if(!window.__s.stop)requestAnimationFrame(f);};requestAnimationFrame(f);},destino);
  await accion();await dormir(esperaMs);
@@ -77,7 +77,7 @@ await dormir(LAT*6+2500);
 // 3) Ir y volver (fresca): segunda visita instantánea, sin esqueleto, sin red.
 const PANTALLAS=[['Problemas','/problems'],['Recomendaciones','/recommendations'],['Brief ejecutivo','/briefs'],['Explorador','/explorer'],['Dinero','/cfo'],['Fuentes','/connections']];
 const primeras={};
-for(const [menu,ruta] of PANTALLAS){
+for(const [,ruta] of PANTALLAS){
  const m1=await muestrear(ruta,LAT*4+1500,()=>irMenu(ruta));primeras[ruta]=m1;
  await irMenu('/overview');await dormir(400);
 }

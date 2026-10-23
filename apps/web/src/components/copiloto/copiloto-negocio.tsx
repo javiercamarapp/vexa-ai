@@ -15,6 +15,7 @@ import {FugaPantalla} from '../refunds/fuga-pantalla';
 import {MODOS, puedeUsarModo} from '../../lib/copiloto/modos.mjs';
 import {AreaRestringida} from './area-restringida';
 import {BriefingCfoView} from './briefing-cfo';
+import {ContenedorErrores} from './contenedor-errores';
 import {briefingCfo, monedaElegida} from './briefing-cfo.mjs';
 import {adaptarRespuestaCfo, cuerpoConsultaCfo, esFueraDeCfo, esPreguntaDeCfo} from './adaptador-cfo.mjs';
 import {PreguntasSugeridas} from './preguntas-sugeridas';
@@ -101,17 +102,17 @@ export function CopilotoNegocio({modo: clave, organization, roleOverride, query 
     if (!esCfo) return null;
     if (!informe) return rep.error ? <div className="cn-estado" role="alert"><h1>CFO</h1><p>{rep.error}</p><Button size="sm" icon={<Refresh />} onClick={() => void rep.reload()}>Reintentar</Button></div> : <div className="cn-estado"><h1 className="sr-only">CFO</h1><RovaqCargando mensaje="Preparando el informe de CFO…" /></div>;
     if (informe.status !== 'ok') return <div className="cn-estado" role="status"><h1>{informe.status === 'timeout' ? 'No disponible ahora' : 'Aún no hay registros en el libro económico'}</h1><p>{informe.status === 'timeout' ? 'La consulta del libro económico superó el tiempo permitido. No se muestra ninguna cifra parcial como si fuera completa.' : 'No hay pedidos ni reembolsos registrados para esta organización en los últimos 12 meses. Carga una fuente para ver el informe.'}</p>{informe.status === 'timeout' ? <Button size="sm" icon={<Refresh />} loading={rep.busy} onClick={() => void rep.reload()}>Reintentar</Button> : <LinkButton href="/economics" size="sm">Ir a Dinero › Preparar</LinkButton>}</div>;
-    return brief ? <BriefingCfoView b={brief} informe={hrefInforme} onMoneda={cambiaMoneda} sintetico={informe.synthetic} /> : null;
+    return brief ? <ContenedorErrores alFallar={<div className="cn-estado" role="status"><h1>CFO</h1><p>El resumen no se pudo dibujar. Puedes preguntar abajo o abrir el <a className="cn-link" href={hrefInforme()}>informe completo</a>.</p></div>}><BriefingCfoView b={brief} informe={hrefInforme} onMoneda={cambiaMoneda} sintetico={informe.synthetic} /></ContenedorErrores> : null;
   };
   const chat: ModoChat = {
     modo: modo.clave, runner, placeholder: esCfo ? 'Pregunta sobre tus ingresos, canales o reembolsos…' : modo.clave === 'refunds' ? 'Pregunta sobre tus reembolsos…' : undefined, etiquetaChat: `Conversación del copiloto: ${modo.titulo}`,
     portada: (ask, hayHilo) => {
       const cuerpo = cuerpoBriefing();
-      return <div className="cn-portada" data-hilo={hayHilo}>
+      return <ContenedorErrores alFallar={<div className="cn-estado" role="status"><h1>{modo.titulo}</h1><p>El resumen no se pudo dibujar. Abre el <a className="cn-link" href={hrefInforme()}>informe completo</a>.</p></div>}><div className="cn-portada" data-hilo={hayHilo}>
         {hayHilo && <button type="button" className="cn-colapsa" aria-expanded={verInforme} onClick={() => setVerInforme(v => !v)}>{verInforme ? 'Ocultar' : 'Ver'} el informe de {modo.titulo}</button>}
         <div hidden={hayHilo && !verInforme}>{cuerpo}</div>
         {!hayHilo && <PreguntasSugeridas temas={modo.chipsPorTema} siguientes={siguientes} ask={ask} />}
-      </div>;
+      </div></ContenedorErrores>;
     },
     pie: esCfo && modo.presupuesto.mostrar ? <UsoDelMes p={presupuesto} /> : undefined,
   };

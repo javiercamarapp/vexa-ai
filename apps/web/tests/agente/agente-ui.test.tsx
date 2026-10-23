@@ -93,3 +93,14 @@ test('compositor: el botón de adjuntar existe, está activo y solo acepta CSV/T
   assert.match(on,/accept="\.csv,\.txt,\.json/);assert.match(on,/no se envía ni se guarda/);assert.ok(!/<button[^>]*disabled=""[^>]*aria-label="Adjuntar/.test(on));
   assert.match(renderToStaticMarkup(<Composer {...props} disabled attachError="El archivo supera 1 MB."/>),/role="alert"[^>]*>El archivo supera 1 MB/);
 });
+
+test('adjuntos: las columnas identificadoras (ticket_id, ids únicos consecutivos) no se suman ni se promedian; la numérica real sí', () => {
+  const csv='ticket_id,monto,id_cliente,folio\n1001,10,7,5001\n1002,20,7,5002\n1003,30,9,5003\n1004,5,9,5004\n1005,7,9,5005';
+  const r=analizarAdjunto('t.csv',csv,csv.length);assert.ok(r.ok);if(!r.ok)return;
+  const col=(n:string)=>r.resumen.columns.find(c=>c.name===n)!;
+  assert.equal(col('ticket_id').numeric,null);assert.equal(col('ticket_id').identificador,true);
+  assert.equal(col('id_cliente').numeric,null);assert.equal(col('folio').numeric,null,'enteros únicos consecutivos');
+  assert.equal(col('monto').numeric?.sum,72);assert.notEqual(col('monto').identificador,true);
+  const html=renderToStaticMarkup(<AttachmentCard a={r.resumen}/>);
+  assert.doesNotMatch(html,/5,015|1,003/);assert.match(html,/identificador/i);
+});

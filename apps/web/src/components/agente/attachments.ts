@@ -6,7 +6,7 @@ export const ADJUNTO_ACCEPT = '.csv,.txt,.json,text/csv,text/plain,application/j
 export const ADJUNTO_ROTULO = 'Dato aportado por el usuario';
 const MAX_FILAS = 20_000, MAX_COLUMNAS = 40, MAX_PREVIEW = 5, MAX_TOP = 8;
 
-export type ColumnaResumen = { name: string; filled: number; missing: number; distinct: number; numeric: { n: number; min: number; max: number; sum: number; mean: number } | null; top: { value: string; count: number }[] };
+export type ColumnaResumen = { identificador?: boolean; name: string; filled: number; missing: number; distinct: number; numeric: { n: number; min: number; max: number; sum: number; mean: number } | null; top: { value: string; count: number }[] };
 export type AdjuntoResumen = {
  id: string; name: string; bytes: number; kind: 'csv' | 'json' | 'txt'; label: typeof ADJUNTO_ROTULO;
  rows: number | null; truncated: boolean; columns: ColumnaResumen[]; preview: string[][]; text: { lines: number; words: number; chars: number } | null;
@@ -55,18 +55,27 @@ export function toNumber(raw: string): number | null {
  if (/^-?\d+(\.\d+)?$/.test(s) || /^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) { const n = Number(s.replace(/,/g, '')); return Number.isFinite(n) ? n : null; }
  return null;
 }
+/** Columna identificadora: el nombre termina en id/_id (o es folio/uuid/identificador), o son enteros únicos y consecutivos. Sumarla o promediarla no significa nada. */
+const NOMBRE_ID = /(^|[^a-z0-9])id([^a-z0-9]|$)|[a-z]id$|^(folio|uuid|guid|identificador|clave)$|(^|[_\s])(folio|uuid|identificador)([_\s]|$)/i;
+export function esColumnaIdentificadora(name: string, values: number[], filled: number, distinct: number): boolean {
+ if (NOMBRE_ID.test(name.trim())) return true;
+ if (values.length < 5 || values.length !== filled || distinct !== filled || !values.every(Number.isInteger)) return false;
+ const lo = Math.min(...values), hi = Math.max(...values);
+ return hi - lo + 1 === values.length; // enteros únicos y consecutivos: un contador de filas, no una medida
+}
 function summarizeTable(header: string[], body: string[][]): { columns: ColumnaResumen[]; freq: AdjuntoResumen['freq'] } {
  const columns = header.slice(0, MAX_COLUMNAS).map((h, i) => {
   const name = (h.trim() || `Columna ${i + 1}`).slice(0, 60); let filled = 0, numericN = 0, sum = 0, min = Infinity, max = -Infinity;
-  const counts = new Map<string, number>();
+  const counts = new Map<string, number>(); const nums: number[] = [];
   for (const r of body) {
    const v = (r[i] ?? '').trim(); if (!v) continue; filled++;
-   const n = toNumber(v); if (n !== null) { numericN++; sum += n; if (n < min) min = n; if (n > max) max = n; }
+   const n = toNumber(v); if (n !== null) { numericN++; nums.push(n); sum += n; if (n < min) min = n; if (n > max) max = n; }
    if (counts.size < 5000 || counts.has(v)) counts.set(v, (counts.get(v) ?? 0) + 1);
   }
-  const allNumeric = filled > 0 && numericN === filled;
+  const identificador = filled > 0 && numericN === filled && esColumnaIdentificadora(name, nums, filled, counts.size);
+  const allNumeric = filled > 0 && numericN === filled && !identificador;
   const top = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'es')).slice(0, MAX_TOP).map(([value, count]) => ({ value: value.slice(0, 60), count }));
-  return { name, filled, missing: body.length - filled, distinct: counts.size, numeric: allNumeric ? { n: numericN, min, max, sum, mean: sum / numericN } : null, top } satisfies ColumnaResumen;
+  return { ...(identificador ? { identificador: true } : {}), name, filled, missing: body.length - filled, distinct: counts.size, numeric: allNumeric ? { n: numericN, min, max, sum, mean: sum / numericN } : null, top } satisfies ColumnaResumen;
  });
  const cat = columns.find((c) => !c.numeric && c.filled >= 3 && c.distinct >= 2 && c.distinct <= 12);
  return { columns, freq: cat ? { column: cat.name, rows: cat.top } : null };

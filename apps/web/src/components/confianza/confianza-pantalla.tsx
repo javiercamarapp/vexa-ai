@@ -4,33 +4,34 @@ import type {CoverageView} from '../../../../../packages/workspace-service/prove
 import type {TrendsView} from '../../../../../packages/workspace-service/trends.mjs';
 import {tarjetasFuentes} from '../../lib/legibilidad/fuentes.mjs';
 import {useJson} from '../ui/use-json';
-import {PageHeader} from '../ui/page-header';
+import {DatosCabecera} from '../datos/datos-cabecera';
+import {DataTable} from '../ui/data-table';
+import {KpiLinea,BarraParte} from '../panel-comun/kpi-linea';
+import {VentanasLinea} from './ventanas-linea';
 import {Button,LinkButton,Refresh,Arrow} from '../ui/button';
-import {SkeletonRows} from '../ui/skeletons';
-import {StatusChip} from '../ui/status-chip';
+import {Loading} from '../ui/loading';
 import {nf} from '../ui/format';
 import {ComoSeCalculoProvider,ComoSeCalculoBoton} from './como-se-calculo';
 import {bloqueFuentes,bloqueFrescura,bloqueVentanas,queNoSabemos,FACTOR_ALERTA} from './confianza-modelo.mjs';
 import type {EntradaComo} from '../hoy/hoy-modelo.mjs';
 import './confianza.css';
 import '../datos/datos.css';
+import '../panel-comun/panel-comun.css';
 
 const acceptFresh=(j:unknown)=>{const d=(j as {data?:{availability?:string;sources?:unknown[];insights?:unknown[]}})?.data;return d&&Array.isArray(d.sources)&&Array.isArray(d.insights)?d:null;};
 const acceptCov=(j:unknown)=>{const d=(j as {data?:CoverageView})?.data;return Array.isArray(d?.sources)?d as CoverageView:null;};
 const acceptTrends=(j:unknown)=>{const d=(j as {data?:TrendsView})?.data;return d?.conversations&&d?.ledger?d:null;};
 const acceptFuga=(j:unknown)=>{const d=(j as {data?:{titular?:unknown;ventanas?:unknown[]}})?.data;return d&&typeof d==='object'&&'titular' in d?d:null;};
 const acceptCarga=(j:unknown)=>{const d=(j as {data?:{sla?:unknown}})?.data;return d&&typeof d==='object'&&'sla' in d?d:null;};
-const TONO={alerta:'bad',atrasada:'warn',ok:'ok',manual:'muted',pausa:'muted',sin_datos:'muted'} as const;
 const REGLA:EntradaComo={id:'frescura',titulo:'alerta de frescura',clase:'observed',fuente:'Estado de sincronización de cada fuente (source_sync_state)',periodo:null,
  formula:`Cada fuente con cadencia esperada se marca «Atrasada» si pasaron más de 2 veces su cadencia sin un éxito, y «Alerta» si pasaron más de ${FACTOR_ALERTA} veces o si la última corrida falló. Las cargas manuales no tienen cadencia y no generan alerta.`,
  cobertura:null,noSabemos:['Una fuente que nunca corrió aparece «Sin datos», no «Al día».','El Tracker de Excel y los archivos son manuales: su frescura es la de la última carga, no un indicador de salud.']};
 
-function Bloque({id,titulo,intro,extra,children}:{id:string;titulo:string;intro:string;extra?:React.ReactNode;children:React.ReactNode}){
- return <section className="dc-bloque" aria-labelledby={id}><header className="hoy-kpi-top"><div><h2 id={id}>{titulo}</h2><p>{intro}</p></div>{extra}</header>{children}</section>;
-}
-const Tabla=({etiqueta,children}:{etiqueta:string;children:React.ReactNode})=><div className="table-wrap" tabIndex={0} role="region" aria-label={etiqueta+', desplazamiento horizontal'}><table className="dc-tabla">{children}</table></div>;
+const ESTADO_TONO={alerta:'bad',atrasada:'warn',ok:'ok',manual:'off',pausa:'off',sin_datos:'off'} as const;
+const Estado=({nivel,children}:{nivel:keyof typeof ESTADO_TONO;children:React.ReactNode})=><span className="pc-estado" data-tono={ESTADO_TONO[nivel]}>{children}</span>;
+const Tarjeta=({id,titulo,sub,extra,flush=false,children}:{id:string;titulo:string;sub?:string;extra?:React.ReactNode;flush?:boolean;children:React.ReactNode})=><section className="pc-card" data-flush={flush||undefined} aria-labelledby={id}><header className="pc-card-head"><div><h2 id={id}>{titulo}</h2>{sub&&<p>{sub}</p>}</div>{extra}</header>{children}</section>;
 
-/** «Datos y confianza»: un solo lugar, cuatro bloques. Lo que no se sabe pesa lo mismo que lo que sí. */
+/** «Datos y confianza»: semáforo por fuente, frescura por cifra, cobertura con ventanas y «qué no sabemos» como lista de tareas. Lo que no se sabe pesa lo mismo que lo que sí. */
 export function ConfianzaPantalla(){
  const fresh=useJson('/api/freshness',acceptFresh),cov=useJson<CoverageView>('/api/coverage',acceptCov),tr=useJson<TrendsView>('/api/trends',acceptTrends);
  const fuga=useJson('/api/refunds',acceptFuga),carga=useJson('/api/workload',acceptCarga);
@@ -40,37 +41,42 @@ export function ConfianzaPantalla(){
  const ocupado=fresh.busy||cov.busy||fuga.busy||carga.busy;
  const recargar=()=>{fresh.reload();cov.reload();tr.reload();fuga.reload();carga.reload();};
  const pendiente=(r:{busy:boolean;data:unknown;error:string})=>r.busy&&!r.data;
+ const n=(l:{nivel:string}[],k:string)=>l.filter(x=>x.nivel===k).length;
+ const cargadas=tarjetas.filter(t=>t.estado==='cargada').length;
+ const kpis=[
+  {label:'Fuentes al día',value:fuentes.disponible?nf.format(n(fuentes.filas,'ok'))+' de '+nf.format(fuentes.filas.length):'—',vacio:!fuentes.disponible,c:8,chip:fuentes.disponible&&n(fuentes.filas,'alerta')>0?{texto:n(fuentes.filas,'alerta')+(n(fuentes.filas,'alerta')===1?' alerta':' alertas'),tono:'bad' as const}:undefined,partes:[{label:'Al día',value:n(fuentes.filas,'ok')},{label:'Carga manual',value:n(fuentes.filas,'manual')+n(fuentes.filas,'pausa')+n(fuentes.filas,'sin_datos')},{label:'Atrasadas',value:n(fuentes.filas,'atrasada')},{label:'Alerta',value:n(fuentes.filas,'alerta')}],nota:fuentes.disponible?'HubSpot es la fuente de verdad':'La actualización automática no está activada: las cargas son manuales'},
+  {label:'Cifras frescas',value:frescura.disponible?nf.format(n(frescura.filas,'ok'))+' de '+nf.format(frescura.filas.length):'—',vacio:!frescura.disponible,c:8,chip:(frescura.alertas??0)>0?{texto:frescura.alertas+(frescura.alertas===1?' alerta':' alertas'),tono:'bad' as const}:undefined,partes:[{label:'Al día',value:n(frescura.filas,'ok')},{label:'Parciales',value:n(frescura.filas,'atrasada')},{label:'Fallaron',value:n(frescura.filas,'alerta')}],nota:'Alerta si pasa más de '+FACTOR_ALERTA+' veces la cadencia esperada'},
+  {label:'Cobertura',value:cov.data?nf.format(cargadas)+' de '+nf.format(tarjetas.length):'—',vacio:!cov.data,c:8,partes:[{label:'Cargadas',value:cargadas},{label:'Sin cargar',value:tarjetas.length-cargadas}],nota:'Fuentes con datos cargados; cada una con su corte'},
+  {label:'Qué no sabemos',value:ocupado&&!tareas.length?'—':nf.format(tareas.length),vacio:ocupado&&!tareas.length,c:8,chip:tareas.length>0?{texto:'Tareas',tono:'warn' as const}:{texto:'Sin huecos conocidos',tono:'ok' as const},partes:[{label:'Con tarea',value:tareas.length}],nota:tareas[0]?.titulo??'Lo no respondido no se cuenta como completo'}];
  return <ComoSeCalculoProvider><section className="task-page stack dc" aria-label="Datos y confianza">
-  <PageHeader eyebrow="Datos y confianza" title="Qué tan confiables son tus cifras" description="De dónde sale cada número, qué tan fresco es, qué cubre y qué todavía no sabemos." actions={<Button icon={<Refresh/>} loading={ocupado} onClick={recargar}>Actualizar</Button>}/>
-
-  <Bloque id="dc-fuentes" titulo="Fuentes conectadas" intro="Cómo entra cada fuente, cuándo funcionó por última vez y cuándo vuelve a correr." extra={<LinkButton href="/connections" size="sm" icon={<Arrow/>}>Administrar fuentes</LinkButton>}>
-   {pendiente(fresh)?<SkeletonRows rows={3}/>:!fuentes.disponible?<p className="dc-vacio">{fresh.error||'La actualización automática aún no está activada para esta organización: las cargas siguen siendo manuales.'}</p>
-    :fuentes.filas.length===0?<p className="dc-vacio">Todavía no se registró ninguna sincronización.</p>
-    :<Tabla etiqueta="Fuentes conectadas"><thead><tr><th scope="col">Fuente</th><th scope="col">Cómo entra</th><th scope="col">Estado</th><th scope="col">Último éxito</th><th scope="col">Siguiente</th><th scope="col">Datos hasta</th></tr></thead>
-     <tbody>{fuentes.filas.map(f=><tr key={f.clave}><th scope="row">{f.nombre}</th><td>{f.metodo}</td><td><StatusChip tone={TONO[f.nivel]}>{f.estado}</StatusChip>{f.error&&<div className="dc-vacio">{f.error}</div>}</td><td>{f.exito}</td><td>{f.siguiente??'—'}</td><td>{f.hasta??'sin fecha de corte'}</td></tr>)}</tbody></Tabla>}
-   <p className="dc-linea">HubSpot es la fuente de verdad. Zendesk no se usa mientras su configuración esté en transición.</p>
-  </Bloque>
-
-  <Bloque id="dc-frescura" titulo="Frescura por cifra" intro="Cuándo se recalculó cada cifra y hasta qué corte de datos llega." extra={<ComoSeCalculoBoton entrada={REGLA}/>}>
-   {pendiente(fresh)?<SkeletonRows rows={4}/>:!frescura.disponible?<p className="dc-vacio">No disponible ahora. Eso no significa que las cifras estén al día.</p>
-    :<>{frescura.alertas!==undefined&&frescura.alertas>0&&<p className="dc-alerta" data-nivel="alerta" role="status">{frescura.alertas} {frescura.alertas===1?'alerta':'alertas'} de frescura: revisa lo marcado abajo.</p>}
-     <Tabla etiqueta="Frescura por cifra"><thead><tr><th scope="col">Cifra</th><th scope="col">Estado</th><th scope="col">Actualizada</th><th scope="col">Datos hasta</th><th scope="col" className="num">Filas</th></tr></thead>
-      <tbody>{frescura.filas.map(f=><tr key={f.clave}><th scope="row">{f.nombre}</th><td><span className="dc-alerta" data-nivel={f.nivel}>{f.estado}</span></td><td>{f.actualizado}{f.pendientes>0?` · faltan ${f.pendientes} periodos`:''}</td><td>{f.corte??'sin fecha de corte'}</td><td className="num">{nf.format(f.filas)}</td></tr>)}</tbody></Tabla></>}
-  </Bloque>
-
-  <Bloque id="dc-cobertura" titulo="Cobertura" intro="Cuánto trajo cada fuente y qué ventanas de exportación cubre cada canal.">
-   {pendiente(cov)?<SkeletonRows rows={4}/>:cov.error&&!cov.data?<p className="dc-vacio">No disponible ahora: {cov.error}</p>
-    :<Tabla etiqueta="Cobertura por fuente"><thead><tr><th scope="col">Fuente</th><th scope="col">Estado</th><th scope="col" className="num">Incorporado</th><th scope="col">Datos hasta</th><th scope="col">Rango</th></tr></thead>
-     <tbody>{tarjetas.map(t=><tr key={t.clave}><th scope="row">{t.nombre}</th><td>{t.estado==='cargada'?'Cargada':t.estado==='no_disponible'?'No disponible ahora':'Sin cargar'}</td><td className="num">{t.estado==='cargada'?`${nf.format(t.incorporadas)} de ${nf.format(t.leidas)} ${t.unidad}`:'—'}</td><td>{t.estado==='cargada'?t.datosHasta??'sin fecha de corte':'—'}</td><td>{t.estado==='cargada'?t.rango??'sin rango registrado':'—'}</td></tr>)}</tbody></Tabla>}
-   {ventanas.disponible?<><p className="dc-linea">{ventanas.linea||'No hay ventanas de exportación registradas.'}</p>
-     {ventanas.filas.length>0&&<Tabla etiqueta="Ventanas de exportación"><thead><tr><th scope="col">Canal</th><th scope="col">Tipo</th><th scope="col">Ventana</th><th scope="col">Desde</th><th scope="col">Hasta</th></tr></thead>
-      <tbody>{ventanas.filas.map((w,i)=><tr key={i}><th scope="row">{w.canal}</th><td>{w.tipo}</td><td>{w.completa?'Completa':'Parcial'}</td><td>{w.desde??'sin fecha'}</td><td>{w.hasta??w.corte??'sin fecha de corte'}</td></tr>)}</tbody></Tabla>}</>
-    :<p className="dc-vacio">{fuga.status===403?'Las ventanas de exportación del dinero las ven propietarios y analistas.':pendiente(fuga)?'Cargando ventanas de exportación…':'Las ventanas de exportación no están disponibles ahora.'}</p>}
-  </Bloque>
-
-  <Bloque id="dc-nosabemos" titulo="Qué no sabemos" intro="Lo que hoy impide calcular o afirmar una cifra, y qué lo cierra. Pesa lo mismo que lo que sí sabemos.">
-   {tareas.length===0?<p className="dc-vacio">{ocupado?'Revisando…':'Con las fuentes que respondieron no hay huecos conocidos. Las que no respondieron no se cuentan como completas.'}</p>
-    :<ol className="dc-tareas">{tareas.map(t=><li key={t.clave}><h3>{t.titulo}</h3><dl><dt>Afecta</dt><dd>{t.afecta}</dd><dt>Se cierra con</dt><dd>{t.cierra}</dd><dt>Base</dt><dd>{t.base}</dd></dl></li>)}</ol>}
-  </Bloque>
+  <DatosCabecera actual="resumen" title="Datos y confianza" description="De dónde sale cada número, qué tan fresco es, qué cubre y qué todavía no sabemos." actions={<Button icon={<Refresh/>} loading={ocupado} onClick={recargar}>Actualizar</Button>}/>
+  <KpiLinea items={kpis} label="Indicadores de confianza en los datos"/>
+  <div className="pc-grid" data-cols="8-4">
+   <Tarjeta id="dc-fuentes" titulo="Semáforo por fuente" sub="Cómo entra cada fuente, cuándo funcionó por última vez y cuándo vuelve a correr" flush extra={<LinkButton href="/connections" size="sm" variant="ghost" icon={<Arrow/>}>Administrar fuentes</LinkButton>}>
+    {!pendiente(fresh)&&!fuentes.disponible?<p className="ac-vacio" style={{margin:'0 14px 14px'}}>{fresh.error||'La actualización automática aún no está activada para esta organización: las cargas siguen siendo manuales.'}</p>
+     :<DataTable caption="Fuentes conectadas" state={pendiente(fresh)?'loading':'ready'} rowKey={f=>f.clave} rows={fuentes.filas} maxHeight="none" empty={<p className="ac-vacio" style={{margin:'0 14px 14px'}}>Todavía no se registró ninguna sincronización.</p>} columns={[
+      {key:'f',header:'Fuente',render:f=><><span className="pc-th-fila">{f.nombre}</span><small className="pc-s" style={{display:'block'}}>{f.metodo}</small></>},
+      {key:'e',header:'Estado',render:f=><><Estado nivel={f.nivel}>{f.estado}</Estado>{f.error&&<small className="pc-s" style={{display:'block'}}>{f.error}</small>}</>},
+      {key:'x',header:'Último éxito',render:f=>f.exito},{key:'s',header:'Siguiente',render:f=>f.siguiente??'—'},{key:'h',header:'Datos hasta',render:f=>f.hasta??'sin fecha de corte'}]}/>}
+   </Tarjeta>
+   <Tarjeta id="dc-frescura" titulo="Frescura por cifra" sub="Cuándo se recalculó cada cifra" extra={<ComoSeCalculoBoton entrada={REGLA}/>}>
+    {pendiente(fresh)?<Loading compact message="Cargando frescura…"/>:!frescura.disponible?<p className="ac-vacio">No disponible ahora. Eso no significa que las cifras estén al día.</p>
+     :<ul className="pc-lista ui-reset pc-fill" role="list">{frescura.filas.map(f=><li key={f.clave} style={{listStyle:'none'}}><i className="pc-punto" data-tono={ESTADO_TONO[f.nivel]}/><span className="pc-grow"><span className="pc-t">{f.nombre}</span><span className="pc-s">{f.actualizado}{f.pendientes>0?' · faltan '+f.pendientes+' periodos':''} · datos hasta {f.corte??'sin fecha de corte'}</span></span><Estado nivel={f.nivel}>{f.estado}</Estado></li>)}</ul>}
+   </Tarjeta>
+  </div>
+  <div className="pc-grid" data-cols="8-4">
+   <Tarjeta id="dc-ventanas" titulo="Cobertura con ventanas" sub={ventanas.disponible?ventanas.linea||'No hay ventanas de exportación registradas.':undefined}>
+    {ventanas.disponible?(ventanas.filas.length?<VentanasLinea filas={ventanas.filas}/>:<p className="ac-vacio">No hay ventanas de exportación registradas.</p>)
+     :pendiente(fuga)?<Loading compact message="Cargando ventanas…"/>:<p className="ac-vacio">{fuga.status===403?'Las ventanas de exportación del dinero las ven propietarios y analistas.':'Las ventanas de exportación no están disponibles ahora.'}</p>}
+   </Tarjeta>
+   <Tarjeta id="dc-cobertura" titulo="Cobertura por fuente" sub="Incorporado frente a lo leído" extra={<LinkButton href="/sources" size="sm" variant="ghost" icon={<Arrow/>}>Ver detalle</LinkButton>}>
+    {pendiente(cov)?<Loading compact message="Cargando cobertura…"/>:cov.error&&!cov.data?<p className="ac-vacio">No disponible ahora: {cov.error}</p>
+     :<div className="pc-fill">{tarjetas.map(t=><BarraParte key={t.clave} etiqueta={t.nombre} valor={t.estado==='cargada'?t.incorporadas:null} max={Math.max(1,t.leidas)} c={8} fin={t.estado==='cargada'?nf.format(t.incorporadas)+' de '+nf.format(t.leidas):t.estado==='no_disponible'?'No disponible':'Sin cargar'}/>)}</div>}
+   </Tarjeta>
+  </div>
+  <Tarjeta id="dc-nosabemos" titulo="Qué no sabemos" sub="Lo que hoy impide calcular o afirmar una cifra, y qué lo cierra" flush>
+   <DataTable caption="Qué no sabemos" state={ocupado&&!tareas.length?'loading':'ready'} rowKey={t=>t.clave} rows={tareas} maxHeight="none" empty={<p className="ac-vacio" style={{margin:'0 14px 14px'}}>Con las fuentes que respondieron no hay huecos conocidos. Las que no respondieron no se cuentan como completas.</p>} columns={[
+    {key:'q',header:'Qué falta',render:t=><span className="pc-th-fila">{t.titulo}</span>},{key:'a',header:'Cifra que afecta',render:t=>t.afecta},{key:'c',header:'Qué lo cierra',render:t=>t.cierra},{key:'b',header:'Base',render:t=><span className="pc-estado" data-tono="off">{t.base}</span>}]}/>
+  </Tarjeta>
  </section></ComoSeCalculoProvider>;
 }

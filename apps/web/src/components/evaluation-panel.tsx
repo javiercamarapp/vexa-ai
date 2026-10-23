@@ -1,7 +1,8 @@
 'use client';
 import {PageHeader} from './ui/page-header';
+import {KpiLinea} from './panel-comun/kpi-linea';
+import './panel-comun/panel-comun.css';
 import {Button,LinkButton,Arrow,Download,Refresh} from './ui/button';
-import {StatCard} from './ui/stat-card';
 import {StatusChip} from './ui/status-chip';
 import {DonutChart} from './ui/donut-chart';
 import {BarList} from './ui/bar-list';
@@ -34,18 +35,17 @@ export function EvaluationPanel(){const [cohortCursor,setCohortCursor]=useState<
  const when=(value:string)=>{const d=new Date(value);return Number.isNaN(d.getTime())?value:d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'});};
  const reasonText=(reason:string|null)=>exclusionReasons[reason??'']??'Requiere revisión de la fuente.';
  return <section className="stack" aria-label="Evaluación histórica" aria-busy={busy}>
-  <PageHeader title="Evaluación histórica" description="Cohortes de desarrollo con resultados existentes: sin ejecutar modelos ni exponer holdout." actions={<><Button size="sm" icon={<Refresh/>} disabled={busy} onClick={()=>{clear();setPage(null);setRefresh(n=>n+1);void load();}}>Actualizar evaluación</Button>{state&&<Button size="sm" variant="primary" disabled={busy} onClick={()=>setCreating(true)}>Nueva cohorte</Button>}</>}/>
+  <PageHeader eyebrow="Interno" title="Evaluación histórica" description="Cohortes de desarrollo con resultados existentes: sin ejecutar modelos ni exponer holdout." actions={<><Button icon={<Refresh/>} disabled={busy} onClick={()=>{clear();setPage(null);setRefresh(n=>n+1);void load();}}>Actualizar evaluación</Button>{state&&<Button variant="primary" disabled={busy} onClick={()=>setCreating(true)}>Nueva cohorte</Button>}</>}/>
   {(loading||pageLoading||taxonomyLoading)&&<p role="status" className="sr-only">Cargando evaluación…</p>}
   {error&&!state?<DataState state={{kind:'error',message:error,code:'evaluation'}}/>:error&&<div role="alert" className="notice-bar"><Icon name="alert" size={14}/><p>{error}</p></div>}
   {notice&&<div role="status" className="notice-bar" data-tone="info"><Icon name="check" size={14}/><p>{notice}</p></div>}
   {!state&&loading&&!error&&<SkeletonStats count={2}/>}
   {state&&<>
-   <div className="stat-grid">
-    <StatCard label="Cohortes guardadas" icon="layers" kind="observed" value={nf.format(state.cohorts.length)+(state.cohortNextCursor?'+':'')} foot={state.cohortNextCursor?'Hay más cohortes en la siguiente página.':undefined}/>
-    <StatCard label="Conexiones históricas" icon="plug" kind="observed" value={nf.format(state.connections.length)}/>
-    {page&&<><StatCard label="Conversaciones en la cohorte" icon="message" kind="observed" value={nf.format(page.cohort.count)} foot={'Corte '+when(page.cohort.cutoff)}/>
-    <StatCard label="Elegibles en esta página" icon="check" kind="observed" value={nf.format(okCount)} foot={'de '+nf.format(items.length)+' casos mostrados'}/></>}
-   </div>
+   <KpiLinea label="Indicadores de evaluación" items={[
+    {label:'Cohortes guardadas',value:nf.format(state.cohorts.length)+(state.cohortNextCursor?'+':''),c:8,partes:state.cohorts.map(c=>({label:when(c.cutoff),value:c.count})),nota:state.cohortNextCursor?'Hay más cohortes en la siguiente página.':'Conversaciones por cohorte'},
+    {label:'Conexiones históricas',value:nf.format(state.connections.length),c:8,partes:state.connections.map(c=>({label:c.source,value:1})),nota:state.connections.map(c=>c.source).join(', ')||'Sin conexiones'},
+    {label:'Conversaciones en la cohorte',value:page?nf.format(page.cohort.count):'—',vacio:!page,c:8,partes:page?[{label:'Elegibles',value:okCount},{label:'Excluidas',value:excludedCount}]:undefined,nota:page?'Corte '+when(page.cohort.cutoff):'Elige una cohorte para revisarla'},
+    {label:'Elegibles en esta página',value:page?nf.format(okCount):'—',vacio:!page,c:8,partes:page?[{label:'Elegibles',value:okCount},{label:'Excluidos',value:excludedCount}]:undefined,nota:page?'de '+nf.format(items.length)+' casos mostrados':'Sin cohorte abierta'}]}/>
    {!state.cohorts.length?<EmptyState art="doc" title="Aún no hay cohortes de desarrollo" body="Crea una cohorte con un corte de fecha para revisar resultados existentes." action={<Button variant="primary" onClick={()=>setCreating(true)}>Crear cohorte</Button>}/>
    :<section className="card" aria-label="Cohortes guardadas">
     <div className="card-title"><div><h2>Cohortes guardadas</h2><p>Elige una para revisar sus casos</p></div></div>

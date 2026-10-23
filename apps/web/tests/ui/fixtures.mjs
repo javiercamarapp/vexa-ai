@@ -72,7 +72,6 @@ export const detailProblem=()=>({...base('problem',IDS.problemA,problems[0].titl
 export const detailCustomer=()=>({...base('customer',IDS.customer,'Cliente demo 001'),customer:{id:IDS.customer,label:'Cliente demo 001',declaredKeys:['cliente-demo-001']},orders:[{id:u(1201),entityId:u(1202),externalId:'SYN-1001',amount_minor:'8990',currency:'USD',exponent:2,status:'settled',effectiveAt:'2026-10-03T00:00:00.000Z',customer_id:IDS.customer}],conversations:[convRef('Conversación 0001 · pedido dañado')],components:[],customer_id:IDS.customer});
 export function causality(){return{problemId:IDS.problemA,claim:{version:1,symptom:'Producto llega dañado',probableCause:'Empaque insuficiente en el tramo final',state:'hypothesis',evidenceIds:[],reason:'Hipótesis inicial a partir de reclamos',actorId:null,facts:{batch:null,carrier:null,sku:null},criticalReview:false},evidence:[],history:[],canRecord:true,canConfirm:true};}
 export const historySnapshot=()=>({batches:[{id:u(3001),connectionId:u(3002),state:'active',reason:null,version:1,enumerated:true,createdAt:'2026-10-17T10:00:00.000Z',consentAt:'2026-10-17T10:00:00.000Z',counts:{pending:600,completed:401},countsCapped:true},{id:u(3003),connectionId:u(3002),state:'completed',reason:null,version:3,enumerated:true,createdAt:'2026-10-10T10:00:00.000Z',consentAt:'2026-10-10T10:00:00.000Z',counts:{completed:48},countsCapped:false}],connections:[{id:u(3002),source:'hubspot',account_id:'demo-portal'}],configuration:{ready:true,enabled:true}});
-const MONTHS=['2025-11','2025-12','2026-01','2026-02','2026-03','2026-04','2026-05','2026-06','2026-07','2026-08','2026-09','2026-10'];
 export const CONV=[5120,5390,5810,5240,6020,6410,6130,6880,7210,6940,7480,6020];
 export const ORD=[[480,'58200000'],[560,'67100000'],[420,'49800000'],[390,'46300000'],[610,'73400000'],[700,'84100000'],[680,'81200000'],[760,'91500000'],[820,'98800000'],[790,'94100000'],[870,'104500000'],[1000,'120450000']];
 const REF=[[40,'190000'],[52,'260000'],[31,'150000'],[28,'140000'],[60,'310000'],[66,'350000'],[70,'380000'],[81,'450000'],[90,'520000'],[84,'490000'],[110,'1320000'],[640,'2310050']];
@@ -151,7 +150,7 @@ export async function respond(url,method,bodyText){
  if(p==='/api/trends/categories')return ok(incidenceCategories(q.get('variant')??'ok'));
  if(p==='/api/trends/incidences'){const pid=q.get('problem');return ok(incidenceMonthly(pid===IDS.problemB?'empty':pid===IDS.problemC?'timeout':'ok',pid));}
  if(p.startsWith('/api/origin/'))return ok(originOf(p.split('/').pop()));
- if(p.startsWith('/api/notifications')&&!p.endsWith('/preferences'))return ok({items:[],unread:0,nextCursor:null});
+ if(p.startsWith('/api/notifications')&&!p.endsWith('/preferences')&&p!=='/api/notifications')return ok({items:[],unread:0,nextCursor:null});
  if(p==='/api/associations')return [200,{data:{items:[],nextCursor:null,canResolve:true,canApprove:true}}];
  // Per-view extension fixtures (wave 2): tests/ui/fixtures-extra-*.mjs export respondExtra(url,method,bodyText,ctx) -> [status,json] | null
  for(const f of extraModules){const hit=await f.respondExtra?.(url,method,bodyText,{ok,IDS,HASH,SCOPE,u});if(hit)return hit;}

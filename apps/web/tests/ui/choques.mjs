@@ -1,4 +1,5 @@
 // Detector de choques de interfaz. Uso (con `next dev` y fixtures en marcha):
+//   (VEXA_UI_VARIANT=flujo añade ?variant= a las lecturas simuladas: una recomendación en cada etapa)
 //   VEXA_UI_BASE=http://localhost:3150 node tests/ui/choques.mjs [--routes=/problems,/cfo] [--sizes=375,1440] [--themes=light,dark] [--detalle]
 // Por cada ruta del MENU x ancho x tema detecta: desborde horizontal, texto recortado, hermanos que se solapan,
 // botones sin nombre, h1 != 1 y fuentes < 12 px (11 px solo en MAYÚSCULAS), h1 > 20 px o cifra KPI > 30 px. Imprime una tabla y sale con código 1 si hay fallas.
@@ -71,7 +72,7 @@ const filas=[];let fallas=0;
 for(const theme of themes)for(const w of sizes){
  const ctx=await browser.newContext({viewport:{width:w,height:w<500?812:w<1000?1024:900},reducedMotion:'reduce'});
  await ctx.addInitScript(t=>{try{localStorage.setItem('vexa-theme',t);}catch{}},theme);
- await ctx.route('**/api/**',async route=>{const q=route.request();if(/resource=problems/.test(q.url())&&/slim=1/.test(q.url()))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({data:F.bundleProblemsCatalogo()})});const h=await respond(q.url(),q.method(),q.postData());return h?route.fulfill({status:h[0],contentType:'application/json',body:JSON.stringify(h[1])}):route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:{code:'fixture_missing'}})});});
+ await ctx.route('**/api/**',async route=>{const q=route.request();if(/resource=problems/.test(q.url())&&/slim=1/.test(q.url()))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({data:F.bundleProblemsCatalogo()})});const V=process.env.VEXA_UI_VARIANT,u2=V?q.url()+(q.url().includes('?')?'&':'?')+'variant='+V:q.url();const h=await respond(u2,q.method(),q.postData());return h?route.fulfill({status:h[0],contentType:'application/json',body:JSON.stringify(h[1])}):route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:{code:'fixture_missing'}})});});
  for(const r of routes){
   const page=await ctx.newPage();let m;
   try{await page.goto(base+r,{waitUntil:'networkidle',timeout:120000});await page.waitForTimeout(600);m=await page.evaluate(medir);}catch(e){m={error:String(e.message).slice(0,80),pliegue:[],huecos:[],repetidos:[],topbar:[],overflowX:[],clipped:[],overlap:[],unnamed:[],h1:1,small:[]};}

@@ -1,5 +1,7 @@
 'use client';
-import {PageHeader} from './ui/page-header';
+import {DatosCabecera} from './datos/datos-cabecera';
+import {KpiLinea} from './panel-comun/kpi-linea';
+import './panel-comun/panel-comun.css';
 import {Button,LinkButton,Arrow} from './ui/button';
 import {StatCard} from './ui/stat-card';
 import {FunnelChart} from './ui/funnel-chart';
@@ -53,21 +55,22 @@ export function ExtractionPanel(){
  const pending=snapshot?.reservations.filter(r=>['reserved','uncertain'].includes(r.state))??[];
  return <section className="stack" aria-labelledby="analysis-title">
   <span id="analysis-title" className="sr-only">Análisis de conversaciones</span>
-  <PageHeader title="Análisis de conversaciones" description="Se ejecutan en segundo plano; los importes inciertos quedan reservados hasta contrastarlos con el proveedor." actions={snapshot?.canConfigure&&snapshot.configuration.window?<Button size="sm" onClick={()=>setBudgetOpen(true)}>Límites y conciliación</Button>:undefined}/>
+  <DatosCabecera actual="analisis" title="Análisis" description="Qué se analizó con IA y cuánto falta; los importes inciertos quedan reservados hasta contrastarlos." actions={snapshot?.canConfigure&&snapshot.configuration.window?<Button size="sm" onClick={()=>setBudgetOpen(true)}>Límites y conciliación</Button>:undefined}/>
   {snapshot&&<LineaCache edadMs={edad} viejo={viejo} actualizando={edad!==null&&!viejo}/>}
   {error&&<><p role="alert" className="notice-bar"><Icon name="alert" size={14}/>{error}</p><div><Button size="sm" disabled={busy} onClick={firstPage}>Volver a la primera página</Button></div></>}
   {!snapshot?(error?<p role="status" className="muted">No hay datos verificados para mostrar.</p>:<><p role="status" className="sr-only">Cargando estado…</p><SkeletonStats count={4}/></>):<>
   {blocked&&(!snapshot.configuration.ready||!snapshot.configuration.enabled)?<p role="status" className="notice-bar"><Icon name="info" size={14}/>{blocked}</p>:null}
-  <div className="stat-grid">
-   <StatCard label="Trabajos en la página" icon="layers" kind="observed" value={nf.format(jobs.length)}/>
-   <StatCard label="En cola o analizando" icon="clock" kind="observed" value={nf.format(nQueuedRunning)}/>
-   <StatCard label="Terminados" icon="check" kind="observed" value={nf.format(nDone)}/>
-   <StatCard label="Requieren atención" icon="alert" kind="observed" value={nf.format(nAttention)}/>
-  </div>
+  <KpiLinea label="Indicadores del análisis" items={[
+   {label:'Trabajos en la página',value:nf.format(jobs.length),c:8,partes:[{label:'En cola o analizando',value:nQueuedRunning},{label:'Terminados',value:nDone},{label:'Requieren atención',value:nAttention}],nota:'Solo los de esta página'},
+   {label:'En cola o analizando',value:nf.format(nQueuedRunning),c:8,partes:[{label:'En cola o analizando',value:nQueuedRunning},{label:'Otros',value:jobs.length-nQueuedRunning}],nota:'Se ejecutan en segundo plano'},
+   {label:'Terminados',value:nf.format(nDone),c:8,partes:[{label:'Terminados',value:nDone},{label:'Con clasificación',value:nClassified}],nota:nf.format(nClassified)+' con clasificación'},
+   {label:'Requieren atención',value:nf.format(nAttention),c:8,chip:nAttention>0?{texto:'Revisar',tono:'bad'}:{texto:'Sin fallas',tono:'ok'},partes:[{label:'Con falla',value:nAttention},{label:'Sin falla',value:jobs.length-nAttention}],nota:'Análisis fallidos o con motivo de rechazo'}]}/>
+  <div className="pc-grid" data-cols={jobs.length>0&&snapshot.canSubmit?"6-6":undefined}>
   {jobs.length>0&&<section className="card" aria-label="Embudo de análisis"><div className="card-title"><div><h2>Avance de los trabajos</h2><p>Conteos de esta página</p></div></div><FunnelChart title="Trabajos solicitados, terminados y clasificados" stages={[{key:'all',label:'Solicitados',value:jobs.length,display:nf.format(jobs.length)},{key:'done',label:'Terminados',value:nDone,display:nf.format(nDone)},{key:'cls',label:'Con clasificación',value:nClassified,display:nf.format(nClassified)}]}/></section>}
   {snapshot.canSubmit&&<section className="card" id="analysis-request" aria-label="Solicitar análisis"><div className="card-title"><div><h2>Solicitar análisis</h2><p>Elige una conversación</p></div></div>
    <form className={css.form} onSubmit={event=>{event.preventDefault();requestKey.current??=crypto.randomUUID();void action({action:'submit',conversationId:selected,requestKey:requestKey.current});}}><div className={css.row}><label className={css.grow}>Conversación<select aria-label="Conversación" value={selected} onChange={event=>{setSelected(event.target.value);requestKey.current=null;}}><option value="">Selecciona una conversación</option>{snapshot.conversations.map(c=><option key={c.id} value={c.id}>{c.source} · {c.id.slice(0,8)}</option>)}</select></label><Button type="submit" size="sm" variant="primary" disabled={busy||!selected||!snapshot.configuration.ready||!snapshot.configuration.enabled}>Solicitar análisis</Button></div>{blocked&&snapshot.configuration.ready&&snapshot.configuration.enabled&&<p className={css.muted} role="note">{blocked}</p>}</form>
    <nav aria-label="Páginas de conversaciones" className={css.pager}><p>Página de conversaciones {pages.conversations.length}</p><Button size="sm" variant="ghost" disabled={busy||pages.conversations.length===1} onClick={()=>navigate('conversations',false)}>Conversaciones anteriores</Button><Button size="sm" variant="ghost" disabled={busy||!snapshot.pagination.conversations.hasMore} onClick={()=>navigate('conversations',true)}>Conversaciones siguientes</Button></nav></section>}
+  </div>
   <div className="card-title"><div><h2>Trabajos</h2></div><nav aria-label="Páginas de trabajos" className={css.pager}><p>Página de trabajos {pages.jobs.length}</p><Button size="sm" variant="ghost" disabled={busy||pages.jobs.length===1} onClick={()=>navigate('jobs',false)}>Trabajos anteriores</Button><Button size="sm" variant="ghost" disabled={busy||!snapshot.pagination.jobs.hasMore} onClick={()=>navigate('jobs',true)}>Trabajos siguientes</Button></nav></div>
   {jobs.length===0?<EmptyState art="search" compact title="Aún no hay análisis solicitados" body="Elige una conversación para lanzar el primero." action={snapshot.canSubmit?<LinkButton href="#analysis-request" size="sm" variant="primary" icon={<Arrow/>}>Elegir una conversación</LinkButton>:undefined}/>:<>
   <HallazgosAnalisis jobs={jobs} fuentes={Object.fromEntries(snapshot.conversations.map(c=>[c.id,c.source]))} masPaginas={snapshot.pagination.jobs.hasMore||pages.jobs.length>1}/>

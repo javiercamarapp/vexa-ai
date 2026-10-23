@@ -1,17 +1,12 @@
 /* Piezas comunes de las pantallas de Acciones, Datos y confianza y Administración (F2-ACCIONES-DATOS).
    Solo clases con prefijo pc-: tokens de la paleta (--chart-n/--soft-n/--ink-n), sin degradados, hover en tinta, mínimo 12 px (11 px en MAYÚSCULAS). */
-/* Encabezado idéntico: eyebrow visible y descripción de UNA línea (13 px) */
-.workspace-content .page-header .eyebrow{display:block;margin:0 0 2px;font:600 11px/1.4 var(--font-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.page-header-description{max-width:none;margin:2px 0 0;font-size:13px;line-height:1.4}
-.page-header h1{margin:0}
-@media(min-width:820px){.page-header-description{white-space:nowrap}}
 /* Pestañas de página (subrayado) */
-.pc-tabs{display:flex;gap:4px;margin:0 0 var(--ui-rhythm);padding:0;list-style:none;border-bottom:1px solid var(--ui-border);overflow-x:auto;scrollbar-width:none}
+.pc-tabs{display:flex;gap:4px;margin:0;padding:0;list-style:none;border-bottom:1px solid var(--ui-border);overflow-x:auto;scrollbar-width:none}
 .pc-tabs::-webkit-scrollbar{display:none}
 .pc-tabs a{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 12px;font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px;flex:none}
 .pc-tabs a:hover{color:var(--ink)}
 .pc-tabs a[aria-current=page]{color:var(--ink);font-weight:600;border-bottom-color:var(--cat,var(--ink))}
-.pc-tabs a:focus-visible{outline:2px solid var(--ui-focus);outline-offset:-2px;border-radius:6px}
+.pc-tabs a:focus-visible{outline:2px solid var(--ui-focus);outline-offset:-2px;border-radius:999px}
 .pc-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;font-size:12px;font-weight:600;background:var(--ui-sunken);color:var(--ink);font-variant-numeric:tabular-nums}
 .pc-tabs a[aria-current=page] .pc-count{background:var(--soft-6);border-color:transparent;color:var(--ink-6)}
 /* Tira de indicadores: UNA tarjeta con celdas separadas por filetes */
@@ -38,6 +33,7 @@
 .pc-grid[data-cols="8-4"]{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
 .pc-grid[data-cols="6-6"]{grid-template-columns:repeat(2,minmax(0,1fr))}
 .pc-grid[data-cols="4-4-4"]{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pc-grid[data-cols="4-8"]{grid-template-columns:minmax(0,1fr) minmax(0,2fr)}
 .pc-grid[data-cols="9-3"]{grid-template-columns:minmax(0,3fr) minmax(0,1fr)}
 @media(max-width:1000px){.pc-grid[data-cols]{grid-template-columns:minmax(0,1fr)}}
 .pc-card{display:flex;flex-direction:column;gap:8px;min-width:0;padding:var(--ui-pad);border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface)}
@@ -85,3 +81,37 @@
 .pc-estado[data-tono=info]{background:var(--soft-1);color:var(--ink-1)}
 .pc-estado[data-tono=off]{background:var(--ui-sunken);color:var(--muted)}
 .pc-estado[data-tono=off]::before{background:transparent;border:1.5px solid currentColor}
+/* Línea de ventanas (una fila por canal y tipo, barra desde–hasta; trama = parcial) */
+.pc-vent{display:flex;flex-direction:column;gap:2px;margin:0;padding:0;list-style:none}
+.pc-vent>li{display:grid;grid-template-columns:minmax(120px,1.2fr) minmax(0,4fr) minmax(88px,auto);gap:10px;align-items:center;min-height:36px}
+.pc-vent-n{font-size:13px;color:var(--ink);overflow-wrap:anywhere}.pc-vent-n small{display:block;font-size:12px;color:var(--muted)}
+.pc-vent-pista{position:relative;height:12px;border-radius:999px;background:var(--ui-sunken)}
+.pc-vent-barra{position:absolute;top:0;bottom:0;border-radius:999px;background:var(--c,var(--chart-8));animation:pc-grow .5s ease-out both;transform-origin:left}
+.pc-vent-barra[data-parcial]{background:repeating-linear-gradient(45deg,var(--c,var(--chart-8)) 0 2px,transparent 2px 5px);border:1px solid var(--c,var(--chart-8));opacity:.75}
+.pc-vent-barra[data-sin]{border:1px dashed var(--muted);background:none}
+.pc-vent-f{font-size:12px;color:var(--muted);text-align:right;white-space:nowrap}
+.pc-eje{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}.pc-vent>li.pc-vent-eje{min-height:20px}
+@media(prefers-reduced-motion:reduce){.pc-vent-barra{animation:none}}
+@media(max-width:720px){.pc-vent>li{grid-template-columns:minmax(0,1fr);gap:2px;padding:6px 0}.pc-vent-f{text-align:left}}
+.pc-leyenda{display:flex;flex-wrap:wrap;gap:4px 14px;margin:0;padding:0;list-style:none;font-size:12px;color:var(--muted)}
+.pc-leyenda li{display:inline-flex;align-items:center;gap:6px}
+.pc-leyenda i{display:inline-block;width:14px;height:8px;border-radius:999px;background:var(--c,var(--chart-8))}
+.pc-leyenda i[data-parcial]{background:repeating-linear-gradient(45deg,var(--c,var(--chart-8)) 0 3px,transparent 3px 6px);border:1px solid var(--c,var(--chart-8))}
+/* Tabla dentro de una tarjeta plana */
+.pc-card[data-flush] .ui-table-wrap{border:0;border-radius:0}
+.pc-card[data-flush] .ui-table th:first-child,.pc-card[data-flush] .ui-table td:first-child{padding-left:14px}
+.pc-card[data-flush] .ui-table th:last-child,.pc-card[data-flush] .ui-table td:last-child{padding-right:14px}
+.pc-th-fila{font-weight:600;color:var(--ink)}
+.pc-card-head button.dc-info{flex:none;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;min-width:24px;min-height:24px;border-radius:999px;border:1px solid var(--ui-border);background:transparent;color:var(--muted);cursor:pointer;padding:0;box-shadow:none}
+
+.pc-notas{margin:0;padding:10px 14px 12px;list-style:none;display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--ui-border);font-size:12px;line-height:1.5;color:var(--muted)}
+.pc-notas b{color:var(--ink);font-weight:600}
+
+.pc-card>fieldset{border:0;padding:0;margin:0;min-width:0}
+.pc-card>fieldset>legend{padding:0;margin:0 0 8px}
+.pc-grid[data-cols="4-4-4"] .pc-lista>li{min-height:56px}
+
+.ui-table tbody th[scope=row]{background:transparent;font-weight:600;color:var(--ink);text-align:left;text-transform:none;letter-spacing:0;font-size:13px;padding:0 12px;height:40px}
+.pc-card[data-flush] .ui-table tbody th[scope=row]{padding-left:14px}
+.pc-card-head select{width:auto;max-width:220px;flex:none}
+.pc-estado-nota{margin:0}

@@ -142,3 +142,8 @@
 .ui-filterbar .btn-label,.page-header-actions .btn-label,.hoy-acciones .btn-label,.ov-fila .btn-label{white-space:nowrap}
 .ov-fila>:only-child{grid-column:1/-1}
 .ov-4-4-4:has(>:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr))}
+/* Encabezado idéntico: eyebrow visible y descripción de UNA línea (13 px) */
+.workspace-content .page-header .eyebrow{display:block;margin:0 0 2px;font:600 12px/1.4 var(--font-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.page-header-description{max-width:none;margin:2px 0 0;font-size:13px;line-height:1.4}
+.page-header h1{margin:0}
+.stack>.page-header{margin-bottom:0}

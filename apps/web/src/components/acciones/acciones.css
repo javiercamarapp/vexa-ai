@@ -6,7 +6,7 @@
 .ac-fila[data-vista=en-curso]{grid-template-columns:minmax(0,4fr) minmax(0,4fr) 392px}
 .ac-fila[data-vista=resultados]{grid-template-columns:minmax(0,4fr) minmax(0,4fr) 150px}
 .ac-fila[data-descartada]{grid-template-columns:minmax(0,1fr)}.ac-fila[data-descartada] .ac-botones,.ac-fila[data-descartada] .ac-grupo{align-items:flex-start;justify-content:flex-start}
-.ac-fila[data-prio=critical][data-vista=por-decidir]::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;background:var(--rovaq-rojo,#e8241c)}
+.ac-fila[data-prio=critical][data-vista=por-decidir]::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:3px;background:var(--rovaq-rojo,#e8241c)}
 .ac-main{display:flex;flex-direction:column;gap:4px;min-width:0}
 .ac-linea{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
 .ac-etapa{font-size:12px;color:var(--muted)}

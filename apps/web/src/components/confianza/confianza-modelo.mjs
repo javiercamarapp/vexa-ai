@@ -41,7 +41,7 @@ export function bloqueFrescura(f, ahora = Date.now()) {
 export function bloqueVentanas(fuga) {
   const v = fuga?.ventanas;
   if (!Array.isArray(v)) return {disponible: false, linea: '', filas: []};
-  return {disponible: true, linea: lineaVentanas(fuga), filas: v.map(w => ({canal: NOMBRE[w.canal] ?? w.canal, tipo: w.tipo === 'refund' ? 'Reembolsos' : 'Pedidos', completa: w.completa, desde: diaTxt(w.inicio), hasta: diaTxt(w.fin), corte: diaTxt(w.corte)}))};
+  return {disponible: true, linea: lineaVentanas(fuga), filas: v.map(w => ({canal: NOMBRE[w.canal] ?? w.canal, tipo: w.tipo === 'refund' ? 'Reembolsos' : 'Pedidos', completa: w.completa, desde: diaTxt(w.inicio), hasta: diaTxt(w.fin), corte: diaTxt(w.corte), inicioIso: w.inicio ?? null, finIso: w.fin ?? null, corteIso: w.corte ?? null}))};
 }
 
 /** Bloque 4: «qué no sabemos» como lista de tareas. Cada fila sale de un dato real (conteo o estado); las limitaciones fijas citan la nota del código que las documenta. */

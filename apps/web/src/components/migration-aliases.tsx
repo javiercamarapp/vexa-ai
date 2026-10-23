@@ -3,7 +3,8 @@ import {useCallback,useEffect,useRef,useState} from 'react';
 import type {AliasEvent,AliasIdentity} from '../../../../packages/connectors/aliases.mjs';
 import {MigrationComparison} from './migration-comparison';
 import {Button,Refresh} from './ui/button';
-import {StatCard} from './ui/stat-card';
+import {KpiLinea} from './panel-comun/kpi-linea';
+import './panel-comun/panel-comun.css';
 import {StatusChip} from './ui/status-chip';
 import {DonutChart} from './ui/donut-chart';
 import {EmptyState} from './ui/empty-state';
@@ -59,11 +60,10 @@ export function MigrationAliases({onChange}:{onChange:()=>void}){
   {error&&<p role="alert" className="notice-bar"><Icon name="alert" size={14}/>{error}</p>}{notice&&<p role="status" className="notice-bar" data-tone="info"><Icon name="check" size={14}/>{notice}</p>}{busy&&<p role="status" className="sr-only">Procesando aliases…</p>}
   {listing&&<>
   <div className="split" data-even>
-   <div className="stat-grid" style={{gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))'}}>
-    <StatCard label="Conversaciones cargadas" icon="message" kind="observed" value={nf.format(listing.conversations.length)+(listing.nextCursor?'+':'')}/>
-    <StatCard label="Identidades resueltas" icon="link" kind="observed" value={listing.groups===null?'Sin resolver':nf.format(listing.groups.length)} foot={listing.groups===null?'Hay identidades ambiguas o procedencia pendiente.':'en esta organización'}/>
-    <StatCard label="Ambiguas" icon="alert" kind="observed" value={nf.format(ambiguous)} foot="en las cargadas"/>
-   </div>
+   <KpiLinea label="Indicadores de identidades" items={[
+    {label:'Conversaciones cargadas',value:nf.format(listing.conversations.length)+(listing.nextCursor?'+':''),c:8,partes:[{label:'Sin ambigüedad',value:listing.conversations.length-ambiguous},{label:'Ambiguas',value:ambiguous}],nota:'En esta página'},
+    {label:'Identidades resueltas',value:listing.groups===null?'Sin resolver':nf.format(listing.groups.length),vacio:listing.groups===null,c:8,partes:listing.groups===null?undefined:[{label:'Resueltas',value:listing.groups.length}],nota:listing.groups===null?'Hay identidades ambiguas o procedencia pendiente.':'en esta organización'},
+    {label:'Ambiguas',value:nf.format(ambiguous),c:8,chip:ambiguous>0?{texto:'Revisar',tono:'warn'}:{texto:'Ninguna',tono:'ok'},partes:[{label:'Ambiguas',value:ambiguous},{label:'Sin ambigüedad',value:listing.conversations.length-ambiguous}],nota:'en las cargadas'}]}/>
    <section className="card" aria-label="Estado de las identidades"><div className="card-title"><div><h2>Estado de identidades</h2><p>Conversaciones cargadas</p></div></div>
     <DonutChart title="Identidades por estado de revisión" centerValue={nf.format(listing.conversations.length)} centerLabel="en total" segments={[{key:'clear',label:'Sin ambigüedad',value:listing.conversations.length-ambiguous,display:nf.format(listing.conversations.length-ambiguous),tone:1},{key:'amb',label:'Identidad ambigua',value:ambiguous,display:nf.format(ambiguous),tone:5}]}/>
    </section>

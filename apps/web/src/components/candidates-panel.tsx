@@ -1,8 +1,9 @@
 'use client';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {PageHeader} from './ui/page-header';
+import {KpiLinea} from './panel-comun/kpi-linea';
+import './panel-comun/panel-comun.css';
 import {Button,LinkButton,Refresh} from './ui/button';
-import {StatCard} from './ui/stat-card';
 import {StatusChip} from './ui/status-chip';
 import {BarList} from './ui/bar-list';
 import {EmptyState} from './ui/empty-state';
@@ -32,17 +33,16 @@ export function CandidatesPanel(){const[data,setData]=useState<State|null>(null)
  const canChange=!!data&&!busy&&!loading&&confirmed&&/^[a-f0-9]{64}$/.test(evidence); const eligibleCount=data?data.results.filter(r=>r.eligible).length:0;
  const utilities=data?data.results.map(r=>r.summary?.utility??null):[];
  return <section className="stack" style={{overflowWrap:'anywhere',minWidth:0}} aria-label="Candidatos de extracción" aria-busy={loading||busy}>
-  <PageHeader title="Candidatos de extracción" description="Selección con evaluación independiente firmada y confirmación de un propietario." actions={<><LinkButton href="/evaluation" size="sm" variant="ghost">Volver a evaluación histórica</LinkButton><Button size="sm" icon={<Refresh/>} onClick={()=>void load()} disabled={busy}>Recargar candidatos</Button>{data&&<Button size="sm" variant="primary" disabled={busy||loading} onClick={()=>setRegistering(true)}>Registrar evaluación</Button>}</>}/>
+  <PageHeader eyebrow="Interno" title="Candidatos de extracción" description="Selección con evaluación independiente firmada y confirmación de un propietario." actions={<><LinkButton href="/evaluation">Volver a evaluación</LinkButton><Button icon={<Refresh/>} onClick={()=>void load()} disabled={busy}>Recargar</Button>{data&&<Button variant="primary" disabled={busy||loading} onClick={()=>setRegistering(true)}>Registrar evaluación</Button>}</>}/>
   {loading&&<p role="status" className="sr-only">Cargando estado confirmado…</p>}
   {loading&&!data&&!error&&<SkeletonStats count={4}/>}
   {error&&!data?<DataState state={{kind:'error',message:error,code:'candidates'}}/>:error&&<div role="alert" className="notice-bar"><Icon name="alert" size={14}/><p>{error}</p></div>}
   {data&&<>
-   <div className="stat-grid">
-    <StatCard label="Versión activa" icon="target" kind="observed" value={nf.format(data.version)} foot={data.activeCandidateId?<IdChip value={data.activeCandidateId} head={8} tail={4}/>:'Configuración predeterminada'}/>
-    <StatCard label="Evaluaciones firmadas" icon="shield" kind="observed" value={nf.format(data.results.length)+(data.next.results!==null?'+':'')}/>
-    <StatCard label="Cumplen criterios" icon="check" kind="observed" value={nf.format(eligibleCount)} foot={'de '+nf.format(data.results.length)+' cargadas'}/>
-    <StatCard label="Versiones en el historial" icon="clock" kind="observed" value={nf.format(data.history.length)+(data.next.history!==null?'+':'')}/>
-   </div>
+   <KpiLinea label="Indicadores de candidatos" items={[
+    {label:'Versión activa',value:nf.format(data.version),c:8,partes:[{label:'Activa',value:1}],nota:data.activeCandidateId?'Candidato '+data.activeCandidateId.slice(0,8):'Configuración predeterminada'},
+    {label:'Evaluaciones firmadas',value:nf.format(data.results.length)+(data.next.results!==null?'+':''),c:8,partes:[{label:'Cumplen',value:eligibleCount},{label:'No cumplen',value:data.results.length-eligibleCount}],nota:'Con evaluación independiente'},
+    {label:'Cumplen criterios',value:nf.format(eligibleCount),c:8,partes:[{label:'Cumplen',value:eligibleCount},{label:'No cumplen',value:data.results.length-eligibleCount}],nota:'de '+nf.format(data.results.length)+' cargadas'},
+    {label:'Versiones en el historial',value:nf.format(data.history.length)+(data.next.history!==null?'+':''),c:8,partes:data.history.map((h,i)=>({label:'v'+i,value:1})),nota:'Cada cambio es un registro nuevo'}]}/>
    {!data.results.length?<EmptyState art="shield" title="Aún no hay evaluaciones firmadas" body="Registra el recibo del custodio para comparar candidatos." action={<Button variant="primary" onClick={()=>setRegistering(true)}>Registrar evaluación</Button>}/>
    :<>
    <div className="split" data-even>

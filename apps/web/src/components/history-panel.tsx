@@ -5,10 +5,11 @@ import {useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {leerSwr,claveSwr,guardarSwr} from '../lib/workspace/swr.mjs';
 import {LineaCache} from './ui/linea-cache';
 const useAntesDePintar=typeof window==='undefined'?useEffect:useLayoutEffect;
-import {PageHeader} from './ui/page-header';
+import {DatosCabecera} from './datos/datos-cabecera';
+import {KpiLinea} from './panel-comun/kpi-linea';
+import './panel-comun/panel-comun.css';
 import {Button,Refresh} from './ui/button';
 import {Drawer} from './ui/overlay';
-import {StatCard} from './ui/stat-card';
 import {StatusChip} from './ui/status-chip';
 import {DonutChart} from './ui/donut-chart';
 import {Heatmap,type HeatCell} from './ui/heatmap';
@@ -60,15 +61,14 @@ export function HistoryPanel({destacado}:{destacado?:React.ReactNode}={}){const 
    <div className="btn-group"><Button size="sm" aria-label={'Ver conversaciones del '+tituloLote(b.createdAt).toLowerCase()+' (ref. '+b.id.slice(0,6)+')'} onClick={()=>setSelectedBatch(selectedBatch===b.id?null:b.id)}>{selectedBatch===b.id?'Ocultar conversaciones':'Ver conversaciones'}</Button>{['active','paused'].includes(b.state)&&<Button size="sm" variant="ghost" aria-label={'Cancelar el '+tituloLote(b.createdAt).toLowerCase()+' (ref. '+b.id.slice(0,6)+')'} disabled={busy} onClick={()=>void action({operation:'cancel',batchId:b.id,expectedVersion:b.version})}>Cancelar lote</Button>}{b.state==='paused'&&<ConfirmationDialog returnFocusRef={heading} triggerLabel={'Reautorizar el '+tituloLote(b.createdAt).toLowerCase()+' (ref. '+b.id.slice(0,6)+')'} title="¿Reautorizar este lote?" description={'El '+tituloLote(b.createdAt).toLowerCase()+' continuará con su configuración original y los límites autorizados. Esta acción renueva su autorización.'} confirmLabel="Reautorizar lote" disabled={busy} onConfirm={()=>action({operation:'resume',batchId:b.id,expectedVersion:b.version,confirmed:true})}/>}</div>
    <details className={styles.tech}><summary>Ver detalle técnico</summary><p>Identificador del lote: <code>{b.id}</code></p></details>
    {selectedBatch===b.id&&<HistoryItems key={b.id} batchId={b.id}/>}</div>}));
- return <section className="task-page history-page stack" aria-label="Histórico de conversaciones" aria-busy={loading||busy}><PageHeader title="Histórico e identidad" guide="historial" actions={<><Button icon={<Refresh/>} loading={loading||busy} onClick={()=>void load()}>Actualizar histórico</Button>{snapshot&&estado.puedeAutorizar&&<Button variant="primary" icon={<Icon name="play" size={14}/>} onClick={()=>setOpenStart(true)}>Autorizar procesamiento</Button>}</>}/><h2 ref={heading} tabIndex={-1} className="sr-only">Acciones del histórico</h2>{destacado}{loading&&!snapshot&&<div role="status" aria-label="Cargando histórico"><SkeletonStats count={4}/><SkeletonRows rows={3}/></div>}{error&&<p className="state state-error" role="alert">{error}</p>}{snapshot&&<LineaCache edadMs={edad} actualizando={loading} viejo={viejo} onActualizar={()=>void load()}/>}{snapshot&&<>
+ return <section className="task-page history-page stack" aria-label="Histórico de conversaciones" aria-busy={loading||busy}><DatosCabecera actual="historico" title="Histórico e identidad" description="Conversaciones anteriores que autorizas analizar por conexión; avanza en segundo plano y no publica cortes." actions={<><Button icon={<Refresh/>} loading={loading||busy} onClick={()=>void load()}>Actualizar histórico</Button>{snapshot&&estado.puedeAutorizar&&<Button variant="primary" icon={<Icon name="play" size={14}/>} onClick={()=>setOpenStart(true)}>Autorizar procesamiento</Button>}</>}/><h2 ref={heading} tabIndex={-1} className="sr-only">Acciones del histórico</h2>{destacado}{loading&&!snapshot&&<div role="status" aria-label="Cargando histórico"><SkeletonStats count={4}/><SkeletonRows rows={3}/></div>}{error&&<p className="state state-error" role="alert">{error}</p>}{snapshot&&<LineaCache edadMs={edad} actualizando={loading} viejo={viejo} onActualizar={()=>void load()}/>}{snapshot&&<>
   <div className="notice-bar" role="status" data-tone={estado.tone==='ok'?'info':estado.tone}><Icon name={estado.tone==='warn'?'info':'check'} size={14}/><span><strong>{estado.titulo}</strong> {estado.texto}</span></div>
   {snapshot.batches.length===0?<section className="task-card history-batches" aria-label="Lotes históricos"><p className="state" role="status">Aún no hay lotes de procesamiento. {estado.puedeAutorizar?'Usa «Autorizar procesamiento» para analizar el histórico de una conexión.':'Aparecerán aquí cuando se active el análisis del histórico.'}</p></section>:<>
-  <div className="stat-grid">
-   <StatCard icon="layers" label="Lotes" kind="observed" value={nf.format(snapshot.batches.length)} foot={nf.format(snapshot.batches.filter(b=>b.state==='active').length)+' en curso'}/>
-   <StatCard icon="check" label="Conversaciones completadas" kind="observed" value={(totals.completed?at:'')+nf.format(totals.completed??0)} foot={capped?'Mínimo por lote grande':undefined}/>
-   <StatCard icon="clock" label="Pendientes y en análisis" kind="observed" value={(inFlight?at:'')+nf.format(inFlight)}/>
-   <StatCard icon="alert" label="Requieren atención" kind="observed" value={(totals.failed?at:'')+nf.format(totals.failed??0)} foot={totals.skipped?nf.format(totals.skipped)+' omitidas':undefined}/>
-  </div>
+  <KpiLinea label="Indicadores del histórico" items={[
+   {label:'Lotes',value:nf.format(snapshot.batches.length),c:8,partes:[{label:'En curso',value:snapshot.batches.filter(b=>b.state==='active').length},{label:'Otros',value:snapshot.batches.filter(b=>b.state!=='active').length}],nota:nf.format(snapshot.batches.filter(b=>b.state==='active').length)+' en curso'},
+   {label:'Conversaciones completadas',value:(totals.completed?at:'')+nf.format(totals.completed??0),c:8,partes:[{label:'Completadas',value:totals.completed??0},{label:'En análisis',value:inFlight},{label:'Requieren atención',value:totals.failed??0}],nota:capped?'Mínimo por lote grande':'Observado'},
+   {label:'Pendientes y en análisis',value:(inFlight?at:'')+nf.format(inFlight),c:8,partes:[{label:'En análisis',value:inFlight},{label:'Completadas',value:totals.completed??0}],nota:'Observado'},
+   {label:'Requieren atención',value:(totals.failed?at:'')+nf.format(totals.failed??0),c:8,chip:(totals.failed??0)>0?{texto:'Revisar',tono:'bad'}:{texto:'Sin fallas',tono:'ok'},partes:[{label:'Con falla',value:totals.failed??0},{label:'Omitidas',value:totals.skipped??0}],nota:totals.skipped?nf.format(totals.skipped)+' omitidas':'Observado'}]}/>
   <div className={styles.twocol}>
    <section className="task-card history-batches" aria-label="Lotes históricos"><div className="card-title"><div><h2>Lotes históricos</h2><p>Del más reciente al más antiguo</p></div></div>
     <Timeline events={events}/>

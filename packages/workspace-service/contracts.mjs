@@ -7,7 +7,7 @@ export const uuid=x=>typeof x==='string'&&/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9
 const unique=x=>[...new Set(x)].sort();
 const date=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\d$/.test(x)&&Number.isFinite(Date.parse(x))&&new Date(x).toISOString().slice(0,10)===x;
 export function parseWorkspaceQuery(query,{now=new Date()}={}){
- const keys=['resource','date_start','date_end','timezone','date_basis','currency','basis','exponent','sku','source','snapshot_id','scope_hash','cursor','limit','format','meta_only'];
+ const keys=['resource','date_start','date_end','timezone','date_basis','currency','basis','exponent','sku','source','snapshot_id','scope_hash','cursor','limit','format','meta_only','slim'];
  for(const key of query.keys())check(keys.includes(key)&&(['sku','source'].includes(key)||query.getAll(key).length===1),'unsupported_filter');
  const today=new Date(now);const end=query.get('date_end')??new Date(Date.UTC(today.getUTCFullYear(),today.getUTCMonth()+1,1)).toISOString().slice(0,10),start=query.get('date_start')??new Date(Date.UTC(today.getUTCFullYear(),today.getUTCMonth(),1)).toISOString().slice(0,10);
  check(date(start)&&date(end)&&start<end&&Date.parse(end)-Date.parse(start)<=366*86400000,'date_window_invalid');

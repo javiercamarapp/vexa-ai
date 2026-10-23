@@ -50,7 +50,7 @@ export function OverviewDashboard({bundle,pinned}:{bundle:Bundle;pinned:URLSearc
  const model=useMemo(()=>buildCfoModel(bundle.items),[bundle]);
  const trends=useJson<TrendsView>('/api/trends',acceptTrends);
  const query=pinned.toString();
- const probs=useJson<Bundle>(bundle.meta.snapshot_id?'/api/workspace?resource=problems&'+query:null,acceptBundle);
+ const probs=useJson<Bundle>(bundle.meta.snapshot_id?'/api/workspace?resource=problems&slim=1&'+query:null,acceptBundle);
  const [measure,setMeasure]=useState<'orders'|'refunds'>('orders'),[incluirRuido,setIncluirRuido]=useState(false);
  const cats=useJson<CategoriesView>('/api/trends/categories',acceptCategories);
  const insights=useMemo(()=>insightsResumen({trends:trends.data,categorias:cats.data}),[trends.data,cats.data]);

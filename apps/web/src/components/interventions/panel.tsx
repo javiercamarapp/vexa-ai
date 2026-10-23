@@ -18,6 +18,7 @@ import {Drawer} from '../ui/overlay';
 import {EmptyState} from '../ui/empty-state';
 import {SkeletonCards,SkeletonStats} from '../ui/skeletons';
 import {nf} from '../ui/format';
+import {AccionesTabs,vistaDe,ESTADOS_VISTA} from './acciones-tabs';
 import css from './panel.module.css';
 
 type List={items:Intervention[];unavailableCount:number};
@@ -29,7 +30,7 @@ function utc(value:string){return value?new Date(value+'Z').toISOString():'';}
 function inputTime(value:string|undefined|null){return value?.slice(0,19)??'';}
 function money(value:string|null,m:Measurement){return value===null?'Desconocido':formatMinorUnits(value,m.currency,m.exponent);}
 function optionLabel(s:SnapshotOption){return s.start+' → '+s.end+' · '+s.currency+' · '+s.basis+' · '+s.id;}
-function cleanQuery(value:string){const q=new URLSearchParams(value);for(const key of ['problem_id','detail_hash','resource','format','cursor','limit','root_kind','root_id','component_id','event_id','q','status','order'])q.delete(key);return q;}
+function cleanQuery(value:string){const q=new URLSearchParams(value);for(const key of ['problem_id','detail_hash','resource','format','cursor','limit','root_kind','root_id','component_id','event_id','q','status','order','vista'])q.delete(key);return q;}
 function initialScope(value:string):Scope & {basis:string;exponent?:number}{const q=cleanQuery(value),now=new Date();return {date_start:q.get('date_start')??new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),1)).toISOString(),date_end:q.get('date_end')??new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()+1,1)).toISOString(),timezone:'UTC',date_basis:q.get('date_basis')??'occurred_at',currency:q.get('currency')??'USD',basis:q.get('basis')??'net',sku:q.getAll('sku'),source:q.getAll('source'),snapshot_id:q.get('snapshot_id'),...(q.has('exponent')?{exponent:Number(q.get('exponent'))}:{})};}
 function pinnedQuery(scope:Scope,snapshot:string,hash:string){const q=new URLSearchParams({date_start:scope.date_start.slice(0,10),date_end:scope.date_end.slice(0,10),timezone:scope.timezone,date_basis:scope.date_basis,currency:scope.currency,basis:scope.basis??'net',snapshot_id:snapshot,scope_hash:hash});if(scope.exponent!==null&&scope.exponent!==undefined)q.set('exponent',String(scope.exponent));for(const sku of scope.sku)q.append('sku',sku);for(const source of scope.source)q.append('source',source);return q;}
 function validList(value:List,query:string){const q=new URLSearchParams(query);return !!value&&Array.isArray(value.items)&&value.items.every(item=>item.recommendationSnapshotId===q.get('snapshot_id')&&item.scopeHash===q.get('scope_hash'));}
@@ -96,12 +97,13 @@ export function InterventionsPanel({initialQuery}:{initialQuery:string}){
   }catch(e){if(!abort.signal.aborted&&generation===epoch.current){if(saved)setView(null);setConflict(true);setError(e instanceof Error?e.message:failure(503));}return false;}finally{if(!abort.signal.aborted&&generation===epoch.current){inFlight.current=false;setBusy(false);}}
  };
  const [mode,setMode]=useState<'board'|'table'>('board');
- const items=view?.items??[];
+ const vista=vistaDe(initialQuery),todas=view?.items??[],items=vista&&vista!=='por-decidir'?todas.filter(i=>ESTADOS_VISTA[vista].includes(i.status)):todas;
  const by=(s:Intervention['status'])=>items.filter(i=>i.status===s);
  const columns=[...STAGES.map(s=>({status:s as Intervention['status'],items:by(s)})),...(by('cancelled').length?[{status:'cancelled' as Intervention['status'],items:by('cancelled')}]:[])];
  const running=by('approved').length+by('active').length+by('measuring').length;
  return <section aria-label="Intervenciones y medición" className="stack">
   <PageHeader eyebrow="Acciones y resultados" title="Acciones" guide="intervenciones" actions={<Button icon={<Refresh/>} loading={busy} onClick={()=>void load(resolved.current)}>Actualizar intervenciones</Button>}/>
+  <AccionesTabs actual={vista??'en-curso'}/>
   <ScopeBar scope={scope} onApply={apply} busy={busy}/>
   {busy&&!view&&<div role="status" aria-label="Verificando intervenciones"><SkeletonStats count={3}/><SkeletonCards count={3}/></div>}{error&&<p className="state state-error" role="alert">{error}</p>}{notice&&<p className="state" role="status">{notice}</p>}{empty&&<EmptyState art="chart" title="Aún no hay un corte publicado" body="No hay una publicación disponible para este alcance." action={<LinkButton href="/economics" variant="primary" size="sm" icon={<Arrow/>}>Revisar publicaciones</LinkButton>}/>}
   {view&&<>{view.unavailableCount>0&&<p className="state" role="status">Hay intervenciones que no pueden mostrarse con la evidencia y los permisos actuales.</p>}

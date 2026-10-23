@@ -29,6 +29,7 @@ import {accionesPermitidas,etapaActual,ETAPA_TXT} from '../../../../../packages/
 import {EtapasFlujo,LineaFlujo,SeguimientoBloque,etapaTono,persona,type FlowItem} from './flujo-vista';
 import {ProcederDrawer,AjustarDrawer,DescartarDrawer,ResultadoDrawer,IniciarBoton} from './flujo-acciones';
 import {BorradoresDrawer} from './flujo-borradores';
+import {AccionesTabs} from '../interventions/acciones-tabs';
 import css from './panel.module.css';
 import fx from './flujo.module.css';
 import {fetchCupo} from '../../lib/workspace/cupo.mjs';
@@ -166,7 +167,8 @@ export function RecommendationsPanel({initialQuery}:{initialQuery:string}){
  const resumen=resumenRecomendaciones(items);
  const firstId=items.find(i=>i.status==='proposed')?.id;
  return <section aria-label="Recomendaciones con evidencia" className="stack">
-  <PageHeader eyebrow="Decisiones y seguimiento" title="Recomendaciones" guide="recomendaciones" actions={<><Button icon={<Refresh/>} loading={busy} onClick={()=>void load(resolved.current,true)}>Actualizar recomendaciones</Button>{view?.canPropose&&<Button icon={<Icon name="sparkle" size={14}/>} onClick={()=>setPropose(true)}>Proponer una recomendación</Button>}</>}/>
+  <PageHeader eyebrow="Decisiones y seguimiento" title="Acciones · Por decidir" guide="recomendaciones" actions={<><Button icon={<Refresh/>} loading={busy} onClick={()=>void load(resolved.current,true)}>Actualizar recomendaciones</Button>{view?.canPropose&&<Button icon={<Icon name="sparkle" size={14}/>} onClick={()=>setPropose(true)}>Proponer una recomendación</Button>}</>}/>
+  <AccionesTabs actual="por-decidir"/>
   <ScopeBar scope={scope} onApply={apply} busy={busy}/>
   {view&&<LineaCache edadMs={edad} actualizando={busy} viejo={viejo} onActualizar={()=>void load(resolved.current,true)}/>}
   {busy&&!view&&<div className="stack"><WaitStatus {...ESPERA.recomendaciones}/><div aria-hidden="true"><SkeletonCards count={esperadas}/></div></div>}{proposing&&view&&<WaitStatus titulo="Proponiendo la recomendación y verificando su evidencia…" detalle="Puede tardar hasta 2 minutos; no cierres esta pestaña."/>}{error&&<p className="state state-error" role="alert">{error}</p>}{notice&&<p className="state" role="status">{notice}</p>}{empty&&<DataState state={{kind:'empty'}}/>}

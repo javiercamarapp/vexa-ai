@@ -45,7 +45,7 @@ const muestrear=async(destino,esperaMs,accion)=>{
  const enRuta=fr.filter(f=>f.ruta),listo=enRuta.find(f=>f.cargando===0&&!f.fb&&f.len>600),primera=enRuta[0],ultFb=[...enRuta].reverse().find(f=>f.fb);
  const ini=primera?.t??0;return {viajeMs:ultFb?Math.round(ultFb.t-ini):0,pintadoMs:listo?Math.round(listo.t-Math.max(ini,ultFb?.t??ini)):null,quien:enRuta.filter(f=>listo&&f.t<listo.t&&f.cargando>0).map(f=>f.quien).filter(Boolean).slice(0,2).join(' ; '),tListo:listo?Math.round(listo.t):null,esqueletoAntes:listo?enRuta.filter(f=>f.t<listo.t&&f.cargando>0&&!f.fb).length:enRuta.length,primeraLinea:enRuta.find(f=>f.linea)?.linea??null,ultimaLinea:enRuta.at(-1)?.linea??null,primeraCargando:primera?.cargando??null,nFrames:fr.length};
 };
-const irMenu=async(ruta)=>{await page.locator(`.workspace-sidebar nav a[href^="${ruta}"]`).first().click();};
+const irMenu=async(ruta)=>{const a=page.locator(`.workspace-sidebar nav a[href^="${ruta}"]`).first();if(!(await a.isVisible())){await page.locator('.workspace-sidebar .nav-group').filter({has:a}).locator('.nav-group-toggle').click();}await a.click();};
 const KPI='[aria-label="Indicadores principales"]';
 console.log(`== caché stale-while-revalidate · ${theme} · latencia ${LAT} ms por lectura`);
 // 1) Primera carga del Resumen con latencia: nada de «No disponible ahora» mientras hay lecturas en vuelo.
@@ -75,7 +75,7 @@ await dormir(LAT*6+2500);
  check(max<=2,'tope de concurrencia ≤ 2 (máximo observado '+max+')');
  void urls;}
 // 3) Ir y volver (fresca): segunda visita instantánea, sin esqueleto, sin red.
-const PANTALLAS=[['Problemas','/problems'],['Recomendaciones','/recommendations'],['Brief ejecutivo','/briefs'],['Explorador','/explorer'],['Dinero','/cfo'],['Fuentes conectadas','/connections']];
+const PANTALLAS=[['Problemas','/problems'],['Por decidir','/recommendations'],['Explorador','/explorer'],['Dinero','/cfo'],['Fuentes conectadas','/connections']];
 const primeras={};
 for(const [,ruta] of PANTALLAS){
  const m1=await muestrear(ruta,LAT*4+1500,()=>irMenu(ruta));primeras[ruta]=m1;

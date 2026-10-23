@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {seriesPoints} from '../src/components/cfo/series';
 import {MonthBars, type MonthPoint} from '../src/components/cfo/month-bars';
-import {buildCfoReport, ledgerMonthlyFixture, FIXTURE_WATERMARK, type CurrencyBlock} from '../../../packages/cfo-copilot/src/index.mjs';
+import {buildCfoReport, ledgerMonthlyFixture, FIXTURE_WATERMARK} from '../../../packages/cfo-copilot/src/index.mjs';
 import {axisLabel} from '../../../packages/cfo-copilot/src/format.mjs';
 
 // QA2-001: el eje debe estar en la misma unidad que la tarjeta y el tooltip (unidades mayores), no en centavos.
@@ -22,7 +22,7 @@ test('ejes de Ingresos y Reembolsos: el tick máximo coincide con el mayor valor
       const html = renderToStaticMarkup(<MonthBars title={title} unit={pc.currency} points={points} exponent={pc.exponent} />);
       const top = ticksOf(html).at(-1)!;
       const maxMinor = known.reduce((a: bigint, s) => (BigInt(s.amount) > a ? BigInt(s.amount) : a), 0n);
-      const maxDisplay = known.find((s) => BigInt(s.amount) === maxMinor).amountDisplay as string;
+      const maxDisplay = known.find((s) => BigInt(s.amount) === maxMinor)!.amountDisplay as string;
       assert.equal(top, axisLabel(Number(maxMinor), pc.exponent), `${pc.currency} ${title}`);
       // El número del eje es del orden de magnitud del tooltip (no 100x): compacto == display redondeado.
       const shown = parseDisplay(maxDisplay);

@@ -8,7 +8,7 @@ const prob = quote => ({id: 'p1', title: 'Order: Spare Parts', version: 1, metri
 test('briefHtml: citas con saludo, cierre y dirección salen enmascaradas y con aviso; el original queda intacto', () => {
   const original = 'Hi Andrew,\nship to 55 Elm Rd, Lakewood, NJ 08701\nThanks, Eli Brook';
   const brief = {id: 'b1', version: 1, contentHash: 'h', document: {snapshotId: 's', scopeHash: 'x', scope: {date_start: 'a', date_end: 'b', currency: 'USD', basis: 'net', timezone: 'UTC', sku: [], source: []}, asOf: 't', watermark: 'w',
-    metrics: [], top3: [prob(original)], critical: [], actions: [], comparison: {status: 'ok', reasons: [], metrics: []}, limits: [], coverage: {}}};
+    metrics: [], top3: [prob(original)], critical: [], actions: [], comparison: {status: 'ok', reasons: [], metrics: []}, limits: [], forecast: {reason: 'sin pronóstico'}, coverage: {}}};
   let html;
   try { html = briefHtml(brief); } catch (e) { assert.fail('el documento mínimo no alcanza para renderizar: ' + e.message); }
   assert.ok(!/Andrew|Elm Rd|Eli Brook/.test(html));

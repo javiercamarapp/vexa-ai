@@ -107,3 +107,14 @@
  .cn-preguntas{animation:cn-aparece 420ms 200ms var(--ui-ease) both}
  @keyframes cn-aparece{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 }
+
+/* Portada de CFO: mismo lenguaje que «Pregúntale a tus datos»; las tarjetas entran en cascada y todo respeta «reducir movimiento». */
+.cn-hero-wrap{display:flex;flex-direction:column;align-items:center;gap:24px;width:100%}
+.cn-hero{animation:cn-sube .5s cubic-bezier(.2,.7,.2,1) both}
+.cn-cats .cn-cat{animation:cn-sube .55s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0) * 90ms + 120ms)}
+.cn-resumen-abre{width:100%;max-width:64rem}
+.cn-resumen-abre>summary{cursor:pointer;list-style:none;text-align:center;color:var(--muted);font:500 13px/1.4 var(--font-ui);padding:8px}
+.cn-resumen-abre>summary::-webkit-details-marker{display:none}
+.cn-resumen-abre[open]>summary{margin-bottom:12px}
+@keyframes cn-sube{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.cn-hero,.cn-cats .cn-cat{animation:none}}

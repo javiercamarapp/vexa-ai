@@ -128,5 +128,5 @@
 .mp-rank ol{gap:0}
 .mp-lista li{min-height:18px;padding:1px 8px}
 .mp-lista h3{margin:0 0 3px}
-.mp-det .eyebrow{font-size:11px}
+.mp-det .eyebrow{font-size:12px}
 @media(max-width:1000px){.mp-barra{flex-wrap:wrap;overflow:visible}.mp-barra .mp-ayuda{display:none}}

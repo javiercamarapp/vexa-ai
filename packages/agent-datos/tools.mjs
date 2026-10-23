@@ -9,6 +9,9 @@ import { CLASS_LABELS, LIMITS, coverageOf, toJsonSchema, validateArgs } from './
 /** Importe en unidades menores -> unidades mayores (solo para altura/eje de gráficas; el dinero mostrado sale de money()). */
 const majorOf = (minor, exponent) => Number(BigInt(minor)) / 10 ** exponent;
 const nf = new Intl.NumberFormat('es-MX');
+/** Qué cuenta cada cifra: base, moneda, fuente y diferencias con otras pantallas (QA2-003). */
+const ALCANCE_PEDIDOS = (cur) => `Pedidos y reembolsos: fuente libro económico, en ${cur}, filas vigentes en estado registrado de todas las bases (incluye Shopify bruto con impuestos y envío, y filas «a revisar»), por fecha efectiva. /cfo muestra una sola base (precio de línea de marketplace, sin filas «a revisar») y compara contra el mes completo anterior, por eso sus cifras pueden diferir.`;
+const ALCANCE_CONV = 'Conversaciones: todas las fuentes cargadas (HubSpot y CSV histórico), fechadas por su inicio o, si falta, por su primer mensaje. El Explorador muestra otra cosa: las filas incorporadas por fuente (p. ej. solo HubSpot), no el total histórico.';
 export const fmtInt = (n) => nf.format(n);
 export const monthLabel = (m) => new Intl.DateTimeFormat('es-MX', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(m + '-01T00:00:00Z'));
 const monthShort = (m) => new Intl.DateTimeFormat('es-MX', { month: 'short', year: '2-digit', timeZone: 'UTC' }).format(new Date(m + '-01T00:00:00Z')).replace('.', '');
@@ -121,7 +124,7 @@ export const TOOLS = [
       const f = fig('tendencia_conversaciones', `Conversaciones en ${monthLabel(last.month)}${last.st.estado === 'parcial' ? ' (mes incompleto)' : ''}`, fmtInt(last.count), last.count, c.class, cov);
       const f2 = fig('tendencia_conversaciones', `Conversaciones en ${dato.length} meses`, fmtInt(sum), sum, c.class, cov);
       const cell = (x) => (x.st.estado === 'sin_datos' ? 'No disponible' : x.st.estado === 'parcial' ? `${fmtInt(x.count)}*` : x.count);
-      const note = [c.sampleNote, avisos.length ? `* ${avisos.join('. ')}. Un mes incompleto no se compara con otro ni se lee como caída.` : null].filter(Boolean).join(' ') || undefined;
+      const note = [c.sampleNote, `${ALCANCE_CONV} Ventana: ${s.length} meses; ${fmtInt(sum)} con fecha de ${fmtInt((c.total ?? sum) + (c.undated ?? 0))} conversaciones cargadas.`, avisos.length ? `* ${avisos.join('. ')}. Un mes incompleto no se compara con otro ni se lee como caída.` : null].filter(Boolean).join(' ') || undefined;
       return {
         status: 'ok', figures: [f, f2],
         blocks: [{ tool: 'tendencia_conversaciones', title: 'Conversaciones por mes', columns: [col('mes', 'Mes'), col('conversaciones', 'Conversaciones', 'integer')], rows: s.map((x) => ({ mes: monthLabel(x.month), conversaciones: cell(x) })), chart: { kind: s.length >= 3 ? 'line' : 'bar', unit: 'conversaciones', series: s.map((x) => ({ key: x.month, label: monthShort(x.month) + (x.st.estado === 'parcial' ? '*' : ''), value: x.st.estado === 'sin_datos' ? null : x.count, display: x.st.estado === 'sin_datos' ? 'No disponible' : fmtInt(x.count) + (x.st.estado === 'parcial' ? ' (mes incompleto)' : ''), ...(x.st.estado === 'parcial' ? { partial: true } : {}) })) }, class: c.class, coverage: cov, truncated: false, note }],
@@ -249,7 +252,7 @@ export const TOOLS = [
       const f2 = fig('ledger_por_mes', `${kind === 'refund' ? 'Reembolsos' : 'Pedidos'} en ${monthLabel(last.month)}`, money(last[key].amountMinor, l.currency, l.exponent), last[key].amountMinor, 'observed', coverageOf(last[key].count - last[key].unknownAmounts, last[key].count), { currency: l.currency });
       return {
         status: 'ok', figures: [f, f2],
-        blocks: [{ tool: 'ledger_por_mes', title: `${kind === 'refund' ? 'Reembolsos liquidados' : 'Pedidos registrados'} por mes (${l.currency})`, columns: [col('mes', 'Mes'), col('registros', 'Registros', 'integer'), col('importe', 'Importe')], rows: s.map((x) => ({ mes: monthLabel(x.month), registros: x[key].count, importe: money(x[key].amountMinor, l.currency, l.exponent) })), chart: { kind: 'bar', unit: `importe en ${l.currency}`, series: s.map((x) => ({ key: x.month, label: monthShort(x.month), value: majorOf(x[key].amountMinor, l.exponent), display: money(x[key].amountMinor, l.currency, l.exponent) })) }, class: 'observed', coverage: cov, truncated: false, note: l.otherCurrencies?.length ? `Hay registros en otras monedas (${l.otherCurrencies.join(', ')}); no se suman a esta serie.` : undefined }],
+        blocks: [{ tool: 'ledger_por_mes', title: `${kind === 'refund' ? 'Reembolsos liquidados' : 'Pedidos registrados'} por mes (${l.currency})`, columns: [col('mes', 'Mes'), col('registros', 'Registros', 'integer'), col('importe', 'Importe')], rows: s.map((x) => ({ mes: monthLabel(x.month), registros: x[key].count, importe: money(x[key].amountMinor, l.currency, l.exponent) })), chart: { kind: 'bar', unit: `importe en ${l.currency}`, series: s.map((x) => ({ key: x.month, label: monthShort(x.month), value: majorOf(x[key].amountMinor, l.exponent), display: money(x[key].amountMinor, l.currency, l.exponent) })) }, class: 'observed', coverage: cov, truncated: false, note: [ALCANCE_PEDIDOS(l.currency), l.otherCurrencies?.length ? `Hay registros en otras monedas (${l.otherCurrencies.join(', ')}); no se suman a esta serie.` : null].filter(Boolean).join(' ') }],
         summary: `${kind === 'refund' ? 'Los reembolsos liquidados' : 'Los pedidos registrados'} suman ${f.display} en ${s.length} meses ${tag(f)}; en ${monthLabel(last.month)}, ${f2.display}.${l.otherCurrencies?.length ? ` Hay otras monedas (${l.otherCurrencies.join(', ')}) que no se suman.` : ''}`, missing: [], notes: [],
       };
     },
@@ -276,10 +279,10 @@ export const TOOLS = [
         rows.push({ medida: label, [a]: shown(sta, va, fmt), [b]: shown(stb, vb, fmt), cambio, clase: CLASS_LABELS[cls] });
         figs.push(fig('comparar_meses', label, cambio, ok ? d : null, cls, cov));
       };
-      add('Conversaciones', t.conversations.class, conv(a), conv(b), covC, sc.a, sc.b);
-      if (t.ledger?.series?.length) { for (const [k, name] of [['orders', 'Pedidos registrados'], ['refunds', 'Reembolsos liquidados']]) add(name, 'observed', led(a, k).count, led(b, k).count, coverageOf(led(a, k).count + led(b, k).count - led(a, k).unknownAmounts - led(b, k).unknownAmounts, led(a, k).count + led(b, k).count), sl.a, sl.b); }
+      add('Conversaciones (todas las fuentes, con fecha)', t.conversations.class, conv(a), conv(b), covC, sc.a, sc.b);
+      if (t.ledger?.series?.length) { for (const [k, name] of [['orders', `Pedidos registrados (${t.ledger.currency}, todas las bases)`], ['refunds', `Reembolsos liquidados (${t.ledger.currency}, todas las bases)`]]) add(name, 'observed', led(a, k).count, led(b, k).count, coverageOf(led(a, k).count + led(b, k).count - led(a, k).unknownAmounts - led(b, k).unknownAmounts, led(a, k).count + led(b, k).count), sl.a, sl.b); }
       const pa = await port.problemIncidents({ month: a }), pb = await port.problemIncidents({ month: b });
-      const nota = ['Solo describe el cambio; no explica sus causas.', avisos.length ? `* ${avisos.join('. ')}. Una variación solo se calcula entre dos meses completos.` : null].filter(Boolean).join(' ');
+      const nota = ['Solo describe el cambio; no explica sus causas.', `Compara los meses que elegiste: ${monthLabel(a)} frente a ${monthLabel(b)}.`, ALCANCE_CONV, t.ledger?.series?.length ? ALCANCE_PEDIDOS(t.ledger.currency) : null, avisos.length ? `* ${avisos.join('. ')}. Una variación solo se calcula entre dos meses completos.` : null].filter(Boolean).join(' ');
       const blocks = [{ tool: 'comparar_meses', title: `Registros · ${monthLabel(a)} frente a ${monthLabel(b)}`, columns: [col('medida', 'Medida'), col(a, monthShort(a), 'integer'), col(b, monthShort(b), 'integer'), col('cambio', 'Cambio'), col('clase', 'Clase')], rows, class: 'mixed', coverage: covC, truncated: false, note: nota }];
       let probText = '';
       if (pa.status === 'ok' && pb.status === 'ok') {

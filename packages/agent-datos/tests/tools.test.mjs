@@ -50,7 +50,7 @@ test('lo que no está cargado responde «no tengo ese dato» y dice qué falta',
 });
 test('comparar_meses: los cambios son diferencias exactas de lo que muestran las series', async () => {
   const r = await run('comparar_meses', { a: '2026-07', b: '2026-09' });
-  const conv = r.blocks[0].rows[0]; assert.equal(conv.medida, 'Conversaciones'); assert.equal(conv['2026-07'], '7,210'); assert.equal(conv['2026-09'], '7,480'); assert.match(conv.cambio, /^\+270 \(\+3\.7 %\)$/);
+  const conv = r.blocks[0].rows[0]; assert.equal(conv.medida, 'Conversaciones (todas las fuentes, con fecha)'); assert.equal(conv['2026-07'], '7,210'); assert.equal(conv['2026-09'], '7,480'); assert.match(conv.cambio, /^\+270 \(\+3\.7 %\)$/);
   assert.equal(r.blocks[0].class, 'mixed'); assert.equal(conv.clase, 'Estimado');
   assert.ok(r.blocks[1].rows[0].cambio.startsWith('+')); assert.equal(r.blocks[1].class, 'inferred');
 });

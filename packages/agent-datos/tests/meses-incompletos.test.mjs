@@ -66,3 +66,21 @@ test('sin marca de corte (base calendario) el mes en curso se trata como incompl
   const r = await run('comparar_meses', { a: '2026-09', b: '2026-10' }, portFor(A));
   for (const row of r.blocks[0].rows) assert.match(row.cambio, UMBRAL, row.medida);
 });
+
+// QA2-003: toda cifra de pedidos/conversaciones lleva su base, moneda, ventana y fuente a la vista.
+test('comparar_meses rotula base, moneda, fuente y mes de comparación de cada cifra', async () => {
+  const r = await run('comparar_meses', { a: '2026-07', b: '2026-08' }, portFor(A));
+  const labels = r.blocks[0].rows.map((x) => x.medida);
+  assert.ok(labels.some((l) => /Conversaciones.*todas las fuentes/.test(l)), labels.join('|'));
+  assert.ok(labels.some((l) => /Pedidos registrados.*USD.*todas las bases/.test(l)), labels.join('|'));
+  assert.match(r.blocks[0].note, /\/cfo/); assert.match(r.blocks[0].note, /libro económico/);
+  assert.match(r.blocks[0].note, /julio de 2026 frente a agosto de 2026/);
+});
+test('tendencia_conversaciones aclara qué cuenta: todas las fuentes, fecha de inicio o primer mensaje, y que el Explorador cuenta otra cosa', async () => {
+  const r = await run('tendencia_conversaciones', { months: 12 }, portFor(A));
+  assert.match(r.blocks[0].note, /todas las fuentes/); assert.match(r.blocks[0].note, /Explorador/);
+});
+test('ledger_por_mes rotula moneda, bases incluidas y fuente', async () => {
+  const r = await run('ledger_por_mes', { kind: 'order' }, portFor(A));
+  assert.match(r.blocks[0].note, /todas las bases/); assert.match(r.blocks[0].note, /\/cfo/);
+});

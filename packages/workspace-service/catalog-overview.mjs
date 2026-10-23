@@ -3,6 +3,7 @@
 // aviso crítico, citas REGISTRADAS (se verifican al abrir cada problema), recomendaciones guardadas y un extracto redactado de ejemplo.
 // Regla de honestidad: cada parte opcional que no alcanza su tope responde «unavailable» (valor null en las filas), nunca 0, y las demás partes siguen.
 // No hace verificaciones completas de evidencia: la cita se verifica al abrir el problema.
+import {resumirSenales} from './critico.mjs';
 export const OVERVIEW_BUDGET_MS = 2500;
 const QUOTE_EMBEDDINGS_PER_PROBLEM = 8;
 const QUOTE_MIN = 25, QUOTE_MAX = 220;
@@ -38,10 +39,12 @@ const clean = text => String(text ?? '').replace(/\s+/g, ' ').trim();
 export async function catalogOverview(s, catalog, {signalRows = null, isCritical, budgetMs = OVERVIEW_BUDGET_MS} = {}) {
   const deadline = Date.now() + budgetMs, ids = catalog.map(c => c.id);
   const per = new Map();
+  // Regla única de «crítico» (critico.mjs): grupos con revisión crítica, señales críticas (evidencias) y motivo por grupo.
+  const crit = signalRows ? resumirSenales(signalRows) : null;
   if (signalRows) for (const r of signalRows) {
     const o = per.get(r.pid) ?? {critical: false, spans: 0};
     o.spans += Number(r.spans) || 0;
-    if (isCritical(r)) o.critical = true;
+    if (isCritical ? isCritical(r) : crit.porGrupo.has(r.pid)) o.critical = true;
     per.set(r.pid, o);
   }
   const meta = ids.length ? await guarded(s, deadline, 'catalog_meta', async () => new Map((await s.query(
@@ -62,11 +65,13 @@ export async function catalogOverview(s, catalog, {signalRows = null, isCritical
       id: c.id, label: c.label, conversations: c.incidences,
       severity: meta ? (m?.severity ?? null) : null,
       critical: signalRows ? (g?.critical ?? false) : null,
+      critical_signals: signalRows ? (crit.porGrupo.get(c.id)?.signals ?? 0) : null,
+      critical_reason: signalRows ? (crit.porGrupo.get(c.id)?.reason ?? null) : null,
       citations: signalRows ? (g?.spans ?? 0) : null,
       recommendations: meta ? (m?.recs ?? 0) : null,
       quote: quotes ? (quotes.get(c.id) || null) : null,
     };
   });
   const state = v => v ? 'ok' : 'unavailable';
-  return {status: 'ok', total: rows.length, rows, parts: {signals: state(signalRows), severity: state(meta), quotes: state(quotes)}};
+  return {status: 'ok', total: rows.length, rows, critical: crit ? {groups: crit.grupos, signals: crit.senales} : null, parts: {signals: state(signalRows), severity: state(meta), quotes: state(quotes)}};
 }

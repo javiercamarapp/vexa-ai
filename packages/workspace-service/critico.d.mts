@@ -1,0 +1,10 @@
+export const SEVERIDADES_CRITICAS:readonly string[];
+export const CATEGORIA_CRITICA_FUENTE:string;
+export const CATEGORIA_CRITICA:RegExp;
+export const DEFINICION:{readonly senal:string;readonly grupo:string};
+export type MotivoCritico='severity'|'category'|'both';
+export function esSenalCritica(r:{severity?:string|null;category?:string|null}|null|undefined):boolean;
+export function motivoSenal(r:{severity?:string|null;category?:string|null}|null|undefined):MotivoCritico|null;
+export function resumirSenales(filas:readonly {pid:string;category?:string|null;severity?:string|null;spans?:number|string}[]|null|undefined):{grupos:number;senales:number;porGrupo:Map<string,{signals:number;reason:MotivoCritico}>};
+export function fraseCriticos(x:{grupos:number;senales?:number|null}):string;
+export function etiquetaMotivo(m:MotivoCritico|null|undefined):string|null;

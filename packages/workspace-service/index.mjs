@@ -7,6 +7,7 @@ import {EconomicError} from '../metrics/repository.mjs';
 import {memoSection,memoized,hasRefSummary,latestRows,latestEntries,shareMemo} from '../metrics/ledger-load.mjs';
 import {catalogOverview} from './catalog-overview.mjs';
 import {WorkspaceError,check,canonical,hash,uuid,parseWorkspaceQuery,canonicalScopeHash,cursorAuthHash,encodeCursor,decodeCursor} from './contracts.mjs';
+import {esSenalCritica,resumirSenales,fraseCriticos} from './critico.mjs';
 const VERSION='workspace-projection-v1',one=async(s,q,a=[])=>(await s.query(q,a)).rows[0],iso=x=>new Date(x).toISOString();
 const uniq=x=>[...new Set(x)].sort();
 const scopedDb=s=>({transaction:async(_action,fn)=>fn(s)});
@@ -18,22 +19,22 @@ class CriticalBudgetExceeded extends Error{}
 // los problemas se listan con verification:'summary' (corrida succeeded, conversación vigente, conexión activa, manifiesto completo, hash del manifiesto) y las incidencias se leen
 // por UNA consulta por lotes. NO se recalcula aquí el sha256 del texto, el input_hash, la validación de la extracción ni las lápidas de mensajes (evidenceCurrent/getMany completos);
 // esa verificación completa sigue en el detalle de cada problema, en priority.view/rank y en las exportaciones. Si no alcanza el presupuesto: «unavailable», nunca 0.
-const CRITICAL_CATEGORY=/safety|privacy|fraud|seguridad|privacidad|humo|smoke|fire|incendio|quemadura/i;
-export const isCriticalIssue=r=>['high','critical'].includes(r.severity)||CRITICAL_CATEGORY.test(r.category??'');
+// La regla vive en critico.mjs (UNA definición para Resumen, Problemas, Brief y recomendaciones).
+export const isCriticalIssue=esSenalCritica;
 // `collect` (opcional): recibe las filas {pid,category,severity,spans} que ya se leyeron, para que el resumen del catálogo no repita la consulta.
 export async function criticalCount(s,collect=null){
  const active=(await createProblemRepository({database:scopedDb(s)}).list({verification:'summary'})).filter(p=>p.state==='active');
  const pids=[],eids=[];for(const p of active)for(const e of p.embeddingIds??[]){pids.push(p.id);eids.push(e);}
- if(!pids.length){if(collect)collect.rows=[];return 0;}
+ if(!pids.length){if(collect){collect.rows=[];collect.evidences=0;}return 0;}
  const rows=(await s.query(`SELECT w.pid,i.category,i.severity,count(DISTINCT es.id)::int AS spans FROM unnest($2::uuid[],$3::uuid[]) w(pid,eid)
   JOIN public.problem_embedding_members m ON m.tenant_id=$1 AND m.embedding_id=w.eid
   JOIN public.embeddings e ON e.tenant_id=m.tenant_id AND e.id=m.embedding_id
   JOIN public.issues i ON i.tenant_id=m.tenant_id AND i.extraction_run_id=m.extraction_run_id
   JOIN public.evidence_spans es ON es.tenant_id=i.tenant_id AND es.issue_id=i.id AND es.message_revision_id=e.message_revision_id
   GROUP BY w.pid,i.category,i.severity`,[s.tenantId,pids,eids])).rows;
- const critical=new Set();for(const r of rows)if(isCriticalIssue(r))critical.add(r.pid);
- if(collect)collect.rows=rows;
- return critical.size;
+ const resumen=resumirSenales(rows);
+ if(collect){collect.rows=rows;collect.evidences=resumen.senales;}
+ return resumen.grupos;
 }
 export async function criticalSignals(s,snapshotId,budgetMs=CRITICAL_BUDGET_MS,collect=null){
  const deadline=Date.now()+budgetMs;
@@ -44,7 +45,7 @@ export async function criticalSignals(s,snapshotId,budgetMs=CRITICAL_BUDGET_MS,c
  let guarded=false,previous=null;
  if(budgetMs>0){previous=(await s.query("SELECT current_setting('statement_timeout') AS v")).rows[0]?.v??null;await s.query('SAVEPOINT critical_signals');await s.query("SELECT set_config('statement_timeout',$1,true)",[Math.ceil(budgetMs)+'ms']);guarded=true;}
  const release=shareMemo(s,limited); // la verificación del snapshot ya hecha en esta transacción se reutiliza, no se repite
- try{const out={status:'ok',count:await criticalCount(limited,collect)};
+ try{const out={status:'ok',count:await criticalCount(limited,collect),evidences:null};out.evidences=collect?.evidences??null;
   if(guarded){await s.query("SELECT set_config('statement_timeout',$1,true)",[previous??'0']);await s.query('RELEASE SAVEPOINT critical_signals');}
   return out;}
  catch(e){
@@ -162,7 +163,7 @@ export function createWorkspaceService({database}){
  const collect={},signalsResult=signals?await criticalSignals(s,base.view.id,CRITICAL_BUDGET_MS,collect):{status:'unavailable',count:null},critical=signalsResult.count??0;
  // Resumen del catálogo (todos los problemas vigentes, no solo la página): solo en la vista interactiva y sin cursor; cada parte opcional tiene su tope y su «no disponible ahora».
  const overview=wantCatalog&&notLinked&&catalog&&!request.cursor?await catalogOverview(s,catalog,{signalRows:signalsResult.status==='ok'?collect.rows??null:null,isCritical:isCriticalIssue}):null;
- return {items,meta:{state:stale?'stale':!items.length?'empty':p.uncertain||items.some(r=>r.status==='partial')?'partial':'ready',snapshot_id:base.view.id,base_snapshot_id:base.view.id,base_scope_hash:base.view.scopeHash,scope_hash:bound.row.scope_hash,cursor_auth_hash:authHash,coverage:notLinked&&items.length?NOT_LINKED_NOTICE:p.uncertain?`${p.uncertain} órdenes con pertenencia al filtro desconocida; subtotal de pertenencias confirmadas.`:stale?'La versión actual del problema cambió; esta vista conserva la historia y las cifras publicadas.':'Cobertura financiera según el snapshot; filas por problema no aditivas.',watermark:base.view.watermark,next_cursor:more?encodeCursor({after:items.at(-1).id,...expected}):null,critical_notice:critical?`${critical} señales críticas actuales autorizadas, independientes de los filtros y del importe del snapshot.`:null,critical_notice_state:signalsResult.status,...(overview?{catalog:overview}:{}),scope:exposedScope(f,bound.row.scope_hash),mapping_manifest_id:bound.row.id,can_manage:s.role==='owner'}};
+ return {items,meta:{state:stale?'stale':!items.length?'empty':p.uncertain||items.some(r=>r.status==='partial')?'partial':'ready',snapshot_id:base.view.id,base_snapshot_id:base.view.id,base_scope_hash:base.view.scopeHash,scope_hash:bound.row.scope_hash,cursor_auth_hash:authHash,coverage:notLinked&&items.length?NOT_LINKED_NOTICE:p.uncertain?`${p.uncertain} órdenes con pertenencia al filtro desconocida; subtotal de pertenencias confirmadas.`:stale?'La versión actual del problema cambió; esta vista conserva la historia y las cifras publicadas.':'Cobertura financiera según el snapshot; filas por problema no aditivas.',watermark:base.view.watermark,next_cursor:more?encodeCursor({after:items.at(-1).id,...expected}):null,critical_notice:critical?`${fraseCriticos({grupos:critical,senales:signalsResult.evidences??null})} actuales autorizados, independientes de los filtros y del importe del snapshot.`:null,critical_notice_state:signalsResult.status,...(overview?{catalog:overview}:{}),scope:exposedScope(f,bound.row.scope_hash),mapping_manifest_id:bound.row.id,can_manage:s.role==='owner'}};
  };
  const prep=async s=>{requestTenant=s.tenantId;const initial=await initialOverviewScope(s,query);if(initial)request.scope=initial;const base=await baseSnapshot(s,request.scope);if(!base)return null;const bound=await binding(s,request.scope,base);return {...bound,role:s.role};};
  // Alcance sin fijar: la preparación (ids/binding) y la lectura final comparten UNA transacción cuando no hay que materializar nada (antes: dos transacciones, dos verificaciones completas del snapshot,

@@ -34,8 +34,9 @@ test('el resumen une catálogo, señales ya leídas, severidad, recomendaciones 
   const signalRows = [{pid: 'p1', category: 'Order: Spare Parts', severity: 'high', spans: 5}, {pid: 'p1', category: 'Order: Spare Parts', severity: 'low', spans: 2}, {pid: 'p2', category: 'Order: Spare Parts', severity: 'low', spans: 4}];
   const o = await catalogOverview(s, catalog, {signalRows, isCritical: isCriticalIssue});
   assert.deepEqual(o.parts, {signals: 'ok', severity: 'ok', quotes: 'ok'});
-  assert.deepEqual(o.rows.find(r => r.id === 'p1'), {id: 'p1', label: 'Order: Spare Parts', conversations: 7, severity: 'high', critical: true, citations: 7, recommendations: 2, quote: 'Necesito la pieza de repuesto'});
-  assert.deepEqual(o.rows.find(r => r.id === 'p2'), {id: 'p2', label: 'Order: Spare Parts', conversations: 3, severity: 'low', critical: false, citations: 4, recommendations: 0, quote: null});
+  assert.deepEqual(o.critical, {groups: 1, signals: 5}, 'grupos con revisión crítica y señales críticas (evidencias), cada uno con su unidad');
+  assert.deepEqual(o.rows.find(r => r.id === 'p1'), {id: 'p1', label: 'Order: Spare Parts', conversations: 7, severity: 'high', critical: true, critical_signals: 5, critical_reason: 'severity', citations: 7, recommendations: 2, quote: 'Necesito la pieza de repuesto'});
+  assert.deepEqual(o.rows.find(r => r.id === 'p2'), {id: 'p2', label: 'Order: Spare Parts', conversations: 3, severity: 'low', critical: false, critical_signals: 0, critical_reason: null, citations: 4, recommendations: 0, quote: null});
   assert.equal(o.total, 2);
 });
 
@@ -86,4 +87,13 @@ test('de punta a punta con Postgres: catálogo completo aunque la página sea co
       assert.equal(res.meta.catalog, undefined, 'el Resumen ejecutivo no cambia');
     } finally { await pool.end(); }
   });
+});
+
+test('un grupo de severidad registrada Baja puede tener señales críticas: la fila trae el motivo y cuántas (QA1-009)', async () => {
+  const {s} = fake({meta: [{id: 'p1', severity: 'low', recs: 0}, {id: 'p2', severity: 'low', recs: 0}], quotes: []});
+  const signalRows = [{pid: 'p1', category: 'Order: Spare Parts', severity: 'low', spans: 336}, {pid: 'p1', category: 'Order: Spare Parts', severity: 'high', spans: 1}, {pid: 'p2', category: 'Order: Spare Parts', severity: 'low', spans: 3}];
+  const o = await catalogOverview(s, catalog, {signalRows, isCritical: isCriticalIssue});
+  const p1 = o.rows.find(r => r.id === 'p1');
+  assert.equal(p1.severity, 'low'); assert.equal(p1.critical, true); assert.equal(p1.critical_signals, 1); assert.equal(p1.critical_reason, 'severity'); assert.equal(p1.citations, 337);
+  assert.deepEqual(o.critical, {groups: 1, signals: 1});
 });

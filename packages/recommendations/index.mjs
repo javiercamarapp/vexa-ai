@@ -1,3 +1,4 @@
+import {esSenalCritica} from '../workspace-service/critico.mjs';
 import {randomUUID} from 'node:crypto';
 import {createWorkspaceService} from '../workspace-service/index.mjs';
 import {createDetailService} from '../workspace-service/detail.mjs';
@@ -17,8 +18,8 @@ function cleanQuery(value){check(typeof value==='string'&&value.length<=8192,'sc
 // recommendation_managed_guard exige 1..500 citas por recomendación y revisa cada una contra la base: un problema con 1,327 o 5,947 citas (22-oct, prod) daba 409/lentitud. Se guarda una MUESTRA rotulada
 // (las críticas primero, luego el orden estable por hash); la verificación completa de TODAS las citas del problema se hizo antes (captured) y el total queda en provenance.evidenceTotal y en la justificación.
 export const MAX_EVIDENCE_REFS=50;
-const CRITICAL_REF=/safety|privacy|fraud|seguridad|privacidad|humo|smoke|fire|incendio|quemadura|injur|burn/i;
-const sampleRefs=(refs,n)=>refs.length<=n?refs:[...refs.filter(r=>['critical','high'].includes(r.severity)||CRITICAL_REF.test(r.category)),...refs.filter(r=>!(['critical','high'].includes(r.severity)||CRITICAL_REF.test(r.category)))].slice(0,n).sort((a,b)=>hash(a).localeCompare(hash(b)));
+// Regla única de «crítico»: ../workspace-service/critico.mjs.
+const sampleRefs=(refs,n)=>refs.length<=n?refs:[...refs.filter(esSenalCritica),...refs.filter(r=>!esSenalCritica(r))].slice(0,n).sort((a,b)=>hash(a).localeCompare(hash(b)));
 export function createRecommendationRepository({database,limits={}}){
  const MAX_REFS=limits.maxRefs??MAX_EVIDENCE_REFS;
  const tx=async(action,fn)=>{let own;try{return await database.transaction(action,async s=>{try{return await fn(s);}catch(e){if(e instanceof WorkspaceError||e instanceof DomainError||e instanceof EconomicError)own=e;throw e;}});}catch(e){if(own)throw own;throw e;}};

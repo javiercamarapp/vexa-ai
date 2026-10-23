@@ -1,3 +1,4 @@
+import {CATEGORIA_CRITICA_FUENTE} from '../workspace-service/critico.mjs';
 import {createWorkspaceService} from '../workspace-service/index.mjs';
 import {evidenceRuns} from '../metrics/evidence-memo.mjs';
 import {WorkspaceError,check,uuid} from '../workspace-service/contracts.mjs';
@@ -33,7 +34,7 @@ export function createExplorerRepository({database}){
  // Resumen por problema SIN texto de evidencia: nº de citas distintas y bandera crítica (misma regla que el brief) por UNA consulta. Solo sirve para ELEGIR candidatos; lo que se muestra se verifica por completo con citations().
  async function summaries(view){return readonly.transaction('read',async s=>{const ids=view.items.map(i=>i.id),{embeddings}=await embeddingsOf(s,view,ids,{soft:true}),pids=[],eids=[];for(const [id,e] of embeddings)if(e)for(const x of e){pids.push(id);eids.push(x);}
  const out=new Map(ids.map(id=>[id,{evidenceCount:0,critical:false}]));if(!pids.length)return out;
- for(const r of (await s.query(`SELECT w.pid,count(DISTINCT (i.extraction_run_id::text||':'||es.message_revision_id::text||':'||es.quote_hash||':'||i.category)) AS n,coalesce(bool_or(i.severity IN ('high','critical') OR i.category ~* 'safety|privacy|fraud|seguridad|privacidad|humo|smoke|fire|incendio|quemadura'),false) AS critical
+ for(const r of (await s.query(`SELECT w.pid,count(DISTINCT (i.extraction_run_id::text||':'||es.message_revision_id::text||':'||es.quote_hash||':'||i.category)) AS n,coalesce(bool_or(i.severity IN ('high','critical') OR i.category ~* '${CATEGORIA_CRITICA_FUENTE}'),false) AS critical
   FROM (SELECT DISTINCT pid,eid FROM unnest($2::uuid[],$3::uuid[]) w(pid,eid)) w JOIN public.problem_embedding_members m ON m.tenant_id=$1 AND m.embedding_id=w.eid
   JOIN public.issues i ON i.tenant_id=m.tenant_id AND i.extraction_run_id=m.extraction_run_id JOIN public.evidence_spans es ON es.tenant_id=i.tenant_id AND es.issue_id=i.id GROUP BY w.pid`,[s.tenantId,pids,eids])).rows)out.set(r.pid,{evidenceCount:Number(r.n),critical:r.critical===true});
  return out;});}

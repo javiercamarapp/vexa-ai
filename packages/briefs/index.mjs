@@ -9,6 +9,7 @@ import {createSnapshotRepository} from '../metrics/snapshots.mjs';
 import {createPriorityRepository} from '../metrics/priority.mjs';
 import {EconomicError} from '../metrics/repository.mjs';
 import {separarRuido} from '../../apps/web/src/lib/legibilidad/ruido.mjs';
+import {esSenalCritica} from '../workspace-service/critico.mjs';
 import {memoSection} from '../metrics/ledger-load.mjs';
 import {WorkspaceError,check,uuid,hash,canonical,parseWorkspaceQuery,cursorAuthHash,encodeCursor,decodeCursor} from '../workspace-service/contracts.mjs';
 const one=async(s,q,a=[])=>(await s.query(q,a)).rows[0],iso=x=>new Date(x).toISOString();
@@ -19,7 +20,7 @@ const scoped=s=>({transaction:async(action,fn)=>{check(action==='read','brief_re
 // Selección del brief (rotulada en el documento): del catálogo (verificación de RESUMEN) solo se verifica por completo la evidencia de los problemas que el brief puede mostrar:
 // los POOL con mejor orden (ranking publicado, o nº de citas según el resumen) y TODOS los candidatos críticos (para no perder ninguno fuera del top). Un problema sin evidencia utilizable se excluye, nunca se muestra.
 export const POOL=15,CRITICAL_N=5,MAX_CITATIONS=3;
-const CRITICAL=/safety|privacy|fraud|seguridad|privacidad|humo|smoke|fire|incendio|quemadura/i;
+// Regla única de «crítico»: ../workspace-service/critico.mjs.
 export function createBriefRepository({database,limits={}}){
  const POOL_N=limits.pool??POOL,CRIT_N=limits.criticalN??CRITICAL_N,MAX_C=limits.maxCitations??MAX_CITATIONS;
  const tx=async(action,fn)=>{let domain;try{return await database.transaction(action,async s=>{try{return await fn(s);}catch(e){if(e instanceof WorkspaceError||e instanceof EconomicError)domain=e;throw e;}});}catch(e){if(domain)throw domain;throw e;}};
@@ -52,10 +53,10 @@ export function createBriefRepository({database,limits={}}){
  while(ordered.slice(0,pool).filter(p=>verified.has(p.id)).length<3&&pool<ordered.length){await verify(ordered.slice(pool,pool+POOL_N).map(p=>p.id));pool=Math.min(pool+POOL_N,ordered.length);}
  // Carril crítico ROTULADO: solo los CRIT_N críticos con más citas (según el resumen) cuya evidencia verifica por completo y sigue siendo crítica; el resto se resume como conteo (sin importes ni citas).
  // Cada problema mostrado lleva a lo sumo MAX_C citas (las críticas primero); brief_guard revisa cada cita mostrada contra la base.
- const isCrit=refs=>refs.some(c=>['high','critical'].includes(c.severity)||CRITICAL.test(c.category)),listed=new Set();
+ const isCrit=refs=>refs.some(esSenalCritica),listed=new Set();
  for(let i=0;i<critOrdered.length&&listed.size<CRIT_N;i+=CRIT_N){const batch=critOrdered.slice(i,i+CRIT_N);await verify(batch.map(p=>p.id));for(const p of batch)if(listed.size<CRIT_N&&verified.has(p.id)&&isCrit(verified.get(p.id)))listed.add(p.id);}
  const pq=scopeQuery(scope).toString(),shown=ordered.filter(p=>verified.has(p.id)&&(listed.has(p.id)||ordered.slice(0,pool).includes(p)));
- const pick=refs=>[...refs.filter(c=>['high','critical'].includes(c.severity)||CRITICAL.test(c.category)),...refs.filter(c=>!(['high','critical'].includes(c.severity)||CRITICAL.test(c.category)))].slice(0,MAX_C);
+ const pick=refs=>[...refs.filter(esSenalCritica),...refs.filter(c=>!esSenalCritica(c))].slice(0,MAX_C);
  const ps=shown.map(p=>{const refs=verified.get(p.id),shownRefs=pick(refs),published=ranked.get(p.id)!==null;return {id:p.id,version:p.version,title:p.title,metrics:p.metrics,critical:listed.has(p.id),rank:ranked.get(p.id),rankingBasis:published?'published_priority':'evidence_count',evidenceCount:shownRefs.length,evidenceTotal:refs.length,evidence:shownRefs.map(({conversationId,source,...r})=>r),href:'/problems/'+p.id+'?'+pq};});
  const selection={mode:'verified_candidates',catalogProblems:view.items.length,candidatePool:pool,criticalCandidates:criticalIds.length,criticalListed:listed.size,criticalOmitted:criticalIds.length-listed.size,maxCitationsPerProblem:MAX_C,automaticNotificationsExcluded:noise,verifiedProblems:ps.length,rankingVerification:rank?'integrity_only':'none'};
  const recs=await createRecommendationRepository({database:db}).list({query:q}),interventions=await createInterventionRepository({database:db}).list({query:q});

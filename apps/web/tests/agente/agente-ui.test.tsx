@@ -105,10 +105,14 @@ test('adjuntos: las columnas identificadoras (ticket_id, ids únicos consecutivo
   assert.doesNotMatch(html,/5,015|1,003/);assert.match(html,/identificador/i);
 });
 
-test('tema propio del chat: opciones claro/oscuro/sistema/como la app, sin tocar la preferencia global', () => {
-  const src=readFileSync(new URL('../../src/components/agente/theme-toggle.tsx',import.meta.url),'utf8');
-  assert.doesNotMatch(src,/setItem\(GLOBAL|setItem\('vexa-theme'/);
-  assert.match(src,/removeItem\(CLAVE\)/);
-  assert.match(readFileSync(new URL('../../src/components/agente/agente.tsx',import.meta.url),'utf8'),/<ThemeToggle\/>/);
-  assert.match(readFileSync(new URL('../../src/components/agente/answer-view.tsx',import.meta.url),'utf8'),/vincul/);
+test('«Pregúntale a tus datos» vive en el shell normal: sin encabezado, sin barra lateral propia, sin selector de tema y con panel Historial', () => {
+  const read=(r:string)=>readFileSync(new URL(r,import.meta.url),'utf8');
+  const chat=read('../../src/components/agente/agente.tsx'),shell=read('../../src/components/workspace/shell.tsx');
+  assert.doesNotMatch(chat,/ThemeToggle|ChatSidebar|chat-bar|Espacio de trabajo/);
+  assert.match(chat,/<HistoryPanel/);assert.match(chat,/aria-label="Historial de chats"/);
+  assert.match(shell,/sinEncabezado=pathname==='\/preguntale'/);assert.match(shell,/workspace-top" hidden=\{sinEncabezado/);
+  assert.doesNotMatch(shell,/workspace-bare/);
+  const hist=read('../../src/components/agente/historial.tsx');
+  assert.match(hist,/ConfirmationDialog/);assert.match(hist,/Buscar chats/);assert.match(hist,/onRename/);
+  assert.match(read('../../src/components/agente/answer-view.tsx'),/vincul/);
 });

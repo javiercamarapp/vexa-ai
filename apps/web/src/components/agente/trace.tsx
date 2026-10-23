@@ -25,7 +25,7 @@ function StepList({steps,labels}:{steps:Step[];labels:Record<string,string>}){
 export function LiveTrace({phase,steps,labels}:{phase:string;steps:Step[];labels:Record<string,string>}){
  const [open,setOpen]=useState(true);
  return <div className="agente-thinking" role="status" aria-live="polite" data-testid="agente-pensando">
-  <RovaqMark size={26} thinking/>
+  <RovaqMark size={16} thinking/>
   <div className="trace-main">
    <p className="trace-phase">{phase}</p>
    {steps.length>0&&<><button type="button" className="trace-toggle" aria-expanded={open} aria-controls="trace-live" onClick={()=>setOpen(v=>!v)}><Icon name="arrow" size={12}/>Desglose de lo que hace el sistema ({steps.length})</button>

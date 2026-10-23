@@ -48,7 +48,7 @@ export function AnswerView({message,question,isLast,busy,labels,userContext,onAs
  const blocksWithRows=a.blocks.filter(b=>b.rows.length>0);
  return <div className="agente-answer">
   <div className="agente-answer-text">
-   <RovaqMark size={24}/>
+   <RovaqMark size={16}/>
    {isAlert(a.status)||a.status==='clarify'||a.status==='out_of_catalog'?<div className={'state'+(isAlert(a.status)?' state-error':'')} role={isAlert(a.status)?'alert':undefined}><p className="agente-state-line"><Icon name={isAlert(a.status)?'alert':'info'} size={16}/>{a.text||notice}</p></div>:<p className="agente-text">{a.text}</p>}
   </div>
   {(a.status==='clarify'||a.status==='out_of_catalog'||a.status==='budget_exceeded')&&a.suggestions.length>0&&<div className="agente-chips" role="group" aria-label="Preguntas que sí puedo responder">{a.suggestions.slice(0,3).map(q=><Button key={q} size="sm" disabled={busy} onClick={()=>onAsk(q)}>{q}</Button>)}</div>}

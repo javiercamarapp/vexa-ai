@@ -1,7 +1,7 @@
 // Lógica PURA del Explorador de evidencia (sin red, sin React): citas repetidas, aviso de datos de terceros, textos de la fila y del importe.
 // Honestidad: lo desconocido es null y nunca se convierte en 0.
-/** Aviso fijo del panel de evidencia. La redacción solo cubre correos, teléfonos y números largos; NO redacta nombres ni direcciones (decisión de producto pendiente, ver NOTAS-EXPLORADOR.md). */
-export const AVISO_TERCEROS='El texto está redactado de correos, teléfonos y números largos; puede contener nombres o direcciones de terceros: no lo compartas fuera de tu organización.';
+/** Aviso fijo del panel de evidencia. La redacción en base cubre correos, teléfonos y números largos; en pantalla se ocultan además patrones estructurales frecuentes de nombres y direcciones (enmascarar-terceros.mjs); NO es detección completa. */
+export const AVISO_TERCEROS='El texto está redactado de correos, teléfonos y números largos. Se ocultan patrones frecuentes de nombres y direcciones, pero el texto puede seguir conteniendo datos de terceros: no lo compartas fuera de tu organización.';
 /** Una cita idéntica (mismo mensaje y mismo hash del texto) que la IA registró en varias corridas se muestra UNA vez con «×N». Orden estable: el de llegada. */
 export const claveCita=c=>(c.messageRevisionId??'')+':'+(c.quoteHash??c.quote??'');
 export function agruparCitas(citas){

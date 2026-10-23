@@ -8,7 +8,7 @@ test('QA2-007: la misma cita en varias corridas se muestra una vez con ×N, en o
 });
 test('el mismo texto en MENSAJES distintos no se funde (el origen es distinto)',()=>{assert.equal(agruparCitas([c(),c({messageRevisionId:'m2'})]).length,2);});
 test('sin citas: lista vacía y distintas null si no es una lista',()=>{assert.deepEqual(agruparCitas([]),[]);assert.deepEqual(agruparCitas(null),[]);assert.equal(citasDistintas(undefined),null);});
-test('el aviso de terceros dice lo que se redacta y lo que no',()=>{assert.match(AVISO_TERCEROS,/correos, teléfonos y números largos/);assert.match(AVISO_TERCEROS,/nombres o direcciones de terceros/);assert.match(AVISO_TERCEROS,/no lo compartas fuera de tu organización/);});
+test('el aviso de terceros dice lo que se redacta y lo que no',()=>{assert.match(AVISO_TERCEROS,/correos, teléfonos y números largos/);assert.match(AVISO_TERCEROS,/Se ocultan patrones frecuentes de nombres y direcciones, pero el texto puede seguir conteniendo datos de terceros/);assert.match(AVISO_TERCEROS,/no lo compartas fuera de tu organización/);});
 test('QA2-006: el importe solo se avisa una vez cuando ninguno es conocido; desconocido ≠ 0',()=>{
  const sin=[{metrics:[{amount_minor:null}]},{metrics:[{amount_minor:null}]}];
  assert.equal(hayImporteConocido(sin),false);assert.equal(hayImporteConocido([...sin,{metrics:[{amount_minor:'0'}]}]),true,'un cero real SÍ es un importe conocido');assert.equal(hayImporteConocido([]),false);

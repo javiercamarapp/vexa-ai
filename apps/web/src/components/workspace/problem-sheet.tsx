@@ -8,7 +8,6 @@ import {etiquetaMotivo} from '../../../../../packages/workspace-service/critico.
 import {Citation} from '../ui/citation';
 import {ChartState} from '../ui/chart-state';
 import {ColumnChart,type ColumnDatum} from '../ui/column-chart';
-import {EmptyState} from '../ui/empty-state';
 import {Button,LinkButton,Refresh,Arrow} from '../ui/button';
 import {KindBadge} from '../ui/kind-badge';
 import {TituloAuto} from '../ui/titulo-auto';
@@ -68,10 +67,14 @@ const NA=<strong className={s.na}>No disponible ahora</strong>;
 export function ProblemSheet({id,shared,captured,dinero,facts,onTitle,causa=null}:{causa?:ReactNode;id:string;shared:string;captured:ConversationRef[]|null;dinero:ReactNode|null;facts:ReturnType<typeof useJson<ProblemFacts>>;onTitle?:(t:string|null)=>void}){
  const trend=useJson<MonthlyIncidencesView>('/api/trends/incidences?problem='+encodeURIComponent(id),acceptTrend);
  const ev=useEvidencia(id,shared,captured);
- const [todas,setTodas]=useState(false);
+ const [todas,setTodas]=useState(false),[intentos,setIntentos]=useState(0);
  const f=facts.data,head=encabezadoFicha(f,etiquetaMotivo);
  useEffect(()=>{onTitle?.(head?.categoria??null);},[head?.categoria,onTitle]);
  const serie=serieConversaciones(trend.data),cambio=cambioMensual(serie);
+ const tendenciaCaida=!serie&&!trend.busy&&(!!trend.error||trend.data?.status==='timeout');
+ // Reintento automático en segundo plano (3 veces, cada 20 s) cuando la tendencia agota su tiempo.
+ const recargarTendencia=trend.reload;
+ useEffect(()=>{if(!tendenciaCaida||intentos>=3)return;const t=setTimeout(()=>{setIntentos(n=>n+1);void recargarTendencia();},20000);return()=>clearTimeout(t);},[tendenciaCaida,intentos,recargarTendencia]);
  const datos:ColumnDatum[]=(serie?serie.map(p=>({key:p.month,label:mesCorto(p.month),long:mesLargo(p.month)+(p.partial?' (mes incompleto)':''),value:p.value,partial:p.partial,display:p.value===null?'No disponible':nf.format(p.value)+(p.value===1?' conversación':' conversaciones'),detail:p.partial?'Mes incompleto: no se compara':undefined})):[]);
  const parciales=trend.data?.completeness?.partialMonths??[];
  const adj=resumenAdjuntos(f?.attachments);
@@ -90,7 +93,6 @@ export function ProblemSheet({id,shared,captured,dinero,facts,onTitle,causa=null
      {f&&<KindBadge kind="inferred" hint="La categoría y la severidad las asigna la IA al extraer cada conversación: son Inferido, no un hecho observado."/>}
     </div>
     {f&&<TituloAuto problemId={id} label={f.label??''} conversaciones={f.conversations} temas={f.themes??null}/>}
-    {head?.critico===true&&head.motivo&&<p className={s.sub}><strong>Motivo de la revisión crítica:</strong> {head.motivo}{head.senales!==null&&<> · {nf.format(head.senales)} {head.senales===1?'señal crítica':'señales críticas'} (evidencias).</>}</p>}
     {facts.busy&&!f&&<div role="status" aria-busy="true"><span className="sr-only">Cargando la ficha…</span><div className="skel-rows"><span/></div></div>}
     {facts.error&&!f&&<p className="state state-error" role="alert">{facts.error} <Button size="sm" icon={<Refresh/>} onClick={facts.reload}>Reintentar</Button></p>}
     {f&&f.parts.catalog==='unavailable'&&<p className="state" role="note">Parte de la ficha no está disponible ahora; lo que no se pudo calcular se marca «No disponible ahora», no cero.</p>}
@@ -105,21 +107,26 @@ export function ProblemSheet({id,shared,captured,dinero,facts,onTitle,causa=null
   ]}/>
   {adj.nota&&<p className={s.sub} role="note">{adj.nota}</p>}
 
-  <div className={s.row84}>
+  <div className={s.row84} data-falla={tendenciaCaida||undefined}>
   <section className={"ui-card "+s.violeta} aria-label="Tendencia mensual de conversaciones">
    <header className="ui-card-head"><div className="ui-card-copy"><h2 className="ui-card-title">Conversaciones por mes</h2><p className="ui-card-desc">Últimos 12 meses, por fecha de inicio de la conversación</p></div><KindBadge kind="observed"/></header>
-   <div className="stack">
+   {tendenciaCaida?<div className={s.nd} role="status"><Icon name="clock" size={16}/><div><strong>No disponible ahora</strong><span>La consulta de la tendencia tardó demasiado; no es cero.{intentos<3?' Se reintenta sola en segundo plano.':''}</span></div><Button size="sm" icon={<Refresh/>} loading={trend.busy} onClick={()=>{setIntentos(0);void trend.reload();}}>Reintentar</Button></div>:<div className="stack">
     <ChartState busy={trend.busy} hasData={!!serie} error={trend.error} status={trend.status} que="la tendencia" retryLabel="Reintentar tendencia" onRetry={trend.reload} height={150}
-     empty={trend.data?.status==='timeout'?<EmptyState compact art="chart" tone="warn" title="No disponible ahora" body="La consulta superó el tiempo permitido. Reintenta en unos segundos." action={<Button size="sm" icon={<Refresh/>} loading={trend.busy} onClick={trend.reload}>Reintentar tendencia</Button>}/>:<EmptyState compact art="chart" title="Aún sin datos" body="Este grupo no tiene conversaciones con fecha en los últimos 12 meses."/>}>
+     empty={<div className={s.nd} role="status"><Icon name="info" size={16}/><div><strong>Aún sin datos</strong><span>Este grupo no tiene conversaciones con fecha en los últimos 12 meses.</span></div></div>}>
      {serie&&<><ColumnChart title="Conversaciones por mes de este problema" kind="observed" height={150} data={datos} unit="conversaciones"/>
       {cambio&&<p className={s.nota}>{cambio.pct===null?`${mesLargo(cambio.a.month)}: ${nf.format(cambio.a.value!)} conversaciones; ${mesLargo(cambio.de.month)} no ofrece base de comparación.`:<>De {mesLargo(cambio.de.month)} a {mesLargo(cambio.a.month)}: <strong>{cambio.pct>0?'+':cambio.pct<0?'−':''}{Math.abs(cambio.pct).toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %</strong> ({nf.format(cambio.de.value!)} → {nf.format(cambio.a.value!)}), entre meses completos.</>}</p>}
       {parciales.length>0&&<p className={s.nota} role="note">* {parciales.map(mesLargo).join(' y ')} {parciales.length===1?'es un mes incompleto':'son meses incompletos'} (datos hasta {diaCorte(trend.data?.completeness?.dataThrough)??'fecha desconocida'}) y no se compara.</p>}
       {trend.data!.undated!==null&&trend.data!.undated>0&&<p className={s.nota} role="note">{nf.format(trend.data!.undated)} registros sin fecha no entran en la gráfica.</p>}</>}
     </ChartState>
-   </div>
+   </div>}
   </section>
   <div className={s.col}>
    {causa}
+   {head&&<section className="ui-card" aria-label="Por qué importa">
+    <header className="ui-card-head"><div className="ui-card-copy"><h2 className="ui-card-title">Por qué importa</h2><p className="ui-card-desc">Revisión crítica y señales</p></div>{head.critico===true?<StatusChip tone="bad">Revisión crítica</StatusChip>:head.critico===false?<Chip>Sin revisión crítica</Chip>:null}</header>
+    <p className={s.sub} style={{maxWidth:'none'}}>{head.critico===true&&head.motivo?<><strong>Motivo:</strong> {head.motivo}</>:'Ninguna conversación del grupo cumple el criterio de revisión crítica en este corte.'}{head.senales!==null&&<> · {nf.format(head.senales)} {head.senales===1?'señal crítica':'señales críticas'}.</>}</p>
+    {distintas.length>0&&<ul className={s.previa} aria-label="Citas destacadas">{distintas.slice(0,2).map((c,i)=><li key={c.messageRevisionId+':'+i}><q>{c.quote.length>140?c.quote.slice(0,137)+'…':c.quote}</q></li>)}</ul>}
+   </section>}
    <section className="ui-card" aria-label="Qué hacer">
    <header className="ui-card-head"><div className="ui-card-copy"><h2 className="ui-card-title">Siguiente paso</h2><p className="ui-card-desc">Recomendación e intervención</p></div></header>
    {f&&f.recommendations.state==='unavailable'&&<p className="state" role="status">No disponible ahora. <Button size="sm" icon={<Refresh/>} onClick={facts.reload}>Reintentar</Button></p>}
@@ -135,7 +142,7 @@ export function ProblemSheet({id,shared,captured,dinero,facts,onTitle,causa=null
   <section className="ui-card" aria-label="Evidencia citada">
    <header className="ui-card-head"><div className="ui-card-copy"><h2 className="ui-card-title">Lo que dicen los clientes</h2><p className="ui-card-desc">Citas textuales verificadas al abrir contra su conversación vigente</p></div><KindBadge kind="observed"/></header>
    {ev.esperando&&<WaitStatus {...ESPERA.evidencia}/>}
-   {ev.sinAlcance&&!ev.citas&&<EmptyState compact art="doc" title="Abre este problema desde una publicación" body="Las citas se verifican con el periodo y los filtros de la publicación." action={<LinkButton href="/problems" size="sm" icon={<Arrow/>}>Ir a Problemas</LinkButton>}/>}
+   {ev.sinAlcance&&!ev.citas&&<p className="state" role="status">Abre este problema desde una publicación: las citas se verifican con su periodo y filtros. <LinkButton href="/problems" size="sm" icon={<Arrow/>}>Ir a Problemas</LinkButton></p>}
    {ev.fallo&&<p className="state state-error" role="alert">No se pudo verificar la evidencia ahora. <Button size="sm" icon={<Refresh/>} onClick={ev.reintentar}>Reintentar</Button></p>}
    {ev.citas&&distintas.length===0&&<p className="state">No hay citas disponibles con el acceso vigente.</p>}
    {distintas.length>0&&<>

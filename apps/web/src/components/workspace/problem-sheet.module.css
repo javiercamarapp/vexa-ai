@@ -32,5 +32,13 @@
 .sheet{gap:var(--ui-rhythm,12px)}
 .recs{margin-top:8px}
 .rec{padding:8px 12px}
-.col{display:grid;gap:var(--ui-rhythm,12px);grid-auto-rows:1fr;min-width:0}
+.col{display:grid;gap:var(--ui-rhythm,12px);grid-auto-rows:auto;min-width:0}
 .nota{margin:6px 0 0;font-size:12px;color:var(--muted)}
+.nd{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px dashed var(--ui-border);border-radius:8px;color:var(--muted)}
+.nd>div{flex:1;min-width:0;display:grid;gap:2px;font-size:12px}.nd strong{font-size:13px;color:var(--ink)}
+.previa{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.previa li{padding:6px 10px;border-left:3px solid var(--chart-7);background:var(--soft-7);border-radius:0 8px 8px 0;font-size:12px;color:var(--ink-7);line-height:1.4}
+.previa q{quotes:none}
+.sub{max-width:none}
+.row84[data-falla]{grid-template-columns:minmax(0,1fr)}
+@media(min-width:700px){.row84[data-falla] .col{grid-template-columns:repeat(2,minmax(0,1fr))}}

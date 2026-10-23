@@ -9,7 +9,7 @@ import {NoDisponible,Seccion,Vacio} from '../refunds/fuga-partes';
 import {KindBadge} from '../ui/kind-badge';
 import {useVista} from './use-vista';
 import {MapaGeo,type Mosaico} from './mapa-geo';
-import {MENSAJE_COMPLETO,NOTA_PROVISIONAL,PAISES,TEXTO_MES,filasTabla,limitesRampa,num,pctTxt,textoCobertura,textoOcultos} from './mapa-modelo.mjs';
+import {MENSAJE_COMPLETO,NOTA_PROVISIONAL,PAISES,filasTabla,limitesRampa,num,pctTxt,textoCobertura,textoOcultos} from './mapa-modelo.mjs';
 import './mapa.css';
 
 const forma=(d:unknown)=>typeof d==='object'&&d!==null&&'status' in d&&'provisional' in d;

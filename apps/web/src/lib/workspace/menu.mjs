@@ -8,6 +8,7 @@ export const MENU = Object.freeze([
   { tipo: 'item', href: '/problems', etiqueta: 'Problemas', icono: 'problems', alias: ['/problems/manage'] },
   { tipo: 'grupo', clave: 'dinero', etiqueta: 'Dinero', roles: DINERO, items: [
     { href: '/cfo', etiqueta: 'Panorama', icono: 'economics', titulo: 'Dinero' },
+    { href: '/refunds', etiqueta: 'Fuga de reembolsos', icono: 'economics', titulo: 'Fuga de reembolsos' },
     { href: '/economics', etiqueta: 'Preparar', icono: 'imports', titulo: 'Dinero · Preparar' },
   ] },
   { tipo: 'item', href: '/recommendations', etiqueta: 'Recomendaciones', icono: 'recommendations' },

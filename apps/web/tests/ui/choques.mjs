@@ -8,7 +8,7 @@ const require=createRequire(process.env.VEXA_PW_PACKAGE??'/private/tmp/claude-50
 const {chromium}=require('playwright-core');
 const {respond}=await import('./fixtures.mjs');
 const {MENU}=await import('../../src/lib/workspace/menu.mjs');
-const arg=(k,d)=>process.argv.find(a=>a.startsWith('--'+k+'='))?.split('=')[1]??d;
+const arg=(k,d)=>(process.argv.find(a=>a.startsWith('--'+k+'='))?.slice(k.length+3))??d;
 const base=process.env.VEXA_UI_BASE??'http://localhost:3150';
 const menuRoutes=[...new Set(MENU.flatMap(x=>x.tipo==='item'?[x.href]:(x.items??[]).map(i=>i.href)).concat(['/notifications','/confianza','/cfo?vista=informe']))];
 const routes=arg('routes',null)?.split(',')??menuRoutes;

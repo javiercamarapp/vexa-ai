@@ -27,7 +27,7 @@ export function BriefingCfoView({b, informe, onMoneda, sintetico}: {b: BriefingC
   return <article className="cn-briefing" aria-label="Informe de CFO">
     <header className="cn-head">
       <p className="cn-eyebrow">CFO · tu copiloto de dinero{sintetico && <span className="chip cn-demo">Datos sintéticos de demostración</span>}</p>
-      <h1 className="cn-titular">{b.titular.texto}</h1>
+      <h2 className="cn-titular">{b.titular.texto}</h2>
       <p className="cn-fuente"><KindBadge kind={b.titular.kind} /><span>Fuente: {lineaDatosHasta({libro: b.corte})}</span></p>
       {b.parcial && <p className="cn-parcial" role="note">{b.parcial}</p>}
       <div className="cn-acciones">

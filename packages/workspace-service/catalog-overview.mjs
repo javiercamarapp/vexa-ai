@@ -1,12 +1,10 @@
 // Resumen del catálogo para la pantalla «Problemas» cuando no hay vínculos problema–pedido (sin importe por problema).
 // Reúne, para TODOS los problemas vigentes y con topes de tiempo, lo que la lista necesita para ser legible: conversaciones (incidencias), severidad registrada,
-// aviso crítico, citas REGISTRADAS (se verifican al abrir cada problema), recomendaciones guardadas y un extracto redactado de ejemplo.
+// aviso crítico, citas REGISTRADAS (se verifican al abrir cada problema), recomendaciones guardadas. NO trae texto de conversación (minimización de privacidad: las listas no muestran extractos; el texto solo aparece al abrir la evidencia).
 // Regla de honestidad: cada parte opcional que no alcanza su tope responde «unavailable» (valor null en las filas), nunca 0, y las demás partes siguen.
 // No hace verificaciones completas de evidencia: la cita se verifica al abrir el problema.
 import {resumirSenales} from './critico.mjs';
 export const OVERVIEW_BUDGET_MS = 2500;
-const QUOTE_EMBEDDINGS_PER_PROBLEM = 8;
-const QUOTE_MIN = 25, QUOTE_MAX = 220;
 
 // Ejecuta una consulta opcional dentro de un SAVEPOINT con statement_timeout local; si vence o falla, revierte el savepoint (la transacción de lectura sigue utilizable) y devuelve null.
 async function guarded(s, deadline, name, work) {
@@ -28,8 +26,6 @@ async function guarded(s, deadline, name, work) {
   }
 }
 
-const clean = text => String(text ?? '').replace(/\s+/g, ' ').trim();
-
 /**
  * @param s transacción de lectura del tenant autorizado
  * @param catalog problemas vigentes del catálogo ({id,label,incidences,embeddingIds})
@@ -50,15 +46,6 @@ export async function catalogOverview(s, catalog, {signalRows = null, isCritical
   const meta = ids.length ? await guarded(s, deadline, 'catalog_meta', async () => new Map((await s.query(
     `SELECT p.id,p.severity,(SELECT count(DISTINCT r.id)::int FROM public.recommendations r WHERE r.tenant_id=$1 AND r.problem_id=p.id AND r.status<>'dismissed') AS recs
      FROM public.problems p WHERE p.tenant_id=$1 AND p.id=ANY($2::uuid[])`, [s.tenantId, ids])).rows.map(r => [r.id, r]))) : new Map();
-  const pids = [], eids = [];
-  for (const c of catalog) for (const e of (c.embeddingIds ?? []).slice(0, QUOTE_EMBEDDINGS_PER_PROBLEM)) { pids.push(c.id); eids.push(e); }
-  const quotes = pids.length ? await guarded(s, deadline, 'catalog_quotes', async () => new Map((await s.query(
-    `SELECT DISTINCT ON(w.pid) w.pid,left(substr(mr.redacted_text,es.start+1,es."end"-es.start),${QUOTE_MAX}) AS quote
-     FROM unnest($2::uuid[],$3::uuid[]) w(pid,eid)
-     JOIN public.embeddings e ON e.tenant_id=$1 AND e.id=w.eid
-     JOIN public.evidence_spans es ON es.tenant_id=$1 AND es.message_revision_id=e.message_revision_id AND es."end"-es.start BETWEEN ${QUOTE_MIN} AND ${QUOTE_MAX}
-     JOIN public.message_revisions mr ON mr.tenant_id=$1 AND mr.id=es.message_revision_id AND mr.deleted_at IS NULL AND mr.redaction_version IS NOT NULL
-     ORDER BY w.pid,abs((es."end"-es.start)-110),es.id`, [s.tenantId, pids, eids])).rows.map(r => [r.pid, clean(r.quote)]))) : new Map();
   const rows = catalog.map(c => {
     const m = meta?.get(c.id), g = per.get(c.id);
     return {
@@ -69,9 +56,8 @@ export async function catalogOverview(s, catalog, {signalRows = null, isCritical
       critical_reason: signalRows ? (crit.porGrupo.get(c.id)?.reason ?? null) : null,
       citations: signalRows ? (g?.spans ?? 0) : null,
       recommendations: meta ? (m?.recs ?? 0) : null,
-      quote: quotes ? (quotes.get(c.id) || null) : null,
     };
   });
   const state = v => v ? 'ok' : 'unavailable';
-  return {status: 'ok', total: rows.length, rows, critical: crit ? {groups: crit.grupos, signals: crit.senales} : null, parts: {signals: state(signalRows), severity: state(meta), quotes: state(quotes)}};
+  return {status: 'ok', total: rows.length, rows, critical: crit ? {groups: crit.grupos, signals: crit.senales} : null, parts: {signals: state(signalRows), severity: state(meta)}};
 }

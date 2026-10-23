@@ -1,5 +1,5 @@
 // Resumen del catálogo para «Problemas» sin vínculos problema–pedido (23-oct): TODOS los problemas vigentes con conversaciones, severidad, aviso crítico, citas registradas,
-// recomendaciones y extracto, con topes por parte y «no disponible ahora» (null, nunca 0) cuando una parte no alcanza.
+// recomendaciones (sin extractos de conversación: privacidad), con topes por parte y «no disponible ahora» (null, nunca 0) cuando una parte no alcanza.
 //   node --test packages/workspace-service/tests/problemas-catalogo-resumen.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -29,31 +29,32 @@ const fake = ({meta = [], quotes = [], fail = []} = {}) => {
 };
 const catalog = [{id: 'p1', label: 'Order: Spare Parts', incidences: 7, embeddingIds: ['e1', 'e2']}, {id: 'p2', label: 'Order: Spare Parts', incidences: 3, embeddingIds: ['e3']}];
 
-test('el resumen une catálogo, señales ya leídas, severidad, recomendaciones y extracto, por problema', async () => {
-  const {s} = fake({meta: [{id: 'p1', severity: 'high', recs: 2}, {id: 'p2', severity: 'low', recs: 0}], quotes: [{pid: 'p1', quote: '  Necesito   la pieza\nde repuesto  '}]});
+test('el resumen une catálogo, señales ya leídas, severidad y recomendaciones, por problema, SIN texto de conversación', async () => {
+  const {s, log} = fake({meta: [{id: 'p1', severity: 'high', recs: 2}, {id: 'p2', severity: 'low', recs: 0}], quotes: [{pid: 'p1', quote: 'Hello Frank, necesito la pieza'}]});
   const signalRows = [{pid: 'p1', category: 'Order: Spare Parts', severity: 'high', spans: 5}, {pid: 'p1', category: 'Order: Spare Parts', severity: 'low', spans: 2}, {pid: 'p2', category: 'Order: Spare Parts', severity: 'low', spans: 4}];
   const o = await catalogOverview(s, catalog, {signalRows, isCritical: isCriticalIssue});
-  assert.deepEqual(o.parts, {signals: 'ok', severity: 'ok', quotes: 'ok'});
+  assert.deepEqual(o.parts, {signals: 'ok', severity: 'ok'});
+  assert.ok(!log.some(x => /redacted_text|message_revisions/.test(x)), 'privacidad: la lista ya no selecciona texto de conversación en SQL');
+  assert.ok(o.rows.every(r => !('quote' in r)), 'las filas no llevan extracto');
   assert.deepEqual(o.critical, {groups: 1, signals: 5}, 'grupos con revisión crítica y señales críticas (evidencias), cada uno con su unidad');
-  assert.deepEqual(o.rows.find(r => r.id === 'p1'), {id: 'p1', label: 'Order: Spare Parts', conversations: 7, severity: 'high', critical: true, critical_signals: 5, critical_reason: 'severity', citations: 7, recommendations: 2, quote: 'Necesito la pieza de repuesto'});
-  assert.deepEqual(o.rows.find(r => r.id === 'p2'), {id: 'p2', label: 'Order: Spare Parts', conversations: 3, severity: 'low', critical: false, critical_signals: 0, critical_reason: null, citations: 4, recommendations: 0, quote: null});
+  assert.deepEqual(o.rows.find(r => r.id === 'p1'), {id: 'p1', label: 'Order: Spare Parts', conversations: 7, severity: 'high', critical: true, critical_signals: 5, critical_reason: 'severity', citations: 7, recommendations: 2});
+  assert.deepEqual(o.rows.find(r => r.id === 'p2'), {id: 'p2', label: 'Order: Spare Parts', conversations: 3, severity: 'low', critical: false, critical_signals: 0, critical_reason: null, citations: 4, recommendations: 0});
   assert.equal(o.total, 2);
 });
 
 test('una parte que vence su tope queda en null y «unavailable»; nunca 0, y las demás partes siguen', async () => {
-  const {s, log} = fake({meta: [{id: 'p1', severity: 'high', recs: 1}], fail: [/redacted_text/]});
+  const {s, log} = fake({meta: [{id: 'p1', severity: 'high', recs: 1}], fail: [/FROM public\.problems p/]});
   const o = await catalogOverview(s, catalog, {signalRows: null, isCritical: isCriticalIssue});
-  assert.deepEqual(o.parts, {signals: 'unavailable', severity: 'ok', quotes: 'unavailable'});
-  for (const r of o.rows) { assert.equal(r.critical, null); assert.equal(r.citations, null); assert.equal(r.quote, null); }
-  assert.equal(o.rows[0].severity, 'high'); assert.equal(o.rows[0].recommendations, 1);
-  assert.ok(log.some(x => /ROLLBACK TO SAVEPOINT catalog_quotes/.test(x)), 'revierte el savepoint de la parte que venció');
+  assert.deepEqual(o.parts, {signals: 'unavailable', severity: 'unavailable'});
+  for (const r of o.rows) { assert.equal(r.critical, null); assert.equal(r.citations, null); assert.equal(r.severity, null); assert.equal(r.recommendations, null); }
+  assert.ok(log.some(x => /ROLLBACK TO SAVEPOINT catalog_meta/.test(x)), 'revierte el savepoint de la parte que venció');
   assert.ok(o.rows.every(r => r.conversations > 0), 'las conversaciones salen del catálogo y siempre están');
 });
 
 test('sin presupuesto restante no se lanza ninguna consulta opcional', async () => {
   const {s, log} = fake({meta: [{id: 'p1', severity: 'high', recs: 1}]});
   const o = await catalogOverview(s, catalog, {signalRows: [], isCritical: isCriticalIssue, budgetMs: 0});
-  assert.deepEqual(o.parts, {signals: 'ok', severity: 'unavailable', quotes: 'unavailable'});
+  assert.deepEqual(o.parts, {signals: 'ok', severity: 'unavailable'});
   assert.deepEqual(log, []);
   assert.deepEqual(o.rows.map(r => r.critical), [false, false], 'señales leídas sin filas: no crítico, no desconocido');
 });

@@ -69,7 +69,7 @@ export function EconomiaResumen({query,puedePreparar,children}:{query:string;pue
    :noDisponible||!report?<EmptyState art="chart" tone="warn" compact title={rep.data?.status==='empty'?'Sin registros en el libro':'No disponible ahora'} body={rep.data?.status==='empty'?'Aún no hay pedidos ni reembolsos registrados para esta organización. Importa una fuente para ver cifras aquí.':rep.error||'La consulta del libro económico no respondió a tiempo o tu rol no puede verla. Reintenta en unos segundos.'} action={rep.data?.status==='empty'?<LinkButton href="/imports" variant="primary" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>:<Button icon={<Refresh/>} onClick={()=>rep.reload()}>Reintentar</Button>}/>
    :<>
     <div className="stat-grid" aria-label="Cifras del libro de registros">
-     <StatCard label="Registros del libro" icon="database" kind="observed" value={nf.format(report.quality.totalRows)} foot="Pedidos y reembolsos, última revisión de cada uno · 12 meses"/>
+     <StatCard label="Registros del libro" icon="database" kind="observed" value={nf.format(report.quality.totalRows)} foot="Pedidos y reembolsos, última revisión de cada uno · solo los últimos 12 meses (Fuentes cuenta todo el historial)"/>
      {tarjetas.map(t=><StatCard key={t.moneda+t.base} label={t.moneda+' · '+t.baseLegible} icon="dollar" kind="observed"
        value={t.subtotalMinor===null?'No disponible':formatMinorUnits(t.subtotalMinor,t.moneda,t.exponente)}
        foot={<>Subtotal conocido: {nf.format(t.pedidos)} pedidos, {t.cobertura}.{t.base!=='gross_order_including_tax_shipping'&&<> Reembolsos registrados: {t.reembolsos?nf.format(t.reembolsos.n):'Sin cobertura'}.</>}</>}>

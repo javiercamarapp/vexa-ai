@@ -5,6 +5,7 @@ export function mil(n:number):string;
 export const CLAVE_COBERTURA:Readonly<Record<string,string>>;
 export const ETIQUETA_SALUD:Readonly<Record<string,string>>;
 export function estadoConexion(row:{source:string;state:string;errorCode:string|null;lastSuccess:string|null;coverage:{observed:number;accepted:number;rejected:number}|null},sources:CoverageSource[]|null):EstadoConexion;
-export type AgregadoImportaciones={cargas:number;incorporadas:number;rechazadas:number;soloMetadatos:number;pendientes:number;sinDesglose:number;fuentes:number};
+export type AgregadoImportaciones={cargas:number;incorporadas:number;rechazadas:number;soloMetadatos:number;pendientes:number;sinDesglose:number;fuentes:number;porFuente:{key:string;nombre:string;cargas:number;incorporadas:number}[]};
+export function desgloseImportaciones(porFuente:{nombre:string;cargas:number;incorporadas:number}[]|null|undefined,campo?:'incorporadas'|'cargas'):string;
 export function agregadoImportaciones(sources:CoverageSource[]|null|undefined):AgregadoImportaciones|null;
 export function nombreFuente(source:string):string;

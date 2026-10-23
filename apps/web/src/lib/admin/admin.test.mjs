@@ -20,7 +20,7 @@ test('QA3-001: tinta y subtítulo de la lista cumplen 4.5:1 sobre superficie y f
   const r=ratio(tok(b,'ui-focus'),tok(b,'ui-surface'));assert.ok(r>=3,`${tema}: borde activo ${r.toFixed(2)}:1`);
  }
 });
-import {estadoConexion,agregadoImportaciones,mil} from '../connections/estado.mjs';
+import {estadoConexion,agregadoImportaciones,desgloseImportaciones,mil} from '../connections/estado.mjs';
 import {rejectionBreakdown} from '../../../../../packages/workspace-service/provenance.mjs';
 const hubspotSrc=(extra={})=>({key:'hubspot',label:'HubSpot',loaded:true,status:'ok',class:'observed',imports:24,openImports:1,total:16491,incorporated:7930,rejected:8561,pending:0,lastUpdate:'2026-10-22T19:25:00.000Z',detail:[],rejectionNote:null,
  rejectionBreakdown:rejectionBreakdown({total:16491,incorporated:7930,rejected:8561,codes:{ENTITY_METADATA_ONLY:8400,BODY_INCOMPLETE:100,ROLE_AMBIGUOUS:30,OTRO:31}}),...extra});
@@ -56,8 +56,9 @@ test('QA3-002: sin desglose de HubSpot se dice «no disponible» en lugar de rec
 });
 test('QA3-002: los KPI de Importaciones suman todas las cargas, separan metadatos de defectos y no cuentan lo desglosado como falla',()=>{
  const a=agregadoImportaciones([csvSrc,hubspotSrc(),{...csvSrc,key:'ledger',imports:0,incorporated:85383,rejected:0}]);
- assert.deepEqual(a,{cargas:74,incorporadas:490066,rechazadas:64+161,soloMetadatos:8400,pendientes:0,sinDesglose:0,fuentes:2});
+ assert.deepEqual({...a,porFuente:undefined},{cargas:74,incorporadas:490066,rechazadas:64+161,soloMetadatos:8400,pendientes:0,sinDesglose:0,fuentes:2,porFuente:undefined});
  const b=agregadoImportaciones([hubspotSrc({rejectionBreakdown:rejectionBreakdown({total:16491,incorporated:7930,rejected:8561,codes:null})})]);
+ {const suma=a.porFuente.reduce((n,f)=>n+f.incorporadas,0);assert.equal(suma,a.incorporadas,'el total de Importaciones es la suma de las tarjetas por fuente de Fuentes (A6)');assert.match(desgloseImportaciones(a.porFuente),/ \+ /);assert.ok(a.porFuente.every(f=>['hubspot','csv','zendesk'].includes(f.key)),'el libro económico no entra en Importaciones');}
  assert.equal(b.sinDesglose,8561);assert.equal(b.rechazadas,0);assert.equal(agregadoImportaciones(null),null);
 });
 test('QA3-002: el panel de Conexiones deriva su estado del resumen de cobertura y ya no imprime «rechazados» ni el hash a la vista',()=>{

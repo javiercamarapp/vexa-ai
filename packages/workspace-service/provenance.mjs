@@ -3,6 +3,7 @@
 // coverage aggregates only the small `imports` table (never message/conversation tables, which cost a policy call per row).
 import {WorkspaceError,uuid} from './contracts.mjs';
 import {guarded} from './trends.mjs';
+import {canalDeFuente,NOMBRE_CANAL} from './fuga-reembolsos.mjs';
 import {readLedgerCounts,readAssociationCounts,summaryLabel,summaryMeta,attempt} from './summaries.mjs';
 const SOURCE_LABELS={hubspot:'HubSpot',zendesk:'Zendesk',csv:'Archivo CSV',excel:'Archivo Excel'};
 // Sources the product is meant to incorporate. A source with no import is reported as "not loaded", never as zero loaded.
@@ -120,8 +121,8 @@ export function createProvenanceRepository({database}){
    let revisions=0;
    if(lrows===null)ledger=none('ledger','timeout');
    else if(lrows.length){const groups=new Map();for(const r of lrows){const k=r.name+' · '+r.currency,o=groups.get(k)??{orders:0,refunds:0,other:0};revisions+=Math.round(Number(r.revisions)*factor);const v=Math.round(Number(r.n)*factor);if(r.kind==='order')o.orders+=v;else if(r.kind==='refund')o.refunds+=v;else o.other+=v;groups.set(k,o);}
-    const total=[...groups.values()].reduce((a,o)=>a+o.orders+o.refunds+o.other,0),lines=[...groups.entries()].slice(0,6).map(([k,o])=>`${k}: ${o.orders.toLocaleString('es-MX')} pedidos · ${o.refunds.toLocaleString('es-MX')} reembolsos${o.other?` · ${o.other.toLocaleString('es-MX')} otros`:''}`);
-    ledger=base('ledger',{class:exact?'observed':'estimated',total,incorporated:total,detail:[...lines,...(groups.size>6?[`y ${groups.size-6} grupos más`]:[]),'Conteo de registros por fuente y moneda; las monedas no se suman.',...(ledgerSummary?[`${exact?`Conteo exacto del libro: ${total.toLocaleString('es-MX')} registros distintos en ${revisions.toLocaleString('es-MX')} revisiones guardadas.`:`${total.toLocaleString('es-MX')} registros distintos en ${revisions.toLocaleString('es-MX')} revisiones al corte del resumen.`}`,ledgerSummary.label]:exact?[`Conteo exacto del libro: ${total.toLocaleString('es-MX')} registros distintos en ${revisions.toLocaleString('es-MX')} revisiones guardadas.`]:[`Estimado con una muestra del ${SAMPLE_PERCENT} %.`])],...(ledgerSummary?{summary:ledgerSummary.meta}:{})});}
+    const total=[...groups.values()].reduce((a,o)=>a+o.orders+o.refunds+o.other,0),lines=lineasLibroPorFuente(groups);
+    ledger=base('ledger',{class:exact?'observed':'estimated',total,incorporated:total,detail:[...lines,...(groups.size>6?[`y ${groups.size-6} grupos más`]:[]),'Conteo de registros por fuente y moneda; las monedas no se suman.',...(ledgerSummary?[`${exact?`Conteo exacto del libro: ${total.toLocaleString('es-MX')} registros distintos en ${revisions.toLocaleString('es-MX')} revisiones guardadas, de todo el historial (Dinero cuenta solo los últimos 12 meses).`:`${total.toLocaleString('es-MX')} registros distintos en ${revisions.toLocaleString('es-MX')} revisiones al corte del resumen, de todo el historial (Dinero cuenta solo los últimos 12 meses).`}`,ledgerSummary.label]:exact?[`Conteo exacto del libro: ${total.toLocaleString('es-MX')} registros distintos en ${revisions.toLocaleString('es-MX')} revisiones guardadas, de todo el historial (Dinero cuenta solo los últimos 12 meses).`]:[`Estimado con una muestra del ${SAMPLE_PERCENT} %.`])],...(ledgerSummary?{summary:ledgerSummary.meta}:{})});}
    // 5. HubSpot ticket-contact associations: facts by state and active bindings (links).
    let associations=none('associations');
    // Conteos mantenidos (association_counts, 20261022000000): no dependen de la política initplan 20261021000000. Sin ellos: tally exacto o muestra.
@@ -164,4 +165,19 @@ export function createProvenanceRepository({database}){
     return {messageRevisionId,complete,chain,gap:complete?null:src?'Esta revisión llegó por sincronización directa de la fuente: no hay fila de archivo que enlazar.':'No hay registro de fuente enlazado a esta revisión con tu acceso.'};
    });}
  };
+}
+
+/**
+ * Una línea por «fuente · moneda» del libro (máx. 6). Los pedidos y los reembolsos de un canal viven en fuentes distintas (p. ej. la exportación de pedidos de Walmart
+ * y su libro de devoluciones): una línea con «0 reembolsos» NO dice que el canal no tenga. Si otra fuente del mismo canal y moneda sí los tiene, la línea lo dice
+ * (mismas cifras que «Fuga de reembolsos»).
+ */
+export function lineasLibroPorFuente(groups) {
+  const f = v => v.toLocaleString('es-MX'), porCanal = new Map();
+  for (const [k, o] of groups) { const canal = canalDeFuente(k.split(' · ')[0]), moneda = k.split(' · ').at(-1), c = canal + '|' + moneda; if (canal !== 'otro') porCanal.set(c, (porCanal.get(c) ?? 0) + o.refunds); }
+  return [...groups.entries()].slice(0, 6).map(([k, o]) => {
+    const canal = canalDeFuente(k.split(' · ')[0]), total = porCanal.get(canal + '|' + k.split(' · ').at(-1)) ?? 0;
+    const nota = o.refunds === 0 && total > 0 ? ` (los reembolsos de ${NOMBRE_CANAL[canal]} están en su fuente de devoluciones: ${f(total)} en el canal)` : '';
+    return `${k}: ${f(o.orders)} pedidos · ${f(o.refunds)} reembolsos${nota}${o.other ? ` · ${f(o.other)} otros` : ''}`;
+  });
 }

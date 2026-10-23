@@ -52,16 +52,21 @@ export function estadoConexion(row,sources){
  const ultimo=row.lastSuccess?{rotulo:'Último éxito',valor:row.lastSuccess,vacio}:src?.lastUpdate?{rotulo:'Última actualización de datos',valor:src.lastUpdate,vacio}:{rotulo:'Último éxito',valor:null,vacio};
  return {ok,tone,chip:ok?'Conectada':'Pendiente',estado,lineas,anillo,ultimo};
 }
+const NOMBRE_FUENTE={hubspot:'HubSpot',csv:'Archivos CSV',zendesk:'Zendesk'};
+/** Texto de base de una cifra de importaciones: «Archivos CSV 482,136 + HubSpot 8,291» (la suma por fuente que explica el total; cada tarjeta de Fuentes muestra UNA fuente). */
+export const desgloseImportaciones=(porFuente,campo='incorporadas')=>(porFuente??[]).map(f=>`${f.nombre} ${new Intl.NumberFormat('es-MX').format(f[campo])}`).join(' + ');
 /** KPIs de Importaciones desde el resumen de cobertura (todas las cargas, no solo las listadas). Fuentes que pasan por importaciones: HubSpot, CSV y Zendesk. */
 export function agregadoImportaciones(sources){
  if(!Array.isArray(sources))return null;
  const as=sources.filter(s=>['hubspot','csv','zendesk'].includes(s.key)&&s.loaded&&s.status==='ok');
  let cargas=0,incorporadas=0,rechazadas=0,soloMetadatos=0,pendientes=0,sinDesglose=0;
+ const porFuente=[];
  for(const s of as){
   cargas+=s.imports;incorporadas+=s.incorporated;pendientes+=s.pending;
+  porFuente.push({key:s.key,nombre:NOMBRE_FUENTE[s.key]??s.label,cargas:s.imports,incorporadas:s.incorporated});
   const bd=s.rejectionBreakdown?.status==='ok'?s.rejectionBreakdown:null;
   if(s.key==='hubspot'&&s.rejected>0){if(bd){rechazadas+=bd.defects??0;soloMetadatos+=bd.metadataOnly??0;}else sinDesglose+=s.rejected;}
   else rechazadas+=s.rejected;
  }
- return {cargas,incorporadas,rechazadas,soloMetadatos,pendientes,sinDesglose,fuentes:as.length};
+ return {cargas,incorporadas,rechazadas,soloMetadatos,pendientes,sinDesglose,fuentes:as.length,porFuente};
 }

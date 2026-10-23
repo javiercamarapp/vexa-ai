@@ -13,7 +13,7 @@ import {Tip} from './ui/tip';
 import {Icon} from './ui/icons';
 import {nf} from './ui/format';
 import {useJson} from './ui/use-json';
-import {agregadoImportaciones} from '../lib/connections/estado.mjs';
+import {agregadoImportaciones,desgloseImportaciones} from '../lib/connections/estado.mjs';
 import type {CoverageView} from '../../../../packages/workspace-service/provenance.mjs';
 import styles from './import-preview.module.css';
 import {useEffect,useState,useRef} from 'react';
@@ -113,8 +113,8 @@ export function ImportPreview(){
   <form id="import-source" className="import-source" onSubmit={event=>{event.preventDefault();void run(createConnection);}}><fieldset disabled={busy} className="form-grid"><legend className="sr-only">Nueva conexión CSV</legend><label className="field field-wide">Nombre del origen CSV<input name="csv-account" value={connectionName} onChange={event=>setConnectionName(event.target.value)} required maxLength={200}/></label><p className="form-note field-wide">Usa un nombre para identificar el origen de estos archivos.</p></fieldset></form>
  </Drawer>
  {canConfigure&&(total||teamJobs.length>0)&&<div className="stat-grid">{total?<>
-  <StatCard icon="upload" label="Cargas del espacio" kind="observed" kindHint="Número de importaciones registradas en el espacio (todas, no solo las de la tabla)." value={nf.format(total.cargas)} foot="Todas las cargas del espacio"/>
-  <StatCard icon="check" label="Filas incorporadas" kind="observed" kindHint="Filas de todas las cargas que ya forman parte de los datos del espacio (aceptadas y repetidas ya presentes)." value={nf.format(total.incorporadas)} foot="De todas las cargas"/>
+  <StatCard icon="upload" label="Cargas del espacio" kind="observed" kindHint="Número de importaciones registradas en el espacio (todas, no solo las de la tabla)." value={nf.format(total.cargas)} foot={`Todas las fuentes de importación: ${desgloseImportaciones(total.porFuente,'cargas')}`}/>
+  <StatCard icon="check" label="Filas incorporadas" kind="observed" kindHint="Filas de todas las cargas que ya forman parte de los datos del espacio (aceptadas y repetidas ya presentes)." value={nf.format(total.incorporadas)} foot={`Suma de fuentes: ${desgloseImportaciones(total.porFuente)}`}/>
   <StatCard icon="alert" label="Rechazadas por reglas" kind="observed" kindHint="Filas con un defecto real que las reglas de validación dejan fuera a propósito; no son una falla de la carga." value={nf.format(total.rechazadas)} foot={total.sinDesglose>0?`Sin contar ${nf.format(total.sinDesglose)} de HubSpot: desglose no disponible ahora`:total.soloMetadatos>0?`Aparte: ${nf.format(total.soloMetadatos)} registros de HubSpot solo de metadatos (sin mensajes)`:'Por reglas de validación'}/>
   <StatCard icon="layers" label="Pendientes" kind="observed" kindHint="Filas leídas que aún están por procesar." value={nf.format(total.pendientes)} foot={total.pendientes>0?'Por procesar':'Nada por procesar'}/></>:<>
   <StatCard icon="upload" label="Cargas listadas" kind="observed" kindHint="Número de cargas en la tabla de abajo; no es el total del espacio." value={nf.format(teamJobs.length)} foot={nextTeamOffset!==null?'Solo las más recientes; hay más':undefined}/>

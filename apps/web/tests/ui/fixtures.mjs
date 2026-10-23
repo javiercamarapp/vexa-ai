@@ -132,7 +132,8 @@ export async function respond(url,method,bodyText){
  if(p==='/api/explorer')return ok(explorerPage(q.get('q')??''));
  if(p==='/api/explorer/tools')return ok({name:'get_evidence',result:{...explorerEvidence(body?.args?.problemId),problemId:body?.args?.problemId}});
  if(p==='/api/explorer/query')return ok(explorerAnswer(body?.question??''));
- if(p==='/api/recommendations')return ok(recommendations());
+ if(p==='/api/recommendations'){const r=recommendations();return ok({...r,items:r.items.map(i=>({...i,evidenceCount:i.evidenceRefs.length,evidenceTotal:i.evidenceRefs.length,verification:'saved',evidenceRefs:[]}))});}
+ if(p.startsWith('/api/recommendations/')&&!p.endsWith('/interventions')){const i=recommendations().items.find(x=>p.endsWith(x.id));return i?ok({...i,evidenceCount:i.evidenceRefs.length,evidenceTotal:i.evidenceRefs.length,verification:'full'}):[404,{error:{code:'recommendation_request_failed'}}];}
  if(p==='/api/interventions')return ok(interventions());
  if(p==='/api/briefs')return ok(q.get('variant')==='produccion'?briefsProduccion():briefs());
  if(/^\/api\/briefs\/[^/]+$/.test(p))return ok(brief(q.get('variant')));

@@ -42,6 +42,13 @@ insert into public.message_revisions(id,tenant_id,revision,text_ref,hash,message
  ('${REV_SYNC}','${TA}','1','ref2','${h('b')}','a0000000-0000-0000-0000-000000000002'),
  ('${REV_B}','${TB}','1','refb','${h('c')}','a0000000-0000-0000-0000-00000000000b');
 insert into public.import_rows(tenant_id,row_ref,row_hash,state,payload_ref,import_id) values ('${TA}','row-17','${h('d')}','accepted','payload-17','f0000000-0000-0000-0000-000000000001');
+-- Rechazadas de HubSpot por código (10 = imports.rejected de la importación 1): 6 solo metadatos, 3 cuerpo incompleto, 1 rol ambiguo. Señuelos: un CSV y otra organización con ENTITY_METADATA_ONLY (no deben contarse).
+insert into public.import_rows(tenant_id,row_ref,state,error_code,import_id)
+ select '${TA}'::uuid,'rej-meta-'||n,'rejected','ENTITY_METADATA_ONLY','f0000000-0000-0000-0000-000000000001'::uuid from generate_series(1,6) n
+ union all select '${TA}','rej-body-'||n,'rejected','BODY_INCOMPLETE','f0000000-0000-0000-0000-000000000001' from generate_series(1,3) n
+ union all select '${TA}','rej-role-1','rejected','ROLE_AMBIGUOUS','f0000000-0000-0000-0000-000000000001'
+ union all select '${TA}','csv-meta-1','rejected','ENTITY_METADATA_ONLY','f0000000-0000-0000-0000-000000000003'
+ union all select '${TB}','b-meta-'||n,'rejected','ENTITY_METADATA_ONLY','f0000000-0000-0000-0000-000000000004' from generate_series(1,50) n;
 insert into public.source_revisions(id,tenant_id,provenance,connection_id,entity_type,external_id,source_revision,content_hash,fingerprint,mapping_version,message_revision_id,snapshot,canonical_id,message_id) values
  (gen_random_uuid(),'${TA}','{"payload_ref":"payload-17"}','${CA}','message','ext-17','1','${h('e')}','${h('7')}','m1','${REV_FILE}','[]','a0000000-0000-0000-0000-000000000001','a0000000-0000-0000-0000-000000000001'),
  (gen_random_uuid(),'${TA}','{}','${CA}','message','ext-sync','1','${h('f')}','${h('8')}','m1','${REV_SYNC}','[]','a0000000-0000-0000-0000-000000000002','a0000000-0000-0000-0000-000000000002');`);
@@ -82,6 +89,12 @@ analyze;`);
  check('coverage: csv loaded 20/20',by.csv.loaded&&by.csv.incorporated===20&&by.csv.pending===0);
  check('coverage: sources never imported (zendesk) are "not loaded", not zero',by.zendesk.loaded===false&&by.zendesk.total===0);
  check('coverage: another tenant never leaks (B sees 999, A does not)',(await other.coverage()).sources.find(s=>s.key==='hubspot').total===999);
+ const rb=by.hubspot.rejectionBreakdown;
+ check('hubspot: rechazadas por código desde la base (6 solo metadatos · 3 cuerpo incompleto · 1 rol ambiguo); el CSV y otra organización no cuentan',rb&&rb.status==='ok'&&rb.metadataOnly===6&&rb.bodyIncomplete===3&&rb.roleAmbiguous===1&&rb.otherDefects===0&&rb.defects===4,JSON.stringify(rb));
+ check('hubspot: el % se calcula SOLO sobre las filas con conversación (150-6=144; 95/144=66 %), no sobre las 150',rb.conversationRows===144&&rb.conversationIncorporated===95&&Math.round(rb.incorporatedShare)===66,JSON.stringify(rb));
+ check('hubspot: la nota separa defecto real de solo metadatos y rotula la base del %',/solo de metadatos/.test(by.hubspot.rejectionNote)&&/no son conversaciones perdidas/.test(by.hubspot.rejectionNote)&&/144 filas con conversación/.test(by.hubspot.rejectionNote)&&!/Las otras/.test(by.hubspot.rejectionNote),by.hubspot.rejectionNote);
+ check('hubspot: las demás fuentes no llevan desglose (CSV, asociaciones)',by.csv.rejectionBreakdown==null&&by.associations.rejectionBreakdown==null);
+ check('hubspot: otra organización: su importación no tiene rechazadas (sin desglose que inventar), los 50 señuelos no se mezclan ni con A (A ve 6, no 56)',(await other.coverage()).sources.find(s=>s.key==='hubspot').rejectionBreakdown==null&&rb.metadataOnly===6);
  check('coverage: viewer role can read',(await viewer.coverage()).sources.length>=4);
  const full=await owner.origin({messageRevisionId:REV_FILE});
  check('origin: full chain revision -> source record -> file row -> file hash',full.complete&&full.chain.map(c=>c.step).join()==='message_revision,source_record,import_row,import_file'&&full.chain[3].hash===h('1')&&full.chain[2].detail==='row-17'&&full.chain[0].hash===h('a'),full.chain.map(c=>c.hashShort).join('>'));
@@ -102,6 +115,8 @@ analyze;`);
  const failOn=(re)=>({async transaction(a,w){return dbFor(UA,TA).transaction(a,sc=>w({...sc,query:(t,v)=>re.test(t)&&!/SAVEPOINT|set_config/.test(t)?Promise.reject(Object.assign(new Error('canceling statement due to statement timeout'),{code:'57014'})):sc.query(t,v)}));}});
  const tov=await createProvenanceRepository({database:failOn(/tracker_versions/)}).coverage();
  check('a statement timeout on the tracker reports status "timeout" (not "Sin cargar") and the other sources still answer',tov.sources.find(x=>x.key==='excel').status==='timeout'&&tov.sources.find(x=>x.key==='attachments').loaded);
+ const tob=await createProvenanceRepository({database:failOn(/error_code/)}).coverage(),hb=tob.sources.find(x=>x.key==='hubspot');
+ check('si el agregado por código no cabe en el tiempo: «No disponible», cifras de la importación intactas, sin inventar un reparto',hb.rejectionBreakdown.status==='unavailable'&&hb.rejectionBreakdown.metadataOnly===null&&hb.rejected===10&&hb.total===150&&hb.incorporated===95&&!/solo de metadatos/.test(hb.rejectionNote)&&/No disponible/.test(hb.rejectionNote),JSON.stringify(hb.rejectionBreakdown)+hb.rejectionNote);
  check('viewer role can read the extended coverage',(await viewer.coverage()).sources.find(x=>x.key==='excel').incorporated===40);
 }catch(e){console.error(e);results.push(false);}
 finally{await pool?.end().catch(()=>{});if(started)spawnSync(path.join(bin,'pg_ctl'),['-D',data,'-m','fast','-w','stop']);fs.rmSync(dir,{recursive:true,force:true});}

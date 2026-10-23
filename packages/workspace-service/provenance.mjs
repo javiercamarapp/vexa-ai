@@ -26,6 +26,26 @@ export function rejectionNote({total,incorporated,rejected,pending}){
  const f=x=>x.toLocaleString('es-MX'),share=Math.round(rejected*1000/total)/10;
  return `${f(incorporated)} de ${f(total)} filas están incorporadas. Las otras ${f(rejected)} (${share.toLocaleString('es-MX')} %) no cumplen las reglas de validación y se dejan fuera a propósito para no mezclar datos dudosos: no es una falla de la carga.${pending>0?` Aún hay ${f(pending)} pendientes de procesar.`:' No quedan filas pendientes.'}`;
 }
+/** Desglose de las rechazadas de HubSpot por error_code (agregado, sin cargar filas). "Solo metadatos" (ENTITY_METADATA_ONLY) son registros sin mensajes: no son conversaciones
+ *  perdidas, así que el porcentaje se calcula SOLO sobre las filas con conversación (total - solo metadatos). Sin el agregado (tiempo agotado): status 'unavailable', nada inventado. */
+export function rejectionBreakdown({total,incorporated,rejected,codes}){
+ if(!codes||Object.keys(codes).length===0)return {status:'unavailable',metadataOnly:null,bodyIncomplete:null,roleAmbiguous:null,otherDefects:null,defects:null,conversationRows:null,conversationIncorporated:null,incorporatedShare:null};
+ const c=k=>n(codes[k]),metadataOnly=Math.min(c('ENTITY_METADATA_ONLY'),Math.max(0,rejected)),defects=Math.max(0,rejected-metadataOnly),bodyIncomplete=Math.min(c('BODY_INCOMPLETE'),defects),roleAmbiguous=Math.min(c('ROLE_AMBIGUOUS'),defects-bodyIncomplete);
+ const conversationRows=Math.max(0,total-metadataOnly);
+ return {status:'ok',metadataOnly,bodyIncomplete,roleAmbiguous,otherDefects:defects-bodyIncomplete-roleAmbiguous,defects,conversationRows,conversationIncorporated:incorporated,incorporatedShare:conversationRows>0?Math.round(incorporated*1000/conversationRows)/10:null};
+}
+/** Texto honesto para HubSpot: conversaciones incorporadas / rechazadas con defecto / solo metadatos, con la base del porcentaje rotulada. Sin desglose cae al texto general + «No disponible». */
+export function hubspotRejectionNote({total,incorporated,rejected,pending},b){
+ const f=x=>x.toLocaleString('es-MX');
+ if(!(rejected>0)||!(total>0))return null;
+ if(!b||b.status!=='ok')return `${rejectionNote({total,incorporated,rejected,pending})} Desglose de las rechazadas por motivo: No disponible ahora (sin filas por motivo o consulta acotada fuera de tiempo).`;
+ const parts=[b.bodyIncomplete>0&&`cuerpo incompleto ${f(b.bodyIncomplete)}`,b.roleAmbiguous>0&&`rol ambiguo ${f(b.roleAmbiguous)}`,b.otherDefects>0&&`otros motivos ${f(b.otherDefects)}`].filter(Boolean);
+ const share=b.incorporatedShare===null?'—':b.incorporatedShare.toLocaleString('es-MX')+' %';
+ return `Conversaciones incorporadas: ${f(incorporated)} de ${f(b.conversationRows)} filas con conversación (${share}; base: las ${f(total)} filas leídas menos ${f(b.metadataOnly)} registros solo de metadatos). `
+  +`Rechazadas con defecto: ${f(b.defects)}${parts.length?` (${parts.join(' · ')})`:''}. `
+  +`Registros solo de metadatos (sin mensajes): ${f(b.metadataOnly)}: no son conversaciones perdidas. `
+  +(pending>0?`Aún hay ${f(pending)} pendientes de procesar.`:'No quedan filas pendientes.');
+}
 export function createProvenanceRepository({database}){
  return {
   /** Coverage per source: import rows (accepted+duplicate / rejected / pending) plus the sources that never create `imports` rows
@@ -58,6 +78,12 @@ export function createProvenanceRepository({database}){
    const fromImports=(key)=>{const r=present.get(key);if(!r)return none(key);const total=n(r.total),incorporated=n(r.accepted)+n(r.duplicates),rejected=n(r.rejected),pending=n(r.pending);
     return base(key,{imports:n(r.imports),openImports:n(r.open_imports),total,incorporated,rejected,pending,rejectionNote:rejectionNote({total,incorporated,rejected,pending}),lastUpdate:r.last_update?new Date(r.last_update).toISOString():null});};
    const by=Object.fromEntries(['hubspot','csv','zendesk'].map(k=>[k,fromImports(k)]));
+   // 1b. HubSpot: las rechazadas por error_code. Una sola agregación acotada (tenant + importaciones de HubSpot + state='rejected'), exacta o «No disponible»; jamás una muestra.
+   if(by.hubspot.loaded&&by.hubspot.rejected>0){const h=by.hubspot,codes=await g(async()=>Object.fromEntries((await s.query(`SELECT coalesce(r.error_code,'SIN_CODIGO') AS code,count(*) AS n FROM public.import_rows r
+      WHERE r.tenant_id=$1 AND r.state='rejected' AND r.import_id IN (SELECT i.id FROM public.imports i JOIN public.connections c ON c.tenant_id=i.tenant_id AND c.id=i.connection_id WHERE i.tenant_id=$1 AND c.source='hubspot')
+      GROUP BY 1 LIMIT 50`,[s.tenantId])).rows.map(r=>[r.code,Number(r.n)])),Math.min(EXACT_STEP_MS,left()));
+    h.rejectionBreakdown=rejectionBreakdown({total:h.total,incorporated:h.incorporated,rejected:h.rejected,codes});
+    h.rejectionNote=hubspotRejectionNote(h,h.rejectionBreakdown);}
    // 2. Tracker: own tables (no imports rows). Version that rules = highest rank; current rows = its observations.
    let excel=fromImports('excel');
    const versions=await g(async()=>(await s.query('SELECT id,label,rank,file_sha256 FROM public.tracker_versions WHERE tenant_id=$1 ORDER BY rank DESC LIMIT 20',[s.tenantId])).rows);

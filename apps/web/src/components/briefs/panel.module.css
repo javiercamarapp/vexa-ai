@@ -10,3 +10,6 @@
 .priorities li{display:grid;gap:2px}
 .prioTitle{font-weight:600}
 .priorities small{color:var(--muted)}
+.cov{display:grid;gap:3px;margin-top:6px}.cov small{font-size:12px;color:var(--muted)}
+.track{display:block;block-size:8px;border-radius:999px;background:var(--ui-soft);overflow:hidden}
+.track>span{display:block;block-size:100%;border-radius:999px;background:var(--cat)}

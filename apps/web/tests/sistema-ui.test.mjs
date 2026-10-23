@@ -80,3 +80,11 @@ test('estados semánticos distintos de los matices de categoría', () => {
   assert.ok(/--tint-up/.test(APPUI)&&/--tint-warn/.test(APPUI)&&/--tint-down/.test(APPUI));
   assert.ok(!/--chart-[1-8]:#e34948/i.test(UI),'el rojo de pérdidas no es un matiz de categoría');
 });
+test('Hoy: una sola barra de acciones, KPI sin dato compacto con reintento y filas al 100 %', () => {
+  const hoy=leer('components/hoy/hoy-pantalla.tsx'),panel=leer('components/workspace/shared-panel.tsx'),c=leer('components/confianza/confianza.css');
+  assert.equal((hoy.match(/aria-label="Actualizar"/g)||[]).length,1,'un solo Actualizar (icono) en Hoy');
+  assert.match(panel,/\{!isOverview&&<PageHeader/,'el Resumen ya no tiene encabezado ni botones propios');
+  assert.match(hoy,/hoy-reintentar/);assert.match(c,/\.hoy-cols>:only-child\{grid-column:1\/-1\}/);
+  assert.match(c,/\.hoy-cols\{grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
+  assert.match(c,/\.hoy-kpi \.sello\{[^}]*white-space:nowrap/);
+});

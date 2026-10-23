@@ -192,15 +192,15 @@ export function armarIntensidad({mensual, lineas, ventanas, canales = ['amazon',
       const l = lineas.porMes.get(c + '|' + m) ?? 0, r = refunds.get(m)?.n ?? 0, canc = refunds.get(m)?.cancelados ?? 0, prev = lineas.porMes.get(c + '|' + addMes(m, -1)) ?? 0;
       let calidad = 'completo';
       if (!dentro(vR, m) || !dentro(vO, m) || m === ultimo) calidad = 'parcial';
-      if (l > 0 && prev > 0 && l < prev / 2) calidad = 'posible_hueco';
-      return {mes: m, reembolsos: r, cancelados: canc, lineas: l, intensidadPct: l > 0 ? Math.round((r * 1000) / l) / 10 : null, calidad};
+      if (l > 0 && prev > 0 && l < prev / 2 && m !== ultimo) calidad = 'posible_hueco';
+      return {mes: m, reembolsos: r, cancelados: canc, lineas: l, intensidadPct: l > 0 ? Math.round((r * 1000) / l) / 10 : null, calidad, ultimo: m === ultimo};
     }).filter(f => f.lineas > 0 || f.reembolsos > 0)};
   }
   return out;
 }
 const addDia = iso => new Date(Date.parse(iso + 'T00:00:00Z') + 86400000).toISOString().slice(0, 10);
 
-/** Intensidad de un canal sin los reembolsos cancelados, sobre los meses indicados (p. ej. jul-sep de Walmart). */
+/** Intensidad de un canal sin los reembolsos cancelados, sobre los meses indicados (sin el último mes con datos, que puede estar cortado). */
 export function sinCancelados(meses) {
   const l = meses.reduce((a, m) => a + m.lineas, 0), r = meses.reduce((a, m) => a + m.reembolsos, 0), c = meses.reduce((a, m) => a + m.cancelados, 0);
   return {reembolsos: r, cancelados: c, lineas: l, conPct: l > 0 ? Math.round((r * 1000) / l) / 10 : null, sinPct: l > 0 ? Math.round(((r - c) * 1000) / l) / 10 : null};
@@ -226,7 +226,8 @@ export function armarTracker(filas) {
   const bySku = {};
   for (const f of filas) {
     if (!f.sku || !f.hoja) continue;
-    const s = bySku[f.sku] ??= {hojas: {}, motivos: {}, submotivos: {}, retailer: {}, estados: {}, reembolsosMonto: 0, reembolsosConMonto: 0};
+    const s = bySku[f.sku] ??= {hojas: {}, motivos: {}, submotivos: {}, retailer: {}, estados: {}, reembolsosMonto: 0, reembolsosConMonto: 0, vinculadas: 0};
+    if (f.vinculada) s.vinculadas++;
     s.hojas[f.hoja] = (s.hojas[f.hoja] ?? 0) + 1;
     if (f.motivo) s.motivos[f.motivo] = (s.motivos[f.motivo] ?? 0) + 1;
     if (f.submotivo) s.submotivos[f.submotivo] = (s.submotivos[f.submotivo] ?? 0) + 1;
@@ -284,11 +285,11 @@ export function createRefundLeakRepository({database, now = () => new Date(), bu
           `WITH hdr AS (SELECT DISTINCT sheet_name, (c->>'col')::int AS col, c->>'v' AS name FROM public.tracker_row_revisions r, jsonb_array_elements(r.cells) c
               WHERE r.tenant_id=$1 AND r.ticket_state='header' AND r.sheet_name = ANY($2::text[])
                 AND c->>'v' IN ('SKU','Tool SKU','Part SKU','P_SKU','Contact_reason','Contact Reason','Subreason','Retailer','Status','Amount','Request_date','Request Date')),
-            latest AS (SELECT DISTINCT ON (sheet_name,row_number) sheet_name,row_number,cells FROM public.tracker_row_revisions
+            latest AS (SELECT DISTINCT ON (sheet_name,row_number) sheet_name,row_number,cells,ticket_state FROM public.tracker_row_revisions
               WHERE tenant_id=$1 AND ticket_state<>'header' AND sheet_name = ANY($2::text[]) ORDER BY sheet_name,row_number,created_at DESC)
-           SELECT l.sheet_name AS sheet, l.row_number AS fila, jsonb_object_agg(h.name, btrim(c->>'v')) FILTER (WHERE btrim(coalesce(c->>'v',''))<>'') AS o
+           SELECT l.sheet_name AS sheet, l.row_number AS fila, (l.ticket_state='linked') AS vinculada, jsonb_object_agg(h.name, btrim(c->>'v')) FILTER (WHERE btrim(coalesce(c->>'v',''))<>'') AS o
            FROM latest l CROSS JOIN LATERAL jsonb_array_elements(l.cells) c JOIN hdr h ON h.sheet_name=l.sheet_name AND h.col=(c->>'col')::int
-           GROUP BY 1,2 LIMIT 20000`, [s.tenantId, Object.keys(TRACKER_SHEETS)])).rows);
+           GROUP BY 1,2,3 LIMIT 20000`, [s.tenantId, Object.keys(TRACKER_SHEETS)])).rows);
 
         const repetido = await guarded(s, dl('repeat'), 'fuga_repeat', async () => (await s.query(
           `SELECT refreshed_at, source_watermark, contacts, contacts_ge2_90, contacts_ge3_90, linked_tickets, repeat_tickets_90, total_tickets, by_category FROM public.contact_repeat_summary WHERE tenant_id=$1`, [s.tenantId])).rows[0] ?? false);
@@ -331,7 +332,7 @@ export function createRefundLeakRepository({database, now = () => new Date(), bu
             const bloques = armarIntensidad({mensual: R.mensual, lineas: L, ventanas});
             const walmart = bloques.walmart?.meses ?? [];
             intensidad = {status: 'ok', class: 'observed', nota: NOTAS_FIJAS.intensidad, canales: bloques,
-              walmartSinCancelados: walmart.length ? sinCancelados(walmart) : null,
+              walmartSinCancelados: walmart.some(m => !m.ultimo) ? sinCancelados(walmart.filter(m => !m.ultimo)) : null,
               bestBuy: {reembolsosEnElLibro: R.por.bestbuy?.n ?? 0}};
           }
         }
@@ -339,7 +340,7 @@ export function createRefundLeakRepository({database, now = () => new Date(), bu
         // ---- Tracker ----
         let tracker = {status: 'unavailable'};
         if (trackerRows) {
-          const filas = trackerRows.map(r => filaDeTracker(r.sheet, r.fila, r.o ?? {}, hoy)).filter(f => f.hoja);
+          const filas = trackerRows.map(r => ({...filaDeTracker(r.sheet, r.fila, r.o ?? {}, hoy), vinculada: Boolean(r.vinculada)})).filter(f => f.hoja);
           const t = armarTracker(filas);
           tracker = {status: t.filasReembolsos ? 'ok' : 'empty', class: 'observed', nota: NOTAS_FIJAS.tracker, currencyAssumed: 'USD', ...t};
           const enRanking = new Set(skus.status === 'ok' ? skus.top.map(r => r.sku).concat(skus.walmart.map(w => w.sku)) : []);

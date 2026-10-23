@@ -49,7 +49,7 @@ test('intensidad: marca parcial (ventana y último mes) y posible hueco (líneas
   assert.deepEqual(cal('amazon'), {'2026-05': 'completo', '2026-06': 'completo', '2026-07': 'posible_hueco', '2026-08': 'completo', '2026-09': 'parcial'});
   assert.deepEqual(cal('walmart'), {'2026-07': 'parcial', '2026-08': 'completo', '2026-09': 'parcial'}, 'junio no se muestra: el libro de reembolsos de Walmart empieza el 4 de julio');
   assert.equal(r.amazon.meses.find(m => m.mes === '2026-06').intensidadPct, 5);
-  assert.deepEqual(F.sinCancelados(r.walmart.meses), {reembolsos: 60, cancelados: 10, lineas: 300, conPct: 20, sinPct: 16.7});
+  assert.deepEqual(F.sinCancelados(r.walmart.meses.filter(m => !m.ultimo)), {reembolsos: 50, cancelados: 10, lineas: 200, conPct: 25, sinPct: 20});
   const cam = F.armarCambios({intensidad: r, conversaciones: {refreshedAt: '2026-10-22T00:00:00Z', meses: [{mes: '2025-08', n: 400}, {mes: '2026-08', n: 250}, {mes: '2026-09', n: 130}]}});
   assert.deepEqual(cam.reembolsos.map(x => [x.canal, x.mes, x.previo]), [], 'Amazon: agosto y junio no son consecutivos (julio es hueco); Walmart: solo agosto es completo');
   assert.deepEqual(cam.conversaciones, {mes: '2026-08', n: 250, mesAnioPrevio: '2025-08', nAnioPrevio: 400, excluido: '2026-09'});
@@ -140,7 +140,7 @@ test('servicio completo contra libro y Tracker sintéticos, con RLS real', {skip
         const w = Object.fromEntries(v.intensidad.canales.walmart.meses.map(m => [m.mes, m]));
         assert.deepEqual(Object.keys(w), ['2026-08', '2026-09'], 'las líneas empiezan en agosto y la ventana de reembolsos en julio: no hay mes con cero inventado');
         assert.equal(w['2026-08'].cancelados, 1);
-        assert.equal(v.intensidad.walmartSinCancelados.cancelados, 1); assert.equal(v.intensidad.bestBuy.reembolsosEnElLibro, 0);
+        assert.equal(v.intensidad.walmartSinCancelados.cancelados, 1); assert.equal(v.intensidad.walmartSinCancelados.lineas, 6, 'sin el último mes (septiembre), que puede estar cortado'); assert.equal(v.intensidad.bestBuy.reembolsosEnElLibro, 0);
       });
       await t.test('ventanas: todas parciales (complete=false) y con su canal', () => {
         assert.equal(v.todasParciales, true);
@@ -155,7 +155,7 @@ test('servicio completo contra libro y Tracker sintéticos, con RLS real', {skip
         const def = tr.porMotivo.find(m => m.motivo === 'Defectuoso');
         assert.deepEqual([def.n, def.montoMinor, def.reembolsados, def.negados], [2, 15050, 1, 1]);
         assert.equal(tr.bySku['BBB-2'].hojas.reembolsos, 2); assert.equal(tr.bySku['BBB-2'].hojas.garantiaHerramientas, 1, 'WTR (espejo) no se suma');
-        assert.equal(tr.bySku['AAA-1'].hojas.reembolsos, 2);
+        assert.equal(tr.bySku['AAA-1'].hojas.reembolsos, 2); assert.equal(tr.bySku['BBB-2'].vinculadas, 1, 'una fila de garantía con ticket vinculado');
         const text = JSON.stringify(v);
         for (const pii of ['Juan', 'Pérez', '200014331476955', 'Allen', 'Nombre Privado', 'logistics']) assert.ok(!text.includes(pii), 'PII en la respuesta: ' + pii);
       });

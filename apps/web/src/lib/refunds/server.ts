@@ -2,7 +2,7 @@ import 'server-only';
 import {NextRequest,NextResponse} from 'next/server';
 import {createDatabase} from '@vexa/platform/db';
 import {serverPool} from '../imports/server';
-import {ACTIVE_ORG,AccessError,config,identity,PRIVATE_HEADERS} from '../auth';
+import {ACTIVE_ORG,AccessError,config,identity,PRIVATE_HEADERS,resolveSession} from '../auth';
 import {requestAuth} from '../auth-http';
 import {createRefundLeakRepository} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
 /** GET /api/refunds[?date_start=YYYY-MM-DD&date_end=YYYY-MM-DD]: «Fuga de reembolsos» del tenant activo. Solo lectura bajo la sesión y la RLS del usuario; sin PII. */
@@ -13,7 +13,11 @@ export async function refunds(request:NextRequest){
   const q=request.nextUrl.searchParams;
   for(const k of q.keys())if(!['date_start','date_end'].includes(k))throw new AccessError(400,'unsupported_filter');
   const auth=requestAuth(request);finish=auth.finish;
-  const database=createDatabase({identity:identity(auth.client),pool:serverPool(),selectedTenant:request.cookies.get(ACTIVE_ORG)?.value});
+  const id=identity(auth.client);
+  // Dinero: solo propietarios y analistas (igual que el menú «Dinero»); ocultar el ítem no protege la ruta.
+  const session=await resolveSession(id,request.cookies.get(ACTIVE_ORG)?.value);
+  if(!['owner','analyst'].includes(session.active.role))throw new AccessError(403,'role_insufficient');
+  const database=createDatabase({identity:id,pool:serverPool(),selectedTenant:session.active.tenant_id});
   const data=await createRefundLeakRepository({database}).get({dateStart:q.get('date_start'),dateEnd:q.get('date_end')});
   return finish(NextResponse.json({data},{headers:{...PRIVATE_HEADERS,Vary:'Cookie'}}));
  }catch(error){

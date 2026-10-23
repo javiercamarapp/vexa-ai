@@ -1,0 +1,12 @@
+import type {FugaVista} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
+export const NO_SE_SABE: readonly string[];
+export type Archivo = {nombre: string; mime: string; contenido: string};
+export function celda(v: unknown): string;
+export function csv(filas: unknown[][], encabezado: string[]): string;
+export function esc(s: unknown): string;
+export function proveniencia(v: FugaVista): string[];
+import type {SkuFila, SkuTracker} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
+export function datosSku(v: FugaVista, sku: string): {fila: SkuFila | null; meses: {sku: string; canal: string; mes: string; n: number; usdBrutoMinor: string}[]; tr: SkuTracker | null};
+export function paqueteEvidencia(v: FugaVista, sku: string): {html: Archivo; csv: Archivo} | null;
+export function listaWalmart(v: FugaVista): Archivo & {total: number};
+export function colaVencidos(v: FugaVista): Archivo & {total: number};

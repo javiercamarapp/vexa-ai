@@ -1,10 +1,10 @@
 export type FugaCanal = 'amazon' | 'walmart' | 'shopify' | 'bestbuy';
-export type Parte<T> = ({status: 'ok' | 'empty'} & T) | {status: 'unavailable' | 'not_computed'; note?: string};
+export type Parte<T> = ({status: 'ok'} & T) | {status: 'empty' | 'unavailable' | 'not_computed'; note?: string};
 export type SkuCanal = {canal: string; n: number; usdBrutoMinor: string; usdNetoMinor: string; lineas: number | null};
 export type SkuFila = {pos: number; sku: string; n: number; usdBrutoMinor: string; usdNetoMinor: string; canales: SkuCanal[]; lineas: number | null; acumPct: number | null};
-export type MesIntensidad = {mes: string; reembolsos: number; cancelados: number; lineas: number; intensidadPct: number | null; calidad: 'completo' | 'parcial' | 'posible_hueco'};
+export type MesIntensidad = {mes: string; reembolsos: number; cancelados: number; lineas: number; intensidadPct: number | null; calidad: 'completo' | 'parcial' | 'posible_hueco'; ultimo: boolean};
 export type FilaTracker = {fila: number; estado: string; sku: string | null; motivo: string | null; submotivo: string | null; retailer: string | null; montoMinor: number | null; fecha: string | null};
-export type SkuTracker = {hojas: Record<string, number>; motivos: Record<string, number>; submotivos: Record<string, number>; retailer: Record<string, number>; estados: Record<string, number>; reembolsosMonto: number; reembolsosConMonto: number};
+export type SkuTracker = {hojas: Record<string, number>; motivos: Record<string, number>; submotivos: Record<string, number>; retailer: Record<string, number>; estados: Record<string, number>; reembolsosMonto: number; reembolsosConMonto: number; vinculadas: number};
 export type FugaVista = {
   generatedAt: string; scope: {dateStart: string | null; dateEnd: string | null; currency: 'USD'}; class: 'observed';
   ventanas: {canal: string; tipo: 'order' | 'refund'; completa: boolean; inicio: string | null; fin: string | null; corte: string | null}[]; todasParciales: boolean;
@@ -12,7 +12,7 @@ export type FugaVista = {
     canales: Record<string, {n: number; usdBrutoMinor: string; usdNetoMinor: string; sinMonto: number; cancelados: number; conSku: number}>;
     otrasMonedas: {currency: string; exponent: number; n: number; amountMinor: string}[]; top10: {n: number; usdBrutoMinor: string; pct: number | null}}>;
   skus: Parte<{top: SkuFila[]; total: number; sinSku: {n: number}; walmart: {sku: string; n: number; usdBrutoMinor: string; usdNetoMinor: string; lineas: number | null}[]; lineasStatus: 'ok' | 'unavailable';
-    detalleMensual: {sku: string; canal: string; mes: string; n: number; usdBrutoMinor: string}[]}> | {status: 'unavailable'; items: never[]};
+    detalleMensual: {sku: string; canal: string; mes: string; n: number; usdBrutoMinor: string}[]}>;
   intensidad: {status: 'unavailable'} | {status: 'ok'; nota: string; canales: Record<string, {meses: MesIntensidad[]}>; walmartSinCancelados: {reembolsos: number; cancelados: number; lineas: number; conPct: number | null; sinPct: number | null} | null; bestBuy: {reembolsosEnElLibro: number}};
   tracker: Parte<{nota: string; currencyAssumed: 'USD'; filasReembolsos: number; estados: Record<string, number>; montoMinor: number; conMonto: number; montoPorEstado: Record<string, number>; negados: number;
     porMotivo: {motivo: string; n: number; montoMinor: number; reembolsados: number; negados: number; otros: number; sinMonto: number}[]; cola: FilaTracker[]; colaTruncada: boolean;

@@ -8,7 +8,7 @@ export function guardarSwr(clave:string,datos:unknown,opciones?:Opc):void;
 export function leerSwr(clave:string,opciones?:Opc&{fresco?:number;vida?:number}):{datos:unknown;edadMs:number;fresca:boolean;obsoleta:boolean}|null;
 export function invalidarSwr(opciones?:{almacen?:Storage|null;prefijo?:string}):void;
 export function olvidarMemoriaSwr():void;
-export function pedirSwr(url:string,opciones?:{signal?:AbortSignal;valida?:(json:unknown)=>unknown;fetchFn?:typeof fetch;clave?:string;ahora?:()=>number;almacen?:Storage|null}):Promise<{status:number;json:unknown}>;
+export function pedirSwr(url:string,opciones?:{signal?:AbortSignal;valida?:(json:unknown)=>unknown;fetchFn?:typeof fetch;clave?:string;ahora?:()=>number;almacen?:Storage|null;baja?:boolean;reintentos?:number}):Promise<{status:number;json:unknown}>;
 export function enVueloN():number;
 export function precalentar(lecturas:(string|{url:string;valida?:(json:unknown)=>unknown})[],opciones?:{fetchFn?:typeof fetch;almacen?:Storage|null;ahora?:number}):number;
 export function estadoPrecalentamiento():{activos:number;maxActivos:number;enCola:number};

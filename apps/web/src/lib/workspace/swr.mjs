@@ -6,6 +6,7 @@
 //  - si la revalidación falla el dato viejo se conserva (el llamador lo rotula); «Actualizar» solo lo marca obsoleto, no lo borra;
 //  - de-duplicación de peticiones en vuelo por clave y precalentamiento (prefetch) con tope de concurrencia 2;
 //  - aislamiento por tenant: la clave lo incluye y al fijar otro tenant (o cerrar sesión) se purga todo lo ajeno.
+import {fetchCupo} from './cupo.mjs';
 export const FRESCO_MS=5*60*1000;
 export const VIDA_MS=30*60*1000;
 export const PREFIJO='vexa:swr:';
@@ -67,10 +68,10 @@ const conSenal=(p,signal)=>{if(!signal)return p;if(signal.aborted)return Promise
  * GET JSON con de-duplicación por clave. Devuelve {status, json}. Guarda en caché solo respuestas 2xx que `valida` acepte
  * (nunca reemplaza un buen dato por una respuesta mal formada). La petición compartida sigue aunque un lector se desmonte (calienta la caché).
  */
-export function pedirSwr(url,{signal,valida,baja=false,fetchFn=globalThis.fetch,clave=claveSwr(url),ahora=Date.now,almacen=almacenDe()}={}){
+export function pedirSwr(url,{signal,valida,baja=false,fetchFn=globalThis.fetch,clave=claveSwr(url),ahora=Date.now,almacen=almacenDe(),reintentos}={}){
  let p=enVuelo.get(clave);
  if(!p){
-  p=(async()=>{const r=await fetchFn(url,baja?{cache:'no-store',priority:'low'}:{cache:'no-store'});const json=r.status===404?null:await r.json().catch(()=>null);
+  p=(async()=>{const r=await fetchCupo(url,baja?{cache:'no-store',priority:'low'}:{cache:'no-store'},{baja,fetchFn,...(reintentos===undefined?{}:{reintentos})});const json=r.status===404?null:await r.json().catch(()=>null);
    if(r.ok&&json!==null&&(!valida||valida(json)!==null)&&clave.startsWith(PREFIJO+tenantActual+'|'))guardarSwr(clave,json,{ahora:ahora(),almacen});
    return {status:r.status,json};})().finally(()=>{if(enVuelo.get(clave)===p)enVuelo.delete(clave);});
   enVuelo.set(clave,p);

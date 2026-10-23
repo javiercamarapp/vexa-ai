@@ -22,6 +22,7 @@ import {agruparCitas,AVISO_TERCEROS,textoCitas} from '../../lib/legibilidad/expl
 import {etiquetaSeveridad} from '../../lib/legibilidad/problemas-catalogo.mjs';
 import {encabezadoFicha,resumenAdjuntos,serieConversaciones,cambioMensual,etiquetaRecomendacion,estadoIntervencion,IMPACTO_NO_DISPONIBLE} from '../../lib/legibilidad/ficha.mjs';
 import s from './problem-sheet.module.css';
+import {fetchCupo} from '../../lib/workspace/cupo.mjs';
 const sevTone=(v:string|null)=>v==='high'||v==='critical'?'bad' as const:v==='medium'?'warn' as const:'neutral' as const;
 const mesCorto=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
 const mesLargo=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
@@ -42,7 +43,7 @@ function useEvidencia(id:string,shared:string,captured:ConversationRef[]|null){
   for(const key of ['sku','source'])for(const v of params.getAll(key))q.append(key,v);
   void Promise.resolve().then(()=>{setCitas(null);setCobertura(null);setFallo(false);});
   void (async()=>{try{
-   const pedir=()=>fetch('/api/explorer/tools',{method:'POST',cache:'no-store',signal:abort.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'get_evidence',args:{query:q.toString(),problemId:id}})});
+   const pedir=()=>fetchCupo('/api/explorer/tools',{method:'POST',cache:'no-store',signal:abort.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'get_evidence',args:{query:q.toString(),problemId:id}})});
    let response=await pedir();
    // Un reintento silencioso ante 5xx (conexión cortada por el pooler) antes de mostrar «No se pudo verificar».
    if(response.status>=500){await new Promise(r=>setTimeout(r,1200));if(abort.signal.aborted)return;response=await pedir();}

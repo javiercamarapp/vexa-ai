@@ -8,6 +8,7 @@ import {mesAbrev} from '../../lib/charts/escala.mjs';
 import {Button,Refresh} from './button';
 import {KindBadge} from './kind-badge';
 import {ColumnPlot,type ColumnDatum} from './column-chart';
+import {fetchCupo} from '../../lib/workspace/cupo.mjs';
 const nfCount=new Intl.NumberFormat('es-MX');
 /** Puntos de importes: altura = fracción exacta del máximo (bps, BigInt); `axis` rotula el eje en unidades mayores de la moneda. */
 export function ledgerAxis(maxMinor:bigint,exponent:number){return (t:number,max:number)=>axisLabel(max>0?Number(maxMinor)*(t/max):0,exponent);}
@@ -26,7 +27,7 @@ export function Bars({title,unit,points,kind,note,tickLabel}:{title:string;unit:
 }
 export function TrendCharts({endpoint='/api/trends'}:{endpoint?:string}){
  const [view,setView]=useState<TrendsView|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(true),[measure,setMeasure]=useState<'orders'|'refunds'>('orders');
- const load=useCallback(async(signal?:AbortSignal)=>{setBusy(true);setError('');try{const r=await fetch(endpoint,{cache:'no-store',signal});if(!r.ok)throw Error(String(r.status));const j=await r.json();if(!j?.data?.conversations||!j?.data?.ledger)throw Error('shape');if(!signal?.aborted)setView(j.data);}catch{if(!signal?.aborted){setView(null);setError('No se pudieron consultar las tendencias. Reintenta.');}}finally{if(!signal?.aborted)setBusy(false);}},[endpoint]);
+ const load=useCallback(async(signal?:AbortSignal)=>{setBusy(true);setError('');try{const r=await fetchCupo(endpoint,{cache:'no-store',signal});if(!r.ok)throw Error(String(r.status));const j=await r.json();if(!j?.data?.conversations||!j?.data?.ledger)throw Error('shape');if(!signal?.aborted)setView(j.data);}catch{if(!signal?.aborted){setView(null);setError('No se pudieron consultar las tendencias. Reintenta.');}}finally{if(!signal?.aborted)setBusy(false);}},[endpoint]);
  useEffect(()=>{const c=new AbortController();void Promise.resolve().then(()=>load(c.signal));const again=()=>void load();window.addEventListener('vexa:refresh',again);return()=>{c.abort();window.removeEventListener('vexa:refresh',again);};},[load]);
  const convPoints=useMemo<Point[]>(()=>view?.conversations.series.map(p=>({month:p.month,value:p.count,label:nfCount.format(p.count)+(view.conversations.sampled?' (estimado)':'')+' conversaciones'}))??[],[view]);
  const led=view?.ledger;

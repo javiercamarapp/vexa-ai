@@ -17,6 +17,7 @@ import {useJson} from '../ui/use-json';
 import {ProblemSheet,acceptFacts} from './problem-sheet';
 import {InsightCard} from '../ui/insight-card';
 import type {ProblemFacts} from '../../../../../packages/workspace-service/problem-facts.mjs';
+import {fetchCupo} from '../../lib/workspace/cupo.mjs';
 type Step={kind:DetailKind;id:string;componentId?:string;eventId?:string};
 const money=(value:string|null,currency:string,exponent:number)=>formatMinorUnits(value,currency,exponent);
 function EventFacts({event}:{event:EventSummary}){return <dl className="record-details"><div><dt>Registro financiero</dt><dd>{event.externalId}</dd></div><div><dt>Tipo</dt><dd>{event.kind}</dd></div><div><dt>Importe registrado</dt><dd>{money(event.amount_minor,event.currency,event.exponent)}</dd></div><div><dt>Estado</dt><dd>{event.status}</dd></div><div><dt>Fecha efectiva</dt><dd><time>{event.effectiveAt}</time></dd></div><div><dt>Revisión física</dt><dd><IdChip value={event.id}/></dd></div>{event.reversalOf&&<div><dt>Revierte el evento</dt><dd><IdChip value={event.reversalOf}/></dd></div>}</dl>;}
@@ -34,9 +35,9 @@ export function FinancialDetailPanel({kind,id,initialQuery,children}:{kind:'prob
   const load=async()=>{const sourceLocation=workspaceLocation();if(abort.signal.aborted||epoch!==generation.current)return;setBusy(true);setData(null);setError('');setNoScope(false);const params=new URLSearchParams(query);for(const key of ['resource','format','cursor','limit','root_kind','root_id','component_id','event_id'])params.delete(key);
    if(!params.get('snapshot_id')||!params.get('scope_hash')){setNoScope(true);setBusy(false);return;}
    params.set('root_kind',kind);params.set('root_id',id);if(step.componentId)params.set('component_id',step.componentId);if(step.eventId)params.set('event_id',step.eventId);
-   try{const url='/api/workspace/detail/'+step.kind+'/'+encodeURIComponent(step.id)+'?'+params.toString();let response=await fetch(url,{cache:'no-store',signal:abort.signal});
+   try{const url='/api/workspace/detail/'+step.kind+'/'+encodeURIComponent(step.id)+'?'+params.toString();let response=await fetchCupo(url,{cache:'no-store',signal:abort.signal},{reintentos:0});
     // Un solo reintento silencioso ante 5xx/red: el pooler de la base puede cortar una conexión; el usuario no debe ver un error por eso.
-    if(response.status>=500&&!abort.signal.aborted){await new Promise(r=>setTimeout(r,1200));if(!abort.signal.aborted&&epoch===generation.current)response=await fetch(url,{cache:'no-store',signal:abort.signal});}
+    if(response.status>=500&&!abort.signal.aborted){await new Promise(r=>setTimeout(r,1200));if(!abort.signal.aborted&&epoch===generation.current)response=await fetchCupo(url,{cache:'no-store',signal:abort.signal},{reintentos:0});}
     if(abort.signal.aborted||epoch!==generation.current)return;if([401,403,404].includes(response.status))setRelatedAuthorized(false);const body=await response.json();if(abort.signal.aborted||epoch!==generation.current)return;
     if(!response.ok)throw Error(response.status===401||response.status===403?'Tu acceso cambió. Vuelve a iniciar sesión o selecciona una organización autorizada.':response.status===404?'No existe un detalle autorizado para este identificador y alcance.':response.status===409?'La identidad de esta vista no coincide con el alcance. Abre de nuevo el detalle desde la publicación.':response.status===400?'El alcance del detalle no es válido. Abre la publicación y revisa sus filtros.':'No se pudo consultar la evidencia. Reintenta cuando el servicio esté disponible.');
     const next=body.data as DetailView;if(!next||next.kind!==step.kind||next.id!==step.id||next.snapshot_id!==params.get('snapshot_id')||next.scope_hash!==params.get('scope_hash')||!next.detail_hash||params.has('detail_hash')&&next.detail_hash!==params.get('detail_hash'))throw Error('No se pudo verificar la identidad del detalle recibido.');

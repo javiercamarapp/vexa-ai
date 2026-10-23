@@ -12,7 +12,9 @@ type Props=Omit<ComponentProps<typeof NextLink>,'href'> & {href:string};
 export default function WorkspaceLink({href:crudo,onNavigate,...props}:Props){
  // Un enlace interno sin query conserva el alcance de la pantalla (periodo y corte), igual que el menú.
  const href=hrefConAlcance(crudo,useSearchParams().toString());
- return <NextLink {...props} href={href} onNavigate={event=>{
+ // Sin precarga automática de Next: cada pantalla del menú pide sesión y datos al servidor, y precargar las ~17 a la vez saturaba el pool de la base (503).
+ // El calentamiento de datos lo hace `precalentar.mjs` (tope de 2 peticiones, al pasar el cursor o en inactividad). Una pantalla puede reactivarla pasando `prefetch`.
+ return <NextLink prefetch={false} {...props} href={href} onNavigate={event=>{
   let cancelled=false;
   onNavigate?.({preventDefault:()=>{cancelled=true;event.preventDefault();}});
   if(cancelled)return;

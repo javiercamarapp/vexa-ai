@@ -1,6 +1,7 @@
 'use client';
 import {useEffect,useState} from 'react';
 import {tiempoTranscurrido} from '../../lib/legibilidad/espera.mjs';
+import {SkeletonRows} from './skeletons';
 /** Segundos transcurridos desde que se montó (la espera sólo existe mientras el componente está en pantalla). */
 export function useElapsed(){
  const [s,setS]=useState(0);
@@ -18,3 +19,11 @@ export function WaitStatus({titulo,detalle,children}:{titulo:string;detalle:stri
   <span className="sr-only">{anuncio>0?`Sigue verificando: ${tiempoTranscurrido(anuncio)} transcurridos.`:''}</span>
  </div>;
 }
+
+/** Una lectura en vuelo: esqueleto con la forma final + una línea honesta con el tiempo que lleva. Nunca «No disponible ahora» mientras la lectura sigue en curso. */
+export function EsperaEsqueleto({que,filas=4}:{que:string;filas?:number}){
+ const s=useElapsed();
+ return <div role="status" aria-busy="true" aria-live="polite" data-testid="espera-esqueleto"><div aria-hidden="true"><SkeletonRows rows={filas}/></div><p className="wait-line">Cargando {que}… llevamos {tiempoTranscurrido(s)}. La primera carga puede tardar hasta unos 30 s.</p></div>;
+}
+/** Cifra en vuelo dentro de una tarjeta o franja (no es un cero ni un «No disponible»). */
+export function CifraCargando({ancho='5ch'}:{ancho?:string}){return <span className="skeleton skel-inline" style={{width:ancho}} role="status" aria-busy="true"><span className="sr-only">Cargando…</span></span>;}

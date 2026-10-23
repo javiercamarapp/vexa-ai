@@ -14,6 +14,8 @@ import {SourceRef} from '../ui/source-ref';
 import {CoverageBand} from '../ui/coverage-band';
 import {EmptyState} from '../ui/empty-state';
 import {SkeletonRows} from '../ui/skeletons';
+import {CifraCargando} from '../ui/wait-status';
+import {LineaCache} from '../ui/linea-cache';
 import {LinkButton,Arrow} from '../ui/button';
 import {useJson} from '../ui/use-json';
 import {nf} from '../ui/format';
@@ -26,6 +28,7 @@ import type {CategoriesView} from '../../../../../packages/workspace-service/inc
 import {insightsResumen} from '../../lib/legibilidad/insights.mjs';
 import {separarRuido} from '../../lib/legibilidad/ruido.mjs';
 import {comparacionMensual,ledgerConDatos} from '../../lib/legibilidad/meses.mjs';
+import {hace} from '../../lib/workspace/swr.mjs';
 import {StatusStrip,ExecKpis,TopProblems,Attention,HowCalculated,useCriticos,acceptCoverage} from './executive';
 import type {CoverageView} from '../../../../../packages/workspace-service/provenance.mjs';
 import {kpiConversaciones,kpiPedidos,estadoFuentes,mesesCoberturaBaja} from '../../lib/legibilidad/resumen-ejecutivo.mjs';
@@ -76,16 +79,20 @@ export function OverviewDashboard({bundle,pinned,avisos=[]}:{bundle:Bundle;pinne
  const kc=kpiConversaciones(conv,ahora),kp=kpiPedidos(led,ahora),fuentes=estadoFuentes(cobertura.data,{libro:led?.completeness?.dataThrough??null,conversaciones:conv?.completeness?.dataThrough??null});
  const cc=bundle.meta.critical_counts??null,conteoCriticos=crit.datos?{groups:crit.datos.groups??0,signals:crit.datos.signals}:cc&&typeof cc.groups==='number'?{groups:cc.groups,signals:cc.signals??null}:null;
  const cmpPedidos=kp?cmpOf('orders',kp.currency):null;
- const NA=<strong>No disponible ahora</strong>;
+ // «No disponible ahora» solo si la lectura ya terminó y falló; mientras sigue en vuelo la cifra es un esqueleto (no parece incompleto).
+ const cargT=trends.busy&&!trends.data,cargC=cobertura.busy&&!cobertura.data,NA=<strong>No disponible ahora</strong>,Esp=<CifraCargando/>;
+ // Una sola línea para todo lo que salió de la caché (en vez de una por tarjeta): la más antigua manda.
+ const lecturas=[trends,probs,cats,cobertura],conCache=lecturas.filter(l=>l.edadMs!==null),edadMax=conCache.length?Math.max(...conCache.map(l=>l.edadMs as number)):null,algunaActualizando=conCache.some(l=>l.actualizando),algunaVieja=lecturas.some(l=>l.viejo);
  const kpis=[
-  {label:'Conversaciones',kind:(kc?.estimado?'estimated':'observed') as 'observed'|'estimated',icon:'message',value:kc?kc.valor!==null?<strong>{nf.format(kc.valor)}</strong>:NA:NA,delta:kc?.delta??null,foot:kc?kc.rotulo+(kc.estimado?' · estimado con muestra':''):'La serie no está disponible ahora',spark:kc?.spark},
-  {label:'Grupos con revisión crítica',kind:'inferred' as const,icon:'alert',value:conteoCriticos?<strong>{nf.format(conteoCriticos.groups)}</strong>:NA,foot:conteoCriticos?(conteoCriticos.signals!==null?nf.format(conteoCriticos.signals)+' señales críticas (evidencias)':'Grupos con al menos una señal crítica'):'Se calcula al abrir «Qué requiere atención»',href:'#atencion'},
-  {label:'Pedidos del último mes completo',kind:'observed' as const,icon:'receipt',value:kp?kp.amountMinor!==null?<strong>{formatMinorUnits(kp.amountMinor,kp.currency,kp.exponent)}</strong>:NA:NA,delta:kp?.delta?{...kp.delta,good:'up' as const}:null,foot:kp?kp.rotulo:'El libro de pedidos no está disponible ahora',spark:cmpPedidos&&!cmpPedidos.sinCobertura?cmpPedidos.meses.map(m=>num(m.orders.amountMinor,led!.exponent!)):undefined},
-  {label:'Cobertura de análisis',kind:'observed' as const,icon:'database',value:fuentes.analisis?<strong>{fuentes.analisis.pct.toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %</strong>:NA,foot:fuentes.analisis?`${nf.format(fuentes.analisis.incorporadas)} de ${nf.format(fuentes.analisis.de)} conversaciones de HubSpot incorporadas`:'La cobertura no está disponible ahora'}
+  {label:'Conversaciones',kind:(kc?.estimado?'estimated':'observed') as 'observed'|'estimated',icon:'message',value:kc?kc.valor!==null?<strong>{nf.format(kc.valor)}</strong>:NA:cargT?Esp:NA,delta:kc?.delta??null,foot:kc?kc.rotulo+(kc.estimado?' · estimado con muestra':''):cargT?'Cargando la serie…':'La serie no está disponible ahora',spark:kc?.spark},
+  {label:'Grupos con revisión crítica',kind:'inferred' as const,icon:'alert',value:conteoCriticos?<strong>{nf.format(conteoCriticos.groups)}</strong>:<strong>Sin calcular</strong>,foot:conteoCriticos?(conteoCriticos.signals!==null?nf.format(conteoCriticos.signals)+' señales críticas (evidencias)':'Grupos con al menos una señal crítica')+(crit.edadMs!==null?` · última lectura ${hace(crit.edadMs)}`:''):'Consulta pesada: se calcula a petición con «Calcular ahora»',href:'#atencion'},
+  {label:'Pedidos del último mes completo',kind:'observed' as const,icon:'receipt',value:kp?kp.amountMinor!==null?<strong>{formatMinorUnits(kp.amountMinor,kp.currency,kp.exponent)}</strong>:NA:cargT?Esp:NA,delta:kp?.delta?{...kp.delta,good:'up' as const}:null,foot:kp?kp.rotulo:cargT?'Cargando el libro de pedidos…':'El libro de pedidos no está disponible ahora',spark:cmpPedidos&&!cmpPedidos.sinCobertura?cmpPedidos.meses.map(m=>num(m.orders.amountMinor,led!.exponent!)):undefined},
+  {label:'Cobertura de análisis',kind:'observed' as const,icon:'database',value:fuentes.analisis?<strong>{fuentes.analisis.pct.toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %</strong>:cargC?Esp:NA,foot:fuentes.analisis?`${nf.format(fuentes.analisis.incorporadas)} de ${nf.format(fuentes.analisis.de)} conversaciones de HubSpot incorporadas`:cargC?'Cargando la cobertura…':'La cobertura no está disponible ahora'}
  ];
  return <div className="stack overview">
   <StatusStrip fuentes={fuentes} cargando={cobertura.busy} dineroDisponible={!!exposure} onCobertura={()=>setVerCobertura(v=>!v)} avisos={[...avisos,...(faltantes.length>0?[{key:'faltantes',node:<aside className="notice-bar" data-tone="info" role="note"><Icon name="info" size={14}/><div><strong>{faltantes.length===1?'Una cifra sin cobertura todavía':faltantes.length+' cifras sin cobertura todavía'}</strong><ul>{faltantes.map(f=><li key={f.key}><strong>{f.metric.label}</strong>: {QUE_FALTA[f.metric.kind]??f.coverage.label}. No es cero.</li>)}</ul><p><LinkButton href="/imports" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>{bundle.meta.can_manage&&<> <LinkButton href="/economics" size="sm" variant="ghost" icon={<Arrow/>}>Revisar fuentes y vínculos</LinkButton></>}</p></div></aside>}]:[])]}/>
   {verCobertura&&<CoverageBand/>}
+  <LineaCache edadMs={edadMax} actualizando={algunaActualizando} viejo={algunaVieja} onActualizar={()=>window.dispatchEvent(new Event('vexa:refresh'))}/>
   <ExecKpis items={kpis}/>
   <div className={exec.cols}>
    <Attention crit={crit} query={query} conteo={conteoCriticos}/>

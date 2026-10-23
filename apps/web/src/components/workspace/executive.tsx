@@ -12,11 +12,11 @@ import {KindBadge} from '../ui/kind-badge';
 import {TituloAuto} from '../ui/titulo-auto';
 import {StatusChip} from '../ui/status-chip';
 import {Button,LinkButton,Arrow} from '../ui/button';
-import {WaitStatus} from '../ui/wait-status';
+import {EsperaEsqueleto,CifraCargando} from '../ui/wait-status';
 import {EmptyState} from '../ui/empty-state';
 import {useJson} from '../ui/use-json';
 import {nf} from '../ui/format';
-import {ESPERA} from '../../lib/legibilidad/espera.mjs';
+import {hace} from '../../lib/workspace/swr.mjs';
 import {claveCache,guardarCache,leerCache} from '../../lib/workspace/cache.mjs';
 import {filasDesdeCatalogo,numerarGrupos as numerar,ordenarFilas,fraseGrupo,etiquetaSeveridad,type FilaProblema} from '../../lib/legibilidad/problemas-catalogo.mjs';
 import {separarRuido} from '../../lib/legibilidad/ruido.mjs';
@@ -32,8 +32,8 @@ type Fuentes=NonNullable<ReturnType<typeof import('../../lib/legibilidad/resumen
 export function StatusStrip({fuentes,cargando,avisos,onCobertura,dineroDisponible}:{fuentes:Fuentes|null;cargando:boolean;avisos:{key:string;node:ReactNode}[];onCobertura:()=>void;dineroDisponible:boolean}){
  return <section className={s.strip} aria-label="Estado de los datos">
   <div className={s.stripRow}>
-   <span className={s.stripItem}>Fuentes con datos: {fuentes&&fuentes.cargadas!==null?<strong>{fuentes.cargadas} de {fuentes.total}</strong>:<strong>{cargando?'…':'No disponible ahora'}</strong>}{fuentes&&fuentes.sinCargar.length>0&&<span>(sin cargar: {fuentes.sinCargar.join(', ')})</span>}</span>
-   <span className={s.stripItem}>Datos hasta:{(fuentes?.cortes??[]).map(c=><span key={c.etiqueta}>{c.etiqueta} <strong>{c.dia??'sin fecha de corte'}</strong></span>)}{!fuentes&&<strong>…</strong>}</span>
+   <span className={s.stripItem}>Fuentes con datos: {fuentes&&fuentes.cargadas!==null?<strong>{fuentes.cargadas} de {fuentes.total}</strong>:cargando?<CifraCargando/>:<strong>No disponible ahora</strong>}{fuentes&&fuentes.sinCargar.length>0&&<span>(sin cargar: {fuentes.sinCargar.join(', ')})</span>}</span>
+   <span className={s.stripItem}>Datos hasta:{(fuentes?.cortes??[]).map(c=><span key={c.etiqueta}>{c.etiqueta} <strong>{c.dia??'sin fecha de corte'}</strong></span>)}{!fuentes&&(cargando?<CifraCargando ancho="12ch"/>:<strong>No disponible ahora</strong>)}</span>
    {!dineroDisponible&&<span className={s.stripItem}>Dinero por problema: <strong>No disponible</strong></span>}
    <Button size="sm" variant="ghost" onClick={onCobertura}>Ver cobertura</Button>
   </div>
@@ -62,7 +62,7 @@ export function TopProblems({items,query,cargando,error,onRetry}:{items:Bundle['
  const top=lista?topProblemas(lista.visibles,5) as FilaProblema[]:[];
  return <section className="card" aria-label="Problemas con más conversaciones">
   <div className={s.cardHead}><div><h2>Problemas con más conversaciones</h2><p>Los 5 grupos con más conversaciones distintas. La categoría la asigna la IA.</p></div><KindBadge kind="observed"/></div>
-  {cargando&&!items&&<WaitStatus {...ESPERA.problemas}/>}
+  {cargando&&!items&&<EsperaEsqueleto que="los problemas" filas={5}/>}
   {error&&!items&&<p className="state state-error" role="alert">{error} <Button size="sm" onClick={onRetry}>Reintentar</Button></p>}
   {items&&top.length===0&&<EmptyState compact art="search" title="Sin conversaciones por problema" body="Cuando los grupos tengan conversaciones registradas aparecerán aquí." action={<LinkButton href={'/problems?'+query} size="sm" icon={<Arrow/>}>Ver problemas</LinkButton>}/>}
   {top.length>0&&<ol className={s.list}>{top.map((f,i)=><li key={f.id} className={s.row}>
@@ -104,14 +104,15 @@ export function Attention({crit,query,conteo}:{crit:ReturnType<typeof useCritico
  return <section className="card" aria-label="Qué requiere atención" id="atencion">
   <div className={s.cardHead}><div><h2>Qué requiere atención</h2><p>Grupos con al menos una señal crítica (severidad alta, crítica o categoría sensible). Se revisan sin importar el dinero.</p></div><KindBadge kind="inferred" hint="La severidad la asigna la IA al extraer cada conversación: es Inferido."/></div>
   {total!==null&&<p className={s.note}><strong>{nf.format(total)}</strong> {total===1?'grupo con revisión crítica':'grupos con revisión crítica'}{(d?.signals??conteo?.signals)!=null&&<> · {nf.format((d?.signals??conteo?.signals) as number)} señales críticas (evidencias)</>}</p>}
+  {d&&crit.edadMs!==null&&<p className="state state-cache" role="status" data-testid="criticos-edad">Última lectura guardada ({hace(crit.edadMs)}); no se recalcula sola porque es una consulta pesada. <button type="button" className="row-link-inline" onClick={()=>void crit.cargar()} disabled={crit.busy}>{crit.busy?'Calculando…':'Calcular de nuevo'}</button></p>}
   {d&&d.filas.length>0&&<ol className={s.list}>{d.filas.slice(0,CRIT_VISIBLES).map((f,i)=><li key={f.id} className={s.row}>
    <span className={s.rank}>{i+1}</span>
    <div className={s.name}><Link href={'/problems/'+f.id+'?'+query}>{f.categoria}</Link><small>{fraseGrupo(f)}{f.motivoCritico?' · '+etiquetaMotivo(f.motivoCritico):''}</small><TituloAuto problemId={f.id} label={f.titulo} conversaciones={f.conversaciones} temas={f.temas??null}/></div>
    <div className={s.num}><strong>{f.conversaciones===null?'—':nf.format(f.conversaciones)}</strong><small>conversaciones</small>{f.severidad&&<StatusChip tone={f.severidad==='high'||f.severidad==='critical'?'bad':f.severidad==='medium'?'warn':'neutral'}>{etiquetaSeveridad(f.severidad)}</StatusChip>}</div>
   </li>)}</ol>}
   {!d&&<>
-   <p className={s.note}>{total===null?'La lista de grupos críticos se calcula al abrirla; es una consulta pesada y no se lanza sola.':'Abre la lista para ver cuáles son.'}</p>
-   {crit.busy?<WaitStatus {...ESPERA.problemas}/>:<div className="btn-group"><Button size="sm" variant="primary" onClick={()=>void crit.cargar()}>Ver los grupos críticos aquí</Button><LinkButton href={'/problems?'+query+'#senales-criticas'} size="sm" icon={<Arrow/>}>Ir a Problemas</LinkButton></div>}
+   <p className={s.note}>{total===null?'Todavía no se calcularon los grupos críticos. Es una consulta pesada y no se lanza sola; no significa que no existan.':'Abre la lista para ver cuáles son.'}</p>
+   {crit.busy?<EsperaEsqueleto que="los grupos críticos" filas={3}/>:<div className="btn-group"><Button size="sm" variant="primary" onClick={()=>void crit.cargar()}>Calcular ahora</Button><LinkButton href={'/problems?'+query+'#senales-criticas'} size="sm" icon={<Arrow/>}>Ir a Problemas</LinkButton></div>}
    {crit.error&&<p className="state state-error" role="alert">{crit.error}</p>}
   </>}
   {d&&d.filas.length>CRIT_VISIBLES&&<p className={s.note}><LinkButton href={'/problems?'+query+'#senales-criticas'} variant="ghost" size="sm" icon={<Arrow/>}>Ver los {nf.format(d.filas.length)} grupos</LinkButton></p>}

@@ -1,4 +1,4 @@
-export type MenuItem={href:string;etiqueta:string;icono:string;titulo?:string;alias?:readonly string[]};
+export type MenuItem={href:string;etiqueta:string;icono:string;titulo?:string;alias?:readonly string[];roles?:readonly string[]};
 export type MenuEntrada=({tipo:'item'}&MenuItem&{roles?:readonly string[];interno?:boolean})|{tipo:'grupo';clave:string;etiqueta:string;roles?:readonly string[];interno?:boolean;items:readonly MenuItem[]};
 export const MENU:readonly MenuEntrada[];
 export function menuVisible(acceso?:{role?:string;interno?:boolean}):MenuEntrada[];

@@ -63,17 +63,17 @@ for(const [w,h] of [[375,812],[768,1024],[1440,900]]){
   if(w>=768||true){
    const abrirMenu=async()=>{if(w<768){await page.getByRole('button',{name:/^(Abrir menú|Más opciones de navegación)$/}).last().click();await page.waitForTimeout(300);}};
    await abrirMenu();const root=w<768?page.locator('.mobile-sidebar'):page.locator('.workspace-sidebar');
-   const toggles=root.locator('.nav-group-toggle');const n=await toggles.count();check(n===(internal?4:3),`grupos esperados ${internal?4:3}, hay ${n}`);
+   const toggles=root.locator('.nav-group-toggle');const n=await toggles.count();check(n===(internal?6:5),`grupos esperados ${internal?6:5}, hay ${n}`);
    const abiertos=async()=>{let k=0;for(let i=0;i<n;i++)if((await toggles.nth(i).getAttribute('aria-expanded'))==='true')k++;return k;};
    check((await abiertos())===1,`acordeón: debe haber exactamente 1 grupo abierto por defecto, hay ${await abiertos()}`);
    check((await toggles.nth(0).getAttribute('aria-expanded'))==='true',`en /overview el grupo abierto por defecto es el primero (${await toggles.nth(0).innerText()})`);
    const labels=(await root.locator('nav a').allInnerTexts()).map(t=>t.trim());
    check(!labels.includes('Notificaciones')&&!labels.includes('Gestionar problemas')&&!labels.includes('Gestión económica'),`ítems que ya no van: ${labels}`);
    check(internal===labels.includes('Evaluación histórica'),`Interno ${internal?'debía':'no debía'} verse: ${labels}`);
-   check(labels.indexOf('Resumen')<labels.indexOf('Problemas')&&labels.indexOf('Problemas')<labels.indexOf('Pregúntale a tus datos')&&labels.indexOf('Pregúntale a tus datos')<labels.indexOf('CFO')&&labels.indexOf('CFO')<labels.indexOf('Recomendaciones')&&labels.indexOf('Acciones')<labels.indexOf('Explorador')&&labels.indexOf('Brief ejecutivo')<labels.indexOf('Fuentes conectadas'),`orden del menú: ${labels}`);
+   const ord=['Hoy','Pregúntale a tus datos','CFO','Problemas','Mapa de problemas','Por decidir','En curso y resultados','Confianza','Explorador','Equipo'].map(x=>labels.indexOf(x));check(ord.every(x=>x>=0)&&ord.every((x,k)=>k===0||ord[k-1]<x)&&!labels.includes('Brief ejecutivo')&&!labels.includes('Recomendaciones'),`orden del menú (8 espacios): ${labels}`);
    const href=await root.locator('nav a',{hasText:'Problemas'}).first().getAttribute('href');const p=new URLSearchParams(href.split('?')[1]??'');
    check(['date_start','date_end','currency','basis','snapshot_id','scope_hash'].every(k=>p.get(k)===new URLSearchParams(SCOPE).get(k)),`el menú no propaga el alcance: ${href}`);
-   {await toggles.filter({hasText:'Datos y fuentes'}).click();check((await toggles.filter({hasText:'Datos y fuentes'}).getAttribute('aria-expanded'))==='true','acordeón: «Datos y fuentes» no se abre');check((await toggles.nth(0).getAttribute('aria-expanded'))==='false','acordeón: al abrir otro grupo se debe cerrar el anterior');check((await abiertos())===1,'acordeón: nunca más de un grupo abierto');await toggles.filter({hasText:'Datos y fuentes'}).click();check((await abiertos())===0,'acordeón: pulsar el grupo abierto lo cierra');}
+   {await toggles.filter({hasText:'Datos y confianza'}).click();check((await toggles.filter({hasText:'Datos y confianza'}).getAttribute('aria-expanded'))==='true','acordeón: «Datos y confianza» no se abre');check((await toggles.nth(0).getAttribute('aria-expanded'))==='false','acordeón: al abrir otro grupo se debe cerrar el anterior');check((await abiertos())===1,'acordeón: nunca más de un grupo abierto');await toggles.filter({hasText:'Datos y confianza'}).click();check((await abiertos())===0,'acordeón: pulsar el grupo abierto lo cierra');}
    await shot(page,'menu');
   }
   await page.close(); }
@@ -91,7 +91,7 @@ for(const [w,h] of [[375,812],[768,1024],[1440,900]]){
  for(const route of ['/evaluation','/evaluation/candidates','/migrations']){
   const page=await open(route);const t=await page.locator('.workspace-content').innerText();
   if(internal)check(!/Esta sección es de uso interno/.test(t),`${route}: el equipo interno no debe ver el aviso`);
-  else{check(/Esta sección es de uso interno/.test(t),`${route}: falta el aviso`);check(await page.getByRole('link',{name:'Ir al Resumen'}).count()===1,`${route}: falta el enlace al Resumen`);}
+  else{check(/Esta sección es de uso interno/.test(t),`${route}: falta el aviso`);check(await page.getByRole('link',{name:'Ir a Hoy'}).count()===1,`${route}: falta el enlace a Hoy`);}
   if(route==='/evaluation')await shot(page,'interno');await page.close();
  }
  await ctx.close();

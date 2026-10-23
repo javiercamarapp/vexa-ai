@@ -4,35 +4,43 @@ const SOLO_PROPIETARIO = ['owner'];
 const DINERO = ['owner', 'analyst'];
 /** Entradas de primer nivel: ítems sueltos o grupos con ítems. `alias` = rutas que se muestran bajo ese ítem sin ser su ruta. */
 export const MENU = Object.freeze([
-  { tipo: 'item', href: '/overview', etiqueta: 'Resumen', icono: 'overview' },
-  { tipo: 'item', href: '/problems', etiqueta: 'Problemas', icono: 'problems', alias: ['/problems/manage'] },
+  // 8 espacios, en el orden de la historia: ver -> entender -> decidir -> confiar. «Brief ejecutivo» se absorbe en Hoy («Exportar informe»); su ruta /briefs sigue viva.
+  { tipo: 'item', href: '/overview', etiqueta: 'Hoy', icono: 'overview', titulo: 'Hoy' },
   { tipo: 'item', href: '/preguntale', etiqueta: 'Pregúntale a tus datos', icono: 'preguntale' },
   { tipo: 'grupo', clave: 'dinero', etiqueta: 'Dinero', roles: DINERO, items: [
+    // El nombre «CFO» se conserva hasta que Javier decida otro (la propuesta es «Panorama financiero»).
     { href: '/cfo', etiqueta: 'CFO', icono: 'economics', titulo: 'CFO' },
     { href: '/gaps', etiqueta: 'Brechas de ingreso', icono: 'economics', titulo: 'Brechas de ingreso' },
     { href: '/refunds', etiqueta: 'Fuga de reembolsos', icono: 'economics', titulo: 'Fuga de reembolsos' },
-    { href: '/economics', etiqueta: 'Preparar', icono: 'imports', titulo: 'Dinero · Preparar' },
   ] },
-  { tipo: 'item', href: '/recommendations', etiqueta: 'Recomendaciones', icono: 'recommendations' },
-  { tipo: 'item', href: '/interventions', etiqueta: 'Acciones', icono: 'interventions' },
-  { tipo: 'item', href: '/explorer', etiqueta: 'Explorador', icono: 'explorer' },
-  { tipo: 'item', href: '/briefs', etiqueta: 'Brief ejecutivo', icono: 'briefs' },
+  { tipo: 'grupo', clave: 'clientes', etiqueta: 'Clientes y problemas', items: [
+    { href: '/problems', etiqueta: 'Problemas', icono: 'problems', alias: ['/problems/manage'] },
+  ] },
   { tipo: 'grupo', clave: 'operacion', etiqueta: 'Operación', roles: DINERO, items: [
     { href: '/map', etiqueta: 'Mapa de problemas', icono: 'grid', titulo: 'Mapa de problemas' },
     { href: '/workload', etiqueta: 'Carga y SLA', icono: 'clock', titulo: 'Carga y SLA' },
   ] },
-  { tipo: 'grupo', clave: 'datos', etiqueta: 'Datos y fuentes', items: [
+  // Recomendaciones y Acciones son un solo ciclo: propuesta -> decisión -> resultado. Por decidir = recomendaciones; En curso y Resultados = intervenciones.
+  { tipo: 'grupo', clave: 'acciones', etiqueta: 'Acciones', items: [
+    { href: '/recommendations', etiqueta: 'Por decidir', icono: 'recommendations', titulo: 'Acciones · Por decidir' },
+    { href: '/interventions', etiqueta: 'En curso y resultados', icono: 'interventions', titulo: 'Acciones' },
+  ] },
+  { tipo: 'grupo', clave: 'datos', etiqueta: 'Datos y confianza', items: [
+    { href: '/confianza', etiqueta: 'Confianza', icono: 'history', titulo: 'Datos y confianza' },
     { href: '/sources', etiqueta: 'Cobertura de datos', icono: 'history', titulo: 'Cobertura de datos' },
     { href: '/connections', etiqueta: 'Fuentes conectadas', icono: 'connections', titulo: 'Fuentes conectadas' },
     { href: '/imports', etiqueta: 'Importaciones', icono: 'imports', alias: ['/jobs'] },
     { href: '/history', etiqueta: 'Histórico e identidad', icono: 'history' },
     { href: '/analysis', etiqueta: 'Análisis', icono: 'analysis', titulo: 'Análisis de conversaciones' },
+    { href: '/economics', etiqueta: 'Preparar', icono: 'imports', titulo: 'Dinero · Preparar', roles: DINERO },
+    { href: '/explorer', etiqueta: 'Explorador', icono: 'explorer' },
   ] },
   { tipo: 'grupo', clave: 'administracion', etiqueta: 'Administración', roles: SOLO_PROPIETARIO, items: [
     { href: '/settings/team', etiqueta: 'Equipo', icono: 'team' },
     { href: '/settings/notifications', etiqueta: 'Avisos', icono: 'avisos', titulo: 'Preferencias de avisos', alias: ['/settings/notification-delivery', '/notifications/push'] },
     { href: '/settings/retention', etiqueta: 'Retención', icono: 'retention', titulo: 'Retención y borrado' },
   ] },
+  // Interno: fuera del menú del cliente; solo lo ve el equipo de Rovaq (acceso de plataforma).
   { tipo: 'grupo', clave: 'interno', etiqueta: 'Interno', interno: true, items: [
     { href: '/evaluation', etiqueta: 'Evaluación histórica', icono: 'analysis' },
     { href: '/evaluation/candidates', etiqueta: 'Candidatos evaluados', icono: 'recommendations' },
@@ -42,6 +50,7 @@ export const MENU = Object.freeze([
 /** Pantallas sin ítem propio (se llega por la campana o por otra pantalla): solo aportan título e icono. */
 const SIN_ITEM = Object.freeze([
   { href: '/notifications', etiqueta: 'Notificaciones', icono: 'notifications' },
+  { href: '/briefs', etiqueta: 'Informe ejecutivo', icono: 'briefs' },
   { href: '/customers', etiqueta: 'Historial del cliente', icono: 'customers' },
 ]);
 const ve = (entrada, { role, interno }) => (entrada.interno ? Boolean(interno) : !entrada.roles || (role !== undefined && entrada.roles.includes(role)));

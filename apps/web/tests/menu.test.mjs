@@ -4,8 +4,22 @@ import {MENU, menuVisible, itemActivo, tituloDePantalla, todosLosItems, cerrados
 const etiquetas = (acceso) => menuVisible(acceso).map((e) => e.etiqueta);
 const hrefs = (acceso) => menuVisible(acceso).flatMap((e) => (e.tipo === 'grupo' ? e.items : [e]).map((i) => i.href));
 
-test('orden de la historia: Resumen, Problemas, Pregúntale a tus datos, Dinero, Recomendaciones, Acciones, Explorador, Brief, Operación, Datos y fuentes, Administración, Interno', () => {
-  assert.deepEqual(etiquetas({role: 'owner', interno: true}), ['Resumen', 'Problemas', 'Pregúntale a tus datos', 'Dinero', 'Recomendaciones', 'Acciones', 'Explorador', 'Brief ejecutivo', 'Operación', 'Datos y fuentes', 'Administración', 'Interno']);
+test('8 espacios en el orden de la historia (ver, entender, decidir, confiar) + Interno solo para plataforma', () => {
+  assert.deepEqual(etiquetas({role: 'owner'}), ['Hoy', 'Pregúntale a tus datos', 'Dinero', 'Clientes y problemas', 'Operación', 'Acciones', 'Datos y confianza', 'Administración']);
+  assert.deepEqual(etiquetas({role: 'owner', interno: true}), ['Hoy', 'Pregúntale a tus datos', 'Dinero', 'Clientes y problemas', 'Operación', 'Acciones', 'Datos y confianza', 'Administración', 'Interno']);
+});
+test('Brief y Recomendaciones ya no son entradas de primer nivel: Brief se absorbe en Hoy, Recomendaciones vive en Acciones > Por decidir', () => {
+  assert.ok(!etiquetas({role: 'owner'}).some((e) => ['Brief ejecutivo', 'Recomendaciones', 'Explorador', 'Resumen', 'Problemas'].includes(e)));
+  const acciones = MENU.find((e) => e.clave === 'acciones');
+  assert.deepEqual(acciones.items.map((i) => [i.href, i.etiqueta]), [['/recommendations', 'Por decidir'], ['/interventions', 'En curso y resultados']]);
+  assert.equal(itemActivo('/briefs/abc'), null); assert.equal(tituloDePantalla('/briefs'), 'Informe ejecutivo');
+});
+test('Explorador y Preparar viven dentro de Datos y confianza; Preparar solo propietario y analista', () => {
+  const datos = MENU.find((e) => e.clave === 'datos');
+  assert.equal(datos.etiqueta, 'Datos y confianza');
+  assert.ok(datos.items.some((i) => i.href === '/explorer') && datos.items.some((i) => i.href === '/economics') && datos.items[0].href === '/confianza');
+  for (const role of ['operator', 'viewer', undefined]) assert.ok(!hrefs({role}).includes('/economics') && hrefs({role}).includes('/explorer') && hrefs({role}).includes('/confianza'), String(role));
+  assert.equal(itemActivo('/explorer').grupo, 'datos'); assert.equal(itemActivo('/economics').grupo, 'datos');
 });
 test('Interno solo con acceso de plataforma; un propietario cliente no lo ve', () => {
   assert.ok(!etiquetas({role: 'owner'}).includes('Interno'));
@@ -18,11 +32,11 @@ test('Administración solo propietarios; Dinero solo propietario y analista', ()
   for (const role of ['owner', 'analyst']) assert.ok(hrefs({role}).includes('/economics') && hrefs({role}).includes('/cfo') && hrefs({role}).includes('/refunds') && hrefs({role}).includes('/gaps'));
   for (const role of ['operator', 'viewer', undefined]) assert.ok(!hrefs({role}).includes('/economics') && !hrefs({role}).includes('/cfo') && !hrefs({role}).includes('/refunds') && !hrefs({role}).includes('/gaps'));
 });
-test('Notificaciones y Gestionar problemas ya no son ítems; Gestión económica pasa a Dinero > Preparar', () => {
+test('Notificaciones y Gestionar problemas ya no son ítems; Dinero conserva CFO, Brechas y Fuga (Preparar pasó a Datos y confianza)', () => {
   const todos = todosLosItems().map(({item}) => item.href);
   assert.ok(!todos.includes('/notifications') && !todos.includes('/problems/manage'));
   const dinero = MENU.find((e) => e.clave === 'dinero');
-  assert.deepEqual(dinero.items.map((i) => [i.href, i.etiqueta]), [['/cfo', 'CFO'], ['/gaps', 'Brechas de ingreso'], ['/refunds', 'Fuga de reembolsos'], ['/economics', 'Preparar']]);
+  assert.deepEqual(dinero.items.map((i) => [i.href, i.etiqueta]), [['/cfo', 'CFO'], ['/gaps', 'Brechas de ingreso'], ['/refunds', 'Fuga de reembolsos']]);
 });
 test('ítem activo: /jobs/:id -> Importaciones, /analysis/:id -> Análisis, /problems/manage -> Problemas, el más específico gana', () => {
   const act = (p) => itemActivo(p)?.item.href;
@@ -34,7 +48,7 @@ test('ítem activo: /jobs/:id -> Importaciones, /analysis/:id -> Análisis, /pro
   assert.equal(itemActivo('/notifications'), null); assert.equal(itemActivo('/ruta-rara'), null);
 });
 test('ninguna ruta del menú anterior se pierde: todas siguen teniendo ítem o título propio', () => {
-  for (const ruta of ['/overview', '/problems', '/problems/manage', '/recommendations', '/explorer', '/preguntale', '/interventions', '/briefs', '/cfo', '/gaps', '/refunds', '/analysis', '/imports', '/connections', '/sources', '/history', '/evaluation', '/evaluation/candidates', '/migrations', '/economics', '/notifications', '/settings/notifications', '/settings/team', '/settings/retention', '/settings/notification-delivery', '/notifications/push', '/jobs/setup', '/customers/1'])
+  for (const ruta of ['/overview', '/problems', '/problems/manage', '/recommendations', '/explorer', '/preguntale', '/interventions', '/briefs', '/cfo', '/gaps', '/refunds', '/analysis', '/imports', '/connections', '/sources', '/history', '/evaluation', '/evaluation/candidates', '/migrations', '/economics', '/notifications', '/settings/notifications', '/settings/team', '/settings/retention', '/settings/notification-delivery', '/notifications/push', '/jobs/setup', '/customers/1', '/confianza', '/briefs/x'])
     assert.notEqual(tituloDePantalla(ruta), 'Espacio de trabajo', ruta);
 });
 test('estado recordado: solo claves de grupo válidas; texto roto = todos abiertos', () => {
@@ -50,7 +64,10 @@ test('A6: Cobertura de datos y Fuentes conectadas ya no se confunden en el menú
 test('acordeón: un solo grupo abierto por defecto; el de la página actual o el primero', () => {
   const menu = menuVisible({ role: 'owner', interno: false });
   const primero = menu.find((e) => e.tipo === 'grupo').clave;
+  assert.equal(primero, 'dinero');
   assert.equal(grupoAbiertoPorDefecto(menu, itemActivo('/overview')), primero);
+  assert.equal(grupoAbiertoPorDefecto(menu, itemActivo('/recommendations')), 'acciones');
+  assert.equal(grupoAbiertoPorDefecto(menu, itemActivo('/problems/manage')), 'clientes');
   assert.equal(grupoAbiertoPorDefecto(menu, null), primero);
   assert.equal(grupoAbiertoPorDefecto(menu, itemActivo('/connections')), 'datos');
   assert.equal(grupoAbiertoPorDefecto(menu, itemActivo('/settings/team')), 'administracion');

@@ -96,6 +96,8 @@ function acoplar(){
   const agenda=()=>{if(!raf)raf=requestAnimationFrame(correr);};
   agenda();
   const mo=new MutationObserver(agenda);mo.observe(raiz,{childList:true,subtree:true,characterData:true});
+  /* Arranque limpio: mientras html[data-arranque] está puesto el contenido está en display:none (medidas en 0); al soltarlo no hay mutación de hijos, así que se vuelve a medir aquí. */
+  mo.observe(document.documentElement,{attributes:true,attributeFilter:['data-arranque']});
   window.addEventListener('resize',agenda);
   parar=()=>{mo.disconnect();window.removeEventListener('resize',agenda);if(raf)cancelAnimationFrame(raf);ultimo={ancla:null};};
  }

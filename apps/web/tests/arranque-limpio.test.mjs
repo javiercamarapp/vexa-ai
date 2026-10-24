@@ -35,3 +35,8 @@ test('el logo de arranque respeta prefers-reduced-motion (reusa rovaq-respira)',
   assert.match(css,/@media \(prefers-reduced-motion: reduce\) \{ \.rovaq-respira \{ animation:none/);
   assert.match(layout,/className="rovaq-respira"/);
 });
+
+test('el ajuste de cifras del celular vuelve a medir al soltar el arranque (data-arranque no es mutación de hijos)',()=>{
+  const mc=f('components/ui/movil-contenido.tsx');
+  assert.match(mc,/observe\(document\.documentElement,\{attributes:true,attributeFilter:\['data-arranque'\]\}\)/);
+});

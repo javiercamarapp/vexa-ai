@@ -6,6 +6,7 @@ import type {TrendsView} from '../../../../../packages/workspace-service/trends.
 import {EXPLICACION} from '../../../../../packages/workspace-service/datos-hasta.mjs';
 import {tarjetasFuentes,identidad} from '../../lib/legibilidad/fuentes.mjs';
 import {filasSincronizacion} from '../../lib/legibilidad/sincronizacion.mjs';
+import {agregadoImportaciones,desgloseImportaciones} from '../../lib/connections/estado.mjs';
 import {DatosCabecera} from './datos-cabecera';
 import {DataTable} from '../ui/data-table';
 import {ErrorState} from '../ui/error-state';
@@ -30,13 +31,13 @@ export function FuentesDatos(){
  const t=useMemo(()=>tarjetasFuentes(cov.data,tr.data),[cov.data,tr.data]);
  const id=useMemo(()=>identidad(cov.data?.sources.find(s=>s.key==='associations')),[cov.data]);
  const sync=useMemo(()=>filasSincronizacion(fr.data),[fr.data]);
- const cargadas=t.filter(x=>x.estado==='cargada'),conCorte=cargadas.filter(x=>x.datosHasta).length,impo=cargadas.reduce((a,x)=>a+x.importaciones,0),abiertas=cargadas.reduce((a,x)=>a+x.abiertas,0);
+ const cargadas=t.filter(x=>x.estado==='cargada'),conCorte=cargadas.filter(x=>x.datosHasta).length,impo=cargadas.reduce((a,x)=>a+x.importaciones,0),abiertas=cargadas.reduce((a,x)=>a+x.abiertas,0),agr=agregadoImportaciones(cov.data?.sources);
  const cargando=cov.busy&&!cov.data,notas=t.filter(x=>x.estado==='cargada'&&(x.nota||x.rangoNota)).map(x=>({clave:x.clave,nombre:x.nombre,texto:[x.nota,x.rangoNota].filter(Boolean).join(' ')}));
  const kpis=[
   {label:'Identidad',value:id?fmtPct(id.bps/100):'—',vacio:!id,c:5,chip:id?{texto:id.estimado?'Estimado':'Observado'}:undefined,partes:id?[{label:'Vinculadas',value:id.vinculadas},{label:'Sin identificar',value:id.sinIdentificar},{label:'Por revisar y retenidas',value:id.porRevisar+id.retenidas}]:undefined,nota:id?nf.format(id.vinculadas)+' de '+nf.format(id.total)+' relaciones ticket–contacto vinculadas':'Los conteos no respondieron: no se estiman'},
   {label:'Fuentes cargadas',value:cov.data?nf.format(cargadas.length)+' de '+nf.format(t.length):'—',vacio:!cov.data,c:3,partes:[{label:'Cargadas',value:cargadas.length},{label:'Sin cargar',value:t.length-cargadas.length}],nota:EXPLICACION.split('.')[0]+'.'},
   {label:'Con fecha de corte',value:cov.data?nf.format(conCorte)+' de '+nf.format(cargadas.length):'—',vacio:!cov.data,c:1,partes:[{label:'Con corte',value:conCorte},{label:'Sin corte',value:cargadas.length-conCorte}],nota:'Sin fecha de corte no se afirma hasta cuándo llega'},
-  {label:'Importaciones',value:cov.data?nf.format(impo):'—',vacio:!cov.data,c:7,chip:abiertas>0?{texto:abiertas+' en proceso',tono:'warn' as const}:undefined,partes:cargadas.filter(x=>x.importaciones>0).map(x=>({label:x.nombre,value:x.importaciones})),nota:'Cargas por archivo y por conexión en todas las fuentes'}];
+  {label:'Cargas del espacio',value:cov.data?nf.format(agr?.cargas??impo):'—',vacio:!cov.data,c:7,chip:abiertas>0?{texto:abiertas+' en proceso',tono:'warn' as const}:undefined,partes:(agr?agr.porFuente.map(x=>({label:x.nombre,value:x.cargas})):cargadas.filter(x=>x.importaciones>0).map(x=>({label:x.nombre,value:x.importaciones}))),nota:agr?'Misma cifra que Importaciones: '+desgloseImportaciones(agr.porFuente,'cargas')+(impo>agr.cargas?' · el libro, el Tracker y otras fuentes suman '+nf.format(impo-agr.cargas)+' cargas más':''):'Cargas por archivo y por conexión'}];
  if(cov.busy&&!cov.data&&!cov.error)return <RovaqCargando mensaje=""/>;
  return <section className="task-page stack dn-page" aria-label="Cobertura de datos">
   <DatosCabecera actual="cobertura" title="Cobertura de datos" description="Qué fuentes están cargadas, hasta cuándo llegan y cuánto del cliente ya está identificado." actions={<LinkButton href="/imports" variant="primary" icon={<Arrow/>}>Importar datos</LinkButton>}/>

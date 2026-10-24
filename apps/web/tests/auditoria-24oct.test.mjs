@@ -69,3 +69,19 @@ test('M8/M9/M15: ni el rótulo de caché ni los KPI muestran texto de carga; el 
   assert.ok(!/Cargando intervenciones/.test(leer('components/recommendations/panel.tsx')));
   assert.ok(!/«Actualizar»/.test(leer('components/workspace/problems-view.tsx')));
 });
+
+import {duracionLegible} from '../src/lib/notifications/duracion.mjs';
+test('M7: la política de envío usa el encabezado común y muestra las duraciones en unidades legibles', () => {
+  assert.equal(duracionLegible(60000), '1 min'); assert.equal(duracionLegible(86400000), '1 día'); assert.equal(duracionLegible(3600000), '1 hora');
+  assert.equal(duracionLegible(7200000), '2 horas'); assert.equal(duracionLegible(2592000000), '30 días'); assert.equal(duracionLegible(1000), '1 s'); assert.equal(duracionLegible(5400000), '1.5 horas');
+  const p = leer('components/notifications/delivery-policies.tsx');
+  assert.match(p, /<PageHeader eyebrow="Avisos" title="Política de envío"/); assert.ok(!/<h1/.test(p)); assert.ok(!/Web Push/.test(p));
+  assert.ok(!/notification-delivery/.test(readFileSync(new URL('../src/lib/workspace/menu.mjs', import.meta.url), 'utf8').split('\n').filter(l => /href:\s*'\/settings\/notification-delivery'/.test(l)).join('')), 'no es un item propio del menú');
+});
+test('M5/M6/M16: Problemas y Explorador rotulados; el conteo de cargas de Fuentes coincide con Importaciones y explica la diferencia', () => {
+  assert.match(leer('components/explorer/panel.tsx'), /eyebrow="Clientes y problemas"/); assert.match(leer('components/workspace/shared-panel.tsx'), /eyebrow="Clientes y problemas"/);
+  assert.match(leer('components/explorer/panel.tsx'), /Incluye las notificaciones automáticas/);
+  assert.match(leer('components/workspace/problems-view.tsx'), /en total, como en el Explorador/);
+  const f = leer('components/datos/fuentes-datos.tsx');
+  assert.match(f, /agregadoImportaciones\(cov\.data\?\.sources\)/); assert.match(f, /label:'Cargas del espacio'/); assert.match(f, /suman '\+nf\.format\(impo-agr\.cargas\)/);
+});

@@ -62,7 +62,7 @@
 .workspace-content .mp-zoom button{inline-size:34px;block-size:34px;padding:0;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-surface);color:var(--ink);font:600 17px/1 var(--font-ui);cursor:pointer;box-shadow:none}
 .workspace-content .mp-zoom button:disabled{opacity:.4;cursor:default}
 .mp-zoom button:focus-visible{outline:3px solid var(--ui-focus);outline-offset:2px}
-.mp-tip{position:absolute;z-index:3;pointer-events:none;max-inline-size:240px;padding:6px 10px;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-surface);color:var(--ink);font:600 12px/1.3 var(--font-ui);box-shadow:0 6px 20px color-mix(in srgb,var(--ink) 12%,transparent);font-variant-numeric:tabular-nums}
+/* .mp-tip: ver el sistema de tooltips en app/ui.css (ancho por contenido 160–280 px, position:fixed por portal, colocado por use-tip-posicion). */
 .mp-carga{position:absolute;inset:0;display:grid;place-items:center;font-size:var(--t-small);color:var(--muted);text-align:center;padding:var(--sp-4)}
 .mp-mes{margin:0;display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:var(--t-small);color:var(--ui-secondary)}.mp-mes b{color:var(--ink)}.mp-mes small{grid-column:1/-1;color:var(--muted);font-size:var(--t-small)}
 @keyframes mp-entra{from{opacity:0}to{opacity:1}}

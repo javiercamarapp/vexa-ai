@@ -1,5 +1,7 @@
 'use client';
-import {useMemo,useRef,useState,type KeyboardEvent} from 'react';
+import {useMemo,useRef,useState,type KeyboardEvent,type ReactNode} from 'react';
+import {createPortal} from 'react-dom';
+import {useTipPosicion} from '../ui/use-tip-posicion';
 import type {PainVista,PuntoPP} from '../../../../../packages/workspace-service/pain-points.d.mts';
 import {disponerBurbujas,type Burbuja} from './burbujas-modelo.mjs';
 import {etiquetaBurbuja,num,usdCorto,valorMostrado,CLASE_NOMBRE} from './modelo.mjs';
@@ -49,9 +51,16 @@ export function Burbujas({vista,modo,seleccion,onElegir,visibles}:{vista:PainVis
    })}
   </svg>
   {!hay&&<p className="pp-vacio-txt">Sin puntos de dolor con cifra en este filtro. Cambia de tema o de medida (Dinero / Volumen).</p>}
-  {tip&&tp&&<div className="pp-tip" role="presentation" style={{left:Math.min(Math.max(tip.cx,90),D.ancho-90),top:Math.max(tip.cy-tip.r-8,4)}}><b>{tp.nombre}</b><span>{modo==='dinero'?(tp.dinero.sinDato?'Sin dato':'USD '+(Number(BigInt(tp.dinero.minor))/100).toLocaleString('es-MX',{minimumFractionDigits:2})):(tp.volumen.sinDato?'Sin dato':num(tp.volumen.n)+' '+tp.volumen.unidad)}</span><span>{CLASE_NOMBRE[tp.clase]}</span></div>}
+  {tip&&tp&&typeof document!=='undefined'&&createPortal(<TipBurbuja ancla={()=>{const r=refs.current[tip.id]?.getBoundingClientRect();return r?{ax:r.left+r.width/2,ay:r.top+r.height/2,modo:'arriba' as const,sep:r.height/2+8}:null;}}><b>{tp.nombre}</b><span>{modo==='dinero'?(tp.dinero.sinDato?'Sin dato':'USD '+(Number(BigInt(tp.dinero.minor))/100).toLocaleString('es-MX',{minimumFractionDigits:2})):(tp.volumen.sinDato?'Sin dato':num(tp.volumen.n)+' '+tp.volumen.unidad)}</span><span>{CLASE_NOMBRE[tp.clase]}</span></TipBurbuja>,document.body)}
   <ul className="pp-leyenda" aria-label="Leyenda"><li><i className="pp-l-o"/>Observado: contorno sólido</li><li><i className="pp-l-i"/>Inferido o mínimo visible: discontinuo</li><li><i className="pp-l-e"/>Estimado: rayado</li><li>Escala: área ∝ valor · máx. {num(Math.round(D.escala.vmax))}{modo==='dinero'?' USD':''}</li></ul>
  </div>;
 }
 function a_dy(nombre:string,r:number){const n=lineas(nombre.replace(/^Dinero devuelto · /,''),Math.floor(r/4.6)).length;return n===1?16:14;}
 export type {PuntoPP};
+
+/** Tooltip de burbuja: portal a <body> con position:fixed (ni el SVG ni la tarjeta lo recortan), centrado sobre la burbuja, volteado debajo si arriba no cabe y acotado al viewport. */
+function TipBurbuja({ancla,children}:{ancla:()=>{ax:number;ay:number;modo:'arriba';sep:number}|null;children:ReactNode}){
+ const ref=useRef<HTMLDivElement>(null);
+ useTipPosicion(ref,true,ancla);
+ return <div ref={ref} className="pp-tip" role="presentation">{children}</div>;
+}

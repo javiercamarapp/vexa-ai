@@ -52,7 +52,8 @@ export function ConfianzaPantalla(){
  return <ComoSeCalculoProvider><section className="task-page stack dc" aria-label="Datos y confianza">
   <DatosCabecera actual="resumen" title="Datos y confianza" description="De dónde sale cada número, qué tan fresco es, qué cubre y qué todavía no sabemos."/>
   <KpiLinea items={kpis} label="Indicadores de confianza en los datos"/>
-  <div className="pc-grid" data-cols="8-4">
+   <div className="pc-grid" data-cols="8-4" style={{alignItems:'start'}}>
+    <div className="pc-col">
    <Tarjeta id="dc-fuentes" titulo="Semáforo por fuente" sub="Cómo entra cada fuente, cuándo funcionó por última vez y cuándo vuelve a correr" flush extra={<LinkButton href="/connections" size="sm" variant="ghost" icon={<Arrow/>}>Administrar fuentes</LinkButton>}>
     {!pendiente(fresh)&&!fuentes.disponible?<p className="ac-vacio" style={{margin:'0 14px 14px'}}>{fresh.error||'La actualización automática aún no está activada para esta organización: las cargas siguen siendo manuales.'}</p>
      :<DataTable caption="Fuentes conectadas" state={pendiente(fresh)?'loading':'ready'} rowKey={f=>f.clave} rows={fuentes.filas} maxHeight="none" empty={<p className="ac-vacio" style={{margin:'0 14px 14px'}}>Todavía no se registró ninguna sincronización.</p>} columns={[
@@ -60,21 +61,22 @@ export function ConfianzaPantalla(){
       {key:'e',header:'Estado',render:f=><><Estado nivel={f.nivel}>{f.estado}</Estado>{f.error&&<small className="pc-s" style={{display:'block'}}>{f.error}</small>}</>},
       {key:'x',header:'Último éxito',render:f=>f.exito},{key:'s',header:'Siguiente',render:f=>f.siguiente??'—'},{key:'h',header:'Datos hasta',render:f=>f.hasta??'sin fecha de corte'}]}/>}
    </Tarjeta>
-   <Tarjeta id="dc-frescura" titulo="Frescura por cifra" sub="Cuándo se recalculó cada cifra" extra={<ComoSeCalculoBoton entrada={REGLA}/>}>
-    {pendiente(fresh)?<Loading compact message="Cargando frescura…"/>:!frescura.disponible?<p className="ac-vacio">No disponible ahora. Eso no significa que las cifras estén al día.</p>
-     :<ul className="pc-lista ui-reset pc-fill" role="list">{frescura.filas.map(f=><li key={f.clave} style={{listStyle:'none'}}><i className="pc-punto" data-tono={ESTADO_TONO[f.nivel]}/><span className="pc-grow"><span className="pc-t">{f.nombre}</span><span className="pc-s">{f.actualizado}{f.pendientes>0?' · faltan '+f.pendientes+' periodos':''} · datos hasta {f.corte??'sin fecha de corte'}</span></span><Estado nivel={f.nivel}>{f.estado}</Estado></li>)}</ul>}
-   </Tarjeta>
-  </div>
-  <div className="pc-grid" data-cols="8-4">
    <Tarjeta id="dc-ventanas" titulo="Cobertura con ventanas" sub={ventanas.disponible?ventanas.linea||'No hay ventanas de exportación registradas.':undefined}>
     {ventanas.disponible?(ventanas.filas.length?<VentanasLinea filas={ventanas.filas}/>:<p className="ac-vacio">No hay ventanas de exportación registradas.</p>)
      :pendiente(fuga)?<Loading compact message="Cargando ventanas…"/>:<p className="ac-vacio">{fuga.status===403?'Las ventanas de exportación del dinero las ven propietarios y analistas.':'Las ventanas de exportación no están disponibles ahora.'}</p>}
+   </Tarjeta>
+    </div>
+    <div className="pc-col">
+   <Tarjeta id="dc-frescura" titulo="Frescura por cifra" sub="Cuándo se recalculó cada cifra" extra={<ComoSeCalculoBoton entrada={REGLA}/>}>
+    {pendiente(fresh)?<Loading compact message="Cargando frescura…"/>:!frescura.disponible?<p className="ac-vacio">No disponible ahora. Eso no significa que las cifras estén al día.</p>
+     :<ul className="pc-lista ui-reset pc-fill" role="list">{frescura.filas.map(f=><li key={f.clave} style={{listStyle:'none'}}><i className="pc-punto" data-tono={ESTADO_TONO[f.nivel]}/><span className="pc-grow"><span className="pc-t">{f.nombre}</span><span className="pc-s">{f.actualizado}{f.pendientes>0?' · faltan '+f.pendientes+' periodos':''} · datos hasta {f.corte??'sin fecha de corte'}</span></span><Estado nivel={f.nivel}>{f.estado}</Estado></li>)}</ul>}
    </Tarjeta>
    <Tarjeta id="dc-cobertura" titulo="Cobertura por fuente" sub="Incorporado frente a lo leído" extra={<LinkButton href="/sources" size="sm" variant="ghost" icon={<Arrow/>}>Ver detalle</LinkButton>}>
     {pendiente(cov)?<Loading compact message="Cargando cobertura…"/>:cov.error&&!cov.data?<p className="ac-vacio">No disponible ahora: {cov.error}</p>
      :<div className="pc-fill">{tarjetas.map(t=><BarraParte key={t.clave} etiqueta={t.nombre} valor={t.estado==='cargada'?t.incorporadas:null} max={Math.max(1,t.leidas)} c={3} fin={t.estado==='cargada'?nf.format(t.incorporadas)+' de '+nf.format(t.leidas):t.estado==='no_disponible'?'No disponible':'Sin cargar'}/>)}</div>}
    </Tarjeta>
-  </div>
+    </div>
+   </div>
   <Tarjeta id="dc-nosabemos" titulo="Qué no sabemos" sub="Lo que hoy impide calcular o afirmar una cifra, y qué lo cierra" flush>
    <DataTable caption="Qué no sabemos" state={ocupado&&!tareas.length?'loading':'ready'} rowKey={t=>t.clave} rows={tareas} maxHeight="none" empty={<p className="ac-vacio" style={{margin:'0 14px 14px'}}>Con las fuentes que respondieron no hay huecos conocidos. Las que no respondieron no se cuentan como completas.</p>} columns={[
     {key:'q',header:'Qué falta',render:t=><span className="pc-th-fila">{t.titulo}</span>},{key:'a',header:'Cifra que afecta',render:t=>t.afecta},{key:'c',header:'Qué lo cierra',render:t=>t.cierra},{key:'b',header:'Base',render:t=><span className="pc-estado" data-tono="off">{t.base}</span>}]}/>

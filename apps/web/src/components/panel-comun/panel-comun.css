@@ -121,3 +121,4 @@
 .an-cancel{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:12px;color:var(--muted)}
 .an-pager{margin:0}
 .pc-card td,.pc-card tbody th,.pc-card[data-flush] td,.pc-card[data-flush] tbody th{vertical-align:middle}
+.pc-col{display:grid;gap:var(--ui-rhythm);min-width:0;align-content:start}

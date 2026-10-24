@@ -5,10 +5,11 @@
 @media(max-width:1100px){.cg-row84,.cg-row444{grid-template-columns:minmax(0,1fr)}}
 .cg-card{min-width:0;height:100%}
 .cg-calor{max-width:100%;overflow-x:auto;margin-top:8px}
-.workspace-content .cg-tabla{border-collapse:separate;border-spacing:2px;min-width:640px;inline-size:100%;font-variant-numeric:tabular-nums}
+.workspace-content .cg-tabla{border-collapse:separate;border-spacing:2px;min-width:540px;inline-size:100%;table-layout:fixed;font-variant-numeric:tabular-nums}
 .workspace-content .cg-tabla th,.workspace-content .cg-tabla td{padding:0;border:0;background:transparent;text-align:center;font:500 12px var(--font-ui)}
-.workspace-content .cg-tabla thead th.cg-h{color:var(--muted);padding-block:2px;inline-size:24px}
-.workspace-content .cg-tabla thead th.cg-tot{inline-size:72px;text-align:left;padding-left:8px}
+.workspace-content .cg-tabla thead th.cg-h{color:var(--muted);padding-block:2px}
+.workspace-content .cg-tabla thead th.cg-tot{inline-size:60px;text-align:left;padding-left:6px}
+.workspace-content .cg-tabla thead th:first-child,.workspace-content .cg-tabla tbody th{inline-size:34px}
 .workspace-content .cg-tabla tbody th{text-align:left;padding-inline:4px;color:var(--ui-secondary);font-weight:600;font-size:12px;white-space:nowrap}
 .workspace-content .cg-tabla tbody td:not(.cg-marg){block-size:26px;border-radius:8px;background:color-mix(in srgb,var(--chart-5) var(--p,0%),var(--ui-surface));color:var(--ink);animation:cgfade .5s ease-out both}
 .cg-tabla td[data-paso="0"]{--p:0%;color:var(--muted)!important;background:transparent!important;border:1px dashed var(--ui-border)}
@@ -16,7 +17,7 @@
 .cg-tabla td[data-paso="4"]{--p:76%;color:#fff}.cg-tabla td[data-paso="5"]{--p:100%;color:#fff}
 .cg-tabla td[data-pico]{outline:2px solid var(--ink);outline-offset:1px;font-weight:700}
 .cg-marg{text-align:left!important;white-space:nowrap;padding-left:8px!important;position:relative}
-.cg-marg-b{display:inline-block;block-size:8px;max-inline-size:44px;border-radius:999px;background:var(--chart-5);vertical-align:middle;margin-right:6px}
+.cg-marg-b{display:inline-block;block-size:8px;max-inline-size:24px;border-radius:999px;background:var(--chart-5);vertical-align:middle;margin-right:6px}
 .cg-marg b{font-weight:600;font-size:12px;color:var(--muted)}
 .cg-marg-c{vertical-align:bottom;block-size:36px;padding:0}
 .cg-marg-c span{display:block;inline-size:60%;margin:0 auto;background:var(--chart-5);opacity:.75;border-radius:999px 999px 0 0;min-block-size:2px}

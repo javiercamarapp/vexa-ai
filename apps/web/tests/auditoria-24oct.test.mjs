@@ -42,3 +42,23 @@ test('A2: /briefs ofrece «Reintentar», no manda a «Actualizar» y el historia
   assert.match(sv, /conMemoria\('briefs\|'/); assert.match(sv, /olvidarMemoria\(\)/);
   assert.match(sv, /getUser\(\)[\s\S]{0,200}conMemoria/, 'la sesión se valida antes de consultar la memoria');
 });
+
+import {usd, dinero} from '../src/lib/formato/es-mx.mjs';
+import {formatMinorUnits} from '../src/lib/formato/dinero-pantalla.mjs';
+test('M2: un solo formato de dinero es-MX con «US$» en toda la pantalla (nada de «803,982.16 USD»)', () => {
+  assert.equal(usd('80398216'), 'US$803,982'); assert.equal(formatMinorUnits('80398216', 'USD', 2), 'US$803,982');
+  assert.equal(formatMinorUnits('-123400', 'USD', 2), '−US$1,234'); assert.equal(formatMinorUnits(null, 'USD', 2), 'No disponible');
+  assert.equal(dinero('120000', 'MXN', 2), 'MX$1,200'); assert.equal(dinero('5000', 'EUR', 2), 'EUR 50'); assert.equal(dinero(null), '—');
+  assert.equal(usd('80398216', {decimales: true}), 'US$803,982.16');
+  // ninguna pantalla de lectura importa el formateador viejo («… USD»); solo los paneles de importación (que verifican centavos) lo conservan
+  const permitidos = new Set(['economic-priority-panel.tsx', 'economic-import-panel.tsx', 'economic-panel.tsx', 'economic-money-panel.tsx', 'economic-exposure-panel.tsx', 'dinero-pantalla.mjs']);
+  const {readdirSync, statSync} = require_fs();
+  const recorre = d => readdirSync(d).flatMap(n => { const p = d + '/' + n; return statSync(p).isDirectory() ? recorre(p) : [p]; });
+  const raiz = new URL('../src/', import.meta.url).pathname;
+  for (const f of recorre(raiz).filter(x => /\.(tsx|mjs)$/.test(x) && !/\.test\./.test(x))) {
+    if (permitidos.has(f.split('/').pop())) continue;
+    assert.ok(!/packages\/metrics\/money\.mjs/.test(readFileSync(f, 'utf8')), 'formato viejo de dinero en ' + f);
+  }
+});
+import * as fs from 'node:fs';
+function require_fs() { return fs; }

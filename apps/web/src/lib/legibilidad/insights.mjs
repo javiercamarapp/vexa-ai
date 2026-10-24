@@ -1,7 +1,7 @@
 // Insights en lenguaje claro, calculados SOLO con datos que la API ya devuelve (máx. 3 por vista).
 // Cada insight lleva fuente, cobertura y clase. Si el dato no existe: {vacio:true, razon} («Aún sin datos»).
 // Los textos marcan con **negritas** las cifras exactas. Importes con BigInt: sin redondeos ni conversión de monedas.
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../formato/dinero-pantalla.mjs';
 import {esMesCompleto,completitud} from '../../../../../packages/metrics/complete-months.mjs';
 import {etiquetaCategoria} from './categorias.mjs';
 import {porcentaje,variacionDecimas} from '../formato/es-mx.mjs';

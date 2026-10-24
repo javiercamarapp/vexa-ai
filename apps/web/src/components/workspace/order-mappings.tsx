@@ -1,7 +1,7 @@
 'use client';
 import {useAutoRefresh} from '../ui/use-auto-refresh';
 import {useCallback,useEffect,useRef,useState} from 'react';
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 type Order={ledgerRowId:string;entityId:string;externalId:string;currency:string;exponent:number;amountMinor:string|null;sourceName:string};
 type Mapping={id:string;ledgerRowId:string;version:number;skus:string[]|null;source:string|null;active:boolean;valid:boolean;report:string|null};
 type Summary={classifiableOrders:number;ordersWithDecision:number;activeDecisions:number};

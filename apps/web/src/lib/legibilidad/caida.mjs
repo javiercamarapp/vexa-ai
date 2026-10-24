@@ -1,7 +1,7 @@
 // Explica una caída mes contra mes SOLO con lo que los datos permiten verificar (aritmética sobre cifras observadas), sin atribuir causas.
 // Si la causa no se puede verificar, lo dice: «Causa no determinada».
 import {diaCorte} from '../../../../../packages/workspace-service/datos-hasta.mjs';
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../formato/dinero-pantalla.mjs';
 import {porcentaje, variacionDecimas} from '../formato/es-mx.mjs';
 const mes = (m) => new Intl.DateTimeFormat('es-MX', {month: 'long', year: 'numeric', timeZone: 'UTC'}).format(new Date(m + '-01T00:00:00Z'));
 const nf = (n) => Number(n).toLocaleString('es-MX');

@@ -3,7 +3,7 @@ import type {ReactNode} from 'react';
 import type {Recommendation} from '../../../../../packages/recommendations/index.mjs';
 import type {FlowEvent,Etapa} from '../../../../../packages/recommendations/flujo.mjs';
 import {construirLinea,pasosEtapa,RESULTADO_TXT,PRIORIDAD_TXT,ETAPA_TXT} from '../../../../../packages/recommendations/flujo.mjs';
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import {Stepper} from '../ui/stepper';
 import {Timeline} from '../ui/timeline';
 import {StatusChip} from '../ui/status-chip';

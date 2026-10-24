@@ -1,7 +1,7 @@
 'use client';
 import {useEffect,useMemo,useRef,useState} from 'react';
 import type {Bundle,Metric} from '../../lib/workspace/contracts';
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import {ratioBps} from './cfo-model.mjs';
 import {epistemicKind} from '../../lib/epistemic.mjs';
 import Link from './navigation-lifecycle';

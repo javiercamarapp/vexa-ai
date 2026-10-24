@@ -9,7 +9,7 @@ import {LineaCache} from '../ui/linea-cache';
 import {consultaFijada} from '../../lib/workspace/precalentar.mjs';
 import type {ExplorerPage,ExplorerEvidence,ExplorerQuestion} from '../../../../../packages/recommendations/explorer.mjs';
 import type {Scope,Metric} from '../../lib/workspace/contracts';
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 const money=(metric:Metric)=>metric.amount_minor===null?'Desconocido':formatMinorUnits(metric.amount_minor,metric.currency,metric.exponent);
 import {ScopeBar} from '../workspace/scope-bar';
 import {Popover,Drawer} from '../ui/overlay';

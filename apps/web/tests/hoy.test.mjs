@@ -26,7 +26,7 @@ test('4 KPI en orden: ingreso bruto, reembolsos, dinero atorado, respuestas >24 
   assert.deepEqual(vista.kpis.map(k => k.id), ['ingreso', 'reembolsos', 'atorado', 'respuestas24']);
   assert.deepEqual(vista.kpis.map(k => k.etiqueta), ['Ingreso bruto', 'Reembolsos', 'Dinero atorado', 'Respuestas >24 h']);
   for (const k of vista.kpis) { assert.equal(k.estado, 'ok', k.id); assert.equal(k.clase, 'observed'); assert.match(k.sello.texto, /^Observado · .+ · (hasta \d.*|sin fecha de corte) · actualizado /, k.id); assert.ok(comoSeCalculo(k.como, vista.ctxComo), k.id); }
-  assert.match(vista.kpis[1].valor, /^\$[\d,]+$/); assert.match(vista.kpis[2].valor, /^\d+ casos$/); assert.match(vista.kpis[3].valor, /^\d+ hilos$/);
+  assert.match(vista.kpis[1].valor, /^US\$[\d,]+$/); assert.match(vista.kpis[2].valor, /^\d+ casos$/); assert.match(vista.kpis[3].valor, /^\d+ hilos$/);
   assert.equal(vista.kpis[3].sello.fuente, 'HubSpot API'); assert.equal(vista.kpis[2].sello.hasta, 'sin fecha de corte', 'el Tracker no trae corte: se dice');
 });
 test('nunca margen, nunca SLA de Zendesk, en ninguna cifra ni explicación', () => {
@@ -40,13 +40,13 @@ test('titular narrativo con periodo y cifra de dinero', () => {
 });
 test('«Requiere tu atención»: máximo 3, el mayor dinero primero, los de conteo al final', () => {
   const a = atencionDe({fuga, carga});
-  assert.ok(a.length >= 1 && a.length <= 3); assert.equal(a[0].id, 'fuga-sku'); assert.match(a[0].dinero, /^\$/);
+  assert.ok(a.length >= 1 && a.length <= 3); assert.equal(a[0].id, 'fuga-sku'); assert.match(a[0].dinero, /^US\$/);
   const solo = atencionDe({fuga: null, carga});
   assert.ok(solo.every(x => x.dinero === null));
   assert.deepEqual(atencionDe({fuga: null, carga: null}), []);
 });
 test('barra observado vs recuperable [E]: lo recuperable NO tiene cifra (sin supuestos tecleados no hay número)', () => {
-  const b = barraDe({fuga}); assert.match(b.observado, /^\$/); assert.equal(b.recuperable, null); assert.match(b.recuperableNota, /Sin tus supuestos no hay cifra/);
+  const b = barraDe({fuga}); assert.match(b.observado, /^US\$/); assert.equal(b.recuperable, null); assert.match(b.recuperableNota, /Sin tus supuestos no hay cifra/);
   assert.equal(barraDe({fuga: null}), null); assert.equal(comoSeCalculo('recuperable').clase, 'estimated');
 });
 test('siguiente mejor acción: borrador del paquete del SKU #1; sin SKU no hay acción', () => {

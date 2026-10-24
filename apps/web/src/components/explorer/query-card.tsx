@@ -1,6 +1,6 @@
 'use client';
 import type {ExplorerQuestion} from '../../../../../packages/recommendations/explorer.mjs';
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import {Button,LinkButton,Arrow} from '../ui/button';
 import {KindBadge} from '../ui/kind-badge';
 import {SourceRef} from '../ui/source-ref';

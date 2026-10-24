@@ -9,3 +9,4 @@ export function usd(minor: string | number | bigint | null | undefined, o?: {dec
 export function dia(iso: string | null | undefined): string | null;
 export function mes(m: string | null | undefined): string | null;
 export function diaDeCorte(valor: string | Date | null | undefined): string | null;
+export function dinero(minor: string | number | bigint | null | undefined, moneda?: string, exponente?: number, o?: {decimales?: boolean}): string;

@@ -1,6 +1,6 @@
 'use client';
 import {useLayoutEffect,useRef} from 'react';
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 /** Animated money: the DOM always holds the exact final text; the intermediate frames are exact fractions computed with BigInt.
  *  Skipped for reduced motion, automation (navigator.webdriver) and non-integer input. */
 export function CountUpMoney({amountMinor,currency,exponent,className}:{amountMinor:string;currency:string;exponent:number;className?:string}){

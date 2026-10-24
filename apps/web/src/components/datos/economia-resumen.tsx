@@ -4,7 +4,7 @@ import {porcentaje} from '../../lib/formato/es-mx.mjs';
 import {useMemo,useState,type ReactNode} from 'react';
 import type {Bundle} from '../../lib/workspace/contracts';
 import type {CfoReport} from '../../../../../packages/cfo-copilot/src/index.mjs';
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import {urlCortePublicado,resumenCorte,serieMensual,tarjetasPorMoneda,filasPorFuente,mesesIncompletos} from '../../lib/legibilidad/dinero.mjs';
 import {PageHeader} from '../ui/page-header';
 import {Card} from '../ui/card';

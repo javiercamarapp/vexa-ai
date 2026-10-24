@@ -3,7 +3,7 @@ import {RovaqCargando} from '../rovaq-cargando';
 import {useAutoRefresh} from '../ui/use-auto-refresh';
 import {useWorkspaceNavigation,workspaceLocation} from './navigation-lifecycle';
 import {useCallback,useEffect,useRef,useState,type ReactNode} from 'react';
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import type {ComponentSummary,ConversationRef,DetailKind,DetailView,EventSummary} from '../../../../../packages/workspace-service/detail.mjs';
 import {DataState} from './data-state';
 import {PageHeader} from '../ui/page-header';

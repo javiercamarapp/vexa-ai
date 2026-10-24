@@ -12,7 +12,7 @@ import {ESTADO_TXT,HOJA_TXT,NOMBRE,frasesCambios,excluidosTexto,mesCorto,num,pct
 import {datosSku,NO_SE_SABE} from './fuga-archivos.mjs';
 
 const big=(m:string)=>Number(BigInt(m)/100n);
-export const corto=(n:number)=>n>=1_000_000?`$${(n/1_000_000).toFixed(2)}M`:n>=1000?`$${Math.round(n/1000)}k`:`$${n}`;
+export const corto=(n:number)=>n>=1_000_000?`US$${(n/1_000_000).toFixed(2)}M`:n>=1000?`US$${Math.round(n/1000)}k`:`US$${n}`;
 const CANAL_C:Record<string,number>={amazon:1,walmart:5,bestbuy:4,shopify:3};
 const cc=(c:string)=>CANAL_C[c]??8;
 

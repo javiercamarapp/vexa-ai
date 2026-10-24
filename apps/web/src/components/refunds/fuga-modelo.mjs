@@ -3,8 +3,10 @@
 const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 import {usd as usdEs, entero, porcentaje as pctEs, dia as diaEs} from '../../lib/formato/es-mx.mjs';
 // Fórmulas del estimador (valores tecleados, no cifras observadas): mismo es-MX/«$» que usdEs.
-const USD0 = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0});
-const USD2 = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 2});
+// Formato único de dinero (es-MX con «US$»): mismas reglas que lib/formato/es-mx.mjs.
+const enUS = (dec) => { const f = new Intl.NumberFormat('es-MX', {minimumFractionDigits: dec, maximumFractionDigits: dec}); return {format: v => `${v < 0 ? '−' : ''}US$${f.format(Math.abs(v))}`}; };
+const USD0 = enUS(0);
+const USD2 = enUS(2);
 const NUM = new Intl.NumberFormat('es-MX');
 const PCT = new Intl.NumberFormat('es-MX', {maximumFractionDigits: 1});
 export const NOMBRE = Object.freeze({amazon: 'Amazon', walmart: 'Walmart', shopify: 'Shopify', bestbuy: 'Best Buy', tienda: 'Tienda propia', lowes: 'Lowe’s', homedepot: 'Home Depot', otro: 'Otro'});
@@ -75,7 +77,7 @@ export function periodoDelTitular(v) {
     else if (cortoInicio || cortoFin) nota = `El periodo elegido es ${pedidoTxt}, pero los reembolsos cargados cubren ${rango}.`;
   }
   const a = v.acumulado?.status === 'ok' ? v.acumulado : null;
-  const acumulado = a && !pedido ? {texto: `Acumulado disponible (todo el libro${a.rango ? `, del ${diaLargo(a.rango.desde)} al ${diaLargo(a.rango.hasta)}` : ''}): ${usd(a.usdBrutoMinor)} USD brutos${a.usdNetoMinor!=null?` (${usd(a.usdNetoMinor, {decimals: true})} sin cancelados)`:''} en ${num(a.n)} reembolsos. Mezcla ventanas distintas por canal; no es el total de un periodo.`, usdBrutoMinor: a.usdBrutoMinor, distinto: false} : null;
+  const acumulado = a && !pedido ? {texto: `Acumulado disponible (todo el libro${a.rango ? `, del ${diaLargo(a.rango.desde)} al ${diaLargo(a.rango.hasta)}` : ''}): ${usd(a.usdBrutoMinor)} brutos${a.usdNetoMinor!=null?` (${usd(a.usdNetoMinor, {decimals: true})} sin cancelados)`:''} en ${num(a.n)} reembolsos. Mezcla ventanas distintas por canal; no es el total de un periodo.`, usdBrutoMinor: a.usdBrutoMinor, distinto: false} : null;
   return {rango, etiqueta: rango ? `Reembolsos ${rango}` : 'Periodo de los reembolsos no disponible', ventanas, nota, pedido: Boolean(pedido), acumulado, acumuladoOmitido: Boolean(pedido && a)};
 }
 

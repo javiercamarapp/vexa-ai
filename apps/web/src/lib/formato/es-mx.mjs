@@ -42,12 +42,16 @@ export function variacionTexto(actual, anterior, {conSigno = true} = {}) {
   return porcentaje(d / 10, {conSigno});
 }
 
-/** Dólares desde centavos (string|number|bigint): «[omitido: dato de cliente]»; con {decimales:true} «[omitido: dato de cliente]». Negativo: «−$1,234». */
-export function usd(minor, {decimales = false} = {}) {
+/** Dólares desde centavos (string|number|bigint): «US[omitido: dato de cliente]»; con {decimales:true} «US[omitido: dato de cliente]». Negativo: «−US$1,234». Es el ÚNICO formato de dinero en pantalla. */
+export function usd(minor, {decimales = false} = {}) { return dinero(minor, 'USD', 2, {decimales}); }
+const SIMBOLO = Object.freeze({USD: 'US$', MXN: 'MX$', CAD: 'CA$'});
+/** Importe en unidades menores con moneda y exponente: «US$803,982», «MX$1,200», «EUR 50». Las monedas NO se convierten ni se suman. null => «—». */
+export function dinero(minor, moneda = 'USD', exponente = 2, {decimales = false} = {}) {
   if (nulo(minor)) return VACIO;
   const c = BigInt(String(minor).split('.')[0]), neg = c < 0n, abs = neg ? -c : c;
-  const v = Number(abs) / 100;
-  return `${neg ? '−' : ''}$${(decimales ? DOS_DECIMALES : SIN_DECIMALES_USD).format(v)}`;
+  const v = Number(abs) / 10 ** exponente;
+  const pre = SIMBOLO[moneda] ?? `${moneda} `;
+  return `${neg ? '−' : ''}${pre}${(decimales ? DOS_DECIMALES : SIN_DECIMALES_USD).format(v)}`;
 }
 
 // Fechas: ISO (AAAA-MM-DD[...]) leído como texto, jamás con la zona del navegador: la misma fecha de corte da el mismo día en todas las pantallas.

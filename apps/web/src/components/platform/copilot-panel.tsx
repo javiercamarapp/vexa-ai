@@ -1,6 +1,7 @@
 'use client';
 import {useCallback, useEffect, useId, useRef, useState, type FormEvent} from 'react';
 import {Button, LinkButton} from '../ui/button';
+import {Drawer} from '../ui/overlay';
 import {KindBadge} from '../ui/kind-badge';
 import {PfIcon} from './icons';
 import {downloadCsv} from './data-table';
@@ -25,9 +26,7 @@ export function CopilotPanel({endpoint, title, subtitle, placeholder, shortcuts,
     fetch(endpoint, {cache: 'no-store', signal: c.signal}).then(r => r.ok ? r.json() : Promise.reject(new Error(String(r.status)))).then(j => setStatus({budget: j.data.budget, mode: j.data.mode})).catch(() => { if (!c.signal.aborted) setStatus('error'); });
     return () => c.abort();
   }, [open, status, endpoint]);
-  useEffect(() => { if (open) area.current?.focus(); }, [open]);
   useEffect(() => { end.current?.scrollIntoView?.({block: 'end'}); }, [msgs, busy]);
-  useEffect(() => { if (!open) return; const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') { setOpen(false); opener.current?.focus(); } }; document.addEventListener('keydown', onKey); return () => document.removeEventListener('keydown', onKey); }, [open]);
   const send = useCallback(async (question: string, direct?: {tool: string; args: Record<string, unknown>}) => {
     const q = question.trim(); if (!q || busy) return;
     const history: {role: 'user' | 'assistant'; content: string}[] = msgs.flatMap(m => m.role === 'user' ? [{role: 'user' as const, content: m.content}] : m.role === 'assistant' ? [{role: 'assistant' as const, content: m.reply.answer.slice(0, 1000)}] : [] as {role: 'user' | 'assistant'; content: string}[]).slice(-6);
@@ -47,13 +46,13 @@ export function CopilotPanel({endpoint, title, subtitle, placeholder, shortcuts,
   const budget = status && status !== 'error' ? status.budget : null;
   return <>
     <button ref={opener} type="button" className="btn btn-primary" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(true)}><PfIcon name="sparkles" /><span className="btn-label">{openLabel}</span></button>
-    {open && <div className="pf-copilot-layer">
-      <button type="button" className="pf-copilot-backdrop" aria-label="Cerrar el Copiloto" tabIndex={-1} onClick={() => { setOpen(false); opener.current?.focus(); }} />
-      <aside className="pf-copilot" role="dialog" aria-modal="false" aria-labelledby={titleId} data-testid="copilot">
-        <header className="pf-copilot-head">
-          <div><p className="eyebrow">{context ?? 'Copiloto'}</p><h2 id={titleId}>{title}</h2><p>{subtitle}</p></div>
-          <div className="btn-group">{msgs.length > 0 && <button type="button" className="btn btn-sm" onClick={() => setMsgs([])}>Nueva conversación</button>}<button type="button" className="btn btn-sm" aria-label="Cerrar el Copiloto" onClick={() => { setOpen(false); opener.current?.focus(); }}><PfIcon name="close" size={14} /><span className="btn-label">Cerrar</span></button></div>
-        </header>
+    <Drawer open={open} onClose={() => setOpen(false)} size="sm" id="copilot" title={title} subtitle={context ? context + ' · ' + subtitle : subtitle}
+      footer={<div className="pf-copilot-foot"><form className="pf-copilot-form" onSubmit={submit}>
+          <label className="sr-only" htmlFor={titleId + '-q'}>Pregunta</label>
+          <textarea data-autofocus id={titleId + '-q'} ref={area} rows={2} maxLength={600} placeholder={placeholder} value={text} disabled={busy} onChange={e => setText(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void send(text, shortcuts.direct[text.trim()]); } }} />
+          <Button type="submit" variant="primary" icon={<PfIcon name="send" />} loading={busy} disabled={!text.trim()} aria-label="Consultar datos">Preguntar</Button>
+        </form></div>}>
+      <div data-testid="copilot" className="pf-copilot-wrap">
         <div className="pf-copilot-use">
           {status === null && <span className="muted">Verificando disponibilidad…</span>}
           {status === 'error' && <span role="alert">No pude verificar el presupuesto de IA. Las consultas directas siguen disponibles.</span>}
@@ -69,13 +68,9 @@ export function CopilotPanel({endpoint, title, subtitle, placeholder, shortcuts,
           {busy && <div className="pf-msg pf-msg-wait" role="status"><span className="btn-spinner" aria-hidden="true" /> Consultando las cifras calculadas…</div>}
           <div ref={end} />
         </div>
-        <form className="pf-copilot-form" onSubmit={submit}>
-          <label className="sr-only" htmlFor={titleId + '-q'}>Pregunta</label>
-          <textarea id={titleId + '-q'} ref={area} rows={2} maxLength={600} placeholder={placeholder} value={text} disabled={busy} onChange={e => setText(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void send(text, shortcuts.direct[text.trim()]); } }} />
-          <Button type="submit" variant="primary" icon={<PfIcon name="send" />} loading={busy} disabled={!text.trim()} aria-label="Consultar datos">Preguntar</Button>
-        </form>
-      </aside>
-    </div>}
+        {msgs.length > 0 && <div className="pf-copilot-new"><button type="button" className="btn btn-sm btn-ghost" onClick={() => setMsgs([])}>Nueva conversación</button></div>}
+      </div>
+    </Drawer>
   </>;
 }
 function ReplyView({reply}: {reply: Reply}) {

@@ -5,6 +5,7 @@ import {useCallback, useEffect, useMemo, useState, type FormEvent, type ReactNod
 import {PageHeader} from '../ui/page-header';
 import {Button, LinkButton, Refresh, Download} from '../ui/button';
 import {KindBadge} from '../ui/kind-badge';
+import {Modal} from '../ui/overlay';
 import {IdChip} from '../ui/id-chip';
 import {BarChart, type BarDatum} from '../ui/bar-chart';
 import {TeamPanel} from '../team-panel';
@@ -228,11 +229,12 @@ export function Jobs({initial}: Props) {
 }
 function ConfirmRetry({count, onCancel, onConfirm}: {count: number; onCancel: () => void; onConfirm: (reason: string) => Promise<void>}) {
   const [reason, setReason] = useState(''), [ok, setOk] = useState(false), [busy, setBusy] = useState(false);
-  return <section className="card pf-confirm" role="alertdialog" aria-labelledby="confirm-title"><h2 id="confirm-title">Reintentar {count} proceso(s)</h2>
-    <p>Los procesos fallidos volverán a la cola. No se borra nada y cada reintento queda en la auditoría con tu usuario y el motivo.</p>
-    <label>Motivo (obligatorio, mínimo 10 caracteres)<textarea rows={2} value={reason} maxLength={300} onChange={e => setReason(e.target.value)} /></label>
+  return <Modal open alert onClose={onCancel} title={'Reintentar ' + count + ' proceso(s)'} describedBy="confirm-desc"
+    footer={<><Button data-autofocus onClick={onCancel}>Cancelar</Button><Button variant="primary" loading={busy} disabled={!ok || reason.trim().length < 10} onClick={async () => { setBusy(true); await onConfirm(reason.trim()); setBusy(false); }}>Confirmar reintento</Button></>}>
+    <p id="confirm-desc" className="ov-impact">Los procesos fallidos volverán a la cola. No se borra nada y cada reintento queda en la auditoría con tu usuario y el motivo.</p>
+    <label className="field">Motivo (obligatorio, mínimo 10 caracteres)<textarea rows={3} value={reason} maxLength={300} onChange={e => setReason(e.target.value)} /></label>
     <label className="pf-check-row"><input type="checkbox" checked={ok} onChange={e => setOk(e.target.checked)} />Confirmo que quiero reintentar estos procesos.</label>
-    <div className="btn-group"><Button variant="primary" loading={busy} disabled={!ok || reason.trim().length < 10} onClick={async () => { setBusy(true); await onConfirm(reason.trim()); setBusy(false); }}>Confirmar reintento</Button><Button onClick={onCancel}>Cancelar</Button></div></section>;
+  </Modal>;
 }
 
 // ---------------------------------------------------------------------------------------------- Costos de IA

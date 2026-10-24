@@ -151,3 +151,14 @@ body .popover-panel .overlay-title,body .popover-panel h2{margin:0 0 6px;font:60
  @keyframes ov-slide-l{from{transform:translateX(-16px);opacity:0}}
  @keyframes ov-pop{from{transform:scale(.97);opacity:0}}
 }
+
+/* Tarjetas de cifras dentro de un overlay: planas y compactas */
+body :is(dialog.drawer,dialog.modal) .overlay-body :is(.card,.record-card){padding:10px 12px;box-shadow:none;border-radius:8px}
+body :is(dialog.drawer,dialog.modal) .overlay-body :is(h3,h4){margin:0;font:600 13px/1.4 var(--font-display)}
+/* Formularios heredados dentro de un overlay (.stack / .action-form): misma piel sin reescribirlos */
+body :is(dialog.drawer,dialog.modal) .overlay-body .stack{display:flex;flex-direction:column;gap:12px;grid-template-columns:none}
+body :is(dialog.drawer,dialog.modal) .overlay-body .action-form{display:grid;gap:4px}
+body :is(dialog.drawer,dialog.modal) .overlay-body .action-form>label{font:500 12px/1.4 var(--font-ui);color:var(--ui-secondary)}
+body :is(dialog.drawer,dialog.modal) .overlay-body .action-form>label:not(:first-child){margin-top:8px}
+body :is(dialog.drawer,dialog.modal) .overlay-body .action-form>.btn-group{margin-top:8px;display:flex;justify-content:flex-end;gap:8px}
+body :is(dialog.drawer,dialog.modal) .overlay-body :is(.card-lead,.state){margin:0;font-size:13px}

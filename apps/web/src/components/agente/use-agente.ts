@@ -1,4 +1,5 @@
 'use client';
+import {stepsOf} from './trace';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {Answer,ChatMessage,Conversation,Direct,Step} from './types';
 import type {AdjuntoResumen} from './attachments';
@@ -54,6 +55,7 @@ export function useAgente(scope:string,maxChars:number,maxTurns:number,toolLabel
  const [messages,setMessages]=useState<ChatMessage[]>([]);
  const [sending,setSending]=useState(false);
  const [freshId,setFreshId]=useState<string|null>(null);
+ const repro=useRef(false);
  const [phase,setPhase]=useState(PHASES[0][1]);
  const [steps,setSteps]=useState<Step[]>([]);
  const busy=useRef(false),control=useRef<AbortController|null>(null),gen=useRef(0);
@@ -61,7 +63,7 @@ export function useAgente(scope:string,maxChars:number,maxTurns:number,toolLabel
  useEffect(()=>{messagesRef.current=messages;activeRef.current=activeId;convRef.current=conversations;});
 
  useEffect(()=>{const frame=requestAnimationFrame(()=>setConversations(loadConversations(scope)));return()=>cancelAnimationFrame(frame);},[scope]);
- useEffect(()=>{if(!sending)return;const t0=Date.now();const id=setInterval(()=>setPhase(phaseAt(Date.now()-t0)),700);return()=>clearInterval(id);},[sending]);
+ useEffect(()=>{if(!sending)return;const t0=Date.now();const id=setInterval(()=>{if(!repro.current)setPhase(phaseAt(Date.now()-t0));},700);return()=>clearInterval(id);},[sending]);
 
  const persist=useCallback((id:string,msgs:ChatMessage[])=>{
   setConversations(prev=>{
@@ -89,7 +91,22 @@ export function useAgente(scope:string,maxChars:number,maxTurns:number,toolLabel
   }finally{clearTimeout(timer);}
   // «Pensando» se queda visible al menos MIN_PENSAR_MS aunque la respuesta sea inmediata (consultas directas): se siente deliberado, no un parpadeo. Un error no espera; «Detener» tampoco.
   const lento=typeof window!=='undefined'&&!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  if(lento&&!cancelled&&answer.status==='ok'){const resto=MIN_PENSAR_MS-(Date.now()-t0);if(resto>0)await new Promise<void>(r=>{const id=setTimeout(r,resto);ctl.signal.addEventListener('abort',()=>{clearTimeout(id);r();},{once:true});});}
+  if(lento&&!cancelled&&answer.status==='ok'){
+   const esperar=(ms:number)=>new Promise<void>(r=>{const id=setTimeout(r,ms);ctl.signal.addEventListener('abort',()=>{clearTimeout(id);r();},{once:true});});
+   const pasos=stepsOf(answer.trace??[]);
+   if(pasos.length){
+    // Historia de pensamiento «en vivo»: se reproducen, uno a uno y con su tiempo real, los pasos que el sistema ya registró (consultas, fuentes, verificación). Solo se dosifica la aparición; el contenido y los tiempos son los medidos.
+    repro.current=true;
+    const total=Math.min(4500,Math.max(MIN_PENSAR_MS,pasos.length*650+400)),base=total/pasos.length;
+    for(let i=0;i<pasos.length;i++){
+     if(ctl.signal.aborted||g!==gen.current)break;
+     const p=pasos[i];setPhase(p.kind==='tool'&&p.tool?(toolLabels[p.tool]??p.label):p.label);
+     setSteps([...pasos.slice(0,i),{...p,done:false}]);await esperar(base*0.55);
+     setSteps(pasos.slice(0,i+1));await esperar(base*0.45);
+    }
+    repro.current=false;
+   }else{const resto=MIN_PENSAR_MS-(Date.now()-t0);if(resto>0)await esperar(resto);}
+  }
   if(g!==gen.current)return;
   const reply:ChatMessage={id:uid('a'),role:'assistant',text:cancelled?'Cancelado.':answer.text,at:new Date().toISOString(),question:q,...(directa?{directa}:{}),...(modo?{modo}:{}),...(cancelled?{cancelled:true}:{answer})};
   const all=[...withUser,reply];setMessages(all);persist(id,all);setFreshId(cancelled?null:reply.id);

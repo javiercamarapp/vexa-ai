@@ -28,7 +28,7 @@ export function LiveTrace({phase,steps,labels}:{phase:string;steps:Step[];labels
   <RovaqMark size={16} thinking/>
   <div className="trace-main">
    <p className="trace-phase">{phase}</p>
-   {steps.length>0&&<><button type="button" className="trace-toggle" aria-expanded={open} aria-controls="trace-live" onClick={()=>setOpen(v=>!v)}><Icon name="arrow" size={12}/>Desglose de lo que hace el sistema ({steps.length})</button>
+   {steps.length>0&&<><button type="button" className="trace-toggle" aria-expanded={open} aria-controls="trace-live" onClick={()=>setOpen(v=>!v)}><Icon name="arrow" size={12}/>Pensamiento del sistema en vivo ({steps.length})</button>
     {open&&<div id="trace-live"><StepList steps={steps} labels={labels}/></div>}</>}
   </div></div>;
 }
@@ -37,7 +37,7 @@ export function LiveTrace({phase,steps,labels}:{phase:string;steps:Step[];labels
 export function TraceDisclosure({trace,labels}:{trace:TraceStep[];labels:Record<string,string>}){
  if(!trace.length)return null;
  const total=trace.reduce((a,t)=>a+(t.ms??0),0);
- return <details className="agente-calc agente-trace"><summary>Desglose de lo que hizo el sistema · {trace.length} pasos · {msText(total)||'0 ms'}</summary>
+ return <details className="agente-calc agente-trace"><summary>Cómo llegué a esto · {trace.length} pasos · {msText(total)||'0 ms'}</summary>
   <StepList steps={stepsOf(trace)} labels={labels}/>
   <p className="card-lead agente-note">Cada paso lo registró el sistema al ejecutarlo (consultas, fuentes y tiempos). No es el razonamiento interno de ningún modelo.</p></details>;
 }

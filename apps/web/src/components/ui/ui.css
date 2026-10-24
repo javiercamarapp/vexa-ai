@@ -1,3 +1,4 @@
+@import './movil-contenido.css';
 /* Primitivos compartidos (PageHeader, FilterBar, Chip, Notice, Card, KpiStrip, DataTable, estados). Se carga DESPUÉS de app/ui.css.
    Solo selectores de clase simples: ninguna regla global de globals.css debe ganar a estos (ver docs/SISTEMA-UI.md). Escala de 4 px; mínimo 12 px; hover nunca rojo. */
 :root{--ui-shadow:none;--ui-rhythm:12px;--ui-ctl-h:32px;--ui-pad:14px}
@@ -215,3 +216,6 @@ body :is(.workspace-content,.access-flow,.platform-shell) select:not([multiple])
 .bm-badge .bm{vertical-align:0}
 .bm-linea{display:inline-flex;align-items:center;gap:6px;max-width:100%;min-width:0}
 .bm-linea .bm{vertical-align:0}
+
+.heat-sel{display:none}
+.mv-valor{display:none}

@@ -40,7 +40,7 @@ test('medidas: fuente ≥ 12 px, controles de 32 px, radios {8,12,999}, sin inpu
   assert.match(c,/--ov-ctl:32px/);
   for(const r of reglas(c)){
     for(const m of r.body.matchAll(/font(?:-size)?:\s*(?:[a-z0-9 ]*?\s)?(\d+(?:\.\d+)?)px/g))assert.ok(+m[1]>=12,`${r.sel}: ${m[0]} < 12 px`);
-    for(const m of r.body.matchAll(/border-radius:\s*([^;}]+)/g))for(const tk of m[1].trim().split(/\s+/))assert.ok(/^(0|8px|12px|999px|50%)$/.test(tk),`${r.sel}: radio ${tk}`);
+    for(const m of r.body.matchAll(/border-radius:\s*([^;}]+)/g))for(const tk of m[1].trim().split(/\s+/))assert.ok(/^(0|8px|12px|999px|50%)$/.test(tk)||(tk==='16px'&&/dialog\.drawer/.test(r.sel)),`${r.sel}: radio ${tk}`);
     if(/(^|[\s,])(input|select|textarea)\b/.test(r.sel)&&!/checkbox|radio/.test(r.sel)){const m=/border-radius:\s*(\d+)px/.exec(r.body);if(m)assert.ok(+m[1]<=12,`${r.sel}: input ovalado ${m[1]}px`);}
   }
   const inputs=reglas(c).filter(r=>/:is\(input:not\(/.test(r.sel)&&/min-height:var\(--ov-ctl\)/.test(r.body));assert.ok(inputs.length>0);

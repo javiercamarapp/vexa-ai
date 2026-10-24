@@ -36,14 +36,14 @@ export function StatusStrip({linea=null,fuentes,cargando,avisos,onCobertura,dine
  useEffect(()=>{try{const j=JSON.parse(localStorage.getItem(CLAVE_OCULTOS)||'{}') as Record<string,number>,ahora=Date.now();setOcultos(Object.fromEntries(Object.entries(j).filter(([,t])=>typeof t==='number'&&t>ahora)));}catch{/* sin almacenamiento: todos visibles */}},[]);
  const ocultar=(key:string)=>{const sig={...ocultos,[key]:Date.now()+7*864e5};setOcultos(sig);try{localStorage.setItem(CLAVE_OCULTOS,JSON.stringify(sig));}catch{/* solo esta sesión */}};
  const visibles=avisos.filter(a=>!ocultos[a.key]);
- return <section className={s.strip} aria-label="Estado de los datos">
+ return <section className={s.strip+' mv-franja'} aria-label="Estado de los datos">
   <div className={s.stripRow}>
-   <span className={s.stripItem}>Fuentes con datos: {fuentes&&fuentes.cargadas!==null?<strong>{fuentes.cargadas} de {fuentes.total}</strong>:cargando?<CifraCargando/>:<strong>No disponible ahora</strong>}{fuentes&&fuentes.sinCargar.length>0&&<span>(sin cargar: {fuentes.sinCargar.join(', ')})</span>}</span>
-   <span className={s.stripItem}>Datos hasta:{(fuentes?.cortes??[]).map(c=><span key={c.etiqueta}>{c.etiqueta} <strong>{c.dia??'sin fecha de corte'}</strong></span>)}{!fuentes&&(cargando?<CifraCargando ancho="12ch"/>:<strong>No disponible ahora</strong>)}</span>
+   <span className={s.stripItem+' mv-franja-fuentes'}><span className="mv-etq">Fuentes con datos:</span> {fuentes&&fuentes.cargadas!==null?<strong>{fuentes.cargadas} de {fuentes.total}</strong>:cargando?<CifraCargando/>:<strong>No disponible ahora</strong>}{fuentes&&fuentes.sinCargar.length>0&&<span className="mv-franja-sin">(sin cargar: {fuentes.sinCargar.join(', ')})</span>}</span>
+   <span className={s.stripItem+' mv-franja-hasta'}>Datos hasta:{(fuentes?.cortes??[]).map(c=><span key={c.etiqueta}>{c.etiqueta} <strong>{c.dia??'sin fecha de corte'}</strong></span>)}{!fuentes&&(cargando?<CifraCargando ancho="12ch"/>:<strong>No disponible ahora</strong>)}</span>
    {!dineroDisponible&&<span className={s.stripItem}>Dinero por problema: <strong>No disponible</strong></span>}
    <Button size="sm" variant="ghost" onClick={onCobertura}>Ver cobertura</Button>
   </div>
-  {linea&&<p className={s.lineaAvisos} role="status" data-testid="linea-avisos">{linea}</p>}
+  {linea&&<p className={s.lineaAvisos+' mv-franja-linea'} role="status" data-testid="linea-avisos">{linea}</p>}
   {visibles.length>0&&<details className={s.avisos}><summary>{visibles.length===1?'1 aviso':`${visibles.length} avisos`}</summary><div>{visibles.map(a=><div key={a.key}>{a.node}<div className={s.avisoPie}><Button size="sm" variant="ghost" onClick={()=>ocultar(a.key)} title="Quita este aviso por 7 días; vuelve antes si aparece uno nuevo">Ocultar 7 días</Button></div></div>)}</div></details>}
  </section>;
 }

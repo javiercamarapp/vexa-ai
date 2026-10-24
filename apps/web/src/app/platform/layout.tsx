@@ -4,12 +4,14 @@ import {RovaqLogo} from '../../components/rovaq-logo';
 import {WorkspaceIcon} from '../../components/workspace/icon';
 import {PlatformNav} from '../../components/platform/platform-nav';
 import {AdminTools} from '../../components/platform/admin-tools';
-import {platformAccessForPage} from './_lib/access';
+import {redirect} from 'next/navigation';
+import {platformAccessForPage, platformMfaGate} from './_lib/access';
 import './platform.css';
 export const dynamic = 'force-dynamic';
 export default async function PlatformLayout({children}: {children: ReactNode}) {
   const access = await platformAccessForPage();
   if (!access) return <section className="home access-flow"><h1>Administración de plataforma</h1><p role="alert">No tienes acceso a la administración de plataforma.</p><Link prefetch={false} className="btn" href="/">Volver</Link></section>;
+  if (await platformMfaGate(access) !== 'ok') redirect('/seguridad?requerido=1');
   return <div className="workspace workspace-shell platform-shell">
     <a className="skip-link workspace-skip" href="#platform-contenido">Saltar al contenido</a>
     <aside className="workspace-sidebar platform-sidebar" aria-label="Plataforma">

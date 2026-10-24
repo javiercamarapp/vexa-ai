@@ -3,6 +3,8 @@ import {cookies} from 'next/headers';
 import {NextRequest} from 'next/server';
 import {AccessError, assertOrigin, authClient, config} from '../../../lib/auth';
 import {requestAuth} from '../../../lib/auth-http';
+import {mfaVerdictFor} from '../../../lib/platform/mfa-server';
+import type {MfaVerdict} from '../../../lib/platform/mfa';
 import {argsHash} from '../../../components/platform/server/copilot-http';
 import {buildPlatformView, platformFixture, type PlatformView, type Principal} from '../../../../../../packages/cfo-copilot/src/index.mjs';
 
@@ -23,6 +25,11 @@ export async function platformAccessForPage(): Promise<Access | null> {
   const grant = await client.rpc('platform_manage', {p_input: {operation: 'status'}});
   return grant.error ? null : {mode: 'live', userId: user.data.user.id, client};
 }
+/** MFA de la consola: con VEXA_PLATFORM_MFA apagado (por defecto) siempre 'ok' y sin llamadas extra. Encendido, exige AAL2 (o falla cerrado si Auth no responde). */
+export async function platformMfaGate(access: Access): Promise<MfaVerdict> {
+  if (access.mode === 'fixture' || !access.client) return 'ok';
+  return mfaVerdictFor(access.client);
+}
 export async function platformAccessForRequest(request: NextRequest): Promise<{access: Access; finish: ReturnType<typeof requestAuth>['finish']}> {
   if (FIXTURES) return {access: {mode: 'fixture', userId: 'fixture-admin'}, finish: r => r};
   const c = config(); if (!c) throw new AccessError(503, 'platform_configuration_required');
@@ -31,6 +38,7 @@ export async function platformAccessForRequest(request: NextRequest): Promise<{a
   if (user.error || !user.data.user) throw new AccessError(401, 'platform_authentication_required');
   const grant = await auth.client.rpc('platform_manage', {p_input: {operation: 'status'}});
   if (grant.error) throw new AccessError(403, 'platform_access_denied');
+  if (await mfaVerdictFor(auth.client) !== 'ok') throw new AccessError(403, 'platform_mfa_required');
   return {access: {mode: 'live', userId: user.data.user.id, client: auth.client}, finish: auth.finish};
 }
 export const principalOf = (a: Access): Principal => ({kind: 'platform_admin', verified: true, userId: a.userId});

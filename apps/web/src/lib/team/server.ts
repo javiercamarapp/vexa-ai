@@ -4,6 +4,7 @@ import {NextRequest,NextResponse} from 'next/server';
 import {createClient} from '@supabase/supabase-js';
 import {ACTIVE_ORG,AccessError,assertOrigin,config,PRIVATE_HEADERS,resolveSession,identity} from '../auth';
 import {requestAuth} from '../auth-http';
+import {mfaVerdictFor} from '../platform/mfa-server';
 import {createTeam} from '../../../../../packages/team/index.mjs';
 const headers={...PRIVATE_HEADERS,'Referrer-Policy':'no-referrer',Vary:'Cookie'};
 async function body(request:NextRequest){
@@ -26,7 +27,7 @@ export async function handleTeam(request:NextRequest,invitationId?:string,platfo
  }
  const verified=await auth.client.auth.getUser();if(verified.error||!verified.data.user)throw new AccessError(401,'team_authentication_required');
  let tenantId:string|undefined;
- if(platform){const tenant=query.get('tenantId');if(!tenant||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(tenant))throw new AccessError(400,'team_input_invalid');const check=await auth.client.rpc('platform_manage',{p_input:{operation:'status'}});if(check.error)throw new AccessError(check.error.code==='42501'?403:503,'team_access_denied');tenantId=tenant;}
+ if(platform){const tenant=query.get('tenantId');if(!tenant||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(tenant))throw new AccessError(400,'team_input_invalid');const check=await auth.client.rpc('platform_manage',{p_input:{operation:'status'}});if(check.error)throw new AccessError(check.error.code==='42501'?403:503,'team_access_denied');if(await mfaVerdictFor(auth.client)!=='ok')throw new AccessError(403,'team_access_denied');tenantId=tenant;}
  else if(!invitationId){const session=await resolveSession(identity(auth.client),request.cookies.get(ACTIVE_ORG)?.value);tenantId=session.active.tenant_id;}
  const team=createTeam({client:platform?{rpc:(_name:string,args:Record<string,unknown>)=>auth.client.rpc('platform_team_manage',args)}:auth.client,tenantId,sendInvitation:sender()});let data;
  if(invitationId){if(!/^[0-9a-f-]{36}$/i.test(invitationId))throw new AccessError(400,'team_input_invalid');if(request.method==='POST'&&!['session','accept'].includes(input?.operation))throw new AccessError(400,'team_input_invalid');data=await team.call({operation:input?.operation==='accept'?'accept':'inspect',id:invitationId});}

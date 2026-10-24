@@ -601,3 +601,11 @@ a.card-link:hover{text-decoration:underline;text-underline-offset:.2em}
 .workspace-content details.chart-table:not(.nav-group):not(.fold):not(.detail-admin)>summary,.workspace-content details.trend-table:not(.nav-group):not(.fold):not(.detail-admin):not(.cf-monthly)>summary{min-height:32px;padding:2px 8px 2px 4px;border:0;background:transparent;font-size:12px;font-weight:500;color:var(--muted)}
 .workspace-content details.chart-table:not(.nav-group)>summary:hover,.workspace-content details.trend-table:not(.nav-group):not(.cf-monthly)>summary:hover{color:var(--ink)}
 .chart-table,.trend-table:not(.cf-monthly){margin-top:var(--sp-1)}
+
+/* ---- Pantallas de acceso del sistema (/sin-acceso, /seguridad, consola sin permiso): H1 de 20 px como el resto del software ---- */
+body .access-flow.acceso-sistema h1{font:600 var(--t-page)/1.2 var(--font-display);letter-spacing:-.025em;margin:0 0 12px}
+body .access-flow.acceso-sistema :is(p,li,small,label){font-size:var(--t-body)}
+body .access-flow.acceso-sistema small{font-size:var(--t-small)}
+body .access-flow.acceso-sistema{max-width:40rem;margin-inline:auto}
+body .access-flow.acceso-sistema .sa-acciones{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:20px}
+body .access-flow.acceso-sistema .sa-acciones :is(button,.btn){margin:0}

@@ -1,6 +1,7 @@
 'use client';
 import {useState} from 'react';
 import {Button} from '../ui/button';
+import {Notice} from '../ui/notice';
 import {CODE} from '../../lib/platform/mfa';
 type State = {required: boolean; verdict: string; level: string | null; verifiedFactors: Array<{id: string; name: string | null}>; pendingFactors: Array<{id: string}>};
 const ERR: Record<string, string> = {mfa_code_invalid: 'El código no es correcto o ya venció. Escribe el que muestra tu app ahora.', mfa_factor_exists: 'Ya existe un factor pendiente. Cancélalo e inténtalo de nuevo.', mfa_unavailable: 'No se pudo completar. Verifica que la verificación en dos pasos (TOTP) esté habilitada en el proyecto.'};
@@ -31,6 +32,6 @@ export function MfaPanel({state}: {state: State}) {
       <Button type="submit" variant="primary" loading={busy} disabled={!CODE.test(code.replace(/\s/g, ''))}>{enroll ? 'Confirmar y activar' : 'Verificar sesión'}</Button>
       {(enroll || state.pendingFactors.length > 0) && <Button variant="ghost" onClick={() => void cancel()} disabled={busy}>Cancelar inscripción</Button>}
     </form>}
-    {error && <p role="alert">{error}</p>}
+    {error && <Notice tone="error">{error}</Notice>}
   </div>;
 }

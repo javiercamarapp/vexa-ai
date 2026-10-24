@@ -1,6 +1,7 @@
 'use client';
 import {useState} from 'react';
 import {Button} from './ui/button';
+import {Notice} from './ui/notice';
 export type Invitacion = {id: string; organization: string; role: string; expiresAt: string};
 export type InvitacionVencida = {organization: string; role: string; expiredAt: string};
 const ROL: Record<string, string> = {owner: 'Dueño', analyst: 'Analista', operator: 'Operador', viewer: 'Lector'};
@@ -27,6 +28,6 @@ export function InvitacionesPendientes({invitaciones}: {invitaciones: Invitacion
       <div><strong>{i.organization}</strong><small>Rol {ROL[i.role] ?? i.role} · vence {fecha(i.expiresAt)}</small></div>
       <Button variant="primary" loading={busy === i.id} disabled={busy !== null} onClick={() => void aceptar(i.id)}>Aceptar y entrar</Button>
     </li>)}</ul>
-    {error && <p role="alert">{error}</p>}
+    {error && <Notice tone="error">{error}</Notice>}
   </>;
 }

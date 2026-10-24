@@ -7,7 +7,7 @@
 /* ---- Palabras: nunca partidas letra a letra. `anywhere` encoge el mínimo de las columnas; `break-word` solo parte lo que de verdad no cabe. ---- */
 :root:root body .workspace-content,:root:root body .workspace-content :is(p,li,dd,dt,td,th,figcaption,blockquote,h1,h2,h3,h4,summary,label,small,span,strong,code,a,b,div){overflow-wrap:break-word;word-break:normal;hyphens:manual}
 :root:root body .workspace-content :is(.chip,.ui-chip,.pc-estado,.kind-badge,.btn,.seg-btn,.pc-count,.fchip,.delta,.id-chip,.count-pill){overflow-wrap:normal;word-break:normal;hyphens:manual}
-:root:root body .workspace-content :is(.pc-estado,.kind-badge,.delta,.pc-count,.count-pill,.btn,.seg-btn){white-space:nowrap}
+:root:root body .workspace-content :is(.pc-estado,.kind-badge,.delta,.pc-count,.count-pill,.seg-btn){white-space:nowrap}
 :root:root body .workspace-content :is(td,th){min-width:min-content}
 
 /* ---- Cifras de KPI: UNA línea, ni 2 ni 3 ---- */
@@ -55,10 +55,10 @@
 :root:root body .mv-franja>div{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 auto}
 :root:root body .mv-franja .mv-franja-hasta,:root:root body .mv-franja .mv-franja-sin,:root:root body .mv-franja .mv-franja-linea{display:none}
 :root:root body .mv-franja .mv-franja-fuentes{flex:1 1 auto;min-width:0;overflow:hidden;white-space:nowrap;flex-wrap:nowrap;gap:4px}
-:root:root body .mv-franja .mv-etq{font-size:0}
-:root:root body .mv-franja .mv-etq::before{content:"Fuentes";font-size:12px}
+:root:root body .mv-franja .mv-etq{display:none}
+:root:root body .mv-franja .mv-franja-fuentes::before{content:"Fuentes"}
 :root:root body .mv-franja .mv-franja-fuentes strong{white-space:nowrap}
-:root:root body .mv-franja>div>button{min-height:32px;height:32px;padding-inline:8px}
+:root:root body .mv-franja>div>button{flex:none;white-space:nowrap;padding-inline:10px}
 :root:root body .mv-franja .mv-avisos{margin-left:auto}
 :root:root body .mv-franja .mv-avisos summary{height:auto;display:inline-flex;align-items:center;padding-inline:10px;border:1px solid var(--ui-line-strong);border-radius:999px;position:relative}
 :root:root body .mv-franja:has(.mv-avisos[open]){height:auto!important;flex-wrap:wrap!important;padding-block:6px}
@@ -93,7 +93,7 @@
 :root:root body .workspace-content .segmented::-webkit-scrollbar{display:none}
 :root:root body .workspace-content .segmented .seg-btn{padding-inline:14px}
 /* Casillas y radios: caja visual de 20 px dentro de una zona de 44 px */
-:root:root body :is(.workspace-content,.access-flow) input:is([type=checkbox],[type=radio]):not(.sr-only){appearance:none;-webkit-appearance:none;display:inline-grid;place-content:center;width:var(--mv-hit);height:var(--mv-hit);min-width:var(--mv-hit);max-width:var(--mv-hit);min-height:var(--mv-hit);max-height:var(--mv-hit);flex:0 0 var(--mv-hit);margin:0 -10px;background:none;border:0;cursor:pointer}
+:root:root body :is(.workspace-content,.access-flow) input:is([type=checkbox],[type=radio]):not(.sr-only){appearance:none;-webkit-appearance:none;display:inline-grid;place-content:center;width:var(--mv-hit);height:var(--mv-hit);min-width:var(--mv-hit);max-width:var(--mv-hit);min-height:var(--mv-hit);max-height:var(--mv-hit);flex:0 0 var(--mv-hit);margin:0;background:none;border:0;cursor:pointer}
 :root:root body :is(.workspace-content,.access-flow) input:is([type=checkbox],[type=radio]):not(.sr-only)::before{content:"";box-sizing:border-box;width:20px;height:20px;border:1.5px solid var(--ui-line-strong);border-radius:8px;background:var(--ui-surface)}
 :root:root body :is(.workspace-content,.access-flow) input[type=radio]:not(.sr-only)::before{border-radius:50%}
 :root:root body :is(.workspace-content,.access-flow) input[type=checkbox]:not(.sr-only):checked::before{background:var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 6.4l2.3 2.3 4.7-5'/%3E%3C/svg%3E") center/14px no-repeat;border-color:var(--ink)}
@@ -130,7 +130,7 @@
 html:root:not([data-tablas-movil=comparar]) :is(.ui-table-wrap,.table-wrap,.table-scroll):has(>table[data-mv]){overflow:visible;max-height:none!important;border:0;background:none;border-radius:0;margin:0;padding:0}
 html:root:not([data-tablas-movil=comparar]) table[data-mv]{display:block;width:100%;min-width:0!important;border:0;background:none}
 html:root:not([data-tablas-movil=comparar]) table[data-mv] caption{display:none}
-html:root:not([data-tablas-movil=comparar]) table[data-mv] :is(thead,tfoot){position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+html:root:not([data-tablas-movil=comparar]) table[data-mv] :is(thead,tfoot){position:absolute;width:1px;height:1px;margin:-1px;clip-path:inset(50%);white-space:nowrap}
 html:root:not([data-tablas-movil=comparar]) table[data-mv] tbody{display:grid;gap:8px}
 html:root:not([data-tablas-movil=comparar]) table[data-mv] tbody tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 12px;padding:12px;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface);height:auto;min-width:0}
 html:root:not([data-tablas-movil=comparar]) table[data-mv] tbody tr[data-sin-tarjeta]{display:block}
@@ -241,4 +241,6 @@ html:root:not([data-tablas-movil=comparar]) .pc-card[data-flush] :is(.ui-table-w
 :root:root body .insight-eyebrow{font-size:12px}
 :root:root body .workspace-content .segmented::after{content:"";flex:0 0 6px}
 
+
+:root:root body .workspace-content .chip{max-width:100%;white-space:normal}
 }

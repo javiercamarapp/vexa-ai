@@ -9,6 +9,6 @@ export function FilterDrawer({title='Filtros',count,chips=[],formId,onClear,chil
  return <div className="filter-bar">
   <button type="button" className="btn btn-secondary" onClick={()=>setOpen(true)} aria-haspopup="dialog"><Icon name="filter" size={14}/><span className="btn-label">Filtros</span>{count>0&&<span className="count-pill" aria-label={count+' activos'}>{count}</span>}</button>
   {chips.length>0&&<ul className="filter-chips" aria-label="Filtros activos">{chips.map(c=><li key={c.key} className="fchip"><span>{c.label}</span>{c.onRemove&&<button type="button" className="fchip-x" onClick={c.onRemove} aria-label={'Quitar '+c.label}><Icon name="x" size={11}/></button>}</li>)}</ul>}
-  <Drawer open={open} onClose={close} title={title} subtitle={hint} footer={<>{onClear&&<button type="button" className="btn btn-ghost" onClick={()=>{onClear();close();}}>Limpiar</button>}<button type="submit" form={formId} className="btn btn-primary">Aplicar</button></>}>{children(close)}</Drawer>
+  <Drawer open={open} onClose={close} size="sm" title={title} subtitle={hint} footer={<>{onClear&&<button type="button" className="btn btn-ghost" onClick={()=>{onClear();close();}}>Limpiar</button>}<button type="submit" form={formId} className="btn btn-primary">Aplicar</button></>}><p className="ov-summary" role="status">{count>0?<><b>{count}</b> {count===1?'filtro activo':'filtros activos'}{chips.length>0&&<> · {chips.map(c=>c.label).join(' · ')}</>}</>:'Sin filtros: se muestra todo el alcance.'}</p>{children(close)}</Drawer>
  </div>;
 }

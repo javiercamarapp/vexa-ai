@@ -183,9 +183,7 @@ body:has(.workspace-shell)>.skip-link { display:none; }
 .workspace-shell :where(button) { border-radius:8px; background:var(--ui-action); }
 .workspace-shell button:disabled { cursor:not-allowed; }
 .workspace-shell .mobile-menu-button,.workspace-bottom-nav { display:none; }
-.workspace-mobile-dialog { padding:0; border:0; background:transparent; max-width:none; max-height:none; width:100%; height:100dvh; margin:0; }
-.workspace-mobile-dialog::backdrop { background:#11181366; }
-.mobile-sidebar { display:flex; flex-direction:column; width:min(320px,calc(100vw - 32px)); height:100dvh; background:var(--ui-surface); padding:8px; box-shadow:8px 0 30px #0002; }
+.mobile-sidebar { display:flex; flex-direction:column; width:100%; height:100%; background:var(--ui-surface); padding:8px; }
 .mobile-sidebar .sidebar-navigation { flex:1; }
 .mobile-sidebar .sidebar-account { margin-bottom:max(8px,env(safe-area-inset-bottom)); }
 
@@ -299,7 +297,6 @@ body:has(.access-flow) main { padding:16px 16px 48px; }
 .workspace-shell :where(button,a,summary,input,select,textarea),.access-flow :where(button,a,input,select) { transition:background-color var(--ui-fast) ease,border-color var(--ui-fast) ease,color var(--ui-fast) ease,box-shadow var(--ui-motion) ease; }
 .workspace-content > section,.access-flow { animation:workspace-enter var(--ui-slow) var(--ui-ease); }
 .workspace-content :where(.record-card,article:not(.record-card)) { animation:workspace-enter var(--ui-motion) var(--ui-ease); }
-.workspace-mobile-dialog[open] .mobile-sidebar { animation:workspace-drawer var(--ui-slow) var(--ui-ease); }
 .workspace-sidebar { transition:width var(--ui-motion) var(--ui-ease),flex-basis var(--ui-motion) var(--ui-ease); }
 .workspace-content :where(button,a):active,.access-flow button:active { transform:translateY(1px); }
 }
@@ -316,37 +313,7 @@ to { transform:none; }
 
 
 @media(prefers-reduced-motion:reduce) {
-.workspace-shell *,.workspace-shell *::before,.workspace-shell *::after,.workspace-mobile-dialog::backdrop,.access-flow * { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
-}
-.confirmation-dialog { width:min(512px,calc(100vw - 32px)); max-height:calc(100dvh - 48px); overflow:auto; padding:24px; border:1px solid var(--ui-border); border-radius:8px; background:var(--ui-surface); color:var(--ink); box-shadow:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a; }
-.confirmation-dialog::backdrop { background:#000c; }
-.confirmation-heading { display:flex; flex-direction:column; gap:8px; }
-.workspace-content .confirmation-dialog h2 { margin:0; font-size:18px; line-height:1.4; }
-.workspace-content .confirmation-dialog p { margin:16px 0; font-size:14px; color:var(--muted); }
-.confirmation-actions { display:flex; gap:8px; justify-content:flex-end; }
-.workspace-content .confirmation-actions button { flex:0 1 auto; width:auto; margin:0; min-height:44px; }
-.workspace-content .confirmation-actions .confirmation-confirm { background:var(--ui-action); border-color:var(--ui-action); color:var(--ui-action-ink); }
-.workspace-content .confirmation-actions .confirmation-confirm:not(:disabled):hover { background:var(--ui-action-hover); border-color:var(--ui-action-hover); }
-
-@media(max-width:639px) {
-.confirmation-heading,.confirmation-dialog p { text-align:center; }
-.confirmation-actions { flex-direction:column-reverse; }
-.workspace-content .confirmation-actions button { width:100%; }
-}
-
-@media(prefers-reduced-motion:no-preference) {
-.confirmation-dialog[open] { animation:confirmation-enter 200ms var(--ui-ease); }
-}
-
-@keyframes confirmation-enter {
-from { transform:translateY(4px) scale(.95); }
-to { transform:none; }
-}
-.workspace-content .confirmation-actions .confirmation-cancel { background:var(--ui-surface); color:var(--ui-secondary); border-color:var(--ui-border); }
-.workspace-content .confirmation-actions button:not(:disabled):hover { background:var(--ui-action-hover); color:var(--ui-action-ink); }
-
-@media(prefers-reduced-motion:reduce){
-.confirmation-dialog,.confirmation-dialog::backdrop { animation:none!important; transition:none!important; }
+.workspace-shell *,.workspace-shell *::before,.workspace-shell *::after,.access-flow * { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
 }
 .workspace-frame,.workspace-shell .workspace-sidebar { box-shadow:var(--ui-shadow); }
 .workspace-shell .workspace-content { padding:24px 28px 28px; min-width:0; background:var(--ui-sunken); }

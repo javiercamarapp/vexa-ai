@@ -13,7 +13,7 @@ import {Chip} from '../ui/chip';
 import {FilterBar, FilterSpacer} from '../ui/filter-bar';
 import {KpiStrip, type Kpi} from '../ui/kpi-strip';
 import {Notice} from '../ui/notice';
-import {Popover} from '../ui/overlay';
+import {MenuList,Popover} from '../ui/overlay';
 import {ErrorState} from '../ui/error-state';
 import {SegmentedControl} from '../ui/segmented';
 import {DataTable, type Column} from '../ui/data-table';
@@ -50,9 +50,9 @@ export function CfoDashboard({query = '', organization, roleOverride, volverA = 
   const actions = <>
     <LinkButton href={volverA} variant="primary">Volver al copiloto CFO</LinkButton>
     <Popover label="Exportar" align="end" width={220} triggerClassName="btn btn-secondary" trigger={<><Download /><span className="btn-label">Exportar</span></>}>
-      <ul className="ui-reset" style={{listStyle: 'none', margin: 0, padding: 4, display: 'grid', gap: 4}}>
+      <MenuList>
         <li><LinkButton size="sm" href="/cfo/data/export?format=csv" download="informe-cfo.csv" icon={<Download />}>Informe CSV</LinkButton></li>
-        <li><LinkButton size="sm" href="/cfo/data/export?format=pdf" download="informe-cfo.pdf" icon={<Download />}>Informe PDF</LinkButton></li></ul></Popover>
+        <li><LinkButton size="sm" href="/cfo/data/export?format=pdf" download="informe-cfo.pdf" icon={<Download />}>Informe PDF</LinkButton></li></MenuList></Popover>
     <Button icon={<Refresh />} loading={busy} onClick={() => void load()}>Actualizar</Button>
   </>;
   const header = <PageHeader eyebrow="Dinero · CFO" title="Informe de CFO" description="Ingresos, reembolsos, canales y calidad de datos por moneda, sin mezclar bases; cada cifra dice cómo se calculó." actions={actions} />;

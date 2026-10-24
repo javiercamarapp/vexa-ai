@@ -6,7 +6,7 @@ import {SegmentedControl} from '../ui/segmented';
 import {Button,Download,LinkButton,Refresh} from '../ui/button';
 import {Card} from '../ui/card';
 import {KpiStrip,type Kpi} from '../ui/kpi-strip';
-import {Popover} from '../ui/overlay';
+import {MenuList,Popover} from '../ui/overlay';
 import {ErrorState} from '../ui/error-state';
 import {Loading} from '../ui/loading';
 import {KindBadge} from '../ui/kind-badge';
@@ -46,11 +46,11 @@ export function GapsPantalla({organization}:{organization?:string}){
  ]:[];
  const titular=v&&ok&&r?.status==='ok'&&ventas?`De ${corto(ventas)} vendidos, ${corto(Math.max(0,big(ok.activoMinor)-big(r.activoMinor)))} se quedan tras cancelaciones y reembolsos; el dinero devuelto pesa ${(big(r.activoMinor)*100/Math.max(1,big(ok.activoMinor))).toLocaleString('es-MX',{maximumFractionDigits:1})} % del ingreso.`:null;
  const exportar=v&&<Popover label="Exportar archivos" align="end" width={260} triggerClassName="btn btn-secondary" trigger={<><Download/><span className="btn-label">Exportar</span></>}>
-  <ul className="ui-reset" style={{listStyle:'none',margin:0,padding:4,display:'grid',gap:4}}>
+  <MenuList>
    <li><Button size="sm" icon={<Download/>} disabled={!ok} onClick={()=>bajarArchivo(resumenHtml(v))}>Resumen (HTML)</Button></li>
    <li><Button size="sm" icon={<Download/>} disabled={v.ranking.status!=='ok'} onClick={()=>bajarArchivo(csvIngresos(v))}>Ingreso por SKU (CSV)</Button></li>
    <li><Button size="sm" icon={<Download/>} disabled={v.intensidad.status!=='ok'} onClick={()=>bajarArchivo(csvIntensidad(v))}>Intensidad (CSV)</Button></li>
-   <li><Button size="sm" icon={<Download/>} disabled={v.recomendaciones.items.length===0} onClick={()=>bajarArchivo(csvRecomendaciones(v))}>Recomendaciones (CSV)</Button></li></ul></Popover>;
+   <li><Button size="sm" icon={<Download/>} disabled={v.recomendaciones.items.length===0} onClick={()=>bajarArchivo(csvRecomendaciones(v))}>Recomendaciones (CSV)</Button></li></MenuList></Popover>;
  return <div className="dg-page">
   <PageHeader eyebrow={'Dinero'+(organization?' · datos sintéticos de demostración':'')} title="Brechas de ingreso" description="Dónde ganas, dónde pierdes y por qué. Siempre ingreso bruto: no hay costo ni margen por producto."
    actions={<><LinkButton href="/refunds" variant="secondary">Ver fuga de reembolsos</LinkButton>{exportar}<Button icon={<Refresh/>} onClick={()=>g.reload()} loading={g.busy&&!!v}>Actualizar</Button></>}/>

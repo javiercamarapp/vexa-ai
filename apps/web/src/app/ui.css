@@ -279,7 +279,7 @@ body .workspace-content .eyebrow{margin:0 0 var(--sp-1)}
 /* ---- Botones compactos: 34 / 32 px, radio píldora, padding uniforme ---- */
 .icon-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--muted);cursor:pointer;flex:none}
 .icon-btn:hover{background:var(--ui-soft);color:var(--ink)}
-.workspace-content .icon-btn,.drawer .icon-btn,.modal .icon-btn{min-height:32px;padding:0;border:0;background:transparent;color:var(--muted)}
+.workspace-content .icon-btn{min-height:32px;padding:0;border:0;background:transparent;color:var(--muted)}
 .count-pill{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--ui-action);color:var(--ui-action-ink);font:600 12px/1 var(--font-ui)}
 .toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2) var(--sp-3);margin:0 0 var(--sp-4)}
 .toolbar-spacer{flex:1 1 auto}
@@ -419,24 +419,7 @@ body .workspace-content .eyebrow{margin:0 0 var(--sp-1)}
 .fchip span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:4px}
 .workspace-content .fchip .fchip-x{display:inline-flex;align-items:center;justify-content:center;width:24px;min-width:24px;height:24px;min-height:24px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--muted)}
 .fchip-x:hover{background:var(--ui-border);color:var(--ink)}
-/* ---- Drawer / Modal / Popover ---- */
-dialog.drawer,dialog.modal{padding:0;border:0;background:transparent;color:var(--ink);max-width:100vw;max-height:100dvh;overflow:visible}
-dialog.drawer::backdrop,dialog.modal::backdrop{background:var(--scrim)}
-dialog.drawer{position:fixed;inset:0 0 0 auto;margin:0;width:min(var(--drawer-w,480px),100vw);height:100dvh}
-.drawer-panel{display:flex;flex-direction:column;height:100%;background:var(--ui-surface);border-left:1px solid var(--ui-border);border-radius:var(--r-card) 0 0 var(--r-card);box-shadow:var(--sh-pop);padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);overflow:hidden}
-dialog.modal{margin:auto;width:min(var(--modal-w,440px),calc(100vw - 32px))}
-.modal-panel{display:flex;flex-direction:column;max-height:calc(100dvh - 48px);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:var(--r-card);box-shadow:var(--sh-pop);overflow:hidden}
-.overlay-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp-3);padding:var(--sp-4) var(--sp-5);border-bottom:1px solid var(--ui-border)}
-.overlay-head h2{margin:0}.overlay-head p{margin:2px 0 0;font-size:var(--t-small);color:var(--muted)}
-.overlay-body{flex:1 1 auto;overflow:auto;padding:var(--sp-5);min-height:0}
-.overlay-foot{display:flex;justify-content:flex-end;gap:var(--sp-2);padding:var(--sp-3) var(--sp-5);padding-bottom:calc(var(--sp-3) + env(safe-area-inset-bottom));border-top:1px solid var(--ui-border);background:var(--ui-surface)}
-.popover{position:relative;display:inline-block}
-.popover-panel{position:absolute;top:calc(100% + 8px);left:0;z-index:40;padding:var(--sp-3);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:var(--r-inner);box-shadow:var(--sh-pop);font-size:var(--t-body)}
-.popover-panel[data-align=end]{left:auto;right:0}
-@media(max-width:639px){
- dialog.drawer{inset:auto 0 0 0;width:100vw;height:auto;max-height:88dvh}
- .drawer-panel{border-left:0;border-top:1px solid var(--ui-border);border-radius:var(--r-card) var(--r-card) 0 0;max-height:88dvh}
-}
+/* Drawer / Modal / Popover: viven en components/ui/overlay.css (sistema único de overlays). */
 /* ---- Tooltip corto ---- */
 .tip{position:relative;display:inline-flex}.tip-target{display:inline-flex;align-items:center;border-radius:8px;cursor:help}
 .tip-bubble{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);z-index:30;width:max-content;max-width:min(260px,70vw);padding:7px 10px;border-radius:8px;background:var(--surf-tip);color:var(--surf-tip-ink);font-size:var(--t-small);line-height:1.4;box-shadow:var(--sh-pop);opacity:0;visibility:hidden;pointer-events:none;white-space:normal;text-align:left}
@@ -507,21 +490,15 @@ dialog.modal{margin:auto;width:min(var(--modal-w,440px),calc(100vw - 32px))}
  .barlist-fill,.funnel-band{transform-origin:left;animation:ui-grow var(--t-bar) var(--ui-ease) both}
  .donut-seg,.ring-fill{animation:ui-sweep 700ms var(--ui-ease) both}@keyframes ui-sweep{from{stroke-dasharray:0 100}}
  .ticks i[data-on]{animation:ui-fade 300ms ease both}
- dialog.drawer[open]::backdrop,dialog.modal[open]::backdrop{animation:ui-fade var(--t-pop) ease both}
- dialog.drawer[open] .drawer-panel{animation:ui-slide-x var(--t-drawer) var(--ui-ease) both}
- dialog.modal[open] .modal-panel{animation:ui-pop var(--t-pop) var(--ui-ease) both}
- .popover-panel,.step-hint{animation:ui-pop var(--t-pop) var(--ui-ease) both;transform-origin:top left}
+ .step-hint{animation:ui-pop var(--t-pop) var(--ui-ease) both;transform-origin:top left}
  .tip-bubble{transition:opacity var(--ui-fast) ease}
  @keyframes ui-fade{from{opacity:0}}@keyframes ui-slide-x{from{transform:translateX(24px);opacity:0}}@keyframes ui-pop{from{transform:scale(.96);opacity:0}}
- @media(max-width:639px){dialog.drawer[open] .drawer-panel{animation-name:ui-slide-y}@keyframes ui-slide-y{from{transform:translateY(24px);opacity:0}}}
 }
 /* ---- Formularios en drawer ---- */
 .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-4);align-items:start}
 .form-grid .field-wide{grid-column:1/-1}
-.workspace-content .field,.drawer .field,.modal .field{display:grid;gap:6px;min-width:0;margin:0;padding:0;border:0;font-size:var(--t-small);font-weight:500;color:var(--muted)}
+.workspace-content .field{display:grid;gap:6px;min-width:0;margin:0;padding:0;border:0;font-size:var(--t-small);font-weight:500;color:var(--muted)}
 .field legend{padding:0;margin-bottom:6px;font-size:var(--t-small);font-weight:500;color:var(--muted)}
-:is(.drawer,.modal) :is(input:not([type=checkbox]):not([type=radio]),select,textarea){width:100%;min-width:0;min-height:var(--btn-h);padding:6px 12px;border:1px solid var(--ui-input);border-radius:var(--r-chip);background:var(--ui-surface);color:var(--ink);font:400 13px/1.5 var(--font-ui)}
-:is(.drawer,.modal) textarea{min-height:84px;resize:vertical}
 .form-note{margin:0;font-size:var(--t-small);color:var(--muted)}
 .check-row{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
 .check-chip{display:inline-flex!important;align-items:center;gap:6px;min-height:30px;padding:0 12px;border:1px solid var(--ui-line-strong);border-radius:999px;background:var(--ui-surface);color:var(--ui-secondary);font-size:var(--t-small);font-weight:600;cursor:pointer}

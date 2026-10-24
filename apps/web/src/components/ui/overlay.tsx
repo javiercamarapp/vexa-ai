@@ -1,28 +1,64 @@
 'use client';
 import {useCallback,useEffect,useId,useLayoutEffect,useRef,useState,type CSSProperties,type MouseEvent,type ReactNode,type SyntheticEvent} from 'react';
 import {Icon} from './icons';
-/** Native <dialog> (top layer): focus is trapped and Esc closes without extra code. We add backdrop-click close and focus restore. */
+/* Sistema único de overlays (Drawer lateral, Modal centrado, Popover anclado). Todo panel flotante del software se construye aquí;
+   los estilos viven en components/ui/overlay.css. Misma anatomía: cabecera compacta (título + descripción + cerrar 28 px),
+   cuerpo con scroll (padding 16) y pie fijo con acciones a la derecha (secundario + primario suave, 32 px). */
+
+/** Anchos del Drawer: 420 (lectura / formularios cortos), 480 (formularios largos), 640 (tablas y evidencia). */
+export const DRAWER_SIZES={sm:420,md:480,lg:640} as const;
+/** Anchos del Modal: 440 (confirmaciones y formularios cortos) y 560 (formularios largos). */
+export const MODAL_SIZES={sm:440,md:560} as const;
+export type DrawerSize=keyof typeof DRAWER_SIZES;
+export type ModalSize=keyof typeof MODAL_SIZES;
+/** Compatibilidad: los llamadores que aún pasan un ancho en px caen en el tamaño estándar más cercano por arriba. */
+const drawerPx=(size?:DrawerSize,width?:number)=>size?DRAWER_SIZES[size]:width===undefined?DRAWER_SIZES.sm:width<=DRAWER_SIZES.sm?DRAWER_SIZES.sm:width<=DRAWER_SIZES.md+80?DRAWER_SIZES.md:DRAWER_SIZES.lg;
+const modalPx=(size?:ModalSize,width?:number)=>size?MODAL_SIZES[size]:width!==undefined&&width>MODAL_SIZES.sm?MODAL_SIZES.md:MODAL_SIZES.sm;
+
+/** <dialog> nativo (capa superior): foco atrapado y Esc cierran sin código extra. Añadimos cierre por clic fuera, foco inicial y retorno de foco. */
 function useDialog(open:boolean,onClose:()=>void){
  const ref=useRef<HTMLDialogElement>(null),from=useRef<Element|null>(null);
  useEffect(()=>{const d=ref.current;if(!d)return;
-  if(open&&!d.open){from.current=document.activeElement;d.showModal();}
+  if(open&&!d.open){from.current=document.activeElement;d.showModal();
+   // Foco inicial: lo marcado como data-autofocus (p. ej. «Cancelar» en confirmaciones) o el primer campo del cuerpo; si no, el botón cerrar.
+   const target=d.querySelector<HTMLElement>('[data-autofocus]')??d.querySelector<HTMLElement>('.overlay-body :is(input:not([type=hidden]):not([type=checkbox]):not([type=radio]),select,textarea):not(:disabled)');
+   target?.focus({preventScroll:true});}
   if(!open&&d.open){d.close();(from.current as HTMLElement|null)?.focus?.();}
  },[open]);
  return {ref,onCancel:(e:SyntheticEvent)=>{e.preventDefault();onClose();},onMouseDown:(e:MouseEvent<HTMLDialogElement>)=>{if(e.target===e.currentTarget)onClose();}};
 }
-export function Drawer({open,onClose,title,subtitle,children,footer,width=480}:{open:boolean;onClose:()=>void;title:string;subtitle?:ReactNode;children:ReactNode;footer?:ReactNode;width?:number}){
- const props=useDialog(open,onClose),id=useId();
- return <dialog {...props} className="drawer" aria-labelledby={id} style={{'--drawer-w':width+'px'} as CSSProperties}>
-  {open&&<div className="drawer-panel"><header className="overlay-head"><div><h2 id={id}>{title}</h2>{subtitle&&<p>{subtitle}</p>}</div><button type="button" className="icon-btn" onClick={onClose} aria-label="Cerrar"><Icon name="x" size={16}/></button></header><div className="overlay-body">{children}</div>{footer&&<footer className="overlay-foot">{footer}</footer>}</div>}
+function Head({id,title,subtitle,onClose}:{id:string;title:string;subtitle?:ReactNode;onClose:()=>void}){
+ return <header className="overlay-head"><div className="overlay-titles"><h2 id={id}>{title}</h2>{subtitle&&<p className="overlay-sub">{subtitle}</p>}</div>
+  <button type="button" className="icon-btn overlay-close" onClick={onClose} aria-label="Cerrar"><Icon name="x" size={14}/></button></header>;
+}
+type DrawerProps={open:boolean;onClose:()=>void;title:string;subtitle?:ReactNode;children:ReactNode;footer?:ReactNode;
+ /** sm 420 · md 480 · lg 640. */size?:DrawerSize;/** @deprecated usa `size`; se redondea al tamaño estándar más cercano. */width?:number;
+ /** Lado de entrada. «left» es solo para la navegación móvil. */side?:'right'|'left';
+ /** Sin cabecera ni pie propios (el contenido los trae); exige `label`. */bare?:boolean;label?:string;className?:string};
+/** Panel lateral derecho (pantalla completa en móvil). Si el contenido es corto el panel no se estira: el pie queda pegado al contenido. */
+export function Drawer({open,onClose,title,subtitle,children,footer,size,width,side='right',bare=false,label,className}:DrawerProps){
+ const props=useDialog(open,onClose),id=useId(),px=drawerPx(size,width);
+ return <dialog {...props} className={'drawer'+(className?' '+className:'')} data-side={side} data-bare={bare||undefined} aria-labelledby={bare?undefined:id} aria-label={bare?label:undefined} style={{'--drawer-w':px+'px'} as CSSProperties}>
+  {open&&(bare?<div className="drawer-panel">{children}</div>:<div className="drawer-panel"><Head id={id} title={title} subtitle={subtitle} onClose={onClose}/><div className="overlay-body">{children}</div>{footer&&<footer className="overlay-foot">{footer}</footer>}</div>)}
  </dialog>;
 }
-export function Modal({open,onClose,title,children,footer,width=440}:{open:boolean;onClose:()=>void;title:string;children:ReactNode;footer?:ReactNode;width?:number}){
- const props=useDialog(open,onClose),id=useId();
- return <dialog {...props} className="modal" aria-labelledby={id} style={{'--modal-w':width+'px'} as CSSProperties}>
-  {open&&<div className="modal-panel"><header className="overlay-head"><h2 id={id}>{title}</h2><button type="button" className="icon-btn" onClick={onClose} aria-label="Cerrar"><Icon name="x" size={16}/></button></header><div className="overlay-body">{children}</div>{footer&&<footer className="overlay-foot">{footer}</footer>}</div>}
+type ModalProps={open:boolean;onClose:()=>void;title:string;subtitle?:ReactNode;children:ReactNode;footer?:ReactNode;size?:ModalSize;/** @deprecated usa `size`. */width?:number;
+ /** Confirmación que interrumpe: role=alertdialog y descripción enlazada. */alert?:boolean;className?:string;describedBy?:string};
+/** Diálogo centrado (440 / 560). Con `alert` se anuncia como confirmación. */
+export function Modal({open,onClose,title,subtitle,children,footer,size,width,alert=false,className,describedBy}:ModalProps){
+ const props=useDialog(open,onClose),id=useId(),px=modalPx(size,width);
+ return <dialog {...props} className={'modal'+(className?' '+className:'')} role={alert?'alertdialog':undefined} aria-labelledby={id} aria-describedby={describedBy} style={{'--modal-w':px+'px'} as CSSProperties}>
+  {open&&<div className="modal-panel"><Head id={id} title={title} subtitle={subtitle} onClose={onClose}/><div className="overlay-body">{children}</div>{footer&&<footer className="overlay-foot">{footer}</footer>}</div>}
  </dialog>;
 }
-/** Anchored panel (non-modal): opens under its trigger, closes on Esc / outside click, stays inside the viewport, restores focus. */
+/** Sección de un formulario dentro de un overlay: título de 12 px y filete superior; agrupa campos relacionados sin zonas vacías. */
+export function OverlaySection({title,children,description}:{title:string;children:ReactNode;description?:ReactNode}){
+ const id=useId();
+ return <section className="ov-section" aria-labelledby={id}><h3 id={id} className="ov-section-title">{title}</h3>{description&&<p className="ov-section-desc">{description}</p>}<div className="ov-section-body">{children}</div></section>;
+}
+/** Lista de acciones dentro de un Popover (exportar, menús): filas de 32 px, una acción por fila. */
+export function MenuList({children,label}:{children:ReactNode;label?:string}){return <ul className="ov-menu" aria-label={label}>{children}</ul>;}
+/** Panel anclado (no modal): se abre bajo su disparador, cierra con Esc / clic fuera, se mantiene dentro de la ventana y devuelve el foco. */
 export function Popover({trigger,children,label,align='start',width=300,triggerClassName='btn btn-secondary'}:{triggerClassName?:string;trigger:ReactNode;children:ReactNode|((close:()=>void)=>ReactNode);label:string;align?:'start'|'end';width?:number}){
  const [open,setOpen]=useState(false),box=useRef<HTMLDivElement>(null),btn=useRef<HTMLButtonElement>(null),panel=useRef<HTMLDivElement>(null),id=useId();
  const close=useCallback(()=>setOpen(false),[]),was=useRef(false);

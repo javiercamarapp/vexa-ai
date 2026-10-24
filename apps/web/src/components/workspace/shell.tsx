@@ -1,6 +1,7 @@
 'use client';
 import Link from './navigation-lifecycle';
-import {useEffect,useRef,useState,type ReactNode} from 'react';
+import {useEffect,useState,type ReactNode} from 'react';
+import {Drawer} from '../ui/overlay';
 import {usePathname,useSearchParams} from 'next/navigation';
 import {Navigation,navigationQuery,workspaceTitle,workspaceIconName} from './navigation';
 import {WorkspaceIcon} from './icon';
@@ -18,13 +19,13 @@ export function WorkspaceShell({children,brand,organizations,tenant,role,platfor
  // La caché de lecturas se aísla por organización: fijarla antes de que los hijos lean (purga lo de otra organización).
  fijarTenant(tenant);
  const pathname=usePathname(),query=navigationQuery(pathname,useSearchParams().toString());
- const [collapsed,setCollapsed]=useState(false),[mobileOpen,setMobileOpen]=useState(false),[theme,setTheme]=useState<Theme>('light');const dialog=useRef<HTMLDialogElement>(null);
+ const [collapsed,setCollapsed]=useState(false),[mobileOpen,setMobileOpen]=useState(false),[theme,setTheme]=useState<Theme>('light');
  useEffect(()=>{try{if(window.localStorage.getItem('vexa-sidebar-collapsed')==='true'){const frame=requestAnimationFrame(()=>setCollapsed(true));return()=>cancelAnimationFrame(frame);}}catch{/* Storage is optional. */}},[]);
  useEffect(()=>{try{const stored=window.localStorage.getItem('vexa-theme');if(stored==='light'||stored==='system'||stored==='dark'){const frame=requestAnimationFrame(()=>setTheme(stored));return()=>cancelAnimationFrame(frame);}}catch{/* Preferences are optional. */}},[]);
  useEffect(()=>{const media=window.matchMedia('(prefers-color-scheme: dark)');const apply=()=>{document.documentElement.dataset.theme=theme==='dark'||(theme==='system'&&media.matches)?'dark':'light';};apply();media.addEventListener('change',apply);return()=>{media.removeEventListener('change',apply);delete document.documentElement.dataset.theme;};},[theme]);
  function chooseTheme(value:Theme){setTheme(value);try{window.localStorage.setItem('vexa-theme',value);}catch{/* The choice still applies to this session. */}}
- const close=()=>dialog.current?.close();
- const open=()=>{setMobileOpen(true);requestAnimationFrame(()=>dialog.current?.showModal());};
+ const close=()=>setMobileOpen(false);
+ const open=()=>setMobileOpen(true);
  const organization=organizations.find(o=>o.id===tenant)?.name??'Organización';
  function toggle(){setCollapsed(value=>{const next=!value;try{window.localStorage.setItem('vexa-sidebar-collapsed',String(next));}catch{/* Storage is optional. */}return next;});}
  function sidebar(mobile=false){return <>
@@ -43,7 +44,7 @@ export function WorkspaceShell({children,brand,organizations,tenant,role,platfor
  return <div className={'workspace workspace-shell'+(collapsed?' sidebar-collapsed':'')+(sinEncabezado?' workspace-chat':'')}>
    <a className="skip-link workspace-skip" href="#workspace-contenido">Saltar al contenido</a><aside className="workspace-sidebar">{sidebar()}</aside>
    <div className="workspace-frame"><header className="workspace-header" hidden={sinEncabezado||undefined}><button type="button" className="icon-button mobile-menu-button" aria-label="Abrir menú" onClick={open}><WorkspaceIcon name="menu"/></button><span className="workspace-heading"><WorkspaceIcon name={workspaceIconName(pathname)}/>{workspaceTitle(pathname)}</span><DatosNuevos/></header><div className="workspace-content" id="workspace-contenido" tabIndex={-1}><RestaurarVista/><AccesoProvider value={{role,interno:platformAccess}}>{children}</AccesoProvider></div></div>
-   <dialog className="workspace-mobile-dialog" ref={dialog} onClose={()=>setMobileOpen(false)} aria-label="Navegación de Rovaq AI" onClick={event=>{if(event.target===event.currentTarget)close();}}>{mobileOpen&&<div className="mobile-sidebar">{sidebar(true)}</div>}</dialog>
+   <Drawer bare side="left" className="workspace-mobile-dialog" label="Navegación de Rovaq AI" open={mobileOpen} onClose={close} title="Navegación"><div className="mobile-sidebar">{sidebar(true)}</div></Drawer>
    <nav className="workspace-bottom-nav" aria-label="Navegación móvil">{[['/overview','Hoy','overview'],['/problems','Problemas','problems'],['/preguntale','Pregúntale','preguntale'],['/recommendations','Acciones','recommendations'],['/confianza','Datos','history']].map(([href,label,icon])=><Link key={href} href={href+(query?'?'+query:'')} aria-current={pathname===href?'page':undefined}><WorkspaceIcon name={icon}/><span>{label}</span></Link>)}<button type="button" onClick={open} aria-label="Más opciones de navegación"><WorkspaceIcon name="menu"/><span>Más</span></button></nav>
  </div>;
 }

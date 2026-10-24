@@ -5,7 +5,7 @@ import {Chip} from '../ui/chip';
 import {FilterBar, FilterSpacer} from '../ui/filter-bar';
 import {KpiStrip, type Kpi} from '../ui/kpi-strip';
 import {Notice} from '../ui/notice';
-import {Popover} from '../ui/overlay';
+import {MenuList,Popover} from '../ui/overlay';
 import {SegmentedControl} from '../ui/segmented';
 import {Fila, ListaBarras, Vacio} from '../dinero/partes';
 import '../dinero/dinero.css';
@@ -24,9 +24,9 @@ function Detalle({href, children = 'Ver detalle'}: {href: string; children?: str
 
 function ExportMenu() {
   return <Popover label="Exportar" align="end" width={220} triggerClassName="btn btn-secondary btn-sm" trigger={<><Download /><span className="btn-label">Exportar</span></>}>
-    <ul className="ui-reset" style={{listStyle: 'none', margin: 0, padding: 4, display: 'grid', gap: 4}}>
+    <MenuList>
       <li><a className="btn btn-sm" href={HREF_EXPORT('csv')} download="informe-cfo.csv">Hoja de cálculo (CSV)</a></li>
-      <li><a className="btn btn-sm" href={HREF_EXPORT('pdf')} download="informe-cfo.pdf">Documento (PDF)</a></li></ul></Popover>;
+      <li><a className="btn btn-sm" href={HREF_EXPORT('pdf')} download="informe-cfo.pdf">Documento (PDF)</a></li></MenuList></Popover>;
 }
 /** Resumen del mes de CFO (dentro del copiloto): titular, KPI en color, serie de 12 meses, alertas, mezcla por canal, calidad y proyección, con los mismos primitivos que el informe completo. */
 export function BriefingCfoView({b, informe, onMoneda, sintetico}: {b: BriefingCfo; informe: (ancla?: string) => string; onMoneda: (m: string) => void; sintetico?: boolean}) {

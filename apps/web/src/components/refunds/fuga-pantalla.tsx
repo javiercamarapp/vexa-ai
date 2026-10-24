@@ -6,7 +6,7 @@ import {PageHeader} from '../ui/page-header';
 import {Button,Download,Refresh} from '../ui/button';
 import {Card} from '../ui/card';
 import {KpiStrip,type Kpi} from '../ui/kpi-strip';
-import {Popover} from '../ui/overlay';
+import {MenuList,Popover} from '../ui/overlay';
 import {ErrorState} from '../ui/error-state';
 import {Loading} from '../ui/loading';
 import {KindBadge} from '../ui/kind-badge';
@@ -54,9 +54,9 @@ export function FugaPantalla({organization,embebido=false}:{organization?:string
  const titular=v&&t&&per?`${usd(t.usdBrutoMinor)} devueltos en ${per.etiqueta.charAt(0).toLowerCase()+per.etiqueta.slice(1)}${fraseConcentracion(v)?'. '+fraseConcentracion(v):'.'}`:null;
  const acciones=v&&<><Button variant="primary" icon={<Download/>} disabled={!skuSel} onClick={()=>paquete(skuSel)}>Generar paquete</Button>
   <Popover label="Más archivos" align="end" width={280} triggerClassName="btn btn-secondary" trigger={<><Download/><span className="btn-label">Exportar</span></>}>
-   <ul className="ui-reset" style={{listStyle:'none',margin:0,padding:4,display:'grid',gap:4}}>
+   <MenuList>
     <li><Button size="sm" icon={<Download/>} disabled={v.skus.status!=='ok'} onClick={lista}>SKUs de Walmart (CSV)</Button></li>
-    <li><Button size="sm" icon={<Download/>} disabled={!tr} onClick={cola}>Cola de vencidos o negados (CSV)</Button></li></ul></Popover>
+    <li><Button size="sm" icon={<Download/>} disabled={!tr} onClick={cola}>Cola de vencidos o negados (CSV)</Button></li></MenuList></Popover>
   <Button icon={<Refresh/>} onClick={()=>f.reload()} loading={f.busy&&!!v}>Actualizar</Button></>;
  const cabecera=embebido?<header className="fg-embebido-head"><p className="cn-eyebrow">Dinero · tu copiloto de reembolsos</p><h1 className="cn-titular">Fuga de reembolsos</h1><p className="cn-fuente">Dónde se concentra el dinero devuelto y qué llevarte al proveedor o a Walmart.</p><div className="cn-acciones"><Button size="sm" icon={<Refresh/>} onClick={()=>f.reload()} loading={f.busy&&!!v}>Actualizar</Button></div></header>
   :<PageHeader eyebrow={'Dinero'+(organization?' · datos sintéticos de demostración':'')} title="Fuga de reembolsos" description="Dónde se concentra el dinero devuelto, cuánto está atorado y qué llevarte a la reunión." actions={acciones}/>;

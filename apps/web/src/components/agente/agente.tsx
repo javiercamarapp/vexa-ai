@@ -42,14 +42,14 @@ export function Agente(){
 export type ModoChat={modo:string;runner?:Runner;placeholder?:string;portada:(ask:(q:string)=>void,hayHilo:boolean)=>ReactNode;pie?:ReactNode;etiquetaChat?:string};
 export function Chat({data,modo}:{data:AgentState;modo?:ModoChat}){
  const a=useAgente(data.scope,data.limits.maxQuestionChars,data.limits.maxTurnsPerConversation,data.toolLabels,{runner:modo?.runner,modo:modo?.modo});
- const [text,setText]=useState(()=>{if(modo||typeof window==='undefined')return '';const q=new URLSearchParams(window.location.search).get('q');return q?q.slice(0,data.limits.maxQuestionChars):'';}),[consult,setConsult]=useState(false),[hist,setHist]=useState(false),[leaving,setLeaving]=useState(false),[attachError,setAttachError]=useState<string|null>(null);
- const histId=useId(),catId=useId(),inputId=useId();
+ const [text,setText]=useState(()=>{if(modo||typeof window==='undefined')return '';const q=new URLSearchParams(window.location.search).get('q');return q?q.slice(0,data.limits.maxQuestionChars):'';}),[hist,setHist]=useState(false),[leaving,setLeaving]=useState(false),[attachError,setAttachError]=useState<string|null>(null);
+ const histId=useId(),inputId=useId();
  const end=useRef<HTMLDivElement>(null),histButton=useRef<HTMLButtonElement>(null),timer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
  useEffect(()=>()=>clearTimeout(timer.current),[]);
  const has=a.messages.length>0;
  const s=data.suggestions;
  useEffect(()=>{end.current?.scrollIntoView?.({block:'end'});},[a.messages.length,a.sending]);
- const ask=useCallback((q:string)=>{const t=q.trim().slice(0,data.limits.maxQuestionChars);if(!t||a.sending)return;setText('');setConsult(false);setAttachError(null);a.send(t,s.directas[t]);},[a,data.limits.maxQuestionChars,s.directas]);
+ const ask=useCallback((q:string)=>{const t=q.trim().slice(0,data.limits.maxQuestionChars);if(!t||a.sending)return;setText('');setAttachError(null);a.send(t,s.directas[t]);},[a,data.limits.maxQuestionChars,s.directas]);
  const openHist=()=>{clearTimeout(timer.current);setLeaving(false);setHist(true);};
  const closeHist=useCallback(()=>{
   clearTimeout(timer.current);
@@ -90,9 +90,8 @@ export function Chat({data,modo}:{data:AgentState;modo?:ModoChat}){
     <div ref={end}/>
    </div>}
 
-   {!has&&consult&&s.categorias.length>0&&<div id={catId} className="agente-cats">{s.categorias.map(c=><section key={c.titulo} className="agente-cat" aria-label={c.titulo}><p className="agente-cat-title" role="heading" aria-level={2}>{c.titulo}</p><div className="agente-cat-list">{c.preguntas.map(q=><div key={q} className="agente-cat-q"><button type="button" className="agente-q" onClick={()=>ask(q)}>{q}</button></div>)}</div></section>)}</div>}
 
-   <div className="agente-dock"><Composer value={text} onChange={setText} onSend={()=>ask(text)} onStop={a.stop} onConsult={()=>setConsult(v=>!v)} sending={a.sending} disabled={limitReached} placeholder={modo?.placeholder??"Pregunta sobre tus datos…"} maxChars={data.limits.maxQuestionChars} categoriesId={catId} categoriesOpen={consult} inputId={inputId} onAttach={f=>void attach(f)} attachError={attachError}/></div>
+   <div className="agente-dock"><Composer value={text} onChange={setText} onSend={()=>ask(text)} onStop={a.stop} sending={a.sending} disabled={limitReached} placeholder={modo?.placeholder??"Pregunta sobre tus datos…"} maxChars={data.limits.maxQuestionChars} inputId={inputId} onAttach={f=>void attach(f)} attachError={attachError}/></div>
 
    {modo?.pie}
    {!modo&&!has&&<>

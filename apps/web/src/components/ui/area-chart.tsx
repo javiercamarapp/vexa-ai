@@ -1,5 +1,5 @@
 'use client';
-import {useId,useState,type KeyboardEvent,type PointerEvent} from 'react';
+import {useEffect,useId,useState,type KeyboardEvent,type PointerEvent} from 'react';
 import {useWidth} from './use-width';
 import {ChartTip} from './chart-parts';
 import {cadaCuantas,compactEs,esConteoPequeno,indicesEtiquetados,niceScale,variacionVsAnterior} from '../../lib/charts/escala.mjs';
@@ -7,8 +7,10 @@ export type AreaPoint={label:string;long?:string;value:number|null;display:strin
 export type AreaSeries={name:string;points:AreaPoint[];tone?:'primary'|'compare'|'estimated'};
 /** Línea con área degradada muy tenue: 1.75 px, puntos solo en el último valor y en hover, 3 marcas en el eje Y, etiquetas directas del máximo y del último valor.
  *  Valores anclados a cero; null = hueco; parcial = punteado con «parcial». Teclado: ←/→. La cifra exacta es el texto del tooltip. */
-export function AreaChart({series,height=168,title,unit}:{series:AreaSeries[];height?:number;title:string;unit?:string}){
- const [ref,width]=useWidth<HTMLDivElement>(),[active,setActive]=useState<number|null>(null),uid=useId().replace(/:/g,'');
+export function AreaChart({series,height:alto=168,title,unit}:{series:AreaSeries[];/** «fill»: ocupa toda la altura libre de la tarjeta (el contenedor flexible mide el alto). */height?:number|'fill';title:string;unit?:string}){
+ const fill=alto==='fill',[ref,width]=useWidth<HTMLDivElement>(),[medido,setMedido]=useState(0),[active,setActive]=useState<number|null>(null),uid=useId().replace(/:/g,'');
+ useEffect(()=>{const el=ref.current;if(!fill||!el)return;const read=()=>setMedido(Math.round(el.getBoundingClientRect().height));read();const ro=new ResizeObserver(read);ro.observe(el);return()=>ro.disconnect();},[fill,ref]);
+ const height=fill?Math.max(medido,128):alto;
  const main=series[0],n=main?.points.length??0;
  const max0=Math.max(0,...series.flatMap(s=>s.points.map(p=>p.value??0)));
  const sc=niceScale(max0,{integer:esConteoPequeno(series.flatMap(s=>s.points.map(p=>p.value)))}),ticks=sc.ticks.map(t=>t===0?'0':compactEs(t));
@@ -22,7 +24,7 @@ export function AreaChart({series,height=168,title,unit}:{series:AreaSeries[];he
  const key=(e:KeyboardEvent)=>{if(e.key==='ArrowRight'){e.preventDefault();setActive(a=>Math.min(n-1,(a??-1)+1));}else if(e.key==='ArrowLeft'){e.preventDefault();setActive(a=>Math.max(0,(a??n)-1));}else if(e.key==='Escape')setActive(null);};
  const sel=active===null?null:active;
  const labeled=main?indicesEtiquetados(main.points):[];
- return <figure className="chart area-chart" aria-label={title}>
+ return <figure className={'chart area-chart'+(fill?' area-fill-h':'')} aria-label={title}>
   <div className="chart-plot" ref={ref}>
    <svg width={W} height={height} viewBox={`0 0 ${W} ${height}`} style={{maxWidth:'100%'}} role="group" aria-label={title+'. Usa las flechas para recorrer los puntos.'} tabIndex={0} onKeyDown={key} onPointerMove={(e:PointerEvent<SVGSVGElement>)=>pick(e.clientX,e.currentTarget)} onPointerLeave={()=>setActive(null)} onBlur={()=>setActive(null)}>
     <defs><linearGradient id={'g'+uid} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="currentColor" stopOpacity=".12"/><stop offset="1" stopColor="currentColor" stopOpacity="0"/></linearGradient></defs>

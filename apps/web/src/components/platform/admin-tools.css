@@ -2,7 +2,8 @@
 .at-search input { width: 100%; }
 .at-lista { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 2px; max-height: min(52dvh, 420px); overflow: auto; }
 .at-fila { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
-.at-fila[aria-selected=true] { background: var(--ui-nav-active); }
+.at-fila[aria-selected=true] { background: var(--ui-nav-active); color: var(--ui-nav-text); }
+.at-fila[aria-selected=true] small { color: inherit; opacity: .8; }
 .at-fila small { color: var(--ui-secondary); white-space: nowrap; }
 .at-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .at-vacio { color: var(--ui-secondary); margin: 12px 0 0; }
@@ -10,3 +11,8 @@
 .at-campo { display: grid; gap: 4px; margin-top: 12px; }
 .at-campo small { color: var(--ui-secondary); }
 @media (max-width: 520px) { .at-kbd { display: none; } .at-fila { flex-direction: column; gap: 0; } }
+/* Disparador en la barra superior de la consola: el encabezado queda fuera de .workspace-content, así que sin esto el botón heredaba el estilo primario negro y el chip ⌘K no se leía. */
+.workspace-header .at-trigger { display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: none; min-height: 32px; margin: 0; padding: 0 6px 0 12px; border: 1px solid var(--ui-input); border-radius: 8px; background: var(--ui-surface); color: var(--ink); font: 600 13px/1.3 var(--font-ui); white-space: nowrap; cursor: pointer; }
+.workspace-header .at-trigger:hover { background: var(--ui-soft); border-color: var(--ui-secondary); }
+.workspace-header .at-trigger .at-kbd { margin: 0; padding: 2px 6px; border: 1px solid var(--ui-border); background: var(--ui-soft); color: var(--ui-secondary); font: 600 12px/1.2 var(--font-ui); }
+@media (max-width: 520px) { .workspace-header .at-trigger { min-height: 44px; padding: 0 12px; } }

@@ -47,7 +47,7 @@ export function AdminTools({trigger = true}: {trigger?: boolean}) {
     const client = data?.items.find(i => i.id === c.clientId); if (client) { setMode(null); setTarget(client); }
   }
   return <>
-    {trigger && <button type="button" className="btn btn-sm btn-secondary" onClick={() => show('clients')} aria-keyshortcuts="Control+K Meta+K">Cambiar de cliente<kbd className="at-kbd" aria-hidden="true">⌘K</kbd></button>}
+    {trigger && <button type="button" className="at-trigger" onClick={() => show('clients')} aria-keyshortcuts="Control+K Meta+K">Cambiar de cliente<kbd className="at-kbd" aria-hidden="true">⌘K</kbd></button>}
     {mode && <CommandList mode={mode} onClose={() => setMode(null)} data={data} failed={failed} recents={recents} onRun={run} />}
     {target && <SupportDialog client={target} onClose={() => setTarget(null)} />}
   </>;

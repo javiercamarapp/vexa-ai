@@ -208,3 +208,10 @@ body :is(.workspace-content,.access-flow,.platform-shell) select:not([multiple])
 .notification-matrix thead th:not(:first-child),.notification-matrix tbody td{text-align:center}
 .notification-matrix tbody td input[type=checkbox]{display:block;margin-inline:auto}
 .ov-avanzado summary{cursor:pointer;font-size:13px;color:var(--ui-secondary);margin-bottom:var(--sp-2,8px)}
+/* BrandMark: el color de marca solo vive en el SVG (atributo fill); aquí solo tamaño fijo y la variante monocroma del tema oscuro. */
+.bm{flex:none;display:inline-block;vertical-align:-3px;color:var(--ui-secondary)}
+:root[data-theme=dark] .bm[data-mono-oscuro] path{fill:var(--ink)}
+.bm-badge{flex:none;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-surface)}
+.bm-badge .bm{vertical-align:0}
+.bm-linea{display:inline-flex;align-items:center;gap:6px;max-width:100%;min-width:0}
+.bm-linea .bm{vertical-align:0}

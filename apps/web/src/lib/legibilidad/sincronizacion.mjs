@@ -26,7 +26,7 @@ export function filasSincronizacion(f, ahora = Date.now()) {
       exito: s.lastSuccessAt ? hace(Math.max(0, Math.round((ahora - new Date(s.lastSuccessAt).getTime()) / 1000))) : 'Nunca', siguiente: s.status === 'paused' || s.method === 'manual_upload' ? null : dentroDe(s.nextRunAt, ahora),
       error: textoError(s.errorCode), nuevos: s.lastNewRecords, latencia: s.latencyMs == null ? null : s.latencyMs < 1000 ? `${s.latencyMs} ms` : `${(s.latencyMs / 1000).toFixed(1)} s`};
   });
-  const calculos = f.insights.map(i => ({clave: i.insight, nombre: nombreCalculo(i.insight), estado: i.status === 'ready' ? 'Al día' : i.status === 'partial' ? 'Calculando…' : i.status === 'skipped' ? 'Omitido' : 'Falló',
+  const calculos = f.insights.map(i => ({clave: i.insight, nombre: nombreCalculo(i.insight), estado: i.status === 'ready' ? 'Al día' : i.status === 'partial' ? 'Parcial' : i.status === 'skipped' ? 'Omitido' : 'Falló',
     actualizado: i.refreshedAt ? hace(Math.max(0, Math.round((ahora - new Date(i.refreshedAt).getTime()) / 1000))) : null, pendientes: i.pending}));
   return {disponible: true, fuentes, calculos};
 }

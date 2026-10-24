@@ -62,3 +62,10 @@ test('M2: un solo formato de dinero es-MX con «US$» en toda la pantalla (nada 
 });
 import * as fs from 'node:fs';
 function require_fs() { return fs; }
+
+import {textoCache} from '../src/lib/workspace/rotulo-cache.mjs';
+test('M8/M9/M15: ni el rótulo de caché ni los KPI muestran texto de carga; el copy de error no manda a un «Actualizar» inexistente', () => {
+  assert.ok(!/Actualizando/.test(textoCache(42000, {actualizando: true})));
+  assert.ok(!/Cargando intervenciones/.test(leer('components/recommendations/panel.tsx')));
+  assert.ok(!/«Actualizar»/.test(leer('components/workspace/problems-view.tsx')));
+});

@@ -66,7 +66,7 @@ test('dosMesesCompletos descarta el mes en curso',()=>{const p=dosMesesCompletos
 test('Resumen: máx. 3, con fuente y cobertura; las monedas no se mezclan; categorías sin dato → Aún sin datos',()=>{
  const r=insightsResumen({trends:trends(),ahora:AHORA});assert.equal(r.length,3);
  const [c,p,k]=r;assert.match(c.texto,/\*\*100\*\*.*\*\*150\*\*.*\+50.0 %/);assert.match(c.cobertura,/fuera de la ventana/);assert.equal(c.clase,'observed');
- assert.match(p.texto,/\*\*1,000\.00 USD\*\*.*\*\*1,500\.00 USD\*\*/);assert.match(p.texto,/\+50\.0 %/);assert.match(p.cobertura,/CAD, MXN\) no se suman ni se convierten/);assert.match(p.cobertura,/2 pedidos sin importe/);
+ assert.match(p.texto,/\*\*US\$1,000\*\*.*\*\*US\$1,500\*\*/);assert.match(p.texto,/\+50\.0 %/);assert.match(p.cobertura,/CAD, MXN\) no se suman ni se convierten/);assert.match(p.cobertura,/2 pedidos sin importe/);
  assert.equal(k.vacio,true);assert.match(k.razon,/no están disponibles ahora/);
  for(const i of r){assert.ok(i.fuente);if(!i.vacio){assert.ok(i.cobertura);assert.ok(['observed','estimated','inferred'].includes(i.clase));}}
 });

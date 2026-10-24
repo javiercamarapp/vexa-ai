@@ -509,3 +509,11 @@ table,.metric-grid dd,.kpi,[class*=kpi] { font-variant-numeric:tabular-nums; }
 @keyframes rovaq-barrido { 0% { clip-path:inset(0 100% 0 0); opacity:.35; } 45%,80% { clip-path:inset(0 0 0 0); opacity:1; } 100% { clip-path:inset(0 0 0 100%); opacity:.35; } }
 @keyframes rovaq-latido { 0%,30% { transform:scale(1); } 55% { transform:scale(1.28); } 75%,100% { transform:scale(1); } }
 @media (prefers-reduced-motion: reduce) { .rovaq-logo-animado .rovaq-logo-tinta, .rovaq-logo-animado .rovaq-logo-punto { animation:none; } }
+
+/* Arranque limpio y carga de página completa (24-oct): mientras haya un logo de carga de página completa NO se ve nada más de contenido; al terminar, todo de una vez. */
+body:has(.rovaq-cargando:not(.rovaq-cargando-compacto)) :is(.site-header,.site-footer) { display:none; }
+.workspace-content:has(.rovaq-cargando:not(.rovaq-cargando-compacto)) *:not(.rovaq-cargando):not(.rovaq-cargando *):not(:has(.rovaq-cargando)) { display:none!important; }
+.workspace-content:has(.rovaq-cargando:not(.rovaq-cargando-compacto)) .rovaq-cargando:not(.rovaq-cargando-compacto) { min-height:calc(100dvh - 120px); }
+#arranque-logo { display:none; }
+html[data-arranque] #arranque-logo { display:flex; position:fixed; inset:0; z-index:2000; align-items:center; justify-content:center; background:var(--background); }
+html[data-arranque] :is(.site-header,.site-footer,main,.skip-link) { display:none!important; }

@@ -55,7 +55,9 @@ export function HoyPantalla(){
  // Un KPI que no cargó se reintenta solo en segundo plano (máx. 3 veces, cada 20 s): sin botones, sin recargar la pantalla.
  const intentos=useRef(0),hayFallo=v.kpis.some(k=>k.estado==='no_disponible');
  useEffect(()=>{if(!hayFallo||intentos.current>=3)return;const id=window.setTimeout(()=>{intentos.current++;fuga.reload();carga.reload();cfo.reload();},20000);return()=>window.clearTimeout(id);},[hayFallo,fuga.status,carga.status,cfo.status]);// eslint-disable-line react-hooks/exhaustive-deps
- if(v.cargando)return <RovaqCargando mensaje=""/>;
+ // El logo solo cubre la PRIMERA carga: un reintento en segundo plano no debe volver a tapar la pantalla ya pintada.
+ const yaListo=useRef(false);if(!v.cargando)yaListo.current=true;
+ if(v.cargando&&!yaListo.current)return <RovaqCargando mensaje=""/>;
  return <ComoSeCalculoProvider><section className="hoy" aria-label="Hoy">
   <div className="hoy-titular"><PageHeader eyebrow="Resumen" title="Hoy"
    description={<span className="hoy-resumen" title={v.titular.texto}>{v.titular.partes.map((x,i)=>x.f?<strong key={i}>{x.t}</strong>:<span key={i}>{x.t}</span>)}</span>}

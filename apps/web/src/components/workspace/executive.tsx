@@ -44,7 +44,7 @@ export function StatusStrip({linea=null,fuentes,cargando,avisos,onCobertura,dine
    <Button size="sm" variant="ghost" onClick={onCobertura}>Ver cobertura</Button>
   </div>
   {linea&&<p className={s.lineaAvisos+' mv-franja-linea'} role="status" data-testid="linea-avisos">{linea}</p>}
-  {visibles.length>0&&<details className={s.avisos}><summary>{visibles.length===1?'1 aviso':`${visibles.length} avisos`}</summary><div>{visibles.map(a=><div key={a.key}>{a.node}<div className={s.avisoPie}><Button size="sm" variant="ghost" onClick={()=>ocultar(a.key)} title="Quita este aviso por 7 días; vuelve antes si aparece uno nuevo">Ocultar 7 días</Button></div></div>)}</div></details>}
+  {visibles.length>0&&<details className={s.avisos+' mv-avisos'}><summary>{visibles.length===1?'1 aviso':`${visibles.length} avisos`}</summary><div>{visibles.map(a=><div key={a.key}>{a.node}<div className={s.avisoPie}><Button size="sm" variant="ghost" onClick={()=>ocultar(a.key)} title="Quita este aviso por 7 días; vuelve antes si aparece uno nuevo">Ocultar 7 días</Button></div></div>)}</div></details>}
  </section>;
 }
 

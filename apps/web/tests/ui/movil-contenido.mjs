@@ -25,7 +25,7 @@ async function medir(){
  const vis=e=>{const r=e.getBoundingClientRect(),cs=getComputedStyle(e);return r.width>0&&r.height>0&&cs.visibility!=='hidden'&&cs.display!=='none'&&cs.opacity!=='0';};
  const desc=e=>e.tagName.toLowerCase()+(e.className&&typeof e.className==='string'?'.'+e.className.trim().split(/\s+/).slice(0,2).join('.'):'')+' "'+(e.innerText||e.getAttribute('aria-label')||'').trim().slice(0,28).replace(/\s+/g,' ')+'"';
  const oculto=e=>e.closest('.sr-only,[hidden],[aria-hidden=true],dialog:not([open]),svg');
- const out={desborde:[],kpi:[],tactil:[],texto:[],partidas:[],pestanas:[],pliegue:[]};
+ const out={desborde:[],kpi:[],tactil:[],texto:[],partidas:[],pestanas:[],pliegue:[],scrub:[]};
  const doc=document.documentElement;
  if(doc.scrollWidth>innerWidth+1)out.desborde.push('documento '+doc.scrollWidth+'>'+innerWidth);
  const all=[...document.querySelectorAll('.workspace-content *')].filter(e=>!['SCRIPT','STYLE','NOSCRIPT'].includes(e.tagName)&&!oculto(e)&&vis(e));
@@ -33,7 +33,7 @@ async function medir(){
  for(const e of all.filter(e=>e.matches('.pc-kpi-valor,.stat-value,.ui-kpi-value,.hoy-kpi-valor,.pfig-value,.kpi-valor,[class*="kpi"][class*="valor"],[class*="kpi"][class*="value"]'))){
   const lh=parseFloat(getComputedStyle(e).lineHeight)||parseFloat(getComputedStyle(e).fontSize)*1.2;
   const txt=(e.textContent||'').trim();if(!txt)continue;
-  const rg=document.createRange();rg.selectNodeContents(e);const tops=new Set([...rg.getClientRects()].map(r=>Math.round(r.top/4)));
+  const rg=document.createRange();rg.selectNodeContents(e);const tops=new Set();{let fin=-1,n=0;for(const r of [...rg.getClientRects()].filter(r=>r.width>0).sort((a,b)=>a.top-b.top)){if(r.top>=fin-1){n++;fin=r.bottom;}else fin=Math.max(fin,r.bottom);tops.add(n);}}
   if(!e.hasAttribute('data-largo')&&(tops.size>1||e.scrollWidth>e.clientWidth+1))out.kpi.push(desc(e)+' '+tops.size+' líneas, '+e.scrollWidth+'/'+e.clientWidth);
  }
  // 2. Texto >= 12 px
@@ -47,6 +47,7 @@ async function medir(){
  let n;
  while((n=walker.nextNode())&&presupuesto>0){
   const p=n.parentElement;if(!p||oculto(p)||!vis(p)||p.closest('script,style'))continue;
+  if(p.closest('details:not([open])')&&!p.closest('summary'))continue; // contenido plegado: no se ve
   const t=n.textContent;if(!t.trim())continue;
   const re=/[\p{L}\p{N}]{3,}/gu;let m;
   while((m=re.exec(t))&&presupuesto-->0){
@@ -82,10 +83,14 @@ async function medir(){
   if(!vis(c)||oculto(c))continue;
   const items=[...c.querySelectorAll(':scope > a,:scope > button,:scope > li > a,:scope > li > button,:scope > [role=tab]')].filter(vis);
   if(items.length<2)continue;
-  c.scrollLeft=c.scrollWidth;await new Promise(r=>setTimeout(r,60));
-  const cr=c.getBoundingClientRect(),last=items[items.length-1].getBoundingClientRect();
+  // El recorte efectivo lo pone el contenedor con scroll horizontal más cercano (él mismo o un ancestro): se desliza hasta el final y la última pestaña debe quedar entera.
+  const sc=(()=>{for(let p=c;p;p=p.parentElement){const o=getComputedStyle(p).overflowX;if((o==='auto'||o==='scroll')&&p.scrollWidth>p.clientWidth+1)return p;}return c;})();
+  const cadena=[];for(let p=c;p;p=p.parentElement){const o=getComputedStyle(p).overflowX;if((o==='auto'||o==='scroll')&&p.scrollWidth>p.clientWidth+1)cadena.push(p);}
+  for(const p of cadena.reverse())p.scrollTo({left:p.scrollWidth,behavior:'instant'});
+  await new Promise(r=>setTimeout(r,160));
+  const cr=sc.getBoundingClientRect(),last=items[items.length-1].getBoundingClientRect();
   if(last.right>cr.right+2||last.right>innerWidth+2)out.pestanas.push('última cortada en '+desc(c)+' ('+Math.round(last.right)+'>'+Math.round(cr.right)+')');
-  c.scrollLeft=0;
+  for(const p of cadena)p.scrollLeft=0;
   if(c.matches('.pc-tabs,[role=tablist]')){for(let i=1;i<items.length;i++){const a=items[i-1].getBoundingClientRect(),b=items[i].getBoundingClientRect();if(b.left-a.right<2&&b.left>a.right-1){out.pestanas.push('pestañas pegadas en '+desc(c));break;}}
    const act=items.find(i=>i.matches('[aria-current=page],[aria-selected=true],[aria-pressed=true]'));
    if(act&&c.scrollWidth>c.clientWidth+1){act.scrollIntoView({inline:'center',block:'nearest'});await new Promise(r=>setTimeout(r,60));const ar=act.getBoundingClientRect(),cr2=c.getBoundingClientRect();if(ar.left<cr2.left-1||ar.right>cr2.right+1)out.pestanas.push('la activa no queda visible en '+desc(c));c.scrollLeft=0;}}
@@ -114,17 +119,22 @@ for(const theme of themes)for(const w of sizes){
   try{await page.goto(base+r,{waitUntil:'networkidle',timeout:120000});await page.waitForTimeout(700);
    if(capDir&&w===390)await page.screenshot({path:join(capDir,r.replace(/[^a-z0-9]+/gi,'_').replace(/^_|_$/g,'')+'-'+theme+'-'+w+'.jpg'),type:'jpeg',quality:60,fullPage:true}).catch(()=>{});
    if(!await page.$('.workspace-content'))throw new Error('sin .workspace-content (¿error de compilación o de carga?)');
-   m=await page.evaluate(medir);}
-  catch(e){m={desborde:[],kpi:[],tactil:[],texto:[],partidas:[],pestanas:[],pliegue:[],error:String(e.message).slice(0,80)};}
+   m=await page.evaluate(medir);
+   // Scrub: tocar una gráfica de columnas/área debe mostrar la lectura en una cinta FIJA por encima del SVG (nunca bajo el dedo).
+   const pos=await page.evaluate(()=>{const sv=document.querySelector('.workspace-content .chart-plot > svg');if(!sv)return null;sv.scrollIntoView({block:'center'});const r=sv.getBoundingClientRect();return {x:r.left+r.width*0.62,y:r.top+r.height*0.6};});
+   if(pos){await page.touchscreen.tap(pos.x,pos.y);await page.waitForTimeout(250);
+    const malo=await page.evaluate(()=>{const sv=document.querySelector('.workspace-content .chart-plot > svg'),tip=sv?.parentElement.querySelector(':scope > .chart-tip');if(!tip)return 'sin lectura tras tocar';const a=tip.getBoundingClientRect(),b=sv.getBoundingClientRect();return a.bottom<=b.top+1&&getComputedStyle(tip).position==='static'?null:'la lectura no está sobre la gráfica';});
+    if(malo)m.scrub.push(malo);}}
+  catch(e){m={desborde:[],kpi:[],tactil:[],texto:[],partidas:[],pestanas:[],pliegue:[],scrub:[],error:String(e.message).slice(0,80)};}
   await page.close();
   const n=Object.entries(m).filter(([k])=>k!=='error').reduce((s,[,v])=>s+v.length,0)+(m.error?1:0);fallas+=n;
-  filas.push({ruta:r,ancho:w,tema:theme,desborde:m.desborde.length,kpi:m.kpi.length,tactil:m.tactil.length,texto12:m.texto.length,partidas:m.partidas.length,pestanas:m.pestanas.length,pliegue:m.pliegue.length,error:m.error??''});
-  if(detalle&&n)console.log('--',theme,w,r,JSON.stringify({d:m.desborde,k:cut(m.kpi,3),t:cut(m.tactil,6),x:cut(m.texto,4),p:cut(m.partidas,4),pe:m.pestanas,pl:m.pliegue,e:m.error}));
+  filas.push({ruta:r,ancho:w,tema:theme,desborde:m.desborde.length,kpi:m.kpi.length,tactil:m.tactil.length,texto12:m.texto.length,partidas:m.partidas.length,pestanas:m.pestanas.length,pliegue:m.pliegue.length,scrub:m.scrub.length,error:m.error??''});
+  if(detalle&&n)console.log('--',theme,w,r,JSON.stringify({d:m.desborde,k:cut(m.kpi,3),t:cut(m.tactil,6),x:cut(m.texto,4),p:cut(m.partidas,4),pe:m.pestanas,pl:m.pliegue,sc:m.scrub,e:m.error}));
  }
  await ctx.close();
 }
 await browser.close();
-const mal=filas.filter(f=>f.desborde||f.kpi||f.tactil||f.texto12||f.partidas||f.pestanas||f.pliegue||f.error);
+const mal=filas.filter(f=>f.desborde||f.kpi||f.tactil||f.texto12||f.partidas||f.pestanas||f.pliegue||f.scrub||f.error);
 console.table(mal);
 console.log(`${filas.length} combinaciones, ${mal.length} con hallazgos, ${fallas} hallazgos`);
 process.exit(fallas?1:0);

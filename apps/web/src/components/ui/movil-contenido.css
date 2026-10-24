@@ -5,7 +5,7 @@
 :root{--mv-hit:44px}
 
 /* ---- Palabras: nunca partidas letra a letra. `anywhere` encoge el mínimo de las columnas; `break-word` solo parte lo que de verdad no cabe. ---- */
-:root:root body .workspace-content,:root .workspace-content :is(p,li,dd,dt,td,th,figcaption,blockquote,h1,h2,h3,h4,summary,label,small,span,strong,code,a,b,div){overflow-wrap:break-word;word-break:normal;hyphens:manual}
+:root:root body .workspace-content,:root:root body .workspace-content :is(p,li,dd,dt,td,th,figcaption,blockquote,h1,h2,h3,h4,summary,label,small,span,strong,code,a,b,div){overflow-wrap:break-word;word-break:normal;hyphens:manual}
 :root:root body .workspace-content :is(.chip,.ui-chip,.pc-estado,.kind-badge,.btn,.seg-btn,.pc-count,.fchip,.delta,.id-chip,.count-pill){overflow-wrap:normal;word-break:normal;hyphens:manual}
 :root:root body .workspace-content :is(.pc-estado,.kind-badge,.delta,.pc-count,.count-pill,.btn,.seg-btn){white-space:nowrap}
 :root:root body .workspace-content :is(td,th){min-width:min-content}
@@ -16,21 +16,21 @@
 :root:root body :is(.pc-kpi-valor,.hoy-kpi-valor,.ui-kpi-value,.stat-value,.pfig-value,.kpi-valor)[data-abrev]{font-size:0;line-height:0}
 :root:root body :is(.pc-kpi-valor,.hoy-kpi-valor,.ui-kpi-value,.stat-value,.pfig-value,.kpi-valor)[data-abrev]::after{content:attr(data-abrev) / "";font-size:clamp(16px,4.9vw,20px);line-height:1.15;font-weight:700;white-space:nowrap}
 :root:root body .pc-kpi-valor small{font-size:12px;margin-left:4px}
-:root:root body .pc-kpi-label,:root .hoy-kpi-label,:root .ui-kpi-label,:root .stat-label{font-size:12px;letter-spacing:.04em}
+:root:root body .pc-kpi-label,:root:root body .hoy-kpi-label,:root:root body .ui-kpi-label,:root:root body .stat-label{font-size:12px;letter-spacing:.04em}
 
 /* Tira de KPI: 2 columnas compactas (3-4 cifras caben en el primer pliegue) */
-:root:root body .pc-kpis,:root .hoy-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+:root:root body .pc-kpis,:root:root body .hoy-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
 :root:root body .pc-kpi{padding:12px;gap:4px}
 :root:root body .pc-kpi+.pc-kpi{border-left:0}
 :root:root body .pc-kpi:nth-child(even){border-left:1px solid var(--ui-border)}
 :root:root body .pc-kpi:nth-child(n+3){border-top:1px solid var(--ui-border)}
 :root:root body .pc-kpi-nota{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-:root:root body .pc-kpi .spark,:root .hoy-kpi-spark{display:none}
-:root:root body .ui-kpis,:root .stat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-:root:root body .ui-kpi,:root .stat-card{padding:12px}
+:root:root body .pc-kpi .spark,:root:root body .hoy-kpi-spark{display:none}
+:root:root body .ui-kpis,:root:root body .stat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+:root:root body .ui-kpi,:root:root body .stat-card{padding:12px}
 :root:root body .stat-main{min-width:0;flex-wrap:nowrap}
 :root:root body .stat-main .spark{display:none}
-:root:root body .stat-foot,:root .ui-kpi-note,:root .stat-note{font-size:12px}
+:root:root body .stat-foot,:root:root body .ui-kpi-note,:root:root body .stat-note{font-size:12px}
 :root:root body .ui-kpi-row .spark{display:none}
 
 /* ---- Hoy: primera cifra en el primer pliegue de 390x844 ---- */
@@ -46,23 +46,26 @@
 :root:root body .hoy-kpi:nth-child(n+3){border-top:1px solid var(--ui-border)}
 :root:root body .hoy-kpi-top{min-height:24px}
 :root:root body .hoy-kpi-fila{flex-wrap:wrap}
-:root:root body .hoy-kpi .sello,:root .hoy-kpi .sello-2>span{font-size:12px;line-height:1.4}
+:root:root body .hoy-kpi .sello,:root:root body .hoy-kpi .sello-2>span{font-size:12px;line-height:1.4}
 :root:root body .hoy-kpi .sello-2>span:nth-child(n+2){display:none}
 :root:root body .hoy-kpi-nota{-webkit-line-clamp:2}
 :root:root body .hoy-kpi .btn.hoy-reintentar{height:32px;min-height:32px}
 /* Franja de estado de fuentes: una sola línea (<= 44 px) con «N avisos» */
 :root:root body .mv-franja{display:flex;flex-wrap:nowrap;align-items:center;gap:8px;padding:0 12px;min-height:44px;height:44px;overflow:hidden;white-space:nowrap}
 :root:root body .mv-franja>div{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 auto}
-:root:root body .mv-franja .mv-franja-hasta,:root .mv-franja .mv-franja-sin,:root .mv-franja .mv-franja-linea{display:none}
+:root:root body .mv-franja .mv-franja-hasta,:root:root body .mv-franja .mv-franja-sin,:root:root body .mv-franja .mv-franja-linea{display:none}
 :root:root body .mv-franja .mv-franja-fuentes{flex:1 1 auto;min-width:0;overflow:hidden;white-space:nowrap;flex-wrap:nowrap;gap:4px}
 :root:root body .mv-franja .mv-etq{font-size:0}
 :root:root body .mv-franja .mv-etq::before{content:"Fuentes";font-size:12px}
 :root:root body .mv-franja .mv-franja-fuentes strong{white-space:nowrap}
 :root:root body .mv-franja>div>button{min-height:32px;height:32px;padding-inline:8px}
-:root:root body .mv-franja .avisos{margin-left:auto}
-:root:root body .mv-franja .avisos summary{min-height:32px;height:32px;display:inline-flex;align-items:center;padding-inline:10px;border:1px solid var(--ui-line-strong);border-radius:999px;position:relative}
-:root:root body .mv-franja .avisos[open]{position:absolute;left:8px;right:8px;top:100%;z-index:5;margin:4px 0 0;padding:8px;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;white-space:normal;order:0}
-:root:root body .mv-franja{position:relative;overflow:visible}
+:root:root body .mv-franja .mv-avisos{margin-left:auto}
+:root:root body .mv-franja .mv-avisos summary{height:auto;display:inline-flex;align-items:center;padding-inline:10px;border:1px solid var(--ui-line-strong);border-radius:999px;position:relative}
+:root:root body .mv-franja:has(.mv-avisos[open]){height:auto!important;flex-wrap:wrap!important;padding-block:6px}
+:root:root body .mv-franja .mv-avisos[open]{position:static!important;flex:1 1 100%!important;width:100%!important;margin:4px 0 0!important;order:99;white-space:normal}
+:root:root body .mv-franja .mv-avisos[open]>div{position:static!important;width:auto!important;max-width:none!important;inset:auto!important;transform:none!important}
+:root:root body .mv-franja>div:has(~.mv-avisos[open]){flex:1 1 100%}
+:root:root body .mv-franja{overflow:visible}
 
 /* ---- Controles: zona táctil >= 44 px ---- */
 :root:root body :is(.workspace-content,.access-flow) :is(.btn,button.btn,a.btn){min-height:var(--mv-hit);padding-block:6px}
@@ -230,4 +233,12 @@ html:root:not([data-tablas-movil=comparar]) .pc-card[data-flush] :is(.ui-table-w
 /* Botón de quitar de los chips de filtro: transparente con icono visible (antes un cuadro negro 22x22) */
 :root:root:root body .workspace-content :is(.ui-chip-x,.fchip-x){background:transparent!important;border:0!important;color:var(--ui-secondary)!important;padding:0!important;box-shadow:none!important;min-width:24px;min-height:24px}
 :root:root:root body .workspace-content :is(.ui-chip-x,.fchip-x) svg{display:block;width:12px;height:12px;stroke:currentColor;fill:none}
+
+/* Gráficas que llenan la tarjeta: en celular el SVG va en flujo, bajo la cinta de lectura */
+:root:root body .area-chart.area-fill-h{flex:none;min-height:0}
+:root:root body .area-chart.area-fill-h .chart-plot{flex:none;min-height:0}
+:root:root body .area-chart.area-fill-h .chart-plot>svg{position:static;inset:auto;width:100%;height:auto}
+:root:root body .insight-eyebrow{font-size:12px}
+:root:root body .workspace-content .segmented::after{content:"";flex:0 0 6px}
+
 }

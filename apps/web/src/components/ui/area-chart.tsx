@@ -9,8 +9,8 @@ export type AreaSeries={name:string;points:AreaPoint[];tone?:'primary'|'compare'
  *  Valores anclados a cero; null = hueco; parcial = punteado con «parcial». Teclado: ←/→. La cifra exacta es el texto del tooltip. */
 export function AreaChart({series,height:alto=168,title,unit}:{series:AreaSeries[];/** «fill»: ocupa toda la altura libre de la tarjeta (el contenedor flexible mide el alto). */height?:number|'fill';title:string;unit?:string}){
  const fill=alto==='fill',[ref,width]=useWidth<HTMLDivElement>(),[medido,setMedido]=useState(0),[active,setActive]=useState<number|null>(null),uid=useId().replace(/:/g,'');
- useEffect(()=>{const el=ref.current;if(!fill||!el)return;const read=()=>setMedido(Math.round(el.getBoundingClientRect().height));read();const ro=new ResizeObserver(read);ro.observe(el);return()=>ro.disconnect();},[fill,ref]);
- const height=fill?Math.max(medido,128):alto;
+ useEffect(()=>{const el=ref.current;if(!fill||!el)return;const read=()=>{const sv=el.querySelector('svg');if(sv&&getComputedStyle(sv).position!=='absolute'){setMedido(0);return;}setMedido(Math.round(el.getBoundingClientRect().height));};/* en celular el SVG va en flujo (con la cinta de lectura): altura fija, sin medir el contenedor */read();const ro=new ResizeObserver(read);ro.observe(el);return()=>ro.disconnect();},[fill,ref]);
+ const height=fill?(medido?Math.max(medido,128):168):alto;
  const main=series[0],n=main?.points.length??0;
  const max0=Math.max(0,...series.flatMap(s=>s.points.map(p=>p.value??0)));
  const sc=niceScale(max0,{integer:esConteoPequeno(series.flatMap(s=>s.points.map(p=>p.value)))}),ticks=sc.ticks.map(t=>t===0?'0':compactEs(t));

@@ -323,16 +323,24 @@ body .workspace-content .eyebrow{margin:0 0 var(--sp-1)}
 .chart-legend{display:flex;flex-wrap:wrap;gap:2px var(--sp-4);margin:var(--sp-2) 0 0;font-size:12px;color:var(--chart-tick)}
 .chart-legend span{display:inline-flex;align-items:center;gap:6px}.chart-legend b{font:600 12px var(--font-ui)}
 .chart-legend-hatch{display:inline-block;width:12px;height:8px;border-radius:8px;border:1px solid var(--chart-hatch);background:repeating-linear-gradient(135deg,var(--chart-hatch) 0 1px,transparent 1px 4px)}
-/* Tooltip: tarjeta pequeña, sombra suave, cifra tabular. Es role=status: se fija el color porque la regla genérica de [role=status] lo atenúa. */
-.chart-tip{position:absolute;z-index:3;display:grid;gap:3px;min-width:132px;max-width:210px;padding:9px 11px;border-radius:8px;border:1px solid var(--ui-border);background:var(--ui-surface);color:var(--ink);font-size:12px;line-height:1.35;box-shadow:0 1px 2px #0e0e100a,0 8px 24px -8px #0e0e1029;pointer-events:none}
-.chart-tip[data-side=left]{transform:translateX(-100%)}
-.workspace-content .chart-tip[role=status]:not(:empty){color:var(--ink);font-size:12px;line-height:1.35}
-.chart-tip-title{font:500 12px var(--font-ui);color:var(--muted);text-transform:capitalize}.chart-tip-title em{font-style:normal;text-transform:none}
-.chart-tip-row{display:flex;flex-direction:column;gap:2px}.chart-tip-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 6px}.chart-tip-row strong,.chart-tip-line strong{font:600 15px/1.2 var(--font-display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+/* Tooltip (un solo sistema para .chart-tip, .mp-tip, .pp-tip y .tip-bubble): tarjeta de 160–280 px por CONTENIDO (width:max-content), alto por contenido, texto que salta por palabras.
+   Causa del defecto de 1 carácter de ancho: `.workspace-content div{min-width:0}` anulaba el min-width del tooltip y `.workspace-content span{overflow-wrap:anywhere}` (heredado) daba un ancho mínimo de 1 letra;
+   un tooltip absoluto con `left:%` toma el espacio libre a la derecha del punto como ancho disponible y se encogía a ese mínimo. Por eso aquí el ancho NO depende del espacio libre y se fija con mayor especificidad.
+   La posición (junto al punto, volteado, acotado al viewport) la calcula use-tip-posicion.ts. Es role=status: se fija el color porque la regla genérica de [role=status] lo atenúa. */
+:root body :is(.chart-tip,.mp-tip,.pp-tip,.tip-bubble){position:absolute;left:0;top:0;right:auto;bottom:auto;transform:none;z-index:60;box-sizing:border-box;display:grid;gap:3px;width:max-content;min-width:160px;max-width:min(280px,calc(100vw - 32px));height:auto;margin:0;padding:10px 12px;border-radius:12px;border:1px solid var(--ui-border);background:var(--ui-surface);color:var(--ink);font:500 12px/1.4 var(--font-ui);text-align:left;text-transform:none;letter-spacing:0;white-space:normal;overflow-wrap:break-word;word-break:normal;hyphens:manual;box-shadow:0 1px 2px #0e0e100a,0 8px 24px -8px #0e0e1029;pointer-events:none;font-variant-numeric:tabular-nums}
+:root body :is(.mp-tip,.pp-tip,.tip-bubble){position:fixed}
+:root body :is(.chart-tip,.mp-tip,.pp-tip,.tip-bubble) :is(span,strong,small,b,i,em,p,div){overflow-wrap:break-word;word-break:normal;min-width:0;text-transform:none}
+.tip-bubble{opacity:0;visibility:hidden}
+.workspace-content .chart-tip[role=status]:not(:empty){color:var(--ink);font-size:12px;line-height:1.4}
+.chart-tip-head{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px}
+.chart-tip-title{font:500 12px/1.4 var(--font-ui);color:var(--muted)}.chart-tip-title::first-letter{text-transform:uppercase}
+.chart-tip-chip{display:inline-flex;align-items:center;padding:0 7px;border-radius:8px;border:1px solid var(--ui-border);background:var(--ui-soft);color:var(--ink);font:500 12px/18px var(--font-ui)}
+.chart-tip-row{display:flex;flex-direction:column;gap:2px}.chart-tip-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 6px}.chart-tip-row strong,.chart-tip-line strong{font:600 16px/1.25 var(--font-display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .chart-tip-row small{flex:1 1 100%;color:var(--muted);font-size:12px}
-.chart-tip-delta{font:500 12px var(--font-ui);color:var(--ink);font-variant-numeric:tabular-nums}.chart-tip-delta i{font-style:normal;font-size:8px;margin-right:4px;vertical-align:1px}.chart-tip-delta small{color:var(--muted);font-size:12px}
+.chart-tip-delta{font:500 12px/1.4 var(--font-ui);color:var(--ink);font-variant-numeric:tabular-nums}.chart-tip-delta i{display:inline-block;font-style:normal;font-size:12px;line-height:1;margin-right:4px;transform:scale(.66);transform-origin:center}.chart-tip-delta small{color:var(--muted);font-size:12px}
 .chart-tip-detail{color:var(--muted);font-size:12px}
 .chart-tip-kind{margin-top:2px}.chart-tip .kind-badge{font-size:12px;padding:1px 7px 1px 5px}
+.pp-tip b{font-weight:600}
 .chart-table{margin-top:var(--sp-3)}
 .sw[data-tone=primary]{background:var(--chart-bar-strong)}.sw[data-tone=estimated]{background:var(--chart-bar-estimated)}.sw[data-tone=compare]{background:var(--ch-neutral)}
 .chart-tip .sw{width:8px;height:8px;border-radius:50%}
@@ -422,9 +430,8 @@ body .workspace-content .eyebrow{margin:0 0 var(--sp-1)}
 /* Drawer / Modal / Popover: viven en components/ui/overlay.css (sistema único de overlays). */
 /* ---- Tooltip corto ---- */
 .tip{position:relative;display:inline-flex}.tip-target{display:inline-flex;align-items:center;border-radius:8px;cursor:help}
-.tip-bubble{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);z-index:30;width:max-content;max-width:min(260px,70vw);padding:7px 10px;border-radius:8px;background:var(--surf-tip);color:var(--surf-tip-ink);font-size:var(--t-small);line-height:1.4;box-shadow:var(--sh-pop);opacity:0;visibility:hidden;pointer-events:none;white-space:normal;text-align:left}
-.tip[data-align=start] .tip-bubble{left:0;transform:none}.tip[data-align=end] .tip-bubble{left:auto;right:0;transform:none}
-.tip:hover .tip-bubble,.tip:focus-within .tip-bubble{opacity:1;visibility:visible}
+.tip-bubble{font-size:var(--t-small)}
+:root body .tip-bubble[data-abierto]{opacity:1;visibility:visible}
 /* ---- InsightCard ---- */
 .insight{display:flex;flex-direction:column;gap:var(--sp-3)}
 .insight[data-highlight]{border-color:color-mix(in srgb,var(--kind-observed) 35%,var(--ui-border));background:var(--ui-surface)}

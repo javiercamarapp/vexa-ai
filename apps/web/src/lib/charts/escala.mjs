@@ -77,3 +77,23 @@ export function indicesEtiquetados(puntos) {
 /** Posición horizontal del tooltip: centrado en x, sin salirse de [pad, ancho - pad]. */
 export const posicionTooltip = (x, ancho, mitadTip = 90, pad = 4) => Math.min(Math.max(x, mitadTip + pad), Math.max(mitadTip + pad, ancho - mitadTip - pad));
 
+
+/** Coloca un tooltip de w×h junto a un punto (ax, ay) en coordenadas de VENTANA y devuelve su esquina (x, y) dentro del viewport, con `margen` de holgura.
+ *  modo «lado»: a la derecha del punto (se voltea a la izquierda si no cabe); verticalmente arranca en `ty` (o a ay - 8) y se acota al viewport.
+ *  modo «arriba»: centrado sobre el punto (se voltea debajo si no cabe arriba); `sep` es la distancia al punto.
+ *  Nunca devuelve una caja fuera de [margen, vw - margen] × [margen, vh - margen] mientras el viewport la admita. */
+export function colocarTooltip({ax, ay, w, h, vw, vh, modo = 'lado', sep = 14, margen = 8, ty}) {
+  const acota = (v, min, max) => Math.max(min, Math.min(v, Math.max(min, max)));
+  if (modo === 'arriba') {
+    const x = acota(ax - w / 2, margen, vw - margen - w);
+    const arriba = ay - sep - h;
+    const abajo = ay + sep;
+    const bajar = arriba < margen && abajo + h <= vh - margen;
+    return {x, y: acota(bajar ? abajo : arriba, margen, vh - margen - h), lado: 'centro', vertical: bajar ? 'abajo' : 'arriba'};
+  }
+  const derecha = ax + sep + w <= vw - margen;
+  const izquierda = ax - sep - w >= margen;
+  const aLaIzq = !derecha && izquierda;
+  const x = acota(aLaIzq ? ax - sep - w : ax + sep, margen, vw - margen - w);
+  return {x, y: acota(ty ?? ay - 8, margen, vh - margen - h), lado: aLaIzq ? 'izquierda' : 'derecha', vertical: 'lado'};
+}

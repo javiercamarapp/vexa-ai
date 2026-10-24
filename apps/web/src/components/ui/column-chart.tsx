@@ -41,7 +41,7 @@ export function ColumnPlot({data,kind='observed',height=168,title,axis,deltaMode
      {i%every===0&&<text x={cx} y={height-6} textAnchor="middle" className="chart-tick chart-xtick">{d.label}</text>}
     </g>;})}
   </svg>
-  {sel&&active!==null&&<ChartTip x={padL+slot*active+slot/2} width={W} title={sel.long??sel.label} partial={sel.partial} kind={kind} detail={sel.detail} delta={deltaMode==='none'||sel.value===null?null:(()=>{const v=variacionVsAnterior(data,active,deltaMode);return v?{...v,contra:data[active-1].label}:null;})()}><strong>{sel.value===null?'Sin datos':sel.display}</strong></ChartTip>}
+  {sel&&active!==null&&<ChartTip x={padL+slot*active+slot/2} width={W} clearance={Math.ceil(slot/2)+8} title={sel.long??sel.label} partial={sel.partial} kind={kind} detail={sel.detail} delta={deltaMode==='none'||sel.value===null?null:(()=>{const v=variacionVsAnterior(data,active,deltaMode);return v?{...v,contra:data[active-1].label}:null;})()}><strong>{sel.value===null?'Sin datos':sel.display}</strong></ChartTip>}
   <ChartLegend partial={data.some(d=>d.partial&&d.value!==null)} nodata={data.some(d=>d.value===null)}/>
  </div>;
 }

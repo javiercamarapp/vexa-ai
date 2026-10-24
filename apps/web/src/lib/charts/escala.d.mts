@@ -8,3 +8,4 @@ export function cadaCuantas(n: number, plotW: number, minPx?: number): number;
 export function variacionVsAnterior(puntos: {value: number | null; partial?: boolean}[], i: number, modo?: 'pct' | 'pp'): {dir: 'up' | 'down' | 'flat'; texto: string} | null;
 export function indicesEtiquetados(puntos: {value: number | null; partial?: boolean}[]): number[];
 export function posicionTooltip(x: number, ancho: number, mitadTip?: number, pad?: number): number;
+export function colocarTooltip(o: {ax: number; ay: number; w: number; h: number; vw: number; vh: number; modo?: 'lado' | 'arriba'; sep?: number; margen?: number; ty?: number}): {x: number; y: number; lado: 'izquierda' | 'derecha' | 'centro'; vertical: 'lado' | 'arriba' | 'abajo'};

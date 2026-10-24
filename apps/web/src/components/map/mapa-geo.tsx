@@ -3,7 +3,9 @@ import {RovaqCargando} from '../rovaq-cargando';
 // Mapa con geometrías reales (SVG puro, sin librerías, sin teselas, sin red). Cámara, entrada escalonada y vuelo adaptados del «Cerebro de ventas»
 // de Likida (repo propio, src/app/admin/mapa-prospectos/cerebro.tsx): cámara imperativa en un <g>, curva cubic-bezier(.22,1,.36,1), borde que se engrosa al elegir.
 import {useCallback,useEffect,useId,useMemo,useRef,useState} from 'react';
-import type {KeyboardEvent,PointerEvent as RPointerEvent} from 'react';
+import {createPortal} from 'react-dom';
+import {useTipPosicion} from '../ui/use-tip-posicion';
+import type {KeyboardEvent,PointerEvent as RPointerEvent,ReactNode} from 'react';
 import {VISTA_PAIS,ZOOM_MAX,cabeEtiqueta,camaraParaRegion,limitarCamara,regionesPintadas,textoRegion,zoomEnPunto,type Camara,type GeoPais} from './mapa-modelo.mjs';
 
 export type Mosaico={clave:string;nombre:string;n:number};
@@ -97,6 +99,13 @@ export function MapaGeo({pais,datos,max,total,nombres,seleccion,onElegir,etiquet
    </g>
   </svg>
   {!geo&&<div className={'mp-carga'+(fallo?' mp-carga-fallo':'')} role="status">{fallo?'No se pudo cargar el mapa. La tabla de abajo tiene los mismos datos.':<RovaqCargando compacto mensaje="Cargando el mapa"/>}</div>}
-  {tip&&tipReg&&<div className="mp-tip" role="presentation" style={{left:Math.min(tip.x+14,Math.max(0,ancho-190)),top:Math.max(0,tip.y-8)}}>{textoRegion(nombreDe(tipReg.r),tipReg.d,total)}</div>}
+  {tip&&tipReg&&typeof document!=='undefined'&&createPortal(<TipRegion ancla={()=>{const c=caja.current?.getBoundingClientRect();return c?{ax:c.left+tip.x,ay:c.top+tip.y,modo:'lado' as const,sep:14}:null;}}>{textoRegion(nombreDe(tipReg.r),tipReg.d,total)}</TipRegion>,document.body)}
  </div>;
+}
+
+/** Tooltip de región: fuera del lienzo (portal a <body>, position:fixed) para que el overflow:hidden del mapa no lo corte; junto al cursor, volteado y acotado al viewport. */
+function TipRegion({ancla,children}:{ancla:()=>{ax:number;ay:number;modo:'lado';sep:number}|null;children:ReactNode}){
+ const ref=useRef<HTMLDivElement>(null);
+ useTipPosicion(ref,true,ancla);
+ return <div ref={ref} className="mp-tip" role="presentation">{children}</div>;
 }

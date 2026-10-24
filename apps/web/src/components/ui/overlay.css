@@ -17,8 +17,8 @@ dialog.modal{margin:auto;width:min(var(--modal-w,440px),calc(100vw - 32px));max-
 dialog.drawer[data-side=left]{inset:0 auto 0 0;width:min(320px,calc(100vw - 32px));height:100dvh;max-height:none}
 dialog.drawer[data-side=left] .drawer-panel{height:100%;max-height:none;border-radius:0 12px 12px 0;border-left:0}
 @media(max-width:639px){
- dialog.drawer:not([data-side=left]){inset:0;width:100vw;height:100dvh;max-height:none}
- dialog.drawer:not([data-side=left]) .drawer-panel{height:100%;max-height:none;border:0;border-radius:0}
+ dialog.drawer:not([data-side=left]):not([data-side=bottom]){inset:0;width:100vw;height:100dvh;max-height:none}
+ dialog.drawer:not([data-side=left]):not([data-side=bottom]) .drawer-panel{height:100%;max-height:none;border:0;border-radius:0}
 }
 
 /* ---- Cabecera / cuerpo / pie ---- */
@@ -171,3 +171,19 @@ body :is(dialog.drawer,dialog.modal) .overlay-body details{padding:8px 12px;bord
 body :is(dialog.drawer,dialog.modal) .overlay-body details>summary{min-height:24px;font:600 13px/1.4 var(--font-ui);cursor:pointer}
 body :is(dialog.drawer,dialog.modal) .overlay-body details[open]>summary{margin-bottom:8px}
 body :is(dialog.drawer,dialog.modal) .overlay-body :is(ul,ol):not(.ov-rows):not(.ov-list):not(.ov-menu):not(.ov-steps):not(.ui-chiplist):not(.filter-chips){margin:0}
+
+/* ---- Hoja inferior (celular): grabber, X de 44 px, un solo nivel, 90 dvh máx. ---- */
+dialog.drawer[data-side=bottom]{inset:auto 0 0 0;margin:0;width:100%;max-width:none;height:auto;max-height:90dvh}
+dialog.drawer[data-side=bottom] .drawer-panel{height:auto;max-height:90dvh;border:0;border-top:1px solid var(--ui-border);border-radius:20px 20px 0 0;box-shadow:0 -12px 40px -12px #0e0e1040}
+dialog.drawer[data-side=bottom] .drawer-marca{display:none}
+dialog.drawer[data-side=bottom] .sheet-grabber{flex:none;display:flex;justify-content:center;padding:8px 0 2px;touch-action:none;cursor:grab}
+dialog.drawer[data-side=bottom] .sheet-grabber i{width:36px;height:4px;border-radius:999px;background:var(--ui-line-strong)}
+dialog.drawer[data-side=bottom] .overlay-head{padding-top:4px;align-items:center}
+dialog.drawer[data-side=bottom] .overlay-head .overlay-close{width:44px;height:44px;min-height:44px;margin:-6px -8px -6px 0;border-radius:12px}
+dialog.drawer[data-side=bottom] .overlay-head .overlay-close svg{width:18px;height:18px}
+dialog.drawer[data-side=bottom] .overlay-body{padding-bottom:calc(var(--ov-pad) + env(safe-area-inset-bottom))}
+@media(min-width:768px){dialog.drawer[data-side=bottom]{inset:auto auto 0 50%;width:min(560px,100%);transform:translateX(-50%)}}
+@media(prefers-reduced-motion:no-preference){
+ dialog.drawer[data-side=bottom][open] .drawer-panel{animation-name:ov-slide-b}
+ @keyframes ov-slide-b{from{transform:translateY(32px);opacity:0}}
+}

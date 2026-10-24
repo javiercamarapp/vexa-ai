@@ -1,5 +1,5 @@
 'use client';
-import {useCallback,useEffect,useId,useLayoutEffect,useRef,useState,type CSSProperties,type MouseEvent,type ReactNode,type SyntheticEvent} from 'react';
+import {useCallback,useEffect,useId,useLayoutEffect,useRef,useState,type CSSProperties,type MouseEvent,type PointerEvent as ReactPointerEvent,type ReactNode,type SyntheticEvent} from 'react';
 import {Icon} from './icons';
 import {RovaqLogo} from '../rovaq-logo';
 /* Sistema único de overlays (Drawer lateral, Modal centrado, Popover anclado). Todo panel flotante del software se construye aquí;
@@ -34,13 +34,23 @@ function Head({id,title,subtitle,onClose}:{id:string;title:string;subtitle?:Reac
 }
 type DrawerProps={open:boolean;onClose:()=>void;title:string;subtitle?:ReactNode;children:ReactNode;footer?:ReactNode;
  /** sm 420 · md 480 · lg 640. */size?:DrawerSize;/** @deprecated usa `size`; se redondea al tamaño estándar más cercano. */width?:number;
- /** Lado de entrada. «left» es solo para la navegación móvil. */side?:'right'|'left';/** id del <dialog> (para aria-controls del disparador). */id?:string;
+ /** Lado de entrada. «bottom» es la hoja inferior del celular (grabber, X de 44 px, 90 dvh máx.); «left» queda para usos heredados. */side?:'right'|'left'|'bottom';/** id del <dialog> (para aria-controls del disparador). */id?:string;
  /** Sin cabecera ni pie propios (el contenido los trae); exige `label`. */bare?:boolean;label?:string;className?:string};
-/** Panel lateral derecho (pantalla completa en móvil). Si el contenido es corto el panel no se estira: el pie queda pegado al contenido. */
+/** Agarradera de la hoja inferior: arrastrar hacia abajo (> 80 px) o tocar la cabecera con el dedo la cierra. Un solo nivel: la hoja no abre otra encima. */
+function useArrastre(onClose:()=>void){
+ const y0=useRef<number|null>(null),panel=useRef<HTMLElement|null>(null);
+ return {
+  onPointerDown:(e:ReactPointerEvent<HTMLElement>)=>{y0.current=e.clientY;panel.current=e.currentTarget.closest('.drawer-panel');e.currentTarget.setPointerCapture?.(e.pointerId);},
+  onPointerMove:(e:ReactPointerEvent<HTMLElement>)=>{if(y0.current===null||!panel.current)return;const dy=Math.max(0,e.clientY-y0.current);panel.current.style.transform=dy?`translateY(${dy}px)`:'';panel.current.style.transition='none';},
+  onPointerUp:(e:ReactPointerEvent<HTMLElement>)=>{if(y0.current===null)return;const dy=e.clientY-y0.current;y0.current=null;if(panel.current){panel.current.style.transition='';panel.current.style.transform='';}if(dy>80)onClose();},
+  onPointerCancel:()=>{y0.current=null;if(panel.current){panel.current.style.transition='';panel.current.style.transform='';}},
+ };
+}
+/** Panel lateral derecho (pantalla completa en móvil) o, con side=«bottom», hoja inferior. Si el contenido es corto el panel no se estira: el pie queda pegado al contenido. */
 export function Drawer({open,onClose,title,subtitle,children,footer,size,width,side='right',bare=false,label,className,id:domId}:DrawerProps){
- const props=useDialog(open,onClose),id=useId(),px=drawerPx(size,width);
+ const props=useDialog(open,onClose),id=useId(),px=drawerPx(size,width),arrastre=useArrastre(onClose);
  return <dialog {...props} id={domId} className={'drawer'+(className?' '+className:'')} data-side={side} data-bare={bare||undefined} aria-labelledby={bare?undefined:id} aria-label={bare?label:undefined} style={{'--drawer-w':px+'px'} as CSSProperties}>
-  {open&&(bare?<div className="drawer-panel">{children}</div>:<div className="drawer-panel"><Head id={id} title={title} subtitle={subtitle} onClose={onClose}/><div className="overlay-body">{children}</div>{footer&&<footer className="overlay-foot">{footer}</footer>}<div className="drawer-marca" aria-hidden="true"><RovaqLogo variante="horizontal" ancho={64} decorativo espacioLibre={false}/></div></div>)}
+  {open&&(bare?<div className="drawer-panel">{children}</div>:<div className="drawer-panel">{side==='bottom'&&<div className="sheet-grabber" {...arrastre} aria-hidden="true"><i/></div>}<Head id={id} title={title} subtitle={subtitle} onClose={onClose}/><div className="overlay-body">{children}</div>{footer&&<footer className="overlay-foot">{footer}</footer>}<div className="drawer-marca" aria-hidden="true"><RovaqLogo variante="horizontal" ancho={64} decorativo espacioLibre={false}/></div></div>)}
  </dialog>;
 }
 type ModalProps={open:boolean;onClose:()=>void;title:string;subtitle?:ReactNode;children:ReactNode;footer?:ReactNode;size?:ModalSize;/** @deprecated usa `size`. */width?:number;

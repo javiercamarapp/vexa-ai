@@ -6,9 +6,10 @@
 import {guarded} from './catalog-overview.mjs';
 import {conversacionesPorMes} from './fuga-reembolsos.mjs';
 import {readThreadResolution} from '../insights/reader.mjs';
+import {leerSlaPrecalculado} from './precalculado-frio.mjs';
 
 export const TZ = 'America/Mexico_City';
-export const CARGA_BUDGETS_MS = Object.freeze({meses: 2500, precalc: 1500, matriz: 9000, canal: 3000, sla: 20000, cierre: 2500});
+export const CARGA_BUDGETS_MS = Object.freeze({meses: 2500, precalc: 1500, matriz: 9000, canal: 3000, sla: 20000, slaPre: 2500, cierre: 2500});
 export const MESES_CARGA = 6;
 export const DIAS = Object.freeze(['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']);
 const addMes = (m, d) => { const [y, mo] = m.split('-').map(Number); return new Date(Date.UTC(y, mo - 1 + d, 1)).toISOString().slice(0, 7); };
@@ -106,15 +107,17 @@ export function createWorkloadRepository({database, now = () => new Date(), budg
           `SELECT count(*)::int AS total, count(*) FILTER (WHERE channel IS NOT NULL AND btrim(channel)<>'')::int AS con_canal FROM public.conversations WHERE tenant_id=$1 AND deleted_at IS NULL`, [s.tenantId])).rows[0]);
         const canal = can ? {status: 'ok', total: Number(can.total), conCanal: Number(can.con_canal), derivable: Number(can.total) > 0 && Number(can.con_canal) / Number(can.total) >= 0.9} : {status: 'unavailable'};
         // ---- SLA ----
-        const slaRow = await guarded(s, dl('sla'), 'carga_sla', async () => (await s.query(
+        // 1) tabla precalculada (insight_thread_sla, 20261125000000; si no existe o está vacía, null) 2) cálculo en vivo con tope, partiendo de los hilos y buscando sus conversaciones/mensajes por índice.
+        let slaOrigen = 'precalculado';
+        let slaRow = await leerSlaPrecalculado(s, dl('slaPre'), hoy);
+        if (!slaRow) { slaOrigen = 'en_vivo'; slaRow = await guarded(s, dl('sla'), 'carga_sla', async () => (await s.query(
           `WITH t AS (SELECT DISTINCT ON (original->'payload'->>'id') original->'payload'->>'id' AS tid, (original->'payload'->>'createdAt')::timestamptz AS creado, original->'payload'->>'status' AS estado, created_at AS visto
                FROM public.sync_raw_objects WHERE tenant_id=$1 AND original->'payload'->>'type' IS NULL AND original->'payload' ? 'createdAt' AND original->'payload' ? 'status' AND original->'payload'->>'createdAt' ~ '^\\d{4}-\\d\\d-\\d\\dT'
                ORDER BY original->'payload'->>'id', created_at DESC),
-             cv AS (SELECT id, external_id FROM public.conversations WHERE tenant_id=$1 AND source='hubspot' AND deleted_at IS NULL),
-             msgs AS (SELECT conversation_id, role, occurred_at FROM public.messages WHERE tenant_id=$1 AND deleted_at IS NULL AND role IN ('customer','agent') AND conversation_id IN (SELECT id FROM cv)),
-             c AS (SELECT conversation_id, min(occurred_at) AS c1 FROM msgs WHERE role='customer' GROUP BY 1),
-             a AS (SELECT c.conversation_id, c.c1, min(m.occurred_at) AS a1 FROM c LEFT JOIN msgs m ON m.conversation_id=c.conversation_id AND m.role='agent' AND m.occurred_at>=c.c1 GROUP BY 1,2),
-             j AS (SELECT t.tid, t.creado, t.estado, t.visto, a.c1, a.a1, extract(epoch FROM a.a1-a.c1)/3600 AS h FROM t LEFT JOIN cv ON cv.external_id=t.tid LEFT JOIN a ON a.conversation_id=cv.id)
+             j AS (SELECT t.tid, t.creado, t.estado, t.visto, f.c1, f.a1, extract(epoch FROM f.a1-f.c1)/3600 AS h
+               FROM t LEFT JOIN public.conversations cv ON cv.tenant_id=$1 AND cv.external_id=t.tid AND cv.source='hubspot' AND cv.deleted_at IS NULL
+               LEFT JOIN LATERAL (SELECT x.c1, (SELECT min(m.occurred_at) FROM public.messages m WHERE m.tenant_id=$1 AND m.conversation_id=cv.id AND m.deleted_at IS NULL AND m.role='agent' AND m.occurred_at>=x.c1) AS a1
+                 FROM (SELECT min(occurred_at) AS c1 FROM public.messages WHERE tenant_id=$1 AND conversation_id=cv.id AND deleted_at IS NULL AND role='customer') x WHERE x.c1 IS NOT NULL) f ON true)
            SELECT count(*)::int AS hilos, count(c1)::int AS medibles, count(a1)::int AS con_resp, count(*) FILTER (WHERE a1 IS NOT NULL AND h<=24)::int AS dentro,
              (percentile_cont(0.5) WITHIN GROUP (ORDER BY h) FILTER (WHERE a1 IS NOT NULL))::numeric AS p50_h, (percentile_cont(0.9) WITHIN GROUP (ORDER BY h) FILTER (WHERE a1 IS NOT NULL))::numeric AS p90_h,
              count(*) FILTER (WHERE c1 IS NOT NULL AND a1 IS NULL AND estado='OPEN' AND c1 < $2::timestamptz - interval '24 hours')::int AS abiertos_sin_resp_24,
@@ -123,8 +126,8 @@ export function createWorkloadRepository({database, now = () => new Date(), budg
              count(*) FILTER (WHERE c1 IS NOT NULL AND a1 IS NULL AND estado='OPEN' AND c1 < $2::timestamptz - interval '30 days')::int AS abiertos_30,
              count(*) FILTER (WHERE c1 IS NOT NULL AND a1 IS NULL AND estado='CLOSED')::int AS cerrados_sin_resp,
              to_char(min(creado) AT TIME ZONE '${TZ}','YYYY-MM-DD') AS min_creado, to_char(max(creado) AT TIME ZONE '${TZ}','YYYY-MM-DD') AS max_creado, max(visto) AS corte
-           FROM j`, [s.tenantId, hoy.toISOString()])).rows[0]);
-        const sla = slaRow ? (Number(slaRow.hilos) > 0 ? {status: 'ok', class: 'observed', fuente: 'HubSpot API', nota: NOTA_FUENTE, ...armarSla(slaRow, {hoy})} : {status: 'empty'}) : {status: 'unavailable'};
+           FROM j`, [s.tenantId, hoy.toISOString()])).rows[0]); }
+        const sla = slaRow ? (Number(slaRow.hilos) > 0 ? {status: 'ok', class: 'observed', fuente: 'HubSpot API', nota: NOTA_FUENTE, origen: slaOrigen, ...(slaRow.refrescado ? {precalculadoAt: new Date(slaRow.refrescado).toISOString()} : {}), ...armarSla(slaRow, {hoy})} : {status: 'empty'}) : {status: 'unavailable'};
         // ---- cierre y reaperturas (precalculado) ----
         const cierre = await guarded(s, dl('cierre'), 'carga_cierre', async () => {
           const r = await readThreadResolution(s);

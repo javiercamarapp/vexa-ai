@@ -200,6 +200,24 @@ test('servicio completo contra libro y Tracker sintéticos, con RLS real', {skip
         assert.equal(x.skus.lineasStatus, 'unavailable'); assert.equal(x.skus.top[0].lineas, null);
         assert.equal(x.parts.tracker, 'unavailable'); assert.equal(x.parts.refunds, 'ok');
       });
+      await t.test('precálculo del libro (20261125000000): mismas cifras que el cálculo en vivo; con corte por fecha o libro que cambió, vuelve a vivo', async () => {
+        const mig = f => fs.readFileSync(new URL('../../../supabase/migrations/' + f, import.meta.url), 'utf8');
+        for (const f of ['20261104000000_insights_engine.sql', '20261125000000_perf_frio_precalculos.sql']) { const rr = psqlFile(h.sock, mig(f)); assert.equal(rr.status, 0, String(rr.stderr).slice(0, 500)); }
+        const repo = () => F.createRefundLeakRepository({database: base(), now: () => NOW});
+        const vivo = await repo().get(); assert.equal(vivo.origenLibro, 'en_vivo', 'sin refrescar: en vivo');
+        let rr = h.psql(`select public.refresh_perf_frio('${TENANT_B}','ledger')`); assert.ok(rr.ok, rr.err);
+        const pre = await repo().get(); assert.equal(pre.origenLibro, 'precalculado');
+        const sin = x => { const { origenLibro, libroPrecalculadoAt, ...resto } = x; return resto; };
+        assert.deepEqual(sin(pre), sin(vivo), 'el precálculo no cambia ninguna cifra');
+        rr = h.psql(`select public.refresh_perf_frio('${TENANT_B}','ledger')`); assert.match(rr.out ?? '', /noop/, 'sin cambios en el libro: no recalcula');
+        const corte = await repo().get({dateStart: '2026-09-01', dateEnd: '2026-10-01'}); assert.equal(corte.origenLibro, 'en_vivo', 'un periodo exacto no sale del precálculo mensual');
+        // el libro se mueve después del refresco: el precálculo ya no vale y se calcula en vivo (jamás cifras viejas)
+        rr = h.psql(`update public.insight_refund_ledger_digest set source_watermark=source_watermark - interval '1 second' where tenant_id='${TENANT_B}'`); assert.ok(rr.ok, rr.err);
+        assert.equal((await repo().get()).origenLibro, 'en_vivo');
+        // aislamiento: el tenant A no ve el digest de B
+        const vA = await F.createRefundLeakRepository({database: base(TENANT_A, OWNER.A), now: () => NOW}).get(); assert.equal(vA.origenLibro, 'en_vivo');
+        rr = h.psql(`set role vexa_backend; select public.refresh_perf_frio('${TENANT_B}')`); assert.equal(rr.ok, false); assert.match(rr.err, /denied/, 'la app no puede recalcular fuera del worker');
+      });
     } finally { await pool.end(); }
   }, {name: 'fuga'});
 });

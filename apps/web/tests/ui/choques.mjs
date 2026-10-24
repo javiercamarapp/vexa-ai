@@ -1,5 +1,6 @@
 // Detector de choques de interfaz. Uso (con `next dev` y fixtures en marcha):
 //   (VEXA_UI_VARIANT=flujo añade ?variant= a las lecturas simuladas: una recomendación en cada etapa)
+//   Servidor: VEXA_UI_FIXTURES=1 VEXA_UI_FIXTURES_PLATFORM=1 VEXA_UI_FIXTURES_ROLE=owner npx next dev --webpack -p 3150 (las rutas de superadmin solo existen con esos fixtures)
 //   VEXA_UI_BASE=http://localhost:3150 node tests/ui/choques.mjs [--routes=/problems,/cfo] [--sizes=375,1440] [--themes=light,dark] [--detalle]
 // Por cada ruta del MENU x ancho x tema detecta: desborde horizontal, texto recortado, hermanos que se solapan,
 // botones sin nombre, h1 != 1 y fuentes < 12 px (11 px solo en MAYÚSCULAS), h1 > 20 px o cifra KPI > 30 px. Imprime una tabla y sale con código 1 si hay fallas.
@@ -12,7 +13,10 @@ const {MENU}=await import('../../src/lib/workspace/menu.mjs');
 const arg=(k,d)=>(process.argv.find(a=>a.startsWith('--'+k+'='))?.slice(k.length+3))??d;
 const base=process.env.VEXA_UI_BASE??'http://localhost:3150';
 const menuRoutes=[...new Set(MENU.flatMap(x=>x.tipo==='item'?[x.href]:(x.items??[]).map(i=>i.href)).concat(['/notifications','/confianza','/cfo?vista=informe','/pain-points']))];
-const routes=arg('routes',null)?.split(',')??menuRoutes;
+// Superadmin (no están en el MENU): consola de plataforma, ficha 360 y las pantallas de acceso (/sin-acceso y /seguridad tienen vista sintética bajo fixtures).
+const {SUPERADMIN_ROUTES}=await import('./superadmin-rutas.mjs');
+const conSuperadmin=[...menuRoutes,...SUPERADMIN_ROUTES];
+const routes=arg('routes',null)?.split(',')??conSuperadmin;
 const sizes=arg('sizes','375,768,1440').split(',').map(Number),themes=arg('themes','light,dark').split(',');
 const detalle=process.argv.includes('--detalle');
 /** Se ejecuta en la página. Devuelve {overflowX,clipped,overlap,unnamed,h1,small} con ejemplos. */
@@ -64,7 +68,7 @@ function medir(){
  const cont=document.querySelector('.workspace-content'),cuenta={};
  for(const e of cont?[...cont.querySelectorAll('button,a.btn')].filter(vis):[]){const n=((e.getAttribute('aria-label')||e.textContent)||'').trim().toLowerCase();if(/^(actualizar|exportar|exportar informe)$/.test(n))cuenta[n]=(cuenta[n]||0)+1;}
  for(const [n,c] of Object.entries(cuenta))if(c>1)out.repetidos.push(n+' x'+c);
- if(innerWidth>=1000)for(const b of document.querySelectorAll('.workspace-header button,.workspace-topbar button'))if(vis(b))out.topbar.push(desc(b));
+ if(innerWidth>=1000)for(const b of document.querySelectorAll('.workspace-header button,.workspace-topbar button'))if(vis(b)&&!b.matches('.at-trigger'))out.topbar.push(desc(b));
  // Aire interior de botones, chips, pestañas y selects con borde o relleno: texto e iconos a ≥5 px del borde (nada pegado al margen); el select, además, ≥24 px a la derecha para su chevron.
  for(const el of document.querySelectorAll('button,.btn,select,.chip,.ui-chip,[role=tab],.fchip')){
   if(!vis(el)||srOnly(el)||el.matches('.row-link-inline,.skip-link,.ui-chip-x'))continue;

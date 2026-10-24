@@ -14,7 +14,9 @@ const {MENU}=await import('../../src/lib/workspace/menu.mjs');
 const arg=(k,d)=>(process.argv.find(a=>a.startsWith('--'+k+'='))?.slice(k.length+3))??d;
 const base=process.env.VEXA_UI_BASE??'http://localhost:3210';
 const menuRoutes=[...new Set(MENU.flatMap(x=>x.tipo==='item'?[x.href]:(x.items??[]).map(i=>i.href)).concat(['/pain-points','/notifications','/confianza','/cfo?vista=informe']))];
-const routes=arg('routes',null)?.split(',')??menuRoutes;
+// Superadmin (requiere VEXA_UI_FIXTURES_PLATFORM=1): consola, ficha 360 y pantallas de acceso.
+const {SUPERADMIN_ROUTES_SHELL}=await import('./superadmin-rutas.mjs');
+const routes=arg('routes',null)?.split(',')??[...menuRoutes,...SUPERADMIN_ROUTES_SHELL];
 const sizes=arg('sizes','390,360,430').split(',').map(Number),themes=arg('themes','light,dark').split(',');
 const capDir=arg('capturas',null);
 const detalle=process.argv.includes('--detalle'),completo=process.argv.includes('--completo');const cut=(a,n)=>completo?a:a.slice(0,n);

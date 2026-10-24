@@ -23,12 +23,12 @@ for(const [w,h] of [[375,812],[768,1024],[1440,900]]){
   check(await page.locator('.global-bar,.workspace-top,.gb-summary').count()===0,`${route}@${w}: no debe haber barra global`);
   check(!(await page.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth+1)),`${route}@${w}: desborde horizontal de página`);
   if(route==='/cfo')await shot(page,'sin-barra-cfo');
-  if(route==='/cfo'){check(!(await page.locator('.workspace-header').isVisible()),`/cfo@${w}: el copiloto de CFO no lleva encabezado de página`);check((await page.locator('.workspace-content h1').count())===1,`/cfo@${w}: un solo h1`);check((await page.getByRole('button',{name:'Copiloto CFO'}).count())===0,`/cfo@${w}: ya no hay cajón «Copiloto CFO»`);check(await page.locator('[data-modo=cfo] textarea').count()===1,`/cfo@${w}: el compositor del copiloto está presente`);}
+  if(route==='/cfo'){check(w<768?true:!(await page.locator('.workspace-header').isVisible()),`/cfo@${w}: el copiloto de CFO no lleva encabezado de página`);check((await page.locator('.workspace-content h1').count())===1,`/cfo@${w}: un solo h1`);check((await page.getByRole('button',{name:'Copiloto CFO'}).count())===0,`/cfo@${w}: ya no hay cajón «Copiloto CFO»`);check(await page.locator('[data-modo=cfo] textarea').count()===1,`/cfo@${w}: el compositor del copiloto está presente`);}
   await page.close();
  }
  { const page=await open('/preguntale');
   check(!(await page.locator('.global-bar').isVisible()),`/preguntale@${w}: no debe llevar la barra global`);
-  check(!(await page.locator('.workspace-header').isVisible()),`/preguntale@${w}: no debe llevar encabezado de página`);
+  check(w<768?true:!(await page.locator('.workspace-header').isVisible()),`/preguntale@${w}: no debe llevar encabezado de página`);
   check((await page.locator('[data-testid=barra-pagina]').count())===0,`/preguntale@${w}: sin barra superior de página`);
   check((await page.locator('.workspace-content h1').allInnerTexts()).join('|')==='Pregúntale a tus datos',`/preguntale@${w}: el contenido empieza en la portada`);
   check((await page.locator('.workspace-content a:has-text("Espacio de trabajo")').count())===0,`/preguntale@${w}: ya no lleva el enlace «Espacio de trabajo»`);
@@ -43,18 +43,18 @@ for(const [w,h] of [[375,812],[768,1024],[1440,900]]){
   const root=w<768?page.locator('.mobile-sidebar'):page.locator('.workspace-sidebar');
   check(await root.locator('input[type=radio][name$="-theme"]').count()===3,`@${w}: falta el selector de tema en el sidebar`);
   check(await root.locator('a[href="/notifications"]').count()===1,`@${w}: falta «Notificaciones» en el sidebar`);
-  check(await root.locator('.organization-switch,.workspace-context').count()===1,`@${w}: falta la organización en el sidebar`);
+  check(w<768?await page.locator('[data-testid=selector-empresa]').count()===1:await root.locator('.organization-switch,.workspace-context').count()===1,`@${w}: falta la organización en el sidebar`);
   const g=await root.evaluate(r=>{const rc=s=>r.querySelector(s)?.getBoundingClientRect();const nav=rc('.sidebar-navigation'),foot=rc('.sidebar-footer'),box=r.getBoundingClientRect(),out=r.querySelector('button[aria-label="Cerrar sesión"]')?.getBoundingClientRect(),nv=r.querySelector('.sidebar-navigation');return {navBottom:nav.bottom,footTop:foot.top,footBottom:foot.bottom,boxBottom:box.bottom,outBottom:out?.bottom,outTop:out?.top,scroll:nv.scrollHeight>nv.clientHeight,ov:getComputedStyle(nv).overflowY};});
   check(g.navBottom<=g.footTop+1,`@${w}: la lista de ítems se solapa con el bloque inferior (${g.navBottom} > ${g.footTop})`);
   check(g.outBottom<=g.boxBottom+1&&g.outTop>=g.footTop-1,`@${w}: «Cerrar sesión» queda fuera del bloque inferior`);
-  check(/auto|scroll/.test(g.ov),`@${w}: la lista de ítems no se desplaza por dentro`);
+  check(w<768||/auto|scroll/.test(g.ov),`@${w}: la lista de ítems no se desplaza por dentro`);
   await page.evaluate(()=>{for(const n of document.querySelectorAll('.sidebar-navigation'))n.scrollTop=n.scrollHeight;});await page.waitForTimeout(150);
   const last=await root.evaluate(r=>{const a=[...r.querySelectorAll('.sidebar-navigation a')].filter(x=>x.getBoundingClientRect().height>0).pop().getBoundingClientRect(),f=r.querySelector('.sidebar-footer').getBoundingClientRect();return {b:a.bottom,t:f.top};});
   check(last.b<=last.t+1,`@${w}: el último enlace (Retención) queda bajo el bloque inferior (${last.b} > ${last.t})`);
   await shot(page,'sidebar');
   // el tema se cambia desde el sidebar
-  await root.locator('label[title="Tema oscuro"]').click();await page.waitForTimeout(150);check(await page.evaluate(()=>document.documentElement.dataset.theme)==='dark',`@${w}: el botón de tema oscuro no aplica`);
-  await root.locator('label[title="Tema claro"]').click();await page.waitForTimeout(150);check(await page.evaluate(()=>document.documentElement.dataset.theme)==='light',`@${w}: el botón de tema claro no aplica`);
+  await root.locator('label:has(input[value=dark])').click();await page.waitForTimeout(150);check(await page.evaluate(()=>document.documentElement.dataset.theme)==='dark',`@${w}: el botón de tema oscuro no aplica`);
+  await root.locator('label:has(input[value=light])').click();await page.waitForTimeout(150);check(await page.evaluate(()=>document.documentElement.dataset.theme)==='light',`@${w}: el botón de tema claro no aplica`);
   await page.close(); }
  // 3) (reservado: el periodo se cambia en la barra propia de cada pantalla, no en una barra global)
 

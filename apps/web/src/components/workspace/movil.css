@@ -1,0 +1,80 @@
+/* Caparazón móvil de Rovaq: cabecera con la empresa SIEMPRE visible, barra inferior flotante de 5 destinos, hoja «Más», selector de tema y teclado.
+   Medidas: toda zona táctil del caparazón ≥ 44 px; texto ≥ 12 px; áreas seguras con env(safe-area-inset-*) (viewport-fit=cover en app/layout.tsx).
+   Los estilos de hoja inferior (grabber, X, 90 dvh) viven en components/ui/overlay.css. */
+
+/* ---- Selector de tema (escritorio y celular): mismo icono SVG de 16 px y mismo trazo en celdas iguales; la elegida es una píldora ajustada ---- */
+.workspace-shell .theme-selector{display:flex;justify-content:center;gap:2px;width:fit-content;max-width:100%;min-width:0;margin:0 auto 10px;padding:3px;border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-soft)}
+.workspace-shell .theme-selector label{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:40px;min-height:32px;padding:0 10px;border-radius:999px;color:var(--muted);font:500 13px/1 var(--font-ui);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.workspace-shell .theme-selector label:hover{color:var(--ink)}
+.workspace-shell .theme-selector svg{display:block;flex:none;width:16px;height:16px}
+.workspace-shell .theme-selector label:has(input:checked){background:var(--ui-surface);color:var(--ink);box-shadow:0 0 0 1px var(--ui-border),0 1px 2px #0e0e1014}
+.workspace-shell .theme-selector label:has(input:focus-visible){outline:2px solid var(--ui-focus);outline-offset:2px}
+
+/* ---- Escritorio: nada de lo móvil aparece ---- */
+.header-empresa{display:none}
+.logout-label{display:none}
+@media(min-width:768px){
+ .workspace-header-chat{display:none}
+}
+
+/* ---- Empresa: chip (varias organizaciones) o nombre fijo (una) ---- */
+.org-avatar{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--ui-nav-active);color:var(--ui-nav-text);font:600 13px/1 var(--font-ui)}
+.org-nombre{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.org-chevron{flex:none;display:inline-flex;color:var(--muted)}
+.workspace-shell .empresa-chip{display:flex;align-items:center;gap:8px;max-width:100%;min-width:0;min-height:44px;padding:0 10px 0 8px;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface);color:var(--ink);font:600 14px/1.2 var(--font-ui);text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.workspace-shell button.empresa-chip:active{background:var(--ui-soft)}
+.workspace-shell .empresa-fija{border-color:transparent;background:transparent;cursor:default;padding-left:0}
+.empresas{display:flex;flex-direction:column;gap:12px}
+.empresas-titulo{margin:0 0 4px;font:600 12px/1.3 var(--font-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.empresas-lista{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.empresas-vacio{margin:8px 0 0;color:var(--muted)}
+body .empresas .empresas-buscar{height:44px}
+body .empresas .empresas-buscar input{font-size:16px}
+body .empresas .org-fila{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:0 10px;border:0;border-radius:12px;background:transparent;color:var(--ink);font:500 15px/1.3 var(--font-ui);text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+body .empresas .org-fila:active,body .empresas .org-fila[aria-current=true]{background:var(--ui-soft)}
+body .empresas .org-marca{margin-left:auto;display:inline-flex;color:var(--ink)}
+
+/* ---- Celular ---- */
+@media(max-width:767px){
+ .workspace-shell{--nav-alto:64px;--nav-abajo:max(10px,env(safe-area-inset-bottom));--nav-total:calc(var(--nav-alto) + var(--nav-abajo))}
+ /* Cabecera: empresa a la izquierda, menú «Más» a la derecha; respeta la muesca. */
+ .workspace-shell .workspace-header{position:sticky;top:0;z-index:5;box-sizing:content-box;height:56px;gap:8px;padding:env(safe-area-inset-top) max(12px,env(safe-area-inset-right)) 0 max(12px,env(safe-area-inset-left));background:color-mix(in srgb,var(--ui-surface) 92%,transparent);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px)}
+ .workspace-shell .header-empresa{display:flex;flex:1 1 auto;min-width:0}
+ .workspace-shell .workspace-heading{display:none}
+ .workspace-shell .mobile-menu-button{display:inline-flex;flex:none;margin-left:auto;border:1px solid var(--ui-border);border-radius:12px;color:var(--ink);background:var(--ui-surface)}
+ .workspace-shell .workspace-frame .workspace-content{padding-bottom:calc(var(--nav-total) + 24px)}
+ .workspace-shell{scroll-padding-top:calc(56px + env(safe-area-inset-top))}
+ #workspace-contenido{scroll-margin-top:calc(72px + env(safe-area-inset-top))}
+
+ /* Barra inferior flotante: 5 destinos con etiqueta, posiciones estables, cada uno ≥ 44 px. */
+ .workspace-shell .workspace-bottom-nav{display:flex;align-items:stretch;gap:2px;position:fixed;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:var(--nav-abajo);height:var(--nav-alto);padding:4px;border:1px solid var(--ui-border);border-radius:999px;background:color-mix(in srgb,var(--ui-surface) 90%,transparent);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);box-shadow:0 10px 30px -10px #0e0e1040,0 2px 6px #0e0e1014;z-index:6}
+ .workspace-shell .workspace-bottom-nav a{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:2px 0;border-radius:999px;color:var(--muted);font:500 12px/1.1 var(--font-ui);text-decoration:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+ .workspace-shell .workspace-bottom-nav a:active{background:var(--ui-soft)}
+ .workspace-shell .workspace-bottom-nav a[aria-current=page]{color:var(--ink);background:var(--ui-soft);font-weight:600}
+ .workspace-shell .workspace-bottom-nav .bn-icono{display:grid;place-items:center;width:32px;height:26px}
+ .workspace-shell .workspace-bottom-nav svg{width:22px;height:22px}
+ .workspace-shell .workspace-bottom-nav .bn-etiqueta{display:block;max-width:100%;padding:0 2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ /* Con el teclado abierto la barra se oculta: el campo de escritura queda justo encima del teclado. */
+ html[data-teclado=abierto] .workspace-shell .workspace-bottom-nav{display:none}
+
+ /* Hoja «Más»: el menú completo, avisos, tema y cuenta con scroll de la propia hoja. */
+ .mobile-sidebar{display:block;height:auto;padding:0;background:transparent}
+ .mobile-sidebar .sidebar-navigation{overflow:visible;padding:0;background:none}
+ .mobile-sidebar .sidebar-footer{max-height:none;overflow:visible;margin-top:8px;padding:12px 0 0;background:transparent;box-shadow:none;border-top:1px solid var(--ui-border)}
+ .mobile-sidebar .theme-selector{width:100%;margin:8px 0 12px}
+ .mobile-sidebar .theme-selector label{flex:1 1 0;min-height:44px}
+ .mobile-sidebar .theme-selector svg{width:16px;height:16px}
+ /* Las reglas genéricas de etiquetas con radio dentro de una hoja (overlay.css) alinean arriba: aquí el contenido va centrado. */
+ body .hoja-mas .mobile-sidebar .theme-selector label:has(input){display:flex;align-items:center;justify-content:center;gap:6px;font:500 13px/1 var(--font-ui);color:var(--muted)}
+ body .hoja-mas .mobile-sidebar .theme-selector label:has(input:checked){color:var(--ink)}
+ .mobile-sidebar .nav-caption,.mobile-sidebar .nav-group-toggle span,.mobile-sidebar .workspace-context span{font-size:12px}
+ .mobile-sidebar .sidebar-account{margin-bottom:0}
+ .mobile-sidebar .logout-button{width:auto;padding:0 12px;gap:6px;border:1px solid var(--ui-border);color:var(--ui-secondary)}
+ .mobile-sidebar .logout-label{display:inline;font:500 13px/1 var(--font-ui)}
+ .mobile-sidebar .workspace-platform-link{display:flex;align-items:center;gap:9px;min-height:44px;padding:0 10px;border-radius:8px;color:var(--ui-secondary);text-decoration:none;font-size:13px;font-weight:500}
+}
+
+/* ---- Cualquier pantalla táctil: 16 px en campos evita el zoom automático de iOS Safari al enfocar ---- */
+@media(max-width:767px) and (pointer:coarse){
+ body :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden]),select,textarea){font-size:16px!important}
+}

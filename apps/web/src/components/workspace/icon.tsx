@@ -18,6 +18,11 @@ const paths:Record<string,string>={
  grid:'M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z',
  clock:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z M12 7v5l3 2',
  painpoints:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z M10 10.5a2.5 2.5 0 1 0 0 .01 M15.5 9a1.5 1.5 0 1 0 0 .01 M14 15a2 2 0 1 0 0 .01',
- analysis:'M4 20V10 M10 20V4 M16 20v-8 M22 20V7',economics:'M12 2v20 M17 5H9a4 4 0 0 0 0 8h6a4 4 0 0 1 0 8H5'
+ analysis:'M4 20V10 M10 20V4 M16 20v-8 M22 20V7',economics:'M12 2v20 M17 5H9a4 4 0 0 0 0 8h6a4 4 0 0 1 0 8H5',
+ sun:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M12 2v2 M12 20v2 M4.9 4.9l1.4 1.4 M17.7 17.7l1.4 1.4 M2 12h2 M20 12h2 M4.9 19.1l1.4-1.4 M17.7 6.3l1.4-1.4',
+ moon:'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z',
+ monitor:'M3 4h18v12H3z M8 20h8 M12 16v4',
+ clientes:'M3 21V8l6-4v17 M9 21V11h12v10 M3 21h18 M13 15h2 M17 15h2',
+ check:'M5 12.5l4.5 4.5L19 7.5',search:'M21 21l-4.3-4.3 M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z'
 };
-export function WorkspaceIcon({name}:{name:string}){return <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]??paths.briefs}/></svg>;}
+export function WorkspaceIcon({name,size=18}:{name:string;size?:number}){return <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]??paths.briefs}/></svg>;}

@@ -7,7 +7,7 @@ import {WorkspaceError} from './contracts.mjs';
 import {guarded} from './catalog-overview.mjs';
 import {readConversationVolume} from '../insights/reader.mjs';
 
-export const FUGA_BUDGETS_MS = Object.freeze({refunds: 4000, orders: 8000, windows: 2500, tracker: 6000, repeat: 2500, conversations: 2500});
+export const FUGA_BUDGETS_MS = Object.freeze({refunds: 9000, orders: 12000, windows: 4000, tracker: 9000, repeat: 4000, conversations: 2500});
 export const SKU_SUFFIX = /(-WM[0-9]+|-[0-9]{3}A-[0-9]{3}|-NEW)$/;
 export const TRACKER_SHEETS = Object.freeze({'Refunds': 'reembolsos', 'Warranty Tools': 'garantiaHerramientas', 'Warranty Parts': 'garantiaPartes', 'Return Labels': 'etiquetas'});
 const DAY = /^\d{4}-\d{2}-\d{2}$/;

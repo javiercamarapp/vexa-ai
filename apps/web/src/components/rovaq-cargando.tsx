@@ -19,6 +19,10 @@ const instantanea = () => version;
 const ganador = () => { let g: {id: string; rango: number; orden: number} | null = null; for (const [id, v] of activos) if (!g || v.rango > g.rango || (v.rango === g.rango && v.orden < g.orden)) g = {id, ...v}; return g?.id ?? null; };
 const useEfectoTemprano = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
+/** ¿Hay una pantalla de carga de página completa (no compacta) montada ahora? Lo usa el arranque para saber cuándo soltar el logo inicial. */
+export const hayCargaDePagina = () => { for (const v of activos.values()) if (v.rango === 1) return true; return false; };
+export const suscribirCargaDePagina = suscribir;
+
 export function RovaqCargando({mensaje = 'Cargando…', compacto = false}: {mensaje?: string; compacto?: boolean}) {
   const id = useId();
   useSyncExternalStore(suscribir, instantanea, () => 0);

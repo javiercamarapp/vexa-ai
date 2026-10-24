@@ -151,7 +151,7 @@ export function siguienteDe({fuga}) {
 export function armarHoy({fuga = null, carga = null, cfo = null, estado, ahora = Date.now()}) {
   const kpis = [kpiIngreso({cfo, estado, ahora}), kpiReembolsos({fuga, estado, ahora}), kpiAtorado({fuga, estado, ahora}), kpiRespuestas({carga, estado, ahora})];
   const titular = titularDe({fuga, kpis, estado});
-  const cargando = Object.values(estado).every(e => e === 'cargando');
+  const cargando = Object.values(estado).some(e => e === 'cargando'); // regla del dueño: logo solo hasta que TODOS los bloques críticos estén listos
   const sinNada = !cargando && kpis.every(k => k.estado !== 'ok' && k.estado !== 'cargando');
   return {titular, kpis, atencion: atencionDe({fuga, carga}), barra: barraDe({fuga}), siguiente: siguienteDe({fuga}), cargando, vacio: sinNada,
     ctxComo: {fuga, carga, cfo: kpis[0].cfoInfo ?? null}};

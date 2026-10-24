@@ -121,4 +121,24 @@ insert into public.memberships values ('02000000-0000-4000-8000-000000000002','a
 set role authenticated;
 select pg_temp.expect($q$select public.platform_support('{"operation":"start","tenant":"02000000-0000-4000-8000-000000000002","reason":"revisar carga de HubSpot","requestId":"44444444-4444-4444-8444-444444444444","confirmed":true}')$q$,'platform_support_own_organization');
 reset role;
+
+-- 6) team_my_invitations: solo el propio correo confirmado
+insert into public.team_invitations(tenant_id,request_id,email,role,expires_at) values
+ ('01000000-0000-4000-8000-000000000001',gen_random_uuid(),'other@x.test','analyst',now()+interval '3 days'),
+ ('02000000-0000-4000-8000-000000000002',gen_random_uuid(),'other@x.test','viewer',now()-interval '2 days'),
+ ('01000000-0000-4000-8000-000000000001',gen_random_uuid(),'owner@x.test','viewer',now()+interval '3 days');
+select pg_temp.as_user('c0000000-0000-4000-8000-000000000003');
+set role authenticated;
+select public.team_my_invitations() as mi \gset
+reset role;
+select pg_temp.eq(jsonb_array_length((:'mi'::jsonb)->'pending'),1,'una pendiente propia');
+select pg_temp.eq((:'mi'::jsonb)->'pending'->0->>'organization','Org Uno','organizacion');
+select pg_temp.eq(jsonb_array_length((:'mi'::jsonb)->'expired'),1,'una vencida propia');
+select pg_temp.eq(position('owner@x.test' in :'mi'),0,'sin correos ajenos');
+update auth.users set email_confirmed_at=null where id='c0000000-0000-4000-8000-000000000003';
+set role authenticated;
+select public.team_my_invitations() as mi2 \gset
+reset role;
+select pg_temp.eq(jsonb_array_length((:'mi2'::jsonb)->'pending'),0,'correo sin confirmar -> vacio');
+set role authenticated; select set_config('request.jwt.claim.sub','',false); select pg_temp.expect($q$select public.team_my_invitations()$q$,'team_authentication_required'); reset role;
 select 'sql-ok' as resultado;

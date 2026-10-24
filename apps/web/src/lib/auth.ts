@@ -2,6 +2,8 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { AccessError, type IdentityPort, type Membership } from '@vexa/platform/session';
 export { AccessError, assertOrigin, authorizeSelection, resolveSession, safeNext } from '@vexa/platform/session';
 export const ACTIVE_ORG='vexa_active_org';
+/** Marca (no autoridad) de que hay una sesión de soporte en curso: permite a la capa HTTP rechazar escrituras sin consultar la base. La base y db.ts son la defensa real. */
+export const SUPPORT_MARK='vexa_support';
 // Same-origin POST navigations need a non-null Origin; external destinations receive no referrer.
 export const PRIVATE_HEADERS={'Cache-Control':'private, no-store, max-age=0, must-revalidate','Pragma':'no-cache','Expires':'0','Referrer-Policy':'same-origin'};
 export function config() {
@@ -38,6 +40,13 @@ export function identity(client:ReturnType<typeof authClient>):IdentityPort {
     async memberships(userId){const {data,error}=await client.from('memberships').select('tenant_id,user_id,role,status,permissions_version').eq('user_id',userId).eq('status','active').order('tenant_id');
       if(error) throw new AccessError(503,'membership_unavailable');
       return data as Membership[];
+    },
+    /** «Ver como»: la base responde si ESTE administrador tiene una sesión de soporte vigente (require_admin + caducidad). Cualquier error = sin soporte. */
+    async support(){
+      const {data,error}=await client.rpc('platform_support',{p_input:{operation:'active'}});
+      const s=data?.session;
+      if(error||data?.active!==true||!s) return null;
+      return {session_id:s.id,tenant_id:s.tenantId,tenant_name:s.tenantName,expires_at:s.expiresAt,reason:s.reason};
     },
   };
 }

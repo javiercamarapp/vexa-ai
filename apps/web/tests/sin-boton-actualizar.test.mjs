@@ -42,8 +42,9 @@ test('cada componente que lee datos se actualiza solo (useAutoRefresh, useJson/h
 });
 // Componentes que hacen fetch solo por una acción del usuario (no muestran una lectura que envejezca).
 const PERMITIDOS_SIN_LECTURA_VIVA=[
+ // Superadmin: selector/paleta (lista bajo demanda al abrir), banner de soporte, MFA y /sin-acceso son acciones, no listas que envejezcan.
  // Cargas bajo demanda o acciones: se leen al abrir un detalle/enviar un formulario, no son una lista que envejezca en pantalla.
  'components/acciones/accion-fila.tsx','components/agente/agente.tsx','components/agente/answer-view.tsx','components/email-login-complete.tsx','components/email-login.tsx',
- 'components/evidence-panel.tsx','components/history-items.tsx','components/notifications/navigation-link.tsx','components/platform/copilot-panel.tsx',
- 'components/recommendations/flujo-borradores.tsx','components/team-invitation.tsx','components/ui/citation.tsx','components/workspace/action-form.tsx',
+ 'components/evidence-panel.tsx','components/history-items.tsx','components/notifications/navigation-link.tsx','components/platform/admin-tools.tsx','components/platform/copilot-panel.tsx','components/platform/mfa-panel.tsx','components/platform/support-banner.tsx',
+ 'components/recommendations/flujo-borradores.tsx','components/sin-acceso.tsx','components/team-invitation.tsx','components/ui/citation.tsx','components/workspace/action-form.tsx',
 ];

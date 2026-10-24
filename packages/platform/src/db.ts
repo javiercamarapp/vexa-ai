@@ -77,14 +77,26 @@ export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool;
       try {
         const session = await resolveSession(identity,selectedTenant);
         const userId=session.user.id, tenantId=session.active.tenant_id;
+        // GUARDIA CENTRAL de «ver como»: una sesión de soporte solo LEE. Ninguna otra acción llega a la base, sea cual sea la ruta que la pida.
+        if (session.support && action !== 'read') throw new AccessError(403,'support_read_only');
         connection = await pool.connect();
         await connection.query(action === 'read' ? 'BEGIN READ ONLY' : 'BEGIN'); open = true;
         await connection.query('SET LOCAL ROLE vexa_backend');
         await connection.query("SELECT set_config('request.jwt.claim.sub',$1,true), set_config('vexa.tenant_id',$2,true), set_config('statement_timeout',$4,true), set_config('vexa.action',$3,true)",[userId,tenantId,action,STATEMENT_TIMEOUT_MS[action]]);
-        const current = await connection.query<Membership>(
-          "SELECT tenant_id,user_id,role,status,permissions_version FROM public.memberships WHERE tenant_id=$1 AND user_id=$2 AND status='active'",
-          [tenantId,userId]);
-        const member=current.rows[0];
+        let member:Membership|undefined;
+        if (session.support) {
+          // Soporte: la base confirma la sesión vigente (vexa_support_active, migración 20261125000100). Sin esa rama la lectura falla cerrada.
+          let granted=false;
+          try { granted=(await connection.query<{ok:boolean}>('SELECT public.vexa_support_active($1::uuid) AS ok',[tenantId])).rows[0]?.ok===true; }
+          catch (error) { if ((error as {code?:string})?.code==='42883') throw new AccessError(503,'support_read_unavailable'); throw error; }
+          if (!granted) throw new AccessError(403,'organization_not_authorized');
+          member=session.active;
+        } else {
+          const current = await connection.query<Membership>(
+            "SELECT tenant_id,user_id,role,status,permissions_version FROM public.memberships WHERE tenant_id=$1 AND user_id=$2 AND status='active'",
+            [tenantId,userId]);
+          member=current.rows[0];
+        }
         if (!member || member.user_id!==userId || member.tenant_id!==tenantId || member.status!=='active') throw new AccessError(403,'organization_not_authorized');
         if (!roles[action].includes(member.role)) throw new AccessError(403,'role_insufficient');
         let active = true;

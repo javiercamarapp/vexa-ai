@@ -14,5 +14,6 @@ $P -f $S/fixture.sql
 $P -f $M/20260930224057_platform_administration.sql
 $P -f $M/20261125000000_platform_support_and_audited_reads.sql
 $P -f $M/20261125000100_support_read_branch.sql
+$P -f $M/20261125000200_team_my_invitations.sql
 $P -t -A -f $S/test.sql | grep -v "^\s*$"
 echo ALL-OK

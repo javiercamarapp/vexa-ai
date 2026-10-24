@@ -220,7 +220,9 @@ export const TOOLS = [
     reads: ['public.economic_ledger_entries (última revisión por entidad)'], method: 'Toma la última revisión de cada registro; pedidos «registrados» y reembolsos «liquidados» por fecha efectiva; agrupa por fuente y moneda. No convierte ni suma monedas; los importes sin monto se cuentan aparte.', source: SRC.ledger,
     async run({ port }, { kind, month, months, fuente }) {
       const r = await port.ledgerBySource({ kind, month, months });
-      const noun = kind === 'refund' ? 'reembolsos liquidados' : 'pedidos registrados';
+      const todos = kind === 'refund' && r.basis === 'all_statuses';
+      const noun = kind === 'refund' ? (todos ? 'reembolsos registrados en el libro (todos los estados)' : 'reembolsos liquidados') : 'pedidos registrados';
+      const etiqueta = kind === 'refund' ? (todos ? 'Reembolsos registrados (todos los estados)' : 'Reembolsos liquidados') : 'Pedidos registrados';
       const span = month ? monthLabel(month) : `los últimos ${months} meses`;
       let rows = r.rows ?? [];
       if (fuente) {
@@ -241,9 +243,9 @@ export const TOOLS = [
       const bar = rows.filter((x) => x.currency === currencies[0]);
       return {
         status: 'ok', figures: fs,
-        blocks: [{ tool: 'ledger_por_fuente', title: `${kind === 'refund' ? 'Reembolsos liquidados' : 'Pedidos registrados'} por fuente · ${span}`, columns: [col('fuente', 'Fuente'), col('moneda', 'Moneda'), col('registros', 'Registros', 'integer'), col('importe', 'Importe'), col('sinImporte', 'Sin importe', 'integer')], rows: rows.map((x) => ({ fuente: x.sourceLabel, moneda: x.currency, registros: x.count, importe: money(x.amountMinor, x.currency, x.exponent), sinImporte: x.unknown })), chart: { kind: 'bar', unit: `importe en ${currencies[0]}`, series: bar.map((x) => ({ key: x.source, label: x.sourceLabel, value: majorOf(x.amountMinor, x.exponent), display: money(x.amountMinor, x.currency, x.exponent) })) }, class: 'observed', coverage: cov, truncated: false, note: currencies.length > 1 ? `Las monedas (${currencies.join(', ')}) no se suman entre sí ni se convierten.` : undefined }],
-        summary: `${kind === 'refund' ? 'Reembolsos liquidados' : 'Pedidos registrados'} por fuente en ${span}: ${rows.map((x, i) => `${x.sourceLabel} ${fs[i].display}`).join('; ')} ${tag(fs[0])}.${currencies.length > 1 ? ' Las monedas no se suman entre sí.' : ''}`,
-        missing: rows.some((x) => x.unknown > 0) ? ['El monto de los registros sin importe'] : [], notes: currencies.length > 1 ? ['Las monedas no se convierten ni se suman.'] : [],
+        blocks: [{ tool: 'ledger_por_fuente', title: `${etiqueta} por fuente · ${span}`, columns: [col('fuente', 'Fuente'), col('moneda', 'Moneda'), col('registros', 'Registros', 'integer'), col('importe', todos ? 'Importe bruto' : 'Importe'), ...(todos ? [col('liquidado', 'De ellos, liquidado'), col('cancelado', 'De ellos, cancelado')] : []), col('sinImporte', 'Sin importe', 'integer')], rows: rows.map((x) => ({ fuente: x.sourceLabel, moneda: x.currency, registros: x.count, importe: money(x.amountMinor, x.currency, x.exponent), ...(todos ? { liquidado: money(x.settledAmountMinor ?? '0', x.currency, x.exponent), cancelado: money(x.cancelledAmountMinor ?? '0', x.currency, x.exponent) } : {}), sinImporte: x.unknown })), chart: { kind: 'bar', unit: `importe en ${currencies[0]}`, series: bar.map((x) => ({ key: x.source, label: x.sourceLabel, value: majorOf(x.amountMinor, x.exponent), display: money(x.amountMinor, x.currency, x.exponent) })) }, class: 'observed', coverage: cov, truncated: false, note: [todos ? 'Importe bruto de todos los reembolsos registrados (incluye pendientes y cancelados); «liquidado» es solo el de estado liquidado. Los de estado desconocido o sin importe cuentan en «Registros» pero no en el importe.' : null, r.note ?? null, currencies.length > 1 ? `Las monedas (${currencies.join(', ')}) no se suman entre sí ni se convierten.` : null].filter(Boolean).join(' ') || undefined }],
+        summary: `${etiqueta} por fuente en ${span}: ${rows.map((x, i) => `${x.sourceLabel} ${fs[i].display}`).join('; ')} ${tag(fs[0])}.${currencies.length > 1 ? ' Las monedas no se suman entre sí.' : ''}`,
+        missing: rows.some((x) => x.unknown > 0) ? ['El monto de los registros sin importe'] : [], notes: [...(currencies.length > 1 ? ['Las monedas no se convierten ni se suman.'] : []), ...(r.note ? [r.note] : [])],
       };
     },
   },

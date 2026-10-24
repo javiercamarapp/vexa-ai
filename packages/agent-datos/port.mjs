@@ -3,6 +3,7 @@
 // adaptador al servicio del espacio de trabajo (abajo), que cubre lo que ya existe y declara «no conectado» lo que falta construir.
 import { createProvenanceRepository } from '../workspace-service/provenance.mjs';
 import { createTrendsRepository } from '../workspace-service/trends.mjs';
+import { readLedgerBySource } from './port-queries.mjs';
 
 export const PORT_METHODS = Object.freeze(['coverage', 'trends', 'associations', 'tracker', 'problems', 'problemIncidents', 'categoryMonthly', 'exposure', 'ledgerBySource', 'evidence', 'problemCustomers']);
 export function assertPort(port) {
@@ -38,7 +39,9 @@ export function createWorkspacePort({ database, tenantId, now = () => new Date()
     tracker: async () => parseTracker((await coverage()).sources.find((s) => s.key === 'excel')),
     // Pendientes de construir (ver INFORME-AGENTE-DATOS.md): requieren consultas acotadas nuevas sobre issues/problems/problem_conversations,
     // economic_problem_links y economic_ledger_entries por fuente. Mientras tanto el agente responde «no tengo ese dato».
+    // Conectado: ledgerBySource (solo lectura, acotado; ver port-queries.mjs). Un tope agotado lanza 57014 -> el agente dice «no pudo completarse», nunca «0».
+    ledgerBySource: ({ kind, month, months }) => database.transaction('read', (s) => readLedgerBySource(s, { kind, month, months, now: now() })),
     problems: notConnected('problems'), problemIncidents: notConnected('problemIncidents'), categoryMonthly: notConnected('categoryMonthly'),
-    exposure: notConnected('exposure'), ledgerBySource: notConnected('ledgerBySource'), evidence: notConnected('evidence'), problemCustomers: notConnected('problemCustomers'),
+    exposure: notConnected('exposure'), evidence: notConnected('evidence'), problemCustomers: notConnected('problemCustomers'),
   };
 }

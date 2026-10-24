@@ -159,3 +159,5 @@
 .workspace-chat .agente-tema-q:hover,.workspace-chat .agente-tema-q:focus-visible{background:var(--ui-soft);outline:none}
 .workspace-chat .agente-tema-q:focus-visible{box-shadow:0 0 0 2px var(--ui-focus)}
 @media(prefers-reduced-motion:no-preference){.agente-tema{animation:ui-rise 480ms var(--ui-ease,ease-out) both}}
+
+.copiloto[data-has=true] .particle-field{opacity:.4}

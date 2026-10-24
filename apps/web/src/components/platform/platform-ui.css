@@ -34,7 +34,7 @@
 .pf-meter[data-tone=warn] span{background:var(--ui-warning)}.pf-meter[data-tone=bad] span{background:var(--pf-bad)}
 .pf-filters{display:flex;flex-wrap:wrap;align-items:end;gap:var(--sp-3) var(--sp-4);margin:0 0 var(--sp-4)}
 .pf-filters label{display:grid;gap:var(--sp-1);font-size:12px;font-weight:600;color:var(--muted);min-width:0}
-.pf-filters :is(input,select){min-height:40px;min-width:min(100%,180px);padding:8px 12px;border:1px solid var(--ui-input);border-radius:999px;background:var(--ui-surface);color:var(--ink);font:500 13px var(--font-ui)}
+.pf-filters :is(input,select){min-height:32px;min-width:min(100%,180px);padding:5px 12px;border:1px solid var(--ui-input);border-radius:8px;background:var(--ui-surface);color:var(--ink);font:500 13px var(--font-ui)}
 .pf-filters input[type=search]{min-width:min(100%,260px)}
 .pf-table-wrap{margin-top:var(--sp-2)}
 .pf-table th{white-space:nowrap}.pf-table td{vertical-align:middle}.pf-table td.pf-wrap{min-width:220px;max-width:340px}

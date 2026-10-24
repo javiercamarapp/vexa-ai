@@ -64,6 +64,18 @@ function medir(){
  for(const e of cont?[...cont.querySelectorAll('button,a.btn')].filter(vis):[]){const n=((e.getAttribute('aria-label')||e.textContent)||'').trim().toLowerCase();if(/^(actualizar|exportar|exportar informe)$/.test(n))cuenta[n]=(cuenta[n]||0)+1;}
  for(const [n,c] of Object.entries(cuenta))if(c>1)out.repetidos.push(n+' x'+c);
  if(innerWidth>=1000)for(const b of document.querySelectorAll('.workspace-header button,.workspace-topbar button'))if(vis(b))out.topbar.push(desc(b));
+ // Aire interior de botones, chips, pestañas y selects con borde o relleno: texto e iconos a ≥5 px del borde (nada pegado al margen); el select, además, ≥24 px a la derecha para su chevron.
+ for(const el of document.querySelectorAll('button,.btn,select,.chip,.ui-chip,[role=tab],.fchip')){
+  if(!vis(el)||srOnly(el)||el.matches('.row-link-inline,.skip-link,.ui-chip-x'))continue;
+  const cs=getComputedStyle(el),r=el.getBoundingClientRect(),caja=parseFloat(cs.borderLeftWidth)>0||cs.backgroundColor!=='rgba(0, 0, 0, 0)';
+  if(!caja||r.width<4)continue;
+  if(el.tagName==='SELECT'){if(el.multiple||el.size>1)continue;if(parseFloat(cs.paddingRight)<24)out.overlap.push('aire: select con padding-derecho '+cs.paddingRight+' '+desc(el));continue;}
+  if(el.querySelector('.sr-only,code')||el.matches('.id-chip'))continue;
+  const txt=(el.textContent||'').trim();if(!txt)continue;
+  const rg=document.createRange();rg.selectNodeContents(el);const tr=rg.getBoundingClientRect();
+  if(tr.width&&(tr.left-r.left<5||r.right-tr.right<5||tr.top-r.top<2||r.bottom-tr.bottom<2))out.overlap.push('aire: texto pegado al borde en '+desc(el)+' ('+Math.round(tr.left-r.left)+'/'+Math.round(r.right-tr.right)+'/'+Math.round(tr.top-r.top)+'/'+Math.round(r.bottom-tr.bottom)+')');
+  for(const sv of el.querySelectorAll('svg')){const q=sv.getBoundingClientRect();if(q.width&&(q.left-r.left<4||r.right-q.right<4))out.overlap.push('aire: icono pegado al borde en '+desc(el));}
+ }
  for(const k of ['clipped','overlap','unnamed','small'])out[k]=[...new Set(out[k])];
  return out;
 }

@@ -77,7 +77,7 @@ export function Chat({data,modo}:{data:AgentState;modo?:ModoChat}){
  const count=a.conversations.length;
  const chips=<p className="agente-meta"><span className="chip" title="Fuentes con datos cargados frente a las que el espacio de trabajo espera.">{s.loaded} de {s.total} fuentes</span><span className="chip agente-mode" title={data.note}>{data.mode==='deterministic'?'Cifras calculadas, sin IA generativa':'Redacción con IA verificada'}</span></p>;
  return <div className={'copiloto'+(modo?' copiloto-negocio':'')} data-testid="agente-shell" data-has={has} data-modo={modo?.modo}>
-  {!has&&<ParticleField/>}
+  <ParticleField/>
   <div className="copiloto-hist-row"><button ref={histButton} type="button" className="copiloto-hist-btn" aria-label="Historial de chats" aria-expanded={hist&&!leaving} aria-controls={histId} onClick={hist&&!leaving?closeHist:openHist}><Icon name="history" size={14}/>Historial{count>0&&<span className="copiloto-hist-count">{count>=50?'50+':count}</span>}</button></div>
   <div className="agente" data-has={has} data-negocio={modo?true:undefined}>
    {modo&&modo.portada(ask,has)}

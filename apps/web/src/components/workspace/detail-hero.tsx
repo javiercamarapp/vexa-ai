@@ -1,6 +1,6 @@
 'use client';
 import {useState,type ReactNode} from 'react';
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import type {ProblemDetail,CustomerDetail} from '../../../../../packages/workspace-service/detail.mjs';
 import {KindBadge} from '../ui/kind-badge';
 import {StatusChip} from '../ui/status-chip';

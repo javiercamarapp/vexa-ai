@@ -2,7 +2,7 @@
 import {RovaqCargando} from '../rovaq-cargando';
 import {useCallback,useEffect,useMemo,useState} from 'react';
 import type {TrendsView,LedgerMonth} from '../../../../../packages/workspace-service/trends.mjs';
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import {ratioBps} from '../workspace/cfo-model.mjs';
 import {axisLabel} from '../../../../../packages/cfo-copilot/src/format.mjs';
 import {mesAbrev} from '../../lib/charts/escala.mjs';

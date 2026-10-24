@@ -3,7 +3,7 @@ import {RovaqCargando} from '../rovaq-cargando';
 import {useEffect,useMemo,useState,type ReactNode} from 'react';
 import type {Bundle} from '../../lib/workspace/contracts';
 import type {TrendsView} from '../../../../../packages/workspace-service/trends.mjs';
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import {buildCfoModel,ratioBps} from './cfo-model.mjs';
 import {AreaChart,type AreaPoint} from '../ui/area-chart';
 import {ColumnChart,type ColumnDatum} from '../ui/column-chart';

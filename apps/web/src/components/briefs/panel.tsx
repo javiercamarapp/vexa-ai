@@ -9,7 +9,7 @@ import {LineaCache} from '../ui/linea-cache';
 import {consultaFijada} from '../../lib/workspace/precalentar.mjs';
 import type {Brief,BriefList,BriefProblem} from '../../../../../packages/briefs/index.mjs';
 import type {Scope,Metric} from '../../lib/workspace/contracts';
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import {epistemicKind} from '../../lib/epistemic.mjs';
 import {ScopeBar} from '../workspace/scope-bar';
 import {PageHeader} from '../ui/page-header';

@@ -38,7 +38,7 @@ test('dinero: Fuga, Brechas y la función compartida dan el mismo texto para los
     assert.equal(Fuga.usd(m), F.usd(m)); assert.equal(Brechas.usd(m), F.usd(m));
     assert.equal(Fuga.usd(m, {decimals: true}), F.usd(m, {decimales: true}));
   }
-  assert.equal(F.usd('85472800'), '[omitido: dato de cliente]'); assert.equal(F.usd(null), '—'); assert.equal(Fuga.usd(undefined), '—');
+  assert.equal(F.usd('85472800'), 'US[omitido: dato de cliente]'); assert.equal(F.usd(null), '—'); assert.equal(Fuga.usd(undefined), '—');
 });
 test('enteros y porcentajes: 104,024 se escribe igual en todas partes; un decimal siempre; 0 de N no es «—»', () => {
   assert.equal(F.entero(104024), '104,024'); assert.equal(Fuga.num(104024), '104,024'); assert.equal(Brechas.num(104024), '104,024');

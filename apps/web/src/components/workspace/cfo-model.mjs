@@ -1,4 +1,4 @@
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 const integer=x=>typeof x==='string'&&x.length<=4096&&/^(0|-?[1-9]\d*)$/.test(x);
 const unit=m=>typeof m.currency==='string'&&/^[A-Z]{3}$/.test(m.currency)&&Number.isInteger(m.exponent)&&m.exponent>=0&&m.exponent<=9;
 const absolute=n=>n<0n?-n:n;

@@ -2,7 +2,7 @@
 import {useRef,useState} from 'react';
 import type {Recommendation,RecommendationList} from '../../../../../packages/recommendations/index.mjs';
 import {accionesPermitidas,etapaActual,ETAPA_TXT,PRIORIDAD_TXT,RESULTADO_TXT} from '../../../../../packages/recommendations/flujo.mjs';
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import {Button,LinkButton,Refresh,Arrow} from '../ui/button';
 import {Citation} from '../ui/citation';
 import {IdChip} from '../ui/id-chip';

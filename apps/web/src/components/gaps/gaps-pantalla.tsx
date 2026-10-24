@@ -23,7 +23,7 @@ import {useGaps} from './use-gaps';
 import '../dinero/dinero.css';
 
 const big=(m:string)=>Number(BigInt(m)/100n);
-const corto=(n:number)=>n>=1_000_000?`$${(n/1_000_000).toFixed(2)}M`:n>=1000?`$${Math.round(n/1000)}k`:`$${n}`;
+const corto=(n:number)=>n>=1_000_000?`US$${(n/1_000_000).toFixed(2)}M`:n>=1000?`US$${Math.round(n/1000)}k`:`US$${n}`;
 
 /** Pantalla «Brechas de ingreso»: titular, KPI en color, puente de ventas a ingreso retenido, dónde gano / pierdo / podría ganar, tabla «Cierra esta brecha» y ventas vs quejas. Siempre ingreso bruto, nunca margen. */
 export function GapsPantalla({organization}:{organization?:string}){

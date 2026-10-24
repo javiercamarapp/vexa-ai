@@ -4,7 +4,7 @@ import type {Bundle} from '../../lib/workspace/contracts';
 import type {CoverageView} from '../../../../../packages/workspace-service/provenance.mjs';
 import type {MonthlyIncidencesView} from '../../../../../packages/workspace-service/incidences.mjs';
 import {etiquetaMotivo} from '../../../../../packages/workspace-service/critico.mjs';
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import Link from './navigation-lifecycle';
 import {StatCard,type Delta} from '../ui/stat-card';
 import {Sparkline} from '../ui/sparkline';

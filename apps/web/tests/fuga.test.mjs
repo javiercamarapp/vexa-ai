@@ -9,7 +9,7 @@ import * as A from '../src/components/refunds/fuga-archivos.mjs';
 const v = await vistaSintetica();
 
 test('formato de dinero y textos: bruto y sin cancelados, concentración, cobertura y ventanas en una línea', () => {
-  assert.equal(M.usd('85472800'), '[omitido: dato de cliente]'); assert.equal(M.usd('50', {decimals: true}), '$0.50'); assert.equal(M.usd(null), '—');
+  assert.equal(M.usd('85472800'), 'US[omitido: dato de cliente]'); assert.equal(M.usd('50', {decimals: true}), 'US$0.50'); assert.equal(M.usd(null), '—');
   assert.match(M.fraseConcentracion(v), /^10 SKUs concentran el \d+(\.\d)? % del dinero devuelto\./);
   assert.match(M.lineaCobertura(v), /Amazon .* · Walmart .* · Shopify 13 reembolsos\. \d+ % de los de Amazon sin monto\. CAD no se suman \(4 reembolsos\)\./);
   const ven = M.lineaVentanas(v);
@@ -26,7 +26,7 @@ test('periodo del titular: rango real, ventana por canal, nota si el periodo ped
   assert.equal(p.acumulado, null, 'con periodo elegido no hay segundo titular con otra ventana'); assert.equal(p.acumuladoOmitido, true);
   const sin = M.periodoDelTitular({...w, scope: {dateStart: null, dateEnd: null}});
   assert.equal(sin.nota, null); assert.equal(sin.pedido, false); assert.equal(sin.acumuladoOmitido, false);
-  assert.match(sin.acumulado.texto, /\[omitido: dato de cliente] USD brutos \(\[omitido: dato de cliente]\.84 sin cancelados\) en 6,405 reembolsos\./);
+  assert.match(sin.acumulado.texto, /US\[omitido: dato de cliente] brutos \(US\[omitido: dato de cliente]\.84 sin cancelados\) en 6,405 reembolsos\./);
   assert.match(M.periodoDelTitular({...w, titular: {...t, rango: null}}).nota, /No hay reembolsos cargados en el periodo elegido/);
   assert.equal(M.periodoDelTitular({titular: {status: 'unavailable'}}), null);
 });
@@ -41,11 +41,11 @@ test('estimador con candado: sin supuestos no hay número; con ellos, la cuenta 
   const vacio = {vacio: true}, base = '10000000';
   assert.deepEqual(M.estimar({baseUsdMinor: base, ticketsRepiten: 1000, pctProveedor: vacio, pctRecuperable: vacio, costoContacto: vacio, pctEvitable: vacio}), {A: null, B: null});
   const a = M.estimar({baseUsdMinor: base, ticketsRepiten: 1000, pctProveedor: M.porcentaje('30 %'), pctRecuperable: M.porcentaje('50'), costoContacto: vacio, pctEvitable: vacio});
-  assert.equal(a.A.valorUsd, 15000); assert.equal(a.B, null); assert.equal(M.formulaA(a.A), '$100,000 × 30 % × 50 %');
+  assert.equal(a.A.valorUsd, 15000); assert.equal(a.B, null); assert.equal(M.formulaA(a.A), 'US$100,000 × 30 % × 50 %');
   const mitad = M.estimar({baseUsdMinor: base, ticketsRepiten: 1000, pctProveedor: M.porcentaje('30'), pctRecuperable: vacio, costoContacto: vacio, pctEvitable: vacio});
   assert.equal(mitad.A, null, 'con un solo supuesto de dos no se muestra número');
   const b = M.estimar({baseUsdMinor: null, ticketsRepiten: 200, pctProveedor: vacio, pctRecuperable: vacio, costoContacto: M.dinero('$6.50'), pctEvitable: M.porcentaje('25')});
-  assert.equal(b.B.valorUsd, 325); assert.equal(M.formulaB(b.B), '200 tickets × $6.50 × 25 %');
+  assert.equal(b.B.valorUsd, 325); assert.equal(M.formulaB(b.B), '200 tickets × US$6.50 × 25 %');
   assert.ok(M.porcentaje('120').error && M.porcentaje('abc').error && M.porcentaje('-5').error && M.dinero('1e3').error && M.porcentaje('0.3').ok, '0.3 es 0.3 %, no 30 %');
   assert.equal(M.estimar({baseUsdMinor: base, ticketsRepiten: null, pctProveedor: M.porcentaje('x'), pctRecuperable: M.porcentaje('50'), costoContacto: vacio, pctEvitable: vacio}).A, null);
 });

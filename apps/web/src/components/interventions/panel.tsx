@@ -2,7 +2,7 @@
 import {useAutoRefresh} from '../ui/use-auto-refresh';
 import {useCallback,useEffect,useRef,useState,type FormEvent} from 'react';
 import type {Intervention,InterventionPlan,Measurement,SnapshotOption} from '../../../../../packages/interventions/index.mjs';
-import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
+import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import {Button} from '../ui/button';
 import Link from '../workspace/navigation-lifecycle';
 import {KindBadge} from '../ui/kind-badge';

@@ -16,7 +16,7 @@ import {CLAVE_BORRADOR} from './gaps-recs';
 import {NOMBRE,mesCorto,mesLargo,num,pct,usd,variacion,TIPO_REC} from './gaps-modelo.mjs';
 
 const big=(m:string)=>Number(BigInt(m)/100n);
-const corto=(n:number)=>n>=1_000_000?`$${(n/1_000_000).toFixed(1)}M`:n>=1000?`$${Math.round(n/1000)}k`:`$${n}`;
+const corto=(n:number)=>n>=1_000_000?`US$${(n/1_000_000).toFixed(1)}M`:n>=1000?`US$${Math.round(n/1000)}k`:`US$${n}`;
 type Ing=Extract<BrechasVista['ingresos'],{status:'ok'}>;
 const CANAL_C:Record<string,number>={amazon:1,walmart:5,bestbuy:4,shopify:3};
 const cc=(c:string)=>CANAL_C[c]??8;

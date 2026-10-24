@@ -2,7 +2,7 @@
 
 Propuesta local: catálogo y emisores de negocio siguen desconectados. No incluye transportes Resend/web-push ni suscripciones o webhooks. No hay endpoint público para elegir destinatarios, emitir o conciliar. Las interfaces son internas de servidor.
 
-`createOutboxRepository({database,leaseMs,verifyReconciliation?})` reutiliza createDatabase. Owner configura políticas versionadas con CAS y encola referencias. `enqueueIn(scope,input)` permite insertar evento, job y outbox en la misma transacción import del negocio; cualquier error revierte todos. Los destinatarios son UUID de memberships activas de VEXA, nunca contactos CRM. Invited no se encola.
+`createOutboxRepository({database,leaseMs,verifyReconciliation?})` reutiliza createDatabase. Owner configura políticas versionadas con CAS y encola referencias. `enqueueIn(scope,input)` permite insertar evento, job y outbox en la misma transacción import del negocio; cualquier error revierte todos. Los destinatarios son UUID de memberships activas de Rovaq, nunca contactos CRM. Invited no se encola.
 
 Se usan public.jobs y public.attempts como única autoridad de lease y fence. La metadata de entrega está en notification_outbox; sus items agrupan eventos de un mismo tenant/usuario/canal y versión de política durante una ventana opcional, hasta100 por digest. No entran eventos nuevos después del claim. Cada referencia se reautoriza antes de enviar; las retiradas se suprimen. El mensaje es genérico, sin cifras ni texto de CRM, y enlaza al centro autorizado.
 

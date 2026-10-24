@@ -12,7 +12,7 @@ La política más reciente del canal debe estar habilitada y su propietario debe
 
 1. Una persona propietaria entra en `/settings/notification-delivery`, autoriza los canales y guarda intervalo, agrupación, máximo de intentos y vigencia. La pantalla comprueba la versión guardada. No autoriza por sí sola mensajes a nadie.
 2. Cada persona activa el canal y los eventos deseados en `/settings/notifications`. Web Push requiere además el registro explícito del dispositivo en `/notifications/push`.
-3. El operador configura los servicios descritos en `EMAIL.md` y `PUSH.md` y ejecuta el consumidor con las credenciales/delegación de VEXA. El módulo integrado `transports.mjs` carga email y push automáticamente: no hay que escribir un módulo de integración para conectar cuentas.
+3. El operador configura los servicios descritos en `EMAIL.md` y `PUSH.md` y ejecuta el consumidor con las credenciales/delegación de Rovaq. El módulo integrado `transports.mjs` carga email y push automáticamente: no hay que escribir un módulo de integración para conectar cuentas.
 4. `node OUT/packages/notifications/daemon.mjs --once` procesa un ciclo; sin `--once` procesa hasta recibir SIGTERM/SIGINT. Usa el build durable existente. Cierra los recursos de ambos transportes al terminar. El override privado `VEXA_NOTIFICATION_TRANSPORT_MODULE` sigue reservado a configuración de servidor.
 
 La pantalla distingue configuración local de entrega confirmada. No llama al proveedor para mostrar preferencias. Un canal sin configurar queda bloqueado, y ningún dato ausente se sustituye por una entrega exitosa. Activar una política o preferencia no manda avisos históricos retroactivamente. Un brief nuevo sobre información histórica sí puede generar su aviso normal.

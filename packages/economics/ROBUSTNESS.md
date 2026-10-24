@@ -37,7 +37,7 @@ contrato inesperado o timeout es `invalid`; no infla la protección medida. Un
 
 El reporte de esta propuesta registra 9/9 casos en Node 22 y Node 26, y los cinco
 mutantes detectados en ambos runtimes. No es un porcentaje de cobertura de todo
-VEXA. La primera calibración de moneda produjo un error de exponente, no una
+Rovaq. La primera calibración de moneda produjo un error de exponente, no una
 aserción válida; su recibo se preservó fuera del producto. Se corrigió el ensayo
 para aislar la suma USD/EUR con el mismo exponente, sin modificar el producto.
 

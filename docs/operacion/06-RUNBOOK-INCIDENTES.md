@@ -1,4 +1,4 @@
-# Runbook de incidentes de Vexa
+# Runbook de incidentes de Rovaq
 
 Principios: primero **leer** (consultas de `ops/diagnostics/`, solo lectura, via MCP `execute_sql` con `project_id` explicito `proyecto-ejemplo` o `psql`), luego decidir; toda escritura de produccion la autoriza Javier (script `!`) con respaldo y verificacion posterior. No tocar contadores, no inventar aprobaciones, no reintentar un intento rojo sin informacion nueva.
 

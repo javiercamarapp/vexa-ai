@@ -122,8 +122,8 @@
 .workspace-chat .agente-round{display:inline-flex;align-items:center;justify-content:center;flex:none;width:32px;height:32px;padding:0;border-radius:999px;cursor:pointer}
 .workspace-chat .agente-attach-btn{border:1px solid var(--ui-border);background:transparent;color:var(--muted)}
 .workspace-chat .agente-attach-btn:hover:not(:disabled){background:var(--ui-soft)}
-.workspace-chat .agente-consult{display:flex;align-items:center;gap:6px;padding:6px 14px 6px 12px;border:0;border-radius:999px;background:var(--ink);color:var(--ui-surface);font:500 12px/16px var(--font-ui);cursor:pointer}
-.workspace-chat .agente-send{border:0;background:var(--ui-action);color:var(--ui-action-ink)}
+.workspace-chat .agente-consult{display:flex;align-items:center;gap:6px;padding:4px 12px 4px 10px;border:1px solid var(--btn-soft-line);border-radius:999px;background:var(--btn-soft-bg);color:var(--btn-soft-ink);font:500 12px/16px var(--font-ui);cursor:pointer}
+.workspace-chat .agente-send{border:1px solid var(--btn-soft-line);background:var(--btn-soft-bg);color:var(--btn-soft-ink)}
 .workspace-chat .agente-send[aria-label=Detener] svg{fill:currentColor}
 .workspace-chat .copiloto button:disabled{opacity:.5}
 .workspace-chat .copiloto button:hover:not(:disabled):is(.agente-consult,.agente-send){opacity:.9;background:inherit}

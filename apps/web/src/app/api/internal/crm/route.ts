@@ -5,12 +5,12 @@ import {createRuntime} from '../../../../../../../packages/jobs/durable/runtime.
 import {createCRMRuntime} from '../../../../../../../packages/connectors/runtime.mjs';
 import {createCRMCredentialResolver} from '../../../../../../../packages/connectors/credentials.mjs';
 import {createCRMHostedHandler} from '../../../../../../../packages/connectors/hosted.mjs';
-import {createAfterWork} from '../../../../../../../packages/insights/refresh.mjs';
+import {createAfterWork,refreshPerfFrio} from '../../../../../../../packages/insights/refresh.mjs';
 export const runtime='nodejs';
 export const maxDuration=60;
 export const dynamic='force-dynamic';
 const handler=createCRMHostedHandler({secret:process.env.VEXA_WORKER_TRIGGER_SECRET,
- afterWork:createAfterWork({source:'hubspot',method:'api_poll',enabled:process.env.VEXA_INSIGHTS_REFRESH==='enabled',budgetMs:8000,expectedEverySeconds:300}),
+ afterWork:createAfterWork({source:'hubspot',method:'api_poll',enabled:process.env.VEXA_INSIGHTS_REFRESH==='enabled',warm:refreshPerfFrio,budgetMs:8000,expectedEverySeconds:300}),
  runtime:async()=>{
  const worker=await createRuntime(process.env,{createDatabase,pool:serverPool(),deadlineAt:Date.now()+40000,consumer:'crm'});
  if(worker.idle)return worker;

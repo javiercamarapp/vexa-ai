@@ -25,3 +25,13 @@ test('gancho: apagado no hace nada; encendido anota y refresca solo con avance; 
   const boom = createAfterWork({source: 'tracker', method: 'manual_upload', enabled: true, refresh: async () => { throw Object.assign(Error('x'), {code: '57014'}); }, record});
   assert.deepEqual(await boom({}, {state: 'done'}), {status: 'error', code: '57014', refreshed: []});
 });
+test('calentar precálculos de rendimiento: solo si la ruta pasa `warm`, con el alcance correcto, y un fallo no rompe el gancho', async () => {
+  const {perfFrioQue, refreshPerfFrio} = await import('../refresh.mjs');
+  assert.equal(perfFrioQue(['hubspot', 'conversations', 'contacts']), 'sla'); assert.equal(perfFrioQue(['ledger']), 'ledger'); assert.equal(perfFrioQue(['all']), 'all'); assert.equal(perfFrioQue(['tracker']), null);
+  const llamadas = [], warm = async (_, o) => { llamadas.push(o.what); return {status: 'ok'}; }, refresh = async () => ({status: 'done'}), record = async () => {};
+  const sin = createAfterWork({source: 'hubspot', method: 'api_poll', enabled: true, refresh, record}); assert.equal((await sin({}, {state: 'done', pages: 1})).perfFrio, undefined);
+  const con = createAfterWork({source: 'hubspot', method: 'api_poll', enabled: true, refresh, record, warm}); assert.deepEqual((await con({}, {state: 'done', pages: 1})).perfFrio, {status: 'ok'}); assert.deepEqual(llamadas, ['sla']);
+  const db = {transaction: async () => { throw Object.assign(new Error('function public.refresh_perf_frio(uuid, text) does not exist'), {code: '42883'}); }};
+  assert.equal((await refreshPerfFrio(db)).status, 'absent');
+  assert.equal((await refreshPerfFrio({transaction: async () => { throw Object.assign(new Error('boom'), {code: '57014'}); }})).status, 'error');
+});

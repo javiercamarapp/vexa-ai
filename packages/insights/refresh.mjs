@@ -14,6 +14,18 @@ export async function refreshInsights(database, {source = 'all', since = null, b
     return r.rows[0].r;
   });
 }
+/** Qué precálculos de rendimiento (20261125000000) toca cada destino de refresco: SLA depende de HubSpot/conversaciones; los digests del libro, del libro. */
+export function perfFrioQue(targets) {
+  const t = new Set(targets);
+  const sla = t.has('all') || t.has('hubspot') || t.has('conversations'), ledger = t.has('all') || t.has('ledger');
+  return sla && ledger ? 'all' : sla ? 'sla' : ledger ? 'ledger' : null;
+}
+/** Recalcula los precálculos de /api/workload y /api/refunds. Sin la migración devuelve {status:'absent'}; jamás lanza (no debe romper el trabajo que lo invoca). */
+export async function refreshPerfFrio(database, {what = 'all'} = {}) {
+  try {
+    return await database.transaction('import', async s => (await s.query('SELECT public.refresh_perf_frio($1::uuid,$2::text) AS r', [s.tenantId, what])).rows[0].r);
+  } catch (e) { return {status: /refresh_perf_frio/.test(String(e?.message)) && /does not exist|no existe/.test(String(e?.message)) ? 'absent' : 'error', code: e?.code ?? null}; }
+}
 /** Anota el estado de una fuente (éxito/fallo, nuevos, latencia, siguiente corrida). */
 export async function recordSourceSync(database, {source, method, ok, newRecords = null, error = null, latencyMs = null, nextRunAt = null, expectedEverySeconds = null, dataWatermark = null}) {
   return database.transaction('import', s => s.query('SELECT public.record_source_sync($1::uuid,$2,$3,$4,$5,$6,$7,$8::timestamptz,$9,$10::timestamptz)',
@@ -23,7 +35,7 @@ export async function recordSourceSync(database, {source, method, ok, newRecords
  * Gancho para los manejadores alojados (imports, CRM): tras un trabajo con avance anota la fuente y refresca los insights afectados.
  * Nunca lanza: el trabajo principal ya terminó y su resultado no depende de esto. `enabled` apaga el gancho por completo (VEXA_INSIGHTS_REFRESH=enabled).
  */
-export function createAfterWork({source, method, enabled = false, budgetMs = 8000, refresh = refreshInsights, record = recordSourceSync, now = Date.now, expectedEverySeconds = null, progressed = r => r && r.state !== 'idle'} = {}) {
+export function createAfterWork({source, method, enabled = false, budgetMs = 8000, refresh = refreshInsights, record = recordSourceSync, now = Date.now, warm = null, expectedEverySeconds = null, progressed = r => r && r.state !== 'idle'} = {}) {
   return async function afterWork(database, result, {error = null, startedAt = now()} = {}) {
     if (enabled !== true || !database) return {status: 'disabled'};
     const out = {status: 'ok'};
@@ -34,6 +46,9 @@ export function createAfterWork({source, method, enabled = false, budgetMs = 800
         const targets = SOURCE_TO_REFRESH[source] ?? ['all'];
         out.refreshed = [];
         for (const t of targets) out.refreshed.push(await refresh(database, {source: t, budgetMs}));
+        // Calentar los precálculos de rendimiento (no-op si el corte no cambió). Solo si la ruta lo pidió (`warm`); un fallo aquí no cambia el resultado.
+        const que = warm ? perfFrioQue(targets) : null;
+        if (que) out.perfFrio = await warm(database, {what: que});
       }
     } catch (e) { out.status = 'error'; out.code = e?.code ?? 'INSIGHTS_HOOK_FAILED'; }
     return out;

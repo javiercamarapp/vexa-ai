@@ -132,7 +132,7 @@ test('contraste: monocromo en oscuro cuando el color de marca no llega a 3:1; ne
   // En claro el logo conserva su color original (un logotipo está exento del contraste mínimo y siempre lleva el nombre al lado):
   // se fija qué marcas quedan por debajo de 3:1 para que un cambio sea consciente.
   const bajos = Object.entries(MARCAS).filter(([, m]) => m.tipo === 'logo' && contraste(m.color, SUPERFICIE.claro) < 3).map(([k]) => k).sort();
-  assert.deepEqual(bajos, ['hubspot', 'openrouter', 'shopify', 'supabase', 'whatsapp']);
+  assert.deepEqual(bajos, ['amazon', 'hubspot', 'openrouter', 'shopify', 'supabase', 'whatsapp']);
   for (const [k, m] of Object.entries(MARCAS)) if (m.tipo === 'logo') assert.ok(contraste(m.color, SUPERFICIE.claro) >= 1.9, k);
   assert.match(leer('components/ui/ui.css'), /:root\[data-theme=dark\] \.bm\[data-mono-oscuro\] path\{fill:var\(--ink\)\}/);
 });

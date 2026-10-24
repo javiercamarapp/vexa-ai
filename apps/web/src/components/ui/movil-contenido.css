@@ -243,4 +243,6 @@ html:root:not([data-tablas-movil=comparar]) .pc-card[data-flush] :is(.ui-table-w
 
 
 :root:root body .workspace-content .chip{max-width:100%;white-space:normal}
+/* Chips dentro de una celda estrecha de tabla-tarjeta (3 columnas de ~82 px): menos relleno lateral para que la palabra no toque ni se recorte contra el borde */
+:root:root body .workspace-content tr>td :is(.chip,.ui-chip){padding-inline:4px;gap:4px}
 }

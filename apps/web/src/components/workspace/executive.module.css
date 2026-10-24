@@ -48,4 +48,5 @@
 .avisoOcultar{position:absolute;top:6px;right:6px;z-index:2;min-height:24px;height:24px;padding:0 8px;font-size:12px}
 @media(max-width:1100px){.lineaAvisos{flex-basis:100%}}
 .avisoPie{display:flex;justify-content:flex-end;margin-top:2px}
+.avisoPie button:global(.btn):global(.btn-sm){flex:none;white-space:nowrap;min-width:max-content!important;overflow:visible}
 @media(max-width:1100px){.strip{white-space:normal}.strip .stripItem{flex:1 1 auto;flex-wrap:wrap;white-space:normal;min-width:0}.strip :is(button,summary){flex:none}.strip .lineaAvisos{flex:1 1 100%}}

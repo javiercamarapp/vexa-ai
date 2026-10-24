@@ -33,7 +33,8 @@ function medir(){
   const fs=parseFloat(cs.fontSize);
   if(ownText&&e.matches('h1')&&fs>20.5)out.small.push('h1 '+fs+'px > 20');
   if(ownText&&e.matches('.stat-value,.ui-kpi-value,.hoy-kpi-valor,.pfig-value')&&fs>30.5)out.small.push('KPI '+fs+'px > 30');
-  if(ownText&&(fs<11||(fs<12&&cs.textTransform!=='uppercase')))out.small.push(desc(e)+' '+cs.fontSize);
+  const abrev=e.hasAttribute('data-abrev')&&parseFloat(getComputedStyle(e,'::after').fontSize)>=12; // cifra abreviada del celular: el valor visible vive en ::after (font-size del contenedor en 0)
+  if(ownText&&!abrev&&(fs<11||(fs<12&&cs.textTransform!=='uppercase')))out.small.push(desc(e)+' '+cs.fontSize);
   if((cs.overflowX==='hidden'||cs.overflowX==='clip')&&e.scrollWidth>e.clientWidth+1&&cs.textOverflow!=='ellipsis'&&(e.textContent||'').trim()&&!scrollers(e)&&e.tagName!=='SELECT'&&e.tagName!=='INPUT')out.clipped.push(desc(e)+' '+e.scrollWidth+'>'+e.clientWidth);
   if(e.matches('button,[role=button],a[href],[role=tab],[role=radio]')){
    const nombre=(e.textContent||'').trim()||e.getAttribute('aria-label')||e.getAttribute('title')||e.getAttribute('aria-labelledby')||e.querySelector('img[alt]:not([alt=""])');

@@ -62,7 +62,7 @@ test('sin estilos de overlays duplicados fuera de overlay.css', () => {
 test('todas las superficies se migraron al sistema', () => {
   const usa=(f,rx)=>assert.match(leer(join(src,f)),rx,f);
   usa('components/confirmation-dialog.tsx',/<Modal[\s\S]*alert/);
-  usa('components/workspace/shell.tsx',/<Drawer bare side="left"/);
+  usa('components/workspace/shell.tsx',/<Drawer side="bottom"/);
   usa('components/platform/copilot-panel.tsx',/<Drawer/);
   usa('components/platform/platform-views.tsx',/<Modal open alert/);
   usa('components/agente/historial.tsx',/<Drawer/);

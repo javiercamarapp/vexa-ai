@@ -1,6 +1,6 @@
 .card{border:1px solid var(--ui-border);background:var(--ui-surface);border-radius:var(--r-lg,12px);overflow:hidden;color:var(--ink,inherit);box-shadow:var(--sh-1,none)}
 .composer{padding:var(--sp-4);display:grid;gap:var(--sp-3)}
-.inputRow{display:flex;gap:var(--sp-2);align-items:center;border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-sunken,var(--ui-soft));padding:4px 4px 4px 14px;transition:border-color .15s,box-shadow .15s}
+.inputRow{display:flex;gap:var(--sp-2);align-items:center;border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-sunken,var(--ui-soft));padding:5px 8px 5px 14px;transition:border-color .15s,box-shadow .15s}
 .inputRow:focus-within{border-color:var(--ui-focus);box-shadow:0 0 0 3px color-mix(in srgb,var(--ui-focus) 22%,transparent)}
 .spark{display:inline-flex;color:var(--ui-accent,var(--ui-focus));flex:none}
 .inputRow textarea{flex:1;min-width:0;border:0!important;background:transparent!important;box-shadow:none!important;outline:none!important;resize:none;min-height:0!important;height:34px;max-height:34px;padding:7px 4px!important;font-size:13px!important;line-height:20px;color:inherit!important;overflow:hidden}
@@ -53,3 +53,6 @@
 .explorer details.publication>summary.sum{all:unset!important;cursor:pointer;font-size:12px;color:var(--muted);display:inline-block;margin-top:4px;border:0!important;background:none!important;padding:0!important}
 .searchRow{flex:0 0 150px;max-width:150px}
 .searchRow{position:relative}
+
+.inputRow :is(button,.btn){min-height:28px!important;height:28px;padding:0 12px!important;font-size:12px;border-radius:999px;flex:none}
+.ro{padding:0 4px 0 6px}

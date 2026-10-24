@@ -19,11 +19,14 @@ export async function emailAuth(request:NextRequest,operation:'request'|'session
  if(operation==='request'){
   if(Object.keys(body).length!==1||typeof body.email!=='string'||body.email.length>254||!/^\S+@[^\s@]+\.[^\s@]+$/.test(body.email.trim()))throw new AccessError(400,'email_auth_input_invalid');
   const admission=emailAdmission.reserve(body.email);if(!admission)return NextResponse.json(generic,{status:202,headers:{...headers,'Retry-After':'60'}});
-  let unavailable=false;
+  let unavailable=false,limitado=false;
   try{const client=createClient(c.url,c.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,flowType:'implicit'},global:{fetch:(target,init)=>fetch(target,{...init,cache:'no-store',signal:AbortSignal.timeout(10000)})}});
    const result=await client.auth.signInWithOtp({email:body.email.trim().toLowerCase(),options:{shouldCreateUser:false,emailRedirectTo:new URL('/auth/email/complete',c.origin).href}});
    unavailable=Boolean(result.error&&(result.error.status===undefined||result.error.status===0||result.error.status>=500));
-  }catch{unavailable=true;}finally{admission.finish(unavailable);}
+   // 429 = el servicio de correo agotó su cupo por hora (no revela si la cuenta existe): se avisa en vez de fingir que se envió.
+   limitado=result.error?.status===429;
+  }catch{unavailable=true;}finally{admission.finish(unavailable||limitado);}
+  if(limitado)return NextResponse.json({error:{code:'email_auth_busy'}},{status:503,headers:{...headers,'Retry-After':'300'}});
   return NextResponse.json(generic,{status:202,headers:{...headers,'Retry-After':'60'}});
  }
  if(Object.keys(body).some(k=>!['accessToken','refreshToken'].includes(k))||typeof body.accessToken!=='string'||typeof body.refreshToken!=='string'||body.accessToken.length>8000||body.refreshToken.length>8000||!body.refreshToken)throw new AccessError(400,'email_auth_input_invalid');

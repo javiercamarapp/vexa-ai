@@ -1,5 +1,5 @@
 'use client';
-import {useState} from 'react';
+import {useEffect,useState} from 'react';
 import {Button,LinkButton} from '../ui/button';
 import {Citation} from '../ui/citation';
 import {IdChip} from '../ui/id-chip';
@@ -32,9 +32,18 @@ function CalcView({answer}:{answer:Answer}){
  </details>;
 }
 
-export function AnswerView({message,question,isLast,busy,labels,userContext,onAsk,onRegenerate,onFeedback}:{message:ChatMessage;question:string;labels:Record<string,string>;userContext:string[];isLast:boolean;busy:boolean;onAsk:(q:string)=>void;onRegenerate:()=>void;onFeedback:(id:string,v:ChatMessage['feedback'])=>void}){
+export function AnswerView({message,question,isLast,busy,labels,userContext,escribir=false,onTick,onAsk,onRegenerate,onFeedback}:{escribir?:boolean;onTick?:()=>void;message:ChatMessage;question:string;labels:Record<string,string>;userContext:string[];isLast:boolean;busy:boolean;onAsk:(q:string)=>void;onRegenerate:()=>void;onFeedback:(id:string,v:ChatMessage['feedback'])=>void}){
  const [copied,setCopied]=useState(false),[csvError,setCsvError]=useState(false),[reasonOpen,setReasonOpen]=useState(false),[fbBusy,setFbBusy]=useState(false);
  const a=message.answer;
+ const [escrito,setEscrito]=useState(escribir?0:Infinity);
+ useEffect(()=>{
+  // Escritura progresiva: máx. 4.5 s aunque la respuesta sea larga (≥ 60 caracteres/s); con «reducir movimiento» sale completa.
+  const largo=a?.text?.length??0;if(!escribir||!largo||(typeof window!=='undefined'&&window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)){setEscrito(Infinity);return;}
+  const ritmo=Math.max(0.06,largo/4500),t0=performance.now();let raf=0;
+  const paso=(t:number)=>{const n=Math.min(largo,Math.floor((t-t0)*ritmo));setEscrito(n>=largo?Infinity:n);onTick?.();if(n<largo)raf=requestAnimationFrame(paso);};
+  raf=requestAnimationFrame(paso);return()=>cancelAnimationFrame(raf);
+ },[escribir,a?.text]);// eslint-disable-line react-hooks/exhaustive-deps
+ const listo=escrito===Infinity;
  if(message.cancelled)return <p className="agente-cancelled">Cancelado.</p>;
  if(!a)return null;
  const ok=a.status==='ok'||a.status==='no_data';
@@ -49,19 +58,19 @@ export function AnswerView({message,question,isLast,busy,labels,userContext,onAs
  return <div className="agente-answer">
   <div className="agente-answer-text">
    <RovaqMark size={16}/>
-   {isAlert(a.status)||a.status==='clarify'||a.status==='out_of_catalog'?<div className={'state'+(isAlert(a.status)?' state-error':'')} role={isAlert(a.status)?'alert':undefined}><p className="agente-state-line"><Icon name={isAlert(a.status)?'alert':'info'} size={16}/>{a.text||notice}</p></div>:<p className="agente-text">{a.text}</p>}
+   {isAlert(a.status)||a.status==='clarify'||a.status==='out_of_catalog'?<div className={'state'+(isAlert(a.status)?' state-error':'')} role={isAlert(a.status)?'alert':undefined}><p className="agente-state-line"><Icon name={isAlert(a.status)?'alert':'info'} size={16}/>{a.text||notice}</p></div>:<p className="agente-text" aria-busy={!listo||undefined}>{listo?a.text:a.text.slice(0,escrito)}</p>}
   </div>
-  {(a.status==='clarify'||a.status==='out_of_catalog'||a.status==='budget_exceeded')&&a.suggestions.length>0&&<div className="agente-chips" role="group" aria-label="Preguntas que sí puedo responder">{a.suggestions.slice(0,3).map(q=><Button key={q} size="sm" disabled={busy} onClick={()=>onAsk(q)}>{q}</Button>)}</div>}
-  {a.status==='ok'&&a.figures.filter(f=>f.rank===undefined).length>0&&<Kpis figures={a.figures.filter(f=>f.rank===undefined).slice(0,4)}/>}
-  {a.status==='ok'&&blocksWithRows.map((b,i)=><BlockView key={b.tool+i} block={b}/>)}
-  {a.status==='ok'&&a.citations.length>0&&<section className="agente-citations" aria-label="Citas verificables"><p className="eyebrow" role="heading" aria-level={3}>Citas verificables</p>{a.citations.map(c=><Citation key={c.messageRevisionId} quote={c.quote} role={c.role} messageRevisionId={c.messageRevisionId} category={c.category} source={c.source}/>)}</section>}
-  {message.citationsOmitted&&<p className="card-lead agente-note">Las citas de clientes no se guardan en el historial de este navegador; vuelve a preguntar para verlas.</p>}
-  {a.missing.length>0&&ok&&<section className="agente-missing card" aria-label="Qué falta cargar"><p className="eyebrow" role="heading" aria-level={3}>Qué falta cargar</p><ul>{a.missing.map(m=><li key={m}>{m}</li>)}</ul>{a.missing.some(m=>!/vincul/i.test(m))&&<LinkButton href="/imports" size="sm" icon={<Icon name="arrow"/>}>Ir a Importaciones</LinkButton>}{a.missing.some(m=>/vincul/i.test(m))&&<LinkButton href="/history" size="sm" icon={<Icon name="arrow"/>}>Ver vínculos pedido–conversación</LinkButton>}</section>}
-  {a.status==='ok'&&a.sources.length>0&&<div className="agente-sources" aria-label="Fuentes"><span className="agente-sources-label">Fuentes</span>{a.sources.map(s=>{const href=safeInternal(s.href);return href?<LinkButton key={s.ref} href={href} size="sm" icon={<Icon name="arrow"/>}>{s.label}</LinkButton>:<span className="chip" key={s.ref}>{s.label}</span>;})}</div>}
+  {listo&&(a.status==='clarify'||a.status==='out_of_catalog'||a.status==='budget_exceeded')&&a.suggestions.length>0&&<div className="agente-chips" role="group" aria-label="Preguntas que sí puedo responder">{a.suggestions.slice(0,3).map(q=><Button key={q} size="sm" disabled={busy} onClick={()=>onAsk(q)}>{q}</Button>)}</div>}
+  {listo&&a.status==='ok'&&a.figures.filter(f=>f.rank===undefined).length>0&&<Kpis figures={a.figures.filter(f=>f.rank===undefined).slice(0,4)}/>}
+  {listo&&a.status==='ok'&&blocksWithRows.map((b,i)=><BlockView key={b.tool+i} block={b}/>)}
+  {listo&&a.status==='ok'&&a.citations.length>0&&<section className="agente-citations" aria-label="Citas verificables"><p className="eyebrow" role="heading" aria-level={3}>Citas verificables</p>{a.citations.map(c=><Citation key={c.messageRevisionId} quote={c.quote} role={c.role} messageRevisionId={c.messageRevisionId} category={c.category} source={c.source}/>)}</section>}
+  {listo&&message.citationsOmitted&&<p className="card-lead agente-note">Las citas de clientes no se guardan en el historial de este navegador; vuelve a preguntar para verlas.</p>}
+  {listo&&a.missing.length>0&&ok&&<section className="agente-missing card" aria-label="Qué falta cargar"><p className="eyebrow" role="heading" aria-level={3}>Qué falta cargar</p><ul>{a.missing.map(m=><li key={m}>{m}</li>)}</ul>{a.missing.some(m=>!/vincul/i.test(m))&&<LinkButton href="/imports" size="sm" icon={<Icon name="arrow"/>}>Ir a Importaciones</LinkButton>}{a.missing.some(m=>/vincul/i.test(m))&&<LinkButton href="/history" size="sm" icon={<Icon name="arrow"/>}>Ver vínculos pedido–conversación</LinkButton>}</section>}
+  {listo&&a.status==='ok'&&a.sources.length>0&&<div className="agente-sources" aria-label="Fuentes"><span className="agente-sources-label">Fuentes</span>{a.sources.map(s=>{const href=safeInternal(s.href);return href?<LinkButton key={s.ref} href={href} size="sm" icon={<Icon name="arrow"/>}>{s.label}</LinkButton>:<span className="chip" key={s.ref}>{s.label}</span>;})}</div>}
   {a.notes&&a.notes.length>0&&ok&&a.notes.map(n=><p key={n} className="card-lead agente-note">{n}</p>)}
-  {ok&&a.trace&&a.trace.length>0&&<TraceDisclosure trace={a.trace} labels={labels}/>}
-  {ok&&a.calc.length>0&&<CalcView answer={a}/>}
-  {a.status==='ok'&&a.text.trim()&&<div className="agente-actions" role="group" aria-label="Acciones de la respuesta">
+  {listo&&ok&&a.trace&&a.trace.length>0&&<TraceDisclosure trace={a.trace} labels={labels}/>}
+  {listo&&ok&&a.calc.length>0&&<CalcView answer={a}/>}
+  {listo&&a.status==='ok'&&a.text.trim()&&<div className="agente-actions" role="group" aria-label="Acciones de la respuesta">
    <Button size="sm" icon={<Icon name={copied?'check':'copy'}/>} onClick={()=>void copy()}>{copied?'Copiado':'Copiar'}</Button>
    {blocksWithRows.map((b,i)=><Button key={b.tool+i} size="sm" icon={<Icon name="sheet"/>} aria-label={blocksWithRows.length>1?`Descargar CSV de ${b.title}`:'Descargar CSV'} onClick={()=>setCsvError(!download(`vexa-${b.tool}.csv`,blockToCsv(b),'text/csv;charset=utf-8'))}>{blocksWithRows.length>1?`CSV: ${b.title}`:'CSV'}</Button>)}
    <Button size="sm" icon={<Icon name="report"/>} title="Abre el reporte en una pestaña nueva; usa Imprimir para guardarlo como PDF." onClick={()=>{const html=answerToHtml({question,answer:a,userContext});if(!openReport(`rovaq-reporte-${message.id}.html`,html))setCsvError(true);}}>Reporte (HTML/PDF)</Button>

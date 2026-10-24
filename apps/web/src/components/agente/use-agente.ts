@@ -5,6 +5,8 @@ import type {AdjuntoResumen} from './attachments';
 import {loadConversations,saveConversations,titleOf} from './store';
 export const PHASES:ReadonlyArray<readonly [number,string]>=[[0,'Entendiendo tu pregunta…'],[2500,'Consultando tus datos…'],[8000,'Armando la respuesta…'],[20000,'Sigo trabajando en esto…']];
 const TIMEOUT_MS=75000;
+/** Tiempo mínimo que se ve «pensando» antes de mostrar una respuesta correcta. */
+const MIN_PENSAR_MS=2200;
 const phaseAt=(ms:number)=>{let t=PHASES[0][1];for(const [from,text] of PHASES)if(ms>=from)t=text;return t;};
 let counter=0;const uid=(p:string)=>`${p}-${Date.now().toString(36)}-${++counter}`;
 /** Folds one server event into the live step list. Pure: exported for tests. */
@@ -51,6 +53,7 @@ export function useAgente(scope:string,maxChars:number,maxTurns:number,toolLabel
  const [activeId,setActiveId]=useState<string|null>(null);
  const [messages,setMessages]=useState<ChatMessage[]>([]);
  const [sending,setSending]=useState(false);
+ const [freshId,setFreshId]=useState<string|null>(null);
  const [phase,setPhase]=useState(PHASES[0][1]);
  const [steps,setSteps]=useState<Step[]>([]);
  const busy=useRef(false),control=useRef<AbortController|null>(null),gen=useRef(0);
@@ -71,10 +74,10 @@ export function useAgente(scope:string,maxChars:number,maxTurns:number,toolLabel
 
  const turn=useCallback(async(question:string,base:ChatMessage[],directa?:Direct)=>{
   if(busy.current)return;const q=question.trim().slice(0,maxChars);if(!q)return;busy.current=true;
-  const g=++gen.current,ctl=new AbortController();control.current=ctl;let timedOut=false;const timer=setTimeout(()=>{timedOut=true;ctl.abort();},TIMEOUT_MS);
+  const t0=Date.now(),g=++gen.current,ctl=new AbortController();control.current=ctl;let timedOut=false;const timer=setTimeout(()=>{timedOut=true;ctl.abort();},TIMEOUT_MS);
   const id=activeRef.current??uid('c');if(!activeRef.current){activeRef.current=id;setActiveId(id);}
   const modo=modoRef.current,userMsg:ChatMessage={id:uid('u'),role:'user',text:q,at:new Date().toISOString(),...(directa?{directa}:{}),...(modo?{modo}:{})};
-  const withUser=[...base,userMsg];setMessages(withUser);setSteps([]);setPhase(PHASES[0][1]);setSending(true);
+  const withUser=[...base,userMsg];setMessages(withUser);setFreshId(null);setSteps([]);setPhase(PHASES[0][1]);setSending(true);
   const history=base.filter(m=>m.kind!=='adjunto').slice(-8).map(m=>({role:m.role,text:m.role==='assistant'?(m.answer?.text??m.text):m.text})).filter(h=>h.text);
   const turns=base.filter(m=>m.role==='user'&&m.kind!=='adjunto').length;
   let answer:Answer,cancelled=false;
@@ -84,9 +87,12 @@ export function useAgente(scope:string,maxChars:number,maxTurns:number,toolLabel
    if(e instanceof DOMException&&e.name==='AbortError'&&!timedOut){cancelled=true;answer=failAnswer('unavailable','');}
    else answer=failAnswer('unavailable','');
   }finally{clearTimeout(timer);}
+  // «Pensando» se queda visible al menos MIN_PENSAR_MS aunque la respuesta sea inmediata (consultas directas): se siente deliberado, no un parpadeo. Un error no espera; «Detener» tampoco.
+  const lento=typeof window!=='undefined'&&!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if(lento&&!cancelled&&answer.status==='ok'){const resto=MIN_PENSAR_MS-(Date.now()-t0);if(resto>0)await new Promise<void>(r=>{const id=setTimeout(r,resto);ctl.signal.addEventListener('abort',()=>{clearTimeout(id);r();},{once:true});});}
   if(g!==gen.current)return;
   const reply:ChatMessage={id:uid('a'),role:'assistant',text:cancelled?'Cancelado.':answer.text,at:new Date().toISOString(),question:q,...(directa?{directa}:{}),...(modo?{modo}:{}),...(cancelled?{cancelled:true}:{answer})};
-  const all=[...withUser,reply];setMessages(all);persist(id,all);
+  const all=[...withUser,reply];setMessages(all);persist(id,all);setFreshId(cancelled?null:reply.id);
   busy.current=false;control.current=null;setSending(false);setSteps([]);
  },[maxChars,persist,toolLabels]);
 
@@ -106,11 +112,11 @@ export function useAgente(scope:string,maxChars:number,maxTurns:number,toolLabel
   if(i<0||busy.current)return;const last=list[i];void turn(last.text,list.slice(0,i),last.directa);
  },[turn]);
  const newChat=useCallback(()=>{gen.current++;control.current?.abort();busy.current=false;setSending(false);setSteps([]);activeRef.current=null;setActiveId(null);setMessages([]);},[]);
- const open=useCallback((id:string)=>{const c=convRef.current.find(x=>x.id===id);if(!c)return;gen.current++;control.current?.abort();busy.current=false;setSending(false);setSteps([]);activeRef.current=id;setActiveId(id);setMessages(c.messages);},[]);
+ const open=useCallback((id:string)=>{setFreshId(null);const c=convRef.current.find(x=>x.id===id);if(!c)return;gen.current++;control.current?.abort();busy.current=false;setSending(false);setSteps([]);activeRef.current=id;setActiveId(id);setMessages(c.messages);},[]);
  const rename=useCallback((id:string,title:string)=>setConversations(prev=>{const t=title.trim().slice(0,80);if(!t)return prev;const next=prev.map(c=>c.id===id?{...c,title:t}:c);saveConversations(scope,next);return next;}),[scope]);
  const remove=useCallback((id:string)=>{setConversations(prev=>{const next=prev.filter(c=>c.id!==id);saveConversations(scope,next);return next;});if(activeRef.current===id)newChat();},[scope,newChat]);
  const setFeedback=useCallback((messageId:string,fb:ChatMessage['feedback'])=>{
   const next=messagesRef.current.map(m=>m.id===messageId?{...m,feedback:fb}:m);setMessages(next);if(activeRef.current)persist(activeRef.current,next);
  },[persist]);
- return {conversations,activeId,messages,sending,phase,steps,send,stop,regenerate,newChat,open,rename,remove,setFeedback,turnsUsed:messages.filter(m=>m.role==='user'&&m.kind!=='adjunto').length,attach};
+ return {conversations,activeId,messages,sending,freshId,phase,steps,send,stop,regenerate,newChat,open,rename,remove,setFeedback,turnsUsed:messages.filter(m=>m.role==='user'&&m.kind!=='adjunto').length,attach};
 }

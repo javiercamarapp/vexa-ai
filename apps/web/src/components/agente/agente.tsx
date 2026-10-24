@@ -48,7 +48,12 @@ export function Chat({data,modo}:{data:AgentState;modo?:ModoChat}){
  useEffect(()=>()=>clearTimeout(timer.current),[]);
  const has=a.messages.length>0;
  const s=data.suggestions;
- useEffect(()=>{end.current?.scrollIntoView?.({block:'end'});},[a.messages.length,a.sending]);
+ // El hilo baja solo dentro de su caja de scroll (nunca la página) y deja de seguirte si subes con el mouse; al mandar otra pregunta vuelve a seguir.
+ const pegado=useRef(true),caja=useRef<HTMLElement|null>(null);
+ const cajaScroll=useCallback(()=>{let n:HTMLElement|null=end.current?.parentElement??null;while(n&&n!==document.body){const o=getComputedStyle(n).overflowY;if((o==='auto'||o==='scroll')&&n.scrollHeight>n.clientHeight+1)return n;n=n.parentElement;}return null;},[]);
+ const seguir=useCallback((fuerza=false)=>{const c=caja.current??cajaScroll();if(!c)return;caja.current=c;if(fuerza)pegado.current=true;if(pegado.current)c.scrollTop=c.scrollHeight;},[cajaScroll]);
+ useEffect(()=>{const c=cajaScroll();if(!c)return;caja.current=c;const f=()=>{pegado.current=c.scrollHeight-c.scrollTop-c.clientHeight<80;};c.addEventListener('scroll',f,{passive:true});return()=>c.removeEventListener('scroll',f);},[cajaScroll,a.messages.length]);
+ useEffect(()=>{seguir(a.sending);},[a.messages.length,a.sending,seguir]);
  const ask=useCallback((q:string)=>{const t=q.trim().slice(0,data.limits.maxQuestionChars);if(!t||a.sending)return;setText('');setAttachError(null);a.send(t,s.directas[t]);},[a,data.limits.maxQuestionChars,s.directas]);
  const openHist=()=>{clearTimeout(timer.current);setLeaving(false);setHist(true);};
  const closeHist=useCallback(()=>{
@@ -84,7 +89,7 @@ export function Chat({data,modo}:{data:AgentState;modo?:ModoChat}){
    </header>}
 
    {has&&<div className="agente-thread" role="log" aria-live="polite" aria-label={modo?.etiquetaChat??"Conversación con el agente de datos"}>
-    {a.messages.map(m=>m.adjunto?<div key={m.id} className="agente-answer"><div className="agente-user"><div className="agente-bubble">{m.text}</div></div><AttachmentCard a={m.adjunto}/></div>:m.role==='user'?<div key={m.id} className="agente-user"><div className="agente-bubble">{m.text}</div></div>:<AnswerView key={m.id} message={m} question={m.question??''} labels={data.toolLabels} userContext={userContext} isLast={m.id===lastAssistant&&!a.sending} busy={a.sending} onAsk={ask} onRegenerate={a.regenerate} onFeedback={a.setFeedback}/>)}
+    {a.messages.map(m=>m.adjunto?<div key={m.id} className="agente-answer"><div className="agente-user"><div className="agente-bubble">{m.text}</div></div><AttachmentCard a={m.adjunto}/></div>:m.role==='user'?<div key={m.id} className="agente-user"><div className="agente-bubble">{m.text}</div></div>:<AnswerView key={m.id} message={m} escribir={m.id===a.freshId} onTick={seguir} question={m.question??''} labels={data.toolLabels} userContext={userContext} isLast={m.id===lastAssistant&&!a.sending} busy={a.sending} onAsk={ask} onRegenerate={a.regenerate} onFeedback={a.setFeedback}/>)}
     {a.sending&&<LiveTrace phase={a.phase} steps={a.steps} labels={data.toolLabels}/>}
     {limitReached&&<p className="state" role="status">Esta conversación llegó a {data.limits.maxTurnsPerConversation} preguntas. Empieza un chat nuevo para seguir.</p>}
     <div ref={end}/>

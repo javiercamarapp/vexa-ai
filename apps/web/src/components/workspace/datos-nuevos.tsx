@@ -7,12 +7,14 @@ import {invalidarSwr} from '../../lib/workspace/swr.mjs';
  * marca la caché SWR como obsoleta y dispara «vexa:refresh» (cada vista revalida en segundo plano y conserva lo pintado mientras tanto). No muestra nada.
  * No hace ninguna otra petición.
  */
+/** El primer sondeo de /api/freshness espera a que la pantalla termine sus lecturas propias (en frío tarda ~9 s y ocupa un turno del cupo del servidor). */
+const PRIMER_SONDEO_MS=6000;
 export function DatosNuevos(){
  const vig=useRef<ReturnType<typeof crearVigilante>|null>(null);
  useEffect(()=>{
   // Cuando llega información nueva el software se actualiza solo y en segundo plano: no hay botón ni aviso en ninguna pantalla.
   const aplicar=()=>{invalidarSwr({});window.dispatchEvent(new Event('vexa:refresh'));vig.current?.reconocer();};
-  const v=crearVigilante({visible:()=>document.visibilityState==='visible',onCambio:aplicar});
+  const v=crearVigilante({visible:()=>document.visibilityState==='visible',onCambio:aplicar,primerRetrasoMs:PRIMER_SONDEO_MS});
   vig.current=v;v.iniciar();
   const vis=()=>v.visibilidad();document.addEventListener('visibilitychange',vis);
   return()=>{document.removeEventListener('visibilitychange',vis);v.detener();vig.current=null;};

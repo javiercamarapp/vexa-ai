@@ -129,7 +129,7 @@ export function barraDe({fuga}) {
 export function siguienteDe({fuga}) {
   const top = fuga?.skus?.status === 'ok' ? fuga.skus.top[0] : null;
   if (!top) return null;
-  return {titulo: `Preparar el paquete de reclamo de ${top.sku}`, detalle: `${usd(top.usdBrutoMinor)} devueltos en ${num(top.n)} reembolsos. Se arma un borrador en tu navegador; no se envía nada.`, cta: 'Preparar paquete', href: '/refunds#fg-acciones', secundaria: {texto: 'Preguntar a Rovaq', href: '/preguntale'}};
+  return {titulo: `Preparar el paquete de reclamo de ${top.sku}`, detalle: `${usd(top.usdBrutoMinor)} devueltos en ${num(top.n)} reembolsos. Se arma un borrador en tu navegador; no se envía nada.`, cta: 'Preparar paquete', href: '/refunds#fg-acciones', secundaria: {texto: 'Preguntar a Rovaq', href: '/preguntale?q=' + encodeURIComponent(`¿Por qué se devolvió el SKU ${top.sku}? Dame los motivos principales de sus ${num(top.n)} reembolsos, por mes y por canal.`)}};
 }
 
 /** @param {{fuga?, carga?, cfo?, estado:{fuga,carga,cfo}, ahora?:number}} a */

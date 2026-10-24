@@ -42,7 +42,7 @@ export function Agente(){
 export type ModoChat={modo:string;runner?:Runner;placeholder?:string;portada:(ask:(q:string)=>void,hayHilo:boolean)=>ReactNode;pie?:ReactNode;etiquetaChat?:string};
 export function Chat({data,modo}:{data:AgentState;modo?:ModoChat}){
  const a=useAgente(data.scope,data.limits.maxQuestionChars,data.limits.maxTurnsPerConversation,data.toolLabels,{runner:modo?.runner,modo:modo?.modo});
- const [text,setText]=useState(''),[consult,setConsult]=useState(false),[hist,setHist]=useState(false),[leaving,setLeaving]=useState(false),[attachError,setAttachError]=useState<string|null>(null);
+ const [text,setText]=useState(()=>{if(modo||typeof window==='undefined')return '';const q=new URLSearchParams(window.location.search).get('q');return q?q.slice(0,data.limits.maxQuestionChars):'';}),[consult,setConsult]=useState(false),[hist,setHist]=useState(false),[leaving,setLeaving]=useState(false),[attachError,setAttachError]=useState<string|null>(null);
  const histId=useId(),catId=useId(),inputId=useId();
  const end=useRef<HTMLDivElement>(null),histButton=useRef<HTMLButtonElement>(null),timer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
  useEffect(()=>()=>clearTimeout(timer.current),[]);

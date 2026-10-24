@@ -14,6 +14,15 @@ const nf = new Intl.NumberFormat('es-MX');
 const ALCANCE_PEDIDOS = (cur) => `Pedidos y reembolsos: fuente libro económico, en ${cur}, filas vigentes en estado registrado de todas las bases (incluye Shopify bruto con impuestos y envío, y filas «a revisar»), por fecha efectiva. /cfo muestra una sola base (precio de línea de marketplace, sin filas «a revisar») y compara contra el mes completo anterior, por eso sus cifras pueden diferir.`;
 const ALCANCE_CONV = 'Conversaciones: todas las fuentes cargadas (HubSpot y CSV histórico), fechadas por su inicio o, si falta, por su primer mensaje. El Explorador muestra otra cosa: las filas incorporadas por fuente (p. ej. solo HubSpot), no el total histórico.';
 export const fmtInt = (n) => nf.format(n);
+/** Si la parte clasificada de las conversaciones cambia mucho entre meses, una subida o caída puede ser avance del análisis y no un cambio real: se avisa (nunca se oculta). */
+export function avisoCoberturaVariable(items) {
+  const xs = (items ?? []).filter((i) => i && i.eligible > 0 && i.classified >= 0).map((i) => ({ month: i.month, p: i.classified / i.eligible }));
+  if (xs.length < 2) return null;
+  const hi = xs.reduce((a, b) => (b.p > a.p ? b : a)), lo = xs.reduce((a, b) => (b.p < a.p ? b : a));
+  if (!(hi.p >= lo.p * 1.5 && hi.p - lo.p >= 0.05)) return null;
+  const pc = (x) => (x < 0.01 ? '<1' : String(Math.round(x * 100))) + ' %';
+  return `La parte de las conversaciones ya clasificada cambia mucho entre meses (${monthLabel(hi.month)}: ${pc(hi.p)}; ${monthLabel(lo.month)}: ${pc(lo.p)}): una subida o caída puede reflejar el avance de la clasificación y no un cambio real.`;
+}
 export const monthLabel = (m) => new Intl.DateTimeFormat('es-MX', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(m + '-01T00:00:00Z'));
 const monthShort = (m) => new Intl.DateTimeFormat('es-MX', { month: 'short', year: '2-digit', timeZone: 'UTC' }).format(new Date(m + '-01T00:00:00Z')).replace('.', '');
 const pct = (a, b) => (a === 0 ? null : ((b - a) * 100) / a);
@@ -154,7 +163,7 @@ export const TOOLS = [
       const fs = rows.map((p, i) => fig('problemas_top', p.title, fmtInt(p.incidents), p.incidents, 'inferred', cov, { rank: i + 1 }));
       return {
         status: 'ok', figures: fs,
-        blocks: [{ tool: 'problemas_top', title: `Problemas con más incidencias · ${monthLabel(m)}`, columns: [col('problema', 'Problema'), col('incidencias', 'Incidencias', 'integer'), col('clientes', 'Clientes', 'integer')], rows: rows.map((p) => ({ problema: p.title, incidencias: p.incidents, clientes: p.customers })), chart: { kind: 'bar', unit: 'incidencias', series: rows.map((p) => ({ key: p.problemId, label: p.title, value: p.incidents, display: fmtInt(p.incidents) })) }, class: 'inferred', coverage: cov, truncated: r.rows.length > rows.length, note: 'Inferido: cada incidencia es una conversación vinculada al problema por su evidencia; las filas no se suman entre sí.' }],
+        blocks: [{ tool: 'problemas_top', title: `Problemas con más incidencias · ${monthLabel(m)}`, columns: [col('problema', 'Problema'), col('incidencias', 'Incidencias', 'integer'), ...(rows.some((p) => p.customers != null) ? [col('clientes', 'Clientes', 'integer')] : [])], rows: rows.map((p) => ({ problema: p.title, incidencias: p.incidents, ...(rows.some((q) => q.customers != null) ? { clientes: p.customers ?? null } : {}) })), chart: { kind: 'bar', unit: 'incidencias', series: rows.map((p) => ({ key: p.problemId, label: p.title, value: p.incidents, display: fmtInt(p.incidents) })) }, class: 'inferred', coverage: cov, truncated: r.rows.length > rows.length, note: 'Inferido: cada incidencia es una conversación vinculada al problema por su evidencia; las filas no se suman entre sí.' }],
         summary: `${aviso ? aviso + '. ' : ''}En ${monthLabel(m)}, los ${rows.length} problemas con más incidencias son: ${rows.map((p, i) => `${i + 1}. ${p.title} (${fmtInt(p.incidents)})`).join('; ')} ${tag(fs[0])}.`, missing: [], notes: aviso ? [aviso] : [],
       };
     },
@@ -191,25 +200,25 @@ export const TOOLS = [
       const done = r.months.filter((m) => st[m].estado === 'completo'), first = done[0], last = done[done.length - 1];
       const get = (c, m) => r.rows.find((x) => x.category === c && x.month === m)?.count ?? 0;
       const cov = coverageOf(r.classified, r.eligible);
-      const avisos = r.months.map((m) => avisoMes(monthLabel(m), st[m])).filter(Boolean);
+      const avisos = r.months.map((m) => avisoMes(monthLabel(m), st[m])).filter(Boolean), cobAviso = avisoCoberturaVariable(r.perMonth);
       const cell = (c, m) => (st[m].estado === 'sin_datos' ? 'No disponible' : st[m].estado === 'parcial' ? `${get(c, m)}*` : get(c, m));
       const comparable = done.length >= 2;
       const cambioDe = (c) => (comparable ? `${signed(get(c, last) - get(c, first))} (${fmtPct(pct(get(c, first), get(c, last)))})` : NO_COMPARABLE);
       const table = cats.map((c) => ({ categoria: c.charAt(0).toUpperCase() + c.slice(1), ...Object.fromEntries(r.months.map((m) => [m, cell(c, m)])), cambio: cambioDe(c) }));
-      const nota = ['Inferido: incidencias vinculadas por evidencia a cada categoría.', avisos.length ? `* ${avisos.join('. ')}. El cambio compara solo meses completos${comparable ? ` (${monthLabel(first)} a ${monthLabel(last)})` : ''}; un mes incompleto no se compara.` : null].filter(Boolean).join(' ');
+      const nota = ['Inferido: incidencias vinculadas por evidencia a cada categoría.', cobAviso, avisos.length ? `* ${avisos.join('. ')}. El cambio compara solo meses completos${comparable ? ` (${monthLabel(first)} a ${monthLabel(last)})` : ''}; un mes incompleto no se compara.` : null].filter(Boolean).join(' ');
       const colLabel = (m) => monthShort(m) + (st[m].estado === 'parcial' ? ' (parcial)' : st[m].estado === 'sin_datos' ? ' (sin datos)' : '');
       const title = `Incidencias por categoría · ${monthShort(r.months[0])} a ${monthShort(r.months[r.months.length - 1])}`;
       const columns = [col('categoria', 'Categoría'), ...r.months.map((m) => col(m, colLabel(m), 'integer')), col('cambio', 'Cambio')];
       if (!comparable) {
         const f0 = fig('categorias_por_mes', 'Cambio por categoría', NO_COMPARABLE, null, 'inferred', cov);
-        return { status: 'ok', figures: [f0], blocks: [{ tool: 'categorias_por_mes', title, columns, rows: table, class: 'inferred', coverage: cov, truncated: false, note: nota }], summary: `No hay dos meses completos en la ventana para comparar categorías: ${NO_COMPARABLE} ${tag(f0)}. ${avisos.join('. ')}.`, missing: [], notes: avisos };
+        return { status: 'ok', figures: [f0], blocks: [{ tool: 'categorias_por_mes', title, columns, rows: table, class: 'inferred', coverage: cov, truncated: false, note: nota }], summary: `No hay dos meses completos en la ventana para comparar categorías: ${NO_COMPARABLE} ${tag(f0)}. ${avisos.join('. ')}.${cobAviso ? ' ' + cobAviso : ''}`, missing: [], notes: [...avisos, cobAviso].filter(Boolean) };
       }
       const ranked = cats.map((c) => ({ c, d: get(c, last) - get(c, first), p: pct(get(c, first), get(c, last)) })).sort((x, y) => y.d - x.d);
       const f = fig('categorias_por_mes', `Cambio de «${ranked[0].c}»`, `${signed(ranked[0].d)} (${fmtPct(ranked[0].p)})`, ranked[0].d, 'inferred', cov);
       return {
         status: 'ok', figures: [f],
         blocks: [{ tool: 'categorias_por_mes', title, columns, rows: table, class: 'inferred', coverage: cov, truncated: false, note: nota }],
-        summary: `Entre ${monthLabel(first)} y ${monthLabel(last)} (meses completos), la categoría que más creció es «${ranked[0].c}»: ${f.display} ${tag(f)}. La que menos: «${ranked[ranked.length - 1].c}» (${signed(ranked[ranked.length - 1].d)}).${avisos.length ? ' ' + avisos.join('. ') + '.' : ''}`, missing: [], notes: avisos,
+        summary: `Entre ${monthLabel(first)} y ${monthLabel(last)} (meses completos), la categoría que más creció es «${ranked[0].c}»: ${f.display} ${tag(f)}. La que menos: «${ranked[ranked.length - 1].c}» (${signed(ranked[ranked.length - 1].d)}).${avisos.length ? ' ' + avisos.join('. ') + '.' : ''}${cobAviso ? ' ' + cobAviso : ''}`, missing: [], notes: [...avisos, cobAviso].filter(Boolean),
       };
     },
   },
@@ -295,7 +304,8 @@ export const TOOLS = [
       add('Conversaciones (todas las fuentes, con fecha)', t.conversations.class, conv(a), conv(b), covC, sc.a, sc.b);
       if (t.ledger?.series?.length) { for (const [k, name] of [['orders', `Pedidos registrados (${t.ledger.currency}, todas las bases)`], ['refunds', `Reembolsos liquidados (${t.ledger.currency}, todas las bases)`]]) add(name, 'observed', led(a, k).count, led(b, k).count, coverageOf(led(a, k).count + led(b, k).count - led(a, k).unknownAmounts - led(b, k).unknownAmounts, led(a, k).count + led(b, k).count), sl.a, sl.b); }
       const pa = await port.problemIncidents({ month: a }), pb = await port.problemIncidents({ month: b });
-      const nota = ['Solo describe el cambio; no explica sus causas.', `Compara los meses que elegiste: ${monthLabel(a)} frente a ${monthLabel(b)}.`, ALCANCE_CONV, t.ledger?.series?.length ? ALCANCE_PEDIDOS(t.ledger.currency) : null, avisos.length ? `* ${avisos.join('. ')}. Una variación solo se calcula entre dos meses completos.` : null].filter(Boolean).join(' ');
+      const cobAviso = pa.status === 'ok' && pb.status === 'ok' ? avisoCoberturaVariable([{ month: a, classified: pa.classified, eligible: pa.eligible }, { month: b, classified: pb.classified, eligible: pb.eligible }]) : null;
+      const nota = ['Solo describe el cambio; no explica sus causas.', cobAviso, `Compara los meses que elegiste: ${monthLabel(a)} frente a ${monthLabel(b)}.`, ALCANCE_CONV, t.ledger?.series?.length ? ALCANCE_PEDIDOS(t.ledger.currency) : null, avisos.length ? `* ${avisos.join('. ')}. Una variación solo se calcula entre dos meses completos.` : null].filter(Boolean).join(' ');
       const blocks = [{ tool: 'comparar_meses', title: `Registros · ${monthLabel(a)} frente a ${monthLabel(b)}`, columns: [col('medida', 'Medida'), col(a, monthShort(a), 'integer'), col(b, monthShort(b), 'integer'), col('cambio', 'Cambio'), col('clase', 'Clase')], rows, class: 'mixed', coverage: covC, truncated: false, note: nota }];
       let probText = '';
       if (pa.status === 'ok' && pb.status === 'ok') {
@@ -312,7 +322,8 @@ export const TOOLS = [
       const resumen = todoOk
         ? `Entre ${monthLabel(a)} y ${monthLabel(b)}, las conversaciones cambiaron ${c0.display} ${tag(c0)}${figs[2] ? `; los reembolsos liquidados, ${figs[2].display} ${tag(figs[2])}` : ''}.${probText}`
         : `Entre ${monthLabel(a)} y ${monthLabel(b)} no hay variación que reportar: ${NO_COMPARABLE}. ${avisos.join('. ')}. ${comparables(sc.a, sc.b) ? `Las conversaciones cambiaron ${c0.display} ${tag(c0)}. ` : ''}Un mes incompleto no se lee como caída ni como alza; los valores con * son parciales.${probText}`;
-      return { status: 'ok', figures: figs, blocks, summary: resumen, missing: pa.status === 'ok' ? [] : ['La clasificación de las conversaciones de esos meses'], notes: [...avisos, lineaDatosHasta({ libro: t.ledger?.completeness?.dataThrough, conversaciones: t.conversations.completeness?.dataThrough })].filter(Boolean) };
+      const resumenFinal = cobAviso ? `${resumen} ${cobAviso}` : resumen;
+      return { status: 'ok', figures: figs, blocks, summary: resumenFinal, missing: pa.status === 'ok' ? [] : ['La clasificación de las conversaciones de esos meses'], notes: [...avisos, cobAviso, lineaDatosHasta({ libro: t.ledger?.completeness?.dataThrough, conversaciones: t.conversations.completeness?.dataThrough })].filter(Boolean) };
     },
   },
   {

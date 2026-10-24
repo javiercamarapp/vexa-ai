@@ -2,7 +2,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createWorkspacePort, assertPort, createAgent, contractViolations, executeTool } from '../index.mjs';
-import { shapeLedgerRows } from '../port-queries.mjs';
+import { shapeLedgerRows, shapeProblemMonthly, problemIncidentsFor, shapeCategoryMonthly, categoriaEs } from '../port-queries.mjs';
+import { avisoCoberturaVariable } from '../tools.mjs';
 import { ctxFor } from './helpers.mjs';
 
 const NOW = new Date('2026-10-23T12:00:00Z');
@@ -112,6 +113,76 @@ test('ledger_por_fuente (pedidos de septiembre) con el puerto real: una fila por
   assert.match(r.blocks[0].note, /no se suman/);
 });
 
+test('problems / problemIncidents: una fila por etiqueta, ordenado, sin clientes inventados, cobertura clasificadas/eligible; lectura única compartida', async () => {
+  const P = (label, id) => ({ label, problem_id: id });
+  const monthly = [
+    { label: 'Order: Spare Parts', month: '2026-09', n: 403, is_total: 0 }, { label: 'Other: Retailer notifications and system alerts', month: '2026-09', n: 473, is_total: 0 },
+    { label: 'Order: Spare Parts', month: '2026-08', n: 90, is_total: 0 }, { label: null, month: '2026-09', n: 835, is_total: 1 }, { label: null, month: '2026-08', n: 120, is_total: 1 },
+    { label: 'Etiqueta ya no vigente', month: '2026-09', n: 1, is_total: 0 },
+  ];
+  const calls = [];
+  const db = fakeDb({ problems: [P('Order: Spare Parts', 'p-1'), P('Other: Retailer notifications and system alerts', 'p-2')], monthly, volume: [{ period: '2026-09', n: 20000 }, { period: '2026-08', n: 3000 }], calls });
+  const port = portOf(db);
+  const cat = await port.problems();
+  assert.deepEqual(cat.rows.map((x) => [x.problemId, x.title, x.category]), [['p-1', 'Order: Spare Parts', 'Pedido'], ['p-2', 'Other: Retailer notifications and system alerts', 'Otros']]);
+  const sep = await port.problemIncidents({ month: '2026-09' }), ago = await port.problemIncidents({ month: '2026-08' });
+  assert.deepEqual(sep.rows.map((x) => [x.title, x.incidents, x.customers]), [['Other: Retailer notifications and system alerts', 473, null], ['Order: Spare Parts', 403, null]]);
+  assert.deepEqual([sep.classified, sep.eligible], [835, 20000]); assert.deepEqual([ago.classified, ago.eligible], [120, 3000]);
+  assert.equal(calls.filter((c) => c === 'incid').length, 1, 'a y b comparten una sola lectura');
+  assert.equal((await port.problemIncidents({ month: '2026-05' })).status, 'empty');
+  const top = await executeTool({ name: 'problemas_top', args: { month: '2026-09', limit: 1 }, port, ctx: ctxFor('owner', T) });
+  assert.equal(top.status, 'ok'); assert.equal(top.blocks[0].rows.length, 1); assert.ok(!top.blocks[0].columns.some((c) => c.key === 'clientes'), 'sin dato de clientes, no hay columna inventada');
+  assert.equal(top.figures[0].coverage.known_n, 835);
+});
+test('problemIncidents: un tope agotado no se guarda y se reintenta; el error no se vuelve «sin datos»', async () => {
+  const fail = { incid: '57014' }; const db = fakeDb({ problems: [], monthly: [], fail });
+  const port = portOf(db);
+  await assert.rejects(() => port.problemIncidents({ month: '2026-09' }), (e) => e.code === '57014');
+  delete fail.incid;
+  assert.equal((await port.problemIncidents({ month: '2026-09' })).status, 'empty');
+  const r = await executeTool({ name: 'problemas_top', args: { month: '2026-09' }, port: portOf(fakeDb({ fail: { problems: '57014' } })), ctx: ctxFor('owner', T) });
+  assert.equal(r.status, 'unavailable');
+});
+test('shapeProblemMonthly: sin denominador conocido la cobertura no excede al numerador; mes fuera de la ventana = empty', () => {
+  const d = shapeProblemMonthly({ catalog: [{ problemId: 'p', title: 'A' }], raw: [{ label: 'A', month: '2026-09', n: 5, is_total: 0 }, { label: null, month: '2026-09', n: 5, is_total: 1 }], volume: null, months: ['2026-09'] });
+  const r = problemIncidentsFor(d, '2026-09'); assert.deepEqual([r.classified, r.eligible], [5, 5]);
+  assert.equal(problemIncidentsFor(d, '2025-01').status, 'empty');
+});
+
+test('categoryMonthly: familias en español, ceros explícitos por mes, cobertura por mes', async () => {
+  const categories = [
+    { fam: 'Warranty', month: '2026-08', n: 885, convs: 822, is_total: 0 }, { fam: 'Warranty', month: '2026-09', n: 395, convs: 376, is_total: 0 }, { fam: 'Shipping', month: '2026-09', n: 143, convs: 139, is_total: 0 },
+    { fam: null, month: '2026-08', n: 1937, convs: 1632, is_total: 1 }, { fam: null, month: '2026-09', n: 992, convs: 853, is_total: 1 },
+  ];
+  const db = fakeDb({ categories, volume: [{ period: '2026-08', n: 3000 }, { period: '2026-09', n: 20000 }] });
+  const port = portOf(db);
+  const r = await port.categoryMonthly({ months: 3 });
+  assert.deepEqual(r.months, ['2026-08', '2026-09'], 'octubre no tiene conversaciones clasificadas: no entra con ceros');
+  assert.deepEqual(r.rows.filter((x) => x.month === '2026-08').map((x) => [x.category, x.count]), [['Envío', 0], ['Garantía', 885]], 'cero explícito solo porque la categoría existe en la ventana y el mes está cubierto');
+  assert.deepEqual(r.perMonth.map((x) => [x.month, x.classified, x.eligible]), [['2026-08', 1632, 3000], ['2026-09', 853, 20000]]);
+  assert.equal(categoriaEs('Pre-sale'), 'Preventa'); assert.equal(categoriaEs('Algo nuevo'), 'Algo nuevo');
+  const t = await executeTool({ name: 'categorias_por_mes', args: { months: 3 }, port, ctx: ctxFor('owner', T) });
+  assert.equal(t.status, 'ok'); assert.ok(t.blocks[0].rows.length >= 2);
+});
+test('avisoCoberturaVariable: avisa cuando la clasificación avanza de forma desigual y calla cuando es pareja', () => {
+  assert.match(avisoCoberturaVariable([{ month: '2026-07', classified: 6000, eligible: 10000 }, { month: '2026-09', classified: 800, eligible: 20000 }]), /avance de la clasificación/);
+  assert.equal(avisoCoberturaVariable([{ month: '2026-07', classified: 500, eligible: 1000 }, { month: '2026-09', classified: 520, eligible: 1000 }]), null);
+  assert.equal(avisoCoberturaVariable([{ month: '2026-07', classified: 5, eligible: null }]), null); assert.equal(avisoCoberturaVariable(undefined), null);
+});
+
+test('exposure: sin vínculos problema–pedido la exposición es desconocida (empty con motivo), nunca 0; con vínculos tampoco se inventa', async () => {
+  const none = await portOf(fakeDb({ links: 0 })).exposure({ limit: 6 });
+  assert.deepEqual(none, { status: 'empty', reason: 'no_problem_order_links' });
+  const some = await portOf(fakeDb({ links: 12 })).exposure({ limit: 6 });
+  assert.equal(some.status, 'empty'); assert.equal(some.reason, 'exposure_requires_published_snapshot');
+  const r = await executeTool({ name: 'exposicion_por_problema', args: {}, port: portOf(fakeDb({ links: 0 })), ctx: ctxFor('owner', T) });
+  assert.equal(r.status, 'no_data'); assert.doesNotMatch(JSON.stringify(r), /\b0[.,]00\b/);
+});
+test('evidence y problemCustomers siguen «no conectados» (citas y clientes exigen verificación de evidencia)', async () => {
+  const port = portOf(fakeDb());
+  assert.deepEqual(await port.evidence({ problemId: 'x', limit: 1 }), { status: 'empty', reason: 'not_connected', method: 'evidence' });
+  assert.deepEqual(await port.problemCustomers({ problemId: 'x', month: '2026-09' }), { status: 'empty', reason: 'not_connected', method: 'problemCustomers' });
+});
 test('shapeLedgerRows: fuente desconocida cae en «Otro» y no se mezcla con canales conocidos', () => {
   const rows = shapeLedgerRows([L('zzz', 'recorded', 'b', 'USD', 2, 2, '10'), L(SRC.amazon, 'recorded', 'b', 'USD', 1, 1, '5')], new Map([[SRC.amazon, NAMES[0].name]]), 'order');
   assert.deepEqual(rows.map((x) => [x.sourceLabel, x.amountMinor]), [['Amazon', '5'], ['Otro', '10']]);

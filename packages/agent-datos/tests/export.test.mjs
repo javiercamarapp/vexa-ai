@@ -13,13 +13,13 @@ test('CSV con BOM, comillas escapadas y una fila por registro', () => {
   const csv = blockToCsv({ columns: [{ key: 'a', label: 'Fuente' }, { key: 'b', label: 'Nota, larga' }], rows: [{ a: 'Amazon', b: 'dice "hola"' }, { a: 'X', b: null }] });
   assert.equal(csv, '﻿Fuente,"Nota, larga"\nAmazon,"dice ""hola"""\nX,');
 });
-test('el adaptador real cumple el puerto y declara «no conectado» lo que falta, sin inventar', async () => {
+test('el adaptador real cumple el puerto: consulta la base donde está conectado y declara «no conectado» lo que falta, sin inventar', async () => {
   const cov = await portFor().coverage();
   const fake = { async transaction() { throw new Error('no db in unit tests'); } };
   const port = assertPort(createWorkspacePort({ database: fake, tenantId: 'x' }));
   for (const m of PORT_METHODS) assert.equal(typeof port[m], 'function');
-  assert.deepEqual(await port.problems(), { status: 'empty', reason: 'not_connected', method: 'problems' });
-  await assert.rejects(() => port.ledgerBySource({ kind: 'refund', months: 3 }), /no db in unit tests/, 'ledgerBySource ya consulta la base');
+  assert.deepEqual(await port.evidence({ problemId: 'x', limit: 1 }), { status: 'empty', reason: 'not_connected', method: 'evidence' });
+  for (const m of ['problems', 'problemIncidents', 'categoryMonthly', 'exposure', 'ledgerBySource']) await assert.rejects(() => port[m]({ month: '2026-09', months: 3, kind: 'refund', limit: 3 }), /no db in unit tests/, `${m} ya consulta la base`);
   const a = parseAssociations(cov.sources.find((s) => s.key === 'associations')); assert.deepEqual([a.total, a.resolved, a.pending, a.activeLinks, a.sampled], [117720, 15190, 102530, 72720, true]);
   const t = parseTracker(cov.sources.find((s) => s.key === 'excel')); assert.deepEqual([t.version, t.versions, t.rows, t.sheetsClosed, t.sheetsTotal], ['v07b', 4, 13228, 64, 64]);
   assert.equal(parseTracker({ loaded: false }).status, 'empty'); assert.equal(parseAssociations({ loaded: true, detail: ['otra cosa'] }).status, 'empty');

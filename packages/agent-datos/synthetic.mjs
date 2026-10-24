@@ -128,7 +128,7 @@ export function createSyntheticPort(store, { tenantId, delayMs = 0, failOn = [],
       const list = MONTHS.slice(-months), rows = [];
       for (const month of list) for (const cat of [...new Set(d.problems.map((p) => p.category))]) rows.push({ month, category: cat, count: d.problems.filter((p) => p.category === cat).reduce((a, p) => a + p.series[monthCols(month)], 0) });
       const cls = d.classified.slice(-months);
-      return { status: 'ok', months: list, rows, classified: cls.reduce((a, x) => a + x.classified, 0), eligible: cls.reduce((a, x) => a + x.eligible, 0) };
+      return { status: 'ok', months: list, rows, perMonth: list.map((month, k) => ({ month, classified: cls[k].classified, eligible: cls[k].eligible })), classified: cls.reduce((a, x) => a + x.classified, 0), eligible: cls.reduce((a, x) => a + x.eligible, 0) };
     }),
     exposure: ({ limit }) => run('exposure', (d) => ({ status: 'ok', ...d.exposure, rows: d.exposure.rows.slice(0, limit) })),
     ledgerBySource: ({ kind, month, months }) => run('ledgerBySource', (d) => {

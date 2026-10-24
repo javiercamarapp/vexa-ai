@@ -1,0 +1,27 @@
+CUENTA
+
+Confirma tu nuevo correo
+
+Correo actual: {{ .Email }}
+Correo nuevo:  {{ .NewEmail }}
+
+Si confirmas, entrarás a Rovaq con el correo nuevo. Te avisaremos
+también en el correo actual.
+
+Confirmar el cambio:
+{{ .ConfirmationURL }}
+
+El enlace caduca en 1 hora y solo funciona una vez.
+
+¿No pediste este cambio? No abras el enlace y avísanos en
+seguridad@rovaq.ai; protegeremos tu cuenta.
+
+Si el botón no abre, copia esta dirección en tu navegador:
+{{ .ConfirmationURL }}
+
+--
+Rovaq nunca te pedirá tu contraseña por correo. No reenvíes este
+mensaje.
+Recibes este correo porque se pidió cambiar el correo de una cuenta de
+Rovaq.
+Rovaq AI · soporte@rovaq.ai · Ciudad de México, México

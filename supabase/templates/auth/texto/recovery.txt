@@ -1,0 +1,25 @@
+ACCESO
+
+Restablece tu contraseña
+
+Pediste recuperar el acceso a la cuenta {{ .Email }}. Con el botón
+podrás elegir una contraseña nueva (mínimo 12 caracteres).
+
+Elegir contraseña nueva:
+{{ .ConfirmationURL }}
+
+El enlace caduca en 1 hora y solo funciona una vez. Si ya no sirve, pide
+uno nuevo en {{ .SiteURL }}/login.
+
+¿No lo pediste? Ignora este correo; tu contraseña actual sigue
+funcionando. Si recibes varios, avísanos en seguridad@rovaq.ai.
+
+Si el botón no abre, copia esta dirección en tu navegador:
+{{ .ConfirmationURL }}
+
+--
+Rovaq nunca te pedirá tu contraseña por correo. No reenvíes este
+mensaje.
+Recibes este correo porque se pidió recuperar el acceso con esta
+dirección.
+Rovaq AI · soporte@rovaq.ai · Ciudad de México, México

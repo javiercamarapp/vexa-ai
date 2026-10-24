@@ -1,0 +1,19 @@
+VERIFICACIÓN
+
+Confirma que eres tú
+
+Escribe este código en la pantalla de Rovaq donde lo pediste.
+
+    {{ .Token }}
+
+Vale 1 hora y se usa una sola vez.
+
+¿No lo pediste? No hagas nada y cambia tu contraseña; alguien podría
+tener acceso a tu sesión. Ni siquiera Rovaq te pedirá este código.
+
+--
+Rovaq nunca te pedirá tu contraseña por correo. No compartas este código
+con nadie, ni siquiera con Rovaq.
+Recibes este correo porque una acción de seguridad en tu cuenta lo
+requiere.
+Rovaq AI · soporte@rovaq.ai · Ciudad de México, México

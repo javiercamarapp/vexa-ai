@@ -1,0 +1,20 @@
+AVISO DE SEGURIDAD
+
+El teléfono de tu cuenta cambió
+
+El teléfono de verificación de la cuenta {{ .Email }} se cambió.
+
+SI NO FUISTE TÚ
+Escríbenos de inmediato a seguridad@rovaq.ai. Revisaremos tu cuenta y,
+si hace falta, cerraremos las sesiones abiertas.
+
+Si fuiste tú, no necesitas hacer nada.
+
+Para cualquier duda, escribe a seguridad@rovaq.ai. No incluyas
+contraseñas ni códigos en tu mensaje.
+
+--
+Rovaq nunca te pedirá tu contraseña por correo.
+Te enviamos este aviso porque cambió un dato de seguridad de tu cuenta.
+No se puede desactivar.
+Rovaq AI · soporte@rovaq.ai · Ciudad de México, México

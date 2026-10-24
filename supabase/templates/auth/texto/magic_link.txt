@@ -1,0 +1,25 @@
+ACCESO
+
+Entra a Rovaq con este enlace
+
+Pediste entrar a Rovaq con el correo {{ .Email }}. Usa el botón; no
+necesitas contraseña.
+
+Entrar a Rovaq:
+{{ .ConfirmationURL }}
+
+El enlace caduca en 1 hora y solo funciona una vez. Si ya no sirve, pide
+uno nuevo en {{ .SiteURL }}/login.
+
+¿No pediste este acceso? Ignora este correo; sin el enlace nadie puede
+entrar a tu cuenta. No reenvíes este mensaje.
+
+Si el botón no abre, copia esta dirección en tu navegador:
+{{ .ConfirmationURL }}
+
+--
+Rovaq nunca te pedirá tu contraseña por correo. No compartas este enlace
+con nadie.
+Recibes este correo porque se solicitó un acceso con esta dirección en
+Rovaq.
+Rovaq AI · soporte@rovaq.ai · Ciudad de México, México

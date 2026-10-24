@@ -1,0 +1,24 @@
+CUENTA
+
+Confirma tu correo
+
+Se creó una cuenta de Rovaq con {{ .Email }}. Confirma que esta
+dirección es tuya para activarla.
+
+Confirmar mi correo:
+{{ .ConfirmationURL }}
+
+El enlace caduca en 1 hora y solo funciona una vez. Si ya no sirve, pide
+uno nuevo desde la pantalla de acceso.
+
+¿No creaste esta cuenta? Ignora este correo; sin confirmar, no se
+activa.
+
+Si el botón no abre, copia esta dirección en tu navegador:
+{{ .ConfirmationURL }}
+
+--
+Rovaq nunca te pedirá tu contraseña por correo. No reenvíes este
+mensaje.
+Recibes este correo porque alguien registró esta dirección en Rovaq.
+Rovaq AI · soporte@rovaq.ai · Ciudad de México, México

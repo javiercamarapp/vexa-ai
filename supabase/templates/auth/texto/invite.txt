@@ -1,0 +1,34 @@
+INVITACIÓN AL EQUIPO
+
+{{ or .Data.invita "Una persona" }} te invitó a
+{{ or .Data.espacio "un espacio" }}
+
+Podrás
+{{ or .Data.rol_funcion "colaborar con tu equipo" }}{{ if .Data.rol }},
+con el rol de {{ .Data.rol }}{{ end }}.
+
+{{ if .Data.espacio }}Espacio: {{ .Data.espacio }}{{ end }}
+{{ if .Data.rol }}Rol:     {{ .Data.rol }}{{ if .Data.rol_descripcion }} ·
+         {{ .Data.rol_descripcion }}{{ end }}{{ end }}
+{{ if .Data.invita }}Invitó:  {{ .Data.invita }}{{ end }}
+{{ if .Data.vence }}Vence:   {{ .Data.vence }}{{ end }}
+
+Aceptar invitación:
+{{ .ConfirmationURL }}
+
+Si todavía no tienes cuenta, la crearás al aceptar. Puedes rechazar la
+invitación sin consecuencias; basta con ignorar este correo.
+
+¿No conoces a {{ or .Data.invita "quien te invita" }} o no esperabas
+esto? No abras el enlace y avísanos en soporte@rovaq.ai.
+
+Si el botón no abre, copia esta dirección en tu navegador:
+{{ .ConfirmationURL }}
+
+--
+Rovaq nunca te pedirá tu contraseña por correo. El enlace es personal;
+no lo reenvíes.
+Recibes este correo porque {{ or .Data.invita "una persona" }} escribió
+esta dirección al invitar personas a
+{{ or .Data.espacio "su espacio" }}.
+Rovaq AI · soporte@rovaq.ai · Ciudad de México, México

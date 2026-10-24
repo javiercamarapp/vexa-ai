@@ -60,6 +60,8 @@ minimum_password_length = 12
 [auth.email]
 enable_signup = true
 enable_confirmations = false
+# Vigencia de enlaces y códigos (segundos). Los textos de los correos dicen «1 hora»: si cambia, cambiar VIGENCIA en email-system.mjs.
+otp_expiry = 3600
 
 # Enabled only after a dedicated Google OAuth client is supplied/configured.
 [auth.external.google]
@@ -74,61 +76,61 @@ backend = "postgres"
 
 [edge_runtime]
 enabled = false
-[auth.email.template.confirmation]
-subject = "Confirma tu correo · Rovaq AI"
-content_path = "./supabase/templates/auth/confirmation.html"
-
-[auth.email.template.invite]
-subject = "Te invitaron a Rovaq AI · Rovaq AI"
-content_path = "./supabase/templates/auth/invite.html"
-
 [auth.email.template.magic_link]
-subject = "Tu enlace para entrar a Rovaq AI · Rovaq AI"
+subject = "Tu enlace para entrar a Rovaq"
 content_path = "./supabase/templates/auth/magic_link.html"
 
+[auth.email.template.reauthentication]
+subject = "Tu código de verificación de Rovaq"
+content_path = "./supabase/templates/auth/reauthentication.html"
+
+[auth.email.template.confirmation]
+subject = "Confirma tu correo en Rovaq"
+content_path = "./supabase/templates/auth/confirmation.html"
+
 [auth.email.template.recovery]
-subject = "Recupera el acceso a Rovaq AI · Rovaq AI"
+subject = "Restablece el acceso a Rovaq"
 content_path = "./supabase/templates/auth/recovery.html"
 
 [auth.email.template.email_change]
-subject = "Confirma el cambio de correo · Rovaq AI"
+subject = "Confirma tu nuevo correo en Rovaq"
 content_path = "./supabase/templates/auth/email_change.html"
 
-[auth.email.template.reauthentication]
-subject = "Confirma que eres tú · Rovaq AI"
-content_path = "./supabase/templates/auth/reauthentication.html"
+[auth.email.template.invite]
+subject = "Te invitaron a un espacio en Rovaq"
+content_path = "./supabase/templates/auth/invite.html"
 
 [auth.email.notification.password_changed]
 enabled = true
-subject = "La contraseña de tu cuenta cambió · Rovaq AI"
+subject = "La contraseña de tu cuenta cambió"
 content_path = "./supabase/templates/auth/password_changed_notification.html"
 
 [auth.email.notification.email_changed]
 enabled = true
-subject = "El correo de tu cuenta cambió · Rovaq AI"
+subject = "El correo de tu cuenta cambió"
 content_path = "./supabase/templates/auth/email_changed_notification.html"
 
 [auth.email.notification.phone_changed]
 enabled = true
-subject = "El teléfono de tu cuenta cambió · Rovaq AI"
+subject = "El teléfono de tu cuenta cambió"
 content_path = "./supabase/templates/auth/phone_changed_notification.html"
 
 [auth.email.notification.identity_linked]
 enabled = true
-subject = "Se vinculó un método de acceso · Rovaq AI"
+subject = "Se vinculó un método de acceso"
 content_path = "./supabase/templates/auth/identity_linked_notification.html"
 
 [auth.email.notification.identity_unlinked]
 enabled = true
-subject = "Se desvinculó un método de acceso · Rovaq AI"
+subject = "Se desvinculó un método de acceso"
 content_path = "./supabase/templates/auth/identity_unlinked_notification.html"
 
 [auth.email.notification.mfa_factor_enrolled]
 enabled = true
-subject = "Se agregó un método de verificación · Rovaq AI"
+subject = "Se agregó una verificación en dos pasos"
 content_path = "./supabase/templates/auth/mfa_factor_enrolled_notification.html"
 
 [auth.email.notification.mfa_factor_unenrolled]
 enabled = true
-subject = "Se eliminó un método de verificación · Rovaq AI"
+subject = "Se quitó una verificación en dos pasos"
 content_path = "./supabase/templates/auth/mfa_factor_unenrolled_notification.html"

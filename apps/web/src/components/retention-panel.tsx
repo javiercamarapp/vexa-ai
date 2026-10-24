@@ -36,7 +36,7 @@ export function RetentionPanel(){const [snapshot,setSnapshot]=useState<Snapshot|
  function selection(){clear();setExternal('');setSources([]);setCursor(null);setNext(null);}
  if(loading&&!snapshot&&!error)return <RovaqCargando mensaje=""/>;
  return <section className="task-page retention-page stack" aria-label="Retención y borrado" aria-busy={unavailable}>
-  <PageHeader eyebrow="Administración" title="Retención y borrado" description="Elimina contenido fuente y derivados; conserva identidades y el historial financiero autorizado." actions={<><Button disabled={unavailable||!snapshot?.ready} onClick={()=>void action('export')}>Exportar ledger firmado</Button></>}/>
+  <PageHeader eyebrow="Administración" title="Retención y borrado" description="Elimina contenido fuente y derivados; conserva identidades y el historial financiero autorizado." actions={<><Button disabled={unavailable||!snapshot?.ready} onClick={()=>void action('export')}>Exportar registro firmado</Button></>}/>
   {(loading||sourceLoading)&&<p role="status" className="sr-only">{sourceLoading?'Cargando fuentes…':snapshot?'Actualizando retención…':'Cargando retención…'}</p>}
   {loading&&!snapshot&&<Loading compact message="Cargando retención…"/>}
   {error&&(!snapshot?<ErrorState title="No se pudo cargar" body={error} onRetry={()=>{clear();void load();}}/>:<p role="alert" className="ac-nota">{error}</p>)}{notice&&<p role="status" className="ac-nota">{notice}</p>}

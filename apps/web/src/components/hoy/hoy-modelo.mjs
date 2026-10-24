@@ -100,7 +100,7 @@ function kpiRespuestas({carga, estado, ahora}) {
 }
 
 /** Titular narrativo con periodo: una frase con una cifra de dinero y lo que significa. */
-function titularDe({fuga, kpis}) {
+function titularDe({fuga, kpis, estado}) {
   const t = fuga?.titular;
   if (ok(t)) {
     const top10 = t.top10?.pct != null && fuga.skus?.top?.length ? ` ${fuga.skus.top.length} SKUs explican el ${pct(t.top10.pct)}.` : '';
@@ -110,6 +110,8 @@ function titularDe({fuga, kpis}) {
     if (top10) partes.push({t: ' '}, {t: `${n} SKUs`, f: true}, {t: ' explican el '}, {t: pct(p), f: true}, {t: '.'});
     return {texto: partes.map(x => x.t).join(''), partes, periodo: r, clase: 'observed'};
   }
+  // M3 (auditoría 24-oct): mientras Fuga sigue cargando NO se publica el titular de respaldo (ingreso): cambiaría de frase cuando Fuga llegue. Titular estable = vacío hasta decidir.
+  if (estado?.fuga === 'cargando') return {texto: '', partes: [], periodo: null, clase: null};
   const rev = kpis.find(k => k.id === 'ingreso' && k.estado === 'ok');
   if (rev) {
     const partes = [{t: 'En '}, {t: rev.periodo, f: true}, {t: ': '}, {t: conUS(rev.valor), f: true}, {t: ' de ingreso bruto.'}];
@@ -148,7 +150,7 @@ export function siguienteDe({fuga}) {
 /** @param {{fuga?, carga?, cfo?, estado:{fuga,carga,cfo}, ahora?:number}} a */
 export function armarHoy({fuga = null, carga = null, cfo = null, estado, ahora = Date.now()}) {
   const kpis = [kpiIngreso({cfo, estado, ahora}), kpiReembolsos({fuga, estado, ahora}), kpiAtorado({fuga, estado, ahora}), kpiRespuestas({carga, estado, ahora})];
-  const titular = titularDe({fuga, kpis});
+  const titular = titularDe({fuga, kpis, estado});
   const cargando = Object.values(estado).every(e => e === 'cargando');
   const sinNada = !cargando && kpis.every(k => k.estado !== 'ok' && k.estado !== 'cargando');
   return {titular, kpis, atencion: atencionDe({fuga, carga}), barra: barraDe({fuga}), siguiente: siguienteDe({fuga}), cargando, vacio: sinNada,

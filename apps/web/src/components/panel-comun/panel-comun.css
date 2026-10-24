@@ -9,6 +9,8 @@
 .pc-tabs a:focus-visible{outline:2px solid var(--ui-focus);outline-offset:-2px;border-radius:999px}
 .pc-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;font-size:12px;font-weight:600;background:var(--ui-sunken);color:var(--ink);font-variant-numeric:tabular-nums}
 .pc-tabs a[aria-current=page] .pc-count{background:var(--soft-6);border-color:transparent;color:var(--ink-6)}
+/* B5: un conteo en 0 no es una alerta: gris */
+.pc-tabs a[aria-current=page] .pc-count[data-cero]{background:var(--ui-soft);color:var(--muted)}
 /* Tira de indicadores: UNA tarjeta con celdas separadas por filetes */
 .pc-kpis{display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));margin:0 0 var(--ui-rhythm);padding:0;list-style:none;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface);overflow:hidden}
 .pc-kpi{display:flex;flex-direction:column;gap:6px;padding:14px;min-width:0}

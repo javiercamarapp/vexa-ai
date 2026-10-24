@@ -198,3 +198,4 @@ body :is(.workspace-content,.access-flow,.platform-shell) select:not([multiple])
 /* Una barra de filtros dentro de un contenedor con `gap` no suma su propio margen (eran 24 px de aire en vez de 12) */
 :is(.stack,.task-page,.dg-page,.pc-page)>.ui-filterbar{margin-bottom:0}
 .segmented .seg-btn{flex:none}
+.ov-avanzado summary{cursor:pointer;font-size:13px;color:var(--ui-secondary);margin-bottom:var(--sp-2,8px)}

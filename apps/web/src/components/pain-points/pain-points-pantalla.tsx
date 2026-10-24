@@ -54,7 +54,7 @@ export function PainPointsPantalla({organization}:{organization?:string}){
     <Card title="Los 8 mayores" description={modo==='dinero'?'USD bruto, de mayor a menor':'Volumen, de mayor a menor'} actions={<KindBadge kind="observed"/>}>
      <div className="pp-tabla-wrap"><table className="pp-tabla"><caption className="sr-only">Los 8 puntos de dolor mayores. Es la misma información del mapa.</caption>
       <thead><tr><th scope="col">Punto</th><th scope="col" data-num>{modo==='dinero'?'USD':'Volumen'}</th><th scope="col">Clase</th></tr></thead>
-      <tbody>{top.map(p=><tr key={p.id} data-sel={sel===p.id||undefined}><td><i className="pp-punto" style={{background:`var(--chart-${temaDe(p.tema).c})`}} aria-hidden="true"/><button type="button" className="row-link-inline" onClick={()=>setSel(p.id)}>{p.nombre}</button><small className="pp-sub">{temaDe(p.tema).nombre}</small></td><td data-num>{valorMostrado(p,modo)}</td><td><KindBadge kind={CLASE_KIND[p.clase]}/></td></tr>)}
+      <tbody>{top.map(p=><tr key={p.id} data-sel={sel===p.id||undefined}><td><i className="pp-punto" style={{background:`var(--chart-${temaDe(p.tema).c})`}} aria-hidden="true"/><button type="button" className="row-link-inline" title={temaDe(p.tema).nombre} onClick={()=>setSel(p.id)}>{p.nombre}</button></td><td data-num>{valorMostrado(p,modo)}</td><td><KindBadge kind={CLASE_KIND[p.clase]}/></td></tr>)}
        {top.length===0&&<tr><td colSpan={3} className="pp-nota">Sin puntos con cifra en este filtro.</td></tr>}</tbody></table></div>
      <p className="pp-nota">Mostrando {top.length} de {filtrados.filter(p=>!p.agregado).length} puntos. Cada fila abre su evidencia.</p>
     </Card>

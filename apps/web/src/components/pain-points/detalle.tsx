@@ -65,7 +65,7 @@ export function Detalle({punto,vista,onCerrar}:{punto:PuntoPP|null;vista:PainVis
    {punto.proxy&&<Notice tone="info" title="Proxy, no chargeback">{punto.proxy.rotulo}</Notice>}
    {punto.proxies&&<Notice tone="info" title="Lo más cercano que hay hoy">{punto.proxies.map(i=>vista.puntos.find(p=>p.id===i)?.nombre).filter(Boolean).join(' y ')} son proxies observados; no se llaman chargebacks.</Notice>}
    <OverlaySection title="Qué mide"><p className="pp-p">{punto.descripcion}</p>
-    <dl className="ov-kv pp-kv"><div><dt>Fuente</dt><dd>{punto.fuente.etiqueta}</dd></div><div><dt>Periodo</dt><dd>{periodoTxt(punto.periodo)}</dd></div><div><dt>Cobertura</dt><dd>{punto.cobertura?.texto??'Sin cobertura'}</dd></div><div><dt>Volumen</dt><dd>{volumenTxt(punto.volumen)}</dd></div>
+    <dl className="pp-kv"><div><dt>Fuente</dt><dd>{punto.fuente.etiqueta}</dd></div><div><dt>Periodo</dt><dd>{periodoTxt(punto.periodo)}</dd></div><div><dt>Cobertura</dt><dd>{punto.cobertura?.texto??'Sin cobertura'}</dd></div><div><dt>Volumen</dt><dd>{volumenTxt(punto.volumen)}</dd></div>
      {punto.otrasMonedas.length>0&&<div><dt>Otras monedas</dt><dd>{punto.otrasMonedas.map(m=>`${num(m.n)} · ${(Number(BigInt(m.minor))/100).toLocaleString('es-MX')} ${m.currency}`).join(' · ')} (no se suman)</dd></div>}</dl></OverlaySection>
    <OverlaySection title="Evidencia" description="Sin nombres, correos ni direcciones. La suma de la columna se compara con la cifra."><Evidencia key={punto.id} punto={punto}/></OverlaySection>
    <OverlaySection title="Cómo se calculó"><ul className="pp-lista">{punto.calculo.map((t,i)=><li key={i}>{t}</li>)}</ul></OverlaySection>

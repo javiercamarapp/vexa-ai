@@ -11,7 +11,7 @@ export function valorDe(p, modo) {
 export const radioDe = (v, vmax) => Math.max(R_MIN, Math.min(R_MAX, R_MAX * Math.sqrt(v / vmax)));
 /** Rejilla de clusters según el ancho disponible: 3 columnas (≥720), 2 (≥520) o 1. */
 export function rejilla(ancho) {
-  const cols = ancho >= 720 ? 3 : ancho >= 520 ? 2 : 1, filas = Math.ceil(6 / cols), altoFila = cols === 3 ? 236 : 232;
+  const cols = ancho >= 720 ? 3 : ancho >= 520 ? 2 : 1, filas = Math.ceil(6 / cols), altoFila = cols === 3 ? 204 : 216;
   return {cols, filas, altoFila, alto: filas * altoFila};
 }
 function colocar(items, region, centro) {

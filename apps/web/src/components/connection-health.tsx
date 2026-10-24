@@ -13,6 +13,7 @@ import {StatusChip} from './ui/status-chip';
 import {ProgressRing} from './ui/progress-ring';
 import {EmptyState} from './ui/empty-state';
 import {Icon} from './ui/icons';
+import {BrandBadge,ConMarca,marcaDe} from './ui/brand-mark';
 import {SkeletonRows} from './ui/skeletons';
 import styles from './connections.module.css';
 import {useJson} from './ui/use-json';
@@ -50,8 +51,8 @@ useEffect(()=>{rowsRef.current=rows;},[rows]);
  {!error&&rows.length>0&&!(coverageBusy&&!coverage)&&<>
   <SegmentedControl label="Filtrar conexiones" size="sm" value={tab} onChange={setTab} options={[{value:'all',label:'Todas',count:rows.length},{value:'ok',label:'Conectadas',count:okCount},{value:'pending',label:'Pendientes',count:rows.length-okCount}]}/>
   <div className={styles.master}>
-   <div className={styles.side}><ul className={styles.list} aria-label="Integraciones">{shownRows.map(r=><li key={r.id}><button type="button" className={styles.item} aria-pressed={row?.id===r.id} onClick={()=>setPicked(r.id)}><Icon name="plug" size={16}/><span className={styles.name}><strong>{sourceName(r.source)}</strong><small>{r.accountId}</small></span><StatusChip tone={est(r).tone}>{est(r).chip}</StatusChip></button></li>)}{shownRows.length===0&&<li className={styles.none}>Sin conexiones en esta pestaña.</li>}</ul><p className={styles.note}>Solo lectura: Rovaq lee de tus fuentes y nunca escribe en ellas. Para cambiar una cuenta usa «Configurar sincronización».</p></div>
-   {row&&e&&<article className={styles.detail} key={row.id} aria-label={sourceName(row.source)+' '+row.accountId}><header className={styles.dhead}><h2>{sourceName(row.source)}: {row.accountId}</h2><StatusChip tone={e.tone}>{e.estado}</StatusChip></header>
+   <div className={styles.side}><ul className={styles.list} aria-label="Integraciones">{shownRows.map(r=><li key={r.id}><button type="button" className={styles.item} aria-pressed={row?.id===r.id} onClick={()=>setPicked(r.id)}>{marcaDe(r.source)?<BrandBadge marca={r.source}/>:<Icon name="plug" size={16}/>}<span className={styles.name}><strong>{sourceName(r.source)}</strong><small>{r.accountId}</small></span><StatusChip tone={est(r).tone}>{est(r).chip}</StatusChip></button></li>)}{shownRows.length===0&&<li className={styles.none}>Sin conexiones en esta pestaña.</li>}</ul><p className={styles.note}>Solo lectura: Rovaq lee de tus fuentes y nunca escribe en ellas. Para cambiar una cuenta usa «Configurar sincronización».</p></div>
+   {row&&e&&<article className={styles.detail} key={row.id} aria-label={sourceName(row.source)+' '+row.accountId}><header className={styles.dhead}><h2><ConMarca marca={row.source} tamaño={20}>{sourceName(row.source)}: {row.accountId}</ConMarca></h2><StatusChip tone={e.tone}>{e.estado}</StatusChip></header>
    <p className={styles.sub}>Configuración: {CONFIG_STATUS[row.connectionStatus]??row.connectionStatus}</p>
    {e.anillo&&<div className={styles.ringRow}><ProgressRing size={56} stroke={6} value={e.anillo.valor} label={e.anillo.pct+'%'} title={e.lineas[0]}/><span>{e.lineas[0]}</span></div>}
    {e.lineas.slice(e.anillo?1:0).length>0&&<ul className={styles.facts}>{e.lineas.slice(e.anillo?1:0).map(l=><li key={l}>{l}</li>)}</ul>}

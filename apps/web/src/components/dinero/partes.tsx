@@ -1,4 +1,5 @@
 'use client';
+import {ConMarca} from '../ui/brand-mark';
 import type {ReactNode} from 'react';
 import {color} from '../ui/mini-charts';
 import './dinero.css';
@@ -18,17 +19,17 @@ export function MiniPct({p,c,label}:{p:number|null;c:number;label:string}){
  if(p===null||!Number.isFinite(p))return <span className="dg-mini" role="img" aria-label={label+': sin dato'}/>;
  return <span className="dg-mini" style={cat(c)} role="img" aria-label={label}><i style={{width:Math.max(1.5,Math.min(100,p))+'%'}}/></span>;
 }
-export type ItemBarra={key:string;etiqueta:ReactNode;sub?:ReactNode;valor:number|null;texto:ReactNode;sub2?:ReactNode;c?:number;estado?:'parcial';marca?:number|null};
+export type ItemBarra={key:string;etiqueta:ReactNode;sub?:ReactNode;valor:number|null;texto:ReactNode;sub2?:ReactNode;c?:number;estado?:'parcial';marca?:number|null;/** clave/nombre de integración: antepone su logo a la etiqueta */integracion?:string};
 /** Lista de barras finas (etiqueta | barra | valor) con una sola escala. `marca` = posición de una referencia (mediana) en la misma escala. */
 export function ListaBarras({items,max,c=1,label,apilado=false,vw=false}:{items:ItemBarra[];max?:number;c?:number;label:string;apilado?:boolean;/** columna de valor de ancho fijo: las barras de todas las filas empiezan y acaban igual */vw?:boolean}){
  const m=Math.max(1e-9,max??Math.max(...items.map(i=>i.valor??0),0));
  return <ul className="dg-lista" data-ap={apilado||undefined} data-vw={vw||undefined} aria-label={label}>{items.map(i=><li key={i.key}>
-  <span className="dg-lab"><b>{i.etiqueta}</b>{i.sub&&<small>{i.sub}</small>}</span>
+  <span className="dg-lab"><b><ConMarca marca={i.integracion}>{i.etiqueta}</ConMarca></b>{i.sub&&<small>{i.sub}</small>}</span>
   <span className="dg-bar" data-estado={i.estado} style={cat(i.c??c)} role="img" aria-label={`${typeof i.etiqueta==='string'?i.etiqueta:label}: ${typeof i.texto==='string'?i.texto:''}`}><i style={{width:Math.max(1.5,Math.min(100,(i.valor??0)*100/m))+'%'}}/>{i.marca!=null&&<u style={{left:Math.min(100,i.marca*100/m)+'%'}}/>}</span>
   <span className="dg-val">{i.texto}{i.sub2&&<small>{i.sub2}</small>}</span></li>)}</ul>;
 }
-export function Leyenda({items}:{items:{label:string;c?:number;hatch?:boolean}[]}){
- return <ul className="dg-leyenda" aria-label="Leyenda">{items.map(i=><li key={i.label}><i data-hatch={i.hatch||undefined} style={i.c?cat(i.c):undefined}/>{i.label}</li>)}</ul>;
+export function Leyenda({items}:{items:{label:string;c?:number;hatch?:boolean;integracion?:string}[]}){
+ return <ul className="dg-leyenda" aria-label="Leyenda">{items.map(i=><li key={i.label}><i data-hatch={i.hatch||undefined} style={i.c?cat(i.c):undefined}/><ConMarca marca={i.integracion}>{i.label}</ConMarca></li>)}</ul>;
 }
 export function Vacio({children}:{children:ReactNode}){return <div className="dg-vacio" role="status"><p>{children}</p></div>;}
 

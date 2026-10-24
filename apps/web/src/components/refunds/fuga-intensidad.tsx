@@ -1,4 +1,5 @@
 'use client';
+import {ConMarca} from '../ui/brand-mark';
 import type {FugaVista,MesIntensidad} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
 import {NOMBRE,mesCorto,num,pct} from './fuga-modelo.mjs';
 import {NoDisponible,Vacio} from './fuga-partes';
@@ -11,8 +12,8 @@ function Canal({canal,todos,max}:{canal:string;todos:MesIntensidad[];max:number}
  const meses=todos.filter(m=>!m.ultimo);
  const ultimoCompleto=[...meses].reverse().find(m=>m.calidad==='completo'&&m.intensidadPct!==null);
  const pico=meses.filter(m=>m.calidad==='completo'&&m.intensidadPct!==null).sort((a,b)=>(b.intensidadPct??0)-(a.intensidadPct??0))[0];
- if(!meses.length)return <div className="fg-canal"><h3>{NOMBRE[canal]}</h3><Vacio>Sin meses con reembolsos registrados.</Vacio></div>;
- return <div className="fg-canal"><h3>{NOMBRE[canal]??canal}</h3>
+ if(!meses.length)return <div className="fg-canal"><h3><ConMarca marca={canal}>{NOMBRE[canal]}</ConMarca></h3><Vacio>Sin meses con reembolsos registrados.</Vacio></div>;
+ return <div className="fg-canal"><h3><ConMarca marca={canal}>{NOMBRE[canal]??canal}</ConMarca></h3>
   <div className="fg-cols" style={{gridTemplateColumns:`repeat(${meses.length},minmax(0,1fr))`}} role="img" aria-label={`Intensidad mensual de ${NOMBRE[canal]}: ${meses.map(m=>`${mesCorto(m.mes)} ${m.intensidadPct===null?'sin dato':pct(m.intensidadPct)}${m.calidad==='completo'?'':m.calidad==='parcial'?' (parcial)':' (posible hueco)'}`).join(', ')}`}>
    {meses.map(m=>{
     const h=m.intensidadPct===null?0:Math.max(2,(m.intensidadPct/max)*100),etiqueta=m===ultimoCompleto||m===pico;
@@ -42,7 +43,7 @@ export function SeccionIntensidad({v,onReintentar}:{v:FugaVista;onReintentar:()=
    if(ultW.length&&w&&w.conPct!==null)partes.push(`Entre ${mesCorto(ultW[0].mes)} y ${mesCorto(ultW[ultW.length-1].mes)}, por cada 100 líneas vendidas en Walmart hubo ~${Math.round(w.conPct)} reembolsos (${pct(w.sinPct)} sin los ${num(w.cancelados)} cancelados)`);
    if(a)partes.push(`${partes.length?'en':'En'} Amazon, ~${Math.round(a.intensidadPct as number)} en ${mesCorto(a.mes)}`);
    return partes.length?<p className="fg-frase">{partes.join('; ')}.</p>:null;})()}
-  <ul className="fg-leyenda"><li><i style={{background:COLOR.walmart}}/>Walmart</li><li><i style={{background:COLOR.amazon}}/>Amazon</li><li><i className="fg-hatch"/>Mes parcial</li><li><b>?</b> Posible hueco de exportación (sin columna)</li></ul>
+  <ul className="fg-leyenda"><li><i style={{background:COLOR.walmart}}/><ConMarca marca="walmart">Walmart</ConMarca></li><li><i style={{background:COLOR.amazon}}/><ConMarca marca="amazon">Amazon</ConMarca></li><li><i className="fg-hatch"/>Mes parcial</li><li><b>?</b> Posible hueco de exportación (sin columna)</li></ul>
   <div className="fg-canales">{Object.entries(i.canales).map(([c,b])=><Canal key={c} canal={c} todos={b.meses} max={max}/>)}</div>
   <p className="fg-aviso">Intensidad, no tasa por cohorte; ventanas parciales. {i.bestBuy.reembolsosEnElLibro===0?'Best Buy no aparece: su libro no trae reembolsos.':''}</p>
  </div>;

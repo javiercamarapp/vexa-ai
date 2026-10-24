@@ -1,4 +1,5 @@
 'use client';
+import {ConMarca} from '../ui/brand-mark';
 import {RovaqCargando} from '../rovaq-cargando';
 import {useMemo,useState} from 'react';
 import type {MapaVista,EstadoMapa,Celdas} from '../../../../../packages/workspace-service/mapa-problemas.mjs';
@@ -22,7 +23,7 @@ function Lista({titulo,celdas,max=2}:{titulo:string;celdas:Celdas;max?:number}){
   const vis=celdas.items.slice(0,max),mas=celdas.items.length-vis.length+(celdas.otros>0?1:0);
   const tope=Math.max(1,...vis.map(i=>i.n));
   return <section className="mp-lista" aria-label={titulo}><h3>{titulo}{mas>0&&<small> · +{mas} más</small>}</h3>
-   <ul>{vis.map(i=><li key={i.etiqueta}><span>{i.etiqueta}</span><b>{num(i.n)}</b><i style={{inlineSize:`${Math.max(4,(i.n*100)/tope)}%`}} aria-hidden="true"/></li>)}</ul></section>;
+   <ul>{vis.map(i=><li key={i.etiqueta}><span><ConMarca marca={titulo==='Retailer'?i.etiqueta:null}>{i.etiqueta}</ConMarca></span><b>{num(i.n)}</b><i style={{inlineSize:`${Math.max(4,(i.n*100)/tope)}%`}} aria-hidden="true"/></li>)}</ul></section>;
 }
 /** Ranking de los estados con más casos: barras finas en el verde de Geografía; el elegido lleva marca roja. */
 function Ranking({estados,sel,onElegir,pais}:{estados:EstadoMapa[];sel:string|null;onElegir:(c:string)=>void;pais:'US'|'MX'}){

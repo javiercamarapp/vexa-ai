@@ -1,4 +1,5 @@
 'use client';
+import {ConMarca} from '../ui/brand-mark';
 import {RovaqCargando} from '../rovaq-cargando';
 import {porcentaje} from '../../lib/formato/es-mx.mjs';
 import {useMemo,useState,type ReactNode} from 'react';
@@ -91,12 +92,12 @@ export function EconomiaResumen({query='',puedePreparar,children}:{query?:string
       {incompletos.meses.length>0&&<p className="dg-nota" role="note">* {incompletos.meses.map(mesLargo).join(', ')}: mes incompleto, los datos llegan {incompletos.datosHasta?'hasta el '+incompletos.datosHasta:'hasta una fecha de corte sin determinar'}. La barra punteada no es una caída.</p>}
      </Card>
      <Card title="Completitud por fuente" description="Lo que falta nunca se cuenta como cero" actions={<KindBadge kind="observed"/>}>
-      <ListaBarras c={5} max={100} label="Completitud por fuente" apilado items={fuentes.map(f=>({key:f.clave,etiqueta:f.fuente,sub:f.reembolsos==='Sin cobertura'?'Sin fuente de reembolsos':'Con fuente de reembolsos',valor:f.completitudBps===null?null:f.completitudBps/100,texto:pctBps(f.completitudBps)}))}/>
+      <ListaBarras c={5} max={100} label="Completitud por fuente" apilado items={fuentes.map(f=>({key:f.clave,etiqueta:f.fuente,integracion:f.fuente,sub:f.reembolsos==='Sin cobertura'?'Sin fuente de reembolsos':'Con fuente de reembolsos',valor:f.completitudBps===null?null:f.completitudBps/100,texto:pctBps(f.completitudBps)}))}/>
      </Card>
     </Fila>
     <Card title="Cargas y pendientes por fuente" description="Qué tan completo está lo que cargó cada fuente">
      <DataTable caption="Cobertura por fuente" rows={fuentes} rowKey={f=>f.clave} maxHeight="none" columns={[
-      {key:'f',header:'Fuente',render:f=><b>{f.fuente}</b>},
+      {key:'f',header:'Fuente',render:f=><b><ConMarca marca={f.fuente}>{f.fuente}</ConMarca></b>},
       {key:'r',header:'Registros',align:'num',render:f=>nf.format(f.registros)},
       {key:'m',header:'Sin moneda',align:'num',render:f=>nf.format(f.sinMoneda)},
       {key:'p',header:'Pedidos sin importe',align:'num',render:f=>nf.format(f.pedidosSinImporte)},

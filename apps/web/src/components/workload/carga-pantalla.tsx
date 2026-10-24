@@ -1,4 +1,5 @@
 'use client';
+import {ConMarca} from '../ui/brand-mark';
 import {RovaqCargando} from '../rovaq-cargando';
 import type {CargaVista} from '../../../../../packages/workspace-service/carga-sla.mjs';
 import {PageHeader} from '../ui/page-header';
@@ -72,7 +73,7 @@ export function CargaPantalla({organization}:{organization?:string}){ void organ
   {!v&&f.busy&&<section className="ui-card"><Esqueleto segundos={f.segundos}/></section>}
   {!v&&!f.busy&&f.error&&<EmptyState art="shield" tone="warn" title={f.error.code==='acceso'?'Tu rol no tiene acceso a este panel':'No disponible ahora'} body={f.error.texto} action={f.error.code==='acceso'?undefined:<Button icon={<Refresh/>} onClick={reintentar}>Reintentar</Button>}/>}
   {v&&c&&s&&ci&&<>
-   <Notice tone="info" title="HubSpot es la fuente.">Zendesk no se usa mientras su configuración esté en transición. Sin extrapolar al histórico.</Notice>
+   <Notice tone="info" title={<ConMarca marca="hubspot">HubSpot es la fuente.</ConMarca>}>Zendesk no se usa mientras su configuración esté en transición. Sin extrapolar al histórico.</Notice>
    <div className="ui-kpis" role="group" aria-label="Indicadores de carga y SLA">
     <Kpi label="Hora pico" value={cok&&pico?horaTxt(pico.hora):'—'} note={cok&&pico?`${pct(pico.pct)} de lo que entra en la semana`:'Sin datos'}>{perfil.length>1&&<Sparkline data={perfil} color={5} label="Perfil de conversaciones por hora del día"/>}</Kpi>
     <Kpi label="Menor carga" value={cok&&menor.length?menor.map(d=>d.dia.slice(0,3)).join(' y '):'—'} note={cok&&menor.length?menor.map(d=>`${d.promedioPorDia} por día`).join(' · '):'Sin datos'}>{cok&&c.porDia&&<Sparkline data={c.porDia.map(d=>d.promedioPorDia)} color={5} label="Conversaciones por día de la semana"/>}</Kpi>

@@ -1,4 +1,5 @@
 'use client';
+import {ConMarca} from '../ui/brand-mark';
 import {useMemo} from 'react';
 import {useJson} from '../ui/use-json';
 import {StatusChip} from '../ui/status-chip';
@@ -14,7 +15,7 @@ export function EstadoSincronizacion(){
   <div className="card-title"><div><h2 id="ds-sync-t">Estado de sincronización</h2><p>Cómo entra cada fuente y cuándo se actualizó por última vez. Los cálculos se rehacen solos cuando llegan datos nuevos.</p></div></div>
   {!v.disponible?<p className="dn-meta">{f.error||'La actualización automática aún no está activada para esta organización: las cargas siguen siendo manuales.'}</p>:<>
    {v.fuentes.length===0?<p className="dn-meta">Todavía no se registró ninguna sincronización.</p>:<ul className="dn-grid">{v.fuentes.map(s=><li key={s.clave} className="dn-source" data-source={s.clave}>
-    <div className="dn-source-head"><h3>{s.nombre}</h3><StatusChip tone={s.tono}>{s.estado}</StatusChip></div>
+    <div className="dn-source-head"><h3><ConMarca marca={s.clave} tamaño={20}>{s.nombre}</ConMarca></h3><StatusChip tone={s.tono}>{s.estado}</StatusChip></div>
     <dl className="dn-facts dn-facts-sm"><div><dt>Cómo entra</dt><dd>{s.metodo}</dd></div><div><dt>Último éxito</dt><dd>{s.exito}</dd></div>{s.siguiente&&<div><dt>Siguiente corrida</dt><dd>{s.siguiente}</dd></div>}</dl>
     {s.nuevos!==null&&<p className="dn-meta">{nf.format(s.nuevos)} registros nuevos en la última corrida{s.latencia?` · ${s.latencia}`:''}</p>}
     {s.error&&<p className="dn-meta" role="status">{s.error}</p>}

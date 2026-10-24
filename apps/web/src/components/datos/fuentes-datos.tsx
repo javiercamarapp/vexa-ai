@@ -9,6 +9,7 @@ import {filasSincronizacion} from '../../lib/legibilidad/sincronizacion.mjs';
 import {agregadoImportaciones,desgloseImportaciones} from '../../lib/connections/estado.mjs';
 import {DatosCabecera} from './datos-cabecera';
 import {DataTable} from '../ui/data-table';
+import {ConMarca} from '../ui/brand-mark';
 import {ErrorState} from '../ui/error-state';
 import {Loading} from '../ui/loading';
 import {ProgressRing} from '../ui/progress-ring';
@@ -45,7 +46,7 @@ export function FuentesDatos(){
    <KpiLinea items={kpis} label="Indicadores de cobertura"/>
    <section className="pc-card" data-flush aria-labelledby="co-t"><header className="pc-card-head"><div><h2 id="co-t">Cobertura por fuente</h2><p>Incorporado frente a lo leído, con su corte y su rango</p></div></header>
     <DataTable caption="Cobertura por fuente" state={cargando?'loading':'ready'} rowKey={f=>f.clave} rows={t} maxHeight="none" columns={[
-     {key:'f',header:'Fuente',render:f=><span className="pc-th-fila">{f.nombre}</span>},
+     {key:'f',header:'Fuente',render:f=><span className="pc-th-fila"><ConMarca marca={f.clave}>{f.nombre}</ConMarca></span>},
      {key:'e',header:'Estado',render:f=>f.estado==='cargada'?<Estado tono="ok">Cargada</Estado>:f.estado==='no_disponible'?<Estado tono="warn">No disponible ahora</Estado>:<Estado tono="muted">Sin cargar</Estado>},
      {key:'i',header:'Incorporado',width:'30%',render:f=>f.estado==='cargada'?<BarraParte etiqueta={<>{nf.format(f.incorporadas)} <small className="pc-s" style={{display:'inline'}}>{f.unidad}</small></>} valor={f.leidas>0?f.incorporadas:null} max={Math.max(1,f.leidas)} c={3} estado={f.rechazadas>0||f.pendientes>0?'parcial':'real'} fin={f.bps!==null&&f.leidas>f.incorporadas?fmtPct(f.bps/100):''}/>:'—'},
      {key:'h',header:'Datos hasta',render:f=>f.estado==='cargada'?f.datosHasta??'Sin fecha de corte':'—'},{key:'u',header:'Última carga',render:f=>f.estado==='cargada'?f.ultimaCarga??'Sin carga por archivo':'—'},{key:'r',header:'Rango',render:f=>f.estado==='cargada'?f.rango??'Sin rango registrado':'—'}]}/>
@@ -61,7 +62,7 @@ export function FuentesDatos(){
     <section className="pc-card" aria-labelledby="cs-t" data-testid="estado-sincronizacion"><header className="pc-card-head"><div><h2 id="cs-t">Estado de sincronización</h2><p>Cómo entra cada fuente</p></div></header>
      {fr.busy&&!fr.data?<Loading compact message="Cargando sincronización…"/>:!sync.disponible?<p className="ac-vacio">{fr.error||'La actualización automática aún no está activada para esta organización: las cargas siguen siendo manuales.'}</p>
       :sync.fuentes.length===0?<p className="ac-vacio">Todavía no se registró ninguna sincronización.</p>
-      :<ul className="pc-lista ui-reset pc-fill" role="list">{sync.fuentes.map(s=><li key={s.clave} style={{listStyle:'none'}}><i className="pc-punto" data-tono={TONO[s.tono as keyof typeof TONO]??'off'}/><span className="pc-grow"><span className="pc-t">{s.nombre}</span><span className="pc-s">{s.metodo} · {s.exito}{s.siguiente?' · siguiente '+s.siguiente:''}{s.error?' · '+s.error:''}</span></span><Estado tono={s.tono}>{s.estado}</Estado></li>)}</ul>}
+      :<ul className="pc-lista ui-reset pc-fill" role="list">{sync.fuentes.map(s=><li key={s.clave} style={{listStyle:'none'}}><i className="pc-punto" data-tono={TONO[s.tono as keyof typeof TONO]??'off'}/><span className="pc-grow"><span className="pc-t"><ConMarca marca={s.clave}>{s.nombre}</ConMarca></span><span className="pc-s">{s.metodo} · {s.exito}{s.siguiente?' · siguiente '+s.siguiente:''}{s.error?' · '+s.error:''}</span></span><Estado tono={s.tono}>{s.estado}</Estado></li>)}</ul>}
     </section>
     <section className="pc-card" aria-labelledby="cc-t2"><header className="pc-card-head"><div><h2 id="cc-t2">Cálculos precalculados</h2><p>Se rehacen al llegar datos nuevos</p></div></header>
      {fr.busy&&!fr.data?<Loading compact message="Cargando cálculos…"/>:sync.calculos.length?<ul className="pc-lista ui-reset pc-fill" role="list">{sync.calculos.map(c=><li key={c.clave} style={{listStyle:'none'}}><span className="pc-grow"><span className="pc-t">{c.nombre}</span><span className="pc-s">{c.actualizado??'sin actualizar'}{c.pendientes>0?' · faltan '+c.pendientes+' periodos':''}</span></span><span className="pc-estado" data-tono="off">{c.estado}</span></li>)}</ul>:<p className="ac-vacio">Sin cálculos registrados todavía.</p>}

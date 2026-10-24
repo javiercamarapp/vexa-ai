@@ -1,4 +1,5 @@
 'use client';
+import {ConMarca} from '../ui/brand-mark';
 import {useEffect,useState} from 'react';
 import {Button,LinkButton} from '../ui/button';
 import {Citation} from '../ui/citation';
@@ -24,7 +25,7 @@ function CalcView({answer}:{answer:Answer}){
      <div><dt>Parámetros</dt><dd>{Object.keys(c.args).length?<ul className="agente-params">{Object.entries(c.args).map(([k,v])=><li key={k}><span>{PARAM_LABELS[k]??k}</span> {paramValue(k,v)}</li>)}</ul>:'Sin parámetros'}<IdChip value={JSON.stringify(c.args)} label="JSON" text="copiar"/></dd></div>
      <div><dt>Método</dt><dd>{c.method}</dd></div>
      <div><dt>Lee</dt><dd><ul className="agente-params">{c.reads.map(r=><li key={r}>{r}</li>)}</ul></dd></div>
-     <div><dt>Fuentes</dt><dd className="agente-sources">{c.sources.map(s=><span className="chip" key={s.ref} title={s.ref}>{s.label}</span>)}</dd></div>
+     <div><dt>Fuentes</dt><dd className="agente-sources">{c.sources.map(s=><span className="chip" key={s.ref} title={s.ref}><ConMarca marca={s.label}>{s.label}</ConMarca></span>)}</dd></div>
      <div><dt>Resultado</dt><dd>{c.status==='ok'?`${c.figures} cifras`:'Sin datos'}{c.durationMs!==undefined?` · ${c.durationMs} ms`:''}</dd></div>
     </dl></li>)}
   </ol>
@@ -66,7 +67,7 @@ export function AnswerView({message,question,isLast,busy,labels,userContext,escr
   {listo&&a.status==='ok'&&a.citations.length>0&&<section className="agente-citations" aria-label="Citas verificables"><p className="eyebrow" role="heading" aria-level={3}>Citas verificables</p>{a.citations.map(c=><Citation key={c.messageRevisionId} quote={c.quote} role={c.role} messageRevisionId={c.messageRevisionId} category={c.category} source={c.source}/>)}</section>}
   {listo&&message.citationsOmitted&&<p className="card-lead agente-note">Las citas de clientes no se guardan en el historial de este navegador; vuelve a preguntar para verlas.</p>}
   {listo&&a.missing.length>0&&ok&&<section className="agente-missing card" aria-label="Qué falta cargar"><p className="eyebrow" role="heading" aria-level={3}>Qué falta cargar</p><ul>{a.missing.map(m=><li key={m}>{m}</li>)}</ul>{a.missing.some(m=>!/vincul/i.test(m))&&<LinkButton href="/imports" size="sm" icon={<Icon name="arrow"/>}>Ir a Importaciones</LinkButton>}{a.missing.some(m=>/vincul/i.test(m))&&<LinkButton href="/history" size="sm" icon={<Icon name="arrow"/>}>Ver vínculos pedido–conversación</LinkButton>}</section>}
-  {listo&&a.status==='ok'&&a.sources.length>0&&<div className="agente-sources" aria-label="Fuentes"><span className="agente-sources-label">Fuentes</span>{a.sources.map(s=>{const href=safeInternal(s.href);return href?<LinkButton key={s.ref} href={href} size="sm" icon={<Icon name="arrow"/>}>{s.label}</LinkButton>:<span className="chip" key={s.ref}>{s.label}</span>;})}</div>}
+  {listo&&a.status==='ok'&&a.sources.length>0&&<div className="agente-sources" aria-label="Fuentes"><span className="agente-sources-label">Fuentes</span>{a.sources.map(s=>{const href=safeInternal(s.href);return href?<LinkButton key={s.ref} href={href} size="sm" icon={<Icon name="arrow"/>}>{s.label}</LinkButton>:<span className="chip" key={s.ref}><ConMarca marca={s.label}>{s.label}</ConMarca></span>;})}</div>}
   {a.notes&&a.notes.length>0&&ok&&a.notes.map(n=><p key={n} className="card-lead agente-note">{n}</p>)}
   {listo&&ok&&a.trace&&a.trace.length>0&&<TraceDisclosure trace={a.trace} labels={labels}/>}
   {listo&&ok&&a.calc.length>0&&<CalcView answer={a}/>}

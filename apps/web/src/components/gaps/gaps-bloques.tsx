@@ -47,7 +47,7 @@ export function GraficoMeses({ing}:{ing:Ing}){
  const canales=[...new Set(ing.meses.flatMap(m=>Object.keys(m.canales)))].sort((a,b)=>cc(a)-cc(b));
  const resumen=ing.meses.map(m=>`${mesLargo(m.mes)} ${usd(m.totalMinor)}`).join(', ');
  return <div className="dg-fill">
-  <Leyenda items={[...canales.map(c=>({label:NOMBRE[c]??c,c:cc(c)})),{label:'Mes parcial o con posible hueco',hatch:true}]}/>
+  <Leyenda items={[...canales.map(c=>({label:NOMBRE[c]??c,c:cc(c),integracion:c})),{label:'Mes parcial o con posible hueco',hatch:true}]}/>
   <div className="dg-meses" style={{gridTemplateColumns:`repeat(${ing.meses.length},minmax(0,1fr))`}} role="img" aria-label={`Ingreso bruto por mes en dólares: ${resumen}. Los meses parciales o con posible hueco llevan trama.`}>
    {ing.meses.map(m=><div key={m.mes} className="dg-mes" data-q={calidadMes(m)}>
     <span className="dg-mes-v">{corto(big(m.totalMinor))}</span>
@@ -63,7 +63,7 @@ export function PanelCanales({ing}:{ing:Ing}){
  const cs=ing.canales;
  return <div className="dg-fill">
   <DonaMini label="Ingreso bruto por canal" size={112} sinLeyenda items={cs.slice(0,5).map(c=>({label:NOMBRE[c.canal]??c.canal,value:big(c.activoMinor),c:cc(c.canal)}))} centro={<span className="dg-dona-c"><b>{corto(big(ing.activoMinor))}</b><small>bruto</small></span>}/>
-  <ListaBarras label="Participación por canal" max={100} items={cs.map(c=>({key:c.canal,c:cc(c.canal),etiqueta:NOMBRE[c.canal]??c.canal,sub:`${num(c.lineas)} líneas`,valor:c.participacionPct,texto:pct(c.participacionPct),sub2:corto(big(c.activoMinor))}))}/>
+  <ListaBarras label="Participación por canal" max={100} items={cs.map(c=>({key:c.canal,c:cc(c.canal),integracion:c.canal,etiqueta:NOMBRE[c.canal]??c.canal,sub:`${num(c.lineas)} líneas`,valor:c.participacionPct,texto:pct(c.participacionPct),sub2:corto(big(c.activoMinor))}))}/>
  </div>;
 }
 

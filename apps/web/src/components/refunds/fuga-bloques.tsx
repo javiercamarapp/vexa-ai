@@ -1,4 +1,5 @@
 'use client';
+import {ConMarca} from '../ui/brand-mark';
 import type {ReactNode} from 'react';
 import type {FugaVista,SkuFila} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
 import {Chip} from '../ui/chip';
@@ -43,9 +44,9 @@ export function IntensidadCanales({v,onReintentar}:{v:FugaVista;onReintentar:()=
  const max=Math.max(1,...todos.map(m=>m.intensidadPct??0));
  const w=i.walmartSinCancelados,a=[...(i.canales.amazon?.meses??[])].reverse().find(m=>m.calidad==='completo'&&m.intensidadPct!==null);
  return <div className="dg-fill">
-  <Leyenda items={[...canales.map(([c])=>({label:NOMBRE[c]??c,c:cc(c)})),{label:'Mes parcial',hatch:true}]}/>
+  <Leyenda items={[...canales.map(([c])=>({label:NOMBRE[c]??c,c:cc(c),integracion:c})),{label:'Mes parcial',hatch:true}]}/>
   {canales.map(([c,b])=>{const meses=b.meses.filter(m=>!m.ultimo);
-   return <div key={c} style={{marginBottom:10,flex:'1 1 auto',display:'flex',flexDirection:'column'}}><p className="dg-lab" style={{margin:'0 0 4px'}}><b>{NOMBRE[c]??c}</b></p>
+   return <div key={c} style={{marginBottom:10,flex:'1 1 auto',display:'flex',flexDirection:'column'}}><p className="dg-lab" style={{margin:'0 0 4px'}}><b><ConMarca marca={c}>{NOMBRE[c]??c}</ConMarca></b></p>
     {!meses.length?<Vacio>Sin meses con reembolsos registrados.</Vacio>:
     <div className="dg-meses" style={{height:'auto',minHeight:120,flex:'1 1 auto',gridTemplateColumns:`repeat(${meses.length},minmax(0,1fr))`}} role="img" aria-label={`Intensidad mensual de ${NOMBRE[c]??c}: ${meses.map(m=>`${mesCorto(m.mes)} ${m.intensidadPct===null?'sin dato':pct(m.intensidadPct)}`).join(', ')}`}>
      {meses.map(m=><div key={m.mes} className="dg-mes" style={{gridTemplateRows:'14px 1fr 16px'}} data-q={m.calidad} title={`${mesCorto(m.mes)}: ${num(m.reembolsos)} reembolsos / ${num(m.lineas)} líneas = ${m.intensidadPct===null?'sin dato':pct(m.intensidadPct)}${m.calidad==='parcial'?' · mes parcial':m.calidad==='posible_hueco'?' · posible hueco de exportación':''}`}>
@@ -62,7 +63,7 @@ export function TablaTop({v,sel,onSel,onPaquete}:{v:FugaVista;sel:string;onSel:(
  const cols:Column<SkuFila>[]=[
   {key:'p',header:'#',width:'44px',render:r=>r.pos},
   {key:'s',header:'SKU',render:r=><button type="button" className="dg-sku ui-reset" aria-pressed={sel===r.sku} aria-label={`Ver expediente de ${r.sku}`} onClick={()=>onSel(r.sku)}>{r.sku}</button>},
-  {key:'c',header:'Canal',render:r=><span style={{display:'inline-flex',gap:4,flexWrap:'wrap'}}>{r.canales.map(c=><Chip key={c.canal} categoria={cc(c.canal)}>{NOMBRE[c.canal]??c.canal}</Chip>)}</span>},
+  {key:'c',header:'Canal',render:r=><span style={{display:'inline-flex',gap:4,flexWrap:'wrap'}}>{r.canales.map(c=><Chip key={c.canal} categoria={cc(c.canal)}><ConMarca marca={c.canal}>{NOMBRE[c.canal]??c.canal}</ConMarca></Chip>)}</span>},
   {key:'d',header:'Devuelto (USD bruto)',align:'num',render:r=>usd(r.usdBrutoMinor)},
   {key:'n',header:'Reembolsos',align:'num',render:r=>num(r.n)},
   {key:'l',header:'Líneas vendidas',align:'num',render:r=>r.lineas===null?'—':<>{num(r.lineas)}{r.n>r.lineas&&<> <Chip tone="warn">revisar</Chip></>}</>},

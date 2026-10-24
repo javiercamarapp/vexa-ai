@@ -1,4 +1,5 @@
 'use client';
+import {ConMarca} from '../ui/brand-mark';
 import {useId, useState, type ReactNode} from 'react';
 import {KindBadge} from '../ui/kind-badge';
 import {PfIcon} from './icons';
@@ -31,10 +32,10 @@ export function HowTo({text, label = 'Cómo se calculó'}: {text: string; label?
   const id = useId(), [open, setOpen] = useState(false);
   return <div className="pf-how"><button type="button" className="btn btn-sm btn-ghost" aria-expanded={open} aria-controls={id} onClick={() => setOpen(o => !o)}><PfIcon name="info" size={14} /><span className="btn-label">{label}</span></button><p id={id} hidden={!open}>{text}</p></div>;
 }
-export function Panel({eyebrow, title, actions, children, id, lead, className}: {eyebrow?: string; title: string; actions?: ReactNode; children: ReactNode; id?: string; lead?: ReactNode; className?: string}) {
+export function Panel({eyebrow, title, marca, actions, children, id, lead, className}: {eyebrow?: string; title: string; /** integración cuyo logo precede al título */marca?: string; actions?: ReactNode; children: ReactNode; id?: string; lead?: ReactNode; className?: string}) {
   const hid = useId();
   return <section className={'card pf-panel' + (className ? ' ' + className : '')} id={id} aria-labelledby={hid}>
-    <div className="card-head"><div>{eyebrow && <p className="eyebrow">{eyebrow}</p>}<h2 id={hid}>{title}</h2></div>{actions && <div className="btn-group">{actions}</div>}</div>
+    <div className="card-head"><div>{eyebrow && <p className="eyebrow">{eyebrow}</p>}<h2 id={hid}><ConMarca marca={marca}>{title}</ConMarca></h2></div>{actions && <div className="btn-group">{actions}</div>}</div>
     {lead && <p className="card-lead">{lead}</p>}
     {children}
   </section>;

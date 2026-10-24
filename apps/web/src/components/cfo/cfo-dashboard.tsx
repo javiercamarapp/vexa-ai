@@ -150,13 +150,13 @@ function Comparativa({block}: {block: CurrencyBlock}) {
 }
 
 function Mix({report, currency}: {report: CfoReport; currency: string}) {
-  const pedidos: ItemBarra[] = report.mix.orders.map(o => ({key: o.channel, label: o.label, etiqueta: o.label, sub: `${int(o.n)} pedidos`, valor: (o.shareBps ?? 0) / 100, texto: pct(o.shareBps)}));
+  const pedidos: ItemBarra[] = report.mix.orders.map(o => ({key: o.channel, integracion: o.channel, label: o.label, etiqueta: o.label, sub: `${int(o.n)} pedidos`, valor: (o.shareBps ?? 0) / 100, texto: pct(o.shareBps)}));
   const grupos = report.mix.byCurrency.filter(g => g.currency === currency);
   return <Card title="Mezcla por canal" description={`Pedidos (conteo, sin moneda) e importes en ${currency} por base: no se suman entre sí`} actions={<KindBadge kind="observed" />}>
     <div className="dg-dos dg-dos-fill">
       <div><p className="dg-lab" style={{margin: '0 0 2px'}}><b>Pedidos por canal</b></p><ListaBarras c={1} max={100} label="Pedidos por canal" apilado items={pedidos} /></div>
       <div>{grupos.length === 0 ? <Vacio>Sin importes en {currency}.</Vacio> : grupos.map(g => <div key={g.currency + g.base} className="dg-g"><p className="dg-lab" style={{margin: '0 0 2px'}}><b>{g.baseLabel}</b><small>total {g.total}</small></p>
-        <ListaBarras c={2} max={100} label={`${g.currency} ${g.baseLabel}`} apilado items={g.items.map(i => ({key: i.channel, etiqueta: i.label, sub: i.display, valor: (i.shareBps ?? 0) / 100, texto: pct(i.shareBps)}))} /></div>)}</div>
+        <ListaBarras c={2} max={100} label={`${g.currency} ${g.baseLabel}`} apilado items={g.items.map(i => ({key: i.channel, integracion: i.channel, etiqueta: i.label, sub: i.display, valor: (i.shareBps ?? 0) / 100, texto: pct(i.shareBps)}))} /></div>)}</div>
     </div>
     <div className="dg-pie"><HowTo text={report.mix.ordersFig.how} /></div></Card>;
 }
@@ -165,7 +165,7 @@ function Quality({report}: {report: CfoReport}) {
   const q = report.quality;
   return <Card title="Calidad de datos" description="Qué tan completo está lo que ves; lo incompleto queda fuera de los totales" actions={<KindBadge kind="observed" />}>
     <div className="dg-fill">
-      <ListaBarras c={5} max={100} label="Completitud por canal" items={q.byChannel.map(r => ({key: r.channel, etiqueta: r.label, sub: !r.hasRefundSource ? `${int(r.rows)} registros · sin fuente de devoluciones` : `${int(r.rows)} registros · ${int(r.noCurrency)} sin moneda · ${int(r.ordersNoAmount + r.refundsNoAmount)} sin importe`, valor: (r.completenessBps ?? 0) / 100, texto: pct(r.completenessBps)}))} />
+      <ListaBarras c={5} max={100} label="Completitud por canal" items={q.byChannel.map(r => ({key: r.channel, integracion: r.channel, etiqueta: r.label, sub: !r.hasRefundSource ? `${int(r.rows)} registros · sin fuente de devoluciones` : `${int(r.rows)} registros · ${int(r.noCurrency)} sin moneda · ${int(r.ordersNoAmount + r.refundsNoAmount)} sin importe`, valor: (r.completenessBps ?? 0) / 100, texto: pct(r.completenessBps)}))} />
       <ul className="dg-leyenda" style={{marginTop: 8}} aria-label="Cifras de calidad">{[q.figs.rows, q.figs.noCurrency, q.figs.ordersNoAmount, q.figs.refundsNoAmount, q.figs.toReview].map(f => <li key={f.id}><i style={{['--cat' as string]: 'var(--chart-5)'}} />{f.label}: <b>{f.display}</b></li>)}</ul>
       <p className="dg-nota">Estimado, no suma a lo observado: lo que valdrían los registros sin importe con el ticket promedio de su canal. {q.unaccounted.flatMap(u => [u.orderFig, u.refundFig]).filter(f => f.display && !f.display.startsWith('Sin')).map(f => `${f.label}: ${f.display}`).join(' · ')}</p>
     </div></Card>;

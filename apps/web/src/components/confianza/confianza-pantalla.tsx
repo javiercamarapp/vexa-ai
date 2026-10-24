@@ -5,6 +5,7 @@ import type {CoverageView} from '../../../../../packages/workspace-service/prove
 import type {TrendsView} from '../../../../../packages/workspace-service/trends.mjs';
 import {tarjetasFuentes} from '../../lib/legibilidad/fuentes.mjs';
 import {useJson} from '../ui/use-json';
+import {ConMarca} from '../ui/brand-mark';
 import {DatosCabecera} from '../datos/datos-cabecera';
 import {DataTable} from '../ui/data-table';
 import {KpiLinea,BarraParte} from '../panel-comun/kpi-linea';
@@ -57,7 +58,7 @@ export function ConfianzaPantalla(){
    <Tarjeta id="dc-fuentes" titulo="Semáforo por fuente" sub="Cómo entra cada fuente, cuándo funcionó por última vez y cuándo vuelve a correr" flush extra={<LinkButton href="/connections" size="sm" variant="ghost" icon={<Arrow/>}>Administrar fuentes</LinkButton>}>
     {!pendiente(fresh)&&!fuentes.disponible?<p className="ac-vacio" style={{margin:'0 14px 14px'}}>{fresh.error||'La actualización automática aún no está activada para esta organización: las cargas siguen siendo manuales.'}</p>
      :<DataTable caption="Fuentes conectadas" state={pendiente(fresh)?'loading':'ready'} rowKey={f=>f.clave} rows={fuentes.filas} maxHeight="none" empty={<p className="ac-vacio" style={{margin:'0 14px 14px'}}>Todavía no se registró ninguna sincronización.</p>} columns={[
-      {key:'f',header:'Fuente',render:f=><><span className="pc-th-fila">{f.nombre}</span><small className="pc-s" style={{display:'block'}}>{f.metodo}</small></>},
+      {key:'f',header:'Fuente',render:f=><><span className="pc-th-fila"><ConMarca marca={f.clave}>{f.nombre}</ConMarca></span><small className="pc-s" style={{display:'block'}}>{f.metodo}</small></>},
       {key:'e',header:'Estado',render:f=><><Estado nivel={f.nivel}>{f.estado}</Estado>{f.error&&<small className="pc-s" style={{display:'block'}}>{f.error}</small>}</>},
       {key:'x',header:'Último éxito',render:f=>f.exito},{key:'s',header:'Siguiente',render:f=>f.siguiente??'—'},{key:'h',header:'Datos hasta',render:f=>f.hasta??'sin fecha de corte'}]}/>}
    </Tarjeta>
@@ -73,7 +74,7 @@ export function ConfianzaPantalla(){
    </Tarjeta>
    <Tarjeta id="dc-cobertura" titulo="Cobertura por fuente" sub="Incorporado frente a lo leído" extra={<LinkButton href="/sources" size="sm" variant="ghost" icon={<Arrow/>}>Ver detalle</LinkButton>}>
     {pendiente(cov)?<Loading compact message="Cargando cobertura…"/>:cov.error&&!cov.data?<p className="ac-vacio">No disponible ahora: {cov.error}</p>
-     :<div className="pc-fill">{tarjetas.map(t=><BarraParte key={t.clave} etiqueta={t.nombre} valor={t.estado==='cargada'?t.incorporadas:null} max={Math.max(1,t.leidas)} c={3} fin={t.estado==='cargada'?nf.format(t.incorporadas)+' de '+nf.format(t.leidas):t.estado==='no_disponible'?'No disponible':'Sin cargar'}/>)}</div>}
+     :<div className="pc-fill">{tarjetas.map(t=><BarraParte key={t.clave} etiqueta={<ConMarca marca={t.clave}>{t.nombre}</ConMarca>} valor={t.estado==='cargada'?t.incorporadas:null} max={Math.max(1,t.leidas)} c={3} fin={t.estado==='cargada'?nf.format(t.incorporadas)+' de '+nf.format(t.leidas):t.estado==='no_disponible'?'No disponible':'Sin cargar'}/>)}</div>}
    </Tarjeta>
     </div>
    </div>

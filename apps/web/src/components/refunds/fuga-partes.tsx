@@ -1,4 +1,5 @@
 'use client';
+import {ConMarca} from '../ui/brand-mark';
 import {Fragment,useId} from 'react';
 import type {ReactNode} from 'react';
 import type {FugaVista,SkuFila} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
@@ -26,7 +27,7 @@ export const Vacio=({children}:{children:ReactNode})=><div className="fg-vacio" 
 
 const CANAL_VAR:Record<string,string>={walmart:'var(--fg-walmart)',amazon:'var(--fg-amazon)',shopify:'var(--fg-otro)',bestbuy:'var(--fg-otro)'};
 export function LeyendaCanales({canales}:{canales:string[]}){
- return <ul className="fg-leyenda" aria-label="Canales">{canales.map(c=><li key={c}><i style={{background:CANAL_VAR[c]??'var(--fg-otro)'}}/>{NOMBRE[c]??c}</li>)}</ul>;
+ return <ul className="fg-leyenda" aria-label="Canales">{canales.map(c=><li key={c}><i style={{background:CANAL_VAR[c]??'var(--fg-otro)'}}/><ConMarca marca={c}>{NOMBRE[c]??c}</ConMarca></li>)}</ul>;
 }
 
 // ---- S2: tabla SKU × canal con expediente en la fila ----

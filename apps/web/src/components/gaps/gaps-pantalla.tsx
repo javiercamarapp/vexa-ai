@@ -1,4 +1,5 @@
 'use client';
+import {ConMarca} from '../ui/brand-mark';
 import {RovaqCargando} from '../rovaq-cargando';
 import {useState} from 'react';
 import {PageHeader} from '../ui/page-header';
@@ -63,7 +64,7 @@ export function GapsPantalla({organization}:{organization?:string}){
    <KpiStrip items={kpis} label="Indicadores de brechas de ingreso"/>
    {ok&&todosCanales.length>0&&<FilterBar label="Filtros de ingreso por mes y canal">
     <SegmentedControl size="sm" label="Periodo" value={per} onChange={setPer} options={[{value:'1',label:'1 mes'},{value:'3',label:'3 meses'},{value:'6',label:'6 meses'},{value:'12',label:'12 meses'},{value:'todo',label:'Todo'}]}/>
-    {todosCanales.map(c=>{const on=!off.includes(c);return <button key={c} type="button" className="dg-fchip ui-reset" aria-pressed={on} style={{['--cat' as string]:`var(--chart-${CANAL_C[c]??8})`}} onClick={()=>setOff(on?(activos.length>1?[...off,c]:off):off.filter(x=>x!==c))}>{NOMBRE[c]??c}</button>;})}
+    {todosCanales.map(c=>{const on=!off.includes(c);return <button key={c} type="button" className="dg-fchip ui-reset" aria-pressed={on} style={{['--cat' as string]:`var(--chart-${CANAL_C[c]??8})`}} onClick={()=>setOff(on?(activos.length>1?[...off,c]:off):off.filter(x=>x!==c))}><ConMarca marca={c}>{NOMBRE[c]??c}</ConMarca></button>;})}
     <FilterSpacer/><span className="dg-sello">Aplica a la gráfica mensual y a «Por canal»</span>
    </FilterBar>}
    <Fila split="8-4">

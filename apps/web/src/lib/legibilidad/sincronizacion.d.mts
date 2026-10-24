@@ -1,6 +1,7 @@
 export const FUENTES: Readonly<Record<string, string>>;
 export const METODOS: Readonly<Record<string, string>>;
 export const CALCULOS: Readonly<Record<string, string>>;
+export function nombreCalculo(id: string): string;
 export function hace(seg: number | null): string | null;
 export function dentroDe(iso: string | null, ahora?: number): string | null;
 export function textoError(code: string | null): string | null;

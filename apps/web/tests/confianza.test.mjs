@@ -41,3 +41,12 @@ test('bloque 4: qué no sabemos son tareas con afecta/cierra y salen de datos re
   assert.deepEqual(queNoSabemos({}), []);
   assert.ok(!/margen|SLA de Zendesk/i.test(JSON.stringify(t)));
 });
+
+test('A4 (auditoría 24-oct): ningún cálculo precalculado muestra su id interno en «Frescura por cifra»', () => {
+  const ids = ['conversation_volume', 'refund_by_sku_month', 'thread_resolution', 'tracker_refund_status', 'repeat_contact', 'complaint_family_month', 'order_revenue_month', 'problem_run_verdict', 'insight_nuevo_sin_nombre'];
+  const f = {availability: 'ready', version: 'x', sources: [], insights: ids.map(insight => ({insight, status: 'ready', refreshedAt: new Date(AHORA).toISOString(), sourceWatermark: null, rows: 1, pending: 0}))};
+  const filas = bloqueFrescura(f, AHORA).filas;
+  for (const fila of filas) assert.ok(!/_/.test(fila.nombre), fila.clave + ' -> ' + fila.nombre);
+  assert.equal(filas.find(x => x.clave === 'complaint_family_month').nombre, 'Quejas por familia y mes');
+  assert.equal(filas.find(x => x.clave === 'order_revenue_month').nombre, 'Ingreso bruto por mes');
+});

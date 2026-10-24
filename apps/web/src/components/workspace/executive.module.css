@@ -38,16 +38,13 @@
 .strip .avisos summary,.strip button{min-height:24px;height:24px;padding-block:0;font-size:12px}
 .strip{min-height:0}
 
-/* Avisos: desplegable anclado bajo la franja (no la estira); la franja queda en UNA línea */
-.strip{position:relative;overflow:visible}
-.avisos{position:relative;flex:none}
-.avisos[open]{flex-basis:auto;margin-left:auto}
-.avisos>div{position:absolute;right:0;top:calc(100% + 6px);z-index:30;width:min(520px,calc(100vw - 48px));max-height:min(60vh,420px);overflow:auto;margin:0;padding:8px;gap:8px;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:0 8px 24px rgba(14,14,16,.12);white-space:normal}
-.avisos>div>div>*{margin:0}
-@media(max-width:1100px){.strip{flex-wrap:wrap}.lineaAvisos{flex-basis:100%}}
-
-/* Corrección: el desplegable de avisos no se encima a «Ver cobertura» ni se ensancha al abrir; si no cabe todo en una línea, la franja pasa a dos. */
-.strip{row-gap:4px}
+/* Avisos: se abren hacia abajo DENTRO del mismo recuadro de la franja (no flotan); cerrada, «N avisos» queda a la derecha de la línea. */
+.strip{position:relative;overflow:visible;flex-wrap:wrap;row-gap:4px}
 .strip :is(button,summary,.stripItem){flex:none}
-.strip .avisos,.strip .avisos[open]{flex:0 0 auto;width:auto;margin-left:auto}
-.strip .avisos>div{right:0;left:auto}
+.strip .avisos{position:relative;flex:0 0 auto;width:auto;margin-left:auto}
+.strip .avisos[open]{flex:1 1 100%;margin-left:0;order:99}
+.strip .avisos>div{position:static;width:auto;max-height:none;overflow:visible;margin:6px 0 2px;padding:0;gap:8px;background:transparent;border:0;box-shadow:none;white-space:normal;display:grid}
+.strip .avisos>div>div{position:relative}
+.avisoOcultar{position:absolute;top:6px;right:6px;z-index:2;min-height:24px;height:24px;padding:0 8px;font-size:12px}
+@media(max-width:1100px){.lineaAvisos{flex-basis:100%}}
+.avisoPie{display:flex;justify-content:flex-end;margin-top:2px}

@@ -165,7 +165,7 @@
 .hoy-page.hoy-page .workspace-content [aria-label="Estado de los datos"] :is(summary,button),.hoy-page [aria-label="Estado de los datos"] :is(summary,button){min-height:24px;height:24px;padding-block:0;font-size:12px;line-height:1}
 .hoy-page [aria-label="Estado de los datos"]{padding:6px 14px;align-items:center}
 .hoy-page [aria-label="Estado de los datos"] details{margin:0 0 0 auto}
-.hoy-page [aria-label="Estado de los datos"] details[open]{flex:0 0 auto;margin:0 0 0 auto}
+.hoy-page [aria-label="Estado de los datos"] details[open]{flex:1 1 100%;margin:0}
 .ov-fila>:only-child{grid-column:1/-1}.ov-4-4-4:has(>:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr))}
 .hoy-page .ov-fila>.card>*{min-width:0;max-width:100%}
 .hoy-page [aria-label="Estado de los datos"] .btn-label{white-space:nowrap}

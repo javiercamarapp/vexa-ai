@@ -54,7 +54,7 @@ export function OrgFicha({id, initial}: {id: string; initial: OrgFichaState}) {
       <Tile label="Asientos del ledger" value={int(d.ledger.rows)} kind="observed" foot={`Último: ${relative(d.ledger.lastAt, now)}`} />
       <Tile label="Procesos (30 días)" value={int(d.jobs.failed30d)} kind="observed" foot={`fallidos · ${d.jobs.stuck} atascados · ${d.jobs.queued} en cola · ${d.jobs.succeeded24h} bien en 24 h`} />
       <Tile label={`Gasto de IA · ${ai.window || 'sin ventana'}`} value={usd(ai.spentMicro)} kind="observed" foot={`de ${usd(ai.limitMicro)} · ${pct(ai.pctBps)}`}><Meter bps={ai.pctBps} /></Tile>
-      <Tile label="Invitaciones" value={`${d.invitations.pending} pendientes`} kind="observed" foot={`${d.invitations.expired} vencidas · ${d.invitations.deliveryProblems} con problema de entrega`} />
+      <Tile label="Invitaciones" value={`${d.invitations.pending} ${d.invitations.pending === 1 ? 'pendiente' : 'pendientes'}`} kind="observed" foot={`${d.invitations.expired} ${d.invitations.expired === 1 ? 'vencida' : 'vencidas'} · ${d.invitations.deliveryProblems} con problema de entrega`} />
     </div>
     {team && <Panel eyebrow="Equipo" title="Gestionar equipo" lead="Leer el equipo de un cliente queda registrado en la auditoría."><TeamPanel key={d.organization.id} endpoint={`/api/platform/team?tenantId=${d.organization.id}`} platform /></Panel>}
     <div className="pf-grid-2">

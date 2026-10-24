@@ -16,3 +16,5 @@ export function filtrarFilas(filas:readonly FilaProblema[],opts?:{texto?:string;
 
 export const ETIQUETA_GENERAL:string;
 export function marcarGeneral(filas:readonly FilaProblema[],opts?:{umbral?:number}):FilaProblema[];
+
+export function chipSeveridad(severidad:unknown,critico:boolean|null|undefined):{texto:string;tono:'bad'|'warn'|'neutral';ayuda:string|null}|null;

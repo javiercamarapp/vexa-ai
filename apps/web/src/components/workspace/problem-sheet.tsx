@@ -21,11 +21,10 @@ import {useJson} from '../ui/use-json';
 import {nf} from '../ui/format';
 import {ESPERA} from '../../lib/legibilidad/espera.mjs';
 import {agruparCitas,AVISO_TERCEROS,textoCitas} from '../../lib/legibilidad/explorador.mjs';
-import {etiquetaSeveridad} from '../../lib/legibilidad/problemas-catalogo.mjs';
+import {chipSeveridad} from '../../lib/legibilidad/problemas-catalogo.mjs';
 import {encabezadoFicha,resumenAdjuntos,serieConversaciones,cambioMensual,etiquetaRecomendacion,estadoIntervencion,IMPACTO_NO_DISPONIBLE} from '../../lib/legibilidad/ficha.mjs';
 import s from './problem-sheet.module.css';
 import {fetchCupo} from '../../lib/workspace/cupo.mjs';
-const sevTone=(v:string|null)=>v==='high'||v==='critical'?'bad' as const:v==='medium'?'warn' as const:'neutral' as const;
 const mesCorto=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
 const mesLargo=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
 export const acceptFacts=(j:unknown)=>{const d=(j as {data?:ProblemFacts})?.data;return d&&typeof d.problemId==='string'&&'recommendations' in d?d:null;};
@@ -92,7 +91,7 @@ export function ProblemSheet({id,shared,captured,dinero,facts,onTitle,causa=null
    <div className={s.head}>
     <div className={s.chips}>
      {head?.grupo&&<Chip categoria={7}>{head.grupo}</Chip>}
-     {f?.severity&&<StatusChip tone={sevTone(f.severity)}>Severidad {etiquetaSeveridad(f.severity)?.toLowerCase()}</StatusChip>}
+     {f?.severity&&(()=>{const c=chipSeveridad(f.severity,head?.critico);return c&&<StatusChip tone={c.tono} title={c.ayuda??undefined}>{c.texto}</StatusChip>;})()}
      {head?.critico===true&&<StatusChip tone="bad" title={head.motivo??undefined}>Revisión crítica</StatusChip>}
      {head?.critico===false&&<Chip>Sin revisión crítica</Chip>}
      {f&&<KindBadge kind="inferred" hint="La categoría y la severidad las asigna la IA al extraer cada conversación: son Inferido, no un hecho observado."/>}

@@ -18,7 +18,7 @@ import {LinkButton,Arrow} from '../ui/button';
 import {InsightList} from '../ui/insight-list';
 import {insightsProblemas} from '../../lib/legibilidad/insights.mjs';
 import {separarRuido} from '../../lib/legibilidad/ruido.mjs';
-import {filasDesdeCatalogo,filasDesdeItems,numerarGrupos,agruparCategorias,resumenFilas,ordenarFilas,filtrarFilas,hayImporte,fraseGrupo,marcarGeneral,etiquetaSeveridad,type FilaProblema,type ColumnaOrden} from '../../lib/legibilidad/problemas-catalogo.mjs';
+import {filasDesdeCatalogo,filasDesdeItems,numerarGrupos,agruparCategorias,resumenFilas,ordenarFilas,filtrarFilas,hayImporte,fraseGrupo,marcarGeneral,etiquetaSeveridad,chipSeveridad,type FilaProblema,type ColumnaOrden} from '../../lib/legibilidad/problemas-catalogo.mjs';
 import {DEFINICION,etiquetaMotivo,desgloseCriticos} from '../../../../../packages/workspace-service/critico.mjs';
 import {nf} from '../ui/format';
 import {EmptyState} from '../ui/empty-state';
@@ -53,7 +53,7 @@ function QuickView({fila,query,onClose}:{fila:FilaProblema|null;query:string;onC
   {fila&&<div className={s.quick}>
    <div className={s.tiles}>
     <div className={s.tile}><strong>{fila.conversaciones===null?'No disponible':nf.format(fila.conversaciones)}</strong><span>Conversaciones <KindBadge kind="observed"/></span></div>
-    <div className={s.tile}><strong>{fila.severidad===null?'No disponible':etiquetaSeveridad(fila.severidad)}</strong><span>Severidad registrada</span></div>
+    <div className={s.tile}><strong title={chipSeveridad(fila.severidad,fila.critico)?.ayuda??undefined}>{fila.severidad===null?'No disponible':fila.critico===true&&chipSeveridad(fila.severidad,true)?.ayuda?'Mixta':etiquetaSeveridad(fila.severidad)}</strong><span>Severidad registrada{fila.critico===true&&chipSeveridad(fila.severidad,true)?.ayuda?' (hay casos críticos)':''}</span></div>
     <div className={s.tile}><strong>{fila.critico===null?'No disponible':fila.critico?'Sí':'No'}</strong><span>Revisión crítica{textoSenales(fila)?' · '+textoSenales(fila):''}</span></div>
     <div className={s.tile}><strong>{fila.recomendaciones===null?'No disponible':fila.recomendaciones>0?'Sí ('+fila.recomendaciones+')':'No'}</strong><span>Recomendación guardada</span></div>
    </div>
@@ -189,7 +189,7 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
     <tbody>{pagina.map(f=><tr key={f.id}>
      <th scope="row" className={s.cat} data-label="Problema"><Link href={hrefDe(f,query)} className="row-link-inline"><b>{f.categoria}</b> · {fraseGrupo(f)}</Link></th>
      <td data-label="Conversaciones" className={s.num+' num'}>{f.conversaciones===null?NA:<span className={s.convCell}><span className={s.convBar} aria-hidden="true"><span style={{width:Math.max(2,f.conversaciones*100/maxConv)+'%'}}/></span><strong>{nf.format(f.conversaciones)}</strong></span>}</td>
-     <td data-label="Severidad">{f.severidad===null?NA:<Chip tone={sevTone(f.severidad)}>{etiquetaSeveridad(f.severidad)}</Chip>}</td>
+     <td data-label="Severidad">{f.severidad===null?NA:<span title={chipSeveridad(f.severidad,f.critico)?.ayuda??undefined}><Chip tone={chipSeveridad(f.severidad,f.critico)?.tono??sevTone(f.severidad)}>{f.critico===true&&chipSeveridad(f.severidad,true)?.ayuda?'Mixta':etiquetaSeveridad(f.severidad)}</Chip></span>}</td>
      <td data-label="Crítico">{f.critico===null?NA:f.critico?<span title={motivoDe(f)}><Chip tone="bad">Crítico</Chip></span>:<span className={s.muted}>—</span>}</td>
      <td data-label="Citas" className={s.num+' num'}><Citas f={f}/></td>
      <td data-label="Recomendación"><Recomendacion f={f}/></td>

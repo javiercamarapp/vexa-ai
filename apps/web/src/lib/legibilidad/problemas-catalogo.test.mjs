@@ -1,7 +1,7 @@
 // Lógica pura de la pantalla «Problemas»: filas, agrupación por categoría, numeración «grupo n de N», orden, búsqueda y ruido.
 //   node --test apps/web/src/lib/legibilidad/problemas-catalogo.test.mjs
 import test from 'node:test';import assert from 'node:assert/strict';
-import {filasDesdeCatalogo,filasDesdeItems,agruparCategorias,numerarGrupos,ordenarFilas,filtrarFilas,resumenFilas,hayImporte,etiquetaSeveridad,fraseGrupo,marcarGeneral,ETIQUETA_GENERAL} from './problemas-catalogo.mjs';
+import {filasDesdeCatalogo,filasDesdeItems,agruparCategorias,numerarGrupos,ordenarFilas,filtrarFilas,resumenFilas,hayImporte,etiquetaSeveridad,chipSeveridad,fraseGrupo,marcarGeneral,ETIQUETA_GENERAL} from './problemas-catalogo.mjs';
 import {separarRuido} from './ruido.mjs';
 
 const R=(id,label,conversations,extra={})=>({id,label,conversations,severity:'medium',critical:false,citations:conversations,recommendations:0,...extra});
@@ -93,4 +93,12 @@ test('el grupo gigante (2,338 de 2,499 conversaciones) se rotula «Grupo general
  const solo=marcarGeneral(numerarGrupos(filasDesdeCatalogo({rows:[R('a','Order: Spare Parts',10)],parts:{}})));assert.equal(solo[0].general,false);assert.equal(fraseGrupo(solo[0]),'Único grupo');
  const parejo=marcarGeneral(filasDesdeCatalogo({rows:[R('a','x',100),R('b','y',100),R('c','z',100),R('d','w',100)],parts:{}}));assert.ok(parejo.every(r=>!r.general));
  const sinDato=marcarGeneral(filasDesdeCatalogo({rows:[R('a','x',null),R('b','y',null)].map(r=>({...r,conversations:null})),parts:{}}));assert.ok(sinDato.every(r=>!r.general),'desconocido no es grande');
+});
+
+test('A5 (auditoría 24-oct): la severidad no contradice la revisión crítica',()=>{
+ assert.deepEqual(chipSeveridad('low',true).texto,'Severidad mixta');assert.equal(chipSeveridad('low',true).tono,'warn');assert.match(chipSeveridad('low',true).ayuda,/revisión crítica/);
+ assert.equal(chipSeveridad('medium',true).texto,'Severidad mixta');
+ assert.equal(chipSeveridad('low',false).texto,'Severidad baja');assert.equal(chipSeveridad('low',null).texto,'Severidad baja');
+ assert.equal(chipSeveridad('high',true).texto,'Severidad alta');assert.equal(chipSeveridad('high',true).tono,'bad');
+ assert.equal(chipSeveridad(null,true),null);
 });

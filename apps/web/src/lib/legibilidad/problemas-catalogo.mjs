@@ -9,6 +9,14 @@ const primaria=item=>item?.metrics?.find(x=>x.kind==='exposure')??item?.metrics?
 const SEV={critical:4,high:3,medium:2,low:1};
 const SEV_ES={critical:'Crítica',high:'Alta',medium:'Media',low:'Baja'};
 export const etiquetaSeveridad=v=>v===null||v===undefined||v===''?null:(SEV_ES[v]??String(v));
+/** Chip de severidad coherente con la revisión crítica: si el grupo tiene señales críticas pero su severidad registrada es baja/media, NO se dice «baja» a secas (se contradice con
+ *  «Revisión crítica»): se rotula «mixta» y la ayuda explica la diferencia. Devuelve null si no hay severidad. */
+export function chipSeveridad(severidad,critico){
+ const e=etiquetaSeveridad(severidad);if(e===null)return null;
+ const tono=severidad==='high'||severidad==='critical'?'bad':severidad==='medium'?'warn':'neutral';
+ if(critico===true&&(severidad==='low'||severidad==='medium'))return {texto:'Severidad mixta',tono:'warn',ayuda:'La severidad registrada del grupo es '+e.toLowerCase()+' (lo habitual en sus conversaciones), pero algunas conversaciones cumplen el criterio de revisión crítica.'};
+ return {texto:'Severidad '+e.toLowerCase(),tono,ayuda:null};
+}
 const base=(id,titulo)=>({id,titulo,categoria:etiquetaCategoria(titulo),clave:clave(titulo)});
 /** Filas desde meta.catalog.rows (todos los problemas vigentes). */
 export function filasDesdeCatalogo(catalogo){

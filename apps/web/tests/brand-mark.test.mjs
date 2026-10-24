@@ -139,10 +139,10 @@ test('contraste: monocromo en oscuro cuando el color de marca no llega a 3:1; ne
 test('uso: las pantallas con logo importan el componente y los archivos de cliente conservan «use client» en la primera línea', () => {
   const usan = ['connection-health.tsx', 'connection-settings.tsx', 'datos/fuentes-datos.tsx', 'datos/estado-sincronizacion.tsx', 'datos/cobertura-conexiones.tsx', 'datos/economia-resumen.tsx',
     'confianza/confianza-pantalla.tsx', 'confianza/como-se-calculo.tsx', 'gaps/gaps-pantalla.tsx', 'refunds/fuga-partes.tsx', 'refunds/fuga-bloques.tsx', 'refunds/fuga-intensidad.tsx',
-    'dinero/partes.tsx', 'workload/carga-pantalla.tsx', 'workspace/shared-filters.tsx', 'map/mapa-pantalla.tsx', 'agente/answer-view.tsx', 'platform/primitives.tsx', 'ui/citation.tsx', 'ui/insight-list.tsx'];
+    'dinero/partes.tsx', 'workload/carga-pantalla.tsx', 'workspace/shared-filters.tsx', 'map/mapa-pantalla.tsx', 'agente/answer-view.tsx', 'platform/primitives.tsx', 'ui/citation.tsx', 'ui/insight-list.tsx', 'confianza/ventanas-linea.tsx'];
   for (const f of usan) {
     const t = leer('components/' + f);
     assert.match(t, /brand-mark'/, f);
-    if (!['ui/insight-list.tsx'].includes(f)) assert.match(t.split('\n')[0], /^(['"])use client\1;?$/, f);
+    if (!['ui/insight-list.tsx', 'confianza/ventanas-linea.tsx'].includes(f)) assert.match(t.split('\n')[0], /^(['"])use client\1;?$/, f);
   }
 });

@@ -1,4 +1,4 @@
-/* VEXA: no application/identity caching; only opaque registration identity is read; notification content is ignored. */
+/* Rovaq: no application/identity caching; only opaque registration identity is read; notification content is ignored. */
 self.addEventListener('install',()=>self.skipWaiting());
 self.addEventListener('activate',event=>event.waitUntil(self.clients.claim()));
 self.addEventListener('push',event=>{

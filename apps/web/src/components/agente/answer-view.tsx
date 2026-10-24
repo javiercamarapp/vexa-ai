@@ -75,7 +75,7 @@ export function AnswerView({message,question,isLast,busy,labels,userContext,escr
    <Button size="sm" icon={<Icon name={copied?'check':'copy'}/>} onClick={()=>void copy()}>{copied?'Copiado':'Copiar'}</Button>
    {blocksWithRows.map((b,i)=><Button key={b.tool+i} size="sm" icon={<Icon name="sheet"/>} aria-label={blocksWithRows.length>1?`Descargar CSV de ${b.title}`:'Descargar CSV'} onClick={()=>setCsvError(!download(`vexa-${b.tool}.csv`,blockToCsv(b),'text/csv;charset=utf-8'))}>{blocksWithRows.length>1?`CSV: ${b.title}`:'CSV'}</Button>)}
    <Button size="sm" icon={<Icon name="report"/>} title="Abre el reporte en una pestaña nueva; usa Imprimir para guardarlo como PDF." onClick={()=>{const html=answerToHtml({question,answer:a,userContext});if(!openReport(`rovaq-reporte-${message.id}.html`,html))setCsvError(true);}}>Reporte (HTML/PDF)</Button>
-   <Button size="sm" icon={<Icon name="download"/>} onClick={()=>download(`vexa-respuesta-${message.id}.md`,answerToMarkdown({question,answer:a}),'text/markdown;charset=utf-8')}>Exportar</Button>
+   <Button size="sm" icon={<Icon name="download"/>} onClick={()=>download(`rovaq-respuesta-${message.id}.md`,answerToMarkdown({question,answer:a}),'text/markdown;charset=utf-8')}>Exportar</Button>
    {isLast&&<Button size="sm" icon={<Icon name="refresh"/>} disabled={busy} onClick={onRegenerate}>Regenerar</Button>}
    <Button size="sm" icon={<Icon name="up"/>} aria-pressed={message.feedback?.verdict==='up'} disabled={fbBusy} onClick={()=>void sendFeedback('up')}>Útil</Button>
    <Button size="sm" icon={<Icon name="down"/>} aria-pressed={message.feedback?.verdict==='down'} disabled={fbBusy} onClick={()=>setReasonOpen(v=>!v)}>No fue útil</Button>

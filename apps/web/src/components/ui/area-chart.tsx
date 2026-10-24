@@ -26,7 +26,7 @@ export function AreaChart({series,height:alto=168,title,unit}:{series:AreaSeries
  const labeled=main?indicesEtiquetados(main.points):[];
  return <figure className={'chart area-chart'+(fill?' area-fill-h':'')} aria-label={title}>
   <div className="chart-plot" ref={ref}>
-   <svg width={W} height={height} viewBox={`0 0 ${W} ${height}`} style={{maxWidth:'100%'}} role="group" aria-label={title+'. Usa las flechas para recorrer los puntos.'} tabIndex={0} onKeyDown={key} onPointerMove={(e:PointerEvent<SVGSVGElement>)=>pick(e.clientX,e.currentTarget)} onPointerLeave={()=>setActive(null)} onBlur={()=>setActive(null)}>
+   <svg width={W} height={height} viewBox={`0 0 ${W} ${height}`} style={{maxWidth:'100%'}} role="group" aria-label={title+'. Usa las flechas para recorrer los puntos.'} tabIndex={0} onKeyDown={key} onPointerMove={(e:PointerEvent<SVGSVGElement>)=>pick(e.clientX,e.currentTarget)} onPointerDown={(e:PointerEvent<SVGSVGElement>)=>pick(e.clientX,e.currentTarget)} onPointerLeave={(e:PointerEvent<SVGSVGElement>)=>{if(e.pointerType!=='touch')setActive(null);}} onBlur={()=>setActive(null)}>
     <defs><linearGradient id={'g'+uid} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="currentColor" stopOpacity=".12"/><stop offset="1" stopColor="currentColor" stopOpacity="0"/></linearGradient></defs>
     {sc.ticks.map((t,i)=><g key={i}><line x1={padL} x2={W-padR} y1={y(t)} y2={y(t)} className={t===0?'chart-axis':'chart-grid'}/><text x={padL-8} y={y(t)+4} textAnchor="end" className="chart-tick">{ticks[i]}</text></g>)}
     {main?.points.map((p,i)=>i%every===0&&<text key={i} x={x(i)} y={height-6} textAnchor="middle" className="chart-tick chart-xtick">{p.label}</text>)}

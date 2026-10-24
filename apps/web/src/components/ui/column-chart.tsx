@@ -22,8 +22,10 @@ export function ColumnPlot({data,kind='observed',height=168,title,axis,deltaMode
  const labeled=indicesEtiquetados(data),last=data.reduce((a,d,i)=>d.value!==null&&!d.partial?i:a,-1);
  const sel=active===null?null:data[active];
  const key=(e:KeyboardEvent)=>{if(e.key==='Escape')setActive(null);};
+ /** Táctil: el dedo recorre las columnas; la lectura queda en la cinta fija sobre la gráfica (en celular el CSS la ancla arriba). */
+ const escrubir=(clientX:number,el:SVGSVGElement)=>{const r=el.getBoundingClientRect(),i=Math.floor((clientX-r.left-padL)/slot);if(i>=0&&i<n)setActive(i);};
  return <div className="chart-plot" ref={ref} onKeyDown={key}>
-  <svg width={W} height={height} viewBox={`0 0 ${W} ${height}`} style={{maxWidth:'100%'}} role="group" aria-label={title} onPointerLeave={()=>setActive(null)}>
+  <svg width={W} height={height} viewBox={`0 0 ${W} ${height}`} style={{maxWidth:'100%'}} role="group" aria-label={title} onPointerLeave={e=>{if(e.pointerType!=='touch')setActive(null);}} onPointerDown={e=>{if(e.pointerType==='touch')escrubir(e.clientX,e.currentTarget);}} onPointerMove={e=>{if(e.pointerType==='touch')escrubir(e.clientX,e.currentTarget);}}>
    <defs><HatchDef id={'h'+uid}/></defs>
    {sc.ticks.map((t,i)=><g key={i}><line x1={padL} x2={W-PAD_R} y1={y(t)} y2={y(t)} className={t===0?'chart-axis':'chart-grid'}/><text x={padL-8} y={y(t)+4} textAnchor="end" className="chart-tick">{ticks[i]}</text></g>)}
    {data.map((d,i)=>{const cx=padL+slot*i+slot/2,x0=padL+slot*i+offset,h=d.value===null?0:Math.max(d.value>0?2:0,d.value/sc.max*plotH),top=base-h,r=Math.min(3,bw/2,h);

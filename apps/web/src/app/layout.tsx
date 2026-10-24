@@ -25,12 +25,21 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/site.webmanifest",
+  appleWebApp: { capable: true, title: "Rovaq", statusBarStyle: "default" },
+  formatDetection: { telephone: false },
 };
-export const viewport: Viewport = { themeColor: "#0E0E10" };
+// viewport-fit=cover habilita env(safe-area-inset-*); «resizes-content» hace que el teclado encoja el viewport en Android (iOS se maneja con visualViewport).
+export const viewport: Viewport = {
+  width: "device-width", initialScale: 1, viewportFit: "cover", interactiveWidget: "resizes-content",
+  themeColor: [{ media: "(prefers-color-scheme: light)", color: "#ffffff" }, { media: "(prefers-color-scheme: dark)", color: "#0e0e10" }],
+};
+// Aplica el tema guardado ANTES del primer pintado (sin destello claro->oscuro). Solo con preferencia guardada; fuera de /login y /auth.
+const TEMA_ANTES_DEL_PINTADO = "(function(){try{if(/^\\/(login|auth)/.test(location.pathname))return;var s=localStorage.getItem('vexa-theme');var d=s==='dark'||(s==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);if(s==='light'||s==='system'||s==='dark'){document.documentElement.dataset.theme=d?'dark':'light';var m=document.querySelectorAll('meta[name=theme-color]');for(var i=0;i<m.length;i++)m[i].setAttribute('content',d?'#0e0e10':'#ffffff');}}catch(e){}})();";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{ __html: TEMA_ANTES_DEL_PINTADO }} /></head>
       <body>
         <a className="skip-link" href="#contenido">Saltar al contenido</a>
         <header className="site-header">

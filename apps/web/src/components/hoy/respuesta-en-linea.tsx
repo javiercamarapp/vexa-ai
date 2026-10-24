@@ -7,6 +7,7 @@ import {LinkButton,Arrow} from '../ui/button';
 import {RovaqMark} from '../agente/rovaq-mark';
 import type {AgentState} from '../agente/types';
 
+// auto-refresh: lectura única del estado del agente; la pregunta se manda una sola vez (es una consulta puntual, no una vista de datos que cambie sola).
 type Carga={kind:'cargando'}|{kind:'error'}|{kind:'listo';data:AgentState};
 
 /** «Preguntar a Rovaq» sin salir de Hoy: la pregunta se manda sola y la respuesta aparece aquí abajo, con el mismo «pensamiento» en vivo y la misma escritura progresiva del chat. */

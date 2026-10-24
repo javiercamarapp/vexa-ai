@@ -3,6 +3,7 @@ import type {ReactNode} from 'react';
 import {RovaqLogo} from '../../components/rovaq-logo';
 import {WorkspaceIcon} from '../../components/workspace/icon';
 import {PlatformNav} from '../../components/platform/platform-nav';
+import {AdminTools} from '../../components/platform/admin-tools';
 import {platformAccessForPage} from './_lib/access';
 import './platform.css';
 export const dynamic = 'force-dynamic';
@@ -21,6 +22,6 @@ export default async function PlatformLayout({children}: {children: ReactNode}) 
         <form action="/auth/logout" method="post"><button className="platform-logout" type="submit"><WorkspaceIcon name="logout" />Cerrar sesión</button></form>
       </div>
     </aside>
-    <div className="workspace-frame"><header className="workspace-header"><span className="workspace-heading"><WorkspaceIcon name="settings" />Consola de Rovaq AI</span><span className="platform-scope">Administración</span></header><div className="workspace-content" id="platform-contenido" tabIndex={-1}>{children}</div></div>
+    <div className="workspace-frame"><header className="workspace-header"><span className="workspace-heading"><WorkspaceIcon name="settings" />Consola de Rovaq AI</span><span className="platform-scope">Administración</span><AdminTools /></header><div className="workspace-content" id="platform-contenido" tabIndex={-1}>{children}</div></div>
   </div>;
 }

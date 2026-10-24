@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import { AccessError, SUPPORT_MARK } from '../../lib/auth';
 import { supportMarkActive } from '../../lib/support-guard';
 import { SupportBanner } from '../../components/platform/support-banner';
+import { AdminTools } from '../../components/platform/admin-tools';
 import { workspaceSession } from '../../lib/workspace/server';
 import { SessionGuard } from '../session-guard';
 import { WorkspaceShell } from '../../components/workspace/shell';
@@ -25,5 +26,5 @@ export default async function WorkspaceLayout({children}:{children:ReactNode}){
  const platform=await client.rpc('platform_manage',{p_input:{operation:'status'}});
  const platformAccess=!platform.error&&platform.data?.administrator===true;
  const now=new Date();const today={iso:now.toISOString().slice(0,10),label:new Intl.DateTimeFormat('es-MX',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).format(now)};
- return <>{support&&<SupportBanner tenantId={support.tenant_id} tenantName={support.tenant_name??'Cliente'} reason={support.reason} expiresAt={support.expires_at}/>}<SessionGuard/><WorkspaceShell brand={<RovaqLogoLateral/>} organizations={organizations} tenant={session.active.tenant_id} role={session.active.role} platformAccess={platformAccess} today={today}>{children}</WorkspaceShell></>;
+ return <>{support&&<SupportBanner tenantId={support.tenant_id} tenantName={support.tenant_name??'Cliente'} reason={support.reason} expiresAt={support.expires_at}/>}{platformAccess&&<AdminTools trigger={false}/>}<SessionGuard/><WorkspaceShell brand={<RovaqLogoLateral/>} organizations={organizations} tenant={session.active.tenant_id} role={session.active.role} platformAccess={platformAccess} today={today}>{children}</WorkspaceShell></>;
 }

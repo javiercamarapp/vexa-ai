@@ -1,0 +1,12 @@
+.at-kbd { margin-left: 8px; padding: 0 6px; border: 1px solid var(--ui-border); border-radius: 8px; font: inherit; font-size: 12px; color: var(--ui-secondary); }
+.at-search input { width: 100%; }
+.at-lista { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 2px; max-height: min(52dvh, 420px); overflow: auto; }
+.at-fila { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+.at-fila[aria-selected=true] { background: var(--ui-nav-active); }
+.at-fila small { color: var(--ui-secondary); white-space: nowrap; }
+.at-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.at-vacio { color: var(--ui-secondary); margin: 12px 0 0; }
+.at-aviso { margin: 0 0 12px; color: var(--ui-secondary); }
+.at-campo { display: grid; gap: 4px; margin-top: 12px; }
+.at-campo small { color: var(--ui-secondary); }
+@media (max-width: 520px) { .at-kbd { display: none; } .at-fila { flex-direction: column; gap: 0; } }

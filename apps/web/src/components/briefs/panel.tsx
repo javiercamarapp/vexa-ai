@@ -1,4 +1,5 @@
 'use client';
+import {useAutoRefresh} from '../ui/use-auto-refresh';
 import {TituloAuto} from '../ui/titulo-auto';
 import {useWorkspaceNavigation,workspaceLocation} from '../workspace/navigation-lifecycle';
 import {useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
@@ -11,7 +12,7 @@ import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
 import {epistemicKind} from '../../lib/epistemic.mjs';
 import {ScopeBar} from '../workspace/scope-bar';
 import {PageHeader} from '../ui/page-header';
-import {Button,LinkButton,Refresh,Download,Arrow} from '../ui/button';
+import {Button,LinkButton,Download,Arrow} from '../ui/button';
 import {KindBadge} from '../ui/kind-badge';
 import {Citation} from '../ui/citation';
 import {IdChip} from '../ui/id-chip';
@@ -115,6 +116,8 @@ export function BriefsPanel({initialQuery,initialId}:{initialQuery:string;initia
   }catch(e){if(!abort.signal.aborted&&epoch===generation.current){if(pageRef.current&&!initialId){setViejo(true);return;}setPage(null);setSelected(null);setError(e instanceof Error?e.message:message(503));}}
   finally{if(!abort.signal.aborted&&epoch===generation.current){pending.current=false;setBusy(false);}}
  },[initialId]);
+ // Datos nuevos: relectura en segundo plano (conserva el historial pintado; no corre durante una generación o exportación).
+ useAutoRefresh(()=>load(current.current,true),{ocupado:()=>pending.current});
  useEffect(()=>{let active=true;void Promise.resolve().then(()=>{if(active)void load(query);});return()=>{active=false;invalidate();};},[query,load,invalidate]);
  useEffect(()=>{const back=()=>{invalidate();const next=clean(window.location.search.slice(1)).toString();current.current=next;if(next===query)void load(next);else setQuery(next);};window.addEventListener('popstate',back);return()=>window.removeEventListener('popstate',back);},[query,load,invalidate]);
  const navigate=(q:URLSearchParams)=>{invalidate();setPage(null);setSelected(null);setBusy(true);setComparison('');const next=q.toString();current.current=next;window.history.pushState(null,'','/briefs?'+next);if(next===query)void load(next);else setQuery(next);};
@@ -130,10 +133,10 @@ export function BriefsPanel({initialQuery,initialId}:{initialQuery:string;initia
  const [generating,setGenerating]=useState(false),[generatingNow,setGeneratingNow]=useState(false);
  const shown=selected??page?.items[0]??null;
  return <section aria-label="Brief ejecutivo" className="stack">
-  <PageHeader eyebrow="Prioridades y decisiones" title="Brief ejecutivo" guide="brief" actions={<><Button icon={<Refresh/>} loading={busy} onClick={()=>void load(current.current,true)}>Actualizar briefs</Button>{page?.canGenerate&&!initialId&&<Button icon={<Icon name="sparkle" size={14}/>} disabled={busy} onClick={()=>setGenerating(true)}>Generar brief</Button>}{initialId&&<LinkButton href={selected?'/briefs?'+pinned(selected.document.scope,selected.document.snapshotId,selected.document.scopeHash):'/briefs'} aria-label="Volver al historial del alcance">Volver al historial</LinkButton>}</>}/>
+  <PageHeader eyebrow="Prioridades y decisiones" title="Brief ejecutivo" guide="brief" actions={<>{page?.canGenerate&&!initialId&&<Button icon={<Icon name="sparkle" size={14}/>} disabled={busy} onClick={()=>setGenerating(true)}>Generar brief</Button>}{initialId&&<LinkButton href={selected?'/briefs?'+pinned(selected.document.scope,selected.document.snapshotId,selected.document.scopeHash):'/briefs'} aria-label="Volver al historial del alcance">Volver al historial</LinkButton>}</>}/>
   {!initialId&&<ScopeBar scope={scope} onApply={apply} busy={busy}/>}
-  {busy&&!page&&<div className="stack"><WaitStatus {...ESPERA.brief}/><div aria-hidden="true"><SkeletonStats count={4}/><SkeletonCards count={2}/></div></div>}{generatingNow&&<WaitStatus {...ESPERA.generarBrief}/>}{notice&&<p className="state" role="status">{notice}</p>}{error&&<p className="state state-error" role="alert">{error}</p>}{locked&&<p className="state">Actualiza para comprobar la versión guardada antes de intentar otra generación.</p>}{empty&&<EmptyState art="chart" title="Aún no hay un corte publicado" body="No hay una publicación para este alcance." action={<LinkButton href="/economics" variant="primary" size="sm" icon={<Arrow/>}>Revisar publicaciones</LinkButton>}/>}
-  {page&&!initialId&&<LineaCache edadMs={edad} actualizando={busy} viejo={viejo} onActualizar={()=>void load(current.current,true)}/>}
+  {busy&&!page&&<div className="stack"><WaitStatus {...ESPERA.brief}/><div aria-hidden="true"><SkeletonStats count={4}/><SkeletonCards count={2}/></div></div>}{generatingNow&&<WaitStatus {...ESPERA.generarBrief}/>}{notice&&<p className="state" role="status">{notice}</p>}{error&&<p className="state state-error" role="alert">{error}</p>}{locked&&<p className="state">Se está comprobando la versión guardada; espera antes de intentar otra generación.</p>}{empty&&<EmptyState art="chart" title="Aún no hay un corte publicado" body="No hay una publicación para este alcance." action={<LinkButton href="/economics" variant="primary" size="sm" icon={<Arrow/>}>Revisar publicaciones</LinkButton>}/>}
+  {page&&!initialId&&<LineaCache edadMs={edad} actualizando={busy} viejo={viejo}/>}
   {page&&<>{page.canGenerate&&!initialId&&<Modal open={generating} onClose={()=>setGenerating(false)} title="Generar brief" footer={<Button type="submit" form="brief-form" variant="primary" loading={busy} disabled={busy||locked}>Generar versión</Button>}>
     <form id="brief-form" className="stack" aria-label="Generar brief" onSubmit={event=>{event.preventDefault();setGenerating(false);void act('generate');}}><label htmlFor="brief-comparison">Publicación previa para comparar</label><select id="brief-comparison" disabled={busy||locked} value={comparison} onChange={event=>setComparison(event.target.value)}><option value="">Sin comparación previa</option>{page.comparisonOptions.map(option=><option key={option.snapshotId+':'+option.scopeHash} value={option.query} disabled={!option.eligible}>{option.start} a {option.end} · {option.snapshotId}{!option.eligible?' · No comparable: '+option.reasons.map(comparisonReason).join(' '):''}</option>)}</select><p className="card-lead"><strong>Puede tardar 2–3 minutos; no cierres esta pestaña.</strong> Se verifica la evidencia de cada problema antes de guardar la versión.</p><p className="card-lead">Los cambios comparan periodos compatibles. No demuestran ahorro causado por la intervención.</p></form>
    </Modal>}

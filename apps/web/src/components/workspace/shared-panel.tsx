@@ -12,7 +12,7 @@ import {TrendCharts} from '../ui/trend-chart';
 import {ProblemsView} from './problems-view';
 import {PageHeader} from '../ui/page-header';
 import {Notice} from '../ui/notice';
-import {Button,LinkButton,Refresh,Download,Arrow} from '../ui/button';
+import {Button,LinkButton,Download,Arrow} from '../ui/button';
 import {Popover} from '../ui/overlay';
 import {IdChip} from '../ui/id-chip';
 import {EmptyState} from '../ui/empty-state';
@@ -52,7 +52,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   const epoch=++generation.current,controller=new AbortController();abort.current=controller;
   const load=async()=>{const sourceLocation=workspaceLocation();if(controller.signal.aborted||epoch!==generation.current)return;setRetrying(false);setSinRed(false);setMissing(false);setViejo(false);setError('');const search=new URLSearchParams(query);search.set('resource',resource);
    // Stale-while-revalidate: la última lectura buena de este alcance (≤30 min) se pinta ya, rotulada con su antigüedad; si es fresca (≤5 min) no se vuelve a pedir,
-   // y si no, se revalida en segundo plano SIN vaciar la pantalla. «Actualizar» (frescas) fuerza la lectura pero conserva lo que se ve.
+   // y si no, se revalida en segundo plano SIN vaciar la pantalla. La lectura «frescas» fuerza la relectura pero conserva lo que se ve.
    const clave=claveCache(resource,query),guardada=leerCache(clave),forzar=frescas.current;frescas.current=false;
    const previo=guardada&&Array.isArray((guardada.datos as ViewBundle)?.items)&&(guardada.datos as ViewBundle).meta?.scope?guardada:null;
    let pintado=false;
@@ -83,7 +83,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   if(changedBase&&bundle?.meta.snapshot_id&&next.get('snapshot_id')===bundle.meta.snapshot_id)next.delete('snapshot_id');
   next.delete('cursor');next.delete('scope_hash');navigate(next);
  };
- // «Actualizar» (botón del Resumen, «Actualizar» de Hoy y aviso de datos nuevos) = evento vexa:refresh: el panel invalida su caché y relee SIN vaciar la pantalla.
+ // Datos nuevos (vigilante invisible) o «Volver a calcular» = evento vexa:refresh: el panel invalida su caché y relee SIN vaciar la pantalla.
  const refrescar=useCallback(()=>{invalidarCache();frescas.current=true;setQuery(resolved.current);setReload(n=>n+1);},[]);
  useEffect(()=>{window.addEventListener('vexa:refresh',refrescar);return()=>window.removeEventListener('vexa:refresh',refrescar);},[refrescar]);
  const update=()=>{window.dispatchEvent(new Event('vexa:refresh'));};
@@ -91,7 +91,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
  const exportUrl=(format:string)=>{const next=new URLSearchParams(pinned);next.set('resource',resource);next.set('format',format);return '/api/workspace/export?'+next.toString();};
  const canExport=!!(bundle?.meta.snapshot_id&&bundle.meta.scope_hash);
  const isOverview=resource==='metrics';
- const actions=<><Button icon={<Refresh/>} loading={busy} onClick={update}>Actualizar</Button>{canExport&&<Popover align="end" width={220} label="Exportar" trigger={<><Icon name="download" size={14}/><span className="btn-label">Exportar</span></>}>{close=><div className="menu-list"><LinkButton download="workspace.json" href={exportUrl('json')} variant="ghost" size="sm" icon={<Download/>} onClick={close}>{isOverview?'Exportar JSON':'Descargar JSON de este alcance'}</LinkButton><LinkButton download="workspace.csv" href={exportUrl('csv')} variant="ghost" size="sm" icon={<Download/>} onClick={close}>{isOverview?'Exportar CSV':'Descargar CSV de este alcance'}</LinkButton></div>}</Popover>}</>;
+ const actions=<>{canExport&&<Popover align="end" width={220} label="Exportar" trigger={<><Icon name="download" size={14}/><span className="btn-label">Exportar</span></>}>{close=><div className="menu-list"><LinkButton download="workspace.json" href={exportUrl('json')} variant="ghost" size="sm" icon={<Download/>} onClick={close}>{isOverview?'Exportar JSON':'Descargar JSON de este alcance'}</LinkButton><LinkButton download="workspace.csv" href={exportUrl('csv')} variant="ghost" size="sm" icon={<Download/>} onClick={close}>{isOverview?'Exportar CSV':'Descargar CSV de este alcance'}</LinkButton></div>}</Popover>}</>;
  const state=bundle?.meta.state;
  const bar=<ScopeBar scope={scope} onApply={apply} onLatest={latest} busy={busy} extra={resource==='problems'?<CurrentProblems/>:undefined}/>;
  const footer=bundle&&<div className="btn-group more-row">
@@ -103,7 +103,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
  const clave=bundle?.meta.scope_hash?'vexa:criticos:'+bundle.meta.scope_hash:null,[ultimo,setUltimo]=useState<{groups:number;signals:number|null}|null>(null);
  useEffect(()=>{if(!clave)return;let nuevo:{groups:number;signals:number|null}|null=null;try{if(bundle?.meta.critical_counts)sessionStorage.setItem(clave,JSON.stringify(bundle.meta.critical_counts));else{const v=sessionStorage.getItem(clave);nuevo=v?JSON.parse(v):null;}}catch{nuevo=null;}void Promise.resolve().then(()=>setUltimo(nuevo));},[clave,bundle?.meta.critical_counts]);
  const notice=bundle?.meta.critical_notice&&<Notice tone="warn" title="Revisión crítica, independiente del importe" actions={bundle.meta.catalog?<a className="row-link-inline" href="#senales-criticas">Ver cuáles son</a>:undefined}><span title={DEFINICION.senal+' '+DEFINICION.grupo}>{bundle.meta.critical_notice}</span></Notice>;
- const criticalPending=!bundle?.meta.critical_notice&&bundle?.meta.critical_notice_state==='unavailable'&&<Notice tone="info" title={ultimo?'Revisión crítica (última lectura)':'Señales críticas pendientes'} actions={ultimo?<Button size="sm" variant="ghost" onClick={update}>Actualizar</Button>:<Button size="sm" onClick={update}>Volver a calcular</Button>}>{ultimo?<>{fraseCriticos({grupos:ultimo.groups,senales:ultimo.signals})} en la última lectura de este alcance; en esta carga aún no se recalcularon. </>:<>Aún no se calcularon en esta carga; no significa que no existan. </>}{isOverview&&<>Consúltalas en <Link href={'/problems'+(pinned.size?'?'+pinned.toString():'')} className="row-link-inline">Problemas</Link>.</>}</Notice>;
+ const criticalPending=!bundle?.meta.critical_notice&&bundle?.meta.critical_notice_state==='unavailable'&&<Notice tone="info" title={ultimo?'Revisión crítica (última lectura)':'Señales críticas pendientes'} actions={ultimo?undefined:<Button size="sm" onClick={update}>Volver a calcular</Button>}>{ultimo?<>{fraseCriticos({grupos:ultimo.groups,senales:ultimo.signals})} en la última lectura de este alcance; en esta carga aún no se recalcularon. </>:<>Aún no se calcularon en esta carga; no significa que no existan. </>}{isOverview&&<>Consúltalas en <Link href={'/problems'+(pinned.size?'?'+pinned.toString():'')} className="row-link-inline">Problemas</Link>.</>}</Notice>;
  return <section className="stack" aria-label={isOverview?'Resumen con alcance compartido':'Problemas con alcance compartido'}>
   {!isOverview&&<PageHeader nivel={1} title={isOverview?'Resumen del corte publicado':'Problemas de negocio'} guide={isOverview?'resumen':'problemas'} linea={isOverview?undefined:lineaProblemas(bundle?bundle.items.some(i=>i.metrics.some(m=>m.kind==='exposure'&&m.amount_minor!==null&&/^-?\d+$/.test(m.amount_minor))):null)} actions={actions}/>}
   {bar}
@@ -112,7 +112,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
   {isOverview&&!bundle&&!missing&&<div className="stack"><CoverageBand/><TrendCharts/></div>}
   {missing&&!busy&&!bundle&&<EmptyState art="chart" title="Aún no hay un corte publicado para este alcance" body="Cuando se publique un corte con este periodo y estos filtros, sus cifras aparecerán aquí. Mientras tanto puedes probar con la última publicación disponible." action={<Button variant="primary" size="sm" onClick={latest}>Ver la última publicación</Button>} secondary={<LinkButton href="/imports" size="sm" icon={<Arrow/>}>Importar datos</LinkButton>}/>}
   {bundle&&<>
-   {!isOverview&&<LineaCache edadMs={edadCache} actualizando={busy} viejo={viejo} onActualizar={update}/>}
+   {!isOverview&&<LineaCache edadMs={edadCache} actualizando={busy} viejo={viejo}/>}
    {!isOverview&&<>{notice}{criticalPending}</>}
    {isOverview?<OverviewDashboard key={`${bundle.meta.snapshot_id}:${bundle.meta.scope_hash}`} bundle={bundle} pinned={pinned} cache={{edadMs:edadCache,actualizando:busy,viejo}} avisos={[...(notice?[{key:'critico',node:notice}]:[]),...(criticalPending?[{key:'pendiente',node:criticalPending}]:[]),...(state&&state!=='empty'&&state!=='ready'?[{key:'parcial',node:<DataState state={{kind:state,coverage:bundle.meta.coverage,watermark:bundle.meta.watermark}}/>}]:[])]}/>
     :bundle.meta.catalog&&state==='partial'?<ProblemsView bundle={bundle} query={pinned.toString()}/>:<DataState state={state==='empty'?{kind:'empty'}:{kind:state??'partial',coverage:bundle.meta.coverage,watermark:bundle.meta.watermark}}><ProblemsView bundle={bundle} query={pinned.toString()}/></DataState>}

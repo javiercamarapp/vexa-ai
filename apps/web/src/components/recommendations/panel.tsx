@@ -1,4 +1,5 @@
 'use client';
+import {useAutoRefresh} from '../ui/use-auto-refresh';
 import {useWorkspaceNavigation,workspaceLocation} from '../workspace/navigation-lifecycle';
 import {useCallback,useEffect,useLayoutEffect,useMemo,useRef,useState} from 'react';
 import {leerConCache,leerSwr,claveSwr,guardarSwr,invalidarSwr} from '../../lib/workspace/swr.mjs';
@@ -8,7 +9,7 @@ import {useVistaPersistente} from '../workspace/vista-persistente';
 import type {RecommendationList} from '../../../../../packages/recommendations/index.mjs';
 import type {Scope} from '../../lib/workspace/contracts';
 import {ScopeBar} from '../workspace/scope-bar';
-import {Button,LinkButton,Refresh,Arrow} from '../ui/button';
+import {Button,LinkButton,Arrow} from '../ui/button';
 import {Icon} from '../ui/icons';
 import {Modal} from '../ui/overlay';
 import {EmptyState} from '../ui/empty-state';
@@ -32,7 +33,7 @@ type Operation=(url:string,body:unknown)=>Promise<boolean>;
 function cleanQuery(value:string){const q=new URLSearchParams(value);for(const key of ['problem_id','detail_hash','resource','format','cursor','limit','root_kind','root_id','component_id','event_id','vista'])q.delete(key);return q;}
 function initialScope(value:string):Filters{const q=cleanQuery(value),now=new Date(),start=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),1)),end=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()+1,1));return {date_start:q.get('date_start')??start.toISOString(),date_end:q.get('date_end')??end.toISOString(),timezone:'UTC',date_basis:q.get('date_basis')??'occurred_at',currency:q.get('currency')??'USD',basis:q.get('basis')??'net',sku:q.getAll('sku'),source:q.getAll('source'),snapshot_id:q.get('snapshot_id'),...(q.has('exponent')?{exponent:Number(q.get('exponent'))}:{})};}
 const pinnedQuery=(scope:Scope,snapshot:string,hash:string)=>consultaFijada(scope,snapshot,hash);
-function failure(status:number){return status===401||status===403?'Tu acceso cambió. Vuelve a iniciar sesión o selecciona una organización autorizada.':status===404?'No hay una recomendación o evidencia autorizada para este alcance.':status===409?'La versión o la evidencia cambió. Actualiza y revisa la propuesta antes de continuar.':status===400?'Revisa los campos y el alcance de la solicitud.':'No se pudo verificar la operación. Conserva tu borrador y reintenta; no se confirma ningún cambio.';}
+function failure(status:number){return status===401||status===403?'Tu acceso cambió. Vuelve a iniciar sesión o selecciona una organización autorizada.':status===404?'No hay una recomendación o evidencia autorizada para este alcance.':status===409?'La versión o la evidencia cambió. Se vuelve a leer sola; revisa la propuesta antes de continuar.':status===400?'Revisa los campos y el alcance de la solicitud.':'No se pudo verificar la operación. Conserva tu borrador y reintenta; no se confirma ningún cambio.';}
 const RANK={critical:0,high:1,normal:2} as const;
 const useAntesDePintar=typeof window==='undefined'?useEffect:useLayoutEffect;
 const validaMeta=(j:unknown)=>(j as {data?:{meta?:{scope?:unknown}}})?.data?.meta?.scope?j:null;
@@ -59,11 +60,13 @@ export function RecommendationsPanel({initialQuery,vista='por-decidir'}:{initial
   finally{if(!abort.signal.aborted&&epoch===generation.current){inFlight.current=false;setBusy(false);}}
  },[vista]);
  useEffect(()=>{let active=true;void Promise.resolve().then(()=>{if(active)void load(query);});return()=>{active=false;invalidate();};},[query,load,invalidate]);
+ // Datos nuevos: relectura en segundo plano (conserva las acciones pintadas); no corre durante una carga u operación.
+ useAutoRefresh(()=>load(resolved.current,true),{ocupado:()=>inFlight.current});
  useEffect(()=>{const back=()=>{invalidate();const next=cleanQuery(window.location.search.slice(1)).toString();resolved.current=next;setProblem('');if(next===query)void load(next);else setQuery(next);};window.addEventListener('popstate',back);return()=>window.removeEventListener('popstate',back);},[invalidate,load,query]);
  const apply=(next:URLSearchParams)=>{invalidate();const changed=['date_start','date_end','currency','basis','exponent'].some(k=>{const old=new URLSearchParams(resolved.current).get(k)??'';return(next.get(k)??'')!==old;});if(changed&&next.get('snapshot_id')===scope.snapshot_id)next.delete('snapshot_id');next.delete('scope_hash');setView(null);setProblem('');setError('');setBusy(true);const value=cleanQuery(next.toString()).toString();resolved.current=value;window.history.pushState(null,'',window.location.pathname+'?'+value+(vista==='por-decidir'?'':'&vista='+vista));if(value===query)void load(value);else setQuery(value);};
  const operate:Operation=async(url,body)=>{if(inFlight.current)return false;inFlight.current=true;controller.current?.abort();const abort=new AbortController();controller.current=abort;const epoch=++generation.current;setBusy(true);setError('');setNotice('');let saved=false;
   try{const response=await fetchCupo(url,{method:'POST',cache:'no-store',signal:abort.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(abort.signal.aborted||epoch!==generation.current)return false;if(!response.ok){if([401,403,404].includes(response.status)){setView(null);setProblem('');}if(response.status===409)setConflict(true);throw Error(failure(response.status));}const result=await response.json();if(abort.signal.aborted||epoch!==generation.current)return false;if(!result.data)throw Error('No se pudo verificar el resultado de la operación.');saved=true;invalidarSwr({prefijo:'/api/recommendations'});
-   const refreshed=await fetchCupo('/api/recommendations?'+resolved.current,{cache:'no-store',signal:abort.signal});if(abort.signal.aborted||epoch!==generation.current)return false;if(!refreshed.ok){if([401,403,404].includes(refreshed.status))setView(null);throw Error('La operación se guardó, pero no se pudo verificar la vista actual. Actualiza antes de continuar.');}const json=await refreshed.json();if(abort.signal.aborted||epoch!==generation.current)return false;const next=json.data as RecommendationList;const fixed=new URLSearchParams(resolved.current);if(!next||!Array.isArray(next.items)||next.snapshotId!==fixed.get('snapshot_id')||next.scopeHash!==fixed.get('scope_hash'))throw Error('La operación se guardó, pero la vista recibida no coincide con su alcance.');setView(next);setEdad(null);setViejo(false);guardarSwr(claveSwr('/api/recommendations?'+resolved.current),{data:next});setNotice('Cambio guardado y verificado.');return true;
+   const refreshed=await fetchCupo('/api/recommendations?'+resolved.current,{cache:'no-store',signal:abort.signal});if(abort.signal.aborted||epoch!==generation.current)return false;if(!refreshed.ok){if([401,403,404].includes(refreshed.status))setView(null);throw Error('La operación se guardó, pero no se pudo verificar la vista actual. Se vuelve a leer sola; espera un momento antes de continuar.');}const json=await refreshed.json();if(abort.signal.aborted||epoch!==generation.current)return false;const next=json.data as RecommendationList;const fixed=new URLSearchParams(resolved.current);if(!next||!Array.isArray(next.items)||next.snapshotId!==fixed.get('snapshot_id')||next.scopeHash!==fixed.get('scope_hash'))throw Error('La operación se guardó, pero la vista recibida no coincide con su alcance.');setView(next);setEdad(null);setViejo(false);guardarSwr(claveSwr('/api/recommendations?'+resolved.current),{data:next});setNotice('Cambio guardado y verificado.');return true;
   }catch(e){if(!abort.signal.aborted&&epoch===generation.current){if(saved)setConflict(true);setError(e instanceof Error?e.message:failure(503));}return false;}
   finally{if(!abort.signal.aborted&&epoch===generation.current){inFlight.current=false;setBusy(false);}}
  };
@@ -106,9 +109,8 @@ export function RecommendationsPanel({initialQuery,vista='por-decidir'}:{initial
   <AccionesCabecera actual={vista} cuentas={view?cuentas:undefined} acciones={view?.canPropose?<Button variant="primary" icon={<Icon name="sparkle" size={14}/>} onClick={()=>setPropose(true)}>Proponer una recomendación</Button>:undefined}/>
   <ScopeBar scope={scope} onApply={apply} busy={busy} extra={view&&todos.length>0?<>
    <select aria-label="Responsable" value={responsable} onChange={e=>setResponsable(e.target.value)}><option value="">Responsable: todos</option><option value="sin">Sin responsable</option>{view.members.map(m=><option key={m.id} value={m.id}>{persona(m.id,view.members)}</option>)}</select>
-   {filtrosActivos&&<button type="button" className="btn btn-ghost btn-sm" onClick={()=>{setResponsable('');setPrioridad('');}}>Limpiar</button>}
-   <button type="button" className="btn btn-ghost btn-sm" aria-label="Actualizar" title="Actualizar" disabled={busy} onClick={()=>void load(resolved.current,true)}><Refresh/></button></>:undefined}/>
-  {view&&<LineaCache edadMs={edad} actualizando={busy} viejo={viejo} onActualizar={()=>void load(resolved.current,true)}/>}
+   {filtrosActivos&&<button type="button" className="btn btn-ghost btn-sm" onClick={()=>{setResponsable('');setPrioridad('');}}>Limpiar</button>}</>:undefined}/>
+  {view&&<LineaCache edadMs={edad} actualizando={busy} viejo={viejo}/>}
   {busy&&!view&&!error&&!empty&&<section className="pc-card" aria-busy="true"><Loading message="Cargando las acciones…"/><WaitStatus {...ESPERA.recomendaciones}/></section>}
   {proposing&&view&&<WaitStatus titulo="Proponiendo la recomendación y verificando su evidencia…" detalle="Puede tardar hasta 2 minutos; no cierres esta pestaña."/>}
   {error&&<ErrorState title="No se pudieron cargar las acciones" body={error} onRetry={()=>void load(resolved.current,true)}/>}

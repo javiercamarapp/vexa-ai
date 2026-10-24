@@ -10,8 +10,8 @@ export const ultimoProgreso=(iso)=>iso?fechaCorteLegible(iso):'Aún sin progreso
 export function errorDeCarga(status, code) {
   if (status === 404 || code === 'JOB_NOT_FOUND') return { tipo: 'inexistente', mensaje: 'Esta carga no existe o ya no está disponible.' };
   if (status === 401 || status === 403) return { tipo: 'sin-acceso', mensaje: 'No tienes acceso a esta carga.' };
-  if (status === 503) return { tipo: 'no-configurado', mensaje: 'El servicio no respondió ahora. Pulsa Actualizar para reintentar; si sigue igual, un administrador debe revisar la conexión y el proceso en segundo plano en «Configurar proceso».' };
-  return { tipo: 'reintentar', mensaje: 'No se pudo consultar el estado de la carga. Pulsa Actualizar para reintentar.' };
+  if (status === 503) return { tipo: 'no-configurado', mensaje: 'El servicio no respondió ahora. Se reintentará solo; si sigue igual, un administrador debe revisar la conexión y el proceso en segundo plano en «Configurar proceso».' };
+  return { tipo: 'reintentar', mensaje: 'No se pudo consultar el estado de la carga. Se reintentará solo.' };
 }
 /** Una carga inexistente o sin acceso no mejora al reintentar: se deja de consultar cada 2 s. */
 export const reintentable = (tipo) => tipo === 'reintentar' || tipo === 'no-configurado';

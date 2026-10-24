@@ -1,4 +1,5 @@
 'use client';
+import {useAutoRefresh} from '../ui/use-auto-refresh';
 import {useCallback,useEffect,useRef,useState,type FormEvent} from 'react';
 import type {Intervention,InterventionPlan,Measurement,SnapshotOption} from '../../../../../packages/interventions/index.mjs';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
@@ -61,6 +62,7 @@ export type ResumenIntervenciones={total:number;porEstado:Record<string,number>}
 export function IntervencionesSeccion({fixedQuery,vista,onResumen}:{fixedQuery:string|null;vista:'en-curso'|'resultados';onResumen?:(r:ResumenIntervenciones|null)=>void}){
  const [view,setView]=useState<List|null>(null),[busy,setBusy]=useState(true),[error,setError]=useState(''),[notice,setNotice]=useState(''),[conflict,setConflict]=useState(false);
  const controller=useRef<AbortController|null>(null),epoch=useRef(0),inFlight=useRef(false),keys=useRef(new Map<string,string>());
+ const epochBusy=useRef(true);
  const resumen=useRef(onResumen);useEffect(()=>{resumen.current=onResumen;},[onResumen]);
  const publicar=useCallback((v:List|null)=>{if(!v){resumen.current?.(null);return;}const porEstado:Record<string,number>={};for(const i of v.items)porEstado[i.status]=(porEstado[i.status]??0)+1;resumen.current?.({total:v.items.length,porEstado});},[]);
  const load=useCallback(async(query:string)=>{controller.current?.abort();const abort=new AbortController();controller.current=abort;const generation=++epoch.current;setBusy(true);setError('');
@@ -68,6 +70,9 @@ export function IntervencionesSeccion({fixedQuery,vista,onResumen}:{fixedQuery:s
   catch(e){if(!abort.signal.aborted&&generation===epoch.current){setError(e instanceof Error?e.message:failure(503));publicar(null);}}
   finally{if(!abort.signal.aborted&&generation===epoch.current)setBusy(false);}
  },[publicar]);
+ epochBusy.current=busy;
+ // Datos nuevos: relectura en segundo plano de la lista (setView sustituye la lista al llegar; nada se vacía antes); no corre durante una operación.
+ useAutoRefresh(()=>fixedQuery?load(fixedQuery):undefined,{ocupado:()=>inFlight.current||epochBusy.current,activo:Boolean(fixedQuery)});
  useEffect(()=>{if(!fixedQuery)return;let active=true;void Promise.resolve().then(()=>{if(active)void load(fixedQuery);});const ep=epoch;return()=>{active=false;controller.current?.abort();ep.current++;};},[fixedQuery,load]);
  const operate:Operation=async(id,body)=>{if(inFlight.current||!fixedQuery)return false;inFlight.current=true;controller.current?.abort();const abort=new AbortController();controller.current=abort;const generation=++epoch.current;setBusy(true);setError('');setNotice('');const fingerprint=JSON.stringify({id,...body});let requestKey=keys.current.get(fingerprint);if(!requestKey){requestKey=crypto.randomUUID();keys.current.set(fingerprint,requestKey);}let saved=false;
   try{const response=await fetch('/api/interventions/'+id,{method:'POST',cache:'no-store',signal:abort.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({...body,requestKey})});if(abort.signal.aborted||generation!==epoch.current)return false;if(!response.ok){if([401,403,404].includes(response.status))setView(null);if(response.status===409)setConflict(true);throw Error(failure(response.status));}const changed=await response.json();if(abort.signal.aborted||generation!==epoch.current)return false;if(!changed.data)throw Error('No se pudo verificar el cambio.');saved=true;const refresh=await fetch('/api/interventions?'+fixedQuery,{cache:'no-store',signal:abort.signal});if(abort.signal.aborted||generation!==epoch.current)return false;if(!refresh.ok){setView(null);throw Error('El cambio se guardó, pero falta verificar el estado actual. Actualiza antes de continuar.');}const next=await refresh.json();if(abort.signal.aborted||generation!==epoch.current)return false;if(!validList(next.data,fixedQuery))throw Error('La respuesta no contiene un estado verificable.');setView(next.data);publicar(next.data);setConflict(false);setNotice('Cambio guardado y verificado.');return true;}

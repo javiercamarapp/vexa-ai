@@ -5,7 +5,7 @@ import Link from '../workspace/navigation-lifecycle';
 import type {FugaVista} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
 import type {CfoReport} from '../../../../../packages/cfo-copilot/src/index.mjs';
 import {useJson} from '../ui/use-json';
-import {LinkButton,Refresh,Arrow} from '../ui/button';
+import {LinkButton,Arrow} from '../ui/button';
 import {endpointFuga} from '../refunds/use-fuga';
 import {Sparkline} from '../ui/sparkline';
 import {DeltaChip} from '../ui/stat-card';
@@ -45,7 +45,6 @@ export function HoyPantalla(){
  const fuga=useJson<FugaVista>(endpointFuga(sp?.toString()),acceptFuga),carga=useJson<Carga>('/api/workload',acceptCarga),cfo=useJson<Cfo>('/cfo/data/report',acceptCfo);
  const estado={fuga:estadoDe(fuga.data,fuga),carga:estadoDe(carga.data,carga),cfo:estadoDe(cfo.data?.status==='ok'?cfo.data:null,{...cfo,busy:cfo.busy&&!cfo.data})};
  const v=useMemo(()=>armarHoy({fuga:fuga.data,carga:carga.data,cfo:cfo.data,estado}),[fuga.data,carga.data,cfo.data,estado.fuga,estado.carga,estado.cfo]);// eslint-disable-line react-hooks/exhaustive-deps
- const ocupado=fuga.busy||carga.busy||cfo.busy;
  const recargar=()=>{fuga.reload();carga.reload();cfo.reload();window.dispatchEvent(new Event('vexa:refresh'));};
  // Un KPI que no cargó se reintenta solo en segundo plano (máx. 3 veces, cada 20 s): sin botones, sin recargar la pantalla.
  const intentos=useRef(0),hayFallo=v.kpis.some(k=>k.estado==='no_disponible');
@@ -54,7 +53,7 @@ export function HoyPantalla(){
   <header className="hoy-titular">
    {v.cargando?<><span className="hoy-skel" data-grande role="status" aria-label="Cargando el titular" style={{width:'70%',height:36}}/><span className="hoy-skel" style={{width:'40%'}}/></>
     :<h1 title={v.titular.periodo?'Periodo: '+v.titular.periodo:undefined}>{v.titular.texto}</h1>}
-   <div className="hoy-acciones"><LinkButton href="/briefs" icon={<Arrow/>} size="sm">Exportar informe</LinkButton><button type="button" className="btn btn-secondary btn-sm icon-only" aria-label="Actualizar" title="Actualizar" aria-busy={ocupado||undefined} disabled={ocupado} onClick={recargar}><Refresh/></button></div>
+   <div className="hoy-acciones"><LinkButton href="/briefs" icon={<Arrow/>} size="sm">Exportar informe</LinkButton></div>
   </header>
   {v.vacio&&<div className="hoy-estado" role="status"><strong>Aún no hay datos para mostrar</strong>Ninguna fuente respondió con cifras. Eso no significa que todo esté en cero: revisa <Link href="/confianza">Datos y confianza</Link> o <Link href="/imports">carga un archivo</Link>.</div>}
   <ul className="hoy-kpis" aria-label="Cuatro cifras clave">{v.kpis.map(k=><Kpi key={k.id} k={k} ctx={v.ctxComo} onRetry={recargar}/>)}</ul>

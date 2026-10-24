@@ -3,7 +3,7 @@ import {useState} from 'react';
 import {PageHeader} from '../ui/page-header';
 import {FilterBar,FilterSpacer} from '../ui/filter-bar';
 import {SegmentedControl} from '../ui/segmented';
-import {Button,Download,LinkButton,Refresh} from '../ui/button';
+import {Button,Download,LinkButton} from '../ui/button';
 import {Card} from '../ui/card';
 import {KpiStrip,type Kpi} from '../ui/kpi-strip';
 import {MenuList,Popover} from '../ui/overlay';
@@ -53,7 +53,7 @@ export function GapsPantalla({organization}:{organization?:string}){
    <li><Button size="sm" icon={<Download/>} disabled={v.recomendaciones.items.length===0} onClick={()=>bajarArchivo(csvRecomendaciones(v))}>Recomendaciones (CSV)</Button></li></MenuList></Popover>;
  return <div className="dg-page">
   <PageHeader eyebrow={'Dinero'+(organization?' · datos sintéticos de demostración':'')} title="Brechas de ingreso" description="Dónde ganas, dónde pierdes y por qué. Siempre ingreso bruto: no hay costo ni margen por producto."
-   actions={<><LinkButton href="/refunds" variant="secondary">Ver fuga de reembolsos</LinkButton>{exportar}<Button icon={<Refresh/>} onClick={()=>g.reload()} loading={g.busy&&!!v}>Actualizar</Button></>}/>
+   actions={<><LinkButton href="/refunds" variant="secondary">Ver fuga de reembolsos</LinkButton>{exportar}</>}/>
   {!v&&g.busy&&<Card><Loading message={g.segundos<8?'Calculando brechas…':`Calculando… ${g.segundos} s. Está tardando más de lo normal.`}/></Card>}
   {!v&&!g.busy&&g.error&&<Card><ErrorState title={g.error.code==='acceso'?'Tu rol no tiene acceso a este panel':'No disponible ahora'} body={g.error.texto} onRetry={g.error.code==='acceso'?undefined:()=>g.reload()}/></Card>}
   {v&&<>

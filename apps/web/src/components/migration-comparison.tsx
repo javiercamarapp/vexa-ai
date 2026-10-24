@@ -1,9 +1,10 @@
 'use client';
+import {useAutoRefresh} from './ui/use-auto-refresh';
 import {ScrollTable} from './workspace/scroll-table';
 import {PageHeader} from './ui/page-header';
 import {KpiLinea} from './panel-comun/kpi-linea';
 import './panel-comun/panel-comun.css';
-import {Button,Refresh} from './ui/button';
+import {Button} from './ui/button';
 import {StatCard} from './ui/stat-card';
 import {StatusChip} from './ui/status-chip';
 import {BarList} from './ui/bar-list';
@@ -33,11 +34,14 @@ export function MigrationComparison(){
  },[]);
  const refresh=useCallback(async(signal?:AbortSignal)=>{const body=await api('',undefined,signal);setSnapshots(body.snapshots);setNextCursor(body.nextCursor);setLoaded(true);setDenied(false);},[api]);
  useEffect(()=>{const controller=new AbortController();void Promise.resolve().then(()=>refresh(controller.signal)).catch(e=>{if(!controller.signal.aborted&&e.name!=='AbortError')setError(e.message);});return()=>controller.abort();},[refresh]);
+ // Datos nuevos: relectura en segundo plano de los cortes; no corre durante una acción.
+ const busyRef=useRef(false);busyRef.current=busy;
+ useAutoRefresh(()=>refresh(),{ocupado:()=>busyRef.current});
  async function action(work:()=>Promise<void>){setError('');setBusy(true);try{await work();}catch(e){if(!(e instanceof Error&&e.name==='AbortError'))setError(e instanceof Error?e.message:'Error de comparación.');}finally{setBusy(false);}}
  const label=(s:ComparisonSnapshot)=>`${s.id.slice(0,8)} · ${s.watermark} · ${s.summary.conversations} conversaciones`; const countLabels:Record<string,string>={conversations:'Conversaciones resueltas',sourceConversations:'Conversaciones fuente',messages:'Mensajes fuente',orders:'Órdenes vinculadas'};
  const countIcons:Record<string,string>={conversations:'message',sourceConversations:'database',messages:'mail',orders:'receipt'};
  return <section className="stack">
-  <PageHeader eyebrow="Interno" title="Comparación de migración" description="Cortes inmutables antes y después; las diferencias no demuestran ahorro ni efecto causal." actions={<Button icon={<Refresh/>} disabled={busy} onClick={()=>void action(()=>refresh())}>Actualizar cortes</Button>}/>
+  <PageHeader eyebrow="Interno" title="Comparación de migración" description="Cortes inmutables antes y después; las diferencias no demuestran ahorro ni efecto causal."/>
   {error&&<p role="alert" className="notice-bar"><Icon name="alert" size={14}/>{error}</p>}
   {!loaded&&!error&&<><p role="status" className="sr-only">Cargando cortes…</p><SkeletonStats count={2}/></>}
   {loaded&&<KpiLinea label="Indicadores de cortes" items={[

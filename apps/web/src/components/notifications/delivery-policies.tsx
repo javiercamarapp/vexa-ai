@@ -1,4 +1,5 @@
 'use client';
+import {useAutoRefresh} from '../ui/use-auto-refresh';
 import Link from 'next/link';
 import {ConfirmationDialog} from '../confirmation-dialog';
 import {useCallback,useEffect,useRef,useState} from 'react';
@@ -17,26 +18,30 @@ export function DeliveryPolicies(){
   const payload=await response.json();if(!payload?.data)throw Error('No se pudo verificar la respuesta. Actualiza antes de volver a intentar.');return payload.data;
  },[]);
  const load=useCallback(async()=>{
-  active.current?.abort();const controller=new AbortController();active.current=controller;setBusy(true);setError('');setNotice('');setRows([]);
+  active.current?.abort();const controller=new AbortController();active.current=controller;setBusy(true);setError('');setNotice('');setRows([]);sucio.current=false;
   try{const next=parse(await request(controller.signal));if(!controller.signal.aborted)setRows(next);}
   catch{if(!controller.signal.aborted)setError('No se pudo consultar la política. Actualiza para volver a comprobarla.');}
   finally{if(!controller.signal.aborted){pending.current=false;setBusy(false);}}
  },[request]);
  useEffect(()=>{let mounted=true;void Promise.resolve().then(()=>{if(mounted)void load();});return()=>{mounted=false;active.current?.abort();};},[load]);
+ // Datos nuevos: relectura en segundo plano; conserva las filas pintadas y no corre durante una carga o un guardado.
+ const sucio=useRef(false),busyRef=useRef(true);busyRef.current=busy;
+ const recargarSilencioso=useCallback(async()=>{if(pending.current||sucio.current)return;const controller=new AbortController();try{const next=parse(await request(controller.signal));if(!pending.current&&!sucio.current)setRows(next);}catch{/* se conserva lo pintado */}},[request]);
+ useAutoRefresh(recargarSilencioso,{ocupado:()=>busyRef.current||sucio.current});
  const save=async(row:DeliveryPolicy)=>{
   if(busy||pending.current)return;pending.current=true;active.current?.abort();const controller=new AbortController();active.current=controller;setBusy(true);setError('');setNotice('');
   try{
    const {version,...input}=row;const saved=await request(controller.signal,{...input,expectedVersion:version});const next=parse(await request(controller.signal));
    if(controller.signal.aborted)return;
    const actual=next.find(p=>p.channel===row.channel);if(!actual||actual.version!==saved.version||Object.entries(input).some(([k,v])=>actual[k as keyof DeliveryPolicy]!==v))throw Error('La política cambió durante el guardado. Actualiza para verificarla.');
-   setRows(next);setNotice('Política guardada y verificada. Las preferencias de cada usuario siguen siendo necesarias.');
+   sucio.current=false;setRows(next);setNotice('Política guardada y verificada. Las preferencias de cada usuario siguen siendo necesarias.');
   }catch{if(!controller.signal.aborted){setRows([]);setError('No se confirmó el guardado. Actualiza para comprobar si se guardó antes de volver a intentarlo.');}}
   finally{if(!controller.signal.aborted){pending.current=false;setBusy(false);}}
  };
- const change=(channel:string,delta:Partial<DeliveryPolicy>)=>setRows(previous=>previous.map(row=>row.channel===channel?{...row,...delta}:row));
+ const change=(channel:string,delta:Partial<DeliveryPolicy>)=>{sucio.current=true;setRows(previous=>previous.map(row=>row.channel===channel?{...row,...delta}:row));};
  return <section className="task-page task-grid delivery-page" aria-label="Política de envío" aria-busy={busy}><p className="eyebrow">Configuración de la organización</p><h1 ref={heading} tabIndex={-1}>Política de envío</h1>
   <p>Autoriza canales y define límites para los avisos futuros. Cada persona debe activar sus preferencias; Web Push también requiere permiso del navegador. Habilitar una política no confirma que el proveedor esté conectado.</p>
-  <p><Link prefetch={false} href="/settings/notifications">Mis preferencias</Link></p><button disabled={busy} onClick={()=>void load()}>Actualizar políticas</button>
+  <p><Link prefetch={false} href="/settings/notifications">Mis preferencias</Link></p>
   {busy&&<p role="status">Verificando políticas…</p>}{error&&<p role="alert">{error}</p>}{notice&&<p role="status">{notice}</p>}
   {rows.map(row=><form id={'delivery-policy-'+row.channel} key={row.channel} className="record-card" onSubmit={event=>event.preventDefault()}><fieldset disabled={busy}><legend>{names[row.channel]}</legend>
    <label style={{display:'flex',alignItems:'center',gap:'.75rem',minHeight:44}}><input style={{width:'1.15rem',height:'1.15rem',padding:0,flexShrink:0}} type="checkbox" checked={row.enabled} onChange={event=>change(row.channel,{enabled:event.target.checked})}/> Autorizar este canal</label>

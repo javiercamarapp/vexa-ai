@@ -1,5 +1,6 @@
 'use client';
-import {useEffect,useMemo,useState,type ReactNode} from 'react';
+import {useAutoRefresh} from '../ui/use-auto-refresh';
+import {useEffect,useMemo,useRef,useState,type ReactNode} from 'react';
 import type {ConversationRef} from '../../../../../packages/workspace-service/detail.mjs';
 import type {ProblemFacts} from '../../../../../packages/workspace-service/problem-facts.mjs';
 import type {MonthlyIncidencesView} from '../../../../../packages/workspace-service/incidences.mjs';
@@ -37,13 +38,16 @@ const peso=(c:Cita)=>c.severity==='critical'?3:c.severity==='high'?2:c.severity=
 function useEvidencia(id:string,shared:string,captured:ConversationRef[]|null){
  const [citas,setCitas]=useState<Cita[]|null>(null),[fallo,setFallo]=useState(false),[reload,setReload]=useState(0),[cobertura,setCobertura]=useState<{runsVerified:number;runsTotal:number}|null>(null);
  // El servidor exige AMBOS (snapshot_id y scope_hash) para la herramienta de evidencia: con solo el primero respondía 400 (published_scope_required) en cada apertura de la ficha (QA-2, N6).
+ const silencioso=useRef(false);
  const alcance=new URLSearchParams(shared),sinAlcance=!alcance.get('snapshot_id')||!alcance.get('scope_hash');
  useEffect(()=>{
   if(sinAlcance)return;
   const abort=new AbortController(),params=new URLSearchParams(shared),q=new URLSearchParams();
   for(const key of ['date_start','date_end','timezone','date_basis','currency','basis','exponent','snapshot_id','scope_hash'])if(params.get(key)!==null)q.set(key,params.get(key)!);
   for(const key of ['sku','source'])for(const v of params.getAll(key))q.append(key,v);
-  void Promise.resolve().then(()=>{setCitas(null);setCobertura(null);setFallo(false);});
+  // Relectura por datos nuevos: conserva las citas pintadas hasta que lleguen las nuevas (sin esqueleto).
+  const silent=silencioso.current;silencioso.current=false;
+  if(!silent)void Promise.resolve().then(()=>{setCitas(null);setCobertura(null);setFallo(false);});
   void (async()=>{try{
    const pedir=()=>fetchCupo('/api/explorer/tools',{method:'POST',cache:'no-store',signal:abort.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'get_evidence',args:{query:q.toString(),problemId:id}})});
    let response=await pedir();
@@ -54,9 +58,10 @@ function useEvidencia(id:string,shared:string,captured:ConversationRef[]|null){
    if(abort.signal.aborted)return;
    if(!result||result.problemId!==id||!Array.isArray(result.citations))throw Error('shape');
    setCobertura(result.verification&&result.verification.runsTotal>result.verification.runsVerified?result.verification:null);setCitas(result.citations);
-  }catch{if(!abort.signal.aborted)setFallo(true);}})();
+  }catch{if(!abort.signal.aborted&&!silent)setFallo(true);}})();
   return()=>abort.abort();
  },[id,shared,sinAlcance,reload]);
+ useAutoRefresh(()=>{if(!sinAlcance){silencioso.current=true;setReload(n=>n+1);}},{activo:!sinAlcance});
  const delCorte=useMemo<Cita[]|null>(()=>captured&&captured.length?captured.flatMap(c=>('citations' in c&&Array.isArray(c.citations)?c.citations:[]).map((q:{message_revision_id:string;quote:string;quote_hash:string;role:string})=>({conversationId:c.id,messageRevisionId:q.message_revision_id,quote:q.quote,quoteHash:q.quote_hash,role:q.role,source:c.source}))):null,[captured]);
  const usable=citas??(fallo?delCorte:null);
  return {citas:usable,cobertura,esperando:!sinAlcance&&citas===null&&!fallo,fallo:fallo&&usable===null,sinAlcance,reintentar:()=>setReload(n=>n+1)};

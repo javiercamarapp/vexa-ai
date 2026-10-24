@@ -1,7 +1,8 @@
 'use client';
+import {useAutoRefresh} from '../ui/use-auto-refresh';
 /* eslint-disable @typescript-eslint/no-explicit-any -- la vista de plataforma es JSON agregado de contrato abierto (platform_observe); los campos se validan en el modelo puro */
 import {useSearchParams} from 'next/navigation';
-import {useCallback, useEffect, useMemo, useState, type FormEvent, type ReactNode} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode} from 'react';
 import {PageHeader} from '../ui/page-header';
 import {Button, LinkButton, Refresh, Download} from '../ui/button';
 import {KindBadge} from '../ui/kind-badge';
@@ -32,15 +33,17 @@ function usePlatform(initial: PlatformStateClient) {
   const reload = useCallback(async () => {
     setBusy(true); setError('');
     try { const r = await fetch('/platform/data/view', {cache: 'no-store', signal: AbortSignal.timeout(20000)}); const j = await r.json(); if (!r.ok) throw new Error(); setState(j.data); }
-    catch { setError('No se pudo actualizar. Conservo las cifras anteriores; reintenta en unos segundos.'); } finally { setBusy(false); }
+    catch { setError('No se pudo actualizar. Conservo las cifras anteriores; se reintentará solo.'); } finally { setBusy(false); }
   }, []);
-  useEffect(() => { const again = () => void reload(); window.addEventListener('vexa:refresh', again); return () => window.removeEventListener('vexa:refresh', again); }, [reload]);
+  // Datos nuevos: relectura en segundo plano (conserva las cifras pintadas); no corre si ya hay una lectura en curso.
+  const busyRef = useRef(false); busyRef.current = busy;
+  useAutoRefresh(reload, {ocupado: () => busyRef.current});
   return {state, busy, error, reload};
 }
 function Shell({title, description, eyebrow = 'Consola de plataforma', ctl, extra, children, state}: {title: string; description: string; eyebrow?: string; ctl: ReturnType<typeof usePlatform>; extra?: ReactNode; children: (view: PlatformView) => ReactNode; state: PlatformStateClient}) {
   const actions = <>
     <CopilotPanel endpoint="/platform/data/copilot" title="Copiloto de plataforma" subtitle="Organizaciones, fuentes, procesos y costos, con la cifra que ya calculó la consola." placeholder="Pregunta sobre organizaciones, procesos o costos de IA…" shortcuts={PLATFORM_SHORTCUTS} openLabel="Copiloto" context="Pregunta a la plataforma" />
-    <Button icon={<Refresh />} loading={ctl.busy} onClick={() => void ctl.reload()}>Actualizar</Button>{extra}</>;
+    {extra}</>;
   return <div className="pf-page">
     <PageHeader eyebrow={eyebrow} title={title} description={description} actions={actions} />
     <div className="pf-banner" role="note"><PfIcon name="shield" /><p><strong>Acceso administrativo.</strong> Esta consola muestra conteos, estados y gasto por organización. No concede acceso al contenido de los clientes y el copiloto no lo lee.</p></div>

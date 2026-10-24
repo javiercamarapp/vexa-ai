@@ -6,7 +6,7 @@ export const PLAZOS_MS=[45000,70000];
 export const ESPERA_REINTENTO_MS=1500;
 const dormir=(ms,signal)=>new Promise((res,rej)=>{if(!ms)return res();const t=setTimeout(res,ms);signal?.addEventListener('abort',()=>{clearTimeout(t);rej(new DOMException('Aborted','AbortError'));},{once:true});});
 /** «Failed to fetch» y similares (inglés del navegador) -> mensaje en español; cualquier otro error conserva su texto. */
-export const MENSAJE_SIN_CONEXION='No se pudo conectar con el servicio. Pulsa Actualizar para reintentar.';
+export const MENSAJE_SIN_CONEXION='No se pudo conectar con el servicio. Se reintentará solo.';
 export const MENSAJE_REINTENTANDO='No se pudo conectar; reintentando…';
 export const esErrorDeRed=e=>!!e&&(e instanceof TypeError||/failed to fetch|load failed|networkerror|fetch failed|network request failed/i.test(String(e.message??e)));
 export const mensajeDeError=(e,otro)=>esErrorDeRed(e)?MENSAJE_SIN_CONEXION:(e instanceof Error&&e.message?e.message:otro);

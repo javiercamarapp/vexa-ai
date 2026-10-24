@@ -8,7 +8,7 @@ import {DatosCabecera} from '../datos/datos-cabecera';
 import {DataTable} from '../ui/data-table';
 import {KpiLinea,BarraParte} from '../panel-comun/kpi-linea';
 import {VentanasLinea} from './ventanas-linea';
-import {Button,LinkButton,Refresh,Arrow} from '../ui/button';
+import {Button,LinkButton,Arrow} from '../ui/button';
 import {Loading} from '../ui/loading';
 import {nf} from '../ui/format';
 import {ComoSeCalculoProvider,ComoSeCalculoBoton} from './como-se-calculo';
@@ -39,7 +39,6 @@ export function ConfianzaPantalla(){
  const ventanas=useMemo(()=>bloqueVentanas(fuga.data),[fuga.data]),tarjetas=useMemo(()=>tarjetasFuentes(cov.data,tr.data),[cov.data,tr.data]);
  const tareas=useMemo(()=>queNoSabemos({fuga:fuga.data,carga:carga.data,cobertura:cov.data,frescura:fresh.data}),[fuga.data,carga.data,cov.data,fresh.data]);
  const ocupado=fresh.busy||cov.busy||fuga.busy||carga.busy;
- const recargar=()=>{fresh.reload();cov.reload();tr.reload();fuga.reload();carga.reload();};
  const pendiente=(r:{busy:boolean;data:unknown;error:string})=>r.busy&&!r.data;
  const n=(l:{nivel:string}[],k:string)=>l.filter(x=>x.nivel===k).length;
  const cargadas=tarjetas.filter(t=>t.estado==='cargada').length;
@@ -49,7 +48,7 @@ export function ConfianzaPantalla(){
   {label:'Cobertura',value:cov.data?nf.format(cargadas)+' de '+nf.format(tarjetas.length):'—',vacio:!cov.data,c:1,partes:[{label:'Cargadas',value:cargadas},{label:'Sin cargar',value:tarjetas.length-cargadas}],nota:'Fuentes con datos cargados; cada una con su corte'},
   {label:'Qué no sabemos',value:ocupado&&!tareas.length?'—':nf.format(tareas.length),vacio:ocupado&&!tareas.length,c:2,chip:tareas.length>0?{texto:'Tareas',tono:'warn' as const}:{texto:'Sin huecos conocidos',tono:'ok' as const},partes:[{label:'Con tarea',value:tareas.length}],nota:tareas[0]?.titulo??'Lo no respondido no se cuenta como completo'}];
  return <ComoSeCalculoProvider><section className="task-page stack dc" aria-label="Datos y confianza">
-  <DatosCabecera actual="resumen" title="Datos y confianza" description="De dónde sale cada número, qué tan fresco es, qué cubre y qué todavía no sabemos." actions={<Button icon={<Refresh/>} loading={ocupado} onClick={recargar}>Actualizar</Button>}/>
+  <DatosCabecera actual="resumen" title="Datos y confianza" description="De dónde sale cada número, qué tan fresco es, qué cubre y qué todavía no sabemos."/>
   <KpiLinea items={kpis} label="Indicadores de confianza en los datos"/>
   <div className="pc-grid" data-cols="8-4">
    <Tarjeta id="dc-fuentes" titulo="Semáforo por fuente" sub="Cómo entra cada fuente, cuándo funcionó por última vez y cuándo vuelve a correr" flush extra={<LinkButton href="/connections" size="sm" variant="ghost" icon={<Arrow/>}>Administrar fuentes</LinkButton>}>

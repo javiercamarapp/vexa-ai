@@ -62,8 +62,7 @@ export function MapaPantalla({organization}:{organization?:string}){
  const lim=limitesRampa(max);
  const tabla=filasTabla(delPais,totalPais);
  return <div className="task-page stack mp-page">
-  <PageHeader eyebrow="Operación" title="Mapa de problemas" description={<>En qué estados se concentran los casos de posventa, con qué motivo y en qué retailer.{organization?` ${organization}.`:''}</>}
-   actions={<Button icon={<Refresh/>} onClick={()=>f.reload()} loading={f.busy&&!!v}>Actualizar</Button>}/>
+  <PageHeader eyebrow="Operación" title="Mapa de problemas" description={<>En qué estados se concentran los casos de posventa, con qué motivo y en qué retailer.{organization?` ${organization}.`:''}</>}/>
   {!v&&f.busy&&<section className="card"><Esqueleto segundos={f.segundos}/></section>}
   {!v&&!f.busy&&f.error&&<EmptyState art="shield" tone="warn" title={f.error.code==='acceso'?'Tu rol no tiene acceso a este panel':'No disponible ahora'} body={f.error.texto} action={f.error.code==='acceso'?undefined:<Button icon={<Refresh/>} onClick={()=>f.reload()}>Reintentar</Button>}/>}
   {v&&<>

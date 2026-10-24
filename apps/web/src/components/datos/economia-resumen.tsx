@@ -51,7 +51,7 @@ export function EconomiaResumen({query='',puedePreparar,children}:{query?:string
  const noDisponible=(rep.data&&rep.data.status!=='ok')||Boolean(rep.error);
  const reintentar=()=>{bundle.reload();rep.reload();};
  return <section className="dg-page">
-  <PageHeader eyebrow="Dinero" title="Dinero · Preparar" description="Qué está publicado, qué tan completo es y qué falta antes de publicar un corte nuevo." actions={<Button icon={<Refresh/>} loading={ocupado} onClick={reintentar}>Actualizar</Button>}/>
+  <PageHeader eyebrow="Dinero" title="Dinero · Preparar" description="Qué está publicado, qué tan completo es y qué falta antes de publicar un corte nuevo."/>
 
   <Card title="Corte publicado" description="Lo que hoy leen el Resumen y el Brief ejecutivo" actions={corte.disponible?<KindBadge kind="observed"/>:undefined}>
    {bundle.busy&&!bundle.data?<SkeletonStats count={4}/>

@@ -16,7 +16,7 @@ test('sin acceso no se reintenta; servicio sin configurar y fallos de red sí, c
 });
 test('un 503 pasajero no se presenta como «configura la base de datos»; y el CSV de errores solo aparece con filas rechazadas', () => {
   const e = errorDeCarga(503);
-  assert.ok(/no respondió/.test(e.mensaje) && /Actualizar/.test(e.mensaje) && !/Configura la conexión a la base de datos/.test(e.mensaje));
+  assert.ok(/no respondió/.test(e.mensaje) && /reintentará solo/.test(e.mensaje) && !/Configura la conexión a la base de datos/.test(e.mensaje));
   assert.equal(hayErroresParaDescargar(0), false); assert.equal(hayErroresParaDescargar(undefined), false);
   assert.equal(hayErroresParaDescargar(3), true); assert.equal(hayErroresParaDescargar('12'), true);
 });

@@ -1,4 +1,5 @@
 'use client';
+import {useAutoRefresh} from '../ui/use-auto-refresh';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {CustomerBindingsView} from '../../../../../packages/workspace-service/detail.mjs';
 export function CustomerBindings(){
@@ -21,6 +22,9 @@ export function CustomerBindings(){
  const body={customerKey:key,customerId,expectedVersion:prior?.version??0,active,report,attested:true},token=JSON.stringify(body);
  const valid=!!view?.declaredKeys.includes(key)&&!!view.customers.some(c=>c.id===customerId)&&report.trim().length>=20;
  const select=(value:string)=>{const old=view?.bindings.filter(b=>b.customerKey===value).sort((a,b)=>b.version-a.version)[0];setKey(value);setCustomerId(old?.valid?old.customerId:'');setActive(old?.active??true);setReport('');setConsent('');};
+ // Datos nuevos: relectura en segundo plano de la primera página con la búsqueda actual; conserva lo pintado y el consentimiento en curso, y no corre durante una operación.
+ const busyRef=useRef(true),kqRef=useRef(''),cqRef=useRef('');busyRef.current=busy;kqRef.current=kq;cqRef.current=cq;
+ useAutoRefresh(async()=>{if(busyRef.current)return;const epoch=generation.current;const qs=new URLSearchParams({limit:'25',...(kqRef.current.trim()?{q:kqRef.current.trim()}:{}),...(cqRef.current.trim()?{customerQ:cqRef.current.trim()}:{})});const r=await fetch('/api/workspace/customer-bindings?'+qs,{cache:'no-store'});if(!r.ok)return;const j=await r.json();const d=j?.data as CustomerBindingsView;if(epoch===generation.current&&!busyRef.current&&d&&Array.isArray(d.customers)&&Array.isArray(d.declaredKeys)&&Array.isArray(d.bindings))setView(d);},{ocupado:()=>busyRef.current});
  return <section aria-label="Asociaciones de clientes"><h2>Asociar identidad financiera y cliente</h2><p>Relaciona el identificador declarado en las órdenes con un cliente conocido de tus fuentes. Compartir un problema o un nombre no demuestra que dos registros pertenezcan a la misma persona.</p>
   <form onSubmit={e=>{e.preventDefault();void request(undefined,kq.trim(),cq.trim());}}><label>Buscar identificador financiero<input value={kq} maxLength={100} onChange={e=>setKq(e.target.value)}/></label> <label>Buscar cliente por nombre o id (mín. 2 letras)<input value={cq} maxLength={100} onChange={e=>setCq(e.target.value)}/></label> <button disabled={busy}>{loaded?'Buscar':'Cargar asociaciones de clientes'}</button></form>{busy&&<p role="status">Verificando asociaciones…</p>}{error&&<p role="status">{error} <button type="button" disabled={busy} onClick={()=>void request(undefined,kq.trim(),cq.trim())}>Reintentar</button></p>}{notice&&<p role="status">{notice}</p>}
   {view&&<><p>{view.notice}</p>{view.canWrite?<form className="action-form" onSubmit={e=>{e.preventDefault();if(valid&&consent===token)void request(body);}}>

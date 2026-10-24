@@ -1,6 +1,7 @@
 'use client';
+import {useAutoRefresh} from './ui/use-auto-refresh';
 import {useCallback,useEffect,useRef,useState} from 'react';
-import {Button,Refresh} from './ui/button';
+import {Button} from './ui/button';
 import {StatusChip} from './ui/status-chip';
 import {Stepper} from './ui/stepper';
 import {Timeline} from './ui/timeline';
@@ -16,14 +17,18 @@ export function CauseEvidence({problemId}:{problemId:string}){
  const [symptom,setSymptom]=useState(''),[cause,setCause]=useState(''),[state,setState]=useState('hypothesis'),[reason,setReason]=useState(''),[refs,setRefs]=useState<string[]>([]),[approved,setApproved]=useState(false);
  const [recordId,setRecordId]=useState(''),[sourceKind,setSourceKind]=useState('inspection'),[observedAt,setObservedAt]=useState(''),[report,setReport]=useState(''),[stance,setStance]=useState('supports'),[status,setStatus]=useState('active'),[batch,setBatch]=useState(''),[carrier,setCarrier]=useState(''),[sku,setSku]=useState(''),[attested,setAttested]=useState(false),[evOpen,setEvOpen]=useState(false),[revOpen,setRevOpen]=useState(false);
  const clear=useCallback(()=>{setData(null);setBusy(false);setSymptom('');setCause('');setReason('');setRefs([]);setApproved(false);setRecordId('');setReport('');setObservedAt('');setBatch('');setCarrier('');setSku('');setAttested(false);},[]);
- const request=useCallback(async(body?:unknown)=>{const epoch=++generation.current;setBusy(true);try{const r=await fetchCupo('/api/problems/'+encodeURIComponent(problemId)+'/causality',{method:body?'POST':'GET',cache:'no-store',headers:body?{'Content-Type':'application/json'}:undefined,body:body?JSON.stringify(body):undefined});if(epoch!==generation.current)return;if(r.status===401||r.status===403){generation.current++;clear();setError('Autorización revocada.');return;}const value=await r.json();if(epoch!==generation.current)return;if(!r.ok)throw Error(r.status===409?'La versión o la evidencia cambió. Actualiza antes de continuar.':'No se pudo completar la evaluación.');setData(value.data);setSymptom(value.data.claim.symptom);setCause(value.data.claim.probableCause??'');setRefs([]);setApproved(false);setAttested(false);setError('');}catch(e){if(epoch===generation.current){clear();setError(e instanceof Error?e.message:'Error de consulta');}}finally{if(epoch===generation.current)setBusy(false);}},[problemId,clear]);
+ const request=useCallback(async(body?:unknown)=>{const epoch=++generation.current;setBusy(true);try{const r=await fetchCupo('/api/problems/'+encodeURIComponent(problemId)+'/causality',{method:body?'POST':'GET',cache:'no-store',headers:body?{'Content-Type':'application/json'}:undefined,body:body?JSON.stringify(body):undefined});if(epoch!==generation.current)return;if(r.status===401||r.status===403){generation.current++;clear();setError('Autorización revocada.');return;}const value=await r.json();if(epoch!==generation.current)return;if(!r.ok)throw Error(r.status===409?'La versión o la evidencia cambió. Vuelve a intentarlo: la evaluación se relee sola.':'No se pudo completar la evaluación.');setData(value.data);setSymptom(value.data.claim.symptom);setCause(value.data.claim.probableCause??'');setRefs([]);setApproved(false);setAttested(false);setError('');}catch(e){if(epoch===generation.current){clear();setError(e instanceof Error?e.message:'Error de consulta');}}finally{if(epoch===generation.current)setBusy(false);}},[problemId,clear]);
  const invalidate=useCallback(()=>{generation.current++;},[]);
+ // Datos nuevos: relectura en segundo plano; solo actualiza la vista, sin tocar lo que la persona está escribiendo.
+ const busyRef=useRef(false);busyRef.current=busy;
+ const recargarSilencioso=useCallback(async()=>{if(busyRef.current)return;const epoch=generation.current;try{const r=await fetchCupo('/api/problems/'+encodeURIComponent(problemId)+'/causality',{method:'GET',cache:'no-store'});if(!r.ok||epoch!==generation.current||busyRef.current)return;const value=await r.json();if(epoch===generation.current&&value?.data?.claim)setData(value.data);}catch{/* se conserva lo pintado */}},[problemId]);
+ useAutoRefresh(recargarSilencioso,{ocupado:()=>busyRef.current});
  useEffect(()=>{void Promise.resolve().then(()=>request());return invalidate;},[request,invalidate]);
  const current=data?.evidence.filter(e=>!data.evidence.some(other=>other.recordId===e.recordId&&other.version>e.version))??[]; const stateTone=(v:string):'ok'|'warn'|'muted'|'info'=>v==='confirmed'?'ok':v==='retracted'?'muted':'info';
  const stateLabel=(v:string)=>v==='confirmed'?'Confirmada':v==='retracted'?'Retirada':v==='hypothesis'?'Hipótesis':v;
  const activeEv=current.filter(e=>e.status==='active');
  return <section aria-label="Evaluación causal" className={css.stack}>
-  <div className="card-title"><div><h3>Síntoma, hipótesis y confirmación operacional</h3><p>Una agrupación o confianza estadística no confirma causalidad.</p></div><Button size="sm" icon={<Refresh/>} disabled={busy} onClick={()=>void request()}>Actualizar evaluación causal</Button></div>
+  <div className="card-title"><div><h3>Síntoma, hipótesis y confirmación operacional</h3><p>Una agrupación o confianza estadística no confirma causalidad.</p></div></div>
   {error&&<p role="alert" className="notice-bar"><Icon name="alert" size={14}/>{error}</p>}
   {!data&&!error&&<p role="status" className={css.muted}>Cargando evaluación causal…</p>}
   {data&&<>

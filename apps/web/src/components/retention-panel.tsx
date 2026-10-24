@@ -1,11 +1,12 @@
 'use client';
+import {useAutoRefresh} from './ui/use-auto-refresh';
 import {useCallback,useEffect,useRef,useState} from 'react';
 type Snapshot={ready:boolean;policy:{version:number;backupTtlSeconds:number}|null;connections:Array<{id:string;source:string;accountId:string}>;artifacts:Array<{id:string;class:string;path:string;status:string}>;counts:{pending:number;deleted:number}};
 type Preview={target:{connectionId:string;entityType:string;externalId:string};scope:{messages:string[];conversations:string[];revisions:unknown[];vectors:string[];jobs:string[];problems:string[];rawObjects:string[];rawFiles:Array<{importId:string;path:string;rows:number}>;artifacts:unknown[];derived:unknown[];policy:{version:number}};requestId:string;token:string;expiresAt:number};
 class RetentionRequestError extends Error {}
 import {segundosADias,diasASegundos,textoVersionPolitica} from '../lib/recovery/retencion.mjs';
 import {PageHeader} from './ui/page-header';
-import {Button,Refresh} from './ui/button';
+import {Button} from './ui/button';
 import {ErrorState} from './ui/error-state';
 import {Loading} from './ui/loading';
 import {KpiLinea} from './panel-comun/kpi-linea';
@@ -15,10 +16,14 @@ export function RetentionPanel(){const [snapshot,setSnapshot]=useState<Snapshot|
  const load=useCallback(async(signal?:AbortSignal)=>{
   const generation=++epoch.current;setLoading(true);setNotice('');
   try{const r=await fetch('/api/recovery',{cache:'no-store',signal});if(!r.ok)throw new RetentionRequestError(r.status===403?'Se requiere un propietario activo.':'No se pudo consultar la retención.');const data=await r.json();if(!signal?.aborted&&generation===epoch.current){setSnapshot(data);setTtl(segundosADias(data.policy?.backupTtlSeconds??2592000));setError('');return true;}return false;
-  }catch(e){if(!signal?.aborted&&generation===epoch.current){setSnapshot(null);clear();setError(e instanceof RetentionRequestError?e.message:'No se pudo consultar la retención. Comprueba la conexión y vuelve a actualizar.');}return false;
+  }catch(e){if(!signal?.aborted&&generation===epoch.current){setSnapshot(null);clear();setError(e instanceof RetentionRequestError?e.message:'No se pudo consultar la retención. Comprueba la conexión y se reintentará solo.');}return false;
   }finally{if(!signal?.aborted&&generation===epoch.current)setLoading(false);}
  },[clear]);
  useEffect(()=>{const c=new AbortController();void Promise.resolve().then(()=>load(c.signal));return()=>c.abort();},[load]);
+ // Datos nuevos: relectura en segundo plano del estado; no toca el formulario (p. ej. los días elegidos) ni corre durante una operación.
+ const ocupadoRef=useRef(true);ocupadoRef.current=busy||loading;
+ const recargarSilencioso=useCallback(async()=>{if(ocupadoRef.current)return;const generation=epoch.current;try{const r=await fetch('/api/recovery',{cache:'no-store'});if(!r.ok)return;const data=await r.json();if(generation===epoch.current&&!ocupadoRef.current)setSnapshot(data);}catch{/* se conserva lo pintado */}},[]);
+ useAutoRefresh(recargarSilencioso,{ocupado:()=>ocupadoRef.current});
  useEffect(()=>{const controller=new AbortController();void Promise.resolve().then(async()=>{
   if(controller.signal.aborted)return;if(!connection){setSourceLoading(false);return;}setSourceLoading(true);
   try{const r=await fetch('/api/recovery?'+new URLSearchParams({connectionId:connection,entityType:kind,...(cursor?{cursor}:{})}),{signal:controller.signal,cache:'no-store'});if(!r.ok)throw new RetentionRequestError('No se pudieron consultar las fuentes.');const result=await r.json();if(!controller.signal.aborted){setSources(result.items);setNext(result.nextCursor);setError('');}}
@@ -29,7 +34,7 @@ export function RetentionPanel(){const [snapshot,setSnapshot]=useState<Snapshot|
  const unavailable=busy||loading||sourceLoading;
  function selection(){clear();setExternal('');setSources([]);setCursor(null);setNext(null);}
  return <section className="task-page retention-page stack" aria-label="Retención y borrado" aria-busy={unavailable}>
-  <PageHeader eyebrow="Administración" title="Retención y borrado" description="Elimina contenido fuente y derivados; conserva identidades y el historial financiero autorizado." actions={<><Button disabled={unavailable||!snapshot?.ready} onClick={()=>void action('export')}>Exportar ledger firmado</Button><Button icon={<Refresh/>} disabled={unavailable} onClick={()=>{clear();void load();}}>Actualizar</Button></>}/>
+  <PageHeader eyebrow="Administración" title="Retención y borrado" description="Elimina contenido fuente y derivados; conserva identidades y el historial financiero autorizado." actions={<><Button disabled={unavailable||!snapshot?.ready} onClick={()=>void action('export')}>Exportar ledger firmado</Button></>}/>
   {(loading||sourceLoading)&&<p role="status" className="ac-nota">{sourceLoading?'Cargando fuentes…':snapshot?'Actualizando retención…':'Cargando retención…'}</p>}
   {loading&&!snapshot&&<Loading compact message="Cargando retención…"/>}
   {error&&(!snapshot?<ErrorState title="No se pudo cargar" body={error} onRetry={()=>{clear();void load();}}/>:<p role="alert" className="ac-nota">{error}</p>)}{notice&&<p role="status" className="ac-nota">{notice}</p>}

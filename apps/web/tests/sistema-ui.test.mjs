@@ -82,13 +82,13 @@ test('estados semánticos distintos de los matices de categoría', () => {
 });
 test('Hoy: una sola barra de acciones, KPI sin dato compacto con reintento y filas al 100 %', () => {
   const hoy=leer('components/hoy/hoy-pantalla.tsx'),panel=leer('components/workspace/shared-panel.tsx'),c=leer('components/confianza/confianza.css');
-  assert.equal((hoy.match(/aria-label="Actualizar"/g)||[]).length,1,'un solo Actualizar (icono) en Hoy');
+  assert.equal((hoy.match(/aria-label="Actualizar"/g)||[]).length,0,'Hoy no lleva botón Actualizar: se actualiza solo');
   assert.match(panel,/\{!isOverview&&<PageHeader/,'el Resumen ya no tiene encabezado ni botones propios');
   assert.match(hoy,/hoy-reintentar/);assert.match(c,/\.hoy-cols>:only-child\{grid-column:1\/-1\}/);
   assert.match(c,/\.hoy-cols\{grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
   assert.match(c,/\.hoy-kpi \.sello\{[^}]*white-space:nowrap/);
 });
-test('Hoy: sin bloques duplicados, «Actualizar» recarga el panel compartido y la tira lleva datos reales', () => {
+test('Hoy: sin bloques duplicados, los datos nuevos recargan el panel compartido y la tira lleva datos reales', () => {
   const ov=leer('components/workspace/overview-dashboard.tsx'),panel=leer('components/workspace/shared-panel.tsx'),hoy=leer('components/hoy/hoy-pantalla.tsx'),mod=leer('components/hoy/hoy-modelo.mjs');
   for(const dup of ['<FugaTarjeta','<ExecKpis','<Attention'])assert.ok(!ov.includes(dup),'duplicado en el Resumen: '+dup);
   assert.match(ov,/<TopProblems[^>]*criticos=/);

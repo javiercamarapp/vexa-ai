@@ -1,4 +1,5 @@
 'use client';
+import {useAutoRefresh} from '../ui/use-auto-refresh';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
 type Order={ledgerRowId:string;entityId:string;externalId:string;currency:string;exponent:number;amountMinor:string|null;sourceName:string};
@@ -24,6 +25,9 @@ export function OrderMappings(){
  const skus=skuKnown?[...new Set(skuText.split(/\r?\n/).map(x=>x.trim()).filter(Boolean))].sort():null;
  const body={ledgerRowId:rowId,expectedVersion:mapping?.version??0,skus,source:source||null,active,report,attested:true},token=JSON.stringify(body);
  const select=(id:string)=>{const prior=view?.mappings.filter(x=>x.ledgerRowId===id).sort((a,b)=>b.version-a.version)[0];setRowId(id);setSkuKnown(prior?.skus!==null&&prior?.skus!==undefined);setSkuText(prior?.skus?.join('\n')??'');setSource(prior?.source??'');setActive(prior?.active??true);setReport('');setConsent('');setNotice('');};
+ // Datos nuevos: relectura en segundo plano de la primera página con la búsqueda actual; conserva lo pintado y no corre durante una operación.
+ const busyRef=useRef(true),qRef=useRef('');busyRef.current=busy;qRef.current=q;
+ useAutoRefresh(async()=>{if(busyRef.current)return;const epoch=generation.current;const r=await fetch('/api/workspace/mappings?limit=50'+(qRef.current.trim()?'&q='+encodeURIComponent(qRef.current.trim()):''),{cache:'no-store'});if(!r.ok)return;const j=await r.json();const d=j?.data as View;if(epoch===generation.current&&!busyRef.current&&d&&Array.isArray(d.orders)&&Array.isArray(d.mappings))setView(d);},{ocupado:()=>busyRef.current});
  return <section aria-label="Clasificación de órdenes"><h2>Clasificación de órdenes</h2><p>Asocia SKU y origen sólo con evidencia verificable. Un SKU identifica una orden que contiene el producto; no reparte su importe por líneas. Dejar un dato desconocido conserva esa limitación en los filtros.</p>
   {view?.summary&&<p>{view.summary.classifiableOrders.toLocaleString('es-MX')} órdenes clasificables · {view.summary.ordersWithDecision} con decisión · {view.summary.activeDecisions} vigentes (observado)</p>}<form onSubmit={e=>{e.preventDefault();void request(undefined,q.trim());}}><label>Buscar orden por identificador<input value={q} maxLength={100} onChange={e=>setQ(e.target.value)}/></label> <button disabled={busy}>{loaded?'Buscar':'Cargar clasificación de órdenes'}</button></form>{busy&&<p role="status">Verificando clasificaciones…</p>}{error&&<p role="status">{error} <button type="button" disabled={busy} onClick={()=>void request(undefined,q.trim())}>Reintentar</button></p>}{notice&&<p role="status">{notice}</p>}
   {view&&<>{!view.orders.length&&<p>No hay órdenes autorizadas para clasificar.</p>}{view.canWrite&&<form className="action-form" onSubmit={e=>{e.preventDefault();if(selected&&consent===token)void request(body);}}>

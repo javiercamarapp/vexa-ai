@@ -1,8 +1,9 @@
 'use client';
+import {useAutoRefresh} from './ui/use-auto-refresh';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {AliasEvent,AliasIdentity} from '../../../../packages/connectors/aliases.mjs';
 import {MigrationComparison} from './migration-comparison';
-import {Button,Refresh} from './ui/button';
+import {Button} from './ui/button';
 import {KpiLinea} from './panel-comun/kpi-linea';
 import './panel-comun/panel-comun.css';
 import {StatusChip} from './ui/status-chip';
@@ -18,7 +19,7 @@ type Listing={conversations:Conversation[];groups:Array<{canonical_id:string;con
 type Proposal={source:AliasIdentity;target:AliasIdentity;expectedVersion:number;legacyUnresolved:boolean};
 async function api(body?:unknown,query='',signal?:AbortSignal){
  const response=await fetch('/api/migrations/aliases'+query,{method:body===undefined?'GET':'POST',cache:'no-store',signal,headers:body===undefined?undefined:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});
- if(!response.ok)throw Object.assign(Error(response.status===409?'La identidad o su versión cambió. Actualiza los aliases y prepara otra decisión.':response.status===403?'Tu rol no permite esta acción. Sólo el propietario puede confirmar o deshacer aliases.':response.status===400?'Revisa las identidades, el motivo, la evidencia y la confirmación.':'No se pudo consultar el servicio de aliases. Reintenta.'),{status:response.status});
+ if(!response.ok)throw Object.assign(Error(response.status===409?'La identidad o su versión cambió. Los aliases se vuelven a leer solos; prepara otra decisión.':response.status===403?'Tu rol no permite esta acción. Sólo el propietario puede confirmar o deshacer aliases.':response.status===400?'Revisa las identidades, el motivo, la evidencia y la confirmación.':'No se pudo consultar el servicio de aliases. Reintenta.'),{status:response.status});
  return response.json();
 }
 export function MigrationAliases({onChange}:{onChange:()=>void}){
@@ -45,6 +46,9 @@ export function MigrationAliases({onChange}:{onChange:()=>void}){
  async function action(work:()=>Promise<void>){const generation=accessGeneration.current;setError('');setNotice('');setBusy(true);try{await work();}catch(e){if(!(e instanceof Error&&e.name==='AbortError'))setError(e instanceof Error?e.message:'No se pudo completar la decisión.');}finally{if(generation===accessGeneration.current)setBusy(false);}}
  function selectSource(value:string){setSource(value);setProposal(null);setHistory([]);setHistoryBusy(Boolean(value));setHistoryError('');setConfirmed(false);setNotice('');}
  async function reload(){const requestId=++historyRequest.current;await refresh();setProposal(null);setConfirmed(false);if(source){try{const value=await authorizedApi(undefined,'?'+new URLSearchParams({sourceConversationId:source}));if(requestId===historyRequest.current){setHistory(value.history);setHistoryError('');}}finally{if(requestId===historyRequest.current)setHistoryBusy(false);}}}
+ // Datos nuevos: relectura en segundo plano del listado; conserva propuestas y formularios en curso.
+ const busyRef=useRef(true);busyRef.current=busy;
+ useAutoRefresh(()=>refresh(),{ocupado:()=>busyRef.current});
  async function decide(operation:'confirm'|'undo'){
   const version=operation==='confirm'?proposal?.expectedVersion:history.at(-1)?.version;
   if(version===undefined||!confirmed)return;
@@ -56,7 +60,7 @@ export function MigrationAliases({onChange}:{onChange:()=>void}){
  const eventTitle=(event:AliasEvent)=>event.operation==='confirm'?'Alias confirmado':event.operation==='undo'?'Alias deshecho':'Alias antiguo pendiente';
  const node=(i:AliasIdentity)=><span className={css.flowNode}><strong>{i.source}</strong><span>{i.account_id}</span><IdChip value={i.external_id} head={10} tail={4}/></span>;
  return <section className="stack" aria-labelledby="migration-aliases-title">
-  <div className="card-title"><div><h2 id="migration-aliases-title">Aliases de conversaciones</h2><p>Identidades de la misma organización, con evidencia y aprobación humana. Un email o texto parecido no confirma una identidad.</p></div><Button size="sm" icon={<Refresh/>} disabled={busy} onClick={()=>void action(reload)}>Actualizar aliases</Button></div>
+  <div className="card-title"><div><h2 id="migration-aliases-title">Aliases de conversaciones</h2><p>Identidades de la misma organización, con evidencia y aprobación humana. Un email o texto parecido no confirma una identidad.</p></div></div>
   {error&&<p role="alert" className="notice-bar"><Icon name="alert" size={14}/>{error}</p>}{notice&&<p role="status" className="notice-bar" data-tone="info"><Icon name="check" size={14}/>{notice}</p>}{busy&&<p role="status" className="sr-only">Procesando aliases…</p>}
   {listing&&<>
   <div className="split" data-even>

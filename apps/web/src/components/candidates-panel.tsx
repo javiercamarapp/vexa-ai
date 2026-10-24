@@ -1,9 +1,10 @@
 'use client';
+import {useAutoRefresh} from './ui/use-auto-refresh';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {PageHeader} from './ui/page-header';
 import {KpiLinea} from './panel-comun/kpi-linea';
 import './panel-comun/panel-comun.css';
-import {Button,LinkButton,Refresh} from './ui/button';
+import {Button,LinkButton} from './ui/button';
 import {StatusChip} from './ui/status-chip';
 import {BarList} from './ui/bar-list';
 import {EmptyState} from './ui/empty-state';
@@ -20,20 +21,24 @@ type Result={id:string;candidateId:string;configHash:string;eligible:boolean;rea
 type History={version:number;candidateId:string|null;configHash:string;operation:string};
 type State={results:Result[];history:History[];version:number;activeCandidateId:string|null;next:{results:string|null;history:number|null}};
 export function CandidatesPanel(){const[data,setData]=useState<State|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState(''),[receipt,setReceipt]=useState(''),[evidence,setEvidence]=useState(''),[confirmed,setConfirmed]=useState(false),[busy,setBusy]=useState(false),[registering,setRegistering]=useState(false);const seq=useRef(0),controller=useRef<AbortController|null>(null);
- const load=useCallback(async()=>{const id=++seq.current;controller.current?.abort();const c=new AbortController();controller.current=c;setLoading(true);setConfirmed(false);setError('');try{const response=await fetch('/api/candidates',{cache:'no-store',signal:c.signal});if(!response.ok)throw Error('load');const value=await response.json();if(seq.current===id){setData(value);setError('');return true;}}catch{if(seq.current===id&&!c.signal.aborted){setData(null);setError('No se pudieron cargar los candidatos. Reintenta para recuperar el estado confirmado.');}}finally{if(seq.current===id)setLoading(false);}return false;},[]);
+ const load=useCallback(async()=>{const id=++seq.current;controller.current?.abort();const c=new AbortController();controller.current=c;setLoading(true);setConfirmed(false);setError('');try{const response=await fetch('/api/candidates',{cache:'no-store',signal:c.signal});if(!response.ok)throw Error('load');const value=await response.json();if(seq.current===id){setData(value);setError('');return true;}}catch{if(seq.current===id&&!c.signal.aborted){setData(null);setError('No se pudieron cargar los candidatos. Se reintentará solo para recuperar el estado confirmado.');}}finally{if(seq.current===id)setLoading(false);}return false;},[]);
  const stop=useCallback(()=>{seq.current++;controller.current?.abort();},[]);
  useEffect(()=>{let disposed=false;void Promise.resolve().then(()=>{if(!disposed)void load();});return()=>{disposed=true;stop();};},[load,stop]);
+ // Datos nuevos: relectura en segundo plano; no corre durante una carga/escritura ni si se paginó (para no perder las páginas ya abiertas).
+ const ocupado=useRef(true);ocupado.current=busy||loading||registering||(data!==null&&(data.results.length>25||data.history.length>25));
+ const recargarSilencioso=useCallback(async()=>{if(ocupado.current)return;const id=seq.current;try{const response=await fetch('/api/candidates',{cache:'no-store'});if(!response.ok)return;const value=await response.json();if(seq.current===id&&!ocupado.current)setData(value);}catch{/* se conserva lo pintado */}},[]);
+ useAutoRefresh(recargarSilencioso,{ocupado:()=>ocupado.current});
  async function more(kind:'results'|'history'){
   if(!data||busy||loading||data.next[kind]===null)return;const before=data;const id=++seq.current;controller.current?.abort();const c=new AbortController();controller.current=c;setLoading(true);setConfirmed(false);setError('');
   try{const query=new URLSearchParams({[kind==='results'?'resultsBefore':'historyBefore']:String(before.next[kind])});const response=await fetch('/api/candidates?'+query,{cache:'no-store',signal:c.signal});if(!response.ok)throw Error('page');const page:State=await response.json();if(seq.current!==id)return;if(page.version!==before.version){setData(null);setError('La selección cambió. Recarga los candidatos antes de continuar.');return;}
    setData({...before,[kind]:kind==='results'?[...before.results,...page.results.filter(r=>!before.results.some(old=>old.id===r.id))]:[...before.history,...page.history.filter(h=>!before.history.some(old=>old.version===h.version))],next:{...before.next,[kind]:page.next[kind]}});
   }catch{if(seq.current===id&&!c.signal.aborted){setData(null);setError('No se pudo verificar la siguiente página. Recarga los candidatos y comprueba tus permisos.');}}finally{if(seq.current===id)setLoading(false);}
  }
- async function mutate(body:object){if(busy||loading)return;setBusy(true);setConfirmed(false);setError('');try{const response=await fetch('/api/candidates',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!response.ok){if(response.status===403)setData(null);if(response.status===409)await load();throw Error('write');}await load();}catch{setError('No se pudo confirmar el cambio. Recarga el estado y verifica los permisos, la versión y el recibo firmado.');}finally{setBusy(false);}}
+ async function mutate(body:object){if(busy||loading)return;setBusy(true);setConfirmed(false);setError('');try{const response=await fetch('/api/candidates',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!response.ok){if(response.status===403)setData(null);if(response.status===409)await load();throw Error('write');}await load();}catch{setError('No se pudo confirmar el cambio. Verifica los permisos, la versión y el recibo firmado.');}finally{setBusy(false);}}
  const canChange=!!data&&!busy&&!loading&&confirmed&&/^[a-f0-9]{64}$/.test(evidence); const eligibleCount=data?data.results.filter(r=>r.eligible).length:0;
  const utilities=data?data.results.map(r=>r.summary?.utility??null):[];
  return <section className="stack" style={{overflowWrap:'anywhere',minWidth:0}} aria-label="Candidatos de extracción" aria-busy={loading||busy}>
-  <PageHeader eyebrow="Interno" title="Candidatos de extracción" description="Selección con evaluación independiente firmada y confirmación de un propietario." actions={<><LinkButton href="/evaluation">Volver a evaluación</LinkButton><Button icon={<Refresh/>} onClick={()=>void load()} disabled={busy}>Recargar</Button>{data&&<Button variant="primary" disabled={busy||loading} onClick={()=>setRegistering(true)}>Registrar evaluación</Button>}</>}/>
+  <PageHeader eyebrow="Interno" title="Candidatos de extracción" description="Selección con evaluación independiente firmada y confirmación de un propietario." actions={<><LinkButton href="/evaluation">Volver a evaluación</LinkButton>{data&&<Button variant="primary" disabled={busy||loading} onClick={()=>setRegistering(true)}>Registrar evaluación</Button>}</>}/>
   {loading&&<p role="status" className="sr-only">Cargando estado confirmado…</p>}
   {loading&&!data&&!error&&<SkeletonStats count={4}/>}
   {error&&!data?<DataState state={{kind:'error',message:error,code:'candidates'}}/>:error&&<div role="alert" className="notice-bar"><Icon name="alert" size={14}/><p>{error}</p></div>}

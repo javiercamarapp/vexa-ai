@@ -1,8 +1,9 @@
 'use client';
+import {useAutoRefresh} from './ui/use-auto-refresh';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import Link,{useWorkspaceNavigation} from './workspace/navigation-lifecycle';
 import {ScrollTable} from './workspace/scroll-table';
-import {Button,Refresh} from './ui/button';
+import {Button} from './ui/button';
 import {Drawer} from './ui/overlay';
 import {SegmentedControl} from './ui/segmented';
 import {StatusChip} from './ui/status-chip';
@@ -47,6 +48,9 @@ export function AssociationPanel(){
  }
  async function loadFacts(signal:AbortSignal,current:()=>boolean,params:typeof scope,state:string,cursor?:string){const data=await request<{items:Fact[];nextCursor:string|null;canResolve:boolean}>({view:'facts',limit:'25',...params,...(state?{state}:{}),...(cursor?{cursor}:{})},signal);if(current()){setFacts(previous=>cursor?unique(previous,data.items):data.items);setNext(data.nextCursor);setCanResolveFacts(data.canResolve===true);}}
  async function loadOrigins(signal:AbortSignal,current:()=>boolean,cursor?:string){const data=await request<{items:Origin[];nextCursor:string|null;canApprove:boolean}>({view:'origins',limit:'25',...(cursor?{cursor}:{})},signal);if(current()){setOrigins(previous=>cursor?[...new Map([...previous,...data.items].map(x=>[x.approvalId,x])).values()]:data.items);setOriginNext(data.nextCursor);setCanApprove(data.canApprove);}}
+ // Datos nuevos: relectura en segundo plano de vínculos y orígenes; conserva la selección y el formulario, y no corre durante una operación ni tras paginar.
+ const busyRef=useRef(true),scopeRef=useRef(scope),filterRef=useRef(filter);busyRef.current=busy||facts.length>25||origins.length>25;scopeRef.current=scope;filterRef.current=filter;
+ useAutoRefresh(async()=>{if(busyRef.current)return;const abort=new AbortController(),epoch=generation.current,current=()=>!abort.signal.aborted&&epoch===generation.current&&!busyRef.current;try{await loadFacts(abort.signal,current,scopeRef.current,filterRef.current);await loadOrigins(abort.signal,current);}catch{/* se conserva lo pintado */}},{ocupado:()=>busyRef.current});
  useEffect(()=>{
   const load=()=>{const params=new URLSearchParams(window.location.search),selected={...(params.has('conversationId')?{conversationId:params.get('conversationId')!}:{}),...(params.has('customerId')?{customerId:params.get('customerId')!}:{})};
    void perform(async(signal,current)=>{setScope(selected);setFilter('');clearSelection();await loadFacts(signal,current,selected,'');await loadOrigins(signal,current);});};
@@ -85,7 +89,7 @@ export function AssociationPanel(){
   {assoc&&<div className="stat-grid" style={{gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))'}}><StatCard icon="link" label="Relaciones ticket–contacto" kind="observed" value={nf.format(assoc.total)} foot={detalleAsociaciones(assoc.detail[0])}/>{/^[\d.,]+ /.test(assoc.detail[1]??'')&&<StatCard icon="users" label="Vínculos conversación–cliente" kind="observed" value={assoc.detail[1].split(' ')[0]} foot={assoc.detail[1].split(' ').slice(1).join(' ')}/>}</div>}
   {(scope.conversationId||scope.customerId)&&<p>Vista filtrada por {scope.conversationId?'conversación':'cliente'}. <Link href="/history">Ver todos los vínculos</Link></p>}
   <details className={styles.tech}><summary>Ver detalle técnico: tickets y contactos</summary>
-  <div className="toolbar"><SegmentedControl label="Estado del vínculo" size="sm" value={filter} onChange={state=>{if(busy)return;setFilter(state);clearSelection();void perform((signal,current)=>loadFacts(signal,current,scope,state));}} options={FILTERS}/><span className="toolbar-spacer"/><Button size="sm" variant="ghost" icon={<Refresh/>} disabled={busy} onClick={()=>void perform(async(signal,current)=>{clearSelection();await loadFacts(signal,current,scope,filter);await loadOrigins(signal,current);})}>Recargar vínculos y comprobar estado</Button></div>
+  <div className="toolbar"><SegmentedControl label="Estado del vínculo" size="sm" value={filter} onChange={state=>{if(busy)return;setFilter(state);clearSelection();void perform((signal,current)=>loadFacts(signal,current,scope,state));}} options={FILTERS}/><span className="toolbar-spacer"/></div>
   {facts.length?<section className="card"><ScrollTable label="Vínculos de conversaciones y clientes"><table className="dtable"><caption className="sr-only">Relaciones originales importadas</caption><thead><tr><th>Ticket</th><th>Contacto</th><th>Estado</th>{canResolveFacts&&<th>Revisión</th>}</tr></thead><tbody>{facts.map(f=><tr key={f.id}><td><code>{f.ticket_id}</code></td><td><code>{f.contact_id}</code></td><td><StatusChip tone={stateTone(f.resolution_state)}>{stateLabel(f.resolution_state)}</StatusChip>{f.reason&&<small className={styles.note}> {motivoVinculo(f.reason)}</small>}</td>{canResolveFacts&&<td><Button size="sm" disabled={busy} aria-label={'Revisar vínculo '+f.ticket_id+' · '+f.contact_id} onClick={()=>void perform((signal,current)=>loadDetail(f.id,signal,current))}>Revisar</Button></td>}</tr>)}</tbody></table></ScrollTable></section>:!busy&&!error&&<EmptyState art="link" compact title="No hay vínculos para este filtro" body="Cuando se importen relaciones ticket–contacto aparecerán aquí."/>}
   {next&&<div className="btn-group"><Button disabled={busy} onClick={()=>void perform((signal,current)=>loadFacts(signal,current,scope,filter,next))}>Más vínculos</Button></div>}
   </details>

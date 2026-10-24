@@ -1,6 +1,7 @@
 'use client';
+import {useAutoRefresh} from '../ui/use-auto-refresh';
 import {eventosVisibles,textoCanal} from '../../lib/notifications/avisos.mjs';
-import {Button,LinkButton,Refresh,Arrow} from '../ui/button';
+import {Button,LinkButton,Arrow} from '../ui/button';
 import {PageHeader} from '../ui/page-header';
 import {SegmentedControl} from '../ui/segmented';
 import {FilterBar} from '../ui/filter-bar';
@@ -55,6 +56,16 @@ export function NotificationPanel({settings=false}:{settings?:boolean}){
   }catch(cause){if(current(op)){clear();setError(cause instanceof Error?cause.message:errorText(503));}}
   finally{if(current(op)){pending.current=false;setBusy(false);}}
  },[begin,clear,current,request,settings]);
+ // Revalidación en segundo plano (datos nuevos): no vacía la bandeja ni muestra «Verificando…»; si hay una acción en curso o falla, se queda lo pintado.
+ const recargarSilencioso=useCallback(async()=>{
+  if(pending.current)return;const abort=new AbortController(),generation=epoch.current;
+  try{
+   const data=await request(settings?'/preferences':'?status='+currentStatus.current,abort.signal);
+   if(pending.current||generation!==epoch.current)return;
+   if(settings)setPreferences(preferenceValue(data));else{setInbox(inboxValue(data,currentStatus.current));window.dispatchEvent(new Event('vexa-notifications-changed'));}
+  }catch{/* se conserva lo pintado */}
+ },[request,settings]);
+ useAutoRefresh(recargarSilencioso,{ocupado:()=>pending.current});
  useEffect(()=>{let active=true;void Promise.resolve().then(()=>{if(active)void load();});return()=>{active=false;invalidate();};},[load,invalidate]);
  useEffect(()=>{const refresh=()=>{invalidate();void load();};window.addEventListener('popstate',refresh);return()=>window.removeEventListener('popstate',refresh);},[load,invalidate]);
  const filter=(unread:boolean)=>{const next:Status=unread?'unread':'all';invalidate();currentStatus.current=next;setStatus(next);void load(next);};
@@ -93,8 +104,8 @@ const heading=settings?'Preferencias de notificaciones':'Notificaciones';
  const sinLeer=inbox?.unreadCount??0,cargados=inbox?.items.length??0;
  return <section className="task-page notifications-page stack" aria-label={heading}>
   {settings
-   ?<PageHeader eyebrow="Administración" title="Avisos" description="Elige qué avisos y por qué canal los recibes en esta organización." actions={<><LinkButton href="/notifications" icon={<Arrow/>}>Ver notificaciones</LinkButton><Button icon={<Refresh/>} loading={busy} onClick={()=>void load()}>Actualizar</Button></>}/>
-   :<PageHeader eyebrow="Tu espacio de trabajo" title="Notificaciones" description="Avisos de esta organización disponibles con tu acceso actual." actions={<><LinkButton href="/settings/notifications" variant="secondary">Configurar avisos</LinkButton><Button icon={<Refresh/>} loading={busy} onClick={()=>void load()}>Actualizar</Button></>}/>}
+   ?<PageHeader eyebrow="Administración" title="Avisos" description="Elige qué avisos y por qué canal los recibes en esta organización." actions={<><LinkButton href="/notifications" icon={<Arrow/>}>Ver notificaciones</LinkButton></>}/>
+   :<PageHeader eyebrow="Tu espacio de trabajo" title="Notificaciones" description="Avisos de esta organización disponibles con tu acceso actual." actions={<><LinkButton href="/settings/notifications" variant="secondary">Configurar avisos</LinkButton></>}/>}
   {busy&&!(settings?preferences:inbox)&&<Loading compact message={settings?'Verificando preferencias…':'Verificando notificaciones…'}/>}
   {fallo}{notice&&<p role="status" className="ac-nota">{notice}</p>}
   {!settings&&<FilterBar label="Filtro de avisos"><SegmentedControl label="Avisos" value={status} onChange={v=>filter(v==='unread')} options={[{value:'unread',label:'Sin leer',count:inbox?sinLeer:undefined},{value:'all',label:'Todas'}]}/></FilterBar>}

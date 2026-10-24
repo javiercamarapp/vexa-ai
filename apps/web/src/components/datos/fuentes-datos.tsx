@@ -10,7 +10,7 @@ import {DataTable} from '../ui/data-table';
 import {ErrorState} from '../ui/error-state';
 import {Loading} from '../ui/loading';
 import {ProgressRing} from '../ui/progress-ring';
-import {LinkButton,Arrow,Button,Refresh} from '../ui/button';
+import {LinkButton,Arrow,Button} from '../ui/button';
 import {useJson} from '../ui/use-json';
 import {nf,fmtPct} from '../ui/format';
 import {KpiLinea,BarraParte} from '../panel-comun/kpi-linea';
@@ -37,7 +37,7 @@ export function FuentesDatos(){
   {label:'Con fecha de corte',value:cov.data?nf.format(conCorte)+' de '+nf.format(cargadas.length):'—',vacio:!cov.data,c:1,partes:[{label:'Con corte',value:conCorte},{label:'Sin corte',value:cargadas.length-conCorte}],nota:'Sin fecha de corte no se afirma hasta cuándo llega'},
   {label:'Importaciones',value:cov.data?nf.format(impo):'—',vacio:!cov.data,c:7,chip:abiertas>0?{texto:abiertas+' en proceso',tono:'warn' as const}:undefined,partes:cargadas.filter(x=>x.importaciones>0).map(x=>({label:x.nombre,value:x.importaciones})),nota:'Cargas por archivo y por conexión en todas las fuentes'}];
  return <section className="task-page stack dn-page" aria-label="Cobertura de datos">
-  <DatosCabecera actual="cobertura" title="Cobertura de datos" description="Qué fuentes están cargadas, hasta cuándo llegan y cuánto del cliente ya está identificado." actions={<><Button icon={<Refresh/>} loading={cov.busy} onClick={()=>{cov.reload();tr.reload();fr.reload();}}>Actualizar</Button><LinkButton href="/imports" variant="primary" icon={<Arrow/>}>Importar datos</LinkButton></>}/>
+  <DatosCabecera actual="cobertura" title="Cobertura de datos" description="Qué fuentes están cargadas, hasta cuándo llegan y cuánto del cliente ya está identificado." actions={<LinkButton href="/imports" variant="primary" icon={<Arrow/>}>Importar datos</LinkButton>}/>
   {cov.error&&!cov.data?<ErrorState title="No disponible ahora" body={cov.error} onRetry={()=>cov.reload()}/>:<>
    <KpiLinea items={kpis} label="Indicadores de cobertura"/>
    <section className="pc-card" data-flush aria-labelledby="co-t"><header className="pc-card-head"><div><h2 id="co-t">Cobertura por fuente</h2><p>Incorporado frente a lo leído, con su corte y su rango</p></div></header>

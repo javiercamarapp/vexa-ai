@@ -26,7 +26,7 @@ export function useJson<T>(endpoint:string|null,accept:(json:unknown)=>T|null){
   catch(e){if(!signal?.aborted){
    // Sin dato viejo que conservar: error. Con dato viejo: se queda, rotulado, y se avisa que no se pudo actualizar.
    if(tiene.current||previo){setViejo(true);setError('');}
-   else{setData(null);tiene.current=false;setError(e instanceof TypeError?'No se pudo conectar con el servicio. Pulsa Actualizar para reintentar.':'No se pudo consultar. Reintenta.');}}}
+   else{setData(null);tiene.current=false;setError(e instanceof TypeError?'No se pudo conectar con el servicio. Se reintentará solo.':'No se pudo consultar. Reintenta.');}}}
   finally{if(!signal?.aborted)setBusy(false);}
  },[endpoint]);
  // Al cambiar de endpoint (otro alcance) lo que había era de otro alcance: no se arrastra.

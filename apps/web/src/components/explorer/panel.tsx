@@ -1,4 +1,5 @@
 'use client';
+import {useAutoRefresh} from '../ui/use-auto-refresh';
 import {lineaDatosHasta} from '../../../../../packages/workspace-service/datos-hasta.mjs';
 import {useWorkspaceNavigation,workspaceLocation} from '../workspace/navigation-lifecycle';
 import {useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
@@ -21,7 +22,7 @@ import {ESPERA} from '../../lib/legibilidad/espera.mjs';
 import {DataState} from '../workspace/data-state';
 import {QueryCard} from './query-card';
 import {PageHeader} from '../ui/page-header';
-import {Button,LinkButton,Refresh,Arrow} from '../ui/button';
+import {Button,LinkButton,Arrow} from '../ui/button';
 import {Notice} from '../ui/notice';
 import {KindBadge} from '../ui/kind-badge';
 import {Citation} from '../ui/citation';
@@ -69,6 +70,9 @@ export function ExplorerPanel({initialQuery}:{initialQuery:string}){
   finally{if(!abort.signal.aborted&&epoch===generation.current){pending.current=false;setBusy(false);}}
  },[]);
  useEffect(()=>{let active=true;void Promise.resolve().then(()=>{if(active)void load(query);});return()=>{active=false;invalidate();};},[query,load,invalidate]);
+ // Datos nuevos: relectura en segundo plano de la lista; no corre si se está leyendo evidencia o una respuesta (load las cerraría) ni durante una consulta.
+ const busyNow=useRef(true),evidenceNow=useRef(false);busyNow.current=busy;evidenceNow.current=Boolean(evidence||answer||opening);
+ useAutoRefresh(()=>{keepPage.current=true;return load(current.current,true);},{ocupado:()=>pending.current||busyNow.current||evidenceNow.current});
  useEffect(()=>{const back=()=>{invalidate();const next=clean(window.location.search.slice(1)).toString();current.current=next;if(next===query)void load(next);else setQuery(next);};window.addEventListener('popstate',back);return()=>window.removeEventListener('popstate',back);},[query,load,invalidate]);
  const navigate=(q:URLSearchParams,keep=false)=>{invalidate();if(keep){setEvidence(null);setAnswer(null);setOpening(null);setEvErr('');}else clearProtected();keepPage.current=keep;setBusy(true);const next=q.toString();current.current=next;window.history.pushState(null,'',window.location.pathname+'?'+next);if(next===query)void load(next);else setQuery(next);};
  const apply=(next:URLSearchParams)=>{const old=clean(current.current);const changed=['date_start','date_end','currency','basis','exponent'].some(k=>(old.get(k)??'')!==(next.get(k)??''));if(changed&&next.get('snapshot_id')===scope.snapshot_id)next.delete('snapshot_id');next.delete('scope_hash');for(const k of searchKeys.filter(k=>k!=='cursor'))if(old.has(k))next.set(k,old.get(k)!);navigate(next);};
@@ -87,7 +91,7 @@ export function ExplorerPanel({initialQuery}:{initialQuery:string}){
  const actualizando=busy&&!opening;const totalCitations=page?page.items.reduce((n,item)=>n+item.distinctCount,0):0,showAmount=page?hayImporteConocido(page.items):false;
  useEffect(()=>{if(!busy&&page&&scrollAfter.current){scrollAfter.current=false;resultsRef.current?.scrollIntoView({block:'start',behavior:'smooth'});resultsRef.current?.focus({preventScroll:true});}},[busy,page]);
  return <section className={styles.explorer+' stack'} aria-label="Explorador de evidencia">
-  <PageHeader title="Explorador de evidencia" guide="explorador" actions={<><Button icon={<Refresh/>} loading={busy} onClick={()=>{window.dispatchEvent(new Event('vexa:refresh'));void load(current.current,true);}}>Actualizar consulta</Button></>}/>
+  <PageHeader title="Explorador de evidencia" guide="explorador"/>
   {busy&&!page&&<div className="stack"><WaitStatus {...ESPERA.explorador}/><div aria-hidden="true"><SkeletonStats count={2}/><SkeletonRows rows={4}/></div></div>}{error&&<p className="state state-error" role="alert">{error}</p>}{empty&&<EmptyState art="search" title="Aún no hay una publicación para explorar" body="Cuando se publique un corte podrás preguntarle a tus datos y revisar su evidencia." action={<LinkButton href="/economics" variant="primary" icon={<Arrow/>}>Revisar publicaciones</LinkButton>}/>}
   {page&&<>
    <QueryCard question={question} onChange={setQuestion} onSubmit={()=>void consult('question')} busy={busy} answer={answer}/>
@@ -110,7 +114,7 @@ export function ExplorerPanel({initialQuery}:{initialQuery:string}){
     <div className="ui-kpi" data-c="1" style={{['--cat' as string]:'var(--chart-1)'}}><span className="ui-kpi-label">Cobertura completa</span><strong className="ui-kpi-value">{nf.format(page.items.filter(i=>i.status==='ready').length)}<small className={styles.de}> de {nf.format(page.items.length)}</small></strong><small className="ui-kpi-note">Parcial: {nf.format(page.items.filter(i=>i.status==='partial').length)} · Corte anterior: {nf.format(page.items.filter(i=>i.status==='stale').length)}</small><span className={styles.prop} role="img" aria-label="Problemas con cobertura completa"><span style={{inlineSize:(page.items.filter(i=>i.status==='ready').length*100/Math.max(1,page.items.length))+'%'}}/></span></div>
     <div className="ui-kpi" data-c="1" style={{['--cat' as string]:'var(--chart-1)'}}><span className="ui-kpi-label">Publicación y cobertura</span><strong className="ui-kpi-value" style={{fontSize:15,lineHeight:1.3}}>{page.meta.watermark?lineaDatosHasta({conversaciones:page.meta.watermark}):'Corte publicado'}</strong><details className={styles.publication}><summary className={styles.sum}>Identidad del corte y cobertura</summary><div className="meta-row"><IdChip value={page.meta.snapshotId} label="Publicación"/><IdChip value={page.meta.scopeHash} label="Alcance"/></div>{page.meta.verification==='registered'&&<p>Las citas se cuentan según lo registrado; cada evidencia se verifica por completo al abrirla con «Ver evidencia».</p>}<p>Cobertura: {page.meta.coverage}</p></details></div>
    </div>
-   <LineaCache edadMs={edad} actualizando={actualizando} viejo={viejo} onActualizar={()=>void load(current.current,true)}/>
+   <LineaCache edadMs={edad} actualizando={actualizando} viejo={viejo}/>
    {page.meta.state==='stale'&&<DataState state={{kind:'stale',coverage:page.meta.coverage,watermark:page.meta.watermark}}/>}
    {busy&&!opening&&<WaitStatus {...ESPERA.actualizando}/>}
    <p ref={resultsRef} tabIndex={-1} className={styles.results} aria-live="polite" aria-busy={busy}>{actualizando?'Actualizando la lista…':resumenResultados({total:Number(page.meta.totalMatched),texto:page.meta.query,estado:page.meta.statusFilter})}{page.meta.unverifiedOmitted>0&&` ${nf.format(page.meta.unverifiedOmitted)} de esta página no pasaron la verificación de evidencia y no se muestran.`}</p>

@@ -6,7 +6,7 @@ import {LineaCache} from '../ui/linea-cache';
 import {useVistaPersistente} from '../workspace/vista-persistente';
 import {EsperaEsqueleto} from '../ui/wait-status';
 import {PageHeader} from '../ui/page-header';
-import {Button, LinkButton, Download, Refresh} from '../ui/button';
+import {Button,LinkButton,Download} from '../ui/button';
 import {KindBadge} from '../ui/kind-badge';
 import {Card} from '../ui/card';
 import {Chip} from '../ui/chip';
@@ -53,7 +53,6 @@ export function CfoDashboard({query = '', organization, roleOverride, volverA = 
       <MenuList>
         <li><LinkButton size="sm" href="/cfo/data/export?format=csv" download="informe-cfo.csv" icon={<Download />}>Informe CSV</LinkButton></li>
         <li><LinkButton size="sm" href="/cfo/data/export?format=pdf" download="informe-cfo.pdf" icon={<Download />}>Informe PDF</LinkButton></li></MenuList></Popover>
-    <Button icon={<Refresh />} loading={busy} onClick={() => void load()}>Actualizar</Button>
   </>;
   const header = <PageHeader eyebrow="Dinero · CFO" title="Informe de CFO" description="Ingresos, reembolsos, canales y calidad de datos por moneda, sin mezclar bases; cada cifra dice cómo se calculó." actions={actions} />;
   if (!permitido) return <div className="dg-page"><PageHeader eyebrow="Dinero · CFO" title="Informe de CFO" description="Panel financiero para propietarios y analistas." />
@@ -86,7 +85,7 @@ export function CfoDashboard({query = '', organization, roleOverride, volverA = 
   const TONO: Record<string, 'bad' | 'warn' | 'info'> = {alta: 'bad', media: 'warn', baja: 'info', info: 'info'};
   return <div className="dg-page">
     {header}
-    <LineaCache edadMs={rep.edadMs} actualizando={rep.actualizando} viejo={rep.viejo} onActualizar={() => void load()} />
+    <LineaCache edadMs={rep.edadMs} actualizando={rep.actualizando} viejo={rep.viejo} />
     <FilterBar label="Moneda y medida">
       <SegmentedControl label="Moneda" size="sm" value={block.currency} options={report.currencies.map(c => ({value: c, label: c}))} onChange={setCurrency} />
       <SegmentedControl label="Medida" size="sm" value={measure} options={MEASURES.map(m => ({value: m.value, label: m.label}))} onChange={v => setMeasure(v as Measure)} />

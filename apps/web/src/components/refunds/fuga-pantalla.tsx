@@ -3,7 +3,7 @@ import {useState} from 'react';
 import {useSearchParams} from 'next/navigation';
 import type {SkuFila} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
 import {PageHeader} from '../ui/page-header';
-import {Button,Download,Refresh} from '../ui/button';
+import {Button,Download} from '../ui/button';
 import {Card} from '../ui/card';
 import {KpiStrip,type Kpi} from '../ui/kpi-strip';
 import {MenuList,Popover} from '../ui/overlay';
@@ -56,9 +56,8 @@ export function FugaPantalla({organization,embebido=false}:{organization?:string
   <Popover label="Más archivos" align="end" width={280} triggerClassName="btn btn-secondary" trigger={<><Download/><span className="btn-label">Exportar</span></>}>
    <MenuList>
     <li><Button size="sm" icon={<Download/>} disabled={v.skus.status!=='ok'} onClick={lista}>SKUs de Walmart (CSV)</Button></li>
-    <li><Button size="sm" icon={<Download/>} disabled={!tr} onClick={cola}>Cola de vencidos o negados (CSV)</Button></li></MenuList></Popover>
-  <Button icon={<Refresh/>} onClick={()=>f.reload()} loading={f.busy&&!!v}>Actualizar</Button></>;
- const cabecera=embebido?<header className="fg-embebido-head"><p className="cn-eyebrow">Dinero · tu copiloto de reembolsos</p><h1 className="cn-titular">Fuga de reembolsos</h1><p className="cn-fuente">Dónde se concentra el dinero devuelto y qué llevarte al proveedor o a Walmart.</p><div className="cn-acciones"><Button size="sm" icon={<Refresh/>} onClick={()=>f.reload()} loading={f.busy&&!!v}>Actualizar</Button></div></header>
+    <li><Button size="sm" icon={<Download/>} disabled={!tr} onClick={cola}>Cola de vencidos o negados (CSV)</Button></li></MenuList></Popover></>;
+ const cabecera=embebido?<header className="fg-embebido-head"><p className="cn-eyebrow">Dinero · tu copiloto de reembolsos</p><h1 className="cn-titular">Fuga de reembolsos</h1><p className="cn-fuente">Dónde se concentra el dinero devuelto y qué llevarte al proveedor o a Walmart.</p></header>
   :<PageHeader eyebrow={'Dinero'+(organization?' · datos sintéticos de demostración':'')} title="Fuga de reembolsos" description="Dónde se concentra el dinero devuelto, cuánto está atorado y qué llevarte a la reunión." actions={acciones}/>;
  return <div className="dg-page">
   {cabecera}

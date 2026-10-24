@@ -1,4 +1,5 @@
 'use client';
+import {useAutoRefresh} from './ui/use-auto-refresh';
 import {DatosCabecera} from './datos/datos-cabecera';
 import {KpiLinea} from './panel-comun/kpi-linea';
 import './panel-comun/panel-comun.css';
@@ -53,6 +54,9 @@ export function ExtractionPanel(){
  const blocked=snapshot?submitBlock(snapshot.configuration,snapshot.canConfigure,!!selected):null;
  const nQueuedRunning=jobs.filter(j=>['queued','running'].includes(j.state)).length,nDone=jobs.filter(j=>j.state==='succeeded').length,nAttention=jobs.filter(j=>j.state==='failed').length,nClassified=jobs.filter(j=>j.runStatus==='succeeded').length;
  const pending=snapshot?.reservations.filter(r=>['reserved','uncertain'].includes(r.state))??[];
+ // Datos nuevos: relectura en segundo plano (reload conserva el análisis pintado si falla el servicio); no corre durante una acción.
+ const busyRef=useRef(true);busyRef.current=busy;
+ useAutoRefresh(()=>reload(),{ocupado:()=>busyRef.current});
  return <section className="stack" aria-labelledby="analysis-title">
   <span id="analysis-title" className="sr-only">Análisis de conversaciones</span>
   <DatosCabecera actual="analisis" title="Análisis" description="Qué se analizó con IA y cuánto falta; los importes inciertos quedan reservados hasta contrastarlos." actions={snapshot?.canConfigure&&snapshot.configuration.window?<Button size="sm" onClick={()=>setBudgetOpen(true)}>Límites y conciliación</Button>:undefined}/>

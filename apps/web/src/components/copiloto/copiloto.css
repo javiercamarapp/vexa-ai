@@ -19,7 +19,6 @@
 @media(max-width:600px){.cn-titular{font-size:18px;line-height:26px}}
 .cn-fuente{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0;font-size:13px;color:var(--muted)}
 .cn-parcial{margin:0;font-size:13px;color:var(--ui-warning);padding-left:10px;border-left:2px solid var(--rovaq-rojo)}
-.cn-acciones{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:4px}
 .cn-seg{display:inline-flex;border:1px solid var(--ui-border);border-radius:999px;padding:2px;background:var(--ui-soft)}
 .cn-seg button{min-height:28px;padding:2px 12px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:500 12px var(--font-ui);cursor:pointer}
 .cn-seg button[aria-pressed=true]{background:var(--ui-action);color:var(--ui-action-ink)}

@@ -6,6 +6,7 @@ import {Drawer} from '../ui/overlay';
 import {Button} from '../ui/button';
 import {ConfirmationDialog} from '../confirmation-dialog';
 import {etiquetaCategoria} from '../../lib/legibilidad/categorias.mjs';
+import {textoLegible} from '../../lib/legibilidad/recomendaciones-vista.mjs';
 import {persona,type Miembro} from './flujo-vista';
 import css from './flujo.module.css';
 
@@ -18,7 +19,7 @@ function Faltan({errores}:{errores:Problema[]}){return errores.length?<p classNa
 function Campo({id,etiqueta,ayuda,children}:{id:string;etiqueta:string;ayuda?:string;children:ReactNode}){return <div className="field"><label htmlFor={id}>{etiqueta}</label>{children}{ayuda&&<small className={css.ayuda}>{ayuda}</small>}</div>;}
 const ETAPAS=['Aprobar','Borradores','En curso','Resultado'];
 /** Cabecera fija del flujo: dónde está esta recomendación en el proceso y qué acción se decide (el pie solo trae la decisión). */
-function Resumen({item,paso}:{item:Recommendation;paso:number}){return <div className="ov-sticky"><ol className="ov-steps" aria-label="Etapas de la acción">{ETAPAS.map((e,i)=><li key={e} aria-current={i===paso?'step':undefined}>{i+1} · {e}</li>)}</ol><p className="ov-impact" style={{marginTop:8}}>{item.action}</p></div>;}
+function Resumen({item,paso}:{item:Recommendation;paso:number}){return <div className="ov-sticky"><ol className="ov-steps" aria-label="Etapas de la acción">{ETAPAS.map((e,i)=><li key={e} aria-current={i===paso?'step':undefined}>{i+1} · {e}</li>)}</ol><p className="ov-impact" style={{marginTop:8}}>{textoLegible(item.action)}</p></div>;}
 const cancelar=(onClose:()=>void)=><Button variant="ghost" onClick={onClose}>Cancelar</Button>;
 const opcionesMiembros=(m:Miembro[])=>m.map(x=><option key={x.id} value={x.id}>{persona(x.id,m)}</option>);
 

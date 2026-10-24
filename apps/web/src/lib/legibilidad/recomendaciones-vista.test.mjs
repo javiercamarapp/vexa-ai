@@ -48,3 +48,14 @@ test('A5: estados causales y generador anterior',()=>{
  assert.equal(esDeGeneradorAnterior({generatorVersion:'conditioned-rules-v2'}),false);
  assert.equal(esDeGeneradorAnterior({}),false);
 });
+
+test('A1 (auditoría 24-oct): la propuesta de Proceder nunca muestra la taxonomía en inglés y el paso 1 usa la capa de legibilidad',async()=>{
+ const crudo='Solicitar revisión humana: contrastar los indicios citados de Dealers: Partnership, Dealers: Warranty, Feedback: Negative, Order: Cancel, Not Shipped con registros.';
+ const r=textoLegible(crudo);
+ for(const en of ['Dealers: Partnership','Dealers: Warranty','Feedback: Negative','Order: Cancel, Not Shipped'])assert.ok(!r.includes(en),en);
+ assert.match(r,/Distribuidores: Alianza comercial, Distribuidores: Garantía, Opinión: Negativa, Pedido: Cancelación, aún sin enviar/);
+ const {readFileSync}=await import('node:fs');
+ const src=readFileSync(new URL('../../components/recommendations/flujo-acciones.tsx',import.meta.url),'utf8');
+ assert.match(src,/\{textoLegible\(item\.action\)\}/);
+ assert.ok(!/<p[^>]*>\{item\.action\}<\/p>/.test(src));
+});

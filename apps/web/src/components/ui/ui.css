@@ -172,3 +172,12 @@
 .workspace-content button.row-link-inline{display:inline;min-height:0;padding:0;border:0;background:none;color:var(--ink);font:inherit;font-weight:600;text-decoration:underline;text-underline-offset:.2em;cursor:pointer}
 .workspace-content button.row-link-inline:not(:disabled):hover{background:none;color:var(--btn-soft-ink)}
 .hoy-sig .btn.btn-primary{background:#fff;color:var(--ink)}
+
+/* ---- Contraste de controles sobre el lienzo: nada del mismo tono que el fondo (pista, chips y botones de filtro siempre con borde y relleno propios) ---- */
+.segmented,.workspace-content .seg{background:var(--ui-surface);border-color:var(--ui-line-strong)}
+.segmented .seg-btn[aria-checked=true],.workspace-content .seg .btn[aria-pressed=true]{background:var(--btn-soft-bg);color:var(--btn-soft-ink);box-shadow:0 0 0 1px var(--btn-soft-line)}
+.workspace-content .seg .btn[aria-pressed=true]{border-color:var(--btn-soft-line)}
+.segmented .seg-btn:not([aria-checked=true]):hover{background:var(--ui-soft)}
+.ui-chip{background:var(--ui-surface);border-color:var(--ui-line-strong);color:var(--ink)}
+:is(.card,.ui-card,.pc-card,.task-card) .ui-chip{background:var(--ui-soft)}
+.ui-filterbar :is(.btn,button.btn,select,input:not([type=checkbox]):not([type=radio])){background:var(--ui-surface);border-color:var(--ui-line-strong)}

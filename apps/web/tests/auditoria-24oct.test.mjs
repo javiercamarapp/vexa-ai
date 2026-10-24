@@ -85,3 +85,41 @@ test('M5/M6/M16: Problemas y Explorador rotulados; el conteo de cargas de Fuente
   const f = leer('components/datos/fuentes-datos.tsx');
   assert.match(f, /agregadoImportaciones\(cov\.data\?\.sources\)/); assert.match(f, /label:'Cargas del espacio'/); assert.match(f, /suman '\+nf\.format\(impo-agr\.cargas\)/);
 });
+
+// ---- Contraste AA (M10, M12, M13) calculado sobre los tokens reales del CSS ----
+const hex = x => [1, 3, 5].map(i => parseInt(x.slice(i, i + 2), 16));
+const lin = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+const lum = c => { const [r, g, b] = c.map(lin); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+const razon = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+const mezcla = (a, b, p) => a.map((v, i) => v * p + b[i] * (1 - p));
+const css = r => leer(r);
+test('M13: texto del mapa de carga /workload con contraste >= 4.5:1 en claro y oscuro', () => {
+  const ui = css('components/ui/ui.css'), carga = css('components/workload/carga.css');
+  const c5 = {light: /:root\{--chart-1:[^}]*?--chart-5:(#[0-9a-fA-F]{6})/.exec(ui)[1], dark: /\[data-theme=dark\]\{--chart-1:[^}]*?--chart-5:(#[0-9a-fA-F]{6})/.exec(ui)[1]};
+  const superficie = {light: '#ffffff', dark: '#17171a'}, tinta = {light: '#0e0e10', dark: '#f4f4f5'};
+  const p = Object.fromEntries([1, 2, 3, 4, 5].map(n => [n, Number(new RegExp('td\\[data-paso="' + n + '"\\]\\{--p:(\\d+)%').exec(carga)?.[1] ?? 0) / 100]));
+  assert.equal(p[5] > 0 && p[5] <= 0.9, true, 'el paso 5 claro queda en <= 90 %');
+  for (const tema of ['light', 'dark']) for (let n = 1; n <= 5; n++) {
+    const pp = tema === 'dark' && n === 5 ? 1 : p[n] || [0, 0.14, 0.30, 0.52, 0.76, 0.88][n];
+    const fondo = mezcla(hex(c5[tema]), hex(superficie[tema]), pp);
+    const texto = tema === 'dark' ? (n === 4 ? '#ffffff' : n === 5 ? '#0e0e10' : tinta.dark) : tinta.light;
+    assert.ok(razon(hex(texto), fondo) >= 4.5, `${tema} paso ${n}: ${razon(hex(texto), fondo).toFixed(2)}`);
+  }
+});
+test('M12: la rampa del mapa en oscuro se distingue del fondo (>= 3:1) y su texto llega a 4.5:1; claro también', () => {
+  const m = css('components/map/mapa.css');
+  const tomar = (re) => { const x = re.exec(m); return Object.fromEntries([1, 2, 3, 4, 5].map(i => [i, new RegExp('--mp-' + i + ':(#[0-9a-f]{6})').exec(x[0])[1]])); };
+  const tt = (re) => { const x = re.exec(m); return Object.fromEntries([1, 2, 3, 4, 5].map(i => [i, new RegExp('--mp-t' + i + ':(#[0-9a-f]{6})').exec(x[0])[1]])); };
+  const oscuro = tomar(/:root\[data-theme=dark\]\{[^}]*\}/), tOsc = tt(/:root\[data-theme=dark\]\{[^}]*\}/);
+  for (let i = 1; i <= 5; i++) {
+    assert.ok(razon(hex(oscuro[i]), hex('#17171a')) >= 3, 'oscuro paso ' + i + ' vs tarjeta');
+    assert.ok(razon(hex(tOsc[i]), hex(oscuro[i])) >= 4.5, 'oscuro texto paso ' + i);
+  }
+  const claro = tomar(/:root\{--mp-0[^}]*\}/), tCl = tt(/:root\{--mp-0[^}]*\}/);
+  for (let i = 1; i <= 5; i++) assert.ok(razon(hex(tCl[i]), hex(claro[i])) >= 4.5, 'claro texto paso ' + i);
+});
+test('M10: el texto sobre las barras segmentadas de Fuga no usa blanco fijo sobre naranja/ocre ni en oscuro', () => {
+  const ui = css('components/ui/ui.css');
+  assert.match(ui, /\.mc-seg:not\(\[data-estado=estimado\]\):not\(\[data-estado=desconocido\]\)\[style\*="--chart-2\)"\]/);
+  assert.match(ui, /:root\[data-theme=dark\] \.mc-seg:not/); assert.ok(!/text-shadow:0 0 2px #0006/.test(ui));
+});

@@ -97,7 +97,12 @@
 .mc{display:flex;flex-direction:column;gap:8px;min-width:0}
 .mc-stack{display:flex;gap:2px;border-radius:8px;overflow:hidden}
 .mc-seg{display:flex;align-items:center;justify-content:center;min-width:3px;background:var(--c);color:#fff;font-size:12px;transform-origin:left;animation:mc-grow 480ms var(--ui-ease) both}
-.mc-seg b{font-weight:600;font-variant-numeric:tabular-nums;text-shadow:0 0 2px #0006}
+.mc-seg b{font-weight:600;font-variant-numeric:tabular-nums}
+/* Texto sobre el color de la métrica con contraste AA (auditoría 24-oct, M10): claro = blanco salvo en naranja/ocre/petróleo (tinta); oscuro = tinta oscura sobre todos (el blanco daba 3.3–3.6:1). */
+.mc-seg:not([data-estado=estimado]):not([data-estado=desconocido])[style*="--chart-2)"],.mc-seg:not([data-estado=estimado]):not([data-estado=desconocido])[style*="--chart-4)"]{color:#0e0e10}.mc-seg:not([data-estado=estimado]):not([data-estado=desconocido])[style*="--chart-5)"]{color:#000}
+:root[data-theme=dark] .mc-seg:not([data-estado=estimado]):not([data-estado=desconocido])[style*="--chart-"]{color:#0e0e10}
+:root[data-theme=dark] .mc-seg:not([data-estado=estimado]):not([data-estado=desconocido])[style*="--chart-5)"],:root[data-theme=dark] .mc-seg:not([data-estado=estimado]):not([data-estado=desconocido])[style*="--chart-6)"]{color:#000}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .mc-seg:not([data-estado=estimado]):not([data-estado=desconocido])[style*="--chart-"]{color:#0e0e10}:root:not([data-theme=light]) .mc-seg:not([data-estado=estimado]):not([data-estado=desconocido])[style*="--chart-5)"],:root:not([data-theme=light]) .mc-seg:not([data-estado=estimado]):not([data-estado=desconocido])[style*="--chart-6)"]{color:#000}}
 .mc-seg[data-estado=parcial]{background-image:repeating-linear-gradient(45deg,#fff5 0 2px,transparent 2px 6px)}
 .mc-seg[data-estado=estimado]{background:transparent;border:1.5px dashed var(--c);color:var(--ink)}
 .mc-seg[data-estado=desconocido]{background:transparent;border:1.5px dotted var(--ui-line-strong);color:var(--muted)}

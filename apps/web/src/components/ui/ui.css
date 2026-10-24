@@ -35,7 +35,7 @@
 .ui-chip-x{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;margin-right:-6px;border:0;border-radius:50%;background:transparent;color:inherit;cursor:pointer;padding:0}
 .ui-chip-x:hover{background:var(--ui-border)}
 /* Notice */
-.ui-notice{display:flex;align-items:flex-start;gap:12px;margin:16px 0;padding:12px 16px;border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm,8px);background:var(--ui-soft);color:var(--ui-secondary);font-size:13px;line-height:1.5}
+.ui-notice{display:flex;align-items:flex-start;gap:12px;margin:16px 0;padding:12px 16px;border:1px solid color-mix(in srgb,var(--ink-info) 22%,transparent);border-radius:var(--ui-radius-sm,8px);background:var(--tint-info);color:var(--ink-info);font-size:13px;line-height:1.5}
 .ui-notice:first-child{margin-top:0}.ui-notice:last-child{margin-bottom:0}
 .ui-stack>.ui-notice{margin:0}
 .ui-notice-icon{flex:none;display:inline-flex;margin-top:2px}
@@ -193,3 +193,12 @@ body :is(.workspace-content,.access-flow,.platform-shell) select:not([multiple])
 /* Una barra de filtros dentro de un contenedor con `gap` no suma su propio margen (eran 24 px de aire en vez de 12) */
 :is(.stack,.task-page,.dg-page,.pc-page)>.ui-filterbar{margin-bottom:0}
 .segmented .seg-btn{flex:none}
+
+/* Más color, menos gris: encabezados de tabla con un tinte petróleo suave y avisos informativos con su propio fondo (antes eran gris sobre gris) */
+.ui-table thead th{background:color-mix(in srgb,var(--chart-5) 7%,var(--ui-surface));color:var(--ink-info,var(--muted))}
+.ui-notice .ui-notice-title{color:inherit}
+.ui-notice[data-tone=info] .ui-notice-icon{color:var(--ink-info)}
+
+/* Matriz de avisos × canales: encabezados y casillas SIEMPRE centrados en su columna (antes el título quedaba a la derecha de la casilla) */
+.notification-matrix thead th:not(:first-child),.notification-matrix tbody td{text-align:center}
+.notification-matrix tbody td input[type=checkbox]{display:block;margin-inline:auto}

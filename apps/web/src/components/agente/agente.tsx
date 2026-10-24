@@ -70,6 +70,9 @@ export function Chat({data,modo}:{data:AgentState;modo?:ModoChat}){
    setAttachError(null);a.attach(r.resumen);
   }catch{setAttachError('No pude leer el archivo.');}
  },[a]);
+ // «Preguntar a Rovaq» desde Hoy llega con ?enviar=1&q=…: el agente responde de inmediato (una sola vez) y la URL se limpia para que recargar no repita la pregunta.
+ const autoEnviado=useRef(false);
+ useEffect(()=>{if(autoEnviado.current||modo)return;const sp=new URLSearchParams(window.location.search),q=sp.get('q');if(sp.get('enviar')!=='1'||!q)return;autoEnviado.current=true;sp.delete('enviar');sp.delete('q');window.history.replaceState(null,'',window.location.pathname+(sp.toString()?'?'+sp.toString():''));ask(q);},[ask,modo]);
  const lastAssistant=[...a.messages].reverse().find(m=>m.role==='assistant')?.id;
  const limitReached=a.turnsUsed>=data.limits.maxTurnsPerConversation;
  const pct=s.total>0?Math.round(s.loaded*100/s.total):0;

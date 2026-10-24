@@ -5,7 +5,7 @@ export type EntradaComo = {id: string; titulo: string; clase: 'observed' | 'esti
 export type AtencionHoy = {id: string; titulo: string; detalle: string; dinero: string | null; href: string; clase: 'observed'};
 export type HoyVista = {titular: {texto: string; partes: Array<{t: string; f?: boolean}>; periodo: string | null; clase: string | null}; kpis: KpiHoy[]; atencion: AtencionHoy[];
   barra: {observado: string; observadoEtiqueta: string; recuperable: null; recuperableEtiqueta: string; recuperableNota: string; href: string} | null;
-  siguiente: {titulo: string; detalle: string; cta: string; href: string; secundaria: {texto: string; href: string}} | null; cargando: boolean; vacio: boolean; ctxComo: unknown};
+  siguiente: {titulo: string; detalle: string; cta: string; accion?: 'paquete'; sku?: string; href: string; secundaria: {texto: string; pregunta?: string; href: string}} | null; cargando: boolean; vacio: boolean; ctxComo: unknown};
 export function estadoDe(data: unknown, o?: {busy?: boolean; error?: string; status?: number}): EstadoFuente;
 export function comoSeCalculo(id: string, ctx?: unknown): EntradaComo | null;
 export function atencionDe(a: {fuga?: unknown; carga?: unknown}): AtencionHoy[];

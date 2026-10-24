@@ -76,6 +76,15 @@ function medir(){
   if(tr.width&&(tr.left-r.left<5||r.right-tr.right<5||tr.top-r.top<2||r.bottom-tr.bottom<2))out.overlap.push('aire: texto pegado al borde en '+desc(el)+' ('+Math.round(tr.left-r.left)+'/'+Math.round(r.right-tr.right)+'/'+Math.round(tr.top-r.top)+'/'+Math.round(r.bottom-tr.bottom)+')');
   for(const sv of el.querySelectorAll('svg')){const q=sv.getBoundingClientRect();if(q.width&&(q.left-r.left<4||r.right-q.right<4))out.overlap.push('aire: icono pegado al borde en '+desc(el));}
  }
+ // Distancia al borde de la tarjeta/cabecera que lo contiene: un control con borde propio no puede quedar a <6 px del borde derecho/superior de su recuadro (el «Miembros» pegado a la esquina).
+ for(const el of document.querySelectorAll('button,.btn,select,.ui-chip,.chip,input:not([type=checkbox]):not([type=radio]),[role=tab]')){
+  if(!vis(el)||srOnly(el))continue;const cs=getComputedStyle(el);if(!(parseFloat(cs.borderLeftWidth)>0||cs.backgroundColor!=='rgba(0, 0, 0, 0)'))continue;
+  const box=el.closest('.card,.ui-card,.pc-card,.hoy-card,.task-card,section,article,dialog');if(!box||box===el)continue;
+  const bs=getComputedStyle(box);if(!(parseFloat(bs.borderLeftWidth)>0))continue;
+  const r=el.getBoundingClientRect(),b=box.getBoundingClientRect();
+  if(r.width<1||b.width<1)continue;
+  if(b.right-r.right<6&&b.right-r.right>=-1&&r.right<=b.right+1||r.top-b.top<6&&r.top-b.top>=-1&&r.bottom<b.bottom)out.overlap.push('borde: '+desc(el)+' a '+Math.round(b.right-r.right)+'px derecha / '+Math.round(r.top-b.top)+'px arriba de su recuadro');
+ }
  for(const k of ['clipped','overlap','unnamed','small'])out[k]=[...new Set(out[k])];
  return out;
 }

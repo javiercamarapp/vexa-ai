@@ -1,12 +1,14 @@
 'use client';
 import {RovaqCargando} from '../rovaq-cargando';
-import {useEffect,useMemo,useRef} from 'react';
+import {useEffect,useMemo,useRef,useState} from 'react';
 import {useSearchParams} from 'next/navigation';
 import Link from '../workspace/navigation-lifecycle';
 import type {FugaVista} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
 import type {CfoReport} from '../../../../../packages/cfo-copilot/src/index.mjs';
 import {useJson} from '../ui/use-json';
-import {LinkButton,Arrow} from '../ui/button';
+import {Button,LinkButton,Arrow} from '../ui/button';
+import {PaqueteReclamo} from './paquete-reclamo';
+import {RespuestaEnLinea} from './respuesta-en-linea';
 import {PageHeader} from '../ui/page-header';
 import {endpointFuga} from '../refunds/use-fuga';
 import {Sparkline} from '../ui/sparkline';
@@ -47,6 +49,8 @@ export function HoyPantalla(){
  const fuga=useJson<FugaVista>(endpointFuga(sp?.toString()),acceptFuga),carga=useJson<Carga>('/api/workload',acceptCarga),cfo=useJson<Cfo>('/cfo/data/report',acceptCfo);
  const estado={fuga:estadoDe(fuga.data,fuga),carga:estadoDe(carga.data,carga),cfo:estadoDe(cfo.data?.status==='ok'?cfo.data:null,{...cfo,busy:cfo.busy&&!cfo.data})};
  const v=useMemo(()=>armarHoy({fuga:fuga.data,carga:carga.data,cfo:cfo.data,estado}),[fuga.data,carga.data,cfo.data,estado.fuga,estado.carga,estado.cfo]);// eslint-disable-line react-hooks/exhaustive-deps
+ const [verPaquete,setVerPaquete]=useState(false),[pregunta,setPregunta]=useState<string|null>(null),respRef=useRef<HTMLDivElement>(null);
+ const preguntar=(q:string)=>{setPregunta(q);setTimeout(()=>respRef.current?.scrollIntoView?.({block:'nearest',behavior:'smooth'}),60);};
  const recargar=()=>{fuga.reload();carga.reload();cfo.reload();window.dispatchEvent(new Event('vexa:refresh'));};
  // Un KPI que no cargó se reintenta solo en segundo plano (máx. 3 veces, cada 20 s): sin botones, sin recargar la pantalla.
  const intentos=useRef(0),hayFallo=v.kpis.some(k=>k.estado==='no_disponible');
@@ -68,7 +72,7 @@ export function HoyPantalla(){
       <div className="hoy-barra-leyenda"><span>{v.barra.observadoEtiqueta} <strong>{v.barra.observado}</strong></span><span>{v.barra.recuperableEtiqueta} [E] <strong>sin supuestos</strong></span></div></div>
      <p className="dc-linea">{v.barra.recuperableNota} <Link href={v.barra.href}>Teclear supuestos</Link></p></section>}
    {v.siguiente&&<section className="hoy-card hoy-sig" aria-labelledby="hoy-sig"><h2 id="hoy-sig">Siguiente mejor acción</h2><p className="hoy-sig-t">{v.siguiente.titulo}</p><p>{v.siguiente.detalle}</p>
-     <div className="hoy-acciones"><LinkButton href={v.siguiente.href} variant="primary" size="sm" icon={<Arrow/>}>{v.siguiente.cta}</LinkButton><LinkButton href={v.siguiente.secundaria.href} size="sm">{v.siguiente.secundaria.texto}</LinkButton></div></section>}
+     <div className="hoy-acciones">{v.siguiente.accion==='paquete'&&fuga.data?<Button variant="primary" size="sm" icon={<Arrow/>} onClick={()=>setVerPaquete(true)}>{v.siguiente.cta}</Button>:<LinkButton href={v.siguiente.href} variant="primary" size="sm" icon={<Arrow/>}>{v.siguiente.cta}</LinkButton>}{v.siguiente.secundaria.pregunta?<Button size="sm" onClick={()=>preguntar(v.siguiente!.secundaria.pregunta!)}>{v.siguiente.secundaria.texto}</Button>:<LinkButton href={v.siguiente.secundaria.href} size="sm">{v.siguiente.secundaria.texto}</LinkButton>}</div></section>}
   </div>
- </section></ComoSeCalculoProvider>;
+ <div ref={respRef}>{pregunta&&<RespuestaEnLinea key={pregunta} pregunta={pregunta} onCerrar={()=>setPregunta(null)}/>}</div>{v.siguiente?.accion==='paquete'&&<PaqueteReclamo open={verPaquete} onClose={()=>setVerPaquete(false)} fuga={fuga.data} sku={v.siguiente.sku??""}/>}</section></ComoSeCalculoProvider>;
 }

@@ -1,6 +1,7 @@
 'use client';
 import {useCallback,useEffect,useId,useLayoutEffect,useRef,useState,type CSSProperties,type MouseEvent,type ReactNode,type SyntheticEvent} from 'react';
 import {Icon} from './icons';
+import {RovaqLogo} from '../rovaq-logo';
 /* Sistema único de overlays (Drawer lateral, Modal centrado, Popover anclado). Todo panel flotante del software se construye aquí;
    los estilos viven en components/ui/overlay.css. Misma anatomía: cabecera compacta (título + descripción + cerrar 28 px),
    cuerpo con scroll (padding 16) y pie fijo con acciones a la derecha (secundario + primario suave, 32 px). */
@@ -39,7 +40,7 @@ type DrawerProps={open:boolean;onClose:()=>void;title:string;subtitle?:ReactNode
 export function Drawer({open,onClose,title,subtitle,children,footer,size,width,side='right',bare=false,label,className,id:domId}:DrawerProps){
  const props=useDialog(open,onClose),id=useId(),px=drawerPx(size,width);
  return <dialog {...props} id={domId} className={'drawer'+(className?' '+className:'')} data-side={side} data-bare={bare||undefined} aria-labelledby={bare?undefined:id} aria-label={bare?label:undefined} style={{'--drawer-w':px+'px'} as CSSProperties}>
-  {open&&(bare?<div className="drawer-panel">{children}</div>:<div className="drawer-panel"><Head id={id} title={title} subtitle={subtitle} onClose={onClose}/><div className="overlay-body">{children}</div>{footer&&<footer className="overlay-foot">{footer}</footer>}</div>)}
+  {open&&(bare?<div className="drawer-panel">{children}</div>:<div className="drawer-panel"><Head id={id} title={title} subtitle={subtitle} onClose={onClose}/><div className="overlay-body">{children}</div>{footer&&<footer className="overlay-foot">{footer}</footer>}<div className="drawer-marca" aria-hidden="true"><RovaqLogo variante="horizontal" ancho={64} decorativo espacioLibre={false}/></div></div>)}
  </dialog>;
 }
 type ModalProps={open:boolean;onClose:()=>void;title:string;subtitle?:ReactNode;children:ReactNode;footer?:ReactNode;size?:ModalSize;/** @deprecated usa `size`. */width?:number;

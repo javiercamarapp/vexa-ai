@@ -80,3 +80,22 @@ export function colaVencidos(v) {
   const filas = cola.map(c => [c.fila, ESTADO_TXT[c.estado] ?? c.estado, c.sku ?? '', c.motivo ?? '', c.submotivo ?? '', c.retailer ? NOMBRE[c.retailer] ?? c.retailer : '', c.montoMinor === null ? '' : (c.montoMinor / 100).toFixed(2), c.fecha ?? '']);
   return {nombre: `cola-reembolsos-negados-${hoy(v)}.csv`, mime: 'text/csv;charset=utf-8', contenido: csv(filas, ['fila_tracker', 'estado', 'sku', 'motivo', 'subrazon', 'canal', 'monto_supuesto_usd', 'fecha_solicitud']), total: cola.length};
 }
+
+
+/** Borrador del mensaje para el proveedor/retailer: solo cifras observadas del libro y del Tracker, sin PII y sin atribuir causa. Un humano lo revisa y lo envía. */
+export function mensajeReclamo(v, sku) {
+  const {fila, tr} = datosSku(v, sku);
+  if (!fila) return null;
+  const canales = fila.canales.map(c => `${NOMBRE[c.canal] ?? c.canal}: ${num(c.n)} reembolsos por ${usd(c.usdBrutoMinor, {decimals: true})}`);
+  const asunto = `Revisión de reembolsos del SKU ${sku}`;
+  const cuerpo = [
+    'Hola,', '',
+    `Estamos revisando los reembolsos del SKU ${sku}. En el libro registramos ${num(fila.n)} reembolsos por ${usd(fila.usdBrutoMinor, {decimals: true})} brutos (${usd(fila.usdNetoMinor, {decimals: true})} sin los cancelados), posición ${fila.pos} entre nuestros SKU.`,
+    ...(canales.length ? ['', 'Por canal:', ...canales.map(c => `• ${c}`)] : []),
+    ...(tr ? ['', `En nuestro seguimiento de solicitudes (Tracker) hay ${num(Object.values(tr.hojas).reduce((a, n) => a + n, 0))} filas relacionadas con este SKU.`] : []),
+    '', 'Adjuntamos el paquete de evidencia (resumen, detalle por canal y mes, y de dónde sale cada cifra). Te pedimos revisar estos casos y confirmarnos qué corresponde acreditar o corregir.',
+    '', 'Este paquete ordena la evidencia para conversar; no establece por sí mismo la causa del defecto ni la responsabilidad de ninguna de las partes.',
+    '', 'Gracias,',
+  ].join('\n');
+  return {asunto, cuerpo};
+}

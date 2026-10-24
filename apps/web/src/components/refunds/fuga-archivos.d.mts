@@ -10,3 +10,4 @@ export function datosSku(v: FugaVista, sku: string): {fila: SkuFila | null; mese
 export function paqueteEvidencia(v: FugaVista, sku: string): {html: Archivo; csv: Archivo} | null;
 export function listaWalmart(v: FugaVista): Archivo & {total: number};
 export function colaVencidos(v: FugaVista): Archivo & {total: number};
+export function mensajeReclamo(v: FugaVista, sku: string): {asunto: string; cuerpo: string} | null;

@@ -21,6 +21,14 @@ dialog.drawer[data-side=left] .drawer-panel{height:100%;max-height:none;border-r
  dialog.drawer:not([data-side=left]):not([data-side=bottom]) .drawer-panel{height:100%;max-height:none;border:0;border-radius:0}
 }
 
+/* Celular (< 820 px): el drawer se ancla abajo como hoja (filtros, detalle, formularios); el panel de navegación lateral (data-side=left) no cambia. */
+@media(max-width:819px){
+ dialog.drawer:not([data-side=left]){inset:auto 0 0 0;width:100%;max-width:100vw;height:auto;max-height:90dvh;border-radius:16px 16px 0 0}
+ dialog.drawer:not([data-side=left]) .drawer-panel{height:auto;max-height:90dvh;border:1px solid var(--ui-border);border-bottom:0;border-radius:16px 16px 0 0;padding-bottom:env(safe-area-inset-bottom)}
+ dialog.drawer[open]:not([data-side=left]) .drawer-panel{animation-name:ov-slide-up}
+ @keyframes ov-slide-up{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+}
+
 /* ---- Cabecera / cuerpo / pie ---- */
 body .overlay-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:12px var(--ov-pad);border-bottom:1px solid var(--ui-border)}
 body .overlay-titles{min-width:0;flex:1 1 auto}

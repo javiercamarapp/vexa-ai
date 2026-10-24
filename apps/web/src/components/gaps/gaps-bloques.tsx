@@ -54,7 +54,7 @@ export function GraficoMeses({ing}:{ing:Ing}){
     <span className="dg-mes-a">{canales.filter(c=>m.canales[c]).map(c=><i key={c} title={`${NOMBRE[c]??c}: ${usd(m.canales[c].activoMinor)}`} style={{height:`${Math.max(1,big(m.canales[c].activoMinor)*100/max)}%`,background:color(cc(c)-1)}}/>)}</span>
     <span className="dg-mes-m">{mesCorto(m.mes).split(' ')[0]}<small>{mesCorto(m.mes).split(' ')[1]}</small></span></div>)}
   </div>
-  <div className="sr-only"><table><caption>Ingreso bruto por mes y canal</caption><thead><tr><th>Mes</th>{canales.map(c=><th key={c}>{NOMBRE[c]??c}</th>)}<th>Total</th></tr></thead>
+  <div className="sr-only mv-alt"><table><caption>Ingreso bruto por mes y canal</caption><thead><tr><th>Mes</th>{canales.map(c=><th key={c}>{NOMBRE[c]??c}</th>)}<th>Total</th></tr></thead>
    <tbody>{ing.meses.map(m=><tr key={m.mes}><th scope="row">{mesLargo(m.mes)}</th>{canales.map(c=><td key={c}>{m.canales[c]?usd(m.canales[c].activoMinor):'sin dato'}</td>)}<td>{usd(m.totalMinor)}</td></tr>)}</tbody></table></div>
  </div>;
 }

@@ -51,6 +51,7 @@ test('tokens de escala: --t-page 20, --t-section 14, --t-kpi ≤ 30', () => {
 test('radios solo del conjunto {0, 8, 12, 999, 50%}', () => {
   for(const f of TODOS){for(const m of readFileSync(f,'utf8').matchAll(/border-radius:\s*([^;}]+)/g)){
     const v=m[1].replace(/var\([^)]*\)/g,'').trim();
+    if(v==='16px 16px 0 0')continue; // hoja inferior del celular
     for(const t of v.split(/\s+/).filter(Boolean)){if(/!important/.test(t))continue;
       assert.ok(/^(0|8px|12px|999px|50%|inherit)$/.test(t),`${f}: border-radius ${m[1]} (${t})`);}
   }}

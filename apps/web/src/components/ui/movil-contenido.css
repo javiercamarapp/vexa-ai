@@ -1,0 +1,246 @@
+/* CELULAR (< 820 px): contenido de las pantallas. Todo bajo @media(max-width:819px): el escritorio no cambia.
+   Se carga con @import desde ui.css; el prefijo `:root` sube la especificidad para ganar a los CSS de pantalla que se cargan después.
+   Reglas: cifra de KPI en UNA línea; tablas como tarjeta-fila; controles con zona táctil >= 44 px; texto >= 12 px; sin palabras partidas a media palabra. */
+@media(max-width:819px){
+:root{--mv-hit:44px}
+
+/* ---- Palabras: nunca partidas letra a letra. `anywhere` encoge el mínimo de las columnas; `break-word` solo parte lo que de verdad no cabe. ---- */
+:root:root body .workspace-content,:root:root body .workspace-content :is(p,li,dd,dt,td,th,figcaption,blockquote,h1,h2,h3,h4,summary,label,small,span,strong,code,a,b,div){overflow-wrap:break-word;word-break:normal;hyphens:manual}
+:root:root body .workspace-content :is(.chip,.ui-chip,.pc-estado,.kind-badge,.btn,.seg-btn,.pc-count,.fchip,.delta,.id-chip,.count-pill){overflow-wrap:normal;word-break:normal;hyphens:manual}
+:root:root body .workspace-content :is(.pc-estado,.kind-badge,.delta,.pc-count,.count-pill,.seg-btn){white-space:nowrap}
+:root:root body .workspace-content :is(td,th){min-width:min-content}
+
+/* ---- Cifras de KPI: UNA línea, ni 2 ni 3 ---- */
+:root:root body :is(.pc-kpi-valor,.hoy-kpi-valor,.ui-kpi-value,.stat-value,.pfig-value,.kpi-valor){font-size:clamp(18px,5.5vw,22px);line-height:1.15;white-space:nowrap;overflow-wrap:normal;word-break:normal;min-width:0;max-width:100%}
+:root:root body :is(.pc-kpi-valor,.hoy-kpi-valor,.ui-kpi-value,.stat-value)[data-vacio]{font-size:clamp(18px,5.5vw,22px)}
+:root:root body :is(.pc-kpi-valor,.hoy-kpi-valor,.ui-kpi-value,.stat-value,.pfig-value,.kpi-valor)[data-abrev]{font-size:0;line-height:0}
+:root:root body :is(.pc-kpi-valor,.hoy-kpi-valor,.ui-kpi-value,.stat-value,.pfig-value,.kpi-valor)[data-abrev]::after{content:attr(data-abrev) / "";font-size:clamp(16px,4.9vw,20px);line-height:1.15;font-weight:700;white-space:nowrap}
+:root:root body .pc-kpi-valor small{font-size:12px;margin-left:4px}
+:root:root body .pc-kpi-label,:root:root body .hoy-kpi-label,:root:root body .ui-kpi-label,:root:root body .stat-label{font-size:12px;letter-spacing:.04em}
+
+/* Tira de KPI: 2 columnas compactas (3-4 cifras caben en el primer pliegue) */
+:root:root body .pc-kpis,:root:root body .hoy-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+:root:root body .pc-kpi{padding:12px;gap:4px}
+:root:root body .pc-kpi+.pc-kpi{border-left:0}
+:root:root body .pc-kpi:nth-child(even){border-left:1px solid var(--ui-border)}
+:root:root body .pc-kpi:nth-child(n+3){border-top:1px solid var(--ui-border)}
+:root:root body .pc-kpi-nota{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+:root:root body .pc-kpi .spark,:root:root body .hoy-kpi-spark{display:none}
+:root:root body .ui-kpis,:root:root body .stat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+:root:root body .ui-kpi,:root:root body .stat-card{padding:12px}
+:root:root body .stat-main{min-width:0;flex-wrap:nowrap}
+:root:root body .stat-main .spark{display:none}
+:root:root body .stat-foot,:root:root body .ui-kpi-note,:root:root body .stat-note{font-size:12px}
+:root:root body .ui-kpi-row .spark{display:none}
+
+/* ---- Hoy: primera cifra en el primer pliegue de 390x844 ---- */
+:root:root body .hoy-titular .eyebrow{display:none}
+:root:root body .hoy-titular .page-header{margin-bottom:0;gap:6px 12px}
+:root:root body .hoy-titular .page-header-actions{width:auto;margin-left:0;flex:1 1 100%;display:flex;flex-wrap:nowrap;gap:8px}
+:root:root body .hoy-titular .hoy-periodo{height:32px;flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+:root:root body .hoy-titular .page-header-actions>a{flex:none;margin-left:auto}
+:root:root body .hoy-kpis{margin:0}
+:root:root body .hoy-kpi{padding:10px 12px;gap:2px}
+:root:root body .hoy-kpi+.hoy-kpi{border-top:0;border-left:0}
+:root:root body .hoy-kpi:nth-child(even){border-left:1px solid var(--ui-border)}
+:root:root body .hoy-kpi:nth-child(n+3){border-top:1px solid var(--ui-border)}
+:root:root body .hoy-kpi-top{min-height:24px}
+:root:root body .hoy-kpi-fila{flex-wrap:wrap}
+:root:root body .hoy-kpi .sello,:root:root body .hoy-kpi .sello-2>span{font-size:12px;line-height:1.4}
+:root:root body .hoy-kpi .sello-2>span:nth-child(n+2){display:none}
+:root:root body .hoy-kpi-nota{-webkit-line-clamp:2}
+:root:root body .hoy-kpi .btn.hoy-reintentar{height:32px;min-height:32px}
+/* Franja de estado de fuentes: una sola línea (<= 44 px) con «N avisos» */
+:root:root body .mv-franja{display:flex;flex-wrap:nowrap;align-items:center;gap:8px;padding:0 12px;min-height:44px;height:44px;overflow:hidden;white-space:nowrap}
+:root:root body .mv-franja>div{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 auto}
+:root:root body .mv-franja .mv-franja-hasta,:root:root body .mv-franja .mv-franja-sin,:root:root body .mv-franja .mv-franja-linea{display:none}
+:root:root body .mv-franja .mv-franja-fuentes{flex:1 1 auto;min-width:0;overflow:hidden;white-space:nowrap;flex-wrap:nowrap;gap:4px}
+:root:root body .mv-franja .mv-etq{display:none}
+:root:root body .mv-franja .mv-franja-fuentes::before{content:"Fuentes"}
+:root:root body .mv-franja .mv-franja-fuentes strong{white-space:nowrap}
+:root:root body .mv-franja>div>button{flex:none;white-space:nowrap;padding-inline:10px}
+:root:root body .mv-franja .mv-avisos{margin-left:auto}
+:root:root body .mv-franja .mv-avisos summary{height:auto;display:inline-flex;align-items:center;padding-inline:10px;border:1px solid var(--ui-line-strong);border-radius:999px;position:relative}
+:root:root body .mv-franja:has(.mv-avisos[open]){height:auto!important;flex-wrap:wrap!important;padding-block:6px}
+:root:root body .mv-franja .mv-avisos[open]{position:static!important;flex:1 1 100%!important;width:100%!important;margin:4px 0 0!important;order:99;white-space:normal}
+:root:root body .mv-franja .mv-avisos[open]>div{position:static!important;width:auto!important;max-width:none!important;inset:auto!important;transform:none!important}
+:root:root body .mv-franja>div:has(~.mv-avisos[open]){flex:1 1 100%}
+:root:root body .mv-franja{overflow:visible}
+
+/* ---- Controles: zona táctil >= 44 px ---- */
+:root:root body :is(.workspace-content,.access-flow) :is(.btn,button.btn,a.btn){min-height:var(--mv-hit);padding-block:6px}
+:root:root body :is(.workspace-content,.access-flow) :is(.btn-sm,button.btn-sm){min-height:var(--mv-hit);padding-block:4px}
+:root:root body .workspace-content :is(select,textarea,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])){min-height:var(--mv-hit);font-size:16px}
+:root:root body .workspace-content :is(.ui-filterbar,.filter-bar) :is(.btn,button.btn,select,input:not([type=checkbox]):not([type=radio])){min-height:var(--mv-hit);height:var(--mv-hit)}
+:root:root body .workspace-content summary{min-height:var(--mv-hit);display:flex;align-items:center}
+:root:root body .workspace-content button.row-link-inline{position:relative}
+/* Chips, píldoras de segmento, pestañas de página y botones «i»: la caja se queda compacta y el área de toque llega a 44 px con ::after */
+:root:root body .workspace-content :is(.fchip-x,.ui-chip-x,.dc-info){position:relative}
+:root:root body .workspace-content :is(.fchip-x,.ui-chip-x,.dc-info)::after{content:"";position:absolute;inset:-12px}
+/* Píldoras: la caja de toque mide 44 px (borde transparente de 6 px) y lo que se ve sigue siendo una píldora compacta de 32 px */
+:root:root body .workspace-content :is(.seg-btn,.dg-fchip,.id-chip,button.chip){min-height:44px;height:auto;border:6px solid transparent;background-clip:padding-box;box-shadow:inset 0 0 0 1px var(--ui-border)}
+:root:root body .workspace-content .segmented .seg-btn{box-shadow:none;background-color:transparent}
+:root:root body .workspace-content .segmented .seg-btn[aria-checked=true],:root:root body .workspace-content .seg .btn[aria-pressed=true]{box-shadow:inset 0 0 0 1px var(--btn-soft-line);background-color:var(--btn-soft-bg)}
+:root:root body .workspace-content .dg-fchip,:root:root body .workspace-content .id-chip{background-color:var(--ui-surface)}
+:root:root body .workspace-content .dg-fchip[aria-pressed=true]{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cat) 45%,var(--ui-border))}
+:root:root body .workspace-content .id-chip-label{font-size:12px}
+:root:root body .workspace-content .segmented{padding:0;gap:0;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity}
+/* Enlaces y botones en línea dentro de listas y tablas: 44 px de alto sin cambiar de aspecto */
+:root:root body .workspace-content :is(a.row-link-inline,button.row-link-inline,a.barlist-head,.barlist-link,.dg-sku,[class*=catBtn],.agente-q,.agente-tema-q,summary){min-height:44px;box-sizing:border-box}
+:root:root body .workspace-content :is(a.row-link-inline,button.row-link-inline,a.barlist-head,.barlist-link,.dg-sku,[class*=catBtn]){display:inline-flex;align-items:center;max-width:100%;height:auto}
+:root:root body .workspace-content :is(a.barlist-head,.barlist-link){display:flex}
+:root:root body .workspace-content summary{height:auto}
+:root:root body .workspace-content .segmented::-webkit-scrollbar{display:none}
+:root:root body .workspace-content .segmented .seg-btn{padding-inline:14px}
+/* Casillas y radios: caja visual de 20 px dentro de una zona de 44 px */
+:root:root body :is(.workspace-content,.access-flow) input:is([type=checkbox],[type=radio]):not(.sr-only){appearance:none;-webkit-appearance:none;display:inline-grid;place-content:center;width:var(--mv-hit);height:var(--mv-hit);min-width:var(--mv-hit);max-width:var(--mv-hit);min-height:var(--mv-hit);max-height:var(--mv-hit);flex:0 0 var(--mv-hit);margin:0;background:none;border:0;cursor:pointer}
+:root:root body :is(.workspace-content,.access-flow) input:is([type=checkbox],[type=radio]):not(.sr-only)::before{content:"";box-sizing:border-box;width:20px;height:20px;border:1.5px solid var(--ui-line-strong);border-radius:8px;background:var(--ui-surface)}
+:root:root body :is(.workspace-content,.access-flow) input[type=radio]:not(.sr-only)::before{border-radius:50%}
+:root:root body :is(.workspace-content,.access-flow) input[type=checkbox]:not(.sr-only):checked::before{background:var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 6.4l2.3 2.3 4.7-5'/%3E%3C/svg%3E") center/14px no-repeat;border-color:var(--ink)}
+:root[data-theme=dark] body :is(.workspace-content,.access-flow) input[type=checkbox]:not(.sr-only):checked::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%230e0e10' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 6.4l2.3 2.3 4.7-5'/%3E%3C/svg%3E")}
+:root:root body :is(.workspace-content,.access-flow) input[type=radio]:not(.sr-only):checked::before{background:radial-gradient(circle,var(--ink) 0 4px,var(--ui-surface) 4.5px);border-color:var(--ink)}
+:root:root body :is(.workspace-content,.access-flow) input:is([type=checkbox],[type=radio]):not(.sr-only):focus-visible{outline:2px solid var(--ui-focus);outline-offset:-6px;border-radius:12px}
+:root:root body .workspace-content label:has(>input:is([type=checkbox],[type=radio])){min-height:var(--mv-hit);display:inline-flex;align-items:center;gap:4px}
+
+/* ---- Filtros: UNA línea de chips con scroll horizontal ---- */
+:root:root body .ui-filterbar{padding-block:6px;gap:8px;scroll-snap-type:x proximity;scroll-padding-inline:16px;-webkit-overflow-scrolling:touch}
+:root:root body .ui-filterbar>*{scroll-snap-align:start}
+:root:root body .ui-filterbar .fchip{height:32px;position:relative}
+:root:root body .ui-filterbar .fchip::after{content:"";position:absolute;inset:-6px -2px;pointer-events:none}
+:root:root body .workspace-content .fchip .fchip-x{width:28px;min-width:28px;height:28px;min-height:28px;background:transparent!important;color:var(--muted)}
+:root:root body .workspace-content .fchip .fchip-x svg{width:11px;height:11px;stroke:currentColor;fill:none;color:inherit}
+
+/* ---- Pestañas de página (Datos y confianza, etc.): separadas, con snap, la activa centrada, la última sin cortar ---- */
+:root:root body .pc-tabs{gap:8px;padding-inline:4px;scroll-snap-type:x proximity;scroll-padding-inline:16px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+:root:root body .pc-tabs a{height:var(--mv-hit);padding:0 14px;scroll-snap-align:center;font-size:13px}
+:root:root body .pc-tabs::after{content:"";flex:0 0 12px}
+:root:root body .pc-tabs[role=tablist]>*{scroll-snap-align:center}
+:root:root body .workspace-content :is([role=tablist]):not(.pc-tabs){gap:8px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity}
+
+/* ---- Cabeceras de página ---- */
+:root:root body .page-header{gap:8px 12px}
+:root:root body .page-header-actions{gap:8px}
+:root:root body .page-header-actions>*{min-width:0}
+
+/* ---- Tablas -> tarjeta-fila (cada fila: título, cifra principal y datos). «Comparar columnas» las deja como tabla con la 1.ª columna fija. ---- */
+:root:root body .mv-slot{display:flex;margin:0 0 8px}
+:root:root body .mv-modo-tablas{display:flex;gap:0;margin:-6px 0;width:fit-content;max-width:100%}
+:root:root body .mv-modo-tablas button{min-height:44px;padding:0 12px;border:6px solid transparent;background-clip:padding-box;border-radius:999px;background:transparent;color:var(--ui-secondary);font:600 12px/1.2 var(--font-ui);white-space:nowrap;cursor:pointer;width:auto;position:relative}
+:root:root body .mv-modo-tablas button[aria-pressed=true]{background:var(--btn-soft-bg);color:var(--btn-soft-ink)}
+html:root:not([data-tablas-movil=comparar]) :is(.ui-table-wrap,.table-wrap,.table-scroll):has(>table[data-mv]){overflow:visible;max-height:none!important;border:0;background:none;border-radius:0;margin:0;padding:0}
+html:root:not([data-tablas-movil=comparar]) table[data-mv]{display:block;width:100%;min-width:0!important;border:0;background:none}
+html:root:not([data-tablas-movil=comparar]) table[data-mv] caption{display:none}
+html:root:not([data-tablas-movil=comparar]) table[data-mv] :is(thead,tfoot){position:absolute;width:1px;height:1px;margin:-1px;clip-path:inset(50%);white-space:nowrap}
+html:root:not([data-tablas-movil=comparar]) table[data-mv] tbody{display:grid;gap:8px}
+html:root:not([data-tablas-movil=comparar]) table[data-mv] tbody tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 12px;padding:12px;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface);height:auto;min-width:0}
+html:root:not([data-tablas-movil=comparar]) table[data-mv] tbody tr[data-sin-tarjeta]{display:block}
+html:root:not([data-tablas-movil=comparar]) table[data-mv] tbody tr:hover{background:var(--ui-surface)}
+html:root:not([data-tablas-movil=comparar]) table[data-mv] :is(td,th){display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0;height:auto;padding:0;border:0;background:none;text-align:left;max-width:none;font-size:13px;line-height:1.35;position:static;white-space:normal;vertical-align:top}
+html:root:not([data-tablas-movil=comparar]) table[data-mv] :is(td,th)::before{content:attr(data-label);font-size:12px;font-weight:500;color:var(--muted);line-height:1.3}
+html:root:not([data-tablas-movil=comparar]) table[data-mv] :is(td,th)[data-label=""]::before,html:root:not([data-tablas-movil=comparar]) table[data-mv] :is(td,th)[data-titulo]::before,html:root:not([data-tablas-movil=comparar]) table[data-mv] :is(td,th)[data-principal]::before{display:none}
+html:root:not([data-tablas-movil=comparar]) table[data-mv] :is(td,th)[data-titulo]{grid-column:1/3;font-weight:600;font-size:14px;color:var(--ink);padding-right:4px}
+html:root:not([data-tablas-movil=comparar]) table[data-mv] :is(td,th)[data-principal]{grid-column:3;grid-row:1;align-items:flex-end;text-align:right;font-weight:700;font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap}
+html:root:not([data-tablas-movil=comparar]) table[data-mv] :is(td,th):not([data-titulo]):not([data-principal]):has(:is(button,.btn,input,select,a.btn)){grid-column:1/-1;flex-direction:row;flex-wrap:wrap;align-items:center}
+html:root:not([data-tablas-movil=comparar]) table[data-mv] :is(td,th):not([data-titulo]):not([data-principal]):has(:is(button,.btn,input,select,a.btn))::before{display:none}
+html:root:not([data-tablas-movil=comparar]) table[data-mv] td:empty{display:none}
+/* Comparar columnas: tabla real con scroll horizontal, 1.ª columna fija y cabecera pegajosa */
+html:root[data-tablas-movil=comparar] table[data-mv]{min-width:640px}
+html:root[data-tablas-movil=comparar] :is(.ui-table-wrap,.table-wrap,.table-scroll):has(>table[data-mv]){overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+html:root[data-tablas-movil=comparar] table[data-mv] :is(td,th):first-child{position:sticky;left:0;z-index:2;background:var(--ui-surface);box-shadow:1px 0 0 var(--ui-border);min-width:104px;max-width:140px}
+html:root[data-tablas-movil=comparar] table[data-mv] thead th:first-child{z-index:3;background:var(--ui-soft)}
+html:root[data-tablas-movil=comparar] table[data-mv] :is(td,th){min-width:96px;white-space:normal}
+html:root[data-tablas-movil=comparar] table[data-mv] :is(td,th):last-child{padding-right:24px}
+
+/* ---- Mapa (/map): lienzo a ancho completo con zoom táctil; leyenda y lista debajo ---- */
+:root:root body .mp-barra{flex-wrap:wrap;gap:8px 12px;overflow:visible}
+:root:root body .workspace-content .mp-seg{padding:0;max-width:100%;overflow-x:auto;scrollbar-width:none}
+:root:root body .workspace-content .mp-seg button{min-height:44px;padding:0 8px;border:6px solid transparent;background-clip:padding-box;border-radius:999px;box-shadow:none}
+:root:root body .workspace-content .mp-seg button[aria-pressed=true]{background-color:var(--ink)}
+:root:root body .mp-zoom{inset-block-start:auto;inset-block-end:8px;inset-inline-end:8px;grid-auto-flow:column;gap:6px}
+:root:root body .workspace-content .mp-zoom button{inline-size:44px;block-size:44px;font-size:20px}
+:root:root body .mp-mapa-col{padding:4px;border-radius:12px}
+:root:root body .mp-cod{font-weight:700}
+:root:root body .mp-leyenda{gap:6px 12px}
+:root:root body .workspace-content .mp-rank button{min-height:44px;grid-template-columns:22px minmax(80px,1.2fr) minmax(40px,1fr) auto;font-size:13px}
+:root:root body .mp-lista li{min-height:24px;font-size:12px}
+:root:root body .mp-panel{min-height:0}
+:root:root body .mp-big{font-size:clamp(22px,6.4vw,26px)}
+:root:root body .mp-dos{grid-template-columns:minmax(0,1fr)}
+
+/* ---- Detalles que faltaban ---- */
+:root:root body .workspace-content .ui-chip-text{overflow-wrap:normal;word-break:normal}
+:root:root body .workspace-content :is(.fchip-x,.ui-chip-x,.dc-info){z-index:2}
+:root:root body :is(.hoy-kpi-valor,.pc-kpi-valor,.ui-kpi-value,.stat-value)[data-largo]{white-space:normal;overflow-wrap:break-word;font-size:15px;line-height:1.3}
+:root:root body .workspace-content :is(td>a:not(.btn),th>a:not(.btn),dd>a:not(.btn):only-child,ul:not(.pc-tabs)>li>a:not(.btn):only-child){display:flex;align-items:center;min-height:44px}
+:root:root body .workspace-content :is(.ac-cifra dt,.ac-et,.ac-datos dt){font-size:12px}
+:root:root body .workspace-content .copiloto-hist-btn{min-height:44px}
+:root:root body .pc-kpi-top{flex-wrap:wrap;gap:2px 8px}
+:root:root body .pc-kpi-label{overflow-wrap:normal;word-break:normal}
+
+/* Pista de scroll horizontal: el borde con más contenido se desvanece */
+:root:root body [data-mas-der]:not([data-mas-izq]){-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent)}
+:root:root body [data-mas-izq]:not([data-mas-der]){-webkit-mask-image:linear-gradient(to right,transparent,#000 28px);mask-image:linear-gradient(to right,transparent,#000 28px)}
+:root:root body [data-mas-izq][data-mas-der]{-webkit-mask-image:linear-gradient(to right,transparent,#000 28px,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(to right,transparent,#000 28px,#000 calc(100% - 28px),transparent)}
+:root:root body .workspace-content :is(.hoy-fila-m,.hoy-fila-d+.hoy-fila-m,.pc-vent-f,.num,.barlist-value,.bar-value,.pc-barra>b){white-space:nowrap;overflow-wrap:normal}
+:root:root body .workspace-content :is(.ui-kpi,.stat-card,.pc-kpi,.hoy-kpi) .delta{white-space:normal;text-align:left;max-width:100%}
+:root:root body .hoy-kpi-label,:root:root body .pc-kpi-label,:root:root body .ui-kpi-label{text-wrap:balance}
+
+/* ---- Gráficas táctiles: ancho completo, etiquetas >= 12 px, scrub con el dedo y lectura en una cinta fija ARRIBA (no bajo el dedo) ---- */
+:root:root body .chart-plot{display:flex;flex-direction:column;min-width:0;max-width:100%}
+:root:root body .chart-plot>svg{touch-action:pan-y;max-width:100%;height:auto;-webkit-tap-highlight-color:transparent}
+:root:root body .chart-plot::before{content:"Toca o desliza para ver el valor";order:-1;display:flex;align-items:center;min-height:40px;padding:0 10px;margin-bottom:4px;border-radius:8px;background:var(--ui-soft);color:var(--muted);font-size:12px}
+:root:root body .chart-plot:has(>.chart-tip)::before{display:none}
+:root:root body .chart-plot>.chart-tip{order:-1;position:static;transform:none;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;min-width:0;max-width:none;width:auto;min-height:40px;margin:0 0 4px;padding:6px 10px;border-radius:8px;box-shadow:none;background:var(--ui-soft)}
+:root:root body .chart-plot>.chart-tip[data-side]{transform:none}
+:root:root body .chart-plot>.chart-tip .chart-tip-row{flex-direction:row;align-items:baseline;gap:6px}
+:root:root body .chart-plot>.chart-tip .chart-tip-title{color:var(--ink);font-weight:600}
+:root:root body .chart-tick,:root:root body .chart-dlabel,:root:root body .chart-note{font-size:12px}
+:root:root body .chart-plot svg text{font-size:12px}
+:root:root body .col-hit{pointer-events:all}
+
+/* Heatmap: el valor de la celda tocada se lee en una línea visible (antes solo en title) */
+:root:root body .heat-sel{display:flex;align-items:center;min-height:40px;margin:6px 0 0;padding:0 10px;border-radius:8px;background:var(--ui-soft);font-size:13px;color:var(--ink)}
+:root:root body .heat-cell[data-sel]{outline:2px solid var(--ink);outline-offset:1px}
+
+/* Todo control del contenido mide al menos 44 px de alto (lo que se ve puede ser más compacto con el borde transparente) */
+:root:root:root body .workspace-content :is(button,summary,select,textarea,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])):not(.dc-info):not(.fchip-x):not(.ui-chip-x):not(.agente-round):not(.sr-only){min-height:var(--mv-hit)!important}
+:root:root body .workspace-content button:not(.dc-info):not(.fchip-x):not(.ui-chip-x):not(.agente-round):not(.sr-only){min-width:var(--mv-hit)}
+
+:root:root body .workspace-content :is(.card-title,.card-head,.ui-card-head,.pc-card-head){flex-wrap:wrap;gap:8px 12px}
+:root:root body .workspace-content :is(.card-title,.card-head,.ui-card-head,.pc-card-head)>:first-child{flex:1 1 200px;min-width:min(200px,100%)}
+:root:root body .workspace-content .ui-kpi-value small{display:inline}
+:root:root:root:root body .workspace-content summary{display:flex!important;align-items:center}
+
+:root:root body .workspace-content .notice-bar{flex-wrap:wrap;align-items:flex-start}
+:root:root body .workspace-content .notice-bar>strong{flex:1 1 calc(100% - 28px);min-width:0}
+:root:root body .workspace-content .notice-bar>span{flex:1 1 100%;min-width:0}
+:root:root body .workspace-content .segmented{padding-inline-end:2px}
+
+/* Valores que antes solo vivían en un title: visibles en el celular */
+:root:root body .mv-valor{display:block;font-size:12px;line-height:1.2;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+:root:root body .dg-mes{grid-template-rows:14px 1fr auto!important}
+:root:root body .sr-only.mv-alt{position:static;width:auto;height:auto;margin:8px 0 0;overflow:visible;clip:auto;white-space:normal}
+:root:root body .sr-only.mv-alt caption{display:block;text-align:left;font-size:12px;color:var(--muted);padding:0 0 6px}
+/* Mapa: controles de zoom en una barra bajo el lienzo (no encima de la geografía) */
+:root:root body .workspace-content .mp-lienzo{padding-bottom:52px}
+:root:root body .mp-zoom{inset-block-end:4px;inset-inline-end:4px}
+
+:root:root body .pc-tabs>li{flex:none;scroll-snap-align:center}
+:root:root body .pc-tabs>li>a{scroll-snap-align:none}
+:root:root body .pc-card[data-flush]>.mv-slot{padding:8px 14px 0;margin:0}
+html:root:not([data-tablas-movil=comparar]) .pc-card[data-flush] :is(.ui-table-wrap,.table-wrap,.table-scroll):has(>table[data-mv]){padding:8px 12px 12px}
+
+/* Botón de quitar de los chips de filtro: transparente con icono visible (antes un cuadro negro 22x22) */
+:root:root:root body .workspace-content :is(.ui-chip-x,.fchip-x){background:transparent!important;border:0!important;color:var(--ui-secondary)!important;padding:0!important;box-shadow:none!important;min-width:24px;min-height:24px}
+:root:root:root body .workspace-content :is(.ui-chip-x,.fchip-x) svg{display:block;width:12px;height:12px;stroke:currentColor;fill:none}
+
+/* Gráficas que llenan la tarjeta: en celular el SVG va en flujo, bajo la cinta de lectura */
+:root:root body .area-chart.area-fill-h{flex:none;min-height:0}
+:root:root body .area-chart.area-fill-h .chart-plot{flex:none;min-height:0}
+:root:root body .area-chart.area-fill-h .chart-plot>svg{position:static;inset:auto;width:100%;height:auto}
+:root:root body .insight-eyebrow{font-size:12px}
+:root:root body .workspace-content .segmented::after{content:"";flex:0 0 6px}
+
+
+:root:root body .workspace-content .chip{max-width:100%;white-space:normal}
+}

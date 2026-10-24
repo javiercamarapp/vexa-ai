@@ -2,6 +2,7 @@ import type {ReactNode} from 'react';
 import {guia,type GuiaId} from '../../lib/legibilidad/guias.mjs';
 import {Popover} from './overlay';
 import {Icon} from './icons';
+import {MovilContenido} from './movil-contenido';
 import s from './legibilidad.module.css';
 /** Una línea guía bajo el título (qué se ve y de dónde sale) y, si la vista tiene guía, un «¿Cómo leer esto?» en popover.
  *  `guide` toma el texto de lib/legibilidad/guias.mjs; `description` solo se usa si no hay guía. */
@@ -12,5 +13,5 @@ export function PageHeader({eyebrow,title,description,actions,guide,linea,nivel=
     <Popover label={'¿Cómo leer '+g.titulo+'?'} width={340} triggerClassName="btn btn-ghost btn-sm" trigger={<><Icon name="info" size={14}/><span className="btn-label">¿Cómo leer esto?</span></>}>
      <h2 className={s.guideTitle}>¿Cómo leer esto?</h2><ul className={s.guideList}>{g.como.map((t,i)=><li key={i}>{t}</li>)}</ul>
     </Popover></div>
-   :description&&<p className="page-header-description">{description}</p>}</div>{actions&&<div className="page-header-actions">{actions}</div>}</header>;
+   :description&&<p className="page-header-description">{description}</p>}</div>{actions&&<div className="page-header-actions">{actions}</div>}<MovilContenido/></header>;
 }

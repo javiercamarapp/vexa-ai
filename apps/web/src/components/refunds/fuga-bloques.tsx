@@ -52,7 +52,7 @@ export function IntensidadCanales({v,onReintentar}:{v:FugaVista;onReintentar:()=
      {meses.map(m=><div key={m.mes} className="dg-mes" style={{gridTemplateRows:'14px 1fr 16px'}} data-q={m.calidad} title={`${mesCorto(m.mes)}: ${num(m.reembolsos)} reembolsos / ${num(m.lineas)} líneas = ${m.intensidadPct===null?'sin dato':pct(m.intensidadPct)}${m.calidad==='parcial'?' · mes parcial':m.calidad==='posible_hueco'?' · posible hueco de exportación':''}`}>
       <span className="dg-mes-v">{m.calidad==='posible_hueco'?'?':''}</span>
       <span className="dg-mes-a">{m.calidad!=='posible_hueco'&&m.intensidadPct!==null&&<i style={{height:Math.max(3,m.intensidadPct*100/max)+'%',background:color(cc(c)-1)}}/>}</span>
-      <span className="dg-mes-m" style={{paddingTop:0}}>{mesCorto(m.mes).slice(0,3)}</span></div>)}</div>}</div>;})}
+      <span className="dg-mes-m" style={{paddingTop:0}}>{mesCorto(m.mes).slice(0,3)}<small className="mv-valor">{m.calidad==='posible_hueco'||m.intensidadPct===null?'s/d':Math.round(m.intensidadPct)+'%'}</small></span></div>)}</div>}</div>;})}
   <p className="dg-nota">{w&&w.conPct!==null?`Walmart: ~${Math.round(w.conPct)} reembolsos por cada 100 líneas (${pct(w.sinPct)} sin los ${num(w.cancelados)} cancelados). `:''}{a?`Amazon: ~${Math.round(a.intensidadPct as number)} en ${mesCorto(a.mes)}. `:''}Intensidad, no tasa por cohorte; «?» = posible hueco de exportación.</p></div>;
 }
 

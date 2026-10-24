@@ -18,7 +18,7 @@ export function MapaGeo({pais,datos,max,total,nombres,seleccion,onElegir,etiquet
  const uid=useId().replace(/[^a-zA-Z0-9]/g,''),idPunto=`mp-punto-${uid}`;
  const [cargado,setCargado]=useState<{pais:Pais;geo:GeoPais}|null>(null),[falloDe,setFalloDe]=useState<Pais|null>(null),[k,setK]=useState(1),[tip,setTip]=useState<Tip|null>(null),[ancho,setAncho]=useState(0);
  const caja=useRef<HTMLDivElement>(null),svg=useRef<SVGSVGElement>(null),g=useRef<SVGGElement>(null);
- const cam=useRef<Camara>({x:0,y:0,k:1}),gesto=useRef<{cx:number;cy:number;mov:number;captura:boolean}|null>(null),arrastro=useRef(false),sync=useRef<ReturnType<typeof setTimeout>|null>(null);
+ const cam=useRef<Camara>({x:0,y:0,k:1}),dedos=useRef(new Map<number,{x:number;y:number}>()),distPrev=useRef(0),gesto=useRef<{cx:number;cy:number;mov:number;captura:boolean}|null>(null),arrastro=useRef(false),sync=useRef<ReturnType<typeof setTimeout>|null>(null);
  const geo=cargado?.pais===pais?cargado.geo:null,fallo=falloDe===pais;
  const vb=geo?.viewBox??VISTA_PAIS[pais];
  useEffect(()=>{const el=caja.current;if(!el)return;const ro=new ResizeObserver(()=>setAncho(el.clientWidth));ro.observe(el);return()=>ro.disconnect();},[]);
@@ -50,14 +50,19 @@ export function MapaGeo({pais,datos,max,total,nombres,seleccion,onElegir,etiquet
   // eslint-disable-next-line react-hooks/exhaustive-deps -- aViewBox solo lee refs
  },[vb,mover,geo]);
 
- const abajo=(e:RPointerEvent<SVGSVGElement>)=>{arrastro.current=false;gesto.current={cx:e.clientX,cy:e.clientY,mov:0,captura:false};};
+ const abajo=(e:RPointerEvent<SVGSVGElement>)=>{arrastro.current=false;if(e.pointerType==='touch'){dedos.current.set(e.pointerId,{x:e.clientX,y:e.clientY});if(dedos.current.size===2){const[a,b]=[...dedos.current.values()];distPrev.current=Math.hypot(a.x-b.x,a.y-b.y);}}gesto.current={cx:e.clientX,cy:e.clientY,mov:0,captura:false};};
  const mueve=(e:RPointerEvent<SVGSVGElement>)=>{
+  // Pellizco con dos dedos (táctil): acerca o aleja alrededor del punto medio.
+  if(e.pointerType==='touch'&&dedos.current.has(e.pointerId)){dedos.current.set(e.pointerId,{x:e.clientX,y:e.clientY});
+   if(dedos.current.size===2){const[p,q]=[...dedos.current.values()],d=Math.hypot(p.x-q.x,p.y-q.y);
+    if(distPrev.current>0&&d>0){const{px,py}=aViewBox((p.x+q.x)/2,(p.y+q.y)/2);arrastro.current=true;setTip(null);mover(zoomEnPunto(cam.current,px,py,d/distPrev.current,vb),false);}
+    distPrev.current=d;gesto.current=null;return;}}
   const a=gesto.current;
   if(a){const r=svg.current?.getBoundingClientRect(),f=r&&r.width?r.width/vb.w:1,dx=e.clientX-a.cx,dy=e.clientY-a.cy;a.cx=e.clientX;a.cy=e.clientY;a.mov+=Math.abs(dx)+Math.abs(dy);
    if(a.mov>5&&cam.current.k>1){arrastro.current=true;if(!a.captura){a.captura=true;svg.current?.setPointerCapture?.(e.pointerId);}
     cam.current=limitarCamara({...cam.current,x:cam.current.x+dx/f,y:cam.current.y+dy/f},vb);aplicar(false);setTip(null);}}
  };
- const suelta=()=>{if(gesto.current?.captura)sincronizar(true);gesto.current=null;};
+ const suelta=(e?:RPointerEvent<SVGSVGElement>)=>{if(e)dedos.current.delete(e.pointerId);if(dedos.current.size<2)distPrev.current=0;if(gesto.current?.captura)sincronizar(true);gesto.current=null;};
  const sobre=(clave:string)=>(e:RPointerEvent<SVGPathElement>)=>{if(e.pointerType!=='mouse'||gesto.current?.captura)return;const c=caja.current?.getBoundingClientRect();if(c)setTip({clave,x:e.clientX-c.left,y:e.clientY-c.top});};
  const tecla=(clave:string)=>(e:KeyboardEvent<SVGPathElement>)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onElegir(clave);}};
  const clic=(clave:string)=>()=>{if(arrastro.current)return;onElegir(clave);};
@@ -75,7 +80,7 @@ export function MapaGeo({pais,datos,max,total,nombres,seleccion,onElegir,etiquet
    <button type="button" onClick={()=>mover({x:0,y:0,k:1},true)} disabled={!geo||k<=1} aria-label="Ver todo el país">⤢</button>
   </div>
   <svg ref={svg} className="mp-svg" viewBox={`0 0 ${vb.w} ${vb.h}`} role="group" aria-label={etiqueta} data-zoom={k>1?'on':'off'} data-listo={geo?'si':'no'}
-   onPointerDown={abajo} onPointerMove={mueve} onPointerUp={suelta} onPointerCancel={suelta} onPointerLeave={()=>{setTip(null);}}>
+   onPointerDown={abajo} onPointerMove={mueve} onPointerUp={suelta} onPointerCancel={suelta} onPointerLeave={()=>{setTip(null);}} onLostPointerCapture={suelta}>
    <defs><pattern id={idPunto} width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="1.6" cy="1.6" r="0.9" className="mp-punto"/></pattern></defs>
    <g ref={g} className="mp-g">
     {pintadas.map(({r,d,tipo,paso},i)=>{
@@ -88,7 +93,7 @@ export function MapaGeo({pais,datos,max,total,nombres,seleccion,onElegir,etiquet
     {/* El elegido se repite encima, sin foco ni puntero, para que su borde rojo no lo tapen los vecinos. */}
     {elegida&&<path d={elegida.r.path} className="mp-reg mp-sobre" vectorEffect="non-scaling-stroke" aria-hidden="true"/>}
     {pintadas.filter(p=>p.tipo==='dato'&&cabeEtiqueta(p.r,k*pxPorU)).map(({r,paso})=>
-     <text key={r.clave} x={r.cx} y={r.cy} className="mp-cod" data-paso={paso} style={{fontSize:`${11/(k*pxPorU)}px`}} textAnchor="middle" dominantBaseline="central" aria-hidden="true">{r.codigo}</text>)}
+     <text key={r.clave} x={r.cx} y={r.cy} className="mp-cod" data-paso={paso} style={{fontSize:`${12/(k*pxPorU)}px`}} textAnchor="middle" dominantBaseline="central" aria-hidden="true">{r.codigo}</text>)}
    </g>
   </svg>
   {!geo&&<div className={'mp-carga'+(fallo?' mp-carga-fallo':'')} role="status">{fallo?'No se pudo cargar el mapa. La tabla de abajo tiene los mismos datos.':<RovaqCargando compacto mensaje="Cargando el mapa"/>}</div>}

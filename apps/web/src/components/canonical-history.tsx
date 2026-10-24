@@ -1,5 +1,5 @@
+'use client';
 import {useAutoRefresh} from './ui/use-auto-refresh';
- 'use client';
 import {useEffect,useState} from 'react';
 type Head={id:string;state:string;version:number;selected_revision_id:string|null};
 type History={head:Head;selected_hash:string|null;revisions:{id:string;hash:string;snapshot:unknown}[]};

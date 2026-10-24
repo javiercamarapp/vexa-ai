@@ -1,6 +1,6 @@
+"use client";
 import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
-"use client";
 import {useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {pedirSwr,leerSwr,claveSwr,invalidarSwr} from '../lib/workspace/swr.mjs';
 import {LineaCache} from './ui/linea-cache';

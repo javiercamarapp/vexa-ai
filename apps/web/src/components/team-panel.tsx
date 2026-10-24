@@ -1,6 +1,6 @@
+'use client';
 import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
- 'use client';
 import {ConfirmationDialog} from './confirmation-dialog';
 import {FormEvent,useCallback,useEffect,useRef,useState} from 'react';
 type Item={id:string;email:string;role:string;status:string;version:number;delivery?:string;expiresAt?:string};

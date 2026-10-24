@@ -97,6 +97,18 @@ test('servicio contra Postgres real: carga (precalculada y en vivo), canal, SLA 
       assert.equal(v.carga.origen, 'en_vivo', 'el mes de jun no está en la tabla precalculada: no se mezcla, se calcula en vivo (exacto)');
       q(h, `insert into public.insight_inbound_load(tenant_id,month,dow,hour,n,refreshed_at) values('${TENANT_A}','2026-06-01',3,9,2,now())`);
       v = await repo().get(); assert.equal(v.carga.origen, 'precalculado'); assert.equal(v.carga.total, 17);
+      // SLA precalculado (20261125000000): mismas cifras que el cálculo en vivo; sin refrescar o sin la tabla, en vivo
+      const slaVivo = (await repo().get()).sla; assert.equal(slaVivo.origen, 'en_vivo'); assert.equal(slaVivo.hilos, 6);
+      const mig = h.file(path.join(HERE, '../../../supabase/migrations/20261125000000_perf_frio_precalculos.sql')); assert.equal(mig.status, 0, String(mig.stderr));
+      assert.equal((await repo().get()).sla.origen, 'en_vivo', 'tabla vacía: en vivo');
+      let rp = h.psql(`select public.refresh_perf_frio('${TENANT_A}','sla')`); assert.ok(rp.ok, rp.err);
+      const slaPre = (await repo().get()).sla; assert.equal(slaPre.origen, 'precalculado'); assert.ok(slaPre.precalculadoAt);
+      const sinOrigen = ({origen, precalculadoAt, ...r}) => r;
+      assert.deepEqual(sinOrigen(slaPre), sinOrigen(slaVivo), 'el precálculo no cambia ninguna cifra'); assert.deepEqual([slaPre.hilos, slaPre.medibles, slaPre.conRespuestaRegistrada, slaPre.dentro], [6, 5, 3, 2]);
+      rp = h.psql(`select public.refresh_perf_frio('${TENANT_A}','sla')`); assert.match(rp.out, /noop/, 'sin cambios en el origen no recalcula');
+      assert.ok(!JSON.stringify(slaPre).match(/hm\d|hs\d|\bt[1-6]\b/), 'sin identificadores');
+      rp = h.psql(`set role vexa_backend; select public.refresh_perf_frio('${TENANT_A}')`); assert.equal(rp.ok, false); assert.match(rp.err, /denied/);
+      rp = h.psql(`set role vexa_backend; insert into public.insight_thread_sla(tenant_id,thread_id,refreshed_at) values('${TENANT_A}','x',now())`); assert.equal(rp.ok, false, 'la app no escribe');
     } finally { await cliente.end(); }
     const down = h.file(DOWN); assert.equal(down.status, 0, String(down.stderr));
     assert.equal(q(h, `select to_regclass('public.insight_inbound_load') is null`), 't');
@@ -106,4 +118,23 @@ test('servicio: sin tablas ni datos responde «no disponible» por parte, nunca 
   const db = {async transaction(_m, work) { return work({tenantId: 'syn', query: async t => { t = String(t); if (/current_setting\('statement_timeout'\)/.test(t)) return {rows: [{v: '0'}]}; if (/^(SAVEPOINT|RELEASE|ROLLBACK)/.test(t) || /set_config/.test(t)) return {rows: []}; throw new Error('57014'); }}); }};
   const v = await C.createWorkloadRepository({database: db}).get();
   assert.deepEqual(v.parts, {carga: 'unavailable', canal: 'unavailable', sla: 'unavailable', cierre: 'unavailable'});
+});
+
+// ------------------------------------------------------------------------------------------------ precalculado-frio (puro)
+import {vigenteONull, pedidosDe} from '../precalculado-frio.mjs';
+test('precálculo del libro: solo vale si su corte coincide con el último movimiento del libro; libro vacío = null', () => {
+  const r = {ch: 'amazon', sku: 'A', month: '2026-08', status: 'settled', currency: 'USD', exponent: 2, n: 2, sinMonto: 1, amount: '500', first_day: '2026-08-01', last_day: '2026-08-02', refreshed_at: '2026-10-24T10:00:00Z', source_watermark: '2026-10-19T06:32:20.376Z'};
+  assert.equal(vigenteONull({vivo: null, reembolsos: [r], lineas: []}), null);
+  assert.equal(vigenteONull({vivo: '2026-10-19T06:32:20.376Z', reembolsos: [], lineas: []}), null);
+  assert.equal(vigenteONull({vivo: '2026-10-20T00:00:00Z', reembolsos: [r], lineas: []}), null, 'el libro cambió después del refresco');
+  const v = vigenteONull({vivo: new Date('2026-10-19T06:32:20.376Z'), reembolsos: [r], lineas: []});
+  assert.equal(v.reembolsos.length, 1); assert.equal(v.reembolsos[0].source_watermark, undefined); assert.equal(v.refrescadoAt, '2026-10-24T10:00:00.000Z'); assert.equal(v.hayRevisiones, false);
+});
+test('pedidos: se reconstruyen los grupos (sku, mes, total) y, con revisiones, solo cuenta la última de cada línea', () => {
+  const l = [{ch: 'amazon', sku: 'A', month: '2026-07', n_all: 3, revised_all: 1, n_latest: 2, revised_latest: 0}, {ch: 'amazon', sku: 'B', month: '2026-08', n_all: 2, revised_all: 0, n_latest: 2, revised_latest: 0}, {ch: 'walmart', sku: 'A', month: '2026-08', n_all: 1, revised_all: 0, n_latest: 1, revised_latest: 0}];
+  const todo = pedidosDe(l, false), g = (arr, k, ch, x) => arr.find(r => r.kind === k && r.ch === ch && (r.sku === x || r.month === x));
+  assert.equal(todo.find(r => r.kind === 'total').n, 6); assert.equal(todo.find(r => r.kind === 'total').revised, 1);
+  assert.equal(g(todo, 'sku', 'amazon', 'A').n, 3); assert.equal(g(todo, 'mes', 'amazon', '2026-08').n, 2); assert.equal(g(todo, 'mes', 'walmart', '2026-08').n, 1);
+  const ult = pedidosDe(l, true); assert.equal(ult.find(r => r.kind === 'total').n, 5); assert.equal(ult.find(r => r.kind === 'total').revised, 0); assert.equal(g(ult, 'sku', 'amazon', 'A').n, 2);
+  assert.deepEqual(pedidosDe([], false), [{kind: 'total', ch: null, sku: null, month: null, n: 0, revised: 0}]);
 });

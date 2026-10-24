@@ -5,9 +5,10 @@
 // Vocabulario de honestidad: «Observado» = hecho del libro o del Tracker; «intensidad» = reembolsos del mes / líneas del mes (NO es tasa por cohorte); el libro no trae cantidad.
 import {WorkspaceError} from './contracts.mjs';
 import {guarded} from './catalog-overview.mjs';
+import {leerLibroPrecalculado} from './precalculado-frio.mjs';
 import {readConversationVolume} from '../insights/reader.mjs';
 
-export const FUGA_BUDGETS_MS = Object.freeze({refunds: 9000, orders: 12000, windows: 4000, tracker: 9000, repeat: 4000, conversations: 2500});
+export const FUGA_BUDGETS_MS = Object.freeze({refunds: 9000, orders: 12000, windows: 4000, tracker: 9000, repeat: 4000, conversations: 2500, precalc: 2500});
 export const SKU_SUFFIX = /(-WM[0-9]+|-[0-9]{3}A-[0-9]{3}|-NEW)$/;
 export const TRACKER_SHEETS = Object.freeze({'Refunds': 'reembolsos', 'Warranty Tools': 'garantiaHerramientas', 'Warranty Parts': 'garantiaPartes', 'Return Labels': 'etiquetas'});
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
@@ -263,7 +264,9 @@ export function createRefundLeakRepository({database, now = () => new Date(), bu
         const SKU3 = "regexp_replace(upper(split_part(external_id,'|',3)),'(-WM[0-9]+|-[0-9]{3}A-[0-9]{3}|-NEW)$','')";
         const SKU4 = "regexp_replace(upper(split_part(external_id,'|',4)),'(-WM[0-9]+|-[0-9]{3}A-[0-9]{3}|-NEW)$','')";
         const CH = "CASE WHEN external_id LIKE 'amazon|%' THEN 'amazon' WHEN external_id LIKE 'walmart|%' THEN 'walmart' WHEN external_id LIKE 'gid://shopify/%' THEN 'shopify' WHEN external_id LIKE 'mirakl_bestbuy%' THEN 'bestbuy' ELSE 'otro' END";
-        const reembolsos = await guarded(s, dl('refunds'), 'fuga_refunds', async () => (await s.query(
+        // Sin periodo: tabla precalculada del libro (20261125000000) si coincide con el último movimiento del libro; con periodo (días exactos) o sin precálculo: en vivo con tope.
+        const pre = !dateStart && !dateEnd ? await leerLibroPrecalculado(s, dl('precalc')) : null;
+        const reembolsos = pre ? pre.reembolsos : await guarded(s, dl('refunds'), 'fuga_refunds', async () => (await s.query(
           `SELECT ${CH} AS ch, ${SKU4} AS sku, to_char(effective_at AT TIME ZONE 'UTC','YYYY-MM') AS month, status, currency, exponent::int AS exponent, count(*)::int AS n,
              count(*) FILTER (WHERE amount_minor IS NULL)::int AS "sinMonto", coalesce(sum(amount_minor),0)::text AS amount,
              to_char(min(effective_at) AT TIME ZONE 'UTC','YYYY-MM-DD') AS first_day, to_char(max(effective_at) AT TIME ZONE 'UTC','YYYY-MM-DD') AS last_day
@@ -277,9 +280,9 @@ export function createRefundLeakRepository({database, now = () => new Date(), bu
              WHERE tenant_id=$1 AND kind='order' AND currency='USD' AND exponent=2 AND ($2::timestamptz IS NULL OR effective_at>=$2) AND ($3::timestamptz IS NULL OR effective_at<$3)
              ${ultima ? 'AND NOT EXISTS (SELECT 1 FROM public.economic_ledger_entries l2 WHERE l2.tenant_id=e.tenant_id AND l2.entity_id=e.entity_id AND l2.revision>e.revision)' : ''}) x
            WHERE ch IN ('amazon','walmart') GROUP BY GROUPING SETS ((ch,sku),(ch,month),()) LIMIT 20000`;
-        let pedidos = await guarded(s, dl('orders'), 'fuga_orders', async () => (await s.query(pedidosSql(false), [s.tenantId, ...cut])).rows);
+        let pedidos = pre ? (pre.hayRevisiones ? pre.pedidosUltima : pre.pedidos) : await guarded(s, dl('orders'), 'fuga_orders', async () => (await s.query(pedidosSql(false), [s.tenantId, ...cut])).rows);
         // Si hay revisiones posteriores, solo cuenta la última de cada línea (camino más lento); si no alcanza el tiempo, las líneas quedan «no disponibles».
-        if (pedidos && pedidos.some(r => r.kind === 'total' && Number(r.revised) > 0)) pedidos = await guarded(s, dl('orders'), 'fuga_orders2', async () => (await s.query(pedidosSql(true), [s.tenantId, ...cut])).rows);
+        if (!pre && pedidos && pedidos.some(r => r.kind === 'total' && Number(r.revised) > 0)) pedidos = await guarded(s, dl('orders'), 'fuga_orders2', async () => (await s.query(pedidosSql(true), [s.tenantId, ...cut])).rows);
 
         const fuentes = await guarded(s, dl('windows'), 'fuga_windows', async () => (await s.query(
           `SELECT DISTINCT ON (source_id) source_id, name, evidence_type, complete, window_start, window_end, watermark, active
@@ -382,7 +385,7 @@ export function createRefundLeakRepository({database, now = () => new Date(), bu
         const cambios = armarCambios({intensidad: intensidad.status === 'ok' ? intensidad.canales : null, conversaciones: convs || null});
 
         return {
-          generatedAt: hoy.toISOString(), scope: {dateStart, dateEnd, currency: 'USD'}, class: 'observed',
+          generatedAt: hoy.toISOString(), scope: {dateStart, dateEnd, currency: 'USD'}, class: 'observed', origenLibro: pre ? 'precalculado' : 'en_vivo', ...(pre ? {libroPrecalculadoAt: pre.refrescadoAt} : {}),
           ventanas, todasParciales: ventanas.length > 0 && ventanas.every(v => !v.completa),
           titular, acumulado, skus, intensidad, tracker, contactoRepetido, cambios,
           parts: {refunds: reembolsos ? 'ok' : 'unavailable', orders: pedidos ? 'ok' : 'unavailable', windows: fuentes ? 'ok' : 'unavailable', tracker: trackerRows ? 'ok' : 'unavailable', repeat: repetido === false ? 'not_computed' : repetido ? 'ok' : 'unavailable', conversations: convs === false ? 'not_computed' : convs ? 'ok' : 'unavailable'},

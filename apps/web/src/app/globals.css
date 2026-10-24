@@ -249,7 +249,7 @@ body:has(.workspace-shell) > .skip-link { display:none; }
 :where(.workspace-content) :where(button:not(.ui-reset):not(:disabled):hover) { background:var(--ui-action-hover); color:var(--ui-action-ink); border-color:var(--ui-action-hover); }
 :where(.workspace-content) :where(button:disabled) { opacity:.55; box-shadow:none; }
 .workspace-content :where(input,select,textarea):disabled { background:var(--ui-soft); color:var(--muted); }
-:where(.workspace-content) :where(button:not(.ui-reset))+:where(button:not(.ui-reset)) { margin-top:8px; }
+/* (sin margin-top entre botones contiguos: movía las opciones de los controles segmentados y de las barras de acciones; el espacio lo da `gap`) */
 :where(.workspace-content :where(form,fieldset))>:where(button+button) { margin-top:0; }
 .workspace-content :where(article:not(.record-card)) { padding:16px; border:1px solid var(--ui-border); border-radius:12px; background:var(--ui-surface); margin:16px 0; box-shadow:0 1px 3px #11181304; }
 .workspace-content article :where(h2,h3):first-child { margin-top:0; }

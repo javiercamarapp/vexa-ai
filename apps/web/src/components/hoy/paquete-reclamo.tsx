@@ -28,8 +28,9 @@ export function PaqueteReclamo({open,onClose,fuga,sku}:{open:boolean;onClose:()=
  return <Drawer open={open} onClose={onClose} size="lg" title={`Paquete de reclamo · ${sku}`} subtitle="Se arma solo a partir del libro y del Tracker; tú lo revisas y lo envías."
   footer={<>{aviso&&<span className="ov-foot-note" role="status">{aviso}</span>}<LinkButton href="/refunds#fg-acciones" variant="ghost" icon={<Arrow/>}>Abrir expediente completo</LinkButton><Button variant="primary" icon={<Download/>} disabled={!listo||!datos?.p} onClick={descargar}>Descargar paquete</Button></>}>
   {!datos||!fila?<p className="state" role="status">No hay datos suficientes de este SKU para armar el paquete.</p>:<>
-   <ol className="trace-list pq-pasos" aria-label="Progreso del paquete">{PASOS.map((t,i)=><li key={t} className="trace-step" data-done={i<paso} style={{display:i<=paso||listo?undefined:'none'}}>
+   {!listo?<ol className="trace-list pq-pasos" aria-label="Progreso del paquete">{PASOS.map((t,i)=><li key={t} className="trace-step" data-done={i<paso} style={{display:i<=paso?undefined:'none'}}>
     <span className="trace-icon" aria-hidden="true">{i<paso?<Icon name="check" size={12}/>:<span className="agente-dot"/>}</span><div className="trace-body"><p className="trace-title">{t}{i<paso?'':'…'}</p></div></li>)}</ol>
+    :<p className="pq-listo" role="status"><Icon name="check" size={14}/>Paquete listo · {PASOS.length} pasos verificados con el libro y el Tracker</p>}
    {listo&&<>
     <dl className="pq-kpis"><div><dt>Devuelto (bruto)</dt><dd>{usd(fila.usdBrutoMinor)}</dd></div><div><dt>Reembolsos</dt><dd>{fila.n.toLocaleString('es-MX')}</dd></div><div><dt>Sin cancelados</dt><dd>{usd(fila.usdNetoMinor)}</dd></div><div><dt>Posición</dt><dd>#{fila.pos}</dd></div></dl>
     <section className="pq-sec" aria-label="Vista previa del paquete"><h3>Vista previa del paquete</h3><iframe title={`Vista previa del paquete de ${sku}`} sandbox="" srcDoc={datos.p?.html.contenido} className="pq-previa"/></section>

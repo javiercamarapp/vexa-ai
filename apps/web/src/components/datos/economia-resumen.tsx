@@ -32,7 +32,7 @@ const mesCorto=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'short',timeZo
 const mesLargo=(m:string)=>new Intl.DateTimeFormat('es-MX',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
 const pctBps=(b:number|null)=>b===null?'No disponible':porcentaje(b/100);
 
-/** Pantalla «Dinero · Preparar»: primero el estado de lo publicado y su cobertura; los formularios que escriben quedan plegados abajo. */
+/** Pantalla «Cortes publicados»: primero el estado de lo publicado y su cobertura; los formularios que escriben quedan plegados abajo. */
 export function EconomiaResumen({query='',puedePreparar,children}:{query?:string;puedePreparar:boolean;children?:ReactNode}){
  const bundle=useJson<Bundle>(urlCortePublicado(query),acceptBundle);
  const rep=useJson<ReportState>('/cfo/data/report',acceptReport);
@@ -54,7 +54,7 @@ export function EconomiaResumen({query='',puedePreparar,children}:{query?:string
  const reintentar=()=>{bundle.reload();rep.reload();};
  if(ocupado&&!report)return <RovaqCargando mensaje=""/>;
  return <section className="dg-page">
-  <PageHeader eyebrow="Dinero" title="Dinero · Preparar" description="Qué está publicado, qué tan completo es y qué falta antes de publicar un corte nuevo."/>
+  <PageHeader eyebrow="Datos y confianza" title="Cortes publicados" description="Qué está publicado, qué tan completo es y qué falta antes de publicar un corte nuevo."/>
 
   <Card title="Corte publicado" description="Lo que hoy leen el Resumen y el Brief ejecutivo" actions={corte.disponible?<KindBadge kind="observed"/>:undefined}>
    {bundle.busy&&!bundle.data?<SkeletonStats count={4}/>

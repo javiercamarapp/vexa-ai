@@ -4,7 +4,7 @@ import {EconomiaResumen} from '../../../components/datos/economia-resumen';
 import {workspaceSession} from '../../../lib/workspace/server';
 import {economicInitialScope} from '../../../lib/economic-scope';
 import {OrderMappings} from '../../../components/workspace/order-mappings';
-export const metadata={title:'Dinero · Preparar'};
+export const metadata={title:'Cortes publicados'};
 // Solo `next dev` con VEXA_UI_FIXTURES=1 (auditoría visual local): organización sintética, sin Supabase.
 const FIXTURES=process.env.NODE_ENV==='development'&&process.env.VEXA_UI_FIXTURES==='1';
 const FIXTURE_TENANT='00000000-0000-4000-8000-000000000001';

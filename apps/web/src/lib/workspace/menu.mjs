@@ -32,7 +32,7 @@ export const MENU = Object.freeze([
     { href: '/imports', etiqueta: 'Importaciones', icono: 'imports', alias: ['/jobs'] },
     { href: '/history', etiqueta: 'Histórico e identidad', icono: 'history' },
     { href: '/analysis', etiqueta: 'Análisis', icono: 'analysis', titulo: 'Análisis de conversaciones' },
-    { href: '/economics', etiqueta: 'Preparar', icono: 'imports', titulo: 'Dinero · Preparar', roles: DINERO },
+    { href: '/economics', etiqueta: 'Cortes publicados', icono: 'imports', titulo: 'Cortes publicados', roles: DINERO },
     { href: '/explorer', etiqueta: 'Explorador', icono: 'explorer' },
   ] },
   { tipo: 'grupo', clave: 'administracion', etiqueta: 'Administración', roles: SOLO_PROPIETARIO, items: [

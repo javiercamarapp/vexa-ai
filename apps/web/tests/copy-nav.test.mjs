@@ -13,11 +13,11 @@ test('los avisos que ve el cliente dicen Rovaq, nunca VEXA (catálogo de prefere
 test('el menú no usa jerga: ni «Gestión económica», ni «Gestionar problemas», ni «Intervenciones» como rótulo', () => {
   const rotulos = MENU.flatMap((e) => (e.tipo === 'grupo' ? [e.etiqueta, ...e.items.map((i) => i.etiqueta)] : [e.etiqueta]));
   for (const malo of ['Gestión económica', 'Gestionar problemas', 'Intervenciones', 'Notificaciones']) assert.ok(!rotulos.includes(malo), malo);
-  assert.ok(rotulos.includes('Acciones') && rotulos.includes('Preparar'));
+  assert.ok(rotulos.includes('Acciones') && rotulos.includes('Cortes publicados'));
 });
 test('el título de pestaña de cada pantalla renombrada coincide con el menú', () => {
-  const metas = {'src/app/(workspace)/cfo/page.tsx': 'CFO', 'src/app/(workspace)/economics/page.tsx': 'Dinero · Preparar', 'src/app/(workspace)/interventions/page.tsx': 'Acciones', 'src/app/(workspace)/connections/page.tsx': 'Fuentes conectadas', 'src/app/(workspace)/history/page.tsx': 'Histórico e identidad'};
+  const metas = {'src/app/(workspace)/cfo/page.tsx': 'CFO', 'src/app/(workspace)/economics/page.tsx': 'Cortes publicados', 'src/app/(workspace)/interventions/page.tsx': 'Acciones', 'src/app/(workspace)/connections/page.tsx': 'Fuentes conectadas', 'src/app/(workspace)/history/page.tsx': 'Histórico e identidad'};
   for (const [f, titulo] of Object.entries(metas)) assert.match(leer(f), new RegExp("title: ?'" + titulo + "'"), f);
-  assert.equal(tituloDePantalla('/cfo'), 'CFO'); assert.equal(tituloDePantalla('/economics'), 'Dinero · Preparar'); assert.equal(tituloDePantalla('/interventions'), 'Acciones');
+  assert.equal(tituloDePantalla('/cfo'), 'CFO'); assert.equal(tituloDePantalla('/economics'), 'Cortes publicados'); assert.equal(tituloDePantalla('/interventions'), 'Acciones');
   assert.equal(tituloDePantalla('/connections'), 'Fuentes conectadas'); assert.equal(tituloDePantalla('/history'), 'Histórico e identidad');
 });

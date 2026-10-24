@@ -1,0 +1,12 @@
+import type {DineroPP, PuntoPP, TemaPP} from './pain-points.d.mts';
+export const TEMAS: readonly TemaPP[];
+export const CLASES: Record<'O' | 'E' | 'I', string>;
+export const TOP_SKU: number;
+export const NOMBRE_CANAL_PP: Record<string, string>;
+export function dineroUsd(minor: string | bigint | number, extra?: Record<string, unknown>): Extract<DineroPP, {sinDato: false}>;
+export function sinDato(causa: 'sin_fuente' | 'no_disponible' | 'no_aplica', motivo: string): Extract<DineroPP, {sinDato: true}>;
+export function agregarReembolsos(rows: unknown[]): {tot: Record<string, bigint | number>; canales: Map<string, Record<string, unknown>>; skus: Map<string, Record<string, unknown>>; otras: unknown[]; desde: string | null; hasta: string | null};
+export function agregarOrdenes(rows: unknown[]): {tot: Record<string, bigint | number>; monedas: unknown[]; canales: Map<string, Record<string, unknown>>; skus: Map<string, Record<string, unknown>>; desde: string | null; hasta: string | null};
+export function agregarTracker(t: unknown): {n: number; nAmount: number; minor: bigint; total: number; estados: Record<string, number>} | null;
+export function armarPuntos(f: Record<string, unknown>): PuntoPP[];
+export function ordenPuntos(a: PuntoPP, b: PuntoPP): number;

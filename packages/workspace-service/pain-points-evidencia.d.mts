@@ -1,0 +1,34 @@
+export type FilaEvidencia = {fecha: string | null; canal: string | null; sku: string | null; estado: string | null; motivo: string | null; moneda: string | null; importeMinor: string | null; ref: string | null; origen: string | null};
+export type VerificacionEvidencia = {cifraMinor: string | null; sumaMinor: string | null; coincide: boolean | null; marca: '✓' | '✗' | '—'; diferenciaMinor: string | null};
+export type CruceEvidencia = {sku: string; mes: string; libro: {n: number; minor: string}; tracker: {n: number; minor: string; negados: number}};
+export type EvidenciaVista = {
+  id: string; nombre: string; tema: string; clase: 'O' | 'E' | 'I'; fuente: {etiqueta: string; tabla: string | null}; periodo: {desde: string; hasta: string} | null; corte: string | null;
+  columnas: readonly {key: string; label: string}[]; sinPII: true; generatedAt: string; proxy: {de: string; rotulo: string} | null;
+  estado: 'ok' | 'empty' | 'sin_filas' | 'sin_dato' | 'unavailable'; motivo?: string; nota?: string; truncado?: boolean;
+  filas: FilaEvidencia[]; nextCursor: string | null;
+  total: {n: number; conMonto: number; sinMonto: number; minor: string; currency: string; exponent: number; supuesta?: true} | null;
+  verificacion: VerificacionEvidencia; cruce: CruceEvidencia[];
+};
+export const EVIDENCIA_BUDGETS_MS: Readonly<Record<string, number>>;
+export const PAGINA: number;
+export const TOPE_CSV: number;
+export const COLUMNAS: readonly {key: string; label: string}[];
+export const COLUMNAS_PERMITIDAS: readonly string[];
+export function definicionDe(id: string): Record<string, unknown> | null;
+export function soloPermitidas(fila: Record<string, unknown>): FilaEvidencia;
+export function condicionesLibro(def: Record<string, unknown>): {w: string[]; p: unknown[]};
+export function sqlPaginaLibro(def: Record<string, unknown>, o: {cursor: {t: string; e: string} | null; limite: number}): {sql: string; p: unknown[]};
+export function sqlTotalLibro(def: Record<string, unknown>): {sql: string; p: unknown[]};
+export function filaLibro(r: Record<string, unknown>, def: Record<string, unknown>): FilaEvidencia;
+export function leerTracker(s: unknown, hojas: string[], hoy?: Date): Promise<Record<string, unknown>[]>;
+export function filaTracker(f: Record<string, unknown>): FilaEvidencia;
+export const ordenTracker: (a: {fecha: string | null; fila: number}, b: {fecha: string | null; fila: number}) => number;
+export function codificarCursor(id: string, c: Record<string, unknown>): string;
+export function decodificarCursor(id: string, raw: string | null | undefined): {t: string; e: string} | {i: number} | null;
+export function aCsv(filas: FilaEvidencia[], meta?: {clase?: string; fuente?: string; corte?: string}): string;
+export function armarCruce(o: {skus: string[]; libro: unknown[]; tracker: unknown[]; canal?: string | null}): CruceEvidencia[];
+export function verificar(cifraMinor: string | null | undefined, sumaMinor: string | null | undefined): VerificacionEvidencia;
+export function createPainEvidenceRepository(o: {database: unknown; now?: () => Date; budgets?: Record<string, number>; resumen?: (() => Promise<unknown>) | null}): {
+  get(q: {id: string; cursor?: string | null; todo?: boolean}): Promise<EvidenciaVista>;
+  csv(q: {id: string}): Promise<{estado: string; nombre: string; filas: number; truncado: boolean; total: EvidenciaVista['total']; verificacion: VerificacionEvidencia; contenido: string}>;
+};

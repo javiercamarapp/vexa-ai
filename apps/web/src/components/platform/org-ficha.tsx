@@ -48,7 +48,7 @@ export function OrgFicha({id, initial}: {id: string; initial: OrgFichaState}) {
     <PageHeader eyebrow="Ficha de cliente" title={d.organization.name} description={`Creada ${when(d.organization.createdAt).split(',')[0]} · generada ${when(d.generatedAt)}. Solo conteos, estados y gasto: sin contenido del cliente.`}
       actions={<><OpenOrganizationButton id={d.organization.id} /><SupportButton client={client} /><Button onClick={() => setTeam(t => !t)} aria-expanded={team}>{team ? 'Ocultar equipo' : 'Gestionar equipo'}</Button><LinkButton href="/platform/organizaciones">Todas las organizaciones</LinkButton></>} />
     {error && <p className="state state-error" role="alert">{error}</p>}
-    <div className="pf-tiles reveal">
+    <div className="pf-tiles pf-tiles-6 reveal">
       <Tile label="Salud" value={<Pill tone={LEVEL_TONE[level]}>{LEVEL_LABEL[level]}</Pill>} kind="observed" foot={sig.length ? `${sig.length} señal(es)` : 'Sin señales de atención'} />
       <Tile label="Equipo" value={int(d.members.total)} kind="observed" foot={`${d.members.owner} dueño(s) · ${d.members.analyst} analista(s) · ${d.members.operator} operador(es) · ${d.members.viewer} lector(es)`} />
       <Tile label="Asientos del ledger" value={int(d.ledger.rows)} kind="observed" foot={`Último: ${relative(d.ledger.lastAt, now)}`} />

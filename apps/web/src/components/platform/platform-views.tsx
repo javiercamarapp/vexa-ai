@@ -66,7 +66,7 @@ export function Overview({initial}: Props) {
       const k = v.kpis, attention = v.organizations.filter(o => o.health.level !== 'healthy'), ai: BarDatum[] = v.aiCosts.filter(c => c.pctBps !== null).slice(0, 5).map(c => ({key: c.id, label: c.name, value: c.pctBps ?? 0, display: `${c.spent} · ${pct(c.pctBps)}`, kind: 'observed' as const}));
       const loaded = v.organizations.reduce((a, o) => a + o.sourcesLoaded, 0), expected = v.organizations.length * EXPECTED_SOURCES.length;
       return <>
-        <div className="pf-tiles reveal">
+        <div className="pf-tiles pf-tiles-6 reveal">
           <Tile label="Organizaciones" value={int(k.organizations)} kind="observed" foot={`${k.healthy} saludables · ${k.attention} con atención · ${k.critical} críticas`} />
           <Tile label="Alertas abiertas" value={int(k.openAlerts)} kind="observed" foot="Incluye señales sin fuente conectada como informativas" />
           <Tile label="Procesos fallidos" value={int(k.failedJobs)} kind="observed" foot={`${k.stuckJobs} atascados · ${k.queued} en cola · ${k.running} en curso`} />
@@ -107,9 +107,9 @@ export function Organizations({initial}: Props) {
         {id: 'members', header: 'Miembros', align: 'right', sort: o => o.members.total, cell: o => <>{int(o.members.total)}{o.invitationsPending > 0 && <small className="pf-sub">{o.invitationsPending} invitación(es)</small>}</>},
         {id: 'ledger', header: 'Asientos', align: 'right', sort: o => o.ledger.rows, cell: o => int(o.ledger.rows)},
         {id: 'src', header: 'Fuentes', align: 'right', sort: o => o.sourcesLoaded, cell: o => `${o.sourcesLoaded} de ${o.sourcesExpected}`},
-        {id: 'jobs', header: 'Procesos fallidos', align: 'right', sort: o => o.jobs.failed, cell: o => int(o.jobs.failed)},
+        {id: 'jobs', header: 'Fallidos', align: 'right', sort: o => o.jobs.failed, cell: o => int(o.jobs.failed)},
         {id: 'ai', header: 'IA', sort: o => o.aiPctBps, cell: o => <><Meter bps={o.aiPctBps} /><small className="pf-sub">{o.aiSpent} de {o.aiLimit}</small></>},
-        {id: 'go', header: 'Acciones', cell: o => <><Button size="sm" onClick={() => { setFocus(o.id); setTeam(null); document.getElementById('detalle')?.scrollIntoView?.({block: 'start'}); }}>Ver detalle</Button><LinkButton href={`/platform/organizaciones/${o.id}`} size="sm">Ficha 360</LinkButton></>},
+        {id: 'go', header: 'Acciones', cell: o => <div className="pf-acts"><Button size="sm" onClick={() => { setFocus(o.id); setTeam(null); document.getElementById('detalle')?.scrollIntoView?.({block: 'start'}); }}>Detalle</Button><LinkButton href={`/platform/organizaciones/${o.id}`} size="sm">Ficha 360</LinkButton></div>},
       ];
       const picked = v.organizations.filter(o => sel.has(o.id)), detail = v.organizations.find(o => o.id === focus);
       return <>
@@ -214,7 +214,7 @@ export function Jobs({initial}: Props) {
         } catch { setMsg({ok: false, text: 'No se confirmó el resultado. Revisa la auditoría antes de reintentar.'}); }
       }
       return <>
-        <div className="pf-tiles"><Tile label="En cola" value={int(t.queued)} kind="observed" /><Tile label="En curso" value={int(t.running)} kind="observed" /><Tile label="Parciales" value={int(t.partial)} kind="observed" /><Tile label="Fallidos (30 d)" value={int(t.failed)} kind="observed" /><Tile label="Atascados" value={int(t.stuck)} kind="observed" foot="En curso con lease vencido más de 15 min" /></div>
+        <div className="pf-tiles pf-tiles-5"><Tile label="En cola" value={int(t.queued)} kind="observed" /><Tile label="En curso" value={int(t.running)} kind="observed" /><Tile label="Parciales" value={int(t.partial)} kind="observed" /><Tile label="Fallidos (30 d)" value={int(t.failed)} kind="observed" /><Tile label="Atascados" value={int(t.stuck)} kind="observed" foot="En curso con lease vencido más de 15 min" /></div>
         {msg && <p className={'state' + (msg.ok ? '' : ' state-error')} role={msg.ok ? 'status' : 'alert'}>{msg.text}</p>}
         <BulkBar count={sel.size} onClear={() => setSel(new Set())}><Button size="sm" variant="primary" icon={<PfIcon name="refresh" size={14} />} onClick={() => setConfirm(true)}>Reintentar seleccionados</Button><Button size="sm" icon={<Download />} onClick={() => downloadCsv('procesos-seleccion.csv', ['Id', 'Proceso', 'Organización', 'Estado', 'Código'], picked.map((j: Job) => [j.id, j.type, j.organization, j.state, j.errorCode]))}>Exportar selección</Button></BulkBar>
         {confirm && <ConfirmRetry count={picked.length} onCancel={() => setConfirm(false)} onConfirm={run} />}

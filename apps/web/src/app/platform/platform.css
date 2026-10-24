@@ -67,6 +67,7 @@
  .platform-shell .sidebar-navigation { padding:0 12px; overflow:auto; }
  .platform-shell .sidebar-navigation ul { display:flex; width:max-content; gap:4px; margin:0 0 12px; }
  .platform-shell .sidebar-navigation a { min-height:44px; padding:8px 12px; }
+ .platform-shell .workspace-sidebar .sidebar-navigation { min-height:0; flex:none; overflow-y:hidden; scrollbar-width:none; }
  .platform-shell .sidebar-footer { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 16px; max-height:none; }
  .platform-sidebar .workspace-platform-link { margin:0; }
  .platform-shell .platform-logout { margin:0; min-height:44px; }

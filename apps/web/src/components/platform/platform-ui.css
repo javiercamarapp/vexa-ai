@@ -2,8 +2,15 @@
 :root{--pf-ok:#1f7a4a;--pf-ok-soft:#e6f4ec;--pf-bad:#ac2440;--pf-bad-soft:#fdecea}
 :root[data-theme=dark]{--pf-ok:#5fd09a;--pf-ok-soft:#15281f;--pf-bad:#ffb3c3;--pf-bad-soft:#341a18}
 .pf-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:var(--sp-4);margin:0 0 var(--sp-6)}
+.pf-tiles>.pf-tile{margin:0}
 .pf-tile{display:flex;flex-direction:column;gap:var(--sp-2);min-width:0;padding:var(--sp-5);border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface);box-shadow:var(--ui-shadow)}
 .pf-tile>header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-2)}
+.pf-tiles-5{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media(max-width:1280px){.pf-tiles-5{grid-template-columns:repeat(2,minmax(0,1fr))}.pf-tiles-5>.pf-tile:last-child{grid-column:1/-1}}
+@media(max-width:560px){.pf-tiles-5{grid-template-columns:minmax(0,1fr)}}
+.pf-tiles-6{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:1000px){.pf-tiles-6{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.pf-tiles-6{grid-template-columns:minmax(0,1fr)}}
 .pf-tile-label{font-size:12px;font-weight:600;color:var(--muted);min-width:0}
 .pf-tile-value{font:600 26px/1.15 var(--font-display);letter-spacing:-.035em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .pf-tile-foot,.pf-tile-cov{font-size:12px;color:var(--muted)}
@@ -28,6 +35,7 @@
 .pf-empty p{margin:0;font-size:13px;color:var(--muted);max-width:62ch}
 .pf-seg{display:inline-flex;flex-wrap:wrap;gap:var(--sp-1);padding:var(--sp-1);border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-soft)}
 :is(.workspace-content,.access-flow) .pf-seg .btn{border-color:transparent;background:transparent}
+:is(.workspace-content,.access-flow) .pf-seg .btn{min-width:72px;min-height:28px;justify-content:center;padding:4px 14px}
 :is(.workspace-content,.access-flow) .pf-seg .btn[aria-pressed=true]{background:var(--ui-surface);border-color:var(--ui-input);box-shadow:var(--ui-shadow)}
 .pf-meter{display:inline-block;width:100%;min-width:64px;max-width:140px;height:8px;border-radius:999px;background:var(--cov-track);overflow:hidden;vertical-align:middle}
 .pf-meter span{display:block;height:100%;border-radius:999px;background:var(--pf-ok)}
@@ -35,13 +43,16 @@
 .pf-filters{display:flex;flex-wrap:wrap;align-items:end;gap:var(--sp-3) var(--sp-4);margin:0 0 var(--sp-4)}
 .pf-filters label{display:grid;gap:var(--sp-1);font-size:12px;font-weight:600;color:var(--muted);min-width:0}
 .pf-filters :is(input,select){min-height:32px;min-width:min(100%,180px);padding:5px 12px;border:1px solid var(--ui-input);border-radius:8px;background:var(--ui-surface);color:var(--ink);font:500 13px var(--font-ui)}
-.pf-filters input[type=search]{min-width:min(100%,260px)}
+.pf-filters input[type=search]{min-width:min(100%,260px);width:260px}
 .pf-table-wrap{margin-top:var(--sp-2)}
-.pf-table th{white-space:nowrap}.pf-table td{vertical-align:middle}.pf-table td.pf-wrap{min-width:220px;max-width:340px}
+.pf-table th{white-space:nowrap;vertical-align:middle;height:40px;padding-block:0;line-height:1.3}.pf-table td{vertical-align:middle}.pf-table td.pf-wrap{min-width:220px;max-width:340px}
 .pf-table .num{text-align:right;font-variant-numeric:tabular-nums}
 .pf-table tr[data-selected] td{background:var(--kind-observed-soft)}
-.pf-check{width:40px;text-align:center}.pf-check input{width:18px;height:18px;margin:0;padding:0;min-width:18px}
-.pf-table th .pf-sort{padding:4px 8px;margin-left:-8px;color:inherit;font-weight:600}
+.pf-check{width:36px;text-align:center}.pf-check input{width:18px;height:18px;margin:0;padding:0;min-width:18px}
+.pf-table th .pf-sort{padding:4px 8px;margin-left:-8px;max-width:none;color:inherit;font-weight:600}
+.pf-table :is(th,td){padding-inline:8px}
+.pf-table td.pf-wrap{min-width:200px;max-width:262px}
+.pf-acts{display:flex;flex-wrap:nowrap;gap:var(--sp-2);align-items:center}
 .pf-sub{display:block;font-size:12px;color:var(--muted);font-weight:400}
 .pf-more{margin:var(--sp-3) 0 0}
 .pf-bulk{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-3);margin:0 0 var(--sp-3);padding:var(--sp-3) var(--sp-4);border:1px solid var(--kind-observed);border-radius:var(--ui-radius-sm);background:var(--kind-observed-soft)}
@@ -89,3 +100,11 @@
 .pf-table th .btn,.pf-table th .btn-label{white-space:nowrap}
 .pf-tile>header{align-items:flex-start}.pf-tile .kind-badge{flex:none}.pf-tile-label{flex:1 1 90px}
 @media(max-width:700px){.pf-list>li{grid-template-columns:minmax(0,1fr)}.pf-list>li>.btn{justify-self:start}}
+@media(max-width:560px){.pf-filters label{flex:1 1 100%}.pf-filters :is(input,select),.pf-filters input[type=search]{width:100%;min-width:0}}
+/* Tarjeta-fila en celular: la casilla de selección va al final con su rótulo, y las píldoras pueden partirse en vez de invadir la columna vecina. */
+@media(max-width:767px){
+ html:root:not([data-tablas-movil=comparar]) .pf-table[data-mv] td.pf-check{order:99;width:auto;flex-direction:row!important;align-items:center;gap:8px;min-height:44px;padding:0}
+ html:root:not([data-tablas-movil=comparar]) .pf-table[data-mv] td.pf-check::after{content:"Seleccionar";font-size:12px;font-weight:500;color:var(--muted)}
+ html:root:not([data-tablas-movil=comparar]) .pf-table[data-mv] .pf-pill{white-space:normal;max-width:100%}
+ html:root:not([data-tablas-movil=comparar]) .pf-table[data-mv] td.pf-wrap .pf-sub{display:block}
+}

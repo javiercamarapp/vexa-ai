@@ -33,11 +33,12 @@ function preparar(t:HTMLTableElement){
   const celdas=[...f.children].filter(c=>c.tagName==='TD'||c.tagName==='TH') as HTMLTableCellElement[];
   if(celdas.some(c=>c.colSpan>1)){f.setAttribute('data-sin-tarjeta','');continue;}
   let principal=-1;
+  const t0=Math.max(0,celdas.findIndex(c=>!c.classList.contains('pf-check'))); // la casilla de selección (consola de plataforma) nunca es el título de la tarjeta
   celdas.forEach((c,i)=>{
    c.setAttribute('role',c.tagName==='TH'?'rowheader':'cell');
    c.setAttribute('data-label',cab[i]??'');
-   if(i===0)c.setAttribute('data-titulo','');
-   if(principal<0&&i>0&&i<=4&&!c.querySelector('button,a,input,select')&&NUM.test((c.textContent||'').trim()))principal=i;
+   if(i===t0)c.setAttribute('data-titulo','');
+   if(principal<0&&i>t0&&i<=t0+4&&!c.querySelector('button,a,input,select')&&NUM.test((c.textContent||'').trim()))principal=i;
   });
   celdas.forEach((c,i)=>{if(i===principal)c.setAttribute('data-principal','');else c.removeAttribute('data-principal');});
  }

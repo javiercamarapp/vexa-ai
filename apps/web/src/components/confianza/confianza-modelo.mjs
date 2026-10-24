@@ -1,7 +1,7 @@
 // Modelo de «Datos y confianza»: 4 bloques con datos que YA existen en el código (frescura y cobertura reales), sin inventar cifras.
 //  1 fuentes conectadas · 2 frescura por cifra con alerta · 3 cobertura con ventanas · 4 «qué no sabemos» como lista de tareas.
 // Regla de alerta: una fuente con cadencia esperada se marca ALERTA si pasó más de 3 veces su cadencia sin éxito (o tiene error); entre 2 y 3 veces está «atrasada».
-import {FUENTES, METODOS, CALCULOS, textoError, dentroDe} from '../../lib/legibilidad/sincronizacion.mjs';
+import {FUENTES, METODOS, nombreCalculo, textoError, dentroDe} from '../../lib/legibilidad/sincronizacion.mjs';
 import {diaTxt, haceDeIso} from '../../lib/confianza/sello.mjs';
 import {lineaVentanas, NOMBRE, num, pct} from '../refunds/fuga-modelo.mjs';
 
@@ -32,7 +32,7 @@ export function bloqueFuentes(f, ahora = Date.now()) {
 export function bloqueFrescura(f, ahora = Date.now()) {
   if (!disponible(f)) return {disponible: false, filas: []};
   const filas = f.insights.map(i => { const nivel = i.status === 'failed' ? 'alerta' : i.status === 'partial' || i.status === 'skipped' ? 'atrasada' : 'ok';
-    return {clave: i.insight, nombre: CALCULOS[i.insight] ?? i.insight, nivel, estado: i.status === 'ready' ? 'Al día' : i.status === 'partial' ? 'Parcial' : i.status === 'skipped' ? 'Omitido' : 'Falló',
+    return {clave: i.insight, nombre: nombreCalculo(i.insight), nivel, estado: i.status === 'ready' ? 'Al día' : i.status === 'partial' ? 'Parcial' : i.status === 'skipped' ? 'Omitido' : 'Falló',
       actualizado: i.refreshedAt ? haceDeIso(i.refreshedAt, ahora) : 'nunca', corte: diaTxt(i.sourceWatermark), filas: i.rows, pendientes: i.pending}; });
   const alertas = filas.filter(x => x.nivel === 'alerta').length + f.sources.filter(s => nivelFuente(s, ahora) === 'alerta').length;
   return {disponible: true, filas, alertas};

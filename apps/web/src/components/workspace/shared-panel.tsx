@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import {useWorkspaceNavigation,workspaceLocation} from './navigation-lifecycle';
 import {pinWorkspaceQuery,latestWorkspaceQuery} from '../../../../../packages/workspace-service/navigation.mjs';
 import {useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
@@ -104,6 +105,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
  useEffect(()=>{if(!clave)return;let nuevo:{groups:number;signals:number|null}|null=null;try{if(bundle?.meta.critical_counts)sessionStorage.setItem(clave,JSON.stringify(bundle.meta.critical_counts));else{const v=sessionStorage.getItem(clave);nuevo=v?JSON.parse(v):null;}}catch{nuevo=null;}void Promise.resolve().then(()=>setUltimo(nuevo));},[clave,bundle?.meta.critical_counts]);
  const notice=bundle?.meta.critical_notice&&<Notice tone="warn" title="Revisión crítica, independiente del importe" actions={bundle.meta.catalog?<a className="row-link-inline" href="#senales-criticas">Ver cuáles son</a>:undefined}><span title={DEFINICION.senal+' '+DEFINICION.grupo}>{bundle.meta.critical_notice}</span></Notice>;
  const criticalPending=!bundle?.meta.critical_notice&&bundle?.meta.critical_notice_state==='unavailable'&&<Notice tone="info" title={ultimo?'Revisión crítica (última lectura)':'Señales críticas pendientes'} actions={ultimo?undefined:<Button size="sm" onClick={update}>Volver a calcular</Button>}>{ultimo?<>{fraseCriticos({grupos:ultimo.groups,senales:ultimo.signals})} en la última lectura de este alcance; en esta carga aún no se recalcularon. </>:<>Aún no se calcularon en esta carga; no significa que no existan. </>}{isOverview&&<>Consúltalas en <Link href={'/problems'+(pinned.size?'?'+pinned.toString():'')} className="row-link-inline">Problemas</Link>.</>}</Notice>;
+ if(busy&&!bundle&&!error&&!missing)return <RovaqCargando mensaje=""/>;
  return <section className="stack" aria-label={isOverview?'Resumen con alcance compartido':'Problemas con alcance compartido'}>
   {!isOverview&&<PageHeader nivel={1} title={isOverview?'Resumen del corte publicado':'Problemas de negocio'} guide={isOverview?'resumen':'problemas'} linea={isOverview?undefined:lineaProblemas(bundle?bundle.items.some(i=>i.metrics.some(m=>m.kind==='exposure'&&m.amount_minor!==null&&/^-?\d+$/.test(m.amount_minor))):null)} actions={actions}/>}
   {bar}

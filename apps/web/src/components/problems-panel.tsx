@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
 import {filasDesdeCatalogo,numerarGrupos,marcarGeneral,fraseGrupo} from '../lib/legibilidad/problemas-catalogo.mjs';
 import {etiquetaCategoria} from '../lib/legibilidad/categorias.mjs';
@@ -50,6 +51,7 @@ export function ProblemsPanel({problemId}:{problemId?:string}){
   return snapshot.problems.map(p=>({p,f:por.get(p.id)??{...numerarGrupos(filasDesdeCatalogo({rows:[{id:p.id,label:p.label,conversations:(p.conversationCount??p.conversationIds.length),severity:null,critical:null,citations:null,recommendations:null}],total:1,status:'ok',parts:{signals:'unavailable',severity:'unavailable'}}))[0]}})).sort((a,b)=>(a.p.state==='retired'?1:0)-(b.p.state==='retired'?1:0)||((b.p.conversationCount??b.p.conversationIds.length)-(a.p.conversationCount??a.p.conversationIds.length))||a.p.id.localeCompare(b.p.id));},[snapshot]);
  const reviewSteps=[{key:'op',label:'Operación',state:'done' as const},{key:'groups',label:operation==='split'?'Grupos':'Unión',state:(operation==='split'?selected.length>0&&labelA.trim()&&labelB.trim():other&&labelA.trim())?'done' as const:'current' as const},{key:'reason',label:'Motivo',state:reason.trim()?'done' as const:'todo' as const},{key:'ok',label:'Confirmación',state:approved?'done' as const:'todo' as const}];
  const canApply=approved&&reason.trim()&&labelA.trim()&&(operation==='split'?selected.length>0&&remaining.length>0&&labelB.trim():!!other);
+ if(!snapshot&&!error)return <RovaqCargando mensaje=""/>;
  return <section className="stack" aria-label="Catálogo de problemas">
   {problemId?<div className="card-title"><div><h2>Agrupación y miembros</h2><p>La similitud no confirma una causa ni representa pérdida o ahorro.</p></div><div className={css.actions}><LinkButton href="/problems" size="sm" variant="ghost">Volver a problemas</LinkButton></div></div>
   :<PageHeader title="Catálogo de problemas" description="Identidades estables y agrupaciones con procedencia; la similitud no confirma una causa. Aquí se administran los grupos; el análisis está en Problemas." actions={<>{snapshot?.canSubmit&&<Button size="sm" variant="primary" disabled={busy} onClick={()=>setGrouping(true)}>Agrupar extracción</Button>}</>}/>}

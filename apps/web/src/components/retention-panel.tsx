@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
 import {useCallback,useEffect,useRef,useState} from 'react';
 type Snapshot={ready:boolean;policy:{version:number;backupTtlSeconds:number}|null;connections:Array<{id:string;source:string;accountId:string}>;artifacts:Array<{id:string;class:string;path:string;status:string}>;counts:{pending:number;deleted:number}};
@@ -33,9 +34,10 @@ export function RetentionPanel(){const [snapshot,setSnapshot]=useState<Snapshot|
  async function action(operation:string,input:Record<string,unknown>={}){if(pending.current)return;pending.current=true;setBusy(true);setError('');setNotice('');try{const r=await fetch('/api/recovery',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({operation,...input})});if(!r.ok)throw new RetentionRequestError(r.status===409?'La política o el alcance cambió. Previsualiza de nuevo y confirma el alcance actual.':r.status===403?'La autorización ya no está vigente.':r.status===413?'El alcance supera el límite de esta operación. Selecciona una entidad menor.':'No se pudo completar la operación.');if(operation==='export'){const blob=await r.blob(),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='retention-ledger.json';a.click();URL.revokeObjectURL(url);setNotice('Ledger firmado exportado. La clave permanece en el servidor.');}else{const {data}=await r.json();if(operation==='preview'){setPreview(data);setConfirmed(false);}else{clear();if(!await load())return;setNotice(operation==='erase'?'Contenido activo borrado. Revisa y elimina los archivos físicos pendientes.':operation==='purge'?data.complete?'Purga física completada. Las copias externas no registradas no están verificadas.':'Quedan archivos pendientes. Puedes reintentar sin repetir el borrado lógico.':'Política guardada.');}}}catch(e){clear();await load();setError(e instanceof RetentionRequestError?e.message:'No se pudo confirmar la operación. Actualiza el estado antes de reintentar.');}finally{pending.current=false;setBusy(false);}}
  const unavailable=busy||loading||sourceLoading;
  function selection(){clear();setExternal('');setSources([]);setCursor(null);setNext(null);}
+ if(loading&&!snapshot&&!error)return <RovaqCargando mensaje=""/>;
  return <section className="task-page retention-page stack" aria-label="Retención y borrado" aria-busy={unavailable}>
   <PageHeader eyebrow="Administración" title="Retención y borrado" description="Elimina contenido fuente y derivados; conserva identidades y el historial financiero autorizado." actions={<><Button disabled={unavailable||!snapshot?.ready} onClick={()=>void action('export')}>Exportar ledger firmado</Button></>}/>
-  {(loading||sourceLoading)&&<p role="status" className="ac-nota">{sourceLoading?'Cargando fuentes…':snapshot?'Actualizando retención…':'Cargando retención…'}</p>}
+  {(loading||sourceLoading)&&<p role="status" className="sr-only">{sourceLoading?'Cargando fuentes…':snapshot?'Actualizando retención…':'Cargando retención…'}</p>}
   {loading&&!snapshot&&<Loading compact message="Cargando retención…"/>}
   {error&&(!snapshot?<ErrorState title="No se pudo cargar" body={error} onRetry={()=>{clear();void load();}}/>:<p role="alert" className="ac-nota">{error}</p>)}{notice&&<p role="status" className="ac-nota">{notice}</p>}
   {snapshot&&<>

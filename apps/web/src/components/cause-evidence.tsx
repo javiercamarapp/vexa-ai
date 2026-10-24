@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {Button} from './ui/button';
@@ -30,7 +31,7 @@ export function CauseEvidence({problemId}:{problemId:string}){
  return <section aria-label="Evaluación causal" className={css.stack}>
   <div className="card-title"><div><h3>Síntoma, hipótesis y confirmación operacional</h3><p>Una agrupación o confianza estadística no confirma causalidad.</p></div></div>
   {error&&<p role="alert" className="notice-bar"><Icon name="alert" size={14}/>{error}</p>}
-  {!data&&!error&&<p role="status" className={css.muted}>Cargando evaluación causal…</p>}
+  {!data&&!error&&<RovaqCargando compacto mensaje="Cargando evaluación causal"/>}
   {data&&<>
    {data.claim.criticalReview&&<p role="alert" className="notice-bar">Posible riesgo severo: revisión humana prioritaria, incluso con baja corroboración. No demuestra un defecto de lote. No activa recall ni reembolso.</p>}
    <Stepper label="Avance de la evaluación causal" steps={[{key:'sym',label:'Síntoma',state:'done'},{key:'hyp',label:'Hipótesis',state:data.claim.probableCause?'done':'current'},{key:'ev',label:'Evidencia ('+activeEv.length+')',state:activeEv.length?'done':data.claim.probableCause?'current':'todo'},{key:'conf',label:'Confirmación',state:data.claim.state==='confirmed'?'done':activeEv.length?'current':'todo'}]}/>

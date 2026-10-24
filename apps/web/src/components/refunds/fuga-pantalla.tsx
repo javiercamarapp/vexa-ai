@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import {useState} from 'react';
 import {useSearchParams} from 'next/navigation';
 import type {SkuFila} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
@@ -59,6 +60,7 @@ export function FugaPantalla({organization,embebido=false}:{organization?:string
     <li><Button size="sm" icon={<Download/>} disabled={!tr} onClick={cola}>Cola de vencidos o negados (CSV)</Button></li></MenuList></Popover></>;
  const cabecera=embebido?<header className="fg-embebido-head"><p className="cn-eyebrow">Dinero · tu copiloto de reembolsos</p><h1 className="cn-titular">Fuga de reembolsos</h1><p className="cn-fuente">Dónde se concentra el dinero devuelto y qué llevarte al proveedor o a Walmart.</p></header>
   :<PageHeader eyebrow={'Dinero'+(organization?' · datos sintéticos de demostración':'')} title="Fuga de reembolsos" description="Dónde se concentra el dinero devuelto, cuánto está atorado y qué llevarte a la reunión." actions={acciones}/>;
+ if(!v&&f.busy)return <RovaqCargando mensaje=""/>;
  return <div className="dg-page">
   {cabecera}
   {!v&&f.busy&&<Card><Loading message={f.segundos<8?'Calculando fuga…':`Calculando… ${f.segundos} s. Está tardando más de lo normal.`}/></Card>}

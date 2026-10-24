@@ -39,7 +39,7 @@ export function DetailHero({data,evidence,nota,children,esperando=false,registra
    </div>
    {nota&&<p className="state" role="note">{nota}</p>}
    {steps.length>0&&<div className="hero-steps"><Stepper label="Ciclo de vida del problema" steps={steps}/></div>}
-   <div className="hero-actions"><button type="button" className="btn btn-primary btn-sm" disabled={esperando} onClick={()=>setOpen(true)}><Icon name="message" size={14}/><span className="btn-label">{esperando?'Verificando evidencia…':`Ver evidencia (${nf.format(cites)})`}</span></button></div>
+   <div className="hero-actions"><button type="button" className="btn btn-primary btn-sm" disabled={esperando} onClick={()=>setOpen(true)}><Icon name="message" size={14}/><span className="btn-label">{esperando?'Ver evidencia':`Ver evidencia (${nf.format(cites)})`}</span></button></div>
   </section>
   {data.kind==='problem'&&data.causality.view&&claim&&<InsightCard severity={CAUSE[claim]?.sev??'info'} eyebrow="Hipótesis, no hecho" title={CAUSE[claim]?.l??'Estado causal'} sentence={<>{data.causality.view.claim.probableCause?<strong>{data.causality.view.claim.probableCause}</strong>:'Sin causa identificada'}. {data.causality.view.claim.reason}</>} footer={<span className="chip">Evaluación vigente, separada de las cifras del corte</span>}/>}
   {children}

@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import {useMemo} from 'react';
 import type {CoverageView} from '../../../../../packages/workspace-service/provenance.mjs';
 import type {TrendsView} from '../../../../../packages/workspace-service/trends.mjs';
@@ -36,6 +37,7 @@ export function FuentesDatos(){
   {label:'Fuentes cargadas',value:cov.data?nf.format(cargadas.length)+' de '+nf.format(t.length):'—',vacio:!cov.data,c:3,partes:[{label:'Cargadas',value:cargadas.length},{label:'Sin cargar',value:t.length-cargadas.length}],nota:EXPLICACION.split('.')[0]+'.'},
   {label:'Con fecha de corte',value:cov.data?nf.format(conCorte)+' de '+nf.format(cargadas.length):'—',vacio:!cov.data,c:1,partes:[{label:'Con corte',value:conCorte},{label:'Sin corte',value:cargadas.length-conCorte}],nota:'Sin fecha de corte no se afirma hasta cuándo llega'},
   {label:'Importaciones',value:cov.data?nf.format(impo):'—',vacio:!cov.data,c:7,chip:abiertas>0?{texto:abiertas+' en proceso',tono:'warn' as const}:undefined,partes:cargadas.filter(x=>x.importaciones>0).map(x=>({label:x.nombre,value:x.importaciones})),nota:'Cargas por archivo y por conexión en todas las fuentes'}];
+ if(cov.busy&&!cov.data&&!cov.error)return <RovaqCargando mensaje=""/>;
  return <section className="task-page stack dn-page" aria-label="Cobertura de datos">
   <DatosCabecera actual="cobertura" title="Cobertura de datos" description="Qué fuentes están cargadas, hasta cuándo llegan y cuánto del cliente ya está identificado." actions={<LinkButton href="/imports" variant="primary" icon={<Arrow/>}>Importar datos</LinkButton>}/>
   {cov.error&&!cov.data?<ErrorState title="No disponible ahora" body={cov.error} onRetry={()=>cov.reload()}/>:<>

@@ -32,7 +32,7 @@ type Estado = {kind: 'cargando'} | {kind: 'error'} | {kind: 'sin_acceso'} | {kin
 
 /** Pie discreto del compositor: gasto del mes frente al tope (mismo presupuesto y bitácora fail-closed del motor de CFO). */
 function UsoDelMes({p}: {p: Presupuesto | 'error' | null}) {
-  if (p === null) return <p className="cn-uso" aria-live="polite">Verificando el presupuesto de IA…</p>;
+  if (p === null) return <p className="sr-only" aria-live="polite">Verificando el presupuesto de IA…</p>;
   if (p === 'error') return <p className="cn-uso" role="alert">No pude verificar el presupuesto de IA. Las consultas directas siguen disponibles.</p>;
   const pct = Math.min(100, Math.round((p.pctBps ?? 0) / 100));
   return <p className="cn-uso">Uso del mes: <strong>{usd(p.spent)}</strong> de {usd(p.cap)}<span className="cn-uso-barra" role="img" aria-label={`${pct} % del presupuesto usado`}><span style={{width: pct + '%'}} /></span>{p.exhausted && <span role="status"> Presupuesto agotado: solo consultas directas.</span>}</p>;

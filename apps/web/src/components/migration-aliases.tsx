@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {AliasEvent,AliasIdentity} from '../../../../packages/connectors/aliases.mjs';
@@ -59,6 +60,7 @@ export function MigrationAliases({onChange}:{onChange:()=>void}){
  const last=history.at(-1),validDecision=confirmed&&evidence.trim().length>0&&reason.trim().length>0; const ambiguous=listing?listing.conversations.filter(row=>row.revisionState==='ambiguous').length:0;
  const eventTitle=(event:AliasEvent)=>event.operation==='confirm'?'Alias confirmado':event.operation==='undo'?'Alias deshecho':'Alias antiguo pendiente';
  const node=(i:AliasIdentity)=><span className={css.flowNode}><strong>{i.source}</strong><span>{i.account_id}</span><IdChip value={i.external_id} head={10} tail={4}/></span>;
+ if(busy&&!listing&&!error)return <RovaqCargando mensaje=""/>;
  return <section className="stack" aria-labelledby="migration-aliases-title">
   <div className="card-title"><div><h2 id="migration-aliases-title">Aliases de conversaciones</h2><p>Identidades de la misma organización, con evidencia y aprobación humana. Un email o texto parecido no confirma una identidad.</p></div></div>
   {error&&<p role="alert" className="notice-bar"><Icon name="alert" size={14}/>{error}</p>}{notice&&<p role="status" className="notice-bar" data-tone="info"><Icon name="check" size={14}/>{notice}</p>}{busy&&<p role="status" className="sr-only">Procesando aliases…</p>}
@@ -94,7 +96,7 @@ export function MigrationAliases({onChange}:{onChange:()=>void}){
   </fieldset>}
   {!listing.canApprove&&<p className="notice-bar" data-tone="calm"><Icon name="lock" size={14}/>Sólo el propietario puede confirmar o deshacer una propuesta.</p>}
   </>}
-  {source&&<section className="card" aria-label="Historial de aliases"><div className="card-title"><div><h3>Historial y procedencia de la identidad</h3></div></div>{historyBusy&&<p role="status">Cargando historial…</p>}{historyError&&<p role="alert" className="notice-bar">{historyError}</p>}{!historyBusy&&!historyError&&!history.length&&<p className="state">Esta identidad no tiene decisiones de alias.</p>}
+  {source&&<section className="card" aria-label="Historial de aliases"><div className="card-title"><div><h3>Historial y procedencia de la identidad</h3></div></div>{historyBusy&&<RovaqCargando compacto mensaje="Cargando historial"/>}{historyError&&<p role="alert" className="notice-bar">{historyError}</p>}{!historyBusy&&!historyError&&!history.length&&<p className="state">Esta identidad no tiene decisiones de alias.</p>}
    {history.length>0&&<Timeline events={history.map(event=>({key:event.id,icon:event.operation==='confirm'?'link':event.operation==='undo'?'refresh':'clock',title:<>Versión {event.version}: {eventTitle(event)}</>,meta:new Date(event.created_at).toLocaleString('es-MX'),body:<><p>Motivo: {event.reason??'No registrado'}</p><p>Evidencia: {event.evidence_ref??'No registrada'}</p><p>Aprobador: {event.approved_by??'No registrado'}</p><details><summary>Procedencia de la versión {event.version}</summary><pre className={css.pre}>{JSON.stringify({source:event.source,accountId:event.account_id,externalId:event.external_id,sourceConversationId:event.source_conversation_id,canonicalId:event.canonical_id,previousVersion:event.previous_version,provenance:event.provenance},null,2)}</pre></details></>}))}/>}
   </section>}
   <p className={css.muted}>Después de una decisión, congela un corte nuevo para comparar el recuento actualizado. Los cortes anteriores no se reescriben.</p>

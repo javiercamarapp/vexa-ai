@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import {useAutoRefresh} from '../ui/use-auto-refresh';
 import {eventosVisibles,textoCanal} from '../../lib/notifications/avisos.mjs';
 import {Button,LinkButton,Arrow} from '../ui/button';
@@ -102,6 +103,7 @@ export function NotificationPanel({settings=false}:{settings?:boolean}){
 const heading=settings?'Preferencias de notificaciones':'Notificaciones';
  const fallo=error&&!busy?<ErrorState title="No se pudo cargar" body={error} onRetry={()=>void load()}/>:null;
  const sinLeer=inbox?.unreadCount??0,cargados=inbox?.items.length??0;
+ if(busy&&!(settings?preferences:inbox)&&!error)return <RovaqCargando mensaje=""/>;
  return <section className="task-page notifications-page stack" aria-label={heading}>
   {settings
    ?<PageHeader eyebrow="Administración" title="Avisos" description="Elige qué avisos y por qué canal los recibes en esta organización." actions={<><LinkButton href="/notifications" icon={<Arrow/>}>Ver notificaciones</LinkButton></>}/>

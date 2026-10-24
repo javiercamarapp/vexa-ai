@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import {useAutoRefresh} from '../ui/use-auto-refresh';
 import {TituloAuto} from '../ui/titulo-auto';
 import {useWorkspaceNavigation,workspaceLocation} from '../workspace/navigation-lifecycle';
@@ -132,6 +133,7 @@ export function BriefsPanel({initialQuery,initialId}:{initialQuery:string;initia
  };
  const [generating,setGenerating]=useState(false),[generatingNow,setGeneratingNow]=useState(false);
  const shown=selected??page?.items[0]??null;
+ if(busy&&!page&&!error&&!empty)return <RovaqCargando mensaje=""/>;
  return <section aria-label="Brief ejecutivo" className="stack">
   <PageHeader eyebrow="Prioridades y decisiones" title="Brief ejecutivo" guide="brief" actions={<>{page?.canGenerate&&!initialId&&<Button icon={<Icon name="sparkle" size={14}/>} disabled={busy} onClick={()=>setGenerating(true)}>Generar brief</Button>}{initialId&&<LinkButton href={selected?'/briefs?'+pinned(selected.document.scope,selected.document.snapshotId,selected.document.scopeHash):'/briefs'} aria-label="Volver al historial del alcance">Volver al historial</LinkButton>}</>}/>
   {!initialId&&<ScopeBar scope={scope} onApply={apply} busy={busy}/>}

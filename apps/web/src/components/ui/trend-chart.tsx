@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import {useCallback,useEffect,useMemo,useState} from 'react';
 import type {TrendsView,LedgerMonth} from '../../../../../packages/workspace-service/trends.mjs';
 import {formatMinorUnits} from '../../../../../packages/metrics/money.mjs';
@@ -39,7 +40,7 @@ export function TrendCharts({endpoint='/api/trends'}:{endpoint?:string}){
  const message=(s:'ok'|'empty'|'timeout',emptyText:string)=>s==='timeout'?'No disponible ahora: la consulta acotada superó el tiempo permitido. Reintenta en unos segundos.':s==='empty'?emptyText:'';
  return <section className="card trends" aria-labelledby="trends-title" aria-busy={busy}>
   <div className="card-head"><div><p className="eyebrow">Tendencia · últimos 12 meses</p><h2 id="trends-title">Volumen y movimiento por mes</h2></div></div>
-  {busy&&!view&&<div className="skeleton-stack" role="status" aria-label="Cargando tendencias"><span className="skeleton skeleton-line"/><span className="skeleton skeleton-chart"/></div>}
+  {busy&&!view&&<RovaqCargando compacto mensaje="Cargando tendencias"/>}
   {error&&<p className="state state-error" role="alert">{error} <Button size="sm" icon={<Refresh/>} onClick={()=>void load()}>Reintentar tendencias</Button></p>}
   {view&&<div className="trend-grid">
    <div>{convState&&convState.status==='ok'?<Bars title="Conversaciones por mes" unit="conversaciones" points={convPoints} kind={convState.class} note={[convState.sampled?`Estimado con una muestra del ${convState.samplePercent??''} %.`:null,'Fecha: inicio o primer mensaje.',convState.outsideWindow?`${nfCount.format(convState.outsideWindow)} fuera de la ventana${convState.undated?` (${nfCount.format(convState.undated)} sin fecha)`:''}.`:null,convState.summary?.source==='summary'?convState.summary.label:null].filter(Boolean).join(' ')}/>:<div className="trend-empty"><p className="chip">Conversaciones</p><p className="state">{message(convState?.status??'empty','Sin cargar: no hay conversaciones con fecha en los últimos 12 meses.')}</p></div>}</div>

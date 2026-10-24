@@ -3,7 +3,7 @@ export type EstadoFuente = 'ok' | 'cargando' | 'sin_acceso' | 'error' | 'vacio';
 export type KpiHoy = {id: string; etiqueta: string; como: string; estado: 'ok' | 'cargando' | 'no_disponible' | 'sin_acceso'; valor?: string | null; periodo?: string | null; nota?: string; notaLarga?: string; delta?: string | null; clase?: 'observed' | 'estimated' | 'inferred'; sello?: Sello; variacion?: {texto: string; dir: 'up' | 'down' | 'flat'; bueno: 'up' | 'down'} | null; serie?: number[]; serieEtiqueta?: string; estados?: {id: string; valor: number}[]};
 export type EntradaComo = {id: string; titulo: string; clase: 'observed' | 'estimated' | 'inferred'; fuente: string; periodo: string | null; formula: string; cobertura: string | null; noSabemos: string[]};
 export type AtencionHoy = {id: string; titulo: string; detalle: string; dinero: string | null; href: string; clase: 'observed'};
-export type HoyVista = {titular: {texto: string; periodo: string | null; clase: string | null}; kpis: KpiHoy[]; atencion: AtencionHoy[];
+export type HoyVista = {titular: {texto: string; partes: Array<{t: string; f?: boolean}>; periodo: string | null; clase: string | null}; kpis: KpiHoy[]; atencion: AtencionHoy[];
   barra: {observado: string; observadoEtiqueta: string; recuperable: null; recuperableEtiqueta: string; recuperableNota: string; href: string} | null;
   siguiente: {titulo: string; detalle: string; cta: string; href: string; secundaria: {texto: string; href: string}} | null; cargando: boolean; vacio: boolean; ctxComo: unknown};
 export function estadoDe(data: unknown, o?: {busy?: boolean; error?: string; status?: number}): EstadoFuente;

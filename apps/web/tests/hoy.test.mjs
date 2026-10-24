@@ -36,7 +36,7 @@ test('nunca margen, nunca SLA de Zendesk, en ninguna cifra ni explicación', () 
   assert.match(comoSeCalculo('respuestas24').noSabemos[0], /Zendesk no se usa/);
 });
 test('titular narrativo con periodo y cifra de dinero', () => {
-  assert.match(vista.titular.texto, /^Se devolvieron \$[\d,]+ brutos del \d+ \w{3} 2026 al \d+ \w{3} 2026\./); assert.ok(vista.titular.periodo);
+  assert.match(vista.titular.texto, /^Se devolvieron US\$[\d,]+ brutos del \d+ \w{3}–\d+ \w{3} 2026\./); assert.ok(vista.titular.periodo);assert.ok(vista.titular.partes.some(p => p.f && /^US\$/.test(p.t)), 'la cifra de dinero va en negrita');
 });
 test('«Requiere tu atención»: máximo 3, el mayor dinero primero, los de conteo al final', () => {
   const a = atencionDe({fuga, carga});

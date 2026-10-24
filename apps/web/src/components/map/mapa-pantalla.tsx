@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import {useMemo,useState} from 'react';
 import type {MapaVista,EstadoMapa,Celdas} from '../../../../../packages/workspace-service/mapa-problemas.mjs';
 import {PageHeader} from '../ui/page-header';
@@ -13,10 +14,8 @@ import {MENSAJE_COMPLETO,NOTA_PROVISIONAL,PAISES,filasTabla,limitesRampa,num,pct
 import './mapa.css';
 
 const forma=(d:unknown)=>typeof d==='object'&&d!==null&&'status' in d&&'provisional' in d;
-function Esqueleto({segundos}:{segundos:number}){
- return <div className="mp-skel" role="status" aria-busy="true"><span className="sr-only">Cargando el mapa de problemas…</span>
-  <div className="mp-skel-mapa" aria-hidden="true"/>
-  <p className="fg-sm">{segundos<2?'Calculando…':segundos<8?`Calculando… ${segundos} s`:`Calculando… ${segundos} s. Está tardando más de lo normal; sigue intentando.`}</p></div>;
+function Esqueleto(_p:{segundos:number}){
+ return <RovaqCargando compacto mensaje="Cargando el mapa de problemas"/>;
 }
 function Lista({titulo,celdas,max=2}:{titulo:string;celdas:Celdas;max?:number}){
   if(celdas.ocultoTodo)return <section className="mp-lista"><h3>{titulo}</h3><p className="fg-sm">Sin desglose: cada categoría tiene menos de 5 casos.</p></section>;
@@ -61,6 +60,7 @@ export function MapaPantalla({organization}:{organization?:string}){
  const cambiar=(p:'US'|'MX')=>{setPais(p);setSel(null);};
  const lim=limitesRampa(max);
  const tabla=filasTabla(delPais,totalPais);
+ if(!v&&f.busy)return <RovaqCargando mensaje=""/>;
  return <div className="task-page stack mp-page">
   <PageHeader eyebrow="Operación" title="Mapa de problemas" description={<>En qué estados se concentran los casos de posventa, con qué motivo y en qué retailer.{organization?` ${organization}.`:''}</>}/>
   {!v&&f.busy&&<section className="card"><Esqueleto segundos={f.segundos}/></section>}

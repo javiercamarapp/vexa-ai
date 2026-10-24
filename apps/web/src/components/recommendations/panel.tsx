@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import {useAutoRefresh} from '../ui/use-auto-refresh';
 import {useWorkspaceNavigation,workspaceLocation} from '../workspace/navigation-lifecycle';
 import {useCallback,useEffect,useLayoutEffect,useMemo,useRef,useState} from 'react';
@@ -105,6 +106,7 @@ export function RecommendationsPanel({initialQuery,vista='por-decidir'}:{initial
  const actividad=actividadReciente(todos,6),evidencia=evidenciaPorAccion(g.decidir),maxCitas=Math.max(1,...evidencia.map(e=>e.citas));
  const compromisos=g.curso.map(i=>({i,e:(i.flow?.events??[]).find(x=>x.kind==='approved')})).filter(x=>x.e?.dueDate).sort((a,b)=>String(a.e!.dueDate).localeCompare(String(b.e!.dueDate)));
  const dias=(f:string)=>Math.floor((new Date(f+'T12:00:00Z').getTime()-hoy.getTime())/86400000);
+ if(busy&&!view&&!error&&!empty)return <RovaqCargando mensaje=""/>;
  return <section aria-label="Acciones con evidencia" className="stack">
   <AccionesCabecera actual={vista} cuentas={view?cuentas:undefined} acciones={view?.canPropose?<Button variant="primary" icon={<Icon name="sparkle" size={14}/>} onClick={()=>setPropose(true)}>Proponer una recomendación</Button>:undefined}/>
   <ScopeBar scope={scope} onApply={apply} busy={busy} extra={view&&todos.length>0?<>

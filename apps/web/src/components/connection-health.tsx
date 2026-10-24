@@ -1,3 +1,4 @@
+import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
 "use client";
 import {useEffect,useLayoutEffect,useRef,useState} from 'react';
@@ -41,6 +42,7 @@ useEffect(()=>{rowsRef.current=rows;},[rows]);
  async function recheck(row:ConnectionHealth){if(recheckPending.current)return;recheckPending.current=true;setBusy(true);setError('');try{const response=await fetch('/api/connections/'+row.id+'/recheck',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({confirmedCredentialRotation:Boolean(row.reconnect?.attemptId&&confirmed[row.id]===row.reconnect.attemptId),expectedAttemptId:row.reconnect?.attemptId})});if(!response.ok)throw new Error(response.status===403?'Sólo el propietario puede habilitar el nuevo intento.':'No se pudo habilitar el intento. Se vuelve a comprobar el estado solo; intenta de nuevo en unos segundos.');invalidarSwr({prefijo:'/api/connections'});setRows(await read());setEdad(null);setConfirmed(previous=>({...previous,[row.id]:null}));}catch(e){setError(e instanceof Error?e.message:'No se pudo habilitar el intento.');}finally{recheckPending.current=false;setBusy(false);}}
  const shownRows=rows.filter(r=>tab==='all'||(tab==='ok')===est(r).ok),row=shownRows.find(r=>r.id===picked)??shownRows[0]??null;
  const okCount=rows.filter(r=>est(r).ok).length,e=row?est(row):null;
+ if(busy&&rows.length===0&&!error)return <RovaqCargando mensaje=""/>;
  return <section className="task-card connection-health" aria-labelledby="connections-title"><div className="card-title"><div><h2 id="connections-title">Estado de las conexiones</h2><p>Cuentas autorizadas de esta organización.</p></div></div>
  {((busy&&rows.length===0)||(coverageBusy&&!coverage))&&<div role="status"><span className="sr-only">Consultando conexiones…</span><SkeletonRows rows={3}/></div>}{error&&<p role="alert" className="state state-error">{error}</p>}
  {!busy&&!error&&rows.length===0&&<EmptyState art="plug" compact title="Aún no hay conexiones" body="No hay conexiones configuradas. Solicita al propietario configurar una cuenta autorizada."/>}

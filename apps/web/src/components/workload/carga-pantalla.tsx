@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import type {CargaVista} from '../../../../../packages/workspace-service/carga-sla.mjs';
 import {PageHeader} from '../ui/page-header';
 import {Button,Refresh} from '../ui/button';
@@ -14,9 +15,8 @@ import '../map/mapa.css';
 import './carga.css';
 
 const forma=(d:unknown)=>typeof d==='object'&&d!==null&&'carga' in d&&'sla' in d;
-function Esqueleto({segundos}:{segundos:number}){
- return <div className="cg-skel" role="status" aria-busy="true"><span className="sr-only">Cargando carga y SLA…</span><div className="cg-skel-b" aria-hidden="true"/><div className="cg-skel-b" aria-hidden="true"/>
-  <p className="fg-sm">{segundos<2?'Calculando…':segundos<8?`Calculando… ${segundos} s`:`Calculando… ${segundos} s. Está tardando más de lo normal; sigue intentando.`}</p></div>;
+function Esqueleto(_p:{segundos:number}){
+ return <RovaqCargando compacto mensaje="Cargando carga y SLA"/>;
 }
 type Carga=CargaVista['carga'];
 
@@ -66,6 +66,7 @@ export function CargaPantalla({organization}:{organization?:string}){ void organ
  const sok=!!s&&s.status==='ok'&&s.medibles!=null,base=Math.max(1,s?.medibles??1);
  const edad=s?.edadAbiertos,maxEdad=Math.max(1,edad?.d1_7??0,edad?.d7_30??0,edad?.d30??0);
  const cierreOk=!!ci&&ci.status==='ok';
+ if(!v&&f.busy)return <RovaqCargando mensaje=""/>;
  return <div className="task-page stack cg-page">
   <PageHeader eyebrow="Operación" title="Carga y SLA" description={<>Cuándo entran las conversaciones, a qué hora hace falta gente y cuánto riesgo hay con las 24 h de Amazon. Fuente: HubSpot.</>}/>
   {!v&&f.busy&&<section className="ui-card"><Esqueleto segundos={f.segundos}/></section>}

@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import {useMemo} from 'react';
 import type {CoverageView} from '../../../../../packages/workspace-service/provenance.mjs';
 import type {TrendsView} from '../../../../../packages/workspace-service/trends.mjs';
@@ -47,6 +48,7 @@ export function ConfianzaPantalla(){
   {label:'Cifras frescas',value:frescura.disponible?nf.format(n(frescura.filas,'ok'))+' de '+nf.format(frescura.filas.length):'—',vacio:!frescura.disponible,c:3,chip:(frescura.alertas??0)>0?{texto:frescura.alertas+(frescura.alertas===1?' alerta':' alertas'),tono:'bad' as const}:undefined,partes:[{label:'Al día',value:n(frescura.filas,'ok')},{label:'Parciales',value:n(frescura.filas,'atrasada')},{label:'Fallaron',value:n(frescura.filas,'alerta')}],nota:'Alerta si pasa más de '+FACTOR_ALERTA+' veces la cadencia esperada'},
   {label:'Cobertura',value:cov.data?nf.format(cargadas)+' de '+nf.format(tarjetas.length):'—',vacio:!cov.data,c:1,partes:[{label:'Cargadas',value:cargadas},{label:'Sin cargar',value:tarjetas.length-cargadas}],nota:'Fuentes con datos cargados; cada una con su corte'},
   {label:'Qué no sabemos',value:ocupado&&!tareas.length?'—':nf.format(tareas.length),vacio:ocupado&&!tareas.length,c:2,chip:tareas.length>0?{texto:'Tareas',tono:'warn' as const}:{texto:'Sin huecos conocidos',tono:'ok' as const},partes:[{label:'Con tarea',value:tareas.length}],nota:tareas[0]?.titulo??'Lo no respondido no se cuenta como completo'}];
+ if((fresh.busy||cov.busy)&&!fresh.data&&!cov.data)return <RovaqCargando mensaje=""/>;
  return <ComoSeCalculoProvider><section className="task-page stack dc" aria-label="Datos y confianza">
   <DatosCabecera actual="resumen" title="Datos y confianza" description="De dónde sale cada número, qué tan fresco es, qué cubre y qué todavía no sabemos."/>
   <KpiLinea items={kpis} label="Indicadores de confianza en los datos"/>

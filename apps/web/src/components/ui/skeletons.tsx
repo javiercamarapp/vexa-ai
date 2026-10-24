@@ -1,5 +1,9 @@
-/** Skeletons that mimic the final shape (not a grey rectangle). Always announced once via role=status. */
-export function SkeletonStats({count=4}:{count?:number}){return <div className="stat-grid" role="status" aria-busy="true"><span className="sr-only">Cargando datos autorizados…</span>{Array.from({length:count},(_,i)=><div key={i} className="card stat-card skel-card"><span className="skeleton skeleton-line" style={{width:'55%'}}/><span className="skeleton skel-value"/><span className="skeleton skeleton-line" style={{width:'40%'}}/></div>)}</div>;}
-export function SkeletonChart({height=180}:{height?:number}){return <div className="skel-chart" style={{height}} role="status" aria-busy="true"><span className="sr-only">Cargando gráfica…</span>{[40,62,48,75,58,88,70,95,66,80,52,90].map((h,i)=><span key={i} className="skeleton" style={{height:h+'%'}}/>)}</div>;}
-export function SkeletonRows({rows=4}:{rows?:number}){return <div className="skel-rows" role="status" aria-busy="true"><span className="sr-only">Cargando…</span>{Array.from({length:rows},(_,i)=><div key={i}><span className="skeleton skel-dot"/><span className="skeleton skeleton-line" style={{width:60+((i*13)%30)+'%'}}/></div>)}</div>;}
-export function SkeletonCards({count=3}:{count?:number}){return <div className="cards-grid" role="status" aria-busy="true"><span className="sr-only">Cargando…</span>{Array.from({length:count},(_,i)=><div key={i} className="card skel-card"><span className="skeleton skeleton-line" style={{width:'70%'}}/><span className="skeleton skel-value"/><span className="skeleton skeleton-bar"/></div>)}</div>;}
+import {RovaqCargando} from '../rovaq-cargando';
+/**
+ * Los esqueletos ya no imitan la forma final: mientras no hay datos se muestra SOLO el logo animado (sin texto visible; el mensaje es solo para lectores de pantalla).
+ * Se conservan los nombres y las props para no tocar a los llamadores; `count`/`rows` ya no dibujan filas ni tarjetas.
+ */
+export function SkeletonStats(_p:{count?:number}){return <RovaqCargando compacto mensaje="Cargando datos autorizados"/>;}
+export function SkeletonChart({height=180}:{height?:number}){return <div style={{minHeight:height,display:'grid',placeItems:'center'}}><RovaqCargando compacto mensaje="Cargando gráfica"/></div>;}
+export function SkeletonRows(_p:{rows?:number}){return <RovaqCargando compacto mensaje="Cargando"/>;}
+export function SkeletonCards(_p:{count?:number}){return <RovaqCargando compacto mensaje="Cargando"/>;}

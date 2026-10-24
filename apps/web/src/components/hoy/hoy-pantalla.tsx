@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import {useEffect,useMemo,useRef} from 'react';
 import {useSearchParams} from 'next/navigation';
 import Link from '../workspace/navigation-lifecycle';
@@ -6,6 +7,7 @@ import type {FugaVista} from '../../../../../packages/workspace-service/fuga-ree
 import type {CfoReport} from '../../../../../packages/cfo-copilot/src/index.mjs';
 import {useJson} from '../ui/use-json';
 import {LinkButton,Arrow} from '../ui/button';
+import {PageHeader} from '../ui/page-header';
 import {endpointFuga} from '../refunds/use-fuga';
 import {Sparkline} from '../ui/sparkline';
 import {DeltaChip} from '../ui/stat-card';
@@ -49,12 +51,11 @@ export function HoyPantalla(){
  // Un KPI que no cargó se reintenta solo en segundo plano (máx. 3 veces, cada 20 s): sin botones, sin recargar la pantalla.
  const intentos=useRef(0),hayFallo=v.kpis.some(k=>k.estado==='no_disponible');
  useEffect(()=>{if(!hayFallo||intentos.current>=3)return;const id=window.setTimeout(()=>{intentos.current++;fuga.reload();carga.reload();cfo.reload();},20000);return()=>window.clearTimeout(id);},[hayFallo,fuga.status,carga.status,cfo.status]);// eslint-disable-line react-hooks/exhaustive-deps
+ if(v.cargando)return <RovaqCargando mensaje=""/>;
  return <ComoSeCalculoProvider><section className="hoy" aria-label="Hoy">
-  <header className="hoy-titular">
-   {v.cargando?<><span className="hoy-skel" data-grande role="status" aria-label="Cargando el titular" style={{width:'70%',height:36}}/><span className="hoy-skel" style={{width:'40%'}}/></>
-    :<h1 title={v.titular.periodo?'Periodo: '+v.titular.periodo:undefined}>{v.titular.texto}</h1>}
-   <div className="hoy-acciones"><LinkButton href="/briefs" icon={<Arrow/>} size="sm">Exportar informe</LinkButton></div>
-  </header>
+  <div className="hoy-titular"><PageHeader eyebrow="Resumen" title="Hoy"
+   description={<span className="hoy-resumen" title={v.titular.texto}>{v.titular.partes.map((x,i)=>x.f?<strong key={i}>{x.t}</strong>:<span key={i}>{x.t}</span>)}</span>}
+   actions={<>{v.titular.periodo&&<span className="hoy-periodo" title="Periodo de las cifras">{v.titular.periodo}</span>}<LinkButton href="/briefs" icon={<Arrow/>} size="sm">Exportar informe</LinkButton></>}/></div>
   {v.vacio&&<div className="hoy-estado" role="status"><strong>Aún no hay datos para mostrar</strong>Ninguna fuente respondió con cifras. Eso no significa que todo esté en cero: revisa <Link href="/confianza">Datos y confianza</Link> o <Link href="/imports">carga un archivo</Link>.</div>}
   <ul className="hoy-kpis" aria-label="Cuatro cifras clave">{v.kpis.map(k=><Kpi key={k.id} k={k} ctx={v.ctxComo} onRetry={recargar}/>)}</ul>
   <div className="hoy-cols">

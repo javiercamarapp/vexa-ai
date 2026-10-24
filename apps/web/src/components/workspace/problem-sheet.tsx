@@ -106,7 +106,7 @@ export function ProblemSheet({id,shared,captured,dinero,facts,onTitle,causa=null
 
   <KpiStrip label="Cifras del problema" items={[
    {label:'Conversaciones',c:7,spark:serie?serie.map(p=>p.value??0):undefined,value:!f&&facts.busy?'…':f?.conversations!=null?nf.format(f.conversations):NA,note:cambio&&cambio.pct!==null?<>{cambio.pct>0?'+':cambio.pct<0?'−':''}{Math.abs(cambio.pct).toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} % vs mes previo · Observado</>:'Distintas del grupo · Observado'},
-   {label:'Citas registradas',c:7,value:!f&&facts.busy?'…':f?.citations!=null?nf.format(f.citations):NA,note:ev.esperando?'Verificando al abrir…':verificadas!==null?`${textoCitas(verificadas)} verificadas al abrir`:ev.sinAlcance?'Se verifican al abrir desde una publicación':'Verificación no disponible ahora'},
+   {label:'Citas registradas',c:7,value:!f&&facts.busy?'…':f?.citations!=null?nf.format(f.citations):NA,note:ev.esperando?undefined:verificadas!==null?`${textoCitas(verificadas)} verificadas al abrir`:ev.sinAlcance?'Se verifican al abrir desde una publicación':'Verificación no disponible ahora'},
    {label:'Adjuntos asociados',c:7,value:!f&&facts.busy?'…':adj.valor!==null?nf.format(adj.valor):NA,note:adj.detalle},
    {label:'Señales críticas',c:6,value:!f&&facts.busy?'…':f?.critical?nf.format(f.critical.signals):NA,note:f?.critical?(f.critical.critical?'Severidad alta, crítica o sensible · Inferido':'Ninguna evidencia crítica · Inferido'):undefined}
   ]}/>

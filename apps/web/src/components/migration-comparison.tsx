@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
 import {ScrollTable} from './workspace/scroll-table';
 import {PageHeader} from './ui/page-header';
@@ -40,6 +41,7 @@ export function MigrationComparison(){
  async function action(work:()=>Promise<void>){setError('');setBusy(true);try{await work();}catch(e){if(!(e instanceof Error&&e.name==='AbortError'))setError(e instanceof Error?e.message:'Error de comparación.');}finally{setBusy(false);}}
  const label=(s:ComparisonSnapshot)=>`${s.id.slice(0,8)} · ${s.watermark} · ${s.summary.conversations} conversaciones`; const countLabels:Record<string,string>={conversations:'Conversaciones resueltas',sourceConversations:'Conversaciones fuente',messages:'Mensajes fuente',orders:'Órdenes vinculadas'};
  const countIcons:Record<string,string>={conversations:'message',sourceConversations:'database',messages:'mail',orders:'receipt'};
+ if(!loaded&&!error)return <RovaqCargando mensaje=""/>;
  return <section className="stack">
   <PageHeader eyebrow="Interno" title="Comparación de migración" description="Cortes inmutables antes y después; las diferencias no demuestran ahorro ni efecto causal."/>
   {error&&<p role="alert" className="notice-bar"><Icon name="alert" size={14}/>{error}</p>}

@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from './rovaq-cargando';
 import {RovaqLogo} from './rovaq-logo';
 import {useEffect,useRef,useState} from 'react';
 type Organization={id:string;name:string};
@@ -44,7 +45,7 @@ export function EmailLoginComplete(){
  }
  return <section className="home access-flow access-selection" aria-busy={busy}>
   <header className="access-brand"><RovaqLogo variante="horizontal" ancho={132} espacioLibre={false}/></header><p className="login-kicker">Bienvenido a Rovaq AI</p><h1>{busy?'Abriendo tu espacio':error?'Revisa tu acceso':'Tus espacios de trabajo'}</h1>
-  {busy&&<p role="status">Comprobando tu acceso…</p>}{error&&<p role="alert">{error}</p>}
+  {busy&&<RovaqCargando compacto mensaje="Comprobando tu acceso"/>}{error&&<p role="alert">{error}</p>}
   {access&&access.organizations.length>1&&<div className="access-destination"><h2>Elige el espacio de cliente</h2><p>Cada espacio contiene sus propios datos y equipo. Puedes cambiarlo después desde el menú.</p>{access.organizations.map(org=><button className="access-organization-choice" key={org.id} disabled={busy} onClick={()=>enter(org.id)}>{org.name}<span aria-hidden="true">→</span></button>)}</div>}
   {access?.organizations.length===0&&<p>Tu sesión está iniciada, pero todavía no tienes acceso a un espacio. Si recibiste una invitación, abre su enlace para aceptarla.</p>}
   {access?.platformAccess&&!error&&<div className="access-destination access-platform"><h2>Administración de Rovaq AI</h2><p>Gestiona organizaciones y accesos de la plataforma.</p><a href="/platform">Abrir administración de Rovaq AI <span aria-hidden="true">↗</span></a></div>}

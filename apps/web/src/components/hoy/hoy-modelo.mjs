@@ -11,6 +11,13 @@ const ok = p => p && p.status === 'ok';
 export const estadoDe = (data, {busy = false, error = '', status = 0} = {}) => data ? 'ok' : busy ? 'cargando' : status === 403 || status === 401 ? 'sin_acceso' : error ? 'error' : 'vacio';
 
 function rangoTxt(r) { return r?.desde && r?.hasta ? `${dia(r.desde)} al ${dia(r.hasta)}` : null; }
+/** «1 ago 2026 al 20 sep 2026» -> «1 ago–20 sep 2026» (mismo año); con años distintos conserva ambos. */
+function rangoCorto(r) {
+  if (!(r?.desde && r?.hasta)) return null;
+  const a = dia(r.desde), b = dia(r.hasta), ya = /\s(\d{4})$/.exec(a)?.[1], yb = /\s(\d{4})$/.exec(b)?.[1];
+  return ya && ya === yb ? `${a.replace(/\s\d{4}$/, '')}–${b}` : `${a}–${b}`;
+}
+const conUS = s => String(s).replace(/^-?\$/, m => m.replace('$', 'US$'));
 
 /** Entradas del panel «Cómo se calculó»: una por cifra de Hoy. Texto por plantilla; lo que no se sabe va aparte. */
 export function comoSeCalculo(id, ctx = {}) {
@@ -97,12 +104,18 @@ function titularDe({fuga, kpis}) {
   const t = fuga?.titular;
   if (ok(t)) {
     const top10 = t.top10?.pct != null && fuga.skus?.top?.length ? ` ${fuga.skus.top.length} SKUs explican el ${pct(t.top10.pct)}.` : '';
-    const r = rangoTxt(t.rango);
-    return {texto: `Se devolvieron ${usd(t.usdBrutoMinor)} brutos${r ? ' del ' + r : ''}.${top10}`, periodo: r, clase: 'observed'};
+    const r = rangoCorto(t.rango), n = fuga.skus?.top?.length, p = t.top10?.pct;
+    // `partes` marca en negrita las cifras clave (la vista las pinta con <strong>); `texto` es la misma frase en plano.
+    const partes = [{t: 'Se devolvieron '}, {t: conUS(usd(t.usdBrutoMinor)), f: true}, {t: ' brutos'}, ...(r ? [{t: ' del '}, {t: r, f: true}] : []), {t: '.'}];
+    if (top10) partes.push({t: ' '}, {t: `${n} SKUs`, f: true}, {t: ' explican el '}, {t: pct(p), f: true}, {t: '.'});
+    return {texto: partes.map(x => x.t).join(''), partes, periodo: r, clase: 'observed'};
   }
   const rev = kpis.find(k => k.id === 'ingreso' && k.estado === 'ok');
-  if (rev) return {texto: `En ${rev.periodo}: ${rev.valor} de ingreso bruto.`, periodo: rev.periodo, clase: 'observed'};
-  return {texto: 'Todavía no hay datos suficientes para resumir tu dinero de este periodo.', periodo: null, clase: null};
+  if (rev) {
+    const partes = [{t: 'En '}, {t: rev.periodo, f: true}, {t: ': '}, {t: conUS(rev.valor), f: true}, {t: ' de ingreso bruto.'}];
+    return {texto: partes.map(x => x.t).join(''), partes, periodo: rev.periodo, clase: 'observed'};
+  }
+  return {texto: 'Todavía no hay datos suficientes para resumir tu dinero de este periodo.', partes: [{t: 'Todavía no hay datos suficientes para resumir tu dinero de este periodo.'}], periodo: null, clase: null};
 }
 
 /** «Requiere tu atención (3)»: candidatos con su dinero en juego; el mayor primero, los que no tienen monto al final. */

@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import {useState} from 'react';
 import {PageHeader} from '../ui/page-header';
 import {FilterBar,FilterSpacer} from '../ui/filter-bar';
@@ -51,6 +52,7 @@ export function GapsPantalla({organization}:{organization?:string}){
    <li><Button size="sm" icon={<Download/>} disabled={v.ranking.status!=='ok'} onClick={()=>bajarArchivo(csvIngresos(v))}>Ingreso por SKU (CSV)</Button></li>
    <li><Button size="sm" icon={<Download/>} disabled={v.intensidad.status!=='ok'} onClick={()=>bajarArchivo(csvIntensidad(v))}>Intensidad (CSV)</Button></li>
    <li><Button size="sm" icon={<Download/>} disabled={v.recomendaciones.items.length===0} onClick={()=>bajarArchivo(csvRecomendaciones(v))}>Recomendaciones (CSV)</Button></li></MenuList></Popover>;
+ if(!v&&g.busy)return <RovaqCargando mensaje=""/>;
  return <div className="dg-page">
   <PageHeader eyebrow={'Dinero'+(organization?' · datos sintéticos de demostración':'')} title="Brechas de ingreso" description="Dónde ganas, dónde pierdes y por qué. Siempre ingreso bruto: no hay costo ni margen por producto."
    actions={<><LinkButton href="/refunds" variant="secondary">Ver fuga de reembolsos</LinkButton>{exportar}</>}/>

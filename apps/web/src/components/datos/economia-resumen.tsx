@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import {porcentaje} from '../../lib/formato/es-mx.mjs';
 import {useMemo,useState,type ReactNode} from 'react';
 import type {Bundle} from '../../lib/workspace/contracts';
@@ -50,6 +51,7 @@ export function EconomiaResumen({query='',puedePreparar,children}:{query?:string
  const ocupado=(bundle.busy&&!bundle.data)||(rep.busy&&!rep.data);
  const noDisponible=(rep.data&&rep.data.status!=='ok')||Boolean(rep.error);
  const reintentar=()=>{bundle.reload();rep.reload();};
+ if(ocupado&&!report)return <RovaqCargando mensaje=""/>;
  return <section className="dg-page">
   <PageHeader eyebrow="Dinero" title="Dinero · Preparar" description="Qué está publicado, qué tan completo es y qué falta antes de publicar un corte nuevo."/>
 

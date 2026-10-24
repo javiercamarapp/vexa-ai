@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import {useEffect,useMemo,useState,type ReactNode} from 'react';
 import type {Bundle} from '../../lib/workspace/contracts';
 import type {TrendsView} from '../../../../../packages/workspace-service/trends.mjs';
@@ -126,7 +127,7 @@ export function OverviewDashboard({bundle,pinned,avisos=[],cache}:{bundle:Bundle
    foot={cats.data?.status==='ok'?<p className="card-lead">{cats.data.note}</p>:undefined}/>
   <section className="card" aria-label="Lo más importante">
    <div className="card-title"><div><h2>Lo más importante</h2><p>Hasta tres lecturas con su fuente y su cobertura · no son proyecciones</p></div></div>
-   {(trends.busy&&!trends.data)||(cats.busy&&!cats.data)?<div role="status" aria-busy="true"><span className="sr-only">Cargando lecturas…</span><SkeletonRows rows={3}/></div>:<InsightList insights={insights}/>}
+   {(trends.busy&&!trends.data)||(cats.busy&&!cats.data)?<RovaqCargando compacto mensaje="Cargando lecturas"/>:<InsightList insights={insights}/>}
   </section>
   </div>
   <div className="ov-pie">

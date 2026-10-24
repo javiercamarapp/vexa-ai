@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
 import {PageHeader} from './ui/page-header';
 import {KpiLinea} from './panel-comun/kpi-linea';
@@ -39,6 +40,7 @@ export function EvaluationPanel(){const [cohortCursor,setCohortCursor]=useState<
  const withFeedback=items.filter(x=>(x.feedback?.version??0)>0).length;
  const when=(value:string)=>{const d=new Date(value);return Number.isNaN(d.getTime())?value:d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'});};
  const reasonText=(reason:string|null)=>exclusionReasons[reason??'']??'Requiere revisión de la fuente.';
+ if(loading&&!state&&!error)return <RovaqCargando mensaje=""/>;
  return <section className="stack" aria-label="Evaluación histórica" aria-busy={busy}>
   <PageHeader eyebrow="Interno" title="Evaluación histórica" description="Cohortes de desarrollo con resultados existentes: sin ejecutar modelos ni exponer holdout." actions={<>{state&&<Button variant="primary" disabled={busy} onClick={()=>setCreating(true)}>Nueva cohorte</Button>}</>}/>
   {(loading||pageLoading||taxonomyLoading)&&<p role="status" className="sr-only">Cargando evaluación…</p>}

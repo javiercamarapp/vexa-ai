@@ -34,7 +34,7 @@ export function HallazgosAnalisis({jobs,fuentes,masPaginas}:{jobs:JobFila[];fuen
  const conHallazgo=Object.values(ev).filter(x=>x&&x!=='error'&&!x.sinConclusion).length;
  return <>
   <section className="card" aria-labelledby="an-cob-t">
-   <div className="card-title"><div><h2 id="an-cob-t">Cobertura del análisis</h2><p>{cob.pct===null&&trends.busy?'Calculando la cobertura…':cob.texto}</p></div>{total!==null&&<KindBadge kind={cob.estimado?'estimated':'observed'}/>}</div>
+   <div className="card-title"><div><h2 id="an-cob-t">Cobertura del análisis</h2><p>{cob.pct===null&&trends.busy?<span className="sr-only">Calculando la cobertura…</span>:cob.texto}</p></div>{total!==null&&<KindBadge kind={cob.estimado?'estimated':'observed'}/>}</div>
    <div className="dn-bar" role="img" aria-label={cob.pct===null?'Cobertura no disponible':`Analizadas: ${cob.pct.toLocaleString('es-MX')} % de las conversaciones cargadas`}>{cob.pct!==null&&<span className="dn-in" style={{width:Math.max(1,Math.min(100,cob.pct))+'%'}}/>}</div>
    <p className="dn-meta">{cob.nota} Esta lista muestra {nf.format(enPagina)} {enPagina===1?'conversación analizada':'conversaciones analizadas'} en la página actual{masPaginas?' (hay más trabajos en otras páginas)':''}; no es la cobertura. Con hallazgo concluyente: {nf.format(conHallazgo)} de {nf.format(runs.length)} análisis terminados que se pudieron leer.</p>
   </section>

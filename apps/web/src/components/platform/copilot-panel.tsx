@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import {useCallback, useEffect, useId, useRef, useState, type FormEvent} from 'react';
 import {Button, LinkButton} from '../ui/button';
 import {Drawer} from '../ui/overlay';
@@ -54,7 +55,7 @@ export function CopilotPanel({endpoint, title, subtitle, placeholder, shortcuts,
         </form></div>}>
       <div data-testid="copilot" className="pf-copilot-wrap">
         <div className="pf-copilot-use">
-          {status === null && <span className="muted">Verificando disponibilidad…</span>}
+          {status === null && <span className="sr-only">Verificando disponibilidad…</span>}
           {status === 'error' && <span role="alert">No pude verificar el presupuesto de IA. Las consultas directas siguen disponibles.</span>}
           {budget && <><span>Uso del mes: <strong>{usd(budget.spent)}</strong> de {usd(budget.cap)}</span><Meter bps={budget.pctBps} />{budget.exhausted && <span role="status">Presupuesto agotado: solo consultas directas.</span>}</>}
         </div>
@@ -65,7 +66,7 @@ export function CopilotPanel({endpoint, title, subtitle, placeholder, shortcuts,
             <div className="pf-cats">{shortcuts.categories.map(c => <section key={c.title} className="pf-cat"><h3>{c.title}</h3><ul>{c.questions.map(q => <li key={q}><button type="button" className="btn btn-sm btn-ghost" onClick={() => void send(q, shortcuts.direct[q])}><span className="btn-label">{q}</span></button></li>)}</ul></section>)}</div>
           </div>}
           {msgs.map((m, i) => m.role === 'user' ? <div key={i} className="pf-msg pf-msg-user"><p>{m.content}</p></div> : m.role === 'error' ? <p key={i} className="state state-error" role="alert">{m.content}</p> : <ReplyView key={i} reply={m.reply} />)}
-          {busy && <div className="pf-msg pf-msg-wait" role="status"><span className="btn-spinner" aria-hidden="true" /> Consultando las cifras calculadas…</div>}
+          {busy && <RovaqCargando compacto mensaje="Consultando las cifras calculadas" />}
           <div ref={end} />
         </div>
         {msgs.length > 0 && <div className="pf-copilot-new"><button type="button" className="btn btn-sm btn-ghost" onClick={() => setMsgs([])}>Nueva conversación</button></div>}

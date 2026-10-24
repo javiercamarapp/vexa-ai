@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import {useCallback, useMemo} from 'react';
 import {useJson} from '../ui/use-json';
 import {useAcceso} from '../workspace/access';
@@ -57,6 +58,7 @@ export function CfoDashboard({query = '', organization, roleOverride, volverA = 
   const header = <PageHeader eyebrow="Dinero · CFO" title="Informe de CFO" description="Ingresos, reembolsos, canales y calidad de datos por moneda, sin mezclar bases; cada cifra dice cómo se calculó." actions={actions} />;
   if (!permitido) return <div className="dg-page"><PageHeader eyebrow="Dinero · CFO" title="Informe de CFO" description="Panel financiero para propietarios y analistas." />
     <Card><EmptyState art="shield" title="Tu rol no tiene acceso a este panel" body="El informe CFO muestra ingresos, reembolsos y exposición económica. Solo lo ven los propietarios y analistas; pide acceso a un propietario." action={<LinkButton href="/overview">Volver al resumen</LinkButton>} /></Card></div>;
+  if (!state && busy && !error) return <RovaqCargando mensaje="" />;
   if (!report) return <div className="dg-page">{header}{error && <ErrorState title="No disponible ahora" body={error} onRetry={() => void load()} />}
     {!state ? (busy ? <EsperaEsqueleto que="el informe del negocio" filas={5} /> : null)
     : state.status === 'timeout'

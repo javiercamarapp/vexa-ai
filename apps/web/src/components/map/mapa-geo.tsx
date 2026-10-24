@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 // Mapa con geometrías reales (SVG puro, sin librerías, sin teselas, sin red). Cámara, entrada escalonada y vuelo adaptados del «Cerebro de ventas»
 // de Likida (repo propio, src/app/admin/mapa-prospectos/cerebro.tsx): cámara imperativa en un <g>, curva cubic-bezier(.22,1,.36,1), borde que se engrosa al elegir.
 import {useCallback,useEffect,useId,useMemo,useRef,useState} from 'react';
@@ -90,7 +91,7 @@ export function MapaGeo({pais,datos,max,total,nombres,seleccion,onElegir,etiquet
      <text key={r.clave} x={r.cx} y={r.cy} className="mp-cod" data-paso={paso} style={{fontSize:`${11/(k*pxPorU)}px`}} textAnchor="middle" dominantBaseline="central" aria-hidden="true">{r.codigo}</text>)}
    </g>
   </svg>
-  {!geo&&<div className={'mp-carga'+(fallo?' mp-carga-fallo':'')} role="status">{fallo?'No se pudo cargar el mapa. La tabla de abajo tiene los mismos datos.':'Cargando el mapa…'}</div>}
+  {!geo&&<div className={'mp-carga'+(fallo?' mp-carga-fallo':'')} role="status">{fallo?'No se pudo cargar el mapa. La tabla de abajo tiene los mismos datos.':<RovaqCargando compacto mensaje="Cargando el mapa"/>}</div>}
   {tip&&tipReg&&<div className="mp-tip" role="presentation" style={{left:Math.min(tip.x+14,Math.max(0,ancho-190)),top:Math.max(0,tip.y-8)}}>{textoRegion(nombreDe(tipReg.r),tipReg.d,total)}</div>}
  </div>;
 }

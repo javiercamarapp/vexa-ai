@@ -1,3 +1,4 @@
+import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
  'use client';
 import {ConfirmationDialog} from './confirmation-dialog';
@@ -17,11 +18,12 @@ async function mutate(input:Record<string,unknown>){if(access!=='ready')return;s
 function invite(event:FormEvent<HTMLFormElement>){event.preventDefault();const form=new FormData(event.currentTarget);void mutate({operation:'invite',email:form.get('email'),role:form.get('role'),requestId:requestId.current,confirmed:form.get('confirmed')==='on'});}
 const rows=visibles(items),texto=platform?'Administración de plataforma. No puedes modificar tu propio acceso desde aquí.':'Solo un propietario vigente puede administrar el equipo.';
 const TONO:Record<string,string>={active:'ok',accepted:'ok',pending:'warn',expired:'off',cancelled:'off',revoked:'off'};
+ if(busy&&access==='unknown'&&!error)return <RovaqCargando mensaje=""/>;
 return <section className="task-page team-page stack" aria-busy={busy}>
  {platform?<><h3 ref={heading} tabIndex={-1}>Equipo</h3><p>{texto} Las invitaciones expiran en 7 días y no conceden acceso hasta su aceptación.</p></>
   :<><PageHeader eyebrow="Administración" title="Equipo" description="Quién entra a la organización y con qué rol; las invitaciones expiran en 7 días y no dan acceso hasta aceptarse."/><h2 ref={heading} tabIndex={-1} className="sr-only">Integrantes y accesos</h2></>}
  {access==='denied'&&<p role="status">{platform?'Tu acceso a la administración de este equipo no está disponible.':'La administración del equipo requiere el rol de propietario en esta organización.'}</p>}
- {busy&&<p role="status" className="ac-nota">Cargando…</p>}{error&&<p role="alert">{error}</p>}{notice&&<p role="status">{notice}</p>}
+ {busy&&<p role="status" className="sr-only">Cargando…</p>}{error&&<p role="alert">{error}</p>}{notice&&<p role="status">{notice}</p>}
  {access==='ready'&&<div className="pc-grid" data-cols="6-6">
   <form className="pc-card team-invite" onSubmit={invite}><div className="pc-card-head"><div><h2>Invitar integrante</h2><p>Define la cuenta y el rol antes de enviar su invitación</p></div></div>
    <div className="pc-ajustes"><div className="pc-ajuste"><div><h3>Correo</h3><p>La invitación se envía a esta cuenta</p></div><div className="pc-ajuste-ctl"><input name="email" type="email" aria-label="Correo" autoComplete="email" placeholder="nombre@empresa.com" required maxLength={254} disabled={busy}/></div></div>

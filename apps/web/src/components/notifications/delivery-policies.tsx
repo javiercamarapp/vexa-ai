@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from '../rovaq-cargando';
 import {useAutoRefresh} from '../ui/use-auto-refresh';
 import Link from 'next/link';
 import {ConfirmationDialog} from '../confirmation-dialog';
@@ -39,10 +40,11 @@ export function DeliveryPolicies(){
   finally{if(!controller.signal.aborted){pending.current=false;setBusy(false);}}
  };
  const change=(channel:string,delta:Partial<DeliveryPolicy>)=>{sucio.current=true;setRows(previous=>previous.map(row=>row.channel===channel?{...row,...delta}:row));};
+ if(busy&&rows.length===0&&!error)return <RovaqCargando mensaje=""/>;
  return <section className="task-page task-grid delivery-page" aria-label="Política de envío" aria-busy={busy}><p className="eyebrow">Configuración de la organización</p><h1 ref={heading} tabIndex={-1}>Política de envío</h1>
   <p>Autoriza canales y define límites para los avisos futuros. Cada persona debe activar sus preferencias; Web Push también requiere permiso del navegador. Habilitar una política no confirma que el proveedor esté conectado.</p>
   <p><Link prefetch={false} href="/settings/notifications">Mis preferencias</Link></p>
-  {busy&&<p role="status">Verificando políticas…</p>}{error&&<p role="alert">{error}</p>}{notice&&<p role="status">{notice}</p>}
+  {busy&&<p role="status" className="sr-only">Verificando políticas…</p>}{error&&<p role="alert">{error}</p>}{notice&&<p role="status">{notice}</p>}
   {rows.map(row=><form id={'delivery-policy-'+row.channel} key={row.channel} className="record-card" onSubmit={event=>event.preventDefault()}><fieldset disabled={busy}><legend>{names[row.channel]}</legend>
    <label style={{display:'flex',alignItems:'center',gap:'.75rem',minHeight:44}}><input style={{width:'1.15rem',height:'1.15rem',padding:0,flexShrink:0}} type="checkbox" checked={row.enabled} onChange={event=>change(row.channel,{enabled:event.target.checked})}/> Autorizar este canal</label>
    <label>Intervalo mínimo entre envíos (segundos)<input type="number" required min="1" max="86400" step="1" value={row.intervalMs/1000} onChange={event=>change(row.channel,{intervalMs:Number(event.target.value)*1000})}/></label>

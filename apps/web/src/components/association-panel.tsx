@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import Link,{useWorkspaceNavigation} from './workspace/navigation-lifecycle';
@@ -84,6 +85,7 @@ export function AssociationPanel(){
  }
  const closeDetail=()=>clearSelection();
  const closeOrigin=()=>{setOriginOpen(false);setOriginFile(null);setOriginName('');setOriginText('');setOriginReason('');setOriginConfirmed(false);setRevoke(null);};
+ if(busy&&facts.length===0&&origins.length===0&&!error)return <RovaqCargando mensaje=""/>;
  return <section className="task-page stack" aria-labelledby="association-heading"><div className="card-title"><div><h2 id="association-heading">Vínculos entre conversaciones y clientes</h2><p>Relaciona cada ticket con el cliente al que pertenece. Los vínculos con certeza se usan en el análisis; el resto queda sin identificar hasta tener evidencia.</p></div></div>
   {error&&<p role="alert" className="state state-error">{error}</p>}<p role="status" aria-live="polite" className={busy||notice?'notice-bar':'sr-only'} data-tone="info">{busy?'Consultando vínculos…':notice}</p>
   {assoc&&<div className="stat-grid" style={{gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))'}}><StatCard icon="link" label="Relaciones ticket–contacto" kind="observed" value={nf.format(assoc.total)} foot={detalleAsociaciones(assoc.detail[0])}/>{/^[\d.,]+ /.test(assoc.detail[1]??'')&&<StatCard icon="users" label="Vínculos conversación–cliente" kind="observed" value={assoc.detail[1].split(' ')[0]} foot={assoc.detail[1].split(' ').slice(1).join(' ')}/>}</div>}

@@ -1,4 +1,5 @@
 'use client';
+import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {PageHeader} from './ui/page-header';
@@ -37,6 +38,7 @@ export function CandidatesPanel(){const[data,setData]=useState<State|null>(null)
  async function mutate(body:object){if(busy||loading)return;setBusy(true);setConfirmed(false);setError('');try{const response=await fetch('/api/candidates',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!response.ok){if(response.status===403)setData(null);if(response.status===409)await load();throw Error('write');}await load();}catch{setError('No se pudo confirmar el cambio. Verifica los permisos, la versión y el recibo firmado.');}finally{setBusy(false);}}
  const canChange=!!data&&!busy&&!loading&&confirmed&&/^[a-f0-9]{64}$/.test(evidence); const eligibleCount=data?data.results.filter(r=>r.eligible).length:0;
  const utilities=data?data.results.map(r=>r.summary?.utility??null):[];
+ if(loading&&!data&&!error)return <RovaqCargando mensaje=""/>;
  return <section className="stack" style={{overflowWrap:'anywhere',minWidth:0}} aria-label="Candidatos de extracción" aria-busy={loading||busy}>
   <PageHeader eyebrow="Interno" title="Candidatos de extracción" description="Selección con evaluación independiente firmada y confirmación de un propietario." actions={<><LinkButton href="/evaluation">Volver a evaluación</LinkButton>{data&&<Button variant="primary" disabled={busy||loading} onClick={()=>setRegistering(true)}>Registrar evaluación</Button>}</>}/>
   {loading&&<p role="status" className="sr-only">Cargando estado confirmado…</p>}

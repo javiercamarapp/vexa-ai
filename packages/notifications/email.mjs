@@ -6,10 +6,11 @@ import {databasePoolOptions} from '../jobs/durable/pg-options.mjs';
 import {createReceiptRepository} from './receipts.mjs';
 import {renderEmail as renderTemplate} from './email-template.mjs';
 export {renderEmail} from './email-template.mjs';
+export {renderWeeklyReport} from './email-weekly.mjs';
 const mailbox=v=>typeof v==='string'&&v.length<=254&&/^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(v);
 const id=v=>typeof v==='string'&&/^[A-Za-z0-9_-]{1,200}$/.test(v);
-export function createEmailTransport({mode,apiKey,from,replyTo,appOrigin,repository,resend,smtp}={}){
- let template;try{template=renderTemplate({type:'digest.available',appOrigin,ctaUrl:new URL('/notifications',appOrigin).href});}catch{/* Invalid deployment config blocks the channel. */}
+export function createEmailTransport({mode,apiKey,from,replyTo,appOrigin,unsubscribeUrl,repository,resend,smtp}={}){
+ let template;try{template=renderTemplate({type:'digest.available',appOrigin,ctaUrl:new URL('/notifications',appOrigin).href,...(unsubscribeUrl?{unsubscribeUrl}:{})});}catch{/* Invalid deployment config blocks the channel. */}
  const configured=()=>!!(template&&mailbox(from)&&(replyTo===undefined||mailbox(replyTo))&&repository&&((mode==='resend'&&typeof apiKey==='string'&&/^re_[A-Za-z0-9_-]+$/.test(apiKey))||(mode==='mailpit'&&smtp)));
  const sdk=mode==='resend'&&configured()?(resend??new Resend(apiKey,{baseUrl:'https://api.resend.com'})):null;
  if(sdk&&!resend)sdk.logError=()=>{}; // Provider messages may contain PII; never log SDK response bodies.
@@ -25,11 +26,11 @@ export function createEmailTransport({mode,apiKey,from,replyTo,appOrigin,reposit
    if(input.signal?.aborted)return{kind:'blocked'};
    let providerId;
    if(mode==='resend'){
-    const result=await sdk.emails.send({from,...(replyTo?{replyTo}:{}),to:[current.email],subject:template.subject,html:template.html,text:template.text},{idempotencyKey:key,signal:input.signal,redirect:'error'});
+    const result=await sdk.emails.send({from,...(replyTo?{replyTo}:{}),to:[current.email],subject:template.subject,html:template.html,text:template.text,headers:template.headers},{idempotencyKey:key,signal:input.signal,redirect:'error'});
     if(result.error){if(result.error.statusCode===429)return{kind:'retry',retryAfterMs:60000};if([401,403].includes(result.error.statusCode))return{kind:'blocked'};return{kind:'uncertain'};}
     providerId=result.data?.id;if(!id(providerId))return{kind:'uncertain'};
    }else{
-    const result=await smtp.sendMail({from,...(replyTo?{replyTo}:{}),to:current.email,subject:template.subject,html:template.html,text:template.text,messageId:`<${key}@mailpit.vexa.test>`,disableFileAccess:true,disableUrlAccess:true},{signal:input.signal});
+    const result=await smtp.sendMail({from,...(replyTo?{replyTo}:{}),to:current.email,subject:template.subject,html:template.html,text:template.text,headers:template.headers,messageId:`<${key}@mailpit.vexa.test>`,disableFileAccess:true,disableUrlAccess:true},{signal:input.signal});
     if(!result.accepted?.includes(current.email))return{kind:'uncertain'};
     providerId='mailpit_'+key;
    }
@@ -59,10 +60,10 @@ export function createMailpitSender({port}){
 export async function createTransports(env=process.env){
  if(!env.VEXA_EMAIL_DATABASE_URL||!['resend','mailpit'].includes(env.VEXA_EMAIL_MODE)||!mailbox(env.VEXA_EMAIL_FROM)||!env.VEXA_APP_ORIGIN)return{};
  if(env.VEXA_EMAIL_MODE==='resend'&&!/^re_[A-Za-z0-9_-]+$/.test(env.RESEND_API_KEY??''))return{};
- try{renderTemplate({type:'digest.available',appOrigin:env.VEXA_APP_ORIGIN,ctaUrl:new URL('/notifications',env.VEXA_APP_ORIGIN).href});}catch{return{};}
+ try{renderTemplate({type:'digest.available',appOrigin:env.VEXA_APP_ORIGIN,ctaUrl:new URL('/notifications',env.VEXA_APP_ORIGIN).href,...(env.VEXA_EMAIL_UNSUBSCRIBE_URL?{unsubscribeUrl:env.VEXA_EMAIL_UNSUBSCRIBE_URL}:{})});}catch{return{};}
  let smtp;
  if(env.VEXA_EMAIL_MODE==='mailpit')smtp=createMailpitSender({port:Number(env.VEXA_MAILPIT_SMTP_PORT)});
  const pool=new pg.Pool({...databasePoolOptions(env.VEXA_EMAIL_DATABASE_URL,env.VEXA_EMAIL_DATABASE_CA_PEM),max:2,idleTimeoutMillis:1000,allowExitOnIdle:true,statement_timeout:5000,query_timeout:6000});
- const email=createEmailTransport({mode:env.VEXA_EMAIL_MODE,apiKey:env.RESEND_API_KEY,from:env.VEXA_EMAIL_FROM,replyTo:env.VEXA_EMAIL_REPLY_TO,appOrigin:env.VEXA_APP_ORIGIN,repository:createReceiptRepository({pool}),smtp});
+ const email=createEmailTransport({mode:env.VEXA_EMAIL_MODE,apiKey:env.RESEND_API_KEY,from:env.VEXA_EMAIL_FROM,replyTo:env.VEXA_EMAIL_REPLY_TO,appOrigin:env.VEXA_APP_ORIGIN,unsubscribeUrl:env.VEXA_EMAIL_UNSUBSCRIBE_URL||undefined,repository:createReceiptRepository({pool}),smtp});
  return{email:Object.freeze({...email,close:async()=>{await pool.end();}})};
 }

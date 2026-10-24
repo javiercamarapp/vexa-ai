@@ -26,7 +26,7 @@ export type PlatformStateClient =
   | {status: 'denied' | 'error'};
 type Props = {initial: PlatformStateClient};
 const fmtDate = (iso: string | null) => (iso ? new Intl.DateTimeFormat('es-MX', {day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'UTC'}).format(new Date(iso)) + ' UTC' : 'Sin registro');
-const OPERATIONS: Record<string, string> = {create: 'Organización creada', team_invite: 'Invitación enviada', team_role: 'Cambio de rol', team_revoke: 'Acceso revocado', team_cancel: 'Invitación cancelada', team_claim: 'Entrega de invitación', team_receipt: 'Recibo de entrega', copilot_query: 'Consulta del copiloto'};
+const OPERATIONS: Record<string, string> = {create: 'Organización creada', team_invite: 'Invitación enviada', team_role: 'Cambio de rol', team_revoke: 'Acceso revocado', team_cancel: 'Invitación cancelada', team_claim: 'Entrega de invitación', team_receipt: 'Recibo de entrega', copilot_query: 'Consulta del copiloto', team_list: 'Lectura del equipo', org_view: 'Ficha de cliente consultada', support_start: 'Modo soporte iniciado', support_end: 'Modo soporte terminado'};
 
 function usePlatform(initial: PlatformStateClient) {
   const [state, setState] = useState(initial), [busy, setBusy] = useState(false), [error, setError] = useState('');
@@ -109,7 +109,7 @@ export function Organizations({initial}: Props) {
         {id: 'src', header: 'Fuentes', align: 'right', sort: o => o.sourcesLoaded, cell: o => `${o.sourcesLoaded} de ${o.sourcesExpected}`},
         {id: 'jobs', header: 'Procesos fallidos', align: 'right', sort: o => o.jobs.failed, cell: o => int(o.jobs.failed)},
         {id: 'ai', header: 'IA', sort: o => o.aiPctBps, cell: o => <><Meter bps={o.aiPctBps} /><small className="pf-sub">{o.aiSpent} de {o.aiLimit}</small></>},
-        {id: 'go', header: 'Acciones', cell: o => <Button size="sm" onClick={() => { setFocus(o.id); setTeam(null); document.getElementById('detalle')?.scrollIntoView?.({block: 'start'}); }}>Ver detalle</Button>},
+        {id: 'go', header: 'Acciones', cell: o => <><Button size="sm" onClick={() => { setFocus(o.id); setTeam(null); document.getElementById('detalle')?.scrollIntoView?.({block: 'start'}); }}>Ver detalle</Button><LinkButton href={`/platform/organizaciones/${o.id}`} size="sm">Ficha 360</LinkButton></>},
       ];
       const picked = v.organizations.filter(o => sel.has(o.id)), detail = v.organizations.find(o => o.id === focus);
       return <>
@@ -138,7 +138,7 @@ export function Organizations({initial}: Props) {
   </Shell>;
 }
 function PartialOrgs({state}: {state: Extract<PlatformStateClient, {status: 'partial'}>}) {
-  return <Panel title="Organizaciones (lista básica)" eyebrow="Observabilidad no conectada" lead={state.reason}><ul className="pf-list">{state.organizations.map(o => <li key={o.id}><div className="pf-li-main"><strong>{o.name}</strong><span>Creada {fmtDate(o.createdAt)}</span></div><IdChip value={o.id} /></li>)}</ul></Panel>;
+  return <Panel title="Organizaciones (lista básica)" eyebrow="Observabilidad no conectada" lead={state.reason}><ul className="pf-list">{state.organizations.map(o => <li key={o.id}><div className="pf-li-main"><strong>{o.name}</strong><span>Creada {fmtDate(o.createdAt)}</span></div><LinkButton href={`/platform/organizaciones/${o.id}`} size="sm">Ficha 360</LinkButton><IdChip value={o.id} /></li>)}</ul></Panel>;
 }
 function CreateOrg({onDone}: {onDone: () => Promise<void>}) {
   const [busy, setBusy] = useState(false), [msg, setMsg] = useState<{ok: boolean; text: string} | null>(null), [confirmed, setConfirmed] = useState(false), [rid, setRid] = useState(() => crypto.randomUUID());

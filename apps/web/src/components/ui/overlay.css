@@ -71,7 +71,7 @@ body .ov-form{display:flex;flex-direction:column;gap:12px}
 body .ov-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 
 /* ---- Bloques de contenido reutilizables (cada panel elige los que su función necesita) ---- */
-body .ov-summary{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:8px 10px;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-soft);font-size:12px;color:var(--ui-secondary)}
+body .ov-summary{display:block;line-height:1.5;padding:8px 10px;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-soft);font-size:12px;color:var(--ui-secondary)}
 body .ov-summary b{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
 body .ov-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:0;border:1px solid var(--ui-border);border-radius:8px;overflow:hidden}
 body .ov-kpi{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-left:1px solid var(--ui-border);min-width:0}

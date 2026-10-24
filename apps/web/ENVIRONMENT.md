@@ -1,10 +1,10 @@
-# Entorno de VEXA
+# Entorno de Rovaq
 
 Auth, permisos, importación durable, conectores, análisis y workspace están implementados. Sin configuración la aplicación muestra servicios no disponibles; no fabrica sesiones ni datos. Consulte PROGRESO.md y los recibos para distinguir lo aceptado de las propuestas locales. Las notas históricas de implementación no sustituyen ese estado.
 
 | Servicio | Variables | Condición |
 |---|---|---|
-| Auth web | NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, NEXT_PUBLIC_SITE_URL | Las tres; proyecto VEXA y origen correcto. Anon no es service-role. |
+| Auth web | NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, NEXT_PUBLIC_SITE_URL | Las tres; proyecto Rovaq y origen correcto. Anon no es service-role. |
 | Invitaciones de equipo | VEXA_TEAM_AUTH_URL, VEXA_TEAM_AUTH_ADMIN_KEY | URL raíz del mismo proyecto Supabase; clave administrativa exclusivamente servidor. SMTP y redirect propio `/auth/invitations/*` configurados en Auth. |
 | Acceso por correo | VEXA_EMAIL_AUTH_ENABLED | `true` habilita magic links sólo para cuentas existentes; configurar SMTP del proyecto y redirect propio `/auth/email/complete` en Supabase Auth. No crea membresías. |
 | Google | VEXA_GOOGLE_AUTH_ENABLED | Requiere OAuth/redirects configurados legítimamente. |

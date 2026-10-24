@@ -1,4 +1,4 @@
-# ops/ — operacion de Vexa (solo preparacion local)
+# ops/ — operacion de Rovaq (solo preparacion local)
 
 Nada aqui se ejecuta contra produccion por si solo. Documentacion: `docs/operacion/03..07`.
 

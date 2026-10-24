@@ -1,4 +1,4 @@
-/* Vexa UI layer — shared primitives (buttons, links, cards, badges, charts, states). Loaded after globals.css and task-layout.css.
+/* Rovaq UI layer — shared primitives (buttons, links, cards, badges, charts, states). Loaded after globals.css and task-layout.css.
    Tokens extend the existing --ui-* set; spacing uses the 4/8 px scale. Motion only under prefers-reduced-motion: no-preference. */
 :root{
  --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:20px;--sp-6:24px;--sp-8:32px;--sp-10:40px;--sp-12:48px;

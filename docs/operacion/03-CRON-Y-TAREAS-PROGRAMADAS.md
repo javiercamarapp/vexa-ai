@@ -1,4 +1,4 @@
-# Cron y tareas programadas de Vexa
+# Cron y tareas programadas de Rovaq
 
 Estado: PROPUESTA. No se activo nada (ni pg_cron, ni Vercel Cron, ni GitHub Actions, ni cron/launchd en esta Mac). Todo lo marcado «no verificado» no se pudo comprobar sin leer produccion.
 

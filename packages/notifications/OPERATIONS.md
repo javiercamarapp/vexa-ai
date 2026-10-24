@@ -1,6 +1,6 @@
 # Centro de notificaciones y preferencias
 
-El centro usa la sesión y `createDatabase` canónicos. Sólo usuarios VEXA con membership activa pueden leer sus avisos o guardar sus preferencias. Los contactos CRM no son destinatarios. Las tres tablas tienen RLS forzada; su acceso se realiza por API de servidor, sin SELECT browser directo.
+El centro usa la sesión y `createDatabase` canónicos. Sólo usuarios Rovaq con membership activa pueden leer sus avisos o guardar sus preferencias. Los contactos CRM no son destinatarios. Las tres tablas tienen RLS forzada; su acceso se realiza por API de servidor, sin SELECT browser directo.
 
 - `GET /api/notifications`: `status=all|unread`, `limit=1..100`, `cursor` opcional. Orden estable por fecha y UUID descendentes; el cursor vincula organización, usuario, rol, versión de permisos, filtro y tamaño. No se omiten avisos autorizados por cortar una página antes de comprobar acceso.
 - `GET /api/notifications/preferences`: catálogo y todas las combinaciones de canal/evento. Ausencia significa `enabled:false,version:0`, no consentimiento.

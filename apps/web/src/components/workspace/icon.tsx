@@ -17,6 +17,7 @@ const paths:Record<string,string>={
  retention:'M3 4h18v4H3z M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8 M10 12h4',
  grid:'M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z',
  clock:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z M12 7v5l3 2',
+ painpoints:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z M10 10.5a2.5 2.5 0 1 0 0 .01 M15.5 9a1.5 1.5 0 1 0 0 .01 M14 15a2 2 0 1 0 0 .01',
  analysis:'M4 20V10 M10 20V4 M16 20v-8 M22 20V7',economics:'M12 2v20 M17 5H9a4 4 0 0 0 0 8h6a4 4 0 0 1 0 8H5'
 };
 export function WorkspaceIcon({name}:{name:string}){return <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]??paths.briefs}/></svg>;}

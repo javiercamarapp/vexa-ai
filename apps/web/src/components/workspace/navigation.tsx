@@ -5,7 +5,7 @@ import {usePathname,useSearchParams} from 'next/navigation';
 import {WorkspaceIcon} from './icon';
 import {precalentarEnlace} from '../../lib/workspace/precalentar.mjs';
 import {consultaAlcance} from '../../lib/workspace/alcance.mjs';
-import {menuVisible,itemActivo,tituloDePantalla,iconoDePantalla,grupoAbiertoPorDefecto,type MenuItem,type MenuEntrada} from '../../lib/workspace/menu.mjs';
+import {menuVisible,pieVisible,PIE,itemActivo,tituloDePantalla,iconoDePantalla,grupoAbiertoPorDefecto,type MenuItem,type MenuEntrada} from '../../lib/workspace/menu.mjs';
 /** El menú conserva solo el alcance (periodo, moneda, base, corte, filtros compartidos); los filtros propios de cada pantalla no viajan. */
 export function navigationQuery(_pathname:string,raw:string){return consultaAlcance(raw);}
 export const workspaceTitle=tituloDePantalla;
@@ -44,4 +44,11 @@ export function Navigation({onNavigate,collapsed=false,role,interno=false}:{onNa
    </div>;
   })}
  </nav>;
+}
+/** Entrada fija «Puntos de dolor» al pie del menú, sobre Notificaciones, bajo la etiqueta «Insights». */
+export function PieNavigation({role,onNavigate}:{role?:string;onNavigate?:()=>void}){
+ const pathname=usePathname(),query=navigationQuery(pathname,useSearchParams().toString()),item=pieVisible({role});
+ if(!item)return null;
+ const destino=item.href+(query?'?'+query:'');
+ return <div className="sidebar-notifications sidebar-pie"><p className="nav-caption">{PIE.etiqueta}</p><Link title={item.titulo} aria-label={item.etiqueta} onClick={onNavigate} onPointerEnter={()=>precalentarEnlace(destino)} onFocus={()=>precalentarEnlace(destino)} aria-current={pathname===item.href||pathname.startsWith(item.href+'/')?'page':undefined} href={destino}><WorkspaceIcon name={item.icono}/><span className="nav-label">{item.etiqueta}</span></Link></div>;
 }

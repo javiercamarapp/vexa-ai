@@ -1,0 +1,10 @@
+import type {PuntoPP} from '../../../../../packages/workspace-service/pain-points.d.mts';
+export const R_MIN: number, R_MAX: number, MAX_BURBUJAS: number, SEPARACION: number, TEMAS_ORDEN: string[];
+export type Burbuja = {tipo: 'punto' | 'mas'; id: string; tema: string; valor: number; r: number; cx: number; cy: number; minimo?: boolean; clase: string; n?: number; ids?: string[]};
+export type Cluster = {id: string; region: {x0: number; x1: number; y0: number; y1: number}; centro: {x: number; y: number}; etiquetaX: number; etiquetaY: number; total: number; n: number};
+export type Disposicion = {burbujas: Burbuja[]; masPorTema: Burbuja[]; sinCifra: PuntoPP[]; omitidas: Burbuja[]; clusters: Cluster[]; ancho: number; alto: number; cols: number; escala: {vmax: number; rMin: number; rMax: number}; modo: string};
+export function valorDe(p: PuntoPP, modo: 'dinero' | 'volumen'): number | null;
+export function radioDe(v: number, vmax: number): number;
+export function rejilla(ancho: number): {cols: number; filas: number; altoFila: number; alto: number};
+export function disponerBurbujas(o: {puntos: PuntoPP[]; modo?: 'dinero' | 'volumen'; ancho?: number; temas?: string[]; maxBurbujas?: number}): Disposicion;
+export function mayores(puntos: PuntoPP[], modo?: 'dinero' | 'volumen', n?: number): PuntoPP[];

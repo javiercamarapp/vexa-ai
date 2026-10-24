@@ -11,7 +11,7 @@ const F=await import('./fixtures.mjs');const {respond}=F;
 const {MENU}=await import('../../src/lib/workspace/menu.mjs');
 const arg=(k,d)=>(process.argv.find(a=>a.startsWith('--'+k+'='))?.slice(k.length+3))??d;
 const base=process.env.VEXA_UI_BASE??'http://localhost:3150';
-const menuRoutes=[...new Set(MENU.flatMap(x=>x.tipo==='item'?[x.href]:(x.items??[]).map(i=>i.href)).concat(['/notifications','/confianza','/cfo?vista=informe']))];
+const menuRoutes=[...new Set(MENU.flatMap(x=>x.tipo==='item'?[x.href]:(x.items??[]).map(i=>i.href)).concat(['/notifications','/confianza','/cfo?vista=informe','/pain-points']))];
 const routes=arg('routes',null)?.split(',')??menuRoutes;
 const sizes=arg('sizes','375,768,1440').split(',').map(Number),themes=arg('themes','light,dark').split(',');
 const detalle=process.argv.includes('--detalle');

@@ -3,7 +3,7 @@ import Link from './navigation-lifecycle';
 import {useEffect,useState,type ReactNode} from 'react';
 import {Drawer} from '../ui/overlay';
 import {usePathname,useSearchParams} from 'next/navigation';
-import {Navigation,navigationQuery,workspaceTitle,workspaceIconName} from './navigation';
+import {Navigation,PieNavigation,navigationQuery,workspaceTitle,workspaceIconName} from './navigation';
 import {WorkspaceIcon} from './icon';
 import {NotificationNavigationLink} from '../notifications/navigation-link';
 import {AccesoProvider} from './access';
@@ -33,6 +33,7 @@ export function WorkspaceShell({children,brand,organizations,tenant,role,platfor
    <div className="sidebar-navigation"><Navigation role={role} interno={platformAccess} collapsed={!mobile&&collapsed} onNavigate={mobile?close:undefined}/></div>
    <div className="sidebar-footer">
     {organizations.length>1?<form className="organization-switch" action="/auth/organization" method="post" onSubmit={()=>limpiarTodo()}><label className="nav-caption" htmlFor={mobile?'mobile-workspace-org':'workspace-org'}>Organización</label><div className="organization-controls"><select id={mobile?'mobile-workspace-org':'workspace-org'} name="tenant_id" defaultValue={tenant}>{organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}</select><button type="submit" title="Cambiar organización" aria-label="Cambiar organización">Ir <span aria-hidden="true">↗</span></button></div></form>:<div className="workspace-context"><span className="nav-caption">Espacio de cliente</span><strong>{organization}</strong></div>}
+    <PieNavigation role={role} onNavigate={mobile?close:undefined}/>
     <div className="sidebar-notifications"><NotificationNavigationLink/></div>
     {platformAccess&&<Link className="workspace-platform-link" href="/platform" aria-label="Administración de Rovaq AI" title="Administración de Rovaq AI"><WorkspaceIcon name="settings"/><span className="platform-link-label">Administración de Rovaq AI</span></Link>}
     <fieldset className="theme-selector"><legend className="sr-only">Tema de la interfaz</legend>{([['light','Claro','☀'],['system','Sistema','▣'],['dark','Oscuro','☾']] as const).map(([value,label,icon])=><label key={value} title={'Tema '+label.toLowerCase()}><input type="radio" className="sr-only" name={mobile?'mobile-theme':'workspace-theme'} value={value} checked={theme===value} onChange={()=>chooseTheme(value)}/><span aria-hidden="true">{icon}</span><span className="sr-only">{label}</span></label>)}</fieldset>

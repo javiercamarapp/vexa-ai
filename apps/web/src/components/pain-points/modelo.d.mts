@@ -1,0 +1,14 @@
+import type {PainVista, PuntoPP, DineroPP, VolumenPP} from '../../../../../packages/workspace-service/pain-points.d.mts';
+export const SIN_DATO: string;
+export const CLASE_KIND: Record<'O' | 'E' | 'I', 'observed' | 'estimated' | 'inferred'>;
+export const CLASE_NOMBRE: Record<'O' | 'E' | 'I', string>;
+export function usd(minor: string): string;
+export function usdCorto(minor: string): string;
+export function num(n: number): string;
+export function dineroTxt(d: DineroPP, corto?: boolean): string;
+export function volumenTxt(v: VolumenPP): string;
+export function mesTxt(m: string): string;
+export function periodoTxt(p: {desde: string; hasta: string} | null): string;
+export function valorMostrado(p: PuntoPP, modo: 'dinero' | 'volumen'): string;
+export function etiquetaBurbuja(p: PuntoPP, tema: string, modo: 'dinero' | 'volumen'): string;
+export function kpisDe(v: PainVista): {key: string; label: string; c: number; p: PuntoPP | null; valor: string; nota: string}[];

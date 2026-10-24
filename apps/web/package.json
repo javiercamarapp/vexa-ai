@@ -12,6 +12,7 @@
     "build": "next build --webpack",
     "start": "next start",
     "test:agente-ui": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/agente/agente-ui.test.tsx",
+    "test:pain-points": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/pain-points-ruta.test.ts",
     "test:auth": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/auth-http.test.ts"
   },
   "dependencies": {

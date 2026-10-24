@@ -1,8 +1,8 @@
 /* «Mapa de problemas» (/map). Rampa de un solo matiz verde (magnitud). El rojo de marca solo resalta el estado elegido. Nunca el color solo: cada mosaico lleva código y número. */
 /* Rampa de UN matiz verde (Geografía = --metric-geografia / --chart-3), 5 pasos de claro a oscuro; en oscuro de apagado a brillante. */
-:root{--mp-0:transparent;--mp-1:#dcebe4;--mp-2:#aed3c2;--mp-3:#6fb094;--mp-4:#2f8a63;--mp-5:#145c3f;--mp-t1:#0e0e10;--mp-t2:#0e0e10;--mp-t3:#0e0e10;--mp-t4:#ffffff;--mp-t5:#ffffff;--mp-borde:#b9c4be;--mp-sel:var(--rovaq-rojo,#e8241c)}
-:root[data-theme=dark]{--mp-0:transparent;--mp-1:#1d3b30;--mp-2:#226149;--mp-3:#2a8a64;--mp-4:#52b58c;--mp-5:#9bdcbc;--mp-t1:#ffffff;--mp-t2:#ffffff;--mp-t3:#ffffff;--mp-t4:#0e0e10;--mp-t5:#0e0e10;--mp-borde:#3a4a43}
-@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--mp-0:transparent;--mp-1:#1d3b30;--mp-2:#226149;--mp-3:#2a8a64;--mp-4:#52b58c;--mp-5:#9bdcbc;--mp-t1:#ffffff;--mp-t2:#ffffff;--mp-t3:#ffffff;--mp-t4:#0e0e10;--mp-t5:#0e0e10;--mp-borde:#3a4a43}}
+:root{--mp-0:transparent;--mp-1:#dcebe4;--mp-2:#aed3c2;--mp-3:#6fb094;--mp-4:#2a7f5b;--mp-5:#145c3f;--mp-t1:#0e0e10;--mp-t2:#0e0e10;--mp-t3:#0e0e10;--mp-t4:#ffffff;--mp-t5:#ffffff;--mp-borde:#b9c4be;--mp-sel:var(--rovaq-rojo,#e8241c)}
+:root[data-theme=dark]{--mp-0:transparent;--mp-1:#2f7d5e;--mp-2:#3b8f6c;--mp-3:#4fa57f;--mp-4:#7cc7a5;--mp-5:#aee3c8;--mp-t1:#ffffff;--mp-t2:#0e0e10;--mp-t3:#0e0e10;--mp-t4:#0e0e10;--mp-t5:#0e0e10;--mp-borde:#3a4a43}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--mp-0:transparent;--mp-1:#2f7d5e;--mp-2:#3b8f6c;--mp-3:#4fa57f;--mp-4:#7cc7a5;--mp-5:#aee3c8;--mp-t1:#ffffff;--mp-t2:#0e0e10;--mp-t3:#0e0e10;--mp-t4:#0e0e10;--mp-t5:#0e0e10;--mp-borde:#3a4a43}}
 .mp-page{min-width:0}
 .mp-prov{display:flex;gap:var(--sp-3);align-items:flex-start;margin:0;padding:12px 16px;border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm);background:var(--ui-soft);font-size:var(--t-small);color:var(--ui-secondary)}
 .mp-prov svg{flex:none;margin-top:2px;color:var(--muted)}.mp-prov b{color:var(--ink)}

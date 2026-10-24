@@ -10,7 +10,7 @@ import {requestAuth} from '../auth-http';
 import {serverPool} from '../imports/server';
 import type {ReadPort} from './data';
 import type {Resource} from './contracts';
-export async function workspaceSession(){const jar=await cookies();const client=authClient({getAll:()=>jar.getAll(),set:()=>{}});const session=await resolveSession(identity(client),jar.get(ACTIVE_ORG)?.value);return {client,session};}
+export async function workspaceSession(){const jar=await cookies();const client=authClient({getAll:()=>jar.getAll(),set:()=>{}});const session=await resolveSession(identity(client),jar.get(ACTIVE_ORG)?.value,{fallback:true});return {client,session};}
 interface WorkspacePort extends ReadPort{resourceScope(input:{resource:Resource;id:string}):Promise<Record<string,string|string[]|null>>;}
 export function workspaceService(client:ReturnType<typeof authClient>,selectedTenant?:string):WorkspacePort{
  const service=createWorkspaceService({database:createDatabase({identity:identity(client),pool:serverPool(),selectedTenant})});

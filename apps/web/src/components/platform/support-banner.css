@@ -1,0 +1,9 @@
+/* Banner de «ver como». Fijo arriba; el cuerpo y el shell ceden su altura (sin tocar shell.tsx ni los css del celular). */
+:root { --soporte-alto: 44px; }
+.soporte-barra { position: fixed; inset: 0 0 auto 0; z-index: 60; height: var(--soporte-alto); display: flex; align-items: center; gap: 12px; padding: 0 16px; background: var(--ui-warning-soft); border-bottom: 2px solid var(--ui-warning); color: var(--ink); font-size: 13px; line-height: 1.3; }
+.soporte-barra p { margin: 0; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.soporte-tiempo { font-variant-numeric: tabular-nums; white-space: nowrap; }
+body:has(.soporte-barra) { padding-top: var(--soporte-alto); box-sizing: border-box; }
+body:has(.soporte-barra) .workspace-shell { height: calc(100dvh - var(--soporte-alto)); }
+body:has(.soporte-barra) .workspace-shell .workspace-sidebar { height: calc(100dvh - 24px - var(--soporte-alto)); }
+@media (max-width: 720px) { .soporte-motivo { display: none; } .soporte-barra { padding: 0 12px; gap: 8px; } }

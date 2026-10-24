@@ -207,3 +207,4 @@ body :is(.workspace-content,.access-flow,.platform-shell) select:not([multiple])
 /* Matriz de avisos × canales: encabezados y casillas SIEMPRE centrados en su columna (antes el título quedaba a la derecha de la casilla) */
 .notification-matrix thead th:not(:first-child),.notification-matrix tbody td{text-align:center}
 .notification-matrix tbody td input[type=checkbox]{display:block;margin-inline:auto}
+.ov-avanzado summary{cursor:pointer;font-size:13px;color:var(--ui-secondary);margin-bottom:var(--sp-2,8px)}

@@ -46,6 +46,10 @@
 .dn-facts-sm dt{margin:0}.dn-facts-sm dd{font-weight:500;text-align:right}
 
 .notification-matrix td{text-align:center}
+/* M17 (auditoría 24-oct): encabezados de canal centrados sobre sus casillas y aire vertical en cada fila (la descripción ya no toca el borde) */
+.notification-matrix thead th[data-align=num],.notification-matrix thead th[scope=col]:not(:first-child){text-align:center}
+.notification-matrix th[scope=row],.notification-matrix td{padding-block:12px}
+.notification-matrix th[scope=row] small{margin-top:2px}
 .notification-matrix .matrix-check{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px}
 .notification-matrix th[scope=row]{min-width:220px;max-width:420px;white-space:normal}
 @media(max-width:700px){.workspace-content .table-wrap .notification-matrix{width:100%;min-width:0;max-width:100%;table-layout:fixed}.notification-matrix th[scope=col]:not(:first-child){width:72px;font-size:12px;white-space:normal;overflow-wrap:anywhere}.notification-matrix th[scope=row]{min-width:0;max-width:none}.notification-matrix td{padding-inline:2px}}

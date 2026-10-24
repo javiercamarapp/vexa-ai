@@ -123,3 +123,20 @@ test('M10: el texto sobre las barras segmentadas de Fuga no usa blanco fijo sobr
   assert.match(ui, /\.mc-seg:not\(\[data-estado=estimado\]\):not\(\[data-estado=desconocido\]\)\[style\*="--chart-2\)"\]/);
   assert.match(ui, /:root\[data-theme=dark\] \.mc-seg:not/); assert.ok(!/text-shadow:0 0 2px #0006/.test(ui));
 });
+
+import {armarHoy} from '../src/components/hoy/hoy-modelo.mjs';
+test('M3: el titular de Hoy no salta a la frase de ingreso mientras Fuga carga', () => {
+  const v = armarHoy({estado: {fuga: 'cargando', carga: 'cargando', cfo: 'ok'}, cfo: null});
+  assert.equal(v.titular.texto, ''); assert.deepEqual(v.titular.partes, []);
+  const e = armarHoy({estado: {fuga: 'error', carga: 'error', cfo: 'error'}});
+  assert.match(e.titular.texto, /Todavía no hay datos suficientes/);
+});
+
+test('M14/M17/B5/B10/B11/B12: filtros legibles, tabla de avisos centrada, conteo 0 en gris y textos sin jerga', () => {
+  const f = leer('components/workspace/shared-filters.tsx');
+  assert.match(f, /<select name="basis"/); assert.match(f, /etiquetaBase\(k\)/); assert.match(f, /<details className="ov-avanzado"/); assert.ok(!/<input name="basis"/.test(f));
+  assert.match(leer('components/datos/datos.css'), /\.notification-matrix thead th\[data-align=num\]/);
+  assert.match(leer('components/panel-comun/tabs-linea.tsx'), /data-cero/);
+  assert.ok(!/Descargar JSON de este alcance|Descargar CSV de este alcance/.test(leer('components/workspace/shared-panel.tsx')));
+  assert.ok(!/ledger firmado/.test(leer('components/retention-panel.tsx'))); assert.ok(!/\branking\b/.test(leer('lib/legibilidad/guias.mjs')));
+});

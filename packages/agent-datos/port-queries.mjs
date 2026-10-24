@@ -129,7 +129,9 @@ export const windowHistory = (now) => monthWindow(now, HISTORY_MONTHS);
 
 export async function readProblems(s) {
   const rows = await bounded(s, 'agent_problems', 3000, async () => (await s.query(PROBLEMS_SQL, [s.tenantId])).rows);
-  return { status: rows.length ? 'ok' : 'empty', rows: rows.map((r) => ({ problemId: r.problem_id, title: r.label, category: categoriaEs(String(r.label).split(':')[0]) })) };
+  // Las notificaciones automáticas de retailers no son problemas de clientes: se excluyen del catálogo del agente (igual que la pantalla Problemas las oculta por defecto).
+  const reales = rows.filter((r) => !/^other:\s*retailer notifications/i.test(String(r.label)));
+  return { status: reales.length ? 'ok' : 'empty', rows: reales.map((r) => ({ problemId: r.problem_id, title: r.label, category: categoriaEs(String(r.label).split(':')[0]) })) };
 }
 
 /** Lectura única (24 meses) de incidencias por problema·mes. Se memoiza en el puerto: problemIncidents(a) y (b) comparten el costo. */

@@ -124,9 +124,9 @@ test('problems / problemIncidents: una fila por etiqueta, ordenado, sin clientes
   const db = fakeDb({ problems: [P('Order: Spare Parts', 'p-1'), P('Other: Retailer notifications and system alerts', 'p-2')], monthly, volume: [{ period: '2026-09', n: 20000 }, { period: '2026-08', n: 3000 }], calls });
   const port = portOf(db);
   const cat = await port.problems();
-  assert.deepEqual(cat.rows.map((x) => [x.problemId, x.title, x.category]), [['p-1', 'Order: Spare Parts', 'Pedido'], ['p-2', 'Other: Retailer notifications and system alerts', 'Otros']]);
+  assert.deepEqual(cat.rows.map((x) => [x.problemId, x.title, x.category]), [['p-1', 'Order: Spare Parts', 'Pedido']]);
   const sep = await port.problemIncidents({ month: '2026-09' }), ago = await port.problemIncidents({ month: '2026-08' });
-  assert.deepEqual(sep.rows.map((x) => [x.title, x.incidents, x.customers]), [['Other: Retailer notifications and system alerts', 473, null], ['Order: Spare Parts', 403, null]]);
+  assert.deepEqual(sep.rows.map((x) => [x.title, x.incidents, x.customers]), [['Order: Spare Parts', 403, null]]);
   assert.deepEqual([sep.classified, sep.eligible], [835, 20000]); assert.deepEqual([ago.classified, ago.eligible], [120, 3000]);
   assert.equal(calls.filter((c) => c === 'incid').length, 1, 'a y b comparten una sola lectura');
   assert.equal((await port.problemIncidents({ month: '2026-05' })).status, 'empty');

@@ -2,7 +2,7 @@
 
 ## Cómo reportar una vulnerabilidad
 
-No abras un issue público. Usa el reporte privado del repositorio (pestaña **Security → Report a vulnerability** de `javiercamarapp/vexa-ai`) o escribe directamente al fundador por el canal privado con el que recibiste este repositorio.
+No abras un issue público. Usa el reporte privado del repositorio (pestaña **Security → Report a vulnerability** de `javiercamarapp/vexa-ai`) o escribe al fundador a javiercamaraportepetit@gmail.com con el asunto «Seguridad Rovaq AI».
 
 Incluye: qué ocurre, cómo reproducirlo, qué datos o permisos quedan expuestos y, si puedes, una propuesta de corrección. Nunca incluyas datos reales de clientes ni credenciales en el reporte.
 

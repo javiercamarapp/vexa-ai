@@ -152,4 +152,4 @@ La integración continua del repositorio ([`.github/workflows`](.github/workflow
 
 ## Licencia y contacto
 
-**Propietario — todos los derechos reservados.** Este repositorio no concede licencia de uso, copia ni distribución. Para consultas de inversión o de acceso, contactar al fundador, Javier Cámara Porte Petit, por el canal con el que recibió este documento.
+**Propietario — todos los derechos reservados.** Este repositorio no concede licencia de uso, copia ni distribución. Para consultas de inversión o de acceso, contactar al fundador, Javier Cámara Porte Petit: javiercamaraportepetit@gmail.com.

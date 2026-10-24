@@ -18,7 +18,7 @@ export async function emailAuth(request:NextRequest,operation:'request'|'session
  const body=await input(request,operation==='request'?1024:16384);
  if(operation==='request'){
   if(Object.keys(body).length!==1||typeof body.email!=='string'||body.email.length>254||!/^\S+@[^\s@]+\.[^\s@]+$/.test(body.email.trim()))throw new AccessError(400,'email_auth_input_invalid');
-  const admission=emailAdmission.reserve(body.email);if(!admission)return NextResponse.json(generic,{status:202,headers:{...headers,'Retry-After':'60'}});
+  const admission=emailAdmission.reserve(body.email);if(!admission){if(emailAdmission.bloqueado())return NextResponse.json({error:{code:'email_auth_busy'}},{status:503,headers:{...headers,'Retry-After':'30'}});return NextResponse.json(generic,{status:202,headers:{...headers,'Retry-After':'60'}});}
   let unavailable=false,limitado=false;
   try{const client=createClient(c.url,c.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,flowType:'implicit'},global:{fetch:(target,init)=>fetch(target,{...init,cache:'no-store',signal:AbortSignal.timeout(10000)})}});
    const result=await client.auth.signInWithOtp({email:body.email.trim().toLowerCase(),options:{shouldCreateUser:false,emailRedirectTo:new URL('/auth/email/complete',c.origin).href}});

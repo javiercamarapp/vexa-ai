@@ -71,8 +71,9 @@ test('datos: cada logo es un único <path> sin scripts, estilos ni referencias; 
     if (m.tipo === 'monograma') assert.match(m.letras, /^[A-Z]{1,2}$/, clave);
   }
   // Sin logo oficial disponible: monograma neutro / icono genérico, nunca un path inventado
-  for (const k of ['amazon', 'walmart', 'bestbuy']) assert.equal(MARCAS[k].tipo, 'monograma', k);
-  for (const k of ['excel', 'csv']) assert.equal(MARCAS[k].tipo, 'archivo', k);
+  assert.equal(MARCAS.bestbuy.tipo, 'monograma', 'bestbuy');
+  for (const k of ['amazon', 'walmart', 'excel']) assert.equal(MARCAS[k].tipo, 'logo', k);
+  assert.equal(MARCAS.csv.tipo, 'archivo', 'csv');
   for (const k of ['hubspot', 'shopify', 'zendesk']) assert.equal(MARCAS[k].tipo, 'logo', k);
 });
 

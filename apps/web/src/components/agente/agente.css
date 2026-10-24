@@ -77,7 +77,7 @@
 .workspace-chat .copiloto{position:relative;min-height:var(--chat-h);overflow:hidden;padding:16px 16px 0}
 .workspace-chat .copiloto-hist-row{position:relative;display:flex;justify-content:flex-end;margin-bottom:24px}
 .workspace-chat .copiloto button{margin:0}
-.workspace-chat :is(.copiloto-hist-btn,.agente-chip,.agente-consult,.agente-hist-new,.agente-history-item){min-height:0;width:auto;max-width:none;letter-spacing:normal}
+.workspace-chat :is(.copiloto-hist-btn,.agente-chip,.agente-consult){min-height:0;width:auto;max-width:none;letter-spacing:normal}
 .workspace-chat .copiloto-hist-btn[aria-expanded=true]{visibility:hidden}
 .workspace-chat .copiloto-hist-btn{position:relative;display:flex;align-items:center;gap:6px;font:400 12px/16px var(--font-ui);border:1px solid var(--ui-border);border-radius:999px;padding:6px 10px 6px 12px;background:var(--ui-surface);color:var(--muted);cursor:pointer}
 .workspace-chat .copiloto-hist-btn:hover{background:var(--ui-soft)}
@@ -140,42 +140,11 @@
 .agente-cat-q{padding:2px 0;border-top:1px solid var(--ui-border)}.agente-cat-q:first-child{border-top:0;padding-top:0}
 .workspace-chat .agente-q{display:flex;align-items:center;justify-content:flex-start;width:100%;min-height:40px;padding:6px 8px;border:0;border-radius:8px;background:transparent;color:var(--ink);font:400 14px/1.375 var(--font-ui);text-align:left;cursor:pointer}
 .workspace-chat .agente-q:hover{background:var(--ui-soft)}
-/* Panel Historial */
-.agente-history{position:absolute;right:12px;top:12px;height:calc(var(--chat-h) - 24px);z-index:20;display:flex;flex-direction:column;width:288px;max-width:85vw;overflow:hidden;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface);box-shadow:0 1px 2px #0000000d,0 12px 32px -8px #0000002e}
-@media(max-width:1023px){.agente-history{position:fixed;inset:0;z-index:40;width:100%;max-width:none;border-radius:0}}
-.agente-history-head{display:flex;align-items:center;gap:8px;padding:12px}
-.workspace-chat .agente-hist-new{flex:1;display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid color-mix(in srgb,var(--ui-border) 60%,transparent);border-radius:999px;background:transparent;color:var(--ink);font:500 14px/20px var(--font-ui);cursor:pointer}
-.workspace-chat .agente-hist-close{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border:1px solid color-mix(in srgb,var(--ui-border) 60%,transparent);border-radius:8px;background:transparent;color:var(--ink);cursor:pointer}
-.workspace-chat .agente-hist-new:hover,.workspace-chat .agente-hist-close:hover{background:var(--ui-soft)}
-.agente-history-tools{display:block;padding:0 12px 8px}
-.workspace-chat .agente-hist-search{display:flex;grid-template-columns:none;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:var(--ui-soft);color:var(--muted);font-size:14px;font-weight:400}
-.workspace-chat .agente-hist-search input{flex:1;min-width:0;min-height:0;padding:0;border:0;border-radius:0;outline:0;background:transparent;box-shadow:none;font:400 14px/20px var(--font-ui);color:var(--ink)}
-.agente-history-scroll{flex:1;min-height:0;overflow-y:auto;padding-bottom:12px}
-.agente-history-scroll .state{margin:0 16px}
-.agente-history-group{display:block}
-.agente-hist-group{margin:0;padding:4px 16px 8px;font:500 11px/15px var(--font-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.agente-history-group ul{list-style:none;margin:0;padding:0 8px;display:block}
-.agente-history-group li{display:flex;align-items:center;padding:0;border:0;border-radius:8px}
-.agente-history-group li:hover,.agente-history-group li:has([aria-current=true]){background:var(--ui-soft)}
-.workspace-chat .agente-history-item{display:block;flex:1;min-width:0;width:auto;padding:8px 12px;border:0;border-radius:8px;background:transparent;color:var(--ink);font:400 14px/20px var(--font-ui);text-align:left;cursor:pointer}
-.workspace-chat .agente-history-item[aria-current=true]{font-weight:500}
-.agente-history-title{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.agente-history-actions{flex:none;display:flex;align-items:center;margin-right:4px;opacity:0}
-.agente-history-group li:hover .agente-history-actions,.agente-history-actions:focus-within{opacity:1}
-@media(max-width:1023px){.agente-history-actions{opacity:1}}
-.workspace-chat .agente-history-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:4px 6px;border:0;border-radius:8px;background:transparent;color:var(--muted);font:400 12px/16px var(--font-ui);cursor:pointer}
-.workspace-chat .agente-history-actions button:hover:not(:disabled){background:var(--ui-surface);color:var(--ink)}
-.agente-history .agente-note{margin:0;padding:8px 16px 12px;font-size:12px;border-top:1px solid var(--ui-border)}
-@media(prefers-reduced-motion:no-preference){
- .agente-history{animation:agente-hist-in 480ms var(--ui-ease) both}
- .agente-history[data-leaving]{animation:agente-hist-out 480ms var(--ui-ease) both}
- @keyframes agente-hist-in{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
- @keyframes agente-hist-out{from{opacity:1;transform:none}to{opacity:0;transform:translateX(16px)}}
-}
+/* Panel Historial: usa el Drawer del sistema (ui/overlay.css). */
+.agente-hist-top{grid-template-columns:auto minmax(0,1fr);align-items:center}
 .agente-chips{display:flex;flex-wrap:wrap;gap:6px}
 .particle-field{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:var(--ui-action)}
-.workspace-chat .copiloto>:not(.particle-field):not(.agente-history){position:relative}
-.workspace-chat .agente-history-scroll .state{margin:0 16px;padding:0;border:0;background:none;box-shadow:none;font-size:14px;color:var(--muted)}
+.workspace-chat .copiloto>:not(.particle-field){position:relative}
 
 /* F2-CLIENTES: portada con tarjetas por tema (color fijo por orden, entrada sobria <=600 ms). */
 .agente-temas{display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:12px;width:min(100%,1080px);margin:20px auto 0}

@@ -82,9 +82,9 @@ body .ov-kv{display:grid;grid-template-columns:minmax(0,8.5rem) minmax(0,1fr);ga
 body .ov-kv dt{margin:0;font:500 12px/1.5 var(--font-ui);color:var(--muted)}
 body .ov-kv dd{margin:0;overflow-wrap:anywhere}
 body .ov-block{display:grid;gap:6px;padding:10px 12px;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-surface);min-width:0}
-body .ov-block-title{margin:0;font:600 12px/1.3 var(--font-ui);color:var(--muted)}
+body .ov-block .ov-block-title{margin:0;font:600 12px/1.3 var(--font-ui);color:var(--muted)}
 body .ov-block p{margin:0}
-body .ov-formula{margin:0;padding:8px 10px;border-radius:8px;background:var(--ui-soft);font:500 12px/1.5 var(--font-mono);overflow-wrap:anywhere;white-space:pre-wrap}
+body .ov-block .ov-formula{margin:0;padding:8px 10px;border-radius:8px;background:var(--ui-soft);font:400 13px/1.5 var(--font-ui);overflow-wrap:anywhere}
 body .ov-seal{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0;font:400 12px/1.4 var(--font-ui);color:var(--muted)}
 body .ov-seal::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--chart-3);flex:none}
 body .ov-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border:1px solid var(--ui-border);border-radius:8px}
@@ -102,12 +102,12 @@ body .ov-sticky{position:sticky;top:calc(var(--ov-pad)*-1);z-index:1;margin:calc
 body .ov-impact{margin:0;font-size:13px;color:var(--ui-secondary)}
 /* Búsqueda compacta (historial, catálogos) */
 body .ov-search{position:relative;display:flex;align-items:center;gap:6px;height:var(--ov-ctl);padding:0 10px;border:1px solid var(--ui-input);border-radius:8px;background:var(--ui-surface);color:var(--muted)}
-body :is(dialog.drawer,dialog.modal,.popover-panel) .ov-search input{flex:1;width:auto;min-width:0;height:100%;min-height:0;padding:0;border:0;border-radius:0;background:transparent;outline:0;font:400 13px var(--font-ui);color:var(--ink)}
+body :is(dialog.drawer,dialog.modal,.popover-panel) .ov-search input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=hidden]):not([type=range]){flex:1;width:auto;min-width:0;height:100%;min-height:0;padding:0;border:0;border-radius:0;background:transparent;outline:0;font:400 13px var(--font-ui);color:var(--ink)}
 body :is(dialog.drawer,dialog.modal,.popover-panel) .ov-search input:focus-visible{outline:0}
 body .ov-search:focus-within{outline:2px solid var(--ui-focus);outline-offset:1px}
 /* Lista densa agrupada: fila de 40 px, título a una línea, barra mini + conteo a la derecha, chevron al hover */
 body .ov-group{display:flex;flex-direction:column}
-body .ov-group-title{margin:0;padding:8px 8px 4px;font:600 12px/1.3 var(--font-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+body .ov-group .ov-group-title{margin:0;padding:8px 8px 4px;font:600 12px/1.3 var(--font-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 body .ov-rows{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
 body .ov-row{position:relative;display:flex;align-items:center;gap:8px;min-height:40px;padding:0 8px;border-radius:8px;min-width:0}
 body .ov-row:hover,body .ov-row:focus-within,body .ov-row[aria-current=true]{background:var(--ui-soft)}

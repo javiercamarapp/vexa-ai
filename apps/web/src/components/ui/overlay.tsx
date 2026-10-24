@@ -33,12 +33,12 @@ function Head({id,title,subtitle,onClose}:{id:string;title:string;subtitle?:Reac
 }
 type DrawerProps={open:boolean;onClose:()=>void;title:string;subtitle?:ReactNode;children:ReactNode;footer?:ReactNode;
  /** sm 420 · md 480 · lg 640. */size?:DrawerSize;/** @deprecated usa `size`; se redondea al tamaño estándar más cercano. */width?:number;
- /** Lado de entrada. «left» es solo para la navegación móvil. */side?:'right'|'left';
+ /** Lado de entrada. «left» es solo para la navegación móvil. */side?:'right'|'left';/** id del <dialog> (para aria-controls del disparador). */id?:string;
  /** Sin cabecera ni pie propios (el contenido los trae); exige `label`. */bare?:boolean;label?:string;className?:string};
 /** Panel lateral derecho (pantalla completa en móvil). Si el contenido es corto el panel no se estira: el pie queda pegado al contenido. */
-export function Drawer({open,onClose,title,subtitle,children,footer,size,width,side='right',bare=false,label,className}:DrawerProps){
+export function Drawer({open,onClose,title,subtitle,children,footer,size,width,side='right',bare=false,label,className,id:domId}:DrawerProps){
  const props=useDialog(open,onClose),id=useId(),px=drawerPx(size,width);
- return <dialog {...props} className={'drawer'+(className?' '+className:'')} data-side={side} data-bare={bare||undefined} aria-labelledby={bare?undefined:id} aria-label={bare?label:undefined} style={{'--drawer-w':px+'px'} as CSSProperties}>
+ return <dialog {...props} id={domId} className={'drawer'+(className?' '+className:'')} data-side={side} data-bare={bare||undefined} aria-labelledby={bare?undefined:id} aria-label={bare?label:undefined} style={{'--drawer-w':px+'px'} as CSSProperties}>
   {open&&(bare?<div className="drawer-panel">{children}</div>:<div className="drawer-panel"><Head id={id} title={title} subtitle={subtitle} onClose={onClose}/><div className="overlay-body">{children}</div>{footer&&<footer className="overlay-foot">{footer}</footer>}</div>)}
  </dialog>;
 }

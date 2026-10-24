@@ -5,9 +5,9 @@
 .accionesBloque{display:grid;gap:var(--sp-2);justify-items:end}
 .motivo{margin:0;font-size:var(--t-small,12px);color:var(--muted);max-width:56ch;text-align:right}
 @media(max-width:640px){.acciones{justify-content:stretch}.acciones>*{flex:1 1 140px}.accionesBloque{justify-items:stretch}.motivo{text-align:left}}
-.primario>button,.peligro>button{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:0 var(--sp-4,16px);border-radius:var(--r-btn,8px);font:inherit;font-weight:600;cursor:pointer;width:100%}
-.primario>button{background:var(--rovaq-negro);color:var(--rovaq-blanco);border:1px solid var(--rovaq-negro)}
-:root[data-theme=dark] .primario>button{background:var(--rovaq-blanco);color:var(--rovaq-negro);border-color:var(--rovaq-blanco)}
+.primario>button,.peligro>button{display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:0 12px;border-radius:8px;font:500 13px var(--font-ui);cursor:pointer;width:auto}
+.primario>button{background:var(--btn-soft-bg);color:var(--btn-soft-ink);border:1px solid var(--btn-soft-line)}
+.primario>button:not(:disabled):hover{background:var(--btn-soft-hover)}
 .peligro>button{background:transparent;color:inherit;border:1px solid var(--ui-border)}
 .peligro>button:hover{border-color:var(--rovaq-rojo)}
 .primario>button:disabled,.peligro>button:disabled{opacity:.5;cursor:not-allowed}

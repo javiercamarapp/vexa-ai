@@ -60,7 +60,7 @@ Lo caro no son las llamadas sino (1) los **builds** y (2) la **IA** (ver 07). Si
 
 ## 5. No verificado
 - Si pg_cron/pg_net/Vault ya estan instalados o hay programaciones activas en `proyecto-ejemplo`.
-- Si el despliegue de produccion de `vexa-ai` incluye el `vercel.json` con crons (y por tanto si ya hay invocaciones cada 5/15 min).
+- Si el despliegue de produccion de `rovaq-ai` (antes `vexa-ai`; https://rovaq-ai.vercel.app) incluye el `vercel.json` con crons (y por tanto si ya hay invocaciones cada 5/15 min).
 - Plan del equipo `likida` en Vercel; credito mensual de Pro; limite de concurrencia/conexiones de pg_cron en Micro.
 - Retencion de `net._http_response` y `cron.job_run_details` (crecimiento de tablas).
 - Compuertas para crm, history y metadata.

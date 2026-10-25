@@ -9,7 +9,7 @@ export const IDENTITY = Object.freeze({
   brandName: 'Rovaq',
   legalName: 'Rovaq AI',
   /** Origen público donde viven los PNG del logo (apps/web/public/email). */
-  assetOrigin: 'https://vexa-ai.vercel.app',
+  assetOrigin: 'https://rovaq-ai.vercel.app',
   supportEmail: 'soporte@rovaq.ai',
   securityEmail: 'seguridad@rovaq.ai',
   /** null = se omite el enlace hasta que exista la página (pendiente de Javier/legal). */
@@ -26,7 +26,7 @@ export const IDENTITY = Object.freeze({
 });
 
 /** Dominios a los que puede apuntar cualquier enlace o imagen de un correo. */
-export const ALLOWED_HOSTS = Object.freeze(['vexa-ai.vercel.app', 'rovaq.ai']);
+export const ALLOWED_HOSTS = Object.freeze(['rovaq-ai.vercel.app', 'vexa-ai.vercel.app', 'rovaq.ai']);
 
 /** Vigencia declarada en los textos; debe coincidir con `[auth.email] otp_expiry` de config.toml. */
 export const OTP_EXPIRY_SECONDS = 3600;

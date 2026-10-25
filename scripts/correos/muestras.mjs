@@ -2,7 +2,7 @@
 // No es el motor real de Supabase: cubre exactamente `{{ .Var }}`, `{{ or A "texto" }}`, `{{ if A }}` y `{{ end }}`.
 import {escapeHtml} from '../../packages/notifications/email-system.mjs';
 
-export const ORIGIN = 'https://vexa-ai.vercel.app';
+export const ORIGIN = 'https://rovaq-ai.vercel.app';
 
 export const GO_SAMPLE = Object.freeze({
   '.Email': 'ana.torres@empresa-ejemplo.mx',

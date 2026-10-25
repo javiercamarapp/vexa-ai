@@ -63,7 +63,7 @@ test('enlaces e imágenes solo a dominios permitidos y por HTTPS', () => {
     for (const url of (p.rawText ?? p.text).match(/https?:\/\/[^\s)]+/g) ?? []) { assert.match(url, /^https:/); assert.ok(ALLOWED_HOSTS.includes(hosts(url)), `${p.id} texto: ${url}`); }
     for (const url of p.html.replace(/xmlns(?::\w+)?="[^"]*"/g, '').match(/https?:\/\/[^\s"'<>)]+/g) ?? []) assert.ok(ALLOWED_HOSTS.includes(hosts(url)), `${p.id} html renderizado: ${url}`);
   }
-  assert.doesNotMatch(read('supabase/templates/auth/magic_link.html').replace(/xmlns(?::\w+)?="[^"]*"/g, ''), /https?:\/\/(?!vexa-ai\.vercel\.app)/);
+  assert.doesNotMatch(read('supabase/templates/auth/magic_link.html').replace(/xmlns(?::\w+)?="[^"]*"/g, ''), /https?:\/\/(?!rovaq-ai\.vercel\.app)/);
 });
 
 test('el logo claro y oscuro son PNG públicos que existen en apps/web/public/email', () => {
@@ -130,7 +130,7 @@ test('cabeceras de baja solo en notificaciones y reportes, nunca en acceso, invi
   assert.equal(w.headers['List-Unsubscribe-Post'], 'List-Unsubscribe=One-Click');
   assert.equal(w.headers.Precedence, 'bulk');
   assert.throws(() => renderWeeklyReport({...WEEKLY_SAMPLE, urls: {...WEEKLY_SAMPLE.urls, baja: undefined}}));
-  assert.throws(() => unsubscribeHeaders('http://vexa-ai.vercel.app/baja', ORIGIN));
+  assert.throws(() => unsubscribeHeaders('http://rovaq-ai.vercel.app/baja', ORIGIN));
   assert.throws(() => unsubscribeHeaders('https://evil.test/baja', ORIGIN));
   assert.throws(() => unsubscribeHeaders(ORIGIN + '/baja\r\nBcc: x@y.z', ORIGIN));
   for (const item of authCatalog) assert.equal(item.headers, undefined, 'los correos de Auth no declaran cabeceras de baja');
@@ -261,7 +261,7 @@ test('reporte semanal: estructura, datos faltantes sin 0, semana sin cambios y e
   assert.throws(() => renderWeeklyReport({...WEEKLY_SAMPLE, rol: 'Dueño'}), /invalid_role/);
   assert.throws(() => renderWeeklyReport({...WEEKLY_SAMPLE, ingreso: {valor: Number.NaN, delta: 1}}), /invalid_income/);
   assert.throws(() => renderWeeklyReport({...WEEKLY_SAMPLE, urls: {...WEEKLY_SAMPLE.urls, informe: 'https://evil.test/x'}}), /invalid_url/);
-  assert.throws(() => renderWeeklyReport({...WEEKLY_SAMPLE, appOrigin: 'http://vexa-ai.vercel.app'}));
+  assert.throws(() => renderWeeklyReport({...WEEKLY_SAMPLE, appOrigin: 'http://rovaq-ai.vercel.app'}));
   assert.doesNotMatch(w.text + w.html, /\bmargen\b(?! *\.| *,)|ahorro/i);
 });
 
@@ -270,7 +270,7 @@ test('formato es-MX de cifras', () => {
 });
 
 test('el motor es escapado: texto de la app con marcado no se interpreta', () => {
-  const r = renderLayout({go: false, subject: 's', preheader: 'p'.repeat(45), eyebrow: 'e', h1: '<img src=x onerror=alert(1)>', blocks: [{type: 'p', text: '<script>1</script> & "q"'}, {type: 'button', label: 'Ir', href: 'https://vexa-ai.vercel.app/a"onclick="x'}], footer: {strong: ANTI, motive: 'm'}});
+  const r = renderLayout({go: false, subject: 's', preheader: 'p'.repeat(45), eyebrow: 'e', h1: '<img src=x onerror=alert(1)>', blocks: [{type: 'p', text: '<script>1</script> & "q"'}, {type: 'button', label: 'Ir', href: 'https://rovaq-ai.vercel.app/a"onclick="x'}], footer: {strong: ANTI, motive: 'm'}});
   assert.doesNotMatch(r.html, /<script|<img src=x|onclick="x/);
   assert.match(r.html, /&lt;script&gt;1&lt;\/script&gt; &amp; &quot;q&quot;/);
 });

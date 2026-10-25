@@ -17,11 +17,11 @@ export function Composer({value,onChange,onSend,onStop,sending,disabled,placehol
   <div className="agente-composer-bar">
    <span className="agente-composer-start">
     <input ref={picker} type="file" accept={ADJUNTO_ACCEPT} className="sr-only" tabIndex={-1} aria-hidden="true" onChange={pick} data-testid="agente-adjunto-input"/>
-    <button type="button" className="agente-round agente-attach-btn" aria-label="Adjuntar archivo para analizar en este navegador" title="Adjuntar CSV, TXT o JSON (hasta 1 MB). Se analiza solo en tu navegador: no se envía ni se guarda." disabled={disabled||sending} onClick={()=>picker.current?.click()}><Icon name="clip" size={16}/></button>
+    <button type="button" className="ctl ctl-icon agente-round agente-attach-btn" aria-label="Adjuntar archivo para analizar en este navegador" title="Adjuntar CSV, TXT o JSON (hasta 1 MB). Se analiza solo en tu navegador: no se envía ni se guarda." disabled={disabled||sending} onClick={()=>picker.current?.click()}><Icon name="clip" size={16}/></button>
    </span>
    <span className="agente-composer-end">
     {value.length>=Math.floor(maxChars*0.8)&&<span className="agente-count" aria-live="polite">{value.length}/{maxChars}</span>}
-    {sending?<button type="button" className="agente-round agente-send" aria-label="Detener" onClick={onStop}><Icon name="stop" size={12}/></button>:<button type="submit" className="agente-round agente-send" aria-label="Enviar" disabled={empty||disabled}><Icon name="send" size={16}/></button>}
+    {sending?<button type="button" className="ctl ctl-icon ctl-pill ctl-solid agente-round agente-send" aria-label="Detener" onClick={onStop}><Icon name="stop" size={12}/></button>:<button type="submit" className="ctl ctl-icon ctl-pill ctl-solid agente-round agente-send" aria-label="Enviar" disabled={empty||disabled}><Icon name="send" size={16}/></button>}
    </span>
   </div>
   {attachError&&<p role="alert" className="agente-inline-error agente-attach-error">{attachError}</p>}

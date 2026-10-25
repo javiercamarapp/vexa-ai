@@ -25,7 +25,7 @@ function Chart({block}:{block:Block}){
 export function BlockView({block}:{block:Block}){
  return <section className="card agente-block" aria-label={block.title}>
   <div className="agente-block-head"><h3>{block.title}</h3><span className="agente-block-tags"><ClassTag block={block}/><span className="chip agente-cov" title="Cuánto de lo elegible respalda esta cifra.">{coverageText(block.coverage)}</span></span></div>
-  {block.chart?<><Chart block={block}/><details className="trend-table"><summary>Ver como tabla</summary><DataTable block={block}/></details></>:<DataTable block={block}/>}
+  {block.chart?<><Chart block={block}/><details className="trend-table"><summary className="ctl">Ver como tabla</summary><DataTable block={block}/></details></>:<DataTable block={block}/>}
   {block.note&&<p className="card-lead agente-note">{block.note}</p>}
   {block.truncated&&<p className="card-lead agente-note">Hay más filas en el sistema que las mostradas.</p>}
  </section>;

@@ -1,7 +1,7 @@
 'use client';
 import {ConMarca} from '../ui/brand-mark';
 import {useEffect,useState} from 'react';
-import {Button,LinkButton} from '../ui/button';
+import {Ctl,CtlLink} from './ctl';
 import {Citation} from '../ui/citation';
 import {IdChip} from '../ui/id-chip';
 import {answerToHtml,answerToMarkdown,blockToCsv} from '../../../../../packages/agent-datos/export.mjs';
@@ -17,7 +17,7 @@ const NOTICE:Partial<Record<Answer['status'],string>>={rate_limited:'Muchas preg
 const isAlert=(s:Answer['status'])=>['rate_limited','budget_exceeded','forbidden','unavailable','invalid_input'].includes(s);
 
 function CalcView({answer}:{answer:Answer}){
- return <details className="agente-calc"><summary>Ver cómo lo calculé</summary>
+ return <details className="agente-calc"><summary className="ctl">Ver cómo lo calculé</summary>
   <ol className="agente-calc-list" aria-label="Pasos del cálculo">
    {answer.calc.map((c,i)=><li key={i} className="agente-calc-step">
     <h4>{c.label}</h4>
@@ -61,28 +61,28 @@ export function AnswerView({message,question,isLast,busy,labels,userContext,escr
    <RovaqMark size={16}/>
    {isAlert(a.status)||a.status==='clarify'||a.status==='out_of_catalog'?<div className={'state'+(isAlert(a.status)?' state-error':'')} role={isAlert(a.status)?'alert':undefined}><p className="agente-state-line"><Icon name={isAlert(a.status)?'alert':'info'} size={16}/>{a.text||notice}</p></div>:<p className="agente-text" aria-busy={!listo||undefined}>{listo?a.text:a.text.slice(0,escrito)}</p>}
   </div>
-  {listo&&(a.status==='clarify'||a.status==='out_of_catalog'||a.status==='budget_exceeded')&&a.suggestions.length>0&&<div className="agente-chips" role="group" aria-label="Preguntas que sí puedo responder">{a.suggestions.slice(0,3).map(q=><Button key={q} size="sm" disabled={busy} onClick={()=>onAsk(q)}>{q}</Button>)}</div>}
+  {listo&&(a.status==='clarify'||a.status==='out_of_catalog'||a.status==='budget_exceeded')&&a.suggestions.length>0&&<div className="agente-chips" role="group" aria-label="Preguntas que sí puedo responder">{a.suggestions.slice(0,3).map(q=><Ctl key={q} className="ctl-q" title={q} disabled={busy} onClick={()=>onAsk(q)}>{q}</Ctl>)}</div>}
   {listo&&a.status==='ok'&&a.figures.filter(f=>f.rank===undefined).length>0&&<Kpis figures={a.figures.filter(f=>f.rank===undefined).slice(0,4)}/>}
   {listo&&a.status==='ok'&&blocksWithRows.map((b,i)=><BlockView key={b.tool+i} block={b}/>)}
   {listo&&a.status==='ok'&&a.citations.length>0&&<section className="agente-citations" aria-label="Citas verificables"><p className="eyebrow" role="heading" aria-level={3}>Citas verificables</p>{a.citations.map(c=><Citation key={c.messageRevisionId} quote={c.quote} role={c.role} messageRevisionId={c.messageRevisionId} category={c.category} source={c.source}/>)}</section>}
   {listo&&message.citationsOmitted&&<p className="card-lead agente-note">Las citas de clientes no se guardan en el historial de este navegador; vuelve a preguntar para verlas.</p>}
-  {listo&&a.missing.length>0&&ok&&<section className="agente-missing card" aria-label="Qué falta cargar"><p className="eyebrow" role="heading" aria-level={3}>Qué falta cargar</p><ul>{a.missing.map(m=><li key={m}>{m}</li>)}</ul>{a.missing.some(m=>!/vincul/i.test(m))&&<LinkButton href="/imports" size="sm" icon={<Icon name="arrow"/>}>Ir a Importaciones</LinkButton>}{a.missing.some(m=>/vincul/i.test(m))&&<LinkButton href="/history" size="sm" icon={<Icon name="arrow"/>}>Ver vínculos pedido–conversación</LinkButton>}</section>}
-  {listo&&a.status==='ok'&&a.sources.length>0&&<div className="agente-sources" aria-label="Fuentes"><span className="agente-sources-label">Fuentes</span>{a.sources.map(s=>{const href=safeInternal(s.href);return href?<LinkButton key={s.ref} href={href} size="sm" icon={<Icon name="arrow"/>}>{s.label}</LinkButton>:<span className="chip" key={s.ref}><ConMarca marca={s.label}>{s.label}</ConMarca></span>;})}</div>}
+  {listo&&a.missing.length>0&&ok&&<section className="agente-missing card" aria-label="Qué falta cargar"><p className="eyebrow" role="heading" aria-level={3}>Qué falta cargar</p><ul>{a.missing.map(m=><li key={m}>{m}</li>)}</ul>{a.missing.some(m=>!/vincul/i.test(m))&&<CtlLink href="/imports" icon={<Icon name="arrow"/>}>Ir a Importaciones</CtlLink>}{a.missing.some(m=>/vincul/i.test(m))&&<CtlLink href="/history" icon={<Icon name="arrow"/>}>Ver vínculos pedido–conversación</CtlLink>}</section>}
+  {listo&&a.status==='ok'&&a.sources.length>0&&<div className="agente-sources" aria-label="Fuentes"><span className="agente-sources-label">Fuentes</span>{a.sources.map(s=>{const href=safeInternal(s.href);return href?<CtlLink key={s.ref} href={href} icon={<Icon name="arrow"/>}>{s.label}</CtlLink>:<span className="chip" key={s.ref}><ConMarca marca={s.label}>{s.label}</ConMarca></span>;})}</div>}
   {a.notes&&a.notes.length>0&&ok&&a.notes.map(n=><p key={n} className="card-lead agente-note">{n}</p>)}
   {listo&&ok&&a.trace&&a.trace.length>0&&<TraceDisclosure trace={a.trace} labels={labels}/>}
   {listo&&ok&&a.calc.length>0&&<CalcView answer={a}/>}
   {listo&&a.status==='ok'&&a.text.trim()&&<div className="agente-actions" role="group" aria-label="Acciones de la respuesta">
-   <Button size="sm" icon={<Icon name={copied?'check':'copy'}/>} onClick={()=>void copy()}>{copied?'Copiado':'Copiar'}</Button>
-   {blocksWithRows.map((b,i)=><Button key={b.tool+i} size="sm" icon={<Icon name="sheet"/>} aria-label={blocksWithRows.length>1?`Descargar CSV de ${b.title}`:'Descargar CSV'} onClick={()=>setCsvError(!download(`rovaq-${b.tool}.csv`,blockToCsv(b),'text/csv;charset=utf-8'))}>{blocksWithRows.length>1?`CSV: ${b.title}`:'CSV'}</Button>)}
-   <Button size="sm" icon={<Icon name="report"/>} title="Abre el reporte en una pestaña nueva; usa Imprimir para guardarlo como PDF." onClick={()=>{const html=answerToHtml({question,answer:a,userContext});if(!openReport(`rovaq-reporte-${message.id}.html`,html))setCsvError(true);}}>Reporte (HTML/PDF)</Button>
-   <Button size="sm" icon={<Icon name="download"/>} onClick={()=>download(`rovaq-respuesta-${message.id}.md`,answerToMarkdown({question,answer:a}),'text/markdown;charset=utf-8')}>Exportar</Button>
-   {isLast&&<Button size="sm" icon={<Icon name="refresh"/>} disabled={busy} onClick={onRegenerate}>Regenerar</Button>}
-   <Button size="sm" icon={<Icon name="up"/>} aria-pressed={message.feedback?.verdict==='up'} disabled={fbBusy} onClick={()=>void sendFeedback('up')}>Útil</Button>
-   <Button size="sm" icon={<Icon name="down"/>} aria-pressed={message.feedback?.verdict==='down'} disabled={fbBusy} onClick={()=>setReasonOpen(v=>!v)}>No fue útil</Button>
+   <Ctl icon={<Icon name={copied?'check':'copy'}/>} onClick={()=>void copy()}>{copied?'Copiado':'Copiar'}</Ctl>
+   {blocksWithRows.map((b,i)=><Ctl key={b.tool+i} icon={<Icon name="sheet"/>} aria-label={blocksWithRows.length>1?`Descargar CSV de ${b.title}`:'Descargar CSV'} onClick={()=>setCsvError(!download(`rovaq-${b.tool}.csv`,blockToCsv(b),'text/csv;charset=utf-8'))}>{blocksWithRows.length>1?`CSV: ${b.title}`:'CSV'}</Ctl>)}
+   <Ctl icon={<Icon name="report"/>} title="Abre el reporte en una pestaña nueva; usa Imprimir para guardarlo como PDF." onClick={()=>{const html=answerToHtml({question,answer:a,userContext});if(!openReport(`rovaq-reporte-${message.id}.html`,html))setCsvError(true);}}>Reporte (HTML/PDF)</Ctl>
+   <Ctl icon={<Icon name="download"/>} onClick={()=>download(`rovaq-respuesta-${message.id}.md`,answerToMarkdown({question,answer:a}),'text/markdown;charset=utf-8')}>Exportar</Ctl>
+   {isLast&&<Ctl solo icon={<Icon name="refresh"/>} disabled={busy} onClick={onRegenerate}>Regenerar</Ctl>}
+   <Ctl solo icon={<Icon name="up"/>} aria-pressed={message.feedback?.verdict==='up'} disabled={fbBusy} onClick={()=>void sendFeedback('up')}>Útil</Ctl>
+   <Ctl solo icon={<Icon name="down"/>} aria-pressed={message.feedback?.verdict==='down'} disabled={fbBusy} onClick={()=>setReasonOpen(v=>!v)}>No fue útil</Ctl>
    {csvError&&<span role="alert" className="agente-inline-error">No se pudo crear el archivo.</span>}
   </div>}
-  {reasonOpen&&<div className="agente-chips" role="group" aria-label="¿Qué falló?">{REASONS.map(([k,l])=><Button key={k} size="sm" disabled={fbBusy} onClick={()=>void sendFeedback('down',k)}>{l}</Button>)}</div>}
+  {reasonOpen&&<div className="agente-chips" role="group" aria-label="¿Qué falló?">{REASONS.map(([k,l])=><Ctl key={k} disabled={fbBusy} onClick={()=>void sendFeedback('down',k)}>{l}</Ctl>)}</div>}
   {message.feedback&&<p className="agente-fb" role="status">Gracias por tu opinión{message.feedback.persisted?'.':' (guardada solo en este navegador).'}</p>}
-  {a.status==='unavailable'&&isLast&&<div><Button size="sm" icon={<Icon name="refresh"/>} disabled={busy} onClick={onRegenerate}>Reintentar</Button></div>}
+  {a.status==='unavailable'&&isLast&&<div><Ctl variant="soft" icon={<Icon name="refresh"/>} disabled={busy} onClick={onRegenerate}>Reintentar</Ctl></div>}
  </div>;
 }

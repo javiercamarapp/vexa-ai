@@ -1,8 +1,10 @@
 'use client';
 import {RovaqCargando} from '../rovaq-cargando';
 import './agente.css';
+import './una-pagina.css';
 import {useCallback,useEffect,useId,useRef,useState,type ReactNode} from 'react';
-import {Button,LinkButton} from '../ui/button';
+import {Ctl,CtlLink} from './ctl';
+import {TemasRapidos} from './sugerencias';
 import {Icon} from './icons';
 import {Composer} from './composer';
 import {HistoryPanel} from './historial';
@@ -33,13 +35,13 @@ export function Agente(){
   return()=>ctl.abort();
  },[attempt]);
  if(load.kind==='loading')return <div className="agente" aria-busy="true" style={{display:'grid',placeItems:'center',minHeight:'60vh'}}><RovaqCargando mensaje=""/></div>;
- if(load.kind==='error')return <div className="agente"><div role="alert" className="state state-error agente-gate"><h1>No se pudo abrir «Pregúntale a tus datos»</h1><p>No pude verificar si la consulta está disponible. Revisa tu conexión e inténtalo de nuevo.</p><Button icon={<Icon name="refresh"/>} onClick={()=>{setLoad({kind:'loading'});setAttempt(n=>n+1);}}>Reintentar</Button></div></div>;
- if(load.kind==='forbidden')return <div className="agente"><div role="status" className="state agente-gate"><span className="agente-mark" aria-hidden="true"><Icon name="lock" size={22}/></span><h1>Sin acceso</h1><p>Tu rol no tiene acceso a estas consultas. Pídele acceso al administrador de tu espacio de trabajo.</p><LinkButton href="/overview" icon={<Icon name="arrow"/>}>Volver al resumen</LinkButton></div></div>;
+ if(load.kind==='error')return <div className="agente"><div role="alert" className="state state-error agente-gate"><h1>No se pudo abrir «Pregúntale a tus datos»</h1><p>No pude verificar si la consulta está disponible. Revisa tu conexión e inténtalo de nuevo.</p><Ctl variant="soft" icon={<Icon name="refresh"/>} onClick={()=>{setLoad({kind:'loading'});setAttempt(n=>n+1);}}>Reintentar</Ctl></div></div>;
+ if(load.kind==='forbidden')return <div className="agente"><div role="status" className="state agente-gate"><span className="agente-mark" aria-hidden="true"><Icon name="lock" size={22}/></span><h1>Sin acceso</h1><p>Tu rol no tiene acceso a estas consultas. Pídele acceso al administrador de tu espacio de trabajo.</p><CtlLink href="/overview" variant="soft" icon={<Icon name="arrow"/>}>Volver al resumen</CtlLink></div></div>;
  return <Chat data={load.data}/>;
 }
 
 /** Extensión para los «modos copiloto» (CFO, reembolsos…): misma pantalla, pero la portada la pone el modo (briefing) y el transporte puede ser otro. */
-export type ModoChat={modo:string;runner?:Runner;placeholder?:string;portada:(ask:(q:string)=>void,hayHilo:boolean)=>ReactNode;pie?:ReactNode;etiquetaChat?:string};
+export type ModoChat={modo:string;runner?:Runner;placeholder?:string;portada:(ask:(q:string)=>void,hayHilo:boolean)=>ReactNode;/** Encabezado en la misma fila que «Historial» (título y acciones del modo). */cabecera?:(hayHilo:boolean)=>ReactNode;pie?:ReactNode;etiquetaChat?:string};
 export function Chat({data,modo}:{data:AgentState;modo?:ModoChat}){
  const a=useAgente(data.scope,data.limits.maxQuestionChars,data.limits.maxTurnsPerConversation,data.toolLabels,{runner:modo?.runner,modo:modo?.modo});
  const [text,setText]=useState(()=>{if(modo||typeof window==='undefined')return '';const q=new URLSearchParams(window.location.search).get('q');return q?q.slice(0,data.limits.maxQuestionChars):'';}),[hist,setHist]=useState(false),[leaving,setLeaving]=useState(false),[attachError,setAttachError]=useState<string|null>(null);
@@ -49,11 +51,12 @@ export function Chat({data,modo}:{data:AgentState;modo?:ModoChat}){
  const has=a.messages.length>0;
  const s=data.suggestions;
  // El hilo baja solo dentro de su caja de scroll (nunca la página) y deja de seguirte si subes con el mouse; al mandar otra pregunta vuelve a seguir.
- const pegado=useRef(true),caja=useRef<HTMLElement|null>(null);
- const cajaScroll=useCallback(()=>{let n:HTMLElement|null=end.current?.parentElement??null;while(n&&n!==document.body){const o=getComputedStyle(n).overflowY;if((o==='auto'||o==='scroll')&&n.scrollHeight>n.clientHeight+1)return n;n=n.parentElement;}return null;},[]);
- const seguir=useCallback((fuerza=false)=>{const c=caja.current??cajaScroll();if(!c)return;caja.current=c;if(fuerza)pegado.current=true;if(pegado.current)c.scrollTop=c.scrollHeight;},[cajaScroll]);
- useEffect(()=>{const c=cajaScroll();if(!c)return;caja.current=c;const f=()=>{pegado.current=c.scrollHeight-c.scrollTop-c.clientHeight<80;};c.addEventListener('scroll',f,{passive:true});return()=>c.removeEventListener('scroll',f);},[cajaScroll,a.messages.length]);
+ const pegado=useRef(true),hilo=useRef<HTMLDivElement>(null),dentro=useRef<HTMLDivElement>(null);
+ const seguir=useCallback((fuerza=false)=>{const c=hilo.current;if(!c)return;if(fuerza)pegado.current=true;if(pegado.current)c.scrollTop=c.scrollHeight;},[]);
+ useEffect(()=>{const c=hilo.current;if(!c)return;let ultimo=c.scrollTop;const f=()=>{const dist=c.scrollHeight-c.scrollTop-c.clientHeight,sube=c.scrollTop<ultimo-1;ultimo=c.scrollTop;if(dist<80)pegado.current=true;else if(sube)pegado.current=false;};c.addEventListener('scroll',f,{passive:true});return()=>c.removeEventListener('scroll',f);},[a.messages.length>0]);
  useEffect(()=>{seguir(a.sending);},[a.messages.length,a.sending,seguir]);
+ // Gráficas, tablas y pasos en vivo crecen después de montarse: mientras sigas abajo, el hilo se mantiene anclado al final sin mover la página.
+ useEffect(()=>{const d=dentro.current;if(!d||typeof ResizeObserver==='undefined')return;const ro=new ResizeObserver(()=>seguir());ro.observe(d);return()=>ro.disconnect();},[a.messages.length>0,seguir]);
  const ask=useCallback((q:string)=>{const t=q.trim().slice(0,data.limits.maxQuestionChars);if(!t||a.sending)return;setText('');setAttachError(null);a.send(t,s.directas[t]);},[a,data.limits.maxQuestionChars,s.directas]);
  const openHist=()=>{clearTimeout(timer.current);setLeaving(false);setHist(true);};
  const closeHist=useCallback(()=>{
@@ -81,30 +84,30 @@ export function Chat({data,modo}:{data:AgentState;modo?:ModoChat}){
  const chips=<p className="agente-meta"><span className="chip" title="Fuentes con datos cargados frente a las que el espacio de trabajo espera.">{s.loaded} de {s.total} fuentes</span><span className="chip agente-mode" title={data.note}>{data.mode==='deterministic'?'Cifras calculadas, sin IA generativa':'Redacción con IA verificada'}</span></p>;
  return <div className={'copiloto'+(modo?' copiloto-negocio':'')} data-testid="agente-shell" data-has={has} data-modo={modo?.modo}>
   <ParticleField/>
-  <div className="copiloto-hist-row"><button ref={histButton} type="button" className="copiloto-hist-btn" aria-label="Historial de chats" aria-expanded={hist&&!leaving} aria-controls={histId} onClick={hist&&!leaving?closeHist:openHist}><Icon name="history" size={14}/>Historial{count>0&&<span className="copiloto-hist-count">{count>=50?'50+':count}</span>}</button></div>
+  <div className="copiloto-hist-row">{modo?.cabecera?.(has)}<button ref={histButton} type="button" className="ctl ctl-chip copiloto-hist-btn" aria-label="Historial de chats" aria-expanded={hist&&!leaving} aria-controls={histId} onClick={hist&&!leaving?closeHist:openHist}><Icon name="history" size={14}/><span className="ctl-label">Historial</span>{count>0&&<span className="copiloto-hist-count">{count>=50?'50+':count}</span>}</button></div>
   <div className="agente" data-has={has} data-negocio={modo?true:undefined}>
    {modo&&modo.portada(ask,has)}
    {!modo&&!has&&<header className="agente-hero">
     <RovaqWordmark size={36}/>
     <h1>Pregúntale a tus datos</h1>
     <p className="agente-sub">Tu información cargada, con la cifra que ya calculó el sistema, su clase y su cobertura. Pide tablas, gráficas, comparaciones o un reporte.</p>
-    {s.empty&&<div className="state agente-empty" role="status"><strong>Todavía no hay información cargada.</strong><p>Sin datos no puedo responder cifras: no las invento. Carga tus fuentes y vuelve a preguntar.</p><LinkButton href="/imports" icon={<Icon name="arrow"/>}>Ir a Importaciones</LinkButton></div>}
+    {s.empty&&<div className="state agente-empty" role="status"><strong>Todavía no hay información cargada.</strong><p>Sin datos no puedo responder cifras: no las invento. Carga tus fuentes y vuelve a preguntar.</p><CtlLink href="/imports" variant="soft" icon={<Icon name="arrow"/>}>Ir a Importaciones</CtlLink></div>}
    </header>}
 
-   {has&&<div className="agente-thread" role="log" aria-live="polite" aria-label={modo?.etiquetaChat??"Conversación con el agente de datos"}>
+   {has&&<div ref={hilo} className="agente-thread" role="log" aria-live="polite" tabIndex={0} aria-label={modo?.etiquetaChat??"Conversación con el agente de datos"}><div ref={dentro} className="agente-hilo-in">
     {a.messages.map(m=>m.adjunto?<div key={m.id} className="agente-answer"><div className="agente-user"><div className="agente-bubble">{m.text}</div></div><AttachmentCard a={m.adjunto}/></div>:m.role==='user'?<div key={m.id} className="agente-user"><div className="agente-bubble">{m.text}</div></div>:<AnswerView key={m.id} message={m} escribir={m.id===a.freshId} onTick={seguir} question={m.question??''} labels={data.toolLabels} userContext={userContext} isLast={m.id===lastAssistant&&!a.sending} busy={a.sending} onAsk={ask} onRegenerate={a.regenerate} onFeedback={a.setFeedback}/>)}
     {a.sending&&<LiveTrace phase={a.phase} steps={a.steps} labels={data.toolLabels}/>}
     {limitReached&&<p className="state" role="status">Esta conversación llegó a {data.limits.maxTurnsPerConversation} preguntas. Empieza un chat nuevo para seguir.</p>}
     <div ref={end}/>
-   </div>}
+   </div></div>}
 
 
    <div className="agente-dock"><Composer value={text} onChange={setText} onSend={()=>ask(text)} onStop={a.stop} sending={a.sending} disabled={limitReached} placeholder={modo?.placeholder??"Pregunta sobre tus datos…"} maxChars={data.limits.maxQuestionChars} inputId={inputId} onAttach={f=>void attach(f)} attachError={attachError}/></div>
 
    {modo?.pie}
    {!modo&&!has&&<>
-    {s.categorias.length>0?<div className="agente-temas" role="group" aria-label="Preguntas por tema" style={{['--n' as string]:Math.min(4,s.categorias.length)}}>{s.categorias.slice(0,4).map((c,i)=><section key={c.titulo} className="agente-tema" style={{['--cat' as string]:`var(--chart-${i+1})`,animationDelay:i*70+'ms'}} aria-label={c.titulo}><header><i aria-hidden="true"/><h2>{c.titulo}</h2></header><ul>{c.preguntas.slice(0,3).map(q=><li key={q}><button type="button" className="agente-tema-q" onClick={()=>ask(q)}>{q}</button></li>)}</ul></section>)}</div>
-    :s.sugerencias.length>0&&<div className="agente-chips agente-chips-center" role="group" aria-label="Preguntas sugeridas según lo que tienes cargado">{s.sugerencias.slice(0,5).map(q=><button type="button" key={q} className="agente-chip" onClick={()=>ask(q)}>{q}</button>)}</div>}
+    {s.categorias.length>0?<TemasRapidos temas={s.categorias.slice(0,4)} ask={ask}/>
+    :s.sugerencias.length>0&&<div className="una-fila" role="group" aria-label="Preguntas sugeridas según lo que tienes cargado">{s.sugerencias.slice(0,5).map(q=><button type="button" key={q} className="ctl ctl-q agente-chip" title={q} onClick={()=>ask(q)}><span className="ctl-label">{q}</span></button>)}</div>}
     <p className="agente-foot">Cargado: {pct} % de las fuentes esperadas. {data.note}</p>
    </>}
    {!modo&&chips}

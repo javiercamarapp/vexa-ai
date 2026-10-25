@@ -203,8 +203,8 @@ html:root[data-tablas-movil=comparar] table[data-mv] :is(td,th):last-child{paddi
 :root:root body .heat-cell[data-sel]{outline:2px solid var(--ink);outline-offset:1px}
 
 /* Todo control del contenido mide al menos 44 px de alto (lo que se ve puede ser más compacto con el borde transparente) */
-:root:root:root body .workspace-content :is(button,summary,select,textarea,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])):not(.dc-info):not(.fchip-x):not(.ui-chip-x):not(.agente-round):not(.sr-only){min-height:var(--mv-hit)!important}
-:root:root body .workspace-content button:not(.dc-info):not(.fchip-x):not(.ui-chip-x):not(.agente-round):not(.sr-only){min-width:var(--mv-hit)}
+:root:root:root body .workspace-content :is(button,summary,select,textarea,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])):not(.dc-info):not(.fchip-x):not(.ui-chip-x):not(.agente-round):not(.ctl):not(.sr-only){min-height:var(--mv-hit)!important}
+:root:root body .workspace-content button:not(.dc-info):not(.fchip-x):not(.ui-chip-x):not(.agente-round):not(.ctl):not(.sr-only){min-width:var(--mv-hit)}
 
 :root:root body .workspace-content :is(.card-title,.card-head,.ui-card-head,.pc-card-head){flex-wrap:wrap;gap:8px 12px}
 :root:root body .workspace-content :is(.card-title,.card-head,.ui-card-head,.pc-card-head)>:first-child{flex:1 1 200px;min-width:min(200px,100%)}

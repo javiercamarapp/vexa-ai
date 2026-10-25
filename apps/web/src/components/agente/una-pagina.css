@@ -163,7 +163,7 @@ html:has(.workspace-chat),html:has(.workspace-chat) body{height:100dvh;overflow:
 .una-cfo>.una-tabs{flex:1 1 auto}
 .workspace-chat .agente .cn-uso{order:5;margin:6px 0 auto}
 /* Tarjeta plegada del informe en la portada limpia de CFO: misma columna y orden que los chips de Pregúntale. */
-.workspace-chat .agente>.cn-tarjeta{order:4;display:flex;align-items:center;gap:12px;width:100%;max-width:var(--col-chat);margin:12px 0 0;padding:8px 8px 8px 14px;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface)}
+.workspace-chat .agente>.cn-tarjeta{order:4;display:flex;align-items:center;gap:12px;width:100%;max-width:calc(var(--col-chat) - 64px);margin:12px 0 0;padding:8px 8px 8px 14px;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface)}
 .cn-tarjeta-t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
 .cn-tarjeta-t b{font:600 13px/16px var(--font-ui);color:var(--ink)}
 .cn-tarjeta-t span{font:400 12px/16px var(--font-ui);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

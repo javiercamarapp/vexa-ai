@@ -68,17 +68,17 @@
 :root:root body .mv-franja{overflow:visible}
 
 /* ---- Controles: zona táctil >= 44 px ---- */
-:root:root body :is(.workspace-content,.access-flow) :is(.btn,button.btn,a.btn){min-height:var(--mv-hit);padding-block:6px}
-:root:root body :is(.workspace-content,.access-flow) :is(.btn-sm,button.btn-sm){min-height:var(--mv-hit);padding-block:4px}
+:root:root body :is(.workspace-content,.access-flow) :is(.btn,button.btn,a.btn){min-height:var(--btn-h-m);padding-block:6px}
+:root:root body :is(.workspace-content,.access-flow) :is(.btn-sm,button.btn-sm){min-height:var(--btn-h-m);padding-block:6px}
 :root:root body .workspace-content :is(select,textarea,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])){min-height:var(--mv-hit);font-size:16px}
-:root:root body .workspace-content :is(.ui-filterbar,.filter-bar) :is(.btn,button.btn,select,input:not([type=checkbox]):not([type=radio])){min-height:var(--mv-hit);height:var(--mv-hit)}
+:root:root body .workspace-content :is(.ui-filterbar,.filter-bar) :is(.btn,button.btn,select,input:not([type=checkbox]):not([type=radio])){min-height:var(--btn-h-m);height:var(--btn-h-m)}
 :root:root body .workspace-content summary{min-height:var(--mv-hit);display:flex;align-items:center}
 :root:root body .workspace-content button.row-link-inline{position:relative}
 /* Chips, píldoras de segmento, pestañas de página y botones «i»: la caja se queda compacta y el área de toque llega a 44 px con ::after */
 :root:root body .workspace-content :is(.fchip-x,.ui-chip-x,.dc-info){position:relative}
 :root:root body .workspace-content :is(.fchip-x,.ui-chip-x,.dc-info)::after{content:"";position:absolute;inset:-12px}
 /* Píldoras: la caja de toque mide 44 px (borde transparente de 6 px) y lo que se ve sigue siendo una píldora compacta de 32 px */
-:root:root body .workspace-content :is(.seg-btn,.dg-fchip,.id-chip,button.chip){min-height:44px;height:auto;border:6px solid transparent;background-clip:padding-box;box-shadow:inset 0 0 0 1px var(--ui-border)}
+:root:root body .workspace-content :is(.seg-btn,.dg-fchip,.id-chip,button.chip){min-height:44px;height:auto;border:6px solid transparent;background-clip:padding-box;box-shadow:inset 0 0 0 1px var(--ui-line-strong)}
 :root:root body .workspace-content .segmented .seg-btn{box-shadow:none;background-color:transparent}
 :root:root body .workspace-content .segmented .seg-btn[aria-checked=true],:root:root body .workspace-content .seg .btn[aria-pressed=true]{box-shadow:inset 0 0 0 1px var(--btn-soft-line);background-color:var(--btn-soft-bg)}
 :root:root body .workspace-content .dg-fchip,:root:root body .workspace-content .id-chip{background-color:var(--ui-surface)}
@@ -203,8 +203,10 @@ html:root[data-tablas-movil=comparar] table[data-mv] :is(td,th):last-child{paddi
 :root:root body .heat-cell[data-sel]{outline:2px solid var(--ink);outline-offset:1px}
 
 /* Todo control del contenido mide al menos 44 px de alto (lo que se ve puede ser más compacto con el borde transparente) */
-:root:root:root body .workspace-content :is(button,summary,select,textarea,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])):not(.dc-info):not(.fchip-x):not(.ui-chip-x):not(.agente-round):not(.sr-only){min-height:var(--mv-hit)!important}
-:root:root body .workspace-content button:not(.dc-info):not(.fchip-x):not(.ui-chip-x):not(.agente-round):not(.sr-only){min-width:var(--mv-hit)}
+:root:root:root body .workspace-content :is(button,summary,select,textarea,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])):not(.dc-info):not(.fchip-x):not(.ui-chip-x):not(.agente-round):not(.sr-only):not(.btn){min-height:var(--mv-hit)!important}
+/* Botones del estándar: caja de 36 px; la zona táctil de 44 px la da el ::after de ui.css */
+:root:root:root body .workspace-content button.btn:not(.dc-info):not(.sr-only){min-height:var(--btn-h-m)!important}
+:root:root body .workspace-content button:not(.dc-info):not(.fchip-x):not(.ui-chip-x):not(.agente-round):not(.sr-only):not(.btn){min-width:var(--mv-hit)}
 
 :root:root body .workspace-content :is(.card-title,.card-head,.ui-card-head,.pc-card-head){flex-wrap:wrap;gap:8px 12px}
 :root:root body .workspace-content :is(.card-title,.card-head,.ui-card-head,.pc-card-head)>:first-child{flex:1 1 200px;min-width:min(200px,100%)}

@@ -25,8 +25,8 @@
 .ac-dinero strong[data-vacio]{color:var(--muted)}
 .ac-dinero .ac-et+.ac-et,.ac-dinero small+.ac-et{margin-top:6px}
 .ac-dinero b{font-size:13px;font-weight:500;color:var(--ink);overflow-wrap:anywhere}
-.ac-botones{display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-width:0}
-.ac-grupo{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.ac-botones{display:flex;flex-direction:column;align-items:flex-end;gap:var(--btn-gap,8px);min-width:0}
+.ac-grupo{display:flex;flex-wrap:wrap;gap:var(--btn-gap,8px);justify-content:flex-end}
 .ac-bloqueo{margin:0;font-size:12px;color:var(--muted);max-width:30ch;text-align:right}
 .ac-curso{display:flex;flex-direction:column;gap:8px;min-width:0;padding-left:16px;border-left:1px solid var(--ui-border)}
 .ac-datos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0}

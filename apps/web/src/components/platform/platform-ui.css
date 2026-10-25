@@ -108,3 +108,6 @@
  html:root:not([data-tablas-movil=comparar]) .pf-table[data-mv] .pf-pill{white-space:normal;max-width:100%}
  html:root:not([data-tablas-movil=comparar]) .pf-table[data-mv] td.pf-wrap .pf-sub{display:block}
 }
+
+/* Tabla de organizaciones: celdas más compactas para que la última columna (botones) no quede recortada ni pegada al borde de la tarjeta a 1440 px */
+.pf-table :is(th,td){padding-inline:10px}

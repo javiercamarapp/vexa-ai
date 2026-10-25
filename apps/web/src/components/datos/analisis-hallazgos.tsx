@@ -8,6 +8,7 @@ import {StatusChip} from '../ui/status-chip';
 import {KindBadge} from '../ui/kind-badge';
 import {LinkButton,Arrow} from '../ui/button';
 import {useJson} from '../ui/use-json';
+import {Tip} from '../ui/tip';
 import {nf} from '../ui/format';
 import Link from '../workspace/navigation-lifecycle';
 import './datos.css';
@@ -48,7 +49,7 @@ export function HallazgosAnalisis({jobs,fuentes,masPaginas}:{jobs:JobFila[];fuen
       <th scope="row" className="dn-asunto">{!termino?<span className="muted">{j.state==='failed'?'Sin resultado':j.state==='succeeded'?'Sin hallazgo concluyente':'Pendiente de análisis'}</span>:e===undefined?<span className="muted">Leyendo…</span>:e==='error'?<span className="muted">No disponible ahora</span>:e.sinConclusion?<span className="muted">Sin hallazgo concluyente</span>:<>{e.titulo}{e.otros>0&&<small className="muted"> · y {e.otros} más</small>}<small className="muted"> · {nf.format(e.citas)} {e.citas===1?'cita':'citas'}</small></>}</th>
       <td>{termino&&e&&e!=='error'&&e.severidad?<StatusChip tone={tonoSeveridad(e.severidad)}>{SEVERIDAD[e.severidad]}</StatusChip>:<span className="muted">—</span>}</td>
       <td>{fuentes[j.conversationId]??'Conversación'} · <code className="dn-code">{j.conversationId.slice(0,8)}</code></td>
-      <td><span className="muted" title="Este análisis no está vinculado a un problema agrupado.">Sin vínculo registrado</span></td>
+      <td><Tip label="Este análisis no está vinculado a un problema agrupado."><span className="muted">Sin vínculo registrado</span></Tip></td>
       <td>{fechaCorteLegible(j.createdAt,{hora:false}).replace(' (UTC)','')||'No disponible'}</td>
       <td><StatusChip tone={st.tono}>{st.texto}</StatusChip></td>
       <td>{j.runId&&termino?<LinkButton href={'/analysis/'+j.runId} size="sm" icon={<Arrow/>}>Ver evidencia</LinkButton>:null}</td>

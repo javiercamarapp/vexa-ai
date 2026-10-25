@@ -30,7 +30,7 @@ test('chat: UNA página — el marco mide 100dvh menos el teclado, el compositor
   const u = leer('src/components/agente/una-pagina.css');
   assert.match(u, /\.workspace-shell\.workspace-chat\{height:calc\(100dvh - var\(--teclado,0px\)\)/);
   assert.match(u, /html\[data-teclado=abierto\] \.workspace-shell\.workspace-chat \.workspace-frame \.workspace-content\{padding-bottom:8px\}/);
-  assert.match(u, /padding:8px max\(12px,env\(safe-area-inset-right\)\) calc\(var\(--nav-total,84px\) \+ 8px\)/, 'reserva la barra inferior');
+  assert.match(u, /padding:4px max\(12px,env\(safe-area-inset-right\)\) calc\(var\(--nav-total,84px\) \+ 8px\)/, 'reserva la barra inferior');
   assert.match(u, /agente-composer textarea\{font-size:16px/);
   assert.doesNotMatch(u, /agente-dock\{position:fixed/);
   assert.match(u, /html:has\(\.workspace-chat\),html:has\(\.workspace-chat\) body\{height:100dvh;overflow:hidden/);

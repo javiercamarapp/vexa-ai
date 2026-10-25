@@ -1,12 +1,13 @@
 .card{border:1px solid var(--ui-border);background:var(--ui-surface);border-radius:var(--r-lg,12px);overflow:hidden;color:var(--ink,inherit);box-shadow:var(--sh-1,none)}
 .composer{padding:var(--sp-4);display:grid;gap:var(--sp-3)}
-.inputRow{display:flex;gap:var(--sp-2);align-items:center;border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-sunken,var(--ui-soft));padding:5px 8px 5px 14px;transition:border-color .15s,box-shadow .15s}
+.inputRow{display:flex;gap:var(--sp-2);align-items:center;border:1px solid var(--ui-line-strong);border-radius:999px;background:var(--ui-surface);padding:5px 8px 5px 14px;transition:border-color .15s,box-shadow .15s}
 .inputRow:focus-within{border-color:var(--ui-focus);box-shadow:0 0 0 3px color-mix(in srgb,var(--ui-focus) 22%,transparent)}
-.spark{display:inline-flex;color:var(--ui-accent,var(--ui-focus));flex:none}
+.spark{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--tint-info);color:var(--ink-info);flex:none}
 .inputRow textarea{flex:1;min-width:0;border:0!important;background:transparent!important;box-shadow:none!important;outline:none!important;resize:none;min-height:0!important;height:34px;max-height:34px;padding:7px 4px!important;font-size:13px!important;line-height:20px;color:inherit!important;overflow:hidden}
-.ro{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--muted);white-space:nowrap;padding:0 6px}
+/* «Solo lectura»: chip con candado de color (tinte petróleo, texto AA) */
+.ro{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;line-height:1;color:var(--ink-info);background:var(--tint-info);border:1px solid color-mix(in srgb,var(--ink-info) 22%,transparent);border-radius:999px;white-space:nowrap;padding:5px 10px}
 .suggestions{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
-.suggestions .chip{border-radius:999px;font-weight:400;color:var(--muted);height:auto;min-height:28px;padding:4px 11px;white-space:normal;text-align:left}
+.suggestions .chip{border-radius:var(--btn-radius,8px);font-weight:500;color:var(--ui-secondary);height:auto;min-height:var(--btn-h,32px);padding:0 12px;white-space:normal;text-align:left}
 .conversation{padding:0 var(--sp-4) var(--sp-4);display:grid;gap:var(--sp-3);font-size:13px}
 .question{justify-self:end;max-width:85%;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--ui-soft);border:1px solid var(--ui-border);border-radius:12px 12px 8px 12px;margin:0;padding:8px 12px}
 .answer{min-width:0;border-left:3px solid var(--ui-focus);padding-left:var(--sp-3)}.answer h3{margin:0 0 6px}.answer p{margin:6px 0;overflow-wrap:anywhere}
@@ -54,5 +55,5 @@
 .searchRow{flex:0 0 150px;max-width:150px}
 .searchRow{position:relative}
 
-.inputRow :is(button,.btn){min-height:28px!important;height:28px;padding:0 12px!important;font-size:12px;border-radius:999px;flex:none}
+.inputRow :is(button,.btn){min-height:var(--btn-h,32px)!important;height:var(--btn-h,32px);padding:0 12px!important;font-size:13px;border-radius:var(--btn-radius,8px);flex:none}
 .ro{padding:0 4px 0 6px}

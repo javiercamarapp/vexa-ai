@@ -3,6 +3,9 @@
    Solo selectores de clase simples: ninguna regla global de globals.css debe ganar a estos (ver docs/SISTEMA-UI.md). Escala de 4 px; mínimo 12 px; hover nunca rojo. */
 :root{--ui-shadow:none;--ui-rhythm:12px;--ui-ctl-h:32px;--ui-pad:14px}
 .ui-reset{all:revert-layer}
+/* ESTÁNDAR ÚNICO DE BOTÓN (24-oct). Único lugar de los tokens: alto 32 px escritorio / 36 px celular (zona táctil de 44 px por ::after), radio 8, 13 px / 600, borde 1 px, aire ≥ 8 px entre vecinos. */
+:root{--btn-h:32px;--btn-h-sm:32px;--btn-h-m:36px;--btn-radius:8px;--btn-gap:8px;--btn-px:12px}
+@media(max-width:819px){:root{--btn-h:var(--btn-h-m);--btn-h-sm:var(--btn-h-m)}}
 /* Ritmo vertical */
 .ui-stack{display:flex;flex-direction:column;gap:var(--ui-rhythm);min-width:0}
 .ui-stack[data-gap="4"]{gap:16px}.ui-stack[data-gap="3"]{gap:12px}
@@ -219,3 +222,90 @@ body :is(.workspace-content,.access-flow,.platform-shell) select:not([multiple])
 
 .heat-sel{display:none}
 .mv-valor{display:none}
+
+/* =====================================================================================================================
+   SISTEMA DE SUPERFICIES (24-oct, «grises-compacto»). Reglas nuevas, acotadas y al final de la cascada.
+   1) Ningún aviso, chip o control del mismo gris que su fondo: avisos con tinte propio (petróleo / ámbar / rojo / verde),
+      chips en superficie blanca con borde firme sobre el lienzo gris o en tinte con color sobre blanco.
+   2) Controles dentro de filas de tabla: 28 px de alto, ≥ 6 px de aire a los separadores (la fila mide 40 px).
+   3) Deshabilitado = legible (sin opacidad): borde discontinuo, texto AA.
+   4) Barras de progreso de tabla: pista fija, rótulo de % siempre visible a la derecha.
+   Verificado por tests/ui/choques.mjs (superficie, contraste, aire de fila).
+   ===================================================================================================================== */
+:root[data-theme=dark]{--ui-line-strong:color-mix(in srgb,var(--ink) 22%,var(--ui-surface))}
+:root{--aviso-linea-info:color-mix(in srgb,var(--ink-info) 24%,transparent);--aviso-linea-warn:color-mix(in srgb,var(--ink-warn) 26%,transparent);--aviso-linea-down:color-mix(in srgb,var(--ink-down) 24%,transparent);--aviso-linea-up:color-mix(in srgb,var(--ink-up) 24%,transparent)}
+/* Avisos: .state (con .state-cache «Mostrando la última carga») y .notice-bar[calm] eran gris sobre gris */
+body .workspace-content .state:not(.state-error):not(.state-warn){background:var(--tint-info);color:var(--ink-info);border-color:var(--aviso-linea-info)}
+body .workspace-content .state-cache[data-estado=viejo],body .workspace-content .state.state-warn{background:var(--tint-warn);color:var(--ink-warn);border-color:var(--aviso-linea-warn)}
+body .workspace-content .state-error{background:var(--tint-down);color:var(--ink-down);border-color:var(--aviso-linea-down)}
+body .workspace-content .notice-bar[data-tone=calm]{background:var(--tint-info);color:var(--ink-info);border-color:var(--aviso-linea-info)}
+body .workspace-content .ui-notice[data-tone=info]{background:var(--tint-info);color:var(--ink-info);border-color:var(--aviso-linea-info)}
+/* Chips y píldoras de filtro: superficie blanca con borde firme sobre el lienzo; tinte con color dentro de una tarjeta blanca */
+body .workspace-content :is(.chip,.fchip,.id-chip){background:var(--ui-surface);border-color:var(--ui-line-strong);color:var(--ink)}
+body .workspace-content :is(.card,.ui-card,.pc-card,.task-card,.record-card,.hoy-card) :is(.chip,.fchip,.id-chip){background:var(--tint-info);border-color:var(--aviso-linea-info);color:var(--ink-info)}
+body .workspace-content .fchip .fchip-x{color:inherit}
+body .workspace-content .fchip .fchip-x:hover{background:color-mix(in srgb,currentColor 14%,transparent);color:inherit}
+body .workspace-content .id-chip .id-chip-label,body .workspace-content .id-chip .id-chip-copy{color:inherit}
+/* Botones de icono y tarjetas-botón con borde de 1,2:1 (casi invisibles sobre blanco) pasan al borde firme del sistema */
+body .workspace-content :is(button.dc-info,.agente-attach-btn){border-color:var(--ui-line-strong);color:var(--ink-info);background:var(--ui-surface)}
+/* Deshabilitado legible: ni opacidad ni «fantasma»; se distingue del activo por borde discontinuo y sin tinte */
+:is(.workspace-content,.access-flow) :is(button,.btn):disabled,:is(.workspace-content,.access-flow) .btn[aria-disabled=true]{opacity:1;background:var(--ui-surface);border:1px dashed color-mix(in srgb,var(--ui-input) 55%,var(--ui-surface));color:var(--ui-secondary)}
+/* Texto secundario dentro de tablas con contraste holgado */
+body .workspace-content :is(td,th) .muted{color:var(--ui-secondary)}
+/* Botón de peligro suave (Revocar, Descartar…): tinte rojo suave, texto rojo oscuro, mismo tamaño que .btn-sm */
+:is(.workspace-content,.access-flow) :is(.btn,button.btn).btn-danger-soft{background:var(--tint-down);border-color:var(--aviso-linea-down);color:var(--ink-down)}
+:is(.workspace-content,.access-flow) :is(.btn,button.btn).btn-danger-soft:not(:disabled):hover{background:color-mix(in srgb,var(--ink-down) 14%,var(--tint-down));border-color:var(--ink-down);color:var(--ink-down)}
+/* Controles dentro de filas de tabla: 28 px, radio 8, 13 px, centrados verticalmente (≥ 6 px de aire a los separadores de la fila de 40 px) */
+/* --mv-hit (objetivo táctil de movil-contenido.css) se acota a 28 px en escritorio; en celular conserva 44 px y la celda gana 6 px de aire (regla de abajo) */
+:root:root:root body .workspace-content :is(td,th) :where(select,input:not([type=checkbox]):not([type=radio]):not([type=hidden]),button.btn,.btn,button:not([class])):where(:not(.row-link-inline):not(.dg-sku):not(.dc-info)){box-sizing:border-box;--mv-hit:28px;height:28px;min-height:28px;padding-block:0;margin-block:0;font-size:13px;line-height:1.2;border-radius:8px;align-self:center;vertical-align:middle}
+:root:root:root body .workspace-content :is(td,th) :is(button.btn,.btn,button:not([class])):where(:not(.row-link-inline):not(.dg-sku):not(.dc-info)){padding-inline:10px;gap:6px}
+:root:root:root body .workspace-content :is(td,th) select:not([multiple]):not([size]){padding-inline:10px 28px;background-position:right 9px center;line-height:26px}
+:root:root:root body .workspace-content :is(td,th) input:not([type=checkbox]):not([type=radio]):not([type=hidden]){padding-inline:10px;line-height:26px}
+:root:root:root body .workspace-content td .btn-label{white-space:nowrap}
+body .workspace-content :is(td,th):has(>:is(select,.btn,button)){vertical-align:middle}
+/* Botones de fila nunca se estiran a la altura de la fila (antes «Abrir detalle» medía lo que la fila) */
+:root:root:root body .workspace-content td :is(.btn,button.btn,button:not([class])){align-self:center}
+:root:root:root body .workspace-content td:has(>.btn:only-child,>button:only-child){align-content:center}
+/* Barras de progreso en celdas de tabla: pista de ancho fijo y rótulo de % siempre visible, alineado a la derecha */
+:root:root:root body .workspace-content td .pc-barra{grid-template-columns:136px minmax(40px,1fr) 56px;min-height:0}
+:root:root:root body .workspace-content td .pc-barra>span:first-child{white-space:nowrap}
+:root:root:root body .workspace-content td .pc-barra>b{text-align:right}
+body .workspace-content .pc-pista{height:8px;background:color-mix(in srgb,var(--chart-5) 12%,var(--ui-surface))}
+.pc-ley{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;margin:0;padding:8px 14px 10px;font-size:12px;color:var(--ui-secondary)}
+.pc-ley span{display:inline-flex;align-items:center;gap:6px}
+.pc-ley i{display:inline-block;width:22px;height:8px;border-radius:999px;background:var(--chart-3)}
+.pc-ley i[data-parcial]{background:repeating-linear-gradient(45deg,var(--chart-3) 0 3px,transparent 3px 6px);outline:1px solid var(--chart-3);outline-offset:-1px}
+@media(max-width:767px){
+ :root:root:root body .workspace-content :is(td,th) :where(select,input:not([type=checkbox]):not([type=radio]):not([type=hidden]),button.btn,.btn,button:not([class])):where(:not(.row-link-inline):not(.dg-sku):not(.dc-info)){--mv-hit:var(--btn-h-m);height:auto;min-height:var(--btn-h-m)}
+ :root:root:root body .workspace-content :is(td,th) :is(select,input:not([type=checkbox]):not([type=radio]):not([type=hidden])){--mv-hit:44px;min-height:44px}
+ :root:root:root:root body .workspace-content th :is(.btn,button.btn){--mv-hit:44px;min-height:44px!important}
+ :root:root:root body .workspace-content td:has(>:is(select,.btn,button.btn,button:not([class]),input:not([type=checkbox]):not([type=radio]))){padding-block:6px}
+}
+
+/* ---- Estándar único de botón / chip / píldora / botón de icono (ver tokens al inicio de este archivo) ---- */
+:is(.workspace-content,.access-flow,.platform-shell) :is(.btn,button.btn,a.btn){min-height:var(--btn-h);height:auto;padding:6px var(--btn-px);font:600 13px/1.25 var(--font-ui);letter-spacing:0;border-radius:var(--btn-radius);border-width:1px;gap:6px}
+:is(.workspace-content,.access-flow,.platform-shell) :is(.btn-sm,button.btn-sm,a.btn-sm){min-height:var(--btn-h-sm);padding:6px var(--btn-px);font-size:13px}
+:is(.workspace-content,.access-flow,.platform-shell) .btn svg{width:16px;height:16px}
+/* Botones sin clase (lista de trabajos, etc.): mismos tokens, con especificidad cero para no pisar los de módulos CSS que los reestilizan */
+:where(:is(.workspace-content,.access-flow,.platform-shell) button:not([class])){min-height:var(--btn-h);font:600 13px/1.25 var(--font-ui);border-radius:var(--btn-radius)}
+/* Secundario: blanco con borde suave; fantasma: sin borde, hover con tinte; el primario suave y el peligro suave ya tienen color con intención */
+:is(.workspace-content,.access-flow,.platform-shell) :is(.btn.btn-secondary){background:var(--ui-surface);border-color:var(--ui-line-strong);color:var(--ink)}
+:is(.workspace-content,.access-flow,.platform-shell) :is(.btn.btn-secondary):not(:disabled):hover{background:var(--tint-info);border-color:var(--aviso-linea-info);color:var(--ink-info)}
+:is(.workspace-content,.access-flow,.platform-shell) :is(.btn-ghost,button.btn-ghost):not(:disabled):hover{background:var(--tint-info);color:var(--ink-info)}
+/* Vecinos nunca se tocan: separación mínima entre botones hermanos */
+.btn-group,.page-header-actions,.ui-notice-actions{gap:var(--btn-gap)}
+/* Botón «i» de cálculo: 32 px visibles sin agrandar su encabezado */
+body .workspace-content :is(button.dc-info,.pc-card-head button.dc-info,.hoy-kpi-top button.dc-info){width:var(--btn-h);height:var(--btn-h);min-width:var(--btn-h);min-height:var(--btn-h);margin-block:-4px;border-radius:var(--btn-radius)}
+/* Celular: caja visible de 36 px y zona táctil de 44 px por un área invisible alrededor (::after), sin tocar al vecino (aire ≥ 8 px = 4 + 4) */
+@media(max-width:819px){
+ :root:root body :is(.workspace-content,.access-flow) :is(.btn,button.btn,a.btn,.btn-sm,button.btn-sm){position:relative;min-height:var(--btn-h-m);padding-block:6px}
+ :root:root body :is(.workspace-content,.access-flow) :is(.btn,button.btn,a.btn):not(.dc-info):not(.pf-seg *)::after{content:"";position:absolute;inset:-5px;border-radius:12px}
+}
+/* Deshabilitado: la regla del estándar (secundario/primario) no lo pisa — debe quedar legible y distinto del activo */
+:is(.workspace-content,.access-flow,.platform-shell) :is(.btn,button.btn,a.btn,button):is(:disabled,[aria-disabled=true]):not(.dc-info){opacity:1;background:var(--ui-surface);border:1px dashed color-mix(in srgb,var(--ui-input) 55%,var(--ui-surface));color:var(--ui-secondary)}
+/* Última celda con botones: 14 px de aire al borde de la tarjeta (antes el botón quedaba a 1–3 px) */
+:is(.workspace-content,.platform-shell) :is(td,th):last-child:has(:is(.btn,button.btn,a.btn)){padding-inline-end:14px}
+:root[data-theme=dark] .workspace-content .ac-cifra dd{color:color-mix(in srgb,var(--cat,var(--ink)) 55%,var(--ink))}
+/* Un botón deshabilitado sigue ocupando su zona táctil (el ::after del celular necesita recibir el toque para no «filtrarlo» al vecino); no dispara clic por estar disabled */
+:is(.workspace-content,.access-flow,.platform-shell) button:is(.btn):disabled{pointer-events:auto}
+@media(max-width:819px){:root:root:root:root body .workspace-content th :is(.btn,button.btn){min-width:44px}}

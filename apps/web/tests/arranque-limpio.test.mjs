@@ -15,14 +15,16 @@ test('con carga de página completa no se ve contenido hermano en el área de co
 test('el script de arranque marca data-arranque, excluye login/auth, tiene seguro de 15 s y noscript revierte',()=>{
   assert.match(layout,/dataset\.arranque='1'/);
   assert.match(layout,/login\|auth/);
-  assert.match(layout,/15000/);
+  assert.match(layout,/20000/);
   assert.match(layout,/<noscript>/);
   assert.match(layout,/id="arranque-logo"/);
   assert.match(layout,/<ArranqueLimpio\/>/);
 });
-test('el componente de arranque es cliente con la directiva en la primera línea, usa el registro y tiene tope de 15 s',()=>{
+test('el componente de arranque es cliente con la directiva en la primera línea, lee el DOM (readyState, cargadores, aria-busy), ventana estable de 600 ms y tope de 20 s',()=>{
   assert.equal(comp.split('\n')[0].trim(),"'use client';");
-  assert.match(comp,/hayCargaDePagina/);assert.match(comp,/15000/);assert.match(comp,/delete raiz\.dataset\.arranque/);
+  assert.match(comp,/hayCargaDePagina/);assert.match(comp,/TOPE_MS = 20000/);assert.match(comp,/VENTANA_ESTABLE_MS = 600/);assert.match(comp,/delete raiz\.dataset\.arranque/);
+  assert.match(comp,/document\.readyState === 'loading'/);assert.match(comp,/document\.querySelector\(PENDIENTE\)/);
+  assert.match(comp,/\.rovaq-cargando:not\(\.rovaq-cargando-compacto\)/);assert.match(comp,/aria-busy="true"/);assert.match(comp,/new MutationObserver/);
   assert.match(reg,/export const hayCargaDePagina/);
 });
 test('Hoy no pinta ningún bloque hasta que todos los datos críticos estén listos (y no vuelve al logo en reintentos)',async()=>{

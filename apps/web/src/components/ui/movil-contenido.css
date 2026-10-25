@@ -83,7 +83,7 @@
 /* Chips, píldoras de segmento, pestañas de página y botones «i»: la caja se queda compacta y el área de toque llega a 44 px con ::after */
 :root:root body .workspace-content :is(.fchip-x,.ui-chip-x,.dc-info){position:relative}
 :root:root body .workspace-content :is(.fchip-x,.ui-chip-x)::after{content:"";position:absolute;inset:-13px}
-:root:root body .workspace-content .dc-info::after{content:"";position:absolute;inset:-4px}
+:root:root body .workspace-content .dc-info::after{content:"";position:absolute;inset:-8px}
 /* Píldoras: la caja de toque mide 44 px (borde transparente de 6 px) y lo que se ve sigue siendo una píldora compacta de 32 px */
 :root:root body .workspace-content :is(.seg-btn,.dg-fchip,.id-chip,button.chip){min-height:44px;height:auto;border-block:7px solid transparent;border-inline:0;background-clip:padding-box;box-shadow:inset 0 0 0 1px var(--ui-border);font-size:12px;line-height:1.2;padding-block:0;padding-inline:12px}
 :root:root body .workspace-content .segmented .seg-btn{box-shadow:none;background-color:transparent}

@@ -10,6 +10,8 @@ import { SessionGuard } from '../session-guard';
 import { WorkspaceShell } from '../../components/workspace/shell';
 import { RovaqLogoLateral } from '../../components/rovaq-logo';
 import { DataState } from '../../components/workspace/data-state';
+import { ROBOTS_PRIVADO } from '../../lib/site.mjs';
+export const metadata={robots:ROBOTS_PRIVADO};
 export const dynamic='force-dynamic';
 // Local visual QA only: `next dev` with VEXA_UI_FIXTURES=1 renders the real shell with a synthetic organization and no Supabase.
 // Never active in a production build (NODE_ENV is "production" there), so it cannot widen access.

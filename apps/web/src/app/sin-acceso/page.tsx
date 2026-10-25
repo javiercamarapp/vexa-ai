@@ -5,7 +5,8 @@ import {InvitacionesPendientes, type Invitacion, type InvitacionVencida} from '.
 import {LinkButton} from '../../components/ui/button';
 import {Notice} from '../../components/ui/notice';
 import './sin-acceso.css';
-export const metadata = {title: 'Sin acceso a una organización'};
+import {ROBOTS_PRIVADO} from '../../lib/site.mjs';
+export const metadata = {title: 'Sin acceso a una organización', robots: ROBOTS_PRIVADO};
 export const dynamic = 'force-dynamic';
 type Invitaciones = {pending: Invitacion[]; expired: InvitacionVencida[]};
 /**

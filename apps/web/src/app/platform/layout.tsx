@@ -8,6 +8,8 @@ import {AdminTools} from '../../components/platform/admin-tools';
 import {redirect} from 'next/navigation';
 import {platformAccessForPage, platformMfaGate} from './_lib/access';
 import './platform.css';
+import {ROBOTS_PRIVADO} from '../../lib/site.mjs';
+export const metadata = {robots: ROBOTS_PRIVADO};
 export const dynamic = 'force-dynamic';
 export default async function PlatformLayout({children}: {children: ReactNode}) {
   const access = await platformAccessForPage();

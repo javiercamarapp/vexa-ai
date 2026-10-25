@@ -18,10 +18,28 @@ test('barra inferior: 5 destinos fijos con etiqueta (Inicio, Dinero, Clientes, A
   assert.equal((movil.match(/\{href:'\/[a-z]+'/g) ?? []).length, 6, '5 destinos + el sustituto «Datos» para roles sin Dinero');
   assert.match(css, /\.bn-etiqueta\{[^}]*text-overflow:ellipsis/);
 });
-test('selector de empresa siempre visible; con varias organizaciones abre la hoja inferior y POST /auth/organization; con una sola es texto sin control', () => {
+test('encabezado móvil: logo de Rovaq (enlace a Inicio) y empresa como monograma; sin texto de cliente ni avatar circular', () => {
+  assert.match(shell, /<Link href="\/overview" className="header-logo"[^>]*><RovaqLogo variante="horizontal"/);assert.match(shell, /import \{RovaqLogo\} from '\.\.\/rovaq-logo'/);
+  assert.match(shell, /<SelectorEmpresa organizations=\{organizations\} tenant=\{tenant\}\/>/);
+  assert.doesNotMatch(shell, /workspace-header[^`]*hidden=/, 'en celular el encabezado no se oculta ni en el chat');
+  assert.doesNotMatch(movil, /empresa-fija/, 'sin un chip con el nombre del cliente en la barra');
+  assert.match(movil, /if\(!varias\)return null/);
+});
+test('selector de empresa: varias organizaciones abren la hoja inferior y POST /auth/organization; el control es un monograma, no el nombre', () => {
   assert.match(movil, /action="\/auth\/organization" method="post"/);assert.match(movil, /<Drawer side="bottom"/);assert.match(movil, /name="tenant_id" value=\{o\.id\}/);
-  assert.match(movil, /if\(!varias\)return <div className="empresa-chip empresa-fija"/);assert.match(shell, /<SelectorEmpresa organizations=\{organizations\} tenant=\{tenant\}\/>/);
-  assert.doesNotMatch(shell, /workspace-header[^`]*hidden=/, 'en celular el encabezado con la empresa no se oculta ni en el chat');
+  assert.match(movil, /aria-label=\{'Empresa: '\+nombre\+'\. Cambiar de empresa'\}/);
+  const chip = movil.slice(movil.indexOf('className="empresa-chip"'), movil.indexOf('<Drawer side="bottom" title="Cambiar de empresa"'));
+  assert.doesNotMatch(chip, /org-nombre/, 'el nombre completo vive en la hoja, no en la barra');
+});
+test('monograma unificado: rectángulo redondeado con tinte (radio 8), nunca círculo; misma clase en barra, hoja, pie del sidebar y plataforma', () => {
+  const g = leer('src/app/globals.css'), p = leer('src/app/platform/layout.tsx');
+  assert.match(g, /\.monograma \{[^}]*border-radius:8px[^}]*color-mix/);assert.doesNotMatch(g, /account-avatar|org-avatar/);assert.doesNotMatch(css + shell + movil + p, /account-avatar|org-avatar/);
+  assert.match(shell, /<Monograma nombre=\{organization\}\/>/);assert.match(p, /className="monograma"/);
+});
+test('iniciales del monograma: dos palabras → una letra de cada una; una palabra → dos letras; ignora conectores y paréntesis', () => {
+  const m = movil.match(/export function iniciales[\s\S]*?\n\}\n/)[0].replace('export function iniciales(nombre:string)', 'function iniciales(nombre)');
+  const iniciales = new Function(m + '; return iniciales;')();
+  assert.equal(iniciales('CLIENTEX'), 'SE');assert.equal(iniciales('Los Tacos de PM'), 'TP');assert.equal(iniciales('Organización de demostración (sintética)'), 'OD');assert.equal(iniciales('Rovaq AI'), 'RA');assert.equal(iniciales('  '), '?');
 });
 test('selector de tema: iconos SVG iguales, sin glifos de texto y sin title', () => {
   assert.doesNotMatch(shell + movil, /['"]☀['"]|['"]☾['"]|['"]▣['"]/);assert.match(movil, /\['light','Claro','sun'\],\['system','Sistema','monitor'\],\['dark','Oscuro','moon'\]/);assert.match(movil, /size=\{16\}/);

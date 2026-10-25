@@ -1,5 +1,5 @@
 // Prueba móvil REAL del caparazón (Playwright, isMobile + hasTouch) a 390×844, 360×780 y 430×932, en claro y oscuro.
-// Mide: sin desborde horizontal del caparazón, zonas táctiles ≥ 44 px, barra inferior de 5 destinos sin superposición, selector de empresa visible,
+// Mide: logo Rovaq en la barra (sin texto de cliente ni avatar circular), sin desborde horizontal del caparazón, zonas táctiles ≥ 44 px, barra inferior de 5 destinos sin superposición, selector de empresa visible,
 // texto ≥ 12 px, sin `title` como único nombre accesible, compositor del chat sobre el teclado simulado, hoja «Más» y hoja de empresa (90 dvh, X ≥ 44),
 // selector de tema centrado, sin destello de tema y PWA (manifest maskable, viewport-fit=cover). Guarda capturas.
 //   VEXA_UI_FIXTURES=1 VEXA_UI_FIXTURES_PLATFORM=1 VEXA_UI_FIXTURES_ROLE=owner npx next dev -p 3200   (otra terminal)
@@ -11,7 +11,10 @@ const {chromium}=require('playwright-core');
 const {respond}=await import('./fixtures.mjs');
 const arg=(k,d)=>(process.argv.find(a=>a.startsWith('--'+k+'='))?.slice(k.length+3))??d;
 const base=process.env.VEXA_UI_BASE??'http://localhost:3200';
-const routes=arg('routes','/overview,/cfo,/gaps,/problems,/recommendations,/preguntale,/confianza,/map,/settings/team').split(',');
+const {MENU}=await import('../../src/lib/workspace/menu.mjs');
+// Por defecto: las rutas de la barra inferior (con su destino activo esperado) y TODAS las del menú (identidad de la barra: logo Rovaq, sin texto de cliente).
+const menuRoutes=[...new Set(MENU.flatMap(x=>x.tipo==='item'?[x.href]:(x.items??[]).map(i=>i.href)))];
+const routes=arg('routes',[...new Set(['/overview','/cfo','/gaps','/problems','/recommendations','/preguntale','/confianza','/map','/settings/team',...menuRoutes])].join(',')).split(',');
 const sizes=arg('sizes','390,360,430').split(',').map(Number),themes=arg('themes','light,dark').split(',');
 const SIZE={390:[390,844],360:[360,780],430:[430,932]};
 const out=arg('out',path.join(os.homedir(),'.codex-work/rovaq-cierre-20261007/estrategia-20261023/diseno-panel/movil-capturas-nuevas'));
@@ -69,10 +72,19 @@ for(const theme of themes)for(const w of sizes){
    const esperado={'/overview':'Inicio','/cfo':'Dinero','/gaps':'Dinero','/refunds':'Dinero','/problems':'Clientes','/map':'Clientes','/recommendations':'Acciones','/interventions':'Acciones','/preguntale':'Preguntar','/confianza':null,'/settings/team':null}[r];
    if(esperado!==undefined){const act=b.items.filter(i=>i.actual==='page').map(i=>i.t);check(esperado===null?act.length===0:(act.length===1&&act[0]===esperado),`${tag}: destino activo ${JSON.stringify(act)} ≠ ${esperado}`);}
   }
-  // 3) Selector de empresa visible arriba y con nombre.
-  const e=await page.evaluate(()=>{const c=document.querySelector('[data-testid=selector-empresa]');if(!c)return null;const r=c.getBoundingClientRect(),h=document.querySelector('.workspace-header')?.getBoundingClientRect();return {top:r.top,bottom:r.bottom,h:r.height,w:r.width,x:r.left,right:r.right,txt:c.textContent.trim(),tag:c.tagName,hb:h?.bottom,hr:h?.right};});
-  check(!!e&&e.bottom>0&&e.top<80&&e.w>60,`${tag}: el selector de empresa no está visible arriba`);
-  if(e){check(/demostración/i.test(e.txt),`${tag}: el chip no muestra el nombre de la empresa`);check(e.tag==='BUTTON'?e.h>=43.5:true,`${tag}: chip de empresa <44 px de alto (${e.h})`);}
+  // 3) Identidad: logo Rovaq visible en la barra (a la izquierda, enlace a Inicio), sin texto de cliente ni avatar circular con letra suelta; selector de empresa alcanzable.
+  const e=await page.evaluate(()=>{const h=document.querySelector('.workspace-header');if(!h)return null;const hb=h.getBoundingClientRect(),vis=el=>{const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&getComputedStyle(el).visibility!=='hidden';};
+   const svg=[...h.querySelectorAll('svg[aria-label=Rovaq]')].find(vis),lr=svg?.getBoundingClientRect(),enlace=svg?.closest('a');
+   const c=h.querySelector('[data-testid=selector-empresa]'),cr=c?.getBoundingClientRect();
+   const org=[...document.querySelectorAll('.header-empresa [data-testid=selector-empresa]')].length?(c.getAttribute('aria-label')||''):'';
+   const txtBarra=(h.innerText||'').replace(/\s+/g,' ').trim();
+   const circulares=[...document.querySelectorAll('.workspace-header *,dialog[open] *')].filter(x=>{if(!vis(x))return false;const r=x.getBoundingClientRect(),br=getComputedStyle(x).borderRadius;const t=(x.textContent||'').trim();return t.length>0&&t.length<=2&&r.width<=48&&r.width>=16&&Math.abs(r.width-r.height)<2&&parseFloat(br)>=r.width/2-0.5&&!x.closest('.sr-only');}).map(x=>x.className||x.tagName);
+   const items=[...h.querySelectorAll('a[href],button')].filter(vis).map(x=>x.getBoundingClientRect());const solapes=items.some((r,i)=>items.some((q,j)=>j>i&&r.left<q.right-0.5&&q.left<r.right-0.5&&r.top<q.bottom-0.5&&q.top<r.bottom-0.5));
+   return {logo:!!svg,logoX:lr?.left,logoW:lr?.width,logoH:lr?.height,enlace:enlace?.getAttribute('href'),hb:hb.bottom,chip:!!c,cx:cr?.left,cw:cr?.width,ch:cr?.height,ctop:cr?.top,cbottom:cr?.bottom,nombre:org,txtBarra,circulares,solapes};});
+  check(!!e&&e.logo,`${tag}: el logo de Rovaq no es visible en el encabezado móvil`);
+  if(e){check(e.logo&&e.logoX<40&&e.logoW>=100&&e.logoH<=44,`${tag}: logo mal ubicado/dimensionado (x ${Math.round(e.logoX)}, ${Math.round(e.logoW)}×${Math.round(e.logoH)})`);check(e.enlace==='/overview'||/^\/overview(\?|$)/.test(e.enlace??''),`${tag}: el logo no enlaza a Inicio (${e.enlace})`);
+   check(!/demostraci|CLIENTEX|empresa de demo/i.test(e.txtBarra),`${tag}: texto de cliente en la barra («${e.txtBarra}»)`);check(e.circulares.length===0,`${tag}: avatar circular con letra suelta (${e.circulares.join(',')})`);check(!e.solapes,`${tag}: controles del encabezado solapados`);
+   check(e.chip&&e.ctop>=0&&e.cbottom<=e.hb&&e.cw>=43.5&&e.ch>=43.5,`${tag}: el selector de empresa no está alcanzable en la barra (${Math.round(e.cw)}×${Math.round(e.ch)})`);check(/Empresa: .*demostraci.*Cambiar de empresa/i.test(e.nombre),`${tag}: el selector no nombra la empresa para lectores de pantalla (${e.nombre})`);}
   // 4) Caparazón: controles ≥44, texto ≥12, sin title como único nombre.
   const m=await page.evaluate(medirCaparazon,['.workspace-header','.workspace-bottom-nav']);
   check(m.chicos.length===0,`${tag}: controles del caparazón <44 px: ${m.chicos.slice(0,4).join(' | ')}`);
@@ -103,6 +115,7 @@ for(const theme of themes)for(const w of sizes){
    check(!!s,`${tag}: no abrió la hoja «Más»`);
    if(s){check(s.h<=s.vh*0.9+1,`${tag}: la hoja «Más» mide ${Math.round(s.h)} > 90 dvh (${Math.round(s.vh*0.9)})`);check(s.g,`${tag}: la hoja «Más» no tiene grabber`);check(!!s.x&&s.x.w>=43.5&&s.x.h>=43.5&&s.x.t>=s.top&&s.x.r<=W,`${tag}: botón cerrar de la hoja ausente o <44 px (${JSON.stringify(s.x)})`);check(s.niveles===1,`${tag}: más de un nivel de overlay (${s.niveles})`);check(s.opciones>=3,`${tag}: la hoja «Más» no trae el menú completo (${s.opciones} enlaces)`);
     check(s.cels.length===3&&s.cels.every(c=>Math.abs(c.dx)<=1&&Math.abs(c.sw-16)<0.6&&Math.abs(c.sh-16)<0.6&&c.h>=43.5&&Math.abs(c.dy)<=1&&Math.abs(c.w-s.cels[0].w)<=1),`${tag}: selector de tema desigual ${JSON.stringify(s.cels.map(c=>[Math.round(c.dx*10)/10,Math.round(c.dy*10)/10,Math.round(c.w),Math.round(c.h)]))}`);check(s.cels.filter(c=>c.marcado).length===1,`${tag}: el selector de tema no marca exactamente una opción`);}
+   check(await page.evaluate(()=>/Organización de demostración/.test(document.querySelector('dialog.hoja-mas[open] .sidebar-account')?.textContent??'')&&!!document.querySelector('dialog.hoja-mas[open] .sidebar-account .monograma')),`${tag}: «Más» no muestra el nombre de la empresa con su monograma`);
    const mm=await page.evaluate(medirCaparazon,['dialog.hoja-mas[open]']);
    check(mm.chicos.length===0,`${tag}: «Más»: controles <44 px: ${mm.chicos.slice(0,4).join(' | ')}`);check(mm.fuentes.length===0,`${tag}: «Más»: texto <12 px: ${mm.fuentes.slice(0,3).join(' | ')}`);check(mm.soloTitle.length===0,`${tag}: «Más»: title como único nombre`);
    await page.screenshot({path:path.join(out,`hoja-mas-${W}-${theme}.png`)});
@@ -115,7 +128,7 @@ for(const theme of themes)for(const w of sizes){
    // Hoja de empresa
    await page.locator('[data-testid=selector-empresa]').tap();await page.waitForTimeout(350);
    const o=await page.evaluate(()=>{const dlg=document.querySelector('dialog.hoja-empresa[open]');if(!dlg)return null;const p=dlg.querySelector('.drawer-panel').getBoundingClientRect();const filas=[...dlg.querySelectorAll('.org-fila')].map(f=>{const r=f.getBoundingClientRect();return {t:f.textContent.trim(),h:r.height,w:r.width,cur:f.getAttribute('aria-current'),tipo:f.type,nombre:f.name,valor:f.value};});const x=dlg.querySelector('.overlay-close').getBoundingClientRect();return {h:p.height,vh:innerHeight,filas,x:[x.width,x.height],accion:dlg.querySelector('form').getAttribute('action'),metodo:dlg.querySelector('form').method};});
-   check(!!o,`${tag}: el chip de empresa no abre la hoja`);
+   check(!!o,`${tag}: el selector de empresa no abre la hoja`);
    if(o){check(o.filas.length===2,`${tag}: la hoja de empresa debe listar 2 organizaciones (${o.filas.length})`);check(o.filas.every(f=>f.h>=43.5),`${tag}: filas de empresa <44 px`);check(o.filas.filter(f=>f.cur==='true').length===1,`${tag}: falta marcar la empresa actual`);check(o.filas.some(f=>f.tipo==='submit'&&f.nombre==='tenant_id'&&f.valor),`${tag}: cambiar de empresa debe enviar tenant_id a /auth/organization`);check(o.accion==='/auth/organization'&&o.metodo==='post',`${tag}: acción ${o.accion} ${o.metodo}`);check(o.x[0]>=43.5&&o.x[1]>=43.5,`${tag}: X de la hoja de empresa <44 px`);check(o.h<=o.vh*0.9+1,`${tag}: hoja de empresa >90 dvh`);}
    await page.screenshot({path:path.join(out,`hoja-empresa-${W}-${theme}.png`)});
    await page.keyboard.press('Escape');await page.waitForTimeout(250);

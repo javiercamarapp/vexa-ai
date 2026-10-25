@@ -25,7 +25,7 @@ for (const configured of [false,true]) test(`served form headers (configured=${c
       assert.equal(response.headers.get('referrer-policy'),'same-origin');
       assert.match(response.headers.get('cache-control'),/no-store/);
       const html=await response.text();
-      if(configured){assert.match(html,/action="\/auth\/google"/);assert.match(html,/action="\/auth\/logout"/);assert.match(html,/method="post"/);}
+      if(configured){assert.match(html,/action="\/auth\/google"/);assert.match(html,/method="post"/);if(path==='/login')assert.doesNotMatch(html,/action="\/auth\/logout"/,'sin sesión no se ofrece «Cerrar sesión» (solo con signedIn, desde d75e1f53/aed5c3a7)');}
     }
   } finally {if(server.exitCode===null && server.signalCode===null)server.kill('SIGTERM');await ended;}
 });

@@ -80,7 +80,7 @@ for(const theme of themes)for(const w of sizes){
    const c=h.querySelector('[data-testid=selector-empresa]'),cr=c?.getBoundingClientRect();
    const org=[...document.querySelectorAll('.header-empresa [data-testid=selector-empresa]')].length?(c.getAttribute('aria-label')||''):'';
    const txtBarra=(h.innerText||'').replace(/\s+/g,' ').trim();
-   const circulares=[...document.querySelectorAll('.workspace-header *,dialog[open] *')].filter(x=>{if(!vis(x))return false;const r=x.getBoundingClientRect(),br=getComputedStyle(x).borderRadius;const t=(x.textContent||'').trim();return t.length>0&&t.length<=2&&r.width<=48&&r.width>=16&&Math.abs(r.width-r.height)<2&&parseFloat(br)>=r.width/2-0.5&&!x.closest('.sr-only');}).map(x=>x.className||x.tagName);
+   const circulares=[...document.querySelectorAll('.workspace-header *,dialog[open] *')].filter(x=>{if(!vis(x))return false;const r=x.getBoundingClientRect(),br=getComputedStyle(x).borderRadius;const t=(x.textContent||'').trim();return t.length>0&&t.length<=2&&!/^\d+\+?$/.test(t)&&r.width<=48&&r.width>=16&&Math.abs(r.width-r.height)<2&&parseFloat(br)>=r.width/2-0.5&&!x.closest('.sr-only');}).map(x=>x.className||x.tagName);
    const items=[...h.querySelectorAll('a[href],button')].filter(vis).map(x=>x.getBoundingClientRect());const solapes=items.some((r,i)=>items.some((q,j)=>j>i&&r.left<q.right-0.5&&q.left<r.right-0.5&&r.top<q.bottom-0.5&&q.top<r.bottom-0.5));
    return {logo:!!svg,logoX:lr?.left,logoW:lr?.width,logoH:lr?.height,enlace:enlace?.getAttribute('href'),hb:hb.bottom,chip:!!c,cx:cr?.left,cw:cr?.width,ch:cr?.height,ctop:cr?.top,cbottom:cr?.bottom,nombre:org,txtBarra,circulares,solapes};});
   check(!!e&&e.logo,`${tag}: el logo de Rovaq no es visible en el encabezado móvil`);

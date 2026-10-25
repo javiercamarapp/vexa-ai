@@ -46,7 +46,7 @@
 :root:root body .hoy-kpi:nth-child(even){border-left:1px solid var(--ui-border)}
 :root:root body .hoy-kpi:nth-child(n+3){border-top:1px solid var(--ui-border)}
 :root:root body .hoy-kpi-top{min-height:0}
-:root:root:root:root body .workspace-content button.dc-info{width:24px;height:24px;min-width:24px;min-height:24px;margin-block:-4px;border-radius:999px}
+:root:root:root:root body .workspace-content button.dc-info{width:var(--btn-h);height:var(--btn-h);min-width:var(--btn-h);min-height:var(--btn-h);margin-block:-6px;border-radius:var(--btn-radius)}
 :root:root body .hoy-kpi-fila{flex-wrap:wrap}
 :root:root body .hoy-kpi .sello,:root:root body .hoy-kpi .sello-2>span{font-size:12px;line-height:1.4}
 :root:root body .hoy-kpi .sello-2>span:nth-child(n+2){display:none}
@@ -74,6 +74,7 @@
 /* Campos: caja de 44 px con borde transparente de 5 px; lo que se ve mide 34 px y la fuente se queda en 16 px (sin zoom en iOS) */
 :root:root body .workspace-content :is(select,textarea,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])){box-sizing:border-box;min-height:var(--mv-hit);font-size:16px;line-height:1.25;border:5px solid transparent;background-clip:padding-box;box-shadow:inset 0 0 0 1px var(--ui-input);border-radius:12px;padding-block:0;padding-inline:10px;outline-offset:-5px}
 :root:root body .workspace-content :is(select,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])){height:var(--mv-hit)}
+:root:root:root:root:root:root body .workspace-content select:not([multiple]):not([size]){padding-inline-end:26px}
 :root:root body .workspace-content textarea{padding-block:6px;min-height:76px}
 :root:root body .workspace-content :is(select,textarea,input):focus-visible{box-shadow:inset 0 0 0 1.5px var(--ui-focus)}
 :root:root body .workspace-content summary{min-height:var(--mv-ctl);display:flex;align-items:center;position:relative}
@@ -82,12 +83,13 @@
 /* Chips, píldoras de segmento, pestañas de página y botones «i»: la caja se queda compacta y el área de toque llega a 44 px con ::after */
 :root:root body .workspace-content :is(.fchip-x,.ui-chip-x,.dc-info){position:relative}
 :root:root body .workspace-content :is(.fchip-x,.ui-chip-x)::after{content:"";position:absolute;inset:-13px}
-:root:root body .workspace-content .dc-info::after{content:"";position:absolute;inset:-11px}
+:root:root body .workspace-content .dc-info::after{content:"";position:absolute;inset:-4px}
 /* Píldoras: la caja de toque mide 44 px (borde transparente de 6 px) y lo que se ve sigue siendo una píldora compacta de 32 px */
 :root:root body .workspace-content :is(.seg-btn,.dg-fchip,.id-chip,button.chip){min-height:44px;height:auto;border-block:7px solid transparent;border-inline:0;background-clip:padding-box;box-shadow:inset 0 0 0 1px var(--ui-border);font-size:12px;line-height:1.2;padding-block:0;padding-inline:12px}
 :root:root body .workspace-content .segmented .seg-btn{box-shadow:none;background-color:transparent}
 :root:root body .workspace-content .segmented .seg-btn[aria-checked=true],:root:root body .workspace-content .seg .btn[aria-pressed=true]{box-shadow:inset 0 0 0 1px var(--btn-soft-line);background-color:var(--btn-soft-bg)}
-:root:root body .workspace-content .dg-fchip,:root:root body .workspace-content .id-chip{background-color:var(--ui-surface)}
+:root:root body .workspace-content .dg-fchip{background-color:var(--ui-surface)}
+:root:root body .workspace-content :is(button.dg-fchip,button.id-chip){box-shadow:inset 0 0 0 1px var(--ui-line-strong)}
 :root:root body .workspace-content .dg-fchip[aria-pressed=true]{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cat) 45%,var(--ui-border))}
 :root:root body .workspace-content .id-chip-label{font-size:12px}
 :root:root body .workspace-content .segmented{padding:7px 0;gap:0;border:0;border-radius:999px;background:var(--ui-surface);background-clip:content-box;box-shadow:none;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;align-items:center}
@@ -115,7 +117,7 @@
 :root:root body .workspace-content label:has(>input:is([type=checkbox],[type=radio])){min-height:var(--mv-hit);display:inline-flex;align-items:center;gap:4px}
 
 /* ---- Filtros: UNA línea de chips con scroll horizontal ---- */
-:root:root body .ui-filterbar{padding-block:7px;margin-block:-7px;gap:6px;scroll-snap-type:x proximity;scroll-padding-inline:16px;-webkit-overflow-scrolling:touch}
+:root:root body .ui-filterbar{padding-block:7px;margin-block:-7px;gap:var(--btn-gap);scroll-snap-type:x proximity;scroll-padding-inline:16px;-webkit-overflow-scrolling:touch}
 :root:root body .ui-filterbar>*{scroll-snap-align:start}
 :root:root body .ui-filterbar .fchip{height:var(--mv-chip);min-height:var(--mv-chip);position:relative;font-size:12px;padding-block:0}
 :root:root body .ui-filterbar .fchip::after{content:"";position:absolute;inset:-8px -2px}
@@ -131,10 +133,10 @@
 :root:root body .workspace-content :is([role=tablist]):not(.pc-tabs){gap:8px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity}
 
 /* ---- Cabeceras de página ---- */
-:root:root body .page-header{gap:6px 10px;margin:0 0 var(--ui-rhythm)}
+:root:root body .page-header{gap:var(--btn-gap) 10px;margin:0 0 var(--ui-rhythm)}
 :root:root body .page-header .eyebrow{margin:0 0 2px}
 :root:root body .page-header-description{margin:2px 0 0;font-size:13px;line-height:1.4}
-:root:root body .page-header-actions{gap:6px}
+:root:root body .page-header-actions{gap:var(--btn-gap)}
 :root:root body .page-header-actions>*{min-width:0}
 
 /* ---- Tablas -> tarjeta-fila (cada fila: título, cifra principal y datos). «Comparar columnas» las deja como tabla con la 1.ª columna fija. ---- */

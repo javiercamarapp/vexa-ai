@@ -89,7 +89,9 @@
 table .num{text-align:right;font-variant-numeric:tabular-nums}
 .workspace-content table{border-collapse:collapse;width:100%;font-size:13px}
 .workspace-content :is(th,td){padding:10px 12px;border-bottom:1px solid var(--ui-border);text-align:left;vertical-align:top}
-.workspace-content th{font-weight:600;color:var(--ui-secondary);background:var(--ui-soft)}
+/* Encabezado de columna con tinte petróleo; el encabezado de FILA (tbody th) toma el fondo de su fila: antes ambos eran gris y la primera columna cortaba la tabla en dos tonos. */
+.workspace-content th{font-weight:600;color:var(--ui-secondary);background:transparent;vertical-align:middle}
+.workspace-content thead th{background:color-mix(in srgb,var(--chart-5) 7%,var(--ui-surface));color:var(--ink-info,var(--muted))}
 /* ---- Bars ---- */
 .chart{margin:0}.chart-title{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-1) var(--sp-3);font-weight:600;font-size:13px;line-height:1.3;margin-bottom:var(--sp-2)}.chart-title span{font:500 12px var(--font-ui);color:var(--muted)}
 .bars{list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-3)}
@@ -247,7 +249,7 @@ table .num{text-align:right;font-variant-numeric:tabular-nums}
    ===================================================================================================================== */
 :root{
  --r-card:12px;--r-inner:8px;--r-chip:999px;--r-pill:999px;
- --btn-h:34px;--btn-h-sm:32px;--btn-px:14px;
+ /* --btn-h / --btn-h-sm / --btn-px / --btn-radius / --btn-gap: ahora viven SOLO en components/ui/ui.css (estándar único de botón) */
  /* escala única (títulos): página 24 · sección 16 · tarjeta 14 */
  --t-page:20px;--t-section:14px;--t-card:14px;--t-body:13px;--t-small:12px;--t-micro:11px;--t-kpi:26px;
  --sh-rest:0 1px 2px #17181c05;--sh-hover:0 1px 2px #17181c06,0 10px 28px -14px #17181c26;--sh-pop:0 12px 32px -8px #17181c2e,0 2px 6px #17181c0f;

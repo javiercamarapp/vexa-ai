@@ -6,8 +6,8 @@
    ==================================================================================================================== */
 
 /* ---- Tokens reutilizables (cualquier pantalla puede usarlos con la clase .ctl, sin tocar ui.css) ---- */
-:root{--ctl-h:32px;--ctl-hit:44px;--ctl-r:8px;--ctl-gap:8px;--ctl-fs:13px;--ctl-px:12px;--ctl-line:var(--ui-line-strong);--ctl-icon:16px;--col-chat:46rem}
-@media(max-width:767px){:root{--ctl-h:36px}}
+/* .ctl usa el estándar único de botón de ui.css (--btn-h 32 / --btn-h-m 36 ≤819 px, --btn-radius, --btn-gap, --btn-px): aquí solo se alias, sin duplicar valores. */
+:root{--ctl-h:var(--btn-h,32px);--ctl-hit:44px;--ctl-r:var(--btn-radius,8px);--ctl-gap:var(--btn-gap,8px);--ctl-fs:13px;--ctl-px:var(--btn-px,12px);--ctl-line:var(--ui-line-strong);--ctl-icon:16px;--col-chat:46rem}
 
 /* ---- Clase base .ctl: botón, enlace o chip compacto. Variantes: .ctl-soft (primario suave), .ctl-ghost, .ctl-solid, .ctl-pill, .ctl-icon, .ctl-chip, .ctl-q, .ctl-tema, .ctl-solo ---- */
 :root .ctl:not(#u){position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;gap:6px;box-sizing:border-box;width:auto;height:var(--ctl-h);min-height:var(--ctl-h);min-width:var(--ctl-h);max-width:100%;margin-block:0;padding:0 var(--ctl-px);border:1px solid var(--ctl-line);border-radius:var(--ctl-r);background:var(--ui-surface);color:var(--ink);font:600 var(--ctl-fs)/1 var(--font-ui);letter-spacing:0;text-align:center;text-decoration:none;white-space:nowrap;cursor:pointer;box-shadow:none;-webkit-tap-highlight-color:transparent;transition:background-color .15s ease,border-color .15s ease,color .15s ease,box-shadow .15s ease}
@@ -42,7 +42,7 @@
 
 /* ---- Caparazón de una página: nada de scroll de documento; el alto lo da 100dvh menos la barra inferior, las áreas seguras y el teclado ---- */
 html:has(.workspace-chat),html:has(.workspace-chat) body{height:100dvh;overflow:hidden;overscroll-behavior:none}
-.workspace-chat{--copiloto-acento:var(--ui-action);--btn-h:var(--ctl-h);--btn-h-sm:var(--ctl-h)}
+.workspace-chat{--copiloto-acento:var(--ui-action)}
 @media(min-width:768px){
  .workspace-shell.workspace-chat{height:100dvh;min-height:0;overflow:hidden;box-sizing:border-box}
  .workspace-chat .workspace-frame{display:flex;flex-direction:column;height:calc(100dvh - 32px);min-height:0;overflow:hidden}

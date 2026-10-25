@@ -2,7 +2,7 @@
 // Por cada tamaño × tema comprueba:
 //   · /preguntale (portada), /preguntale con un hilo de varias respuestas largas, /cfo (resumen) y /cfo?vista=informe: document.scrollHeight <= innerHeight y sin desborde horizontal;
 //   · portada completa visible (logo, título, sugerencias, compositor) sin que el compositor tape nada; con hilo, el hilo scrollea por dentro, queda anclado abajo y el compositor sigue visible;
-//   · controles (.ctl, .seg-btn, .btn): alto 32 px escritorio / 36 px celular (±1), fuente 13 px, nunca se tocan (separación ≥ 8 px), texto visible ≥ 12 px, zona táctil ≥ 44 px (área invisible);
+//   · controles (.ctl, .seg-btn, .btn): alto 32 px escritorio / 36 px hasta 819 px (±1), fuente 13 px, nunca se tocan (separación ≥ 8 px), texto visible ≥ 12 px, zona táctil ≥ 44 px (área invisible);
 //   · capturas en ~/.codex-work/rovaq-cierre-20261007/estrategia-20261023/diseno-panel/una-pagina-capturas/.
 //   VEXA_UI_FIXTURES=1 VEXA_UI_FIXTURES_PLATFORM=1 VEXA_UI_FIXTURES_ROLE=owner npx next dev --webpack -p 3340   (otra terminal)
 //   VEXA_UI_BASE=http://localhost:3340 node tests/ui/una-pagina.mjs [--sizes=390x844,360x740,768x1024,1440x900,1280x720] [--themes=light,dark] [--out=dir] [--solo=portada,hilo,cfo,informe]
@@ -51,7 +51,7 @@ function vecinos(items,min=8){
  }
  return mal;
 }
-function reglasControles(tag,m,movil){
+function reglasControles(tag,m,W<=819){
  const H=movil?36:32;
  // Las preguntas sugeridas (.ctl-q) son frases: nunca se truncan, así que en celular pueden ocupar 2 líneas (alto ≥ H); el resto mide H exacto.
  const raros=m.items.filter(i=>i.ctl||/seg-btn/.test(i.d)).filter(i=>/ctl-q/.test(i.d)?i.h<H-1.01:Math.abs(i.h-H)>1.01);
@@ -98,7 +98,7 @@ for(const theme of themes)for(const [W,H] of sizes){
   const tag=`portada@${W}x${H}/${theme}`;const page=await abrir('/preguntale','[data-testid=agente-shell] h1');
   sinScroll(tag,await page.evaluate(medirPagina));
   await encaja(page,tag,['[data-testid=agente-shell] h1','.una-sug','.una-temas','.una-preguntas','.agente-composer']);
-  const m=await page.evaluate(medirControles);check(m.items.length>=6,`${tag}: pocos controles medidos (${m.items.length})`);reglasControles(tag,m,movil);
+  const m=await page.evaluate(medirControles);check(m.items.length>=6,`${tag}: pocos controles medidos (${m.items.length})`);reglasControles(tag,m,W<=819);
   const pregs=await page.locator('.una-preguntas .ctl').count();check(pregs===3,`${tag}: deben verse 3 preguntas del tema (hay ${pregs})`);
   const pend=await page.evaluate(()=>[...document.querySelectorAll('.una-temas .ctl')].every(e=>e.getBoundingClientRect().height>0));check(pend,`${tag}: temas sin altura`);
   await foto(page,'portada');await page.close();
@@ -120,7 +120,7 @@ for(const theme of themes)for(const [W,H] of sizes){
   await page.evaluate(()=>{document.querySelector('.agente-thread').scrollTop=0;});await page.waitForTimeout(150);
   const p2=await page.evaluate(medirPagina),c1=await page.evaluate(()=>document.querySelector('.agente-composer').getBoundingClientRect().top);
   check(p2.scrollY===0&&Math.abs(c1-c0)<1,`${tag}: al subir por el hilo se movió la página o el compositor (${c0}→${c1})`);
-  const m=await page.evaluate(medirControles);check(m.items.length>=6,`${tag}: pocos controles medidos`);reglasControles(tag,m,movil);
+  const m=await page.evaluate(medirControles);check(m.items.length>=6,`${tag}: pocos controles medidos`);reglasControles(tag,m,W<=819);
   await page.evaluate(()=>{const t=document.querySelector('.agente-thread');t.scrollTop=t.scrollHeight;});await page.waitForTimeout(200);
   await foto(page,'hilo');
   // Con el hilo abajo, un tercio del hilo hacia arriba también se ve (captura del hilo a media altura).
@@ -131,7 +131,7 @@ for(const theme of themes)for(const [W,H] of sizes){
   const tag=`cfo@${W}x${H}/${theme}`;const page=await abrir('/cfo','.una-kpis');
   sinScroll(tag,await page.evaluate(medirPagina));
   await encaja(page,tag,['.una-kpis','.una-tablist','.una-panel','.agente-composer']);
-  const m=await page.evaluate(medirControles);check(m.items.length>=8,`${tag}: pocos controles medidos (${m.items.length})`);reglasControles(tag,m,movil);
+  const m=await page.evaluate(medirControles);check(m.items.length>=8,`${tag}: pocos controles medidos (${m.items.length})`);reglasControles(tag,m,W<=819);
   const kp=await page.evaluate(()=>{const l=[...document.querySelectorAll('.una-kpi')].map(e=>e.getBoundingClientRect());return {n:l.length,misma:l.every(r=>Math.abs(r.top-l[0].top)<1)};});check(kp.n>=4&&kp.misma,`${tag}: los KPI no van en una sola fila (${kp.n})`);
   const pn=await page.evaluate(()=>{const p=document.querySelector('.una-panel').getBoundingClientRect(),c=document.querySelector('.agente-composer').getBoundingClientRect();return {h:p.height,b:p.bottom,ct:c.top};});check(pn.h>=150,`${tag}: el panel principal es muy bajo (${Math.round(pn.h)} px)`);
   await foto(page,'cfo');
@@ -146,7 +146,7 @@ for(const theme of themes)for(const [W,H] of sizes){
  if(solo.includes('informe')){
   const tag=`informe@${W}x${H}/${theme}`;const page=await abrir('/cfo?vista=informe','.una-kpis');
   sinScroll(tag,await page.evaluate(medirPagina));
-  const m=await page.evaluate(medirControles);check(m.items.length>=8,`${tag}: pocos controles medidos (${m.items.length})`);reglasControles(tag,m,movil);
+  const m=await page.evaluate(medirControles);check(m.items.length>=8,`${tag}: pocos controles medidos (${m.items.length})`);reglasControles(tag,m,W<=819);
   const pn=await page.evaluate(()=>{const p=document.querySelector('.una-panel').getBoundingClientRect();return {h:p.height,b:p.bottom,vh:innerHeight};});check(pn.h>=150&&pn.b<=pn.vh+0.5,`${tag}: el panel principal no cabe (${Math.round(pn.h)} px, fondo ${Math.round(pn.b)}/${pn.vh})`);
   await foto(page,'informe');
   for(const nombre of ['Alertas','Canales','Calidad','Proyección','Exposición','Comparativa','Glosario']){await page.getByRole('tab',{name:new RegExp('^'+nombre)}).click();await page.waitForTimeout(200);sinScroll(`${tag}/${nombre}`,await page.evaluate(medirPagina));if(nombre==='Canales')await foto(page,'informe-canales');}

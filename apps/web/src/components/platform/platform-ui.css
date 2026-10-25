@@ -108,3 +108,10 @@
  html:root:not([data-tablas-movil=comparar]) .pf-table[data-mv] .pf-pill{white-space:normal;max-width:100%}
  html:root:not([data-tablas-movil=comparar]) .pf-table[data-mv] td.pf-wrap .pf-sub{display:block}
 }
+
+/* Tabla de organizaciones: celdas más compactas para que la última columna (botones) no quede recortada ni pegada al borde de la tarjeta a 1440 px */
+.pf-table :is(th,td){padding-inline:10px}
+/* Segmentado de plataforma: superficie blanca con borde firme (antes gris sobre gris), activo con tinte; en celular los botones miden 44 px sin ::after (son vecinos) */
+.pf-seg{background:var(--ui-surface);border-color:var(--ui-line-strong)}
+:is(.workspace-content,.access-flow) .pf-seg .btn[aria-pressed=true]{background:var(--btn-soft-bg);border-color:var(--btn-soft-line);color:var(--btn-soft-ink);box-shadow:none}
+@media(max-width:819px){:root:root:root:root body .workspace-content .pf-seg .btn{min-height:44px!important}:root:root body .workspace-content .pf-seg .btn::after{content:none}}

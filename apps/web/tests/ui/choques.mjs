@@ -26,7 +26,7 @@ function medir(){
  const srOnly=e=>e.closest('.sr-only,[hidden],[aria-hidden=true]');
  const all=[...document.querySelectorAll('body *')].filter(e=>!['SCRIPT','STYLE','NOSCRIPT','svg','path','circle','rect','g','line','polyline','text','tspan','defs','use'].includes(e.tagName)&&!e.closest('svg')&&vis(e)&&!srOnly(e));
  const scrollers=e=>{for(let p=e.parentElement;p;p=p.parentElement){const o=getComputedStyle(p).overflowX;if((o==='auto'||o==='scroll')&&p.scrollWidth>p.clientWidth)return true;}return false;};
- const out={pliegue:[],huecos:[],repetidos:[],topbar:[],overflowX:[],clipped:[],overlap:[],unnamed:[],h1:document.querySelectorAll('h1').length,small:[]};
+ const out={boton:[],boton:[],superficie:[],aireFila:[],contraste:[],pliegue:[],huecos:[],repetidos:[],topbar:[],overflowX:[],clipped:[],overlap:[],unnamed:[],h1:document.querySelectorAll('h1').length,small:[]};
  const wc=document.querySelector('.workspace-content');
  if(document.documentElement.scrollWidth>innerWidth+1)out.overflowX.push('documento '+document.documentElement.scrollWidth+'>'+innerWidth);
  if(wc&&wc.scrollWidth>wc.clientWidth+1)out.overflowX.push('.workspace-content '+wc.scrollWidth+'>'+wc.clientWidth);
@@ -85,12 +85,93 @@ function medir(){
  for(const el of document.querySelectorAll('button,.btn,select,.ui-chip,.chip,input:not([type=checkbox]):not([type=radio]),[role=tab]')){
   if(!vis(el)||srOnly(el))continue;const cs=getComputedStyle(el);if(!(parseFloat(cs.borderLeftWidth)>0||cs.backgroundColor!=='rgba(0, 0, 0, 0)'))continue;
   const box=el.closest('.card,.ui-card,.pc-card,.hoy-card,.task-card,section,article,dialog');if(!box||box===el)continue;
+  if(box.matches('.mv-franja'))continue; // franja de estado de 44 px del celular: el botón va centrado (4 px arriba/abajo) y la franja tiene tope de alto en movil-contenido.mjs
   const bs=getComputedStyle(box);if(!(parseFloat(bs.borderLeftWidth)>0))continue;
   const r=el.getBoundingClientRect(),b=box.getBoundingClientRect();
   if(r.width<1||b.width<1)continue;
   if(b.right-r.right<6&&b.right-r.right>=-1&&r.right<=b.right+1||r.top-b.top<6&&r.top-b.top>=-1&&r.bottom<b.bottom)out.overlap.push('borde: '+desc(el)+' a '+Math.round(b.right-r.right)+'px derecha / '+Math.round(r.top-b.top)+'px arriba de su recuadro');
  }
- for(const k of ['clipped','overlap','unnamed','small'])out[k]=[...new Set(out[k])];
+  // ---- Superficie, contraste y aire en filas (sistema de grises): el color de un control o aviso no puede confundirse con el de su fondo ----
+ const cv=document.createElement('canvas');cv.width=cv.height=1;const cx=cv.getContext('2d',{willReadFrequently:true});
+ const rgba=c=>{cx.clearRect(0,0,1,1);cx.fillStyle='#000';cx.fillStyle=c;cx.fillRect(0,0,1,1);const d=cx.getImageData(0,0,1,1).data;return [d[0],d[1],d[2],d[3]/255];};
+ const blend=(f,b)=>[f[0]*f[3]+b[0]*(1-f[3]),f[1]*f[3]+b[1]*(1-f[3]),f[2]*f[3]+b[2]*(1-f[3]),1];
+ const bgDe=el=>{ // fondo efectivo (compuesto sobre sus ancestros hasta el lienzo)
+  const capas=[];for(let p=el;p;p=p.parentElement){const c=rgba(getComputedStyle(p).backgroundColor);if(c[3]>0)capas.push(c);if(c[3]>=1)break;}
+  let r=[255,255,255,1];if(getComputedStyle(document.documentElement).colorScheme==='dark'&&!capas.some(c=>c[3]>=1))r=rgba(getComputedStyle(document.body).backgroundColor);
+  for(const c of capas.reverse())r=blend(c,r);return r;};
+ const lum=c=>{const f=v=>{v/=255;return v<=0.03928?v/12.92:((v+0.055)/1.055)**2.4;};return 0.2126*f(c[0])+0.7152*f(c[1])+0.0722*f(c[2]);};
+ const ratio=(a,b)=>{const x=lum(a),y=lum(b);return (Math.max(x,y)+0.05)/(Math.min(x,y)+0.05);};
+ const croma=c=>Math.max(c[0],c[1],c[2])-Math.min(c[0],c[1],c[2]);
+ const CTRL='button,.btn,select,input:not([type=checkbox]):not([type=radio]):not([type=hidden]),textarea,.chip,.ui-chip,.fchip,[role=tab],[role=radio],.seg-btn,.status-chip,.kind-badge,.id-chip';
+ const AVISO='.ui-notice,.notice-bar,.state-cache,.state,.state-panel,.state-error,.notice';
+ const otroCarril=/^\/(preguntale|cfo)(\/|$)/.test(location.pathname); // pantallas con clases propias de otro carril (chat y CFO)
+ for(const el of document.querySelectorAll(CTRL+','+AVISO)){
+  if(otroCarril||!vis(el)||srOnly(el)||el.matches('.skip-link,.row-link-inline,.ui-chip-x,.sidebar-navigation a,.mobile-menu-button,.icon-button,.empresa-chip')||el.closest('.workspace-sidebar,.workspace-bottom-nav,.platform-nav'))continue;
+  const cs=getComputedStyle(el),r=el.getBoundingClientRect();if(r.width<4||r.height<4)continue;
+  const bgp=el.parentElement?bgDe(el.parentElement):[255,255,255,1],bg=bgDe(el),aviso=el.matches(AVISO);
+  let bcr=rgba(cs.borderTopColor);if(bcr[3]<0.05&&/inset/.test(cs.boxShadow)){const m=cs.boxShadow.match(/(rgba?\([^)]*\)|color\([^)]*\))/);if(m)bcr=rgba(m[1]);} // píldoras móviles: borde transparente + sombra interior de 1 px
+  const bw=bcr[3]>0.05?parseFloat(cs.borderTopWidth):0,bc=bw>0?blend(bcr,bgp):null;
+  const propio=cs.backgroundColor!=='rgba(0, 0, 0, 0)'&&rgba(cs.backgroundColor)[3]>0.3;
+  if(aviso){
+   // Un aviso lleva color propio (tinte con croma) o, si es blanco, un borde con color; nunca gris sobre gris ni gris sobre blanco.
+   if(propio&&croma(bg)<9&&!(croma(bc??[0,0,0,1])>=18))out.superficie.push('aviso sin color propio '+desc(el)+' bg='+bg.slice(0,3).map(Math.round)+' sobre '+bgp.slice(0,3).map(Math.round));
+  }else if(propio||bw>0){
+   const dist=propio?ratio(bg,bgp):1,borde=bc?ratio(bc,bgp):1,conColor=propio&&croma(bg)>=14;
+   // Un control distinguible: tinte con color, o fondo claramente distinto del de su padre, o borde ≥ 3:1, o borde ≥ 1.4:1 si su fondo es blanco (superficie) y no gris.
+   if(!(conColor||dist>=1.08||borde>=3||borde>=1.4)&&!el.disabled)out.superficie.push('control del color del fondo '+desc(el)+' bg='+bg.slice(0,3).map(Math.round)+' fondo='+bgp.slice(0,3).map(Math.round)+' borde '+borde.toFixed(1)+':1');
+   if(el.disabled&&!(dist>=1.04||borde>=1.5||conColor))out.superficie.push('control deshabilitado invisible '+desc(el));
+  }
+  // Contraste del texto del control/aviso contra su propio fondo (≥ 4.5:1).
+  const t=[...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim())||(el.matches('select,input,textarea')&&(el.value||el.placeholder));
+  if(t&&!el.matches('.id-chip,[data-decorativo]')){
+   const fg=blend(rgba(cs.color),bg),rt=ratio(fg,bg),op=parseFloat(cs.opacity);
+   if(rt<4.5||op<0.99&&rt*op<4.5)out.contraste.push(desc(el)+' '+rt.toFixed(1)+':1');
+  }
+ }
+ // Texto secundario de tablas y avisos (.muted, celdas, th): contraste AA contra el fondo real.
+ for(const el of document.querySelectorAll('.workspace-content :is(td,th,.muted,small,.dn-meta,figcaption,label,dd,dt)')){
+  if(!vis(el)||srOnly(el))continue;if(![...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim()))continue;
+  const cs=getComputedStyle(el),bg=bgDe(el),fg=blend(rgba(cs.color),bg),rt=ratio(fg,bg),op=parseFloat(cs.opacity);
+  if(rt<4.5||op<0.99&&rt*op<4.5)out.contraste.push(desc(el)+' '+rt.toFixed(1)+':1');
+ }
+ // Aire en filas de tabla: un control con borde o relleno dentro de una fila queda a ≥ 6 px de sus separadores (arriba y abajo).
+ for(const tr of document.querySelectorAll('.workspace-content tbody tr')){
+  if(!vis(tr))continue;const rr=tr.getBoundingClientRect();if(rr.height<20)continue;
+  for(const el of tr.querySelectorAll('button,.btn,select,input:not([type=checkbox]):not([type=radio]):not([type=hidden]),textarea')){
+   if(!vis(el)||srOnly(el)||el.matches('.row-link-inline'))continue;const cs=getComputedStyle(el);
+   if(!(parseFloat(cs.borderTopWidth)>0&&rgba(cs.borderTopColor)[3]>0.05||rgba(cs.backgroundColor)[3]>0.3))continue;
+   const r=el.getBoundingClientRect(),arriba=r.top-rr.top,abajo=rr.bottom-r.bottom;
+   if(rr.height>r.height*2.2)continue; // filas con varias líneas de texto: la caja no manda
+   if(arriba<5.4||abajo<5.4)out.aireFila.push('control a '+Math.round(arriba)+'/'+Math.round(abajo)+' px de los separadores en '+desc(el));
+   if(r.height>34&&el.closest('td'))out.aireFila.push('control de fila de '+Math.round(r.height)+' px (máx. 34) '+desc(el));
+  }
+ }
+ // ---- Estándar de botón (24-oct): alto 32 px escritorio / 36 px móvil (±1; 28 dentro de filas de tabla, que miden 40) y ≥ 8 px entre vecinos. /preguntale y /cfo los gobierna otro carril. ----
+ if(!/^\/(preguntale|cfo)(\/|$)/.test(location.pathname)){
+  const movil=innerWidth<820; // mismo corte que movil-contenido.css
+  const EXCL='.row-link-inline,.dg-sku,.skip-link,.seg-btn,.fchip-x,.ui-chip-x,.id-chip,.chip,.empresa-chip,summary,th *,[role=tab],[role=radio],[role=switch],[role=checkbox],.mobile-menu-button,.at-trigger,.catalog-link,.barlist-link,[class*=catBtn],[class*=agente],[class*=cfo]';
+  const esBtn=e=>!e.matches(EXCL)&&!e.closest('.segmented,.seg,.mc-seg,.pc-seg,.mp-seg,.mp-rank,.mv-modo-tablas,[class*=-seg],[role=tablist],[role=radiogroup],.workspace-sidebar,.workspace-bottom-nav,.theme-selector,.hoy-sig');
+  const btns=[...document.querySelectorAll('button,.btn,a.btn,[role=button]')].filter(e=>vis(e)&&!srOnly(e)&&e.namespaceURI==='http://www.w3.org/1999/xhtml'&&esBtn(e));
+  for(const el of btns){
+   const cs=getComputedStyle(el),r=el.getBoundingClientRect();if(cs.display==='inline'||r.width<4)continue;
+   const caja=(parseFloat(cs.borderTopWidth)>0&&rgba(cs.borderTopColor)[3]>0.05)||rgba(cs.backgroundColor)[3]>0.3;if(!caja)continue;
+   const lh=parseFloat(cs.lineHeight)||parseFloat(cs.fontSize)*1.3,uno=r.height<lh*1.9+16;
+   const dentroFila=!!el.closest('td'),obj=dentroFila&&!movil?28:movil?36:32,tieneTexto=(el.textContent||'').trim().length>0;
+   if(uno&&Math.abs(r.height-obj)>1.2&&!(r.height>lh*1.6+10))out.boton.push('alto '+Math.round(r.height*10)/10+' (objetivo '+obj+') '+desc(el));
+   if(!tieneTexto&&el.querySelector('svg')&&Math.abs(r.width-r.height)<3&&Math.abs(r.width-obj)>1.2)out.boton.push('botón de icono '+Math.round(r.width)+'x'+Math.round(r.height)+' (objetivo '+obj+') '+desc(el));
+   if(parseFloat(cs.borderTopLeftRadius)>12&&r.height<60&&!el.matches('.pill,[data-forma=pildora]'))out.boton.push('radio '+cs.borderTopLeftRadius+' (píldora solo en estados) '+desc(el));
+   if(parseFloat(cs.fontSize)>14.2&&tieneTexto&&!movil)out.boton.push('fuente '+cs.fontSize+' (13 px) '+desc(el));
+   if(tieneTexto&&el.children.length<=1&&parseFloat(cs.fontWeight)<500)out.boton.push('peso '+cs.fontWeight+' '+desc(el));
+  }
+  for(let i=0;i<btns.length;i++)for(let j=i+1;j<btns.length;j++){
+   if(btns[i].contains(btns[j])||btns[j].contains(btns[i]))continue;
+   const a=btns[i].getBoundingClientRect(),b=btns[j].getBoundingClientRect();
+   const gx=Math.max(a.left,b.left)-Math.min(a.right,b.right),gy=Math.max(a.top,b.top)-Math.min(a.bottom,b.bottom);
+   const sobreX=Math.min(a.right,b.right)-Math.max(a.left,b.left),sobreY=Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top);
+   if((sobreY>2&&gx<7.5)||(sobreX>2&&gy<7.5))out.boton.push('botones a '+Math.round(Math.max(gx,gy))+' px (≥ 8) '+desc(btns[i])+' / '+desc(btns[j]));
+  }
+ }
+ for(const k of ['boton','superficie','aireFila','contraste','clipped','overlap','unnamed','small'])out[k]=[...new Set(out[k])];
  return out;
 }
 const browser=await chromium.launch();
@@ -101,15 +182,15 @@ for(const theme of themes)for(const w of sizes){
  await ctx.route('**/api/**',async route=>{const q=route.request();if(/resource=problems/.test(q.url())&&/slim=1/.test(q.url()))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({data:F.bundleProblemsCatalogo()})});const V=process.env.VEXA_UI_VARIANT,u2=V?q.url()+(q.url().includes('?')?'&':'?')+'variant='+V:q.url();const h=await respond(u2,q.method(),q.postData());return h?route.fulfill({status:h[0],contentType:'application/json',body:JSON.stringify(h[1])}):route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:{code:'fixture_missing'}})});});
  for(const r of routes){
   const page=await ctx.newPage();let m;
-  try{await page.goto(base+r,{waitUntil:'networkidle',timeout:120000});await page.waitForTimeout(600);m=await page.evaluate(medir);}catch(e){m={error:String(e.message).slice(0,80),pliegue:[],huecos:[],repetidos:[],topbar:[],overflowX:[],clipped:[],overlap:[],unnamed:[],h1:1,small:[]};}
+  try{await page.goto(base+r,{waitUntil:'networkidle',timeout:120000});await page.waitForTimeout(600);m=await page.evaluate(medir);}catch(e){m={error:String(e.message).slice(0,80),boton:[],superficie:[],aireFila:[],contraste:[],pliegue:[],huecos:[],repetidos:[],topbar:[],overflowX:[],clipped:[],overlap:[],unnamed:[],h1:1,small:[]};}
   await page.close();
-  const n=m.pliegue.length+m.huecos.length+m.repetidos.length+m.topbar.length+m.overflowX.length+m.clipped.length+m.overlap.length+m.unnamed.length+m.small.length+(m.h1!==1?1:0)+(m.error?1:0);fallas+=n;
-  filas.push({ruta:r,ancho:w,tema:theme,pliegue:m.pliegue.length,huecos:m.huecos.length,repetidos:m.repetidos.length,topbar:m.topbar.length,desborde:m.overflowX.length,recortes:m.clipped.length,solapes:m.overlap.length,sinNombre:m.unnamed.length,h1:m.h1,fuente12:m.small.length,error:m.error??''});
-  if(detalle&&n)console.log('--',theme,w,r,JSON.stringify({p:m.pliegue,h:m.huecos,r:m.repetidos,tb:m.topbar,o:m.overflowX,c:m.clipped.slice(0,4),s:m.overlap.slice(0,4),u:m.unnamed.slice(0,4),f:m.small.slice(0,4),h1:m.h1,e:m.error}));
+  const n=m.boton.length+m.superficie.length+m.aireFila.length+m.contraste.length+m.pliegue.length+m.huecos.length+m.repetidos.length+m.topbar.length+m.overflowX.length+m.clipped.length+m.overlap.length+m.unnamed.length+m.small.length+(m.h1!==1?1:0)+(m.error?1:0);fallas+=n;
+  filas.push({ruta:r,ancho:w,tema:theme,boton:m.boton.length,superficie:m.superficie.length,aire:m.aireFila.length,contraste:m.contraste.length,pliegue:m.pliegue.length,huecos:m.huecos.length,repetidos:m.repetidos.length,topbar:m.topbar.length,desborde:m.overflowX.length,recortes:m.clipped.length,solapes:m.overlap.length,sinNombre:m.unnamed.length,h1:m.h1,fuente12:m.small.length,error:m.error??''});
+  if(detalle&&n)console.log('--',theme,w,r,JSON.stringify({bot:m.boton.slice(0,8),sup:m.superficie.slice(0,6),aire:m.aireFila.slice(0,6),con:m.contraste.slice(0,6),p:m.pliegue,h:m.huecos,r:m.repetidos,tb:m.topbar,o:m.overflowX,c:m.clipped.slice(0,4),s:m.overlap.slice(0,4),u:m.unnamed.slice(0,4),f:m.small.slice(0,4),h1:m.h1,e:m.error}));
  }
  await ctx.close();
 }
 await browser.close();
-console.table(filas.filter(f=>f.pliegue||f.huecos||f.repetidos||f.topbar||f.desborde||f.recortes||f.solapes||f.sinNombre||f.h1!==1||f.fuente12||f.error));
-console.log(`${filas.length} combinaciones, ${filas.filter(f=>f.pliegue||f.huecos||f.repetidos||f.topbar||f.desborde||f.recortes||f.solapes||f.sinNombre||f.h1!==1||f.fuente12||f.error).length} con fallas, ${fallas} hallazgos`);
+console.table(filas.filter(f=>f.boton||f.superficie||f.aire||f.contraste||f.pliegue||f.huecos||f.repetidos||f.topbar||f.desborde||f.recortes||f.solapes||f.sinNombre||f.h1!==1||f.fuente12||f.error));
+console.log(`${filas.length} combinaciones, ${filas.filter(f=>f.boton||f.superficie||f.aire||f.contraste||f.pliegue||f.huecos||f.repetidos||f.topbar||f.desborde||f.recortes||f.solapes||f.sinNombre||f.h1!==1||f.fuente12||f.error).length} con fallas, ${fallas} hallazgos`);
 process.exit(fallas?1:0);

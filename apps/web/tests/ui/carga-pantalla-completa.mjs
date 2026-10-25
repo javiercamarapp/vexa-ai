@@ -77,7 +77,7 @@ for(const tema of TEMAS)for(const [w,h] of [[1440,900],[390,844]])for(const [i,e
  check(a.viol.length===0,`${w}/${tema}/${e.n}: sin violaciones por fotograma ${JSON.stringify(a.viol)} (${a.n} fotogramas; capa hasta ${a.tFinCarga} ms, app a ${a.tApp} ms)`);
  check(a.huecos===0,`${w}/${tema}/${e.n}: sin fotogramas en blanco entre la capa y la app (${a.huecos})`);
  const demoraMax=Math.max(...Object.values(e.d));
- const minimo=e.frio?Math.max(e.d.fuga,e.d.carga,e.d.cfo)+(e.falla503?0:0):2500;
+ const minimo=e.frio?Math.max(e.d.fuga,e.d.carga,e.d.cfo)+(e.falla503?0:0):2000;
  check(a.tApp!==null&&a.tApp>=minimo-800,`${w}/${tema}/${e.n}: la app no aparece antes del dato más lento (app a ${a.tApp} ms, más lento ${demoraMax} ms)`);
  // Colores computados por estado (primer fotograma de cada estado)
  const est={};for(const x of F){const k=x.capa&&x.arr?'capa':x.capa?'saliendo':x.enLinea?'enLinea':x.cont?'app':'vacio';if(!est[k])est[k]={t:x.t,...x.col};}

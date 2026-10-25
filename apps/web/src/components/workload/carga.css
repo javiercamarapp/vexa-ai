@@ -53,3 +53,6 @@
 @media(prefers-reduced-motion:reduce){.cg-skel-b,.cg-tabla td,.cg-bala-v{animation:none!important}}
 .cg-page .ui-kpi-value{white-space:nowrap}.cg-bala{flex:1 1 56px}.cg-page .ui-kpi-row{align-items:center}
 .cg-card .ui-card-head{flex-wrap:nowrap;gap:8px}.cg-card .ui-card-copy{min-width:0;flex:1 1 0}.cg-card .ui-card-head>:last-child{flex:none}
+
+/* Celular: las celdas del mapa de calor se apilan como filas y perdían su relleno (texto oscuro sobre fondo oscuro en tema oscuro) */
+@media(max-width:819px){:root:root body .workspace-content .cg-tabla td[data-paso]:not([data-paso="0"]){background:color-mix(in srgb,var(--chart-5) var(--p,0%),var(--ui-surface))!important;border-radius:8px}}

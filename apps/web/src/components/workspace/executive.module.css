@@ -30,7 +30,7 @@
 .fold>div{display:grid;gap:var(--sp-3);margin-top:var(--sp-3)}
 
 .strip :is(button,summary){white-space:nowrap;min-height:24px;padding-block:0}
-.strip{padding:4px 14px}
+.strip{padding:6px 14px}
 @media(max-width:1100px){.strip{flex-wrap:wrap;white-space:normal;overflow:visible}.stripItem{flex:1 1 auto;flex-wrap:wrap}.lineaAvisos{flex:1 1 100%;white-space:normal}}
 .headAcc{display:flex;align-items:center;gap:8px;flex:none}
 .foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}

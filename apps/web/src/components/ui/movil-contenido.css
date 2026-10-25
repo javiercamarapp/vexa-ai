@@ -67,24 +67,20 @@
 :root:root body .mv-franja>div:has(~.mv-avisos[open]){flex:1 1 100%}
 :root:root body .mv-franja{overflow:visible}
 
+/* ---- Controles: los botones usan el estándar de ui.css (--btn-h-m 36 px en celular, toque de 44 px por ::after). Campos y summary: ---- */
 /* ---- Controles: caja VISUAL de 32 px; la zona táctil llega a 44 px con ::after (--mv-ext = 6 px por lado), no con tamaño ---- */
-:root:root body :is(.workspace-content,.access-flow) :is(.btn,button.btn,a.btn,button:not([class])){position:relative;min-height:var(--mv-ctl);min-width:var(--mv-ctl);padding-block:0;padding-inline:12px;border-radius:8px;font-size:13px;line-height:1.2}
-:root:root body :is(.workspace-content,.access-flow) :is(.btn-sm,button.btn-sm){min-height:28px;min-width:28px;padding-block:0;padding-inline:10px}
-:root:root body :is(.workspace-content,.access-flow) :is(.btn,button.btn,a.btn,button:not([class]))::after{content:"";position:absolute;inset:calc(-1*var(--mv-ext));min-width:var(--mv-hit);pointer-events:auto}
-:root:root body :is(.workspace-content,.access-flow) :is(.btn-sm,button.btn-sm)::after{inset:-9px}
-:root:root body .workspace-content .btn svg{width:16px;height:16px}
 /* Campos: caja de 44 px con borde transparente de 5 px; lo que se ve mide 34 px y la fuente se queda en 16 px (sin zoom en iOS) */
 :root:root body .workspace-content :is(select,textarea,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])){box-sizing:border-box;min-height:var(--mv-hit);font-size:16px;line-height:1.25;border:5px solid transparent;background-clip:padding-box;box-shadow:inset 0 0 0 1px var(--ui-input);border-radius:13px;padding-block:0;padding-inline:10px;outline-offset:-5px}
 :root:root body .workspace-content :is(select,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])){height:var(--mv-hit)}
 :root:root body .workspace-content textarea{padding-block:6px;min-height:76px}
 :root:root body .workspace-content :is(select,textarea,input):focus-visible{box-shadow:inset 0 0 0 1.5px var(--ui-focus)}
-:root:root body .workspace-content :is(.ui-filterbar,.filter-bar) :is(.btn,button.btn){height:var(--mv-ctl)}
 :root:root body .workspace-content summary{min-height:var(--mv-ctl);display:flex;align-items:center;position:relative}
 :root:root body .workspace-content summary::after{content:"";position:absolute;inset:-8px 0}
 :root:root body .workspace-content button.row-link-inline{position:relative}
 /* Chips, píldoras de segmento, pestañas de página y botones «i»: la caja se queda compacta y el área de toque llega a 44 px con ::after */
 :root:root body .workspace-content :is(.fchip-x,.ui-chip-x,.dc-info){position:relative}
-:root:root body .workspace-content :is(.fchip-x,.ui-chip-x,.dc-info)::after{content:"";position:absolute;inset:-13px}
+:root:root body .workspace-content :is(.fchip-x,.ui-chip-x)::after{content:"";position:absolute;inset:-13px}
+:root:root body .workspace-content .dc-info::after{content:"";position:absolute;inset:-5px}
 /* Píldoras: la caja de toque mide 44 px (borde transparente de 6 px) y lo que se ve sigue siendo una píldora compacta de 32 px */
 :root:root body .workspace-content :is(.seg-btn,.dg-fchip,.id-chip,button.chip){min-height:44px;height:auto;border-block:7px solid transparent;border-inline:0;background-clip:padding-box;box-shadow:inset 0 0 0 1px var(--ui-border);font-size:12px;line-height:1.2;padding-block:0;padding-inline:12px}
 :root:root body .workspace-content .segmented .seg-btn{box-shadow:none;background-color:transparent}
@@ -173,8 +169,9 @@ html:root[data-tablas-movil=comparar] table[data-mv] :is(td,th):last-child{paddi
 :root:root body .workspace-content .mp-seg{padding:0;max-width:100%;overflow-x:auto;scrollbar-width:none}
 :root:root body .workspace-content .mp-seg button{min-height:44px;padding:0 8px;border:7px solid transparent;background-clip:padding-box;border-radius:999px;box-shadow:none}
 :root:root body .workspace-content .mp-seg button[aria-pressed=true]{background-color:var(--ink)}
-:root:root body .mp-zoom{inset-block-start:auto;inset-block-end:8px;inset-inline-end:8px;grid-auto-flow:column;gap:6px}
-:root:root body .workspace-content .mp-zoom button{inline-size:44px;block-size:44px;font-size:20px}
+:root:root body .mp-zoom{inset-block-start:auto;inset-block-end:8px;inset-inline-end:8px;grid-auto-flow:column;gap:var(--btn-gap,8px)}
+:root:root body .workspace-content .mp-zoom button{inline-size:var(--btn-h-m,36px);block-size:var(--btn-h-m,36px);font-size:16px;position:relative}
+:root:root body .workspace-content .mp-zoom button::after{content:"";position:absolute;inset:-5px}
 :root:root body .mp-mapa-col{padding:4px;border-radius:12px}
 :root:root body .mp-cod{font-weight:700}
 :root:root body .mp-leyenda{gap:6px 12px}
@@ -223,6 +220,8 @@ html:root[data-tablas-movil=comparar] table[data-mv] :is(td,th):last-child{paddi
 
 /* Todo control del contenido mide al menos 44 px de alto (lo que se ve puede ser más compacto con el borde transparente) */
 :root:root:root body .workspace-content :is(select,textarea,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])):not(.agente-round):not(.sr-only){min-height:var(--mv-hit)!important}
+/* Botones del estándar: caja de 36 px; zona táctil de 44 px por el ::after de ui.css */
+:root:root:root body .workspace-content button.btn:not(.dc-info):not(.sr-only):not(th *):not(.pf-seg *){min-height:var(--btn-h-m)!important}
 
 :root:root body .workspace-content :is(.card-title,.card-head,.ui-card-head,.pc-card-head){flex-wrap:wrap;gap:8px 12px}
 :root:root body .workspace-content :is(.card-title,.card-head,.ui-card-head,.pc-card-head)>:first-child{flex:1 1 200px;min-width:min(200px,100%)}
@@ -290,7 +289,6 @@ html:root:not([data-tablas-movil=comparar]) .pc-card[data-flush] :is(.ui-table-w
 :root:root body dialog.drawer:not([data-side=left]) .overlay-head .overlay-close::after{content:"";position:absolute;inset:-7px}
 :root:root body dialog.drawer:not([data-side=left]) .overlay-body{padding:12px 14px;gap:10px}
 :root:root body dialog.drawer:not([data-side=left]) .overlay-foot{padding:8px 14px;padding-bottom:calc(8px + env(safe-area-inset-bottom));gap:6px}
-:root:root body .workspace-content button.dc-info{width:20px;height:20px;min-width:20px;min-height:20px}
 /* Píldoras con caja de 44 px (borde transparente): sin ::after genérico */
 :root:root:root body .workspace-content :is(.mv-modo-tablas button,.mp-seg button){min-height:44px;min-width:0;padding-block:0}
 :root:root:root body .workspace-content :is(.mv-modo-tablas button,.mp-seg button)::after{content:none}

@@ -2,6 +2,7 @@ import {CustomerBindings} from '../../../components/workspace/customer-bindings'
 import {EconomicImportWorkspace} from '../../../components/economic-import-workspace';
 import {EconomiaResumen} from '../../../components/datos/economia-resumen';
 import {workspaceSession} from '../../../lib/workspace/server';
+import {conRedireccionDeAcceso} from '../../../lib/workspace/acceso-pagina';
 import {economicInitialScope} from '../../../lib/economic-scope';
 import {OrderMappings} from '../../../components/workspace/order-mappings';
 export const metadata={title:'Cortes publicados'};
@@ -13,7 +14,7 @@ const ALCANCE=['date_start','date_end','currency','basis','exponent','timezone',
 export default async function Page({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const raw=await searchParams,query=new URLSearchParams();
  for(const [k,v] of Object.entries(raw))if(typeof v==='string')query.set(k,v);
- const active=FIXTURES?{tenant_id:FIXTURE_TENANT,role:(['owner','analyst','operator','viewer'].includes(String(raw.as))?String(raw.as):'owner')}:(await workspaceSession()).session.active;
+ const active=FIXTURES?{tenant_id:FIXTURE_TENANT,role:(['owner','analyst','operator','viewer'].includes(String(raw.as))?String(raw.as):'owner')}:(await conRedireccionDeAcceso(workspaceSession)).session.active;
  const sc=economicInitialScope(query);
  const lectura=new URLSearchParams();for(const k of ALCANCE){const v=query.get(k);if(v)lectura.set(k,v);}
  for(const k of ['sku','source'])for(const v of query.getAll(k))lectura.append(k,v);

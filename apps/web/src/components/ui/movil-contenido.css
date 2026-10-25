@@ -41,12 +41,12 @@
 :root:root body .hoy-titular .hoy-periodo{height:32px;flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
 :root:root body .hoy-titular .page-header-actions>a{flex:none;margin-left:auto}
 :root:root body .hoy-kpis{margin:0}
-:root:root body .hoy-kpi{padding:12px 10px 8px;gap:1px}
+:root:root body .hoy-kpi{padding:13px 10px 8px;gap:1px}
 :root:root body .hoy-kpi+.hoy-kpi{border-top:0;border-left:0}
 :root:root body .hoy-kpi:nth-child(even){border-left:1px solid var(--ui-border)}
 :root:root body .hoy-kpi:nth-child(n+3){border-top:1px solid var(--ui-border)}
 :root:root body .hoy-kpi-top{min-height:0}
-:root:root:root body .hoy-kpi .dc-info{margin-block:-8px}
+:root:root:root:root body .workspace-content button.dc-info{width:24px;height:24px;min-width:24px;min-height:24px;margin-block:-4px;border-radius:999px}
 :root:root body .hoy-kpi-fila{flex-wrap:wrap}
 :root:root body .hoy-kpi .sello,:root:root body .hoy-kpi .sello-2>span{font-size:12px;line-height:1.4}
 :root:root body .hoy-kpi .sello-2>span:nth-child(n+2){display:none}
@@ -82,7 +82,7 @@
 /* Chips, píldoras de segmento, pestañas de página y botones «i»: la caja se queda compacta y el área de toque llega a 44 px con ::after */
 :root:root body .workspace-content :is(.fchip-x,.ui-chip-x,.dc-info){position:relative}
 :root:root body .workspace-content :is(.fchip-x,.ui-chip-x)::after{content:"";position:absolute;inset:-13px}
-:root:root body .workspace-content .dc-info::after{content:"";position:absolute;inset:-5px}
+:root:root body .workspace-content .dc-info::after{content:"";position:absolute;inset:-11px}
 /* Píldoras: la caja de toque mide 44 px (borde transparente de 6 px) y lo que se ve sigue siendo una píldora compacta de 32 px */
 :root:root body .workspace-content :is(.seg-btn,.dg-fchip,.id-chip,button.chip){min-height:44px;height:auto;border-block:7px solid transparent;border-inline:0;background-clip:padding-box;box-shadow:inset 0 0 0 1px var(--ui-border);font-size:12px;line-height:1.2;padding-block:0;padding-inline:12px}
 :root:root body .workspace-content .segmented .seg-btn{box-shadow:none;background-color:transparent}
@@ -303,7 +303,7 @@ html:root:not([data-tablas-movil=comparar]) .pc-card[data-flush] :is(.ui-table-w
 :root:root:root body .workspace-content .mp-zoom button::after{content:none}
 :root:root:root body .workspace-content summary[class*=_sum_]{min-height:44px!important}
 /* Segmentado de la consola: botones de 32 px dentro de una píldora de 36; el toque de 44 px sale por ::after */
-:root:root:root:root:root body .workspace-content .pf-seg{padding:6px;gap:2px}
+:root:root:root:root:root body .workspace-content .pf-seg{padding:6px;gap:2px;margin-block:-6px;border-color:transparent;background:transparent;border-radius:999px}
 :root:root:root:root:root body .workspace-content .pf-seg .btn{min-height:32px!important;height:32px;padding-block:0;position:relative}
 :root:root:root:root:root body .workspace-content .pf-seg .btn::after{content:"";position:absolute;inset:-9px -2px}
 /* <button class=""> (clase vacía) no entra en el selector del estándar: misma zona táctil */
@@ -311,4 +311,7 @@ html:root:not([data-tablas-movil=comparar]) .pc-card[data-flush] :is(.ui-table-w
 :root:root body .workspace-content button[class=""]::after{content:"";position:absolute;inset:-5px}
 :root:root:root body .workspace-content .task-record-list button{min-height:44px}
 :root:root:root body .workspace-content .task-record-list button::after{content:none}
+/* Filas de «Requiere tu atención»: la cifra no se sale de la tarjeta */
+:root:root body .hoy-fila{max-width:100%;min-width:0;width:100%;box-sizing:border-box}
+:root:root body .hoy-fila>*{min-width:0}
 }

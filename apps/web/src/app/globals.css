@@ -510,10 +510,18 @@ table,.metric-grid dd,.kpi,[class*=kpi] { font-variant-numeric:tabular-nums; }
 @keyframes rovaq-latido { 0%,30% { transform:scale(1); } 55% { transform:scale(1.28); } 75%,100% { transform:scale(1); } }
 @media (prefers-reduced-motion: reduce) { .rovaq-logo-animado .rovaq-logo-tinta, .rovaq-logo-animado .rovaq-logo-punto { animation:none; } }
 
-/* Arranque limpio y carga de página completa (24-oct): mientras haya un logo de carga de página completa NO se ve nada más de contenido; al terminar, todo de una vez. */
+/* Carga a pantalla completa (24-oct): UNA sola capa fija (#arranque-logo, html[data-arranque]) cubre TODO —sidebar, encabezados, contenido— con un solo color y el logo centrado.
+   Sirve para carga inicial, recarga y navegación interna (ArranqueLimpio la activa tras 250 ms de carga y la mantiene ≥400 ms). Los cargadores en línea (RovaqCargando de página completa) solo registran la carga: nunca se ven por sí mismos.
+   --carga-fondo es el ÚNICO lugar donde se cambia el color de la pantalla de carga (claro: blanco; oscuro: el negro de la app). */
+:root { --carga-fondo:#ffffff; }
+:root[data-theme=dark] { --carga-fondo:#0e0e10; }
+.rovaq-cargando:not(.rovaq-cargando-compacto) { visibility:hidden; }
 body:has(.rovaq-cargando:not(.rovaq-cargando-compacto)) :is(.site-header,.site-footer) { display:none; }
 .workspace-content:has(.rovaq-cargando:not(.rovaq-cargando-compacto)) *:not(.rovaq-cargando):not(.rovaq-cargando *):not(:has(.rovaq-cargando)) { display:none!important; }
-.workspace-content:has(.rovaq-cargando:not(.rovaq-cargando-compacto)) .rovaq-cargando:not(.rovaq-cargando-compacto) { min-height:calc(100dvh - 120px); }
-#arranque-logo { display:none; }
-html[data-arranque] #arranque-logo { display:flex; position:fixed; inset:0; z-index:2000; align-items:center; justify-content:center; background:var(--background); }
+/* Seguro (45 s sin terminar): el cargador en línea pasa a ser él mismo una capa de pantalla completa del mismo color; nunca una pantalla dividida. */
+html[data-carga-tope] .rovaq-cargando:not(.rovaq-cargando-compacto) { visibility:visible; position:fixed; inset:0; z-index:2000; min-height:0; background:var(--carga-fondo); }
+#arranque-logo { display:flex; position:fixed; inset:0; z-index:2000; align-items:center; justify-content:center; background:var(--carga-fondo); opacity:0; visibility:hidden; pointer-events:none; transition:opacity 170ms ease-out,visibility 0s linear 170ms; }
+html[data-arranque] #arranque-logo { display:flex; opacity:1; visibility:visible; pointer-events:auto; transition:none; }
+html[data-arranque],html[data-arranque] body { background:var(--carga-fondo); }
 html[data-arranque] :is(.site-header,.site-footer,main,.skip-link) { display:none!important; }
+@media (prefers-reduced-motion: reduce) { #arranque-logo { transition:none; } }

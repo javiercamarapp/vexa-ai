@@ -37,8 +37,8 @@ export const viewport: Viewport = {
 // Aplica el tema guardado ANTES del primer pintado (sin destello claro->oscuro). Solo con preferencia guardada; fuera de /login y /auth.
 const TEMA_ANTES_DEL_PINTADO = "(function(){try{if(/^\\/(login|auth)/.test(location.pathname))return;var s=localStorage.getItem('vexa-theme');var d=s==='dark'||(s==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);if(s==='light'||s==='system'||s==='dark'){document.documentElement.dataset.theme=d?'dark':'light';var m=document.querySelectorAll('meta[name=theme-color]');for(var i=0;i<m.length;i++)m[i].setAttribute('content',d?'#0e0e10':'#ffffff');}}catch(e){}})();";
 // Arranque limpio: en carga/recarga de pantallas del espacio de trabajo solo se ve el logo animado hasta que todo esté listo. No aplica a /login, /auth ni a las páginas públicas
-// donde el encabezado es parte del diseño (inicio sin sesión, invitaciones, plataforma). Seguro propio de 20 s por si React nunca hidrata (la suelta normal la decide ArranqueLimpio leyendo el DOM).
-const ARRANQUE_ANTES_DEL_PINTADO = "(function(){try{if(/^\\/(login|auth|platform)(\\/|$)|^\\/$/.test(location.pathname))return;var d=document.documentElement;d.dataset.arranque='1';setTimeout(function(){d.removeAttribute('data-arranque');},20000);}catch(e){}})();";
+// donde el encabezado es parte del diseño (inicio sin sesión, invitaciones, plataforma). Seguro propio de 60 s solo por si React nunca hidrata (sin ArranqueLimpio vivo) (la suelta normal la decide ArranqueLimpio leyendo el DOM).
+const ARRANQUE_ANTES_DEL_PINTADO = "(function(){try{if(/^\\/(login|auth|platform)(\\/|$)|^\\/$/.test(location.pathname))return;var d=document.documentElement;d.dataset.arranque='1';setTimeout(function(){if(!window.__arranqueVivo)d.removeAttribute('data-arranque');},60000);}catch(e){}})();";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

@@ -6,17 +6,16 @@ import {useAcceso} from '../workspace/access';
 import {LineaCache} from '../ui/linea-cache';
 import {useVistaPersistente} from '../workspace/vista-persistente';
 import {EsperaEsqueleto} from '../ui/wait-status';
-import {PageHeader} from '../ui/page-header';
-import {Button,LinkButton,Download} from '../ui/button';
+import {Download} from '../ui/button';
+import {Ctl,CtlLink} from '../agente/ctl';
+import {UnaKpis,PestanasUna,SegmentoUna,kpiCorto,type KpiUna,type PestanaUna} from './una-ui';
 import {KindBadge} from '../ui/kind-badge';
 import {Card} from '../ui/card';
+import {Icon} from '../agente/icons';
 import {Chip} from '../ui/chip';
-import {FilterBar, FilterSpacer} from '../ui/filter-bar';
-import {KpiStrip, type Kpi} from '../ui/kpi-strip';
 import {Notice} from '../ui/notice';
 import {MenuList,Popover} from '../ui/overlay';
 import {ErrorState} from '../ui/error-state';
-import {SegmentedControl} from '../ui/segmented';
 import {DataTable, type Column} from '../ui/data-table';
 import {EmptyState} from '../ui/empty-state';
 import {Fila, ListaBarras, Vacio, type ItemBarra} from '../dinero/partes';
@@ -49,21 +48,21 @@ export function CfoDashboard({query = '', organization, roleOverride, volverA = 
   const load = useCallback(async () => { await rep.reload(); }, [rep]);
   const ok = state?.status === 'ok' ? state : null, report = ok?.report;
   const actions = <>
-    <LinkButton href={volverA} variant="primary">Volver al copiloto CFO</LinkButton>
-    <Popover label="Exportar" align="end" width={220} triggerClassName="btn btn-secondary" trigger={<><Download /><span className="btn-label">Exportar</span></>}>
+    <CtlLink href={volverA} variant="soft" solo icon={<Icon name="back" size={16} />}>Volver al copiloto CFO</CtlLink>
+    <Popover label="Exportar" align="end" width={220} triggerClassName="ctl ctl-solo" trigger={<><Download /><span className="ctl-label una-solo-vis">Exportar</span><span className="sr-only una-solo-sr">Exportar</span></>}>
       <MenuList>
-        <li><LinkButton size="sm" href="/cfo/data/export?format=csv" download="informe-cfo.csv" icon={<Download />}>Informe CSV</LinkButton></li>
-        <li><LinkButton size="sm" href="/cfo/data/export?format=pdf" download="informe-cfo.pdf" icon={<Download />}>Informe PDF</LinkButton></li></MenuList></Popover>
+        <li><CtlLink href="/cfo/data/export?format=csv" download="informe-cfo.csv" icon={<Download />}>Informe CSV</CtlLink></li>
+        <li><CtlLink href="/cfo/data/export?format=pdf" download="informe-cfo.pdf" icon={<Download />}>Informe PDF</CtlLink></li></MenuList></Popover>
   </>;
-  const header = <PageHeader eyebrow="Dinero · CFO" title="Informe de CFO" description="Ingresos, reembolsos, canales y calidad de datos por moneda, sin mezclar bases; cada cifra dice cómo se calculó." actions={actions} />;
-  if (!permitido) return <div className="dg-page"><PageHeader eyebrow="Dinero · CFO" title="Informe de CFO" description="Panel financiero para propietarios y analistas." />
-    <Card><EmptyState art="shield" title="Tu rol no tiene acceso a este panel" body="El informe CFO muestra ingresos, reembolsos y exposición económica. Solo lo ven los propietarios y analistas; pide acceso a un propietario." action={<LinkButton href="/overview">Volver al resumen</LinkButton>} /></Card></div>;
+  const header = <header className="una-head"><div className="una-head-t"><p className="eyebrow">Dinero · CFO</p><h1 className="una-h1">Informe de CFO</h1></div><p className="una-head-d">Ingresos, reembolsos, canales y calidad de datos por moneda, sin mezclar bases; cada cifra dice cómo se calculó.</p><div className="una-head-a">{actions}</div></header>;
+  if (!permitido) return <div className="dg-page una-informe"><header className="una-head"><div className="una-head-t"><p className="eyebrow">Dinero · CFO</p><h1 className="una-h1">Informe de CFO</h1></div></header>
+    <Card><EmptyState art="shield" title="Tu rol no tiene acceso a este panel" body="El informe CFO muestra ingresos, reembolsos y exposición económica. Solo lo ven los propietarios y analistas; pide acceso a un propietario." action={<CtlLink href="/overview" variant="soft">Volver al resumen</CtlLink>} /></Card></div>;
   if (!state && busy && !error) return <RovaqCargando mensaje="" />;
-  if (!report) return <div className="dg-page">{header}{error && <ErrorState title="No disponible ahora" body={error} onRetry={() => void load()} />}
+  if (!report) return <div className="dg-page una-informe">{header}{error && <ErrorState title="No disponible ahora" body={error} onRetry={() => void load()} />}
     {!state ? (busy ? <EsperaEsqueleto que="el informe del negocio" filas={5} /> : null)
     : state.status === 'timeout'
       ? <Card><ErrorState title="No disponible ahora" body="La consulta acotada del libro económico superó el tiempo permitido. No significa que no haya datos: reintenta en un momento." onRetry={() => void load()} busy={busy} /></Card>
-      : <Card><EmptyState art="inbox" title="Sin registros en el libro económico" body="Aún no hay pedidos ni reembolsos registrados en los últimos 12 meses. Carga una fuente para ver el panel financiero." action={<LinkButton href="/economics">Ir a Dinero › Preparar</LinkButton>} /></Card>}</div>;
+      : <Card><EmptyState art="inbox" title="Sin registros en el libro económico" body="Aún no hay pedidos ni reembolsos registrados en los últimos 12 meses. Carga una fuente para ver el panel financiero." action={<CtlLink href="/economics" variant="soft">Ir a Dinero › Preparar</CtlLink>} /></Card>}</div>;
 
   const block = report.perCurrency.find(c => c.currency === currency) ?? report.perCurrency[0];
   const kpis = report.kpis.find(k => k.currency === block.currency)!;
@@ -77,50 +76,48 @@ export function CfoDashboard({query = '', organization, roleOverride, volverA = 
     if (id.includes('order') || id.includes('pedidos')) return block.ordersAll.filter(s => !s.partial).map(s => s.n);
     return line.series.filter(s => !s.partial && s.known > 0).map(s => Number(BigInt(s.amount)));
   };
-  const stripKpis: Kpi[] = kpis.metrics.map(m => {
+  const kpisUna: KpiUna[] = kpis.metrics.map(m => {
     const refund = m.id.startsWith('refund');
     const t = m.delta?.bps == null || refund ? undefined : m.delta.bps > 0 ? 'up' : m.delta.bps < 0 ? 'down' : undefined;
-    return {key: m.id, label: m.label, c: refund ? 2 : 1, value: <span title={m.display}>{(m.display.length>9?m.display.replace(/\.\d+/,''):m.display).replace(/\s?(USD|CAD|MXN)$/,'')}</span>, spark: sparkDe(m.id),
-      note: <span className="dg-kpi-nota">{m.delta ? <span className="dg-delta" data-t={t}>{m.delta.display}</span> : <span className="dg-delta">sin comparar</span>}<span>{m.delta ? 'vs ' + m.delta.vs : m.scope}</span></span>};
+    return {key: m.id, label: m.label, c: refund ? 2 : 1, value: kpiCorto(m.display), title: m.display, delta: m.delta ? m.delta.display : null, t, sub: (m.delta ? 'vs ' + m.delta.vs : m.scope) ?? undefined};
   });
   const alertas = report.alerts.filter(a => a.severity !== 'info');
   const TONO: Record<string, 'bad' | 'warn' | 'info'> = {alta: 'bad', media: 'warn', baja: 'info', info: 'info'};
-  return <div className="dg-page">
+  const serie = seriesPoints(block, measure);
+  const tabs: PestanaUna[] = [
+    {id: 'tendencia', label: 'Tendencia', llena: true, contenido: <MonthBars llena key={measure + block.currency} title={serie.title} unit={serie.unit} points={serie.points} note={serie.note} exponent={serie.exponent} c={measure === 'reembolsos' || measure === 'tasa' ? 2 : measure === 'pedidos' ? 5 : 1} />},
+    {id: 'alertas', label: 'Alertas', count: alertas.length, contenido: <>
+      <CaidaExplicada report={report} moneda={block.currency} />
+      {alertas.length === 0 ? <Vacio>Ninguna regla se activó con los datos actuales.</Vacio> :
+        <ul className="dg-lista" aria-label="Alertas" data-cols="dos">{alertas.slice(0, 8).map(a => <li key={a.id}>
+          <span className="dg-lab"><b>{a.title}</b><small>{a.detail}</small></span>
+          <span style={{display: 'flex', gap: 8, alignItems: 'center', justifyContent: 'flex-end', flexWrap: 'wrap'}}><Chip tone={TONO[a.severity]}>{SEVERITY[a.severity]}</Chip>{a.cta && <CtlLink href={a.cta.href}>{a.cta.label}</CtlLink>}</span></li>)}</ul>}</>},
+    {id: 'canales', label: 'Canales', contenido: <Mix report={report} currency={block.currency} />},
+    {id: 'calidad', label: 'Calidad', contenido: <Quality report={report} />},
+    {id: 'proyeccion', label: 'Proyección', contenido: <Projections report={report} block={block} />},
+    {id: 'exposicion', label: 'Exposición', contenido: <Exposure report={report} />},
+    {id: 'comparativa', label: 'Comparativa', contenido: <Comparativa block={block} />},
+    {id: 'glosario', label: 'Glosario', contenido: <>
+      <p className="dg-nota" style={{margin: '0 0 10px'}}>{lineaDatosHasta({libro: report.watermark})} Último mes completo: {report.lastComplete ? monthLabel(report.lastComplete) : 'ninguno'}.</p>
+      <p className="dg-nota" style={{margin: '0 0 10px'}}>USD, CAD y MXN no se suman ni se convierten: no hay tipos de cambio aprobados. Tampoco se restan reembolsos de ingresos (bases distintas). {organization ?? ''}</p>
+      <p className="dg-nota" style={{margin: '0 0 10px'}}>{ok?.synthetic ? AFTER_SAVE : 'Las cifras provienen del libro económico de esta organización; los CSV y PDF llevan exactamente las mismas.'}</p>
+      <dl className="cf-glossary">{report.glossary.map(g => <div key={g.term}><dt>{g.term}</dt><dd>{g.body}</dd></div>)}</dl></>},
+  ];
+  return <div className="dg-page una-informe">
     {header}
+    <div className="una-filtros" role="group" aria-label="Moneda y medida">
+      <SegmentoUna label="Moneda" value={block.currency} options={report.currencies.map(c => ({value: c, label: c}))} onChange={setCurrency} />
+      <SegmentoUna label="Medida" value={measure} options={MEASURES.map(m => ({value: m.value, label: m.label}))} onChange={v => setMeasure(v as Measure)} />
+      <span className="una-filtros-chips">
+        {ok?.synthetic && <Chip tone="warn">Datos sintéticos de demostración</Chip>}
+        <Chip>{lineaDatosHasta({libro: report.watermark}).replace(/\.$/, '')}</Chip>
+        {!report.complete && <Chip tone="warn">Resultado truncado</Chip>}
+      </span>
+    </div>
+    <p className="una-nota"><Icon name="info" size={14} /><span className="una-nota-t">Último mes completo: {report.lastComplete ? monthLabel(report.lastComplete) : 'ninguno'}. USD, CAD y MXN no se suman ni se convierten: no hay tipos de cambio aprobados. Tampoco se restan reembolsos de ingresos (bases distintas). {organization ?? ''}</span></p>
     <LineaCache edadMs={rep.edadMs} actualizando={rep.actualizando} viejo={rep.viejo} />
-    <FilterBar label="Moneda y medida">
-      <SegmentedControl label="Moneda" size="sm" value={block.currency} options={report.currencies.map(c => ({value: c, label: c}))} onChange={setCurrency} />
-      <SegmentedControl label="Medida" size="sm" value={measure} options={MEASURES.map(m => ({value: m.value, label: m.label}))} onChange={v => setMeasure(v as Measure)} />
-      <FilterSpacer />
-      {ok?.synthetic && <Chip tone="warn">Datos sintéticos de demostración</Chip>}
-      <Chip>{lineaDatosHasta({libro: report.watermark}).replace(/\.$/, '')}</Chip>
-      <Chip categoria={1}>Último mes completo: {report.lastComplete ? monthLabel(report.lastComplete) : 'ninguno'}</Chip>
-      {!report.complete && <Chip tone="warn">Resultado truncado</Chip>}
-    </FilterBar>
-    <Notice tone="info">USD, CAD y MXN no se suman ni se convierten: no hay tipos de cambio aprobados. Tampoco se restan reembolsos de ingresos (bases distintas). {organization ?? ''}</Notice>
-    <KpiStrip items={stripKpis} label={`Indicadores de ${block.currency}`} />
-    <CaidaExplicada report={report} moneda={block.currency} />
-    <Fila split="8-4">
-      <Card title="Tendencia mensual" description={`Últimos ${report.months.length} meses · ${block.currency}`}>
-        <MonthBars key={measure + block.currency} title={seriesPoints(block, measure).title} unit={seriesPoints(block, measure).unit} points={seriesPoints(block, measure).points} note={seriesPoints(block, measure).note} exponent={seriesPoints(block, measure).exponent} c={measure === 'reembolsos' || measure === 'tasa' ? 2 : measure === 'pedidos' ? 5 : 1} height={290} />
-      </Card>
-      <Card title={`Alertas (${alertas.length} activas)`} description="Reglas deterministas sobre cifras observadas" actions={<KindBadge kind="observed" />}>
-        {alertas.length === 0 ? <Vacio>Ninguna regla se activó con los datos actuales.</Vacio> :
-          <ul className="dg-lista" aria-label="Alertas" data-cols="dos">{alertas.slice(0, 4).map(a => <li key={a.id}>
-            <span className="dg-lab"><b>{a.title}</b><small>{a.detail}</small></span>
-            <span style={{display: 'grid', gap: 4, justifyItems: 'end'}}><Chip tone={TONO[a.severity]}>{SEVERITY[a.severity]}</Chip>{a.cta && <LinkButton href={a.cta.href} size="sm">{a.cta.label}</LinkButton>}</span></li>)}</ul>}
-      </Card>
-    </Fila>
-    <Fila split="6-6">
-      <Mix report={report} currency={block.currency} />
-      <Quality report={report} />
-    </Fila>
-    <Projections report={report} block={block} />
-    <Exposure report={report} />
-    <Comparativa block={block} />
-    <Card title="Glosario y cómo leer las cifras" description={ok?.synthetic ? AFTER_SAVE : 'Las cifras provienen del libro económico de esta organización; los CSV y PDF llevan exactamente las mismas.'}>
-      <dl className="cf-glossary">{report.glossary.map(g => <div key={g.term}><dt>{g.term}</dt><dd>{g.body}</dd></div>)}</dl>
-    </Card>
+    <UnaKpis items={kpisUna} label={`Indicadores de ${block.currency}`} />
+    <PestanasUna items={tabs} etiqueta="Secciones del informe de CFO" anclas={{tendencias: 'tendencia', alertas: 'alertas', mezcla: 'canales', calidad: 'calidad', proyecciones: 'proyeccion', exposicion: 'exposicion', comparativa: 'comparativa', glosario: 'glosario'}} />
   </div>;
 }
 
@@ -174,7 +171,7 @@ function Quality({report}: {report: CfoReport}) {
 function Exposure({report}: {report: CfoReport}) {
   const e = report.exposure;
   return <Card title="Exposición económica por problema" description="Problemas con dinero detrás" actions={<KindBadge kind="inferred" />}>
-    {e.state === 'sin_atestar' ? <div className="dg-fill"><Vacio>No disponible: falta vincular cada problema con sus pedidos (hoy hay {int(e.attestedLinks)} vínculos atestados), así que no se calcula dinero por problema ni se estima.</Vacio>{e.cta && <div style={{marginTop: 12}}><LinkButton href={e.cta.href} size="sm">{e.cta.label}</LinkButton></div>}</div> : <div className="dg-fill">
+    {e.state === 'sin_atestar' ? <div className="dg-fill"><Vacio>No disponible: falta vincular cada problema con sus pedidos (hoy hay {int(e.attestedLinks)} vínculos atestados), así que no se calcula dinero por problema ni se estima.</Vacio>{e.cta && <div style={{marginTop: 12}}><CtlLink href={e.cta.href}>{e.cta.label}</CtlLink></div>}</div> : <div className="dg-fill">
       <p className="dg-nota" style={{marginTop: 0}}>{e.note}{e.coverageComplete ? '' : ' La cobertura de vínculos no está declarada completa: son pisos, no totales.'}</p>
       <ul className="dg-lista" aria-label="Exposición por problema" data-cols="dos">{e.rows.map(r => <li key={r.problemId}><span className="dg-lab"><b>{r.title}</b><small>{int(r.linkedOrders)} pedidos vinculados ({r.coverage.known} con importe)</small></span><span className="dg-val">{r.display}</span></li>)}</ul></div>}
   </Card>;

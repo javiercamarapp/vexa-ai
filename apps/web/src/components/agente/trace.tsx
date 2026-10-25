@@ -37,7 +37,7 @@ export function LiveTrace({phase,steps,labels}:{phase:string;steps:Step[];labels
 export function TraceDisclosure({trace,labels}:{trace:TraceStep[];labels:Record<string,string>}){
  if(!trace.length)return null;
  const total=trace.reduce((a,t)=>a+(t.ms??0),0);
- return <details className="agente-calc agente-trace"><summary>Cómo llegué a esto · {trace.length} pasos · {msText(total)||'0 ms'}</summary>
+ return <details className="agente-calc agente-trace"><summary className="ctl">Cómo llegué a esto · {trace.length} pasos · {msText(total)||'0 ms'}</summary>
   <StepList steps={stepsOf(trace)} labels={labels}/>
   <p className="card-lead agente-note">Cada paso lo registró el sistema al ejecutarlo (consultas, fuentes y tiempos). No es el razonamiento interno de ningún modelo.</p></details>;
 }

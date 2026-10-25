@@ -3,7 +3,8 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {useJson} from '../ui/use-json';
 import {useAcceso} from '../workspace/access';
-import {Button, LinkButton, Refresh} from '../ui/button';
+import {Refresh} from '../ui/button';
+import {CtlLink} from '../agente/ctl';
 import {RovaqCargando} from '../rovaq-cargando';
 import {Chat, type ModoChat} from '../agente/agente';
 import {runTurn, failAnswerOf, type Runner} from '../agente/use-agente';
@@ -14,9 +15,9 @@ import type {CfoReport} from '../../../../../packages/cfo-copilot/src/index.mjs'
 import {FugaPantalla} from '../refunds/fuga-pantalla';
 import {MODOS, puedeUsarModo} from '../../lib/copiloto/modos.mjs';
 import {AreaRestringida} from './area-restringida';
-import {BriefingCfoView} from './briefing-cfo-view';
+import {AccionesCfo, BriefingCfoUna} from './briefing-cfo-una';
+import {Ctl} from '../agente/ctl';
 import {ContenedorErrores} from './contenedor-errores';
-import {RovaqWordmark} from '../agente/rovaq-mark';
 import {briefingCfo, monedaElegida} from './briefing-cfo.mjs';
 import {adaptarRespuestaCfo, cuerpoConsultaCfo, esFueraDeCfo, esPreguntaDeCfo} from './adaptador-cfo.mjs';
 import {PreguntasSugeridas} from './preguntas-sugeridas';
@@ -92,7 +93,7 @@ export function CopilotoNegocio({modo: clave, organization, roleOverride, query 
 
   if (!permitido || estado.kind === 'sin_acceso' || sinAccesoMotor) return <AreaRestringida modo={modo} />;
   if (estado.kind === 'cargando') return <div className="copiloto copiloto-negocio" aria-busy="true"><div className="cn-espera"><RovaqCargando mensaje="" /></div></div>;
-  if (estado.kind === 'error') return <div className="cn-gate" role="alert"><h1>No se pudo abrir «{modo.titulo}»</h1><p>No pude verificar si la consulta está disponible. Revisa tu conexión e inténtalo de nuevo.</p><Button icon={<Refresh />} onClick={() => { setEstado({kind: 'cargando'}); setIntento(n => n + 1); }}>Reintentar</Button></div>;
+  if (estado.kind === 'error') return <div className="cn-gate" role="alert"><h1>No se pudo abrir «{modo.titulo}»</h1><p>No pude verificar si la consulta está disponible. Revisa tu conexión e inténtalo de nuevo.</p><Ctl variant="soft" icon={<Refresh />} onClick={() => { setEstado({kind: 'cargando'}); setIntento(n => n + 1); }}>Reintentar</Ctl></div>;
 
   const base = estado.base, siguientes = brief?.siguientes ?? [];
   const directas = {...base.suggestions.directas, ...modo.directas, ...Object.fromEntries(siguientes.map(s => [s.pregunta, s.directa]))};
@@ -101,25 +102,33 @@ export function CopilotoNegocio({modo: clave, organization, roleOverride, query 
   const cuerpoBriefing = () => {
     if (modo.briefing === 'refunds') return <FugaPantalla embebido organization={organization} />;
     if (!esCfo) return null;
-    if (!informe) return rep.error ? <div className="cn-estado" role="alert"><h1>CFO</h1><p>{rep.error}</p><Button size="sm" icon={<Refresh />} onClick={() => void rep.reload()}>Reintentar</Button></div> : <div className="cn-estado"><h1 className="sr-only">CFO</h1><RovaqCargando mensaje="Preparando el informe de CFO…" /></div>;
-    if (informe.status !== 'ok') return <div className="cn-estado" role="status"><h1>{informe.status === 'timeout' ? 'No disponible ahora' : 'Aún no hay registros en el libro económico'}</h1><p>{informe.status === 'timeout' ? 'La consulta del libro económico superó el tiempo permitido. No se muestra ninguna cifra parcial como si fuera completa.' : 'No hay pedidos ni reembolsos registrados para esta organización en los últimos 12 meses. Carga una fuente para ver el informe.'}</p>{informe.status === 'timeout' ? <Button size="sm" icon={<Refresh />} loading={rep.busy} onClick={() => void rep.reload()}>Reintentar</Button> : <LinkButton href="/economics" size="sm">Ir a Dinero › Preparar</LinkButton>}</div>;
-    return brief ? <ContenedorErrores alFallar={null}><BriefingCfoView b={brief} informe={hrefInforme} onMoneda={cambiaMoneda} sintetico={informe.synthetic} /></ContenedorErrores> : null;
+    if (!informe) return rep.error ? <div className="cn-estado" role="alert"><p>{rep.error}</p><Ctl variant="soft" icon={<Refresh />} onClick={() => void rep.reload()}>Reintentar</Ctl></div> : <div className="una-esqueleto" role="status" aria-label="Preparando el informe de CFO"><span className="una-esq-kpis" /><span className="una-esq-panel" /></div>;
+    if (informe.status !== 'ok') return <div className="cn-estado" role="status"><h2>{informe.status === 'timeout' ? 'No disponible ahora' : 'Aún no hay registros en el libro económico'}</h2><p>{informe.status === 'timeout' ? 'La consulta del libro económico superó el tiempo permitido. No se muestra ninguna cifra parcial como si fuera completa.' : 'No hay pedidos ni reembolsos registrados para esta organización en los últimos 12 meses. Carga una fuente para ver el informe.'}</p>{informe.status === 'timeout' ? <Ctl variant="soft" icon={<Refresh />} disabled={rep.busy} onClick={() => void rep.reload()}>Reintentar</Ctl> : <CtlLink href="/economics" variant="soft">Ir a Dinero › Preparar</CtlLink>}</div>;
+    return brief ? <ContenedorErrores alFallar={null}><BriefingCfoUna b={brief} informe={hrefInforme} /></ContenedorErrores> : null;
   };
   const chat: ModoChat = {
-    modo: modo.clave, runner, placeholder: esCfo ? 'Pregunta sobre tus ingresos, canales o reembolsos…' : modo.clave === 'refunds' ? 'Pregunta sobre tus reembolsos…' : undefined, etiquetaChat: `Conversación del copiloto: ${modo.titulo}`,
+    modo: modo.clave, runner, placeholder: esCfo ? 'Pregunta sobre tu dinero…' : modo.clave === 'refunds' ? 'Pregunta sobre tus reembolsos…' : undefined, etiquetaChat: `Conversación del copiloto: ${modo.titulo}`,
+    cabecera: !esCfo ? undefined : hayHilo => <>
+      <h1 className="una-h1">{modo.titulo}</h1>
+      {hayHilo ? <Ctl variant="soft" className="una-toggle" aria-expanded={verInforme} onClick={() => setVerInforme(v => !v)}>{verInforme ? 'Ocultar' : 'Ver'} el informe de {modo.titulo}</Ctl>
+        : brief ? <AccionesCfo b={brief} informe={hrefInforme} onMoneda={cambiaMoneda} sintetico={informe?.status === 'ok' && informe.synthetic} /> : null}
+    </>,
     portada: (ask, hayHilo) => {
       const cuerpo = cuerpoBriefing();
       const resumen = <ContenedorErrores alFallar={null}>{cuerpo}</ContenedorErrores>;
-      if (hayHilo) return <div className="cn-portada" data-hilo={true}>
-        <button type="button" className="cn-colapsa" aria-expanded={verInforme} onClick={() => setVerInforme(v => !v)}>{verInforme ? 'Ocultar' : 'Ver'} el informe de {modo.titulo}</button>
-        <div hidden={!verInforme}>{resumen}</div>
-      </div>;
-      if (!esCfo) return <div className="cn-portada" data-hilo={false}>{resumen}<PreguntasSugeridas temas={modo.chipsPorTema} siguientes={siguientes} ask={ask} /></div>;
-      // CFO: la misma portada que «Pregúntale a tus datos» (logo arriba, nombre debajo, tarjetas por tema con entrada animada); el resumen del mes es opcional.
-      return <div className="cn-portada cn-hero-wrap" data-hilo={false}>
-        <header className="agente-hero cn-hero"><RovaqWordmark size={36} /><h1>{modo.titulo}</h1><p className="agente-sub">{modo.subtitulo}</p></header>
-        <div className="agente-cats cn-cats">{[...(siguientes.length ? [{titulo: 'Lo que podría ayudarte', preguntas: siguientes.map(x => x.pregunta)}] : []), ...modo.chipsPorTema.map(t => ({titulo: t.titulo, preguntas: [...t.preguntas]}))].map((c, i) => <section key={c.titulo} className="agente-cat cn-cat" style={{'--i': i} as React.CSSProperties} aria-label={c.titulo}><p className="agente-cat-title" role="heading" aria-level={2}>{c.titulo}</p><div className="agente-cat-list">{c.preguntas.map(q => <div key={q} className="agente-cat-q"><button type="button" className="agente-q" onClick={() => ask(q)}>{q}</button></div>)}</div></section>)}</div>
-        {brief && <details className="cn-resumen-abre"><summary>Ver el resumen del mes</summary>{resumen}</details>}
+      if (!esCfo) {
+        if (hayHilo) return <div className="cn-portada" data-hilo={true}>
+          <Ctl className="cn-colapsa" aria-expanded={verInforme} onClick={() => setVerInforme(v => !v)}>{verInforme ? 'Ocultar' : 'Ver'} el informe de {modo.titulo}</Ctl>
+          <div hidden={!verInforme}>{resumen}</div>
+        </div>;
+        return <div className="cn-portada" data-hilo={false}>{resumen}<PreguntasSugeridas temas={modo.chipsPorTema} siguientes={siguientes} ask={ask} /></div>;
+      }
+      // CFO en una sola pantalla: el informe vive arriba (KPI en una fila + pestañas) y el chat queda anclado abajo; con un hilo abierto el informe se despliega a demanda.
+      if (hayHilo) return <div className="cn-portada cn-una" data-hilo={true}><div hidden={!verInforme} className="cn-una-cuerpo">{resumen}</div></div>;
+      const rapidas = [...siguientes.map(x => x.pregunta), ...modo.chipsPorTema.map(t => t.preguntas[0])].filter((q, i, a) => q && a.indexOf(q) === i).slice(0, 6);
+      return <div className="cn-portada cn-una" data-hilo={false}>
+        <div className="cn-una-cuerpo">{resumen}</div>
+        <div className="una-fila una-fila-scroll" role="group" aria-label="Preguntas sugeridas">{rapidas.map(q => <button type="button" key={q} className="ctl ctl-q" title={q} onClick={() => ask(q)}><span className="ctl-label">{q}</span></button>)}</div>
       </div>;
     },
     pie: esCfo && modo.presupuesto.mostrar ? <UsoDelMes p={presupuesto} /> : undefined,

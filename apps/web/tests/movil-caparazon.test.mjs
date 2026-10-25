@@ -44,9 +44,14 @@ test('iniciales del monograma: dos palabras → una letra de cada una; una palab
 test('selector de tema: iconos SVG iguales, sin glifos de texto y sin title', () => {
   assert.doesNotMatch(shell + movil, /['"]☀['"]|['"]☾['"]|['"]▣['"]/);assert.match(movil, /\['light','Claro','sun'\],\['system','Sistema','monitor'\],\['dark','Oscuro','moon'\]/);assert.match(movil, /size=\{16\}/);
 });
-test('chat: compositor fijo sobre la barra inferior y el teclado, textarea de 16 px', () => {
-  const a = leer('src/components/agente/agente.css');
-  assert.match(a, /\.workspace-chat \.agente-dock\{position:fixed/);assert.match(a, /data-teclado=abierto\] \.workspace-chat \.agente-dock\{bottom:var\(--teclado/);assert.match(a, /agente-composer textarea\{font-size:16px/);
+test('chat: UNA página — el marco mide 100dvh menos el teclado, el compositor queda anclado al fondo (sin position:fixed) y la textarea es de 16 px', () => {
+  const u = leer('src/components/agente/una-pagina.css');
+  assert.match(u, /\.workspace-shell\.workspace-chat\{height:calc\(100dvh - var\(--teclado,0px\)\)/);
+  assert.match(u, /html\[data-teclado=abierto\] \.workspace-shell\.workspace-chat \.workspace-frame \.workspace-content\{padding-bottom:8px\}/);
+  assert.match(u, /padding:4px max\(12px,env\(safe-area-inset-right\)\) calc\(var\(--nav-total,84px\) \+ 8px\)/, 'reserva la barra inferior');
+  assert.match(u, /agente-composer textarea\{font-size:16px/);
+  assert.doesNotMatch(u, /agente-dock\{position:fixed/);
+  assert.match(u, /html:has\(\.workspace-chat\),html:has\(\.workspace-chat\) body\{height:100dvh;overflow:hidden/);
   assert.match(movil, /visualViewport/);
 });
 test('PWA: manifest instalable con iconos maskable 192 y 512', () => {

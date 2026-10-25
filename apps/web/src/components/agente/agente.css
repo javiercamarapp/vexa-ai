@@ -68,113 +68,11 @@
 .agente-ubar-track{height:8px;border-radius:999px;background:var(--ch-track);overflow:hidden}
 .agente-ubar-track span{display:block;height:100%;background:repeating-linear-gradient(135deg,var(--ch-neutral) 0 4px,color-mix(in srgb,var(--ch-neutral) 55%,var(--ui-surface)) 4px 8px)}
 
-
-/* ---- «Pregúntale a tus datos» vive dentro del shell del espacio de trabajo (misma barra lateral), sin encabezado ni barra global.
-   La estructura y las medidas siguen a ChatDatosShell de Atiende (portada, Historial, compositor rounded-3xl, chips, hilo); el acento es el negro de Rovaq (neutro tintado, sin azul). ---- */
-.workspace-chat{--chat-h:calc(100dvh - 66px);--copiloto-acento:var(--ui-action)}
-@media(max-width:767px){.workspace-chat{--chat-h:calc(100dvh - 120px)}}
-@media(min-width:768px){.workspace-shell.workspace-chat .workspace-content{padding:14px 20px 20px}}
-.workspace-chat .copiloto{position:relative;min-height:var(--chat-h);overflow:hidden;padding:16px 16px 0}
-.workspace-chat .copiloto-hist-row{position:relative;display:flex;justify-content:flex-end;margin-bottom:24px}
-.workspace-chat .copiloto button{margin:0}
-.workspace-chat :is(.copiloto-hist-btn,.agente-chip,.agente-consult){min-height:0;width:auto;max-width:none;letter-spacing:normal}
-.workspace-chat .copiloto-hist-btn[aria-expanded=true]{visibility:hidden}
-.workspace-chat .copiloto-hist-btn{position:relative;display:flex;align-items:center;gap:6px;font:400 12px/16px var(--font-ui);border:1px solid var(--ui-border);border-radius:999px;padding:6px 10px 6px 12px;background:var(--ui-surface);color:var(--muted);cursor:pointer}
-.workspace-chat .copiloto-hist-btn:hover{background:var(--ui-soft)}
-.copiloto-hist-count{font:500 12px/15px var(--font-ui);background:var(--ui-soft);border-radius:999px;padding:2px 6px;color:var(--ink)}
-.workspace-chat .copiloto-hist-btn:hover .copiloto-hist-count{background:var(--ui-surface)}
-.workspace-chat .agente{padding:0 16px 32px;min-height:calc(var(--chat-h) - 68px)}
-.workspace-chat .agente[data-has=false]{padding-top:64px}
-@media(min-width:768px){.workspace-chat .agente[data-has=false]{padding-top:96px}}
-.workspace-chat .agente[data-has=true]{justify-content:flex-end}
-.workspace-chat .agente-hero{display:flex;flex-direction:column;align-items:center;gap:0;padding:0;text-align:center}
-.workspace-chat .agente-hero .rovaq-wordmark{margin-bottom:24px}
-.workspace-chat .agente-hero h1{margin:0 0 8px;font:600 20px/32px var(--font-ui);letter-spacing:normal;color:var(--ink)}
-.workspace-chat .agente-sub{margin:0 0 32px;max-width:28rem;font-size:14px;line-height:20px;text-align:center;color:var(--muted)}
-.workspace-chat .agente-empty{margin:0 0 24px}
-.workspace-chat .agente-thread{width:100%;max-width:42rem;display:flex;flex-direction:column;gap:20px;margin-bottom:24px;align-content:normal;flex:none}
-.agente-user{display:flex;justify-content:flex-end}
-.agente-bubble{max-width:80%;padding:8px 16px;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface);box-shadow:0 1px 2px #0000000d;font-size:14px;line-height:20px;white-space:pre-wrap;overflow-wrap:anywhere}
-.agente-answer{display:flex;flex-direction:column;gap:12px;min-width:0}
-.agente-answer-text{display:flex;gap:8px;align-items:flex-start;min-width:0}
-.agente-answer>:not(.agente-answer-text){margin-left:24px}
-.agente-cancelled{margin:0 0 0 24px;font-size:14px;color:var(--muted)}
-.agente-block{padding:16px;border-radius:12px}
-.agente-text{font-size:14px;line-height:1.625;color:var(--ink)}
-.workspace-chat .agente-sources{gap:6px;font-size:12px;color:var(--muted)}
-.agente-sources-label{font:400 12px var(--font-ui);color:var(--muted)}
-.agente-sources-label::after{content:':'}
-.workspace-chat .agente-sources .chip{white-space:normal;overflow:visible;height:auto}
-.workspace-chat .agente-sources .btn,.workspace-chat .agente-sources .chip{font-size:12px;line-height:16px;min-height:24px;padding:3px 8px;border-radius:999px;border:1px solid var(--ui-border);background:transparent;color:var(--muted);font-weight:400}
-.workspace-chat .agente-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-.workspace-chat .agente-actions .btn{min-height:32px;padding:0 4px;gap:6px;border:0;background:transparent;color:var(--muted);font-size:12px;font-weight:400;line-height:16px}
-.workspace-chat .agente-actions .btn:hover:not(:disabled){background:transparent;color:var(--ink)}
-.workspace-chat .agente-actions .btn[aria-pressed=true]{color:var(--ink);font-weight:600}
-.workspace-chat .agente-actions .btn svg{width:14px;height:14px}
-.agente-thinking{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:20px;color:var(--muted)}
-.trace-phase{font-weight:400;color:var(--muted)}
-.agente-dock{display:flex;justify-content:center;width:100%}
-.workspace-chat .agente-composer{width:100%;max-width:36rem;flex:none;padding:12px;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface);box-shadow:0 1px 2px #0000000d}
-.workspace-chat .agente-composer textarea{display:block;width:100%;min-height:0;max-height:144px;margin:0;padding:6px 8px;border:0;border-radius:0;outline:0;resize:none;background:transparent;box-shadow:none;color:var(--ink);font:400 14px/20px var(--font-ui)}
-.workspace-chat .agente-composer-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px}
-.agente-composer-start{display:flex;align-items:center;gap:8px}
-.agente-composer-end{display:flex;align-items:center;gap:8px}
-.workspace-chat .agente-round{display:inline-flex;align-items:center;justify-content:center;flex:none;width:32px;height:32px;padding:0;border-radius:999px;cursor:pointer}
-.workspace-chat .agente-attach-btn{border:1px solid var(--ui-border);background:transparent;color:var(--muted)}
-.workspace-chat .agente-attach-btn:hover:not(:disabled){background:var(--ui-soft)}
-.workspace-chat .agente-consult{display:flex;align-items:center;gap:6px;padding:4px 12px 4px 10px;border:1px solid var(--btn-soft-line);border-radius:999px;background:var(--btn-soft-bg);color:var(--btn-soft-ink);font:500 12px/16px var(--font-ui);cursor:pointer}
-.workspace-chat .agente-send{border:1px solid var(--btn-soft-line);background:var(--btn-soft-bg);color:var(--btn-soft-ink)}
-.workspace-chat .agente-send[aria-label=Detener] svg{fill:currentColor}
-.workspace-chat .copiloto button:disabled{opacity:.5}
-.workspace-chat .copiloto button:hover:not(:disabled):is(.agente-consult,.agente-send){opacity:.9;background:inherit}
-.agente-count{font:500 12px/15px var(--font-ui);color:var(--muted)}
-.workspace-chat .agente-chips-center{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:36rem;margin-top:16px}
-.workspace-chat .agente-chip{font-size:12px;line-height:16px;border-radius:999px;padding:4px 12px;border:1px solid color-mix(in srgb,var(--ui-action) 20%,transparent);background:color-mix(in srgb,var(--ui-action) 10%,transparent);color:var(--ui-action);cursor:pointer;font-weight:400}
-.workspace-chat .agente-chip:hover{background:color-mix(in srgb,var(--ui-action) 20%,transparent)}
-.workspace-chat .agente-foot{margin:32px 0 0;max-width:32rem;text-align:center;font-size:12px;line-height:16px;color:var(--muted)}
-.agente-meta{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:12px 0 0}
-.workspace-chat .agente-cats{display:grid;width:100%;max-width:64rem;gap:12px;margin-bottom:20px;align-items:stretch;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr))}
-.workspace-chat .agente-cat{display:flex;flex-direction:column;min-width:0;padding:16px;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface)}
-.agente-cat-title{margin:0 0 8px;font:500 11px/15px var(--font-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.agente-cat-list{display:flex;flex-direction:column}
-.agente-cat-q{padding:2px 0;border-top:1px solid var(--ui-border)}.agente-cat-q:first-child{border-top:0;padding-top:0}
-.workspace-chat .agente-q{display:flex;align-items:center;justify-content:flex-start;width:100%;min-height:40px;padding:6px 8px;border:0;border-radius:8px;background:transparent;color:var(--ink);font:400 14px/1.375 var(--font-ui);text-align:left;cursor:pointer}
-.workspace-chat .agente-q:hover{background:var(--ui-soft)}
 /* Panel Historial: usa el Drawer del sistema (ui/overlay.css). */
 .agente-hist-top{grid-template-columns:auto minmax(0,1fr);align-items:center}
-.agente-chips{display:flex;flex-wrap:wrap;gap:6px}
 .particle-field{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:var(--ui-action)}
-.workspace-chat .copiloto>:not(.particle-field){position:relative}
-
-/* F2-CLIENTES: portada con tarjetas por tema (color fijo por orden, entrada sobria <=600 ms). */
-.agente-temas{display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:12px;width:min(100%,1080px);margin:20px auto 0}
-@media(max-width:1100px){.agente-temas{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:560px){.agente-temas{grid-template-columns:minmax(0,1fr)}}
-.agente-tema{display:flex;flex-direction:column;gap:6px;min-width:0;padding:12px 14px;border:1px solid var(--ui-border);border-top:3px solid var(--cat);border-radius:12px;background:var(--ui-surface);text-align:left}
-.agente-tema header{display:flex;align-items:center;gap:8px}
-.agente-tema header i{flex:none;inline-size:8px;block-size:8px;border-radius:50%;background:var(--cat)}
-.agente-tema h2{margin:0;font-size:14px;font-weight:600}
-.agente-tema ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
-.workspace-chat .agente-tema-q{all:unset;box-sizing:border-box;display:block;inline-size:100%;padding:6px 8px;border-radius:8px;font-size:13px;line-height:1.4;cursor:pointer;color:var(--ink);overflow-wrap:anywhere}
-.workspace-chat .agente-tema-q:hover,.workspace-chat .agente-tema-q:focus-visible{background:var(--ui-soft);outline:none}
-.workspace-chat .agente-tema-q:focus-visible{box-shadow:0 0 0 2px var(--ui-focus)}
-@media(prefers-reduced-motion:no-preference){.agente-tema{animation:ui-rise 480ms var(--ui-ease,ease-out) both}}
-
-.copiloto[data-has=true] .particle-field{opacity:.4}
 
 /* Historia de pensamiento en vivo: cada paso entra con un desplazamiento corto y el paso en curso respira (como el logo de carga); todo el movimiento solo con «no-preference» */
 @keyframes trace-in{from{opacity:0;transform:translateY(4px)}}
 @media (prefers-reduced-motion:no-preference){.trace-step{animation:trace-in .2s ease-out both}.trace-step[data-done=false] .agente-dot{animation:rovaq-respira 1.1s cubic-bezier(.22,1,.36,1) infinite}}
-
-/* ---- Celular: el compositor queda FIJO sobre la barra inferior y, con el teclado abierto, justo encima del teclado.
-   --nav-total lo define el caparazón (movil.css); --teclado lo publica useTeclado() (visualViewport). Textarea de 16 px: iOS no hace zoom al enfocar. ---- */
-@media(max-width:767px){
- .workspace-chat{--chat-h:calc(100dvh - 56px - env(safe-area-inset-top))}
- .workspace-chat .agente{padding-bottom:calc(var(--nav-total,84px) + 128px)}
- .workspace-chat .agente-dock{position:fixed;left:0;right:0;bottom:calc(var(--nav-total,84px) + 4px);z-index:7;padding:12px max(12px,env(safe-area-inset-right)) 4px max(12px,env(safe-area-inset-left));background:linear-gradient(to top,var(--ui-surface) 62%,transparent)}
- html[data-teclado=abierto] .workspace-chat .agente-dock{bottom:var(--teclado,0px);padding-bottom:8px}
- .workspace-chat .agente-composer{max-width:none;box-shadow:0 6px 24px -10px #0e0e1040,0 1px 2px #0000000d}
- .workspace-chat .agente-composer textarea{font-size:16px;line-height:22px;max-height:120px}
- .workspace-chat .agente-round{width:44px;height:44px}
- .workspace-chat .agente-composer-bar{margin-top:0}
-}
+/* El diseño de pantalla única (shell, portada, hilo, compositor, controles .ctl) vive en una-pagina.css. */

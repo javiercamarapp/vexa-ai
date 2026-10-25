@@ -2,11 +2,14 @@ import 'server-only';
 import {NextRequest,NextResponse} from 'next/server';
 import {createDatabase} from '@vexa/platform/db';
 import {serverPool} from '../imports/server';
-import {ACTIVE_ORG,AccessError,config,identity,PRIVATE_HEADERS,resolveSession} from '../auth';
+import {ACTIVE_ORG,AccessError,assertOrigin,config,identity,PRIVATE_HEADERS,resolveSession} from '../auth';
 import {requestAuth} from '../auth-http';
 import {conMemoria,olvidarSiDegradada} from '../lectura-memo.mjs';
 import {createPainPointsRepository} from '../../../../../packages/workspace-service/pain-points.mjs';
 import {createPainEvidenceRepository} from '../../../../../packages/workspace-service/pain-points-evidencia.mjs';
+import {createPainAiService} from '../../../../../packages/workspace-service/pain-points-ia.mjs';
+import {createPainAiStore} from '../../../../../packages/workspace-service/pain-points-ia-store.mjs';
+import {crearProveedorReal} from '../../../../../packages/workspace-service/pain-points-ia-proveedor.mjs';
 const TTL_MS=90_000;
 /** Solo propietarios y analistas (igual que el menú «Dinero»): ocultar el ítem no protege la ruta. */
 async function contexto(request:NextRequest){
@@ -55,4 +58,31 @@ export async function painEvidenceHandler(request:NextRequest,params:{id:string}
   const data=olvidarSiDegradada(clave,await conMemoria(clave,TTL_MS,()=>repo.get({id,cursor:q.get('cursor')})));
   return finish(NextResponse.json({data},{headers:{...PRIVATE_HEADERS,Vary:'Cookie'}}));
  }catch(error){return falla(error,finish,'pain_points');}
+}
+
+const CODIGOS_IA=/^(pain_point_invalid|pain_point_not_found|pain_point_sin_dato|pii_blocked|ia_apagada|ia_no_migrada)$/;
+function fallaIa(error:unknown,finish:(r:NextResponse)=>NextResponse){
+ const e=error as {status?:number;code?:string};const status=[400,401,403,404,409,422,503].includes(e.status??0)?e.status!:503;
+ const code=e.code&&CODIGOS_IA.test(e.code)?e.code:status===403?'request_rejected':status===404?'resource_not_found':status===503?'pain_points_ia_unavailable':'request_rejected';
+ return finish(NextResponse.json({error:{code}},{status,headers:PRIVATE_HEADERS}));
+}
+/** Proveedor de IA: null (apagado) salvo VEXA_PAIN_AI=enabled con llave. Inyectable en pruebas. */
+export const proveedorIa={actual:()=>crearProveedorReal(process.env)};
+/**
+ * GET /api/pain-points/[id]/ia: última lectura de IA del punto (corte actual o la última guardada), tope semanal «US$x de US$5.00» y si «Analizar» está permitido. NO dispara IA.
+ * POST /api/pain-points/[id]/ia: corre (o completa) el triple análisis. Solo propietario/analista, mismo origen, sin cuerpo; respeta el tope y es idempotente por (punto, corte, versión de prompt).
+ */
+export async function painAiHandler(request:NextRequest,params:{id:string}){
+ let finish=(r:NextResponse)=>r;
+ try{
+  if(request.nextUrl.search)throw new AccessError(400,'unsupported_filter');
+  if(request.method==='POST'){const c0=config();if(!c0)throw new AccessError(503,'configuration_required');assertOrigin(request.headers.get('origin'),c0.origin);if(request.headers.get('content-length')&&request.headers.get('content-length')!=='0')throw new AccessError(400,'unsupported_filter');}
+  else if(request.method!=='GET')throw new AccessError(400,'unsupported_filter');
+  const c=await contexto(request);finish=c.finish;
+  const resumen=()=>{const clave=c.tenant+'|'+c.role+'|pain-points';return conMemoria(clave,TTL_MS,()=>createPainPointsRepository({database:c.database}).get());};
+  const id=decodeURIComponent(params.id);
+  const svc=createPainAiService({store:createPainAiStore({database:c.database}),provider:proveedorIa.actual(),vista:resumen,evidencia:createPainEvidenceRepository({database:c.database,resumen})});
+  const data=request.method==='POST'?await svc.analizar({id}):await svc.estado({id});
+  return finish(NextResponse.json({data:{...data,puedeAnalizar:['owner','analyst'].includes(c.role)}},{headers:{...PRIVATE_HEADERS,Vary:'Cookie'}}));
+ }catch(error){return fallaIa(error,finish);}
 }

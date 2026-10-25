@@ -51,7 +51,7 @@ function vecinos(items,min=8){
  }
  return mal;
 }
-function reglasControles(tag,m,W<=819){
+function reglasControles(tag,m,movil){
  const H=movil?36:32;
  // Las preguntas sugeridas (.ctl-q) son frases: nunca se truncan, así que en celular pueden ocupar 2 líneas (alto ≥ H); el resto mide H exacto.
  const raros=m.items.filter(i=>i.ctl||/seg-btn/.test(i.d)).filter(i=>/ctl-q/.test(i.d)?i.h<H-1.01:Math.abs(i.h-H)>1.01);

@@ -1,0 +1,1 @@
+export function crearAplicarBaja(o: {pool: {connect(): Promise<any>}; statementTimeoutMs?: number}): (a: {tenantId: string; userId: string; resubscribe: boolean}) => Promise<{ok: boolean; estado?: string; yaEstaba?: boolean; reason?: string} | null>;

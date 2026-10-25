@@ -74,7 +74,7 @@
 /* Campos: caja de 44 px con borde transparente de 5 px; lo que se ve mide 34 px y la fuente se queda en 16 px (sin zoom en iOS) */
 :root:root body .workspace-content :is(select,textarea,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])){box-sizing:border-box;min-height:var(--mv-hit);font-size:16px;line-height:1.25;border:5px solid transparent;background-clip:padding-box;box-shadow:inset 0 0 0 1px var(--ui-input);border-radius:12px;padding-block:0;padding-inline:10px;outline-offset:-5px}
 :root:root body .workspace-content :is(select,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])){height:var(--mv-hit)}
-:root:root:root:root:root:root body .workspace-content select:not([multiple]):not([size]){padding-inline-end:26px}
+:root:root:root:root:root:root body .workspace-content select:not([multiple]):not([size]){padding-inline-end:32px}
 :root:root body .workspace-content textarea{padding-block:6px;min-height:76px}
 :root:root body .workspace-content :is(select,textarea,input):focus-visible{box-shadow:inset 0 0 0 1.5px var(--ui-focus)}
 :root:root body .workspace-content summary{min-height:var(--mv-ctl);display:flex;align-items:center;position:relative}

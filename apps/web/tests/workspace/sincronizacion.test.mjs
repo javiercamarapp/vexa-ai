@@ -15,5 +15,5 @@ test('fila al día, con error, atrasada, pausa y sin conectar', () => {
 test('cálculos: al día, parcial con periodos pendientes, omitido, fallido', () => {
   const i = (insight, status, pending = 0) => ({insight, status, refreshedAt: '2026-10-23T11:00:00Z', pending});
   const r = filasSincronizacion({availability: 'ready', sources: [], insights: [i('conversation_volume', 'ready'), i('refund_by_sku_month', 'partial', 3), i('repeat_contact', 'skipped'), i('thread_resolution', 'failed')]}, AHORA).calculos;
-  assert.deepEqual(r.map(x => x.estado), ['Al día', 'Calculando…', 'Omitido', 'Falló']); assert.equal(r[0].actualizado, 'hace 1 h'); assert.equal(r[1].pendientes, 3);
+  assert.deepEqual(r.map(x => x.estado), ['Al día', 'Parcial', 'Omitido', 'Falló']); assert.equal(r[0].actualizado, 'hace 1 h'); assert.equal(r[1].pendientes, 3);
 });

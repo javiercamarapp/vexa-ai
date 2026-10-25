@@ -62,12 +62,21 @@ export function BarraInferior({role}:{role:string}){
  return <nav className="workspace-bottom-nav" aria-label="Navegación móvil">{lista.map(d=>{const activo=activoDe(pathname,d);return <Link key={d.href} href={d.href+(query?'?'+query:'')} aria-current={activo?'page':undefined}><span className="bn-icono"><WorkspaceIcon name={d.icono} size={22}/></span><span className="bn-etiqueta">{d.etiqueta}</span></Link>;})}</nav>;
 }
 
-function iniciales(nombre:string){return (nombre.trim().slice(0,1)||'?').toUpperCase();}
+/** Iniciales del monograma: dos palabras → 1.ª letra de cada una; una palabra → sus dos primeras letras. Ignora paréntesis y conectores («de», «la»…). */
+export function iniciales(nombre:string){
+ const limpio=nombre.replace(/\([^)]*\)/g,' ').replace(/[^\p{L}\p{N}\s]/gu,' ');
+ const todas=limpio.split(/\s+/).filter(Boolean),utiles=todas.filter(p=>!/^(de|del|la|las|los|el|y|e|en|the|of|and)$/i.test(p));
+ const pal=utiles.length?utiles:todas;
+ const r=pal.length>=2?pal[0].slice(0,1)+pal[1].slice(0,1):pal[0]?.slice(0,2)??'?';
+ return r.toLocaleUpperCase('es');
+}
+/** Monograma de identidad (empresa o cuenta): rectángulo redondeado con tinte suave y iniciales; nunca un círculo con una letra suelta. */
+export function Monograma({nombre,className=''}:{nombre:string;className?:string}){return <span className={'monograma'+(className?' '+className:'')} aria-hidden="true">{iniciales(nombre)}</span>;}
 function leerRecientes():string[]{try{const v=JSON.parse(window.localStorage.getItem(RECIENTES)??'[]');return Array.isArray(v)?v.filter((x:unknown)=>typeof x==='string').slice(0,4):[];}catch{return [];}}
 function guardarReciente(id:string){try{const v=[id,...leerRecientes().filter(x=>x!==id)].slice(0,4);window.localStorage.setItem(RECIENTES,JSON.stringify(v));}catch{/* opcional */}}
 
-/** Selector de empresa SIEMPRE visible arriba. Con varias organizaciones es un chip que abre una hoja inferior (buscador + recientes);
-    con una sola muestra el nombre sin control. El cambio real lo hace POST /auth/organization, que valida la membresía en el servidor. */
+/** Selector de empresa: con varias organizaciones es un control pequeño (monograma + chevron) que abre una hoja inferior con los nombres completos (buscador + recientes);
+    con una sola no hay control y el nombre vive en la hoja «Más». El cambio real lo hace POST /auth/organization, que valida la membresía en el servidor. */
 export function SelectorEmpresa({organizations,tenant}:{organizations:Organization[];tenant:string}){
  const [abierto,setAbierto]=useState(false),[q,setQ]=useState(''),[recientes,setRecientes]=useState<string[]>([]);
  const nombre=organizations.find(o=>o.id===tenant)?.name??'Organización',idBuscar=useId(),form=useRef<HTMLFormElement>(null);
@@ -77,10 +86,11 @@ export function SelectorEmpresa({organizations,tenant}:{organizations:Organizati
  const filtradas=useMemo(()=>{const n=norm(q.trim());return n?organizations.filter(o=>norm(o.name).includes(n)):organizations;},[q,organizations]);
  const recientesVisibles=useMemo(()=>q.trim()||organizations.length<5?[]:recientes.map(id=>organizations.find(o=>o.id===id)).filter((o):o is Organization=>!!o&&o.id!==tenant).slice(0,3),[q,recientes,organizations,tenant]);
  const alEnviar=(e:FormEvent<HTMLFormElement>)=>{const quien=(e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement|null;if(quien?.value)guardarReciente(quien.value);limpiarTodo();};
- const fila=(o:Organization)=>{const actual=o.id===tenant;return <li key={o.id}>{actual?<button type="button" className="org-fila btn-ghost" aria-current="true" onClick={()=>setAbierto(false)}><span className="org-avatar" aria-hidden="true">{iniciales(o.name)}</span><span className="org-nombre">{o.name}</span><span className="org-marca"><WorkspaceIcon name="check" size={18}/><span className="sr-only">Empresa actual</span></span></button>:<button type="submit" name="tenant_id" value={o.id} className="org-fila btn-ghost"><span className="org-avatar" aria-hidden="true">{iniciales(o.name)}</span><span className="org-nombre">{o.name}</span></button>}</li>;};
- if(!varias)return <div className="empresa-chip empresa-fija" data-testid="selector-empresa"><span className="org-avatar" aria-hidden="true">{iniciales(nombre)}</span><span className="org-nombre"><span className="sr-only">Empresa: </span>{nombre}</span></div>;
+ const fila=(o:Organization)=>{const actual=o.id===tenant;return <li key={o.id}>{actual?<button type="button" className="org-fila btn-ghost" aria-current="true" onClick={()=>setAbierto(false)}><Monograma nombre={o.name} className="monograma-fila"/><span className="org-nombre">{o.name}</span><span className="org-marca"><WorkspaceIcon name="check" size={18}/><span className="sr-only">Empresa actual</span></span></button>:<button type="submit" name="tenant_id" value={o.id} className="org-fila btn-ghost"><Monograma nombre={o.name} className="monograma-fila"/><span className="org-nombre">{o.name}</span></button>}</li>;};
+ // Con una sola organización no hay nada que cambiar: la barra no lleva control (el nombre vive en la hoja «Más»).
+ if(!varias)return null;
  return <>
-  <button type="button" className="empresa-chip" data-testid="selector-empresa" aria-haspopup="dialog" aria-expanded={abierto} onClick={abrir}><span className="org-avatar" aria-hidden="true">{iniciales(nombre)}</span><span className="org-nombre"><span className="sr-only">Empresa: </span>{nombre}</span><span className="org-chevron" aria-hidden="true"><WorkspaceIcon name="chevron" size={16}/></span><span className="sr-only">Cambiar de empresa</span></button>
+  <button type="button" className="empresa-chip" data-testid="selector-empresa" aria-haspopup="dialog" aria-expanded={abierto} aria-label={'Empresa: '+nombre+'. Cambiar de empresa'} onClick={abrir}><Monograma nombre={nombre}/><span className="org-chevron" aria-hidden="true"><WorkspaceIcon name="chevron" size={14}/></span></button>
   <Drawer side="bottom" title="Cambiar de empresa" subtitle="Elige el espacio que quieres ver" open={abierto} onClose={()=>setAbierto(false)} className="hoja-empresa">
    <form ref={form} className="empresas" action="/auth/organization" method="post" onSubmit={alEnviar}>
     {organizations.length>5&&<div className="ov-search empresas-buscar"><WorkspaceIcon name="search" size={16}/><label htmlFor={idBuscar} className="sr-only">Buscar empresa</label><input id={idBuscar} type="search" inputMode="search" autoComplete="off" placeholder="Buscar empresa" value={q} onChange={e=>setQ(e.target.value)}/></div>}

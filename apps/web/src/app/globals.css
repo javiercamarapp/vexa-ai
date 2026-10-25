@@ -191,7 +191,7 @@ body:has(.workspace-shell)>.skip-link { display:none; }
 .sidebar-collapsed .workspace-sidebar { width:72px; flex-basis:72px; }
 .sidebar-collapsed .workspace-sidebar .sidebar-brand { padding:12px 15px; justify-content:center; flex-direction:column; gap:12px; }
 .sidebar-collapsed .workspace-sidebar .sidebar-logo { justify-content:center; }
-.sidebar-collapsed .workspace-sidebar .organization-switch,.sidebar-collapsed .workspace-sidebar .nav-label,.sidebar-collapsed .workspace-sidebar .nav-caption,.sidebar-collapsed .workspace-sidebar .account-copy,.sidebar-collapsed .workspace-sidebar .account-avatar { display:none; }
+.sidebar-collapsed .workspace-sidebar .organization-switch,.sidebar-collapsed .workspace-sidebar .nav-label,.sidebar-collapsed .workspace-sidebar .nav-caption,.sidebar-collapsed .workspace-sidebar .account-copy,.sidebar-collapsed .workspace-sidebar .monograma { display:none; }
 .sidebar-collapsed .workspace-sidebar .sidebar-navigation a { justify-content:center; min-height:40px; padding:8px; }
 .sidebar-collapsed .workspace-sidebar .nav-group summary { display:none; }
 .sidebar-collapsed .workspace-sidebar .nav-group ul { display:block; }
@@ -330,7 +330,7 @@ to { transform:none; }
 .workspace-shell .organization-controls select { width:100%; min-width:0; min-height:32px; padding:5px 24px 5px 8px; border-color:var(--ui-input); font-size:12px; border-radius:8px; }
 .workspace-shell .organization-controls button { flex:none; width:auto; min-height:32px; padding:5px 8px; border-radius:8px; color:var(--ui-secondary); background:var(--ui-surface); }
 .workspace-shell .sidebar-account { display:flex; align-items:center; gap:8px; border:1px solid var(--ui-border); margin:0; padding:8px; border-radius:12px; background:var(--ui-surface); }
-.account-avatar { width:28px; height:28px; flex:none; display:grid; place-items:center; font-weight:600; background:var(--ui-nav-active); color:var(--ui-nav-text); border-radius:50%; }
+.monograma { width:28px; height:28px; flex:none; display:grid; place-items:center; border-radius:8px; font:600 12px/1 var(--font-ui); letter-spacing:.02em; background:color-mix(in srgb,var(--ink) 7%,var(--ui-surface)); color:var(--ink); box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 12%,transparent); }
 .workspace-shell .sidebar-account .icon-button { color:var(--muted); }
 .workspace-shell .sidebar-account .icon-button:hover { color:var(--ui-danger); }
 .workspace-content :where(input:not([type=checkbox]):not([type=radio]),select,textarea) { line-height:1.5; box-shadow:0 1px 2px #11181304; min-height:36px; padding:8px 10px; font-size:13px; border-color:var(--ui-input); }

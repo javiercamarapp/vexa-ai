@@ -1,4 +1,4 @@
-/* Caparazón móvil de Rovaq: cabecera con la empresa SIEMPRE visible, barra inferior flotante de 5 destinos, hoja «Más», selector de tema y teclado.
+/* Caparazón móvil de Rovaq: cabecera con el logo de Rovaq y el selector de empresa, barra inferior flotante de 5 destinos, hoja «Más», selector de tema y teclado.
    Medidas: toda zona táctil del caparazón ≥ 44 px; texto ≥ 12 px; áreas seguras con env(safe-area-inset-*) (viewport-fit=cover en app/layout.tsx).
    Los estilos de hoja inferior (grabber, X, 90 dvh) viven en components/ui/overlay.css. */
 
@@ -18,12 +18,12 @@
 }
 
 /* ---- Empresa: chip (varias organizaciones) o nombre fijo (una) ---- */
-.org-avatar{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--ui-nav-active);color:var(--ui-nav-text);font:600 13px/1 var(--font-ui)}
+.monograma-fila{width:32px;height:32px}
 .org-nombre{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .org-chevron{flex:none;display:inline-flex;color:var(--muted)}
-.workspace-shell .empresa-chip{display:flex;align-items:center;gap:8px;max-width:100%;min-width:0;min-height:44px;padding:0 10px 0 8px;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface);color:var(--ink);font:600 14px/1.2 var(--font-ui);text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.workspace-shell .empresa-chip{display:inline-flex;align-items:center;justify-content:center;gap:2px;min-width:44px;min-height:44px;padding:0 6px 0 8px;border:0;border-radius:12px;background:transparent;color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .workspace-shell button.empresa-chip:active{background:var(--ui-soft)}
-.workspace-shell .empresa-fija{border-color:transparent;background:transparent;cursor:default;padding-left:0}
+.header-logo,.header-campana{display:none}
 .empresas{display:flex;flex-direction:column;gap:12px}
 .empresas-titulo{margin:0 0 4px;font:600 12px/1.3 var(--font-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .empresas-lista{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
@@ -37,11 +37,14 @@ body .empresas .org-marca{margin-left:auto;display:inline-flex;color:var(--ink)}
 /* ---- Celular ---- */
 @media(max-width:767px){
  .workspace-shell{--nav-alto:64px;--nav-abajo:max(10px,env(safe-area-inset-bottom));--nav-total:calc(var(--nav-alto) + var(--nav-abajo))}
- /* Cabecera: empresa a la izquierda, menú «Más» a la derecha; respeta la muesca. */
+ /* Cabecera: logo de Rovaq a la izquierda (enlace a Inicio); a la derecha empresa (monograma), avisos y menú «Más». Respeta la muesca. */
  .workspace-shell .workspace-header{position:sticky;top:0;z-index:5;box-sizing:content-box;height:56px;gap:8px;padding:env(safe-area-inset-top) max(12px,env(safe-area-inset-right)) 0 max(12px,env(safe-area-inset-left));background:color-mix(in srgb,var(--ui-surface) 92%,transparent);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px)}
- .workspace-shell .header-empresa{display:flex;flex:1 1 auto;min-width:0}
+ .workspace-shell .header-logo{display:inline-flex;align-items:center;flex:1 1 auto;min-width:0;min-height:44px;margin-right:auto;color:var(--ink);text-decoration:none;-webkit-tap-highlight-color:transparent}
+ .workspace-shell .header-empresa{display:flex;flex:none}
+ .workspace-shell .header-campana{display:flex;flex:none}
+ .workspace-shell .header-campana .notification-bell{border-radius:12px;color:var(--ink)}
  .workspace-shell .workspace-heading{display:none}
- .workspace-shell .mobile-menu-button{display:inline-flex;flex:none;margin-left:auto;border:1px solid var(--ui-border);border-radius:12px;color:var(--ink);background:var(--ui-surface)}
+ .workspace-shell .mobile-menu-button{display:inline-flex;flex:none;border:1px solid var(--ui-border);border-radius:12px;color:var(--ink);background:var(--ui-surface)}
  .workspace-shell .workspace-frame .workspace-content{padding-bottom:calc(var(--nav-total) + 24px)}
  .workspace-shell{scroll-padding-top:calc(56px + env(safe-area-inset-top))}
  #workspace-contenido{scroll-margin-top:calc(72px + env(safe-area-inset-top))}

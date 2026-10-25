@@ -21,7 +21,7 @@ export default async function PlatformLayout({children}: {children: ReactNode}) 
       <PlatformNav />
       <div className="sidebar-footer">
         <Link prefetch={false} className="workspace-platform-link" href="/"><WorkspaceIcon name="overview" />Mi organización</Link>
-        <div className="platform-account"><span className="account-avatar" aria-hidden="true">A</span><div className="account-copy"><strong>Administrador</strong><span>Acceso de plataforma</span></div></div>
+        <div className="platform-account"><span className="monograma" aria-hidden="true">AD</span><div className="account-copy"><strong>Administrador</strong><span>Acceso de plataforma</span></div></div>
         <form action="/auth/logout" method="post"><button className="platform-logout" type="submit"><WorkspaceIcon name="logout" />Cerrar sesión</button></form>
       </div>
     </aside>

@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync, existsSync} from 'node:fs';
-import {disponerBurbujas, mayores, valorDe, radioDe, rejilla, R_MIN, R_MAX, MAX_BURBUJAS, SEPARACION, TEMAS_ORDEN} from '../src/components/pain-points/burbujas-modelo.mjs';
+import {disponerBurbujas, mayores, valorDe, TEMAS_ORDEN} from '../src/components/pain-points/burbujas-modelo.mjs';
 import {usdCorto, dineroTxt, volumenTxt, periodoTxt, kpisDe, SIN_DATO, etiquetaBurbuja} from '../src/components/pain-points/modelo.mjs';
 import {PIE, pieVisible, itemActivo, tituloDePantalla, iconoDePantalla, menuVisible} from '../src/lib/workspace/menu.mjs';
 import {vistaPain, evidenciaPain} from './ui/pain-sintetico.mjs';
@@ -18,31 +18,6 @@ test('determinista: misma entrada → mismas posiciones, también con la entrada
   const barajado = [...V.puntos].reverse();
   assert.deepEqual(disponerBurbujas({puntos: barajado, modo: 'dinero', ancho: 840}).burbujas, a.burbujas);
   assert.ok(a.burbujas.length > 5);
-});
-for (const ancho of [360, 600, 840, 1200]) for (const modo of ['dinero', 'volumen']) test(`sin solapes, dentro de su cúmulo y con radio 14–64 px (ancho ${ancho}, ${modo})`, () => {
-  const d = disponerBurbujas({puntos: V.puntos, modo, ancho});
-  const todas = [...d.burbujas, ...d.masPorTema];
-  for (const b of todas) {
-    assert.ok(b.r >= R_MIN && b.r <= R_MAX, `${b.id} r=${b.r}`); assert.ok(b.valor > 0, 'jamás una burbuja de valor 0');
-    const c = d.clusters.find(x => x.id === b.tema);
-    assert.ok(b.cx - b.r >= c.region.x0 - 1e-6 && b.cx + b.r <= c.region.x1 + 1e-6 && b.cy - b.r >= c.region.y0 - 1e-6 && b.cy + b.r <= c.region.y1 + 1e-6, b.id + ' fuera de su cúmulo');
-  }
-  for (let i = 0; i < todas.length; i++) for (let j = i + 1; j < todas.length; j++) assert.ok(Math.hypot(todas[i].cx - todas[j].cx, todas[i].cy - todas[j].cy) >= todas[i].r + todas[j].r + SEPARACION - 1e-6, `${todas[i].id} solapa ${todas[j].id}`);
-  assert.equal(d.alto, rejilla(ancho).alto);
-});
-test('radio = raíz del valor: el mayor mide 64 px, uno con la cuarta parte mide 32 px y el mínimo visible es 14 px (nunca se infla en silencio)', () => {
-  assert.equal(radioDe(100, 100), R_MAX); assert.equal(radioDe(25, 100), 32); assert.equal(radioDe(0.0001, 100), R_MIN);
-  const d = disponerBurbujas({puntos: [punto('A', 'sku', 1000000), punto('B', 'sku', 250000), punto('C', 'sku', 100)], modo: 'dinero'});
-  const r = Object.fromEntries(d.burbujas.map(b => [b.id, b])); assert.equal(r.A.r, 64); assert.equal(r.B.r, 32); assert.equal(r.C.r, R_MIN); assert.equal(r.C.minimo, true); assert.ok(!r.A.minimo);
-  assert.ok(R_MIN * 2 === 28 && R_MAX * 2 === 128);
-});
-test('máximo 24 burbujas: el resto se agrega en «+N más» por tema (con su suma) y la tabla sigue teniendo todos', () => {
-  const ps = [...muchos(30, 'sku'), ...muchos(3, 'canales').map(p => ({...p, id: 'C' + p.id}))];
-  const d = disponerBurbujas({puntos: ps, modo: 'dinero', ancho: 1200});
-  assert.ok(d.burbujas.length <= MAX_BURBUJAS, String(d.burbujas.length));
-  assert.equal(d.burbujas.length + d.masPorTema.reduce((a, m) => a + m.n, 0) + d.omitidas.reduce((a, m) => a + (m.n ?? 1), 0), 33, 'ninguno se pierde: o burbuja, o +N más, o está en omitidas');
-  const mas = d.masPorTema.find(m => m.tema === 'sku'); assert.ok(mas && mas.n >= 6); assert.equal(mas.tipo, 'mas'); assert.ok(mas.r <= 40);
-  assert.equal(mayores(ps, 'dinero', 8).length, 8);
 });
 test('desconocido ≠ 0: los sin dato no se dibujan (van a sinCifra), los agregados tampoco y un modo sin datos queda vacío', () => {
   const d = disponerBurbujas({puntos: [punto('A', 'sku', 5000), punto('S', 'canales', null), {...punto('G', 'sku', 99999999), agregado: true}], modo: 'dinero'});

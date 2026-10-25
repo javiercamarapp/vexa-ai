@@ -70,7 +70,8 @@ export function LecturaIA({puntoId}:{puntoId:string}){
  const d=post??e.data;
  if(!d)return <ErrorState compact title="Lectura de IA no disponible ahora" body="No significa que no haya análisis guardados: reintenta en un momento." onRetry={()=>e.reload()}/>;
  const p=d.presupuesto,corrida=d.actual??d.ultima,esUltima=!d.actual&&Boolean(d.ultima);
- const puede=d.puedeAnalizar!==false&&d.habilitada&&!d.topeAlcanzado;
+ const alDia=!esUltima&&corrida?.estado==='completo';
+ const puede=d.puedeAnalizar!==false&&d.habilitada&&!d.topeAlcanzado&&!alDia;
  const r=d.resultado;
  return <div className="pp-ia">
   <div className="pp-ia-cab">
@@ -78,7 +79,7 @@ export function LecturaIA({puntoId}:{puntoId:string}){
     <KindBadge kind="inferred"/>
     <span className="pp-ia-gasto" data-tope={d.topeAlcanzado||undefined}>{usdIA(p.usedMicro)} de {usdIA(p.topeMicro)} <small>usados esta semana · quedan {usdIA(p.remainingMicro)}</small></span>
    </div>
-   <Button variant="primary" size="sm" loading={corriendo} disabled={!puede} onClick={analizar} title={!d.habilitada?'El análisis de IA está apagado en este entorno':d.topeAlcanzado?'Tope semanal de IA alcanzado':undefined}>{corrida&&!esUltima?'Completar análisis':'Analizar'}</Button>
+   <Button variant="primary" size="sm" loading={corriendo} disabled={!puede} onClick={analizar} title={!d.habilitada?'El análisis de IA está apagado en este entorno':d.topeAlcanzado?'Tope semanal de IA alcanzado':alDia?'Las tres lecturas de este corte ya están guardadas':undefined}>{alDia?'Análisis al día':corrida&&!esUltima?'Completar análisis':'Analizar'}</Button>
   </div>
   {!d.habilitada&&<Notice tone="info" title="Análisis de IA apagado">Aquí solo se muestran lecturas ya guardadas. Encenderlo es una decisión de costo: tope de {usdIA(p.topeMicro)} por semana y organización.</Notice>}
   {d.topeAlcanzado&&<Notice tone="warn" title="Tope semanal de IA alcanzado">Se usaron {usdIA(p.usedMicro)} de {usdIA(p.topeMicro)}. {corrida?'Se muestra la última lectura guardada.':'Todavía no hay una lectura guardada de este punto.'} El tope se renueva el lunes (UTC).</Notice>}

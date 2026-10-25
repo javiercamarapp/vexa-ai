@@ -26,7 +26,7 @@ function corrida(id, v, actual = true) {
   const consenso = v === 'desacuerdo' ? {estado: 'desacuerdo', tono: 'bad', severidad: null, rango: ['baja', 'alta'], confianza: 0.33, completo: true, motivo: 'Las lecturas se contradicen: trátala como una hipótesis, no como una conclusión.', discrepancias: [{rol: 'causa_raiz', severidad: 'alta'}, {rol: 'impacto', severidad: 'baja'}, {rol: 'accion', severidad: 'media'}]}
     : v === 'completo' ? {estado: 'acuerdo', tono: 'ok', severidad: 'alta', rango: null, confianza: 0.66, completo: true, motivo: 'Las lecturas coinciden en la severidad.', discrepancias: []}
     : {estado: 'acuerdo_parcial', tono: 'warn', severidad: null, rango: ['media', 'alta'], confianza: 0.5, completo: true, motivo: 'Las lecturas difieren por un nivel de severidad.', discrepancias: [{rol: 'causa_raiz', severidad: 'alta'}, {rol: 'impacto', severidad: 'alta'}, {rol: 'accion', severidad: 'media'}]};
-  return {id: 'r1', puntoId: id, corte: actual ? '2026-10-20T00:00:00.000Z' : '2026-10-13T00:00:00.000Z', version: 'pp-ia-v1', estado: 'completo', consenso, confianza: consenso.confianza, creadoEn: '2026-10-21T10:00:00.000Z', actualizadoEn: '2026-10-21T10:00:00.000Z', lecturas, esActual: actual};
+  return {id: 'r1', puntoId: id, corte: actual ? '2026-10-20T00:00:00.000Z' : '2026-10-13T00:00:00.000Z', version: 'pp-ia-v1', estado: v === 'parcial' && actual ? 'parcial' : 'completo', consenso, confianza: consenso.confianza, creadoEn: '2026-10-21T10:00:00.000Z', actualizadoEn: '2026-10-21T10:00:00.000Z', lecturas: v === 'parcial' && actual ? lecturas.slice(0, 2) : lecturas, esActual: actual};
 }
 function respondIa(id, method, v) {
   if (v === 'error') return [503, {error: {code: 'pain_points_ia_unavailable'}}];

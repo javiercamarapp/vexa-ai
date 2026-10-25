@@ -26,7 +26,7 @@ function medir() {
   for (const g of ia.querySelectorAll('.pp-ia-cab, .pp-ia-estado, .pp-ia-card header, .pp-ia-consenso-cab')) { const k = [...g.children].filter(vis); for (let i = 0; i < k.length; i++) for (let j = i + 1; j < k.length; j++) { const a = k[i].getBoundingClientRect(), b = k[j].getBoundingClientRect(); if (a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1) out.solapes.push(desc(k[i]) + ' x ' + desc(k[j])); } }
   for (const b of ia.querySelectorAll('button, a')) if (vis(b) && !(b.innerText || b.getAttribute('aria-label') || b.title || '').trim()) out.sinNombre.push(desc(b));
   for (const b of d.querySelectorAll('button')) if (/actualizar/i.test(b.innerText || '')) out.actualizar.push(desc(b));
-  const a = [...ia.querySelectorAll('button')].find(b => /analizar|completar/i.test(b.innerText)); out.analizar = a ? {deshabilitado: a.disabled, texto: a.innerText.trim()} : null;
+  const a = [...ia.querySelectorAll('button')].find(b => /analizar|completar|an[aá]lisis al d[ií]a/i.test(b.innerText)); out.analizar = a ? {deshabilitado: a.disabled, texto: a.innerText.trim()} : null;
   return out;
 }
 
@@ -47,7 +47,8 @@ for (const variante of variantes) for (const theme of themes) for (const w of si
     }
     if (capDir) { await page.evaluate(() => document.querySelector('.pp-ia').scrollIntoView({block: 'start'})); await page.waitForTimeout(150); await page.screenshot({path: join(capDir, `ia-${variante}-${theme}-${w}.png`)}); }
   } catch (e) { m = {error: String(e.message).slice(0, 120), desborde: [], pequeno: [], solapes: [], sinNombre: [], actualizar: []}; }
-  const nAnalizar = variante === 'apagado' || variante === 'tope' ? (m.analizar && !m.analizar.deshabilitado ? 1 : m.analizar ? 0 : 1) : (m.analizar && m.analizar.deshabilitado ? 1 : 0);
+  const apagable = ['apagado', 'tope', 'completo', 'desacuerdo'].includes(variante); // sin permiso de gasto o ya al día: «Analizar» debe estar deshabilitado
+  const nAnalizar = apagable ? (m.analizar && !m.analizar.deshabilitado ? 1 : m.analizar ? 0 : 1) : (m.analizar && m.analizar.deshabilitado ? 1 : 0);
   const n = (m.error ? 1 : 0) + (m.sinDrawer ? 1 : 0) + (m.sinIA ? 1 : 0) + m.desborde.length + m.pequeno.length + m.solapes.length + m.sinNombre.length + m.actualizar.length + nAnalizar + ((m.tras?.desborde?.length ?? 0) + (m.tras?.pequeno?.length ?? 0) + (m.tras?.solapes?.length ?? 0));
   fallas += n; filas.push({variante, tema: theme, ancho: w, desborde: m.desborde.length, pequeno: m.pequeno.length, solapes: m.solapes.length, sinNombre: m.sinNombre.length, actualizar: m.actualizar.length, analizar: JSON.stringify(m.analizar), error: m.error ?? ''});
   if (n && process.argv.includes('--detalle')) console.log('--', variante, theme, w, JSON.stringify({d: m.desborde.slice(0, 4), p: m.pequeno.slice(0, 4), s: m.solapes.slice(0, 3), a: m.analizar, e: m.error, t: m.tras}));

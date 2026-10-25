@@ -32,7 +32,6 @@
 .pp-leyenda .pp-l-i{border-style:dashed}
 .pp-leyenda .pp-l-g{border-style:dotted}
 .pp-leyenda .pp-l-e{background:repeating-linear-gradient(45deg,var(--soft-8) 0 3px,transparent 3px 6px)}
-.pp-sin{margin:8px 0 0;font-size:12px;color:var(--muted)}
 .pp-corte{font-size:12px;color:var(--muted);white-space:nowrap}
 .pp-tabla-wrap{overflow-x:auto;min-width:0}
 .pp-tabla{inline-size:100%;border-collapse:collapse;font-size:13px}

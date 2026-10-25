@@ -16,7 +16,7 @@ import {useJson} from '../ui/use-json';
 import {Fila} from '../dinero/partes';
 import {Burbujas} from './burbujas';
 import {Detalle} from './detalle';
-import {disponerBurbujas,mayores} from './burbujas-modelo.mjs';
+import {mayores} from './burbujas-modelo.mjs';
 import {CLASE_KIND,kpisDe,num,valorMostrado} from './modelo.mjs';
 import '../dinero/dinero.css';
 import './pain-points.css';
@@ -30,7 +30,6 @@ export function PainPointsPantalla({organization}:{organization?:string}){
  const visibles=useMemo(()=>tema==='todos'?null:new Set([tema]),[tema]);
  const filtrados=useMemo(()=>v?v.puntos.filter(p=>!visibles||visibles.has(p.tema)):[],[v,visibles]);
  const top=useMemo(()=>mayores(filtrados,modo,8),[filtrados,modo]);
- const sinCifra=useMemo(()=>v?disponerBurbujas({puntos:filtrados,modo,ancho:840}).sinCifra:[],[v,filtrados,modo]);
  const punto=v&&sel?v.puntos.find(p=>p.id===sel)??null:null;
  if(!v&&f.busy)return <RovaqCargando mensaje=""/>;
  const temaDe=(id:string)=>v!.temas.find(t=>t.id===id)!;
@@ -47,9 +46,8 @@ export function PainPointsPantalla({organization}:{organization?:string}){
    <FilterBar label="Filtros de puntos de dolor"><SegmentedControl size="sm" label="Tema" value={tema} onChange={setTema} options={[{value:'todos',label:'Todos'},...v.temas.map(t=>({value:t.id,label:t.nombre}))]}/><FilterSpacer/><span className="pp-corte">Corte {new Date(v.generatedAt).toLocaleDateString('es-MX',{day:'numeric',month:'short'})}</span></FilterBar>
    <KpiStrip items={kpis} label="Indicadores de puntos de dolor"/>
    <Fila split="8-4">
-    <Card title="Mapa de burbujas" description="Un cúmulo por tema · el tamaño es el área" actions={<><SegmentedControl size="sm" label="Medida del tamaño" value={modo} onChange={setModo} options={[{value:'dinero',label:'Dinero'},{value:'volumen',label:'Volumen'}]}/><KindBadge kind="observed"/></>}>
+    <Card title="Mapa de burbujas" description="Cada burbuja es un punto de dolor" actions={<><SegmentedControl size="sm" label="Medida del tamaño" value={modo} onChange={setModo} options={[{value:'dinero',label:'Dinero'},{value:'volumen',label:'Volumen'}]}/><KindBadge kind="observed"/></>}>
      <Burbujas vista={v} modo={modo} seleccion={sel} onElegir={setSel} visibles={visibles}/>
-     {sinCifra.length>0&&<p className="pp-sin" aria-label="Puntos sin cifra"><b>{sinCifra.length} sin cifra en esta medida (no es 0):</b> {sinCifra.map((p,i)=><span key={p.id}>{i>0?' · ':' '}<button type="button" className="row-link-inline" onClick={()=>setSel(p.id)}>{p.nombre}</button></span>)}</p>}
     </Card>
     <Card title="Los 8 mayores" description={modo==='dinero'?'USD bruto, de mayor a menor':'Volumen, de mayor a menor'} actions={<KindBadge kind="observed"/>}>
      <div className="pp-tabla-wrap"><table className="pp-tabla"><caption className="sr-only">Los 8 puntos de dolor mayores. Es la misma información del mapa.</caption>

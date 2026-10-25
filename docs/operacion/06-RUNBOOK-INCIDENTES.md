@@ -32,7 +32,7 @@ El adaptador (`packages/platform/src/db.ts`) mapea **cualquier** error de base n
 `06-disco-y-tamanos.sql`: tamano total, 20 mayores relaciones, `n_dead_tup` (candidatos a vacuum), bytes de Storage. Umbrales sugeridos (propios, no del proveedor): avisar a 70 % del disco de la base [NV: tamano contratado]; adjuntos: dry-run exige ≥ 6 GiB libres locales. En la Mac: `df -h /`; el swap de workflows paralelos puede llenar el disco; max 2 cargas pesadas.
 
 ## 6. Despliegues y reversa de la app
-`vexa-ai` no tiene Git y su Ignored Build Step es `exit 0`; los despliegues son por CLI y **cada uno es un build facturable**: contar y reportar. Reversa de frontend = promover un despliegue anterior (Vercel «rollback»; no revierte el esquema) → ver 05 para el esquema. Comprobar SHA servido (`/api/health/version`) tras cualquier cambio.
+`rovaq-ai` (antes `vexa-ai`) no tiene Git y su Ignored Build Step es `exit 0`; los despliegues son por CLI y **cada uno es un build facturable**: contar y reportar. Reversa de frontend = promover un despliegue anterior (Vercel «rollback»; no revierte el esquema) → ver 05 para el esquema. Comprobar SHA servido (`/api/health/version`) tras cualquier cambio.
 
 ## 7. Contactos y decisiones (matriz)
 | Situacion | Decide / ejecuta |

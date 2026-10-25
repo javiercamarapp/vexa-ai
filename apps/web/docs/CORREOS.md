@@ -11,7 +11,7 @@ Estado: código y pruebas listos en la rama `correos-enterprise`. **Nada de esto
 | Asuntos, `otp_expiry` y rutas de plantilla | `supabase/config.toml` (se genera con `--local-config`) |
 | Notificaciones de la app (digest, bienvenida, invitación, brief, acción asignada, conexión, importación) | `packages/notifications/email-template.mjs` |
 | Reporte semanal (función pura, sin cron ni envío) | `packages/notifications/email-weekly.mjs` -> `renderWeeklyReport()` |
-| Logos PNG claro y oscuro | `apps/web/public/email/` (URL pública `https://vexa-ai.vercel.app/email/...`) |
+| Logos PNG claro y oscuro | `apps/web/public/email/` (URL pública `https://rovaq-ai.vercel.app/email/...`) |
 | Vista previa local | `node scripts/correos/previsualizar.mjs [carpeta]` |
 | Pruebas | `cd packages/notifications && npm test`, `node --test support/F08-auth-brand/templates.test.mjs` |
 
@@ -32,7 +32,7 @@ Todo vive en un solo objeto, `IDENTITY` de `email-system.mjs`:
 - `supportEmail` / `securityEmail`: hoy `soporte@rovaq.ai` y `seguridad@rovaq.ai` son marcadores. `rovaq.ai` no tiene MX; hay que crear los buzones.
 - `privacyUrl`: `null`. No existe una página de aviso de privacidad; mientras sea `null` el pie la omite. Los correos que no son de seguridad la necesitan (LFPDPPP).
 - `revokeUrl`: `null`. No existe un endpoint para revocar un cambio de seguridad, así que los avisos dicen «escríbenos a seguridad@...» y no llevan botón. Al poner la URL, el botón y la redacción del documento aparecen solos.
-- `assetOrigin`: `https://vexa-ai.vercel.app`. Los PNG de `public/email/` solo se verán cuando se despliegue esta rama (1 build de Vercel).
+- `assetOrigin`: `https://rovaq-ai.vercel.app`. Los PNG de `public/email/` solo se verán cuando se despliegue esta rama (1 build de Vercel).
 - Vigencia: los textos dicen «1 hora» para enlaces y código (`VIGENCIA`), igual que `otp_expiry = 3600` en `config.toml`. Supabase usa una sola vigencia para enlaces y códigos; el «10 minutos» del documento de diseño no era cierto con esa configuración. Si se cambia el valor en el panel, cambiar también `VIGENCIA` y `otp_expiry` (una prueba lo vigila).
 - Roles de la invitación (Propietario, Analista, Operador, Lector): textos a validar contra la matriz real de permisos (`ROLES` en `email-template.mjs`).
 
@@ -78,7 +78,7 @@ Responsable Javier, salvo lectura con `dig`:
 6. Supabase -> Rate Limits: correos por hora a 300 o más; revisar OTP 360 por hora.
 7. Supabase -> URL Configuration: Site URL de producción y redirects exactos (`/auth/callback`, `/auth/email/complete`, `/auth/invitations/*`).
 8. Aplicar las 13 plantillas (sección anterior).
-9. Vercel (`vexa-ai`), variables secretas: `VEXA_EMAIL_MODE=resend`, `RESEND_API_KEY`, `VEXA_EMAIL_FROM=avisos@avisos.rovaq.ai`, `VEXA_EMAIL_REPLY_TO=soporte@rovaq.ai`, `VEXA_APP_ORIGIN`, `RESEND_WEBHOOK_SECRET`, `VEXA_EMAIL_DATABASE_URL` (+ CA). `vercel env add` de secretos suele bloquearse en sesión: darlo como script o hacerlo en el panel.
+9. Vercel (proyecto `rovaq-ai`, antes `vexa-ai`), variables secretas: `VEXA_EMAIL_MODE=resend`, `RESEND_API_KEY`, `VEXA_EMAIL_FROM=avisos@avisos.rovaq.ai`, `VEXA_EMAIL_REPLY_TO=soporte@rovaq.ai`, `VEXA_APP_ORIGIN`, `RESEND_WEBHOOK_SECRET`, `VEXA_EMAIL_DATABASE_URL` (+ CA). `vercel env add` de secretos suele bloquearse en sesión: darlo como script o hacerlo en el panel.
 10. Resend -> Webhooks: `https://<dominio>/api/webhooks/email` con delivered, bounced, complained, delivery_delayed, suppressed, failed; copiar el secreto a `RESEND_WEBHOOK_SECRET`. Los correos de Auth enviados por el SMTP de Resend llegan a este webhook como huérfanos, caso ya soportado.
 11. Pruebas con buzones reales: Gmail, Outlook/Hotmail y el de Responsable A; revisar bandeja (no spam) y `Authentication-Results: spf=pass dkim=pass dmarc=pass`; mail-tester >= 9/10; Litmus o bandejas reales en claro y oscuro (Gmail iOS/Android, Outlook Windows). El VML y el modo oscuro de Gmail y Outlook no se han verificado en clientes reales.
 

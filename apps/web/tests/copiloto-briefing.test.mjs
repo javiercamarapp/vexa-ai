@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {buildCfoReport, exposureFixture, FIXTURE_WATERMARK, ledgerMonthlyFixture} from '../../../packages/cfo-copilot/src/index.mjs';
-import {briefingCfo, monedaElegida, serieIngresos, mesLargo} from '../src/components/copiloto/briefing-cfo.mjs';
+import {briefingCfo, monedaElegida, serieIngresos, mesLargo, parametrosConMoneda} from '../src/components/copiloto/briefing-cfo.mjs';
 
 const report = buildCfoReport(ledgerMonthlyFixture(), {watermark: FIXTURE_WATERMARK, now: new Date('2026-10-20T14:00:00Z'), exposure: exposureFixture({})});
 test('titular: un mes completo, una moneda, clase Observado y fuente; el mes en curso se dice en una línea', () => {
@@ -41,3 +41,15 @@ test('alertas activas excluyen las informativas y se ordenan por severidad', () 
   assert.equal(b.alertasActivas, report.alerts.filter(a => a.severity !== 'info').length); assert.equal(b.alertas[0].severity, 'alta'); assert.ok(b.alertas.length <= 3);
 });
 test('mesLargo', () => { assert.equal(mesLargo('2026-09'), 'septiembre de 2026'); assert.equal(mesLargo(null), ''); });
+
+test('cambiar la moneda descarta el corte (snapshot_id/scope_hash) del alcance anterior y conserva el resto', () => {
+  const q = new URLSearchParams(parametrosConMoneda('date_start=2026-08-01&date_end=2026-09-21&currency=USD&basis=marketplace_line_price&snapshot_id=f3937770-c59a&scope_hash=5220&date_basis=order', 'CAD'));
+  assert.equal(q.get('currency'), 'CAD');
+  assert.equal(q.get('snapshot_id'), null); assert.equal(q.get('scope_hash'), null);
+  assert.equal(q.get('date_start'), '2026-08-01'); assert.equal(q.get('date_end'), '2026-09-21'); assert.equal(q.get('basis'), 'marketplace_line_price'); assert.equal(q.get('date_basis'), 'order');
+});
+test('parametrosConMoneda: sin parámetros previos solo fija la moneda; vuelve a USD sin corte', () => {
+  assert.equal(parametrosConMoneda('', 'USD'), 'currency=USD');
+  assert.equal(parametrosConMoneda(undefined, 'MXN'), 'currency=MXN');
+  assert.equal(parametrosConMoneda('currency=CAD&snapshot_id=a&scope_hash=b', 'USD'), 'currency=USD');
+});

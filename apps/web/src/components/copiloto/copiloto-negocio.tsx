@@ -21,7 +21,7 @@ import {AreaRestringida} from './area-restringida';
 import {AccionesCfo, BriefingCfoUna} from './briefing-cfo-una';
 import {Ctl} from '../agente/ctl';
 import {ContenedorErrores} from './contenedor-errores';
-import {briefingCfo, monedaElegida} from './briefing-cfo.mjs';
+import {briefingCfo, monedaElegida, parametrosConMoneda} from './briefing-cfo.mjs';
 import {adaptarRespuestaCfo, cuerpoConsultaCfo, esFueraDeCfo, esPreguntaDeCfo} from './adaptador-cfo.mjs';
 import {PreguntasSugeridas} from './preguntas-sugeridas';
 import './copiloto.css';
@@ -73,7 +73,7 @@ export function CopilotoNegocio({modo: clave, organization, roleOverride, query 
 
   const informe = rep.data, moneda = informe?.status === 'ok' ? monedaElegida(informe.report, sp?.get('currency')) : null;
   const brief = useMemo(() => informe?.status === 'ok' && moneda ? briefingCfo(informe.report, moneda) : null, [informe, moneda]);
-  const cambiaMoneda = useCallback((m: string) => { const p = new URLSearchParams(sp?.toString() ?? ''); p.set('currency', m); router.replace(pathname + '?' + p.toString(), {scroll: false}); }, [sp, router, pathname]);
+  const cambiaMoneda = useCallback((m: string) => { router.replace(pathname + '?' + parametrosConMoneda(sp?.toString(), m), {scroll: false}); }, [sp, router, pathname]);
   useEffect(() => { // Escape vuelve al chat desde el informe abierto (sin pisar el Escape de un menú o diálogo abierto)
     if (!verInforme) return;
     const alEscape = (e: KeyboardEvent) => { if (e.key === 'Escape' && !e.defaultPrevented && !document.querySelector('dialog[open], .popover-panel')) setVerInforme(false); };

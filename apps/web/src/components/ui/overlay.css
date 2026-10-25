@@ -185,3 +185,13 @@ body :is(dialog.drawer,dialog.modal) .overlay-body details{padding:8px 12px;bord
 body :is(dialog.drawer,dialog.modal) .overlay-body details>summary{min-height:24px;font:600 13px/1.4 var(--font-ui);cursor:pointer}
 body :is(dialog.drawer,dialog.modal) .overlay-body details[open]>summary{margin-bottom:8px}
 body :is(dialog.drawer,dialog.modal) .overlay-body :is(ul,ol):not(.ov-rows):not(.ov-list):not(.ov-menu):not(.ov-steps):not(.ui-chiplist):not(.filter-chips){margin:0}
+
+@media(max-width:819px){
+/* Hojas inferiores: cabecera compacta (título 15, X visual de 32 px con zona táctil de 44 px por ::after) */
+body dialog.drawer:not([data-side=left]) .sheet-grabber{padding:6px 0 0}
+body dialog.drawer:not([data-side=left]) .overlay-head{padding:2px 14px 8px}
+body dialog.drawer:not([data-side=left]) .overlay-head .overlay-close{position:relative;width:32px;height:32px;min-height:32px;margin:-2px -4px -2px 0;border-radius:8px}
+body dialog.drawer:not([data-side=left]) .overlay-head .overlay-close::after{content:"";position:absolute;inset:-7px}
+body dialog.drawer:not([data-side=left]) .overlay-body{padding:12px 14px;gap:10px}
+body dialog.drawer:not([data-side=left]) .overlay-foot{padding:8px 14px;padding-bottom:calc(8px + env(safe-area-inset-bottom));gap:6px}
+}

@@ -3,6 +3,7 @@ import {RovaqLogo} from "../components/rovaq-logo";
 import {ArranqueLimpio} from "../components/arranque-limpio";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import {SITE,siteUrl} from "../lib/site.mjs";
 import "./fonts.css";
 import "./globals.css";
 import "./task-layout.css";
@@ -11,9 +12,20 @@ import "../components/ui/ui.css";
 import "../components/ui/overlay.css";
 
 export const metadata: Metadata = {
-  title: {default:"Rovaq AI",template:"%s · Rovaq AI"},
-  description: "Rovaq AI · Decisiones con evidencia para tu equipo.",
-  robots: { index: false, follow: false },
+  metadataBase: new URL(siteUrl()),
+  title: {default:SITE.titulo,template:"%s · Rovaq AI"},
+  description: SITE.descripcion,
+  applicationName: SITE.nombre,
+  keywords: [...SITE.palabrasClave],
+  authors: [{name:SITE.nombre}],
+  creator: SITE.nombre,
+  publisher: SITE.nombre,
+  category: SITE.categoria,
+  alternates: {canonical:"/"},
+  // Por defecto las páginas públicas se indexan; el espacio de trabajo, /platform, /auth, /seguridad y /sin-acceso declaran noindex en su propio segmento y por cabecera X-Robots-Tag (next.config.ts).
+  robots: {index:true,follow:true,googleBot:{index:true,follow:true,"max-image-preview":"large","max-snippet":-1}},
+  openGraph: {type:"website",locale:SITE.locale,siteName:SITE.nombre,title:SITE.titulo,description:SITE.descripcion,url:"/",images:[{url:"/opengraph-image",width:SITE.og.ancho,height:SITE.og.alto,alt:SITE.og.alt,type:"image/png"}]},
+  twitter: {card:"summary_large_image",title:SITE.titulo,description:SITE.descripcion,images:[{url:"/twitter-image",width:SITE.og.ancho,height:SITE.og.alto,alt:SITE.og.alt}]},
   // Kit de logotipo de Rovaq: favicon completo + manifiesto (public/). El ícono SVG ya trae el fondo negro de marca, así que sirve igual en pestañas claras y oscuras.
   icons: {
     icon: [
@@ -22,16 +34,19 @@ export const metadata: Metadata = {
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/favicon-48x48.png", sizes: "48x48", type: "image/png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
+    shortcut: [{ url: "/favicon.ico" }],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/site.webmanifest",
   appleWebApp: { capable: true, title: "Rovaq", statusBarStyle: "default" },
-  formatDetection: { telephone: false },
+  formatDetection: { telephone: false, email: false, address: false },
 };
 // viewport-fit=cover habilita env(safe-area-inset-*); «resizes-content» hace que el teclado encoja el viewport en Android (iOS se maneja con visualViewport).
 export const viewport: Viewport = {
-  width: "device-width", initialScale: 1, viewportFit: "cover", interactiveWidget: "resizes-content",
+  width: "device-width", initialScale: 1, viewportFit: "cover", colorScheme: "light dark", interactiveWidget: "resizes-content",
   themeColor: [{ media: "(prefers-color-scheme: light)", color: "#ffffff" }, { media: "(prefers-color-scheme: dark)", color: "#0e0e10" }],
 };
 // Aplica el tema guardado ANTES del primer pintado (sin destello claro->oscuro). Solo con preferencia guardada; fuera de /login y /auth.

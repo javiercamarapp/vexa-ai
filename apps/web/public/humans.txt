@@ -1,0 +1,8 @@
+/* EQUIPO */
+Producto: Rovaq AI (antes Vexa AI)
+Contacto: javiercamaraportepetit@gmail.com
+Idioma: es-MX
+
+/* SITIO */
+Descripcion: inteligencia de ingresos para negocios que venden por marketplaces.
+Estandares: HTML5, CSS3, Next.js, React

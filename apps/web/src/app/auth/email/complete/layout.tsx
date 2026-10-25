@@ -1,3 +1,4 @@
 import type {ReactNode} from 'react';
-export const metadata={title:'Confirmar correo'};
+import {ROBOTS_PRIVADO} from '../../../../lib/site.mjs';
+export const metadata={title:'Confirmar correo',robots:ROBOTS_PRIVADO};
 export default function Layout({children}:{children:ReactNode}){return children;}

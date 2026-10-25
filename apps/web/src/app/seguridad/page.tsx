@@ -6,7 +6,8 @@ import {MfaPanel} from '../../components/platform/mfa-panel';
 import {LinkButton} from '../../components/ui/button';
 import {Notice} from '../../components/ui/notice';
 import './seguridad.css';
-export const metadata = {title: 'Seguridad de la cuenta'};
+import {ROBOTS_PRIVADO} from '../../lib/site.mjs';
+export const metadata = {title: 'Seguridad de la cuenta', robots: ROBOTS_PRIVADO};
 export const dynamic = 'force-dynamic';
 /** Verificación en dos pasos (TOTP) de los administradores de plataforma. Fuera del layout de /platform para no bloquearse a sí misma cuando la exigencia esté encendida. */
 const FIXTURES = process.env.NODE_ENV === 'development' && process.env.VEXA_UI_FIXTURES === '1';

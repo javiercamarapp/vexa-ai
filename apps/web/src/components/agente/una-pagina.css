@@ -11,11 +11,11 @@
 
 /* ---- Clase base .ctl: botón, enlace o chip compacto. Variantes: .ctl-soft (primario suave), .ctl-ghost, .ctl-solid, .ctl-pill, .ctl-icon, .ctl-chip, .ctl-q, .ctl-tema, .ctl-solo ---- */
 :root .ctl:not(#u){position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;gap:6px;box-sizing:border-box;width:auto;height:var(--ctl-h);min-height:var(--ctl-h);min-width:var(--ctl-h);max-width:100%;margin-block:0;padding:0 var(--ctl-px);border:1px solid var(--ctl-line);border-radius:var(--ctl-r);background:var(--ui-surface);color:var(--ink);font:600 var(--ctl-fs)/1 var(--font-ui);letter-spacing:0;text-align:center;text-decoration:none;white-space:nowrap;cursor:pointer;box-shadow:none;-webkit-tap-highlight-color:transparent;transition:background-color .15s ease,border-color .15s ease,color .15s ease,box-shadow .15s ease}
-:root .ctl:not(#u)::after{content:'';position:absolute;left:0;right:0;top:calc((var(--ctl-h) - var(--ctl-hit)) / 2);bottom:calc((var(--ctl-h) - var(--ctl-hit)) / 2)}
+:root .ctl:not(#u)::after{content:'';position:absolute;left:0;right:0;top:calc((var(--ctl-h) - var(--ctl-hit)) / 2 - 1px);bottom:calc((var(--ctl-h) - var(--ctl-hit)) / 2 - 1px)}
 :root .ctl:not(#u) svg{flex:none;width:var(--ctl-icon);height:var(--ctl-icon)}
 :root .ctl:not(#u) .ctl-label{min-width:0;overflow:hidden;text-overflow:ellipsis}
 :root .ctl-icon:not(#u){width:var(--ctl-h);padding:0}
-:root .ctl-icon:not(#u)::after{left:calc((var(--ctl-h) - var(--ctl-hit)) / 2);right:calc((var(--ctl-h) - var(--ctl-hit)) / 2)}
+:root .ctl-icon:not(#u)::after{left:calc((var(--ctl-h) - var(--ctl-hit)) / 2 - 1px);right:calc((var(--ctl-h) - var(--ctl-hit)) / 2 - 1px)}
 :root .ctl-pill:not(#u){border-radius:999px}
 :root .ctl:not(#u):hover:not(:disabled):not([aria-disabled=true]){background:var(--ui-soft);border-color:var(--ui-input);color:var(--ink)}
 :root .ctl:not(#u):active:not(:disabled){background:var(--ui-soft)}
@@ -29,14 +29,15 @@
 :root .ctl-solid:not(#u):hover:not(:disabled):not([aria-disabled=true]){background:var(--ui-action-hover);border-color:var(--ui-action-hover);color:var(--ui-action-ink)}
 :root .ctl-solid:not(#u):disabled{opacity:1;background:var(--ui-soft);border-color:var(--ui-border);color:var(--muted)}
 :root .ctl-chip:not(#u){font-weight:500;color:var(--ink)}
-:root .ctl-q:not(#u){justify-content:flex-start;font-weight:500;text-align:left;flex:0 1 auto}
+:root .ctl-q:not(#u){justify-content:flex-start;font-weight:500;text-align:left;flex:0 1 auto;height:auto;white-space:normal;line-height:16px;padding-block:calc((var(--ctl-h) - 18px) / 2)}
+:root .ctl-q:not(#u) .ctl-label{overflow:visible;text-overflow:clip}
 :root .ctl-tema:not(#u){gap:8px;font-weight:600;color:var(--muted)}
 :root .ctl-tema:not(#u) i{flex:none;inline-size:8px;block-size:8px;border-radius:50%;background:var(--cat)}
 :root .ctl-tema:not(#u)[aria-pressed=true]{color:var(--ink);border-color:var(--cat);background:color-mix(in srgb,var(--cat) 10%,var(--ui-surface))}
 @media(max-width:767px){
  :root .ctl-solo:not(#u){width:var(--ctl-h);padding:0}
- :root .ctl-solo:not(#u)::after{left:calc((var(--ctl-h) - var(--ctl-hit)) / 2);right:calc((var(--ctl-h) - var(--ctl-hit)) / 2)}
- :root .ctl-solo:not(#u) .ctl-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+ :root .ctl-solo:not(#u)::after{left:calc((var(--ctl-h) - var(--ctl-hit)) / 2 - 1px);right:calc((var(--ctl-h) - var(--ctl-hit)) / 2 - 1px)}
+ :root .ctl-solo:not(#u) .ctl-label{display:none}
 }
 
 /* ---- Caparazón de una página: nada de scroll de documento; el alto lo da 100dvh menos la barra inferior, las áreas seguras y el teclado ---- */
@@ -45,16 +46,16 @@ html:has(.workspace-chat),html:has(.workspace-chat) body{height:100dvh;overflow:
 @media(min-width:768px){
  .workspace-shell.workspace-chat{height:100dvh;min-height:0;overflow:hidden;box-sizing:border-box}
  .workspace-chat .workspace-frame{display:flex;flex-direction:column;height:calc(100dvh - 32px);min-height:0;overflow:hidden}
- .workspace-chat .workspace-content{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:12px 20px 16px;overflow:hidden}
+ .workspace-chat .workspace-content{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:8px 20px 16px;overflow:hidden}
 }
 @media(max-width:767px){
  .workspace-shell.workspace-chat{height:calc(100dvh - var(--teclado,0px));min-height:0;overflow:hidden}
  .workspace-chat .workspace-frame{display:flex;flex-direction:column;height:100%;min-height:0;overflow:hidden}
  .workspace-chat .workspace-header{flex:none}
- .workspace-shell.workspace-chat .workspace-frame .workspace-content{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:8px max(12px,env(safe-area-inset-right)) calc(var(--nav-total,84px) + 8px) max(12px,env(safe-area-inset-left));overflow:hidden}
+ .workspace-shell.workspace-chat .workspace-frame .workspace-content{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:4px max(12px,env(safe-area-inset-right)) calc(var(--nav-total,84px) + 8px) max(12px,env(safe-area-inset-left));overflow:hidden}
  html[data-teclado=abierto] .workspace-shell.workspace-chat .workspace-frame .workspace-content{padding-bottom:8px}
 }
-.workspace-chat .copiloto{position:relative;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden;padding:0}
+.workspace-chat .copiloto{position:relative;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden;padding:4px 0 0}
 .workspace-chat .copiloto>:not(.particle-field){position:relative}
 .workspace-chat .copiloto-hist-row{flex:none;display:flex;justify-content:flex-end;margin:0 0 8px}
 .workspace-chat .copiloto-hist-btn[aria-expanded=true]{visibility:hidden}
@@ -147,8 +148,7 @@ html:has(.workspace-chat),html:has(.workspace-chat) body{height:100dvh;overflow:
 .una-acciones .popover{display:inline-flex}
 .una-acciones>*{flex:none}
 @media(max-width:1000px){
- .una-acciones{order:4;flex:1 1 100%;overflow-x:auto;padding:4px 0;margin:-4px 0;scrollbar-width:none}
- .una-acciones::-webkit-scrollbar{display:none}
+ .una-acciones{order:4;flex:1 1 100%;flex-wrap:wrap}
 }
 .workspace-chat .copiloto-negocio{--col-chat:50rem}
 .workspace-chat .copiloto-negocio .copiloto-hist-row{max-width:64rem;width:100%;align-self:center}
@@ -234,9 +234,10 @@ html:has(.workspace-chat),html:has(.workspace-chat) body{height:100dvh;overflow:
 @media(max-width:900px){.una-head-d{display:none}}
 .una-filtros{display:flex;align-items:center;gap:var(--ctl-gap);overflow-x:auto;padding:4px 0;margin:-4px 0;scrollbar-width:none}
 .una-filtros::-webkit-scrollbar{display:none}
-.una-filtros>*{flex:none}
-.una-filtros-chips{display:inline-flex;align-items:center;gap:var(--ctl-gap)}
-.una-seg{display:inline-flex;align-items:center;gap:var(--ctl-gap)}
+.una-filtros>*{flex:0 1 auto;min-width:0}
+.una-filtros-chips{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ctl-gap);min-width:0;max-width:100%}
+.una-filtros-chips>*{white-space:normal;min-width:0}
+.una-seg{display:inline-flex;flex-wrap:wrap;align-items:center;gap:var(--ctl-gap);max-width:100%}
 
 /* Resúmenes desplegables de las respuestas («Cómo llegué a esto», «Ver cómo lo calculé», «Ver como tabla»): mismo control compacto, sin píldoras gordas */
 :root summary.ctl:not(#u){list-style:none;justify-content:flex-start;width:fit-content;font-weight:600}
@@ -266,3 +267,15 @@ details[open]>summary.ctl{margin-bottom:var(--ctl-gap)}
 @media(max-height:760px){.workspace-chat .agente>.cn-portada>.una-fila-scroll{display:none}}
 .workspace-chat .agente-answer details{margin-block:0}
 .una-toggle{order:2}
+@media(max-width:767px){
+ .una-demo{display:none}
+ .una-tablist{flex-wrap:wrap}
+ .una-nota{display:none}
+}
+.una-filtros{flex-wrap:wrap}
+@media(min-width:768px){.una-solo-sr{display:none}}
+@media(max-width:767px){.una-solo-vis{display:none}}
+@media(max-width:767px){.una-head-t .eyebrow,.una-filtros-chips{display:none}.una-head{flex-wrap:nowrap}}
+/* Teclado abierto o pantallas muy bajas: la portada cede (sin logo ni frase, menos preguntas) para que el compositor nunca quede tapado */
+@media(max-height:560px){.workspace-chat .agente-hero .rovaq-wordmark,.workspace-chat .agente-sub{display:none}.una-preguntas .ctl-q:nth-child(n+3){display:none}}
+@media(max-height:480px){.workspace-chat .agente-hero{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);margin:0}.una-preguntas .ctl-q:nth-child(n+2){display:none}}

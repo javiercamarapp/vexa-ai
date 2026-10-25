@@ -48,8 +48,8 @@ export function CfoDashboard({query = '', organization, roleOverride, volverA = 
   const load = useCallback(async () => { await rep.reload(); }, [rep]);
   const ok = state?.status === 'ok' ? state : null, report = ok?.report;
   const actions = <>
-    <CtlLink href={volverA} variant="soft">Volver al copiloto CFO</CtlLink>
-    <Popover label="Exportar" align="end" width={220} triggerClassName="ctl" trigger={<><Download /><span className="ctl-label">Exportar</span></>}>
+    <CtlLink href={volverA} variant="soft" solo icon={<Icon name="back" size={16} />}>Volver al copiloto CFO</CtlLink>
+    <Popover label="Exportar" align="end" width={220} triggerClassName="ctl ctl-solo" trigger={<><Download /><span className="ctl-label una-solo-vis">Exportar</span><span className="sr-only una-solo-sr">Exportar</span></>}>
       <MenuList>
         <li><CtlLink href="/cfo/data/export?format=csv" download="informe-cfo.csv" icon={<Download />}>Informe CSV</CtlLink></li>
         <li><CtlLink href="/cfo/data/export?format=pdf" download="informe-cfo.pdf" icon={<Download />}>Informe PDF</CtlLink></li></MenuList></Popover>
@@ -98,6 +98,7 @@ export function CfoDashboard({query = '', organization, roleOverride, volverA = 
     {id: 'exposicion', label: 'Exposición', contenido: <Exposure report={report} />},
     {id: 'comparativa', label: 'Comparativa', contenido: <Comparativa block={block} />},
     {id: 'glosario', label: 'Glosario', contenido: <>
+      <p className="dg-nota" style={{margin: '0 0 10px'}}>{lineaDatosHasta({libro: report.watermark})} Último mes completo: {report.lastComplete ? monthLabel(report.lastComplete) : 'ninguno'}.</p>
       <p className="dg-nota" style={{margin: '0 0 10px'}}>USD, CAD y MXN no se suman ni se convierten: no hay tipos de cambio aprobados. Tampoco se restan reembolsos de ingresos (bases distintas). {organization ?? ''}</p>
       <p className="dg-nota" style={{margin: '0 0 10px'}}>{ok?.synthetic ? AFTER_SAVE : 'Las cifras provienen del libro económico de esta organización; los CSV y PDF llevan exactamente las mismas.'}</p>
       <dl className="cf-glossary">{report.glossary.map(g => <div key={g.term}><dt>{g.term}</dt><dd>{g.body}</dd></div>)}</dl></>},

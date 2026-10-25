@@ -53,7 +53,8 @@ function vecinos(items,min=8){
 }
 function reglasControles(tag,m,movil){
  const H=movil?36:32;
- const raros=m.items.filter(i=>i.ctl||/seg-btn/.test(i.d)).filter(i=>Math.abs(i.h-H)>1.01);
+ // Las preguntas sugeridas (.ctl-q) son frases: nunca se truncan, así que en celular pueden ocupar 2 líneas (alto ≥ H); el resto mide H exacto.
+ const raros=m.items.filter(i=>i.ctl||/seg-btn/.test(i.d)).filter(i=>/ctl-q/.test(i.d)?i.h<H-1.01:Math.abs(i.h-H)>1.01);
  check(raros.length===0,`${tag}: controles con alto ≠ ${H}±1: ${raros.slice(0,4).map(i=>i.d+' '+i.h.toFixed(1)).join(' | ')}`);
  const fs=m.items.filter(i=>i.ctl).filter(i=>Math.abs(i.fs-13)>0.1);
  check(fs.length===0,`${tag}: botones con fuente ≠ 13 px: ${fs.slice(0,4).map(i=>i.d+' '+i.fs).join(' | ')}`);

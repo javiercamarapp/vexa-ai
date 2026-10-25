@@ -21,9 +21,9 @@ const HREF_EXPORT = (f: 'csv' | 'pdf') => `/cfo/data/export?format=${f}`;
 export function AccionesCfo({b, informe, onMoneda, sintetico}: {b: BriefingCfo; informe: (ancla?: string) => string; onMoneda: (m: string) => void; sintetico?: boolean}) {
   return <div className="una-acciones" role="group" aria-label="Moneda y acciones del resumen">
     {b.monedas.length > 1 && <SegmentoUna label="Moneda del resumen" value={b.moneda} options={b.monedas.map(m => ({value: m, label: m}))} onChange={onMoneda} />}
-    {sintetico && <Chip tone="warn">Datos sintéticos</Chip>}
+    {sintetico && <span className="una-demo"><Chip tone="warn">Datos sintéticos</Chip></span>}
     <G id="ver-detalle"><CtlLink href={informe()} variant="soft">Ver informe</CtlLink></G>
-    <G id="exportar"><Popover label="Exportar" align="end" width={220} triggerClassName="ctl" trigger={<><Download /><span className="ctl-label">Exportar</span></>}>
+    <G id="exportar"><Popover label="Exportar" align="end" width={220} triggerClassName="ctl ctl-solo" trigger={<><Download /><span className="ctl-label una-solo-vis">Exportar</span><span className="sr-only una-solo-sr">Exportar</span></>}>
       <MenuList>
         <li><a className="ctl" href={HREF_EXPORT('csv')} download="informe-cfo.csv">Hoja de cálculo (CSV)</a></li>
         <li><a className="ctl" href={HREF_EXPORT('pdf')} download="informe-cfo.pdf">Documento (PDF)</a></li></MenuList></Popover></G>

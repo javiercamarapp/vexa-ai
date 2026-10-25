@@ -68,10 +68,16 @@ test('datos: cada logo es un único <path> sin scripts, estilos ni referencias; 
   assert.ok(!/<script|javascript:|onload|onerror|<style|href=|url\(/i.test(datos));
   for (const [clave, m] of Object.entries(MARCAS)) {
     if (m.tipo === 'logo') { assert.match(m.color, /^#[0-9A-F]{6}$/i, clave); assert.match(m.path, /^[MmLlHhVvCcSsQqTtAaZz0-9 .,\-]+$/, clave); assert.ok(m.path.length > 20, clave); }
+    if (m.tipo === 'multicolor') for (const c of m.capas) assert.match(c.fill, /^#[0-9A-F]{6}$/i, clave);
     if (m.tipo === 'monograma') assert.match(m.letras, /^[A-Z]{1,2}$/, clave);
   }
-  // Sin logo oficial disponible: monograma neutro / icono genérico, nunca un path inventado
-  assert.equal(MARCAS.bestbuy.tipo, 'monograma', 'bestbuy');
+  // Best Buy: logo oficial aportado por el dueño, vectorizado (multicolor); ya no es monograma. CSV: icono genérico propio.
+  assert.equal(MARCAS.bestbuy.tipo, 'multicolor', 'bestbuy');
+  assert.ok(!Object.values(MARCAS).some((m) => m.tipo === 'monograma' && /best/i.test(m.nombre)), 'Best Buy no es monograma');
+  assert.deepEqual(MARCAS.bestbuy.capas.map((c) => c.fill), ['#000000', '#F6EB16', '#FFFFFF']);
+  for (const c of MARCAS.bestbuy.capas) assert.match(c.d, /^[MZ0-9 .\-]+$/, 'trazado sin comandos ni referencias'), assert.ok(c.d.length > 50);
+  assert.match(MARCAS.bestbuy.viewBox, /^-?\d+(\.\d+)? -?\d+(\.\d+)? 500 500$/);
+  assert.match(datos, /dueño[^.]*logo oficial/i);
   for (const k of ['amazon', 'walmart', 'excel']) assert.equal(MARCAS[k].tipo, 'logo', k);
   assert.equal(MARCAS.csv.tipo, 'archivo', 'csv');
   for (const k of ['hubspot', 'shopify', 'zendesk']) assert.equal(MARCAS[k].tipo, 'logo', k);
@@ -91,11 +97,11 @@ async function cargarComponente() {
   return import(pathToFileURL(join(dir, 'brand-mark.mjs')).href);
 }
 
-test('componente: tamaño fijo (width=height=tamaño, viewBox 24), accesible, sin scripts', async () => {
+test('componente: tamaño fijo (width=height=tamaño, viewBox cuadrado), accesible, sin scripts', async () => {
   const {BrandMark, BrandBadge, ConMarca} = await cargarComponente();
   for (const clave of Object.keys(MARCAS)) for (const t of [16, 20, 24]) {
     const html = renderToStaticMarkup(h(BrandMark, {marca: clave, 'tamaño': t}));
-    assert.match(html, new RegExp(`width="${t}"`)); assert.match(html, new RegExp(`height="${t}"`)); assert.match(html, /viewBox="0 0 24 24"/);
+    assert.match(html, new RegExp(`width="${t}"`)); assert.match(html, new RegExp(`height="${t}"`)); assert.match(html, MARCAS[clave].tipo === 'multicolor' ? /viewBox="-?\d+(\.\d+)? -?\d+(\.\d+)? 500 500"/ : /viewBox="0 0 24 24"/);
     assert.match(html, /aria-hidden="true"/); assert.ok(!/<script|on\w+=|href=|<style/i.test(html), clave);
     const titulado = renderToStaticMarkup(h(BrandMark, {marca: clave, 'tamaño': t, titulo: 'Origen: ' + clave}));
     assert.match(titulado, /role="img"/); assert.match(titulado, /aria-label="Origen: /); assert.ok(!/aria-hidden/.test(titulado));
@@ -146,4 +152,21 @@ test('uso: las pantallas con logo importan el componente y los archivos de clien
     assert.match(t, /brand-mark'/, f);
     if (!['ui/insight-list.tsx', 'confianza/ventanas-linea.tsx'].includes(f)) assert.match(t.split('\n')[0], /^(['"])use client\1;?$/, f);
   }
+});
+
+test('Best Buy: resuelve por clave y por nombres, no es monocromo ni neutro, tamaño fijo y accesible', async () => {
+  const {BrandMark, BrandBadge, ConMarca} = await cargarComponente();
+  for (const t of ['bestbuy', 'Best Buy', 'Best Buy US (Mirakl)', 'mirakl', 'best_buy', 'BEST BUY']) assert.equal(marcaDe(t), 'bestbuy', t);
+  assert.equal(marcaDe('Amazon y Best Buy'), null);
+  assert.equal(monoEnOscuro(MARCAS.bestbuy), false);
+  for (const t of [16, 20, 24]) {
+    const html = renderToStaticMarkup(h(BrandMark, {marca: 'Best Buy US (Mirakl)', 'tamaño': t}));
+    assert.match(html, new RegExp(`width="${t}" height="${t}"`)); assert.match(html, /data-marca="bestbuy"/); assert.match(html, /data-multicolor="1"/);
+    assert.ok(!/data-neutra|<text|<image|<img/.test(html)); assert.equal((html.match(/<path/g) || []).length, 3); assert.match(html, /fill-rule="evenodd"/);
+  }
+  assert.match(renderToStaticMarkup(h(BrandMark, {marca: 'bestbuy', titulo: 'Origen: Best Buy'})), /role="img" aria-label="Origen: Best Buy"/);
+  assert.match(renderToStaticMarkup(h(BrandBadge, {marca: 'Best Buy'})), /class="bm-badge".*width="20" height="20"/s);
+  assert.match(renderToStaticMarkup(h(ConMarca, {marca: 'Best Buy US (Mirakl)'}, 'Best Buy US (Mirakl)')), /bm-linea.*data-marca="bestbuy".*Best Buy US/s);
+  // La etiqueta amarilla contrasta con ambas superficies (tema claro y oscuro)
+  assert.ok(contraste('#F6EB16', SUPERFICIE.oscuro) >= 3 && contraste('#000000', '#F6EB16') >= 7);
 });

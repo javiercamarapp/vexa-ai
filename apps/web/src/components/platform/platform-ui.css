@@ -62,7 +62,7 @@
 .pf-list .pf-li-main strong{font-size:14px}.pf-list .pf-li-main span{font-size:12px;color:var(--muted)}
 .pf-list .pf-li-head{display:flex;flex-wrap:wrap;gap:var(--sp-2);align-items:center}
 .pf-statusbar{display:flex;flex-wrap:wrap;gap:var(--sp-2) var(--sp-4);align-items:center;margin:0 0 var(--sp-4);font-size:12px;color:var(--muted)}
-.pf-banner{display:flex;gap:var(--sp-3);align-items:flex-start;margin:0 0 var(--sp-4);padding:var(--sp-3) var(--sp-4);border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm);background:var(--ui-soft);font-size:13px}
+.pf-banner{display:flex;gap:var(--sp-3);align-items:flex-start;margin:0 0 var(--sp-4);padding:var(--sp-3) var(--sp-4);border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm);background:var(--ui-surface);font-size:13px}
 .pf-banner svg{flex:none;margin-top:2px}.pf-banner p{margin:0}
 .pf-banner[data-tone=warn]{background:var(--ui-warning-soft);border-color:var(--ui-warning)}
 .pf-anchors{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin:0 0 var(--sp-6)}

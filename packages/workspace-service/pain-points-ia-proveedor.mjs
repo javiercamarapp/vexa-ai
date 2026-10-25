@@ -6,7 +6,7 @@ export const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 export function iaHabilitada(env = process.env) { return env.VEXA_PAIN_AI === 'enabled' && /^sk-ant-[A-Za-z0-9_-]{20,}$/.test(env.VEXA_PAIN_AI_API_KEY ?? ''); }
 
 /** @returns {{completar: Function}|null} null si está apagado: la UI deshabilita «Analizar» y la API responde ia_apagada. */
-export function crearProveedorReal(env = process.env, {fetchImpl = globalThis.fetch, timeoutMs = 25000} = {}) {
+export function crearProveedorReal(env = process.env, {fetchImpl = globalThis.fetch, timeoutMs = 18000} = {}) {
   if (!iaHabilitada(env)) return null;
   const modelo = env.VEXA_PAIN_AI_MODEL || 'claude-sonnet-5-5';
   const tarifaIn = Number(env.VEXA_PAIN_AI_USD_PER_MTOK_IN || 5), tarifaOut = Number(env.VEXA_PAIN_AI_USD_PER_MTOK_OUT || 25);

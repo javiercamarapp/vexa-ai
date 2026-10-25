@@ -9,6 +9,7 @@ import {Notice} from '../ui/notice';
 import {ErrorState} from '../ui/error-state';
 import {RovaqCargando} from '../rovaq-cargando';
 import {useJson} from '../ui/use-json';
+import {LecturaIA} from './lectura-ia';
 import {CLASE_KIND,CLASE_NOMBRE,SIN_DATO,dineroTxt,num,periodoTxt,usd,volumenTxt} from './modelo.mjs';
 
 const acepta=(j:unknown)=>{const d=(j as {data?:EvidenciaVista})?.data;return d&&typeof d==='object'&&'estado' in d&&Array.isArray(d.filas)?d:null;};
@@ -68,6 +69,7 @@ export function Detalle({punto,vista,onCerrar}:{punto:PuntoPP|null;vista:PainVis
     <dl className="pp-kv"><div><dt>Fuente</dt><dd>{punto.fuente.etiqueta}</dd></div><div><dt>Periodo</dt><dd>{periodoTxt(punto.periodo)}</dd></div><div><dt>Cobertura</dt><dd>{punto.cobertura?.texto??'Sin cobertura'}</dd></div><div><dt>Volumen</dt><dd>{volumenTxt(punto.volumen)}</dd></div>
      {punto.otrasMonedas.length>0&&<div><dt>Otras monedas</dt><dd>{punto.otrasMonedas.map(m=>`${num(m.n)} · ${(Number(BigInt(m.minor))/100).toLocaleString('es-MX')} ${m.currency}`).join(' · ')} (no se suman)</dd></div>}</dl></OverlaySection>
    <OverlaySection title="Evidencia" description="Sin nombres, correos ni direcciones. La suma de la columna se compara con la cifra."><Evidencia key={punto.id} punto={punto}/></OverlaySection>
+   <OverlaySection title="Lectura de IA" description="Tres lecturas independientes y su consenso. Inferido, no observado."><LecturaIA key={punto.id} puntoId={punto.id}/></OverlaySection>
    <OverlaySection title="Cómo se calculó"><ul className="pp-lista">{punto.calculo.map((t,i)=><li key={i}>{t}</li>)}</ul></OverlaySection>
    <OverlaySection title="Qué no sabemos"><ul className="pp-lista">{punto.noSabemos.map((t,i)=><li key={i}>{t}</li>)}{punto.solapaCon.length>0&&<li>Comparte dinero con {punto.solapaCon.join(', ')}: no se suman entre sí.</li>}</ul></OverlaySection>
   </div>}

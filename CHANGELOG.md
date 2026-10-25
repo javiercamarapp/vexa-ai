@@ -2,6 +2,10 @@
 
 Formato libre, entradas más recientes arriba. El detalle por fase está en [docs/ESTADO-VIGENTE.md](docs/ESTADO-VIGENTE.md) y el histórico en [docs/HISTORIAL-ESTADO.md](docs/HISTORIAL-ESTADO.md).
 
+## Sin publicar (rama `produccion-listo-24oct`, 24-oct-2026)
+
+- **SEO y publicación (sin cambios de interfaz):** metadatos completos con dominio canónico `https://rovaq-ai.vercel.app`, Open Graph/Twitter con imagen 1200×630 del logo real, JSON-LD en `/login`, `robots.txt`, `sitemap.xml`, `security.txt`, manifest PWA unificado, noindex en todo lo privado (metadata + `X-Robots-Tag`), cabeceras de seguridad (HSTS, Permissions-Policy, COOP, CSP en Report-Only) y caché larga para `/fonts` y `/brand`. Páginas 404/error con salida a «Hoy». Títulos de pestaña únicos por pantalla. Detalle, verificación y tareas del dueño: [docs/SEO-Y-PUBLICACION.md](docs/SEO-Y-PUBLICACION.md).
+
 ## Sin publicar (rama `integracion-2-24oct`, 24-oct-2026)
 
 En producción sigue el build 41 (`0de30edd`). Lo siguiente está en la rama, pendiente de despliegue.

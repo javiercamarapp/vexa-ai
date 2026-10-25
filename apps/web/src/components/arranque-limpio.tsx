@@ -1,41 +1,60 @@
 'use client';
 import {useEffect} from 'react';
-import {hayCargaDePagina} from './rovaq-cargando';
+import {hayCargaDePagina,suscribirCargaDePagina} from './rovaq-cargando';
 
 /**
- * Suelta el logo de arranque (`html[data-arranque]`, puesto por un script inline antes del primer pintado) cuando la primera pantalla de página completa
- * ya está lista: todo a la vez, sin pasos intermedios visibles.
+ * Gobierna la ÚNICA capa de carga a pantalla completa (`#arranque-logo`, visible mientras `html[data-arranque]`): logo centrado sobre un solo color (`--carga-fondo`),
+ * sin sidebar, encabezados ni contenido. Cubre tres casos con las mismas reglas:
+ *  1. Carga/recarga: un script inline pone `data-arranque` antes del primer pintado; aquí se suelta cuando TODO está listo.
+ *  2. Navegación interna y cambios de organización/cliente: si un cargador de página completa (`RovaqCargando`) sigue montado pasados {@link RETARDO_NAVEGACION_MS},
+ *     se activa la misma capa (en navegaciones rápidas nunca aparece); una vez visible permanece al menos {@link MINIMO_VISIBLE_MS} para no destellar.
+ *  3. Seguro: pasados {@link TOPE_MS} se suelta y `html[data-carga-tope]` convierte el cargador en línea en una capa de pantalla completa del mismo color.
  *
  * CONDICIÓN LEÍDA DEL DOM, no del registro de React. Con respuestas lentas el servidor entrega el HTML por partes: el cargador `loading.tsx` llega dentro de una
- * frontera Suspense aún pendiente y React NO la hidrata (no monta su fallback), así que su `RovaqCargando` nunca se registra y `hayCargaDePagina()` daba `false`
- * justo después de hidratar: el arranque se soltaba a los 200 ms y se veía el espacio de trabajo (sidebar, encabezado) con el logo en el área de contenido.
- * El DOM sí lo tiene (el HTML del servidor trae el cargador con `aria-busy`), por eso se observa el DOM.
- *
- * Se suelta cuando, de forma CONTINUA durante {@link VENTANA_ESTABLE_MS}: (a) el documento terminó de llegar (`readyState` ≠ `loading`; sin fronteras pendientes),
- * (b) no hay ningún cargador de página completa en el DOM (ni `[aria-busy="true"]` de página) y (c) ninguno está registrado en el cliente. El seguro final es
- * {@link TOPE_MS}. La navegación interna no pasa por aquí: el componente vive en el layout raíz y solo evalúa en la primera carga.
+ * frontera Suspense aún pendiente y React NO la hidrata, así que su `RovaqCargando` no se registra; el DOM sí lo tiene (HTML del servidor con `aria-busy`).
+ * Se suelta cuando, de forma CONTINUA durante {@link VENTANA_ESTABLE_MS}: (a) el documento terminó de llegar, (b) no hay cargador de página completa en el DOM
+ * (en la carga inicial tampoco `main [aria-busy="true"]`) y (c) ninguno está registrado en el cliente.
  */
 export const VENTANA_ESTABLE_MS = 600;
-export const TOPE_MS = 20000;
-const PENDIENTE = '.rovaq-cargando:not(.rovaq-cargando-compacto), main [aria-busy="true"]:not(.rovaq-cargando-compacto):not([aria-hidden="true"])';
-const hayPendiente = () => document.readyState === 'loading' || hayCargaDePagina() || document.querySelector(PENDIENTE) !== null;
+export const VENTANA_NAVEGACION_MS = 150;
+export const RETARDO_NAVEGACION_MS = 250;
+export const MINIMO_VISIBLE_MS = 400;
+export const TOPE_MS = 45000;
+const PAGINA = '.rovaq-cargando:not(.rovaq-cargando-compacto)';
+const PENDIENTE = PAGINA + ', main [aria-busy="true"]:not(.rovaq-cargando-compacto):not([aria-hidden="true"])';
+const hayPendiente = (inicial: boolean) => document.readyState === 'loading' || hayCargaDePagina() || document.querySelector(inicial ? PENDIENTE : PAGINA) !== null;
+const SIN_CAPA = /^\/(login|auth)(\/|$)/;
 
 export function ArranqueLimpio(){
   useEffect(()=>{
-    const raiz=document.documentElement;
-    if(!raiz.dataset.arranque)return;
-    let temporizador:number|undefined,programado=false,vivo=true;
-    const soltar=()=>{if(!vivo)return;limpiar();delete raiz.dataset.arranque;};
-    const evaluar=()=>{window.clearTimeout(temporizador);if(!vivo||hayPendiente())return;temporizador=window.setTimeout(()=>{if(!hayPendiente())soltar();},VENTANA_ESTABLE_MS);};
+    const raiz=document.documentElement,w=window as unknown as {__arranqueVivo?:boolean};
+    w.__arranqueVivo=true;
+    let inicial=!!raiz.dataset.arranque,activa=inicial,desde=Date.now(),tope:number|undefined,espera:number|undefined,aparicion:number|undefined,programado=false,vivo=true;
+    const armarTope=()=>{window.clearTimeout(tope);tope=window.setTimeout(()=>{if(!vivo||!activa)return;activa=false;raiz.dataset.cargaTope='1';delete raiz.dataset.arranque;},TOPE_MS);};
+    const soltar=()=>{window.clearTimeout(tope);activa=false;inicial=false;delete raiz.dataset.arranque;};
+    const evaluar=()=>{
+      if(!vivo)return;
+      if(raiz.dataset.cargaTope&&!hayPendiente(false))delete raiz.dataset.cargaTope;
+      if(activa){
+        window.clearTimeout(aparicion);window.clearTimeout(espera);
+        if(hayPendiente(inicial))return;
+        const ventana=inicial?VENTANA_ESTABLE_MS:Math.max(VENTANA_NAVEGACION_MS,MINIMO_VISIBLE_MS-(Date.now()-desde));
+        espera=window.setTimeout(()=>{if(vivo&&!hayPendiente(inicial))soltar();},ventana);
+        return;
+      }
+      window.clearTimeout(aparicion);
+      if(SIN_CAPA.test(location.pathname)||raiz.dataset.cargaTope||!hayPendiente(false)||document.readyState==='loading')return;
+      aparicion=window.setTimeout(()=>{if(!vivo||activa||!hayPendiente(false))return;activa=true;inicial=false;desde=Date.now();raiz.dataset.arranque='1';armarTope();},RETARDO_NAVEGACION_MS);
+    };
     // Las mutaciones llegan en ráfagas durante la hidratación: se evalúa una vez por ráfaga.
     const alCambiar=()=>{if(programado)return;programado=true;queueMicrotask(()=>{programado=false;evaluar();});};
     const observador=new MutationObserver(alCambiar);
     observador.observe(raiz,{childList:true,subtree:true,attributes:true,attributeFilter:['aria-busy','class']});
     document.addEventListener('readystatechange',alCambiar);
-    const tope=window.setTimeout(soltar,TOPE_MS);
-    const limpiar=()=>{vivo=false;window.clearTimeout(temporizador);window.clearTimeout(tope);observador.disconnect();document.removeEventListener('readystatechange',alCambiar);};
+    const baja=suscribirCargaDePagina(alCambiar);
+    if(activa)armarTope();
     evaluar();
-    return limpiar;
+    return()=>{vivo=false;window.clearTimeout(tope);window.clearTimeout(espera);window.clearTimeout(aparicion);observador.disconnect();document.removeEventListener('readystatechange',alCambiar);baja();};
   },[]);
   return null;
 }

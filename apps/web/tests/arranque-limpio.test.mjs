@@ -12,18 +12,18 @@ test('el encabezado y el pie global se ocultan con carga de página completa y d
 test('con carga de página completa no se ve contenido hermano en el área de contenido',()=>{
   assert.match(css,/\.workspace-content:has\(\.rovaq-cargando:not\(\.rovaq-cargando-compacto\)\) \*:not\(\.rovaq-cargando\)[^{]*\{\s*display:none!important/);
 });
-test('el script de arranque marca data-arranque, excluye login/auth, tiene seguro de 15 s y noscript revierte',()=>{
+test('el script de arranque marca data-arranque, excluye login/auth, tiene seguro de 60 s solo sin ArranqueLimpio vivo y noscript revierte',()=>{
   assert.match(layout,/dataset\.arranque='1'/);
   assert.match(layout,/login\|auth/);
-  assert.match(layout,/20000/);
+  assert.match(layout,/60000/);assert.match(layout,/__arranqueVivo/);assert.doesNotMatch(layout,/20000/);
   assert.match(layout,/<noscript>/);
   assert.match(layout,/id="arranque-logo"/);
   assert.match(layout,/<ArranqueLimpio\/>/);
 });
-test('el componente de arranque es cliente con la directiva en la primera línea, lee el DOM (readyState, cargadores, aria-busy), ventana estable de 600 ms y tope de 20 s',()=>{
+test('el componente de arranque es cliente con la directiva en la primera línea, lee el DOM (readyState, cargadores, aria-busy), ventana estable de 600 ms y tope de 45 s',()=>{
   assert.equal(comp.split('\n')[0].trim(),"'use client';");
-  assert.match(comp,/hayCargaDePagina/);assert.match(comp,/TOPE_MS = 20000/);assert.match(comp,/VENTANA_ESTABLE_MS = 600/);assert.match(comp,/delete raiz\.dataset\.arranque/);
-  assert.match(comp,/document\.readyState === 'loading'/);assert.match(comp,/document\.querySelector\(PENDIENTE\)/);
+  assert.match(comp,/hayCargaDePagina/);assert.match(comp,/TOPE_MS = 45000/);assert.match(comp,/VENTANA_ESTABLE_MS = 600/);assert.match(comp,/delete raiz\.dataset\.arranque/);
+  assert.match(comp,/document\.readyState === 'loading'/);assert.match(comp,/document\.querySelector\(inicial \? PENDIENTE : PAGINA\)/);
   assert.match(comp,/\.rovaq-cargando:not\(\.rovaq-cargando-compacto\)/);assert.match(comp,/aria-busy="true"/);assert.match(comp,/new MutationObserver/);
   assert.match(reg,/export const hayCargaDePagina/);
 });
@@ -32,6 +32,19 @@ test('Hoy no pinta ningún bloque hasta que todos los datos críticos estén lis
   const v=armarHoy({fuga:null,carga:null,cfo:null,estado:{fuga:'ok',carga:'cargando',cfo:'ok'}});
   assert.equal(v.cargando,true);
   assert.match(hoy,/yaListo/);
+});
+test('UNA sola capa de carga: fondo en el token --carga-fondo (claro blanco, oscuro #0e0e10), cubre todo, cargadores en línea invisibles y salida con fundido corto',()=>{
+  assert.match(css,/:root \{ --carga-fondo:#ffffff; \}/);assert.match(css,/:root\[data-theme=dark\] \{ --carga-fondo:#0e0e10; \}/);
+  assert.match(css,/#arranque-logo \{[^}]*position:fixed; inset:0; z-index:2000;[^}]*background:var\(--carga-fondo\)/);
+  assert.match(css,/html\[data-arranque\],html\[data-arranque\] body \{ background:var\(--carga-fondo\); \}/);
+  assert.match(css,/\.rovaq-cargando:not\(\.rovaq-cargando-compacto\) \{ visibility:hidden; \}/);
+  assert.match(css,/#arranque-logo \{[^}]*transition:opacity 170ms/);assert.match(css,/@media \(prefers-reduced-motion: reduce\) \{ #arranque-logo \{ transition:none; \} \}/);
+  assert.match(css,/html\[data-carga-tope\] \.rovaq-cargando:not\(\.rovaq-cargando-compacto\) \{[^}]*position:fixed; inset:0;[^}]*background:var\(--carga-fondo\)/);
+  assert.doesNotMatch(css,/html\[data-arranque\] #arranque-logo \{[^}]*background:var\(--background\)/);
+});
+test('la navegación interna activa la misma capa tras 250 ms y la mantiene >= 400 ms',()=>{
+  assert.match(comp,/RETARDO_NAVEGACION_MS = 250/);assert.match(comp,/MINIMO_VISIBLE_MS = 400/);assert.match(comp,/suscribirCargaDePagina/);assert.match(comp,/raiz\.dataset\.arranque='1'/);
+  assert.match(reg,/export const suscribirCargaDePagina/);
 });
 test('el logo de arranque respeta prefers-reduced-motion (reusa rovaq-respira)',()=>{
   assert.match(css,/@media \(prefers-reduced-motion: reduce\) \{ \.rovaq-respira \{ animation:none/);

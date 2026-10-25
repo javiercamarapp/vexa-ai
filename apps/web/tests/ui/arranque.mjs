@@ -51,13 +51,13 @@ for(const [w,h] of [[1440,900],[390,844]]){
  await page.waitForSelector('.hoy-kpis',{timeout:60000});await page.waitForTimeout(400);
  const v2=await page.evaluate(()=>[...new Set(window.__viol)]);check(v2.length===0,`${w}: recarga sin violaciones ${JSON.stringify(v2)}`);
  if(w>=900){
-  console.log(`== ${w}px: navegación interna (sidebar sigue visible)`);
-  await page.evaluate(()=>{window.__soloArranque=false;window.__viol.length=0;window.__lado=[];const vis=e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0;};const f=()=>{const s=document.querySelector('.workspace-sidebar');window.__lado.push(!!s&&vis(s)&&getComputedStyle(s).display!=='none');requestAnimationFrame(f);};f();});
+  console.log(`== ${w}px: navegación interna (sidebar visible o capa única completa)`);
+  await page.evaluate(()=>{window.__soloArranque=false;window.__viol.length=0;window.__lado=[];const vis=e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0;};const f=()=>{const s=document.querySelector('.workspace-sidebar');window.__lado.push((!!s&&vis(s)&&getComputedStyle(s).display!=='none')||(document.documentElement.dataset.arranque==='1'));requestAnimationFrame(f);};f();});
   await page.locator('.workspace-sidebar a[href^="/cfo"]').first().click();
   await page.waitForTimeout(500);await page.screenshot({path:path.join(out,`4-navegacion-interna-${w}.png`)});
   await page.waitForFunction(()=>location.pathname==='/cfo');await page.waitForTimeout(4500);
   const nav=await page.evaluate(()=>({lado:window.__lado.every(Boolean),n:window.__lado.length,viol:[...new Set(window.__viol)],arr:!!document.documentElement.dataset.arranque}));
-  check(nav.lado&&nav.n>10,`${w}: sidebar visible en TODOS los fotogramas de la navegación interna (${nav.n})`);
+  check(nav.lado&&nav.n>10,`${w}: sidebar visible o cubierta por la capa de carga única en TODOS los fotogramas de la navegación interna (${nav.n})`);
   check(!nav.arr,`${w}: la navegación interna no reactiva el arranque`);
   check(nav.viol.length===0,`${w}: navegación interna sin violaciones ${JSON.stringify(nav.viol)}`);
  }
@@ -88,7 +88,7 @@ for(const [w,h,esc] of [[1440,900,ESCENARIOS],[390,844,ESCENARIOS.slice(0,1)]])f
  for(const ms of [3000,Math.min(8000,demoraMax-2500)]){
   await page.waitForTimeout(Math.max(0,ms-(Date.now()-t0)));
   const est=await page.evaluate(()=>{const vis=s=>[...document.querySelectorAll(s)].some(x=>{const r=x.getBoundingClientRect();return r.width>0&&r.height>0&&getComputedStyle(x).display!=='none';});
-   return {arr:!!document.documentElement.dataset.arranque,logo:vis('#arranque-logo'),side:vis('.workspace-sidebar'),top:vis('.workspace-header'),hdr:vis('.site-header'),ftr:vis('.site-footer'),kpis:vis('.hoy-kpis'),logos:[...document.querySelectorAll('.rovaq-respira')].filter(x=>{const r=x.getBoundingClientRect();return r.width>0&&r.height>0;}).length};});
+   return {arr:!!document.documentElement.dataset.arranque,logo:vis('#arranque-logo')&&getComputedStyle(document.querySelector('#arranque-logo')).visibility==='visible',side:vis('.workspace-sidebar'),top:vis('.workspace-header'),hdr:vis('.site-header'),ftr:vis('.site-footer'),kpis:vis('.hoy-kpis'),logos:[...document.querySelectorAll('.rovaq-respira')].filter(x=>{const r=x.getBoundingClientRect();return r.width>0&&r.height>0;}).length};});
   check(est.arr&&est.logo&&!est.side&&!est.top&&!est.hdr&&!est.ftr&&!est.kpis&&est.logos===1,`${w}px/${e.n}: a los ${Math.round((Date.now()-t0)/1000)} s sigue SOLO el logo (1 logo, sin sidebar/encabezado/pie/contenido) ${JSON.stringify(est)}`);
  }
  await page.screenshot({path:path.join(out,`5-latencias-${w}-${ESCENARIOS.indexOf(e)}.png`)});

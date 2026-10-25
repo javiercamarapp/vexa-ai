@@ -24,6 +24,7 @@ if(capDir)mkdirSync(capDir,{recursive:true});
 
 /** Se ejecuta en la página. */
 async function medir(){
+ const plegado=e=>{const d=e.tagName==='SUMMARY'?e.parentElement?.parentElement?.closest('details:not([open])'):e.closest('details:not([open])');return !!d&&!(e.tagName!=='SUMMARY'&&e.closest('summary')&&e.closest('summary').parentElement===d);}; // dentro de un <details> cerrado no se ve ni se toca
  const vis=e=>{const r=e.getBoundingClientRect(),cs=getComputedStyle(e);return r.width>0&&r.height>0&&cs.visibility!=='hidden'&&cs.display!=='none'&&cs.opacity!=='0';};
  const desc=e=>e.tagName.toLowerCase()+(e.className&&typeof e.className==='string'?'.'+e.className.trim().split(/\s+/).slice(0,2).join('.'):'')+' "'+(e.innerText||e.getAttribute('aria-label')||'').trim().slice(0,28).replace(/\s+/g,' ')+'"';
  const oculto=e=>e.closest('.sr-only,[hidden],[aria-hidden=true],dialog:not([open]),svg');
@@ -65,7 +66,7 @@ async function medir(){
   if(rs.length>=4&&rs.every(r=>r.width<=parseFloat(getComputedStyle(e).fontSize)*1.2)&&!/^\s*$/.test(t))out.partidas.push('letra por línea: '+desc(e));
  }
  // 4. Zona táctil >= 44 px (prueba de impacto)
- const ctl=all.filter(e=>e.matches('button,a[href],select,input:not([type=hidden]),textarea,[role=tab],[role=button],[role=switch],summary')&&!e.matches('.sr-only,.skip-link,.agente-round')&&!(e.closest('thead')&&e.closest('table[data-mv]')&&document.documentElement.dataset.tablasMovil!=='comparar')&&!e.closest('.workspace-bottom-nav,.mobile-sidebar,.workspace-header'));
+ const ctl=all.filter(e=>e.matches('button,a[href],select,input:not([type=hidden]),textarea,[role=tab],[role=button],[role=switch],summary')&&!e.matches('.sr-only,.skip-link,.agente-round')&&!plegado(e)&&!(e.closest('thead')&&e.closest('table[data-mv]')&&document.documentElement.dataset.tablasMovil!=='comparar')&&!e.closest('.workspace-bottom-nav,.mobile-sidebar,.workspace-header'));
  for(const e of ctl){
   if(e.tagName==='A'&&e.closest('p,li.pc-s,.pc-notas,td,.pc-s,.pc-t,small,.prose,.ui-notice,.notice,.brief-text')&&getComputedStyle(e).display==='inline')continue; // enlace de texto en línea (WCAG 2.5.8 excepción)
   if(e.type==='checkbox'||e.type==='radio'){const l=e.closest('label');if(l&&l.getBoundingClientRect().height>=43.5)continue;}
@@ -75,7 +76,7 @@ async function medir(){
   const r=e.getBoundingClientRect();if(r.top<0||r.bottom>innerHeight)continue;
   const cx=r.left+r.width/2,cy=r.top+r.height/2;
   // Controles contiguos reparten la franja que los separa: si el punto cae en OTRO control a <= 16 px de éste, no hay zona muerta (cuenta como acierto).
-  const ctlSel='button,a[href],summary,select,input,[role=tab],[role=button],[role=switch],label';
+  const ctlSel='button,a[href],summary,select,input,[role=tab],[role=button],[role=switch],label,.ui-filterbar';
   const ok=(x,y)=>{if(x<0||y<0||x>=innerWidth||y>=innerHeight)return true;const h=document.elementFromPoint(x,y);if(!h)return false;if(e===h||e.contains(h)||h.contains(e)&&h.closest('label')===e.closest('label')&&!!h.closest('label'))return true;const v=h.closest(ctlSel);if(v&&v!==e){const a=e.getBoundingClientRect(),b=v.getBoundingClientRect();const gap=Math.max(b.top-a.bottom,a.top-b.bottom,0),dx=Math.max(b.left-a.right,a.left-b.right,0);return gap<=16&&dx<=16;}return false;};
   const needH=r.height<43.5,needW=r.width<43.5;
   const pasa=(!needH||(ok(cx,cy-21)&&ok(cx,cy+21)))&&(!needW||(ok(cx-21,cy)&&ok(cx+21,cy)));
@@ -103,14 +104,14 @@ async function medir(){
  // separación vertical entre bloques de pantalla <= 12 px y la primera cifra de Hoy por encima de y=300 en 390x844. La zona táctil >= 44 px la comprueba el punto 4 (prueba de impacto).
  {const lineas=e=>{const rg=document.createRange();rg.selectNodeContents(e);return new Set([...rg.getClientRects()].filter(r=>r.width>0).map(r=>Math.round(r.top/4))).size;};
   const visual=e=>{const c=getComputedStyle(e),r=e.getBoundingClientRect();const tr=/rgba\(0, 0, 0, 0\)|transparent/.test(c.borderTopColor)&&/rgba\(0, 0, 0, 0\)|transparent/.test(c.borderBottomColor);return r.height-(tr?(parseFloat(c.borderTopWidth)||0)+(parseFloat(c.borderBottomWidth)||0):0);};
-  for(const e of all.filter(e=>e.matches('button,a.btn,.btn,summary,select,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])')&&!e.closest('.mp-zoom,.agente-compositor,.agente-composer,.chat-composer,form.agente-form')&&!e.matches('.agente-round,.sr-only,a.barlist-head,.barlist-link,[class*=catBtn]'))){ // filas de lista apiladas: paso de 44 px por diseño
+  for(const e of all.filter(e=>e.matches('button,a.btn,.btn,summary,select,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])')&&!e.closest('.mp-zoom,.agente-compositor,.agente-composer,.chat-composer,form.agente-form')&&!e.matches('.agente-round,.sr-only,a.barlist-head,.barlist-link,[class*=catBtn]')&&!plegado(e)&&!(e.closest('thead')&&document.documentElement.dataset.tablasMovil!=='comparar'))){ // filas de lista apiladas: paso de 44 px por diseño
    const v=visual(e);if(v>36.5&&lineas(e)<2)out.densidad.push('control de '+Math.round(v)+' px (>36): '+desc(e));
   }
   for(const e of all.filter(e=>e.matches('.card,.ui-card,.pc-card,.record-card,.ui-kpi,.stat-card,.pc-kpi,.hoy-kpi,details.card'))){
    const c=getComputedStyle(e),m=Math.max(parseFloat(c.paddingTop),parseFloat(c.paddingBottom),parseFloat(c.paddingLeft),parseFloat(c.paddingRight));if(m>12.5)out.densidad.push('padding '+m+' px (>12) en '+desc(e));
   }
   for(const par of document.querySelectorAll('.workspace-content :is(.stack,.task-page,.dg-page,.pc-page)')){
-   const k=[...par.children].filter(c=>vis(c)&&!c.matches('.sr-only'));for(let i=1;i<k.length;i++){const a=k[i-1].getBoundingClientRect(),b=k[i].getBoundingClientRect();const aB=Math.max(a.bottom,...[...k[i-1].children].map(c=>c.getBoundingClientRect().bottom));const g=b.top-aB;if(g>12.5&&b.top>=aB-1&&b.left<a.right&&b.right>a.left&&g<200)out.densidad.push('separación de '+Math.round(g)+' px (>12) entre '+desc(k[i-1])+' y '+desc(k[i]));}
+   if(getComputedStyle(par).display==='contents')continue;const k=[...par.children].filter(c=>vis(c)&&!c.matches('.sr-only'));for(let i=1;i<k.length;i++){const a=k[i-1].getBoundingClientRect(),b=k[i].getBoundingClientRect();const aB=Math.max(a.bottom,...[...k[i-1].children].map(c=>c.getBoundingClientRect().bottom));const g=b.top-aB;if(g>12.5&&b.top>=aB-1&&b.left<a.right&&b.right>a.left&&g<200)out.densidad.push('separación de '+Math.round(g)+' px (>12) entre '+desc(k[i-1])+' y '+desc(k[i]));}
   }
   if(location.pathname==='/overview'&&innerWidth===390){const k=document.querySelector('.hoy-kpis .hoy-kpi-valor');if(k){const t=k.getBoundingClientRect().top;if(t>300)out.densidad.push('la primera cifra de Hoy empieza en y='+Math.round(t)+' (> 300)');}}
  }

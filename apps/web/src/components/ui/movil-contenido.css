@@ -35,16 +35,18 @@
 
 /* ---- Hoy: primera cifra en el primer pliegue de 390x844 ---- */
 :root:root body .hoy-titular .eyebrow{display:none}
-:root:root body .hoy-titular .page-header{margin-bottom:0;gap:6px 12px}
+:root:root body .hoy-titular .page-header{margin-bottom:0;gap:4px 12px}
+:root:root body .workspace-content .stack:has(>.hoy-titular){gap:8px}
 :root:root body .hoy-titular .page-header-actions{width:auto;margin-left:0;flex:1 1 100%;display:flex;flex-wrap:nowrap;gap:8px}
 :root:root body .hoy-titular .hoy-periodo{height:32px;flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
 :root:root body .hoy-titular .page-header-actions>a{flex:none;margin-left:auto}
 :root:root body .hoy-kpis{margin:0}
-:root:root body .hoy-kpi{padding:10px 10px 8px;gap:1px}
+:root:root body .hoy-kpi{padding:12px 10px 8px;gap:1px}
 :root:root body .hoy-kpi+.hoy-kpi{border-top:0;border-left:0}
 :root:root body .hoy-kpi:nth-child(even){border-left:1px solid var(--ui-border)}
 :root:root body .hoy-kpi:nth-child(n+3){border-top:1px solid var(--ui-border)}
-:root:root body .hoy-kpi-top{min-height:24px}
+:root:root body .hoy-kpi-top{min-height:0}
+:root:root:root body .hoy-kpi .dc-info{margin-block:-8px}
 :root:root body .hoy-kpi-fila{flex-wrap:wrap}
 :root:root body .hoy-kpi .sello,:root:root body .hoy-kpi .sello-2>span{font-size:12px;line-height:1.4}
 :root:root body .hoy-kpi .sello-2>span:nth-child(n+2){display:none}
@@ -240,7 +242,7 @@ html:root[data-tablas-movil=comparar] table[data-mv] :is(td,th):last-child{paddi
 :root:root body .sr-only.mv-alt caption{display:block;text-align:left;font-size:12px;color:var(--muted);padding:0 0 6px}
 /* Mapa: controles de zoom en una barra bajo el lienzo (no encima de la geografía) */
 :root:root body .workspace-content .mp-lienzo{padding-bottom:52px}
-:root:root body .mp-zoom{inset-block-end:4px;inset-inline-end:4px}
+:root:root body .mp-zoom{inset-block-end:6px;inset-inline-end:6px}
 
 :root:root body .pc-tabs>li{flex:none;scroll-snap-align:center}
 :root:root body .pc-tabs>li>a{scroll-snap-align:none}
@@ -264,11 +266,13 @@ html:root:not([data-tablas-movil=comparar]) .pc-card[data-flush] :is(.ui-table-w
 :root:root body .workspace-content tr>td :is(.chip,.ui-chip){padding-inline:4px;gap:4px}
 
 /* ================= DENSIDAD COMPACTA (premium): tarjetas, ritmo, hojas ================= */
-:root:root body .workspace-shell:not(.workspace-chat) .workspace-content{padding-inline:16px;padding-top:10px}
+:root:root body .workspace-shell:not(.workspace-chat) .workspace-content{padding-inline:16px;padding-top:6px}
 :root:root body .workspace-content :is(.card,.record-card,.ui-card,.pc-card){padding:var(--ui-pad);border-radius:var(--mv-r);box-shadow:none}
 :root:root body .workspace-content :is(.ui-kpi,.stat-card,.pc-kpis,.hoy-kpis){border-radius:var(--mv-r)}
 :root:root body .workspace-content :is(.stack,.task-page,.dg-page,.pc-page,.pc-grid){gap:var(--ui-rhythm)}
-:root:root body .workspace-content :is(.stack,.task-page,.dg-page,.pc-page)>*{margin-block:0}
+:root:root body .workspace-content :is(.stack,.task-page,.dg-page,.pc-page)>*:not(.ui-filterbar){margin-block:0}
+:root:root body .workspace-content form{margin-block:0}
+:root:root body .workspace-content :is(.stack,.task-page,.dg-page,.pc-page)>.ui-filterbar{margin-block:-7px}
 :root:root body .workspace-content :is(.card-head,.ui-card-head,.pc-card-head){margin-bottom:8px;gap:4px 10px}
 :root:root body .workspace-content :is(.ui-notice,.notice-bar){padding:8px 10px;margin-block:0;border-radius:var(--mv-r)}
 :root:root body .workspace-content :is(.card-head,.ui-card-head,.pc-card-head)+*{margin-top:0}
@@ -292,7 +296,14 @@ html:root:not([data-tablas-movil=comparar]) .pc-card[data-flush] :is(.ui-table-w
 /* Píldoras con caja de 44 px (borde transparente): sin ::after genérico */
 :root:root:root body .workspace-content :is(.mv-modo-tablas button,.mp-seg button){min-height:44px;min-width:0;padding-block:0}
 :root:root:root body .workspace-content :is(.mv-modo-tablas button,.mp-seg button)::after{content:none}
-/* Ordenar columnas (thead): botones fantasma con la altura de toque completa (la cabecera de la tabla recorta el ::after) */
-:root:root:root body .workspace-content th .btn{min-height:var(--mv-hit)}
-:root:root:root body .workspace-content th .btn::after{content:none}
+/* Resumen sin estilo propio (all:unset en el explorador): sin ::after de toque, que se anclaría a un ancestro lejano */
+:root:root:root body .workspace-content summary[class*=_sum_]::after{content:none}
+:root:root:root body .workspace-content summary[class*=_sum_]{min-height:44px}
+:root:root:root body .workspace-content .mp-zoom button{inline-size:44px;block-size:44px}
+:root:root:root body .workspace-content .mp-zoom button::after{content:none}
+:root:root:root body .workspace-content summary[class*=_sum_]{min-height:44px!important}
+/* Segmentado de la consola: botones de 32 px dentro de una píldora de 36; el toque de 44 px sale por ::after */
+:root:root:root:root:root body .workspace-content .pf-seg{padding:2px;gap:2px}
+:root:root:root:root:root body .workspace-content .pf-seg .btn{min-height:32px!important;height:32px;padding-block:0;position:relative}
+:root:root:root:root:root body .workspace-content .pf-seg .btn::after{content:"";position:absolute;inset:-9px -2px}
 }

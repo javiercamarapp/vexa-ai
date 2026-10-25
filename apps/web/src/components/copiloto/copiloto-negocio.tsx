@@ -7,6 +7,7 @@ import {Refresh} from '../ui/button';
 import {CtlLink} from '../agente/ctl';
 import {RovaqCargando} from '../rovaq-cargando';
 import {Chat, type ModoChat} from '../agente/agente';
+import {Icon} from '../agente/icons';
 import {TemasRapidos} from '../agente/sugerencias';
 import {RovaqWordmark} from '../agente/rovaq-mark';
 import {runTurn, failAnswerOf, type Runner} from '../agente/use-agente';
@@ -73,6 +74,12 @@ export function CopilotoNegocio({modo: clave, organization, roleOverride, query 
   const informe = rep.data, moneda = informe?.status === 'ok' ? monedaElegida(informe.report, sp?.get('currency')) : null;
   const brief = useMemo(() => informe?.status === 'ok' && moneda ? briefingCfo(informe.report, moneda) : null, [informe, moneda]);
   const cambiaMoneda = useCallback((m: string) => { const p = new URLSearchParams(sp?.toString() ?? ''); p.set('currency', m); router.replace(pathname + '?' + p.toString(), {scroll: false}); }, [sp, router, pathname]);
+  useEffect(() => { // Escape vuelve al chat desde el informe abierto (sin pisar el Escape de un menú o diálogo abierto)
+    if (!verInforme) return;
+    const alEscape = (e: KeyboardEvent) => { if (e.key === 'Escape' && !e.defaultPrevented && !document.querySelector('dialog[open], .popover-panel')) setVerInforme(false); };
+    document.addEventListener('keydown', alEscape);
+    return () => document.removeEventListener('keydown', alEscape);
+  }, [verInforme]);
   const hrefInforme = useCallback((ancla?: string) => { const p = new URLSearchParams(sp?.toString() ?? ''); p.set('vista', 'informe'); return (modo.ruta) + '?' + p.toString() + (ancla ? '#' + ancla : ''); }, [sp, modo.ruta]);
 
   const sugerenciasCfo = useMemo(() => modo.chipsPorTema.flatMap(t => [...t.preguntas]).slice(0, 3), [modo]);
@@ -122,7 +129,7 @@ export function CopilotoNegocio({modo: clave, organization, roleOverride, query 
       <h1 className="una-h1">{modo.titulo}</h1>
       {hayHilo ? <Ctl variant="soft" className="una-toggle" aria-expanded={verInforme} onClick={() => setVerInforme(v => !v)}>{verInforme ? 'Ocultar' : 'Ver'} el informe de {modo.titulo}</Ctl>
         : <>
-          <Ctl variant="soft" className="una-toggle" aria-expanded onClick={() => setVerInforme(false)}>Cerrar el informe</Ctl>
+          <Ctl variant="soft" className="una-toggle una-volver" icon={<Icon name="back" size={16} />} aria-expanded onClick={() => setVerInforme(false)}>Volver al chat</Ctl>
           {brief ? <AccionesCfo b={brief} informe={hrefInforme} onMoneda={cambiaMoneda} sintetico={informe?.status === 'ok' && informe.synthetic} /> : null}
         </>}
     </> : null,

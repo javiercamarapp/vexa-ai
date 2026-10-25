@@ -276,6 +276,7 @@ details[open]>summary.ctl{margin-bottom:var(--ctl-gap)}
 @media(max-height:760px){.workspace-chat .agente>.cn-portada>.una-fila-scroll{display:none}}
 .workspace-chat .agente-answer details{margin-block:0}
 .una-toggle{order:2}
+.una-toggle.una-volver{order:-1}
 @media(max-width:767px){
  .una-demo{display:none}
  .una-tablist{flex-wrap:wrap}

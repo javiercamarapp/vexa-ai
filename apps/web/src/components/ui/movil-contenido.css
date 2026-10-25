@@ -156,8 +156,9 @@ html:root[data-tablas-movil=comparar] table[data-mv] :is(td,th):last-child{paddi
 :root:root body .workspace-content .mp-seg{padding:0;max-width:100%;overflow-x:auto;scrollbar-width:none}
 :root:root body .workspace-content .mp-seg button{min-height:44px;padding:0 8px;border:6px solid transparent;background-clip:padding-box;border-radius:999px;box-shadow:none}
 :root:root body .workspace-content .mp-seg button[aria-pressed=true]{background-color:var(--ink)}
-:root:root body .mp-zoom{inset-block-start:auto;inset-block-end:8px;inset-inline-end:8px;grid-auto-flow:column;gap:6px}
-:root:root body .workspace-content .mp-zoom button{inline-size:44px;block-size:44px;font-size:20px}
+:root:root body .mp-zoom{inset-block-start:auto;inset-block-end:8px;inset-inline-end:8px;grid-auto-flow:column;gap:var(--btn-gap,8px)}
+:root:root body .workspace-content .mp-zoom button{inline-size:var(--btn-h-m,36px);block-size:var(--btn-h-m,36px);font-size:16px;position:relative}
+:root:root body .workspace-content .mp-zoom button::after{content:"";position:absolute;inset:-5px}
 :root:root body .mp-mapa-col{padding:4px;border-radius:12px}
 :root:root body .mp-cod{font-weight:700}
 :root:root body .mp-leyenda{gap:6px 12px}
@@ -205,7 +206,7 @@ html:root[data-tablas-movil=comparar] table[data-mv] :is(td,th):last-child{paddi
 /* Todo control del contenido mide al menos 44 px de alto (lo que se ve puede ser más compacto con el borde transparente) */
 :root:root:root body .workspace-content :is(button,summary,select,textarea,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden])):not(.dc-info):not(.fchip-x):not(.ui-chip-x):not(.agente-round):not(.sr-only):not(.btn){min-height:var(--mv-hit)!important}
 /* Botones del estándar: caja de 36 px; la zona táctil de 44 px la da el ::after de ui.css */
-:root:root:root body .workspace-content button.btn:not(.dc-info):not(.sr-only){min-height:var(--btn-h-m)!important}
+:root:root:root body .workspace-content button.btn:not(.dc-info):not(.sr-only):not(th *){min-height:var(--btn-h-m)!important}
 :root:root body .workspace-content button:not(.dc-info):not(.fchip-x):not(.ui-chip-x):not(.agente-round):not(.sr-only):not(.btn){min-width:var(--mv-hit)}
 
 :root:root body .workspace-content :is(.card-title,.card-head,.ui-card-head,.pc-card-head){flex-wrap:wrap;gap:8px 12px}

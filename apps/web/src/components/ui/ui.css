@@ -276,6 +276,8 @@ body .workspace-content .pc-pista{height:8px;background:color-mix(in srgb,var(--
 .pc-ley i[data-parcial]{background:repeating-linear-gradient(45deg,var(--chart-3) 0 3px,transparent 3px 6px);outline:1px solid var(--chart-3);outline-offset:-1px}
 @media(max-width:767px){
  :root:root:root body .workspace-content :is(td,th) :where(select,input:not([type=checkbox]):not([type=radio]):not([type=hidden]),button.btn,.btn,button:not([class])):where(:not(.row-link-inline):not(.dg-sku):not(.dc-info)){--mv-hit:var(--btn-h-m);height:auto;min-height:var(--btn-h-m)}
+ :root:root:root body .workspace-content :is(td,th) :is(select,input:not([type=checkbox]):not([type=radio]):not([type=hidden])){--mv-hit:44px;min-height:44px}
+ :root:root:root:root body .workspace-content th :is(.btn,button.btn){--mv-hit:44px;min-height:44px!important}
  :root:root:root body .workspace-content td:has(>:is(select,.btn,button.btn,button:not([class]),input:not([type=checkbox]):not([type=radio]))){padding-block:6px}
 }
 
@@ -296,9 +298,10 @@ body .workspace-content :is(button.dc-info,.pc-card-head button.dc-info,.hoy-kpi
 /* Celular: caja visible de 36 px y zona táctil de 44 px por un área invisible alrededor (::after), sin tocar al vecino (aire ≥ 8 px = 4 + 4) */
 @media(max-width:819px){
  :root:root body :is(.workspace-content,.access-flow) :is(.btn,button.btn,a.btn,.btn-sm,button.btn-sm){position:relative;min-height:var(--btn-h-m);padding-block:6px}
- :root:root body :is(.workspace-content,.access-flow) :is(.btn,button.btn,a.btn):not(.dc-info)::after{content:"";position:absolute;inset:-4px;border-radius:calc(var(--btn-radius) + 4px)}
+ :root:root body :is(.workspace-content,.access-flow) :is(.btn,button.btn,a.btn):not(.dc-info)::after{content:"";position:absolute;inset:-5px;border-radius:calc(var(--btn-radius) + 5px)}
 }
 /* Deshabilitado: la regla del estándar (secundario/primario) no lo pisa — debe quedar legible y distinto del activo */
 :is(.workspace-content,.access-flow,.platform-shell) :is(.btn,button.btn,a.btn,button):is(:disabled,[aria-disabled=true]):not(.dc-info){opacity:1;background:var(--ui-surface);border:1px dashed color-mix(in srgb,var(--ui-input) 55%,var(--ui-surface));color:var(--ui-secondary)}
 /* Última celda con botones: 14 px de aire al borde de la tarjeta (antes el botón quedaba a 1–3 px) */
 :is(.workspace-content,.platform-shell) :is(td,th):last-child:has(:is(.btn,button.btn,a.btn)){padding-inline-end:14px}
+:root[data-theme=dark] .workspace-content .ac-cifra dd{color:color-mix(in srgb,var(--cat,var(--ink)) 55%,var(--ink))}

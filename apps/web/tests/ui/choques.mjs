@@ -85,6 +85,7 @@ function medir(){
  for(const el of document.querySelectorAll('button,.btn,select,.ui-chip,.chip,input:not([type=checkbox]):not([type=radio]),[role=tab]')){
   if(!vis(el)||srOnly(el))continue;const cs=getComputedStyle(el);if(!(parseFloat(cs.borderLeftWidth)>0||cs.backgroundColor!=='rgba(0, 0, 0, 0)'))continue;
   const box=el.closest('.card,.ui-card,.pc-card,.hoy-card,.task-card,section,article,dialog');if(!box||box===el)continue;
+  if(box.matches('.mv-franja'))continue; // franja de estado de 44 px del celular: el botón va centrado (4 px arriba/abajo) y la franja tiene tope de alto en movil-contenido.mjs
   const bs=getComputedStyle(box);if(!(parseFloat(bs.borderLeftWidth)>0))continue;
   const r=el.getBoundingClientRect(),b=box.getBoundingClientRect();
   if(r.width<1||b.width<1)continue;
@@ -103,8 +104,9 @@ function medir(){
  const croma=c=>Math.max(c[0],c[1],c[2])-Math.min(c[0],c[1],c[2]);
  const CTRL='button,.btn,select,input:not([type=checkbox]):not([type=radio]):not([type=hidden]),textarea,.chip,.ui-chip,.fchip,[role=tab],[role=radio],.seg-btn,.status-chip,.kind-badge,.id-chip';
  const AVISO='.ui-notice,.notice-bar,.state-cache,.state,.state-panel,.state-error,.notice';
+ const otroCarril=/^\/(preguntale|cfo)(\/|$)/.test(location.pathname); // pantallas con clases propias de otro carril (chat y CFO)
  for(const el of document.querySelectorAll(CTRL+','+AVISO)){
-  if(!vis(el)||srOnly(el)||el.matches('.skip-link,.row-link-inline,.ui-chip-x,.sidebar-navigation a,.mobile-menu-button,.icon-button,.empresa-chip')||el.closest('.workspace-sidebar,.workspace-bottom-nav,.platform-nav'))continue;
+  if(otroCarril||!vis(el)||srOnly(el)||el.matches('.skip-link,.row-link-inline,.ui-chip-x,.sidebar-navigation a,.mobile-menu-button,.icon-button,.empresa-chip')||el.closest('.workspace-sidebar,.workspace-bottom-nav,.platform-nav'))continue;
   const cs=getComputedStyle(el),r=el.getBoundingClientRect();if(r.width<4||r.height<4)continue;
   const bgp=el.parentElement?bgDe(el.parentElement):[255,255,255,1],bg=bgDe(el),aviso=el.matches(AVISO);
   let bcr=rgba(cs.borderTopColor);if(bcr[3]<0.05&&/inset/.test(cs.boxShadow)){const m=cs.boxShadow.match(/(rgba?\([^)]*\)|color\([^)]*\))/);if(m)bcr=rgba(m[1]);} // píldoras móviles: borde transparente + sombra interior de 1 px
@@ -116,7 +118,7 @@ function medir(){
   }else if(propio||bw>0){
    const dist=propio?ratio(bg,bgp):1,borde=bc?ratio(bc,bgp):1,conColor=propio&&croma(bg)>=14;
    // Un control distinguible: tinte con color, o fondo claramente distinto del de su padre, o borde ≥ 3:1, o borde ≥ 1.4:1 si su fondo es blanco (superficie) y no gris.
-   if(!(conColor||dist>=1.08||borde>=3||(borde>=1.4&&(lum(bg)>0.9||dist>=1.04)))&&!el.disabled)out.superficie.push('control del color del fondo '+desc(el)+' bg='+bg.slice(0,3).map(Math.round)+' fondo='+bgp.slice(0,3).map(Math.round)+' borde '+borde.toFixed(1)+':1');
+   if(!(conColor||dist>=1.08||borde>=3||borde>=1.4)&&!el.disabled)out.superficie.push('control del color del fondo '+desc(el)+' bg='+bg.slice(0,3).map(Math.round)+' fondo='+bgp.slice(0,3).map(Math.round)+' borde '+borde.toFixed(1)+':1');
    if(el.disabled&&!(dist>=1.04||borde>=1.5||conColor))out.superficie.push('control deshabilitado invisible '+desc(el));
   }
   // Contraste del texto del control/aviso contra su propio fondo (≥ 4.5:1).

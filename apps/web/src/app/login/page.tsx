@@ -4,7 +4,6 @@ import { authClient, config } from '../../lib/auth';
 import {RovaqLogo} from '../../components/rovaq-logo';
 import {EmailLogin} from '../../components/email-login';
 import {LimpiarCache} from '../../components/limpiar-cache';
-export const metadata={title:'Iniciar sesión'};
 export const dynamic='force-dynamic';
 export default async function Login({searchParams}:{searchParams:Promise<{error?:string}>}) {
   let configured=false;
@@ -46,7 +45,7 @@ export default async function Login({searchParams}:{searchParams:Promise<{error?
     </div></section>
     <aside className="login-visual"><figure className="login-lamina">
       {/* eslint-disable-next-line @next/next/no-img-element -- Approved fixed local warehouse image. */}
-      <img src="/images/login-warehouse.webp" alt="Operación de ecommerce en un centro de distribución." className="login-foto-marca" fetchPriority="high"/>
+      <img src="/images/login-warehouse.webp" alt="Operación de ecommerce en un centro de distribución." className="login-foto-marca" width={1744} height={2336} fetchPriority="high"/>
       <div className="login-velo"/>
       <figcaption><p className="login-kicker">De conversaciones a decisiones</p><p className="login-serif">Entiende lo que importa.<br/>Decide con evidencia.</p></figcaption>
     </figure></aside>

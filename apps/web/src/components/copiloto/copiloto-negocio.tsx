@@ -127,11 +127,10 @@ export function CopilotoNegocio({modo: clave, organization, roleOverride, query 
     modo: modo.clave, runner, placeholder: esCfo ? 'Pregunta sobre tu dinero…' : modo.clave === 'refunds' ? 'Pregunta sobre tus reembolsos…' : undefined, etiquetaChat: `Conversación del copiloto: ${modo.titulo}`,
     cabecera: !esCfo ? undefined : hayHilo => hayHilo || verInforme ? <>
       <h1 className="una-h1">{modo.titulo}</h1>
-      {hayHilo ? <Ctl variant="soft" className="una-toggle" aria-expanded={verInforme} onClick={() => setVerInforme(v => !v)}>{verInforme ? 'Ocultar' : 'Ver'} el informe de {modo.titulo}</Ctl>
-        : <>
-          <Ctl variant="soft" className="una-toggle una-volver" icon={<Icon name="back" size={16} />} aria-expanded onClick={() => setVerInforme(false)}>Volver al chat</Ctl>
-          {brief ? <AccionesCfo b={brief} informe={hrefInforme} onMoneda={cambiaMoneda} sintetico={informe?.status === 'ok' && informe.synthetic} /> : null}
-        </>}
+      {verInforme
+        ? <Ctl variant="soft" className="una-toggle una-volver" icon={<Icon name="back" size={16} />} aria-expanded onClick={() => setVerInforme(false)}>Volver al chat</Ctl>
+        : <Ctl variant="soft" className="una-toggle" aria-expanded={false} onClick={() => setVerInforme(true)}>Ver el informe de {modo.titulo}</Ctl>}
+      {verInforme && brief ? <AccionesCfo b={brief} informe={hrefInforme} onMoneda={cambiaMoneda} sintetico={informe?.status === 'ok' && informe.synthetic} /> : null}
     </> : null,
     portada: (ask, hayHilo) => {
       const cuerpo = cuerpoBriefing();

@@ -15,6 +15,7 @@ export type BriefingCfo = {
   siguientes: {pregunta: string; directa: Directa; motivo: string}[];
 };
 export function monedaElegida(report: CfoReport | null | undefined, pedida?: string | null): string | null;
+export function parametrosConMoneda(search: string | null | undefined, moneda: string): string;
 export function serieIngresos(report: CfoReport, moneda: string): SerieIngresos | null;
 export function briefingCfo(report: CfoReport, monedaPedida?: string | null): BriefingCfo | null;
 export function mesLargo(key: string | null | undefined): string;

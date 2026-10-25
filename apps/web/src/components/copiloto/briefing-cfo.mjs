@@ -11,6 +11,15 @@ const KPI_IDS = ['rev', 'orders', 'ticket', 'refund', 'rate'];
 /** Clave del bloque de una moneda: la pedida si existe en el informe; si no, la primera (nunca se inventa una). */
 export const monedaElegida = (report, pedida) => (report?.currencies ?? []).includes(pedida) ? pedida : (report?.currencies?.[0] ?? null);
 
+/** Parámetros de la URL al cambiar la moneda del resumen. `currency` es parte del alcance compartido de la app y `snapshot_id`/`scope_hash` fijan el corte de ESE alcance:
+ *  cambiar solo la moneda dejaba un corte de otra moneda en los enlaces del menú (las demás pantallas respondían 409). Igual que el Explorador, se descarta el corte
+ *  para que el servidor resuelva el del alcance nuevo. Devuelve el texto de la query (sin «?»). */
+export const parametrosConMoneda = (search, moneda) => {
+  const p = new URLSearchParams(search ?? '');
+  p.set('currency', moneda); p.delete('snapshot_id'); p.delete('scope_hash');
+  return p.toString();
+};
+
 function kpisDe(report, moneda) {
   const k = report.kpis.find(x => x.currency === moneda);
   return (k?.metrics ?? []).filter(m => KPI_IDS.includes(m.id.split(':')[0])).map(m => ({id: m.id, label: m.label.replace(/ · [A-Z]{3}$/, ''), display: m.display, kind: m.kind, delta: m.delta ? {display: m.delta.display, vs: m.delta.vs, bps: m.delta.bps ?? null, pp: !!m.delta.pp} : null, cobertura: m.coverage?.eligible == null ? null : m.coverage.label, how: m.how}));

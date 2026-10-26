@@ -48,13 +48,12 @@ export function CfoDashboard({query = '', organization, roleOverride, volverA = 
   const load = useCallback(async () => { await rep.reload(); }, [rep]);
   const ok = state?.status === 'ok' ? state : null, report = ok?.report;
   const actions = <>
-    <CtlLink href={volverA} variant="soft" solo icon={<Icon name="back" size={16} />}>Volver al copiloto CFO</CtlLink>
     <Popover label="Exportar" align="end" width={220} triggerClassName="ctl ctl-solo" trigger={<><Download /><span className="ctl-label una-solo-vis">Exportar</span><span className="sr-only una-solo-sr">Exportar</span></>}>
       <MenuList>
         <li><CtlLink href="/cfo/data/export?format=csv" download="informe-cfo.csv" icon={<Download />}>Informe CSV</CtlLink></li>
         <li><CtlLink href="/cfo/data/export?format=pdf" download="informe-cfo.pdf" icon={<Download />}>Informe PDF</CtlLink></li></MenuList></Popover>
   </>;
-  const header = <header className="una-head"><div className="una-head-t"><p className="eyebrow">Dinero · CFO</p><h1 className="una-h1">Informe de CFO</h1></div><p className="una-head-d">Ingresos, reembolsos, canales y calidad de datos por moneda, sin mezclar bases; cada cifra dice cómo se calculó.</p><div className="una-head-a">{actions}</div></header>;
+  const header = <header className="una-head"><CtlLink href={volverA} variant="soft" solo icon={<Icon name="back" size={16} />}>Volver al chat</CtlLink><div className="una-head-t"><p className="eyebrow">Dinero · CFO</p><h1 className="una-h1">Informe de CFO</h1></div><p className="una-head-d">Ingresos, reembolsos, canales y calidad de datos por moneda, sin mezclar bases; cada cifra dice cómo se calculó.</p><div className="una-head-a">{actions}</div></header>;
   if (!permitido) return <div className="dg-page una-informe"><header className="una-head"><div className="una-head-t"><p className="eyebrow">Dinero · CFO</p><h1 className="una-h1">Informe de CFO</h1></div></header>
     <Card><EmptyState art="shield" title="Tu rol no tiene acceso a este panel" body="El informe CFO muestra ingresos, reembolsos y exposición económica. Solo lo ven los propietarios y analistas; pide acceso a un propietario." action={<CtlLink href="/overview" variant="soft">Volver al resumen</CtlLink>} /></Card></div>;
   if (!state && busy && !error) return <RovaqCargando mensaje="" />;

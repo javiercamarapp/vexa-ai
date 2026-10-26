@@ -46,17 +46,22 @@ export function Chat({data,modo}:{data:AgentState;modo?:ModoChat}){
  const a=useAgente(data.scope,data.limits.maxQuestionChars,data.limits.maxTurnsPerConversation,data.toolLabels,{runner:modo?.runner,modo:modo?.modo});
  const [text,setText]=useState(()=>{if(modo||typeof window==='undefined')return '';const sp=new URLSearchParams(window.location.search),q=sp.get('q');return sp.get('enviar')==='1'?'':q?q.slice(0,data.limits.maxQuestionChars):'';}),[hist,setHist]=useState(false),[leaving,setLeaving]=useState(false),[attachError,setAttachError]=useState<string|null>(null);
  const histId=useId(),inputId=useId();
- const end=useRef<HTMLDivElement>(null),histButton=useRef<HTMLButtonElement>(null),timer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
+ const histButton=useRef<HTMLButtonElement>(null),timer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
  useEffect(()=>()=>clearTimeout(timer.current),[]);
  const has=a.messages.length>0;
  const s=data.suggestions;
- // El hilo baja solo dentro de su caja de scroll (nunca la página) y deja de seguirte si subes con el mouse; al mandar otra pregunta vuelve a seguir.
- const pegado=useRef(true),hilo=useRef<HTMLDivElement>(null),dentro=useRef<HTMLDivElement>(null);
- const seguir=useCallback((fuerza=false)=>{const c=hilo.current;if(!c)return;if(fuerza)pegado.current=true;if(pegado.current)c.scrollTop=c.scrollHeight;},[]);
- useEffect(()=>{const c=hilo.current;if(!c)return;let ultimo=c.scrollTop;const f=()=>{const dist=c.scrollHeight-c.scrollTop-c.clientHeight,sube=c.scrollTop<ultimo-1;ultimo=c.scrollTop;if(dist<80)pegado.current=true;else if(sube)pegado.current=false;};c.addEventListener('scroll',f,{passive:true});return()=>c.removeEventListener('scroll',f);},[has]);
- useEffect(()=>{seguir(a.sending);},[a.messages.length,a.sending,seguir]);
- // Gráficas, tablas y pasos en vivo crecen después de montarse: mientras sigas abajo, el hilo se mantiene anclado al final sin mover la página.
- useEffect(()=>{const d=dentro.current;if(!d||typeof ResizeObserver==='undefined')return;const ro=new ResizeObserver(()=>seguir());ro.observe(d);return()=>ro.disconnect();},[has,seguir]);
+ // Cada respuesta se abre por el principio. Su crecimiento nunca arrastra al lector.
+ const hilo=useRef<HTMLDivElement>(null);
+ const ultimoMensaje=a.messages.at(-1)?.id;
+ const conversacionAnterior=useRef(a.activeId);
+ useEffect(()=>{
+  const c=hilo.current;if(!c)return;
+  const cambioConversacion=conversacionAnterior.current!==a.activeId;
+  conversacionAnterior.current=a.activeId;
+  if(cambioConversacion){c.scrollTop=0;return;}
+  const mensaje=Array.from(c.querySelectorAll<HTMLElement>('[data-message-id]')).find(el=>el.dataset.messageId===ultimoMensaje);
+  if(mensaje)c.scrollTop=Math.max(0,c.scrollTop+mensaje.getBoundingClientRect().top-c.getBoundingClientRect().top-12);
+ },[ultimoMensaje,a.activeId]);
  const ask=useCallback((q:string)=>{const t=q.trim().slice(0,data.limits.maxQuestionChars);if(!t||a.sending)return;setText('');setAttachError(null);a.send(t,s.directas[t]);},[a,data.limits.maxQuestionChars,s.directas]);
  const openHist=()=>{clearTimeout(timer.current);setLeaving(false);setHist(true);};
  const closeHist=useCallback(()=>{
@@ -94,11 +99,10 @@ export function Chat({data,modo}:{data:AgentState;modo?:ModoChat}){
     {s.empty&&<div className="state agente-empty" role="status"><strong>Todavía no hay información cargada.</strong><p>Sin datos no puedo responder cifras: no las invento. Carga tus fuentes y vuelve a preguntar.</p><CtlLink href="/imports" variant="soft" icon={<Icon name="arrow"/>}>Ir a Importaciones</CtlLink></div>}
    </header>}
 
-   {has&&<div ref={hilo} className="agente-thread" role="log" aria-live="polite" tabIndex={0} aria-label={modo?.etiquetaChat??"Conversación con el agente de datos"}><div ref={dentro} className="agente-hilo-in">
-    {a.messages.map(m=>m.adjunto?<div key={m.id} className="agente-answer"><div className="agente-user"><div className="agente-bubble">{m.text}</div></div><AttachmentCard a={m.adjunto}/></div>:m.role==='user'?<div key={m.id} className="agente-user"><div className="agente-bubble">{m.text}</div></div>:<AnswerView key={m.id} message={m} escribir={m.id===a.freshId} onTick={seguir} question={m.question??''} labels={data.toolLabels} userContext={userContext} isLast={m.id===lastAssistant&&!a.sending} busy={a.sending} onAsk={ask} onRegenerate={a.regenerate} onFeedback={a.setFeedback}/>)}
+   {has&&<div ref={hilo} className="agente-thread" role="log" aria-live="polite" tabIndex={0} aria-label={modo?.etiquetaChat??"Conversación con el agente de datos"}><div className="agente-hilo-in">
+    {a.messages.map(m=><div key={m.id} data-message-id={m.id} className="agente-message">{m.adjunto?<div key={m.id} className="agente-answer"><div className="agente-user"><div className="agente-bubble">{m.text}</div></div><AttachmentCard a={m.adjunto}/></div>:m.role==='user'?<div key={m.id} className="agente-user"><div className="agente-bubble">{m.text}</div></div>:<AnswerView key={m.id} message={m} escribir={m.id===a.freshId} question={m.question??''} labels={data.toolLabels} userContext={userContext} isLast={m.id===lastAssistant&&!a.sending} busy={a.sending} onAsk={ask} onRegenerate={a.regenerate} onFeedback={a.setFeedback}/>}</div>)}
     {a.sending&&<LiveTrace phase={a.phase} steps={a.steps} labels={data.toolLabels}/>}
     {limitReached&&<p className="state" role="status">Esta conversación llegó a {data.limits.maxTurnsPerConversation} preguntas. Empieza un chat nuevo para seguir.</p>}
-    <div ref={end}/>
    </div></div>}
 
 

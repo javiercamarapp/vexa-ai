@@ -85,12 +85,12 @@ html:has(.workspace-chat),html:has(.workspace-chat) body{height:100dvh;overflow:
 @media(max-height:640px){.workspace-chat .agente-sub{display:none}.workspace-chat .agente-meta{display:none}}
 
 /* ---- Hilo: SOLO él scrollea, anclado abajo; el borde se difumina en vez de cortarse ---- */
-.workspace-chat .agente-thread{order:1;width:100%;max-width:var(--col-chat);flex:1 1 auto;min-height:0;display:block;margin:0;padding:12px 4px 20px;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%)}
+.workspace-chat .agente-thread{order:1;width:100%;max-width:var(--col-chat);flex:1 1 auto;min-height:0;display:block;margin:0;padding:12px 4px 20px;overflow-x:hidden;overflow-y:auto;overflow-anchor:none;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%)}
 .agente-hilo-in{display:flex;flex-direction:column;gap:20px;min-width:0}
 .agente-hilo-in>*{flex:none}
 .workspace-chat .agente-thread:focus-visible{outline:2px solid var(--ui-focus);outline-offset:-2px}
 .workspace-chat .agente[data-has=true] .agente-dock{order:2}
-@media(prefers-reduced-motion:no-preference){.workspace-chat .agente-thread{scroll-behavior:smooth}}
+
 .agente-user{display:flex;justify-content:flex-end}
 .agente-bubble{max-width:85%;padding:9px 14px;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-soft);font-size:14px;line-height:20px;white-space:pre-wrap;overflow-wrap:anywhere}
 .agente-answer{display:flex;flex-direction:column;gap:12px;min-width:0}

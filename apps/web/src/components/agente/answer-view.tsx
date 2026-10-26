@@ -34,7 +34,7 @@ function CalcView({answer}:{answer:Answer}){
  </details>;
 }
 
-export function AnswerView({message,question,isLast,busy,labels,userContext,escribir=false,onTick,onAsk,onRegenerate,onFeedback}:{escribir?:boolean;onTick?:()=>void;message:ChatMessage;question:string;labels:Record<string,string>;userContext:string[];isLast:boolean;busy:boolean;onAsk:(q:string)=>void;onRegenerate:()=>void;onFeedback:(id:string,v:ChatMessage['feedback'])=>void}){
+export function AnswerView({message,question,isLast,busy,labels,userContext,escribir=false,onAsk,onRegenerate,onFeedback}:{escribir?:boolean;message:ChatMessage;question:string;labels:Record<string,string>;userContext:string[];isLast:boolean;busy:boolean;onAsk:(q:string)=>void;onRegenerate:()=>void;onFeedback:(id:string,v:ChatMessage['feedback'])=>void}){
  const [copied,setCopied]=useState(false),[csvError,setCsvError]=useState(false),[reasonOpen,setReasonOpen]=useState(false),[fbBusy,setFbBusy]=useState(false);
  const a=message.answer;
  const reducido=useReducedMotion();
@@ -43,9 +43,9 @@ export function AnswerView({message,question,isLast,busy,labels,userContext,escr
   // Escritura progresiva: máx. 4.5 s aunque la respuesta sea larga (≥ 60 caracteres/s); con «reducir movimiento» sale completa.
   const largo=a?.text?.length??0;if(!escribir||!largo||reducido)return;
   const ritmo=Math.max(0.06,largo/4500),t0=performance.now();let raf=0;
-  const paso=(t:number)=>{const n=Math.min(largo,Math.floor((t-t0)*ritmo));setEscrito(n>=largo?Infinity:n);onTick?.();if(n<largo)raf=requestAnimationFrame(paso);};
+  const paso=(t:number)=>{const n=Math.min(largo,Math.floor((t-t0)*ritmo));setEscrito(n>=largo?Infinity:n);if(n<largo)raf=requestAnimationFrame(paso);};
   raf=requestAnimationFrame(paso);return()=>cancelAnimationFrame(raf);
- },[escribir,a?.text,reducido,onTick]);
+ },[escribir,a?.text,reducido]);
  const listo=!escribir||reducido||!a?.text?.length||escrito===Infinity;
  if(message.cancelled)return <p className="agente-cancelled">Cancelado.</p>;
  if(!a)return null;

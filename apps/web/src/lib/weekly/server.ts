@@ -10,7 +10,7 @@ import {entregaDesdeEntorno} from '../../../../../packages/notifications/weekly-
 const UUID=/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 /** Organizaciones del reporte: VEXA_WEEKLY_TENANTS (UUID separados por coma, máx. 20). Sin configurar: el disparador responde 503, no recorre «todas». */
 export function tenantsSemanales(env:NodeJS.ProcessEnv=process.env){
- const ids=(env.VEXA_WEEKLY_TENANTS??'').split(',').map(x=>x.trim()).filter(Boolean);
+ const ids=(env.VEXA_WEEKLY_TENANTS??'').split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);
  if(!ids.length||ids.length>20||!ids.every(x=>UUID.test(x)))throw new Error('WEEKLY_CONFIGURATION_REQUIRED');
  return [...new Set(ids)];
 }
@@ -22,6 +22,7 @@ export async function ejecutarSemanal({deadlineAt}:{deadlineAt:number}){
  const tenants=tenantsSemanales();
  const entregar=await entregaDesdeEntorno(process.env);
  const resultados:unknown[]=[];
+ try{
  for(const tenant of tenants){
   const worker=await createRuntime({...process.env,VEXA_WORKER_DISPATCHER:'disabled',VEXA_WORKER_TENANT:tenant},{createDatabase,pool:serverPool(),deadlineAt:Math.min(deadlineAt,Date.now()+40000),consumer:'notifications'});
   try{
@@ -35,4 +36,5 @@ export async function ejecutarSemanal({deadlineAt}:{deadlineAt:number}){
   }finally{await worker.close();}
  }
  return resultados;
+ }finally{await entregar?.close();}
 }

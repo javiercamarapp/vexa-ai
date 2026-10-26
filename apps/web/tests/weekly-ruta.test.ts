@@ -30,6 +30,8 @@ function ruta(path:string,requests:Peticion[],config:Record<string,string>={}):R
 const T1='11111111-1111-1111-1111-111111111111',T2='22222222-2222-2222-2222-222222222222';
 test('VEXA_WEEKLY_TENANTS: lista explícita de UUID; vacía, con basura o de más de 20 falla cerrado (jamás «todas»)',()=>{
   assert.deepEqual(tenantsSemanales({VEXA_WEEKLY_TENANTS:` ${T1}, ${T2},${T1} `} as unknown as NodeJS.ProcessEnv),[T1,T2]);
+  const alpha='abcdefab-abcd-abcd-abcd-abcdefabcdef';
+  assert.deepEqual(tenantsSemanales({VEXA_WEEKLY_TENANTS:`${alpha.toUpperCase()},${alpha}`} as NodeJS.ProcessEnv),[alpha]);
   for(const mal of [undefined,'','  ','no-es-uuid',T1+';'+T2,Array.from({length:21},(_,i)=>`11111111-1111-1111-1111-${String(i).padStart(12,'0')}`).join(',')])
     assert.throws(()=>tenantsSemanales({VEXA_WEEKLY_TENANTS:mal} as unknown as NodeJS.ProcessEnv),/WEEKLY_CONFIGURATION_REQUIRED/);
 });

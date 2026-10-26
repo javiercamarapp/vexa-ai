@@ -16,6 +16,7 @@ export function createReceiptRepository({pool}){
  return Object.freeze({
  resolveRecipient:({tenantId,userId})=>call('notification_email_recipient',[tenantId,userId]),
  prepare:({idempotencyKey,tenantId,userId,provider})=>call('notification_email_prepare',[idempotencyKey,tenantId,userId,provider]),
+ prepareWeekly:({idempotencyKey,tenantId,userId,provider})=>call('notification_weekly_email_prepare',[idempotencyKey,tenantId,userId,provider]),
  accepted:({idempotencyKey,provider,providerId})=>call('notification_email_accepted',[idempotencyKey,provider,providerId]),
  record:({eventId,providerId,type,occurredAt,payloadHash,bounceKind=null})=>call('notification_email_receipt',[eventId,providerId,type,occurredAt,payloadHash,bounceKind]),
  });

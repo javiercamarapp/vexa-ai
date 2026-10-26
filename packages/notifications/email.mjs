@@ -14,30 +14,42 @@ export function createEmailTransport({mode,apiKey,from,replyTo,appOrigin,unsubsc
  const configured=()=>!!(template&&mailbox(from)&&(replyTo===undefined||mailbox(replyTo))&&repository&&((mode==='resend'&&typeof apiKey==='string'&&/^re_[A-Za-z0-9_-]+$/.test(apiKey))||(mode==='mailpit'&&smtp)));
  const sdk=mode==='resend'&&configured()?(resend??new Resend(apiKey,{baseUrl:'https://api.resend.com'})):null;
  if(sdk&&!resend)sdk.logError=()=>{}; // Provider messages may contain PII; never log SDK response bodies.
- return Object.freeze({configured,resolveRecipient:identity=>repository.resolveRecipient(structuredClone(identity)),async send(input){
+ async function deliver(input,weekly=false){
   let owned;try{owned=structuredClone({recipient:input.recipient,idempotencyKey:input.idempotencyKey});}catch{return{kind:'blocked'};}
   if(!configured()||input.signal?.aborted)return{kind:'blocked'};
   const {recipient:r,idempotencyKey:key}=owned;
   if(!mailbox(r?.email)||r.emailVerified!==true||r.channel!=='email'||!/^[0-9a-f]{64}$/.test(key??''))return{kind:'blocked'};
   try{
-   const current=await repository.prepare({idempotencyKey:key,tenantId:r.tenantId,userId:r.userId,provider:mode});
+   const prepare=weekly?repository.prepareWeekly:repository.prepare;
+   if(typeof prepare!=='function')return{kind:'blocked'};
+   const current=await prepare.call(repository,{idempotencyKey:key,tenantId:r.tenantId,userId:r.userId,provider:mode});
    if(!current||current.email!==r.email||current.emailVerified!==true)return{kind:'blocked'};
    if(current.providerId)return{kind:'accepted',providerId:current.providerId};
    if(input.signal?.aborted)return{kind:'blocked'};
+   // Weekly content comes from the authorized, persisted report, never a caller's body.
+   let message={subject:template.subject,html:template.html,text:template.text,headers:template.headers};
+   if(weekly){
+    const {subject,html,text}=current;
+    if(typeof subject!=='string'||!subject||subject.length>998||/[\r\n]/.test(subject)||typeof html!=='string'||!html||html.length>1000000||typeof text!=='string'||!text||text.length>1000000)return{kind:'blocked'};
+    const headers=structuredClone(input.headers??{});
+    if(Object.keys(headers).some(k=>!['List-Unsubscribe','List-Unsubscribe-Post'].includes(k))||Object.values(headers).some(v=>typeof v!=='string'||/[\r\n]/.test(v)||v.length>4096))return{kind:'blocked'};
+    message={subject,html,text,headers};
+   }
    let providerId;
    if(mode==='resend'){
-    const result=await sdk.emails.send({from,...(replyTo?{replyTo}:{}),to:[current.email],subject:template.subject,html:template.html,text:template.text,headers:template.headers},{idempotencyKey:key,signal:input.signal,redirect:'error'});
+    const result=await sdk.emails.send({from,...(replyTo?{replyTo}:{}),to:[current.email],...message},{idempotencyKey:key,signal:input.signal,redirect:'error'});
     if(result.error){if(result.error.statusCode===429)return{kind:'retry',retryAfterMs:60000};if([401,403].includes(result.error.statusCode))return{kind:'blocked'};return{kind:'uncertain'};}
     providerId=result.data?.id;if(!id(providerId))return{kind:'uncertain'};
    }else{
-    const result=await smtp.sendMail({from,...(replyTo?{replyTo}:{}),to:current.email,subject:template.subject,html:template.html,text:template.text,headers:template.headers,messageId:`<${key}@mailpit.vexa.test>`,disableFileAccess:true,disableUrlAccess:true},{signal:input.signal});
+    const result=await smtp.sendMail({from,...(replyTo?{replyTo}:{}),to:current.email,...message,messageId:`<${key}@mailpit.vexa.test>`,disableFileAccess:true,disableUrlAccess:true},{signal:input.signal});
     if(!result.accepted?.includes(current.email))return{kind:'uncertain'};
     providerId='mailpit_'+key;
    }
    await repository.accepted({idempotencyKey:key,provider:mode,providerId});
    return{kind:'accepted',providerId};
   }catch{return{kind:'uncertain'};}
- }});
+ }
+ return Object.freeze({configured,resolveRecipient:identity=>repository.resolveRecipient(structuredClone(identity)),send:input=>deliver(input),sendWeekly:input=>deliver(input,true)});
 }
 /** Each attempt owns its socket. Abort destroys only that socket, including during connect. */
 export function createMailpitSender({port}){

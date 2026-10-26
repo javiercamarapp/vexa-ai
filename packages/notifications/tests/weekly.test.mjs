@@ -42,18 +42,18 @@ test('ejecuta, devuelve solo conteos, un ciclo a la vez y falla cerrado ante con
   assert.equal((await lento(req())).status, 503);
 });
 
-test('entrega semanal: apagada por defecto; solo envía a correos verificados y con el HTML guardado', async () => {
-  assert.equal(await entregaDesdeEntorno({}), null); assert.equal(await entregaDesdeEntorno({VEXA_WEEKLY_SEND: 'true'}), null); assert.equal(await entregaDesdeEntorno({VEXA_WEEKLY_SEND: 'disabled', RESEND_API_KEY: 're_x'}), null);
-  const enviados = [];
-  const sdk = {emails: {async send(m, o) { enviados.push([m, o]); return {data: {id: 'em_1'}}; }}};
-  const ok = {configured: async () => true, resolveRecipient: async () => ({email: 'a@b.com', emailVerified: true})};
-  const msg = {tenantId: 't', userId: 'u', subject: 'S', html: '<p>h</p>', text: 'h', headers: {'List-Unsubscribe': '<https://x>'}, idempotencyKey: 'k'};
-  const e = crearEntregaSemanal({email: ok, sdk, from: 'Rovaq <r@x.com>'});
-  assert.deepEqual(await e(msg), {ok: true, providerId: 'em_1'});
-  assert.deepEqual(enviados[0][0].to, ['a@b.com']); assert.equal(enviados[0][0].html, '<p>h</p>'); assert.deepEqual(enviados[0][0].headers, msg.headers); assert.equal(enviados[0][1].idempotencyKey, 'k'); assert.equal(enviados[0][1].redirect, 'error');
-  assert.equal((await crearEntregaSemanal({email: {...ok, configured: async () => false}, sdk, from: 'x'})(msg)).motivo, 'no_configurado');
-  assert.equal((await crearEntregaSemanal({email: {...ok, resolveRecipient: async () => ({email: 'a@b.com', emailVerified: false})}, sdk, from: 'x'})(msg)).motivo, 'sin_destinatario');
-  assert.equal((await crearEntregaSemanal({email: {...ok, resolveRecipient: async () => null}, sdk, from: 'x'})(msg)).motivo, 'sin_destinatario');
-  assert.equal((await crearEntregaSemanal({email: ok, sdk: {emails: {send: async () => ({error: {statusCode: 500}})}}, from: 'x'})(msg)).motivo, 'rechazado');
-  assert.equal(enviados.length, 1, 'ninguna rama fallida llamó al SDK');
+test('entrega semanal: apagada por defecto y transporte preparado obligatorio', async () => {
+  for (const env of [{}, {VEXA_WEEKLY_SEND: 'true'}, {VEXA_WEEKLY_SEND: 'disabled', RESEND_API_KEY: 're_x'}, {VEXA_WEEKLY_SEND: 'enabled', VEXA_EMAIL_MODE: 'mailpit'}]) assert.equal(await entregaDesdeEntorno(env), null);
+  const recipient = {tenantId: 't', userId: 'u', channel: 'email', email: 'a@b.com', emailVerified: true};
+  const sent = [], msg = {tenantId: 't', userId: 'u', headers: {}, idempotencyKey: 'a'.repeat(64)};
+  const email = {configured: () => true, resolveRecipient: async () => recipient, sendWeekly: async input => { sent.push(input); return {kind: 'accepted', providerId: 'em_1'}; }};
+  assert.deepEqual(await crearEntregaSemanal({email})(msg), {ok: true, providerId: 'em_1'});
+  assert.deepEqual(sent[0], {recipient, headers: {}, idempotencyKey: msg.idempotencyKey, signal: undefined});
+  for (const [override, motivo] of [[{configured: () => false}, 'no_configurado'], [{resolveRecipient: async () => null}, 'sin_destinatario'], [{resolveRecipient: async () => ({...recipient, emailVerified: false})}, 'sin_destinatario'], [{sendWeekly: undefined}, 'no_configurado']]) {
+    assert.equal((await crearEntregaSemanal({email: {...email, ...override}})(msg)).motivo, motivo);
+  }
+  assert.equal(sent.length, 1);
+  let closed = 0;
+  await crearEntregaSemanal({email: {...email, close: async () => { closed++; }}}).close();
+  assert.equal(closed, 1);
 });

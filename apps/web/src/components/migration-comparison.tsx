@@ -15,7 +15,7 @@ import {Icon} from './ui/icons';
 import {SkeletonStats} from './ui/skeletons';
 import {nf} from './ui/format';
 import css from './ops-panels.module.css';
-import {useCallback,useEffect,useRef,useState} from 'react';
+import {useLayoutEffect,useCallback,useEffect,useRef,useState} from 'react';
 import type {ComparisonResult,ComparisonSnapshot} from '../../../../packages/connectors/comparability.mjs';
 const reasonLabels:Record<string,string>={currency_unit_changed:'Cambió la unidad monetaria; los importes no son comparables.',scope_changed:'Cambiaron filtros, ventana, moneda o base temporal.',pipeline_changed:'Cambió la versión del procesamiento.',mapping_changed:'Cambió el mapeo de las fuentes.',taxonomy_changed:'Cambió la taxonomía: documenta el cambio y genera cortes con el mismo método.',channel_coverage_changed:'Cambió la cobertura de canales; menos casos no significa una mejora.',incomplete_evidence:'Hay datos sin versión, fecha o canal verificable.',empty_dataset:'Uno de los cortes no contiene conversaciones.'};
 
@@ -36,7 +36,7 @@ export function MigrationComparison(){
  const refresh=useCallback(async(signal?:AbortSignal)=>{const body=await api('',undefined,signal);setSnapshots(body.snapshots);setNextCursor(body.nextCursor);setLoaded(true);setDenied(false);},[api]);
  useEffect(()=>{const controller=new AbortController();void Promise.resolve().then(()=>refresh(controller.signal)).catch(e=>{if(!controller.signal.aborted&&e.name!=='AbortError')setError(e.message);});return()=>controller.abort();},[refresh]);
  // Datos nuevos: relectura en segundo plano de los cortes; no corre durante una acción.
- const busyRef=useRef(false);busyRef.current=busy;
+ const busyRef=useRef(false);useLayoutEffect(()=>{busyRef.current=busy;});
  useAutoRefresh(()=>refresh(),{ocupado:()=>busyRef.current});
  async function action(work:()=>Promise<void>){setError('');setBusy(true);try{await work();}catch(e){if(!(e instanceof Error&&e.name==='AbortError'))setError(e instanceof Error?e.message:'Error de comparación.');}finally{setBusy(false);}}
  const label=(s:ComparisonSnapshot)=>`${s.id.slice(0,8)} · ${s.watermark} · ${s.summary.conversations} conversaciones`; const countLabels:Record<string,string>={conversations:'Conversaciones resueltas',sourceConversations:'Conversaciones fuente',messages:'Mensajes fuente',orders:'Órdenes vinculadas'};
@@ -47,7 +47,7 @@ export function MigrationComparison(){
   {error&&<p role="alert" className="notice-bar"><Icon name="alert" size={14}/>{error}</p>}
   {!loaded&&!error&&<><p role="status" className="sr-only">Cargando cortes…</p><SkeletonStats count={2}/></>}
   {loaded&&<KpiLinea label="Indicadores de cortes" items={[
-   {label:'Cortes guardados',value:nf.format(snapshots.length)+(nextCursor?'+':''),c:5,partes:snapshots.map(x=>({label:x.id.slice(0,6),value:Number(x.summary.conversations)})),nota:snapshots.length?'Conversaciones por corte':'Sin cortes'},
+   {label:'Cortes guardados',value:nf.format(snapshots.length)+(nextCursor?'+':''),c:5,partes:snapshots.map(x=>({key:x.id,label:x.id.slice(0,6),value:Number(x.summary.conversations)})),nota:snapshots.length?'Conversaciones por corte':'Sin cortes'},
    {label:'Conversaciones del último corte',value:snapshots[0]?nf.format(snapshots[0].summary.conversations):'—',vacio:!snapshots[0],c:3,partes:snapshots[0]?[{label:'Último',value:Number(snapshots[0].summary.conversations)}]:undefined,nota:snapshots[0]?'Corte '+snapshots[0].id.slice(0,6)+'…'+snapshots[0].id.slice(-3):'Sin cortes'}]}/>}
   {loaded&&!snapshots.length&&<EmptyState art="doc" title="Aún no hay cortes publicados" body="Congela el conjunto de datos para crear el primero." compact/>}
   <div className="split" data-even>

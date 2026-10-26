@@ -87,7 +87,7 @@ flowchart LR
 **Lo que sigue pendiente** (declarado, no oculto):
 
 - **Respaldos gestionados y recuperación a un punto en el tiempo (PITR):** hoy hay respaldo lógico por organización y procedimiento de restauración probado ([docs/operacion/04-RESPALDOS-Y-RESTAURACION.md](docs/operacion/04-RESPALDOS-Y-RESTAURACION.md)); PITR gestionado no está activado.
-- **CSP estricta** y **MFA** para administradores de plataforma (ver Seguridad). El MFA (TOTP) y la consola de superadmin ya están construidos en una rama pendiente de despliegue, con MFA apagado por defecto y tres migraciones sin aplicar; en producción todavía no existen.
+- **CSP estricta** y **MFA** para administradores de plataforma (ver Seguridad). El MFA (TOTP) y la consola de superadmin están construidos. Las migraciones de plataforma y lectura de soporte ya están aplicadas; MFA sigue apagado hasta enrolar a los administradores y comprobar recuperación.
 - **Correo propio:** SMTP con dominio propio vía Resend; mientras tanto el correo de acceso depende del servicio por defecto, con cupo limitado, y el producto avisa cuando se agota en vez de fingir el envío.
 - **Triple análisis de IA** (varios modelos contrastados sobre el mismo caso) para subir la confianza de la clasificación.
 - **Accesos de datos de marketplaces:** la lectura directa de Amazon y Walmart depende de las credenciales y autorizaciones de cada cliente; hoy se cubre con exportes.

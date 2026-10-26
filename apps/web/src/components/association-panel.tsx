@@ -1,7 +1,7 @@
 'use client';
 import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
-import {useCallback,useEffect,useRef,useState} from 'react';
+import {useLayoutEffect,useCallback,useEffect,useRef,useState} from 'react';
 import Link,{useWorkspaceNavigation} from './workspace/navigation-lifecycle';
 import {ScrollTable} from './workspace/scroll-table';
 import {Button} from './ui/button';
@@ -50,7 +50,7 @@ export function AssociationPanel(){
  async function loadFacts(signal:AbortSignal,current:()=>boolean,params:typeof scope,state:string,cursor?:string){const data=await request<{items:Fact[];nextCursor:string|null;canResolve:boolean}>({view:'facts',limit:'25',...params,...(state?{state}:{}),...(cursor?{cursor}:{})},signal);if(current()){setFacts(previous=>cursor?unique(previous,data.items):data.items);setNext(data.nextCursor);setCanResolveFacts(data.canResolve===true);}}
  async function loadOrigins(signal:AbortSignal,current:()=>boolean,cursor?:string){const data=await request<{items:Origin[];nextCursor:string|null;canApprove:boolean}>({view:'origins',limit:'25',...(cursor?{cursor}:{})},signal);if(current()){setOrigins(previous=>cursor?[...new Map([...previous,...data.items].map(x=>[x.approvalId,x])).values()]:data.items);setOriginNext(data.nextCursor);setCanApprove(data.canApprove);}}
  // Datos nuevos: relectura en segundo plano de vínculos y orígenes; conserva la selección y el formulario, y no corre durante una operación ni tras paginar.
- const busyRef=useRef(true),scopeRef=useRef(scope),filterRef=useRef(filter);busyRef.current=busy||facts.length>25||origins.length>25;scopeRef.current=scope;filterRef.current=filter;
+ const busyRef=useRef(true),scopeRef=useRef(scope),filterRef=useRef(filter);useLayoutEffect(()=>{busyRef.current=busy||facts.length>25||origins.length>25;scopeRef.current=scope;filterRef.current=filter;});
  useAutoRefresh(async()=>{if(busyRef.current)return;const abort=new AbortController(),epoch=generation.current,current=()=>!abort.signal.aborted&&epoch===generation.current&&!busyRef.current;try{await loadFacts(abort.signal,current,scopeRef.current,filterRef.current);await loadOrigins(abort.signal,current);}catch{/* se conserva lo pintado */}},{ocupado:()=>busyRef.current});
  useEffect(()=>{
   const load=()=>{const params=new URLSearchParams(window.location.search),selected={...(params.has('conversationId')?{conversationId:params.get('conversationId')!}:{}),...(params.has('customerId')?{customerId:params.get('customerId')!}:{})};

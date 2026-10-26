@@ -1,6 +1,6 @@
 'use client';
 import {useAutoRefresh} from '../ui/use-auto-refresh';
-import {useCallback,useEffect,useRef,useState,type FormEvent} from 'react';
+import {useLayoutEffect,useCallback,useEffect,useRef,useState,type FormEvent} from 'react';
 import type {Intervention,InterventionPlan,Measurement,SnapshotOption} from '../../../../../packages/interventions/index.mjs';
 import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import {Button} from '../ui/button';
@@ -70,7 +70,7 @@ export function IntervencionesSeccion({fixedQuery,vista,onResumen}:{fixedQuery:s
   catch(e){if(!abort.signal.aborted&&generation===epoch.current){setError(e instanceof Error?e.message:failure(503));publicar(null);}}
   finally{if(!abort.signal.aborted&&generation===epoch.current)setBusy(false);}
  },[publicar]);
- epochBusy.current=busy;
+ useLayoutEffect(()=>{epochBusy.current=busy;});
  // Datos nuevos: relectura en segundo plano de la lista (setView sustituye la lista al llegar; nada se vacía antes); no corre durante una operación.
  useAutoRefresh(()=>fixedQuery?load(fixedQuery):undefined,{ocupado:()=>inFlight.current||epochBusy.current,activo:Boolean(fixedQuery)});
  useEffect(()=>{if(!fixedQuery)return;let active=true;void Promise.resolve().then(()=>{if(active)void load(fixedQuery);});const ep=epoch;return()=>{active=false;controller.current?.abort();ep.current++;};},[fixedQuery,load]);

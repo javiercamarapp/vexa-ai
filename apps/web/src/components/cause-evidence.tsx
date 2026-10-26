@@ -1,7 +1,7 @@
 'use client';
 import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
-import {useCallback,useEffect,useRef,useState} from 'react';
+import {useLayoutEffect,useCallback,useEffect,useRef,useState} from 'react';
 import {Button} from './ui/button';
 import {StatusChip} from './ui/status-chip';
 import {Stepper} from './ui/stepper';
@@ -21,7 +21,7 @@ export function CauseEvidence({problemId}:{problemId:string}){
  const request=useCallback(async(body?:unknown)=>{const epoch=++generation.current;setBusy(true);try{const r=await fetchCupo('/api/problems/'+encodeURIComponent(problemId)+'/causality',{method:body?'POST':'GET',cache:'no-store',headers:body?{'Content-Type':'application/json'}:undefined,body:body?JSON.stringify(body):undefined});if(epoch!==generation.current)return;if(r.status===401||r.status===403){generation.current++;clear();setError('Autorización revocada.');return;}const value=await r.json();if(epoch!==generation.current)return;if(!r.ok)throw Error(r.status===409?'La versión o la evidencia cambió. Vuelve a intentarlo: la evaluación se relee sola.':'No se pudo completar la evaluación.');setData(value.data);setSymptom(value.data.claim.symptom);setCause(value.data.claim.probableCause??'');setRefs([]);setApproved(false);setAttested(false);setError('');}catch(e){if(epoch===generation.current){clear();setError(e instanceof Error?e.message:'Error de consulta');}}finally{if(epoch===generation.current)setBusy(false);}},[problemId,clear]);
  const invalidate=useCallback(()=>{generation.current++;},[]);
  // Datos nuevos: relectura en segundo plano; solo actualiza la vista, sin tocar lo que la persona está escribiendo.
- const busyRef=useRef(false);busyRef.current=busy;
+ const busyRef=useRef(false);useLayoutEffect(()=>{busyRef.current=busy;});
  const recargarSilencioso=useCallback(async()=>{if(busyRef.current)return;const epoch=generation.current;try{const r=await fetchCupo('/api/problems/'+encodeURIComponent(problemId)+'/causality',{method:'GET',cache:'no-store'});if(!r.ok||epoch!==generation.current||busyRef.current)return;const value=await r.json();if(epoch===generation.current&&value?.data?.claim)setData(value.data);}catch{/* se conserva lo pintado */}},[problemId]);
  useAutoRefresh(recargarSilencioso,{ocupado:()=>busyRef.current});
  useEffect(()=>{void Promise.resolve().then(()=>request());return invalidate;},[request,invalidate]);

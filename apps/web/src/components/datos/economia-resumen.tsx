@@ -51,7 +51,6 @@ export function EconomiaResumen({query='',puedePreparar,children}:{query?:string
   detail:[p.parcial?'Incompleto: no se compara':'',p.detalle??''].filter(Boolean).join(' · ')||undefined}));
  const ocupado=(bundle.busy&&!bundle.data)||(rep.busy&&!rep.data);
  const noDisponible=(rep.data&&rep.data.status!=='ok')||Boolean(rep.error);
- const reintentar=()=>{bundle.reload();rep.reload();};
  if(ocupado&&!report)return <RovaqCargando mensaje=""/>;
  return <section className="dg-page">
   <PageHeader eyebrow="Datos y confianza" title="Cortes publicados" description="Qué está publicado, qué tan completo es y qué falta antes de publicar un corte nuevo."/>

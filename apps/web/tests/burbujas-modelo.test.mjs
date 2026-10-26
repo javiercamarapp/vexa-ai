@@ -2,7 +2,7 @@
 //   cd apps/web && node --test tests/burbujas-modelo.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {disponerBurbujas, conciliar, valorDe, estadoDe, radioDe, valoresReferencia, rotular, R_UMBRAL, PAD, SEPARACION} from '../src/components/pain-points/burbujas-modelo.mjs';
+import {disponerBurbujas, conciliar, valorDe, estadoDe, radioDe, valoresReferencia, rotular, R_UMBRAL, SEPARACION} from '../src/components/pain-points/burbujas-modelo.mjs';
 import {vistaPain} from './ui/pain-sintetico.mjs';
 
 const P = (id, tema, usd, o = {}) => ({id, tema, nombre: id, agregado: false, clase: 'O', padre: null, solapaCon: [], dinero: usd == null ? {sinDato: true, causa: 'sin_fuente', motivo: 'x'} : {sinDato: false, tipo: 'bruto', currency: 'USD', exponent: 2, minor: String(Math.round(usd * 100))}, volumen: {sinDato: false, n: o.n ?? 10, unidad: 'u'}, ...o});

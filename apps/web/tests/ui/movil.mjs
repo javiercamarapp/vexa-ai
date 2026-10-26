@@ -25,7 +25,6 @@ const aviso=msg=>{avisos.push(msg);console.log('   - aviso: '+msg);};
 const slug=r=>r.replace(/^\//,'').replace(/[^a-z0-9]+/gi,'-')||'raiz';
 
 /** En la página: nombre accesible mínimo de un control. */
-function nombreAccesible(e){return (e.getAttribute('aria-label')||[...(e.getAttribute('aria-labelledby')||'').split(/\s+/)].map(i=>document.getElementById(i)?.textContent||'').join(' ')||e.textContent||'').trim();}
 /** Mide el caparazón dentro de `raiz` (selector). Devuelve controles pequeños, fuentes <12, títulos como único nombre. */
 function medirCaparazon(raices){
  const vis=e=>{const r=e.getBoundingClientRect(),cs=getComputedStyle(e);return r.width>0&&r.height>0&&cs.visibility!=='hidden'&&cs.display!=='none';};

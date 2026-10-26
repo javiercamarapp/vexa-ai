@@ -13,7 +13,7 @@ import {ConMarca} from '../ui/brand-mark';
 import {ErrorState} from '../ui/error-state';
 import {Loading} from '../ui/loading';
 import {ProgressRing} from '../ui/progress-ring';
-import {LinkButton,Arrow,Button} from '../ui/button';
+import {LinkButton,Arrow} from '../ui/button';
 import {useJson} from '../ui/use-json';
 import {nf,fmtPct} from '../ui/format';
 import {KpiLinea,BarraParte} from '../panel-comun/kpi-linea';

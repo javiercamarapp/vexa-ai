@@ -1,4 +1,5 @@
 'use client';
+import {useRouter} from 'next/navigation';
 import type {ExplorerQuestion} from '../../../../../packages/recommendations/explorer.mjs';
 import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import {Button,LinkButton,Arrow} from '../ui/button';
@@ -11,8 +12,9 @@ const missingLabels={basis:'base de los importes',currency:'moneda',period:'peri
 const suggestions=['¿Qué reembolsos constan en este corte?','¿Cuánto se registró en órdenes en este periodo?','¿Cuál es la cobertura de los importes?'];
 const headline=(status:ExplorerQuestion['status'])=>status==='answered'?'Esto muestran los datos':status==='clarification_required'?'Necesito un poco más de contexto':status==='abstained'?'La evidencia no permite esa conclusión':'Esta consulta necesita otros datos';
 /** «Consultar» lleva al chat «Pregúntale a tus datos» con la pregunta ya enviada: ahí vive el agente, con su pensamiento en vivo y su respuesta. */
-const alChat=(q:string)=>{const t=q.trim();if(t)window.location.assign('/preguntale?enviar=1&q='+encodeURIComponent(t.slice(0,2000)));};
-export function QueryCard({question,onChange,onSubmit,busy,answer}:{question:string;onChange:(value:string)=>void;onSubmit:()=>void;busy:boolean;answer:ExplorerQuestion|null}){
+export function QueryCard({question,onChange,answer}:{question:string;onChange:(value:string)=>void;onSubmit:()=>void;busy:boolean;answer:ExplorerQuestion|null}){
+ const router=useRouter();
+ const alChat=(q:string)=>{const t=q.trim();if(t)router.push('/preguntale?enviar=1&q='+encodeURIComponent(t.slice(0,2000)));};
  return <section className={styles.card} aria-label="Consulta tus datos">
   <form className={styles.composer} aria-label="Consulta ejecutiva" onSubmit={event=>{event.preventDefault();alChat(question);}}>
    <label htmlFor="explorer-question" className="sr-only">Tu pregunta</label>

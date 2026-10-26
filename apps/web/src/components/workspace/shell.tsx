@@ -4,8 +4,8 @@ import {useEffect,useState,type ReactNode} from 'react';
 import {Drawer} from '../ui/overlay';
 import {BarraInferior,Monograma,SelectorEmpresa,SelectorTema,useTeclado,type Theme} from './movil';
 import {RovaqLogo} from '../rovaq-logo';
-import {usePathname,useSearchParams} from 'next/navigation';
-import {Navigation,PieNavigation,navigationQuery,workspaceTitle,workspaceIconName} from './navigation';
+import {usePathname} from 'next/navigation';
+import {Navigation,PieNavigation,workspaceTitle,workspaceIconName} from './navigation';
 import {WorkspaceIcon} from './icon';
 import {NotificationNavigationLink} from '../notifications/navigation-link';
 import {AccesoProvider} from './access';
@@ -19,7 +19,7 @@ const roleLabel:Record<string,string>={owner:'Administrador del espacio',analyst
 export function WorkspaceShell({children,brand,organizations,tenant,role,platformAccess=false}:{children:ReactNode;brand:ReactNode;organizations:Organization[];tenant:string;role:string;platformAccess?:boolean;today?:{iso:string;label:string}}){
  // La caché de lecturas se aísla por organización: fijarla antes de que los hijos lean (purga lo de otra organización).
  fijarTenant(tenant);
- const pathname=usePathname(),query=navigationQuery(pathname,useSearchParams().toString());
+ const pathname=usePathname();
  const [collapsed,setCollapsed]=useState(false),[mobileOpen,setMobileOpen]=useState(false),[theme,setTheme]=useState<Theme|null>(null);
  useTeclado();
  useEffect(()=>{try{if(window.localStorage.getItem('vexa-sidebar-collapsed')==='true'){const frame=requestAnimationFrame(()=>setCollapsed(true));return()=>cancelAnimationFrame(frame);}}catch{/* Storage is optional. */}},[]);

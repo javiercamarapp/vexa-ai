@@ -20,7 +20,7 @@ import {KpiLinea} from './panel-comun/kpi-linea';
 import './panel-comun/panel-comun.css';
 import type {CoverageView} from '../../../../packages/workspace-service/provenance.mjs';
 import styles from './import-preview.module.css';
-import {useEffect,useState,useRef} from 'react';
+import {useLayoutEffect,useEffect,useState,useRef} from 'react';
 import type {Mapping,Preview} from '../../../../packages/ingestion/mapping.mjs';
 type TeamJob={id:string;state:string;created_at:string;accepted:string;rejected:string;duplicates:string;account_id:string};
 const jobLabels:Record<string,string>={queued:'En cola',running:'Importando',succeeded:'Completado',partial:'Con rechazos',failed:'Requiere atención',cancelled:'Cancelado'};
@@ -57,7 +57,7 @@ export function ImportPreview(){
  }
 
  // Datos nuevos: relectura en segundo plano de la primera página de cargas y reservas; se funde con lo ya pintado (no pierde páginas abiertas ni toca el formulario).
- const busyRef=useRef(true);busyRef.current=busy;
+ const busyRef=useRef(true);useLayoutEffect(()=>{busyRef.current=busy;});
  useAutoRefresh(async()=>{
   if(busyRef.current)return;
   const data=await api('?offset=0&connection_offset=0&team_offset=0');if(busyRef.current)return;

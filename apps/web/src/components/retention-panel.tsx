@@ -1,7 +1,7 @@
 'use client';
 import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
-import {useCallback,useEffect,useRef,useState} from 'react';
+import {useLayoutEffect,useCallback,useEffect,useRef,useState} from 'react';
 type Snapshot={ready:boolean;policy:{version:number;backupTtlSeconds:number}|null;connections:Array<{id:string;source:string;accountId:string}>;artifacts:Array<{id:string;class:string;path:string;status:string}>;counts:{pending:number;deleted:number}};
 type Preview={target:{connectionId:string;entityType:string;externalId:string};scope:{messages:string[];conversations:string[];revisions:unknown[];vectors:string[];jobs:string[];problems:string[];rawObjects:string[];rawFiles:Array<{importId:string;path:string;rows:number}>;artifacts:unknown[];derived:unknown[];policy:{version:number}};requestId:string;token:string;expiresAt:number};
 class RetentionRequestError extends Error {}
@@ -22,7 +22,7 @@ export function RetentionPanel(){const [snapshot,setSnapshot]=useState<Snapshot|
  },[clear]);
  useEffect(()=>{const c=new AbortController();void Promise.resolve().then(()=>load(c.signal));return()=>c.abort();},[load]);
  // Datos nuevos: relectura en segundo plano del estado; no toca el formulario (p. ej. los días elegidos) ni corre durante una operación.
- const ocupadoRef=useRef(true);ocupadoRef.current=busy||loading;
+ const ocupadoRef=useRef(true);useLayoutEffect(()=>{ocupadoRef.current=busy||loading;});
  const recargarSilencioso=useCallback(async()=>{if(ocupadoRef.current)return;const generation=epoch.current;try{const r=await fetch('/api/recovery',{cache:'no-store'});if(!r.ok)return;const data=await r.json();if(generation===epoch.current&&!ocupadoRef.current)setSnapshot(data);}catch{/* se conserva lo pintado */}},[]);
  useAutoRefresh(recargarSilencioso,{ocupado:()=>ocupadoRef.current});
  useEffect(()=>{const controller=new AbortController();void Promise.resolve().then(async()=>{

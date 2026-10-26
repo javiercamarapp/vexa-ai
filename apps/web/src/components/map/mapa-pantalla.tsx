@@ -15,7 +15,7 @@ import {MENSAJE_COMPLETO,NOTA_PROVISIONAL,PAISES,filasTabla,limitesRampa,num,pct
 import './mapa.css';
 
 const forma=(d:unknown)=>typeof d==='object'&&d!==null&&'status' in d&&'provisional' in d;
-function Esqueleto(_p:{segundos:number}){
+function Esqueleto({}:{segundos:number}){
  return <RovaqCargando compacto mensaje="Cargando el mapa de problemas"/>;
 }
 function Lista({titulo,celdas,max=2}:{titulo:string;celdas:Celdas;max?:number}){

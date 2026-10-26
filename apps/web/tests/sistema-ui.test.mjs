@@ -61,7 +61,6 @@ test('radios solo del conjunto {0, 8, 12, 999, 50%}', () => {
 const hex=v=>[0,2,4].map(i=>parseInt(v.slice(1+i,3+i),16));
 const lum=rgb=>{const[r,g,b]=rgb.map(c=>{c/=255;return c<=.03928?c/12.92:((c+.055)/1.055)**2.4;});return .2126*r+.7152*g+.0722*b;};
 const ratio=(a,b)=>{const[x,y]=[lum(a),lum(b)].sort((p,q)=>q-p);return(x+.05)/(y+.05);};
-const mezcla=(fg,bg,a)=>fg.map((c,i)=>Math.round(c*a+bg[i]*(1-a)));
 const bloque=sel=>{const m=new RegExp(sel.replace(/[[\]]/g,'\\$&')+'\\{([^}]*)\\}').exec(UI.slice(UI.indexOf('Paleta de datos')));return m[1];};
 const tok=(b,p)=>Array.from({length:8},(_,i)=>new RegExp('--'+p+'-'+(i+1)+':(#[0-9a-f]{6})','i').exec(b)[1]);
 test('paleta de datos --chart-1..8 y --soft-1..8 en claro y oscuro', () => {

@@ -10,7 +10,7 @@ import {DatosCabecera} from '../datos/datos-cabecera';
 import {DataTable} from '../ui/data-table';
 import {KpiLinea,BarraParte} from '../panel-comun/kpi-linea';
 import {VentanasLinea} from './ventanas-linea';
-import {Button,LinkButton,Arrow} from '../ui/button';
+import {LinkButton,Arrow} from '../ui/button';
 import {Loading} from '../ui/loading';
 import {nf} from '../ui/format';
 import {ComoSeCalculoProvider,ComoSeCalculoBoton} from './como-se-calculo';

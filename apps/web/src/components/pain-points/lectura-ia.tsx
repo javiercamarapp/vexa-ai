@@ -50,12 +50,12 @@ function Resultado({corrida}:{corrida:CorridaIA}){
 }
 
 /** «Lectura de IA» del drawer: tres tarjetas + consenso. Siempre rotulada Inferido; solo propone, nunca ejecuta. Sin botón «Actualizar»: «Analizar» corre (o completa) el análisis y respeta el tope semanal. */
-export function LecturaIA({puntoId}:{puntoId:string}){
+export function LecturaIA({puntoId}:{puntoId:string}){return <LecturaPorPunto key={puntoId} puntoId={puntoId}/>;}
+function LecturaPorPunto({puntoId}:{puntoId:string}){
  const base='/api/pain-points/'+encodeURIComponent(puntoId)+'/ia';
  const e=useJson<EstadoIA>(base,acepta);
  const [post,setPost]=useState<EstadoIA|null>(null),[corriendo,setCorriendo]=useState(false),[aviso,setAviso]=useState<string|null>(null);
  const ctl=useRef<AbortController|null>(null);
- useEffect(()=>{setPost(null);setAviso(null);},[puntoId]);
  useEffect(()=>()=>ctl.current?.abort(),[]);
  const analizar=useCallback(async()=>{
   ctl.current?.abort();const c=new AbortController();ctl.current=c;setCorriendo(true);setAviso(null);

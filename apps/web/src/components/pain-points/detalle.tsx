@@ -21,12 +21,14 @@ function Evidencia({punto}:{punto:PuntoPP}){
  const e=useJson<EvidenciaVista>(punto.evidencia.disponible?base:null,acepta);
  const [extra,setExtra]=useState<FilaEvidencia[]>([]),[next,setNext]=useState<string|null|undefined>(undefined),[cargando,setCargando]=useState(false),[fallo,setFallo]=useState(false);
  const ctl=useRef<AbortController|null>(null);
- useEffect(()=>{setExtra([]);setNext(undefined);setFallo(false);},[punto.id,e.data?.generatedAt]);
- useEffect(()=>()=>ctl.current?.abort(),[]);
+ const generacion=punto.id+'|'+(e.data?.generatedAt??'');
+ const [anterior,setAnterior]=useState(generacion);
+ if(anterior!==generacion){setAnterior(generacion);setExtra([]);setNext(undefined);setFallo(false);setCargando(false);}
+ useEffect(()=>()=>ctl.current?.abort(),[generacion]);
  const sig=next===undefined?e.data?.nextCursor??null:next;
  const mas=useCallback(async()=>{
   if(!sig)return;ctl.current?.abort();const c=new AbortController();ctl.current=c;setCargando(true);setFallo(false);
-  try{const r=await fetch(base+'?cursor='+encodeURIComponent(sig),{cache:'no-store',signal:c.signal});if(!r.ok)throw Error();const d=acepta(await r.json());if(!d)throw Error();setExtra(x=>[...x,...d.filas]);setNext(d.nextCursor);}
+  try{const r=await fetch(base+'?cursor='+encodeURIComponent(sig),{cache:'no-store',signal:c.signal});if(!r.ok)throw Error();const d=acepta(await r.json());if(!d)throw Error();if(c.signal.aborted)return;setExtra(x=>[...x,...d.filas]);setNext(d.nextCursor);}
   catch{if(!c.signal.aborted)setFallo(true);}finally{if(!c.signal.aborted)setCargando(false);}
  },[base,sig]);
  if(!punto.evidencia.disponible)return <Notice tone="info">{punto.evidencia.motivo??'Este punto no tiene filas que mostrar.'}</Notice>;

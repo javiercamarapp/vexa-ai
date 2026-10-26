@@ -2,7 +2,7 @@
 import {useAutoRefresh} from '../ui/use-auto-refresh';
 /* eslint-disable @typescript-eslint/no-explicit-any -- la vista de plataforma es JSON agregado de contrato abierto (platform_observe); los campos se validan en el modelo puro */
 import {useSearchParams} from 'next/navigation';
-import {useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode} from 'react';
+import {useLayoutEffect,useCallback, useMemo, useRef, useState, type FormEvent, type ReactNode} from 'react';
 import {PageHeader} from '../ui/page-header';
 import {Button, LinkButton, Refresh, Download} from '../ui/button';
 import {KindBadge} from '../ui/kind-badge';
@@ -36,7 +36,7 @@ function usePlatform(initial: PlatformStateClient) {
     catch { setError('No se pudo actualizar. Conservo las cifras anteriores; se reintentará solo.'); } finally { setBusy(false); }
   }, []);
   // Datos nuevos: relectura en segundo plano (conserva las cifras pintadas); no corre si ya hay una lectura en curso.
-  const busyRef = useRef(false); busyRef.current = busy;
+  const busyRef = useRef(false); useLayoutEffect(()=>{busyRef.current = busy;});
   useAutoRefresh(reload, {ocupado: () => busyRef.current});
   return {state, busy, error, reload};
 }

@@ -1,6 +1,7 @@
 'use client';
 import {useEffect,useState} from 'react';
 import {createPortal} from 'react-dom';
+import {useStoredString} from './browser-state';
 /** Mejoras de CONTENIDO para el celular (< 820 px). No cambian el escritorio: solo anotan el DOM con atributos que el CSS de movil-contenido.css usa en @media(max-width:819px).
  *  1. Tablas -> tarjeta-fila: cada celda recibe `data-label` (la cabecera de su columna), la primera es el título y la primera cifra es la principal. Atributos solo; React no se entera.
  *  2. Cifras de KPI que no caben en una línea reciben `data-abrev` (es-MX: «US$11.6M»); el CSS pinta la abreviatura y el lector de pantalla sigue leyendo la cifra completa.
@@ -106,9 +107,9 @@ function acoplar(){
 
 /** `solo="cifras"`: únicamente ajusta cifras/pestañas/tablas (sin interruptor); sin prop: además pinta «Tarjetas | Comparar columnas» junto a la primera tabla. */
 export function MovilContenido({solo}:{solo?:'cifras'}={}){
- const [slot,setSlot]=useState<HTMLElement|null>(null),[modo,setModo]=useState<'tarjetas'|'comparar'>('tarjetas');
- useEffect(()=>{if(solo)return;try{if(localStorage.getItem(CLAVE)==='comparar')setModo('comparar');}catch{/* sin almacenamiento: tarjetas */}},[solo]);
- useEffect(()=>{if(solo)return;document.documentElement.dataset.tablasMovil=modo;try{localStorage.setItem(CLAVE,modo);}catch{/* solo esta sesión */}},[modo,solo]);
+ const [slot,setSlot]=useState<HTMLElement|null>(null),[preferencia,setModo]=useStoredString(CLAVE,'tarjetas');
+ const modo=preferencia==='comparar'?'comparar':'tarjetas';
+ useEffect(()=>{if(solo)return;document.documentElement.dataset.tablasMovil=modo;},[modo,solo]);
  useEffect(()=>{
   const fuera=acoplar();
   if(solo)return fuera;

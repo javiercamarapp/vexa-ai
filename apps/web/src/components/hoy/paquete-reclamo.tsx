@@ -1,5 +1,7 @@
 'use client';
 import {useEffect,useMemo,useState} from 'react';
+import {identidadReclamo,reconciliarBorrador,type BorradorReclamo} from './reclamo-borrador';
+import {useReducedMotion} from '../ui/browser-state';
 import type {FugaVista} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
 import {Drawer} from '../ui/overlay';
 import {Button,LinkButton,Arrow,Download} from '../ui/button';
@@ -14,13 +16,19 @@ const PASOS=['Reuniendo los reembolsos del SKU','Separando por canal y por mes',
 /** «Preparar paquete» hecho de verdad: al abrir, el sistema arma solo el paquete de evidencia y el borrador del mensaje; la persona revisa, descarga y envía (nada se envía desde aquí). */
 export function PaqueteReclamo({open,onClose,fuga,sku}:{open:boolean;onClose:()=>void;fuga:FugaVista|null;sku:string}){
  const [paso,setPaso]=useState(0),[copiado,setCopiado]=useState(false),[aviso,setAviso]=useState('');
- const listo=paso>=PASOS.length;
- useEffect(()=>{if(!open){setPaso(0);setCopiado(false);setAviso('');return;}
-  const lento=!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;if(!lento){setPaso(PASOS.length);return;}
-  const id=setInterval(()=>setPaso(p=>{if(p+1>=PASOS.length){clearInterval(id);return PASOS.length;}return p+1;}),520);return()=>clearInterval(id);},[open]);
+ const reducido=useReducedMotion(),listo=reducido||paso>=PASOS.length;
+ const [apertura,setApertura]=useState(open);
+ if(apertura!==open){setApertura(open);setPaso(0);setCopiado(false);setAviso('');}
+ useEffect(()=>{if(!open||reducido)return;
+  const id=setInterval(()=>setPaso(p=>{if(p+1>=PASOS.length){clearInterval(id);return PASOS.length;}return p+1;}),520);return()=>clearInterval(id);},[open,reducido]);
  const datos=useMemo(()=>fuga?{p:paqueteEvidencia(fuga,sku),m:mensajeReclamo(fuga,sku),d:datosSku(fuga,sku)}:null,[fuga,sku]);
- const [texto,setTexto]=useState('');
- useEffect(()=>{setTexto(datos?.m?.cuerpo??'');},[datos]);
+ const cuerpo=datos?.m?.cuerpo??'';
+ const identidad=identidadReclamo(sku,fuga?.scope??null,cuerpo);
+ const [borrador,setBorrador]=useState<BorradorReclamo|null>(null);
+ const vigente=reconciliarBorrador(borrador,identidad);
+ if(vigente!==borrador)setBorrador(vigente);
+ const texto=vigente?.texto??cuerpo;
+ const setTexto=(texto:string)=>setBorrador({identidad,texto});
  const fila=datos?.d.fila;
  const usd=(m:number|string|bigint)=>new Intl.NumberFormat('es-MX',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(m)/100);
  const copiar=async()=>{if(!datos?.m)return;try{await navigator.clipboard.writeText(`Asunto: ${datos.m.asunto}\n\n${texto}`);setCopiado(true);setTimeout(()=>setCopiado(false),1800);}catch{setAviso('No se pudo copiar; selecciona el texto y cópialo.');}};

@@ -10,7 +10,6 @@ import {vistaPain, evidenciaPain} from './ui/pain-sintetico.mjs';
 
 const V = vistaPain();
 const punto = (id, tema, minor, n = 10) => ({id, tema, nombre: id, agregado: false, clase: 'O', dinero: minor == null ? {sinDato: true, causa: 'sin_fuente', motivo: 'x'} : {sinDato: false, tipo: 'bruto', currency: 'USD', exponent: 2, minor: String(minor)}, volumen: {sinDato: false, n, unidad: 'u'}});
-const muchos = (k, tema = 'sku') => Array.from({length: k}, (_, i) => punto('Q' + String(i).padStart(2, '0'), tema, (i + 1) * 123456));
 
 test('determinista: misma entrada → mismas posiciones, también con la entrada en otro orden', () => {
   const a = disponerBurbujas({puntos: V.puntos, modo: 'dinero', ancho: 840}), b = disponerBurbujas({puntos: V.puntos, modo: 'dinero', ancho: 840});

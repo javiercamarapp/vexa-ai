@@ -56,7 +56,7 @@ export function ExtractionPanel(){
  const nQueuedRunning=jobs.filter(j=>['queued','running'].includes(j.state)).length,nDone=jobs.filter(j=>j.state==='succeeded').length,nAttention=jobs.filter(j=>j.state==='failed').length,nClassified=jobs.filter(j=>j.runStatus==='succeeded').length;
  const pending=snapshot?.reservations.filter(r=>['reserved','uncertain'].includes(r.state))??[];
  // Datos nuevos: relectura en segundo plano (reload conserva el análisis pintado si falla el servicio); no corre durante una acción.
- const busyRef=useRef(true);busyRef.current=busy;
+ const busyRef=useRef(true);useLayoutEffect(()=>{busyRef.current=busy;});
  useAutoRefresh(()=>reload(),{ocupado:()=>busyRef.current});
  if(!snapshot&&!error)return <RovaqCargando mensaje=""/>;
  return <section className="stack" aria-labelledby="analysis-title">

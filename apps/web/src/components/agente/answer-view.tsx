@@ -1,6 +1,7 @@
 'use client';
 import {ConMarca} from '../ui/brand-mark';
 import {useEffect,useState} from 'react';
+import {useReducedMotion} from '../ui/browser-state';
 import {Ctl,CtlLink} from './ctl';
 import {Citation} from '../ui/citation';
 import {IdChip} from '../ui/id-chip';
@@ -36,15 +37,16 @@ function CalcView({answer}:{answer:Answer}){
 export function AnswerView({message,question,isLast,busy,labels,userContext,escribir=false,onTick,onAsk,onRegenerate,onFeedback}:{escribir?:boolean;onTick?:()=>void;message:ChatMessage;question:string;labels:Record<string,string>;userContext:string[];isLast:boolean;busy:boolean;onAsk:(q:string)=>void;onRegenerate:()=>void;onFeedback:(id:string,v:ChatMessage['feedback'])=>void}){
  const [copied,setCopied]=useState(false),[csvError,setCsvError]=useState(false),[reasonOpen,setReasonOpen]=useState(false),[fbBusy,setFbBusy]=useState(false);
  const a=message.answer;
+ const reducido=useReducedMotion();
  const [escrito,setEscrito]=useState(escribir?0:Infinity);
  useEffect(()=>{
   // Escritura progresiva: máx. 4.5 s aunque la respuesta sea larga (≥ 60 caracteres/s); con «reducir movimiento» sale completa.
-  const largo=a?.text?.length??0;if(!escribir||!largo||(typeof window!=='undefined'&&window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)){setEscrito(Infinity);return;}
+  const largo=a?.text?.length??0;if(!escribir||!largo||reducido)return;
   const ritmo=Math.max(0.06,largo/4500),t0=performance.now();let raf=0;
   const paso=(t:number)=>{const n=Math.min(largo,Math.floor((t-t0)*ritmo));setEscrito(n>=largo?Infinity:n);onTick?.();if(n<largo)raf=requestAnimationFrame(paso);};
   raf=requestAnimationFrame(paso);return()=>cancelAnimationFrame(raf);
- },[escribir,a?.text]);// eslint-disable-line react-hooks/exhaustive-deps
- const listo=escrito===Infinity;
+ },[escribir,a?.text,reducido,onTick]);
+ const listo=!escribir||reducido||!a?.text?.length||escrito===Infinity;
  if(message.cancelled)return <p className="agente-cancelled">Cancelado.</p>;
  if(!a)return null;
  const ok=a.status==='ok'||a.status==='no_data';

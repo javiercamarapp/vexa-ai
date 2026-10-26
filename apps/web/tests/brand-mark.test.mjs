@@ -51,7 +51,7 @@ test('marcaDe cubre todos los nombres de fuente/canal que muestran las pantallas
   const sync = {hubspot: 'hubspot', zendesk: 'zendesk', csv_conversations: 'csv', ledger: null, tracker: 'excel', amazon: 'amazon', walmart: 'walmart', bestbuy: 'bestbuy', shopify: 'shopify'};
   for (const [k, esperada] of con(sync)) { assert.ok(k in FUENTES_SYNC, k); assert.equal(marcaDe(k), esperada, k); const n = marcaDe(FUENTES_SYNC[k]); assert.ok(n === esperada || (k === 'csv_conversations' && n === null), `${FUENTES_SYNC[k]} -> ${n}`); }
   // Conexiones
-  for (const s of ['csv', 'xlsx', 'excel', 'hubspot', 'zendesk']) assert.ok(marcaDe(s), s), assert.equal(marcaDe(nombreFuente(s)), marcaDe(s));
+  for (const s of ['csv', 'xlsx', 'excel', 'hubspot', 'zendesk']) { assert.ok(marcaDe(s), s); assert.equal(marcaDe(nombreFuente(s)), marcaDe(s)); }
   // Canales y retailers
   for (const m of [NOMBRE_FUGA, NOMBRE_BRECHAS, NOMBRE_RETAILER]) for (const [k, n] of con(m)) { const e = ['amazon', 'walmart', 'shopify', 'bestbuy'].includes(k) ? k : null; assert.equal(marcaDe(k), e, k); assert.equal(marcaDe(n), e, n); }
   // Nombres de las fuentes esperadas (packages/workspace-service/provenance.mjs)
@@ -75,7 +75,7 @@ test('datos: cada logo es un único <path> sin scripts, estilos ni referencias; 
   assert.equal(MARCAS.bestbuy.tipo, 'multicolor', 'bestbuy');
   assert.ok(!Object.values(MARCAS).some((m) => m.tipo === 'monograma' && /best/i.test(m.nombre)), 'Best Buy no es monograma');
   assert.deepEqual(MARCAS.bestbuy.capas.map((c) => c.fill), ['#000000', '#F6EB16', '#FFFFFF']);
-  for (const c of MARCAS.bestbuy.capas) assert.match(c.d, /^[MZ0-9 .\-]+$/, 'trazado sin comandos ni referencias'), assert.ok(c.d.length > 50);
+  for (const c of MARCAS.bestbuy.capas) { assert.match(c.d, /^[MZ0-9 .\-]+$/, 'trazado sin comandos ni referencias'); assert.ok(c.d.length > 50); }
   assert.match(MARCAS.bestbuy.viewBox, /^-?\d+(\.\d+)? -?\d+(\.\d+)? 500 500$/);
   assert.match(datos, /dueño[^.]*logo oficial/i);
   for (const k of ['amazon', 'walmart', 'excel']) assert.equal(MARCAS[k].tipo, 'logo', k);

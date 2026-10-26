@@ -21,7 +21,6 @@ function tokens(dark) {
 const LIGHT = tokens(false), DARK = {...LIGHT, ...tokens(true)}; // oscuro hereda lo no redefinido
 const hex = (v) => { const m = /^#([0-9a-f]{6})([0-9a-f]{2})?$/i.exec(v); assert.ok(m, 'color no hex: ' + v); return [0, 2, 4].map(i => parseInt(m[1].slice(i, i + 2), 16)); };
 const lum = (rgb) => { const [r, g, b] = rgb.map(c => { c /= 255; return c <= .03928 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4; }); return .2126 * r + .7152 * g + .0722 * b; };
-const mezcla = (fg, bg, a) => fg.map((c, i) => Math.round(c * a + bg[i] * (1 - a)));
 export const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + .05) / (y + .05); };
 const val = (T, n) => { let v = T[n]; assert.ok(v, 'falta token --' + n); const ref = /^var\(--([a-z0-9-]+)\)$/.exec(v); if (ref) return val(T, ref[1]); return hex(v); };
 

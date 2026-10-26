@@ -7,7 +7,7 @@ import {LineaCache} from '../ui/linea-cache';
 import {useVistaPersistente} from '../workspace/vista-persistente';
 import {EsperaEsqueleto} from '../ui/wait-status';
 import {Download} from '../ui/button';
-import {Ctl,CtlLink} from '../agente/ctl';
+import {CtlLink} from '../agente/ctl';
 import {UnaKpis,PestanasUna,SegmentoUna,kpiCorto,type KpiUna,type PestanaUna} from './una-ui';
 import {KindBadge} from '../ui/kind-badge';
 import {Card} from '../ui/card';
@@ -18,7 +18,7 @@ import {MenuList,Popover} from '../ui/overlay';
 import {ErrorState} from '../ui/error-state';
 import {DataTable, type Column} from '../ui/data-table';
 import {EmptyState} from '../ui/empty-state';
-import {Fila, ListaBarras, Vacio, type ItemBarra} from '../dinero/partes';
+import {ListaBarras, Vacio, type ItemBarra} from '../dinero/partes';
 import {HowTo} from '../platform/primitives';
 import type {CfoReport, CurrencyBlock} from '../../../../../packages/cfo-copilot/src/index.mjs';
 import {changeBps, int, monthLabel, pct, signedPct} from '../../../../../packages/cfo-copilot/src/format.mjs';
@@ -66,16 +66,6 @@ export function CfoDashboard({query = '', organization, roleOverride, volverA = 
 
   const block = report.perCurrency.find(c => c.currency === currency) ?? report.perCurrency[0];
   const kpis = report.kpis.find(k => k.currency === block.currency)!;
-  const line = block.orderBases[0];
-  const sparkDe = (id: string): number[] => {
-    const lleno = (xs: {partial: boolean}[]) => xs.length;
-    void lleno;
-    if (id.startsWith('refund:rate') || id.includes('rate')) return block.rate.series.filter(s => !s.partial && s.bps !== null).map(s => s.bps as number);
-    if (id.startsWith('refund')) return block.refunds.series.filter(s => !s.partial).map(s => Number(BigInt(s.amount)));
-    if (id.includes('ticket')) return line.series.filter(s => !s.partial && s.known > 0).map(s => Number(BigInt(s.amount)) / s.known);
-    if (id.includes('order') || id.includes('pedidos')) return block.ordersAll.filter(s => !s.partial).map(s => s.n);
-    return line.series.filter(s => !s.partial && s.known > 0).map(s => Number(BigInt(s.amount)));
-  };
   const kpisUna: KpiUna[] = kpis.metrics.map(m => {
     const refund = m.id.startsWith('refund');
     const t = m.delta?.bps == null || refund ? undefined : m.delta.bps > 0 ? 'up' : m.delta.bps < 0 ? 'down' : undefined;

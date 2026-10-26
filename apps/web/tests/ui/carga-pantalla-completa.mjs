@@ -69,7 +69,7 @@ for(const tema of TEMAS)for(const [w,h] of [[1440,900],[390,844]])for(const [i,e
  await page.goto(base+'/overview',{waitUntil:'commit',timeout:120000});await page.waitForSelector('.hoy-kpis',{timeout:90000});await page.waitForTimeout(1500);
  // recarga (lo que hace el dueño)
  await page.evaluate((frio)=>{window.__f.length=0;if(frio)try{sessionStorage.clear();}catch{}},!!e.frio);
- const t0=Date.now();await page.reload({waitUntil:'commit'});
+ await page.reload({waitUntil:'commit'});
  await page.waitForTimeout(1200);await page.screenshot({path:path.join(out,`recarga-${tema}-${w}-${i}-mid.png`)});
  await page.waitForSelector('.hoy-kpis',{timeout:90000});await page.waitForTimeout(1800);
  await page.screenshot({path:path.join(out,`recarga-${tema}-${w}-${i}-fin.png`)});
@@ -124,7 +124,7 @@ for(const tema of TEMAS){
   await page.evaluate(()=>{window.__f.length=0;});
   await page.evaluate(async ms=>{const d=document.createElement('div');d.className='rovaq-cargando';d.setAttribute('role','status');d.setAttribute('aria-busy','true');document.body.appendChild(d);await new Promise(r=>setTimeout(r,ms));d.remove();},ms);
   await page.waitForTimeout(1200);
-  const F=await page.evaluate(()=>window.__f);const capaFr=F.filter(x=>x.capa&&x.arr);const a=analizar(F);
+  const F=await page.evaluate(()=>window.__f);const capaFr=F.filter(x=>x.capa&&x.arr);
   if(ms===150)check(capaFr.length===0,`1440/${tema}: cargador de 150 ms no muestra la capa (${capaFr.length} fotogramas)`);
   else{const t=capaFr.length?capaFr[capaFr.length-1].t-capaFr[0].t:0;check(capaFr.length>0&&t>=380,`1440/${tema}: cargador de 700 ms muestra la capa y la mantiene >= 400 ms (${t} ms)`);check(capaFr.every(x=>x.cubre&&!x.side&&!x.top&&x.logos===1),`1440/${tema}: la capa cubre 100 % del viewport, sin sidebar y con 1 logo`);}
  }

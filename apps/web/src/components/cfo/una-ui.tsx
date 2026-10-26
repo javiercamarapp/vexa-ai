@@ -1,6 +1,7 @@
 'use client';
 import {useEffect,useId,useRef,useState,type KeyboardEvent,type ReactNode} from 'react';
 import '../agente/una-pagina.css';
+import {useLocationHash} from '../ui/browser-state';
 
 /** Tamaño real (px) de una caja, en vivo: las gráficas de «una página» llenan el alto que sobra en vez de tener un alto fijo. */
 export function useCaja<T extends HTMLElement>(){
@@ -22,9 +23,9 @@ export function UnaKpis({items,label}:{items:KpiUna[];label:string}){
 export type PestanaUna={id:string;label:string;count?:number;contenido:ReactNode;/** El panel llena el alto restante sin scroll propio (una gráfica). */llena?:boolean};
 /** Pestañas accesibles (tablist/tab/tabpanel, flechas, Inicio/Fin). Solo el panel activo se monta; `hash` abre la pestaña que nombre el ancla de la URL. */
 export function PestanasUna({items,etiqueta,anclas={}}:{items:PestanaUna[];etiqueta:string;anclas?:Record<string,string>}){
- const uid=useId().replace(/:/g,''),[sel,setSel]=useState(items[0]?.id??''),lista=useRef<HTMLDivElement>(null);
- useEffect(()=>{const h=window.location.hash.replace('#','');const id=anclas[h]??h;if(id&&items.some(i=>i.id===id))setSel(id);},[]);// eslint-disable-line react-hooks/exhaustive-deps
- const actual=items.find(i=>i.id===sel)??items[0];
+ const uid=useId().replace(/:/g,''),[sel,setSel]=useState<string|null>(null),lista=useRef<HTMLDivElement>(null);
+ const hash=useLocationHash(),inicial=anclas[hash]??hash;
+ const actual=items.find(i=>i.id===(sel??inicial))??items[0];
  if(!actual)return null;
  const mover=(e:KeyboardEvent,i:number)=>{const n=items.length,d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:e.key==='Home'?-i:e.key==='End'?n-1-i:0;if(!d)return;e.preventDefault();const k=e.key==='Home'?0:e.key==='End'?n-1:(i+d+n)%n;setSel(items[k].id);requestAnimationFrame(()=>lista.current?.querySelector<HTMLElement>('[aria-selected=true]')?.focus());};
  return <div className="una-tabs">

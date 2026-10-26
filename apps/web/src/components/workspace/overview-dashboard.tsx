@@ -14,7 +14,6 @@ import {KindBadge} from '../ui/kind-badge';
 import {SourceRef} from '../ui/source-ref';
 import {CoverageBand} from '../ui/coverage-band';
 import {EmptyState} from '../ui/empty-state';
-import {SkeletonRows} from '../ui/skeletons';
 import {LineaCache} from '../ui/linea-cache';
 import {useVistaPersistente} from './vista-persistente';
 import {LinkButton,Arrow} from '../ui/button';

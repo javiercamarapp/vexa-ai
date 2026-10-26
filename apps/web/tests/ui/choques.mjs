@@ -12,7 +12,7 @@ const F=await import('./fixtures.mjs');const {respond}=F;
 const {MENU}=await import('../../src/lib/workspace/menu.mjs');
 const arg=(k,d)=>(process.argv.find(a=>a.startsWith('--'+k+'='))?.slice(k.length+3))??d;
 const base=process.env.VEXA_UI_BASE??'http://localhost:3150';
-const menuRoutes=[...new Set(MENU.flatMap(x=>x.tipo==='item'?[x.href]:(x.items??[]).map(i=>i.href)).concat(['/notifications','/confianza','/cfo?vista=informe','/pain-points']))];
+const menuRoutes=[...new Set(MENU.flatMap(x=>x.tipo==='item'?[x.href]:(x.items??[]).map(i=>i.href)).concat(['/notifications','/confianza','/cfo?vista=informe','/pain-points','/problems/manage']))];
 // Superadmin (no están en el MENU): consola de plataforma, ficha 360 y las pantallas de acceso (/sin-acceso y /seguridad tienen vista sintética bajo fixtures).
 const {SUPERADMIN_ROUTES}=await import('./superadmin-rutas.mjs');
 const conSuperadmin=[...menuRoutes,...SUPERADMIN_ROUTES];
@@ -26,7 +26,7 @@ function medir(){
  const srOnly=e=>e.closest('.sr-only,[hidden],[aria-hidden=true]');
  const all=[...document.querySelectorAll('body *')].filter(e=>!['SCRIPT','STYLE','NOSCRIPT','svg','path','circle','rect','g','line','polyline','text','tspan','defs','use'].includes(e.tagName)&&!e.closest('svg')&&vis(e)&&!srOnly(e));
  const scrollers=e=>{for(let p=e.parentElement;p;p=p.parentElement){const o=getComputedStyle(p).overflowX;if((o==='auto'||o==='scroll')&&p.scrollWidth>p.clientWidth)return true;}return false;};
- const out={boton:[],boton:[],superficie:[],aireFila:[],contraste:[],pliegue:[],huecos:[],repetidos:[],topbar:[],overflowX:[],clipped:[],overlap:[],unnamed:[],h1:document.querySelectorAll('h1').length,small:[]};
+ const out={layoutWidth:innerWidth,boton:[],superficie:[],aireFila:[],contraste:[],pliegue:[],huecos:[],repetidos:[],topbar:[],overflowX:[],clipped:[],overlap:[],unnamed:[],h1:document.querySelectorAll('h1').length,small:[]};
  const wc=document.querySelector('.workspace-content');
  if(document.documentElement.scrollWidth>innerWidth+1)out.overflowX.push('documento '+document.documentElement.scrollWidth+'>'+innerWidth);
  if(wc&&wc.scrollWidth>wc.clientWidth+1)out.overflowX.push('.workspace-content '+wc.scrollWidth+'>'+wc.clientWidth);
@@ -177,12 +177,12 @@ function medir(){
 const browser=await chromium.launch();
 const filas=[];let fallas=0;
 for(const theme of themes)for(const w of sizes){
- const ctx=await browser.newContext({viewport:{width:w,height:w<500?812:w<1000?1024:900},reducedMotion:'reduce'});
+ const ctx=await browser.newContext({viewport:{width:w,height:w<500?812:w<1000?1024:900},reducedMotion:'reduce',isMobile:w<500,hasTouch:w<500});
  await ctx.addInitScript(t=>{try{localStorage.setItem('vexa-theme',t);}catch{}},theme);
  await ctx.route('**/api/**',async route=>{const q=route.request();if(/resource=problems/.test(q.url())&&/slim=1/.test(q.url()))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({data:F.bundleProblemsCatalogo()})});const V=process.env.VEXA_UI_VARIANT,u2=V?q.url()+(q.url().includes('?')?'&':'?')+'variant='+V:q.url();const h=await respond(u2,q.method(),q.postData());return h?route.fulfill({status:h[0],contentType:'application/json',body:JSON.stringify(h[1])}):route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:{code:'fixture_missing'}})});});
  for(const r of routes){
   const page=await ctx.newPage();let m;
-  try{await page.goto(base+r,{waitUntil:'networkidle',timeout:120000});await page.waitForTimeout(600);m=await page.evaluate(medir);}catch(e){m={error:String(e.message).slice(0,80),boton:[],superficie:[],aireFila:[],contraste:[],pliegue:[],huecos:[],repetidos:[],topbar:[],overflowX:[],clipped:[],overlap:[],unnamed:[],h1:1,small:[]};}
+  try{await page.goto(base+r,{waitUntil:'networkidle',timeout:120000});await page.waitForTimeout(600);m=await page.evaluate(medir);if(m.layoutWidth>w+1)m.overflowX.push('viewport expandido '+m.layoutWidth+'>'+w);}catch(e){m={error:String(e.message).slice(0,80),boton:[],superficie:[],aireFila:[],contraste:[],pliegue:[],huecos:[],repetidos:[],topbar:[],overflowX:[],clipped:[],overlap:[],unnamed:[],h1:1,small:[]};}
   await page.close();
   const n=m.boton.length+m.superficie.length+m.aireFila.length+m.contraste.length+m.pliegue.length+m.huecos.length+m.repetidos.length+m.topbar.length+m.overflowX.length+m.clipped.length+m.overlap.length+m.unnamed.length+m.small.length+(m.h1!==1?1:0)+(m.error?1:0);fallas+=n;
   filas.push({ruta:r,ancho:w,tema:theme,boton:m.boton.length,superficie:m.superficie.length,aire:m.aireFila.length,contraste:m.contraste.length,pliegue:m.pliegue.length,huecos:m.huecos.length,repetidos:m.repetidos.length,topbar:m.topbar.length,desborde:m.overflowX.length,recortes:m.clipped.length,solapes:m.overlap.length,sinNombre:m.unnamed.length,h1:m.h1,fuente12:m.small.length,error:m.error??''});

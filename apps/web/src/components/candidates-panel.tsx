@@ -1,7 +1,7 @@
 'use client';
 import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
-import {useCallback,useEffect,useRef,useState} from 'react';
+import {useLayoutEffect,useCallback,useEffect,useRef,useState} from 'react';
 import {PageHeader} from './ui/page-header';
 import {KpiLinea} from './panel-comun/kpi-linea';
 import './panel-comun/panel-comun.css';
@@ -26,7 +26,7 @@ export function CandidatesPanel(){const[data,setData]=useState<State|null>(null)
  const stop=useCallback(()=>{seq.current++;controller.current?.abort();},[]);
  useEffect(()=>{let disposed=false;void Promise.resolve().then(()=>{if(!disposed)void load();});return()=>{disposed=true;stop();};},[load,stop]);
  // Datos nuevos: relectura en segundo plano; no corre durante una carga/escritura ni si se paginó (para no perder las páginas ya abiertas).
- const ocupado=useRef(true);ocupado.current=busy||loading||registering||(data!==null&&(data.results.length>25||data.history.length>25));
+ const ocupado=useRef(true);useLayoutEffect(()=>{ocupado.current=busy||loading||registering||(data!==null&&(data.results.length>25||data.history.length>25));});
  const recargarSilencioso=useCallback(async()=>{if(ocupado.current)return;const id=seq.current;try{const response=await fetch('/api/candidates',{cache:'no-store'});if(!response.ok)return;const value=await response.json();if(seq.current===id&&!ocupado.current)setData(value);}catch{/* se conserva lo pintado */}},[]);
  useAutoRefresh(recargarSilencioso,{ocupado:()=>ocupado.current});
  async function more(kind:'results'|'history'){

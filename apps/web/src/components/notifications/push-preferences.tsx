@@ -1,7 +1,7 @@
 'use client';
 import {RovaqCargando} from '../rovaq-cargando';
 import {useAutoRefresh} from '../ui/use-auto-refresh';
-import {useCallback,useEffect,useRef,useState} from 'react';
+import {useLayoutEffect,useCallback,useEffect,useRef,useState} from 'react';
 import Link from 'next/link';
 import type {PushDevice} from '../../../../../packages/notifications/push.mjs';
 type View={observedAt:number;devices:PushDevice[];configured:boolean;publicKey:string|null;currentDeviceId:string|null};
@@ -23,7 +23,7 @@ export function PushPreferences(){
   finally{if(!signal?.aborted&&epoch===generation.current)setLoading(false);}
  },[]);
  // Datos nuevos o al volver a la pestaña (p. ej. tras cambiar el permiso en los ajustes del navegador): relectura en segundo plano sin vaciar lo pintado.
- const busyRef=useRef(false);busyRef.current=busy||loading;
+ const busyRef=useRef(false);useLayoutEffect(()=>{busyRef.current=busy||loading;});
  const recargarSilencioso=useCallback(async()=>{if('Notification' in window)setPermission(Notification.permission);if(busyRef.current)return;const epoch=generation.current;try{const r=await fetch('/api/notifications/push',{cache:'no-store',signal:AbortSignal.timeout(15000)});if(!r.ok)return;const body=await r.json();if(epoch!==generation.current||busyRef.current||!body.data||!Array.isArray(body.data.devices)||typeof body.data.configured!=='boolean'||!Number.isFinite(body.data.observedAt))return;setView(body.data as View);setObservedAt(body.data.observedAt);}catch{/* se conserva lo pintado */}},[]);
  useAutoRefresh(recargarSilencioso,{ocupado:()=>busyRef.current,ocultaMinMs:0});
  useEffect(()=>{const controller=new AbortController();lifetime.current=controller;void Promise.resolve().then(()=>{if(controller.signal.aborted)return;setSupported(window.isSecureContext&&'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window);if('Notification' in window)setPermission(Notification.permission);return read(controller.signal);});return()=>{controller.abort();};},[read]);

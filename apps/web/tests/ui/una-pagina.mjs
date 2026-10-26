@@ -45,7 +45,6 @@ function vecinos(items,min=8){
  for(let i=0;i<items.length;i++)for(let j=i+1;j<items.length;j++){
   const a=items[i],b=items[j];if(!a.en||!b.en)continue;
   const gx=Math.max(a.x-(b.x+b.w),b.x-(a.x+a.w)),gy=Math.max(a.y-(b.y+b.h),b.y-(a.y+a.h));
-  const sep=gx<0&&gy<0?Math.max(gx,gy):Math.max(gx,gy,0)===0&&(gx<0||gy<0)?Math.max(gx,gy):Math.max(gx,gy);
   const cerca=(gx<0&&gy<0)||(gx<min&&gy<0)||(gy<min&&gx<0)||(gx>=0&&gy>=0&&Math.hypot(gx,gy)<min);
   if(cerca)mal.push(`${a.d} ⟂ ${b.d} (${Math.round(gx)},${Math.round(gy)})`);
  }

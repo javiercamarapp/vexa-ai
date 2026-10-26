@@ -72,7 +72,7 @@ export function ExplorerPanel({initialQuery}:{initialQuery:string}){
  },[]);
  useEffect(()=>{let active=true;void Promise.resolve().then(()=>{if(active)void load(query);});return()=>{active=false;invalidate();};},[query,load,invalidate]);
  // Datos nuevos: relectura en segundo plano de la lista; no corre si se está leyendo evidencia o una respuesta (load las cerraría) ni durante una consulta.
- const busyNow=useRef(true),evidenceNow=useRef(false);busyNow.current=busy;evidenceNow.current=Boolean(evidence||answer||opening);
+ const busyNow=useRef(true),evidenceNow=useRef(false);useLayoutEffect(()=>{busyNow.current=busy;evidenceNow.current=Boolean(evidence||answer||opening);});
  useAutoRefresh(()=>{keepPage.current=true;return load(current.current,true);},{ocupado:()=>pending.current||busyNow.current||evidenceNow.current});
  useEffect(()=>{const back=()=>{invalidate();const next=clean(window.location.search.slice(1)).toString();current.current=next;if(next===query)void load(next);else setQuery(next);};window.addEventListener('popstate',back);return()=>window.removeEventListener('popstate',back);},[query,load,invalidate]);
  const navigate=(q:URLSearchParams,keep=false)=>{invalidate();if(keep){setEvidence(null);setAnswer(null);setOpening(null);setEvErr('');}else clearProtected();keepPage.current=keep;setBusy(true);const next=q.toString();current.current=next;window.history.pushState(null,'',window.location.pathname+'?'+next);if(next===query)void load(next);else setQuery(next);};

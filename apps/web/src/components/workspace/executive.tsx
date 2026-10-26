@@ -1,5 +1,6 @@
 'use client';
 import {useEffect,useState,type ReactNode} from 'react';
+import {useStoredString} from '../ui/browser-state';
 import type {Bundle} from '../../lib/workspace/contracts';
 import type {CoverageView} from '../../../../../packages/workspace-service/provenance.mjs';
 import type {MonthlyIncidencesView} from '../../../../../packages/workspace-service/incidences.mjs';
@@ -32,9 +33,10 @@ type Fuentes=NonNullable<ReturnType<typeof import('../../lib/legibilidad/resumen
 export function StatusStrip({linea=null,fuentes,cargando,avisos,onCobertura,dineroDisponible}:{linea?:string|null;fuentes:Fuentes|null;cargando:boolean;avisos:{key:string;node:ReactNode}[];onCobertura:()=>void;dineroDisponible:boolean}){
  // Avisos ocultables: cada uno se puede quitar 7 días (solo en este navegador); si aparece un aviso con otra clave, se muestra. La causa se resuelve con sus acciones (Importar datos, Revisar fuentes…).
  const CLAVE_OCULTOS='vexa:avisos-ocultos';
- const [ocultos,setOcultos]=useState<Record<string,number>>({});
- useEffect(()=>{try{const j=JSON.parse(localStorage.getItem(CLAVE_OCULTOS)||'{}') as Record<string,number>,ahora=Date.now();setOcultos(Object.fromEntries(Object.entries(j).filter(([,t])=>typeof t==='number'&&t>ahora)));}catch{/* sin almacenamiento: todos visibles */}},[]);
- const ocultar=(key:string)=>{const sig={...ocultos,[key]:Date.now()+7*864e5};setOcultos(sig);try{localStorage.setItem(CLAVE_OCULTOS,JSON.stringify(sig));}catch{/* solo esta sesión */}};
+ const [guardados,guardarOcultos]=useStoredString(CLAVE_OCULTOS,'{}');
+ const [ahora]=useState(()=>Date.now());
+ let ocultos:Record<string,number>={};
+ try{const j=JSON.parse(guardados) as Record<string,number>;ocultos=Object.fromEntries(Object.entries(j).filter(([,t])=>typeof t==='number'&&t>ahora));}catch{/* invalid preference: show all */}
  const visibles=avisos.filter(a=>!ocultos[a.key]);
  return <section className={s.strip+' mv-franja'} aria-label="Estado de los datos">
   <div className={s.stripRow}>
@@ -44,7 +46,7 @@ export function StatusStrip({linea=null,fuentes,cargando,avisos,onCobertura,dine
    <Button size="sm" variant="ghost" onClick={onCobertura}>Ver cobertura</Button>
   </div>
   {linea&&<p className={s.lineaAvisos+' mv-franja-linea'} role="status" data-testid="linea-avisos">{linea}</p>}
-  {visibles.length>0&&<details className={s.avisos+' mv-avisos'}><summary>{visibles.length===1?'1 aviso':`${visibles.length} avisos`}</summary><div>{visibles.map(a=><div key={a.key}>{a.node}<div className={s.avisoPie}><Button size="sm" variant="ghost" onClick={()=>ocultar(a.key)} title="Quita este aviso por 7 días; vuelve antes si aparece uno nuevo">Ocultar 7 días</Button></div></div>)}</div></details>}
+  {visibles.length>0&&<details className={s.avisos+' mv-avisos'}><summary>{visibles.length===1?'1 aviso':`${visibles.length} avisos`}</summary><div>{visibles.map(a=><div key={a.key}>{a.node}<div className={s.avisoPie}><Button size="sm" variant="ghost" onClick={()=>{const vence=Date.now()+7*864e5;guardarOcultos(JSON.stringify({...ocultos,[a.key]:vence}));}} title="Quita este aviso por 7 días; vuelve antes si aparece uno nuevo">Ocultar 7 días</Button></div></div>)}</div></details>}
  </section>;
 }
 

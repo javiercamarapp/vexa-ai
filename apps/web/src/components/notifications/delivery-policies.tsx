@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {PageHeader} from '../ui/page-header';
 import {duracionLegible} from '../../lib/notifications/duracion.mjs';
 import {ConfirmationDialog} from '../confirmation-dialog';
-import {useCallback,useEffect,useRef,useState} from 'react';
+import {useLayoutEffect,useCallback,useEffect,useRef,useState} from 'react';
 import type {DeliveryPolicy} from '../../../../../packages/notifications/policies.mjs';
 const names={inapp:'Centro de notificaciones',email:'Correo electrónico',push:'Notificaciones push del navegador'};
 function parse(value:unknown):DeliveryPolicy[]{
@@ -14,25 +14,34 @@ function parse(value:unknown):DeliveryPolicy[]{
 }
 export function DeliveryPolicies(){
  const [rows,setRows]=useState<DeliveryPolicy[]>([]),[busy,setBusy]=useState(true),[error,setError]=useState(''),[notice,setNotice]=useState('');
- const active=useRef<AbortController|null>(null),heading=useRef<HTMLElement>(null),pending=useRef(false);
+ const active=useRef<AbortController|null>(null),heading=useRef<HTMLElement>(null),pending=useRef(false),sucio=useRef(false),busyRef=useRef(true);
+ const refreshGeneration=useRef(0),refreshController=useRef<AbortController|null>(null);
+ const invalidateRefresh=useCallback(()=>{refreshGeneration.current++;refreshController.current?.abort();refreshController.current=null;},[]);
  const request=useCallback(async(signal:AbortSignal,body?:unknown)=>{
   const response=await fetch('/api/notifications/delivery',{method:body===undefined?'GET':'POST',cache:'no-store',signal:AbortSignal.any([signal,AbortSignal.timeout(15000)]),headers:body===undefined?undefined:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});
   if(!response.ok)throw Error(response.status===409?'La política cambió. Vuelve a cargar la página antes de guardar.':response.status===403?'Sólo una persona propietaria puede configurar los envíos.':'No se pudo verificar el estado guardado. Vuelve a intentarlo.');
   const payload=await response.json();if(!payload?.data)throw Error('No se pudo verificar la respuesta. Vuelve a intentarlo.');return payload.data;
  },[]);
  const load=useCallback(async()=>{
+  invalidateRefresh();
   active.current?.abort();const controller=new AbortController();active.current=controller;setBusy(true);setError('');setNotice('');setRows([]);sucio.current=false;
   try{const next=parse(await request(controller.signal));if(!controller.signal.aborted)setRows(next);}
   catch{if(!controller.signal.aborted)setError('No se pudo consultar la política. Vuelve a intentarlo en un momento.');}
   finally{if(!controller.signal.aborted){pending.current=false;setBusy(false);}}
- },[request]);
- useEffect(()=>{let mounted=true;void Promise.resolve().then(()=>{if(mounted)void load();});return()=>{mounted=false;active.current?.abort();};},[load]);
+ },[request,invalidateRefresh]);
+ useEffect(()=>{let mounted=true;void Promise.resolve().then(()=>{if(mounted)void load();});return()=>{mounted=false;active.current?.abort();invalidateRefresh();};},[load,invalidateRefresh]);
  // Datos nuevos: relectura en segundo plano; conserva las filas pintadas y no corre durante una carga o un guardado.
- const sucio=useRef(false),busyRef=useRef(true);busyRef.current=busy;
- const recargarSilencioso=useCallback(async()=>{if(pending.current||sucio.current)return;const controller=new AbortController();try{const next=parse(await request(controller.signal));if(!pending.current&&!sucio.current)setRows(next);}catch{/* se conserva lo pintado */}},[request]);
+ useLayoutEffect(()=>{busyRef.current=busy;});
+ const recargarSilencioso=useCallback(async()=>{
+  if(busyRef.current||pending.current||sucio.current)return;
+  invalidateRefresh();const generation=refreshGeneration.current,controller=new AbortController();refreshController.current=controller;
+  try{const next=parse(await request(controller.signal));if(generation===refreshGeneration.current&&!controller.signal.aborted&&!busyRef.current&&!pending.current&&!sucio.current)setRows(next);}
+  catch{/* se conserva lo pintado */}
+  finally{if(refreshController.current===controller)refreshController.current=null;}
+ },[request,invalidateRefresh]);
  useAutoRefresh(recargarSilencioso,{ocupado:()=>busyRef.current||sucio.current});
  const save=async(row:DeliveryPolicy)=>{
-  if(busy||pending.current)return;pending.current=true;active.current?.abort();const controller=new AbortController();active.current=controller;setBusy(true);setError('');setNotice('');
+  if(busy||pending.current)return;invalidateRefresh();pending.current=true;active.current?.abort();const controller=new AbortController();active.current=controller;setBusy(true);setError('');setNotice('');
   try{
    const {version,...input}=row;const saved=await request(controller.signal,{...input,expectedVersion:version});const next=parse(await request(controller.signal));
    if(controller.signal.aborted)return;
@@ -41,7 +50,7 @@ export function DeliveryPolicies(){
   }catch{if(!controller.signal.aborted){setRows([]);setError('No se confirmó el guardado. Vuelve a cargar para comprobar si se guardó antes de volver a intentarlo.');}}
   finally{if(!controller.signal.aborted){pending.current=false;setBusy(false);}}
  };
- const change=(channel:string,delta:Partial<DeliveryPolicy>)=>{sucio.current=true;setRows(previous=>previous.map(row=>row.channel===channel?{...row,...delta}:row));};
+ const change=(channel:string,delta:Partial<DeliveryPolicy>)=>{invalidateRefresh();sucio.current=true;setRows(previous=>previous.map(row=>row.channel===channel?{...row,...delta}:row));};
  if(busy&&rows.length===0&&!error)return <RovaqCargando mensaje=""/>;
  return <section ref={heading} tabIndex={-1} className="task-page task-grid delivery-page" aria-label="Política de envío" aria-busy={busy}><PageHeader eyebrow="Avisos" title="Política de envío" description="Autoriza canales y define límites para los avisos futuros. Cada persona debe activar sus preferencias; las notificaciones push también requieren permiso del navegador." actions={<Link prefetch={false} className="btn btn-ghost btn-sm" href="/settings/notifications">Mis preferencias</Link>}/>
   <p className="card-lead">Habilitar una política no confirma que el proveedor esté conectado.</p>

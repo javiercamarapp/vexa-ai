@@ -1,7 +1,7 @@
 'use client';
 import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
-import {useCallback,useEffect,useRef,useState} from 'react';
+import {useLayoutEffect,useCallback,useEffect,useRef,useState} from 'react';
 import type {AliasEvent,AliasIdentity} from '../../../../packages/connectors/aliases.mjs';
 import {MigrationComparison} from './migration-comparison';
 import {Button} from './ui/button';
@@ -48,7 +48,7 @@ export function MigrationAliases({onChange}:{onChange:()=>void}){
  function selectSource(value:string){setSource(value);setProposal(null);setHistory([]);setHistoryBusy(Boolean(value));setHistoryError('');setConfirmed(false);setNotice('');}
  async function reload(){const requestId=++historyRequest.current;await refresh();setProposal(null);setConfirmed(false);if(source){try{const value=await authorizedApi(undefined,'?'+new URLSearchParams({sourceConversationId:source}));if(requestId===historyRequest.current){setHistory(value.history);setHistoryError('');}}finally{if(requestId===historyRequest.current)setHistoryBusy(false);}}}
  // Datos nuevos: relectura en segundo plano del listado; conserva propuestas y formularios en curso.
- const busyRef=useRef(true);busyRef.current=busy;
+ const busyRef=useRef(true);useLayoutEffect(()=>{busyRef.current=busy;});
  useAutoRefresh(()=>refresh(),{ocupado:()=>busyRef.current});
  async function decide(operation:'confirm'|'undo'){
   const version=operation==='confirm'?proposal?.expectedVersion:history.at(-1)?.version;

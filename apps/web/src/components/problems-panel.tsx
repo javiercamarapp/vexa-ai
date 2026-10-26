@@ -19,7 +19,7 @@ import {ESPERA} from '../lib/legibilidad/espera.mjs';
 import {nf} from './ui/format';
 import css from './ops-panels.module.css';
 import {EmbeddingBudgetPanel} from './embedding-budget-panel';
-import {useCallback,useEffect,useMemo,useRef,useState} from 'react';
+import {useLayoutEffect,useCallback,useEffect,useMemo,useRef,useState} from 'react';
 import type {ProblemSnapshot,ProblemDetail,Match} from '../lib/problems/contracts';
 const jobStates:Record<string,string>={queued:'En cola',running:'Agrupando',succeeded:'Terminado',failed:'Requiere atención',cancelled:'Cancelado'};
 const stale=()=>new DOMException('Respuesta obsoleta','AbortError');
@@ -39,7 +39,7 @@ export function ProblemsPanel({problemId}:{problemId?:string}){
  const reload=useCallback(async(signal?:AbortSignal)=>{const epoch=++generation.current;try{const [listing,current]=await Promise.all([request('/api/problems',epoch,undefined,signal),problemId?request('/api/problems/'+encodeURIComponent(problemId),epoch,undefined,signal):Promise.resolve(null)]);if(!signal?.aborted&&epoch===generation.current){setSnapshot(listing);setDetail(current?.problem??null);setError('');setMatches(null);setSelected([]);setApproved(false);}}catch(e){if(e instanceof Error&&e.name==='AbortError')return;if(!signal?.aborted&&epoch===generation.current){clear();setError(e instanceof Error?e.message:'No se pudieron cargar los problemas.');}}},[problemId,request,clear]);
  useEffect(()=>{const controller=new AbortController();void Promise.resolve().then(()=>reload(controller.signal));return()=>{controller.abort();invalidate();};},[reload,invalidate]);
  // Datos nuevos: relectura en segundo plano; conserva lo pintado y la selección en curso, y no corre durante una acción.
- const busyRef=useRef(false);busyRef.current=busy;
+ const busyRef=useRef(false);useLayoutEffect(()=>{busyRef.current=busy;});
  const reloadSilencioso=useCallback(async()=>{if(busyRef.current)return;const epoch=generation.current;try{const [listing,current]=await Promise.all([request('/api/problems',epoch),problemId?request('/api/problems/'+encodeURIComponent(problemId),epoch):Promise.resolve(null)]);if(epoch===generation.current){setSnapshot(listing);setDetail(current?.problem??null);}}catch{/* se conserva lo pintado */}},[problemId,request]);
  useAutoRefresh(reloadSilencioso,{ocupado:()=>busyRef.current});
  async function action(body:Record<string,unknown>):Promise<boolean>{if(actionPending.current)return false;actionPending.current=true;setBusy(true);setError('');setNotice('');const epoch=++generation.current;try{const response=await request('/api/problems',epoch,body);if(epoch!==generation.current)return false;if(body.operation==='retrieve'){setMatches(response.data);return true;}if(body.operation==='submit'){requestKey.current=null;setNotice('Agrupación en cola. El resultado del consumidor aparecerá solo cuando esté listo.');}else if(body.operation==='budget'){setNotice('Límite de agrupación guardado.');}else if(body.operation==='reconcile'){setNotice('Costo de agrupación conciliado con el recibo confirmado.');}else{setNotice('Revisión guardada. Las versiones anteriores se conservan.');setReason('');setApproved(false);setSelected([]);}await reload();return true;}catch(e){if(!(e instanceof Error&&e.name==='AbortError')){if(body.operation==='budget'||body.operation==='reconcile')await reload();setError(e instanceof Error?e.message:'No se pudo completar la acción.');}return false;}finally{actionPending.current=false;setBusy(false);}}

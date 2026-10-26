@@ -2,7 +2,7 @@
 import {RovaqCargando} from '../rovaq-cargando';
 import {useAutoRefresh} from '../ui/use-auto-refresh';
 import {useWorkspaceNavigation,workspaceLocation} from './navigation-lifecycle';
-import {useCallback,useEffect,useRef,useState,type ReactNode} from 'react';
+import {useLayoutEffect,useCallback,useEffect,useRef,useState,type ReactNode} from 'react';
 import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import type {ComponentSummary,ConversationRef,DetailKind,DetailView,EventSummary} from '../../../../../packages/workspace-service/detail.mjs';
 import {DataState} from './data-state';
@@ -52,7 +52,7 @@ export function FinancialDetailPanel({kind,id,initialQuery,children}:{kind:'prob
   };void Promise.resolve().then(load);return()=>{abort.abort();};
  },[query,step,reload,kind,id]);
  // Datos nuevos: se vuelve a leer el paso actual en segundo plano (no corre mientras se carga uno).
- const busyRef=useRef(true);busyRef.current=busy;
+ const busyRef=useRef(true);useLayoutEffect(()=>{busyRef.current=busy;});
  useAutoRefresh(()=>{silencioso.current=true;setReload(n=>n+1);},{ocupado:()=>busyRef.current});
  const open=(next:Step)=>{invalidate();setData(null);setBusy(true);setError('');setQuery(resolved.current);setStep(next);setReload(n=>n+1);};
  const newIdentity=()=>{invalidate();const next=new URLSearchParams(resolved.current);next.delete('detail_hash');resolved.current=next.toString();window.history.pushState(null,'',window.location.pathname+'?'+next.toString());setQuery(next.toString());setStep({kind,id});setData(null);setError('');setBusy(true);setReload(n=>n+1);};

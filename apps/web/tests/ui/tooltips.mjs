@@ -30,7 +30,6 @@ function medirTips({sel,px,py}){
  const tips=[...document.querySelectorAll(sel)].filter(visible);
  return {n:tips.length,tips:tips.map(e=>{
   const r=e.getBoundingClientRect(),cs=getComputedStyle(e);
-  const probs=[];
   // Palabras partidas: una palabra corta que ocupa más de una línea.
   const tw=document.createTreeWalker(e,NodeFilter.SHOW_TEXT);let nd,partidas=[];
   while((nd=tw.nextNode())){const t=nd.textContent;const re=/\S+/g;let m;while((m=re.exec(t))){const rg=document.createRange();rg.setStart(nd,m.index);rg.setEnd(nd,m.index+m[0].length);const tops=new Set([...rg.getClientRects()].map(q=>Math.round(q.top/3)));if(tops.size>1&&m[0].length<=24)partidas.push(m[0]);}}
@@ -45,7 +44,7 @@ function medirTips({sel,px,py}){
    partidas,recorte,chico,anywhere:/anywhere/.test(cs.overflowWrap)||/break-all/.test(cs.wordBreak),wrap,cubre,texto:(e.innerText||'').replace(/\s+/g,' ').trim().slice(0,70)};
  })};
 }
-function evaluar(m,ancho,tipo){
+function evaluar(m,ancho){
  const out=[];const movil=ancho<820;
  if(m.n===0)return ['sin tooltip visible'];
  if(m.n>1)out.push(m.n+' tooltips visibles a la vez');
@@ -98,7 +97,7 @@ for(const theme of themes)for(const w of sizes){
     if(modo==='borde'){const r0=el.getBoundingClientRect();window.scrollBy(0,r0.bottom-(innerHeight-6));}
     if(modo==='arriba'){const r0=el.getBoundingClientRect();window.scrollBy(0,r0.top-6);}
     const r=el.getBoundingClientRect();
-    if(ob.tipo==='area'||ob.tipo==='columnas'){const pl=ob.tipo==='area'?0.02:0.02;return [0.02,0.12,0.3,0.5,0.7,0.88,0.985].map(f=>[r.left+r.width*f,r.top+r.height*(ob.tipo==='area'?0.45:0.55)]);}
+    if(ob.tipo==='area'||ob.tipo==='columnas'){return [0.02,0.12,0.3,0.5,0.7,0.88,0.985].map(f=>[r.left+r.width*f,r.top+r.height*(ob.tipo==='area'?0.45:0.55)]);}
     if(ob.tipo==='mapa'){const regs=[...document.querySelectorAll('.mp-reg[data-tipo=dato]')];const pts=[];for(const idx of [0,Math.floor(regs.length/2),regs.length-1]){const b=regs[idx].getBoundingClientRect();for(const [fx,fy] of [[.5,.5],[.35,.4],[.6,.6],[.5,.3]]){const x=b.left+b.width*fx,y=b.top+b.height*fy;const t=document.elementFromPoint(x,y);if(t===regs[idx]){pts.push([x,y]);break;}}}return pts;}
     if(ob.tipo==='burbujas'){const bs=[...document.querySelectorAll('.pp-burbuja')];return [0,Math.floor(bs.length/2),bs.length-1].map(i=>{const b=bs[i].getBoundingClientRect();return [b.left+b.width/2,b.top+b.height/2];});}
     return [[r.left+r.width/2,r.top+r.height/2]];
@@ -126,7 +125,7 @@ for(const theme of themes)for(const w of sizes){
     await page.mouse.move(2,2);
     const tecla=async(paso)=>{
      if(ob.tipo==='area'){const sv=page.locator('.chart-plot > svg').nth(ob.i);await sv.scrollIntoViewIfNeeded();await sv.focus();for(let k=0;k<(paso==='fin'?14:1);k++)await page.keyboard.press('ArrowRight');if(paso==='inicio'){await page.keyboard.press('ArrowLeft');}}
-     else{const cols=page.locator('.chart-plot').nth(0);const todas=page.locator('.chart-plot > svg').nth(ob.i).locator('.col');const n=await todas.count();const c=todas.nth(paso==='fin'?n-1:0);await c.scrollIntoViewIfNeeded();await c.focus();}
+     else{const todas=page.locator('.chart-plot > svg').nth(ob.i).locator('.col');const n=await todas.count();const c=todas.nth(paso==='fin'?n-1:0);await c.scrollIntoViewIfNeeded();await c.focus();}
      await page.waitForTimeout(120);
      const m=await page.evaluate(medirTips,{sel:SEL,px:null,py:null});nSond++;sondeos++;
      if(m.n)tiposVistos.add(ob.tipo+'-teclado@escritorio');
@@ -152,7 +151,7 @@ for(const theme of themes)for(const w of sizes){
      await page.waitForTimeout(60);
      await page.locator(sel).nth(i).click({trial:false}).catch(()=>{});
      await page.waitForTimeout(160);
-     const m=await page.evaluate(({panel})=>{const e=document.querySelector(panel);if(!e)return null;const r=e.getBoundingClientRect(),cs=getComputedStyle(e),vw=document.documentElement.clientWidth,vh=innerHeight;
+     const m=await page.evaluate(({panel})=>{const e=document.querySelector(panel);if(!e)return null;const r=e.getBoundingClientRect(),vw=document.documentElement.clientWidth,vh=innerHeight;
       const tw=document.createTreeWalker(e,NodeFilter.SHOW_TEXT);let nd,partidas=[];while((nd=tw.nextNode())){const re=/\S+/g;let q;while((q=re.exec(nd.textContent))){const rg=document.createRange();rg.setStart(nd,q.index);rg.setEnd(nd,q.index+q[0].length);if(new Set([...rg.getClientRects()].map(z=>Math.round(z.top/3))).size>1&&q[0].length<=24)partidas.push(q[0]);}}
       return {x:Math.round(r.left),y:Math.round(r.top),w:Math.round(r.width),h:Math.round(r.height),r:Math.round(r.right),vw,vh,partidas};},{panel});
      nSond++;sondeos++;

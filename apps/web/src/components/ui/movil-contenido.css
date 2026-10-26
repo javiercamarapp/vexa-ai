@@ -146,6 +146,8 @@
 :root:root body .mv-modo-tablas button[aria-pressed=true]{background:var(--btn-soft-bg);color:var(--btn-soft-ink)}
 html:root:not([data-tablas-movil=comparar]) :is(.ui-table-wrap,.table-wrap,.table-scroll):has(>table[data-mv]){overflow:visible;max-height:none!important;border:0;background:none;border-radius:0;margin:0;padding:0}
 html:root:not([data-tablas-movil=comparar]) table[data-mv]{display:block;width:100%;min-width:0!important;border:0;background:none}
+/* En tarjetas, los títulos largos se leen completos sin ensanchar el viewport táctil. */
+html:root:root:not([data-tablas-movil=comparar]) body .workspace-content table[data-mv] .btn-label{white-space:normal;overflow-wrap:anywhere}
 html:root:not([data-tablas-movil=comparar]) table[data-mv] caption{display:none}
 html:root:not([data-tablas-movil=comparar]) table[data-mv] :is(thead,tfoot){position:absolute;width:1px;height:1px;margin:-1px;clip-path:inset(50%);white-space:nowrap}
 html:root:not([data-tablas-movil=comparar]) table[data-mv] tbody{display:grid;gap:6px}

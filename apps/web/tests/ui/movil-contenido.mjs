@@ -34,7 +34,6 @@ async function medir(){
  const all=[...document.querySelectorAll('.workspace-content *')].filter(e=>!['SCRIPT','STYLE','NOSCRIPT'].includes(e.tagName)&&!oculto(e)&&vis(e));
  // 1. Cifras de KPI en una línea
  for(const e of all.filter(e=>e.matches('.pc-kpi-valor,.stat-value,.ui-kpi-value,.hoy-kpi-valor,.pfig-value,.kpi-valor,[class*="kpi"][class*="valor"],[class*="kpi"][class*="value"]'))){
-  const lh=parseFloat(getComputedStyle(e).lineHeight)||parseFloat(getComputedStyle(e).fontSize)*1.2;
   const txt=(e.textContent||'').trim();if(!txt)continue;
   const rg=document.createRange();rg.selectNodeContents(e);const tops=new Set();{let fin=-1,n=0;for(const r of [...rg.getClientRects()].filter(r=>r.width>0).sort((a,b)=>a.top-b.top)){if(r.top>=fin-1){n++;fin=r.bottom;}else fin=Math.max(fin,r.bottom);tops.add(n);}}
   if(!e.hasAttribute('data-largo')&&(tops.size>1||e.scrollWidth>e.clientWidth+1))out.kpi.push(desc(e)+' '+tops.size+' líneas, '+e.scrollWidth+'/'+e.clientWidth);

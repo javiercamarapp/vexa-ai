@@ -16,7 +16,7 @@ import '../map/mapa.css';
 import './carga.css';
 
 const forma=(d:unknown)=>typeof d==='object'&&d!==null&&'carga' in d&&'sla' in d;
-function Esqueleto(_p:{segundos:number}){
+function Esqueleto({}:{segundos:number}){
  return <RovaqCargando compacto mensaje="Cargando carga y SLA"/>;
 }
 type Carga=CargaVista['carga'];

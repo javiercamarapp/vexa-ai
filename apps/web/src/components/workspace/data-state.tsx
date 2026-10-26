@@ -2,7 +2,6 @@ import {RovaqCargando} from '../rovaq-cargando';
 import type { ReactNode } from 'react';
 import {EmptyState} from '../ui/empty-state';
 import {Icon} from '../ui/icons';
-import {SkeletonRows} from '../ui/skeletons';
 import {fechaCorteLegible} from '../../lib/legibilidad/fechas.mjs';
 export type State = {kind:'loading'}|{kind:'error';message:string;code:string}|{kind:'empty'}|{kind:'partial'|'stale'|'ready';coverage:string;watermark:string|null};
 const NOTICE={partial:'Datos parciales: no equivalen al total',stale:'Datos desactualizados: revisa el corte',ready:'Corte disponible'};

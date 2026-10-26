@@ -2,14 +2,14 @@
 import {RovaqCargando} from './rovaq-cargando';
 import {useAutoRefresh} from './ui/use-auto-refresh';
 import {ConfirmationDialog} from './confirmation-dialog';
-import {FormEvent,useCallback,useEffect,useRef,useState} from 'react';
+import {useLayoutEffect,FormEvent,useCallback,useEffect,useRef,useState} from 'react';
 type Item={id:string;email:string;role:string;status:string;version:number;delivery?:string;expiresAt?:string};
 import {ROLES as roles,rolEs,estadoEs,visibles,puedeRevocar} from '../lib/team/vista.mjs';
 import {PageHeader} from './ui/page-header';
 import {Button} from './ui/button';
 import './panel-comun/panel-comun.css';
 export function TeamPanel({endpoint='/api/team',platform=false}:{endpoint?:string;platform?:boolean}={}){const [kind,setKind]=useState('members'),[items,setItems]=useState<Item[]>([]),[next,setNext]=useState<string|null>(null),[busy,setBusy]=useState(true),[viewerId,setViewerId]=useState<string|null>(null),[access,setAccess]=useState<'unknown'|'ready'|'denied'>('unknown'),[error,setError]=useState(''),[notice,setNotice]=useState('');const heading=useRef<HTMLHeadingElement>(null);const generation=useRef(0);const requestId=useRef(crypto.randomUUID());
-const cursorActual=useRef<string|undefined>(undefined),ocupado=useRef(true);ocupado.current=busy;
+const cursorActual=useRef<string|undefined>(undefined),ocupado=useRef(true);useLayoutEffect(()=>{ocupado.current=busy;});
 const load=useCallback(async(cursor?:string,silencioso=false)=>{const version=++generation.current;cursorActual.current=cursor;if(!silencioso){setBusy(true);setAccess('unknown');setItems([]);setError('');}try{const response=await fetch(`${endpoint}${endpoint.includes('?')?'&':'?'}kind=${kind}${cursor?`&cursor=${encodeURIComponent(cursor)}`:''}`,{cache:'no-store',signal:AbortSignal.timeout(15000)});if(response.status===403){if(generation.current===version){setAccess('denied');setNext(null);}return false;}const result=await response.json();if(!response.ok)throw new Error();if(generation.current===version){setAccess('ready');setViewerId(typeof result.viewerId==='string'?result.viewerId:null);setItems(result.data.items);setNext(result.data.nextCursor);return true;}}catch{if(generation.current===version&&!silencioso){setNext(null);setError('No se pudo cargar el equipo. Verifica tu acceso e intenta otra vez.');}}finally{if(generation.current===version&&!silencioso)setBusy(false);}return false;},[kind,endpoint]);
 // Datos nuevos: relectura en segundo plano de la página actual; conserva la lista pintada y no corre si hay una operación en curso.
 useAutoRefresh(()=>load(cursorActual.current,true),{ocupado:()=>ocupado.current,activo:access==='ready'});

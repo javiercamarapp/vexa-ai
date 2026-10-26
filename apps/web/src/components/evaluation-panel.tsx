@@ -16,7 +16,7 @@ import {DataState} from './workspace/data-state';
 import {nf} from './ui/format';
 import {Icon} from './ui/icons';
 import css from './ops-panels.module.css';
-import {useCallback,useEffect,useRef,useState} from 'react';
+import {useLayoutEffect,useCallback,useEffect,useRef,useState} from 'react';
 const exclusionReasons:Record<string,string>={customer_unknown:'No hay cliente canónico identificado.',customer_binding_unavailable:'El vínculo con el cliente ya no está disponible.',temporal_cutoff_excluded:'El evento o su disponibilidad supera el corte.',result_changed_or_erased:'El resultado cambió o fue borrado.',source_unavailable:'La fuente ya no está disponible.'};
 type Cohort={id:string;connectionId:string;cutoff:string;count:number;taxonomy:string[];taxonomyHash:string;taxonomyVersion:string};
 type Feedback={version:number;labels:string[];verdict:string;topicCorrect:boolean;evidenceSufficient:boolean;decisionPossible:boolean};
@@ -28,7 +28,7 @@ export function EvaluationPanel(){const [cohortCursor,setCohortCursor]=useState<
  const load=useCallback(async(signal?:AbortSignal)=>{const generation=++loadEpoch.current;setLoading(true);let failure='No se pudo consultar evaluación. Reintenta.';try{const r=await fetch('/api/evaluation'+(cohortCursor?'?'+new URLSearchParams({cohortCursor}):''),{cache:'no-store',signal});if(!r.ok){failure=r.status===403?'Se requiere un propietario activo.':'No se pudo consultar evaluación. Reintenta.';throw Error(failure);}const data=await r.json();if(!signal?.aborted&&generation===loadEpoch.current){setState(data);setError('');}}catch{if(!signal?.aborted&&generation===loadEpoch.current){setState(null);setPage(null);clear();setError(failure);}}finally{if(!signal?.aborted&&generation===loadEpoch.current)setLoading(false);}},[clear,cohortCursor]);
  useEffect(()=>{const controller=new AbortController();void Promise.resolve().then(()=>load(controller.signal));return()=>controller.abort();},[load]);
  // Datos nuevos: relectura en segundo plano del estado; conserva cohorte y formulario, y no corre durante una operación.
- const ocupadoRef=useRef(true);ocupadoRef.current=busy;
+ const ocupadoRef=useRef(true);useLayoutEffect(()=>{ocupadoRef.current=busy;});
  const recargarSilencioso=useCallback(async()=>{if(ocupadoRef.current)return;const generation=loadEpoch.current;try{const r=await fetch('/api/evaluation'+(cohortCursor?'?'+new URLSearchParams({cohortCursor}):''),{cache:'no-store'});if(!r.ok)return;const data=await r.json();if(generation===loadEpoch.current&&!ocupadoRef.current)setState(data);}catch{/* se conserva lo pintado */}},[cohortCursor]);
  useAutoRefresh(recargarSilencioso,{ocupado:()=>ocupadoRef.current});
  useEffect(()=>{const controller=new AbortController();if(connection)void(async()=>{setTaxonomyLoading(true);try{const r=await fetch('/api/evaluation?'+new URLSearchParams({connectionId:connection}),{signal:controller.signal,cache:'no-store'});if(!r.ok)throw Error('No se pudieron consultar las taxonomías.');const data=await r.json();if(!controller.signal.aborted)setTaxonomies(data.items);}catch{if(!controller.signal.aborted){setTaxonomies([]);setError('No se pudieron consultar las taxonomías. Reintenta.');}}finally{if(!controller.signal.aborted)setTaxonomyLoading(false);}})();return()=>controller.abort();},[connection]);

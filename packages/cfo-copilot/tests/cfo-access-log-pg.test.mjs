@@ -10,8 +10,8 @@ import {fileURLToPath} from 'node:url';
 import {withPg, pgAvailable} from '../../metrics/tests/pg-harness.mjs';
 import {TENANT_A, TENANT_B, OWNER, ANALYST_A, SECOND_OWNER_A, sembrarUsuarios} from '../../ai-scale/economia-problemas/mundo.mjs';
 
-const DIR = join(dirname(fileURLToPath(import.meta.url)), '../../../supabase/propuestas');
-const UP = join(DIR, '20261128000000_cfo_access_log.sql'), DOWN = join(DIR, '20261128000000_cfo_access_log.down.sql');
+const DIR = join(dirname(fileURLToPath(import.meta.url)), '../../../supabase/migrations');
+const UP = join(DIR, '20261128000000_cfo_access_log.sql'), DOWN = join(DIR, '../operations/20261128000000_cfo_access_log.rollback.sql');
 const OPERATOR_A = '00000000-0000-4000-8000-000000009005';
 const HASH = 'a'.repeat(64);
 
@@ -32,6 +32,10 @@ test('cfo_access_log: quién escribe y lee, solo-anexar, aislamiento y reversa',
     const como = (user, tenant, action, sentencia) => psql(`begin; set local role vexa_backend; select set_config('request.jwt.claim.sub','${user}',true), set_config('vexa.tenant_id','${tenant}',true), set_config('vexa.action','${action}',true); ${sentencia}; commit;`);
     const insertar = (user, tenant, action, actor = user, tenantFila = tenant) => como(user, tenant, action, `insert into public.cfo_access_log(tenant_id,actor_id,tool,args_hash,outcome) values('${tenantFila}','${actor}','resumen_mes','${HASH}','ok')`);
 
+    // Empty rollback and reapply before first use.
+    assert.equal(file(DOWN).status, 0);
+    assert.equal(must(`select to_regclass('public.cfo_access_log') is null`), 't');
+    assert.equal(file(UP).status, 0);
     // 1) el INSERT exacto de access.ts funciona para owner y analyst con la acción propose
     assert.ok(insertar(OWNER.A, TENANT_A, 'propose').ok, 'owner debe poder registrar');
     assert.ok(insertar(ANALYST_A, TENANT_A, 'propose').ok, 'analyst debe poder registrar');
@@ -60,11 +64,12 @@ test('cfo_access_log: quién escribe y lee, solo-anexar, aislamiento y reversa',
     const upd = psql(`update public.cfo_access_log set outcome='x'`); assert.ok(!upd.ok && /cfo_access_log_append_only/.test(upd.err), upd.err.slice(0, 160));
     const del = psql(`delete from public.cfo_access_log`); assert.ok(!del.ok && /cfo_access_log_append_only/.test(del.err), del.err.slice(0, 160));
     assert.equal(must(`select count(*) from public.cfo_access_log`), '2');
-    // 6) reversa: quita tabla, función y disparador
-    const dn = file(DOWN); assert.equal(dn.status, 0, String(dn.stderr).slice(0, 300));
-    assert.equal(must(`select count(*) from pg_class where relname='cfo_access_log'`), '0');
-    assert.equal(must(`select count(*) from pg_proc where proname='cfo_access_log_append_only'`), '0');
-    // 7) tras la reversa vuelve el fallo que hoy ve producción: 42P01 (tabla inexistente), como el db-fallo registrado
-    const sin = insertar(OWNER.A, TENANT_A, 'propose'); assert.ok(!sin.ok && /does not exist/.test(sin.err), sin.err.slice(0, 160));
+    // Used log: rollback refuses before deleting any row or schema object.
+    const before = must(`select md5(json_agg(l order by id)::text) from public.cfo_access_log l`);
+    const dn = file(DOWN); assert.notEqual(dn.status, 0);
+    assert.match(String(dn.stderr), /CFO_ROLLBACK_ALREADY_USED/);
+    assert.equal(must(`select md5(json_agg(l order by id)::text) from public.cfo_access_log l`), before);
+    assert.ok(insertar(OWNER.A, TENANT_A, 'propose').ok, 'log remains operational after refused rollback');
+
   });
 });

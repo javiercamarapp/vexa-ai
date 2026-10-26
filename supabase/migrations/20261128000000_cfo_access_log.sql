@@ -1,10 +1,7 @@
--- Bitácora de consultas del Copiloto CFO (insert-only, por organización). LISTA PARA APLICAR, NO APLICADA.
--- Contenido idéntico a packages/cfo-copilot/sql/cfo_access_log.proposal.sql (solo cambia este encabezado). Reversa: 20261128000000_cfo_access_log.down.sql.
--- Por qué: sin esta tabla el copiloto no ejecuta ninguna herramienta (falla cerrado). En producción, POST /cfo/data/copilot registra
--- db-fallo {accion:propose, clase:sqlstate_42P01} (tabla inexistente) y el chat de CFO responde «no se pudo registrar la consulta en la bitácora».
--- Dependencias (ya existentes): public.organizations, public.memberships(tenant_id,user_id), public.vexa_member, public.vexa_backend_action, rol vexa_backend.
--- Probada en Postgres local desechable: packages/cfo-copilot/tests/cfo-access-log-pg.test.mjs. Al aplicarla, moverla a supabase/migrations/.
+-- CFO audit: reviewed migration. Rollback refuses any populated log.
 begin;
+set local lock_timeout='3s';
+set local statement_timeout='15s';
 create table public.cfo_access_log(
  id bigint generated always as identity primary key,
  tenant_id uuid not null references public.organizations(id) on delete restrict,

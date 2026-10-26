@@ -55,10 +55,27 @@ const TEMA_ANTES_DEL_PINTADO = "(function(){try{if(/^\\/(login|auth)/.test(locat
 // donde el encabezado es parte del diseño (inicio sin sesión, invitaciones, plataforma). Seguro propio de 60 s solo por si React nunca hidrata (sin ArranqueLimpio vivo) (la suelta normal la decide ArranqueLimpio leyendo el DOM).
 const ARRANQUE_ANTES_DEL_PINTADO = "(function(){try{if(/^\\/(login|auth|platform)(\\/|$)|^\\/$/.test(location.pathname))return;var d=document.documentElement;d.dataset.arranque='1';setTimeout(function(){if(!window.__arranqueVivo)d.removeAttribute('data-arranque');},60000);}catch(e){}})();";
 
+// Critical first-paint styles travel with the HTML, before any streamed body or CSS chunk.
+// Keep the boot screen usable even when external stylesheets arrive late on a cold visit.
+const ARRANQUE_CSS_CRITICO = `
+#arranque-logo{display:none}
+html[data-arranque],html[data-arranque] body{margin:0;background:#fff}
+html[data-arranque][data-theme=dark],html[data-arranque][data-theme=dark] body{background:#0e0e10}
+html[data-arranque] body>:not(#arranque-logo){display:none!important}
+html[data-arranque] #arranque-logo{display:flex;position:fixed;inset:0;z-index:2000;align-items:center;justify-content:center;background:#fff;opacity:1;visibility:visible}
+html[data-arranque][data-theme=dark] #arranque-logo{background:#0e0e10}
+#arranque-logo .rovaq-logo{display:inline-flex;line-height:0}
+#arranque-logo svg{display:block}
+html[data-theme=dark] #arranque-logo .rovaq-logo-tinta{fill:#fff}
+@keyframes rovaq-arranque-respira{0%,100%{opacity:.35;transform:scale(.985)}50%{opacity:1;transform:scale(1)}}
+html[data-arranque] #arranque-logo .rovaq-respira{animation:rovaq-arranque-respira 1.6s cubic-bezier(.22,1,.36,1) infinite}
+@media(prefers-reduced-motion:reduce){html[data-arranque] #arranque-logo .rovaq-respira{animation:none;opacity:.6}}
+`;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <head><script dangerouslySetInnerHTML={{ __html: TEMA_ANTES_DEL_PINTADO }} /><script dangerouslySetInnerHTML={{ __html: ARRANQUE_ANTES_DEL_PINTADO }} /><noscript><style>{"html[data-arranque] .site-header,html[data-arranque] .site-footer,html[data-arranque] main{display:revert!important}#arranque-logo{display:none!important}"}</style></noscript></head>
+      <head><style id="arranque-estilos-criticos">{ARRANQUE_CSS_CRITICO}</style><script dangerouslySetInnerHTML={{ __html: TEMA_ANTES_DEL_PINTADO }} /><script dangerouslySetInnerHTML={{ __html: ARRANQUE_ANTES_DEL_PINTADO }} /><noscript><style>{"html[data-arranque] .site-header,html[data-arranque] .site-footer,html[data-arranque] main{display:revert!important}#arranque-logo{display:none!important}"}</style></noscript></head>
       <body>
         <div id="arranque-logo" aria-hidden="true"><RovaqLogo variante="horizontal" ancho={140} className="rovaq-respira" decorativo espacioLibre={false}/></div>
         <ArranqueLimpio/>

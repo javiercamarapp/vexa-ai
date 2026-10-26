@@ -26,11 +26,21 @@ revoke all on function public.vexa_support_active(uuid) from public,anon,authent
 grant execute on function public.vexa_support_active(uuid) to vexa_backend;
 
 do $migration$
-declare src text;
+declare previous record; normalized text;
 begin
- select p.prosrc into strict src from pg_proc p where p.oid='public.vexa_member(uuid,text[])'::regprocedure;
- -- Falla si la funcion cambio respecto a 20261004061000 (deriva): no se sobrescribe a ciegas.
- if regexp_replace(src,'\s+',' ','g') is distinct from ' BEGIN RETURN exists(select 1 from public.memberships m where m.tenant_id=p_tenant and m.user_id=(select public.vexa_request_uid()) and m.status=''active'' and m.role=any(p_roles)); END; ' then
+ select p.prosrc, l.lanname, p.prosecdef, p.provolatile, p.proconfig
+ into strict previous from pg_proc p join pg_language l on l.oid=p.prolang
+ where p.oid='public.vexa_member(uuid,text[])'::regprocedure;
+ normalized:=regexp_replace(previous.prosrc,'\s+',' ','g');
+ -- Dos fuentes conocidas y equivalentes: PL/pgSQL local y SQL observado en
+ -- produccion el 25-oct-2026. Ambas devuelven exactamente el mismo EXISTS;
+ -- cualquier otro cuerpo, lenguaje o contexto de seguridad sigue abortando.
+ if previous.prosecdef or previous.provolatile<>'s'
+    or previous.proconfig is distinct from array['search_path=""']::text[]
+    or not (
+      (previous.lanname='plpgsql' and normalized=' BEGIN RETURN exists(select 1 from public.memberships m where m.tenant_id=p_tenant and m.user_id=(select public.vexa_request_uid()) and m.status=''active'' and m.role=any(p_roles)); END; ')
+      or (previous.lanname='sql' and normalized=' select exists(select 1 from public.memberships m where m.tenant_id=p_tenant and m.user_id=(select public.vexa_request_uid()) and m.status=''active'' and m.role=any(p_roles)) ')
+    ) then
   raise exception 'VEXA_MEMBER_SOURCE_DRIFT';
  end if;
 end

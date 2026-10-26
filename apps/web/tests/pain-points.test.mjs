@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import {readFileSync, existsSync} from 'node:fs';
 import {disponerBurbujas, mayores, valorDe, TEMAS_ORDEN} from '../src/components/pain-points/burbujas-modelo.mjs';
 import {usdCorto, dineroTxt, volumenTxt, periodoTxt, kpisDe, SIN_DATO, etiquetaBurbuja} from '../src/components/pain-points/modelo.mjs';
-import {PIE, pieVisible, itemActivo, tituloDePantalla, iconoDePantalla, menuVisible} from '../src/lib/workspace/menu.mjs';
+import {itemActivo, tituloDePantalla, iconoDePantalla, menuVisible} from '../src/lib/workspace/menu.mjs';
 import {vistaPain, evidenciaPain} from './ui/pain-sintetico.mjs';
 
 const V = vistaPain();
@@ -41,15 +41,20 @@ test('formato: «Sin dato» y nunca $0 por falta de dato; periodo y etiqueta acc
   const k = kpisDe(V); assert.equal(k.length, 4); assert.ok(k.every(x => x.valor !== '$0')); assert.equal(k[3].label, 'Puntos de dolor');
   assert.ok(!kpisDe(vistaPain({vacio: true})).some(x => /^\$/.test(x.valor)), 'sin lecturas no hay montos en la tira');
 });
-test('menú: «Puntos de dolor» fijo al pie, solo owner y analyst, sin ser un 9.º espacio; icono dibujado', () => {
-  assert.equal(PIE.item.href, '/pain-points'); assert.equal(PIE.etiqueta, 'Insights');
-  assert.equal(pieVisible({role: 'owner'})?.etiqueta, 'Puntos de dolor'); assert.equal(pieVisible({role: 'analyst'})?.href, '/pain-points');
-  for (const r of ['operator', 'viewer', undefined]) assert.equal(pieVisible({role: r}), null, String(r));
-  assert.equal(menuVisible({role: 'owner'}).length, 8, 'los 8 espacios no cambian');
-  assert.equal(itemActivo('/pain-points').item.href, '/pain-points'); assert.equal(tituloDePantalla('/pain-points'), 'Puntos de dolor'); assert.equal(iconoDePantalla('/pain-points'), 'painpoints');
-  assert.match(readFileSync(new URL('../src/components/workspace/icon.tsx', import.meta.url), 'utf8'), /\bpainpoints:'/);
-  const shell = readFileSync(new URL('../src/components/workspace/shell.tsx', import.meta.url), 'utf8');
-  assert.ok(shell.indexOf('<PieNavigation') > 0 && shell.indexOf('<PieNavigation') < shell.indexOf('<NotificationNavigationLink'), 'sobre Notificaciones');
+test('menú: Puntos de dolor pertenece a Clientes y problemas y conserva acceso por rol', () => {
+  for (const role of ['owner', 'analyst']) {
+    const menu = menuVisible({role});
+    const grupo = menu.find(x => x.clave === 'clientes');
+    assert.equal(grupo.items.filter(x => x.href === '/pain-points').length, 1);
+  }
+  for (const role of ['operator', 'viewer', undefined]) {
+    assert.ok(!menuVisible({role}).flatMap(x => x.items ?? [x]).some(x => x.href === '/pain-points'), String(role));
+  }
+  assert.equal(menuVisible({role: 'owner'}).length, 8);
+  assert.equal(itemActivo('/pain-points').grupo, 'clientes');
+  assert.equal(itemActivo('/pain-points/detalle').grupo, 'clientes');
+  assert.equal(tituloDePantalla('/pain-points'), 'Puntos de dolor');
+  assert.equal(iconoDePantalla('/pain-points'), 'painpoints');
 });
 test('evidencia sintética de la pantalla respeta la forma del contrato (sin PII, total y marca)', () => {
   const e = evidenciaPain('P2', null);

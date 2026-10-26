@@ -8,5 +8,3 @@ export function tituloDePantalla(pathname:string):string;
 export function iconoDePantalla(pathname:string):string;
 export function cerradosGuardados(texto:string|null|undefined):string[];
 export function grupoAbiertoPorDefecto(entradas:readonly MenuEntrada[],activo:{item:MenuItem;grupo:string|null}|null):string|null;
-export const PIE:{etiqueta:string;item:MenuItem&{roles:readonly string[]}};
-export function pieVisible(acceso?:{role?:string}):MenuItem|null;

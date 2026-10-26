@@ -5,7 +5,7 @@ import {Drawer} from '../ui/overlay';
 import {BarraInferior,Monograma,SelectorEmpresa,SelectorTema,useTeclado,type Theme} from './movil';
 import {RovaqLogo} from '../rovaq-logo';
 import {usePathname} from 'next/navigation';
-import {Navigation,PieNavigation,workspaceTitle,workspaceIconName} from './navigation';
+import {Navigation,workspaceTitle,workspaceIconName} from './navigation';
 import {WorkspaceIcon} from './icon';
 import {NotificationNavigationLink} from '../notifications/navigation-link';
 import {AccesoProvider} from './access';
@@ -36,7 +36,6 @@ export function WorkspaceShell({children,brand,organizations,tenant,role,platfor
    <div className="sidebar-navigation"><Navigation role={role} interno={platformAccess} collapsed={!mobile&&collapsed} onNavigate={mobile?close:undefined}/></div>
    <div className="sidebar-footer">
     {!mobile&&(organizations.length>1?<form className="organization-switch" action="/auth/organization" method="post" onSubmit={()=>limpiarTodo()}><label className="nav-caption" htmlFor="workspace-org">Organización</label><div className="organization-controls"><select id="workspace-org" name="tenant_id" defaultValue={tenant}>{organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}</select><button type="submit" title="Cambiar organización" aria-label="Cambiar organización">Ir <span aria-hidden="true">↗</span></button></div></form>:<div className="workspace-context"><span className="nav-caption">Espacio de cliente</span><strong>{organization}</strong></div>)}
-    <PieNavigation role={role} onNavigate={mobile?close:undefined}/>
     <div className="sidebar-notifications"><NotificationNavigationLink/></div>
     {platformAccess&&<Link className="workspace-platform-link" href="/platform" aria-label="Administración de Rovaq AI" title={mobile?undefined:'Administración de Rovaq AI'} onClick={mobile?close:undefined}><WorkspaceIcon name="settings"/><span className="platform-link-label">Administración de Rovaq AI</span></Link>}
     <SelectorTema valor={theme??'light'} onChange={chooseTheme} nombre={mobile?'mobile-theme':'workspace-theme'} etiquetas={mobile}/>

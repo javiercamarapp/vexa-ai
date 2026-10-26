@@ -15,6 +15,7 @@ export const MENU = Object.freeze([
   ] },
   { tipo: 'grupo', clave: 'clientes', etiqueta: 'Clientes y problemas', items: [
     { href: '/problems', etiqueta: 'Problemas', icono: 'problems', alias: ['/problems/manage'] },
+    { href: '/pain-points', etiqueta: 'Puntos de dolor', icono: 'painpoints', titulo: 'Puntos de dolor', roles: DINERO },
   ] },
   { tipo: 'grupo', clave: 'operacion', etiqueta: 'Operación', roles: DINERO, items: [
     { href: '/map', etiqueta: 'Mapa de problemas', icono: 'grid', titulo: 'Mapa de problemas' },
@@ -47,8 +48,6 @@ export const MENU = Object.freeze([
     { href: '/migrations', etiqueta: 'Comparación de migración', icono: 'connections' },
   ] },
 ]);
-/** Entrada fija al pie del menú (abajo a la izquierda, sobre Notificaciones), bajo la etiqueta «Insights». No es un 9.º espacio del acordeón. Solo propietarios y analistas (usa dinero). */
-export const PIE = Object.freeze({ etiqueta: 'Insights', item: Object.freeze({ href: '/pain-points', etiqueta: 'Puntos de dolor', icono: 'painpoints', titulo: 'Puntos de dolor', roles: DINERO }) });
 /** Pantallas sin ítem propio (se llega por la campana o por otra pantalla): solo aportan título e icono. */
 const SIN_ITEM = Object.freeze([
   { href: '/notifications', etiqueta: 'Notificaciones', icono: 'notifications' },
@@ -63,9 +62,7 @@ export function menuVisible({ role, interno = false } = {}) {
 const rutas = (item) => [item.href, ...(item.alias ?? [])];
 const coincide = (pathname, ruta) => pathname === ruta || pathname.startsWith(ruta + '/');
 /** Todos los ítems del menú completo (sin filtrar por permisos) con su grupo. */
-export const todosLosItems = () => [...MENU.flatMap((e) => (e.tipo === 'grupo' ? e.items.map((item) => ({ item, grupo: e.clave })) : [{ item: e, grupo: null }])), { item: PIE.item, grupo: null }];
-/** Ítem fijo del pie visible para este acceso (o null). */
-export const pieVisible = ({ role } = {}) => (role !== undefined && PIE.item.roles.includes(role) ? PIE.item : null);
+export const todosLosItems = () => [...MENU.flatMap((e) => (e.tipo === 'grupo' ? e.items.map((item) => ({ item, grupo: e.clave })) : [{ item: e, grupo: null }]))];
 /** Ítem activo para una ruta: la coincidencia más específica gana (/evaluation/candidates antes que /evaluation; /jobs/:id -> Importaciones; /problems/manage -> Problemas). */
 export function itemActivo(pathname) {
   let mejor = null;

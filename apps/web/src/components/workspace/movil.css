@@ -3,10 +3,10 @@
    Los estilos de hoja inferior (grabber, X, 90 dvh) viven en components/ui/overlay.css. */
 
 /* ---- Selector de tema (escritorio y celular): mismo icono SVG de 16 px y mismo trazo en celdas iguales; la elegida es una píldora ajustada ---- */
-.workspace-shell .theme-selector{display:flex;justify-content:center;gap:2px;width:fit-content;max-width:100%;min-width:0;margin:0 auto 10px;padding:3px;border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-soft)}
-.workspace-shell .theme-selector label{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:40px;min-height:32px;padding:0 10px;border-radius:999px;color:var(--muted);font:500 13px/1 var(--font-ui);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.workspace-shell .theme-selector{display:flex;justify-content:center;gap:2px;width:fit-content;max-width:100%;min-width:0;margin:0 auto 10px;padding:2px;border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-soft)}
+.workspace-shell .theme-selector label{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:32px;min-height:26px;padding:0 7px;border-radius:999px;color:var(--muted);font:500 13px/1 var(--font-ui);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .workspace-shell .theme-selector label:hover{color:var(--ink)}
-.workspace-shell .theme-selector svg{display:block;flex:none;width:16px;height:16px}
+.workspace-shell .theme-selector svg{display:block;flex:none;width:14px;height:14px}
 .workspace-shell .theme-selector label:has(input:checked){background:var(--ui-surface);color:var(--ink);box-shadow:0 0 0 1px var(--ui-border),0 1px 2px #0e0e1014}
 .workspace-shell .theme-selector label:has(input:focus-visible){outline:2px solid var(--ui-focus);outline-offset:2px}
 

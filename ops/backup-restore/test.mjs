@@ -24,6 +24,7 @@ try {
   pg.createDb('src');
   pg.applySchema('src');
   pg.file('src', path.join(here, 'synthetic-fixture.sql'), [['na', '8000'], ['nc', '600']]);
+  pg.sql('src', `insert into vexa_platform.settings(key,value) values('syn_backup_global','{"marker":"SYN_GLOBAL_NOT_TENANT"}'::jsonb)`);
   const env = {PGHOST: pg.sock, PGPORT: pg.port, PGDATABASE: 'src'};
   const bk = (out, extra = []) => node('backup.mjs', ['--tenant', TA, '--out', out, ...extra], env);
   const rv = (dir, extra = []) => node('restore-verify.mjs', ['--backup', dir, ...extra]);
@@ -36,6 +37,8 @@ try {
   const row = (n) => m.tables.find(t => t.name === 'public.' + n)?.rows;
   check('backup: cubre todas las tablas del esquema (excepto las globales declaradas)', m.tables.length >= 120, `tablas=${m.tables.length}`);
   check('backup: conteos sinteticos esperados (A) y sin filas del tenant B', row('messages') === 8000 && row('customers') === 600 && row('economic_ledger_entries') === 300 && row('organizations') === 1 && row('embeddings') === 50 && row('attachment_blobs') === 100 && row('tracker_versions') === 2, JSON.stringify({m: row('messages'), c: row('customers'), e: row('embeddings')}));
+  check('backup: configuracion global declarada, sin archivo de datos ni marcador', m.excludedGlobalTables.includes('vexa_platform.settings') && !m.tables.some(t => t.name === 'vexa_platform.settings') && !fs.existsSync(path.join(b1, 'data/vexa_platform.settings.copy')) && !fs.readdirSync(path.join(b1, 'data')).some(f => fs.readFileSync(path.join(b1, 'data', f), 'utf8').includes('SYN_GLOBAL_NOT_TENANT')));
+  check('backup: weekly/CFO y recibos via FK conservan A y excluyen B', row('weekly_report_outbox') === 1 && row('notification_email_messages') === 1 && row('notification_email_receipts') === 1 && row('cfo_access_log') === 1 && !fs.readFileSync(path.join(b1, 'data/public.notification_email_receipts.copy'), 'utf8').includes('SYN_receipt_B'));
   const leaked = fs.readdirSync(path.join(b1, 'data')).filter(f => fs.readFileSync(path.join(b1, 'data', f), 'utf8').includes(TB));
   check('backup: ningun archivo de datos contiene el id del tenant B', leaked.length === 0, leaked.join(','));
   const modes = [b1, path.join(b1, 'manifest.json'), path.join(b1, 'data/public.messages.copy')].map(p => (fs.statSync(p).mode & 0o777).toString(8));
@@ -80,7 +83,7 @@ try {
   }
   { // d) politica RLS eliminada del esquema (con sha del esquema ajustado)
     const d = clone('mut-d'); const f = path.join(d, 'schema.sql'); let s = fs.readFileSync(f, 'utf8');
-    const i = s.indexOf('CREATE POLICY backend_scope ON public.attachment_blobs'); const j = s.indexOf(';\n', i);
+    const i = s.indexOf('CREATE POLICY member_read ON public.messages'); const j = s.indexOf(';\n', i);
     s = s.slice(0, i) + s.slice(j + 2); fs.writeFileSync(f, s);
     const mm = manifestOf(d); mm.schemaSha256 = sha(f); saveManifest(d, mm);
     const r = rv(d);

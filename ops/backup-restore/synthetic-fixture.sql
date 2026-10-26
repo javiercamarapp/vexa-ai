@@ -75,4 +75,13 @@ insert into public.embeddings(tenant_id,model_id,dim,version,content,embedding,m
  select pg_temp.u('tenant-A'),'m-sint',3,'v1','texto '||g,('['||g||',0.5,'||(g*0.25)||']')::extensions.vector,pg_temp.u('rev-A-'||g) from generate_series(1,50) g;
 insert into public.embeddings(tenant_id,model_id,dim,version,content,embedding,message_revision_id)
  select pg_temp.u('tenant-B'),'m-sint',3,'v1','b '||g,'[1,2,3]'::extensions.vector,pg_temp.u('rev-B-'||g) from generate_series(1,5) g;
+-- Current weekly/CFO tables: direct tenant scope plus receipts inherited through FK.
+insert into public.weekly_report_outbox(id,tenant_id,week_start,user_id,state,subject,html,body_text)
+ select pg_temp.u('weekly-'||x),pg_temp.u('tenant-'||x),'2026-10-19',pg_temp.u('user-'||x||'-owner'),'sent','SYN weekly '||x,'<p>SYN</p>','SYN weekly '||x from unnest(array['A','B']) x;
+insert into public.notification_email_messages(idempotency_key,tenant_id,user_id,weekly_report_id,mailbox_hash,provider,provider_id)
+ select md5('weekly-'||x)||md5('key-'||x),pg_temp.u('tenant-'||x),pg_temp.u('user-'||x||'-owner'),pg_temp.u('weekly-'||x),repeat('a',64),'resend','SYN_provider_'||x from unnest(array['A','B']) x;
+insert into public.notification_email_receipts(event_id,provider_id,event_type,occurred_at,payload_hash,idempotency_key)
+ select 'SYN_receipt_'||x,'SYN_provider_'||x,'email.delivered',now(),repeat('b',64),md5('weekly-'||x)||md5('key-'||x) from unnest(array['A','B']) x;
+insert into public.cfo_access_log(tenant_id,actor_id,tool,args_hash,outcome)
+ select pg_temp.u('tenant-'||x),pg_temp.u('user-'||x||'-owner'),'resumen_mes',repeat('c',64),'ok' from unnest(array['A','B']) x;
 commit;

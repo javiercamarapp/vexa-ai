@@ -12,7 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {startLocalPg, bin} from '../lib/localpg.mjs';
 import {fileURLToPath} from 'node:url';
-import {makePsql, metricSelect, CATALOG_SQL, FK_SQL, SESSION, qi, qlit, sha256File, sha256Text, stableStringify} from './lib.mjs';
+import {makePsql, metricSelect, CATALOG_SQL, FK_SQL, SESSION, qi, qlit, sha256File, sha256Text, stableStringify, parseProbeOutput} from './lib.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
@@ -126,8 +126,10 @@ try {
     for (const t of probeTables) lines.push(`select ${qlit(t.name)}||'|'||count(*) from ${t.name.split('.').map(qi).join('.')};`);
     const f = path.join(pg.dir, `probe-${role}.sql`); fs.writeFileSync(f, lines.join('\n') + '\n');
     const r = ps.run(['-At', '-v', 'ON_ERROR_STOP=0', '-f', f], {allowFail: true});
-    const seen = new Map(); for (const l of r.stdout.split('\n')) { const m = l.match(/^(public\.[a-z_0-9]+)\|(\d+)$/); if (m) seen.set(m[1], Number(m[2])); }
-    return seen; // tablas con error de permiso no aparecen: 0 visibles
+    const readable = JSON.parse(ps.sql(`select coalesce(json_agg(n),'[]'::json) from unnest(array[${probeTables.map(t => qlit(t.name)).join(',')}]::text[]) n where has_table_privilege(${qlit(role)},n,'SELECT')`));
+    try { return parseProbeOutput(r.stdout, readable); }
+    catch (error) { fail('rls-sonda', `${role}: ${error.message}`); return new Map(); }
+    // Missing output is permitted only for tables without SELECT privilege.
   };
   const asStranger = runProbe('authenticated', stranger, null);
   // memberships tiene politica "ver mi propia fila" por diseno: se admite solo las filas del propio usuario.

@@ -1,6 +1,10 @@
 # Cron y tareas programadas de Rovaq
 
-Estado: PROPUESTA. No se activo nada (ni pg_cron, ni Vercel Cron, ni GitHub Actions, ni cron/launchd en esta Mac). Todo lo marcado «no verificado» no se pudo comprobar sin leer produccion.
+El diseño original de este documento es una propuesta; la verificación posterior siguiente sustituye sus afirmaciones históricas sobre ausencia de programaciones. No se activaron consumidores nuevos durante esa verificación.
+
+## Verificacion del 26-oct-2026
+
+`pg_cron`, `pg_net` y Vault están instalados. Existe un job activo, `vexa-notifications-chunk`, cada minuto, con compuerta de trabajo pendiente. Se observaron 930 ejecuciones SQL satisfactorias en las 24 horas consultadas. Esto prueba el disparador SQL, **no entrega de correo, push ni respuesta HTTP**; `net._http_response` no conservaba respuestas de ese intervalo. No había otros jobs pg_cron. La API del proyecto Vercel confirma cron habilitado, sin fecha de desactivación, con CRM cada cinco minutos y metadata cada quince, asociados al despliegue de producción `dpl_E6mERCFUga4bb6R3iVcjGJ1xBkP2`. Eso acredita configuración activa, no ejecución satisfactoria de cada consumidor. GitHub Actions continúa desactivado y el proyecto Vercel no tiene enlace Git.
 
 ## 1. Inventario: que existe y que hace falta
 

@@ -1,0 +1,638 @@
+{
+  "fks": [
+    {
+      "cols": [
+        "user_id"
+      ],
+      "child": "vexa_platform.administrators",
+      "pcols": [
+        "id"
+      ],
+      "parent": "auth.users"
+    },
+    {
+      "cols": [
+        "idempotency_key"
+      ],
+      "child": "public.notification_email_receipts",
+      "pcols": [
+        "idempotency_key"
+      ],
+      "parent": "public.notification_email_messages"
+    }
+  ],
+  "tables": [
+    {
+      "name": "public.ai_budget_attempts",
+      "hasTenant": true
+    },
+    {
+      "name": "public.ai_budget_limits",
+      "hasTenant": true
+    },
+    {
+      "name": "public.ai_budget_reconciliations",
+      "hasTenant": true
+    },
+    {
+      "name": "public.ai_budget_reservations",
+      "hasTenant": true
+    },
+    {
+      "name": "public.analysis_reads",
+      "hasTenant": true
+    },
+    {
+      "name": "public.analysis_runs",
+      "hasTenant": true
+    },
+    {
+      "name": "public.analysis_spend",
+      "hasTenant": true
+    },
+    {
+      "name": "public.association_counts",
+      "hasTenant": true
+    },
+    {
+      "name": "public.assumptions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.attachment_blobs",
+      "hasTenant": true
+    },
+    {
+      "name": "public.attachment_links",
+      "hasTenant": true
+    },
+    {
+      "name": "public.attempts",
+      "hasTenant": true
+    },
+    {
+      "name": "public.attributions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.audit_events",
+      "hasTenant": true
+    },
+    {
+      "name": "public.brief_heads",
+      "hasTenant": true
+    },
+    {
+      "name": "public.brief_requests",
+      "hasTenant": true
+    },
+    {
+      "name": "public.candidate_results",
+      "hasTenant": true
+    },
+    {
+      "name": "public.candidate_selections",
+      "hasTenant": true
+    },
+    {
+      "name": "public.cfo_access_log",
+      "hasTenant": true
+    },
+    {
+      "name": "public.checkpoints",
+      "hasTenant": true
+    },
+    {
+      "name": "public.components",
+      "hasTenant": true
+    },
+    {
+      "name": "public.connection_health",
+      "hasTenant": true
+    },
+    {
+      "name": "public.connections",
+      "hasTenant": true
+    },
+    {
+      "name": "public.contact_repeat_summary",
+      "hasTenant": true
+    },
+    {
+      "name": "public.conversation_customer_association_bindings",
+      "hasTenant": true
+    },
+    {
+      "name": "public.conversation_monthly",
+      "hasTenant": true
+    },
+    {
+      "name": "public.conversations",
+      "hasTenant": true
+    },
+    {
+      "name": "public.cost_rates",
+      "hasTenant": true
+    },
+    {
+      "name": "public.crm_sync_settings",
+      "hasTenant": true
+    },
+    {
+      "name": "public.crm_webhook_receipts",
+      "hasTenant": true
+    },
+    {
+      "name": "public.customers",
+      "hasTenant": true
+    },
+    {
+      "name": "public.dead_letters",
+      "hasTenant": true
+    },
+    {
+      "name": "public.economic_currency_versions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.economic_events",
+      "hasTenant": true
+    },
+    {
+      "name": "public.economic_fx_versions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.economic_ledger_counts",
+      "hasTenant": true
+    },
+    {
+      "name": "public.economic_ledger_entries",
+      "hasTenant": true
+    },
+    {
+      "name": "public.economic_ledger_monthly",
+      "hasTenant": true
+    },
+    {
+      "name": "public.economic_order_aliases",
+      "hasTenant": true
+    },
+    {
+      "name": "public.economic_order_customers",
+      "hasTenant": true
+    },
+    {
+      "name": "public.economic_problem_links",
+      "hasTenant": true
+    },
+    {
+      "name": "public.economic_relation_coverage",
+      "hasTenant": true
+    },
+    {
+      "name": "public.economic_snapshot_heads",
+      "hasTenant": true
+    },
+    {
+      "name": "public.economic_source_versions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.embeddings",
+      "hasTenant": true
+    },
+    {
+      "name": "public.evidence_spans",
+      "hasTenant": true
+    },
+    {
+      "name": "public.external_aliases",
+      "hasTenant": true
+    },
+    {
+      "name": "public.extraction_claims",
+      "hasTenant": true
+    },
+    {
+      "name": "public.extraction_inputs",
+      "hasTenant": true
+    },
+    {
+      "name": "public.extraction_metadata_scopes",
+      "hasTenant": true
+    },
+    {
+      "name": "public.extraction_metadata_snapshots",
+      "hasTenant": true
+    },
+    {
+      "name": "public.extraction_requests",
+      "hasTenant": true
+    },
+    {
+      "name": "public.extraction_runs",
+      "hasTenant": true
+    },
+    {
+      "name": "public.history_batches",
+      "hasTenant": true
+    },
+    {
+      "name": "public.history_items",
+      "hasTenant": true
+    },
+    {
+      "name": "public.import_rows",
+      "hasTenant": true
+    },
+    {
+      "name": "public.import_uploads",
+      "hasTenant": true
+    },
+    {
+      "name": "public.imports",
+      "hasTenant": true
+    },
+    {
+      "name": "public.insight_complaint_family_month",
+      "hasTenant": true
+    },
+    {
+      "name": "public.insight_conversation_volume",
+      "hasTenant": true
+    },
+    {
+      "name": "public.insight_family_pair",
+      "hasTenant": true
+    },
+    {
+      "name": "public.insight_inbound_load",
+      "hasTenant": true
+    },
+    {
+      "name": "public.insight_order_lines_digest",
+      "hasTenant": true
+    },
+    {
+      "name": "public.insight_order_revenue_month",
+      "hasTenant": true
+    },
+    {
+      "name": "public.insight_refund_by_sku_month",
+      "hasTenant": true
+    },
+    {
+      "name": "public.insight_refund_ledger_digest",
+      "hasTenant": true
+    },
+    {
+      "name": "public.insight_state",
+      "hasTenant": true
+    },
+    {
+      "name": "public.insight_thread_resolution",
+      "hasTenant": true
+    },
+    {
+      "name": "public.insight_thread_sla",
+      "hasTenant": true
+    },
+    {
+      "name": "public.insight_tracker_refund_status",
+      "hasTenant": true
+    },
+    {
+      "name": "public.intervention_events",
+      "hasTenant": true
+    },
+    {
+      "name": "public.intervention_results",
+      "hasTenant": true
+    },
+    {
+      "name": "public.interventions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.issues",
+      "hasTenant": true
+    },
+    {
+      "name": "public.jobs",
+      "hasTenant": true
+    },
+    {
+      "name": "public.learning_cohorts",
+      "hasTenant": true
+    },
+    {
+      "name": "public.learning_feedback",
+      "hasTenant": true
+    },
+    {
+      "name": "public.learning_items",
+      "hasTenant": true
+    },
+    {
+      "name": "public.measurement_plans",
+      "hasTenant": true
+    },
+    {
+      "name": "public.memberships",
+      "hasTenant": true
+    },
+    {
+      "name": "public.message_revisions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.messages",
+      "hasTenant": true
+    },
+    {
+      "name": "public.metric_snapshots",
+      "hasTenant": true
+    },
+    {
+      "name": "public.native_customer_associations",
+      "hasTenant": true
+    },
+    {
+      "name": "public.notification_business_events",
+      "hasTenant": true
+    },
+    {
+      "name": "public.notification_delivery_policies",
+      "hasTenant": true
+    },
+    {
+      "name": "public.notification_dispatch_limits",
+      "hasTenant": true
+    },
+    {
+      "name": "public.notification_email_messages",
+      "hasTenant": true
+    },
+    {
+      "name": "public.notification_email_receipts",
+      "hasTenant": false
+    },
+    {
+      "name": "public.notification_email_suppressions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.notification_events",
+      "hasTenant": true
+    },
+    {
+      "name": "public.notification_inbox",
+      "hasTenant": true
+    },
+    {
+      "name": "public.notification_outbox",
+      "hasTenant": true
+    },
+    {
+      "name": "public.notification_outbox_items",
+      "hasTenant": true
+    },
+    {
+      "name": "public.notification_preferences",
+      "hasTenant": true
+    },
+    {
+      "name": "public.notification_reconciliation_evidence",
+      "hasTenant": true
+    },
+    {
+      "name": "public.notification_reconciliations",
+      "hasTenant": true
+    },
+    {
+      "name": "public.order_lines",
+      "hasTenant": true
+    },
+    {
+      "name": "public.orders",
+      "hasTenant": true
+    },
+    {
+      "name": "public.organizations",
+      "hasTenant": false
+    },
+    {
+      "name": "public.outbox",
+      "hasTenant": true
+    },
+    {
+      "name": "public.priority_actionability_versions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.priority_entries",
+      "hasTenant": true
+    },
+    {
+      "name": "public.priority_policy_versions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.priority_runs",
+      "hasTenant": true
+    },
+    {
+      "name": "public.problem_causal_versions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.problem_conversations",
+      "hasTenant": true
+    },
+    {
+      "name": "public.problem_embedding_members",
+      "hasTenant": true
+    },
+    {
+      "name": "public.problem_embedding_requests",
+      "hasTenant": true
+    },
+    {
+      "name": "public.problem_operational_evidence",
+      "hasTenant": true
+    },
+    {
+      "name": "public.problem_versions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.problems",
+      "hasTenant": true
+    },
+    {
+      "name": "public.products",
+      "hasTenant": true
+    },
+    {
+      "name": "public.push_attempts",
+      "hasTenant": true
+    },
+    {
+      "name": "public.push_subscriptions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.recommendation_flow_events",
+      "hasTenant": true
+    },
+    {
+      "name": "public.recommendation_versions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.recommendations",
+      "hasTenant": true
+    },
+    {
+      "name": "public.redaction_maps",
+      "hasTenant": true
+    },
+    {
+      "name": "public.report_unsubscribes",
+      "hasTenant": true
+    },
+    {
+      "name": "public.retention_artifacts",
+      "hasTenant": true
+    },
+    {
+      "name": "public.retention_ledger",
+      "hasTenant": true
+    },
+    {
+      "name": "public.retention_policies",
+      "hasTenant": true
+    },
+    {
+      "name": "public.retention_redactions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.retention_web_requests",
+      "hasTenant": true
+    },
+    {
+      "name": "public.reversals",
+      "hasTenant": true
+    },
+    {
+      "name": "public.source_heads",
+      "hasTenant": true
+    },
+    {
+      "name": "public.source_quarantine",
+      "hasTenant": true
+    },
+    {
+      "name": "public.source_revisions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.source_sync_state",
+      "hasTenant": true
+    },
+    {
+      "name": "public.summary_refresh_state",
+      "hasTenant": true
+    },
+    {
+      "name": "public.sync_cursors",
+      "hasTenant": true
+    },
+    {
+      "name": "public.sync_pages",
+      "hasTenant": true
+    },
+    {
+      "name": "public.sync_raw_objects",
+      "hasTenant": true
+    },
+    {
+      "name": "public.team_audit",
+      "hasTenant": true
+    },
+    {
+      "name": "public.team_invitations",
+      "hasTenant": true
+    },
+    {
+      "name": "public.tombstones",
+      "hasTenant": true
+    },
+    {
+      "name": "public.tracker_row_observations",
+      "hasTenant": true
+    },
+    {
+      "name": "public.tracker_row_rejections",
+      "hasTenant": true
+    },
+    {
+      "name": "public.tracker_row_revisions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.tracker_sheet_jobs",
+      "hasTenant": true
+    },
+    {
+      "name": "public.tracker_versions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.weekly_briefs",
+      "hasTenant": true
+    },
+    {
+      "name": "public.weekly_report_outbox",
+      "hasTenant": true
+    },
+    {
+      "name": "public.worker_delegations",
+      "hasTenant": true
+    },
+    {
+      "name": "public.workspace_customer_identity_versions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.workspace_detail_bindings",
+      "hasTenant": true
+    },
+    {
+      "name": "public.workspace_order_dimension_versions",
+      "hasTenant": true
+    },
+    {
+      "name": "public.workspace_scope_bindings",
+      "hasTenant": true
+    },
+    {
+      "name": "vexa_platform.administrators",
+      "hasTenant": false
+    },
+    {
+      "name": "vexa_platform.audit",
+      "hasTenant": true
+    },
+    {
+      "name": "vexa_platform.settings",
+      "hasTenant": false
+    },
+    {
+      "name": "vexa_platform.support_sessions",
+      "hasTenant": true
+    }
+  ]
+}

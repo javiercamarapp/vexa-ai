@@ -1,5 +1,15 @@
 # Respaldos y restauracion probada
 
+## Verificacion del 26-oct-2026
+
+Esta actualización sustituye los estados históricos «no verificado» sobre existencia de respaldos y PITR de la tabla siguiente. El inventario de administración devolvió ocho respaldos físicos COMPLETED (19–26 de octubre); el último terminó el 26-oct a las 08:47 UTC. PITR está desactivado. No se restauró un respaldo gestionado ni se habilitó un servicio adicional.
+
+El respaldo lógico se actualizó para el catálogo de 153 tablas con alcance de tenant: `vexa_platform.settings`, igual que `administrators`, es global y sus datos se excluyen expresamente. Una tabla desconocida sin alcance sigue abortando; también aborta una tabla global declarada que adquiera `tenant_id`. Los recibos de correo sin `tenant_id` se filtran mediante su FK al mensaje. La configuración global y los administradores deben restituirse por un procedimiento separado antes de habilitar un destino recuperado.
+
+Pruebas actuales: `node --test ops/backup-restore/scopes.test.mjs` (4/4) y `node ops/backup-restore/test.mjs` (23/23, ALL PASS): [omitido: dato de cliente] filas sintéticas, 153 tablas de datos, 155 tablas de catálogo, 379 FK sin huérfanos, 85 sondas RLS y siete mutantes detectados. Los errores de una consulta autorizada ahora hacen fallar la verificación: nunca se interpretan como cero filas. Miembro: 11 tablas visibles; backend: 16; extraño y anónimo: cero. La membresía propia permitida por contrato no cuenta como fuga al probar otro tenant.
+
+La prueba expuso además un fallo de `vexa_member`, corregido por `20261129000000_member_support_short_circuit.sql`. Su regresión independiente pasa 27/27 y comprueba acceso normal, aislamiento, soporte exclusivo de servidor, revocación y expiración. Las limitaciones del ensayo local de la sección 4 siguen vigentes. **No acredita recuperación gestionada ni objetos Storage.**
+
 ## 1. Que cubre cada capa
 | Capa | Que protege | Retencion / RPO | Estado |
 |---|---|---|---|

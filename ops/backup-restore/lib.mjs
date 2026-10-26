@@ -6,7 +6,9 @@ import {spawnSync} from 'node:child_process';
 
 export const SCHEMAS = ['public', 'vexa_platform'];
 // Tablas GLOBALES de plataforma (no pertenecen a un tenant) que NO se respaldan por tenant.
-export const GLOBAL_EXCLUDE = new Set(['vexa_platform.administrators']);
+// settings (20261126000000) contains deployment-wide switches, including MFA.
+// A tenant restore must not replace administrators or global security configuration.
+export const GLOBAL_EXCLUDE = new Set(['vexa_platform.administrators', 'vexa_platform.settings']);
 // Sesion determinista: la misma salida de texto en origen y destino.
 export const SESSION = ["set client_encoding='UTF8'", "set timezone='UTC'", "set datestyle='ISO, MDY'", "set extra_float_digits=1", "set bytea_output='hex'", "set intervalstyle='postgres'"];
 
@@ -101,7 +103,10 @@ export function buildScopes(tables, fks, tenant) {
   const scopes = new Map();
   const T = qlit(tenant);
   for (const t of tables) {
-    if (GLOBAL_EXCLUDE.has(t.name)) continue;
+    if (GLOBAL_EXCLUDE.has(t.name)) {
+      if (t.hasTenant) throw new Error('Tabla global declarada adquirio alcance tenant: ' + t.name);
+      continue;
+    }
     if (t.name === 'public.organizations') scopes.set(t.name, `${qi('id')} = ${T}::uuid`);
     else if (t.hasTenant) scopes.set(t.name, `${qi('tenant_id')} = ${T}::uuid`);
   }
@@ -128,4 +133,16 @@ export function chmodTree(dir) {
     const p = path.join(dir, e.name);
     if (e.isDirectory()) { fs.chmodSync(p, 0o700); chmodTree(p); } else fs.chmodSync(p, 0o600);
   }
+}
+
+// A failed query on a SELECT-granted table is not an empty RLS result.
+export function parseProbeOutput(stdout, readableTables) {
+  const seen = new Map();
+  for (const line of stdout.split('\n')) {
+    const m = line.match(/^(public\.[a-z_0-9]+)\|(\d+)$/);
+    if (m) seen.set(m[1], Number(m[2]));
+  }
+  const missing = readableTables.filter(name => !seen.has(name));
+  if (missing.length) throw new Error('Sonda SELECT fallo en tablas autorizadas: ' + missing.join(', '));
+  return seen;
 }

@@ -129,6 +129,7 @@ test('resúmenes precomputados: paridad exacta, RLS, idempotencia, obsolescencia
       await cfoRepo().ledgerMonthly(); // caliente
       const {v, ms} = await time(() => cfoRepo().ledgerMonthly());
       assert.equal(v.summary.source, 'summary'); assert.equal(v.summary.freshness, 'fresh'); assert.match(v.summary.label, /^Observado · resumen al \d{4}-\d\d-\d\d/);
+      console.log(`# latencia CFO: ${ms} ms (límite 200 ms)`);
       assert.ok(ms < 200, 'CFO ' + ms + ' ms');
       const direct = await db(TENANT_A, OWNER.A).transaction('read', async s => (await s.query(LEDGER_MONTHLY_SQL, [s.tenantId, win.start.toISOString(), win.end.toISOString()])).rows);
       const key = r => [r.month, r.source_id ?? r.sourceId, r.kind, r.status, r.currency, r.exponent, r.basis].join('|');
@@ -142,6 +143,7 @@ test('resúmenes precomputados: paridad exacta, RLS, idempotencia, obsolescencia
       const trends = () => createTrendsRepository({database: db(TENANT_A, OWNER.A), now: () => NOW});
       await trends().monthly();
       const {v, ms} = await time(() => trends().monthly());
+      console.log(`# latencia tendencias: ${ms} ms (límite 200 ms)`);
       assert.ok(ms < 200, 'tendencias ' + ms + ' ms');
       // conversation_monthly está retirada: las conversaciones ya no salen de ese resumen (solo de insight_conversation_volume o del camino en vivo, que aquí se rotula).
       assert.notEqual(v.conversations.summary?.source, 'summary'); assert.ok(['observed', 'estimated'].includes(v.conversations.class));
@@ -149,7 +151,12 @@ test('resúmenes precomputados: paridad exacta, RLS, idempotencia, obsolescencia
 
 
       assert.equal(v.ledger.class, 'observed'); assert.equal(v.ledger.summary.freshness, 'fresh');
-      const dl = h.psql(`with latest as (select distinct on (entity_id) * from public.economic_ledger_entries where tenant_id='${TENANT_A}' and kind in('order','refund') order by entity_id,revision desc) select m||':'||n||':'||a from (select to_char(effective_at at time zone 'UTC','YYYY-MM') m,count(*) n,coalesce(sum(amount_minor),0) a from latest where kind='order' and status='recorded' and currency='${v.ledger.currency}' and effective_at>=timestamptz '${win.start.toISOString()}' and effective_at<timestamptz '${win.end.toISOString()}' group by 1 order by 1) q`).out.split('\n');
+      // Contrato vigente: pedidos de una sola base; Shopify bruto queda aparte.
+      // El oráculo SQL lee el libro directamente, sin reutilizar ingresosDelLibro.
+      assert.equal(v.ledger.currency, 'USD');
+      assert.equal(v.ledger.orderBasis.base, 'marketplace_line_price');
+      assert.ok(v.ledger.otherBases.some(b => b.base === 'gross_order_including_tax_shipping'));
+      const dl = h.psql(`with latest as (select distinct on (entity_id) * from public.economic_ledger_entries where tenant_id='${TENANT_A}' and kind in('order','refund') order by entity_id,revision desc) select m||':'||n||':'||a from (select to_char(effective_at at time zone 'UTC','YYYY-MM') m,count(*) n,coalesce(sum(amount_minor),0) a from latest where kind='order' and status='recorded' and currency='USD' and exponent=2 and split_part(basis,'|',1)='marketplace_line_price' and position('|a_revisar' in basis)=0 and effective_at>=timestamptz '${win.start.toISOString()}' and effective_at<timestamptz '${win.end.toISOString()}' group by 1 order by 1) q`).out.split('\n');
       const lg = v.ledger.series.filter(p => p.orders.count > 0).map(p => p.month + ':' + p.orders.count + ':' + p.orders.amountMinor); assert.deepEqual(lg, dl);
     });
     await t.test('cobertura: asociaciones EXACTAS (117,719 / 72,720) SIN la migración de políticas, libro exacto, <500 ms', async () => {
@@ -160,6 +167,7 @@ test('resúmenes precomputados: paridad exacta, RLS, idempotencia, obsolescencia
       assert.ok(S.associations.detail.includes('Conteo exacto.')); assert.equal(S.associations.summary.freshness, 'fresh');
       const exact = Number(h.psql(`select count(distinct entity_id) from public.economic_ledger_entries where tenant_id='${TENANT_A}'`).out);
       assert.equal(S.ledger.class, 'observed'); assert.equal(S.ledger.total, exact); assert.ok(S.ledger.detail.some(l => /Conteo exacto del libro: .* en 85[.,]361 revisiones/.test(l)), S.ledger.detail.join('|'));
+      console.log(`# latencia cobertura: ${ms} ms (límite 500 ms)`);
       assert.ok(ms < 500, 'cobertura ' + ms + ' ms');
     });
     await t.test('aislamiento: otra organización ve solo lo suyo; un miembro no puede leer ni pedir otro tenant', async () => {

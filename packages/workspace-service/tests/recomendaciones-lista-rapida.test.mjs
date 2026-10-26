@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import pg from 'pg';
 import {withPg, pgAvailable} from '../../metrics/tests/pg-harness.mjs';
-import {montarMundo, TENANT_A, OWNER, psqlFile} from '../../ai-scale/economia-problemas/mundo.mjs';
+import {montarMundo, TENANT_A, TENANT_B, OWNER, SECOND_OWNER_A, psqlFile} from '../../ai-scale/economia-problemas/mundo.mjs';
 import {crearBaseDatos, alcance} from '../../ai-scale/economia-problemas/snapshot.mjs';
 import {createSnapshotRepository} from '../../metrics/snapshots.mjs';
 import {createWorkspaceService} from '../index.mjs';
@@ -54,6 +54,22 @@ test('Lista de recomendaciones: sin verificación completa; get() la hace al abr
         const log = [], full = await createRecommendationRepository({database: logged(log)}).get({id: saved.id});
         assert.ok(verifies(log) > 0, 'verificación completa al abrir');
         assert.equal(full.verification, 'full'); assert.deepEqual(full.evidenceRefs.map(e => e.quoteHash).sort(), saved.evidenceRefs.map(e => e.quoteHash).sort());
+      });
+
+      await t.test('la lectura agrupada conserva RLS y rechaza un autor del historial revocado', async () => {
+        const other = createRecommendationRepository({database: crearBaseDatos({pool, tenantId: TENANT_B, userId: OWNER.B})});
+        await assert.rejects(other.get({id: saved.id}), e => e.status === 404);
+        const viewer = createRecommendationRepository({database: crearBaseDatos({pool, tenantId: TENANT_A, userId: SECOND_OWNER_A})});
+        assert.equal((await viewer.get({id: saved.id})).id, saved.id);
+        const changed = h.psql(`update public.memberships set status='revoked' where tenant_id='${TENANT_A}' and user_id='${OWNER.A}'`);
+        assert.ok(changed.ok, changed.err);
+        try {
+          await assert.rejects(viewer.get({id: saved.id}), e => e.status === 403 && e.message === 'recommendation_contributor_unavailable');
+        } finally {
+          const restored = h.psql(`update public.memberships set status='active' where tenant_id='${TENANT_A}' and user_id='${OWNER.A}'`);
+          assert.ok(restored.ok, restored.err);
+        }
+        assert.equal((await viewer.get({id: saved.id})).id, saved.id, 'sin caché de autorizaciones entre peticiones');
       });
 
       await t.test('fail-closed: con la evidencia alterada la lista conserva la tarjeta pero get() no muestra citas (403)', async () => {

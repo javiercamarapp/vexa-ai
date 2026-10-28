@@ -64,6 +64,8 @@ html[data-arranque][data-theme=dark],html[data-arranque][data-theme=dark] body{b
 html[data-arranque] body>:not(#arranque-logo){display:none!important}
 html[data-arranque] #arranque-logo{display:flex;position:fixed;inset:0;z-index:2000;align-items:center;justify-content:center;background:#fff;opacity:1;visibility:visible}
 html[data-arranque][data-theme=dark] #arranque-logo{background:#0e0e10}
+body:has(.rovaq-cargando:not(.rovaq-cargando-compacto)) :is(.site-header,.site-footer,.skip-link){display:none!important}
+.rovaq-cargando:not(.rovaq-cargando-compacto){min-height:100dvh;width:100%;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
 #arranque-logo .rovaq-logo{display:inline-flex;line-height:0}
 #arranque-logo svg{display:block}
 html[data-theme=dark] #arranque-logo .rovaq-logo-tinta{fill:#fff}

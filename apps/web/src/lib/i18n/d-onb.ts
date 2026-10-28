@@ -11,7 +11,7 @@ export const onbEs = {
   'onb.ui.recorrido': 'Recorrido guiado', 'onb.ui.menuGuia': 'Opciones de la guía', 'onb.ui.rolOrg': '{organizacion} · {rol}', 'onb.ui.mostrarChecklist': 'Mostrar la lista de primeros pasos',
   'onb.ui.avisoPasos': 'Paso {n} de {total}: {titulo}',
   // Checklist en Hoy
-  'onb.check.titulo': 'Primeros pasos', 'onb.check.progreso': '{hechos} de {total} listos', 'onb.check.siguiente': 'Recomendado ahora', 'onb.check.masTareas': 'Ver más tareas', 'onb.check.ocultar': 'Ocultar lista',
+  'onb.check.titulo': 'Primeros pasos', 'onb.check.progreso': '{hechos} de {total} que puedes hacer ahora', 'onb.check.siguiente': 'Recomendado ahora', 'onb.check.masTareas': 'Ver más tareas', 'onb.check.ocultar': 'Ocultar lista',
   'onb.check.cargando': 'Calculando tu avance…', 'onb.check.noDisponible': 'No se pudo calcular tu avance ahora.', 'onb.check.abrir': 'Abrir',
   'onb.check.estado.hecho': 'Hecho', 'onb.check.estado.salvedad': 'Hecho con salvedad', 'onb.check.estado.esperando': 'En espera', 'onb.check.estado.bloqueado': 'Bloqueado', 'onb.check.estado.pendiente': 'Pendiente', 'onb.check.estado.informativo': 'Para revisar',
   'onb.check.concil': 'Pendiente de conciliación: las cifras de dinero son parciales hasta ligar los pedidos con clientes.',
@@ -75,7 +75,7 @@ export const onbEn = {
   'onb.ui.recorrido': 'Guided tour', 'onb.ui.menuGuia': 'Guide options', 'onb.ui.rolOrg': '{organizacion} · {rol}', 'onb.ui.mostrarChecklist': 'Show the getting started list',
   'onb.ui.avisoPasos': 'Step {n} of {total}: {titulo}',
   // Checklist on Today
-  'onb.check.titulo': 'Getting started', 'onb.check.progreso': '{hechos} of {total} done', 'onb.check.siguiente': 'Recommended now', 'onb.check.masTareas': 'Show more tasks', 'onb.check.ocultar': 'Hide list',
+  'onb.check.titulo': 'Getting started', 'onb.check.progreso': '{hechos} of {total} you can do now', 'onb.check.siguiente': 'Recommended now', 'onb.check.masTareas': 'Show more tasks', 'onb.check.ocultar': 'Hide list',
   'onb.check.cargando': 'Working out your progress…', 'onb.check.noDisponible': 'Your progress could not be worked out right now.', 'onb.check.abrir': 'Open',
   'onb.check.estado.hecho': 'Done', 'onb.check.estado.salvedad': 'Done with a caveat', 'onb.check.estado.esperando': 'Waiting', 'onb.check.estado.bloqueado': 'Blocked', 'onb.check.estado.pendiente': 'To do', 'onb.check.estado.informativo': 'To review',
   'onb.check.concil': 'Reconciliation pending: money numbers are partial until orders are linked to customers.',

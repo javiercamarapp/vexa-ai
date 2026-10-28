@@ -25,3 +25,4 @@ export function clavesDePista(pista: Pista): string[];
 export const CLAVES_SETUP: readonly string[];
 export const CLAVES_UI: readonly string[];
 export function problemasDePaso(paso: PasoOnboarding, menuVisible: (o: {role?: string; interno?: boolean}) => readonly unknown[]): string[];
+export const CLAVES_TOUR: readonly string[];

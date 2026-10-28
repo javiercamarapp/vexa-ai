@@ -27,6 +27,7 @@ import {probdetEs} from './d-probdet';
 import {resumenEs} from './d-resumen';
 import {onbEs} from './d-onb';
 import {setupEs} from './d-setup';
+import {tourEs} from './d-tour';
 import {rolesEs} from './d-roles';
 export const es = {
   // Compartido
@@ -171,6 +172,7 @@ export const es = {
   ...resumenEs,
   ...onbEs,
   ...setupEs,
+  ...tourEs,
   ...rolesEs,
 } as const;
 export type Clave = keyof typeof es;

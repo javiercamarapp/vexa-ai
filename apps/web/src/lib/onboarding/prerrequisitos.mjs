@@ -43,12 +43,12 @@ export function estadoDePaso(paso, senales) {
 const HECHOS = new Set(['hecho', 'salvedad']);
 /**
  * Checklist de una pista: items en el orden del catálogo, los primeros `maxVisibles` visibles y el resto plegado.
- * progreso = hechos / total SOLO entre pasos propios (sin terceros ni informativos). siguiente = primer paso pendiente (no bloqueado, no de tercero).
+ * progreso = hechos / total SOLO entre pasos propios (sin terceros ni informativos); esperan = cuántos pasos están en espera de un tercero (no cuentan, pero se dicen). siguiente = primer paso pendiente (no bloqueado, no de tercero).
  */
 export function calcularChecklist(pista, senales, { maxVisibles = MAX_VISIBLES } = {}) {
   const items = pasosDe(pista, 'checklist').map((paso) => ({ id: paso.id, href: paso.href, textos: paso.textos, ...estadoDePaso(paso, senales) }));
   const propios = items.filter((i) => i.cuenta);
   const hechos = propios.filter((i) => HECHOS.has(i.estado)).length;
   const siguiente = senales ? (items.find((i) => i.estado === 'pendiente')?.id ?? null) : null;
-  return { items, visibles: items.slice(0, maxVisibles), plegados: items.slice(maxVisibles), progreso: { hechos, total: propios.length }, siguiente, completo: propios.length > 0 && hechos === propios.length };
+  return { items, visibles: items.slice(0, maxVisibles), plegados: items.slice(maxVisibles), progreso: { hechos, total: propios.length }, esperan: items.filter((i) => i.estado === 'esperando').length, siguiente, completo: propios.length > 0 && hechos === propios.length };
 }

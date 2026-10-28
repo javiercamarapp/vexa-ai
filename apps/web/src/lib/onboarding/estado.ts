@@ -8,8 +8,9 @@ export const PREFIJO_ONB = 'onb.';
 export const VERSION_ESTADO = 'v1';
 /** Subconjunto de Storage que usamos (permite probar con un almacén falso). */
 export interface Almacen { getItem(k: string): string | null; setItem(k: string, v: string): void; removeItem(k: string): void; key(i: number): string | null; readonly length: number }
-export interface EstadoLocal { visto: boolean; omitido: boolean; descartado: boolean; paso: string | null }
-export const ESTADO_VACIO: EstadoLocal = Object.freeze({ visto: false, omitido: false, descartado: false, paso: null });
+/** `activo` = el recorrido estaba abierto al recargar o cerrar la pestaña: se retoma solo en ese paso (Esc, Omitir y Terminar lo apagan). */
+export interface EstadoLocal { visto: boolean; omitido: boolean; descartado: boolean; paso: string | null; activo: boolean }
+export const ESTADO_VACIO: EstadoLocal = Object.freeze({ visto: false, omitido: false, descartado: false, paso: null, activo: false });
 
 /** Hash corto (FNV-1a 32 bits, 8 hex) de usuario+organización. No es criptográfico: solo evita dejar el id en claro en el navegador. */
 export function hashCorto(userId: string, tenantId: string): string {
@@ -28,7 +29,7 @@ export function almacenDelNavegador(): Almacen | null {
 function normalizar(crudo: unknown): EstadoLocal {
   if (!crudo || typeof crudo !== 'object') return { ...ESTADO_VACIO };
   const c = crudo as Record<string, unknown>;
-  return { visto: c.visto === true, omitido: c.omitido === true, descartado: c.descartado === true, paso: typeof c.paso === 'string' && c.paso.length <= 80 ? c.paso : null };
+  return { visto: c.visto === true, omitido: c.omitido === true, descartado: c.descartado === true, activo: c.activo === true, paso: typeof c.paso === 'string' && c.paso.length <= 80 ? c.paso : null };
 }
 /** Lee el estado; cualquier fallo (sin almacén, excepción, JSON roto, forma rara) devuelve el estado vacío. */
 export function leerEstado(almacen: Almacen | null, clave: string): EstadoLocal {

@@ -51,12 +51,14 @@ export const CATALOGO = Object.freeze([
   paso('operador', 'problemas', 'read', '/problems'),
   paso('operador', 'acciones', 'execute', '/interventions'),
   paso('operador', 'preguntar', 'read', '/preguntale'),
+  paso('operador', 'avisos', 'notify', '/settings/notifications'),
   paso('operador', 'propuesta', 'propose', '/recommendations', 'checklist', 'accion_propuesta'),
   paso('operador', 'resultado', 'execute', '/interventions', 'checklist', 'resultado_registrado'),
   // Lector: solo mira; ningún paso con botón de escritura.
   paso('lector', 'hoy', 'read', '/overview'),
   paso('lector', 'problemas', 'read', '/problems'),
   paso('lector', 'confianza', 'read', '/confianza'),
+  paso('lector', 'avisos', 'notify', '/settings/notifications'),
   // Administrador de plataforma: dentro de /platform (no es un rol de organización; no pasa por menuVisible).
   paso('plataforma', 'resumen', 'read', '/platform'),
   paso('plataforma', 'organizaciones', 'read', '/platform/organizaciones'),

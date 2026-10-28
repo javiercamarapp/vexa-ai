@@ -167,3 +167,26 @@ test('onb.*: los textos de pistas de rol no prometen lo que el rol no puede hace
   assert.doesNotMatch(ESP['onb.lector.hoy.cuerpo'] + ESP['onb.lector.problemas.cuerpo'] + ESP['onb.lector.confianza.cuerpo'], /\b(importa|conecta|invita|aprueba|propón)/i);
   assert.match(ESP['onb.soporte.aviso.cuerpo'], /solo lectura/i); assert.match(ING['onb.soporte.aviso.cuerpo'], /read-only/i);
 });
+
+// F3c: pistas de analista y operador
+test('analista: el paso del corte espera al propietario (no cuenta como tarea suya) y su texto no promete preparar ni publicar', () => {
+  const corte = pasosDe('analista').find((p) => p.id === 'analista.corte')!;
+  assert.equal(corte.espera, 'propietario'); assert.equal(corte.superficie, 'checklist');
+  assert.match(ESP['onb.analista.corte.cuerpo'], /propietario/i); assert.match(ING['onb.analista.corte.cuerpo'], /owner/i);
+  assert.match(ESP['onb.analista.corte.cuerpo'], /lo hace el propietario/); assert.match(ING['onb.analista.corte.cuerpo'], /owner prepares and publishes/);
+  assert.ok(!pasosDe('analista').some((p) => p.accion === 'configure' || /pedidos|orders/i.test(p.id)), 'el analista no carga pedidos ni configura');
+  assert.match(ESP['onb.analista.importar.cuerpo'], /propietario/); assert.match(ING['onb.analista.importar.cuerpo'], /owner/);
+});
+test('operador y lector tienen paso de avisos propios (notify) y llegan a él desde su menú', () => {
+  for (const pista of ['operador', 'lector'] as const) {
+    const a = pasosDe(pista).find((p) => p.id === pista + '.avisos')!;
+    assert.equal(a.accion, 'notify'); assert.equal(a.href, '/settings/notifications'); assert.equal(a.superficie, 'tour');
+    assert.deepEqual(problemasDePaso(a, menuVisible), []);
+  }
+});
+test('operador: sin pasos de importación ni de dinero; el lector no ve pasos con verbos de escritura', () => {
+  for (const p of pasosDe('operador')) assert.ok(!['/imports', '/cfo', '/economics', '/connections'].includes(p.href!), p.id);
+  const texto = (pista: string, d: Record<string, string>) => pasosDe(pista as never).map((p) => d[p.textos.cuerpo]).join(' ');
+  assert.doesNotMatch(texto('lector', ESP), /\b(importa|conecta|invita|aprueba|propón|carga)\b/i);
+  assert.doesNotMatch(texto('operador', ESP), /\b(importa|conecta|invita|carga)\b/i);
+});

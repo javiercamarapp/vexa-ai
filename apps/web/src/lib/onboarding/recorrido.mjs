@@ -59,9 +59,11 @@ export const OBJETIVOS = Object.freeze({
   'operador.problemas': ['[data-tour="problemas"]', '[data-tour="menu:/problems"]'],
   'operador.acciones': ['[data-tour="menu:/interventions"]'],
   'operador.preguntar': ['[data-tour="menu:/preguntale"]'],
+  'operador.avisos': ['[data-tour="menu:/settings/notifications"]'],
   'lector.hoy': ['[data-tour="hoy-rol"]', '[data-tour="menu:/overview"]'], // Hoy propio del rol (HoyRol): sin cifras de dinero
   'lector.problemas': ['[data-tour="problemas"]', '[data-tour="menu:/problems"]'],
   'lector.confianza': ['[data-tour="menu:/confianza"]'],
+  'lector.avisos': ['[data-tour="menu:/settings/notifications"]'],
   'plataforma.resumen': ['[data-tour="plataforma:/platform"]'],
   'plataforma.organizaciones': ['[data-tour="plataforma:/platform/organizaciones"]'],
   'plataforma.costos': ['[data-tour="plataforma:/platform/costos-ia"]'],

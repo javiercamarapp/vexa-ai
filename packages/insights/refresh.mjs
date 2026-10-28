@@ -26,6 +26,22 @@ export async function refreshPerfFrio(database, {what = 'all'} = {}) {
     return await database.transaction('import', async s => (await s.query('SELECT public.refresh_perf_frio($1::uuid,$2::text) AS r', [s.tenantId, what])).rows[0].r);
   } catch (e) { return {status: /refresh_perf_frio/.test(String(e?.message)) && /does not exist|no existe/.test(String(e?.message)) ? 'absent' : 'error', code: e?.code ?? null}; }
 }
+/**
+ * Mantiene al día el veredicto precalculado de las corridas de evidencia (20261114000000). Si ya está vigente (todas las corridas con el epoch actual) no recalcula;
+ * si no, llama a refresh_problem_run_verdicts con su propio tope. Sin la migración devuelve {status:'absent'}; jamás lanza (no debe romper el trabajo que lo invoca).
+ */
+export async function refreshProblemRunVerdicts(database, {budgetMs = 55000} = {}) {
+  try {
+    return await database.transaction('import', async s => {
+      const cur = (await s.query(
+        `SELECT (SELECT epoch FROM public.problem_verdict_epoch WHERE tenant_id=$1) AS epoch,
+                (SELECT count(*) FROM public.insight_problem_run_verdict v WHERE v.tenant_id=$1 AND v.epoch=(SELECT epoch FROM public.problem_verdict_epoch WHERE tenant_id=$1))::int AS vigentes,
+                (SELECT count(DISTINCT extraction_run_id) FROM public.problem_embedding_members WHERE tenant_id=$1)::int AS corridas`, [s.tenantId])).rows[0];
+      if (cur.epoch !== null && cur.corridas > 0 && cur.vigentes === cur.corridas) return {status: 'current', runs: cur.corridas};
+      return (await s.query('SELECT public.refresh_problem_run_verdicts($1::uuid,$2::integer) AS r', [s.tenantId, budgetMs])).rows[0].r;
+    });
+  } catch (e) { return {status: /problem_verdict_epoch|refresh_problem_run_verdicts|insight_problem_run_verdict/.test(String(e?.message)) && /does not exist|no existe/.test(String(e?.message)) ? 'absent' : 'error', code: e?.code ?? null}; }
+}
 /** Anota el estado de una fuente (éxito/fallo, nuevos, latencia, siguiente corrida). */
 export async function recordSourceSync(database, {source, method, ok, newRecords = null, error = null, latencyMs = null, nextRunAt = null, expectedEverySeconds = null, dataWatermark = null}) {
   return database.transaction('import', s => s.query('SELECT public.record_source_sync($1::uuid,$2,$3,$4,$5,$6,$7,$8::timestamptz,$9,$10::timestamptz)',
@@ -35,7 +51,7 @@ export async function recordSourceSync(database, {source, method, ok, newRecords
  * Gancho para los manejadores alojados (imports, CRM): tras un trabajo con avance anota la fuente y refresca los insights afectados.
  * Nunca lanza: el trabajo principal ya terminó y su resultado no depende de esto. `enabled` apaga el gancho por completo (VEXA_INSIGHTS_REFRESH=enabled).
  */
-export function createAfterWork({source, method, enabled = false, budgetMs = 8000, refresh = refreshInsights, record = recordSourceSync, now = Date.now, warm = null, expectedEverySeconds = null, progressed = r => r && r.state !== 'idle'} = {}) {
+export function createAfterWork({source, method, enabled = false, budgetMs = 8000, refresh = refreshInsights, record = recordSourceSync, now = Date.now, warm = null, warmVerdicts = null, expectedEverySeconds = null, progressed = r => r && r.state !== 'idle'} = {}) {
   return async function afterWork(database, result, {error = null, startedAt = now()} = {}) {
     if (enabled !== true || !database) return {status: 'disabled'};
     const out = {status: 'ok'};
@@ -49,6 +65,8 @@ export function createAfterWork({source, method, enabled = false, budgetMs = 800
         // Calentar los precálculos de rendimiento (no-op si el corte no cambió). Solo si la ruta lo pidió (`warm`); un fallo aquí no cambia el resultado.
         const que = warm ? perfFrioQue(targets) : null;
         if (que) out.perfFrio = await warm(database, {what: que});
+        // El veredicto de las corridas depende de las conversaciones/corridas extraídas; se mantiene vigente tras cualquier avance (no-op si ya lo está).
+        if (warmVerdicts) out.problemVerdicts = await warmVerdicts(database, {});
       }
     } catch (e) { out.status = 'error'; out.code = e?.code ?? 'INSIGHTS_HOOK_FAILED'; }
     return out;

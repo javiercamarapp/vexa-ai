@@ -26,7 +26,7 @@ end $$;
 -- 1) El estado de insight reconoce el nuevo cálculo.
 alter table public.insight_state drop constraint if exists insight_state_insight_check;
 alter table public.insight_state add constraint insight_state_insight_check
- check(insight in('conversation_volume','refund_by_sku_month','thread_resolution','tracker_refund_status','repeat_contact','problem_run_verdict'));
+ check(insight in('conversation_volume','refund_by_sku_month','thread_resolution','tracker_refund_status','repeat_contact','order_revenue_month','complaint_family_month','problem_run_verdict'));
 
 -- 2) Contador de cambios que pueden invalidar un veredicto (uno por tenant).
 create table if not exists public.problem_verdict_epoch(

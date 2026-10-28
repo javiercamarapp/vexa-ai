@@ -35,3 +35,21 @@ test('calentar precálculos de rendimiento: solo si la ruta pasa `warm`, con el 
   assert.equal((await refreshPerfFrio(db)).status, 'absent');
   assert.equal((await refreshPerfFrio({transaction: async () => { throw Object.assign(new Error('boom'), {code: '57014'}); }})).status, 'error');
 });
+
+test('refreshProblemRunVerdicts: vigente no recalcula, desfasado llama a la función, ausente y error no lanzan', async () => {
+  const {refreshProblemRunVerdicts} = await import('../refresh.mjs');
+  const mk = rows => ({transaction: async (_, fn) => fn({tenantId: 't', query: async sql => ({rows: rows(sql)})})});
+  const vigente = mk(sql => /vigentes/.test(sql) ? [{epoch: 3, vigentes: 10, corridas: 10}] : (() => { throw Error('no debe recalcular'); })());
+  assert.deepEqual(await refreshProblemRunVerdicts(vigente), {status: 'current', runs: 10});
+  const llamadas = [];
+  const desfasado = mk(sql => { llamadas.push(sql); return /vigentes/.test(sql) ? [{epoch: 3, vigentes: 4, corridas: 10}] : [{r: {status: 'done', runs: 10}}]; });
+  assert.equal((await refreshProblemRunVerdicts(desfasado)).status, 'done'); assert.equal(llamadas.length, 2);
+  assert.equal((await refreshProblemRunVerdicts({transaction: async () => { throw Error('relation "public.problem_verdict_epoch" does not exist'); }})).status, 'absent');
+  assert.equal((await refreshProblemRunVerdicts({transaction: async () => { throw Object.assign(Error('boom'), {code: '57014'}); }})).status, 'error');
+});
+test('createAfterWork llama warmVerdicts tras un avance y no rompe si falla', async () => {
+  let n = 0;
+  const hook = createAfterWork({source: 'hubspot', method: 'api_poll', enabled: true, refresh: async () => ({}), record: async () => {}, warmVerdicts: async () => { n++; return {status: 'current'}; }});
+  const out = await hook({}, {state: 'done'});
+  assert.equal(n, 1); assert.equal(out.problemVerdicts.status, 'current');
+});

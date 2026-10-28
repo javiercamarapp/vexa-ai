@@ -4,7 +4,7 @@ import {NextRequest,NextResponse} from 'next/server';
 import {createClient} from '@supabase/supabase-js';
 import {AccessError,assertOrigin,config,identity,PRIVATE_HEADERS} from '../auth';
 import {requestAuth} from '../auth-http';
-import {emailAdmission} from './admission';
+import {clientIp,emailAdmission} from './admission';
 const headers={...PRIVATE_HEADERS,'Referrer-Policy':'no-referrer',Vary:'Cookie'};
 const generic={message:'Si la cuenta existe, intentaremos enviar un enlace. Revisa tu bandeja de entrada y correo no deseado antes de solicitar otro.',retryAfterSeconds:60};
 async function input(request:NextRequest,limit:number){
@@ -18,7 +18,12 @@ export async function emailAuth(request:NextRequest,operation:'request'|'session
  const body=await input(request,operation==='request'?1024:16384);
  if(operation==='request'){
   if(Object.keys(body).length!==1||typeof body.email!=='string'||body.email.length>254||!/^\S+@[^\s@]+\.[^\s@]+$/.test(body.email.trim()))throw new AccessError(400,'email_auth_input_invalid');
-  const admission=emailAdmission.reserve(body.email);if(!admission){if(emailAdmission.bloqueado())return NextResponse.json({error:{code:'email_auth_busy'}},{status:503,headers:{...headers,'Retry-After':'30'}});return NextResponse.json(generic,{status:202,headers:{...headers,'Retry-After':'60'}});}
+  const admitted=emailAdmission.admit(body.email,clientIp(request.headers));
+  if(admitted.kind==='busy')return NextResponse.json({error:{code:'email_auth_busy'}},{status:503,headers:{...headers,'Retry-After':String(admitted.retryAfterSeconds)}});
+  if(admitted.kind==='ip_limited')return NextResponse.json({error:{code:'email_auth_rate_limited'}},{status:429,headers:{...headers,'Retry-After':String(admitted.retryAfterSeconds)}});
+  // Misma dirección en el último minuto: el aviso genérico es lo previsto y no revela si la cuenta existe.
+  if(admitted.kind==='duplicate')return NextResponse.json(generic,{status:202,headers:{...headers,'Retry-After':'60'}});
+  const admission=admitted.lease;
   let unavailable=false,limitado=false;
   try{const client=createClient(c.url,c.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,flowType:'implicit'},global:{fetch:(target,init)=>fetch(target,{...init,cache:'no-store',signal:AbortSignal.timeout(10000)})}});
    const result=await client.auth.signInWithOtp({email:body.email.trim().toLowerCase(),options:{shouldCreateUser:false,emailRedirectTo:new URL('/auth/email/complete',c.origin).href}});

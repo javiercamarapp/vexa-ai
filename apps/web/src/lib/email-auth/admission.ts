@@ -1,14 +1,43 @@
 import {createHmac,randomBytes} from 'node:crypto';
+import {isIP} from 'node:net';
 
+export type Admission={finish(unavailable?:boolean):void};
+export type AdmissionResult=
+ |{kind:'lease';lease:Admission}
+ |{kind:'duplicate'}                              // misma dirección en <60 s: el 202 genérico es el comportamiento previsto
+ |{kind:'busy';retryAfterSeconds:number}          // cupo global agotado o circuito abierto: 503 email_auth_busy
+ |{kind:'ip_limited';retryAfterSeconds:number};   // demasiadas solicitudes de la misma IP: 429
+const IP_LIMIT=10,IP_WINDOW_MS=60000,IP_TABLE_MAX=4096;
+
+/** Primer salto de x-forwarded-for: en Vercel el borde sobrescribe la cabecera con la IP del cliente, así que el primer valor es confiable. */
+export function clientIp(headers:{get(name:string):string|null}):string|null{
+ const first=headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+ return first&&isIP(first)?first:null;
+}
 // Process-local backpressure complements provider/edge limits; it is not a distributed quota.
 export function createEmailAdmission(now:()=>number=()=>performance.now()){
- const key=randomBytes(32),recent=new Map<string,number>();let active=0,blockedUntil=0;
- return {bloqueado(){return now()<blockedUntil;},reserve(email:string){
+ const key=randomBytes(32),recent=new Map<string,number>(),perIp=new Map<string,{count:number;resetAt:number}>();let active=0,blockedUntil=0;
+ const seconds=(ms:number)=>Math.max(1,Math.ceil(ms/1000));
+ function admit(email:string,ip:string|null=null):AdmissionResult{
   const time=now();for(const [id,expires]of recent)if(expires<=time)recent.delete(id);
+  for(const [id,entry]of perIp)if(entry.resetAt<=time)perIp.delete(id);
+  // Cupo global: se avisa (503) en vez de fingir un envío que no ocurrirá.
+  if(time<blockedUntil)return {kind:'busy',retryAfterSeconds:seconds(blockedUntil-time)};
+  if(active>=8)return {kind:'busy',retryAfterSeconds:10};
+  // Límite por IP, separado del global: una sola IP no puede llenar el cupo de todos. Sin IP confiable no se limita (no hay un cubo «desconocido» compartido).
+  if(ip){
+   const entry=perIp.get(ip);
+   if(entry){if(entry.count>=IP_LIMIT)return {kind:'ip_limited',retryAfterSeconds:seconds(entry.resetAt-time)};entry.count++;}
+   else if(perIp.size<IP_TABLE_MAX)perIp.set(ip,{count:1,resetAt:time+IP_WINDOW_MS});
+  }
   const id=createHmac('sha256',key).update(email.trim().toLowerCase()).digest('hex');
-  if(time<blockedUntil||active>=8||recent.has(id)||recent.size>=256)return null;
+  if(recent.has(id))return {kind:'duplicate'};
+  if(recent.size>=256)return {kind:'busy',retryAfterSeconds:seconds(Math.min(...recent.values())-time)};
   recent.set(id,time+60000);active++;let finished=false;
-  return {finish(unavailable=false){if(finished)return;finished=true;active--;if(unavailable)blockedUntil=Math.max(blockedUntil,now()+15000);}};
- }};
+  return {kind:'lease',lease:{finish(unavailable=false){if(finished)return;finished=true;active--;if(unavailable)blockedUntil=Math.max(blockedUntil,now()+15000);}}};
+ }
+ return {bloqueado(){return now()<blockedUntil;},admit,
+  /** Compatibilidad: lease o null cuando no se admite por cualquier motivo. */
+  reserve(email:string,ip:string|null=null){const r=admit(email,ip);return r.kind==='lease'?r.lease:null;}};
 }
 export const emailAdmission=createEmailAdmission();

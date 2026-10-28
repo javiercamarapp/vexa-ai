@@ -6,6 +6,8 @@ import type {CoverageView} from '../../../../../packages/workspace-service/prove
 import type {TrendsView} from '../../../../../packages/workspace-service/trends.mjs';
 import {tarjetasFuentes} from '../../lib/legibilidad/fuentes.mjs';
 import {useJson} from '../ui/use-json';
+import {useOnboarding} from '../onboarding/contexto';
+import {ROLES_DINERO} from '../../lib/workspace/menu.mjs';
 import {ConMarca} from '../ui/brand-mark';
 import {DatosCabecera} from '../datos/datos-cabecera';
 import {DataTable} from '../ui/data-table';
@@ -33,9 +35,11 @@ const Tarjeta=({id,titulo,sub,extra,flush=false,children}:{id:string;titulo:stri
 /** «Datos y confianza»: semáforo por fuente, frescura por cifra, cobertura con ventanas y «qué no sabemos» como lista de tareas. Lo que no se sabe pesa lo mismo que lo que sí. */
 export function ConfianzaPantalla(){
  const tx=useT();
+ // /api/refunds y /api/workload son de propietario y analista (403 para el resto): quien no los puede leer ni los pide ni ve las tarjetas que dependen de ellos.
+ const rol=useOnboarding()?.datos.rol,verDinero=rol===undefined||(ROLES_DINERO as readonly string[]).includes(rol);
  const REGLA:EntradaComo={id:'frescura',titulo:tx('conf.reglaTitulo'),clase:'observed',fuente:tx('conf.reglaFuente'),periodo:null,formula:tx('conf.reglaFormula',{n:FACTOR_ALERTA}),cobertura:null,noSabemos:[tx('conf.reglaNo1'),tx('conf.reglaNo2')]};
  const fresh=useJson('/api/freshness',acceptFresh),cov=useJson<CoverageView>('/api/coverage',acceptCov),tr=useJson<TrendsView>('/api/trends',acceptTrends);
- const fuga=useJson('/api/refunds',acceptFuga),carga=useJson('/api/workload',acceptCarga);
+ const fuga=useJson(verDinero?'/api/refunds':null,acceptFuga),carga=useJson(verDinero?'/api/workload':null,acceptCarga);
  const fuentes=useMemo(()=>bloqueFuentes(fresh.data),[fresh.data]),frescura=useMemo(()=>bloqueFrescura(fresh.data),[fresh.data]);
  const ventanas=useMemo(()=>bloqueVentanas(fuga.data),[fuga.data]),tarjetas=useMemo(()=>tarjetasFuentes(cov.data,tr.data),[cov.data,tr.data]);
  const tareas=useMemo(()=>queNoSabemos({fuga:fuga.data,carga:carga.data,cobertura:cov.data,frescura:fresh.data}),[fuga.data,carga.data,cov.data,fresh.data]);
@@ -61,10 +65,10 @@ export function ConfianzaPantalla(){
       {key:'e',header:tx('conf.hEstado'),render:f=><><Estado nivel={f.nivel}>{f.estado}</Estado>{f.error&&<small className="pc-s" style={{display:'block'}}>{f.error}</small>}</>},
       {key:'x',header:tx('conf.hUltimo'),render:f=>f.exito},{key:'s',header:tx('conf.hSiguiente'),render:f=>f.siguiente??'—'},{key:'h',header:tx('conf.hDatosHasta'),render:f=>f.hasta??tx('conf.sinFechaCorte')}]}/>}
    </Tarjeta>
-   <Tarjeta id="dc-ventanas" titulo={tx('conf.cVentanas')} sub={ventanas.disponible?ventanas.linea||tx('conf.sinVentanas'):undefined}>
+   {verDinero&&<Tarjeta id="dc-ventanas" titulo={tx('conf.cVentanas')} sub={ventanas.disponible?ventanas.linea||tx('conf.sinVentanas'):undefined}>
     {ventanas.disponible?(ventanas.filas.length?<VentanasLinea filas={ventanas.filas}/>:<p className="ac-vacio">{tx('conf.sinVentanas')}</p>)
      :pendiente(fuga)?<Loading compact message={tx('conf.cargandoVent')}/>:<p className="ac-vacio">{fuga.status===403?tx('conf.ventanas403'):tx('conf.ventanasNo')}</p>}
-   </Tarjeta>
+   </Tarjeta>}
     </div>
     <div className="pc-col">
    <Tarjeta id="dc-frescura" titulo={tx('conf.cFrescura')} sub={tx('conf.cFrescuraD')} extra={<ComoSeCalculoBoton entrada={REGLA}/>}>

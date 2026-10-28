@@ -97,7 +97,7 @@ test('un solo mecanismo: login y espacio de trabajo resuelven el idioma con la m
   assert.match(leer('src/app/(workspace)/layout.tsx'), /idiomaActual\(\)/);
   assert.match(leer('src/app/(workspace)/layout.tsx'), /IdiomaProvider/);
   assert.match(leer('src/components/workspace/shell.tsx'), /<SelectorIdioma\/>/);
-  assert.match(leer('src/components/i18n/selector-idioma.tsx'), /aria-label=\{t\('idioma\.etiqueta'\)\}/);
+  assert.match(leer('src/components/i18n/selector-idioma.tsx'), /<legend className="sr-only">\{t\('idioma\.etiqueta'\)\}<\/legend>/);
   assert.match(leer('src/components/i18n/selector-idioma.tsx'), /guardarIdiomaEnNavegador\(/);
   assert.match(leer('src/lib/i18n/servidor.ts'), /COOKIE_IDIOMA/);
 });

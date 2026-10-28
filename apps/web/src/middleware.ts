@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ACTIVE_ORG, AccessError, SUPPORT_MARK, config as authConfig, identity, PRIVATE_HEADERS, resolveSession } from './lib/auth';
 import { supportMarkActive, supportVerdict } from './lib/support-guard';
 import { failure, localRedirect, requestAuth } from './lib/auth-http';
+import { decidirHost, rutaConAutenticacion } from './lib/host-routing.mjs';
 function authLinkHeaders(request:NextRequest,response:NextResponse) {
   if (/^\/auth\/(?:invitations|email)(?:\/|$)/.test(request.nextUrl.pathname)) response.headers.set('Referrer-Policy','no-referrer');
   return response;
@@ -9,8 +10,15 @@ function authLinkHeaders(request:NextRequest,response:NextResponse) {
 const protectedPathPrefix=(path:string)=>/^\/(overview|problems|customers|recommendations|explorer|preguntale|interventions|briefs|cfo)(\/|$)/.test(path);
 export async function middleware(request:NextRequest) {
   try {
-    const c=authConfig();
     const path=request.nextUrl.pathname;
+    // Host primero: rovaq.ai sirve la landing, los hosts antiguos de Vercel redirigen a app.rovaq.ai y app.rovaq.ai sigue exactamente como antes (decisión pura y probada en host-routing.mjs).
+    const decision=decidirHost({host:request.headers.get('x-forwarded-host')??request.headers.get('host')??request.nextUrl.host,pathname:path,search:request.nextUrl.search,produccion:process.env.VERCEL_ENV==='production'});
+    if(decision.tipo==='reescribir')return NextResponse.rewrite(new URL(decision.destino+request.nextUrl.search,request.url));
+    if(decision.tipo==='redirigir')return NextResponse.redirect(new URL(decision.url,request.url),decision.status);
+    if(decision.tipo==='activo')return NextResponse.next();
+    // El matcher ahora cubre todo menos estáticos; lo que antes no pasaba por aquí sigue sin tocarse.
+    if(!rutaConAutenticacion(path))return NextResponse.next();
+    const c=authConfig();
     // «Ver como» (solo lectura): con la marca vigente se rechazan escrituras y exportaciones. Sin marca, las rutas /api siguen exactamente como antes.
     if(supportMarkActive(request.cookies.get(SUPPORT_MARK)?.value)&&(path.startsWith('/api/')||path==='/'||protectedPathPrefix(path))){
       const verdict=supportVerdict(request.method,path);
@@ -43,4 +51,5 @@ export async function middleware(request:NextRequest) {
     }
   } catch(error) {return authLinkHeaders(request,failure(error));}
 }
-export const config = { runtime: 'nodejs', matcher: ['/', '/seguridad', '/sin-acceso', '/api/:path*', '/platform', '/platform/:path*', '/cfo/:path*', '/login', '/auth/:path*', '/overview/:path*', '/problems/:path*', '/customers/:path*', '/recommendations/:path*', '/explorer/:path*', '/preguntale/:path*', '/interventions/:path*', '/briefs/:path*'] };
+// El matcher abarca todo salvo estáticos de Next para poder decidir por host (landing, hosts antiguos). En app.rovaq.ai, rutaConAutenticacion() conserva la lista anterior: lo demás no se toca.
+export const config = { runtime: 'nodejs', matcher: ['/((?!_next/static|_next/image|fonts/|brand/|images/).*)'] };

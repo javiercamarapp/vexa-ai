@@ -10,6 +10,9 @@ import {BlockView,Kpis} from '../../src/components/agente/blocks';
 import {AttachmentCard} from '../../src/components/agente/attachment-card';
 import {Composer} from '../../src/components/agente/composer';
 import type {Block} from '../../src/components/agente/types';
+import {IdiomaProvider} from '../../src/components/i18n/proveedor';
+// El idioma por defecto es inglés: las aserciones de texto en español renderizan dentro de un proveedor explícito.
+const renderEs=(nodo:React.ReactNode)=>renderToStaticMarkup(<IdiomaProvider idioma="es">{nodo}</IdiomaProvider>);
 
 const cov={known_n:3,eligible_n:4};
 const sv=(key:string,value:number|null,display=String(value))=>({key,label:key,value,display});
@@ -66,10 +69,10 @@ test('RovaqMark: idle sin órbita, thinking con órbita; el CSS de movimiento vi
   }
 });
 test('desglose: muestra herramientas, tiempos y aclara que no es razonamiento de un modelo', () => {
-  const html=renderToStaticMarkup(<TraceDisclosure labels={{estado_tracker:'Revisando el Tracker'}} trace={[{id:'plan',kind:'plan',label:'Elegí qué consultar',estado:'ok',ms:2},{id:'tool:1',kind:'tool',tool:'estado_tracker',label:'x',estado:'ok',ms:1500,cifras:3,fuentes:['Tracker (Excel)']}]}/>);
+  const html=renderEs(<TraceDisclosure labels={{estado_tracker:'Revisando el Tracker'}} trace={[{id:'plan',kind:'plan',label:'Elegí qué consultar',estado:'ok',ms:2},{id:'tool:1',kind:'tool',tool:'estado_tracker',label:'x',estado:'ok',ms:1500,cifras:3,fuentes:['Tracker (Excel)']}]}/>);
   assert.match(html,/Revisando el Tracker/);assert.match(html,/1\.5 s/);assert.match(html,/Tracker \(Excel\)/);assert.match(html,/No es el razonamiento interno/);
-  assert.equal(renderToStaticMarkup(<TraceDisclosure labels={{}} trace={[]}/>),'');assert.equal(msText(null),'');
-  const live=renderToStaticMarkup(<LiveTrace phase="Consultando tus datos…" steps={[{id:'tool:1',kind:'tool',tool:'estado_tracker',label:'x',done:false}]} labels={{estado_tracker:'Revisando el Tracker'}}/>);
+  assert.equal(renderEs(<TraceDisclosure labels={{}} trace={[]}/>),'');assert.equal(msText(null),'');
+  const live=renderEs(<LiveTrace phase="Consultando tus datos…" steps={[{id:'tool:1',kind:'tool',tool:'estado_tracker',label:'x',done:false}]} labels={{estado_tracker:'Revisando el Tracker'}}/>);
   assert.match(live,/role="status"/);assert.match(live,/Revisando el Tracker…/);assert.match(live,/aria-expanded="true"/);
 });
 test('bloques: barra, línea y dona traen su tabla equivalente, clase y cobertura; la dona nunca usa los colores de clase', () => {
@@ -89,9 +92,9 @@ test('tarjeta de adjunto: rotulada «Dato aportado por el usuario», sin insigni
 });
 test('compositor: el botón de adjuntar existe, está activo y solo acepta CSV/TXT/JSON; deshabilitado cuando la conversación llegó al límite', () => {
   const props={value:'',onChange:()=>{},onSend:()=>{},onStop:()=>{},onConsult:()=>{},sending:false,placeholder:'p',maxChars:600,categoriesId:'c',categoriesOpen:false,inputId:'i',onAttach:()=>{},attachError:null};
-  const on=renderToStaticMarkup(<Composer {...props} disabled={false}/>);
+  const on=renderEs(<Composer {...props} disabled={false}/>);
   assert.match(on,/accept="\.csv,\.txt,\.json/);assert.match(on,/no se envía ni se guarda/);assert.ok(!/<button[^>]*disabled=""[^>]*aria-label="Adjuntar/.test(on));
-  assert.match(renderToStaticMarkup(<Composer {...props} disabled attachError="El archivo supera 1 MB."/>),/role="alert"[^>]*>El archivo supera 1 MB/);
+  assert.match(renderEs(<Composer {...props} disabled attachError="El archivo supera 1 MB."/>),/role="alert"[^>]*>El archivo supera 1 MB/);
 });
 
 test('adjuntos: las columnas identificadoras (ticket_id, ids únicos consecutivos) no se suman ni se promedian; la numérica real sí', () => {

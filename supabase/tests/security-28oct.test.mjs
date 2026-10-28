@@ -39,11 +39,20 @@ test('STO-01 + LIFE-01',async t=>{
     insert into public.messages(id,tenant_id,external_id,role,occurred_at,conversation_id,connection_id) values ('30000000-0000-4000-8000-000000000001','${A}','m-1','customer',now(),'20000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000001'),('30000000-0000-4000-8000-000000000002','${A}','m-2','customer',now(),'20000000-0000-4000-8000-000000000002','10000000-0000-4000-8000-000000000001');
     insert into public.attachment_blobs(id,tenant_id,sha256,bytes,object_path,state) values
      ('40000000-0000-4000-8000-000000000001','${A}','${sha(1)}',10,'${A}/attachments/11/${sha(1)}','uploaded'),
-     ('40000000-0000-4000-8000-000000000002','${A}','${sha(2)}',10,'${A}/attachments/22/${sha(2)}','uploaded');
+     ('40000000-0000-4000-8000-000000000002','${A}','${sha(2)}',10,'${A}/attachments/22/${sha(2)}','uploaded'),
+     ('40000000-0000-4000-8000-000000000003','${A}','${sha(3)}',10,'${A}/attachments/33/${sha(3)}','uploaded'),
+     ('40000000-0000-4000-8000-000000000004','${A}','${sha(4)}',10,'${A}/attachments/44/${sha(4)}','uploaded'),
+     ('40000000-0000-4000-8000-000000000005','${A}','${sha(5)}',10,'${A}/attachments/55/${sha(5)}','uploaded');
     insert into public.attachment_links(tenant_id,blob_id,source_family,source_file_id,conversation_id,message_id) values
      ('${A}','40000000-0000-4000-8000-000000000001','conversation','f-1','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001'),
      ('${A}','40000000-0000-4000-8000-000000000002','conversation','f-2','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001'),
-     ('${A}','40000000-0000-4000-8000-000000000002','conversation','f-3','20000000-0000-4000-8000-000000000002','30000000-0000-4000-8000-000000000002');`);
+     ('${A}','40000000-0000-4000-8000-000000000002','conversation','f-3','20000000-0000-4000-8000-000000000002','30000000-0000-4000-8000-000000000002');
+    -- R2-01: vinculos sin mensaje/conversacion resueltos
+    insert into public.attachment_links(tenant_id,blob_id,source_family,source_file_id,provenance) values
+     ('${A}','40000000-0000-4000-8000-000000000003','conversation','f-B','{"message_id":"m-1","resolution":"message_ambiguous"}'),
+     ('${A}','40000000-0000-4000-8000-000000000004','conversation','f-D','{"thread_id":"conv-1"}'),
+     ('${A}','40000000-0000-4000-8000-000000000002','conversation','f-live-orphan','{"message_id":"m-2"}'),
+     ('${A}','40000000-0000-4000-8000-000000000005','note','n-1','{}');`);
    pg.file(db,new URL('../migrations/20261130000100_retention_erase_attachments.sql',import.meta.url).pathname);
    const rid='50000000-0000-4000-8000-000000000001';
    const out=pg.sql(db,`begin; set local role vexa_backend; set local request.jwt.claim.sub='${U.owner}'; set local vexa.tenant_id='${A}'; set local vexa.action='retain';
@@ -55,6 +64,16 @@ test('STO-01 + LIFE-01',async t=>{
    assert.equal(pg.sql(db,`select count(*) from public.attachment_blobs where id='40000000-0000-4000-8000-000000000002'`),'1','blob compartido: se conserva');
    assert.equal(pg.sql(db,`select status||':'||class from public.retention_artifacts where object_path='${A}/attachments/11/${sha(1)}'`),'pending:raw');
    assert.equal(pg.sql(db,`select count(*) from public.retention_artifacts where object_path='${A}/attachments/22/${sha(2)}'`),'0','blob compartido no se purga fisicamente');
+   const gone=id=>pg.sql(db,`select count(*) from public.attachment_links where source_file_id='${id}'`);
+   assert.equal(gone('f-B'),'0','message_ambiguous del origen borrado');assert.equal(gone('f-D'),'0','sin resolver (thread_id) del origen borrado');
+   assert.equal(gone('f-live-orphan'),'1','sin resolver de otro origen vivo se conserva');assert.equal(gone('n-1'),'1','nota sin referencia no atribuible: se conserva');
+   for(const n of [3,4])assert.equal(pg.sql(db,`select status||':'||class from public.retention_artifacts where object_path='${A}/attachments/${n}${n}/${sha(n)}'`),'pending:raw',`blob ${n} purgado`);
+   assert.equal(pg.sql(db,`select count(*) from public.attachment_blobs where id in ('40000000-0000-4000-8000-000000000003','40000000-0000-4000-8000-000000000004')`),'0');
+   assert.equal(pg.sql(db,`select count(*) from public.attachment_blobs where id='40000000-0000-4000-8000-000000000005'`),'1','blob de la nota intacto');
+   assert.equal(pg.sql(db,`select count(*) from public.retention_artifacts where object_path='${A}/attachments/55/${sha(5)}'`),'0');
+   assert.equal(pg.sql(db,`select count(*) from public.attachment_blobs where id='40000000-0000-4000-8000-000000000002'`),'1','blob compartido entre vinculo borrado y vivos');
+   for(const prov of ['{"message_id":"m-1"}','{"thread_id":"conv-1"}'])assert.throws(()=>pg.sql(db,`insert into public.attachment_links(tenant_id,blob_id,source_family,source_file_id,provenance) values ('${A}','40000000-0000-4000-8000-000000000002','conversation','f-re-'||md5('${prov}'),'${prov}')`),/SOURCE_TOMBSTONED/);
+   pg.sql(db,`insert into public.attachment_links(tenant_id,blob_id,source_family,source_file_id,provenance) values ('${A}','40000000-0000-4000-8000-000000000002','note','n-2','{}')`);
    assert.throws(()=>pg.sql(db,`insert into public.attachment_links(tenant_id,blob_id,source_family,source_file_id,conversation_id,message_id) values ('${A}','40000000-0000-4000-8000-000000000002','conversation','f-4','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001')`),/SOURCE_TOMBSTONED/);
    assert.equal(pg.sql(db,`select count(*) from pg_trigger where tgname='retention_source_guard' and tgrelid='public.attachment_links'::regclass`),'1');
   });

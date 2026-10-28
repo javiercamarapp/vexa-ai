@@ -5,7 +5,7 @@
 begin;
 create or replace function public.retention_erase(p jsonb) returns jsonb language plpgsql security definer set search_path='' as $$
 declare t uuid:=nullif(current_setting('vexa.tenant_id',true),'')::uuid;c uuid:=(p->>'connectionId')::uuid;k text:=p->>'entityType';e text:=p->>'externalId';rid uuid:=(p->>'requestId')::uuid;
- pol public.retention_policies;prior public.retention_ledger;mid uuid[];cid uuid[];revs uuid[];import_ids uuid[];probs uuid[];m record;oldrow jsonb;newrow jsonb;redacted jsonb;count_raw integer;count_vectors integer;afids uuid[];aimps uuid[];ablobs uuid[];begin
+ pol public.retention_policies;prior public.retention_ledger;mid uuid[];cid uuid[];revs uuid[];import_ids uuid[];probs uuid[];m record;oldrow jsonb;newrow jsonb;redacted jsonb;count_raw integer;count_vectors integer;afids uuid[];aimps uuid[];ablobs uuid[];mext text[];cext text[];begin
  if current_setting('vexa.action',true) is distinct from 'retain' or public.vexa_member(t,array['owner']) is not true then raise insufficient_privilege;end if;
  if p->>'confirmed' is distinct from 'true' or k not in('message','conversation','customer') or e is null or length(e) not between 1 and 512 or rid is null then raise check_violation;end if;
  select * into pol from public.retention_policies where tenant_id=t;if pol.tenant_id is null then raise check_violation using message='RETENTION_POLICY_REQUIRED';end if;
@@ -55,8 +55,13 @@ declare t uuid:=nullif(current_setting('vexa.tenant_id',true),'')::uuid;c uuid:=
  -- LIFE-01: los adjuntos (bytes en vexa-private/<tenant>/attachments/..) de lo borrado tambien se purgan.
  -- Se borran los vinculos del origen; el blob (direccionado por contenido y compartido) solo cuando ya no
  -- lo referencia ningun otro vinculo, y su objeto queda en retention_artifacts para la purga fisica.
- select coalesce(array_agg(distinct blob_id),'{}') into ablobs from public.attachment_links where tenant_id=t and (message_id=any(mid) or conversation_id=any(cid));
- delete from public.attachment_links where tenant_id=t and (message_id=any(mid) or conversation_id=any(cid));
+ -- R2-01: los vinculos sin mensaje/conversacion resueltos (message_ambiguous, sin resolver) conservan en provenance el id de origen
+ -- (message_id = external_id del mensaje, thread_id = external_id de la conversacion): se atribuyen por ese id, dentro del tenant.
+ -- Las notas sin ninguna referencia no se pueden atribuir a un cliente y no se borran (nada se infiere).
+ select coalesce(array_agg(external_id),'{}') into mext from public.messages where tenant_id=t and id=any(mid);
+ select coalesce(array_agg(external_id),'{}') into cext from public.conversations where tenant_id=t and id=any(cid);
+ select coalesce(array_agg(distinct blob_id),'{}') into ablobs from public.attachment_links where tenant_id=t and (message_id=any(mid) or conversation_id=any(cid) or (message_id is null and conversation_id is null and (provenance->>'message_id'=any(mext) or provenance->>'thread_id'=any(cext))));
+ delete from public.attachment_links where tenant_id=t and (message_id=any(mid) or conversation_id=any(cid) or (message_id is null and conversation_id is null and (provenance->>'message_id'=any(mext) or provenance->>'thread_id'=any(cext))));
  insert into public.retention_artifacts(tenant_id,connection_id,entity_type,source_key,class,object_path,expires_at,status) select t,c,k,e,'raw',b.object_path,clock_timestamp(),'pending' from public.attachment_blobs b where b.tenant_id=t and b.id=any(ablobs) and b.object_path is not null and not exists(select 1 from public.attachment_links l where l.tenant_id=t and l.blob_id=b.id) on conflict(tenant_id,object_path) do update set status='pending';
  delete from public.attachment_blobs b where b.tenant_id=t and b.id=any(ablobs) and not exists(select 1 from public.attachment_links l where l.tenant_id=t and l.blob_id=b.id);
  -- Fence related jobs before storage IO. This closes workers and prevents late commits.
@@ -83,7 +88,12 @@ declare t uuid:=new.tenant_id;c uuid;k text;e text;m public.messages;begin
   -- LIFE-01: un adjunto no puede reinsertarse bajo un origen ya borrado (note_ref sin origen canonico no aplica).
   if new.message_id is not null then select * into m from public.messages where tenant_id=t and id=new.message_id;c=m.connection_id;k='message';e=m.external_id;
   elsif new.conversation_id is not null then select v.connection_id,v.external_id into c,e from public.conversations v where v.tenant_id=t and v.id=new.conversation_id;k='conversation';
-  else return new;end if;
+  else
+   -- Sin resolver: se atribuye por los ids de origen de provenance; si ese origen esta en lapida se rechaza.
+   if exists(select 1 from public.retention_ledger l where l.tenant_id=t and ((l.entity_type='message' and l.external_id=new.provenance->>'message_id') or (l.entity_type='conversation' and l.external_id=new.provenance->>'thread_id')))
+    then raise check_violation using message='SOURCE_TOMBSTONED';end if;
+   return new;
+  end if;
  end if;
  perform pg_advisory_xact_lock(hashtextextended(t::text||':'||c::text,0));
  if public.retention_source_deleted_internal(t,c,k,e) then raise check_violation using message='SOURCE_TOMBSTONED';end if;return new;

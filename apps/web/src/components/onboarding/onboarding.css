@@ -2,9 +2,13 @@
 :root { --onb-resalte:#0b57d0; --onb-fondo:var(--ui-surface,#fff); }
 :root[data-theme=dark] { --onb-resalte:#8ab4f8; }
 
-.onb-boton { display:inline-flex; align-items:center; gap:6px; min-height:32px; padding:0 10px; border:1px solid var(--ui-border); border-radius:999px; background:var(--ui-surface); color:var(--ink); font:500 12px/1 var(--font-ui); cursor:pointer; }
-.onb-boton:hover { background:var(--ui-soft); }
-.onb-boton-signo { display:inline-grid; place-items:center; width:16px; height:16px; border:1px solid currentColor; border-radius:50%; font:600 11px/1 var(--font-ui); }
+/* Botón «Guía» del encabezado: compacto, transparente, sin bloque oscuro. Especificidad (0,2,0) para ganar a `.workspace-shell :where(button)` (fondo de acción). */
+.workspace-header .onb-boton, .onb-boton { position:relative; display:inline-flex; align-items:center; gap:5px; flex:none; box-sizing:border-box; min-height:0; height:26px; margin:0; padding:0 9px 0 7px; border:1px solid var(--ui-border); border-radius:999px; background:var(--ui-soft); color:var(--muted); font:500 12px/1 var(--font-ui); letter-spacing:0; cursor:pointer; box-shadow:none; }
+.workspace-header .onb-boton:hover, .workspace-header .onb-boton[aria-expanded="true"], .onb-boton:hover { background:var(--ui-surface); color:var(--ink); box-shadow:0 0 0 1px var(--ui-border), 0 1px 2px #0e0e1014; }
+.onb-boton-signo { display:inline-grid; place-items:center; width:14px; height:14px; border:1px solid currentColor; border-radius:50%; font:600 9px/1 var(--font-ui); }
+.onb-boton-punto { position:absolute; top:-2px; right:-2px; width:6px; height:6px; border-radius:50%; background:var(--onb-resalte); box-shadow:0 0 0 2px var(--ui-surface); }
+/* Área táctil ≥ 36 px sin agrandar lo visible. */
+@media (pointer:coarse) { .onb-boton::after { content:""; position:absolute; inset:-5px -4px; } }
 
 .onb-tarjeta, .onb-invitacion, .onb-menu { position:fixed; z-index:40; box-sizing:border-box; border:1px solid var(--ui-line-strong); border-radius:12px; background:var(--onb-fondo); color:var(--ink); box-shadow:var(--ui-shadow, 0 8px 28px rgba(0,0,0,.18)); }
 .onb-tarjeta, .onb-invitacion { right:24px; bottom:24px; width:min(360px, calc(100vw - 32px)); padding:16px 18px; }
@@ -38,7 +42,7 @@
  .onb-tarjeta, .onb-invitacion { left:12px; right:12px; width:auto; bottom:calc(var(--nav-total, 0px) + 12px); }
  .onb-menu { right:12px; }
  .onb-boton-texto { position:absolute; width:1px; height:1px; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
- .onb-boton { padding:0 8px; min-width:32px; justify-content:center; }
+ .workspace-header .onb-boton { padding:0 7px; min-width:26px; justify-content:center; }
 }
 
 /* Lista de primeros pasos en Hoy */

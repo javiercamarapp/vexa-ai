@@ -19,7 +19,7 @@ export function GuiaBoton(){
  if(!c||!c.tieneRecorrido)return null;
  const {registrarBoton,menuAbierto,alternarMenu}=c;
  return <button ref={registrarBoton} id="onb-boton" type="button" className="onb-boton" aria-haspopup="true" aria-expanded={menuAbierto} aria-controls={menuAbierto?'onb-menu':undefined} aria-label={t('onb.ui.menuGuia')} onClick={alternarMenu}>
-  <span className="onb-boton-signo" aria-hidden="true">?</span><span className="onb-boton-texto">{t('onb.ui.guia')}</span>
+  <span className="onb-boton-signo" aria-hidden="true">?</span><span className="onb-boton-texto">{t('onb.ui.guia')}</span>{c.invitacionVisible&&<span className="onb-boton-punto" aria-hidden="true"/>}
  </button>;
 }
 export function GuiaPaneles(){

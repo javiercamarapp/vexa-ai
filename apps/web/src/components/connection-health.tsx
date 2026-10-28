@@ -47,7 +47,7 @@ useEffect(()=>{rowsRef.current=rows;},[rows]);
  const shownRows=rows.filter(r=>tab==='all'||(tab==='ok')===est(r).ok),row=shownRows.find(r=>r.id===picked)??shownRows[0]??null;
  const okCount=rows.filter(r=>est(r).ok).length,e=row?est(row):null;
  if(busy&&rows.length===0&&!error)return <RovaqCargando mensaje=""/>;
- return <section className="task-card connection-health" aria-labelledby="connections-title"><div className="card-title"><div><h2 id="connections-title">{t('conx.h.estadoTitulo')}</h2><p>{t('conx.h.estadoSub')}</p></div></div>
+ return <section className="task-card connection-health" data-tour="fuentes" aria-labelledby="connections-title"><div className="card-title"><div><h2 id="connections-title">{t('conx.h.estadoTitulo')}</h2><p>{t('conx.h.estadoSub')}</p></div></div>
  {((busy&&rows.length===0)||(coverageBusy&&!coverage))&&<div role="status"><span className="sr-only">{t('conx.h.consultando')}</span><SkeletonRows rows={3}/></div>}{error&&<p role="alert" className="state state-error">{error}</p>}
  {!busy&&!error&&rows.length===0&&<EmptyState art="plug" compact title={t('conx.h.sinConexiones')} body={t('conx.h.sinConexionesBody')}/>}
  {rows.length>0&&<LineaCache edadMs={edad} actualizando={busy} viejo={viejo}/>}

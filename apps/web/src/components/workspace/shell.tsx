@@ -16,9 +16,13 @@ import {DatosNuevos} from './datos-nuevos';
 import './encabezado.css';
 import {esRutaCopiloto} from '../../lib/copiloto/modos.mjs';
 import {fijarTenant,limpiarTodo} from '../../lib/workspace/swr.mjs';
+import {OnboardingRaiz} from '../onboarding/contexto';
+import {GuiaBoton,GuiaPaneles} from '../onboarding/guia';
+import {almacenDelNavegador,limpiarEstadoOnboarding} from '../../lib/onboarding/estado';
+import type {Pista} from '../../lib/onboarding/catalogo.mjs';
 type Organization={id:string;name:string};
 const ROLES=['owner','analyst','operator','viewer'] as const;
-export function WorkspaceShell({children,brand,organizations,tenant,role,platformAccess=false}:{children:ReactNode;brand:ReactNode;organizations:Organization[];tenant:string;role:string;platformAccess?:boolean;today?:{iso:string;label:string}}){
+export function WorkspaceShell({children,brand,organizations,tenant,role,platformAccess=false,onboarding}:{children:ReactNode;brand:ReactNode;organizations:Organization[];tenant:string;role:string;platformAccess?:boolean;onboarding?:{pista:Pista|null;userId:string};today?:{iso:string;label:string}}){
  // La caché de lecturas se aísla por organización: fijarla antes de que los hijos lean (purga lo de otra organización).
  fijarTenant(tenant);
  const t=useT();
@@ -43,15 +47,16 @@ export function WorkspaceShell({children,brand,organizations,tenant,role,platfor
     <div className="sidebar-notifications"><NotificationNavigationLink/></div>
     {platformAccess&&<Link className="workspace-platform-link" href="/platform" aria-label={t('shell.admin')} title={mobile?undefined:t('shell.admin')} onClick={mobile?close:undefined}><WorkspaceIcon name="settings"/><span className="platform-link-label">{t('shell.admin')}</span></Link>}
     <SelectorTema valor={theme??'light'} onChange={chooseTheme} nombre={mobile?'mobile-theme':'workspace-theme'} etiquetas={mobile}/>
-    <div className="sidebar-account"><Monograma nombre={organization}/><div className="account-copy"><strong title={mobile?undefined:organization}>{organization}</strong><span>{rol}</span></div><form action="/auth/logout" method="post" onSubmit={()=>limpiarTodo()}><button className="icon-button logout-button" title={mobile?undefined:t('shell.cerrarSesion')} aria-label={t('shell.cerrarSesion')}><WorkspaceIcon name="logout"/><span className="logout-label">{t('shell.salir')}</span></button></form></div>
+    <div className="sidebar-account"><Monograma nombre={organization}/><div className="account-copy"><strong title={mobile?undefined:organization}>{organization}</strong><span>{rol}</span></div><form action="/auth/logout" method="post" onSubmit={()=>{limpiarTodo();limpiarEstadoOnboarding(almacenDelNavegador());}}><button className="icon-button logout-button" title={mobile?undefined:t('shell.cerrarSesion')} aria-label={t('shell.cerrarSesion')}><WorkspaceIcon name="logout"/><span className="logout-label">{t('shell.salir')}</span></button></form></div>
    </div>
   </>;}
  // «Pregúntale a tus datos» lives inside the normal shell (same sidebar) but has NO page header and no global scope bar: the content starts at the cover.
  const sinEncabezado=esRutaCopiloto(pathname);
- return <div className={'workspace workspace-shell'+(collapsed?' sidebar-collapsed':'')+(sinEncabezado?' workspace-chat':'')}>
+ return <OnboardingRaiz datos={{pista:onboarding?.pista??null,userId:onboarding?.userId??'',tenantId:tenant,organizacion:organization,rolEtiqueta:rol}}><div className={'workspace workspace-shell'+(collapsed?' sidebar-collapsed':'')+(sinEncabezado?' workspace-chat':'')}>
    <a className="skip-link workspace-skip" href="#workspace-contenido">{t('shell.saltar')}</a><aside className="workspace-sidebar">{sidebar()}</aside>
-   <div className="workspace-frame"><header className={'workspace-header'+(sinEncabezado?' workspace-header-chat':'')}><Link href="/overview" className="header-logo" aria-label={t('shell.irInicio')}><RovaqLogo variante="horizontal" ancho={100} espacioLibre={false}/></Link><div className="header-empresa"><SelectorEmpresa organizations={organizations} tenant={tenant}/></div><div className="header-campana"><NotificationNavigationLink compact/></div><button type="button" className="icon-button mobile-menu-button" aria-label={t('shell.abrirMenu')} aria-haspopup="dialog" onClick={open}><WorkspaceIcon name="menu" size={20}/></button><span className="workspace-heading"><WorkspaceIcon name={workspaceIconName(pathname)}/>{tituloTraducido(pathname,t)}</span><DatosNuevos/><SelectorIdioma/></header><div className="workspace-content" id="workspace-contenido" tabIndex={-1}><RestaurarVista/><AccesoProvider value={{role,interno:platformAccess}}>{children}</AccesoProvider></div></div>
+   <div className="workspace-frame"><header className={'workspace-header'+(sinEncabezado?' workspace-header-chat':'')}><Link href="/overview" className="header-logo" aria-label={t('shell.irInicio')}><RovaqLogo variante="horizontal" ancho={100} espacioLibre={false}/></Link><div className="header-empresa"><SelectorEmpresa organizations={organizations} tenant={tenant}/></div><div className="header-campana"><NotificationNavigationLink compact/></div><button type="button" className="icon-button mobile-menu-button" aria-label={t('shell.abrirMenu')} aria-haspopup="dialog" onClick={open}><WorkspaceIcon name="menu" size={20}/></button><span className="workspace-heading"><WorkspaceIcon name={workspaceIconName(pathname)}/>{tituloTraducido(pathname,t)}</span><DatosNuevos/><GuiaBoton/><SelectorIdioma/></header><div className="workspace-content" id="workspace-contenido" tabIndex={-1}><RestaurarVista/><AccesoProvider value={{role,interno:platformAccess}}>{children}</AccesoProvider></div></div>
    <Drawer side="bottom" className="hoja-mas" title={t('shell.mas')} subtitle={t('shell.masSub')} open={mobileOpen} onClose={close}><div className="mobile-sidebar">{sidebar(true)}</div></Drawer>
    <BarraInferior role={role}/>
- </div>;
+   <GuiaPaneles/>
+ </div></OnboardingRaiz>;
 }

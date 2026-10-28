@@ -1,0 +1,63 @@
+/* Onboarding (recorrido, invitación, menú Guía y lista de primeros pasos). Solo clases: sin estilos en línea, compatible con CSP estricta. */
+:root { --onb-resalte:#0b57d0; --onb-fondo:var(--ui-surface,#fff); }
+:root[data-theme=dark] { --onb-resalte:#8ab4f8; }
+
+.onb-boton { display:inline-flex; align-items:center; gap:6px; min-height:32px; padding:0 10px; border:1px solid var(--ui-border); border-radius:999px; background:var(--ui-surface); color:var(--ink); font:500 12px/1 var(--font-ui); cursor:pointer; }
+.onb-boton:hover { background:var(--ui-soft); }
+.onb-boton-signo { display:inline-grid; place-items:center; width:16px; height:16px; border:1px solid currentColor; border-radius:50%; font:600 11px/1 var(--font-ui); }
+
+.onb-tarjeta, .onb-invitacion, .onb-menu { position:fixed; z-index:40; box-sizing:border-box; border:1px solid var(--ui-line-strong); border-radius:12px; background:var(--onb-fondo); color:var(--ink); box-shadow:var(--ui-shadow, 0 8px 28px rgba(0,0,0,.18)); }
+.onb-tarjeta, .onb-invitacion { right:24px; bottom:24px; width:min(360px, calc(100vw - 32px)); padding:16px 18px; }
+.onb-tarjeta h2, .onb-invitacion h2 { margin:0 0 6px; font:600 15px/1.35 var(--font-ui); letter-spacing:0; }
+.onb-tarjeta p, .onb-invitacion p { margin:0 0 12px; font-size:13px; line-height:1.55; color:var(--muted); }
+.onb-tarjeta .onb-contador { margin:0 0 4px; font:500 11px/1.4 var(--font-mono); text-transform:uppercase; letter-spacing:.06em; }
+.onb-acciones { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; margin:0; }
+.onb-btn, .onb-btn-sec { min-height:36px; padding:0 14px; border-radius:8px; font:500 13px/1 var(--font-ui); cursor:pointer; }
+.onb-btn { border:1px solid var(--ink); background:var(--ink); color:var(--background); }
+.onb-btn-sec { border:1px solid var(--ui-line-strong); background:transparent; color:var(--ink); }
+.onb-btn:focus-visible, .onb-btn-sec:focus-visible, .onb-boton:focus-visible, .onb-menu button:focus-visible { outline:3px solid var(--onb-resalte); outline-offset:2px; }
+
+.onb-menu { top:60px; right:16px; display:grid; gap:2px; min-width:220px; max-width:min(320px, calc(100vw - 32px)); padding:8px; }
+.onb-menu-ctx { margin:0; padding:6px 8px 8px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--ui-border); }
+.onb-menu button { min-height:40px; padding:0 8px; border:0; border-radius:8px; background:transparent; color:var(--ink); font:400 13px/1.3 var(--font-ui); text-align:left; cursor:pointer; }
+.onb-menu button:hover { background:var(--ui-soft); }
+
+/* Elemento resaltado por el recorrido: contorno de contraste ≥ 3:1 sobre el fondo, también en alto contraste forzado. */
+.onb-resaltado { outline:3px solid var(--onb-resalte); outline-offset:3px; border-radius:8px; }
+@media (forced-colors:active) { .onb-resaltado { outline-color:Highlight; } .onb-tarjeta, .onb-invitacion, .onb-menu { border-color:CanvasText; } }
+
+/* Animación sutil (transform/opacity, 200 ms) solo si la persona no pidió reducir el movimiento. */
+@media (prefers-reduced-motion:no-preference) {
+ .onb-tarjeta, .onb-invitacion, .onb-menu { animation:onb-entra 200ms ease-out; }
+ .onb-resaltado { transition:outline-color 150ms ease; }
+ @keyframes onb-entra { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+}
+
+/* Móvil: hoja anclada abajo, por encima de la barra inferior (nunca la tapa). */
+@media (max-width:767px) {
+ .onb-tarjeta, .onb-invitacion { left:12px; right:12px; width:auto; bottom:calc(var(--nav-total, 0px) + 12px); }
+ .onb-menu { right:12px; }
+ .onb-boton-texto { position:absolute; width:1px; height:1px; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+ .onb-boton { padding:0 8px; min-width:32px; justify-content:center; }
+}
+
+/* Lista de primeros pasos en Hoy */
+.onb-lista { margin:20px 0; padding:18px 20px; border:1px solid var(--ui-border); border-radius:12px; background:var(--ui-surface); }
+.onb-lista[data-cargando] { min-height:132px; }
+.onb-lista-cab { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 16px; margin-bottom:10px; }
+.onb-lista h2 { margin:0; font:600 16px/1.35 var(--font-display); letter-spacing:-.02em; }
+.onb-progreso { display:flex; align-items:center; gap:10px; font-size:12px; color:var(--muted); }
+.onb-progreso progress { width:120px; height:8px; accent-color:var(--onb-resalte); }
+.onb-items { display:grid; gap:8px; margin:0; padding:0; list-style:none; }
+.onb-item { display:grid; gap:4px; padding:12px 14px; border:1px solid var(--ui-border); border-radius:12px; background:var(--ui-canvas); }
+.onb-item[data-siguiente] { border-color:var(--onb-resalte); }
+.onb-item h3 { margin:0; font:600 14px/1.4 var(--font-ui); }
+.onb-item p { margin:0; font-size:12px; line-height:1.55; color:var(--muted); }
+.onb-estado { display:inline-block; margin-right:8px; padding:1px 8px; border:1px solid var(--ui-line-strong); border-radius:999px; font:500 12px/1.6 var(--font-ui); color:var(--ink); }
+.onb-item a { display:inline-flex; align-items:center; min-height:36px; font-size:12px; }
+.onb-lista-pie { display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:10px; }
+.onb-lista-pie button, .onb-lista details summary { min-height:36px; padding:0 4px; border:0; background:transparent; color:var(--muted); font:400 12px/1 var(--font-ui); text-decoration:underline; cursor:pointer; }
+.onb-lista details { margin-top:8px; }
+.onb-aviso { margin:20px 0; padding:14px 18px; border:1px solid var(--ui-line-strong); border-radius:12px; background:var(--ui-soft); }
+.onb-aviso h2 { margin:0 0 4px; font:600 14px/1.4 var(--font-ui); }
+.onb-aviso p { margin:0; font-size:13px; color:var(--muted); }

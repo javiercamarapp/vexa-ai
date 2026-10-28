@@ -66,7 +66,7 @@ export function HoyPantalla(){
    description={<span className="hoy-resumen" title={v.titular.texto}>{v.titular.partes.map((x,i)=>x.f?<strong key={i}>{x.t}</strong>:<span key={i}>{x.t}</span>)}</span>}
    actions={<>{v.titular.periodo&&<span className="hoy-periodo" title={t('hoy.periodo')}>{v.titular.periodo}</span>}<LinkButton href="/briefs" icon={<Arrow/>} size="sm">{t('hoy.exportar')}</LinkButton></>}/></div>
   {v.vacio&&<div className="hoy-estado" role="status"><strong>{t('hoy.sinDatosTitulo')}</strong>{t('hoy.sinDatosA')} <Link href="/confianza">{t('hoy.sinDatosLink1')}</Link> {t('hoy.sinDatosO')} <Link href="/imports">{t('hoy.sinDatosLink2')}</Link>.</div>}
-  <ul className="hoy-kpis" aria-label={t('hoy.cuatroCifras')}>{v.kpis.map(k=><Kpi key={k.id} k={k} ctx={v.ctxComo} onRetry={recargar}/>)}</ul>
+  <ul className="hoy-kpis" data-tour="hoy-cifras" aria-label={t('hoy.cuatroCifras')}>{v.kpis.map(k=><Kpi key={k.id} k={k} ctx={v.ctxComo} onRetry={recargar}/>)}</ul>
   <div className="hoy-cols">
    <section className="hoy-card" aria-labelledby="hoy-at"><h2 id="hoy-at">{t('hoy.atencion')} <span>({v.atencion.length})</span></h2>
     {v.cargando?<span className="hoy-skel" role="status" aria-label={t('comun.cargando')}/>:v.atencion.length===0?<p className="dc-vacio">{t('hoy.nadaUrgente')}</p>

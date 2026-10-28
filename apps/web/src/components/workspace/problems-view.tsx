@@ -159,7 +159,7 @@ export function ProblemsView({bundle,query}:{bundle:Bundle;query:string}){
  const maxConv=Math.max(1,...pagina.map(f=>f.conversaciones??0));
  const th=(c:ColumnaOrden,label:string,num=false,title?:string)=>{const activa=col===c;return <th scope="col" className={num?s.num+' num':undefined} aria-sort={activa?(dir==='asc'?'ascending':'descending'):'none'} title={title}><button type="button" className={s.sortBtn+' ui-reset'} onClick={()=>ordenarPor(c)}>{label}<span aria-hidden="true">{activa?(dir==='asc'?'▲':'▼'):''}</span></button></th>;};
  const ocultosTxt=sep.ocultosN>0&&!incluirRuido?t('prob.nOcultas',{n:nf.format(sep.ocultosN)}):null;
- return <div className="stack">
+ return <div className="stack" data-tour="problemas">
   {!conImporte&&<Notice tone="info" title={t('prob.importeNoDisp')}>{t('prob.ordenConv')}{bundle.meta.can_manage?<> <Link href="/economics" className="row-link-inline">{t('prob.revisarFuentes')}</Link></>:null}</Notice>}
   <div className="ui-kpis" role="group" aria-label={t('prob.resumen')}>
    <Kpi label={t('prob.kConv')} value={hayConv?nf.format(convTotal)+(convDesconocidas?'+':''):'—'} note={hayConv?(cats.length?t('prob.kTop4',{p:Math.round(top4*100/Math.max(1,convTotal))}):undefined):t('prob.kSinConteo')}>{hayConv&&<Prop parte={top4} total={convTotal} label={t('prob.kPeso4')}/>}</Kpi>

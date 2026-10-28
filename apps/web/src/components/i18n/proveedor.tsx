@@ -8,6 +8,8 @@ export function IdiomaProvider({idioma, children}: {idioma: Idioma; children: Re
   useEffect(() => { document.documentElement.lang = idioma; }, [idioma]);
   return <Contexto.Provider value={idioma}>{children}</Contexto.Provider>;
 }
+/** Da el idioma a una isla de cliente SIN tocar <html lang> (consola de plataforma, que aún no está traducida entera). */
+export function IdiomaLocal({idioma, children}: {idioma: Idioma; children: ReactNode}) { return <Contexto.Provider value={idioma}>{children}</Contexto.Provider>; }
 export const useIdioma = (): Idioma => useContext(Contexto);
 export function useT(): Traductor { const idioma = useIdioma(); return useMemo(() => traductor(idioma), [idioma]); }
 export const useLocaleIntl = () => LOCALE_INTL[useIdioma()];

@@ -60,7 +60,8 @@ export const onbEs = {
   'onb.plataforma.auditoria.titulo': 'Auditoría y alertas', 'onb.plataforma.auditoria.cuerpo': 'Consulta quién hizo qué y qué alertas siguen abiertas.',
   // Soporte
   'onb.soporte.nombre': 'Sesión de soporte',
-  'onb.soporte.aviso.titulo': 'Estás viendo como {organizacion}', 'onb.soporte.aviso.cuerpo': 'Solo lectura: no puedes exportar ni editar, y todo queda registrado. Algunas pantallas no están disponibles en este modo. Usa Salir para volver a la consola.',
+  'onb.soporte.aviso.titulo': 'Estás viendo como {organizacion}', 'onb.soporte.terminada.titulo': 'La sesión de soporte terminó', 'onb.soporte.terminada.cuerpo': 'Lo que ves ahora ya no es la vista del cliente. Si necesitas volver a verla, inicia otra sesión de soporte desde la consola.',
+  'onb.soporte.aviso.cuerpo': 'Solo lectura: no puedes exportar ni editar, y todo queda registrado. Algunas pantallas no están disponibles en este modo. Usa Salir para volver a la consola.',
 } as const;
 
 export const onbEn = {
@@ -123,5 +124,6 @@ export const onbEn = {
   'onb.plataforma.auditoria.titulo': 'Audit and alerts', 'onb.plataforma.auditoria.cuerpo': 'See who did what and which alerts are still open.',
   // Support
   'onb.soporte.nombre': 'Support session',
-  'onb.soporte.aviso.titulo': 'You are viewing as {organizacion}', 'onb.soporte.aviso.cuerpo': 'Read-only: you cannot export or edit, and everything is recorded. Some screens are not available in this mode. Use Exit to return to the console.',
+  'onb.soporte.aviso.titulo': 'You are viewing as {organizacion}', 'onb.soporte.terminada.titulo': 'The support session has ended', 'onb.soporte.terminada.cuerpo': 'What you see now is no longer the customer view. To see it again, start another support session from the console.',
+  'onb.soporte.aviso.cuerpo': 'Read-only: you cannot export or edit, and everything is recorded. Some screens are not available in this mode. Use Exit to return to the console.',
 } as const;

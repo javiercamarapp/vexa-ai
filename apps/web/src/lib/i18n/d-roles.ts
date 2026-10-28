@@ -18,6 +18,12 @@ export const rolesEs = {
   'hoy.rol.confianzaTitulo': 'Cuánto fiarte de lo que ves',
   'hoy.rol.confianzaCuerpo': 'Confianza explica qué datos están completos y cuáles faltan.',
   'hoy.rol.verConfianza': 'Ver Confianza',
+  'soporte.banner.region': 'Modo soporte, solo lectura', 'soporte.banner.modo': 'Modo soporte', 'soporte.banner.viendo': 'viendo', 'soporte.banner.comoAdmin': 'como administrador de Rovaq · solo lectura',
+  'soporte.banner.motivo': 'motivo: {motivo}', 'soporte.banner.caduca': 'Caduca en', 'soporte.banner.salir': 'Salir',
+  'soporte.banner.vencida': 'La sesión de soporte venció: esta vista ya no es la del cliente.', 'soporte.banner.volver': 'Volver a la consola',
+  'sinacceso.titulo': 'Tu cuenta aún no pertenece a una organización', 'sinacceso.tituloInvitacion': 'Tienes una invitación pendiente', 'sinacceso.vencida': 'Tu invitación venció. Pide a quien te invitó que la reenvíe.',
+  'sinacceso.rol': 'Rol {rol}', 'sinacceso.nada': 'No encontramos invitaciones para tu correo. Pide al responsable de tu organización que te invite con el mismo correo con el que iniciaste sesión.',
+  'sinacceso.irConsola': 'Ir a administración de plataforma', 'sinacceso.cerrarSesion': 'Cerrar sesión',
 } as const;
 export const rolesEn = {
   'hoy.rol.notaOperador': 'Your role sees here what it can operate. Money figures (revenue, refunds, stuck) are for owners and analysts.',
@@ -38,4 +44,10 @@ export const rolesEn = {
   'hoy.rol.confianzaTitulo': 'How much to trust what you see',
   'hoy.rol.confianzaCuerpo': 'Trust explains which data is complete and which is missing.',
   'hoy.rol.verConfianza': 'See Trust',
+  'soporte.banner.region': 'Support mode, read-only', 'soporte.banner.modo': 'Support mode', 'soporte.banner.viendo': 'viewing', 'soporte.banner.comoAdmin': 'as a Rovaq administrator · read-only',
+  'soporte.banner.motivo': 'reason: {motivo}', 'soporte.banner.caduca': 'Expires in', 'soporte.banner.salir': 'Exit',
+  'soporte.banner.vencida': 'The support session has expired: this view is no longer the customer view.', 'soporte.banner.volver': 'Back to the console',
+  'sinacceso.titulo': 'Your account does not belong to an organization yet', 'sinacceso.tituloInvitacion': 'You have a pending invitation', 'sinacceso.vencida': 'Your invitation expired. Ask whoever invited you to resend it.',
+  'sinacceso.rol': 'Role {rol}', 'sinacceso.nada': 'We found no invitations for your email. Ask the person in charge of your organization to invite you with the same email you signed in with.',
+  'sinacceso.irConsola': 'Go to platform administration', 'sinacceso.cerrarSesion': 'Sign out',
 } as const;

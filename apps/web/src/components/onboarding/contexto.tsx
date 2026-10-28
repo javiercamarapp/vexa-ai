@@ -10,7 +10,7 @@ import {actualizarEstado,almacenDelNavegador,claveEstado,ESTADO_VACIO,leerEstado
 export interface DatosOnboarding {pista:Pista|null;userId:string;tenantId:string;organizacion:string;rolEtiqueta:string;rol?:string}
 export interface Controlador {
  datos:DatosOnboarding;pista:Pista|null;listo:boolean;local:EstadoLocal;tieneRecorrido:boolean;pasos:PasoOnboarding[];tieneChecklist:boolean;
- rec:EstadoRecorrido;paso:PasoOnboarding|null;menuAbierto:boolean;invitacionVisible:boolean;
+ rec:EstadoRecorrido;paso:PasoOnboarding|null;menuAbierto:boolean;invitacionVisible:boolean;soporteTerminado:boolean;
  registrarBoton:(el:HTMLButtonElement|null)=>void;enfocarBoton:()=>void;
  alternarMenu:()=>void;cerrarMenu:()=>void;
  iniciar:(modo:'inicio'|'retomar')=>void;despachar:(e:EventoRecorrido)=>void;omitir:()=>void;noVolver:()=>void;saltarInvitacion:()=>void;mostrarChecklist:()=>void;ocultarChecklist:()=>void;
@@ -20,6 +20,9 @@ export const useOnboarding=()=>useContext(Contexto);
 export function OnboardingRaiz({datos,children}:{datos:DatosOnboarding;children:ReactNode}){
  const {pista,userId,tenantId}=datos,router=useRouter(),pathname=usePathname();
  const tieneRecorrido=Boolean(pista&&pista!=='soporte');
+ // Si la sesión de soporte termina con la pantalla abierta (la pista deja de ser «soporte»), se avisa en vez de cambiar la vista sin decir nada.
+ const [pistaAnterior,setPistaAnterior]=useState(pista),[soporteTerminado,setSoporteTerminado]=useState(false);
+ if(pistaAnterior!==pista){setPistaAnterior(pista);setSoporteTerminado(pistaAnterior==='soporte'&&pista!=='soporte');}
  const pasos=useMemo(()=>tieneRecorrido&&pista?pasosDe(pista,'tour'):[],[tieneRecorrido,pista]);
  const tieneChecklist=Boolean(tieneRecorrido&&pista&&pasosDe(pista,'checklist').length>0);
  const clave=useMemo(()=>tieneRecorrido&&pista?claveEstado(userId,tenantId,pista):null,[tieneRecorrido,pista,userId,tenantId]);
@@ -49,7 +52,7 @@ export function OnboardingRaiz({datos,children}:{datos:DatosOnboarding;children:
  const mostrarChecklist=useCallback(()=>{setMenuAbierto(false);guardar({descartado:false});router.push('/overview');},[guardar,router]);
  const ocultarChecklist=useCallback(()=>guardar({descartado:true}),[guardar]);
  const invitacionVisible=listo&&tieneRecorrido&&!rec.abierto&&!local.visto&&!local.omitido&&!local.descartado;
- const valor:Controlador={datos,pista,listo,local,tieneRecorrido,pasos,tieneChecklist,rec,paso,menuAbierto,invitacionVisible,registrarBoton:setBoton,enfocarBoton:()=>boton?.focus(),
+ const valor:Controlador={datos,pista,listo,local,tieneRecorrido,pasos,tieneChecklist,rec,paso,menuAbierto,invitacionVisible,soporteTerminado,registrarBoton:setBoton,enfocarBoton:()=>boton?.focus(),
   alternarMenu:()=>setMenuAbierto(v=>!v),cerrarMenu:()=>setMenuAbierto(false),iniciar,despachar,omitir,noVolver,saltarInvitacion,mostrarChecklist,ocultarChecklist};
  return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }

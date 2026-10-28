@@ -37,7 +37,7 @@ export function ChecklistHoy(){
   return()=>{window.clearTimeout(id);ctl.abort();};
  },[activo,tenant,pista]);
  if(!c||!c.listo)return null;
- if(c.pista==='soporte')return <AvisoSoporte/>;
+ if(c.pista==='soporte'||c.soporteTerminado)return <AvisoSoporte/>;
  if(!activo||!pista)return null;
  const txt=(k:string,v?:Record<string,string|number>)=>t(k as Clave,v);
  const senales=carga.estado==='listo'?carga.senales:null;
@@ -63,9 +63,11 @@ export function ChecklistHoy(){
   <div className="onb-lista-pie"><button type="button" onClick={c.ocultarChecklist}>{t('onb.check.ocultar')}</button></div>
  </section>;
 }
-/** «Ver como»: solo un aviso informativo de solo lectura; sin lista, sin botones ni enlaces. */
+/** «Ver como»: solo un aviso informativo de solo lectura; sin lista, sin botones ni enlaces. Si la sesión terminó con la pantalla abierta, lo dice con claridad. */
 export function AvisoSoporte(){
  const c=useOnboarding(),t=useT();
- if(!c||c.pista!=='soporte')return null;
+ if(!c)return null;
+ if(c.pista!=='soporte'&&c.soporteTerminado)return <aside className="onb-aviso" role="alert" aria-labelledby="onb-aviso-titulo" data-terminada=""><h2 id="onb-aviso-titulo">{t('onb.soporte.terminada.titulo')}</h2><p>{t('onb.soporte.terminada.cuerpo')}</p></aside>;
+ if(c.pista!=='soporte')return null;
  return <aside className="onb-aviso" role="note" aria-labelledby="onb-aviso-titulo"><h2 id="onb-aviso-titulo">{t('onb.soporte.aviso.titulo',{organizacion:c.datos.organizacion})}</h2><p>{t('onb.soporte.aviso.cuerpo')}</p></aside>;
 }

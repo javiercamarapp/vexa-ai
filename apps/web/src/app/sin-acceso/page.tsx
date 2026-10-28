@@ -1,9 +1,10 @@
 import {cookies} from 'next/headers';
 import {redirect} from 'next/navigation';
 import {ACTIVE_ORG, AccessError, authClient, config, identity, resolveSession} from '../../lib/auth';
-import {InvitacionesPendientes, type Invitacion, type InvitacionVencida} from '../../components/sin-acceso';
-import {LinkButton} from '../../components/ui/button';
-import {Notice} from '../../components/ui/notice';
+import {SinAccesoVista} from '../../components/sin-acceso-vista';
+import type {Invitacion, InvitacionVencida} from '../../components/sin-acceso';
+import {idiomaActual} from '../../lib/i18n/servidor';
+import {traductor} from '../../lib/i18n';
 import './sin-acceso.css';
 import {ROBOTS_PRIVADO} from '../../lib/site.mjs';
 export const metadata = {title: 'Sin acceso a una organización', robots: ROBOTS_PRIVADO};
@@ -22,7 +23,7 @@ function fixture(estado: string | undefined, admin: boolean): {inv: Invitaciones
   return {inv: {pending: [{id: '00000000-0000-4000-8000-0000000000a1', organization: 'Empresa de demostración (sintética)', role: 'analyst', expiresAt: soon}, {id: '00000000-0000-4000-8000-0000000000a2', organization: 'Segunda empresa de demostración (sintética)', role: 'viewer', expiresAt: soon}], expired: []}, isAdmin: admin};
 }
 export default async function SinAcceso({searchParams}: {searchParams?: Promise<{estado?: string; admin?: string}>}) {
-  if (FIXTURES) { const q = (await searchParams) ?? {}; const f = fixture(q.estado, q.admin === '1'); return <Vista inv={f.inv} isAdmin={f.isAdmin} />; }
+  if (FIXTURES) { const q = (await searchParams) ?? {}; const f = fixture(q.estado, q.admin === '1'); return <SinAccesoVista inv={f.inv} isAdmin={f.isAdmin} t={traductor(await idiomaActual())} />; }
   if (!config()) redirect('/login');
   const jar = await cookies(), client = authClient({getAll: () => jar.getAll(), set: () => {}});
   const user = await client.auth.getUser();
@@ -36,20 +37,5 @@ export default async function SinAcceso({searchParams}: {searchParams?: Promise<
   const isAdmin = !platform.error && platform.data?.administrator === true;
   // Si la función aún no está aplicada en la base, se trata como «sin invitaciones» (no se inventa nada).
   const inv: Invitaciones = !mine.error && mine.data ? {pending: mine.data.pending ?? [], expired: mine.data.expired ?? []} : {pending: [], expired: []};
-  return <Vista inv={inv} isAdmin={isAdmin} />;
-}
-function Vista({inv, isAdmin}: {inv: Invitaciones; isAdmin: boolean}) {
-  return <section className="home access-flow acceso-sistema" aria-labelledby="sa-titulo">
-    <h1 id="sa-titulo">{inv.pending.length ? 'Tienes una invitación pendiente' : 'Tu cuenta aún no pertenece a una organización'}</h1>
-    {inv.pending.length > 0 && <InvitacionesPendientes invitaciones={inv.pending} />}
-    {inv.pending.length === 0 && inv.expired.length > 0 && <>
-      <Notice tone="warn">Tu invitación venció. Pide a quien te invitó que la reenvíe.</Notice>
-      <ul className="sa-lista">{inv.expired.map((e, i) => <li key={i} className="card sa-tarjeta"><div><strong>{e.organization}</strong><small>Rol {e.role}</small></div></li>)}</ul>
-    </>}
-    {inv.pending.length === 0 && inv.expired.length === 0 && <Notice>No encontramos invitaciones para tu correo. Pide al responsable de tu organización que te invite con el mismo correo con el que iniciaste sesión.</Notice>}
-    <div className="sa-acciones">
-      {isAdmin && <LinkButton href="/platform" variant="primary">Ir a administración de plataforma</LinkButton>}
-      <form action="/auth/logout" method="post"><button className="btn btn-secondary" type="submit">Cerrar sesión</button></form>
-    </div>
-  </section>;
+  return <SinAccesoVista inv={inv} isAdmin={isAdmin} t={traductor(await idiomaActual())} />;
 }

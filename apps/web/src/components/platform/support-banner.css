@@ -7,3 +7,5 @@ body:has(.soporte-barra) { padding-top: var(--soporte-alto); box-sizing: border-
 body:has(.soporte-barra) .workspace-shell { height: calc(100dvh - var(--soporte-alto)); }
 body:has(.soporte-barra) .workspace-shell .workspace-sidebar { height: calc(100dvh - 24px - var(--soporte-alto)); }
 @media (max-width: 720px) { .soporte-motivo { display: none; } .soporte-barra { padding: 0 12px; gap: 8px; } }
+.soporte-barra[data-vencida] { background: var(--ui-danger-soft, var(--ui-warning-soft)); border-bottom-color: var(--ui-danger, var(--ui-warning)); }
+.soporte-barra[data-vencida] p { white-space: normal; }

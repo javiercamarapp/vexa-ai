@@ -5,6 +5,18 @@ export const onbEs = {
   'onb.ui.paso': 'Paso {n} de {total}', 'onb.ui.reabrir': 'Repetir el recorrido', 'onb.ui.esperando': 'Esperando a: {quien}',
   'onb.ui.sinPasos': 'No hay un recorrido para esta vista.',
   'onb.ui.superadminSinOrg': 'Tu cuenta es de administración de plataforma y no pertenece a ninguna organización. Entra a la consola de plataforma para trabajar.',
+  // Interfaz del recorrido (F2)
+  'onb.ui.cerrar': 'Cerrar', 'onb.ui.empezar': 'Empezar recorrido', 'onb.ui.saltar': 'Saltar', 'onb.ui.retomar': 'Retomar donde lo dejé', 'onb.ui.noVolver': 'No volver a mostrar',
+  'onb.ui.invitacionTitulo': 'Conoce Rovaq en un minuto', 'onb.ui.invitacionCuerpo': 'Un recorrido corto por lo que tu rol puede hacer aquí. Puedes saltarlo y abrirlo luego desde Guía.',
+  'onb.ui.recorrido': 'Recorrido guiado', 'onb.ui.menuGuia': 'Opciones de la guía', 'onb.ui.rolOrg': '{organizacion} · {rol}', 'onb.ui.mostrarChecklist': 'Mostrar la lista de primeros pasos',
+  'onb.ui.avisoPasos': 'Paso {n} de {total}: {titulo}',
+  // Checklist en Hoy
+  'onb.check.titulo': 'Primeros pasos', 'onb.check.progreso': '{hechos} de {total} listos', 'onb.check.siguiente': 'Recomendado ahora', 'onb.check.masTareas': 'Ver más tareas', 'onb.check.ocultar': 'Ocultar lista',
+  'onb.check.cargando': 'Calculando tu avance…', 'onb.check.noDisponible': 'No se pudo calcular tu avance ahora.', 'onb.check.abrir': 'Abrir',
+  'onb.check.estado.hecho': 'Hecho', 'onb.check.estado.salvedad': 'Hecho con salvedad', 'onb.check.estado.esperando': 'En espera', 'onb.check.estado.bloqueado': 'Bloqueado', 'onb.check.estado.pendiente': 'Pendiente', 'onb.check.estado.informativo': 'Para revisar',
+  'onb.check.concil': 'Pendiente de conciliación: las cifras de dinero son parciales hasta ligar los pedidos con clientes.',
+  'onb.check.bloq.sinDatos': 'Primero necesitas datos: una conexión activa o un historial importado.', 'onb.check.bloq.sinIntervencion': 'Primero necesitas una intervención asignada a ti.',
+  'onb.tercero.crm': 'el equipo de Rovaq (conexión del CRM)', 'onb.tercero.correo': 'la configuración del correo de acceso', 'onb.tercero.propietario': 'el propietario de la organización',
   // Propietario
   'onb.propietario.nombre': 'Recorrido del propietario',
   'onb.propietario.hoy.titulo': 'Hoy: tus cuatro cifras', 'onb.propietario.hoy.cuerpo': 'Ingreso, reembolsos, dinero atorado y respuestas en las últimas veinticuatro horas, cada una con su periodo. Si falta conciliar pedidos con clientes, la cifra lo dice en lugar de aparentar estar completa.',
@@ -23,20 +35,20 @@ export const onbEs = {
   'onb.analista.dinero.titulo': 'Dinero: CFO y brechas', 'onb.analista.dinero.cuerpo': 'Lee las cifras con su salvedad: mientras falten pedidos por conciliar, son parciales y así se muestran.',
   'onb.analista.importar.titulo': 'Importar historial por archivo', 'onb.analista.importar.cuerpo': 'Puedes cargar historial en Importaciones. Conectar el CRM y cargar pedidos le toca al propietario.',
   'onb.analista.preguntar.titulo': 'Pregúntale a tus datos', 'onb.analista.preguntar.cuerpo': 'Haz una pregunta en lenguaje natural y revisa la evidencia que respalda la respuesta.',
-  'onb.analista.corte.titulo': 'Preparar un corte', 'onb.analista.corte.cuerpo': 'Prepara el corte para revisión; publicarlo lo decide el propietario.',
+  'onb.analista.corte.titulo': 'Preparar un corte', 'onb.analista.corte.cuerpo': 'Prepara el corte para revisión; publicarlo lo hace el propietario.',
   'onb.analista.informe.titulo': 'Exportar un informe', 'onb.analista.informe.cuerpo': 'Desde Hoy puedes exportar un informe para compartirlo.',
   // Operador
   'onb.operador.nombre': 'Recorrido del operador',
   'onb.operador.hoy.titulo': 'Hoy: lo que hay abierto', 'onb.operador.hoy.cuerpo': 'Ve qué problemas y acciones siguen abiertos. Las cifras de dinero son para propietarios y analistas.',
   'onb.operador.problemas.titulo': 'Problemas y cómo leer una ficha', 'onb.operador.problemas.cuerpo': 'Cada ficha explica qué pasó y de dónde sale. Úsala para decidir qué atender primero.',
-  'onb.operador.acciones.titulo': 'Acciones en curso', 'onb.operador.acciones.cuerpo': 'Toma una intervención, muévela de etapa y registra su resultado. Aprobar nuevas acciones le corresponde al propietario.',
+  'onb.operador.acciones.titulo': 'Acciones en curso', 'onb.operador.acciones.cuerpo': 'Trabaja las intervenciones que te asignaron, muévelas de etapa y registra su resultado. Aprobar y asignar le corresponde al propietario.',
   'onb.operador.preguntar.titulo': 'Pregúntale a tus datos', 'onb.operador.preguntar.cuerpo': 'Consulta en lenguaje natural lo que necesites para operar.',
-  'onb.operador.propuesta.titulo': 'Proponer tu primera acción', 'onb.operador.propuesta.cuerpo': 'Propón una acción a partir de un problema; el propietario la decide.',
-  'onb.operador.resultado.titulo': 'Registrar un resultado', 'onb.operador.resultado.cuerpo': 'Cuando cierres una intervención, anota qué pasó para medir si funcionó.',
+  'onb.operador.propuesta.titulo': 'Decidir una recomendación', 'onb.operador.propuesta.cuerpo': 'Revisa lo recomendado y decide con evidencia: proceder, ajustar o dar seguimiento.',
+  'onb.operador.resultado.titulo': 'Registrar un resultado', 'onb.operador.resultado.cuerpo': 'Cuando cierres una intervención que te asignaron, anota qué pasó para medir si funcionó.',
   // Lector
   'onb.lector.nombre': 'Recorrido del lector',
-  'onb.lector.hoy.titulo': 'Hoy: cómo leer una cifra', 'onb.lector.hoy.cuerpo': 'Cada cifra indica su periodo. Tu acceso es de lectura: puedes mirar, no cambiar nada.',
-  'onb.lector.problemas.titulo': 'Problemas y su evidencia', 'onb.lector.problemas.cuerpo': 'Abre un problema para leer su evidencia. Algunos datos sensibles aparecen resumidos para tu rol.',
+  'onb.lector.hoy.titulo': 'Hoy: cómo leer una cifra', 'onb.lector.hoy.cuerpo': 'Hoy resume lo publicado que tu rol puede ver, con su periodo. Tu acceso es de lectura: puedes mirar, no cambiar nada.',
+  'onb.lector.problemas.titulo': 'Problemas y su evidencia', 'onb.lector.problemas.cuerpo': 'Abre un problema para leer su evidencia.',
   'onb.lector.confianza.titulo': 'Cuánto fiarte de cada cifra', 'onb.lector.confianza.cuerpo': 'Confianza explica qué tan completos están los datos. Los avisos te llegan a Notificaciones.',
   // Plataforma
   'onb.plataforma.nombre': 'Recorrido de administración de plataforma',
@@ -46,7 +58,7 @@ export const onbEs = {
   'onb.plataforma.auditoria.titulo': 'Auditoría y alertas', 'onb.plataforma.auditoria.cuerpo': 'Consulta quién hizo qué y qué alertas siguen abiertas.',
   // Soporte
   'onb.soporte.nombre': 'Sesión de soporte',
-  'onb.soporte.aviso.titulo': 'Estás viendo como {organizacion}', 'onb.soporte.aviso.cuerpo': 'Solo lectura: no puedes exportar ni editar, y todo queda registrado. Usa Salir para volver a la consola.',
+  'onb.soporte.aviso.titulo': 'Estás viendo como {organizacion}', 'onb.soporte.aviso.cuerpo': 'Solo lectura: no puedes exportar ni editar, y todo queda registrado. Algunas pantallas no están disponibles en este modo. Usa Salir para volver a la consola.',
 } as const;
 
 export const onbEn = {
@@ -54,6 +66,18 @@ export const onbEn = {
   'onb.ui.paso': 'Step {n} of {total}', 'onb.ui.reabrir': 'Repeat the tour', 'onb.ui.esperando': 'Waiting on: {quien}',
   'onb.ui.sinPasos': 'There is no tour for this view.',
   'onb.ui.superadminSinOrg': 'Your account is a platform administrator and does not belong to any organization. Open the platform console to get to work.',
+  // Tour interface (F2)
+  'onb.ui.cerrar': 'Close', 'onb.ui.empezar': 'Start tour', 'onb.ui.saltar': 'Skip', 'onb.ui.retomar': 'Resume where I left off', 'onb.ui.noVolver': "Don't show again",
+  'onb.ui.invitacionTitulo': 'Get to know Rovaq in a minute', 'onb.ui.invitacionCuerpo': 'A short tour of what your role can do here. You can skip it and open it later from Guide.',
+  'onb.ui.recorrido': 'Guided tour', 'onb.ui.menuGuia': 'Guide options', 'onb.ui.rolOrg': '{organizacion} · {rol}', 'onb.ui.mostrarChecklist': 'Show the getting started list',
+  'onb.ui.avisoPasos': 'Step {n} of {total}: {titulo}',
+  // Checklist on Today
+  'onb.check.titulo': 'Getting started', 'onb.check.progreso': '{hechos} of {total} done', 'onb.check.siguiente': 'Recommended now', 'onb.check.masTareas': 'Show more tasks', 'onb.check.ocultar': 'Hide list',
+  'onb.check.cargando': 'Working out your progress…', 'onb.check.noDisponible': 'Your progress could not be worked out right now.', 'onb.check.abrir': 'Open',
+  'onb.check.estado.hecho': 'Done', 'onb.check.estado.salvedad': 'Done with a caveat', 'onb.check.estado.esperando': 'Waiting', 'onb.check.estado.bloqueado': 'Blocked', 'onb.check.estado.pendiente': 'To do', 'onb.check.estado.informativo': 'To review',
+  'onb.check.concil': 'Reconciliation pending: money numbers are partial until orders are linked to customers.',
+  'onb.check.bloq.sinDatos': 'You need data first: an active connection or an imported history.', 'onb.check.bloq.sinIntervencion': 'You first need an intervention assigned to you.',
+  'onb.tercero.crm': 'the Rovaq team (CRM connection)', 'onb.tercero.correo': 'sign-in email setup', 'onb.tercero.propietario': 'the organization owner',
   // Owner
   'onb.propietario.nombre': 'Owner tour',
   'onb.propietario.hoy.titulo': 'Today: your four numbers', 'onb.propietario.hoy.cuerpo': 'Revenue, refunds, stuck money and replies within the last twenty-four hours, each with its period. If orders are not yet matched to customers, the number says so instead of looking complete.',
@@ -72,20 +96,20 @@ export const onbEn = {
   'onb.analista.dinero.titulo': 'Money: CFO and gaps', 'onb.analista.dinero.cuerpo': 'Read the numbers with their caveat: while orders are still unmatched they are partial and shown that way.',
   'onb.analista.importar.titulo': 'Import history from a file', 'onb.analista.importar.cuerpo': 'You can upload history under Imports. Connecting the CRM and loading orders is up to the owner.',
   'onb.analista.preguntar.titulo': 'Ask your data', 'onb.analista.preguntar.cuerpo': 'Ask a question in plain language and check the evidence behind the answer.',
-  'onb.analista.corte.titulo': 'Prepare a cut', 'onb.analista.corte.cuerpo': 'Prepare the cut for review; the owner decides whether to publish it.',
+  'onb.analista.corte.titulo': 'Prepare a cut', 'onb.analista.corte.cuerpo': 'Prepare the cut for review; the owner publishes it.',
   'onb.analista.informe.titulo': 'Export a report', 'onb.analista.informe.cuerpo': 'From Today you can export a report to share.',
   // Operator
   'onb.operador.nombre': 'Operator tour',
   'onb.operador.hoy.titulo': 'Today: what is open', 'onb.operador.hoy.cuerpo': 'See which problems and actions are still open. Money numbers are for owners and analysts.',
   'onb.operador.problemas.titulo': 'Problems and how to read a card', 'onb.operador.problemas.cuerpo': 'Each card explains what happened and where it comes from. Use it to decide what to handle first.',
-  'onb.operador.acciones.titulo': 'Actions in progress', 'onb.operador.acciones.cuerpo': 'Pick up an intervention, move it along and record its result. Approving new actions belongs to the owner.',
+  'onb.operador.acciones.titulo': 'Actions in progress', 'onb.operador.acciones.cuerpo': 'Work the interventions assigned to you, move them along and record their result. Approving and assigning belongs to the owner.',
   'onb.operador.preguntar.titulo': 'Ask your data', 'onb.operador.preguntar.cuerpo': 'Ask in plain language whatever you need to operate.',
-  'onb.operador.propuesta.titulo': 'Propose your first action', 'onb.operador.propuesta.cuerpo': 'Propose an action from a problem; the owner decides on it.',
-  'onb.operador.resultado.titulo': 'Record a result', 'onb.operador.resultado.cuerpo': 'When you close an intervention, note what happened so we can tell whether it worked.',
+  'onb.operador.propuesta.titulo': 'Decide on a recommendation', 'onb.operador.propuesta.cuerpo': 'Review what is recommended and decide with evidence: proceed, adjust or follow up.',
+  'onb.operador.resultado.titulo': 'Record a result', 'onb.operador.resultado.cuerpo': 'When you close an intervention assigned to you, note what happened so we can tell whether it worked.',
   // Viewer
   'onb.lector.nombre': 'Viewer tour',
-  'onb.lector.hoy.titulo': 'Today: how to read a number', 'onb.lector.hoy.cuerpo': 'Each number shows its period. Your access is read-only: you can look, not change anything.',
-  'onb.lector.problemas.titulo': 'Problems and their evidence', 'onb.lector.problemas.cuerpo': 'Open a problem to read its evidence. Some sensitive details appear summarized for your role.',
+  'onb.lector.hoy.titulo': 'Today: how to read a number', 'onb.lector.hoy.cuerpo': 'Today summarizes the published data your role can see, with its period. Your access is read-only: you can look, not change anything.',
+  'onb.lector.problemas.titulo': 'Problems and their evidence', 'onb.lector.problemas.cuerpo': 'Open a problem to read its evidence.',
   'onb.lector.confianza.titulo': 'How much to trust each number', 'onb.lector.confianza.cuerpo': 'Trust explains how complete the data is. Your alerts arrive under Notifications.',
   // Platform
   'onb.plataforma.nombre': 'Platform administration tour',
@@ -95,5 +119,5 @@ export const onbEn = {
   'onb.plataforma.auditoria.titulo': 'Audit and alerts', 'onb.plataforma.auditoria.cuerpo': 'See who did what and which alerts are still open.',
   // Support
   'onb.soporte.nombre': 'Support session',
-  'onb.soporte.aviso.titulo': 'You are viewing as {organizacion}', 'onb.soporte.aviso.cuerpo': 'Read-only: you cannot export or edit, and everything is recorded. Use Exit to return to the console.',
+  'onb.soporte.aviso.titulo': 'You are viewing as {organizacion}', 'onb.soporte.aviso.cuerpo': 'Read-only: you cannot export or edit, and everything is recorded. Some screens are not available in this mode. Use Exit to return to the console.',
 } as const;

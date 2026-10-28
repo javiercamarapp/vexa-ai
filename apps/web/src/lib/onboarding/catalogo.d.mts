@@ -9,6 +9,7 @@ export interface PasoOnboarding {
   readonly href: string | null;
   readonly superficie: Superficie;
   readonly prerrequisito: PrerrequisitoId | null;
+  readonly espera: 'propietario' | null;
   readonly textos: {readonly titulo: string; readonly cuerpo: string};
 }
 export const PISTAS: readonly Pista[];

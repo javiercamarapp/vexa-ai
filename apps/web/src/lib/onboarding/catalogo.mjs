@@ -24,7 +24,8 @@ export const PRERREQUISITOS = Object.freeze({
 
 const t = (pista, id) => ({ titulo: `onb.${pista}.${id}.titulo`, cuerpo: `onb.${pista}.${id}.cuerpo` });
 /** surf: 'tour' (tarjeta de recorrido, máx. 5 por pista) o 'checklist' (lista de activación, máx. 4). */
-const paso = (pista, id, accion, href, surf = 'tour', prerrequisito = null) => Object.freeze({ id: `${pista}.${id}`, pista, accion, href, superficie: surf, prerrequisito, textos: t(pista, id) });
+/** `espera` = quien debe actuar cuando este rol NO puede (p. ej. el analista prepara el corte pero lo publica el propietario): el paso queda «en espera» y no cuenta. */
+const paso = (pista, id, accion, href, surf = 'tour', prerrequisito = null, espera = null) => Object.freeze({ id: `${pista}.${id}`, pista, accion, href, superficie: surf, prerrequisito, espera, textos: t(pista, id) });
 
 export const CATALOGO = Object.freeze([
   // Propietario: todo el espacio de su organización.
@@ -43,7 +44,7 @@ export const CATALOGO = Object.freeze([
   paso('analista', 'dinero', 'read', '/cfo'),
   paso('analista', 'importar', 'import', '/imports', 'tour', 'historial_importado'),
   paso('analista', 'preguntar', 'read', '/preguntale'),
-  paso('analista', 'corte', 'materialize', '/economics', 'checklist', 'corte_publicado'),
+  paso('analista', 'corte', 'materialize', '/economics', 'checklist', 'corte_publicado', 'propietario'),
   paso('analista', 'informe', 'export', '/overview', 'checklist'),
   // Operador: propone y ejecuta intervenciones; no ve dinero ni importa.
   paso('operador', 'hoy', 'read', '/overview'),
@@ -72,7 +73,7 @@ export const rolesConCapacidad = (accion) => [...(DATABASE_ACTION_ROLES[accion] 
 export const rolTieneCapacidad = (rol, accion) => rolesConCapacidad(accion).includes(rol);
 /** Claves i18n que usa una pista (nombre, pasos). */
 export const clavesDePista = (pista) => [`onb.${pista}.nombre`, ...pasosDe(pista).flatMap((p) => [p.textos.titulo, p.textos.cuerpo])];
-export const CLAVES_UI = Object.freeze(['onb.ui.guia', 'onb.ui.omitir', 'onb.ui.siguiente', 'onb.ui.anterior', 'onb.ui.terminar', 'onb.ui.paso', 'onb.ui.reabrir', 'onb.ui.esperando', 'onb.ui.sinPasos', 'onb.ui.superadminSinOrg']);
+export const CLAVES_UI = Object.freeze(['onb.ui.guia', 'onb.ui.omitir', 'onb.ui.siguiente', 'onb.ui.anterior', 'onb.ui.terminar', 'onb.ui.paso', 'onb.ui.reabrir', 'onb.ui.esperando', 'onb.ui.sinPasos', 'onb.ui.superadminSinOrg', 'onb.ui.cerrar','onb.ui.empezar','onb.ui.saltar','onb.ui.retomar','onb.ui.noVolver','onb.ui.invitacionTitulo','onb.ui.invitacionCuerpo','onb.ui.recorrido','onb.ui.menuGuia','onb.ui.rolOrg','onb.ui.mostrarChecklist','onb.ui.avisoPasos','onb.check.titulo','onb.check.progreso','onb.check.siguiente','onb.check.masTareas','onb.check.ocultar','onb.check.cargando','onb.check.noDisponible','onb.check.abrir','onb.check.estado.hecho','onb.check.estado.salvedad','onb.check.estado.esperando','onb.check.estado.bloqueado','onb.check.estado.pendiente','onb.check.estado.informativo','onb.check.concil','onb.check.bloq.sinDatos','onb.check.bloq.sinIntervencion','onb.tercero.crm','onb.tercero.correo','onb.tercero.propietario']);
 
 const hrefsDelMenu = (menu) => new Set(menu.flatMap((e) => (e.tipo === 'grupo' ? e.items : [e]).flatMap((i) => [i.href, ...(i.alias ?? [])])));
 /**

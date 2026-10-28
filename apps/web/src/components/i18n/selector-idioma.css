@@ -1,0 +1,6 @@
+.idioma-selector{display:flex;align-items:center;margin-left:auto;font-size:13px}
+.idioma-celda{display:inline-flex;align-items:center}
+.idioma-sep{color:var(--ui-border)}
+.idioma-boton{min-width:44px;min-height:44px;padding:0 6px;border:0;background:none;color:var(--muted);font:inherit;cursor:pointer}
+.idioma-boton[aria-pressed=true]{color:var(--ink);font-weight:600}
+.idioma-boton:focus-visible{outline:2px solid var(--ink);outline-offset:-2px;border-radius:8px}

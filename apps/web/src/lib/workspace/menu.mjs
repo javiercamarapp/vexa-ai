@@ -1,6 +1,9 @@
 // Menú del espacio de trabajo, ordenado como la historia del producto: ver -> entender -> decidir -> actuar -> medir.
 // Ocultar un ítem del menú NO protege su pantalla: la autorización sigue siendo la del servidor. Aquí solo se decide qué se le ofrece a cada quien.
+import { DATABASE_ACTION_ROLES } from '@vexa/platform/capabilities';
 const SOLO_PROPIETARIO = ['owner'];
+// Avisos propios: los roles se derivan de la capacidad real «notify» del servidor (db.ts), nunca se copian aquí.
+const AVISOS = [...DATABASE_ACTION_ROLES.notify];
 const DINERO = ['owner', 'analyst'];
 /** Entradas de primer nivel: ítems sueltos o grupos con ítems. `alias` = rutas que se muestran bajo ese ítem sin ser su ruta. */
 export const MENU = Object.freeze([
@@ -36,9 +39,11 @@ export const MENU = Object.freeze([
     { href: '/economics', etiqueta: 'Cortes publicados', icono: 'imports', titulo: 'Cortes publicados', roles: DINERO },
     { href: '/explorer', etiqueta: 'Explorador', icono: 'explorer' },
   ] },
+  // Avisos propios (preferencias, bandeja y dispositivos): de cada persona, no de la administración. La política de entrega de la organización sigue en Administración.
+  { tipo: 'item', href: '/settings/notifications', etiqueta: 'Avisos', icono: 'avisos', titulo: 'Preferencias de avisos', alias: ['/notifications/push'], roles: AVISOS },
   { tipo: 'grupo', clave: 'administracion', etiqueta: 'Administración', roles: SOLO_PROPIETARIO, items: [
     { href: '/settings/team', etiqueta: 'Equipo', icono: 'team' },
-    { href: '/settings/notifications', etiqueta: 'Avisos', icono: 'avisos', titulo: 'Preferencias de avisos', alias: ['/settings/notification-delivery', '/notifications/push'] },
+    { href: '/settings/notification-delivery', etiqueta: 'Entrega de avisos', icono: 'avisos' },
     { href: '/settings/retention', etiqueta: 'Retención', icono: 'retention', titulo: 'Retención y borrado' },
   ] },
   // Interno: fuera del menú del cliente; solo lo ve el equipo de Rovaq (acceso de plataforma).

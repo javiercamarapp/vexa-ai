@@ -53,7 +53,7 @@ export const es = {
   'nav.item.problems': 'Problemas', 'nav.item.pain-points': 'Puntos de dolor', 'nav.item.map': 'Mapa de problemas', 'nav.item.workload': 'Carga y SLA',
   'nav.item.recommendations': 'Por decidir', 'nav.item.interventions': 'En curso y resultados', 'nav.item.confianza': 'Confianza', 'nav.item.sources': 'Cobertura de datos',
   'nav.item.connections': 'Fuentes conectadas', 'nav.item.imports': 'Importaciones', 'nav.item.history': 'Histórico e identidad', 'nav.item.analysis': 'Análisis',
-  'nav.item.economics': 'Cortes publicados', 'nav.item.explorer': 'Explorador', 'nav.item.settings-team': 'Equipo', 'nav.item.settings-notifications': 'Avisos',
+  'nav.item.economics': 'Cortes publicados', 'nav.item.explorer': 'Explorador', 'nav.item.settings-team': 'Equipo', 'nav.item.settings-notifications': 'Avisos', 'nav.item.settings-notification-delivery': 'Entrega de avisos',
   'nav.item.settings-retention': 'Retención', 'nav.item.evaluation': 'Evaluación histórica', 'nav.item.evaluation-candidates': 'Candidatos evaluados', 'nav.item.migrations': 'Comparación de migración',
   'nav.titulo.recommendations': 'Acciones · Por decidir', 'nav.titulo.interventions': 'Acciones', 'nav.titulo.confianza': 'Datos y confianza', 'nav.titulo.analysis': 'Análisis de conversaciones',
   'nav.titulo.settings-notifications': 'Preferencias de avisos', 'nav.titulo.settings-retention': 'Retención y borrado',

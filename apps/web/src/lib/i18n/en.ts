@@ -49,7 +49,7 @@ export const en: Record<Clave, string> = {
   'nav.item.problems': 'Problems', 'nav.item.pain-points': 'Pain points', 'nav.item.map': 'Problem map', 'nav.item.workload': 'Workload and SLA',
   'nav.item.recommendations': 'To decide', 'nav.item.interventions': 'In progress and results', 'nav.item.confianza': 'Trust', 'nav.item.sources': 'Data coverage',
   'nav.item.connections': 'Connected sources', 'nav.item.imports': 'Imports', 'nav.item.history': 'History and identity', 'nav.item.analysis': 'Analysis',
-  'nav.item.economics': 'Published cuts', 'nav.item.explorer': 'Explorer', 'nav.item.settings-team': 'Team', 'nav.item.settings-notifications': 'Alerts',
+  'nav.item.economics': 'Published cuts', 'nav.item.explorer': 'Explorer', 'nav.item.settings-team': 'Team', 'nav.item.settings-notifications': 'Alerts', 'nav.item.settings-notification-delivery': 'Alert delivery',
   'nav.item.settings-retention': 'Retention', 'nav.item.evaluation': 'Historical evaluation', 'nav.item.evaluation-candidates': 'Evaluated candidates', 'nav.item.migrations': 'Migration comparison',
   'nav.titulo.recommendations': 'Actions · To decide', 'nav.titulo.interventions': 'Actions', 'nav.titulo.confianza': 'Data and trust', 'nav.titulo.analysis': 'Conversation analysis',
   'nav.titulo.settings-notifications': 'Alert preferences', 'nav.titulo.settings-retention': 'Retention and deletion',

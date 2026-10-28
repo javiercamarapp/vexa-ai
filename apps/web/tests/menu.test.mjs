@@ -4,9 +4,9 @@ import {MENU, menuVisible, itemActivo, tituloDePantalla, todosLosItems, cerrados
 const etiquetas = (acceso) => menuVisible(acceso).map((e) => e.etiqueta);
 const hrefs = (acceso) => menuVisible(acceso).flatMap((e) => (e.tipo === 'grupo' ? e.items : [e]).map((i) => i.href));
 
-test('8 espacios en el orden de la historia (ver, entender, decidir, confiar) + Interno solo para plataforma', () => {
-  assert.deepEqual(etiquetas({role: 'owner'}), ['Hoy', 'Pregúntale a tus datos', 'Dinero', 'Clientes y problemas', 'Operación', 'Acciones', 'Datos y confianza', 'Administración']);
-  assert.deepEqual(etiquetas({role: 'owner', interno: true}), ['Hoy', 'Pregúntale a tus datos', 'Dinero', 'Clientes y problemas', 'Operación', 'Acciones', 'Datos y confianza', 'Administración', 'Interno']);
+test('8 espacios + Avisos propios en el orden de la historia (ver, entender, decidir, confiar) + Interno solo para plataforma', () => {
+  assert.deepEqual(etiquetas({role: 'owner'}), ['Hoy', 'Pregúntale a tus datos', 'Dinero', 'Clientes y problemas', 'Operación', 'Acciones', 'Datos y confianza', 'Avisos', 'Administración']);
+  assert.deepEqual(etiquetas({role: 'owner', interno: true}), ['Hoy', 'Pregúntale a tus datos', 'Dinero', 'Clientes y problemas', 'Operación', 'Acciones', 'Datos y confianza', 'Avisos', 'Administración', 'Interno']);
 });
 test('Brief y Recomendaciones ya no son entradas de primer nivel: Brief se absorbe en Hoy, Recomendaciones vive en Acciones > Por decidir', () => {
   assert.ok(!etiquetas({role: 'owner'}).some((e) => ['Brief ejecutivo', 'Recomendaciones', 'Explorador', 'Resumen', 'Problemas'].includes(e)));
@@ -26,7 +26,7 @@ test('Interno solo con acceso de plataforma; un propietario cliente no lo ve', (
   assert.ok(!hrefs({role: 'owner'}).some((h) => ['/evaluation', '/evaluation/candidates', '/migrations'].includes(h)));
   assert.deepEqual(menuVisible({role: 'viewer', interno: true}).find((e) => e.etiqueta === 'Interno').items.map((i) => i.href), ['/evaluation', '/evaluation/candidates', '/migrations']);
 });
-test('Administración solo propietarios; Dinero solo propietario y analista', () => {
+test('Administración solo propietarios (Equipo, Entrega de avisos, Retención); Dinero solo propietario y analista', () => {
   for (const role of ['analyst', 'operator', 'viewer', undefined]) assert.ok(!etiquetas({role}).includes('Administración'), String(role));
   assert.ok(etiquetas({role: 'owner'}).includes('Administración'));
   for (const role of ['owner', 'analyst']) assert.ok(hrefs({role}).includes('/economics') && hrefs({role}).includes('/cfo') && hrefs({role}).includes('/refunds') && hrefs({role}).includes('/gaps'));
@@ -43,7 +43,7 @@ test('ítem activo: /jobs/:id -> Importaciones, /analysis/:id -> Análisis, /pro
   assert.equal(act('/jobs/abc'), '/imports'); assert.equal(act('/jobs/setup'), '/imports'); assert.equal(act('/imports'), '/imports');
   assert.equal(act('/analysis/xyz'), '/analysis'); assert.equal(act('/problems/manage'), '/problems'); assert.equal(act('/problems/p1'), '/problems');
   assert.equal(act('/evaluation/candidates'), '/evaluation/candidates'); assert.equal(act('/evaluation'), '/evaluation');
-  assert.equal(act('/notifications/push'), '/settings/notifications'); assert.equal(act('/settings/notification-delivery'), '/settings/notifications');
+  assert.equal(act('/notifications/push'), '/settings/notifications'); assert.equal(act('/settings/notification-delivery'), '/settings/notification-delivery');
   assert.equal(itemActivo('/jobs/abc').grupo, 'datos');
   assert.equal(itemActivo('/notifications'), null); assert.equal(itemActivo('/ruta-rara'), null);
 });
@@ -78,4 +78,21 @@ test('Operación (Mapa de problemas, Carga y SLA): solo propietario y analista; 
   for (const role of ['owner', 'analyst']) assert.ok(hrefs({role}).includes('/map') && hrefs({role}).includes('/workload'));
   for (const role of ['operator', 'viewer', undefined]) assert.ok(!hrefs({role}).includes('/map') && !hrefs({role}).includes('/workload'));
   assert.equal(itemActivo('/map')?.item.href, '/map'); assert.equal(tituloDePantalla('/workload'), 'Carga y SLA');
+});
+
+test('Avisos propios: los 4 roles lo ven fuera de Administración; sin rol no; la política de entrega sigue siendo solo del propietario', () => {
+  for (const role of ['owner', 'analyst', 'operator', 'viewer']) {
+    assert.ok(hrefs({role}).includes('/settings/notifications'), role);
+    assert.ok(etiquetas({role}).includes('Avisos'), role);
+    assert.equal(menuVisible({role}).find((e) => e.etiqueta === 'Avisos').tipo, 'item', 'Avisos es un ítem propio, no cuelga de Administración');
+  }
+  assert.ok(!hrefs({role: undefined}).includes('/settings/notifications'));
+  const admin = MENU.find((e) => e.clave === 'administracion');
+  assert.deepEqual(admin.items.map((i) => i.href), ['/settings/team', '/settings/notification-delivery', '/settings/retention']);
+  for (const role of ['analyst', 'operator', 'viewer']) assert.ok(!hrefs({role}).includes('/settings/notification-delivery') && !hrefs({role}).includes('/settings/team'), role);
+});
+test('los roles de Avisos salen de la capacidad notify del servidor, no de una copia', async () => {
+  const {DATABASE_ACTION_ROLES} = await import('@vexa/platform/capabilities');
+  const item = MENU.find((e) => e.href === '/settings/notifications');
+  assert.deepEqual([...item.roles].sort(), [...DATABASE_ACTION_ROLES.notify].sort());
 });

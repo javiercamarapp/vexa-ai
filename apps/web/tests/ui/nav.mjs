@@ -77,10 +77,10 @@ for(const [w,h] of [[375,812],[768,1024],[1440,900]]){
    await shot(page,'menu');
   }
   await page.close(); }
- for(const [route,activo] of [['/jobs/00000000-0000-4000-8000-000000000001','Importaciones'],['/problems/manage','Problemas'],['/analysis','Análisis'],['/economics','Preparar'],['/settings/notification-delivery','Preferencias de avisos']]){
+ for(const [route,activo] of [['/jobs/00000000-0000-4000-8000-000000000001','Importaciones'],['/problems/manage','Problemas'],['/analysis','Análisis'],['/economics','Preparar'],['/settings/notification-delivery','Entrega de avisos']]){
   const page=await open(route);if(w<768){await page.getByRole('button',{name:/^(Abrir menú|Más opciones de navegación)$/}).last().click();await page.waitForTimeout(300);}
   const root=w<768?page.locator('.mobile-sidebar'):page.locator('.workspace-sidebar');const cur=await root.locator('nav a[aria-current=page]').allInnerTexts();
-  check(cur.length===1&&cur[0].trim()===(activo==='Preferencias de avisos'?'Avisos':activo)||(route.startsWith('/settings')&&cur.length===1),`${route}@${w}: ítem activo ${JSON.stringify(cur)} != ${activo}`);
+  check(cur.length===1&&cur[0].trim()===activo||(route.startsWith('/settings')&&cur.length===1),`${route}@${w}: ítem activo ${JSON.stringify(cur)} != ${activo}`);
   if(route==='/problems/manage'){check(await page.locator('.tabs a[aria-current=page]').innerText()==='Gestionar','pestaña Gestionar no activa');check(await page.locator('.tabs a').count()===2,'faltan las pestañas de Problemas');}
   await page.close();
  }

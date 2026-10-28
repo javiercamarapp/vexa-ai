@@ -2,8 +2,8 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {useJson} from '../ui/use-json';
-import {useT, useIdioma} from '../i18n/proveedor';
-import type {Traductor, Clave} from '../../lib/i18n';
+import {useT} from '../i18n/proveedor';
+import type {Clave} from '../../lib/i18n';
 import {useAcceso} from '../workspace/access';
 import {Refresh} from '../ui/button';
 import {CtlLink} from '../agente/ctl';
@@ -47,7 +47,7 @@ function UsoDelMes({p}: {p: Presupuesto | 'error' | null}) {
 
 /** «Modo copiloto»: el shell de «Pregúntale a tus datos» con un briefing estructurado del área como primer bloque. Ver docs/COPILOTO-NEGOCIO.md. */
 export function CopilotoNegocio({modo: clave, organization, roleOverride, query = ''}: {modo: keyof typeof MODOS | string; organization?: string; roleOverride?: string; query?: string}) {
-  const t = useT(), idioma = useIdioma(), modo = MODOS[clave as keyof typeof MODOS], tituloModo = (['cfo', 'refunds', 'general'].includes(modo.clave) ? t(('cop.modo.' + modo.clave) as Clave) : modo.titulo), {role} = useAcceso(), permitido = puedeUsarModo(modo, roleOverride ?? role);
+  const t = useT(), modo = MODOS[clave as keyof typeof MODOS], tituloModo = (['cfo', 'refunds', 'general'].includes(modo.clave) ? t(('cop.modo.' + modo.clave) as Clave) : modo.titulo), {role} = useAcceso(), permitido = puedeUsarModo(modo, roleOverride ?? role);
   const pathname = usePathname(), router = useRouter(), sp = useSearchParams(), esCfo = modo.consulta === 'cfo';
   const [estado, setEstado] = useState<Estado>({kind: 'cargando'}), [intento, setIntento] = useState(0), [presupuesto, setPresupuesto] = useState<Presupuesto | 'error' | null>(null), [sinAccesoMotor, setSinAccesoMotor] = useState(false), [verInforme, setVerInforme] = useState(false);
   const rep = useJson<Informe>(permitido && esCfo && modo.endpointInforme ? modo.endpointInforme + query : null, acepta);

@@ -1,5 +1,6 @@
 'use client';
 import {ConMarca} from '../ui/brand-mark';
+import {useT} from '../i18n/proveedor';
 import type {ReactNode} from 'react';
 import {color} from '../ui/mini-charts';
 import './dinero.css';
@@ -10,13 +11,15 @@ export function Fila({split,children}:{split:'8-4'|'6-6'|'4-4-4'|'3-3-3-3'|'12';
 const cat=(c:number)=>({['--cat' as string]:`var(--chart-${((c-1)%8)+1})`});
 /** Chip de variación con signo real; nulo = «sin comparar» (nunca 0). */
 export function Delta({p,sufijo}:{p:number|null|undefined;sufijo?:string}){
- if(p===null||p===undefined||!Number.isFinite(p))return <span className="dg-delta" title="Sin dos meses completos y comparables">sin comparar</span>;
+ const tr=useT();
+ if(p===null||p===undefined||!Number.isFinite(p))return <span className="dg-delta" title={tr('dinero.sinDosMeses')}>{tr('dinero.sinComparar')}</span>;
  const t=p>0.05?'up':p<-0.05?'down':'flat',txt=(p>0?'+':p<0?'−':'')+Math.abs(p).toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})+' %';
  return <span className="dg-delta" data-t={t}>{txt}{sufijo?' '+sufijo:''}</span>;
 }
 /** Barra fina de porcentaje (0-100) en el color de la métrica, para la nota de un KPI sin serie. */
 export function MiniPct({p,c,label}:{p:number|null;c:number;label:string}){
- if(p===null||!Number.isFinite(p))return <span className="dg-mini" role="img" aria-label={label+': sin dato'}/>;
+ const tr=useT();
+ if(p===null||!Number.isFinite(p))return <span className="dg-mini" role="img" aria-label={label+': '+tr('dinero.sinDato')}/>;
  return <span className="dg-mini" style={cat(c)} role="img" aria-label={label}><i style={{width:Math.max(1.5,Math.min(100,p))+'%'}}/></span>;
 }
 export type ItemBarra={key:string;etiqueta:ReactNode;sub?:ReactNode;valor:number|null;texto:ReactNode;sub2?:ReactNode;c?:number;estado?:'parcial';marca?:number|null;/** clave/nombre de integración: antepone su logo a la etiqueta */integracion?:string};

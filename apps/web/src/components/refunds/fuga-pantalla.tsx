@@ -1,4 +1,5 @@
 'use client';
+import {useT} from '../i18n/proveedor';
 import {RovaqCargando} from '../rovaq-cargando';
 import {useState} from 'react';
 import {useSearchParams} from 'next/navigation';
@@ -29,7 +30,7 @@ export function bajar(a:Archivo){
 
 /** Pantalla «Fuga de reembolsos»: titular del periodo, KPI en color, Pareto top 10 con tabla, expediente por SKU (qué se sabe | qué no se sabe), Tracker, contacto repetido, qué cambió y estimador con supuestos. */
 export function FugaPantalla({organization,embebido=false}:{organization?:string;/** Dentro del copiloto de negocio: sin PageHeader del espacio de trabajo; el h1 es el titular de la pantalla. */embebido?:boolean}){
- const sp=useSearchParams(),f=useFuga(endpointFuga(sp?.toString()));
+ const tx=useT(),sp=useSearchParams(),f=useFuga(endpointFuga(sp?.toString()));
  const per=f.data?periodoDelTitular(f.data):null;
  const [sel,setSel]=useState<string>(''),[aviso,setAviso]=useState('');
  const v=f.data;
@@ -37,62 +38,62 @@ export function FugaPantalla({organization,embebido=false}:{organization?:string
  const skuSel=sel&&top.some(r=>r.sku===sel)?sel:top[0]?.sku??'';
  const paquete=(sku:string)=>{
   if(!v)return;const p=paqueteEvidencia(v,sku);
-  if(!p){setAviso('No se pudo armar el paquete de este SKU.');return;}
+  if(!p){setAviso(tx('fuga.noPaquete'));return;}
   bajar(p.html);setTimeout(()=>bajar(p.csv),400);
-  setAviso(`Paquete de ${sku} descargado en tu equipo: ${p.html.nombre} y ${p.csv.nombre}. No se envió nada.`);
+  setAviso(tx('fuga.paqueteDesc',{sku,html:p.html.nombre,csv:p.csv.nombre}));
  };
- const lista=()=>{if(!v)return;const l=listaWalmart(v);bajar(l);setAviso(`Lista descargada: ${num(l.total)} SKUs de Walmart (${l.nombre}). No se envió nada.`);};
- const cola=()=>{if(!v)return;const c=colaVencidos(v);bajar(c);setAviso(`Cola descargada: ${num(c.total)} solicitudes (${c.nombre}). No se envió nada.`);};
+ const lista=()=>{if(!v)return;const l=listaWalmart(v);bajar(l);setAviso(tx('fuga.listaDesc',{n:num(l.total),nombre:l.nombre}));};
+ const cola=()=>{if(!v)return;const c=colaVencidos(v);bajar(c);setAviso(tx('fuga.colaDesc',{n:num(c.total),nombre:c.nombre}));};
  const t=v?.titular.status==='ok'?v.titular:null,tr=v?.tracker.status==='ok'?v.tracker:null,cr=v?.contactoRepetido.status==='ok'?v.contactoRepetido:null;
  const big=(m:string)=>Number(BigInt(m)/100n);
  const negMonto=tr?(tr.montoPorEstado.vencido??0)+(tr.montoPorEstado.no_reembolsable??0)+(tr.montoPorEstado.rechazado??0):0;
  const kpis:Kpi[]=v?[
-  {label:'Dinero devuelto (periodo)',c:2,value:t?corto(big(t.usdBrutoMinor)):'—',spark:serieReembolsos(v),note:t?<><MiniPct c={2} p={t.usdBrutoMinor!=='0'?big(t.usdNetoMinor)*100/Math.max(1,big(t.usdBrutoMinor)):null} label="Parte sin reembolsos cancelados"/><span>Sin cancelados: {usd(t.usdNetoMinor)}</span></>:'No disponible ahora'},
-  {label:'Reembolsos',c:2,value:t?num(t.n):'—',note:t?<><MiniPct c={2} p={t.n?(t.n-t.sinMonto)*100/t.n:null} label="Reembolsos con monto"/><span>{num(t.sinMonto)} sin monto (Amazon): cuentan, no suman</span></>:'No disponible ahora'},
-  {label:'Dinero atorado',c:4,value:tr?corto(negMonto/100):'—',note:tr?<><MiniPct c={4} p={tr.filasReembolsos?tr.negados*100/tr.filasReembolsos:null} label="Solicitudes negadas o vencidas"/><span>{num(tr.negados)} de {num(tr.filasReembolsos)} solicitudes sin reembolsar</span></>:'Sin Tracker cargado'},
-  {label:'Repetición de contacto',c:7,value:cr?pct(cr.pctDosOMas):'—',note:cr?<><MiniPct c={7} p={cr.pctDosOMas} label="Contactos que escriben 2 o más veces"/><span>{num(cr.contactosDosOMas90)} de {num(cr.contactos)} contactos en 90 días</span></>:'No calculado todavía'},
+  {label:tx('fuga.kDevuelto'),c:2,value:t?corto(big(t.usdBrutoMinor)):'—',spark:serieReembolsos(v),note:t?<><MiniPct c={2} p={t.usdBrutoMinor!=='0'?big(t.usdNetoMinor)*100/Math.max(1,big(t.usdBrutoMinor)):null} label={tx('fuga.parteSinCancel')}/><span>{tx('fuga.sinCancelados',{x:usd(t.usdNetoMinor)})}</span></>:tx('fuga.noDisp')},
+  {label:tx('fuga.kReembolsos'),c:2,value:t?num(t.n):'—',note:t?<><MiniPct c={2} p={t.n?(t.n-t.sinMonto)*100/t.n:null} label={tx('fuga.reembConMonto')}/><span>{tx('fuga.sinMontoAmazon',{n:num(t.sinMonto)})}</span></>:tx('fuga.noDisp')},
+  {label:tx('fuga.kAtorado'),c:4,value:tr?corto(negMonto/100):'—',note:tr?<><MiniPct c={4} p={tr.filasReembolsos?tr.negados*100/tr.filasReembolsos:null} label={tx('fuga.negadasAria')}/><span>{tx('fuga.solSinReemb',{a:num(tr.negados),b:num(tr.filasReembolsos)})}</span></>:tx('fuga.sinTracker')},
+  {label:tx('fuga.kRepeticion'),c:7,value:cr?pct(cr.pctDosOMas):'—',note:cr?<><MiniPct c={7} p={cr.pctDosOMas} label={tx('fuga.contactosAria')}/><span>{tx('fuga.contactos90',{a:num(cr.contactosDosOMas90),b:num(cr.contactos)})}</span></>:tx('fuga.noCalculado')},
  ]:[];
- const titular=v&&t&&per?`${usd(t.usdBrutoMinor)} devueltos en ${per.etiqueta.charAt(0).toLowerCase()+per.etiqueta.slice(1)}${fraseConcentracion(v)?'. '+fraseConcentracion(v):'.'}`:null;
- const acciones=v&&<><Button variant="primary" icon={<Download/>} disabled={!skuSel} onClick={()=>paquete(skuSel)}>Generar paquete</Button>
-  <Popover label="Más archivos" align="end" width={280} triggerClassName="btn btn-secondary" trigger={<><Download/><span className="btn-label">Exportar</span></>}>
+ const titular=v&&t&&per?tx('fuga.titular',{usd:usd(t.usdBrutoMinor),periodo:per.etiqueta.charAt(0).toLowerCase()+per.etiqueta.slice(1),frase:fraseConcentracion(v)?'. '+fraseConcentracion(v):'.'}):null;
+ const acciones=v&&<><Button variant="primary" icon={<Download/>} disabled={!skuSel} onClick={()=>paquete(skuSel)}>{tx('fuga.generarPaquete')}</Button>
+  <Popover label={tx('fuga.masArchivos')} align="end" width={280} triggerClassName="btn btn-secondary" trigger={<><Download/><span className="btn-label">{tx('fuga.exportar')}</span></>}>
    <MenuList>
-    <li><Button size="sm" icon={<Download/>} disabled={v.skus.status!=='ok'} onClick={lista}>SKUs de Walmart (CSV)</Button></li>
-    <li><Button size="sm" icon={<Download/>} disabled={!tr} onClick={cola}>Cola de vencidos o negados (CSV)</Button></li></MenuList></Popover></>;
- const cabecera=embebido?<header className="fg-embebido-head"><p className="cn-eyebrow">Dinero · tu copiloto de reembolsos</p><h1 className="cn-titular">Fuga de reembolsos</h1><p className="cn-fuente">Dónde se concentra el dinero devuelto y qué llevarte al proveedor o a Walmart.</p></header>
-  :<PageHeader eyebrow={'Dinero'+(organization?' · datos sintéticos de demostración':'')} title="Fuga de reembolsos" description="Dónde se concentra el dinero devuelto, cuánto está atorado y qué llevarte a la reunión." actions={acciones}/>;
+    <li><Button size="sm" icon={<Download/>} disabled={v.skus.status!=='ok'} onClick={lista}>{tx('fuga.skusWalmart')}</Button></li>
+    <li><Button size="sm" icon={<Download/>} disabled={!tr} onClick={cola}>{tx('fuga.colaVencidos')}</Button></li></MenuList></Popover></>;
+ const cabecera=embebido?<header className="fg-embebido-head"><p className="cn-eyebrow">{tx('fuga.embEyebrow')}</p><h1 className="cn-titular">{tx('fuga.titulo')}</h1><p className="cn-fuente">{tx('fuga.embDesc')}</p></header>
+  :<PageHeader eyebrow={tx('fuga.eyebrow')+(organization?tx('fuga.sintetico'):'')} title={tx('fuga.titulo')} description={tx('fuga.desc')} actions={acciones}/>;
  if(!v&&f.busy)return <RovaqCargando mensaje=""/>;
  return <div className="dg-page">
   {cabecera}
-  {!v&&f.busy&&<Card><Loading message={f.segundos<8?'Calculando fuga…':`Calculando… ${f.segundos} s. Está tardando más de lo normal.`}/></Card>}
-  {!v&&!f.busy&&f.error&&<Card><ErrorState title={f.error.code==='acceso'?'Tu rol no tiene acceso a este panel':'No disponible ahora'} body={f.error.texto} onRetry={f.error.code==='acceso'?undefined:()=>f.reload()}/></Card>}
+  {!v&&f.busy&&<Card><Loading message={f.segundos<8?tx('fuga.calculando'):tx('fuga.calculandoLento',{s:f.segundos})}/></Card>}
+  {!v&&!f.busy&&f.error&&<Card><ErrorState title={f.error.code==='acceso'?tx('vista.sinAcceso'):tx('vista.noDisponible')} body={f.error.texto} onRetry={f.error.code==='acceso'?undefined:()=>f.reload()}/></Card>}
   {v&&<>
-   {v.titular.status==='unavailable'?<NoDisponible onRetry={()=>f.reload()}/>:titular?<p className="dg-titular">{titular}</p>:<Vacio>Sin libro de reembolsos cargado para este periodo. Carga el export de Amazon o Walmart para ver este número.</Vacio>}
-   <KpiStrip items={kpis} label="Indicadores de fuga de reembolsos"/>
+   {v.titular.status==='unavailable'?<NoDisponible onRetry={()=>f.reload()}/>:titular?<p className="dg-titular">{titular}</p>:<Vacio>{tx('fuga.sinLibro')}</Vacio>}
+   <KpiStrip items={kpis} label={tx('fuga.kpisAria')}/>
    <Fila split="8-4">
-    <Card title="Dónde se fuga: los 10 SKUs" description="Dinero devuelto por SKU base, con % acumulado" actions={<KindBadge kind="observed"/>}><Pareto v={v} onReintentar={()=>f.reload()}/></Card>
-    <Card title="Intensidad por canal" description="Reembolsos entre líneas vendidas, por mes" actions={<KindBadge kind="observed"/>}><IntensidadCanales v={v} onReintentar={()=>f.reload()}/></Card>
+    <Card title={tx('fuga.cDonde')} description={tx('fuga.cDondeD')} actions={<KindBadge kind="observed"/>}><Pareto v={v} onReintentar={()=>f.reload()}/></Card>
+    <Card title={tx('fuga.cIntensidad')} description={tx('fuga.cIntensidadD')} actions={<KindBadge kind="observed"/>}><IntensidadCanales v={v} onReintentar={()=>f.reload()}/></Card>
    </Fila>
-   <Card title="Top 10 en detalle" description="Elige un SKU para abrir su expediente" actions={<KindBadge kind="observed"/>}><TablaTop v={v} sel={skuSel} onSel={setSel} onPaquete={paquete}/></Card>
+   <Card title={tx('fuga.cTop')} description={tx('fuga.cTopD')} actions={<KindBadge kind="observed"/>}><TablaTop v={v} sel={skuSel} onSel={setSel} onPaquete={paquete}/></Card>
    {skuSel&&<Fila split="6-6">
-    <Card title={`Expediente de ${skuSel}`} description="Lo que se sabe y lo que no; nada se envía a nadie" actions={<KindBadge kind="observed"/>}><Expediente v={v} sku={skuSel} onPaquete={paquete}/></Card>
-    <Card title="¿Cuánto podrías recuperar?" description="Estimador con candado: tú tecleas los supuestos" actions={<KindBadge kind="estimated"/>}><Estimador v={v}/></Card>
+    <Card title={tx('fuga.cExpediente',{sku:skuSel})} description={tx('fuga.cExpedienteD')} actions={<KindBadge kind="observed"/>}><Expediente v={v} sku={skuSel} onPaquete={paquete}/></Card>
+    <Card title={tx('fuga.cRecuperar')} description={tx('fuga.cRecuperarD')} actions={<KindBadge kind="estimated"/>}><Estimador v={v}/></Card>
    </Fila>}
    <Fila split="4-4-4">
-    <Card title="Dinero negado o atorado" description="Solicitudes del Tracker por estado" actions={<KindBadge kind="observed"/>}><PanelTracker v={v} onCola={cola} onReintentar={()=>f.reload()}/></Card>
-    <Card title="Contacto repetido" description="Clientes que vuelven a escribir en 90 días" actions={<KindBadge kind="observed"/>}><PanelRepetido v={v} onReintentar={()=>f.reload()}/></Card>
-    <Card title="Qué cambió" description="Solo meses completos y comparables" actions={<KindBadge kind="observed"/>}><PanelCambios v={v}/></Card>
+    <Card title={tx('fuga.cNegado')} description={tx('fuga.cNegadoD')} actions={<KindBadge kind="observed"/>}><PanelTracker v={v} onCola={cola} onReintentar={()=>f.reload()}/></Card>
+    <Card title={tx('fuga.cRepetido')} description={tx('fuga.cRepetidoD')} actions={<KindBadge kind="observed"/>}><PanelRepetido v={v} onReintentar={()=>f.reload()}/></Card>
+    <Card title={tx('fuga.cCambio')} description={tx('fuga.cCambioD')} actions={<KindBadge kind="observed"/>}><PanelCambios v={v}/></Card>
    </Fila>
-   <Card title="Cómo se calculó" description={`Corte: ${v.scope.dateStart||v.scope.dateEnd?`${v.scope.dateStart??'inicio'} a ${v.scope.dateEnd??'hoy'}`:'todo lo cargado'} · consulta del ${v.generatedAt.slice(0,10)}`}>
+   <Card title={tx('fuga.cComo')} description={tx('fuga.corte',{rango:v.scope.dateStart||v.scope.dateEnd?tx('fuga.rangoDe',{a:v.scope.dateStart??tx('fuga.inicio'),b:v.scope.dateEnd??tx('fuga.hoy')}):tx('fuga.todoCargado'),fecha:v.generatedAt.slice(0,10)})}>
     <ul style={{margin:0,paddingLeft:18,fontSize:13,lineHeight:1.55,color:'var(--ui-secondary)',columns:2,columnGap:32}}>
-     {per&&<li>Periodo: {per.etiqueta}{per.ventanas.length>0?` · Ventana por canal: ${per.ventanas.join(' · ')}`:''}.</li>}
+     {per&&<li>{tx('fuga.periodoL',{p:per.etiqueta})}{per.ventanas.length>0?tx('fuga.ventanaCanal',{v:per.ventanas.join(' · ')}):''}.</li>}
      {per?.nota&&<li>{per.nota}</li>}
      {per?.acumulado&&<li>{per.acumulado.texto}</li>}
-     {per?.acumuladoOmitido&&<li>El acumulado de todo el libro no se muestra junto a un periodo elegido. <a href="/refunds">Ver todo el libro</a></li>}
+     {per?.acumuladoOmitido&&<li>{tx('fuga.acumOmitido')} <a href="/refunds">{tx('fuga.verTodoLibro')}</a></li>}
      <li>{lineaCobertura(v)}</li>
      <li>{lineaVentanas(v)}</li>
      {proveniencia(v).map((x,i)=><li key={i}>{x}</li>)}
-     <li>Dinero devuelto: reembolsos del libro, última revisión de cada uno, en USD. «Bruto» incluye reembolsos cancelados. CAD y MXN nunca se suman.</li>
-     <li>Lo que no se puede calcular hoy: tasa de reembolso por SKU o cohorte, margen o pérdida neta, causa raíz. Faltan cantidad por línea, un identificador común de pedido en Walmart y costo por SKU.</li></ul>
+     <li>{tx('fuga.dineroDevuelto')}</li>
+     <li>{tx('fuga.noCalcula')}</li></ul>
     <p className="dg-nota" role="status" aria-live="polite">{aviso}</p></Card>
   </>}
  </div>;

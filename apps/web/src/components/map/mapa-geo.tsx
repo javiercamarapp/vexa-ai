@@ -1,4 +1,5 @@
 'use client';
+import {useT} from '../i18n/proveedor';
 import {RovaqCargando} from '../rovaq-cargando';
 // Mapa con geometrías reales (SVG puro, sin librerías, sin teselas, sin red). Cámara, entrada escalonada y vuelo adaptados del «Cerebro de ventas»
 // de Likida (repo propio, src/app/admin/mapa-prospectos/cerebro.tsx): cámara imperativa en un <g>, curva cubic-bezier(.22,1,.36,1), borde que se engrosa al elegir.
@@ -6,7 +7,7 @@ import {useCallback,useEffect,useId,useMemo,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
 import {useTipPosicion} from '../ui/use-tip-posicion';
 import type {KeyboardEvent,PointerEvent as RPointerEvent,ReactNode} from 'react';
-import {VISTA_PAIS,ZOOM_MAX,cabeEtiqueta,camaraParaRegion,limitarCamara,regionesPintadas,textoRegion,zoomEnPunto,type Camara,type GeoPais} from './mapa-modelo.mjs';
+import {VISTA_PAIS,ZOOM_MAX,cabeEtiqueta,camaraParaRegion,limitarCamara,regionesPintadas,zoomEnPunto,type Camara,type GeoPais} from './mapa-modelo.mjs';
 
 export type Mosaico={clave:string;nombre:string;n:number};
 type Pais='US'|'MX';
@@ -17,6 +18,8 @@ const reducido=()=>typeof window!=='undefined'&&window.matchMedia('(prefers-redu
 type Tip={clave:string;x:number;y:number};
 
 export function MapaGeo({pais,datos,max,total,nombres,seleccion,onElegir,etiqueta}:{pais:Pais;datos:Map<string,Mosaico>;max:number;total:number;nombres:Readonly<Record<string,string>>;seleccion:string|null;onElegir:(clave:string)=>void;etiqueta:string}){
+ const t=useT();
+ const textoRegion=(nombre:string,d:Mosaico|null|undefined,total:number)=>{if(!d||!(d.n>0))return t('mapa.sinDatoRegion',{nombre});const pc=total>0?' · '+String(Math.round((d.n*1000)/total)/10)+' %':'';return `${nombre}: ${d.n.toLocaleString('en-US')} ${d.n===1?t('mapa.caso'):t('mapa.casos')}${pc}`;};
  const uid=useId().replace(/[^a-zA-Z0-9]/g,''),idPunto=`mp-punto-${uid}`;
  const [cargado,setCargado]=useState<{pais:Pais;geo:GeoPais}|null>(null),[falloDe,setFalloDe]=useState<Pais|null>(null),[k,setK]=useState(1),[tip,setTip]=useState<Tip|null>(null),[ancho,setAncho]=useState(0);
  const caja=useRef<HTMLDivElement>(null),svg=useRef<SVGSVGElement>(null),g=useRef<SVGGElement>(null);
@@ -76,10 +79,10 @@ export function MapaGeo({pais,datos,max,total,nombres,seleccion,onElegir,etiquet
  const pxPorU=ancho?ancho/vb.w:0.5;
 
  return <div className="mp-lienzo" ref={caja}>
-  <div className="mp-zoom" role="group" aria-label="Acercar o alejar el mapa">
-   <button type="button" onClick={()=>zoom(1.6)} disabled={!geo||k>=ZOOM_MAX} aria-label="Acercar">+</button>
-   <button type="button" onClick={()=>zoom(1/1.6)} disabled={!geo||k<=1} aria-label="Alejar">−</button>
-   <button type="button" onClick={()=>mover({x:0,y:0,k:1},true)} disabled={!geo||k<=1} aria-label="Ver todo el país">⤢</button>
+  <div className="mp-zoom" role="group" aria-label={t('mapa.zoomGrupo')}>
+   <button type="button" onClick={()=>zoom(1.6)} disabled={!geo||k>=ZOOM_MAX} aria-label={t('mapa.acercar')}>+</button>
+   <button type="button" onClick={()=>zoom(1/1.6)} disabled={!geo||k<=1} aria-label={t('mapa.alejar')}>−</button>
+   <button type="button" onClick={()=>mover({x:0,y:0,k:1},true)} disabled={!geo||k<=1} aria-label={t('mapa.verTodo')}>⤢</button>
   </div>
   <svg ref={svg} className="mp-svg" viewBox={`0 0 ${vb.w} ${vb.h}`} role="group" aria-label={etiqueta} data-zoom={k>1?'on':'off'} data-listo={geo?'si':'no'}
    onPointerDown={abajo} onPointerMove={mueve} onPointerUp={suelta} onPointerCancel={suelta} onPointerLeave={()=>{setTip(null);}} onLostPointerCapture={suelta}>
@@ -98,7 +101,7 @@ export function MapaGeo({pais,datos,max,total,nombres,seleccion,onElegir,etiquet
      <text key={r.clave} x={r.cx} y={r.cy} className="mp-cod" data-paso={paso} style={{fontSize:`${12/(k*pxPorU)}px`}} textAnchor="middle" dominantBaseline="central" aria-hidden="true">{r.codigo}</text>)}
    </g>
   </svg>
-  {!geo&&<div className={'mp-carga'+(fallo?' mp-carga-fallo':'')} role="status">{fallo?'No se pudo cargar el mapa. La tabla de abajo tiene los mismos datos.':<RovaqCargando compacto mensaje="Cargando el mapa"/>}</div>}
+  {!geo&&<div className={'mp-carga'+(fallo?' mp-carga-fallo':'')} role="status">{fallo?t('mapa.falloMapa'):<RovaqCargando compacto mensaje={t('mapa.cargandoMapa')}/>}</div>}
   {tip&&tipReg&&typeof document!=='undefined'&&createPortal(<TipRegion ancla={()=>{const c=caja.current?.getBoundingClientRect();return c?{ax:c.left+tip.x,ay:c.top+tip.y,modo:'lado' as const,sep:14}:null;}}>{textoRegion(nombreDe(tipReg.r),tipReg.d,total)}</TipRegion>,document.body)}
  </div>;
 }

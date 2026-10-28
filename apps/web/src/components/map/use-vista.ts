@@ -1,5 +1,6 @@
 'use client';
 import {useCallback,useEffect,useRef,useState} from 'react';
+import {useT} from '../i18n/proveedor';
 import {fetchCupo} from '../../lib/workspace/cupo.mjs';
 import {debeReintentar,elegirDato,ESPERA_REINTENTO_MS} from '../../lib/workspace/reintento-vista.mjs';
 const dormir=(ms:number,signal?:AbortSignal)=>new Promise<void>(res=>{const t=setTimeout(res,ms);signal?.addEventListener('abort',()=>{clearTimeout(t);res();},{once:true});});
@@ -7,6 +8,7 @@ const dormir=(ms:number,signal?:AbortSignal)=>new Promise<void>(res=>{const t=se
  *  Resiliencia (auditoría 24-oct, A3): un fallo del servidor/red en la 1.ª carga se reintenta UNA vez en silencio antes de mostrar error, y si la respuesta llega con
  *  partes «unavailable» (consulta acotada que excedió su tiempo) se reintenta UNA vez en segundo plano, sin spinner: lo bueno ya pintado no se pierde. */
 export function useVista<T>(endpoint:string,forma:(d:unknown)=>boolean){
+ const t=useT();
  const [data,setData]=useState<T|null>(null),[error,setError]=useState<{code:'acceso'|'red'|'forma';texto:string}|null>(null),[busy,setBusy]=useState(true),[segundos,setSegundos]=useState(0);
  const tick=useRef<ReturnType<typeof setInterval>|null>(null),actual=useRef<T|null>(null);
  const pedir=useCallback(async(signal?:AbortSignal)=>{
@@ -29,14 +31,14 @@ export function useVista<T>(endpoint:string,forma:(d:unknown)=>boolean){
   }catch(e){
    if(signal?.aborted)return;
    const code=(e as {code?:string}).code;
-   actual.current=null;setData(null);setError(code==='acceso'?{code:'acceso',texto:'Tu rol no tiene acceso a este panel. Lo ven propietarios y analistas.'}:{code:code==='forma'?'forma':'red',texto:'No disponible ahora. No significa que no haya casos: reintenta en un momento.'});
+   actual.current=null;setData(null);setError(code==='acceso'?{code:'acceso',texto:t('vista.errAcceso')}:{code:code==='forma'?'forma':'red',texto:t('vista.errRed')});
   }finally{if(tick.current){clearInterval(tick.current);tick.current=null;}if(!signal?.aborted)setBusy(false);}
   // Segundo intento en segundo plano si alguna parte llegó caída: sin spinner ni mensaje; solo reemplaza si no es peor.
   if(pintado&&!signal?.aborted&&debeReintentar(pintado,0)){
    await dormir(ESPERA_REINTENTO_MS,signal);if(signal?.aborted)return;
    try{const nuevo=await pedir(signal);if(!signal?.aborted){const elegido=elegirDato(actual.current,nuevo);actual.current=elegido;setData(elegido);}}catch{/* se queda lo ya pintado */}
   }
- },[pedir]);
+ },[pedir,t]);
  useEffect(()=>{const c=new AbortController();void Promise.resolve().then(()=>load(c.signal));const again=()=>void load();window.addEventListener('vexa:refresh',again);return()=>{c.abort();window.removeEventListener('vexa:refresh',again);if(tick.current)clearInterval(tick.current);};},[load]);
  return {data,error,busy,segundos,reload:()=>load()};
 }

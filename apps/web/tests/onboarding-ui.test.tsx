@@ -158,7 +158,7 @@ test('checklist: máximo 4 visibles y el resto plegado (con una lista simulada m
   const c=calcularChecklist('propietario',normalizarSenales(TODO_FALSO),{maxVisibles:2});assert.equal(c.visibles.length,2);assert.equal(c.plegados.length,2);
 });
 test('estadoDePaso: el paso de MFA/push nunca existe como «hecho» (no hay tal paso en el catálogo) y el dinero no muestra cifra de conciliación',()=>{
-  assert.ok(!CATALOGO.some(p=>/mfa|push/i.test(p.id)),'sin pasos de MFA ni push en F2');
+  assert.ok(!CATALOGO.some(p=>/mfa|push/i.test(p.id)&&p.superficie!=='setup'),'MFA y push solo existen en el asistente /setup (F4), nunca en el tour ni en el checklist');
   const corte=CATALOGO.find(p=>p.id==='propietario.corte')!;
   const r=estadoDePaso(corte,normalizarSenales({...TODO_FALSO,corte_publicado:true}));assert.equal(r.estado,'salvedad');
   for(const k of ['onb.check.concil'])for(const dic of [es,en])assert.doesNotMatch((dic as Record<string,string>)[k],/\d|%/,'sin cifra inventada');

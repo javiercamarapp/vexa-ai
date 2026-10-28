@@ -5,7 +5,7 @@
 import { pasosDe, PRERREQUISITOS } from './catalogo.mjs';
 
 export const MAX_VISIBLES = 4;
-export const CLAVES_SENALES = Object.freeze(['conexion_activa', 'conexion_con_problema', 'historial_importado', 'corte_publicado', 'equipo_invitado', 'accion_propuesta', 'hay_intervenciones', 'resultado_registrado']);
+export const CLAVES_SENALES = Object.freeze(['conexion_activa', 'conexion_con_problema', 'historial_importado', 'corte_publicado', 'equipo_invitado', 'accion_propuesta', 'hay_intervenciones', 'resultado_registrado', 'pedidos_cargados', 'pedidos_ligados']);
 
 /** Normaliza lo que llega de la red: solo booleanos conocidos; todo lo demás se ignora. */
 export function normalizarSenales(crudo) {
@@ -15,7 +15,7 @@ export function normalizarSenales(crudo) {
   return s;
 }
 
-const TERCERO_TEXTO = Object.freeze({ crm: 'onb.tercero.crm', correo: 'onb.tercero.correo', propietario: 'onb.tercero.propietario' });
+const TERCERO_TEXTO = Object.freeze({ crm: 'onb.tercero.crm', correo: 'onb.tercero.correo', propietario: 'onb.tercero.propietario', push: 'onb.tercero.push' });
 
 /**
  * Estado de un paso con prerrequisito.
@@ -31,6 +31,8 @@ export function estadoDePaso(paso, senales) {
   if (hecho) {
     // El dinero publicado nunca se presenta como conciliado mientras no haya un indicador barato y verificable de pedidos ligados.
     if (pre === 'corte_publicado') return { estado: 'salvedad', cuenta: true, esperaA: null, nota: 'onb.check.concil' };
+    // Que exista algún pedido ligado nunca es «conciliado»: la cobertura completa no se puede leer barato, así que siempre va con salvedad.
+    if (pre === 'pedidos_ligados') return { estado: 'salvedad', cuenta: true, esperaA: null, nota: 'onb.setup.conc.salvedad' };
     return { estado: 'hecho', cuenta: true, esperaA: null, nota: null };
   }
   if (pre === 'corte_publicado' && !senales.historial_importado && !senales.conexion_activa) return { estado: 'bloqueado', cuenta: true, esperaA: null, nota: 'onb.check.bloq.sinDatos' };

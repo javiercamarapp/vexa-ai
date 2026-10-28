@@ -14,6 +14,14 @@ export function clientIp(headers:{get(name:string):string|null}):string|null{
  const first=headers.get('x-forwarded-for')?.split(',')[0]?.trim();
  return first&&isIP(first)?first:null;
 }
+/** Cubo de límite: IPv4 exacta; IPv6 agrupada por /64 (un cliente recibe un /64 entero, así no puede fabricar miles de cubos). */
+export function ipBucket(ip:string):string{
+ if(!ip.includes(':'))return ip;
+ const mapped=/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i.exec(ip);if(mapped)return mapped[1];
+ const [head,tail]=ip.toLowerCase().split('::'),h=head?head.split(':'):[],t=tail===undefined?[]:tail?tail.split(':'):[];
+ const groups=tail===undefined?h:[...h,...Array<string>(Math.max(0,8-h.length-t.length)).fill('0'),...t];
+ return groups.slice(0,4).map(g=>g.replace(/^0+(?=.)/,'')).join(':')+'::/64';
+}
 // Process-local backpressure complements provider/edge limits; it is not a distributed quota.
 export function createEmailAdmission(now:()=>number=()=>performance.now()){
  const key=randomBytes(32),recent=new Map<string,number>(),perIp=new Map<string,{count:number;resetAt:number}>();let active=0,blockedUntil=0;
@@ -26,9 +34,13 @@ export function createEmailAdmission(now:()=>number=()=>performance.now()){
   if(active>=8)return {kind:'busy',retryAfterSeconds:10};
   // Límite por IP, separado del global: una sola IP no puede llenar el cupo de todos. Sin IP confiable no se limita (no hay un cubo «desconocido» compartido).
   if(ip){
-   const entry=perIp.get(ip);
+   ip=ipBucket(ip);const entry=perIp.get(ip);
    if(entry){if(entry.count>=IP_LIMIT)return {kind:'ip_limited',retryAfterSeconds:seconds(entry.resetAt-time)};entry.count++;}
-   else if(perIp.size<IP_TABLE_MAX)perIp.set(ip,{count:1,resetAt:time+IP_WINDOW_MS});
+   else{
+    // Tabla acotada: al llenarse se expulsa la entrada más antigua (orden de inserción) en vez de dejar de limitar.
+    if(perIp.size>=IP_TABLE_MAX)perIp.delete(perIp.keys().next().value as string);
+    perIp.set(ip,{count:1,resetAt:time+IP_WINDOW_MS});
+   }
   }
   const id=createHmac('sha256',key).update(email.trim().toLowerCase()).digest('hex');
   if(recent.has(id))return {kind:'duplicate'};

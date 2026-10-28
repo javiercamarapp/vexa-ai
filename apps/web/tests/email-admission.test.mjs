@@ -22,3 +22,14 @@ test('sin IP confiable no hay cubo compartido y la cabecera se interpreta por pr
  for(let i=0;i<20;i++){const r=a.admit(`SYN-${i}@example.invalid`,null);assert.equal(r.kind,'lease');r.lease.finish();}
  const h=v=>({get:n=>n==='x-forwarded-for'?v:null});
  assert.equal(clientIp(h('203.0.113.9, 10.0.0.1')),'203.0.113.9');assert.equal(clientIp(h('not-an-ip')),null);assert.equal(clientIp(h(null)),null);assert.equal(clientIp(h('2001:db8::1')),'2001:db8::1');});
+// R2-02: IPv6 por /64 y tabla acotada con expulsión (no deja de limitar al llenarse).
+import {ipBucket} from '../src/lib/email-auth/admission.ts';
+test('IPv6 se agrupa por /64 y un /64 completo comparte un solo cubo de 10 por minuto',()=>{let time=0;const a=createEmailAdmission(()=>time);
+ assert.equal(ipBucket('2001:db8:1:2:aaaa:bbbb:cccc:dddd'),ipBucket('2001:0db8:0001:0002::1'));assert.notEqual(ipBucket('2001:db8:1:2::1'),ipBucket('2001:db8:1:3::1'));
+ assert.equal(ipBucket('::ffff:203.0.113.9'),'203.0.113.9');assert.equal(ipBucket('203.0.113.9'),'203.0.113.9');
+ for(let i=0;i<10;i++){const r=a.admit(`SYN-${i}@example.invalid`,`2001:db8:1:2:${i.toString(16)}::${i+1}`);assert.equal(r.kind,'lease');r.lease.finish();}
+ assert.equal(a.admit('SYN-x@example.invalid','2001:db8:1:2:ffff::9').kind,'ip_limited');});
+test('tabla por IP llena: expulsa las más viejas y sigue limitando a IPs nuevas',()=>{let time=0;const a=createEmailAdmission(()=>time);
+ for(let i=0;i<4100;i++){const r=a.admit(`SYN-${i}@example.invalid`,`10.${i>>8&255}.${i&255}.1`);if(r.kind==='lease')r.lease.finish();if(i%200===199)time+=1000;}
+ const ip='198.51.100.77';let last;for(let i=0;i<12;i++){last=a.admit(`SYN-new-${i}@example.invalid`,ip);if(last.kind==='lease')last.lease.finish();}
+ assert.equal(last.kind,'ip_limited','una IP nueva con la tabla llena sigue limitada');});

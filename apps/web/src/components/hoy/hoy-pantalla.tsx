@@ -1,5 +1,5 @@
 'use client';
-import {useT} from '../i18n/proveedor';
+import {useT,useIdioma} from '../i18n/proveedor';
 import type {Clave} from '../../lib/i18n';
 import {RovaqCargando} from '../rovaq-cargando';
 import {useEffect,useMemo,useRef,useState} from 'react';
@@ -48,10 +48,10 @@ function Kpi({k,ctx,onRetry}:{k:KpiHoy;ctx:unknown;onRetry:()=>void}){
 
 /** «Hoy»: lo que pasa con el dinero y qué hacer ahora. Cada bloque falla por separado; nada se rellena con ceros. */
 export function HoyPantalla(){
- const sp=useSearchParams(),t=useT();
+ const sp=useSearchParams(),t=useT(),idioma=useIdioma();
  const fuga=useJson<FugaVista>(endpointFuga(sp?.toString()),acceptFuga),carga=useJson<Carga>('/api/workload',acceptCarga),cfo=useJson<Cfo>('/cfo/data/report',acceptCfo);
  const estado={fuga:estadoDe(fuga.data,fuga),carga:estadoDe(carga.data,carga),cfo:estadoDe(cfo.data?.status==='ok'?cfo.data:null,{...cfo,busy:cfo.busy&&!cfo.data})};
- const v=useMemo(()=>armarHoy({fuga:fuga.data,carga:carga.data,cfo:cfo.data,estado}),[fuga.data,carga.data,cfo.data,estado.fuga,estado.carga,estado.cfo]);// eslint-disable-line react-hooks/exhaustive-deps
+ const v=useMemo(()=>armarHoy({fuga:fuga.data,carga:carga.data,cfo:cfo.data,estado,idioma}),[fuga.data,carga.data,cfo.data,estado.fuga,estado.carga,estado.cfo,idioma]);// eslint-disable-line react-hooks/exhaustive-deps
  const [verPaquete,setVerPaquete]=useState(false),[pregunta,setPregunta]=useState<string|null>(null),respRef=useRef<HTMLDivElement>(null);
  const preguntar=(q:string)=>{setPregunta(q);setTimeout(()=>respRef.current?.scrollIntoView?.({block:'nearest',behavior:'smooth'}),60);};
  const recargar=()=>{fuga.reload();carga.reload();cfo.reload();window.dispatchEvent(new Event('vexa:refresh'));};

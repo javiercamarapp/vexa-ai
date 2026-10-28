@@ -14,13 +14,13 @@ export const ESTADO_TXT = Object.freeze({reembolsado: 'Reembolsado', vencido: 'M
 export const HOJA_TXT = Object.freeze({reembolsos: 'Reembolsos', garantiaHerramientas: 'Garantía de herramientas', garantiaPartes: 'Garantía de partes', etiquetas: 'Etiquetas de devolución'});
 
 /** centavos (string|number|bigint) -> «[omitido: dato de cliente]» (sin decimales) o con decimales. Misma función que Resumen, CFO y Brechas (lib/formato/es-mx.mjs). */
-export const usd = (minor, {decimals = false} = {}) => usdEs(minor, {decimales: decimals});
-export const num = n => entero(n);
-export const pct = p => pctEs(p);
+export const usd = (minor, {decimals = false, idioma} = {}) => usdEs(minor, {decimales: decimals, idioma});
+export const num = (n, idioma) => entero(n, typeof idioma === 'string' ? idioma : undefined);
+export const pct = (p, idioma) => pctEs(p, {idioma: typeof idioma === 'string' ? idioma : undefined});
 export const mesCorto = m => { const [y, mo] = String(m).split('-').map(Number); return MESES[mo - 1] ? `${MESES[mo - 1]} ${String(y).slice(2)}` : String(m); };
 export const mesLargo = m => { const [y, mo] = String(m).split('-').map(Number); return MESES[mo - 1] ? `${MESES[mo - 1]} ${y}` : String(m); };
-const diaLargo = diaEs;
-export const dia = diaLargo;
+export const dia = (iso, idioma) => diaEs(iso, typeof idioma === 'string' ? idioma : undefined);
+const diaLargo = dia;
 
 /** Frase de concentración por plantilla: «10 SKUs concentran el 59.3 % del dinero devuelto. Los 4 primeros son de Walmart (familias SKUP y SKUS).» */
 export function fraseConcentracion(v) {

@@ -2,16 +2,22 @@
 import {formatMinorUnits} from '../../metrics/money.mjs';
 
 export const money = (minor, currency, exponent = 2) => (minor === null || minor === undefined ? 'No disponible' : formatMinorUnits(String(minor), currency, exponent));
-export const int = n => (n === null || n === undefined ? 'No disponible' : new Intl.NumberFormat('es-MX').format(n));
-const oneDecimal = new Intl.NumberFormat('es-MX', {minimumFractionDigits: 1, maximumFractionDigits: 1});
-/** bps (entero, puntos base) -> «12.3 %». */
-export const pct = bps => (bps === null || bps === undefined ? 'No disponible' : oneDecimal.format(bps / 100) + ' %');
-export const signedPct = bps => (bps === null || bps === undefined ? 'No disponible' : (bps > 0 ? '+' : bps < 0 ? '−' : '') + oneDecimal.format(Math.abs(bps) / 100) + ' %');
+// `idioma` es opcional ('es' por omisión): solo cambia la presentación (meses, símbolo %, separadores), nunca el valor numérico.
+const LOC = {es: 'es-MX', en: 'en-US'};
+const loc = idioma => LOC[idioma] ?? LOC.es;
+const decimal1 = idioma => new Intl.NumberFormat(loc(idioma), {minimumFractionDigits: 1, maximumFractionDigits: 1});
+const pctSufijo = idioma => (idioma === 'en' ? '%' : ' %');
+const NO_DISPONIBLE = idioma => (idioma === 'en' ? 'Not available' : 'No disponible');
+export const int = (n, idioma) => (n === null || n === undefined ? NO_DISPONIBLE(idioma) : new Intl.NumberFormat(loc(idioma)).format(n));
+/** bps (entero, puntos base) -> «12.3 %» (en: «12.3%»). */
+export const pct = (bps, idioma) => (bps === null || bps === undefined ? NO_DISPONIBLE(idioma) : decimal1(idioma).format(bps / 100) + pctSufijo(idioma));
+export const signedPct = (bps, idioma) => (bps === null || bps === undefined ? NO_DISPONIBLE(idioma) : (bps > 0 ? '+' : bps < 0 ? '−' : '') + decimal1(idioma).format(Math.abs(bps) / 100) + pctSufijo(idioma));
 /** Diferencia de dos tasas en puntos porcentuales. */
-export const signedPp = bps => (bps === null || bps === undefined ? 'No disponible' : (bps > 0 ? '+' : bps < 0 ? '−' : '') + oneDecimal.format(Math.abs(bps) / 100) + ' pp');
-const MONTHS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-export const monthLabel = key => (/^\d{4}-\d{2}$/.test(key) ? MONTHS[Number(key.slice(5)) - 1] + ' ' + key.slice(0, 4) : key);
-export const monthShort = key => (/^\d{4}-\d{2}$/.test(key) ? MONTHS[Number(key.slice(5)) - 1] : key);
+export const signedPp = (bps, idioma) => (bps === null || bps === undefined ? NO_DISPONIBLE(idioma) : (bps > 0 ? '+' : bps < 0 ? '−' : '') + decimal1(idioma).format(Math.abs(bps) / 100) + ' pp');
+const MONTHS = {es: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'], en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']};
+const months = idioma => MONTHS[idioma] ?? MONTHS.es;
+export const monthLabel = (key, idioma) => (/^\d{4}-\d{2}$/.test(key) ? months(idioma)[Number(key.slice(5)) - 1] + ' ' + key.slice(0, 4) : key);
+export const monthShort = (key, idioma) => (/^\d{4}-\d{2}$/.test(key) ? months(idioma)[Number(key.slice(5)) - 1] : key);
 
 /** Cociente entero redondeado a la mitad hacia arriba (positivos). null si el divisor es 0. */
 export function divRound(numerator, denominator) {

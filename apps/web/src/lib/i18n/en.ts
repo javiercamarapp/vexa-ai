@@ -1,5 +1,7 @@
 // English dictionary. Must mirror es.ts key for key (the type enforces it at compile time and tests/i18n.test.ts at run time).
 import type {Clave} from './es';
+import {cfoEn} from './d-cfo';
+import {copEn} from './d-cop';
 export const en: Record<Clave, string> = {
   'comun.cerrar': 'Close', 'comun.reintentar': 'Try again', 'comun.cargando': 'Loading…', 'comun.sinDato': 'No data',
   'idioma.etiqueta': 'Language', 'idioma.es': 'Español', 'idioma.en': 'English', 'idioma.cambiar': 'Switch language to {idioma}',
@@ -105,4 +107,6 @@ export const en: Record<Clave, string> = {
   'panel.criticoUltimaFrase': '{frase} in the latest reading of this scope; they have not been recalculated in this load yet.',
   'panel.criticoNoCalculadas': 'They have not been calculated in this load yet; that does not mean they do not exist.',
   'panel.consultalas': 'See them in',
+  ...cfoEn,
+  ...copEn,
 };

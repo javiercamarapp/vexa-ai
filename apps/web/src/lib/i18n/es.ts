@@ -1,4 +1,6 @@
 // Diccionario en español (idioma base). Las claves son planas y sin acentos; {x} marca una variable. Cada clave debe existir también en en.ts (lo comprueba tests/i18n.test.ts).
+import {cfoEs} from './d-cfo';
+import {copEs} from './d-cop';
 export const es = {
   // Compartido
   'comun.cerrar': 'Cerrar', 'comun.reintentar': 'Volver a intentar', 'comun.cargando': 'Cargando…', 'comun.sinDato': 'Sin dato',
@@ -114,5 +116,7 @@ export const es = {
   'panel.criticoUltimaFrase': '{frase} en la última lectura de este alcance; en esta carga aún no se recalcularon.',
   'panel.criticoNoCalculadas': 'Aún no se calcularon en esta carga; no significa que no existan.',
   'panel.consultalas': 'Consúltalas en',
+  ...cfoEs,
+  ...copEs,
 } as const;
 export type Clave = keyof typeof es;

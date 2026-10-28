@@ -1,10 +1,10 @@
 export function money(minor: string | null | undefined, currency: string, exponent?: number): string;
-export function int(n: number | null | undefined): string;
-export function pct(bps: number | null | undefined): string;
-export function signedPct(bps: number | null | undefined): string;
-export function signedPp(bps: number | null | undefined): string;
-export function monthLabel(key: string): string;
-export function monthShort(key: string): string;
+export function int(n: number | null | undefined, idioma?: string): string;
+export function pct(bps: number | null | undefined, idioma?: string): string;
+export function signedPct(bps: number | null | undefined, idioma?: string): string;
+export function signedPp(bps: number | null | undefined, idioma?: string): string;
+export function monthLabel(key: string, idioma?: string): string;
+export function monthShort(key: string, idioma?: string): string;
 export function divRound(numerator: bigint | string | number, denominator: bigint | string | number): bigint | null;
 export function ratioBps(n: number | bigint, d: number | bigint): number | null;
 export function changeBps(current: bigint | string | number, previous: bigint | string | number): number | null;

@@ -91,3 +91,20 @@ test('un solo mecanismo: login y espacio de trabajo resuelven el idioma con la m
   assert.match(leer('src/components/i18n/selector-idioma.tsx'), /guardarIdiomaEnNavegador\(/);
   assert.match(leer('src/lib/i18n/servidor.ts'), /COOKIE_IDIOMA/);
 });
+
+test('Hoy: el modelo arma el texto en el idioma pedido (es por omisión) sin cambiar las cifras', async () => {
+  const {armarHoy} = await import('../src/components/hoy/hoy-modelo.mjs');
+  const estado = {fuga: 'vacio', carga: 'vacio', cfo: 'vacio'} as const;
+  const es0 = armarHoy({estado: {...estado}}), en0 = armarHoy({estado: {...estado}, idioma: 'en'});
+  assert.equal(es0.titular.texto, 'Todavía no hay datos suficientes para resumir tu dinero de este periodo.');
+  assert.equal(en0.titular.texto, 'There is not enough data yet to summarize your money for this period.');
+  assert.deepEqual(en0.kpis.map((k) => k.etiqueta), ['Gross revenue', 'Refunds', 'Stuck money', 'Replies >24 h']);
+});
+test('formateadores centrales: la locale solo cambia la presentación (mes, %), no el valor', async () => {
+  const f = await import('../src/lib/formato/es-mx.mjs');
+  assert.equal(f.dia('2026-09-18'), '18 sep 2026'); assert.equal(f.dia('2026-09-18', 'en'), 'Sep 18, 2026');
+  assert.equal(f.porcentaje(29.34), '29.3 %'); assert.equal(f.porcentaje(29.34, {idioma: 'en'}), '29.3%');
+  assert.equal(f.usd('85472840'), 'US[omitido: dato de cliente]'); assert.equal(f.usd('85472840', {idioma: 'en'}), 'US[omitido: dato de cliente]');
+  const c = await import('../../../packages/cfo-copilot/src/format.mjs');
+  assert.equal(c.monthLabel('2026-03'), 'mar 2026'); assert.equal(c.monthLabel('2026-03', 'en'), 'Mar 2026');
+});

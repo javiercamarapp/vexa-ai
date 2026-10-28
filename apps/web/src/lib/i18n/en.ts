@@ -2,6 +2,30 @@
 import type {Clave} from './es';
 import {cfoEn} from './d-cfo';
 import {copEn} from './d-cop';
+import {brechasEn} from './d-brechas';
+import {cargaEn} from './d-carga';
+import {confEn} from './d-conf';
+import {conxEn} from './d-conx';
+import {conxaEn} from './d-conxa';
+import {conxeEn} from './d-conxe';
+import {conxiEn} from './d-conxi';
+import {conxjEn} from './d-conxj';
+import {conxnEn} from './d-conxn';
+import {conxpEn} from './d-conxp';
+import {conxrEn} from './d-conxr';
+import {conxsEn} from './d-conxs';
+import {econEn} from './d-econ';
+import {fugaEn} from './d-fuga';
+import {histEn} from './d-hist';
+import {intervEn} from './d-interv';
+import {mapaEn} from './d-mapa';
+import {probEn} from './d-prob';
+import {recsEn} from './d-recs';
+import {agEn} from './d-ag';
+import {briefsEn} from './d-briefs';
+import {exploradorEn} from './d-explorador';
+import {probdetEn} from './d-probdet';
+import {resumenEn} from './d-resumen';
 export const en: Record<Clave, string> = {
   'comun.cerrar': 'Close', 'comun.reintentar': 'Try again', 'comun.cargando': 'Loading…', 'comun.sinDato': 'No data',
   'idioma.etiqueta': 'Language', 'idioma.es': 'Español', 'idioma.en': 'English', 'idioma.cambiar': 'Switch language to {idioma}',
@@ -109,4 +133,28 @@ export const en: Record<Clave, string> = {
   'panel.consultalas': 'See them in',
   ...cfoEn,
   ...copEn,
+  ...brechasEn,
+  ...cargaEn,
+  ...confEn,
+  ...conxEn,
+  ...conxaEn,
+  ...conxeEn,
+  ...conxiEn,
+  ...conxjEn,
+  ...conxnEn,
+  ...conxpEn,
+  ...conxrEn,
+  ...conxsEn,
+  ...econEn,
+  ...fugaEn,
+  ...histEn,
+  ...intervEn,
+  ...mapaEn,
+  ...probEn,
+  ...recsEn,
+  ...agEn,
+  ...briefsEn,
+  ...exploradorEn,
+  ...probdetEn,
+  ...resumenEn,
 };

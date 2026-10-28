@@ -1,6 +1,30 @@
 // Diccionario en español (idioma base). Las claves son planas y sin acentos; {x} marca una variable. Cada clave debe existir también en en.ts (lo comprueba tests/i18n.test.ts).
 import {cfoEs} from './d-cfo';
 import {copEs} from './d-cop';
+import {brechasEs} from './d-brechas';
+import {cargaEs} from './d-carga';
+import {confEs} from './d-conf';
+import {conxEs} from './d-conx';
+import {conxaEs} from './d-conxa';
+import {conxeEs} from './d-conxe';
+import {conxiEs} from './d-conxi';
+import {conxjEs} from './d-conxj';
+import {conxnEs} from './d-conxn';
+import {conxpEs} from './d-conxp';
+import {conxrEs} from './d-conxr';
+import {conxsEs} from './d-conxs';
+import {econEs} from './d-econ';
+import {fugaEs} from './d-fuga';
+import {histEs} from './d-hist';
+import {intervEs} from './d-interv';
+import {mapaEs} from './d-mapa';
+import {probEs} from './d-prob';
+import {recsEs} from './d-recs';
+import {agEs} from './d-ag';
+import {briefsEs} from './d-briefs';
+import {exploradorEs} from './d-explorador';
+import {probdetEs} from './d-probdet';
+import {resumenEs} from './d-resumen';
 export const es = {
   // Compartido
   'comun.cerrar': 'Cerrar', 'comun.reintentar': 'Volver a intentar', 'comun.cargando': 'Cargando…', 'comun.sinDato': 'Sin dato',
@@ -118,5 +142,29 @@ export const es = {
   'panel.consultalas': 'Consúltalas en',
   ...cfoEs,
   ...copEs,
+  ...brechasEs,
+  ...cargaEs,
+  ...confEs,
+  ...conxEs,
+  ...conxaEs,
+  ...conxeEs,
+  ...conxiEs,
+  ...conxjEs,
+  ...conxnEs,
+  ...conxpEs,
+  ...conxrEs,
+  ...conxsEs,
+  ...econEs,
+  ...fugaEs,
+  ...histEs,
+  ...intervEs,
+  ...mapaEs,
+  ...probEs,
+  ...recsEs,
+  ...agEs,
+  ...briefsEs,
+  ...exploradorEs,
+  ...probdetEs,
+  ...resumenEs,
 } as const;
 export type Clave = keyof typeof es;

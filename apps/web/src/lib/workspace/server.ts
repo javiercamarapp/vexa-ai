@@ -3,7 +3,7 @@ import 'server-only';
 import {randomUUID} from 'node:crypto';
 import {cookies} from 'next/headers';
 import {NextRequest,NextResponse} from 'next/server';
-import {createDatabase} from '@vexa/platform/db';
+import {createDatabase,forDownload} from '@vexa/platform/db';
 import {createWorkspaceService,workspaceCsv} from '../../../../../packages/workspace-service/index.mjs';
 import {AccessError,ACTIVE_ORG,authClient,identity,resolveSession,assertOrigin,config,PRIVATE_HEADERS} from '../auth';
 import {requestAuth} from '../auth-http';
@@ -19,7 +19,7 @@ export function workspaceService(client:ReturnType<typeof authClient>,selectedTe
 export async function workspaceResponse(request:NextRequest,mode:'query'|'export'|'mappings'='query'){
  const traceId=randomUUID();const contractVersion='f06-workspace-v1';let finish=(r:NextResponse)=>r;try{
  const configuration=config();if(!configuration)return NextResponse.json({contract_version:contractVersion,error:{code:'configuration_required',retryable:true,message:'La configuración del servidor del espacio de trabajo no está disponible.'},meta:{trace_id:traceId}},{status:503,headers:PRIVATE_HEADERS});
- if(request.method==='POST')assertOrigin(request.headers.get('origin'),configuration.origin);const auth=requestAuth(request);finish=auth.finish;const service=createWorkspaceService({database:createDatabase({identity:identity(auth.client),pool:serverPool(),selectedTenant:request.cookies.get(ACTIVE_ORG)?.value})});
+ if(request.method==='POST')assertOrigin(request.headers.get('origin'),configuration.origin);const auth=requestAuth(request);finish=auth.finish;const service=createWorkspaceService({database:forDownload(createDatabase({identity:identity(auth.client),pool:serverPool(),selectedTenant:request.cookies.get(ACTIVE_ORG)?.value}),mode==='export')});
  let data;
  if(mode==='mappings'){
   if(request.nextUrl.search)throw new AccessError(400,'unsupported_filter');

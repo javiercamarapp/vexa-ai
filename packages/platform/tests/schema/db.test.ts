@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createDatabase,requireRow,type SqlConnection,type DatabaseScope} from '../../src/db.ts';
+import {createDatabase,forDownload,requireRow,type SqlConnection,type DatabaseScope} from '../../src/db.ts';
 const member={tenant_id:'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',user_id:'11111111-1111-4111-8111-111111111111',role:'owner' as const,status:'active' as const,permissions_version:1};
 const identity={async getUser(){return {id:member.user_id};},async memberships(){return [member];}};
 function fixture(role='owner',failure?:string){
@@ -30,4 +30,18 @@ test('database failure never becomes an empty list and never exposes driver secr
 test('RBAC contractual matrix',async()=>{
  const allowed={owner:['read','import','configure','propose','approve','execute','retain'],analyst:['read','import','propose'],operator:['read','propose','execute'],viewer:['read']};
  for(const [role,actions] of Object.entries(allowed))for(const action of allowed.owner){const f=fixture(role);const p=f.db.transaction(action as Parameters<typeof f.db.transaction>[0],async()=>true);if(actions.includes(action))assert.equal(await p,true);else await assert.rejects(p,{status:403});}
+});
+// AUTH-01 / R-01: la acción 'export' nunca llega a la base en una sesión de soporte.
+const grant={session_id:'ssssssss-ssss-4sss-8sss-ssssssssssss',tenant_id:member.tenant_id,expires_at:'2999-01-01T00:00:00Z',reason:'revisar'};
+test('support session cannot run export: 403 support_export_blocked before any SQL; ordinary export is a READ ONLY read',async()=>{
+ const statements:string[]=[];
+ const pool={async connect(){return {async query(text:string){statements.push(text);return {rows:[member],rowCount:1};},release(){}};}};
+ const asSupport=createDatabase({identity:{async getUser(){return {id:member.user_id};},async memberships(){return [];},async support(){return grant;}},pool});
+ await assert.rejects(asSupport.transaction('export',async()=>'csv'),{status:403,code:'support_export_blocked'});
+ await assert.rejects(forDownload(asSupport,true).transaction('read',async()=>'csv'),{status:403,code:'support_export_blocked'});
+ assert.equal(statements.length,0,'no se abrió conexión ni transacción');
+ await assert.rejects(forDownload(asSupport,false).transaction('configure',async()=>1),{code:'support_read_only'});
+ const f=fixture();
+ assert.equal(await forDownload(f.db,true).transaction('read',async()=>'ok'),'ok');
+ assert.equal(f.statements[0].text,'BEGIN READ ONLY');assert.deepEqual((f.statements[2].values as unknown[]).slice(0,3),[member.user_id,member.tenant_id,'read']);
 });

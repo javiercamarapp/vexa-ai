@@ -5,6 +5,14 @@ const VERSION='f02-durable-v1';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const hash=x=>createHash('sha256').update(x).digest('hex');
 const fail=(status,code)=>{throw new AccessError(status,code);};
+/** AI-IMP-03: el tamaño REAL del objeto (metadata de Storage, antes de descargarlo) debe coincidir con el declarado y no pasar de 20 MiB; así nunca se bufferiza un objeto mayor. */
+export const MAX_IMPORT_BYTES=20971520;
+export function objectBounded(object,row){
+ const bytes=object?.object_bytes===null||object?.object_bytes===undefined?NaN:Number(object.object_bytes);
+ if(!Number.isSafeInteger(bytes)||bytes<0)fail(422,'object_size_unknown');
+ if(bytes>MAX_IMPORT_BYTES)fail(422,'object_too_large');
+ if(bytes!==Number(row.size))fail(422,'object_bytes_invalid');
+}
 const domain=fn=>{try{return fn();}catch(e){if(e?.name==='IngestionError')fail(422,e.code);throw e;}};
 const pick=(x,keys)=>{if(!x||typeof x!=='object'||Array.isArray(x)||Object.keys(x).some(k=>!keys.includes(k)))fail(400,'invalid_input');};
 async function body(request){if(Number(request.headers.get('content-length'))>8192)fail(413,'metadata_too_large');const reader=request.body?.getReader();if(!reader)fail(400,'invalid_json');let n=0,parts=[];while(true){const r=await reader.read();if(r.done)break;n+=r.value.length;if(n>8192){await reader.cancel();fail(413,'metadata_too_large');}parts.push(r.value);}try{return JSON.parse(Buffer.concat(parts).toString('utf8'));}catch{fail(400,'invalid_json');}}
@@ -38,7 +46,7 @@ export function createImportHandler({database,storage,confirmationSecret,admissi
    const match=url.pathname.match(/^\/api\/imports(?:\/([0-9a-f-]+)(\/(?:confirm|renew|preview|mapping|errors\.csv))?)?$/i);
    if(!match||match[1]&&!uuid.test(match[1])||(url.search&&(request.method!=='GET'||(match[1]?Boolean(match[2])||[...url.searchParams.keys()].some(k=>k!=='sheet'):[...url.searchParams.keys()].some(k=>!['offset','connection_offset','team_offset'].includes(k))))))fail(404,'route_not_found');
    const owned=async(s,id)=>{const r=await get(s,id);if(r.user_id!==s.userId)fail(404,'import_not_found');return r;};
-   const verified=async(s,r)=>{await connection(s,r.connection_id);const owner=(await s.query("SELECT owner_id FROM storage.objects WHERE bucket_id='vexa-private' AND name=$1",[r.object_path])).rows[0];if(!owner||owner.owner_id!==s.userId)fail(422,'object_unavailable');const bytes=await storage.read({tenantId:s.tenantId,userId:s.userId},r);if(!(bytes instanceof Uint8Array)||bytes.byteLength!==Number(r.size)||hash(bytes)!==r.file_hash)fail(422,'object_bytes_invalid');return bytes;};
+   const verified=async(s,r)=>{await connection(s,r.connection_id);const owner=(await s.query("SELECT owner_id,(metadata->>'size')::bigint AS object_bytes FROM storage.objects WHERE bucket_id='vexa-private' AND name=$1",[r.object_path])).rows[0];if(!owner||owner.owner_id!==s.userId)fail(422,'object_unavailable');objectBounded(owner,r);const bytes=await storage.read({tenantId:s.tenantId,userId:s.userId},r);if(!(bytes instanceof Uint8Array)||bytes.byteLength!==Number(r.size)||hash(bytes)!==r.file_hash)fail(422,'object_bytes_invalid');return bytes;};
    const preview=(bytes,r,mapping)=>domain(()=>previewImport(bytes,{contentType:r.content_type,mapping,context:{tenant_id:r.tenant_id,connection_id:r.connection_id,source:'csv',source_account_id:r.connection_id},observedAt:new Date().toISOString()}));
    if(request.method==='GET'&&!match[1])return await database.transaction('read',async s=>{
     const offset=Number(url.searchParams.get('offset')??0),connectionOffset=Number(url.searchParams.get('connection_offset')??0);if(!Number.isSafeInteger(offset)||offset<0||offset>1000000||!Number.isSafeInteger(connectionOffset)||connectionOffset<0||connectionOffset>1000000)fail(400,'invalid_pagination');
@@ -129,8 +137,8 @@ export function createImportHandler({database,storage,confirmationSecret,admissi
     if(input.sha256!==r.file_hash||input.mapping_version!==r.mapping_version)fail(409,'confirmation_conflict');
     if(r.job_id)return {row:r,replay:true};
     if(new Date(r.expires_at)<=new Date())fail(409,'reservation_expired');
-    const owner=(await s.query("SELECT owner_id FROM storage.objects WHERE bucket_id='vexa-private' AND name=$1",[r.object_path])).rows[0];
-    if(!owner||owner.owner_id!==s.userId)fail(422,'object_owner_invalid');
+    const owner=(await s.query("SELECT owner_id,(metadata->>'size')::bigint AS object_bytes FROM storage.objects WHERE bucket_id='vexa-private' AND name=$1",[r.object_path])).rows[0];
+    if(!owner||owner.owner_id!==s.userId)fail(422,'object_owner_invalid');objectBounded(owner,r);
     return {row:r,scope:{tenantId:s.tenantId,userId:s.userId}};
    });
    if(!prepared.replay){

@@ -26,12 +26,13 @@ export function InvitacionRecorrido({t,saltar,empezar}:{t:Traductor;saltar:()=>v
   <div className="onb-acciones"><button type="button" className="onb-btn-sec" onClick={saltar}>{t('onb.ui.saltar')}</button><button type="button" className="onb-btn" onClick={empezar}>{t('onb.ui.empezar')}</button></div>
  </section>;
 }
-export function MenuGuia({t,innerRef,contexto,tienePaso,mostrarChecklistOpcion,descartado,iniciar,retomar,mostrarChecklist,noVolver,cerrar}:{t:Traductor;innerRef?:Ref<HTMLDivElement>;contexto:string;tienePaso:boolean;mostrarChecklistOpcion:boolean;descartado:boolean;iniciar:()=>void;retomar:()=>void;mostrarChecklist:()=>void;noVolver:()=>void;cerrar:()=>void}){
+export function MenuGuia({t,innerRef,contexto,tienePaso,mostrarChecklistOpcion,descartado,iniciar,retomar,mostrarChecklist,abrirSetup,noVolver,cerrar}:{t:Traductor;innerRef?:Ref<HTMLDivElement>;contexto:string;tienePaso:boolean;mostrarChecklistOpcion:boolean;descartado:boolean;iniciar:()=>void;retomar:()=>void;mostrarChecklist:()=>void;abrirSetup?:()=>void;noVolver:()=>void;cerrar:()=>void}){
  return <div ref={innerRef} id="onb-menu" className="onb-menu" role="group" aria-label={t('onb.ui.menuGuia')} onKeyDown={e=>{if(e.key==='Escape'){e.preventDefault();cerrar();}}}>
   <p className="onb-menu-ctx">{contexto}</p>
   <button type="button" onClick={iniciar}>{t('onb.ui.reabrir')}</button>
   {tienePaso&&<button type="button" onClick={retomar}>{t('onb.ui.retomar')}</button>}
   {mostrarChecklistOpcion&&descartado&&<button type="button" onClick={mostrarChecklist}>{t('onb.ui.mostrarChecklist')}</button>}
+  {abrirSetup&&<button type="button" onClick={abrirSetup}>{t('onb.setup.verTodo')}</button>}
   {!descartado&&<button type="button" onClick={noVolver}>{t('onb.ui.noVolver')}</button>}
  </div>;
 }

@@ -60,7 +60,7 @@ export function ChecklistHoy(){
     <ul className="onb-items">{lista.visibles.map(item)}</ul>
     {lista.plegados.length>0&&<details><summary>{t('onb.check.masTareas')}</summary><ul className="onb-items">{lista.plegados.map(item)}</ul></details>}
    </>}
-  <div className="onb-lista-pie"><button type="button" onClick={c.ocultarChecklist}>{t('onb.check.ocultar')}</button></div>
+  <div className="onb-lista-pie"><button type="button" onClick={c.ocultarChecklist}>{t('onb.check.ocultar')}</button><Link href="/setup" className="onb-lista-enlace">{t('onb.setup.verTodo')}</Link></div>
  </section>;
 }
 /** «Ver como»: solo un aviso informativo de solo lectura; sin lista, sin botones ni enlaces. Si la sesión terminó con la pantalla abierta, lo dice con claridad. */

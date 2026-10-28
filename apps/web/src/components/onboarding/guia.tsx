@@ -45,7 +45,7 @@ export function GuiaPaneles(){
  const total=c.pasos.length,n=c.rec.indice+1;
  return <>
   {c.menuAbierto&&<MenuGuia t={t} innerRef={menu} contexto={t('onb.ui.rolOrg',{organizacion:c.datos.organizacion,rol:c.datos.rolEtiqueta})} tienePaso={Boolean(c.local.paso)} mostrarChecklistOpcion={c.tieneChecklist} descartado={c.local.descartado}
-   iniciar={()=>c.iniciar('inicio')} retomar={()=>c.iniciar('retomar')} mostrarChecklist={c.mostrarChecklist} noVolver={c.noVolver} cerrar={()=>{c.cerrarMenu();c.enfocarBoton();}}/>}
+   iniciar={()=>c.iniciar('inicio')} retomar={()=>c.iniciar('retomar')} mostrarChecklist={c.mostrarChecklist} abrirSetup={c.abrirSetup} noVolver={c.noVolver} cerrar={()=>{c.cerrarMenu();c.enfocarBoton();}}/>}
   {c.invitacionVisible&&<InvitacionRecorrido t={t} saltar={c.saltarInvitacion} empezar={()=>c.iniciar('inicio')}/>}
   {abierto&&c.paso&&<TarjetaRecorrido t={t} innerRef={tarjeta} titulo={c.paso.textos.titulo} cuerpo={c.paso.textos.cuerpo} n={n} total={total} alEvento={c.despachar} omitir={c.omitir}/>}
  </>;

@@ -56,7 +56,8 @@
 .onb-estado { display:inline-block; margin-right:8px; padding:1px 8px; border:1px solid var(--ui-line-strong); border-radius:999px; font:500 12px/1.6 var(--font-ui); color:var(--ink); }
 .onb-item a { display:inline-flex; align-items:center; min-height:36px; font-size:12px; }
 .onb-lista-pie { display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:10px; }
-.onb-lista-pie button, .onb-lista details summary { min-height:36px; padding:0 4px; border:0; background:transparent; color:var(--muted); font:400 12px/1 var(--font-ui); text-decoration:underline; cursor:pointer; }
+.onb-lista-pie button, .onb-lista-enlace, .onb-lista details summary { min-height:36px; padding:0 4px; border:0; background:transparent; color:var(--muted); font:400 12px/1 var(--font-ui); text-decoration:underline; cursor:pointer; }
+.onb-lista-enlace { display:inline-flex; align-items:center; text-decoration:underline; }
 .onb-lista details { margin-top:8px; }
 .onb-aviso { margin:20px 0; padding:14px 18px; border:1px solid var(--ui-line-strong); border-radius:12px; background:var(--ui-soft); }
 .onb-aviso h2 { margin:0 0 4px; font:600 14px/1.4 var(--font-ui); }

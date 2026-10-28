@@ -13,7 +13,7 @@ export interface Controlador {
  rec:EstadoRecorrido;paso:PasoOnboarding|null;menuAbierto:boolean;invitacionVisible:boolean;soporteTerminado:boolean;
  registrarBoton:(el:HTMLButtonElement|null)=>void;enfocarBoton:()=>void;
  alternarMenu:()=>void;cerrarMenu:()=>void;
- iniciar:(modo:'inicio'|'retomar')=>void;despachar:(e:EventoRecorrido)=>void;omitir:()=>void;noVolver:()=>void;saltarInvitacion:()=>void;mostrarChecklist:()=>void;ocultarChecklist:()=>void;
+ abrirSetup:()=>void;iniciar:(modo:'inicio'|'retomar')=>void;despachar:(e:EventoRecorrido)=>void;omitir:()=>void;noVolver:()=>void;saltarInvitacion:()=>void;mostrarChecklist:()=>void;ocultarChecklist:()=>void;
 }
 const Contexto=createContext<Controlador|null>(null);
 export const useOnboarding=()=>useContext(Contexto);
@@ -46,6 +46,7 @@ export function OnboardingRaiz({datos,children}:{datos:DatosOnboarding;children:
   const indice=Math.max(0,pasos.findIndex(p=>p.id===desde));
   setMenuAbierto(false);guardar({omitido:false});aplicar(reducir(rec,{tipo:'abrir',indice:modo==='retomar'?indice:0},pasos.length));
  },[aplicar,guardar,local,pasos,pista,rec]);
+ const abrirSetup=useCallback(()=>{setMenuAbierto(false);router.push('/setup');},[router]);
  const omitir=useCallback(()=>{guardar({omitido:true,visto:true,paso:null});setRec(reducir(rec,{tipo:'cerrar'},pasos.length));},[guardar,pasos.length,rec]);
  const noVolver=useCallback(()=>{setMenuAbierto(false);guardar({descartado:true,omitido:true,visto:true,paso:null});setRec(reducir(rec,{tipo:'cerrar'},pasos.length));},[guardar,pasos.length,rec]);
  const saltarInvitacion=useCallback(()=>guardar({omitido:true,visto:true}),[guardar]);
@@ -53,6 +54,6 @@ export function OnboardingRaiz({datos,children}:{datos:DatosOnboarding;children:
  const ocultarChecklist=useCallback(()=>guardar({descartado:true}),[guardar]);
  const invitacionVisible=listo&&tieneRecorrido&&!rec.abierto&&!local.visto&&!local.omitido&&!local.descartado;
  const valor:Controlador={datos,pista,listo,local,tieneRecorrido,pasos,tieneChecklist,rec,paso,menuAbierto,invitacionVisible,soporteTerminado,registrarBoton:setBoton,enfocarBoton:()=>boton?.focus(),
-  alternarMenu:()=>setMenuAbierto(v=>!v),cerrarMenu:()=>setMenuAbierto(false),iniciar,despachar,omitir,noVolver,saltarInvitacion,mostrarChecklist,ocultarChecklist};
+  alternarMenu:()=>setMenuAbierto(v=>!v),cerrarMenu:()=>setMenuAbierto(false),abrirSetup,iniciar,despachar,omitir,noVolver,saltarInvitacion,mostrarChecklist,ocultarChecklist};
  return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }

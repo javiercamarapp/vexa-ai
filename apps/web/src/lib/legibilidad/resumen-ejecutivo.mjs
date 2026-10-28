@@ -6,10 +6,12 @@ import {variacion} from './insights.mjs';
 import {estadosDeSerie} from '../../../../../packages/agent-datos/meses.mjs';
 import {filasDesdeItems,numerarGrupos,ordenarFilas} from './problemas-catalogo.mjs';
 import {diaCorte} from '../../../../../packages/workspace-service/datos-hasta.mjs';
-const largo=m=>new Intl.DateTimeFormat('es-MX',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
-const corto=m=>new Intl.DateTimeFormat('es-MX',{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
-const nombreMes=m=>new Intl.DateTimeFormat('es-MX',{month:'long',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
-const diaLargoUtc=d=>new Intl.DateTimeFormat('es-MX',{day:'numeric',month:'long',timeZone:'UTC'}).format(new Date(d+'T00:00:00Z'));
+const largo=(m,loc='es-MX')=>new Intl.DateTimeFormat(loc,{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
+const corto=(m,loc='es-MX')=>new Intl.DateTimeFormat(loc,{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
+const nombreMes=(m,loc='es-MX')=>new Intl.DateTimeFormat(loc,{month:'long',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
+const diaLargoUtc=(d,loc='es-MX')=>new Intl.DateTimeFormat(loc,{day:'numeric',month:'long',timeZone:'UTC'}).format(new Date(d+'T00:00:00Z'));
+/** Unión «a y b» en el idioma activo (con `t`) o en español. */
+const unir=(xs,t)=>xs.join(t?' '+t('prob.y')+' ':' y ');
 const dir=v=>v.dir==='sube'?'up':v.dir==='baja'?'down':'flat';
 
 /** Meses «completos» por fecha pero con cobertura baja (volumen < 25 % de la mediana de los demás meses completos: la carga de ese mes probablemente es parcial).
@@ -21,22 +23,22 @@ export function mesesCoberturaBaja(conv,ahora=new Date()){
 }
 /** Conversaciones del último mes completo frente al anterior completo. null si la serie no está disponible; sin dos meses completos no hay delta.
  *  Si algún mes comparado tiene cobertura baja NO hay delta ni flecha: «Cobertura baja en septiembre (carga de HubSpot parcial); sin comparación». */
-export function kpiConversaciones(conv,ahora=new Date()){
+export function kpiConversaciones(conv,ahora=new Date(),{t=null,loc='es-MX'}={}){
  if(!conv||conv.status!=='ok'||!Array.isArray(conv.series))return null;
  const baja=mesesCoberturaBaja(conv,ahora);
  const completos=conv.series.filter(p=>esMesCompleto(p.month,{dataThrough:conv.completeness?.dataThrough??null,ahora}));
  const ult=completos.at(-1)??null;
- if(!ult)return {valor:null,mes:null,delta:null,rotulo:'Aún no hay un mes completo con conversaciones fechadas',estimado:conv.class==='estimated'};
+ if(!ult)return {valor:null,mes:null,delta:null,rotulo:t?t('res.kpiSinMes'):'Aún no hay un mes completo con conversaciones fechadas',estimado:conv.class==='estimated'};
  // Mes con datos que ya terminó (calendario) pero cuyo último dato no llega a su último día: cobertura parcial, no se compara.
  const mesActual=ahora.toISOString().slice(0,7),corte=conv.completeness?.dataThrough?String(conv.completeness.dataThrough).slice(0,10):null;
  const parciales=conv.series.filter(p=>p.month<mesActual&&p.count>0&&!esMesCompleto(p.month,{dataThrough:corte,ahora})).map(p=>p.month);
- if(parciales.length){const nombres=parciales.map(nombreMes);return {valor:ult.count,mes:ult.month,delta:null,coberturaParcial:nombres,datosHasta:corte,rotulo:`Cobertura parcial en ${nombres.join(' y ')}${corte?` (datos hasta el ${diaLargoUtc(corte)})`:''}; sin comparación`,estimado:conv.class==='estimated'||!!conv.sampled,spark:completos.filter(p=>!baja.has(p.month)).map(p=>p.count)};}
- const prev=completos.at(-2)??null,bajos=[prev,ult].filter(p=>p&&baja.has(p.month)).map(p=>nombreMes(p.month));
+ if(parciales.length){const nombres=parciales.map(m=>nombreMes(m,loc));return {valor:ult.count,mes:ult.month,delta:null,coberturaParcial:nombres,datosHasta:corte,rotulo:t?(corte?t('res.kpiParcialHasta',{meses:unir(nombres,t),dia:diaLargoUtc(corte,loc)}):t('res.kpiParcial',{meses:unir(nombres,t)})):`Cobertura parcial en ${nombres.join(' y ')}${corte?` (datos hasta el ${diaLargoUtc(corte)})`:''}; sin comparación`,estimado:conv.class==='estimated'||!!conv.sampled,spark:completos.filter(p=>!baja.has(p.month)).map(p=>p.count)};}
+ const prev=completos.at(-2)??null,bajos=[prev,ult].filter(p=>p&&baja.has(p.month)).map(p=>nombreMes(p.month,loc));
  const estimado=conv.class==='estimated'||!!conv.sampled,spark=completos.filter(p=>!baja.has(p.month)).map(p=>p.count);
- if(bajos.length)return {valor:ult.count,mes:ult.month,delta:null,coberturaBaja:bajos,rotulo:`Cobertura baja en ${bajos.join(' y ')} (carga de HubSpot parcial); sin comparación`,estimado,spark};
+ if(bajos.length)return {valor:ult.count,mes:ult.month,delta:null,coberturaBaja:bajos,rotulo:t?t('res.kpiBaja',{meses:unir(bajos,t)}):`Cobertura baja en ${bajos.join(' y ')} (carga de HubSpot parcial); sin comparación`,estimado,spark};
  const v=prev?variacion(String(ult.count),String(prev.count)):null;
  return {valor:ult.count,mes:ult.month,delta:v?{value:v.texto,dir:dir(v)}:null,
-  rotulo:`${largo(ult.month)}${prev?` vs ${corto(prev.month)}`:''}${v||!prev?'':' (sin base de comparación)'}`,estimado,spark};
+  rotulo:t?`${largo(ult.month,loc)}${prev?' '+t('res.vs')+' '+corto(prev.month,loc):''}${v||!prev?'':' '+t('res.kpiSinBase')}`:`${largo(ult.month)}${prev?` vs ${corto(prev.month)}`:''}${v||!prev?'':' (sin base de comparación)'}`,estimado,spark};
 }
 /** Pedidos del libro del último mes completo (monto exacto en unidades menores), con su base rotulada. */
 export function kpiPedidos(led,ahora=new Date()){
@@ -55,11 +57,12 @@ export function topProblemas(items,n=5){
  return ordenarFilas(filas.filter(f=>f.conversaciones!==null),{col:'conversaciones',dir:'desc'}).slice(0,n);
 }
 /** Cobertura de fuentes: «6 de 7», incorporación de conversaciones de HubSpot (definición única: workspace-service/cifras-cobertura.mjs; sin desglose no hay %) y «datos hasta» por fuente (cada una con su propia fecha). */
-export function estadoFuentes(view,{libro=null,conversaciones=null}={}){
+export function estadoFuentes(view,{libro=null,conversaciones=null,t=null,loc='es-MX'}={}){
+ const dia=v=>{if(!t)return diaCorte(v);const m=typeof v==='string'?/^(\d{4})-(\d{2})-(\d{2})/.exec(v):null;return m&&Number(m[2])>=1&&Number(m[2])<=12?new Intl.DateTimeFormat(loc,{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(v)):null;};
  const fuentes=Array.isArray(view?.sources)?view.sources:null;
  const cargadas=fuentes?fuentes.filter(s=>s.loaded).length:null;
  const hub=fuentes?.find(s=>s.key==='hubspot'&&s.loaded)??null;
- const cortes=[['Conversaciones',conversaciones],['Libro de pedidos',libro]].map(([etiqueta,v])=>({etiqueta,dia:diaCorte(v)}));
+ const cortes=[[t?t('res.corteConv'):'Conversaciones',conversaciones],[t?t('res.corteLibro'):'Libro de pedidos',libro]].map(([etiqueta,v])=>({etiqueta,dia:dia(v)}));
  return {cargadas,total:fuentes?fuentes.length:null,sinCargar:fuentes?fuentes.filter(s=>!s.loaded&&s.status!=='timeout').map(s=>s.label):[],
   incorporacion:coberturaIncorporacion(hub),cortes};
 }
@@ -67,20 +70,21 @@ export function estadoFuentes(view,{libro=null,conversaciones=null}={}){
 /** Una línea de estado con lo clave de los avisos críticos reales del Resumen (qué falta / qué ajustar); el detalle queda en el plegable.
  *  null si no hay ningún aviso crítico real. Entrada: `critico` y `pendiente` (booleanos), `parcialCarga` (la carga misma es parcial),
  *  `faltantes` (etiquetas de cifras sin cobertura), `conv`/`led` (payloads de tendencias): meses YA TERMINADOS cuyo último dato no llega a su último día. */
-export function lineaAvisos({critico=false,pendiente=false,parcialCarga=false,faltantes=[],conv=null,led=null,ahora=new Date()}={}){
+export function lineaAvisos({critico=false,pendiente=false,parcialCarga=false,faltantes=[],conv=null,led=null,ahora=new Date(),t=null,loc='es-MX'}={}){
  const partes=[];
- if(critico)partes.push('hay señales críticas por revisar');
- if(pendiente)partes.push('señales críticas sin calcular en esta carga');
- if(parcialCarga)partes.push('la carga de datos es parcial');
- if(faltantes.length)partes.push(faltantes.length===1?`falta cobertura de ${faltantes[0]}`:`faltan ${faltantes.length} cifras por cobertura (${faltantes.slice(0,3).join(', ')}${faltantes.length>3?'…':''})`);
+ if(critico)partes.push(t?t('res.avCritico'):'hay señales críticas por revisar');
+ if(pendiente)partes.push(t?t('res.avPendiente'):'señales críticas sin calcular en esta carga');
+ if(parcialCarga)partes.push(t?t('res.avParcialCarga'):'la carga de datos es parcial');
+ if(faltantes.length)partes.push(t?(faltantes.length===1?t('res.avFalta1',{x:faltantes[0]}):t('res.avFaltanN',{n:faltantes.length,lista:faltantes.slice(0,3).join(', ')+(faltantes.length>3?'…':'')})):faltantes.length===1?`falta cobertura de ${faltantes[0]}`:`faltan ${faltantes.length} cifras por cobertura (${faltantes.slice(0,3).join(', ')}${faltantes.length>3?'…':''})`);
  const mesActual=ahora.toISOString().slice(0,7);
  for(const [nombre,src] of [['conversaciones',conv],['libro',led]]){
+  const nombreT=t?t(nombre==='libro'?'res.avLibro':'res.avConversaciones'):nombre;
   const corte=src?.completeness?.dataThrough?String(src.completeness.dataThrough).slice(0,10):null;
   if(!corte||!Array.isArray(src?.series))continue;
-  const meses=src.series.filter(p=>p.month<mesActual&&!esMesCompleto(p.month,{dataThrough:corte,ahora})&&(Number(p.count??p.orders?.count??0)>0)).map(p=>nombreMes(p.month));
-  if(meses.length)partes.push(`${nombre}: ${meses.join(' y ')} parcial (datos hasta el ${diaLargoUtc(corte)}), sin comparación`);
+  const meses=src.series.filter(p=>p.month<mesActual&&!esMesCompleto(p.month,{dataThrough:corte,ahora})&&(Number(p.count??p.orders?.count??0)>0)).map(p=>nombreMes(p.month,loc));
+  if(meses.length)partes.push(t?t('res.avMesParcial',{fuente:nombreT,meses:unir(meses,t),dia:diaLargoUtc(corte,loc)}):`${nombre}: ${meses.join(' y ')} parcial (datos hasta el ${diaLargoUtc(corte)}), sin comparación`);
  }
- return partes.length?'Estado de los datos: '+partes.join(' · ')+'.':null;
+ return partes.length?(t?t('res.avPrefijo'):'Estado de los datos: ')+partes.join(' · ')+'.':null;
 }
 
 /** Cobertura de análisis de la IA para Resumen y /analysis: analizadas (trends.conversations.analysis) sobre las conversaciones cargadas (trends.conversations.total). */

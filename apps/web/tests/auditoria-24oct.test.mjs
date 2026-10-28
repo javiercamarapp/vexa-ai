@@ -37,7 +37,7 @@ test('A6: «Datos y confianza» pinta en cuanto llega CUALQUIER lectura (no espe
 });
 test('A2: /briefs ofrece «Reintentar», no manda a «Actualizar» y el historial se lee con memoria del servidor', () => {
   const p = leer('components/briefs/panel.tsx');
-  assert.match(p, /state-error[^>]*>.*Reintentar/s); assert.ok(!/Actualiza para comprobar|Actualiza antes/.test(p));
+  assert.match(p, /state-error[^>]*>.*brief\.reintentar/s); assert.match(leer('lib/i18n/d-briefs.ts'), /'brief\.reintentar': 'Reintentar'/); assert.ok(!/Actualiza para comprobar|Actualiza antes/.test(p));
   const sv = leer('lib/briefs/server.ts');
   assert.match(sv, /conMemoria\('briefs\|'/); assert.match(sv, /olvidarMemoria\(\)/);
   assert.match(sv, /getUser\(\)[\s\S]{0,200}conMemoria/, 'la sesión se valida antes de consultar la memoria');
@@ -75,13 +75,13 @@ test('M7: la política de envío usa el encabezado común y muestra las duracion
   assert.equal(duracionLegible(60000), '1 min'); assert.equal(duracionLegible(86400000), '1 día'); assert.equal(duracionLegible(3600000), '1 hora');
   assert.equal(duracionLegible(7200000), '2 horas'); assert.equal(duracionLegible(2592000000), '30 días'); assert.equal(duracionLegible(1000), '1 s'); assert.equal(duracionLegible(5400000), '1.5 horas');
   const p = leer('components/notifications/delivery-policies.tsx');
-  assert.match(p, /<PageHeader eyebrow="Avisos" title="Política de envío"/); assert.ok(!/<h1/.test(p)); assert.ok(!/Web Push/.test(p));
+  assert.match(p, /<PageHeader eyebrow=\{t\('conx\.p\.eyebrow'\)\} title=\{t\('conx\.p\.titulo'\)\}/); assert.ok(!/<h1/.test(p)); assert.ok(!/Web Push/.test(p));
   assert.ok(!/notification-delivery/.test(readFileSync(new URL('../src/lib/workspace/menu.mjs', import.meta.url), 'utf8').split('\n').filter(l => /href:\s*'\/settings\/notification-delivery'/.test(l)).join('')), 'no es un item propio del menú');
 });
 test('M5/M6/M16: Problemas y Explorador rotulados; el conteo de cargas de Fuentes coincide con Importaciones y explica la diferencia', () => {
-  assert.match(leer('components/explorer/panel.tsx'), /eyebrow="Clientes y problemas"/); assert.match(leer('components/workspace/shared-panel.tsx'), /eyebrow=\{t\('panel\.eyebrowProblemas'\)\}/); assert.match(leer('lib/i18n/es.ts'), /'panel\.eyebrowProblemas': 'Clientes y problemas'/);
-  assert.match(leer('components/explorer/panel.tsx'), /Incluye las notificaciones automáticas/);
-  assert.match(leer('components/workspace/problems-view.tsx'), /en total, como en el Explorador/);
+  assert.match(leer('components/explorer/panel.tsx'), /eyebrow=\{tx\('exp\.eyebrow'\)\}/); assert.match(leer('lib/i18n/d-explorador.ts'), /'exp\.eyebrow': 'Clientes y problemas'/); assert.match(leer('components/workspace/shared-panel.tsx'), /eyebrow=\{t\('panel\.eyebrowProblemas'\)\}/); assert.match(leer('lib/i18n/es.ts'), /'panel\.eyebrowProblemas': 'Clientes y problemas'/);
+  assert.match(leer('lib/i18n/d-explorador.ts'), /Incluye las notificaciones automáticas/);
+  assert.match(leer('lib/i18n/d-prob.ts'), /en total, como en el Explorador/);
   const f = leer('components/datos/fuentes-datos.tsx');
   assert.match(f, /agregadoImportaciones\(cov\.data\?\.sources\)/); assert.match(f, /label:'Cargas del espacio'/); assert.match(f, /suman '\+nf\.format\(impo-agr\.cargas\)/);
 });

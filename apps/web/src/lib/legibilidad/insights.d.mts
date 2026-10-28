@@ -1,3 +1,4 @@
+import type {Clave} from '../i18n';
 import type {CategoriesView,MonthlyIncidencesView} from '../../../../../packages/workspace-service/incidences.mjs';
 import type {TrendsView} from '../../../../../packages/workspace-service/trends.mjs';
 export type InsightClase='observed'|'estimated'|'inferred';
@@ -5,8 +6,8 @@ export type Insight={id:string;texto:string;fuente:string;cobertura:string;clase
 export type FilaCategoria={category:string;count:number};
 export function variacion(actual:string,anterior:string):{dir:'sube'|'baja'|'igual';texto:string}|null;
 export function dosMesesCompletos<T extends {month:string}>(series:readonly T[]|null|undefined,ahora?:Date,completitud?:{dataThrough?:string|null}|null):[T,T]|null;
-export function notaMesParcial<T extends {month:string}>(series:readonly T[]|null|undefined,ahora:Date,completitud:{dataThrough?:string|null}|null|undefined,conDatos:(p:T)=>boolean):string;
-export function insightsResumen(input?:{trends?:TrendsView|null;categorias?:CategoriesView|FilaCategoria[]|null;ahora?:Date}):Insight[];
+export function notaMesParcial<T extends {month:string}>(series:readonly T[]|null|undefined,ahora:Date,completitud:{dataThrough?:string|null}|null|undefined,conDatos:(p:T)=>boolean,ctx?:{t?:(clave:Clave,vars?:Record<string,string|number>)=>string|null;loc?:string}|null):string;
+export function insightsResumen(input?:{trends?:TrendsView|null;categorias?:CategoriesView|FilaCategoria[]|null;ahora?:Date;t?:(clave:Clave,vars?:Record<string,string|number>)=>string|null;loc?:string}):Insight[];
 type ItemMin={title:string;evidence:unknown[];metrics:{kind:string;amount_minor:string|null;currency:string;exponent:number;coverage?:{known_n:number;eligible_n:number}}[]};
-export function insightsProblemas(input?:{items?:ItemMin[];moneda?:string|null}):Insight[];
+export function insightsProblemas(input?:{items?:ItemMin[];moneda?:string|null;t?:(clave:Clave,vars?:Record<string,string|number>)=>string|null}):Insight[];
 export function insightsProblemaSerie(vista:MonthlyIncidencesView|null,ahora?:Date):Insight[];

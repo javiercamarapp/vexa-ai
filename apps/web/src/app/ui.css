@@ -166,7 +166,7 @@ table .num{text-align:right;font-variant-numeric:tabular-nums}
 .stack>.card+.card,.stack>*+*{margin-top:var(--sp-4)}
 .workspace-content .stack>.page-header{margin-bottom:var(--sp-2)}
 .detail-extras{display:grid;gap:var(--sp-4);margin-top:var(--sp-4)}
-.detail-extras>section[aria-label="Evaluación causal"]{padding:var(--sp-6);border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface);box-shadow:var(--ui-shadow)}
+.detail-extras>section[data-eval-causal]{padding:var(--sp-6);border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface);box-shadow:var(--ui-shadow)}
 
 .detail-admin>summary{cursor:pointer;font-weight:600;font-size:15px;padding:var(--sp-1) 0}
 .detail-admin[open]>summary{margin-bottom:var(--sp-4)}

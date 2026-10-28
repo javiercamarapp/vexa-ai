@@ -21,36 +21,41 @@ const saludOk=row=>['healthy','running','partial'].includes(row.state)&&row.erro
  * @param sources  CoverageSource[] del resumen de cobertura, o null si no se pudo consultar
  * @returns {{ok:boolean,tone:'ok'|'warn'|'bad'|'muted',chip:string,estado:string,lineas:string[],anillo:{valor:number,pct:number}|null,ultimo:{rotulo:string,valor:string|null,vacio:string}}}
  */
-export function estadoConexion(row,sources){
+const tr=(t,clave,es,vars)=>t?t(clave,vars):es;
+export function estadoConexion(row,sources,t){
  const src=sources?.find(s=>s.key===CLAVE_COBERTURA[row.source]&&s.loaded&&s.status==='ok')??null;
- const vacio='Aún no hay una sincronización completa registrada';
+ const vacio=tr(t,'conx.est.vacio','Aún no hay una sincronización completa registrada');
  if(ARCHIVO.has(row.source)){
   if(src&&src.incorporated>0){
-   const lineas=[`${nf.format(src.imports)} ${src.imports===1?'carga':'cargas'}${src.openImports>0?` (${nf.format(src.openImports)} en curso)`:''} · ${nf.format(src.incorporated)} filas incorporadas de ${nf.format(src.total)} leídas`];
-   if(src.pending>0)lineas.push(`${nf.format(src.pending)} filas pendientes de procesar`);
-   return {ok:true,tone:'ok',chip:'Cargado',estado:`Cargado · ${nf.format(src.incorporated)} filas`,lineas,anillo:null,ultimo:{rotulo:'Última carga',valor:src.lastUpdate,vacio}};
+   const cargas=src.imports===1?tr(t,'conx.est.cargaUna',`${nf.format(src.imports)} carga`,{n:nf.format(src.imports)}):tr(t,'conx.est.cargaVarias',`${nf.format(src.imports)} cargas`,{n:nf.format(src.imports)});
+   const curso=src.openImports>0?tr(t,'conx.est.enCurso',` (${nf.format(src.openImports)} en curso)`,{n:nf.format(src.openImports)}):'';
+   const lineas=[tr(t,'conx.est.filasInc',`${cargas}${curso} · ${nf.format(src.incorporated)} filas incorporadas de ${nf.format(src.total)} leídas`,{cargas:cargas+curso,inc:nf.format(src.incorporated),total:nf.format(src.total)})];
+   if(src.pending>0)lineas.push(tr(t,'conx.est.filasPend',`${nf.format(src.pending)} filas pendientes de procesar`,{n:nf.format(src.pending)}));
+   return {ok:true,tone:'ok',chip:tr(t,'conx.est.cargado','Cargado'),estado:tr(t,'conx.est.cargadoFilas',`Cargado · ${nf.format(src.incorporated)} filas`,{n:nf.format(src.incorporated)}),lineas,anillo:null,ultimo:{rotulo:tr(t,'conx.est.ultCarga','Última carga'),valor:src.lastUpdate,vacio}};
   }
-  if(src)return {ok:false,tone:'warn',chip:'Sin filas',estado:'Cargas registradas sin filas incorporadas',lineas:[`${nf.format(src.imports)} cargas; ${nf.format(src.total)} filas leídas, ninguna incorporada.`],anillo:null,ultimo:{rotulo:'Última carga',valor:src.lastUpdate,vacio}};
-  if(sources)return {ok:false,tone:'muted',chip:'Sin cargas',estado:'Aún no se ha cargado ningún archivo',lineas:[],anillo:null,ultimo:{rotulo:'Última carga',valor:null,vacio:'Aún no hay cargas registradas'}};
-  return {ok:false,tone:'muted',chip:'Sin comprobar',estado:'No se pudo comprobar las cargas ahora',lineas:[],anillo:null,ultimo:{rotulo:'Última carga',valor:null,vacio:'No disponible ahora'}};
+  const ultC=tr(t,'conx.est.ultCarga','Última carga');
+  if(src)return {ok:false,tone:'warn',chip:tr(t,'conx.est.sinFilas','Sin filas'),estado:tr(t,'conx.est.cargasSinFilas','Cargas registradas sin filas incorporadas'),lineas:[tr(t,'conx.est.cargasNinguna',`${nf.format(src.imports)} cargas; ${nf.format(src.total)} filas leídas, ninguna incorporada.`,{n:nf.format(src.imports),total:nf.format(src.total)})],anillo:null,ultimo:{rotulo:ultC,valor:src.lastUpdate,vacio}};
+  if(sources)return {ok:false,tone:'muted',chip:tr(t,'conx.est.sinCargas','Sin cargas'),estado:tr(t,'conx.est.sinArchivo','Aún no se ha cargado ningún archivo'),lineas:[],anillo:null,ultimo:{rotulo:ultC,valor:null,vacio:tr(t,'conx.est.sinCargasReg','Aún no hay cargas registradas')}};
+  return {ok:false,tone:'muted',chip:tr(t,'conx.est.sinComprobar','Sin comprobar'),estado:tr(t,'conx.est.noComprobarCargas','No se pudo comprobar las cargas ahora'),lineas:[],anillo:null,ultimo:{rotulo:ultC,valor:null,vacio:tr(t,'conx.est.noDisp','No disponible ahora')}};
  }
  const ok=saludOk(row),tone=row.state==='healthy'&&row.errorCode!=='RECONNECT_REQUESTED'?'ok':row.state==='reconnect_required'?'bad':row.state==='unknown'?'muted':'warn';
- const base=row.errorCode==='RECONNECT_REQUESTED'?'Permisos pendientes de comprobar':ok?'Conectada':(ETIQUETA_SALUD[row.state]??'Estado pendiente de comprobar');
+ const base=row.errorCode==='RECONNECT_REQUESTED'?tr(t,'conx.est.permPend','Permisos pendientes de comprobar'):ok?tr(t,'conx.est.conectada','Conectada'):(ETIQUETA_SALUD[row.state]?tr(t,'conx.salud.'+row.state,ETIQUETA_SALUD[row.state]):tr(t,'conx.est.pendComprobar','Estado pendiente de comprobar'));
  const lineas=[];let estado=base,anillo=null;
  if(src){
   const enCurso=src.openImports>0,bd=src.rejectionBreakdown?.status==='ok'?src.rejectionBreakdown:null;
-  if(enCurso&&ok)estado=`${base} · importación en curso`;
+  if(enCurso&&ok)estado=tr(t,'conx.est.impCurso',`${base} · importación en curso`,{base});
   if(bd){
    const aprox=n=>n>=1000?'≈'+mil(n):mil(n),parte=bd.incorporatedShare===null?'':` (≈${Math.round(bd.incorporatedShare)} %)`;
    if(bd.incorporatedShare!==null)anillo={valor:bd.incorporatedShare/100,pct:Math.round(bd.incorporatedShare)};
-   lineas.push(`${mil(bd.conversationIncorporated??src.incorporated)} conversaciones incorporadas de ${aprox(bd.conversationRows??0)} con conversación${parte}`);
-   if((bd.metadataOnly??0)>0)lineas.push(`${mil(bd.metadataOnly)} registros solo de metadatos (sin mensajes; no son conversaciones perdidas)`);
-   if((bd.defects??0)>0)lineas.push(`${nf.format(bd.defects)} con defecto de validación`);
-  }else lineas.push(`${nf.format(src.incorporated)} de ${nf.format(src.total)} filas leídas están incorporadas; el desglose del resto no está disponible ahora.`);
-  if(src.pending>0)lineas.push(`${nf.format(src.pending)} filas pendientes de procesar`);
- }else if(row.coverage&&row.coverage.observed>0){anillo={valor:row.coverage.accepted/row.coverage.observed,pct:Math.round(row.coverage.accepted*100/row.coverage.observed)};lineas.push(`${nf.format(row.coverage.accepted)} de ${nf.format(row.coverage.observed)} registros incorporados; el resto no se desglosa todavía.`);}
- const ultimo=row.lastSuccess?{rotulo:'Último éxito',valor:row.lastSuccess,vacio}:src?.lastUpdate?{rotulo:'Última actualización de datos',valor:src.lastUpdate,vacio}:{rotulo:'Último éxito',valor:null,vacio};
- return {ok,tone,chip:ok?'Conectada':'Pendiente',estado,lineas,anillo,ultimo};
+   lineas.push(tr(t,'conx.est.convInc',`${mil(bd.conversationIncorporated??src.incorporated)} conversaciones incorporadas de ${aprox(bd.conversationRows??0)} con conversación${parte}`,{inc:mil(bd.conversationIncorporated??src.incorporated),de:aprox(bd.conversationRows??0),parte}));
+   if((bd.metadataOnly??0)>0)lineas.push(tr(t,'conx.est.soloMeta',`${mil(bd.metadataOnly)} registros solo de metadatos (sin mensajes; no son conversaciones perdidas)`,{n:mil(bd.metadataOnly)}));
+   if((bd.defects??0)>0)lineas.push(tr(t,'conx.est.defecto',`${nf.format(bd.defects)} con defecto de validación`,{n:nf.format(bd.defects)}));
+  }else lineas.push(tr(t,'conx.est.sinDesglose',`${nf.format(src.incorporated)} de ${nf.format(src.total)} filas leídas están incorporadas; el desglose del resto no está disponible ahora.`,{inc:nf.format(src.incorporated),total:nf.format(src.total)}));
+  if(src.pending>0)lineas.push(tr(t,'conx.est.filasPend',`${nf.format(src.pending)} filas pendientes de procesar`,{n:nf.format(src.pending)}));
+ }else if(row.coverage&&row.coverage.observed>0){anillo={valor:row.coverage.accepted/row.coverage.observed,pct:Math.round(row.coverage.accepted*100/row.coverage.observed)};lineas.push(tr(t,'conx.est.regInc',`${nf.format(row.coverage.accepted)} de ${nf.format(row.coverage.observed)} registros incorporados; el resto no se desglosa todavía.`,{acc:nf.format(row.coverage.accepted),obs:nf.format(row.coverage.observed)}));}
+ const ultExito=tr(t,'conx.est.ultExito','Último éxito');
+ const ultimo=row.lastSuccess?{rotulo:ultExito,valor:row.lastSuccess,vacio}:src?.lastUpdate?{rotulo:tr(t,'conx.est.ultAct','Última actualización de datos'),valor:src.lastUpdate,vacio}:{rotulo:ultExito,valor:null,vacio};
+ return {ok,tone,chip:ok?tr(t,'conx.est.conectada','Conectada'):tr(t,'conx.est.pendiente','Pendiente'),estado,lineas,anillo,ultimo};
 }
 const NOMBRE_FUENTE={hubspot:'HubSpot',csv:'Archivos CSV',zendesk:'Zendesk'};
 /** Texto de base de una cifra de importaciones: «Archivos CSV 482,136 + HubSpot 8,291» (la suma por fuente que explica el total; cada tarjeta de Fuentes muestra UNA fuente). */

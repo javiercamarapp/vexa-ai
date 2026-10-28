@@ -68,11 +68,11 @@ const T={es:traductor('es'),en:traductor('en')};
 for(const idioma of ['es','en'] as const){
   test(`tarjeta (${idioma}): dialog no modal, un solo anuncio de «Paso n de N», primer botón primario, sin style=`,()=>{
     const t=T[idioma],dic=(idioma==='es'?es:en) as Record<string,string>;
-    const html=renderToStaticMarkup(<TarjetaRecorrido t={t} titulo="onb.propietario.datos.titulo" cuerpo="onb.propietario.datos.cuerpo" n={2} total={5} alEvento={noop} omitir={noop}/>);
+    const html=renderToStaticMarkup(<TarjetaRecorrido t={t} titulo={t('onb.propietario.datos.titulo')} cuerpo={t('onb.propietario.datos.cuerpo')} n={2} total={5} omitir={noop} ruta={{nombres:['Hoy','Fuentes'],actual:1}} tipo="info" ilu="nodos" grupoN={2} grupoTotal={2} anterior={noop} primario={noop}/>);
     assert.match(html,/role="dialog"/);assert.doesNotMatch(html,/aria-modal/);assert.doesNotMatch(html,/\bstyle=/);assert.doesNotMatch(html,/tabindex/i,'no atrapa el foco');
     assert.match(html,/aria-labelledby="onb-t-titulo"/);assert.match(html,/aria-describedby="onb-t-cuerpo"/);
     assert.equal((html.match(/role="status"/g)??[]).length,1,'un solo anuncio');assert.doesNotMatch(html,/aria-live/);
-    assert.match(html,/class="onb-contador" aria-hidden="true"/,'la línea visible del contador no se duplica en lectores de pantalla');
+    assert.match(html,/class="onb-cab" aria-hidden="true"/,'la línea visible del contador no se duplica en lectores de pantalla');
     const anuncio=/role="status">([^<]*)</.exec(html)![1];assert.ok(anuncio.includes(dic['onb.propietario.datos.titulo'])&&/2/.test(anuncio)&&/5/.test(anuncio));
     assert.ok(html.indexOf('data-onb-primario')>html.indexOf(dic['onb.ui.omitir']),'Omitir, Anterior y Siguiente en orden de lectura');
     assert.ok(html.includes(dic['onb.ui.anterior'])&&html.includes(dic['onb.ui.siguiente']));
@@ -80,9 +80,9 @@ for(const idioma of ['es','en'] as const){
 }
 test('tarjeta: en el primer paso no hay «Anterior»; en el último el primario dice «Terminar»',()=>{
   const t=T.en;
-  const primero=renderToStaticMarkup(<TarjetaRecorrido t={t} titulo="onb.lector.hoy.titulo" cuerpo="onb.lector.hoy.cuerpo" n={1} total={3} alEvento={noop} omitir={noop}/>);
+  const primero=renderToStaticMarkup(<TarjetaRecorrido t={t} titulo={t('onb.lector.hoy.titulo')} cuerpo={t('onb.lector.hoy.cuerpo')} n={1} total={3} omitir={noop} ruta={{nombres:['Hoy','Fuentes'],actual:1}} tipo="info" ilu="nodos" grupoN={2} grupoTotal={2} anterior={noop} primario={noop}/>);
   assert.doesNotMatch(primero,/>Back</);
-  const ultimo=renderToStaticMarkup(<TarjetaRecorrido t={t} titulo="onb.lector.confianza.titulo" cuerpo="onb.lector.confianza.cuerpo" n={3} total={3} alEvento={noop} omitir={noop}/>);
+  const ultimo=renderToStaticMarkup(<TarjetaRecorrido t={t} titulo={t('onb.lector.confianza.titulo')} cuerpo={t('onb.lector.confianza.cuerpo')} n={3} total={3} omitir={noop} ruta={{nombres:['Hoy','Fuentes'],actual:1}} tipo="cierre" ilu="nodos" grupoN={2} grupoTotal={2} anterior={noop} primario={noop}/>);
   assert.match(ultimo,/>Finish</);
 });
 test('invitación y menú Guía: sin style=, saltar/«No volver a mostrar»/«Retomar» presentes según el caso',()=>{

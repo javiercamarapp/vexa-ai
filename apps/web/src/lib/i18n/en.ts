@@ -26,6 +26,7 @@ import {briefsEn} from './d-briefs';
 import {exploradorEn} from './d-explorador';
 import {probdetEn} from './d-probdet';
 import {resumenEn} from './d-resumen';
+import {onbEn} from './d-onb';
 export const en: Record<Clave, string> = {
   'comun.cerrar': 'Close', 'comun.reintentar': 'Try again', 'comun.cargando': 'Loading…', 'comun.sinDato': 'No data',
   'idioma.etiqueta': 'Language', 'idioma.es': 'Español', 'idioma.en': 'English', 'idioma.cambiar': 'Switch language to {idioma}',
@@ -157,4 +158,5 @@ export const en: Record<Clave, string> = {
   ...exploradorEn,
   ...probdetEn,
   ...resumenEn,
+  ...onbEn,
 };

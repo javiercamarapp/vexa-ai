@@ -1,12 +1,12 @@
 /* Píldora segmentada del idioma: mismo tamaño y lenguaje que .theme-selector (movil.css), justo debajo del selector de tema. Solo variables del sistema: claro y oscuro. */
 .idioma-selector{display:flex;justify-content:center;align-items:center;gap:2px;width:fit-content;max-width:100%;min-width:0;margin:0 auto 10px;padding:2px;border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-soft)}
-.idioma-selector label{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:4px;min-width:32px;min-height:26px;padding:0 8px 0 6px;border-radius:999px;color:var(--muted);font:600 11px/1 var(--font-ui);letter-spacing:.04em;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .15s ease,color .15s ease,box-shadow .15s ease}
+.idioma-selector label{position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:32px;min-height:26px;padding:0 7px;border-radius:999px;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .15s ease,box-shadow .15s ease}
 .idioma-selector label:hover{color:var(--ink)}
 .idioma-selector label:has(input:checked){background:var(--ui-surface);color:var(--ink);box-shadow:0 0 0 1px var(--ui-border),0 1px 2px #0e0e1014}
 .idioma-selector label:has(input:focus-visible){outline:2px solid var(--ui-focus);outline-offset:2px}
 .idioma-selector[aria-busy=true]{opacity:.7}
-.idioma-bandera{display:block;flex:none;width:14px;height:14px;border-radius:50%;filter:saturate(.9)}
-.idioma-selector label:not(:has(input:checked)) .idioma-bandera{opacity:.6}
+.idioma-bandera{display:block;flex:none;width:14px;height:14px;border-radius:50%;filter:grayscale(1);opacity:.55;transition:opacity .15s ease}
+.idioma-selector label:hover .idioma-bandera,.idioma-selector label:has(input:checked) .idioma-bandera{opacity:1}
 .sidebar-collapsed .workspace-sidebar .idioma-selector{display:none}
 /* Hoja «Más» en móvil: ancho completo y celdas de 44 px, como el selector de tema. */
 .mobile-sidebar .idioma-selector{width:100%;margin:0 0 12px}

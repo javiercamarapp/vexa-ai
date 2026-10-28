@@ -17,7 +17,7 @@ export function SelectorIdioma() {
     <legend className="sr-only">{t('idioma.etiqueta')}</legend>
     {IDIOMAS.map(i => <label key={i} lang={i} title={t(i === 'es' ? 'idioma.es' : 'idioma.en')}>
       <input type="radio" className="sr-only" name="idioma" value={i} checked={i === actual} aria-label={t('idioma.cambiar', {idioma: t(i === 'es' ? 'idioma.es' : 'idioma.en')})} onChange={() => elegir(i)} />
-      <Bandera idioma={i} /><span aria-hidden="true">{i.toUpperCase()}</span>
+      <Bandera idioma={i} /><span className="sr-only">{i.toUpperCase()}</span>
     </label>)}
   </fieldset>;
 }

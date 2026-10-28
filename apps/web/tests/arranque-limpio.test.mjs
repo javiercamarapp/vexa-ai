@@ -12,6 +12,9 @@ test('el encabezado y el pie global se ocultan con carga de página completa y d
 test('el CSS crítico en línea oculta encabezado y pie y centra la carga antes de que llegue el CSS externo (visita fría en /)',()=>{
   const critico=layout.slice(layout.indexOf('ARRANQUE_CSS_CRITICO = `'),layout.indexOf('export default function RootLayout'));
   assert.match(critico,/body:has\(\.rovaq-cargando:not\(\.rovaq-cargando-compacto\)\) :is\(\.site-header,\.site-footer,\.skip-link\)\{display:none!important\}/);
+  // Pantallas de acceso (login, enlace del correo, espacio de trabajo): el encabezado del sitio no se ve aunque la hoja externa llegue tarde.
+  assert.match(critico,/body:has\(:is\(\.login,\.access-selection,\.workspace-shell\)\) :is\(\.site-header,\.site-footer,\.skip-link\)\{display:none!important\}/);
+  assert.match(critico,/body:has\(\.access-selection\) \.rovaq-cargando\{min-height:100dvh;[^}]*align-items:center;justify-content:center/);
   assert.match(critico,/\.rovaq-cargando:not\(\.rovaq-cargando-compacto\)\{min-height:100dvh;[^}]*align-items:center;justify-content:center/);
 });
 test('con carga de página completa no se ve contenido hermano en el área de contenido',()=>{

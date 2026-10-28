@@ -54,10 +54,20 @@ test('robots.ts y sitemap.ts: solo lo público, con sitemap absoluto', () => {
   assert.match(s,/lastModified/);assert.match(s,/RUTAS_PUBLICAS\.map/);
   assert.deepEqual([...RUTAS_PUBLICAS],['/login']);
 });
-test('el middleware de auth no intercepta robots, sitemap, manifest, íconos ni imágenes sociales', () => {
-  const m=leer('src/middleware.ts'),matcher=/matcher:\s*\[([^\]]+)\]/.exec(m)[1];
-  for (const ruta of ['/robots.txt','/sitemap.xml','/site.webmanifest','/opengraph-image','/twitter-image','/favicon.ico','/.well-known/security.txt','/humans.txt'])
-    assert.ok(!matcher.split(',').some(p=>{const q=p.trim().replace(/['"]/g,'');return q===ruta||(q.endsWith('/:path*')&&ruta.startsWith(q.slice(0,-7)+'/'));}),ruta+' pasaría por el middleware de auth');
+test('el middleware de auth no intercepta robots, sitemap, manifest, íconos ni imágenes sociales (el matcher abarca todo salvo estáticos para decidir por host; la autenticación solo corre en la lista anterior)', async () => {
+  const {rutaConAutenticacion}=await import('../src/lib/host-routing.mjs');
+  for (const ruta of ['/robots.txt','/sitemap.xml','/site.webmanifest','/opengraph-image','/twitter-image','/favicon.ico','/.well-known/security.txt','/humans.txt','/landing'])
+    assert.equal(rutaConAutenticacion(ruta),false,ruta+' pasaría por el middleware de auth');
+  const m=leer('src/middleware.ts');
+  assert.match(m,/decidirHost\(/);assert.match(m,/if\(!rutaConAutenticacion\(path\)\)return NextResponse\.next\(\)/);
+  assert.match(m,/matcher:\s*\['\/\(\(\?!_next\/static\|_next\/image\|fonts\/\|brand\/\|images\/\)\.\*\)'\]/);
+});
+test('landing: robots y sitemap por host (rovaq.ai solo anuncia la landing), canonical propio y la app sigue sin listar la raíz', () => {
+  const r=leer('src/app/robots.ts'),s=leer('src/app/sitemap.ts');
+  for (const f of [r,s]) {assert.match(f,/ES_HOST_LANDING/);assert.match(f,/landingUrl\(\)/);}
+  assert.match(r,/rules:\[\{userAgent:'\*',allow:\['\/'\]\}\]/);
+  assert.match(s,/url:`\$\{landingUrl\(\)\}\/`/);
+  assert.ok(!RUTAS_PUBLICAS.includes('/'),'la raíz de la app redirige y no se lista');
 });
 test('íconos: existen y tienen el tamaño declarado', () => {
   const esperados={'favicon-16x16.png':[16,16],'favicon-32x32.png':[32,32],'favicon-48x48.png':[48,48],'apple-touch-icon.png':[180,180],'icon-192.png':[192,192],'icon-512.png':[512,512],'icon-maskable-192.png':[192,192],'icon-maskable-512.png':[512,512]};
@@ -118,7 +128,7 @@ test('títulos de pestaña: toda pantalla del menú tiene título propio, único
   }
   // Toda página (no solo las del menú) declara título, directo o en su layout.
   const paginas=d=>readdirSync(d).flatMap(n=>{const p=join(d,n);return statSync(p).isDirectory()?paginas(p):n==='page.tsx'?[p]:[];});
-  const sin=paginas(src).filter(f=>{const s=readFileSync(f,'utf8');if(/metadata/.test(s))return false;const l=join(f,'..','layout.tsx');return !(existsSync(l)&&/metadata/.test(readFileSync(l,'utf8')));}).map(f=>f.replace(src+'/',''));
+  const sin=paginas(src).filter(f=>{const s=readFileSync(f,'utf8');if(/metadata|generateMetadata/i.test(s))return false;const l=join(f,'..','layout.tsx');return !(existsSync(l)&&/metadata/.test(readFileSync(l,'utf8')));}).map(f=>f.replace(src+'/',''));
   assert.deepEqual(sin.filter(f=>f!=='page.tsx'),[],'páginas sin título: '+sin.join(', '));
 });
 test('páginas de error de marca: noindex, logo y salida a Hoy; «use client» primero', () => {

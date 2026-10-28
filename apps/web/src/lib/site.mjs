@@ -5,6 +5,14 @@ export function siteUrl(env = process.env.NEXT_PUBLIC_SITE_URL) {
   try { const u = new URL(String(env ?? '').trim()); if (u.protocol === 'https:' || u.hostname === 'localhost') return u.origin; } catch { /* sin valor válido: respaldo */ }
   return SITE_URL_RESPALDO;
 }
+/** Origen público de la landing. NEXT_PUBLIC_LANDING_URL lo sobreescribe; sin valor válido, https://rovaq.ai. Es independiente de NEXT_PUBLIC_SITE_URL, que sigue siendo el origen de la aplicación. */
+export const LANDING_URL_RESPALDO = 'https://rovaq.ai';
+export function landingUrl(env = process.env.NEXT_PUBLIC_LANDING_URL) {
+  try { const u = new URL(String(env ?? '').trim()); if (u.protocol === 'https:' || u.hostname === 'localhost') return u.origin; } catch { /* sin valor válido: respaldo */ }
+  return LANDING_URL_RESPALDO;
+}
+/** Origen de la aplicación a la que enlaza la landing (inicio de sesión). */
+export const APP_URL = 'https://app.rovaq.ai';
 export const SITE = Object.freeze({
   nombre: 'Rovaq AI',
   corto: 'Rovaq',

@@ -6,3 +6,6 @@ export const PREFIJOS_PRIVADOS: readonly string[];
 export function metadatosPublicos(o:{titulo?:string;descripcion?:string;ruta:string}): import('next').Metadata;
 export function jsonLd(base?: string): Record<string, unknown>;
 export const ROBOTS_PRIVADO: Readonly<{index:false;follow:false;nocache:true}>;
+export const LANDING_URL_RESPALDO: string;
+export function landingUrl(env?: string | undefined): string;
+export const APP_URL: string;

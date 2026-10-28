@@ -14,6 +14,7 @@ import { ROBOTS_PRIVADO } from '../../lib/site.mjs';
 import { idiomaActual } from '../../lib/i18n/servidor';
 import { traductor, LOCALE_INTL } from '../../lib/i18n';
 import { IdiomaProvider } from '../../components/i18n/proveedor';
+import { TituloPestana } from '../../components/i18n/titulo-pestana';
 export const metadata={robots:ROBOTS_PRIVADO};
 export const dynamic='force-dynamic';
 // Local visual QA only: `next dev` with VEXA_UI_FIXTURES=1 renders the real shell with a synthetic organization and no Supabase.
@@ -35,5 +36,5 @@ export default async function WorkspaceLayout({children}:{children:ReactNode}){
  const platform=await client.rpc('platform_manage',{p_input:{operation:'status'}});
  const platformAccess=!platform.error&&platform.data?.administrator===true;
  const now=new Date();const today={iso:now.toISOString().slice(0,10),label:new Intl.DateTimeFormat(locale,{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).format(now)};
- return <IdiomaProvider idioma={idioma}>{support&&<SupportBanner tenantId={support.tenant_id} tenantName={support.tenant_name??t('estado.clienteGenerico')} reason={support.reason} expiresAt={support.expires_at}/>}{platformAccess&&<AdminTools trigger={false}/>}<SessionGuard/><WorkspaceShell brand={<RovaqLogoLateral/>} organizations={organizations} tenant={session.active.tenant_id} role={session.active.role} platformAccess={platformAccess} today={today}>{children}</WorkspaceShell></IdiomaProvider>;
+ return <IdiomaProvider idioma={idioma}>{support&&<SupportBanner tenantId={support.tenant_id} tenantName={support.tenant_name??t('estado.clienteGenerico')} reason={support.reason} expiresAt={support.expires_at}/>}{platformAccess&&<AdminTools trigger={false}/>}<SessionGuard/><TituloPestana/><WorkspaceShell brand={<RovaqLogoLateral/>} organizations={organizations} tenant={session.active.tenant_id} role={session.active.role} platformAccess={platformAccess} today={today}>{children}</WorkspaceShell></IdiomaProvider>;
 }

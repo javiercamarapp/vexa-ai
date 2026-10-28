@@ -33,11 +33,11 @@ test('escala: list({verification:"summary"}) <10 s, pocas consultas, sin cargar 
     const textQueries = m => m.log.filter(x => /redacted_text/.test(x.t)).length;
     try {
       let summaryIds, fullIds;
-      await t.test('resumen: <10 s, ≤10 consultas, ninguna toca redacted_text; completo: sí carga texto (89 lotes) y devuelve lo mismo', async () => {
+      await t.test('resumen: <10 s, ≤13 consultas, ninguna toca redacted_text; completo: sí carga texto (89 lotes) y devuelve lo mismo', async () => {
         const m = mk(); const repo = createProblemRepository({database: m.db});
         const s0 = performance.now(); const summary = await repo.list({verification: 'summary'}); const ms = performance.now() - s0;
         console.log(`# list(summary): ${ms.toFixed(0)} ms, ${m.log.length} consultas, máx ${Math.max(...m.log.map(x => x.ms)).toFixed(0)} ms, consultas con redacted_text: ${textQueries(m)}`);
-        assert.equal(summary.length, 394); assert.ok(ms < 10000, 'list(summary) ' + ms + ' ms'); assert.ok(m.log.length <= 10, 'consultas ' + m.log.length); assert.equal(textQueries(m), 0, 'el resumen no debe cargar texto de evidencia');
+        assert.equal(summary.length, 394); assert.ok(ms < 10000, 'list(summary) ' + ms + ' ms'); assert.ok(m.log.length <= 13, 'consultas ' + m.log.length) /* 9 en vivo + SAVEPOINT/SELECT/RELEASE del lector del precálculo 20261114 */; assert.equal(textQueries(m), 0, 'el resumen no debe cargar texto de evidencia');
         const m2 = mk(); const f0 = performance.now(); const full = await createProblemRepository({database: m2.db}).list(); const fms = performance.now() - f0;
         console.log(`# list(full):    ${fms.toFixed(0)} ms, ${m2.log.length} consultas, consultas con redacted_text: ${textQueries(m2)}`);
         assert.ok(textQueries(m2) >= 80, 'el modo completo (por omisión) conserva la verificación con texto: ' + textQueries(m2));

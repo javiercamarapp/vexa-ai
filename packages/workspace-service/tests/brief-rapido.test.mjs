@@ -153,7 +153,7 @@ test('Brief y recomendación sobre corte sin vínculos: una transacción, sin N+
         assert.equal(rec.problemId, pid); assert.equal(rec.status, 'proposed'); assert.ok(rec.evidenceRefs.length > 0); assert.equal(rec.stale, false);
         const runsVerified = log.filter(x => /WITH sel AS MATERIALIZED/.test(x)).map(x => Number(/#runs=(\d+)/.exec(x)[1]));
         assert.ok(runsVerified.every(n => n <= Number(runsOf(pid))), 'el resumen verifica solo las corridas de UN problema: ' + runsVerified);
-        assert.ok(st.tx <= 10 && st.stmts <= 150 && st.runGets <= 4, JSON.stringify(st));
+        assert.ok(st.tx <= 10 && st.stmts <= 160 /* +3 por veredicto de resumen: SAVEPOINT/SELECT/RELEASE del lector del precálculo 20261114 */ && st.runGets <= 4, JSON.stringify(st));
         const replay = await createRecommendationRepository({database: base()}).generate({query: sp.toString(), problemId: pid, requestKey: 'rec-key-00001'});
         assert.equal(replay.id, rec.id, 'idempotente');
         assert.equal((await createRecommendationRepository({database: base()}).get({id: rec.id})).id, rec.id, 'la recomendación guardada se relee con la verificación completa');

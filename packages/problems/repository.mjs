@@ -19,7 +19,28 @@ async function accessible(s,p,{maxRuns=VERIFY_MAX_RUNS}={}){const ids=p.embeddin
 const UUID_RE="'^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'";
 // Memoizado por (transacción, conjunto de corridas): el catálogo, las señales críticas y el resto de vistas de UNA petición piden el mismo veredicto; dentro de una memoSection se calcula una sola vez
 // (≈6.5 s en frío para 8,761 corridas). Fuera de una sección (memoized sin memo) se calcula siempre. Nada cruza transacciones.
-const usableRunsSummary=(s,runIds)=>memoized(s,'usable-runs-summary:'+[...runIds].sort().join(','),()=>usableRunsSummaryUncached(s,runIds));
+const usableRunsSummary=(s,runIds)=>memoized(s,'usable-runs-summary:'+[...runIds].sort().join(','),async()=>(await usableRunsPrecalculado(s,runIds))??usableRunsSummaryUncached(s,runIds));
+// Veredicto PRECALCULADO (migración 20261114000000: insight_problem_run_verdict + problem_verdict_epoch; el cálculo SQL es el mismo que usableRunsSummaryBody y corre fuera de la petición).
+// Fail-closed: solo se usa si CADA corrida pedida tiene fila y su epoch es el vigente del tenant (los disparadores suben el epoch con cualquier borrado/lápida/retención/cambio de estado que
+// pueda cambiar el veredicto). Tabla ausente (migración sin aplicar), vacía, incompleta, desfasada o cualquier error -> null y se calcula en vivo como siempre. Nunca se mezclan ambos orígenes.
+export function veredictoVigente(runIds,rows){
+ const want=new Set(runIds.map(x=>String(x).toLowerCase())),got=new Map();
+ for(const r of rows??[]){const id=String(r.extraction_run_id).toLowerCase();if(want.has(id))got.set(id,r.usable===true);}
+ if(!want.size||got.size!==want.size)return null;
+ return new Set([...got].filter(([,u])=>u).map(([id])=>id));
+}
+export async function usableRunsPrecalculado(s,runIds){
+ if(!runIds.length)return null;
+ try{await s.query('SAVEPOINT veredicto_pre');}catch{return null;}
+ try{
+  const rows=(await s.query('SELECT v.extraction_run_id,v.usable FROM public.insight_problem_run_verdict v JOIN public.problem_verdict_epoch e ON e.tenant_id=v.tenant_id AND e.epoch=v.epoch WHERE v.tenant_id=$1 AND v.extraction_run_id=ANY($2::uuid[])',[s.tenantId,runIds])).rows;
+  await s.query('RELEASE SAVEPOINT veredicto_pre');
+  return veredictoVigente(runIds,rows);
+ }catch{
+  try{await s.query('ROLLBACK TO SAVEPOINT veredicto_pre');await s.query('RELEASE SAVEPOINT veredicto_pre');}catch{}
+  return null;
+ }
+}
 // Tope por sentencia: la acción de lectura trae 10 s y las verificaciones de evidencia del catálogo son costosas EN FRÍO (resumen: 8,761 corridas, 6.5–9 s; completa con redacted_text: ~13 s) y a veces
 // las cancelaba y tumbaba la vista (503). Se sube SOLO para esa lectura acotada y se restaura; un tope deliberadamente menor del llamador (p. ej. señales críticas, 1.5 s) NO se amplía.
 const VERIFY_TIMEOUT_MS=45000;

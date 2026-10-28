@@ -10,16 +10,12 @@ export interface SqlConnection {
   release(): void;
 }
 export interface SqlPool { connect(): Promise<SqlConnection> }
-export type DatabaseAction = 'read' | 'notify' | 'materialize' | 'import' | 'configure' | 'propose' | 'approve' | 'execute' | 'retain' | 'export';
+import type { DatabaseAction } from '@vexa/platform/capabilities';
+export type { DatabaseAction } from '@vexa/platform/capabilities';
 // Las lecturas interactivas conservan 10 s. La preparación y publicación de cortes económicos (import) y la materialización recorren todo el libro (~85 mil asientos) y exceden 10 s bajo RLS; la duración total sigue acotada por maxDuration de la ruta.
 const STATEMENT_TIMEOUT_MS: Record<DatabaseAction, string> = {read:'10000',notify:'10000',materialize:'45000',import:'55000',configure:'10000',propose:'10000',approve:'10000',execute:'10000',retain:'10000',export:'10000'};
-const roles: Record<DatabaseAction, readonly Membership['role'][]> = {
-  notify: ['owner','analyst','operator','viewer'],
-  read: ['owner','analyst','operator','viewer'], materialize: ['owner','analyst','operator','viewer'], import: ['owner','analyst'], configure: ['owner'],
-  propose: ['owner','analyst','operator'], approve: ['owner'], execute: ['owner','operator'], retain: ['owner'],
-  // Descarga masiva (CSV/JSON): mismas lecturas que 'read', pero jamás en sesión de soporte (AUTH-01).
-  export: ['owner','analyst','operator','viewer'],
-};
+import { DATABASE_ACTION_ROLES } from '@vexa/platform/capabilities';
+const roles = DATABASE_ACTION_ROLES;
 export interface DatabaseScope {
   readonly tenantId: string;
   readonly userId: string;

@@ -6,6 +6,7 @@
   "exports": {
     "./session": "./src/session.ts",
     "./db": "./src/db.ts",
+    "./capabilities": "./src/capabilities.ts",
     "./pool-options": "./src/pool-options.ts"
   },
   "scripts": {

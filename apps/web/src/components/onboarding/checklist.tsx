@@ -42,7 +42,8 @@ export function ChecklistHoy(){
  const txt=(k:string,v?:Record<string,string|number>)=>t(k as Clave,v);
  const senales=carga.estado==='listo'?carga.senales:null;
  const lista=calcularChecklist(pista,senales);
- if(carga.estado==='listo'&&lista.completo&&lista.items.every(i=>!i.nota))return null;
+ // Con todo lo propio hecho la lista se oculta, salvo que haya pasos en espera de un tercero o con salvedad: esos se siguen diciendo.
+ if(carga.estado==='listo'&&lista.completo&&lista.esperan===0&&lista.items.every(i=>!i.nota))return null;
  const item=(i:(typeof lista.items)[number])=><li key={i.id} className="onb-item" data-estado={i.estado} data-siguiente={lista.siguiente===i.id||undefined}>
   <h3><span className="onb-estado">{t(('onb.check.estado.'+i.estado) as Clave)}</span>{txt(i.textos.titulo)}</h3>
   <p>{txt(i.textos.cuerpo)}</p>
@@ -53,7 +54,7 @@ export function ChecklistHoy(){
  </li>;
  return <section className="onb-lista" aria-labelledby="onb-lista-titulo" data-cargando={carga.estado==='cargando'||undefined} data-tour="checklist">
   <div className="onb-lista-cab"><h2 id="onb-lista-titulo">{t('onb.check.titulo')}</h2>
-   {carga.estado==='listo'&&lista.progreso.total>0&&<div className="onb-progreso"><progress max={lista.progreso.total} value={lista.progreso.hechos} aria-label={t('onb.check.progreso',{hechos:lista.progreso.hechos,total:lista.progreso.total})}/><span>{t('onb.check.progreso',{hechos:lista.progreso.hechos,total:lista.progreso.total})}</span></div>}</div>
+   {carga.estado==='listo'&&(lista.progreso.total>0||lista.esperan>0)&&<div className="onb-progreso">{lista.progreso.total>0&&<><progress max={lista.progreso.total} value={lista.progreso.hechos} aria-label={t('onb.check.progreso',{hechos:lista.progreso.hechos,total:lista.progreso.total})}/><span>{t('onb.check.progreso',{hechos:lista.progreso.hechos,total:lista.progreso.total})}</span></>}{lista.esperan>0&&<span className="onb-espera">{t('onb.check.esperan',{n:lista.esperan})}</span>}</div>}</div>
   {carga.estado==='cargando'?<p role="status">{t('onb.check.cargando')}</p>
    :carga.estado==='error'?<p role="status">{t('onb.check.noDisponible')}</p>
    :<>

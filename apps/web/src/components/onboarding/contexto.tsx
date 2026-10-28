@@ -1,19 +1,23 @@
 'use client';
-// Estado y comportamiento del recorrido, compartidos entre el botón «Guía» (encabezado) y los paneles (tarjeta, invitación, menú),
+// Estado y comportamiento del recorrido, compartidos entre el botón «Guía» (encabezado) y los paneles (tarjeta, foco, invitación, menú),
 // que viven FUERA del encabezado porque este usa backdrop-filter y atraparía a los elementos fixed.
 import {createContext,useCallback,useContext,useEffect,useMemo,useRef,useState,type ReactNode} from 'react';
 import {usePathname,useRouter} from 'next/navigation';
-import {pasosDe,type Pista,type PasoOnboarding} from '../../lib/onboarding/catalogo.mjs';
-import {estadoInicial,reducir,type EstadoRecorrido,type EventoRecorrido} from '../../lib/onboarding/recorrido.mjs';
-import {actualizarEstado,almacenDelNavegador,claveEstado,ESTADO_VACIO,leerEstado,reconciliar,type EstadoLocal} from '../../lib/onboarding/estado';
+import {pasosDe,type Pista} from '../../lib/onboarding/catalogo.mjs';
+import {estadoInicial,eventoDeTecla,reducir,teclasPropias,type EstadoRecorrido,type EventoRecorrido} from '../../lib/onboarding/recorrido.mjs';
+import {construirTour,gruposDe,type PasoTour} from '../../lib/onboarding/tour.mjs';
+import {enPantalla} from '../../lib/onboarding/ruta.mjs';
+import {actualizarEstado,almacenDelNavegador,claveEstado,ESTADO_VACIO,leerEstado,type EstadoLocal} from '../../lib/onboarding/estado';
+import {abrirGrupoDelMenu,primerVisible} from './objetivo';
 /** rol = rol efectivo de la sesión en la organización (en «Ver como» es lector); ausente en la consola de plataforma. */
 export interface DatosOnboarding {pista:Pista|null;userId:string;tenantId:string;organizacion:string;rolEtiqueta:string;rol?:string}
 export interface Controlador {
- datos:DatosOnboarding;pista:Pista|null;listo:boolean;local:EstadoLocal;tieneRecorrido:boolean;pasos:PasoOnboarding[];tieneChecklist:boolean;
- rec:EstadoRecorrido;paso:PasoOnboarding|null;menuAbierto:boolean;invitacionVisible:boolean;soporteTerminado:boolean;
+ datos:DatosOnboarding;pista:Pista|null;listo:boolean;local:EstadoLocal;tieneRecorrido:boolean;pasos:PasoTour[];pantallas:{href:string;grupo:number;desde:number}[];tieneChecklist:boolean;
+ rec:EstadoRecorrido;paso:PasoTour|null;menuAbierto:boolean;invitacionVisible:boolean;soporteTerminado:boolean;ruta:string;
  registrarBoton:(el:HTMLButtonElement|null)=>void;enfocarBoton:()=>void;
  alternarMenu:()=>void;cerrarMenu:()=>void;
- abrirSetup:()=>void;iniciar:(modo:'inicio'|'retomar')=>void;despachar:(e:EventoRecorrido)=>void;omitir:()=>void;noVolver:()=>void;saltarInvitacion:()=>void;mostrarChecklist:()=>void;ocultarChecklist:()=>void;
+ abrirSetup:()=>void;iniciar:(modo:'inicio'|'retomar')=>void;irAPantalla:(href:string)=>void;despachar:(e:EventoRecorrido)=>void;siguiente:()=>void;llevame:()=>void;terminarEIrASetup:()=>void;
+ omitir:()=>void;noVolver:()=>void;saltarInvitacion:()=>void;mostrarChecklist:()=>void;ocultarChecklist:()=>void;
 }
 const Contexto=createContext<Controlador|null>(null);
 export const useOnboarding=()=>useContext(Contexto);
@@ -23,37 +27,82 @@ export function OnboardingRaiz({datos,children}:{datos:DatosOnboarding;children:
  // Si la sesión de soporte termina con la pantalla abierta (la pista deja de ser «soporte»), se avisa en vez de cambiar la vista sin decir nada.
  const [pistaAnterior,setPistaAnterior]=useState(pista),[soporteTerminado,setSoporteTerminado]=useState(false);
  if(pistaAnterior!==pista){setPistaAnterior(pista);setSoporteTerminado(pistaAnterior==='soporte'&&pista!=='soporte');}
- const pasos=useMemo(()=>tieneRecorrido&&pista?pasosDe(pista,'tour'):[],[tieneRecorrido,pista]);
+ // El recorrido se construye del catálogo y del menú real del rol: mismas pantallas que ve, nada más.
+ const pasos=useMemo(()=>tieneRecorrido&&pista?construirTour(pista):[],[tieneRecorrido,pista]);
+ const pantallas=useMemo(()=>gruposDe(pasos),[pasos]);
  const tieneChecklist=Boolean(tieneRecorrido&&pista&&pasosDe(pista,'checklist').length>0);
  const clave=useMemo(()=>tieneRecorrido&&pista?claveEstado(userId,tenantId,pista):null,[tieneRecorrido,pista,userId,tenantId]);
  const [listo,setListo]=useState(false),[local,setLocal]=useState<EstadoLocal>(ESTADO_VACIO),[rec,setRec]=useState<EstadoRecorrido>(estadoInicial()),[menuAbierto,setMenuAbierto]=useState(false);
- const [boton,setBoton]=useState<HTMLButtonElement|null>(null),abiertoAntes=useRef(false);
- // Lo guardado se lee tras montar (el servidor no ve el navegador): evita diferencias de hidratación. Al cambiar de rol u organización cambia la clave y se reconcilia.
- useEffect(()=>{const frame=requestAnimationFrame(()=>{setLocal(clave?leerEstado(almacenDelNavegador(),clave):ESTADO_VACIO);setRec(estadoInicial());setListo(true);});return()=>cancelAnimationFrame(frame);},[clave]);
+ const [boton,setBoton]=useState<HTMLButtonElement|null>(null),abiertoAntes=useRef(false),rutaRef=useRef(pathname);
+ useEffect(()=>{rutaRef.current=pathname;},[pathname]);
+ // Lo guardado se lee tras montar (el servidor no ve el navegador): evita diferencias de hidratación. Al cambiar de rol u organización cambia la clave.
+ // Si el recorrido estaba abierto al recargar, se retoma en el mismo paso.
+ useEffect(()=>{const frame=requestAnimationFrame(()=>{
+  const leido=clave?leerEstado(almacenDelNavegador(),clave):ESTADO_VACIO,indice=leido.activo&&!leido.descartado?pasos.findIndex(p=>p.id===leido.paso):-1;
+  setLocal(leido);setRec(indice>=0?reducir(estadoInicial(),{tipo:'abrir',indice},pasos.length,pasos,rutaRef.current):estadoInicial());setListo(true);
+ });return()=>cancelAnimationFrame(frame);},[clave,pasos]);
  const guardar=useCallback((parche:Partial<EstadoLocal>)=>{setLocal(previo=>clave?actualizarEstado(almacenDelNavegador(),clave,{...previo,...parche}):{...previo,...parche});},[clave]);
- // Todo cambio del recorrido nace de una acción de la persona: aquí se aplica, se guarda el paso y, si cambió de pantalla, se la lleva (un cambio de ruta ajeno nunca pasa por aquí).
- const aplicar=useCallback((sig:EstadoRecorrido)=>{
+ // Todo cambio del recorrido nace de una acción de la persona (o de que llegue a la pantalla a la que se le mandó): aquí se aplica y se guarda el paso.
+ // Si el paso cae en otra pantalla distinta de la actual (volver atrás, retomar, saltar), se la lleva; un paso «ir» no navega: te dice qué apretar.
+ const aplicar=useCallback((sig:EstadoRecorrido,navegar:boolean)=>{
   setRec(sig);
-  if(sig.abierto){const p=pasos[sig.indice];if(p){guardar({paso:p.id,visto:true});if(p.href&&p.href!==pathname)router.push(p.href);}}
-  else if(sig.terminado)guardar({paso:null,visto:true,omitido:false});
+  if(sig.abierto){const p=pasos[sig.indice];if(p){guardar({paso:p.id,visto:true,activo:true});if(navegar&&p.tipo!=='ir'&&p.pantalla&&!enPantalla(pathname,p.pantalla))router.push(p.pantalla);}}
+  else if(sig.terminado)guardar({paso:null,visto:true,omitido:false,activo:false});
+  else guardar({activo:false});
  },[guardar,pasos,pathname,router]);
- const despachar=useCallback((e:EventoRecorrido)=>aplicar(reducir(rec,e,pasos.length)),[aplicar,rec,pasos.length]);
+ const despachar=useCallback((e:EventoRecorrido)=>aplicar(reducir(rec,e,pasos.length,pasos,pathname),e.tipo!=='clic'&&e.tipo!=='ruta'),[aplicar,rec,pasos,pathname]);
+ // Llegar a la pantalla a la que te mandaba un paso «ir» (por clic, «Llévame», atrás del navegador…) lo completa. Un cambio de ruta ajeno no abre, cierra ni mueve nada.
+ useEffect(()=>{
+  const frame=requestAnimationFrame(()=>{const sig=reducir(rec,{tipo:'ruta',ruta:pathname},pasos.length,pasos,pathname);if(sig!==rec)aplicar(sig,false);});
+  return()=>cancelAnimationFrame(frame);
+ // eslint-disable-next-line react-hooks/exhaustive-deps -- solo reacciona al cambio de ruta
+ },[pathname]);
  const paso=rec.abierto?(pasos[rec.indice]??null):null;
  // Al cerrar (Esc, Omitir, Terminar) el foco vuelve al disparador: el botón Guía.
  useEffect(()=>{if(abiertoAntes.current&&!rec.abierto)boton?.focus();abiertoAntes.current=rec.abierto;},[rec.abierto,boton]);
  const iniciar=useCallback((modo:'inicio'|'retomar')=>{
-  const desde=modo==='retomar'&&pista?reconciliar(local,pista).pasoActual:null;
-  const indice=Math.max(0,pasos.findIndex(p=>p.id===desde));
-  setMenuAbierto(false);guardar({omitido:false});aplicar(reducir(rec,{tipo:'abrir',indice:modo==='retomar'?indice:0},pasos.length));
- },[aplicar,guardar,local,pasos,pista,rec]);
+  const desde=modo==='retomar'?pasos.findIndex(p=>p.id===local.paso):-1;
+  setMenuAbierto(false);guardar({omitido:false});aplicar(reducir(rec,{tipo:'abrir',indice:desde>=0?desde:0},pasos.length,pasos,pathname),false);
+ },[aplicar,guardar,local.paso,pasos,pathname,rec]);
+ const irAPantalla=useCallback((href:string)=>{
+  const g=pantallas.find(x=>x.href===href);if(!g)return;
+  setMenuAbierto(false);guardar({omitido:false});aplicar(reducir(rec,{tipo:'abrir',indice:g.desde},pasos.length,pasos,pathname),false);
+ },[aplicar,guardar,pantallas,pasos,pathname,rec]);
  const abrirSetup=useCallback(()=>{setMenuAbierto(false);router.push('/setup');},[router]);
- const omitir=useCallback(()=>{guardar({omitido:true,visto:true,paso:null});setRec(reducir(rec,{tipo:'cerrar'},pasos.length));},[guardar,pasos.length,rec]);
- const noVolver=useCallback(()=>{setMenuAbierto(false);guardar({descartado:true,omitido:true,visto:true,paso:null});setRec(reducir(rec,{tipo:'cerrar'},pasos.length));},[guardar,pasos.length,rec]);
+ // «Llévame»: hace el clic real en el elemento (así viaja con el alcance del menú); si no está a la vista, navega directo. En los dos casos el paso «ir» queda completo.
+ const llevame=useCallback(()=>{
+  const p=rec.abierto?pasos[rec.indice]:null;
+  if(!p||p.tipo!=='ir'||!p.href)return;
+  abrirGrupoDelMenu(p.objetivos);
+  const el=primerVisible(p.objetivos);
+  if(el){el.click();return;}
+  router.push(p.href);despachar({tipo:'clic'});
+ },[despachar,pasos,rec.abierto,rec.indice,router]);
+ const siguiente=useCallback(()=>{if(paso?.tipo==='ir')llevame();else despachar({tipo:'siguiente'});},[despachar,llevame,paso?.tipo]);
+ const terminarEIrASetup=useCallback(()=>{despachar({tipo:'siguiente'});router.push('/setup');},[despachar,router]);
+ const omitir=useCallback(()=>{guardar({omitido:true,visto:true,paso:null,activo:false});setRec(reducir(rec,{tipo:'cerrar'},pasos.length,pasos,pathname));},[guardar,pasos,pathname,rec]);
+ const noVolver=useCallback(()=>{setMenuAbierto(false);guardar({descartado:true,omitido:true,visto:true,paso:null,activo:false});setRec(reducir(rec,{tipo:'cerrar'},pasos.length,pasos,pathname));},[guardar,pasos,pathname,rec]);
  const saltarInvitacion=useCallback(()=>guardar({omitido:true,visto:true}),[guardar]);
  const mostrarChecklist=useCallback(()=>{setMenuAbierto(false);guardar({descartado:false});router.push('/overview');},[guardar,router]);
  const ocultarChecklist=useCallback(()=>guardar({descartado:true}),[guardar]);
+ // Teclado a nivel de documento mientras el recorrido está abierto: las flechas avanzan SIEMPRE (también tras navegar a otra pantalla),
+ // salvo dentro de campos de texto, listas, pestañas o con modificadores. Esc siempre sale. Enter solo cuenta dentro de la tarjeta.
+ const abierto=rec.abierto;
+ useEffect(()=>{
+  if(!abierto)return;
+  const alTeclear=(e:KeyboardEvent)=>{
+   if(e.defaultPrevented)return;
+   const objetivo=e.target instanceof HTMLElement?e.target:null;
+   const ev=eventoDeTecla(e.key,objetivo?.tagName??'',{propias:teclasPropias(objetivo),modificador:e.altKey||e.ctrlKey||e.metaKey||e.shiftKey});
+   if(!ev)return;
+   if(e.key==='Enter'&&!objetivo?.closest('.onb-tarjeta'))return;
+   e.preventDefault();
+   if(ev.tipo==='siguiente')siguiente();else despachar(ev);
+  };
+  document.addEventListener('keydown',alTeclear);return()=>document.removeEventListener('keydown',alTeclear);
+ },[abierto,siguiente,despachar]);
  const invitacionVisible=listo&&tieneRecorrido&&!rec.abierto&&!local.visto&&!local.omitido&&!local.descartado;
- const valor:Controlador={datos,pista,listo,local,tieneRecorrido,pasos,tieneChecklist,rec,paso,menuAbierto,invitacionVisible,soporteTerminado,registrarBoton:setBoton,enfocarBoton:()=>boton?.focus(),
-  alternarMenu:()=>setMenuAbierto(v=>!v),cerrarMenu:()=>setMenuAbierto(false),abrirSetup,iniciar,despachar,omitir,noVolver,saltarInvitacion,mostrarChecklist,ocultarChecklist};
+ const valor:Controlador={datos,pista,listo,local,tieneRecorrido,pasos,pantallas,tieneChecklist,rec,paso,menuAbierto,invitacionVisible,soporteTerminado,ruta:pathname,registrarBoton:setBoton,enfocarBoton:()=>boton?.focus(),
+  alternarMenu:()=>setMenuAbierto(v=>!v),cerrarMenu:()=>setMenuAbierto(false),abrirSetup,iniciar,irAPantalla,despachar,siguiente,llevame,terminarEIrASetup,omitir,noVolver,saltarInvitacion,mostrarChecklist,ocultarChecklist};
  return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }

@@ -1,45 +1,148 @@
 /* Onboarding (recorrido, invitación, menú Guía y lista de primeros pasos). Solo clases: sin estilos en línea, compatible con CSP estricta. */
-:root { --onb-resalte:#0b57d0; --onb-fondo:var(--ui-surface,#fff); }
-:root[data-theme=dark] { --onb-resalte:#8ab4f8; }
+:root { --onb-resalte:#0b57d0; --onb-etq-tinta:#fff; --onb-fondo:var(--ui-surface,#fff); }
+:root[data-theme=dark] { --onb-resalte:#8ab4f8; --onb-etq-tinta:#0b1b3a; }
 
 /* Botón «Guía» del encabezado: compacto, transparente, sin bloque oscuro. Especificidad (0,2,0) para ganar a `.workspace-shell :where(button)` (fondo de acción). */
 .workspace-header .onb-boton, .onb-boton { position:relative; display:inline-flex; align-items:center; gap:5px; flex:none; box-sizing:border-box; min-height:0; height:26px; margin:0; padding:0 9px 0 7px; border:1px solid var(--ui-border); border-radius:999px; background:var(--ui-soft); color:var(--muted); font:500 12px/1 var(--font-ui); letter-spacing:0; cursor:pointer; box-shadow:none; }
 .workspace-header .onb-boton:hover, .workspace-header .onb-boton[aria-expanded="true"], .onb-boton:hover { background:var(--ui-surface); color:var(--ink); box-shadow:0 0 0 1px var(--ui-border), 0 1px 2px #0e0e1014; }
-.onb-boton-signo { display:inline-grid; place-items:center; width:14px; height:14px; border:1px solid currentColor; border-radius:50%; font:600 9px/1 var(--font-ui); }
+.onb-boton-signo { display:inline-grid; place-items:center; width:14px; height:14px; border:1px solid currentColor; border-radius:50%; font:600 11px/1 var(--font-ui); }
 .onb-boton-punto { position:absolute; top:-2px; right:-2px; width:6px; height:6px; border-radius:50%; background:var(--onb-resalte); box-shadow:0 0 0 2px var(--ui-surface); }
 /* Área táctil ≥ 36 px sin agrandar lo visible. */
 @media (pointer:coarse) { .onb-boton::after { content:""; position:absolute; inset:-5px -4px; } }
 
 .onb-tarjeta, .onb-invitacion, .onb-menu { position:fixed; z-index:40; box-sizing:border-box; border:1px solid var(--ui-line-strong); border-radius:12px; background:var(--onb-fondo); color:var(--ink); box-shadow:var(--ui-shadow, 0 8px 28px rgba(0,0,0,.18)); }
-.onb-tarjeta, .onb-invitacion { right:24px; bottom:24px; width:min(360px, calc(100vw - 32px)); padding:16px 18px; }
-.onb-tarjeta h2, .onb-invitacion h2 { margin:0 0 6px; font:600 15px/1.35 var(--font-ui); letter-spacing:0; }
-.onb-tarjeta p, .onb-invitacion p { margin:0 0 12px; font-size:13px; line-height:1.55; color:var(--muted); }
-.onb-tarjeta .onb-contador { margin:0 0 4px; font:500 11px/1.4 var(--font-mono); text-transform:uppercase; letter-spacing:.06em; }
+.onb-tarjeta, .onb-invitacion { right:24px; bottom:24px; width:min(380px, calc(100vw - 32px)); padding:14px 18px 16px; }
+.onb-tarjeta[data-lado="izq"] { right:auto; left:24px; }
+.onb-tarjeta[data-centrada] { inset:auto; left:50%; top:50%; translate:-50% -50%; }
+.onb-tarjeta h2, .onb-invitacion h2 { margin:0 0 6px; font:600 16px/1.35 var(--font-ui); letter-spacing:0; }
+.onb-tarjeta p, .onb-invitacion p { margin:0 0 10px; font-size:13px; line-height:1.55; color:var(--muted); }
+.onb-cab { display:flex; justify-content:space-between; gap:8px; margin:0 0 6px; }
+.onb-tarjeta .onb-contador { margin:0; font:500 11px/1.4 var(--font-mono); text-transform:uppercase; letter-spacing:.06em; }
+.onb-avance { display:block; width:100%; height:4px; margin:0 0 12px; border:0; border-radius:999px; overflow:hidden; background:var(--ui-soft); accent-color:var(--onb-resalte); appearance:none; }
+.onb-avance::-webkit-progress-bar { background:var(--ui-soft); }
+.onb-avance::-webkit-progress-value { background:var(--onb-resalte); }
+.onb-avance::-moz-progress-bar { background:var(--onb-resalte); }
+.onb-tarjeta .onb-resumen { color:var(--ink); }
+.onb-tarjeta .onb-nota { padding:6px 10px; border-radius:8px; background:var(--ui-soft); font-size:12px; }
 .onb-acciones { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; margin:0; }
 .onb-btn, .onb-btn-sec { min-height:36px; padding:0 14px; border-radius:8px; font:500 13px/1 var(--font-ui); cursor:pointer; }
 .onb-btn { border:1px solid var(--ink); background:var(--ink); color:var(--background); }
 .onb-btn-sec { border:1px solid var(--ui-line-strong); background:transparent; color:var(--ink); }
 .onb-btn:focus-visible, .onb-btn-sec:focus-visible, .onb-boton:focus-visible, .onb-menu button:focus-visible { outline:3px solid var(--onb-resalte); outline-offset:2px; }
 
-.onb-menu { top:60px; right:16px; display:grid; gap:2px; min-width:220px; max-width:min(320px, calc(100vw - 32px)); padding:8px; }
+/* Ruta del recorrido: pantallas en una ventana corta, la actual marcada. */
+.onb-ruta { display:flex; flex-wrap:wrap; gap:2px 6px; margin:0 0 12px; padding:0; list-style:none; font:500 12px/1.5 var(--font-ui); color:var(--muted); }
+.onb-ruta li + li::before { content:"·"; margin-right:6px; color:var(--ui-line-strong); }
+.onb-ruta li[data-actual] { color:var(--ink); font-weight:600; }
+.onb-ruta li[data-actual]::after { content:""; display:block; height:2px; background:var(--onb-resalte); }
+
+/* Ilustración de la pantalla: línea sobria con el acento del sistema. Estado final = el que se ve sin animación. */
+.onb-ilu-marco { display:grid; place-items:center; height:104px; margin:0 0 10px; border-radius:8px; background:var(--ui-soft); overflow:hidden; }
+.onb-tarjeta[data-tipo="cierre"] .onb-ilu-marco { height:120px; }
+.onb-ilu { width:auto; height:92px; fill:none; stroke:var(--muted); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; overflow:visible; }
+.onb-ilu .ilu-l { stroke:var(--ui-line-strong); }
+.onb-ilu .ilu-a { stroke:var(--onb-resalte); }
+.onb-ilu .ilu-f { fill:var(--ui-surface); stroke:var(--ui-line-strong); }
+.onb-ilu .ilu-fa { fill:var(--onb-resalte); stroke:none; }
+.onb-ilu .ilu-bordea { stroke:var(--onb-resalte); }
+.onb-ilu .ilu-sup { fill:var(--ui-surface); stroke:var(--onb-resalte); }
+.onb-ilu .ilu-t { stroke:var(--onb-fondo); }
+.onb-ilu .ilu-sin-relleno { fill:none; }
+.onb-ilu .ilu-grueso { stroke-width:4; }
+.onb-ilu .ilu-traza { stroke-dasharray:1; stroke-dashoffset:0; }
+.onb-ilu .ilu-arco { stroke-width:7; stroke-linecap:butt; stroke-dasharray:.72 1; transform:rotate(-90deg); transform-origin:125px 46px; }
+.onb-ilu circle.ilu-l.ilu-sin-relleno { stroke-width:7; }
+.onb-ilu .ilu-barra, .onb-ilu .ilu-pop, .onb-ilu .ilu-punto { transform-box:fill-box; transform-origin:center; }
+.onb-ilu .ilu-barra { transform-origin:50% 100%; }
+
+/* Foco con atenuación: una capa que no recibe clics (la persona puede usar el elemento y la página) y un recorte posicionado por CSSOM. */
+.onb-capa { position:fixed; inset:0; z-index:38; pointer-events:none; }
+.onb-capa[data-sin-foco][data-scrim] { background:rgba(8,10,16,.55); }
+.onb-capa[data-sin-foco] .onb-foco { display:none; }
+.onb-foco { position:absolute; left:0; top:0; width:var(--tour-w,0px); height:var(--tour-h,0px); transform:translate(var(--tour-x,0px), var(--tour-y,0px)); border-radius:12px; box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--onb-resalte), 0 0 0 9999px rgba(8,10,16,.55); }
+.onb-foco::after { content:""; position:absolute; inset:-4px; border:2px solid var(--onb-resalte); border-radius:12px; opacity:0; }
+
+/* Etiqueta «Haz clic aquí» con flecha, junto al elemento real. */
+.onb-etiqueta { position:fixed; left:0; top:0; z-index:39; pointer-events:none; visibility:hidden; transform:translate(var(--lab-x,0px), var(--lab-y,0px)); }
+.onb-etiqueta[data-lado="abajo"] { --bx:0px; --by:-5px; }
+.onb-etiqueta[data-lado="arriba"] { --bx:0px; --by:5px; }
+.onb-etiqueta[data-lado="der"] { --bx:-5px; --by:0px; }
+.onb-etiqueta[data-lado="izq"] { --bx:5px; --by:0px; }
+.onb-etq-in { display:inline-flex; align-items:center; gap:6px; max-width:min(300px, calc(100vw - 16px)); padding:6px 10px; border-radius:8px; background:var(--onb-resalte); color:var(--onb-etq-tinta); font:600 12px/1.3 var(--font-ui); box-shadow:0 4px 14px rgba(8,10,16,.3); }
+.onb-etq-flecha { flex:none; width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.onb-etiqueta[data-lado="arriba"] .onb-etq-flecha { transform:rotate(180deg); }
+.onb-etiqueta[data-lado="der"] .onb-etq-flecha { transform:rotate(-90deg); }
+.onb-etiqueta[data-lado="izq"] .onb-etq-flecha { transform:rotate(90deg); }
+
+/* Aviso breve al entrar a una pantalla nueva. */
+.onb-entrada { display:none; position:fixed; z-index:41; left:50%; top:72px; translate:-50% 0; margin:0; padding:8px 16px; border-radius:999px; background:var(--ink); color:var(--background); font:600 13px/1.3 var(--font-ui); pointer-events:none; }
+
+.onb-menu { top:60px; right:16px; display:grid; gap:2px; min-width:220px; max-width:min(320px, calc(100vw - 32px)); max-height:calc(100vh - 80px); overflow:auto; padding:8px; }
 .onb-menu-ctx { margin:0; padding:6px 8px 8px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--ui-border); }
 .onb-menu button { min-height:40px; padding:0 8px; border:0; border-radius:8px; background:transparent; color:var(--ink); font:400 13px/1.3 var(--font-ui); text-align:left; cursor:pointer; }
 .onb-menu button:hover { background:var(--ui-soft); }
+.onb-menu-pantallas { display:grid; gap:1px; margin:4px 0; padding:4px 0; border-top:1px solid var(--ui-border); border-bottom:1px solid var(--ui-border); max-height:min(40vh, 300px); overflow:auto; }
+.onb-menu-sub { margin:0; padding:4px 8px; font:500 11px/1.4 var(--font-mono); text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+.onb-menu-pantallas button { min-height:32px; }
+.onb-menu-pantallas button[aria-current="step"] { background:var(--ui-soft); font-weight:600; }
 
-/* Elemento resaltado por el recorrido: contorno de contraste ≥ 3:1 sobre el fondo, también en alto contraste forzado. */
+/* Elemento resaltado por el recorrido (compatibilidad): contorno de contraste ≥ 3:1 sobre el fondo, también en alto contraste forzado. */
 .onb-resaltado { outline:3px solid var(--onb-resalte); outline-offset:3px; border-radius:8px; }
-@media (forced-colors:active) { .onb-resaltado { outline-color:Highlight; } .onb-tarjeta, .onb-invitacion, .onb-menu { border-color:CanvasText; } }
+@media (forced-colors:active) {
+ .onb-resaltado { outline-color:Highlight; }
+ .onb-tarjeta, .onb-invitacion, .onb-menu { border-color:CanvasText; }
+ .onb-foco { box-shadow:none; outline:3px solid Highlight; outline-offset:3px; }
+ .onb-etq-in, .onb-entrada { border:1px solid CanvasText; background:Canvas; color:CanvasText; }
+ .onb-ilu * { stroke:CanvasText; }
+}
 
-/* Animación sutil (transform/opacity, 200 ms) solo si la persona no pidió reducir el movimiento. */
+/* Animación (transform/opacity/trazo) solo si la persona no pidió reducir el movimiento; con «reducir movimiento» todo cambia al instante y las ilustraciones quedan en su estado final. */
 @media (prefers-reduced-motion:no-preference) {
  .onb-tarjeta, .onb-invitacion, .onb-menu { animation:onb-entra 200ms ease-out; }
  .onb-resaltado { transition:outline-color 150ms ease; }
  @keyframes onb-entra { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+ .onb-capa[data-animar] .onb-foco { transition:transform 380ms cubic-bezier(.2,.8,.2,1), width 380ms cubic-bezier(.2,.8,.2,1), height 380ms cubic-bezier(.2,.8,.2,1); }
+ .onb-etiqueta { transition:transform 380ms cubic-bezier(.2,.8,.2,1); }
+ .onb-foco::after { animation:onb-pulso 1800ms ease-out infinite; }
+ @keyframes onb-pulso { from { opacity:.8; transform:scale(1); } to { opacity:0; transform:scale(1.12); } }
+ .onb-etq-in { animation:onb-flecha 900ms ease-in-out infinite; }
+ @keyframes onb-flecha { 0%, 100% { transform:none; } 50% { transform:translate(var(--bx,0px), var(--by,0px)); } }
+ .onb-entrada { display:block; animation:onb-banner 1900ms ease-out both; }
+ @keyframes onb-banner { 0% { opacity:0; transform:translateY(-10px); } 15%, 80% { opacity:1; transform:none; } 100% { opacity:0; transform:translateY(-6px); } }
+ .onb-ilu-marco .ilu-traza { animation:onb-traza 900ms ease-out both; }
+ @keyframes onb-traza { from { stroke-dashoffset:1; } to { stroke-dashoffset:0; } }
+ .onb-ilu-marco .ilu-arco { animation:onb-arco 1100ms ease-out 200ms both; }
+ @keyframes onb-arco { from { stroke-dashoffset:.72; } to { stroke-dashoffset:0; } }
+ .onb-ilu-marco .ilu-barra { animation:onb-barra 650ms cubic-bezier(.2,.8,.2,1) both; }
+ @keyframes onb-barra { from { transform:scaleY(0); } to { transform:scaleY(1); } }
+ .onb-ilu-marco .ilu-pop { animation:onb-pop 450ms cubic-bezier(.2,.9,.3,1.2) both; }
+ @keyframes onb-pop { from { opacity:0; transform:scale(.4); } to { opacity:1; transform:scale(1); } }
+ .onb-ilu-marco .ilu-entra { animation:onb-sube 520ms cubic-bezier(.2,.8,.2,1) both; }
+ @keyframes onb-sube { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+ .onb-ilu-marco .ilu-cae { animation:onb-cae 600ms cubic-bezier(.3,.9,.4,1) both; }
+ @keyframes onb-cae { from { opacity:0; transform:translateY(-18px); } to { opacity:1; transform:none; } }
+ .onb-ilu-marco .ilu-punto { animation:onb-punto 900ms ease-in-out infinite alternate both; }
+ @keyframes onb-punto { from { opacity:.25; } to { opacity:1; } }
+ .onb-ilu-marco .ilu-onda, .onb-ilu-marco .ilu-chispa { animation:onb-aparece 700ms ease-out both; }
+ @keyframes onb-aparece { from { opacity:0; } to { opacity:1; } }
+ .onb-ilu-marco .d1 { animation-delay:80ms; }
+ .onb-ilu-marco .d2 { animation-delay:200ms; }
+ .onb-ilu-marco .d3 { animation-delay:320ms; }
+ .onb-ilu-marco .d4 { animation-delay:440ms; }
+ .onb-ilu-marco .d5 { animation-delay:560ms; }
+ .onb-ilu-marco .d6 { animation-delay:680ms; }
 }
 
 /* Móvil: hoja anclada abajo, por encima de la barra inferior (nunca la tapa). */
 @media (max-width:767px) {
  .onb-tarjeta, .onb-invitacion { left:12px; right:12px; width:auto; bottom:calc(var(--nav-total, 0px) + 12px); }
+ .onb-tarjeta { max-height:min(62vh, 440px); overflow:auto; padding:12px 14px 14px; }
+ .onb-tarjeta[data-centrada] { inset:auto 12px calc(var(--nav-total, 0px) + 12px) 12px; translate:none; }
+ .onb-ilu-marco { height:64px; }
+ .onb-ilu { height:56px; }
+ .onb-tarjeta[data-tipo="cierre"] .onb-ilu-marco { height:80px; }
+ .onb-ruta li:not([data-actual], .onb-ruta-mas) { display:none; }
+ .onb-ruta li + li::before { content:none; }
  .onb-menu { right:12px; }
  .onb-boton-texto { position:absolute; width:1px; height:1px; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
  .workspace-header .onb-boton { padding:0 7px; min-width:26px; justify-content:center; }
@@ -51,6 +154,7 @@
 .onb-lista-cab { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 16px; margin-bottom:10px; }
 .onb-lista h2 { margin:0; font:600 16px/1.35 var(--font-display); letter-spacing:-.02em; }
 .onb-progreso { display:flex; align-items:center; gap:10px; font-size:12px; color:var(--muted); }
+.onb-espera { padding-left:10px; border-left:1px solid var(--ui-line-strong); }
 .onb-progreso progress { width:120px; height:8px; accent-color:var(--onb-resalte); }
 .onb-items { display:grid; gap:8px; margin:0; padding:0; list-style:none; }
 .onb-item { display:grid; gap:4px; padding:12px 14px; border:1px solid var(--ui-border); border-radius:12px; background:var(--ui-canvas); }

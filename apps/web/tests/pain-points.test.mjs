@@ -50,7 +50,7 @@ test('menú: Puntos de dolor pertenece a Clientes y problemas y conserva acceso 
   for (const role of ['operator', 'viewer', undefined]) {
     assert.ok(!menuVisible({role}).flatMap(x => x.items ?? [x]).some(x => x.href === '/pain-points'), String(role));
   }
-  assert.equal(menuVisible({role: 'owner'}).length, 9);
+  assert.equal(menuVisible({role: 'owner'}).length, 10);
   assert.equal(itemActivo('/pain-points').grupo, 'clientes');
   assert.equal(itemActivo('/pain-points/detalle').grupo, 'clientes');
   assert.equal(tituloDePantalla('/pain-points'), 'Puntos de dolor');

@@ -5,8 +5,8 @@ const etiquetas = (acceso) => menuVisible(acceso).map((e) => e.etiqueta);
 const hrefs = (acceso) => menuVisible(acceso).flatMap((e) => (e.tipo === 'grupo' ? e.items : [e]).map((i) => i.href));
 
 test('8 espacios + Avisos propios en el orden de la historia (ver, entender, decidir, confiar) + Interno solo para plataforma', () => {
-  assert.deepEqual(etiquetas({role: 'owner'}), ['Hoy', 'Pregúntale a tus datos', 'Dinero', 'Clientes y problemas', 'Operación', 'Acciones', 'Datos y confianza', 'Avisos', 'Administración']);
-  assert.deepEqual(etiquetas({role: 'owner', interno: true}), ['Hoy', 'Pregúntale a tus datos', 'Dinero', 'Clientes y problemas', 'Operación', 'Acciones', 'Datos y confianza', 'Avisos', 'Administración', 'Interno']);
+  assert.deepEqual(etiquetas({role: 'owner'}), ['Hoy', 'Pregúntale a tus datos', 'Dinero', 'Clientes y problemas', 'Operación', 'Acciones', 'Datos y confianza', 'Avisos', 'Configuración', 'Administración']);
+  assert.deepEqual(etiquetas({role: 'owner', interno: true}), ['Hoy', 'Pregúntale a tus datos', 'Dinero', 'Clientes y problemas', 'Operación', 'Acciones', 'Datos y confianza', 'Avisos', 'Configuración', 'Administración', 'Interno']);
 });
 test('Brief y Recomendaciones ya no son entradas de primer nivel: Brief se absorbe en Hoy, Recomendaciones vive en Acciones > Por decidir', () => {
   assert.ok(!etiquetas({role: 'owner'}).some((e) => ['Brief ejecutivo', 'Recomendaciones', 'Explorador', 'Resumen', 'Problemas'].includes(e)));
@@ -95,4 +95,15 @@ test('los roles de Avisos salen de la capacidad notify del servidor, no de una c
   const {DATABASE_ACTION_ROLES} = await import('@vexa/platform/capabilities');
   const item = MENU.find((e) => e.href === '/settings/notifications');
   assert.deepEqual([...item.roles].sort(), [...DATABASE_ACTION_ROLES.notify].sort());
+});
+
+test('Configuración (/setup): ítem propio visible para los cuatro roles y para soporte (rol lector); nunca cuelga de Administración', () => {
+  for (const role of ['owner', 'analyst', 'operator', 'viewer']) {
+    assert.ok(etiquetas({role}).includes('Configuración'), role);
+    assert.equal(menuVisible({role}).find((e) => e.etiqueta === 'Configuración').tipo, 'item', role);
+    assert.ok(hrefs({role}).includes('/setup'), role);
+  }
+  assert.ok(!MENU.find((e) => e.clave === 'administracion').items.some((i) => i.href === '/setup'));
+  assert.equal(itemActivo('/setup')?.item.href, '/setup'); assert.equal(tituloDePantalla('/setup'), 'Configuración');
+  assert.ok(!etiquetas({role: undefined}).includes('Configuración'), 'sin rol de organización no se ofrece');
 });

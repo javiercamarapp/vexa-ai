@@ -5,6 +5,10 @@ const SOLO_PROPIETARIO = ['owner'];
 // Avisos propios: los roles se derivan de la capacidad real «notify» del servidor (db.ts), nunca se copian aquí.
 const AVISOS = [...DATABASE_ACTION_ROLES.notify];
 const DINERO = ['owner', 'analyst'];
+/** Roles que ven cifras de dinero (CFO, Brechas, Fuga, Carga): el servidor responde 403 al resto. Las pantallas mixtas no deben pedirles esos endpoints. */
+export const ROLES_DINERO = Object.freeze([...DINERO]);
+// Configuración es de lectura: los roles salen de la capacidad «read» del servidor (db.ts), nunca se copian aquí.
+const LECTURA = [...DATABASE_ACTION_ROLES.read];
 /** Entradas de primer nivel: ítems sueltos o grupos con ítems. `alias` = rutas que se muestran bajo ese ítem sin ser su ruta. */
 export const MENU = Object.freeze([
   // 8 espacios, en el orden de la historia: ver -> entender -> decidir -> confiar. «Brief ejecutivo» se absorbe en Hoy («Exportar informe»); su ruta /briefs sigue viva.
@@ -41,6 +45,8 @@ export const MENU = Object.freeze([
   ] },
   // Avisos propios (preferencias, bandeja y dispositivos): de cada persona, no de la administración. La política de entrega de la organización sigue en Administración.
   { tipo: 'item', href: '/settings/notifications', etiqueta: 'Avisos', icono: 'avisos', titulo: 'Preferencias de avisos', alias: ['/notifications/push'], roles: AVISOS },
+  // Configuración (/setup): estado de la configuración de la organización, solo lectura y según el rol. Lo ven los cuatro roles; los pasos que su rol no puede hacer se muestran sin enlace.
+  { tipo: 'item', href: '/setup', etiqueta: 'Configuración', icono: 'check', titulo: 'Configuración', roles: LECTURA },
   { tipo: 'grupo', clave: 'administracion', etiqueta: 'Administración', roles: SOLO_PROPIETARIO, items: [
     { href: '/settings/team', etiqueta: 'Equipo', icono: 'team' },
     { href: '/settings/notification-delivery', etiqueta: 'Entrega de avisos', icono: 'avisos' },

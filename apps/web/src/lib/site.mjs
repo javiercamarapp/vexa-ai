@@ -25,7 +25,7 @@ export const PREFIJOS_PRIVADOS = Object.freeze([
   '/api', '/auth', '/platform', '/seguridad', '/sin-acceso',
   '/analysis', '/briefs', '/cfo', '/confianza', '/connections', '/customers', '/economics', '/evaluation', '/explorer', '/gaps', '/history', '/imports',
   '/interventions', '/jobs', '/map', '/migrations', '/notifications', '/overview', '/pain-points', '/preguntale', '/problems', '/recommendations', '/refunds',
-  '/settings', '/sources', '/workload',
+  '/settings', '/setup', '/sources', '/workload',
 ]);
 /** Metadatos de una página pública: canonical + Open Graph + Twitter coherentes (un `openGraph` hijo reemplaza al del layout, por eso se arma completo). */
 export function metadatosPublicos({ titulo, descripcion = SITE.descripcion, ruta }) {

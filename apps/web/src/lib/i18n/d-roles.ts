@@ -24,6 +24,11 @@ export const rolesEs = {
   'sinacceso.titulo': 'Tu cuenta aún no pertenece a una organización', 'sinacceso.tituloInvitacion': 'Tienes una invitación pendiente', 'sinacceso.vencida': 'Tu invitación venció. Pide a quien te invitó que la reenvíe.',
   'sinacceso.rol': 'Rol {rol}', 'sinacceso.nada': 'No encontramos invitaciones para tu correo. Pide al responsable de tu organización que te invite con el mismo correo con el que iniciaste sesión.',
   'sinacceso.irConsola': 'Ir a administración de plataforma', 'sinacceso.cerrarSesion': 'Cerrar sesión',
+  'rol.imp.soloLectura': 'Tu rol puede ver las importaciones pero no cargar archivos. Pídele al propietario o a un analista que cargue el historial.',
+  'rol.imp.vacioTituloSinCarga': 'Todavía no hay importaciones', 'rol.imp.vacioSinCarga': 'Cuando el propietario o un analista cargue archivos, sus resultados aparecerán aquí. Si los necesitas ya, pídeselo a ellos.',
+  'rol.imp.vacioAnalista': 'La conexión de origen la crea el propietario. Cuando exista, tú puedes subir el archivo.',
+  'rol.econ.soloProp': 'Preparar y publicar un corte (cargar pedidos, clasificar productos, asociar clientes) lo hace el propietario. Aquí puedes revisar los cortes ya publicados; si necesitas uno nuevo, pídeselo al propietario.',
+  'conx.s.zendeskFuera': 'Zendesk (fuera de alcance por ahora)',
 } as const;
 export const rolesEn = {
   'hoy.rol.notaOperador': 'Your role sees here what it can operate. Money figures (revenue, refunds, stuck) are for owners and analysts.',
@@ -50,4 +55,9 @@ export const rolesEn = {
   'sinacceso.titulo': 'Your account does not belong to an organization yet', 'sinacceso.tituloInvitacion': 'You have a pending invitation', 'sinacceso.vencida': 'Your invitation expired. Ask whoever invited you to resend it.',
   'sinacceso.rol': 'Role {rol}', 'sinacceso.nada': 'We found no invitations for your email. Ask the person in charge of your organization to invite you with the same email you signed in with.',
   'sinacceso.irConsola': 'Go to platform administration', 'sinacceso.cerrarSesion': 'Sign out',
+  'rol.imp.soloLectura': 'Your role can see imports but not upload files. Ask the owner or an analyst to load the history.',
+  'rol.imp.vacioTituloSinCarga': 'There are no imports yet', 'rol.imp.vacioSinCarga': 'When the owner or an analyst uploads files, their results will show up here. If you need them now, ask them.',
+  'rol.imp.vacioAnalista': 'The owner creates the source connection. Once it exists, you can upload the file.',
+  'rol.econ.soloProp': 'Preparing and publishing a cut (loading orders, classifying products, linking customers) is done by the owner. Here you can review the cuts already published; if you need a new one, ask the owner.',
+  'conx.s.zendeskFuera': 'Zendesk (out of scope for now)',
 } as const;

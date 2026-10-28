@@ -35,7 +35,7 @@ const mesLargo=(m:string,loc='es-MX')=>new Intl.DateTimeFormat(loc,{month:'long'
 const pctBps=(b:number|null,nd='No disponible')=>b===null?nd:porcentaje(b/100);
 
 /** Pantalla «Cortes publicados»: primero el estado de lo publicado y su cobertura; los formularios que escriben quedan plegados abajo. */
-export function EconomiaResumen({query='',puedePreparar,children}:{query?:string;puedePreparar:boolean;children?:ReactNode}){
+export function EconomiaResumen({query='',puedePreparar,soloPropietario=false,children}:{query?:string;puedePreparar:boolean;soloPropietario?:boolean;children?:ReactNode}){
  const tr=useT(),idioma=useIdioma(),loc=LOCALE_INTL[idioma];
  const nd=tr('econ.noDisp');
  const bundle=useJson<Bundle>(urlCortePublicado(query),acceptBundle);
@@ -111,6 +111,7 @@ export function EconomiaResumen({query='',puedePreparar,children}:{query?:string
    </>}
 
   {puedePreparar&&<Preparar>{children}</Preparar>}
+  {!puedePreparar&&soloPropietario&&<p className="ac-nota" role="note" data-tour="corte-propietario">{tr('rol.econ.soloProp')}</p>}
  </section>;
 }
 

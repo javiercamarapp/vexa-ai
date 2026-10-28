@@ -72,7 +72,7 @@ export const es = {
   'base.net': 'Neto', 'base.marketplace_line_price': 'Precio de línea de marketplace',
   // Estados de datos
   'estado.cargandoDatos': 'Cargando datos autorizados', 'estado.errorTitulo': 'No pudimos cargar esta vista', 'estado.referencia': 'Referencia:',
-  'estado.vacioTitulo': 'Sin resultados para este alcance', 'estado.vacioCuerpo': 'La consulta terminó correctamente. Ajusta el periodo o los filtros, o importa datos desde el flujo autorizado.',
+  'estado.vacioTitulo': 'Sin resultados para este alcance', 'estado.vacioCuerpo': 'La consulta terminó correctamente. Ajusta el periodo o los filtros. Si todavía no hay datos, pide al propietario de tu organización que los cargue.',
   'estado.parcial': 'Datos parciales: no equivalen al total', 'estado.desactualizado': 'Datos desactualizados: revisa el corte', 'estado.listo': 'Corte disponible',
   'estado.corte': 'Corte:', 'estado.sinCorte': 'Sin corte publicado',
   'estado.identidad': 'Configura el acceso Supabase y verifica el servicio de identidad para abrir el espacio de trabajo.',

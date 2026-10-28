@@ -76,7 +76,9 @@ test('M7: la política de envío usa el encabezado común y muestra las duracion
   assert.equal(duracionLegible(7200000), '2 horas'); assert.equal(duracionLegible(2592000000), '30 días'); assert.equal(duracionLegible(1000), '1 s'); assert.equal(duracionLegible(5400000), '1.5 horas');
   const p = leer('components/notifications/delivery-policies.tsx');
   assert.match(p, /<PageHeader eyebrow=\{t\('conx\.p\.eyebrow'\)\} title=\{t\('conx\.p\.titulo'\)\}/); assert.ok(!/<h1/.test(p)); assert.ok(!/Web Push/.test(p));
-  assert.ok(!/notification-delivery/.test(readFileSync(new URL('../src/lib/workspace/menu.mjs', import.meta.url), 'utf8').split('\n').filter(l => /href:\s*'\/settings\/notification-delivery'/.test(l)).join('')), 'no es un item propio del menú');
+  // F3a (28-oct): Avisos personales salieron de Administración; la política de entrega de la organización (solo propietario) es ahora su único ítem de avisos allí.
+  const menu = readFileSync(new URL('../src/lib/workspace/menu.mjs', import.meta.url), 'utf8').split('\n').filter(l => /href:\s*'\/settings\/notification-delivery'/.test(l));
+  assert.equal(menu.length, 1, 'un solo ítem para la política de entrega'); assert.ok(!/roles:/.test(menu[0]), 'hereda el rol solo propietario de Administración');
 });
 test('M5/M6/M16: Problemas y Explorador rotulados; el conteo de cargas de Fuentes coincide con Importaciones y explica la diferencia', () => {
   assert.match(leer('components/explorer/panel.tsx'), /eyebrow=\{tx\('exp\.eyebrow'\)\}/); assert.match(leer('lib/i18n/d-explorador.ts'), /'exp\.eyebrow': 'Clientes y problemas'/); assert.match(leer('components/workspace/shared-panel.tsx'), /eyebrow=\{t\('panel\.eyebrowProblemas'\)\}/); assert.match(leer('lib/i18n/es.ts'), /'panel\.eyebrowProblemas': 'Clientes y problemas'/);

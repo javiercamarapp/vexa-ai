@@ -20,8 +20,9 @@ export default async function Page({searchParams}:{searchParams:Promise<Record<s
  for(const k of ['sku','source'])for(const v of query.getAll(k))lectura.append(k,v);
  // Sin periodo en la URL se usa el alcance inicial de esta pantalla (12 meses, base de marketplace: la de los cortes publicados) y no el mes en curso con base «net» que asume el servidor.
  if(!lectura.has('date_start')||!lectura.has('date_end')){lectura.set('date_start',sc.start);lectura.set('date_end',sc.end);lectura.set('currency',sc.currency);lectura.set('exponent',String(sc.exponent));lectura.set('basis',sc.basis);}
- const puedePreparar=active.role==='owner'||active.role==='analyst';
- return <EconomiaResumen query={lectura.toString()} puedePreparar={puedePreparar}>
+ // El servidor exige propietario para preparar, cargar, clasificar, asociar y publicar (snapshot_owner_required): el analista solo revisa.
+ const puedePreparar=active.role==='owner',soloPropietario=active.role==='analyst';
+ return <EconomiaResumen query={lectura.toString()} puedePreparar={puedePreparar} soloPropietario={soloPropietario}>
   <EconomicImportWorkspace key={active.tenant_id} tenantId={active.tenant_id} canImport={active.role==='owner'} defaultScope={{start:sc.start+'T00:00:00.000Z',end:sc.end+'T00:00:00.000Z',currency:sc.currency,exponent:sc.exponent,basis:sc.basis,timezone:'UTC',dateBasis:'occurred_at'}}/>
   <OrderMappings/>
   <CustomerBindings/>

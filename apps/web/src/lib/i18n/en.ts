@@ -66,7 +66,7 @@ export const en: Record<Clave, string> = {
   'filtros.ayuda': 'Changing filters resets pagination. The reference date is the event effective date (UTC).',
   'base.net': 'Net', 'base.marketplace_line_price': 'Marketplace line price',
   'estado.cargandoDatos': 'Loading authorized data', 'estado.errorTitulo': 'We could not load this view', 'estado.referencia': 'Reference:',
-  'estado.vacioTitulo': 'No results for this scope', 'estado.vacioCuerpo': 'The query finished correctly. Adjust the period or the filters, or import data through the authorized flow.',
+  'estado.vacioTitulo': 'No results for this scope', 'estado.vacioCuerpo': 'The query finished correctly. Adjust the period or the filters. If there is no data yet, ask the owner of your organization to load it.',
   'estado.parcial': 'Partial data: it does not equal the total', 'estado.desactualizado': 'Outdated data: check the cut', 'estado.listo': 'Cut available',
   'estado.corte': 'Cut:', 'estado.sinCorte': 'No published cut',
   'estado.identidad': 'Set up Supabase access and check the identity service to open the workspace.',

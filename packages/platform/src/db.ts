@@ -10,13 +10,15 @@ export interface SqlConnection {
   release(): void;
 }
 export interface SqlPool { connect(): Promise<SqlConnection> }
-export type DatabaseAction = 'read' | 'notify' | 'materialize' | 'import' | 'configure' | 'propose' | 'approve' | 'execute' | 'retain';
+export type DatabaseAction = 'read' | 'notify' | 'materialize' | 'import' | 'configure' | 'propose' | 'approve' | 'execute' | 'retain' | 'export';
 // Las lecturas interactivas conservan 10 s. La preparación y publicación de cortes económicos (import) y la materialización recorren todo el libro (~85 mil asientos) y exceden 10 s bajo RLS; la duración total sigue acotada por maxDuration de la ruta.
-const STATEMENT_TIMEOUT_MS: Record<DatabaseAction, string> = {read:'10000',notify:'10000',materialize:'45000',import:'55000',configure:'10000',propose:'10000',approve:'10000',execute:'10000',retain:'10000'};
+const STATEMENT_TIMEOUT_MS: Record<DatabaseAction, string> = {read:'10000',notify:'10000',materialize:'45000',import:'55000',configure:'10000',propose:'10000',approve:'10000',execute:'10000',retain:'10000',export:'10000'};
 const roles: Record<DatabaseAction, readonly Membership['role'][]> = {
   notify: ['owner','analyst','operator','viewer'],
   read: ['owner','analyst','operator','viewer'], materialize: ['owner','analyst','operator','viewer'], import: ['owner','analyst'], configure: ['owner'],
   propose: ['owner','analyst','operator'], approve: ['owner'], execute: ['owner','operator'], retain: ['owner'],
+  // Descarga masiva (CSV/JSON): mismas lecturas que 'read', pero jamás en sesión de soporte (AUTH-01).
+  export: ['owner','analyst','operator','viewer'],
 };
 export interface DatabaseScope {
   readonly tenantId: string;
@@ -64,7 +66,7 @@ export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool;
     async transaction<T>(action: DatabaseAction, work: (scope: DatabaseScope) => Promise<T>): Promise<T> {
       // Solo lecturas: si el pooler corta la conexión a mitad, se repite la transacción completa una vez con otra conexión (nada se escribió).
       try { return await api.attempt(action, work); } catch (error) {
-        if (action === 'read' && typeof error === 'object' && error !== null && lost.has(error)) return api.attempt(action, work);
+        if ((action === 'read' || action === 'export') && typeof error === 'object' && error !== null && lost.has(error)) return api.attempt(action, work);
         throw error;
       }
     },
@@ -78,11 +80,14 @@ export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool;
         const session = await resolveSession(identity,selectedTenant);
         const userId=session.user.id, tenantId=session.active.tenant_id;
         // GUARDIA CENTRAL de «ver como»: una sesión de soporte solo LEE. Ninguna otra acción llega a la base, sea cual sea la ruta que la pida.
+        if (session.support && action === 'export') throw new AccessError(403,'support_export_blocked');
         if (session.support && action !== 'read') throw new AccessError(403,'support_read_only');
+        // 'export' es una lectura para la base (READ ONLY y vexa.action='read'): solo la capa de aplicación la distingue.
+        const sqlAction: DatabaseAction = action === 'export' ? 'read' : action;
         connection = await pool.connect();
-        await connection.query(action === 'read' ? 'BEGIN READ ONLY' : 'BEGIN'); open = true;
+        await connection.query(sqlAction === 'read' ? 'BEGIN READ ONLY' : 'BEGIN'); open = true;
         await connection.query('SET LOCAL ROLE vexa_backend');
-        await connection.query("SELECT set_config('request.jwt.claim.sub',$1,true), set_config('vexa.tenant_id',$2,true), set_config('statement_timeout',$4,true), set_config('vexa.action',$3,true)",[userId,tenantId,action,STATEMENT_TIMEOUT_MS[action]]);
+        await connection.query("SELECT set_config('request.jwt.claim.sub',$1,true), set_config('vexa.tenant_id',$2,true), set_config('statement_timeout',$4,true), set_config('vexa.action',$3,true)",[userId,tenantId,sqlAction,STATEMENT_TIMEOUT_MS[action]]);
         let member:Membership|undefined;
         if (session.support) {
           // Soporte: la base confirma la sesión vigente (vexa_support_active, migración 20261126000100). Sin esa rama la lectura falla cerrada.
@@ -126,4 +131,9 @@ export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool;
 export function requireRow<Row>(result:SqlResult<Row>):Row {
   if(result.rows.length===0) throw new AccessError(404,'resource_not_found');
   return result.rows[0];
+}
+/** Rutas de descarga (CSV/JSON/HTML adjunto): toda lectura pasa a la acción 'export', que una sesión de soporte «ver como» no puede ejecutar (403 support_export_blocked). */
+export function forDownload<D extends {transaction: <T>(action: DatabaseAction, work: (scope: DatabaseScope) => Promise<T>) => Promise<T>}>(database: D, downloading: boolean): D {
+  if (!downloading) return database;
+  return Object.freeze({...database, transaction: <T>(action: DatabaseAction, work: (scope: DatabaseScope) => Promise<T>): Promise<T> => database.transaction(action === 'read' ? 'export' : action, work)}) as D;
 }

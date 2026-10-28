@@ -137,3 +137,22 @@ test('sin marca (o vencida) las rutas /api quedan exactamente como antes',async(
   const plain=await middleware(new NextRequest(origin+'/api/agent/turn',{method:'POST',headers:{cookie:cookies()}}));assert.equal(plain.status,200);
   const stale=new NextRequest(origin+'/api/agent/turn',{method:'POST',headers:{cookie:cookies()}});stale.cookies.set('vexa_support',String(Math.floor(Date.now()/1000)-60));assert.equal((await middleware(stale)).status,200);
 });
+// ---------------------------------------------------------------- AUTH-01 / R-01 (auditoría 28-oct): exportar no depende de la cookie vexa_support
+import {GET as exportWorkspace} from '../src/app/api/workspace/export/route';
+import {GET as exportBrief} from '../src/app/api/briefs/[id]/export/route';
+import {GET as exportSnapshot} from '../src/app/api/economic-snapshots/[id]/export/route';
+import {GET as jobErrors} from '../src/app/api/jobs/[id]/errors/route';
+test('soporte SIN cookie vexa_support: cada exportación responde 403 y no entrega bytes (la base no es alcanzable)',async()=>{
+  setup();process.env.VEXA_DATABASE_URL='postgres://nadie:nada@127.0.0.1:1/ninguna';
+  mockServer({tenants:[],support:{tenantId:C,expiresAt:new Date(Date.now()+20*60000).toISOString()}});
+  const id='dddddddd-dddd-4ddd-8ddd-dddddddddddd',get=(path:string)=>{const req=new NextRequest(origin+path,{method:'GET',headers:{cookie:cookies()}});req.cookies.set(ACTIVE_ORG,C);assert.equal(req.cookies.get('vexa_support'),undefined);return req;};
+  try{
+    const results=await Promise.all([
+      exportWorkspace(get(`/api/workspace/export?snapshot_id=${id}&scope_hash=${'a'.repeat(64)}&format=csv`)),
+      exportBrief(get(`/api/briefs/${id}/export?format=json`),{params:Promise.resolve({id})}),
+      exportSnapshot(get(`/api/economic-snapshots/${id}/export?scopeHash=${'a'.repeat(64)}&format=csv`),{params:Promise.resolve({id})}),
+      jobErrors(get(`/api/jobs/${id}/errors`)),
+    ]);
+    for(const [i,r] of results.entries()){assert.equal(r.status,403,`ruta ${i}`);assert.doesNotMatch(r.headers.get('content-type')??'',/csv/);assert.equal(r.headers.get('content-disposition'),null);}
+  }finally{delete process.env.VEXA_DATABASE_URL;}
+});

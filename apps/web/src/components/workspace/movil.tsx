@@ -7,6 +7,8 @@ import {WorkspaceIcon} from './icon';
 import {navigationQuery} from './navigation';
 import {itemActivo} from '../../lib/workspace/menu.mjs';
 import {limpiarTodo} from '../../lib/workspace/swr.mjs';
+import {useT} from '../i18n/proveedor';
+import type {Clave} from '../../lib/i18n';
 import './movil.css';
 
 export type Organization={id:string;name:string};
@@ -39,14 +41,14 @@ export function useTeclado(){
 }
 
 /** Cinco destinos fijos, con etiqueta y posiciones estables. Quien no ve «Dinero» (rol sin acceso) conserva la ranura con «Datos». */
-type Destino={href:string;etiqueta:string;icono:string;grupos:string[]};
+type Destino={href:string;etiqueta:Clave;icono:string;grupos:string[]};
 function destinos(dinero:boolean):Destino[]{
  return [
-  {href:'/overview',etiqueta:'Inicio',icono:'overview',grupos:[]},
-  dinero?{href:'/cfo',etiqueta:'Dinero',icono:'economics',grupos:['dinero']}:{href:'/confianza',etiqueta:'Datos',icono:'history',grupos:['datos']},
-  {href:'/problems',etiqueta:'Clientes',icono:'clientes',grupos:['clientes','operacion']},
-  {href:'/recommendations',etiqueta:'Acciones',icono:'recommendations',grupos:['acciones']},
-  {href:'/preguntale',etiqueta:'Preguntar',icono:'preguntale',grupos:[]},
+  {href:'/overview',etiqueta:'movil.inicio',icono:'overview',grupos:[]},
+  dinero?{href:'/cfo',etiqueta:'movil.dinero',icono:'economics',grupos:['dinero']}:{href:'/confianza',etiqueta:'movil.datos',icono:'history',grupos:['datos']},
+  {href:'/problems',etiqueta:'movil.clientes',icono:'clientes',grupos:['clientes','operacion']},
+  {href:'/recommendations',etiqueta:'movil.acciones',icono:'recommendations',grupos:['acciones']},
+  {href:'/preguntale',etiqueta:'movil.preguntar',icono:'preguntale',grupos:[]},
  ];
 }
 function activoDe(pathname:string,d:Destino){
@@ -57,9 +59,9 @@ function activoDe(pathname:string,d:Destino){
 }
 /** Barra inferior flotante (solo celular). Cada destino mide ≥ 44 px de alto y ocupa 1/5 del ancho; la etiqueta se trunca con elipsis. */
 export function BarraInferior({role}:{role:string}){
- const pathname=usePathname(),query=navigationQuery(pathname,useSearchParams().toString());
+ const pathname=usePathname(),query=navigationQuery(pathname,useSearchParams().toString()),t=useT();
  const lista=destinos(role==='owner'||role==='analyst');
- return <nav className="workspace-bottom-nav" aria-label="Navegación móvil">{lista.map(d=>{const activo=activoDe(pathname,d);return <Link key={d.href} href={d.href+(query?'?'+query:'')} aria-current={activo?'page':undefined}><span className="bn-icono"><WorkspaceIcon name={d.icono} size={22}/></span><span className="bn-etiqueta">{d.etiqueta}</span></Link>;})}</nav>;
+ return <nav className="workspace-bottom-nav" aria-label={t('shell.navMovil')}>{lista.map(d=>{const activo=activoDe(pathname,d);return <Link key={d.href} href={d.href+(query?'?'+query:'')} aria-current={activo?'page':undefined}><span className="bn-icono"><WorkspaceIcon name={d.icono} size={22}/></span><span className="bn-etiqueta">{t(d.etiqueta)}</span></Link>;})}</nav>;
 }
 
 /** Iniciales del monograma: dos palabras → 1.ª letra de cada una; una palabra → sus dos primeras letras. Ignora paréntesis y conectores («de», «la»…). */
@@ -78,31 +80,32 @@ function guardarReciente(id:string){try{const v=[id,...leerRecientes().filter(x=
 /** Selector de empresa: con varias organizaciones es un control pequeño (monograma + chevron) que abre una hoja inferior con los nombres completos (buscador + recientes);
     con una sola no hay control y el nombre vive en la hoja «Más». El cambio real lo hace POST /auth/organization, que valida la membresía en el servidor. */
 export function SelectorEmpresa({organizations,tenant}:{organizations:Organization[];tenant:string}){
- const [abierto,setAbierto]=useState(false),[q,setQ]=useState(''),[recientes,setRecientes]=useState<string[]>([]);
- const nombre=organizations.find(o=>o.id===tenant)?.name??'Organización',idBuscar=useId(),form=useRef<HTMLFormElement>(null);
+ const t=useT(),[abierto,setAbierto]=useState(false),[q,setQ]=useState(''),[recientes,setRecientes]=useState<string[]>([]);
+ const nombre=organizations.find(o=>o.id===tenant)?.name??t('shell.organizacion'),idBuscar=useId(),form=useRef<HTMLFormElement>(null);
  const varias=organizations.length>1;
  const abrir=()=>{setRecientes(leerRecientes());setQ('');setAbierto(true);};
- const norm=(t:string)=>t.toLocaleLowerCase('es').normalize('NFD').replace(/[̀-ͯ]/g,'');
+ const norm=(x:string)=>x.toLocaleLowerCase('es').normalize('NFD').replace(/[̀-ͯ]/g,'');
  const filtradas=useMemo(()=>{const n=norm(q.trim());return n?organizations.filter(o=>norm(o.name).includes(n)):organizations;},[q,organizations]);
  const recientesVisibles=useMemo(()=>q.trim()||organizations.length<5?[]:recientes.map(id=>organizations.find(o=>o.id===id)).filter((o):o is Organization=>!!o&&o.id!==tenant).slice(0,3),[q,recientes,organizations,tenant]);
  const alEnviar=(e:FormEvent<HTMLFormElement>)=>{const quien=(e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement|null;if(quien?.value)guardarReciente(quien.value);limpiarTodo();};
- const fila=(o:Organization)=>{const actual=o.id===tenant;return <li key={o.id}>{actual?<button type="button" className="org-fila btn-ghost" aria-current="true" onClick={()=>setAbierto(false)}><Monograma nombre={o.name} className="monograma-fila"/><span className="org-nombre">{o.name}</span><span className="org-marca"><WorkspaceIcon name="check" size={18}/><span className="sr-only">Empresa actual</span></span></button>:<button type="submit" name="tenant_id" value={o.id} className="org-fila btn-ghost"><Monograma nombre={o.name} className="monograma-fila"/><span className="org-nombre">{o.name}</span></button>}</li>;};
+ const fila=(o:Organization)=>{const actual=o.id===tenant;return <li key={o.id}>{actual?<button type="button" className="org-fila btn-ghost" aria-current="true" onClick={()=>setAbierto(false)}><Monograma nombre={o.name} className="monograma-fila"/><span className="org-nombre">{o.name}</span><span className="org-marca"><WorkspaceIcon name="check" size={18}/><span className="sr-only">{t('movil.empresaActualSr')}</span></span></button>:<button type="submit" name="tenant_id" value={o.id} className="org-fila btn-ghost"><Monograma nombre={o.name} className="monograma-fila"/><span className="org-nombre">{o.name}</span></button>}</li>;};
  // Con una sola organización no hay nada que cambiar: la barra no lleva control (el nombre vive en la hoja «Más»).
  if(!varias)return null;
  return <>
-  <button type="button" className="empresa-chip" data-testid="selector-empresa" aria-haspopup="dialog" aria-expanded={abierto} aria-label={'Empresa: '+nombre+'. Cambiar de empresa'} onClick={abrir}><Monograma nombre={nombre}/><span className="org-chevron" aria-hidden="true"><WorkspaceIcon name="chevron" size={14}/></span></button>
-  <Drawer side="bottom" title="Cambiar de empresa" subtitle="Elige el espacio que quieres ver" open={abierto} onClose={()=>setAbierto(false)} className="hoja-empresa">
+  <button type="button" className="empresa-chip" data-testid="selector-empresa" aria-haspopup="dialog" aria-expanded={abierto} aria-label={t('movil.empresaActual',{nombre})} onClick={abrir}><Monograma nombre={nombre}/><span className="org-chevron" aria-hidden="true"><WorkspaceIcon name="chevron" size={14}/></span></button>
+  <Drawer side="bottom" title={t('movil.cambiarEmpresa')} subtitle={t('movil.cambiarEmpresaSub')} open={abierto} onClose={()=>setAbierto(false)} className="hoja-empresa">
    <form ref={form} className="empresas" action="/auth/organization" method="post" onSubmit={alEnviar}>
-    {organizations.length>5&&<div className="ov-search empresas-buscar"><WorkspaceIcon name="search" size={16}/><label htmlFor={idBuscar} className="sr-only">Buscar empresa</label><input id={idBuscar} type="search" inputMode="search" autoComplete="off" placeholder="Buscar empresa" value={q} onChange={e=>setQ(e.target.value)}/></div>}
-    {recientesVisibles.length>0&&<section aria-label="Recientes"><p className="empresas-titulo">Recientes</p><ul className="empresas-lista">{recientesVisibles.map(fila)}</ul></section>}
-    <section aria-label="Todas las empresas">{(recientesVisibles.length>0||organizations.length>5)&&<p className="empresas-titulo">Todas</p>}<ul className="empresas-lista">{filtradas.map(fila)}</ul>{filtradas.length===0&&<p className="empresas-vacio" role="status">No hay empresas con ese nombre.</p>}</section>
+    {organizations.length>5&&<div className="ov-search empresas-buscar"><WorkspaceIcon name="search" size={16}/><label htmlFor={idBuscar} className="sr-only">{t('movil.buscarEmpresa')}</label><input id={idBuscar} type="search" inputMode="search" autoComplete="off" placeholder={t('movil.buscarEmpresa')} value={q} onChange={e=>setQ(e.target.value)}/></div>}
+    {recientesVisibles.length>0&&<section aria-label={t('movil.recientes')}><p className="empresas-titulo">{t('movil.recientes')}</p><ul className="empresas-lista">{recientesVisibles.map(fila)}</ul></section>}
+    <section aria-label={t('movil.todasEmpresas')}>{(recientesVisibles.length>0||organizations.length>5)&&<p className="empresas-titulo">{t('movil.todas')}</p>}<ul className="empresas-lista">{filtradas.map(fila)}</ul>{filtradas.length===0&&<p className="empresas-vacio" role="status">{t('movil.sinEmpresas')}</p>}</section>
    </form>
   </Drawer>
  </>;
 }
 
-const TEMAS:[Theme,string,string][]=[['light','Claro','sun'],['system','Sistema','monitor'],['dark','Oscuro','moon']];
+const TEMAS:[Theme,Clave,string][]=[['light','shell.temaClaro','sun'],['system','shell.temaSistema','monitor'],['dark','shell.temaOscuro','moon']];
 /** Selector de tema: tres celdas iguales con el mismo icono SVG de 16 px (mismo trazo) centrado; la elegida es una píldora ajustada a su celda. */
 export function SelectorTema({valor,onChange,nombre,etiquetas=false}:{valor:Theme;onChange:(t:Theme)=>void;nombre:string;etiquetas?:boolean}){
- return <fieldset className="theme-selector" data-etiquetas={etiquetas||undefined}><legend className="sr-only">Tema de la interfaz</legend>{TEMAS.map(([v,etiqueta,icono])=><label key={v}><input type="radio" className="sr-only" name={nombre} value={v} checked={valor===v} onChange={()=>onChange(v)}/><WorkspaceIcon name={icono} size={16}/><span className={etiquetas?'tema-texto':'sr-only'}>{etiqueta}</span></label>)}</fieldset>;
+ const t=useT();
+ return <fieldset className="theme-selector" data-etiquetas={etiquetas||undefined}><legend className="sr-only">{t('shell.tema')}</legend>{TEMAS.map(([v,etiqueta,icono])=><label key={v}><input type="radio" className="sr-only" name={nombre} value={v} checked={valor===v} onChange={()=>onChange(v)}/><WorkspaceIcon name={icono} size={16}/><span className={etiquetas?'tema-texto':'sr-only'}>{t(etiqueta)}</span></label>)}</fieldset>;
 }

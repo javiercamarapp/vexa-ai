@@ -5,6 +5,9 @@ import {RovaqLogo} from '../../components/rovaq-logo';
 import {EmailLogin} from '../../components/email-login';
 import {LoginArtwork} from '../../components/login/artwork';
 import {LimpiarCache} from '../../components/limpiar-cache';
+import {GuardarIdioma} from '../../components/i18n/guardar-idioma';
+import {idiomaActual} from '../../lib/i18n/servidor';
+import {idiomaValido} from '../../lib/i18n/idioma';
 export const dynamic='force-dynamic';
 export default async function Login({searchParams}:{searchParams:Promise<{error?:string;lang?:string}>}) {
   let configured=false;
@@ -15,7 +18,8 @@ export default async function Login({searchParams}:{searchParams:Promise<{error?
   }
   const params=await searchParams;
   const loginError=params.error;
-  const locale=params.lang==='en'?'en':'es';
+  // Mismo mecanismo que la app autenticada: ?lang= explícito, si no la cookie rovaq_lang, si no Accept-Language, si no español.
+  const locale=await idiomaActual(params.lang);
   const t=(es:string,en:string)=>locale==='en'?en:es;
   const localeLink=(lang:string)=>`/login?${new URLSearchParams({...loginError?{error:loginError}:{},lang})}`;
   // Con una sesión válida no hay nada que iniciar: va al resumen. Con ?error= se queda (acceso denegado) para no encadenar redirecciones con el middleware.
@@ -23,7 +27,7 @@ export default async function Login({searchParams}:{searchParams:Promise<{error?
   const denied=!!loginError;
   const google=configured && process.env.VEXA_GOOGLE_AUTH_ENABLED==='true';
   const email=configured && process.env.VEXA_EMAIL_AUTH_ENABLED==='true';
-  return <div className="login login-editorial" lang={locale}><LimpiarCache/>
+  return <div className="login login-editorial" lang={locale}><LimpiarCache/><GuardarIdioma idioma={locale} explicito={idiomaValido(params.lang)!==null}/>
     <section className="login-column"><div className="login-inner">
       <header className="login-entra auth-brand"><RovaqLogo variante="horizontal" tono="positivo" ancho={132} espacioLibre={false}/><nav className="login-locales" aria-label={t('Idioma','Language')}><a href={localeLink('es')} lang="es" aria-label="Español" aria-current={locale==='es'?'page':undefined}>ES</a><span aria-hidden="true">/</span><a href={localeLink('en')} lang="en" aria-label="English" aria-current={locale==='en'?'page':undefined}>EN</a></nav></header>
       <div className="login-copy">

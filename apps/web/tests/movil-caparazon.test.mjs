@@ -14,7 +14,7 @@ test('el tema se aplica antes del primer pintado desde <head> (sin destello) y e
   assert.match(shell, /useState<Theme\|null>\(null\)/);assert.doesNotMatch(shell, /useState<Theme>\('light'\)/);
 });
 test('barra inferior: 5 destinos fijos con etiqueta (Inicio, Dinero, Clientes, Acciones, Preguntar)', () => {
-  for (const e of ['Inicio', 'Dinero', 'Clientes', 'Acciones', 'Preguntar']) assert.match(movil, new RegExp("etiqueta:'" + e + "'"));
+  for (const e of ['inicio', 'dinero', 'clientes', 'acciones', 'preguntar']) assert.match(movil, new RegExp("etiqueta:'movil\\." + e + "'"));// los rótulos viven en lib/i18n/es.ts (Inicio, Dinero, Clientes, Acciones, Preguntar)
   assert.equal((movil.match(/\{href:'\/[a-z]+'/g) ?? []).length, 6, '5 destinos + el sustituto «Datos» para roles sin Dinero');
   assert.match(css, /\.bn-etiqueta\{[^}]*text-overflow:ellipsis/);
 });
@@ -27,7 +27,7 @@ test('encabezado móvil: logo de Rovaq (enlace a Inicio) y empresa como monogram
 });
 test('selector de empresa: varias organizaciones abren la hoja inferior y POST /auth/organization; el control es un monograma, no el nombre', () => {
   assert.match(movil, /action="\/auth\/organization" method="post"/);assert.match(movil, /<Drawer side="bottom"/);assert.match(movil, /name="tenant_id" value=\{o\.id\}/);
-  assert.match(movil, /aria-label=\{'Empresa: '\+nombre\+'\. Cambiar de empresa'\}/);
+  assert.match(movil, /aria-label=\{t\('movil\.empresaActual',\{nombre\}\)\}/);// «Empresa: {nombre}. Cambiar de empresa» en el diccionario
   const chip = movil.slice(movil.indexOf('className="empresa-chip"'), movil.indexOf('<Drawer side="bottom" title="Cambiar de empresa"'));
   assert.doesNotMatch(chip, /org-nombre/, 'el nombre completo vive en la hoja, no en la barra');
 });
@@ -42,7 +42,7 @@ test('iniciales del monograma: dos palabras → una letra de cada una; una palab
   assert.equal(iniciales('CLIENTEX'), 'SE');assert.equal(iniciales('Los Tacos de PM'), 'TP');assert.equal(iniciales('Organización de demostración (sintética)'), 'OD');assert.equal(iniciales('Rovaq AI'), 'RA');assert.equal(iniciales('  '), '?');
 });
 test('selector de tema: iconos SVG iguales, sin glifos de texto y sin title', () => {
-  assert.doesNotMatch(shell + movil, /['"]☀['"]|['"]☾['"]|['"]▣['"]/);assert.match(movil, /\['light','Claro','sun'\],\['system','Sistema','monitor'\],\['dark','Oscuro','moon'\]/);assert.match(movil, /size=\{16\}/);
+  assert.doesNotMatch(shell + movil, /['"]☀['"]|['"]☾['"]|['"]▣['"]/);assert.match(movil, /\['light','shell\.temaClaro','sun'\],\['system','shell\.temaSistema','monitor'\],\['dark','shell\.temaOscuro','moon'\]/);assert.match(movil, /size=\{16\}/);
 });
 test('chat: UNA página — el marco mide 100dvh menos el teclado, el compositor queda anclado al fondo (sin position:fixed) y la textarea es de 16 px', () => {
   const u = leer('src/components/agente/una-pagina.css');

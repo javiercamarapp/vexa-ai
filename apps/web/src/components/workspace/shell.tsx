@@ -5,7 +5,9 @@ import {Drawer} from '../ui/overlay';
 import {BarraInferior,Monograma,SelectorEmpresa,SelectorTema,useTeclado,type Theme} from './movil';
 import {RovaqLogo} from '../rovaq-logo';
 import {usePathname} from 'next/navigation';
-import {Navigation,workspaceTitle,workspaceIconName} from './navigation';
+import {Navigation,tituloTraducido,workspaceIconName} from './navigation';
+import {useT} from '../i18n/proveedor';
+import {SelectorIdioma} from '../i18n/selector-idioma';
 import {WorkspaceIcon} from './icon';
 import {NotificationNavigationLink} from '../notifications/navigation-link';
 import {AccesoProvider} from './access';
@@ -15,10 +17,12 @@ import './encabezado.css';
 import {esRutaCopiloto} from '../../lib/copiloto/modos.mjs';
 import {fijarTenant,limpiarTodo} from '../../lib/workspace/swr.mjs';
 type Organization={id:string;name:string};
-const roleLabel:Record<string,string>={owner:'Administrador del espacio',analyst:'Analista',operator:'Operador',viewer:'Lectura'};
+const ROLES=['owner','analyst','operator','viewer'] as const;
 export function WorkspaceShell({children,brand,organizations,tenant,role,platformAccess=false}:{children:ReactNode;brand:ReactNode;organizations:Organization[];tenant:string;role:string;platformAccess?:boolean;today?:{iso:string;label:string}}){
  // La caché de lecturas se aísla por organización: fijarla antes de que los hijos lean (purga lo de otra organización).
  fijarTenant(tenant);
+ const t=useT();
+ const rol=(ROLES as readonly string[]).includes(role)?t(('shell.rol.'+role) as 'shell.rol.owner'):role;
  const pathname=usePathname();
  const [collapsed,setCollapsed]=useState(false),[mobileOpen,setMobileOpen]=useState(false),[theme,setTheme]=useState<Theme|null>(null);
  useTeclado();
@@ -29,25 +33,25 @@ export function WorkspaceShell({children,brand,organizations,tenant,role,platfor
  function chooseTheme(value:Theme){setTheme(value);try{window.localStorage.setItem('vexa-theme',value);}catch{/* The choice still applies to this session. */}}
  const close=()=>setMobileOpen(false);
  const open=()=>setMobileOpen(true);
- const organization=organizations.find(o=>o.id===tenant)?.name??'Organización';
+ const organization=organizations.find(o=>o.id===tenant)?.name??t('shell.organizacion');
  function toggle(){setCollapsed(value=>{const next=!value;try{window.localStorage.setItem('vexa-sidebar-collapsed',String(next));}catch{/* Storage is optional. */}return next;});}
  function sidebar(mobile=false){return <>
-   {!mobile&&<div className="sidebar-brand"><Link href="/overview" aria-label="Rovaq AI, resumen" className="sidebar-logo">{brand}</Link><button className="icon-button" type="button" aria-label={collapsed?'Expandir menú':'Contraer menú'} aria-expanded={!collapsed} onClick={toggle}><WorkspaceIcon name={collapsed?'expand':'collapse'}/></button></div>}
+   {!mobile&&<div className="sidebar-brand"><Link href="/overview" aria-label={t('shell.logoResumen')} className="sidebar-logo">{brand}</Link><button className="icon-button" type="button" aria-label={collapsed?t('shell.expandir'):t('shell.contraer')} aria-expanded={!collapsed} onClick={toggle}><WorkspaceIcon name={collapsed?'expand':'collapse'}/></button></div>}
    <div className="sidebar-navigation"><Navigation role={role} interno={platformAccess} collapsed={!mobile&&collapsed} onNavigate={mobile?close:undefined}/></div>
    <div className="sidebar-footer">
-    {!mobile&&(organizations.length>1?<form className="organization-switch" action="/auth/organization" method="post" onSubmit={()=>limpiarTodo()}><label className="nav-caption" htmlFor="workspace-org">Organización</label><div className="organization-controls"><select id="workspace-org" name="tenant_id" defaultValue={tenant}>{organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}</select><button type="submit" title="Cambiar organización" aria-label="Cambiar organización">Ir <span aria-hidden="true">↗</span></button></div></form>:<div className="workspace-context"><span className="nav-caption">Espacio de cliente</span><strong>{organization}</strong></div>)}
+    {!mobile&&(organizations.length>1?<form className="organization-switch" action="/auth/organization" method="post" onSubmit={()=>limpiarTodo()}><label className="nav-caption" htmlFor="workspace-org">{t('shell.organizacion')}</label><div className="organization-controls"><select id="workspace-org" name="tenant_id" defaultValue={tenant}>{organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}</select><button type="submit" title={t('shell.cambiarOrg')} aria-label={t('shell.cambiarOrg')}>{t('shell.ir')} <span aria-hidden="true">↗</span></button></div></form>:<div className="workspace-context"><span className="nav-caption">{t('shell.espacioCliente')}</span><strong>{organization}</strong></div>)}
     <div className="sidebar-notifications"><NotificationNavigationLink/></div>
-    {platformAccess&&<Link className="workspace-platform-link" href="/platform" aria-label="Administración de Rovaq AI" title={mobile?undefined:'Administración de Rovaq AI'} onClick={mobile?close:undefined}><WorkspaceIcon name="settings"/><span className="platform-link-label">Administración de Rovaq AI</span></Link>}
+    {platformAccess&&<Link className="workspace-platform-link" href="/platform" aria-label={t('shell.admin')} title={mobile?undefined:t('shell.admin')} onClick={mobile?close:undefined}><WorkspaceIcon name="settings"/><span className="platform-link-label">{t('shell.admin')}</span></Link>}
     <SelectorTema valor={theme??'light'} onChange={chooseTheme} nombre={mobile?'mobile-theme':'workspace-theme'} etiquetas={mobile}/>
-    <div className="sidebar-account"><Monograma nombre={organization}/><div className="account-copy"><strong title={mobile?undefined:organization}>{organization}</strong><span>{roleLabel[role]??role}</span></div><form action="/auth/logout" method="post" onSubmit={()=>limpiarTodo()}><button className="icon-button logout-button" title={mobile?undefined:'Cerrar sesión'} aria-label="Cerrar sesión"><WorkspaceIcon name="logout"/><span className="logout-label">Salir</span></button></form></div>
+    <div className="sidebar-account"><Monograma nombre={organization}/><div className="account-copy"><strong title={mobile?undefined:organization}>{organization}</strong><span>{rol}</span></div><form action="/auth/logout" method="post" onSubmit={()=>limpiarTodo()}><button className="icon-button logout-button" title={mobile?undefined:t('shell.cerrarSesion')} aria-label={t('shell.cerrarSesion')}><WorkspaceIcon name="logout"/><span className="logout-label">{t('shell.salir')}</span></button></form></div>
    </div>
   </>;}
  // «Pregúntale a tus datos» lives inside the normal shell (same sidebar) but has NO page header and no global scope bar: the content starts at the cover.
  const sinEncabezado=esRutaCopiloto(pathname);
  return <div className={'workspace workspace-shell'+(collapsed?' sidebar-collapsed':'')+(sinEncabezado?' workspace-chat':'')}>
-   <a className="skip-link workspace-skip" href="#workspace-contenido">Saltar al contenido</a><aside className="workspace-sidebar">{sidebar()}</aside>
-   <div className="workspace-frame"><header className={'workspace-header'+(sinEncabezado?' workspace-header-chat':'')}><Link href="/overview" className="header-logo" aria-label="Rovaq, ir a Inicio"><RovaqLogo variante="horizontal" ancho={100} espacioLibre={false}/></Link><div className="header-empresa"><SelectorEmpresa organizations={organizations} tenant={tenant}/></div><div className="header-campana"><NotificationNavigationLink compact/></div><button type="button" className="icon-button mobile-menu-button" aria-label="Abrir menú" aria-haspopup="dialog" onClick={open}><WorkspaceIcon name="menu" size={20}/></button><span className="workspace-heading"><WorkspaceIcon name={workspaceIconName(pathname)}/>{workspaceTitle(pathname)}</span><DatosNuevos/></header><div className="workspace-content" id="workspace-contenido" tabIndex={-1}><RestaurarVista/><AccesoProvider value={{role,interno:platformAccess}}>{children}</AccesoProvider></div></div>
-   <Drawer side="bottom" className="hoja-mas" title="Más" subtitle="Todo el menú, avisos, tema y cuenta" open={mobileOpen} onClose={close}><div className="mobile-sidebar">{sidebar(true)}</div></Drawer>
+   <a className="skip-link workspace-skip" href="#workspace-contenido">{t('shell.saltar')}</a><aside className="workspace-sidebar">{sidebar()}</aside>
+   <div className="workspace-frame"><header className={'workspace-header'+(sinEncabezado?' workspace-header-chat':'')}><Link href="/overview" className="header-logo" aria-label={t('shell.irInicio')}><RovaqLogo variante="horizontal" ancho={100} espacioLibre={false}/></Link><div className="header-empresa"><SelectorEmpresa organizations={organizations} tenant={tenant}/></div><div className="header-campana"><NotificationNavigationLink compact/></div><button type="button" className="icon-button mobile-menu-button" aria-label={t('shell.abrirMenu')} aria-haspopup="dialog" onClick={open}><WorkspaceIcon name="menu" size={20}/></button><span className="workspace-heading"><WorkspaceIcon name={workspaceIconName(pathname)}/>{tituloTraducido(pathname,t)}</span><DatosNuevos/><SelectorIdioma/></header><div className="workspace-content" id="workspace-contenido" tabIndex={-1}><RestaurarVista/><AccesoProvider value={{role,interno:platformAccess}}>{children}</AccesoProvider></div></div>
+   <Drawer side="bottom" className="hoja-mas" title={t('shell.mas')} subtitle={t('shell.masSub')} open={mobileOpen} onClose={close}><div className="mobile-sidebar">{sidebar(true)}</div></Drawer>
    <BarraInferior role={role}/>
  </div>;
 }

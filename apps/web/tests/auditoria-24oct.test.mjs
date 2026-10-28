@@ -79,7 +79,7 @@ test('M7: la política de envío usa el encabezado común y muestra las duracion
   assert.ok(!/notification-delivery/.test(readFileSync(new URL('../src/lib/workspace/menu.mjs', import.meta.url), 'utf8').split('\n').filter(l => /href:\s*'\/settings\/notification-delivery'/.test(l)).join('')), 'no es un item propio del menú');
 });
 test('M5/M6/M16: Problemas y Explorador rotulados; el conteo de cargas de Fuentes coincide con Importaciones y explica la diferencia', () => {
-  assert.match(leer('components/explorer/panel.tsx'), /eyebrow="Clientes y problemas"/); assert.match(leer('components/workspace/shared-panel.tsx'), /eyebrow="Clientes y problemas"/);
+  assert.match(leer('components/explorer/panel.tsx'), /eyebrow="Clientes y problemas"/); assert.match(leer('components/workspace/shared-panel.tsx'), /eyebrow=\{t\('panel\.eyebrowProblemas'\)\}/); assert.match(leer('lib/i18n/es.ts'), /'panel\.eyebrowProblemas': 'Clientes y problemas'/);
   assert.match(leer('components/explorer/panel.tsx'), /Incluye las notificaciones automáticas/);
   assert.match(leer('components/workspace/problems-view.tsx'), /en total, como en el Explorador/);
   const f = leer('components/datos/fuentes-datos.tsx');

@@ -28,7 +28,7 @@ test('Drawer, Modal y Popover solo se importan del sistema', () => {
 test('anatomía única: cabecera con título enlazado, cerrar de 28 px, cuerpo con scroll y pie fijo', () => {
   const t=leer(OVERLAY),c=leer(OVCSS);
   assert.match(t,/aria-labelledby/);assert.match(t,/onCancel/);assert.match(t,/showModal/);assert.match(t,/\.focus\?\.\(\)/);
-  assert.match(t,/aria-label="Cerrar"/);
+  assert.match(t,/aria-label=\{t\('comun\.cerrar'\)\}/);// «Cerrar» vive en el diccionario (es: Cerrar / en: Close)
   const sizes=/DRAWER_SIZES=\{sm:420,md:480,lg:640\}/.test(t)&&/MODAL_SIZES=\{sm:440,md:560\}/.test(t);assert.ok(sizes,'anchos 420/480/640 y 440/560');
   const close=reglas(c).find(r=>/overlay-close/.test(r.sel)&&/width:28px/.test(r.body));assert.ok(close&&/height:28px/.test(close.body));
   assert.ok(reglas(c).some(r=>/\.overlay-body\{/.test(r.sel+'{')&&/overflow:auto/.test(r.body)&&/padding:var\(--ov-pad\)/.test(r.body)));

@@ -1,4 +1,5 @@
 'use client';
+import {useT} from '../i18n/proveedor';
 import {useCallback,useEffect,useId,useLayoutEffect,useRef,useState,type CSSProperties,type MouseEvent,type PointerEvent as ReactPointerEvent,type ReactNode,type SyntheticEvent} from 'react';
 import {Icon} from './icons';
 import {RovaqLogo} from '../rovaq-logo';
@@ -29,8 +30,9 @@ function useDialog(open:boolean,onClose:()=>void){
  return {ref,onCancel:(e:SyntheticEvent)=>{e.preventDefault();onClose();},onMouseDown:(e:MouseEvent<HTMLDialogElement>)=>{if(e.target===e.currentTarget)onClose();}};
 }
 function Head({id,title,subtitle,onClose}:{id:string;title:string;subtitle?:ReactNode;onClose:()=>void}){
+ const t=useT();
  return <header className="overlay-head"><div className="overlay-titles"><h2 id={id}>{title}</h2>{subtitle&&<p className="overlay-sub">{subtitle}</p>}</div>
-  <button type="button" className="icon-btn overlay-close" onClick={onClose} aria-label="Cerrar"><Icon name="x" size={14}/></button></header>;
+  <button type="button" className="icon-btn overlay-close" onClick={onClose} aria-label={t('comun.cerrar')}><Icon name="x" size={14}/></button></header>;
 }
 type DrawerProps={open:boolean;onClose:()=>void;title:string;subtitle?:ReactNode;children:ReactNode;footer?:ReactNode;
  /** sm 420 · md 480 · lg 640. */size?:DrawerSize;/** @deprecated usa `size`; se redondea al tamaño estándar más cercano. */width?:number;

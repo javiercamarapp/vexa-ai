@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {es} from '../src/lib/i18n/es';
 import {en} from '../src/lib/i18n/en';
-import {traducir, resolverIdioma, idiomaDeAcceptLanguage, idiomaValido, cookieIdioma, COOKIE_IDIOMA, type Clave} from '../src/lib/i18n';
+import {traducir, resolverIdioma, idiomaDeAcceptLanguage, idiomaValido, cookieIdioma, COOKIE_IDIOMA, IDIOMA_POR_OMISION, type Clave} from '../src/lib/i18n';
 import {claveItem, claveTitulo, claveGrupo} from '../src/lib/i18n/menu';
 import {periodoDelAlcance} from '../src/lib/i18n/periodo';
 import {numero, moneda, fecha} from '../src/lib/i18n/formato';
@@ -22,18 +22,28 @@ test('es.ts y en.ts tienen exactamente las mismas claves, sin textos vacíos', (
 test('cada clave conserva las mismas {variables} en los dos idiomas', () => {
   for (const k of Object.keys(es)) assert.equal(variables((en as Record<string, string>)[k]), variables((es as Record<string, string>)[k]), k);
 });
-test('una cookie inválida cae a español; una válida manda; sin cookie decide Accept-Language', () => {
-  assert.equal(resolverIdioma({cookie: 'fr'}), 'es');
-  assert.equal(resolverIdioma({cookie: 'EN'}), 'es');
-  assert.equal(resolverIdioma({cookie: '<script>'}), 'es');
-  assert.equal(resolverIdioma({cookie: 'fr', acceptLanguage: 'en-US,en;q=0.9'}), 'es');
-  assert.equal(resolverIdioma({cookie: 'en'}), 'en');
+test('inglés por omisión: sin cookie válida ni ?lang= es en; Accept-Language ya no decide; solo cookie o ?lang= dan español', () => {
+  assert.equal(IDIOMA_POR_OMISION, 'en');
+  assert.equal(resolverIdioma({}), 'en');
+  assert.equal(resolverIdioma({cookie: 'fr'}), 'en');
+  assert.equal(resolverIdioma({cookie: 'EN'}), 'en');
+  assert.equal(resolverIdioma({cookie: '<script>'}), 'en');
+  assert.equal(resolverIdioma({cookie: ''}), 'en');
+  assert.equal(resolverIdioma({cookie: 'fr', acceptLanguage: 'es-MX,es;q=0.9'}), 'en', 'cookie inválida + navegador en español: inglés');
+  assert.equal(resolverIdioma({acceptLanguage: 'es-MX,es;q=0.9'}), 'en', 'el navegador en español no cambia el idioma');
+  assert.equal(resolverIdioma({acceptLanguage: 'de-DE,de;q=0.9'}), 'en');
+  assert.equal(resolverIdioma({cookie: 'es'}), 'es');
+  assert.equal(resolverIdioma({cookie: 'en', acceptLanguage: 'es'}), 'en');
   assert.equal(resolverIdioma({cookie: 'es', acceptLanguage: 'en-US'}), 'es');
-  assert.equal(resolverIdioma({}), 'es');
-  assert.equal(resolverIdioma({acceptLanguage: 'en-US,en;q=0.9,es;q=0.8'}), 'en');
-  assert.equal(resolverIdioma({acceptLanguage: 'de-DE,de;q=0.9'}), 'es');
+  assert.equal(resolverIdioma({parametro: 'es'}), 'es', '?lang=es sin cookie');
   assert.equal(resolverIdioma({parametro: 'en', cookie: 'es'}), 'en', '?lang= válido manda sobre la cookie');
-  assert.equal(resolverIdioma({parametro: 'xx', cookie: 'en'}), 'en', '?lang= inválido se ignora');
+  assert.equal(resolverIdioma({parametro: 'xx', cookie: 'es'}), 'es', '?lang= inválido se ignora');
+  assert.equal(resolverIdioma({parametro: 'xx'}), 'en');
+});
+test('el idioma de la petición no lee Accept-Language y <html lang> sigue al idioma activo', () => {
+  assert.doesNotMatch(leer('src/lib/i18n/servidor.ts'), /headers\(\)|\.get\('accept-language'\)/i);
+  assert.match(leer('src/app/layout.tsx'), /<html lang=\{idioma\}/);
+  assert.match(leer('src/app/layout.tsx'), /await idiomaActual\(\)/);
 });
 test('Accept-Language respeta q y el orden; idiomaValido solo acepta es|en exactos', () => {
   assert.equal(idiomaDeAcceptLanguage('es-MX;q=0.5,en;q=0.9'), 'en');
@@ -92,7 +102,7 @@ test('un solo mecanismo: login y espacio de trabajo resuelven el idioma con la m
   assert.match(leer('src/lib/i18n/servidor.ts'), /COOKIE_IDIOMA/);
 });
 
-test('Hoy: el modelo arma el texto en el idioma pedido (es por omisión) sin cambiar las cifras', async () => {
+test('Hoy: el modelo arma el texto en el idioma pedido (en por omisión) sin cambiar las cifras', async () => {
   const {armarHoy} = await import('../src/components/hoy/hoy-modelo.mjs');
   const estado = {fuga: 'vacio', carga: 'vacio', cfo: 'vacio'} as const;
   const es0 = armarHoy({estado: {...estado}}), en0 = armarHoy({estado: {...estado}, idioma: 'en'});

@@ -4,7 +4,7 @@ export const IDIOMAS = ['es', 'en'] as const;
 export type Idioma = (typeof IDIOMAS)[number];
 /** Cookie de preferencia: solo «es» o «en», sin datos personales; la lee el servidor en cada petición. */
 export const COOKIE_IDIOMA = 'rovaq_lang';
-export const IDIOMA_POR_OMISION: Idioma = 'es';
+export const IDIOMA_POR_OMISION: Idioma = 'en';
 /** Locale de Intl para cifras, fechas y moneda de cada idioma. */
 export const LOCALE_INTL: Record<Idioma, string> = {es: 'es-MX', en: 'en-US'};
 /** Valida un valor cualquiera (cookie, ?lang=): solo «es» o «en» exactos; todo lo demás es null. */
@@ -23,12 +23,9 @@ export function idiomaDeAcceptLanguage(cabecera: string | null | undefined): Idi
   for (const c of candidatos) { const v = idiomaValido(c.base); if (v) return v; }
   return null;
 }
-/** Orden de decisión: ?lang= válido, cookie rovaq_lang, Accept-Language (solo si NO hay cookie), español. Una cookie presente pero inválida cae a español, no al navegador. */
-export function resolverIdioma({parametro, cookie, acceptLanguage}: {parametro?: unknown; cookie?: unknown; acceptLanguage?: string | null}): Idioma {
-  const explicito = idiomaValido(parametro);
-  if (explicito) return explicito;
-  if (cookie !== undefined && cookie !== null && cookie !== '') return idiomaValido(cookie) ?? IDIOMA_POR_OMISION;
-  return idiomaDeAcceptLanguage(acceptLanguage) ?? IDIOMA_POR_OMISION;
+/** Orden de decisión: ?lang= válido, cookie rovaq_lang válida, inglés. El idioma del navegador (Accept-Language) ya NO decide: el español solo llega por selector, cookie o ?lang=es. */
+export function resolverIdioma({parametro, cookie}: {parametro?: unknown; cookie?: unknown; acceptLanguage?: string | null}): Idioma {
+  return idiomaValido(parametro) ?? idiomaValido(cookie) ?? IDIOMA_POR_OMISION;
 }
 /** Guarda la preferencia en el navegador (cookie rovaq_lang) y alinea <html lang>. Solo cliente. */
 export function guardarIdiomaEnNavegador(idioma: Idioma): void {

@@ -23,7 +23,7 @@ test('layout raíz: campos obligatorios de metadata', () => {
   assert.match(s,/template:\s*"%s · Rovaq AI"/);
   assert.match(s,/locale:SITE\.locale/);
   assert.match(s,/summary_large_image/);
-  assert.match(s,/<html lang="es"/);
+  assert.match(s,/<html lang=\{idioma\}/);assert.match(s,/idiomaActual\(\)/);
   assert.equal(SITE.locale,'es_MX');
 });
 test('title y description con longitud útil para buscadores', () => {

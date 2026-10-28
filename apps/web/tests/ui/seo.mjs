@@ -30,7 +30,7 @@ for(const [ruta,esperaCanon] of [['/login',CANON+'/login'],['/',CANON]]){
     tw:Object.fromEntries([...document.querySelectorAll('meta[name^="twitter:"]')].map(x=>[x.getAttribute('name'),x.content])),
     robots:m('meta[name=robots]'),manifest:m('link[rel=manifest]','href'),icons:[...document.querySelectorAll('link[rel~=icon],link[rel=apple-touch-icon]')].map(l=>l.getAttribute('href')),
     h1:[...document.querySelectorAll('h1')].map(x=>x.textContent.trim()),imgs,svgs,ld,enlaces};});
-  check(d.lang==='es',`lang="es" (${d.lang})`);
+  check(d.lang==='en',`lang="en" por omisión (${d.lang})`);
   check(/Rovaq AI/.test(d.title)&&d.title.length>=10&&d.title.length<=70,`title «${d.title}»`);
   check(!!d.desc&&d.desc.length>=150&&d.desc.length<=160,`description ${d.desc?.length} caracteres`);
   check(d.canon===esperaCanon||d.canon===CANON,`canonical ${d.canon}`);

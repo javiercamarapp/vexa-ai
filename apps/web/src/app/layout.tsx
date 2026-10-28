@@ -4,6 +4,7 @@ import {ArranqueLimpio} from "../components/arranque-limpio";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import {SITE,siteUrl} from "../lib/site.mjs";
+import {idiomaActual} from "../lib/i18n/servidor";
 import "./fonts.css";
 import "./globals.css";
 import "./task-layout.css";
@@ -74,9 +75,11 @@ html[data-arranque] #arranque-logo .rovaq-respira{animation:rovaq-arranque-respi
 @media(prefers-reduced-motion:reduce){html[data-arranque] #arranque-logo .rovaq-respira{animation:none;opacity:.6}}
 `;
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  // <html lang> sigue al idioma activo (cookie rovaq_lang, inglés por omisión), no a uno fijo.
+  const idioma = await idiomaActual();
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang={idioma} suppressHydrationWarning>
       <head><style id="arranque-estilos-criticos">{ARRANQUE_CSS_CRITICO}</style><script dangerouslySetInnerHTML={{ __html: TEMA_ANTES_DEL_PINTADO }} /><script dangerouslySetInnerHTML={{ __html: ARRANQUE_ANTES_DEL_PINTADO }} /><noscript><style>{"html[data-arranque] .site-header,html[data-arranque] .site-footer,html[data-arranque] main{display:revert!important}#arranque-logo{display:none!important}"}</style></noscript></head>
       <body>
         <div id="arranque-logo" aria-hidden="true"><RovaqLogo variante="horizontal" ancho={140} className="rovaq-respira" decorativo espacioLibre={false}/></div>

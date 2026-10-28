@@ -18,7 +18,7 @@ export default async function Login({searchParams}:{searchParams:Promise<{error?
   }
   const params=await searchParams;
   const loginError=params.error;
-  // Mismo mecanismo que la app autenticada: ?lang= explícito, si no la cookie rovaq_lang, si no Accept-Language, si no español.
+  // Mismo mecanismo que la app autenticada: ?lang= explícito, si no la cookie rovaq_lang, si no inglés.
   const locale=await idiomaActual(params.lang);
   const t=(es:string,en:string)=>locale==='en'?en:es;
   const localeLink=(lang:string)=>`/login?${new URLSearchParams({...loginError?{error:loginError}:{},lang})}`;

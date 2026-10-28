@@ -13,6 +13,20 @@ test('CSV con BOM, comillas escapadas y una fila por registro', () => {
   const csv = blockToCsv({ columns: [{ key: 'a', label: 'Fuente' }, { key: 'b', label: 'Nota, larga' }], rows: [{ a: 'Amazon', b: 'dice "hola"' }, { a: 'X', b: null }] });
   assert.equal(csv, '﻿Fuente,"Nota, larga"\nAmazon,"dice ""hola"""\nX,');
 });
+test('AI-IMP-01: el CSV neutraliza fórmulas (= + - @ tab CR) sin tocar cifras ni texto normal', () => {
+  const rows = ['=HYPERLINK("http://x","clic")', '+SUM(A1)', '-2+3', '@cmd', '\tx', '\rx', '-1,234.5', '12 %', 'Reembolso', 'a=b'].map((a) => ({ a }));
+  const lines = blockToCsv({ columns: [{ key: 'a', label: 'Problema' }], rows }).split('\n');
+  assert.equal(lines[1], '"\'=HYPERLINK(""http://x"",""clic"")"');
+  assert.equal(lines[2], "'+SUM(A1)");
+  assert.equal(lines[3], "'-2+3");
+  assert.equal(lines[4], "'@cmd");
+  assert.ok(blockToCsv({ columns: [{ key: 'a', label: 'x' }], rows: [{ a: '\tx' }] }).endsWith("'\tx"));
+  assert.ok(blockToCsv({ columns: [{ key: 'a', label: 'x' }], rows: [{ a: '\rx' }] }).endsWith('"\'\rx"'));
+  assert.ok(blockToCsv({ columns: [{ key: 'a', label: 'x' }], rows: [{ a: '-1,234.5' }] }).endsWith('"-1,234.5"'), 'una cifra negativa legítima no se prefija');
+  assert.ok(blockToCsv({ columns: [{ key: 'a', label: 'x' }], rows: [{ a: '12 %' }] }).endsWith('\n12 %'));
+  assert.ok(blockToCsv({ columns: [{ key: 'a', label: 'x' }], rows: [{ a: 'a=b' }] }).endsWith('\na=b'));
+  assert.ok(blockToCsv({ columns: [{ key: '=a', label: '=cmd' }], rows: [] }).includes("'=cmd"), 'también la cabecera');
+});
 test('el adaptador real cumple el puerto: consulta la base donde está conectado y declara «no conectado» lo que falta, sin inventar', async () => {
   const cov = await portFor().coverage();
   const fake = { async transaction() { throw new Error('no db in unit tests'); } };

@@ -2,6 +2,7 @@
 import { CLASS_LABELS } from './contract.mjs';
 import { rovaqLogoSvg } from '../workspace-service/marca.mjs';
 import { compactEs, niceScale, esConteoPequeno } from '../../apps/web/src/lib/charts/escala.mjs'; // misma escala «agradable» y formato compacto que la app
+import { csvCell } from '../cfo-copilot/src/cfo-export.mjs'; // misma neutralización de fórmulas (= + - @ tab CR) que los demás exportadores
 import { enmascararTerceros } from '../workspace-service/enmascarar-terceros.mjs'; // privacidad: el texto de las citas exportadas lleva los mismos patrones ocultos que la pantalla
 const esc = (v) => String(v ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ');
 const covText = (c) => (c.eligible_n === null ? c.note : `${c.known_n.toLocaleString('es-MX')} de ${c.eligible_n.toLocaleString('es-MX')}`);
@@ -22,7 +23,7 @@ export function answerToMarkdown({ question, answer, generatedAt }) {
   return out.join('\n');
 }
 export function blockToCsv(block) {
-  const cell = (v) => { const s = String(v ?? ''); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+  const cell = csvCell;
   return '﻿' + [block.columns.map((c) => cell(c.label)).join(','), ...block.rows.map((r) => block.columns.map((c) => cell(r[c.key])).join(','))].join('\n');
 }
 

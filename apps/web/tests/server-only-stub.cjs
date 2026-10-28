@@ -5,3 +5,5 @@ const original = Module._resolveFilename;
 Module._resolveFilename = function (request, ...rest) {
   return original.call(this, request === 'server-only' ? 'next/dist/compiled/server-only/empty.js' : request, ...rest);
 };
+// Las hojas de estilos (globales o módulos) no se ejecutan en node --test: se importan como módulo vacío (los módulos CSS devuelven '' por clase).
+Module._extensions['.css'] = (module) => { module.exports = new Proxy({}, { get: (_t, k) => (k === '__esModule' ? false : '') }); };

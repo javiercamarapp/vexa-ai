@@ -26,6 +26,7 @@ import {exploradorEs} from './d-explorador';
 import {probdetEs} from './d-probdet';
 import {resumenEs} from './d-resumen';
 import {onbEs} from './d-onb';
+import {rolesEs} from './d-roles';
 export const es = {
   // Compartido
   'comun.cerrar': 'Cerrar', 'comun.reintentar': 'Volver a intentar', 'comun.cargando': 'Cargando…', 'comun.sinDato': 'Sin dato',
@@ -168,5 +169,6 @@ export const es = {
   ...probdetEs,
   ...resumenEs,
   ...onbEs,
+  ...rolesEs,
 } as const;
 export type Clave = keyof typeof es;

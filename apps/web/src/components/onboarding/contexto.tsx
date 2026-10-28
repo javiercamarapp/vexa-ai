@@ -6,7 +6,8 @@ import {usePathname,useRouter} from 'next/navigation';
 import {pasosDe,type Pista,type PasoOnboarding} from '../../lib/onboarding/catalogo.mjs';
 import {estadoInicial,reducir,type EstadoRecorrido,type EventoRecorrido} from '../../lib/onboarding/recorrido.mjs';
 import {actualizarEstado,almacenDelNavegador,claveEstado,ESTADO_VACIO,leerEstado,reconciliar,type EstadoLocal} from '../../lib/onboarding/estado';
-export interface DatosOnboarding {pista:Pista|null;userId:string;tenantId:string;organizacion:string;rolEtiqueta:string}
+/** rol = rol efectivo de la sesión en la organización (en «Ver como» es lector); ausente en la consola de plataforma. */
+export interface DatosOnboarding {pista:Pista|null;userId:string;tenantId:string;organizacion:string;rolEtiqueta:string;rol?:string}
 export interface Controlador {
  datos:DatosOnboarding;pista:Pista|null;listo:boolean;local:EstadoLocal;tieneRecorrido:boolean;pasos:PasoOnboarding[];tieneChecklist:boolean;
  rec:EstadoRecorrido;paso:PasoOnboarding|null;menuAbierto:boolean;invitacionVisible:boolean;

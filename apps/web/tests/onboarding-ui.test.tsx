@@ -52,7 +52,7 @@ test('flujo del propietario completo con teclado en ≤ 12 interacciones (Tab al
   assert.ok(teclas.length<=12,`interacciones: ${teclas.length}`);
 });
 test('cada paso de tour tiene objetivos y todos los data-tour que usan existen en el código',()=>{
-  const fuentes=['src/components/hoy/hoy-pantalla.tsx','src/components/connection-health.tsx','src/components/workspace/problems-view.tsx','src/components/workspace/navigation.tsx','src/components/platform/platform-nav.tsx'].map(leer).join('\n');
+  const fuentes=['src/components/hoy/hoy-pantalla.tsx','src/components/hoy/hoy-rol.tsx','src/components/connection-health.tsx','src/components/workspace/problems-view.tsx','src/components/workspace/navigation.tsx','src/components/platform/platform-nav.tsx'].map(leer).join('\n');
   for(const p of CATALOGO.filter(p=>p.superficie==='tour'&&p.pista!=='soporte'))assert.ok((OBJETIVOS as Record<string,string[]>)[p.id]?.length>0,'sin objetivo '+p.id);
   for(const lista of Object.values(OBJETIVOS))for(const sel of lista){
     const m=/data-tour="([^":]+)(?::([^"]*))?"/.exec(sel)!;
@@ -60,7 +60,7 @@ test('cada paso de tour tiene objetivos y todos los data-tour que usan existen e
     else if(m[1]==='plataforma')assert.match(fuentes,/data-tour=\{'plataforma:'\+href\}/);
     else if(m[1]!=='alcance')assert.ok(fuentes.includes(`data-tour="${m[1]}"`),'falta data-tour '+m[1]);
   }
-  assert.ok(!OBJETIVOS['operador.hoy'].some(s=>s.includes('hoy-cifras'))&&!OBJETIVOS['lector.hoy'].some(s=>s.includes('hoy-cifras')),'operador y lector ven esas cifras «sin acceso»: no se resaltan');
+  assert.ok(!OBJETIVOS['operador.hoy'].some(s=>s.includes('hoy-cifras'))&&!OBJETIVOS['lector.hoy'].some(s=>s.includes('hoy-cifras')),'operador y lector tienen su propio Hoy (hoy-rol): no se resaltan cifras de dinero');
 });
 
 // ---- Marcado accesible

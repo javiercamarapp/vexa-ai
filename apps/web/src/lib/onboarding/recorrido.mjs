@@ -55,11 +55,11 @@ export const OBJETIVOS = Object.freeze({
   'analista.dinero': ['[data-tour="menu:/cfo"]'],
   'analista.importar': ['[data-tour="menu:/imports"]'],
   'analista.preguntar': ['[data-tour="menu:/preguntale"]'],
-  'operador.hoy': ['[data-tour="menu:/overview"]'], // sin cifras de Hoy: ese rol las ve «sin acceso»
+  'operador.hoy': ['[data-tour="mis-intervenciones"]', '[data-tour="hoy-rol"]', '[data-tour="menu:/overview"]'], // Hoy propio del rol (HoyRol): sin cifras de dinero
   'operador.problemas': ['[data-tour="problemas"]', '[data-tour="menu:/problems"]'],
   'operador.acciones': ['[data-tour="menu:/interventions"]'],
   'operador.preguntar': ['[data-tour="menu:/preguntale"]'],
-  'lector.hoy': ['[data-tour="menu:/overview"]'], // sin cifras de Hoy: ese rol las ve «sin acceso»
+  'lector.hoy': ['[data-tour="hoy-rol"]', '[data-tour="menu:/overview"]'], // Hoy propio del rol (HoyRol): sin cifras de dinero
   'lector.problemas': ['[data-tour="problemas"]', '[data-tour="menu:/problems"]'],
   'lector.confianza': ['[data-tour="menu:/confianza"]'],
   'plataforma.resumen': ['[data-tour="plataforma:/platform"]'],

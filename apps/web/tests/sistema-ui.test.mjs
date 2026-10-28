@@ -38,7 +38,7 @@ test('escala tipográfica: h1 ≤ 20 px, titular narrativo ≤ 18 px, cifra KPI 
     for(const r of reglas(readFileSync(f,'utf8'))){
       const m=/font(?:-size)?:\s*(?:[a-z0-9 ]*?\s)?(\d+(?:\.\d+)?)px/.exec(r.body),c=/font-size:\s*clamp\(\s*\d+px\s*,[^,]*,\s*(\d+)px/.exec(r.body),v=m?+m[1]:c?+c[1]:null;
       if(v===null)continue;
-      if(/\.access-flow|\.login|\.getting-started/.test(r.sel))continue;
+      if(/\.access-flow|\.login/.test(r.sel))continue;
       if(/(^|[\s,>])h1\b/.test(r.sel)&&!/\.access|\.login/.test(r.sel))assert.ok(v<=20,`${f}: ${r.sel} h1 ${v}px > 20`);
       if(/titular/.test(r.sel)&&!/valor/.test(r.sel))assert.ok(v<=18,`${f}: ${r.sel} ${v}px > 18`);
       if(/(kpi|stat-value|pfig-value|fg-big|metric-grid dd|component-amount|\.big\b)/.test(r.sel))assert.ok(v<=30,`${f}: ${r.sel} ${v}px > 30`);

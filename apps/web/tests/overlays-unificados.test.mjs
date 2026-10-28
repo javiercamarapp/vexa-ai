@@ -15,7 +15,8 @@ const reglas=t=>[...t.replace(/\/\*[\s\S]*?\*\//g,'').matchAll(/([^{}@][^{}]*)\{
 test('ningún role="dialog", aria-modal, <dialog> ni showModal fuera de components/ui/overlay.tsx', () => {
   for(const f of TSX){if(f===OVERLAY)continue;
     const t=leer(f).replace(/\/\*[\s\S]*?\*\//g,'').replace(/^\s*\/\/.*$/gm,'');
-    assert.doesNotMatch(t,/role=\{?["'](alert)?dialog["']/,rel(f)+': role=dialog fuera del sistema de overlays');
+    // Excepción documentada: la tarjeta del recorrido guiado es un diálogo NO modal (sin aria-modal, sin atrapar foco, no tapa la página); el sistema de overlays solo ofrece modales.
+    if(rel(f)!=='components/onboarding/paneles.tsx')assert.doesNotMatch(t,/role=\{?["'](alert)?dialog["']/,rel(f)+': role=dialog fuera del sistema de overlays');
     assert.doesNotMatch(t,/aria-modal/,rel(f)+': aria-modal fuera del sistema');
     assert.doesNotMatch(t,/<dialog[\s>]/,rel(f)+': <dialog> fuera del sistema');
     assert.doesNotMatch(t,/\.showModal\(/,rel(f)+': showModal fuera del sistema');

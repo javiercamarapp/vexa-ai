@@ -1,0 +1,1919 @@
+/*
+ * Portada del sitio de Rovaq: cargador, secciones S1 a S10, horizonte, costuras, hilo, pie y movimiento.
+ * Dueño: T6. Va al final del orden de carga, por eso aquí vive el ÚNICO bloque de movimiento reducido (al final).
+ *
+ * CONTRATO DE ESTADOS Y GANCHOS (lo escriben sitio.js e inicio.js con setAttribute o classList; nunca style)
+ *   html[data-js]                 JavaScript arrancó. Todo diseño fijado o con estado oculto lo exige.
+ *   html.cargando                 cargador activo, bloquea el scroll.
+ *   html[data-intro-visto]        el cargador ya se vio en la sesión: el hero entra a los 200 ms.
+ *   html[data-intro-saltado]      se saltó la animación: el hero entra sin retardo y el cargador no se pinta.
+ *   html[data-eco]                vigilante de rendimiento: apaga blur y deriva.
+ *   header[data-tema]             tema bajo el centro de la cabecera. header[data-compacta] tras 60 px.
+ *   .s-visto                      revelado una vez por IntersectionObserver sobre [data-reveal].
+ *   --p (0 a 1)                   JS lo escribe solo en navegadores sin animation-timeline: en .s-hero__pista,
+ *                                 .s-pie, [data-palabras] y .s-hilo-zona. Palabras: --i y --n por span [data-i].
+ *   [data-escena][data-paso=0..3] paso activo de S5. [data-puesto=1..4] puesto activo de S7.
+ * Todo estado oculto vive dentro de (prefers-reduced-motion: no-preference) y (scripting: enabled).
+ */
+
+/* ==================== Maquinaria de barrido ====================
+ * Cada elemento de la lista declara --a y --b (rango 0 a 1 del recorrido) y un @keyframes con animation-name.
+ * Con view-timeline nativo se enlaza al rango; sin él, el retardo negativo se calcula desde --p, mismo @keyframes.
+ * Por defecto la línea de tiempo es --s-hero con rango contain; el pie cambia --s-tl y --s-rango.
+ */
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  html[data-js] :is(
+    .s-hero__contenido,
+    .s-hero__objeto,
+    .s-hero__reglas .s-h2,
+    .s-regla,
+    .s-hero__escena > .s-horizonte,
+    .s-pie__col,
+    .s-marca__contorno,
+    .s-marca__relleno,
+    .s-marca__punto
+  ) {
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+  }
+
+  @supports (animation-timeline: view()) {
+    html[data-js] :is(
+      .s-hero__contenido,
+      .s-hero__objeto,
+      .s-hero__reglas .s-h2,
+      .s-regla,
+      .s-hero__escena > .s-horizonte,
+      .s-pie__col,
+      .s-marca__contorno,
+      .s-marca__relleno,
+      .s-marca__punto
+    ) {
+      animation-timeline: var(--s-tl, --s-hero);
+      animation-range:
+        var(--s-rango, contain) calc(var(--a, 0) * 100%)
+        var(--s-rango, contain) calc(var(--b, 1) * 100%);
+    }
+  }
+
+  @supports not (animation-timeline: view()) {
+    html[data-js] :is(
+      .s-hero__contenido,
+      .s-hero__objeto,
+      .s-hero__reglas .s-h2,
+      .s-regla,
+      .s-hero__escena > .s-horizonte,
+      .s-pie__col,
+      .s-marca__contorno,
+      .s-marca__relleno,
+      .s-marca__punto
+    ) {
+      animation-duration: calc((var(--b, 1) - var(--a, 0)) * 1s);
+      animation-delay: calc((var(--a, 0) - var(--p, 0)) * 1s);
+      animation-play-state: paused;
+    }
+  }
+}
+
+/* ==================== Revelado por IntersectionObserver ==================== */
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  html[data-js] [data-reveal] {
+    transition:
+      opacity var(--s-d-revelado) var(--s-e-expo),
+      transform var(--s-d-revelado) var(--s-e-expo),
+      filter var(--s-d-revelado) var(--s-e-expo);
+    transition-delay: var(--s-retardo-r, 0ms);
+  }
+
+  html[data-js] [data-reveal]:not(.s-visto) {
+    opacity: 0;
+    transform: translateY(20px);
+    /* Salvavidas: si nada lo revela, a los 4 s se muestra solo */
+    animation: s-salvavidas 0s linear 4s forwards;
+  }
+
+  html[data-js] [data-reveal="linea"]:not(.s-visto) {
+    opacity: 1;
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  html[data-js] [data-reveal="blur"]:not(.s-visto) {
+    filter: blur(6px);
+  }
+
+  html[data-js] [data-reveal-grupo] > :nth-child(2) { --s-retardo-r: 80ms; }
+  html[data-js] [data-reveal-grupo] > :nth-child(3) { --s-retardo-r: 160ms; }
+  html[data-js] [data-reveal-grupo] > :nth-child(4) { --s-retardo-r: 240ms; }
+  html[data-js] [data-reveal-grupo] > :nth-child(5) { --s-retardo-r: 320ms; }
+  html[data-js] [data-reveal-grupo] > :nth-child(6) { --s-retardo-r: 400ms; }
+  html[data-js] [data-reveal-grupo] > :nth-child(7) { --s-retardo-r: 480ms; }
+  html[data-js] [data-reveal-grupo] > :nth-child(n+8) { --s-retardo-r: 560ms; }
+}
+
+@keyframes s-salvavidas {
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* ==================== Cargador ====================
+ * El overlay está en el HTML. Con movimiento permitido y scripting activo se pinta solo con CSS y se retira solo
+ * a los 1.9 s: si el JavaScript falla, la cortina igual sube. Sin scripting o con movimiento reducido no existe.
+ */
+.s-cargador {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  html:not([data-intro-visto]):not([data-intro-saltado]) .s-cargador {
+    position: fixed;
+    inset: 0;
+    z-index: var(--s-z-cargador);
+    display: grid;
+    place-items: center;
+    background: var(--s-c-tinta);
+    color: var(--s-c-hueso);
+    animation: s-cargador-cortina 600ms var(--s-e-cortina) 1300ms both;
+  }
+
+  .s-cargador__logo {
+    display: block;
+    width: 168px;
+    height: auto;
+    overflow: visible;
+    animation: s-cargador-logo-sale 300ms var(--s-e-ui) 1300ms both;
+  }
+
+  .s-cargador__anillo,
+  .s-cargador__mascara {
+    fill: none;
+    stroke: var(--s-c-hueso);
+    stroke-dasharray: 214;
+    stroke-dashoffset: 214;
+    animation: s-cargador-anillo 650ms var(--s-e-io) both;
+  }
+
+  .s-cargador__punto {
+    fill: var(--s-acento);
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: s-cargador-punto 400ms ease-out 450ms both;
+  }
+
+  .s-cargador__palabra {
+    fill: var(--s-c-hueso);
+    clip-path: inset(0 100% 0 0) fill-box;
+    animation: s-cargador-palabra 300ms var(--s-e-io) 750ms both;
+  }
+
+  .s-cargador__saltar {
+    position: absolute;
+    right: var(--s-e32);
+    bottom: var(--s-e32);
+    padding: var(--s-e8) var(--s-e12);
+    font-family: var(--s-f-mono);
+    font-size: var(--s-t-minimo);
+    letter-spacing: var(--s-k-sello);
+    text-transform: uppercase;
+    color: var(--s-c-hueso);
+    opacity: .55;
+  }
+}
+
+@keyframes s-cargador-anillo {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes s-cargador-punto {
+  0% { opacity: 0; transform: translateY(-24px) scale(.6); }
+  60% { opacity: 1; transform: translateY(0) scale(1.15); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes s-cargador-palabra {
+  to { clip-path: inset(0 0 0 0) fill-box; }
+}
+
+@keyframes s-cargador-logo-sale {
+  to { opacity: 0; transform: translateY(-12px); }
+}
+
+/* Cortina: de arriba hacia abajo se encoge, descubriendo la página desde abajo; al final queda fuera de alcance */
+@keyframes s-cargador-cortina {
+  to {
+    clip-path: inset(0 0 100% 0);
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+/* ==================== S1 Hero y reglas, oscuro ==================== */
+.s-hero {
+  position: relative;
+  z-index: var(--s-z-contenido);
+  background: var(--s-fondo);
+  color: var(--s-tinta);
+}
+
+.s-hero__pista {
+  position: relative;
+}
+
+.s-hero__escena {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  overflow: clip;
+}
+
+.s-hero__contenido {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-e24);
+  padding: clamp(112px, 16.5svh, 160px) var(--s-pad-x) var(--s-e48);
+  text-align: center;
+}
+
+.s-hero__titulo {
+  margin-top: var(--s-e4);
+}
+
+/* Cada línea del titular se enmascara: transform y recorte, nunca opacidad en el candidato a LCP */
+.s-hero__linea {
+  display: block;
+  overflow: hidden;
+  padding-bottom: .12em;
+  margin-bottom: -.12em;
+}
+
+.s-hero__linea > span {
+  display: block;
+}
+
+.s-hero__sub {
+  max-width: 640px;
+  color: var(--s-apagado);
+}
+
+.s-hero__limite {
+  font-family: var(--s-f-mono);
+  font-size: var(--s-t-eyebrow);
+  line-height: 1.5;
+  color: var(--s-apagado);
+}
+
+.s-hero__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-e12);
+  margin-top: var(--s-e8);
+}
+
+.s-hero__micro {
+  font-size: var(--s-t-pequeno);
+  color: var(--s-apagado);
+}
+
+/* Objeto héroe de 760 px, centrado en 50 por ciento y 47 por ciento, con resplandor de 900 px detrás */
+.s-hero__objeto {
+  position: absolute;
+  left: 50%;
+  top: 47%;
+  z-index: 1;
+  width: var(--s-hero-objeto);
+  height: var(--s-hero-objeto);
+  translate: -50% -50%;
+  pointer-events: none;
+}
+
+.s-hero__objeto::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 900px;
+  height: 900px;
+  max-width: none;
+  translate: -50% -50%;
+  background: var(--s-resplandor-hero);
+}
+
+.s-nube,
+.s-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.s-nube {
+  opacity: 0;
+  transition: opacity 600ms var(--s-e-ui);
+}
+
+.s-nube[data-estado="activa"],
+.s-nube[data-estado="pausada"] {
+  opacity: 1;
+}
+
+.s-nube[data-estado="activa"] ~ .s-poster,
+.s-nube[data-estado="pausada"] ~ .s-poster {
+  opacity: 0;
+}
+
+.s-poster {
+  transition: opacity 600ms var(--s-e-ui);
+}
+
+/* Punto marcado en rojo dentro de la nube: menos del 4 por ciento de los puntos */
+.s-nube-punto {
+  color: var(--s-acento);
+}
+
+.s-hero__anillo--trasero { z-index: 0; }
+.s-hero__anillo--delantero { z-index: 3; }
+
+.s-hero__rotulo {
+  position: absolute;
+  right: var(--s-pad-x);
+  bottom: var(--s-e24);
+  z-index: 2;
+}
+
+.s-hero__scroll {
+  position: absolute;
+  left: 50%;
+  bottom: var(--s-e24);
+  z-index: 2;
+  width: 32px;
+  height: 18px;
+  margin-left: -16px;
+}
+
+.s-hero__scroll::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-right: 1.5px solid var(--s-apagado);
+  border-bottom: 1.5px solid var(--s-apagado);
+  transform: rotate(45deg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .s-hero__scroll::before {
+    animation: s-rebote 2.4s var(--s-e-ui) infinite;
+  }
+}
+
+@keyframes s-rebote {
+  0%, 100% { transform: translateY(0) rotate(45deg); }
+  50% { transform: translateY(6px) rotate(45deg); }
+}
+
+/* Reglas: título, cuatro columnas con numeral mono, título Hanken 500 de 18 px y una línea de 14 px */
+.s-hero__reglas {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-e40);
+  padding: var(--s-e32) var(--s-pad-x) var(--s-e96);
+  text-align: center;
+}
+
+.s-reglas {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-gap-4);
+  width: 100%;
+  max-width: calc(var(--s-contenedor) - 2 * var(--s-pad-x));
+  text-align: left;
+}
+
+.s-regla {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-e8);
+  padding-top: var(--s-e20);
+}
+
+/* Línea de 1 px que se dibuja sobre cada regla */
+.s-regla::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--s-borde);
+  background: var(--s-linea-fuerte);
+  transform-origin: left center;
+}
+
+.s-regla__titulo {
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 1.3;
+  letter-spacing: var(--s-k-h3-producto);
+  color: var(--s-tinta);
+}
+
+/* S1 fijado a escritorio y tableta, con movimiento permitido y JavaScript activo */
+@media (prefers-reduced-motion: no-preference) and (min-width: 769px) and (scripting: enabled) {
+  html[data-js] .s-hero__pista {
+    height: 250vh;
+    view-timeline: --s-hero block;
+  }
+
+  html[data-js] .s-hero__escena {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 0;
+  }
+
+  html[data-js] .s-hero__reglas {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: clamp(88px, 14svh, 140px);
+    padding-block: 0;
+  }
+
+  html[data-js] .s-hero__contenido {
+    --a: 0;
+    --b: .35;
+    animation-name: s-hero-sale;
+  }
+
+  html[data-js] .s-hero__objeto {
+    --a: 0;
+    --b: .7;
+    animation-name: s-hero-objeto;
+  }
+
+  html[data-js] .s-hero__reglas .s-h2 {
+    --a: .62;
+    --b: .82;
+    animation-name: s-sube;
+  }
+
+  html[data-js] .s-regla {
+    --a: .64;
+    --b: .86;
+    animation-name: s-sube;
+  }
+
+  html[data-js] .s-regla:nth-child(2) { --a: .70; --b: .92; }
+  html[data-js] .s-regla:nth-child(3) { --a: .76; --b: .98; }
+  html[data-js] .s-regla:nth-child(4) { --a: .80; --b: 1; }
+
+  html[data-js] .s-regla::before {
+    --a: .62;
+    --b: .86;
+    animation-name: s-linea-dibuja;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+  }
+
+  html[data-js] .s-hero__escena > .s-horizonte {
+    --a: .85;
+    --b: 1;
+    animation-name: s-horizonte-sube;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 769px) and (scripting: enabled) {
+  @supports (animation-timeline: view()) {
+    html[data-js] .s-regla::before {
+      animation-timeline: --s-hero;
+      animation-range: contain 62% contain 86%;
+    }
+  }
+
+  @supports not (animation-timeline: view()) {
+    html[data-js] .s-regla::before {
+      animation-duration: .24s;
+      animation-delay: calc((.62 - var(--p, 0)) * 1s);
+      animation-play-state: paused;
+    }
+  }
+}
+
+@keyframes s-hero-sale {
+  to {
+    opacity: 0;
+    transform: translateY(-12vh);
+    filter: blur(8px);
+  }
+}
+
+@keyframes s-hero-objeto {
+  0%, 78% { opacity: 1; }
+  100% { opacity: .04; scale: 1.9; }
+}
+
+@keyframes s-sube {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes s-linea-dibuja {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes s-horizonte-sube {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Entrada del hero tras el cargador, con translate y máscara, nunca opacidad en el titular */
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  html[data-intro-visto] { --s-retardo-hero: 200ms; }
+  html[data-intro-saltado] { --s-retardo-hero: 0ms; }
+
+  .s-hero__linea > span {
+    animation: s-linea-entra 800ms var(--s-e-expo) both;
+    animation-delay: var(--s-retardo-hero);
+  }
+
+  .s-hero__linea:nth-child(2) > span { animation-delay: calc(var(--s-retardo-hero) + 110ms); }
+  .s-hero__linea:nth-child(3) > span { animation-delay: calc(var(--s-retardo-hero) + 220ms); }
+
+  .s-hero__contenido > .s-eyebrow {
+    animation: s-entra-blur 900ms var(--s-e-firma) both;
+    animation-delay: var(--s-retardo-hero);
+  }
+
+  .s-hero__sub,
+  .s-hero__limite {
+    animation: s-entra-blur 900ms var(--s-e-firma) both;
+    animation-delay: calc(var(--s-retardo-hero) + 250ms);
+  }
+
+  .s-hero__acciones > * {
+    animation: s-entra-blur 900ms var(--s-e-firma) both;
+    animation-delay: calc(var(--s-retardo-hero) + 400ms);
+  }
+
+  .s-hero__acciones > :nth-child(2) { animation-delay: calc(var(--s-retardo-hero) + 480ms); }
+
+  .s-hero__micro,
+  .s-hero__rotulo,
+  .s-hero__scroll {
+    animation: s-entra-blur 900ms var(--s-e-firma) both;
+    animation-delay: calc(var(--s-retardo-hero) + 560ms);
+  }
+
+  html[data-eco] .s-hero__contenido,
+  html[data-eco] .s-hero__sub,
+  html[data-eco] .s-hero__acciones > * {
+    filter: none;
+  }
+}
+
+@keyframes s-linea-entra {
+  from { transform: translateY(105%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes s-entra-blur {
+  from { opacity: 0; filter: blur(6px); transform: translateY(16px); }
+  to { opacity: 1; filter: blur(0); transform: none; }
+}
+
+/* ==================== S2 Horizonte ==================== */
+.s-horizonte {
+  position: relative;
+  z-index: 3;
+  height: var(--s-horizonte-h);
+  background: var(--s-horizonte-resplandor), var(--s-horizonte-degradado);
+  border-bottom: var(--s-borde) solid var(--s-horizonte-linea);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 769px) and (scripting: enabled) {
+  html[data-js] .s-hero__escena > .s-horizonte {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+}
+
+/* ==================== Costuras estáticas de 220 a 320 px, en la sección entrante ==================== */
+.s-costura {
+  padding-top: calc(var(--s-costura-h) + var(--s-e32));
+}
+
+.s-costura::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--s-costura-h);
+  pointer-events: none;
+}
+
+.s-costura > * {
+  position: relative;
+}
+
+.s-costura--a-claro::before {
+  background: var(--s-costura-a-claro);
+}
+
+.s-costura--a-oscuro::before {
+  background: var(--s-costura-a-oscuro);
+}
+
+/* ==================== S3 El problema, claro ==================== */
+.s-problema__cabeza {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-e28);
+  margin-bottom: clamp(var(--s-e64), 7vw, var(--s-e96));
+  text-align: center;
+}
+
+.s-problema__titulo {
+  max-width: 880px;
+  margin-inline: auto;
+}
+
+.s-columnas {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-gap-4);
+}
+
+.s-columna {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-e12);
+}
+
+.s-columna__diagrama {
+  width: 100%;
+  aspect-ratio: 244 / 160;
+  margin-bottom: var(--s-e16);
+}
+
+.s-columna__titulo {
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: var(--s-k-h3-producto);
+}
+
+.s-columna__texto {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--s-apagado);
+}
+
+/* ==================== S4 Valor y sellos, claro alterno ==================== */
+.s-valor__escena {
+  position: relative;
+  max-width: 1024px;
+  margin: 0 auto var(--s-e80);
+}
+
+.s-valor__ventana {
+  min-height: 540px;
+}
+
+.s-valor__rotulo {
+  margin-top: var(--s-e16);
+  text-align: center;
+}
+
+.s-valor__sello {
+  position: absolute;
+  right: calc(-1 * var(--s-e40));
+  top: 38%;
+  z-index: 2;
+}
+
+.s-valor__cota {
+  position: absolute;
+  right: 40%;
+  top: 41%;
+  width: 18%;
+  z-index: 2;
+}
+
+.s-sellos {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-gap-4);
+}
+
+.s-sello-def {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-e12);
+  padding-top: var(--s-e20);
+  border-top: var(--s-borde) solid var(--s-linea-fuerte);
+}
+
+.s-sello-def__texto {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--s-apagado);
+}
+
+.s-valor__regla {
+  margin-top: var(--s-e64);
+  text-align: center;
+}
+
+/* ==================== S5 Cuatro pasos, oscuro ==================== */
+.s-escena {
+  position: relative;
+  padding-block: 0;
+}
+
+.s-escena__pista {
+  position: relative;
+  padding-block: var(--s-seccion-v);
+}
+
+.s-escena__fijo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-e64);
+}
+
+.s-escena__visor {
+  display: none;
+  position: relative;
+  width: var(--s-visor);
+  height: var(--s-visor);
+  max-width: 100%;
+}
+
+.s-escena__visor canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.s-escena__progreso {
+  display: none;
+}
+
+/* Modo apilado: móvil, tableta, movimiento reducido y sin JavaScript. Cuatro bloques con render estático de 240 px */
+.s-paso {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-e24);
+  padding-block: var(--s-e32);
+  border-top: var(--s-borde) solid var(--s-linea);
+}
+
+.s-paso__texto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-e16);
+  max-width: var(--s-escena-col);
+}
+
+.s-paso__etiqueta {
+  font-family: var(--s-f-mono);
+  font-size: var(--s-t-eyebrow);
+  letter-spacing: var(--s-k-eyebrow);
+  text-transform: uppercase;
+  color: var(--s-apagado);
+}
+
+.s-paso__limite {
+  font-size: var(--s-t-pequeno);
+  color: var(--s-apagado);
+}
+
+.s-paso__render {
+  width: 240px;
+  height: 240px;
+  object-fit: contain;
+}
+
+.s-paso__mock {
+  width: 100%;
+  max-width: 440px;
+}
+
+/* Mockup de apoyo compacto: sin barra lateral y con cifras en dos columnas */
+.s-paso__mock .s-mock {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.s-paso__mock .s-mock__lateral,
+.s-paso__mock .s-mock__columnas,
+.s-paso__mock .s-mock__barra {
+  display: none;
+}
+
+.s-paso__mock .s-mock__principal {
+  padding: var(--s-e16);
+  gap: var(--s-e8);
+}
+
+.s-paso__mock .s-mock__rejilla {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-e8);
+}
+
+.s-paso__mock .s-mock__cifra {
+  padding: var(--s-e8) var(--s-e12);
+  gap: var(--s-e4);
+}
+
+/* Progreso de cuatro segmentos de 2 px por 56 de ancho */
+.s-progreso {
+  display: flex;
+  gap: var(--s-e8);
+}
+
+.s-progreso__seg {
+  position: relative;
+  width: 56px;
+  height: 2px;
+  background: var(--s-linea-fuerte);
+}
+
+.s-progreso__seg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--s-tinta);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 450ms var(--s-e-expo);
+}
+
+/* Cabeza roja de 6 px en el segmento activo */
+.s-escena__cabeza {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: var(--s-punto);
+  height: var(--s-punto);
+  margin: -3px -3px 0 0;
+  border-radius: 50%;
+  background: var(--s-acento);
+  opacity: 0;
+  transition: opacity 250ms var(--s-e-ui);
+}
+
+[data-escena][data-paso="0"] .s-progreso__seg:nth-child(-n+1)::after,
+[data-escena][data-paso="1"] .s-progreso__seg:nth-child(-n+2)::after,
+[data-escena][data-paso="2"] .s-progreso__seg:nth-child(-n+3)::after,
+[data-escena][data-paso="3"] .s-progreso__seg:nth-child(-n+4)::after {
+  transform: scaleX(1);
+}
+
+[data-escena][data-paso="0"] .s-progreso__seg:nth-child(1) .s-escena__cabeza,
+[data-escena][data-paso="1"] .s-progreso__seg:nth-child(2) .s-escena__cabeza,
+[data-escena][data-paso="2"] .s-progreso__seg:nth-child(3) .s-escena__cabeza,
+[data-escena][data-paso="3"] .s-progreso__seg:nth-child(4) .s-escena__cabeza {
+  opacity: 1;
+}
+
+/* Modo fijado, solo escritorio ancho con movimiento permitido y JavaScript */
+@media (prefers-reduced-motion: no-preference) and (min-width: 1101px) and (scripting: enabled) {
+  html[data-js] .s-escena__pista {
+    height: 500vh;
+    padding-block: 0;
+  }
+
+  html[data-js] .s-escena__fijo {
+    position: sticky;
+    top: 0;
+    display: grid;
+    grid-template-columns: var(--s-escena-col) minmax(0, 1fr);
+    align-items: center;
+    column-gap: var(--s-e80);
+    height: 100svh;
+    padding-block: var(--s-e80) var(--s-e48);
+  }
+
+  html[data-js] .s-escena__visor {
+    display: block;
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  html[data-js] .s-paso {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    grid-template-columns: var(--s-escena-col) minmax(0, 1fr);
+    column-gap: var(--s-e80);
+    align-items: center;
+    padding-block: 0;
+    border-top: 0;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px);
+    transition: opacity 280ms var(--s-e-ui), transform 280ms var(--s-e-ui), visibility 0s linear 280ms;
+  }
+
+  /* Sin atributo de paso se muestra el primero */
+  html[data-js] [data-escena]:not([data-paso]) .s-paso[data-n="1"],
+  html[data-js] [data-escena][data-paso="0"] .s-paso[data-n="1"],
+  html[data-js] [data-escena][data-paso="1"] .s-paso[data-n="2"],
+  html[data-js] [data-escena][data-paso="2"] .s-paso[data-n="3"],
+  html[data-js] [data-escena][data-paso="3"] .s-paso[data-n="4"] {
+    pointer-events: auto;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity 450ms var(--s-e-expo) 120ms, transform 450ms var(--s-e-expo) 120ms, visibility 0s;
+  }
+
+  html[data-js] .s-paso__render {
+    display: none;
+  }
+
+  html[data-js] .s-paso__texto {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  /* El mockup de 440 por 260 cae sobre el borde inferior del visor */
+  html[data-js] .s-paso__mock {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+    justify-self: end;
+    width: 440px;
+    height: 260px;
+    margin-bottom: calc(-1 * var(--s-e24));
+    overflow: hidden;
+    border-radius: var(--s-r-ventana);
+    z-index: 2;
+  }
+
+  html[data-js] .s-paso__mock > .s-ventana {
+    height: 100%;
+  }
+
+  html[data-js] .s-escena__progreso {
+    display: flex;
+    grid-column: 1;
+    grid-row: 1;
+    align-self: end;
+    padding-bottom: var(--s-e24);
+  }
+}
+
+/* ==================== S6 Seis pantallas, claro ==================== */
+.s-pantallas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-gap-4);
+}
+
+.s-pantalla {
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.s-pantalla__miniatura {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  border-bottom: var(--s-borde) solid var(--s-linea);
+  background: var(--s-fondo-alt);
+}
+
+/* Mockup completo de 1024 px reducido por escala para llenar la miniatura de 352 px */
+.s-pantalla__miniatura > .s-miniatura__interior {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1024px;
+  transform: scale(var(--s-escala-mini));
+  transform-origin: top left;
+  pointer-events: none;
+}
+
+.s-pantalla__cuerpo {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--s-e8);
+  padding: var(--s-e24);
+}
+
+.s-pantalla__titulo {
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: var(--s-k-h3-producto);
+}
+
+.s-pantalla__pregunta {
+  font-size: var(--s-t-pequeno);
+  line-height: 1.55;
+  color: var(--s-apagado);
+}
+
+.s-pantalla__flecha {
+  position: absolute;
+  right: var(--s-e24);
+  bottom: var(--s-e24);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: var(--s-borde) solid var(--s-linea-fuerte);
+  border-radius: 50%;
+  color: var(--s-tinta);
+  transition: background-color 250ms var(--s-e-ui), color 250ms var(--s-e-ui);
+}
+
+@media (hover: hover) {
+  .s-pantalla:hover .s-pantalla__flecha {
+    background: var(--s-tinta);
+    color: var(--s-fondo);
+  }
+
+  .s-pantalla:hover .s-flecha {
+    transform: rotate(0deg);
+  }
+}
+
+/* ==================== S7 Por puesto, claro alterno ==================== */
+.s-puestos__arco {
+  position: relative;
+  width: 100%;
+  max-width: 1072px;
+  height: 360px;
+  margin: 0 auto var(--s-e48);
+}
+
+.s-arco {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.s-arco__giro {
+  position: absolute;
+  left: 50%;
+  top: 6%;
+  width: 920px;
+  height: 920px;
+  margin-left: -460px;
+  border: 1.5px solid var(--s-linea-fuerte);
+  border-radius: 50%;
+  -webkit-mask-image: linear-gradient(to bottom, var(--s-c-tinta), transparent 60%);
+  mask-image: linear-gradient(to bottom, var(--s-c-tinta), transparent 60%);
+  transition: rotate 500ms var(--s-e-firma);
+}
+
+[data-puesto="2"] .s-arco__giro { rotate: -90deg; }
+[data-puesto="3"] .s-arco__giro { rotate: -180deg; }
+[data-puesto="4"] .s-arco__giro { rotate: -270deg; }
+
+/* Orbes de 90, 67, 56 y 45 px: son los objetos o1 a o4 sobre disco oscuro */
+.s-orbe {
+  position: absolute;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--s-c-tinta);
+  border: var(--s-borde) solid var(--s-linea-fuerte);
+}
+
+.s-orbe img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.s-orbe--1 { width: 90px; height: 90px; left: calc(50% - 45px); top: 3%; }
+.s-orbe--2 { width: 67px; height: 67px; left: 78%; top: 22%; }
+.s-orbe--3 { width: 56px; height: 56px; left: 12%; top: 30%; }
+.s-orbe--4 { width: 45px; height: 45px; left: 90%; top: 52%; }
+
+.s-capsula {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  width: 320px;
+  height: 120px;
+  margin-left: -160px;
+  border: var(--s-borde) solid var(--s-linea-fuerte);
+  border-radius: 60px;
+  background: var(--s-c-pizarra);
+  color: var(--s-c-hueso);
+  text-align: center;
+}
+
+.s-capsula__nombre {
+  font-family: var(--s-f-serif);
+  font-weight: 300;
+  font-variation-settings: "opsz" 32;
+  font-size: var(--s-t-h3-serif);
+  letter-spacing: var(--s-k-h3-serif);
+}
+
+.s-puestos__texto {
+  max-width: 520px;
+  margin: var(--s-e32) auto 0;
+  text-align: center;
+  color: var(--s-apagado);
+}
+
+.s-puestos__cierre {
+  margin-top: var(--s-e48);
+  text-align: center;
+}
+
+/* ==================== S8 Seguridad y límites, oscuro ==================== */
+.s-orgs {
+  width: 100%;
+  max-width: 1072px;
+  margin: 0 auto var(--s-e48);
+}
+
+.s-hechos {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: var(--s-e64);
+  border-block: var(--s-borde) solid var(--s-linea-fuerte);
+}
+
+.s-hechos > * {
+  padding: var(--s-e20) var(--s-e24);
+  border-left: var(--s-borde) solid var(--s-linea);
+  font-family: var(--s-f-mono);
+  font-size: var(--s-t-minimo);
+  line-height: 1.5;
+  letter-spacing: var(--s-k-sello);
+  text-transform: uppercase;
+  color: var(--s-apagado);
+}
+
+.s-hechos > :first-child {
+  border-left: 0;
+}
+
+.s-seguridad__tarjetas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-e32);
+  max-width: 1072px;
+  margin: 0 auto var(--s-e144);
+}
+
+.s-lista {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--s-e24);
+}
+
+.s-lista > li {
+  padding: var(--s-e12) 0;
+  border-top: var(--s-borde) solid var(--s-linea);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--s-apagado);
+}
+
+.s-limites__cabeza {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-e16);
+  margin-bottom: var(--s-e64);
+}
+
+.s-limites {
+  display: flex;
+  flex-direction: column;
+}
+
+.s-limite {
+  position: relative;
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) minmax(0, 1.4fr);
+  align-items: center;
+  column-gap: var(--s-e24);
+  min-height: 66px;
+  padding-block: var(--s-e16);
+}
+
+/* Línea de 1 px que se dibuja con scaleX en 900 ms */
+.s-limite::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--s-borde);
+  background: var(--s-linea-fuerte);
+  transform-origin: left center;
+}
+
+.s-limite__titulo {
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.25;
+  letter-spacing: var(--s-k-h3-producto);
+}
+
+.s-limite__texto {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--s-apagado);
+}
+
+.s-seguridad__fecha {
+  margin-top: var(--s-e32);
+}
+
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  html[data-js] .s-limite:not(.s-visto)::before {
+    transform: scaleX(0);
+  }
+
+  html[data-js] .s-limite::before {
+    transition: transform var(--s-d-revelado) var(--s-e-io);
+  }
+
+  html[data-js] .s-limite:not(.s-visto) > * {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: s-salvavidas 0s linear 4s forwards;
+  }
+
+  html[data-js] .s-limite > * {
+    transition: opacity var(--s-d-revelado) var(--s-e-expo), transform var(--s-d-revelado) var(--s-e-expo);
+  }
+
+  html[data-js] .s-limite > :nth-child(2) { transition-delay: 60ms; }
+  html[data-js] .s-limite > :nth-child(3) { transition-delay: 120ms; }
+}
+
+/* ==================== S9 Integraciones y preguntas, claro ==================== */
+.s-integraciones {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto var(--s-e48);
+}
+
+.s-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-e12);
+  margin-bottom: var(--s-e144);
+}
+
+.s-faq__cabeza {
+  margin-bottom: var(--s-e48);
+}
+
+/* ==================== S10 Cierre y pie, oscuro ==================== */
+.s-cierre {
+  position: relative;
+  z-index: var(--s-z-contenido);
+  overflow: hidden;
+  background: var(--s-fondo);
+  text-align: center;
+}
+
+.s-cierre__objeto {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 0;
+  width: 560px;
+  height: 560px;
+  translate: -50% -50%;
+  opacity: .9;
+  pointer-events: none;
+}
+
+.s-cierre__contenido {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-e32);
+  padding-block: var(--s-e64);
+}
+
+.s-cierre__texto {
+  max-width: var(--s-lectura-corta);
+  color: var(--s-apagado);
+}
+
+.s-cierre__lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-e8);
+  max-width: var(--s-lectura-corta);
+  margin: 0;
+  text-align: left;
+  font-size: var(--s-t-pequeno);
+  color: var(--s-apagado);
+}
+
+.s-cierre__lista > li {
+  position: relative;
+  padding-left: var(--s-e20);
+}
+
+.s-cierre__lista > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .7em;
+  width: var(--s-e8);
+  height: var(--s-borde);
+  background: var(--s-apagado);
+}
+
+.s-cierre__precio {
+  font-family: var(--s-f-mono);
+  font-size: var(--s-t-minimo);
+  letter-spacing: var(--s-k-sello);
+  text-transform: uppercase;
+  color: var(--s-apagado);
+}
+
+/* Pie con marca gigante recortada. El cierre sube sobre él: el pie queda fijo atrás y el espaciador lo descubre. */
+.s-pie-espacio {
+  height: var(--s-pie-h);
+  pointer-events: none;
+}
+
+.s-pie {
+  position: relative;
+  z-index: var(--s-z-fondo);
+  height: auto;
+  min-height: var(--s-pie-h);
+  overflow: hidden;
+  background: var(--s-fondo-alt);
+  color: var(--s-tinta);
+}
+
+.s-pie__cuerpo {
+  position: relative;
+  z-index: 1;
+  padding-block: var(--s-e96) var(--s-e48);
+}
+
+.s-pie__cols {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--s-gap-4);
+}
+
+.s-pie__titulo {
+  margin-bottom: var(--s-e16);
+  font-family: var(--s-f-mono);
+  font-size: var(--s-t-minimo);
+  letter-spacing: var(--s-k-eyebrow);
+  text-transform: uppercase;
+  color: var(--s-apagado);
+}
+
+.s-pie__enlaces {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-e12);
+  font-size: var(--s-t-pequeno);
+}
+
+.s-pie__legal {
+  margin-top: var(--s-e64);
+  padding-top: var(--s-e24);
+  border-top: var(--s-borde) solid var(--s-linea);
+}
+
+/* Marca gigante: 97 vw, recortada por el borde inferior, dos terceras partes visibles */
+.s-pie__marca {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  z-index: 0;
+  width: 97vw;
+  height: auto;
+  translate: -50% 33%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.s-marca__contorno {
+  fill: none;
+  stroke: var(--s-marca-contorno);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.s-marca__relleno {
+  fill: var(--s-marca-relleno);
+  -webkit-mask-image: linear-gradient(to bottom, var(--s-c-tinta) 30%, transparent 100%);
+  mask-image: linear-gradient(to bottom, var(--s-c-tinta) 30%, transparent 100%);
+}
+
+.s-marca__punto {
+  fill: var(--s-acento);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Barrido del pie con el espaciador como view-timeline; sin soporte lo conduce --p. Solo desde 769 px */
+.s-pie-espacio {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 769px) and (scripting: enabled) {
+  html[data-js] .s-pagina {
+    timeline-scope: --s-pie;
+  }
+
+  html[data-js] .s-pie-espacio {
+    display: block;
+    view-timeline: --s-pie block;
+  }
+
+  html[data-js] .s-pie {
+    position: sticky;
+    bottom: 0;
+    height: var(--s-pie-h);
+    margin-top: calc(-1 * var(--s-pie-h));
+    --s-tl: --s-pie;
+    --s-rango: entry;
+  }
+
+  html[data-js] .s-pie__col {
+    --a: 0;
+    --b: .45;
+    animation-name: s-pie-sube;
+  }
+
+  html[data-js] .s-pie__col:nth-child(2) { --a: .06; --b: .51; }
+  html[data-js] .s-pie__col:nth-child(3) { --a: .12; --b: .57; }
+  html[data-js] .s-pie__col:nth-child(4) { --a: .18; --b: .63; }
+  html[data-js] .s-pie__col:nth-child(5) { --a: .24; --b: .69; }
+
+  html[data-js] .s-marca__contorno {
+    --a: .2;
+    --b: .85;
+    animation-name: s-trazo;
+  }
+
+  html[data-js] .s-marca__relleno {
+    --a: .7;
+    --b: 1;
+    animation-name: s-aparece;
+  }
+
+  html[data-js] .s-marca__punto {
+    --a: .85;
+    --b: 1;
+    animation-name: s-punto-pie;
+  }
+
+  html[data-js] .s-pie[data-latido] .s-marca__punto {
+    animation: s-latido 1000ms var(--s-e-firma) 1;
+  }
+}
+
+@keyframes s-pie-sube {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes s-trazo {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes s-aparece {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes s-punto-pie {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+@keyframes s-latido {
+  0%, 100% { transform: scale(1); }
+  45% { transform: scale(1.5); }
+}
+
+/* ==================== Hilo de 1 px que se dibuja con el scroll, S3 a S10 ==================== */
+.s-hilo-zona {
+  position: relative;
+}
+
+.s-hilo {
+  position: absolute;
+  inset: 0;
+  z-index: var(--s-z-hilo);
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+}
+
+.s-hilo__guia,
+.s-hilo__trazo {
+  fill: none;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.s-hilo__guia {
+  stroke: var(--s-hilo-guia);
+}
+
+.s-hilo__trazo {
+  stroke: var(--s-hilo-trazo);
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+/* Cabeza roja de 6 px con estela de 24 px; la posición la escribe inicio.js con getPointAtLength */
+.s-hilo__cabeza {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: var(--s-z-hilo);
+  width: var(--s-punto);
+  height: var(--s-punto);
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: var(--s-acento);
+  translate: var(--x, 0) var(--y, 0);
+  pointer-events: none;
+}
+
+.s-hilo__nodo {
+  position: absolute;
+  left: var(--x, 0);
+  top: var(--y, 0);
+  width: var(--s-nodo);
+  height: var(--s-nodo);
+  margin: -3px 0 0 -3px;
+  border: var(--s-borde) solid var(--s-tinta);
+  border-radius: 50%;
+  background: var(--s-nodo-relleno);
+  transition: background-color 250ms var(--s-e-ui);
+}
+
+.s-hilo__nodo.s-visto {
+  background: var(--s-tinta);
+}
+
+.s-hilo__nota {
+  position: absolute;
+  left: var(--x, 0);
+  top: var(--y, 0);
+  display: flex;
+  align-items: center;
+  gap: var(--s-e8);
+  width: max-content;
+  max-width: 240px;
+  font-family: var(--s-f-mono);
+  font-size: var(--s-t-minimo);
+  line-height: 1.4;
+  letter-spacing: var(--s-k-sello);
+  text-transform: uppercase;
+  color: var(--s-apagado);
+}
+
+.s-hilo__icono {
+  flex: none;
+  width: var(--s-e16);
+  height: var(--s-e16);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+}
+
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  @supports (animation-timeline: view()) {
+    html[data-js] .s-hilo__trazo {
+      animation: s-trazo linear both;
+      animation-timeline: view();
+      animation-range: cover 40vh cover calc(100% - 60vh);
+    }
+  }
+
+  @supports not (animation-timeline: view()) {
+    html[data-js] .s-hilo__trazo {
+      animation: s-trazo 1s linear paused both;
+      animation-delay: calc(var(--p, 0) * -1s);
+    }
+  }
+}
+
+/* A 1100 px o menos el carril es único y recto a 20 px del borde; en móvil sin notas */
+@media (max-width: 1100px) {
+  .s-hilo__nota {
+    display: none;
+  }
+}
+
+/* ==================== Adaptación a tableta y móvil ==================== */
+@media (max-width: 1100px) {
+  .s-columnas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .s-sellos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .s-reglas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .s-pie__cols {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .s-valor__sello,
+  .s-valor__cota {
+    display: none;
+  }
+
+  .s-escena__fijo {
+    gap: var(--s-e48);
+  }
+}
+
+@media (max-width: 768px) {
+  .s-pantallas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .s-hero__contenido {
+    padding-top: clamp(96px, 14svh, 120px);
+  }
+
+  .s-hero__objeto {
+    top: 38%;
+  }
+
+  .s-hero__acciones {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .s-hero__acciones > .s-boton {
+    width: 100%;
+  }
+
+  .s-hero__rotulo {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    align-self: flex-end;
+    margin: 0 var(--s-pad-x) var(--s-e24);
+  }
+
+  .s-hero__scroll {
+    display: none;
+  }
+
+  .s-valor__ventana {
+    min-height: 0;
+  }
+
+  .s-seguridad__tarjetas {
+    grid-template-columns: minmax(0, 1fr);
+    margin-bottom: var(--s-e96);
+  }
+
+  .s-hechos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .s-hechos > :nth-child(odd) {
+    border-left: 0;
+  }
+
+  .s-hechos > :nth-child(n+3) {
+    border-top: var(--s-borde) solid var(--s-linea);
+  }
+
+  .s-limite {
+    grid-template-columns: 40px minmax(0, 1fr);
+    row-gap: var(--s-e4);
+  }
+
+  .s-limite__texto {
+    grid-column: 2;
+  }
+
+  .s-puestos__arco {
+    height: auto;
+    margin-bottom: var(--s-e24);
+  }
+
+  .s-arco,
+  .s-orbe--2,
+  .s-orbe--3,
+  .s-orbe--4 {
+    display: none;
+  }
+
+  .s-orbe--1 {
+    position: relative;
+    left: auto;
+    top: auto;
+    margin: 0 auto var(--s-e16);
+  }
+
+  .s-capsula {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: 100%;
+    max-width: 320px;
+    height: 88px;
+    margin: 0 auto;
+  }
+
+  .s-pie__cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .s-cierre__objeto {
+    width: 320px;
+    height: 320px;
+  }
+
+  .s-pie {
+    min-height: 0;
+  }
+
+  .s-pie__marca {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    margin: var(--s-e48) auto 0;
+    translate: 0 33%;
+  }
+
+  .s-pie-espacio {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .s-columnas,
+  .s-sellos,
+  .s-reglas,
+  .s-pantallas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .s-columna__diagrama {
+    max-width: 332px;
+    aspect-ratio: 332 / 140;
+  }
+
+  .s-pantalla {
+    min-height: 0;
+  }
+
+  .s-regla {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: var(--s-e16);
+  }
+
+  .s-pie__cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: var(--s-e32);
+  }
+
+  .s-integraciones {
+    display: none;
+  }
+}
+
+@media (min-width: 481px) {
+  .s-integraciones-lista {
+    display: none;
+  }
+}
+
+/* Estática del hero en móvil y tableta: cuatro reglas apiladas sin escena fija */
+@media (max-width: 768px) {
+  .s-hero__reglas {
+    padding-block: var(--s-e32) var(--s-e64);
+  }
+}
+
+/* ==================== Movimiento reducido: UN solo bloque, estado final ====================
+ * Con prefers-reduced-motion: reduce no hay cargador, Lenis, nube, sticky, barrido ni deriva. Todo se ve en su estado
+ * final y el pie es un pie normal con la marca rellena. Solo se permiten cambios de color y opacidad de 150 ms.
+ * Los estados ocultos y las animaciones viven en (no-preference), por eso aquí solo se neutraliza lo que queda.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Justificado: gana a cualquier transición de componente, que tiene más especificidad que un selector universal */
+  *,
+  *::before,
+  *::after {
+    transition-property: color, background-color, border-color, opacity !important;
+    transition-duration: 150ms !important;
+    transition-delay: 0s !important;
+    animation: none !important;
+  }
+
+  .s-cargador,
+  .s-nube,
+  .s-hero__scroll {
+    display: none;
+  }
+
+  .s-poster {
+    opacity: 1;
+  }
+
+  .s-pie {
+    position: relative;
+    height: auto;
+    margin-top: 0;
+  }
+
+  .s-pie-espacio {
+    display: none;
+  }
+
+  .s-marca__contorno {
+    stroke-dashoffset: 0;
+  }
+
+  .s-hilo__trazo {
+    stroke-dashoffset: 0;
+  }
+
+  .s-hilo__cabeza {
+    display: none;
+  }
+
+  .s-arco__giro {
+    transition: none !important;
+  }
+
+  .s-boton:active {
+    transform: none;
+  }
+
+  .s-escena__visor {
+    display: none;
+  }
+
+  .s-acordeon__panel,
+  .s-acordeon__interior {
+    transition: none !important;
+  }
+}

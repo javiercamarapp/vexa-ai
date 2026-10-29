@@ -13,7 +13,12 @@ export async function middleware(request:NextRequest) {
     const path=request.nextUrl.pathname;
     // Host primero: rovaq.ai sirve la landing, los hosts antiguos de Vercel redirigen a app.rovaq.ai y app.rovaq.ai sigue exactamente como antes (decisión pura y probada en host-routing.mjs).
     const decision=decidirHost({host:request.headers.get('x-forwarded-host')??request.headers.get('host')??request.nextUrl.host,pathname:path,search:request.nextUrl.search,produccion:process.env.VERCEL_ENV==='production'});
-    if(decision.tipo==='reescribir')return NextResponse.rewrite(new URL(decision.destino+request.nextUrl.search,request.url));
+    if(decision.tipo==='reescribir'){
+      // La landing fija su idioma por la ruta; el layout raíz lo lee de este encabezado y no de la cookie del app.
+      const reenviados=new Headers(request.headers);
+      reenviados.set('x-rovaq-lang',decision.destino.endsWith('/en')?'en':'es');
+      return NextResponse.rewrite(new URL(decision.destino+request.nextUrl.search,request.url),{request:{headers:reenviados}});
+    }
     if(decision.tipo==='redirigir')return NextResponse.redirect(new URL(decision.url,request.url),decision.status);
     if(decision.tipo==='activo')return NextResponse.next();
     // El matcher ahora cubre todo menos estáticos; lo que antes no pasaba por aquí sigue sin tocarse.

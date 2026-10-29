@@ -1,3 +1,4 @@
+import {headers} from "next/headers";
 import Link from "next/link";
 import {RovaqLogo} from "../components/rovaq-logo";
 import {ArranqueLimpio} from "../components/arranque-limpio";
@@ -79,7 +80,9 @@ html[data-arranque] #arranque-logo .rovaq-respira{animation:rovaq-arranque-respi
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   // <html lang> sigue al idioma activo (cookie rovaq_lang, inglés por omisión), no a uno fijo.
-  const idioma = await idiomaActual();
+  // La landing de rovaq.ai fija el idioma por la ruta (/ es, /en en) con el encabezado que pone el middleware; el resto sigue por cookie.
+  const delHost = (await headers()).get('x-rovaq-lang');
+  const idioma = delHost === 'es' || delHost === 'en' ? delHost : await idiomaActual();
   return (
     <html lang={idioma} suppressHydrationWarning>
       <head><style id="arranque-estilos-criticos">{ARRANQUE_CSS_CRITICO}</style><script dangerouslySetInnerHTML={{ __html: TEMA_ANTES_DEL_PINTADO }} /><script dangerouslySetInnerHTML={{ __html: ARRANQUE_ANTES_DEL_PINTADO }} /><noscript><style>{"html[data-arranque] .site-header,html[data-arranque] .site-footer,html[data-arranque] main{display:revert!important}#arranque-logo{display:none!important}"}</style></noscript></head>

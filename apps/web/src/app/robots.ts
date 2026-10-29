@@ -1,11 +1,13 @@
 import type {MetadataRoute} from 'next';
 import {headers} from 'next/headers';
-import {PREFIJOS_PRIVADOS,RUTAS_PUBLICAS,landingUrl,siteUrl} from '../lib/site.mjs';
-import {ES_HOST_LANDING} from '../lib/host-routing.mjs';
-/** Se permite lo público y se cierra el resto (la app es privada). El noindex de cada segmento y la cabecera X-Robots-Tag son la segunda barrera. En rovaq.ai solo existe la landing: se permite y se anuncia su propio sitemap. */
+import {landingUrl} from '../lib/site.mjs';
+import {robotsParaHost} from '../../config/sitio/agentic.mjs';
+/**
+ * robots.txt por host (decisión y lista de rastreadores en config/sitio/agentic.mjs).
+ * rovaq.ai: contenido público abierto a buscadores y agentes de IA, con política explícita por rastreador; se cierra solo lo interno (/sitio/, /api/, /_next/data/). Los activos de /s/ quedan abiertos para que Google cargue scripts e imágenes.
+ * app.rovaq.ai y cualquier otro host (vistas previas, hosts antiguos): Disallow: / y sin sitemap. El noindex por segmento y la cabecera X-Robots-Tag son la segunda barrera.
+ */
 export default async function robots():Promise<MetadataRoute.Robots>{
  const h=await headers();
- if(ES_HOST_LANDING(h.get('x-forwarded-host')??h.get('host')))return {rules:[{userAgent:'*',allow:['/']}],sitemap:`${landingUrl()}/sitemap.xml`};
- const base=siteUrl();
- return {rules:[{userAgent:'*',allow:['/',...RUTAS_PUBLICAS],disallow:PREFIJOS_PRIVADOS.map(p=>p+(p==='/api'||p==='/auth'?'/':''))}],sitemap:`${base}/sitemap.xml`};
+ return robotsParaHost(h.get('x-forwarded-host')??h.get('host'),landingUrl());
 }

@@ -41,7 +41,7 @@ export function Valor({lang, t}: {lang: Lang; t: TextosPortada}) {
   const partes = partesSello(clases.items[0].sello);
   const enlace = enlaceInterno(clases.href);
   return (
-    <section className="s-seccion s-seccion--alterna s-seccion--corte" id="valor" data-seccion="valor" data-tema="claro" aria-labelledby="valor-titulo">
+    <section className="s-seccion" id="valor" data-seccion="valor" data-tema="claro" aria-labelledby="valor-titulo">
       <div className="s-contenedor">
         <div className="s-seccion__cabeza">
           <p className="s-eyebrow" data-reveal="">{valor.etiqueta}</p>

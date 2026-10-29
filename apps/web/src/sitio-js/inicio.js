@@ -1,7 +1,7 @@
 // inicio.js (T10): solo la portada. sitio.js lo importa tras reposo y llama a la exportación por defecto con
-// {urls, RM, NAT, motor}. Hace: héroe en modo halo, escena fija de cuatro pasos con nube.js, objeto del cierre,
-// el hilo que se dibuja con el scroll, el latido del pie y Lenis (solo escritorio con puntero fino).
-// Scroll nativo, sin librerías de animación; este archivo solo lee scrollY y escribe variables CSS con setProperty.
+// {urls, RM, NAT, motor}. Hace: escena fija de cuatro pasos (paso activo y marca .s-visto para animar su visual),
+// el hilo que se dibuja con el scroll y el latido del pie.
+// Scroll nativo (scroll nativo), sin librerías de animación; este archivo solo lee scrollY y escribe variables CSS con setProperty.
 const D = document, H = D.documentElement;
 const $ = (s, r = D) => r.querySelector(s);
 const $$ = (s, r = D) => [...r.querySelectorAll(s)];
@@ -73,12 +73,6 @@ export function pasoDe(s, actual, h = 0.04) {
   while (n > 0 && s < n - h) n--;
   return n;
 }
-/** Lector de red: true si hay que quedarse con el póster y los pasos apilados. */
-export function ahorro(nav = navigator) {
-  const c = nav.connection || {};
-  return !!c.saveData || /(^|-)(2g|3g)$/.test(c.effectiveType || '') || (nav.deviceMemory ?? 8) <= 2;
-}
-
 /* ---------- íconos del hilo (generado desde components/sitio/iconos; ver hilo-iconos.json) ---------- */
 // BLOQUE-ICONOS-INICIO
 const ICONOS = [
@@ -101,66 +95,18 @@ const el = (tag, attrs = {}, padre, clase) => {
 };
 const div = (clase, padre, tag = 'div') => { const e = D.createElement(tag); e.className = clase; padre?.appendChild(e); return e; };
 
-export default function iniciar({urls, RM, NAT, motor}) {
+export default function iniciar({urls, RM, motor}) {
   const {tareas, despertar, barrer, rangos} = motor;
-  const fino = matchMedia('(hover: hover) and (pointer: fine)').matches;
   const ancho = () => innerWidth;
-  const sinNube = RM || ahorro();
-
-  /* ---------- nube: un contexto vivo a la vez ---------- */
-  let modNube = null, activa = null;
-  const cargarNube = () => (modNube ||= import(urls.nube).catch(() => null));
-  const liberar = () => { if (activa) { activa.api.destruir(); activa.canvas.dataset.estado = 'respaldo'; activa = null; } };
-  /** Crea la nube cuando el lienzo se acerca a la vista y la destruye al alejarse. */
-  function gestionar(canvas, opc, alCrear) {
-    if (!canvas || sinNube || typeof IntersectionObserver === 'undefined') { if (canvas) canvas.dataset.estado = 'respaldo'; return; }
-    let ocupado = false;
-    new IntersectionObserver(async (es) => {
-      const dentro = es[es.length - 1].isIntersecting;
-      if (dentro && !(activa && activa.canvas === canvas) && !ocupado) {
-        ocupado = true;
-        const m = await cargarNube();
-        if (!m) { canvas.dataset.estado = 'respaldo'; ocupado = false; return; }
-        liberar();
-        const api = m.crearNube(canvas, opc);
-        activa = {canvas, api};
-        alCrear?.(api);
-        ocupado = false;
-      } else if (!dentro && activa && activa.canvas === canvas) liberar();
-    }, {rootMargin: '60% 0px'}).observe(canvas);
-  }
-
-  /* ---------- héroe ---------- */
-  const pista = $('.s-hero__pista');
-  const cvH = $('canvas[data-nube="hero"]');
-  let apiH = null;
-  gestionar(cvH, {modo: 'halo', puntero: fino, modelos: {hero: cvH?.dataset.pts}, cargar: 'hero'}, (a) => { apiH = a; });
-  if (pista) barrer(pista, rangos.pista);
 
   /* ---------- escena de cuatro pasos (solo escritorio ancho) ---------- */
   const esc = $('[data-escena]');
-  const cvE = $('canvas[data-nube="escena"]', esc || D);
   const pasos = esc ? $$('.s-paso', esc) : [];
-  const modelosE = {hero: cvE?.dataset.pts};
-  pasos.forEach((p, i) => { modelosE['o' + (i + 1)] = p.dataset.pts; });
-  let apiE = null, paso = -1;
+  let paso = -1;
   const escenaActiva = () => !RM && ancho() > 1100;
-  if (esc && escenaActiva()) gestionar(cvE, {modelos: modelosE, cargar: 'hero'}, (a) => { apiE = a; if (paso >= 0) mostrar(paso); });
-  else if (cvE) cvE.dataset.estado = 'respaldo';
-  let tMorfo = 0;
-  function mostrar(n) {
-    if (!apiE) return;
-    apiE.mostrar('o' + (n + 1));
-    clearTimeout(tMorfo);
-    tMorfo = setTimeout(() => apiE?.destello?.(), 1000);
-  }
+  // El visual de cada paso se anima al activarse (.s-visto); apilado lo marca sitio.js al entrar en pantalla.
+  const marcar = (n) => { if (escenaActiva()) pasos[n]?.classList.add('s-visto'); };
   let ultY = scrollY, ultT = performance.now();
-
-  /* ---------- cierre ---------- */
-  const cvC = $('canvas[data-nube="cierre"]');
-  gestionar(cvC, {modelos: {hero: cvC?.dataset.pts}, cargar: 'hero', puntos: 6000});
-  const objC = $('.s-cierre__objeto');
-  if (objC && !RM) new IntersectionObserver((es) => { if (es[0].isIntersecting) { objC.classList.add('s-visto'); } }, {threshold: 0.2}).observe(objC);
 
   /* ---------- pie ---------- */
   const espacio = $('.s-pie-espacio'), pie = $('.s-pie');
@@ -170,49 +116,22 @@ export default function iniciar({urls, RM, NAT, motor}) {
   const hilo = construirHilo(urls, RM);
 
   /* ---------- tareas por cuadro ---------- */
-  let fuera = false;
   tareas.add((t) => {
     const y = scrollY, vh = innerHeight;
     const vel = Math.abs(y - ultY) / Math.max(1, t - ultT) * 1000;
     ultY = y; ultT = t;
     H.toggleAttribute('data-rapido', vel > 650);
-    if (pista && apiH) { const r = pista.getBoundingClientRect(); if (r.bottom > 0 && r.top < vh) apiH.progreso(lim(-r.top / Math.max(1, r.height - vh))); }
-    if (esc && apiE) {
-      const r = $('.s-escena__pista', esc).getBoundingClientRect();
-      const s = lim(-r.top / Math.max(1, r.height - vh)) * 4;
-      const n = pasoDe(s, Math.max(paso, 0));
-      if (n !== paso) { paso = n; esc.dataset.paso = String(n); mostrar(n); }
-    } else if (esc && escenaActiva()) {
+    if (esc && escenaActiva()) {
       const r = $('.s-escena__pista', esc).getBoundingClientRect();
       const n = pasoDe(lim(-r.top / Math.max(1, r.height - vh)) * 4, Math.max(paso, 0));
-      if (n !== paso) { paso = n; esc.dataset.paso = String(n); }
+      if (n !== paso) { paso = n; esc.dataset.paso = String(n); marcar(n); }
     }
     if (espacio && pie) { const r = espacio.getBoundingClientRect(); if (r.height) pie.toggleAttribute('data-latido', (vh - r.top) / r.height >= 0.98); }
     hilo?.cuadro(y, vh);
-    return !fuera && lenisVivo();
+    return false;
   });
   addEventListener('resize', () => hilo?.medir(), {passive: true});
   despertar(400);
-
-  /* ---------- Lenis: solo escritorio, puntero fino, sin movimiento reducido ni ahorro de datos ---------- */
-  let lenis = null;
-  const lenisVivo = () => !!lenis && lenis.isScrolling;
-  if (!RM && fino && !ahorro() && urls.lenis) {
-    const arranca = () => {
-      if (lenis || H.classList.contains('s-cargando')) { if (!lenis) setTimeout(arranca, 400); return; }
-      const s = D.createElement('script');
-      s.src = urls.lenis;
-      s.onload = () => {
-        if (!self.Lenis) return;
-        lenis = new self.Lenis({duration: 1.2, easing: (x) => Math.min(1, 1.001 - 2 ** (-10 * x)), wheelMultiplier: 0.9, smoothTouch: false});
-        tareas.add((t) => { lenis.raf(t); return lenis.isScrolling; });
-        despertar(2000);
-      };
-      D.head.appendChild(s);
-    };
-    const quieto = () => ('requestIdleCallback' in self ? requestIdleCallback(arranca, {timeout: 2500}) : setTimeout(arranca, 2500));
-    quieto();
-  }
 }
 
 /* ---------- construcción del hilo con medidas reales ---------- */
@@ -221,7 +140,6 @@ function construirHilo(urls, RM) {
   if (!zona || !cont || typeof ResizeObserver === 'undefined') return null;
   let notas = [];
   try { notas = JSON.parse(urls.notas || '[]'); } catch { notas = []; }
-  const orbes = (() => { try { return JSON.parse(urls.orbes || '{}'); } catch { return {}; } })();
   const svg = el('svg', {'aria-hidden': 'true', focusable: 'false'}, cont, 's-hilo');
   const guia = el('path', {pathLength: 1}, svg, 's-hilo__guia');
   const trazo = el('path', {pathLength: 1}, svg, 's-hilo__trazo');
@@ -282,15 +200,6 @@ function construirHilo(urls, RM) {
       nota.appendChild(tx);
       nodos.push(nota);
       nota._y = y;
-      const orbe = i === 0 ? orbes.o1 : i === 4 ? orbes.hero : null;
-      if (orbe) {
-        const im = div('s-hilo__orbe', cont, 'img');
-        im.src = orbe; im.alt = ''; im.width = 72; im.height = 72; im.loading = 'lazy'; im.decoding = 'async';
-        im.dataset.tema = tema;
-        im.style.setProperty('--x', x + 'px'); im.style.setProperty('--y', y + 24 + 'px');
-        nodos.push(im);
-        im._y = y;
-      }
     });
     if (RM) { nodos.forEach((n) => n.classList.add('s-visto')); trazo.style.setProperty('stroke-dashoffset', '0'); }
   }

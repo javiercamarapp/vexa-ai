@@ -1,9 +1,12 @@
-// S7 Por puesto (claro alterno): arco con cuatro orbes (objetos o1 a o4 sobre disco oscuro), cápsula central, pestañas y el texto de cada puesto.
+// S7 Por puesto (claro): arco con cuatro discos con un ícono de línea del producto, cápsula central, pestañas y el texto de cada puesto.
 // Sin JavaScript los cuatro textos quedan visibles y apilados (no hay `hidden` en el HTML); sitio.js marca el puesto activo con data-puesto y
 // oculta con el atributo hidden los otros. Después, el bloque de Finanzas y Experiencia del cliente.
-import {alt, medidas, url} from '../../../lib/sitio/activos';
+import {Icono} from '../iconos';
+import type {NombreIcono} from '../iconos';
 import {enlaceInterno} from './datos';
 import type {Lang, TextosPortada} from './datos';
+
+const ICONOS_PUESTO: readonly NombreIcono[] = ['persona', 'pedido', 'conversacion', 'evidencia'];
 
 export function Puestos({lang, t}: {lang: Lang; t: TextosPortada}) {
   const p = t.puestos;
@@ -11,7 +14,7 @@ export function Puestos({lang, t}: {lang: Lang; t: TextosPortada}) {
   const hrefFin = enlaceInterno(l.finanzas.href);
   const hrefCx = enlaceInterno(l.cx.href);
   return (
-    <section className="s-seccion s-seccion--alterna s-seccion--corte" id="puestos" data-seccion="puestos" data-tema="claro" data-puesto="1" aria-labelledby="puestos-titulo">
+    <section className="s-seccion" id="puestos" data-seccion="puestos" data-tema="claro" data-puesto="1" aria-labelledby="puestos-titulo">
       <div className="s-contenedor">
         <div className="s-seccion__cabeza">
           <p className="s-eyebrow" data-reveal="">{p.etiqueta}</p>
@@ -19,15 +22,9 @@ export function Puestos({lang, t}: {lang: Lang; t: TextosPortada}) {
         </div>
         <div className="s-puestos__arco" aria-hidden="true" data-reveal="">
           <div className="s-arco"><div className="s-arco__giro" /></div>
-          {[1, 2, 3, 4].map((n) => {
-            const clave = `img/o${n}-orbe`;
-            const {ancho, alto} = medidas(clave);
-            return (
-              <span className={`s-orbe s-orbe--${n}`} key={n}>
-                <img src={url(clave)} srcSet={`${url(clave, {ancho: 96})} 96w, ${url(clave)} ${ancho}w`} sizes="90px" width={ancho} height={alto} alt={alt(clave, lang)} loading="lazy" decoding="async" />
-              </span>
-            );
-          })}
+          {ICONOS_PUESTO.map((nombre, i) => (
+            <span className={`s-orbe s-orbe--${i + 1}`} key={nombre}><Icono nombre={nombre} tam={i === 0 ? 32 : 24} /></span>
+          ))}
           <div className="s-capsula"><span className="s-capsula__nombre">{p.items[0].t}</span></div>
         </div>
         <div className="s-pestanas" role="tablist" aria-label={p.titulo}>

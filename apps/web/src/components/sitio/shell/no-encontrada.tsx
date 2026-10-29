@@ -45,7 +45,7 @@ export function PaginaNoEncontrada({lang}: {lang: Lang}) {
         </div>
       </section>
       {enlaces.length > 0 ? (
-        <section className="s-seccion s-costura s-costura--a-claro" data-tema="claro">
+        <section className="s-seccion" data-tema="claro">
           <div className="s-contenedor s-pag-contenido">
             <div className="s-pag-bloque">
               <h2 className="s-h3-serif s-pag-titulo">{lang === 'es' ? 'Páginas del sitio' : 'Pages on this site'}</h2>

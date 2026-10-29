@@ -225,14 +225,14 @@ export function CuerpoPagina({pagina, lang, publicable = true, motivos = []}: Pr
           {esAcceso ? Boton : null}
         </div>
       </section>
-      <section className="s-seccion s-costura s-costura--a-claro" data-tema="claro">
+      <section className="s-seccion" data-tema="claro">
         <div className="s-contenedor s-pag-contenido">
           {bloques}
           {p.rotulo ? <p className="s-rotulo-ejemplo">{txt(p.rotulo, lang)}</p> : null}
         </div>
       </section>
       {esAcceso ? null : (
-        <section className="s-seccion s-cierre s-costura s-costura--a-oscuro" data-tema="oscuro">
+        <section className="s-seccion s-cierre" data-tema="oscuro">
           <div className="s-contenedor s-cierre__contenido">
             <h2 className="s-h2">{c.titulo}</h2>
             <p className="s-cierre__texto">{c.texto}</p>

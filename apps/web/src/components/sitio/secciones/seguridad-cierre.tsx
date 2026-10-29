@@ -1,9 +1,8 @@
 // S8 Seguridad y límites (oscuro), S9 Integraciones y preguntas (claro) y S10 Cierre (oscuro).
-import {url} from '../../../lib/sitio/activos';
 import {Diagrama} from '../diagramas';
 import {correoAcceso, enlaceInterno, partirOracion} from './datos';
 import type {Lang, TextosPortada} from './datos';
-import {Boton, ImagenManifest, Palabras, dosCifras} from './piezas';
+import {Boton, Palabras, dosCifras} from './piezas';
 
 export function Seguridad({lang, t}: {lang: Lang; t: TextosPortada}) {
   const s = t.seguridad;
@@ -11,7 +10,7 @@ export function Seguridad({lang, t}: {lang: Lang; t: TextosPortada}) {
   const hrefSeg = enlaceInterno(s.href);
   const hrefRuta = enlaceInterno(l.href);
   return (
-    <section className="s-seccion s-costura s-costura--a-oscuro" id="seguridad" data-seccion="seguridad" data-tema="oscuro" aria-labelledby="seguridad-titulo">
+    <section className="s-seccion" id="seguridad" data-seccion="seguridad" data-tema="oscuro" aria-labelledby="seguridad-titulo">
       <div className="s-contenedor">
         <div className="s-seccion__cabeza">
           <p className="s-eyebrow" data-reveal="">{s.etiqueta}</p>
@@ -66,7 +65,7 @@ export function Integraciones({lang, t}: {lang: Lang; t: TextosPortada}) {
   const hrefRuta = enlaceInterno(g.hrefRuta);
   const preguntas = t.faq.items.filter((x): x is {q: string; a: string} => Boolean(x.q && x.a));
   return (
-    <section className="s-seccion s-costura s-costura--a-claro" id="integraciones" data-seccion="integraciones" data-tema="claro" aria-labelledby="integraciones-titulo">
+    <section className="s-seccion" id="integraciones" data-seccion="integraciones" data-tema="claro" aria-labelledby="integraciones-titulo">
       <div className="s-contenedor">
         <div className="s-seccion__cabeza">
           <p className="s-eyebrow" data-reveal="">{g.etiqueta}</p>
@@ -128,11 +127,7 @@ export function Cierre({lang, t}: {lang: Lang; t: TextosPortada}) {
   const c = t.cierre;
   const correo = correoAcceso(lang);
   return (
-    <section className="s-seccion s-cierre s-costura s-costura--a-oscuro" id="cierre" data-seccion="cierre" data-tema="oscuro" aria-labelledby="cierre-titulo">
-      <div className="s-cierre__objeto" aria-hidden="true">
-        <canvas className="s-nube" data-nube="cierre" data-estado="cargando" data-pts={url('pts/hero')} />
-        <ImagenManifest clave="img/hero" lang={lang} clase="s-poster" tamanos="560px" textoAlt={c.objetoAlt} />
-      </div>
+    <section className="s-seccion s-cierre" id="cierre" data-seccion="cierre" data-tema="oscuro" aria-labelledby="cierre-titulo">
       <div className="s-contenedor s-cierre__contenido">
         <h2 className="s-h2-grande s-centrado s-ancho-titular" id="cierre-titulo" data-palabras="">
           <Palabras texto={c.titulo} />

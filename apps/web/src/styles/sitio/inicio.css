@@ -1,16 +1,14 @@
 /*
- * Portada del sitio de Rovaq: cargador, secciones S1 a S10, horizonte, costuras, hilo, pie y movimiento.
+ * Portada del sitio de Rovaq: secciones S1 a S10, horizonte, hilo, pie y movimiento. Sin cargador ni costuras: el tema es global (tokens.css).
  * Dueño: T6. Va al final del orden de carga, por eso aquí vive el ÚNICO bloque de movimiento reducido (al final).
  *
  * CONTRATO DE ESTADOS Y GANCHOS (lo escriben sitio.js e inicio.js con setAttribute o classList; nunca style)
  *   html[data-js]                 JavaScript arrancó. Todo diseño fijado o con estado oculto lo exige.
- *   html.s-cargando               cargador activo, bloquea el scroll.
- *   html[data-intro-visto]        el cargador ya se vio en la sesión: el hero entra a los 200 ms.
- *   html[data-intro-saltado]      se saltó la animación: el hero entra sin retardo y el cargador no se pinta.
+ *   html[data-escena]             escena de tema global (oscuro o claro); html[data-escena-anim] activa su transición.
  *   html[data-eco]                vigilante de rendimiento: apaga blur y deriva.
- *   header[data-tema]             tema bajo el centro de la cabecera. header[data-compacta] tras 60 px.
+ *   header[data-compacta]         píldora tras 60 px.
  *   .s-visto                      revelado una vez por IntersectionObserver sobre [data-reveal].
- *   --p (0 a 1)                   JS lo escribe solo en navegadores sin animation-timeline: en .s-hero__pista,
+ *   --p (0 a 1)                   JS lo escribe solo en navegadores sin animation-timeline: en .s-pie,
  *                                 .s-pie, [data-palabras] y .s-hilo-zona. Palabras: --i y --n por span [data-i].
  *   [data-escena][data-paso=0..3] paso activo de S5. [data-puesto=1..4] puesto activo de S7.
  * Todo estado oculto vive dentro de (prefers-reduced-motion: no-preference) y (scripting: enabled).
@@ -23,11 +21,6 @@
  */
 @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
   html[data-js] :is(
-    .s-hero__contenido,
-    .s-hero__objeto,
-    .s-hero__reglas .s-h2,
-    .s-regla,
-    .s-hero__escena > .s-horizonte,
     .s-pie__col,
     .s-marca__contorno,
     .s-marca__relleno,
@@ -39,11 +32,6 @@
 
   @supports (animation-timeline: view()) {
     html[data-js] :is(
-      .s-hero__contenido,
-      .s-hero__objeto,
-      .s-hero__reglas .s-h2,
-      .s-regla,
-      .s-hero__escena > .s-horizonte,
       .s-pie__col,
       .s-marca__contorno,
       .s-marca__relleno,
@@ -58,11 +46,6 @@
 
   @supports not (animation-timeline: view()) {
     html[data-js] :is(
-      .s-hero__contenido,
-      .s-hero__objeto,
-      .s-hero__reglas .s-h2,
-      .s-regla,
-      .s-hero__escena > .s-horizonte,
       .s-pie__col,
       .s-marca__contorno,
       .s-marca__relleno,
@@ -119,114 +102,18 @@
   }
 }
 
-/* ==================== Cargador ====================
- * El overlay está en el HTML. Con movimiento permitido y scripting activo se pinta solo con CSS y se retira solo
- * a los 1.9 s: si el JavaScript falla, la cortina igual sube. Sin scripting o con movimiento reducido no existe.
- */
-.s-cargador {
-  display: none;
-}
-
-@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
-  html:not([data-intro-visto]):not([data-intro-saltado]) .s-cargador {
-    position: fixed;
-    inset: 0;
-    z-index: var(--s-z-cargador);
-    display: grid;
-    place-items: center;
-    background: var(--s-c-tinta);
-    color: var(--s-c-hueso);
-    animation: s-cargador-cortina 600ms var(--s-e-cortina) 1300ms both;
-  }
-
-  .s-cargador__logo {
-    display: block;
-    width: 168px;
-    height: auto;
-    overflow: visible;
-    animation: s-cargador-logo-sale 300ms var(--s-e-ui) 1300ms both;
-  }
-
-  .s-cargador__anillo,
-  .s-cargador__mascara {
-    fill: none;
-    stroke: var(--s-c-hueso);
-    stroke-dasharray: 214;
-    stroke-dashoffset: 214;
-    animation: s-cargador-anillo 650ms var(--s-e-io) both;
-  }
-
-  .s-cargador__punto {
-    fill: var(--s-acento);
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: s-cargador-punto 400ms ease-out 450ms both;
-  }
-
-  .s-cargador__palabra {
-    fill: var(--s-c-hueso);
-    clip-path: inset(0 100% 0 0) fill-box;
-    animation: s-cargador-palabra 300ms var(--s-e-io) 750ms both;
-  }
-
-  .s-cargador__saltar {
-    position: absolute;
-    right: var(--s-e32);
-    bottom: var(--s-e32);
-    padding: var(--s-e8) var(--s-e12);
-    font-family: var(--s-f-mono);
-    font-size: var(--s-t-minimo);
-    letter-spacing: var(--s-k-sello);
-    text-transform: uppercase;
-    color: var(--s-c-hueso);
-    opacity: .55;
-  }
-}
-
-@keyframes s-cargador-anillo {
-  to { stroke-dashoffset: 0; }
-}
-
-@keyframes s-cargador-punto {
-  0% { opacity: 0; transform: translateY(-24px) scale(.6); }
-  60% { opacity: 1; transform: translateY(0) scale(1.15); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes s-cargador-palabra {
-  to { clip-path: inset(0 0 0 0) fill-box; }
-}
-
-@keyframes s-cargador-logo-sale {
-  to { opacity: 0; transform: translateY(-12px); }
-}
-
-/* Cortina: de arriba hacia abajo se encoge, descubriendo la página desde abajo; al final queda fuera de alcance */
-@keyframes s-cargador-cortina {
-  to {
-    clip-path: inset(0 0 100% 0);
-    visibility: hidden;
-    pointer-events: none;
-  }
-}
-
 /* ==================== S1 Hero y reglas, oscuro ==================== */
 .s-hero {
   position: relative;
   z-index: var(--s-z-contenido);
-  background: var(--s-fondo);
   color: var(--s-tinta);
-}
-
-.s-hero__pista {
-  position: relative;
 }
 
 .s-hero__escena {
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 100svh;
+  align-items: center;
   overflow: clip;
 }
 
@@ -236,8 +123,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--s-e24);
-  padding: clamp(112px, 16.5svh, 160px) var(--s-pad-x) var(--s-e48);
+  gap: var(--s-e20);
+  padding: clamp(104px, 14.5svh, 136px) var(--s-pad-x) var(--s-e40);
   text-align: center;
 }
 
@@ -274,7 +161,7 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: var(--s-e12);
-  margin-top: var(--s-e8);
+  margin-top: var(--s-e4);
 }
 
 .s-hero__micro {
@@ -282,120 +169,231 @@
   color: var(--s-apagado);
 }
 
-/* Objeto héroe de 760 px, centrado en 50 por ciento y 47 por ciento, con resplandor de 900 px detrás */
-.s-hero__objeto {
-  position: absolute;
-  left: 50%;
-  top: 47%;
-  z-index: 1;
-  width: var(--s-hero-objeto);
-  height: var(--s-hero-objeto);
-  translate: -50% -50%;
-  pointer-events: none;
+/* Ventana de producto: 1040 px, la corta el pliegue. Sigue oscura en cualquier escena: es la captura real del producto en tema oscuro. */
+.s-hero__marco {
+  position: relative;
+  z-index: 2;
+  width: min(1040px, 100% - 2 * var(--s-pad-x));
+  margin-bottom: var(--s-e64);
 }
 
-.s-hero__objeto::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 900px;
-  height: 900px;
-  max-width: none;
-  translate: -50% -50%;
-  background: var(--s-resplandor-hero);
+.s-ventana--producto {
+  --s-ventana-fondo: var(--s-vp-fondo);
+  --s-ventana-borde: var(--s-vp-borde);
+  --s-sombra-ventana: var(--s-vp-sombra);
+  --s-tinta: var(--s-vp-texto);
+  --s-apagado: var(--s-vp-apagado);
+  --s-superficie-2: var(--s-vp-barra);
+  --s-linea: var(--s-vp-linea);
+  border-radius: var(--s-r-tarjeta);
+  overflow: visible;
 }
 
-.s-nube,
-.s-poster {
+.s-ventana--producto .s-ventana__barra {
+  border-radius: var(--s-r-tarjeta) var(--s-r-tarjeta) 0 0;
+}
+
+.s-ventana--producto .s-ventana__cuerpo {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0 0 var(--s-r-tarjeta) var(--s-r-tarjeta);
+  container-type: inline-size;
+  background: var(--s-vp-fondo);
+}
+
+.s-ventana__img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.s-ventana__rotulo {
+  margin: var(--s-e12) 0 0;
+  text-align: right;
+}
+
+/* Capa SVG sobre la captura: mismas coordenadas que la imagen de 2000 por 1250 */
+.s-ov {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  overflow: visible;
 }
 
-.s-nube {
-  opacity: 0;
-  transition: opacity 600ms var(--s-e-ui);
-}
+.s-ov__fila { outline: none; cursor: default; }
+.s-ov__zona { fill: transparent; }
+.s-ov__pista { fill: var(--s-vp-pista); }
+.s-ov__barra { fill: var(--s-vp-barra-color); transform-box: fill-box; transform-origin: left center; }
+.s-ov__tip { opacity: 0; pointer-events: none; transition: opacity var(--s-d-hover) var(--s-e-ui); }
+.s-ov__tip rect { fill: var(--s-vp-pista); stroke: var(--s-vp-borde); stroke-width: 1.5; }
+.s-ov__tip text { fill: var(--s-vp-texto); font: 500 22px var(--s-f-mono); letter-spacing: .04em; }
+.s-ov__fila:hover .s-ov__tip,
+.s-ov__fila:focus-visible .s-ov__tip { opacity: 1; }
+.s-ov__fila:focus-visible .s-ov__zona { stroke: var(--s-vp-texto); stroke-width: 3; rx: 12; }
+.s-ov__marca { stroke: var(--s-vp-apagado); stroke-width: 1.5; stroke-dasharray: 5 7; fill: none; vector-effect: non-scaling-stroke; }
+.s-ov__eje { fill: var(--s-vp-apagado); font: 500 22px var(--s-f-mono); letter-spacing: .06em; }
+.s-ov__acum { fill: none; stroke: var(--s-vp-texto); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; opacity: .85; vector-effect: non-scaling-stroke; }
+.s-ov__nodo { fill: var(--s-vp-fondo); stroke: var(--s-vp-texto); stroke-width: 2.5; vector-effect: non-scaling-stroke; }
 
-.s-nube[data-estado="activa"],
-.s-nube[data-estado="pausada"] {
-  opacity: 1;
-}
-
-/* La nube de la escena sustituye al póster; la del héroe (modo halo) solo dibuja el polvo que orbita, y el póster del objeto va debajo y se queda visible. */
-.s-nube:not([data-modo="halo"])[data-estado="activa"] ~ .s-poster,
-.s-nube:not([data-modo="halo"])[data-estado="pausada"] ~ .s-poster {
-  opacity: 0;
-}
-
-.s-nube[data-modo="halo"] {
-  z-index: 1;
-}
-
-.s-nube[data-modo="halo"] ~ .s-poster {
-  z-index: 0;
-}
-
-/* Con el polvo activo el objeto baja de intensidad para que el subtítulo y el límite, que pasan por delante, conserven contraste. */
-.s-nube[data-modo="halo"][data-estado="activa"] ~ .s-poster,
-.s-nube[data-modo="halo"][data-estado="pausada"] ~ .s-poster {
-  opacity: 0.6;
-}
-
-.s-poster {
-  transition: opacity 600ms var(--s-e-ui);
-}
-
-/* Punto marcado en rojo dentro de la nube: menos del 4 por ciento de los puntos */
-.s-nube-punto {
-  color: var(--s-acento);
-}
-
-.s-hero__anillo--trasero { z-index: 0; }
-.s-hero__anillo--delantero { z-index: 3; }
-
-.s-hero__rotulo {
+/* Punto rojo de HM-210, único rojo del héroe */
+.s-ov-punto {
   position: absolute;
-  right: var(--s-pad-x);
-  bottom: var(--s-e24);
-  z-index: 2;
+  left: 63.8%;
+  top: 50.5%;
+  margin: -4px 0 0 -4px;
 }
 
-.s-hero__scroll {
+/* Cifra del héroe: tarjeta en el hueco libre del encabezado de la captura; en ancho de móvil baja bajo la imagen */
+.s-ov-cifra {
   position: absolute;
-  left: 50%;
-  bottom: var(--s-e24);
-  z-index: 2;
-  width: 32px;
-  height: 18px;
-  margin-left: -16px;
+  left: 52.5%;
+  top: 6.4%;
+  display: grid;
+  gap: var(--s-e4);
+  width: 28%;
+  margin: 0;
+  padding: 10px 14px;
+  border: var(--s-borde) solid var(--s-vp-borde);
+  border-radius: var(--s-r-fila);
+  background: var(--s-vp-barra);
+  color: var(--s-vp-texto);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
 }
 
-.s-hero__scroll::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 0;
-  width: 14px;
-  height: 14px;
-  margin-left: -7px;
-  border-right: 1.5px solid var(--s-apagado);
-  border-bottom: 1.5px solid var(--s-apagado);
-  transform: rotate(45deg);
+.s-ov-cifra__n {
+  font-variant-numeric: tabular-nums;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .s-hero__scroll::before {
-    animation: s-rebote 2.4s var(--s-e-ui) infinite;
+.s-ov-cifra__linea { display: block; }
+.s-ov-cifra__sub {
+  font-family: var(--s-f-mono);
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: .02em;
+  color: var(--s-vp-apagado);
+}
+
+.s-ov-cifra__sello {
+  justify-self: start;
+  margin-top: 2px;
+}
+
+@container (max-width: 700px) {
+  .s-ov-cifra {
+    position: static;
+    width: auto;
+    margin: var(--s-e12);
+  }
+  .s-ov__eje { display: none; }
+}
+
+/* Entrada: una sola vez, sin bucles. Estado inicial de cada pieza en CSS: sin JavaScript no hay parpadeo y el estado final es el de reposo. */
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  .s-ventana--producto {
+    animation: s-ventana-sube 700ms var(--s-e-firma) 350ms both;
+  }
+
+  .s-ov__barra {
+    animation: s-forma 420ms steps(10, end) both;
+    animation-delay: calc(900ms + var(--i, 0) * 40ms);
+  }
+
+  .s-ov__fila:nth-child(2) { --i: 1; }
+  .s-ov__fila:nth-child(3) { --i: 2; }
+  .s-ov__fila:nth-child(4) { --i: 3; }
+  .s-ov__fila:nth-child(5) { --i: 4; }
+  .s-ov__fila:nth-child(6) { --i: 5; }
+  .s-ov__fila:nth-child(7) { --i: 6; }
+  .s-ov__fila:nth-child(8) { --i: 7; }
+  .s-ov__fila:nth-child(9) { --i: 8; }
+
+  .s-ov__acum {
+    stroke-dasharray: 1;
+    animation: s-traza 650ms var(--s-e-firma) 1500ms both;
+  }
+
+  .s-ov__nodo,
+  .s-ov__marca,
+  .s-ov__eje {
+    animation: s-aparece 300ms var(--s-e-ui) 1900ms both;
+  }
+
+  .s-ov-cifra {
+    animation: s-aparece 600ms var(--s-e-firma) 700ms both;
+  }
+
+  .s-ov-cifra__sello {
+    animation: s-sello 260ms var(--s-e-firma) 2150ms both;
+  }
+
+  .s-ov-punto {
+    animation: s-aparece 400ms var(--s-e-ui) 1500ms both;
   }
 }
 
-@keyframes s-rebote {
-  0%, 100% { transform: translateY(0) rotate(45deg); }
-  50% { transform: translateY(6px) rotate(45deg); }
+@keyframes s-ventana-sube {
+  from { opacity: 0; transform: translateY(36px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes s-forma {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes s-traza {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes s-aparece {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes s-sello {
+  from { opacity: 0; transform: scale(1.06); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  .s-hero__linea > span {
+    animation: s-linea-entra 800ms var(--s-e-expo) both;
+    animation-delay: var(--s-retardo-hero);
+  }
+
+  .s-hero__linea:nth-child(2) > span { animation-delay: calc(var(--s-retardo-hero) + 110ms); }
+
+  .s-hero__contenido > .s-eyebrow {
+    animation: s-entra 700ms var(--s-e-firma) both;
+    animation-delay: var(--s-retardo-hero);
+  }
+
+  .s-hero__sub,
+  .s-hero__limite {
+    animation: s-entra 700ms var(--s-e-firma) both;
+    animation-delay: calc(var(--s-retardo-hero) + 150ms);
+  }
+
+  .s-hero__acciones > *,
+  .s-hero__micro {
+    animation: s-entra 700ms var(--s-e-firma) both;
+    animation-delay: calc(var(--s-retardo-hero) + 250ms);
+  }
+}
+
+@keyframes s-linea-entra {
+  from { transform: translateY(105%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes s-entra {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
 }
 
 /* Reglas: título, cuatro columnas con numeral mono, título Hanken 500 de 18 px y una línea de 14 px */
@@ -447,215 +445,151 @@
   color: var(--s-tinta);
 }
 
-/* S1 fijado a escritorio y tableta, con movimiento permitido y JavaScript activo */
-@media (prefers-reduced-motion: no-preference) and (min-width: 769px) and (scripting: enabled) {
-  html[data-js] .s-hero__pista {
-    height: 250vh;
-    view-timeline: --s-hero block;
-  }
 
-  html[data-js] .s-hero__escena {
-    position: sticky;
-    top: 0;
-    height: 100svh;
-    min-height: 0;
-  }
-
-  html[data-js] .s-hero__reglas {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: clamp(88px, 14svh, 140px);
-    padding-block: 0;
-  }
-
-  html[data-js] .s-hero__contenido {
-    --a: 0;
-    --b: .35;
-    animation-name: s-hero-sale;
-  }
-
-  html[data-js] .s-hero__objeto {
-    --a: 0;
-    --b: .7;
-    animation-name: s-hero-objeto;
-  }
-
-  html[data-js] .s-hero__reglas .s-h2 {
-    --a: .62;
-    --b: .82;
-    animation-name: s-sube;
-  }
-
-  html[data-js] .s-regla {
-    --a: .64;
-    --b: .86;
-    animation-name: s-sube;
-  }
-
-  html[data-js] .s-regla:nth-child(2) { --a: .70; --b: .92; }
-  html[data-js] .s-regla:nth-child(3) { --a: .76; --b: .98; }
-  html[data-js] .s-regla:nth-child(4) { --a: .80; --b: 1; }
-
-  html[data-js] .s-regla::before {
-    --a: .62;
-    --b: .86;
-    animation-name: s-linea-dibuja;
-    animation-timing-function: linear;
-    animation-fill-mode: both;
-  }
-
-  html[data-js] .s-hero__escena > .s-horizonte {
-    --a: .85;
-    --b: 1;
-    animation-name: s-horizonte-sube;
-  }
+/* ==================== Visual de cada paso (S5) ==================== */
+.s-pv {
+  --k: 1;
 }
 
-@media (prefers-reduced-motion: no-preference) and (min-width: 769px) and (scripting: enabled) {
-  @supports (animation-timeline: view()) {
-    html[data-js] .s-regla::before {
-      animation-timeline: --s-hero;
-      animation-range: contain 62% contain 86%;
-    }
-  }
+.s-pv[data-n="2"] { --k: 1.5; }
+.s-pv[data-n="3"] { --k: 1.75; }
+.s-pv[data-n="4"] { --k: 1.2; }
 
-  @supports not (animation-timeline: view()) {
-    html[data-js] .s-regla::before {
-      animation-duration: .24s;
-      animation-delay: calc((.62 - var(--p, 0)) * 1s);
-      animation-play-state: paused;
-    }
-  }
+.s-pv__lienzo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 755 / 450;
 }
 
-@keyframes s-hero-sale {
-  to {
-    opacity: 0;
-    transform: translateY(-12vh);
-    filter: blur(8px);
-  }
+.s-pv[data-n="2"] .s-pv__lienzo { aspect-ratio: 1020 / 430; }
+.s-pv[data-n="3"] .s-pv__lienzo { aspect-ratio: 1160 / 425; }
+.s-pv[data-n="4"] .s-pv__lienzo { aspect-ratio: 505 / 425; }
+
+.s-pv__marco {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
 }
 
-@keyframes s-hero-objeto {
-  0%, 78% { opacity: 1; }
-  100% { opacity: .04; scale: 1.9; }
+.s-pv__marco[data-n="1"] { left: 25.166%; width: 74.834%; }
+.s-pv__marco[data-n="2"] { top: 27.907%; }
+
+.s-pv__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
-@keyframes s-sube {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: none; }
+.s-pv__mono {
+  font: 500 calc(12px * var(--k)) var(--s-f-mono);
+  letter-spacing: .08em;
+  fill: var(--s-vp-apagado);
 }
 
-@keyframes s-linea-dibuja {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
+.s-pv__mono--cota { fill: var(--s-vp-texto); }
+
+.s-pv__txt {
+  font: 500 calc(13px * var(--k)) var(--s-f-sans);
+  fill: var(--s-vp-texto);
 }
 
-@keyframes s-horizonte-sube {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+.s-pv__cifra {
+  font: 500 calc(17px * var(--k)) var(--s-f-sans);
+  font-variant-numeric: tabular-nums;
+  fill: var(--s-vp-texto);
 }
 
-/* Entrada del hero tras el cargador, con translate y máscara, nunca opacidad en el titular */
+.s-pv__hebra,
+.s-pv__cota,
+.s-pv__rama,
+.s-pv__llave {
+  fill: none;
+  stroke: var(--s-vp-texto);
+  stroke-width: calc(1.5px * var(--k));
+  stroke-linecap: round;
+}
+
+.s-pv__hebra--punteada,
+.s-pv__rama--punteada {
+  stroke: var(--s-vp-apagado);
+  stroke-dasharray: 2 7;
+}
+
+.s-pv__cota,
+.s-pv__llave { stroke: var(--s-vp-apagado); stroke-width: calc(1.2px * var(--k)); }
+.s-pv__rama { stroke-width: calc(3px * var(--k)); }
+
+.s-pv__chip rect,
+.s-pv__suelta rect,
+.s-pv__fila {
+  fill: var(--s-vp-barra);
+  stroke: var(--s-vp-borde);
+  stroke-width: 1;
+}
+
+.s-pv__chip text,
+.s-pv__suelta text {
+  font: 500 calc(11px * var(--k)) var(--s-f-mono);
+  letter-spacing: .02em;
+  fill: var(--s-vp-texto);
+}
+
+.s-pv__foco {
+  fill: none;
+  stroke: var(--s-vp-texto);
+  stroke-width: calc(1.8px * var(--k));
+}
+
+.s-pv__ok,
+.s-pv__tilde {
+  fill: none;
+  stroke: var(--s-vp-texto);
+  stroke-width: calc(1.6px * var(--k));
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.s-pv__suelta[data-i="0"] { --dx: 60; --dy: 70; }
+.s-pv__suelta[data-i="1"] { --dx: -40; --dy: 110; }
+.s-pv__suelta[data-i="2"] { --dx: 90; --dy: 140; }
+.s-pv__suelta[data-i="3"] { --dx: -70; --dy: 90; }
+.s-pv__suelta[data-i="4"] { --dx: 50; --dy: 130; }
+.s-pv__suelta[data-i="5"] { --dx: -90; --dy: 60; }
+
+.s-pv__a[data-i="1"] { --i: 1; }
+.s-pv__a[data-i="2"] { --i: 2; }
+.s-pv__a[data-i="3"] { --i: 3; }
+.s-pv__a[data-i="4"] { --i: 4; }
+.s-pv__a[data-i="5"] { --i: 5; }
+.s-pv__a[data-i="6"] { --i: 6; }
+.s-pv__a[data-i="7"] { --i: 7; }
+.s-pv__a[data-i="8"] { --i: 8; }
+
+/* Estado inicial oculto solo con JavaScript y movimiento permitido; el estado final es el de reposo y el de las capturas sin JavaScript */
 @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
-  html[data-intro-visto] { --s-retardo-hero: 200ms; }
-  html[data-intro-saltado] { --s-retardo-hero: 0ms; }
-
-  .s-hero__linea > span {
-    animation: s-linea-entra 800ms var(--s-e-expo) both;
-    animation-delay: var(--s-retardo-hero);
+  html[data-js] .s-pv__a {
+    transition: opacity 600ms var(--s-e-ui), transform 800ms var(--s-e-firma);
+    transition-delay: calc(250ms + var(--i, 0) * 90ms);
   }
 
-  .s-hero__linea:nth-child(2) > span { animation-delay: calc(var(--s-retardo-hero) + 110ms); }
-  .s-hero__linea:nth-child(3) > span { animation-delay: calc(var(--s-retardo-hero) + 220ms); }
-
-  .s-hero__contenido > .s-eyebrow {
-    animation: s-entra-blur 900ms var(--s-e-firma) both;
-    animation-delay: var(--s-retardo-hero);
-  }
-
-  .s-hero__sub,
-  .s-hero__limite {
-    animation: s-entra-blur 900ms var(--s-e-firma) both;
-    animation-delay: calc(var(--s-retardo-hero) + 250ms);
-  }
-
-  .s-hero__acciones > * {
-    animation: s-entra-blur 900ms var(--s-e-firma) both;
-    animation-delay: calc(var(--s-retardo-hero) + 400ms);
-  }
-
-  .s-hero__acciones > :nth-child(2) { animation-delay: calc(var(--s-retardo-hero) + 480ms); }
-
-  .s-hero__micro,
-  .s-hero__rotulo,
-  .s-hero__scroll {
-    animation: s-entra-blur 900ms var(--s-e-firma) both;
-    animation-delay: calc(var(--s-retardo-hero) + 560ms);
-  }
-
-  html[data-eco] .s-hero__contenido,
-  html[data-eco] .s-hero__sub,
-  html[data-eco] .s-hero__acciones > * {
-    filter: none;
-  }
-}
-
-@keyframes s-linea-entra {
-  from { transform: translateY(105%); }
-  to { transform: translateY(0); }
-}
-
-@keyframes s-entra-blur {
-  from { opacity: 0; filter: blur(6px); transform: translateY(16px); }
-  to { opacity: 1; filter: blur(0); transform: none; }
+  html[data-js] .s-paso:not(.s-visto) .s-pv__a { opacity: 0; }
+  html[data-js] .s-paso:not(.s-visto) .s-pv__a--izq { transform: translateX(-28px); }
+  html[data-js] .s-paso:not(.s-visto) .s-pv__suelta { transform: translate(calc(var(--dx, 0) * 1px), calc(var(--dy, 0) * 1px)); }
 }
 
 /* ==================== S2 Horizonte ==================== */
+/* Un solo resplandor de 120 px al pie del héroe. El cambio de oscuro a claro lo hace la escena global, no este elemento. */
 .s-horizonte {
-  position: relative;
-  z-index: 3;
-  height: var(--s-horizonte-h);
-  background: var(--s-horizonte-resplandor), var(--s-horizonte-degradado);
-  border-bottom: var(--s-borde) solid var(--s-horizonte-linea);
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) and (min-width: 769px) and (scripting: enabled) {
-  html[data-js] .s-hero__escena > .s-horizonte {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-}
-
-/* ==================== Costuras estáticas de 220 a 320 px, en la sección entrante ==================== */
-.s-costura {
-  padding-top: calc(var(--s-costura-h) + var(--s-e32));
-}
-
-.s-costura::before {
-  content: "";
   position: absolute;
   left: 0;
   right: 0;
-  top: 0;
-  height: var(--s-costura-h);
+  bottom: 0;
+  height: var(--s-horizonte-h);
+  background: var(--s-horizonte-resplandor);
   pointer-events: none;
-}
-
-.s-costura > * {
-  position: relative;
-}
-
-.s-costura--a-claro::before {
-  background: var(--s-costura-a-claro);
-}
-
-.s-costura--a-oscuro::before {
-  background: var(--s-costura-a-oscuro);
 }
 
 /* ==================== S3 El problema, claro ==================== */
@@ -778,21 +712,6 @@
   gap: var(--s-e64);
 }
 
-.s-escena__visor {
-  display: none;
-  position: relative;
-  width: var(--s-visor);
-  height: var(--s-visor);
-  max-width: 100%;
-}
-
-.s-escena__visor canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
 .s-escena__progreso {
   display: none;
 }
@@ -826,43 +745,9 @@
   color: var(--s-apagado);
 }
 
-.s-paso__render {
-  order: -1;
-  width: 240px;
-  height: 240px;
-  object-fit: contain;
-}
-
-.s-paso__mock {
+.s-paso__visual {
   width: 100%;
-  max-width: 440px;
-}
-
-/* Mockup de apoyo compacto: sin barra lateral y con cifras en dos columnas */
-.s-paso__mock .s-mock {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.s-paso__mock .s-mock__lateral,
-.s-paso__mock .s-mock__fila,
-.s-paso__mock .s-mock__columnas,
-.s-paso__mock .s-mock__barra {
-  display: none;
-}
-
-.s-paso__mock .s-mock__principal {
-  padding: var(--s-e16);
-  gap: var(--s-e8);
-}
-
-.s-paso__mock .s-mock__rejilla {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--s-e8);
-}
-
-.s-paso__mock .s-mock__cifra {
-  padding: var(--s-e8) var(--s-e12);
-  gap: var(--s-e4);
+  max-width: 640px;
 }
 
 /* Progreso de cuatro segmentos de 2 px por 56 de ancho */
@@ -919,7 +804,7 @@
 /* Modo fijado, solo escritorio ancho con movimiento permitido y JavaScript */
 @media (prefers-reduced-motion: no-preference) and (min-width: 1101px) and (scripting: enabled) {
   html[data-js] .s-escena__pista {
-    height: 500vh;
+    height: 300vh;
     padding-block: 0;
   }
 
@@ -927,25 +812,18 @@
     position: sticky;
     top: 0;
     display: grid;
-    grid-template-columns: var(--s-escena-col) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
     align-items: center;
-    column-gap: var(--s-e80);
+    column-gap: var(--s-e64);
     height: 100svh;
     padding-block: var(--s-e80) var(--s-e48);
-  }
-
-  html[data-js] .s-escena__visor {
-    display: block;
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: end;
   }
 
   html[data-js] .s-paso {
     grid-column: 1 / -1;
     grid-row: 1;
-    grid-template-columns: var(--s-escena-col) minmax(0, 1fr);
-    column-gap: var(--s-e80);
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    column-gap: var(--s-e64);
     align-items: center;
     padding-block: 0;
     border-top: 0;
@@ -969,31 +847,15 @@
     transition: opacity 450ms var(--s-e-expo) 120ms, transform 450ms var(--s-e-expo) 120ms, visibility 0s;
   }
 
-  html[data-js] .s-paso__render {
-    display: none;
-  }
-
   html[data-js] .s-paso__texto {
     grid-column: 1;
     grid-row: 1;
   }
 
-  /* El mockup de 440 por 260 cae sobre el borde inferior del visor */
-  html[data-js] .s-paso__mock {
+  html[data-js] .s-paso__visual {
     grid-column: 2;
     grid-row: 1;
-    align-self: end;
     justify-self: end;
-    width: 440px;
-    height: 260px;
-    margin-bottom: calc(-1 * var(--s-e24));
-    overflow: hidden;
-    border-radius: var(--s-r-ventana);
-    z-index: 2;
-  }
-
-  html[data-js] .s-paso__mock > .s-ventana {
-    height: 100%;
   }
 
   html[data-js] .s-escena__progreso {
@@ -1022,21 +884,54 @@
 
 .s-pantalla__miniatura {
   position: relative;
-  height: 220px;
+  aspect-ratio: 1440 / 900;
   overflow: hidden;
   border-bottom: var(--s-borde) solid var(--s-linea);
   background: var(--s-fondo-alt);
 }
 
-/* Mockup completo de 1024 px reducido por escala para llenar la miniatura de 352 px */
-.s-pantalla__miniatura > .s-miniatura__interior {
+.s-pantalla__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+}
+
+/* Barrido único al revelarse la tarjeta: la captura se descubre de arriba abajo y una línea de 1 px marca el borde (sin bucle) */
+.s-pantalla__barrido {
   position: absolute;
   left: 0;
+  right: 0;
   top: 0;
-  width: 1024px;
-  transform: scale(var(--s-escala-mini));
-  transform-origin: top left;
+  height: var(--s-borde);
+  background: var(--s-tinta);
+  opacity: 0;
   pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  html[data-js] .s-pantalla:not(.s-visto) .s-pantalla__img {
+    clip-path: inset(0 0 100% 0);
+  }
+
+  html[data-js] .s-pantalla.s-visto .s-pantalla__img {
+    animation: s-descubre 1000ms var(--s-e-firma) calc(var(--s-retardo-r, 0ms) + 150ms) both;
+  }
+
+  html[data-js] .s-pantalla.s-visto .s-pantalla__barrido {
+    animation: s-barrido 1000ms var(--s-e-firma) calc(var(--s-retardo-r, 0ms) + 150ms) both;
+  }
+}
+
+@keyframes s-descubre {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes s-barrido {
+  0% { top: 0; opacity: .7; }
+  90% { opacity: .7; }
+  100% { top: calc(100% - 1px); opacity: 0; }
 }
 
 .s-pantalla__cuerpo {
@@ -1119,7 +1014,7 @@
 [data-puesto="3"] .s-arco__giro { rotate: -180deg; }
 [data-puesto="4"] .s-arco__giro { rotate: -270deg; }
 
-/* Orbes de 90, 67, 56 y 45 px: son los objetos o1 a o4 sobre disco oscuro */
+/* Discos de 90, 67, 56 y 45 px con un ícono de línea del producto */
 .s-orbe {
   position: absolute;
   display: block;
@@ -1129,10 +1024,10 @@
   border: var(--s-borde) solid var(--s-linea-fuerte);
 }
 
-.s-orbe img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.s-orbe {
+  display: grid;
+  place-items: center;
+  color: var(--s-c-hueso);
 }
 
 .s-orbe--1 { width: 90px; height: 90px; left: calc(50% - 45px); top: 3%; }
@@ -1327,18 +1222,6 @@
   overflow: hidden;
   background: var(--s-fondo);
   text-align: center;
-}
-
-.s-cierre__objeto {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: 0;
-  width: 560px;
-  height: 560px;
-  translate: -50% -50%;
-  opacity: .7;
-  pointer-events: none;
 }
 
 .s-cierre__contenido {
@@ -1705,24 +1588,8 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  /* El objeto pasa al flujo, arriba del texto, a 56 vw (220 px a 390) */
-  .s-hero__objeto {
-    position: relative;
-    left: auto;
-    top: auto;
-    translate: none;
-    width: 56vw;
-    height: 56vw;
-    margin: var(--s-e80) auto 0;
-  }
-
-  .s-hero__objeto::before {
-    width: 140%;
-    height: 140%;
-  }
-
   .s-hero__contenido {
-    padding-top: var(--s-e24);
+    padding-top: clamp(96px, 14svh, 112px);
   }
 
   .s-hero__acciones {
@@ -1732,18 +1599,6 @@
 
   .s-hero__acciones > .s-boton {
     width: 100%;
-  }
-
-  .s-hero__rotulo {
-    position: relative;
-    right: auto;
-    bottom: auto;
-    align-self: flex-end;
-    margin: 0 var(--s-pad-x) var(--s-e24);
-  }
-
-  .s-hero__scroll {
-    display: none;
   }
 
   .s-valor__ventana {
@@ -1807,11 +1662,6 @@
 
   .s-pie__cols {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .s-cierre__objeto {
-    width: 320px;
-    height: 320px;
   }
 
   .s-pie {
@@ -1879,7 +1729,7 @@
 }
 
 /* ==================== Movimiento reducido: UN solo bloque, estado final ====================
- * Con prefers-reduced-motion: reduce no hay cargador, Lenis, nube, sticky, barrido ni deriva. Todo se ve en su estado
+ * Con prefers-reduced-motion: reduce no hay sticky, barrido ni deriva. Todo se ve en su estado
  * final y el pie es un pie normal con la marca rellena. Solo se permiten cambios de color y opacidad de 150 ms.
  * Los estados ocultos y las animaciones viven en (no-preference), por eso aquí solo se neutraliza lo que queda.
  */
@@ -1896,16 +1746,6 @@
     transition-duration: 150ms !important;
     transition-delay: 0s !important;
     animation: none !important;
-  }
-
-  .s-cargador,
-  .s-nube,
-  .s-hero__scroll {
-    display: none;
-  }
-
-  .s-poster {
-    opacity: 1;
   }
 
   .s-pie {
@@ -1936,10 +1776,6 @@
 
   .s-boton:active {
     transform: none;
-  }
-
-  .s-escena__visor {
-    display: none;
   }
 
   .s-acordeon__panel,

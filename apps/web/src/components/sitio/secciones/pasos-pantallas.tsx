@@ -1,35 +1,32 @@
 // S5 Cuatro pasos (escena fija, oscuro) y S6 Seis pantallas (claro).
-// S5: sin JavaScript, en movimiento reducido y en móvil los cuatro pasos quedan apilados, cada uno con su póster estático, su texto y su mockup.
-// Con JavaScript en escritorio ancho el CSS de T6 fija el track de 500 vh y muestra el paso activo (data-paso) sobre un solo canvas.
-import {url} from '../../../lib/sitio/activos';
-import {Mock} from '../mocks';
+// S5: sin JavaScript, en movimiento reducido y en móvil los cuatro pasos quedan apilados, cada uno con su visual propio y su texto.
+// Con JavaScript en escritorio ancho el CSS fija la pista y muestra el paso activo (data-paso). El visual de cada paso es un recorte de la captura
+// real del producto con una capa SVG que enseña el verbo del paso (ventana-paso.tsx); la anima .s-visto del paso.
+import {Captura} from './captura';
 import {enlaceInterno} from './datos';
 import type {Lang, TextosPortada} from './datos';
-import {ImagenManifest, dosCifras} from './piezas';
+import {dosCifras} from './piezas';
+import {VentanaPaso} from './ventana-paso';
 
 export function Pasos({lang, t}: {lang: Lang; t: TextosPortada}) {
   const m = t.modulos;
   return (
-    <section className="s-seccion s-escena s-costura s-costura--a-oscuro" id="modulos" data-seccion="pasos" data-tema="oscuro" data-escena="" data-paso="0" aria-labelledby="modulos-titulo">
+    <section className="s-seccion s-escena" id="modulos" data-seccion="pasos" data-tema="oscuro" data-escena="" data-paso="0" aria-labelledby="modulos-titulo">
       <div className="s-escena__pista">
         <div className="s-contenedor s-escena__fijo">
           <h2 className="s-solo-lector" id="modulos-titulo">{m.titulo}</h2>
           <p className="s-solo-lector">{m.apoyo}</p>
-          <div className="s-escena__visor s-visor s-visor--grande" aria-hidden="true">
-            <canvas className="s-nube" data-nube="escena" data-estado="cargando" data-pts={url('pts/hero')} />
-          </div>
           {m.items.map((it, i) => (
-            <article className="s-paso" data-n={i + 1} data-pts={url(`pts/o${i + 1}`)} aria-labelledby={`paso-${i + 1}-titulo`} key={it.nombre}>
+            <article className="s-paso" data-n={i + 1} data-visto="" aria-labelledby={`paso-${i + 1}-titulo`} key={it.nombre}>
               <div className="s-paso__texto">
                 <span className="s-paso__etiqueta">{m.contador[i]}</span>
                 <h3 className="s-h2" id={`paso-${i + 1}-titulo`}>{it.titulo}</h3>
                 <p className="s-lead">{it.texto}</p>
                 {it.limite ? <p className="s-paso__limite">{it.limite}</p> : null}
               </div>
-              <div className="s-paso__render s-visor" aria-hidden="true">
-                <ImagenManifest clave={`img/o${i + 1}`} lang={lang} clase="s-poster" tamanos="240px" />
+              <div className="s-paso__visual">
+                <VentanaPaso n={(i + 1) as 1 | 2 | 3 | 4} lang={lang} />
               </div>
-              <div className="s-paso__mock"><Mock id={it.mockup} lang={lang} variante="apoyo" /></div>
             </article>
           ))}
           <div className="s-progreso s-escena__progreso" aria-hidden="true">
@@ -43,11 +40,14 @@ export function Pasos({lang, t}: {lang: Lang; t: TextosPortada}) {
   );
 }
 
+// Pantalla real de cada tarjeta (tema claro, la sección es clara). La quinta, sin captura propia, usa la tarjeta de siguiente acción de Hoy.
+const CAPTURA_PANTALLA = ['hoy', 'fuga', 'problemas', 'preguntale', 'pantalla5', 'conexiones'] as const;
+
 export function Pantallas({lang, t}: {lang: Lang; t: TextosPortada}) {
   const p = t.pantallas;
   const todas = enlaceInterno(p.hrefTodas);
   return (
-    <section className="s-seccion s-costura s-costura--a-claro" id="pantallas" data-seccion="pantallas" data-tema="claro" aria-labelledby="pantallas-titulo">
+    <section className="s-seccion" id="pantallas" data-seccion="pantallas" data-tema="claro" aria-labelledby="pantallas-titulo">
       <div className="s-contenedor">
         <div className="s-seccion__cabeza">
           <p className="s-eyebrow" data-reveal="">{p.etiqueta}</p>
@@ -59,7 +59,10 @@ export function Pantallas({lang, t}: {lang: Lang; t: TextosPortada}) {
             const href = enlaceInterno(it.href);
             const cuerpo = (
               <>
-                <div className="s-pantalla__miniatura"><Mock id={it.mockup} lang={lang} variante="miniatura" /></div>
+                <div className="s-pantalla__miniatura">
+                  <Captura nombre={CAPTURA_PANTALLA[i]} clave={CAPTURA_PANTALLA[i] === 'pantalla5' ? 'img/producto/pantalla5' : undefined} tema="claro" lang={lang} tamanos="(max-width: 768px) 92vw, 352px" clase="s-pantalla__img" anchos={CAPTURA_PANTALLA[i] === 'pantalla5' ? [727] : [960, 1440]} />
+                  <span className="s-pantalla__barrido" aria-hidden="true" />
+                </div>
                 <div className="s-pantalla__cuerpo">
                   <span className="s-mono-min">{dosCifras(i + 1)}</span>
                   <h3 className="s-pantalla__titulo" id={`pantalla-${i + 1}-titulo`}>{it.t}</h3>

@@ -1,7 +1,7 @@
 /*
  * Movimiento de la portada que escribe sitio.js e inicio.js (T10). Va después de inicio.css.
  * Todo estado oculto vive bajo (prefers-reduced-motion: no-preference) y (scripting: enabled); solo tokens, prefijo s-.
- * Huecos de T6 que cubre: salida del cargador a 300 ms, puestos ocultos, notas y orbes del hilo, entrada del objeto del cierre.
+ * Huecos de T6 que cubre: puestos ocultos y notas del hilo.
  */
 
 /* Puestos (S7): el panel inactivo lo oculta sitio.js con hidden */
@@ -10,11 +10,6 @@ html[data-js] [data-puesto-panel][hidden] {
 }
 
 @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
-  /* Salto del cargador: 300 ms, desde cualquier momento */
-  html:not([data-intro-visto]) .s-cargador[data-fase="salida"] {
-    animation: s-cargador-salta 300ms var(--s-e-ui) both;
-  }
-
   /* Cambio de texto de puesto: blur de 4 px y translateY de 8 px en 600 ms */
   html[data-js] [data-puesto-panel]:not([hidden]) {
     animation: s-puesto-entra 600ms var(--s-e-firma) both;
@@ -30,27 +25,16 @@ html[data-js] [data-puesto-panel][hidden] {
   }
 
   html[data-js] .s-hilo__nodo,
-  html[data-js] .s-hilo__nota,
-  html[data-js] .s-hilo__orbe {
+  html[data-js] .s-hilo__nota {
     transition: opacity 600ms var(--s-e-expo), translate 600ms var(--s-e-expo), background-color 250ms var(--s-e-ui);
   }
 
-  html[data-js] .s-hilo__nota:not(.s-visto),
-  html[data-js] .s-hilo__orbe:not(.s-visto) {
+  html[data-js] .s-hilo__nota:not(.s-visto) {
     opacity: 0;
   }
 
   html[data-js] .s-hilo__nota:not(.s-visto) {
     translate: 8px -50%;
-  }
-
-  /* Objeto del cierre: sube 250 px en 1.2 s */
-  html[data-js] .s-cierre__objeto {
-    transition: transform 1200ms var(--s-e-firma);
-  }
-
-  html[data-js] .s-cierre__objeto:not(.s-visto) {
-    transform: translateY(250px);
   }
 
   /* Scroll rápido: el texto del paso espera 100 ms */
@@ -59,7 +43,7 @@ html[data-js] [data-puesto-panel][hidden] {
   }
 }
 
-/* Notas y orbes del hilo (posición; el color lo da data-tema de la sección donde caen) */
+/* Notas del hilo (posición; el color lo da la escena global) */
 .s-hilo__nota {
   translate: 16px -50%;
   pointer-events: none;
@@ -70,32 +54,10 @@ html[data-js] [data-puesto-panel][hidden] {
   translate: calc(-100% - 16px) -50%;
 }
 
-.s-hilo__orbe {
-  position: absolute;
-  left: var(--x, 0);
-  top: var(--y, 0);
-  width: 72px;
-  height: 72px;
-  translate: -50% 0;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
 .s-hilo__cabeza,
 .s-hilo__nodo,
-.s-hilo__nota,
-.s-hilo__orbe {
+.s-hilo__nota {
   z-index: var(--s-z-hilo);
-}
-
-@media (max-width: 1100px) {
-  .s-hilo__orbe {
-    display: none;
-  }
-}
-
-@keyframes s-cargador-salta {
-  to { opacity: 0; visibility: hidden; pointer-events: none; }
 }
 
 @keyframes s-puesto-entra {

@@ -1,6 +1,5 @@
 /* EQUIPO */
 Producto: Rovaq AI (antes Vexa AI)
-Contacto: javiercamaraportepetit@gmail.com
 Idioma: es-MX
 
 /* SITIO */

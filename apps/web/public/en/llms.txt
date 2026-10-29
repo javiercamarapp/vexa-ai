@@ -1,0 +1,39 @@
+# Rovaq AI
+
+> Rovaq AI connects conversations, orders and refunds to show where revenue is at risk. Every figure comes with its source and its cut-off date. Always gross revenue, never margin. Exposure is an inferred figure, not a loss.
+
+Notes for anyone citing this site. Gross revenue, never margin. What is unknown says No data, never zero. Currencies kept apart, never converted. A person decides every action. Pricing is not published yet.
+
+## Home
+
+- [Home page in Markdown](https://rovaq.ai/en/index.md): Rovaq AI measures observed refunds and the revenue exposed to each problem, with the evidence in plain view and every figure labeled Observed, Estimated or Inferred.
+- [Home page in HTML](https://rovaq.ai/en): The page as it appears in the browser.
+
+## Product
+
+- [Today: four figures with period, formula and coverage](https://rovaq.ai/s/md/en/hoy.59e71802.md): The Today screen gathers four figures with period, formula and coverage. When a figure is partial, Rovaq AI says so and never shows it as a full total.
+- [Pain points: which reason repeats and what it carries](https://rovaq.ai/s/md/en/puntos-de-dolor.3d10e5c4.md): From support conversations to a bubble map by volume or money. Export without personal data and tell what merely repeats from what really matters.
+- [Ask your data: calculated figures, visible steps](https://rovaq.ai/s/md/en/pregunta-a-tus-datos.29c7d23c.md): Ask about your sales and customers and get calculated figures with every step in view. It uses rules and read-only tools and respects a monthly budget.
+- [To decide: proposal, a person decides, outcome recorded](https://rovaq.ai/s/md/en/por-decidir.4d2d774f.md): Every proposal arrives with its evidence, an owner and a record of the outcome. A person decides with Proceed, Adjust or Dismiss; nothing runs on its own.
+- [Data trust: freshness, coverage and what is unknown](https://rovaq.ai/s/md/en/confianza-de-los-datos.7a65c5e4.md): Before you decide, check the date your data reaches, how much it covers and what is still unknown. It is trust in the data, not a security certification.
+- [Finance: a report by currency, bases never mixed](https://rovaq.ai/s/md/en/finanzas.9e013fcf.md): Gross revenue reports by currency and by cutoff, bases never mixed. Rovaq AI does not calculate margin and flags any figure with incomplete reconciliation.
+
+## Use cases
+
+- [Owner: configure, decide and approve](https://rovaq.ai/s/md/en/propietario.a7cb9e0e.md): The owner sets up the organization, connects sources and approves actions. See the screens they use, the decisions they make and what gets recorded.
+- [Analyst: investigate, prepare and propose](https://rovaq.ai/s/md/en/analista.45c3f66f.md): The analyst investigates refunds, problems and pain points, prepares evidence and proposes actions. See where proposing ends and approving begins.
+- [Operator: carries out the actions assigned to you](https://rovaq.ai/s/md/en/operador.63efa870.md): The operator receives assigned actions and records the result. They see actions and evidence, not money figures, and leave a record of what was done.
+- [Viewer: read without any risk of changing anything](https://rovaq.ai/s/md/en/lector.f28a6e4e.md): The viewer reads the screens that apply to them and cannot modify data, connections or decisions. Useful for leadership, finance and teams that only read.
+
+## Company and contact
+
+- [Request access and review your figures with their evidence.](https://rovaq.ai/s/md/en/solicitar-acceso.5e98ee8b.md): Write to us with your role and the tools you use. We tell you what can be loaded today and what is still on the roadmap. Pricing is not published yet.
+
+## Full reference
+
+- [Full content in a single file](https://rovaq.ai/en/llms-full.txt): The home page and every published page, in plain text.
+- [Versión en español](https://rovaq.ai/llms.txt): El mismo sitio en español.
+
+## Optional
+
+- [Sitemap](https://rovaq.ai/sitemap.xml): Public URLs with their last-modified date.

@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "fuente": "SPEC-FINAL-LANDING sección 8 (valores finales; manda sobre P-C sección 4). Si T1 mide un piso de Next mayor, recalibrar con ese número más 10 por ciento.",
+  "unidad": "KB transferidos con brotli (calidad 5 sobre texto; binarios ya comprimidos van crudos)",
+  "crecimientoMaxPct": 5,
+  "escenarios": {
+    "critico": {
+      "descripcion": "Crítico: sin 3D y sin scroll (movimiento reducido y Save-Data, para que no se pida nube, pts ni Lenis)",
+      "objetivoKB": 330,
+      "techoKB": 390,
+      "columnasKB": { "html": 28, "css": 22, "jsNext": 125, "jsPropio": 8, "fuentes": 85, "imagenes": 60, "datos3d": 0 }
+    },
+    "inicial3d": {
+      "descripcion": "Inicial con héroe 3D tras reposo, sin scroll",
+      "objetivoKB": 390,
+      "techoKB": 460,
+      "columnasKB": { "html": 28, "css": 22, "jsNext": 125, "jsPropio": 17, "fuentes": 85, "imagenes": 60, "datos3d": 50 }
+    },
+    "recorrido": {
+      "descripcion": "Recorrido completo con los 4 pasos (scroll hasta el pie)",
+      "objetivoKB": 700,
+      "techoKB": 850,
+      "columnasKB": { "html": 30, "css": 26, "jsNext": 125, "jsPropio": 17, "fuentes": 85, "imagenes": 200, "datos3d": 210 }
+    },
+    "sinWebglCritico": {
+      "descripcion": "Sin WebGL, sin scroll",
+      "objetivoKB": 330,
+      "techoKB": 390,
+      "columnasKB": { "html": 28, "css": 22, "jsNext": 125, "jsPropio": 8, "fuentes": 85, "imagenes": 60, "datos3d": 0 }
+    },
+    "sinWebglRecorrido": {
+      "descripcion": "Sin WebGL, recorrido completo con renders apilados",
+      "objetivoKB": 480,
+      "techoKB": 560,
+      "columnasKB": { "html": 30, "css": 26, "jsNext": 125, "jsPropio": 8, "fuentes": 85, "imagenes": 200, "datos3d": 0 }
+    }
+  },
+  "limitesPorTipoKB": {
+    "fuentesTotal": 130,
+    "objetoEscena": 50,
+    "orbe": 20,
+    "posterHeroe": 60
+  },
+  "rutasInteriores": {
+    "nota": "P-C sección 4.3: frío y sin scroll. Ninguna ruta interior carga Lenis, nube.js ni pts. Se mide con el escenario critico.",
+    "productoIndice": { "objetivoKB": 300, "techoKB": 380 },
+    "productoSubpagina": { "objetivoKB": 280, "techoKB": 340 },
+    "casosDeUso": { "objetivoKB": 260, "techoKB": 320 },
+    "seguridad": { "objetivoKB": 230, "techoKB": 280 },
+    "institucionales": { "objetivoKB": 240, "techoKB": 300 },
+    "legales": { "objetivoKB": 220, "techoKB": 280 },
+    "blogIndice": { "objetivoKB": 280, "techoKB": 340 },
+    "articulo": { "objetivoKB": 270, "techoKB": 330 }
+  },
+  "lecturas": {
+    "lcpEstranguladoMs": 2500,
+    "lcpEscritorioMs": 1500,
+    "cls": 0.05
+  }
+}

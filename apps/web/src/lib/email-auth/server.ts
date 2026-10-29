@@ -5,6 +5,8 @@ import {createClient} from '@supabase/supabase-js';
 import {AccessError,assertOrigin,config,identity,PRIVATE_HEADERS} from '../auth';
 import {requestAuth} from '../auth-http';
 import {clientIp,emailAdmission} from './admission';
+import {emailThrottle} from './throttle';
+import {serverPool} from '../imports/server';
 const headers={...PRIVATE_HEADERS,'Referrer-Policy':'no-referrer',Vary:'Cookie'};
 const generic={message:'Si la cuenta existe, intentaremos enviar un enlace. Revisa tu bandeja de entrada y correo no deseado antes de solicitar otro.',retryAfterSeconds:60};
 async function input(request:NextRequest,limit:number){
@@ -18,7 +20,12 @@ export async function emailAuth(request:NextRequest,operation:'request'|'session
  const body=await input(request,operation==='request'?1024:16384);
  if(operation==='request'){
   if(Object.keys(body).length!==1||typeof body.email!=='string'||body.email.length>254||!/^\S+@[^\s@]+\.[^\s@]+$/.test(body.email.trim()))throw new AccessError(400,'email_auth_input_invalid');
-  const admitted=emailAdmission.admit(body.email,clientIp(request.headers));
+  // AUTH-03: primero el límite compartido por IP y por correo (base). Si no está disponible cae al límite local de la instancia.
+  const ip=clientIp(request.headers),shared=await emailThrottle(body.email,ip,serverPool);
+  if(shared?.verdict==='ip_limited')return NextResponse.json({error:{code:'email_auth_rate_limited'}},{status:429,headers:{...headers,'Retry-After':String(shared.retryAfterSeconds)}});
+  // Mismo correo en el último minuto (o tope por hora): el 202 genérico es idéntico exista o no la cuenta.
+  if(shared?.verdict==='duplicate')return NextResponse.json(generic,{status:202,headers:{...headers,'Retry-After':String(Math.min(60,shared.retryAfterSeconds))}});
+  const admitted=emailAdmission.admit(body.email,ip,shared!==null);
   if(admitted.kind==='busy')return NextResponse.json({error:{code:'email_auth_busy'}},{status:503,headers:{...headers,'Retry-After':String(admitted.retryAfterSeconds)}});
   if(admitted.kind==='ip_limited')return NextResponse.json({error:{code:'email_auth_rate_limited'}},{status:429,headers:{...headers,'Retry-After':String(admitted.retryAfterSeconds)}});
   // Misma dirección en el último minuto: el aviso genérico es lo previsto y no revela si la cuenta existe.

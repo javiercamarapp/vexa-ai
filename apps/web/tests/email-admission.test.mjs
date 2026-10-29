@@ -33,3 +33,8 @@ test('tabla por IP llena: expulsa las más viejas y sigue limitando a IPs nuevas
  for(let i=0;i<4100;i++){const r=a.admit(`SYN-${i}@example.invalid`,`10.${i>>8&255}.${i&255}.1`);if(r.kind==='lease')r.lease.finish();if(i%200===199)time+=1000;}
  const ip='198.51.100.77';let last;for(let i=0;i<12;i++){last=a.admit(`SYN-new-${i}@example.invalid`,ip);if(last.kind==='lease')last.lease.finish();}
  assert.equal(last.kind,'ip_limited','una IP nueva con la tabla llena sigue limitada');});
+// AUTH-03 (cierre 29-oct): con el límite compartido en base, 256+ correos inventados ya no agotan la instancia.
+test('modo distribuido: más de 256 correos distintos por minuto y por encima de 10 por IP siguen admitidos; solo la concurrencia y el circuito limitan',()=>{let time=0;const a=createEmailAdmission(()=>time);
+ for(let i=0;i<300;i++){const r=a.admit(`SYN-${i}@example.invalid`,'203.0.113.9',true);assert.equal(r.kind,'lease',`intento ${i}`);r.lease.finish();}
+ const leases=Array.from({length:8},(_,i)=>a.admit(`SYN-c${i}@example.invalid`,null,true).lease);
+ assert.equal(a.admit('SYN-x@example.invalid',null,true).kind,'busy');leases[0].finish(true);assert.equal(a.admit('SYN-y@example.invalid',null,true).kind,'busy');});

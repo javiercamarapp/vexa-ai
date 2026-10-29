@@ -22,16 +22,19 @@ export function ipBucket(ip:string):string{
  const groups=tail===undefined?h:[...h,...Array<string>(Math.max(0,8-h.length-t.length)).fill('0'),...t];
  return groups.slice(0,4).map(g=>g.replace(/^0+(?=.)/,'')).join(':')+'::/64';
 }
-// Process-local backpressure complements provider/edge limits; it is not a distributed quota.
+// Respaldo local por instancia (concurrencia en vuelo, circuito del proveedor y, sin base, un límite por IP/correo). El límite compartido por IP y por correo vive en la base (throttle.ts).
 export function createEmailAdmission(now:()=>number=()=>performance.now()){
  const key=randomBytes(32),recent=new Map<string,number>(),perIp=new Map<string,{count:number;resetAt:number}>();let active=0,blockedUntil=0;
  const seconds=(ms:number)=>Math.max(1,Math.ceil(ms/1000));
- function admit(email:string,ip:string|null=null):AdmissionResult{
+ function release():Admission{let finished=false;return {finish(unavailable=false){if(finished)return;finished=true;active--;if(unavailable)blockedUntil=Math.max(blockedUntil,now()+15000);}};}
+ /** `distributed`: el límite por IP y por correo ya lo decidió la base (throttle.ts); aquí solo quedan la concurrencia en vuelo y el circuito del proveedor. */
+ function admit(email:string,ip:string|null=null,distributed=false):AdmissionResult{
   const time=now();for(const [id,expires]of recent)if(expires<=time)recent.delete(id);
   for(const [id,entry]of perIp)if(entry.resetAt<=time)perIp.delete(id);
   // Cupo global: se avisa (503) en vez de fingir un envío que no ocurrirá.
   if(time<blockedUntil)return {kind:'busy',retryAfterSeconds:seconds(blockedUntil-time)};
   if(active>=8)return {kind:'busy',retryAfterSeconds:10};
+  if(distributed){active++;return {kind:'lease',lease:release()};}
   // Límite por IP, separado del global: una sola IP no puede llenar el cupo de todos. Sin IP confiable no se limita (no hay un cubo «desconocido» compartido).
   if(ip){
    ip=ipBucket(ip);const entry=perIp.get(ip);
@@ -45,8 +48,8 @@ export function createEmailAdmission(now:()=>number=()=>performance.now()){
   const id=createHmac('sha256',key).update(email.trim().toLowerCase()).digest('hex');
   if(recent.has(id))return {kind:'duplicate'};
   if(recent.size>=256)return {kind:'busy',retryAfterSeconds:seconds(Math.min(...recent.values())-time)};
-  recent.set(id,time+60000);active++;let finished=false;
-  return {kind:'lease',lease:{finish(unavailable=false){if(finished)return;finished=true;active--;if(unavailable)blockedUntil=Math.max(blockedUntil,now()+15000);}}};
+  recent.set(id,time+60000);active++;
+  return {kind:'lease',lease:release()};
  }
  return {bloqueado(){return now()<blockedUntil;},admit,
   /** Compatibilidad: lease o null cuando no se admite por cualquier motivo. */

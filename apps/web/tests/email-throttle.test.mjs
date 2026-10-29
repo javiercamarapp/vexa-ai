@@ -1,0 +1,24 @@
+// AUTH-03: adaptador del límite compartido (throttle.ts) con un pool falso; la lógica SQL se prueba en supabase/tests/security-29oct.test.mjs.
+import test from 'node:test';import assert from 'node:assert/strict';
+import {emailThrottle,fingerprint} from '../src/lib/email-auth/throttle.ts';
+const fakePool=(rows,log=[],fail=null)=>({async connect(){return {async query(text,values){log.push([text,values]);if(fail&&/email_auth_admit/.test(text))throw fail;return /email_auth_admit/.test(text)?{rows}:{rows:[]};},release(){log.push(['release']);}};}});
+const env=(v)=>{process.env.VEXA_DATABASE_URL=v;delete process.env.VEXA_EMAIL_THROTTLE_KEY;};
+test('sin base configurada devuelve null (cae al límite local) y no abre conexión',async()=>{delete process.env.VEXA_DATABASE_URL;delete process.env.VEXA_EMAIL_THROTTLE_KEY;let usado=false;
+ assert.equal(await emailThrottle('a@b.co','203.0.113.9',()=>{usado=true;return fakePool([]);}),null);assert.equal(usado,false);});
+test('envía solo huellas hex de 64 caracteres, jamás la IP ni el correo, bajo el rol vexa_backend',async()=>{env('postgres://u:p@h/db');const log=[];
+ const r=await emailThrottle(' Real@Example.INVALID ','203.0.113.9',()=>fakePool([{r:{verdict:'ok',retry_after:0}}],log));
+ assert.deepEqual(r,{verdict:'ok',retryAfterSeconds:0});
+ const call=log.find(([t])=>/email_auth_admit/.test(t));assert.match(call[1][0],/^[a-f0-9]{64}$/);assert.match(call[1][1],/^[a-f0-9]{64}$/);
+ assert.ok(!JSON.stringify(log).includes('203.0.113.9')&&!/example/i.test(JSON.stringify(log)));
+ assert.ok(log.some(([t])=>/SET LOCAL ROLE vexa_backend/.test(t)));assert.ok(log.some(([t])=>t==='COMMIT'));assert.ok(log.some(([t])=>t==='release'));});
+test('la huella del correo es insensible a mayúsculas y espacios, y distinta de la de una IP igual en texto',async()=>{env('postgres://u:p@h/db');const k='k'.repeat(32);
+ assert.equal(fingerprint('email','a@b.co',k),fingerprint('email','a@b.co',k));assert.notEqual(fingerprint('email','x',k),fingerprint('ip','x',k));});
+test('veredictos ip_limited y duplicate se transmiten con Retry-After acotado',async()=>{env('postgres://u:p@h/db');
+ assert.deepEqual(await emailThrottle('a@b.co','203.0.113.9',()=>fakePool([{r:{verdict:'ip_limited',retry_after:42}}])),{verdict:'ip_limited',retryAfterSeconds:42});
+ assert.deepEqual(await emailThrottle('a@b.co',null,()=>fakePool([{r:{verdict:'duplicate',retry_after:99999}}])),{verdict:'duplicate',retryAfterSeconds:3600});});
+test('fallo de la base, migración sin aplicar, veredicto desconocido o lentitud: null y rollback (el acceso nunca depende de esta tabla)',async()=>{env('postgres://u:p@h/db');const log=[];
+ assert.equal(await emailThrottle('a@b.co',null,()=>fakePool([],log,Object.assign(new Error('x'),{code:'42883'}))),null);assert.ok(log.some(([t])=>t==='ROLLBACK'));
+ assert.equal(await emailThrottle('a@b.co',null,()=>fakePool([{r:{verdict:'raro'}}])),null);
+ const lento={async connect(){await new Promise(r=>setTimeout(r,200));throw new Error('tarde');}};
+ const t0=Date.now();assert.equal(await emailThrottle('a@b.co',null,()=>lento,30),null);assert.ok(Date.now()-t0<150);
+ assert.equal(await emailThrottle('a@b.co',null,()=>{throw new Error('sin pool');}),null);});

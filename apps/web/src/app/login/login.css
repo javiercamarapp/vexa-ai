@@ -46,7 +46,7 @@
 .login-editorial .login-visual{display:none}
 .login-editorial .login-story-surface{display:flex;flex:1;flex-direction:column;position:relative;isolation:isolate;overflow:hidden;border-radius:24px;background:radial-gradient(ellipse at 50% 90%,#ffffff12,transparent 65%),#0e0e10;color:#f4f4f5;min-height:0}
 .login-editorial .login-story-copy{position:relative;z-index:1;padding:clamp(32px,4vw,56px);padding-bottom:0}
-.login-editorial .login-story-copy .login-kicker{color:#a3a3ab;font-size:10px;letter-spacing:.18em}
+.login-editorial .login-story-copy .login-kicker{color:#a3a3ab;font-size:11px;letter-spacing:.18em;text-transform:uppercase}
 .login-editorial .login-story-copy h2{font-size:clamp(32px,3.5vw,50px);max-width:17ch;line-height:1.08;margin:24px 0 0;text-wrap:balance}
 .login-editorial .login-story-description{max-width:43ch;font-size:15px;line-height:1.7;margin:20px 0 0;color:#b4b4bb;text-wrap:pretty}
 .login-editorial .login-artwork{position:relative;flex:1;min-height:0;margin-top:16px;overflow:hidden;--login-particle-glow:#ffffff22;--login-particle-wash:#ffffff0a;--login-particle-clear:#ffffff00;--login-particle-front:#ffffff;--login-particle-middle:#c8c8cf;--login-particle-rear:#6b6b73;--login-particle-ambient:#9b9ba3}

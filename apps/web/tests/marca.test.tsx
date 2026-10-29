@@ -60,7 +60,7 @@ test('favicon completo, manifiestos y metadata apuntan al kit; el símbolo de av
   assert.equal(pub('push-icon.svg'), pub('favicon.svg'));
   for (const f of ['site.webmanifest', 'push-manifest.webmanifest']) { const m = JSON.parse(pub(f)); assert.equal(m.theme_color, '#0E0E10'); assert.equal(m.background_color, '#0E0E10'); assert.match(m.name, /^Rovaq/); }
   const layout = readFileSync(join(import.meta.dirname, '../src/app/layout.tsx'), 'utf8');
-  assert.match(layout, /themeColor: "#0E0E10"/); assert.match(layout, /manifest: "\/site\.webmanifest"/); assert.match(layout, /apple-touch-icon\.png/); assert.match(layout, /favicon\.svg/);
+  assert.match(layout, /themeColor: \[[^\]]*"#ffffff"[^\]]*"#0e0e10"/i); // claro y oscuro; el manifiesto fija #0E0E10 assert.match(layout, /manifest: "\/site\.webmanifest"/); assert.match(layout, /apple-touch-icon\.png/); assert.match(layout, /favicon\.svg/);
 });
 
 test('no queda la marca anterior (la «R» azul): ni componentes, ni íconos, ni colores de marca vieja', () => {

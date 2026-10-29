@@ -49,7 +49,8 @@ test('tokens de escala: --t-page 20, --t-section 14, --t-kpi ≤ 30', () => {
   assert.equal(g('t-page'),20);assert.equal(g('t-section'),14);assert.ok(g('t-kpi')<=30);
 });
 test('radios solo del conjunto {0, 8, 12, 999, 50%}', () => {
-  for(const f of TODOS){for(const m of readFileSync(f,'utf8').matchAll(/border-radius:\s*([^;}]+)/g)){
+  // Fuera de la escala de radios, igual que en tokens-nucleo.test.mjs (que ya exime las reglas .login): el acceso editorial (/login) y la página pública (components/landing, burbujas con cola de 2 px, la construye otro equipo).
+  for(const f of TODOS.filter(x=>!/\/components\/landing\/|\/app\/login\//.test(x))){for(const m of readFileSync(f,'utf8').matchAll(/border-radius:\s*([^;}]+)/g)){
     const v=m[1].replace(/var\([^)]*\)/g,'').trim();
     if(v==='16px 16px 0 0')continue; // hoja inferior del celular
     for(const t of v.split(/\s+/).filter(Boolean)){if(/!important/.test(t))continue;

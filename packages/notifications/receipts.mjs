@@ -42,6 +42,6 @@ export async function handleEmailWebhook(request,{webhookSecret,repository,readT
   event=new Resend('webhook_verification_only').webhooks.verify({payload:raw,headers,webhookSecret});
   if(event?.type==='email.bounced'&&event.data?.bounce?.type!==undefined&&!['Permanent','Transient','Undetermined'].includes(event.data.bounce.type))throw Error();
   if(!events.has(event?.type)||!validId(event?.data?.email_id)||typeof event.created_at!=='string'||!Number.isFinite(Date.parse(event.created_at))||Date.parse(event.created_at)>Date.now()+300000)throw Error();
- }catch{return response(400,'email_webhook_invalid');}
+ }catch{try{globalThis.__vexaSecuritySink?.({kind:'webhook_signature_invalid',route:new URL(request.url).pathname,method:request.method,ipRaw:request.headers.get('x-forwarded-for'),ua:request.headers.get('user-agent'),detail:{code:'email_invalid'}});}catch{/* el registro nunca rompe */}return response(400,'email_webhook_invalid');}
  try{const result=await repository.record({eventId:headers.id,providerId:event.data.email_id,type:event.type,occurredAt:event.created_at,payloadHash:createHash('sha256').update(raw).digest('hex'),bounceKind:event.type==='email.bounced'?(event.data?.bounce?.type??null):null});return response(200,result?.replay?'email_webhook_replay':'email_webhook_recorded');}catch{return response(503,'email_webhook_unavailable');}
 }

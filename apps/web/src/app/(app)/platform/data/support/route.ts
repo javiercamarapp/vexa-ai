@@ -1,6 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {ACTIVE_ORG, SUPPORT_MARK, config} from '../../../../../lib/auth';
 import {parseSupportInput} from '../../../../../lib/platform/support-input';
+import {registrar} from '../../../../../lib/security/registro';
 import {HEADERS, readJson} from '../../../../../components/platform/server/copilot-http';
 import {FIXTURES, platformAccessForRequest} from '../../_lib/access';
 export const runtime = 'nodejs'; export const dynamic = 'force-dynamic';
@@ -29,6 +30,9 @@ export async function POST(request: NextRequest) {
     }
     const data = result.data as {id?: string; tenantId?: string; expiresAt?: string; ended?: boolean};
     const response = finish(NextResponse.json({data}, {headers: HEADERS}));
+    // Entrada y salida de «Ver como»: un evento por cada una (sin motivo ni texto libre; el motivo vive en vexa_platform.audit, enmascarado).
+    void registrar({kind: input.operation === 'start' ? 'support_start' : 'support_end', route: '/platform/data/support', method: 'POST', actorId: r.access.userId, tenantId: input.operation === 'start' ? (data.tenantId ?? input.tenant) : undefined,
+      ipRaw: request.headers.get('x-forwarded-for'), ua: request.headers.get('user-agent'), detail: input.operation === 'start' ? {minutes: input.minutes} : {}});
     if (input.operation === 'start' && data.expiresAt && data.tenantId) {
       const seconds = Math.max(1, Math.floor((Date.parse(data.expiresAt) - Date.now()) / 1000));
       response.cookies.set(SUPPORT_MARK, String(Math.floor(Date.parse(data.expiresAt) / 1000)), {...base, maxAge: seconds});

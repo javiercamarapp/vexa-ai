@@ -9,7 +9,7 @@ export function createHostedHandler({runtime,secret,timeoutMs=20000,platformTime
   const reply=(code,status)=>Response.json({code},{status,headers:{'Cache-Control':'no-store'}});
   if(!secret||secret.length<32||!Number.isInteger(timeoutMs)||timeoutMs<1000||timeoutMs>20000||platformTimeoutMs<timeoutMs+15000||intervalMs<10000||intervalMs>60000)return reply('WORKER_CONFIGURATION_REQUIRED',503);
   if(request.method!=='POST')return reply('METHOD_NOT_ALLOWED',405);
-  if(!timingSafeEqual(digest(request.headers.get('authorization')??''),digest('Bearer '+secret)))return reply('UNAUTHORIZED',401);
+  if(!timingSafeEqual(digest(request.headers.get('authorization')??''),digest('Bearer '+secret))){try{globalThis.__vexaSecuritySink?.({kind:'bearer_invalid',route:new URL(request.url).pathname,method:request.method,ipRaw:request.headers.get('x-forwarded-for'),ua:request.headers.get('user-agent')});}catch{/* el registro nunca rompe */}return reply('UNAUTHORIZED',401);}
   try{await readTriggerInput(request);}catch(error){return reply(error.message==='BODY_TIMEOUT'?'REQUEST_TIMEOUT':'BODY_NOT_ALLOWED',error.message==='BODY_TIMEOUT'?408:400);}
   if(active)return reply('CHUNK_BUSY',409);
   active=true;let r;const startedAt=Date.now();

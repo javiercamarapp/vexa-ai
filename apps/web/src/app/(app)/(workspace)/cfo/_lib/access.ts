@@ -1,6 +1,7 @@
 import 'server-only';
 import {NextRequest} from 'next/server';
-import {createDatabase, forDownload} from '@vexa/platform/db';
+import {createDatabase} from '@vexa/platform/db';
+import {forDownloadAuditado as forDownload} from '../../../../../lib/security/descargas';
 import {AccessError, ACTIVE_ORG, assertOrigin, config, identity, resolveSession} from '../../../../../lib/auth';
 import {requestAuth} from '../../../../../lib/auth-http';
 import {serverPool} from '../../../../../lib/imports/server';

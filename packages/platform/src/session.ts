@@ -11,8 +11,20 @@ export interface ResolveOptions {
 }
 const UUID=/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 export class AccessError extends Error {
-  status:number; code:string;
+  status:number; code:string; reported=false;
   constructor(status:number, code:string) { super(code); this.status=status; this.code=code; }
+}
+/** Registro de eventos de seguridad (auditoría 3). El paquete no conoce la aplicación: usa el ayudante que ella publica en globalThis y nunca lanza.
+ * Una sola vez por error (`reported`) aunque lo atrapen varias capas (sesión, base, manejador). */
+export function reportAccess(error:AccessError):AccessError {
+  try {
+    if (error.reported) return error;
+    if (error.status!==401 && error.status!==403) return error;
+    error.reported=true;
+    const kind=error.status===401 ? 'auth_401' : error.code==='csrf_rejected' ? 'csrf_rejected' : /^support_(read_only|export_blocked)$/.test(error.code) ? 'support_blocked' : 'forbidden_403';
+    (globalThis as {__vexaSecuritySink?:(e:unknown)=>void}).__vexaSecuritySink?.({kind,detail:{code:error.code,status:error.status}});
+  } catch { /* el registro nunca rompe la petición */ }
+  return error;
 }
 export function safeNext(value:string|null, origin:string):string {
   if (!value || !value.startsWith('/') || value.startsWith('//') || /[\\\u0000-\u0020]|%2f|%5c/i.test(value)) return '/';
@@ -21,11 +33,11 @@ export function safeNext(value:string|null, origin:string):string {
   } catch { return '/'; }
 }
 export function assertOrigin(value:string|null, origin:string):void {
-  if (value!==origin) throw new AccessError(403,'csrf_rejected');
+  if (value!==origin) throw reportAccess(new AccessError(403,'csrf_rejected'));
 }
 export async function resolveSession(port:IdentityPort, selected?:string, options:ResolveOptions={}) {
   const user=await port.getUser();
-  if (!user) throw new AccessError(401,'authentication_required');
+  if (!user) throw reportAccess(new AccessError(401,'authentication_required'));
   const memberships=(await port.memberships(user.id)).filter(m=>m.user_id===user.id && m.status==='active');
   let active:Membership|undefined=selected ? memberships.find(m=>m.tenant_id===selected) : memberships[0];
   let support:SupportGrant|null=null, fellBack=false;
@@ -37,7 +49,7 @@ export async function resolveSession(port:IdentityPort, selected?:string, option
     }
   }
   if (!active && selected && options.fallback && memberships[0]) { active=memberships[0]; fellBack=true; }
-  if (!active) throw new AccessError(403,'organization_not_authorized');
+  if (!active) throw reportAccess(new AccessError(403,'organization_not_authorized'));
   return {user,memberships,active,support,fellBack};
 }
 export async function authorizeSelection(port:IdentityPort, tenant:string) {

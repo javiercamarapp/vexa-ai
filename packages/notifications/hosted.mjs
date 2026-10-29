@@ -27,7 +27,7 @@ export function createNotificationHostedHandler({runtime,transports,secret,timeo
  return async request=>{
   if(typeof secret!=='string'||secret.length<32||typeof runtime!=='function'||typeof transports!=='function'||!Number.isSafeInteger(timeoutMs)||timeoutMs<1000||timeoutMs>40000||!Number.isSafeInteger(sendTimeoutMs)||sendTimeoutMs<1||sendTimeoutMs>5000||sendTimeoutMs*4>timeoutMs||!Number.isSafeInteger(cleanupMs)||cleanupMs<1||cleanupMs>10000)return reply('NOTIFICATION_CONFIGURATION_REQUIRED',503);
   if(request.method!=='POST')return reply('METHOD_NOT_ALLOWED',405);
-  if(!timingSafeEqual(digest(request.headers.get('authorization')??''),digest('Bearer '+secret)))return reply('UNAUTHORIZED',401);
+  if(!timingSafeEqual(digest(request.headers.get('authorization')??''),digest('Bearer '+secret))){try{globalThis.__vexaSecuritySink?.({kind:'bearer_invalid',route:new URL(request.url).pathname,method:request.method,ipRaw:request.headers.get('x-forwarded-for'),ua:request.headers.get('user-agent')});}catch{/* el registro nunca rompe */}return reply('UNAUTHORIZED',401);}
   if(new URL(request.url).search||request.headers.has('origin'))return reply('BODY_NOT_ALLOWED',400);
   if(active)return reply('CYCLE_BUSY',409);
   try{await emptyInput(request);}catch(error){return reply(error.message==='BODY_TIMEOUT'?'REQUEST_TIMEOUT':'BODY_NOT_ALLOWED',error.message==='BODY_TIMEOUT'?408:400);}

@@ -3,6 +3,7 @@ import { ACTIVE_ORG, AccessError, SUPPORT_MARK, config as authConfig, identity, 
 import { supportMarkActive, supportVerdict } from './lib/support-guard';
 import { failure, localRedirect, requestAuth } from './lib/auth-http';
 import { decidirHost, rutaConAutenticacion } from './lib/host-routing.mjs';
+import { registrar } from './lib/security/registro';
 function authLinkHeaders(request:NextRequest,response:NextResponse) {
   if (/^\/auth\/(?:invitations|email)(?:\/|$)/.test(request.nextUrl.pathname)) response.headers.set('Referrer-Policy','no-referrer');
   return response;
@@ -11,6 +12,8 @@ const protectedPathPrefix=(path:string)=>/^\/(overview|problems|customers|recomm
 export async function middleware(request:NextRequest) {
   try {
     const path=request.nextUrl.pathname;
+    // Ruta y método para el registro de seguridad aguas abajo (sin consulta). La IP y el agente se leen de las cabeceras originales.
+    try{request.headers.set('x-vexa-route',request.method+' '+path);}catch{/* cabecera inmutable: el registro pierde la ruta, nada más */}
     // Host primero (decisión pura y probada en host-routing.mjs). Con las reglas por host de next.config (Fase A) rovaq.ai y www.rovaq.ai ya no llegan aquí: el matcher los excluye.
     // Lo que sigue sirve a app.rovaq.ai y a los hosts antiguos, y es también el respaldo (Fase B) si rovaq.ai volviera a pasar por el middleware.
     const decision=decidirHost({host:request.headers.get('x-forwarded-host')??request.headers.get('host')??request.nextUrl.host,pathname:path,search:request.nextUrl.search,produccion:process.env.VERCEL_ENV==='production'});
@@ -23,9 +26,10 @@ export async function middleware(request:NextRequest) {
     // «Ver como» (solo lectura): con la marca vigente se rechazan escrituras y exportaciones. Sin marca, las rutas /api siguen exactamente como antes.
     if(supportMarkActive(request.cookies.get(SUPPORT_MARK)?.value)&&(path.startsWith('/api/')||path==='/'||protectedPathPrefix(path))){
       const verdict=supportVerdict(request.method,path,request.nextUrl.search);
+      if(!verdict.ok){void registrar({kind:'support_blocked',route:path,method:request.method,ipRaw:request.headers.get('x-forwarded-for'),ua:request.headers.get('user-agent'),detail:{code:verdict.code}});}
       if(!verdict.ok)return NextResponse.json({error:{code:verdict.code,message:'Modo soporte: solo lectura.',retryable:false}},{status:403,headers:PRIVATE_HEADERS});
     }
-    if(path.startsWith('/api/'))return NextResponse.next();
+    if(path.startsWith('/api/'))return NextResponse.next({request:{headers:request.headers}});
     const platformRoute=path==='/platform'||path.startsWith('/platform/');
     const dataRoute=(platformRoute||path==='/cfo'||path.startsWith('/cfo/'))&&/\/data(\/|$)/.test(path);
     const identityRoute=path==='/seguridad'||path==='/sin-acceso';

@@ -9,6 +9,7 @@ import {createJobRepository} from '../../../../../packages/jobs/durable/reposito
 import {createImportHandler} from '../../../../../packages/jobs/index.mjs';
 import {ACTIVE_ORG,AccessError,assertOrigin,config,identity,PRIVATE_HEADERS} from '../auth';
 import {requestAuth} from '../auth-http';
+import {instalar} from '../security/registro';
 import {conectarConReintento,crearCompuerta,vigilarPool} from '../db-resiliencia.mjs';
 let pool:SqlPool|undefined;
 // Espera máxima de un hueco del pool (la función dura hasta 60–300 s; una pantalla pide ~12 lecturas a la vez).
@@ -33,6 +34,8 @@ export function serverPool():SqlPool {
   return {query:async<Row>(text:string,values?:readonly (string|number|bigint|boolean|null|readonly string[])[])=>{const result=await c.query(text,values?[...values]:undefined);return {rows:result.rows as Row[],rowCount:result.rowCount};},release:()=>{try{c.release();}finally{liberar();}}};
  }};return pool;
 }
+// Registro de eventos de seguridad: publica el ayudante para los paquetes y la capa de sesión (diferido; nunca rompe la petición).
+instalar(serverPool);
 export async function imports(request:NextRequest) {
  let finish=(r:NextResponse)=>r;
  try{

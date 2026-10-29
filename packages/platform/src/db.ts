@@ -2,7 +2,7 @@
  * The pool login must be allowed to SET ROLE vexa_backend, must not own domain tables,
  * and must not have SUPERUSER/BYPASSRLS. No driver or Auth implementation is duplicated here.
  */
-import { AccessError, resolveSession, type IdentityPort, type Membership } from '@vexa/platform/session';
+import { AccessError, reportAccess, resolveSession, type IdentityPort, type Membership } from '@vexa/platform/session';
 export type SqlValue = string | number | bigint | boolean | null | readonly string[];
 export interface SqlResult<Row> { rows: Row[]; rowCount: number | null }
 export interface SqlConnection {
@@ -76,8 +76,8 @@ export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool;
         const session = await resolveSession(identity,selectedTenant);
         const userId=session.user.id, tenantId=session.active.tenant_id;
         // GUARDIA CENTRAL de «ver como»: una sesión de soporte solo LEE. Ninguna otra acción llega a la base, sea cual sea la ruta que la pida.
-        if (session.support && action === 'export') throw new AccessError(403,'support_export_blocked');
-        if (session.support && action !== 'read') throw new AccessError(403,'support_read_only');
+        if (session.support && action === 'export') throw reportAccess(new AccessError(403,'support_export_blocked'));
+        if (session.support && action !== 'read') throw reportAccess(new AccessError(403,'support_read_only'));
         // 'export' es una lectura para la base (READ ONLY y vexa.action='read'): solo la capa de aplicación la distingue.
         const sqlAction: DatabaseAction = action === 'export' ? 'read' : action;
         connection = await pool.connect();
@@ -90,7 +90,7 @@ export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool;
           let granted=false;
           try { granted=(await connection.query<{ok:boolean}>('SELECT public.vexa_support_active($1::uuid) AS ok',[tenantId])).rows[0]?.ok===true; }
           catch (error) { if ((error as {code?:string})?.code==='42883') throw new AccessError(503,'support_read_unavailable'); throw error; }
-          if (!granted) throw new AccessError(403,'organization_not_authorized');
+          if (!granted) throw reportAccess(new AccessError(403,'organization_not_authorized'));
           member=session.active;
         } else {
           const current = await connection.query<Membership>(
@@ -98,8 +98,8 @@ export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool;
             [tenantId,userId]);
           member=current.rows[0];
         }
-        if (!member || member.user_id!==userId || member.tenant_id!==tenantId || member.status!=='active') throw new AccessError(403,'organization_not_authorized');
-        if (!roles[action].includes(member.role)) throw new AccessError(403,'role_insufficient');
+        if (!member || member.user_id!==userId || member.tenant_id!==tenantId || member.status!=='active') throw reportAccess(new AccessError(403,'organization_not_authorized'));
+        if (!roles[action].includes(member.role)) throw reportAccess(new AccessError(403,'role_insufficient'));
         let active = true;
         const sql = connection;
         const scope: DatabaseScope = Object.freeze({tenantId:member.tenant_id,userId:member.user_id,role:member.role,permissionsVersion:member.permissions_version,
@@ -128,8 +128,23 @@ export function requireRow<Row>(result:SqlResult<Row>):Row {
   if(result.rows.length===0) throw new AccessError(404,'resource_not_found');
   return result.rows[0];
 }
-/** Rutas de descarga (CSV/JSON/HTML adjunto): toda lectura pasa a la acción 'export', que una sesión de soporte «ver como» no puede ejecutar (403 support_export_blocked). */
-export function forDownload<D extends {transaction: <T>(action: DatabaseAction, work: (scope: DatabaseScope) => Promise<T>) => Promise<T>}>(database: D, downloading: boolean): D {
+/** Cuántas filas devolvió una consulta de descarga (sin contenido): arreglo, {rows}, {items} o desconocido (null). */
+export function contarFilas(result: unknown): number | null {
+  if (Array.isArray(result)) return result.length;
+  if (result && typeof result === 'object') { const r = result as {rows?: unknown; items?: unknown; length?: unknown}; if (Array.isArray(r.rows)) return r.rows.length; if (Array.isArray(r.items)) return r.items.length; }
+  return null;
+}
+/** Rutas de descarga (CSV/JSON/HTML adjunto): toda lectura pasa a la acción 'export', que una sesión de soporte «ver como» no puede ejecutar (403 support_export_blocked).
+ * `onExport` (opcional) se llama UNA vez por descarga, al terminar la primera consulta, con quién, en qué organización y cuántas filas (nunca contenido); un fallo suyo no afecta la descarga. */
+export function forDownload<D extends {transaction: <T>(action: DatabaseAction, work: (scope: DatabaseScope) => Promise<T>) => Promise<T>}>(database: D, downloading: boolean, onExport?: (e: {tenantId: string; userId: string; rows: number | null}) => void): D {
   if (!downloading) return database;
-  return Object.freeze({...database, transaction: <T>(action: DatabaseAction, work: (scope: DatabaseScope) => Promise<T>): Promise<T> => database.transaction(action === 'read' ? 'export' : action, work)}) as D;
+  let emitted = false;
+  return Object.freeze({...database, transaction: <T>(action: DatabaseAction, work: (scope: DatabaseScope) => Promise<T>): Promise<T> => {
+    const mapped = action === 'read' ? 'export' : action;
+    return database.transaction(mapped, async scope => {
+      const result = await work(scope);
+      if (mapped === 'export' && !emitted && onExport) { emitted = true; try { onExport({tenantId: scope.tenantId, userId: scope.userId, rows: contarFilas(result)}); } catch { /* el registro nunca rompe la descarga */ } }
+      return result;
+    });
+  }}) as D;
 }

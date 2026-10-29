@@ -13,7 +13,7 @@ export const NOMBRE = Object.freeze({amazon: 'Amazon', walmart: 'Walmart', shopi
 export const ESTADO_TXT = Object.freeze({reembolsado: 'Reembolsado', vencido: 'Más de 180 días', no_reembolsable: 'No reembolsable', rechazado: 'Rechazado', enviado: 'Enviado', otro: 'Otro estado', sin_estado: 'Sin estado'});
 export const HOJA_TXT = Object.freeze({reembolsos: 'Reembolsos', garantiaHerramientas: 'Garantía de herramientas', garantiaPartes: 'Garantía de partes', etiquetas: 'Etiquetas de devolución'});
 
-/** centavos (string|number|bigint) -> «[omitido: dato de cliente]» (sin decimales) o con decimales. Misma función que Resumen, CFO y Brechas (lib/formato/es-mx.mjs). */
+/** centavos (string|number|bigint) -> «$123,456» (sin decimales) o con decimales. Misma función que Resumen, CFO y Brechas (lib/formato/es-mx.mjs). */
 export const usd = (minor, {decimals = false, idioma} = {}) => usdEs(minor, {decimales: decimals, idioma});
 export const num = (n, idioma) => entero(n, typeof idioma === 'string' ? idioma : undefined);
 export const pct = (p, idioma) => pctEs(p, {idioma: typeof idioma === 'string' ? idioma : undefined});

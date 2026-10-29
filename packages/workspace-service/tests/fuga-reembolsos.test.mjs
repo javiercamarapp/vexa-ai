@@ -31,7 +31,7 @@ test('Tracker sin PII: el texto libre no sale; solo catálogos cerrados', () => 
   assert.equal(F.estadoDeTracker('Allen passed it on to the logistics colleague'), 'otro'); assert.equal(F.estadoDeTracker(''), 'sin_estado');
   assert.equal(F.submotivoDe('Customer paid 138 and item is for 100 order 200014331476955'), 'Otro (texto libre omitido)');
   assert.equal(F.submotivoDe('Tool Replacement'), 'Reemplazo de herramienta'); assert.equal(F.motivoDe('Algo raro de Juan'), 'Otro'); assert.equal(F.motivoDe('Defective'), 'Defectuoso');
-  const f = F.filaDeTracker('Refunds', 5, {SKU: 'aaa-1-new', Contact_reason: 'Defective', Subreason: 'Juan Pérez llamó', Retailer: 'Walmart :: fulfilled by CLIENTEX', Status: 'Rejected', Amount: '$1,234.50', Request_date: '46042.0', Customer_name: 'Juan'}, new Date('2026-10-23'));
+  const f = F.filaDeTracker('Refunds', 5, {SKU: 'aaa-1-new', Contact_reason: 'Defective', Subreason: 'Juan Pérez llamó', Retailer: 'Walmart :: fulfilled by PILOTO', Status: 'Rejected', Amount: '$1,234.50', Request_date: '46042.0', Customer_name: 'Juan'}, new Date('2026-10-23'));
   assert.deepEqual(f, {hoja: 'reembolsos', fila: 5, sku: 'AAA-1', motivo: 'Defectuoso', submotivo: 'Otro (texto libre omitido)', retailer: 'walmart', estado: 'rechazado', montoMinor: 123450, fecha: '2026-01-20'});
   assert.ok(!JSON.stringify(f).includes('Juan'));
   assert.equal(F.fechaExcel('46353.0', new Date('2026-10-23')), null, 'una fecha futura (2026-11) no se inventa ni se muestra');
@@ -94,7 +94,7 @@ test('servicio completo contra libro y Tracker sintéticos, con RLS real', {skip
     const row = (reason, sub, ret, sku, amount, status, date, name = 'Nombre Privado') => [[10, reason], [11, sub], [12, ret], [13, sku], [15, amount], [21, status], [3, date], [4, name], [8, '200014331476955']];
     const sql = ['set session_replication_role=replica',
       ins(1, 'Refunds', 1, 'header', HDR, '2026-10-01'),
-      ins(2, 'Refunds', 2, 'no_ticket', row('Defective', 'Tool Replacement', 'Walmart :: fulfilled by CLIENTEX', 'BBB-2-WM01', '100.5', 'Refunded', '46042.0'), '2026-10-02'),
+      ins(2, 'Refunds', 2, 'no_ticket', row('Defective', 'Tool Replacement', 'Walmart :: fulfilled by PILOTO', 'BBB-2-WM01', '100.5', 'Refunded', '46042.0'), '2026-10-02'),
       ins(3, 'Refunds', 3, 'no_ticket', row('Defective', 'Customer Juan Pérez order 200014331476955 broke', 'Walmart', 'BBB-2', '50.0', 'Older than 180 days', '46000.0'), '2026-10-02'),
       ins(4, 'Refunds', 4, 'no_ticket', row('Warranty', 'Damaged', 'Amazon', 'AAA-1-NEW', '', 'Can Not Refund', '46010.0'), '2026-10-02'),
       ins(5, 'Refunds', 5, 'no_ticket', row('Order', 'Spare Parts', 'Amazon', 'AAA-1', '20.0', 'Allen passed it on to the logistics colleague', '46020.0'), '2026-10-02'),

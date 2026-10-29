@@ -42,7 +42,7 @@ export function filasTracker() {
   const r = lcg(11), out = [];
   for (let i = 2; i < 160; i++) {
     const motivo = MOTIVOS[Math.floor(r() * MOTIVOS.length)], estado = ESTADOS[Math.floor(r() * ESTADOS.length)], sku = SKUS[Math.floor(r() * 9)][0];
-    out.push({sheet: 'Refunds', fila: i, vinculada: r() < 0.2, o: {SKU: sku, Contact_reason: motivo, Subreason: r() < 0.5 ? 'Tool Replacement' : 'texto libre del cliente con datos personales', Retailer: r() < 0.6 ? 'Walmart :: fulfilled by CLIENTEX' : 'Amazon', Status: estado, Amount: r() < 0.9 ? (40 + Math.round(r() * 300)).toFixed(2) : '', Request_date: String(46000 + Math.floor(r() * 40))}});
+    out.push({sheet: 'Refunds', fila: i, vinculada: r() < 0.2, o: {SKU: sku, Contact_reason: motivo, Subreason: r() < 0.5 ? 'Tool Replacement' : 'texto libre del cliente con datos personales', Retailer: r() < 0.6 ? 'Walmart :: fulfilled by PILOTO' : 'Amazon', Status: estado, Amount: r() < 0.9 ? (40 + Math.round(r() * 300)).toFixed(2) : '', Request_date: String(46000 + Math.floor(r() * 40))}});
   }
   for (let i = 2; i < 60; i++) out.push({sheet: i % 2 ? 'Warranty Tools' : 'Warranty Parts', fila: i, vinculada: r() < 0.5, o: {SKU: SKUS[Math.floor(r() * 5)][0], 'Contact Reason': 'Warranty', Subreason: 'Tool Replacement', Retailer: 'Walmart'}});
   return out;

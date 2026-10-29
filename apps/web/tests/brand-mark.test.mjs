@@ -36,7 +36,7 @@ test('marcaDe: claves y nombres reales de fuentes, canales y retailers', () => {
 test('marcaDe: textos agregados, ambiguos o sin integración devuelven null (no se adivina)', () => {
   for (const t of ['ledger', 'attachments', 'associations', 'Libro de pedidos y reembolsos', 'Libro económico', 'Libro de reembolsos (Amazon, Walmart, Shopify)',
     'Marketplaces y Shopify (libro de registros)', 'Adjuntos', 'Adjuntos (archivos)', 'Asociaciones ticket–contacto', 'Asociaciones ticket–contacto (HubSpot)',
-    'Conversaciones por archivo', 'Tienda CLIENTEX', 'Sin retailer', 'otro', 'Otro', 'Desconocido', '', '   ', 'Amazon y Walmart', 'HubSpot + Zendesk'])
+    'Conversaciones por archivo', 'Tienda propia', 'Sin retailer', 'otro', 'Otro', 'Desconocido', '', '   ', 'Amazon y Walmart', 'HubSpot + Zendesk'])
     assert.equal(marcaDe(t), null, JSON.stringify(t));
   for (const v of [null, undefined, 0, {}, [], 'constructor', '__proto__', 'toString']) assert.equal(marcaDe(v), null);
 });

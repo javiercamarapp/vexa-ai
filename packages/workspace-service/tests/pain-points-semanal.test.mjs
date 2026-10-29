@@ -41,7 +41,7 @@ const corrida = (id, extra = {}) => ({id: 'r', puntoId: id, estado: 'completo', 
 
 test('informe: ingreso y «sin respuesta» salen «—» (unknown ≠ 0); reembolsos solo con anterior; la IA entra solo si ya hay lectura guardada', () => {
   const v = vistaSimulada();
-  const base = {vista: v, espacio: 'Clientex', rol: 'Propietario', hoy: HOY, appOrigin: ORIGIN, urls};
+  const base = {vista: v, espacio: 'Piloto', rol: 'Propietario', hoy: HOY, appOrigin: ORIGIN, urls};
   const a = construirInformeSemanal({...base, anterior: null});
   assert.equal(a.input.ingreso.valor, null); assert.equal(a.input.vencidas.valor, null); assert.equal(a.input.reembolsos.valor, null);
   assert.match(a.input.fraseClave, /Primer reporte/); assert.equal(a.input.accion, undefined); assert.equal(a.input.lecturaIA, undefined); assert.equal(a.resumen.primera, true);
@@ -64,7 +64,7 @@ test('un texto de IA con PII, marcado o direcciones no entra al correo', () => {
   assert.equal(limpiarTexto('Escribe a ana@x.com', 100), null); assert.equal(limpiarTexto('Llamar 55 1234 5678', 100), null); assert.equal(limpiarTexto('Ver https://x.com/a', 100), null);
   assert.equal(limpiarTexto('**negrita** [x] {y}', 100), 'negrita x y'); assert.equal(limpiarTexto('a'.repeat(200), 50).length, 50);
   const v = vistaSimulada(); const mala = corrida('P2'); mala.lecturas[1].contenido.propuesta.titulo = 'Contactar a maria@correo.com';
-  const r = construirInformeSemanal({vista: v, anterior: foto(v), corridas: new Map([['P2', mala]]), espacio: 'Clientex', rol: 'Analista', hoy: HOY, appOrigin: ORIGIN, urls});
+  const r = construirInformeSemanal({vista: v, anterior: foto(v), corridas: new Map([['P2', mala]]), espacio: 'Piloto', rol: 'Analista', hoy: HOY, appOrigin: ORIGIN, urls});
   assert.equal(r.input.accion, undefined, 'sin acción antes que una con PII');
 });
 
@@ -91,7 +91,7 @@ const mkSvc = (o = {}) => {
   const store = new Proxy({async buscarRun() { spy.buscar++; return null; }, async ultimoRun() { spy.ultimo++; return null; }}, {get(t, k) { if (k in t) return t[k]; spy.otros.push(String(k)); return () => { throw Error('el reporte no debe usar ' + String(k)); }; }});
   const enviados = [];
   const entregar = 'entregar' in o ? o.entregar : async m => { enviados.push(m); return {ok: true, providerId: 'p'}; };
-  const svc = createWeeklyService({database: sim.database, tenantId: TENANT, vista: async () => vistaSimulada(), store, entregar, enviarActivo: o.enviarActivo ?? false, secret: 'secret' in o ? o.secret : SECRET, appOrigin: ORIGIN, nombreEspacio: 'Clientex', now: () => HOY});
+  const svc = createWeeklyService({database: sim.database, tenantId: TENANT, vista: async () => vistaSimulada(), store, entregar, enviarActivo: o.enviarActivo ?? false, secret: 'secret' in o ? o.secret : SECRET, appOrigin: ORIGIN, nombreEspacio: 'Piloto', now: () => HOY});
   return {svc, sim, spy, enviados};
 };
 

@@ -241,9 +241,9 @@ test('config.toml, archivos generados y parche de Management API coinciden con e
 
 test('reporte semanal: estructura, datos faltantes sin 0, semana sin cambios y entradas inválidas', () => {
   const w = renderWeeklyReport(WEEKLY_SAMPLE);
-  assert.equal(w.subject, 'Reporte semanal · 14–20 oct: reembolsos $854.7k');
-  assert.match(w.preheader, /^Reembolsos \$854\.7k, 10 SKUs explican el 59 %\. Una acción por decidir\.$/);
-  const order = ['Reporte semanal · 14 al 20 de octubre de 2026', 'Se devolvieron $854.7k; 10 SKUs explican el 59', 'Ingreso bruto', 'Reembolsos', 'Dinero atorado', 'Sin respuesta', 'Principales puntos de dolor', 'Acción recomendada', 'Abrir el informe completo', 'Fuentes:'];
+  assert.equal(w.subject, 'Reporte semanal · 14–20 oct: reembolsos $123.4k');
+  assert.match(w.preheader, /^Reembolsos \$123\.4k, 10 SKUs explican el 59 %\. Una acción por decidir\.$/);
+  const order = ['Reporte semanal · 14 al 20 de octubre de 2026', 'Se devolvieron $123.4k; 10 SKUs explican el 59', 'Ingreso bruto', 'Reembolsos', 'Dinero atorado', 'Sin respuesta', 'Principales puntos de dolor', 'Acción recomendada', 'Abrir el informe completo', 'Fuentes:'];
   let at = -1;
   for (const s of order) { const i = w.html.replace(/ /g, ' ').indexOf(s, at + 1); assert.ok(i > at, `orden de «${s}»`); at = i; }
   for (const c of Object.values(TOKENS.kpi)) assert.ok(w.html.includes(c));
@@ -266,7 +266,7 @@ test('reporte semanal: estructura, datos faltantes sin 0, semana sin cambios y e
 });
 
 test('formato es-MX de cifras', () => {
-  assert.deepEqual([854_700, 3_840_000, 212_000, 950, 1_234_500_000].map(fmtMonto), ['$854.7k', '$3.84 M', '$212k', '$950', '$1,234.50 M']);
+  assert.deepEqual([123_400, 3_840_000, 212_000, 950, 1_234_500_000].map(fmtMonto), ['$123.4k', '$3.84 M', '$212k', '$950', '$1,234.50 M']);
 });
 
 test('el motor es escapado: texto de la app con marcado no se interpreta', () => {

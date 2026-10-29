@@ -48,7 +48,7 @@ export function variacionTexto(actual, anterior, {conSigno = true, idioma} = {})
   return porcentaje(d / 10, {conSigno, idioma});
 }
 
-/** Dólares desde centavos (string|number|bigint): «US[omitido: dato de cliente]»; con {decimales:true} «US[omitido: dato de cliente]». Negativo: «−US$1,234». Es el ÚNICO formato de dinero en pantalla. */
+/** Dólares desde centavos (string|number|bigint): «US$123,456»; con {decimales:true} «US$123,456.40». Negativo: «−US$1,234». Es el ÚNICO formato de dinero en pantalla. */
 export function usd(minor, {decimales = false, idioma} = {}) { return dinero(minor, 'USD', 2, {decimales, idioma}); }
 const SIMBOLO = Object.freeze({USD: 'US$', MXN: 'MX$', CAD: 'CA$'});
 /** Importe en unidades menores con moneda y exponente: «US$803,982», «MX$1,200», «EUR 50». Las monedas NO se convierten ni se suman. null => «—». */

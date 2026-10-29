@@ -1,7 +1,7 @@
 // Interfaz del generador de recomendaciones con IA ANCLADA EN EVIDENCIA (R4). Detrás de la bandera VEXA_RECS_AI (APAGADA por omisión).
 // Este módulo NO llama a ningún modelo por sí mismo: recibe un `cliente` inyectado (en pruebas, uno simulado). Sin cliente real, sin red, sin gasto.
 // Reglas por código, no por prompt: (1) entrada = solo cifras de insight_* y citas ya enmascaradas; (2) salida = JSON estricto; (3) toda cifra del texto debe existir en la entrada;
-// (4) el impacto es solo de INGRESO y solo si coincide con una cifra de la entrada (CLIENTEX no comparte costos: no hay margen ni utilidad); (5) presupuesto por recomendación y reserva antes de llamar.
+// (4) el impacto es solo de INGRESO y solo si coincide con una cifra de la entrada (cliente piloto no comparte costos: no hay margen ni utilidad); (5) presupuesto por recomendación y reserva antes de llamar.
 import {numbersIn, numbersGrounded} from '../agent-datos/contract.mjs';
 import {sinPII} from './borradores.mjs';
 

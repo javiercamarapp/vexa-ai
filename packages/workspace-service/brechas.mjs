@@ -1,4 +1,4 @@
-// «Brechas de ingreso» (/gaps): dónde gano, dónde pierdo y dónde podría ganar más. TODO es INGRESO BRUTO (jamás margen, utilidad ni ganancia: CLIENTEX no comparte costo por producto).
+// «Brechas de ingreso» (/gaps): dónde gano, dónde pierdo y dónde podría ganar más. TODO es INGRESO BRUTO (jamás margen, utilidad ni ganancia: cliente piloto no comparte costo por producto).
 // Lee SOLO insight_* precalculados (packages/insights/reader*.mjs); nada se agrega en vivo contra las tablas grandes. Cada parte puede quedar 'unavailable' («No disponible ahora»), JAMÁS 0.
 // Clases: Observado (hecho del libro/Tracker), Estimado (solo con supuestos tecleados por el usuario, en el navegador), Inferido (regla sobre datos observados; se rotula «regla»).
 // Reglas de honestidad: sin sumar monedas (USD aparte de CAD/MXN); meses parciales o con hueco de exportación nunca entran a una comparación mes contra mes; la intensidad de reembolso

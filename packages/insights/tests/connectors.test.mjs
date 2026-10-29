@@ -114,11 +114,11 @@ test('carpeta: un fallo de importación detiene la pasada, no deja recibo y se r
 });
 test('TrackerSource carpeta: versiones por orden de recepción, duplicados por contenido fuera, y syncTracker importa solo lo nuevo', async () => {
   const dir = await tmp(); const t = i => new Date(Date.now() - (10 - i) * 3600_000);
-  for (const [n, c, i] of [['CLIENTEX Tracker V2.xlsx', 'v1', 1], ['CLIENTEX Tracker V2 - copia.xlsx', 'v1', 2], ['CLIENTEX Tracker V2 - 20261008.xlsx', 'v2', 3], ['otro.xlsx', 'zz', 4]]) { await fs.writeFile(path.join(dir, n), c); await fs.utimes(path.join(dir, n), t(i), t(i)); }
+  for (const [n, c, i] of [['PILOTO Tracker V2.xlsx', 'v1', 1], ['PILOTO Tracker V2 - copia.xlsx', 'v1', 2], ['PILOTO Tracker V2 - 20261008.xlsx', 'v2', 3], ['otro.xlsx', 'zz', 4]]) { await fs.writeFile(path.join(dir, n), c); await fs.utimes(path.join(dir, n), t(i), t(i)); }
   const src = folderTrackerSource({dir}), vs = await src.listVersions();
-  assert.deepEqual(vs.map(v => v.label), ['CLIENTEX Tracker V2.xlsx', 'CLIENTEX Tracker V2 - 20261008.xlsx']); assert.deepEqual(src.describe(), {kind: 'folder', method: 'file_drop', location: path.basename(dir)});
+  assert.deepEqual(vs.map(v => v.label), ['PILOTO Tracker V2.xlsx', 'PILOTO Tracker V2 - 20261008.xlsx']); assert.deepEqual(src.describe(), {kind: 'folder', method: 'file_drop', location: path.basename(dir)});
   const receipts = memoryReceipts(), got = [], rec = [];
-  const r = await syncTracker({source: src, receipts, importer: async v => got.push([v.label, v.bytes.length]), record: async x => rec.push(x)}); assert.equal(r.imported.length, 2); assert.deepEqual(got, [['CLIENTEX Tracker V2.xlsx', 2], ['CLIENTEX Tracker V2 - 20261008.xlsx', 2]]);
+  const r = await syncTracker({source: src, receipts, importer: async v => got.push([v.label, v.bytes.length]), record: async x => rec.push(x)}); assert.equal(r.imported.length, 2); assert.deepEqual(got, [['PILOTO Tracker V2.xlsx', 2], ['PILOTO Tracker V2 - 20261008.xlsx', 2]]);
   assert.equal((await syncTracker({source: src, receipts, importer: async () => { throw Error('no'); }})).imported.length, 0); assert.deepEqual([rec[0].source, rec[0].method, rec[0].ok], ['tracker', 'file_drop', true]);
 });
 test('TrackerSource Google Sheets / OneDrive: contrato con transporte inyectable; apagado por defecto; secreto solo por referencia', async () => {

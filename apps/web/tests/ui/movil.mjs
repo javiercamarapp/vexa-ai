@@ -86,7 +86,7 @@ for(const theme of themes)for(const w of sizes){
    return {logo:!!svg,logoX:lr?.left,logoW:lr?.width,logoH:lr?.height,enlace:enlace?.getAttribute('href'),hb:hb.bottom,chip:!!c,cx:cr?.left,cw:cr?.width,ch:cr?.height,ctop:cr?.top,cbottom:cr?.bottom,nombre:org,txtBarra,circulares,solapes};});
   check(!!e&&e.logo,`${tag}: el logo de Rovaq no es visible en el encabezado móvil`);
   if(e){check(e.logo&&e.logoX<40&&e.logoW>=100&&e.logoH<=44,`${tag}: logo mal ubicado/dimensionado (x ${Math.round(e.logoX)}, ${Math.round(e.logoW)}×${Math.round(e.logoH)})`);check(e.enlace==='/overview'||/^\/overview(\?|$)/.test(e.enlace??''),`${tag}: el logo no enlaza a Inicio (${e.enlace})`);
-   check(!/demostraci|CLIENTEX|empresa de demo/i.test(e.txtBarra),`${tag}: texto de cliente en la barra («${e.txtBarra}»)`);check(e.circulares.length===0,`${tag}: avatar circular con letra suelta (${e.circulares.join(',')})`);check(!e.solapes,`${tag}: controles del encabezado solapados`);
+   check(!/demostraci|PILOTO|empresa de demo/i.test(e.txtBarra),`${tag}: texto de cliente en la barra («${e.txtBarra}»)`);check(e.circulares.length===0,`${tag}: avatar circular con letra suelta (${e.circulares.join(',')})`);check(!e.solapes,`${tag}: controles del encabezado solapados`);
    check(e.chip&&e.ctop>=0&&e.cbottom<=e.hb&&e.cw>=43.5&&e.ch>=43.5,`${tag}: el selector de empresa no está alcanzable en la barra (${Math.round(e.cw)}×${Math.round(e.ch)})`);check(/Empresa: .*demostraci.*Cambiar de empresa/i.test(e.nombre),`${tag}: el selector no nombra la empresa para lectores de pantalla (${e.nombre})`);}
   // 4) Caparazón: controles ≥44, texto ≥12, sin title como único nombre.
   const m=await page.evaluate(medirCaparazon,['.workspace-header','.workspace-bottom-nav']);

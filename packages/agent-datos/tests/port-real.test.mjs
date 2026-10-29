@@ -11,7 +11,7 @@ const T = '00000000-0000-4000-8000-0000000000aa';
 const SRC = { amazon: '67520fdd-0000-0000-0000-000000000001', walmart: '2e5c3942-0000-0000-0000-000000000002', shopify: '3d47b75d-0000-0000-0000-000000000003', bbCA: 'd35cdfa9-0000-0000-0000-000000000004', bbUS: 'a4eaa69c-0000-0000-0000-000000000005', amzRef: '8107854d-0000-0000-0000-000000000006', wmRef: 'e331c8c6-0000-0000-0000-000000000007' };
 const NAMES = [
   { source_id: SRC.amazon, name: 'Marketplace Amazon · Pedidos (export recibido 2026-10-05)' }, { source_id: SRC.walmart, name: 'Marketplace Walmart · Pedidos (export recibido 2026-10-05)' },
-  { source_id: SRC.shopify, name: 'Shopify CLIENTEX · Pedidos disponibles al 5 oct 2026' }, { source_id: SRC.bbCA, name: 'Marketplace Best Buy CA (Mirakl) · Pedidos (export recibido 2026-10-05)' },
+  { source_id: SRC.shopify, name: 'Shopify PILOTO · Pedidos disponibles al 5 oct 2026' }, { source_id: SRC.bbCA, name: 'Marketplace Best Buy CA (Mirakl) · Pedidos (export recibido 2026-10-05)' },
   { source_id: SRC.bbUS, name: 'Marketplace Best Buy US (Mirakl) · Pedidos (export recibido 2026-10-05)' },
   { source_id: SRC.amzRef, name: 'Marketplace Amazon · Devoluciones (export recibido 2026-10-05)' }, { source_id: SRC.wmRef, name: 'Marketplace Walmart · Devoluciones (export recibido 2026-10-05)' },
 ];

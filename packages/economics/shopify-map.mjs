@@ -1,5 +1,5 @@
 // Mapeo PURO de Shopify al contrato de economic_batch_import. Reproduce EXACTAMENTE las entradas que se cargaron el 6-oct
-// (clientex-shopify-economic-import-20261006.json) para que su reenvío sea `replayed` (idempotente) y para que pedidos
+// (shopify-economic-import.json) para que su reenvío sea `replayed` (idempotente) y para que pedidos
 // adicionales (p. ej. anteriores al 6-ago, si algún día se obtienen) entren con la misma identidad, base y redacción.
 import {sha256hex} from './marketplace-map.mjs';
 

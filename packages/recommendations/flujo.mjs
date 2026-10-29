@@ -1,6 +1,6 @@
 // Dominio PURO del flujo de aprobación de recomendaciones (sin red, sin base de datos, sin React). V1: un humano decide; nada se ejecuta solo.
 // Etapas visibles: propuesta -> ajustada -> aprobada -> en curso -> resultado (y «descartada» como salida lateral).
-// CLIENTEX no comparte costos: NINGÚN campo de este módulo habla de margen o utilidad; el impacto solo puede ser de INGRESO y solo si hay dato observado.
+// cliente piloto no comparte costos: NINGÚN campo de este módulo habla de margen o utilidad; el impacto solo puede ser de INGRESO y solo si hay dato observado.
 
 export const ROLES_QUE_DECIDEN = Object.freeze(['owner', 'analyst', 'operator']);
 export const puedeDecidir = rol => ROLES_QUE_DECIDEN.includes(rol);

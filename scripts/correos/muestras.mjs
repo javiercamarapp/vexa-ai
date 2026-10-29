@@ -63,7 +63,7 @@ export const WEEKLY_SAMPLE = Object.freeze({
   rangoCorto: '14–20 oct',
   corte: '20 oct',
   ingreso: {valor: 3_840_000, delta: 4.2},
-  reembolsos: {valor: 854_700, delta: 11},
+  reembolsos: {valor: 123_400, delta: 11},
   atorado: {valor: 212_000, delta: 2},
   vencidas: {valor: 14, antes: 6},
   hallazgo: {nSku: 10, pctSku: 59},

@@ -18,7 +18,7 @@ async function accessible(s,p,{maxRuns=VERIFY_MAX_RUNS}={}){const ids=p.embeddin
 /** Corridas utilizables según el veredicto «resumen» (ver list): Set de ids. Sin texto de evidencia; todas las consultas filtran por tenant_id=$1. */
 const UUID_RE="'^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'";
 // Memoizado por (transacción, conjunto de corridas): el catálogo, las señales críticas y el resto de vistas de UNA petición piden el mismo veredicto; dentro de una memoSection se calcula una sola vez
-// (≈6.5 s en frío para 8,761 corridas). Fuera de una sección (memoized sin memo) se calcula siempre. Nada cruza transacciones.
+// (≈6.5 s en frío para miles de corridas). Fuera de una sección (memoized sin memo) se calcula siempre. Nada cruza transacciones.
 const usableRunsSummary=(s,runIds)=>memoized(s,'usable-runs-summary:'+[...runIds].sort().join(','),async()=>(await usableRunsPrecalculado(s,runIds))??usableRunsSummaryUncached(s,runIds));
 // Veredicto PRECALCULADO (migración 20261114000000: insight_problem_run_verdict + problem_verdict_epoch; el cálculo SQL es el mismo que usableRunsSummaryBody y corre fuera de la petición).
 // Fail-closed: solo se usa si CADA corrida pedida tiene fila y su epoch es el vigente del tenant (los disparadores suben el epoch con cualquier borrado/lápida/retención/cambio de estado que
@@ -41,7 +41,7 @@ export async function usableRunsPrecalculado(s,runIds){
   return null;
  }
 }
-// Tope por sentencia: la acción de lectura trae 10 s y las verificaciones de evidencia del catálogo son costosas EN FRÍO (resumen: 8,761 corridas, 6.5–9 s; completa con redacted_text: ~13 s) y a veces
+// Tope por sentencia: la acción de lectura trae 10 s y las verificaciones de evidencia del catálogo son costosas EN FRÍO (resumen: miles de corridas, 6.5–9 s; completa con redacted_text: ~13 s) y a veces
 // las cancelaba y tumbaba la vista (503). Se sube SOLO para esa lectura acotada y se restaura; un tope deliberadamente menor del llamador (p. ej. señales críticas, 1.5 s) NO se amplía.
 const VERIFY_TIMEOUT_MS=45000;
 async function withVerifyTimeout(s,work){

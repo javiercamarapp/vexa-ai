@@ -9,7 +9,7 @@ import * as A from '../src/components/refunds/fuga-archivos.mjs';
 const v = await vistaSintetica();
 
 test('formato de dinero y textos: bruto y sin cancelados, concentración, cobertura y ventanas en una línea', () => {
-  assert.equal(M.usd('85472800'), 'US[omitido: dato de cliente]'); assert.equal(M.usd('50', {decimals: true}), 'US$0.50'); assert.equal(M.usd(null), '—');
+  assert.equal(M.usd('12345600'), 'US$123,456'); assert.equal(M.usd('50', {decimals: true}), 'US$0.50'); assert.equal(M.usd(null), '—');
   assert.match(M.fraseConcentracion(v), /^10 SKUs concentran el \d+(\.\d)? % del dinero devuelto\./);
   assert.match(M.lineaCobertura(v), /Amazon .* · Walmart .* · Shopify 13 reembolsos\. \d+ % de los de Amazon sin monto\. CAD no se suman \(4 reembolsos\)\./);
   const ven = M.lineaVentanas(v);
@@ -18,7 +18,7 @@ test('formato de dinero y textos: bruto y sin cancelados, concentración, cobert
 });
 test('periodo del titular: rango real, ventana por canal, nota si el periodo pedido no coincide y acumulado rotulado aparte', () => {
   const t = {status: 'ok', usdBrutoMinor: '5000000', n: 300, rango: {desde: '2026-08-03', hasta: '2026-09-18'}, canales: {walmart: {n: 200, desde: '2026-08-03', hasta: '2026-09-18'}, shopify: {n: 5, desde: '2026-08-10', hasta: '2026-09-02'}}};
-  const w = {titular: t, acumulado: {status: 'ok', scope: 'todo_el_libro', n: 6405, usdBrutoMinor: '85472777', usdNetoMinor: '73972184', rango: {desde: '2025-10-01', hasta: '2026-10-02'}}, scope: {dateStart: '2026-08-01', dateEnd: '2026-09-21'}};
+  const w = {titular: t, acumulado: {status: 'ok', scope: 'todo_el_libro', n: 1234, usdBrutoMinor: '12345649', usdNetoMinor: '9876543', rango: {desde: '2025-10-01', hasta: '2026-10-02'}}, scope: {dateStart: '2026-08-01', dateEnd: '2026-09-21'}};
   const p = M.periodoDelTitular(w);
   assert.equal(p.etiqueta, 'Reembolsos del 3 ago 2026 al 18 sep 2026');
   assert.deepEqual(p.ventanas, ['Walmart desde 3 ago 2026', 'Shopify desde 10 ago 2026']);
@@ -26,7 +26,7 @@ test('periodo del titular: rango real, ventana por canal, nota si el periodo ped
   assert.equal(p.acumulado, null, 'con periodo elegido no hay segundo titular con otra ventana'); assert.equal(p.acumuladoOmitido, true);
   const sin = M.periodoDelTitular({...w, scope: {dateStart: null, dateEnd: null}});
   assert.equal(sin.nota, null); assert.equal(sin.pedido, false); assert.equal(sin.acumuladoOmitido, false);
-  assert.match(sin.acumulado.texto, /US\[omitido: dato de cliente] brutos \(US\[omitido: dato de cliente]\.84 sin cancelados\) en 6,405 reembolsos\./);
+  assert.match(sin.acumulado.texto, /US\$123,456 brutos \(US\$98,765\.43 sin cancelados\) en 1,234 reembolsos\./);
   assert.match(M.periodoDelTitular({...w, titular: {...t, rango: null}}).nota, /No hay reembolsos cargados en el periodo elegido/);
   assert.equal(M.periodoDelTitular({titular: {status: 'unavailable'}}), null);
 });

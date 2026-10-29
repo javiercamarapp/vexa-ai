@@ -98,8 +98,8 @@ export function remuestrear(d, m) {
 
 // ---------- Shaders ----------
 const VS = `attribute vec3 aP0, aP1; attribute vec2 aN0, aN1; attribute vec3 aC0, aC1; attribute vec4 aS;
-uniform float uMix, uSolid, uTam, uDist, uAsp, uF, uEsc, uDust, uApert; uniform vec2 uRot; uniform vec3 uPtr;
-varying vec3 vN; varying vec3 vC; varying float vG, vA, vH;
+uniform float uMix, uSolid, uTam, uDist, uAsp, uF, uEsc, uDust, uApert, uTime; uniform mediump float uHalo; uniform vec2 uRot; uniform vec3 uPtr;
+varying vec3 vN; varying vec3 vC; varying float vG, vA, vH; varying vec2 vS;
 vec3 octa(vec2 e){ e = e * 2.0 - 1.0; vec3 v = vec3(e, 1.0 - abs(e.x) - abs(e.y)); if (v.z < 0.0) v.xy = (1.0 - abs(v.yx)) * vec2(v.x >= 0.0 ? 1.0 : -1.0, v.y >= 0.0 ? 1.0 : -1.0); return normalize(v); }
 void main(){
   vec3 dir = aS.xyz * 2.0 - 1.0;
@@ -117,22 +117,38 @@ void main(){
   vec3 cc = mix(aC0, aC1, te); float z = p.z + uDist - 0.07 * cc.z; // las aristas se adelantan un poco para no quedar tapadas por los granos de la cara
   gl_Position = vec4(p.x * uF / uAsp, p.y * uF, (z - 1.0) * 0.12, z);
   float hh = fract(sin(dot(aS.xyz, vec3(12.9898, 78.233, 37.719)) * 43758.5453) * 43758.5453);
+  if (uHalo > 0.5) { // modo halo: solo partículas finas que orbitan alrededor del objeto (el póster va debajo)
+    if (hh > 0.75) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); gl_PointSize = 0.0; vC = vec3(0.0); vN = n; vG = 0.0; vA = 0.0; vH = 0.0; vS = vec2(0.0); return; }
+    float u1 = hh / 0.75, u2 = fract(u1 * 137.507), a = uTime * (0.05 + 0.12 * u2) + u1 * 6.2831853, r = 1.0 + 0.24 * u2 * u2 * u2 + 0.05 * fract(u1 * 53.3), ca = cos(a), sa = sin(a);
+    vec3 q = vec3(sa * 0.58 * r, ca * 0.93 * r, ca * 0.35 * r * sign(u2 - 0.5) + (u2 - 0.5) * 0.18); // anillo elíptico alrededor del objeto (el póster va debajo)
+    q.xy = vec2(q.x * 0.97 - q.y * 0.2, q.x * 0.2 + q.y * 0.97);
+    z = q.z + uDist; gl_Position = vec4(q.x * uF / uAsp, q.y * uF, (z - 1.0) * 0.12, z);
+    vC = vec3(0.7, 0.0, 0.0); vN = vec3(0.0, 0.0, 1.0); vG = 0.0; vH = 0.0; vS = q.xy; vA = (0.35 + 0.65 * clamp((uDist + 0.8 - z) / 1.6, 0.0, 1.0)) * (0.5 + 0.5 * aS.w);
+    gl_PointSize = uTam * (0.75 + 0.7 * aS.w) * clamp(uDist / z, 0.7, 1.3); return;
+  }
   vG = step(hh, uSolid) * (1.0 - clamp(uDust * 2.0, 0.0, 1.0));
-  vC = mix(aC0, aC1, te); vN = n; vH = sw;
+  vC = mix(aC0, aC1, te); vN = n; vH = sw; vS = p.xy;
   vA = (1.0 - 0.45 * clamp(dd, 0.0, 1.0)) * (1.0 - 0.12 * sw);
-  gl_PointSize = uTam * mix(1.0 - 0.1 * sw, 2.2 - 0.9 * vC.z, vG) * clamp(uDist / z, 0.8, 1.3) * (1.0 - 0.5 * clamp(dd, 0.0, 1.0));
+  float fr = clamp((uDist + 1.0 - z) / 2.0, 0.0, 1.0); // 1 cerca, 0 lejos: el grano se afina con la profundidad
+  gl_PointSize = uTam * mix((1.0 - 0.1 * sw) * (1.0 + 1.3 * vC.y), 2.5 - 0.8 * vC.z + 1.1 * vC.y, vG) * (0.7 + 0.6 * fr) * (1.0 - 0.5 * clamp(dd, 0.0, 1.0));
 }`;
-const FS = `precision mediump float; uniform vec3 uTinta, uAcento, uSombra, uLuz; uniform float uFade, uAdit;
-varying vec3 vN; varying vec3 vC; varying float vG, vA, vH;
+const FS = `precision mediump float; uniform vec3 uTinta, uAcento, uSombra, uLuz; uniform float uFade, uAdit, uHalo, uSweep, uClaro;
+varying vec3 vN; varying vec3 vC; varying float vG, vA, vH; varying vec2 vS;
 void main(){
   vec2 c = gl_PointCoord - 0.5; float r = dot(c, c); if (r > 0.25) discard;
-  vec3 nn = normalize(vN), L = normalize(vec3(-0.5, 0.75, 0.55));
-  float dif = clamp(dot(nn, L), 0.0, 1.0), ndl = dif * 0.7 + 0.3, rim = pow(1.0 - clamp(abs(nn.z), 0.0, 1.0), 2.4), cara = nn.z > -0.05 ? 1.0 : 0.07;
-  float luz = 0.2 + 0.7 * pow(dif, 1.1) * (0.5 + 0.5 * vC.x) + rim * (0.4 + 0.4 * dif) + vC.z * 0.5;
-  vec3 solido = mix(uSombra, uLuz, clamp(luz, 0.0, 1.0)); solido = mix(solido, uAcento, vC.y);
+  if (uHalo > 0.5) { float h = smoothstep(0.25, 0.0, r) * vA * 0.8; gl_FragColor = vec4(uTinta * h, h * (1.0 - 0.0 * uClaro)); return; }
+  vec3 nn = normalize(vN), L = normalize(vec3(-0.5, 0.75, 0.55)), Hh = normalize(L + vec3(0.0, 0.0, 1.0));
+  float dif = clamp(dot(nn, L), 0.0, 1.0), ndl = dif * 0.7 + 0.3, cara = nn.z > -0.05 ? 1.0 : 0.05;
+  float fres = pow(1.0 - clamp(abs(nn.z), 0.0, 1.0), 2.2), lado = clamp(dot(nn.xy, normalize(vec2(-0.5, 0.85))) * 0.5 + 0.5, 0.0, 1.0);
+  float spec = pow(clamp(dot(nn, Hh), 0.0, 1.0), 24.0), barrido = smoothstep(-0.7, 0.9, dot(vS, vec2(-0.55, 0.8)));
+  float luz = 0.05 + 0.75 * pow(dif, 1.4) * (0.45 + 0.55 * vC.x) + 1.1 * fres * (0.25 + 0.9 * lado * lado) + 0.9 * spec + (0.35 + 0.9 * smoothstep(0.75, 0.97, nn.z)) * barrido * barrido * barrido + vC.z * 1.0;
+  float b = exp(-pow((dot(vS, vec2(0.86, 0.5)) - mix(-1.5, 1.5, uSweep)) / 0.26, 2.0)) * step(0.0, uSweep) * step(uSweep, 1.0);
+  luz += 2.2 * b * cara;
+  vec3 solido = mix(uSombra, uLuz, clamp(luz, 0.0, 1.0)); solido = mix(solido, uAcento * (1.0 + 0.5 * uClaro * 0.0) , vC.y); solido += uAcento * vC.y * 0.25;
   vec3 nube = mix(uTinta * (0.5 + 0.5 * ndl), uAcento, vC.y);
-  float aS = smoothstep(0.25, 0.1, r) * cara, aN = smoothstep(0.25, 0.08, r) * vA * uFade;
-  vec3 col = mix(nube, solido, vG); float a = clamp(mix(aN, aS, vG), 0.0, 1.0);
+  float aS = smoothstep(0.25, 0.04, r) * cara * (0.8 + 0.6 * clamp(luz, 0.0, 1.0) + vC.y), aN = smoothstep(0.25, 0.04, r) * vA * uFade;
+  solido = mix(solido, uTinta * 1.15, clamp(b * 0.85, 0.0, 1.0) * cara);
+  vec3 col = mix(nube, solido, vG); float a = clamp(mix(aN, aS * (1.0 + 1.2 * b), vG), 0.0, 1.0);
   gl_FragColor = vec4(col * a, a * mix(uAdit, 1.0, vG));
 }`;
 
@@ -140,7 +156,7 @@ void main(){
 function leeColor(ctx, valor, defecto) { try { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = '#000'; ctx.fillStyle = valor || defecto; ctx.fillRect(0, 0, 1, 1); const d = ctx.getImageData(0, 0, 1, 1).data; return [d[0] / 255, d[1] / 255, d[2] / 255]; } catch { return [0.5, 0.5, 0.5]; } }
 
 export function crearNube(canvas, opciones = {}) {
-  const O = {nivel: null, dprMax: 1.5, puntero: false, puntos: 0, modelos: null, regulador: true, ...opciones};
+  const O = {nivel: null, dprMax: 1.5, puntero: false, puntos: 0, modelos: null, regulador: true, modo: 'puntos', ...opciones};
   const est = (e) => { canvas.dataset.estado = e; };
   if (!canvas.hasAttribute('data-nube')) canvas.dataset.nube = '';
   const nav = typeof navigator !== 'undefined' ? navigator : {};
@@ -152,8 +168,8 @@ export function crearNube(canvas, opciones = {}) {
   const lista = [], porClave = new Map(); // {clave, url, datos, pend}
   let nivel = O.nivel || elegirNivel({ancho: innerWidth, memoria: nav.deviceMemory ?? 8, ahorro: nav.connection?.saveData, tipoRed: nav.connection?.effectiveType}), gl = null, prog = null, u = {}, a = {}, destruida = false;
   const reducido = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const API = {};
-  const respaldo = () => { est('respaldo'); const v = () => Promise.resolve(-1); Object.assign(API, {cargar: v, mostrar: v, mezcla() {}, progreso() {}, tema() {}, pausar() {}, reanudar() {}, destruir() {}, estado: 'respaldo', nivel: nivel || 'bajo'}); return API; };
+  const API = {}; Object.defineProperties(API, {estado: {get: () => canvas.dataset.estado}, nivel: {get: () => nivel || 'bajo'}});
+  const respaldo = () => { est('respaldo'); const v = () => Promise.resolve(-1); Object.assign(API, {cargar: v, mostrar: v, mezcla() {}, progreso() {}, tema() {}, pausar() {}, reanudar() {}, destruir() {}, destello() {}}); return API; };
   if (!nivel || reducido) return respaldo();
   try { gl = canvas.getContext('webgl', {alpha: true, antialias: false, depth: true, premultipliedAlpha: true, powerPreference: innerWidth < 760 ? 'low-power' : 'high-performance', failIfMajorPerformanceCaveat: true}); } catch { gl = null; }
   if (!gl) return respaldo();
@@ -179,11 +195,11 @@ export function crearNube(canvas, opciones = {}) {
     gl.uniform3fv(u.uTinta, t.tinta); gl.uniform3fv(u.uAcento, t.acento); gl.uniform3fv(u.uSombra, sombra); gl.uniform3fv(u.uLuz, luz); gl.uniform1f(u.uAdit, claro ? 1 : 0.42);
   }
   function compila() {
-    const sh = (tipo, src) => { const o = gl.createShader(tipo); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; };
-    const v = sh(gl.VERTEX_SHADER, VS), f = sh(gl.FRAGMENT_SHADER, FS); if (!v || !f) return false;
-    prog = gl.createProgram(); gl.attachShader(prog, v); gl.attachShader(prog, f); gl.linkProgram(prog); if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return false;
+    const sh = (tipo, src) => { const o = gl.createShader(tipo); gl.shaderSource(o, src); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS) && O.depurar) console.error(gl.getShaderInfoLog(o)); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; };
+    const v = sh(gl.VERTEX_SHADER, VS), f = sh(gl.FRAGMENT_SHADER, FS); if (!v || !f) { if (O.depurar) console.error('shader', !!v, !!f); return false; }
+    prog = gl.createProgram(); gl.attachShader(prog, v); gl.attachShader(prog, f); gl.linkProgram(prog); if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { if (O.depurar) console.error(gl.getProgramInfoLog(prog)); return false; }
     gl.useProgram(prog); u = {}; a = {};
-    for (const k of ['uMix', 'uSolid', 'uTam', 'uDist', 'uAsp', 'uF', 'uEsc', 'uDust', 'uApert', 'uRot', 'uPtr', 'uFade', 'uAdit', 'uTinta', 'uAcento', 'uSombra', 'uLuz']) u[k] = gl.getUniformLocation(prog, k);
+    for (const k of ['uMix', 'uSolid', 'uTam', 'uDist', 'uAsp', 'uF', 'uEsc', 'uDust', 'uApert', 'uRot', 'uPtr', 'uFade', 'uAdit', 'uHalo', 'uTime', 'uSweep', 'uClaro', 'uTinta', 'uAcento', 'uSombra', 'uLuz']) u[k] = gl.getUniformLocation(prog, k);
     for (const k of ['aP0', 'aP1', 'aN0', 'aN1', 'aC0', 'aC1', 'aS']) a[k] = gl.getAttribLocation(prog, k);
     gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL); gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); gl.clearColor(0, 0, 0, 0); return true;
   }
@@ -203,7 +219,7 @@ export function crearNube(canvas, opciones = {}) {
     if (canvas.width !== cw || canvas.height !== ch) { canvas.width = cw; canvas.height = ch; }
     gl.viewport(0, 0, cw, ch);
     const px = cw / w, objPx = Math.min(h, w) * dim.fill; // píxeles CSS que mide el objeto
-    dim = {...dim, w, h, dpr: px, asp: w / h, tam: clamp(1.3, 3.4, 2.2 * objPx / 547) * px}; S.sucio = true; return true;
+    dim = {...dim, w, h, dpr: px, asp: w / h, tam: ({alto: 1.5, medio: 1.3, bajo: 1.15}[nivel] || 1.3) * clamp(0.85, 1.3, objPx / 547)}; S.sucio = true; return true;
   }
   function enlaza(A, B) {
     const par = (g, p, n, c) => { gl.bindBuffer(gl.ARRAY_BUFFER, g.pos); gl.enableVertexAttribArray(a[p]); gl.vertexAttribPointer(a[p], 3, gl.FLOAT, false, 12, 0); gl.bindBuffer(gl.ARRAY_BUFFER, g.att); gl.enableVertexAttribArray(a[n]); gl.vertexAttribPointer(a[n], 2, gl.UNSIGNED_BYTE, true, 8, 0); gl.enableVertexAttribArray(a[c]); gl.vertexAttribPointer(a[c], 3, gl.UNSIGNED_BYTE, true, 8, 2); };
@@ -234,7 +250,8 @@ export function crearNube(canvas, opciones = {}) {
     const t = determinista ? 0 : (performance.now() - t0) / 1000, deriva = Math.sin(t * 0.286) * 0.35, ptr = S.ptr;
     gl.uniform1f(u.uMix, S.mix); gl.uniform1f(u.uSolid, Math.max(0, solido) * (1 - clamp(0, 1, S.dust * 2))); gl.uniform1f(u.uTam, dim.tam); gl.uniform1f(u.uDist, dist); gl.uniform1f(u.uAsp, dim.asp); gl.uniform1f(u.uF, F);
     gl.uniform1f(u.uEsc, S.esc); gl.uniform1f(u.uDust, S.dust); gl.uniform1f(u.uApert, S.apert ?? 0.07); gl.uniform2f(u.uRot, S.rotBase + deriva + ptr.ox.x, ptr.oy.x + S.dust * 0.2);
-    gl.uniform3f(u.uPtr, ptr.px || 0, ptr.py || 0, ptr.f); gl.uniform1f(u.uFade, fade);
+    gl.uniform3f(u.uPtr, ptr.px || 0, ptr.py || 0, ptr.f); gl.uniform1f(u.uFade, fade); gl.uniform1f(u.uHalo, O.modo === 'halo' ? 1 : 0); gl.uniform1f(u.uTime, t);
+    const sw = S.swManual != null ? S.swManual : S.sw0 ? (performance.now() - S.sw0) / 1200 : -1; gl.uniform1f(u.uSweep, sw > 1 ? -1 : sw); // destello: una pasada de 1.2 s al condensarse
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); gl.drawArrays(gl.POINTS, 0, n);
   }
   function cuadro(ahora) {
@@ -243,7 +260,7 @@ export function crearNube(canvas, opciones = {}) {
     if (activo) reposo = ahora; const lento = !activo && ahora - reposo > 1500;
     if (lento && dtMs < 31) { raf = requestAnimationFrame(cuadro); return; } // reposo: 30 cuadros por segundo
     ult = ahora; const dt = Math.min(0.05, dtMs / 1000); S.dustPrev = S.dust;
-    if (S.anim) { S.anim.t += dtMs / 1000 / S.anim.dur; if (S.anim.t >= 1) { S.mix = 1; S.anim = null; S.de = S.a; S.deTmp = false; S.mix = 0; S.mixModo = false; S.sol0 = 1; } else S.mix = S.anim.t; }
+    if (S.anim) { S.anim.t += dtMs / 1000 / S.anim.dur; if (S.anim.t >= 1) { S.mix = 1; S.anim = null; S.de = S.a; S.deTmp = false; S.mix = 0; S.mixModo = false; S.sol0 = 1; S.sw0 = performance.now(); } else S.mix = S.anim.t; }
     const P = S.ptr; if (!determinista && O.puntero) { P.ox = pasoResorte(P.ox, P.tx * 0.052, dt); P.oy = pasoResorte(P.oy, -P.ty * 0.052, dt); P.f += ((P.dentro ? 1 : 0) - P.f) * (P.dentro ? 0.12 : 0.04); }
     dibuja(); cuadros++; canvas.dataset.cuadros = String(cuadros); canvas.dataset.nivel = nivel; est('activa');
     if (!lento && !determinista && O.regulador && reg.muestra(dtMs) && !S.anim) bajaNivel(); // con webdriver no hay regulador: las capturas no deben degradarse
@@ -295,10 +312,12 @@ export function crearNube(canvas, opciones = {}) {
   // Progreso 0 a 1 del héroe en su pista: el sólido se vuelve polvo y el objeto crece (el remapeo detiene la cámara donde está el texto).
   API.progreso = (p) => { const f = remapeo(p); S.dust = Math.max(0, f - 0.04) / 0.96 * 0.9; S.esc = 1 + 0.9 * f; S.rotBase = f * 0.9; S.sucio = true; arranca(); };
   API.tema = (c) => { if (c) { const col = (x) => (typeof x === 'string' ? leeColor(ctx2d(), x, '#888') : x); tema = {tinta: col(c.tinta) || tema.tinta, acento: col(c.acento) || tema.acento, fondo: col(c.fondo) || tema.fondo}; temaFijo = true; } else { temaFijo = false; leeTema(); } S.sucio = true; };
+  // Destello de luz que recorre la forma de lado a lado (1.2 s). Sin argumento lo lanza; con un número fija su avance 0..1 (capturas); con null vuelve al modo normal.
+  API.destello = (p) => { if (p === undefined) { S.swManual = null; S.sw0 = performance.now(); } else S.swManual = p; arranca(); };
   API.pausar = () => { pausadoManual = true; };
   API.reanudar = () => { pausadoManual = false; arranca(); };
   API.destruir = () => destruye(true);
-  Object.defineProperties(API, {estado: {get: () => canvas.dataset.estado}, nivel: {get: () => nivel}});
+  
 
   // ---------- observadores ----------
   const onVis = () => { oculto = document.hidden; if (oculto) { if (raf) cancelAnimationFrame(raf); raf = 0; est('pausada'); } else arranca(); };

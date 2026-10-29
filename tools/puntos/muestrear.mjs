@@ -15,13 +15,13 @@ import crypto from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {codificar} from './pts3.mjs';
 
-export const FRACCION_ARISTAS = 0.22, ANGULO_ARISTA = 62;
+export const FRACCION_ARISTAS = 0.35, ANGULO_ARISTA = 62;
 const rad = (g) => g * Math.PI / 180;
 // Pose (grados, en orden Y, X, Z), cantidad de puntos y regla de la marca roja (en el espacio ya normalizado y girado).
 const esfera = (c, r, f) => (p, n) => Math.hypot(p[0] - c[0], p[1] - c[1], p[2] - c[2]) < r && (!f || f(p, n));
 // base: giro que deja el objeto de frente (x a la derecha, y arriba, z hacia el visor). rojo: regla en ese marco. vista: giro de tres cuartos que se hornea en los puntos.
 export const OBJETOS = {
-  hero: {n: 12000, base: [90, 0, 0], vista: [-32, 8, 0], rojo: esfera([0.62, -0.66, 0.2], 0.1, (p) => p[2] > 0.12)},
+  hero: {n: 12000, angulo: 52, base: [90, 0, 0], vista: [-32, 8, 0], rojo: esfera([0.62, -0.66, 0.2], 0.1, (p) => p[2] > 0.12)},
   o1: {n: 9000, base: [0, 0, 0], vista: [-42, 7, 0], rojo: 'pico'},
   o2: {n: 9000, base: [90, 0, 0], vista: [-20, 8, 0], rojo: esfera([-0.65, 0.14, 0], 0.07)},
   o3: {n: 9000, base: [0, 0, 0], vista: [-20, 0, 0], rojo: (p, n) => Math.abs(p[1] - 0.13) < 0.016 && n[2] > 0.25},
@@ -60,15 +60,15 @@ export function muestreaTris(tris0, nombre, cfg) {
   // Aristas por vértice soldado: compartidas por dos triángulos (diedro) o por uno solo (contorno abierto).
   const mapa = new Map();
   util.forEach((t, i) => { for (let e = 0; e < 3; e++) { const a = t.ids[e], b = t.ids[(e + 1) % 3], k = a < b ? a * 4194304 + b : b * 4194304 + a; (mapa.get(k) ?? mapa.set(k, []).get(k)).push([i, t.P[e], t.P[(e + 1) % 3]]); } });
-  const aristas = [], cos = Math.cos(rad(ANGULO_ARISTA));
+  const aristas = [], cos = Math.cos(rad(cfg.angulo || ANGULO_ARISTA));
   for (const [, l] of mapa) {
     const len = Math.hypot(...sub(l[0][1], l[0][2])); if (len < 0.004) continue;
-    if (l.length === 2) { const t0 = util[l[0][0]], t1 = util[l[1][0]], d = t0.fn[0] * t1.fn[0] + t0.fn[1] * t1.fn[1] + t0.fn[2] * t1.fn[2], ang = Math.acos(Math.max(-1, Math.min(1, d))); t0.curv = Math.max(t0.curv, ang); t1.curv = Math.max(t1.curv, ang); if (d < cos) aristas.push({a: l[0][1], b: l[0][2], len, n: norma([t0.fn[0] + t1.fn[0], t0.fn[1] + t1.fn[1], t0.fn[2] + t1.fn[2]]), peso: 1}); }
-    else if (l.length === 1) aristas.push({a: l[0][1], b: l[0][2], len, n: util[l[0][0]].fn, peso: 1.4});
+    if (l.length === 2) { const t0 = util[l[0][0]], t1 = util[l[1][0]], d = t0.fn[0] * t1.fn[0] + t0.fn[1] * t1.fn[1] + t0.fn[2] * t1.fn[2], ang = Math.acos(Math.max(-1, Math.min(1, d))); const plano = Math.abs(t0.fn[2]) > 0.7 && Math.abs(t1.fn[2]) > 0.7; /* pliegues de ruido dentro de una cara plana al visor */ if (!plano) { t0.curv = Math.max(t0.curv, ang); t1.curv = Math.max(t1.curv, ang); } if (d < cos && !plano) aristas.push({a: l[0][1], b: l[0][2], len, n: norma([t0.fn[0] + t1.fn[0], t0.fn[1] + t1.fn[1], t0.fn[2] + t1.fn[2]]), peso: 1}); }
+    else if (l.length === 1 && Math.abs(util[l[0][0]].fn[2]) < 0.7) aristas.push({a: l[0][1], b: l[0][2], len, n: util[l[0][0]].fn, peso: 1.4});
   }
   const acum = (lista, peso) => { const ac = new Float64Array(lista.length); let tot = 0; lista.forEach((x, i) => { tot += peso(x); ac[i] = tot; }); return {ac, tot}; };
   const pick = ({ac, tot}, r) => { const x = r * tot; let lo = 0, hi = ac.length - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (ac[m] < x) lo = m + 1; else hi = m; } return lo; };
-  const sup = acum(util, (t) => t.area * (1 + 1.2 * Math.min(1, t.curv / 1.2))), edg = acum(aristas, (e) => e.len * e.peso);
+  const sup = acum(util, (t) => t.area * (0.45 + 2.5 * Math.min(1, t.curv / 1.2))), edg = acum(aristas, (e) => e.len * e.peso);
   const nAr = aristas.length ? Math.round(N * FRACCION_ARISTAS) : 0, rnd = mulberry32(semilla(nombre)), pts = [];
   for (let i = 0; i < N - nAr; i++) {
     const t = util[pick(sup, rnd())]; let r1 = rnd(), r2 = rnd(); if (r1 + r2 > 1) { r1 = 1 - r1; r2 = 1 - r2; }

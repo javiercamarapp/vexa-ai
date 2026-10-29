@@ -113,3 +113,44 @@ test('RLS-01: la API directa deja leer contenido solo a owner/analyst; viewer y 
  });
  }finally{await pg.stop();}
 });
+
+test('LIFE-02: retention_erase vacía las celdas del Tracker del ticket borrado y la reingesta no las revive',async t=>{
+ const pg=await startLocalPg({label:'sec29c'});try{
+ const db='s29c',conn='10000000-0000-4000-8000-000000000001',rid=n=>`50000000-0000-4000-8000-00000000000${n}`;
+ pg.createDb(db);pg.applySchema(db,{upTo:BASE});seedTenants(pg,db);
+ pg.sql(db,`insert into public.connections(id,tenant_id,source,account_id) values ('${conn}','${A}','syn','acc');
+  insert into public.retention_policies(tenant_id,version,backup_ttl_seconds,active_erasure,business_history,actor_id) values ('${A}',1,3600,'immediate','retain-authorized-audit','${U.owner}');
+  insert into public.conversations(id,tenant_id,source,external_id,connection_id) values ('20000000-0000-4000-8000-000000000001','${A}','gorgias','gorgias:555','${conn}'),('20000000-0000-4000-8000-000000000002','${A}','gorgias','gorgias:777','${conn}'),('20000000-0000-4000-8000-000000000003','${A}','hubspot','999','${conn}');
+  insert into public.tracker_versions(id,tenant_id,connection_id,file_sha256,rank) values ('60000000-0000-4000-8000-000000000001','${A}','${conn}','${'a'.repeat(64)}',1);
+  set session_replication_role=replica;`);
+ const rev=(n,ticket,secret)=>`insert into public.tracker_row_revisions(id,tenant_id,connection_id,sheet_name,row_number,row_hash,cells,ticket_state,ticket_id,ticket_cell,first_version_id) values ('7000000${n}-0000-4000-8000-000000000001','${A}','${conn}','Refunds',${n},'${String(n).repeat(64).slice(0,64)}','[{"col":1,"v":"${secret}"}]','linked',${ticket?`'${ticket}'`:'null'},'A${n}','60000000-0000-4000-8000-000000000001');`;
+ const cells=n=>pg.sql(db,`select cells::text||'|'||coalesce(ticket_id,'~') from public.tracker_row_revisions where row_number=${n}`);
+ const erase=(ext,n)=>pg.sql(db,`begin; set local role vexa_backend; set local request.jwt.claim.sub='${U.owner}'; set local vexa.tenant_id='${A}'; set local vexa.action='retain';
+  select public.retention_erase('{"connectionId":"${conn}","entityType":"conversation","externalId":"${ext}","requestId":"${rid(n)}","confirmed":"true"}'::jsonb); commit;`);
+ pg.sql(db,[1,2,3,4].map(n=>rev(n,['555','777','999','12345'][n-1],'dato-personal-'+n)).join('\n'));
+ await t.test('ANTES: el defecto existe, el borrado de la conversación deja las celdas del Tracker',()=>{
+  erase('gorgias:777',1);assert.match(cells(2),/dato-personal-2.*\|777/);
+ });
+ pg.file(db,mig('20261205000200_retention_erase_tracker.sql'));
+ await t.test('DESPUÉS: borra solo las celdas del ticket (con y sin prefijo de proveedor); el resto del Tracker queda intacto',()=>{
+  erase('gorgias:555',2);assert.equal(cells(1),'[]|~','ticket 555 vaciado');
+  erase('999',3);assert.equal(cells(3),'[]|~','ticket 999 sin prefijo vaciado');
+  assert.match(cells(4),/dato-personal-4.*\|12345/,'ticket ajeno intacto');
+  assert.match(cells(2),/dato-personal-2.*\|777/,'borrado anterior a la migración no se reescribe aquí (ver APLICAR: repetir el borrado)');
+ });
+ await t.test('las cabezas por fila (tracker_row_heads) ya no devuelven las celdas borradas',()=>{
+  pg.sql(db,`insert into public.tracker_row_observations(tenant_id,version_id,sheet_name,row_number,revision_id) values ('${A}','60000000-0000-4000-8000-000000000001','Refunds',1,'70000001-0000-4000-8000-000000000001'),('${A}','60000000-0000-4000-8000-000000000001','Refunds',4,'70000004-0000-4000-8000-000000000001');`);
+  assert.equal(pg.sql(db,`select cells::text from public.tracker_row_heads where row_number=1`),'[]');
+  assert.match(pg.sql(db,`select cells::text from public.tracker_row_heads where row_number=4`),/dato-personal-4/);
+ });
+ await t.test('reingesta: una fila nueva de un ticket borrado entra vacía; la de otro ticket entra con sus celdas',()=>{
+  pg.sql(db,rev(5,'555','nuevo-dato-5')+rev(6,'888','nuevo-dato-6'));
+  assert.equal(cells(5),'[]|~');assert.match(cells(6),/nuevo-dato-6.*\|888/);
+ });
+ await t.test('la ledger firmada registra el borrado y la función sigue exigiendo owner y confirmación',()=>{
+  assert.equal(pg.sql(db,`select count(*) from public.retention_ledger where entity_type='conversation' and external_id in ('gorgias:555','999')`),'2');
+  assert.throws(()=>pg.sql(db,`begin; set local role vexa_backend; set local request.jwt.claim.sub='${U.viewer}'; set local vexa.tenant_id='${A}'; set local vexa.action='retain';
+   select public.retention_erase('{"connectionId":"${conn}","entityType":"conversation","externalId":"gorgias:777","requestId":"${rid(9)}","confirmed":"true"}'::jsonb); commit;`),/insufficient_privilege|privilege/i);
+ });
+ }finally{await pg.stop();}
+});

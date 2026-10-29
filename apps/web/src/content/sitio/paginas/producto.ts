@@ -14,7 +14,7 @@ const no = b('No', 'No');
 export const PRODUCTO_INDICE: Pagina = {
   id: 'producto',
   estado: 'pendiente-de-revision',
-  pendiente: 'El índice enlaza pantallas con condiciones MATIZ sin verificar: Problemas, Pregúntale a tus datos, Por decidir, Carga y SLA y Fuentes e importaciones (condiciones 2, 3, 4, 8 y 9).',
+  pendiente: 'El índice enlaza pantallas con condiciones MATIZ sin verificar: Problemas (condición 7), Carga y SLA y Fuentes e importaciones (condiciones 8 y 9).',
   seo: {
     titulo: b('Producto | Diez pantallas con una pregunta cada una', 'Product | Ten Screens, Each With One Question | Rovaq AI'),
     descripcion: b(
@@ -179,7 +179,7 @@ export const PRODUCTO_FUGA: Pagina = pantalla({
 export const PRODUCTO_PROBLEMAS: Pagina = pantalla({
   id: 'producto/problemas',
   estado: 'pendiente-de-revision',
-  pendiente: 'Condiciones 3 y 7: extracción habilitada en la organización piloto y exposición solo con vínculos de problema a pedido confirmados. Revisión de Responsable A.',
+  pendiente: 'Condición 7: exposición solo con vínculos de problema a pedido confirmados; problem_conversations tiene 0 filas al 2026-10-29. Revisión de Responsable A.',
   seo: {
     titulo: b('Problemas | Lo que dicen tus clientes, con evidencia', 'Problems | What Your Customers Say, With Evidence | Rovaq AI'),
     descripcion: b(
@@ -195,10 +195,10 @@ export const PRODUCTO_PROBLEMAS: Pagina = pantalla({
       titulo: b('De conversaciones a problemas', 'From conversations to problems'),
       texto: m(
         3,
-        'La agrupación con modelos de IA se habilita por organización; sin extracción habilitada, retirar la agrupación en problemas.',
+        'Estado al 2026-10-29: la extracción corre en producción, casi toda por lotes, y problem_conversations tiene 0 filas. Se redacta como capacidad y sin extracción en vivo por conversación nueva.',
         b(
-          'Las conversaciones se agrupan en problemas con volumen, estado de cobertura y citas verificables. La agrupación con modelos de IA se habilita por organización y una persona revisa la agrupación.',
-          'Conversations are grouped into problems with volume, coverage status and verifiable quotes. Grouping with AI models is enabled per organization and a person reviews the grouping.',
+          'Cada problema se presenta con su volumen, su estado de cobertura y su evidencia cuando hay vínculos confirmados. La agrupación con modelos de IA se habilita por organización, se procesa por lotes y una persona la revisa.',
+          'Each problem is presented with its volume, its coverage status and its evidence when links are confirmed. Grouping with AI models is enabled per organization, runs in batches and a person reviews it.',
         ),
       ),
     },
@@ -206,7 +206,7 @@ export const PRODUCTO_PROBLEMAS: Pagina = pantalla({
       tipo: 'lista',
       titulo: b('Citas enmascaradas', 'Masked quotes'),
       items: [
-        b('Cada problema abre una ficha con cifras, tendencia mensual y citas con correos y teléfonos enmascarados.', 'Each problem opens a record with figures, a monthly trend and quotes with masked emails and phone numbers.'),
+        b('Cada problema abre una ficha con cifras, tendencia mensual y citas con correos y teléfonos enmascarados, cuando hay vínculos confirmados.', 'Each problem opens a record with figures, a monthly trend and quotes with masked emails and phone numbers, when links are confirmed.'),
         b('La evidencia se puede recorrer hasta la fila de origen y la ficha dice qué acceso se comprobó en cada paso.', 'The evidence can be followed to the source row and the record says which access was checked at each step.'),
       ],
     },
@@ -232,9 +232,8 @@ export const PRODUCTO_PROBLEMAS: Pagina = pantalla({
 
 export const PRODUCTO_PUNTOS: Pagina = pantalla({
   id: 'producto/puntos-de-dolor',
-  estado: 'pendiente-de-revision',
-  pendiente: 'Condición 3: extracción habilitada en la organización piloto.',
-  seo: {
+  estado: 'publicable',
+    seo: {
     titulo: b('Puntos de dolor | Qué motivo se repite y cuánto arrastra', 'Pain Points | Which Reason Repeats and What It Carries'),
     descripcion: b(
       'De las conversaciones de soporte a un mapa de burbujas por volumen o por dinero. Exporta sin datos personales y separa lo que se repite de lo que importa.',
@@ -274,8 +273,7 @@ export const PRODUCTO_PUNTOS: Pagina = pantalla({
 
 export const PRODUCTO_PREGUNTALE: Pagina = pantalla({
   id: 'producto/pregunta-a-tus-datos',
-  estado: 'pendiente-de-revision',
-  pendiente: 'Condición 2: confirmar que el modo con IA de Pregúntale no está encendido en producción. Si lo está, se reescribe esta página.',
+  estado: 'publicable',
   seo: {
     titulo: b('Pregúntale a tus datos | Cifras calculadas, pasos visibles', 'Ask Your Data | Calculated Figures, Visible Steps | Rovaq AI'),
     descripcion: b(
@@ -291,7 +289,7 @@ export const PRODUCTO_PREGUNTALE: Pagina = pantalla({
       titulo: b('Cómo se calcula una respuesta', 'How an answer is calculated'),
       texto: m(
         2,
-        'Corre con reglas y herramientas de solo lectura, sin modelo de lenguaje. Si el modo con IA se enciende en producción, se reescribe.',
+        'Verificada por código el 2026-10-29: el agente general corre en modo determinista, sin interruptor de IA. Si se agrega un rol data_agent al gateway, esta página se reescribe.',
         b(
           'Escribes una pregunta y recibes cifras, tablas y gráficas, cada una con su clase y su cobertura. Las cifras salen de herramientas de solo lectura y se calculan con reglas, sin modelo de lenguaje.',
           'You type a question and get figures, tables and charts, each with its class and coverage. Figures come from read-only tools and are calculated with rules, without a language model.',
@@ -311,6 +309,7 @@ export const PRODUCTO_PREGUNTALE: Pagina = pantalla({
       tipo: 'limites',
       titulo: b('Qué no hace', 'What it does not do'),
       items: [
+        b('Esto describe el agente general de esta pantalla. El modo de Finanzas tiene su propio motor y no afirmamos que sea solo de reglas.', 'This describes the general agent of this screen. The Finance mode has its own engine and we do not claim it is rules only.'),
         b('No usa un modelo de lenguaje para responder y no busca en internet.', 'It does not use a language model to answer and does not search the internet.'),
         b('Cuando no tiene el dato, lo dice y no lo inventa. Si la pregunta no corresponde a una consulta disponible, pide aclararla.', 'When it does not have the data, it says so and does not invent it. If the question does not match an available query, it asks you to clarify.'),
         b('El presupuesto mensual limita las consultas; al agotarse quedan las consultas directas.', 'The monthly budget limits queries; when it runs out, direct queries remain.'),
@@ -326,8 +325,7 @@ export const PRODUCTO_PREGUNTALE: Pagina = pantalla({
 
 export const PRODUCTO_POR_DECIDIR: Pagina = pantalla({
   id: 'producto/por-decidir',
-  estado: 'pendiente-de-revision',
-  pendiente: 'Condición 4: confirmar que la migración del flujo de Acciones está aplicada en producción. Sin ella, Proceder, Ajustar y Descartar quedan inactivos.',
+  estado: 'publicable',
   seo: {
     titulo: b('Por decidir | Propuesta, decisión de una persona y resultado', 'To Decide | Proposal, a Person Decides, Outcome Recorded'),
     descripcion: b(
@@ -343,7 +341,7 @@ export const PRODUCTO_POR_DECIDIR: Pagina = pantalla({
       titulo: b('El ciclo de una propuesta', 'The life of a proposal'),
       texto: m(
         4,
-        'El ciclo completo depende de que la migración del flujo de Acciones esté aplicada; la medición usa solo dato observado.',
+        'Migración del flujo aplicada en producción al 2026-10-29, pero con 0 eventos: se describe solo lo que el producto permite, sin resultados ni casos.',
         b(
           'Cada recomendación trae su evidencia, por qué se sugiere y qué se espera lograr. Una persona decide, y el resultado queda registrado con su medición antes y después, solo con dato observado.',
           'Each recommendation brings its evidence, why it is suggested and what is expected. A person decides, and the outcome is recorded with its before and after measurement, using observed data only.',
@@ -373,7 +371,7 @@ export const PRODUCTO_POR_DECIDIR: Pagina = pantalla({
 export const PRODUCTO_CARGA: Pagina = pantalla({
   id: 'producto/carga-y-sla',
   estado: 'pendiente-de-revision',
-  pendiente: 'Condición 9: HubSpot acreditado y cobertura limitada a lo que su API expone. Hoy es la única fuente de conversaciones.',
+  pendiente: 'Condición 9: HubSpot acreditado sobre una muestra. La cobertura de HubSpot aparece incompleta en producción al 2026-10-29. Hoy es la única fuente de conversaciones.',
   seo: {
     titulo: b('Carga y SLA | Horas pico y riesgo de pasar de 24 horas', 'Workload and SLA | Peak Hours and 24-Hour Risk | Rovaq AI'),
     descripcion: b(

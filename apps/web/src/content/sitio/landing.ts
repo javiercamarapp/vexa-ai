@@ -88,7 +88,7 @@ export const LANDING = {
       items: [
         { t: { es: 'Hoy', en: 'Today' }, d: { es: 'Qué requiere atención hoy.', en: 'What needs attention today.' }, href: { es: '/producto/hoy', en: '/en/product/today' } }, // PUBLICO. /overview
         { t: { es: 'Fuga de reembolsos', en: 'Refund leakage' }, d: { es: 'Dónde se concentra el dinero devuelto.', en: 'Where returned money concentrates.' }, href: { es: '/producto/fuga-de-reembolsos', en: '/en/product/refund-leakage' } }, // PUBLICO. /refunds
-        { t: { es: 'Problemas', en: 'Problems' }, d: m(3, '/problems, extracción habilitada', { es: 'Qué problema priorizar y con qué casos.', en: 'Which problem to prioritize and with which cases.' }), href: { es: '/producto/problemas', en: '/en/product/problems' } }, // MATIZ. /problems, extracción habilitada
+        { t: { es: 'Problemas', en: 'Problems' }, d: m(3, 'Estado al 2026-10-29: problem_conversations tiene 0 filas; se redacta como capacidad. /problems, extracción habilitada', { es: 'Qué problema priorizar y con qué casos.', en: 'Which problem to prioritize and with which cases.' }), href: { es: '/producto/problemas', en: '/en/product/problems' } }, // MATIZ. /problems, extracción habilitada
         { t: { es: 'Puntos de dolor', en: 'Pain points' }, d: { es: 'Qué motivo se repite y cuánto dinero arrastra.', en: 'Which reason repeats and how much money it carries.' }, href: { es: '/producto/puntos-de-dolor', en: '/en/product/pain-points' } }, // PUBLICO. /pain-points
         { t: { es: 'Pregúntale a tus datos', en: 'Ask your data' }, d: m(2, '/preguntale, modo de reglas', { es: 'Cómo se llegó a esta cifra.', en: 'How this figure was reached.' }), href: { es: '/producto/pregunta-a-tus-datos', en: '/en/product/ask-your-data' } }, // MATIZ. /preguntale, modo de reglas
         { t: { es: 'Por decidir', en: 'To decide' }, d: m(4, '/recommendations, migración del flujo', { es: 'Qué se propone y quién decide.', en: 'What is proposed and who decides.' }), href: { es: '/producto/por-decidir', en: '/en/product/to-decide' } }, // MATIZ. /recommendations, migración del flujo
@@ -344,7 +344,7 @@ export const LANDING = {
         etiqueta: { es: 'Módulo 02', en: 'Module 02' },
         nombre: { es: 'Problemas', en: 'Problems' },
         titulo: { es: 'Agrupa en problemas', en: 'Group into problems' },
-        texto: m(3, 'Problemas y Puntos de dolor. Condición: extracción habilitada en la organización', { es: 'Las conversaciones se agrupan en problemas con volumen y citas verificables. Correos y teléfonos salen enmascarados. Ves qué se repite.', en: 'Conversations are grouped into problems with volume and verifiable quotes. Emails and phone numbers are masked. See what keeps repeating.' }), // MATIZ. Problemas y Puntos de dolor. Condición: extracción habilitada en la organización
+        texto: m(3, 'Estado al 2026-10-29: problem_conversations tiene 0 filas; se redacta como capacidad, con vínculos confirmados. Problemas y Puntos de dolor. Condición: extracción habilitada en la organización', { es: 'Cada problema presenta su volumen y evidencia cuando hay vínculos confirmados. Correos y teléfonos salen enmascarados. Ves qué se repite.', en: 'Each problem shows its volume and evidence when links are confirmed. Emails and phone numbers are masked. See what repeats.' }), // MATIZ. Problemas y Puntos de dolor. Condición: extracción habilitada en la organización
         limite: m(3, 'EXTRACTION-RUNTIME.md, apagada salvo habilitación', { es: 'La agrupación con modelos de IA se habilita por organización.', en: 'Grouping with AI models is enabled per organization.' }), // MATIZ. EXTRACTION-RUNTIME.md, apagada salvo habilitación
         pantallas: [
           { t: { es: 'Problemas', en: 'Problems' }, href: { es: '/producto/problemas', en: '/en/product/problems' } },
@@ -402,7 +402,7 @@ export const LANDING = {
       {
         etiqueta: { es: 'Problemas', en: 'Problems' },
         t: { es: 'Una prioridad con evidencia', en: 'A priority with evidence' },
-        d: m(3, 'Problemas. Condición: extracción habilitada; exposición solo con vínculos', { es: 'Cada problema trae su volumen, sus citas enmascaradas y su exposición, cuando existe. Un tema repetido no es un tema que cuesta.', en: 'Each problem carries its volume, its masked quotes and its exposure, when it exists. A repeated theme is not a theme that costs.' }), // MATIZ. Problemas. Condición: extracción habilitada; exposición solo con vínculos
+        d: m(3, 'Estado al 2026-10-29: problem_conversations tiene 0 filas; se redacta como capacidad. Problemas. Condición: extracción habilitada; exposición solo con vínculos', { es: 'Cada problema se presenta con su volumen, sus citas enmascaradas y su exposición cuando hay vínculos confirmados. Un tema repetido no es un tema que cuesta.', en: 'Each problem is presented with its volume, its masked quotes and its exposure when links are confirmed. A repeated theme is not a theme that costs.' }), // MATIZ. Problemas. Condición: extracción habilitada; exposición solo con vínculos
       },
       {
         etiqueta: { es: 'Reportes', en: 'Reports' },
@@ -479,7 +479,7 @@ export const LANDING = {
       {
         t: { es: 'Problemas con evidencia', en: 'Problems with evidence' },
         pregunta: { es: 'Qué problema priorizar y con qué casos.', en: 'Which problem to prioritize and with which cases.' },
-        d: m(7, '/problems. Condición: exposición solo con vínculos confirmados; sin ellos dice No disponible', { es: 'Cada problema con su volumen, sus citas verificables y su evidencia. La exposición económica es una cifra Inferida: ingreso de pedidos ligados al problema, no una pérdida.', en: 'Each problem with its volume, verifiable quotes and evidence. Economic exposure is an Inferred figure: revenue from orders linked to the problem, not a loss.' }), // MATIZ. /problems. Condición: exposición solo con vínculos confirmados; sin ellos dice No disponible
+        d: m(7, 'Estado al 2026-10-29: problem_conversations tiene 0 filas. /problems. Condición: exposición solo con vínculos confirmados; sin ellos dice No disponible', { es: 'Cada problema se presenta con su volumen y su evidencia cuando hay vínculos confirmados. La exposición económica es una cifra Inferida: ingreso de pedidos ligados al problema, no una pérdida.', en: 'Each problem is presented with its volume and its evidence when links are confirmed. Economic exposure is an Inferred figure: revenue from orders linked to the problem, not a loss.' }), // MATIZ. /problems. Condición: exposición solo con vínculos confirmados; sin ellos dice No disponible
         mockup: 'm3',
         href: { es: '/producto/problemas', en: '/en/product/problems' },
       },
@@ -573,7 +573,7 @@ export const LANDING = {
     hoy: [
       {
         n: { es: 'HubSpot', en: 'HubSpot' },
-        d: m(5, 'Condición: publicar la cifra de 5 minutos solo tras verificar corridas exitosas del cron; mientras tanto usar dAlterno', { es: 'Lectura de conversaciones, en solo lectura, con sincronización programada cada 5 minutos. No es tiempo real: cada pantalla muestra su fecha de corte. La conexión se configura con nuestro equipo.', en: 'Reading of conversations, read-only, with a scheduled sync every 5 minutes. It is not real time: every screen shows its cut-off date. The connection is set up with our team.' }, { req: ['responsable_a'], alterno: 'integraciones.hoy[0].dAlterno', verifica: 5 }), // MATIZ. Condición: publicar la cifra de 5 minutos solo tras verificar corridas exitosas del cron; mientras tanto usar dAlterno
+        d: m(5, 'Condición: publicar la cifra de 5 minutos solo tras verificar corridas exitosas del cron; mientras tanto usar dAlterno', { es: 'Lectura de conversaciones, en solo lectura, con sincronización programada cada 5 minutos. No es tiempo real y la cobertura se limita a lo que expone la API de HubSpot: cada pantalla muestra su fecha de corte. La conexión se configura con nuestro equipo.', en: 'Reading of conversations, read-only, with a scheduled sync every 5 minutes. It is not real time and coverage is limited to what the HubSpot API exposes: every screen shows its cut-off date. The connection is set up with our team.' }, { alterno: 'integraciones.hoy[0].dAlterno', verifica: 5 }), // MATIZ. Condición: publicar la cifra de 5 minutos solo tras verificar corridas exitosas del cron; mientras tanto usar dAlterno
         dAlterno: m(9, 'Sin la cifra', { es: 'Lectura de conversaciones, en solo lectura, con sincronización programada. No es tiempo real: cada pantalla muestra su fecha de corte. La conexión se configura con nuestro equipo.', en: 'Reading of conversations, read-only, with a scheduled sync. It is not real time: every screen shows its cut-off date. The connection is set up with our team.' }), // MATIZ. Sin la cifra
       },
       {
@@ -655,7 +655,7 @@ export const LANDING = {
       },
       {
         q: { es: '¿Los datos se actualizan en tiempo real?', en: 'Is the data updated in real time?' },
-        a: m(5, 'vercel.json, sello. Condición: verificar corridas exitosas del cron antes de publicar la cifra', { es: 'No. HubSpot se sincroniza de forma programada cada 5 minutos y las cargas de archivos son manuales. Cada cifra muestra hasta qué fecha llegan sus datos y hace cuánto se actualizó.', en: 'No. HubSpot syncs on a schedule every 5 minutes and file uploads are manual. Every figure shows the date its data reaches and how long ago it was updated.' }, { req: ['responsable_a'], alterno: 'faq.items[2].aAlterno', verifica: 5 }), // MATIZ. vercel.json, sello. Condición: verificar corridas exitosas del cron antes de publicar la cifra
+        a: m(5, 'vercel.json, sello. Condición: verificar corridas exitosas del cron antes de publicar la cifra', { es: 'No. HubSpot se sincroniza de forma programada cada 5 minutos y las cargas de archivos son manuales. Cada cifra muestra hasta qué fecha llegan sus datos y hace cuánto se actualizó.', en: 'No. HubSpot syncs on a schedule every 5 minutes and file uploads are manual. Every figure shows the date its data reaches and how long ago it was updated.' }, { alterno: 'faq.items[2].aAlterno', verifica: 5 }), // MATIZ. vercel.json, sello. Condición: verificar corridas exitosas del cron antes de publicar la cifra
         aAlterno: m(9, 'Sin la cifra de 5 minutos, mientras no haya corridas verificadas del cron', { es: 'No. HubSpot se sincroniza de forma programada y las cargas de archivos son manuales. Cada cifra muestra hasta qué fecha llegan sus datos y hace cuánto se actualizó.', en: 'No. HubSpot syncs on a schedule and file uploads are manual. Every figure shows the date its data reaches and how long ago it was updated.' }),
       },
       {

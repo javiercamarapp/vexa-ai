@@ -66,6 +66,11 @@ export const CASOS_INDICE: Pagina = {
     },
     {
       tipo: 'texto',
+      titulo: b('Los cuatro puestos', 'The four roles'),
+      texto: b('Los cuatro puestos existen en el producto. El propietario da de alta a cada persona y le asigna su puesto.', 'The four roles exist in the product. The owner adds each person and assigns their role.'),
+    },
+    {
+      tipo: 'texto',
       titulo: b('Permisos decididos en el servidor', 'Permissions enforced on the server'),
       texto: LANDING.puestos.cierre,
     },

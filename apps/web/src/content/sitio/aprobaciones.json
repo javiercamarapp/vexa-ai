@@ -6,16 +6,24 @@
       "cumplida": false
     },
     "2": {
-      "cumplida": false
+      "cumplida": true,
+      "fecha": "2026-10-29",
+      "nota": "Verificado por código: lib/agent/server.ts en modo determinista, createRuleModel por defecto, sin interruptor de IA. Solo el agente general; /cfo tiene su propio motor y no se afirma que sea solo reglas."
     },
     "3": {
-      "cumplida": false
+      "cumplida": true,
+      "fecha": "2026-10-29",
+      "nota": "Extracción corre en producción: 72,121 corridas, 66,418 exitosas, casi todas por lotes. problem_conversations tiene 0 filas: los textos van como capacidad, sin extracción en vivo."
     },
     "4": {
-      "cumplida": false
+      "cumplida": true,
+      "fecha": "2026-10-29",
+      "nota": "Migración recommendation_flow aplicada; 0 eventos del flujo. Se describe solo lo que el producto permite, sin resultados ni casos."
     },
     "5": {
-      "cumplida": false
+      "cumplida": true,
+      "fecha": "2026-10-29",
+      "nota": "Cron cada 5 minutos: 285 de 288 ciclos en 24 h, 0 fallos registrados. connection_health marca partial con COVERAGE_INCOMPLETE: no se publica cobertura completa ni tiempo real."
     },
     "6": {
       "cumplida": false

@@ -38,6 +38,21 @@ function leerAprobaciones() {
   return JSON.parse(fs.readFileSync(RUTA_APROBACIONES, 'utf8'));
 }
 
+/** Hechos de la verificación contra producción, de solo lectura, fechada. Fuente: landing/construccion/VERIFICACION-PRODUCCION.md. */
+export const PRODUCCION = {
+  fecha: '2026-10-29',
+  hechos: [
+    { condicion: 2, estado: 'Cumplida', hecho: 'Pregúntale corre solo con reglas: verificado por código, modo determinista en lib/agent/server.ts, sin interruptor de IA. Vale para el agente general; /cfo tiene su propio motor y no se afirma que sea solo reglas.', texto: 'Se quitó el estado pendiente de la página de Pregúntale.' },
+    { condicion: 3, estado: 'Cumplida con matiz', hecho: 'La extracción corre en producción, 72,121 corridas y 66,418 exitosas, casi todas por lotes. problem_conversations tiene 0 filas.', texto: 'Problemas, citas y exposición se redactan como capacidad, cuando hay vínculos confirmados. No se afirma extracción en vivo por conversación nueva.' },
+    { condicion: 4, estado: 'Cumplida en la base, sin uso', hecho: 'La migración del flujo de Acciones está aplicada, con 0 eventos del flujo.', texto: 'Solo se describe lo que el producto permite. Sin resultados ni casos. En inglés, Dismiss.' },
+    { condicion: 5, estado: 'Cumplida con salvedad', hecho: 'Sincronización de HubSpot cada 5 minutos: 285 de 288 ciclos en 24 horas, 0 fallos registrados. connection_health marca partial con COVERAGE_INCOMPLETE y 415 de 795 páginas tuvieron un registro rechazado.', texto: 'Se publica sincronización programada cada 5 minutos, con cobertura limitada a lo que expone la API. No se dice cobertura completa ni tiempo real.' },
+    { condicion: 9, estado: 'Pendiente', hecho: 'HubSpot acreditado sobre una muestra no queda cubierto por esta verificación.', texto: 'hero.pruebaDeHoy sigue fuera.' },
+    { condicion: null, estado: 'Dato informativo', hecho: 'Roles: hay propietarios y analistas en uso. Operador y lector existen como puestos disponibles, sin cuentas.', texto: 'No se dice que haya equipos que ya los usen.' },
+    { condicion: null, estado: 'Dato informativo', hecho: 'El registro público de Supabase está abierto (disable_signup=false). Decisión de Javier: cerrarlo o aceptarlo.', texto: 'El acceso se solicita por correo, que sigue siendo cierto. No se afirma que el acceso sea solo por invitación.' },
+    { condicion: null, estado: 'Sin verificar', hecho: 'Valores de las variables sensibles de IA de Vercel, como VEXA_PAIN_AI: no legibles por diseño.', texto: 'Se verifican en el panel de Vercel; no afectan a Pregúntale.' },
+  ],
+};
+
 /** Calcula todo lo que la hoja necesita. Función pura sobre aprobaciones y contexto. */
 export function datosDeRevision({ aprobaciones = leerAprobaciones(), ctx = M.contextoPorDefecto() } = {}) {
   const hojasLanding = M.estadoPublicacion(LANDING, { aprobaciones, ctx });
@@ -57,6 +72,7 @@ export function datosDeRevision({ aprobaciones = leerAprobaciones(), ctx = M.con
   });
   return {
     generado: new Date().toISOString().slice(0, 10),
+    produccion: PRODUCCION,
     totales: {
       hojas: todas.length,
       pendientes: pendientes.length,
@@ -145,6 +161,14 @@ export function aMarkdown(d) {
   L.push('| Dónde | Condición | Texto en español |');
   L.push('|---|---|---|');
   for (const h of d.matizPublicados) L.push(`| ${h.ruta} | ${h.condicion.n === 0 ? 'va junto a ' + (h.condicion.acompana ?? []).join(', ') : h.condicion.n}: ${h.condicion.texto.replace(/\|/g, '/')} | ${h.es.replace(/\|/g, '/')} |`);
+  L.push('');
+  L.push(`## 6. Verificación en producción (${d.produccion.fecha})`);
+  L.push('');
+  L.push('Solo lectura contra la base y el código. No se imprimieron valores secretos ni datos de clientes.');
+  L.push('');
+  L.push('| Condición | Estado | Hecho | Qué hace el texto |');
+  L.push('|---|---|---|---|');
+  for (const h of d.produccion.hechos) L.push(`| ${h.condicion ?? '-'} | ${h.estado} | ${h.hecho.replace(/\|/g, '/')} | ${h.texto.replace(/\|/g, '/')} |`);
   L.push('');
   return L.join('\n');
 }

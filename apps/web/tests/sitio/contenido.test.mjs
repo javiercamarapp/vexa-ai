@@ -321,7 +321,7 @@ describe('lo publicable', () => {
   });
 
   test('la versión alterna se publica mientras no haya aprobación: segundo titular sin insight y HubSpot sin la cifra', () => {
-    const { arbol, sustituidas } = publicar(LANDING, { aprobaciones: APROBACIONES, ctx: CTX });
+    const { arbol, sustituidas } = publicar(LANDING, { aprobaciones: aprobacionesVacias(), ctx: CTX });
     assert.equal(arbol.puente.titulo.es, LANDING.puente.tituloAlterno.es);
     assert.ok(!/insight/i.test(JSON.stringify(arbol.puente)));
     assert.ok(!/5 minutos/.test(arbol.integraciones.hoy[0].d.es) && !/5 minutes/.test(arbol.integraciones.hoy[0].d.en));
@@ -329,6 +329,7 @@ describe('lo publicable', () => {
     assert.ok(!('dAlterno' in arbol.integraciones.hoy[0]) && !('aAlterno' in arbol.faq.items[2]));
     assert.deepEqual(sustituidas.map((s) => s.ruta).sort(), ['faq.items[2].a', 'integraciones.hoy[0].d', 'puente.titulo']);
     assert.ok(!('pruebaDeHoy' in arbol.hero), 'pruebaDeHoy no se muestra sin la condición 9');
+    assert.ok(!('pruebaDeHoy' in publicar(LANDING, { aprobaciones: APROBACIONES, ctx: CTX }).arbol.hero), 'la condición 9 sigue pendiente en aprobaciones.json');
     assert.ok(!('pildoras' in LANDING.hero) && !('orbes' in LANDING.puente), 'pildoras y orbes salen de la portada');
   });
 });
@@ -352,7 +353,7 @@ describe('aprobaciones por campo atadas al hash del texto', () => {
   test('sin aprobaciones, cada campo con revisor requerido queda pendiente', () => {
     const estados = estadoPublicacion(LANDING, { aprobaciones: aprobacionesVacias(), ctx: CTX });
     const conReq = estados.filter((e) => e.req.length > 0);
-    assert.ok(conReq.length >= 6, `esperaba al menos 6 campos con revisor, hay ${conReq.length}`);
+    assert.ok(conReq.length >= 4, `esperaba al menos 4 campos con revisor, hay ${conReq.length}`);
     for (const e of conReq) assert.equal(e.publicable, false, e.ruta);
   });
 
@@ -389,15 +390,49 @@ describe('aprobaciones por campo atadas al hash del texto', () => {
     assert.equal(publicar(copia, { aprobaciones: ap, ctx: CTX }).arbol.faq.items.length, 9, 'sin la pregunta aprobada el elemento sigue fuera');
   });
 
-  test('la condición 9 y la 5 reactivan la prueba de hoy y la cifra de 5 minutos, y solo con aprobación de Responsable A la segunda', () => {
+  test('la condición 9 reactiva la prueba de hoy y la 5 la cifra de 5 minutos', () => {
     const copia = structuredClone(LANDING);
     let ap = marcarCondicion(aprobacionesVacias(), 9, true);
     assert.ok('pruebaDeHoy' in publicar(copia, { aprobaciones: ap, ctx: CTX }).arbol.hero);
+    assert.ok(!/5 minutos/.test(publicar(copia, { aprobaciones: ap, ctx: CTX }).arbol.integraciones.hoy[0].d.es), 'sin la condición 5 sale la alterna');
     ap = marcarCondicion(ap, 5, true);
-    const solo5 = publicar(copia, { aprobaciones: ap, ctx: CTX }).arbol;
-    assert.ok(!/5 minutos/.test(solo5.integraciones.hoy[0].d.es), 'con la condición 5 sin Responsable A sigue la alterna');
-    ap = aprobar(ap, 'integraciones.hoy[0].d', 'responsable_a', hojaEn(copia, 'integraciones.hoy[0].d'));
-    assert.match(publicar(copia, { aprobaciones: ap, ctx: CTX }).arbol.integraciones.hoy[0].d.es, /5 minutos/);
+    const arbol = publicar(copia, { aprobaciones: ap, ctx: CTX }).arbol;
+    assert.match(arbol.integraciones.hoy[0].d.es, /sincronización programada cada 5 minutos/);
+    assert.match(arbol.faq.items[2].a.es, /cada 5 minutos/);
+  });
+
+  test('verificación en producción del 2026-10-29: condiciones 2, 3, 4 y 5 cumplidas con su evidencia; la 9 sigue pendiente', () => {
+    for (const n of ['2', '3', '4', '5']) {
+      assert.equal(APROBACIONES.condiciones[n].cumplida, true, n);
+      assert.equal(APROBACIONES.condiciones[n].fecha, '2026-10-29');
+      assert.ok(APROBACIONES.condiciones[n].nota.length > 40, n);
+    }
+    assert.match(APROBACIONES.condiciones['2'].nota, /\/cfo tiene su propio motor/);
+    for (const n of ['1', '6', '7', '8', '9', '10', '11', '12', '13']) assert.equal(APROBACIONES.condiciones[n].cumplida, false, n);
+    const { arbol } = publicar(LANDING, { aprobaciones: APROBACIONES, ctx: CTX });
+    const hs = proyectarArbol(arbol, 'es').integraciones.hoy[0].d;
+    assert.match(hs, /cada 5 minutos/);
+    assert.match(hs, /No es tiempo real/);
+    assert.ok(!/cobertura completa|complete coverage/i.test(JSON.stringify(arbol)), 'no se afirma cobertura completa');
+  });
+
+  test('el acceso no se describe como solo por invitación y el texto de Solicitar acceso por correo sigue siendo cierto', () => {
+    const todo = todasLasHojas().map((h) => `${h.hoja.es} ${h.hoja.en}`).join('\n');
+    assert.ok(!/solo por invitaci[oó]n|only by invitation|invitation[- ]only|por invitaci[oó]n [uú]nicamente/i.test(todo));
+    assert.equal(LANDING.hero.micro.es, 'El acceso se solicita por correo.');
+  });
+
+  test('Problemas, Acciones, extracción y roles se redactan como capacidad: sin extracción en vivo ni equipos que ya lo usen', () => {
+    const todo = todasLasHojas().map((h) => `${h.hoja.es} ${h.hoja.en}`).join('\n');
+    assert.ok(!/extracci[oó]n en vivo|en vivo por conversaci|live extraction|real-time extraction/i.test(todo));
+    assert.ok(!/equipos (ya )?(lo )?usan|teams (already )?use|ya lo usan|already using/i.test(todo));
+    const m2 = LANDING.modulos.items[1].texto;
+    assert.match(m2.es, /cuando hay vínculos confirmados/);
+    assert.match(m2.en, /when links are confirmed/);
+    assert.ok(!/citas verificables|verifiable quotes/.test(JSON.stringify([LANDING.modulos, LANDING.cambios, LANDING.pantallas])));
+    const pregunta = PAGINAS_INTERNAS.find((p) => p.id === 'producto/pregunta-a-tus-datos');
+    assert.match(JSON.stringify(pregunta), /no afirmamos que sea solo de reglas/);
+    assert.equal(pregunta.estado, 'publicable');
   });
 });
 
@@ -520,8 +555,8 @@ describe('reglas de contenido de la portada', () => {
     for (const ruta of RETIRADAS_DE_PORTADA) assert.ok(hojaEn(LANDING, ruta) !== undefined, `${ruta} se conserva para páginas internas`);
   });
 
-  test('la cifra de 5 minutos y la palabra insight solo viven en hojas con revisor', () => {
-    const malas = todasLasHojas().filter(({ ruta, hoja }) => (/\b5 (minutos|minutes)\b/.test(hoja.es) || /insight/i.test(hoja.es)) && !(hoja.req?.length));
+  test('la cifra de 5 minutos solo vive en hojas con la verificación 5 y la palabra insight, en hojas con revisor', () => {
+    const malas = todasLasHojas().filter(({ ruta, hoja }) => (/\b5 (minutos|minutes)\b/.test(hoja.es) || /insight/i.test(hoja.es)) && !(hoja.req?.length) && hoja.verifica !== 5);
     assert.deepEqual(malas.map((m) => m.ruta), []);
   });
 });
@@ -613,10 +648,14 @@ describe('páginas internas', () => {
     assert.equal(hoy.publicable, true, hoy.motivos.join());
   });
 
-  test('las páginas con una condición MATIZ de producto sin verificar están marcadas pendientes de revisión', () => {
-    const conMatizDeProducto = PAGINAS_INTERNAS.filter((p) => hojas(p).some(({ hoja }) => hoja.nivel === 'MATIZ' && [2, 3, 4, 5, 7, 8, 9].includes(hoja.condicion.n)));
-    assert.ok(conMatizDeProducto.length >= 8);
-    for (const p of conMatizDeProducto) assert.equal(p.estado, 'pendiente-de-revision', p.id);
+  test('las páginas con una condición MATIZ sin verificar están marcadas pendientes de revisión', () => {
+    // La condición 6 es un hecho de producto que ya va escrito en el propio texto: no bloquea la página.
+    const sinCumplir = (n) => n >= 1 && n !== 6 && APROBACIONES.condiciones[String(n)]?.cumplida !== true;
+    const conMatizSinVerificar = PAGINAS_INTERNAS.filter((p) => hojas(p).some(({ hoja }) => hoja.nivel === 'MATIZ' && sinCumplir(hoja.condicion.n)));
+    assert.ok(conMatizSinVerificar.length >= 8, `hay ${conMatizSinVerificar.length}`);
+    for (const p of conMatizSinVerificar) assert.equal(p.estado, 'pendiente-de-revision', p.id);
+    // Las que solo dependen de condiciones cumplidas ya no llevan la nota pendiente.
+    for (const id of ['producto/pregunta-a-tus-datos', 'producto/por-decidir', 'producto/puntos-de-dolor']) assert.equal(PAGINAS_INTERNAS.find((p) => p.id === id).estado, 'publicable', id);
   });
 
   test('las páginas pasan las mismas reglas editoriales: sin paréntesis, exclamaciones ni emojis, ni siquiera sin publicar', () => {
@@ -638,8 +677,12 @@ describe('hoja de revisión para Responsable A y el abogado', () => {
   test('lista los textos que esperan una decisión, con español, inglés, condición, revisor y huella', () => {
     const d = datosDeRevision({ aprobaciones: APROBACIONES, ctx: CTX });
     const rutas = d.pendientes.map((h) => h.ruta);
-    for (const esperada of ['puente.titulo', 'limites.items[7]', 'faq.items[8].q', 'faq.items[8].a', 'integraciones.hoy[0].d', 'faq.items[2].a', 'hero.pruebaDeHoy']) assert.ok(rutas.includes(esperada), esperada);
-    assert.equal(d.totales.condicionesCumplidas, 0);
+    for (const esperada of ['puente.titulo', 'limites.items[7]', 'faq.items[8].q', 'faq.items[8].a', 'hero.pruebaDeHoy']) assert.ok(rutas.includes(esperada), esperada);
+    assert.ok(!rutas.includes('integraciones.hoy[0].d') && !rutas.includes('faq.items[2].a'), 'HubSpot ya se publica con la cifra');
+    assert.equal(d.totales.condicionesCumplidas, 4);
+    assert.ok(d.produccion.fecha === '2026-10-29' && d.produccion.hechos.length >= 8);
+    assert.match(aMarkdown(d), /## 6\. Verificación en producción/);
+    assert.match(aMarkdown(d), /285 de 288/);
     assert.equal(d.condiciones.length, 13);
     const md = aMarkdown(d);
     assert.match(md, /Lo que otros llaman insight/);

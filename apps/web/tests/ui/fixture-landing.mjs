@@ -163,9 +163,12 @@ function datasetAgente() {
     });
   });
   d.ledger = led.filter(r => r.month >= '2026-08'); // el libro de ejemplo solo cubre ago-oct: «los últimos 12 meses» del agente suman 36,000
-  const usd = kind => MESES12.map(month => d.ledger.filter(r => r.month === month && r.kind === kind).reduce((a, r) => ({count: a.count + r.count, amount: a.amount + BigInt(r.amountMinor), unknown: 0}), {count: 0, amount: 0n, unknown: 0}));
-  const O = usd('order'), R = usd('refund');
-  d.trends.ledger.series = MESES12.map((month, i) => ({month, orders: {count: O[i].count, amountMinor: String(O[i].amount), unknownAmounts: 0}, refunds: {count: R[i].count, amountMinor: String(R[i].amount), unknownAmounts: 0}}));
+    const full = kind => MESES12.map(month => led.filter(r => r.month === month && r.kind === kind).reduce((a, r) => ({count: a.count + r.count, amount: a.amount + BigInt(r.amountMinor)}), {count: 0, amount: 0n}));
+  const Of = full('order'), Rf = full('refund');
+  d.trends.ledger.series = MESES12.map((month, i) => ({month, orders: {count: Of[i].count, amountMinor: String(Of[i].amount), unknownAmounts: 0}, refunds: {count: Rf[i].count, amountMinor: String(Rf[i].amount), unknownAmounts: 0}}));
+  const CV = [820, 880, 910, 990, 1060, 1090, 1150, 1240, 1310, 1420, 1560, 1690];
+  d.trends.conversations.series = MESES12.map((month, i) => ({month, count: CV[i]}));
+  d.trends.conversations.outsideWindow = 0; d.trends.conversations.sampled = false; delete d.trends.conversations.sampleNote; d.trends.conversations.class = 'observed';
   d.trends.ledger.otherCurrencies = []; d.trends.ledger.currencies = ['USD:2'];
   const TIT = ['Entrega marcada como completa sin recibirse', 'Pieza distinta a la publicada', 'Cobro duplicado'];
   const CAS = [124, 86, 41];
@@ -196,7 +199,7 @@ async function agentTurn(body) {
 export async function vistaCco() {
   const ok = rows => ({rows});
   const cell = (d1, d2, n, es_otros = false) => ({d1, d2, n, es_otros});
-  const vent = [['amazon', true, 3], ['walmart', true, 3], ['bestbuy', true, 3]].map(([channel, ra, months]) => ({channel, refunds_available: ra, orders_from: '2026-08-01', orders_to: '2026-11-02', refunds_from: '2026-08-01', refunds_to: '2026-11-02', months}));
+  const vent = [['amazon', true, 3], ['walmart', true, 3], ['bestbuy', true, 3]].map(([channel, ra, months]) => ({channel, refunds_available: ra, month_from: '2026-08-01', month_to: '2026-10-01', orders_from: '2026-08-01', orders_to: '2026-11-02', refunds_from: '2026-08-01', refunds_to: '2026-11-02', months}));
   const lineas = filasPedidos().filter(r => r.kind === 'sku'), rf = filasReembolsos();
   const sku = (s, ch) => {
     const l = lineas.find(r => r.sku === s && r.ch === ch), rr = rf.filter(r => r.sku === s && r.ch === ch);
@@ -229,14 +232,14 @@ function parcheRecord(rec, i) {
   return {...rec, title: p.t, summary: p.s, status: i === 2 ? 'partial' : 'ready', metrics: parcheMetrics(rec.metrics?.length ? rec.metrics : [{label: 'Ingresos expuestos', kind: 'exposure', currency: 'USD', exponent: 2, source_ref: 'snapshot:exposure.' + PID(i)}, {label: 'Reembolsos liquidados', kind: 'refunds', currency: 'USD', exponent: 2, source_ref: 'snapshot:refunds.' + PID(i), status: 'complete', missing_reasons: []}], p),
     evidence: ev, details: [{label: 'Conversaciones', value: `${p.n} · ${ev.length} con cita verificable`}]};
 }
-const CONN = (id, source, accountId, extra = {}) => ({id, source, accountId, connectionStatus: 'active', state: 'ok', lastAttempt: '2026-11-04T13:55:00.000Z', lastSuccess: '2026-11-04T13:55:00.000Z', watermark: null, coverage: null, lagSeconds: 300, lagBasis: 'time_since_success', permissions: 'available', errorCode: null, reconnect: null, ...extra});
+const CONN = (id, source, accountId, extra = {}) => ({id, source, accountId, connectionStatus: 'active', state: 'healthy', lastAttempt: '2026-11-04T13:55:00.000Z', lastSuccess: '2026-11-04T13:55:00.000Z', watermark: null, coverage: null, lagSeconds: 300, lagBasis: 'time_since_success', permissions: 'available', errorCode: null, reconnect: null, ...extra});
 
 export async function respond(url, method, bodyText) {
   const u = new URL(url, 'http://x'), p = u.pathname, q = u.searchParams, ok = data => [200, {contract_version: 'f06-workspace-v1', data, meta: {trace_id: 'fixture'}}];
   if (method === 'GET') {
     if (p === '/api/refunds') return [200, {data: await (cacheFuga ??= vistaFuga())}];
     if (p === '/api/workload') return [200, {data: await (cacheCarga ??= vistaCarga())}];
-    if (p === '/api/cco') return [200, await (cacheCco ??= vistaCco())];
+    if (p === '/api/cco') return [200, {data: await (cacheCco ??= vistaCco())}];
     if (p === '/cfo/data/report') return [200, informeCfo()];
     if (p === '/api/onboarding/estado') return [200, {data: {pista: 'owner', derivados: [], completados: []}}];
     if (p === '/api/connections') return [200, {connections: [CONN('00000000-0000-4000-8000-000000003002', 'hubspot', 'Portal de ejemplo', {coverage: {observed: 8420, accepted: 8420, rejected: 0}, watermark: {kind: 'checkpoint_hash', value: 'a1b2c3d4e5f6'}}),
@@ -251,6 +254,7 @@ export async function respond(url, method, bodyText) {
     }
     if (p === '/api/coverage') return ok(store.get(TENANT).coverage);
     if (p === '/api/agent/state') return [200, {data: await agentState()}];
+    if (p === '/api/trends') { const [, j] = await respondBase(url, method, bodyText); return [200, {...j, data: store.get(TENANT).trends}]; }
     if (p === '/api/trends/categories') {
       const [, j] = await respondBase(url, method, bodyText), rows = [['Shipping: Delivery Not Received', 1204], ['Order: Wrong Item', 655], ['Billing: Duplicate Charge', 388], ['Shipping: Damaged in Transit', 342], ['Return: No Longer Wanted', 288], ['Shipping: Arrived Late', 171]].map(([category, count], i) => ({category, count, runs: 6 - (i >> 1)}));
       return [200, {...j, data: {...j.data, rows, totals: {incidences: suma(rows.map(r => r.count)), categories: rows.length, runs: 18}}}];
@@ -259,7 +263,10 @@ export async function respond(url, method, bodyText) {
   if (p === '/api/agent/turn') return [200, await agentTurn(bodyText ? JSON.parse(bodyText) : null)];
   const hit = await respondBase(url, method, bodyText);
   if (!hit || hit[0] !== 200) return hit;
-  const [st, j] = hit, clone = structuredClone(j);
+  if (p.startsWith('/api/explorer')) return [hit[0], JSON.parse(JSON.stringify(hit[1]).replaceAll('Llegó la caja aplastada y el producto roto, quiero mi dinero de vuelta.', PROB[0].cita).replaceAll('Es la segunda vez que me llega dañado el mismo modelo.', PROB[0].cita2))];
+  const [st, j0] = hit;
+  const j = /^\/api\/(workspace|briefs|recommendations)/.test(p) ? JSON.parse(JSON.stringify(j0).replaceAll('2026-10-01T00:00:00.000Z', '2026-08-01T00:00:00.000Z')) : j0;
+  const clone = structuredClone(j);
   if (p === '/api/workspace' && q.get('resource') === 'problems' && clone.data?.items) {
     clone.data.items = clone.data.items.slice(0, 3).map((it, i) => ({...parcheRecord(it, i), id: PID(i), problem_id: PID(i)}));
     clone.data.meta = {...clone.data.meta, coverage: 'Corte de ejemplo: la exposición se muestra como subtotal conocido, no como total.', watermark: CORTE, state: 'partial'};

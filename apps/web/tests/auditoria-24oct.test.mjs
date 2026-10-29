@@ -40,7 +40,7 @@ test('A2: /briefs ofrece «Reintentar», no manda a «Actualizar» y el historia
   assert.match(p, /state-error[^>]*>.*brief\.reintentar/s); assert.match(leer('lib/i18n/d-briefs.ts'), /'brief\.reintentar': 'Reintentar'/); assert.ok(!/Actualiza para comprobar|Actualiza antes/.test(p));
   const sv = leer('lib/briefs/server.ts');
   assert.match(sv, /conMemoria\('briefs\|'/); assert.match(sv, /olvidarMemoria\(\)/);
-  assert.match(sv, /getUser\(\)[\s\S]{0,200}conMemoria/, 'la sesión se valida antes de consultar la memoria');
+  assert.match(sv, /resolveSession\([\s\S]{0,400}conMemoria/, 'la sesión y la membresía vigente se validan antes de consultar la memoria (R-05)');
 });
 
 import {usd, dinero} from '../src/lib/formato/es-mx.mjs';

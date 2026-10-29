@@ -1,6 +1,6 @@
 -- 20261024000000: la lista de Problemas (verificación de evidencia del catálogo) deja de agotar el statement_timeout bajo RLS.
 -- Diagnóstico (22-oct, producción, solo lectura): /api/workspace?resource=problems devolvía 503 a los ~15 s. La sentencia activa era la verificación «resumen» de las
--- 8,761 corridas de los 394 problemas (extraction_runs → message_revisions → messages → conversations → source_heads → tombstones). Sin RLS tarda ~1.9 s; con la política
+-- miles de corridas de cientos de problemas (extraction_runs → message_revisions → messages → conversations → source_heads → tombstones). Sin RLS tarda ~1.9 s; con la política
 -- por FILA (`vexa_member(tenant_id)` correlacionado, ~30 µs por fila, ~100 mil filas) ~4.6 s en emulación y >8 s en producción con lectura en frío; con el sub-select no
 -- correlacionado (mismo patrón que 0055 y 20261021) ~0.8 s.
 -- NO cambia el significado de ninguna política: sigue siendo «tenant de la fila = tenant de la sesión Y la sesión es miembro activa»; solo evalúa la membresía UNA vez por

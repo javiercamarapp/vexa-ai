@@ -32,7 +32,7 @@ Se ejecuta en el servidor, nunca en el modelo. Rechaza si:
 2. alguna cifra escrita en el texto **no existe en la entrada** (`cifra_no_respaldada`);
 3. una referencia de evidencia no es un id de la entrada;
 4. `impactoIngreso.valorMinor` no coincide con una cifra de ingreso de la entrada (`impacto_sin_cifra_de_ingreso`);
-5. menciona margen o utilidad (CLIENTEX no comparte costos);
+5. menciona margen o utilidad (cliente piloto no comparte costos);
 6. afirma causalidad («provocó», «demuestra que», «causa confirmada»).
 
 Una salida rechazada **se cobra al costo real** (ya se gastó) y no se muestra como recomendación.

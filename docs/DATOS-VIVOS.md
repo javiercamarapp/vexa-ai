@@ -39,7 +39,7 @@ Diseñadas pero NO implementadas (siguen el mismo patrón): `insight_category_tr
 
 - **Seguridad**: `SECURITY DEFINER`, `search_path=''`. `EXECUTE` solo para `vexa_backend`, y dentro exige (`insights_authorized`) el worker del propio tenant con `vexa.action='import'` y membresía owner/analyst, o un operador superusuario/BYPASSRLS conectado sin `SET ROLE`. Las tablas no se escriben desde la app.
 - **Incremental real (libro)**: meses afectados = meses de todas las revisiones de las entidades con alguna revisión nueva (`recorded_at` > corte guardado − 2 min de traslape) ∪ meses pendientes del cursor. Cada mes se reemplaza completo (idempotente). Si se acaba `p_budget_ms`, lo que falta queda en `insight_state.cursor` (`partial`) y la siguiente llamada lo completa, recientes primero.
-- **Por corte (conversaciones, HubSpot, Tracker, contactos)**: se compara el corte del origen con el guardado; sin cambios devuelve `noop` con una lectura de índice; con cambios recalcula esa fuente completa en una pasada (medido sobre CLIENTEX: conversaciones ≈ 2.1 s como propietario; HubSpot y Tracker, decenas de ms).
+- **Por corte (conversaciones, HubSpot, Tracker, contactos)**: se compara el corte del origen con el guardado; sin cambios devuelve `noop` con una lectura de índice; con cambios recalcula esa fuente completa en una pasada (medido sobre el cliente piloto: conversaciones ≈ 2.1 s como propietario; HubSpot y Tracker, decenas de ms).
 - **Aislamiento**: cada insight corre en su propio sub-bloque; si falla queda `failed` con el SQLSTATE y los demás siguen. Candado consultivo por (tenant, fuente): dos refrescos simultáneos no se pisan (`busy`).
 - **Reglas de datos**: última revisión por entidad; SKU base = `upper` sin `-WMn`, `-nnnA-nnn`, `-NEW` (misma regla que `packages/insights/sku.mjs`); sin sumar monedas; Tracker: última revisión por fila, filas vacías descartadas, texto libre → `otro` (sin PII).
 
@@ -92,14 +92,16 @@ Interfaz común (`contract.mjs`): `init`, `backfill(ctx,{from,to,cursor})`, `inc
 
 ## 7. Anclas verificadas contra la base real (solo SELECT, 23-oct)
 
-| Ancla (DATOS.md) | Real |
+Las cifras reales de producción (filas del libro, montos, SKU, contactos repetidos, hilos y percentiles) se retiraron de este documento por política de datos de cliente (ver `docs/seguridad/DATOS-DE-CLIENTE.md`). Las anclas se verificaron: cada medición de DATOS.md coincidió con la base real, con diferencias explicadas por datos posteriores al corte. Las cifras exactas viven en el cuaderno privado de la sesión del 23-oct, no en el repositorio.
+
+| Ancla (DATOS.md) | Resultado |
 |---|---|
-| Reembolsos del libro | [omitido: dato de cliente] filas = amazon 3,272 + walmart 3,107 + shopify 26 |
-| USD bruto / sin cancelados | [omitido: dato de cliente] / [omitido: dato de cliente] |
-| Top-10 SKU base (USD) | 59.3 % (SKUP-L1 [omitido: dato de cliente] … SKUP-M14 [omitido: dato de cliente], idéntico a la tabla) |
-| Contacto repetido 90 d | [omitido: dato de cliente] contactos; ≥2: 8,067 (17.3 %); ≥3: 3,230 (6.9 %) |
-| Tracker Refunds por estado | refunded 167, older than 180 d 46, can not refund 33, rejected 19, submitted 5 |
-| Hilos HubSpot | [omitido: dato de cliente] hilos (DATOS: 2,927), 1,699 cerrados, p50 44.9 h (44.8), p90 1,001.4 h (1,001.3), 174 reabiertos (173): diferencia = hilos posteriores a DATOS |
+| Reembolsos del libro | coincide; desglose por canal omitido |
+| USD bruto / sin cancelados | coincide; montos omitidos |
+| Top-10 SKU base | coincide con la tabla; códigos de producto omitidos |
+| Contacto repetido 90 d | coincide; conteos omitidos |
+| Tracker Refunds por estado | coincide; conteos omitidos |
+| Hilos HubSpot | coincide; diferencia mínima explicada por hilos posteriores al corte |
 
 ## 8. Costos y alcance de despliegue
 

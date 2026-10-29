@@ -82,7 +82,7 @@ flowchart LR
 
 ## Estado de producción (honesto)
 
-**Lo que existe hoy.** Rovaq AI corre en producción con su **primer cliente, CLIENTEX**, una operación con ventas en marketplaces y soporte sobre HubSpot. El histórico del cliente está cargado con procedencia y las pantallas de arriba operan sobre sus datos reales. No se publican aquí cifras de clientes, ingresos ni tracción: esas métricas no están auditadas para este documento.
+**Lo que existe hoy.** Rovaq AI corre en producción con su **primer cliente piloto**, una operación con ventas en marketplaces y soporte sobre HubSpot. El histórico del cliente está cargado con procedencia y las pantallas de arriba operan sobre sus datos reales. No se publican aquí cifras de clientes, ingresos ni tracción: esas métricas no están auditadas para este documento.
 
 **Lo que sigue pendiente** (declarado, no oculto):
 

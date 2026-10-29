@@ -3,7 +3,7 @@
 Pantalla del grupo «Dinero» que responde las tres preguntas de Responsable A: **dónde gano más, dónde pierdo y por qué, y dónde podría ganar más**. Rama `rediseno-brechas` (23-oct-2026). Nada aplicado ni desplegado.
 
 ## Regla de oro: todo es INGRESO BRUTO
-CLIENTEX no compartirá costo por producto. Ninguna cifra es margen, utilidad ni ganancia, y la pantalla lo rotula («ingreso bruto»). Las recomendaciones miden **ingreso en juego**; lo recuperable solo se estima con supuestos que teclea el usuario (estimador con candado, el mismo de `/refunds`).
+Cliente piloto no compartirá costo por producto. Ninguna cifra es margen, utilidad ni ganancia, y la pantalla lo rotula («ingreso bruto»). Las recomendaciones miden **ingreso en juego**; lo recuperable solo se estima con supuestos que teclea el usuario (estimador con candado, el mismo de `/refunds`).
 
 Clases: **Observado** (hecho del libro/Tracker), **Estimado** (solo con supuestos tecleados, en el navegador), **Inferido** (regla sobre datos observados; así se rotulan las recomendaciones). Sin sumar monedas (CAD/MXN aparte), `unknown ≠ 0` (una parte que no responde dice «No disponible ahora»), ventanas parciales dichas en una línea.
 

@@ -1,6 +1,6 @@
 'use client';
 import {useState} from 'react';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
 import type {Clave,Traductor} from '../../lib/i18n';
 import type {BrechasVista,Recomendacion} from '../../../../../packages/workspace-service/brechas.mjs';
 import {recomendacionDeBrecha} from '../../../../../packages/workspace-service/brechas-recomendacion.mjs';
@@ -138,12 +138,12 @@ export function Intensidad({v,onReintentar}:{v:BrechasVista;onReintentar:()=>voi
 // ---------- Tabla «Cierra esta brecha»
 type Borrador=ReturnType<typeof recomendacionDeBrecha>;
 export function CierraBrecha({v,onReintentar,supuesto}:{v:BrechasVista;onReintentar:()=>void;supuesto:{id:string;texto:string}|null}){
- const t=useT(),r=v.recomendaciones;
+ const t=useT(),idioma=useIdioma(),r=v.recomendaciones;
  const [abierto,setAbierto]=useState<string|null>(null),[b,setB]=useState<Borrador|null>(null),[aviso,setAviso]=useState('');
  if(r.status==='unavailable')return <NoDisponible onRetry={onReintentar}/>;
  const rows=[...r.items].sort((a,b2)=>(b2.impacto.usdMinor?big(b2.impacto.usdMinor):0)-(a.impacto.usdMinor?big(a.impacto.usdMinor):0));
  const proceder=(x:Recomendacion)=>{
-  const bd=recomendacionDeBrecha(x,{generadoEn:new Date().toISOString(),supuestos:supuesto?.id===x.id?[supuesto.texto]:[]});
+  const bd=recomendacionDeBrecha(x,{generadoEn:new Date().toISOString(),supuestos:supuesto?.id===x.id?[supuesto.texto]:[],idioma});
   setB(bd);setAbierto(x.id);
   try{sessionStorage.setItem(CLAVE_BORRADOR,JSON.stringify(bd));}catch{/* sin almacenamiento: el texto sigue a la vista */}
   setAviso(t('tr.brecha.textoPreparado'));

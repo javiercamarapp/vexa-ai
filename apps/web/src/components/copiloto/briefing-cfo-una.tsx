@@ -48,7 +48,7 @@ export function BriefingCfoUna({b, informe}: {b: BriefingCfo; informe: (ancla?: 
       {pie('alertas')}</>},
     {id: 'canales', label: t('cop.br.canales'), contenido: <><p className="dg-nota" style={{margin: '0 0 8px'}}>{t('cop.br.partPedidos')}</p><ListaBarras c={1} max={100} label={t('cop.br.pedidosCanal')} items={b.canales.map(c => ({key: c.canal, etiqueta: c.label, sub: t('cop.br.nPedidos', {n: int(c.n, idioma)}), valor: (c.shareBps ?? 0) / 100, texto: pct(c.shareBps, idioma)}))} />{pie('mezcla')}</>},
     {id: 'calidad', label: t('cop.br.calidad'), contenido: <>
-      <p className="dg-nota" style={{margin: '0 0 10px'}}>{b.parcial ? b.parcial + ' ' : ''}{b.avisoMonedas} {t('cop.br.fuente')} {lineaDatosHasta({libro: b.corte})}</p>
+      <p className="dg-nota" style={{margin: '0 0 10px'}}>{b.parcial ? b.parcial + ' ' : ''}{b.avisoMonedas} {t('cop.br.fuente')} {lineaDatosHasta({libro: b.corte}, idioma)}</p>
       <ul className="dg-lista" data-cols="dos" aria-label={t('cop.br.cifrasCalidad')}>{[...b.calidad.cifras.map(f => ({id: f.id, label: f.label, display: f.display})), {id: 'filas', label: t('cop.br.registrosLibro'), display: int(b.calidad.filas, idioma)}].map(f => <li key={f.id}><span className="dg-lab"><b>{f.label}</b></span><span className="dg-val">{f.display}</span></li>)}</ul>
       {b.calidad.canalMenosCompleto && <p className="dg-nota">{t('cop.br.canalesInc', {n: b.calidad.canalesIncompletos, canal: b.calidad.canalMenosCompleto.label, pct: pct(b.calidad.canalMenosCompleto.completenessBps, idioma)})}</p>}
       {b.calidad.costo.length > 0 && <p className="dg-nota"><G id="kind"><KindBadgeBase kind="estimated" /></G> {b.calidad.costo.map(c => `${c.label}: ${c.display}`).join(' · ')}. {t('cop.br.estimadoNoSuma')}</p>}
@@ -61,7 +61,7 @@ export function BriefingCfoUna({b, informe}: {b: BriefingCfo; informe: (ancla?: 
   return <div className="una-cfo" role="region" aria-label={t('cop.br.informeCfo')}>
     <h2 className="sr-only">{b.titular.texto}</h2>
     <UnaKpis items={kpis} label={t('cop.br.ultimoMes', {moneda: b.moneda})} />
-    <p className="una-nota" title={`${b.titular.texto} ${b.avisoMonedas}`}><G id="kind-t"><KindBadgeBase kind={b.titular.kind} /></G><span className="una-nota-t"><strong>{b.titular.texto}</strong> {b.parcial ? b.parcial + ' ' : ''}{b.avisoMonedas} {t('cop.br.fuente')} {lineaDatosHasta({libro: b.corte})}</span></p>
+    <p className="una-nota" title={`${b.titular.texto} ${b.avisoMonedas}`}><G id="kind-t"><KindBadgeBase kind={b.titular.kind} /></G><span className="una-nota-t"><strong>{b.titular.texto}</strong> {b.parcial ? b.parcial + ' ' : ''}{b.avisoMonedas} {t('cop.br.fuente')} {lineaDatosHasta({libro: b.corte}, idioma)}</span></p>
     <PestanasUna items={tabs} etiqueta={t('cop.br.detalleResumen')} anclas={{tendencias: 'tendencia', mezcla: 'canales', proyecciones: 'proyeccion'}} />
   </div>;
 }

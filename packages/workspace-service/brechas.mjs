@@ -6,6 +6,7 @@
 import {readOrderRevenueMonth, readComplaintFamilyMonth, readFamilyPairs, readAnalysisProgress} from '../insights/reader-brechas.mjs';
 import {readRefundBySkuMonth, readTrackerRefundStatus} from '../insights/reader.mjs';
 export {recomendacionDeBrecha} from './brechas-recomendacion.mjs';
+import {elegir, fNumI, pctI} from './idioma.mjs';
 
 /** Parámetros de las reglas. Son umbrales de trabajo declarados (no hallazgos); la pantalla los muestra en «Cómo se calculó». */
 export const UMBRALES = Object.freeze({
@@ -54,7 +55,13 @@ export const NOMBRE_CATEGORIA = Object.freeze({cortacesped: 'Cortacésped', desb
   sierra: 'Sierra', setos: 'Cortasetos', cultivador: 'Cultivador', nieve: 'Quitanieves', bateria: 'Batería', cargador: 'Cargador', cuchilla: 'Cuchilla', bujia: 'Bujía', carburador: 'Carburador', cadena_barra: 'Cadena y barra',
   aceite_combustible: 'Aceite y combustible'});
 /** Etiqueta legible de una familia: «Línea SKUP» o «Categoría: Batería». */
-export const etiquetaFamilia = f => (esFamiliaCodigo(f) ? 'Línea ' + f.slice(4) : esFamiliaCategoria(f) ? 'Categoría: ' + (NOMBRE_CATEGORIA[f.slice(4)] ?? f.slice(4)) : String(f));
+export const NOMBRE_CATEGORIA_EN = Object.freeze({cortacesped: 'Lawn mower', desbrozadora: 'Brush cutter', motosierra: 'Chainsaw', sopladora: 'Blower', hidrolavadora: 'Pressure washer', generador: 'Generator', taladro: 'Drill',
+  sierra: 'Saw', setos: 'Hedge trimmer', cultivador: 'Tiller', nieve: 'Snow blower', bateria: 'Battery', cargador: 'Charger', cuchilla: 'Blade', bujia: 'Spark plug', carburador: 'Carburetor', cadena_barra: 'Chain and bar',
+  aceite_combustible: 'Oil and fuel'});
+export const MOTIVO_TRACKER_EN = Object.freeze({defective: 'Defective', order: 'Order', warranty: 'Warranty', return: 'Return', shipping: 'Shipping', not_as_expected: 'Not as expected', change_mind: 'Changed mind',
+  price_match: 'Price match', otro: 'Other', sin_motivo: 'No reason'});
+export const NOMBRE_CANAL_EN = Object.freeze({...NOMBRE_CANAL, otro: 'Other'});
+export const etiquetaFamilia = (f, idioma = 'es') => (esFamiliaCodigo(f) ? elegir(idioma, 'Línea ', 'Line ') + f.slice(4) : esFamiliaCategoria(f) ? elegir(idioma, 'Categoría: ', 'Category: ') + ((idioma === 'en' ? NOMBRE_CATEGORIA_EN : NOMBRE_CATEGORIA)[f.slice(4)] ?? f.slice(4)) : String(f));
 const ACCESORIOS = new Set(['cat:bateria', 'cat:cargador', 'cat:cuchilla', 'cat:bujia', 'cat:carburador', 'cat:cadena_barra', 'cat:aceite_combustible']);
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -186,12 +193,12 @@ export function cruzar(I, R) {
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Tracker (catálogo cerrado; monto sin moneda declarada: se supone USD)
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-export function armarTracker(t) {
+export function armarTracker(t, idioma = 'es') {
   const estados = Object.fromEntries(ESTADOS.map(e => [e, {n: 0, nMonto: 0, montoMinor: 0n}]));
   const motivos = new Map(), canales = new Map();
   for (const r of t.rows) {
     const e = estados[r.status] ?? estados.otro; e.n += r.n; e.nMonto += r.nAmount; e.montoMinor += B(r.amountMinor);
-    const neg = NEGADOS.includes(r.status), m = motivos.get(r.reason) ?? {motivo: r.reason, etiqueta: MOTIVO_TRACKER[r.reason] ?? 'Otro', n: 0, negados: 0, reembolsados: 0, negadosMinor: 0n};
+    const neg = NEGADOS.includes(r.status), m = motivos.get(r.reason) ?? {motivo: r.reason, etiqueta: (idioma === 'en' ? MOTIVO_TRACKER_EN : MOTIVO_TRACKER)[r.reason] ?? elegir(idioma, 'Otro', 'Other'), n: 0, negados: 0, reembolsados: 0, negadosMinor: 0n};
     m.n += r.n; if (neg) { m.negados += r.n; m.negadosMinor += B(r.amountMinor); } if (r.status === 'reembolsado') m.reembolsados += r.n; motivos.set(r.reason, m);
     if (neg) { const c = canales.get(r.retailer) ?? {canal: r.retailer, negados: 0, negadosMinor: 0n}; c.negados += r.n; c.negadosMinor += B(r.amountMinor); canales.set(r.retailer, c); }
   }
@@ -208,7 +215,7 @@ export function armarTracker(t) {
  * Cruza SOLO familias `cod:` con mapa a SKU, en los meses en que hay análisis Y el libro de pedidos está completo en TODOS los canales donde la familia vende.
  * Tasa = conversaciones que mencionan la familia por cada 100 líneas vendidas de esa familia en esos mismos meses. «Quejas» = conversaciones de soporte que mencionan la familia (no todas son quejas).
  */
-export function armarFamilias({I, complaints, progress}) {
+export function armarFamilias({I, complaints, progress, idioma = 'es'}) {
   const base = {progreso: progress?.availability === 'ready' ? {v2: progress.v2, objetivo: progress.objetivo, avancePct: progress.avancePct, conFamilias: progress.conFamilias, cargadas: progress.conversacionesCargadas} : null};
   if (!complaints || complaints.availability === 'unavailable' || complaints.availability === 'timeout') return {...base, status: 'unavailable', filas: [], categorias: []};
   const filas = complaints.availability === 'ready' || complaints.availability === 'partial' ? complaints.rows : [];
@@ -229,12 +236,12 @@ export function armarFamilias({I, complaints, progress}) {
   const ingresoTotalFamilias = [...I.skus].filter(s => s.familia).reduce((a, s) => a + s.activoMinor, 0n);
   const filasOut = [...skusPorFam.keys()].filter(f => lineasPorFam.has(f) || quejasPorFam.has(f)).map(f => {
     const lineas = lineasPorFam.get(f) ?? 0, q = quejasPorFam.get(f) ?? 0;
-    return {familia: f, etiqueta: etiquetaFamilia(f), skus: skusPorFam.get(f).size, lineas, ingresoMinor: String(ingresoPorFam.get(f) ?? 0n), conversaciones: q, por100: lineas >= UMBRALES.minLineasCruce ? dec1((q * 100) / lineas) : null};
+    return {familia: f, etiqueta: etiquetaFamilia(f, idioma), skus: skusPorFam.get(f).size, lineas, ingresoMinor: String(ingresoPorFam.get(f) ?? 0n), conversaciones: q, por100: lineas >= UMBRALES.minLineasCruce ? dec1((q * 100) / lineas) : null};
   }).sort((a, b) => Number(B(b.ingresoMinor) - B(a.ingresoMinor)));
   const rangoIng = [...filasOut].sort((a, b) => Number(B(b.ingresoMinor) - B(a.ingresoMinor))).map(f => f.familia), rangoQ = [...filasOut].sort((a, b) => b.conversaciones - a.conversaciones).map(f => f.familia);
   filasOut.forEach(f => { f.posIngreso = rangoIng.indexOf(f.familia) + 1; f.posQuejas = rangoQ.indexOf(f.familia) + 1; });
-  const sinMapa = [...quejasPorFam.entries()].filter(([f]) => esFamiliaCodigo(f) && !skusPorFam.has(f)).map(([f, n]) => ({familia: f, etiqueta: etiquetaFamilia(f), conversaciones: n})).sort((a, b) => b.conversaciones - a.conversaciones);
-  const categorias = [...quejasPorFam.entries()].filter(([f]) => esFamiliaCategoria(f)).map(([f, n]) => ({familia: f, etiqueta: etiquetaFamilia(f), conversaciones: n})).sort((a, b) => b.conversaciones - a.conversaciones);
+  const sinMapa = [...quejasPorFam.entries()].filter(([f]) => esFamiliaCodigo(f) && !skusPorFam.has(f)).map(([f, n]) => ({familia: f, etiqueta: etiquetaFamilia(f, idioma), conversaciones: n})).sort((a, b) => b.conversaciones - a.conversaciones);
+  const categorias = [...quejasPorFam.entries()].filter(([f]) => esFamiliaCategoria(f)).map(([f, n]) => ({familia: f, etiqueta: etiquetaFamilia(f, idioma), conversaciones: n})).sort((a, b) => b.conversaciones - a.conversaciones);
   const conFamTotal = conFam.reduce((a, r) => a + r.n, 0);
   return {...base, status: base.progreso && base.progreso.avancePct !== null && base.progreso.avancePct < 100 ? 'parcial' : 'ok', filas: filasOut, sinMapa, categorias, meses: [...mesesAnalisis].sort(),
     cobertura: {analizadas: totalAnalizadas, conFamilia: conFamTotal, conFamiliaPct: totalAnalizadas ? dec1((conFamTotal * 100) / totalAnalizadas) : null, ingresoConMapaPct: pct1(ingresoTotalFamilias, I.activo)}};
@@ -243,21 +250,23 @@ export function armarFamilias({I, complaints, progress}) {
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Recomendaciones con evidencia (reglas, sin IA)
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-const nc = c => NOMBRE_CANAL[c] ?? c;
-export function generarRecomendaciones({ranking, cruce, familias, pares, progress, I}) {
+
+export function generarRecomendaciones({ranking, cruce, familias, pares, progress, I, idioma = 'es'}) {
+  const E = (es, en) => elegir(idioma, es, en), P = n => pctI(n, idioma), N = n => fNumI(n, idioma), nc = c => (idioma === 'en' ? NOMBRE_CANAL_EN : NOMBRE_CANAL)[c] ?? c;
   const out = [], rankPor = new Map(ranking.map(r => [r.sku, r]));
-  const cobertura = `Cruce de ${fNum(cruce.cobertura.reembolsosCruzados)} de ${fNum(cruce.cobertura.reembolsosTotales)} reembolsos (${cruce.cobertura.pct === null ? 'n/d' : cruce.cobertura.pct + ' % del dinero devuelto'}) con el ingreso del mismo SKU, canal y mes; solo meses completos.`;
-  const ventana = 'Ventanas de exportación parciales; la intensidad no es tasa por cohorte.';
+  const cobertura = E(`Cruce de ${N(cruce.cobertura.reembolsosCruzados)} de ${N(cruce.cobertura.reembolsosTotales)} reembolsos (${cruce.cobertura.pct === null ? 'n/d' : cruce.cobertura.pct + ' % del dinero devuelto'}) con el ingreso del mismo SKU, canal y mes; solo meses completos.`,
+    `Matched ${N(cruce.cobertura.reembolsosCruzados)} of ${N(cruce.cobertura.reembolsosTotales)} refunds (${cruce.cobertura.pct === null ? 'n/a' : cruce.cobertura.pct + '% of the money refunded'}) with revenue for the same SKU, channel and month; complete months only.`);
+  const ventana = E('Ventanas de exportación parciales; la intensidad no es tasa por cohorte.', 'Export windows are partial; intensity is not a cohort rate.');
   const sig = cruce.filas.filter(f => f.significativa);
   // R1: revisar con proveedor/canal = intensidad >= 2 × mediana del canal
   for (const f of sig) {
     const med = cruce.medianaCanal[f.canal]; if (med === undefined || med <= 0 || f.intensidadPct < med * UMBRALES.multiplicadorMediana) continue;
     const r = rankPor.get(f.sku);
-    out.push({id: `revisar:${f.sku}:${f.canal}`, tipo: 'revisar_proveedor', sku: f.sku, canal: f.canal, titulo: `Revisar ${f.sku} en ${nc(f.canal)} con el proveedor y el canal`,
-      accion: `Pedir al proveedor y a ${nc(f.canal)} una revisión de ${f.sku}: calidad del producto, descripción de la ficha y motivo de las devoluciones.`,
-      porque: `Más de ${UMBRALES.multiplicadorMediana} veces la intensidad de reembolso típica del canal, con ingreso alto: devuelve ${f.intensidadPct} % de lo que vende frente a ${med} % de la mediana de ${nc(f.canal)}.`,
-      evidencia: [`${fNum(f.reembolsos)} reembolsos por ${fUsd(f.reembolsoMinor)} (sin cancelados) frente a ${fUsd(f.ingresoMinor)} de ingreso bruto en los mismos meses (${f.meses.length} meses).`, `Intensidad ${f.intensidadPct} % contra mediana del canal ${med} %.`, r ? `Posición ${r.pos} por ingreso (${r.participacionPct} % del total).` : 'Sin posición en el ranking.'],
-      cobertura: `${cobertura} ${ventana}`, impacto: {clase: 'observed', usdMinor: String(f.reembolsoMinor), texto: `${fUsd(f.reembolsoMinor)} de ingreso bruto devuelto en juego (Observado). Cuánto se podría recuperar solo se estima con tus supuestos.`},
+    out.push({id: `revisar:${f.sku}:${f.canal}`, tipo: 'revisar_proveedor', sku: f.sku, canal: f.canal, titulo: E(`Revisar ${f.sku} en ${nc(f.canal)} con el proveedor y el canal`, `Review ${f.sku} on ${nc(f.canal)} with the supplier and the channel`),
+      accion: E(`Pedir al proveedor y a ${nc(f.canal)} una revisión de ${f.sku}: calidad del producto, descripción de la ficha y motivo de las devoluciones.`, `Ask the supplier and ${nc(f.canal)} to review ${f.sku}: product quality, listing description and reasons for returns.`),
+      porque: E(`Más de ${UMBRALES.multiplicadorMediana} veces la intensidad de reembolso típica del canal, con ingreso alto: devuelve ${f.intensidadPct} % de lo que vende frente a ${med} % de la mediana de ${nc(f.canal)}.`, `More than ${UMBRALES.multiplicadorMediana} times the typical refund intensity of the channel, with high revenue: it refunds ${f.intensidadPct}% of what it sells against ${med}% for the ${nc(f.canal)} median.`),
+      evidencia: [E(`${N(f.reembolsos)} reembolsos por ${fUsd(f.reembolsoMinor)} (sin cancelados) frente a ${fUsd(f.ingresoMinor)} de ingreso bruto en los mismos meses (${f.meses.length} meses).`, `${N(f.reembolsos)} refunds for ${fUsd(f.reembolsoMinor)} (excluding cancelled) against ${fUsd(f.ingresoMinor)} of gross revenue in the same months (${f.meses.length} months).`), E(`Intensidad ${f.intensidadPct} % contra mediana del canal ${med} %.`, `Intensity ${f.intensidadPct}% against channel median ${med}%.`), r ? E(`Posición ${r.pos} por ingreso (${r.participacionPct} % del total).`, `Rank ${r.pos} by revenue (${r.participacionPct}% of the total).`) : E('Sin posición en el ranking.', 'Not in the ranking.')],
+      cobertura: `${cobertura} ${ventana}`, impacto: {clase: 'observed', usdMinor: String(f.reembolsoMinor), texto: E(`${fUsd(f.reembolsoMinor)} de ingreso bruto devuelto en juego (Observado). Cuánto se podría recuperar solo se estima con tus supuestos.`, `${fUsd(f.reembolsoMinor)} of gross revenue refunded and at stake (Observed). How much could be recovered is only estimated with your assumptions.`)},
       baseMinor: String(f.reembolsoMinor), prioridad: Number(f.reembolsoMinor / 100n)});
   }
   // R2: empujar = ingreso creciente (entre meses completos) con intensidad igual o menor a la mediana del canal
@@ -266,22 +275,22 @@ export function generarRecomendaciones({ranking, cruce, familias, pares, progres
     const f = cruce.filas.find(x => x.sku === r.sku && x.canal === g.canal); if (!f || !f.significativa) continue;
     const med = cruce.medianaCanal[g.canal]; if (med === undefined || f.intensidadPct > med) continue;
     const delta = B(g.activoMinor) - B(g.previoMinor);
-    out.push({id: `empujar:${r.sku}:${g.canal}`, tipo: 'empujar', sku: r.sku, canal: g.canal, titulo: `Empujar ${r.sku} en ${nc(g.canal)}`,
-      accion: `Darle más exposición a ${r.sku} en ${nc(g.canal)} (inventario, publicidad o lugar en la ficha) y vigilar que la devolución siga baja.`,
-      porque: `Su ingreso crece ${g.pct} % entre ${g.previo} y ${g.mes} (meses completos) y devuelve ${f.intensidadPct} %, no más que la mediana del canal (${med} %).`,
-      evidencia: [`${fUsd(g.previoMinor)} en ${g.previo} y ${fUsd(g.activoMinor)} en ${g.mes} (ingreso bruto, sin cancelados).`, `${fNum(f.reembolsos)} reembolsos en ${f.meses.length} meses con cruce; intensidad ${f.intensidadPct} %.`],
-      cobertura: `${cobertura} ${ventana}`, impacto: {clase: 'observed', usdMinor: String(delta), texto: `${fUsd(delta)} más de ingreso bruto mensual ya observado entre ${g.previo} y ${g.mes}. Cuánto más se podría ganar solo se estima con tus supuestos.`},
+    out.push({id: `empujar:${r.sku}:${g.canal}`, tipo: 'empujar', sku: r.sku, canal: g.canal, titulo: E(`Empujar ${r.sku} en ${nc(g.canal)}`, `Push ${r.sku} on ${nc(g.canal)}`),
+      accion: E(`Darle más exposición a ${r.sku} en ${nc(g.canal)} (inventario, publicidad o lugar en la ficha) y vigilar que la devolución siga baja.`, `Give ${r.sku} more exposure on ${nc(g.canal)} (inventory, advertising or listing placement) and watch that returns stay low.`),
+      porque: E(`Su ingreso crece ${g.pct} % entre ${g.previo} y ${g.mes} (meses completos) y devuelve ${f.intensidadPct} %, no más que la mediana del canal (${med} %).`, `Its revenue grows ${g.pct}% between ${g.previo} and ${g.mes} (complete months) and it refunds ${f.intensidadPct}%, no more than the channel median (${med}%).`),
+      evidencia: [E(`${fUsd(g.previoMinor)} en ${g.previo} y ${fUsd(g.activoMinor)} en ${g.mes} (ingreso bruto, sin cancelados).`, `${fUsd(g.previoMinor)} in ${g.previo} and ${fUsd(g.activoMinor)} in ${g.mes} (gross revenue, excluding cancelled).`), E(`${N(f.reembolsos)} reembolsos en ${f.meses.length} meses con cruce; intensidad ${f.intensidadPct} %.`, `${N(f.reembolsos)} refunds in ${f.meses.length} matched months; intensity ${f.intensidadPct}%.`)],
+      cobertura: `${cobertura} ${ventana}`, impacto: {clase: 'observed', usdMinor: String(delta), texto: E(`${fUsd(delta)} más de ingreso bruto mensual ya observado entre ${g.previo} y ${g.mes}. Cuánto más se podría ganar solo se estima con tus supuestos.`, `${fUsd(delta)} more monthly gross revenue already observed between ${g.previo} and ${g.mes}. How much more could be earned is only estimated with your assumptions.`)},
       baseMinor: String(delta > 0n ? delta : 0n), prioridad: Number(delta / 100n) / 2});
   }
   // R3: no ofrecer en un mercado = misma SKU, intensidad >= 2 × mediana en un canal y <= mediana en otro (con ingreso significativo en ambos)
   for (const f of sig) {
     const med = cruce.medianaCanal[f.canal]; if (med === undefined || med <= 0 || f.intensidadPct < med * UMBRALES.multiplicadorMediana) continue;
     const otro = sig.find(x => x.sku === f.sku && x.canal !== f.canal && cruce.medianaCanal[x.canal] !== undefined && x.intensidadPct <= cruce.medianaCanal[x.canal]); if (!otro) continue;
-    out.push({id: `canal:${f.sku}:${f.canal}`, tipo: 'revisar_canal', sku: f.sku, canal: f.canal, titulo: `Evaluar si ${f.sku} conviene en ${nc(f.canal)}`,
-      accion: `Revisar con ${nc(f.canal)} si seguir ofreciendo ${f.sku} ahí, o cambiar su ficha y empaque, antes de retirarlo.`,
-      porque: `En ${nc(f.canal)} devuelve ${f.intensidadPct} % y en ${nc(otro.canal)} ${otro.intensidadPct} %: el mismo SKU se comporta distinto según el canal.`,
-      evidencia: [`${nc(f.canal)}: ${fNum(f.reembolsos)} reembolsos, ${fUsd(f.reembolsoMinor)}; ingreso ${fUsd(f.ingresoMinor)}.`, `${nc(otro.canal)}: ${fNum(otro.reembolsos)} reembolsos, ${fUsd(otro.reembolsoMinor)}; ingreso ${fUsd(otro.ingresoMinor)}.`],
-      cobertura: `${cobertura} ${ventana} «Mercado» = canal de venta; aún no hay geografía.`, impacto: {clase: 'observed', usdMinor: String(f.reembolsoMinor), texto: `${fUsd(f.reembolsoMinor)} de ingreso bruto devuelto en ${nc(f.canal)} (Observado); el ingreso que se perdería al retirarlo no se estima sin tus supuestos.`},
+    out.push({id: `canal:${f.sku}:${f.canal}`, tipo: 'revisar_canal', sku: f.sku, canal: f.canal, titulo: E(`Evaluar si ${f.sku} conviene en ${nc(f.canal)}`, `Assess whether ${f.sku} makes sense on ${nc(f.canal)}`),
+      accion: E(`Revisar con ${nc(f.canal)} si seguir ofreciendo ${f.sku} ahí, o cambiar su ficha y empaque, antes de retirarlo.`, `Review with ${nc(f.canal)} whether to keep offering ${f.sku} there, or change its listing and packaging, before pulling it.`),
+      porque: E(`En ${nc(f.canal)} devuelve ${f.intensidadPct} % y en ${nc(otro.canal)} ${otro.intensidadPct} %: el mismo SKU se comporta distinto según el canal.`, `On ${nc(f.canal)} it refunds ${f.intensidadPct}% and on ${nc(otro.canal)} ${otro.intensidadPct}%: the same SKU behaves differently depending on the channel.`),
+      evidencia: [E(`${nc(f.canal)}: ${N(f.reembolsos)} reembolsos, ${fUsd(f.reembolsoMinor)}; ingreso ${fUsd(f.ingresoMinor)}.`, `${nc(f.canal)}: ${N(f.reembolsos)} refunds, ${fUsd(f.reembolsoMinor)}; revenue ${fUsd(f.ingresoMinor)}.`), E(`${nc(otro.canal)}: ${N(otro.reembolsos)} reembolsos, ${fUsd(otro.reembolsoMinor)}; ingreso ${fUsd(otro.ingresoMinor)}.`, `${nc(otro.canal)}: ${N(otro.reembolsos)} refunds, ${fUsd(otro.reembolsoMinor)}; revenue ${fUsd(otro.ingresoMinor)}.`)],
+      cobertura: `${cobertura} ${ventana} ` + E('«Mercado» = canal de venta; aún no hay geografía.', '"Market" means sales channel; there is no geography yet.'), impacto: {clase: 'observed', usdMinor: String(f.reembolsoMinor), texto: E(`${fUsd(f.reembolsoMinor)} de ingreso bruto devuelto en ${nc(f.canal)} (Observado); el ingreso que se perdería al retirarlo no se estima sin tus supuestos.`, `${fUsd(f.reembolsoMinor)} of gross revenue refunded on ${nc(f.canal)} (Observed); the revenue that would be lost by pulling it is not estimated without your assumptions.`)},
       baseMinor: String(f.reembolsoMinor), prioridad: Number(f.reembolsoMinor / 100n) * 0.9});
   }
   // R4: cross-selling = accesorio mencionado junto a una línea de modelo (solo con product_families y análisis avanzado)
@@ -290,12 +299,12 @@ export function generarRecomendaciones({ranking, cruce, familias, pares, progres
       if (p.n < UMBRALES.minParConversaciones) continue;
       const [modelo, acc] = esFamiliaCodigo(p.a) && ACCESORIOS.has(p.b) ? [p.a, p.b] : esFamiliaCodigo(p.b) && ACCESORIOS.has(p.a) ? [p.b, p.a] : [null, null]; if (!modelo) continue;
       const fam = familias?.filas?.find(x => x.familia === modelo); if (!fam) continue;
-      const accTxt = etiquetaFamilia(acc).replace('Categoría: ', '').toLowerCase(), lineaTxt = 'línea ' + modelo.slice(4);
-      out.push({id: `cross:${modelo}:${acc}`, tipo: 'cross_sell', sku: null, canal: null, titulo: `Ofrecer ${accTxt} con la ${lineaTxt}`,
-        accion: `Armar una campaña de venta cruzada: ${accTxt} para quienes compran la ${lineaTxt}.`,
-        porque: `${fNum(p.n)} conversaciones de soporte mencionan la ${lineaTxt} y ${accTxt} a la vez.`,
-        evidencia: [`${fNum(p.n)} conversaciones con ambas menciones (análisis al ${progress.avancePct} %).`, `Línea ${modelo.slice(4)}: ${fUsd(fam.ingresoMinor)} de ingreso bruto en ${fNum(fam.lineas)} líneas.`],
-        cobertura: `Solo conversaciones ya analizadas (${progress.avancePct} % del histórico); la mención no prueba que el cliente comprara el accesorio.`, impacto: {clase: 'observed', usdMinor: fam.ingresoMinor, texto: `Base observada: ${fUsd(fam.ingresoMinor)} de ingreso bruto de la ${lineaTxt} sobre la que se vendería. El ingreso extra solo se estima con tus supuestos.`},
+      const accTxt = (idioma === 'en' ? NOMBRE_CATEGORIA_EN[acc.slice(4)] ?? acc.slice(4) : etiquetaFamilia(acc).replace('Categoría: ', '')).toLowerCase(), lineaTxt = E('línea ', 'line ') + modelo.slice(4);
+      out.push({id: `cross:${modelo}:${acc}`, tipo: 'cross_sell', sku: null, canal: null, titulo: E(`Ofrecer ${accTxt} con la ${lineaTxt}`, `Offer ${accTxt} with the ${modelo.slice(4)} line`),
+        accion: E(`Armar una campaña de venta cruzada: ${accTxt} para quienes compran la ${lineaTxt}.`, `Set up a cross-sell campaign: ${accTxt} for customers who buy the ${modelo.slice(4)} line.`),
+        porque: E(`${N(p.n)} conversaciones de soporte mencionan la ${lineaTxt} y ${accTxt} a la vez.`, `${N(p.n)} support conversations mention the ${modelo.slice(4)} line and ${accTxt} together.`),
+        evidencia: [E(`${N(p.n)} conversaciones con ambas menciones (análisis al ${progress.avancePct} %).`, `${N(p.n)} conversations with both mentions (analysis at ${progress.avancePct}%).`), E(`Línea ${modelo.slice(4)}: ${fUsd(fam.ingresoMinor)} de ingreso bruto en ${N(fam.lineas)} líneas.`, `${modelo.slice(4)} line: ${fUsd(fam.ingresoMinor)} of gross revenue across ${N(fam.lineas)} order lines.`)],
+        cobertura: E(`Solo conversaciones ya analizadas (${progress.avancePct} % del histórico); la mención no prueba que el cliente comprara el accesorio.`, `Only conversations already analyzed (${progress.avancePct}% of the history); a mention does not prove the customer bought the accessory.`), impacto: {clase: 'observed', usdMinor: fam.ingresoMinor, texto: E(`Base observada: ${fUsd(fam.ingresoMinor)} de ingreso bruto de la ${lineaTxt} sobre la que se vendería. El ingreso extra solo se estima con tus supuestos.`, `Observed base: ${fUsd(fam.ingresoMinor)} of gross revenue from the ${modelo.slice(4)} line the accessory would be sold on. Extra revenue is only estimated with your assumptions.`)},
         baseMinor: fam.ingresoMinor, prioridad: Number(B(fam.ingresoMinor) / 100n) / 20});
     }
   }
@@ -310,15 +319,15 @@ const frescura = r => (ok(r) ? {refreshedAt: r.meta?.refreshedAt ?? null, source
 const s2 = o => JSON.parse(JSON.stringify(o, (_, v) => (typeof v === 'bigint' ? String(v) : v)));
 
 /** Arma la vista a partir de las lecturas ya hechas (puro: lo prueban fixtures y la base real por igual). */
-export function armarVista({ordenes, reembolsos, tracker, quejas, pares, progreso, ahora = new Date()}) {
+export function armarVista({ordenes, reembolsos, tracker, quejas, pares, progreso, ahora = new Date(), idioma = 'es'}) {
   const partes = {ordenes: ordenes?.availability ?? 'unavailable', reembolsos: reembolsos?.availability ?? 'unavailable', tracker: tracker?.availability ?? 'unavailable', quejas: quejas?.availability ?? 'unavailable', progreso: progreso?.availability ?? 'unavailable'};
   const I = ok(ordenes) ? armarIngresos(ordenes.rows) : null;
   const R = ok(reembolsos) ? armarReembolsos(reembolsos.rows) : null;
   const ranking = I ? rankingIngresos(I) : [];
   const cruce = I && R ? cruzar(I, R) : null;
-  const familias = I ? armarFamilias({I, complaints: quejas, progress: progreso}) : {status: 'unavailable', filas: [], categorias: [], progreso: progreso?.availability === 'ready' ? progreso : null};
-  const T = ok(tracker) ? armarTracker(tracker) : null;
-  const recs = I && R && cruce ? generarRecomendaciones({ranking, cruce, familias, pares: ok(pares) ? pares.pairs : [], progress: progreso, I}) : [];
+  const familias = I ? armarFamilias({I, complaints: quejas, progress: progreso, idioma}) : {status: 'unavailable', filas: [], categorias: [], progreso: progreso?.availability === 'ready' ? progreso : null};
+  const T = ok(tracker) ? armarTracker(tracker, idioma) : null;
+  const recs = I && R && cruce ? generarRecomendaciones({ranking, cruce, familias, pares: ok(pares) ? pares.pairs : [], progress: progreso, I, idioma}) : [];
   const vista = {
     generatedAt: ahora.toISOString(), currency: 'USD', class: 'observed', partes, frescura: {ordenes: frescura(ordenes), reembolsos: frescura(reembolsos), tracker: frescura(tracker), quejas: frescura(quejas)},
     umbrales: UMBRALES,
@@ -337,7 +346,7 @@ export function armarVista({ordenes, reembolsos, tracker, quejas, pares, progres
       tracker: !T ? {status: 'unavailable'} : T.total ? {status: 'ok', class: 'observed', ...T, supuestoMoneda: 'USD'} : {status: 'empty'},
     },
     intensidad: !cruce ? {status: 'unavailable', filas: []} : {status: 'ok', class: 'observed', filas: [...cruce.filas].sort((a, b) => Number(b.ingresoMinor - a.ingresoMinor)).slice(0, 40).map(f => ({...f, meses: f.meses.length})), medianaCanal: cruce.medianaCanal,
-      cobertura: cruce.cobertura, nota: 'Intensidad, no tasa por cohorte: reembolsos del mes entre ingreso del mismo mes, mismo SKU y canal. Los reembolsos de un mes pueden venir de compras anteriores.'},
+      cobertura: cruce.cobertura, nota: elegir(idioma, 'Intensidad, no tasa por cohorte: reembolsos del mes entre ingreso del mismo mes, mismo SKU y canal. Los reembolsos de un mes pueden venir de compras anteriores.', 'Intensity, not a cohort rate: refunds in the month divided by revenue in the same month, same SKU and channel. Refunds in a month can come from earlier purchases.')},
     concentracion: !R ? {status: 'unavailable'} : {status: 'ok', top10Pct: R.top10Pct, top10: R.top10, skusConReembolso: R.skus.length},
     familias, recomendaciones: {status: I && R ? 'ok' : 'unavailable', items: recs},
   };
@@ -346,7 +355,7 @@ export function armarVista({ordenes, reembolsos, tracker, quejas, pares, progres
 
 export function createRevenueGapsRepository({database, now = () => new Date()}) {
   return {
-    async get() {
+    async get({idioma = 'es'} = {}) {
       return database.transaction('read', async s => {
         const ordenes = await readOrderRevenueMonth(s);
         const reembolsos = await readRefundBySkuMonth(s, {top: 50});
@@ -354,7 +363,7 @@ export function createRevenueGapsRepository({database, now = () => new Date()}) 
         const quejas = await readComplaintFamilyMonth(s);
         const pares = await readFamilyPairs(s);
         const progreso = await readAnalysisProgress(s);
-        return armarVista({ordenes, reembolsos, tracker, quejas, pares, progreso, ahora: now()});
+        return armarVista({ordenes, reembolsos, tracker, quejas, pares, progreso, ahora: now(), idioma});
       });
     },
   };

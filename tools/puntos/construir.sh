@@ -1,5 +1,10 @@
 #!/bin/bash
-# Reconstruye public/landing/pts desde los GLB de Higgsfield. Uso (desde ~/vexa-tools/puntos tras `npm ci`):
-#   bash construir.sh <dir con nucleo.glb paso1.glb paso2.glb paso3.glb paso4.glb> <dir de salida, p. ej. .../apps/web/public/landing/pts>
+# Reconstruye apps/web/public/s/pts desde los GLB de los objetos finales (renders/r3/final). Las dependencias viven en ~/vexa-tools/puntos (npm ci allí; nunca en el node_modules compartido).
+#   bash tools/puntos/construir.sh <dir con hero.glb o1.glb ... o4.glb> <dir de salida> [--gzip]
 set -e
-node --max-old-space-size=8192 "$(dirname "$0")/muestrear.mjs" "$1" "$2"
+AQUI="$(cd "$(dirname "$0")" && pwd)"
+# Las importaciones de paquetes se resuelven desde ~/vexa-tools/puntos: se copian allí de forma temporal.
+HERR="$HOME/vexa-tools/puntos"
+cp "$AQUI/muestrear.mjs" "$HERR/_muestrear.mjs"; cp "$AQUI/pts3.mjs" "$HERR/pts3.mjs"
+trap 'rm -f "$HERR/_muestrear.mjs" "$HERR/pts3.mjs"' EXIT
+(cd "$HERR" && node --max-old-space-size=4096 _muestrear.mjs "$1" "$2" $3)

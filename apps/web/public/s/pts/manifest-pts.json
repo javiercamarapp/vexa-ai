@@ -1,0 +1,37 @@
+{
+ "hero": {
+  "archivo": "hero.3b1a371a.pts",
+  "puntos": 12000,
+  "bytes": 61193,
+  "brotli": 36592,
+  "sha256": "3b1a371afb2da8b7afe40b9cbd73900fd512847d76f59bfc5bef40a86cb57bfe"
+ },
+ "o1": {
+  "archivo": "o1.890bf0ff.pts",
+  "puntos": 9000,
+  "bytes": 47455,
+  "brotli": 26928,
+  "sha256": "890bf0ff84483c5eb084bcaef7b12a117992ee9cef25c5c2ca66b2bbe5307362"
+ },
+ "o2": {
+  "archivo": "o2.d99e75ef.pts",
+  "puntos": 9000,
+  "bytes": 42647,
+  "brotli": 30421,
+  "sha256": "d99e75efb0647decadabe9c3742fcefa9aab27458fcfa3f819b11c6898518dba"
+ },
+ "o3": {
+  "archivo": "o3.fb7d6340.pts",
+  "puntos": 9000,
+  "bytes": 43550,
+  "brotli": 25966,
+  "sha256": "fb7d634031c7350a2c2ba677878e511165a47f065f159105f893ea39a0979d10"
+ },
+ "o4": {
+  "archivo": "o4.b88a3600.pts",
+  "puntos": 9000,
+  "bytes": 45013,
+  "brotli": 28969,
+  "sha256": "b88a3600f4e03530d9ff1c318d3537120e852b3514b3f51884542c5823b57fdb"
+ }
+}

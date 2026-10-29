@@ -1,37 +1,37 @@
 {
  "hero": {
-  "archivo": "hero.3b1a371a.pts",
+  "archivo": "hero.6a9106e6.pts",
   "puntos": 12000,
-  "bytes": 61193,
-  "brotli": 36592,
-  "sha256": "3b1a371afb2da8b7afe40b9cbd73900fd512847d76f59bfc5bef40a86cb57bfe"
+  "bytes": 39273,
+  "brotli": 39277,
+  "sha256": "6a9106e69b0b03184f6ad5486853766f8ea7836d66bcd1a0f41cb3fa2584d172"
  },
  "o1": {
-  "archivo": "o1.890bf0ff.pts",
+  "archivo": "o1.bf6aeb78.pts",
   "puntos": 9000,
-  "bytes": 47455,
-  "brotli": 26928,
-  "sha256": "890bf0ff84483c5eb084bcaef7b12a117992ee9cef25c5c2ca66b2bbe5307362"
+  "bytes": 31219,
+  "brotli": 31223,
+  "sha256": "bf6aeb7864d19a78b06cb1eb72512a8fa078693fb86611395ebbedd8fb98c69f"
  },
  "o2": {
-  "archivo": "o2.d99e75ef.pts",
+  "archivo": "o2.c96bbbee.pts",
   "puntos": 9000,
-  "bytes": 42647,
-  "brotli": 30421,
-  "sha256": "d99e75efb0647decadabe9c3742fcefa9aab27458fcfa3f819b11c6898518dba"
+  "bytes": 32413,
+  "brotli": 32417,
+  "sha256": "c96bbbee37914bab851b97cc0de8c9e773fad9122d3680dfe47d80bb7edc7865"
  },
  "o3": {
-  "archivo": "o3.fb7d6340.pts",
+  "archivo": "o3.87aca337.pts",
   "puntos": 9000,
-  "bytes": 43550,
-  "brotli": 25966,
-  "sha256": "fb7d634031c7350a2c2ba677878e511165a47f065f159105f893ea39a0979d10"
+  "bytes": 27321,
+  "brotli": 27325,
+  "sha256": "87aca3375c7d1082a6ccc3fe2ac0b30ca072c64298543296122c9f1132655dfe"
  },
  "o4": {
-  "archivo": "o4.b88a3600.pts",
+  "archivo": "o4.29c9a7df.pts",
   "puntos": 9000,
-  "bytes": 45013,
-  "brotli": 28969,
-  "sha256": "b88a3600f4e03530d9ff1c318d3537120e852b3514b3f51884542c5823b57fdb"
+  "bytes": 31147,
+  "brotli": 31117,
+  "sha256": "29c9a7dffbc3bdbcb6f36b51e214470b6396c45392fbde23611acbb292bac98e"
  }
 }

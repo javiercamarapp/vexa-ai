@@ -22,7 +22,7 @@ const esfera = (c, r, f) => (p, n) => Math.hypot(p[0] - c[0], p[1] - c[1], p[2] 
 // base: giro que deja el objeto de frente (x a la derecha, y arriba, z hacia el visor). rojo: regla en ese marco. vista: giro de tres cuartos que se hornea en los puntos.
 export const OBJETOS = {
   hero: {n: 12000, base: [90, 0, 0], vista: [-32, 8, 0], rojo: esfera([0.62, -0.66, 0.2], 0.1, (p) => p[2] > 0.12)},
-  o1: {n: 9000, base: [0, 0, 0], vista: [-35, 11, 0], rojo: 'pico'},
+  o1: {n: 9000, base: [0, 0, 0], vista: [-42, 7, 0], rojo: 'pico'},
   o2: {n: 9000, base: [90, 0, 0], vista: [-20, 8, 0], rojo: esfera([-0.65, 0.14, 0], 0.07)},
   o3: {n: 9000, base: [0, 0, 0], vista: [-20, 0, 0], rojo: (p, n) => Math.abs(p[1] - 0.13) < 0.016 && n[2] > 0.25},
   o4: {n: 9000, base: [90, 0, 0], vista: [-28, 6, 0], rojo: (p, n) => Math.abs(p[0]) < 0.1 && p[1] > 0.74 && n[2] > 0.4},
@@ -95,7 +95,8 @@ export async function construyeObjeto(archivo, nombre, cfg = OBJETOS[nombre], op
 
 const esPrincipal = process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1]);
 if (esPrincipal) {
-  const [, , entrada, salida, opt] = process.argv, gzip = opt === '--gzip';
+  // Por defecto el cuerpo va con gzip interno (la CDN no comprime octet-stream de forma fiable): 22 KB menos en el héroe sin CDN y solo 2 a 3 KB más que brotli con CDN. --crudo lo desactiva.
+  const [, , entrada, salida, opt] = process.argv, gzip = opt !== '--crudo';
   fs.mkdirSync(salida, {recursive: true});
   const manifest = {};
   for (const nombre of Object.keys(OBJETOS)) {

@@ -1,9 +1,9 @@
-// 404 propio del sitio (T7): con el shell, útil y noindex. Vive junto a [...ruta] para que Next la use dentro del layout del sitio (que pone el <html>);
+// 404 propio del sitio (T7): con el shell, útil y noindex. Vive junto al layout del sitio (que pone el <html>) porque Next solo captura el notFound() de una página en la frontera del layout superior;
 // el idioma llega por idioma-actual porque no-encontrada no recibe params. Responde 404 real: las rutas desconocidas se reescriben a __404.
 import type {Metadata} from 'next';
-import {MarcoSitio} from '../../../../../components/sitio/shell/marco';
-import {hrefAcceso, hrefDe, menus} from '../../../../../components/sitio/shell/datos';
-import {idiomaActual} from '../../../../../components/sitio/shell/idioma-actual';
+import {MarcoSitio} from '../../../../components/sitio/shell/marco';
+import {hrefAcceso, hrefDe, menus} from '../../../../components/sitio/shell/datos';
+import {idiomaActual} from '../../../../components/sitio/shell/idioma-actual';
 
 export const metadata: Metadata = {title: {absolute: 'Página no encontrada | Rovaq AI'}, robots: {index: false, follow: true}};
 

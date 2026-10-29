@@ -1,6 +1,7 @@
 import {catalog,channels,resourceHref} from './catalog.mjs';
 import {NotificationError,check,uuid,parseInboxQuery,validatePreference,cursorBinding,encodeCursor,decodeCursor} from './contracts.mjs';
 export {catalog,NotificationError};
+export {catalogFor,channelsFor} from './catalog.mjs';
 const timestamp=column=>`to_char(${column} AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`;
 const preference=r=>({channel:r.channel,eventType:r.event_type,enabled:r.enabled,version:r.version});
 /** Identity/capabilities belong to the canonical createDatabase boundary, never request input. */

@@ -1,5 +1,6 @@
 import {consumeOne} from '../jobs/durable/consumer.mjs';
 import {check} from './contracts.mjs';
+import {textoPush,idiomaDe} from './idioma.mjs';
 import {boundedSend,normalizeOutcome,recipientSnapshot} from './delivery.mjs';
 /** Trusted callbacks only. Every network effect follows persisted sending and a live canonical fence. */
 export async function consumeNotification({repository,transports={},timeoutMs=10000,afterSend=async()=>{}}){
@@ -21,7 +22,7 @@ export async function consumeNotification({repository,transports={},timeoutMs=10
    if(ready.kind!=='ready')result=ready;
    else{
     // Separate copies prevent retained mutable resolver/config objects from redirecting an effect.
-    const input={recipient:structuredClone(recipient),message:{title:'Rovaq AI',body:'Tienes avisos disponibles en Rovaq AI.',href:'/notifications',count:ready.count},idempotencyKey:ready.idempotencyKey};
+    const input={recipient:structuredClone(recipient),message:{...textoPush(recipient?.idioma),href:'/notifications',count:ready.count,...(idiomaDe(recipient?.idioma)==='en'?{idioma:'en'}:{})},idempotencyKey:ready.idempotencyKey};
     const liveConfig=await boundedSend(async()=>({value:await transport.configured()}),timeoutMs);
     if(liveConfig?.value!==true)result={kind:'blocked',code:'transport_unconfigured'};
     else{result=normalizeOutcome(await boundedSend(signal=>transport.send({...structuredClone(input),signal}),timeoutMs));

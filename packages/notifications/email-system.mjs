@@ -3,6 +3,8 @@
 // (support/F08-auth-brand, con variables Go `{{ .X }}`) y las notificaciones de la app
 // (email-template.mjs, email-weekly.mjs, con valores reales ya escapados aquí).
 // Una sola fuente por plantilla: bloques -> HTML y texto plano, en el mismo orden.
+// Idioma: todas las funciones de salida aceptan `idioma` ('es' | 'en'); sin él el resultado es el español de siempre, byte a byte.
+import { idiomaDe, langDe, porIdioma } from './idioma.mjs';
 
 /** Identidad de envío. Dominio y buzones son marcadores hasta que Javier los confirme. */
 export const IDENTITY = Object.freeze({
@@ -108,11 +110,13 @@ export function inline(source, go = false, linkClass = 't-ink') {
 }
 
 /** Misma sintaxis a texto plano: enlaces como `texto (url)`; `mailto:` sin repetir. */
-export function plain(source) {
+export function plain(source, idioma = 'es') {
+  const en = idiomaDe(idioma) === 'en';
   return String(source).replace(INLINE, (_all, bold, label, href) => {
     if (bold !== undefined) return bold;
     const bare = href.replace(/^mailto:/, '');
-    return label === bare || label === href ? label : `${label} (${bare})`;
+    // En inglés el enlace va entre ángulos (sin paréntesis en el texto visible).
+    return label === bare || label === href ? label : en ? `${label} <${bare}>` : `${label} (${bare})`;
   });
 }
 
@@ -225,22 +229,24 @@ function blockHtml(b, go) {
 }
 
 /** Texto plano de un bloque, ancho <= 72 y el enlace en su propia línea. */
-function blockText(b) {
+function blockText(b, idioma = 'es') {
+  const en = idiomaDe(idioma) === 'en';
+  const plain_ = x => plain(x, idioma);
   switch (b.type) {
-    case 'p': case 'help': return wrap(plain(b.text));
+    case 'p': case 'help': return wrap(plain_(b.text));
     case 'h2': return b.text.toUpperCase() + (b.sub ? '\n' + wrap(b.sub) : '');
     case 'list': {
-      const rows = b.rows.map(r => [plain(r.label), plain(r.value), r.when]);
+      const rows = b.rows.map(r => [plain_(r.label), plain_(r.value), r.when]);
       const max = Math.max(...rows.map(r => r[0].length));
       return rows.map(([label, value, when]) => { const head = (label + ':').padEnd(max + 2); const line = head + wrap(value, 72 - head.length).split('\n').join('\n' + ' '.repeat(head.length)); return when ? `{{ if ${when} }}${line}{{ end }}` : line; }).join('\n');
     }
     case 'button': return `${b.label}:\n${b.href}`;
     case 'code': return `    ${b.text}`;
-    case 'callout': return `${plain(b.title).toUpperCase()}\n${wrap(plain(b.body))}`;
-    case 'stats': { const max = Math.max(...b.items.map(i => i[0].length)); return b.items.map(([l, v]) => `${(l + ':').padEnd(max + 2)}${plain(v)}`).join('\n'); }
-    case 'kpis': { const max = Math.max(...b.items.map(i => i.label.length)); return 'CIFRAS DE LA SEMANA\n' + b.items.map(k => `${k.label.padEnd(max + 2)}${k.value}${k.chip ? `   ${k.chip}` : ''}${k.note ? `   (${k.note})` : ''}`).join('\n'); }
+    case 'callout': return `${plain_(b.title).toUpperCase()}\n${wrap(plain_(b.body))}`;
+    case 'stats': { const max = Math.max(...b.items.map(i => i[0].length)); return b.items.map(([l, v]) => `${(l + ':').padEnd(max + 2)}${plain_(v)}`).join('\n'); }
+    case 'kpis': { const max = Math.max(...b.items.map(i => i.label.length)); return (en ? 'THIS WEEK\'S FIGURES\n' : 'CIFRAS DE LA SEMANA\n') + b.items.map(k => `${k.label.padEnd(max + 2)}${k.value}${k.chip ? `   ${k.chip}` : ''}${k.note ? (en ? `   ${k.note}` : `   (${k.note})`) : ''}`).join('\n'); }
     case 'rows': return b.items.map((r, i) => `${i + 1}. ${r.label}   ${r.value}`).join('\n');
-    case 'urlLine': return `${wrap(plain(b.lead))}\n${b.url}`;
+    case 'urlLine': return `${wrap(plain_(b.lead))}\n${b.url}`;
     default: throw Error('unknown_block:' + b.type);
   }
 }
@@ -261,6 +267,8 @@ const BLEED = new Set(['kpis']);
  */
 export function renderLayout(d) {
   const go = !!d.go;
+  const idioma = idiomaDe(d.idioma), lang = langDe(idioma);
+  const en = idioma === 'en';
   const origin = d.assetOrigin ?? IDENTITY.assetOrigin;
   const logoSrc = p => escapeHtml(origin.replace(/\/$/, '') + p, go);
   const pad = (top, inner, bottom = 12) => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td class="px" style="padding:${top}px 36px ${bottom}px 36px;">${inner}</td></tr></table>`;
@@ -276,12 +284,12 @@ export function renderLayout(d) {
   const f = d.footer;
   const fp = (inner, last) => `<p class="t-muted" style="margin:0${last ? '' : ' 0 8px'};${P_MUTED(12, 18)}">${inner}</p>`;
   const contactBits = [`${escapeHtml(IDENTITY.legalName, go)}`, `<a href="mailto:${IDENTITY.supportEmail}" class="t-muted" style="color:${L.muted};text-decoration:underline;">${IDENTITY.supportEmail}</a>`];
-  if (IDENTITY.privacyUrl) contactBits.push(`<a href="${escapeHtml(IDENTITY.privacyUrl, go)}" class="t-muted" style="color:${L.muted};text-decoration:underline;">Aviso de privacidad</a>`);
-  contactBits.push(escapeHtml(IDENTITY.city, go));
+  if (IDENTITY.privacyUrl) contactBits.push(`<a href="${escapeHtml(IDENTITY.privacyUrl, go)}" class="t-muted" style="color:${L.muted};text-decoration:underline;">${en ? 'Privacy notice' : 'Aviso de privacidad'}</a>`);
+  contactBits.push(escapeHtml(en ? 'Mexico City, Mexico' : IDENTITY.city, go));
   const footerHtml = fp(`<strong style="font-weight:600;">${escapeHtml(f.strong, go)}</strong>${f.extra ? ' ' + escapeHtml(f.extra, go) : ''}`) + fp(inline(f.motive, go, 't-muted')) + fp(contactBits.join(' · '), true);
 
   const html = `<!doctype html>
-<html lang="es-MX" dir="ltr" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<html lang="${lang}" dir="ltr" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -296,7 +304,7 @@ ${CSS}</style>
 </head>
 <body class="bg-canvas" style="margin:0;padding:0;background:${L.canvas};word-spacing:normal;">
 <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:${L.canvas};opacity:0;">${escapeHtml(d.preheader, go)}${'&nbsp;&zwnj;'.repeat(60)}</div>
-<div role="article" aria-roledescription="email" lang="es-MX" dir="ltr">
+<div role="article" aria-roledescription="email" lang="${lang}" dir="ltr">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="bg-canvas" style="background:${L.canvas};"><tr><td align="center" style="padding:32px 12px;">
 <!--[if mso]><table role="presentation" width="600" align="center" cellpadding="0" cellspacing="0" border="0"><tr><td><![endif]-->
 <table role="presentation" class="w" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;"><tr><td style="padding:0 4px 20px 4px;" align="left"><img class="logo-l" src="${logoSrc(IDENTITY.logo.light)}" width="${IDENTITY.logo.width}" height="${IDENTITY.logo.height}" alt="Rovaq" style="display:block;width:${IDENTITY.logo.width}px;height:auto;"><!--[if !mso]><!--><img class="logo-d" src="${logoSrc(IDENTITY.logo.dark)}" width="${IDENTITY.logo.width}" height="${IDENTITY.logo.height}" alt="" style="display:none;width:${IDENTITY.logo.width}px;height:auto;max-height:0;overflow:hidden;"><!--<![endif]--></td></tr><tr><td class="bg-card bd" style="background:${L.card};border:1px solid ${L.border};border-radius:12px;">${main.join('')}${note}</td></tr></table>
@@ -307,13 +315,13 @@ ${footerHtml}
 `;
 
   const sections = [
-    (d.alert ? 'REQUIERE ACCIÓN · ' : '') + d.eyebrow.toUpperCase(),
-    wrap(plain(d.h1)),
-    ...d.blocks.map(blockText),
-    ...(d.note ?? []).map(blockText),
+    (d.alert ? (en ? 'ACTION REQUIRED · ' : 'REQUIERE ACCIÓN · ') : '') + d.eyebrow.toUpperCase(),
+    wrap(plain(d.h1, idioma)),
+    ...d.blocks.map(b => blockText(b, idioma)),
+    ...(d.note ?? []).map(b => blockText(b, idioma)),
   ];
-  const contactText = [IDENTITY.legalName, IDENTITY.supportEmail, IDENTITY.city].join(' · ');
-  const footerText = ['--', wrap(`${f.strong}${f.extra ? ' ' + f.extra : ''}`), wrap(plain(f.motive)), contactText, ...(IDENTITY.privacyUrl ? [`Aviso de privacidad: ${IDENTITY.privacyUrl}`] : [])].join('\n');
+  const contactText = [IDENTITY.legalName, IDENTITY.supportEmail, en ? 'Mexico City, Mexico' : IDENTITY.city].join(' · ');
+  const footerText = ['--', wrap(`${f.strong}${f.extra ? ' ' + f.extra : ''}`), wrap(plain(f.motive, idioma)), contactText, ...(IDENTITY.privacyUrl ? [`${en ? 'Privacy notice' : 'Aviso de privacidad'}: ${IDENTITY.privacyUrl}`] : [])].join('\n');
   const text = sections.join('\n\n') + '\n\n' + footerText + '\n';
   return { html, text };
 }
@@ -329,22 +337,26 @@ export function safeText(value, max = 60, name = 'value') {
 }
 export const truncate = (v, max) => (v.length <= max ? v : v.slice(0, Math.max(0, max - 1)).trimEnd() + '…');
 
-const nf = (n, d) => n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
-/** `$854.7k`, `$3.84 M`, `$212k`, `$950`. */
-export function fmtMonto(n) {
+const nf = (n, d, idioma = 'es') => n.toLocaleString(langDe(idioma), { minimumFractionDigits: d, maximumFractionDigits: d });
+/** `$854.7k`, `$3.84 M`, `$212k`, `$950` (en inglés `$3.84M`). */
+export function fmtMonto(n, idioma = 'es') {
   if (!Number.isFinite(n)) throw Error('invalid_amount');
-  const sign = n < 0 ? '-' : '', a = Math.abs(n);
-  if (a >= 1e6) return `${sign}$${nf(a / 1e6, 2)} M`;
-  if (a >= 1e3) return `${sign}$${nf(a / 1e3, 1).replace(/\.0$/, '')}k`;
+  const sign = n < 0 ? '-' : '', a = Math.abs(n), mm = porIdioma(idioma, ' M', 'M');
+  if (a >= 1e6) return `${sign}$${nf(a / 1e6, 2, idioma)}${mm}`;
+  if (a >= 1e3) return `${sign}$${nf(a / 1e3, 1, idioma).replace(/\.0$/, '')}k`;
   return `${sign}$${Math.round(a)}`;
 }
-/** `4.2 %` con espacio sin separación. */
-export const fmtPct = (n, d = 1) => `${nf(n, d).replace(/\.0+$/, '')}\u00A0%`;
-export const fmtDelta = n => `${n > 0 ? '+' : n < 0 ? '\u2212' : ''}${fmtPct(Math.abs(n))}`;
-/** `31 de octubre de 2026, 11:59 p. m. (hora CDMX)`. */
-export function fmtFechaHora(iso) {
+/** `4.2 %` con espacio sin separación (en inglés `4.2%`). */
+export const fmtPct = (n, d = 1, idioma = 'es') => `${nf(n, d, idioma).replace(/\.0+$/, '')}${porIdioma(idioma, '\u00A0%', '%')}`;
+export const fmtDelta = (n, idioma = 'es') => `${n > 0 ? '+' : n < 0 ? '\u2212' : ''}${fmtPct(Math.abs(n), 1, idioma)}`;
+/** `31 de octubre de 2026, 11:59 p. m. (hora CDMX)`; en inglés `October 31, 2026, 11:59 PM Mexico City time`. */
+export function fmtFechaHora(iso, idioma = 'es') {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) throw Error('invalid_date');
+  if (idiomaDe(idioma) === 'en') {
+    const f = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Mexico_City', day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }).format(d);
+    return f.replace(/[\s\u202f]+/g, ' ').replace(/ at /, ', ') + ' Mexico City time';
+  }
   const f = new Intl.DateTimeFormat('es-MX', { timeZone: 'America/Mexico_City', day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }).format(d);
   return f.replace(/\s+/g, ' ').replace(/([ap])\.\s?m\./i, (_m, x) => `${x.toLowerCase()}. m.`).replace(/ de (\d{4}),?(?: a las)? /, ' de $1, ') + ' (hora CDMX)';
 }

@@ -10,6 +10,7 @@ import '../../../../styles/sitio/base.css';
 import '../../../../styles/sitio/tipografia.css';
 import '../../../../styles/sitio/inicio.css';
 import '../../../../styles/sitio/movimiento.css';
+import '../../../../styles/sitio/integracion.css';
 import '../../../../components/sitio/shell/paginas.css';
 import {esLang, IDIOMAS_VALIDOS} from '../../../../components/sitio/shell/datos';
 import {fijarIdioma} from '../../../../components/sitio/shell/idioma-actual';

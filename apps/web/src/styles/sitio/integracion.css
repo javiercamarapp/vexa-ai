@@ -1,0 +1,26 @@
+/*
+ * Integración (T14a): clases que faltaban en la portada y que T8 resolvió reutilizando otras. Se carga después de movimiento.css.
+ *  .s-tarjetas-ficha   rejilla de dos columnas para el bloque de Finanzas y Experiencia del cliente (S7) y para «hoy» y hoja de ruta (S9).
+ *                      Es la de .s-seguridad__tarjetas sin su margen inferior de 144 px, que solo corresponde al cierre de S8.
+ *  .s-acordeon__titulo el h3 que envuelve al botón del acordeón (S9): sin margen ni tipografía propia, el botón manda.
+ * Todas las clases llevan prefijo s-.
+ */
+.s-tarjetas-ficha {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-e32);
+  max-width: 1072px;
+  margin: 0 auto;
+}
+
+.s-acordeon__titulo {
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+@media (max-width: 768px) {
+  .s-tarjetas-ficha {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

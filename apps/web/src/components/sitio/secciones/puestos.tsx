@@ -49,7 +49,7 @@ export function Puestos({lang, t}: {lang: Lang; t: TextosPortada}) {
         <p className="s-puestos__cierre s-h3-serif">{p.cierre}</p>
         <div className="s-mt-96">
           <h3 className="s-h3-serif s-centrado s-lectura s-mb-48">{l.titulo}</h3>
-          <div className="s-seguridad__tarjetas">
+          <div className="s-tarjetas-ficha">
             <div className="s-tarjeta s-tarjeta--capacidad">
               <h4 className="s-h3-producto">{l.finanzas.t}</h4>
               {l.finanzas.d ? <p className="s-mt-16 s-apagado">{l.finanzas.d}</p> : null}

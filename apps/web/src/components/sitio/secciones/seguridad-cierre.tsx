@@ -83,7 +83,7 @@ export function Integraciones({lang, t}: {lang: Lang; t: TextosPortada}) {
           {g.chipsFila2.map((c) => <span className="s-chip s-chip--integracion" key={c}>{c}</span>)}
           <span className="s-chip">{g.chipEtiquetaRuta}</span>
         </div>
-        <div className="s-seguridad__tarjetas">
+        <div className="s-tarjetas-ficha">
           <div>
             <h3 className="s-h3-producto">{g.hoyEtiqueta}</h3>
             <ul className="s-lista">{g.hoy.map((x) => <li key={x.n}><b>{x.n}.</b> {x.d}</li>)}</ul>

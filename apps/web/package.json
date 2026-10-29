@@ -15,7 +15,9 @@
     "test:pain-points": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/pain-points-ruta.test.ts tests/weekly-ruta.test.ts",
     "test:i18n": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/i18n.test.ts",
     "test:onboarding": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/onboarding.test.ts tests/onboarding-ui.test.tsx tests/onboarding-tour.test.tsx tests/setup.test.tsx",
-    "test:auth": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/auth-http.test.ts"
+    "test:auth": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/auth-http.test.ts",
+    "test:sitio": "node --test \"tests/sitio/*.test.*\"",
+    "presupuesto": "node ../../tools/sitio/presupuesto.mjs"
   },
   "dependencies": {
     "next": "16.3.8",

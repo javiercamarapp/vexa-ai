@@ -23,7 +23,7 @@ html {
   scroll-margin-top: var(--s-e96);
 }
 
-html.cargando {
+html.s-cargando {
   overflow: hidden;
 }
 

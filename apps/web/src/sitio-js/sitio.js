@@ -66,12 +66,12 @@ function cargador() {
   try { visto = sessionStorage.getItem('rovaq-intro') === '1'; } catch { /* sin almacenamiento */ }
   if (RM || visto) { H.setAttribute('data-intro-visto', ''); listo.then(() => el.remove()); return; }
   try { sessionStorage.setItem('rovaq-intro', '1'); } catch { /* sin almacenamiento */ }
-  H.classList.add('cargando');
+  H.classList.add('s-cargando');
   let fin = false;
   const terminar = () => {
     if (fin) return;
     fin = true;
-    H.classList.remove('cargando');
+    H.classList.remove('s-cargando');
     listo.then(() => el.remove());
     for (const e of ['pointerdown', 'keydown', 'wheel', 'touchstart']) removeEventListener(e, saltar);
   };

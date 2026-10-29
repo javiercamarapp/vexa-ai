@@ -4,7 +4,7 @@
  *
  * CONTRATO DE ESTADOS Y GANCHOS (lo escriben sitio.js e inicio.js con setAttribute o classList; nunca style)
  *   html[data-js]                 JavaScript arrancó. Todo diseño fijado o con estado oculto lo exige.
- *   html.cargando                 cargador activo, bloquea el scroll.
+ *   html.s-cargando               cargador activo, bloquea el scroll.
  *   html[data-intro-visto]        el cargador ya se vio en la sesión: el hero entra a los 200 ms.
  *   html[data-intro-saltado]      se saltó la animación: el hero entra sin retardo y el cargador no se pinta.
  *   html[data-eco]                vigilante de rendimiento: apaga blur y deriva.

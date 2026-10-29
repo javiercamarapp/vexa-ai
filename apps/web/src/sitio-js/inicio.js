@@ -199,7 +199,7 @@ export default function iniciar({urls, RM, NAT, motor}) {
   const lenisVivo = () => !!lenis && lenis.isScrolling;
   if (!RM && fino && !ahorro() && urls.lenis) {
     const arranca = () => {
-      if (lenis || H.classList.contains('cargando')) { if (!lenis) setTimeout(arranca, 400); return; }
+      if (lenis || H.classList.contains('s-cargando')) { if (!lenis) setTimeout(arranca, 400); return; }
       const s = D.createElement('script');
       s.src = urls.lenis;
       s.onload = () => {

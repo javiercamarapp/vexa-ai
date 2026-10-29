@@ -182,7 +182,7 @@ test('Chrome: si el módulo falla el overlay libera a los 3.5 s y la página sig
     await dormir(3600);
     const v = await s.page.evaluate(() => {
       const c = document.querySelector('[data-cargador]');
-      return {oculto: !c || getComputedStyle(c).visibility === 'hidden', cargando: document.documentElement.classList.contains('cargando'), inert: !!document.querySelector('[inert]'), scroll: getComputedStyle(document.documentElement).overflow};
+      return {oculto: !c || getComputedStyle(c).visibility === 'hidden', cargando: document.documentElement.classList.contains('s-cargando'), inert: !!document.querySelector('[inert]'), scroll: getComputedStyle(document.documentElement).overflow};
     });
     assert.equal(v.oculto, true);
     assert.equal(v.cargando, false);

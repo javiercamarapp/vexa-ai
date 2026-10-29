@@ -16,7 +16,7 @@ export async function connections(request:NextRequest){
   const rows=await createHealthRepository({database}).list();
   return finish(NextResponse.json({connections:rows},{headers:PRIVATE_HEADERS}));
  }catch(error){
-  return finish(crmFailure(error instanceof AccessError?error.code:'connections_unavailable',error instanceof AccessError?error.status:503));
+  return finish(crmFailure(error instanceof AccessError?error.code:'connections_unavailable',error instanceof AccessError?error.status:503,request));
  }
 }
 
@@ -31,5 +31,5 @@ export async function recheck(request:NextRequest){
   const database=createDatabase({identity:identity(auth.client),pool:serverPool(),selectedTenant:request.cookies.get(ACTIVE_ORG)?.value});
   const data=await createHealthRepository({database}).requestRecheck({connectionId,expectedAttemptId:body.expectedAttemptId,confirmedCredentialRotation:true});
   return finish(NextResponse.json(data,{status:202,headers:PRIVATE_HEADERS}));
- }catch(error){return finish(crmFailure(error instanceof AccessError?error.code:'connections_unavailable',error instanceof AccessError?error.status:503));}
+ }catch(error){return finish(crmFailure(error instanceof AccessError?error.code:'connections_unavailable',error instanceof AccessError?error.status:503,request));}
 }

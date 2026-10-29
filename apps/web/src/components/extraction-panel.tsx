@@ -21,7 +21,7 @@ import {LineaCache} from './ui/linea-cache';
 const useAntesDePintar=typeof window==='undefined'?useEffect:useLayoutEffect;
 import {submitBlock} from '../lib/analysis-jobs';
 import {HallazgosAnalisis} from './datos/analisis-hallazgos';
-import {useT} from './i18n/proveedor';
+import {useIdioma,useT} from './i18n/proveedor';
 import type {Clave} from '../lib/i18n';
 type Job={id:string;runId:string|null;conversationId:string;state:string;runStatus:string|null;reason:string|null;createdAt?:string};
 type Reservation={id:string;state:string;version:number;actualMinor:string|null;heldMinor:string;reportedMinor:string};
@@ -30,7 +30,7 @@ type Snapshot={pagination:{jobs:PageMeta;conversations:PageMeta};jobs:Job[];conv
 const reasons:Record<string,Clave>={reconciliation_required:'tr.ext.rReconc',runtime_disabled:'tr.ext.rRuntime',configuration_changed:'tr.ext.rConfig',budget_exceeded:'tr.ext.rBudget',ambiguous:'tr.ext.rAmbiguo',invalid_output:'tr.ext.rInvalid',policy_blocked:'tr.ext.rPolicy'};
 function usd(minor:string){const value=BigInt(minor);return `${value/1000000n}.${String(value%1000000n).padStart(6,'0')}`;}
 export function ExtractionPanel(){
- const t=useT();
+ const t=useT(),idioma=useIdioma();
  const [snapshot,setSnapshot]=useState<Snapshot|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false),[selected,setSelected]=useState(''),[limit,setLimit]=useState(''),[purpose,setPurpose]=useState('extraction'),[reservation,setReservation]=useState(''),[actual,setActual]=useState(''),[evidence,setEvidence]=useState(''),[confirmed,setConfirmed]=useState(false),[budgetOpen,setBudgetOpen]=useState(false);
  const requestKey=useRef<string|null>(null),refreshGeneration=useRef(0),[edad,setEdad]=useState<number|null>(null),[viejo,setViejo]=useState(false),snapRef=useRef<Snapshot|null>(null);
  useEffect(()=>{snapRef.current=snapshot;},[snapshot]);
@@ -55,7 +55,7 @@ export function ExtractionPanel(){
  },[pages,clearSelection,t]);
  useEffect(()=>{const controller=new AbortController();const update=()=>reload(controller.signal).catch(e=>{if(!controller.signal.aborted)setError(e.message);});void update();const timer=setInterval(update,10000);return()=>{controller.abort();clearInterval(timer);};},[reload]);
  async function action(body:Record<string,unknown>){if(busy)return;setBusy(true);setError('');try{const response=await fetch('/api/extraction',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!response.ok){if(response.status===401||response.status===403){++refreshGeneration.current;setSnapshot(null);clearSelection();}const value=await response.json();throw Error(response.status===409?t('tr.ext.conflicto'):value.error?.code==='role_insufficient'?t('tr.ext.requierePropietario'):t('tr.ext.noAccion'));}if(body.action==='submit')requestKey.current=null;if(body.action==='reconcile'){setConfirmed(false);setEvidence('');setActual('');}await reload();}catch(e){setError(e instanceof Error?e.message:t('tr.ext.noAccion'));}finally{setBusy(false);}} const jobs=snapshot?.jobs??[];
- const blocked=snapshot?submitBlock(snapshot.configuration,snapshot.canConfigure,!!selected):null;
+ const blocked=snapshot?submitBlock(snapshot.configuration,snapshot.canConfigure,!!selected,idioma):null;
  const nQueuedRunning=jobs.filter(j=>['queued','running'].includes(j.state)).length,nDone=jobs.filter(j=>j.state==='succeeded').length,nAttention=jobs.filter(j=>j.state==='failed').length,nClassified=jobs.filter(j=>j.runStatus==='succeeded').length;
  const pending=snapshot?.reservations.filter(r=>['reserved','uncertain'].includes(r.state))??[];
  // Datos nuevos: relectura en segundo plano (reload conserva el análisis pintado si falla el servicio); no corre durante una acción.

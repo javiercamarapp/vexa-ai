@@ -26,5 +26,5 @@ export async function migrations(request:NextRequest){
    return finish(NextResponse.json(await repository.compare({beforeId,afterId}),{headers:PRIVATE_HEADERS}));
   }
   return finish(NextResponse.json(await repository.list({cursor:request.nextUrl.searchParams.get('cursor')}),{headers:PRIVATE_HEADERS}));
- }catch(error){return finish(crmFailure(error instanceof AccessError?error.code:'comparison_unavailable',error instanceof AccessError?error.status:error instanceof Error&&error.message==='COMPARISON_CURSOR_INVALID'?400:503));}
+ }catch(error){return finish(crmFailure(error instanceof AccessError?error.code:'comparison_unavailable',error instanceof AccessError?error.status:error instanceof Error&&error.message==='COMPARISON_CURSOR_INVALID'?400:503,request));}
 }

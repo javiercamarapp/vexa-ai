@@ -5,6 +5,7 @@ import {ACTIVE_ORG,AccessError,PRIVATE_HEADERS,assertOrigin,config,identity,reso
 import {requestAuth} from '../auth-http';
 import {serverPool} from '../imports/server';
 import {readRequestText} from '../request-body';
+import {mensajesDe} from '../i18n/errores-api';
 import {ROLES,LIMITS,buildSuggestions,createAgent,createSyntheticPort,createSyntheticStore,createTurnLimiter,createWorkspacePort,SYNTHETIC_TENANTS,SYNTHETIC_NOW,type DataPort,type Direct} from '../../../../../packages/agent-datos/index.mjs';
 
 // Local visual QA / demo only (same guard as the workspace layout): synthetic organization, no Supabase, never in a production build.
@@ -24,10 +25,11 @@ export async function agentContext(request:NextRequest,mutating:boolean):Promise
  return {ctx:{tenantId:session.active.tenant_id,userId:session.user.id,role:session.active.role,now:new Date()},port:createWorkspacePort({database,tenantId:session.active.tenant_id}),finish:auth.finish};
 }
 export const knownRole=(role:string)=>(ROLES as readonly string[]).includes(role);
-export function failure(error:unknown,finish:(r:NextResponse)=>NextResponse=r=>r){
+export function failure(error:unknown,finish:(r:NextResponse)=>NextResponse=r=>r,request?:NextRequest){
+ const m=request?mensajesDe(request):mensajesDe({cookies:{get:()=>undefined}});
  const status=error instanceof AccessError?error.status:503;
  const code=error instanceof AccessError?error.code:'agent_unavailable';
- const message=status===401?'Inicia sesión para preguntarle a tus datos.':status===403?'Tu rol no tiene acceso a estas consultas.':status===400||status===413?'La solicitud no es válida.':'No se pudo preparar la consulta. Reintenta en un momento.';
+ const message=status===401?m('tr.err.agSesion'):status===403?m('tr.err.agRol'):status===400||status===413?m('tr.err.agSolicitud'):m('tr.err.agPreparar');
  return finish(NextResponse.json({error:{code,message,retryable:status===503}},{status:[400,401,403,408,413,429].includes(status)?status:503,headers:PRIVATE_HEADERS}));
 }
 export async function jsonBody(request:NextRequest,allowed:readonly string[],maxBytes=16384):Promise<Record<string,unknown>>{

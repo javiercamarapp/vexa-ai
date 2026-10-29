@@ -1,3 +1,4 @@
+import {mensajesDe} from '../i18n/errores-api';
 import {readRequestBytes} from '../request-body';
 import 'server-only';
 import {randomUUID} from 'node:crypto';
@@ -29,7 +30,7 @@ async function pushInput(request:NextRequest){
  try{return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{throw new AccessError(400,'input_invalid');}
 }
 export async function pushResponse(request:NextRequest){
- let finish=(r:NextResponse)=>r;const trace=randomUUID();
+ let finish=(r:NextResponse)=>r;const m=mensajesDe(request);const trace=randomUUID();
  try{
   const c=config();if(!c)throw new AccessError(503,'configuration_required');
   if(request.nextUrl.search)throw new AccessError(400,'input_invalid');
@@ -46,5 +47,5 @@ export async function pushResponse(request:NextRequest){
   const data=await repo.register({consent:input.consent,subscription:input.subscription},{deviceId,sessionId,expiresAt});
   const response=finish(NextResponse.json({data,meta:{trace_id:trace}},{headers:PRIVATE_HEADERS}));
   response.cookies.set(PUSH_DEVICE,deviceId,{httpOnly:true,secure:c.secure,sameSite:'strict',path:'/',maxAge:31536000});return response;
- }catch(error){const e=error as {status?:number};const status=[400,401,403,404,408,409,413,429,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({error:{code:'push_request_failed',message:status===409?'La suscripción cambió o pertenece a otra sesión. Desactívala antes de volver a registrarla.':'No se pudo verificar la suscripción.',retryable:status===503},meta:{trace_id:trace}},{status,headers:PRIVATE_HEADERS}));}
+ }catch(error){const e=error as {status?:number};const status=[400,401,403,404,408,409,413,429,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({error:{code:'push_request_failed',message:status===409?m('tr.err.pushRevision'):m('tr.err.pushFallo'),retryable:status===503},meta:{trace_id:trace}},{status,headers:PRIVATE_HEADERS}));}
 }

@@ -8,10 +8,10 @@ export async function POST(request:NextRequest){
  let finish=(r:NextResponse)=>r;
  try{
   const c=await agentContext(request,true);finish=c.finish;
-  if(!knownRole(c.ctx.role))return failure(new AccessError(403,'forbidden'),finish);
+  if(!knownRole(c.ctx.role))return failure(new AccessError(403,'forbidden'),finish,request);
   const b=await jsonBody(request,['messageId','verdict','reason','comment'],2048);
   const ok=typeof b.messageId==='string'&&/^[\w-]{1,64}$/.test(b.messageId)&&(b.verdict==='up'||b.verdict==='down')&&(b.reason===undefined||(typeof b.reason==='string'&&REASONS.includes(b.reason)))&&(b.comment===undefined||(typeof b.comment==='string'&&b.comment.length<=280&&!/[\u0000-\u001f]/.test(b.comment)));
-  if(!ok)return failure(new AccessError(400,'input_invalid'),finish);
+  if(!ok)return failure(new AccessError(400,'input_invalid'),finish,request);
   return finish(NextResponse.json({data:{accepted:true,persisted:false,reason:'agent_feedback_table_not_applied'}},{status:202,headers:PRIVATE_HEADERS}));
- }catch(error){return failure(error,finish);}
+ }catch(error){return failure(error,finish,request);}
 }

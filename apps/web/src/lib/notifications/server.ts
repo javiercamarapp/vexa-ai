@@ -1,3 +1,4 @@
+import {mensajesDe,idiomaDePeticion} from '../i18n/errores-api';
 import {readRequestBytes} from '../request-body';
 import 'server-only';
 import {randomUUID} from 'node:crypto';
@@ -15,17 +16,17 @@ async function notificationInput(request:NextRequest){
  try{const result=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));return result;}catch{throw new AccessError(400,'input_invalid');}
 }
 export async function notificationResponse(request:NextRequest,path?:{preferences?:boolean;id?:string}){
- const traceId=randomUUID(),version='f06-notifications-v1';let finish=(r:NextResponse)=>r;
+ const traceId=randomUUID(),version='f06-notifications-v1';let finish=(r:NextResponse)=>r;const m=mensajesDe(request);
  try{
-  const configuration=config();if(!configuration)return NextResponse.json({contract_version:version,error:{code:'configuration_required',retryable:true,message:'Configura el acceso autorizado al centro de notificaciones.'},meta:{trace_id:traceId}},{status:503,headers:PRIVATE_HEADERS});
+  const configuration=config();if(!configuration)return NextResponse.json({contract_version:version,error:{code:'configuration_required',retryable:true,message:m('tr.err.cfgNotif')},meta:{trace_id:traceId}},{status:503,headers:PRIVATE_HEADERS});
   if(request.method==='POST')assertOrigin(request.headers.get('origin'),configuration.origin);
   const auth=requestAuth(request);finish=auth.finish;
   const repository=createNotificationRepository({database:createDatabase({identity:identity(auth.client),pool:serverPool(),selectedTenant:request.cookies.get(ACTIVE_ORG)?.value})});let data;
   if(request.method==='GET'){
    if(path?.preferences){
     if(request.nextUrl.search)throw new AccessError(400,'unsupported_filter');
-    const preferences=await repository.preferences(),configured=await configuredChannels();
-    data={...preferences,channels:preferences.channels.map(channel=>({...channel,deliveryAvailable:configured[channel.id],reason:channel.id==='inapp'?channel.reason:configured[channel.id]?'Configuración disponible en este servidor. Se requieren una política habilitada, tus preferencias y el consumidor activo; todavía no acredita entrega del proveedor.':channel.reason}))};
+    const preferences=await repository.preferences({idioma:idiomaDePeticion(request)}),configured=await configuredChannels();
+    data={...preferences,channels:preferences.channels.map(channel=>({...channel,deliveryAvailable:configured[channel.id],reason:channel.id==='inapp'?channel.reason:configured[channel.id]?m('tr.err.notifCanal'):channel.reason}))};
    }
    else data=await repository.inbox({query:request.nextUrl.searchParams});
   }else{
@@ -35,5 +36,5 @@ export async function notificationResponse(request:NextRequest,path?:{preference
    else throw new AccessError(400,'unsupported_operation');
   }
   return finish(NextResponse.json({contract_version:version,data,meta:{trace_id:traceId}},{headers:{...PRIVATE_HEADERS,Vary:'Cookie'}}));
- }catch(error){const e=error as {status?:number};const status=[400,401,403,404,408,409,413,429,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({contract_version:version,error:{code:'notification_request_failed',retryable:status===503,message:status===409?'La preferencia o la página cambió. Actualiza antes de volver a guardar.':status===404?'El aviso no está disponible para tu usuario.':'No se pudo completar la operación autorizada.'},meta:{trace_id:traceId}},{status,headers:PRIVATE_HEADERS}));}
+ }catch(error){const e=error as {status?:number};const status=[400,401,403,404,408,409,413,429,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({contract_version:version,error:{code:'notification_request_failed',retryable:status===503,message:status===409?m('tr.err.notifRevision'):status===404?m('tr.err.avisoNoDisp'):m('tr.err.opFallo')},meta:{trace_id:traceId}},{status,headers:PRIVATE_HEADERS}));}
 }

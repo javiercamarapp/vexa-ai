@@ -1,3 +1,4 @@
+import {mensajesDe} from '../i18n/errores-api';
 import { readRequestJson } from '../request-body';
 import 'server-only';
 import {randomUUID} from 'node:crypto';
@@ -9,7 +10,7 @@ import {requestAuth} from '../auth-http';
 import {createCRMRuntime} from '../../../../../packages/connectors/runtime.mjs';
 import {createCRMCredentialResolver} from '../../../../../packages/connectors/credentials.mjs';
 export async function connectionSettings(request:NextRequest){
- let finish=(response:NextResponse)=>response;
+ let finish=(response:NextResponse)=>response;const m=mensajesDe(request);
  try{
   const configuration=config();if(!configuration)throw new AccessError(503,'configuration_required');
   if(request.method==='POST')assertOrigin(request.headers.get('origin'),configuration.origin);
@@ -19,5 +20,5 @@ export async function connectionSettings(request:NextRequest){
   if(request.method==='GET')return finish(NextResponse.json(await crm.list(),{headers:PRIVATE_HEADERS}));
   let body;try{body=await readRequestJson(request, 32768);}catch(error){if(error instanceof AccessError)throw error;throw new AccessError(400,'configuration_input_invalid');}
   const data=await crm.configure(body);return finish(NextResponse.json({data},{status:201,headers:PRIVATE_HEADERS}));
- }catch(error){const e=error instanceof AccessError?error:new AccessError(503,'configuration_unavailable');return finish(NextResponse.json({contract_version:'f03-crm-v1',error:{code:e.code,message:'No se pudo consultar o guardar la configuración.',retryable:e.status===503},meta:{trace_id:randomUUID()}},{status:e.status,headers:PRIVATE_HEADERS}));}
+ }catch(error){const e=error instanceof AccessError?error:new AccessError(503,'configuration_unavailable');return finish(NextResponse.json({contract_version:'f03-crm-v1',error:{code:e.code,message:m('tr.err.conexFallo'),retryable:e.status===503},meta:{trace_id:randomUUID()}},{status:e.status,headers:PRIVATE_HEADERS}));}
 }

@@ -1,3 +1,4 @@
+import {mensajesDe} from '../i18n/errores-api';
 import { readRequestJson } from '../request-body';
 import 'server-only';
 import {randomUUID} from 'node:crypto';
@@ -10,7 +11,7 @@ import {requestAuth} from '../auth-http';
 const uuid=(value:unknown):value is string=>typeof value==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(value);
 const invalid=()=>new AccessError(400,'alias_input_invalid');
 export async function aliases(request:NextRequest){
- let finish=(response:NextResponse)=>response;
+ let finish=(response:NextResponse)=>response;const m=mensajesDe(request);
  try{
   const configuration=config();if(!configuration)throw new AccessError(503,'configuration_required');
   if(request.method==='POST')assertOrigin(request.headers.get('origin'),configuration.origin);
@@ -46,6 +47,6 @@ export async function aliases(request:NextRequest){
   return finish(NextResponse.json({event},{status:201,headers:PRIVATE_HEADERS}));
  }catch(error){
   const failure=error instanceof AccessError?error:(error as {code?:string})?.code==='23514'?new AccessError(409,'alias_conflict'):new AccessError(503,'alias_unavailable');
-  return finish(NextResponse.json({contract_version:'f03-alias-v1',error:{code:failure.code,message:'No se pudo consultar o modificar el alias.',retryable:failure.status===503},meta:{trace_id:randomUUID()}},{status:failure.status,headers:PRIVATE_HEADERS}));
+  return finish(NextResponse.json({contract_version:'f03-alias-v1',error:{code:failure.code,message:m('tr.err.aliasFallo'),retryable:failure.status===503},meta:{trace_id:randomUUID()}},{status:failure.status,headers:PRIVATE_HEADERS}));
  }
 }

@@ -1,3 +1,4 @@
+import {mensajesDe} from '../i18n/errores-api';
 import {boundedRequest} from '../request-body';
 import 'server-only';
 import {NextRequest,NextResponse} from 'next/server';
@@ -9,8 +10,8 @@ import {createJobRepository} from '../../../../../packages/jobs/durable/reposito
 import {createImportHandler} from '../../../../../packages/jobs/index.mjs';
 import {ACTIVE_ORG,AccessError,assertOrigin,config,identity,PRIVATE_HEADERS} from '../auth';
 import {requestAuth} from '../auth-http';
-import {instalar} from '../security/registro';
 import {conectarConReintento,crearCompuerta,vigilarPool} from '../db-resiliencia.mjs';
+import {instalar} from '../security/registro';
 let pool:SqlPool|undefined;
 // Espera máxima de un hueco del pool (la función dura hasta 60–300 s; una pantalla pide ~12 lecturas a la vez).
 const POOL_WAIT_MS=15000;
@@ -37,7 +38,7 @@ export function serverPool():SqlPool {
 // Registro de eventos de seguridad: publica el ayudante para los paquetes y la capa de sesión (diferido; nunca rompe la petición).
 instalar(serverPool);
 export async function imports(request:NextRequest) {
- let finish=(r:NextResponse)=>r;
+ let finish=(r:NextResponse)=>r;const m=mensajesDe(request);
  try{
   const c=config();if(!c)throw new AccessError(503,'auth_not_configured');
   if(request.method!=='GET')assertOrigin(request.headers.get('origin'),c.origin);
@@ -49,5 +50,5 @@ export async function imports(request:NextRequest) {
    async read(_scope,row){const {data,error}=await bucket.download(row.object_path);if(error||!data)throw new AccessError(503,'storage_read_unavailable');if(data.size>20971520)throw new AccessError(422,'object_too_large');return new Uint8Array(await data.arrayBuffer());}
   }});
   const result=await handler(await boundedRequest(request, 8192));return finish(new NextResponse(result.body,{status:result.status,headers:result.headers}));
- }catch(error){const e=error instanceof AccessError?error:new AccessError(503,'imports_unavailable');return finish(NextResponse.json({contract_version:'f02-durable-v1',error:{code:e.code,message:e.status===503?'El servicio de importaciones no está disponible por ahora. Intenta de nuevo en unos minutos.':'Acceso rechazado.',retryable:e.status===503},meta:{trace_id:randomUUID()}},{status:e.status,headers:PRIVATE_HEADERS}));}
+ }catch(error){const e=error instanceof AccessError?error:new AccessError(503,'imports_unavailable');return finish(NextResponse.json({contract_version:'f02-durable-v1',error:{code:e.code,message:e.status===503?m('tr.err.cfgImports'):m('tr.err.accesoRechazado'),retryable:e.status===503},meta:{trace_id:randomUUID()}},{status:e.status,headers:PRIVATE_HEADERS}));}
 }

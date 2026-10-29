@@ -1,15 +1,15 @@
 // Cierre de seguridad 29-oct sobre un Postgres 17 LOCAL (ops/lib/localpg.mjs, sin red): AUTH-03, RLS-01, LIFE-02 y tipos de archivo.
 // Cada bloque crea su base, aplica el esquema hasta la última migración vigente en producción, muestra el defecto ANTES y el arreglo DESPUÉS.
-import test,{after} from 'node:test';
+import test from 'node:test';
 import assert from 'node:assert/strict';
 import {startLocalPg} from '../../ops/lib/localpg.mjs';
 const mig=n=>new URL('../migrations/'+n,import.meta.url).pathname;
 const BASE='20261130000100_retention_erase_attachments.sql';
 const h=n=>Number(n).toString(16).padStart(64,'0');
-const pg=await startLocalPg({label:'sec29'});
-after(async()=>{await pg.stop();});
+// Los roles de Postgres son del clúster: cada bloque levanta su propio Postgres local efímero.
 
 test('AUTH-03: email_auth_admit limita por IP y por correo, compartido entre conexiones, sin enumerar cuentas',async t=>{
+ const pg=await startLocalPg({label:'sec29a'});try{
  const db='s29a';pg.createDb(db);pg.applySchema(db,{upTo:BASE});pg.file(db,mig('20261205000000_email_auth_throttle.sql'));
  const call=(ip,em,role='vexa_backend')=>JSON.parse(pg.sql(db,`begin; set local role ${role}; select public.email_auth_admit(${ip?`'${ip}'`:'null'},'${em}'); commit;`).split('\n').find(l=>l.startsWith('{')));
  await t.test('IP: 10 correos distintos por minuto, el 11.º es ip_limited con Retry-After; otra IP sigue admitida',()=>{
@@ -45,4 +45,71 @@ test('AUTH-03: email_auth_admit limita por IP y por correo, compartido entre con
   assert.throws(()=>pg.sql(db,`begin; set local role vexa_backend; select count(*) from public.email_auth_events; commit;`),/permission denied/,'ni el backend lee la tabla directo');
   assert.throws(()=>pg.sql(db,`begin; set local role vexa_backend; select public.email_auth_admit('1.2.3.4','nada'); commit;`),/email_auth_input_invalid/);
  });
+ }finally{await pg.stop();}
+});
+
+const A='00000000-0000-4000-8000-000000000001', B='00000000-0000-4000-8000-000000000002';
+const U={owner:'00000000-0000-4000-8000-000000000011',analyst:'00000000-0000-4000-8000-000000000012',operator:'00000000-0000-4000-8000-000000000013',viewer:'00000000-0000-4000-8000-000000000014',other:'00000000-0000-4000-8000-000000000015'};
+const STRICT=['assumptions','attachment_blobs','attachment_links','attempts','attributions','audit_events','checkpoints','components','connections','conversations','cost_rates','customers','dead_letters','economic_events','embeddings','evidence_spans','external_aliases','extraction_runs','import_rows','import_uploads','imports','issues','jobs','message_revisions','messages','order_lines','orders','outbox','problem_conversations','products','reversals','tombstones'];
+const WORK=['interventions','measurement_plans'];
+const AGGREGATE=['recommendations','weekly_briefs','metric_snapshots','economic_snapshot_heads','problems','problem_versions'];
+const IDENTITY=['memberships','organizations'];
+
+function seedTenants(pg,db){
+ const users=Object.values(U).map((id,i)=>`('${id}','u${i}@example.invalid')`).join(',');
+ pg.sql(db,`insert into auth.users(id,email) values ${users};
+  insert into public.organizations(id,name) values ('${A}','SYN A'),('${B}','SYN B');
+  insert into public.memberships(tenant_id,user_id,role,status) values ('${A}','${U.owner}','owner','active'),('${A}','${U.analyst}','analyst','active'),('${A}','${U.operator}','operator','active'),('${A}','${U.viewer}','viewer','active'),('${B}','${U.other}','owner','active');`);
+}
+function seedContent(pg,db){
+ const ids=n=>`'${n}0000000-0000-4000-8000-000000000001'`;
+ pg.sql(db,`set session_replication_role=replica;
+  insert into public.customers(tenant_id,external_id,display_name) values ('${A}','c-1','Nombre Real Cliente');
+  insert into public.message_revisions(tenant_id,revision,text_ref,hash,message_id,redacted_text) values ('${A}','r1','ref','h',${ids(7)},'texto redactado del ticket');
+  insert into public.embeddings(tenant_id,model_id,dim,version,content,embedding,message_revision_id) values ('${A}','m',3,'v','contenido embebido','[1,2,3]',${ids(8)});
+  insert into public.import_rows(tenant_id,row_ref,import_id) values ('${A}','fila-1',${ids(9)});
+  insert into public.interventions(tenant_id,status,version,recommendation_id) values ('${A}','draft',1,${ids(6)});
+  insert into public.problems(tenant_id,severity,cause_status) values ('${A}','high','unknown');`);
+}
+const countAs=(pg,db,uid,table)=>pg.sql(db,`begin; set local role authenticated; set local request.jwt.claim.sub='${uid}'; select count(*) from public.${table}; rollback;`);
+
+test('RLS-01: la API directa deja leer contenido solo a owner/analyst; viewer y operator solo agregados',async t=>{
+ const pg=await startLocalPg({label:'sec29b'});try{
+ const db='s29b';pg.createDb(db);pg.applySchema(db,{upTo:BASE});seedTenants(pg,db);seedContent(pg,db);
+ const content=['customers','message_revisions','embeddings','import_rows'];
+ await t.test('ANTES: el defecto existe, un viewer lee nombres, texto redactado, embeddings e import_rows',()=>{
+  for(const tb of content)assert.equal(countAs(pg,db,U.viewer,tb),'1',tb+' visible al lector antes del arreglo');
+  assert.equal(countAs(pg,db,U.operator,'customers'),'1');
+ });
+ pg.file(db,mig('20261205000100_direct_read_by_role.sql'));
+ await t.test('DESPUÉS: owner y analyst conservan la lectura; operator y viewer no leen contenido; otro tenant nada',()=>{
+  for(const tb of content){
+   assert.equal(countAs(pg,db,U.owner,tb),'1',tb+' owner');assert.equal(countAs(pg,db,U.analyst,tb),'1',tb+' analyst');
+   assert.equal(countAs(pg,db,U.operator,tb),'0',tb+' operator');assert.equal(countAs(pg,db,U.viewer,tb),'0',tb+' viewer');assert.equal(countAs(pg,db,U.other,tb),'0',tb+' otro tenant');
+  }
+ });
+ await t.test('operator conserva su trabajo (interventions); el lector no',()=>{
+  assert.equal(countAs(pg,db,U.operator,'interventions'),'1');assert.equal(countAs(pg,db,U.owner,'interventions'),'1');assert.equal(countAs(pg,db,U.viewer,'interventions'),'0');assert.equal(countAs(pg,db,U.other,'interventions'),'0');
+ });
+ await t.test('los agregados (problems) siguen visibles para todos los roles del tenant, y solo para ellos',()=>{
+  for(const r of ['owner','analyst','operator','viewer'])assert.equal(countAs(pg,db,U[r],'problems'),'1',r);
+  assert.equal(countAs(pg,db,U.other,'problems'),'0');
+ });
+ await t.test('identidad intacta: cada rol sigue viendo su membresía y su organización',()=>{
+  for(const r of ['owner','analyst','operator','viewer']){assert.equal(countAs(pg,db,U[r],'memberships'),'1',r);assert.equal(countAs(pg,db,U[r],'organizations'),'1',r);}
+ });
+ await t.test('el backend (pool de la aplicación) sigue leyendo el contenido con su propio rol: las pantallas no cambian',()=>{
+  const n=pg.sql(db,`begin; set local role vexa_backend; set local request.jwt.claim.sub='${U.viewer}'; set local vexa.tenant_id='${A}'; set local vexa.action='read'; select count(*) from public.customers; rollback;`);
+  assert.equal(n,'1');
+ });
+ await t.test('anon sigue sin acceso',()=>{assert.throws(()=>pg.sql(db,`begin; set local role anon; select count(*) from public.customers; rollback;`),/permission denied/);});
+ await t.test('clasificación completa: toda tabla con lectura directa para authenticated está en la matriz y las estrictas/operativas tienen la política',()=>{
+  const readable=pg.sql(db,`select string_agg(distinct tablename,',' order by tablename) from pg_policies where schemaname='public' and permissive='PERMISSIVE' and cmd='SELECT' and roles::text ~ 'authenticated'`).split(',');
+  const known=new Set([...STRICT,...WORK,...AGGREGATE,...IDENTITY]);
+  assert.deepEqual(readable.filter(x=>!known.has(x)),[],'tabla nueva con lectura directa sin clasificar en RLS-01: decide si el lector la ve');
+  const guarded=new Set(pg.sql(db,`select string_agg(tablename,',') from pg_policies where schemaname='public' and policyname='role_scoped_direct_read' and permissive='RESTRICTIVE' and cmd='SELECT'`).split(','));
+  for(const tb of [...STRICT,...WORK])assert.ok(guarded.has(tb),tb+' sin política role_scoped_direct_read');
+  for(const tb of [...AGGREGATE,...IDENTITY])assert.ok(!guarded.has(tb),tb+' no debe estar restringida');
+ });
+ }finally{await pg.stop();}
 });

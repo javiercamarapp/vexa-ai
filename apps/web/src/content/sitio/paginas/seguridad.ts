@@ -2,7 +2,7 @@
 // Pendiente de revisión de Responsable A y de un abogado. El contacto de seguridad y la fecha usan marcadores que no se resuelven todavía,
 // así que esas hojas no se publican. Sin certificaciones, sin cifras de tablas ni de pruebas, sin auditoría interna.
 import type { Pagina } from '../tipos.ts';
-import { b } from '../ayudas.ts';
+import { b, m } from '../ayudas.ts';
 import { LANDING } from '../landing.ts';
 
 export const SEGURIDAD: Pagina = {
@@ -34,9 +34,14 @@ export const SEGURIDAD: Pagina = {
     {
       tipo: 'texto',
       titulo: b('Datos personales', 'Personal data'),
-      texto: b(
-        'Las conversaciones se guardan con una versión redactada, separada de la original. Redactar no equivale a anonimizar, y por eso no decimos que tus datos estén anonimizados.',
-        'Conversations are stored with a redacted version, separate from the original. Redaction is not anonymization, and that is why we do not say your data is anonymized.',
+      texto: m(
+        11,
+        'Misma materia que la pregunta de datos personales con IA del FAQ y la fila de anonimización de los límites: revisión de Responsable A y de un abogado.',
+        b(
+          'Las conversaciones se guardan con una versión redactada, separada de la original. Redactar no equivale a anonimizar, y por eso no decimos que tus datos estén anonimizados.',
+          'Conversations are stored with a redacted version, separate from the original. Redaction is not anonymization, and that is why we do not say your data is anonymized.',
+        ),
+        { req: ['responsable_a', 'abogado'] },
       ),
     },
     {

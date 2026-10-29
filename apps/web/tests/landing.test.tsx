@@ -76,27 +76,55 @@ test('CSS: un único bloque prefers-reduced-motion:reduce que deja el estado fin
   const reduce = css.match(/@media\s*\(prefers-reduced-motion:\s*reduce\)/g) ?? [];
   assert.equal(reduce.length, 1);
   const bloque = css.slice(css.indexOf('@media(prefers-reduced-motion:reduce)'));
-  assert.match(bloque, /animation:none!important/); assert.match(bloque, /transition:none!important/); assert.match(bloque, /opacity:1!important/); assert.match(bloque, /transform:none!important/); assert.match(bloque, /position:static!important/);
-  // Cada @keyframes y cada animation-timeline están dentro de un bloque no-preference.
+  for (const p of [/animation:none!important/, /transition:none!important/, /opacity:1!important/, /transform:none!important/]) assert.match(bloque, p);
   const fuera = sinBloques(sinBloques(css, '@media(prefers-reduced-motion:no-preference)'), '@media(prefers-reduced-motion:reduce)');
   assert.doesNotMatch(fuera, /@keyframes|animation-timeline|animation:/, 'movimiento fuera de no-preference');
-  assert.match(css, /@supports \(animation-timeline:view\(\)\)/); assert.match(css, /@supports not \(animation-timeline:view\(\)\)/);
-  assert.match(css, /view-timeline:--pasos/); assert.match(css, /position:sticky/);
+  // La escena anclada solo existe con movimiento permitido; en la base los pasos quedan apilados.
+  assert.match(sinBloques(css, '@media(prefers-reduced-motion:no-preference)'), /\.fw-pista\{position:relative\}/);
+  assert.match(css, /position:sticky/);
 });
-test('CSS y marca: Hanken Grotesk, un solo rojo señal, sin degradados ni vidrio', () => {
-  assert.doesNotMatch(css, /linear-gradient|radial-gradient|conic-gradient|backdrop-filter|filter:\s*blur/i);
-  assert.doesNotMatch(css, /\bInter\b|Fraunces|Instrument Sans|Bricolage|googleapis/);
-  const rojos = css.match(/#e8241c/gi) ?? [];
-  assert.equal(rojos.length, 1, 'el rojo se declara una vez como variable');
-  assert.match(css, /#0e0e10/i);
-  assert.match(css, /prefers-color-scheme:dark/);
+test('CSS y marca: Hanken Grotesk, un solo rojo señal, sin azules, sin vidrio ni degradados decorativos', () => {
+  assert.doesNotMatch(css, /linear-gradient|conic-gradient|backdrop-filter|filter:\s*blur/i);
+  assert.doesNotMatch(css, /\bInter\b|Fraunces|Instrument Sans|Bricolage|googleapis|@import|url\(\s*['"]?https?:/);
+  assert.equal((css.match(/#e8241c/gi) ?? []).length, 1, 'el rojo se declara una vez como variable');
+  assert.match(css, /#0e0e10/i); assert.match(css, /prefers-color-scheme:dark/);
+  // Sin azules: ningún color hexadecimal con el canal azul claramente dominante.
+  for (const [, h] of css.matchAll(/#([0-9a-f]{6})\b/gi)) { const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); assert.ok(!(b > r + 24 && b > g + 12), 'azul #' + h); }
+  assert.doesNotMatch(css, /\b(blue|navy|royalblue|dodgerblue)\b|hsl\(\s*(19\d|2\d\d)/i);
 });
-test('JavaScript de movimiento: sin librerías, con respaldo y variables escritas con setProperty', () => {
+test('JavaScript de movimiento: GSAP, ScrollTrigger, Lenis y three.js del mismo origen, solo en la landing, con licencias y sin CDN ni dependencias nuevas', () => {
   const c = leer('src/components/landing/cliente.tsx');
-  assert.doesNotMatch(c, /gsap|lenis|framer|motion\/react|from 'motion'/i);
-  assert.match(c, /IntersectionObserver/); assert.match(c, /setProperty\('--p'/); assert.match(c, /setProperty\('--rx'/); assert.match(c, /prefers-reduced-motion: reduce/);
-  assert.match(c, /CSS\.supports\('animation-timeline: view\(\)'\)/);
-  const pkg = JSON.parse(leer('package.json')); for (const d of Object.keys({...pkg.dependencies, ...pkg.devDependencies})) assert.doesNotMatch(d, /gsap|lenis|framer-motion|^motion$/);
+  for (const f of ['/vendor/gsap.min.js', '/vendor/ScrollTrigger.min.js', '/vendor/lenis.min.js', '/landing/escena.js']) assert.ok(c.includes(f), f);
+  assert.doesNotMatch(c, /https?:\/\/|jsdelivr|unpkg|cdnjs/);
+  assert.match(c, /prefers-reduced-motion: reduce/); assert.match(c, /setAttribute\('data-landing-js'/);
+  const lic = leer('public/vendor/LICENSES.txt');
+  for (const n of ['GSAP 3.13.0', 'ScrollTrigger 3.13.0', 'Lenis 1.1.13', 'three.js 0.170.0', 'MIT']) assert.ok(lic.includes(n), n);
+  const esc = leer('public/landing/escena.js');
+  assert.match(esc, /Math\.min\(window\.devicePixelRatio \|\| 1, 2\)/); assert.match(esc, /IntersectionObserver/); assert.match(esc, /prefers-reduced-motion: reduce/);
+  assert.doesNotMatch(esc, /https?:\/\/|eval\(|new Function|WebAssembly|setAttribute\(\s*['"]style/);
+  for (const f of ['three.module.min.js', 'GLTFLoader.js', 'BufferGeometryUtils.js', 'RoomEnvironment.js', 'LICENSE']) assert.ok(fs.existsSync(new URL('../public/vendor/three/' + f, import.meta.url)), f);
+  for (const f of ['GLTFLoader.js', 'BufferGeometryUtils.js', 'RoomEnvironment.js']) assert.doesNotMatch(leer('public/vendor/three/' + f), /from 'three'|from "three"/, 'importación sin reescribir ' + f);
+  const pkg = JSON.parse(leer('package.json')); for (const d of Object.keys({...pkg.dependencies, ...pkg.devDependencies})) assert.doesNotMatch(d, /gsap|lenis|^three$|framer-motion/);
+  assert.match(leer('next.config.ts'), /script-src 'self'/);
+});
+test('activos de la landing: GLB bajo 1.2 MB cada uno y 5 MB en total, todo public/landing bajo 6 MB, y cada imagen con alt, ancho y alto', () => {
+  const raiz = new URL('../public/landing/', import.meta.url);
+  let total = 0; const glb: number[] = [];
+  const recorre = (dir: URL) => { for (const e of fs.readdirSync(dir, {withFileTypes: true})) { const u = new URL(e.name + (e.isDirectory() ? '/' : ''), dir); if (e.isDirectory()) recorre(u); else { const n = fs.statSync(u).size; total += n; if (e.name.endsWith('.glb')) glb.push(n); } } };
+  recorre(raiz);
+  assert.ok(total < 6 * 1024 * 1024, 'public/landing pesa ' + total);
+  assert.equal(glb.length, 5); for (const n of glb) assert.ok(n < 1.2 * 1024 * 1024, 'GLB de ' + n); assert.ok(glb.reduce((a, b) => a + b, 0) < 5 * 1024 * 1024);
+  for (const idioma of ['es', 'en'] as const) for (const im of html(idioma).match(/<img[^>]*>/g) ?? []) { assert.match(im, /\balt="/); assert.match(im, /\bwidth="\d+"/); assert.match(im, /\bheight="\d+"/); }
+  assert.match(html('en'), /<img[^>]*fetchPriority="high"|<img[^>]*fetchpriority="high"/i);
+});
+test('solo hay lienzos 3D declarados con modelos del mismo origen y la imagen estática de respaldo sigue en el HTML', () => {
+  const h = html('en');
+  assert.equal((h.match(/data-escena3d=/g) ?? []).length, 2);
+  for (const [, m] of h.matchAll(/data-modelos="([^"]+)"/g)) for (const u of m.split(',')) assert.match(u, /^\/landing\/3d\/[\w-]+\.glb$/);
+  assert.ok(h.includes('/landing/objeto-nucleo.webp'));
+});
+test('la escena fija usa los cuatro sellos de clase de cifra como eje', () => {
+  for (const [idioma, d] of [['es', landingEs], ['en', landingEn]] as const) { const h = html(idioma); for (const k of ['obs', 'est', 'inf', 'sin']) assert.ok(h.includes(`data-s="${k}"`), k); assert.ok(h.includes(d['landing.val.sin'])); }
 });
 test('marcado: un h1, encabezados en orden, anclas válidas, sin imágenes sin alternativa, CTA como correo al contacto de site.mjs', () => {
   for (const idioma of ['es', 'en'] as const) {
@@ -108,9 +136,8 @@ test('marcado: un h1, encabezados en orden, anclas válidas, sin imágenes sin a
     for (const [, id] of h.matchAll(/href="#([\w-]+)"/g)) assert.ok(h.includes(`id="${id}"`), 'ancla rota #' + id);
     assert.doesNotMatch(h, /<img(?![^>]*\balt=)/);
     for (const f of h.match(/<figure[\s\S]*?<\/figure>/g) ?? []) { assert.match(f, /role="img"/); assert.ok(f.includes(d['landing.sintetico']), 'figura sin rótulo sintético'); }
-    assert.ok((h.match(/data-frase/g) ?? []).length === 1);
-    assert.equal((h.match(/class="panel"/g) ?? []).length, 4);
-    assert.equal((h.match(/<details/g) ?? []).length, 7);
+        assert.equal((h.match(/class="panel"/g) ?? []).length, 4);
+    assert.equal((h.match(/<details/g) ?? []).length, 8);
     assert.doesNotMatch(h, /\{\w+\}/, 'variables sin reemplazar');
   }
 });

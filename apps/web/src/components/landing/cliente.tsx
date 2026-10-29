@@ -1,83 +1,99 @@
 'use client';
-import {useEffect, useRef, useState} from 'react';
-// Islas de cliente de la landing. Reglas de la política de seguridad: ningún atributo style en el marcado ni script en línea; aquí solo se escriben variables CSS con setProperty
-// (CSSOM) y atributos de datos. El movimiento principal es CSS puro (animation-timeline); esto es respaldo para navegadores sin él, cifras que cuentan y tilt.
+import {useEffect, useState} from 'react';
+// Movimiento de la landing. Reglas de la política de seguridad: ningún atributo style en el marcado ni script en línea.
+// GSAP 3.13.0, ScrollTrigger y Lenis 1.1.13 se sirven desde el mismo dominio (public/vendor) y se cargan solo aquí, después del primer pintado.
+// Aquí solo se escriben propiedades con la API del objeto style (CSSOM) y atributos de datos. Con movimiento reducido no se carga nada.
 
-const CSS_TIMELINE = () => typeof CSS !== 'undefined' && CSS.supports('animation-timeline: view()');
 const REDUCIDO = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+type Gsap = {registerPlugin(...p: unknown[]): void; set(t: unknown, v: object): void; to(t: unknown, v: object): unknown; from(t: unknown, v: object): unknown; ticker: {add(f: (t: number) => void): void; remove(f: (t: number) => void): void; lagSmoothing(n: number): void}; context(f: () => void): {revert(): void}; utils: {toArray(s: string): HTMLElement[]; clamp(a: number, b: number, v: number): number}};
+type Disparador = {create(v: object): {kill(): void}; update(): void; refresh(): void};
+type LenisT = {raf(t: number): void; on(e: string, f: () => void): void; scrollTo(t: unknown, o?: object): void; destroy(): void};
+declare global { interface Window {gsap?: Gsap; ScrollTrigger?: Disparador; Lenis?: new (o?: object) => LenisT} }
 
-function contar(el: HTMLElement) {
-  const final = el.textContent ?? '', objetivo = Number(el.dataset.contar ?? '0');
-  const prefijo = /^[^\d]*/.exec(final)?.[0] ?? '';
-  const fmt = new Intl.NumberFormat('en-US');
-  const inicio = performance.now(), dur = 1100;
-  const paso = (ahora: number) => {
-    const p = Math.min(1, (ahora - inicio) / dur), e = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
-    el.textContent = prefijo + fmt.format(Math.round(objetivo * e));
-    if (p < 1) requestAnimationFrame(paso);
-  };
-  requestAnimationFrame(paso);
+function cargar(src: string) {
+  return new Promise<void>((ok, fallo) => {
+    const s = document.createElement('script');
+    s.src = src; s.async = false; s.onload = () => ok(); s.onerror = () => fallo(new Error(src));
+    document.head.appendChild(s);
+  });
 }
 
 export function MovimientoLanding() {
   useEffect(() => {
-    const raiz = document.documentElement, limpiar: Array<() => void> = [];
+    const raiz = document.documentElement;
     raiz.setAttribute('data-landing-js', '');
-    limpiar.push(() => raiz.removeAttribute('data-landing-js'));
-    // Sin preferencia guardada, se sigue al sistema (la app solo lee la preferencia guardada).
     if (!raiz.dataset.theme && window.matchMedia('(prefers-color-scheme: dark)').matches) raiz.dataset.theme = 'dark';
-    const reducido = REDUCIDO(), conTimeline = CSS_TIMELINE();
     const el = <T extends Element>(sel: string) => Array.from(document.querySelectorAll<T>(sel));
+    const limpiar: Array<() => void> = [() => raiz.removeAttribute('data-landing-js')];
+    let vivo = true;
 
-    // Revelados: con animation-timeline lo hace el CSS; sin él, IntersectionObserver añade la clase «on».
-    if (!reducido && !conTimeline) {
-      const alto = window.innerHeight;
-      const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }), {rootMargin: '0px 0px -8% 0px', threshold: 0.08});
-      el('.rv').forEach((n) => { if (n.getBoundingClientRect().top < alto) n.classList.add('on', 'ya'); else io.observe(n); });
+    // Escena de los cuatro pasos: respaldo sin librerías con centinelas. GSAP mejora el movimiento, pero el paso activo nunca depende de él.
+    const escena = document.querySelector<HTMLElement>('[data-escena]');
+    if (escena) {
+      const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) escena.dataset.activo = (e.target as HTMLElement).dataset.centinela ?? '1'; }), {rootMargin: '-50% 0px -50% 0px'});
+      el('[data-centinela]').forEach((c) => io.observe(c));
       limpiar.push(() => io.disconnect());
     }
+    if (REDUCIDO()) return () => limpiar.forEach((f) => f());
 
-    // Cifras que cuentan hacia arriba al activarse su paso. Texto final en el HTML; aquí se pone en cero solo lo que aún no se ve.
-    const contadores = el<HTMLElement>('[data-contar]');
-    if (!reducido) contadores.forEach((c) => { const pref = /^[^\d]*/.exec(c.textContent ?? '')?.[0] ?? ''; c.textContent = pref + '0'; });
+    // Movimiento premium: se carga tras el primer pintado y solo en la landing.
+    const arranque = async () => {
+      try {
+        await cargar('/vendor/gsap.min.js'); await cargar('/vendor/ScrollTrigger.min.js'); await cargar('/vendor/lenis.min.js');
+      } catch { return; }
+      const {gsap, ScrollTrigger, Lenis} = window;
+      if (!vivo || !gsap || !ScrollTrigger || !Lenis) return;
+      gsap.registerPlugin(ScrollTrigger);
+      const lenis = new Lenis({lerp: 0.1, smoothWheel: true});
+      lenis.on('scroll', () => ScrollTrigger.update());
+      const tick = (t: number) => lenis.raf(t * 1000);
+      gsap.ticker.add(tick); gsap.ticker.lagSmoothing(0);
+      const alto = () => (document.querySelector('.l-nav')?.getBoundingClientRect().height ?? 56);
+      const alClic = (ev: MouseEvent) => {
+        const a = (ev.target as Element).closest?.('a[href^="#"]') as HTMLAnchorElement | null;
+        const id = a?.getAttribute('href')?.slice(1);
+        const dest = id ? document.getElementById(id) : null;
+        if (!a || !dest) return;
+        ev.preventDefault(); lenis.scrollTo(dest, {offset: -alto()});
+        history.replaceState(null, '', '#' + id);
+      };
+      document.addEventListener('click', alClic);
 
-    // Centinelas de los pasos: activan el paso (respaldo del CSS) y disparan las cifras del panel activo.
-    const pista = document.querySelector<HTMLElement>('[data-pasos]');
-    if (pista) {
-      const cen = el<HTMLElement>('[data-centinela]'), hechos = new Set<Element>();
-      const io = new IntersectionObserver((es) => es.forEach((e) => {
-        if (!e.isIntersecting) return;
-        const n = (e.target as HTMLElement).dataset.centinela ?? '1';
-        pista.dataset.activo = n;
-        if (reducido) return;
-        pista.querySelectorAll<HTMLElement>(`.panel[data-paso="${n}"] [data-contar]`).forEach((c) => { if (!hechos.has(c)) { hechos.add(c); contar(c); } });
-      }), {rootMargin: '-50% 0px -50% 0px'});
-      cen.forEach((c) => io.observe(c));
-      limpiar.push(() => io.disconnect());
-    }
-    if (reducido) contadores.forEach((c) => c.removeAttribute('data-contar'));
-
-    // Frase que se rellena palabra por palabra: respaldo con una variable --p escrita desde un único oyente pasivo.
-    const frases = el<HTMLElement>('[data-frase]');
-    if (!reducido && !conTimeline && frases.length) {
-      let esperando = false;
-      const medir = () => { esperando = false; const vh = window.innerHeight; frases.forEach((f) => { const r = f.getBoundingClientRect(); f.style.setProperty('--p', String(Math.max(0, Math.min(1, (vh * 0.85 - r.top) / (r.height + vh * 0.3))))); }); };
-      const alScroll = () => { if (!esperando) { esperando = true; requestAnimationFrame(medir); } };
-      medir();
-      window.addEventListener('scroll', alScroll, {passive: true}); window.addEventListener('resize', alScroll);
-      limpiar.push(() => { window.removeEventListener('scroll', alScroll); window.removeEventListener('resize', alScroll); });
-    }
-
-    // Tilt sutil de tarjeta con puntero fino: variables --rx y --ry.
-    if (!reducido && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      el<HTMLElement>('.tilt').forEach((t) => {
-        const mover = (ev: PointerEvent) => { const r = t.getBoundingClientRect(); t.style.setProperty('--rx', (((ev.clientY - r.top) / r.height - 0.5) * -5).toFixed(2) + 'deg'); t.style.setProperty('--ry', (((ev.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg'); };
-        const salir = () => { t.style.removeProperty('--rx'); t.style.removeProperty('--ry'); };
-        t.addEventListener('pointermove', mover); t.addEventListener('pointerleave', salir);
-        limpiar.push(() => { t.removeEventListener('pointermove', mover); t.removeEventListener('pointerleave', salir); });
+      const ctx = gsap.context(() => {
+        // Entrada del hero: el titular nunca se oculta (LCP); solo sube unos píxeles. El resto aparece escalonado.
+        gsap.from('[data-in="0"]', {y: 18, duration: 0.9, ease: 'expo.out'});
+        gsap.from('[data-in="1"],[data-in="2"],[data-in="3"]', {autoAlpha: 0, y: 14, duration: 0.8, ease: 'power3.out', stagger: 0.12, delay: 0.15});
+        // Revelados al entrar en vista: solo lo que está por debajo del primer viewport.
+        const vh = window.innerHeight;
+        gsap.utils.toArray('[data-rv]').forEach((n) => {
+          if (n.getBoundingClientRect().top < vh) return;
+          gsap.set(n, {autoAlpha: 0, y: 28});
+          ScrollTrigger.create({trigger: n, start: 'top 88%', once: true, onEnter: () => gsap.to(n, {autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out', clearProps: 'transform,opacity,visibility'})});
+        });
+        // Objetos 3D reales (módulo propio con three.js, mismo origen): el scroll solo escribe datos que la escena lee con inercia.
+        const nucleo = document.querySelector<HTMLElement>('canvas[data-escena3d="nucleo"]'), pasos = document.querySelector<HTMLElement>('canvas[data-escena3d="pasos"]');
+        if (nucleo) ScrollTrigger.create({trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true, onUpdate: (s: {progress: number}) => { nucleo.dataset.p = s.progress.toFixed(4); }});
+        if (nucleo || pasos) {
+          const m = document.createElement('script'); m.type = 'module'; m.src = '/landing/escena.js'; document.head.appendChild(m);
+          limpiar.push(() => m.remove());
+        }
+        // Escena fija: el objeto activo sube a su sitio y los demás se apartan; el progreso ligado al scroll gira el objeto sutilmente.
+        if (escena) {
+          ScrollTrigger.create({trigger: escena, start: () => 'top ' + alto(), end: 'bottom bottom', scrub: 0.5,
+            onUpdate: (s: {progress: number}) => {
+              // El progreso 0 a 1 es lo único que se escribe: el texto, la cifra y el 3D se sincronizan con él.
+              const i = Math.min(3, Math.round(s.progress * 3));
+              escena.dataset.activo = String(i + 1);
+              if (pasos) { pasos.dataset.activo = String(i + 1); pasos.dataset.c = s.progress.toFixed(4); }
+            }});
+        }
       });
-    }
-    return () => limpiar.forEach((f) => f());
+      limpiar.push(() => { ctx.revert(); document.removeEventListener('click', alClic); gsap.ticker.remove(tick); lenis.destroy(); });
+      window.addEventListener('load', () => ScrollTrigger.refresh(), {once: true});
+    };
+    const arrancar = () => { void arranque(); };
+    if (document.readyState === 'complete') window.setTimeout(arrancar, 50); else window.addEventListener('load', () => window.setTimeout(arrancar, 50), {once: true});
+    return () => { vivo = false; limpiar.forEach((f) => f()); };
   }, []);
   return null;
 }
@@ -98,78 +114,8 @@ export function SelectorTemaLanding({etiqueta}: {etiqueta: string}) {
     try { window.localStorage.setItem('vexa-theme', siguiente); } catch { /* la preferencia es opcional */ }
     document.querySelectorAll('meta[name=theme-color]').forEach((m) => m.setAttribute('content', siguiente === 'dark' ? '#0e0e10' : '#ffffff'));
   }
-  return <button type="button" className="l-tema" aria-label={etiqueta} aria-pressed={oscuro} onClick={alternar}>
-    <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.6" /><path className="l-tema-mitad" d="M10 3.5a6.5 6.5 0 0 1 0 13z" fill="currentColor" /></svg>
+  return <button type="button" className="c-tema-btn" aria-label={etiqueta} aria-pressed={oscuro} onClick={alternar}>
+    <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path className="l-tema-luna" d="M16.5 11.6A7 7 0 0 1 8.4 3.5a7 7 0 1 0 8.1 8.1z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>
   </button>;
 }
 
-const VS = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
-const FS = `#ifdef GL_FRAGMENT_PRECISION_HIGH
-precision highp float;
-#else
-precision mediump float;
-#endif
-uniform vec2 uRes;uniform float uT;uniform vec3 uC;
-float h(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
-float n(vec2 p){vec2 i=floor(p),f=fract(p);vec2 u=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),u.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),u.x),u.y);}
-float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*n(p);p*=2.02;a*=.5;}return v;}
-void main(){
-  vec2 uv=gl_FragCoord.xy/uRes;float asp=uRes.x/uRes.y;
-  vec2 p=vec2(uv.x*asp,uv.y)*1.5;
-  float f=fbm(p+vec2(uT*.02,-uT*.014))+.3*fbm(p*2.1-vec2(uT*.01));
-  float d=abs(fract(f*8.)-.5);
-  float linea=1.-smoothstep(.015,.055,d);
-  float masc=(.2+.8*smoothstep(.25,1.,uv.x))*smoothstep(.02,.5,uv.y);
-  float a=linea*masc*.2;
-  gl_FragColor=vec4(uC*a,a);
-}`;
-
-/** Fondo de curvas de nivel en una sola tinta, muy tenue. Sin degradados: solo líneas finas que derivan despacio. Un solo cuadro con movimiento reducido, pausa fuera de vista y a 30 cuadros por segundo en táctil. */
-export function SombreadoLanding() {
-  const ref = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
-    const canvas = ref.current;
-    if (!canvas) return;
-    const conexion = (navigator as Navigator & {connection?: {saveData?: boolean}}).connection;
-    if (conexion?.saveData) return;
-    const gl = canvas.getContext('webgl', {antialias: false, alpha: true, premultipliedAlpha: true, powerPreference: 'low-power'});
-    if (!gl) return;
-    const sh = (tipo: number, src: string) => { const s = gl.createShader(tipo)!; gl.shaderSource(s, src); gl.compileShader(s); return s; };
-    const prog = gl.createProgram()!;
-    gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
-    gl.useProgram(prog);
-    const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
-    const loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    const uRes = gl.getUniformLocation(prog, 'uRes'), uT = gl.getUniformLocation(prog, 'uT'), uC = gl.getUniformLocation(prog, 'uC');
-    const reducido = REDUCIDO(), tactil = window.matchMedia('(pointer: coarse)').matches;
-    const escala = window.innerWidth < 760 ? 0.5 : 0.6;
-    const color = () => { const m = /(\d+)[ ,]+(\d+)[ ,]+(\d+)/.exec(getComputedStyle(canvas).color); gl.uniform3f(uC, +(m?.[1] ?? 14) / 255, +(m?.[2] ?? 14) / 255, +(m?.[3] ?? 16) / 255); };
-    const medir = () => { canvas.width = Math.max(2, Math.round(canvas.clientWidth * escala)); canvas.height = Math.max(2, Math.round(canvas.clientHeight * escala)); gl.viewport(0, 0, canvas.width, canvas.height); gl.uniform2f(uRes, canvas.width, canvas.height); };
-    const t0 = performance.now();
-    let visible = true, pestana = !document.hidden, raf = 0, ultimo = 0;
-    const dibujar = (ahora: number) => { gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.uniform1f(uT, reducido ? 0 : (ahora - t0) / 1000); gl.drawArrays(gl.TRIANGLES, 0, 6); };
-    const bucle = (ahora: number) => {
-      raf = 0;
-      if (!visible || !pestana || reducido) return;
-      if (!tactil || ahora - ultimo > 32) { ultimo = ahora; dibujar(ahora); }
-      raf = requestAnimationFrame(bucle);
-    };
-    const arrancar = () => { if (!raf && visible && pestana && !reducido) raf = requestAnimationFrame(bucle); };
-    medir(); color(); dibujar(t0);
-    canvas.setAttribute('data-listo', '');
-    const io = new IntersectionObserver((es) => { visible = es[0]?.isIntersecting ?? true; arrancar(); });
-    io.observe(canvas);
-    const alVisibilidad = () => { pestana = !document.hidden; arrancar(); };
-    document.addEventListener('visibilitychange', alVisibilidad);
-    let temporizador = 0;
-    const alRedimensionar = () => { window.clearTimeout(temporizador); temporizador = window.setTimeout(() => { medir(); dibujar(performance.now()); }, 150); };
-    window.addEventListener('resize', alRedimensionar);
-    const mo = new MutationObserver(() => { color(); dibujar(performance.now()); });
-    mo.observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
-    arrancar();
-    return () => { if (raf) cancelAnimationFrame(raf); io.disconnect(); mo.disconnect(); window.clearTimeout(temporizador); document.removeEventListener('visibilitychange', alVisibilidad); window.removeEventListener('resize', alRedimensionar); };
-  }, []);
-  return <canvas ref={ref} className="l-shader" aria-hidden="true" />;
-}

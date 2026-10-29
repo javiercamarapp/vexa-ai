@@ -1,4 +1,8 @@
 {
+ "auxiliares": [
+  "fuentes/LICENCIAS.txt",
+  "pts/manifest-pts.json"
+ ],
  "fuentes": {
   "display": {
    "brotli": 35496,

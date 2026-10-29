@@ -39,7 +39,7 @@ function archivosDeclarados() {
 
 test('manifest válido: versión, secciones conocidas, claves con url pública y sin campos faltantes', () => {
   assert.equal(manifest.version, 1);
-  for (const k of Object.keys(manifest)) assert.ok(['version', 'precargas', ...SECCIONES].includes(k), `sección desconocida ${k}`);
+  for (const k of Object.keys(manifest)) assert.ok(['version', 'precargas', 'auxiliares', ...SECCIONES].includes(k), `sección desconocida ${k}`);
   for (const s of ['js', 'pts', 'img', 'fuentes']) assert.ok(Object.keys(manifest[s] ?? {}).length > 0, `sección vacía ${s}`);
   for (const {seccion, clave, e} of entradas()) {
     assert.match(e.url, /^\/(s|vendor)\/[A-Za-z0-9._\-\/]+$/, `${seccion}/${clave}`);
@@ -173,13 +173,14 @@ test('fuentes.css referencia exactamente los woff2 del manifest y declara las tr
 
 test('sin claves huérfanas: todo archivo de public/s está en el manifest y toda entrada tiene su archivo', () => {
   const declarados = new Set(archivosDeclarados().map((a) => a.url));
-  const permitidos = new Set(['/s/manifest.json', '/s/pts/manifest-pts.json', '/s/fuentes/LICENCIAS.txt']); // fuente de T5 y licencias
+  const permitidos = new Set(['/s/manifest.json', ...manifest.auxiliares.map((a) => `/s/${a}`)]); // fuente de T5 y licencias
   const recorrer = (dir) => readdirSync(dir).flatMap((n) => { const p = join(dir, n); return statSync(p).isDirectory() ? recorrer(p) : [p]; });
   for (const f of recorrer(join(pub, 's'))) {
     const url = '/' + relative(pub, f).split('\\').join('/');
     assert.ok(declarados.has(url) || permitidos.has(url), `archivo huérfano fuera del manifest: ${url}`);
   }
   for (const u of declarados) assert.ok(existsSync(disco(u)), `entrada sin archivo: ${u}`);
+  assert.deepEqual([...permitidos].sort(), ['/s/fuentes/LICENCIAS.txt', '/s/manifest.json', '/s/pts/manifest-pts.json']);
   // manifest-pts.json de T5 y la sección pts dicen lo mismo
   const mp = JSON.parse(readFileSync(join(pub, 's', 'pts', 'manifest-pts.json'), 'utf8'));
   assert.deepEqual(Object.keys(mp).sort(), Object.keys(manifest.pts).sort());

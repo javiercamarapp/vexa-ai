@@ -100,6 +100,7 @@ async function main() {
   man.js = js;
   man.pts = pts;
   man.md = man.md ?? {}; // T2 llena la sección md
+  man.auxiliares = ['fuentes/LICENCIAS.txt', 'pts/manifest-pts.json']; // archivos de public/s que no se sirven por clave pero van con los activos
   escribirJson(MANIFEST, man);
   for (const [k, e] of Object.entries(js)) console.log(`${k.padEnd(14)} ${String(e.bytes).padStart(7)} B  brotli ${String(e.brotli).padStart(6)} B  ${e.url}`);
   if (pendientes.length) console.log(`pendientes (aún no existen en src/sitio-js): ${pendientes.join(', ')}`);

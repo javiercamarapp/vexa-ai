@@ -64,7 +64,7 @@ export const ccoEs = {
   'cco.cob.filasConBodega': 'Filas con bodega: {conocido} de {elegible}.',
   'cco.cob.direccionesLegibles': 'Direcciones de las que se pudo leer el estado: {pct} por ciento, {conocido} de {elegible}.',
   // Ventana y tablas
-  'cco.ventana': '{canal}: ventana común del {desde} al {hasta}, {meses} meses completos. Las fuentes están marcadas incompletas.',
+  'cco.ventana': '{canal}: ventana común del {desde} al {fin}, {meses} meses completos. Las fuentes están marcadas incompletas.',
   'cco.ventanasDistintas': 'Cada canal tiene su propia ventana. Las tasas no se comparan entre canales.',
   'cco.sinVentana': 'Sin ventana común completa en: {canales}. No hay cifra, y no es cero.',
   'cco.devNoDisp': 'Este canal no tiene fuente de devoluciones cargada. Las devoluciones son desconocidas, no cero.',
@@ -226,7 +226,7 @@ export const ccoEn = {
   'cco.cob.latenciaConBodega': 'Rows with a warehouse and a readable dispatch time: {pct} percent, {conocido} of {elegible}.',
   'cco.cob.filasConBodega': 'Rows with a warehouse: {conocido} of {elegible}.',
   'cco.cob.direccionesLegibles': 'Addresses from which the state could be read: {pct} percent, {conocido} of {elegible}.',
-  'cco.ventana': '{canal}: common window from {desde} to {hasta}, {meses} full months. The sources are marked incomplete.',
+  'cco.ventana': '{canal}: common window from {desde} to {fin}, {meses} full months. The sources are marked incomplete.',
   'cco.ventanasDistintas': 'Each channel has its own window. Rates are not compared across channels.',
   'cco.sinVentana': 'No complete common window in: {canales}. There is no figure, and it is not zero.',
   'cco.devNoDisp': 'This channel has no refund source loaded. Refunds are unknown, not zero.',

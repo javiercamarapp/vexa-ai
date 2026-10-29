@@ -7,7 +7,7 @@ import {StatusChip} from '../ui/status-chip';
 import {Notice} from '../ui/notice';
 import {SegmentedControl} from '../ui/segmented';
 type Column<T>={key:string;header:ReactNode;render:(row:T)=>ReactNode;align?:'start'|'num'};
-import {SelloProcedencia} from '../confianza/sello-procedencia';
+import '../confianza/confianza.css';
 import type {Cobertura,Faltan,CardBase,TarjetaAv,TarjetaBv,TarjetaCv,TarjetaDv,TarjetaEv,TarjetaFv,CanalA,FilaSku,EstadoCco} from '../../../../../packages/workspace-service/cco.mjs';
 import {mayor,mesTxt,diaTxt,selloCco,tonoDeEstado} from './cco-modelo.mjs';
 import './cco.css';
@@ -60,7 +60,7 @@ export function Marco({card,minimo,consultado,children}:{card:CardBase;minimo:nu
   {card.indisponible&&<Notice tone="warn">{t(card.indisponible==='not_installed'?'cco.noInstalado.cuerpo':'cco.noDisp')}</Notice>}
   {children}
   {card.cobertura&&card.cobertura.length>0&&<ul className="cco-cob">{card.cobertura.map(c=><Cob key={c.clave} c={c}/>)}</ul>}
-  {sello&&<SelloProcedencia sello={sello}/>}
+  {sello&&<ul className="sello" data-clase={sello.clase} title={sello.texto} aria-label={t('conf.procedencia',{texto:sello.texto})}><li className="sello-clase">{sello.claseTxt}</li><li>{sello.fuente}</li><li>{sello.hasta}</li>{sello.actualizado&&<li>{sello.actualizado}</li>}</ul>}
   <Salvedades ids={card.salvedades} minimo={minimo}/>
   <Faltan items={card.faltan}/>
  </section>;
@@ -85,11 +85,12 @@ export function TarjetaA({card,minimo,consultado}:{card:TarjetaAv;minimo:number;
  const t=useT(),idioma=useIdioma(),locale=LOCALE_INTL[idioma];
  const [sel,setSel]=useState<string|null>(null);
  const canal=card.canales.find(c=>c.canal===sel)??card.canales[0];
+ const ventana=(c:CanalA)=>({canal:NOMBRE_CANAL[c.canal]??c.canal,desde:mesTxt(c.ventana.desde,locale)??'—',fin:mesTxt(c.ventana.hasta,locale)??'—',meses:numero(idioma,c.ventana.meses)});
  const opciones=useMemo(()=>card.canales.map(c=>({value:c.canal,label:NOMBRE_CANAL[c.canal]??c.canal})),[card.canales]);
  return <Marco card={card} minimo={minimo} consultado={consultado}>
   {canal&&<div className="cco-bloque">
    {card.canales.length>1&&<SegmentedControl options={opciones} value={canal.canal} onChange={setSel} label={t('cco.canalAria')} size="sm"/>}
-   <p className="cco-ventana">{t('cco.ventana',{canal:NOMBRE_CANAL[canal.canal]??canal.canal,desde:mesTxt(canal.ventana.desde,locale)??'—',hasta:mesTxt(canal.ventana.hasta,locale)??'—',meses:numero(idioma,canal.ventana.meses)})}</p>
+   <p className="cco-ventana">{t('cco.ventana',ventana(canal))}</p>
    {!canal.devolucionesDisponibles&&<Notice tone="info">{t('cco.devNoDisp')}</Notice>}
    {canal.monedas.length===0&&<p className="cco-vacio">{t('cco.sinFilas')}</p>}
    {canal.monedas.map(m=><div key={m.moneda} className="cco-tabla"><p className="cco-moneda">{t('cco.moneda',{moneda:m.moneda})}</p><TablaSkus canal={canal} moneda={m} trackerOk={card.trackerDisponible!==false}/></div>)}

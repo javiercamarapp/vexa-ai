@@ -11,7 +11,7 @@ import { PAGINAS, RUTAS, rutaDe, idDeRuta } from '../../src/content/sitio/regist
 import { LOGOS } from '../../../../packages/workspace-service/marca.mjs';
 
 const WEB = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const salida = execFileSync(process.execPath, ['--import', 'tsx', join(WEB, 'tests', 'sitio', '_render-shell.tsx')], { cwd: WEB, maxBuffer: 64 * 1024 * 1024, env: { ...process.env, NODE_NO_WARNINGS: '1' } });
+const salida = execFileSync(process.execPath, ['--import', 'tsx', '--import', join(WEB, 'tests', 'sitio', '_css-nulo.mjs'), join(WEB, 'tests', 'sitio', '_render-shell.tsx')], { cwd: WEB, maxBuffer: 64 * 1024 * 1024, env: { ...process.env, NODE_NO_WARNINGS: '1' } });
 const R = JSON.parse(salida.toString('utf8'));
 
 const hrefs = (html) => [...html.matchAll(/<a\b[^>]*\shref="([^"]*)"/g)].map((m) => m[1]);
@@ -47,7 +47,8 @@ for (const c of R.casos) {
     assert.deepEqual(hall.map((h) => `${h.regla}: ${h.nota}`), []);
     assert.equal((c.html.match(/<h1[\s>]/g) || []).length, 1, 'un solo h1');
     assert.ok(!/\sstyle\s*=/.test(c.html), 'cero style');
-    assert.ok(!/<script/.test(c.html), 'cero scripts en el marcado de componentes');
+    // T2 añadió el JSON-LD de cada página: el único script permitido en el marcado de componentes es de datos (application/ld+json).
+    assert.ok(!/<script(?![^>]*type="application\/ld\+json")/.test(c.html), 'cero scripts en el marcado de componentes salvo JSON-LD');
     assert.ok(!/\sinert\b/.test(c.html), 'cero inert');
     assert.ok(!/\[[A-Z_]{3,}\]/.test(c.html), 'ningún marcador entre corchetes');
     assert.ok(!/[!¡]/.test(c.html.replace(/<svg[\s\S]*?<\/svg>/g, '').replace(/<[^>]+>/g, ' ')), 'sin exclamaciones en el texto');
@@ -161,7 +162,8 @@ test('fuentes de los componentes del sitio sin hallazgos de los escáneres', () 
     ...listarArchivos(join(WEB, 'src', 'components', 'sitio', 'shell'), ['.ts', '.tsx']),
     join(WEB, 'src', 'components', 'sitio', 'cuerpo.tsx'),
     join(WEB, 'src', 'components', 'sitio', 'logo-sitio.tsx'),
-    ...listarArchivos(join(WEB, 'src', 'app', '(sitio)'), ['.ts', '.tsx']),
+    // La imagen social (next/og) exige style={{ }} y genera un PNG, no HTML: queda fuera del escáner de style.
+    ...listarArchivos(join(WEB, 'src', 'app', '(sitio)'), ['.ts', '.tsx']).filter((f) => !/\/\(sitio\)\/og\//.test(f)),
   ];
   const hall = archivos.flatMap((f) => escanearFuente(leer(f), rel(WEB, f)));
   assert.deepEqual(hall.map((h) => `${h.archivo}:${h.linea} ${h.regla}`), []);

@@ -8,6 +8,8 @@ import { existsSync } from 'node:fs';
 import { listarArchivos, escanearFuente, rel, leer } from './_escaner.mjs';
 
 const WEB = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+// La ruta de la imagen social (next/og, T2) genera un PNG: ImageResponse exige style={{ }} y nunca produce HTML ni CSS en el navegador, así que la regla de style no aplica.
+const EXENTOS_IMAGEN = /^src\/app\/\(sitio\)\/og\//;
 const CARPETAS = [
   ['src/components/sitio', 'T7, T8 y T9'],
   ['src/content/sitio', 'T11'],
@@ -53,7 +55,7 @@ for (const [dir, tarea] of CARPETAS) {
   const ruta = join(WEB, dir);
   const hay = existsSync(ruta);
   test(`fuentes limpias en ${dir}`, { skip: hay ? false : `PENDIENTE: ${dir} aún no existe (lo crea ${tarea})` }, () => {
-    const archivos = listarArchivos(ruta, ['.ts', '.tsx', '.js', '.mjs', '.jsx']).filter((f) => !/\.test\./.test(f));
+    const archivos = listarArchivos(ruta, ['.ts', '.tsx', '.js', '.mjs', '.jsx']).filter((f) => !/\.test\./.test(f) && !EXENTOS_IMAGEN.test(rel(WEB, f)));
     const hall = archivos.flatMap((f) => escanearFuente(leer(f), rel(WEB, f)));
     assert.deepEqual(hall.map((h) => `${h.archivo}:${h.linea} ${h.regla}`), []);
   });

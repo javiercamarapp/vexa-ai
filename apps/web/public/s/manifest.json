@@ -492,6 +492,890 @@
      "url": "/s/img/o4-orbe-192.af38e520.webp"
     }
    ]
+  },
+  "producto/caso": {
+   "alt": {
+    "en": "Rovaq problem record: delivery marked complete but not received, with 124 conversations, high severity, a monthly trend and an Inferred seal. Example data.",
+    "es": "Ficha de un problema de Rovaq: entrega marcada como completa sin recibirse, con 124 conversaciones, severidad alta, tendencia mensual y sello Inferido. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 23448,
+     "sha256": "e30a9b88ba60e72169797bbb221df595a4a61505fe911723ab691393332f5b7d",
+     "url": "/s/img/producto/caso-960.e30a9b88.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 37152,
+     "sha256": "2dd4000e39114ee38df05c27300f88279d78065186fc50be1d408a2c10e8f0e2",
+     "url": "/s/img/producto/caso-1440.2dd4000e.avif"
+    }
+   ],
+   "bytes": 57554,
+   "sha256": "29c0d2daa41a5c35a42f476259eea8a202e501d49e75d66e9a1d27bb9a66455d",
+   "tema": "claro",
+   "tipo": "captura",
+   "url": "/s/img/producto/caso-1440.29c0d2da.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 32734,
+     "sha256": "eda8bfaed994afa9fefd0eafaa801de975f6e47577c4383c4b88aa875e0e6170",
+     "url": "/s/img/producto/caso-960.eda8bfae.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 57554,
+     "sha256": "29c0d2daa41a5c35a42f476259eea8a202e501d49e75d66e9a1d27bb9a66455d",
+     "url": "/s/img/producto/caso-1440.29c0d2da.webp"
+    }
+   ]
+  },
+  "producto/caso-oscuro": {
+   "alt": {
+    "en": "Rovaq problem record: delivery marked complete but not received, with 124 conversations, high severity, a monthly trend and an Inferred seal. Example data.",
+    "es": "Ficha de un problema de Rovaq: entrega marcada como completa sin recibirse, con 124 conversaciones, severidad alta, tendencia mensual y sello Inferido. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 37313,
+     "sha256": "f65c92280b2d88242701d12a53d2d4cca3870253d4413215f57ca308b163db1c",
+     "url": "/s/img/producto/caso-oscuro-1440.f65c9228.avif"
+    }
+   ],
+   "bytes": 56196,
+   "sha256": "fe6944935b5ce9512d7d679a7d1c745b124960ae1dc95a9f46ab8011020e367c",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/caso-oscuro-1440.fe694493.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 31840,
+     "sha256": "ad8f2fce962ff71bf748971220762ade9b2807021e9252db47f65f03b45232e5",
+     "url": "/s/img/producto/caso-oscuro-960.ad8f2fce.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 56196,
+     "sha256": "fe6944935b5ce9512d7d679a7d1c745b124960ae1dc95a9f46ab8011020e367c",
+     "url": "/s/img/producto/caso-oscuro-1440.fe694493.webp"
+    }
+   ]
+  },
+  "producto/cco": {
+   "alt": {
+    "en": "Rovaq CCO tab: performance by SKU and marketplace with lines, gross revenue, refunds and refunds per 100 lines, with what is missing stated explicitly. Example data.",
+    "es": "Pestaña CCO de Rovaq: rendimiento por SKU y marketplace con líneas, ingreso bruto, reembolsos y reembolsos por cada 100 líneas, con lo que falta dicho de forma explícita. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 22867,
+     "sha256": "94d1fde5b5bf22326bbaf875029cbd0370c5576084c1eb3ac17a802d427627a1",
+     "url": "/s/img/producto/cco-960.94d1fde5.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 37018,
+     "sha256": "9744d2708faa1f7b3013be01f7b58fb33899490fa1d4cd185965847f125caba2",
+     "url": "/s/img/producto/cco-1440.9744d270.avif"
+    }
+   ],
+   "bytes": 57826,
+   "sha256": "dc7e52d4e91036ce77bc863bbe9fe248723f69a68822dd98ac5583861ee2fd87",
+   "tema": "claro",
+   "tipo": "captura",
+   "url": "/s/img/producto/cco-1440.dc7e52d4.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 32310,
+     "sha256": "033cca8a91d6839392b13dcc18d0540647ea1c5084c458acb11ccfd05340ce37",
+     "url": "/s/img/producto/cco-960.033cca8a.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 57826,
+     "sha256": "dc7e52d4e91036ce77bc863bbe9fe248723f69a68822dd98ac5583861ee2fd87",
+     "url": "/s/img/producto/cco-1440.dc7e52d4.webp"
+    }
+   ]
+  },
+  "producto/cco-oscuro": {
+   "alt": {
+    "en": "Rovaq CCO tab: performance by SKU and marketplace with lines, gross revenue, refunds and refunds per 100 lines, with what is missing stated explicitly. Example data.",
+    "es": "Pestaña CCO de Rovaq: rendimiento por SKU y marketplace con líneas, ingreso bruto, reembolsos y reembolsos por cada 100 líneas, con lo que falta dicho de forma explícita. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 23686,
+     "sha256": "152425d1de6627d1885dfe6dbdbc52a701d4fa4086eda63017a4259be9e830a3",
+     "url": "/s/img/producto/cco-oscuro-960.152425d1.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 39107,
+     "sha256": "2208152a066ce86a68c9b8bae2fe699ea87524d4cd53e736886b0b304ad4a837",
+     "url": "/s/img/producto/cco-oscuro-1440.2208152a.avif"
+    }
+   ],
+   "bytes": 56990,
+   "sha256": "a0bea726e0984e38567c9c402a3db2905433fc6799c0d7a309fa12f434afb324",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/cco-oscuro-1440.a0bea726.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 32004,
+     "sha256": "653f194db73f1a75d0df8b0b7ef39e98f7298bc6a8ef41e50c51be08700a3826",
+     "url": "/s/img/producto/cco-oscuro-960.653f194d.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 56990,
+     "sha256": "a0bea726e0984e38567c9c402a3db2905433fc6799c0d7a309fa12f434afb324",
+     "url": "/s/img/producto/cco-oscuro-1440.a0bea726.webp"
+    }
+   ]
+  },
+  "producto/conexiones": {
+   "alt": {
+    "en": "Rovaq Connected sources screen: HubSpot as the only automatic connection and three marketplace exports uploaded by hand, with their status and last upload. Example data.",
+    "es": "Pantalla Fuentes conectadas de Rovaq: HubSpot como única conexión automática y tres exportes de marketplace cargados a mano, con su estado y su última carga. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 21679,
+     "sha256": "c31b2ad0379378f791e0d9830285a110480bbfb285537d752388f7bfbb778b3d",
+     "url": "/s/img/producto/conexiones-960.c31b2ad0.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 34966,
+     "sha256": "2eb8bd6a572f94e56f1d6dbd10c828cacf9f5826bbda57b3f02080c3b0ef648e",
+     "url": "/s/img/producto/conexiones-1440.2eb8bd6a.avif"
+    }
+   ],
+   "bytes": 54946,
+   "sha256": "f82c8272183b688f4c62168ea1e5170d25d58202c9d3b481954158e2e6deec25",
+   "tema": "claro",
+   "tipo": "captura",
+   "url": "/s/img/producto/conexiones-1440.f82c8272.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 30642,
+     "sha256": "ac27328f256b7d827175989816fef10244435c58d97b6421bd78fb2121a5eb89",
+     "url": "/s/img/producto/conexiones-960.ac27328f.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 54946,
+     "sha256": "f82c8272183b688f4c62168ea1e5170d25d58202c9d3b481954158e2e6deec25",
+     "url": "/s/img/producto/conexiones-1440.f82c8272.webp"
+    }
+   ]
+  },
+  "producto/conexiones-oscuro": {
+   "alt": {
+    "en": "Rovaq Connected sources screen: HubSpot as the only automatic connection and three marketplace exports uploaded by hand, with their status and last upload. Example data.",
+    "es": "Pantalla Fuentes conectadas de Rovaq: HubSpot como única conexión automática y tres exportes de marketplace cargados a mano, con su estado y su última carga. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 21732,
+     "sha256": "c7f24b2e6002dbc8d417f42e52f0bab646d0d0311aec6a2df01d107620d8398b",
+     "url": "/s/img/producto/conexiones-oscuro-960.c7f24b2e.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 35198,
+     "sha256": "7bbc7ee1ee302aae85be59da7362bf91646d0c7a10714366a95e65b2559ceb58",
+     "url": "/s/img/producto/conexiones-oscuro-1440.7bbc7ee1.avif"
+    }
+   ],
+   "bytes": 53636,
+   "sha256": "c6f3ff9cde36cbf9a0508f7759fbde03832e1df6f102d57b515ea1e979d5b8ed",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/conexiones-oscuro-1440.c6f3ff9c.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 30226,
+     "sha256": "0d924e2c20e4c3993c4e695b4ce9b78a2ee3c168f17f658b667cda8b2e27b935",
+     "url": "/s/img/producto/conexiones-oscuro-960.0d924e2c.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 53636,
+     "sha256": "c6f3ff9cde36cbf9a0508f7759fbde03832e1df6f102d57b515ea1e979d5b8ed",
+     "url": "/s/img/producto/conexiones-oscuro-1440.c6f3ff9c.webp"
+    }
+   ]
+  },
+  "producto/evidencia": {
+   "alt": {
+    "en": "Verified customer quotes on a problem record, each with its source, an Observed seal and the See origin button to check where it came from. Example data.",
+    "es": "Citas textuales verificadas de clientes en la ficha de un problema, cada una con su fuente, sello Observado y el botón Ver origen para comprobar su procedencia. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 19967,
+     "sha256": "3bde1b6edd39780cb4ed00f4233d5c26d7731dc3c299c1a0a899d13e88870ee4",
+     "url": "/s/img/producto/evidencia-960.3bde1b6e.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 31880,
+     "sha256": "ffef36f41276ac9c5e76f994bc6c28d0a489580f46526bb7d11a1c92854573c8",
+     "url": "/s/img/producto/evidencia-1440.ffef36f4.avif"
+    }
+   ],
+   "bytes": 50366,
+   "sha256": "af31ce94933f9e913f7cbce0b96eaf18672220541777795dbe5e2d39c28076d9",
+   "tema": "claro",
+   "tipo": "captura",
+   "url": "/s/img/producto/evidencia-1440.af31ce94.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 27598,
+     "sha256": "4ed5472ebe528cd10d0db7a04919c3cf0b430eacf72281b6815c20ac4d3e4d83",
+     "url": "/s/img/producto/evidencia-960.4ed5472e.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 50366,
+     "sha256": "af31ce94933f9e913f7cbce0b96eaf18672220541777795dbe5e2d39c28076d9",
+     "url": "/s/img/producto/evidencia-1440.af31ce94.webp"
+    }
+   ]
+  },
+  "producto/evidencia-oscuro": {
+   "alt": {
+    "en": "Verified customer quotes on a problem record, each with its source, an Observed seal and the See origin button to check where it came from. Example data.",
+    "es": "Citas textuales verificadas de clientes en la ficha de un problema, cada una con su fuente, sello Observado y el botón Ver origen para comprobar su procedencia. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 19754,
+     "sha256": "dc739c68930b67c828fbec7bfced69212f0b2df641c29ae038fce36e38401366",
+     "url": "/s/img/producto/evidencia-oscuro-960.dc739c68.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 32575,
+     "sha256": "63f677483e821e2d99ebb691f8a884bf08fb457ebb791a3548c5307a722517ad",
+     "url": "/s/img/producto/evidencia-oscuro-1440.63f67748.avif"
+    }
+   ],
+   "bytes": 48544,
+   "sha256": "9446844ab7968281bf1a414e291fc621ab4845542e2257da846608b55aae9e05",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/evidencia-oscuro-1440.9446844a.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 27178,
+     "sha256": "4c612d0aa0cab8bf7b6231df8ca4914a89cb8c48e23e03d4d5c997cc33068f35",
+     "url": "/s/img/producto/evidencia-oscuro-960.4c612d0a.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 48544,
+     "sha256": "9446844ab7968281bf1a414e291fc621ab4845542e2257da846608b55aae9e05",
+     "url": "/s/img/producto/evidencia-oscuro-1440.9446844a.webp"
+    }
+   ]
+  },
+  "producto/fuga": {
+   "alt": {
+    "en": "Rovaq Refund leakage screen: 36,000 USD returned, four figure cards, a ranking of 10 SKUs from HM-210 to HM-200 with cumulative percentage and intensity by marketplace. Example data.",
+    "es": "Pantalla Fuga de reembolsos de Rovaq: 36,000 USD devueltos, cuatro tarjetas de cifras, ranking de 10 SKU de HM-210 a HM-200 con porcentaje acumulado e intensidad por marketplace. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 27642,
+     "sha256": "69104d0ec4741a501d3aadf55b8a88ee039e467bce452af2edae464323357ca3",
+     "url": "/s/img/producto/fuga-960.69104d0e.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 44329,
+     "sha256": "13d7616a61d1a8efc02107fbd8a7679c0183edaeaa69a0583ddc34348ea97d17",
+     "url": "/s/img/producto/fuga-1440.13d7616a.avif"
+    },
+    {
+     "alto": 1800,
+     "ancho": 2880,
+     "bytes": 93910,
+     "sha256": "7d73e42c833b0f933e7b1b32be993176b996a838ef8d66ca6e0959a75748d27e",
+     "url": "/s/img/producto/fuga-2880.7d73e42c.avif"
+    }
+   ],
+   "bytes": 69414,
+   "sha256": "a5dcd2339b12755e3392c73f4e9791de059610494ea2378b130dc1b17f5ea18c",
+   "tema": "claro",
+   "tipo": "captura",
+   "url": "/s/img/producto/fuga-1440.a5dcd233.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 39154,
+     "sha256": "81720fba81aa6b1847ed184266a5f8cfea2c3df7c5d849cddf33c48a5ca15e04",
+     "url": "/s/img/producto/fuga-960.81720fba.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 69414,
+     "sha256": "a5dcd2339b12755e3392c73f4e9791de059610494ea2378b130dc1b17f5ea18c",
+     "url": "/s/img/producto/fuga-1440.a5dcd233.webp"
+    },
+    {
+     "alto": 1800,
+     "ancho": 2880,
+     "bytes": 158576,
+     "sha256": "610d7dfe6262e1f1112055487724dbdd8a0dc843142aaa318f0ad4b92f586c42",
+     "url": "/s/img/producto/fuga-2880.610d7dfe.webp"
+    }
+   ]
+  },
+  "producto/fuga-oscuro": {
+   "alt": {
+    "en": "Rovaq Refund leakage screen: 36,000 USD returned, four figure cards, a ranking of 10 SKUs from HM-210 to HM-200 with cumulative percentage and intensity by marketplace. Example data.",
+    "es": "Pantalla Fuga de reembolsos de Rovaq: 36,000 USD devueltos, cuatro tarjetas de cifras, ranking de 10 SKU de HM-210 a HM-200 con porcentaje acumulado e intensidad por marketplace. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 27515,
+     "sha256": "fd2cc2214c838f1a919d91c4482a87b89338eff9578afa90e8ec7fae1935127a",
+     "url": "/s/img/producto/fuga-oscuro-960.fd2cc221.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 45035,
+     "sha256": "c4262b2f9f5957ad30774a29990ba5956b403fe8a44494e05cdd6c803ed98f29",
+     "url": "/s/img/producto/fuga-oscuro-1440.c4262b2f.avif"
+    }
+   ],
+   "bytes": 67872,
+   "sha256": "44a06bc5be7dacde285a1adbcf832af250beab46d08893683b26ab7a5d9bfe78",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/fuga-oscuro-1440.44a06bc5.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 38682,
+     "sha256": "3b81d887e8ed3097ac33a21d53f5a2b8b430313c3e02d644f227dcd8780e454a",
+     "url": "/s/img/producto/fuga-oscuro-960.3b81d887.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 67872,
+     "sha256": "44a06bc5be7dacde285a1adbcf832af250beab46d08893683b26ab7a5d9bfe78",
+     "url": "/s/img/producto/fuga-oscuro-1440.44a06bc5.webp"
+    }
+   ]
+  },
+  "producto/hoy": {
+   "alt": {
+    "en": "Rovaq Today screen with four figures: gross revenue 480,000 USD, refunds 36,000 USD, stuck money 9,000 USD and 14 threads unanswered for over 24 hours, each with its Observed seal. Example data.",
+    "es": "Pantalla Hoy de Rovaq con cuatro cifras: ingreso bruto 480,000 USD, reembolsos 36,000 USD, dinero atorado 9,000 USD y 14 hilos sin respuesta de más de 24 horas, cada una con su sello Observado. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 33246,
+     "sha256": "b673e9a2158be8857b29117ed727adadf05c5f8d4fb90a2dcdb109f503146c3d",
+     "url": "/s/img/producto/hoy-960.b673e9a2.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 53699,
+     "sha256": "205f21e4bd6f1f87a5ea862c87e6f1da82de9b0142db2f21931fe7309d9ad8fe",
+     "url": "/s/img/producto/hoy-1440.205f21e4.avif"
+    }
+   ],
+   "bytes": 85046,
+   "sha256": "ab76e7ae2ef9d7074df1fec5703a0034062307c58395e050012ebb6b1729ea20",
+   "tema": "claro",
+   "tipo": "captura",
+   "url": "/s/img/producto/hoy-1440.ab76e7ae.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 46862,
+     "sha256": "6d688fa91baba7e339ac64597cdeeffd22f4d322ed3f06838a498fc80378b28a",
+     "url": "/s/img/producto/hoy-960.6d688fa9.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 85046,
+     "sha256": "ab76e7ae2ef9d7074df1fec5703a0034062307c58395e050012ebb6b1729ea20",
+     "url": "/s/img/producto/hoy-1440.ab76e7ae.webp"
+    }
+   ]
+  },
+  "producto/hoy-oscuro": {
+   "alt": {
+    "en": "Rovaq Today screen with four figures: gross revenue 480,000 USD, refunds 36,000 USD, stuck money 9,000 USD and 14 threads unanswered for over 24 hours, each with its Observed seal. Example data.",
+    "es": "Pantalla Hoy de Rovaq con cuatro cifras: ingreso bruto 480,000 USD, reembolsos 36,000 USD, dinero atorado 9,000 USD y 14 hilos sin respuesta de más de 24 horas, cada una con su sello Observado. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 34996,
+     "sha256": "5d5801cbb9cd579c48f4ee1d0031dbed2cac2b5ac84c21a1a538c01acf587259",
+     "url": "/s/img/producto/hoy-oscuro-960.5d5801cb.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 55969,
+     "sha256": "7971655827db7cece9dc29da3324027cdf4ff7485bc8ebe8eb09a66143c0df1c",
+     "url": "/s/img/producto/hoy-oscuro-1440.79716558.avif"
+    }
+   ],
+   "bytes": 83670,
+   "sha256": "f8c3da9577bf571a6b326fbe6f1a530f8f550d2a2c7029b3352c4fa6064bfdf3",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/hoy-oscuro-1440.f8c3da95.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 46746,
+     "sha256": "ee4ae64f6b3443f4b77ca8e1fb2618bd9451b0133064f9808bc75e70d24b99e3",
+     "url": "/s/img/producto/hoy-oscuro-960.ee4ae64f.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 83670,
+     "sha256": "f8c3da9577bf571a6b326fbe6f1a530f8f550d2a2c7029b3352c4fa6064bfdf3",
+     "url": "/s/img/producto/hoy-oscuro-1440.f8c3da95.webp"
+    }
+   ]
+  },
+  "producto/pareto": {
+   "alt": {
+    "en": "Ranking of refunds by SKU from HM-210 to HM-200 with bars, amount and cumulative percentage up to 100 percent. Example data.",
+    "es": "Ranking de reembolsos por SKU de HM-210 a HM-200 con barras, importe y porcentaje acumulado hasta 100 por ciento. Datos de ejemplo."
+   },
+   "alto": 1206,
+   "ancho": 1472,
+   "avif": [
+    {
+     "alto": 603,
+     "ancho": 736,
+     "bytes": 22404,
+     "sha256": "a72eece58673ccca3e3da348b267eeea47f5834bc58410599cfb62f6676c0980",
+     "url": "/s/img/producto/pareto-736.a72eece5.avif"
+    },
+    {
+     "alto": 1206,
+     "ancho": 1472,
+     "bytes": 47531,
+     "sha256": "fa5b083fe929f896c0814d1a80bd920514a59d3a55d5263c49be2ba57de2c38f",
+     "url": "/s/img/producto/pareto-1472.fa5b083f.avif"
+    }
+   ],
+   "bytes": 76574,
+   "sha256": "e079455271dd550ab4b8615a1e223fd61357aeb16fad2855f569d00d0b00972b",
+   "tema": "claro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/pareto-1472.e0794552.webp",
+   "variantes": [
+    {
+     "alto": 603,
+     "ancho": 736,
+     "bytes": 33492,
+     "sha256": "2ef7d5d49e6d341229ec5c8048deffd608ad7ac6de2b8d67f7af7dd3f3fa5426",
+     "url": "/s/img/producto/pareto-736.2ef7d5d4.webp"
+    },
+    {
+     "alto": 1206,
+     "ancho": 1472,
+     "bytes": 76574,
+     "sha256": "e079455271dd550ab4b8615a1e223fd61357aeb16fad2855f569d00d0b00972b",
+     "url": "/s/img/producto/pareto-1472.e0794552.webp"
+    }
+   ]
+  },
+  "producto/pareto-vector": {
+   "alt": {
+    "en": "Ranking of refunds by SKU from HM-210 to HM-200 with bars, amount and cumulative percentage up to 100 percent. Vector version. Example data.",
+    "es": "Ranking de reembolsos por SKU de HM-210 a HM-200 con barras, importe y porcentaje acumulado hasta 100 por ciento. Versión vectorial. Datos de ejemplo."
+   },
+   "alto": 602,
+   "ancho": 736,
+   "bytes": 12660,
+   "sha256": "ed9891cca3f3a922504240520b736905a775e8ee6cee399d482f52efe856658b",
+   "tema": "claro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/pareto.ed9891cc.svg",
+   "variantes": [
+    {
+     "alto": 602,
+     "ancho": 736,
+     "bytes": 12660,
+     "sha256": "ed9891cca3f3a922504240520b736905a775e8ee6cee399d482f52efe856658b",
+     "url": "/s/img/producto/pareto.ed9891cc.svg"
+    }
+   ]
+  },
+  "producto/preguntale": {
+   "alt": {
+    "en": "Ask your data: the question about which marketplace concentrates the most refunds with its answer as cards and bars, 100 percent coverage and the dropdown with the calculation steps. Example data.",
+    "es": "Pregúntale a tus datos: la pregunta sobre qué marketplace concentra más reembolsos con su respuesta en tarjetas y barras, cobertura de 100 por ciento y el desplegable con los pasos del cálculo. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 25809,
+     "sha256": "685b1a247fe0c8ce6dcf2134a6cdf757a3fb4c3d8ba5c535659b60d2b4aaa3f9",
+     "url": "/s/img/producto/preguntale-960.685b1a24.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 37420,
+     "sha256": "05983f22a23231027518f3ebe4b7ec294215033e023028a257ca99cb841662aa",
+     "url": "/s/img/producto/preguntale-1440.05983f22.avif"
+    }
+   ],
+   "bytes": 64826,
+   "sha256": "5eb1d2290f3d228ebf7d7b6471219cf1a45c7552a7d5b89ba288482fd74a20b2",
+   "tema": "claro",
+   "tipo": "captura",
+   "url": "/s/img/producto/preguntale-1440.5eb1d229.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 37604,
+     "sha256": "ff3e5fe82ba3c12d64ef461deae57feb2ab14bb9e0bb388aedc9fff9bba54558",
+     "url": "/s/img/producto/preguntale-960.ff3e5fe8.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 64826,
+     "sha256": "5eb1d2290f3d228ebf7d7b6471219cf1a45c7552a7d5b89ba288482fd74a20b2",
+     "url": "/s/img/producto/preguntale-1440.5eb1d229.webp"
+    }
+   ]
+  },
+  "producto/preguntale-oscuro": {
+   "alt": {
+    "en": "Ask your data: the question about which marketplace concentrates the most refunds with its answer as cards and bars, 100 percent coverage and the dropdown with the calculation steps. Example data.",
+    "es": "Pregúntale a tus datos: la pregunta sobre qué marketplace concentra más reembolsos con su respuesta en tarjetas y barras, cobertura de 100 por ciento y el desplegable con los pasos del cálculo. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 26084,
+     "sha256": "a88c17ce6e7e09668282dd65cff4c26f0a8a1e32a8ec0da9cbdffce3355fdd01",
+     "url": "/s/img/producto/preguntale-oscuro-960.a88c17ce.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 38824,
+     "sha256": "7cd55da03eb62fff81efc9ef8e10867d82d1aaebcfc0b169adf6602e8b12af2b",
+     "url": "/s/img/producto/preguntale-oscuro-1440.7cd55da0.avif"
+    }
+   ],
+   "bytes": 64186,
+   "sha256": "8775e08046e950b35969192b041bde6b90dcbabf8945ca08c6e6baacdb622a3d",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/preguntale-oscuro-1440.8775e080.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 38024,
+     "sha256": "e5f0030a482c17e89be605ec280bf785a999a9deb9b2029152eabfc75e792c7f",
+     "url": "/s/img/producto/preguntale-oscuro-960.e5f0030a.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 64186,
+     "sha256": "8775e08046e950b35969192b041bde6b90dcbabf8945ca08c6e6baacdb622a3d",
+     "url": "/s/img/producto/preguntale-oscuro-1440.8775e080.webp"
+    }
+   ]
+  },
+  "producto/problemas": {
+   "alt": {
+    "en": "Rovaq Problems screen with three grouped problems, exposed revenue as a known subtotal with an Inferred seal and the data coverage status. Example data.",
+    "es": "Pantalla Problemas de Rovaq con tres problemas agrupados, ingresos expuestos como subtotal conocido con sello Inferido y el estado de la cobertura de datos. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 28047,
+     "sha256": "cbd22d17c780849c2ce904c2790ee07e45ac509fb028d1efd457b1be785b8577",
+     "url": "/s/img/producto/problemas-960.cbd22d17.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 44836,
+     "sha256": "49c9247713184041f77880a9db9b50e57830019e8deedd2797edeeb86f03e6e6",
+     "url": "/s/img/producto/problemas-1440.49c92477.avif"
+    }
+   ],
+   "bytes": 70724,
+   "sha256": "a4a1b8550a2ff11496a804bcf370ab9d11504297351eaca9258342556c32f14e",
+   "tema": "claro",
+   "tipo": "captura",
+   "url": "/s/img/producto/problemas-1440.a4a1b855.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 40300,
+     "sha256": "1e0c05608817c3efba6daabc83d1da25e85a7f1bf5127b340e39177eefd08ce3",
+     "url": "/s/img/producto/problemas-960.1e0c0560.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 70724,
+     "sha256": "a4a1b8550a2ff11496a804bcf370ab9d11504297351eaca9258342556c32f14e",
+     "url": "/s/img/producto/problemas-1440.a4a1b855.webp"
+    }
+   ]
+  },
+  "producto/problemas-oscuro": {
+   "alt": {
+    "en": "Rovaq Problems screen with three grouped problems, exposed revenue as a known subtotal with an Inferred seal and the data coverage status. Example data.",
+    "es": "Pantalla Problemas de Rovaq con tres problemas agrupados, ingresos expuestos como subtotal conocido con sello Inferido y el estado de la cobertura de datos. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 29603,
+     "sha256": "12f3dd91952051fd42823cb8eb23fc076788cd539c783c1c7efae6a2857e1811",
+     "url": "/s/img/producto/problemas-oscuro-960.12f3dd91.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 46772,
+     "sha256": "5b285a251a89f4a57ab547bf7a3e652bdb926f3957898346ad4e95f0d47f9838",
+     "url": "/s/img/producto/problemas-oscuro-1440.5b285a25.avif"
+    }
+   ],
+   "bytes": 69766,
+   "sha256": "bb85284efde940d6e8b89e5f4ff669a3b381ca978fb00d7fb7ee5882593b5611",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/problemas-oscuro-1440.bb85284e.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 39898,
+     "sha256": "fdec431d5654046be23228993ab1b55696e79945dc3ef65f135c53714744f5ab",
+     "url": "/s/img/producto/problemas-oscuro-960.fdec431d.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 69766,
+     "sha256": "bb85284efde940d6e8b89e5f4ff669a3b381ca978fb00d7fb7ee5882593b5611",
+     "url": "/s/img/producto/problemas-oscuro-1440.bb85284e.webp"
+    }
+   ]
+  },
+  "producto/tarjetas-fuga": {
+   "alt": {
+    "en": "The four cards of Refund leakage: money returned, refunds, stuck money and repeat contact. Example data.",
+    "es": "Las cuatro tarjetas de Fuga de reembolsos: dinero devuelto, reembolsos, dinero atorado y repetición de contacto. Datos de ejemplo."
+   },
+   "alto": 250,
+   "ancho": 2220,
+   "avif": [
+    {
+     "alto": 125,
+     "ancho": 1110,
+     "bytes": 7099,
+     "sha256": "a01c120995a7f860b81c6f578490f82c8446982cbf8bb8194ddf36b1d6eb4548",
+     "url": "/s/img/producto/tarjetas-fuga-1110.a01c1209.avif"
+    },
+    {
+     "alto": 250,
+     "ancho": 2220,
+     "bytes": 14484,
+     "sha256": "c93588384abc35aaefd2b08111f8ef8d9d7f76a691ade4b08c03816aea66e6b4",
+     "url": "/s/img/producto/tarjetas-fuga-2220.c9358838.avif"
+    }
+   ],
+   "bytes": 22884,
+   "sha256": "b5d1f7c836000db78c21216b38678cb1cc8813f1fa26909a68e8e55bd0fa7a30",
+   "tema": "claro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/tarjetas-fuga-2220.b5d1f7c8.webp",
+   "variantes": [
+    {
+     "alto": 125,
+     "ancho": 1110,
+     "bytes": 10396,
+     "sha256": "8650362c7da6ffb0c13771bffdc8d80438aaa43dc2634a7d8af44b0002d43caa",
+     "url": "/s/img/producto/tarjetas-fuga-1110.8650362c.webp"
+    },
+    {
+     "alto": 250,
+     "ancho": 2220,
+     "bytes": 22884,
+     "sha256": "b5d1f7c836000db78c21216b38678cb1cc8813f1fa26909a68e8e55bd0fa7a30",
+     "url": "/s/img/producto/tarjetas-fuga-2220.b5d1f7c8.webp"
+    }
+   ]
+  },
+  "producto/tarjetas-hoy": {
+   "alt": {
+    "en": "The four figure cards of Today: gross revenue, refunds, stuck money and replies over 24 hours, each with its provenance seal. Example data.",
+    "es": "Las cuatro tarjetas de cifras de Hoy: ingreso bruto, reembolsos, dinero atorado y respuestas de más de 24 horas, cada una con su sello de procedencia. Datos de ejemplo."
+   },
+   "alto": 324,
+   "ancho": 2220,
+   "avif": [
+    {
+     "alto": 162,
+     "ancho": 1110,
+     "bytes": 13894,
+     "sha256": "3d08a8274cc3321b304c3c87ababb5bac26b074a9448cf2c1b3703f6c8d7b370",
+     "url": "/s/img/producto/tarjetas-hoy-1110.3d08a827.avif"
+    },
+    {
+     "alto": 324,
+     "ancho": 2220,
+     "bytes": 30399,
+     "sha256": "d761fb6bfacb244a20618c963af56e6dea4f1166373456c3491e57843ca68563",
+     "url": "/s/img/producto/tarjetas-hoy-2220.d761fb6b.avif"
+    }
+   ],
+   "bytes": 47298,
+   "sha256": "7ef2ada51e317f6fd23b18574c226909da87632fb226b97533dc7fecb95bd44a",
+   "tema": "claro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/tarjetas-hoy-2220.7ef2ada5.webp",
+   "variantes": [
+    {
+     "alto": 162,
+     "ancho": 1110,
+     "bytes": 20806,
+     "sha256": "46f8414e83a5ebb6be1beabe3d2f322e3f0e64482fadbc878ecade5228d498c1",
+     "url": "/s/img/producto/tarjetas-hoy-1110.46f8414e.webp"
+    },
+    {
+     "alto": 324,
+     "ancho": 2220,
+     "bytes": 47298,
+     "sha256": "7ef2ada51e317f6fd23b18574c226909da87632fb226b97533dc7fecb95bd44a",
+     "url": "/s/img/producto/tarjetas-hoy-2220.7ef2ada5.webp"
+    }
+   ]
   }
  },
  "js": {

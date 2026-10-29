@@ -1,19 +1,19 @@
 Bibliotecas de terceros de la landing de Rovaq (autoalojadas; ninguna se carga desde un CDN en tiempo de ejecucion).
 Descargadas el 2026-10-28 desde jsDelivr y servidas desde el mismo origen. Solo las carga la landing.
 
-1. GSAP 3.13.0  (gsap.min.js)
+1. GSAP 3.13.0  (gsap-3.13.0.min.js)
    Origen: https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js
    SHA-256: 96c01b81f44a3290e2b4532f55e2c9534b2adc43273a19f3756b2cb41f0fd0b6
    Licencia: GreenSock "Standard no charge license" (campo license de package.json): https://gsap.com/standard-license
    Cabecera del archivo: Copyright 2025, GreenSock. All rights reserved. Subject to the terms at https://gsap.com/standard-license.
    Uso sin cargo, incluido el comercial, bajo esa licencia; las restricciones estan en el texto de la licencia. Se conserva la cabecera de licencia del archivo.
 
-2. ScrollTrigger 3.13.0, plugin de GSAP  (ScrollTrigger.min.js)
+2. ScrollTrigger 3.13.0, plugin de GSAP  (ScrollTrigger-3.13.0.min.js)
    Origen: https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js
    SHA-256: 308219390e5e3b84cda0c481e70caa9820883ae10bda44e6e9a149a81aac4b3f
    Licencia: la misma licencia estandar de GreenSock que GSAP (https://gsap.com/standard-license).
 
-3. Lenis 1.1.13  (lenis.min.js)
+3. Lenis 1.1.13  (lenis-1.1.13.min.js)
    Origen: https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js
    SHA-256: b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8
    Licencia: MIT. Copyright (c) 2024 darkroom.engineering

@@ -54,6 +54,13 @@ const nextConfig: NextConfig = {
       // Fuentes y marca: el nombre del archivo cambia si cambia el contenido (regla en docs/SEO-Y-PUBLICACION.md), así que se cachean un año.
       source: '/:carpeta(fonts|brand)/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
     }, {
+      // Landing: scripts vendoreados con versión en el nombre y puntos con hash se cachean un año; el resto de activos de la landing se revalidan cada hora.
+      source: '/landing/:path+', headers: [{ key: 'Cache-Control', value: 'public, max-age=3600, stale-while-revalidate=86400' }],
+    }, {
+      source: '/vendor/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+    }, {
+      source: '/landing/pts/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+    }, {
       source: '/:archivo(site.webmanifest|push-manifest.webmanifest|robots.txt|sitemap.xml|humans.txt)', headers: [{ key: 'Cache-Control', value: 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400' }],
     }, {
       source: '/.well-known/security.txt', headers: [{ key: 'Cache-Control', value: 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400' }, { key: 'Content-Type', value: 'text/plain; charset=utf-8' }],

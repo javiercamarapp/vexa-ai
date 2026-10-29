@@ -6,7 +6,7 @@ import {ES_HOST_LANDING} from '../lib/host-routing.mjs';
 const ACTUALIZADO=new Date();
 export default async function sitemap():Promise<MetadataRoute.Sitemap>{
  const h=await headers();
- if(ES_HOST_LANDING(h.get('x-forwarded-host')??h.get('host')))return [{url:`${landingUrl()}/`,lastModified:ACTUALIZADO,changeFrequency:'monthly' as const,priority:1}];
+ if(ES_HOST_LANDING(h.get('x-forwarded-host')??h.get('host'))){const b=landingUrl(),alternates={languages:{'es-MX':`${b}/`,en:`${b}/en`,'x-default':`${b}/`}};return [`${b}/`,`${b}/en`].map(url=>({url,lastModified:ACTUALIZADO,changeFrequency:'monthly' as const,priority:1,alternates}));}
  const base=siteUrl();
  return RUTAS_PUBLICAS.map(ruta=>({url:`${base}${ruta}`,lastModified:ACTUALIZADO,changeFrequency:'monthly' as const,priority:1}));
 }

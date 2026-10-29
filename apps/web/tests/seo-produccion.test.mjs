@@ -60,13 +60,13 @@ test('el middleware de auth no intercepta robots, sitemap, manifest, íconos ni 
     assert.equal(rutaConAutenticacion(ruta),false,ruta+' pasaría por el middleware de auth');
   const m=leer('src/middleware.ts');
   assert.match(m,/decidirHost\(/);assert.match(m,/if\(!rutaConAutenticacion\(path\)\)return NextResponse\.next\(\)/);
-  assert.match(m,/matcher:\s*\['\/\(\(\?!_next\/static\|_next\/image\|fonts\/\|brand\/\|images\/\)\.\*\)'\]/);
+  assert.match(m,/matcher:\s*\['\/\(\(\?!_next\/static\|_next\/image\|fonts\/\|brand\/\|images\/\|vendor\/\|landing\/\.\+\\\\\.\)\.\*\)'\]/);
 });
 test('landing: robots y sitemap por host (rovaq.ai solo anuncia la landing), canonical propio y la app sigue sin listar la raíz', () => {
   const r=leer('src/app/robots.ts'),s=leer('src/app/sitemap.ts');
   for (const f of [r,s]) {assert.match(f,/ES_HOST_LANDING/);assert.match(f,/landingUrl\(\)/);}
   assert.match(r,/rules:\[\{userAgent:'\*',allow:\['\/'\]\}\]/);
-  assert.match(s,/url:`\$\{landingUrl\(\)\}\/`/);
+  assert.match(s,/`\$\{b\}\/`,`\$\{b\}\/en`/);assert.match(s,/alternates/);
   assert.ok(!RUTAS_PUBLICAS.includes('/'),'la raíz de la app redirige y no se lista');
 });
 test('íconos: existen y tienen el tamaño declarado', () => {

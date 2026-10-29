@@ -3,8 +3,6 @@ import React from 'react';
 import {RovaqLogo} from '../rovaq-logo';
 import {SITE, APP_URL, landingUrl} from '../../lib/site.mjs';
 import {traductor, type Idioma, type Traductor} from '../../lib/i18n';
-import {IdiomaLocal} from '../i18n/proveedor';
-import {SelectorIdioma} from '../i18n/selector-idioma';
 import {Miniatura} from './mocks';
 import {MovimientoLanding, SelectorTemaLanding} from './cliente';
 import './landing.css';
@@ -16,10 +14,10 @@ const SELLO_PASO = ['obs', 'obs', 'inf', 'est'] as const;
 const SELLOS = [['obs', 'landing.val.obs'], ['est', 'landing.val.est'], ['inf', 'landing.val.inf'], ['sin', 'landing.val.sin']] as const;
 
 /** Datos estructurados mínimos de la landing: organización y sitio. Sin valoraciones, precios ni clientes. */
-export function jsonLdLanding(base = landingUrl()) {
+export function jsonLdLanding(base = landingUrl(), idioma: Idioma = 'es') {
   return {'@context': 'https://schema.org', '@graph': [
     {'@type': 'Organization', '@id': `${base}/#organizacion`, name: SITE.nombre, alternateName: [SITE.corto], url: base, logo: `${base}/brand/rovaq-logo-horizontal-positivo-600px.png`, email: SITE.contacto},
-    {'@type': 'WebSite', '@id': `${base}/#sitio`, name: SITE.nombre, url: base, publisher: {'@id': `${base}/#organizacion`}},
+    {'@type': 'WebSite', '@id': `${base}/#sitio`, name: SITE.nombre, url: base, inLanguage: idioma === 'es' ? 'es-MX' : 'en', publisher: {'@id': `${base}/#organizacion`}},
   ]};
 }
 
@@ -50,7 +48,9 @@ export function Landing({idioma}: {idioma: Idioma}) {
           <nav className="c c-links" aria-label={t('landing.nav.aria')}>
             <a href="#como">{t('landing.nav.como')}</a><a href="#producto">{t('landing.nav.producto')}</a><a href="#seguridad">{t('landing.nav.seguridad')}</a><a href="#faq">{t('landing.nav.faq')}</a>
           </nav>
-          <div className="c c-idioma"><IdiomaLocal idioma={idioma}><SelectorIdioma /></IdiomaLocal></div>
+          <nav className="c c-idioma" aria-label={t('idioma.etiqueta')}>
+            {(['es', 'en'] as const).map((i) => <a key={i} href={i === 'es' ? '/' : '/en'} lang={i} hrefLang={i} aria-current={i === idioma ? 'page' : undefined} aria-label={t('idioma.cambiar', {idioma: t(i === 'es' ? 'idioma.es' : 'idioma.en')})}>{i.toUpperCase()}</a>)}
+          </nav>
           <div className="c c-tema"><SelectorTemaLanding etiqueta={t('landing.tema.cambiar')} /></div>
           <a className="c c-boton" href={acceso}>{t('landing.nav.acceso')}<span aria-hidden="true">{' ↗'}</span></a>
         </div>

@@ -52,4 +52,4 @@ export async function middleware(request:NextRequest) {
   } catch(error) {return authLinkHeaders(request,failure(error));}
 }
 // El matcher abarca todo salvo estáticos de Next para poder decidir por host (landing, hosts antiguos). En app.rovaq.ai, rutaConAutenticacion() conserva la lista anterior: lo demás no se toca.
-export const config = { runtime: 'nodejs', matcher: ['/((?!_next/static|_next/image|fonts/|brand/|images/).*)'] };
+export const config = { runtime: 'nodejs', matcher: ['/((?!_next/static|_next/image|fonts/|brand/|images/|vendor/|landing/.+\\.).*)'] };

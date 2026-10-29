@@ -43,7 +43,10 @@ body:has(.landing)>.site-header,body:has(.landing)>.site-footer{display:none}
 .c-links a{display:flex;align-items:center;height:100%;padding:0 22px;border-left:1px solid var(--l-line);font:500 11px/1 var(--font-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--l-muted)}
 .c-links a:last-child{border-right:1px solid var(--l-line)}
 .c-links a:hover{color:var(--l-ink)}
-.c-idioma .idioma-selector{margin:0}
+.c-idioma{gap:2px}
+.c-idioma a{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:32px;padding:0 8px;border-radius:999px;font:500 11px/1 var(--font-ui);letter-spacing:.08em;color:var(--l-muted)}
+.c-idioma a:hover{color:var(--l-ink)}
+.c-idioma a[aria-current=page]{background:var(--l-ink);color:var(--l-bg)}
 .c-tema{padding:0 12px}
 .c-tema-btn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:999px;border:0;background:transparent;color:var(--l-ink);cursor:pointer}
 .c-tema-btn:hover{background:var(--l-soft)}

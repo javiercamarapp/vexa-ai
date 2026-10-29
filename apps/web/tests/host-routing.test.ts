@@ -34,6 +34,34 @@ test('rovaq.ai: fuentes, marca, íconos, imágenes sociales, robots y sitemap se
   assert.equal(esActivoPublico('/overview'), false);
   assert.equal(esActivoPublico('/icon-evil.js'), false);
 });
+test('rovaq.ai: español sin prefijo e inglés bajo /en, con /landing y /landing/en redirigiendo a la URL pública', () => {
+  for (const h of ['rovaq.ai', 'www.rovaq.ai', 'ROVAQ.AI:443']) {
+    assert.deepEqual(dec(h, '/en'), {tipo: 'reescribir', destino: '/landing/en'});
+    assert.deepEqual(dec(h, '/en/'), {tipo: 'reescribir', destino: '/landing/en'});
+    assert.deepEqual(dec(h, '/landing/en', '?x=1'), {tipo: 'redirigir', url: '/en?x=1', status: 308});
+    assert.deepEqual(dec(h, '/landing/en/'), {tipo: 'redirigir', url: '/en', status: 308});
+    assert.deepEqual(dec(h, '/landing/'), {tipo: 'redirigir', url: '/', status: 308});
+  }
+  for (const r of ['/EN', '/en/otra', '/en/product', '/es']) assert.equal(dec('rovaq.ai', r).tipo, 'redirigir', r);
+});
+test('rovaq.ai: /vendor y /landing/<archivo> se sirven como activos (antes redirigían 308 a la app y la escena 3D no cargaba)', () => {
+  for (const r of ['/vendor/gsap-3.13.0.min.js', '/vendor/ScrollTrigger-3.13.0.min.js', '/vendor/lenis-1.1.13.min.js', '/landing/nube.js', '/landing/escena.js', '/landing/pts/nucleo.ab12cd34.pts', '/landing/3d/nucleo.glb', '/landing/objeto-1.webp', '/landing/pts/manifest.json'])
+    for (const h of ['rovaq.ai', 'www.rovaq.ai']) assert.deepEqual(dec(h, r), {tipo: 'activo'}, h + r);
+  for (const r of ['/vendor', '/vendor/', '/vendor/x', '/landing/x', '/landing/../login', '/landing/a/../../overview.js', '/vendorx/a.js', '/landingx/a.js'])
+    assert.equal(dec('rovaq.ai', r).tipo, 'redirigir', r);
+  assert.equal(esActivoPublico('/vendor/a.js'), true); assert.equal(esActivoPublico('/landing'), false); assert.equal(esActivoPublico('/landing/en'), false);
+});
+test('el matcher del middleware excluye /vendor y los archivos de /landing, pero no las páginas /landing ni /landing/en', async () => {
+  const fuente = (await import('node:fs')).readFileSync(new URL('../src/middleware.ts', import.meta.url), 'utf8');
+  const m = /matcher:\s*\['([^']+)'\]/.exec(fuente)!; const re = new RegExp('^' + m[1].replace(/\\\\/g, '\\') + '$');
+  for (const r of ['/vendor/gsap-3.13.0.min.js', '/landing/escena.js', '/landing/pts/a.pts', '/landing/3d/a.glb', '/_next/static/a.js', '/fonts/a.woff2']) assert.equal(re.test(r), false, 'excluido ' + r);
+  for (const r of ['/', '/en', '/landing', '/landing/en', '/overview', '/login', '/api/x']) assert.equal(re.test(r), true, 'pasa por middleware ' + r);
+});
+test('middleware real en rovaq.ai: /en reescribe, los activos pasan sin redirigir y lo demás va a la app', async () => {
+  const en = await middleware(pet('rovaq.ai', '/en?x=1')); assert.equal(en.status, 200); assert.match(en.headers.get('x-middleware-rewrite') ?? '', /\/landing\/en\?x=1/);
+  for (const r of ['/vendor/gsap-3.13.0.min.js', '/landing/pts/a.pts', '/landing/3d/a.glb', '/landing/escena.js']) { const x = await middleware(pet('rovaq.ai', r)); assert.equal(x.status, 200, r); assert.equal(x.headers.get('location'), null, r); }
+  const login = await middleware(pet('rovaq.ai', '/login')); assert.equal(login.status, 308); assert.equal(login.headers.get('location'), 'https://app.rovaq.ai/login');
+});
 test('endpoints abiertos en cualquier host: /api/health/version, /api/internal y /api/webhooks', () => {
   for (const r of ['/api/health/version', '/api/internal', '/api/internal/cron/sync', '/api/webhooks', '/api/webhooks/hubspot']) { assert.equal(rutaSiempreAbierta(r), true, r); assert.equal(dec('rovaq.ai', r).tipo, 'activo', 'rovaq.ai ' + r); assert.equal(dec('vexa-ai.vercel.app', r, '', true).tipo, 'activo', 'vexa-ai ' + r); assert.equal(dec('rovaq-ai.vercel.app', r, '', true).tipo, 'activo', 'rovaq-ai ' + r); }
   for (const r of ['/api/health', '/api/health/version/x', '/api/internals', '/api/webhooksx', '/api/auth']) assert.equal(rutaSiempreAbierta(r), false, r);

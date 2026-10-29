@@ -39,7 +39,7 @@ export function MovimientoLanding() {
     // Movimiento premium: se carga tras el primer pintado y solo en la landing.
     const arranque = async () => {
       try {
-        await cargar('/vendor/gsap.min.js'); await cargar('/vendor/ScrollTrigger.min.js'); await cargar('/vendor/lenis.min.js');
+        await cargar('/vendor/gsap-3.13.0.min.js'); await cargar('/vendor/ScrollTrigger-3.13.0.min.js'); await cargar('/vendor/lenis-1.1.13.min.js');
       } catch { return; }
       const {gsap, ScrollTrigger, Lenis} = window;
       if (!vivo || !gsap || !ScrollTrigger || !Lenis) return;

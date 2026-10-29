@@ -11,7 +11,8 @@ import {en} from '../src/lib/i18n/en';
 import {landingUrl, SITE, PREFIJOS_PRIVADOS, RUTAS_PUBLICAS} from '../src/lib/site.mjs';
 
 const leer = (rel: string) => fs.readFileSync(new URL('../' + rel, import.meta.url), 'utf8');
-const ARCHIVOS = ['src/components/landing/landing.tsx', 'src/components/landing/mocks.tsx', 'src/components/landing/cliente.tsx', 'src/app/(landing)/landing/page.tsx'];
+const PAGINAS = ['src/app/(landing)/landing/page.tsx', 'src/app/(landing)/landing/en/page.tsx'];
+const ARCHIVOS = ['src/components/landing/landing.tsx', 'src/components/landing/mocks.tsx', 'src/components/landing/cliente.tsx', 'src/components/landing/pagina.tsx', ...PAGINAS];
 const cssCrudo = leer('src/components/landing/landing.css');
 const css = cssCrudo.replace(/\/\*[\s\S]*?\*\//g, '');
 const variables = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join(',');
@@ -66,7 +67,7 @@ test('sin atributos style en el marcado renderizado ni en el código fuente', ()
 });
 test('sin scripts en línea nuevos: el único bloque es JSON-LD de datos y no hay estilos en línea', () => {
   for (const idioma of ['es', 'en'] as const) { const h = html(idioma); assert.doesNotMatch(h, /<script/i); assert.doesNotMatch(h, /<style/i); assert.doesNotMatch(h, /\son\w+=/i); }
-  const page = leer('src/app/(landing)/landing/page.tsx');
+  const page = leer('src/components/landing/pagina.tsx');
   assert.equal((page.match(/dangerouslySetInnerHTML/g) ?? []).length, 1);
   assert.match(page, /type="application\/ld\+json"/);
   for (const f of ARCHIVOS.slice(0, 3)) assert.doesNotMatch(leer(f), /dangerouslySetInnerHTML/, f);
@@ -94,7 +95,7 @@ test('CSS y marca: Hanken Grotesk, un solo rojo señal, sin azules, sin vidrio n
 });
 test('JavaScript de movimiento: GSAP, ScrollTrigger, Lenis y three.js del mismo origen, solo en la landing, con licencias y sin CDN ni dependencias nuevas', () => {
   const c = leer('src/components/landing/cliente.tsx');
-  for (const f of ['/vendor/gsap.min.js', '/vendor/ScrollTrigger.min.js', '/vendor/lenis.min.js', '/landing/escena.js']) assert.ok(c.includes(f), f);
+  for (const f of ['/vendor/gsap-3.13.0.min.js', '/vendor/ScrollTrigger-3.13.0.min.js', '/vendor/lenis-1.1.13.min.js', '/landing/escena.js']) assert.ok(c.includes(f), f);
   assert.doesNotMatch(c, /https?:\/\/|jsdelivr|unpkg|cdnjs/);
   assert.match(c, /prefers-reduced-motion: reduce/); assert.match(c, /setAttribute\('data-landing-js'/);
   const lic = leer('public/vendor/LICENSES.txt');
@@ -157,8 +158,11 @@ test('SEO: canonical y datos estructurados propios en rovaq.ai; la app sigue noi
   const j = JSON.parse(JSON.stringify(jsonLdLanding('https://rovaq.ai')));
   assert.deepEqual(j['@graph'].map((n: {'@type': string}) => n['@type']), ['Organization', 'WebSite']);
   assert.doesNotMatch(JSON.stringify(j), /aggregateRating|offers|price|review/i);
-  const page = leer('src/app/(landing)/landing/page.tsx');
-  assert.match(page, /canonical: `\$\{base\}\/`/); assert.match(page, /robots: \{index: true, follow: true\}/); assert.match(page, /summary_large_image/); assert.match(page, /absolute: titulo/);
+  const meta = leer('src/components/landing/pagina.tsx');
+  assert.match(meta, /canonical: url/); assert.match(meta, /'es-MX': base \+ RUTA_PUBLICA\.es, en: base \+ RUTA_PUBLICA\.en, 'x-default'/); assert.match(meta, /robots: \{index: true, follow: true\}/); assert.match(meta, /summary_large_image/); assert.match(meta, /absolute: titulo/);
+  // Las páginas públicas no leen cookies ni cabeceras: el idioma sale de la URL.
+  for (const f of [...PAGINAS, 'src/components/landing/pagina.tsx', 'src/components/landing/landing.tsx']) assert.doesNotMatch(leer(f), /cookies\(|headers\(|idiomaActual/, f);
+  assert.match(leer(PAGINAS[0]), /idioma="es"/); assert.match(leer(PAGINAS[1]), /idioma="en"/);
   assert.ok(!PREFIJOS_PRIVADOS.includes('/landing')); assert.deepEqual([...RUTAS_PUBLICAS], ['/login']);
   assert.match(leer('src/app/robots.ts'), /ES_HOST_LANDING/); assert.match(leer('src/app/sitemap.ts'), /ES_HOST_LANDING/);
 });

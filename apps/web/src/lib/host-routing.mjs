@@ -6,6 +6,9 @@ export const HOSTS_LANDING = Object.freeze(['rovaq.ai', 'www.rovaq.ai']);
 export const HOSTS_ANTIGUOS = Object.freeze(['rovaq-ai.vercel.app', 'vexa-ai.vercel.app']);
 /** Ruta interna donde vive la landing; en rovaq.ai la raíz se reescribe a ella. */
 export const RUTA_LANDING = '/landing';
+/** Ruta interna de la landing en inglés: en rovaq.ai se publica como /en (español sin prefijo). */
+export const RUTA_LANDING_EN = '/landing/en';
+export const URL_PUBLICA_EN = '/en';
 
 /** Host en minúsculas, sin puerto ni punto final; con varios valores (proxies) toma el primero. */
 export function normalizarHost(valor) {
@@ -22,6 +25,8 @@ const PREFIJOS_ACTIVOS = ['/_next/', '/fonts/', '/brand/', '/images/', '/.well-k
 const ARCHIVOS_PUBLICOS = new Set(['/favicon.ico', '/favicon.svg', '/apple-touch-icon.png', '/site.webmanifest', '/robots.txt', '/sitemap.xml', '/humans.txt']);
 /** Activos públicos que la landing necesita en rovaq.ai (fuentes, marca, íconos, imágenes sociales, robots y sitemap). */
 export function esActivoPublico(pathname) {
+  // Scripts de terceros vendoreados y activos de la landing (módulo 3D, puntos, renders): archivos con extensión bajo /vendor/ y /landing/. /landing y /landing/en son páginas, no activos.
+  if (/^\/vendor\/[\w./-]+\.[a-z0-9]+$/i.test(pathname) || /^\/landing\/[\w./-]+\.[a-z0-9]+$/i.test(pathname)) return !pathname.includes('..');
   return ARCHIVOS_PUBLICOS.has(pathname) || /^\/(?:favicon|icon)-[\w-]+\.png$/.test(pathname) || PREFIJOS_ACTIVOS.some((p) => pathname.startsWith(p));
 }
 /**
@@ -36,7 +41,9 @@ export function decidirHost({host, pathname, search = '', produccion = false}) {
   const h = normalizarHost(host);
   if (HOSTS_LANDING.includes(h)) {
     if (pathname === '/') return {tipo: 'reescribir', destino: RUTA_LANDING};
+    if (pathname === URL_PUBLICA_EN || pathname === URL_PUBLICA_EN + '/') return {tipo: 'reescribir', destino: RUTA_LANDING_EN};
     if (pathname === RUTA_LANDING || pathname === RUTA_LANDING + '/') return {tipo: 'redirigir', url: '/' + search, status: 308};
+    if (pathname === RUTA_LANDING_EN || pathname === RUTA_LANDING_EN + '/') return {tipo: 'redirigir', url: URL_PUBLICA_EN + search, status: 308};
     if (esActivoPublico(pathname) || rutaSiempreAbierta(pathname)) return {tipo: 'activo'};
     return {tipo: 'redirigir', url: ORIGEN_APP + pathname + search, status: 308};
   }

@@ -105,7 +105,7 @@ export function Landing({idioma}: {idioma: Idioma}) {
       </section>
 
       <section id="producto" className="sec" aria-labelledby="t-val">
-        <Cinta pill={t('landing.cap.eyebrow')} n={3} t={t} />
+        <Cinta pill={t('landing.cap.eyebrow')} n={2} t={t} />
         <div className="banda banda-cab">
           <div className="c"><h2 id="t-val" className="h-gigante h-2" data-rv>{t('landing.val.titulo')}</h2><p className="desc" data-rv>{t('landing.val.sub')}</p></div>
           <div className="c c-vals">
@@ -118,7 +118,7 @@ export function Landing({idioma}: {idioma: Idioma}) {
         <div className="banda banda-cinta banda-fw">
           <div className="c"><span className="pildora">{t('landing.como.eyebrow')}</span></div>
           <div className="c c-texto mono"><h2 id="t-como" className="mini-h">{t('landing.como.titulo')}</h2></div>
-          <div className="c c-der mono">{t('landing.indice', {n: '02', total: String(TOTAL).padStart(2, '0')})}</div>
+          <div className="c c-der mono">{t('landing.indice', {n: '03', total: String(TOTAL).padStart(2, '0')})}</div>
         </div>
         <p className="sr-only">{t('landing.fw.respaldo')}</p>
         <div className="fw-pista" data-escena data-activo="1">

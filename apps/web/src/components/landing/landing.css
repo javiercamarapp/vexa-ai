@@ -113,7 +113,7 @@ body:has(.landing)>.site-header,body:has(.landing)>.site-footer{display:none}
 
 /* Sellos de clase de cifra como eje de la escena: la clase del paso activo se rellena; Sin dato siempre va punteado */
 .sellos{position:absolute;left:34px;right:34px;top:34px;display:flex;flex-wrap:wrap;gap:6px;z-index:2}
-.sellos .etq{background:transparent;color:var(--l-muted);border:1px solid var(--l-line2)}
+.sellos .etq{text-transform:uppercase;letter-spacing:.06em;font-size:11px;padding:5px 10px;background:transparent;color:var(--l-muted);border:1px solid var(--l-line2)}
 .sellos .etq.sin{border-style:dashed}
 .sello-paso{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:22px}
 .panel[data-s] .sello-paso .etq{background:var(--l-ink);color:var(--l-bg)}
@@ -151,8 +151,8 @@ body:has(.landing)>.site-header,body:has(.landing)>.site-footer{display:none}
 .c-etq>div{display:grid;grid-template-columns:132px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--l-line);align-items:baseline}
 .c-etq>div:last-child{border-bottom:0}
 .c-etq dd{font:400 14px/1.5 var(--font-ui);color:var(--l-muted)}
-.etq{display:inline-block;font-style:normal;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:var(--l-ink);color:var(--l-bg)}
-.etq.sin{background:transparent;color:var(--l-ink);border:1px dashed var(--l-ink)}
+.c-etq .etq,.sello-paso .etq{font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;background:var(--l-ink);color:var(--l-bg);border-color:var(--l-ink)}
+.c-etq .etq.sin{background:transparent;color:var(--l-ink);border:1px dashed var(--l-ink)}
 .c-ruta{display:grid;gap:14px;align-content:start}
 .c-ruta .desc{margin:0;text-transform:none;letter-spacing:0;font-size:15px}
 .c-int{display:grid;gap:12px;align-content:start}
@@ -309,3 +309,12 @@ body:has(.landing)>.site-header,body:has(.landing)>.site-footer{display:none}
 .fw-visor .segmentos{display:none}
 @media(prefers-reduced-motion:no-preference){.fw-visor .segmentos{display:grid}}
 @media(max-width:759px){.fw-visor .segmentos{display:none}}
+
+/* Bandas de una sola celda ocupan todo el ancho; en móvil la cinta pasa el texto a una segunda fila */
+.banda:has(>:only-child){grid-template-columns:minmax(0,1fr)}
+@media(max-width:759px){
+  .banda-cinta{grid-template-columns:auto minmax(0,1fr)}
+  .banda-cinta>:nth-child(1){grid-column:1;grid-row:1}
+  .banda-cinta>.c-der{grid-column:2;grid-row:1}
+  .banda-cinta>.c-texto{grid-column:1/-1;grid-row:2;min-height:0}
+}

@@ -1,6 +1,6 @@
 -- 20261125000000 (PROPUESTA, NO APLICADA): precálculos para que «Carga y SLA» (/api/workload) y «Fuga de reembolsos» (/api/refunds) no escaneen datos crudos en frío.
--- Por qué (medido 24-oct sobre CLIENTEX como superusuario, sin RLS, Mac cargada): la parte SLA de /workload no cabe en 120 s la primera vez (solo la lectura de hilos de
---   sync_raw_objects tarda 14.1 s con 75k buffers; las conversaciones de HubSpot 8.8 s por Seq Scan de 104k filas); /refunds: lineas de reembolso 6.4 s, pedidos 0.46 s.
+-- Por qué (medido 24-oct sobre el cliente piloto como superusuario, sin RLS, Mac cargada): la parte SLA de /workload no cabe en 120 s la primera vez (solo la lectura de hilos de
+--   sync_raw_objects tarda 14.1 s con 75k buffers; las conversaciones de HubSpot 8.8 s por Seq Scan de cientos de miles de filas); /refunds: lineas de reembolso 6.4 s, pedidos 0.46 s.
 --   Con estas tablas cada parte es un SELECT de unos cientos de filas. Mientras no se aplique, la aplicación calcula en vivo con tope (comportamiento anterior).
 -- Qué AÑADE (todo por tenant, RLS forzada y solo lectura para la app, mismo patrón que 20261112000000_insight_inbound_load):
 --   insight_thread_sla           un renglón por hilo de HubSpot API: creación, estado, primer mensaje de cliente y primera respuesta de agente posterior (sin PII: id opaco, fechas, estado).

@@ -7,7 +7,7 @@
 //   node vinculos.mjs --run --commit --owner U --atestacion-archivo F                      # todo (lotes de --chunk pares; reanudable)
 // ATESTACIÓN: economic_problem_links exige que un OWNER atestigüe cada vínculo (columnas actor_id/report/attested). Este programa NO la fabrica:
 //   --owner <uuid del owner activo> y --atestacion-archivo <texto de al menos 20 caracteres escrito por Javier> son obligatorios para escribir.
-// Guardas: proyecto proyecto-ejemplo y tenant ab12cd34-... fijos; lista cerrada de sentencias; solo INSERT en economic_problem_links; los problemas
+// Guardas: proyecto proyecto-ejemplo y tenant piloto (VEXA_TENANT_ID) fijos; lista cerrada de sentencias; solo INSERT en economic_problem_links; los problemas
 // sin evidencia vigente (problemas-validos.json de snapshot.mjs) NO reciben vínculos (uno solo inválido deja sin cifras a todo el alcance).
 import fs from 'node:fs';
 import os from 'node:os';
@@ -68,7 +68,7 @@ from (select problem_id,count(distinct entity_id) as e from nuevo group by 1 ord
 async function cli() {
   const a = process.argv.slice(2), flag = n => a.includes('--' + n), opt = (n, d = null) => { const i = a.indexOf('--' + n); return i >= 0 ? a[i + 1] : d; };
   const out = opt('out', OUT_DEFAULT), repo = opt('repo', path.join(os.homedir(), 'vexa'));
-  const tenant = opt('tenant', TENANT); if (tenant !== TENANT) throw new Error('TENANT_NO_AUTORIZADO');
+  const tenant = opt('tenant', TENANT); if (!TENANT||tenant !== TENANT) throw new Error('TENANT_NO_AUTORIZADO');
   const kind = opt('tipo', 'all'); if (!['order', 'refund', 'all'].includes(kind)) throw new Error('--tipo: order|refund|all');
   const max = intOpt(opt('max'), 'max', 0), chunk = intOpt(opt('chunk'), 'chunk', 1500), top = intOpt(opt('top-problemas'), 'top-problemas', 0);
   const run = flag('run'), commit = flag('commit'), rb = flag('rollback-test'), medir = flag('medir');

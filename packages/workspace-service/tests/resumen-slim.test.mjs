@@ -1,4 +1,4 @@
-// /overview tardaba ~25 s en resolver «Prioridad con evidencia»: el widget pedía /api/workspace?resource=problems completo (resumen del catálogo + señales críticas + verificación de resumen de 8,761 corridas, ≈14 s medidos).
+// /overview tardaba ~25 s en resolver «Prioridad con evidencia»: el widget pedía /api/workspace?resource=problems completo (resumen del catálogo + señales críticas + verificación de resumen de miles de corridas, ≈14 s medidos).
 // slim=1 pide solo los registros del corte: sin esas tres partes y con el mismo scope_hash.
 //   node --test packages/workspace-service/tests/resumen-slim.test.mjs
 import test from 'node:test';

@@ -133,7 +133,7 @@ async function cli() {
   const a = process.argv.slice(2), cmd = a[0];
   const flag = n => a.includes('--' + n), opt = (n, d = null) => { const i = a.indexOf('--' + n); return i >= 0 ? a[i + 1] : d; };
   const out = opt('out', OUT_DEFAULT); fs.mkdirSync(out, {recursive: true, mode: 0o700});
-  const tenant = opt('tenant', TENANT); if (tenant !== TENANT) throw new Error('TENANT_NO_AUTORIZADO');
+  const tenant = opt('tenant', TENANT); if (!TENANT||tenant !== TENANT) throw new Error('TENANT_NO_AUTORIZADO');
   const owner = opt('owner');
   const needOwner = ['preparar', 'cobertura', 'publicar'].includes(cmd) && (flag('commit') || flag('rollback-test') || flag('publicar'));
   if (needOwner && !UUID.test(owner ?? '')) throw new Error('Falta --owner <uuid> (owner activo del tenant). Es la atestación explícita de Javier; no se infiere.');

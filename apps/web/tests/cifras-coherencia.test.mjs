@@ -34,11 +34,11 @@ test('la explicación de caída usa la misma variación que Resumen (pedidos, su
   assert.match(r.lineas[0], /hasta el 18 sep 2026/, 'los datos llegan hasta el mismo día de corte (UTC) que en las demás pantallas');
 });
 test('dinero: Fuga, Brechas y la función compartida dan el mismo texto para los mismos centavos (null = «—», nunca $0)', () => {
-  for (const m of ['85472800', 85472800, 10499, '0', '-123400', 5n]) {
+  for (const m of ['12345600', 12345600, 10499, '0', '-123400', 5n]) {
     assert.equal(Fuga.usd(m), F.usd(m)); assert.equal(Brechas.usd(m), F.usd(m));
     assert.equal(Fuga.usd(m, {decimals: true}), F.usd(m, {decimales: true}));
   }
-  assert.equal(F.usd('85472800'), 'US[omitido: dato de cliente]'); assert.equal(F.usd(null), '—'); assert.equal(Fuga.usd(undefined), '—');
+  assert.equal(F.usd('12345600'), 'US$123,456'); assert.equal(F.usd(null), '—'); assert.equal(Fuga.usd(undefined), '—');
 });
 test('enteros y porcentajes: 104,024 se escribe igual en todas partes; un decimal siempre; 0 de N no es «—»', () => {
   assert.equal(F.entero(104024), '104,024'); assert.equal(Fuga.num(104024), '104,024'); assert.equal(Brechas.num(104024), '104,024');

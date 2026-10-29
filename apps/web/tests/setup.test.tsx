@@ -41,7 +41,7 @@ function vista(pista:Pista,ctx:Ctx,{idioma='es',conc=null,soporte=false}:{idioma
  return envolver(soporte?'soporte':pista,<SetupVista t={t} locale={idioma==='es'?'es-MX':'en-US'} pista={soporte?'soporte':pista} rolEtiqueta={ETIQUETA[pista]??''} soporteTerminado={false} cargando={false} errorDeLectura={false} lista={lista} conciliacion={conc} fechaResumen={null} hoja={hoja}/>,idioma);
 }
 const hrefs=(html:string)=>[...html.matchAll(/href="([^"]+)"/g)].map(m=>m[1]);
-const SENALES_CLIENTEX=normalizarSenales({...TODO_FALSO,conexion_activa:true,historial_importado:true,corte_publicado:true,pedidos_cargados:true,equipo_invitado:false});
+const SENALES_PILOTO=normalizarSenales({...TODO_FALSO,conexion_activa:true,historial_importado:true,corte_publicado:true,pedidos_cargados:true,equipo_invitado:false});
 
 // ---- El asistente sale del catálogo (no hay lista paralela)
 test('cada paso del asistente existe en el catálogo y es válido para su pista: capacidad real, href en el menú del rol',()=>{
@@ -76,9 +76,9 @@ test('ningún paso del asistente es accionable para un rol sin la capacidad: est
   }
 });
 
-// ---- Propietario con datos simulados (CLIENTEX: 0 enlaces pedido-cliente)
-test('propietario: estados honestos con datos de CLIENTEX (conexión activa, historial, pedidos y corte cargados, 0 pedidos ligados, correo sin configurar, push sin configurar)',()=>{
-  const l=calcularAsistente('propietario',{senales:SENALES_CLIENTEX,consultadas:consultadasDe('owner'),push:{configurado:false,dispositivos:0}});
+// ---- Propietario con datos simulados (PILOTO: 0 enlaces pedido-cliente)
+test('propietario: estados honestos con datos de PILOTO (conexión activa, historial, pedidos y corte cargados, 0 pedidos ligados, correo sin configurar, push sin configurar)',()=>{
+  const l=calcularAsistente('propietario',{senales:SENALES_PILOTO,consultadas:consultadasDe('owner'),push:{configurado:false,dispositivos:0}});
   const por=Object.fromEntries(l.items.map(i=>[i.id.split('.')[1],i]));
   assert.equal(por.idioma.estado,'informativo');
   assert.equal(por.crm.estado,'hecho');assert.equal(por.crm.cuenta,false,'el CRM es de un tercero: no cuenta');assert.equal(por.crm.mixto,true);
@@ -94,7 +94,7 @@ test('propietario: estados honestos con datos de CLIENTEX (conexión activa, his
   assert.deepEqual(l.progreso,{hechos:3,total:4},'cuentan historial, pedidos, conciliar y corte (3 de 4 hechos, el corte con salvedad); nada de terceros, MFA ni informativos');
 });
 test('propietario: el push solo se ofrece (pendiente y con enlace) si el servidor dice configured=true; con dispositivos queda hecho',()=>{
-  const base={senales:SENALES_CLIENTEX,consultadas:consultadasDe('owner')};
+  const base={senales:SENALES_PILOTO,consultadas:consultadasDe('owner')};
   const av=(push:Ctx extends infer C?C extends {push?:infer P}?P:never:never)=>calcularAsistente('propietario',{...base,push}).items.find(i=>i.id==='propietario.avisos')!;
   assert.equal(av({configurado:false,dispositivos:0}).estado,'esperando');
   assert.equal(av({configurado:true,dispositivos:0}).estado,'pendiente');
@@ -147,7 +147,7 @@ test('una señal que el servidor no consultó para el rol nunca se toma por «fa
 for(const idioma of ['es','en'] as const){
   const dic=idioma==='es'?ESP:ING;
   test(`propietario (${idioma}): lista ordenada accesible, estado de cada paso, tiempo, qué se pide, quién, enlace «Ir a hacerlo», hoja para soporte y sin «Probar ahora»`,()=>{
-    const ctx={senales:SENALES_CLIENTEX,consultadas:consultadasDe('owner'),push:{configurado:true,dispositivos:0}};
+    const ctx={senales:SENALES_PILOTO,consultadas:consultadasDe('owner'),push:{configurado:true,dispositivos:0}};
     const html=vista('propietario',ctx,{idioma,conc:indicadorConciliacion({pedidos:85000,resumen:'ready',refreshedAt:'2026-10-27T10:00:00Z',ligadas:false})});
     assert.match(html,/<ol class="setup-lista" aria-label="/);
     const n=ASISTENTE.propietario.length;
@@ -187,7 +187,7 @@ for(const idioma of ['es','en'] as const){
   });
 }
 test('soporte («Ver como») y vistas sin pista: solo un aviso, cero pasos, cero enlaces, cero botones',()=>{
-  const sop=vista('propietario',{senales:SENALES_CLIENTEX,consultadas:consultadasDe('owner')},{soporte:true});
+  const sop=vista('propietario',{senales:SENALES_PILOTO,consultadas:consultadasDe('owner')},{soporte:true});
   assert.doesNotMatch(sop,/<ol|setup-paso|<progress|<button|<a /);
   assert.ok(sop.includes(ESP['onb.setup.soporte']));
   const sinPista=envolver(null,<SetupVista t={traductor('es')} locale="es-MX" pista={null} rolEtiqueta="" soporteTerminado={false} cargando={false} errorDeLectura={false} lista={null} conciliacion={null} fechaResumen={null} hoja={null}/>);
@@ -195,7 +195,7 @@ test('soporte («Ver como») y vistas sin pista: solo un aviso, cero pasos, cero
   const plataforma=vista('plataforma',{});assert.ok(plataforma.includes(ESP['onb.setup.sinPista'])||!/<ol/.test(plataforma));
 });
 test('sin estilos en línea ni roles/tabindex ajenos en el marcado y en los componentes nuevos',()=>{
-  const html=vista('propietario',{senales:SENALES_CLIENTEX,consultadas:consultadasDe('owner'),push:{configurado:true,dispositivos:0}});
+  const html=vista('propietario',{senales:SENALES_PILOTO,consultadas:consultadasDe('owner'),push:{configurado:true,dispositivos:0}});
   assert.doesNotMatch(html,/\sstyle=|role="button"|tabindex="[1-9]/);
   for(const f of ['src/components/onboarding/setup-piezas.tsx','src/components/onboarding/setup-pantalla.tsx','src/app/(app)/(workspace)/setup/page.tsx'])assert.doesNotMatch(leer(f),/style=\{|\sstyle="/,f);
   assert.doesNotMatch(leer('src/components/onboarding/setup.css'),/!important/);
@@ -208,7 +208,7 @@ test('CSS de /setup: objetivos táctiles de 40 px, foco visible de 3 px, móvil 
 });
 
 // ---- Indicador de conciliación: honesto
-test('conciliación: CLIENTEX (85 mil pedidos del libro, 0 enlaces) → «0 de N pedidos ligados» con su base; nunca un porcentaje',()=>{
+test('conciliación: PILOTO (85 mil pedidos del libro, 0 enlaces) → «0 de N pedidos ligados» con su base; nunca un porcentaje',()=>{
   const c=indicadorConciliacion({pedidos:85357,resumen:'ready',refreshedAt:'2026-10-27T10:00:00Z',ligadas:false});
   assert.deepEqual({tipo:c.tipo,ligados:c.ligados,total:c.total},{tipo:'base',ligados:0,total:85357});
   for(const idioma of ['es','en'] as const){

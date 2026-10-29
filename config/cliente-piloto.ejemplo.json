@@ -1,0 +1,42 @@
+{
+  "_comentario": "EJEMPLO GENÉRICO. Copie a config/cliente-piloto.local.json (ignorado por git) o a ~/.config/vexa/cliente-piloto.json y ponga los valores reales. Nunca versione los valores reales.",
+  "tenantId": "00000000-0000-4000-8000-000000000000",
+  "trackerAccountId": "pilot-tracker",
+  "trackerVersions": [
+    {
+      "key": "recibida",
+      "rank": 1,
+      "file": "01 Documentos recibidos/Tracker.xlsx",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "received_at": null
+    },
+    {
+      "key": "v06",
+      "rank": 2,
+      "file": "06 Tracker original y versiones/Tracker - 20260101T0000Z.xlsx",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "received_at": "2026-01-01T00:00:00Z"
+    }
+  ],
+  "tiendaPropia": {
+    "prefijoRetailer": "tienda-piloto",
+    "dominio": "tienda-piloto.example",
+    "etiqueta": "Tienda del cliente piloto"
+  },
+  "rutaInsumosMarketplaces": "private/cliente-piloto/received/VEXA",
+  "shopify": {
+    "raiz": "~/.vexa-private/cliente-piloto/insumos-shopify",
+    "importPackage": {
+      "rel": "shopify-economic-import.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "normalized": {
+      "rel": "shopify-normalized-private.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  },
+  "trackerRecibo": {
+    "rows": 0,
+    "cells": 0
+  }
+}

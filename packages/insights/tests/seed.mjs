@@ -59,8 +59,8 @@ export function sembrarTracker(h) {
   // Cabecera + 6 filas de Refunds: 3 reembolsado (2 con monto), 1 vencido, 1 con texto libre en Status (=> otro), 1 vacía (descartada). Dos versiones de la fila 2 (manda la última).
   const hdr = ['Status', 'Contact_reason', 'Retailer', 'Amount'].map((v, col) => `{"col":${col},"v":"${v}"}`).join(',');
   const row = (st, rs, rt, amt) => `[{"col":0,"v":"${st}"},{"col":1,"v":"${rs}"},{"col":2,"v":"${rt}"},{"col":3,"v":"${amt}"}]`;
-  const rows = [[1, 'header', `[${hdr}]`, 0], [2, 'linked', row('Pending', 'Defective', 'Amazon :: fulfilled by CLIENTEX', ''), 1], [2, 'linked', row('Refunded', 'Defective', 'Amazon :: fulfilled by CLIENTEX', '$100.50'), 2],
-    [3, 'linked', row('Refunded', 'Warranty', 'Walmart :: fulfilled by CLIENTEX', '40'), 3], [4, 'linked', row('Refunded', 'Warranty', 'Walmart :: fulfilled by CLIENTEX', ''), 4], [5, 'linked', row('Older than 180 days', 'Return', 'Lowes', '10'), 5],
+  const rows = [[1, 'header', `[${hdr}]`, 0], [2, 'linked', row('Pending', 'Defective', 'Amazon :: fulfilled by PILOTO', ''), 1], [2, 'linked', row('Refunded', 'Defective', 'Amazon :: fulfilled by PILOTO', '$100.50'), 2],
+    [3, 'linked', row('Refunded', 'Warranty', 'Walmart :: fulfilled by PILOTO', '40'), 3], [4, 'linked', row('Refunded', 'Warranty', 'Walmart :: fulfilled by PILOTO', ''), 4], [5, 'linked', row('Older than 180 days', 'Return', 'Lowes', '10'), 5],
     [6, 'linked', row('Allen se lo paso a logistica', 'Algo libre raro', 'Quien sabe', '5'), 6], [7, 'no_ticket', row('', '', '', ''), 7]];
   const vals = rows.map(([n, st, cells, k]) => `(md5('tr${n}-${k}')::uuid,'${TENANT_A}',timestamptz '2026-10-02 00:00:00+00'+${k}*interval '1 minute','${CONN}','Refunds',${n},'${hex('e' + n + k)}','${cells}'::jsonb,'${st}',md5('ver')::uuid)`).join(',');
   const r = psqlFile(h.sock, `set session_replication_role=replica;insert into public.tracker_row_revisions(id,tenant_id,created_at,connection_id,sheet_name,row_number,row_hash,cells,ticket_state,first_version_id) values ${vals};`);

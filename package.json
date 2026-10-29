@@ -8,6 +8,7 @@
   },
   "scripts": {
     "test": "npm run test:kernel && npm run test:foundation",
+    "test:datos-cliente": "node --test tests/seguridad/datos-de-cliente.test.mjs",
     "test:kernel": "node --test tests/acceptance/economics.test.mjs",
     "test:foundation": "node --test tests/acceptance/F00-*.test.mjs tests/acceptance/foundation-negative.test.mjs",
     "test:scaffold": "node --test tests/acceptance/F01-01.test.mjs",

@@ -3,7 +3,7 @@
 -- sobre ~72 mil vínculos (varios segundos, con RLS por fila no cabe en el tope de 2.5-8 s de una lectura de pantalla). Aquí corre UNA vez por refresco, fuera de la ruta del usuario.
 -- Sin esta migración la pantalla muestra «No disponible ahora» en esa sección (nunca 0) y todo lo demás sigue funcionando.
 -- Qué NO hace: no cambia ninguna política, función ni dato existente; no se refresca sola (lo ejecuta un operador: select public.refresh_contact_repeat('<tenant>')).
--- Definiciones (idénticas a las consultas de DATOS.md, 23-oct, verificadas contra CLIENTEX): fecha del ticket = primer mensaje no borrado de la conversación; contacto = cliente con vínculo activo;
+-- Definiciones (idénticas a las consultas de DATOS.md, 23-oct, verificadas contra el cliente piloto): fecha del ticket = primer mensaje no borrado de la conversación; contacto = cliente con vínculo activo;
 -- «repite» = el ticket tiene al menos otro ticket del mismo contacto en los 90 días previos o el mismo instante. Categorías = issues.category (IA), solo cubre las conversaciones con extracción.
 -- Reversa: packages/workspace-service/tests/20261102000000_contact_repeat_summary.down.sql
 begin;

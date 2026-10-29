@@ -338,7 +338,7 @@ export function safeText(value, max = 60, name = 'value') {
 export const truncate = (v, max) => (v.length <= max ? v : v.slice(0, Math.max(0, max - 1)).trimEnd() + '…');
 
 const nf = (n, d, idioma = 'es') => n.toLocaleString(langDe(idioma), { minimumFractionDigits: d, maximumFractionDigits: d });
-/** `$854.7k`, `$3.84 M`, `$212k`, `$950` (en inglés `$3.84M`). */
+/** `$123.4k`, `$3.84 M`, `$212k`, `$950` (en inglés `$3.84M`). */
 export function fmtMonto(n, idioma = 'es') {
   if (!Number.isFinite(n)) throw Error('invalid_amount');
   const sign = n < 0 ? '-' : '', a = Math.abs(n), mm = porIdioma(idioma, ' M', 'M');

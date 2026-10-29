@@ -7,7 +7,7 @@
 set -uo pipefail
 umask 077
 source "$(dirname "$0")/lib-carga.sh"
-TENANT="$CLIENTEX_TENANT"; MAX=0; PREP_ONLY=0; MONEDA=rechazar; ACTOR="${VEXA_ACTOR:-}"
+TENANT="$PILOT_TENANT"; MAX=0; PREP_ONLY=0; MONEDA=rechazar; ACTOR="${VEXA_ACTOR:-}"
 while [ $# -gt 0 ]; do case "$1" in
   --solo-preparar) PREP_ONLY=1;; --max-tandas) MAX="$2"; shift;; --tenant) TENANT="$2"; shift;; --moneda-desconocida) MONEDA="$2"; shift;; --actor) ACTOR="$2"; shift;;
   *) die "opción desconocida: $1";; esac; shift; done

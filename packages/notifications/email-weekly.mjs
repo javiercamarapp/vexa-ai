@@ -118,7 +118,7 @@ export function renderWeeklyReport(input) {
 
   const footer = {strong: antiFraude(lang), motive: en ? `You receive this report every Monday because you are ${rol} in ${espacio}. [Choose which reports to receive](${urls.preferencias}) · [Unsubscribe from this report](${urls.baja})` : `Recibes este reporte cada lunes porque eres ${rol} en ${espacio}. [Elegir qué reportes recibir](${urls.preferencias}) · [Darme de baja de este reporte](${urls.baja})`};
 
-  // Asunto: «Reporte semanal · 14–20 oct: reembolsos $854.7k», recortado a 55.
+  // Asunto: «Reporte semanal · 14–20 oct: reembolsos $123.4k», recortado a 55.
   const lead = en ? `Weekly report · ${rangoCorto}: ` : `Reporte semanal · ${rangoCorto}: `;
   const wanted = sinCambios ? (en ? 'no changes' : 'sin cambios') : input.titularCorto === undefined ? (reemb.valor === null ? (en ? 'summary' : 'resumen') : `${en ? 'refunds' : 'reembolsos'} ${money(reemb)}`) : safeText(input.titularCorto, 80, 'short_title');
   const subject = (lead + truncate(wanted, Math.max(8, SUBJECT_MAX - lead.length))).slice(0, SUBJECT_MAX);

@@ -27,14 +27,14 @@ const ATESTACION = 'SYN prueba: el owner de prueba atesta haber revisado la regl
 // ================================================================== puras: reglas
 test('marketplace: solo texto explícito (columna o retailer); columnas contradictorias, Lowe\'s y vacío sin retailer NO se ligan', () => {
   assert.deepEqual(marketplaceDe({marketplace: 'amazon', retailer: ''}), {mk: 'amazon', via: 'columna'});
-  assert.deepEqual(marketplaceDe({marketplace: '', retailer: 'Walmart :: fulfilled by CLIENTEX'}), {mk: 'walmart', via: 'retailer'});
+  assert.deepEqual(marketplaceDe({marketplace: '', retailer: 'Walmart :: fulfilled by PILOTO'}), {mk: 'walmart', via: 'retailer'});
   assert.deepEqual(marketplaceDe({marketplace: 'bestbuy', retailer: 'Best Buy :: CAN'}), {mk: 'mirakl_bestbuy_ca', via: 'retailer'});
   assert.equal(marketplaceDe({marketplace: 'bestbuy', retailer: 'Walmart :: x'}), null);       // Best Buy sin país explícito
-  assert.equal(marketplaceDe({marketplace: 'amazon', retailer: 'Walmart :: fulfilled by CLIENTEX'}), null); // contradicción
+  assert.equal(marketplaceDe({marketplace: 'amazon', retailer: 'Walmart :: fulfilled by PILOTO'}), null); // contradicción
   assert.equal(marketplaceDe({marketplace: 'lowes', retailer: 'Lowes'}), null);
   assert.equal(marketplaceDe({marketplace: '', retailer: 'Other'}), null);
-  assert.deepEqual(marketplaceDe({marketplace: '', retailer: 'Clientextools.com :: Shopify'}), {mk: 'shopify', via: 'retailer'});
-  assert.deepEqual(marketplaceDe({marketplace: '', retailer: 'Clientextools.com Shopify'}), {mk: 'shopify', via: 'retailer'});
+  assert.deepEqual(marketplaceDe({marketplace: '', retailer: 'tienda-piloto.example :: Shopify'}), {mk: 'shopify', via: 'retailer'});
+  assert.deepEqual(marketplaceDe({marketplace: '', retailer: 'tienda-piloto.example Shopify'}), {mk: 'shopify', via: 'retailer'});
   // la forma del order_id NUNCA decide el marketplace
   assert.equal(marketplaceDe({marketplace: '', retailer: '', order_id: '111-1234567-1234567'}), null);
 });
@@ -403,7 +403,7 @@ test('PG: puente alterno por el Tracker (DIAG 4) mide en la base el alcance conv
     const filas = [
       ['Hoja1', 1, 'header', null, [mkCell(0, 'Requester'), mkCell(1, 'Hubspot ID'), mkCell(2, 'Order ID'), mkCell(3, 'Retailer')]],
       ['Hoja1', 2, 'candidate', '5000000001', [mkCell(0, 'x'), mkCell(1, '5000000001'), mkCell(2, 'SYN-111-0000001'), mkCell(3, 'Amazon :: Amazon')]],
-      ['Hoja1', 3, 'candidate', '5000000003', [mkCell(0, 'x'), mkCell(1, '5000000003'), mkCell(2, 'SYN-111-0000002'), mkCell(3, 'Amazon :: fulfilled by CLIENTEX')]],
+      ['Hoja1', 3, 'candidate', '5000000003', [mkCell(0, 'x'), mkCell(1, '5000000003'), mkCell(2, 'SYN-111-0000002'), mkCell(3, 'Amazon :: fulfilled by PILOTO')]],
       ['Hoja2', 1, 'header', null, [mkCell(0, 'Owner'), mkCell(1, 'Retailer'), mkCell(2, 'Hubspot_ID'), mkCell(5, 'Order_ID')]],      // columnas en otro orden
       ['Hoja2', 2, 'candidate', '5000000004', [mkCell(0, 'y'), mkCell(1, 'Amazon :: Amazon'), mkCell(2, '5000000004'), mkCell(5, 'SYN-111-0000003')]],
       ['Hoja2', 3, 'candidate', '5000000099', [mkCell(1, 'Amazon :: Amazon'), mkCell(2, '5000000099'), mkCell(5, 'SYN-111-0000001')]],               // ticket sin conversación

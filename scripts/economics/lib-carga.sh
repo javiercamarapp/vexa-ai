@@ -3,12 +3,15 @@
 # Garantías: aborta si el proyecto enlazado no es vexa-ai, si 0051 no está aplicada, si el disco libre es <10 GiB o si el actor/tenant no cuadran;
 # ejecuta UNA tanda ≤250 por llamada (transacción propia, idempotente); se detiene en el primer error; reanudable; recibo local sin datos de clientes.
 REF=proyecto-ejemplo
-CLIENTEX_TENANT=00000000-0000-4000-8000-000000000000
 BASE="$HOME/.codex-work/rovaq-cierre-20261007/economico-carga-20261019"
 LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd "$LIB_DIR/../.." && pwd)"
 
 die() { echo "ABORTO: $*" >&2; exit "${2:-1}"; }
+# Datos del cliente piloto: salen de VEXA_TENANT_ID o de la configuración local (config/cliente-piloto.mjs), nunca del repo.
+pilot_cfg() { node --input-type=module -e "import * as m from '$REPO/config/cliente-piloto.mjs'; const c=m.configPiloto(); process.stdout.write(String($1 ?? ''))" 2>/dev/null; }
+PILOT_TENANT="${VEXA_TENANT_ID:-$(pilot_cfg 'm.tenantPiloto()')}"
+[ -n "$PILOT_TENANT" ] || die "falta el UUID de la organización piloto: exporte VEXA_TENANT_ID o cree config/cliente-piloto.local.json (ver config/cliente-piloto.ejemplo.json)"
 rq() { (cd "$REPO" && supabase db query --linked "$1" 2>&1); }
 grab() { printf '%s' "$1" | sed -n "s/.*$2.*/\1/p" | head -1; }
 

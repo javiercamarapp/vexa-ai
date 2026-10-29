@@ -9,7 +9,7 @@
 //   node persistir.mjs ... --run --commit --max 5            # CANARIO: escribe de verdad 5 conversaciones
 //   node persistir.mjs ... --run --commit                    # todo (por lotes de 25 conversaciones, idempotente)
 // Idempotente: ids deterministas + ON CONFLICT DO NOTHING + NOT EXISTS por (conversación, input_hash).
-// Guardas: proyecto proyecto-ejemplo y tenant 00000000-0000-4000-8000-000000000000 fijos; solo INSERT; recibo local con conteos.
+// Guardas: proyecto proyecto-ejemplo y tenant piloto (VEXA_TENANT_ID) fijos; solo INSERT; recibo local con conteos.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -100,7 +100,7 @@ async function cli(){
   const resF=opt('results',path.join(base,'resultados.jsonl')),inF=opt('input',path.join(base,'entrada.jsonl')+','+path.join(base,'entrada-csv.jsonl'));
   const taxonomy=JSON.parse(fs.readFileSync(opt('taxonomy'),'utf8'));
   const ref=opt('project-ref',PROJECT_REF),tenant=opt('tenant',TENANT);
-  if(ref!==PROJECT_REF||tenant!==TENANT)throw Error('proyecto/tenant no autorizados');
+  if(ref!==PROJECT_REF||!TENANT||tenant!==TENANT)throw Error('proyecto/tenant no autorizados');
   const commit=flag('commit'),run=flag('run'),rollbackTest=flag('rollback-test');
   if(run&&commit===rollbackTest)throw Error('con --run indique exactamente uno: --rollback-test o --commit');
   const convs=new Map(inF.split(',').filter(f=>fs.existsSync(f)).flatMap(readJsonl).map(c=>[c.conversation_id,c]));

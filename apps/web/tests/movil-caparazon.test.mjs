@@ -39,7 +39,7 @@ test('monograma unificado: rectángulo redondeado con tinte (radio 8), nunca cí
 test('iniciales del monograma: dos palabras → una letra de cada una; una palabra → dos letras; ignora conectores y paréntesis', () => {
   const m = movil.match(/export function iniciales[\s\S]*?\n\}\n/)[0].replace('export function iniciales(nombre:string)', 'function iniciales(nombre)');
   const iniciales = new Function(m + '; return iniciales;')();
-  assert.equal(iniciales('CLIENTEX'), 'SE');assert.equal(iniciales('Los Tacos de PM'), 'TP');assert.equal(iniciales('Organización de demostración (sintética)'), 'OD');assert.equal(iniciales('Rovaq AI'), 'RA');assert.equal(iniciales('  '), '?');
+  assert.equal(iniciales('PILOTO'), 'PI');assert.equal(iniciales('Los Tacos de PM'), 'TP');assert.equal(iniciales('Organización de demostración (sintética)'), 'OD');assert.equal(iniciales('Rovaq AI'), 'RA');assert.equal(iniciales('  '), '?');
 });
 test('selector de tema: iconos SVG iguales, sin glifos de texto y sin title', () => {
   assert.doesNotMatch(shell + movil, /['"]☀['"]|['"]☾['"]|['"]▣['"]/);assert.match(movil, /\['light','shell\.temaClaro','sun'\],\['system','shell\.temaSistema','monitor'\],\['dark','shell\.temaOscuro','moon'\]/);assert.match(movil, /size=\{16\}/);

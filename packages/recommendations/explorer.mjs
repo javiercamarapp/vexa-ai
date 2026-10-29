@@ -63,7 +63,7 @@ export function createExplorerRepository({database}){
  async catalog({query}){return bundle(parseExplorerQuery(query));},
  async summaries({view}){return summaries(view);},
  async verified({view,ids,maxRuns=EVIDENCE_MAX_RUNS,onlyRuns=null,info=null}){return citations(view,{ids,soft:true,maxRuns,onlyRuns,info});},
- // Corte sin vínculos: el catálogo se LISTA sin verificar (13 ms medidos en lugar de ≈14 s de la verificación de resumen de 8,761 corridas por petición); buscar, ordenar y paginar eligen la página y SOLO esa página se verifica por completo
+ // Corte sin vínculos: el catálogo se LISTA sin verificar (13 ms medidos en lugar de ≈14 s de la verificación de resumen de miles de corridas por petición); buscar, ordenar y paginar eligen la página y SOLO esa página se verifica por completo
  // (fail-closed): el problema que no pasa se excluye y se cuenta en meta.unverifiedOmitted. Corte con vínculos: igual que antes (verificación de todos los candidatos si hay texto de búsqueda).
  async search({query}){const parsed=parseExplorerQuery(query),view=await bundle(parsed,'problems',{catalogVerification:'none'}),needle=normalizeSearch(parsed.search),lazy=view.meta.catalog_unverified===true;
  const info=new Map(numerarGrupos(filasDesdeItems(view.items)).map(r=>[r.id,r]));

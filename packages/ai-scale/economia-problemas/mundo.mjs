@@ -139,7 +139,7 @@ export const puenteSintetico = () => {
     row({hubspot_ticket_id: '5000000006', marketplace: 'walmart', order_id: 'SYN-W-1', sku: 'SKU-W'}),              // T6 -> devolución R1 (A)
     row({hubspot_ticket_id: '5000000007', gorgias_id: 'G7', marketplace: 'amazon', order_id: 'SYN-111-0000002', sku: 'SKU-B'}), // T7 (conversación gorgias:G7) -> O2 (A)
     row({hubspot_ticket_id: '5000000009', marketplace: 'amazon', order_id: 'SYN-999-NOEXISTE', sku: 'SKU-A'}),     // T9 pedido fuera del libro
-    row({hubspot_ticket_id: '5000000010', marketplace: '', retailer: 'Clientextools.com :: Shopify', order_id: '19001', sku: 'SKU-S'}), // T10 -> S1 (A) por retailer
+    row({hubspot_ticket_id: '5000000010', marketplace: '', retailer: 'tienda-piloto.example :: Shopify', order_id: '19001', sku: 'SKU-S'}), // T10 -> S1 (A) por retailer
     row({hubspot_ticket_id: '5000000011', marketplace: 'amazon', order_id: 'SYN-111-0000004', sku: 'SKU-D'}),       // T11 pedido cancelado: no elegible
     row({hubspot_ticket_id: '5000000012', marketplace: 'amazon', order_id: 'SYN-111-0000001', sku: 'SKU-OTRO'}),    // T12 SKU distinto en línea única: no se liga (clase C opcional)
   ];

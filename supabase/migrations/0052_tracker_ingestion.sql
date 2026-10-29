@@ -1,5 +1,5 @@
 begin;
--- Tracker (libro CLIENTEX Tracker V2): una hoja = un job, lotes <=250 filas, valor Y fórmula por celda,
+-- Tracker (libro Tracker del cliente piloto): una hoja = un job, lotes <=250 filas, valor Y fórmula por celda,
 -- una versión por archivo recibido. La cabeza de cada fila es su observación en la versión de MAYOR rango
 -- (decisión explícita: manda la más reciente; las anteriores se conservan como revisiones).
 -- source_revisions/source_heads no sirven aquí: su entity_type no admite filas de hoja y una segunda revisión

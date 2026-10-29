@@ -7,7 +7,7 @@ SOCK="$1"; PORT="$2"; TPL="$3"; W="$4"; HERE="$(cd "$(dirname "$0")" && pwd)"
 rm -rf "$W"; mkdir -p "$W/bin" "$W/base"; chmod 700 "$W"
 DB=econ_cli_test
 psql -X -q -h "$SOCK" -p "$PORT" -d postgres -c "DROP DATABASE IF EXISTS $DB" -c "CREATE DATABASE $DB TEMPLATE $TPL" >/dev/null || exit 1
-T=00000000-0000-4000-8000-000000000000; U=00000000-0000-4000-8000-0000000000a2
+T=00000000-0000-4000-8000-0000000000c1; export VEXA_TENANT_ID=$T; U=00000000-0000-4000-8000-0000000000a2
 psql -X -q -h "$SOCK" -p "$PORT" -d $DB -c "insert into auth.users(id) values('$U')" -c "insert into organizations(id,name) values('$T','SYN')" -c "insert into memberships(tenant_id,user_id,role,status,permissions_version) values('$T','$U','owner','active',1)" >/dev/null || exit 1
 # CLI simulada: `supabase db query --linked [-f archivo | "SQL"]` -> psql -c (cadena multi-sentencia = una transacción implícita; imprime la última sentencia), salida JSON estilo CLI.
 cat > "$W/bin/supabase" <<SH

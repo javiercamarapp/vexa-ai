@@ -64,6 +64,9 @@ export function estadoDeTracker(raw) {
   if (k === 'submitted') return 'enviado';
   return 'otro';
 }
+// Prefijo del retailer de la tienda propia del cliente piloto: se configura por entorno (VEXA_TIENDA_PROPIA_PREFIJO), nunca en el repo.
+// `globalThis.process` evita romper en el navegador, donde no hay `process`.
+const PREFIJO_TIENDA_PROPIA = String(globalThis.process?.env?.VEXA_TIENDA_PROPIA_PREFIJO ?? '').trim().toLowerCase();
 export const ESTADOS_NEGADOS = Object.freeze(['vencido', 'no_reembolsable', 'rechazado']);
 export function retailerDe(raw) {
   const k = clave(raw);
@@ -71,7 +74,7 @@ export function retailerDe(raw) {
   if (k.startsWith('amazon')) return 'amazon';
   if (k.startsWith('walmart')) return 'walmart';
   if (k.startsWith('best buy')) return 'bestbuy';
-  if (k.startsWith('clientex')) return 'tienda';
+  if (PREFIJO_TIENDA_PROPIA && k.startsWith(PREFIJO_TIENDA_PROPIA)) return 'tienda';
   if (k.startsWith('lowes') || k.startsWith('lowe')) return 'lowes';
   if (k.startsWith('home depot')) return 'homedepot';
   return 'otro';

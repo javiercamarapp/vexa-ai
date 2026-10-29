@@ -332,7 +332,7 @@ test('storage: solo GET, host verificado contra el proyecto, ruta confinada al t
   const dir=tmp(),f=path.join(dir,'.env');const KEY='sbKEYSECRET1234567890';
   fs.writeFileSync(f,`SUPABASE_URL=https://${SQL.PROJECT_REF}.supabase.co\nSUPABASE_SERVICE_KEY=${KEY}\n`);
   let seen;const get=createStorageGet({envFile:f,fetchImpl:async(u,o)=>{seen={u,o};return new Response(new Uint8Array([1,2,3]),{status:200});}});
-  const b=await get(`${SQL.TENANT}/imports/x/a b.csv`);assert.deepEqual([...b],[1,2,3]);assert.equal(seen.o.method,'GET');assert.match(seen.u,/vexa-private\/ab12cd34.*a%20b\.csv$/);
+  const b=await get(`${SQL.TENANT}/imports/x/a b.csv`);assert.deepEqual([...b],[1,2,3]);assert.equal(seen.o.method,'GET');assert.match(seen.u,new RegExp('vexa-private/'+SQL.TENANT.slice(0,8)+'.*a%20b\\.csv$'));
   await assert.rejects(()=>get('otro-tenant/imports/x/a.csv'));await assert.rejects(()=>get(`${SQL.TENANT}/imports/../../x`));
   const nf=createStorageGet({envFile:f,fetchImpl:async()=>new Response('{"error":"x"}',{status:404})});assert.equal(await nf(`${SQL.TENANT}/imports/x/a.csv`),null);
   const err=createStorageGet({envFile:f,fetchImpl:async()=>new Response(KEY,{status:500})});await assert.rejects(()=>err(`${SQL.TENANT}/imports/x/a.csv`),e=>!e.message.includes(KEY));

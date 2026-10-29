@@ -114,7 +114,7 @@ test('formateadores centrales: la locale solo cambia la presentación (mes, %), 
   const f = await import('../src/lib/formato/es-mx.mjs');
   assert.equal(f.dia('2026-09-18'), '18 sep 2026'); assert.equal(f.dia('2026-09-18', 'en'), 'Sep 18, 2026');
   assert.equal(f.porcentaje(29.34), '29.3 %'); assert.equal(f.porcentaje(29.34, {idioma: 'en'}), '29.3%');
-  assert.equal(f.usd('85472840'), 'US[omitido: dato de cliente]'); assert.equal(f.usd('85472840', {idioma: 'en'}), 'US[omitido: dato de cliente]');
+  assert.equal(f.usd('12345640'), 'US$123,456'); assert.equal(f.usd('12345640', {idioma: 'en'}), 'US$123,456');
   const c = await import('../../../packages/cfo-copilot/src/format.mjs');
   assert.equal(c.monthLabel('2026-03'), 'mar 2026'); assert.equal(c.monthLabel('2026-03', 'en'), 'Mar 2026');
 });

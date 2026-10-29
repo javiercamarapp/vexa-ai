@@ -4,7 +4,9 @@
 //   - verificación/diagnóstico: SELECT de solo lectura que Javier/yo corremos por MCP
 // Contexto de escritura = el de packages/economics/emit-sql.mjs: tenant + acción `configure` + actor owner EXPLÍCITO (jamás inferido).
 import {TENANT, PROJECT_REF} from '../sql.mjs';
-import {sinLiterales} from './reglas.mjs';
+import {sinLiterales, rxDominioTienda} from './reglas.mjs';
+// Dominio de la tienda propia (config local) escapado para la regex POSIX del SQL generado.
+const rxSqlDominio = () => rxDominioTienda().toLowerCase();
 export {TENANT, PROJECT_REF};
 
 const UUID = /^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/;
@@ -172,7 +174,7 @@ filas as (
     (select btrim(c->>'v') from jsonb_array_elements(h.cells) c where (c->>'col')::int=cols.c_ret limit 1) as retailer
   from public.tracker_row_heads h join cols using(sheet_name)
   where h.tenant_id=${T0} and h.ticket_state in('linked','candidate') and h.ticket_id is not null),
-mk as (select ticket_id,order_id,case when retailer ~* '^amazon\\s*::' then 'amazon' when retailer ~* '^walmart\\s*::' then 'walmart' when retailer ~* '^best buy\\s*::\\s*usa$' then 'mirakl_bestbuy_us' when retailer ~* '^best buy\\s*::\\s*can$' then 'mirakl_bestbuy_ca' when retailer ~* '^clientextools\\.com.*shopify' then 'shopify' end as mk from filas where coalesce(order_id,'')<>''),
+mk as (select ticket_id,order_id,case when retailer ~* '^amazon\\s*::' then 'amazon' when retailer ~* '^walmart\\s*::' then 'walmart' when retailer ~* '^best buy\\s*::\\s*usa$' then 'mirakl_bestbuy_us' when retailer ~* '^best buy\\s*::\\s*can$' then 'mirakl_bestbuy_ca' when retailer ~* '^${rxSqlDominio()}.*shopify' then 'shopify' end as mk from filas where coalesce(order_id,'')<>''),
 led as (select distinct on(e.entity_id) e.entity_id, split_part(e.external_id,'|',1) as mk, split_part(e.external_id,'|',2) as order_id, e.status, e.basis from public.economic_ledger_entries e where e.tenant_id=${T0} and e.kind='order' and e.external_id like '%|%|%' order by e.entity_id, e.revision desc)
 select (select count(*) from filas) as filas_con_ticket, (select count(*) from mk where mk is not null) as filas_con_pedido_y_marketplace,
   (select count(distinct m.ticket_id||'|'||l.entity_id) from mk m join led l on l.mk=m.mk and l.order_id=m.order_id) as pares_ticket_linea_en_libro,

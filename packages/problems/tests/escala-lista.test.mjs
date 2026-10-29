@@ -1,4 +1,4 @@
-// «Gestionar problemas» a la escala medida en producción (394 problemas, 14,796 miembros, 8,858 corridas succeeded): listar NO debe cargar el texto de evidencia de todas las corridas.
+// «Gestionar problemas» a la escala de orden de magnitud similar a la de producción (cientos de problemas, decenas de miles de miembros, miles de corridas): listar NO debe cargar el texto de evidencia de todas las corridas.
 // Mide tiempo y número de consultas, compara el veredicto «resumen» con el completo fail-closed (que se conserva) y prueba aislamiento entre tenants.
 // Postgres local desechable con migraciones reales; datos sintéticos. Construir el mundo tarda ~1 min.
 //   node --test packages/problems/tests/escala-lista.test.mjs

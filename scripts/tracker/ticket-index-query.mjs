@@ -6,6 +6,7 @@ import {writeFileSync,mkdirSync} from 'node:fs';
 import path from 'node:path';
 import {VERSIONS,loadBytes,planVersion} from '../../packages/ingestion/tracker/loader.mjs';
 import {candidateIds,summarySql,idsSql} from '../../packages/ingestion/tracker/ticket-index.mjs';
+if(!VERSIONS.length){console.error('Faltan trackerVersions: cree config/cliente-piloto.local.json (ver config/cliente-piloto.ejemplo.json)');process.exit(2);}
 const arg=(k,d)=>{const i=process.argv.indexOf('--'+k);return i>0?process.argv[i+1]:d;};
 const tenant=arg('tenant'),out=arg('out'),root=arg('root',path.join(process.env.HOME,'Desktop/rovaq ai'));
 if(!tenant||!out){console.error('Uso: --tenant <uuid> --out <carpeta> [--root dir]');process.exit(2);}

@@ -32,7 +32,7 @@ const threads = [{grain: 'all', period: '0001-01-01', threads: 3000, closed: 250
 const walmartMensual = [
   {fuente: 'Marketplace Walmart · Devoluciones (export recibido 2026-10-05)', status: 'pending', currency: 'USD', exponent: 2, n: 637, known: 637, amount: '13756830', desde: '2026-07', hasta: '2026-09', refreshed: '2026-10-23T17:00:00Z', watermark: '2026-10-19T06:00:00Z'},
   {fuente: 'Marketplace Walmart · Devoluciones (export recibido 2026-10-05)', status: 'cancelled', currency: 'USD', exponent: 2, n: 620, known: 620, amount: '11500593', desde: '2026-07', hasta: '2026-09', refreshed: '2026-10-23T17:00:00Z', watermark: null},
-  {fuente: 'Shopify CLIENTEX · Transacciones de reembolso', status: 'pending', currency: 'USD', exponent: 2, n: 1, known: 1, amount: '27900', desde: '2026-10', hasta: '2026-10', refreshed: '2026-10-23T17:00:00Z', watermark: null},
+  {fuente: 'Shopify PILOTO · Transacciones de reembolso', status: 'pending', currency: 'USD', exponent: 2, n: 1, known: 1, amount: '27900', desde: '2026-10', hasta: '2026-10', refreshed: '2026-10-23T17:00:00Z', watermark: null},
 ];
 
 /** Base simulada: responde por patrón de SQL. `fallan` = tablas cuyo SELECT agota el tiempo (57014). `registro` guarda lo ejecutado. */

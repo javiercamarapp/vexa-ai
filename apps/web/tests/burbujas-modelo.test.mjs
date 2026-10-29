@@ -6,7 +6,7 @@ import {disponerBurbujas, conciliar, valorDe, estadoDe, radioDe, valoresReferenc
 import {vistaPain} from './ui/pain-sintetico.mjs';
 
 const P = (id, tema, usd, o = {}) => ({id, tema, nombre: id, agregado: false, clase: 'O', padre: null, solapaCon: [], dinero: usd == null ? {sinDato: true, causa: 'sin_fuente', motivo: 'x'} : {sinDato: false, tipo: 'bruto', currency: 'USD', exponent: 2, minor: String(Math.round(usd * 100))}, volumen: {sinDato: false, n: o.n ?? 10, unidad: 'u'}, ...o});
-const CLIENTEX = [P('P2', 'devoluciones', 138000, {solapaCon: ['P4']}), P('P1', 'devoluciones', 20000, {solapaCon: ['P4']}), P('P10~walmart', 'canales', 448541, {padre: 'P4'}), P('P5', 'canales', 316000), P('P10~amazon', 'canales', 288000, {padre: 'P4'}), P('P10~shopify', 'canales', 3500, {padre: 'P4'}),
+const PILOTO = [P('P2', 'devoluciones', 138000, {solapaCon: ['P4']}), P('P1', 'devoluciones', 20000, {solapaCon: ['P4']}), P('P10~walmart', 'canales', 448541, {padre: 'P4'}), P('P5', 'canales', 316000), P('P10~amazon', 'canales', 288000, {padre: 'P4'}), P('P10~shopify', 'canales', 3500, {padre: 'P4'}),
   ...[62, 60, 58, 57, 55, 54, 53, 52].map((v, i) => P('S' + i, 'sku', v * 1000, {padre: 'P4'})), P('P4', 'sku', 740000, {agregado: true, solapaCon: ['P1', 'P2']}), P('P6', 'garantia', null, {volumen: {sinDato: true, causa: 'sin_fuente', motivo: 'x'}})];
 const todas = d => d.clusters.flatMap(c => c.burbujas);
 const verifica = (d, esperados) => {
@@ -24,13 +24,13 @@ const verifica = (d, esperados) => {
   // nada por encima del umbral agrupado
   for (const g of d.grupos) for (const m of g.miembros) assert.ok(Math.sqrt(m.valor / d.escala.vmax) * d.escala.rMax < R_UMBRAL, `${m.id} agrupado siendo grande`);
 };
-for (const ancho of [300, 390, 560, 840, 1000, 1400]) for (const modo of ['dinero', 'volumen']) test(`CLIENTEX: escala global, grandes individuales y nada perdido (ancho ${ancho}, ${modo})`, () => {
-  const d = disponerBurbujas({puntos: CLIENTEX, modo, ancho});
-  verifica(d, CLIENTEX.filter(p => !p.agregado && valorDe(p, modo) !== null).map(p => p.id));
+for (const ancho of [300, 390, 560, 840, 1000, 1400]) for (const modo of ['dinero', 'volumen']) test(`PILOTO: escala global, grandes individuales y nada perdido (ancho ${ancho}, ${modo})`, () => {
+  const d = disponerBurbujas({puntos: PILOTO, modo, ancho});
+  verifica(d, PILOTO.filter(p => !p.agregado && valorDe(p, modo) !== null).map(p => p.id));
   if (modo === 'dinero') for (const id of ['P10~walmart', 'P5', 'P10~amazon']) assert.ok(d.burbujas.some(b => b.id === id), id + ' debe ser individual (antes se escondía en «+3 más»)');
 });
 test('defecto reproducido y corregido: 448k/316k/288k ya no se esconden y 3.5k no se infla al tamaño de 20k', () => {
-  const d = disponerBurbujas({puntos: CLIENTEX, modo: 'dinero', ancho: 840});
+  const d = disponerBurbujas({puntos: PILOTO, modo: 'dinero', ancho: 840});
   const r = Object.fromEntries(todas(d).map(b => [b.id, b]));
   assert.ok(Math.abs(r['P10~walmart'].r / r.P5.r - Math.sqrt(448541 / 316000)) < 1e-9);
   assert.ok(r['P10~shopify'].minimo && d.grupos.length === 0, '3.5k es el único pequeño: se dibuja él, con tamaño mínimo marcado (no se infla en silencio)');
@@ -62,14 +62,14 @@ test('ceros, sin dato, NaN y negativos: nunca burbuja; cero medido ≠ sin dato'
   const v = disponerBurbujas({puntos: [{...P('V', 'sku', 1), volumen: {sinDato: false, n: NaN, unidad: 'u'}}], modo: 'volumen'}); assert.equal(todas(v).length, 0);
 });
 test('cúmulo vacío y todos vacíos: sin círculos vacíos, van a `vacios` con sus puntos', () => {
-  const d = disponerBurbujas({puntos: CLIENTEX, modo: 'dinero'});
+  const d = disponerBurbujas({puntos: PILOTO, modo: 'dinero'});
   assert.ok(d.vacios.some(v => v.id === 'garantia' && v.sinCifra[0].id === 'P6')); assert.ok(d.clusters.every(c => c.burbujas.length > 0));
   const t = disponerBurbujas({puntos: [P('S', 'sku', null), P('T', 'canales', null)]});
   assert.equal(t.clusters.length, 0); assert.equal(t.burbujas.length, 0); assert.equal(t.escala.vmax, 1); assert.ok(Number.isFinite(t.escala.rMax));
   assert.equal(disponerBurbujas({puntos: []}).clusters.length, 0);
 });
 test('volumen vs dinero: la escala es por modo; el cúmulo no cambia; unidades mixtas no se suman', () => {
-  const din = disponerBurbujas({puntos: CLIENTEX, modo: 'dinero'}), vol = disponerBurbujas({puntos: CLIENTEX, modo: 'volumen'});
+  const din = disponerBurbujas({puntos: PILOTO, modo: 'dinero'}), vol = disponerBurbujas({puntos: PILOTO, modo: 'volumen'});
   assert.ok(din.escala.vmax > 4e5 && vol.escala.vmax === 10);
   assert.ok(vol.clusters.some(c => c.id === 'garantia') === false && vol.vacios.some(v => v.id === 'garantia'), 'P6 sin volumen en este ejemplo');
   const mix = disponerBurbujas({puntos: [P('A', 'canales', 5, {volumen: {sinDato: false, n: 5, unidad: 'reembolsos'}}), P('B', 'canales', 5, {volumen: {sinDato: false, n: 7, unidad: 'líneas'}})], modo: 'volumen'});
@@ -83,23 +83,23 @@ test('monedas mezcladas: solo USD entra al mapa (las otras monedas viven aparte 
   assert.ok(eur.dinero.currency !== 'USD'); // el modelo no convierte ni suma monedas: el contrato lo impide aguas arriba
 });
 test('filtro por pestaña: la escala y la conciliación no cambian', () => {
-  const todo = disponerBurbujas({puntos: CLIENTEX, ancho: 1000}), uno = disponerBurbujas({puntos: CLIENTEX.filter(p => p.tema === 'sku'), ancho: 1000, temas: ['sku'], escalaDe: CLIENTEX});
+  const todo = disponerBurbujas({puntos: PILOTO, ancho: 1000}), uno = disponerBurbujas({puntos: PILOTO.filter(p => p.tema === 'sku'), ancho: 1000, temas: ['sku'], escalaDe: PILOTO});
   assert.equal(uno.escala.vmax, todo.escala.vmax); assert.equal(uno.escala.rMax, todo.escala.rMax); assert.deepEqual(uno.conciliacion, todo.conciliacion);
   const a = todas(todo).find(b => b.id === 'S0'), b = todas(uno).find(x => x.id === 'S0'); assert.equal(a.r, b.r);
 });
 test('conciliación: las burbujas suman con cortes repetidos; sin repetir = totales + independientes; en volumen no se suma', () => {
-  const c = conciliar(CLIENTEX, 'dinero');
+  const c = conciliar(PILOTO, 'dinero');
   assert.equal(c.items.map(x => x.id).join(), 'P4,P5'); assert.equal(c.sinRepetir, 740000 + 316000);
-  const suma = CLIENTEX.filter(p => !p.agregado).reduce((a, p) => a + (valorDe(p, 'dinero') ?? 0), 0);
+  const suma = PILOTO.filter(p => !p.agregado).reduce((a, p) => a + (valorDe(p, 'dinero') ?? 0), 0);
   assert.equal(c.suma, suma); assert.ok(Math.abs(c.repetido - (suma - c.sinRepetir)) < 1e-6);
-  assert.equal(conciliar(CLIENTEX, 'volumen').aplica, false);
-  const d = disponerBurbujas({puntos: CLIENTEX}), sku = d.clusters.find(x => x.id === 'sku');
+  assert.equal(conciliar(PILOTO, 'volumen').aplica, false);
+  const d = disponerBurbujas({puntos: PILOTO}), sku = d.clusters.find(x => x.id === 'sku');
   assert.equal(sku.reparte.padre, 'P4'); assert.ok(Math.abs(sku.reparte.pct - 100 * 452000 / 740000 * 1) < 0.2 || sku.reparte.pct > 0);
   const canales = d.clusters.find(x => x.id === 'canales').reparte; assert.equal(canales.otros[0].id, 'P5');
 });
 test('referencia de leyenda: valores redondos y radios a la misma escala', () => {
   assert.deepEqual(valoresReferencia(448541), [200000, 50000]); assert.deepEqual(valoresReferencia(10, 'volumen'), [5, 1]);
-  const d = disponerBurbujas({puntos: CLIENTEX}); for (const r of d.escala.refs) assert.equal(r.r, radioDe(r.valor, d.escala.vmax, d.escala.rMax));
+  const d = disponerBurbujas({puntos: PILOTO}); for (const r of d.escala.refs) assert.equal(r.r, radioDe(r.valor, d.escala.vmax, d.escala.rMax));
 });
 test('rótulo: dentro solo si cabe entero; si no, fuera (2 líneas) y sin texto cortado dentro', () => {
   assert.equal(rotular('Walmart', '$449k', 56, 400).dentro, true);

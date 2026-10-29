@@ -69,7 +69,7 @@ export async function main(){
   const o={from:opt('from'),to:opt('to'),basis:opt('basis','first'),tenant:opt('tenant',TENANT)};
   const ref=opt('project-ref',PROJECT_REF);
   if(ref!==PROJECT_REF)throw Error('proyecto no autorizado');
-  if(o.tenant!==TENANT)throw Error('tenant no autorizado');
+  if(!TENANT||o.tenant!==TENANT)throw Error('tenant no autorizado');
   const out=opt('out',DEFAULT_OUT);const limit=intOpt(args,'limit',200);const maxConv=intOpt(args,'max',Infinity);
   const fuente=opt('fuente','todas');if(!['todas','hubspot','csv'].includes(fuente))throw Error('--fuente: todas|hubspot|csv');
   if(fuente==='csv'){await exportCsvCli({o,ref,out,run:flag('run')});return;}

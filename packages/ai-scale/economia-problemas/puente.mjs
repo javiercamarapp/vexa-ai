@@ -2,7 +2,7 @@
 // PASO 1 (local, sin red, sin base): construye los pares ticket -> línea del libro a partir de archivos con HASH FIJADO.
 //   node puente.mjs                      # escribe pares-economia.jsonl (0600) + puente-resumen.json (solo conteos)
 //   node puente.mjs --aceptar-sku-distinto   # añade la clase C (inferida); por defecto NO
-// Entradas (solo lectura): economia-tickets.csv (CLIENTEX), los 8 CSV de marketplaces (los mismos que cargó economico-carga) y el
+// Entradas (solo lectura): economia-tickets.csv (cliente piloto), los 8 CSV de marketplaces (los mismos que cargó economico-carga) y el
 // paquete/normalizado de Shopify. El libro real se mapea con los MISMOS mapeadores que lo cargaron (marketplace-map.mjs / shopify-map.mjs),
 // así que los entity_id coinciden con los de producción; el SQL de vinculos.mjs lo vuelve a verificar contra la base antes de insertar.
 // Nunca imprime identificadores de pedidos, tickets ni clientes: solo conteos.
@@ -12,7 +12,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {parseCsv} from '../../economics/csv.mjs';
 import {entityId, sha256hex} from '../../economics/marketplace-map.mjs';
-import {mapAllMarketplaces, DEFAULT_ROOT, CLIENTEX_TENANT} from '../../../scripts/economics/fuentes-marketplaces.mjs';
+import {mapAllMarketplaces, DEFAULT_ROOT, PILOT_TENANT} from '../../../scripts/economics/fuentes-marketplaces.mjs';
 import {loadShopify, SHOPIFY_ROOT} from '../../../scripts/economics/fuentes-shopify.mjs';
 import {construirPares, pedidoClave, BASIS_ORDER_MP, BASIS_REFUND_MP, BASIS_SHOPIFY, REGLA_VERSION} from './reglas.mjs';
 
@@ -22,7 +22,7 @@ export const OUT_DEFAULT = path.join(os.homedir(), '.codex-work/rovaq-cierre-202
 const stripSuffix = s => s.replace(/~dup\d+$/, '').replace(/#[a-f0-9]{12}$/, '');
 
 /** Índice de pedidos elegibles de marketplaces: «mk|order_id» -> [{sku, entityId}]. Solo recorded, base limpia, importe y moneda conocidos. */
-export function indexarMarketplaces(items, tenantId = CLIENTEX_TENANT) {
+export function indexarMarketplaces(items, tenantId = PILOT_TENANT) {
   const pedidos = new Map(), reembolsos = new Map(), stats = {pedidos_elegibles: 0, pedidos_no_elegibles: 0, reembolsos_elegibles: 0, reembolsos_no_elegibles: 0};
   for (const it of items) {
     const e = it.entry;
@@ -48,7 +48,7 @@ export function indexarMarketplaces(items, tenantId = CLIENTEX_TENANT) {
 }
 
 /** Pedidos de Shopify: «shopify|<número sin #>» -> [{sku:null, skus:[...], entityId}] (una «línea» por pedido; el libro guarda el pedido completo). */
-export function indexarShopify({normalized, packageEntries, tenantId = CLIENTEX_TENANT}) {
+export function indexarShopify({normalized, packageEntries, tenantId = PILOT_TENANT}) {
   const porGid = new Map(packageEntries.filter(e => e.kind === 'order').map(e => [e.externalId, e]));
   const out = new Map();
   let elegibles = 0, noElegibles = 0;
@@ -76,7 +76,7 @@ export function leerTickets(root = DEFAULT_ROOT, file = TICKETS_FILE) {
   return {rows: t.rows, sha256: sha};
 }
 
-export function construirTodo({root = DEFAULT_ROOT, shopifyRoot = SHOPIFY_ROOT, aceptarSkuDistinto = false, tenantId = CLIENTEX_TENANT, now = new Date()} = {}) {
+export function construirTodo({root = DEFAULT_ROOT, shopifyRoot = SHOPIFY_ROOT, aceptarSkuDistinto = false, tenantId = PILOT_TENANT, now = new Date()} = {}) {
   const tickets = leerTickets(root);
   const mp = mapAllMarketplaces({root, tenantId, now});
   const idxMp = indexarMarketplaces(mp.items, tenantId);

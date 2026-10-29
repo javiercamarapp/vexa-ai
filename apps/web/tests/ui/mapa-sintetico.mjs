@@ -7,7 +7,7 @@ const ESTADOS = [['TX', 'Austin', '78701', 220], ['CA', 'Fresno', '93650', 190],
   ['PA', 'Erie', '16501', 40], ['AZ', 'Tucson', '85701', 36], ['NC', 'Raleigh', '27601', 30], ['WA', 'Spokane', '99201', 22], ['CO', 'Pueblo', '81003', 15], ['MI', 'Flint', '48502', 9], ['NV', 'Reno', '89501', 6], ['VT', 'Barre', '05641', 3], ['WY', 'Casper', '82601', 2], ['HI', 'Hilo', '96720', 1]];
 const MX = [['Jalisco', 22], ['Nuevo León', 14], ['Ciudad de México', 11], ['Querétaro', 6], ['Yucatán', 3]];
 const HOJAS = ['Warranty Tools', 'Warranty Parts', 'Refunds', 'Return Labels', 'Quotes', 'Waitlist', 'Refunds Requests'];
-const MOT = ['Defective', 'Warranty', 'Return', 'Order', 'Shipping', 'Missing parts'], RET = ['Walmart :: x', 'Amazon', 'Amazon', 'Walmart :: x', 'Best Buy', 'CLIENTEX'];
+const MOT = ['Defective', 'Warranty', 'Return', 'Order', 'Shipping', 'Missing parts'], RET = ['Walmart :: x', 'Amazon', 'Amazon', 'Walmart :: x', 'Best Buy', 'PILOTO'];
 export function filasMapa(o = {}) {
   const r = lcg(5), out = [];
   for (const [st, ciudad, zip, n] of ESTADOS) for (let i = 0; i < n; i++) out.push({sheet: HOJAS[Math.floor(r() * 4)], tiene: true,

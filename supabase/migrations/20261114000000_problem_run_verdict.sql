@@ -1,5 +1,5 @@
 -- 20261114000000 (PROPUESTA, NO APLICADA): VEREDICTO PRECALCULADO DE LAS CORRIDAS DE EVIDENCIA DE LOS PROBLEMAS (insight_problem_run_verdict).
--- Por qué: la lista de problemas (/problems, /api/problems, el catálogo del Brief y el Explorador) verifica EN CADA PETICIÓN las ~8,761 corridas con una consulta agregada
+-- Por qué: la lista de problemas (/problems, /api/problems, el catálogo del Brief y el Explorador) verifica EN CADA PETICIÓN las miles de corridas con una consulta agregada
 --   (usableRunsSummary, packages/problems/repository.mjs): 6.5–9 s en frío medidos el 22-oct y hasta 14 s con la base ocupada. Es la lectura más lenta que queda tras
 --   acotar la verificación de una ficha (BUILD-ESTABILIDAD, 23-oct). Aquí el MISMO veredicto se calcula FUERA de la ruta del usuario (motor de insights) y la aplicación solo hace
 --   SELECT sobre ~9 mil filas por clave primaria.

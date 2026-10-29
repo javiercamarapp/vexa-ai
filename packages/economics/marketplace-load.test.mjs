@@ -271,7 +271,7 @@ test('PG: Shopify — reenvío del paquete cargado = todo repetido; ampliación 
   const pool = await freshDb('econ_shop');
   const dir = mkdtempSync(path.join(os.tmpdir(), 'econ-shop-'));
   try {
-    // paquete sintético con la MISMA forma que clientex-shopify-economic-import-20261006.json (redacción escrita aquí de forma independiente)
+    // paquete sintético con la MISMA forma que shopify-economic-import.json (redacción escrita aquí de forma independiente)
     const NORM_SHA = 'e'.repeat(64);
     const SO = '3d47b75d-0023-5bda-a102-5cc351b33edd', SR = 'b3ba2126-fb69-5f4e-aeef-c3caf395e27d';
     const srcBase = {expectedVersion: 0, active: true, complete: false, windowStart: '2026-08-01T00:00:00.000Z', windowEnd: '2026-10-06T00:00:00.000Z', watermark: '2026-10-05T21:25:04.753Z'};

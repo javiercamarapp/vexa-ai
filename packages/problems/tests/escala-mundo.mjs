@@ -1,4 +1,4 @@
-// Mundo SINTÉTICO a la escala medida en producción el 22-oct (CLIENTEX): 394 problemas, 14,796 miembros, 8,858 corridas succeeded.
+// Mundo SINTÉTICO a una escala de orden de magnitud similar a la de producción (cientos de problemas, decenas de miles de miembros, miles de corridas); los parámetros son sintéticos.
 // La evidencia es REAL para el verificador (persistence del flujo de producción: hashes, manifiestos, input_hash); solo los vectores son de relleno ('[0]').
 // Todo identificador es sintético (uuid de prueba / SYN-). Ningún dato de clientes.
 import {spawnSync} from 'node:child_process';

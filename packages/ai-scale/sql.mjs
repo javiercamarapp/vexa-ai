@@ -1,12 +1,14 @@
 // Generador de SQL de SOLO LECTURA para la cohorte. Ventana parametrizable por fecha del PRIMER o del ÚLTIMO mensaje.
 // Se corre por MCP (execute_sql) o con `supabase db query --linked -f`. Ninguna sentencia escribe.
-export const TENANT='00000000-0000-4000-8000-000000000000';
+import {tenantPiloto} from '../../config/cliente-piloto.mjs';
+// UUID de la organización piloto: VEXA_TENANT_ID o config local (ver config/cliente-piloto.mjs). Sin valor real por defecto.
+export const TENANT=tenantPiloto();
 export const PROJECT_REF='proyecto-ejemplo';
 const iso=/^\d{4}-\d{2}-\d{2}$/;
 function check({from,to,basis,tenant=TENANT}){
   if(!iso.test(from)||!iso.test(to)||from>=to)throw Error('ventana inválida: use --from YYYY-MM-DD --to YYYY-MM-DD (to exclusivo)');
   if(!['first','last'].includes(basis))throw Error('--basis debe ser first o last');
-  if(!/^[a-f0-9-]{36}$/.test(tenant))throw Error('tenant inválido');
+  if(!/^[a-f0-9-]{36}$/.test(tenant))throw Error('tenant inválido: defina VEXA_TENANT_ID');
 }
 // CTE común: conversaciones vigentes (mismas condiciones que queue.conversationsPage) con primer/último mensaje.
 const cohortFrom=({from,to,basis,tenant=TENANT})=>`with p as (select '${tenant}'::uuid as tenant, '${from}'::timestamptz as lo, '${to}'::timestamptz as hi),

@@ -826,7 +826,7 @@ export const LANDING = {
     m2: {
       marco: { es: 'Fuga de reembolsos', en: 'Refund leakage' },
       titular: { es: '36,000 USD devueltos en el periodo', en: '36,000 USD returned in the period' },
-      grafica: { es: 'Pareto de 10 SKU, de HM-100 a HM-190, con línea de porcentaje acumulado', en: 'Pareto of 10 SKUs, HM-100 to HM-190, with a cumulative percentage line' },
+      grafica: { es: 'Pareto de 10 SKU, de HM-120 a HM-210, con línea de porcentaje acumulado', en: 'Pareto of 10 SKUs, HM-120 to HM-210, with a cumulative percentage line' },
       canales: [
         { es: 'Canal A', en: 'Channel A' },
         { es: 'Canal B', en: 'Channel B' },

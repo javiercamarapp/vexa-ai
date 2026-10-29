@@ -57,6 +57,8 @@ export function destinoInterno(pathname) {
   if (pathname.startsWith('/en/')) return PREFIJO_INTERNO + '/en' + pathname.slice(3);
   return PREFIJO_INTERNO + '/es' + pathname;
 }
+/** Segmento pregenerado por [...ruta] cuyo único contenido es notFound(): destino de toda ruta desconocida del sitio. */
+export const SEGMENTO_404 = '__404';
 const RUTAS_SITIO = new Set(RUTAS);
 const esRutaApp = (pathname) => RUTAS_APP.some((r) => pathname === r || pathname.startsWith(r + '/')) || pathname === '/api' || pathname.startsWith('/api/');
 const redir = (url) => ({tipo: 'redirigir', url, status: 308});
@@ -83,8 +85,8 @@ export function decidirHost({host, pathname, search = '', produccion = false}) {
     if (RUTAS_SITIO.has(limpia)) return limpia !== pathname ? redir(limpia + search) : {tipo: 'reescribir', destino: destinoInterno(limpia)};
     if (esActivoPublico(pathname) || rutaSiempreAbierta(pathname)) return {tipo: 'activo'};
     if (esRutaApp(pathname)) return redir(ORIGEN_APP + pathname + search);
-    // Ruta desconocida: 404 propio del sitio (la ruta [...ruta] no pregenera nada y responde 404 real), no una redirección a la aplicación.
-    return {tipo: 'reescribir', destino: destinoInterno(limpia), noEncontrada: true};
+    // Ruta desconocida: 404 propio del sitio. Se reescribe a /sitio/<lang>/__404, una página prerenderizada que responde 404 real (con dynamicParams=false en el sitio, una ruta sin pregenerar caería al catch-all de la aplicación); nunca una redirección a la aplicación.
+    return {tipo: 'reescribir', destino: PREFIJO_INTERNO + (limpia.startsWith('/en/') ? '/en' : '/es') + '/' + SEGMENTO_404, noEncontrada: true};
   }
   if (produccion && HOSTS_ANTIGUOS.includes(h)) {
     if (rutaSiempreAbierta(pathname)) return {tipo: 'activo'};
@@ -141,8 +143,8 @@ export function reglasNext({produccion = false} = {}) {
   ];
   const afterFiles = [
     // Lo que no es archivo, ni ruta del registro, ni de la aplicación, ni endpoint abierto: 404 propio del sitio (nunca una redirección a la aplicación).
-    {source: '/en/:resto*', has: sitio, destination: '/sitio/en/:resto*'},
-    {source: `/:resto((?!en(?:/|$)|_next/|api/(?:${API_ABIERTA.replace('$', '')})).+)`, has: sitio, destination: '/sitio/es/:resto'},
+    {source: '/en/:resto*', has: sitio, destination: '/sitio/en/' + SEGMENTO_404},
+    {source: `/:resto((?!en(?:/|$)|_next/|api/(?:${API_ABIERTA.replace('$', '')})).+)`, has: sitio, destination: '/sitio/es/' + SEGMENTO_404},
   ];
   return {redirects, beforeFiles, afterFiles, fallback: []};
 }

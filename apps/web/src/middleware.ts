@@ -52,7 +52,7 @@ export async function middleware(request:NextRequest) {
     }
   } catch(error) {return authLinkHeaders(request,failure(error));}
 }
-// Matcher: todo menos estáticos y activos públicos, y sin rovaq.ai ni www.rovaq.ai (el sitio no ejecuta funciones). Next exige que sea un literal estático:
-// config/sitio/reglas-host.mjs guarda el mismo valor como MATCHER_MIDDLEWARE y una prueba los compara. Fase B (respaldo): quitar `missing` y poner MODO_ENRUTAMIENTO = 'middleware'.
+// Matcher (Fase B vigente): todo menos estáticos y activos públicos; rovaq.ai y www pasan por aquí y decidirHost los enruta. Fase A: añadir `missing: [{ type: 'header', key: 'host', value: '(www\\\\.)?rovaq\\\\.ai' }]`. Next exige que sea un literal estático:
+// config/sitio/reglas-host.mjs guarda el mismo valor como MATCHER_MIDDLEWARE y una prueba los compara.
 // En app.rovaq.ai, rutaConAutenticacion() conserva la lista anterior: lo demás no se toca.
-export const config = { runtime: 'nodejs', matcher: [{ source: '/((?!_next/static|_next/image|fonts/|brand/|images/|vendor/|s/).*)', missing: [{ type: 'header', key: 'host', value: '(www\\.)?rovaq\\.ai' }] }] };
+export const config = { runtime: 'nodejs', matcher: [{ source: '/((?!_next/static|_next/image|fonts/|brand/|images/|vendor/|s/).*)' }] };

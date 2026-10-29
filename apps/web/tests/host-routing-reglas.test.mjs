@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import {readdirSync, readFileSync, statSync, existsSync} from 'node:fs';
 import {join} from 'node:path';
 import {unstable_getResponseFromNextConfig as correr, getRedirectUrl, getRewrittenUrl, isRewrite, unstable_doesMiddlewareMatch as casa} from 'next/experimental/testing/server.js';
-import {reglasHost, MATCHER_MIDDLEWARE, MODO_ENRUTAMIENTO} from '../config/sitio/reglas-host.mjs';
+import {MATCHER_MIDDLEWARE, MODO_ENRUTAMIENTO} from '../config/sitio/reglas-host.mjs';
 import {reglasNext, decidirHost, RUTAS_APP, esActivoPublico, HOSTS_ANTIGUOS} from '../src/lib/host-routing.mjs';
 import {RUTAS, PAGINAS} from '../src/content/sitio/registro.mjs';
 import * as modConfig from '../next.config.ts';
@@ -17,7 +17,7 @@ const RAIZ = join(import.meta.dirname, '..');
 const sinNada = async () => [];
 /** Ejecuta redirects y beforeFiles (fase 1) y, si nada tocó la ruta, afterFiles (fase 2). Los archivos de public/ y las rutas fijas se sirven entre las dos fases. */
 async function simular(host, ruta, search, produccion) {
-  const r = reglasHost({produccion});
+  const r = reglasNext({produccion}); // la especificación de la Fase A, haya o no modo next-config vigente
   const url = `https://${host}${ruta}${search}`;
   const fase1 = await correr({url, headers: {host}, nextConfig: {redirects: async () => r.redirects, rewrites: async () => ({beforeFiles: r.beforeFiles, afterFiles: [], fallback: []})}});
   const salida = (res, fase) => isRewrite(res) ? {tipo: 'reescribir', destino: new URL(getRewrittenUrl(res)).pathname, search: new URL(getRewrittenUrl(res)).search, fase}
@@ -80,28 +80,29 @@ test('las reglas existen solo con has host y los redirects son permanentes (308)
   assert.deepEqual(HOSTS_ANTIGUOS.slice().sort(), ['rovaq-ai.vercel.app', 'vexa-ai.vercel.app']);
 });
 
-test('next.config.ts entrega exactamente las reglas de reglasHost (y las de producción solo con VERCEL_ENV=production)', async () => {
+test('next.config.ts entrega lo que dice reglasHost: vacío en Fase B (middleware), las reglas de reglasNext en Fase A', async () => {
   const antes = process.env.VERCEL_ENV;
   try {
     delete process.env.VERCEL_ENV;
-    assert.deepEqual(await nextConfig.redirects(), reglasHost({produccion: false}).redirects);
-    const rw = await nextConfig.rewrites();
-    assert.deepEqual(rw, {beforeFiles: reglasHost().beforeFiles, afterFiles: reglasHost().afterFiles, fallback: []});
-    process.env.VERCEL_ENV = 'preview';
-    assert.deepEqual(await nextConfig.redirects(), reglasHost({produccion: false}).redirects);
+    const esperado = (prod) => MODO_ENRUTAMIENTO === 'middleware' ? {redirects: [], beforeFiles: [], afterFiles: [], fallback: []} : reglasNext({produccion: prod});
+    assert.deepEqual(await nextConfig.redirects(), esperado(false).redirects);
+    assert.deepEqual(await nextConfig.rewrites(), {beforeFiles: esperado(false).beforeFiles, afterFiles: esperado(false).afterFiles, fallback: []});
     process.env.VERCEL_ENV = 'production';
-    assert.deepEqual(await nextConfig.redirects(), reglasHost({produccion: true}).redirects);
+    assert.deepEqual(await nextConfig.redirects(), esperado(true).redirects);
   } finally { if (antes === undefined) delete process.env.VERCEL_ENV; else process.env.VERCEL_ENV = antes; }
-  assert.equal(MODO_ENRUTAMIENTO, 'next-config');
+  assert.ok(['next-config', 'middleware'].includes(MODO_ENRUTAMIENTO));
 });
 
 test('el matcher del middleware es estático, igual a MATCHER_MIDDLEWARE, y excluye rovaq.ai, www y los activos públicos', () => {
   assert.deepEqual(configMiddleware.matcher, MATCHER_MIDDLEWARE);
   const fuente = readFileSync(join(RAIZ, 'src/middleware.ts'), 'utf8');
-  assert.match(fuente, /export const config = \{ runtime: 'nodejs', matcher: \[\{ source: '[^']+', missing: \[\{ type: 'header', key: 'host', value: '[^']+' \}\] \}\] \};/, 'el matcher debe ser un literal');
+  assert.match(fuente, /export const config = \{ runtime: 'nodejs', matcher: \[\{ source: '[^']+'(?:, missing: \[\{ type: 'header', key: 'host', value: '[^']+' \}\])? \}\] \};/, 'el matcher debe ser un literal');
   const pasa = (host, ruta) => casa({config: {matcher: MATCHER_MIDDLEWARE}, url: `https://${host}${ruta}`, headers: {host}});
   // Cero invocaciones en el sitio: ni páginas, ni activos, ni desconocidas, ni app de pega.
-  for (const h of ['rovaq.ai', 'www.rovaq.ai']) for (const r of ['/', '/en', '/producto', '/en/product', '/login', '/zzz', '/robots.txt', '/s/a.js', '/api/health/version', '/sitio/es']) assert.equal(pasa(h, r), false, h + r);
+  // Fase A: cero invocaciones en el sitio. Fase B: el middleware enruta rovaq.ai y www; los activos siguen excluidos.
+  const sitioPasa = MODO_ENRUTAMIENTO === 'middleware';
+  for (const h of ['rovaq.ai', 'www.rovaq.ai']) for (const r of ['/', '/en', '/producto', '/en/product', '/login', '/zzz', '/robots.txt', '/api/health/version', '/sitio/es']) assert.equal(pasa(h, r), sitioPasa, h + r);
+  for (const h of ['rovaq.ai', 'www.rovaq.ai']) for (const r of ['/s/a.js', '/vendor/lenis-1.1.13.min.js', '/fonts/a.woff2', '/_next/static/a.js']) assert.equal(pasa(h, r), false, h + r);
   // La aplicación, los hosts antiguos, las vistas previas y desarrollo siguen pasando por el middleware.
   for (const h of ['app.rovaq.ai', 'rovaq-ai.vercel.app', 'vexa-ai.vercel.app', 'vexa-ai-git-x-equipo.vercel.app', 'localhost', 'sub.rovaq.ai', 'rovaq.ai.evil.example', 'notrovaq.ai'])
     for (const r of ['/', '/login', '/overview', '/api/x', '/robots.txt', '/sitio/es', '/producto']) assert.equal(pasa(h, r), true, h + r);

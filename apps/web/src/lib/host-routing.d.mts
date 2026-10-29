@@ -6,6 +6,7 @@ export const ORIGEN_SITIO: string;
 export const HOSTS_LANDING: readonly string[];
 export const HOSTS_ANTIGUOS: readonly string[];
 export const PREFIJO_INTERNO: string;
+export const SEGMENTO_404: string;
 export const RUTAS_APP: readonly string[];
 export function normalizarHost(valor: unknown): string;
 export function rutaSiempreAbierta(pathname: string): boolean;

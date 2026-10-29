@@ -87,20 +87,20 @@ const TABLA_SITIO: [string, string, object][] = [
   ['/llms.txt', '', {tipo: 'activo'}],
   ['/en/llms.txt', '', {tipo: 'activo'}],
   ['/blog/rss.xml', '', {tipo: 'activo'}],
-  ['/pagina-que-no-existe', '', nf('/sitio/es/pagina-que-no-existe')],
-  ['/producto/no-existe', '', nf('/sitio/es/producto/no-existe')],
-  ['/en/nope', '', nf('/sitio/en/nope')],
-  ['/en/product/nope', '', nf('/sitio/en/product/nope')],
-  ['/es', '', nf('/sitio/es/es')],
-  ['/EN', '', nf('/sitio/es/EN')],
-  ['/s', '', nf('/sitio/es/s')],
-  ['/s/', '', nf('/sitio/es/s')],
-  ['/vendor/x', '', nf('/sitio/es/vendor/x')],
-  ['/s/../login', '', nf('/sitio/es/s/../login')],
-  ['/sitio', '', nf('/sitio/es/sitio')],
-  ['/sitio/fr', '', nf('/sitio/es/sitio/fr')],
-  ['/loginx', '', nf('/sitio/es/loginx')],
-  ['/overviews', '', nf('/sitio/es/overviews')],
+  ['/pagina-que-no-existe', '', nf('/sitio/es/__404')],
+  ['/producto/no-existe', '', nf('/sitio/es/__404')],
+  ['/en/nope', '', nf('/sitio/en/__404')],
+  ['/en/product/nope', '', nf('/sitio/en/__404')],
+  ['/es', '', nf('/sitio/es/__404')],
+  ['/EN', '', nf('/sitio/es/__404')],
+  ['/s', '', nf('/sitio/es/__404')],
+  ['/s/', '', nf('/sitio/es/__404')],
+  ['/vendor/x', '', nf('/sitio/es/__404')],
+  ['/s/../login', '', nf('/sitio/es/__404')],
+  ['/sitio', '', nf('/sitio/es/__404')],
+  ['/sitio/fr', '', nf('/sitio/es/__404')],
+  ['/loginx', '', nf('/sitio/es/__404')],
+  ['/overviews', '', nf('/sitio/es/__404')],
 ];
 test(`rovaq.ai: ${TABLA_SITIO.length} casos escritos a mano (sitio, redirecciones, app, activos y 404 propio)`, () => {
   assert.ok(TABLA_SITIO.length >= 60);
@@ -199,7 +199,7 @@ test('middleware (respaldo): rovaq.ai/ reescribe a /sitio/es y /en a /sitio/en c
 });
 test('middleware (respaldo): /login en rovaq.ai redirige 308, una desconocida se reescribe al 404 del sitio y www redirige al apex', async () => {
   const login = await middleware(pet('rovaq.ai', '/login')); assert.equal(login.status, 308); assert.equal(login.headers.get('location'), 'https://app.rovaq.ai/login');
-  const x = await middleware(pet('rovaq.ai', '/no-existe?a=1')); assert.equal(x.status, 200); assert.match(x.headers.get('x-middleware-rewrite') ?? '', /^https:\/\/rovaq\.ai\/sitio\/es\/no-existe\?a=1$/);
+  const x = await middleware(pet('rovaq.ai', '/no-existe?a=1')); assert.equal(x.status, 200); assert.match(x.headers.get('x-middleware-rewrite') ?? '', /^https:\/\/rovaq\.ai\/sitio\/es\/__404\?a=1$/);
   const w = await middleware(pet('www.rovaq.ai', '/producto?z=1')); assert.equal(w.status, 308); assert.equal(w.headers.get('location'), 'https://rovaq.ai/producto?z=1');
 });
 test('middleware: rovaq.ai sirve activos y no pide autenticación', async () => {

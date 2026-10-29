@@ -12,7 +12,7 @@ const archivos=(d:string,acc:string[]=[]):string[]=>{for(const n of readdirSync(
 const TODOS=archivos(raiz).map(p=>({ruta:relative(raiz,p),dir:relative(raiz,join(p,'..')),texto:readFileSync(p,'utf8')}));
 const ESP=es as Record<string,string>,ING=en as Record<string,string>;
 // Fuera de este contrato: la raíz (redirige), la página pública (metadatos propios por idioma en lib/landing) y la ruta de retorno del correo (hereda el título de su layout).
-const EXENTAS=new Set(['page.tsx','layout.tsx','auth/email/complete/page.tsx','[...rest]/page.tsx']);
+const EXENTAS=new Set(['page.tsx','layout.tsx','auth/email/complete/page.tsx']);
 const claveDe=(texto:string)=>/(?:metaTitulo\(\s*|traducir\(.*?,\s*)'(meta\.titulo\.[a-z0-9-]+)'/.exec(texto)?.[1]??null;
 const padres=(dir:string)=>{const salida:string[]=[];let d=dir;for(;;){salida.push(d);if(!d)break;d=d.includes('/')?d.slice(0,d.lastIndexOf('/')):'';}return salida;};
 /** Clave del título de una pantalla: la de su página o, si no tiene, la del layout más cercano (sin contar el layout raíz). */

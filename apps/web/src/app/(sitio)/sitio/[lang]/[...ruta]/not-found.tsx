@@ -1,4 +1,4 @@
-// 404 del sitio público, en los dos idiomas porque no-encontrada no recibe el idioma. noindex: un 404 no se indexa.
+// 404 del sitio público (vive junto a [...ruta] para que su <html> lo ponga el layout del sitio; en el nivel del layout Next usaría su 404 genérico), en los dos idiomas porque no-encontrada no recibe el idioma. noindex: un 404 no se indexa.
 import Link from 'next/link';
 
 export const metadata = {title: {absolute: 'Página no encontrada | Rovaq AI'}, robots: {index: false, follow: true}};

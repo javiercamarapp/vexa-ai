@@ -1,0 +1,712 @@
+{
+  "version": 1,
+  "fuente": "landing/posicionamiento/01-POSICIONAMIENTO-Y-CONTENIDO.md, sección 10 (las 45 afirmaciones que no deben aparecer), contrato K8",
+  "descripcion": "Cada afirmación es una lista de expresiones regulares (banderas iu) que se corren sobre cada hoja de contenido, en español e inglés. regla prohibida: ninguna coincidencia es aceptable. regla negada: una coincidencia es aceptable solo si la misma oración trae una negación, una hoja de ruta o un exporte, que es como se encodifican las tres excepciones permitidas (Lo que Rovaq no hace, FAQ y ausencias de Seguridad). regla estructural: además de los patrones, hay una comprobación propia en contenido.test.mjs. excepciones: rutas de hojas donde la coincidencia es un falso positivo o el titular blindado, con su motivo. quitar: expresiones que se borran del texto antes de buscar.",
+  "banderas": "iu",
+  "contextoSeguro": "\\b(?:no|nunca|ni|sin|tampoco|todav[ií]a no|a[uú]n no)\\b|\\b(?:not|never|without|nor|neither|none|cannot|isn't|doesn't|don't|does not|do not)\\b|hoja de ruta|roadmap|\\bplanead[oa]s?\\b|\\bplanned\\b|en endurecimiento|being hardened|bajo petici|on (?:customer )?request|\\bexportes?\\b|\\bexports?\\b",
+  "afirmaciones": [
+    {
+      "n": 1,
+      "afirmacion": "Se conecta con tu CRM, con cualquier CRM o con Zendesk. Solo HubSpot.",
+      "regla": "prohibida",
+      "patrones": [
+        "\\bzendesk\\b",
+        "\\b(?:cualquier|any)\\s+crm\\b",
+        "(?:se conecta|conecta|integra|connects?|integrates?)\\s+(?:con\\s+)?(?:to\\s+|with\\s+)?(?:tu|su|your)\\s+crm"
+      ],
+      "nota": "Solo se nombra HubSpot. La negación No escribe en tu CRM es de la afirmación 20."
+    },
+    {
+      "n": 2,
+      "afirmacion": "Conexión directa o integración con Amazon, Walmart, Shopify o Best Buy.",
+      "regla": "negada",
+      "patrones": [
+        "(?:conexi[oó]n|integraci[oó]n|conect\\w+|conectores?|integra\\w*)\\s+(?:directa|directos?|directas)?[^.;:]{0,70}(?:amazon|walmart|shopify|best buy)",
+        "(?:direct|connect\\w*|integrat\\w+)[^.;:]{0,70}(?:amazon|walmart|shopify|best buy)"
+      ],
+      "nota": "Aceptable solo como negación, como hoja de ruta o como exporte cargado a mano.",
+      "excepciones": [
+        {
+          "ruta": "^integraciones\\.chips",
+          "motivo": "chips de nombres como texto"
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "afirmacion": "Mercado Libre o TikTok Shop en cualquier forma.",
+      "regla": "prohibida",
+      "patrones": [
+        "mercado\\s*libre",
+        "tik\\s*tok"
+      ]
+    },
+    {
+      "n": 4,
+      "afirmacion": "Datos en tiempo real, siempre al día, en vivo, actualización inmediata.",
+      "regla": "negada",
+      "patrones": [
+        "tiempo\\s+real",
+        "real[- ]time",
+        "\\ben vivo\\b",
+        "\\blive data\\b",
+        "siempre al d[ií]a",
+        "always up to date",
+        "actualizaci[oó]n inmediata",
+        "instant(?:ly)? updat"
+      ],
+      "excepciones": [
+        {
+          "ruta": "^faq\\.items\\[2\\]\\.q$",
+          "motivo": "Es la pregunta del FAQ, que se responde con No"
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "afirmacion": "Conéctalo en minutos, tú mismo, autoservicio.",
+      "regla": "negada",
+      "patrones": [
+        "\\ben minutos\\b",
+        "\\bin minutes\\b",
+        "t[uú] mismo",
+        "self[- ]?serv",
+        "autoservicio",
+        "do it yourself"
+      ]
+    },
+    {
+      "n": 6,
+      "afirmacion": "Lee tu correo, tus tickets, tus chats o WhatsApp.",
+      "regla": "prohibida",
+      "patrones": [
+        "whatsapp",
+        "\\bgmail\\b",
+        "\\boutlook\\b",
+        "(?:lee|leemos|reads?|ingiere|importa|analiza|analyzes?|imports?)\\s+(?:tu|tus|your)\\s+(?:correos?|emails?|tickets?|chats?)"
+      ]
+    },
+    {
+      "n": 7,
+      "afirmacion": "Margen, utilidad o ganancia como dato del producto.",
+      "regla": "negada",
+      "patrones": [
+        "\\bmargen\\b",
+        "\\bmargin\\b",
+        "\\butilidad(?:es)?\\b",
+        "\\bprofit\\b",
+        "\\bganancias?\\b"
+      ],
+      "excepciones": [
+        {
+          "ruta": "^faq\\.items\\[3\\]\\.q$",
+          "motivo": "Es la pregunta del FAQ, que se responde con No calcula margen"
+        }
+      ]
+    },
+    {
+      "n": 8,
+      "afirmacion": "Multimoneda, convierte monedas, o suma USD con CAD y MXN.",
+      "regla": "negada",
+      "patrones": [
+        "multi[- ]?moneda",
+        "multi[- ]?currenc",
+        "convierte\\s+(?:las\\s+)?(?:monedas|divisas)",
+        "converts?\\s+(?:the\\s+)?currenc",
+        "(?:suma|sums?|adds?)\\s+(?:the\\s+)?usd"
+      ]
+    },
+    {
+      "n": 9,
+      "afirmacion": "Cuánto dinero pierdes calculado; exposición presentada como pérdida o como total.",
+      "regla": "negada",
+      "patrones": [
+        "pierdes",
+        "you lose",
+        "exposici[oó]n[^.;:]{0,40}\\s(?:es|como)\\s+(?:una\\s+)?p[eé]rdida",
+        "exposure[^.;:]{0,40}\\s(?:is|as)\\s+(?:a\\s+)?loss",
+        "p[eé]rdida\\s+(?:total|neta)",
+        "(?:net|total)\\s+loss"
+      ],
+      "excepciones": [
+        {
+          "ruta": "^hero\\.titulo$|^hero\\.lineas\\[\\d\\]$|^seo\\.|^hero\\.titularBusqueda$",
+          "motivo": "El titular del dueño, blindado por hero.subtitulo y hero.limite (P-D alerta 1). En español no usa pierdes; en inglés Know how much money you lose."
+        },
+        {
+          "ruta": "^faq\\.items\\[3\\]\\.q$",
+          "motivo": "Es la pregunta del FAQ, que se responde con No calcula margen."
+        }
+      ],
+      "nota": "El titular es MATIZ y siempre va con subtítulo y línea de límite."
+    },
+    {
+      "n": 10,
+      "afirmacion": "Salud de cuenta, tasa de defectos de pedido, reseñas, SAFE-T o cualquier métrica de plataforma que Rovaq no produce.",
+      "regla": "prohibida",
+      "patrones": [
+        "salud de (?:la )?cuenta",
+        "account health",
+        "order defect",
+        "tasa de defectos",
+        "\\bodr\\b",
+        "safe-?t\\b",
+        "rese[ñn]as? de (?:clientes|productos|compradores)",
+        "(?:customer|product|seller) reviews?",
+        "star ratings?",
+        "best buy"
+      ]
+    },
+    {
+      "n": 11,
+      "afirmacion": "Mapa de problemas completo, Ver como o Configuración guiada como disponibles.",
+      "regla": "negada",
+      "patrones": [
+        "mapa\\s+(?:de problemas\\s+)?completo",
+        "full\\s+(?:problem\\s+)?map",
+        "\\bver como\\b",
+        "\\bview as\\b",
+        "configuraci[oó]n guiada",
+        "guided (?:setup|configuration)"
+      ],
+      "excepciones": [
+        {
+          "ruta": "^integraciones\\.ruta\\[\\d+\\]$|^paginas\\.integraciones\\.bloques\\[1\\]\\.items\\[\\d+\\]$|^paginas\\.hoja-de-ruta",
+          "motivo": "Está bajo En hoja de ruta"
+        }
+      ]
+    },
+    {
+      "n": 12,
+      "afirmacion": "Cobertura en porcentaje, 100 por ciento de las interacciones, 63 por ciento, 37 por ciento o cifras de pedidos ligados.",
+      "regla": "prohibida",
+      "patrones": [
+        "\\d[\\d.,]*\\s*(?:%|por ciento|percent)",
+        "cobertura (?:del|de)\\s+\\d",
+        "\\d+ de \\d+ pedidos ligados"
+      ]
+    },
+    {
+      "n": 13,
+      "afirmacion": "Cuadra con tus reportes o coincide con tus cifras.",
+      "regla": "prohibida",
+      "patrones": [
+        "cuadra con",
+        "coincide con tus",
+        "matches your (?:reports|figures|numbers)",
+        "reconciles? with your"
+      ]
+    },
+    {
+      "n": 14,
+      "afirmacion": "IA generativa, chat con IA o conversa con tus datos para Pregúntale.",
+      "regla": "negada",
+      "patrones": [
+        "ia generativa",
+        "generative ai",
+        "chat con ia",
+        "chat with ai",
+        "conversa con tus datos",
+        "talk to your data",
+        "chatbot",
+        "asistente (?:de )?ia",
+        "ai assistant"
+      ]
+    },
+    {
+      "n": 15,
+      "afirmacion": "Entiende cualquier pregunta o cualquier idioma.",
+      "regla": "prohibida",
+      "patrones": [
+        "cualquier (?:pregunta|idioma)",
+        "any (?:question|language)",
+        "entiende (?:tu|todas|cualquier)",
+        "understands? (?:any|every|all)"
+      ]
+    },
+    {
+      "n": 16,
+      "afirmacion": "Precisión, porcentaje de acierto, la IA no se equivoca.",
+      "regla": "negada",
+      "patrones": [
+        "precisi[oó]n",
+        "\\baccuracy\\b",
+        "\\bacierto\\b",
+        "no se equivoca",
+        "never wrong",
+        "mistake-?free"
+      ]
+    },
+    {
+      "n": 17,
+      "afirmacion": "Triple verificación o varios modelos.",
+      "regla": "prohibida",
+      "patrones": [
+        "triple\\s+(?:verificaci|an[aá]lisis|check)",
+        "triple\\s+(?:verification|analysis)",
+        "varios modelos",
+        "multiple models",
+        "multi-?model"
+      ]
+    },
+    {
+      "n": 18,
+      "afirmacion": "Recomendada por IA, IA experta que recomienda; las recomendaciones de hoy salen de reglas.",
+      "regla": "prohibida",
+      "patrones": [
+        "recomendad[ao]s? por (?:la )?ia",
+        "recommended by ai",
+        "ai[- ]recommended",
+        "ia experta",
+        "expert ai"
+      ]
+    },
+    {
+      "n": 19,
+      "afirmacion": "Agentes autónomos, plataforma agéntica, AI-native, que se mejora sola.",
+      "regla": "negada",
+      "patrones": [
+        "agentes? aut[oó]nomos?",
+        "autonomous agents?",
+        "\\bagentic\\b",
+        "ag[eé]ntic",
+        "ai[- ]native",
+        "se mejora sola",
+        "self[- ]improving"
+      ]
+    },
+    {
+      "n": 20,
+      "afirmacion": "La IA ejecuta acciones, reclama reembolsos o escribe en tu CRM.",
+      "regla": "negada",
+      "patrones": [
+        "\\bla ia (?:ejecuta|reclama|env[ií]a|escribe)",
+        "\\bthe ai (?:executes|files|claims|sends|writes)",
+        "escribe en tu crm",
+        "writes? to your crm",
+        "ejecuta acciones por (?:ti|su cuenta)"
+      ]
+    },
+    {
+      "n": 21,
+      "afirmacion": "Ahorro, retorno, ROI, recuperas, recuperado como promesa, ni siquiera de horas.",
+      "regla": "negada",
+      "patrones": [
+        "\\bahorr\\w*",
+        "\\bsavings?\\b",
+        "\\bsave (?:money|time|hours)",
+        "\\broi\\b",
+        "\\bretorno\\b",
+        "\\breturn on\\b",
+        "\\brecuper(?:a|as|ado|ados|aci[oó]n|able|ables|ar|es)\\b",
+        "\\brecover(?:s|ed|y|able)?\\b"
+      ],
+      "nota": "Solo como negación: No publicamos cifras de ahorro, retorno ni recuperación."
+    },
+    {
+      "n": 22,
+      "afirmacion": "Reclama tus reembolsos automáticamente.",
+      "regla": "negada",
+      "patrones": [
+        "reclama\\s+(?:tus|los|mis)\\s+reembolsos",
+        "claims? (?:your|the|my) refunds",
+        "reclam\\w+\\s+autom[aá]tic",
+        "automatically claims?"
+      ],
+      "excepciones": [
+        {
+          "ruta": "^faq\\.items\\[5\\]\\.q$",
+          "motivo": "Es la pregunta del FAQ, que se responde con No"
+        }
+      ]
+    },
+    {
+      "n": 23,
+      "afirmacion": "Cifras, casos, clientes, usuarios, tracción, ingresos o estadísticas de Rovaq.",
+      "regla": "prohibida",
+      "patrones": [
+        "nuestros clientes",
+        "\\bour (?:customers|clients)",
+        "trusted by",
+        "conf[ií]an en (?:nosotros|rovaq)",
+        "tracci[oó]n",
+        "\\btraction\\b",
+        "\\b\\d[\\d,.]*\\s+(?:clientes|usuarios|customers|users|empresas|companies)\\b"
+      ]
+    },
+    {
+      "n": 24,
+      "afirmacion": "Testimonios, reseñas, casos de éxito, logotipos de clientes o de terceros.",
+      "regla": "prohibida",
+      "patrones": [
+        "testimonios?",
+        "testimonials?",
+        "casos? de [eé]xito",
+        "success stor",
+        "case stud",
+        "logos? de (?:clientes|terceros|marcas)",
+        "logotipos? de (?:clientes|terceros|marcas)",
+        "(?:customer|client|partner) logos?"
+      ]
+    },
+    {
+      "n": 25,
+      "afirmacion": "Nombre de la agencia de Responsable A, de la marca piloto, de su sector o de sus productos; nombres de personas.",
+      "regla": "prohibida",
+      "patrones": [
+        "\\bclientex\\b",
+        "\\bdavid\\b",
+        "\\bjavier\\b",
+        "\\bc[aá]mara\\b",
+        "\\bcelinda\\b",
+        "innovativos",
+        "\\blikida\\b"
+      ],
+      "nota": "El contacto resuelto es el único dato personal permitido y se excluye por valor exacto."
+    },
+    {
+      "n": 26,
+      "afirmacion": "Precios, planes, rangos o cifras de mercado.",
+      "regla": "prohibida",
+      "patrones": [
+        "(?:us)?\\$\\s?\\d",
+        "\\b\\d[\\d,.]*\\s*(?:usd|mxn|d[oó]lares|pesos|dollars)\\s*(?:al|por|\\/|a|per)\\s*(?:mes|month)",
+        "\\bplanes\\b",
+        "\\bplans\\b",
+        "pricing (?:starts|tiers?|from)",
+        "desde \\$",
+        "starting at",
+        "\\bgratis\\b",
+        "free (?:trial|plan|tier)",
+        "prueba gratuita",
+        "freemium",
+        "\\bmillones?\\b",
+        "\\bmillions?\\b",
+        "\\bbillion"
+      ]
+    },
+    {
+      "n": 27,
+      "afirmacion": "SOC 2, ISO 27001, certificado o conforme a, salvo negado.",
+      "regla": "negada",
+      "patrones": [
+        "\\bsoc\\s?2\\b",
+        "iso\\s?27001",
+        "\\bcertificad[oa]s?\\b",
+        "certificaci[oó]n|certificaciones",
+        "\\bcertified\\b",
+        "certifications?"
+      ],
+      "excepciones": [
+        {
+          "ruta": "^faq\\.items\\[6\\]\\.q$",
+          "motivo": "Es la pregunta del FAQ, que se responde con No tenemos SOC 2 ni ISO 27001"
+        }
+      ]
+    },
+    {
+      "n": 28,
+      "afirmacion": "GDPR, LFPDPPP o HIPAA, cumplimiento, salvo negado.",
+      "regla": "negada",
+      "patrones": [
+        "\\bgdpr\\b",
+        "lfpdppp",
+        "\\bhipaa\\b",
+        "cumplimiento",
+        "\\bcompliance\\b",
+        "\\bcompliant\\b",
+        "conforme a"
+      ]
+    },
+    {
+      "n": 29,
+      "afirmacion": "100 por ciento seguro, a prueba de ataques, de nivel empresarial, de nivel militar.",
+      "regla": "prohibida",
+      "patrones": [
+        "100\\s*(?:%|por ciento|percent)",
+        "a prueba de ataques",
+        "attack-?proof",
+        "nivel (?:empresarial|militar|bancario)",
+        "(?:enterprise|military|bank)[- ]grade",
+        "inquebrantable",
+        "unbreakable",
+        "totalmente seguro",
+        "completely secure"
+      ]
+    },
+    {
+      "n": 30,
+      "afirmacion": "Auditado, auditoría completa, cero hallazgos; la auditoría interna no se menciona.",
+      "regla": "negada",
+      "patrones": [
+        "\\bauditad[oa]s?\\b",
+        "auditor[ií]a completa",
+        "auditor[ií]a interna",
+        "cero hallazgos",
+        "zero findings",
+        "fully audited",
+        "\\baudited\\b",
+        "internal audit"
+      ]
+    },
+    {
+      "n": 31,
+      "afirmacion": "Números de tablas, pruebas, funciones o hallazgos.",
+      "regla": "prohibida",
+      "patrones": [
+        "\\b\\d+\\s+(?:tablas|pruebas|funciones|hallazgos|migraciones|tables|tests|functions|findings|migrations)\\b"
+      ]
+    },
+    {
+      "n": 32,
+      "afirmacion": "Anonimiza tus datos o ninguna información personal llega a la IA.",
+      "regla": "negada",
+      "patrones": [
+        "anonimiz\\w*",
+        "anonymi[sz]\\w*",
+        "ninguna informaci[oó]n personal llega",
+        "no personal (?:information|data) reaches"
+      ]
+    },
+    {
+      "n": 33,
+      "afirmacion": "Nadie de nuestro equipo ve tus datos, privacidad total, registramos cada acceso.",
+      "regla": "prohibida",
+      "patrones": [
+        "nadie (?:de nuestro equipo )?ve",
+        "no one (?:on our team )?sees?",
+        "privacidad total",
+        "total privacy",
+        "registramos cada acceso",
+        "(?:se )?registra cada (?:lectura|acceso)",
+        "every (?:access|read) is (?:logged|recorded)"
+      ]
+    },
+    {
+      "n": 34,
+      "afirmacion": "Verificación en dos pasos obligatoria, soporta MFA, inicio de sesión único o política de contenido estricta como existentes.",
+      "regla": "negada",
+      "patrones": [
+        "verificaci[oó]n en dos pasos",
+        "two[- ]step",
+        "\\bmfa\\b",
+        "\\b2fa\\b",
+        "inicio de sesi[oó]n [uú]nico",
+        "single sign-?on",
+        "\\bsso\\b",
+        "pol[ií]tica de contenido",
+        "content security policy",
+        "\\bcsp\\b"
+      ],
+      "excepciones": [
+        {
+          "ruta": "^integraciones\\.ruta\\[\\d+\\]$|^paginas\\.integraciones\\.bloques\\[1\\]\\.items\\[\\d+\\]$",
+          "motivo": "Está bajo En hoja de ruta"
+        }
+      ],
+      "nota": "Solo como ausencia declarada u hoja de ruta."
+    },
+    {
+      "n": 35,
+      "afirmacion": "Respaldos probados, restauración probada, PITR, RPO, RTO, SLA o disponibilidad garantizada.",
+      "regla": "negada",
+      "patrones": [
+        "respaldos? probados?",
+        "tested backups?",
+        "restauraci[oó]n probada",
+        "\\bpitr\\b",
+        "\\brpo\\b",
+        "\\brto\\b",
+        "\\bsla\\b",
+        "disponibilidad garantizada",
+        "\\buptime\\b",
+        "99\\.\\d",
+        "availability (?:guarantee|commitment)s?",
+        "compromisos? de disponibilidad",
+        "point-in-time",
+        "recuperaci[oó]n a un punto"
+      ],
+      "quitar": [
+        "carga y sla",
+        "workload and sla"
+      ],
+      "excepciones": [
+        {
+          "ruta": "\\.href\\w*$",
+          "motivo": "La URL de la pantalla Carga y SLA"
+        }
+      ],
+      "nota": "Carga y SLA es el nombre de una pantalla, no un compromiso."
+    },
+    {
+      "n": 36,
+      "afirmacion": "Borramos todo cuando lo pides o derecho de supresión con plazo.",
+      "regla": "prohibida",
+      "patrones": [
+        "borramos todo",
+        "we delete everything",
+        "derecho de supresi[oó]n",
+        "right to (?:erasure|be forgotten)"
+      ]
+    },
+    {
+      "n": 37,
+      "afirmacion": "Residencia de datos, región concreta, cero retención del proveedor de IA, cifrado propio.",
+      "regla": "prohibida",
+      "patrones": [
+        "residencia de datos",
+        "data residency",
+        "cero retenci[oó]n",
+        "zero[- ]retention",
+        "cifrado propio",
+        "own encryption",
+        "end-to-end",
+        "extremo a extremo",
+        "us-east"
+      ]
+    },
+    {
+      "n": 38,
+      "afirmacion": "Prueba de penetración realizada.",
+      "regla": "negada",
+      "patrones": [
+        "prueba de penetraci[oó]n",
+        "penetration test",
+        "\\bpentest"
+      ]
+    },
+    {
+      "n": 39,
+      "afirmacion": "Primero, único, sin competencia, ningún competidor, nada parecido en México.",
+      "regla": "prohibida",
+      "patrones": [
+        "\\bel primero en\\b",
+        "\\bla primera (?:herramienta|plataforma|soluci[oó]n)\\b",
+        "\\bthe first (?:to|tool|platform|solution)\\b",
+        "\\bthe only\\b",
+        "(?<![\\p{L}])[uú]nic[oa]s? (?:herramienta|plataforma|soluci[oó]n)",
+        "\\bsin competencia\\b",
+        "\\bno competit",
+        "\\bnada parecido\\b",
+        "\\bnothing like\\b",
+        "\\bn[uú]mero uno\\b",
+        "\\bl[ií]deres? en\\b",
+        "\\bmarket[- ]leading\\b",
+        "\\bindustry[- ]leading\\b",
+        "\\bbest-?in-?class\\b"
+      ]
+    },
+    {
+      "n": 40,
+      "afirmacion": "Comparaciones con nombres de competidores, sus precios o sus carencias.",
+      "regla": "prohibida",
+      "patrones": [
+        "\\bramp\\b",
+        "\\blovable\\b",
+        "\\bgorgias\\b",
+        "\\bfreshdesk\\b",
+        "\\bintercom\\b",
+        "help\\s?scout",
+        "\\bhelpshift\\b",
+        "\\bsalesforce\\b",
+        "jungle\\s?scout",
+        "helium\\s?10",
+        "sellerboard",
+        "channeladvisor",
+        "\\bHandle\\b(?=\\s+(?:es|is|ofrece|offers|publica|publishes))"
+      ],
+      "sensibleAMayusculas": true
+    },
+    {
+      "n": 41,
+      "afirmacion": "Vale millones, mercado multimillonario o cualquier lenguaje de pitch.",
+      "regla": "prohibida",
+      "patrones": [
+        "multimillonari",
+        "billion",
+        "\\btam\\b",
+        "unicorn",
+        "unicornio",
+        "valuaci[oó]n",
+        "valuation",
+        "mercado de \\d",
+        "market of \\d"
+      ]
+    },
+    {
+      "n": 42,
+      "afirmacion": "Palabras de entusiasmo informal y de marketing inflado.",
+      "regla": "prohibida",
+      "patrones": [
+        "incre[ií]ble",
+        "una locura",
+        "otro nivel",
+        "\\bamazing\\b",
+        "\\bawesome\\b",
+        "mind-?blowing",
+        "game-?chang",
+        "\\binsane\\b",
+        "revoluciona\\w*",
+        "revolutionar",
+        "revolutioniz",
+        "disrupt\\w*",
+        "poderos[oa]",
+        "\\bpotente\\b",
+        "\\bpowerful\\b",
+        "\\binteligente\\b",
+        "\\brobust\\w*",
+        "\\brobusto",
+        "cutting-?edge",
+        "vanguardia",
+        "next[- ]gen",
+        "world-?class",
+        "state-of-the-art"
+      ]
+    },
+    {
+      "n": 43,
+      "afirmacion": "El nombre anterior del producto en cualquier página visible.",
+      "regla": "prohibida",
+      "patrones": [
+        "\\bvexa\\b"
+      ],
+      "nota": "El nombre anterior es SITE.anteriorNombre. Se comprueba además en hrefs e identificadores."
+    },
+    {
+      "n": 44,
+      "afirmacion": "Signos de exclamación, paréntesis, emojis y superlativos.",
+      "regla": "prohibida",
+      "patrones": [
+        "[!¡]",
+        "[()]",
+        "[\\u{1F000}-\\u{1FFFF}\\u{2190}-\\u{21FF}\\u{2300}-\\u{23FF}\\u{2600}-\\u{27BF}\\u{2B00}-\\u{2BFF}\\u{FE0F}]",
+        "\\b(?:el|la|lo|los|las) mejor(?:es)?\\b",
+        "\\bmejor(?:es)? del\\b",
+        "\\bsiguiente mejor\\b",
+        "\\bnext best\\b",
+        "\\bbest\\b",
+        "\\b(?:fastest|greatest|ultimate|unmatched|unparalleled)\\b",
+        "\\bm[aá]s (?:r[aá]pid|seguro|potente|avanzad|complet|preciso|confiable)\\w*",
+        "\\bmost (?:powerful|advanced|secure|accurate|reliable|complete)\\b",
+        "\\w{3,}[ií]sim[oa]s?\\b"
+      ],
+      "nota": "Comprobada también por separado con pruebas propias de sin paréntesis, exclamaciones ni emojis."
+    },
+    {
+      "n": 45,
+      "afirmacion": "Imágenes con datos que parezcan reales, capturas con nombres, pedidos o correos, o ilustraciones sin el rótulo Datos de ejemplo.",
+      "regla": "estructural",
+      "patrones": [
+        "[\\w.+-]+@[\\w-]+\\.[\\w.-]+",
+        "\\+?\\d[\\d\\s().-]{8,}\\d"
+      ],
+      "nota": "Los patrones detectan correos y teléfonos con apariencia real; el correo de contacto resuelto se excluye por valor exacto. La parte estructural la comprueba contenido.test.mjs: el rótulo Datos de ejemplo en mockups.rotulo y hero.rotulo, y la palabra invent o ejemplo en el alt de cada mockup.",
+      "excepciones": [
+        {
+          "ruta": "^seo\\.|\\.href$",
+          "motivo": "URLs y metadatos"
+        }
+      ]
+    }
+  ]
+}

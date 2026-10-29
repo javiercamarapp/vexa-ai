@@ -92,8 +92,9 @@ describe('archivos publicados en public/s/pts', () => {
     for (const [k, v] of Object.entries(man)) { const buf = fs.readFileSync(path.join(PTS, v.archivo)), sha = crypto.createHash('sha256').update(buf).digest('hex'); assert.equal(sha, v.sha256); assert.equal(buf.length, v.bytes); assert.ok(v.archivo.startsWith(k + '.' + sha.slice(0, 8))); assert.equal(decodificar(buf).n, v.puntos); }
   });
   test('cantidades: héroe 12 000 y pasos 9 000', { skip: !man }, () => { assert.equal(man.hero.puntos, 12000); for (const k of ['o1', 'o2', 'o3', 'o4']) assert.equal(man[k].puntos, 9000); });
-  test('presupuesto con brotli: héroe < 50 KB y cada paso < 40 KB', { skip: !man }, () => {
-    for (const [k, v] of Object.entries(man)) { const br = zlib.brotliCompressSync(fs.readFileSync(path.join(PTS, v.archivo)), {params: {[zlib.constants.BROTLI_PARAM_QUALITY]: 11}}).length; assert.ok(br < (k === 'hero' ? 50 : 40) * 1000, `${k}: ${br} B con brotli`); }
+  test('el cuerpo va con gzip interno (bandera de la cabecera)', { skip: !man }, () => { for (const v of Object.values(man)) assert.equal(fs.readFileSync(path.join(PTS, v.archivo))[7] & 1, 1); });
+  test('presupuesto con brotli: héroe < 50 KB y cada paso < 40 KB (también sin que la CDN comprima: gzip interno)', { skip: !man }, () => {
+    for (const [k, v] of Object.entries(man)) { const br = zlib.brotliCompressSync(fs.readFileSync(path.join(PTS, v.archivo)), {params: {[zlib.constants.BROTLI_PARAM_QUALITY]: 11}}).length; assert.ok(br < (k === 'hero' ? 50 : 40) * 1000, `${k}: ${br} B con brotli`); assert.ok(v.bytes < (k === 'hero' ? 50 : 40) * 1000, `${k}: ${v.bytes} B tal cual`); }
   });
   test('menos del 4 % de los puntos son rojos y cada objeto tiene alguno', { skip: !man }, () => {
     for (const v of Object.values(man)) { const d = decodificar(fs.readFileSync(path.join(PTS, v.archivo))), r = d.rojo.reduce((a, b) => a + b, 0); assert.ok(r > 0 && r / d.n < 0.04, `${r}/${d.n}`); }
@@ -105,12 +106,14 @@ describe('archivos publicados en public/s/pts', () => {
 
 describe('determinismo del muestreo desde los GLB', () => {
   const hay = fs.existsSync(path.join(HERR, 'node_modules')) && fs.existsSync(path.join(GLB, 'o3.glb'));
-  test('reconstruir o3 dos veces da el mismo SHA-256 que el publicado', { skip: !hay, timeout: 120000 }, () => {
+  test('reconstruir o3 dos veces da el mismo SHA-256 y el mismo contenido que el publicado', { skip: !hay, timeout: 120000 }, () => {
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'pts-')), glb = path.join(tmp, 'glb'); fs.mkdirSync(glb); fs.copyFileSync(path.join(GLB, 'o3.glb'), path.join(glb, 'o3.glb'));
     const sha = [];
     for (const i of [1, 2]) { const out = path.join(tmp, 'o' + i), r = spawnSync('bash', [path.join(AQUI, '../../../../tools/puntos/construir.sh'), glb, out], {encoding: 'utf8'}); assert.equal(r.status, 0, r.stderr); sha.push(JSON.parse(fs.readFileSync(path.join(out, 'manifest-pts.json'), 'utf8')).o3.sha256); }
     assert.equal(sha[0], sha[1]);
-    const man = JSON.parse(fs.readFileSync(path.join(PTS, 'manifest-pts.json'), 'utf8')); assert.equal(sha[0], man.o3.sha256, 'el publicado no corresponde al código actual');
+    // El publicado debe decodificar igual que lo reconstruido (se compara el contenido, no el SHA, por si cambia la versión de zlib).
+    const man = JSON.parse(fs.readFileSync(path.join(PTS, 'manifest-pts.json'), 'utf8')), nuevo = decodificar(fs.readFileSync(path.join(tmp, 'o1', JSON.parse(fs.readFileSync(path.join(tmp, 'o1', 'manifest-pts.json'), 'utf8')).o3.archivo))), pub = decodificar(fs.readFileSync(path.join(PTS, man.o3.archivo)));
+    assert.deepEqual([...nuevo.pos], [...pub.pos], 'el publicado no corresponde al código actual'); assert.deepEqual([...nuevo.lum], [...pub.lum]);
     fs.rmSync(tmp, {recursive: true, force: true});
   });
 });

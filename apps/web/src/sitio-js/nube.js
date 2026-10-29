@@ -17,9 +17,10 @@ export function tiempoPunto(mix, retardo) {
 }
 // Línea de tiempo del cambio de objeto (t de 0 a 1 = 0 a 1000 ms): el sólido saliente se disuelve en 140 ms, el entrante aparece grano a grano de 700 a 980 ms
 // y la nube restante se desvanece de 850 a 1000. Devuelve la fracción de granos sólidos y la opacidad de la nube.
-export function lineaDeTiempo(t) {
+// sol0 es la fracción de sólido con la que arranca (1 en reposo; menor si se interrumpió un morfo a medias, para que no haya saltos).
+export function lineaDeTiempo(t, sol0 = 1) {
   t = clamp(0, 1, t);
-  const sal = 1 - (clamp(0, 1, t / 0.14)) ** 2, ent = clamp(0, 1, (t - 0.7) / 0.28);
+  const sal = sol0 * (1 - (clamp(0, 1, t / 0.14)) ** 2), ent = clamp(0, 1, (t - 0.7) / 0.28);
   return {solido: t < 0.5 ? sal : ent, fade: 1 - suave(0.85, 1, t)};
 }
 // Retardo por punto: mezcla de azar y altura de origen (la forma se disuelve de arriba abajo). Misma fórmula que el vertex shader.
@@ -139,11 +140,11 @@ void main(){
 function leeColor(ctx, valor, defecto) { try { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = '#000'; ctx.fillStyle = valor || defecto; ctx.fillRect(0, 0, 1, 1); const d = ctx.getImageData(0, 0, 1, 1).data; return [d[0] / 255, d[1] / 255, d[2] / 255]; } catch { return [0.5, 0.5, 0.5]; } }
 
 export function crearNube(canvas, opciones = {}) {
-  const O = {nivel: null, dprMax: 1.5, puntero: false, puntos: 0, modelos: null, ...opciones};
+  const O = {nivel: null, dprMax: 1.5, puntero: false, puntos: 0, modelos: null, regulador: true, ...opciones};
   const est = (e) => { canvas.dataset.estado = e; };
   if (!canvas.hasAttribute('data-nube')) canvas.dataset.nube = '';
   const nav = typeof navigator !== 'undefined' ? navigator : {};
-  const determinista = !!nav.webdriver;
+  const determinista = O.determinista ?? !!nav.webdriver; // opciones.determinista: forzar o anular (el arnés mide fps con el puntero activo)
   let modelos = O.modelos;
   if (!modelos && canvas.dataset.modelos) { try { modelos = JSON.parse(canvas.dataset.modelos); } catch { modelos = null; } }
   const claves = Array.isArray(modelos) ? modelos.map((u, i) => String(i)) : Object.keys(modelos || {});
@@ -159,7 +160,7 @@ export function crearNube(canvas, opciones = {}) {
   est('cargando');
 
   // estado de la escena
-  const S = {de: -1, a: -1, mix: 0, anim: null, dust: 0, esc: 1, rotBase: 0, ptr: {x: 0, y: 0, f: 0, ox: {x: 0, v: 0}, oy: {x: 0, v: 0}, tx: 0, ty: 0}, solido: 1, fade: 1, sucio: true};
+  const S = {sol0: 1, de: -1, a: -1, mix: 0, anim: null, dust: 0, esc: 1, rotBase: 0, ptr: {x: 0, y: 0, f: 0, ox: {x: 0, v: 0}, oy: {x: 0, v: 0}, tx: 0, ty: 0}, solido: 1, fade: 1, sucio: true};
   let tema = {tinta: [0.97, 0.97, 0.97], acento: [0.91, 0.14, 0.11], fondo: [0.055, 0.055, 0.063]}, temaFijo = false;
   let visible = false, oculto = typeof document !== 'undefined' && document.hidden, pausadoManual = false, raf = 0, ult = 0, reposo = 0, cuadros = 0, t0 = 0, liberada = false, perdidas = 0, tLibera = 0;
   const reg = new Regulador();
@@ -219,7 +220,7 @@ export function crearNube(canvas, opciones = {}) {
     }
     const mk = (data) => { const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW); return b; };
     if (S.tmp) { gl.deleteBuffer(S.tmp.pos); gl.deleteBuffer(S.tmp.att); }
-    S.tmp = {m: n, pos: mk(pos), att: mk(att), cpuPos: pos, cpuAtt: att, nivel}; S.deTmp = true;
+    S.tmp = {m: n, pos: mk(pos), att: mk(att), cpuPos: pos, cpuAtt: att, nivel}; S.deTmp = true; S.sol0 = lineaDeTiempo(S.mix, S.sol0).solido;
   }
   function par() { const A = S.deTmp ? S.tmp : (S.de >= 0 ? lista[S.de]?.gpu : null), B = S.a >= 0 ? lista[S.a]?.gpu : null; return [A || B, B || A]; }
 
@@ -227,7 +228,7 @@ export function crearNube(canvas, opciones = {}) {
     const [A, B] = par(); if (!A || !B) return; const n = Math.min(A.m, B.m);
     if (S.nSem !== A.m) subeSemillas(A.m);
     enlaza(A, B);
-    const r = Math.min(1, dim.asp), dist = 6, F = dist * dim.fill * r, tl = S.anim || S.mixModo ? lineaDeTiempo(S.mix) : {solido: 1, fade: 1};
+    const r = Math.min(1, dim.asp), dist = 6, F = dist * dim.fill * r, tl = S.anim || S.mixModo ? lineaDeTiempo(S.mix, S.sol0) : {solido: 1, fade: 1};
     const solido = S.mix > 0 && S.mix < 1 ? tl.solido : 1, fade = tl.fade;
     gl.useProgram(prog); uniformesTema();
     const t = determinista ? 0 : (performance.now() - t0) / 1000, deriva = Math.sin(t * 0.286) * 0.35, ptr = S.ptr;
@@ -242,10 +243,10 @@ export function crearNube(canvas, opciones = {}) {
     if (activo) reposo = ahora; const lento = !activo && ahora - reposo > 1500;
     if (lento && dtMs < 31) { raf = requestAnimationFrame(cuadro); return; } // reposo: 30 cuadros por segundo
     ult = ahora; const dt = Math.min(0.05, dtMs / 1000); S.dustPrev = S.dust;
-    if (S.anim) { S.anim.t += dtMs / 1000 / S.anim.dur; if (S.anim.t >= 1) { S.mix = 1; S.anim = null; S.de = S.a; S.deTmp = false; S.mix = 0; S.mixModo = false; } else S.mix = S.anim.t; }
+    if (S.anim) { S.anim.t += dtMs / 1000 / S.anim.dur; if (S.anim.t >= 1) { S.mix = 1; S.anim = null; S.de = S.a; S.deTmp = false; S.mix = 0; S.mixModo = false; S.sol0 = 1; } else S.mix = S.anim.t; }
     const P = S.ptr; if (!determinista && O.puntero) { P.ox = pasoResorte(P.ox, P.tx * 0.052, dt); P.oy = pasoResorte(P.oy, -P.ty * 0.052, dt); P.f += ((P.dentro ? 1 : 0) - P.f) * (P.dentro ? 0.12 : 0.04); }
     dibuja(); cuadros++; canvas.dataset.cuadros = String(cuadros); canvas.dataset.nivel = nivel; est('activa');
-    if (!lento && !determinista && reg.muestra(dtMs) && !S.anim) bajaNivel(); // con webdriver no hay regulador: las capturas no deben degradarse
+    if (!lento && !determinista && O.regulador && reg.muestra(dtMs) && !S.anim) bajaNivel(); // con webdriver no hay regulador: las capturas no deben degradarse
     if (!destruida && est) raf = requestAnimationFrame(cuadro);
   }
   const ptrActivo = () => O.puntero && (Math.abs(S.ptr.ox.v) > 1e-3 || Math.abs(S.ptr.oy.v) > 1e-3 || S.ptr.f > 0.01);
@@ -279,16 +280,16 @@ export function crearNube(canvas, opciones = {}) {
     const m = resuelve(ref); await cargaModelo(m); if (destruida) return -1; asegura(m);
     if (!S.primero) { await API.cargar(ref); return m.idx; }
     const actual = S.anim ? S.a : S.de; if (m.idx === actual && !S.anim) return m.idx;
-    if (op.inmediato || determinista && op.inmediato !== false && false) { S.anim = null; S.de = S.a = m.idx; S.deTmp = false; S.mix = 0; S.mixModo = false; S.sucio = true; arranca(); return m.idx; }
-    if (S.anim || (S.mixModo && S.mix > 0)) congela(); else S.deTmp = false;
+    if (op.inmediato || determinista && op.inmediato !== false && false) { S.anim = null; S.de = S.a = m.idx; S.deTmp = false; S.mix = 0; S.mixModo = false; S.sol0 = 1; S.sucio = true; arranca(); return m.idx; }
+    if (S.anim || (S.mixModo && S.mix > 0)) congela(); else { S.deTmp = false; S.sol0 = 1; }
     if (!S.deTmp) S.de = actual; S.a = m.idx; S.anim = {t: 0, dur: (op.duracion || 1000) / 1000}; S.mix = 0; S.mixModo = true; S.ua = S.ub = null; arranca(); return m.idx;
   };
   // Control directo por scroll: t de 0 a 1 entre los objetos a y b (índices o claves). Si cambia el par con t intermedio, se congela la posición.
   API.mezcla = (ra, rb, t) => {
     const A = resuelve(ra), B = resuelve(rb); if (!A.gpu || !B.gpu) { Promise.all([cargaModelo(A), cargaModelo(B)]).then(() => { asegura(A); asegura(B); if (!S.primero) { S.primero = true; subeSemillas(A.gpu.m); medir(); leeTema(); } API.mezcla(ra, rb, t); }).catch(() => {}); return; }
     if (S.anim) { S.anim = null; }
-    const clave = A.idx + '>' + B.idx; if (clave !== ultPar) { if (S.mixModo && S.mix > 0 && S.mix < 1) congela(); else S.deTmp = false; ultPar = clave; S.ua = S.ub = null; }
-    if (!S.deTmp) S.de = A.idx; S.a = B.idx; S.mix = clamp(0, 1, t); S.mixModo = S.mix > 0 && S.mix < 1; if (!S.mixModo) { S.de = S.mix >= 1 ? B.idx : A.idx; S.a = S.de; S.mix = 0; S.deTmp = false; ultPar = ''; S.ua = S.ub = null; }
+    const clave = A.idx + '>' + B.idx; if (clave !== ultPar) { if (S.mixModo && S.mix > 0 && S.mix < 1) congela(); else { S.deTmp = false; S.sol0 = 1; } ultPar = clave; S.ua = S.ub = null; }
+    if (!S.deTmp) S.de = A.idx; S.a = B.idx; S.mix = clamp(0, 1, t); S.mixModo = S.mix > 0 && S.mix < 1; if (!S.mixModo) { S.de = S.mix >= 1 ? B.idx : A.idx; S.a = S.de; S.mix = 0; S.deTmp = false; S.sol0 = 1; ultPar = ''; S.ua = S.ub = null; }
     S.sucio = true; arranca();
   };
   // Progreso 0 a 1 del héroe en su pista: el sólido se vuelve polvo y el objeto crece (el remapeo detiene la cámara donde está el texto).

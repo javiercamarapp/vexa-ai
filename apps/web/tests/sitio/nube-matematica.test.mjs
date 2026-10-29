@@ -43,6 +43,13 @@ describe('línea de tiempo de la condensación', () => {
   });
 });
 
+describe('interrupción del morfo', () => {
+  test('si se interrumpe con sólido parcial, el nuevo morfo arranca desde ese valor y no salta a 1', () => {
+    assert.equal(lineaDeTiempo(0, 0.3).solido, 0.3); assert.equal(lineaDeTiempo(0.07, 0).solido, 0); assert.ok(lineaDeTiempo(0.05, 0.6).solido < 0.6);
+    for (let t = 0; t <= 0.14; t += 0.01) assert.ok(lineaDeTiempo(t, 0.5).solido <= 0.5);
+  });
+});
+
 describe('trayectoria', () => {
   const a = [-0.5, 0.2, 0.9], b = [0.7, -0.4, -0.3], dir = [0.3, -0.8, 0.5];
   test('empieza en el origen y termina en el destino', () => {

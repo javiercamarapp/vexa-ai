@@ -1,0 +1,199 @@
+/*
+ * Tipografía del sitio de Rovaq. Dueño: T6.
+ * Titular en Source Serif 4 peso 300, opsz fijo 32, tracking cerrado; cuerpo en Hanken Grotesk; etiquetas y cifras en IBM Plex Mono.
+ * Las familias y la escala fluida viven en tokens.css (anclas 390, 768 y 1440). Mínimo absoluto de texto: 11 px.
+ * Énfasis de palabra clave solo por luminosidad, nunca por color. Lectura máxima 62 caracteres, 672 px.
+ */
+
+.s-display,
+.s-h2-grande,
+.s-h2,
+.s-h3-serif {
+  font-family: var(--s-f-serif);
+  font-weight: 300;
+  font-optical-sizing: none;
+  font-variation-settings: "opsz" 32;
+  font-kerning: normal;
+  text-wrap: balance;
+  color: var(--s-tinta);
+}
+
+.s-display {
+  max-width: 11em;
+  font-size: var(--s-t-hero);
+  line-height: var(--s-i-hero);
+  letter-spacing: var(--s-k-hero);
+}
+
+.s-h2-grande {
+  font-size: var(--s-t-h2-grande);
+  line-height: var(--s-i-h2-grande);
+  letter-spacing: var(--s-k-h2-grande);
+}
+
+.s-h2 {
+  font-size: var(--s-t-h2);
+  line-height: var(--s-i-h2);
+  letter-spacing: var(--s-k-h2);
+}
+
+.s-h3-serif {
+  font-size: var(--s-t-h3-serif);
+  line-height: var(--s-i-h3-serif);
+  letter-spacing: var(--s-k-h3-serif);
+}
+
+.s-h3-producto {
+  font-family: var(--s-f-sans);
+  font-weight: 500;
+  font-size: var(--s-t-h3-producto);
+  line-height: var(--s-i-h3-producto);
+  letter-spacing: var(--s-k-h3-producto);
+  color: var(--s-tinta);
+}
+
+/* Titulares centrados en hero, problema y cierre; a la izquierda en el resto */
+.s-centrado {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.s-ancho-titular {
+  max-width: 880px;
+}
+
+.s-lead {
+  max-width: var(--s-lectura-corta);
+  font-size: var(--s-t-lead);
+  line-height: var(--s-i-lead);
+  letter-spacing: var(--s-k-lead);
+  color: var(--s-apagado);
+}
+
+.s-cuerpo {
+  max-width: var(--s-lectura);
+  font-size: var(--s-t-cuerpo);
+  line-height: var(--s-i-cuerpo);
+  color: var(--s-apagado);
+}
+
+.s-pequeno {
+  font-size: var(--s-t-pequeno);
+  line-height: var(--s-i-pequeno);
+  color: var(--s-apagado);
+}
+
+/* Apoyo bajo un titular, en serif 30 px y color apagado */
+.s-apoyo {
+  font-family: var(--s-f-serif);
+  font-weight: 300;
+  font-variation-settings: "opsz" 32;
+  font-size: var(--s-t-h3-serif);
+  line-height: var(--s-i-h3-serif);
+  letter-spacing: var(--s-k-h3-serif);
+  color: var(--s-apagado);
+}
+
+/* Etiqueta eyebrow: Plex Mono 400 en mayúsculas con tracking abierto, 12 px y 11 px en móvil */
+.s-eyebrow {
+  font-family: var(--s-f-mono);
+  font-weight: 400;
+  font-size: var(--s-t-eyebrow);
+  line-height: var(--s-i-eyebrow);
+  letter-spacing: var(--s-k-eyebrow);
+  text-transform: uppercase;
+  color: var(--s-apagado);
+}
+
+.s-mono {
+  font-family: var(--s-f-mono);
+  font-size: var(--s-t-eyebrow);
+  line-height: var(--s-i-eyebrow);
+  color: var(--s-apagado);
+}
+
+.s-mono-min {
+  font-family: var(--s-f-mono);
+  font-size: var(--s-t-minimo);
+  line-height: var(--s-i-eyebrow);
+  letter-spacing: var(--s-k-sello);
+  text-transform: uppercase;
+  color: var(--s-apagado);
+}
+
+/* Numeral de índice, 01 a 04: mono, color sutil por ser decorativo y grande; nunca texto de lectura */
+.s-numeral {
+  font-family: var(--s-f-mono);
+  font-weight: 400;
+  font-size: var(--s-t-eyebrow);
+  letter-spacing: var(--s-k-eyebrow);
+  color: var(--s-apagado);
+}
+
+.s-cifra {
+  font-family: var(--s-f-mono);
+  font-weight: 500;
+  font-size: var(--s-t-cifra);
+  line-height: 1;
+  letter-spacing: var(--s-k-cifra);
+  font-variant-numeric: tabular-nums;
+}
+
+.s-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Rótulo único en acento: máximo uno por pantalla, 11 px, matiz ajustado para legibilidad */
+.s-rotulo-acento {
+  font-family: var(--s-f-mono);
+  font-size: var(--s-t-minimo);
+  letter-spacing: var(--s-k-sello);
+  text-transform: uppercase;
+  color: var(--s-acento-texto);
+}
+
+/* Énfasis por luminosidad, sin color */
+.s-clave {
+  color: var(--s-tinta);
+}
+
+.s-tenue {
+  color: var(--s-apagado);
+}
+
+/* ==================== Párrafo que se ilumina palabra por palabra ====================
+ * El servidor emite <p data-palabras> con un <span data-i> por palabra. Sin JavaScript, o con movimiento reducido,
+ * todo el texto queda en su color final. Con JavaScript, inicio.js escribe --i (posición) y --n (total) en cada palabra
+ * con setProperty; --p (0 a 1) lo anima CSS con view() o, en navegadores sin soporte, lo escribe el bucle rAF.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-js] [data-palabras] [data-i] {
+    --s-t: clamp(0, (var(--p) * (var(--n, 5) + 5) - var(--i, 0)) / 5, 1);
+    --s-u: clamp(0, (var(--p) - .92) / .08, 1);
+    color: color-mix(
+      in oklab,
+      color-mix(in oklab, var(--s-tinta) calc(var(--s-t) * 100%), var(--s-sutil)),
+      var(--s-apagado) calc(var(--s-u) * 100%)
+    );
+  }
+
+  /* La frase clave no se colorea: al terminar queda en --text y el resto baja a --muted */
+  html[data-js] [data-palabras] [data-i].s-clave {
+    color: color-mix(in oklab, var(--s-tinta) calc(var(--s-t) * 100%), var(--s-sutil));
+  }
+}
+
+@keyframes s-p {
+  from { --p: 0; }
+  to { --p: 1; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    [data-palabras] {
+      animation: s-p linear both;
+      animation-timeline: view();
+      animation-range: cover 20vh cover calc(100% - 35vh);
+    }
+  }
+}

@@ -8,55 +8,11 @@
  *   html[data-eco]                vigilante de rendimiento: apaga blur y deriva.
  *   header[data-compacta]         píldora tras 60 px.
  *   .s-visto                      revelado una vez por IntersectionObserver sobre [data-reveal].
- *   --p (0 a 1)                   JS lo escribe solo en navegadores sin animation-timeline: en .s-pie,
- *                                 .s-pie, [data-palabras] y .s-hilo-zona. Palabras: --i y --n por span [data-i].
+ *   --p (0 a 1)                   JS lo escribe solo en navegadores sin animation-timeline: en [data-palabras] y .s-hilo-zona.
+ *                                 Palabras: --i y --n por span [data-i].
  *   [data-escena][data-paso=0..3] paso activo de S5. [data-puesto=1..4] puesto activo de S7.
  * Todo estado oculto vive dentro de (prefers-reduced-motion: no-preference) y (scripting: enabled).
  */
-
-/* ==================== Maquinaria de barrido ====================
- * Cada elemento de la lista declara --a y --b (rango 0 a 1 del recorrido) y un @keyframes con animation-name.
- * Con view-timeline nativo se enlaza al rango; sin él, el retardo negativo se calcula desde --p, mismo @keyframes.
- * Por defecto la línea de tiempo es --s-hero con rango contain; el pie cambia --s-tl y --s-rango.
- */
-@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
-  html[data-js] :is(
-    .s-pie__col,
-    .s-marca__contorno,
-    .s-marca__relleno,
-    .s-marca__punto
-  ) {
-    animation-timing-function: linear;
-    animation-fill-mode: both;
-  }
-
-  @supports (animation-timeline: view()) {
-    html[data-js] :is(
-      .s-pie__col,
-      .s-marca__contorno,
-      .s-marca__relleno,
-      .s-marca__punto
-    ) {
-      animation-timeline: var(--s-tl, --s-hero);
-      animation-range:
-        var(--s-rango, contain) calc(var(--a, 0) * 100%)
-        var(--s-rango, contain) calc(var(--b, 1) * 100%);
-    }
-  }
-
-  @supports not (animation-timeline: view()) {
-    html[data-js] :is(
-      .s-pie__col,
-      .s-marca__contorno,
-      .s-marca__relleno,
-      .s-marca__punto
-    ) {
-      animation-duration: calc((var(--b, 1) - var(--a, 0)) * 1s);
-      animation-delay: calc((var(--a, 0) - var(--p, 0)) * 1s);
-      animation-play-state: paused;
-    }
-  }
-}
 
 /* ==================== Revelado por IntersectionObserver ==================== */
 @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
@@ -185,6 +141,9 @@
   --s-apagado: var(--s-vp-apagado);
   --s-superficie-2: var(--s-vp-barra);
   --s-linea: var(--s-vp-linea);
+  --s-linea-fuerte: var(--s-vp-apagado);
+  --s-superficie: var(--s-vp-barra);
+  --s-sutil: var(--s-vp-apagado);
   border-radius: var(--s-r-tarjeta);
   overflow: visible;
 }
@@ -200,6 +159,10 @@
   border-radius: 0 0 var(--s-r-tarjeta) var(--s-r-tarjeta);
   container-type: inline-size;
   background: var(--s-vp-fondo);
+}
+
+.s-ventana__lienzo {
+  position: relative;
 }
 
 .s-ventana__img {
@@ -283,6 +246,12 @@
 }
 
 @container (max-width: 700px) {
+  /* En ancho de móvil la captura se recorta a la columna principal (sin la barra lateral) para que el texto y el Pareto se lean: la imagen y la capa SVG escalan juntas */
+  .s-ventana__lienzo {
+    width: 196%;
+    margin-left: -36.2%;
+  }
+
   .s-ov-cifra {
     position: static;
     width: auto;
@@ -484,12 +453,13 @@
 }
 
 .s-pv__mono {
-  font: 500 calc(12px * var(--k)) var(--s-f-mono);
-  letter-spacing: .08em;
+  font: 500 calc(13px * var(--k)) var(--s-f-mono);
+  letter-spacing: .06em;
   fill: var(--s-vp-apagado);
 }
 
 .s-pv__mono--cota { fill: var(--s-vp-texto); }
+.s-pv__nota { font-size: calc(11px * var(--k)); letter-spacing: .04em; text-transform: none; }
 
 .s-pv__txt {
   font: 500 calc(13px * var(--k)) var(--s-f-sans);
@@ -532,8 +502,8 @@
 
 .s-pv__chip text,
 .s-pv__suelta text {
-  font: 500 calc(11px * var(--k)) var(--s-f-mono);
-  letter-spacing: .02em;
+  font: 500 calc(12.5px * var(--k)) var(--s-f-mono);
+  letter-spacing: .01em;
   fill: var(--s-vp-texto);
 }
 
@@ -646,7 +616,7 @@
 }
 
 .s-valor__ventana {
-  min-height: 540px;
+  position: relative;
 }
 
 .s-valor__rotulo {
@@ -654,18 +624,19 @@
   text-align: center;
 }
 
+/* Anotaciones sobre la captura de Hoy: la cota sale de la fila Observado de la primera cifra y llega al sello expandido */
 .s-valor__sello {
   position: absolute;
-  right: calc(-1 * var(--s-e40));
-  top: 38%;
+  left: 57%;
+  top: 41%;
   z-index: 2;
 }
 
 .s-valor__cota {
   position: absolute;
-  right: 40%;
-  top: 41%;
-  width: 18%;
+  left: 35%;
+  top: 46%;
+  width: 22%;
   z-index: 2;
 }
 
@@ -804,7 +775,7 @@
 /* Modo fijado, solo escritorio ancho con movimiento permitido y JavaScript */
 @media (prefers-reduced-motion: no-preference) and (min-width: 1101px) and (scripting: enabled) {
   html[data-js] .s-escena__pista {
-    height: 300vh;
+    height: 190vh;
     padding-block: 0;
   }
 
@@ -1273,12 +1244,7 @@
   color: var(--s-apagado);
 }
 
-/* Pie con marca gigante recortada. El cierre sube sobre él: el pie queda fijo atrás y el espaciador lo descubre. */
-.s-pie-espacio {
-  height: var(--s-pie-h);
-  pointer-events: none;
-}
-
+/* Pie con marca gigante recortada, en el flujo normal (el tema global no admite un pie fijo detrás de secciones transparentes). */
 .s-pie {
   position: relative;
   z-index: var(--s-z-fondo);
@@ -1292,7 +1258,7 @@
 .s-pie__cuerpo {
   position: relative;
   z-index: 1;
-  padding-block: var(--s-e96) var(--s-e48);
+  padding-block: var(--s-e56) var(--s-e32);
 }
 
 .s-pie__cols {
@@ -1355,89 +1321,6 @@
   fill: var(--s-acento);
   transform-box: fill-box;
   transform-origin: center;
-}
-
-/* Barrido del pie con el espaciador como view-timeline; sin soporte lo conduce --p. Solo desde 769 px */
-.s-pie-espacio {
-  display: none;
-}
-
-@media (prefers-reduced-motion: no-preference) and (min-width: 769px) and (scripting: enabled) {
-  html[data-js] .s-pagina {
-    timeline-scope: --s-pie;
-  }
-
-  html[data-js] .s-pie-espacio {
-    display: block;
-    view-timeline: --s-pie block;
-  }
-
-  html[data-js] .s-pie {
-    position: sticky;
-    bottom: 0;
-    height: var(--s-pie-h);
-    margin-top: calc(-1 * var(--s-pie-h));
-    --s-tl: --s-pie;
-    --s-rango: entry;
-  }
-
-  html[data-js] .s-pie__col {
-    --a: 0;
-    --b: .45;
-    animation-name: s-pie-sube;
-  }
-
-  html[data-js] .s-pie__col:nth-child(2) { --a: .06; --b: .51; }
-  html[data-js] .s-pie__col:nth-child(3) { --a: .12; --b: .57; }
-  html[data-js] .s-pie__col:nth-child(4) { --a: .18; --b: .63; }
-  html[data-js] .s-pie__col:nth-child(5) { --a: .24; --b: .69; }
-
-  html[data-js] .s-marca__contorno {
-    --a: .2;
-    --b: .85;
-    animation-name: s-trazo;
-  }
-
-  html[data-js] .s-marca__relleno {
-    --a: .7;
-    --b: 1;
-    animation-name: s-aparece;
-  }
-
-  html[data-js] .s-marca__punto {
-    --a: .85;
-    --b: 1;
-    animation-name: s-punto-pie;
-  }
-
-  html[data-js] .s-pie[data-latido] .s-marca__punto {
-    animation: s-latido 1000ms var(--s-e-firma) 1;
-  }
-}
-
-@keyframes s-pie-sube {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: none; }
-}
-
-@keyframes s-trazo {
-  from { stroke-dashoffset: 1; }
-  to { stroke-dashoffset: 0; }
-}
-
-@keyframes s-aparece {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes s-punto-pie {
-  from { transform: scale(0); }
-  to { transform: scale(1); }
-}
-
-@keyframes s-latido {
-  0%, 100% { transform: scale(1); }
-  45% { transform: scale(1.5); }
 }
 
 /* ==================== Hilo de 1 px que se dibuja con el scroll, S3 a S10 ==================== */
@@ -1552,6 +1435,74 @@
 @media (max-width: 1100px) {
   .s-hilo__nota {
     display: none;
+  }
+}
+
+/* ==================== Ritmo vertical (T15) ====================
+ * La portada medía 19,769 px a 1440 contra 11,617 de Handle. Se compacta sin quitar contenido: menos relleno de sección, límites y preguntas en dos
+ * columnas, pista fija de los pasos más corta y el pie en el flujo. Objetivo medido: 12,500 px a 1440. */
+.s-seccion__cabeza {
+  margin-bottom: clamp(36px, 4vw, 56px);
+}
+
+.s-hero__contenido {
+  gap: var(--s-e16);
+  padding-bottom: var(--s-e28);
+}
+
+.s-hero__marco {
+  width: min(920px, 100% - 2 * var(--s-pad-x));
+  margin-bottom: var(--s-e28);
+}
+
+.s-hero__reglas {
+  gap: var(--s-e28);
+  padding-block: 0 var(--s-e32);
+}
+
+.s-valor__escena {
+  max-width: 780px;
+  margin-bottom: var(--s-e40);
+}
+
+.s-valor__regla { margin-top: var(--s-e40); }
+.s-sellos { row-gap: var(--s-e16); }
+.s-orgs { max-width: 780px; margin-bottom: var(--s-e32); }
+.s-seguridad__tarjetas { gap: var(--s-e24); margin-bottom: var(--s-e56); }
+.s-limites__cabeza { margin-bottom: var(--s-e40); }
+.s-puestos__arco { height: 230px; }
+.s-pantalla { min-height: 0; }
+.s-mt-96 { margin-top: var(--s-e56); }
+.s-mt-80 { margin-top: var(--s-e48); }
+.s-faq__cabeza.s-mt-96 { margin-top: var(--s-e40); }
+.s-integraciones { max-width: 640px; margin-bottom: var(--s-e24); }
+.s-acordeon { max-width: none; }
+
+@media (min-width: 1101px) {
+  .s-limites {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--s-e48);
+  }
+
+  .s-limite {
+    grid-template-columns: 48px minmax(0, 1fr);
+    row-gap: var(--s-e4);
+  }
+
+  .s-limite__texto { grid-column: 2; }
+
+  .s-acordeon {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--s-e48);
+    align-items: start;
+  }
+
+  .s-cierre__lista {
+    columns: 2;
+    column-gap: var(--s-e40);
+    text-align: left;
   }
 }
 
@@ -1676,9 +1627,6 @@
     translate: 0 33%;
   }
 
-  .s-pie-espacio {
-    display: none;
-  }
 }
 
 @media (max-width: 480px) {
@@ -1752,10 +1700,6 @@
     position: relative;
     height: auto;
     margin-top: 0;
-  }
-
-  .s-pie-espacio {
-    display: none;
   }
 
   .s-marca__contorno {

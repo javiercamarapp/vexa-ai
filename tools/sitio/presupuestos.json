@@ -4,38 +4,79 @@
   "unidad": "KB transferidos con brotli (calidad 5 sobre texto; binarios ya comprimidos van crudos)",
   "crecimientoMaxPct": 5,
   "recalibraciones": [
-    "29-oct (T14a): jsPropio de 17 a 20 KB en inicial3d y recorrido. Medido: nube.js 8.4 KB + sitio.js 2.4 + inicio.js 3.8 + Lenis 3.4 = 18 KB con brotli; la tabla decía 17. El total del recorrido pasa de 693 a 696 KB (objetivo 700, techo 850) y el de inicial3d de 387 a 390 KB (objetivo 390), así que el peso total no cambia de banda."
+    "29-oct (T14a): jsPropio de 17 a 20 KB en inicial3d y recorrido. Medido: nube.js 8.4 KB + sitio.js 2.4 + inicio.js 3.8 + Lenis 3.4 = 18 KB con brotli; la tabla decía 17. El total del recorrido pasa de 693 a 696 KB (objetivo 700, techo 850) y el de inicial3d de 387 a 390 KB (objetivo 390), así que el peso total no cambia de banda.",
+    "29-oct (T15): sin nube.js, pts ni Lenis. jsPropio de 20 a 12 KB (sitio.js 2.3 + inicio.js 2.7 = 5 KB medidos; objetivo 11.6, techo 14), datos3d a 0 y imagenes del recorrido a 340 KB (héroe, cuatro recortes de paso y seis pantallas reales en AVIF). La banda de peso total del recorrido no cambia (objetivo 700, techo 850). Objetivos recalculados como suma de columnas; techo del recorrido 700 KB (pedido del dueño) y +60 KB en los demás."
   ],
   "escenarios": {
     "critico": {
-      "descripcion": "Crítico: sin 3D y sin scroll (movimiento reducido y Save-Data, para que no se pida nube, pts ni Lenis)",
-      "objetivoKB": 330,
-      "techoKB": 390,
-      "columnasKB": { "html": 28, "css": 22, "jsNext": 125, "jsPropio": 8, "fuentes": 85, "imagenes": 60, "datos3d": 0 }
+      "descripcion": "Crítico: sin scroll (movimiento reducido y Save-Data)",
+      "objetivoKB": 328,
+      "techoKB": 388,
+      "columnasKB": {
+        "html": 28,
+        "css": 22,
+        "jsNext": 125,
+        "jsPropio": 8,
+        "fuentes": 85,
+        "imagenes": 60,
+        "datos3d": 0
+      }
     },
     "inicial3d": {
-      "descripcion": "Inicial con héroe 3D tras reposo, sin scroll",
-      "objetivoKB": 390,
-      "techoKB": 460,
-      "columnasKB": { "html": 28, "css": 22, "jsNext": 125, "jsPropio": 20, "fuentes": 85, "imagenes": 60, "datos3d": 50 }
+      "descripcion": "Inicial con la ventana de producto del héroe tras reposo, sin scroll",
+      "objetivoKB": 332,
+      "techoKB": 392,
+      "columnasKB": {
+        "html": 28,
+        "css": 22,
+        "jsNext": 125,
+        "jsPropio": 12,
+        "fuentes": 85,
+        "imagenes": 60,
+        "datos3d": 0
+      }
     },
     "recorrido": {
       "descripcion": "Recorrido completo con los 4 pasos (scroll hasta el pie)",
-      "objetivoKB": 700,
-      "techoKB": 850,
-      "columnasKB": { "html": 30, "css": 26, "jsNext": 125, "jsPropio": 20, "fuentes": 85, "imagenes": 200, "datos3d": 210 }
+      "objetivoKB": 618,
+      "techoKB": 700,
+      "columnasKB": {
+        "html": 30,
+        "css": 26,
+        "jsNext": 125,
+        "jsPropio": 12,
+        "fuentes": 85,
+        "imagenes": 340,
+        "datos3d": 0
+      }
     },
     "sinWebglCritico": {
-      "descripcion": "Sin WebGL, sin scroll",
-      "objetivoKB": 330,
-      "techoKB": 390,
-      "columnasKB": { "html": 28, "css": 22, "jsNext": 125, "jsPropio": 8, "fuentes": 85, "imagenes": 60, "datos3d": 0 }
+      "descripcion": "Sin animación, sin scroll",
+      "objetivoKB": 328,
+      "techoKB": 388,
+      "columnasKB": {
+        "html": 28,
+        "css": 22,
+        "jsNext": 125,
+        "jsPropio": 8,
+        "fuentes": 85,
+        "imagenes": 60,
+        "datos3d": 0
+      }
     },
     "sinWebglRecorrido": {
-      "descripcion": "Sin WebGL, recorrido completo con renders apilados",
-      "objetivoKB": 480,
-      "techoKB": 560,
-      "columnasKB": { "html": 30, "css": 26, "jsNext": 125, "jsPropio": 8, "fuentes": 85, "imagenes": 200, "datos3d": 0 }
+      "descripcion": "Sin animación, recorrido completo con renders apilados",
+      "objetivoKB": 474,
+      "techoKB": 534,
+      "columnasKB": {
+        "html": 30,
+        "css": 26,
+        "jsNext": 125,
+        "jsPropio": 8,
+        "fuentes": 85,
+        "imagenes": 200,
+        "datos3d": 0
+      }
     }
   },
   "limitesPorTipoKB": {
@@ -46,14 +87,38 @@
   },
   "rutasInteriores": {
     "nota": "P-C sección 4.3: frío y sin scroll. Ninguna ruta interior carga Lenis, nube.js ni pts. Se mide con el escenario critico.",
-    "productoIndice": { "objetivoKB": 300, "techoKB": 380 },
-    "productoSubpagina": { "objetivoKB": 280, "techoKB": 340 },
-    "casosDeUso": { "objetivoKB": 260, "techoKB": 320 },
-    "seguridad": { "objetivoKB": 230, "techoKB": 280 },
-    "institucionales": { "objetivoKB": 240, "techoKB": 300 },
-    "legales": { "objetivoKB": 220, "techoKB": 280 },
-    "blogIndice": { "objetivoKB": 280, "techoKB": 340 },
-    "articulo": { "objetivoKB": 270, "techoKB": 330 }
+    "productoIndice": {
+      "objetivoKB": 300,
+      "techoKB": 380
+    },
+    "productoSubpagina": {
+      "objetivoKB": 280,
+      "techoKB": 340
+    },
+    "casosDeUso": {
+      "objetivoKB": 260,
+      "techoKB": 320
+    },
+    "seguridad": {
+      "objetivoKB": 230,
+      "techoKB": 280
+    },
+    "institucionales": {
+      "objetivoKB": 240,
+      "techoKB": 300
+    },
+    "legales": {
+      "objetivoKB": 220,
+      "techoKB": 280
+    },
+    "blogIndice": {
+      "objetivoKB": 280,
+      "techoKB": 340
+    },
+    "articulo": {
+      "objetivoKB": 270,
+      "techoKB": 330
+    }
   },
   "lecturas": {
     "lcpEstranguladoMs": 2500,

@@ -1,7 +1,7 @@
 // inicio.js (T10): solo la portada. sitio.js lo importa tras reposo y llama a la exportación por defecto con
 // {urls, RM, NAT, motor}. Hace: escena fija de cuatro pasos (paso activo y marca .s-visto para animar su visual),
-// el hilo que se dibuja con el scroll y el latido del pie.
-// Scroll nativo (scroll nativo), sin librerías de animación; este archivo solo lee scrollY y escribe variables CSS con setProperty.
+// y el hilo que se dibuja con el scroll.
+// Scroll nativo, sin librerías de animación; este archivo solo lee scrollY y escribe variables CSS con setProperty.
 const D = document, H = D.documentElement;
 const $ = (s, r = D) => r.querySelector(s);
 const $$ = (s, r = D) => [...r.querySelectorAll(s)];
@@ -96,7 +96,7 @@ const el = (tag, attrs = {}, padre, clase) => {
 const div = (clase, padre, tag = 'div') => { const e = D.createElement(tag); e.className = clase; padre?.appendChild(e); return e; };
 
 export default function iniciar({urls, RM, motor}) {
-  const {tareas, despertar, barrer, rangos} = motor;
+  const {tareas, despertar} = motor;
   const ancho = () => innerWidth;
 
   /* ---------- escena de cuatro pasos (solo escritorio ancho) ---------- */
@@ -107,10 +107,6 @@ export default function iniciar({urls, RM, motor}) {
   // El visual de cada paso se anima al activarse (.s-visto); apilado lo marca sitio.js al entrar en pantalla.
   const marcar = (n) => { if (escenaActiva()) pasos[n]?.classList.add('s-visto'); };
   let ultY = scrollY, ultT = performance.now();
-
-  /* ---------- pie ---------- */
-  const espacio = $('.s-pie-espacio'), pie = $('.s-pie');
-  if (pie && espacio && !RM) barrer(espacio, rangos.entrada, pie);
 
   /* ---------- hilo ---------- */
   const hilo = construirHilo(urls, RM);
@@ -126,7 +122,6 @@ export default function iniciar({urls, RM, motor}) {
       const n = pasoDe(lim(-r.top / Math.max(1, r.height - vh)) * 4, Math.max(paso, 0));
       if (n !== paso) { paso = n; esc.dataset.paso = String(n); marcar(n); }
     }
-    if (espacio && pie) { const r = espacio.getBoundingClientRect(); if (r.height) pie.toggleAttribute('data-latido', (vh - r.top) / r.height >= 0.98); }
     hilo?.cuadro(y, vh);
     return false;
   });
@@ -226,7 +221,8 @@ function construirHilo(urls, RM) {
       cabeza.style.setProperty('--x', (q.x * (zona.clientWidth / M.ancho)) + 'px');
       cabeza.style.setProperty('--y', q.y + 'px');
       cabeza.style.opacity = Yc < 0 || Yc > M.alto || (f.y > oculto[0] && f.y < oculto[1]) ? '0' : '1';
-      for (const n of nodos) n.classList.toggle('s-visto', Yc >= n._y);
+      // Lo que cae bajo la píldora de la cabecera (96 px superiores de la ventana) se apaga: no se lee tapado
+      for (const n of nodos) n.classList.toggle('s-visto', Yc >= n._y && top + n._y - y > 96);
     },
   };
 }

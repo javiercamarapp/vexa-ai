@@ -1,9 +1,9 @@
 // S3 El problema (claro) y S4 Valor y sellos (claro alterno).
 import {Diagrama} from '../diagramas';
 import type {IdDiagrama} from '../diagramas';
-import {Mock} from '../mocks';
 import {enlaceInterno, partesSello, sinPuntoFinal} from './datos';
 import type {Lang, TextosPortada} from './datos';
+import {VentanaCaptura} from './captura';
 import {CLASES_SELLO, Palabras, Sello} from './piezas';
 
 const DIAGRAMAS_PROBLEMA: readonly IdDiagrama[] = ['problema-1', 'problema-2', 'problema-3', 'problema-4'];
@@ -48,13 +48,16 @@ export function Valor({lang, t}: {lang: Lang; t: TextosPortada}) {
           <h2 className="s-h2-grande s-ancho-titular" id="valor-titulo">{valor.titulo}</h2>
         </div>
         <div className="s-valor__escena" data-reveal="">
-          <div className="s-valor__ventana s-flota"><Mock id="m1" lang={lang} /></div>
-          <span className="s-cota s-valor__cota" role="img" aria-label={valor.cotaAlt} data-cota-para="ingreso-bruto" />
-          <div className="s-valor__sello s-sello-expandido" data-sello-de="ingreso-bruto">
-            <b>{clases.items[0].nombre}</b>
-            {partes
-              ? partes.map((x, i) => <span key={i}>{clases.campos[i]}: {x}</span>)
-              : <span>{sinPuntoFinal(clases.items[0].sello)}</span>}
+          <div className="s-valor__ventana">
+            <VentanaCaptura nombre="hoy" lang={lang} ruta="m1" tamanos="(max-width: 1100px) 100vw, 1024px">
+              <span className="s-cota s-valor__cota" role="img" aria-label={valor.cotaAlt} data-cota-para="ingreso-bruto" />
+              <div className="s-valor__sello s-sello-expandido" data-sello-de="ingreso-bruto">
+                <b>{clases.items[0].nombre}</b>
+                {partes
+                  ? partes.map((x, i) => <span key={i}>{clases.campos[i]}: {x}</span>)
+                  : <span>{sinPuntoFinal(clases.items[0].sello)}</span>}
+              </div>
+            </VentanaCaptura>
           </div>
         </div>
         <div className="s-sellos" data-reveal-grupo="">

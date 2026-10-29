@@ -14,7 +14,8 @@ const P = cargarPresupuestos();
 const KB = 1024;
 
 test('presupuestos.json trae la tabla de la sección 8', () => {
-  const esperado = { critico: [330, 390], inicial3d: [390, 460], recorrido: [700, 850], sinWebglCritico: [330, 390], sinWebglRecorrido: [480, 560] };
+  // Recalibrada el 29-oct (T15): sin nube, pts ni Lenis; el recorrido pasa de objetivo 700 y techo 850 a objetivo 618 y techo 700.
+  const esperado = { critico: [328, 388], inicial3d: [332, 392], recorrido: [618, 700], sinWebglCritico: [328, 388], sinWebglRecorrido: [474, 534] };
   for (const [n, [obj, techo]] of Object.entries(esperado)) {
     assert.equal(P.escenarios[n].objetivoKB, obj, n);
     assert.equal(P.escenarios[n].techoKB, techo, n);
@@ -59,7 +60,7 @@ test('techo: falla por encima del techo, avisa entre objetivo y techo, pasa por 
   const aviso = evaluarEscenario(med(350), pres);
   assert.equal(aviso.fallas.length, 0);
   assert.equal(aviso.avisos.length, 1);
-  assert.equal(evaluarEscenario(med(391), pres).fallas.length, 1);
+  assert.equal(evaluarEscenario(med(389), pres).fallas.length, 1);
 });
 
 test('crecimiento: más de 5 % contra la línea base falla, 5 % exacto pasa', () => {

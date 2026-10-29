@@ -45,16 +45,18 @@ export function VentanaPaso({n, lang}: Props) {
 function Paso1({u}: {u: Record<string, string>}) {
   const filas = [104, 198, 291, 386];
   const rotulos = [u.hubspot, u.exporte, u.exporte, u.csv];
+  const nota = [u.real, u.aMano, '', ''];
   return (
     <g>
       {filas.map((y, i) => (
         <g className="s-pv__a s-pv__a--izq" data-i={i} key={i}>
           <line className={i === 0 ? 's-pv__hebra' : 's-pv__hebra s-pv__hebra--punteada'} x1={8} x2={186} y1={y} y2={y} />
-          <text className="s-pv__mono" x={8} y={y - 12}>{rotulos[i]}{i === 0 ? ` · ${u.real}` : i === 1 ? ` · ${u.aMano}` : ''}</text>
+          <text className="s-pv__mono" x={8} y={y - 14}>{rotulos[i]}</text>
           <g className="s-pv__chip">
-            <rect x={8} y={y + 10} width={118} height={24} rx={5} />
-            <text x={18} y={y + 26}>{`${i === 0 ? 'HubSpot' : u.exporte.charAt(0) + u.exporte.slice(1).toLowerCase()} · ${u.corte}`}</text>
+            <rect x={8} y={y + 12} width={168} height={28} rx={6} />
+            <text x={18} y={y + 31}>{`${i === 0 ? 'HubSpot' : u.exporte.charAt(0) + u.exporte.slice(1).toLowerCase()} · ${u.corte}`}</text>
           </g>
+          {nota[i] ? <text className="s-pv__mono s-pv__nota" x={8} y={y + 60}>{nota[i]}</text> : null}
         </g>
       ))}
     </g>

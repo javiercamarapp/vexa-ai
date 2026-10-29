@@ -28,7 +28,7 @@ function Idiomas({lang, id, escritorio}: {lang: Lang; id: string | null; escrito
           {x.lang === lang ? (
             <a href={x.href} hrefLang={x.lang} lang={x.lang} aria-current="true">{x.lang.toUpperCase()}</a>
           ) : (
-            <a href={x.href} hrefLang={x.lang} lang={x.lang} aria-label={t.idiomaAria}>{x.lang.toUpperCase()}</a>
+            <a href={x.href} hrefLang={x.lang} lang={x.lang} aria-label={`${x.lang.toUpperCase()}: ${t.idiomaAria}`}>{x.lang.toUpperCase()}</a>
           )}
         </Fragment>
       ))}

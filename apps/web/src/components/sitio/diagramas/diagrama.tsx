@@ -132,7 +132,7 @@ function Problema4({lang}: P) {
         <Nodo key={y} x={30} y={y} />
       ))}
       <rect className="s-diag-caja s-diag-caja--solida" x={118} y={52} width={100} height={44} rx={8} />
-      <Texto x={168} y={80} clase="s-diag-cifra">1,240</Texto>
+      <Texto x={168} y={80} clase="s-diag-cifra">N</Texto>
       <rect className="s-diag-caja s-diag-caja--punteada" x={134} y={106} width={68} height={18} rx={9} />
       <Texto x={168} y={142}>{rotulo('sinClase', lang)}</Texto>
     </Envoltura>

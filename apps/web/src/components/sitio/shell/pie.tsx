@@ -1,5 +1,5 @@
 // Pie del sitio (T7): cinco columnas del registro, línea de marca, rótulo legal solo si se resolvió y la marca gigante recortada.
-// El espaciador .s-pie-espacio va justo antes; el cierre de la página sube sobre el pie (z-index) y el CSS lo descubre al barrer.
+// El pie va en el flujo normal, sin espaciador ni barrido: el tema global deja las secciones sin fondo propio.
 import {LogoSitio} from '../logo-sitio';
 import {columnasPie, lineasPie, textosShell} from './datos';
 import type {Lang} from './datos';
@@ -10,7 +10,6 @@ export function Pie({lang}: {lang: Lang}) {
   const l = lineasPie(lang);
   return (
     <>
-      <div className="s-pie-espacio" aria-hidden="true" />
       <footer className="s-pie" data-tema="oscuro" aria-label={t.pie}>
         <div className="s-pie__cuerpo s-contenedor">
           <div className="s-pie__cols">

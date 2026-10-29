@@ -30,6 +30,7 @@ export function VentanaFuga({lang}: {lang: Lang}) {
         <span className="s-mock-org">{t.organizacion}</span>
       </div>
       <div className="s-ventana__cuerpo">
+        <div className="s-ventana__lienzo">
         <Captura nombre="fuga" tema="oscuro" lang={lang} tamanos="(max-width: 1100px) 100vw, 1040px" prioridad clase="s-ventana__img" />
         <svg className="s-ov" viewBox="0 0 2000 1250" preserveAspectRatio="none" role="group" aria-label={ui.captura.barras} focusable="false">
           {filas.map((f, i) => (
@@ -51,6 +52,7 @@ export function VentanaFuga({lang}: {lang: Lang}) {
           </g>
         </svg>
         <span className="s-punto s-ov-punto" aria-hidden="true" />
+        </div>
         <p className="s-ov-cifra">
           <span className="s-ov-cifra__linea">
             <span className="s-solo-lector">{`${fmt(REEMBOLSOS)} USD ${ui.captura.devueltos}. `}</span>
@@ -61,7 +63,7 @@ export function VentanaFuga({lang}: {lang: Lang}) {
           <span className="s-sello s-sello--observado s-ov-cifra__sello"><span className="s-sello__icono" aria-hidden="true" />{obs}</span>
         </p>
       </div>
-      <p className="s-rotulo-ejemplo s-ventana__rotulo">{t.rotulo}</p>
+      <p className="s-rotulo-ejemplo s-ventana__rotulo">{lang === 'en' ? `${t.rotulo} ${ui.captura.enEs}` : t.rotulo}</p>
     </figure>
   );
 }

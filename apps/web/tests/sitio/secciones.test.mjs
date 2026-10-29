@@ -256,10 +256,11 @@ describe('párrafo que se ilumina palabra por palabra', () => {
 // ------------------------------------------------------------------ 5. S4
 describe('S4 Valor y sellos', () => {
   for (const lang of IDIOMAS) {
-    test(`${lang}: ventana M1 con las cuatro cifras (data-cifra), cota, sello expandido y cuatro sellos por patrón`, () => {
+    test(`${lang}: captura real de Hoy (sin mockup dibujado a mano), cota, sello expandido y cuatro sellos por patrón`, () => {
       const h = seccion(portada(lang), 'valor');
-      const cifras = [...h.matchAll(/data-cifra="([^"]+)"/g)].map((m) => m[1]);
-      assert.deepEqual(cifras, ['ingreso-bruto', 'reembolsos', 'dinero-atorado', 'respuestas-24h']);
+      assert.match(h, /<figure class="s-ventana s-ventana--producto">/);
+      assert.match(etiquetas(h, 'img')[0], /class="s-ventana__img"/);
+      assert.doesNotMatch(h, /s-mock-raiz|data-cifra/);
       assert.match(h, /class="s-cota s-valor__cota"[^>]*role="img"/);
       assert.match(h, /class="s-valor__sello s-sello-expandido"/);
       const sello = /<div class="s-valor__sello[^>]*>([\s\S]*?)<\/div>/.exec(h)[1];

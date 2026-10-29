@@ -135,7 +135,7 @@
   --s-e96: 96px;
   --s-e112: 112px;
   --s-e144: 144px;
-  --s-seccion-v: clamp(88px, 9vw, 144px);
+  --s-seccion-v: clamp(44px, 4.4vw, 64px);
 
   /* ---- Rejilla ---- */
   --s-contenedor: 1152px;
@@ -155,7 +155,7 @@
   --s-circulo: 36px;
   --s-menu-w: 560px;
   --s-horizonte-h: 120px;
-  --s-pie-h: min(100svh, 760px);
+  --s-pie-h: 460px;
   --s-sello-h: 22px;
   --s-punto: 6px;
   --s-nodo: 6px;

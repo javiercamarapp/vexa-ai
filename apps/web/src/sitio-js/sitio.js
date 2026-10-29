@@ -201,7 +201,7 @@ function acordeon() {
   });
 }
 
-/* ---------- portada: inicio.js tras reposo (hilo, paso activo de la escena y latido del pie) ---------- */
+/* ---------- portada: inicio.js tras reposo (hilo, paso activo de la escena) ---------- */
 function portada() {
   if (!DATOS.inicio || !$('[data-hilo]')) return;
   let hecho = false;
@@ -214,8 +214,8 @@ function portada() {
       m.default({urls: DATOS, RM, NAT, motor: {tareas, despertar, barrer, rangos, lim}});
     } catch { /* la portada funciona sin inicio.js: póster, pasos apilados y estados finales */ }
   };
-  const reposo = () => ('requestIdleCallback' in window ? requestIdleCallback(ir, {timeout: 2500}) : setTimeout(ir, 1200));
-  if (D.readyState === 'complete') reposo(); else addEventListener('load', () => setTimeout(reposo, 200), {once: true});
+  // Sin esperar al reposo: la escena de los cuatro pasos depende de él para cambiar de paso, y pesa unos 3 KB.
+  if (D.readyState === 'complete') setTimeout(ir, 100); else addEventListener('load', () => setTimeout(ir, 100), {once: true});
   setTimeout(ir, 4000);
 }
 

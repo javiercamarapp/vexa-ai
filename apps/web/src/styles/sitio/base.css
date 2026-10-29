@@ -269,7 +269,7 @@ html:not([data-escena]) [data-tema="claro"] .s-logo__negativo { opacity: 0; }
   line-height: 1;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color var(--s-d-hover) var(--s-e-ui), transform var(--s-d-toque) var(--s-e-ui);
+  transition: background-color var(--s-d-hover) var(--s-e-ui), box-shadow var(--s-d-hover) var(--s-e-ui), transform var(--s-d-toque) var(--s-e-ui);
 }
 
 .s-boton:active {
@@ -286,6 +286,7 @@ html:not([data-escena]) [data-tema="claro"] .s-logo__negativo { opacity: 0; }
   border-radius: 50%;
   background: var(--s-acento);
   color: var(--s-boton-flecha);
+  transition: transform var(--s-d-hover) var(--s-e-ui);
 }
 
 /* Flecha dibujada con bordes: apunta arriba a la derecha y gira 45 grados al hover */
@@ -349,6 +350,11 @@ html:not([data-escena]) [data-tema="claro"] .s-logo__negativo { opacity: 0; }
 @media (hover: hover) {
   .s-boton:hover {
     background: var(--s-boton-fondo-hover);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--s-tinta) 24%, transparent), var(--s-boton-halo);
+  }
+
+  .s-boton:hover .s-boton__circulo {
+    transform: scale(1.1);
   }
 
   .s-boton:hover .s-flecha {

@@ -1,6 +1,7 @@
 'use client';
 import {createContext, useContext, useEffect, useMemo, type ReactNode} from 'react';
 import {IDIOMA_POR_OMISION, traductor, LOCALE_INTL, type Idioma, type Traductor} from '../../lib/i18n';
+import {formatosDe, type Formatos} from '../../lib/i18n/formatos';
 const Contexto = createContext<Idioma>(IDIOMA_POR_OMISION);
 /** Expone a los componentes cliente el idioma que el servidor resolvió (?lang= / cookie rovaq_lang / inglés por omisión). Sin proveedor, el idioma es inglés. */
 export function IdiomaProvider({idioma, children}: {idioma: Idioma; children: ReactNode}) {
@@ -13,3 +14,5 @@ export function IdiomaLocal({idioma, children}: {idioma: Idioma; children: React
 export const useIdioma = (): Idioma => useContext(Contexto);
 export function useT(): Traductor { const idioma = useIdioma(); return useMemo(() => traductor(idioma), [idioma]); }
 export const useLocaleIntl = () => LOCALE_INTL[useIdioma()];
+/** Formatos de cifras, fechas y horas del idioma activo (es-MX / en-US), ya ligados al idioma: `const f = useFormato(); f.mesLargo('2026-09')`. */
+export function useFormato(): Formatos { const idioma = useIdioma(); return useMemo(() => formatosDe(idioma), [idioma]); }

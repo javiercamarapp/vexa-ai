@@ -1,6 +1,6 @@
 import 'server-only';
 import {NextRequest,NextResponse} from 'next/server';
-import {createDatabase} from '@vexa/platform/db';
+import {createDatabase,forDownload} from '@vexa/platform/db';
 import {serverPool} from '../imports/server';
 import {ACTIVE_ORG,AccessError,assertOrigin,config,identity,PRIVATE_HEADERS,resolveSession} from '../auth';
 import {requestAuth} from '../auth-http';
@@ -12,13 +12,15 @@ import {createPainAiStore} from '../../../../../packages/workspace-service/pain-
 import {crearProveedorReal} from '../../../../../packages/workspace-service/pain-points-ia-proveedor.mjs';
 const TTL_MS=90_000;
 /** Solo propietarios y analistas (igual que el menú «Dinero»): ocultar el ítem no protege la ruta. */
-async function contexto(request:NextRequest){
+async function contexto(request:NextRequest,descarga=false){
  if(!config())throw new AccessError(503,'configuration_required');
  const auth=requestAuth(request);
  const id=identity(auth.client);
  const session=await resolveSession(id,request.cookies.get(ACTIVE_ORG)?.value);
  if(!['owner','analyst'].includes(session.active.role))throw new AccessError(403,'role_insufficient');
- const database=createDatabase({identity:id,pool:serverPool(),selectedTenant:session.active.tenant_id});
+ // Una sesión de soporte («ver como») nunca descarga: la guardia vive en la acción 'export' de la base, no en la cookie.
+ if(descarga&&session.support)throw new AccessError(403,'support_export_blocked');
+ const database=forDownload(createDatabase({identity:id,pool:serverPool(),selectedTenant:session.active.tenant_id}),descarga);
  return {finish:auth.finish,database,tenant:session.active.tenant_id,role:session.active.role};
 }
 function falla(error:unknown,finish:(r:NextResponse)=>NextResponse,base:string){
@@ -44,7 +46,7 @@ export async function painEvidenceHandler(request:NextRequest,params:{id:string}
   const q=request.nextUrl.searchParams;
   for(const k of q.keys())if(!['cursor','format'].includes(k))throw new AccessError(400,'unsupported_filter');
   if(q.getAll('cursor').length>1||q.getAll('format').length>1||(q.get('format')!==null&&q.get('format')!=='csv'))throw new AccessError(400,'unsupported_format');
-  const c=await contexto(request);finish=c.finish;
+  const c=await contexto(request,q.get('format')==='csv');finish=c.finish;
   const resumen=()=>{const clave=c.tenant+'|'+c.role+'|pain-points';return conMemoria(clave,TTL_MS,()=>createPainPointsRepository({database:c.database}).get());};
   const repo=createPainEvidenceRepository({database:c.database,resumen});
   const id=decodeURIComponent(params.id);
@@ -78,7 +80,7 @@ export async function painAiHandler(request:NextRequest,params:{id:string}){
   if(request.nextUrl.search)throw new AccessError(400,'unsupported_filter');
   if(request.method==='POST'){const c0=config();if(!c0)throw new AccessError(503,'configuration_required');assertOrigin(request.headers.get('origin'),c0.origin);if(request.headers.get('content-length')&&request.headers.get('content-length')!=='0')throw new AccessError(400,'unsupported_filter');}
   else if(request.method!=='GET')throw new AccessError(400,'unsupported_filter');
-  const c=await contexto(request);finish=c.finish;
+  const c=await contexto(request,q.get('format')==='csv');finish=c.finish;
   const resumen=()=>{const clave=c.tenant+'|'+c.role+'|pain-points';return conMemoria(clave,TTL_MS,()=>createPainPointsRepository({database:c.database}).get());};
   const id=decodeURIComponent(params.id);
   const svc=createPainAiService({store:createPainAiStore({database:c.database}),provider:proveedorIa.actual(),vista:resumen,evidencia:createPainEvidenceRepository({database:c.database,resumen})});

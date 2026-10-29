@@ -22,7 +22,7 @@ export async function middleware(request:NextRequest) {
     const c=authConfig();
     // «Ver como» (solo lectura): con la marca vigente se rechazan escrituras y exportaciones. Sin marca, las rutas /api siguen exactamente como antes.
     if(supportMarkActive(request.cookies.get(SUPPORT_MARK)?.value)&&(path.startsWith('/api/')||path==='/'||protectedPathPrefix(path))){
-      const verdict=supportVerdict(request.method,path);
+      const verdict=supportVerdict(request.method,path,request.nextUrl.search);
       if(!verdict.ok)return NextResponse.json({error:{code:verdict.code,message:'Modo soporte: solo lectura.',retryable:false}},{status:403,headers:PRIVATE_HEADERS});
     }
     if(path.startsWith('/api/'))return NextResponse.next();

@@ -121,7 +121,7 @@ test('soporte vencido en la base: 303 a /sin-acceso aunque la cookie siga',async
   setup();mockServer({tenants:[],support:{tenantId:C,expiresAt:new Date(Date.now()-5000).toISOString()}});
   const req=request('/overview');req.cookies.set(ACTIVE_ORG,C);assert.equal((await middleware(req)).status,303);
 });
-for(const [method,path] of [['POST','/api/agent/turn'],['PUT','/api/connections/settings'],['DELETE','/api/notifications/push'],['PATCH','/api/briefs/x'],['POST','/api/workspace/mappings'],['GET','/api/workspace/export'],['GET','/api/briefs/abc/export']] as const)
+for(const [method,path] of [['POST','/api/agent/turn'],['PUT','/api/connections/settings'],['DELETE','/api/notifications/push'],['PATCH','/api/briefs/x'],['POST','/api/workspace/mappings'],['GET','/api/workspace/export'],['GET','/api/briefs/abc/export'],['GET','/api/pain-points/P2/evidence?format=csv'],['GET','/api/jobs/abc/errors'],['GET','/cfo/data/export?format=pdf']] as const)
   test(`marca de soporte: ${method} ${path} se rechaza con 403 antes de llegar a la ruta`,async()=>{
     setup();const paths=mockServer();const req=withMark(new NextRequest(origin+path,{method,headers:{cookie:cookies()}}));
     const response=await middleware(req);assert.equal(response.status,403);assert.match((await response.json()).error.code,/^support_(read_only|export_blocked)$/);assert.equal(paths.length,0,'sin red');
@@ -154,5 +154,20 @@ test('soporte SIN cookie vexa_support: cada exportación responde 403 y no entre
       jobErrors(get(`/api/jobs/${id}/errors`)),
     ]);
     for(const [i,r] of results.entries()){assert.equal(r.status,403,`ruta ${i}`);assert.doesNotMatch(r.headers.get('content-type')??'',/csv/);assert.equal(r.headers.get('content-disposition'),null);}
+  }finally{delete process.env.VEXA_DATABASE_URL;}
+});
+
+// Segunda capa de AUTH-01 (cierre de seguridad): CSV de evidencia de pain-points y exportación CFO tampoco dependen de la cookie.
+import {painEvidenceHandler} from '../src/lib/pain-points/server';
+import {GET as exportCfo} from '../src/app/(app)/(workspace)/cfo/data/export/route';
+test('soporte SIN cookie vexa_support: CSV de pain-points y exportación CFO responden 403 sin bytes',async()=>{
+  setup();process.env.VEXA_DATABASE_URL='postgres://nadie:nada@127.0.0.1:1/ninguna';
+  mockServer({tenants:[],support:{tenantId:C,expiresAt:new Date(Date.now()+20*60000).toISOString()}});
+  const get=(path:string)=>{const req=new NextRequest(origin+path,{method:'GET',headers:{cookie:cookies()}});req.cookies.set(ACTIVE_ORG,C);assert.equal(req.cookies.get('vexa_support'),undefined);return req;};
+  try{
+    const pain=await painEvidenceHandler(get('/api/pain-points/P2/evidence?format=csv'),{id:'P2'});
+    const cfo=await exportCfo(get('/cfo/data/export?format=csv'));
+    for(const r of [pain,cfo]){assert.equal(r.status,403);assert.doesNotMatch(r.headers.get('content-type')??'',/csv|pdf/);assert.equal(r.headers.get('content-disposition'),null);}
+    assert.equal((await cfo.json()).error.code,'support_export_blocked');
   }finally{delete process.env.VEXA_DATABASE_URL;}
 });

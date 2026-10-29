@@ -812,6 +812,7 @@
 }
 
 .s-paso__render {
+  order: -1;
   width: 240px;
   height: 240px;
   object-fit: contain;
@@ -828,6 +829,7 @@
 }
 
 .s-paso__mock .s-mock__lateral,
+.s-paso__mock .s-mock__fila,
 .s-paso__mock .s-mock__columnas,
 .s-paso__mock .s-mock__barra {
   display: none;
@@ -1105,6 +1107,7 @@
 /* Orbes de 90, 67, 56 y 45 px: son los objetos o1 a o4 sobre disco oscuro */
 .s-orbe {
   position: absolute;
+  display: block;
   border-radius: 50%;
   overflow: hidden;
   background: var(--s-c-tinta);
@@ -1319,7 +1322,7 @@
   width: 560px;
   height: 560px;
   translate: -50% -50%;
-  opacity: .9;
+  opacity: .7;
   pointer-events: none;
 }
 
@@ -1687,12 +1690,24 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .s-hero__contenido {
-    padding-top: clamp(96px, 14svh, 120px);
+  /* El objeto pasa al flujo, arriba del texto, a 56 vw (220 px a 390) */
+  .s-hero__objeto {
+    position: relative;
+    left: auto;
+    top: auto;
+    translate: none;
+    width: 56vw;
+    height: 56vw;
+    margin: var(--s-e80) auto 0;
   }
 
-  .s-hero__objeto {
-    top: 38%;
+  .s-hero__objeto::before {
+    width: 140%;
+    height: 140%;
+  }
+
+  .s-hero__contenido {
+    padding-top: var(--s-e24);
   }
 
   .s-hero__acciones {

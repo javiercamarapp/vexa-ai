@@ -141,6 +141,7 @@ button {
   background: var(--s-fondo);
   color: var(--s-tinta);
   padding-block: var(--s-seccion-v);
+  overflow-x: clip;
 }
 
 .s-seccion[data-tema="claro"] {
@@ -1290,6 +1291,7 @@ button {
 /* ==================== Pestañas y formularios ==================== */
 .s-pestanas {
   display: flex;
+  justify-content: safe center;
   gap: var(--s-e8);
   overflow-x: auto;
   scrollbar-width: none;
@@ -1384,10 +1386,6 @@ button {
 
   .s-mock__rejilla {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .s-boton {
-    height: var(--s-boton-h);
   }
 }
 

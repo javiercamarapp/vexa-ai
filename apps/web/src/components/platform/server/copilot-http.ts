@@ -3,6 +3,7 @@ import {createHash} from 'node:crypto';
 import {NextResponse} from 'next/server';
 import {CopilotError, type Copilot, type Principal} from '../../../../../../packages/cfo-copilot/src/index.mjs';
 import {PRIVATE_HEADERS} from '../../../lib/auth';
+import {readRequestText} from '../../../lib/request-body';
 
 export const HEADERS = {...PRIVATE_HEADERS, Vary: 'Cookie'};
 export const MAX_BODY = 8192;
@@ -11,8 +12,13 @@ const stable = (v: unknown): string => Array.isArray(v) ? '[' + v.map(stable).jo
 export const argsHash = (args: unknown) => createHash('sha256').update(stable(args)).digest('hex');
 export async function readJson(request: Request): Promise<Record<string, unknown>> {
   if (request.headers.get('content-type')?.split(';')[0].trim() !== 'application/json') throw new CopilotError('input_invalid', 400);
-  const text = await request.text();
-  if (Buffer.byteLength(text) > MAX_BODY) throw new CopilotError('input_limit', 413);
+  // R-02: el cuerpo se lee con tope EN LA LECTURA (Content-Length y flujo), antes de decodificar o parsear; ya no se acumula entero en memoria.
+  let text: string;
+  try { text = await readRequestText(request, MAX_BODY); }
+  catch (error) {
+    const e = error as {status?: number};
+    throw new CopilotError(e.status === 413 ? 'input_limit' : 'input_invalid', e.status === 413 ? 413 : e.status === 408 ? 408 : 400);
+  }
   let body: unknown;
   try { body = JSON.parse(text); } catch { throw new CopilotError('input_invalid', 400); }
   if (!body || typeof body !== 'object' || Array.isArray(body)) throw new CopilotError('input_invalid', 400);

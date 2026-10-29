@@ -46,7 +46,8 @@ export function esActivoPublico(pathname) {
 export function rutaPublicaDeInterna(pathname) {
   const m = /^\/sitio\/(es|en)(\/.*)?$/.exec(pathname);
   if (!m) return null;
-  const resto = m[2] ?? '';
+  // R2-17: «//evil.example/x» tras /sitio/es dejaría una redirección a un host ajeno (URL relativa al protocolo). Se colapsan las barras iniciales.
+  const resto = (m[2] ?? '').replace(/^\/{2,}/, '/');
   if (m[1] === 'es') return resto || '/';
   return '/en' + resto;
 }

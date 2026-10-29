@@ -89,3 +89,14 @@ test('createDatabase: una acción pesada con el tope alcanzado responde 429 org_
     consultas.length=0;await db.transaction('read',async()=>1);assert.deepEqual(consultas,[]);
   }finally{g.__vexaConcurrency=previo;}
 });
+
+test('R2-13: rutas de datos fuera de /api tienen clase propia (exportación, copiloto, lectura y escritura)', () => {
+  assert.equal(claseDe('GET', '/cfo/data/export'), 'export');
+  assert.equal(claseDe('GET', '/platform/data/download/x'), 'export');
+  assert.equal(claseDe('POST', '/platform/data/copilot'), 'ai');
+  assert.equal(claseDe('GET', '/cfo/data/resumen'), 'read');
+  assert.equal(claseDe('POST', '/seguridad/data'), 'write');
+  assert.equal(claseDe('PUT', '/auth/organization'), 'write');
+  assert.equal(claseDe('GET', '/platform'), null, 'las páginas normales siguen sin límite');
+  assert.equal(claseDe('GET', '/seguridad'), null);
+});

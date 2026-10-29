@@ -18,6 +18,10 @@ export function claseDe(method:string,pathname:string,search=''):Clase|null{
   const m=method.toUpperCase();
   if(pathname==='/api/health'||pathname.startsWith('/api/health/'))return null;
   if(/^\/auth\/(?:email|google|callback|invitations)(?:\/|$)/.test(pathname))return 'auth';
+  // R2-13: rutas de datos fuera de /api que también hacen trabajo caro o sensible: exportaciones, copiloto y los endpoints de datos de CFO, plataforma, seguridad y organización.
+  if(/^\/(?:cfo|platform)\/data\/(?:export|download)(?:\/|$)/.test(pathname))return 'export';
+  if(/^\/(?:cfo|platform)\/data\/copilot(?:\/|$)/.test(pathname)&&m!=='GET'&&m!=='HEAD')return 'ai';
+  if(/^\/(?:cfo\/data|platform\/data|seguridad\/data|auth\/organization)(?:\/|$)/.test(pathname))return m==='GET'||m==='HEAD'||m==='OPTIONS'?'read':'write';
   if(!pathname.startsWith('/api/'))return null;
   if(/^\/api\/(?:webhooks|internal|baja)(?:\/|$)/.test(pathname))return 'hook';
   if(/\/(?:export|download)(?:\/|$)/.test(pathname)||/^\/api\/jobs\/[^/]+\/errors\/?$/i.test(pathname)||/(?:^|[?&])format=(?:csv|pdf|xlsx)(?:&|$)/i.test(search))return 'export';

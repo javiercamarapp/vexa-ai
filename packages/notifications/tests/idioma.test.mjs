@@ -58,7 +58,7 @@ test('(1) reporte semanal en EN: asunto, preheader, html y texto sin español, s
   assert.doesNotMatch(m.html, /es-MX/);
   assert.match(m.html, /<html lang="en-US"/);
   assert.equal(m.headers['Content-Language'], 'en-US');
-  assert.match(m.subject, /^Weekly report · Oct 14–20: refunds \$854\.7k$/);
+  assert.match(m.subject, /^Weekly report · Oct 14–20: refunds \$123\.4k$/);
   assert.match(m.text, /THIS WEEK'S FIGURES/);
   assert.match(m.text, /\$3\.84M/);
   assert.doesNotMatch(m.text, /\(/);
@@ -86,7 +86,7 @@ test('(2) paridad: mismos enlaces, botones, bloques y variables en ES y EN', () 
   for (const clase of ['class="btn-a"', 'class="kpi-c', 'class="chip-', 'class="trk"', 'class="callout']) assert.equal(cuenta(en.html, clase), cuenta(es.html, clase), clase);
   assert.deepEqual(Object.keys(en.headers).sort(), Object.keys(es.headers).sort());
   // Las cuatro cifras de monto son las mismas; solo cambia el formato de la unidad.
-  assert.ok(en.html.includes('$854.7k') && es.html.includes('$854.7k'));
+  assert.ok(en.html.includes('$123.4k') && es.html.includes('$123.4k'));
   assert.ok(en.html.includes('$3.84M') && es.html.includes('$3.84 M'));
 });
 

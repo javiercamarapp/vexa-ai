@@ -56,7 +56,7 @@ function kpiIngreso({cfo, estado, ahora, idioma}) {
   const X = textos(idioma), base = {id: 'ingreso', etiqueta: X.etiquetas.ingreso, como: 'ingreso'};
   if (estado.cfo === 'sin_acceso') return {...base, estado: 'sin_acceso', valor: null, nota: X.propietariosAnalistas};
   if (estado.cfo === 'cargando') return {...base, estado: 'cargando'};
-  const b = cfo?.status === 'ok' ? briefingCfo(cfo.report, 'USD') : null;
+  const b = cfo?.status === 'ok' ? briefingCfo(cfo.report, 'USD', idioma) : null;
   const rev = b?.kpis.find(k => k.id.startsWith('rev:'));
   if (!b || !rev) return {...base, estado: 'no_disponible', valor: null, nota: estado.cfo === 'error' ? X.ingresoNoDisp : X.ingresoSinMes};
   return {...base, estado: 'ok', valor: rev.display, periodo: b.mesDelResumen, nota: `${b.titular.periodo ?? ''} · ${b.moneda}`.replace(/^ · /, ''), notaLarga: `${b.titular.periodo ?? ''} · ${b.moneda}${rev.cobertura ? ' · ' + rev.cobertura : ''}`.replace(/^ · /, ''),

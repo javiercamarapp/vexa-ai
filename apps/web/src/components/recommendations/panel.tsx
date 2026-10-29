@@ -1,5 +1,6 @@
 'use client';
-import {useT} from '../i18n/proveedor';
+import {useT,useIdioma} from '../i18n/proveedor';
+import {fechaCorta} from '../../lib/formato/idioma.mjs';
 import type {Traductor} from '../../lib/i18n';
 import {RovaqCargando} from '../rovaq-cargando';
 import {useAutoRefresh} from '../ui/use-auto-refresh';
@@ -42,7 +43,7 @@ const useAntesDePintar=typeof window==='undefined'?useEffect:useLayoutEffect;
 const validaMeta=(j:unknown)=>(j as {data?:{meta?:{scope?:unknown}}})?.data?.meta?.scope?j:null;
 const validaLista=(j:unknown)=>{const d=(j as {data?:RecommendationList})?.data;return d&&Array.isArray(d.items)&&Array.isArray(d.problemOptions)&&Array.isArray(d.members)?j:null;};
 export function RecommendationsPanel({initialQuery,vista='por-decidir'}:{initialQuery:string;vista?:VistaAccion}){
- const t=useT();
+ const t=useT(),idioma=useIdioma();
  const failure=useCallback((status:number)=>falla(status,t),[t]);
  const [query,setQuery]=useState(cleanQuery(initialQuery).toString()),[scope,setScope]=useState<Filters>(()=>initialScope(initialQuery)),[view,setView]=useState<RecommendationList|null>(null),[busy,setBusy]=useState(true),[empty,setEmpty]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState(''),[conflict,setConflict]=useState(false),[problem,setProblem]=useState(new URLSearchParams(initialQuery).get('problem_id')??''),[edad,setEdad]=useState<number|null>(null),[viejo,setViejo]=useState(false);
  const viewRef=useRef<RecommendationList|null>(null);useEffect(()=>{viewRef.current=view;},[view]);
@@ -92,7 +93,7 @@ export function RecommendationsPanel({initialQuery,vista='por-decidir'}:{initial
  const partes=(...l:[string,number][])=>l.map(([label,value])=>({label,value}));
  const kpis=vista==='por-decidir'?[
   {label:t('recs.kPorDecidir'),value:nf.format(rf.decidir.n),c:6,chip:rf.decidir.urgentes>0?{texto:nf.format(rf.decidir.urgentes)+' '+(rf.decidir.urgentes===1?t('recs.urgente'):t('recs.urgentes')),tono:'bad' as const}:undefined,partes:partes([t('recs.pUrgentes'),rf.decidir.urgentes],[t('recs.pAltas'),rf.decidir.altas],[t('recs.pNormales'),rf.decidir.normales]),nota:t('recs.notaPrio',{u:rf.decidir.urgentes,a:rf.decidir.altas,n:rf.decidir.normales})},
-  {label:t('recs.kEvidencia'),value:nf.format(rf.decidir.citas),c:6,partes:evidenciaPorAccion(g.decidir).map(e=>({label:etiquetaCategoria(e.titulo),value:e.citas})),nota:t('recs.notaEvid')},
+  {label:t('recs.kEvidencia'),value:nf.format(rf.decidir.citas),c:6,partes:evidenciaPorAccion(g.decidir).map(e=>({label:etiquetaCategoria(e.titulo,t),value:e.citas})),nota:t('recs.notaEvid')},
   {label:t('recs.kSinResp'),value:t('recs.deN',{a:nf.format(rf.decidir.sinResponsable),b:nf.format(rf.decidir.n)}),c:6,partes:partes([t('recs.pConResp'),rf.decidir.n-rf.decidir.sinResponsable],[t('recs.kSinResp'),rf.decidir.sinResponsable]),nota:t('recs.notaResp')},
   {label:t('recs.kDinero'),value:'—',vacio:true,c:6,chip:{texto:t('recs.sinEstimar')},nota:t('recs.notaDinero')}]
  :vista==='en-curso'?[
@@ -134,14 +135,14 @@ export function RecommendationsPanel({initialQuery,vista='por-decidir'}:{initial
     {vista==='por-decidir'&&<>
      {lista(t('recs.tPorDecidir'),t('recs.subPorDecidir'),g.decidir,'por-decidir',filtrosActivos?t('recs.nada'):t('recs.nadaPorDecidir'))}
      <div className="pc-grid" data-cols="6-6">
-      <section className="pc-card" aria-label={t('recs.evidPorRec')}><header className="pc-card-head"><div><h2>{t('recs.evidPorRec')}</h2><p>{t('recs.citasVerif')}</p></div></header><div className="pc-fill">{evidencia.length?evidencia.map(e=><BarraParte key={e.id} etiqueta={etiquetaCategoria(e.titulo)} valor={e.citas} max={maxCitas} c={6} fin={nf.format(e.citas)}/>):<p className="ac-vacio">{t('recs.sinRecsDecidir')}</p>}</div></section>
-      <section className="pc-card" aria-label={t('recs.ultAct')}><header className="pc-card-head"><div><h2>{t('recs.ultAct')}</h2><p>{t('recs.ultActSub')}</p></div></header><div className="pc-fill">{actividad.length?<ul className="pc-lista ui-reset">{actividad.map(a=><li key={a.clave}><i className="pc-punto" data-tono={a.tipo==='dismissed'?'off':a.tipo==='resolved'?'ok':undefined} style={{['--c' as string]:'var(--chart-6)'}}/><span className="pc-grow"><span className="pc-t">{a.titulo} · {etiquetaCategoria(a.titulo2)}</span><span className="pc-s"><time dateTime={a.cuando}>{new Date(a.cuando).toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'})}</time></span></span></li>)}</ul>:<p className="ac-vacio">{t('recs.sinDecisiones')}</p>}</div></section>
+      <section className="pc-card" aria-label={t('recs.evidPorRec')}><header className="pc-card-head"><div><h2>{t('recs.evidPorRec')}</h2><p>{t('recs.citasVerif')}</p></div></header><div className="pc-fill">{evidencia.length?evidencia.map(e=><BarraParte key={e.id} etiqueta={etiquetaCategoria(e.titulo,t)} valor={e.citas} max={maxCitas} c={6} fin={nf.format(e.citas)}/>):<p className="ac-vacio">{t('recs.sinRecsDecidir')}</p>}</div></section>
+      <section className="pc-card" aria-label={t('recs.ultAct')}><header className="pc-card-head"><div><h2>{t('recs.ultAct')}</h2><p>{t('recs.ultActSub')}</p></div></header><div className="pc-fill">{actividad.length?<ul className="pc-lista ui-reset">{actividad.map(a=><li key={a.clave}><i className="pc-punto" data-tono={a.tipo==='dismissed'?'off':a.tipo==='resolved'?'ok':undefined} style={{['--c' as string]:'var(--chart-6)'}}/><span className="pc-grow"><span className="pc-t">{a.titulo} · {etiquetaCategoria(a.titulo2,t)}</span><span className="pc-s"><time dateTime={a.cuando}>{(fechaCorta(a.cuando,idioma)??'')}</time></span></span></li>)}</ul>:<p className="ac-vacio">{t('recs.sinDecisiones')}</p>}</div></section>
      </div></>}
     {vista==='en-curso'&&<>
      {lista(t('recs.tEnCurso'),t('recs.subEnCurso'),g.curso,'en-curso',filtrosActivos?t('recs.nada'):t('recs.nadaEnCurso'))}
      <div className="pc-grid" data-cols="8-4">
       <IntervencionesSeccion fixedQuery={fixedQuery} vista="en-curso" onResumen={setIntv}/>
-      <section className="pc-card" aria-label={t('recs.compromisos')}><header className="pc-card-head"><div><h2>{t('recs.compromisos')}</h2><p>{t('recs.porFechaComp')}</p></div></header><div className="pc-fill">{compromisos.length?<ul className="pc-lista ui-reset">{compromisos.map(({i,e})=>{const d=dias(e!.dueDate!);return <li key={i.id}><i className="pc-punto" data-tono={d<0?'bad':d<=7?'warn':undefined} style={{['--c' as string]:'var(--chart-6)'}}/><span className="pc-grow"><span className="pc-t">{etiquetaCategoria(i.title)}</span><span className="pc-s">{new Date(e!.dueDate+'T12:00:00Z').toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'})}</span></span><span className="pc-estado" data-tono={d<0?'bad':d<=7?'warn':'off'}>{d<0?t('recs.vencida',{n:Math.abs(d)}):d===0?t('recs.hoy'):t('recs.enDias',{n:d})}</span></li>;})}</ul>:<p className="ac-vacio">{t('recs.sinCompromisos')}</p>}</div></section>
+      <section className="pc-card" aria-label={t('recs.compromisos')}><header className="pc-card-head"><div><h2>{t('recs.compromisos')}</h2><p>{t('recs.porFechaComp')}</p></div></header><div className="pc-fill">{compromisos.length?<ul className="pc-lista ui-reset">{compromisos.map(({i,e})=>{const d=dias(e!.dueDate!);return <li key={i.id}><i className="pc-punto" data-tono={d<0?'bad':d<=7?'warn':undefined} style={{['--c' as string]:'var(--chart-6)'}}/><span className="pc-grow"><span className="pc-t">{etiquetaCategoria(i.title,t)}</span><span className="pc-s">{(fechaCorta(e!.dueDate,idioma)??'')}</span></span><span className="pc-estado" data-tono={d<0?'bad':d<=7?'warn':'off'}>{d<0?t('recs.vencida',{n:Math.abs(d)}):d===0?t('recs.hoy'):t('recs.enDias',{n:d})}</span></li>;})}</ul>:<p className="ac-vacio">{t('recs.sinCompromisos')}</p>}</div></section>
      </div></>}
     {vista==='resultados'&&<>
      {lista(t('recs.tResultados'),t('recs.subResultados'),g.resultado,'resultados',filtrosActivos?t('recs.nada'):t('recs.nadaResultados'))}

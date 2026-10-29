@@ -1,18 +1,19 @@
 'use client';
 import {useMemo,useRef,useState,type KeyboardEvent,type ReactNode} from 'react';
 import {createPortal} from 'react-dom';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
+import {formatoNum} from '../../lib/formato/idioma.mjs';
 import type {Clave,Traductor} from '../../lib/i18n';
 import {useTipPosicion} from '../ui/use-tip-posicion';
 import type {PainVista,PuntoPP,TemaPP} from '../../../../../packages/workspace-service/pain-points.d.mts';
-import {disponerBurbujas,estadoDe,LINE_H,TEMA_NOTA,type Burbuja,type Cluster,type Modo} from './burbujas-modelo.mjs';
+import {disponerBurbujas,estadoDe,LINE_H,notaDeTema,type Burbuja,type Cluster,type Modo} from './burbujas-modelo.mjs';
 import {etiquetaBurbuja,num,usdCorto,CLASE_NOMBRE} from './modelo.mjs';
 import {useWidth} from '../ui/use-width';
 
 const cat=(c:number)=>`var(--chart-${((c-1)%8)+1})`;
-const money=(v:number)=>usdCorto(String(Math.round(v*100)));
-const fmt=(v:number,modo:Modo)=>modo==='dinero'?money(v):num(Math.round(v));
-const money2=(v:number)=>v>=1e6?'$'+(v/1e6).toLocaleString('es-MX',{maximumFractionDigits:2})+' M':money(v);
+const nf2=formatoNum({maximumFractionDigits:2});
+/** Formatos de dinero de las burbujas ligados al idioma activo (la «M» de millones cambia: «1.2 M» en español, «1.2M» en inglés). */
+const formatosDe=(idioma:string)=>{const money=(v:number)=>usdCorto(String(Math.round(v*100)),idioma);return {money,fmt:(v:number,modo:Modo)=>modo==='dinero'?money(v):num(Math.round(v)),money2:(v:number)=>v>=1e6?'$'+nf2.format(v/1e6)+(idioma==='en'?'M':' M'):money(v)};};
 const pl=(tx:Traductor,n:number,uno:Clave,varios:Clave)=>tx(n===1?uno:varios,{n:num(n)});
 const CLASE_CLAVE:Record<string,Clave>={O:'tr.pp.claseO',E:'tr.pp.claseE',I:'tr.pp.claseI'};
 const claseTxt=(tx:Traductor,c:string)=>CLASE_CLAVE[c]?tx(CLASE_CLAVE[c]):(CLASE_NOMBRE as Record<string,string>)[c]??c;
@@ -20,11 +21,11 @@ const medidaTxt=(tx:Traductor,m:Modo)=>tx(m==='dinero'?'tr.pp.medidaDinero':'tr.
 
 /** Mapa de burbujas SVG: UNA escala de área para todo el mapa (r = raíz del valor), un cúmulo por tema, posiciones deterministas. Cada burbuja es un botón; el color es el tema y la clase va en el trazo. */
 export function Burbujas({vista,modo,seleccion,onElegir,visibles}:{vista:PainVista;modo:Modo;seleccion:string|null;onElegir:(id:string)=>void;visibles:Set<string>|null}){
- const tx=useT();
+ const tx=useT(),idioma=useIdioma(),{money,fmt,money2}=formatosDe(idioma);
  const [ref,w]=useWidth<HTMLDivElement>(),ancho=Math.max(260,w||840);
  const puntos=useMemo(()=>vista.puntos.filter(p=>!visibles||visibles.has(p.tema)),[vista,visibles]);
  const temasVis=useMemo(()=>vista.temas.map(t=>t.id).filter(id=>!visibles||visibles.has(id)),[vista,visibles]);
- const D=useMemo(()=>disponerBurbujas({puntos,modo,ancho,temas:temasVis,escalaDe:vista.puntos}),[puntos,modo,ancho,temasVis,vista]);
+ const D=useMemo(()=>disponerBurbujas({puntos,modo,ancho,temas:temasVis,escalaDe:vista.puntos,idioma}),[puntos,modo,ancho,temasVis,vista,idioma]);
  const porId=useMemo(()=>new Map(vista.puntos.map(p=>[p.id,p])),[vista]);
  const tema=(id:string):TemaPP=>vista.temas.find(t=>t.id===id)??{id,nombre:id,c:8};
  const [hover,setHover]=useState<string|null>(null),refs=useRef<Record<string,SVGGElement|null>>({});
@@ -37,7 +38,7 @@ export function Burbujas({vista,modo,seleccion,onElegir,visibles}:{vista:PainVis
  }
  const tip=hover?todas.find(b=>b.id===hover):null,tp=tip&&tip.tipo==='punto'?porId.get(tip.id):null;
  const hay=D.clusters.length>0;
- const verTip=(b:Burbuja)=>b.tipo==='punto'&&tp?<><b>{tp.nombre}</b><span>{modo==='dinero'?(tp.dinero.sinDato?tx('tr.pp.sinDato'):'USD '+(Number(BigInt(tp.dinero.minor))/100).toLocaleString('es-MX',{minimumFractionDigits:2})):(tp.volumen.sinDato?tx('tr.pp.sinDato'):num(tp.volumen.n)+' '+tp.volumen.unidad)}</span><span>{claseTxt(tx,tp.clase)} · {tema(b.tema).nombre}</span></>:<><b>{pl(tx,b.n!,'tr.pp.ptsPequenoUno','tr.pp.ptsPequenoVarios')} · {fmt(b.valor,modo)}{modo==='dinero'?' USD':''}</b>{b.miembros!.slice(0,8).map(m=><span key={m.id}>{m.nombre} · {fmt(m.valor,modo)}</span>)}{b.miembros!.length>8&&<span>{tx('tr.pp.yMas',{n:b.miembros!.length-8})}</span>}<span>{tema(b.tema).nombre}</span></>;
+ const verTip=(b:Burbuja)=>b.tipo==='punto'&&tp?<><b>{tp.nombre}</b><span>{modo==='dinero'?(tp.dinero.sinDato?tx('tr.pp.sinDato'):'USD '+formatoNum({minimumFractionDigits:2}).format(Number(BigInt(tp.dinero.minor))/100)):(tp.volumen.sinDato?tx('tr.pp.sinDato'):num(tp.volumen.n)+' '+tp.volumen.unidad)}</span><span>{claseTxt(tx,tp.clase)} · {tema(b.tema).nombre}</span></>:<><b>{pl(tx,b.n!,'tr.pp.ptsPequenoUno','tr.pp.ptsPequenoVarios')} · {fmt(b.valor,modo)}{modo==='dinero'?' USD':''}</b>{b.miembros!.slice(0,8).map(m=><span key={m.id}>{m.nombre} · {fmt(m.valor,modo)}</span>)}{b.miembros!.length>8&&<span>{tx('tr.pp.yMas',{n:b.miembros!.length-8})}</span>}<span>{tema(b.tema).nombre}</span></>;
  const refTxt=(v:number)=>modo==='dinero'?money(v):num(v);
  const conc=D.conciliacion;
  return <div className="pp-mapa" ref={ref}>
@@ -52,7 +53,7 @@ export function Burbujas({vista,modo,seleccion,onElegir,visibles}:{vista:PainVis
      <defs><pattern id={'pp-r-'+c.id} width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="var(--ui-surface)"/><rect width="4" height="8" fill={`var(--soft-${t.c})`}/></pattern></defs>
      {c.burbujas.map(b=>{
       const i=todas.indexOf(b),p=b.tipo==='punto'?porId.get(b.id)!:null,sel=seleccion===b.id,L=b.label,H=(L.lineas.length+1)*LINE_H;
-      const etiqueta=p?etiquetaBurbuja(p,t.nombre,modo):tx('tr.pp.grupoAria',{tema:t.nombre,pts:pl(tx,b.n!,'tr.pp.ptsPequenoUno','tr.pp.ptsPequenoVarios'),valor:fmt(b.valor,modo)+(modo==='dinero'?' USD':''),nombres:b.miembros!.slice(0,5).map(m=>m.nombre).join(', ')+(b.miembros!.length>5?tx('tr.pp.yMasCorto'):'')});
+      const etiqueta=p?etiquetaBurbuja(p,t.nombre,modo,idioma):tx('tr.pp.grupoAria',{tema:t.nombre,pts:pl(tx,b.n!,'tr.pp.ptsPequenoUno','tr.pp.ptsPequenoVarios'),valor:fmt(b.valor,modo)+(modo==='dinero'?' USD':''),nombres:b.miembros!.slice(0,5).map(m=>m.nombre).join(', ')+(b.miembros!.length>5?tx('tr.pp.yMasCorto'):'')});
       const dash=b.tipo==='grupo'?'2 3':p?.clase==='I'?'6 3':undefined,fill=p?.clase==='E'?`url(#pp-r-${c.id})`:`var(--soft-${t.c})`;
       return <g key={b.id} ref={el=>{refs.current[b.id]=el;}} className="pp-burbuja" data-sel={sel||undefined} data-tipo={b.tipo} data-valor={b.valor} data-r={b.r} tabIndex={0} role="button" aria-label={etiqueta} aria-pressed={sel} transform={`translate(${b.cx} ${b.cy})`}
        onClick={()=>onElegir(b.tipo==='punto'?b.id:b.ids![0])} onKeyDown={e=>tecla(e,i,b)} onMouseEnter={()=>setHover(b.id)} onMouseLeave={()=>setHover(null)} onFocus={()=>setHover(b.id)} onBlur={()=>setHover(null)}>
@@ -74,7 +75,7 @@ export function Burbujas({vista,modo,seleccion,onElegir,visibles}:{vista:PainVis
  </div>;
 }
 function Cumulo({c,t,modo,otro,onElegir,children}:{c:Cluster;t:TemaPP;modo:Modo;otro:Modo;onElegir:(id:string)=>void;children:ReactNode}){
- const tx=useT();
+ const tx=useT(),idioma=useIdioma(),{money,fmt}=formatosDe(idioma);
  const g=c.burbujas.find(b=>b.tipo==='grupo'),r=c.reparte;
  const tot=modo==='dinero'?money(c.total)+' USD':c.unidad?`${num(c.total)} ${c.unidad}`:null;
  const sin=[...c.sinCifra,...c.ceros];
@@ -82,7 +83,7 @@ function Cumulo({c,t,modo,otro,onElegir,children}:{c:Cluster;t:TemaPP;modo:Modo;
   <header className="pp-cumulo-cab">
    <h3 id={'pp-c-'+c.id} className="pp-cumulo-t" style={{color:`var(--ink-${t.c})`}}>{t.nombre}</h3>
    <p className="pp-cumulo-n"><b>{pl(tx,c.n,'tr.pp.ptsUno','tr.pp.ptsVarios')}</b>{tot?<>{tx('tr.pp.sumanTot',{tot})}</>:null}</p>
-   <p className="pp-cumulo-nota">{TEMA_NOTA[c.id]??''}{r&&<> · {r.pct>=99.5?tx('tr.pp.sumanPct',{pct:100}):tx('tr.pp.sonPct',{pct:num(r.pct)})} {modo==='dinero'?tx('tr.pp.delDinero'):tx('tr.pp.deReembolsos')} ({fmt(r.total,modo)}){r.otros.length>0&&<>{tx('tr.pp.aparte',{lista:r.otros.slice(0,2).map(o=>o.nombre+' '+fmt(o.valor,modo)).join(', ')})}</>}</>}</p>
+   <p className="pp-cumulo-nota">{notaDeTema(c.id,idioma)??''}{r&&<> · {r.pct>=99.5?tx('tr.pp.sumanPct',{pct:100}):tx('tr.pp.sonPct',{pct:num(r.pct)})} {modo==='dinero'?tx('tr.pp.delDinero'):tx('tr.pp.deReembolsos')} ({fmt(r.total,modo)}){r.otros.length>0&&<>{tx('tr.pp.aparte',{lista:r.otros.slice(0,2).map(o=>o.nombre+' '+fmt(o.valor,modo)).join(', ')})}</>}</>}</p>
   </header>
   {children}
   {(g||sin.length>0)&&<p className="pp-cumulo-pie">

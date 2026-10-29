@@ -1,7 +1,7 @@
 'use client';
 import {ConMarca} from '../ui/brand-mark';
 import type {ReactNode} from 'react';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
 import type {FugaVista,SkuFila} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
 import {Chip} from '../ui/chip';
 import {DataTable,type Column} from '../ui/data-table';
@@ -125,13 +125,13 @@ export function PanelRepetido({v,onReintentar}:{v:FugaVista;onReintentar:()=>voi
  if(c.status!=='ok')return <Vacio>{t('fuga.repSinTickets')}</Vacio>;
  return <div className="dg-fill">
   <ListaBarras c={7} vw max={100} label={t('tr.fuga.contactosRepiten')} items={[{key:'a',etiqueta:t('tr.fuga.vecesEn',{k:2,d:90}),sub:t('tr.fuga.deContactos',{a:num(c.contactosDosOMas90),b:num(c.contactos)}),valor:c.pctDosOMas,texto:pct(c.pctDosOMas)},{key:'b',etiqueta:t('tr.fuga.masVeces',{k:3}),sub:t('tr.fuga.nContactos',{n:num(c.contactosTresOMas90)}),valor:c.pctTresOMas,texto:pct(c.pctTresOMas)}]}/>
-  {c.porCategoria.length>0&&<ListaBarras c={7} apilado label={t('fuga.repCategorias')} max={Math.max(1,...c.porCategoria.map(x=>x.pct??0))} items={c.porCategoria.slice(0,4).map(x=>({key:x.categoria,etiqueta:<span>{etiquetaCategoria(x.categoria)}</span>,sub:t('tr.fuga.deClientes',{a:num(x.repiten),b:num(x.clientes)}),valor:x.pct,texto:pct(x.pct)}))}/>}
+  {c.porCategoria.length>0&&<ListaBarras c={7} apilado label={t('fuga.repCategorias')} max={Math.max(1,...c.porCategoria.map(x=>x.pct??0))} items={c.porCategoria.slice(0,4).map(x=>({key:x.categoria,etiqueta:<span>{etiquetaCategoria(x.categoria,t)}</span>,sub:t('tr.fuga.deClientes',{a:num(x.repiten),b:num(x.clientes)}),valor:x.pct,texto:pct(x.pct)}))}/>}
   <p className="dg-pie">{t('tr.fuga.repPie',{fecha:String(c.refreshedAt).slice(0,10)})}</p></div>;
 }
 
 // ---- Qué cambió
 export function PanelCambios({v}:{v:FugaVista}){
- const t=useT(),fr=frasesCambios(v),ex=excluidosTexto(v);
+ const t=useT(),idioma=useIdioma(),fr=frasesCambios(v,idioma),ex=excluidosTexto(v,idioma);
  if(!fr.length)return <Vacio>{t('fuga.cambiosVacio')}</Vacio>;
  return <div className="dg-fill"><ul className="ui-reset" style={{listStyle:'none',margin:0,padding:0,display:'grid',gap:8,flex:'1 1 auto',gridAutoRows:'1fr'}}>{fr.map((f,i)=><li key={f.clave} className="dg-caja" style={{borderLeft:`3px solid ${color(i%2?1:2)}`,display:'flex',alignItems:'center'}}><span className="dg-lab"><small style={{color:'var(--ink)',fontSize:13}}>{f.texto}</small></span></li>)}</ul>
   {ex.length>0&&<p className="dg-pie">{t('fuga.noSeUsan',{x:ex.join('; ')})}</p>}</div>;

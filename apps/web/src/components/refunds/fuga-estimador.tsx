@@ -1,7 +1,7 @@
 'use client';
 import {useId,useState} from 'react';
 import type {FugaVista} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
 import {KindBadge} from '../ui/kind-badge';
 import {Icon} from '../ui/icons';
 import {dinero,estimar,formulaA,formulaB,num,porcentaje,usd,usdNum} from './fuga-modelo.mjs';
@@ -15,13 +15,13 @@ export function Campo({etiqueta,ayuda,valor,onChange,sufijo,modo,entrada}:{etiqu
 }
 /** Estimador con candado: sin supuestos tecleados NO hay número; con ellos, «Estimado con tus supuestos» y la cuenta a la vista. Nada se guarda ni se envía. */
 export function Estimador({v}:{v:FugaVista}){
- const t=useT();
+ const t=useT(),idioma=useIdioma();
  const [sel,setSel]=useState<string>('top10');
  const [pP,setPP]=useState(''),[pR,setPR]=useState(''),[cc,setCC]=useState(''),[pE,setPE]=useState('');
  const top=v.skus.status==='ok'?v.skus.top:[];
  const baseMinor=v.titular.status==='ok'&&top.length?(sel==='top10'?String(top.reduce((a,r)=>a+BigInt(r.usdNetoMinor),0n)):top.find(r=>r.sku===sel)?.usdNetoMinor??null):null;
  const rep=v.contactoRepetido.status==='ok'?v.contactoRepetido.ticketsQueRepiten90:null;
- const e={pP:porcentaje(pP),pR:porcentaje(pR),cc:dinero(cc),pE:porcentaje(pE)};
+ const e={pP:porcentaje(pP,idioma),pR:porcentaje(pR,idioma),cc:dinero(cc,idioma),pE:porcentaje(pE,idioma)};
  const r=estimar({baseUsdMinor:baseMinor,ticketsRepiten:rep,pctProveedor:e.pP,pctRecuperable:e.pR,costoContacto:e.cc,pctEvitable:e.pE});
  const hay=r.A||r.B;
  return <div className="fg-est">

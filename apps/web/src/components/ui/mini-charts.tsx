@@ -1,11 +1,12 @@
 import type {ReactNode} from 'react';
 import {useT} from '../i18n/proveedor';
+import {formatoNum} from '../../lib/formato/idioma.mjs';
 /** Kit de gráficas pequeñas y compactas. Color = identidad (tokens --chart-1..8, en orden fijo, nunca por ranking); estado = trama/discontinuo/punteado:
  *  parcial = trama, estimado = línea discontinua, desconocido = vacío punteado (NUNCA cero). Todas llevan etiqueta directa, aria-label y tabla equivalente (sr-only). */
 export type Estado='real'|'parcial'|'estimado'|'desconocido';
 export const color=(i:number)=>`var(--chart-${((i%8)+8)%8+1})`;
 export const suave=(i:number)=>`var(--soft-${((i%8)+8)%8+1})`;
-const fmt=(v:number)=>new Intl.NumberFormat('es-MX',{maximumFractionDigits:1}).format(v);
+const nf1=formatoNum({maximumFractionDigits:1}),fmt=(v:number)=>nf1.format(v);
 function Tabla({titulo,filas}:{titulo:string;filas:[string,string][]}){return <div className="sr-only"><table><caption>{titulo}</caption><tbody>{filas.map(([a,b],i)=><tr key={i}><th scope="row">{a}</th><td>{b}</td></tr>)}</tbody></table></div>;}
 
 /** Barra apilada horizontal 100 %: una fila, segmentos con 2 px de separación y etiqueta directa en los grandes. */

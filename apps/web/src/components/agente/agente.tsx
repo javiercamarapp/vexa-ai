@@ -1,6 +1,6 @@
 'use client';
 import {RovaqCargando} from '../rovaq-cargando';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
 import './agente.css';
 import './una-pagina.css';
 import {useCallback,useEffect,useId,useRef,useState,type ReactNode} from 'react';
@@ -45,7 +45,7 @@ export function Agente(){
 /** Extensión para los «modos copiloto» (CFO, reembolsos…): misma pantalla, pero la portada la pone el modo (briefing) y el transporte puede ser otro. */
 export type ModoChat={modo:string;runner?:Runner;placeholder?:string;portada:(ask:(q:string)=>void,hayHilo:boolean)=>ReactNode;/** Encabezado en la misma fila que «Historial» (título y acciones del modo). */cabecera?:(hayHilo:boolean)=>ReactNode;pie?:ReactNode;etiquetaChat?:string};
 export function Chat({data,modo}:{data:AgentState;modo?:ModoChat}){
- const tx=useT();
+ const tx=useT(),idioma=useIdioma();
  const a=useAgente(data.scope,data.limits.maxQuestionChars,data.limits.maxTurnsPerConversation,data.toolLabels,{runner:modo?.runner,modo:modo?.modo});
  const [text,setText]=useState(()=>{if(modo||typeof window==='undefined')return '';const sp=new URLSearchParams(window.location.search),q=sp.get('q');return sp.get('enviar')==='1'?'':q?q.slice(0,data.limits.maxQuestionChars):'';}),[hist,setHist]=useState(false),[leaving,setLeaving]=useState(false),[attachError,setAttachError]=useState<string|null>(null);
  const histId=useId(),inputId=useId();
@@ -74,13 +74,13 @@ export function Chat({data,modo}:{data:AgentState;modo?:ModoChat}){
   setLeaving(true);back();timer.current=setTimeout(()=>{setHist(false);setLeaving(false);},480);
  },[]);
  const attach=useCallback(async(file:File)=>{
-  const bad=validarArchivo(file.name,file.size);if(bad){setAttachError(bad);return;}
+  const bad=validarArchivo(file.name,file.size,idioma);if(bad){setAttachError(bad);return;}
   try{
-   const r=analizarAdjunto(file.name,await file.text(),file.size,`adj-${Date.now().toString(36)}`);
+   const r=analizarAdjunto(file.name,await file.text(),file.size,`adj-${Date.now().toString(36)}`,idioma);
    if(!r.ok){setAttachError(r.error);return;}
    setAttachError(null);a.attach(r.resumen);
   }catch{setAttachError(tx('ag.noLeerArchivo'));}
- },[a,tx]);
+ },[a,tx,idioma]);
  // «Preguntar a Rovaq» desde Hoy llega con ?enviar=1&q=…: el agente responde de inmediato (una sola vez) y la URL se limpia para que recargar no repita la pregunta.
  const autoEnviado=useRef(false);
  useEffect(()=>{if(autoEnviado.current||modo)return;const sp=new URLSearchParams(window.location.search),q=sp.get('q');if(sp.get('enviar')!=='1'||!q)return;autoEnviado.current=true;sp.delete('enviar');sp.delete('q');window.history.replaceState(null,'',window.location.pathname+(sp.toString()?'?'+sp.toString():''));const t=q.trim().slice(0,data.limits.maxQuestionChars);if(t)a.send(t,s.directas[t]);},[a,data.limits.maxQuestionChars,modo,s.directas]);

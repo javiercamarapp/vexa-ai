@@ -53,7 +53,7 @@ function topProblems(bundle:Bundle,t:Traductor):Pick[]{
 }
 export function OverviewDashboard({bundle,pinned,avisos=[],cache}:{bundle:Bundle;pinned:URLSearchParams;avisos?:{key:string;node:ReactNode}[];cache?:{edadMs:number|null;actualizando:boolean;viejo:boolean}}){
  const t=useT(),idioma=useIdioma(),loc=useLocaleIntl(),monthShort=(m:string)=>monthShortL(loc,m),monthLong=(m:string)=>monthLongL(loc,m),pct1=(v:number)=>v.toLocaleString(loc,{minimumFractionDigits:1,maximumFractionDigits:1});
- const model=useMemo(()=>buildCfoModel(bundle.items),[bundle]);
+ const model=useMemo(()=>buildCfoModel(bundle.items,idioma),[bundle,idioma]);
  const trends=useJson<TrendsView>('/api/trends',acceptTrends);
  const query=pinned.toString();
  const probs=useJson<Bundle>(bundle.meta.snapshot_id?'/api/workspace?resource=problems&slim=1&'+query:null,acceptBundle);

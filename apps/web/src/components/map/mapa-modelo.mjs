@@ -22,7 +22,7 @@ export function limitesRampa(max) {
   return [1, 2, 3, 4, 5].map(p => ({paso: p, desde: p === 1 ? 1 : Math.floor(((p - 1) * max) / 5) + 1, hasta: Math.floor((p * max) / 5)})).filter(l => l.desde <= l.hasta);
 }
 export const num = n => (n == null ? '—' : Number(n).toLocaleString('en-US'));
-export const pctTxt = p => (p == null ? '—' : String(p).replace('.', '.') + ' %');
+export const pctTxt = (p, idioma) => (p == null ? '—' : String(p) + (idioma === 'en' ? '%' : ' %'));
 
 export function textoCobertura(c) {
   if (!c) return 'No disponible ahora.';
@@ -33,8 +33,8 @@ export function textoOcultos(o) {
   return `${num(o.estados)} ${o.estados === 1 ? 'estado con menos' : 'estados con menos'} de ${o.minimo} casos ${o.estados === 1 ? 'no se muestra' : 'no se muestran'} por separado (${num(o.casos)} casos): protege la privacidad de los clientes.`;
 }
 /** Tabla accesible equivalente: una fila por estado visible. */
-export function filasTabla(estados, total) {
-  return estados.map(e => ({clave: e.clave, estado: e.nombre, pais: e.pais === 'US' ? 'Estados Unidos' : 'México', casos: e.n, pct: total > 0 ? Math.round((e.n * 1000) / total) / 10 : null}));
+export function filasTabla(estados, total, idioma) {
+  return estados.map(e => ({clave: e.clave, estado: e.nombre, pais: e.pais === 'US' ? (idioma === 'en' ? 'United States' : 'Estados Unidos') : (idioma === 'en' ? 'Mexico' : 'México'), casos: e.n, pct: total > 0 ? Math.round((e.n * 1000) / total) / 10 : null}));
 }
 export const MENSAJE_COMPLETO = 'Para un mapa completo se necesita la dirección de envío de cada pedido: se activa al conectar Amazon, Walmart y Shopify (ver guía de accesos).';
 export function resumenEstado(e) {

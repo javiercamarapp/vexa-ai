@@ -31,12 +31,12 @@ export function CategoryVolume({rows,reason,unavailable=false,limit=8,title,kind
  const sub=noData?(load?t('tr.ui.catSubVacio'):null):totalIncidencias!==undefined&&totalIncidencias!==view.total?t('tr.ui.catSubDe',{n:nf.format(view.total),total:nf.format(totalIncidencias),k:nf.format(view.sorted.length)}):t('tr.ui.catSub',{n:nf.format(view.total),k:nf.format(view.sorted.length)});
  const head=<div className="card-title"><div><h2>{titulo}</h2>{sub&&<p>{sub}</p>}</div>{!noData&&<KindBadge kind={kind}/>}</div>;
  const max=view.top[0]?.count??1;
- const items:BarListItem[]=view.top.map(r=>({key:r.category,label:etiquetaCategoria(r.category),value:r.count*100/max,display:nf.format(r.count),kind,c:7}));
+ const items:BarListItem[]=view.top.map(r=>({key:r.category,label:etiquetaCategoria(r.category,t),value:r.count*100/max,display:nf.format(r.count),kind,c:7}));
  const content=<div className="stack">
   {view.hayRuido&&<NoiseToggle incluir={incluir} onChange={setIncluir} ocultos={view.ocultas} unidad={t('tr.ui.incidencias')}/>}
   {items.length?<BarList items={items} wrap c={7} sinMeta/>:<p className="state">{t('tr.ui.catSoloAuto')}</p>}
   {view.sorted.length>view.top.length&&<p className="card-lead">{t('tr.ui.catMuestra',{n:view.top.length,total:nf.format(view.sorted.length)})}</p>}
-  {view.sorted.length>0&&<details className="chart-table"><summary>{t('cfo.serie.verTabla')}</summary><div className="table-wrap" tabIndex={0} role="region" aria-label={t('tr.ui.tabla',{titulo})}><table><thead><tr><th scope="col">{t('tr.ui.thCategoria')}</th><th scope="col" className="num">{t('tr.ui.thIncidencias')}</th></tr></thead><tbody>{view.sorted.map(r=><tr key={r.category}><th scope="row">{etiquetaCategoria(r.category)}</th><td className="num">{nf.format(r.count)}</td></tr>)}</tbody></table></div></details>}
+  {view.sorted.length>0&&<details className="chart-table"><summary>{t('cfo.serie.verTabla')}</summary><div className="table-wrap" tabIndex={0} role="region" aria-label={t('tr.ui.tabla',{titulo})}><table><thead><tr><th scope="col">{t('tr.ui.thCategoria')}</th><th scope="col" className="num">{t('tr.ui.thIncidencias')}</th></tr></thead><tbody>{view.sorted.map(r=><tr key={r.category}><th scope="row">{etiquetaCategoria(r.category,t)}</th><td className="num">{nf.format(r.count)}</td></tr>)}</tbody></table></div></details>}
   {!noData&&<p className="card-lead" data-testid="unidad-categorias">{UNIDADES.incidencias}</p>}{foot}
  </div>;
  return <section className="card" aria-label={titulo}>

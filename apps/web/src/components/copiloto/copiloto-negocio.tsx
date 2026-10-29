@@ -1,8 +1,9 @@
 'use client';
 import {useCallback, useEffect, useMemo, useState} from 'react';
+import {formatoNum} from '../../lib/formato/idioma.mjs';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {useJson} from '../ui/use-json';
-import {useT} from '../i18n/proveedor';
+import {useIdioma, useT} from '../i18n/proveedor';
 import type {Clave} from '../../lib/i18n';
 import {useAcceso} from '../workspace/access';
 import {Refresh} from '../ui/button';
@@ -31,7 +32,7 @@ import './copiloto.css';
 type Informe = {status: 'ok'; report: CfoReport; synthetic: boolean} | {status: 'empty' | 'timeout'; synthetic?: boolean};
 const acepta = (j: unknown): Informe | null => { const d = (j as {data?: Informe})?.data; return d && (d.status === 'ok' || d.status === 'empty' || d.status === 'timeout') ? d : null; };
 type Presupuesto = {spent: string; cap: string; pctBps: number | null; exhausted: boolean};
-const usd = (micro: string) => 'US$ ' + new Intl.NumberFormat('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(Number(BigInt(micro) / 10000n) / 100);
+const usd = (micro: string) => 'US$ ' + formatoNum({minimumFractionDigits: 2, maximumFractionDigits: 2}).format(Number(BigInt(micro) / 10000n) / 100);
 const ETIQUETAS_CFO = Object.fromEntries(CFO_TOOLS.map((t: {name: string; label: string}) => [t.name, t.label]));
 const DESCRIPCIONES_CFO = Object.fromEntries(CFO_TOOLS.map((t: {name: string; description: string}) => [t.name, t.description]));
 type Estado = {kind: 'cargando'} | {kind: 'error'} | {kind: 'sin_acceso'} | {kind: 'listo'; base: AgentState};
@@ -47,7 +48,7 @@ function UsoDelMes({p}: {p: Presupuesto | 'error' | null}) {
 
 /** «Modo copiloto»: el shell de «Pregúntale a tus datos» con un briefing estructurado del área como primer bloque. Ver docs/COPILOTO-NEGOCIO.md. */
 export function CopilotoNegocio({modo: clave, organization, roleOverride, query = ''}: {modo: keyof typeof MODOS | string; organization?: string; roleOverride?: string; query?: string}) {
-  const t = useT(), modo = MODOS[clave as keyof typeof MODOS], tituloModo = (['cfo', 'refunds', 'general'].includes(modo.clave) ? t(('cop.modo.' + modo.clave) as Clave) : modo.titulo), {role} = useAcceso(), permitido = puedeUsarModo(modo, roleOverride ?? role);
+  const t = useT(), idioma = useIdioma(), modo = MODOS[clave as keyof typeof MODOS], tituloModo = (['cfo', 'refunds', 'general'].includes(modo.clave) ? t(('cop.modo.' + modo.clave) as Clave) : modo.titulo), {role} = useAcceso(), permitido = puedeUsarModo(modo, roleOverride ?? role);
   const pathname = usePathname(), router = useRouter(), sp = useSearchParams(), esCfo = modo.consulta === 'cfo';
   const [estado, setEstado] = useState<Estado>({kind: 'cargando'}), [intento, setIntento] = useState(0), [presupuesto, setPresupuesto] = useState<Presupuesto | 'error' | null>(null), [sinAccesoMotor, setSinAccesoMotor] = useState(false), [verInforme, setVerInforme] = useState(false);
   const rep = useJson<Informe>(permitido && esCfo && modo.endpointInforme ? modo.endpointInforme + query : null, acepta);
@@ -75,7 +76,7 @@ export function CopilotoNegocio({modo: clave, organization, roleOverride, query 
   }, [permitido, esCfo, modo, query]);
 
   const informe = rep.data, moneda = informe?.status === 'ok' ? monedaElegida(informe.report, sp?.get('currency')) : null;
-  const brief = useMemo(() => informe?.status === 'ok' && moneda ? briefingCfo(informe.report, moneda) : null, [informe, moneda]);
+  const brief = useMemo(() => informe?.status === 'ok' && moneda ? briefingCfo(informe.report, moneda, idioma) : null, [informe, moneda, idioma]);
   const cambiaMoneda = useCallback((m: string) => { router.replace(pathname + '?' + parametrosConMoneda(sp?.toString(), m), {scroll: false}); }, [sp, router, pathname]);
   useEffect(() => { // Escape vuelve al chat desde el informe abierto (sin pisar el Escape de un menú o diálogo abierto)
     if (!verInforme) return;

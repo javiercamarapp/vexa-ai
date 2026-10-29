@@ -31,7 +31,7 @@ export function ProcederDrawer({open,onClose,item,miembros,busy,operate}:Comun){
  const [owner,setOwner]=useState(item.ownerId??''),[due,setDue]=useState(hoyMas(7)),[comment,setComment]=useState('');
  const errores=validarAprobacion({ownerId:owner,dueDate:due,comment});const clave=useClave(JSON.stringify([item.id,item.version,owner,due,comment]));
  const endpoint='/api/recommendations/'+item.id+'/flow';
- return <Drawer open={open} onClose={onClose} size="md" title={t('tr.recs.procTitulo')} subtitle={etiquetaCategoria(item.title)}
+ return <Drawer open={open} onClose={onClose} size="md" title={t('tr.recs.procTitulo')} subtitle={etiquetaCategoria(item.title,t)}
   footer={<>{cancelar(onClose,t)}<div className={css.primario}><ConfirmationDialog triggerLabel={t('tr.recs.procBoton')} title={t('tr.recs.procPregunta')} description={t('tr.recs.procDesc',{quien:persona(owner,miembros,t),fecha:due})} confirmLabel={t('tr.recs.procSi')} disabled={busy||errores.length>0} onConfirm={async()=>{if(await operate(endpoint,{operation:'approve',expectedVersion:item.version,ownerId:owner,dueDate:due,comment:comment.trim(),requestKey:clave()}))onClose();}}/></div></>}>
   <div className="ov-form"><Resumen item={item} paso={0}/>
    <p className="ov-impact">{t('tr.recs.procA')} <strong>{t('tr.recs.procB')}</strong>.</p>
@@ -50,7 +50,7 @@ export function AjustarDrawer({open,onClose,item,miembros,busy,operate,prioridad
  const lista=supuestos.split(/\r?\n/).map(v=>v.trim()).filter(Boolean);
  const errores=validarAjuste({action,rationale,preconditions:lista,ownerId:owner||null,priority:prio,comment});const clave=useClave(JSON.stringify([item.id,item.version,action,rationale,lista,owner,prio,comment]));
  const endpoint='/api/recommendations/'+item.id+'/flow';
- return <Drawer open={open} onClose={onClose} size="md" title={t('tr.recs.ajustarTitulo')} subtitle={etiquetaCategoria(item.title)}
+ return <Drawer open={open} onClose={onClose} size="md" title={t('tr.recs.ajustarTitulo')} subtitle={etiquetaCategoria(item.title,t)}
   footer={<>{cancelar(onClose,t)}<Button type="submit" form={item.id+'-ajuste'} variant="primary" disabled={busy||errores.length>0}>{t('tr.recs.guardarAjuste')}</Button></>}>
   <form id={item.id+'-ajuste'} className="ov-form" aria-label={t('tr.recs.ajustarAria')} onSubmit={e=>{e.preventDefault();if(errores.length||busy)return;void operate(endpoint,{operation:'adjust',expectedVersion:item.version,action,rationale,preconditions:lista,ownerId:owner||null,priority:prio,comment,requestKey:clave()}).then(ok=>{if(ok)onClose();});}}>
 <Resumen item={item} paso={0}/>   <p className="ov-impact">{t('tr.recs.ajusteNota')}</p>
@@ -69,7 +69,7 @@ export function AjustarDrawer({open,onClose,item,miembros,busy,operate,prioridad
 export function DescartarDrawer({open,onClose,item,busy,operate,reabrir=false}:Omit<Comun,'miembros'> & {reabrir?:boolean}){
  const t=useT();
  const [reason,setReason]=useState('');const errores=validarDescarte({reason});const endpoint='/api/recommendations/'+item.id;
- return <Drawer open={open} onClose={onClose} size="md" title={reabrir?t('tr.recs.reabrirTitulo'):t('tr.recs.descartarTitulo')} subtitle={etiquetaCategoria(item.title)}
+ return <Drawer open={open} onClose={onClose} size="md" title={reabrir?t('tr.recs.reabrirTitulo'):t('tr.recs.descartarTitulo')} subtitle={etiquetaCategoria(item.title,t)}
   footer={<>{cancelar(onClose,t)}<div className={css.primario}><ConfirmationDialog triggerLabel={reabrir?t('acc.reabrirRec'):t('acc.descartarRec')} title={reabrir?t('tr.recs.reabrirPregunta'):t('tr.recs.descartarPregunta')} description={reabrir?t('tr.recs.reabrirDesc'):t('tr.recs.descartarDesc')} confirmLabel={reabrir?t('tr.recs.reabrirSi'):t('tr.recs.descartarSi')} disabled={busy||errores.length>0} onConfirm={async()=>{if(await operate(endpoint,{operation:'state',expectedVersion:item.version,status:reabrir?'proposed':'dismissed',reason}))onClose();}}/></div></>}>
   <div className="ov-form"><Resumen item={item} paso={0}/>
    <Campo id={item.id+'-ds-reason'} etiqueta={reabrir?t('tr.recs.motivoReabrir'):t('tr.recs.motivoDescartar')} ayuda={t('tr.recs.minCaracteres',{n:MIN_COMENTARIO})}><textarea id={item.id+'-ds-reason'} required minLength={MIN_COMENTARIO} maxLength={2000} value={reason} onChange={e=>setReason(e.target.value)} disabled={busy}/></Campo>
@@ -83,7 +83,7 @@ export function ResultadoDrawer({open,onClose,item,busy,operate}:Omit<Comun,'mie
  const t=useT();
  const [outcome,setOutcome]=useState(''),[note,setNote]=useState('');const errores=validarResultado({outcome,note});const clave=useClave(JSON.stringify([item.id,item.version,outcome,note]));
  const endpoint='/api/recommendations/'+item.id+'/flow';
- return <Drawer open={open} onClose={onClose} size="md" title={t('tr.recs.regResTitulo')} subtitle={etiquetaCategoria(item.title)}
+ return <Drawer open={open} onClose={onClose} size="md" title={t('tr.recs.regResTitulo')} subtitle={etiquetaCategoria(item.title,t)}
   footer={<>{cancelar(onClose,t)}<div className={css.primario}><ConfirmationDialog triggerLabel={t('acc.registrarRes')} title={t('tr.recs.regResPregunta')} description={t('tr.recs.regResDesc')} confirmLabel={t('tr.recs.regResSi')} disabled={busy||errores.length>0} onConfirm={async()=>{if(await operate(endpoint,{operation:'resolve',expectedVersion:item.version,outcome,note,requestKey:clave()}))onClose();}}/></div></>}>
   <div className="ov-form"><Resumen item={item} paso={3}/>
    <p className="ov-impact">{t('tr.recs.seResolvioTexto')}</p>

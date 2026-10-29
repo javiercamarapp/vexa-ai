@@ -1,11 +1,11 @@
-export function compactEs(n: number): string;
+export function compactEs(n: number, idioma?: string): string;
 export function niceScale(max: number, opts?: {integer?: boolean}): {max: number; ticks: number[]};
 export function esConteoPequeno(values: (number | null | undefined)[]): boolean;
 export const MESES: string[];
-export function mesAbrev(key: string): string;
+export function mesAbrev(key: string, idioma?: string): string;
 export function geometriaColumnas(n: number, plotW: number, opts?: {ratio?: number; max?: number; min?: number}): {slot: number; bw: number; offset: number};
 export function cadaCuantas(n: number, plotW: number, minPx?: number): number;
-export function variacionVsAnterior(puntos: {value: number | null; partial?: boolean}[], i: number, modo?: 'pct' | 'pp'): {dir: 'up' | 'down' | 'flat'; texto: string} | null;
+export function variacionVsAnterior(puntos: {value: number | null; partial?: boolean}[], i: number, modo?: 'pct' | 'pp', idioma?: string): {dir: 'up' | 'down' | 'flat'; texto: string} | null;
 export function indicesEtiquetados(puntos: {value: number | null; partial?: boolean}[]): number[];
 export function posicionTooltip(x: number, ancho: number, mitadTip?: number, pad?: number): number;
 export function colocarTooltip(o: {ax: number; ay: number; w: number; h: number; vw: number; vh: number; modo?: 'lado' | 'arriba'; sep?: number; margen?: number; ty?: number}): {x: number; y: number; lado: 'izquierda' | 'derecha' | 'centro'; vertical: 'lado' | 'arriba' | 'abajo'};

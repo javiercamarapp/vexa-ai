@@ -1,11 +1,12 @@
 // Estado legible de cada conexión, derivado de los MISMOS datos que muestra el Explorador (resumen de cobertura, /api/coverage).
 // Reglas: desconocido no es cero; «rechazadas» de HubSpot nunca se muestra sin desglose (los registros solo de metadatos no son conversaciones perdidas);
 // un archivo ya cargado no está «pendiente». Sin cobertura (consulta fuera de tiempo) cae al estado de salud sin inventar nada.
-const nf=new Intl.NumberFormat('es-MX');
-/** 7930 -> «7,9 mil»; 482136 -> «482 mil»; 1_200_000 -> «1,2 millones». Menos de 1000 va exacto. */
-export function mil(n){
+import {nf,compacto,porcentaje} from '../formato/idioma.mjs';
+/** 7930 -> «7,9 mil»; 482136 -> «482 mil»; 1_200_000 -> «1,2 millones» (en inglés: «7.9K», «482K», «1.2M»). Menos de 1000 va exacto. */
+export function mil(n,idioma){
  if(!Number.isFinite(n))return '—';
  if(n<1000)return nf.format(n);
+ if(idioma==='en')return compacto(n,'en',n<1e5||n>=1e6?1:0);
  if(n>=1e6)return String(Math.round(n/1e5)/10).replace('.',',')+' millones';
  const k=Math.round(n/100)/10;return String(k>=100?Math.round(k):k).replace('.',',')+' mil';
 }
@@ -22,7 +23,7 @@ const saludOk=row=>['healthy','running','partial'].includes(row.state)&&row.erro
  * @returns {{ok:boolean,tone:'ok'|'warn'|'bad'|'muted',chip:string,estado:string,lineas:string[],anillo:{valor:number,pct:number}|null,ultimo:{rotulo:string,valor:string|null,vacio:string}}}
  */
 const tr=(t,clave,es,vars)=>t?t(clave,vars):es;
-export function estadoConexion(row,sources,t){
+export function estadoConexion(row,sources,t,idioma){
  const src=sources?.find(s=>s.key===CLAVE_COBERTURA[row.source]&&s.loaded&&s.status==='ok')??null;
  const vacio=tr(t,'conx.est.vacio','Aún no hay una sincronización completa registrada');
  if(ARCHIVO.has(row.source)){
@@ -45,10 +46,10 @@ export function estadoConexion(row,sources,t){
   const enCurso=src.openImports>0,bd=src.rejectionBreakdown?.status==='ok'?src.rejectionBreakdown:null;
   if(enCurso&&ok)estado=tr(t,'conx.est.impCurso',`${base} · importación en curso`,{base});
   if(bd){
-   const aprox=n=>n>=1000?'≈'+mil(n):mil(n),parte=bd.incorporatedShare===null?'':` (≈${Math.round(bd.incorporatedShare)} %)`;
+   const aprox=n=>n>=1000?'≈'+mil(n,idioma):mil(n,idioma),parte=bd.incorporatedShare===null?'':` (≈${porcentaje(Math.round(bd.incorporatedShare),idioma,{decimales:0})})`;
    if(bd.incorporatedShare!==null)anillo={valor:bd.incorporatedShare/100,pct:Math.round(bd.incorporatedShare)};
-   lineas.push(tr(t,'conx.est.convInc',`${mil(bd.conversationIncorporated??src.incorporated)} conversaciones incorporadas de ${aprox(bd.conversationRows??0)} con conversación${parte}`,{inc:mil(bd.conversationIncorporated??src.incorporated),de:aprox(bd.conversationRows??0),parte}));
-   if((bd.metadataOnly??0)>0)lineas.push(tr(t,'conx.est.soloMeta',`${mil(bd.metadataOnly)} registros solo de metadatos (sin mensajes; no son conversaciones perdidas)`,{n:mil(bd.metadataOnly)}));
+   lineas.push(tr(t,'conx.est.convInc',`${mil(bd.conversationIncorporated??src.incorporated,idioma)} conversaciones incorporadas de ${aprox(bd.conversationRows??0)} con conversación${parte}`,{inc:mil(bd.conversationIncorporated??src.incorporated,idioma),de:aprox(bd.conversationRows??0),parte}));
+   if((bd.metadataOnly??0)>0)lineas.push(tr(t,'conx.est.soloMeta',`${mil(bd.metadataOnly,idioma)} registros solo de metadatos (sin mensajes; no son conversaciones perdidas)`,{n:mil(bd.metadataOnly,idioma)}));
    if((bd.defects??0)>0)lineas.push(tr(t,'conx.est.defecto',`${nf.format(bd.defects)} con defecto de validación`,{n:nf.format(bd.defects)}));
   }else lineas.push(tr(t,'conx.est.sinDesglose',`${nf.format(src.incorporated)} de ${nf.format(src.total)} filas leídas están incorporadas; el desglose del resto no está disponible ahora.`,{inc:nf.format(src.incorporated),total:nf.format(src.total)}));
   if(src.pending>0)lineas.push(tr(t,'conx.est.filasPend',`${nf.format(src.pending)} filas pendientes de procesar`,{n:nf.format(src.pending)}));
@@ -59,7 +60,7 @@ export function estadoConexion(row,sources,t){
 }
 const NOMBRE_FUENTE={hubspot:'HubSpot',csv:'Archivos CSV',zendesk:'Zendesk'};
 /** Texto de base de una cifra de importaciones: «Archivos CSV 482,136 + HubSpot 8,291» (la suma por fuente que explica el total; cada tarjeta de Fuentes muestra UNA fuente). */
-export const desgloseImportaciones=(porFuente,campo='incorporadas')=>(porFuente??[]).map(f=>`${f.nombre} ${new Intl.NumberFormat('es-MX').format(f[campo])}`).join(' + ');
+export const desgloseImportaciones=(porFuente,campo='incorporadas')=>(porFuente??[]).map(f=>`${f.nombre} ${nf.format(f[campo])}`).join(' + ');
 /** KPIs de Importaciones desde el resumen de cobertura (todas las cargas, no solo las listadas). Fuentes que pasan por importaciones: HubSpot, CSV y Zendesk. */
 export function agregadoImportaciones(sources){
  if(!Array.isArray(sources))return null;

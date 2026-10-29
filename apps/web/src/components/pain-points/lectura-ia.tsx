@@ -1,7 +1,8 @@
 'use client';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {CorridaIA,EstadoIA,LecturaIA} from '../../../../../packages/workspace-service/pain-points-ia.d.mts';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
+import {diaMes} from '../../lib/formato/idioma.mjs';
 import type {Clave} from '../../lib/i18n';
 import {Button} from '../ui/button';
 import {KindBadge} from '../ui/kind-badge';
@@ -20,7 +21,7 @@ const ESTADO_CONSENSO:Record<string,Clave>={acuerdo:'tr.pp.consAcuerdo',acuerdo_
 const MOTIVO:Record<string,Clave>={json_invalido:'tr.pp.mJson',severidad_invalida:'tr.pp.mSeveridad',confianza_invalida:'tr.pp.mConfianza',forma_invalida:'tr.pp.mForma',categoria_invalida:'tr.pp.mCategoria',propuesta_invalida:'tr.pp.mPropuesta',pii_en_salida:'tr.pp.mPii',monto_no_sustentado:'tr.pp.mMonto',proveedor_sin_respuesta:'tr.pp.mProveedor'};
 const ERRORES:Record<string,Clave>={ia_apagada:'tr.pp.eApagada',pii_blocked:'tr.pp.ePii',pain_point_sin_dato:'tr.pp.eSinDato',role_insufficient:'tr.pp.eRol',ia_no_migrada:'tr.pp.eNoMigrada'};
 const ROL_TXT:Record<string,Clave>={causa_raiz:'tr.pp.rolCausa',impacto:'tr.pp.rolImpacto',accion:'tr.pp.rolAccion'};
-const fecha=(iso:string)=>new Date(iso).toLocaleDateString('es-MX',{day:'numeric',month:'short'});
+const fecha=(iso:string,idioma:string)=>diaMes(iso,idioma,{largo:false})??'';
 
 function Tarjeta({id,nombre,pregunta,lectura}:{id:string;nombre:string;pregunta:string;lectura?:LecturaIA}){
  const t=useT(),c=lectura?.estado==='ok'?lectura.contenido:null;
@@ -54,7 +55,7 @@ function Resultado({corrida}:{corrida:CorridaIA}){
 /** «Lectura de IA» del drawer: tres tarjetas + consenso. Siempre rotulada Inferido; solo propone, nunca ejecuta. Sin botón «Actualizar»: «Analizar» corre (o completa) el análisis y respeta el tope semanal. */
 export function LecturaIA({puntoId}:{puntoId:string}){return <LecturaPorPunto key={puntoId} puntoId={puntoId}/>;}
 function LecturaPorPunto({puntoId}:{puntoId:string}){
- const t=useT();
+ const t=useT(),idioma=useIdioma();
  const base='/api/pain-points/'+encodeURIComponent(puntoId)+'/ia';
  const e=useJson<EstadoIA>(base,acepta);
  const [post,setPost]=useState<EstadoIA|null>(null),[corriendo,setCorriendo]=useState(false),[aviso,setAviso]=useState<string|null>(null);
@@ -90,7 +91,7 @@ function LecturaPorPunto({puntoId}:{puntoId:string}){
   {r?.enCurso&&<Notice tone="info">{t('tr.pp.enCurso')}</Notice>}
   {r&&!r.tope&&!r.enCurso&&r.reutilizado&&<Notice tone="info">{t('tr.pp.reutilizado')}</Notice>}
   {r&&r.tope&&r.nuevas>0&&<Notice tone="warn" title={t('tr.pp.incompletoT')}>{t('tr.pp.incompletoB',{n:r.nuevas})}</Notice>}
-  {esUltima&&corrida&&<Notice tone="info">{t('tr.pp.ultimaOtroCorte',{corte:corrida.corte.slice(0,10),fecha:fecha(corrida.actualizadoEn)})}</Notice>}
+  {esUltima&&corrida&&<Notice tone="info">{t('tr.pp.ultimaOtroCorte',{corte:corrida.corte.slice(0,10),fecha:fecha(corrida.actualizadoEn,idioma)})}</Notice>}
   {corrida?<>
    <Resultado corrida={corrida}/>
    <div className="pp-ia-cards">{d.roles.map(ro=><Tarjeta key={ro.id} id={ro.id} nombre={ro.nombre} pregunta={ro.pregunta} lectura={corrida.lecturas.find(l=>l.rol===ro.id)}/>)}</div>

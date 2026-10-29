@@ -1,7 +1,7 @@
 'use client';
 import {useId,useState} from 'react';
 import type {Recomendacion} from '../../../../../packages/workspace-service/brechas.mjs';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
 import {Button} from '../ui/button';
 import {KindBadge} from '../ui/kind-badge';
 import {Icon} from '../ui/icons';
@@ -16,10 +16,10 @@ export const CLAVE_BORRADOR='vexa:borrador-recomendacion';
 
 /** Estimador con candado (mismos campos y reglas que «Fuga de reembolsos»): sin supuestos tecleados no hay número. La base es el dinero devuelto observado de la recomendación elegida. */
 export function EstimadorBrecha({recs,onSupuestos}:{recs:Recomendacion[];onSupuestos:(s:Supuesto|null)=>void}){
- const t=useT();
+ const t=useT(),idioma=useIdioma();
  const [sel,setSel]=useState(''),[pP,setPP]=useState(''),[pR,setPR]=useState('');
  const id=useId(),elegidas=recs.filter(r=>r.impacto.usdMinor&&r.tipo!=='cross_sell'&&r.tipo!=='empujar'),r0=elegidas.find(r=>r.id===sel)??elegidas[0]??null;
- const e={pP:porcentaje(pP),pR:porcentaje(pR)};
+ const e={pP:porcentaje(pP,idioma),pR:porcentaje(pR,idioma)};
  const est=estimar({baseUsdMinor:r0?.baseMinor??null,ticketsRepiten:null,pctProveedor:e.pP,pctRecuperable:e.pR,costoContacto:{vacio:true},pctEvitable:{vacio:true}});
  return <div className="fg-est">
   <p className="fg-intro">{t('tr.brecha.estIntro')}</p>

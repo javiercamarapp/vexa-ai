@@ -34,7 +34,7 @@ export function BorradoresDrawer({open,onClose,item,miembros}:{open:boolean;onCl
   return()=>{abort.abort();hecho.current=false;};
  // eslint-disable-next-line react-hooks/exhaustive-deps
  },[open]);
- return <Drawer open={open} onClose={onClose} width={620} title={t('tr.recs.borradoresTitulo')} subtitle={etiquetaCategoria(item.title)}>
+ return <Drawer open={open} onClose={onClose} width={620} title={t('tr.recs.borradoresTitulo')} subtitle={etiquetaCategoria(item.title,t)}>
   <div className="stack">
    <p className={css.aviso} role="note"><strong>{t('tr.recs.nadaEnviado')}</strong>{t('tr.recs.borradoresAviso')}</p>
    {estado?.fase==='cargando'&&<p className="state" role="status">{t('tr.recs.preparando')}</p>}

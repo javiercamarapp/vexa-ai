@@ -1,6 +1,6 @@
 'use client';
 import {ConMarca} from '../ui/brand-mark';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
 import type {Clave,Traductor} from '../../lib/i18n';
 import {Fragment,useId} from 'react';
 import type {ReactNode} from 'react';
@@ -144,15 +144,15 @@ export function SeccionRepetido({v,onReintentar}:{v:FugaVista;onReintentar:()=>v
    <div><b className="fg-stat">{pct(c.pctTresOMas)}</b><span>{tx('tr.fuga.statTres',{k:3,n:num(c.contactosTresOMas90)})}</span></div>
    <div><b className="fg-stat">{num(c.ticketsQueRepiten90)}</b><span>{tx('tr.fuga.statTickets',{d:90})}</span></div>
   </div>
-  {c.porCategoria.length>0&&<><h3 className="fg-h3">{tx('fuga.repCategorias')}</h3><ul className="fg-rank">{c.porCategoria.map(x=><li key={x.categoria}><span>{etiquetaCategoria(x.categoria)}</span><b>{pct(x.pct)}</b><small>{tx('tr.fuga.deClientes',{a:num(x.repiten),b:num(x.clientes)})}</small></li>)}</ul></>}
+  {c.porCategoria.length>0&&<><h3 className="fg-h3">{tx('fuga.repCategorias')}</h3><ul className="fg-rank">{c.porCategoria.map(x=><li key={x.categoria}><span>{etiquetaCategoria(x.categoria,tx)}</span><b>{pct(x.pct)}</b><small>{tx('tr.fuga.deClientes',{a:num(x.repiten),b:num(x.clientes)})}</small></li>)}</ul></>}
   <p className="fg-pie">{c.pctSinVincular!==null?tx('tr.fuga.sinVincular',{pct:pct(c.pctSinVincular)}):''}{tx('tr.fuga.resumenCalc',{fecha:String(c.refreshedAt).slice(0,10),periodo:tx('tr.fuga.periodoExtr',{anio:2026})})}</p>
  </div>;
 }
 
 // ---- S7: qué cambió ----
 export function SeccionCambios({v}:{v:FugaVista}){
- const tx=useT();
- const fr=frasesCambios(v),ex=excluidosTexto(v);
+ const tx=useT(),idioma=useIdioma();
+ const fr=frasesCambios(v,idioma),ex=excluidosTexto(v,idioma);
  if(!fr.length)return <Vacio>{tx('fuga.cambiosVacio')}</Vacio>;
  return <div><ul className="fg-cambios">{fr.map(f=><li key={f.clave}>{f.texto}</li>)}</ul>
   {ex.length>0&&<p className="fg-pie">{tx('fuga.noSeUsan',{x:ex.join('; ')})}</p>}</div>;

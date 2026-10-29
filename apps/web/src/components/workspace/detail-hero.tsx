@@ -32,7 +32,7 @@ export function DetailHero({data,evidence,nota,children,esperando=false,registra
  ]:[];
  return <>
   <section className="card hero" aria-label={tx('tr.ws.dhResumen')}>
-   <div className="hero-main"><div className="hero-title"><StatusChip tone={st.t}>{tx(st.l)}</StatusChip><h2 className="detail-title">{data.kind==='problem'?etiquetaCategoria(data.title):data.title}</h2><p className="hero-sub">{(()=>{const [a,b]=tx('tr.ws.dhCorte',{fecha:'\u0000'}).split('\u0000');return <>{a}<time>{data.as_of.replace('T',' ').replace(/\.\d{3}Z$/,' UTC')}</time>{b}</>;})()}</p></div>
+   <div className="hero-main"><div className="hero-title"><StatusChip tone={st.t}>{tx(st.l)}</StatusChip><h2 className="detail-title">{data.kind==='problem'?etiquetaCategoria(data.title,tx):data.title}</h2><p className="hero-sub">{(()=>{const [a,b]=tx('tr.ws.dhCorte',{fecha:'\u0000'}).split('\u0000');return <>{a}<time>{data.as_of.replace('T',' ').replace(/\.\d{3}Z$/,' UTC')}</time>{b}</>;})()}</p></div>
     <div className="hero-figs">
      {metrics.slice(0,2).map((m,i)=><Fig key={i} label={m.label} value={money(m)} kind={{metric:m}} note={m.amount_minor===null&&m.known_subtotal!==null?tx('tr.ws.dhSubtotal',{x:formatMinorUnits(m.known_subtotal,m.currency,m.exponent)}):undefined}/>)}
      {data.kind==='customer'&&<Fig label={tx('tr.ws.dhOrdenesAtr')} value={nf.format(data.orders.length)} kind={{kind:'observed'}}/>}

@@ -11,7 +11,7 @@ import {Icon} from '../ui/icons';
 import styles from './query-card.module.css';
 
 const missingLabels:Record<string,Clave>={basis:'exp.qBase',currency:'exp.qMoneda',period:'exp.qPeriodo',published_scope:'exp.qPubAlcance',measure:'exp.qMedida'};
-const suggestions=['¿Qué reembolsos constan en este corte?','¿Cuánto se registró en órdenes en este periodo?','¿Cuál es la cobertura de los importes?'];
+const suggestions:Clave[]=['tr.ge.sugReembolsos','tr.ge.sugOrdenes','tr.ge.sugCobertura'];
 const headline=(status:ExplorerQuestion['status']):Clave=>status==='answered'?'exp.qHAnswered':status==='clarification_required'?'exp.qHClarif':status==='abstained'?'exp.qHAbstained':'exp.qHOtro';
 /** «Consultar» lleva al chat «Pregúntale a tus datos» con la pregunta ya enviada: ahí vive el agente, con su pensamiento en vivo y su respuesta. */
 export function QueryCard({question,onChange,answer}:{question:string;onChange:(value:string)=>void;onSubmit:()=>void;busy:boolean;answer:ExplorerQuestion|null}){
@@ -26,7 +26,7 @@ export function QueryCard({question,onChange,answer}:{question:string;onChange:(
     <span className={styles.ro} title={tx('exp.qSoloLecturaTip')}><Icon name="lock" size={12}/>{tx('exp.qSoloLectura')}</span>
     <Button type="submit" variant="primary" size="sm" disabled={!question.trim()} aria-label={tx('exp.qConsultarAria')} icon={<Arrow/>}>{tx('exp.qConsultar')}</Button>
    </div>
-   <div className={styles.suggestions} role="group" aria-label={tx('exp.qSugAria')}>{suggestions.map(text=><Button key={text} size="sm" variant="secondary" className={styles.chip} onClick={()=>alChat(text)}>{text}</Button>)}</div>
+   <div className={styles.suggestions} role="group" aria-label={tx('exp.qSugAria')}>{suggestions.map(clave=>{const text=tx(clave);return <Button key={clave} size="sm" variant="secondary" className={styles.chip} onClick={()=>alChat(text)}>{text}</Button>;})}</div>
   </form>
   {answer&&<div className={styles.conversation} aria-live="polite">
    <p className={styles.question}>{answer.question}</p>

@@ -1,2 +1,4 @@
 import {RovaqCargando} from '../../../components/rovaq-cargando';
-export default function Loading(){return <RovaqCargando mensaje="Cargando tu espacio de trabajo…"/>;}
+import {idiomaActual} from '../../../lib/i18n/servidor';
+import {traducir} from '../../../lib/i18n';
+export default async function Loading(){return <RovaqCargando mensaje={traducir(await idiomaActual(),'tr.ge.cargandoEspacio')}/>;}

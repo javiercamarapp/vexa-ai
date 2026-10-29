@@ -10,7 +10,7 @@ const accept=(j:unknown)=>{const d=(j as {data?:{availability?:string;sources?:u
 /** Panel «Estado de sincronización»: por fuente su método de entrada, último éxito, siguiente corrida y error; y cuándo se recalculó cada cálculo. Solo lectura de /api/freshness. */
 export function EstadoSincronizacion(){
  const tx=useT(),f=useJson('/api/freshness',accept);
- const v=useMemo(()=>filasSincronizacion(f.data),[f.data]);
+ const v=useMemo(()=>filasSincronizacion(f.data,Date.now(),tx),[f.data,tx]);
  if(f.busy&&!f.data)return null;
  return <section aria-labelledby="ds-sync-t" data-testid="estado-sincronizacion">
   <div className="card-title"><div><h2 id="ds-sync-t">{tx('tr.datos.syncTitulo')}</h2><p>{tx('tr.datos.syncSub')}</p></div></div>

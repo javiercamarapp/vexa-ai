@@ -1,5 +1,5 @@
 'use client';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
 import {RovaqCargando} from '../rovaq-cargando';
 import {useState} from 'react';
 import {useSearchParams} from 'next/navigation';
@@ -30,8 +30,8 @@ export function bajar(a:Archivo){
 
 /** Pantalla «Fuga de reembolsos»: titular del periodo, KPI en color, Pareto top 10 con tabla, expediente por SKU (qué se sabe | qué no se sabe), Tracker, contacto repetido, qué cambió y estimador con supuestos. */
 export function FugaPantalla({organization,embebido=false}:{organization?:string;/** Dentro del copiloto de negocio: sin PageHeader del espacio de trabajo; el h1 es el titular de la pantalla. */embebido?:boolean}){
- const tx=useT(),sp=useSearchParams(),f=useFuga(endpointFuga(sp?.toString()));
- const per=f.data?periodoDelTitular(f.data):null;
+ const tx=useT(),idioma=useIdioma(),sp=useSearchParams(),f=useFuga(endpointFuga(sp?.toString()));
+ const per=f.data?periodoDelTitular(f.data,idioma):null;
  const [sel,setSel]=useState<string>(''),[aviso,setAviso]=useState('');
  const v=f.data;
  const top:SkuFila[]=v&&v.skus.status==='ok'?v.skus.top:[];
@@ -53,7 +53,7 @@ export function FugaPantalla({organization,embebido=false}:{organization?:string
   {label:tx('fuga.kAtorado'),c:4,value:tr?corto(negMonto/100):'—',note:tr?<><MiniPct c={4} p={tr.filasReembolsos?tr.negados*100/tr.filasReembolsos:null} label={tx('fuga.negadasAria')}/><span>{tx('fuga.solSinReemb',{a:num(tr.negados),b:num(tr.filasReembolsos)})}</span></>:tx('fuga.sinTracker')},
   {label:tx('fuga.kRepeticion'),c:7,value:cr?pct(cr.pctDosOMas):'—',note:cr?<><MiniPct c={7} p={cr.pctDosOMas} label={tx('fuga.contactosAria')}/><span>{tx('fuga.contactos90',{a:num(cr.contactosDosOMas90),b:num(cr.contactos)})}</span></>:tx('fuga.noCalculado')},
  ]:[];
- const titular=v&&t&&per?tx('fuga.titular',{usd:usd(t.usdBrutoMinor),periodo:per.etiqueta.charAt(0).toLowerCase()+per.etiqueta.slice(1),frase:fraseConcentracion(v)?'. '+fraseConcentracion(v):'.'}):null;
+ const titular=v&&t&&per?tx('fuga.titular',{usd:usd(t.usdBrutoMinor,{idioma}),periodo:per.etiqueta.charAt(0).toLowerCase()+per.etiqueta.slice(1),frase:fraseConcentracion(v,idioma)?'. '+fraseConcentracion(v,idioma):'.'}):null;
  const acciones=v&&<><Button variant="primary" icon={<Download/>} disabled={!skuSel} onClick={()=>paquete(skuSel)}>{tx('fuga.generarPaquete')}</Button>
   <Popover label={tx('fuga.masArchivos')} align="end" width={280} triggerClassName="btn btn-secondary" trigger={<><Download/><span className="btn-label">{tx('fuga.exportar')}</span></>}>
    <MenuList>
@@ -89,8 +89,8 @@ export function FugaPantalla({organization,embebido=false}:{organization?:string
      {per?.nota&&<li>{per.nota}</li>}
      {per?.acumulado&&<li>{per.acumulado.texto}</li>}
      {per?.acumuladoOmitido&&<li>{tx('fuga.acumOmitido')} <a href="/refunds">{tx('fuga.verTodoLibro')}</a></li>}
-     <li>{lineaCobertura(v)}</li>
-     <li>{lineaVentanas(v)}</li>
+     <li>{lineaCobertura(v,idioma)}</li>
+     <li>{lineaVentanas(v,idioma)}</li>
      {proveniencia(v).map((x,i)=><li key={i}>{x}</li>)}
      <li>{tx('fuga.dineroDevuelto')}</li>
      <li>{tx('fuga.noCalcula')}</li></ul>

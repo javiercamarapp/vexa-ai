@@ -495,6 +495,15 @@
   }
  },
  "js": {
+  "inicio.js": {
+   "brotli": 3811,
+   "bytes": 8910,
+   "fuenteBytes": 15492,
+   "hash": "0eb8e89d",
+   "modulo": true,
+   "sha256": "0eb8e89d2e24c6466ad2245e5b67ce3608a0d749321d22d7fadd26a2a03399c7",
+   "url": "/s/inicio.0eb8e89d.js"
+  },
   "lenis.js": {
    "brotli": 3357,
    "bytes": 13485,
@@ -513,6 +522,15 @@
    "modulo": true,
    "sha256": "b780dd1e9433d5bf28924c1d68d6742f4c6bb031bd20592e8660008219e4917d",
    "url": "/s/nube.b780dd1e.js"
+  },
+  "sitio.js": {
+   "brotli": 2326,
+   "bytes": 6369,
+   "fuenteBytes": 10559,
+   "hash": "dafddc38",
+   "modulo": true,
+   "sha256": "dafddc3839059179ecadd62ce6ed5f054b305d5fc668953b4925a96b2f7d8191",
+   "url": "/s/sitio.dafddc38.js"
   }
  },
  "md": {

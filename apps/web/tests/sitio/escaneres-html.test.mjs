@@ -36,7 +36,9 @@ test('la lista blanca de T3 (csp-lista-blanca.json) se respeta si existe', () =>
   assert.ok(j && typeof j === 'object');
 });
 
-const archivos = listarArchivos(DIR, ['.html']);
+// Las páginas del registro aún no publicables salen del build como el cascarón de error de Next (notFound sin JavaScript); el middleware nunca las sirve:
+// responde con el segmento __404, que sí se escanea completo (lang, h1, noindex). Se excluye solo ese cascarón, identificado por su id.
+const archivos = listarArchivos(DIR, ['.html']).filter((f) => !/<html id="__next_error__"/.test(leer(f)));
 const motivo = archivos.length ? false : `PENDIENTE: no hay HTML del sitio en ${rel(WEB, DIR)}; falta next build con las rutas del sitio (T1 y T14)`;
 const lista = process.env.ROVAQ_LISTA_BLANCA ? [new RegExp(process.env.ROVAQ_LISTA_BLANCA)] : LISTA_BLANCA_NEXT_POR_DEFECTO;
 const hallazgos = archivos.flatMap((f) => escanearHtml(leer(f), { archivo: rel(WEB, f), listaBlanca: lista }));
@@ -50,5 +52,6 @@ test('HTML construido: sin style, sin script fuera de la lista blanca, sin orige
 // si unas lo traen y otras no, falla.
 const conCanonical = archivos.filter((f) => /rel="canonical"/.test(leer(f))).length;
 test('HTML construido: canonical absoluto de rovaq.ai en cada página', { skip: motivo || (conCanonical === 0 ? 'PENDIENTE: ninguna página trae canonical todavía (metadatos de T2)' : false) }, () => {
-  assert.deepEqual(hallazgos.filter((h) => h.regla === 'canonical').map(fmt), []);
+  // El segmento __404 es noindex y sin canonical por diseño.
+  assert.deepEqual(hallazgos.filter((h) => h.regla === 'canonical' && !/__404\.html$/.test(h.archivo)).map(fmt), []);
 });

@@ -30,7 +30,8 @@ for (const p of params) {
     const meta = await generateMetadata({params: Promise.resolve({lang: p.lang, ruta: p.ruta})});
     const pub = PAGINAS.find((x) => x[p.lang].ruta === (p.lang === 'en' ? '/en/' : '/') + p.ruta.join('/'));
     const canonical = (meta.alternates?.canonical as string) ?? null;
-    casos.push({nombre: `pagina:${p.lang}:${pub?.id}`, lang: p.lang, id: pub?.id ?? null, html: doc(p.lang, canonical, renderToStaticMarkup(el)), canonical});
+    const centinela = p.ruta.length === 1 && p.ruta[0] === '__404';
+    casos.push({nombre: `${centinela ? 'centinela' : 'pagina'}:${p.lang}:${pub?.id}`, lang: p.lang, id: pub?.id ?? null, html: doc(p.lang, canonical, renderToStaticMarkup(el)), canonical});
   } catch (e) {
     const digest = (e as {digest?: string}).digest ?? '';
     if (digest.includes('404')) { noPublicablesLanzan++; lanzados.push(`${p.lang}:/${p.ruta.join('/')}`); } else throw e;

@@ -36,14 +36,16 @@ test('las páginas no publicables devuelven el 404 propio (notFound) y las publi
   const renderizadas = R.casos.filter((c) => c.nombre.startsWith('pagina:')).map((c) => c.id).sort();
   const esperadas = PAGINAS.filter((p) => R.estados[p.id] && p.id !== 'inicio').flatMap((p) => [p.id, p.id]).sort();
   assert.deepEqual(renderizadas, esperadas);
-  assert.equal(R.noPublicablesLanzan, R.params.length - esperadas.length);
-  assert.ok(R.noPublicablesLanzan >= 2, 'el centinela y las páginas pendientes lanzan notFound');
+  // El centinela __404 ya no lanza notFound: se rinde como página completa (el middleware la sirve con estado 404). Lanzan solo las páginas pendientes.
+  assert.equal(R.noPublicablesLanzan, R.params.length - esperadas.length - 2);
+  assert.ok(R.noPublicablesLanzan >= 2, 'las páginas pendientes lanzan notFound');
+  assert.deepEqual(R.casos.filter((c) => c.nombre.startsWith('centinela:')).map((c) => c.lang).sort(), ['en', 'es']);
 });
 
 for (const c of R.casos) {
   test(`HTML limpio y válido: ${c.nombre}`, () => {
     // 404 sin canonical por diseño (noindex); el resto lleva el canonical de metadatosPagina.
-    const hall = escanearHtml(c.html, { archivo: c.nombre }).filter((h) => !(c.nombre.startsWith('404') && h.regla === 'canonical'));
+    const hall = escanearHtml(c.html, { archivo: c.nombre }).filter((h) => !((c.nombre.startsWith('404') || c.nombre.startsWith('centinela')) && h.regla === 'canonical'));
     assert.deepEqual(hall.map((h) => `${h.regla}: ${h.nota}`), []);
     assert.equal((c.html.match(/<h1[\s>]/g) || []).length, 1, 'un solo h1');
     assert.ok(!/\sstyle\s*=/.test(c.html), 'cero style');

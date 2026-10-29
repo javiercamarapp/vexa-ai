@@ -40,15 +40,18 @@ function archivosDeclarados() {
 test('manifest válido: versión, secciones conocidas, claves con url pública y sin campos faltantes', () => {
   assert.equal(manifest.version, 1);
   for (const k of Object.keys(manifest)) assert.ok(['version', 'precargas', 'auxiliares', ...SECCIONES].includes(k), `sección desconocida ${k}`);
-  for (const s of ['js', 'pts', 'img', 'fuentes']) assert.ok(Object.keys(manifest[s] ?? {}).length > 0, `sección vacía ${s}`);
+  for (const s of ['js', 'img', 'fuentes']) assert.ok(Object.keys(manifest[s] ?? {}).length > 0, `sección vacía ${s}`);
   for (const {seccion, clave, e} of entradas()) {
     assert.match(e.url, /^\/(s|vendor)\/[A-Za-z0-9._\-\/]+$/, `${seccion}/${clave}`);
     assert.match(e.sha256, /^[0-9a-f]{64}$/, `${seccion}/${clave} sha256`);
     assert.ok(Number.isInteger(e.bytes) && e.bytes > 0, `${seccion}/${clave} bytes`);
     assert.ok(Number.isInteger(e.brotli ?? 1) && (e.brotli ?? 1) > 0);
   }
-  for (const k of ['nube.js', 'lenis.js']) assert.ok(manifest.js[k], `falta js/${k}`);
-  for (const k of ['hero', 'o1', 'o2', 'o3', 'o4']) assert.ok(manifest.pts[k] && manifest.img[k] && manifest.img[`${k}-orbe`], `falta ${k}`);
+  for (const k of ['sitio.js', 'inicio.js']) assert.ok(manifest.js[k], `falta js/${k}`);
+  for (const k of ['nube.js', 'lenis.js']) assert.ok(!manifest.js[k], `js/${k} ya no existe: scroll nativo y capturas reales`);
+  assert.ok(!manifest.pts, 'sin nubes de puntos');
+  for (const k of ['fuga-oscuro', 'hoy-oscuro', 'problemas-oscuro', 'conexiones-oscuro', 'fuga', 'hoy', 'problemas', 'preguntale', 'conexiones', 'paso1', 'paso2', 'paso3', 'paso4', 'pantalla5']) assert.ok(manifest.img[`producto/${k}`], `falta img/producto/${k}`);
+  assert.ok(!Object.keys(manifest.img).some((k) => /^(hero|o[1-4])/.test(k)), 'sin imágenes de héroe ni objetos');
   for (const k of ['display', 'texto', 'mono-400', 'mono-500']) assert.ok(manifest.fuentes[k], `falta fuentes/${k}`);
 });
 
@@ -68,15 +71,6 @@ test('los hashes del manifest coinciden con los archivos y con el sufijo de 8 ca
     if (seccion === 'pts') continue; // el campo brotli de PTS3 lo mide T5 sobre el crudo con gzip interno
     assert.equal(e.brotli, esperado, `${seccion}/${clave} brotli`);
   }
-});
-
-test('Lenis: el hash del manifest es el de vendor.lock.json y el archivo coincide', () => {
-  const lock = JSON.parse(readFileSync(join(pub, 'vendor', 'vendor.lock.json'), 'utf8')).archivos.find((x) => x.nombre === 'lenis');
-  const e = manifest.js['lenis.js'];
-  assert.equal(e.sha256, lock.sha256);
-  assert.equal(e.url, `/vendor/${lock.archivo}`);
-  assert.equal(sha(readFileSync(join(pub, 'vendor', lock.archivo))), lock.sha256);
-  assert.equal(e.version, '1.1.13');
 });
 
 test('imágenes: todas con alt en español e inglés, ancho y alto definidos y reales en el archivo', () => {
@@ -99,9 +93,8 @@ test('imágenes: todas con alt en español e inglés, ancho y alto definidos y r
       const d = v.url.endsWith('.webp') ? dimWebp(b) : v.url.endsWith('.avif') ? dimAvif(b) : v.url.endsWith('.svg') ? {w: v.ancho, h: v.alto} : dimJpg(b);
       assert.deepEqual([d.w, d.h], [v.ancho, v.alto], `${v.url} medidas reales`);
     }
-    if (e.fondo === 'oscuro') assert.ok(['poster', 'objeto'].includes(e.tipo), clave);
+    assert.ok(['captura', 'recorte', 'heroe', 'social'].includes(e.tipo), `${clave}: tipo ${e.tipo}`);
   }
-  assert.ok(manifest.img['hero'].tipo === 'poster' && manifest.img['o1-orbe'].tipo === 'orbe');
 });
 
 test('AVIF solo donde ahorra 25 por ciento o más contra el WebP del mismo ancho', () => {
@@ -118,7 +111,7 @@ test('presupuestos de peso por tipo (SPEC sección 8)', () => {
   const f = Object.values(manifest.fuentes).reduce((s, e) => s + e.brotli, 0);
   assert.ok(f < 130 * KB, `fuentes ${f} B`);
   assert.ok(f <= 85 * KB, `fuentes ${f} B por encima del objetivo de 85 KB`);
-  // Imágenes: póster 60 KB, objetos 50 KB, orbes 20 KB, anchos de 480 hasta 20 KB; la variante densa de 1440 tiene tope propio.
+  // Imágenes: solo capturas y recortes del producto (960 hasta 60 KB, 1440 hasta 120 KB, 2880 hasta 260 KB, SVG hasta 20 KB).
   for (const [clave, e] of Object.entries(manifest.img)) {
     for (const v of e.variantes) {
       const capturaProducto = ['heroe', 'captura', 'recorte'].includes(e.tipo); // capturas reales del producto (29-oct): 960 hasta 60 KB, 1440 hasta 120 KB, 2880 hasta 260 KB, SVG vectorial hasta 20 KB
@@ -128,11 +121,14 @@ test('presupuestos de peso por tipo (SPEC sección 8)', () => {
     if (e.tipo === 'poster') assert.ok(e.bytes <= 60 * KB, 'póster del héroe');
     if (e.tipo === 'objeto') assert.ok(e.bytes <= 50 * KB, clave);
   }
-  // Datos 3D por objeto (T5): héroe 50 KB, el resto 40 KB.
-  for (const [k, e] of Object.entries(manifest.pts)) assert.ok(e.bytes <= (k === 'hero' ? 50 : 40) * KB, `pts ${k}`);
-  // JS propio y Lenis: 20 KB con brotli entre todos los scripts del sitio (recalibrado de 17 el 29-oct: nube 8.4 + sitio 2.4 + inicio 3.8 + Lenis 3.4 = 18; ver recalibraciones en tools/sitio/presupuestos.json).
+  // JS propio: objetivo 11.6 KB y techo duro de 14 KB con brotli entre sitio.js e inicio.js (sin nube ni Lenis).
   const js = Object.values(manifest.js).reduce((s, e) => s + e.brotli, 0);
-  assert.ok(js <= 20 * KB, `JS propio y Lenis ${js} B > 20 KB`);
+  assert.ok(js <= 11.6 * KB, `JS propio ${js} B > 11.6 KB (techo 14)`);
+  // Imágenes del recorrido: héroe y pasos (recortes) y seis pantallas claras; ninguna imagen decorativa de héroe.
+  const peso = (k, w) => manifest.img[k].avif.find((v) => v.ancho === w)?.bytes ?? manifest.img[k].variantes.find((v) => v.ancho === w).bytes;
+  const recorrido = peso('producto/fuga-oscuro', 1440) + [1, 2, 3, 4].reduce((a, n) => a + peso(`producto/paso${n}`, manifest.img[`producto/paso${n}`].ancho), 0)
+    + ['hoy', 'fuga', 'problemas', 'preguntale', 'conexiones'].reduce((a, k) => a + peso(`producto/${k}`, 1440), 0) + peso('producto/pantalla5', 727);
+  assert.ok(recorrido <= 340 * KB, `imágenes del recorrido ${recorrido} B > 340 KB`);
 });
 
 test('JS: módulos del mismo origen sin eval, wasm ni mapa de fuente', () => {
@@ -181,29 +177,25 @@ test('sin claves huérfanas: todo archivo de public/s está en el manifest y tod
     assert.ok(declarados.has(url) || permitidos.has(url), `archivo huérfano fuera del manifest: ${url}`);
   }
   for (const u of declarados) assert.ok(existsSync(disco(u)), `entrada sin archivo: ${u}`);
-  assert.deepEqual([...permitidos].sort(), ['/s/fuentes/LICENCIAS.txt', '/s/manifest.json', '/s/pts/manifest-pts.json']);
-  // manifest-pts.json de T5 y la sección pts dicen lo mismo
-  const mp = JSON.parse(readFileSync(join(pub, 's', 'pts', 'manifest-pts.json'), 'utf8'));
-  assert.deepEqual(Object.keys(mp).sort(), Object.keys(manifest.pts).sort());
-  for (const [k, e] of Object.entries(mp)) assert.equal(manifest.pts[k].sha256, e.sha256);
-  // los GLB fuente no están en public
-  assert.ok(!recorrer(pub).some((f) => /\.glb$/.test(f)));
+  assert.deepEqual([...permitidos].sort(), ['/s/fuentes/LICENCIAS.txt', '/s/manifest.json']);
+  // ni nubes de puntos ni modelos 3D en public
+  assert.ok(!recorrer(pub).some((f) => /\.(glb|pts)$/.test(f)));
+  assert.ok(!existsSync(join(pub, 's', 'pts')) && !existsSync(join(pub, 'vendor')), 'sin pts ni vendor');
 });
 
 test('activos.ts resuelve las claves del contrato K3', async () => {
   const {crearActivos} = await import('../../src/lib/sitio/activos.ts');
   const a = crearActivos(manifest);
-  assert.equal(a.url('nube.js'), manifest.js['nube.js'].url);
-  assert.equal(a.url('lenis.js'), '/vendor/lenis-1.1.13.min.js');
-  assert.equal(a.url('pts/hero'), manifest.pts.hero.url);
+  assert.equal(a.url('sitio.js'), manifest.js['sitio.js'].url);
+  assert.throws(() => a.url('nube.js'), /ACTIVO_NO_EN_MANIFEST/);
   assert.equal(a.url('fuentes/display'), manifest.fuentes.display.url);
-  assert.equal(a.url('img/hero', {ancho: 480}), manifest.img.hero.variantes.find((v) => v.ancho === 480).url);
-  assert.deepEqual(a.medidas('img/o2'), {ancho: 960, alto: 960});
-  assert.match(a.alt('img/hero', 'es'), /^Objeto de adorno/);
-  assert.match(a.alt('img/hero', 'en'), /^Decorative object/);
+  assert.equal(a.url('img/producto/fuga-oscuro', {ancho: 960}), manifest.img['producto/fuga-oscuro'].variantes.find((v) => v.ancho === 960).url);
+  assert.deepEqual(a.medidas('img/producto/fuga-oscuro'), {ancho: 1440, alto: 900});
+  assert.match(a.alt('img/producto/fuga-oscuro', 'es'), /^Pantalla Fuga de reembolsos/);
+  assert.match(a.alt('img/producto/fuga-oscuro', 'en'), /^Rovaq Refund leakage screen/);
   assert.equal(a.precargas().length, 2);
   assert.throws(() => a.url('img/inexistente'), /ACTIVO_NO_EN_MANIFEST/);
-  assert.throws(() => a.url('img/hero', {ancho: 123}), /ACTIVO_VARIANTE_NO_EXISTE/);
+  assert.throws(() => a.url('img/producto/fuga-oscuro', {ancho: 123}), /ACTIVO_VARIANTE_NO_EXISTE/);
 });
 
 test('íconos existentes: tamaños reales iguales a su nombre y site.webmanifest apunta a archivos que existen', () => {
@@ -220,9 +212,4 @@ test('determinismo: reconstruir fuentes y JS da los mismos hashes', {skip: !herr
     try { execFileSync('node', [join(repo, 'tools', 'sitio', s), '--verificar'], {stdio: 'pipe', timeout: 120000}); }
     catch (e) { assert.fail(`${s} --verificar difiere: ${e.stderr?.toString().slice(0, 500)}`); }
   }
-});
-
-test('determinismo de imágenes (SITIO_VERIFICAR_IMAGENES=1)', {skip: !(herramientas && process.env.SITIO_VERIFICAR_IMAGENES) && 'solo con SITIO_VERIFICAR_IMAGENES=1'}, () => {
-  try { execFileSync('node', [join(repo, 'tools', 'sitio', 'imagenes.mjs'), '--verificar'], {stdio: 'pipe', timeout: 590000}); }
-  catch (e) { assert.fail(`imagenes.mjs --verificar difiere: ${e.stderr?.toString().slice(0, 500)}`); }
 });

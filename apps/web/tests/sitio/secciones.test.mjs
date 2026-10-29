@@ -29,7 +29,7 @@ const salida = JSON.parse(
 
 const SECCIONES = [
   { clave: 'hero', id: 'inicio', tema: 'oscuro' },
-  { clave: 'horizonte', id: 'horizonte', tema: 'claro' },
+  { clave: 'horizonte', id: 'horizonte', tema: null },
   { clave: 'problema', id: 'problema', tema: 'claro' },
   { clave: 'valor', id: 'valor', tema: 'claro' },
   { clave: 'pasos', id: 'modulos', tema: 'oscuro' },
@@ -84,9 +84,9 @@ describe('diez secciones S1 a S10, en orden', () => {
         const html = seccion(portada(lang), s.id);
         const abre = /^<[^>]+>/.exec(html)[0];
         assert.equal(attr(abre, 'data-seccion'), s.clave, s.id);
-        assert.equal(attr(abre, 'data-tema'), s.tema, `${s.id} tema`);
+        assert.equal(attr(abre, 'data-tema'), s.tema ?? undefined, `${s.id} tema`);
+        if (s.clave === 'horizonte') continue; // S2 no tiene contenido ni tema: es un resplandor decorativo aria-hidden; el tema es global
         assert.ok(['oscuro', 'claro'].includes(attr(abre, 'data-tema')), s.id);
-        if (s.clave === 'horizonte') continue; // S2 no tiene contenido: es un bloque decorativo aria-hidden
         assert.match(abre, /^<section\b/, `${s.id} es section`);
         const rotulo = attr(abre, 'aria-labelledby');
         assert.ok(rotulo && html.includes(` id="${rotulo}"`), `${s.id} aria-labelledby apunta a un encabezado existente`);
@@ -107,11 +107,12 @@ describe('diez secciones S1 a S10, en orden', () => {
       }
     });
 
-    test(`${lang}: costuras solo en S5, S6, S8, S9 y S10; S3 y S4 sin costura; S4 y S7 con fondo alterno`, () => {
+    test(`${lang}: sin costuras ni fondos propios por sección: el tema es global (data-escena)`, () => {
       const abre = (id) => /^<[^>]+>/.exec(seccion(portada(lang), id))[0];
-      for (const id of ['modulos', 'pantallas', 'seguridad', 'integraciones', 'cierre']) assert.match(abre(id), /\bs-costura\b/, id);
-      for (const id of ['problema', 'valor', 'puestos', 'inicio']) assert.doesNotMatch(abre(id), /\bs-costura\b/, id);
-      for (const id of ['valor', 'puestos']) assert.match(abre(id), /s-seccion--alterna s-seccion--corte/, id);
+      for (const id of ['inicio', 'problema', 'valor', 'modulos', 'pantallas', 'puestos', 'seguridad', 'integraciones', 'cierre']) {
+        assert.doesNotMatch(abre(id), /\bs-costura\b|s-seccion--alterna|s-seccion--corte/, id);
+      }
+      assert.doesNotMatch(portada(lang), /s-costura|s-cargador|data-nube|<canvas/);
     });
 
     test(`${lang}: contenedor del hilo vacío (data-hilo) al inicio de .s-hilo-zona y sin hilo durante S1`, () => {
@@ -181,36 +182,34 @@ describe('S1 Hero y reglas, S2 Horizonte', () => {
       assert.match(t().hero.limite, lang === 'es' ? /ingreso bruto.*inferida/i : /gross revenue.*inferred/i);
     });
 
-    test(`${lang}: póster del héroe con fetchpriority alta, ancho y alto del manifest, srcset y precarga con los mismos datos`, () => {
+    test(`${lang}: la ventana del héroe es la captura real de Fuga (tema oscuro) con fetchpriority alta, ancho y alto del manifest, AVIF con respaldo WebP y precarga`, () => {
       const manifest = JSON.parse(fs.readFileSync(path.join(WEB, 'public/s/manifest.json'), 'utf8'));
-      const e = manifest.img.hero;
-      const poster = etiquetas(seccion(portada(lang), 'inicio'), 'img')[0];
-      assert.match(poster, /class="s-poster"/);
-      assert.equal(attr(poster, 'fetchpriority'), 'high');
-      assert.equal(attr(poster, 'loading'), undefined, 'el candidato a LCP no se carga perezoso');
-      assert.equal(attr(poster, 'src'), e.url);
-      assert.equal(Number(attr(poster, 'width')), e.ancho);
-      assert.equal(Number(attr(poster, 'height')), e.alto);
-      assert.equal(attr(poster, 'alt'), e.alt[lang]);
-      assert.match(attr(poster, 'srcset'), /480w, .*960w/);
-      const pre = etiquetas(portada(lang), 'link').find((x) => attr(x, 'rel') === 'preload' && attr(x, 'as') === 'image');
-      assert.ok(pre, 'precarga del póster (la hoistea React 19 por fetchPriority alta)');
-      assert.equal(attr(pre, 'fetchpriority'), 'high');
-      assert.equal(attr(pre, 'imagesrcset'), attr(poster, 'srcset'));
-      assert.equal(attr(pre, 'imagesizes'), attr(poster, 'sizes'));
-      assert.equal(etiquetas(portada(lang), 'link').filter((x) => attr(x, 'rel') === 'preload').length, 1, 'una sola precarga');
+      const e = manifest.img['producto/fuga-oscuro'];
+      const h = seccion(portada(lang), 'inicio');
+      const img = etiquetas(h, 'img')[0];
+      assert.match(img, /class="s-ventana__img"/);
+      assert.equal(attr(img, 'fetchpriority'), 'high');
+      assert.equal(attr(img, 'loading'), undefined, 'el candidato a imagen del pliegue no se carga perezoso');
+      assert.equal(attr(img, 'src'), e.url);
+      assert.equal(Number(attr(img, 'width')), e.ancho);
+      assert.equal(Number(attr(img, 'height')), e.alto);
+      assert.equal(attr(img, 'alt'), e.alt[lang]);
+      assert.match(h, /<source type="image\/avif" srcSet="[^"]*"|<source type="image\/avif" srcset="[^"]*"/i);
+      assert.ok(h.includes('<figure class="s-ventana s-ventana--producto"'), 'figure.s-ventana: la excepción de porcentajes de la regla 12 está acotada a ella');
+      assert.doesNotMatch(h, /<canvas|s-poster|data-nube/);
     });
 
-    test(`${lang}: canvas del héroe en modo halo con data-estado y el modelo de puntos del manifest; el póster va después del canvas`, () => {
-      const manifest = JSON.parse(fs.readFileSync(path.join(WEB, 'public/s/manifest.json'), 'utf8'));
+    test(`${lang}: capa SVG del Pareto: nueve filas enfocables con tooltip, línea de acumulado y marca de 80 por ciento; cifra de 36 000 USD con sello Observado`, () => {
       const h = seccion(portada(lang), 'inicio');
-      const canvas = etiquetas(h, 'canvas')[0];
-      assert.equal(attr(canvas, 'data-nube'), 'hero');
-      assert.equal(attr(canvas, 'data-modo'), 'halo');
-      assert.equal(attr(canvas, 'data-estado'), 'cargando');
-      assert.equal(attr(canvas, 'data-pts'), manifest.pts.hero.url);
-      assert.ok(h.indexOf('<canvas') < h.indexOf('class="s-poster"'), 'el CSS usa el selector hermano ~ .s-poster');
-      assert.match(h, /<div class="s-hero__objeto" aria-hidden="true">/);
+      assert.equal((h.match(/class="s-ov__fila"/g) ?? []).length, 9);
+      assert.equal((h.match(/class="s-ov__fila"[^>]*tabindex="0"/g) ?? []).length, 9);
+      assert.equal((h.match(/class="s-ov__tip"/g) ?? []).length, 9);
+      assert.match(h, /class="s-ov__acum"[^>]*pathLength="1"/);
+      assert.match(h, /data-cuenta="36000"/);
+      assert.match(h, /class="s-sello s-sello--observado s-ov-cifra__sello"/);
+      assert.match(h, /class="s-punto s-ov-punto"/);
+      assert.equal((h.match(/class="s-punto/g) ?? []).length, 1, 'un solo punto rojo en el héroe');
+      assert.doesNotMatch(h, /style=/);
     });
 
     test(`${lang}: botón principal con círculo de 36 px (aria-hidden) y secundario; ambos enlazan a anclas existentes`, () => {
@@ -227,9 +226,9 @@ describe('S1 Hero y reglas, S2 Horizonte', () => {
       assert.ok(textoPlano(h).includes(t().hero.micro));
     });
 
-    test(`${lang}: horizonte como hijo directo de la escena, aria-hidden y sin contenido`, () => {
+    test(`${lang}: horizonte de 120 px al pie del héroe, aria-hidden, sin tema ni contenido`, () => {
       const h = seccion(portada(lang), 'inicio');
-      assert.match(h, /<div class="s-horizonte" id="horizonte" data-seccion="horizonte" data-tema="claro" aria-hidden="true"><\/div><\/div><\/div><\/section>$/);
+      assert.match(h, /<div class="s-horizonte" id="horizonte" data-seccion="horizonte" aria-hidden="true"><\/div><\/section>$/);
     });
   }
 });
@@ -274,23 +273,26 @@ describe('S4 Valor y sellos', () => {
 // ------------------------------------------------------------------ 6. S5
 describe('S5 Cuatro pasos', () => {
   for (const lang of IDIOMAS) {
-    test(`${lang}: pista, canvas, cuatro pasos apilados sin JavaScript con póster, texto y mockup, y progreso de cuatro segmentos`, () => {
+    test(`${lang}: pista, cuatro pasos apilados sin JavaScript con visual propio (recorte de captura real y capa SVG), texto y progreso de cuatro segmentos`, () => {
       const manifest = JSON.parse(fs.readFileSync(path.join(WEB, 'public/s/manifest.json'), 'utf8'));
       const h = seccion(portada(lang), 'modulos');
       assert.match(h, /data-escena(?:="")? data-paso="0"/);
       assert.match(h, /<div class="s-escena__pista"><div class="s-contenedor s-escena__fijo">/);
-      assert.match(h, /<div class="s-escena__visor s-visor s-visor--grande" aria-hidden="true"><canvas class="s-nube" data-nube="escena" data-estado="cargando"/);
-      const pasos = [...h.matchAll(/<article class="s-paso" data-n="(\d)" data-pts="([^"]+)"/g)];
+      assert.doesNotMatch(h, /<canvas|s-nube|s-poster|s-paso__mock|data-pts/);
+      const pasos = [...h.matchAll(/<article class="s-paso" data-n="(\d)" data-visto=""/g)];
       assert.deepEqual(pasos.map((m) => m[1]), ['1', '2', '3', '4']);
-      assert.deepEqual(pasos.map((m) => m[2]), ['o1', 'o2', 'o3', 'o4'].map((k) => manifest.pts[k].url));
-      assert.equal((h.match(/class="s-paso__render s-visor" aria-hidden="true"/g) ?? []).length, 4);
-      assert.equal((h.match(/class="s-paso__mock"/g) ?? []).length, 4);
+      assert.equal((h.match(/class="s-paso__visual"/g) ?? []).length, 4);
       assert.equal((h.match(/class="s-progreso__seg"/g) ?? []).length, 4);
-      for (const k of ['o1', 'o2', 'o3', 'o4']) assert.ok(h.includes(manifest.img[k].url), `póster ${k}`);
+      for (const k of [1, 2, 3, 4]) {
+        assert.ok(h.includes(manifest.img[`producto/paso${k}`].url), `recorte paso${k}`);
+        assert.ok(h.includes(`data-paso-ventana="${k}"`), `ventana del paso ${k}`);
+      }
       assert.equal((h.match(/class="s-paso__etiqueta"/g) ?? []).length, 4);
-      // Los mockups de apoyo son M6, M3, M2 y M5 en ese orden.
-      const aria = [...h.matchAll(/s-mock-raiz--apoyo[^>]*/g)];
-      assert.equal(aria.length, 4);
+      // Paso 1: tres hebras punteadas y una continua; paso 3: dos ramas que no se unen; paso 4: registro pendiente de revisión.
+      assert.equal((h.match(/class="s-pv__hebra s-pv__hebra--punteada"/g) ?? []).length, 3);
+      assert.equal((h.match(/class="s-pv__rama"/g) ?? []).length, 1);
+      assert.equal((h.match(/class="s-pv__rama s-pv__rama--punteada"/g) ?? []).length, 1);
+      assert.doesNotMatch(h, /style=/);
     });
   }
 });
@@ -298,9 +300,11 @@ describe('S5 Cuatro pasos', () => {
 // ------------------------------------------------------------------ 7. S6
 describe('S6 Seis pantallas', () => {
   for (const lang of IDIOMAS) {
-    test(`${lang}: seis tarjetas con la miniatura de su mockup; solo se enlazan las que el registro publica`, () => {
+    test(`${lang}: seis tarjetas con la captura real del producto; solo se enlazan las que el registro publica`, () => {
       const h = seccion(portada(lang), 'pantallas');
-      assert.equal((h.match(/s-mock-raiz--miniatura/g) ?? []).length >= 6, true);
+      assert.equal((h.match(/class="s-pantalla__img"/g) ?? []).length, 6, 'seis capturas reales');
+      assert.equal((h.match(/<source type="image\/avif"/gi) ?? []).length, 6, 'AVIF con respaldo WebP');
+      assert.doesNotMatch(h, /s-mock-raiz/, 'sin mockups dibujados a mano');
       const tarjetas = [...h.matchAll(/<(a|div) class="s-pantalla s-tarjeta( s-tarjeta--capacidad)?"/g)];
       assert.equal(tarjetas.length, 6);
       for (const m of tarjetas) assert.equal(m[1] === 'a', Boolean(m[2]), 'solo los enlaces llevan el resalte de capacidad');
@@ -315,7 +319,7 @@ describe('S6 Seis pantallas', () => {
 // ------------------------------------------------------------------ 8. S7
 describe('S7 Por puesto', () => {
   for (const lang of IDIOMAS) {
-    test(`${lang}: arco con cuatro orbes, cápsula, cuatro pestañas con sus paneles visibles sin JavaScript y bloque de Finanzas y Experiencia del cliente`, () => {
+    test(`${lang}: arco con cuatro discos de ícono, cápsula, cuatro pestañas con sus paneles visibles sin JavaScript y bloque de Finanzas y Experiencia del cliente`, () => {
       const t = salida[lang].textos;
       const h = seccion(portada(lang), 'puestos');
       assert.match(h, /data-puesto="1"/);
@@ -423,26 +427,20 @@ describe('S10 Cierre', () => {
       assert.ok(textoPlano(h).includes(CTX.contacto), 'ayuda del correo con el marcador resuelto');
     });
 
-    test(`${lang}: la lente del cierre es decorativa (aria-hidden) con canvas de 6 000 puntos y póster perezoso`, () => {
+    test(`${lang}: el cierre ya no lleva objeto decorativo (sin lente, canvas ni póster)`, () => {
       const h = seccion(portada(lang), 'cierre');
-      assert.match(h, /<div class="s-cierre__objeto" aria-hidden="true"><canvas class="s-nube" data-nube="cierre"/);
-      assert.match(etiquetas(h, 'img')[0], /loading="lazy"/);
+      assert.doesNotMatch(h, /s-cierre__objeto|<canvas|<img|s-poster/);
     });
   }
 });
 
-// ------------------------------------------------------------------ 12. cargador
-describe('cargador', () => {
+// ------------------------------------------------------------------ 12. sin cargador
+describe('sin cargador bloqueante', () => {
   for (const lang of IDIOMAS) {
-    test(`${lang}: logo con máscara, punto y palabra, y control Saltar animación enfocable al principio del contenido`, () => {
+    test(`${lang}: la portada empieza en el héroe: ni cargador ni control Saltar animación (el héroe se lee desde el primer pintado)`, () => {
       const p = portada(lang);
-      assert.ok(p.startsWith('<div class="s-cargador"') || p.includes('<div class="s-cargador"'));
-      assert.ok(p.indexOf('s-cargador') < p.indexOf('id="inicio"'));
-      assert.match(p, /<mask id="s-carga-mascara"[^>]*><circle class="s-cargador__mascara"[^>]*pathLength="214"/);
-      assert.match(p, /class="s-cargador__punto"/);
-      assert.match(p, /class="s-cargador__palabra"/);
-      assert.match(p, /<button class="s-cargador__saltar" type="button"[^>]*>[^<]+<\/button>/);
-      assert.match(p, /<svg class="s-cargador__logo"[^>]*aria-hidden="true"/);
+      assert.doesNotMatch(p, /s-cargador|data-cargador|s-carga-mascara|data-saltar-cargador/);
+      assert.ok(p.indexOf('id="inicio"') >= 0 && p.indexOf('id="inicio"') < 40, 'la sección del héroe abre el contenido');
     });
   }
 });

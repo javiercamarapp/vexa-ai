@@ -39,6 +39,7 @@ test('fuente: nada de inert ni hidden fuera de los puestos; el hilo no bloquea l
 test('presupuestos: brotli por archivo bajo el tope (sitio 8 KB, inicio 9 KB)', () => {
   const sitio = manifest.js['sitio.js'], inicio = manifest.js['inicio.js'];
   assert.ok(sitio && inicio, 'sitio.js e inicio.js deben estar en el manifest (node tools/sitio/construir-js.mjs)');
+  assert.ok(sitio.brotli + inicio.brotli <= 11.6 * 1024, `JS propio ${sitio.brotli + inicio.brotli} B: objetivo 11.6 KB (techo 14)`);
   assert.ok(sitio.brotli <= 8 * 1024, `sitio.js ${sitio.brotli} B`);
   assert.ok(inicio.brotli <= 9 * 1024, `inicio.js ${inicio.brotli} B`);
   for (const k of ['sitio.js', 'inicio.js']) {
@@ -48,26 +49,24 @@ test('presupuestos: brotli por archivo bajo el tope (sitio 8 KB, inicio 9 KB)', 
   }
 });
 
-test('cargador: una vez por sesión con sessionStorage en try, salida de seguridad a 3.5 s y salto desde t igual a 0', () => {
-  assert.match(SITIO, /try \{ visto = sessionStorage\.getItem\('rovaq-intro'\)/);
-  assert.match(SITIO, /setTimeout\(terminar, 3500\)/);
-  assert.match(SITIO, /setTimeout\(terminar, 1900\)/);
-  for (const e of ['pointerdown', 'keydown', 'wheel', 'touchstart']) assert.ok(SITIO.includes(`'${e}'`));
-  assert.match(SITIO, /data-intro-saltado/);
-  assert.match(CSS, /s-cargador\[data-fase="salida"\][\s\S]*300ms/);
+test('sin cargador bloqueante ni Lenis: scroll nativo y héroe legible desde el primer pintado', () => {
+  assert.ok(!/cargador|rovaq-intro|data-intro|s-cargando/.test(SITIO + INICIO), 'ni cargador ni estados de intro en el JS');
+  assert.ok(!/cargador|s-cargando/.test(CSS), 'ni cargador en movimiento.css');
+  assert.ok(!/Lenis|lenis|urls\.nube/.test(SITIO + INICIO + LAYOUT), 'sin Lenis ni nube: scroll nativo');
+  assert.ok(!manifest.js['nube.js'] && !manifest.js['lenis.js'] && !manifest.pts, 'el manifest ya no lista nube, Lenis ni pts');
 });
 
-test('movimiento reducido: nube y Lenis no se piden', () => {
-  assert.match(INICIO, /const sinNube = RM \|\| ahorro\(\)/);
-  assert.match(INICIO, /if \(!RM && fino && !ahorro\(\) && urls\.lenis\)/);
-  assert.match(INICIO, /if \(!canvas \|\| sinNube/);
+test('escena de tema global: un atributo en html, histéresis 42 por ciento al bajar y 58 al subir, transición solo tras el primer cuadro', () => {
+  assert.match(SITIO, /innerHeight \* \(bajando \? 0\.42 : 0\.58\)/);
+  assert.match(SITIO, /H\.setAttribute\('data-escena', t\)/);
+  assert.match(SITIO, /data-escena-anim/);
+  assert.match(SITIO, /addEventListener\('scroll', pedir, \{passive: true\}\)/);
+});
+
+test('movimiento reducido: sin conteo y sin barrido; los pasos de la escena fija solo se marcan con movimiento permitido', () => {
+  assert.match(SITIO, /function conteo\(\) \{\n  if \(RM\) return;/);
   assert.match(SITIO, /if \(NAT \|\| RM \|\| !origen\) return/);
-});
-
-test('Lenis: parámetros de la spec', () => {
-  assert.match(INICIO, /duration: 1\.2/);
-  assert.match(INICIO, /wheelMultiplier: 0\.9/);
-  assert.match(INICIO, /pointer: fine/);
+  assert.match(INICIO, /const escenaActiva = \(\) => !RM && ancho\(\) > 1100/);
 });
 
 test('layout: un solo script de módulo con defer implícito, URL del manifest y sin script en línea', () => {
@@ -85,17 +84,13 @@ test('CSS propio: solo tokens, prefijo s-, sin hex ni rgba, estados ocultos solo
   assert.ok(!/opacity:\s*0/.test(fuera), 'opacity 0 fuera de no-preference');
 });
 
-test('hilo: acciones puras de inicio.js (pasoDe con histéresis, ahorro)', () => {
+test('hilo: acciones puras de inicio.js (pasoDe con histéresis)', () => {
   assert.equal(I.pasoDe(0.5, 0), 0);
   assert.equal(I.pasoDe(1.03, 0), 0);
   assert.equal(I.pasoDe(1.05, 0), 1);
   assert.equal(I.pasoDe(0.97, 1), 1);
   assert.equal(I.pasoDe(0.95, 1), 0);
   assert.equal(I.pasoDe(3.9, 0), 3);
-  assert.equal(I.ahorro({connection: {saveData: true}}), true);
-  assert.equal(I.ahorro({connection: {effectiveType: '3g'}}), true);
-  assert.equal(I.ahorro({connection: {effectiveType: '4g'}, deviceMemory: 8}), false);
-  assert.equal(I.ahorro({deviceMemory: 2}), true);
 });
 
 test('hilo: genera-hilo.mjs y la copia de inicio.js dan el mismo d y la misma tabla', () => {
@@ -160,59 +155,23 @@ const sesion = async (opc, fn) => {
 const dormir = (ms) => new Promise((r) => setTimeout(r, ms));
 const rutas = (s) => s.registro.peticiones.map((u) => new URL(u).pathname);
 
-test('Chrome: el cargador se salta al primer evento y no reaparece en la misma sesión; CSP sin violaciones', {skip: vivo ? false : motivo}, async () => {
-  await sesion({vp: 1440, etiqueta: 'mov-cargador'}, async (s) => {
-    await s.page.goto(URL_VIVA, {waitUntil: 'commit'});
-    await s.page.waitForSelector('[data-cargador]', {timeout: 5000});
-    await s.page.keyboard.press('Shift');
-    await dormir(700);
-    assert.equal(await s.page.locator('[data-cargador]').count(), 0, 'el cargador debe retirarse tras el salto');
-    await s.page.reload({waitUntil: 'load'});
-    await dormir(400);
-    assert.equal(await s.page.locator('[data-cargador]').count(), 0, 'no reaparece');
-    assert.equal(await s.page.evaluate(() => document.documentElement.hasAttribute('data-intro-visto')), true);
+test('Chrome: la portada no pide nube, pts ni Lenis, no hay canvas y el CSP no registra violaciones', {skip: vivo ? false : motivo}, async () => {
+  await sesion({vp: 1440, etiqueta: 'mov-sin-nube'}, async (s) => {
+    await s.page.goto(URL_VIVA, {waitUntil: 'load'});
+    await dormir(3000);
+    const r = rutas(s);
+    assert.ok(!r.some((p) => /nube\.|\.pts$|lenis/.test(p)), r.filter((p) => /nube\.|\.pts$|lenis/.test(p)).join(','));
+    assert.equal(await s.page.locator('canvas').count(), 0, 'sin canvas en el DOM');
     assert.deepEqual(await s.page.evaluate(() => window.__rovaq.csp), []);
   });
 });
 
-test('Chrome: si el módulo falla el overlay libera a los 3.5 s y la página sigue utilizable', {skip: vivo ? false : motivo}, async () => {
-  await sesion({vp: 1440, etiqueta: 'mov-falla'}, async (s) => {
-    await s.page.route(/\/s\/sitio\.[0-9a-f]+\.js/, (r) => r.abort());
-    await s.page.goto(URL_VIVA, {waitUntil: 'load'});
-    await dormir(3600);
-    const v = await s.page.evaluate(() => {
-      const c = document.querySelector('[data-cargador]');
-      return {oculto: !c || getComputedStyle(c).visibility === 'hidden', cargando: document.documentElement.classList.contains('s-cargando'), inert: !!document.querySelector('[inert]'), scroll: getComputedStyle(document.documentElement).overflow};
-    });
-    assert.equal(v.oculto, true);
-    assert.equal(v.cargando, false);
-    assert.equal(v.inert, false);
-  });
-});
-
-test('Chrome: movimiento reducido no pide nube.js, pts ni Lenis', {skip: vivo ? false : motivo}, async () => {
+test('Chrome: movimiento reducido: ninguna animación ni transición de más de 150 ms y estado final del héroe', {skip: vivo ? false : motivo}, async () => {
   await sesion({vp: 1440, movimiento: 'reduce', etiqueta: 'mov-reducido'}, async (s) => {
     await s.page.goto(URL_VIVA, {waitUntil: 'load'});
     await dormir(5000);
-    const r = rutas(s);
-    assert.ok(!r.some((p) => /nube\.|\.pts$|lenis/.test(p)), r.filter((p) => /nube\.|\.pts$|lenis/.test(p)).join(','));
-    assert.equal(await s.page.evaluate(() => document.querySelector('[data-cargador]') === null), true);
-  });
-});
-
-test('Chrome: data-cuadros se detiene fuera de vista y se registran fps', {skip: vivo ? false : motivo}, async () => {
-  await sesion({vp: 1440, etiqueta: 'mov-cuadros'}, async (s) => {
-    await s.page.goto(URL_VIVA, {waitUntil: 'load'});
-    await dormir(4500);
-    const n1 = await s.page.evaluate(() => +(document.querySelector('canvas[data-nube="hero"]')?.dataset.cuadros || 0));
-    assert.ok(n1 > 0, 'el héroe debe dibujar cuadros');
-    await s.page.evaluate(() => scrollTo({top: 9000, behavior: 'instant'}));
-    await dormir(1500);
-    const a = await s.page.evaluate(() => +(document.querySelector('canvas[data-nube="hero"]')?.dataset.cuadros || 0));
-    await dormir(1200);
-    const b = await s.page.evaluate(() => +(document.querySelector('canvas[data-nube="hero"]')?.dataset.cuadros || 0));
-    assert.equal(a, b, 'sin cuadros nuevos fuera de vista');
-    const fps = await s.page.evaluate(() => new Promise((res) => { let n = 0; const t0 = performance.now(); const f = () => { n++; performance.now() - t0 < 2000 ? requestAnimationFrame(f) : res(n / 2); }; requestAnimationFrame(f); }));
-    console.log('fps medidos (rAF, headless):', fps);
+    const largas = await s.page.evaluate(() => document.getAnimations().filter((a) => a.effect?.getTiming().duration > 150).length);
+    assert.equal(largas, 0, 'sin animaciones largas');
+    assert.equal(await s.page.evaluate(() => document.querySelector('[data-cuenta]').textContent), '36,000');
   });
 });

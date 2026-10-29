@@ -8,19 +8,28 @@ import {join} from 'node:path';
 export const SECCIONES_ACTIVOS = ['js', 'pts', 'img', 'fuentes', 'md'] as const;
 export type SeccionActivos = (typeof SECCIONES_ACTIVOS)[number];
 
-export type VarianteActivo = {url: string; ancho: number; alto?: number; bytes?: number};
+export type VarianteActivo = {url: string; ancho: number; alto?: number; bytes?: number; sha256?: string; /** Variante de pantalla densa (1440), fuera del presupuesto de imágenes. */ densa?: boolean};
 export type EntradaActivo = {
   /** Ruta pública con hash de 8 en el nombre, por ejemplo /s/nube.ab12cd34.js. */
   url: string;
   bytes?: number;
+  /** Bytes con brotli calidad 11 (T13). */
+  brotli?: number;
   sha256?: string;
+  /** Solo imágenes: texto alternativo por idioma; fondo 'oscuro' si el alfa solo sirve sobre #0E0E10; tipo poster, objeto, orbe o social. */
+  alt?: {es: string; en: string};
+  fondo?: 'oscuro' | 'cualquiera';
+  tipo?: string;
+  /** Solo imágenes: variantes AVIF (solo existen donde ahorran 25 por ciento o más). */
+  avif?: readonly VarianteActivo[];
   /** Solo imágenes: dimensiones del original, para escribir width y height. */
   ancho?: number;
   alto?: number;
   /** Solo imágenes: tamaños alternativos, elegidos con la opción ancho. */
   variantes?: readonly VarianteActivo[];
 };
-export type ManifestActivos = {version?: number} & Partial<Record<SeccionActivos, Record<string, EntradaActivo>>>;
+export type Precarga = {clave: string; url: string; as: string; type: string; crossOrigin?: string};
+export type ManifestActivos = {version?: number; precargas?: readonly Precarga[]} & Partial<Record<SeccionActivos, Record<string, EntradaActivo>>>;
 export type OpcionesUrl = {ancho?: number};
 
 /** Separa 'pts/nucleo' en sección y nombre; una clave sin sección ('nube.js') es un script propio. */
@@ -55,6 +64,20 @@ export function crearActivos(manifest: ManifestActivos) {
       if (typeof e.ancho !== 'number' || typeof e.alto !== 'number') throw new Error(`ACTIVO_SIN_MEDIDAS: ${clave}`);
       return {ancho: e.ancho, alto: e.alto};
     },
+    /** Ruta de la variante AVIF de ese ancho, o undefined si no ahorra lo bastante y no se generó. */
+    urlAvif(clave: string, ancho: number): string | undefined {
+      return entrada(clave).avif?.find((x) => x.ancho === ancho)?.url;
+    },
+    /** Texto alternativo de una imagen en el idioma pedido; rompe el build si no está definido. */
+    alt(clave: string, lang: 'es' | 'en'): string {
+      const a = entrada(clave).alt?.[lang];
+      if (!a) throw new Error(`ACTIVO_SIN_ALT: ${clave} ${lang}`);
+      return a;
+    },
+    /** Precargas de fuentes para el layout (display y texto; la mono no se precarga). */
+    precargas(): readonly Precarga[] {
+      return manifest.precargas ?? [];
+    },
     existe(clave: string): boolean {
       try { entrada(clave); return true; } catch { return false; }
     },
@@ -72,3 +95,6 @@ const activos = crearActivos(leerManifest());
 export const url = activos.url;
 export const medidas = activos.medidas;
 export const existe = activos.existe;
+export const urlAvif = activos.urlAvif;
+export const alt = activos.alt;
+export const precargas = activos.precargas;

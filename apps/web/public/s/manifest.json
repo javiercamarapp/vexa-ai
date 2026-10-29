@@ -490,6 +490,28 @@
    ]
   }
  },
+ "js": {
+  "lenis.js": {
+   "brotli": 3357,
+   "bytes": 13485,
+   "licencia": "MIT",
+   "modulo": false,
+   "sha256": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
+   "url": "/vendor/lenis-1.1.13.min.js",
+   "vendor": true,
+   "version": "1.1.13"
+  },
+  "nube.js": {
+   "brotli": 8430,
+   "bytes": 21298,
+   "fuenteBytes": 33203,
+   "hash": "b780dd1e",
+   "modulo": true,
+   "sha256": "b780dd1e9433d5bf28924c1d68d6742f4c6bb031bd20592e8660008219e4917d",
+   "url": "/s/nube.b780dd1e.js"
+  }
+ },
+ "md": {},
  "precargas": [
   {
    "as": "font",
@@ -506,5 +528,42 @@
    "url": "/s/fuentes/texto.9ed69688.woff2"
   }
  ],
+ "pts": {
+  "hero": {
+   "brotli": 39987,
+   "bytes": 39983,
+   "puntos": 12000,
+   "sha256": "5044248984adc2c1fc5f96c85c15e8ce84f3bbe54c967959db19c80d607bfb39",
+   "url": "/s/pts/hero.50442489.pts"
+  },
+  "o1": {
+   "brotli": 31312,
+   "bytes": 31308,
+   "puntos": 9000,
+   "sha256": "4756b55b516c7d368122b74f864b4d43aebe6e18e795afd07fa3ed92f30593d7",
+   "url": "/s/pts/o1.4756b55b.pts"
+  },
+  "o2": {
+   "brotli": 31674,
+   "bytes": 31670,
+   "puntos": 9000,
+   "sha256": "d04f6171fbddd1e06f3cfaa5c2a2e5243ce242b33cb04e22cbe7a130b91b1557",
+   "url": "/s/pts/o2.d04f6171.pts"
+  },
+  "o3": {
+   "brotli": 27068,
+   "bytes": 27064,
+   "puntos": 9000,
+   "sha256": "6131f9c19d9e6fe2073da797bbe36843adb38348d89522b1b5291c671f98e1c7",
+   "url": "/s/pts/o3.6131f9c1.pts"
+  },
+  "o4": {
+   "brotli": 30476,
+   "bytes": 30472,
+   "puntos": 9000,
+   "sha256": "7ab8ac8deccaa46530d792b2106e89586feeb4f8edf61031bb779bc61f26e6ea",
+   "url": "/s/pts/o4.7ab8ac8d.pts"
+  }
+ },
  "version": 1
 }

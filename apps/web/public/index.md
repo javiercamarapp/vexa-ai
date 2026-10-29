@@ -1,8 +1,8 @@
 ---
 title: Rovaq AI | Inteligencia de ingresos de posventa
 description: Rovaq AI cruza conversaciones, pedidos y reembolsos para mostrar dónde se concentra el ingreso en riesgo. Cada cifra trae su fuente y su fecha de corte.
-url: https://rovaq.ai/
-canonical_url: https://rovaq.ai/
+url: https://rovaq.ai
+canonical_url: https://rovaq.ai
 alternate_language_url: https://rovaq.ai/en
 language: es-MX
 type: landing

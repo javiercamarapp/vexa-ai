@@ -3,7 +3,7 @@ title: Rovaq AI | Post-Purchase Revenue Intelligence
 description: Rovaq AI connects conversations, orders and refunds to show where revenue is at risk. Every figure comes with its source and its cut-off date.
 url: https://rovaq.ai/en
 canonical_url: https://rovaq.ai/en
-alternate_language_url: https://rovaq.ai/
+alternate_language_url: https://rovaq.ai
 language: en
 type: landing
 last_modified: 2026-10-28

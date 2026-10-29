@@ -114,10 +114,11 @@ test('una hoja MATIZ lleva su nivel y su condición en el marcado', () => {
 test('metadatos: canonical absoluto y hreflang con rutas del registro', () => {
   for (const lang of ['es', 'en']) {
     const m = R[`meta:${lang}`];
-    assert.equal(m.alternates.canonical, 'https://rovaq.ai' + (lang === 'en' ? '/en' : '/'));
-    assert.equal(m.alternates.languages.es, 'https://rovaq.ai/');
+    // T2 sustituyó los metadatos provisionales: hreflang es-MX, en y x-default, y el origen pelado sin barra final (como lo escribe Next).
+    assert.equal(m.alternates.canonical, 'https://rovaq.ai' + (lang === 'en' ? '/en' : ''));
+    assert.equal(m.alternates.languages['es-MX'], 'https://rovaq.ai');
     assert.equal(m.alternates.languages.en, 'https://rovaq.ai/en');
-    assert.equal(m.alternates.languages['x-default'], 'https://rovaq.ai/');
+    assert.equal(m.alternates.languages['x-default'], 'https://rovaq.ai');
   }
 });
 

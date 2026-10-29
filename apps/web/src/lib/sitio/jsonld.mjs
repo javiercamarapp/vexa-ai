@@ -25,7 +25,7 @@ export function organizacion(base = landingUrl()) {
     '@id': ids(base).org,
     name: NOMBRE,
     alternateName: 'Rovaq',
-    url: `${base}/`,
+    url: base,
     logo: { '@type': 'ImageObject', url: `${base}${LOGO_CUADRADO.ruta}`, width: LOGO_CUADRADO.ancho, height: LOGO_CUADRADO.alto },
     image: { '@type': 'ImageObject', url: `${base}${LOGO_HORIZONTAL.ruta}`, width: LOGO_HORIZONTAL.ancho, height: LOGO_HORIZONTAL.alto },
     // Sin email ni contactPoint (ver arriba). sameAs: solo perfiles que existan y que Javier confirme; hoy ninguno.
@@ -34,7 +34,7 @@ export function organizacion(base = landingUrl()) {
 
 export function sitioWeb(base = landingUrl()) {
   // Sin SearchAction: el sitio no tiene buscador.
-  return { '@type': 'WebSite', '@id': ids(base).sitio, name: NOMBRE, url: `${base}/`, inLanguage: [HREFLANG.es, HREFLANG.en], publisher: { '@id': ids(base).org } };
+  return { '@type': 'WebSite', '@id': ids(base).sitio, name: NOMBRE, url: base, inLanguage: [HREFLANG.es, HREFLANG.en], publisher: { '@id': ids(base).org } };
 }
 
 /** Descripción verdadera del producto: la misma del título de la portada. Sin offers, sin aggregateRating, sin featureList. */
@@ -43,7 +43,7 @@ export function aplicacion(lang, descripcion, base = landingUrl()) {
     '@type': 'SoftwareApplication',
     '@id': ids(base).app,
     name: NOMBRE,
-    url: `${base}/`,
+    url: base,
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     inLanguage: HREFLANG[lang],

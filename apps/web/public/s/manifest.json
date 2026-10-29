@@ -524,13 +524,13 @@
    "url": "/s/nube.b780dd1e.js"
   },
   "sitio.js": {
-   "brotli": 2326,
-   "bytes": 6369,
-   "fuenteBytes": 10559,
-   "hash": "dafddc38",
+   "brotli": 2427,
+   "bytes": 6636,
+   "fuenteBytes": 11242,
+   "hash": "9c89f43b",
    "modulo": true,
-   "sha256": "dafddc3839059179ecadd62ce6ed5f054b305d5fc668953b4925a96b2f7d8191",
-   "url": "/s/sitio.dafddc38.js"
+   "sha256": "9c89f43bbe951f6bb09a6ed276dceae8ecf1fcc4bb088b03b3d0725ac6986e1c",
+   "url": "/s/sitio.9c89f43b.js"
   }
  },
  "md": {

@@ -43,7 +43,7 @@ export function reglasCabecerasEspejos(fichas, espejoDe, base = 'https://rovaq.a
     for (const lang of ['es', 'en']) {
       const archivo = espejoDe(f.id, lang);
       if (!archivo) continue;
-      const canonica = f.ruta[lang] === '/' ? `${base}/` : `${base}${f.ruta[lang]}`;
+      const canonica = f.ruta[lang] === '/' ? base : `${base}${f.ruta[lang]}`;
       reglas.push({
         source: archivo,
         headers: [{ key: 'Content-Type', value: 'text/markdown; charset=utf-8' }, { key: 'Link', value: `<${canonica}>; rel="canonical"` }, ...comunes],

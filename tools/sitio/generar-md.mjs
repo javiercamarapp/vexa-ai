@@ -91,7 +91,7 @@ function sinCorreo(texto, lang, urlAcceso) {
 function crearRender(fichas, lang) {
   const porId = new Map(fichas.map((f) => [f.id, f]));
   const porRutaEs = new Map(fichas.map((f) => [f.ruta.es, f]));
-  const abs = (f) => (f.ruta[lang] === '/' ? `${BASE}/` : `${BASE}${f.ruta[lang]}`);
+  const abs = (f) => (f.ruta[lang] === '/' ? BASE : `${BASE}${f.ruta[lang]}`);
   const acceso = porId.get('solicitar-acceso');
   const urlAcceso = acceso?.indexable ? abs(acceso) : abs(porId.get('inicio'));
   const t = (h) => sinCorreo(hoja(h, lang), lang, urlAcceso).replace(/\s+/g, ' ').trim();
@@ -208,7 +208,7 @@ function frente(f, lang, r, extra = {}) {
     description: f.descripcion[lang],
     url: r.abs(f),
     canonical_url: r.abs(f),
-    alternate_language_url: f.ruta[otro] === '/' ? `${BASE}/` : `${BASE}${f.ruta[otro]}`,
+    alternate_language_url: f.ruta[otro] === '/' ? BASE : `${BASE}${f.ruta[otro]}`,
     language: lang === 'es' ? 'es-MX' : 'en',
     type: f.id === 'inicio' ? 'landing' : f.tipo,
     ...(f.mod ? { last_modified: f.mod } : {}),
@@ -247,7 +247,7 @@ export function llmsTxt(fichas, lang, espejos) {
     : { notas: 'Notes for anyone citing this site.', portada: 'Home page in Markdown', html: 'Home page in HTML', full: 'Full content in a single file', fullD: 'The home page and every published page, in plain text.', otro: 'Versión en español', otroD: 'El mismo sitio en español.', opc: 'Optional', mapa: 'Sitemap', mapaD: 'Public URLs with their last-modified date.', ref: 'Full reference' };
   const reglas = lista(a.puente.reglas).map((x) => r.t(x)).join(' ');
   const out = ['# Rovaq AI', '', `> ${resumen(fichas, lang)}`, '', `${L.notas} ${reglas} ${r.t(a.cierre.precio)}`, ''];
-  out.push(`## ${lang === 'es' ? 'Portada' : 'Home'}`, '', `- [${L.portada}](${BASE}${espejos('inicio', lang)}): ${r.t(a.hero.subtitulo)}`, `- [${L.html}](${BASE}${lang === 'es' ? '/' : '/en'}): ${lang === 'es' ? 'La página tal como se ve en el navegador.' : 'The page as it appears in the browser.'}`, '');
+  out.push(`## ${lang === 'es' ? 'Portada' : 'Home'}`, '', `- [${L.portada}](${BASE}${espejos('inicio', lang)}): ${r.t(a.hero.subtitulo)}`, `- [${L.html}](${BASE}${lang === 'es' ? '' : '/en'}): ${lang === 'es' ? 'La página tal como se ve en el navegador.' : 'The page as it appears in the browser.'}`, '');
   for (const [titulo, filtro] of SECCIONES_LLMS[lang]) {
     const filas = fichas.filter((f) => f.indexable && f.id !== 'inicio' && filtro(f));
     if (filas.length === 0) continue;

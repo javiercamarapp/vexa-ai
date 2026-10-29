@@ -7,7 +7,7 @@ Notas para quien cite este sitio. Ingreso bruto, nunca margen. Lo desconocido di
 ## Portada
 
 - [Portada en Markdown](https://rovaq.ai/index.md): Rovaq AI mide los reembolsos observados y el ingreso expuesto a cada problema, con la evidencia a la vista y cada cifra rotulada como Observada, Estimada o Inferida.
-- [Portada en HTML](https://rovaq.ai/): La página tal como se ve en el navegador.
+- [Portada en HTML](https://rovaq.ai): La página tal como se ve en el navegador.
 
 ## Producto
 

@@ -62,7 +62,7 @@ echo "$a" | grep -qE '<lastmod>[0-9]{4}-[0-9]{2}-[0-9]{2}( |$)' && OK "lastmod c
 S "$B/sitemap.xml" | grep -q 'hreflang="es-MX"' && OK "sitemap con hreflang es-MX" || MAL "sitemap sin hreflang es-MX"
 S "$B/sitemap.xml" | grep -q 'hreflang="en"' && OK "sitemap con hreflang en" || MAL "sitemap sin hreflang en"
 S "$B/sitemap.xml" | grep -q 'hreflang="x-default"' && OK "sitemap con x-default" || MAL "sitemap sin x-default"
-S "$B/sitemap.xml" | grep -q '<loc>https://rovaq.ai/</loc>' && OK "sitemap lista la portada" || MAL "sitemap sin la portada"
+S "$B/sitemap.xml" | grep -q '<loc>https://rovaq.ai</loc>' && OK "sitemap lista la portada" || MAL "sitemap sin la portada"
 S "$B/sitemap.xml" | grep -q '<loc>https://rovaq.ai/producto/hoy</loc>' && OK "sitemap lista una página publicable" || MAL "sitemap sin /producto/hoy"
 S "$B/sitemap.xml" | grep -q '<loc>https://rovaq.ai/producto</loc>' && MAL "sitemap lista una página pendiente de revisión (/producto)" || OK "sitemap sin páginas pendientes"
 S "$B/sitemap.xml" | grep -qiE 'changefreq|priority' && MAL "sitemap con changefreq o priority" || OK "sitemap sin changefreq ni priority"
@@ -70,8 +70,9 @@ S "$B/sitemap.xml" | grep -qiE 'changefreq|priority' && MAL "sitemap con changef
 echo "== 6. Datos estructurados y head"
 H=$(S "$B/")
 for t in Organization WebSite WebPage SoftwareApplication FAQPage; do echo "$H" | grep -q "\"@type\":\"$t\"" && OK "JSON-LD $t" || MAL "JSON-LD sin $t"; done
-echo "$H" | grep -qiE '"offers"|aggregateRating|vexa|@gmail|"price"' && MAL "JSON-LD contiene offers, rating, precio, nombre anterior o correo personal" || OK "JSON-LD sin offers, rating, precio, nombre anterior ni correo personal"
-echo "$H" | grep -q 'rel="canonical" href="https://rovaq.ai/"' && OK "canonical limpio" || MAL "canonical inesperado"
+LD=$(echo "$H" | grep -o '<script type="application/ld+json">[^<]*</script>')
+echo "$LD" | grep -qiE '"offers"|aggregateRating|vexa|@gmail|"price"' && MAL "JSON-LD contiene offers, rating, precio, nombre anterior o correo personal" || OK "JSON-LD sin offers, rating, precio, nombre anterior ni correo personal"
+echo "$H" | grep -q 'rel="canonical" href="https://rovaq.ai"' && OK "canonical limpio" || MAL "canonical inesperado"
 echo "$H" | grep -q 'type="text/markdown"' && OK "link rel=alternate type=text/markdown en el head" || MAL "falta el link alternate Markdown en el head"
 echo "$H" | grep -qi 'hreflang="en"' && OK "hreflang en" || MAL "sin hreflang en"
 echo "$H" | grep -qi 'hreflang="es-MX"' && OK "hreflang es-MX" || MAL "sin hreflang es-MX"

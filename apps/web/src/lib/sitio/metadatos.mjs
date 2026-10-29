@@ -23,9 +23,9 @@ export const THEME_COLOR = Object.freeze({ claro: '#F7F7F8', oscuro: '#0E0E10' }
 
 // ---------------------------------------------------------------- direcciones
 
-/** URL absoluta. Un solo criterio: el origen pelado termina en barra y el resto no tiene barra final. */
+/** URL absoluta. Un solo criterio, el mismo que Next escribe en el HTML: ninguna barra final, tampoco en el origen pelado (https://rovaq.ai). */
 export function urlAbsoluta(ruta, base = landingUrl()) {
-  if (ruta === '/' || ruta === '') return `${base}/`;
+  if (ruta === '/' || ruta === '') return base;
   return `${base}${ruta.length > 1 && ruta.endsWith('/') ? ruta.slice(0, -1) : ruta}`;
 }
 /** Imagen social 1200 por 630, una por idioma (generada en el build por la ruta /og/[archivo]). */

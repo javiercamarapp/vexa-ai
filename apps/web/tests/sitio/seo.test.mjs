@@ -91,14 +91,14 @@ describe('títulos y descripciones', () => {
 });
 
 describe('canonical y hreflang', () => {
-  test('canonical absoluto, propio de cada idioma y sin barra final salvo el origen pelado', () => {
+  test('canonical absoluto, propio de cada idioma y sin barra final, tampoco en el origen pelado (como lo escribe Next)', () => {
     for (const f of publicas) for (const l of IDIOMAS) {
       const c = conjunto(f, l).alternates.canonical;
-      assert.match(c, /^https:\/\/rovaq\.ai(\/|\/[^?#\s]*[^/?#\s])$/, `${f.id}.${l}: ${c}`);
+      assert.match(c, /^https:\/\/rovaq\.ai(\/[^?#\s]*[^/?#\s])?$/, `${f.id}.${l}: ${c}`);
       assert.equal(c, urlAbsoluta(f.ruta[l]));
       assert.ok(!c.includes('?') && !c.includes('#'));
     }
-    assert.equal(conjunto(fichas[0], 'es').alternates.canonical, `${BASE}/`);
+    assert.equal(conjunto(fichas[0], 'es').alternates.canonical, BASE);
     assert.equal(conjunto(fichas[0], 'en').alternates.canonical, `${BASE}/en`);
   });
   test('hreflang es-MX, en y x-default, recíprocos: cada idioma lista a los dos y se incluye a sí mismo', () => {
@@ -201,7 +201,7 @@ describe('JSON-LD', () => {
       assert.ok(['WebPage', 'AboutPage', 'ContactPage'].includes(g[1]['@type']), f.id);
       const miga = g.find((n) => n['@type'] === 'BreadcrumbList');
       const items = miga.itemListElement;
-      assert.equal(items[0].item, `${BASE}${l === 'es' ? '/' : '/en'}`.replace(/\/en$/, '/en'));
+      assert.equal(items[0].item, l === 'es' ? BASE : `${BASE}/en`);
       assert.equal(items.at(-1).item, urlAbsoluta(f.ruta[l]));
       assert.deepEqual(items.map((i) => i.position), items.map((_, i) => i + 1));
       assert.equal(g[1].breadcrumb['@id'], miga['@id']);

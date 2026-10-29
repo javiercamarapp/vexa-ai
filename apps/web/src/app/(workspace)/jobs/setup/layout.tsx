@@ -1,3 +1,4 @@
 import type {ReactNode} from 'react';
-export const metadata={title:'Proceso en segundo plano'};
+import {metaTitulo} from '../../../../lib/i18n/titulo';
+export const generateMetadata=()=>metaTitulo('meta.titulo.jobs-setup');
 export default function Layout({children}:{children:ReactNode}){return children;}

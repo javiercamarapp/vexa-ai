@@ -30,6 +30,10 @@ import {setupEs} from './d-setup';
 import {tourEs} from './d-tour';
 import {landingEs} from './d-landing';
 import {rolesEs} from './d-roles';
+import {metaEs} from './d-meta';
+import {trAEs} from './d-tr-a';
+import {trBEs} from './d-tr-b';
+import {trCEs} from './d-tr-c';
 export const es = {
   // Compartido
   'comun.cerrar': 'Cerrar', 'comun.reintentar': 'Volver a intentar', 'comun.cargando': 'Cargando…', 'comun.sinDato': 'Sin dato',
@@ -172,6 +176,10 @@ export const es = {
   ...probdetEs,
   ...resumenEs,
   ...onbEs,
+  ...metaEs,
+  ...trAEs,
+  ...trBEs,
+  ...trCEs,
   ...setupEs,
   ...tourEs,
   ...landingEs,

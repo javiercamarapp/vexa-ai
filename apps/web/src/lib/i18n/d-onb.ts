@@ -10,6 +10,8 @@ export const onbEs = {
   'onb.ui.invitacionTitulo': 'Conoce Rovaq en un minuto', 'onb.ui.invitacionCuerpo': 'Un recorrido corto por lo que tu rol puede hacer aquí. Puedes saltarlo y abrirlo luego desde Guía.',
   'onb.ui.recorrido': 'Recorrido guiado', 'onb.ui.menuGuia': 'Opciones de la guía', 'onb.ui.rolOrg': '{organizacion} · {rol}', 'onb.ui.mostrarChecklist': 'Mostrar la lista de primeros pasos',
   'onb.ui.avisoPasos': 'Paso {n} de {total}: {titulo}',
+  'onb.ui.invitacionElige': 'Elige un recorrido por lo que tu rol puede hacer aquí: el corto solo muestra lo esencial. Puedes saltarlo y abrirlo luego desde Guía.',
+  'onb.ui.recorridoCorto': 'Recorrido corto ({n} pasos)', 'onb.ui.recorridoCompleto': 'Recorrido completo ({n} pasos)',
   // Checklist en Hoy
   'onb.check.titulo': 'Primeros pasos', 'onb.check.progreso': '{hechos} de {total} que puedes hacer ahora', 'onb.check.siguiente': 'Recomendado ahora', 'onb.check.masTareas': 'Ver más tareas', 'onb.check.ocultar': 'Ocultar lista',
   'onb.check.cargando': 'Calculando tu avance…', 'onb.check.noDisponible': 'No se pudo calcular tu avance ahora.', 'onb.check.abrir': 'Abrir',
@@ -74,6 +76,8 @@ export const onbEn = {
   'onb.ui.invitacionTitulo': 'Get to know Rovaq in a minute', 'onb.ui.invitacionCuerpo': 'A short tour of what your role can do here. You can skip it and open it later from Guide.',
   'onb.ui.recorrido': 'Guided tour', 'onb.ui.menuGuia': 'Guide options', 'onb.ui.rolOrg': '{organizacion} · {rol}', 'onb.ui.mostrarChecklist': 'Show the getting started list',
   'onb.ui.avisoPasos': 'Step {n} of {total}: {titulo}',
+  'onb.ui.invitacionElige': 'Choose a tour of what your role can do here: the short one only shows the essentials. You can skip it and open it later from Guide.',
+  'onb.ui.recorridoCorto': 'Short tour ({n} steps)', 'onb.ui.recorridoCompleto': 'Full tour ({n} steps)',
   // Checklist on Today
   'onb.check.titulo': 'Getting started', 'onb.check.progreso': '{hechos} of {total} you can do now', 'onb.check.siguiente': 'Recommended now', 'onb.check.masTareas': 'Show more tasks', 'onb.check.ocultar': 'Hide list',
   'onb.check.cargando': 'Working out your progress…', 'onb.check.noDisponible': 'Your progress could not be worked out right now.', 'onb.check.abrir': 'Open',

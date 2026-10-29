@@ -1,7 +1,8 @@
 import {CfoDashboard} from '../../../components/cfo/cfo-dashboard';
 import {CopilotoNegocio} from '../../../components/copiloto/copiloto-negocio';
 import {FIXTURES} from './_lib/access';
-export const metadata = {title: 'CFO'};
+import {metaTitulo} from '../../../lib/i18n/titulo';
+export const generateMetadata=()=>metaTitulo('meta.titulo.cfo');
 export const dynamic = 'force-dynamic';
 type Search = Promise<Record<string, string | string[] | undefined>>;
 // La página no consulta nada en el servidor: la sesión y el rol ya los validó el layout del espacio de trabajo y el copiloto pide el informe

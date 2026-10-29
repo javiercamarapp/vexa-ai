@@ -5,5 +5,8 @@ export interface PasoTour {
   readonly objetivos: readonly string[]; readonly titulo: string | null; readonly cuerpo: string | null; readonly catalogo: string | null;
 }
 export function pantallasDe(pista: Pista | null): string[];
-export function construirTour(pista: Pista | null): PasoTour[];
+export type ModoTour = 'corto' | 'completo';
+export const MODOS: readonly ModoTour[];
+export const ESENCIALES: Readonly<Partial<Record<Pista, readonly (readonly [string, readonly string[]])[]>>>;
+export function construirTour(pista: Pista | null, modo?: ModoTour): PasoTour[];
 export function gruposDe(pasos: readonly PasoTour[]): {href: string; grupo: number; desde: number}[];

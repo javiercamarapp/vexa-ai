@@ -1,4 +1,5 @@
 import type {ReactNode} from 'react';
 import {ROBOTS_PRIVADO} from '../../../../lib/site.mjs';
-export const metadata={title:'Confirmar correo',robots:ROBOTS_PRIVADO};
+import {metaTitulo} from '../../../../lib/i18n/titulo';
+export const generateMetadata=()=>metaTitulo('meta.titulo.auth-email-complete',{robots:ROBOTS_PRIVADO});
 export default function Layout({children}:{children:ReactNode}){return children;}

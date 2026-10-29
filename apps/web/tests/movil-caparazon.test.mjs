@@ -10,7 +10,7 @@ test('viewport-fit=cover, interactive-widget y theme-color claro/oscuro', () => 
   assert.match(layout, /prefers-color-scheme: light[\s\S]*prefers-color-scheme: dark/);
 });
 test('el tema se aplica antes del primer pintado desde <head> (sin destello) y el shell no arranca en «light»', () => {
-  assert.match(layout, /<head><script dangerouslySetInnerHTML/);assert.match(layout, /localStorage\.getItem\('vexa-theme'\)/);assert.match(layout, /prefers-color-scheme: dark/);
+  assert.match(layout, /<head>(?:<style[^>]*>\{[A-Z_]+\}<\/style>)?<script dangerouslySetInnerHTML=\{\{ __html: TEMA_ANTES_DEL_PINTADO \}\}/); // en <head>, antes de cualquier otro script y del cuerpoassert.match(layout, /localStorage\.getItem\('vexa-theme'\)/);assert.match(layout, /prefers-color-scheme: dark/);
   assert.match(shell, /useState<Theme\|null>\(null\)/);assert.doesNotMatch(shell, /useState<Theme>\('light'\)/);
 });
 test('barra inferior: 5 destinos fijos con etiqueta (Inicio, Dinero, Clientes, Acciones, Preguntar)', () => {

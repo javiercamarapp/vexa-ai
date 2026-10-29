@@ -57,8 +57,8 @@ test('eventos del servidor -> pasos en vivo: inicio abre, fin cierra con estado/
   assert.equal(applyEvent(s,{t:'otro'},{}),s);
 });
 test('RovaqMark: idle sin órbita, thinking con órbita; el CSS de movimiento vive bajo prefers-reduced-motion', () => {
-  assert.ok(!renderToStaticMarkup(<RovaqMark/>).includes('rovaq-orbit'));
-  assert.match(renderToStaticMarkup(<RovaqMark thinking/>),/data-state="thinking"[\s\S]*rovaq-orbit/);
+  assert.ok(!renderEs(<RovaqMark/>).includes('rovaq-orbit'));
+  assert.match(renderEs(<RovaqMark thinking/>),/data-state="thinking"[\s\S]*rovaq-orbit/);
   const css=readFileSync(new URL('../../src/components/agente/agente.css',import.meta.url),'utf8');
   assert.equal(css.split('{').length,css.split('}').length,'llaves del CSS desbalanceadas');
   assert.ok(!/@media\(max-width:\d+px\)\{@media/.test(css),'media anidado por error');
@@ -76,17 +76,17 @@ test('desglose: muestra herramientas, tiempos y aclara que no es razonamiento de
   assert.match(live,/role="status"/);assert.match(live,/Revisando el Tracker…/);assert.match(live,/aria-expanded="true"/);
 });
 test('bloques: barra, línea y dona traen su tabla equivalente, clase y cobertura; la dona nunca usa los colores de clase', () => {
-  const bar=renderToStaticMarkup(<BlockView block={block({kind:'bar',unit:'u',series:[sv('x',2),sv('y',null,'No disponible')]})}/>);
+  const bar=renderEs(<BlockView block={block({kind:'bar',unit:'u',series:[sv('x',2),sv('y',null,'No disponible')]})}/>);
   assert.match(bar,/No disponible/);assert.match(bar,/Ver como tabla/);assert.match(bar,/Observado/);assert.match(bar,/Cobertura: 3 de 4/);
-  const line=renderToStaticMarkup(<BlockView block={block({kind:'line',unit:'u',series:[sv('a',1),sv('b',2),sv('c',3)]})}/>);
+  const line=renderEs(<BlockView block={block({kind:'line',unit:'u',series:[sv('a',1),sv('b',2),sv('c',3)]})}/>);
   assert.match(line,/area-chart/);assert.match(line,/Ver como tabla/);
-  const donut=renderToStaticMarkup(<BlockView block={block({kind:'donut',additive:true,unit:'fuentes',series:[sv('c',2),sv('s',1)]})}/>);
+  const donut=renderEs(<BlockView block={block({kind:'donut',additive:true,unit:'fuentes',series:[sv('c',2),sv('s',1)]})}/>);
   assert.match(donut,/donut-seg/);assert.ok(!/data-tone="1"|data-tone="2"|data-tone="3"/.test(donut));
-  assert.match(renderToStaticMarkup(<Kpis figures={[{id:'f',label:'L',display:'No disponible',value:null,class:'inferred',coverage:cov}]}/>),/No disponible[\s\S]*Inferido/);
+  assert.match(renderEs(<Kpis figures={[{id:'f',label:'L',display:'No disponible',value:null,class:'inferred',coverage:cov}]}/>),/No disponible[\s\S]*Inferido/);
 });
 test('tarjeta de adjunto: rotulada «Dato aportado por el usuario», sin insignias de clase del corte y aclara que el agente no lo lee', () => {
   const r=analizarAdjunto('v.csv','canal,monto\nweb,10\nweb,20\ntienda,5',33);assert.ok(r.ok);if(!r.ok)return;
-  const html=renderToStaticMarkup(<AttachmentCard a={r.resumen}/>);
+  const html=renderEs(<AttachmentCard a={r.resumen}/>);
   assert.match(html,/Dato aportado por el usuario/);assert.match(html,/El agente no lee este archivo/);assert.match(html,/Analizado en tu navegador/);
   assert.ok(!/Observado|Estimado|Inferido/.test(html));
 });
@@ -104,7 +104,7 @@ test('adjuntos: las columnas identificadoras (ticket_id, ids únicos consecutivo
   assert.equal(col('ticket_id').numeric,null);assert.equal(col('ticket_id').identificador,true);
   assert.equal(col('id_cliente').numeric,null);assert.equal(col('folio').numeric,null,'enteros únicos consecutivos');
   assert.equal(col('monto').numeric?.sum,72);assert.notEqual(col('monto').identificador,true);
-  const html=renderToStaticMarkup(<AttachmentCard a={r.resumen}/>);
+  const html=renderEs(<AttachmentCard a={r.resumen}/>);
   assert.doesNotMatch(html,/5,015|1,003/);assert.match(html,/identificador/i);
 });
 
@@ -112,10 +112,10 @@ test('«Pregúntale a tus datos» vive en el shell normal: sin encabezado, sin b
   const read=(r:string)=>readFileSync(new URL(r,import.meta.url),'utf8');
   const chat=read('../../src/components/agente/agente.tsx'),shell=read('../../src/components/workspace/shell.tsx');
   assert.doesNotMatch(chat,/ThemeToggle|ChatSidebar|chat-bar|Espacio de trabajo/);
-  assert.match(chat,/<HistoryPanel/);assert.match(chat,/aria-label="Historial de chats"/);
+  assert.match(chat,/<HistoryPanel/);assert.match(chat,/aria-label=\{tx\('ag\.histAria'\)\}/);
   assert.match(shell,/sinEncabezado=esRutaCopiloto\(pathname\)/);assert.match(shell,/workspace-header-chat/);assert.doesNotMatch(shell,/GlobalBar|workspace-top/);
   assert.doesNotMatch(shell,/workspace-bare/);
   const hist=read('../../src/components/agente/historial.tsx');
-  assert.match(hist,/ConfirmationDialog/);assert.match(hist,/Buscar chats/);assert.match(hist,/onRename/);
+  assert.match(hist,/ConfirmationDialog/);assert.match(hist,/ag\.hBuscar/);assert.match(hist,/onRename/);
   assert.match(read('../../src/components/agente/answer-view.tsx'),/vincul/);
 });

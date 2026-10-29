@@ -1,3 +1,4 @@
 import {Agente} from '../../../components/agente/agente';
-export const metadata={title:'Pregúntale a tus datos'};
+import {metaTitulo} from '../../../lib/i18n/titulo';
+export const generateMetadata=()=>metaTitulo('meta.titulo.preguntale');
 export default function Page(){return <Agente/>;}

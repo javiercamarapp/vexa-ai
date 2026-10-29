@@ -5,7 +5,7 @@ import {useT} from '../i18n/proveedor';
 import {Ctl} from './ctl';
 import {ConfirmationDialog} from '../confirmation-dialog';
 import {Icon} from './icons';
-import {GROUPS,groupLabel} from './store';
+import {GROUPS,GROUP_CLAVES,groupLabel} from './store';
 import type {Conversation} from './types';
 const plain=(t:string)=>t.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
 /** Panel «Historial» (Drawer del sistema): chats agrupados por día, buscador, renombrar y borrar con confirmación (acciones al pasar el cursor).
@@ -20,7 +20,7 @@ export function HistoryPanel({id,conversations,activeId,leaving,onNew,onOpen,onR
   <div className="ov-pair agente-hist-top"><Ctl variant="soft" onClick={onNew} icon={<Icon name="edit" size={14}/>}>{tx('ag.hNuevo')}</Ctl>
    <label className="ov-search"><Icon name="search" size={14}/><span className="sr-only">{tx('ag.hBuscarLabel')}</span><input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder={tx('ag.hBuscar')} aria-label={tx('ag.hBuscar')}/></label></div>
   {conversations.length===0?<p className="ov-help" role="status">{tx('ag.hVacio')}</p>:shown.length===0?<p className="ov-help" role="status">{tx('ag.hNinguno',{q:query})}</p>:
-   groups.map(([label,list])=><section key={label} aria-label={label} className="ov-group"><h3 className="ov-group-title">{label}</h3><ul className="ov-rows">
+   groups.map(([label,list])=><section key={label} aria-label={tx(GROUP_CLAVES[label],{n:30})} className="ov-group"><h3 className="ov-group-title">{tx(GROUP_CLAVES[label],{n:30})}</h3><ul className="ov-rows">
     {list.map(c=><li key={c.id} className="ov-row">{editing===c.id?
      <form className="agente-rename" onSubmit={e=>{e.preventDefault();onRename(c.id,draft);setEditing(null);}}><label className="sr-only" htmlFor={id+'-r'}>{tx('ag.hNuevoNombre')}</label><input id={id+'-r'} autoFocus value={draft} maxLength={80} onChange={e=>setDraft(e.target.value)} onKeyDown={e=>{if(e.key==='Escape'){e.stopPropagation();setEditing(null);}}}/><span className="btn-group"><Ctl type="submit" variant="soft">{tx('ag.hGuardar')}</Ctl><Ctl onClick={()=>setEditing(null)}>{tx('ag.hCancelar')}</Ctl></span></form>:
      <><button type="button" className="ov-row-main" aria-current={c.id===activeId?'true':undefined} onClick={()=>onOpen(c.id)} title={c.title}><span className="ov-row-title">{c.title}</span></button>

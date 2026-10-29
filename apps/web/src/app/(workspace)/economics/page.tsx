@@ -5,7 +5,8 @@ import {workspaceSession} from '../../../lib/workspace/server';
 import {conRedireccionDeAcceso} from '../../../lib/workspace/acceso-pagina';
 import {economicInitialScope} from '../../../lib/economic-scope';
 import {OrderMappings} from '../../../components/workspace/order-mappings';
-export const metadata={title:'Cortes publicados'};
+import {metaTitulo} from '../../../lib/i18n/titulo';
+export const generateMetadata=()=>metaTitulo('meta.titulo.economics');
 // Solo `next dev` con VEXA_UI_FIXTURES=1 (auditoría visual local): organización sintética, sin Supabase.
 const FIXTURES=process.env.NODE_ENV==='development'&&process.env.VEXA_UI_FIXTURES==='1';
 const FIXTURE_TENANT='00000000-0000-4000-8000-000000000001';

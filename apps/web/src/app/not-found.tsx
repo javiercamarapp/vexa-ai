@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import {ThemeBoot} from '../components/theme-boot';
 import {ROBOTS_PRIVADO} from '../lib/site.mjs';
-export const metadata={title:'Página no encontrada',robots:ROBOTS_PRIVADO};
-export default function NotFound(){return <section className="access-flow"><ThemeBoot/><p className="eyebrow">Rovaq AI · 404</p><h1>No encontramos esta página</h1><p>El enlace puede haber cambiado. Vuelve a Hoy para abrir un recurso disponible con tu acceso.</p><div className="btn-group"><Link prefetch={false} className="btn btn-primary" href="/overview">Ir a Hoy</Link></div></section>;}
+import {metaTitulo} from '../lib/i18n/titulo';
+import {traductor} from '../lib/i18n';
+import {idiomaActual} from '../lib/i18n/servidor';
+export const generateMetadata=()=>metaTitulo('meta.titulo.not-found',{robots:ROBOTS_PRIVADO});
+export default async function NotFound(){const t=traductor(await idiomaActual());return <section className="access-flow"><ThemeBoot/><p className="eyebrow">Rovaq AI · 404</p><h1>{t('tr.nf.titulo')}</h1><p>{t('tr.nf.cuerpo')}</p><div className="btn-group"><Link prefetch={false} className="btn btn-primary" href="/overview">{t('det.irAHoy')}</Link></div></section>;}

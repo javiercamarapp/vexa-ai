@@ -5,6 +5,7 @@ import {useT} from '../i18n/proveedor';
 import type {Clave} from '../../lib/i18n';
 import {RovaqMark} from './rovaq-mark';
 import type {Step,TraceStep} from './types';
+import {PHASE_CLAVES} from './store';
 
 const ESTADO:Record<string,Clave>={ok:'ag.tOk',no_data:'ag.tNoData',unavailable:'ag.tUnavail',forbidden:'ag.tForbidden',invalid_input:'ag.tInvalid',clarify:'ag.tClarify',descartado:'ag.tDescartado',sin_consulta:'ag.tSinConsulta'};
 export const estadoLabel=(e?:string,tr?:(c:Clave)=>string)=>e?(ESTADO[e]?(tr?tr(ESTADO[e]):ESTADO_ES[e]):e):'';
@@ -32,7 +33,7 @@ export function LiveTrace({phase,steps,labels}:{phase:string;steps:Step[];labels
  return <div className="agente-thinking" role="status" aria-live="polite" data-testid="agente-pensando">
   <RovaqMark size={16} thinking/>
   <div className="trace-main">
-   <p className="trace-phase">{phase}</p>
+   <p className="trace-phase">{PHASE_CLAVES[phase]?tx(PHASE_CLAVES[phase]):phase}</p>
    {steps.length>0&&<><button type="button" className="trace-toggle" aria-expanded={open} aria-controls="trace-live" onClick={()=>setOpen(v=>!v)}><Icon name="arrow" size={12}/>{tx('ag.tEnVivo',{n:steps.length})}</button>
     {open&&<div id="trace-live"><StepList steps={steps} labels={labels}/></div>}</>}
   </div></div>;

@@ -82,3 +82,8 @@
  .ac-fila[data-vista=por-decidir] .ac-dinero>:nth-child(4){grid-column:2;grid-row:1;margin-top:0}
  .ac-fila[data-vista=por-decidir] .ac-dinero>:nth-child(5){grid-column:2;grid-row:2}
 }
+/* Celulares angostos: tres columnas de cifras no caben con rótulos largos en inglés (Hypothesis); pasan a una columna y la palabra no se parte. */
+@media(max-width:420px){
+  .ac-cifras{grid-template-columns:minmax(0,1fr);padding-left:0;border-left:0}
+  .ac-cifra dd{overflow-wrap:break-word}
+}

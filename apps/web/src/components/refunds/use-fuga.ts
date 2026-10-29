@@ -1,5 +1,6 @@
 'use client';
 import {useCallback,useEffect,useRef,useState} from 'react';
+import {useT} from '../i18n/proveedor';
 import type {FugaVista} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
 /** Endpoint de /api/refunds con SOLO el periodo del alcance (date_start/date_end válidos); sin periodo = todo el libro. */
 export function endpointFuga(raw:string|URLSearchParams|null|undefined){
@@ -11,10 +12,11 @@ export function endpointFuga(raw:string|URLSearchParams|null|undefined){
 }
 /** GET /api/refunds con cronómetro (para el esqueleto «Calculando… N s»). Un 403 o 503 se dice en español; jamás se muestra un 0 por un fallo. */
 export function useFuga(endpoint:string|null='/api/refunds'){
- const [data,setData]=useState<FugaVista|null>(null),[error,setError]=useState<{code:'acceso'|'red'|'forma';texto:string}|null>(null),[busy,setBusy]=useState(Boolean(endpoint)),[segundos,setSegundos]=useState(0);
+ const t=useT();
+ const [data,setData]=useState<FugaVista|null>(null),[err,setErr]=useState<{code:'acceso'|'red'|'forma'}|null>(null),[busy,setBusy]=useState(Boolean(endpoint)),[segundos,setSegundos]=useState(0);
  const tick=useRef<ReturnType<typeof setInterval>|null>(null);
  const load=useCallback(async(signal?:AbortSignal)=>{
-  if(!endpoint)return;setBusy(true);setError(null);setSegundos(0);
+  if(!endpoint)return;setBusy(true);setErr(null);setSegundos(0);
   const t0=Date.now();if(tick.current)clearInterval(tick.current);tick.current=setInterval(()=>setSegundos(Math.floor((Date.now()-t0)/1000)),1000);
   try{
    const r=await fetch(endpoint,{cache:'no-store',signal});
@@ -26,9 +28,10 @@ export function useFuga(endpoint:string|null='/api/refunds'){
   }catch(e){
    if(signal?.aborted)return;
    const code=(e as {code?:string}).code;
-   setData(null);setError(code==='acceso'?{code:'acceso',texto:'Tu rol no tiene acceso a este panel. Lo ven propietarios y analistas.'}:{code:code==='forma'?'forma':'red',texto:'No disponible ahora. No significa que no haya reembolsos: reintenta en un momento.'});
+   setData(null);setErr(code==='acceso'?{code:'acceso'}:{code:code==='forma'?'forma':'red'});
   }finally{if(tick.current){clearInterval(tick.current);tick.current=null;}if(!signal?.aborted)setBusy(false);}
  },[endpoint]);
  useEffect(()=>{const c=new AbortController();void Promise.resolve().then(()=>load(c.signal));const again=()=>void load();window.addEventListener('vexa:refresh',again);return()=>{c.abort();window.removeEventListener('vexa:refresh',again);if(tick.current)clearInterval(tick.current);};},[load]);
+ const error=err?{code:err.code,texto:err.code==='acceso'?t('vista.errAcceso'):t('tr.fuga.errRed')}:null;
  return {data,error,busy,segundos,reload:()=>load()};
 }

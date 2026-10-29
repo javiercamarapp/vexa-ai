@@ -16,7 +16,7 @@ const {MENU}=await import('../../src/lib/workspace/menu.mjs');
 const menuRoutes=[...new Set(MENU.flatMap(x=>x.tipo==='item'?[x.href]:(x.items??[]).map(i=>i.href)))];
 const routes=arg('routes',[...new Set(['/overview','/cfo','/gaps','/problems','/recommendations','/preguntale','/confianza','/map','/settings/team',...menuRoutes])].join(',')).split(',');
 const sizes=arg('sizes','390,360,430').split(',').map(Number),themes=arg('themes','light,dark').split(',');
-const SIZE={390:[390,844],360:[360,780],430:[430,932]};
+const SIZE={390:[390,844],360:[360,780],430:[430,932],375:[375,812]};
 const out=arg('out',path.join(os.homedir(),'.codex-work/rovaq-cierre-20261007/estrategia-20261023/diseno-panel/movil-capturas-nuevas'));
 fs.mkdirSync(out,{recursive:true});
 const fallas=[],avisos=[];let comprobaciones=0;
@@ -51,16 +51,18 @@ function medirCaparazon(raices){
  }
  return res;
 }
-const browser=await chromium.launch();
+const browser=await chromium.launch(process.env.VEXA_CHROME?{executablePath:process.env.VEXA_CHROME,headless:true}:{}); // VEXA_CHROME=ruta de un Chrome instalado si el Chromium de Playwright no coincide
 for(const theme of themes)for(const w of sizes){
  const [W,H]=SIZE[w]??[w,844];
  console.log(`== ${W}×${H} ${theme}`);
  const ctx=await browser.newContext({viewport:{width:W,height:H},deviceScaleFactor:2,isMobile:true,hasTouch:true,reducedMotion:'reduce',colorScheme:theme==='dark'?'dark':'light'});
+ await ctx.addCookies([{name:'rovaq_lang',value:process.env.VEXA_LANG??'es',url:base}]); // esta prueba revisa rótulos en español; VEXA_LANG=en para el inglés
  await ctx.addInitScript(t=>{try{localStorage.setItem('vexa-theme',t);}catch{}window.__temas=[];new MutationObserver(()=>window.__temas.push(document.documentElement.dataset.theme??null)).observe(document,{attributes:true,subtree:true,attributeFilter:['data-theme']});},theme);
  await ctx.route('**/api/**',async route=>{const q=route.request();if(/resource=problems/.test(q.url())&&/slim=1/.test(q.url())){const F=await import('./fixtures.mjs');return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({data:F.bundleProblemsCatalogo()})});}const h=await respond(q.url(),q.method(),q.postData());return h?route.fulfill({status:h[0],contentType:'application/json',body:JSON.stringify(h[1])}):route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:{code:'fixture_missing'}})});});
  for(const r of routes){
   const page=await ctx.newPage();const tag=`${r}@${W}/${theme}`;
-  try{await page.goto(base+r,{waitUntil:'networkidle',timeout:120000});}catch(e){check(false,`${tag}: no cargó (${String(e.message).slice(0,60)})`);await page.close();continue;}
+  try{await page.goto(base+r,{waitUntil:'networkidle',timeout:120000});await page.evaluate(()=>document.querySelector('.onb-invitacion .onb-btn-sec')?.click());} // la invitación del recorrido (primera visita) tapa controles y el compositor; se descarta como lo haría la persona
+  catch(e){check(false,`${tag}: no cargó (${String(e.message).slice(0,60)})`);await page.close();continue;}
   await page.waitForTimeout(500);
   // 1) Desborde horizontal: del caparazón (falla) y del contenido (aviso).
   const d=await page.evaluate(()=>{const de=document.documentElement,wc=document.querySelector('.workspace-content');const sobra=[...document.querySelectorAll('.workspace-header,.workspace-bottom-nav')].filter(e=>{const b=e.getBoundingClientRect();return b.left<-0.5||b.right>innerWidth+0.5;}).map(e=>e.className);return {doc:de.scrollWidth-innerWidth,cont:wc?wc.scrollWidth-wc.clientWidth:0,sobra};});

@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {renderToStaticMarkup} from 'react-dom/server';
+import {renderToStaticMarkup as renderCrudo} from 'react-dom/server';
+import type {ReactElement} from 'react';
+import {IdiomaProvider} from '../src/components/i18n/proveedor';
 import {ChartTip, ChartLegend} from '../src/components/ui/chart-parts';
 import {ColumnPlot, type ColumnDatum} from '../src/components/ui/column-chart';
 import {AreaChart} from '../src/components/ui/area-chart';
@@ -8,6 +10,8 @@ import {Sparkline} from '../src/components/ui/sparkline';
 import {DonutChart, MAX_DONA} from '../src/components/ui/donut-chart';
 
 const mes = (m: string, value: number | null, extra: Partial<ColumnDatum> = {}): ColumnDatum => ({key: m, label: m, long: m + ' 2026', value, display: value === null ? 'No disponible' : value + ' pedidos', ...extra});
+// Los componentes leen el idioma del proveedor; sin él serían inglés. Estas pruebas fijan el español canónico.
+const renderToStaticMarkup = (el: ReactElement) => renderCrudo(<IdiomaProvider idioma="es">{el}</IdiomaProvider>);
 const text = (html: string) => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
 
 test('tooltip: mes, cifra, variación contra el mes anterior e insignia de clase', () => {

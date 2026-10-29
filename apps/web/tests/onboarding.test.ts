@@ -110,8 +110,8 @@ test('guardar, leer y actualizar el estado; formas rotas devuelven el estado vac
   const a = almacenFalso(); const k = 'onb.v1.aaaaaaaa.lector';
   assert.deepEqual(leerEstado(a, k), ESTADO_VACIO);
   assert.equal(guardarEstado(a, k, {...ESTADO_VACIO, visto: true, paso: 'lector.hoy'}), true);
-  assert.deepEqual(leerEstado(a, k), {visto: true, omitido: false, descartado: false, activo: false, paso: 'lector.hoy'});
-  assert.deepEqual(actualizarEstado(a, k, {omitido: true}), {visto: true, omitido: true, descartado: false, activo: false, paso: 'lector.hoy'});
+  assert.deepEqual(leerEstado(a, k), {visto: true, omitido: false, descartado: false, activo: false, modo: null, paso: 'lector.hoy'});
+  assert.deepEqual(actualizarEstado(a, k, {omitido: true}), {visto: true, omitido: true, descartado: false, activo: false, modo: null, paso: 'lector.hoy'});
   a.datos.set(k, '{no es json'); assert.deepEqual(leerEstado(a, k), ESTADO_VACIO);
   a.datos.set(k, JSON.stringify({visto: 'sí', paso: 42, extra: 1})); assert.deepEqual(leerEstado(a, k), ESTADO_VACIO);
   a.datos.set(k, 'null'); assert.deepEqual(leerEstado(a, k), ESTADO_VACIO);

@@ -3,6 +3,8 @@ import type {ReactNode} from 'react';
 import type {Recommendation} from '../../../../../packages/recommendations/index.mjs';
 import type {FlowEvent,Etapa} from '../../../../../packages/recommendations/flujo.mjs';
 import {construirLinea,pasosEtapa,RESULTADO_TXT,PRIORIDAD_TXT,ETAPA_TXT} from '../../../../../packages/recommendations/flujo.mjs';
+import {useT} from '../i18n/proveedor';
+import {traductor,type Clave,type Traductor} from '../../lib/i18n';
 import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import {Stepper} from '../ui/stepper';
 import {Timeline} from '../ui/timeline';
@@ -17,48 +19,57 @@ export const ROL_TXT:Record<string,string>={owner:'Propietario',analyst:'Analist
 const fechaTxt=(v:string|null|undefined)=>{if(!v)return '';const d=new Date(v.length===10?v+'T12:00:00Z':v);return Number.isNaN(d.getTime())?v:d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});};
 const horaTxt=(v:string)=>{const d=new Date(v);return Number.isNaN(d.getTime())?v:d.toLocaleString('es-MX',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'UTC'})+' UTC';};
 /** Los miembros solo traen id y rol (no nombres ni correos): se muestra el rol y los últimos 4 caracteres del id. */
-export function persona(id:string|null|undefined,miembros:Miembro[]){if(!id)return 'Sin asignar';const m=miembros.find(x=>x.id===id);return (m?ROL_TXT[m.role]??m.role:'Persona del equipo')+' · '+id.slice(-4);}
+const ROL_CLAVE:Record<string,Clave>={owner:'conx.e.rol.owner',analyst:'conx.e.rol.analyst',operator:'conx.e.rol.operator',viewer:'conx.e.rol.viewer'};
+/** `t` es el traductor del idioma activo; sin él se conserva el español (llamadores que aún no lo pasan). */
+export function persona(id:string|null|undefined,miembros:Miembro[],t:Traductor=traductor('es')){if(!id)return t('acc.sinAsignar');const m=miembros.find(x=>x.id===id);return (m?(ROL_CLAVE[m.role]?t(ROL_CLAVE[m.role]):ROL_TXT[m.role]??m.role):t('tr.recs.personaEquipo'))+' · '+id.slice(-4);}
+const PRIO_CLAVE:Record<string,Clave>={critical:'acc.prioCritical',high:'acc.prioHigh',normal:'acc.prioNormal'};
+const RES_CLAVE:Record<string,Clave>={yes:'acc.resSi',no:'acc.resNo',partial:'acc.resParcial'};
+const ETAPA_CLAVE:Record<string,Clave>={propuesta:'acc.etPropuesta',ajustada:'acc.etAjustada',aprobada:'acc.etAprobada',en_curso:'acc.etEnCurso',resultado:'acc.etResultado',descartada:'acc.etDescartada'};
+/** Prioridad, resultado y etapa en el idioma activo (los textos base de packages/recommendations siguen en español para quien no pasa `t`). */
+export const prioridadTxt=(t:Traductor,p:string)=>PRIO_CLAVE[p]?t(PRIO_CLAVE[p]):(PRIORIDAD_TXT[p]??p);
+export const resultadoTxt=(t:Traductor,r:string)=>RES_CLAVE[r]?t(RES_CLAVE[r]):(RESULTADO_TXT[r]??r);
 export const etapaTono=(e:Etapa):'ok'|'warn'|'bad'|'info'|'neutral'|'muted'=>e==='descartada'?'muted':e==='resultado'?'ok':e==='en_curso'||e==='aprobada'?'info':'neutral';
 
 export function EtapasFlujo({etapa}:{etapa:Etapa}){
- if(etapa==='descartada')return <div className={css.etapas}><p className={css.etapaTitulo}>Etapa</p><StatusChip tone="muted">Descartada</StatusChip></div>;
- return <div className={css.etapas}><p className={css.etapaTitulo}>Etapa</p><Stepper label="Etapas de la recomendación" steps={pasosEtapa(etapa).map(p=>({key:p.clave,label:p.etiqueta,state:p.estado}))}/></div>;
+ const t=useT();
+ if(etapa==='descartada')return <div className={css.etapas}><p className={css.etapaTitulo}>{t('tr.recs.etapa')}</p><StatusChip tone="muted">{t('acc.descartada')}</StatusChip></div>;
+ return <div className={css.etapas}><p className={css.etapaTitulo}>{t('tr.recs.etapa')}</p><Stepper label={t('tr.recs.etapasAria')} steps={pasosEtapa(etapa).map(p=>({key:p.clave,label:ETAPA_CLAVE[p.clave==='propuesta'&&etapa==='ajustada'?'ajustada':p.clave]?t(ETAPA_CLAVE[p.clave==='propuesta'&&etapa==='ajustada'?'ajustada':p.clave]):p.etiqueta,state:p.estado}))}/></div>;
 }
 const ICONO:Record<string,string>={propuesta:'sparkle',ajustada:'settings',responsable:'users',aprobada:'check',approved:'check',adjusted:'settings',started:'play',resolved:'flag',descartada:'x',reabierta:'refresh'};
 export function LineaFlujo({item,miembros}:{item:FlowItem;miembros:Miembro[]}){
- const filas=construirLinea({item,eventos:item.flow?.events??[],nombre:id=>persona(id,miembros)});
- return <details className={css.linea}><summary>{'Línea de tiempo ('+filas.length+')'}</summary>
+ const t=useT(),filas=construirLinea({item,eventos:item.flow?.events??[],nombre:id=>persona(id,miembros,t)});
+ return <details className={css.linea}><summary>{t('tr.recs.lineaTiempo',{n:filas.length})}</summary>
   <Timeline events={filas.map(f=>({key:f.clave,title:f.titulo,icon:ICONO[f.tipo]??'message',meta:<>{f.quien} · <time dateTime={f.cuando}>{horaTxt(f.cuando)}</time></>,body:f.detalle?textoLegible(f.detalle):undefined}))}/>
  </details>;
 }
 export function ComparacionBloque({c}:{c:NonNullable<FlowEvent['comparison']>}){
- const fmt=(v:string)=>formatMinorUnits(v,c.moneda,c.exponente);
- return <section aria-label="Comparación antes y después"><dl className={css.comparacion}><div><dt>Antes</dt><dd>{fmt(c.antesMinor)}</dd></div><div><dt>Después</dt><dd>{fmt(c.despuesMinor)}</dd></div><div><dt>Cambio</dt><dd>{fmt(c.deltaMinor)}</dd></div></dl>
-  <p className={css.rotulo}><strong>{c.rotulo}</strong>{c.completa?'':' La medición está incompleta: solo incluye el subtotal conocido de cada periodo.'} Importes de ingreso observados; no se estima margen ni ahorro.</p></section>;
+ const t=useT(),fmt=(v:string)=>formatMinorUnits(v,c.moneda,c.exponente);
+ return <section aria-label={t('tr.recs.cmpAria')}><dl className={css.comparacion}><div><dt>{t('acc.antes')}</dt><dd>{fmt(c.antesMinor)}</dd></div><div><dt>{t('acc.despues')}</dt><dd>{fmt(c.despuesMinor)}</dd></div><div><dt>{t('tr.recs.cambio')}</dt><dd>{fmt(c.deltaMinor)}</dd></div></dl>
+  <p className={css.rotulo}><strong>{c.rotulo}</strong>{c.completa?'':t('tr.recs.cmpIncompleta')}{t('tr.recs.cmpImportes')}</p></section>;
 }
 /** Bloque «Seguimiento» (aprobada / en curso / con resultado). */
 export function SeguimientoBloque({item,miembros,acciones}:{item:FlowItem;miembros:Miembro[];acciones?:ReactNode}){
- const evs=item.flow?.events??[],apr=evs.find(e=>e.kind==='approved'),ini=evs.find(e=>e.kind==='started'),res=evs.find(e=>e.kind==='resolved');
+ const t=useT(),evs=item.flow?.events??[],apr=evs.find(e=>e.kind==='approved'),ini=evs.find(e=>e.kind==='started'),res=evs.find(e=>e.kind==='resolved');
  if(!apr)return null;
- const prioridad=PRIORIDAD_TXT[item.priority]??item.priority;
+ const prioridad=prioridadTxt(t,item.priority);
  return <>
-  <section className={css.seguimiento} aria-label="Seguimiento de la intervención"><h4>Seguimiento</h4>
+  <section className={css.seguimiento} aria-label={t('tr.recs.segAria')}><h4>{t('tr.recs.seguimiento')}</h4>
    <dl className={css.kv}>
-    <div><dt>Responsable</dt><dd>{persona(apr.ownerId,miembros)}</dd></div>
-    <div><dt>Fecha de compromiso</dt><dd>{fechaTxt(apr.dueDate)}</dd></div>
-    <div><dt>Aprobada por</dt><dd>{persona(apr.actorId,miembros)} · {fechaTxt(apr.createdAt)}</dd></div>
-    <div><dt>Puesta en curso</dt><dd>{ini?persona(ini.actorId,miembros)+' · '+fechaTxt(ini.createdAt):'Aún no'}</dd></div>
-    <div><dt>Prioridad</dt><dd>{prioridad}</dd></div>
-    <div><dt>Intervención</dt><dd>{apr.interventionId?<LinkButton href={'/interventions#intervention-'+apr.interventionId} size="sm" variant="ghost" icon={<Arrow/>}>Abrir intervención</LinkButton>:'Sin vincular'}</dd></div>
+    <div><dt>{t('acc.responsable')}</dt><dd>{persona(apr.ownerId,miembros,t)}</dd></div>
+    <div><dt>{t('tr.recs.fechaCompromiso')}</dt><dd>{fechaTxt(apr.dueDate)}</dd></div>
+    <div><dt>{t('tr.recs.aprobadaPor')}</dt><dd>{persona(apr.actorId,miembros,t)} · {fechaTxt(apr.createdAt)}</dd></div>
+    <div><dt>{t('tr.recs.puestaCurso')}</dt><dd>{ini?persona(ini.actorId,miembros,t)+' · '+fechaTxt(ini.createdAt):t('tr.recs.aunNo')}</dd></div>
+    <div><dt>{t('tr.recs.prioridad')}</dt><dd>{prioridad}</dd></div>
+    <div><dt>{t('tr.recs.intervencion')}</dt><dd>{apr.interventionId?<LinkButton href={'/interventions#intervention-'+apr.interventionId} size="sm" variant="ghost" icon={<Arrow/>}>{t('acc.abrirInterv')}</LinkButton>:t('tr.recs.sinVincular')}</dd></div>
    </dl>
-   {apr.comment&&<p className="card-lead">{'Comentario de la aprobación: '}{textoLegible(apr.comment)}</p>}
+   {apr.comment&&<p className="card-lead">{t('tr.recs.comentarioAprob')}{textoLegible(apr.comment)}</p>}
    {acciones}
   </section>
-  {res&&<section className={css.resultado} aria-label="Resultado registrado"><h4>Resultado</h4>
-   <p><StatusChip tone={res.outcome==='yes'?'ok':res.outcome==='partial'?'warn':'bad'}>{RESULTADO_TXT[res.outcome??'']??res.outcome}</StatusChip></p>
+  {res&&<section className={css.resultado} aria-label={t('tr.recs.resultadoAria')}><h4>{t('tr.recs.resultado')}</h4>
+   <p><StatusChip tone={res.outcome==='yes'?'ok':res.outcome==='partial'?'warn':'bad'}>{resultadoTxt(t,res.outcome??'')}</StatusChip></p>
    <p className="card-lead">{textoLegible(res.note??'')}</p>
-   <p className={css.rotulo}>{'Registrado por '+persona(res.actorId,miembros)+' · '+fechaTxt(res.createdAt)+'. Lo escribió una persona: no es una medición automática.'}</p>
-   {res.comparison?<ComparacionBloque c={res.comparison}/>:<p className={css.rotulo}>Sin comparación antes/después: la intervención no tiene una medición con datos observados en dos periodos. No se estima ni se supone un efecto.</p>}
+   <p className={css.rotulo}>{t('tr.recs.registradoPor',{quien:persona(res.actorId,miembros,t),fecha:fechaTxt(res.createdAt)})}</p>
+   {res.comparison?<ComparacionBloque c={res.comparison}/>:<p className={css.rotulo}>{t('tr.recs.sinComparacion')}</p>}
   </section>}
  </>;
 }

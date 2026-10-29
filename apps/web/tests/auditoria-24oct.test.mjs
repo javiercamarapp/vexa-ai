@@ -85,7 +85,8 @@ test('M5/M6/M16: Problemas y Explorador rotulados; el conteo de cargas de Fuente
   assert.match(leer('lib/i18n/d-explorador.ts'), /Incluye las notificaciones automáticas/);
   assert.match(leer('lib/i18n/d-prob.ts'), /en total, como en el Explorador/);
   const f = leer('components/datos/fuentes-datos.tsx');
-  assert.match(f, /agregadoImportaciones\(cov\.data\?\.sources\)/); assert.match(f, /label:'Cargas del espacio'/); assert.match(f, /suman '\+nf\.format\(impo-agr\.cargas\)/);
+  assert.match(f, /agregadoImportaciones\(cov\.data\?\.sources\)/); assert.match(f, /label:tx\('tr\.datos\.fdCargasEspacio'\)/); assert.match(f, /tx\('tr\.datos\.fdSuman',\{n:nf\.format\(impo-agr\.cargas\)\}\)/);
+  const trA = leer('lib/i18n/d-tr-a.ts'); assert.match(trA, /'tr\.datos\.fdCargasEspacio': 'Cargas del espacio'/); assert.match(trA, /'tr\.datos\.fdSuman': ' · el libro, el Tracker y otras fuentes suman \{n\} cargas más'/);
 });
 
 // ---- Contraste AA (M10, M12, M13) calculado sobre los tokens reales del CSS ----

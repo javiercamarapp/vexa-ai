@@ -115,3 +115,5 @@
 .pf-seg{background:var(--ui-surface);border-color:var(--ui-line-strong)}
 :is(.workspace-content,.access-flow) .pf-seg .btn[aria-pressed=true]{background:var(--btn-soft-bg);border-color:var(--btn-soft-line);color:var(--btn-soft-ink);box-shadow:none}
 @media(max-width:819px){:root:root:root:root body .workspace-content .pf-seg .btn{min-height:44px!important}:root:root body .workspace-content .pf-seg .btn::after{content:none}}
+/* Celular: el rótulo del encabezado ordenable no se parte a media palabra (la regla de tablas del espacio de trabajo usa overflow-wrap:anywhere). */
+html:root:root:not([data-tablas-movil=comparar]) body .pf-table[data-mv] th .btn-label{overflow-wrap:normal;word-break:normal;white-space:nowrap}

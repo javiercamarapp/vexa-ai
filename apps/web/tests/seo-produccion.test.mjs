@@ -4,6 +4,9 @@ import {existsSync,readFileSync,readdirSync,statSync} from 'node:fs';
 import {join} from 'node:path';
 import {SITE,SITE_URL_RESPALDO,siteUrl,RUTAS_PUBLICAS,PREFIJOS_PRIVADOS,metadatosPublicos,jsonLd} from '../src/lib/site.mjs';
 import {MENU} from '../src/lib/workspace/menu.mjs';
+import {es} from '../src/lib/i18n/es';
+/** Título en español de una página: su clave meta.titulo.* (metaTitulo) resuelta en el diccionario. */
+const tituloEs=texto=>{const k=/metaTitulo\(\s*'(meta\.titulo\.[a-z0-9-]+)'/.exec(texto)?.[1];return k?es[k]:null;};
 /** SEO y publicación: metadatos, robots, sitemap, manifest, íconos, cabeceras y títulos leídos del código (sin servidor). */
 const raiz=join(import.meta.dirname,'..'),src=join(raiz,'src/app');
 const leer=r=>readFileSync(join(raiz,r),'utf8'),pub=r=>join(raiz,'public',r);
@@ -35,7 +38,8 @@ test('title y description con longitud útil para buscadores', () => {
   assert.equal(m.openGraph.type,'website');assert.equal(m.openGraph.locale,'es_MX');assert.equal(m.openGraph.siteName,'Rovaq AI');
   assert.deepEqual([m.openGraph.images[0].width,m.openGraph.images[0].height],[1200,630]);assert.ok(m.openGraph.images[0].alt.length>10);
   assert.equal(m.twitter.card,'summary_large_image');assert.equal(m.robots.index,true);
-  assert.match(leer('src/app/login/layout.tsx'),/metadatosPublicos\(\{titulo:'Iniciar sesión',ruta:'\/login'\}\)/);
+  assert.match(leer('src/app/login/layout.tsx'),/metadatosPublicos\(\{titulo:traducir\(await idiomaActual\(\),'meta\.titulo\.login'\),ruta:'\/login'\}\)/);
+  assert.equal(es['meta.titulo.login'],'Iniciar sesión');
 });
 test('páginas privadas: noindex en cada segmento y cabecera X-Robots-Tag', () => {
   for (const f of ['src/app/(workspace)/layout.tsx','src/app/platform/layout.tsx','src/app/seguridad/page.tsx','src/app/sin-acceso/page.tsx','src/app/not-found.tsx','src/app/auth/invitations/[id]/layout.tsx','src/app/auth/email/complete/layout.tsx'])
@@ -122,18 +126,18 @@ test('títulos de pestaña: toda pantalla del menú tiene título propio, único
   const itemsMenu=MENU.flatMap(e=>e.tipo==='grupo'?e.items:[e]);
   for (const it of itemsMenu) {
     const f=join(src,'(workspace)',it.href.slice(1),'page.tsx');assert.ok(existsSync(f),it.href+' sin page.tsx');
-    const m=/export const metadata\s*=\s*\{title:\s*'([^']+)'/.exec(readFileSync(f,'utf8'));assert.ok(m,it.href+' sin metadata.title');
+    const m=[null,tituloEs(readFileSync(f,'utf8'))];assert.ok(m[1],it.href+' sin título (metaTitulo)');
     const esperado=it.titulo??it.etiqueta;assert.ok(m[1].startsWith(esperado),`${it.href}: «${m[1]}» no empieza con «${esperado}»`);
     assert.ok(!titulos.has(m[1]),`título repetido «${m[1]}» (${titulos.get(m[1])} y ${it.href})`);titulos.set(m[1],it.href);
   }
   // Toda página (no solo las del menú) declara título, directo o en su layout.
   const paginas=d=>readdirSync(d).flatMap(n=>{const p=join(d,n);return statSync(p).isDirectory()?paginas(p):n==='page.tsx'?[p]:[];});
-  const sin=paginas(src).filter(f=>{const s=readFileSync(f,'utf8');if(/metadata|generateMetadata/i.test(s))return false;const l=join(f,'..','layout.tsx');return !(existsSync(l)&&/metadata/.test(readFileSync(l,'utf8')));}).map(f=>f.replace(src+'/',''));
+  const sin=paginas(src).filter(f=>{const s=readFileSync(f,'utf8');if(/metadata|generateMetadata/i.test(s))return false;const l=join(f,'..','layout.tsx');return !(existsSync(l)&&/metadata|metaTitulo|metadatosPublicos/.test(readFileSync(l,'utf8')));}).map(f=>f.replace(src+'/',''));
   assert.deepEqual(sin.filter(f=>f!=='page.tsx'),[],'páginas sin título: '+sin.join(', '));
 });
 test('páginas de error de marca: noindex, logo y salida a Hoy; «use client» primero', () => {
   const nf=leer('src/app/not-found.tsx'),ge=leer('src/app/global-error.tsx'),er=leer('src/app/error.tsx');
-  assert.match(nf,/Ir a Hoy/);assert.match(er,/href="\/overview"/);
+  assert.match(nf,/t\('det\.irAHoy'\)/);assert.match(readFileSync('src/lib/i18n/d-probdet.ts','utf8'),/'det\.irAHoy': 'Ir a Hoy'/);assert.match(er,/href="\/overview"/);
   assert.match(ge,/^'use client';/);assert.match(er,/^'use client';/);
   assert.match(ge,/noindex/);assert.match(ge,/rovaq-logo-horizontal-positivo-600px\.png/);assert.match(ge,/alt="Rovaq AI"/);assert.match(ge,/width=\{160\} height=\{45\}/);
 });

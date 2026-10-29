@@ -5,7 +5,7 @@ import {createContext,useCallback,useContext,useEffect,useMemo,useRef,useState,t
 import {usePathname,useRouter} from 'next/navigation';
 import {pasosDe,type Pista} from '../../lib/onboarding/catalogo.mjs';
 import {estadoInicial,eventoDeTecla,reducir,teclasPropias,type EstadoRecorrido,type EventoRecorrido} from '../../lib/onboarding/recorrido.mjs';
-import {construirTour,gruposDe,type PasoTour} from '../../lib/onboarding/tour.mjs';
+import {construirTour,gruposDe,type ModoTour,type PasoTour} from '../../lib/onboarding/tour.mjs';
 import {enPantalla} from '../../lib/onboarding/ruta.mjs';
 import {actualizarEstado,almacenDelNavegador,claveEstado,ESTADO_VACIO,leerEstado,type EstadoLocal} from '../../lib/onboarding/estado';
 import {abrirGrupoDelMenu,primerVisible} from './objetivo';
@@ -16,7 +16,8 @@ export interface Controlador {
  rec:EstadoRecorrido;paso:PasoTour|null;menuAbierto:boolean;invitacionVisible:boolean;soporteTerminado:boolean;ruta:string;
  registrarBoton:(el:HTMLButtonElement|null)=>void;enfocarBoton:()=>void;
  alternarMenu:()=>void;cerrarMenu:()=>void;
- abrirSetup:()=>void;iniciar:(modo:'inicio'|'retomar')=>void;irAPantalla:(href:string)=>void;despachar:(e:EventoRecorrido)=>void;siguiente:()=>void;llevame:()=>void;terminarEIrASetup:()=>void;
+ modo:ModoTour;hayModoCorto:boolean;pasosCorto:number;pasosCompleto:number;
+ abrirSetup:()=>void;iniciar:(modo:'inicio'|'retomar',recorrido?:ModoTour)=>void;irAPantalla:(href:string)=>void;despachar:(e:EventoRecorrido)=>void;siguiente:()=>void;llevame:()=>void;terminarEIrASetup:()=>void;
  omitir:()=>void;noVolver:()=>void;saltarInvitacion:()=>void;mostrarChecklist:()=>void;ocultarChecklist:()=>void;
 }
 const Contexto=createContext<Controlador|null>(null);
@@ -27,8 +28,12 @@ export function OnboardingRaiz({datos,children}:{datos:DatosOnboarding;children:
  // Si la sesión de soporte termina con la pantalla abierta (la pista deja de ser «soporte»), se avisa en vez de cambiar la vista sin decir nada.
  const [pistaAnterior,setPistaAnterior]=useState(pista),[soporteTerminado,setSoporteTerminado]=useState(false);
  if(pistaAnterior!==pista){setPistaAnterior(pista);setSoporteTerminado(pistaAnterior==='soporte'&&pista!=='soporte');}
- // El recorrido se construye del catálogo y del menú real del rol: mismas pantallas que ve, nada más.
- const pasos=useMemo(()=>tieneRecorrido&&pista?construirTour(pista):[],[tieneRecorrido,pista]);
+ // El recorrido se construye del catálogo y del menú real del rol: mismas pantallas que ve, nada más. «Corto» = solo lo esencial del rol (tour.mjs, ESENCIALES).
+ const [modo,setModo]=useState<ModoTour>('completo');
+ const completo=useMemo(()=>tieneRecorrido&&pista?construirTour(pista,'completo'):[],[tieneRecorrido,pista]);
+ const corto=useMemo(()=>tieneRecorrido&&pista?construirTour(pista,'corto'):[],[tieneRecorrido,pista]);
+ const hayModoCorto=corto.length>0&&corto.length<completo.length;
+ const pasos=modo==='corto'&&hayModoCorto?corto:completo;
  const pantallas=useMemo(()=>gruposDe(pasos),[pasos]);
  const tieneChecklist=Boolean(tieneRecorrido&&pista&&pasosDe(pista,'checklist').length>0);
  const clave=useMemo(()=>tieneRecorrido&&pista?claveEstado(userId,tenantId,pista):null,[tieneRecorrido,pista,userId,tenantId]);
@@ -38,15 +43,16 @@ export function OnboardingRaiz({datos,children}:{datos:DatosOnboarding;children:
  // Lo guardado se lee tras montar (el servidor no ve el navegador): evita diferencias de hidratación. Al cambiar de rol u organización cambia la clave.
  // Si el recorrido estaba abierto al recargar, se retoma en el mismo paso.
  useEffect(()=>{const frame=requestAnimationFrame(()=>{
-  const leido=clave?leerEstado(almacenDelNavegador(),clave):ESTADO_VACIO,indice=leido.activo&&!leido.descartado?pasos.findIndex(p=>p.id===leido.paso):-1;
-  setLocal(leido);setRec(indice>=0?reducir(estadoInicial(),{tipo:'abrir',indice},pasos.length,pasos,rutaRef.current):estadoInicial());setListo(true);
- });return()=>cancelAnimationFrame(frame);},[clave,pasos]);
+  const leido=clave?leerEstado(almacenDelNavegador(),clave):ESTADO_VACIO,elegido:ModoTour=leido.modo==='corto'&&corto.length>0&&corto.length<completo.length?'corto':'completo',lista=elegido==='corto'?corto:completo;
+  const indice=leido.activo&&!leido.descartado?lista.findIndex(p=>p.id===leido.paso):-1;
+  setModo(elegido);setLocal(leido);setRec(indice>=0?reducir(estadoInicial(),{tipo:'abrir',indice},lista.length,lista,rutaRef.current):estadoInicial());setListo(true);
+ });return()=>cancelAnimationFrame(frame);},[clave,corto,completo]);
  const guardar=useCallback((parche:Partial<EstadoLocal>)=>{setLocal(previo=>clave?actualizarEstado(almacenDelNavegador(),clave,{...previo,...parche}):{...previo,...parche});},[clave]);
  // Todo cambio del recorrido nace de una acción de la persona (o de que llegue a la pantalla a la que se le mandó): aquí se aplica y se guarda el paso.
  // Si el paso cae en otra pantalla distinta de la actual (volver atrás, retomar, saltar), se la lleva; un paso «ir» no navega: te dice qué apretar.
- const aplicar=useCallback((sig:EstadoRecorrido,navegar:boolean)=>{
+ const aplicar=useCallback((sig:EstadoRecorrido,navegar:boolean,lista:PasoTour[]=pasos)=>{
   setRec(sig);
-  if(sig.abierto){const p=pasos[sig.indice];if(p){guardar({paso:p.id,visto:true,activo:true});if(navegar&&p.tipo!=='ir'&&p.pantalla&&!enPantalla(pathname,p.pantalla))router.push(p.pantalla);}}
+  if(sig.abierto){const p=lista[sig.indice];if(p){guardar({paso:p.id,visto:true,activo:true});if(navegar&&p.tipo!=='ir'&&p.pantalla&&!enPantalla(pathname,p.pantalla))router.push(p.pantalla);}}
   else if(sig.terminado)guardar({paso:null,visto:true,omitido:false,activo:false});
   else guardar({activo:false});
  },[guardar,pasos,pathname,router]);
@@ -60,10 +66,12 @@ export function OnboardingRaiz({datos,children}:{datos:DatosOnboarding;children:
  const paso=rec.abierto?(pasos[rec.indice]??null):null;
  // Al cerrar (Esc, Omitir, Terminar) el foco vuelve al disparador: el botón Guía.
  useEffect(()=>{if(abiertoAntes.current&&!rec.abierto)boton?.focus();abiertoAntes.current=rec.abierto;},[rec.abierto,boton]);
- const iniciar=useCallback((modo:'inicio'|'retomar')=>{
-  const desde=modo==='retomar'?pasos.findIndex(p=>p.id===local.paso):-1;
-  setMenuAbierto(false);guardar({omitido:false});aplicar(reducir(rec,{tipo:'abrir',indice:desde>=0?desde:0},pasos.length,pasos,pathname),false);
- },[aplicar,guardar,local.paso,pasos,pathname,rec]);
+ // «inicio» empieza de cero; «retomar» sigue en el paso guardado. `recorrido` elige corto o completo (se guarda); sin él se usa el último elegido.
+ const iniciar=useCallback((como:'inicio'|'retomar',recorrido?:ModoTour)=>{
+  const elegido:ModoTour=recorrido&&(recorrido==='completo'||hayModoCorto)?recorrido:modo,lista=elegido==='corto'?corto:completo;
+  const desde=como==='retomar'?lista.findIndex(p=>p.id===local.paso):-1;
+  setMenuAbierto(false);setModo(elegido);guardar({omitido:false,modo:elegido});aplicar(reducir(rec,{tipo:'abrir',indice:desde>=0?desde:0},lista.length,lista,pathname),false,lista);
+ },[aplicar,completo,corto,guardar,hayModoCorto,local.paso,modo,pathname,rec]);
  const irAPantalla=useCallback((href:string)=>{
   const g=pantallas.find(x=>x.href===href);if(!g)return;
   setMenuAbierto(false);guardar({omitido:false});aplicar(reducir(rec,{tipo:'abrir',indice:g.desde},pasos.length,pasos,pathname),false);
@@ -102,7 +110,7 @@ export function OnboardingRaiz({datos,children}:{datos:DatosOnboarding;children:
   document.addEventListener('keydown',alTeclear);return()=>document.removeEventListener('keydown',alTeclear);
  },[abierto,siguiente,despachar]);
  const invitacionVisible=listo&&tieneRecorrido&&!rec.abierto&&!local.visto&&!local.omitido&&!local.descartado;
- const valor:Controlador={datos,pista,listo,local,tieneRecorrido,pasos,pantallas,tieneChecklist,rec,paso,menuAbierto,invitacionVisible,soporteTerminado,ruta:pathname,registrarBoton:setBoton,enfocarBoton:()=>boton?.focus(),
+ const valor:Controlador={datos,pista,listo,local,tieneRecorrido,pasos,modo,hayModoCorto,pasosCorto:corto.length,pasosCompleto:completo.length,pantallas,tieneChecklist,rec,paso,menuAbierto,invitacionVisible,soporteTerminado,ruta:pathname,registrarBoton:setBoton,enfocarBoton:()=>boton?.focus(),
   alternarMenu:()=>setMenuAbierto(v=>!v),cerrarMenu:()=>setMenuAbierto(false),abrirSetup,iniciar,irAPantalla,despachar,siguiente,llevame,terminarEIrASetup,omitir,noVolver,saltarInvitacion,mostrarChecklist,ocultarChecklist};
  return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }

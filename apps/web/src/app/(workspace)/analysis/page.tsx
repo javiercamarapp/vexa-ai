@@ -1,3 +1,4 @@
 import {ExtractionPanel} from '../../../components/extraction-panel';
-export const metadata={title:'Análisis de conversaciones'};
+import {metaTitulo} from '../../../lib/i18n/titulo';
+export const generateMetadata=()=>metaTitulo('meta.titulo.analysis');
 export default function AnalysisPage(){return <ExtractionPanel/>;}

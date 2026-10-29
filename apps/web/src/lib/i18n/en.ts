@@ -31,6 +31,10 @@ import {setupEn} from './d-setup';
 import {tourEn} from './d-tour';
 import {landingEn} from './d-landing';
 import {rolesEn} from './d-roles';
+import {metaEn} from './d-meta';
+import {trAEn} from './d-tr-a';
+import {trBEn} from './d-tr-b';
+import {trCEn} from './d-tr-c';
 export const en: Record<Clave, string> = {
   'comun.cerrar': 'Close', 'comun.reintentar': 'Try again', 'comun.cargando': 'Loading…', 'comun.sinDato': 'No data',
   'idioma.etiqueta': 'Language', 'idioma.es': 'Español', 'idioma.en': 'English', 'idioma.cambiar': 'Switch language to {idioma}',
@@ -163,6 +167,10 @@ export const en: Record<Clave, string> = {
   ...probdetEn,
   ...resumenEn,
   ...onbEn,
+  ...metaEn,
+  ...trAEn,
+  ...trBEn,
+  ...trCEn,
   ...setupEn,
   ...tourEn,
   ...landingEn,

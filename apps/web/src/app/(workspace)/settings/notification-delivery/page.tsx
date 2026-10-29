@@ -4,7 +4,8 @@ import {conRedireccionDeAcceso} from '../../../../lib/workspace/acceso-pagina';
 import {idiomaActual} from '../../../../lib/i18n/servidor';
 import {traductor} from '../../../../lib/i18n';
 import {DeliveryPolicies} from '../../../../components/notifications/delivery-policies';
-export const metadata={title:'Entrega de avisos'};
+import {metaTitulo} from '../../../../lib/i18n/titulo';
+export const generateMetadata=()=>metaTitulo('meta.titulo.settings-notification-delivery');
 // Auditoría local explícita, igual que Preferencias de avisos; nunca en producción.
 const FIXTURES=process.env.NODE_ENV==='development'&&process.env.VEXA_UI_FIXTURES==='1';
 export default async function Page(){

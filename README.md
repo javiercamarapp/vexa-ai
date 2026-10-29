@@ -86,7 +86,7 @@ flowchart LR
 
 **Lo que sigue pendiente** (declarado, no oculto):
 
-- **Respaldos gestionados y recuperación a un punto en el tiempo (PITR):** hoy hay respaldo lógico por organización y procedimiento de restauración probado ([docs/operacion/04-RESPALDOS-Y-RESTAURACION.md](docs/operacion/04-RESPALDOS-Y-RESTAURACION.md)); PITR gestionado no está activado.
+- **Respaldos y recuperación:** el proveedor de la base hace respaldos físicos diarios (ocho consecutivos verificados el 28 de octubre), con un peor caso de pérdida de casi 24 horas porque la recuperación a un punto en el tiempo (PITR) está apagada. Nadie ha restaurado jamás un respaldo gestionado de este proyecto y el tiempo de recuperación (RTO) no está medido, por lo que no se ofrece ningún compromiso de recuperación. Existe además una herramienta propia de respaldo lógico por organización, probada solo en local con datos sintéticos y nunca contra producción. Los archivos de Storage no están en los respaldos de la base. El ensayo de restauración está planeado ([docs/operacion/04-RESPALDOS-Y-RESTAURACION.md](docs/operacion/04-RESPALDOS-Y-RESTAURACION.md)).
 - **CSP estricta** y **MFA** para administradores de plataforma (ver Seguridad). El MFA (TOTP) y la consola de superadmin están construidos. Las migraciones de plataforma y lectura de soporte ya están aplicadas; MFA sigue apagado hasta enrolar a los administradores y comprobar recuperación.
 - **Correo propio:** SMTP con dominio propio vía Resend; mientras tanto el correo de acceso depende del servicio por defecto, con cupo limitado, y el producto avisa cuando se agota en vez de fingir el envío.
 - **Triple análisis de IA** (varios modelos contrastados sobre el mismo caso) para subir la confianza de la clasificación.
@@ -99,7 +99,7 @@ El detalle de aceptación y la evidencia por fase están en [docs/ESTADO-VIGENTE
 
 Uso de fondos, en orden de prioridad y sin cifras comprometidas en este documento:
 
-1. **Confiabilidad de producción:** respaldos con PITR, CSP, MFA, correo propio, monitoreo y alertas de operación.
+1. **Confiabilidad de producción:** ensayo de restauración con tiempos medidos, PITR, CSP, MFA, correo propio, monitoreo y alertas de operación.
 2. **Segundo y tercer cliente:** conectores directos de Amazon, Walmart y Zendesk, y un proceso repetible de alta de una organización.
 3. **Calidad de la IA:** triple análisis, evaluación continua contra casos revisados por personas y control de costo por organización.
 4. **Producto:** reclamo asistido de reembolsos de extremo a extremo, medición del resultado de cada acción y reporte semanal configurable.

@@ -1,3 +1,4 @@
 import {RetentionPanel} from '../../../../components/retention-panel';
-export const metadata={title:'Retención y borrado'};
+import {metaTitulo} from '../../../../lib/i18n/titulo';
+export const generateMetadata=()=>metaTitulo('meta.titulo.settings-retention');
 export default function RetentionPage(){return <RetentionPanel/>;}

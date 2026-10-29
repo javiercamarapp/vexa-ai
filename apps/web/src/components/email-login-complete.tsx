@@ -2,6 +2,8 @@
 import {RovaqCargando} from './rovaq-cargando';
 import {RovaqLogo} from './rovaq-logo';
 import {useEffect,useRef,useState} from 'react';
+import {useT} from './i18n/proveedor';
+import type {Clave} from '../lib/i18n';
 type Organization={id:string;name:string};
 type Access={organizations:Organization[];platformAccess:boolean};
 async function selectOrganization(tenant:string){
@@ -14,7 +16,8 @@ function openDestination(path:'/overview'|'/platform'){
  window.location.assign(path);
 }
 export function EmailLoginComplete(){
- const [access,setAccess]=useState<Access|null>(null),[busy,setBusy]=useState(true),[error,setError]=useState('');
+ const t=useT();
+ const [access,setAccess]=useState<Access|null>(null),[busy,setBusy]=useState(true),[error,setError]=useState<Clave|''>('');
  const establishment=useRef<Promise<Access>|null>(null);
  useEffect(()=>{
   let active=true;
@@ -35,20 +38,20 @@ export function EmailLoginComplete(){
    if(next.organizations.length===1){openDestination('/overview');return;}
    if(next.organizations.length===0&&next.platformAccess){openDestination('/platform');return;}
    setAccess(next);setBusy(false);
-  }).catch(()=>{if(active){setError('No pudimos completar el acceso. El enlace puede haber caducado o los permisos del espacio cambiaron. Vuelve a iniciar sesión.');setBusy(false);}});
+  }).catch(()=>{if(active){setError('tr.login.errCompletar');setBusy(false);}});
   return()=>{active=false;};
  },[]);
  async function enter(tenant:string){
   if(busy)return;setBusy(true);setError('');
   try{await selectOrganization(tenant);openDestination('/overview');}
-  catch{setAccess(null);setError('El acceso al espacio cambió o la sesión no está disponible. Vuelve a iniciar sesión.');setBusy(false);}
+  catch{setAccess(null);setError('tr.login.errCambio');setBusy(false);}
  }
  return <section className="home access-flow access-selection" aria-busy={busy}>
-  <header className="access-brand"><RovaqLogo variante="horizontal" ancho={132} espacioLibre={false}/></header><p className="login-kicker">Bienvenido a Rovaq AI</p><h1>{busy?'Abriendo tu espacio':error?'Revisa tu acceso':'Tus espacios de trabajo'}</h1>
-  {busy&&<RovaqCargando compacto mensaje="Comprobando tu acceso"/>}{error&&<p role="alert">{error}</p>}
-  {access&&access.organizations.length>1&&<div className="access-destination"><h2>Elige el espacio de cliente</h2><p>Cada espacio contiene sus propios datos y equipo. Puedes cambiarlo después desde el menú.</p>{access.organizations.map(org=><button className="access-organization-choice" key={org.id} disabled={busy} onClick={()=>enter(org.id)}>{org.name}<span aria-hidden="true">→</span></button>)}</div>}
-  {access?.organizations.length===0&&<p>Tu sesión está iniciada, pero todavía no tienes acceso a un espacio. Si recibiste una invitación, abre su enlace para aceptarla.</p>}
-  {access?.platformAccess&&!error&&<div className="access-destination access-platform"><h2>Administración de Rovaq AI</h2><p>Gestiona organizaciones y accesos de la plataforma.</p><a href="/platform">Abrir administración de Rovaq AI <span aria-hidden="true">↗</span></a></div>}
-  <a className="access-back" href="/login">Volver al inicio de sesión</a>
+  <header className="access-brand"><RovaqLogo variante="horizontal" ancho={132} espacioLibre={false}/></header><p className="login-kicker">{t('tr.login.bienvenida')}</p><h1>{busy?t('tr.login.abriendo'):error?t('tr.login.revisa'):t('tr.login.espacios')}</h1>
+  {busy&&<RovaqCargando compacto mensaje={t('tr.login.comprobando')}/>}{error&&<p role="alert">{t(error)}</p>}
+  {access&&access.organizations.length>1&&<div className="access-destination"><h2>{t('tr.login.elige')}</h2><p>{t('tr.login.eligeCuerpo')}</p>{access.organizations.map(org=><button className="access-organization-choice" key={org.id} disabled={busy} onClick={()=>enter(org.id)}>{org.name}<span aria-hidden="true">→</span></button>)}</div>}
+  {access?.organizations.length===0&&<p>{t('tr.login.sinEspacio')}</p>}
+  {access?.platformAccess&&!error&&<div className="access-destination access-platform"><h2>{t('shell.admin')}</h2><p>{t('tr.login.adminCuerpo')}</p><a href="/platform">{t('tr.login.abrirAdmin')} <span aria-hidden="true">↗</span></a></div>}
+  <a className="access-back" href="/login">{t('tr.login.volver')}</a>
  </section>;
 }

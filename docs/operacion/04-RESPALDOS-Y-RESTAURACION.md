@@ -1,4 +1,6 @@
-# Respaldos y restauracion probada
+# Respaldos y restauracion
+
+> Alcance de «probada»: en este documento significa ensayada en un Postgres local con datos sinteticos. Nadie ha restaurado jamas un respaldo gestionado de Supabase para este proyecto y el tiempo de recuperacion (RTO) no esta medido. Ante cualquier diferencia manda el runbook RB-03 (28-oct-2026), que es mas estricto y mas reciente.
 
 ## Verificacion del 26-oct-2026
 

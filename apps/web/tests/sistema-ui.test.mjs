@@ -6,7 +6,8 @@ import {join} from 'node:path';
 const src=join(import.meta.dirname,'../src');
 const leer=f=>readFileSync(join(src,f),'utf8');
 const UI=leer('components/ui/ui.css'),GLOBAL=leer('app/(app)/globals.css'),APPUI=leer('app/(app)/ui.css');
-const css=(d=src,acc=[])=>{for(const n of readdirSync(d)){const p=join(d,n);if(statSync(p).isDirectory())css(p,acc);else if(n.endsWith('.css'))acc.push(p);}return acc;};
+// El sitio público (src/styles/sitio) tiene su propio sistema de diseño y su propia auditoría (tools/sitio, arnés de CSS de T6): no entra en la escala del espacio de trabajo.
+const css=(d=src,acc=[])=>{for(const n of readdirSync(d)){const p=join(d,n);if(statSync(p).isDirectory()){if(p!==join(src,'styles','sitio'))css(p,acc);}else if(n.endsWith('.css'))acc.push(p);}return acc;};
 const TODOS=css();
 // Fuera de alcance de la escala del espacio de trabajo: pantallas de acceso y plataforma interna.
 const AJENOS=/\/(platform|login)\/|platform-ui\.css|globals\.css$/;
@@ -49,8 +50,8 @@ test('tokens de escala: --t-page 20, --t-section 14, --t-kpi ≤ 30', () => {
   assert.equal(g('t-page'),20);assert.equal(g('t-section'),14);assert.ok(g('t-kpi')<=30);
 });
 test('radios solo del conjunto {0, 8, 12, 999, 50%}', () => {
-  // Fuera de la escala de radios, igual que en tokens-nucleo.test.mjs (que ya exime las reglas .login): el acceso editorial (/login) y la página pública (components/landing, burbujas con cola de 2 px, la construye otro equipo).
-  for(const f of TODOS.filter(x=>!/\/components\/landing\/|\/app\/login\//.test(x))){for(const m of readFileSync(f,'utf8').matchAll(/border-radius:\s*([^;}]+)/g)){
+  // Fuera de la escala de radios, igual que en tokens-nucleo.test.mjs (que ya exime las reglas .login): el acceso editorial (/login) y la burbuja con cola de 2 px.
+  for(const f of TODOS.filter(x=>!/\/app\/(?:\(app\)\/)?login\//.test(x))){for(const m of readFileSync(f,'utf8').matchAll(/border-radius:\s*([^;}]+)/g)){
     const v=m[1].replace(/var\([^)]*\)/g,'').trim();
     if(v==='16px 16px 0 0')continue; // hoja inferior del celular
     for(const t of v.split(/\s+/).filter(Boolean)){if(/!important/.test(t))continue;

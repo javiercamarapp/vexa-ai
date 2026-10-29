@@ -5,6 +5,8 @@ import {mkdtempSync, mkdirSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {IDIOMAS, PAGINAS, RUTAS, porId, rutaDe, idDeRuta} from '../src/content/sitio/registro.mjs';
+import {readFileSync, existsSync} from 'node:fs';
+import {landingUrl, PREFIJOS_PRIVADOS, RUTAS_PUBLICAS} from '../src/lib/site.mjs';
 import {crearActivos, leerManifest, partirClave} from '../src/lib/sitio/activos';
 
 test('K2: 34 páginas con id único y rutas únicas por idioma (español sin prefijo, inglés bajo /en), 68 rutas en total', () => {
@@ -62,4 +64,22 @@ test('K3: leerManifest tolera que public/s/manifest.json todavía no exista y le
   mkdirSync(join(vacio, 'public', 's'), {recursive: true});
   writeFileSync(join(vacio, 'public', 's', 'manifest.json'), JSON.stringify(MANIFEST));
   assert.equal(crearActivos(leerManifest(vacio)).url('nube.js'), '/s/nube.ab12cd34.js');
+});
+
+const leer = (rel: string) => readFileSync(join(import.meta.dirname, '..', rel), 'utf8');
+test('el origen del sitio es rovaq.ai por omisión y solo se sobreescribe con https; /landing no es un prefijo privado', () => {
+  assert.equal(landingUrl(undefined), 'https://rovaq.ai'); assert.equal(landingUrl('http://evil.example'), 'https://rovaq.ai'); assert.equal(landingUrl('https://staging.rovaq.ai/x'), 'https://staging.rovaq.ai');
+  assert.ok(!PREFIJOS_PRIVADOS.includes('/landing')); assert.ok(!PREFIJOS_PRIVADOS.includes('/sitio')); assert.deepEqual([...RUTAS_PUBLICAS], ['/login']);
+});
+test('robots y sitemap siguen decidiendo por host y el layout de la app conserva el arranque limpio sin pantalla de carga en rutas públicas', () => {
+  assert.match(leer('src/app/robots.ts'), /ES_HOST_LANDING/); assert.match(leer('src/app/sitemap.ts'), /ES_HOST_LANDING/);
+  assert.match(leer('src/app/(app)/layout.tsx'), /login\|auth\|platform\|landing/);
+});
+test('dos raíces: no hay app/layout.tsx; la app lee la cookie de idioma y el sitio fija lang por la ruta, ambos sin cabecera x-rovaq-lang', () => {
+  assert.ok(!existsSync(join(import.meta.dirname, '../src/app/layout.tsx')));
+  const app = leer('src/app/(app)/layout.tsx'); const sitio = leer('src/app/(sitio)/sitio/[lang]/layout.tsx');
+  assert.match(app, /await idiomaActual\(\)/); assert.doesNotMatch(app, /x-rovaq-lang|headers\(/);
+  assert.match(sitio, /<html lang=\{lang\}>/); assert.doesNotMatch(sitio, /cookies\(|headers\(|idiomaActual/);
+  assert.match(sitio, /dynamic = 'force-static'/); assert.match(sitio, /dynamicParams = false/); assert.match(sitio, /generateStaticParams/);
+  assert.doesNotMatch(leer('src/middleware.ts'), /x-rovaq-lang/);
 });

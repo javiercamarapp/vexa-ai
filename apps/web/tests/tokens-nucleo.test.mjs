@@ -5,7 +5,8 @@ import {readFileSync, readdirSync, statSync} from 'node:fs';
 import {join} from 'node:path';
 const src = join(import.meta.dirname, '../src');
 const css = (f) => readFileSync(join(src, f), 'utf8');
-const todos = (d = src) => readdirSync(d).flatMap((n) => { const p = join(d, n); return statSync(p).isDirectory() ? todos(p) : p.endsWith('.css') ? [p] : []; });
+// El sitio público (src/styles/sitio) tiene su propio sistema de diseño (prefijo s-, tokens propios) y su propia auditoría (tools/sitio, arnés de CSS de T6): no entra en la escala del espacio de trabajo.
+const todos = (d = src) => readdirSync(d).flatMap((n) => { const p = join(d, n); return statSync(p).isDirectory() ? (p === join(src, 'styles', 'sitio') ? [] : todos(p)) : p.endsWith('.css') ? [p] : []; });
 const oscuro = [...css('app/(app)/globals.css').matchAll(/:root\[data-theme=dark\]\s*\{([^}]*)\}/g)].map((m) => m[1]).join(' ');
 const tok = (n) => new RegExp('--' + n + ':\\s*(#[0-9a-f]{6})', 'i').exec(oscuro)?.[1].toLowerCase();
 const lum = (h) => [1, 3, 5].reduce((a, i, k) => { let c = parseInt(h.slice(i, i + 2), 16) / 255; c = c <= .03928 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4; return a + c * [.2126, .7152, .0722][k]; }, 0);

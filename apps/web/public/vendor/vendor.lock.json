@@ -1,24 +1,6 @@
 {
  "archivos": [
   {
-   "archivo": "gsap-3.13.0.min.js",
-   "nombre": "gsap",
-   "version": "3.13.0",
-   "origen": "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js",
-   "sha256": "96c01b81f44a3290e2b4532f55e2c9534b2adc43273a19f3756b2cb41f0fd0b6",
-   "licencia": "GreenSock Standard no charge license",
-   "descargado": "2026-10-28"
-  },
-  {
-   "archivo": "ScrollTrigger-3.13.0.min.js",
-   "nombre": "ScrollTrigger",
-   "version": "3.13.0",
-   "origen": "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js",
-   "sha256": "308219390e5e3b84cda0c481e70caa9820883ae10bda44e6e9a149a81aac4b3f",
-   "licencia": "GreenSock Standard no charge license",
-   "descargado": "2026-10-28"
-  },
-  {
    "archivo": "lenis-1.1.13.min.js",
    "nombre": "lenis",
    "version": "1.1.13",

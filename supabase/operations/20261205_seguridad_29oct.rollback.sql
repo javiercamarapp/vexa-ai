@@ -2,10 +2,16 @@
 -- Las tablas de contadores y de eventos solo guardan datos efímeros o de auditoría de seguridad: respaldar security_events antes si se quiere conservarla.
 begin;
 -- 0700: privilegios por defecto y funciones de disparador
-do $$ declare r text; begin foreach r in array array['postgres','supabase_admin'] loop if exists(select 1 from pg_roles where rolname=r) then
- execute format('alter default privileges for role %I in schema public grant all on tables to anon, authenticated',r);
- execute format('alter default privileges for role %I in schema public grant all on sequences to anon, authenticated',r);
- execute format('alter default privileges for role %I in schema public grant execute on functions to anon, authenticated',r); end if; end loop; end $$;
+do $$ declare r text; begin foreach r in array array['postgres','supabase_admin'] loop
+ -- R2-20: mismo criterio que la migración 0700: solo los roles de los que el rol actual es miembro (o superusuario); el resto se omite con NOTICE.
+ if not exists(select 1 from pg_roles where rolname=r) then raise notice 'R2-20 OMITIDO: el rol % no existe', r; continue; end if;
+ if not (r = current_user or (select rolsuper from pg_roles where rolname = current_user) or pg_has_role(current_user, r, 'member')) then raise notice 'R2-20 OMITIDO: % no es miembro de %', current_user, r; continue; end if;
+ begin
+  execute format('alter default privileges for role %I in schema public grant all on tables to anon, authenticated',r);
+  execute format('alter default privileges for role %I in schema public grant all on sequences to anon, authenticated',r);
+  execute format('alter default privileges for role %I in schema public grant execute on functions to anon, authenticated',r);
+ exception when insufficient_privilege then raise notice 'R2-20 OMITIDO: privilegios insuficientes para %', r; end;
+end loop; end $$;
 grant execute on function public.ai_budget_attempt_guard(),public.ai_budget_limit_guard(),public.ai_budget_reconciliation_guard(),public.ai_budget_reservation_guard(),public.cfo_access_log_append_only() to anon, authenticated, public;
 alter function public.ai_budget_attempt_guard() set search_path=pg_catalog,public; alter function public.ai_budget_limit_guard() set search_path=pg_catalog,public;
 alter function public.ai_budget_reconciliation_guard() set search_path=pg_catalog,public; alter function public.ai_budget_reservation_guard() set search_path=pg_catalog,public;

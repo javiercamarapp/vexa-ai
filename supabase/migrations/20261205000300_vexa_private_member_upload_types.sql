@@ -8,6 +8,7 @@
 -- lo que declara un tipo distinto o un tamano mayor. No se toca la configuracion del bucket (los adjuntos usan tipos y tamanos distintos).
 -- Reversion: drop policy vexa_private_member_upload_types on storage.objects;
 begin;
+set local lock_timeout='3s'; set local statement_timeout='30s';
 create policy vexa_private_member_upload_types on storage.objects as restrictive for insert to authenticated
  with check(bucket_id<>'vexa-private' or (
   split_part(name,'/',2)='imports'

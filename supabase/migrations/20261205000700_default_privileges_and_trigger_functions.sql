@@ -7,13 +7,22 @@
 --    cuatro ai_budget_* fijan search_path vacío (las referencias ya van calificadas con public.; pg_catalog siempre se busca primero).
 -- Reversión: alter default privileges ... grant (ver rollback) ; grant execute on las funciones a public; alter function ... set search_path=pg_catalog,public.
 begin;
+set local lock_timeout='3s'; set local statement_timeout='30s';
+-- R2-20 (auditoría run 2): en Supabase gestionado `postgres` NO es superusuario ni miembro de supabase_admin, así que `alter default privileges for role supabase_admin`
+-- falla con insufficient_privilege. Cada rol se trata por separado: lo de `postgres` (el que ejecuta las migraciones) se aplica siempre; lo de supabase_admin solo si el
+-- rol actual es superusuario o miembro de él, y si no se emite un NOTICE «R2-20 OMITIDO» y se sigue. Nada de lo que sigue (revokes de los cinco disparadores, search_path de
+-- las cuatro ai_budget_*) depende de esto. El valor por defecto de supabase_admin lo cierra quien tenga ese rol (panel de Supabase o soporte); el script de aplicar lo reporta.
 do $$ declare r text; begin
  foreach r in array array['postgres','supabase_admin'] loop
-  if exists(select 1 from pg_roles where rolname=r) then
+  if not exists(select 1 from pg_roles where rolname=r) then raise notice 'R2-20 OMITIDO: el rol % no existe', r; continue; end if;
+  if not (r = current_user or (select rolsuper from pg_roles where rolname = current_user) or pg_has_role(current_user, r, 'member')) then
+   raise notice 'R2-20 OMITIDO: % no es miembro de % (alter default privileges for role % no se aplica)', current_user, r, r; continue; end if;
+  begin
    execute format('alter default privileges for role %I in schema public revoke all on tables from anon, authenticated',r);
    execute format('alter default privileges for role %I in schema public revoke all on sequences from anon, authenticated',r);
    execute format('alter default privileges for role %I in schema public revoke execute on functions from anon, authenticated',r);
-  end if;
+  exception when insufficient_privilege then raise notice 'R2-20 OMITIDO: privilegios insuficientes para alter default privileges for role %', r;
+  end;
  end loop;
 end $$;
 revoke execute on function public.ai_budget_attempt_guard(),public.ai_budget_limit_guard(),public.ai_budget_reconciliation_guard(),public.ai_budget_reservation_guard(),public.cfo_access_log_append_only() from anon, authenticated, public;

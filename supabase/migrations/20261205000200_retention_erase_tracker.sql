@@ -3,6 +3,7 @@
 -- del Tracker. Ademas un disparador BEFORE INSERT vacia las filas nuevas del Tracker cuyo ticket ya fue borrado, para que una reingesta no lo reviva.
 -- Reversion: restaurar retention_erase desde 20261130000100 y drop trigger/function tracker_tombstone_blank.
 begin;
+set local lock_timeout='3s'; set local statement_timeout='30s';
 create or replace function public.retention_erase(p jsonb) returns jsonb language plpgsql security definer set search_path='' as $$
 declare t uuid:=nullif(current_setting('vexa.tenant_id',true),'')::uuid;c uuid:=(p->>'connectionId')::uuid;k text:=p->>'entityType';e text:=p->>'externalId';rid uuid:=(p->>'requestId')::uuid;
  pol public.retention_policies;prior public.retention_ledger;mid uuid[];cid uuid[];revs uuid[];import_ids uuid[];probs uuid[];m record;oldrow jsonb;newrow jsonb;redacted jsonb;count_raw integer;count_vectors integer;afids uuid[];aimps uuid[];ablobs uuid[];mext text[];cext text[];tkeys text[];begin

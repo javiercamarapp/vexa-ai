@@ -366,3 +366,45 @@ test('M3 + B1: privilegios por defecto cerrados para anon/authenticated, funcion
  });
  }finally{await pg.stop();}
 });
+
+test('R2-20: la migración 0700 tolera que postgres no sea superusuario ni miembro de supabase_admin (Supabase gestionado) y aplica lo demás',async t=>{
+ const pg=await startLocalPg({label:'sec29r'});try{
+ const db='s29r';
+ // Réplica de producción: postgres con CREATEROLE pero SIN superusuario y sin pertenencia a supabase_admin; supabase_admin es el superusuario de la plataforma.
+ pg.sql('postgres',`create role postgres login createrole; create role supabase_admin superuser login`);
+ pg.createDb(db);
+ pg.applySchema(db,{upTo:'20261205000600_invitation_quota.sql'});
+ pg.sql(db,`alter default privileges for role postgres in schema public grant all on tables to anon,authenticated,service_role;
+  alter default privileges for role postgres in schema public grant execute on functions to anon,authenticated,service_role;
+  alter default privileges for role supabase_admin in schema public grant all on tables to anon,authenticated,service_role;
+  grant all on schema public to postgres;
+  alter function public.ai_budget_attempt_guard() owner to postgres; alter function public.ai_budget_limit_guard() owner to postgres;
+  alter function public.ai_budget_reconciliation_guard() owner to postgres; alter function public.ai_budget_reservation_guard() owner to postgres; alter function public.cfo_access_log_append_only() owner to postgres`);
+ const nombres=()=>pg.sql(db,`select coalesce(string_agg(distinct r.rolname,',' order by r.rolname),'') from pg_default_acl d join pg_namespace n on n.oid=d.defaclnamespace join pg_roles r on r.oid=d.defaclrole where n.nspname='public' and exists(select 1 from aclexplode(d.defaclacl) a join pg_roles g on g.oid=a.grantee where g.rolname in ('anon','authenticated'))`);
+ assert.equal(nombres(),'postgres,supabase_admin');
+ const sql=new URL('./.r2-20-envuelta.sql',import.meta.url).pathname;
+ const {writeFileSync,readFileSync,rmSync}=await import('node:fs');
+ writeFileSync(sql,`set role postgres;\n${readFileSync(mig('20261205000700_default_privileges_and_trigger_functions.sql'),'utf8')}\nreset role;\n`);
+ try{
+  await t.test('con postgres sin pertenencia a supabase_admin la migración NO aborta',()=>{pg.file(db,sql);});
+  await t.test('lo de postgres sí se aplicó; lo de supabase_admin quedó omitido y es detectable',()=>{
+   assert.equal(nombres(),'supabase_admin','solo supabase_admin conserva el defecto abierto (omitido por falta de membresía)');
+  });
+  await t.test('los revokes de los cinco disparadores y el search_path de las cuatro ai_budget_* se aplicaron igual',()=>{
+   for(const f of ['ai_budget_attempt_guard','ai_budget_limit_guard','ai_budget_reconciliation_guard','ai_budget_reservation_guard','cfo_access_log_append_only'])
+    for(const rol of ['anon','authenticated','public'])assert.equal(pg.sql(db,`select has_function_privilege('${rol}','public.${f}()','execute')`),'f',f+' '+rol);
+   assert.equal(pg.sql(db,`select count(*) from pg_proc where proname like 'ai_budget_%_guard' and proconfig @> array['search_path=""']`),'4');
+  });
+  await t.test('es idempotente: una segunda aplicación tampoco falla',()=>{pg.file(db,sql);assert.equal(nombres(),'supabase_admin');});
+ }finally{rmSync(sql,{force:true});}
+ }finally{await pg.stop();}
+});
+
+test('SM-02: toda migración de seguridad con begin; fija lock_timeout y statement_timeout justo después',async()=>{
+ const {readFileSync,readdirSync}=await import('node:fs');
+ const dir=new URL('../migrations/',import.meta.url).pathname;
+ const lista=readdirSync(dir).filter(f=>/^202612050[0-9]{5}_.*\.sql$/.test(f));
+ assert.equal(lista.length,8);
+ for(const f of lista){const s=readFileSync(dir+f,'utf8');const m=/^begin;\n(.*)\n/m.exec(s);assert.ok(m,f+': sin begin;');assert.match(m[1],/lock_timeout='3s'/,f);}
+ for(const f of lista.filter(f=>/0[2367]00_/.test(f)))assert.match(readFileSync(dir+f,'utf8'),/statement_timeout='30s'/,f);
+});

@@ -4,6 +4,7 @@
 -- (la aplicación lo responde 429 y registra el evento rate_limited) y deja un evento invitation_sent por cada invitación aceptada en vexa_platform.security_events (migración 20261205000400 es requisito). No se guarda el correo.
 -- Reversión: drop trigger team_invitation_quota on public.team_invitations; drop function public.team_invitation_quota();
 begin;
+set local lock_timeout='3s'; set local statement_timeout='30s';
 create function public.team_invitation_quota() returns trigger language plpgsql security definer set search_path='' as $$
 declare h integer; d integer;
 begin

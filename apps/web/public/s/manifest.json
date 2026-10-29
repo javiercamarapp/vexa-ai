@@ -1,0 +1,87 @@
+{
+ "fuentes": {
+  "display": {
+   "brotli": 35496,
+   "bytes": 35492,
+   "display": "swap",
+   "ejes": [
+    [
+     "wght",
+     300,
+     400,
+     400
+    ]
+   ],
+   "familia": "Source Serif 4",
+   "formato": "woff2",
+   "glifos": 217,
+   "hash": "6e82d0cd",
+   "peso": "300 400",
+   "sha256": "6e82d0cd301f4b2024f9050865ee7c614a8faca51940843703155c3c8e9dc5ed",
+   "url": "/s/fuentes/display.6e82d0cd.woff2"
+  },
+  "mono-400": {
+   "brotli": 8172,
+   "bytes": 8168,
+   "display": "optional",
+   "ejes": [],
+   "familia": "IBM Plex Mono",
+   "formato": "woff2",
+   "glifos": 217,
+   "hash": "00555394",
+   "peso": "400",
+   "sha256": "00555394f3f452cadef4b2775e74cae6cb6705d4b148f33d3c396538fa69a6f2",
+   "url": "/s/fuentes/mono-400.00555394.woff2"
+  },
+  "mono-500": {
+   "brotli": 8228,
+   "bytes": 8224,
+   "display": "optional",
+   "ejes": [],
+   "familia": "IBM Plex Mono",
+   "formato": "woff2",
+   "glifos": 217,
+   "hash": "6607b032",
+   "peso": "500",
+   "sha256": "6607b032c1f986aafcddcbb3880601fbfdddb92ed24c9e187b17db438ccdacc0",
+   "url": "/s/fuentes/mono-500.6607b032.woff2"
+  },
+  "texto": {
+   "brotli": 19072,
+   "bytes": 19068,
+   "display": "swap",
+   "ejes": [
+    [
+     "wght",
+     400,
+     400,
+     600
+    ]
+   ],
+   "familia": "Hanken Grotesk",
+   "formato": "woff2",
+   "glifos": 214,
+   "hash": "9ed69688",
+   "peso": "400 600",
+   "sha256": "9ed69688a08f3251da29c0c0a3c1608a802423c48a3baab1609dd9ff355aadb8",
+   "url": "/s/fuentes/texto.9ed69688.woff2"
+  }
+ },
+ "precargas": [
+  {
+   "as": "font",
+   "clave": "fuentes/display",
+   "crossOrigin": "anonymous",
+   "type": "font/woff2",
+   "url": "/s/fuentes/display.6e82d0cd.woff2"
+  },
+  {
+   "as": "font",
+   "clave": "fuentes/texto",
+   "crossOrigin": "anonymous",
+   "type": "font/woff2",
+   "url": "/s/fuentes/texto.9ed69688.woff2"
+  }
+ ],
+ "version": 1
+}

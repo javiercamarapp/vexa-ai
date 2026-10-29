@@ -1,1 +1,0 @@
-Herramienta de build (no va al navegador). Copiar esta carpeta a ~/vexa-tools/puntos, correr `npm ci` allí y luego `bash construir.sh <glb> <salida>`. Nunca instalar sobre el node_modules compartido del monorepo.

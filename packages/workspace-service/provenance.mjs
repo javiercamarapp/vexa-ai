@@ -58,7 +58,7 @@ export function createProvenanceRepository({database}){
  return {
   /** Coverage per source: import rows (accepted+duplicate / rejected / pending) plus the sources that never create `imports` rows
    *  (Tracker, attachments, the economic ledger, HubSpot associations) read from their own tables with bounded queries. */
-  async coverage(){return database.transaction('read',async s=>{
+  async coverage({idioma='es'}={}){const E=(es,en)=>elegir(idioma,es,en),F=n=>fNumI(n,idioma);return database.transaction('read',async s=>{
    const started=Date.now(),left=()=>Math.max(500,Math.min(STEP_TIMEOUT_MS,TOTAL_BUDGET_MS-(Date.now()-started)));
    const over=()=>Date.now()-started>=TOTAL_BUDGET_MS;
    const g=(work,ms)=>over()?Promise.resolve(null):guarded(s,work,ms??left());

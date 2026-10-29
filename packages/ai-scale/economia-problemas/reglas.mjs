@@ -2,12 +2,16 @@
 //
 // Cadena de evidencia (cada eslabón y su clase epistémica):
 //   problema  --(membresía vectorial, IA: INFERIDO)-->  conversación (hubspot:<ticket> | gorgias:<id>)
-//   conversación --(mismo ticket)--> fila de economia-tickets.csv (CLIENTEX, hash fijado)  [OBSERVADO en la fuente de CLIENTEX]
+//   conversación --(mismo ticket)--> fila de economia-tickets.csv (cliente piloto, hash fijado)  [OBSERVADO en la fuente del cliente piloto]
 //   fila --(marketplace + order_id [+ sku], identificadores EXACTOS)--> línea del libro (economic_ledger_entries)  [OBSERVADO]
 // El importe es el del libro (observado). La relación problema->dinero hereda el carácter INFERIDO de la agrupación por IA.
 //
 // Lo que NO se hace (por diseño): nada de coincidencias aproximadas, por nombre/dirección/teléfono, por fecha ni por importe;
 // no se infiere marketplace desde la forma del order_id; no se ligan pedidos multilínea sin SKU coincidente.
+import {tiendaPropia} from '../../../config/cliente-piloto.mjs';
+// Dominio de la tienda propia del cliente piloto: viene de la configuración local (config/cliente-piloto.mjs), no del repo.
+export const rxDominioTienda = () => tiendaPropia().dominio.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const RX_TIENDA_PROPIA_SHOPIFY = new RegExp('^' + rxDominioTienda() + '\\b.*Shopify', 'i');
 
 export const REGLA_VERSION = 'econ-problemas-r1';
 export const BASIS_ORDER_MP = 'marketplace_line_price';
@@ -36,7 +40,7 @@ export function marketplaceDe(row) {
     if (/^Walmart\s*::/i.test(ret)) return 'walmart';
     if (/^Best Buy\s*::\s*USA$/i.test(ret)) return 'mirakl_bestbuy_us';
     if (/^Best Buy\s*::\s*CAN$/i.test(ret)) return 'mirakl_bestbuy_ca';
-    if (/^Clientextools\.com\b.*Shopify/i.test(ret)) return 'shopify';
+    if (RX_TIENDA_PROPIA_SHOPIFY.test(ret)) return 'shopify';
     return null;
   })();
   if (MARKETPLACES.includes(mk)) {

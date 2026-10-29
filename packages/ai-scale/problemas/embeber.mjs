@@ -60,7 +60,7 @@ async function cli(){
   const mode=opt('texto','mensaje');if(!MODES.includes(mode))throw Error('--texto debe ser mensaje o quote');
   const resF=opt('results',path.join(base,'resultados.jsonl')),inF=opt('input',path.join(base,'entrada.jsonl')+','+path.join(base,'entrada-csv.jsonl')).split(',');
   const taxonomy=JSON.parse(fs.readFileSync(opt('taxonomy'),'utf8'));
-  const tenant=opt('tenant',TENANT);if(tenant!==TENANT)throw Error('tenant no autorizado');
+  const tenant=opt('tenant',TENANT);if(!TENANT||tenant!==TENANT)throw Error('tenant no autorizado');
   const version=opt('embedding-version',defaultVersion(mode));
   const {items}=cargarCohorte({resultsFile:resF,inputFiles:inF,taxonomy,max:intOpt(a,'max',Infinity)});
   const {rows,descartadasSeveridad,textoInvalido}=construirFilas(items,{mode,tenant,version});

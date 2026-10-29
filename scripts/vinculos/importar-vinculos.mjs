@@ -22,8 +22,10 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
+import {tenantPiloto} from '../../config/cliente-piloto.mjs';
 
-export const TENANT = '00000000-0000-4000-8000-000000000000';
+// UUID de la organización piloto: VEXA_TENANT_ID o config local (config/cliente-piloto.mjs). Sin valor real por defecto.
+export const TENANT = tenantPiloto();
 export const PROJECT_REF = 'proyecto-ejemplo';
 export const VERSION = 'v1';
 export const MARCA = '[vinculos-importer ' + VERSION; // aparece en cada report; la reversa solo toca lo que lo lleve
@@ -86,7 +88,7 @@ const values = (pares) => pares.map((p, i) => `(${i},${lit(p.problemId)}::uuid,$
 
 /** SELECT de solo lectura: clasifica cada par contra la base. Una fila JSON por línea tras el marcador VINCULOS_PLAN. */
 export function planSql(pares, {tipos = TIPOS_DEFECTO, accion = 'importar', tenant = TENANT} = {}) {
-  if (tenant !== TENANT) throw new Error('TENANT_NO_AUTORIZADO');
+  if (!TENANT||tenant !== TENANT) throw new Error('TENANT_NO_AUTORIZADO');
   if (!pares.length) throw new Error('SIN_PARES');
   const ownerActivo = (u) => `exists(select 1 from public.memberships m where m.tenant_id=${T} and m.user_id=${u} and m.status='active' and m.role='owner')`;
   return `begin read only;
@@ -242,7 +244,7 @@ export async function main(a) {
   const {flag, opt} = argv(a);
   if (flag('help') || !a.length) { console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').slice(1, 17).map(l => l.replace(/^\/\/ ?/, '')).join('\n')); return 0; }
   const csvFile = opt('csv'); if (!csvFile) throw new Error('Falta --csv');
-  const tenant = opt('tenant', TENANT); if (tenant !== TENANT) throw new Error('TENANT_NO_AUTORIZADO');
+  const tenant = opt('tenant', TENANT); if (!TENANT||tenant !== TENANT) throw new Error('TENANT_NO_AUTORIZADO');
   const metodos = (opt('metodos') ?? METODOS_DEFECTO.join(',')).split(',').map(s => s.trim()).filter(Boolean);
   const tipos = (opt('tipos') ?? TIPOS_DEFECTO.join(',')).split(',').map(s => s.trim()).filter(Boolean);
   if (!tipos.every(t => ['order', 'refund', 'reversal', 'replacement', 'support_model'].includes(t))) throw new Error('--tipos inválido');

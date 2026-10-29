@@ -5,6 +5,7 @@ import path from 'node:path';
 import {randomBytes} from 'node:crypto';
 import {planSheetJob} from './plan.mjs';
 import {versionId} from './runner.mjs';
+import {cuentaTracker} from '../../../config/cliente-piloto.mjs';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const q=v=>v==null?'null':`'${String(v).replaceAll("'","''")}'`;
 function json(v){const text=JSON.stringify(v);let tag;do{tag='j'+randomBytes(6).toString('hex');}while(text.includes('$'+tag+'$'));return `$${tag}$${text}$${tag}$::jsonb`;}
@@ -17,7 +18,7 @@ export function emitVersionSql({workbook,version,tenantId,connectionId,dir,ticke
  const put=(name,sql)=>{writeFileSync(path.join(dir,name),sql,{mode:0o600});files.push(name);};
  const jobs=workbook.sheets.map(s=>planSheetJob(s,{chunkSize,ticketIndex}));
  put('000-version.sql',tx(tenantId,
-  `insert into public.connections(id,tenant_id,source,account_id) values(${q(connectionId)},${q(tenantId)},'xlsx','clientex-tracker') on conflict do nothing;\n`+
+  `insert into public.connections(id,tenant_id,source,account_id) values(${q(connectionId)},${q(tenantId)},'xlsx',${q(cuentaTracker())}) on conflict do nothing;\n`+
   `insert into public.tracker_versions(id,tenant_id,connection_id,file_sha256,label,rank,received_at) values(${q(vid)},${q(tenantId)},${q(connectionId)},${q(version.sha256)},${q(version.label)},${version.rank},${q(version.received_at)}) on conflict do nothing;\n`+
   jobs.map(j=>`insert into public.tracker_sheet_jobs(id,tenant_id,version_id,sheet_name,sheet_state,expected_rows,expected_cells) values(gen_random_uuid(),${q(tenantId)},${q(vid)},${q(j.sheet)},${q(j.state)},${j.counts.rows},${j.counts.cells}) on conflict(tenant_id,version_id,sheet_name) do nothing;`).join('\n')));
  jobs.forEach((j,ji)=>{

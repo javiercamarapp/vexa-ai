@@ -7,6 +7,7 @@ import {createHash} from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import {readWorkbook} from './workbook.mjs';
+import {versionesTracker,cuentaTracker} from '../../../config/cliente-piloto.mjs';
 import {planSheetJob} from './plan.mjs';
 import {emitVersionSql} from './emit-sql.mjs';
 import {versionId} from './runner.mjs';
@@ -14,11 +15,8 @@ import {versionId} from './runner.mjs';
 export const PROJECT_REF='proyecto-ejemplo';
 export const DEFAULT_SQL_CMD=['supabase','db','query','--linked','-f'];
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-export const VERSIONS=Object.freeze([ // rango ascendente = orden de recepción; la última manda
- {key:'recibida',rank:1,file:'01 Documentos recibidos/CLIENTEX Tracker V2.xlsx',sha256:'ab12cd34',received_at:null},
- {key:'v06',rank:2,file:'06 Tracker original y versiones/CLIENTEX Tracker V2 - 20261005T2312Z.xlsx',sha256:'ab12cd34',received_at:'2026-10-05T23:12:00Z'},
- {key:'v07a',rank:3,file:'07 Actualizaciones de fuentes/20261005T231800827506Z/CLIENTEX Tracker V2.xlsx',sha256:'ab12cd34',received_at:'2026-10-05T23:18:00Z'},
- {key:'v07b',rank:4,file:'07 Actualizaciones de fuentes/20261005T232014403866Z/CLIENTEX Tracker V2.xlsx',sha256:'ab12cd34',received_at:'2026-10-05T23:20:14Z'}]);
+// Archivos recibidos (nombre, huella, orden; rango ascendente = orden de recepción, la última manda): config local del cliente piloto, fuera del repo.
+export const VERSIONS=versionesTracker();
 export const KNOWN_ERRORS=['TENANT_REQUIRED','INVALID_BATCH','BATCH_SIZE_INVALID','VERSION_UNKNOWN','SHEET_JOB_NOT_OPEN','DUPLICATE_ROW_IN_BATCH','ROW_CONFLICT_IN_VERSION','SHEET_COUNT_MISMATCH','SHEET_JOB_UNKNOWN','canceling statement due to statement timeout','row-level security'];
 const fail=(code,extra={})=>{throw Object.assign(new Error(code),{code,...extra});};
 export const sha256Bytes=b=>createHash('sha256').update(b).digest('hex');
@@ -45,7 +43,7 @@ export function parseGuard(out){
  const reason=!tables||!fns?'MIGRATION_0052_NOT_APPLIED':!bypass?'ROLE_CANNOT_BYPASS_RLS':!tenant?'TENANT_NOT_FOUND':null;
  return {ok:!reason,reason,tables,fns,tenant,bypass};
 }
-export const connSql=tenant=>`select 'TRCONN id='||coalesce((select id::text from public.connections where tenant_id='${tenant}' and source='xlsx' and account_id='clientex-tracker'),'none')||' END';\n`;
+export const connSql=tenant=>`select 'TRCONN id='||coalesce((select id::text from public.connections where tenant_id='${tenant}' and source='xlsx' and account_id='${cuentaTracker()}'),'none')||' END';\n`;
 export const parseConn=out=>{const m=/TRCONN id=([0-9a-f-]{36}|none) END/.exec(out);return m?(m[1]==='none'?null:m[1]):undefined;};
 export const stateSql=(tenant,vid)=>`select 'TRSTATE jobs='||(select count(*) from public.tracker_sheet_jobs where tenant_id='${tenant}' and version_id='${vid}')||' closed='||coalesce((select string_agg(encode(convert_to(sheet_name,'UTF8'),'hex'),',') from public.tracker_sheet_jobs where tenant_id='${tenant}' and version_id='${vid}' and state='closed'),'')||' END';\n`;
 export function parseState(out){
@@ -133,7 +131,7 @@ export async function loadTracker(o){
   const g=runText('guard.sql',guardSql(o.tenant));const gp=g.ok?parseGuard(g.out):{ok:false,reason:'GUARD_QUERY_FAILED'};
   if(!gp.ok)fail(gp.reason,{report});
   report.guard={project_ref:PROJECT_REF,migration_0052:true,tenant_found:true,role_bypasses_rls:true};
-  // La conexión del Tracker es única por (tenant,'xlsx','clientex-tracker'): si ya existe se reutiliza su id (los ids de versión derivan de ella).
+  // La conexión del Tracker es única por (tenant,'xlsx',cuenta del Tracker en la config local): si ya existe se reutiliza su id (los ids de versión derivan de ella).
   const cr=runText('conn.sql',connSql(o.tenant));const existing=cr.ok?parseConn(cr.out):undefined;
   if(existing===undefined)fail('CONNECTION_QUERY_FAILED',{report});
   const connectionId=existing??o.connectionId;report.connection_reused=!!existing;

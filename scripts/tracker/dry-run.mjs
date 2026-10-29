@@ -3,16 +3,12 @@
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
+import {exigirVersionesTracker,configPiloto} from '../../config/cliente-piloto.mjs';
 import {readWorkbook,manifest,ingestVersion,TrackerLedgerRepository,TrackerLedger,planWorkbook} from '../../packages/ingestion/tracker/index.mjs';
 const arg=(k,d)=>{const i=process.argv.indexOf('--'+k);return i>0?process.argv[i+1]:d;};
 const ROOT=arg('root',path.join(process.env.HOME,'Desktop/rovaq ai'));
 const P={
- chosenDir:'07 Actualizaciones de fuentes/20261005T232014403866Z',
- versions:[ // rango ascendente = orden de recepción; la última manda
-  {key:'recibida',rank:1,file:'01 Documentos recibidos/CLIENTEX Tracker V2.xlsx',sha256:'ab12cd34'},
-  {key:'v06',rank:2,file:'06 Tracker original y versiones/CLIENTEX Tracker V2 - 20261005T2312Z.xlsx',sha256:'ab12cd34'},
-  {key:'v07a',rank:3,file:'07 Actualizaciones de fuentes/20261005T231800827506Z/CLIENTEX Tracker V2.xlsx',sha256:'ab12cd34'},
-  {key:'v07b',rank:4,file:'07 Actualizaciones de fuentes/20261005T232014403866Z/CLIENTEX Tracker V2.xlsx',sha256:'ab12cd34'}],
+ versions:exigirVersionesTracker(), // rango ascendente = orden de recepción; la última manda. Nombres y huellas: config local del cliente piloto
  receipt:'06 Tracker original y versiones/comparacion-version-recibida.json',
  verification:'07 Actualizaciones de fuentes/20261005T232014403866Z/verificacion.json'};
 const checks=[],unverifiable=[];
@@ -46,7 +42,7 @@ const cmp=(mk)=>{const m=manifests[mk];if(!m||!receipt)return null;const diffs=[
 const rcpt={};
 for(const k of ['v06','v07b']){const d=cmp(k);if(d)rcpt[k]=d.length?d:'igual';}
 if(receipt&&manifests.v06)check('recibo: filas/celdas por hoja (16) = versión de 06',rcpt.v06==='igual',rcpt.v06);
-if(receipt&&manifests.v06)check('recibo: totales 13,228 filas / 148,109 celdas',manifests.v06.total.rows===13228&&manifests.v06.total.cells===148109);
+if(receipt&&manifests.v06)check('recibo: totales de filas y celdas (config local trackerRecibo)',!!configPiloto().trackerRecibo&&manifests.v06.total.rows===configPiloto().trackerRecibo.rows&&manifests.v06.total.cells===configPiloto().trackerRecibo.cells);
 let changes=null;
 if(receipt&&ledger.versions.length===4){
  const at=k=>P.versions.find(v=>v.key===k).sha256;

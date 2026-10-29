@@ -13,7 +13,7 @@ export const HOJAS_ESPEJO = Object.freeze(['WTR', 'WPR']); // espejos de Warrant
 const TIPOS = new Map([['Warranty Tools', 'Garantía de herramientas'], ['Warranty Parts', 'Garantía de piezas'], ['Refunds', 'Reembolsos'], ['Refunds Requests', 'Solicitudes de reembolso'], ['Return Labels', 'Etiquetas de devolución'],
   ['Quotes', 'Cotizaciones'], ['Waitlist', 'Lista de espera'], ['B&S', 'B&S'], ['RMA', 'RMA'], ['Cancellations', 'Cancelaciones'], ['Cancel Subscriptions', 'Cancelar suscripciones']]);
 export const tipoDeHoja = hoja => TIPOS.get(hoja) ?? 'Otro';
-export const NOMBRE_RETAILER = Object.freeze({amazon: 'Amazon', walmart: 'Walmart', bestbuy: 'Best Buy', tienda: 'Tienda CLIENTEX', lowes: "Lowe's", homedepot: 'Home Depot', otro: 'Otro'});
+export const NOMBRE_RETAILER = Object.freeze({amazon: 'Amazon', walmart: 'Walmart', bestbuy: 'Best Buy', tienda: 'Tienda propia', lowes: "Lowe's", homedepot: 'Home Depot', otro: 'Otro'});
 
 const claveCol = s => String(s ?? '').toLowerCase().replace(/[\s_]+/g, ' ').trim();
 /** Dirección de una fila (objeto nombre-de-columna -> texto): la corregida por el cliente manda sobre la de envío y esta sobre la original de Shopify. Solo vive en memoria. */

@@ -8,7 +8,7 @@
 //   node agrupar.mjs --taxonomy t.json --threshold 0.30 --max 5 --run --commit      # CANARIO real de 5 conversaciones
 //   node agrupar.mjs --taxonomy t.json --threshold 0.30 --run --commit              # todo (lotes de 25 conversaciones, luego versiones)
 // Precondición: persistir.mjs ya dejó extraction_runs 'succeeded' + message_revisions de esas conversaciones (un DO-guard aborta el lote si falta alguna).
-// Guardas: proyecto proyecto-ejemplo y tenant ab12cd34-... fijos; lista cerrada de sentencias (solo INSERT/begin/commit/rollback/DO-guard/set_config); recibo local solo con conteos.
+// Guardas: proyecto proyecto-ejemplo y tenant piloto (VEXA_TENANT_ID) fijos; lista cerrada de sentencias (solo INSERT/begin/commit/rollback/DO-guard/set_config); recibo local solo con conteos.
 // El umbral es de CONFIGURACIÓN (en el producto vive en VEXA_PROBLEMS_CONFIG_JSON); aquí es obligatorio y se imprime en el recibo. Con el MISMO umbral y los mismos vectores el resultado es determinista.
 import fs from 'node:fs';
 import os from 'node:os';
@@ -44,7 +44,7 @@ async function cli(){
   const resF=opt('results',path.join(base,'resultados.jsonl')),inF=opt('input',path.join(base,'entrada.jsonl')+','+path.join(base,'entrada-csv.jsonl')).split(',');
   const taxonomy=JSON.parse(fs.readFileSync(opt('taxonomy'),'utf8'));
   const ref=opt('project-ref',PROJECT_REF),tenant=opt('tenant',TENANT);
-  if(ref!==PROJECT_REF||tenant!==TENANT)throw Error('proyecto/tenant no autorizados');
+  if(ref!==PROJECT_REF||!TENANT||tenant!==TENANT)throw Error('proyecto/tenant no autorizados');
   const version=opt('embedding-version',defaultVersion(mode));
   const commit=flag('commit'),run=flag('run'),rollbackTest=flag('rollback-test');
   if(run&&commit===rollbackTest)throw Error('con --run indique exactamente uno: --rollback-test o --commit');

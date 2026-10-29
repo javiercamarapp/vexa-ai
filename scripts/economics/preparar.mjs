@@ -6,7 +6,7 @@ import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {packBatches, MAX_BATCH, summarize} from '../../packages/economics/marketplace-map.mjs';
 import {batchSql, sourcesSql, sourceExtendSql} from '../../packages/economics/emit-sql.mjs';
-import {mapAllMarketplaces, DEFAULT_ROOT, CLIENTEX_TENANT} from './fuentes-marketplaces.mjs';
+import {mapAllMarketplaces, DEFAULT_ROOT, PILOT_TENANT} from './fuentes-marketplaces.mjs';
 import {loadShopify, SHOPIFY_ROOT} from './fuentes-shopify.mjs';
 import {syntheticMarketplaceTexts} from '../../packages/economics/synthetic.mjs';
 
@@ -118,7 +118,7 @@ function write(out, files) {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const arg = (k, d) => { const i = process.argv.indexOf('--' + k); return i > 0 ? process.argv[i + 1] : d; };
-  const modo = arg('modo'), tenantId = arg('tenant', CLIENTEX_TENANT), out = arg('out'), actorId = arg('actor', process.env.VEXA_ACTOR || null);
+  const modo = arg('modo'), tenantId = arg('tenant', PILOT_TENANT), out = arg('out'), actorId = arg('actor', process.env.VEXA_ACTOR || null);
   if (!modo || !out) { console.error('Uso: --modo marketplaces|shopify --out <carpeta> [--tenant uuid] [--actor uuid]'); process.exit(2); }
   let files, extra = {};
   if (modo === 'marketplaces') {

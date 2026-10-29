@@ -5,6 +5,7 @@ import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {loadTracker,VERSIONS,DEFAULT_SQL_CMD,sha256Bytes} from '../../packages/ingestion/tracker/loader.mjs';
+if(!VERSIONS.length){console.error('Faltan trackerVersions: cree config/cliente-piloto.local.json (ver config/cliente-piloto.ejemplo.json)');process.exit(2);}
 const here=path.dirname(new URL(import.meta.url).pathname),repo=path.resolve(here,'../..');
 const arg=(k,d)=>{const i=process.argv.indexOf('--'+k);return i>0?process.argv[i+1]:d;};
 const flag=k=>process.argv.includes('--'+k);

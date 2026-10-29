@@ -1,17 +1,23 @@
-// Shopify: paquete cargado el 6-oct (883 entradas, hash fijado) + opción de pedidos adicionales. Sin red, sin base.
+// Shopify: paquete de importación (hash fijado) + opción de pedidos adicionales. Sin red, sin base.
 import {readFileSync, lstatSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import path from 'node:path';
+import {configPiloto} from '../../config/cliente-piloto.mjs';
 import {sha256hex} from '../../packages/economics/marketplace-map.mjs';
 import {mapShopifyOrder, importEntryToBatch, sameEntry, SHOPIFY_BASIS} from '../../packages/economics/shopify-map.mjs';
 
-// Copias fijadas (hash verificado) fuera de iCloud; los originales siguen en ~/Desktop/rovaq ai y no se tocan.
-export const SHOPIFY_ROOT = path.join(process.env.HOME, '.codex-work/rovaq-cierre-20261007/economico-carga-20261019/insumos-shopify');
+// Copias fijadas (hash verificado) fuera de iCloud y fuera del repo; los originales no se tocan.
+// Ruta, nombres y huellas salen de la configuración local del cliente piloto (config/cliente-piloto.mjs).
+export const SHOPIFY_ROOT = configPiloto().shopify.raiz;
 export const SHOPIFY_FILES = {
-  importPackage: {rel: 'clientex-shopify-economic-import-20261006.json', sha256: 'ab12cd34'},
-  normalized: {rel: 'shopify-normalized-private.json', sha256: 'ab12cd34'},
+  get importPackage() { return exigirArchivo('importPackage'); },
+  get normalized() { return exigirArchivo('normalized'); },
 };
-export const SHOPIFY_EXPECTED = {orders: 857, refunds: 26, entries: 883};
+function exigirArchivo(clave) {
+  const f = configPiloto().shopify[clave];
+  if (!f?.rel || !f?.sha256) throw new Error(`Falta shopify.${clave} en config/cliente-piloto.local.json (ver config/cliente-piloto.ejemplo.json)`);
+  return f;
+}
 
 /** Falla si el archivo es un marcador iCloud no descargado (compressed,dataless). */
 export function assertMaterialized(p) {
@@ -45,7 +51,7 @@ export function loadShopify({root = SHOPIFY_ROOT, extraNormalized = null, readFi
     if (e.sourceVersion !== 1) throw new Error('PAQUETE_VERSION');
     g.entries.push({entry: importEntryToBatch(e), kind: e.kind});
   }
-  // equivalencia del mapeador contra lo ya cargado (los 857 pedidos)
+  // equivalencia del mapeador contra lo ya cargado (todos los pedidos)
   const baselineOrders = pkg.entries.filter(e => e.kind === 'order');
   let exact = 0, different = 0;
   normalized.orders.forEach((o, i) => { const m = mapShopifyOrder(o, i, norm.sha); const b = baselineOrders[i]; if (b && sameEntry(m, importEntryToBatch(b))) exact++; else different++; });
@@ -67,10 +73,10 @@ export function dryRunShopify({root = SHOPIFY_ROOT, extraNormalized = null} = {}
   const win = Math.min(...s.package.sources.map(x => Date.parse(x.windowStart)));
   return {
     paquete: {sha256: SHOPIFY_FILES.importPackage.sha256.slice(0, 16) + '…', entradas: all.length, pedidos: all.filter(x => x.kind === 'order').length, reembolsos: all.filter(x => x.kind === 'refund').length, por_tipo_estado: count(x => x.kind + '/' + x.entry.status), importe_pedidos_minor: sum('order'), importe_reembolsos_minor: sum('refund'), base: SHOPIFY_BASIS, moneda: 'USD'},
-    esperado_en_ledger_remoto: {pedidos: 857, reembolsos: 26, recorded: 840, cancelled: 17, importe_recorded_minor: '13683117', importe_cancelled_minor: '343694'},
+    esperado_en_ledger_remoto: configPiloto().shopify.esperadoEnLedger ?? null, // cifras reales: solo en la configuración local
     equivalencia_mapeador_vs_paquete: s.equivalence,
     ventana_actual_fuente_inicio: new Date(win).toISOString().slice(0, 10),
     pedidos_adicionales_a_cargar: s.extras.length,
-    nota: 'Con los datos locales actuales todo el paquete ya está en el ledger remoto: el reenvío debe dar 883 repetidas y 0 insertadas. Pedidos anteriores al 2026-08-06 requieren obtenerlos de Shopify (fuera de este alcance).',
+    nota: 'Con los datos locales actuales todo el paquete ya está en el ledger remoto: el reenvío debe dar todas repetidas y 0 insertadas. Pedidos anteriores al 2026-08-06 requieren obtenerlos de Shopify (fuera de este alcance).',
   };
 }

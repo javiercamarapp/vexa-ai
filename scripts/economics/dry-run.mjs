@@ -1,6 +1,6 @@
 // DRY-RUN: lee los CSV reales y el paquete Shopify, mapea y emite SOLO conteos/totales (con y sin filas dudosas). NO escribe nada
 // (ni base, ni archivos, ni red). Salida: JSON en stdout. Uso: node dry-run.mjs [--root <carpeta VEXA>] [--moneda-desconocida rechazar|XXX] [--sin-shopify]
-import {mapAllMarketplaces, DEFAULT_ROOT, CLIENTEX_TENANT} from './fuentes-marketplaces.mjs';
+import {mapAllMarketplaces, DEFAULT_ROOT, PILOT_TENANT} from './fuentes-marketplaces.mjs';
 import {packBatches, summarize, MAX_BATCH} from '../../packages/economics/marketplace-map.mjs';
 import {dryRunShopify} from './fuentes-shopify.mjs';
 
@@ -39,5 +39,5 @@ const out = {
   marcas: flagCounts, archivos: files, totales_por_vista: summarize(r.items),
   fuentes: r.sources.map(s => ({clave: s.key, tipo: s.evidenceType, ventana: s.windowStart.slice(0, 10) + '..' + s.windowEnd.slice(0, 10)})),
 };
-if (!process.argv.includes('--sin-shopify')) out.shopify = dryRunShopify({tenantId: CLIENTEX_TENANT});
+if (!process.argv.includes('--sin-shopify')) out.shopify = dryRunShopify({tenantId: PILOT_TENANT});
 process.stdout.write(JSON.stringify(out, null, 1) + '\n');

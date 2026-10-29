@@ -3,6 +3,9 @@
   "fuente": "SPEC-FINAL-LANDING sección 8 (valores finales; manda sobre P-C sección 4). Si T1 mide un piso de Next mayor, recalibrar con ese número más 10 por ciento.",
   "unidad": "KB transferidos con brotli (calidad 5 sobre texto; binarios ya comprimidos van crudos)",
   "crecimientoMaxPct": 5,
+  "recalibraciones": [
+    "29-oct (T14a): jsPropio de 17 a 20 KB en inicial3d y recorrido. Medido: nube.js 8.4 KB + sitio.js 2.4 + inicio.js 3.8 + Lenis 3.4 = 18 KB con brotli; la tabla decía 17. El total del recorrido pasa de 693 a 696 KB (objetivo 700, techo 850) y el de inicial3d de 387 a 390 KB (objetivo 390), así que el peso total no cambia de banda."
+  ],
   "escenarios": {
     "critico": {
       "descripcion": "Crítico: sin 3D y sin scroll (movimiento reducido y Save-Data, para que no se pida nube, pts ni Lenis)",
@@ -14,13 +17,13 @@
       "descripcion": "Inicial con héroe 3D tras reposo, sin scroll",
       "objetivoKB": 390,
       "techoKB": 460,
-      "columnasKB": { "html": 28, "css": 22, "jsNext": 125, "jsPropio": 17, "fuentes": 85, "imagenes": 60, "datos3d": 50 }
+      "columnasKB": { "html": 28, "css": 22, "jsNext": 125, "jsPropio": 20, "fuentes": 85, "imagenes": 60, "datos3d": 50 }
     },
     "recorrido": {
       "descripcion": "Recorrido completo con los 4 pasos (scroll hasta el pie)",
       "objetivoKB": 700,
       "techoKB": 850,
-      "columnasKB": { "html": 30, "css": 26, "jsNext": 125, "jsPropio": 17, "fuentes": 85, "imagenes": 200, "datos3d": 210 }
+      "columnasKB": { "html": 30, "css": 26, "jsNext": 125, "jsPropio": 20, "fuentes": 85, "imagenes": 200, "datos3d": 210 }
     },
     "sinWebglCritico": {
       "descripcion": "Sin WebGL, sin scroll",

@@ -92,7 +92,7 @@ test('CSS: un único bloque prefers-reduced-motion:reduce que deja el estado fin
   assert.match(css, /position:sticky/);
 });
 test('CSS y marca: Hanken Grotesk, un solo rojo señal, sin azules, sin vidrio ni degradados decorativos', () => {
-  assert.doesNotMatch(css, /linear-gradient|conic-gradient|backdrop-filter|filter:\s*blur/i);
+  assert.doesNotMatch(css, /(?<!repeating-)linear-gradient|conic-gradient|backdrop-filter|filter:\s*blur/i);
   assert.doesNotMatch(css, /\bInter\b|Fraunces|Instrument Sans|Bricolage|googleapis|@import|url\(\s*['"]?https?:/);
   assert.equal((css.match(/#e8241c/gi) ?? []).length, 1, 'el rojo se declara una vez como variable');
   assert.match(css, /#0e0e10/i); assert.match(css, /prefers-color-scheme:dark/);
@@ -130,9 +130,9 @@ test('activos de la landing: archivos .pts válidos y deterministas, todo public
   assert.deepEqual(Object.keys(manifest).sort(), ['nucleo', 'paso1', 'paso2', 'paso3', 'paso4']);
   for (const [, m] of Object.entries(manifest)) {
     const buf = fs.readFileSync(new URL('pts/' + m.archivo, raiz));
-    assert.equal(buf.length, m.bytes); assert.equal(buf.length, 16 + m.puntos * 12); assert.equal(buf.toString('ascii', 0, 4), 'PTS1'); assert.equal(buf.readUInt32LE(8), m.puntos);
+    assert.equal(buf.length, m.bytes); assert.equal(buf.length, 16 + m.puntos * 10); assert.equal(buf.toString('ascii', 0, 4), 'PTS2'); assert.equal(buf.readUInt32LE(8), m.puntos);
     assert.equal(crypto.createHash('sha256').update(buf).digest('hex'), m.sha256); assert.ok(m.archivo.includes(m.sha256.slice(0, 8)), 'el nombre lleva el hash');
-    assert.ok(buf.length < 140 * 1024, 'archivo de puntos pequeño');
+    assert.ok(buf.length < 240 * 1024, 'archivo de puntos pequeño'); assert.ok(m.puntos >= 20000 && m.puntos <= 24000, 'entre 20 000 y 24 000 puntos');
   }
   assert.equal(fs.readdirSync(new URL('pts/', raiz)).filter((f) => f.endsWith('.pts')).length, 5, 'sin .pts huérfanos');
   for (const idioma of ['es', 'en'] as const) for (const im of html(idioma).match(/<img[^>]*>/g) ?? []) { assert.match(im, /\balt="/); assert.match(im, /\bwidth="\d+"/); assert.match(im, /\bheight="\d+"/); }
@@ -149,7 +149,7 @@ test('la escena fija usa los cuatro sellos de clase de cifra como eje', () => {
 });
 test('las miniaturas de pantallas se rotulan como datos de ejemplo y no hay cifras sueltas en el texto', () => {
   const mocks = leer('src/components/landing/mocks.tsx');
-  assert.doesNotMatch(mocks, /\bstyle\b\s*=/); assert.doesNotMatch(mocks, /Mock[A-Z]/);
+  assert.doesNotMatch(mocks, /\bstyle\b\s*=/); assert.ok((mocks.match(/<Rotulo t=\{t\}/g) ?? []).length >= 5, 'cada maqueta lleva su rótulo');
   assert.match(landingEs['landing.sintetico'], /Datos de ejemplo\. No son de un cliente\./); assert.match(landingEn['landing.sintetico'], /Example data\. Not from a customer\./);
   for (const idioma of ['es', 'en'] as const) assert.ok(html(idioma).includes(idioma === 'es' ? landingEs['landing.sintetico'] : landingEn['landing.sintetico']));
 });

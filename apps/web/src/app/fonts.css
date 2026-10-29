@@ -34,12 +34,12 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url(/fonts/ibmplexmono-0.ttf) format('truetype');
+  src: url(/fonts/ibmplexmono-0.woff2) format('woff2');
 }
 @font-face {
   font-family: 'IBM Plex Mono';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url(/fonts/ibmplexmono-1.ttf) format('truetype');
+  src: url(/fonts/ibmplexmono-1.woff2) format('woff2');
 }

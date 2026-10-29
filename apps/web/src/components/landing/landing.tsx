@@ -3,7 +3,7 @@ import React from 'react';
 import {RovaqLogo} from '../rovaq-logo';
 import {SITE, APP_URL, landingUrl} from '../../lib/site.mjs';
 import {traductor, type Idioma, type Traductor} from '../../lib/i18n';
-import {Miniatura} from './mocks';
+import {Mockup} from './mocks';
 import puntos from '../../../public/landing/pts/manifest.json';
 import {MovimientoLanding, SelectorTemaLanding} from './cliente';
 import './landing.css';
@@ -129,6 +129,7 @@ export function Landing({idioma}: {idioma: Idioma}) {
                 <canvas className="esc3d" data-nube="pasos" data-pts={[puntos.paso1, puntos.paso2, puntos.paso3, puntos.paso4].map((p) => `/landing/pts/${p.archivo}`).join(',')} aria-hidden="true" />
                 <ol className="segmentos" aria-hidden="true">{PASOS.map((n) => <li key={n} data-seg={n} />)}</ol>
                 <ol className="sellos" aria-label={t('landing.fw.sellos')}>{SELLOS.map(([k, c]) => <li key={k} data-s={k}><em className={'etq' + (k === 'sin' ? ' sin' : '')}>{t(c)}</em></li>)}</ol>
+                <div className="cota" aria-hidden="true"><i />{SELLOS.slice(0, 4).filter(([k]) => k !== 'sin').map(([k, c]) => <span key={k} data-s={k} className="mono">{t(c)}</span>)}<i /></div>
                 <span className="visor-rotulo mono">{t('landing.fw.visor')}</span>
               </Visor>
               <div className="fw-textos">
@@ -154,7 +155,7 @@ export function Landing({idioma}: {idioma: Idioma}) {
           <div className="c c-sub"><p className="desc" data-rv><span className="sint">{t('landing.sintetico')}</span> {t('landing.cap.nota')}</p></div>
         </div>
         <ul className="banda banda-caps">
-          {[1, 2, 3, 4, 5, 6].map((n) => <li key={n} className="c cap" data-rv><div className="cap-vis"><Miniatura n={n} t={t} /></div><h3 className="h-medio">{t(`landing.cap.${n}.t` as 'landing.cap.1.t')}</h3><p className="desc">{t(`landing.cap.${n}.d` as 'landing.cap.1.d')}</p></li>)}
+          {[1, 2, 3, 4, 5, 6].map((n) => <li key={n} className="c cap" data-rv><Mockup n={n} t={t} /><h3 className="h-medio">{t(`landing.cap.${n}.t` as 'landing.cap.1.t')}</h3><p className="desc">{t(`landing.cap.${n}.d` as 'landing.cap.1.d')}</p></li>)}
         </ul>
         <div className="banda banda-cab">
           <div className="c"><h2 id="t-cls" className="h-gigante h-2" data-rv>{t('landing.cls.titulo')}</h2><p className="desc" data-rv>{t('landing.cls.regla')}</p></div>
@@ -174,7 +175,7 @@ export function Landing({idioma}: {idioma: Idioma}) {
 
       <section id="seguridad" className="sec" aria-labelledby="t-seg">
         <Cinta pill={t('landing.seg.eyebrow')} n={4} t={t} />
-        <div className="banda banda-cab"><div className="c"><h2 id="t-seg" className="h-gigante h-2" data-rv>{t('landing.seg.titulo')}</h2></div></div>
+        <div className="banda banda-cab"><div className="c"><h2 id="t-seg" className="h-gigante h-2" data-rv>{t('landing.seg.titulo')}</h2></div><div className="c c-rayado" aria-hidden="true" /></div>
         <div className="banda banda-dos">
           <div className="c" data-rv><h3 className="h-medio">{t('landing.seg.hoy')}</h3>
             <ul className="lista-seg">{[1, 2, 3, 4, 5, 6, 7].map((n) => <li key={n}>{t(`landing.seg.${n}` as 'landing.seg.1')}</li>)}</ul></div>

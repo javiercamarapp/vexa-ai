@@ -2,14 +2,24 @@
   "description": "Self-hosted fonts (SIL OFL). IBM Plex Mono: 2026-09-25. Hanken Grotesk (fuente de interfaz de Rovaq): 2026-10-23 desde @fontsource/hanken-grotesk 5.3.0, subset latin con acentos y signos del espanol. Barlow Condensed 800 y 900 (fuente de display de la landing): 2026-10-28 desde @fontsource/barlow-condensed 5.3.0, subset latin.",
   "sources": [
     {
-      "path": "fonts/ibmplexmono-0.ttf",
-      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n5ig.ttf",
-      "sha256": "a7fdc993f9f0387caedba4e42521136fa97e4c0837ae6239bf0413ccf8af00c2"
+      "path": "fonts/ibmplexmono-0.woff2",
+      "sha256": "9777913c92eb73d21a0eaeaee2f56417ad58580730106121b9d122e9bb0d224b",
+      "derivado_de": {
+        "path": "fonts/ibmplexmono-0.ttf",
+        "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n5ig.ttf",
+        "sha256": "a7fdc993f9f0387caedba4e42521136fa97e4c0837ae6239bf0413ccf8af00c2"
+      },
+      "nota": "Subset latino con acentos del español y signos, convertido a woff2 con fonttools 2026-10-28."
     },
     {
-      "path": "fonts/ibmplexmono-1.ttf",
-      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJ8lc.ttf",
-      "sha256": "4fc14a73ca53ba9d32fd759ae1ca1a3133326035d0dd337862b3ee1633cc156e"
+      "path": "fonts/ibmplexmono-1.woff2",
+      "sha256": "22cbe0a35e89a1b757084d30784c273fa2957b4c63616e36f94935296bfddba3",
+      "derivado_de": {
+        "path": "fonts/ibmplexmono-1.ttf",
+        "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJ8lc.ttf",
+        "sha256": "4fc14a73ca53ba9d32fd759ae1ca1a3133326035d0dd337862b3ee1633cc156e"
+      },
+      "nota": "Subset latino con acentos del español y signos, convertido a woff2 con fonttools 2026-10-28."
     },
     {
       "path": "fonts/ibmplexmono-OFL.txt",

@@ -6,12 +6,21 @@ import {numero} from '../../lib/i18n/formato';
 import {StatusChip} from '../ui/status-chip';
 import {Notice} from '../ui/notice';
 import {SegmentedControl} from '../ui/segmented';
-import {DataTable,type Column} from '../ui/data-table';
+type Column<T>={key:string;header:ReactNode;render:(row:T)=>ReactNode;align?:'start'|'num'};
 import {SelloProcedencia} from '../confianza/sello-procedencia';
 import type {Cobertura,Faltan,CardBase,TarjetaAv,TarjetaBv,TarjetaCv,TarjetaDv,TarjetaEv,TarjetaFv,CanalA,FilaSku,EstadoCco} from '../../../../../packages/workspace-service/cco.mjs';
 import {mayor,mesTxt,diaTxt,selloCco,tonoDeEstado} from './cco-modelo.mjs';
 import './cco.css';
 
+/** Tabla del sistema (mismas clases que DataTable) sin atributos style: la altura no se limita porque cada tabla trae pocas filas. */
+function DataTable<T>({columns,rows,rowKey,caption,empty}:{columns:Column<T>[];rows:T[];rowKey:(r:T)=>string;caption:string;maxHeight?:string;empty?:ReactNode}){
+ if(!rows.length)return <>{empty}</>;
+ return <div className="ui-table-wrap" tabIndex={0} role="region" aria-label={caption}>
+  <table className="ui-table"><caption className="sr-only">{caption}</caption>
+   <thead><tr>{columns.map(c=><th key={c.key} scope="col" data-align={c.align}>{c.header}</th>)}</tr></thead>
+   <tbody>{rows.map(r=><tr key={rowKey(r)}>{columns.map(c=><td key={c.key} data-align={c.align}>{c.render(r)}</td>)}</tr>)}</tbody>
+  </table></div>;
+}
 const NOMBRE_CANAL:Record<string,string>={amazon:'Amazon',walmart:'Walmart',bestbuy:'Best Buy',shopify:'Shopify'};
 const CLAVE_LAT=['menos_de_1_dia','1_dia','2_dias','3_o_mas_dias','sin_dato'] as const;
 const k=(x:string)=>x as Clave;

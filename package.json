@@ -21,6 +21,7 @@
     "business:build": "python3 scripts/census_market.py && python3 scripts/business_model.py",
     "test:platform": "npm run test --workspace @vexa/platform",
     "test:cfo": "node --test packages/cfo-copilot/tests/*.test.mjs",
+    "test:cco": "node --test packages/workspace-service/tests/insight-cco-pg.test.mjs packages/agent-datos/tests/cco-tools.test.mjs && npm run test:cco --workspace @vexa/web",
     "test:agent-datos": "node --test packages/agent-datos/tests/*.test.mjs",
     "test:metrics": "node --test packages/metrics/tests/*.test.mjs",
     "test:workspace-service": "node --test packages/workspace-service/tests/provenance.mjs packages/workspace-service/tests/trends.mjs packages/workspace-service/tests/coverage-exactas.test.mjs packages/workspace-service/tests/agregados.test.mjs packages/workspace-service/tests/resumen-sin-bloqueo.test.mjs packages/workspace-service/tests/problemas-sin-vinculos.test.mjs packages/workspace-service/tests/problemas-catalogo-resumen.test.mjs",

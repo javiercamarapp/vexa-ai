@@ -136,6 +136,8 @@ for(const theme of themes)for(const w of sizes){
  for(const r of routes){
   const page=await ctx.newPage();let m;
   try{await page.goto(base+r,{waitUntil:'networkidle',timeout:120000});await page.waitForTimeout(700);
+   // La invitación del recorrido guiado (tarjeta fija abajo) tapa controles de la primera visita y falsea la prueba de impacto: se descarta como lo haría la persona.
+   await page.evaluate(()=>document.querySelector('.onb-invitacion .onb-btn-sec')?.click());await page.waitForTimeout(150);
    if(capDir&&w===390)await page.screenshot({path:join(capDir,r.replace(/[^a-z0-9]+/gi,'_').replace(/^_|_$/g,'')+'-'+theme+'-'+w+'.jpg'),type:'jpeg',quality:60,fullPage:true}).catch(()=>{});
    if(!await page.$('.workspace-content'))throw new Error('sin .workspace-content (¿error de compilación o de carga?)');
    m=await page.evaluate(medir);

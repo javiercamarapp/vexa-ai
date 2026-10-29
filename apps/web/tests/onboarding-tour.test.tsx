@@ -249,7 +249,7 @@ test('CSS: capa sin eventos de puntero (no bloquea el objetivo ni la salida), an
 test('botón Guía compacto: ~26 px, texto 12 px, sin bloque oscuro, punto de acento, área táctil ≥ 36 px solo en pantallas táctiles, claro y oscuro con tokens',()=>{
   const css=leer('src/components/onboarding/onboarding.css'),linea=css.split('\n').find(l=>l.startsWith('.workspace-header .onb-boton, .onb-boton {'))!;
   assert.match(linea,/height:26px/);assert.match(linea,/font:500 12px/);assert.match(linea,/background:var\(--ui-soft\)/);assert.match(linea,/border:1px solid var\(--ui-border\)/);assert.doesNotMatch(linea,/var\(--ink\)\s*;|background:var\(--ink\)|var\(--ui-action\)/);
-  assert.match(css,/\.onb-boton-signo \{[^}]*width:14px; height:14px/);assert.match(css,/\.onb-boton-punto \{[^}]*width:6px; height:6px/);assert.match(css,/@media \(pointer:coarse\) \{ \.onb-boton::after \{ content:""; position:absolute; inset:-5px -4px/);
+  assert.match(css,/\.onb-boton-signo \{[^}]*width:14px; height:14px/);assert.match(css,/\.onb-boton-punto \{[^}]*width:6px; height:6px/);assert.match(css,/@media \(pointer:coarse\) \{ \.onb-boton::after \{ content:""; position:absolute; inset:-9px -7px/);assert.match(css,/max-width:819px\) \{\s*:root:root \.workspace-header \.onb-boton \{ height:44px; min-width:44px/); // en celular la caja táctil real es de 44 px
   assert.match(css,/\.workspace-header \.onb-boton:hover[^{]*\{ background:var\(--ui-surface\)/);
   assert.match(leer('src/components/onboarding/guia.tsx'),/onb-boton-punto/);
 });

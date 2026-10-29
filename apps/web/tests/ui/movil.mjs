@@ -56,11 +56,13 @@ for(const theme of themes)for(const w of sizes){
  const [W,H]=SIZE[w]??[w,844];
  console.log(`== ${W}×${H} ${theme}`);
  const ctx=await browser.newContext({viewport:{width:W,height:H},deviceScaleFactor:2,isMobile:true,hasTouch:true,reducedMotion:'reduce',colorScheme:theme==='dark'?'dark':'light'});
+ await ctx.addCookies([{name:'rovaq_lang',value:process.env.VEXA_LANG??'es',url:base}]); // esta prueba revisa rótulos en español; VEXA_LANG=en para el inglés
  await ctx.addInitScript(t=>{try{localStorage.setItem('vexa-theme',t);}catch{}window.__temas=[];new MutationObserver(()=>window.__temas.push(document.documentElement.dataset.theme??null)).observe(document,{attributes:true,subtree:true,attributeFilter:['data-theme']});},theme);
  await ctx.route('**/api/**',async route=>{const q=route.request();if(/resource=problems/.test(q.url())&&/slim=1/.test(q.url())){const F=await import('./fixtures.mjs');return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({data:F.bundleProblemsCatalogo()})});}const h=await respond(q.url(),q.method(),q.postData());return h?route.fulfill({status:h[0],contentType:'application/json',body:JSON.stringify(h[1])}):route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:{code:'fixture_missing'}})});});
  for(const r of routes){
   const page=await ctx.newPage();const tag=`${r}@${W}/${theme}`;
-  try{await page.goto(base+r,{waitUntil:'networkidle',timeout:120000});}catch(e){check(false,`${tag}: no cargó (${String(e.message).slice(0,60)})`);await page.close();continue;}
+  try{await page.goto(base+r,{waitUntil:'networkidle',timeout:120000});await page.evaluate(()=>document.querySelector('.onb-invitacion .onb-btn-sec')?.click());} // la invitación del recorrido (primera visita) tapa controles y el compositor; se descarta como lo haría la persona
+  catch(e){check(false,`${tag}: no cargó (${String(e.message).slice(0,60)})`);await page.close();continue;}
   await page.waitForTimeout(500);
   // 1) Desborde horizontal: del caparazón (falla) y del contenido (aviso).
   const d=await page.evaluate(()=>{const de=document.documentElement,wc=document.querySelector('.workspace-content');const sobra=[...document.querySelectorAll('.workspace-header,.workspace-bottom-nav')].filter(e=>{const b=e.getBoundingClientRect();return b.left<-0.5||b.right>innerWidth+0.5;}).map(e=>e.className);return {doc:de.scrollWidth-innerWidth,cont:wc?wc.scrollWidth-wc.clientWidth:0,sobra};});

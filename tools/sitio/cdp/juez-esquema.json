@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "rovaq-juez-v1",
+  "title": "Salida del juez de la sección 11 (rúbrica de 10 criterios, 4 celdas)",
+  "type": "object",
+  "required": ["ronda", "celdas", "enterprise"],
+  "additionalProperties": false,
+  "properties": {
+    "ronda": { "type": "integer", "minimum": 1, "maximum": 3 },
+    "referencias": { "type": "array", "items": { "type": "string" } },
+    "enterprise": { "type": "boolean", "description": "Falso si alguna captura no pasaría en una página de marketing enterprise" },
+    "celdas": {
+      "type": "object",
+      "required": ["escritorio-oscuro", "escritorio-claro", "movil-oscuro", "movil-claro"],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(escritorio|movil)-(oscuro|claro)$": {
+          "type": "object",
+          "required": ["criterios"],
+          "additionalProperties": false,
+          "properties": {
+            "criterios": {
+              "type": "array",
+              "minItems": 10,
+              "maxItems": 10,
+              "items": {
+                "type": "object",
+                "required": ["n", "nota", "captura", "accion"],
+                "additionalProperties": false,
+                "properties": {
+                  "n": { "type": "integer", "minimum": 1, "maximum": 10 },
+                  "nota": { "type": "integer", "minimum": 1, "maximum": 10 },
+                  "captura": { "type": "string", "minLength": 1, "description": "Archivo de captura que justifica la nota" },
+                  "justificacion": { "type": "string" },
+                  "accion": { "type": "string", "description": "Acción concreta de corrección; vacía solo si la nota es 9 o 10" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

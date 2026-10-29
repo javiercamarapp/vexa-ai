@@ -1,0 +1,16 @@
+{
+  "nota": "Alinea por función de sección. rovaq: fracción de scroll (0 a 1) o nombre de data-seccion; handle: índice pNN de handle/capturas/home (1440 y 390 tienen distinto número de posiciones: el de 390 se calcula por fracción); ref: igual que handle para la tercera columna. Editable a mano.",
+  "funciones": [
+    { "funcion": "hero",          "titulo": "Hero y reglas",            "rovaq": { "fraccion": 0.0 },  "handle": { "fraccion": 0.0 } },
+    { "funcion": "horizonte",     "titulo": "Horizonte, transición",    "rovaq": { "fraccion": 0.13 }, "handle": { "fraccion": 0.14 } },
+    { "funcion": "problema",      "titulo": "El problema",              "rovaq": { "fraccion": 0.17 }, "handle": { "fraccion": 0.2 } },
+    { "funcion": "valor",         "titulo": "Valor y sellos",           "rovaq": { "fraccion": 0.24 }, "handle": { "fraccion": 0.45 } },
+    { "funcion": "pasos",         "titulo": "Cuatro pasos (escena)",    "rovaq": { "fraccion": 0.45 }, "handle": { "fraccion": 0.38 } },
+    { "funcion": "pantallas",     "titulo": "Seis pantallas, producto", "rovaq": { "fraccion": 0.6 },  "handle": { "fraccion": 0.6 } },
+    { "funcion": "puestos",       "titulo": "Por puesto, resultados",   "rovaq": { "fraccion": 0.67 }, "handle": { "fraccion": 0.5 } },
+    { "funcion": "seguridad",     "titulo": "Seguridad y límites",      "rovaq": { "fraccion": 0.75 }, "handle": { "fraccion": 0.3 } },
+    { "funcion": "integraciones", "titulo": "Integraciones y preguntas","rovaq": { "fraccion": 0.87 }, "handle": { "fraccion": 0.7 } },
+    { "funcion": "cierre",        "titulo": "Cierre",                   "rovaq": { "fraccion": 0.95 }, "handle": { "fraccion": 0.8 } },
+    { "funcion": "pie",           "titulo": "Pie y marca gigante",      "rovaq": { "fraccion": 1.0 },  "handle": { "fraccion": 1.0 } }
+  ]
+}

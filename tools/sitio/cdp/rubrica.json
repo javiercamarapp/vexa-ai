@@ -1,0 +1,18 @@
+{
+  "fuente": "SPEC-FINAL-LANDING sección 10",
+  "celdas": ["escritorio-oscuro", "escritorio-claro", "movil-oscuro", "movil-claro"],
+  "aprobacion": { "promedioMinimoPorCelda": 8, "notaMinimaPorCriterio": 7 },
+  "regla": "Si una captura no pasaría en una página de marketing enterprise no se entrega.",
+  "criterios": [
+    { "n": 1, "id": "jerarquia-tipografica", "nombre": "Jerarquía tipográfica", "diez": "Un solo foco por pantalla; serif ligera nítida", "ocho": "Foco claro, tracking correcto", "bajoSiete": "Dos focos compiten o la serif se rompe" },
+    { "n": 2, "id": "aire-y-ritmo", "nombre": "Aire y ritmo", "diez": "Secciones respiran, espaciado de 8 a 144 consistente", "ocho": "Sin zonas apretadas", "bajoSiete": "Bloques pegados o vacíos sin intención" },
+    { "n": 3, "id": "color-y-rojo", "nombre": "Disciplina del color y del rojo", "diez": "Un acento en dosis mínima, prueba de rojo pasa con margen", "ocho": "Rojo bajo 0.3 por ciento y hasta 3 elementos", "bajoSiete": "Cualquier rojo fuera de regla" },
+    { "n": 4, "id": "objetos-y-renders", "nombre": "Calidad de objetos y renders", "diez": "Serie coherente, material creíble, no parece stock", "ocho": "Se lee la forma en un segundo; consistente", "bajoSiete": "Plástico, juguete o ruido" },
+    { "n": 5, "id": "coherencia-del-sistema", "nombre": "Coherencia del sistema", "diez": "Radios, bordes, mono y botones idénticos en todas partes", "ocho": "Desvíos menores", "bajoSiete": "Componentes que parecen de otra página" },
+    { "n": 6, "id": "movimiento", "nombre": "Calma y precisión del movimiento", "diez": "Transiciones lentas, sin saltos, 60 fps", "ocho": "Sin tirones perceptibles en cuadros", "bajoSiete": "Saltos, parpadeo o retraso del contenido" },
+    { "n": 7, "id": "nivel-premium", "nombre": "Nivel premium contra Handle, Ramp y Lovable", "diez": "Una captura pasaría en una página enterprise", "ocho": "Comparable con una de las tres referencias", "bajoSiete": "Se distingue como amateur al lado de las tres" },
+    { "n": 8, "id": "concision", "nombre": "Concisión del texto", "diez": "Cada bloque dice una cosa; sin muros", "ocho": "Párrafos de 2 a 3 líneas", "bajoSiete": "Párrafos largos o jerga" },
+    { "n": 9, "id": "credibilidad", "nombre": "Credibilidad del producto", "diez": "Mockups legibles, sellos, rótulo de datos de ejemplo siempre visible", "ocho": "Mockups legibles", "bajoSiete": "Mockup ilegible o cifra sin rótulo" },
+    { "n": 10, "id": "responsive-y-accesibilidad", "nombre": "Responsive y accesibilidad visual", "diez": "Sin desbordes, contraste mínimo 4.5, texto mínimo 11 px, foco visible", "ocho": "Un fallo menor", "bajoSiete": "Desborde horizontal, contraste insuficiente, texto bajo 11 px" }
+  ]
+}

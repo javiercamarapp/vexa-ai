@@ -27,6 +27,11 @@ export const CASOS_INDICE: Pagina = {
     { tipo: 'enlaces', titulo: b('Por puesto', 'By role'), items: LANDING.nav.casos.items },
     {
       tipo: 'tarjetas',
+      titulo: LANDING.puestos.lideres.titulo,
+      items: [LANDING.puestos.lideres.finanzas, LANDING.puestos.lideres.cx, LANDING.puestos.lideres.cx.salvedad],
+    },
+    {
+      tipo: 'tarjetas',
       titulo: b('Por situación', 'By situation'),
       items: [
         {

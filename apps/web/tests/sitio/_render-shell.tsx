@@ -9,7 +9,7 @@ import {esPublicable, paginaDe, motivosNoPublicable, menus, columnasPie} from '.
 import {metadatosPagina} from '../../src/components/sitio/shell/metadatos';
 import {Portada} from '../../src/components/sitio/secciones/portada';
 import PaginaInterna, {generateStaticParams, generateMetadata} from '../../src/app/(sitio)/sitio/[lang]/[...ruta]/page';
-import NoEncontrada from '../../src/app/(sitio)/sitio/[lang]/[...ruta]/not-found';
+import NoEncontrada from '../../src/app/(sitio)/sitio/[lang]/not-found';
 
 type Lang = 'es' | 'en';
 const doc = (lang: Lang, canonical: string | null, cuerpo: string) =>

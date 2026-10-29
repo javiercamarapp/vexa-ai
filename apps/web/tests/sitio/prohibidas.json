@@ -593,7 +593,18 @@
         "\\bl[ií]deres? en\\b",
         "\\bmarket[- ]leading\\b",
         "\\bindustry[- ]leading\\b",
-        "\\bbest-?in-?class\\b"
+        "\\bbest-?in-?class\\b",
+        "\\bno hay competencia\\b",
+        "\\bninguna competencia\\b",
+        "\\bsin rivales\\b",
+        "\\bthere is no competition\\b",
+        "\\bno competition\\b",
+        "\\bwithout competition\\b",
+        "\\bno tiene competencia\\b",
+        "\\bno tiene competidores\\b",
+        "\\bsin competidores\\b",
+        "\\bno competitors\\b",
+        "\\bhas no competitors\\b"
       ]
     },
     {
@@ -707,6 +718,61 @@
           "motivo": "URLs y metadatos"
         }
       ]
+    }
+  ],
+  "adicionales": [
+    {
+      "id": "A1",
+      "afirmacion": "Correlación de cualquier tipo o número entre finanzas y experiencia del cliente, como 100 por ciento correlacionados",
+      "regla": "prohibida",
+      "patrones": [
+        "correlacionad\\w*",
+        "correlaci[oó]n",
+        "correlat\\w*",
+        "correlation"
+      ],
+      "nota": "Pedido del dueño el 2026-10-29: ninguna cifra ni afirmación de correlación."
+    },
+    {
+      "id": "A2",
+      "afirmacion": "Sin competencia o categoría sin rivales (contradice la existencia de más de 9 plataformas de Customer Intelligence en MX)",
+      "regla": "prohibida",
+      "patrones": [
+        "\\bsin competencia\\b",
+        "\\bno hay competencia\\b",
+        "\\bninguna competencia\\b",
+        "\\bno competition\\b",
+        "\\bthere is no competition\\b",
+        "\\bwithout competition\\b",
+        "\\bno tiene competencia\\b",
+        "\\bno tiene competidores\\b",
+        "\\bsin competidores\\b",
+        "\\bno competitors\\b",
+        "\\bhas no competitors\\b"
+      ],
+      "nota": "Ver afirmación 39."
+    },
+    {
+      "id": "A3",
+      "afirmacion": "Datos de Retailer, cumplimiento o inventario ya ingestados",
+      "regla": "prohibida",
+      "patrones": [
+        "ya (?:est[aá]n? |se )?(?:ingest|ingerid|cargad)\\w*",
+        "\\balready (?:ingested|loaded)\\b",
+        "ingesta (?:de|del) (?:retailer|inventario|cumplimiento)",
+        "(?:retailer|inventory|fulfillment|inventario|cumplimiento) data (?:is|are) (?:ingested|loaded)"
+      ],
+      "nota": "Esos datos no están ingestados; solo se dice que requieren datos adicionales."
+    },
+    {
+      "id": "A4",
+      "afirmacion": "100 por ciento de cualquier cosa",
+      "regla": "prohibida",
+      "patrones": [
+        "100\\s*(?:%|por ciento|percent)",
+        "\\bcien por ciento\\b"
+      ],
+      "nota": "Ver afirmaciones 12 y 29."
     }
   ]
 }

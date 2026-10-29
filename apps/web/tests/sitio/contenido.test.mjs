@@ -163,6 +163,34 @@ describe('afirmaciones prohibidas (K8)', () => {
     assert.ok(violaciones(dos, 'x', 'Conectores directos con Amazon y Walmart.', 'es').length > 0);
   });
 
+  test('ajuste de posicionamiento: sin correlación, sin competencia, sin 100 por ciento y sin datos ya ingestados', () => {
+    const MUESTRA = {
+      A1: ['Finanzas y experiencia del cliente están 100% correlacionadas.', 'Finance and customer experience show a high correlation.'],
+      A2: ['Rovaq no tiene competencia.', 'There is no competition.'],
+      A3: ['Los datos de inventario ya están ingestados.', 'Retailer data is already ingested.'],
+      A4: ['Cubre el 100 por ciento.', 'Covers 100 percent.'],
+    };
+    for (const af of PROHIBIDAS.adicionales) {
+      const [es, en] = MUESTRA[af.id];
+      assert.ok(violaciones(af, 'muestra', es, 'es').length > 0, `${af.id} es`);
+      assert.ok(violaciones(af, 'muestra', en, 'en').length > 0, `${af.id} en`);
+      const malas = [];
+      for (const { ruta, hoja } of [...todasLasHojas(), ...hojasPublicables()]) for (const l of IDIOMAS) malas.push(...violaciones(af, ruta, hoja[l], l));
+      assert.deepEqual(malas.slice(0, 3), [], `${af.id}: ${af.afirmacion}`);
+    }
+    const l = LANDING.puestos.lideres;
+    assert.match(l.titulo.es, /^Finanzas y experiencia del cliente leen el mismo problema/);
+    assert.match(l.cx.salvedad.es, /rendimiento por SKU y los casos por estado/);
+    assert.match(l.cx.salvedad.es, /datos adicionales/);
+    assert.equal(l.cx.d.nivel, 'MATIZ');
+    assert.deepEqual(l.cx.d.condicion.acompana, ['puestos.lideres.cx.salvedad']);
+    assert.equal(l.finanzas.d.nivel, 'MATIZ');
+    // La experiencia del cliente solo se publica junto a su salvedad.
+    const copia = structuredClone(LANDING);
+    copia.puestos.lideres.cx.salvedad.es += ' [FECHA_DE_REVISION]';
+    assert.ok(publicar(copia, { aprobaciones: APROBACIONES, ctx: CTX }).omitidas.some((o) => o.ruta === 'puestos.lideres.cx.d'));
+  });
+
   test('afirmación 43: el nombre anterior del producto no aparece en ninguna cadena, ni en hrefs ni en identificadores', () => {
     const anterior = new RegExp(SITE.anteriorNombre.split(' ')[0], 'iu');
     const cadenas = [];

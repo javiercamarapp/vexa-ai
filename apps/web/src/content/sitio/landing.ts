@@ -448,6 +448,20 @@ export const LANDING = {
         href: { es: '/casos-de-uso/lector', en: '/en/use-cases/viewer' },
       },
     ], // PUBLICO las cuatro. Matriz de capacidades; no se afirma qué datos personales ve el lector, candidato RLS-01 abierto
+    lideres: {
+      titulo: { es: 'Finanzas y experiencia del cliente leen el mismo problema: el dinero que se devuelve y la razón por la que se devuelve.', en: 'Finance and customer experience read the same problem: the money that is returned and the reason it is returned.' }, // PUBLICO. Dos ángulos, sin cifras de correlación
+      finanzas: {
+        t: { es: 'Finanzas', en: 'Finance' },
+        d: m(7, 'Exposición solo con vínculos problema a pedido confirmados por un propietario; sin ellos la pantalla dice No disponible', { es: 'Quien responde por el ingreso expuesto y los reembolsos ve cuánto dinero se devuelve por canal, producto y mes, con cada cifra rotulada por su clase, su fuente y su corte.', en: 'Whoever answers for exposed revenue and refunds sees how much money is returned by channel, product and month, with every figure labeled by class, source and cut-off.' }),
+        href: { es: '/producto/fuga-de-reembolsos', en: '/en/product/refund-leakage' },
+      },
+      cx: {
+        t: { es: 'Experiencia del cliente', en: 'Customer experience' },
+        d: m(0, 'Va junto a su salvedad: hoy solo responde con salvedad el rendimiento por SKU y los casos por estado; lo demás requiere datos adicionales que no están cargados', { es: 'Quien responde por los problemas, los puntos de dolor y la atención ve qué motivo se repite y cuánto dinero arrastra, junto a Puntos de dolor.', en: 'Whoever answers for problems, pain points and support sees which reason repeats and how much money it carries, next to Pain points.' }, { acompana: ['puestos.lideres.cx.salvedad'] }),
+        salvedad: { es: 'Hoy responde con salvedad el rendimiento por SKU y los casos por estado. Lo demás requiere datos adicionales que todavía no están cargados.', en: 'Today it answers, with caveats, performance by SKU and cases by state. Anything else requires additional data that is not loaded yet.' },
+        href: { es: '/producto/puntos-de-dolor', en: '/en/product/pain-points' },
+      },
+    },
     enlaceItem: { es: 'Ver el puesto', en: 'See the role' },
     cierre: { es: 'La autorización se decide en el servidor. Ocultar un elemento del menú no protege una pantalla.', en: 'Authorization is decided on the server. Hiding a menu item does not protect a screen.' }, // PUBLICO. Producto 01, regla del menú
   },

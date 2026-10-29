@@ -60,7 +60,7 @@ const PROHIBIDOS: Record<string, string[]> = {
   'src/components/platform/platform-nav.tsx': ['Fuentes y cargas', 'Costos de IA', 'Seguridad de la cuenta', 'Gestionar'],
   'src/components/platform/data-table.tsx': ['Sin resultados', 'Limpiar selección', 'Mostrar más', 'desplazamiento horizontal'],
   'src/components/platform/admin-tools.tsx': ['Cambiar de cliente', 'Iniciar modo soporte', 'Abrir organización', 'Motivo (obligatorio)'],
-  'src/app/platform/layout.tsx': ['Saltar al contenido', 'Consola de administración', 'Cerrar sesión', 'Mi organización'],
+  'src/app/(app)/platform/layout.tsx': ['Saltar al contenido', 'Consola de administración', 'Cerrar sesión', 'Mi organización'],
 };
 
 test('los archivos migrados no vuelven a llevar texto fijo en español de la lista', () => {
@@ -72,13 +72,13 @@ test('los archivos migrados no vuelven a llevar texto fijo en español de la lis
 
 test('los archivos migrados usan el traductor del idioma activo', () => {
   for (const archivo of Object.keys(PROHIBIDOS)) {
-    if (archivo === 'src/app/platform/layout.tsx') { assert.match(leer(archivo), /traductor\(idioma\)/, archivo); continue; }
+    if (archivo === 'src/app/(app)/platform/layout.tsx') { assert.match(leer(archivo), /traductor\(idioma\)/, archivo); continue; }
     assert.match(leer(archivo), /useT\(\)/, archivo + ' debe usar useT()');
   }
 });
 
 test('la consola de plataforma no cambia <html lang>: el layout usa IdiomaLocal y no IdiomaProvider', () => {
-  const layout = leer('src/app/platform/layout.tsx');
+  const layout = leer('src/app/(app)/platform/layout.tsx');
   assert.match(layout, /IdiomaLocal/);
   assert.doesNotMatch(layout, /IdiomaProvider/);
 });

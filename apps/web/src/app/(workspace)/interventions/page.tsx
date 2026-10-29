@@ -1,7 +1,0 @@
-import {RecommendationsPanel} from '../../../components/recommendations/panel';
-import {vistaDe} from '../../../components/interventions/acciones-tabs';
-import {queryParams,type Query} from '../../../lib/workspace/view';
-import {metaTitulo} from '../../../lib/i18n/titulo';
-export const generateMetadata=()=>metaTitulo('meta.titulo.interventions');
-/** Alias de /recommendations: la misma pantalla de Acciones con la pestaña En curso (por omisión) o Resultados (?vista=). */
-export default async function Page({searchParams}:{searchParams:Query}){const q=queryParams(await searchParams).toString();return <RecommendationsPanel initialQuery={q} vista={vistaDe(q)??'en-curso'}/>;}

@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {join} from 'node:path';
 const src = join(import.meta.dirname, '../src');
-const FILES = ['app/globals.css', 'app/ui.css', 'components/refunds/fuga.css', 'components/platform/platform-ui.css'];
+const FILES = ['app/(app)/globals.css', 'app/(app)/ui.css', 'components/refunds/fuga.css', 'components/platform/platform-ui.css'];
 function tokens(dark) {
   const t = {};
   for (const f of FILES) {

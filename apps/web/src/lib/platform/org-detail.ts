@@ -1,5 +1,5 @@
 import 'server-only';
-import type {Access} from '../../app/platform/_lib/access';
+import type {Access} from '../../app/(app)/platform/_lib/access';
 import {FIXTURE_DETAIL, type OrgDetail} from './ficha-model';
 export type OrgDetailResult = {status: 'ok'; detail: OrgDetail} | {status: 'notfound' | 'error'};
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

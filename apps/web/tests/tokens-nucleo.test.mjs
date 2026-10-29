@@ -6,7 +6,7 @@ import {join} from 'node:path';
 const src = join(import.meta.dirname, '../src');
 const css = (f) => readFileSync(join(src, f), 'utf8');
 const todos = (d = src) => readdirSync(d).flatMap((n) => { const p = join(d, n); return statSync(p).isDirectory() ? todos(p) : p.endsWith('.css') ? [p] : []; });
-const oscuro = [...css('app/globals.css').matchAll(/:root\[data-theme=dark\]\s*\{([^}]*)\}/g)].map((m) => m[1]).join(' ');
+const oscuro = [...css('app/(app)/globals.css').matchAll(/:root\[data-theme=dark\]\s*\{([^}]*)\}/g)].map((m) => m[1]).join(' ');
 const tok = (n) => new RegExp('--' + n + ':\\s*(#[0-9a-f]{6})', 'i').exec(oscuro)?.[1].toLowerCase();
 const lum = (h) => [1, 3, 5].reduce((a, i, k) => { let c = parseInt(h.slice(i, i + 2), 16) / 255; c = c <= .03928 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4; return a + c * [.2126, .7152, .0722][k]; }, 0);
 test('oscuro: hundido < superficie < elevado, y sin sombras (elevación por borde)', () => {
@@ -39,7 +39,7 @@ test('tipografía: ningún texto de lectura por debajo de 12 px (11 px solo en e
   assert.deepEqual(malos, []);
 });
 test('h1 con tracking -0.02em y cifras tabulares globales', () => {
-  const g = css('app/globals.css');
+  const g = css('app/(app)/globals.css');
   assert.match(g, /\.workspace-shell h1 \{[^}]*letter-spacing:-\.02em/); assert.match(g, /font-variant-numeric:tabular-nums/);
 });
 test('titular de Fuga: cifra en tinta plena (nunca gris), 24-28 px y peso 600 (escala compacta)', () => {

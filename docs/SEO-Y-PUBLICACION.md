@@ -10,8 +10,8 @@ La app es privada. `/` no es una página de aterrizaje: sin sesión redirige a `
 
 | Tema | Dónde | Detalle |
 |---|---|---|
-| Metadatos globales | `apps/web/src/app/layout.tsx` | `metadataBase` (NEXT_PUBLIC_SITE_URL, respaldo al dominio nuevo), plantilla de título `%s · Rovaq AI`, description de 153 caracteres, applicationName, keywords, authors/creator/publisher, category, canonical, Open Graph (es_MX, 1200×630 con alt), Twitter `summary_large_image`, robots, formatDetection, manifest, íconos, appleWebApp, themeColor claro/oscuro, `color-scheme` |
-| Página pública | `apps/web/src/app/login/layout.tsx` | canonical `/login`, OG/Twitter completos y JSON-LD (Organization + SoftwareApplication, sin ratings ni precios) |
+| Metadatos globales | `apps/web/src/app/(app)/layout.tsx` | `metadataBase` (NEXT_PUBLIC_SITE_URL, respaldo al dominio nuevo), plantilla de título `%s · Rovaq AI`, description de 153 caracteres, applicationName, keywords, authors/creator/publisher, category, canonical, Open Graph (es_MX, 1200×630 con alt), Twitter `summary_large_image`, robots, formatDetection, manifest, íconos, appleWebApp, themeColor claro/oscuro, `color-scheme` |
+| Página pública | `apps/web/src/app/(app)/login/layout.tsx` | canonical `/login`, OG/Twitter completos y JSON-LD (Organization + SoftwareApplication, sin ratings ni precios) |
 | Imagen social | `apps/web/src/app/opengraph-image.tsx`, `twitter-image.tsx` | PNG 1200×630 con los trazos reales del logo (`marca.mjs`), generado en el build |
 | Privadas | `ROBOTS_PRIVADO` en el layout del espacio de trabajo, `/platform`, `/seguridad`, `/sin-acceso`, invitaciones, confirmación de correo y 404 | metadata `noindex, nofollow`; además cabecera `X-Robots-Tag` en `next.config.ts` para todo prefijo de `PREFIJOS_PRIVADOS` (incluye `/api` y `/auth`) |
 | robots / sitemap | `apps/web/src/app/robots.ts`, `sitemap.ts` | permite `/` y `/login`, cierra el resto, sitemap absoluto |

@@ -8,7 +8,7 @@ import {es} from '../src/lib/i18n/es';
 /** Título en español de una página: su clave meta.titulo.* (metaTitulo) resuelta en el diccionario. */
 const tituloEs=texto=>{const k=/metaTitulo\(\s*'(meta\.titulo\.[a-z0-9-]+)'/.exec(texto)?.[1];return k?es[k]:null;};
 /** SEO y publicación: metadatos, robots, sitemap, manifest, íconos, cabeceras y títulos leídos del código (sin servidor). */
-const raiz=join(import.meta.dirname,'..'),src=join(raiz,'src/app');
+const raiz=join(import.meta.dirname,'..'),src=join(raiz,'src/app/(app)');
 const leer=r=>readFileSync(join(raiz,r),'utf8'),pub=r=>join(raiz,'public',r);
 const pngTam=r=>{const b=readFileSync(pub(r));assert.equal(b.subarray(1,4).toString(),'PNG',r+' no es PNG');return [b.readUInt32BE(16),b.readUInt32BE(20)];};
 
@@ -18,10 +18,10 @@ test('dominio canónico: NEXT_PUBLIC_SITE_URL con respaldo al dominio nuevo', ()
   assert.equal(siteUrl('no es url'),SITE_URL_RESPALDO);
   assert.equal(siteUrl('http://evil.example'),SITE_URL_RESPALDO,'http fuera de localhost no se acepta');
   assert.equal(siteUrl('https://rovaq.ai/ruta/x'),'https://rovaq.ai');
-  assert.match(leer('src/app/layout.tsx'),/metadataBase:\s*new URL\(siteUrl\(\)\)/);
+  assert.match(leer('src/app/(app)/layout.tsx'),/metadataBase:\s*new URL\(siteUrl\(\)\)/);
 });
 test('layout raíz: campos obligatorios de metadata', () => {
-  const s=leer('src/app/layout.tsx');
+  const s=leer('src/app/(app)/layout.tsx');
   for (const k of ['applicationName','keywords','authors','creator','publisher','category','alternates','openGraph','twitter','robots','formatDetection','manifest','icons','appleWebApp','themeColor']) assert.match(s,new RegExp('\\b'+k+'\\b'),'falta '+k);
   assert.match(s,/template:\s*"%s · Rovaq AI"/);
   assert.match(s,/locale:SITE\.locale/);
@@ -38,11 +38,11 @@ test('title y description con longitud útil para buscadores', () => {
   assert.equal(m.openGraph.type,'website');assert.equal(m.openGraph.locale,'es_MX');assert.equal(m.openGraph.siteName,'Rovaq AI');
   assert.deepEqual([m.openGraph.images[0].width,m.openGraph.images[0].height],[1200,630]);assert.ok(m.openGraph.images[0].alt.length>10);
   assert.equal(m.twitter.card,'summary_large_image');assert.equal(m.robots.index,true);
-  assert.match(leer('src/app/login/layout.tsx'),/metadatosPublicos\(\{titulo:traducir\(await idiomaActual\(\),'meta\.titulo\.login'\),ruta:'\/login'\}\)/);
+  assert.match(leer('src/app/(app)/login/layout.tsx'),/metadatosPublicos\(\{titulo:traducir\(await idiomaActual\(\),'meta\.titulo\.login'\),ruta:'\/login'\}\)/);
   assert.equal(es['meta.titulo.login'],'Iniciar sesión');
 });
 test('páginas privadas: noindex en cada segmento y cabecera X-Robots-Tag', () => {
-  for (const f of ['src/app/(workspace)/layout.tsx','src/app/platform/layout.tsx','src/app/seguridad/page.tsx','src/app/sin-acceso/page.tsx','src/app/not-found.tsx','src/app/auth/invitations/[id]/layout.tsx','src/app/auth/email/complete/layout.tsx'])
+  for (const f of ['src/app/(app)/(workspace)/layout.tsx','src/app/(app)/platform/layout.tsx','src/app/(app)/seguridad/page.tsx','src/app/(app)/sin-acceso/page.tsx','src/app/(app)/not-found.tsx','src/app/(app)/auth/invitations/[id]/layout.tsx','src/app/(app)/auth/email/complete/layout.tsx'])
     assert.match(leer(f),/robots:\s*ROBOTS_PRIVADO/,f+' sin noindex');
   const cfg=leer('next.config.ts');
   assert.match(cfg,/X-Robots-Tag/);assert.match(cfg,/PREFIJOS_PRIVADOS/);
@@ -78,7 +78,7 @@ test('íconos: existen y tienen el tamaño declarado', () => {
   for (const [f,t] of Object.entries(esperados)) assert.deepEqual(pngTam(f),t,f);
   for (const f of ['favicon.ico','favicon.svg','push-icon.svg','brand/rovaq-app-icon.svg','brand/rovaq-logo-horizontal-positivo-600px.png','.well-known/security.txt','humans.txt']) assert.ok(existsSync(pub(f))&&statSync(pub(f)).size>0,f);
   const ico=readFileSync(pub('favicon.ico'));assert.equal(ico.readUInt16LE(2),1,'ico');assert.ok(ico.readUInt16LE(4)>=2,'ico con varias medidas');
-  const layout=leer('src/app/layout.tsx');
+  const layout=leer('src/app/(app)/layout.tsx');
   for (const f of ['/favicon.ico','/favicon.svg','/favicon-16x16.png','/favicon-32x32.png','/favicon-48x48.png','/icon-192.png','/icon-512.png','/apple-touch-icon.png']) assert.ok(layout.includes(f),f+' sin declarar en icons');
 });
 test('imágenes Open Graph y Twitter 1200×630 de segmento', () => {
@@ -113,7 +113,7 @@ test('JSON-LD válido: Organization + SoftwareApplication, sin ratings ni precio
   assert.equal(org.url,'https://rovaq-ai.vercel.app');assert.match(org.logo.url,/^https:\/\/rovaq-ai\.vercel\.app\/brand\/.+\.png$/);assert.ok(existsSync(pub(org.logo.url.replace('https://rovaq-ai.vercel.app/',''))));
   assert.equal(app.publisher['@id'],org['@id']);assert.equal(app.inLanguage,'es-MX');
   assert.doesNotMatch(JSON.stringify(j),/aggregateRating|offers|price|review/i);
-  assert.match(leer('src/app/login/layout.tsx'),/application\/ld\+json/);
+  assert.match(leer('src/app/(app)/login/layout.tsx'),/application\/ld\+json/);
 });
 test('security.txt con contacto y expiración vigente', () => {
   const t=leer('public/.well-known/security.txt');
@@ -136,7 +136,7 @@ test('títulos de pestaña: toda pantalla del menú tiene título propio, único
   assert.deepEqual(sin.filter(f=>f!=='page.tsx'),[],'páginas sin título: '+sin.join(', '));
 });
 test('páginas de error de marca: noindex, logo y salida a Hoy; «use client» primero', () => {
-  const nf=leer('src/app/not-found.tsx'),ge=leer('src/app/global-error.tsx'),er=leer('src/app/error.tsx');
+  const nf=leer('src/app/(app)/not-found.tsx'),ge=leer('src/app/global-error.tsx'),er=leer('src/app/(app)/error.tsx');
   assert.match(nf,/t\('det\.irAHoy'\)/);assert.match(readFileSync('src/lib/i18n/d-probdet.ts','utf8'),/'det\.irAHoy': 'Ir a Hoy'/);assert.match(er,/href="\/overview"/);
   assert.match(ge,/^'use client';/);assert.match(er,/^'use client';/);
   assert.match(ge,/noindex/);assert.match(ge,/rovaq-logo-horizontal-positivo-600px\.png/);assert.match(ge,/alt="Rovaq AI"/);assert.match(ge,/width=\{160\} height=\{45\}/);

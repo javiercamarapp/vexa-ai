@@ -7,7 +7,7 @@ import {es} from '../src/lib/i18n/es';
 import {en} from '../src/lib/i18n/en';
 import {traducir} from '../src/lib/i18n';
 
-const raiz=join(import.meta.dirname,'../src/app');
+const raiz=join(import.meta.dirname,'../src/app/(app)');
 const archivos=(d:string,acc:string[]=[]):string[]=>{for(const n of readdirSync(d)){const p=join(d,n);if(statSync(p).isDirectory())archivos(p,acc);else if(/^(page|layout|not-found)\.tsx$/.test(n))acc.push(p);}return acc;};
 const TODOS=archivos(raiz).map(p=>({ruta:relative(raiz,p),dir:relative(raiz,join(p,'..')),texto:readFileSync(p,'utf8')}));
 const ESP=es as Record<string,string>,ING=en as Record<string,string>;

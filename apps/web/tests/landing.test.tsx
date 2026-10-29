@@ -12,7 +12,7 @@ import {en} from '../src/lib/i18n/en';
 import {landingUrl, PREFIJOS_PRIVADOS, RUTAS_PUBLICAS} from '../src/lib/site.mjs';
 
 const leer = (rel: string) => fs.readFileSync(new URL('../' + rel, import.meta.url), 'utf8');
-const PAGINAS = ['src/app/(landing)/landing/page.tsx', 'src/app/(landing)/landing/en/page.tsx'];
+const PAGINAS = ['src/app/(app)/(landing)/landing/page.tsx', 'src/app/(app)/(landing)/landing/en/page.tsx'];
 const ARCHIVOS = ['src/components/landing/landing.tsx', 'src/components/landing/mocks.tsx', 'src/components/landing/cliente.tsx', 'src/components/landing/pagina.tsx', ...PAGINAS];
 const cssCrudo = leer('src/components/landing/landing.css');
 const css = cssCrudo.replace(/\/\*[\s\S]*?\*\//g, '');
@@ -172,5 +172,5 @@ test('SEO: canonical y datos estructurados propios en rovaq.ai; la app sigue noi
   assert.match(leer('src/app/robots.ts'), /ES_HOST_LANDING/); assert.match(leer('src/app/sitemap.ts'), /ES_HOST_LANDING/);
 });
 test('layout: el arranque limpio y el tema respetan /landing', () => {
-  assert.match(leer('src/app/layout.tsx'), /login\|auth\|platform\|landing/);
+  assert.match(leer('src/app/(app)/layout.tsx'), /login\|auth\|platform\|landing/);
 });

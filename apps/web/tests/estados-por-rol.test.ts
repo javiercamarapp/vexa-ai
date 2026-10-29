@@ -30,7 +30,7 @@ test('textos de vacío: ninguno ordena «Carga/Importa/Sube» a un rol sin permi
   }
 });
 test('Cortes publicados: preparar, cargar pedidos, clasificar y asociar es del propietario (el servidor exige snapshot_owner_required); el analista ve un aviso en vez de la sección',()=>{
-  const pagina=leer('src/app/(workspace)/economics/page.tsx');
+  const pagina=leer('src/app/(app)/(workspace)/economics/page.tsx');
   assert.match(pagina,/puedePreparar=active\.role==='owner',soloPropietario=active\.role==='analyst'/);
   assert.match(pagina,/<EconomiaResumen[^>]*soloPropietario=\{soloPropietario\}/);
   const vista=leer('src/components/datos/economia-resumen.tsx');

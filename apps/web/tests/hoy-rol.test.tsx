@@ -27,7 +27,7 @@ test('el Hoy por rol no consulta ningún endpoint de dinero (solo owner y analys
   assert.deepEqual(usados,['/api/interventions','/api/problems'],'solo lecturas de los cuatro roles');
 });
 test('la página de Hoy elige por rol y la pantalla completa (con los tres endpoints de dinero) no se monta para operador ni lector',()=>{
-  assert.match(leer('src/app/(workspace)/overview/page.tsx'),/<HoyPorRol completa=\{<HoyPantalla\/>\}\/>/);
+  assert.match(leer('src/app/(app)/(workspace)/overview/page.tsx'),/<HoyPorRol completa=\{<HoyPantalla\/>\}\/>/);
   const sentinela=createElement('p',{id:'completa'},'cifras');
   for(const rol of ['operator','viewer'])assert.ok(!envolver(rol,createElement(HoyPorRol,{completa:sentinela})).includes('id="completa"'),rol);
   for(const rol of ['owner','analyst',undefined])assert.ok(envolver(rol,createElement(HoyPorRol,{completa:sentinela})).includes('id="completa"'),String(rol));

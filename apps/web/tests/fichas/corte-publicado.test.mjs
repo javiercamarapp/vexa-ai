@@ -17,7 +17,7 @@ test('el componente y la página usan esa lectura con el alcance de la URL', () 
   const src=readFileSync(new URL('../../src/components/datos/economia-resumen.tsx',import.meta.url),'utf8');
   assert.ok(src.includes('urlCortePublicado(query)'));
   assert.ok(!src.includes("resource=metrics'+(query"));
-  const page=readFileSync(new URL('../../src/app/(workspace)/economics/page.tsx',import.meta.url),'utf8');
+  const page=readFileSync(new URL('../../src/app/(app)/(workspace)/economics/page.tsx',import.meta.url),'utf8');
   assert.ok(/ALCANCE=\[[^\]]*'basis'[^\]]*'exponent'/.test(page),'la página reenvía la base y el exponente');
   assert.ok(!/ALCANCE=\[[^\]]*snapshot_id/.test(page),'la página no reenvía snapshot_id');
 });

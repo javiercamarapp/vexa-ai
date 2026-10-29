@@ -122,7 +122,7 @@ test('CSS: contenedor 28×28 con borde 1 px y radio 8; el color de marca no entr
   assert.match(badge, /width:28px/); assert.match(badge, /height:28px/); assert.match(badge, /border:1px solid var\(--ui-border\)/); assert.match(badge, /border-radius:8px/);
   const bm = css.slice(css.indexOf('/* BrandMark')); // todo lo que añade BrandMark a ui.css
   assert.ok(!/#[0-9a-f]{3,8}\b/i.test(bm), 'colores literales en el CSS de BrandMark');
-  for (const m of Object.values(MARCAS)) if (m.tipo === 'logo' && !/^#(.)\1(.)\2(.)\3$/.test(m.color)) for (const f of ['app/globals.css', 'app/ui.css', 'components/ui/ui.css']) assert.ok(!leer(f).toLowerCase().includes(m.color.toLowerCase()), `${m.color} (${m.nombre}) en ${f}`);
+  for (const m of Object.values(MARCAS)) if (m.tipo === 'logo' && !/^#(.)\1(.)\2(.)\3$/.test(m.color)) for (const f of ['app/(app)/globals.css', 'app/(app)/ui.css', 'components/ui/ui.css']) assert.ok(!leer(f).toLowerCase().includes(m.color.toLowerCase()), `${m.color} (${m.nombre}) en ${f}`);
 });
 
 test('contraste: monocromo en oscuro cuando el color de marca no llega a 3:1; neutros legibles; claro documentado', () => {

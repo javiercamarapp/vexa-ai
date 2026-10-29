@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const f=(p)=>readFileSync(new URL('../src/'+p,import.meta.url),'utf8');
-const css=f('app/globals.css'),layout=f('app/layout.tsx'),comp=f('components/arranque-limpio.tsx'),reg=f('components/rovaq-cargando.tsx'),hoy=f('components/hoy/hoy-pantalla.tsx');
+const css=f('app/(app)/globals.css'),layout=f('app/(app)/layout.tsx'),comp=f('components/arranque-limpio.tsx'),reg=f('components/rovaq-cargando.tsx'),hoy=f('components/hoy/hoy-pantalla.tsx');
 test('el encabezado y el pie global se ocultan con carga de página completa y durante el arranque',()=>{
   assert.match(css,/body:has\(\.rovaq-cargando:not\(\.rovaq-cargando-compacto\)\) :is\(\.site-header,\.site-footer\)\s*\{\s*display:none/);
   assert.match(css,/html\[data-arranque\] :is\(\.site-header,\.site-footer,main,\.skip-link\)\s*\{\s*display:none!important/);

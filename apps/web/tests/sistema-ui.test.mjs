@@ -5,7 +5,7 @@ import {readFileSync,readdirSync,statSync} from 'node:fs';
 import {join} from 'node:path';
 const src=join(import.meta.dirname,'../src');
 const leer=f=>readFileSync(join(src,f),'utf8');
-const UI=leer('components/ui/ui.css'),GLOBAL=leer('app/globals.css'),APPUI=leer('app/ui.css');
+const UI=leer('components/ui/ui.css'),GLOBAL=leer('app/(app)/globals.css'),APPUI=leer('app/(app)/ui.css');
 const css=(d=src,acc=[])=>{for(const n of readdirSync(d)){const p=join(d,n);if(statSync(p).isDirectory())css(p,acc);else if(n.endsWith('.css'))acc.push(p);}return acc;};
 const TODOS=css();
 // Fuera de alcance de la escala del espacio de trabajo: pantallas de acceso y plataforma interna.

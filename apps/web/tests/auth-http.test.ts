@@ -3,10 +3,10 @@
 import {test,afterEach} from 'node:test';
 import assert from 'node:assert/strict';
 import {NextRequest} from 'next/server';
-import {POST as select} from '../src/app/auth/organization/route';
-import {GET as callback} from '../src/app/auth/callback/route';
-import {POST as logout} from '../src/app/auth/logout/route';
-import {POST as google} from '../src/app/auth/google/route';
+import {POST as select} from '../src/app/(app)/auth/organization/route';
+import {GET as callback} from '../src/app/(app)/auth/callback/route';
+import {POST as logout} from '../src/app/(app)/auth/logout/route';
+import {POST as google} from '../src/app/(app)/auth/google/route';
 import {middleware} from '../src/middleware';
 import {config, ACTIVE_ORG} from '../src/lib/auth';
 const originalFetch=globalThis.fetch;

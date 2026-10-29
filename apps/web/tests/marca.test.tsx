@@ -36,7 +36,7 @@ test('RovaqLogo: alt «Rovaq», tamaños mínimos del kit, espacio libre de 2 di
   assert.match(h, /fill="#E8241C"/); assert.equal((h.match(/fill="#0E0E10"/g) ?? []).length, LOGOS.horizontal.tinta.length);
   const lateral = renderToStaticMarkup(<RovaqLogoLateral/>);
   assert.match(lateral, /rovaq-logo-expandido/); assert.match(lateral, /rovaq-logo-colapsado/);
-  const css = readFileSync(join(import.meta.dirname, '../src/app/globals.css'), 'utf8');
+  const css = readFileSync(join(import.meta.dirname, '../src/app/(app)/globals.css'), 'utf8');
   assert.match(css, /--rovaq-logo-tinta:var\(--rovaq-negro\)/); assert.match(css, /:root\[data-theme=dark\] \{ --rovaq-logo-tinta:var\(--rovaq-blanco\)/);
   assert.match(css, /\.rovaq-logo-tinta \{ fill:var\(--rovaq-tinta\)/);
 });
@@ -59,7 +59,7 @@ test('favicon completo, manifiestos y metadata apuntan al kit; el símbolo de av
     assert.ok(existsSync(join(import.meta.dirname, '../public', f)) && statSync(join(import.meta.dirname, '../public', f)).size > 100, f);
   assert.equal(pub('push-icon.svg'), pub('favicon.svg'));
   for (const f of ['site.webmanifest', 'push-manifest.webmanifest']) { const m = JSON.parse(pub(f)); assert.equal(m.theme_color, '#0E0E10'); assert.equal(m.background_color, '#0E0E10'); assert.match(m.name, /^Rovaq/); }
-  const layout = readFileSync(join(import.meta.dirname, '../src/app/layout.tsx'), 'utf8');
+  const layout = readFileSync(join(import.meta.dirname, '../src/app/(app)/layout.tsx'), 'utf8');
   assert.match(layout, /themeColor: \[[^\]]*"#ffffff"[^\]]*"#0e0e10"/i); // claro y oscuro; el manifiesto fija #0E0E10 assert.match(layout, /manifest: "\/site\.webmanifest"/); assert.match(layout, /apple-touch-icon\.png/); assert.match(layout, /favicon\.svg/);
 });
 
@@ -86,7 +86,7 @@ test('pantalla de carga (igual a la de Likida): SOLO el logo respirando, accesib
 });
 
 test('la animación del logo (respira, como Likida) respeta reducir movimiento y solo cambia opacidad y escala', () => {
-  const css = readFileSync(join(import.meta.dirname, '../src/app/globals.css'), 'utf8');
+  const css = readFileSync(join(import.meta.dirname, '../src/app/(app)/globals.css'), 'utf8');
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[^}]*\.rovaq-respira/s);
   const anim = css.slice(css.indexOf('@keyframes rovaq-respira'), css.indexOf('.rovaq-respira {'));
   assert.doesNotMatch(anim, /rotate|translate|skew/, 'el kit prohíbe rotar o deformar el logo');

@@ -197,7 +197,7 @@ test('soporte («Ver como») y vistas sin pista: solo un aviso, cero pasos, cero
 test('sin estilos en línea ni roles/tabindex ajenos en el marcado y en los componentes nuevos',()=>{
   const html=vista('propietario',{senales:SENALES_CLIENTEX,consultadas:consultadasDe('owner'),push:{configurado:true,dispositivos:0}});
   assert.doesNotMatch(html,/\sstyle=|role="button"|tabindex="[1-9]/);
-  for(const f of ['src/components/onboarding/setup-piezas.tsx','src/components/onboarding/setup-pantalla.tsx','src/app/(workspace)/setup/page.tsx'])assert.doesNotMatch(leer(f),/style=\{|\sstyle="/,f);
+  for(const f of ['src/components/onboarding/setup-piezas.tsx','src/components/onboarding/setup-pantalla.tsx','src/app/(app)/(workspace)/setup/page.tsx'])assert.doesNotMatch(leer(f),/style=\{|\sstyle="/,f);
   assert.doesNotMatch(leer('src/components/onboarding/setup.css'),/!important/);
   // Todo lo que se puede activar es un enlace, un botón o un resumen nativo (teclado gratis): no hay onClick en div, li ni span.
   assert.doesNotMatch(leer('src/components/onboarding/setup-piezas.tsx'),/<(div|li|span|p)[^>]*onClick/);

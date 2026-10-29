@@ -1,5 +1,0 @@
-'use client';
-import Link from 'next/link';
-import {useState} from 'react';
-import {useT} from '../../../../components/i18n/proveedor';
-export default function WorkerSetup(){const t=useT();const [id,setId]=useState(''),[status,setStatus]=useState('');async function save(enabled:boolean){try{const r=await fetch('/api/jobs/worker',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:id,enabled})});setStatus(r.ok?(enabled?t('tr.setup.habilitado'):t('tr.setup.deshabilitado')):t('tr.setup.noDisponible',{estado:r.status}));}catch{setStatus(t('tr.setup.servicioNoDisp'));}}return <section className="task-page worker-setup"><h1>{t('tr.setup.titulo')}</h1><p>{t('tr.setup.cuerpo')}</p><label>{t('tr.setup.idCuenta')} <input value={id} onChange={e=>setId(e.target.value)}/></label><button onClick={()=>void save(true)}>{t('tr.setup.habilitar')}</button><button onClick={()=>void save(false)}>{t('tr.setup.revocar')}</button><p role='status'>{status}</p><Link prefetch={false} href='/imports'>{t('tr.setup.volver')}</Link></section>}

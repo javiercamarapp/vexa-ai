@@ -111,7 +111,7 @@ test('CSS: animación solo bajo prefers-reduced-motion:no-preference, transform/
 const lum=(hex:string)=>{const c=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(v=>v<=0.03928?v/12.92:((v+0.055)/1.055)**2.4);return 0.2126*c[0]+0.7152*c[1]+0.0722*c[2];};
 const contraste=(a:string,b:string)=>{const [x,y]=[lum(a),lum(b)].sort((p,q)=>q-p);return (x+0.05)/(y+0.05);};
 test('contraste del resaltado ≥ 3:1 contra los fondos de tema claro y oscuro',()=>{
-  const css=leer('src/components/onboarding/onboarding.css'),glob=leer('src/app/globals.css');
+  const css=leer('src/components/onboarding/onboarding.css'),glob=leer('src/app/(app)/globals.css');
   const claro=/:root \{ --onb-resalte:(#[0-9a-f]{6})/.exec(css)![1],oscuro=/data-theme=dark\] \{ --onb-resalte:(#[0-9a-f]{6})/.exec(css)![1];
   const fondoClaro=/--ui-canvas:(#[0-9a-f]{6})/.exec(glob.split('\n')[1])![1],fondoOscuro=/--ui-canvas:(#[0-9a-f]{6})/.exec(glob.split('\n')[2])![1];
   assert.ok(contraste(claro,'#ffffff')>=3&&contraste(claro,fondoClaro)>=3,String(contraste(claro,fondoClaro)));
@@ -119,7 +119,7 @@ test('contraste del resaltado ≥ 3:1 contra los fondos de tema claro y oscuro',
 });
 test('getting-started.tsx y su CSS ya no existen y nadie los importa',()=>{
   assert.equal(fs.existsSync(new URL('../src/components/workspace/getting-started.tsx',import.meta.url)),false);
-  assert.doesNotMatch(leer('src/app/globals.css'),/getting-started|step-number/);
+  assert.doesNotMatch(leer('src/app/(app)/globals.css'),/getting-started|step-number/);
 });
 test('cierre de sesión borra las claves onb.* (shell y página de ingreso)',()=>{
   assert.match(leer('src/components/workspace/shell.tsx'),/action="\/auth\/logout"[^>]*onSubmit=\{\(\)=>\{limpiarTodo\(\);limpiarEstadoOnboarding\(almacenDelNavegador\(\)\);\}\}/);

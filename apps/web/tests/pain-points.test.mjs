@@ -68,5 +68,5 @@ test('ruta: archivos de Next, runtime nodejs y dinámicas, solo GET, rol owner/a
   }
   const h = readFileSync(new URL('../src/lib/pain-points/server.ts', import.meta.url), 'utf8');
   assert.match(h, /\['owner','analyst'\]\.includes/); assert.match(h, /olvidarSiDegradada/); assert.match(h, /conMemoria\(clave,TTL_MS/); assert.match(h, /TTL_MS=90_000/); assert.match(h, /PRIVATE_HEADERS/); assert.match(h, /text\/csv/); assert.match(h, /attachment; filename/);
-  assert.ok(existsSync(new URL('../src/app/(workspace)/pain-points/page.tsx', import.meta.url)));
+  assert.ok(existsSync(new URL('../src/app/(app)/(workspace)/pain-points/page.tsx', import.meta.url)));
 });

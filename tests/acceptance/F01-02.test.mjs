@@ -9,7 +9,7 @@ import {revocationOracle,readOnlyNavigation,authenticatedRootOracle} from './sup
 const candidate=process.env.VEXA_CANDIDATE;
 test('F01-02: real SSR callback, membership, invalid sessions, revocation and logout', {timeout:290000},async t=>{
   assert.ok(candidate,'SETUP: set VEXA_CANDIDATE explicitly');
-  for(const file of ['packages/platform/src/session.ts','apps/web/src/app/login/page.tsx','apps/web/src/app/auth/callback/route.ts','apps/web/src/middleware.ts'])
+  for(const file of ['packages/platform/src/session.ts','apps/web/src/app/(app)/login/page.tsx','apps/web/src/app/(app)/auth/callback/route.ts','apps/web/src/middleware.ts'])
     assert.ok(fs.existsSync(path.join(candidate,file)),`IMPLEMENTATION_MISSING: ${file}`);
   const h=await local(candidate);
   let browser,seeded=false;

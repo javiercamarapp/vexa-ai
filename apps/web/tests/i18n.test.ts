@@ -42,8 +42,8 @@ test('inglés por omisión: sin cookie válida ni ?lang= es en; Accept-Language 
 });
 test('el idioma de la petición no lee Accept-Language y <html lang> sigue al idioma activo', () => {
   assert.doesNotMatch(leer('src/lib/i18n/servidor.ts'), /headers\(\)|\.get\('accept-language'\)/i);
-  assert.match(leer('src/app/layout.tsx'), /<html lang=\{idioma\}/);
-  assert.match(leer('src/app/layout.tsx'), /await idiomaActual\(\)/);
+  assert.match(leer('src/app/(app)/layout.tsx'), /<html lang=\{idioma\}/);
+  assert.match(leer('src/app/(app)/layout.tsx'), /await idiomaActual\(\)/);
 });
 test('Accept-Language respeta q y el orden; idiomaValido solo acepta es|en exactos', () => {
   assert.equal(idiomaDeAcceptLanguage('es-MX;q=0.5,en;q=0.9'), 'en');
@@ -92,10 +92,10 @@ test('periodos, cifras y moneda se formatean con la locale (es-MX / en-US) sin c
   assert.match(fecha('es', '2026-10-05T00:00:00Z'), /^5 oct(\.)? 2026$/);
 });
 test('un solo mecanismo: login y espacio de trabajo resuelven el idioma con la misma cookie; el selector vive en el encabezado', () => {
-  assert.match(leer('src/app/login/page.tsx'), /idiomaActual\(params\.lang\)/);
-  assert.match(leer('src/app/login/page.tsx'), /GuardarIdioma/);
-  assert.match(leer('src/app/(workspace)/layout.tsx'), /idiomaActual\(\)/);
-  assert.match(leer('src/app/(workspace)/layout.tsx'), /IdiomaProvider/);
+  assert.match(leer('src/app/(app)/login/page.tsx'), /idiomaActual\(params\.lang\)/);
+  assert.match(leer('src/app/(app)/login/page.tsx'), /GuardarIdioma/);
+  assert.match(leer('src/app/(app)/(workspace)/layout.tsx'), /idiomaActual\(\)/);
+  assert.match(leer('src/app/(app)/(workspace)/layout.tsx'), /IdiomaProvider/);
   assert.match(leer('src/components/workspace/shell.tsx'), /<SelectorIdioma\/>/);
   assert.match(leer('src/components/i18n/selector-idioma.tsx'), /<legend className="sr-only">\{t\('idioma\.etiqueta'\)\}<\/legend>/);
   assert.match(leer('src/components/i18n/selector-idioma.tsx'), /guardarIdiomaEnNavegador\(/);

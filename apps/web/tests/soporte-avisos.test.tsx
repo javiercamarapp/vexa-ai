@@ -45,7 +45,7 @@ test('pista de plataforma: solo dentro de /platform; fuera de ahí (sin organiza
   assert.equal(pistaDe({platformAdmin:true,enPlataforma:false}),null,'superadmin sin membresías fuera de /platform: sin tour');
   assert.equal(pistaDe({rol:'owner',platformAdmin:true,enPlataforma:false}),'propietario');
   for(const p of pasosDe('plataforma'))assert.match(p.href!,/^\/platform(\/|$)/);
-  assert.match(leer('src/app/platform/layout.tsx'),/pista: 'plataforma'/);
+  assert.match(leer('src/app/(app)/platform/layout.tsx'),/pista: 'plataforma'/);
 });
 const sinAcceso=(isAdmin:boolean,inv={pending:[],expired:[]},idioma:'es'|'en'='es')=>renderToStaticMarkup(<PathnameContext.Provider value="/sin-acceso"><SearchParamsContext.Provider value={new URLSearchParams() as never}><SinAccesoVista inv={inv} isAdmin={isAdmin} t={traductor(idioma)}/></SearchParamsContext.Provider></PathnameContext.Provider>);
 test('/sin-acceso para administrador de plataforma sin organizaciones: aviso y enlace a la consola, sin recorrido ni botón Guía',()=>{
@@ -57,6 +57,6 @@ test('/sin-acceso para administrador de plataforma sin organizaciones: aviso y e
 test('/sin-acceso para quien no es administrador: sin enlace a la consola y con el mensaje de invitaciones',()=>{
   const html=sinAcceso(false);
   assert.doesNotMatch(html,/href="\/platform"/);assert.ok(html.includes(es['sinacceso.nada']));assert.ok(!html.includes(es['onb.ui.superadminSinOrg']));
-  assert.match(leer('src/app/sin-acceso/page.tsx'),/SinAccesoVista/);
-  assert.doesNotMatch(leer('src/app/sin-acceso/page.tsx'),/OnboardingRaiz/,'esa pantalla no monta el recorrido');
+  assert.match(leer('src/app/(app)/sin-acceso/page.tsx'),/SinAccesoVista/);
+  assert.doesNotMatch(leer('src/app/(app)/sin-acceso/page.tsx'),/OnboardingRaiz/,'esa pantalla no monta el recorrido');
 });

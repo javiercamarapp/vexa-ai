@@ -6,13 +6,13 @@ import {join} from 'node:path';
  *  (clases y reglas CSS); la medición real en pantalla la hace tests/ui/choques.mjs con fixtures (VEXA_UI_FIXTURES_PLATFORM=1). */
 const src=join(import.meta.dirname,'../src');
 const leer=r=>readFileSync(join(src,r),'utf8');
-const ui=leer('app/ui.css'),platformUi=leer('components/platform/platform-ui.css'),admin=leer('components/platform/admin-tools.css');
+const ui=leer('app/(app)/ui.css'),platformUi=leer('components/platform/platform-ui.css'),admin=leer('components/platform/admin-tools.css');
 
 test('pantallas de acceso del sistema: H1 de 20 px (--t-page) y clase acceso-sistema en las tres', () => {
   assert.match(ui,/body \.access-flow\.acceso-sistema h1\{font:600 var\(--t-page\)/);
   assert.match(ui,/--t-page:20px/);
-  for(const f of ['components/sin-acceso-vista.tsx','app/seguridad/page.tsx','app/platform/layout.tsx'])assert.match(leer(f),/access-flow acceso-sistema/,f);
-  for(const f of ['components/sin-acceso-vista.tsx','app/seguridad/page.tsx','app/platform/layout.tsx'])assert.doesNotMatch(leer(f),/role="alert"/,f+': los avisos usan <Notice>');
+  for(const f of ['components/sin-acceso-vista.tsx','app/(app)/seguridad/page.tsx','app/(app)/platform/layout.tsx'])assert.match(leer(f),/access-flow acceso-sistema/,f);
+  for(const f of ['components/sin-acceso-vista.tsx','app/(app)/seguridad/page.tsx','app/(app)/platform/layout.tsx'])assert.doesNotMatch(leer(f),/role="alert"/,f+': los avisos usan <Notice>');
 });
 test('botón «Cambiar de cliente»: estilo propio en la barra (no hereda el primario negro) y chip ⌘K legible', () => {
   assert.match(leer('components/platform/admin-tools.tsx'),/className="at-trigger"/);

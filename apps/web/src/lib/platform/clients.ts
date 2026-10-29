@@ -1,5 +1,5 @@
 import 'server-only';
-import type {Access} from '../../app/platform/_lib/access';
+import type {Access} from '../../app/(app)/platform/_lib/access';
 
 export type ClientRow = {id: string; name: string; createdAt: string | null; member: boolean; role: string | null};
 export type SupportInfo = {id: string; tenantId: string; tenantName: string | null; reason: string; startedAt: string; expiresAt: string} | null;

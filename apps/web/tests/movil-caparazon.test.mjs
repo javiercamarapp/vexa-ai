@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const leer = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
-const layout = leer('src/app/layout.tsx'), shell = leer('src/components/workspace/shell.tsx'), movil = leer('src/components/workspace/movil.tsx');
+const layout = leer('src/app/(app)/layout.tsx'), shell = leer('src/components/workspace/shell.tsx'), movil = leer('src/components/workspace/movil.tsx');
 const css = leer('src/components/workspace/movil.css'), manifest = JSON.parse(leer('public/site.webmanifest'));
 test('viewport-fit=cover, interactive-widget y theme-color claro/oscuro', () => {
   assert.match(layout, /viewportFit:\s*"cover"/);assert.match(layout, /interactiveWidget:\s*"resizes-content"/);
@@ -32,7 +32,7 @@ test('selector de empresa: varias organizaciones abren la hoja inferior y POST /
   assert.doesNotMatch(chip, /org-nombre/, 'el nombre completo vive en la hoja, no en la barra');
 });
 test('monograma unificado: rectángulo redondeado con tinte (radio 8), nunca círculo; misma clase en barra, hoja, pie del sidebar y plataforma', () => {
-  const g = leer('src/app/globals.css'), p = leer('src/app/platform/layout.tsx');
+  const g = leer('src/app/(app)/globals.css'), p = leer('src/app/(app)/platform/layout.tsx');
   assert.match(g, /\.monograma \{[^}]*border-radius:8px[^}]*color-mix/);assert.doesNotMatch(g, /account-avatar|org-avatar/);assert.doesNotMatch(css + shell + movil + p, /account-avatar|org-avatar/);
   assert.match(shell, /<Monograma nombre=\{organization\}\/>/);assert.match(p, /className="monograma"/);
 });

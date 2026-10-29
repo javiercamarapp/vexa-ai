@@ -1,13 +1,28 @@
-// Página mínima del sitio: T7 y T8 construyen la real. Sirve para fijar la ruta, el CSS propio y la prueba de estática.
-import '../../../../styles/sitio/inicio.css';
+// Portada del sitio, por idioma (/sitio/es y /sitio/en; host-routing reescribe / y /en). La estructura S1 a S10 la pone Portada (T8).
+import type {Metadata} from 'next';
+import {notFound} from 'next/navigation';
+import {LANDING} from '../../../../content/sitio/landing';
+import {MarcoSitio} from '../../../../components/sitio/shell/marco';
+import {esLang} from '../../../../components/sitio/shell/datos';
+import {metadatosPagina} from '../../../../components/sitio/shell/metadatos';
+import {Portada} from '../../../../components/sitio/secciones/portada';
 
 export const dynamic = 'force-static';
 export const dynamicParams = false;
 
-export default function Inicio() {
+export async function generateMetadata({params}: {params: Promise<{lang: string}>}): Promise<Metadata> {
+  const {lang} = await params;
+  if (!esLang(lang)) return {};
+  const s = LANDING.seo.pagina;
+  return metadatosPagina({id: 'inicio', lang, titulo: s.titulo[lang], descripcion: s.descripcion[lang]});
+}
+
+export default async function Inicio({params}: {params: Promise<{lang: string}>}) {
+  const {lang} = await params;
+  if (!esLang(lang)) notFound();
   return (
-    <main>
-      <h1>Rovaq AI</h1>
-    </main>
+    <MarcoSitio lang={lang} id="inicio">
+      <Portada lang={lang} />
+    </MarcoSitio>
   );
 }

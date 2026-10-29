@@ -171,3 +171,20 @@ test('soporte SIN cookie vexa_support: CSV de pain-points y exportación CFO res
     assert.equal((await cfo.json()).error.code,'support_export_blocked');
   }finally{delete process.env.VEXA_DATABASE_URL;}
 });
+
+// R-05 (cierre de seguridad 28-oct): /api/briefs no sirve de la memoria sin revalidar la membresía vigente.
+import {briefResponse} from '../src/lib/briefs/server';
+import {conMemoria,olvidarMemoria} from '../src/lib/lectura-memo.mjs';
+test('briefs: con la lista en memoria, una membresía revocada recibe 403 y no la caché; una vigente sigue sirviéndose de ella',async()=>{
+  setup();olvidarMemoria();process.env.VEXA_DATABASE_URL='postgres://nadie:nada@127.0.0.1:1/ninguna';
+  const key='briefs|'+userId+'|'+A+'|owner|';
+  await conMemoria(key,60_000,async()=>({items:[{id:'secreto-en-cache'}]}));
+  try{
+    mockServer({tenants:[A]});
+    const vigente=await briefResponse(new NextRequest(origin+'/api/briefs',{method:'GET',headers:{cookie:cookies()}}));
+    assert.equal(vigente.status,200);assert.match(JSON.stringify(await vigente.json()),/secreto-en-cache/);
+    mockServer({tenants:[]});
+    const revocada=await briefResponse(new NextRequest(origin+'/api/briefs',{method:'GET',headers:{cookie:cookies()}}));
+    assert.equal(revocada.status,403);assert.doesNotMatch(await revocada.text(),/secreto-en-cache/);
+  }finally{delete process.env.VEXA_DATABASE_URL;olvidarMemoria();}
+});

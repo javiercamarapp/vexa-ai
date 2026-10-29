@@ -42,48 +42,28 @@
   --s-c-gris-borde: #E6E6E8;
   --s-c-gris-borde-2: #D6D6D9;
   --s-c-rojo: #E8241C;
+  /* Color de las barras de la captura real del producto (ranking de SKU); no es el acento de marca. */
+  --s-c-captura-barra: #E8602B;
+
+  /* Ventana de producto del héroe: la captura es del tema oscuro del producto y se queda así en cualquier escena. */
+  --s-vp-fondo: var(--s-c-pizarra);
+  --s-vp-barra: var(--s-c-grafito);
+  --s-vp-pista: var(--s-c-pizarra-2);
+  --s-vp-barra-color: var(--s-c-captura-barra);
+  --s-vp-borde: rgba(247, 247, 248, .14);
+  --s-vp-linea: rgba(247, 247, 248, .10);
+  --s-vp-texto: var(--s-c-hueso);
+  --s-vp-apagado: #A6A6AC;
+  --s-vp-sombra: 0 40px 120px rgba(0, 0, 0, .55);
 
   /* ---- Acento. Una sola marca de color en toda la página. ---- */
   --s-acento: var(--s-c-rojo);
 
-  /* ---- Horizonte: único degradado de página, solo grises con tinte frío mínimo ---- */
-  --s-horizonte-degradado: linear-gradient(
-    to bottom,
-    #0E0E10 0,
-    #1B1B20 22%,
-    #3A3C46 42%,
-    #8F919C 62%,
-    #D4D4D8 80%,
-    #F1F1F2 92%,
-    #F7F7F8 100%
-  );
+  /* ---- Horizonte: un resplandor de 120 px al pie del héroe, sin degradado de página ---- */
   --s-horizonte-resplandor: radial-gradient(
-    ellipse 60% 40% at 50% 100%,
-    rgba(247, 247, 248, .55),
+    ellipse 55% 100% at 50% 100%,
+    rgba(247, 247, 248, .07),
     transparent
-  );
-  --s-horizonte-linea: rgba(14, 14, 16, .12);
-
-  /* ---- Costuras estáticas, degradado en oklab. Claro entrante: de tinta a hueso. ---- */
-  --s-costura-a-claro: linear-gradient(
-    in oklab to bottom,
-    #0E0E10 0,
-    #202022 10%,
-    #3F3F41 25%,
-    #777779 50%,
-    #B5B5B6 75%,
-    #DCDCDD 90%,
-    #F7F7F8 100%
-  );
-  --s-costura-a-oscuro: linear-gradient(
-    in oklab to top,
-    #0E0E10 0,
-    #202022 10%,
-    #3F3F41 25%,
-    #777779 50%,
-    #B5B5B6 75%,
-    #DCDCDD 90%,
-    #F7F7F8 100%
   );
 
   /* ---- Resplandores radiales ---- */
@@ -174,17 +154,13 @@
   --s-boton-h-pildora: 44px;
   --s-circulo: 36px;
   --s-menu-w: 560px;
-  --s-horizonte-h: 520px;
-  --s-costura-h: clamp(220px, 26vh, 320px);
+  --s-horizonte-h: 120px;
   --s-pie-h: min(100svh, 760px);
-  --s-visor: 560px;
-  --s-hero-objeto: 760px;
   --s-sello-h: 22px;
   --s-punto: 6px;
   --s-nodo: 6px;
   --s-nodo-central: 14px;
   --s-hilo-carril: 92px;
-  --s-escala-mini: .5;
   --s-escena-col: 420px;
 
   /* ---- Radios ---- */
@@ -215,9 +191,10 @@
   --s-d-menu: 400ms;
   --s-d-revelado: 900ms;
   --s-d-seccion: 1100ms;
-  --s-d-tema: 500ms;
+  --s-d-tema: 700ms;
+  --s-d-cabecera: 500ms;
   --s-escalon: 80ms;
-  --s-retardo-hero: 1450ms;
+  --s-retardo-hero: 120ms;
 
   /* ---- Capas ---- */
   --s-z-fondo: 0;
@@ -238,7 +215,8 @@
 
 /* ==================== Tema oscuro, valor por defecto ==================== */
 :root,
-[data-tema="oscuro"] {
+html[data-escena="oscuro"],
+html:not([data-escena]) [data-tema="oscuro"] {
   --s-fondo: var(--s-c-tinta);
   --s-fondo-alt: var(--s-c-grafito);
   --s-superficie: var(--s-c-pizarra);
@@ -273,11 +251,11 @@
   --s-sombra-ventana: var(--s-sombra-ventana-oscuro);
   --s-nodo-relleno: var(--s-c-tinta);
   --s-hover-chip: rgba(247, 247, 248, .04);
-  --s-trama: none;
 }
 
 /* ==================== Tema claro ==================== */
-[data-tema="claro"] {
+html[data-escena="claro"],
+html:not([data-escena]) [data-tema="claro"] {
   --s-fondo: var(--s-c-hueso);
   --s-fondo-alt: var(--s-c-hueso-2);
   --s-superficie: var(--s-c-blanco);
@@ -309,13 +287,12 @@
   --s-sombra-ventana: var(--s-sombra-ventana-claro);
   --s-nodo-relleno: var(--s-c-hueso);
   --s-hover-chip: rgba(14, 14, 16, .04);
-  /* Trama de puntos de 1 px cada 24 px al 5 por ciento, solo en secciones claras */
-  --s-trama: radial-gradient(circle at 1px 1px, rgba(14, 14, 16, .05) 1px, transparent 1.5px);
 }
 
 /* Mapa de calor de mockups: sin verde, ámbar, azul ni lima. Se invierte en oscuro. */
 :root,
-[data-tema="oscuro"] {
+html[data-escena="oscuro"],
+html:not([data-escena]) [data-tema="oscuro"] {
   --s-calor-1: #0E0E10;
   --s-calor-2: #5A5A61;
   --s-calor-3: #98989F;
@@ -323,7 +300,8 @@
   --s-calor-5: #ECECEE;
 }
 
-[data-tema="claro"] {
+html[data-escena="claro"],
+html:not([data-escena]) [data-tema="claro"] {
   --s-calor-1: #ECECEE;
   --s-calor-2: #C9C9CD;
   --s-calor-3: #98989F;
@@ -336,8 +314,6 @@
   :root {
     --s-pad-x: 32px;
     --s-gap: 20px;
-    --s-hero-objeto: 560px;
-    --s-visor: 480px;
   }
 }
 
@@ -346,7 +322,6 @@
     --s-cab-h: 58px;
     --s-boton-h-pildora: 40px;
     --s-cab-r: var(--s-r-movil);
-    --s-hero-objeto: 400px;
     --s-t-lead: 17px;
     --s-t-cifra: 22px;
     --s-hilo-carril: 20px;
@@ -360,13 +335,204 @@
     --s-t-eyebrow: var(--s-t-minimo);
     --s-t-mock: var(--s-t-minimo);
     --s-t-cifra: 20px;
-    --s-hero-objeto: 260px;
-    --s-horizonte-h: 320px;
   }
 }
 
 @media (min-width: 1101px) {
   :root {
     --s-t-lead: 18px;
+  }
+}
+
+/* ==================== Escena de tema global ====================
+ * Un solo mecanismo: sitio.js escribe html[data-escena="oscuro|claro"] cuando el borde superior de la sección siguiente cruza el 42 por ciento
+ * de la ventana (58 al subir). Las variables semánticas de color están registradas como <color>, así que transicionan juntas 700 ms con ease:
+ * fondo, texto, bordes, píldora de la cabecera y botones cambian en el mismo instante y con la misma curva. Las secciones no pintan fondo propio.
+ * Sin JavaScript no existe data-escena y cada sección conserva su tema local (primer selector de cada bloque de arriba).
+ */
+@property --s-fondo {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-fondo-alt {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-superficie {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-vidrio {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-superficie-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-linea {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-linea-fuerte {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-tinta {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-apagado {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-sutil {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-acento-texto {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-boton-fondo {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-boton-fondo-hover {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-boton-texto {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-boton-flecha {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-boton-borde-sec {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-boton-hover-sec {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-cab-fondo {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-cab-fondo-firefox {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-cab-borde {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-menu-fondo {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-ventana-fondo {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-ventana-borde {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-nodo-relleno {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-hover-chip {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-calor-1 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-calor-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-calor-3 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-calor-4 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+@property --s-calor-5 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0E0E10;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-escena-anim] {
+    transition:
+      --s-fondo var(--s-d-tema) ease,
+      --s-fondo-alt var(--s-d-tema) ease,
+      --s-superficie var(--s-d-tema) ease,
+      --s-vidrio var(--s-d-tema) ease,
+      --s-superficie-2 var(--s-d-tema) ease,
+      --s-linea var(--s-d-tema) ease,
+      --s-linea-fuerte var(--s-d-tema) ease,
+      --s-tinta var(--s-d-tema) ease,
+      --s-apagado var(--s-d-tema) ease,
+      --s-sutil var(--s-d-tema) ease,
+      --s-acento-texto var(--s-d-tema) ease,
+      --s-boton-fondo var(--s-d-tema) ease,
+      --s-boton-fondo-hover var(--s-d-tema) ease,
+      --s-boton-texto var(--s-d-tema) ease,
+      --s-boton-flecha var(--s-d-tema) ease,
+      --s-boton-borde-sec var(--s-d-tema) ease,
+      --s-boton-hover-sec var(--s-d-tema) ease,
+      --s-cab-fondo var(--s-d-tema) ease,
+      --s-cab-fondo-firefox var(--s-d-tema) ease,
+      --s-cab-borde var(--s-d-tema) ease,
+      --s-menu-fondo var(--s-d-tema) ease,
+      --s-ventana-fondo var(--s-d-tema) ease,
+      --s-ventana-borde var(--s-d-tema) ease,
+      --s-nodo-relleno var(--s-d-tema) ease,
+      --s-hover-chip var(--s-d-tema) ease,
+      --s-calor-1 var(--s-d-tema) ease,
+      --s-calor-2 var(--s-d-tema) ease,
+      --s-calor-3 var(--s-d-tema) ease,
+      --s-calor-4 var(--s-d-tema) ease,
+      --s-calor-5 var(--s-d-tema) ease;
   }
 }

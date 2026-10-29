@@ -552,10 +552,14 @@
 .s-mock-calor-4 { background: var(--s-calor-4); color: var(--s-c-tinta); }
 .s-mock-calor-5 { background: var(--s-calor-5); color: var(--s-c-tinta); }
 
-[data-tema="claro"] .s-mock-calor-1 { color: var(--s-c-tinta); }
-[data-tema="claro"] .s-mock-calor-2 { color: var(--s-c-tinta); }
-[data-tema="claro"] .s-mock-calor-4 { color: var(--s-c-hueso); }
-[data-tema="claro"] .s-mock-calor-5 { color: var(--s-c-hueso); }
+html[data-escena="claro"] .s-mock-calor-1,
+html:not([data-escena]) [data-tema="claro"] .s-mock-calor-1 { color: var(--s-c-tinta); }
+html[data-escena="claro"] .s-mock-calor-2,
+html:not([data-escena]) [data-tema="claro"] .s-mock-calor-2 { color: var(--s-c-tinta); }
+html[data-escena="claro"] .s-mock-calor-4,
+html:not([data-escena]) [data-tema="claro"] .s-mock-calor-4 { color: var(--s-c-hueso); }
+html[data-escena="claro"] .s-mock-calor-5,
+html:not([data-escena]) [data-tema="claro"] .s-mock-calor-5 { color: var(--s-c-hueso); }
 
 .s-mock-causa {
   display: flex;

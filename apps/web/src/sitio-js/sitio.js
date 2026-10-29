@@ -1,7 +1,7 @@
 // sitio.js (T10): carga temprana del sitio. Módulo ES del mismo origen, sin dependencias, sin eval, sin style en el marcado.
-// Hace: html[data-js], cargador, cabecera, menús, panel móvil, tema por sección, revelados, palabras, puestos, acordeón
+// Hace: html[data-js], cabecera, menús, panel móvil, escena de tema global, revelados, conteo del héroe, palabras, puestos, acordeón
 // y el motor de barrido de respaldo (--p) para navegadores sin animation-timeline. Carga inicio.js tras reposo solo en la portada.
-// Las URL de inicio.js, nube.js y Lenis llegan por atributos de datos de su propia etiqueta <script data-sitio>.
+// La URL de inicio.js llega por un atributo de datos de su propia etiqueta <script data-sitio>.
 const D = document, H = D.documentElement;
 const $ = (s, r = D) => r.querySelector(s);
 const $$ = (s, r = D) => [...r.querySelectorAll(s)];
@@ -58,34 +58,6 @@ export const rangos = {
   entrada: (r, vh) => (r.height ? (vh - r.top) / r.height : 0), // entry
 };
 
-/* ---------- cargador ---------- */
-function cargador() {
-  const el = $('[data-cargador]');
-  if (!el) return;
-  let visto = false;
-  try { visto = sessionStorage.getItem('rovaq-intro') === '1'; } catch { /* sin almacenamiento */ }
-  if (RM || visto) { H.setAttribute('data-intro-visto', ''); listo.then(() => el.remove()); return; }
-  try { sessionStorage.setItem('rovaq-intro', '1'); } catch { /* sin almacenamiento */ }
-  H.classList.add('s-cargando');
-  let fin = false;
-  const terminar = () => {
-    if (fin) return;
-    fin = true;
-    H.classList.remove('s-cargando');
-    listo.then(() => el.remove());
-    for (const e of ['pointerdown', 'keydown', 'wheel', 'touchstart']) removeEventListener(e, saltar);
-  };
-  const saltar = () => {
-    if (fin || el.dataset.fase) return;
-    el.dataset.fase = 'salida';
-    H.setAttribute('data-intro-saltado', '');
-    setTimeout(terminar, 300);
-  };
-  for (const e of ['pointerdown', 'keydown', 'wheel', 'touchstart']) addEventListener(e, saltar, {passive: true});
-  setTimeout(terminar, 1900);
-  setTimeout(terminar, 3500); // salida de seguridad
-}
-
 /* ---------- cabecera, menús y panel móvil ---------- */
 function cabecera() {
   const cab = $('.s-cabecera');
@@ -131,32 +103,55 @@ function cabecera() {
   matchMedia('(min-width: 1101px)').addEventListener('change', (m) => { if (m.matches && cab.hasAttribute('data-menu-abierto')) panelAbrir(false); });
 }
 
-/* ---------- tema de la cabecera bajo su centro ---------- */
+/* ---------- escena de tema global ----------
+ * Un solo atributo en <html> (data-escena) cambia las variables semánticas de fondo, texto, bordes y cabecera con una transición de 700 ms
+ * (tokens.css). Se dispara cuando el borde superior de la sección siguiente cruza el 42 % del alto de la ventana al bajar y el 58 % al subir:
+ * la histéresis evita parpadeos con scroll rápido o hacia atrás. Las secciones no tienen fondo propio, así que no hay costuras. */
 function tema() {
   const cab = $('.s-cabecera');
-  const objetivos = $$('[data-tema]').filter((e) => e !== cab);
-  if (!cab || !objetivos.length || typeof IntersectionObserver === 'undefined') return;
-  let io = null;
-  const dentro = new Set();
-  const montar = () => {
-    io?.disconnect();
-    dentro.clear();
-    const r = cab.getBoundingClientRect(), cy = Math.round(r.top + r.height / 2), vh = innerHeight;
-    io = new IntersectionObserver((es) => {
-      es.forEach((e) => (e.isIntersecting ? dentro.add(e.target) : dentro.delete(e.target)));
-      const ult = objetivos.filter((o) => dentro.has(o)).pop();
-      if (ult) cab.dataset.tema = ult.dataset.tema;
-    }, {rootMargin: `-${cy}px 0px -${Math.max(0, vh - cy - 1)}px 0px`});
-    objetivos.forEach((o) => io.observe(o));
+  const secs = $$('section[data-tema], footer[data-tema]');
+  if (!secs.length) return;
+  let ultY = scrollY, escena = '', libre = true;
+  const aplicar = () => {
+    libre = true;
+    const y = scrollY, bajando = y >= ultY;
+    if (y !== ultY) ultY = y;
+    const linea = innerHeight * (bajando ? 0.42 : 0.58);
+    let t = secs[0].dataset.tema;
+    for (const s of secs) if (s.getBoundingClientRect().top <= linea) t = s.dataset.tema; else break;
+    if (t !== escena) { escena = t; H.setAttribute('data-escena', t); if (cab) cab.dataset.tema = t; }
   };
-  montar();
-  let t = 0;
-  addEventListener('resize', () => { clearTimeout(t); t = setTimeout(montar, 150); }, {passive: true});
+  const pedir = () => { if (libre) { libre = false; requestAnimationFrame(aplicar); } };
+  addEventListener('scroll', pedir, {passive: true});
+  addEventListener('resize', pedir, {passive: true});
+  aplicar();
+  requestAnimationFrame(() => requestAnimationFrame(() => H.setAttribute('data-escena-anim', '')));
+}
+
+/* ---------- héroe: conteo de la cifra (el resto de la entrada es CSS) ---------- */
+function conteo() {
+  if (RM) return;
+  const f = new Intl.NumberFormat('en-US');
+  listo.then(() => {
+    if (performance.now() > 2500) return;
+    $$('[data-cuenta]').forEach((e) => {
+      const n = +e.dataset.cuenta, t0 = performance.now() + 750;
+      e.textContent = '0';
+      const paso = (t) => {
+        const k = lim((t - t0) / 800);
+        e.textContent = f.format(Math.round(n * (1 - (1 - k) ** 3)));
+        if (k < 1) requestAnimationFrame(paso);
+      };
+      requestAnimationFrame(paso);
+    });
+  });
 }
 
 /* ---------- revelados ---------- */
 function revelados() {
-  const lista = $$('[data-reveal]');
+  // Los pasos de la escena fija ([data-visto]) los marca inicio.js uno a uno; apilados (móvil, tableta) se revelan aquí.
+  const escena = !RM && innerWidth > 1100;
+  const lista = $$(escena ? '[data-reveal]' : '[data-reveal],[data-visto]');
   if (!lista.length) return;
   if (RM || typeof IntersectionObserver === 'undefined') { lista.forEach((e) => e.classList.add('s-visto')); return; }
   const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('s-visto'); io.unobserve(e.target); } }), {rootMargin: '0px 0px -12% 0px', threshold: 0.1});
@@ -206,7 +201,7 @@ function acordeon() {
   });
 }
 
-/* ---------- portada: inicio.js tras reposo ---------- */
+/* ---------- portada: inicio.js tras reposo (hilo, paso activo de la escena y latido del pie) ---------- */
 function portada() {
   if (!DATOS.inicio || !$('[data-hilo]')) return;
   let hecho = false;
@@ -225,6 +220,6 @@ function portada() {
 }
 
 /* ---------- arranque: cada pieza aislada, un fallo no detiene a las demás ---------- */
-for (const f of [cargador, cabecera, tema, revelados, palabras, puestos, acordeon, portada]) {
+for (const f of [cabecera, tema, conteo, revelados, palabras, puestos, acordeon, portada]) {
   try { f(); } catch { /* aislado */ }
 }

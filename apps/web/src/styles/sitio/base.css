@@ -16,15 +16,13 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   background: var(--s-fondo);
+  color: var(--s-tinta);
+  overflow-x: clip;
 }
 
 /* No se usa scroll-padding en html: desplazaría el rango de todas las líneas de tiempo view() */
 [id] {
   scroll-margin-top: var(--s-e96);
-}
-
-html.s-cargando {
-  overflow: hidden;
 }
 
 body {
@@ -45,6 +43,10 @@ body {
 h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd {
   margin: 0;
 }
+
+/* Hanken Grotesk se carga de 400 a 600: ningún encabezado ni énfasis pide 700 (sin negrita sintética) */
+h1, h2, h3, h4, h5, h6 { font-weight: 500; }
+b, strong, th { font-weight: 600; }
 
 ul, ol {
   margin: 0;
@@ -138,23 +140,14 @@ button {
 .s-seccion {
   position: relative;
   z-index: var(--s-z-contenido);
-  background: var(--s-fondo);
   color: var(--s-tinta);
   padding-block: var(--s-seccion-v);
   overflow-x: clip;
 }
 
-.s-seccion[data-tema="claro"] {
-  background-image: var(--s-trama);
-  background-size: var(--s-e24) var(--s-e24);
-}
-
-.s-seccion--alterna {
-  background-color: var(--s-fondo-alt);
-}
-
-.s-seccion--corte {
-  border-top: var(--s-borde) solid var(--s-linea);
+/* Sin JavaScript no hay escena global: cada sección pinta su propio fondo (sin costura que animar). Con JavaScript el fondo es el de la página. */
+html:not([data-escena]) .s-seccion {
+  background: var(--s-fondo);
 }
 
 /* Cabecera de sección: eyebrow, titular y contenido con la cadencia 28 y 80 a 96 */
@@ -247,8 +240,10 @@ button {
 
 /* Variante según el tema del contenedor: negativo sobre oscuro, positivo sobre claro */
 .s-logo__positivo { opacity: 0; }
-[data-tema="claro"] .s-logo__positivo { opacity: 1; }
-[data-tema="claro"] .s-logo__negativo { opacity: 0; }
+html[data-escena="claro"] .s-logo__positivo,
+html:not([data-escena]) [data-tema="claro"] .s-logo__positivo { opacity: 1; }
+html[data-escena="claro"] .s-logo__negativo,
+html:not([data-escena]) [data-tema="claro"] .s-logo__negativo { opacity: 0; }
 
 .s-logo__punto {
   fill: var(--s-acento);
@@ -419,12 +414,12 @@ button {
   border: var(--s-borde) solid transparent;
   border-radius: var(--s-cab-r);
   transition:
-    max-width var(--s-d-interfaz) var(--s-e-ui),
-    margin-top var(--s-d-interfaz) var(--s-e-ui),
-    padding var(--s-d-interfaz) var(--s-e-ui),
-    background-color var(--s-d-interfaz) var(--s-e-ui),
-    border-color var(--s-d-interfaz) var(--s-e-ui),
-    box-shadow var(--s-d-interfaz) var(--s-e-ui);
+    max-width var(--s-d-cabecera) var(--s-e-ui),
+    margin-top var(--s-d-cabecera) var(--s-e-ui),
+    padding var(--s-d-cabecera) var(--s-e-ui),
+    background-color var(--s-d-cabecera) var(--s-e-ui),
+    border-color var(--s-d-cabecera) var(--s-e-ui),
+    box-shadow var(--s-d-cabecera) var(--s-e-ui);
 }
 
 /* Píldora de vidrio: aparece pasados 60 px. backdrop-filter solo aquí y en el menú. */
@@ -435,8 +430,8 @@ button {
   background: var(--s-cab-fondo);
   border-color: var(--s-cab-borde);
   box-shadow: var(--s-cab-sombra);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  backdrop-filter: blur(24px) saturate(1.5);
 }
 
 @supports (-moz-appearance: none) {
@@ -639,12 +634,21 @@ button {
     display: block;
   }
 
+  /* A 768 o menos la píldora de vidrio existe desde el inicio (como en Handle): solo cambia la sombra al desplazarse */
   .s-cabecera__barra {
-    padding-inline: var(--s-pad-x);
+    max-width: var(--s-cab-w);
+    margin-top: var(--s-e12);
+    height: 58px;
+    padding-inline: var(--s-e16);
+    background: var(--s-cab-fondo);
+    border-color: var(--s-cab-borde);
+    -webkit-backdrop-filter: blur(24px) saturate(1.5);
+    backdrop-filter: blur(24px) saturate(1.5);
   }
 
   .s-cabecera[data-compacta] .s-cabecera__barra {
-    padding-inline: var(--s-e16);
+    margin-top: var(--s-cab-top);
+    box-shadow: var(--s-cab-sombra);
   }
 
   .s-panel-movil__enlace {

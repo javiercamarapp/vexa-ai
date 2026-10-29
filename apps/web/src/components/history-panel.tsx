@@ -30,7 +30,7 @@ const DAY=86400000,WEEKDAYS=['L','M','X','J','V','S','D'];
 const day=(iso:string)=>{const d=new Date(iso);return Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate());};
 const tone=(state:string)=>state==='completed'?'ok':state==='paused'||state==='cancelled'?'warn':state==='active'?'info':'neutral';
 /** Calendar heat: batches created per day (UTC), weeks as columns, Monday first. Exact counts only; needs real dates. */
-function batchCalendar(batches:Batch[],locale='es-MX'){
+function batchCalendar(batches:Batch[],locale:string){
  const dated=batches.filter(b=>b.createdAt&&!Number.isNaN(Date.parse(b.createdAt)));
  if(dated.length<3)return null;
  const per=new Map<number,number>();for(const b of dated)per.set(day(b.createdAt!),(per.get(day(b.createdAt!))??0)+1);

@@ -89,7 +89,7 @@ export function CfoDashboard({query = '', organization, roleOverride, volverA = 
     {id: 'exposicion', label: t('cfo.tab.exposicion'), contenido: <Exposure report={report} />},
     {id: 'comparativa', label: t('cfo.tab.comparativa'), contenido: <Comparativa block={block} />},
     {id: 'glosario', label: t('cfo.tab.glosario'), contenido: <>
-      <p className="dg-nota" style={{margin: '0 0 10px'}}>{lineaDatosHasta({libro: report.watermark})} {t('cfo.ultimoMes', {mes: report.lastComplete ? monthLabel(report.lastComplete, idioma) : t('cfo.ninguno')})}</p>
+      <p className="dg-nota" style={{margin: '0 0 10px'}}>{lineaDatosHasta({libro: report.watermark}, idioma)} {t('cfo.ultimoMes', {mes: report.lastComplete ? monthLabel(report.lastComplete, idioma) : t('cfo.ninguno')})}</p>
       <p className="dg-nota" style={{margin: '0 0 10px'}}>{t('cfo.monedas')} {organization ?? ''}</p>
       <p className="dg-nota" style={{margin: '0 0 10px'}}>{ok?.synthetic ? t('cfo.sintetico') : t('cfo.origenReal')}</p>
       <dl className="cf-glossary">{report.glossary.map(g => <div key={g.term}><dt>{g.term}</dt><dd>{g.body}</dd></div>)}</dl></>},
@@ -101,7 +101,7 @@ export function CfoDashboard({query = '', organization, roleOverride, volverA = 
       <SegmentoUna label={t('cfo.medida')} value={measure} options={MEASURES.map(m => ({value: m.value, label: t(m.label)}))} onChange={v => setMeasure(v as Measure)} />
       <span className="una-filtros-chips">
         {ok?.synthetic && <Chip tone="warn">{t('cfo.chipSintetico')}</Chip>}
-        <Chip>{lineaDatosHasta({libro: report.watermark}).replace(/\.$/, '')}</Chip>
+        <Chip>{lineaDatosHasta({libro: report.watermark}, idioma).replace(/\.$/, '')}</Chip>
         {!report.complete && <Chip tone="warn">{t('cfo.truncado')}</Chip>}
       </span>
     </div>

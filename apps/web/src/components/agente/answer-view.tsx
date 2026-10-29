@@ -2,7 +2,8 @@
 import {ConMarca} from '../ui/brand-mark';
 import {useEffect,useState} from 'react';
 import {useReducedMotion} from '../ui/browser-state';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
+import {formatoNum} from '../../lib/formato/idioma.mjs';
 import type {Clave} from '../../lib/i18n';
 import {Ctl,CtlLink} from './ctl';
 import {Citation} from '../ui/citation';
@@ -20,20 +21,20 @@ const NOTICE:Partial<Record<Answer['status'],Clave>>={rate_limited:'ag.nRate',bu
 const isAlert=(s:Answer['status'])=>['rate_limited','budget_exceeded','forbidden','unavailable','invalid_input'].includes(s);
 
 function CalcView({answer}:{answer:Answer}){
- const tx=useT();
+ const tx=useT(),idioma=useIdioma();
  return <details className="agente-calc"><summary className="ctl">{tx('ag.verCalculo')}</summary>
   <ol className="agente-calc-list" aria-label={tx('ag.pasosCalculo')}>
    {answer.calc.map((c,i)=><li key={i} className="agente-calc-step">
     <h4>{c.label}</h4>
     <dl className="agente-dl"><div><dt>{tx('ag.cHerr')}</dt><dd><IdChip value={c.tool} text={c.tool}/></dd></div>
-     <div><dt>{tx('ag.parametros')}</dt><dd>{Object.keys(c.args).length?<ul className="agente-params">{Object.entries(c.args).map(([k,v])=><li key={k}><span>{PARAM_CLAVES[k]?tx(PARAM_CLAVES[k]):k}</span> {paramValue(k,v)}</li>)}</ul>:tx('ag.cSinParam')}<IdChip value={JSON.stringify(c.args)} label="JSON" text={tx('ag.cCopiar')}/></dd></div>
+     <div><dt>{tx('ag.parametros')}</dt><dd>{Object.keys(c.args).length?<ul className="agente-params">{Object.entries(c.args).map(([k,v])=><li key={k}><span>{PARAM_CLAVES[k]?tx(PARAM_CLAVES[k]):k}</span> {paramValue(k,v,idioma)}</li>)}</ul>:tx('ag.cSinParam')}<IdChip value={JSON.stringify(c.args)} label="JSON" text={tx('ag.cCopiar')}/></dd></div>
      <div><dt>{tx('ag.metodo')}</dt><dd>{c.method}</dd></div>
      <div><dt>{tx('ag.cLee')}</dt><dd><ul className="agente-params">{c.reads.map(r=><li key={r}>{r}</li>)}</ul></dd></div>
      <div><dt>{tx('ag.fuentes')}</dt><dd className="agente-sources">{c.sources.map(s=><span className="chip" key={s.ref} title={s.ref}><ConMarca marca={s.label}>{s.label}</ConMarca></span>)}</dd></div>
      <div><dt>{tx('ag.resultado')}</dt><dd>{c.status==='ok'?tx('ag.nCifras',{n:c.figures}):tx('ag.sinDatos')}{c.durationMs!==undefined?` · ${c.durationMs} ms`:''}</dd></div>
     </dl></li>)}
   </ol>
-  <p className="card-lead agente-note">{tx('ag.cModo',{modo:answer.usage.mode==='deterministic'?tx('ag.cModoDet'):tx('ag.cModoMixto'),n:answer.usage.modelCalls,costo:answer.usage.costMinor==='0'?'0':(Number(answer.usage.costMinor)/1e6).toLocaleString('es-MX',{maximumFractionDigits:6})+' USD'})}</p>
+  <p className="card-lead agente-note">{tx('ag.cModo',{modo:answer.usage.mode==='deterministic'?tx('ag.cModoDet'):tx('ag.cModoMixto'),n:answer.usage.modelCalls,costo:answer.usage.costMinor==='0'?'0':formatoNum({maximumFractionDigits:6}).format(Number(answer.usage.costMinor)/1e6)+' USD'})}</p>
  </details>;
 }
 
@@ -55,7 +56,7 @@ export function AnswerView({message,question,isLast,busy,labels,userContext,escr
  if(!a)return null;
  const ok=a.status==='ok'||a.status==='no_data';
  const notice=NOTICE[a.status]?tx(NOTICE[a.status]!):undefined;
- async function copy(){try{await navigator.clipboard.writeText(copyText(a!));setCopied(true);setTimeout(()=>setCopied(false),1500);}catch{setCopied(false);}}
+ async function copy(){try{await navigator.clipboard.writeText(copyText(a!,tx));setCopied(true);setTimeout(()=>setCopied(false),1500);}catch{setCopied(false);}}
  async function sendFeedback(verdict:'up'|'down',reason?:string){
   setFbBusy(true);let persisted=false;
   try{const r=await fetch('/api/agent/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messageId:message.id,verdict,...(reason?{reason}:{})}),cache:'no-store'});if(r.ok){const j=await r.json();persisted=j?.data?.persisted===true;}}catch{/* kept locally */}

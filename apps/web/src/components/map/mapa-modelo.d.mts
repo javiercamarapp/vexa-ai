@@ -5,10 +5,10 @@ export const MENSAJE_COMPLETO: string;
 export function pasoDeRampa(n: number | null | undefined, max: number): 0 | 1 | 2 | 3 | 4 | 5;
 export function limitesRampa(max: number): {paso: number; desde: number; hasta: number}[];
 export function num(n: number | null | undefined): string;
-export function pctTxt(p: number | null | undefined): string;
+export function pctTxt(p: number | null | undefined, idioma?: string): string;
 export function textoCobertura(c: {filas: number; conDireccion: number; interpretables: number; pctInterpretablesDeDireccion: number | null} | null | undefined): string;
 export function textoOcultos(o: {estados: number; casos: number; minimo: number} | null | undefined): string | null;
-export function filasTabla(estados: {clave: string; nombre: string; pais: string; n: number}[], total: number): {clave: string; estado: string; pais: string; casos: number; pct: number | null}[];
+export function filasTabla(estados: {clave: string; nombre: string; pais: string; n: number}[], total: number, idioma?: string): {clave: string; estado: string; pais: string; casos: number; pct: number | null}[];
 export function resumenEstado(e: {nombre: string; n: number} | null | undefined): string;
 
 export type Region = {clave: string; codigo: string; cx: number; cy: number; bx: number; by: number; bw: number; bh: number; path: string};

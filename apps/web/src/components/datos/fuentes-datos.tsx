@@ -3,7 +3,7 @@ import {RovaqCargando} from '../rovaq-cargando';
 import {useMemo} from 'react';
 import type {CoverageView} from '../../../../../packages/workspace-service/provenance.mjs';
 import type {TrendsView} from '../../../../../packages/workspace-service/trends.mjs';
-import {EXPLICACION} from '../../../../../packages/workspace-service/datos-hasta.mjs';
+import {explicacion} from '../../../../../packages/workspace-service/datos-hasta.mjs';
 import {tarjetasFuentes,identidad} from '../../lib/legibilidad/fuentes.mjs';
 import {filasSincronizacion} from '../../lib/legibilidad/sincronizacion.mjs';
 import {agregadoImportaciones,desgloseImportaciones} from '../../lib/connections/estado.mjs';
@@ -16,7 +16,7 @@ import {ProgressRing} from '../ui/progress-ring';
 import {LinkButton,Arrow} from '../ui/button';
 import {useJson} from '../ui/use-json';
 import {nf,fmtPct} from '../ui/format';
-import {useT} from '../i18n/proveedor';
+import {useT,useIdioma} from '../i18n/proveedor';
 import {KpiLinea,BarraParte} from '../panel-comun/kpi-linea';
 import './datos.css';
 import '../panel-comun/panel-comun.css';
@@ -29,15 +29,15 @@ const Estado=({tono,children}:{tono:string;children:React.ReactNode})=><span cla
 
 /** «Cobertura de datos»: qué tan completo es el dato, hasta cuándo llega cada fuente y cuánto del cliente ya está identificado. Nada se estima: lo que no responde se dice. */
 export function FuentesDatos(){
- const tx=useT(),cov=useJson<CoverageView>('/api/coverage',acceptCoverage),tr=useJson<TrendsView>('/api/trends',acceptTrends),fr=useJson('/api/freshness',acceptFresh);
- const t=useMemo(()=>tarjetasFuentes(cov.data,tr.data),[cov.data,tr.data]);
+ const tx=useT(),idioma=useIdioma(),cov=useJson<CoverageView>('/api/coverage',acceptCoverage),tr=useJson<TrendsView>('/api/trends',acceptTrends),fr=useJson('/api/freshness',acceptFresh);
+ const t=useMemo(()=>tarjetasFuentes(cov.data,tr.data,tx),[cov.data,tr.data,tx]);
  const id=useMemo(()=>identidad(cov.data?.sources.find(s=>s.key==='associations')),[cov.data]);
- const sync=useMemo(()=>filasSincronizacion(fr.data),[fr.data]);
+ const sync=useMemo(()=>filasSincronizacion(fr.data,Date.now(),tx),[fr.data,tx]);
  const cargadas=t.filter(x=>x.estado==='cargada'),conCorte=cargadas.filter(x=>x.datosHasta).length,impo=cargadas.reduce((a,x)=>a+x.importaciones,0),abiertas=cargadas.reduce((a,x)=>a+x.abiertas,0),agr=agregadoImportaciones(cov.data?.sources);
  const cargando=cov.busy&&!cov.data,notas=t.filter(x=>x.estado==='cargada'&&(x.nota||x.rangoNota)).map(x=>({clave:x.clave,nombre:x.nombre,texto:[x.nota,x.rangoNota].filter(Boolean).join(' ')}));
  const kpis=[
   {label:tx('tr.datos.fdIdentidad'),value:id?fmtPct(id.bps/100):'—',vacio:!id,c:5,chip:id?{texto:id.estimado?tx('landing.val.est'):tx('hist.observado')}:undefined,partes:id?[{label:tx('tr.datos.fdVinculadas'),value:id.vinculadas},{label:tx('tr.datos.fdSinId'),value:id.sinIdentificar},{label:tx('tr.datos.fdRevRet'),value:id.porRevisar+id.retenidas}]:undefined,nota:id?tx('tr.datos.fdNotaId',{a:nf.format(id.vinculadas),b:nf.format(id.total)}):tx('tr.datos.fdNoRespondio')},
-  {label:tx('tr.datos.fdFuentesCarg'),value:cov.data?tx('tr.datos.deN',{a:nf.format(cargadas.length),b:nf.format(t.length)}):'—',vacio:!cov.data,c:3,partes:[{label:tx('tr.datos.fdCargadas'),value:cargadas.length},{label:tx('tr.ui.cbSinCargar'),value:t.length-cargadas.length}],nota:EXPLICACION.split('.')[0]+'.'},
+  {label:tx('tr.datos.fdFuentesCarg'),value:cov.data?tx('tr.datos.deN',{a:nf.format(cargadas.length),b:nf.format(t.length)}):'—',vacio:!cov.data,c:3,partes:[{label:tx('tr.datos.fdCargadas'),value:cargadas.length},{label:tx('tr.ui.cbSinCargar'),value:t.length-cargadas.length}],nota:explicacion(idioma).split('.')[0]+'.'},
   {label:tx('tr.datos.fdConFecha'),value:cov.data?tx('tr.datos.deN',{a:nf.format(conCorte),b:nf.format(cargadas.length)}):'—',vacio:!cov.data,c:1,partes:[{label:tx('tr.datos.fdConCorte'),value:conCorte},{label:tx('tr.datos.fdSinCorteP'),value:cargadas.length-conCorte}],nota:tx('tr.datos.fdNotaCorte')},
   {label:tx('tr.datos.fdCargasEspacio'),value:cov.data?nf.format(agr?.cargas??impo):'—',vacio:!cov.data,c:7,chip:abiertas>0?{texto:tx('tr.datos.fdEnProceso',{n:abiertas}),tono:'warn' as const}:undefined,partes:(agr?agr.porFuente.map(x=>({label:x.nombre,value:x.cargas})):cargadas.filter(x=>x.importaciones>0).map(x=>({label:x.nombre,value:x.importaciones}))),nota:agr?tx('tr.datos.fdMisma',{desglose:desgloseImportaciones(agr.porFuente,'cargas')})+(impo>agr.cargas?tx('tr.datos.fdSuman',{n:nf.format(impo-agr.cargas)}):''):tx('tr.datos.fdPorArchivo')}];
  if(cov.busy&&!cov.data&&!cov.error)return <RovaqCargando mensaje=""/>;

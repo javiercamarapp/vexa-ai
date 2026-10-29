@@ -30,8 +30,8 @@ import './datos.css';
 type ReportState={status:'ok';report:CfoReport;synthetic?:boolean}|{status:'empty'|'timeout'};
 const acceptBundle=(j:unknown)=>{const d=(j as {data?:Bundle})?.data;return d&&d.meta&&d.meta.scope?d:null;};
 const acceptReport=(j:unknown)=>{const d=(j as {data?:ReportState})?.data;return d&&typeof d.status==='string'?d:null;};
-const mesCorto=(m:string,loc='es-MX')=>new Intl.DateTimeFormat(loc,{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
-const mesLargo=(m:string,loc='es-MX')=>new Intl.DateTimeFormat(loc,{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
+const mesCorto=(m:string,loc:string)=>new Intl.DateTimeFormat(loc,{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
+const mesLargo=(m:string,loc:string)=>new Intl.DateTimeFormat(loc,{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
 const pctBps=(b:number|null,nd='No disponible')=>b===null?nd:porcentaje(b/100);
 
 /** Pantalla «Cortes publicados»: primero el estado de lo publicado y su cobertura; los formularios que escriben quedan plegados abajo. */
@@ -40,16 +40,16 @@ export function EconomiaResumen({query='',puedePreparar,soloPropietario=false,ch
  const nd=tr('econ.noDisp');
  const bundle=useJson<Bundle>(urlCortePublicado(query),acceptBundle);
  const rep=useJson<ReportState>('/cfo/data/report',acceptReport);
- const corte=useMemo(()=>resumenCorte(bundle.data?.meta),[bundle.data]);
+ const corte=useMemo(()=>resumenCorte(bundle.data?.meta,tr),[bundle.data,tr]);
  const report=rep.data?.status==='ok'?rep.data.report:null;
- const tarjetas=useMemo(()=>tarjetasPorMoneda(report),[report]);
+ const tarjetas=useMemo(()=>tarjetasPorMoneda(report,tr),[report,tr]);
  const fuentes=useMemo(()=>filasPorFuente(report),[report]);
- const incompletos=useMemo(()=>mesesIncompletos(report),[report]);
+ const incompletos=useMemo(()=>mesesIncompletos(report,tr),[report,tr]);
  const claves=useMemo(()=>tarjetas.map(t=>t.moneda+'|'+t.base),[tarjetas]);
  const [elegida,setElegida]=useState(''),[medida,setMedida]=useState<'pedidos'|'subtotal'>('pedidos');
  const clave=claves.includes(elegida)?elegida:claves[0]??'';
  const actual=tarjetas.find(t=>t.moneda+'|'+t.base===clave);
- const serie=useMemo(()=>actual?serieMensual(report,actual.moneda,actual.base,medida):[],[report,actual,medida]);
+ const serie=useMemo(()=>actual?serieMensual(report,actual.moneda,actual.base,medida,tr):[],[report,actual,medida,tr]);
  const datos:ColumnDatum[]=serie.map(p=>({key:p.mes,label:mesCorto(p.mes,loc),long:mesLargo(p.mes,loc)+(p.parcial?tr('econ.mesIncompleto'):''),value:p.valor,partial:p.parcial,
   display:p.valor===null?nd:medida==='pedidos'?nf.format(p.pedidos):formatMinorUnits(p.importeMinor,actual!.moneda,actual!.exponente),
   detail:[p.parcial?tr('econ.incompletoNoComp'):'',p.detalle??''].filter(Boolean).join(' · ')||undefined}));
@@ -82,7 +82,7 @@ export function EconomiaResumen({query='',puedePreparar,soloPropietario=false,ch
      {key:'reg',label:tr('econ.kRegistros'),c:8,value:nf.format(report.quality.totalRows),note:tr('econ.kRegNota')},
      ...tarjetas.map((t):Kpi=>({key:t.moneda+t.base,label:t.moneda+' · '+t.baseLegible,c:t.base.includes('gross')?3:t.moneda==='USD'?1:t.moneda==='CAD'?5:4,
       value:<span title={t.subtotalMinor===null?undefined:formatMinorUnits(t.subtotalMinor,t.moneda,t.exponente)}>{t.subtotalMinor===null?nd:formatMinorUnits(t.subtotalMinor,t.moneda,t.exponente).replace(/\.\d+/,'').replace(/\s?(USD|CAD|MXN)$/,'')}</span>,
-      spark:serieMensual(report,t.moneda,t.base,'pedidos').filter(p=>!p.parcial&&p.valor!==null).map(p=>p.valor as number),
+      spark:serieMensual(report,t.moneda,t.base,'pedidos',tr).filter(p=>!p.parcial&&p.valor!==null).map(p=>p.valor as number),
       note:<>{tr('econ.pedidosN',{n:nf.format(t.pedidos)})} · {t.cobertura}{t.base!=='gross_order_including_tax_shipping'?' · '+tr('econ.reembolsos',{x:t.reembolsos?nf.format(t.reembolsos.n):tr('econ.sinCobertura')}):''}</>}))]}/>
     <Notice tone="info">{tr('econ.noSuma')}</Notice>
     <Fila split="8-4">

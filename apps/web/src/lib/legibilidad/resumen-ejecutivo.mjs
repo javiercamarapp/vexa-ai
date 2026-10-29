@@ -6,10 +6,11 @@ import {variacion} from './insights.mjs';
 import {estadosDeSerie} from '../../../../../packages/agent-datos/meses.mjs';
 import {filasDesdeItems,numerarGrupos,ordenarFilas} from './problemas-catalogo.mjs';
 import {diaCorte} from '../../../../../packages/workspace-service/datos-hasta.mjs';
-const largo=(m,loc='es-MX')=>new Intl.DateTimeFormat(loc,{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
-const corto=(m,loc='es-MX')=>new Intl.DateTimeFormat(loc,{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
-const nombreMes=(m,loc='es-MX')=>new Intl.DateTimeFormat(loc,{month:'long',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
-const diaLargoUtc=(d,loc='es-MX')=>new Intl.DateTimeFormat(loc,{day:'numeric',month:'long',timeZone:'UTC'}).format(new Date(d+'T00:00:00Z'));
+import {LOCALES} from '../formato/idioma.mjs';
+const largo=(m,loc=LOCALES.es)=>new Intl.DateTimeFormat(loc,{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
+const corto=(m,loc=LOCALES.es)=>new Intl.DateTimeFormat(loc,{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
+const nombreMes=(m,loc=LOCALES.es)=>new Intl.DateTimeFormat(loc,{month:'long',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
+const diaLargoUtc=(d,loc=LOCALES.es)=>new Intl.DateTimeFormat(loc,{day:'numeric',month:'long',timeZone:'UTC'}).format(new Date(d+'T00:00:00Z'));
 /** Unión «a y b» en el idioma activo (con `t`) o en español. */
 const unir=(xs,t)=>xs.join(t?' '+t('prob.y')+' ':' y ');
 const dir=v=>v.dir==='sube'?'up':v.dir==='baja'?'down':'flat';
@@ -23,7 +24,7 @@ export function mesesCoberturaBaja(conv,ahora=new Date()){
 }
 /** Conversaciones del último mes completo frente al anterior completo. null si la serie no está disponible; sin dos meses completos no hay delta.
  *  Si algún mes comparado tiene cobertura baja NO hay delta ni flecha: «Cobertura baja en septiembre (carga de HubSpot parcial); sin comparación». */
-export function kpiConversaciones(conv,ahora=new Date(),{t=null,loc='es-MX'}={}){
+export function kpiConversaciones(conv,ahora=new Date(),{t=null,loc=LOCALES.es}={}){
  if(!conv||conv.status!=='ok'||!Array.isArray(conv.series))return null;
  const baja=mesesCoberturaBaja(conv,ahora);
  const completos=conv.series.filter(p=>esMesCompleto(p.month,{dataThrough:conv.completeness?.dataThrough??null,ahora}));
@@ -57,7 +58,7 @@ export function topProblemas(items,n=5){
  return ordenarFilas(filas.filter(f=>f.conversaciones!==null),{col:'conversaciones',dir:'desc'}).slice(0,n);
 }
 /** Cobertura de fuentes: «6 de 7», incorporación de conversaciones de HubSpot (definición única: workspace-service/cifras-cobertura.mjs; sin desglose no hay %) y «datos hasta» por fuente (cada una con su propia fecha). */
-export function estadoFuentes(view,{libro=null,conversaciones=null,t=null,loc='es-MX'}={}){
+export function estadoFuentes(view,{libro=null,conversaciones=null,t=null,loc=LOCALES.es}={}){
  const dia=v=>{if(!t)return diaCorte(v);const m=typeof v==='string'?/^(\d{4})-(\d{2})-(\d{2})/.exec(v):null;return m&&Number(m[2])>=1&&Number(m[2])<=12?new Intl.DateTimeFormat(loc,{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(v)):null;};
  const fuentes=Array.isArray(view?.sources)?view.sources:null;
  const cargadas=fuentes?fuentes.filter(s=>s.loaded).length:null;
@@ -70,7 +71,7 @@ export function estadoFuentes(view,{libro=null,conversaciones=null,t=null,loc='e
 /** Una línea de estado con lo clave de los avisos críticos reales del Resumen (qué falta / qué ajustar); el detalle queda en el plegable.
  *  null si no hay ningún aviso crítico real. Entrada: `critico` y `pendiente` (booleanos), `parcialCarga` (la carga misma es parcial),
  *  `faltantes` (etiquetas de cifras sin cobertura), `conv`/`led` (payloads de tendencias): meses YA TERMINADOS cuyo último dato no llega a su último día. */
-export function lineaAvisos({critico=false,pendiente=false,parcialCarga=false,faltantes=[],conv=null,led=null,ahora=new Date(),t=null,loc='es-MX'}={}){
+export function lineaAvisos({critico=false,pendiente=false,parcialCarga=false,faltantes=[],conv=null,led=null,ahora=new Date(),t=null,loc=LOCALES.es}={}){
  const partes=[];
  if(critico)partes.push(t?t('res.avCritico'):'hay señales críticas por revisar');
  if(pendiente)partes.push(t?t('res.avPendiente'):'señales críticas sin calcular en esta carga');

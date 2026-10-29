@@ -6,11 +6,12 @@ import type {Clave} from '../../lib/i18n';
 import {RovaqMark} from './rovaq-mark';
 import type {Step,TraceStep} from './types';
 import {PHASE_CLAVES} from './store';
+import {formatoNum} from '../../lib/formato/idioma.mjs';
 
 const ESTADO:Record<string,Clave>={ok:'ag.tOk',no_data:'ag.tNoData',unavailable:'ag.tUnavail',forbidden:'ag.tForbidden',invalid_input:'ag.tInvalid',clarify:'ag.tClarify',descartado:'ag.tDescartado',sin_consulta:'ag.tSinConsulta'};
 export const estadoLabel=(e?:string,tr?:(c:Clave)=>string)=>e?(ESTADO[e]?(tr?tr(ESTADO[e]):ESTADO_ES[e]):e):'';
 const ESTADO_ES:Record<string,string>={ok:'Listo',no_data:'Sin datos',unavailable:'No disponible',forbidden:'Sin acceso',invalid_input:'Entrada no válida',clarify:'Pide aclaración',descartado:'Descartado',sin_consulta:'Sin consulta aplicable'};
-export const msText=(ms?:number|null)=>ms===null||ms===undefined?'':ms<1000?`${ms} ms`:`${(ms/1000).toLocaleString('es-MX',{maximumFractionDigits:1})} s`;
+export const msText=(ms?:number|null)=>ms===null||ms===undefined?'':ms<1000?`${ms} ms`:`${formatoNum({maximumFractionDigits:1}).format(ms/1000)} s`;
 /** Same shape for live events and for the stored `answer.trace`: only what the system measured, never model text. */
 export const stepsOf=(trace:TraceStep[]):Step[]=>trace.map(t=>({id:t.id,kind:t.kind,tool:t.tool,label:t.label,done:true,estado:t.estado,ms:t.ms,detail:t.detail,cifras:t.cifras,fuentes:t.fuentes}));
 

@@ -1,3 +1,4 @@
+import {idiomaDePeticion,mensajeError} from '../i18n/errores-api';
 import {readRequestBytes} from '../request-body';
 import 'server-only';
 import {NextRequest,NextResponse} from 'next/server';
@@ -5,8 +6,11 @@ import {createClient} from '@supabase/supabase-js';
 import {AccessError,assertOrigin,config,identity,PRIVATE_HEADERS} from '../auth';
 import {requestAuth} from '../auth-http';
 import {clientIp,emailAdmission} from './admission';
+import {emailThrottle} from './throttle';
+import {registrar} from '../security/registro';
+import {serverPool} from '../imports/server';
 const headers={...PRIVATE_HEADERS,'Referrer-Policy':'no-referrer',Vary:'Cookie'};
-const generic={message:'Si la cuenta existe, intentaremos enviar un enlace. Revisa tu bandeja de entrada y correo no deseado antes de solicitar otro.',retryAfterSeconds:60};
+const generic=(request:NextRequest)=>({message:mensajeError(idiomaDePeticion(request),'tr.err.enlaceEnviado'),retryAfterSeconds:60});
 async function input(request:NextRequest,limit:number){
  if(request.headers.get('content-type')?.split(';')[0].trim()!=='application/json'||!request.body)throw new AccessError(400,'email_auth_input_invalid');
  let bytes:Uint8Array;
@@ -18,11 +22,18 @@ export async function emailAuth(request:NextRequest,operation:'request'|'session
  const body=await input(request,operation==='request'?1024:16384);
  if(operation==='request'){
   if(Object.keys(body).length!==1||typeof body.email!=='string'||body.email.length>254||!/^\S+@[^\s@]+\.[^\s@]+$/.test(body.email.trim()))throw new AccessError(400,'email_auth_input_invalid');
-  const admitted=emailAdmission.admit(body.email,clientIp(request.headers));
+  // AUTH-03: primero el límite compartido por IP y por correo (base). Si no está disponible cae al límite local de la instancia.
+  const ip=clientIp(request.headers),shared=await emailThrottle(body.email,ip,serverPool);
+  if(shared?.verdict==='ip_limited'){void registrar({kind:'rate_limited',route:request.nextUrl.pathname,method:request.method,ipRaw:request.headers.get('x-forwarded-for'),ua:request.headers.get('user-agent'),detail:{scope:'email_ip',code:'shared'}});}
+  if(shared?.verdict==='ip_limited')return NextResponse.json({error:{code:'email_auth_rate_limited'}},{status:429,headers:{...headers,'Retry-After':String(shared.retryAfterSeconds)}});
+  // Mismo correo en el último minuto (o tope por hora): el 202 genérico es idéntico exista o no la cuenta.
+  if(shared?.verdict==='duplicate')return NextResponse.json(generic(request),{status:202,headers:{...headers,'Retry-After':String(Math.min(60,shared.retryAfterSeconds))}});
+  const admitted=emailAdmission.admit(body.email,ip,shared!==null);
+  if(admitted.kind==='ip_limited'||admitted.kind==='busy'){void registrar({kind:'rate_limited',route:request.nextUrl.pathname,method:request.method,ipRaw:request.headers.get('x-forwarded-for'),ua:request.headers.get('user-agent'),detail:{scope:admitted.kind==='busy'?'email_busy':'email_ip',code:'local'}});}
   if(admitted.kind==='busy')return NextResponse.json({error:{code:'email_auth_busy'}},{status:503,headers:{...headers,'Retry-After':String(admitted.retryAfterSeconds)}});
   if(admitted.kind==='ip_limited')return NextResponse.json({error:{code:'email_auth_rate_limited'}},{status:429,headers:{...headers,'Retry-After':String(admitted.retryAfterSeconds)}});
   // Misma dirección en el último minuto: el aviso genérico es lo previsto y no revela si la cuenta existe.
-  if(admitted.kind==='duplicate')return NextResponse.json(generic,{status:202,headers:{...headers,'Retry-After':'60'}});
+  if(admitted.kind==='duplicate')return NextResponse.json(generic(request),{status:202,headers:{...headers,'Retry-After':'60'}});
   const admission=admitted.lease;
   let unavailable=false,limitado=false;
   try{const client=createClient(c.url,c.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,flowType:'implicit'},global:{fetch:(target,init)=>fetch(target,{...init,cache:'no-store',signal:AbortSignal.timeout(10000)})}});
@@ -32,7 +43,7 @@ export async function emailAuth(request:NextRequest,operation:'request'|'session
    limitado=result.error?.status===429;
   }catch{unavailable=true;}finally{admission.finish(unavailable||limitado);}
   if(limitado)return NextResponse.json({error:{code:'email_auth_busy'}},{status:503,headers:{...headers,'Retry-After':'300'}});
-  return NextResponse.json(generic,{status:202,headers:{...headers,'Retry-After':'60'}});
+  return NextResponse.json(generic(request),{status:202,headers:{...headers,'Retry-After':'60'}});
  }
  if(Object.keys(body).some(k=>!['accessToken','refreshToken'].includes(k))||typeof body.accessToken!=='string'||typeof body.refreshToken!=='string'||body.accessToken.length>8000||body.refreshToken.length>8000||!body.refreshToken)throw new AccessError(400,'email_auth_input_invalid');
  const auth=requestAuth(request);

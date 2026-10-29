@@ -2,7 +2,7 @@
 import {ConMarca} from '../ui/brand-mark';
 import {RovaqCargando} from '../rovaq-cargando';
 import {useMemo,useState} from 'react';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
 import type {MapaVista,EstadoMapa,Celdas} from '../../../../../packages/workspace-service/mapa-problemas.mjs';
 import {PageHeader} from '../ui/page-header';
 import {Button,LinkButton,Refresh,Arrow} from '../ui/button';
@@ -38,13 +38,13 @@ function Ranking({estados,sel,onElegir}:{estados:EstadoMapa[];sel:string|null;on
  </section>;
 }
 function Panel({e,total,estados,pais,sel,onElegir,ocultos}:{e:EstadoMapa|null;total:number;estados:EstadoMapa[];pais:'US'|'MX';sel:string|null;onElegir:(c:string)=>void;ocultos:string|null}){
- const t=useT();
+ const t=useT(),idioma=useIdioma();
  const d=e??[...estados].sort((a,b)=>b.n-a.n)[0]??null;
  return <aside className="mp-panel" aria-live="polite" aria-label={d?t('mapa.detalleDe',{nombre:d.nombre}):t('mapa.detalle')}><div className="mp-panel-in">
   <Ranking estados={estados} sel={sel} onElegir={onElegir} pais={pais}/>
   {d&&<div className="mp-det">
    <p className="eyebrow">{e?(d.pais==='US'?t('mapa.us'):t('mapa.mx')):t('mapa.mayor')}</p>
-   <p className="mp-panel-t">{d.nombre}<span><b>{num(d.n)}</b> {d.n===1?t('mapa.caso'):t('mapa.casos')} · {t('mapa.pctConEstado',{pct:pctTxt(total>0?Math.round((d.n*1000)/total)/10:null)})}</span></p>
+   <p className="mp-panel-t">{d.nombre}<span><b>{num(d.n)}</b> {d.n===1?t('mapa.caso'):t('mapa.casos')} · {t('mapa.pctConEstado',{pct:pctTxt(total>0?Math.round((d.n*1000)/total)/10:null,idioma)})}</span></p>
    <div className="mp-listas"><Lista titulo={t('mapa.tipo')} celdas={d.tipos}/><Lista titulo={t('mapa.motivo')} celdas={d.motivos}/><Lista titulo={t('mapa.retailer')} celdas={d.retailers}/></div>
   </div>}
   <p className="mp-pie">{t('mapa.pie')}{ocultos?` ${ocultos}`:''}</p>
@@ -53,9 +53,9 @@ function Panel({e,total,estados,pais,sel,onElegir,ocultos}:{e:EstadoMapa|null;to
 
 /** Pantalla «Mapa de problemas» (/map): casos por estado, provisional desde el Tracker. Honesta: cobertura a la vista, sin direcciones ni ciudades. */
 export function MapaPantalla({organization}:{organization?:string}){
- const t=useT();
+ const t=useT(),idioma=useIdioma();
  const nombrePais=(p:'US'|'MX')=>p==='US'?t('mapa.us'):t('mapa.mx');
- const textoCobertura=(c:NonNullable<MapaVista['cobertura']>)=>t('mapa.cobTexto',{interp:num(c.interpretables),filas:num(c.filas),conDir:num(c.conDireccion),pct:pctTxt(c.pctInterpretablesDeDireccion)});
+ const textoCobertura=(c:NonNullable<MapaVista['cobertura']>)=>t('mapa.cobTexto',{interp:num(c.interpretables),filas:num(c.filas),conDir:num(c.conDireccion),pct:pctTxt(c.pctInterpretablesDeDireccion,idioma)});
  const textoOcultos=(o:MapaVista['ocultos'])=>!o||!o.estados?null:t(o.estados===1?'mapa.ocultosUno':'mapa.ocultosVarios',{n:num(o.estados),min:o.minimo,casos:num(o.casos)});
  const f=useVista<MapaVista>('/api/map',forma);
  const [pais,setPais]=useState<'US'|'MX'>('US'),[sel,setSel]=useState<string|null>(null);
@@ -69,7 +69,7 @@ export function MapaPantalla({organization}:{organization?:string}){
  const elegir=(c:string)=>setSel(c);
  const cambiar=(p:'US'|'MX')=>{setPais(p);setSel(null);};
  const lim=limitesRampa(max);
- const tabla=filasTabla(delPais,totalPais);
+ const tabla=filasTabla(delPais,totalPais,idioma);
  if(!v&&f.busy)return <RovaqCargando mensaje=""/>;
  return <div className="task-page stack mp-page">
   <PageHeader eyebrow={t('mapa.eyebrow')} title={t('mapa.titulo')} description={<>{t('mapa.desc')}{organization?` ${organization}.`:''}</>}/>
@@ -107,7 +107,7 @@ export function MapaPantalla({organization}:{organization?:string}){
    <div className="mp-dos">
    <Seccion id="mp-cobertura" titulo={t('mapa.cobTitulo')} kind="observed" intro={t('mapa.cobIntro')}>
     {v.status==='unavailable'||!v.cobertura?<NoDisponible onRetry={()=>f.reload()}/>:<>
-     <p className="mp-big" aria-label={textoCobertura(v.cobertura)}>{num(v.cobertura.interpretables)}<small>{t('mapa.cobBig',{filas:num(v.cobertura.filas),pct:pctTxt(v.cobertura.pctInterpretablesDeFilas)})}</small></p>
+     <p className="mp-big" aria-label={textoCobertura(v.cobertura)}>{num(v.cobertura.interpretables)}<small>{t('mapa.cobBig',{filas:num(v.cobertura.filas),pct:pctTxt(v.cobertura.pctInterpretablesDeFilas,idioma)})}</small></p>
      <div className="mp-cob" role="img" aria-label={t('mapa.cobAria',{a:num(v.cobertura.interpretables),b:num(v.cobertura.conDireccion-v.cobertura.interpretables),c:num(v.cobertura.filas-v.cobertura.conDireccion)})}>
       <i style={{inlineSize:`${(v.cobertura.interpretables*100)/Math.max(1,v.cobertura.filas)}%`}} data-t="ok"/><i style={{inlineSize:`${((v.cobertura.conDireccion-v.cobertura.interpretables)*100)/Math.max(1,v.cobertura.filas)}%`}} data-t="mal"/>
      </div>
@@ -125,7 +125,7 @@ export function MapaPantalla({organization}:{organization?:string}){
     <div className="fg-tabla-wrap" tabIndex={0} role="region" aria-label={t('mapa.tablaRegion')}>
      <table className="fg-tabla" aria-label={t('mapa.tablaAria',{pais:nombrePais(pais)})}>
       <thead><tr><th scope="col">{t('mapa.thEstado')}</th><th scope="col" className="fg-r">{t('mapa.thCasos')}</th><th scope="col" className="fg-r">{t('mapa.thPct')}</th></tr></thead>
-      <tbody>{tabla.map(r=><tr key={r.clave}><th scope="row">{r.estado}</th><td className="fg-r">{num(r.casos)}</td><td className="fg-r">{pctTxt(r.pct)}</td></tr>)}</tbody>
+      <tbody>{tabla.map(r=><tr key={r.clave}><th scope="row">{r.estado}</th><td className="fg-r">{num(r.casos)}</td><td className="fg-r">{pctTxt(r.pct,idioma)}</td></tr>)}</tbody>
      </table>
     </div>
    </details>}

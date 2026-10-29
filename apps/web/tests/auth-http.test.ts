@@ -21,7 +21,7 @@ const encode=(v:unknown)=>Buffer.from(JSON.stringify(v)).toString('base64url');
 function session(){const exp=Math.floor(Date.now()/1000)+3600;return {access_token:`${encode({alg:'HS256',typ:'JWT'})}.${encode({sub:userId,exp,session_id:'synthetic-session'})}.synthetic-signature`,refresh_token:'synthetic-refresh',expires_at:exp,expires_in:3600,token_type:'bearer',user};}
 function cookies(){return `sb-127-auth-token=base64-${encode(session())}; ${ACTIVE_ORG}=${A}`;}
 function request(path:string,body?:string,requestOrigin:string|null=origin){return new NextRequest(origin+path,{method:body===undefined?'GET':'POST',headers:{cookie:cookies(),...(requestOrigin?{origin:requestOrigin}:{}),...(body===undefined?{}:{'content-type':'application/x-www-form-urlencoded'})},...(body===undefined?{}:{body})});}
-function mockServer(options:{tenants?:string[]; support?:{tenantId:string;expiresAt:string}; revoked?:boolean; dbError?:boolean; invalid?:boolean; logoutError?:boolean; platform?:'granted'|'denied'|'unavailable'}={}) {
+function mockServer(options:{tenants?:string[]; support?:{tenantId:string;expiresAt:string}; revoked?:boolean; dbError?:boolean; invalid?:boolean; logoutError?:boolean; platform?:'granted'|'denied'|'unavailable'; role?:string}={}) {
   const paths:string[]=[];
   globalThis.fetch=async(input)=>{
     const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);paths.push(url.pathname);
@@ -31,7 +31,7 @@ function mockServer(options:{tenants?:string[]; support?:{tenantId:string;expire
     if(url.pathname==='/auth/v1/logout')return options.logoutError?json({msg:'unavailable'},503):new Response(null,{status:204});
     if(url.pathname==='/rest/v1/rpc/platform_manage')return options.platform==='granted'?json({administrator:true}):options.platform==='unavailable'?json({code:'PGRST000',message:'unavailable'},503):json({code:'42501',message:'platform_access_denied'},403);
     if(url.pathname==='/rest/v1/rpc/platform_support')return options.support?json({active:true,session:{id:'ssssssss-ssss-4sss-8sss-ssssssssssss',tenantId:options.support.tenantId,tenantName:'Cliente',reason:'revisar carga de HubSpot',expiresAt:options.support.expiresAt}}):json({code:'42501',message:'platform_access_denied'},403);
-    if(url.pathname==='/rest/v1/memberships')return options.dbError?json({message:'unavailable'},503):json(options.revoked?[]:(options.tenants??[A,B]).map(tenant_id=>({tenant_id,user_id:userId,role:'owner',status:'active',permissions_version:1})));
+    if(url.pathname==='/rest/v1/memberships')return options.dbError?json({message:'unavailable'},503):json(options.revoked?[]:(options.tenants??[A,B]).map(tenant_id=>({tenant_id,user_id:userId,role:options.role??'owner',status:'active',permissions_version:1})));
     throw new Error(`unexpected mocked network path ${url.pathname}`);
   };return paths;
 }
@@ -121,7 +121,7 @@ test('soporte vencido en la base: 303 a /sin-acceso aunque la cookie siga',async
   setup();mockServer({tenants:[],support:{tenantId:C,expiresAt:new Date(Date.now()-5000).toISOString()}});
   const req=request('/overview');req.cookies.set(ACTIVE_ORG,C);assert.equal((await middleware(req)).status,303);
 });
-for(const [method,path] of [['POST','/api/agent/turn'],['PUT','/api/connections/settings'],['DELETE','/api/notifications/push'],['PATCH','/api/briefs/x'],['POST','/api/workspace/mappings'],['GET','/api/workspace/export'],['GET','/api/briefs/abc/export']] as const)
+for(const [method,path] of [['POST','/api/agent/turn'],['PUT','/api/connections/settings'],['DELETE','/api/notifications/push'],['PATCH','/api/briefs/x'],['POST','/api/workspace/mappings'],['GET','/api/workspace/export'],['GET','/api/briefs/abc/export'],['GET','/api/pain-points/P2/evidence?format=csv'],['GET','/api/jobs/abc/errors'],['GET','/cfo/data/export?format=pdf']] as const)
   test(`marca de soporte: ${method} ${path} se rechaza con 403 antes de llegar a la ruta`,async()=>{
     setup();const paths=mockServer();const req=withMark(new NextRequest(origin+path,{method,headers:{cookie:cookies()}}));
     const response=await middleware(req);assert.equal(response.status,403);assert.match((await response.json()).error.code,/^support_(read_only|export_blocked)$/);assert.equal(paths.length,0,'sin red');
@@ -155,4 +155,77 @@ test('soporte SIN cookie vexa_support: cada exportación responde 403 y no entre
     ]);
     for(const [i,r] of results.entries()){assert.equal(r.status,403,`ruta ${i}`);assert.doesNotMatch(r.headers.get('content-type')??'',/csv/);assert.equal(r.headers.get('content-disposition'),null);}
   }finally{delete process.env.VEXA_DATABASE_URL;}
+});
+
+// Segunda capa de AUTH-01 (cierre de seguridad): CSV de evidencia de pain-points y exportación CFO tampoco dependen de la cookie.
+import {painEvidenceHandler} from '../src/lib/pain-points/server';
+import {GET as exportCfo} from '../src/app/(app)/(workspace)/cfo/data/export/route';
+test('soporte SIN cookie vexa_support: CSV de pain-points y exportación CFO responden 403 sin bytes',async()=>{
+  setup();process.env.VEXA_DATABASE_URL='postgres://nadie:nada@127.0.0.1:1/ninguna';
+  mockServer({tenants:[],support:{tenantId:C,expiresAt:new Date(Date.now()+20*60000).toISOString()}});
+  const get=(path:string)=>{const req=new NextRequest(origin+path,{method:'GET',headers:{cookie:cookies()}});req.cookies.set(ACTIVE_ORG,C);assert.equal(req.cookies.get('vexa_support'),undefined);return req;};
+  try{
+    const pain=await painEvidenceHandler(get('/api/pain-points/P2/evidence?format=csv'),{id:'P2'});
+    const cfo=await exportCfo(get('/cfo/data/export?format=csv'));
+    for(const r of [pain,cfo]){assert.equal(r.status,403);assert.doesNotMatch(r.headers.get('content-type')??'',/csv|pdf/);assert.equal(r.headers.get('content-disposition'),null);}
+    assert.equal((await cfo.json()).error.code,'support_export_blocked');
+  }finally{delete process.env.VEXA_DATABASE_URL;}
+});
+
+// R-05 (cierre de seguridad 28-oct): /api/briefs no sirve de la memoria sin revalidar la membresía vigente.
+import {briefResponse} from '../src/lib/briefs/server';
+import {conMemoria,olvidarMemoria} from '../src/lib/lectura-memo.mjs';
+test('briefs: con la lista en memoria, una membresía revocada recibe 403 y no la caché; una vigente sigue sirviéndose de ella',async()=>{
+  setup();olvidarMemoria();process.env.VEXA_DATABASE_URL='postgres://nadie:nada@127.0.0.1:1/ninguna';
+  const key='briefs|'+userId+'|'+A+'|owner|';
+  await conMemoria(key,60_000,async()=>({items:[{id:'secreto-en-cache'}]}));
+  try{
+    mockServer({tenants:[A]});
+    const vigente=await briefResponse(new NextRequest(origin+'/api/briefs',{method:'GET',headers:{cookie:cookies()}}));
+    assert.equal(vigente.status,200);assert.match(JSON.stringify(await vigente.json()),/secreto-en-cache/);
+    mockServer({tenants:[]});
+    const revocada=await briefResponse(new NextRequest(origin+'/api/briefs',{method:'GET',headers:{cookie:cookies()}}));
+    assert.equal(revocada.status,403);assert.doesNotMatch(await revocada.text(),/secreto-en-cache/);
+  }finally{delete process.env.VEXA_DATABASE_URL;olvidarMemoria();}
+});
+
+// AUTH-05 (cierre de seguridad 28-oct): el cierre de sesión borra vexa_support y termina la sesión de soporte en la base antes de revocar tokens.
+test('logout: borra la cookie vexa_support aunque no llegara en la petición y cierra la sesión de soporte en la base antes de revocar',async()=>{
+  setup();const paths=mockServer({support:{tenantId:C,expiresAt:new Date(Date.now()+20*60000).toISOString()}});
+  const response=await logout(request('/auth/logout',''));
+  assert.equal(response.status,303);assert.equal(response.cookies.get('vexa_support')?.value,'');
+  const fin=paths.indexOf('/rest/v1/rpc/platform_support'),rev=paths.indexOf('/auth/v1/logout');
+  assert.ok(fin>=0,'llamó platform_support end');assert.ok(rev>fin,'cerró soporte antes de revocar el token');
+});
+test('logout: si cerrar soporte falla (no administrador), el cierre de sesión sigue y borra todo',async()=>{
+  setup();mockServer();const response=await logout(request('/auth/logout',''));
+  assert.equal(response.status,303);assert.equal(response.cookies.get('vexa_support')?.value,'');assert.equal(response.cookies.get('sb-127-auth-token')?.value,'');
+});
+
+// H-02 (auditoría 1): /api/pain-points/[id]/ia lanzaba ReferenceError (variable q de otra función) y devolvía siempre 503.
+// Con un lector el handler debe LLEGAR al control de rol (403); antes del arreglo respondía 503, igual que ante un fallo de base.
+import {painAiHandler} from '../src/lib/pain-points/server';
+test('pain-points IA: el handler alcanza el control de sesión y rol (lector 403, no 503 por ReferenceError)',async()=>{
+  setup();process.env.VEXA_DATABASE_URL='postgres://nadie:nada@127.0.0.1:1/ninguna';
+  try{
+    mockServer({tenants:[A],role:'viewer'});
+    for(const method of ['GET','POST']){
+      const req=new NextRequest(origin+'/api/pain-points/P2/ia',{method,headers:{cookie:cookies(),origin}});req.cookies.set(ACTIVE_ORG,A);
+      const r=await painAiHandler(req,{id:'P2'});assert.equal(r.status,403,method);assert.equal((await r.json()).error.code,'request_rejected');
+    }
+    mockServer({tenants:[A],role:'owner'});
+    const owner=new NextRequest(origin+'/api/pain-points/P2/ia',{method:'GET',headers:{cookie:cookies()}});owner.cookies.set(ACTIVE_ORG,A);
+    const r=await painAiHandler(owner,{id:'P2'});assert.notEqual(r.status,403);// pasó el control de rol; la base inalcanzable da 503 controlado
+    assert.equal((await r.json()).error.code,'pain_points_ia_unavailable');
+  }finally{delete process.env.VEXA_DATABASE_URL;}
+});
+
+// B-03 (auditoría 4): la cookie de sesión nace con Max-Age acotado (30 días), HttpOnly, SameSite=Lax y Path=/ (no los 400 días de la librería).
+import {SESSION_COOKIE_MAX_AGE,authClient} from '../src/lib/auth';
+test('cookies de sesión que escribe el cliente de Auth: HttpOnly, SameSite=Lax, Path=/ y Max-Age de 30 días como máximo',async()=>{
+  setup();mockServer();const guardadas:{name:string;options:Record<string,unknown>}[]=[];
+  const client=authClient({getAll:()=>[],set:(name,_v,options)=>{guardadas.push({name,options:options as Record<string,unknown>});}});
+  const s=session();await client.auth.setSession({access_token:s.access_token,refresh_token:s.refresh_token});
+  assert.equal(SESSION_COOKIE_MAX_AGE,2592000);assert.ok(guardadas.length>0,'se escribió la cookie de sesión');
+  for(const g of guardadas){assert.equal(g.options.httpOnly,true,g.name);assert.equal(g.options.sameSite,'lax');assert.equal(g.options.path,'/');const m=g.options.maxAge as number;assert.ok(m>0&&m<=2592000,g.name+' '+m);}
 });

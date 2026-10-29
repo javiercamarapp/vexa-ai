@@ -1,3 +1,4 @@
+import {X} from './trad.mjs';
 // Diccionario de jerga interna -> lenguaje de cliente. Los valores internos (claves de base, tablas) NO cambian: solo se traducen al mostrarlos.
 export const BASES = Object.freeze({
   marketplace_line_price: 'Precio de línea de marketplace',
@@ -12,7 +13,7 @@ export const TERMINOS = Object.freeze([
   [/\bAsientos\b/g, 'Registros del libro'],
 ]);
 /** Base económica interna -> nombre legible. Una clave desconocida se muestra sin guiones bajos, nunca inventada. */
-export const etiquetaBase = (k) => (k === null || k === undefined || k === '' ? '' : BASES[k] ?? String(k).replace(/_/g, ' '));
+export const etiquetaBase = (k, t = null) => (k === null || k === undefined || k === '' ? '' : BASES[k] ? X(t, 'tr.lg.base.' + k, BASES[k]) : String(k).replace(/_/g, ' '));
 /** Traduce términos técnicos dentro de un texto. */
 export function sinJerga(texto) {
   let t = String(texto ?? '');

@@ -35,6 +35,12 @@ import {metaEn} from './d-meta';
 import {trAEn} from './d-tr-a';
 import {trBEn} from './d-tr-b';
 import {trCEn} from './d-tr-c';
+import {trDEn} from './d-tr-d';
+import {trEEn} from './d-tr-e';
+import {trFEn} from './d-tr-f';
+import {trGEn} from './d-tr-g';
+import {trHEn} from './d-tr-h';
+import {trIEn} from './d-tr-i';
 export const en: Record<Clave, string> = {
   'comun.cerrar': 'Close', 'comun.reintentar': 'Try again', 'comun.cargando': 'Loading…', 'comun.sinDato': 'No data',
   'idioma.etiqueta': 'Language', 'idioma.es': 'Español', 'idioma.en': 'English', 'idioma.cambiar': 'Switch language to {idioma}',
@@ -171,6 +177,12 @@ export const en: Record<Clave, string> = {
   ...trAEn,
   ...trBEn,
   ...trCEn,
+  ...trDEn,
+  ...trEEn,
+  ...trFEn,
+  ...trGEn,
+  ...trHEn,
+  ...trIEn,
   ...setupEn,
   ...tourEn,
   ...landingEn,

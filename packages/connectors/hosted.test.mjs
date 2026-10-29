@@ -92,9 +92,9 @@ test('failed tick closes and releases shared guard without leaking errors',async
  await check(await handler(request('GET')),503,'CRM_WORKER_UNAVAILABLE');
  await check(await handler(request('POST')),200,'IDLE');assert.equal(closed,1);
 });
-test('deployment config declares only CRM every five minutes and route shares one handler',()=>{
+test('deployment config declares the CRM cron every five minutes, the metadata and security-alert crons every fifteen, and the CRM route shares one handler',()=>{
  const config=JSON.parse(readFileSync(new URL('../../apps/web/vercel.json',import.meta.url),'utf8'));
- assert.deepEqual(config,{$schema:'https://openapi.vercel.sh/vercel.json',crons:[{path:'/api/internal/crm',schedule:'*/5 * * * *'}]});
+ assert.deepEqual(config,{$schema:'https://openapi.vercel.sh/vercel.json',crons:[{path:'/api/internal/crm',schedule:'*/5 * * * *'},{path:'/api/internal/metadata',schedule:'*/15 * * * *'},{path:'/api/internal/security-alerts',schedule:'*/15 * * * *'}]});
  const route=readFileSync(new URL('../../apps/web/src/app/api/internal/crm/route.ts',import.meta.url),'utf8');
  assert.equal((route.match(/createCRMHostedHandler\(/g)??[]).length,1);
  assert.match(route,/const handler=createCRMHostedHandler\(\{secret:process\.env\.VEXA_WORKER_TRIGGER_SECRET/);

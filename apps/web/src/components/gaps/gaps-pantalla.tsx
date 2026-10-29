@@ -1,5 +1,7 @@
 'use client';
 import {useT} from '../i18n/proveedor';
+import {formatoNum} from '../../lib/formato/idioma.mjs';
+const nf1=formatoNum({maximumFractionDigits:1});
 import {ConMarca} from '../ui/brand-mark';
 import {RovaqCargando} from '../rovaq-cargando';
 import {useState} from 'react';
@@ -43,11 +45,11 @@ export function GapsPantalla({organization}:{organization?:string}){
  const ventas=ok&&c?.status==='ok'?big(ok.activoMinor)+big(c.canceladoMinor):null;
  const kpis:Kpi[]=v?[
   {label:t('brechas.kVentas'),c:1,value:ok?corto(ventas??big(ok.activoMinor)):'—',spark:serieVentas(ok),note:<span className="dg-kpi-nota"><Delta p={variacionVentas(ok)} sufijo={t('brechas.vsPrevio')}/></span>},
-  {label:t('brechas.kCancel'),c:2,value:c?.status==='ok'?corto(big(c.canceladoMinor)):'—',note:c?.status==='ok'?<><MiniPct c={2} p={ventas?big(c.canceladoMinor)*100/ventas:null} label={t('brechas.cancelSobre')}/><span>{t('brechas.lineasPct',{n:num(c.lineas),pct:c.pct!==null?t('brechas.pctLineas',{pct:c.pct.toLocaleString('es-MX',{maximumFractionDigits:1})}):t('brechas.sinDato')})}</span></>:t('brechas.noDisp')},
+  {label:t('brechas.kCancel'),c:2,value:c?.status==='ok'?corto(big(c.canceladoMinor)):'—',note:c?.status==='ok'?<><MiniPct c={2} p={ventas?big(c.canceladoMinor)*100/ventas:null} label={t('brechas.cancelSobre')}/><span>{t('brechas.lineasPct',{n:num(c.lineas),pct:c.pct!==null?t('brechas.pctLineas',{pct:nf1.format(c.pct)}):t('brechas.sinDato')})}</span></>:t('brechas.noDisp')},
   {label:t('brechas.kReemb'),c:2,value:r?.status==='ok'?corto(big(r.brutoMinor)):'—',note:r?.status==='ok'?<><MiniPct c={2} p={ok?big(r.activoMinor)*100/Math.max(1,big(ok.activoMinor)):null} label={t('brechas.reembSobre')}/><span>{t('brechas.reembN',{n:num(r.n)})}{r.sinMonto>0?t('brechas.sinMonto',{n:num(r.sinMonto)}):''}</span></>:t('brechas.noDisp')},
   {label:t('brechas.kNoRec'),c:4,value:tr?.status==='ok'?corto(big(tr.negadosMinor)):'—',note:tr?.status==='ok'?<><MiniPct c={4} p={tr.total?tr.negados*100/tr.total:null} label={t('brechas.negadasAria')}/><span>{t('brechas.solicitudesMuestra',{a:num(tr.negados),b:num(tr.total)})}</span></>:t('brechas.sinTracker')},
  ]:[];
- const titular=v&&ok&&r?.status==='ok'&&ventas?t('brechas.titular',{ventas:corto(ventas),quedan:corto(Math.max(0,big(ok.activoMinor)-big(r.activoMinor))),pct:(big(r.activoMinor)*100/Math.max(1,big(ok.activoMinor))).toLocaleString('es-MX',{maximumFractionDigits:1})}):null;
+ const titular=v&&ok&&r?.status==='ok'&&ventas?t('brechas.titular',{ventas:corto(ventas),quedan:corto(Math.max(0,big(ok.activoMinor)-big(r.activoMinor))),pct:nf1.format(big(r.activoMinor)*100/Math.max(1,big(ok.activoMinor)))}):null;
  const exportar=v&&<Popover label={t('brechas.exportarArchivos')} align="end" width={260} triggerClassName="btn btn-secondary" trigger={<><Download/><span className="btn-label">{t('brechas.exportar')}</span></>}>
   <MenuList>
    <li><Button size="sm" icon={<Download/>} disabled={!ok} onClick={()=>bajarArchivo(resumenHtml(v))}>{t('brechas.resumenHtml')}</Button></li>

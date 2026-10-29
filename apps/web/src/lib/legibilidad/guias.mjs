@@ -9,7 +9,10 @@ export const GLOSARIO=Object.freeze({
  monedas:'Cada moneda se muestra por separado: nunca se suman ni se convierten.'
 });
 /** Bajada de «Problemas» según lo que el corte permite: ordenar por ingresos expuestos solo si hay importe; si no, por conversaciones. conImporte: true | false | null (aún sin cargar). */
-export const lineaProblemas=conImporte=>`Grupos de conversaciones parecidas, ordenados ${conImporte===true?'por ingresos expuestos':'por conversaciones'}, con su evidencia.`;
+/** `t` (traductor del idioma activo) es opcional: sin él sale el español canónico que fijan las pruebas. */
+export const lineaProblemas=(conImporte,t=null)=>t?t(conImporte===true?'tr.gu.problemasPorImporte':conImporte===false?'tr.gu.problemasPorConv':'tr.gu.problemasSinOrden'):conImporte===null||conImporte===undefined?'Grupos de conversaciones parecidas, con su evidencia.':`Grupos de conversaciones parecidas, ordenados ${conImporte===true?'por ingresos expuestos':'por conversaciones'}, con su evidencia.`;
+/** Orden de los puntos de «¿Cómo leer esto?» por vista: nombre del glosario compartido o c<n> (texto propio de la vista). Las claves viven en d-tr-g.ts. */
+const COMO=Object.freeze({resumen:['observado','estimado','inferido','monedas','c4'],problemas:['incidencia','problema','c2','monedas','c4'],recomendaciones:['c0','c1','inferido'],explorador:['c0','c1','c2'],intervenciones:['c0','monedas'],brief:['c0','problema','monedas'],cliente:['c0','c1','monedas'],historial:['c0','c1','c2']});
 export const GUIAS=Object.freeze({
  resumen:{titulo:'Resumen ejecutivo',linea:'Cifras del corte publicado: pedidos, reembolsos y conversaciones cargadas, cada una con su clase y su fuente.',como:[GLOSARIO.observado,GLOSARIO.estimado,GLOSARIO.inferido,GLOSARIO.monedas,'La exposición compartida entre problemas no se suma.']},
  problemas:{titulo:'Problemas de negocio',linea:'Problemas agrupados a partir de incidencias en conversaciones, ordenados por ingresos expuestos y con su evidencia.',como:[GLOSARIO.incidencia,GLOSARIO.problema,'Ingresos expuestos: importe de pedidos vinculados a la evidencia del problema. No es pérdida.',GLOSARIO.monedas,'Las notificaciones automáticas se ocultan del orden por defecto; puedes incluirlas con el interruptor.']},
@@ -22,4 +25,8 @@ export const GUIAS=Object.freeze({
 });
 export const IDS_GUIA=Object.freeze(Object.keys(GUIAS));
 /** Guía por id; una id desconocida devuelve null (la vista no muestra texto inventado). */
-export function guia(id){return Object.prototype.hasOwnProperty.call(GUIAS,id)?GUIAS[id]:null;}
+export function guia(id,t=null){
+ if(!Object.prototype.hasOwnProperty.call(GUIAS,id))return null;
+ if(!t)return GUIAS[id];
+ return {titulo:t(`tr.gu.${id}.titulo`),linea:t(`tr.gu.${id}.linea`),como:COMO[id].map(c=>t(/^c\d$/.test(c)?`tr.gu.${id}.${c}`:`tr.gu.g.${c}`))};
+}

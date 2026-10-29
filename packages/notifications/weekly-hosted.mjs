@@ -9,7 +9,7 @@ export function createWeeklyHostedHandler({secret, ejecutar, timeoutMs = 55000})
   return async request => {
     if (typeof secret !== 'string' || secret.length < 32 || typeof ejecutar !== 'function' || !Number.isSafeInteger(timeoutMs) || timeoutMs < 1000 || timeoutMs > 58000) return reply('WEEKLY_CONFIGURATION_REQUIRED', 503);
     if (request.method !== 'GET' && request.method !== 'POST') return reply('METHOD_NOT_ALLOWED', 405);
-    if (!timingSafeEqual(digest(request.headers.get('authorization') ?? ''), digest('Bearer ' + secret))) return reply('UNAUTHORIZED', 401);
+    if (!timingSafeEqual(digest(request.headers.get('authorization') ?? ''), digest('Bearer ' + secret))){try{globalThis.__vexaSecuritySink?.({kind:'bearer_invalid',route:new URL(request.url).pathname,method:request.method,ipRaw:request.headers.get('x-forwarded-for'),ua:request.headers.get('user-agent')});}catch{/* el registro nunca rompe */}return reply('UNAUTHORIZED',401);}
     if (new URL(request.url).search || request.headers.has('origin')) return reply('BODY_NOT_ALLOWED', 400);
     if (request.method === 'POST' && request.body) { const t = await request.text(); if (t !== '' && t !== '{}') return reply('BODY_NOT_ALLOWED', 400); }
     if (activo) return reply('CYCLE_BUSY', 409);

@@ -1,6 +1,7 @@
 import 'server-only';
 import {NextRequest} from 'next/server';
 import {createDatabase} from '@vexa/platform/db';
+import {forDownloadAuditado as forDownload} from '../../../../../lib/security/descargas';
 import {AccessError, ACTIVE_ORG, assertOrigin, config, identity, resolveSession} from '../../../../../lib/auth';
 import {requestAuth} from '../../../../../lib/auth-http';
 import {serverPool} from '../../../../../lib/imports/server';
@@ -26,14 +27,16 @@ export async function cfoAccessForPage(search: Record<string, string | string[] 
   return {mode: 'live', userId: session.user.id, tenantId: session.active.tenant_id, role: session.active.role, database: createDatabase({identity: identity(client), pool: serverPool(), selectedTenant: session.active.tenant_id})};
 }
 /** Acceso desde una ruta de datos: sesión + (en POST) comprobación de origen. */
-export async function cfoAccessForRequest(request: NextRequest): Promise<{access: CfoAccess; finish: ReturnType<typeof requestAuth>['finish']}> {
+export async function cfoAccessForRequest(request: NextRequest, options: {download?: boolean} = {}): Promise<{access: CfoAccess; finish: ReturnType<typeof requestAuth>['finish']}> {
   const search = Object.fromEntries(request.nextUrl.searchParams);
   if (FIXTURES) return {access: await cfoAccessForPage(search), finish: r => r};
   const c = config(); if (!c) throw new AccessError(503, 'configuration_required');
   if (request.method === 'POST') assertOrigin(request.headers.get('origin'), c.origin);
   const auth = requestAuth(request), id = identity(auth.client);
   const session = await resolveSession(id, request.cookies.get(ACTIVE_ORG)?.value);
-  return {access: {mode: 'live', userId: session.user.id, tenantId: session.active.tenant_id, role: session.active.role, database: createDatabase({identity: id, pool: serverPool(), selectedTenant: session.active.tenant_id})}, finish: auth.finish};
+  // «Ver como» nunca descarga (decide la sesión de soporte de la base, no la cookie vexa_support).
+  if (options.download && session.support) throw new AccessError(403, 'support_export_blocked');
+  return {access: {mode: 'live', userId: session.user.id, tenantId: session.active.tenant_id, role: session.active.role, database: forDownload(createDatabase({identity: id, pool: serverPool(), selectedTenant: session.active.tenant_id}), options.download === true)}, finish: auth.finish};
 }
 export const principalOf = (a: CfoAccess): Principal => ({kind: 'tenant_member', verified: true, userId: a.userId, tenantId: a.tenantId, role: a.role});
 

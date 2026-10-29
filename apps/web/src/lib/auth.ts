@@ -2,6 +2,10 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { AccessError, type IdentityPort, type Membership } from '@vexa/platform/session';
 export { AccessError, assertOrigin, authorizeSelection, resolveSession, safeNext } from '@vexa/platform/session';
 export const ACTIVE_ORG='vexa_active_org';
+/** B-03 (auditoría 4): la librería usa 400 días por omisión. La cookie de sesión dura como máximo 30 días; el límite real de la sesión (tiempo total e inactividad) se fija además en Supabase Auth (APLICAR.md §6). */
+export const SESSION_COOKIE_MAX_AGE=60*60*24*30;
+/** @supabase/ssr fuerza su Max-Age de 400 días al escribir la sesión e ignora cookieOptions.maxAge: se acota aquí, sin tocar las cookies que se borran (Max-Age 0). */
+export function acotarVigencia(options:CookieOptions):CookieOptions{const m=options?.maxAge;return typeof m==='number'&&m>SESSION_COOKIE_MAX_AGE?{...options,maxAge:SESSION_COOKIE_MAX_AGE}:options;}
 /** Marca (no autoridad) de que hay una sesión de soporte en curso: permite a la capa HTTP rechazar escrituras sin consultar la base. La base y db.ts son la defensa real. */
 export const SUPPORT_MARK='vexa_support';
 // Same-origin POST navigations need a non-null Origin; external destinations receive no referrer.
@@ -26,9 +30,9 @@ export type CookieJar={getAll():{name:string;value:string}[];set(name:string,val
 export function authClient(jar:CookieJar) {
   const c=config(); if(!c) throw new AccessError(503,'auth_not_configured');
   return createServerClient(c.url,c.key,{
-    cookieOptions:{path:'/',httpOnly:true,sameSite:'lax',secure:c.secure},
+    cookieOptions:{path:'/',httpOnly:true,sameSite:'lax',secure:c.secure,maxAge:SESSION_COOKIE_MAX_AGE},
     global:{fetch:(input,init)=>fetch(input,{...init,cache:'no-store'})},
-    cookies:{getAll:()=>jar.getAll(),setAll:updates=>{for(const {name,value,options} of updates)jar.set(name,value,options);}},
+    cookies:{getAll:()=>jar.getAll(),setAll:updates=>{for(const {name,value,options} of updates)jar.set(name,value,acotarVigencia(options));}},
   });
 }
 export function identity(client:ReturnType<typeof authClient>):IdentityPort {

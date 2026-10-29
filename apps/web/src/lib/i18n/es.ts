@@ -34,6 +34,12 @@ import {metaEs} from './d-meta';
 import {trAEs} from './d-tr-a';
 import {trBEs} from './d-tr-b';
 import {trCEs} from './d-tr-c';
+import {trDEs} from './d-tr-d';
+import {trEEs} from './d-tr-e';
+import {trFEs} from './d-tr-f';
+import {trGEs} from './d-tr-g';
+import {trHEs} from './d-tr-h';
+import {trIEs} from './d-tr-i';
 export const es = {
   // Compartido
   'comun.cerrar': 'Cerrar', 'comun.reintentar': 'Volver a intentar', 'comun.cargando': 'Cargando…', 'comun.sinDato': 'Sin dato',
@@ -180,6 +186,12 @@ export const es = {
   ...trAEs,
   ...trBEs,
   ...trCEs,
+  ...trDEs,
+  ...trEEs,
+  ...trFEs,
+  ...trGEs,
+  ...trHEs,
+  ...trIEs,
   ...setupEs,
   ...tourEs,
   ...landingEs,

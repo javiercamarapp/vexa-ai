@@ -1,0 +1,17 @@
+import type {Idioma} from '../i18n/idioma';
+export const LOCALES: Readonly<Record<Idioma, string>>;
+export function localeDe(idioma: Idioma | string | undefined): string;
+export function aFecha(valor: unknown): Date | null;
+export function numero(n: number | null | undefined, idioma: Idioma | string | undefined, opciones?: Intl.NumberFormatOptions): string;
+export function compacto(n: number | null | undefined, idioma: Idioma | string | undefined, decimales?: number): string;
+export function porcentaje(p: number | null | undefined, idioma: Idioma | string | undefined, opciones?: {decimales?: number; conSigno?: boolean}): string;
+export function moneda(n: number | null | undefined, codigo: string, idioma: Idioma | string | undefined, opciones?: Intl.NumberFormatOptions): string;
+export function mesLargo(m: string | null | undefined, idioma: Idioma | string | undefined): string | null;
+export function mesCorto(m: string | null | undefined, idioma: Idioma | string | undefined, opciones?: {anio?: boolean}): string | null;
+export function diaMes(v: unknown, idioma: Idioma | string | undefined, opciones?: {largo?: boolean}): string | null;
+export function fechaCorta(v: unknown, idioma: Idioma | string | undefined): string | null;
+export function fechaHora(v: unknown, idioma: Idioma | string | undefined): string | null;
+export function diaHora(v: unknown, idioma: Idioma | string | undefined): string | null;
+export function duracionMs(ms: number | null | undefined, idioma: Idioma | string | undefined): string;
+export function formatoNum(opciones?: Intl.NumberFormatOptions): Intl.NumberFormat;
+export const nf: Intl.NumberFormat;

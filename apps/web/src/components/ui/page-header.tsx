@@ -9,7 +9,7 @@ import s from './legibilidad.module.css';
 /** Una línea guía bajo el título (qué se ve y de dónde sale) y, si la vista tiene guía, un «¿Cómo leer esto?» en popover.
  *  `guide` toma el texto de lib/legibilidad/guias.mjs; `description` solo se usa si no hay guía. */
 export function PageHeader({eyebrow,title,description,actions,guide,linea,nivel=1}:{nivel?:1|2;eyebrow?:string;title:string;description?:ReactNode;actions?:ReactNode;guide?:GuiaId;linea?:string}){
- const t=useT(),g=guide?guia(guide):null;
+ const t=useT(),g=guide?guia(guide,t):null;
  return <header className="page-header"><div className="page-header-copy">{eyebrow&&<p className="eyebrow">{eyebrow}</p>}{nivel===2?<h2>{title}</h2>:<h1>{title}</h1>}
   {g?<div className={s.guideRow}><p className={'page-header-description '+s.guideLine} style={{margin:0}}>{linea??g.linea}</p>
     <Popover label={t('tr.ui.comoLeerX',{titulo:g.titulo})} width={340} triggerClassName="btn btn-ghost btn-sm" trigger={<><Icon name="info" size={14}/><span className="btn-label">{t('tr.ui.comoLeer')}</span></>}>

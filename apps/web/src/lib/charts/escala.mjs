@@ -1,14 +1,16 @@
 // Escalas y formatos de las gráficas: aritmética pura, sin DOM ni React, para poder probarla.
 // Todo número que sale en un eje, una etiqueta directa o un tooltip pasa por aquí.
 
-const compacto = new Intl.NumberFormat('es-MX', {notation: 'compact', maximumFractionDigits: 1});
-const entero = new Intl.NumberFormat('es-MX', {maximumFractionDigits: 0});
-const unDecimal = new Intl.NumberFormat('es-MX', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+import {compacto, formatoNum, mesCorto} from '../formato/idioma.mjs';
+// Los enteros y decimales son idénticos en es-MX y en-US; lo que cambia con el idioma (compactos, «%», meses) recibe `idioma` (por omisión español).
+const entero = formatoNum({maximumFractionDigits: 0});
+const unDecimal = formatoNum({minimumFractionDigits: 1, maximumFractionDigits: 1});
+const sufPct = (idioma) => (idioma === 'en' ? '%' : ' %');
 
 /** «2.1 M», «337.9 mil», «842». Los negativos conservan el signo; no finitos -> «—». */
-export function compactEs(n) {
+export function compactEs(n, idioma) {
   if (typeof n !== 'number' || !Number.isFinite(n)) return '—';
-  return Math.abs(n) < 1000 ? entero.format(Math.round(n * 10) / 10) : compacto.format(n).replace(/\s/g, ' ');
+  return Math.abs(n) < 1000 ? entero.format(Math.round(n * 10) / 10) : compacto(n, idioma).replace(/\s/g, ' ');
 }
 
 /** Pasos «agradables»: el máximo del eje es uno de estos × 10^k y su mitad también es redonda. */
@@ -36,7 +38,7 @@ export const esConteoPequeno = (values) => { const v = values.filter((x) => type
 
 export const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 /** «2026-10» -> «oct». Entrada inválida se devuelve igual. */
-export const mesAbrev = (key) => (/^\d{4}-(0[1-9]|1[0-2])$/.test(String(key)) ? MESES[Number(String(key).slice(5)) - 1] : String(key));
+export const mesAbrev = (key, idioma) => (/^\d{4}-(0[1-9]|1[0-2])$/.test(String(key)) ? mesCorto(key, idioma) : String(key));
 
 /** Geometría de columnas: relación barra/hueco ≈ 0.6, ancho máximo 22 px, mínimo 3 px. */
 export function geometriaColumnas(n, plotW, {ratio = 0.6, max = 22, min = 3} = {}) {
@@ -53,14 +55,14 @@ export const cadaCuantas = (n, plotW, minPx = 30) => Math.max(1, Math.ceil(n / M
  * modo 'pct' = cambio relativo; 'pp' = diferencia de una tasa en puntos (bps -> pp).
  * Devuelve null si no es comparable (parcial, sin dato, base 0).
  */
-export function variacionVsAnterior(puntos, i, modo = 'pct') {
+export function variacionVsAnterior(puntos, i, modo = 'pct', idioma) {
   const a = puntos[i - 1], b = puntos[i];
   if (!a || !b || i < 1) return null;
   if (a.partial || b.partial || a.value === null || b.value === null || a.value === undefined || b.value === undefined) return null;
   if (modo === 'pp') { const d = (b.value - a.value) / 100; return {dir: d > 0 ? 'up' : d < 0 ? 'down' : 'flat', texto: signo(d) + unDecimal.format(Math.abs(d)) + ' pp'}; }
   if (!(a.value > 0)) return null;
   const d = ((b.value - a.value) / a.value) * 100;
-  return {dir: d > 0.05 ? 'up' : d < -0.05 ? 'down' : 'flat', texto: signo(d) + unDecimal.format(Math.abs(d)) + ' %'};
+  return {dir: d > 0.05 ? 'up' : d < -0.05 ? 'down' : 'flat', texto: signo(d) + unDecimal.format(Math.abs(d)) + sufPct(idioma)};
 }
 const signo = (d) => (Math.abs(d) < 0.05 ? '' : d > 0 ? '+' : '−');
 

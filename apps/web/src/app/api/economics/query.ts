@@ -1,3 +1,5 @@
+import {IDIOMA_POR_OMISION,type Idioma} from '../../../lib/i18n/idioma';
+import {mensajeError} from '../../../lib/i18n/errores-api';
 // Parseo puro (sin red ni base) del GET /api/economics y mapeo único de errores a respuestas. Probado en tests/economics-contract.test.ts.
 export type EconomicsView='auto'|'overview'|'page'|'history'|'exposure';
 export type ParsedEconomics={view:EconomicsView;scope?:{start:string;end:string;currency:string;exponent:number;basis:string;timezone:string;dateBasis:'occurred_at'};fxRateId?:string;limit?:number;cursor?:string;filters?:Record<string,string>;entityId?:string};
@@ -28,10 +30,10 @@ export function parseEconomicsQuery(params:URLSearchParams):ParsedEconomics{
 const STATUSES=[400,401,403,404,408,409,413,429,503,504];
 const isTimeout=(e:{code?:string;message?:string})=>e.code==='57014'||e.code==='economic_query_timeout'||/statement timeout|canceling statement due to/i.test(String(e.message??''));
 /** Un timeout NUNCA es el 503 genérico: 504 `economic_query_timeout`, con mensaje claro y reintento. */
-export function economicErrorResponse(error:unknown):{status:number;body:{error:{code:string;message:string;retryable:boolean;detail?:string}};headers:Record<string,string>}{
+export function economicErrorResponse(error:unknown,idioma:Idioma=IDIOMA_POR_OMISION):{status:number;body:{error:{code:string;message:string;retryable:boolean;detail?:string}};headers:Record<string,string>}{
  const e=(error ?? {}) as {status?:number;code?:string;message?:string};
- if(isTimeout(e))return {status:504,headers:{'Retry-After':'5'},body:{error:{code:'economic_query_timeout',retryable:true,message:'La consulta tardó más de lo permitido. Reintenta en unos segundos o acota la ventana de fechas; tus datos no se modificaron.'}}};
+ if(isTimeout(e))return {status:504,headers:{'Retry-After':'5'},body:{error:{code:'economic_query_timeout',retryable:true,message:mensajeError(idioma,'tr.err.econTimeout')}}};
  const status=STATUSES.includes(e.status??0)?e.status!:503;
  const known=typeof e.code==='string'&&/^[a-z_]{3,60}$/.test(e.code)&&status!==503;
- return {status,headers:{},body:{error:{code:'economic_request_failed',retryable:status===503||status===429,message:status===409?'La versión, identidad o fuente requiere revisión.':status===400?'Revisa los campos, las fechas y las unidades monetarias.':'No se pudo completar la consulta económica.',...(known?{detail:e.code}:{})}}};
+ return {status,headers:{},body:{error:{code:'economic_request_failed',retryable:status===503||status===429,message:status===409?mensajeError(idioma,'tr.err.econVersion'):status===400?mensajeError(idioma,'tr.err.econCampos'):mensajeError(idioma,'tr.err.econFallo'),...(known?{detail:e.code}:{})}}};
 }

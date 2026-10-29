@@ -2,6 +2,8 @@ import type {PuntoPP} from '../../../../../packages/workspace-service/pain-point
 export const R_UMBRAL: number, R_GRUPO_MIN: number, SEPARACION: number, PAD: number, GAP: number, ALTO_MIN: number, CHAR_W: number, LINE_H: number;
 export const TEMAS_ORDEN: string[];
 export const TEMA_NOTA: Record<string, string>;
+export const TEMA_NOTA_EN: Record<string, string>;
+export function notaDeTema(id: string, idioma?: string): string | undefined;
 export type Modo = 'dinero' | 'volumen';
 export type Rotulo = {dentro: boolean; lineas: string[]; valor: string; w: number; h: number};
 export type Burbuja = {tipo: 'punto' | 'grupo'; id: string; tema: string; valor: number; r: number; cx: number; cy: number; clase: string; label: Rotulo; minimo?: boolean; n?: number; ids?: string[]; miembros?: {id: string; nombre: string; valor: number}[]};
@@ -21,5 +23,5 @@ export function nombreCorto(n: string): string;
 export function partirNombre(t: string, max: number, maxLineas?: number): {lineas: string[]; truncado: boolean};
 export function rotular(nombre: string, valorTxt: string, r: number, W: number): Rotulo;
 export function conciliar(puntos: PuntoPP[], modo?: Modo): Conciliacion;
-export function disponerBurbujas(o: {puntos: PuntoPP[]; modo?: Modo; ancho?: number; temas?: string[]; escalaDe?: PuntoPP[] | null}): Disposicion;
+export function disponerBurbujas(o: {puntos: PuntoPP[]; modo?: Modo; ancho?: number; temas?: string[]; escalaDe?: PuntoPP[] | null; idioma?: string}): Disposicion;
 export function mayores(puntos: PuntoPP[], modo?: Modo, n?: number): PuntoPP[];

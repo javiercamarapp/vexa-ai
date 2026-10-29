@@ -18,7 +18,7 @@ import {SkeletonRows} from './ui/skeletons';
 import styles from './connections.module.css';
 import {useJson} from './ui/use-json';
 import {estadoConexion,nombreFuente,type EstadoConexion} from '../lib/connections/estado.mjs';
-import {useT,useLocaleIntl} from './i18n/proveedor';
+import {useT,useLocaleIntl,useIdioma} from './i18n/proveedor';
 import type {Traductor} from '../lib/i18n';
 import type {CoverageView} from '../../../../packages/workspace-service/provenance.mjs';
 import type {ConnectionHealth} from '../../../../packages/connectors/health.mjs';
@@ -32,10 +32,10 @@ async function read(t:Traductor,signal?:AbortSignal):Promise<ConnectionHealth[]>
  const data=response.json as {connections?:ConnectionHealth[]};if(!Array.isArray(data?.connections))throw new Error(t('conx.h.errRespuesta'));return data.connections;
 }
 export function ConnectionHealthPanel(){
- const t=useT(),loc=useLocaleIntl();
+ const t=useT(),loc=useLocaleIntl(),idioma=useIdioma();
  const recheckPending=useRef(false),rowsRef=useRef<ConnectionHealth[]>([]);
  const {data:coverage,busy:coverageBusy}=useJson<CoverageView>('/api/coverage',j=>{const d=(j as {data?:CoverageView})?.data;return Array.isArray(d?.sources)?d as CoverageView:null;});
- const sources=coverage?.sources??null,est=(r:ConnectionHealth):EstadoConexion=>estadoConexion(r,sources,t);
+ const sources=coverage?.sources??null,est=(r:ConnectionHealth):EstadoConexion=>estadoConexion(r,sources,t,idioma);
  const [rows,setRows]=useState<ConnectionHealth[]>([]),[busy,setBusy]=useState(true),[error,setError]=useState(''),[confirmed,setConfirmed]=useState<Record<string,string|null>>({}),[tab,setTab]=useVistaPersistente<'all'|'ok'|'pending'>('conexiones:pestana','all'),[picked,setPicked]=useVistaPersistente<string|null>('conexiones:elegida',null),[edad,setEdad]=useState<number|null>(null),[viejo,setViejo]=useState(false);
  useAntesDePintar(()=>{const g=leerSwr(claveSwr('/api/connections')),v=(g?.datos as {connections?:ConnectionHealth[]}|undefined)?.connections;if(g&&Array.isArray(v)){setRows(v);setEdad(g.edadMs);if(g.fresca)setBusy(false);}},[]);
  useEffect(()=>{const controller=new AbortController();async function load(){try{const g=leerSwr(claveSwr('/api/connections'));if(g?.fresca){setBusy(false);return;}const data=await read(t,controller.signal);if(!controller.signal.aborted){setRows(data);setEdad(null);setViejo(false);}}catch(e){if(!controller.signal.aborted){const st=(e as {estado?:number}).estado;if(rowsRef.current.length>0&&(st===undefined||st>=500))setViejo(true);else setError(e instanceof Error?e.message:t('conx.h.errEstado'));}}finally{if(!controller.signal.aborted)setBusy(false);}}void load();return()=>controller.abort();},[]); // eslint-disable-line react-hooks/exhaustive-deps

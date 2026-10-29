@@ -1,3 +1,4 @@
+import {mensajesDe} from '../i18n/errores-api';
 import {readRequestBytes} from '../request-body';
 import 'server-only';
 import {NextRequest,NextResponse} from 'next/server';
@@ -14,7 +15,7 @@ async function notificationInput(request:NextRequest){
  try{const result=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));return result;}catch{throw new AccessError(400,'input_invalid');}
 }
 export async function deliveryResponse(request:NextRequest){
- let finish=(r:NextResponse)=>r;
+ let finish=(r:NextResponse)=>r;const m=mensajesDe(request);
  try{
   const configuration=config();if(!configuration)throw new AccessError(503,'configuration_required');
   if(request.method==='POST')assertOrigin(request.headers.get('origin'),configuration.origin);
@@ -30,6 +31,6 @@ export async function deliveryResponse(request:NextRequest){
  }catch(error){
   const code=(error as {status?:number}).status;
   const status=[400,401,403,408,409,413,429].includes(code??0)?code!:503;
-  return finish(NextResponse.json({error:{code:'delivery_policy_unavailable',message:status===409?'La política cambió. Actualiza antes de guardar.':'No se pudo verificar la política de envío con tus permisos actuales.'}},{status,headers:PRIVATE_HEADERS}));
+  return finish(NextResponse.json({error:{code:'delivery_policy_unavailable',message:status===409?m('tr.err.politicaCambio'):m('tr.err.politicaFallo')}},{status,headers:PRIVATE_HEADERS}));
  }
 }

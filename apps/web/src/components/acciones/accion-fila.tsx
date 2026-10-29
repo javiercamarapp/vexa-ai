@@ -1,7 +1,8 @@
 'use client';
 import {useRef,useState} from 'react';
-import {useT} from '../i18n/proveedor';
-import type {Clave} from '../../lib/i18n';
+import {useT,useIdioma} from '../i18n/proveedor';
+import {diaMes} from '../../lib/formato/idioma.mjs';
+import type {Clave,Idioma} from '../../lib/i18n';
 import type {Recommendation,RecommendationList} from '../../../../../packages/recommendations/index.mjs';
 import {accionesPermitidas,etapaActual} from '../../../../../packages/recommendations/flujo.mjs';
 import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
@@ -32,7 +33,7 @@ const CAUSAL:Record<string,Clave>={unassessed:'acc.cSinEvaluar',confirmed:'acc.c
 const PRIO:Record<string,Clave>={critical:'acc.prioCritical',high:'acc.prioHigh',normal:'acc.prioNormal'};
 const ETAPA:Record<string,Clave>={propuesta:'acc.etPropuesta',ajustada:'acc.etAjustada',aprobada:'acc.etAprobada',en_curso:'acc.etEnCurso',resultado:'acc.etResultado',descartada:'acc.etDescartada'};
 const RESULT:Record<string,Clave>={yes:'acc.resSi',no:'acc.resNo',partial:'acc.resParcial'};
-const fechaTxt=(v:string|null|undefined)=>{if(!v)return '—';const d=new Date(v.length===10?v+'T12:00:00Z':v);return Number.isNaN(d.getTime())?v:d.toLocaleDateString('es-MX',{day:'numeric',month:'short',timeZone:'UTC'});};
+const fechaTxt=(v:string|null|undefined,idioma:Idioma)=>{if(!v)return '—';return diaMes(v,idioma,{largo:false})??v;};
 const pinned=(scope:Recommendation['scope'],snapshot:string,hash:string)=>consultaFijada(scope as never,snapshot,hash);
 
 function Cifra({etiqueta,valor,pie,c}:{etiqueta:string;valor:string;pie:string;c?:number}){return <div className="ac-cifra" style={c?{['--cat' as string]:`var(--chart-${c})`}:undefined}><dt>{etiqueta}</dt><dd>{valor}</dd><small>{pie}</small></div>;}
@@ -40,7 +41,7 @@ function Cifra({etiqueta,valor,pie,c}:{etiqueta:string;valor:string;pie:string;c
 /** Una acción en una FILA compacta. Por decidir: evidencia, dinero en juego y Proceder / Ajustar / Descartar. En curso: etapa, responsable, compromiso y borradores.
  *  Resultados: respuesta, comparación antes/después solo con dato observado. Descartadas: motivo y Reabrir (historial reversible: cada cambio es un evento nuevo). */
 export function AccionFila({item,members,busy,conflict,operate,vista,descartada=false,flowAvailable,onRegenerate}:{item:FlowItem;members:RecommendationList['members'];busy:boolean;conflict:boolean;operate:Operation;vista:VistaAccion;descartada?:boolean;flowAvailable:boolean;onRegenerate?:(problemId:string)=>void}){
- const t=useT();
+ const t=useT(),idioma=useIdioma();
  const [action,setAction]=useState(item.action),[conditions,setConditions]=useState(item.preconditions.join('\n')),[rationale,setRationale]=useState(item.rationale),[owner,setOwner]=useState(item.ownerId??''),[reason,setReason]=useState(''),[stateReason,setStateReason]=useState(''),[evidence,setEvidence]=useState(false),[edit,setEdit]=useState(false),[full,setFull]=useState<Recommendation|null>(item.verification==='full'?item:null),[openState,setOpenState]=useState<'idle'|'loading'|'unavailable'|'error'>('idle');
  const draftKey=useRef<string|null>(null),locked=busy||conflict||!item.canMutate,endpoint='/api/recommendations/'+item.id;
  const create=()=>{draftKey.current??=crypto.randomUUID();void operate(endpoint+'/interventions',{expectedVersion:item.version,requestKey:draftKey.current});};
@@ -50,10 +51,10 @@ export function AccionFila({item,members,busy,conflict,operate,vista,descartada=
  const openEvidence=()=>{setEvidence(true);if(full||openState==='loading')return;setOpenState('loading');const corte=new AbortController(),tm=window.setTimeout(()=>corte.abort(),45000);void fetchCupo(endpoint,{cache:'no-store',signal:corte.signal}).then(async r=>{if(r.status===403||r.status===404){setOpenState('unavailable');return;}if(!r.ok)throw Error('x');const j=await r.json();if(!j.data||j.data.id!==item.id)throw Error('x');setFull(j.data as Recommendation);setOpenState('idle');}).catch(()=>setOpenState('error')).finally(()=>window.clearTimeout(tm));};
  const close=(ok:Promise<boolean>)=>{void ok.then(saved=>{if(saved)setEdit(false);});};
  const aprobada=eventos.find(e=>e.kind==='approved'),resuelta=eventos.find(e=>e.kind==='resolved');
- const prioKey=(item.priority in PRIO_TONO?item.priority:'normal') as keyof typeof PRIO_TONO,titulo=etiquetaCategoria(item.title);
+ const prioKey=(item.priority in PRIO_TONO?item.priority:'normal') as keyof typeof PRIO_TONO,titulo=etiquetaCategoria(item.title,t);
  const motivoDescarte=descartada?[...(item.history??[])].sort((a,b)=>b.version-a.version).find(h=>h.status==='dismissed')?.reason:null;
  const cmp=resuelta?.comparison??null,fmt=(v:string)=>cmp?formatMinorUnits(v,cmp.moneda,cmp.exponente):v,mx=cmp?Math.max(Math.abs(Number(cmp.antesMinor)),Math.abs(Number(cmp.despuesMinor)),1):1;
- const resp=conFlujo&&(aprobada?.ownerId??item.ownerId)?persona(aprobada?.ownerId??item.ownerId,members):t('acc.sinAsignar');
+ const resp=conFlujo&&(aprobada?.ownerId??item.ownerId)?persona(aprobada?.ownerId??item.ownerId,members,t):t('acc.sinAsignar');
  return <article className="ac-fila" data-vista={vista} data-prio={prioKey} data-descartada={descartada||undefined} aria-label={t('acc.fila',{titulo})}>
   <div className="ac-main">
    <div className="ac-linea"><span className="pc-estado" data-tono={descartada?'off':PRIO_TONO[prioKey]}>{descartada?t('acc.descartada'):PRIO[item.priority]?t(PRIO[item.priority]):item.priority}</span>{conFlujo&&!descartada&&<span className="ac-etapa">{ETAPA[etapa]?t(ETAPA[etapa]):etapa} · v{item.version}</span>}{item.stale&&<span className="pc-estado" data-tono="warn">{t('acc.evCambio')}</span>}</div>
@@ -71,9 +72,9 @@ export function AccionFila({item,members,busy,conflict,operate,vista,descartada=
    <Cifra etiqueta={t('acc.causa')} valor={CAUSAL[item.causalState]?t(CAUSAL[item.causalState]):etiquetaCausal(item.causalState)} pie={t('acc.noDemuestra')}/>
   </dl>}
   {vista==='en-curso'&&<div className="ac-curso">{conFlujo&&<EtapasFlujo etapa={etapa}/>}
-   <dl className="ac-datos"><div><dt>{t('acc.responsable')}</dt><dd>{resp}</dd></div><div><dt>{t('acc.compromiso')}</dt><dd>{fechaTxt(aprobada?.dueDate)}</dd></div><div><dt>{t('acc.borradores')}</dt><dd>{item.drafts.length>0?nf.format(item.drafts.length):'—'}</dd></div></dl></div>}
+   <dl className="ac-datos"><div><dt>{t('acc.responsable')}</dt><dd>{resp}</dd></div><div><dt>{t('acc.compromiso')}</dt><dd>{fechaTxt(aprobada?.dueDate,idioma)}</dd></div><div><dt>{t('acc.borradores')}</dt><dd>{item.drafts.length>0?nf.format(item.drafts.length):'—'}</dd></div></dl></div>}
   {vista==='resultados'&&!descartada&&<div className="ac-cmp" aria-label={t('acc.antesDespues')}>{cmp?<><BarraParte etiqueta={t('acc.antes')} valor={Math.abs(Number(cmp.antesMinor))} max={mx} c={5} fin={fmt(cmp.antesMinor)}/><BarraParte etiqueta={t('acc.despues')} valor={Math.abs(Number(cmp.despuesMinor))} max={mx} c={6} estado={cmp.completa?'real':'parcial'} fin={fmt(cmp.despuesMinor)}/><small>{cmp.completa?t('acc.ingresoObs'):t('acc.medIncompleta')}</small></>:<><div className="pc-pista" data-vacio role="img" aria-label={t('acc.sinMedAria')}/><small>{t('acc.sinMedTxt')}</small></>}</div>}
-  {vista==='por-decidir'&&!descartada&&<div className="ac-dinero"><span className="ac-et">{t('acc.dineroEnJuego')}</span><strong data-vacio>—</strong><small>{t('acc.sinImporte')}</small><span className="ac-et">{t('acc.responsable')}</span><b>{conFlujo&&item.ownerId?persona(item.ownerId,members):t('acc.sinAsignar')}</b></div>}
+  {vista==='por-decidir'&&!descartada&&<div className="ac-dinero"><span className="ac-et">{t('acc.dineroEnJuego')}</span><strong data-vacio>—</strong><small>{t('acc.sinImporte')}</small><span className="ac-et">{t('acc.responsable')}</span><b>{conFlujo&&item.ownerId?persona(item.ownerId,members,t):t('acc.sinAsignar')}</b></div>}
   <div className="ac-botones">
    {conFlujo&&decide&&(etapa==='propuesta'||etapa==='ajustada')&&<div className="ac-grupo" role="group" aria-label={t('acc.decidirAria')}><Button size="sm" variant="primary" disabled={!permisos.proceder.permitido||busy||conflict} onClick={()=>setAbierto('proceder')}>{t('acc.proceder')}</Button><Button size="sm" variant="secondary" disabled={!permisos.ajustar.permitido||busy||conflict} onClick={()=>setAbierto('ajustar')}>{t('acc.ajustar')}</Button><Button size="sm" variant="ghost" disabled={!permisos.descartar.permitido||busy||conflict} onClick={()=>setAbierto('descartar')}>{t('acc.descartar')}</Button></div>}
    {conFlujo&&decide&&(etapa==='aprobada'||etapa==='en_curso')&&<div className="ac-grupo"><Button size="sm" variant="secondary" onClick={()=>setAbierto('borradores')}>{t('acc.verBorradores')}</Button>{permisos.iniciar.permitido&&<IniciarBoton item={item} busy={busy||conflict} operate={operate}/>}{permisos.resultado.permitido&&<Button size="sm" variant="primary" disabled={busy||conflict} onClick={()=>setAbierto('resultado')}>{t('acc.registrarRes')}</Button>}</div>}

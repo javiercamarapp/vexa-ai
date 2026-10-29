@@ -19,7 +19,7 @@ const acceptTrends=(j:unknown)=>{const d=(j as {data?:TrendsView})?.data;return 
 /** /connections: además del estado de cada conexión, cuánto trajo cada fuente y hasta cuándo llegan sus datos. */
 export function CoberturaConexiones(){
  const tx=useT(),cov=useJson<CoverageView>('/api/coverage',acceptCoverage),tr=useJson<TrendsView>('/api/trends',acceptTrends);
- const t=useMemo(()=>tarjetasFuentes(cov.data,tr.data),[cov.data,tr.data]);
+ const t=useMemo(()=>tarjetasFuentes(cov.data,tr.data,tx),[cov.data,tr.data,tx]);
  return <section className="card" aria-labelledby="cc-t">
   <div className="card-title"><div><h2 id="cc-t">{tx('tr.datos.cobFuente')}</h2><p>{tx('tr.datos.ccSub')}</p></div><LinkButton href="/sources" size="sm" icon={<Arrow/>}>{tx('tr.datos.ccDatosFuentes')}</LinkButton></div>
   {cov.busy&&!cov.data?<SkeletonRows rows={5}/>:cov.error&&!cov.data?<p className="dn-note" role="status">{tx('hoy.noDisponible')}: {cov.error} <Button size="sm" icon={<Refresh/>} onClick={()=>cov.reload()}>{tx('hoy.reintentar')}</Button></p>:

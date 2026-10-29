@@ -1,6 +1,6 @@
 // Identidad pública de Rovaq AI (SEO, Open Graph, JSON-LD, robots, sitemap). Fuente única: nada de esto toca la interfaz.
-// Dominio canónico: NEXT_PUBLIC_SITE_URL; sin ella (o inválida) se usa el dominio nuevo de producción.
-export const SITE_URL_RESPALDO = 'https://rovaq-ai.vercel.app';
+// Dominio canónico: NEXT_PUBLIC_SITE_URL; sin ella (o inválida) se usa el host vigente de la aplicación.
+export const SITE_URL_RESPALDO = 'https://app.rovaq.ai'; // host vigente de la aplicación (el host rovaq-ai.vercel.app es el antiguo y solo redirige)
 export function siteUrl(env = process.env.NEXT_PUBLIC_SITE_URL) {
   try { const u = new URL(String(env ?? '').trim()); if (u.protocol === 'https:' || u.hostname === 'localhost') return u.origin; } catch { /* sin valor válido: respaldo */ }
   return SITE_URL_RESPALDO;

@@ -4,6 +4,7 @@
 import {WorkspaceError,uuid} from './contracts.mjs';
 import {guarded} from './trends.mjs';
 import {canalDeFuente,NOMBRE_CANAL} from './fuga-reembolsos.mjs';
+import {elegir,fNumI} from './idioma.mjs';
 import {readLedgerCounts,readAssociationCounts,summaryLabel,summaryMeta,attempt} from './summaries.mjs';
 const SOURCE_LABELS={hubspot:'HubSpot',zendesk:'Zendesk',csv:'Archivo CSV',excel:'Archivo Excel'};
 // Sources the product is meant to incorporate. A source with no import is reported as "not loaded", never as zero loaded.
@@ -22,9 +23,10 @@ const ENTITY={message:'mensaje',conversation:'conversación',customer:'cliente',
 const n=v=>Number(v??0),short=h=>typeof h==='string'?h.slice(0,12):null;
 /** Rejected rows are rows the validation rules leave out on purpose (so doubtful data never mixes with trusted data); they are not a load failure.
  *  Exact figures, no adjective about quality; pending rows are named separately because those ARE still to be processed. */
-export function rejectionNote({total,incorporated,rejected,pending}){
+export function rejectionNote({total,incorporated,rejected,pending},idioma='es'){
  if(!(rejected>0)||!(total>0))return null;
- const f=x=>x.toLocaleString('es-MX'),share=Math.round(rejected*1000/total)/10;
+ const f=x=>fNumI(x,idioma),share=Math.round(rejected*1000/total)/10;
+ if(idioma==='en')return `${f(incorporated)} of ${f(total)} rows are incorporated. The other ${f(rejected)} (${fNumI(share,idioma)}%) do not meet the validation rules and are left out on purpose so doubtful data does not mix with trusted data: this is not a load failure.${pending>0?` ${f(pending)} are still waiting to be processed.`:' No rows are pending.'}`;
  return `${f(incorporated)} de ${f(total)} filas están incorporadas. Las otras ${f(rejected)} (${share.toLocaleString('es-MX')} %) no cumplen las reglas de validación y se dejan fuera a propósito para no mezclar datos dudosos: no es una falla de la carga.${pending>0?` Aún hay ${f(pending)} pendientes de procesar.`:' No quedan filas pendientes.'}`;
 }
 /** Desglose de las rechazadas de HubSpot por error_code (agregado, sin cargar filas). "Solo metadatos" (ENTITY_METADATA_ONLY) son registros sin mensajes: no son conversaciones
@@ -36,17 +38,22 @@ export function rejectionBreakdown({total,incorporated,rejected,codes}){
  return {status:'ok',metadataOnly,bodyIncomplete,roleAmbiguous,otherDefects:defects-bodyIncomplete-roleAmbiguous,defects,conversationRows,conversationIncorporated:incorporated,incorporatedShare:conversationRows>0?Math.round(incorporated*1000/conversationRows)/10:null};
 }
 /** Texto honesto para HubSpot: conversaciones incorporadas / rechazadas con defecto / solo metadatos, con la base del porcentaje rotulada. Sin desglose cae al texto general + «No disponible». */
-export function hubspotRejectionNote({total,incorporated,rejected,pending},b){
- const f=x=>x.toLocaleString('es-MX');
+export function hubspotRejectionNote({total,incorporated,rejected,pending},b,idioma='es'){
+ const f=x=>fNumI(x,idioma),E=(es,en)=>elegir(idioma,es,en);
  if(!(rejected>0)||!(total>0))return null;
- if(!b||b.status!=='ok')return `${rejectionNote({total,incorporated,rejected,pending})} Desglose de las rechazadas por motivo: No disponible ahora (sin filas por motivo o consulta acotada fuera de tiempo).`;
- const parts=[b.bodyIncomplete>0&&`cuerpo incompleto ${f(b.bodyIncomplete)}`,b.roleAmbiguous>0&&`rol ambiguo ${f(b.roleAmbiguous)}`,b.otherDefects>0&&`otros motivos ${f(b.otherDefects)}`].filter(Boolean);
- const share=b.incorporatedShare===null?'—':b.incorporatedShare.toLocaleString('es-MX')+' %';
+ if(!b||b.status!=='ok')return `${rejectionNote({total,incorporated,rejected,pending},idioma)} `+E('Desglose de las rechazadas por motivo: No disponible ahora (sin filas por motivo o consulta acotada fuera de tiempo).','Breakdown of rejected rows by reason: not available right now (no rows by reason, or the bounded query timed out).');
+ const parts=[b.bodyIncomplete>0&&E(`cuerpo incompleto ${f(b.bodyIncomplete)}`,`incomplete body ${f(b.bodyIncomplete)}`),b.roleAmbiguous>0&&E(`rol ambiguo ${f(b.roleAmbiguous)}`,`ambiguous role ${f(b.roleAmbiguous)}`),b.otherDefects>0&&E(`otros motivos ${f(b.otherDefects)}`,`other reasons ${f(b.otherDefects)}`)].filter(Boolean);
+ const share=b.incorporatedShare===null?'—':fNumI(b.incorporatedShare,idioma)+(idioma==='en'?'%':' %');
+ if(idioma==='en')return `Conversations incorporated: ${f(incorporated)} of ${f(b.conversationRows)} rows with a conversation (${share}; base: the ${f(total)} rows read minus ${f(b.metadataOnly)} metadata-only records). `
+  +`Rejected with a defect: ${f(b.defects)}${parts.length?` (${parts.join(' · ')})`:''}. `
+  +`Metadata-only records (no messages): ${f(b.metadataOnly)}: they are not lost conversations. `
+  +(pending>0?`${f(pending)} are still waiting to be processed.`:'No rows are pending.');
  return `Conversaciones incorporadas: ${f(incorporated)} de ${f(b.conversationRows)} filas con conversación (${share}; base: las ${f(total)} filas leídas menos ${f(b.metadataOnly)} registros solo de metadatos). `
   +`Rechazadas con defecto: ${f(b.defects)}${parts.length?` (${parts.join(' · ')})`:''}. `
   +`Registros solo de metadatos (sin mensajes): ${f(b.metadataOnly)}: no son conversaciones perdidas. `
   +(pending>0?`Aún hay ${f(pending)} pendientes de procesar.`:'No quedan filas pendientes.');
 }
+
 export function createProvenanceRepository({database}){
  return {
   /** Coverage per source: import rows (accepted+duplicate / rejected / pending) plus the sources that never create `imports` rows
@@ -115,20 +122,20 @@ export function createProvenanceRepository({database}){
    const lsum=await readLedgerCounts(s);
    if(lsum.availability==='ready'){
     const names=await attempt(s,async()=>new Map((await s.query('SELECT DISTINCT ON(source_id) source_id,name FROM public.economic_source_versions WHERE tenant_id=$1 ORDER BY source_id,version DESC LIMIT 100',[s.tenantId])).rows.map(r=>[r.source_id,r.name])));
-    if(names.value){lrows=lsum.groups.map(x=>({name:names.value.get(x.sourceId)??'Fuente sin nombre',currency:x.currency,kind:x.kind,n:x.entities,revisions:x.revisions}));exact=lsum.freshness==='fresh';factor=1;ledgerSummary={meta:summaryMeta(lsum),label:summaryLabel(lsum)};}
+    if(names.value){lrows=lsum.groups.map(x=>({name:names.value.get(x.sourceId)??E('Fuente sin nombre','Unnamed source'),currency:x.currency,kind:x.kind,n:x.entities,revisions:x.revisions}));exact=lsum.freshness==='fresh';factor=1;ledgerSummary={meta:summaryMeta(lsum),label:summaryLabel(lsum)};}
    }
    if(!lrows){lrows=await g(ledgerQuery(''),Math.min(EXACT_STEP_MS,left()));exact=lrows!==null;if(lrows===null)lrows=await g(ledgerQuery(` TABLESAMPLE BERNOULLI (${SAMPLE_PERCENT}) REPEATABLE (7)`));factor=exact?1:100/SAMPLE_PERCENT;}
    let revisions=0;
    if(lrows===null)ledger=none('ledger','timeout');
    else if(lrows.length){const groups=new Map();for(const r of lrows){const k=r.name+' · '+r.currency,o=groups.get(k)??{orders:0,refunds:0,other:0};revisions+=Math.round(Number(r.revisions)*factor);const v=Math.round(Number(r.n)*factor);if(r.kind==='order')o.orders+=v;else if(r.kind==='refund')o.refunds+=v;else o.other+=v;groups.set(k,o);}
-    const total=[...groups.values()].reduce((a,o)=>a+o.orders+o.refunds+o.other,0),lines=lineasLibroPorFuente(groups);
-    ledger=base('ledger',{class:exact?'observed':'estimated',total,incorporated:total,detail:[...lines,...(groups.size>6?[`y ${groups.size-6} grupos más`]:[]),'Conteo de registros por fuente y moneda; las monedas no se suman.',...(ledgerSummary?[`${exact?`Conteo exacto del libro: ${total.toLocaleString('es-MX')} registros distintos en ${revisions.toLocaleString('es-MX')} revisiones guardadas, de todo el historial (Dinero cuenta solo los últimos 12 meses).`:`${total.toLocaleString('es-MX')} registros distintos en ${revisions.toLocaleString('es-MX')} revisiones al corte del resumen, de todo el historial (Dinero cuenta solo los últimos 12 meses).`}`,ledgerSummary.label]:exact?[`Conteo exacto del libro: ${total.toLocaleString('es-MX')} registros distintos en ${revisions.toLocaleString('es-MX')} revisiones guardadas, de todo el historial (Dinero cuenta solo los últimos 12 meses).`]:[`Estimado con una muestra del ${SAMPLE_PERCENT} %.`])],...(ledgerSummary?{summary:ledgerSummary.meta}:{})});}
+    const total=[...groups.values()].reduce((a,o)=>a+o.orders+o.refunds+o.other,0),lines=lineasLibroPorFuente(groups,idioma);
+    ledger=base('ledger',{class:exact?'observed':'estimated',total,incorporated:total,detail:[...lines,...(groups.size>6?[E(`y ${groups.size-6} grupos más`,`and ${groups.size-6} more groups`)]:[]),E('Conteo de registros por fuente y moneda; las monedas no se suman.','Record count by source and currency; currencies are not added together.'),...(ledgerSummary?[exact?E(`Conteo exacto del libro: ${total.toLocaleString('es-MX')} registros distintos en ${revisions.toLocaleString('es-MX')} revisiones guardadas, de todo el historial (Dinero cuenta solo los últimos 12 meses).`,`Exact ledger count: ${F(total)} distinct records across ${F(revisions)} stored revisions, over the whole history (Money counts only the last 12 months).`):E(`${total.toLocaleString('es-MX')} registros distintos en ${revisions.toLocaleString('es-MX')} revisiones al corte del resumen, de todo el historial (Dinero cuenta solo los últimos 12 meses).`,`${F(total)} distinct records across ${F(revisions)} revisions at the summary cutoff, over the whole history (Money counts only the last 12 months).`),ledgerSummary.label]:exact?[E(`Conteo exacto del libro: ${total.toLocaleString('es-MX')} registros distintos en ${revisions.toLocaleString('es-MX')} revisiones guardadas, de todo el historial (Dinero cuenta solo los últimos 12 meses).`,`Exact ledger count: ${F(total)} distinct records across ${F(revisions)} stored revisions, over the whole history (Money counts only the last 12 months).`)]:[E(`Estimado con una muestra del ${SAMPLE_PERCENT} %.`,`Estimated from a ${SAMPLE_PERCENT}% sample.`)])],...(ledgerSummary?{summary:ledgerSummary.meta}:{})});}
    // 5. HubSpot ticket-contact associations: facts by state and active bindings (links).
    let associations=none('associations');
    // Conteos mantenidos (association_counts, 20261022000000): no dependen de la política initplan 20261021000000. Sin ellos: tally exacto o muestra.
    const asum=await readAssociationCounts(s);
    const assocBase=(c,total,linkCount,exact,tail,extra={})=>base('associations',{class:exact?'observed':'estimated',total,incorporated:total,counts:{facts:total,resolved:c.resolved??0,pending:c.pending??0,blocked:c.blocked??0,retained:c.retained??0,links:linkCount},
-    detail:[`${total.toLocaleString('es-MX')} hechos (resueltos ${(c.resolved??0).toLocaleString('es-MX')} · pendientes ${(c.pending??0).toLocaleString('es-MX')} · por revisar ${(c.blocked??0).toLocaleString('es-MX')} · retenidos ${(c.retained??0).toLocaleString('es-MX')})`,linkCount===null?'Vínculos: no disponible ahora':`${linkCount.toLocaleString('es-MX')} vínculos activos conversación–cliente`].concat(tail),...extra});
+    detail:[E(`${total.toLocaleString('es-MX')} hechos (resueltos ${(c.resolved??0).toLocaleString('es-MX')} · pendientes ${(c.pending??0).toLocaleString('es-MX')} · por revisar ${(c.blocked??0).toLocaleString('es-MX')} · retenidos ${(c.retained??0).toLocaleString('es-MX')})`,`${F(total)} facts (resolved ${F(c.resolved??0)} · pending ${F(c.pending??0)} · to review ${F(c.blocked??0)} · held ${F(c.retained??0)})`),linkCount===null?E('Vínculos: no disponible ahora','Links: not available right now'):E(`${linkCount.toLocaleString('es-MX')} vínculos activos conversación–cliente`,`${F(linkCount)} active conversation-customer links`)].concat(tail),...extra});
    if(asum.availability==='ready'&&asum.counts.fact_resolved!==undefined){
     const k=asum.counts,c={resolved:k.fact_resolved,pending:k.fact_pending,blocked:k.fact_blocked,retained:k.fact_retained},total=c.resolved+c.pending+c.blocked+c.retained;
     if(total>0)associations=assocBase(c,total,k.binding_active??0,asum.freshness==='fresh',[asum.freshness==='fresh'?'Conteo exacto.':'',summaryLabel(asum)].filter(Boolean),{summary:summaryMeta(asum)});
@@ -139,11 +146,11 @@ export function createProvenanceRepository({database}){
    if(facts===null){if(!hadSummary)associations=none('associations','timeout');}
    else if(facts.rows.length&&(facts.exact||!hadSummary)){const links=await tally({table:'public.conversation_customer_association_bindings',alias:'b',where:'b.active',group:"'links'"});
     const c=Object.fromEntries(facts.rows.map(r=>[r.g,r.n])),total=facts.rows.reduce((a,r)=>a+r.n,0),linkCount=links&&links.rows[0]?links.rows[0].n:links===null?null:0,exact=facts.exact&&(links===null||links.exact);
-    if(exact||!hadSummary)associations=assocBase(c,total,linkCount,exact,exact?['Conteo exacto.']:[`Estimado con una muestra del ${SAMPLE_PERCENT} %.`]);}
+    if(exact||!hadSummary)associations=assocBase(c,total,linkCount,exact,exact?[E('Conteo exacto.','Exact count.')]:[E(`Estimado con una muestra del ${SAMPLE_PERCENT} %.`,`Estimated from a ${SAMPLE_PERCENT}% sample.`)]);}
    }
    const sources=[by.hubspot,associations,by.csv,ledger,excel,attachments,by.zendesk];
    for(const r of rows)if(!EXPECTED_SOURCES.some(e=>e.key===r.source))sources.push({...fromImports(r.source),label:SOURCE_LABELS[r.source]??r.source,key:r.source});
-   return {generatedAt:new Date().toISOString(),basis:'imports+tables',note:'Importaciones registradas más las fuentes que no pasan por importaciones (Tracker, adjuntos, libro de registros, asociaciones), leídas con consultas acotadas; una cifra con «Estimado» viene de una muestra rotulada. Lo que nunca se cargó aparece como «Sin cargar»; no se estima su tamaño.',sources};
+   return {generatedAt:new Date().toISOString(),basis:'imports+tables',note:E('Importaciones registradas más las fuentes que no pasan por importaciones (Tracker, adjuntos, libro de registros, asociaciones), leídas con consultas acotadas; una cifra con «Estimado» viene de una muestra rotulada. Lo que nunca se cargó aparece como «Sin cargar»; no se estima su tamaño.','Recorded imports plus the sources that do not go through imports (Tracker, attachments, records ledger, associations), read with bounded queries; a figure marked "Estimated" comes from a labeled sample. Anything never loaded appears as "Not loaded"; its size is not estimated.'),sources};
   });},
   /** Origin of a quoted message revision: revision hash -> source row -> import file hash. Absent links are reported, never invented. */
   async origin({messageRevisionId}){if(!uuid(messageRevisionId))throw new WorkspaceError('origin_input_invalid',400);
@@ -172,12 +179,12 @@ export function createProvenanceRepository({database}){
  * y su libro de devoluciones): una línea con «0 reembolsos» NO dice que el canal no tenga. Si otra fuente del mismo canal y moneda sí los tiene, la línea lo dice
  * (mismas cifras que «Fuga de reembolsos»).
  */
-export function lineasLibroPorFuente(groups) {
-  const f = v => v.toLocaleString('es-MX'), porCanal = new Map();
+export function lineasLibroPorFuente(groups, idioma = 'es') {
+  const f = v => fNumI(v, idioma), porCanal = new Map(), E = (es, en) => elegir(idioma, es, en);
   for (const [k, o] of groups) { const canal = canalDeFuente(k.split(' · ')[0]), moneda = k.split(' · ').at(-1), c = canal + '|' + moneda; if (canal !== 'otro') porCanal.set(c, (porCanal.get(c) ?? 0) + o.refunds); }
   return [...groups.entries()].slice(0, 6).map(([k, o]) => {
     const canal = canalDeFuente(k.split(' · ')[0]), total = porCanal.get(canal + '|' + k.split(' · ').at(-1)) ?? 0;
-    const nota = o.refunds === 0 && total > 0 ? ` (los reembolsos de ${NOMBRE_CANAL[canal]} están en su fuente de devoluciones: ${f(total)} en el canal)` : '';
-    return `${k}: ${f(o.orders)} pedidos · ${f(o.refunds)} reembolsos${nota}${o.other ? ` · ${f(o.other)} otros` : ''}`;
+    const nota = o.refunds === 0 && total > 0 ? E(` (los reembolsos de ${NOMBRE_CANAL[canal]} están en su fuente de devoluciones: ${f(total)} en el canal)`, ` (${NOMBRE_CANAL[canal]} refunds are in its returns source: ${f(total)} in the channel)`) : '';
+    return E(`${k}: ${f(o.orders)} pedidos · ${f(o.refunds)} reembolsos${nota}${o.other ? ` · ${f(o.other)} otros` : ''}`, `${k}: ${f(o.orders)} orders · ${f(o.refunds)} refunds${nota}${o.other ? ` · ${f(o.other)} other` : ''}`);
   });
 }

@@ -14,6 +14,16 @@ export const TEMA_NOTA = {
   ubicaciones: 'Casos por estado: aún sin fuente de destino',
   sku: 'Los SKU con más dinero devuelto: otro corte del mismo dinero',
 };
+export const TEMA_NOTA_EN = {
+  devoluciones: 'Denied or pending refunds: parts of the money refunded',
+  garantia: 'Warranty requests: the Tracker has no amount',
+  logistica: 'Slow threads and repeat contact: measured in cases, not in money',
+  canales: 'Money refunded by channel, plus cancelled orders',
+  ubicaciones: 'Cases by state: no destination source yet',
+  sku: 'SKUs with the most money refunded: another cut of the same money',
+};
+/** Nota del tema en el idioma pedido (por omisión español). */
+export const notaDeTema = (id, idioma) => (idioma === 'en' ? TEMA_NOTA_EN : TEMA_NOTA)[id];
 const fin = x => (typeof x === 'number' && Number.isFinite(x) && x > 0 ? x : null);
 /** Valor numérico del punto en el modo elegido (sin descartar agregados), o null si es sin dato / cero / inválido (desconocido ≠ 0: jamás una burbuja de tamaño 0). */
 export function valorBruto(p, modo) {
@@ -117,7 +127,7 @@ export function conciliar(puntos, modo = 'dinero') {
  * escalaDe = TODOS los puntos (la escala y la conciliación no cambian al filtrar por pestaña).
  * Devuelve cúmulos con burbujas ya colocadas (coordenadas locales de cada cúmulo), los temas vacíos aparte (`vacios`), `sinCifra` (compat: desconocidos), escala y conciliación.
  */
-export function disponerBurbujas({puntos, modo = 'dinero', ancho = 840, temas = TEMAS_ORDEN, escalaDe = null}) {
+export function disponerBurbujas({puntos, modo = 'dinero', ancho = 840, temas = TEMAS_ORDEN, escalaDe = null, idioma}) {
   const todosLosPuntos = escalaDe ?? puntos;
   const dibujables = puntos.filter(p => !p.agregado);
   const escalaVals = [...todosLosPuntos, ...puntos].filter(p => !p.agregado).map(p => valorBruto(p, modo)).filter(v => v !== null);
@@ -134,14 +144,14 @@ export function disponerBurbujas({puntos, modo = 'dinero', ancho = 840, temas = 
   const rMax = Math.max(18, Math.min(rMaxBase, Math.floor((g.colAncho - 2 * PAD) / 2)));
   const clusters = llenos.map(i => {
     const items = i.con.map(x => ({p: x.p, valor: x.v, r: radioDe(x.v, vmax, rMax)})).sort((a, b) => b.valor - a.valor || a.p.id.localeCompare(b.p.id));
-    const vTxt = v => (modo === 'dinero' ? usdCorto(String(Math.round(v * 100))) : num(v));
+    const vTxt = v => (modo === 'dinero' ? usdCorto(String(Math.round(v * 100)), idioma) : num(v, idioma));
     const grandes = items.filter(x => x.r >= R_UMBRAL).map(x => ({tipo: 'punto', id: x.p.id, tema: i.id, valor: x.valor, r: x.r, clase: x.p.clase, label: rotular(nombreCorto(x.p.nombre), vTxt(x.valor), x.r, g.colAncho)}));
     const unicoChico = items.filter(x => x.r < R_UMBRAL).length === 1 ? items.find(x => x.r < R_UMBRAL) : null; // un solo pequeño no es un grupo: se dibuja él mismo con tamaño mínimo marcado
     const chicos = unicoChico ? [] : items.filter(x => x.r < R_UMBRAL), sumaChicos = suma(chicos.map(x => x.valor));
     const rg = chicos.length ? radioDe(sumaChicos, vmax, rMax) : 0;
     if (unicoChico) { const r = Math.max(R_GRUPO_MIN, unicoChico.r); grandes.push({tipo: 'punto', id: unicoChico.p.id, tema: i.id, valor: unicoChico.valor, r, clase: unicoChico.p.clase, minimo: r > unicoChico.r, label: rotular(nombreCorto(unicoChico.p.nombre), vTxt(unicoChico.valor), r, g.colAncho)}); }
     const rgf = Math.max(R_GRUPO_MIN, rg);
-    const grupo = chicos.length ? [{tipo: 'grupo', id: 'grupo~' + i.id, tema: i.id, valor: sumaChicos, r: rgf, minimo: rg < R_GRUPO_MIN, label: rotular(chicos.length + (chicos.length === 1 ? ' pequeño' : ' pequeños'), vTxt(sumaChicos), rgf, g.colAncho), n: chicos.length, ids: chicos.map(x => x.p.id), miembros: chicos.map(x => ({id: x.p.id, nombre: x.p.nombre, valor: x.valor})), clase: 'O'}] : [];
+    const grupo = chicos.length ? [{tipo: 'grupo', id: 'grupo~' + i.id, tema: i.id, valor: sumaChicos, r: rgf, minimo: rg < R_GRUPO_MIN, label: rotular(chicos.length + (idioma === 'en' ? ' small' : chicos.length === 1 ? ' pequeño' : ' pequeños'), vTxt(sumaChicos), rgf, g.colAncho), n: chicos.length, ids: chicos.map(x => x.p.id), miembros: chicos.map(x => ({id: x.p.id, nombre: x.p.nombre, valor: x.valor})), clase: 'O'}] : [];
     const {puestas, alto} = empaquetar([...grandes, ...grupo], g.colAncho);
     const unidades = [...new Set(items.map(x => x.p.volumen?.unidad).filter(Boolean))];
     // ¿De qué dinero es parte? Si los puntos del cúmulo cuelgan de un total (padre), cuánto de ese total reparten.

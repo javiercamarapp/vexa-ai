@@ -1,7 +1,7 @@
 'use client';
 import {RovaqCargando} from '../rovaq-cargando';
 import {useCallback,useEffect,useMemo,useState} from 'react';
-import {useLocaleIntl,useT} from '../i18n/proveedor';
+import {useIdioma,useLocaleIntl,useT} from '../i18n/proveedor';
 import type {Clave} from '../../lib/i18n';
 import type {TrendsView,LedgerMonth} from '../../../../../packages/workspace-service/trends.mjs';
 import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
@@ -12,16 +12,16 @@ import {Button,Refresh} from './button';
 import {KindBadge} from './kind-badge';
 import {ColumnPlot,type ColumnDatum} from './column-chart';
 import {fetchCupo} from '../../lib/workspace/cupo.mjs';
-const nfCount=new Intl.NumberFormat('es-MX');
+import {nf} from '../../lib/formato/idioma.mjs';
+const nfCount=nf;
 /** Puntos de importes: altura = fracción exacta del máximo (bps, BigInt); `axis` rotula el eje en unidades mayores de la moneda. */
 export function ledgerAxis(maxMinor:bigint,exponent:number){return (t:number,max:number)=>axisLabel(max>0?Number(maxMinor)*(t/max):0,exponent);}
-const monthShort=(m:string)=>mesAbrev(m);
 const monthLong=(m:string,loc:string)=>new Intl.DateTimeFormat(loc,{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
 type Point={month:string;value:number|null;label:string;detail?:string};
 /** Bars anchored at zero, one axis, tooltip on hover/focus, table equivalent. Heights are exact ratios (money via BigInt basis points). Drawn by the shared ColumnPlot. */
 export function Bars({title,unit,points,kind,note,tickLabel}:{title:string;unit:string;points:Point[];kind:'observed'|'estimated';note?:string;/** Rotula el eje cuando la altura no está en la unidad mostrada (p. ej. importes como fracción del máximo). */tickLabel?:(tick:number,max:number)=>string}){
- const t=useT(),loc=useLocaleIntl();
- const data:ColumnDatum[]=points.map(p=>({key:p.month,label:monthShort(p.month),long:monthLong(p.month,loc),value:p.value,display:p.label,detail:p.detail}));
+ const t=useT(),loc=useLocaleIntl(),idioma=useIdioma();
+ const data:ColumnDatum[]=points.map(p=>({key:p.month,label:mesAbrev(p.month,idioma),long:monthLong(p.month,loc),value:p.value,display:p.label,detail:p.detail}));
  return <figure className="chart trend">
   <figcaption className="chart-title"><span>{title}</span><span className="trend-meta"><KindBadge kind={kind}/><span>{unit}</span></span></figcaption>
   <ColumnPlot data={data} kind={kind} title={title} axis={tickLabel}/>

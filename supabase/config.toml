@@ -53,13 +53,16 @@ additional_redirect_urls = ["http://localhost:3640/auth/callback", "http://127.0
 jwt_expiry = 3600
 enable_refresh_token_rotation = true
 refresh_token_reuse_interval = 10
-enable_signup = true
+# Cierre de seguridad 29-oct: el registro público debe estar CERRADO. Los usuarios nuevos entran solo por invitación (admin.inviteUserByEmail con la llave de servidor,
+# que no depende de este ajuste) y los existentes por enlace (signInWithOtp shouldCreateUser:false) o Google. Ver docs/seguridad/CERRAR-REGISTRO-PUBLICO.md.
+enable_signup = false
 enable_anonymous_sign_ins = false
 minimum_password_length = 12
 
 [auth.email]
-enable_signup = true
-enable_confirmations = false
+enable_signup = false
+# Producción tiene mailer_autoconfirm=false (exige confirmar el correo): el archivo ya no debe contradecirlo si alguien corre `supabase config push`.
+enable_confirmations = true
 # Vigencia de enlaces y códigos (segundos). Los textos de los correos dicen «1 hora»: si cambia, cambiar VIGENCIA en email-system.mjs.
 otp_expiry = 3600
 

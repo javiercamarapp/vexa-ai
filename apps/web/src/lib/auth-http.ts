@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AccessError, authClient, config, PRIVATE_HEADERS } from './auth';
+import { reportAccess } from '@vexa/platform/session';
 export function requestAuth(request:NextRequest) {
   const updates:Parameters<NextResponse['cookies']['set']>[]=[];
   const client=authClient({getAll:()=>request.cookies.getAll(),set:(name,value,options)=>{request.cookies.set(name,value);updates.push([name,value,options]);}});
@@ -7,6 +8,7 @@ export function requestAuth(request:NextRequest) {
   return {client,finish};
 }
 export function failure(error:unknown) {
+  if(error instanceof AccessError)reportAccess(error);
   const status=error instanceof AccessError?error.status:503;
   const code=error instanceof AccessError?error.code:'identity_unavailable';
   return NextResponse.json({error:{code,message:status===403?'Acceso denegado.':'No se pudo validar el acceso.',retryable:status===503}},{status,headers:PRIVATE_HEADERS});

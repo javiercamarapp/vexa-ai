@@ -14,7 +14,7 @@ export async function POST(request:Request){
  const reply=(code:string,status:number)=>Response.json({code},{status,headers:{'Cache-Control':'private, no-store'}});
  const secret=process.env.VEXA_WORKER_TRIGGER_SECRET;
  if(!secret||secret.length<32)return reply('PROBLEMS_CONFIGURATION_REQUIRED',503);
- if(!timingSafeEqual(digest(request.headers.get('authorization')??''),digest('Bearer '+secret)))return reply('UNAUTHORIZED',401);
+ if(!timingSafeEqual(digest(request.headers.get('authorization')??''),digest('Bearer '+secret))){try{globalThis.__vexaSecuritySink?.({kind:'bearer_invalid',route:new URL(request.url).pathname,method:request.method,ipRaw:request.headers.get('x-forwarded-for'),ua:request.headers.get('user-agent')});}catch{/* el registro nunca rompe */}return reply('UNAUTHORIZED',401);}
  try{await readTriggerInput(request);}catch(error){const timeout=error instanceof Error&&error.message==='BODY_TIMEOUT';return reply(timeout?'REQUEST_TIMEOUT':'BODY_NOT_ALLOWED',timeout?408:400);}
  if(active)return reply('CHUNK_BUSY',409);active=true;let worker;
  try{

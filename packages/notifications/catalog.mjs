@@ -1,4 +1,5 @@
 // Labels/policy selectively adopted from 5fbf223 notification templates; no external transport.
+import {idiomaDe} from './idioma.mjs';
 const entries=[
  ['membership.welcome','Tu acceso está listo','Ya puedes entrar a tu espacio de trabajo y consultar los recursos que tu equipo te haya autorizado.'],
  ['membership.invited','Tu equipo te invita a colaborar','Una persona propietaria debe crear y reservar explícitamente la invitación. Este evento todavía no está conectado.'],
@@ -21,3 +22,21 @@ export function resourceHref(type,id){
  if(type==='membership.welcome')return '/overview';
  return null;
 }
+
+// Misma lista en inglés (mismo orden y mismos tipos). Se elige con `catalogFor(idioma)` / `channelsFor(idioma)`; sin idioma, el español de arriba.
+const entriesEn=[
+ ['membership.welcome','Your access is ready','You can now enter your workspace and view the resources your team has given you access to.'],
+ ['membership.invited','Your team invites you to collaborate','A workspace owner must explicitly create and reserve the invitation. This event is not connected yet.'],
+ ['brief.available','Priorities, in one place','A brief is available for your team. Review the analysis, its sources and the pending decisions inside Rovaq AI.'],
+ ['intervention.assigned','An action is waiting for your review','An intervention has been assigned to you. Review its goal, the evidence and the next steps before recording an action.'],
+ ['connection.attention','Check the status of your connection','A connection in your organization needs review. Check its status before deciding how to proceed.'],
+ ['processing.failed','Review the pending processing','A processing job could not be completed. Check the error and the available options; the data is not assumed to be complete.'],
+];
+const catalogEn=Object.freeze(entriesEn.map(([type,label,description])=>Object.freeze({type,label,description,connected:type!=='membership.invited'})));
+const channelsEn=Object.freeze([
+ {id:'inapp',label:'Notification center',deliveryAvailable:true,reason:'Authorized events are saved with the business operation. Requires an enabled policy, your preferences and the active consumer.'},
+ {id:'email',label:'Email',deliveryAvailable:false,reason:'The adapter is integrated. The sender and provider configuration is checked on the server; a preference does not confirm delivery.'},
+ {id:'push',label:'Push notifications',deliveryAvailable:false,reason:'The adapter is integrated. Turn on the device with explicit consent; a preference does not grant browser permission.'},
+].map(Object.freeze));
+export const catalogFor=idioma=>idiomaDe(idioma)==='en'?catalogEn:catalog;
+export const channelsFor=idioma=>idiomaDe(idioma)==='en'?channelsEn:channels;

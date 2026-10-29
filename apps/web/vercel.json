@@ -8,6 +8,10 @@
     {
       "path": "/api/internal/metadata",
       "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/internal/security-alerts",
+      "schedule": "*/15 * * * *"
     }
   ]
 }

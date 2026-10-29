@@ -3,6 +3,8 @@ import {ConMarca} from '../ui/brand-mark';
 import {useId, useState, type ReactNode} from 'react';
 import {KindBadge} from '../ui/kind-badge';
 import {PfIcon} from './icons';
+import {useIdioma, useT} from '../i18n/proveedor';
+import {numero} from '../../lib/i18n/formato';
 import type {EpistemicKind} from '../../lib/epistemic.mjs';
 
 export type Tone = 'ok' | 'warn' | 'bad' | 'info' | 'muted';
@@ -28,9 +30,10 @@ export function Tile({label, value, kind, foot, delta, coverage, children, how}:
   </article>;
 }
 /** «Cómo se calculó»: expansor en píldora, mismo estilo que el resto de las vistas. */
-export function HowTo({text, label = 'Cómo se calculó'}: {text: string; label?: string}) {
+export function HowTo({text, label}: {text: string; label?: string}) {
+  const t = useT();
   const id = useId(), [open, setOpen] = useState(false);
-  return <div className="pf-how"><button type="button" className="btn btn-sm btn-ghost" aria-expanded={open} aria-controls={id} onClick={() => setOpen(o => !o)}><PfIcon name="info" size={14} /><span className="btn-label">{label}</span></button><p id={id} hidden={!open}>{text}</p></div>;
+  return <div className="pf-how"><button type="button" className="btn btn-sm btn-ghost" aria-expanded={open} aria-controls={id} onClick={() => setOpen(o => !o)}><PfIcon name="info" size={14} /><span className="btn-label">{label ?? t('tr.pl.comoSeCalculo')}</span></button><p id={id} hidden={!open}>{text}</p></div>;
 }
 export function Panel({eyebrow, title, marca, actions, children, id, lead, className}: {eyebrow?: string; title: string; /** integración cuyo logo precede al título */marca?: string; actions?: ReactNode; children: ReactNode; id?: string; lead?: ReactNode; className?: string}) {
   const hid = useId();
@@ -47,5 +50,11 @@ export function Empty({title, children, action, tone = 'muted'}: {title: string;
 export function Seg<T extends string>({label, value, options, onChange}: {label: string; value: T; options: ReadonlyArray<{value: T; label: string}>; onChange: (v: T) => void}) {
   return <div className="pf-seg" role="group" aria-label={label}>{options.map(o => <button key={o.value} type="button" className="btn btn-sm" aria-pressed={value === o.value} onClick={() => onChange(o.value)}>{o.label}</button>)}</div>;
 }
-export const Skeleton = ({lines = 3}: {lines?: number}) => <div className="skeleton-stack" role="status" aria-label="Cargando">{Array.from({length: lines}, (_, i) => <span key={i} className="skeleton skeleton-line" style={{width: 90 - i * 18 + '%'}} />)}</div>;
-export const Meter = ({bps, tone}: {bps: number | null; tone?: Tone}) => bps === null ? <span className="muted">Sin tope</span> : <span className="pf-meter" role="img" aria-label={`${(bps / 100).toFixed(1)} % del tope`} data-tone={tone ?? (bps >= 10000 ? 'bad' : bps >= 8000 ? 'warn' : 'ok')}><span style={{width: Math.min(100, bps / 100) + '%'}} /></span>;
+export function Skeleton({lines = 3}: {lines?: number}) {
+  const t = useT();
+  return <div className="skeleton-stack" role="status" aria-label={t('tr.pl.cargando')}>{Array.from({length: lines}, (_, i) => <span key={i} className="skeleton skeleton-line" style={{width: 90 - i * 18 + '%'}} />)}</div>;
+}
+export function Meter({bps, tone}: {bps: number | null; tone?: Tone}) {
+  const t = useT(), idioma = useIdioma();
+  return bps === null ? <span className="muted">{t('tr.pl.sinTope')}</span> : <span className="pf-meter" role="img" aria-label={t('tr.pl.delTope', {pct: numero(idioma, bps / 100, {minimumFractionDigits: 1, maximumFractionDigits: 1})})} data-tone={tone ?? (bps >= 10000 ? 'bad' : bps >= 8000 ? 'warn' : 'ok')}><span style={{width: Math.min(100, bps / 100) + '%'}} /></span>;
+}

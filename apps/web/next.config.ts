@@ -45,6 +45,21 @@ const nextConfig: NextConfig = {
       { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()' },
       { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
     ] }, {
+      // B-01 (auditoría 4): `preload` solo en los hosts propios (rovaq.ai, www y app). Nunca en *.vercel.app, que no es nuestro dominio. La cabecera sola no inscribe nada:
+      // la inscripción en hstspreload.org la decide Javier tras confirmar que TODOS los subdominios de rovaq.ai sirven HTTPS (retirarse de la lista es lento).
+      source: '/:path*', has: [{ type: 'host', value: '(?:app\\.|www\\.)?rovaq\\.ai' }], headers: [
+        { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
+      ],
+    }, {
+      // Cierre de seguridad 29-oct: cabeceras extra SOLO para el host de la aplicación (el sitio público en rovaq.ai/www no las recibe).
+      // CORP evita que otros orígenes incrusten recursos de la app (fuentes, marca, exportaciones); el resto cierra rutas de lectura cruzada heredadas.
+      source: '/:path*', has: [{ type: 'host', value: 'app.rovaq.ai' }], headers: [
+        { key: 'Cross-Origin-Resource-Policy', value: 'same-origin' },
+        { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
+        { key: 'Origin-Agent-Cluster', value: '?1' },
+        { key: 'X-DNS-Prefetch-Control', value: 'off' },
+      ],
+    }, {
       // Espacio de trabajo, plataforma, acceso y API: nunca se indexan (segunda barrera además del metadata robots de cada segmento).
       source: `/:privado(${privado})/:path*`, headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' }],
     }, {

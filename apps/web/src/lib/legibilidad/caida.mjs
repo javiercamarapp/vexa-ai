@@ -3,8 +3,9 @@
 import {diaCorte} from '../../../../../packages/workspace-service/datos-hasta.mjs';
 import {formatMinorUnits} from '../formato/dinero-pantalla.mjs';
 import {porcentaje, variacionDecimas} from '../formato/es-mx.mjs';
-const mes = (m) => new Intl.DateTimeFormat('es-MX', {month: 'long', year: 'numeric', timeZone: 'UTC'}).format(new Date(m + '-01T00:00:00Z'));
-const nf = (n) => Number(n).toLocaleString('es-MX');
+import {LOCALES} from '../formato/idioma.mjs';
+const mes = (m) => new Intl.DateTimeFormat(LOCALES.es, {month: 'long', year: 'numeric', timeZone: 'UTC'}).format(new Date(m + '-01T00:00:00Z'));
+const nf = (n) => Number(n).toLocaleString(LOCALES.es);
 // Variación en décimas de punto porcentual (definición única: lib/formato/es-mx.mjs); 1000 pb = 10 % = 100 décimas.
 const pct = (decimas) => porcentaje(decimas / 10, {conSigno: true});
 const cambioBps = (antes, despues) => { const d = variacionDecimas(despues, antes); return d === null ? null : d * 10; };

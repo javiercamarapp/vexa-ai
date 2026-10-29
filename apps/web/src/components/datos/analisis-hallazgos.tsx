@@ -38,7 +38,7 @@ export function HallazgosAnalisis({jobs,fuentes,masPaginas}:{jobs:JobFila[];fuen
  return <>
   <section className="card" aria-labelledby="an-cob-t">
    <div className="card-title"><div><h2 id="an-cob-t">{tx('tr.datos.anCobTitulo')}</h2><p>{cob.pct===null&&trends.busy?<span className="sr-only">{tx('tr.datos.anCalculando')}</span>:cob.texto}</p></div>{total!==null&&<KindBadge kind={cob.estimado?'estimated':'observed'}/>}</div>
-   <div className="dn-bar" role="img" aria-label={cob.pct===null?tx('tr.datos.anCobNoDisp'):tx('tr.datos.anAnalizadas',{pct:cob.pct.toLocaleString('es-MX')})}>{cob.pct!==null&&<span className="dn-in" style={{width:Math.max(1,Math.min(100,cob.pct))+'%'}}/>}</div>
+   <div className="dn-bar" role="img" aria-label={cob.pct===null?tx('tr.datos.anCobNoDisp'):tx('tr.datos.anAnalizadas',{pct:nf.format(cob.pct)})}>{cob.pct!==null&&<span className="dn-in" style={{width:Math.max(1,Math.min(100,cob.pct))+'%'}}/>}</div>
    <p className="dn-meta">{cob.nota} {tx(enPagina===1?'tr.datos.anLista1':'tr.datos.anListaN',{n:nf.format(enPagina),mas:masPaginas?tx('tr.datos.anMas'):'',a:nf.format(conHallazgo),b:nf.format(runs.length)})}</p>
   </section>
   <section className="card" aria-labelledby="an-tab-t">

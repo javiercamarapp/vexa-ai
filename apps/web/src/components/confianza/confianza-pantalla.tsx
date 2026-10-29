@@ -1,5 +1,5 @@
 'use client';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
 import {RovaqCargando} from '../rovaq-cargando';
 import {useMemo} from 'react';
 import type {CoverageView} from '../../../../../packages/workspace-service/provenance.mjs';
@@ -34,15 +34,15 @@ const Tarjeta=({id,titulo,sub,extra,flush=false,children}:{id:string;titulo:stri
 
 /** «Datos y confianza»: semáforo por fuente, frescura por cifra, cobertura con ventanas y «qué no sabemos» como lista de tareas. Lo que no se sabe pesa lo mismo que lo que sí. */
 export function ConfianzaPantalla(){
- const tx=useT();
+ const tx=useT(),idioma=useIdioma();
  // /api/refunds y /api/workload son de propietario y analista (403 para el resto): quien no los puede leer ni los pide ni ve las tarjetas que dependen de ellos.
  const rol=useOnboarding()?.datos.rol,verDinero=rol===undefined||(ROLES_DINERO as readonly string[]).includes(rol);
  const REGLA:EntradaComo={id:'frescura',titulo:tx('conf.reglaTitulo'),clase:'observed',fuente:tx('conf.reglaFuente'),periodo:null,formula:tx('conf.reglaFormula',{n:FACTOR_ALERTA}),cobertura:null,noSabemos:[tx('conf.reglaNo1'),tx('conf.reglaNo2')]};
  const fresh=useJson('/api/freshness',acceptFresh),cov=useJson<CoverageView>('/api/coverage',acceptCov),tr=useJson<TrendsView>('/api/trends',acceptTrends);
  const fuga=useJson(verDinero?'/api/refunds':null,acceptFuga),carga=useJson(verDinero?'/api/workload':null,acceptCarga);
- const fuentes=useMemo(()=>bloqueFuentes(fresh.data),[fresh.data]),frescura=useMemo(()=>bloqueFrescura(fresh.data),[fresh.data]);
- const ventanas=useMemo(()=>bloqueVentanas(fuga.data),[fuga.data]),tarjetas=useMemo(()=>tarjetasFuentes(cov.data,tr.data),[cov.data,tr.data]);
- const tareas=useMemo(()=>queNoSabemos({fuga:fuga.data,carga:carga.data,cobertura:cov.data,frescura:fresh.data}),[fuga.data,carga.data,cov.data,fresh.data]);
+ const fuentes=useMemo(()=>bloqueFuentes(fresh.data,undefined,idioma),[fresh.data,idioma]),frescura=useMemo(()=>bloqueFrescura(fresh.data,undefined,idioma),[fresh.data,idioma]);
+ const ventanas=useMemo(()=>bloqueVentanas(fuga.data,idioma),[fuga.data,idioma]),tarjetas=useMemo(()=>tarjetasFuentes(cov.data,tr.data,tx),[cov.data,tr.data,tx]);
+ const tareas=useMemo(()=>queNoSabemos({fuga:fuga.data,carga:carga.data,cobertura:cov.data,frescura:fresh.data,idioma}),[fuga.data,carga.data,cov.data,fresh.data,idioma]);
  const ocupado=fresh.busy||cov.busy||fuga.busy||carga.busy;
  const pendiente=(r:{busy:boolean;data:unknown;error:string})=>r.busy&&!r.data;
  const n=(l:{nivel:string}[],k:string)=>l.filter(x=>x.nivel===k).length;

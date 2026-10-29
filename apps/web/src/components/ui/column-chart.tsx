@@ -1,6 +1,6 @@
 'use client';
 import {useId,useState,type KeyboardEvent} from 'react';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
 import {useWidth} from './use-width';
 import {ChartLegend,ChartTip,HatchDef} from './chart-parts';
 import {cadaCuantas,compactEs,esConteoPequeno,geometriaColumnas,indicesEtiquetados,niceScale,variacionVsAnterior} from '../../lib/charts/escala.mjs';
@@ -13,10 +13,10 @@ const PAD_T=20,PAD_B=22,PAD_R=6;
 /** Columnas finas ancladas a cero (relación barra/hueco 0.6, radio 3): tinta al 85 %, último mes completo en tinta plena, el seleccionado en rojo de marca.
  *  Un eje de 3 marcas, etiquetas directas del máximo y del último mes, tooltip con variación contra el mes anterior. Texto en píxeles reales (nunca escalado). */
 export function ColumnPlot({data,kind='observed',height=168,title,axis,deltaMode='pct',integer}:PlotProps){
- const t=useT(),[ref,width]=useWidth<HTMLDivElement>(),[active,setActive]=useState<number|null>(null),uid=useId().replace(/:/g,'');
+ const t=useT(),idioma=useIdioma(),[ref,width]=useWidth<HTMLDivElement>(),[active,setActive]=useState<number|null>(null),uid=useId().replace(/:/g,'');
  const n=data.length,vals=data.map(d=>d.value),dataMax=Math.max(0,...vals.map(v=>v??0));
  const sc=niceScale(dataMax,{integer:integer??esConteoPequeno(vals)});
- const txt=(v:number)=>v===0?'0':axis?axis(v,dataMax):compactEs(v);
+ const txt=(v:number)=>v===0?'0':axis?axis(v,dataMax):compactEs(v,idioma);
  const ticks=sc.ticks.map(txt),padL=Math.max(30,Math.max(...ticks.map(t=>t.length))*6.4+14);
  const W=Math.max(width||640,240),plotW=W-padL-PAD_R,plotH=height-PAD_T-PAD_B,base=PAD_T+plotH,{slot,bw,offset}=geometriaColumnas(n,plotW);
  const y=(v:number)=>PAD_T+plotH-(v/sc.max)*plotH,every=cadaCuantas(n,plotW,34);
@@ -31,7 +31,7 @@ export function ColumnPlot({data,kind='observed',height=168,title,axis,deltaMode
    {sc.ticks.map((t,i)=><g key={i}><line x1={padL} x2={W-PAD_R} y1={y(t)} y2={y(t)} className={t===0?'chart-axis':'chart-grid'}/><text x={padL-8} y={y(t)+4} textAnchor="end" className="chart-tick">{ticks[i]}</text></g>)}
    {data.map((d,i)=>{const cx=padL+slot*i+slot/2,x0=padL+slot*i+offset,h=d.value===null?0:Math.max(d.value>0?2:0,d.value/sc.max*plotH),top=base-h,r=Math.min(3,bw/2,h);
     const path=h>0?`M${x0.toFixed(1)},${base}V${(top+r).toFixed(1)}Q${x0.toFixed(1)},${top.toFixed(1)} ${(x0+r).toFixed(1)},${top.toFixed(1)}H${(x0+bw-r).toFixed(1)}Q${(x0+bw).toFixed(1)},${top.toFixed(1)} ${(x0+bw).toFixed(1)},${(top+r).toFixed(1)}V${base}Z`:'';
-    const lab=labeled.includes(i)&&active===null&&d.value!==null?(d.short??(axis?axis(d.value,dataMax):compactEs(d.value))):null;
+    const lab=labeled.includes(i)&&active===null&&d.value!==null?(d.short??(axis?axis(d.value,dataMax):compactEs(d.value,idioma))):null;
     const anchor=lab&&cx+lab.length*3.4>W?'end':lab&&cx-lab.length*3.4<padL?'start':'middle';
     return <g key={d.key} className="col" tabIndex={0} role="img" aria-label={t(d.partial?'tr.ui.colAriaParcial':'tr.ui.colAria',{fecha:d.long??d.label,valor:d.value===null?t('tr.ui.sinDatosMin'):d.display})+(d.detail?'. '+d.detail:'')} data-active={active===i||undefined} data-last={i===last||undefined} onPointerEnter={()=>setActive(i)} onPointerDown={()=>setActive(i)} onFocus={()=>setActive(i)} onBlur={()=>setActive(null)}>
      <rect x={padL+slot*i} y={PAD_T-4} width={slot} height={plotH+PAD_B+4} className="col-hit"/>
@@ -42,7 +42,7 @@ export function ColumnPlot({data,kind='observed',height=168,title,axis,deltaMode
      {i%every===0&&<text x={cx} y={height-6} textAnchor="middle" className="chart-tick chart-xtick">{d.label}</text>}
     </g>;})}
   </svg>
-  {sel&&active!==null&&<ChartTip x={padL+slot*active+slot/2} width={W} clearance={Math.ceil(slot/2)+8} title={sel.long??sel.label} partial={sel.partial} kind={kind} detail={sel.detail} delta={deltaMode==='none'||sel.value===null?null:(()=>{const v=variacionVsAnterior(data,active,deltaMode);return v?{...v,contra:data[active-1].label}:null;})()}><strong>{sel.value===null?t('tr.ui.sinDatosCap'):sel.display}</strong></ChartTip>}
+  {sel&&active!==null&&<ChartTip x={padL+slot*active+slot/2} width={W} clearance={Math.ceil(slot/2)+8} title={sel.long??sel.label} partial={sel.partial} kind={kind} detail={sel.detail} delta={deltaMode==='none'||sel.value===null?null:(()=>{const v=variacionVsAnterior(data,active,deltaMode,idioma);return v?{...v,contra:data[active-1].label}:null;})()}><strong>{sel.value===null?t('tr.ui.sinDatosCap'):sel.display}</strong></ChartTip>}
   <ChartLegend partial={data.some(d=>d.partial&&d.value!==null)} nodata={data.some(d=>d.value===null)}/>
  </div>;
 }

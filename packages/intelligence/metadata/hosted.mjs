@@ -8,7 +8,7 @@ export function createMetadataHostedHandler({runtime,secret}={}){
   const reply=(code,status)=>Response.json({code},{status,headers:{'Cache-Control':'private, no-store'}});
   if(typeof secret!=='string'||secret.length<32||typeof runtime!=='function')return reply('METADATA_CONFIGURATION_REQUIRED',503);
   if(!['GET','POST'].includes(request.method))return reply('METHOD_NOT_ALLOWED',405);
-  if(!timingSafeEqual(hash(request.headers.get('authorization')??''),hash('Bearer '+secret)))return reply('UNAUTHORIZED',401);
+  if(!timingSafeEqual(hash(request.headers.get('authorization')??''),hash('Bearer '+secret))){try{globalThis.__vexaSecuritySink?.({kind:'bearer_invalid',route:new URL(request.url).pathname,method:request.method,ipRaw:request.headers.get('x-forwarded-for'),ua:request.headers.get('user-agent')});}catch{/* el registro nunca rompe */}return reply('UNAUTHORIZED',401);}
   try{await readTriggerInput(request);}catch{return reply('BODY_NOT_ALLOWED',400);}
   if(active)return reply('METADATA_BUSY',409);active=true;
   let timer,expired=false;const work=(async()=>{let worker;try{worker=await runtime({deadlineAt});if(expired)return reply('METADATA_TIMEOUT',503);const data=worker.idle?{state:'idle'}:await worker.metadata.tick();if(expired)return reply('METADATA_TIMEOUT',503);return Response.json({data},{headers:{'Cache-Control':'private, no-store'}});}catch{return reply('METADATA_UNAVAILABLE',503);}finally{try{await worker?.close();}finally{active=false;}}})();

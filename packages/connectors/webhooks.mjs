@@ -72,6 +72,6 @@ export function createCRMWebhookHandler({bindings,record,clock=Date.now,readTime
    if(result?.status==='unavailable')return reply('CRM_WEBHOOK_UNAVAILABLE',503);
    check(result?.status==='accepted'||result?.status==='duplicate','CRM_WEBHOOK_UNAVAILABLE',503);
    return reply(result.status==='duplicate'?'CRM_WEBHOOK_DUPLICATE':'CRM_WEBHOOK_ACCEPTED',result.status==='duplicate'?200:202);
-  }catch(e){const code=e?.code;return typeof code==='string'&&/^CRM_WEBHOOK_[A-Z_]+$/.test(code)&&[400,401,403,408,413,415,503].includes(e.status)?reply(code,e.status):reply('CRM_WEBHOOK_UNAVAILABLE',503);}
+  }catch(e){const code=e?.code;if(code==='CRM_WEBHOOK_UNAUTHORIZED'){try{globalThis.__vexaSecuritySink?.({kind:'webhook_signature_invalid',route:new URL(request.url).pathname.replace(/\/[a-zA-Z0-9_-]{16,80}$/,'/:binding'),method:request.method,ipRaw:request.headers.get('x-forwarded-for'),ua:request.headers.get('user-agent'),detail:{code:'crm_unauthorized'}});}catch{/* el registro nunca rompe */}}return typeof code==='string'&&/^CRM_WEBHOOK_[A-Z_]+$/.test(code)&&[400,401,403,408,413,415,503].includes(e.status)?reply(code,e.status):reply('CRM_WEBHOOK_UNAVAILABLE',503);}
  };
 }

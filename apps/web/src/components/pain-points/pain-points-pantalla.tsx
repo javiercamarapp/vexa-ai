@@ -36,7 +36,7 @@ export function PainPointsPantalla({organization}:{organization?:string}){
  if(!v&&f.busy)return <RovaqCargando mensaje=""/>;
  const temaDe=(id:string)=>v!.temas.find(t=>t.id===id)!;
  const caidas=v?Object.entries(v.partes).filter(([,e])=>e==='unavailable').length:0;
- const kpis:Kpi[]=v?kpisDe(v).map(k=>({key:k.key,c:k.c,label:k.label,value:k.valor,note:k.nota})):[];
+ const kpis:Kpi[]=v?kpisDe(v,idioma).map(k=>({key:k.key,c:k.c,label:k.label,value:k.valor,note:k.nota})):[];
  const exportables=v?.puntos.filter(p=>p.evidencia.disponible&&!p.agregado)??[];
  const acciones=v&&exportables.length>0&&<Popover label={t('pp.exportarEvidencia')} align="end" width={300} triggerClassName="btn btn-secondary" trigger={<><Download/><span className="btn-label">{t('pp.exportar')}</span></>}>
   <MenuList label={t('pp.csvPorPunto')}>{exportables.map(p=><li key={p.id}><LinkButton size="sm" icon={<Download/>} href={'/api/pain-points/'+encodeURIComponent(p.id)+'/evidence?format=csv'} download="">{p.nombre}</LinkButton></li>)}</MenuList></Popover>;
@@ -54,7 +54,7 @@ export function PainPointsPantalla({organization}:{organization?:string}){
     <Card title={t('pp.top8')} description={modo==='dinero'?t('pp.top8Dinero'):t('pp.top8Volumen')} actions={<KindBadge kind="observed"/>}>
      <div className="pp-tabla-wrap"><table className="pp-tabla"><caption className="sr-only">{t('pp.tablaCaption')}</caption>
       <thead><tr><th scope="col">{t('pp.colPunto')}</th><th scope="col" data-num>{modo==='dinero'?t('pp.colUsd'):t('pp.colVolumen')}</th><th scope="col">{t('pp.colClase')}</th></tr></thead>
-      <tbody>{top.map(p=><tr key={p.id} data-sel={sel===p.id||undefined}><td><i className="pp-punto" style={{background:`var(--chart-${temaDe(p.tema).c})`}} aria-hidden="true"/><button type="button" className="row-link-inline" title={temaDe(p.tema).nombre} onClick={()=>setSel(p.id)}>{p.nombre}</button></td><td data-num>{valorMostrado(p,modo)}</td><td><KindBadge kind={CLASE_KIND[p.clase]}/></td></tr>)}
+      <tbody>{top.map(p=><tr key={p.id} data-sel={sel===p.id||undefined}><td><i className="pp-punto" style={{background:`var(--chart-${temaDe(p.tema).c})`}} aria-hidden="true"/><button type="button" className="row-link-inline" title={temaDe(p.tema).nombre} onClick={()=>setSel(p.id)}>{p.nombre}</button></td><td data-num>{valorMostrado(p,modo,idioma)}</td><td><KindBadge kind={CLASE_KIND[p.clase]}/></td></tr>)}
        {top.length===0&&<tr><td colSpan={3} className="pp-nota">{t('pp.sinPuntos')}</td></tr>}</tbody></table></div>
      <p className="pp-nota">{t('pp.mostrando',{n:top.length,total:filtrados.filter(p=>!p.agregado).length})}</p>
     </Card>

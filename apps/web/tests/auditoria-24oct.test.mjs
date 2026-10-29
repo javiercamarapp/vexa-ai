@@ -40,7 +40,7 @@ test('A2: /briefs ofrece «Reintentar», no manda a «Actualizar» y el historia
   assert.match(p, /state-error[^>]*>.*brief\.reintentar/s); assert.match(leer('lib/i18n/d-briefs.ts'), /'brief\.reintentar': 'Reintentar'/); assert.ok(!/Actualiza para comprobar|Actualiza antes/.test(p));
   const sv = leer('lib/briefs/server.ts');
   assert.match(sv, /conMemoria\('briefs\|'/); assert.match(sv, /olvidarMemoria\(\)/);
-  assert.match(sv, /getUser\(\)[\s\S]{0,200}conMemoria/, 'la sesión se valida antes de consultar la memoria');
+  assert.match(sv, /resolveSession\([\s\S]{0,400}conMemoria/, 'la sesión y la membresía vigente se validan antes de consultar la memoria (R-05)');
 });
 
 import {usd, dinero} from '../src/lib/formato/es-mx.mjs';
@@ -137,7 +137,7 @@ test('M3: el titular de Hoy no salta a la frase de ingreso mientras Fuga carga',
 
 test('M14/M17/B5/B10/B11/B12: filtros legibles, tabla de avisos centrada, conteo 0 en gris y textos sin jerga', () => {
   const f = leer('components/workspace/shared-filters.tsx');
-  assert.match(f, /<select name="basis"/); assert.match(f, /etiquetaBase\(k\)/); assert.match(f, /<details className="ov-avanzado"/); assert.ok(!/<input name="basis"/.test(f));
+  assert.match(f, /<select name="basis"/); assert.match(f, /etiquetaBase\(k(,\w+)?\)/); assert.match(f, /<details className="ov-avanzado"/); assert.ok(!/<input name="basis"/.test(f));
   assert.match(leer('components/datos/datos.css'), /\.notification-matrix thead th\[data-align=num\]/);
   assert.match(leer('components/panel-comun/tabs-linea.tsx'), /data-cero/);
   assert.ok(!/Descargar JSON de este alcance|Descargar CSV de este alcance/.test(leer('components/workspace/shared-panel.tsx')));

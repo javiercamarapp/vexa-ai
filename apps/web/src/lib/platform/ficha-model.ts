@@ -14,26 +14,31 @@ export type OrgDetail = {
   support: Array<{id: string; adminId: string; reason: string; startedAt: string; expiresAt: string; endedAt: string | null; endReason: string | null}>;
   audit: Array<{operation: string; actorId: string; createdAt: string}>;
 };
+import {traductor, type Clave, type Traductor} from '../i18n';
+const ES: Traductor = traductor('es');
 export type Level = 'ok' | 'warn' | 'bad' | 'info';
 export type Freshness = 'none' | 'fresh' | 'aging' | 'stale';
 const H = 3600_000, D = 24 * H;
+/** Ventana de los conteos de fallos que trae platform_org_detail (los campos se llaman *30d). */
+export const VENTANA_DIAS = 30;
 export function freshness(iso: string | null | undefined, now: number): Freshness {
   if (!iso) return 'none'; const age = now - Date.parse(iso);
   return !Number.isFinite(age) ? 'none' : age < 2 * D ? 'fresh' : age < 7 * D ? 'aging' : 'stale';
 }
-export function relative(iso: string | null | undefined, now: number): string {
-  if (!iso) return 'Sin registro'; const ms = now - Date.parse(iso); if (!Number.isFinite(ms)) return 'Sin registro';
-  if (ms < 0) return 'Hace un momento'; const m = Math.floor(ms / 60000);
-  return m < 1 ? 'Hace un momento' : m < 60 ? `Hace ${m} min` : m < 48 * 60 ? `Hace ${Math.floor(m / 60)} h` : `Hace ${Math.floor(m / 1440)} d`;
+/** Tiempo transcurrido en texto corto. `t` es el traductor del idioma activo (español por omisión). */
+export function relative(iso: string | null | undefined, now: number, t: Traductor = ES): string {
+  if (!iso) return t('tr.pl.sinRegistro'); const ms = now - Date.parse(iso); if (!Number.isFinite(ms)) return t('tr.pl.sinRegistro');
+  if (ms < 0) return t('tr.pl.haceMomento'); const m = Math.floor(ms / 60000);
+  return m < 1 ? t('tr.pl.haceMomento') : m < 60 ? t('tr.pl.haceMin', {n: m}) : m < 48 * 60 ? t('tr.pl.haceH', {n: Math.floor(m / 60)}) : t('tr.pl.haceD', {n: Math.floor(m / 1440)});
 }
-const SOURCE_LABEL: Record<string, string> = {hubspot: 'HubSpot', csv: 'CSV', zendesk: 'Zendesk', excel: 'Excel', sin_conexion: 'Cargas manuales'};
-export const sourceLabel = (s: string) => SOURCE_LABEL[s] ?? s;
+const SOURCE_LABEL: Record<string, string> = {hubspot: 'HubSpot', csv: 'CSV', zendesk: 'Zendesk', excel: 'Excel'};
+export const sourceLabel = (s: string, t: Traductor = ES) => (s === 'sin_conexion' ? t('tr.pl.cargasManuales') : SOURCE_LABEL[s] ?? s);
 export type SourceRow = {source: string; label: string; total: number; incorporated: number; rejected: number; pending: number; incorporatedBps: number | null; lastUpdate: string | null; freshness: Freshness; connection: {status: string; health: string | null; errorCode: string | null; lastSuccess: string | null} | null};
-export function sourceRows(d: OrgDetail, now: number): SourceRow[] {
+export function sourceRows(d: OrgDetail, now: number, t: Traductor = ES): SourceRow[] {
   const keys = [...new Set([...d.sources.map(s => s.source), ...d.connections.map(c => c.source)])].sort();
   return keys.map(k => {
     const s = d.sources.find(x => x.source === k), c = d.connections.find(x => x.source === k) ?? null, last = s?.lastUpdate ?? c?.lastSuccess ?? null;
-    return {source: k, label: sourceLabel(k), total: s?.total ?? 0, incorporated: s?.incorporated ?? 0, rejected: s?.rejected ?? 0, pending: s?.pending ?? 0,
+    return {source: k, label: sourceLabel(k, t), total: s?.total ?? 0, incorporated: s?.incorporated ?? 0, rejected: s?.rejected ?? 0, pending: s?.pending ?? 0,
       incorporatedBps: s && s.total > 0 ? Math.round(s.incorporated * 10000 / s.total) : null, lastUpdate: last, freshness: freshness(last, now),
       connection: c ? {status: c.status, health: c.health, errorCode: c.errorCode, lastSuccess: c.lastSuccess} : null};
   });
@@ -44,29 +49,32 @@ export function aiUsage(d: OrgDetail) {
 }
 export type Signal = {level: Exclude<Level, 'ok'>; text: string};
 /** Señales de atención con su motivo en lenguaje llano; el peor nivel manda. Nada se infiere de lo que no se midió. */
-export function signals(d: OrgDetail, now: number): Signal[] {
-  const out: Signal[] = [], ai = aiUsage(d);
-  if (d.members.owner === 0) out.push({level: 'bad', text: 'No tiene ningún dueño activo.'});
-  if (d.jobs.stuck > 0) out.push({level: 'bad', text: `${d.jobs.stuck} proceso(s) atascado(s).`});
+export function signals(d: OrgDetail, now: number, t: Traductor = ES): Signal[] {
+  const out: Signal[] = [], ai = aiUsage(d), n = (one: Clave, many: Clave, c: number, extra: Record<string, number> = {}) => t(c === 1 ? one : many, {n: c, ...extra});
+  if (d.members.owner === 0) out.push({level: 'bad', text: t('tr.pl.sgSinDueno')});
+  if (d.jobs.stuck > 0) out.push({level: 'bad', text: n('tr.pl.sgAtascado1', 'tr.pl.sgAtascadoN', d.jobs.stuck)});
   for (const c of d.connections) {
-    if (c.health === 'reconnect_required' || c.status === 'reconnect_required') out.push({level: 'bad', text: `${sourceLabel(c.source)} necesita reconectarse.`});
-    else if (c.health === 'stale' || c.status === 'failed') out.push({level: 'warn', text: `${sourceLabel(c.source)} no se está actualizando.`});
+    if (c.health === 'reconnect_required' || c.status === 'reconnect_required') out.push({level: 'bad', text: t('tr.pl.sgReconectar', {fuente: sourceLabel(c.source, t)})});
+    else if (c.health === 'stale' || c.status === 'failed') out.push({level: 'warn', text: t('tr.pl.sgNoActualiza', {fuente: sourceLabel(c.source, t)})});
   }
-  if (ai.pctBps !== null && ai.pctBps >= 10000) out.push({level: 'bad', text: 'Gasto de IA por encima del tope.'}); else if (ai.pctBps !== null && ai.pctBps >= 8000) out.push({level: 'warn', text: 'Gasto de IA cerca del tope.'});
-  if (ai.uncertain > 0) out.push({level: 'warn', text: `${ai.uncertain} reserva(s) de IA con resultado incierto.`});
-  if (d.jobs.failed30d > 0) out.push({level: 'warn', text: `${d.jobs.failed30d} proceso(s) fallido(s) en 30 días.`});
-  if (d.imports.failed30d > 0) out.push({level: 'warn', text: `${d.imports.failed30d} carga(s) fallida(s) en 30 días.`});
-  if (d.invitations.expired > 0) out.push({level: 'warn', text: `${d.invitations.expired} invitación(es) vencida(s) sin aceptar.`});
-  if (d.invitations.deliveryProblems > 0) out.push({level: 'warn', text: `${d.invitations.deliveryProblems} invitación(es) con problema de entrega.`});
-  if (d.ledger.rows === 0) out.push({level: 'warn', text: 'Aún no tiene asientos cargados.'});
-  else if (freshness(d.ledger.lastAt, now) === 'stale') out.push({level: 'warn', text: 'El libro no recibe asientos desde hace más de una semana.'});
-  if (!d.cuts.some(c => c.status === 'published')) out.push({level: 'info', text: 'Sin cortes publicados.'});
+  if (ai.pctBps !== null && ai.pctBps >= 10000) out.push({level: 'bad', text: t('tr.pl.sgIaSobre')}); else if (ai.pctBps !== null && ai.pctBps >= 8000) out.push({level: 'warn', text: t('tr.pl.sgIaCerca')});
+  if (ai.uncertain > 0) out.push({level: 'warn', text: n('tr.pl.sgIncierto1', 'tr.pl.sgInciertoN', ai.uncertain)});
+  if (d.jobs.failed30d > 0) out.push({level: 'warn', text: n('tr.pl.sgProcFallido1', 'tr.pl.sgProcFallidoN', d.jobs.failed30d, {dias: VENTANA_DIAS})});
+  if (d.imports.failed30d > 0) out.push({level: 'warn', text: n('tr.pl.sgCargaFallida1', 'tr.pl.sgCargaFallidaN', d.imports.failed30d, {dias: VENTANA_DIAS})});
+  if (d.invitations.expired > 0) out.push({level: 'warn', text: n('tr.pl.sgInvVencida1', 'tr.pl.sgInvVencidaN', d.invitations.expired)});
+  if (d.invitations.deliveryProblems > 0) out.push({level: 'warn', text: n('tr.pl.sgInvEntrega1', 'tr.pl.sgInvEntregaN', d.invitations.deliveryProblems)});
+  if (d.ledger.rows === 0) out.push({level: 'warn', text: t('tr.pl.sgSinAsientos')});
+  else if (freshness(d.ledger.lastAt, now) === 'stale') out.push({level: 'warn', text: t('tr.pl.sgLibroAtrasado', {dias: 7})});
+  if (!d.cuts.some(c => c.status === 'published')) out.push({level: 'info', text: t('tr.pl.sgSinCortes')});
   return out.sort((a, b) => ({bad: 0, warn: 1, info: 2})[a.level] - ({bad: 0, warn: 1, info: 2})[b.level]);
 }
 export const overallLevel = (s: Signal[]): Level => (s.some(x => x.level === 'bad') ? 'bad' : s.some(x => x.level === 'warn') ? 'warn' : 'ok');
-export const OP_LABEL: Record<string, string> = {create: 'Organización creada', team_invite: 'Invitación enviada', team_role: 'Cambio de rol', team_revoke: 'Acceso revocado', team_cancel: 'Invitación cancelada', team_claim: 'Entrega de invitación', team_receipt: 'Recibo de entrega',
-  team_list: 'Lectura del equipo', org_view: 'Ficha consultada', support_start: 'Modo soporte iniciado', support_end: 'Modo soporte terminado', copilot_query: 'Consulta del copiloto'};
-export const END_LABEL: Record<string, string> = {ended: 'Terminó el administrador', expired: 'Venció'};
+/** Claves de texto por operación de auditoría y por motivo de fin del modo soporte; lo desconocido se muestra tal cual. */
+export const OP_KEY: Record<string, Clave> = {create: 'tr.pl.opCreate', team_invite: 'tr.pl.opInvite', team_role: 'tr.pl.opRole', team_revoke: 'tr.pl.opRevoke', team_cancel: 'tr.pl.opCancel', team_claim: 'tr.pl.opClaim', team_receipt: 'tr.pl.opReceipt',
+  team_list: 'tr.pl.opTeamList', org_view: 'tr.pl.opOrgView', support_start: 'tr.pl.opSupportStart', support_end: 'tr.pl.opSupportEnd', copilot_query: 'tr.pl.opCopilot'};
+export const END_KEY: Record<string, Clave> = {ended: 'tr.pl.endEnded', expired: 'tr.pl.endExpired'};
+export const opLabel = (op: string, t: Traductor = ES) => (OP_KEY[op] ? t(OP_KEY[op]) : op);
+export const endLabel = (reason: string, t: Traductor = ES) => (END_KEY[reason] ? t(END_KEY[reason]) : t('tr.pl.endGeneric'));
 export const FIXTURE_DETAIL = (id: string, now: number): OrgDetail => ({
   generatedAt: new Date(now).toISOString(), organization: {id, name: 'Cliente de ejemplo A (sintético)', createdAt: new Date(now - 60 * D).toISOString()},
   members: {owner: 1, analyst: 2, operator: 0, viewer: 1, total: 4}, invitations: {pending: 1, expired: 1, deliveryProblems: 0},

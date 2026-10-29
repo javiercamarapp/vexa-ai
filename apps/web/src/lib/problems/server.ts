@@ -1,3 +1,4 @@
+import {mensajesDe} from '../i18n/errores-api';
 import { readRequestText } from '../request-body';
 import 'server-only';
 import {randomUUID} from 'node:crypto';
@@ -15,7 +16,7 @@ const uuid=(v:unknown):v is string=>typeof v==='string'&&/^[a-f0-9]{8}-[a-f0-9]{
 const invalid=()=>new AccessError(400,'problem_input_invalid');
 function object(value:unknown,keys:string[]):Record<string,unknown>{if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).some(key=>!keys.includes(key)))throw invalid();return value as Record<string,unknown>;}
 export async function problems(request:NextRequest,problemId?:string){
- let finish=(r:NextResponse)=>r;
+ let finish=(r:NextResponse)=>r;const m=mensajesDe(request);
  try{
   const configuration=config();if(!configuration)throw new AccessError(503,'configuration_required');
   if(request.method==='POST')assertOrigin(request.headers.get('origin'),configuration.origin);
@@ -55,6 +56,6 @@ export async function problems(request:NextRequest,problemId?:string){
  }catch(error){
   const e=error as {status?:number;code?:string};const status=[400,401,403,404,408,409,413,429,503].includes(e.status??0)?e.status!:503;
   const known=new Set(['configuration_required','runtime_disabled','problem_input_invalid','role_insufficient','organization_not_authorized','authentication_required','problem_not_found','problem_conflict','database_conflict','budget_window_changed','budget_reservation_not_found']);
-  return finish(NextResponse.json({contract_version:'f04-problems-v1',error:{code:known.has(e.code??'')?e.code:'problems_unavailable',message:'No se pudo consultar o modificar los problemas.',retryable:status===503},meta:{trace_id:randomUUID()}},{status,headers}));
+  return finish(NextResponse.json({contract_version:'f04-problems-v1',error:{code:known.has(e.code??'')?e.code:'problems_unavailable',message:m('tr.err.problemasFallo'),retryable:status===503},meta:{trace_id:randomUUID()}},{status,headers}));
  }
 }

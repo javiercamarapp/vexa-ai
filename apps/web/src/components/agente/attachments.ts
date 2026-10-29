@@ -1,6 +1,8 @@
 // Adjuntos del chat: análisis 100 % LOCAL (en el navegador). El archivo nunca sale de la página: no se envía al servidor, al modelo ni a ningún
 // servicio, no se guarda en el historial y no se mezcla con las cifras del corte publicado. Todo lo que de aquí sale se rotula
 // «Dato aportado por el usuario» (no verificado). Solo CSV, TXT y JSON de hasta 1 MB.
+import {traductor,type Idioma} from '../../lib/i18n';
+import {nf} from '../../lib/formato/idioma.mjs';
 export const ADJUNTO_MAX_BYTES = 1_000_000;
 export const ADJUNTO_ACCEPT = '.csv,.txt,.json,text/csv,text/plain,application/json';
 export const ADJUNTO_ROTULO = 'Dato aportado por el usuario';
@@ -20,10 +22,11 @@ export function extensionOf(name: string): 'csv' | 'json' | 'txt' | null {
  return m && (m[1] === 'csv' || m[1] === 'json' || m[1] === 'txt') ? m[1] : null;
 }
 /** Validación previa a leer el archivo (extensión y tamaño). */
-export function validarArchivo(name: string, size: number): string | null {
- if (!extensionOf(name)) return 'Solo puedo leer archivos CSV, TXT o JSON.';
- if (size === 0) return 'El archivo está vacío.';
- if (size > ADJUNTO_MAX_BYTES) return 'El archivo supera 1 MB.';
+export function validarArchivo(name: string, size: number, idioma: Idioma = 'es'): string | null {
+ const tx = traductor(idioma);
+ if (!extensionOf(name)) return tx('tr.fm.adjFormato');
+ if (size === 0) return tx('tr.fm.adjVacio');
+ if (size > ADJUNTO_MAX_BYTES) return tx('tr.fm.adjGrande', { mb: ADJUNTO_MAX_BYTES / 1_000_000 });
  return null;
 }
 
@@ -63,9 +66,9 @@ export function esColumnaIdentificadora(name: string, values: number[], filled: 
  const lo = Math.min(...values), hi = Math.max(...values);
  return hi - lo + 1 === values.length; // enteros únicos y consecutivos: un contador de filas, no una medida
 }
-function summarizeTable(header: string[], body: string[][]): { columns: ColumnaResumen[]; freq: AdjuntoResumen['freq'] } {
+function summarizeTable(header: string[], body: string[][], idioma: Idioma = 'es'): { columns: ColumnaResumen[]; freq: AdjuntoResumen['freq'] } {
  const columns = header.slice(0, MAX_COLUMNAS).map((h, i) => {
-  const name = (h.trim() || `Columna ${i + 1}`).slice(0, 60); let filled = 0, numericN = 0, sum = 0, min = Infinity, max = -Infinity;
+  const name = (h.trim() || traductor(idioma)('tr.fm.adjColumna', { n: i + 1 })).slice(0, 60); let filled = 0, numericN = 0, sum = 0, min = Infinity, max = -Infinity;
   const counts = new Map<string, number>(); const nums: number[] = [];
   for (const r of body) {
    const v = (r[i] ?? '').trim(); if (!v) continue; filled++;
@@ -88,11 +91,12 @@ function fromRecords(records: Record<string, unknown>[]): { header: string[]; bo
 }
 
 /** Lee y resume el texto de un adjunto. Sin red, sin modelo, determinista. */
-export function analizarAdjunto(name: string, text: string, bytes: number, id = 'adj'): AdjuntoResultado {
- const kind = extensionOf(name); const bad = validarArchivo(name, bytes);
- if (bad || !kind) return { ok: false, error: bad ?? 'Formato no soportado.' };
+export function analizarAdjunto(name: string, text: string, bytes: number, id = 'adj', idioma: Idioma = 'es'): AdjuntoResultado {
+ const tx = traductor(idioma);
+ const kind = extensionOf(name); const bad = validarArchivo(name, bytes, idioma);
+ if (bad || !kind) return { ok: false, error: bad ?? tx('tr.fm.adjNoSoportado') };
  const base = { id, name: name.slice(0, 120), bytes, kind, label: ADJUNTO_ROTULO } as const;
- const notes = ['Analizado en tu navegador: el archivo no se envió a ningún servicio ni se guarda en el historial.'];
+ const notes = [tx('tr.fm.adjLocal')];
  if (kind === 'txt') {
   const lines = text.split(/\r?\n/); const nonEmpty = lines.filter((l) => l.trim());
   return { ok: true, resumen: { ...base, rows: null, truncated: false, columns: [], preview: nonEmpty.slice(0, MAX_PREVIEW).map((l) => [l.slice(0, 160)]), text: { lines: nonEmpty.length, words: (text.match(/\S+/g) ?? []).length, chars: text.length }, freq: null, notes } };
@@ -100,21 +104,21 @@ export function analizarAdjunto(name: string, text: string, bytes: number, id = 
  let header: string[], body: string[][], truncated = false;
  if (kind === 'csv') {
   const parsed = parseCsv(text); truncated = parsed.truncated;
-  if (parsed.rows.length < 2) return { ok: false, error: 'El CSV necesita una fila de encabezados y al menos una fila de datos.' };
+  if (parsed.rows.length < 2) return { ok: false, error: tx('tr.fm.adjCsvMin') };
   [header, ...body] = parsed.rows;
  } else {
-  let data: unknown; try { data = JSON.parse(text); } catch { return { ok: false, error: 'El JSON no es válido.' }; }
+  let data: unknown; try { data = JSON.parse(text); } catch { return { ok: false, error: tx('tr.fm.adjJsonInvalido') }; }
   const list = Array.isArray(data) ? data : data && typeof data === 'object' ? [data] : null;
-  if (!list || !list.length || !list.every((x) => x && typeof x === 'object' && !Array.isArray(x))) return { ok: false, error: 'Solo leo JSON con un objeto o una lista de objetos.' };
+  if (!list || !list.length || !list.every((x) => x && typeof x === 'object' && !Array.isArray(x))) return { ok: false, error: tx('tr.fm.adjJsonForma') };
   if (list.length > MAX_FILAS) { truncated = true; }
   ({ header, body } = fromRecords((list as Record<string, unknown>[]).slice(0, MAX_FILAS)));
  }
- const { columns, freq } = summarizeTable(header, body);
- if (truncated) notes.push(`Solo se analizaron las primeras ${MAX_FILAS.toLocaleString('es-MX')} filas.`);
- if (header.length > MAX_COLUMNAS) notes.push(`Solo se analizaron las primeras ${MAX_COLUMNAS} columnas.`);
- notes.push('Las columnas con símbolos de moneda o separadores ambiguos se tratan como texto: no se suman ni se interpretan.');
+ const { columns, freq } = summarizeTable(header, body, idioma);
+ if (truncated) notes.push(tx('tr.fm.adjPrimerasFilas', { n: nf.format(MAX_FILAS) }));
+ if (header.length > MAX_COLUMNAS) notes.push(tx('tr.fm.adjPrimerasCols', { n: MAX_COLUMNAS }));
+ notes.push(tx('tr.fm.adjAmbiguas'));
  return { ok: true, resumen: { ...base, rows: body.length, truncated, columns, preview: [header.slice(0, 8).map((h) => h.slice(0, 40)), ...body.slice(0, MAX_PREVIEW).map((r) => r.slice(0, 8).map((c) => c.slice(0, 40)))], text: null, freq, notes } };
 }
 
 /** Lo único que se guarda del adjunto en el historial del navegador: que existió, sin su contenido. */
-export const adjuntoSinContenido = (a: AdjuntoResumen): AdjuntoResumen => ({ ...a, columns: [], preview: [], freq: null, text: null, notes: ['El contenido del adjunto no se guarda en el historial; vuelve a cargarlo para analizarlo.'] });
+export const adjuntoSinContenido = (a: AdjuntoResumen, idioma: Idioma = 'es'): AdjuntoResumen => ({ ...a, columns: [], preview: [], freq: null, text: null, notes: [traductor(idioma)('tr.fm.adjSinContenido')] });

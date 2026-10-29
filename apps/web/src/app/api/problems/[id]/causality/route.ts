@@ -5,10 +5,11 @@ import {createCausalityRepository} from '../../../../../../../../packages/proble
 import {serverPool} from '../../../../../lib/imports/server';
 import {ACTIVE_ORG,AccessError,assertOrigin,config,identity,PRIVATE_HEADERS} from '../../../../../lib/auth';
 import {requestAuth} from '../../../../../lib/auth-http';
+import {mensajesDe} from '../../../../../lib/i18n/errores-api';
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
 async function handle(request:NextRequest,context:{params:Promise<{id:string}>}){
- let finish=(r:NextResponse)=>r;
+ let finish=(r:NextResponse)=>r;const m=mensajesDe(request);
  try{
  const configuration=config();if(!configuration)throw new AccessError(503,'configuration_required');
  if(request.method==='POST')assertOrigin(request.headers.get('origin'),configuration.origin);
@@ -22,7 +23,7 @@ async function handle(request:NextRequest,context:{params:Promise<{id:string}>})
  data=body.operation==='evidence'?await repository.recordEvidence({...body,problemId:id}):await repository.revise({...body,problemId:id});
  }
  return finish(NextResponse.json({data},{headers:{...PRIVATE_HEADERS,Vary:'Cookie'}}));
- }catch(error){const e=error as {status?:number};const status=[400,401,403,404,408,409,413,429,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({error:{code:'causality_unavailable',message:'No se pudo consultar o actualizar la evaluación causal.'}},{status,headers:PRIVATE_HEADERS}));}
+ }catch(error){const e=error as {status?:number};const status=[400,401,403,404,408,409,413,429,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({error:{code:'causality_unavailable',message:m('tr.err.causalFallo')}},{status,headers:PRIVATE_HEADERS}));}
 }
 export const GET=handle;
 export const POST=handle;

@@ -1,6 +1,7 @@
 import https from 'node:https';
 import {createHash} from 'node:crypto';
 import {check,uuid,strict} from './contracts.mjs';
+import {textoPush} from './idioma.mjs';
 const hosts=new Set(['fcm.googleapis.com','updates.push.services.mozilla.com','web.push.apple.com']);
 const key=(v,n)=>typeof v==='string'&&/^[A-Za-z0-9_-]+$/.test(v)&&Buffer.from(v,'base64url').length===n&&Buffer.from(v,'base64url').toString('base64url')===v;
 export function copyPushSubscription(input){
@@ -42,13 +43,13 @@ export function retryAfter(value,now=Date.now()){
 export function createWebPushSender({sdk,vapid,timeoutMs=5000,clock=Date.now,request=https.request}={}){
  let config;try{config=pushConfiguration({VEXA_PUSH_SUBJECT:vapid?.subject,VEXA_PUSH_PUBLIC_KEY:vapid?.publicKey,VEXA_PUSH_PRIVATE_KEY:vapid?.privateKey});}catch{config=null;}
  const configured=()=>!!config&&typeof sdk?.generateRequestDetails==='function'&&Number.isSafeInteger(timeoutMs)&&timeoutMs>=1&&timeoutMs<=8000;
- return Object.freeze({configured,async send({subscription,idempotencyKey,signal,deliveryScope}){
+ return Object.freeze({configured,async send({subscription,idempotencyKey,signal,deliveryScope,idioma}){
   let saved;try{saved=copyPushSubscription(subscription);}catch{return {kind:'blocked'};}
   if(!configured()||signal?.aborted||!uuid(deliveryScope?.subscriptionId)||!Number.isSafeInteger(deliveryScope?.version)||deliveryScope.version<1)return {kind:'blocked'};
   const scope={subscriptionId:deliveryScope.subscriptionId,version:deliveryScope.version};
   const options={vapidDetails:{...config},TTL:300,urgency:'normal',contentEncoding:'aes128gcm',topic:createHash('sha256').update(String(idempotencyKey)).digest('base64url').slice(0,32)};
   let details;
-  try{details=sdk.generateRequestDetails(saved,JSON.stringify({title:'Rovaq AI',body:'Tienes avisos disponibles en Rovaq AI.',href:'/notifications',...scope}),options);if(details.endpoint!==saved.endpoint||details.method!=='POST'||!Buffer.isBuffer(details.body))return {kind:'blocked'};}catch{return {kind:'blocked'};}
+  try{details=sdk.generateRequestDetails(saved,JSON.stringify({...textoPush(idioma),href:'/notifications',...scope}),options);if(details.endpoint!==saved.endpoint||details.method!=='POST'||!Buffer.isBuffer(details.body))return {kind:'blocked'};}catch{return {kind:'blocked'};}
   if(signal?.aborted)return {kind:'blocked'};
   // SDK supplies standard encryption/VAPID. Native HTTPS supplies a real abortable deadline and never follows redirects.
   const controller=new AbortController();let req,timer;
@@ -80,7 +81,7 @@ export function createPushTransport({database,sdk,vapid,timeoutMs=5000,request}=
  const operation=p=>database.transaction('import',s=>call(s,'push_worker',p));
  return Object.freeze({configured:sender.configured,
  async resolveRecipient(identity){const saved=structuredClone(identity);check(uuid(saved.tenantId)&&uuid(saved.userId)&&saved.channel==='push');const ids=await operation({...saved,op:'resolve'});return {...saved,consent:Array.isArray(ids)&&ids.length>0,subscriptionIds:ids};},
- async send({recipient,idempotencyKey,signal}){
+ async send({recipient,idempotencyKey,signal,idioma,message}){
   let r;try{r=structuredClone(recipient);}catch{return {kind:'blocked'};}
   if(!sender.configured()||!r||r.channel!=='push'||r.consent!==true||!uuid(r.tenantId)||!uuid(r.userId)||!Array.isArray(r.subscriptionIds)||!r.subscriptionIds.length||r.subscriptionIds.some(x=>!uuid(x))||! /^[0-9a-f]{64}$/.test(idempotencyKey))return {kind:'blocked'};
   const outcomes=await Promise.all([...new Set(r.subscriptionIds)].map(async subscriptionId=>{
@@ -88,7 +89,7 @@ export function createPushTransport({database,sdk,vapid,timeoutMs=5000,request}=
    try{
     if(signal?.aborted)return {kind:'uncertain'};
     const begin=await operation({...p,op:'begin'});if(begin?.kind!=='ready')return begin??{kind:'uncertain'};
-    const outcome=await sender.send({subscription:begin.subscription,idempotencyKey,signal,deliveryScope:begin.deliveryScope});
+    const outcome=await sender.send({subscription:begin.subscription,idempotencyKey,signal,deliveryScope:begin.deliveryScope,idioma:idioma??message?.idioma??r.idioma});
     // A configuration race after durable sending cannot be retried automatically.
     const saved=outcome.kind==='blocked'?{kind:'uncertain'}:outcome;
     await operation({...p,op:'finish',attempt:begin.attempt,...saved});return saved;

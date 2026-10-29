@@ -1,7 +1,8 @@
 // Título descriptivo DETERMINISTA de un grupo de problemas, sin IA: categoría en español + los 2 temas (categorías de sus citas) más frecuentes, con conteos.
 // Solo usa datos reales ya registrados (issues.category de las citas del grupo). Es una «descripción automática», no un nombre curado ni generado por un modelo.
 import {etiquetaCategoria} from './categorias.mjs';
-const nf=new Intl.NumberFormat('es-MX');
+import {LOCALES} from '../formato/idioma.mjs';
+const nf=new Intl.NumberFormat(LOCALES.es);
 export const ROTULO_AUTO='Descripción automática';
 export const AVISO_AUTO='Descripción automática a partir de las categorías más frecuentes de las citas del grupo; no es un nombre curado ni generado por IA.';
 const norm=s=>String(s??'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();

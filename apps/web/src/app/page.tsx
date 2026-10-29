@@ -1,9 +1,11 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { traductor } from '../lib/i18n';
+import { idiomaActual } from '../lib/i18n/servidor';
 import { ACTIVE_ORG, AccessError, authClient, config, identity, resolveSession } from '../lib/auth';
 export const dynamic='force-dynamic';
 export default async function Home() {
-  if(!config())return <section className="home access-flow"><h1>Rovaq AI · En construcción</h1><p>El acceso aún no está configurado. No hay datos de clientes ni métricas disponibles.</p><a href="/login">Acceder</a></section>;
+  if(!config()){const t=traductor(await idiomaActual());return <section className="home access-flow"><h1>{t('tr.home.titulo')}</h1><p>{t('tr.home.sinConfig')}</p><a href="/login">{t('tr.home.acceder')}</a></section>;}
   const jar=await cookies();
   const client=authClient({getAll:()=>jar.getAll(),set:()=>{}});
   try {await resolveSession(identity(client),jar.get(ACTIVE_ORG)?.value,{fallback:true});}

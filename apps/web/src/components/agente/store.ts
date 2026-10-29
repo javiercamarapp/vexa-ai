@@ -1,4 +1,5 @@
 import type {Conversation} from './types';
+import type {Clave} from '../../lib/i18n';
 import {adjuntoSinContenido} from './attachments';
 // Local-only history (this browser). Customer quotes are NOT persisted: citations are dropped on save and the message says so.
 const MAX_CONVERSATIONS=50;
@@ -17,3 +18,7 @@ export function groupLabel(iso:string,now:Date=new Date()){
  return diff<=0?'Hoy':diff===1?'Ayer':diff<=7?'Últimos 7 días':diff<=30?'Últimos 30 días':'Anteriores';
 }
 export const GROUPS=['Hoy','Ayer','Últimos 7 días','Últimos 30 días','Anteriores'];
+/** Clave traducida de cada fase del agente (el texto en español es el identificador interno de la fase, ver PHASES en use-agente). */
+export const PHASE_CLAVES:Record<string,Clave>={'Entendiendo tu pregunta…':'tr.ag.f1','Consultando tus datos…':'tr.ag.f2','Armando la respuesta…':'tr.ag.f3','Sigo trabajando en esto…':'tr.ag.f4'};
+/** Etiqueta traducida de cada grupo (el texto en español es el identificador interno del grupo). */
+export const GROUP_CLAVES:Record<string,Clave>={'Hoy':'nav.item.overview','Ayer':'tr.ag.gAyer','Últimos 7 días':'tr.ag.g7','Últimos 30 días':'tr.ag.g30','Anteriores':'tr.ag.gAnt'};

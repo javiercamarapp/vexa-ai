@@ -1,29 +1,31 @@
 'use client';
 import {useState} from 'react';
 import type {EmbeddingBudget} from '../lib/problems/contracts';
+import {useT} from './i18n/proveedor';
 const usd=(value:string)=>{const amount=BigInt(value);return `${amount/1000000n}.${String(amount%1000000n).padStart(6,'0')}`;};
 export function EmbeddingBudgetPanel({budget,busy,onAction}:{budget:EmbeddingBudget;busy:boolean;onAction:(body:Record<string,unknown>)=>Promise<boolean>}){
+ const t=useT();
  const [purpose,setPurpose]=useState('embedding'),[limit,setLimit]=useState(''),[reservationId,setReservationId]=useState(''),[actual,setActual]=useState(''),[evidence,setEvidence]=useState(''),[confirmedFor,setConfirmedFor]=useState<string|null>(null);
  const pending=budget.reservations.filter(row=>['reserved','uncertain'].includes(row.state));
  const selected=pending.find(row=>row.id===reservationId);
  const decision=JSON.stringify({id:selected?.id,version:selected?.version,window:selected?.window,actual,evidence});
  const confirmed=!!selected&&confirmedFor===decision;
- return <section aria-label="Consumo de agrupación"><h2>Consumo de agrupación</h2>
- <p>Configurar límites o conciliar costos no activa el proveedor ni solicita una agrupación.</p>
- {budget.window?<><p>Ventana de agrupación: {budget.window}</p><p>Se necesitan un límite global y otro de agrupación. El global también limita otros usos que compartan esta ventana.</p>
- <ul>{budget.limits.map(row=><li key={row.purpose}>{row.purpose==='all'?'Global':'Agrupación'}: {usd(row.limitMinor)} USD · versión {row.version}</li>)}</ul>
+ return <section aria-label={t('tr.emb.titulo')}><h2>{t('tr.emb.titulo')}</h2>
+ <p>{t('tr.emb.nota')}</p>
+ {budget.window?<><p>{t('tr.emb.ventana',{v:budget.window})}</p><p>{t('tr.emb.seNecesitan')}</p>
+ <ul>{budget.limits.map(row=><li key={row.purpose}>{t('tr.emb.limLinea',{tipo:row.purpose==='all'?t('tr.emb.global'):t('tr.emb.agrupacion'),usd:usd(row.limitMinor),v:row.version})}</li>)}</ul>
  <form onSubmit={async event=>{event.preventDefault();const current=budget.limits.find(row=>row.purpose===purpose);if(await onAction({operation:'budget',purpose,limitUsd:limit,expectedWindow:budget.window,...(current?{expectedVersion:current.version}:{})}))setLimit('');}}>
- <label>Tipo de límite de agrupación<select aria-label="Tipo de límite de agrupación" disabled={busy} value={purpose} onChange={event=>setPurpose(event.target.value)}><option value="embedding">Agrupación</option><option value="all">Global de esta ventana</option></select></label>
- <label>Límite de agrupación en USD<input required disabled={busy} inputMode="decimal" pattern="[0-9]+([.][0-9]{1,6})?" value={limit} onChange={event=>setLimit(event.target.value)}/></label><button disabled={busy}>Guardar límite de agrupación</button>
- </form></>:<p role="status">Falta configurar la ventana de consumo del servicio de agrupación. Los costos pendientes todavía se pueden conciliar.</p>}
- <h3>Costos pendientes de conciliación</h3>
- {!pending.length?<p>No hay costos de agrupación pendientes.</p>:<ul>{pending.map(row=><li key={row.id}>{row.id} · Ventana: {row.window} · Reservado: {usd(row.heldMinor)} USD · Reportado: {usd(row.reportedMinor)} USD · Costo final: {row.actualMinor===null?'desconocido':`${usd(row.actualMinor)} USD`}</li>)}</ul>}
+ <label>{t('tr.emb.tipoLimite')}<select aria-label={t('tr.emb.tipoLimite')} disabled={busy} value={purpose} onChange={event=>setPurpose(event.target.value)}><option value="embedding">{t('tr.emb.agrupacion')}</option><option value="all">{t('tr.emb.globalVentana')}</option></select></label>
+ <label>{t('tr.emb.limiteUsd')}<input required disabled={busy} inputMode="decimal" pattern="[0-9]+([.][0-9]{1,6})?" value={limit} onChange={event=>setLimit(event.target.value)}/></label><button disabled={busy}>{t('tr.emb.guardar')}</button>
+ </form></>:<p role="status">{t('tr.emb.faltaVentana')}</p>}
+ <h3>{t('tr.emb.pendientes')}</h3>
+ {!pending.length?<p>{t('tr.emb.sinPendientes')}</p>:<ul>{pending.map(row=><li key={row.id}>{t('tr.emb.filaPend',{id:row.id,w:row.window,r:usd(row.heldMinor),p:usd(row.reportedMinor),c:row.actualMinor===null?t('tr.emb.desconocido'):t('tr.emb.usd',{v:usd(row.actualMinor)})})}</li>)}</ul>}
  {pending.length>0&&<form onSubmit={async event=>{event.preventDefault();if(!selected||!confirmed)return;if(await onAction({operation:'reconcile',reservationId:selected.id,expectedVersion:selected.version,expectedWindow:selected.window,actualUsd:actual,evidenceHash:evidence,confirmedProviderEvidence:true})){setReservationId('');setActual('');setEvidence('');setConfirmedFor(null);}}}>
- <label>Reserva de agrupación<select aria-label="Reserva de agrupación" required disabled={busy} value={reservationId} onChange={event=>{setReservationId(event.target.value);setConfirmedFor(null);}}><option value="">Selecciona una reserva</option>{pending.map(row=><option key={row.id} value={row.id}>{row.id} · {row.window}</option>)}</select></label>
- <label>Costo confirmado de agrupación en USD<input required disabled={busy} inputMode="decimal" pattern="[0-9]+([.][0-9]{1,6})?" value={actual} onChange={event=>{setActual(event.target.value);setConfirmedFor(null);}}/></label>
- <label>Huella SHA-256 del recibo de agrupación<input required disabled={busy} pattern="[a-f0-9]{64}" value={evidence} onChange={event=>{setEvidence(event.target.value);setConfirmedFor(null);}}/></label>
- <label><input type="checkbox" disabled={busy||!selected} checked={confirmed} onChange={event=>setConfirmedFor(event.target.checked?decision:null)}/>Contrasté este costo de agrupación con evidencia del proveedor.</label>
- <button disabled={busy||!confirmed}>Conciliar costo de agrupación</button>
+ <label>{t('tr.emb.reserva')}<select aria-label={t('tr.emb.reserva')} required disabled={busy} value={reservationId} onChange={event=>{setReservationId(event.target.value);setConfirmedFor(null);}}><option value="">{t('tr.emb.selReserva')}</option>{pending.map(row=><option key={row.id} value={row.id}>{row.id} · {row.window}</option>)}</select></label>
+ <label>{t('tr.emb.costoConf')}<input required disabled={busy} inputMode="decimal" pattern="[0-9]+([.][0-9]{1,6})?" value={actual} onChange={event=>{setActual(event.target.value);setConfirmedFor(null);}}/></label>
+ <label>{t('tr.emb.huella')}<input required disabled={busy} pattern="[a-f0-9]{64}" value={evidence} onChange={event=>{setEvidence(event.target.value);setConfirmedFor(null);}}/></label>
+ <label><input type="checkbox" disabled={busy||!selected} checked={confirmed} onChange={event=>setConfirmedFor(event.target.checked?decision:null)}/>{t('tr.emb.contraste')}</label>
+ <button disabled={busy||!confirmed}>{t('tr.emb.conciliar')}</button>
  </form>}
  </section>;
 }

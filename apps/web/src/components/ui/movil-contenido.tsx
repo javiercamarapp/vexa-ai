@@ -2,6 +2,7 @@
 import {useEffect,useState} from 'react';
 import {createPortal} from 'react-dom';
 import {useStoredString} from './browser-state';
+import {useT} from '../i18n/proveedor';
 /** Mejoras de CONTENIDO para el celular (< 820 px). No cambian el escritorio: solo anotan el DOM con atributos que el CSS de movil-contenido.css usa en @media(max-width:819px).
  *  1. Tablas -> tarjeta-fila: cada celda recibe `data-label` (la cabecera de su columna), la primera es el título y la primera cifra es la principal. Atributos solo; React no se entera.
  *  2. Cifras de KPI que no caben en una línea reciben `data-abrev` (es-MX: «US$11.6M»); el CSS pinta la abreviatura y el lector de pantalla sigue leyendo la cifra completa.
@@ -107,7 +108,7 @@ function acoplar(){
 
 /** `solo="cifras"`: únicamente ajusta cifras/pestañas/tablas (sin interruptor); sin prop: además pinta «Tarjetas | Comparar columnas» junto a la primera tabla. */
 export function MovilContenido({solo}:{solo?:'cifras'}={}){
- const [slot,setSlot]=useState<HTMLElement|null>(null),[preferencia,setModo]=useStoredString(CLAVE,'tarjetas');
+ const t=useT(),[slot,setSlot]=useState<HTMLElement|null>(null),[preferencia,setModo]=useStoredString(CLAVE,'tarjetas');
  const modo=preferencia==='comparar'?'comparar':'tarjetas';
  useEffect(()=>{if(solo)return;document.documentElement.dataset.tablasMovil=modo;},[modo,solo]);
  useEffect(()=>{
@@ -125,8 +126,8 @@ export function MovilContenido({solo}:{solo?:'cifras'}={}){
   return()=>{oyentes.delete(alCambiar);fuera();};
  },[solo]);
  if(solo||!slot)return null;
- return createPortal(<div className="mv-modo-tablas" role="group" aria-label="Cómo ver las tablas">
-  <button type="button" aria-pressed={modo==='tarjetas'} onClick={()=>setModo('tarjetas')}>Tarjetas</button>
-  <button type="button" aria-pressed={modo==='comparar'} onClick={()=>setModo('comparar')}>Comparar columnas</button>
+ return createPortal(<div className="mv-modo-tablas" role="group" aria-label={t('tr.ui.movilComoVer')}>
+  <button type="button" aria-pressed={modo==='tarjetas'} onClick={()=>setModo('tarjetas')}>{t('tr.ui.movilTarjetas')}</button>
+  <button type="button" aria-pressed={modo==='comparar'} onClick={()=>setModo('comparar')}>{t('tr.ui.movilComparar')}</button>
  </div>,slot);
 }

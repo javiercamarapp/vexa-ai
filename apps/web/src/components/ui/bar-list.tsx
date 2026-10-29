@@ -1,11 +1,13 @@
 import type {ReactNode} from 'react';
 import Link from '../workspace/navigation-lifecycle';
+import {useT} from '../i18n/proveedor';
 import {KindBadge} from './kind-badge';
 import type {EpistemicKind} from '../../lib/epistemic.mjs';
 export type BarListItem={key:string;label:string;value:number|null;display:string;kind?:EpistemicKind;href?:string;note?:ReactNode;/** 1..8: color fijo de la métrica (sustituye el gris de la clase) */c?:number};
 /** Ranking: label left, exact value right, 8 px bar below (one hue per series, anchored at zero). Unknown values show a hatched track, never a zero bar. */
-export function BarList({items,max,empty='Sin datos para clasificar.',wrap=false,c,sinMeta=false}:{items:BarListItem[];max?:number;empty?:string;wrap?:boolean;/** 1..8: color de la métrica (--chart-n) para las barras; sin él, el color por tipo de dato */c?:number;/** sin insignia de clase por fila (la lleva el encabezado de la tarjeta) */sinMeta?:boolean}){
- if(!items.length)return <p className="state">{empty}</p>;
+export function BarList({items,max,empty,wrap=false,c,sinMeta=false}:{items:BarListItem[];max?:number;empty?:string;wrap?:boolean;/** 1..8: color de la métrica (--chart-n) para las barras; sin él, el color por tipo de dato */c?:number;/** sin insignia de clase por fila (la lleva el encabezado de la tarjeta) */sinMeta?:boolean}){
+ const t=useT();
+ if(!items.length)return <p className="state">{empty??t('tr.ui.sinDatosClasificar')}</p>;
  const top=max??(Math.max(0,...items.map(i=>i.value??0))||1);
  return <ul className="barlist" data-wrap={wrap||undefined} data-c={c||undefined} style={c?{['--chart-bar' as string]:`var(--chart-${((c-1)%8)+1})`,['--chart-bar-strong' as string]:`var(--chart-${((c-1)%8)+1})`}:undefined}>{items.map((it,i)=>{const w=it.value===null?0:Math.max(it.value>0?1.5:0,it.value*100/top);
   const head=<><span className="barlist-label" title={it.label}>{it.label}</span><span className="barlist-value">{it.display}</span></>;

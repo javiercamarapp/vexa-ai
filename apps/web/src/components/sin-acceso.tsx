@@ -1,13 +1,15 @@
 'use client';
 import {useState} from 'react';
+import {useLocaleIntl,useT} from './i18n/proveedor';
 import {Button} from './ui/button';
 import {Notice} from './ui/notice';
 export type Invitacion = {id: string; organization: string; role: string; expiresAt: string};
 export type InvitacionVencida = {organization: string; role: string; expiredAt: string};
-const ROL: Record<string, string> = {owner: 'Dueño', analyst: 'Analista', operator: 'Operador', viewer: 'Lector'};
-const fecha = (iso: string) => new Intl.DateTimeFormat('es-MX', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'}).format(new Date(iso));
+const fecha = (iso: string, loc: string) => new Intl.DateTimeFormat(loc, {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'}).format(new Date(iso));
 /** Acepta con la sesión actual (la base valida correo confirmado, vigencia y que no seas ya miembro) y fija la organización. Reutiliza las rutas del enlace del correo. */
 export function InvitacionesPendientes({invitaciones}: {invitaciones: Invitacion[]}) {
+  const t = useT(), loc = useLocaleIntl();
+  const ROL: Record<string, string> = {owner: t('tr.acc.rolOwner'), analyst: t('shell.rol.analyst'), operator: t('shell.rol.operator'), viewer: t('tr.acc.rolViewer')};
   const [busy, setBusy] = useState<string | null>(null), [error, setError] = useState('');
   async function aceptar(id: string) {
     setBusy(id); setError('');
@@ -20,13 +22,13 @@ export function InvitacionesPendientes({invitaciones}: {invitaciones: Invitacion
       // La cookie de organización cambió: se descarta el caché de navegación previo.
       // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- cookies de sesión y organización cambiaron
       window.location.assign('/');
-    } catch { setError('No se pudo aceptar la invitación. Comprueba que iniciaste sesión con el correo invitado e inténtalo de nuevo.'); setBusy(null); }
+    } catch { setError(t('tr.acc.errAceptar')); setBusy(null); }
   }
   return <>
-    <p>Estas organizaciones te invitaron con tu correo. Al aceptar entras directo.</p>
+    <p>{t('tr.acc.intro')}</p>
     <ul className="sa-lista">{invitaciones.map(i => <li key={i.id} className="card sa-tarjeta">
-      <div><strong>{i.organization}</strong><small>Rol {ROL[i.role] ?? i.role} · vence {fecha(i.expiresAt)}</small></div>
-      <Button variant="primary" loading={busy === i.id} disabled={busy !== null} onClick={() => void aceptar(i.id)}>Aceptar y entrar</Button>
+      <div><strong>{i.organization}</strong><small>{t('tr.acc.rolVence', {rol: ROL[i.role] ?? i.role, fecha: fecha(i.expiresAt, loc)})}</small></div>
+      <Button variant="primary" loading={busy === i.id} disabled={busy !== null} onClick={() => void aceptar(i.id)}>{t('tr.acc.aceptar')}</Button>
     </li>)}</ul>
     {error && <Notice tone="error">{error}</Notice>}
   </>;

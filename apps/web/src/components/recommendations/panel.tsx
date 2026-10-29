@@ -114,7 +114,7 @@ export function RecommendationsPanel({initialQuery,vista='por-decidir'}:{initial
  return <section aria-label={t('recs.sec')} className="stack">
   <AccionesCabecera actual={vista} cuentas={view?cuentas:undefined} acciones={view?.canPropose?<Button variant="primary" icon={<Icon name="sparkle" size={14}/>} onClick={()=>setPropose(true)}>{t('recs.proponer')}</Button>:undefined}/>
   <ScopeBar scope={scope} onApply={apply} busy={busy} extra={view&&todos.length>0?<>
-   <select aria-label={t('recs.responsable')} value={responsable} onChange={e=>setResponsable(e.target.value)}><option value="">{t('recs.respTodos')}</option><option value="sin">{t('recs.sinResp')}</option>{view.members.map(m=><option key={m.id} value={m.id}>{persona(m.id,view.members)}</option>)}</select>
+   <select aria-label={t('recs.responsable')} value={responsable} onChange={e=>setResponsable(e.target.value)}><option value="">{t('recs.respTodos')}</option><option value="sin">{t('recs.sinResp')}</option>{view.members.map(m=><option key={m.id} value={m.id}>{persona(m.id,view.members,t)}</option>)}</select>
    {filtrosActivos&&<button type="button" className="btn btn-ghost btn-sm" onClick={()=>{setResponsable('');setPrioridad('');}}>{t('recs.limpiar')}</button>}</>:undefined}/>
   {view&&<LineaCache edadMs={edad} actualizando={busy} viejo={viejo}/>}
   {busy&&!view&&!error&&!empty&&<section className="pc-card" aria-busy="true"><Loading message={t('recs.cargando')}/><WaitStatus {...ESPERA.recomendaciones}/></section>}

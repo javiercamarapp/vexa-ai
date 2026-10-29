@@ -10,7 +10,7 @@ import {IdChip} from '../ui/id-chip';
 import {answerToHtml,answerToMarkdown,blockToCsv} from '../../../../../packages/agent-datos/export.mjs';
 import {Icon} from './icons';
 import {RovaqMark} from './rovaq-mark';
-import {PARAM_LABELS,copyText,download,openReport,paramValue,safeInternal} from './format';
+import {PARAM_CLAVES,copyText,download,openReport,paramValue,safeInternal} from './format';
 import {BlockView,Kpis} from './blocks';
 import {TraceDisclosure} from './trace';
 import type {Answer,ChatMessage} from './types';
@@ -26,7 +26,7 @@ function CalcView({answer}:{answer:Answer}){
    {answer.calc.map((c,i)=><li key={i} className="agente-calc-step">
     <h4>{c.label}</h4>
     <dl className="agente-dl"><div><dt>{tx('ag.cHerr')}</dt><dd><IdChip value={c.tool} text={c.tool}/></dd></div>
-     <div><dt>{tx('ag.parametros')}</dt><dd>{Object.keys(c.args).length?<ul className="agente-params">{Object.entries(c.args).map(([k,v])=><li key={k}><span>{PARAM_LABELS[k]??k}</span> {paramValue(k,v)}</li>)}</ul>:tx('ag.cSinParam')}<IdChip value={JSON.stringify(c.args)} label="JSON" text={tx('ag.cCopiar')}/></dd></div>
+     <div><dt>{tx('ag.parametros')}</dt><dd>{Object.keys(c.args).length?<ul className="agente-params">{Object.entries(c.args).map(([k,v])=><li key={k}><span>{PARAM_CLAVES[k]?tx(PARAM_CLAVES[k]):k}</span> {paramValue(k,v)}</li>)}</ul>:tx('ag.cSinParam')}<IdChip value={JSON.stringify(c.args)} label="JSON" text={tx('ag.cCopiar')}/></dd></div>
      <div><dt>{tx('ag.metodo')}</dt><dd>{c.method}</dd></div>
      <div><dt>{tx('ag.cLee')}</dt><dd><ul className="agente-params">{c.reads.map(r=><li key={r}>{r}</li>)}</ul></dd></div>
      <div><dt>{tx('ag.fuentes')}</dt><dd className="agente-sources">{c.sources.map(s=><span className="chip" key={s.ref} title={s.ref}><ConMarca marca={s.label}>{s.label}</ConMarca></span>)}</dd></div>

@@ -126,10 +126,10 @@ async function medir(){
  return out;
 }
 
-const browser=await chromium.launch();
+const browser=await chromium.launch(process.env.VEXA_CHROME?{executablePath:process.env.VEXA_CHROME,headless:true}:{}); // VEXA_CHROME=ruta de un Chrome instalado si el Chromium de Playwright no coincide
 const filas=[];let fallas=0;
 for(const theme of themes)for(const w of sizes){
- const h=w===360?780:w===430?932:844;
+ const h=w===360?780:w===430?932:w===375?812:844;
  const ctx=await browser.newContext({viewport:{width:w,height:h},deviceScaleFactor:2,hasTouch:true,isMobile:true,reducedMotion:'reduce',userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1'});
  await ctx.addInitScript(t=>{try{localStorage.setItem('vexa-theme',t);}catch{}},theme);
  await ctx.route('**/api/**',async route=>{const q=route.request();if(/resource=problems/.test(q.url())&&/slim=1/.test(q.url()))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({data:F.bundleProblemsCatalogo()})});const V=process.env.VEXA_UI_VARIANT,u2=V?q.url()+(q.url().includes('?')?'&':'?')+'variant='+V:q.url();const hh=await respond(u2,q.method(),q.postData());return hh?route.fulfill({status:hh[0],contentType:'application/json',body:JSON.stringify(hh[1])}):route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:{code:'fixture_missing'}})});});

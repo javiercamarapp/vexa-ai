@@ -1,5 +1,6 @@
 'use client';
 import {useId,useState,type KeyboardEvent} from 'react';
+import {useT} from '../i18n/proveedor';
 import {useWidth} from './use-width';
 import {ChartLegend,ChartTip,HatchDef} from './chart-parts';
 import {cadaCuantas,compactEs,esConteoPequeno,geometriaColumnas,indicesEtiquetados,niceScale,variacionVsAnterior} from '../../lib/charts/escala.mjs';
@@ -12,7 +13,7 @@ const PAD_T=20,PAD_B=22,PAD_R=6;
 /** Columnas finas ancladas a cero (relación barra/hueco 0.6, radio 3): tinta al 85 %, último mes completo en tinta plena, el seleccionado en rojo de marca.
  *  Un eje de 3 marcas, etiquetas directas del máximo y del último mes, tooltip con variación contra el mes anterior. Texto en píxeles reales (nunca escalado). */
 export function ColumnPlot({data,kind='observed',height=168,title,axis,deltaMode='pct',integer}:PlotProps){
- const [ref,width]=useWidth<HTMLDivElement>(),[active,setActive]=useState<number|null>(null),uid=useId().replace(/:/g,'');
+ const t=useT(),[ref,width]=useWidth<HTMLDivElement>(),[active,setActive]=useState<number|null>(null),uid=useId().replace(/:/g,'');
  const n=data.length,vals=data.map(d=>d.value),dataMax=Math.max(0,...vals.map(v=>v??0));
  const sc=niceScale(dataMax,{integer:integer??esConteoPequeno(vals)});
  const txt=(v:number)=>v===0?'0':axis?axis(v,dataMax):compactEs(v);
@@ -32,23 +33,24 @@ export function ColumnPlot({data,kind='observed',height=168,title,axis,deltaMode
     const path=h>0?`M${x0.toFixed(1)},${base}V${(top+r).toFixed(1)}Q${x0.toFixed(1)},${top.toFixed(1)} ${(x0+r).toFixed(1)},${top.toFixed(1)}H${(x0+bw-r).toFixed(1)}Q${(x0+bw).toFixed(1)},${top.toFixed(1)} ${(x0+bw).toFixed(1)},${(top+r).toFixed(1)}V${base}Z`:'';
     const lab=labeled.includes(i)&&active===null&&d.value!==null?(d.short??(axis?axis(d.value,dataMax):compactEs(d.value))):null;
     const anchor=lab&&cx+lab.length*3.4>W?'end':lab&&cx-lab.length*3.4<padL?'start':'middle';
-    return <g key={d.key} className="col" tabIndex={0} role="img" aria-label={`${d.long??d.label}${d.partial?' (mes incompleto)':''}: ${d.value===null?'sin datos':d.display}${d.detail?'. '+d.detail:''}`} data-active={active===i||undefined} data-last={i===last||undefined} onPointerEnter={()=>setActive(i)} onPointerDown={()=>setActive(i)} onFocus={()=>setActive(i)} onBlur={()=>setActive(null)}>
+    return <g key={d.key} className="col" tabIndex={0} role="img" aria-label={t(d.partial?'tr.ui.colAriaParcial':'tr.ui.colAria',{fecha:d.long??d.label,valor:d.value===null?t('tr.ui.sinDatosMin'):d.display})+(d.detail?'. '+d.detail:'')} data-active={active===i||undefined} data-last={i===last||undefined} onPointerEnter={()=>setActive(i)} onPointerDown={()=>setActive(i)} onFocus={()=>setActive(i)} onBlur={()=>setActive(null)}>
      <rect x={padL+slot*i} y={PAD_T-4} width={slot} height={plotH+PAD_B+4} className="col-hit"/>
-     {d.value===null?<text x={cx} y={base-6} textAnchor="middle" className="chart-note">s/d</text>
+     {d.value===null?<text x={cx} y={base-6} textAnchor="middle" className="chart-note">{t('tr.ui.leySd')}</text>
       :<path d={path} className={'col-bar col-'+kind+(d.partial?' col-partial':'')} style={{animationDelay:i*14+'ms',...(d.partial?{fill:`url(#h${uid})`}:{})}}/>}
-     {d.partial&&d.value!==null&&active!==i&&<text x={cx} y={top-5} textAnchor={cx+18>W?'end':'middle'} className="chart-note">parcial</text>}
+     {d.partial&&d.value!==null&&active!==i&&<text x={cx} y={top-5} textAnchor={cx+18>W?'end':'middle'} className="chart-note">{t('tr.ui.parcialChip')}</text>}
      {lab&&!d.partial&&<text x={cx} y={top-5} textAnchor={anchor} className="chart-dlabel">{lab}</text>}
      {i%every===0&&<text x={cx} y={height-6} textAnchor="middle" className="chart-tick chart-xtick">{d.label}</text>}
     </g>;})}
   </svg>
-  {sel&&active!==null&&<ChartTip x={padL+slot*active+slot/2} width={W} clearance={Math.ceil(slot/2)+8} title={sel.long??sel.label} partial={sel.partial} kind={kind} detail={sel.detail} delta={deltaMode==='none'||sel.value===null?null:(()=>{const v=variacionVsAnterior(data,active,deltaMode);return v?{...v,contra:data[active-1].label}:null;})()}><strong>{sel.value===null?'Sin datos':sel.display}</strong></ChartTip>}
+  {sel&&active!==null&&<ChartTip x={padL+slot*active+slot/2} width={W} clearance={Math.ceil(slot/2)+8} title={sel.long??sel.label} partial={sel.partial} kind={kind} detail={sel.detail} delta={deltaMode==='none'||sel.value===null?null:(()=>{const v=variacionVsAnterior(data,active,deltaMode);return v?{...v,contra:data[active-1].label}:null;})()}><strong>{sel.value===null?t('tr.ui.sinDatosCap'):sel.display}</strong></ChartTip>}
   <ChartLegend partial={data.some(d=>d.partial&&d.value!==null)} nodata={data.some(d=>d.value===null)}/>
  </div>;
 }
 /** Columnas mensuales con tabla equivalente. API estable; `axis`, `deltaMode` e `integer` son opcionales. */
 export function ColumnChart({data,kind='observed',height=168,title,unit,axis,deltaMode,integer}:{data:ColumnDatum[];kind?:ColumnKind;height?:number;title:string;unit?:string;axis?:AxisFormat;deltaMode?:'pct'|'pp'|'none';integer?:boolean}){
+ const t=useT();
  return <figure className="chart column-chart" aria-label={title}>
   <ColumnPlot data={data} kind={kind} height={height} title={title} axis={axis} deltaMode={deltaMode} integer={integer}/>
-  <details className="chart-table"><summary>Ver como tabla</summary><div className="table-wrap" tabIndex={0} role="region" aria-label={'Tabla: '+title}><table><thead><tr><th scope="col">Periodo</th><th scope="col" className="num">Valor{unit?` (${unit})`:''}</th></tr></thead><tbody>{data.map(d=><tr key={d.key}><th scope="row">{d.long??d.label}{d.partial?' (incompleto)':''}</th><td className="num">{d.value===null?'Sin datos':d.display}{d.detail?` · ${d.detail}`:''}</td></tr>)}</tbody></table></div></details>
+  <details className="chart-table"><summary>{t('cfo.serie.verTabla')}</summary><div className="table-wrap" tabIndex={0} role="region" aria-label={t('tr.ui.tabla',{titulo:title})}><table><thead><tr><th scope="col">{t('tr.ui.thPeriodo')}</th><th scope="col" className="num">{t('cfo.serie.valor')}{unit?` (${unit})`:''}</th></tr></thead><tbody>{data.map(d=><tr key={d.key}><th scope="row">{d.long??d.label}{d.partial?t('tr.ui.incompleto'):''}</th><td className="num">{d.value===null?t('tr.ui.sinDatosCap'):d.display}{d.detail?` · ${d.detail}`:''}</td></tr>)}</tbody></table></div></details>
  </figure>;
 }

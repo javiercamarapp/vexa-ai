@@ -10,17 +10,19 @@ import {LinkButton,Arrow} from '../ui/button';
 import {useJson} from '../ui/use-json';
 import {Tip} from '../ui/tip';
 import {nf} from '../ui/format';
+import {useT} from '../i18n/proveedor';
+import type {Clave} from '../../lib/i18n';
 import Link from '../workspace/navigation-lifecycle';
 import './datos.css';
 
 export type JobFila={id:string;runId:string|null;conversationId:string;state:string;runStatus:string|null;reason:string|null;createdAt?:string};
-const ESTADO:Record<string,{texto:string;tono:'ok'|'warn'|'info'|'muted'}>={queued:{texto:'En cola',tono:'info'},running:{texto:'Analizando',tono:'info'},succeeded:{texto:'Terminado',tono:'ok'},failed:{texto:'Requiere atención',tono:'warn'},cancelled:{texto:'Cancelado',tono:'muted'}};
+const ESTADO:Record<string,{texto:Clave;tono:'ok'|'warn'|'info'|'muted'}>={queued:{texto:'tr.datos.anEnCola',tono:'info'},running:{texto:'tr.datos.anAnalizando',tono:'info'},succeeded:{texto:'tr.datos.anTerminado',tono:'ok'},failed:{texto:'tr.datos.anAtencion',tono:'warn'},cancelled:{texto:'tr.datos.anCancelado',tono:'muted'}};
 const acceptTrends=(j:unknown)=>{const d=(j as {data?:TrendsView})?.data;return d?.conversations?d:null;};
 type Estado={[runId:string]:ResumenEvidencia|'error'|undefined};
 
 /** Cobertura honesta («6 de N») y tabla de hallazgos: un asunto legible por análisis en vez de un identificador y seis botones iguales. */
 export function HallazgosAnalisis({jobs,fuentes,masPaginas}:{jobs:JobFila[];fuentes:Record<string,string>;masPaginas:boolean}){
- const [ev,setEv]=useState<Estado>({});
+ const tx=useT(),[ev,setEv]=useState<Estado>({});
  const runs=useMemo(()=>[...new Set(jobs.filter(j=>j.runId&&['succeeded','abstained'].includes(j.runStatus??'')).map(j=>j.runId as string))].slice(0,15),[jobs]);
  useEffect(()=>{
   const c=new AbortController();
@@ -35,27 +37,27 @@ export function HallazgosAnalisis({jobs,fuentes,masPaginas}:{jobs:JobFila[];fuen
  const conHallazgo=Object.values(ev).filter(x=>x&&x!=='error'&&!x.sinConclusion).length;
  return <>
   <section className="card" aria-labelledby="an-cob-t">
-   <div className="card-title"><div><h2 id="an-cob-t">Cobertura del análisis</h2><p>{cob.pct===null&&trends.busy?<span className="sr-only">Calculando la cobertura…</span>:cob.texto}</p></div>{total!==null&&<KindBadge kind={cob.estimado?'estimated':'observed'}/>}</div>
-   <div className="dn-bar" role="img" aria-label={cob.pct===null?'Cobertura no disponible':`Analizadas: ${cob.pct.toLocaleString('es-MX')} % de las conversaciones cargadas`}>{cob.pct!==null&&<span className="dn-in" style={{width:Math.max(1,Math.min(100,cob.pct))+'%'}}/>}</div>
-   <p className="dn-meta">{cob.nota} Esta lista muestra {nf.format(enPagina)} {enPagina===1?'conversación analizada':'conversaciones analizadas'} en la página actual{masPaginas?' (hay más trabajos en otras páginas)':''}; no es la cobertura. Con hallazgo concluyente: {nf.format(conHallazgo)} de {nf.format(runs.length)} análisis terminados que se pudieron leer.</p>
+   <div className="card-title"><div><h2 id="an-cob-t">{tx('tr.datos.anCobTitulo')}</h2><p>{cob.pct===null&&trends.busy?<span className="sr-only">{tx('tr.datos.anCalculando')}</span>:cob.texto}</p></div>{total!==null&&<KindBadge kind={cob.estimado?'estimated':'observed'}/>}</div>
+   <div className="dn-bar" role="img" aria-label={cob.pct===null?tx('tr.datos.anCobNoDisp'):tx('tr.datos.anAnalizadas',{pct:cob.pct.toLocaleString('es-MX')})}>{cob.pct!==null&&<span className="dn-in" style={{width:Math.max(1,Math.min(100,cob.pct))+'%'}}/>}</div>
+   <p className="dn-meta">{cob.nota} {tx(enPagina===1?'tr.datos.anLista1':'tr.datos.anListaN',{n:nf.format(enPagina),mas:masPaginas?tx('tr.datos.anMas'):'',a:nf.format(conHallazgo),b:nf.format(runs.length)})}</p>
   </section>
   <section className="card" aria-labelledby="an-tab-t">
-   <div className="card-title"><div><h2 id="an-tab-t">Hallazgos por análisis</h2><p>Lo que encontró cada análisis, con su evidencia citada.</p></div></div>
-   <div className="table-wrap" tabIndex={0} role="region" aria-label="Tabla de hallazgos, desplazamiento horizontal">
-    <table className="dn-tabla"><thead><tr><th scope="col">Hallazgo</th><th scope="col">Severidad</th><th scope="col">Conversación</th><th scope="col">Problema asociado</th><th scope="col">Fecha</th><th scope="col">Estado</th><th scope="col"><span className="sr-only">Evidencia</span></th></tr></thead>
-    <tbody>{jobs.map(j=>{const e=j.runId?ev[j.runId]:undefined,st=ESTADO[j.state]??{texto:j.state,tono:'muted' as const};
+   <div className="card-title"><div><h2 id="an-tab-t">{tx('tr.datos.anHalTitulo')}</h2><p>{tx('tr.datos.anHalSub')}</p></div></div>
+   <div className="table-wrap" tabIndex={0} role="region" aria-label={tx('tr.ui.hmScroll',{titulo:tx('tr.datos.anTablaT')})}>
+    <table className="dn-tabla"><thead><tr><th scope="col">{tx('tr.datos.thHallazgo')}</th><th scope="col">{tx('tr.datos.thSeveridad')}</th><th scope="col">{tx('det.conversacion')}</th><th scope="col">{tx('tr.datos.thProblemaAs')}</th><th scope="col">{tx('tr.datos.thFecha')}</th><th scope="col">{tx('tr.datos.thEstado')}</th><th scope="col"><span className="sr-only">{tx('tr.datos.thEvidencia')}</span></th></tr></thead>
+    <tbody>{jobs.map(j=>{const e=j.runId?ev[j.runId]:undefined,st=ESTADO[j.state];
      const termino=j.runStatus==='succeeded';
      return <tr key={j.id}>
-      <th scope="row" className="dn-asunto">{!termino?<span className="muted">{j.state==='failed'?'Sin resultado':j.state==='succeeded'?'Sin hallazgo concluyente':'Pendiente de análisis'}</span>:e===undefined?<span className="muted">Leyendo…</span>:e==='error'?<span className="muted">No disponible ahora</span>:e.sinConclusion?<span className="muted">Sin hallazgo concluyente</span>:<>{e.titulo}{e.otros>0&&<small className="muted"> · y {e.otros} más</small>}<small className="muted"> · {nf.format(e.citas)} {e.citas===1?'cita':'citas'}</small></>}</th>
+      <th scope="row" className="dn-asunto">{!termino?<span className="muted">{j.state==='failed'?tx('tr.datos.anSinResultado'):j.state==='succeeded'?tx('tr.datos.anSinConcluyente'):tx('tr.datos.anPendiente')}</span>:e===undefined?<span className="muted">{tx('tr.datos.anLeyendo')}</span>:e==='error'?<span className="muted">{tx('hoy.noDisponible')}</span>:e.sinConclusion?<span className="muted">{tx('tr.datos.anSinConcluyente')}</span>:<>{e.titulo}{e.otros>0&&<small className="muted"> · {tx('tr.datos.anYMas',{n:e.otros})}</small>}<small className="muted"> · {tx(e.citas===1?'tr.datos.anCita1':'tr.datos.anCitaN',{n:nf.format(e.citas)})}</small></>}</th>
       <td>{termino&&e&&e!=='error'&&e.severidad?<StatusChip tone={tonoSeveridad(e.severidad)}>{SEVERIDAD[e.severidad]}</StatusChip>:<span className="muted">—</span>}</td>
-      <td>{fuentes[j.conversationId]??'Conversación'} · <code className="dn-code">{j.conversationId.slice(0,8)}</code></td>
-      <td><Tip label="Este análisis no está vinculado a un problema agrupado."><span className="muted">Sin vínculo registrado</span></Tip></td>
-      <td>{fechaCorteLegible(j.createdAt,{hora:false}).replace(' (UTC)','')||'No disponible'}</td>
-      <td><StatusChip tone={st.tono}>{st.texto}</StatusChip></td>
-      <td>{j.runId&&termino?<LinkButton href={'/analysis/'+j.runId} size="sm" icon={<Arrow/>}>Ver evidencia</LinkButton>:null}</td>
+      <td>{fuentes[j.conversationId]??tx('det.conversacion')} · <code className="dn-code">{j.conversationId.slice(0,8)}</code></td>
+      <td><Tip label={tx('tr.datos.anTip')}><span className="muted">{tx('tr.datos.anSinVinculo')}</span></Tip></td>
+      <td>{fechaCorteLegible(j.createdAt,{hora:false}).replace(' (UTC)','')||tx('tr.ui.cbNoDisp')}</td>
+      <td><StatusChip tone={st?st.tono:'muted'}>{st?tx(st.texto):j.state}</StatusChip></td>
+      <td>{j.runId&&termino?<LinkButton href={'/analysis/'+j.runId} size="sm" icon={<Arrow/>}>{tx('tr.datos.anVerEvidencia')}</LinkButton>:null}</td>
      </tr>;})}</tbody></table>
    </div>
-   <p className="dn-meta">Los problemas agrupados se explican en <Link href="/problems">Problemas</Link>: un análisis suelto no se une a un problema sin vínculo registrado.</p>
+   <p className="dn-meta">{(()=>{const [a,b]=tx('tr.datos.anProb',{enlace:'\u0000'}).split('\u0000');return <>{a}<Link href="/problems">{tx('nav.item.problems')}</Link>{b}</>;})()}</p>
   </section>
  </>;
 }

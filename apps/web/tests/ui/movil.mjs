@@ -16,7 +16,7 @@ const {MENU}=await import('../../src/lib/workspace/menu.mjs');
 const menuRoutes=[...new Set(MENU.flatMap(x=>x.tipo==='item'?[x.href]:(x.items??[]).map(i=>i.href)))];
 const routes=arg('routes',[...new Set(['/overview','/cfo','/gaps','/problems','/recommendations','/preguntale','/confianza','/map','/settings/team',...menuRoutes])].join(',')).split(',');
 const sizes=arg('sizes','390,360,430').split(',').map(Number),themes=arg('themes','light,dark').split(',');
-const SIZE={390:[390,844],360:[360,780],430:[430,932]};
+const SIZE={390:[390,844],360:[360,780],430:[430,932],375:[375,812]};
 const out=arg('out',path.join(os.homedir(),'.codex-work/rovaq-cierre-20261007/estrategia-20261023/diseno-panel/movil-capturas-nuevas'));
 fs.mkdirSync(out,{recursive:true});
 const fallas=[],avisos=[];let comprobaciones=0;
@@ -51,7 +51,7 @@ function medirCaparazon(raices){
  }
  return res;
 }
-const browser=await chromium.launch();
+const browser=await chromium.launch(process.env.VEXA_CHROME?{executablePath:process.env.VEXA_CHROME,headless:true}:{}); // VEXA_CHROME=ruta de un Chrome instalado si el Chromium de Playwright no coincide
 for(const theme of themes)for(const w of sizes){
  const [W,H]=SIZE[w]??[w,844];
  console.log(`== ${W}×${H} ${theme}`);

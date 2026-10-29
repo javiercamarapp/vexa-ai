@@ -137,7 +137,7 @@ test('títulos de pestaña: toda pantalla del menú tiene título propio, único
 });
 test('páginas de error de marca: noindex, logo y salida a Hoy; «use client» primero', () => {
   const nf=leer('src/app/not-found.tsx'),ge=leer('src/app/global-error.tsx'),er=leer('src/app/error.tsx');
-  assert.match(nf,/Ir a Hoy/);assert.match(er,/href="\/overview"/);
+  assert.match(nf,/t\('det\.irAHoy'\)/);assert.match(readFileSync('src/lib/i18n/d-probdet.ts','utf8'),/'det\.irAHoy': 'Ir a Hoy'/);assert.match(er,/href="\/overview"/);
   assert.match(ge,/^'use client';/);assert.match(er,/^'use client';/);
   assert.match(ge,/noindex/);assert.match(ge,/rovaq-logo-horizontal-positivo-600px\.png/);assert.match(ge,/alt="Rovaq AI"/);assert.match(ge,/width=\{160\} height=\{45\}/);
 });

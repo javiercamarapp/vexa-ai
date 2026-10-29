@@ -1,6 +1,7 @@
 // Datos SINTÉTICOS (claramente falsos) con la misma forma y coherencia interna que los reales: la suma de los marketplaces en USD
 // coincide con la serie mensual del libro; los problemas suman a las categorías; la cobertura dice qué falta (Zendesk, adjuntos).
 // Sirven para pruebas, para la auditoría UI y para el modo `VEXA_UI_FIXTURES=1`. No hay red, ni base, ni clientes reales.
+import { tarjetaA, tarjetaB, tarjetaC, tarjetaE } from '../workspace-service/cco.mjs';
 const u = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 export const SYNTHETIC_TENANTS = Object.freeze({ A: '00000000-0000-4000-8000-000000000001', B: '00000000-0000-4000-8000-0000000000b2' });
 export const SYNTHETIC_NOW = '2026-10-19T12:00:00.000Z';
@@ -103,6 +104,35 @@ export function createSyntheticStore() {
 }
 
 /** Puerto de datos sintético, atado a UN tenant (el servidor lo construye; el modelo no puede cambiarlo). */
+
+// ---- CCO sintético: mismas formas que las filas de insight_cco_* (el SKU ZZ-OTRA-ORG solo existe en la organización B para probar el aislamiento) ----
+const D = (iso) => iso;
+function ccoRaw(tenantId) {
+  const ok = (rows) => ({ rows });
+  const B = tenantId === SYNTHETIC_TENANTS.B;
+  const sku = B ? 'ZZ-OTRA-ORG' : 'SYN-AX1';
+  const vent = [['amazon', true, '2025-10-01', '2026-09-01', 12], ['walmart', true, '2026-08-01', '2026-09-01', 2], ['bestbuy', false, '2026-03-01', '2026-09-01', 7]].map(([channel, ra, mf, mt, months]) => ({ channel, refunds_available: ra, orders_from: '2025-10-01', orders_to: '2026-10-02', refunds_from: ra ? '2025-10-01' : null, refunds_to: ra ? '2026-10-02' : null, month_from: mf, month_to: mt, months, complete: false }));
+  const row = (channel, s, lines, gross, rn, runk, ramt) => ({ channel, sku_base: s, currency: 'USD', exponent: 2, month_from: '2025-10-01', month_to: '2026-09-01', months: 12, window_complete: false, refunds_available: channel !== 'bestbuy',
+    order_lines: lines, order_gross_minor: String(gross), refund_n: channel === 'bestbuy' ? null : rn, refund_n_unknown_amount: channel === 'bestbuy' ? null : runk, refund_amount_minor: channel === 'bestbuy' ? null : ramt, refunds_per_100_lines: channel === 'bestbuy' || !lines ? null : Math.round(rn * 10000 / lines) / 100 });
+  const sinV = (s, last, w, l9, ch) => ({ sku_base: s, first_sale_month: '2025-10-01', last_sale_month: last, months_without_sale: w, lines_last_3m: 0, lines_last_6m: 0, lines_last_9m: l9, channels: ch, skus_with_sales: 40, reference_month: '2026-09-01', data_through: '2026-10-02' });
+  const cell = (d1, d2, n, es_otros = false) => ({ d1, d2, n, es_otros });
+  return {
+    ventanas: ok(vent),
+    skuCanal: ok([row('amazon', sku, 4800, 51200000, 310, 40, '3310000'), row('amazon', B ? 'ZZ-OTRA-2' : 'SYN-AX2', 2100, 18800000, 90, 90, null), row('walmart', sku, 900, 8100000, 22, 0, '198000'), row('bestbuy', '', 300, 2100000, null, null, null)]),
+    sinVenta: ok([sinV(B ? 'ZZ-VIEJO' : 'SYN-OLD1', '2026-05-01', 4, 12, ['amazon']), sinV('SYN-OLD2', '2026-06-01', 3, 30, ['amazon', 'walmart']), sinV('SYN-OLD3', '2026-02-01', 7, 3, ['walmart'])]),
+    defecto: ok([cell(sku, 'defectuoso', 11), cell(sku, 'danado', 6)]), hoja: ok([cell(sku, 'garantia', 12), cell(sku, 'reembolso', 7)]),
+    subcanal: ok([cell('amazon_cumplido_por_clientex', null, 485), cell('walmart_cumplido_por_clientex', null, 359), cell('amazon_com', null, 110), cell('walmart_cumplido_por_walmart', null, 82), cell('amazon_cumplido_por_amazon', null, 48), cell('lowes', null, 153)]),
+    bodLat: ok([cell('BODEGAB-USTX', '2_dias', 120), cell('BODEGAB-USTX', '1_dia', 80), cell('BODEGAA USA Inc', '3_o_mas_dias', 60), cell('BODEGAA USA Inc', '2_dias', 140), cell('Bodegac', 'sin_dato', 56), cell(null, null, 9, true)]),
+    bodMot: ok([cell('BODEGAB-USTX', 'defectuoso', 90), cell('BODEGAA USA Inc', 'faltan_piezas', 70)]),
+    cob: ok([{ rows_total: 2317, with_retailer: 2299, with_sku: 2299, with_warehouse: 1244, with_latency: 1153, with_address: 2017, sheets: 6, cutoff: '2026-10-05T00:00:00Z' }]),
+  };
+}
+const ccoGeoSintetico = () => ({ status: 'ok', generatedAt: '2026-10-19T12:00:00.000Z', class: 'observed', provisional: true, fuente: 'Tracker de Excel', minimoPorCelda: 5,
+  cobertura: { filas: 2300, conDireccion: 2017, interpretables: 1799, pctInterpretablesDeDireccion: 89.2, pctInterpretablesDeFilas: 78.2, pais: { US: 1790, MX: 9 } },
+  estados: [{ clave: 'US-TX', pais: 'US', codigo: 'TX', nombre: 'Texas', n: 240, tipos: { items: [{ etiqueta: 'Garantía de herramientas', n: 150 }, { etiqueta: 'Reembolsos', n: 60 }], otros: 30, ocultoTodo: false }, motivos: { items: [], otros: 0, ocultoTodo: true }, retailers: { items: [{ etiqueta: 'Amazon', n: 120 }], otros: 0, ocultoTodo: false } },
+    { clave: 'US-CA', pais: 'US', codigo: 'CA', nombre: 'California', n: 200, tipos: { items: [{ etiqueta: 'Garantía de piezas', n: 100 }], otros: 100, ocultoTodo: false }, motivos: { items: [], otros: 0, ocultoTodo: true }, retailers: { items: [], otros: 0, ocultoTodo: true } }],
+  ocultos: { estados: 3, casos: 8, minimo: 5 } });
+
 export function createSyntheticPort(store, { tenantId, delayMs = 0, failOn = [], now = SYNTHETIC_NOW } = {}) {
   const data = store.get(tenantId);
   const run = async (name, fn) => {
@@ -130,6 +160,11 @@ export function createSyntheticPort(store, { tenantId, delayMs = 0, failOn = [],
       const cls = d.classified.slice(-months);
       return { status: 'ok', months: list, rows, perMonth: list.map((month, k) => ({ month, classified: cls[k].classified, eligible: cls[k].eligible })), classified: cls.reduce((a, x) => a + x.classified, 0), eligible: cls.reduce((a, x) => a + x.eligible, 0) };
     }),
+    ccoSku: () => run('ccoSku', (d) => ({ status: 'ok', card: tarjetaA(ccoRaw(tenantId)) })),
+    ccoSinVenta: () => run('ccoSinVenta', (d) => ({ status: 'ok', card: tarjetaB(ccoRaw(tenantId)) })),
+    ccoBodegas: () => run('ccoBodegas', (d) => ({ status: 'ok', card: tarjetaC(ccoRaw(tenantId)) })),
+    ccoSubcanal: () => run('ccoSubcanal', (d) => ({ status: 'ok', card: tarjetaE(ccoRaw(tenantId)) })),
+    ccoEstados: () => run('ccoEstados', (d) => ({ status: 'ok', vista: ccoGeoSintetico() })),
     exposure: ({ limit }) => run('exposure', (d) => ({ status: 'ok', ...d.exposure, rows: d.exposure.rows.slice(0, limit) })),
     ledgerBySource: ({ kind, month, months }) => run('ledgerBySource', (d) => {
       const list = month ? [month] : MONTHS.slice(-(months ?? 12));

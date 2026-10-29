@@ -6,8 +6,9 @@ import { ctxFor, portFor, store } from './helpers.mjs';
 const run = (name, args = {}, role = 'owner', tenant = SYNTHETIC_TENANTS.A, portOpts) => executeTool({ name, args, port: portFor(tenant, portOpts), ctx: ctxFor(role, tenant) });
 
 test('cada herramienta devuelve cifras con clase y cobertura, fuente y método', async () => {
-  const calls = { cobertura_datos: {}, estado_tracker: {}, estado_asociaciones: {}, tendencia_conversaciones: {}, problemas_top: {}, exposicion_por_problema: {}, categorias_por_mes: {}, ledger_por_fuente: { kind: 'refund' }, ledger_por_mes: { kind: 'order' }, comparar_meses: { a: '2026-07', b: '2026-09' }, evidencias_de_problema: { problema: 'producto dañado' }, clientes_por_problema: { problema: 'cobro duplicado' } };
-  assert.deepEqual(Object.keys(calls).sort(), TOOLS.map((t) => t.name).sort());
+  const calls = { cobertura_datos: {}, estado_tracker: {}, estado_asociaciones: {}, tendencia_conversaciones: {}, problemas_top: {}, exposicion_por_problema: {}, categorias_por_mes: {}, ledger_por_fuente: { kind: 'refund' }, ledger_por_mes: { kind: 'order' }, comparar_meses: { a: '2026-07', b: '2026-09' }, evidencias_de_problema: { problema: 'producto dañado' }, clientes_por_problema: { problema: 'cobro duplicado' }, rendimiento_sku: {}, candidatos_sin_venta: {}, eficiencia_bodegas: {}, casos_por_estado: {}, casos_por_subcanal: {} };
+  // envio_propio_vs_amazon (pregunta F) responde siempre no_data: se prueba en cco-tools.test.mjs.
+  assert.deepEqual([...Object.keys(calls), 'envio_propio_vs_amazon'].sort(), TOOLS.map((t) => t.name).sort());
   for (const [name, args] of Object.entries(calls)) {
     const r = await run(name, args);
     assert.equal(r.status, 'ok', name); assert.ok(r.figures.length > 0, name); assert.ok(r.sources.length === 1 && r.method && r.reads.length, name);

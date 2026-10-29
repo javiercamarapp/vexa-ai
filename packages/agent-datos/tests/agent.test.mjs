@@ -4,7 +4,7 @@ import { DEMO_QUESTIONS, contractViolations, createSimulatedModel, buildSuggesti
 import { ask, ctxFor, portFor, ALL_TEXT } from './helpers.mjs';
 
 test('15 preguntas de demostración de punta a punta (modo determinista, sin LLM)', async () => {
-  assert.equal(DEMO_QUESTIONS.length, 15);
+  assert.equal(DEMO_QUESTIONS.length, 21);
   for (const d of DEMO_QUESTIONS) {
     const a = await ask(d.q);
     assert.equal(a.status, d.expect ?? 'ok', `${d.q} -> ${a.status}: ${a.text}`);

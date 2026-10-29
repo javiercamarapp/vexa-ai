@@ -72,6 +72,18 @@ export const FALTAN = Object.freeze({
   E: [{clave: 'propiedadRetailer', quien: 'responsable_a'}, {clave: 'cumplimientoPedido', quien: 'responsable_b'}, {clave: 'proveedorDirecto', quien: 'responsable_a'}, {clave: 'tarifasAmazon', quien: 'responsable_a'}],
   F: [{clave: 'propiedadRetailer', quien: 'responsable_a'}, {clave: 'cumplimientoPedido', quien: 'responsable_b'}, {clave: 'facturasTransportista', quien: 'responsable_a'}, {clave: 'tarifasAmazon', quien: 'responsable_a'}, {clave: 'bodegaOrigen', quien: 'responsable_b'}],
 });
+/** Mismos textos que `cco.falta.*` en español de la interfaz (una prueba verifica que no se desalinean). El agente responde en español. */
+export const FALTAN_ES = Object.freeze({
+  unidades: 'Cantidad vendida por línea en los reportes de pedidos de cada marketplace.', resenas: 'Exportación de reseñas de producto por marketplace.', skuBestBuyShopify: 'SKU en los pedidos de Best Buy y de Shopify.',
+  inventario: 'Existencias por SKU y bodega, desde NetSuite o las bodegas.', estadoProducto: 'Catálogo de productos con estado, activo o descontinuado.', recurrencia: 'Identidad estable del comprador en los pedidos, si el marketplace la entrega.',
+  transportista: 'Transportista de cada envío, por ejemplo desde los envíos de Speedship.', entregaFecha: 'Fecha de entrega y eventos de entrega por envío.', denominadorEnvios: 'Total de envíos por bodega para poder calcular tasas.',
+  vinculoQuejaEnvio: 'Vínculo entre cada queja y el envío al que pertenece.', destinoPedido: 'Estado y código postal de destino de cada pedido de Amazon, Walmart, Best Buy y Shopify.', bodegaEstado: 'Tabla de bodega a estado, confirmada por el cliente.',
+  propiedadRetailer: 'Propiedad Retailer de los tickets de HubSpot, con permiso de lectura de tickets.', cumplimientoPedido: 'Tipo de cumplimiento de cada pedido, propio o de Amazon.', proveedorDirecto: 'Ventas de Amazon como proveedor directo, desde el portal de proveedor.',
+  tarifasAmazon: 'Reporte de tarifas, comisiones y cumplimiento de Amazon.', facturasTransportista: 'Facturas o tarifas de FedEx y UPS.', bodegaOrigen: 'Bodega de origen de cada pedido de venta.',
+});
+export const QUIEN_ES = Object.freeze({responsable_a: 'Responsable A', responsable_b: 'Responsable B'});
+/** «Texto. Pedir a Responsable A.» para cada dato que falta de una pregunta. */
+export const faltanTexto = (id) => FALTAN[id].map((x) => `${FALTAN_ES[x.clave]} Pedir a ${QUIEN_ES[x.quien]}.`);
 export const faltanDe = (id) => FALTAN[id].map((x) => ({...x}));
 
 // ---- lectura acotada ----

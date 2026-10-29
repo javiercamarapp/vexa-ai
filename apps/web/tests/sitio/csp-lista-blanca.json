@@ -1,0 +1,13 @@
+{
+  "nota": "Scripts en línea que Next inyecta en el HTML estático del sitio (hidratación y streaming). Mismas formas que LISTA_BLANCA_NEXT_POR_DEFECTO de _escaner.mjs. La CSP candidata en informe (config/sitio/cabeceras.mjs) los permite con 'unsafe-inline' porque una página estática no puede llevar nonce por petición; nada más en línea es válido.",
+  "scriptsEnLinea": [
+    "^self\\.__next_f\\.push\\(",
+    "^\\(self\\.__next_f\\s*=\\s*self\\.__next_f\\s*\\|\\|\\s*\\[\\]\\)\\.push\\(",
+    "^\\(self\\.__next_s\\s*=",
+    "^\\$R[CSVXT]?\\(",
+    "^requestAnimationFrame\\(function\\(\\)\\{\\$RT=",
+    "^\\(\\$RC="
+  ],
+  "origenesPermitidos": ["'self'"],
+  "evalPermitido": false
+}

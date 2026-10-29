@@ -16,9 +16,10 @@ export function destinoInterno(pathname: string): string;
 export type DecisionHost =
   | {tipo: 'pasar'}
   | {tipo: 'activo'}
-  | {tipo: 'reescribir'; destino: string; noEncontrada?: true}
+  | {tipo: 'reescribir'; destino: string; noEncontrada?: true; markdown?: true}
   | {tipo: 'redirigir'; url: string; status: 308};
-export function decidirHost(args: {host: unknown; pathname: string; search?: string; produccion?: boolean}): DecisionHost;
+export function prefiereMarkdown(accept: unknown): boolean;
+export function decidirHost(args: {host: unknown; pathname: string; search?: string; produccion?: boolean; accept?: string | null; espejoDe?: ((rutaPublica: string) => string | null) | null}): DecisionHost;
 export function rutaConAutenticacion(pathname: string): boolean;
 export function ES_HOST_LANDING(host: unknown): boolean;
 export type HasHost = {type: 'host'; value: string};

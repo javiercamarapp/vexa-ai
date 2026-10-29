@@ -4,7 +4,7 @@ import test from 'node:test';import assert from 'node:assert/strict';
 import mod from '../next.config.ts';const cfg=mod.default??mod;
 const reglas=await cfg.headers();
 const hdrs=(r)=>Object.fromEntries(r.headers.map(h=>[h.key,h.value]));
-const base=reglas.find(r=>r.source==='/:path*'&&!r.has);
+const base=reglas.find(r=>r.source==='/:path*'&&!r.has&&!r.missing);
 const app=reglas.find(r=>r.source==='/:path*'&&r.has?.some(h=>h.type==='host'&&h.value==='app.rovaq.ai'));
 test('base global: HSTS de un año con subdominios, nosniff, DENY, Referrer-Policy, Permissions-Policy, COOP y CSP con frame-ancestors/object-src',()=>{
   const h=hdrs(base);

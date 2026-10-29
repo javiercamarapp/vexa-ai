@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import type { NextConfig } from "next";
 import { PREFIJOS_PRIVADOS } from './src/lib/site.mjs';
 import { reglasHost } from './config/sitio/reglas-host.mjs';
+import { reglasEspejos, reglasPorHost, HOST_SITIO_RE } from './config/sitio/cabeceras.mjs';
 
 // Public build identity only. Next inlines this value into the compiled route;
 // changing a runtime environment variable does not relabel an existing build.
@@ -35,11 +36,16 @@ const nextConfig: NextConfig = {
       "font-src 'self' data:", "connect-src 'self' https://*.supabase.co wss://*.supabase.co", "worker-src 'self' blob:", "manifest-src 'self'",
       "form-action 'self' https://accounts.google.com https://*.supabase.co", "base-uri 'self'", "object-src 'none'", "frame-ancestors 'none'",
     ].join('; ');
-    return [{ source: '/:path*', headers: [
+    // Manifest de /s/ (lo genera tools/sitio): de ahí salen los espejos Markdown que reciben cabeceras propias. Sin manifest (clon sin build del sitio) no hay reglas de espejos.
+    let manifestMd: Record<string, { url: string }> = {};
+    try { manifestMd = JSON.parse(readFileSync(resolve(__dirname, 'public/s/manifest.json'), 'utf8')).md ?? {}; } catch { /* sin manifest */ }
+    return [{
+      // CSP en modo informe de la aplicación y hosts antiguos. El sitio (rovaq.ai y www) lleva la suya, más estricta, en reglasPorHost.
+      source: '/:path*', missing: [{ type: 'host', value: HOST_SITIO_RE }], headers: [{ key: 'Content-Security-Policy-Report-Only', value: cspReportOnly }],
+    }, { source: '/:path*', headers: [
       { key: 'X-Content-Type-Options', value: 'nosniff' },
       { key: 'X-Frame-Options', value: 'DENY' },
       { key: 'Content-Security-Policy', value: "base-uri 'self'; object-src 'none'; frame-ancestors 'none'" },
-      { key: 'Content-Security-Policy-Report-Only', value: cspReportOnly },
       { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
       { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
       { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()' },
@@ -76,7 +82,7 @@ const nextConfig: NextConfig = {
     }, {
       // Sitio público: los activos de /s/ llevan hash de 8 caracteres en el nombre (nube, scripts, puntos, imágenes, fuentes), así que se cachean un año.
       source: '/s/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
-    }, {
+    }, ...reglasEspejos(manifestMd), ...reglasPorHost(), {
       source: '/vendor/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
     }, {
       source: '/:archivo(site.webmanifest|push-manifest.webmanifest|robots.txt|sitemap.xml|humans.txt)', headers: [{ key: 'Cache-Control', value: 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400' }],

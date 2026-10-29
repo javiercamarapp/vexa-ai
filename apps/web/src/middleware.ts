@@ -5,6 +5,11 @@ import { failure, localRedirect, requestAuth } from './lib/auth-http';
 import { decidirHost, rutaConAutenticacion } from './lib/host-routing.mjs';
 import { registrar } from './lib/security/registro';
 import { evaluarLimite } from './lib/security/limite-servidor';
+import { espejoDeRuta, mapaEspejos } from './lib/sitio/espejos.mjs';
+import manifestSitio from '../public/s/manifest.json';
+// Espejos Markdown del sitio por ruta pública (negociación Accept: text/markdown en rovaq.ai). Se arma una vez al cargar el módulo.
+const espejos=mapaEspejos((manifestSitio as {md?:Record<string,{url:string}>}).md??{});
+const espejoDe=espejoDeRuta(espejos);
 function authLinkHeaders(request:NextRequest,response:NextResponse) {
   if (/^\/auth\/(?:invitations|email)(?:\/|$)/.test(request.nextUrl.pathname)) response.headers.set('Referrer-Policy','no-referrer');
   return response;
@@ -23,8 +28,20 @@ export async function middleware(request:NextRequest) {
     }
     // Host primero (decisión pura y probada en host-routing.mjs). Con las reglas por host de next.config (Fase A) rovaq.ai y www.rovaq.ai ya no llegan aquí: el matcher los excluye.
     // Lo que sigue sirve a app.rovaq.ai y a los hosts antiguos, y es también el respaldo (Fase B) si rovaq.ai volviera a pasar por el middleware.
-    const decision=decidirHost({host:request.headers.get('x-forwarded-host')??request.headers.get('host')??request.nextUrl.host,pathname:path,search:request.nextUrl.search,produccion:process.env.VERCEL_ENV==='production'});
-    if(decision.tipo==='reescribir')return NextResponse.rewrite(new URL(decision.destino+request.nextUrl.search,request.url));
+    const decision=decidirHost({host:request.headers.get('x-forwarded-host')??request.headers.get('host')??request.nextUrl.host,pathname:path,search:request.nextUrl.search,produccion:process.env.VERCEL_ENV==='production',accept:request.method==='GET'||request.method==='HEAD'?request.headers.get('accept')??'':null,espejoDe});
+    if(decision.tipo==='reescribir'&&decision.markdown){
+      // Mismo URL, representación Markdown (negociada por Accept). Las cabeceras de los archivos .md no corren para la URL original: se fijan aquí.
+      const respuesta=NextResponse.rewrite(new URL(decision.destino,request.url));
+      respuesta.headers.set('Content-Type','text/markdown; charset=utf-8');respuesta.headers.set('Vary','Accept');respuesta.headers.set('X-Robots-Tag','noindex');
+      respuesta.headers.set('Link','<'+(espejos.get(path)?.canonica??'https://rovaq.ai')+'>; rel="canonical"');
+      return respuesta;
+    }
+    if(decision.tipo==='reescribir'){
+      const respuesta=NextResponse.rewrite(new URL(decision.destino+request.nextUrl.search,request.url));
+      // La misma URL puede responder HTML o Markdown según Accept: las cachés deben distinguirlas.
+      if(!decision.noEncontrada&&espejoDe(path))respuesta.headers.set('Vary','Accept');
+      return respuesta;
+    }
     if(decision.tipo==='redirigir')return NextResponse.redirect(new URL(decision.url,request.url),decision.status);
     if(decision.tipo==='activo')return NextResponse.next();
     // El matcher ahora cubre todo menos estáticos; lo que antes no pasaba por aquí sigue sin tocarse.

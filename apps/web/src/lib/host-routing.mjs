@@ -72,7 +72,33 @@ const redir = (url) => ({tipo: 'redirigir', url, status: 308});
  * `produccion` solo es verdadero en el despliegue de producción (VERCEL_ENV=production): en local y en vistas previas los hosts antiguos no redirigen
  * y /sitio/... sigue abierto en el host de la app para poder probar el sitio por /sitio/es.
  */
-export function decidirHost({host, pathname, search = '', produccion = false}) {
+/**
+ * Negociación de contenido por Accept (sin mirar el User-Agent: eso sería cloaking). Verdadero solo si el cliente pide text/markdown de forma EXPLÍCITA con q mayor que 0
+ * y con prioridad igual o mayor que la de text/html (explícito, text/* o comodín). Un navegador (text/html con un comodín de q baja) nunca recibe Markdown.
+ */
+export function prefiereMarkdown(accept) {
+  if (typeof accept !== 'string' || accept.length === 0 || accept.length > 2048) return false;
+  let md = -1, html = -1, texto = -1, todo = -1;
+  for (const parte of accept.split(',')) {
+    const [tipoCrudo, ...params] = parte.trim().toLowerCase().split(';');
+    const tipo = tipoCrudo.trim();
+    if (!tipo) continue;
+    let q = 1;
+    for (const prm of params) {
+      const m = /^\s*q\s*=\s*([0-9]*\.?[0-9]+)\s*$/.exec(prm);
+      if (m) q = Math.min(1, Number(m[1]));
+    }
+    if (tipo === 'text/markdown') md = Math.max(md, q);
+    else if (tipo === 'text/html') html = Math.max(html, q);
+    else if (tipo === 'text/*') texto = Math.max(texto, q);
+    else if (tipo === '*/*') todo = Math.max(todo, q);
+  }
+  if (md <= 0) return false;
+  const qHtml = html >= 0 ? html : texto >= 0 ? texto : Math.max(todo, 0);
+  return md >= qHtml;
+}
+
+export function decidirHost({host, pathname, search = '', produccion = false, accept = null, espejoDe = null}) {
   const h = normalizarHost(host);
   if (h === HOST_WWW) return redir(ORIGEN_SITIO + pathname + search);
   if (h === HOST_SITIO) {
@@ -82,7 +108,13 @@ export function decidirHost({host, pathname, search = '', produccion = false}) {
     if (publica !== null) return redir(publica + search);
     if (limpia === '/landing') return redir('/' + search);
     if (limpia === '/landing/en') return redir('/en' + search);
-    if (RUTAS_SITIO.has(limpia)) return limpia !== pathname ? redir(limpia + search) : {tipo: 'reescribir', destino: destinoInterno(limpia)};
+    if (RUTAS_SITIO.has(limpia)) {
+      if (limpia !== pathname) return redir(limpia + search);
+      // Accept: text/markdown sirve el espejo Markdown de la misma URL (solo páginas con espejo, es decir, las publicables). Sin Accept la decisión es la de siempre.
+      const espejo = accept !== null && espejoDe ? espejoDe(limpia) : null;
+      if (espejo && prefiereMarkdown(accept)) return {tipo: 'reescribir', destino: espejo, markdown: true};
+      return {tipo: 'reescribir', destino: destinoInterno(limpia)};
+    }
     if (esActivoPublico(pathname) || rutaSiempreAbierta(pathname)) return {tipo: 'activo'};
     if (esRutaApp(pathname)) return redir(ORIGEN_APP + pathname + search);
     // Ruta desconocida: 404 propio del sitio. Se reescribe a /sitio/<lang>/__404, una página prerenderizada que responde 404 real (con dynamicParams=false en el sitio, una ruta sin pregenerar caería al catch-all de la aplicación); nunca una redirección a la aplicación.

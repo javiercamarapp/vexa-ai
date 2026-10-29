@@ -77,7 +77,8 @@ export function construirEntrada(punto, evidencia = null, {maxFilas = MAX_FILAS_
       mostradas: Math.min(maxFilas, evidencia.filas?.length ?? 0),
     };
   } else o.evidencia = {total: 'sin filas disponibles', verificacion: 'no aplica', filas: [], mostradas: 0};
-  const texto = JSON.stringify(o);
+  // B-03: JSON seguro dentro de <DATOS>…</DATOS>: ningún dato importado puede cerrar la etiqueta ni abrir otra (se escapan < > & como \u003c, \u003e, \u0026; sigue siendo JSON válido).
+  const texto = JSON.stringify(o).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026');
   if (pareceTenerPII(texto)) throw new WorkspaceError('pii_blocked', 422);
   return {objeto: o, texto};
 }

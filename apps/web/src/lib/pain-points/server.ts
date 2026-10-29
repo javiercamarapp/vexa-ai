@@ -12,6 +12,8 @@ import {createPainAiService} from '../../../../../packages/workspace-service/pai
 import {createPainAiStore} from '../../../../../packages/workspace-service/pain-points-ia-store.mjs';
 import {crearProveedorReal} from '../../../../../packages/workspace-service/pain-points-ia-proveedor.mjs';
 const TTL_MS=90_000;
+/** B-02: un `%` suelto hacía lanzar URIError (503). Se decodifica con captura y se rechaza con 400 si no es un id de punto de dolor razonable. */
+function idSeguro(valor:string):string{let id:string;try{id=decodeURIComponent(valor);}catch{throw new AccessError(400,'pain_point_invalid');}if(id.length<1||id.length>128||/[\u0000-\u001f]/.test(id))throw new AccessError(400,'pain_point_invalid');return id;}
 /** Solo propietarios y analistas (igual que el menú «Dinero»): ocultar el ítem no protege la ruta. */
 async function contexto(request:NextRequest,descarga=false){
  if(!config())throw new AccessError(503,'configuration_required');
@@ -50,7 +52,7 @@ export async function painEvidenceHandler(request:NextRequest,params:{id:string}
   const c=await contexto(request,q.get('format')==='csv');finish=c.finish;
   const resumen=()=>{const clave=c.tenant+'|'+c.role+'|pain-points';return conMemoria(clave,TTL_MS,()=>createPainPointsRepository({database:c.database}).get());};
   const repo=createPainEvidenceRepository({database:c.database,resumen});
-  const id=decodeURIComponent(params.id);
+  const id=idSeguro(params.id);
   if(q.get('format')==='csv'){
    const clave=c.tenant+'|'+c.role+'|pain-points-csv|'+id;
    const out=olvidarSiDegradada(clave,await conMemoria(clave,TTL_MS,()=>repo.csv({id})));
@@ -83,7 +85,7 @@ export async function painAiHandler(request:NextRequest,params:{id:string}){
   else if(request.method!=='GET')throw new AccessError(400,'unsupported_filter');
   const c=await contexto(request);finish=c.finish;
   const resumen=()=>{const clave=c.tenant+'|'+c.role+'|pain-points';return conMemoria(clave,TTL_MS,()=>createPainPointsRepository({database:c.database}).get());};
-  const id=decodeURIComponent(params.id);
+  const id=idSeguro(params.id);
   const svc=createPainAiService({store:createPainAiStore({database:c.database}),provider:proveedorIa.actual(),vista:resumen,evidencia:createPainEvidenceRepository({database:c.database,resumen})});
   const data=request.method==='POST'?await svc.analizar({id}):await svc.estado({id});
   return finish(NextResponse.json({data:{...data,puedeAnalizar:['owner','analyst'].includes(c.role)}},{headers:{...PRIVATE_HEADERS,Vary:'Cookie'}}));

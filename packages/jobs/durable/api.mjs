@@ -3,7 +3,7 @@ export function createJobsHandler(repository){return async request=>{
  try{
   const path=new URL(request.url).pathname;
   if(path==='/api/jobs/health'&&request.method==='GET'){const data=await repository.health();return Response.json({data},{status:data.healthy?200:503});}
-  if(path==='/api/jobs/worker'&&request.method==='POST'){const b=await request.json();return Response.json({data:await repository.setup(b.user_id,b.enabled)});}
+  if(path==='/api/jobs/worker'&&request.method==='POST'){const b=await request.json().catch(()=>null);if(!b||typeof b!=='object'||Array.isArray(b))return Response.json({error:{code:'jobs_input_invalid'}},{status:400});return Response.json({data:await repository.setup(b.user_id,b.enabled)});/* B-02: cuerpo nulo o no objeto = 400, no 503 */}
   const detail=path.match(/^\/api\/jobs\/([0-9a-f-]{36})\/(errors|canonicals)(?:\/([0-9a-f-]{36}))?$/i);
   if(detail){
    if(detail[2]==='errors'&&request.method==='GET')return new Response(exportRowErrors(await repository.errors(detail[1])),{headers:{'Content-Type':'text/csv; charset=utf-8','Content-Disposition':'attachment; filename="ingestion-errors.csv"','Cache-Control':'private, no-store'}});

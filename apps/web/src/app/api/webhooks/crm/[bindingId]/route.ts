@@ -1,4 +1,5 @@
 import 'server-only';
+import {failureClass} from '@vexa/platform/db';
 import {createDatabase} from '@vexa/platform/db';
 import {serverPool} from '../../../../../lib/imports/server';
 import {createRuntime} from '../../../../../../../../packages/jobs/durable/runtime.mjs';
@@ -21,5 +22,5 @@ export async function POST(request:Request){
    const worker=await createRuntime({...process.env,VEXA_WORKER_DISPATCHER:'disabled',VEXA_WORKER_TENANT:binding.tenantId},{createDatabase,pool:serverPool(),deadlineAt:Date.now()+10000,consumer:'crm'});
    try{return await createCRMWebhookRepository({database:worker.database}).record({binding,digest});}finally{await worker.close();}
   }})(request);
- }catch(error){console.error('crm-webhook-failed',typeof (error as {code?:unknown})?.code==='string'?(error as {code:string}).code:(error as Error)?.message?.slice(0,80));return Response.json({code:'CRM_WEBHOOK_CONFIGURATION_REQUIRED'},{status:503,headers:{'Cache-Control':'private, no-store'}});}
+ }catch(error){console.error('crm-webhook-failed',typeof (error as {code?:unknown})?.code==='string'&&/^[A-Z_0-9]{3,64}$/.test((error as {code:string}).code)?(error as {code:string}).code:failureClass(error)/* B-06: nunca el mensaje (puede traer host, usuario o consulta) */);return Response.json({code:'CRM_WEBHOOK_CONFIGURATION_REQUIRED'},{status:503,headers:{'Cache-Control':'private, no-store'}});}
 }

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {extraerInformes} from '../src/lib/sitio/csp-informe';
+import {claseDe} from '../src/lib/security/limite';
 import {POST} from '../src/app/api/csp-informe/route';
 
 test('csp-informe: los dos formatos se reducen a directiva, origen bloqueado y ruta, sin consulta ni PII', () => {
@@ -26,4 +27,9 @@ test('csp-informe: responde 204 siempre, no registra el cuerpo crudo y rechaza c
   assert.equal(lineas.length, 1);
   assert.doesNotMatch(lineas[0], /a@b\.c|x=1/);
   assert.match(lineas[0], /img-src/);
+});
+
+test('el limitador general no toca el sitio: ni páginas, ni activos de /s/, ni espejos, ni robots', () => {
+  for (const ruta of ['/', '/producto', '/en', '/en/producto', '/s/sitio.9c89f43b.js', '/index.md', '/llms.txt', '/robots.txt', '/sitemap.xml', '/blog/rss.xml', '/og/es.png'])
+    for (const metodo of ['GET', 'HEAD']) assert.equal(claseDe(metodo, ruta), null, metodo + ' ' + ruta);
 });

@@ -8,7 +8,6 @@ import {decidirHost, prefiereMarkdown} from '../../src/lib/host-routing.mjs';
 import {mapaEspejos, espejoDeRuta, rutaEspejoDe} from '../../src/lib/sitio/espejos.mjs';
 import {rutaEspejo} from '../../src/lib/sitio/metadatos.mjs';
 import {LISTA_BLANCA_NEXT_POR_DEFECTO} from './_escaner.mjs';
-import {claseDe} from '../../src/lib/security/limite.ts';
 
 const aqui = import.meta.dirname;
 const manifest = JSON.parse(readFileSync(join(aqui, '../../public/s/manifest.json'), 'utf8'));
@@ -98,7 +97,3 @@ test('next.config: la CSP en informe de la app excluye al sitio y no se pierde n
   assert.match(c, /\.\.\.reglasEspejos\(manifestMd\), \.\.\.reglasPorHost\(\)/);
 });
 
-test('el limitador general no toca el sitio: ni páginas, ni activos de /s/, ni espejos, ni robots', () => {
-  for (const ruta of ['/', '/producto', '/en', '/en/producto', '/s/sitio.9c89f43b.js', '/index.md', '/llms.txt', '/robots.txt', '/sitemap.xml', '/blog/rss.xml', '/og/es.png'])
-    for (const metodo of ['GET', 'HEAD']) assert.equal(claseDe(metodo, ruta), null, metodo + ' ' + ruta);
-});

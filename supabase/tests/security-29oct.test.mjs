@@ -197,3 +197,77 @@ test('STO-01 (tipos): un miembro solo sube a vexa-private el espacio de importac
  });
  }finally{await pg.stop();}
 });
+
+test('security_events: solo inserción, sin PII, muestreo, aislamiento por rol, alertas por umbral y bitácoras inmutables',async t=>{
+ const pg=await startLocalPg({label:'sec29e'});try{
+ const db='s29e',ADMIN='00000000-0000-4000-8000-0000000000aa',SESS='00000000-0000-4000-8000-0000000000bb';
+ pg.createDb(db);pg.applySchema(db,{upTo:BASE});seedTenants(pg,db);
+ pg.sql(db,`alter table auth.users add column if not exists email_confirmed_at timestamptz default now();
+  insert into auth.users(id,email) values ('${ADMIN}','admin@example.invalid');
+  insert into auth.sessions(id,user_id) values ('${SESS}','${ADMIN}');
+  insert into vexa_platform.administrators(user_id) values ('${ADMIN}');`);
+ pg.file(db,mig('20261205000400_security_events.sql'));
+ const rec=(o,role='vexa_backend')=>JSON.parse(pg.sql(db,`begin; set local role ${role}; select public.record_security_event($j$${JSON.stringify(o)}$j$::jsonb); commit;`).split('\n').find(l=>l.startsWith('{')));
+ const asAdmin=(sql)=>pg.sql(db,`begin; set local role authenticated; set local request.jwt.claim.sub='${ADMIN}'; set local request.jwt.claims='{"session_id":"${SESS}"}'; ${sql}; commit;`).split('\n').filter(l=>l&&l!=='BEGIN'&&l!=='COMMIT'&&!l.startsWith('SET')).join('');
+ const count=(w='true')=>Number(pg.sql(db,`select count(*) from vexa_platform.security_events where ${w}`));
+ await t.test('solo inserción: UPDATE, DELETE y TRUNCATE fallan incluso para el dueño de la tabla',()=>{
+  rec({kind:'auth_401',route:'/api/x',method:'GET'});
+  for(const q of [`update vexa_platform.security_events set severity='info'`,`delete from vexa_platform.security_events`,`truncate vexa_platform.security_events`])assert.throws(()=>pg.sql(db,q),/append_only/,q);
+ });
+ await t.test('sin PII ni secretos: correo, JWT y Bearer en el detalle se descartan; IP inválida y agente se sanean; la ruta pierde la consulta',()=>{
+  const r=rec({kind:'forbidden_403',route:'/api/briefs?email=a@b.co&token=eyJabc',method:'post',ip_hash:'203.0.113.9',ua:'Mozilla/5.0\u0007 (X11)'+'x'.repeat(300),
+   detail:{code:'role_insufficient',email:'real@example.com',reason_code:'real@example.com',scope:'Bearer abc.def',resource:'eyJhbGciOi.payload.sig',rows:3,extra:'x',status:403}});
+  assert.equal(r.stored,true);
+  const row=JSON.parse(pg.sql(db,`select to_jsonb(e) from vexa_platform.security_events e where kind='forbidden_403' order by id desc limit 1`));
+  assert.equal(row.route,'/api/briefs');assert.equal(row.method,'POST');assert.equal(row.ip_hash,null,'IP en claro rechazada: solo se aceptan huellas hex de 64');
+  assert.ok(row.ua.length<=120&&!/[\u0000-\u001f]/.test(row.ua));
+  assert.deepEqual(row.detail,{code:'role_insufficient',rows:3,status:403});
+  const all=pg.sql(db,`select string_agg(e::text,' ') from vexa_platform.security_events e`);
+  assert.ok(!/@|eyJ|Bearer|203\.0\.113/.test(all),'ninguna fila contiene correo, token ni IP');
+ });
+ await t.test('tipo de evento inválido no inserta ni lanza; entradas raras no rompen',()=>{
+  assert.equal(rec({kind:'raro'}).stored,false);assert.equal(rec({kind:'auth_401',tenant_id:'no-uuid',actor_id:'x',detail:'texto'}).stored,true);
+ });
+ await t.test('deduplicación: 3 primeros del minuto por huella, luego solo 10, 100…; los contadores cuentan todo',()=>{
+  const ip=h(777);const before=count(`ip_hash='${ip}'`);
+  for(let i=0;i<120;i++)rec({kind:'auth_401',route:'/api/problems',method:'GET',ip_hash:ip});
+  assert.equal(count(`ip_hash='${ip}'`)-before,3+2,'3 + los eventos 10 y 100');
+  assert.equal(pg.sql(db,`select hits from vexa_platform.security_event_counters where kind='auth_401' and scope_hash='${ip}'`),'120');
+  assert.equal(pg.sql(db,`select (detail->>'hits') from vexa_platform.security_events where ip_hash='${ip}' and detail ? 'hits' order by id desc limit 1`),'100');
+ });
+ await t.test('exportación y soporte no se muestrean: cada una deja su fila',()=>{
+  const a=count(`kind='export'`);for(let i=0;i<8;i++)rec({kind:'export',tenant_id:A,actor_id:U.owner,detail:{resource:'workspace',format:'csv',rows:i}});
+  assert.equal(count(`kind='export'`)-a,8);
+ });
+ await t.test('aislamiento: anon, authenticated, owner/viewer de un tenant y service_role no leen ni escriben; el administrador lee por función',()=>{
+  for(const role of ['anon','authenticated','service_role'])assert.throws(()=>rec({kind:'auth_401'},role),/permission denied/,role);
+  assert.throws(()=>pg.sql(db,`begin; set local role authenticated; set local request.jwt.claim.sub='${U.owner}'; select * from vexa_platform.security_events; commit;`),/permission denied/);
+  assert.throws(()=>pg.sql(db,`begin; set local role vexa_backend; select * from vexa_platform.security_events; commit;`),/permission denied/);
+  assert.throws(()=>pg.sql(db,`begin; set local role authenticated; set local request.jwt.claim.sub='${U.owner}'; set local request.jwt.claims='{"session_id":"${SESS}"}'; select public.platform_security_events('{}'::jsonb); commit;`),/platform_access_denied/,'un propietario no es administrador');
+  const out=JSON.parse(asAdmin(`select public.platform_security_events('{"kind":"export","limit":5}'::jsonb)`));
+  assert.equal(out.items.length,5);assert.ok(out.nextCursor);assert.ok(out.items.every(i=>i.kind==='export'&&!('ip_hash' in i)));
+  const f=JSON.parse(asAdmin(`select public.platform_security_events('{"severity":"warn","since":"2020-01-01T00:00:00Z"}'::jsonb)`));assert.ok(f.items.length>0&&f.items.every(i=>i.severity==='warn'));
+  assert.throws(()=>asAdmin(`select public.platform_security_events('{"x":1}'::jsonb)`),/platform_input_invalid/);
+ });
+ await t.test('alerta por umbral: 20 fallos de una misma fuente, un Bearer inválido o 5 firmas inválidas; el cron deja un solo alert_raised por cubeta',()=>{
+  const quiet=JSON.parse(asAdmin(`select public.platform_security_alerts()`));
+  assert.ok(!quiet.alerts.some(a=>a.kind==='bearer_invalid'));
+  rec({kind:'bearer_invalid',route:'/api/internal/crm',method:'POST',ip_hash:h(5)});
+  for(let i=0;i<6;i++)rec({kind:'webhook_signature_invalid',route:'/api/webhooks/email',method:'POST',ip_hash:h(6)});
+  const a=JSON.parse(asAdmin(`select public.platform_security_alerts()`)).alerts;
+  assert.ok(a.some(x=>x.kind==='bearer_invalid'&&x.severity==='high'));assert.ok(a.some(x=>x.kind==='webhook_signature_invalid'&&x.severity==='high'&&x.hits>=6));
+  assert.ok(a.some(x=>x.kind==='auth_failures'),'los 120 fallos de la misma huella superan 20');
+  const ev=()=>JSON.parse(pg.sql(db,`begin; set local role vexa_backend; select public.evaluate_security_alerts(); commit;`).split('\n').find(l=>l.startsWith('{')));
+  assert.equal(ev().raised,true);assert.equal(ev().raised,false);assert.equal(count(`kind='alert_raised'`),1);
+  assert.throws(()=>pg.sql(db,`begin; set local role authenticated; select public.evaluate_security_alerts(); commit;`),/permission denied/);
+ });
+ await t.test('bitácoras de plataforma y de equipo son solo inserción y el motivo de soporte se enmascara',()=>{
+  pg.sql(db,`insert into vexa_platform.audit(actor_id,operation,details) values ('${ADMIN}','support_start','{"reason":"cliente juan@empresa.com tel +52 55 1234 5678 pidió revisar"}')`);
+  const d=pg.sql(db,`select details->>'reason' from vexa_platform.audit order by id desc limit 1`);
+  assert.ok(!/@|1234/.test(d)&&/\[correo\]/.test(d)&&/\[numero\]/.test(d),d);
+  assert.throws(()=>pg.sql(db,`update vexa_platform.audit set operation='x'`),/append_only/);assert.throws(()=>pg.sql(db,`delete from vexa_platform.audit`),/append_only/);
+  pg.sql(db,`insert into public.team_audit(tenant_id,actor_id,operation,target_id) values ('${A}','${U.owner}','role','${U.viewer}')`);
+  assert.throws(()=>pg.sql(db,`update public.team_audit set operation='x'`),/append_only/);assert.throws(()=>pg.sql(db,`delete from public.team_audit`),/append_only/);
+ });
+ }finally{await pg.stop();}
+});

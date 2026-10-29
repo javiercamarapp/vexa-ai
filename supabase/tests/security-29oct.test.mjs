@@ -303,3 +303,22 @@ test('H-01: contadores de peticiones y arrendamientos de concurrencia compartido
  });
  }finally{await pg.stop();}
 });
+
+test('M-03: tope de invitaciones por organización (20/h, 100/día), por organización, con evento y sin correo en el registro',async t=>{
+ const pg=await startLocalPg({label:'sec29g'});try{
+ const db='s29g';pg.createDb(db);pg.applySchema(db,{upTo:BASE});seedTenants(pg,db);pg.file(db,mig('20261205000400_security_events.sql'));pg.file(db,mig('20261205000600_invitation_quota.sql'));
+ const inv=(tenant,n,backdate='')=>pg.sql(db,`insert into public.team_invitations(tenant_id,request_id,email,role,created_by,created_at,expires_at) select '${tenant}',gen_random_uuid(),'secreto'||md5(random()::text||g)||'@example.invalid','viewer','${U.owner}',clock_timestamp()${backdate},clock_timestamp()+interval '3 days' from generate_series(1,${n}) g`);
+ await t.test('20 por hora pasan; la 21 se rechaza con team_invitation_quota; otra organización no se ve afectada',()=>{
+  inv(A,20);assert.throws(()=>inv(A,1),/team_invitation_quota/);inv(B,1);
+  assert.equal(pg.sql(db,`select count(*) from public.team_invitations where tenant_id='${A}'`),'20');
+ });
+ await t.test('100 por día: con 100 invitaciones de hace 2 horas, la siguiente se rechaza aunque la hora esté libre',()=>{
+  inv(B,99,` - interval '2 hours'`);assert.throws(()=>inv(B,1),/team_invitation_quota/);
+ });
+ await t.test('eventos: uno por invitación aceptada, sin correo ni identificadores de invitado',()=>{
+  assert.equal(pg.sql(db,`select count(*) from vexa_platform.security_events where kind='invitation_sent'`),'120');
+  assert.equal(pg.sql(db,`select count(*) from vexa_platform.security_events where kind='rate_limited'`),'0','el rechazo revierte la transacción; la aplicación registra el 429');
+  assert.ok(!/secreto|@example/.test(pg.sql(db,`select string_agg(e::text,' ') from vexa_platform.security_events e`)));
+ });
+ }finally{await pg.stop();}
+});

@@ -30,3 +30,14 @@ test('B-03: un dato importado con </DATOS> no puede cerrar la etiqueta del promp
   assert.ok(!/<\/?DATOS/i.test(texto),texto);assert.ok(!texto.includes('<')&&!texto.includes('>'));
   assert.equal(JSON.parse(texto).punto.nombre,objeto.punto.nombre,'escape reversible: el dato original se conserva al leer el JSON');
 });
+
+import {createTeam} from '../../../packages/team/index.mjs';
+test('M-03: la cuota de invitaciones (54000) se responde 429 team_invitation_quota y deja el evento rate_limited',async()=>{
+  const eventos:any[]=[];(globalThis as any).__vexaSecuritySink=(e:unknown)=>eventos.push(e);
+  try{
+    const client={rpc:async()=>({data:null,error:{code:'54000',message:'team_invitation_quota'}})};
+    const team=createTeam({client:client as never,tenantId:'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',sendInvitation:async()=>'sent'} as never);
+    await assert.rejects((team as any).invite({email:'a@b.co',role:'viewer',requestId:'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',confirmed:true}),(e:any)=>e.status===429&&e.code==='team_invitation_quota');
+    assert.equal(eventos[0]?.kind,'rate_limited');assert.ok(!JSON.stringify(eventos).includes('a@b.co'));
+  }finally{delete (globalThis as any).__vexaSecuritySink;}
+});

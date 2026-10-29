@@ -13,7 +13,7 @@ const leer=r=>readFileSync(join(raiz,r),'utf8'),pub=r=>join(raiz,'public',r);
 const pngTam=r=>{const b=readFileSync(pub(r));assert.equal(b.subarray(1,4).toString(),'PNG',r+' no es PNG');return [b.readUInt32BE(16),b.readUInt32BE(20)];};
 
 test('dominio canónico: NEXT_PUBLIC_SITE_URL con respaldo al dominio nuevo', () => {
-  assert.equal(SITE_URL_RESPALDO,'https://rovaq-ai.vercel.app');
+  assert.equal(SITE_URL_RESPALDO,'https://app.rovaq.ai');assert.ok(!/vercel\.app/.test(SITE_URL_RESPALDO),'el respaldo no apunta al host antiguo');assert.match(readFileSync(pub('.well-known/security.txt'),'utf8'),/^Canonical: https:\/\/app\.rovaq\.ai\/\.well-known\/security\.txt$/m);
   assert.equal(siteUrl(undefined),SITE_URL_RESPALDO);
   assert.equal(siteUrl('no es url'),SITE_URL_RESPALDO);
   assert.equal(siteUrl('http://evil.example'),SITE_URL_RESPALDO,'http fuera de localhost no se acepta');
@@ -101,7 +101,7 @@ test('cabeceras de seguridad y caché en next.config.ts', () => {
   const c=leer('next.config.ts');
   for (const k of ['X-Content-Type-Options','nosniff','X-Frame-Options','DENY','Strict-Transport-Security','max-age=31536000; includeSubDomains','Referrer-Policy','strict-origin-when-cross-origin','Permissions-Policy','camera=()','microphone=()','geolocation=()','Cross-Origin-Opener-Policy','same-origin','Content-Security-Policy-Report-Only','frame-ancestors','max-age=31536000, immutable','stale-while-revalidate'])
     assert.ok(c.includes(k),'falta '+k);
-  assert.doesNotMatch(c,/preload/,'sin preload de HSTS en *.vercel.app');
+  assert.match(c,/Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' \}/,'la regla base de HSTS no lleva preload (*.vercel.app)');assert.match(c,/has: \[\{ type: 'host', value: '\(\?:app[^']*rovaq[^']*ai' \}\][\s\S]{0,80}Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload'/,'preload solo en los hosts de rovaq.ai');
   assert.match(c,/key: 'Content-Security-Policy', value: "base-uri 'self'; object-src 'none'; frame-ancestors 'none'"/,'la CSP vigente no se debilita');
   assert.match(c,/\/api\/briefs\/:id\/export/);
 });

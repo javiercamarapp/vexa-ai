@@ -1,3 +1,4 @@
+import 'server-only';
 import type {SqlPool} from '@vexa/platform/db';
 
 /** Máximo de operaciones pesadas simultáneas por organización (y su caducidad de arrendamiento). Una organización no puede agotar el pool de 5 conexiones. */

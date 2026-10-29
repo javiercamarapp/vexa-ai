@@ -1,3 +1,4 @@
+import 'server-only';
 import {createHmac} from 'node:crypto';
 import type {SqlPool} from '@vexa/platform/db';
 import {ipBucket} from './admission';

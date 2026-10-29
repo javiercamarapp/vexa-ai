@@ -219,3 +219,13 @@ test('pain-points IA: el handler alcanza el control de sesión y rol (lector 403
     assert.equal((await r.json()).error.code,'pain_points_ia_unavailable');
   }finally{delete process.env.VEXA_DATABASE_URL;}
 });
+
+// B-03 (auditoría 4): la cookie de sesión nace con Max-Age acotado (30 días), HttpOnly, SameSite=Lax y Path=/ (no los 400 días de la librería).
+import {SESSION_COOKIE_MAX_AGE,authClient} from '../src/lib/auth';
+test('cookies de sesión que escribe el cliente de Auth: HttpOnly, SameSite=Lax, Path=/ y Max-Age de 30 días como máximo',async()=>{
+  setup();mockServer();const guardadas:{name:string;options:Record<string,unknown>}[]=[];
+  const client=authClient({getAll:()=>[],set:(name,_v,options)=>{guardadas.push({name,options:options as Record<string,unknown>});}});
+  const s=session();await client.auth.setSession({access_token:s.access_token,refresh_token:s.refresh_token});
+  assert.equal(SESSION_COOKIE_MAX_AGE,2592000);assert.ok(guardadas.length>0,'se escribió la cookie de sesión');
+  for(const g of guardadas){assert.equal(g.options.httpOnly,true,g.name);assert.equal(g.options.sameSite,'lax');assert.equal(g.options.path,'/');const m=g.options.maxAge as number;assert.ok(m>0&&m<=2592000,g.name+' '+m);}
+});

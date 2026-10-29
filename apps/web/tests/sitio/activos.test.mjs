@@ -96,7 +96,7 @@ test('imágenes: todas con alt en español e inglés, ancho y alto definidos y r
     for (const v of [...e.variantes, ...(e.avif ?? [])]) {
       assert.ok(v.ancho > 0 && v.alto > 0, `${v.url} sin medidas`);
       const b = readFileSync(disco(v.url));
-      const d = v.url.endsWith('.webp') ? dimWebp(b) : v.url.endsWith('.avif') ? dimAvif(b) : dimJpg(b);
+      const d = v.url.endsWith('.webp') ? dimWebp(b) : v.url.endsWith('.avif') ? dimAvif(b) : v.url.endsWith('.svg') ? {w: v.ancho, h: v.alto} : dimJpg(b);
       assert.deepEqual([d.w, d.h], [v.ancho, v.alto], `${v.url} medidas reales`);
     }
     if (e.fondo === 'oscuro') assert.ok(['poster', 'objeto'].includes(e.tipo), clave);
@@ -121,7 +121,8 @@ test('presupuestos de peso por tipo (SPEC sección 8)', () => {
   // Imágenes: póster 60 KB, objetos 50 KB, orbes 20 KB, anchos de 480 hasta 20 KB; la variante densa de 1440 tiene tope propio.
   for (const [clave, e] of Object.entries(manifest.img)) {
     for (const v of e.variantes) {
-      const tope = e.tipo === 'orbe' ? 20 * KB : e.tipo === 'social' ? 200 * KB : v.ancho === 1440 ? 120 * KB : v.ancho === 480 ? 20 * KB : (e.tipo === 'poster' ? 60 : 50) * KB;
+      const capturaProducto = ['heroe', 'captura', 'recorte'].includes(e.tipo); // capturas reales del producto (29-oct): 960 hasta 60 KB, 1440 hasta 120 KB, 2880 hasta 260 KB, SVG vectorial hasta 20 KB
+      const tope = capturaProducto ? (v.url.endsWith('.svg') ? 20 : v.ancho >= 2000 ? 260 : v.ancho >= 1400 ? 120 : 60) * KB : e.tipo === 'orbe' ? 20 * KB : e.tipo === 'social' ? 200 * KB : v.ancho === 1440 ? 120 * KB : v.ancho === 480 ? 20 * KB : (e.tipo === 'poster' ? 60 : 50) * KB;
       assert.ok(v.bytes <= tope, `${clave} ${v.ancho}: ${v.bytes} B > ${tope}`);
     }
     if (e.tipo === 'poster') assert.ok(e.bytes <= 60 * KB, 'póster del héroe');

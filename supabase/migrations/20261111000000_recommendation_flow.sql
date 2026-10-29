@@ -1,4 +1,4 @@
--- 20261111000000_recommendation_flow (PROPUESTA, NO APLICADA): flujo de aprobación con humano al mando (Proceder / Ajustar / seguimiento / resultado manual).
+-- 20261111000000_recommendation_flow (APLICADA en producción): flujo de aprobación con humano al mando (Proceder / Ajustar / seguimiento / resultado manual).
 -- Tabla de eventos de solo-inserción por recomendación: approved (responsable + fecha + intervención borrador), adjusted (prioridad y comentario del responsable),
 -- started (en curso) y resolved (resultado manual sí/no/parcial + nota + comparación antes/después SOLO si hubo dato observado). Nada se ejecuta solo.
 -- Lo aprobado es inmutable: una vez existe un evento 'approved', la recomendación no se puede revisar ni cambiar de estado (trigger).

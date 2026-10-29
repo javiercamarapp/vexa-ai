@@ -25,6 +25,7 @@ export const PANTALLAS = Object.freeze({
   '/refunds': { ilu: 'linea', clave: TABLA },
   '/problems': { ilu: 'barras', clave: ['[data-tour="problemas"]', ...TABLA], accion: { capacidad: 'read', objetivos: [`${CONT} table a`, `${CONT} [data-tour="problemas"] a`, ...ACCIONES] } },
   '/pain-points': { ilu: 'equipo', clave: TABLA },
+  '/cco': { ilu: 'tarjetas', clave: [`${CONT} .cco-card`, ...TABLA] },
   '/map': { ilu: 'mapa', clave: [`${CONT} svg`, `${CONT} canvas`, ...TABLA] },
   '/workload': { ilu: 'linea', clave: TABLA },
   '/recommendations': { ilu: 'tarjetas', clave: TABLA, accion: { capacidad: 'approve', objetivos: ACCIONES } },

@@ -19,6 +19,7 @@ import {fugaEn} from './d-fuga';
 import {histEn} from './d-hist';
 import {intervEn} from './d-interv';
 import {mapaEn} from './d-mapa';
+import {ccoEn} from './d-cco';
 import {probEn} from './d-prob';
 import {recsEn} from './d-recs';
 import {agEn} from './d-ag';
@@ -159,6 +160,7 @@ export const en: Record<Clave, string> = {
   ...histEn,
   ...intervEn,
   ...mapaEn,
+  ...ccoEn,
   ...probEn,
   ...recsEn,
   ...agEn,

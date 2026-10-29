@@ -9,3 +9,7 @@ export const DATABASE_ACTION_ROLES: Record<DatabaseAction, readonly Role[]> = {
   // Descarga masiva (CSV/JSON): mismas lecturas que 'read', pero jamás en sesión de soporte (AUTH-01).
   export: ['owner','analyst','operator','viewer'],
 };
+/** Pantallas que mezclan importes de dinero (CFO, Brechas, Fuga, CCO): propietarios y analistas. Fuente única; menú, página y API la usan y el servidor responde 403 al resto. */
+export const MONEY_SCREEN_ROLES: readonly Role[] = ['owner','analyst'];
+/** Pestaña CCO (/cco): seis preguntas del director de cliente. Mezcla ingreso bruto, así que es de roles de dinero. */
+export const CCO_ROLES: readonly Role[] = MONEY_SCREEN_ROLES;

@@ -1,6 +1,6 @@
 // Menú del espacio de trabajo, ordenado como la historia del producto: ver -> entender -> decidir -> actuar -> medir.
 // Ocultar un ítem del menú NO protege su pantalla: la autorización sigue siendo la del servidor. Aquí solo se decide qué se le ofrece a cada quien.
-import { DATABASE_ACTION_ROLES } from '@vexa/platform/capabilities';
+import { DATABASE_ACTION_ROLES, CCO_ROLES } from '@vexa/platform/capabilities';
 const SOLO_PROPIETARIO = ['owner'];
 // Avisos propios: los roles se derivan de la capacidad real «notify» del servidor (db.ts), nunca se copian aquí.
 const AVISOS = [...DATABASE_ACTION_ROLES.notify];
@@ -23,6 +23,8 @@ export const MENU = Object.freeze([
   { tipo: 'grupo', clave: 'clientes', etiqueta: 'Clientes y problemas', items: [
     { href: '/problems', etiqueta: 'Problemas', icono: 'problems', alias: ['/problems/manage'] },
     { href: '/pain-points', etiqueta: 'Puntos de dolor', icono: 'painpoints', titulo: 'Puntos de dolor', roles: DINERO },
+    // CCO: seis preguntas del director de cliente. Mezcla ingreso bruto: roles de la capacidad CCO_ROLES (owner y analyst), nunca copiados aquí.
+    { href: '/cco', etiqueta: 'CCO', icono: 'analysis', titulo: 'CCO', roles: [...CCO_ROLES] },
   ] },
   { tipo: 'grupo', clave: 'operacion', etiqueta: 'Operación', roles: DINERO, items: [
     { href: '/map', etiqueta: 'Mapa de problemas', icono: 'grid', titulo: 'Mapa de problemas' },

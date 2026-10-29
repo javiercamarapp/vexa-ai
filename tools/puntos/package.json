@@ -1,0 +1,1 @@
+{"name":"vexa-puntos","private":true,"version":"1.0.0","type":"module","description":"Herramienta de build: muestrea nubes de puntos desde GLB. No va al navegador.","dependencies":{"@gltf-transform/core":"4.1.1","@gltf-transform/extensions":"4.1.1","@gltf-transform/cli":"4.1.1","sharp":"0.33.5"}}

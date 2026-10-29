@@ -4,6 +4,7 @@ import {RovaqLogo} from '../rovaq-logo';
 import {SITE, APP_URL, landingUrl} from '../../lib/site.mjs';
 import {traductor, type Idioma, type Traductor} from '../../lib/i18n';
 import {Miniatura} from './mocks';
+import puntos from '../../../public/landing/pts/manifest.json';
 import {MovimientoLanding, SelectorTemaLanding} from './cliente';
 import './landing.css';
 
@@ -74,7 +75,7 @@ export function Landing({idioma}: {idioma: Idioma}) {
           <Visor clase="hero-visor">
             {/* Imagen del LCP: prioridad alta, tamaño fijo. El lienzo 3D se superpone al cargar y el HTML conserva este respaldo estático. */}
             <img className="obj" src="/landing/objeto-nucleo.webp" width={900} height={900} alt={t('landing.hero.render')} fetchPriority="high" decoding="async" />
-            <canvas className="esc3d" data-escena3d="nucleo" data-modelos="/landing/3d/nucleo.glb" aria-hidden="true" />
+            <canvas className="esc3d" data-nube="nucleo" data-pts={`/landing/pts/${puntos.nucleo.archivo}`} aria-hidden="true" />
           </Visor>
         </div>
         <ul className="banda banda-hechos" data-in="3">
@@ -125,7 +126,8 @@ export function Landing({idioma}: {idioma: Idioma}) {
             <div className="fw-grid">
               <Visor clase="fw-visor">
                 {PASOS.map((n) => <img key={n} className="obj" data-paso={n} src={`/landing/objeto-${n}.webp`} width={720} height={720} alt={t(`landing.fw.${n}.alt` as 'landing.fw.1.alt')} loading="lazy" decoding="async" />)}
-                <canvas className="esc3d" data-escena3d="pasos" data-modelos="/landing/3d/paso-1.glb,/landing/3d/paso-2.glb,/landing/3d/paso-3.glb,/landing/3d/paso-4.glb" aria-hidden="true" />
+                <canvas className="esc3d" data-nube="pasos" data-pts={[puntos.paso1, puntos.paso2, puntos.paso3, puntos.paso4].map((p) => `/landing/pts/${p.archivo}`).join(',')} aria-hidden="true" />
+                <ol className="segmentos" aria-hidden="true">{PASOS.map((n) => <li key={n} data-seg={n} />)}</ol>
                 <ol className="sellos" aria-label={t('landing.fw.sellos')}>{SELLOS.map(([k, c]) => <li key={k} data-s={k}><em className={'etq' + (k === 'sin' ? ' sin' : '')}>{t(c)}</em></li>)}</ol>
                 <span className="visor-rotulo mono">{t('landing.fw.visor')}</span>
               </Visor>

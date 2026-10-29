@@ -71,10 +71,10 @@ export function MovimientoLanding() {
           ScrollTrigger.create({trigger: n, start: 'top 88%', once: true, onEnter: () => gsap.to(n, {autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out', clearProps: 'transform,opacity,visibility'})});
         });
         // Objetos 3D reales (módulo propio con three.js, mismo origen): el scroll solo escribe datos que la escena lee con inercia.
-        const nucleo = document.querySelector<HTMLElement>('canvas[data-escena3d="nucleo"]'), pasos = document.querySelector<HTMLElement>('canvas[data-escena3d="pasos"]');
+        const nucleo = document.querySelector<HTMLElement>('canvas[data-nube="nucleo"]'), pasos = document.querySelector<HTMLElement>('canvas[data-nube="pasos"]');
         if (nucleo) ScrollTrigger.create({trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true, onUpdate: (s: {progress: number}) => { nucleo.dataset.p = s.progress.toFixed(4); }});
         if (nucleo || pasos) {
-          const m = document.createElement('script'); m.type = 'module'; m.src = '/landing/escena.js'; document.head.appendChild(m);
+          const m = document.createElement('script'); m.type = 'module'; m.src = '/landing/nube.js'; document.head.appendChild(m);
           limpiar.push(() => m.remove());
         }
         // Escena fija: el objeto activo sube a su sitio y los demás se apartan; el progreso ligado al scroll gira el objeto sutilmente.

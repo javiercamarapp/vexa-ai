@@ -28,8 +28,5 @@ Descargadas el 2026-10-28 desde jsDelivr y servidas desde el mismo origen. Solo 
 
 Fuente de display de la landing (Barlow Condensed 800 y 900, SIL OFL 1.1): ver public/fonts/barlowcondensed-OFL.txt y public/fonts/sources.json.
 
-4. three.js 0.170.0  (three/three.module.min.js, three/GLTFLoader.js, three/BufferGeometryUtils.js, three/RoomEnvironment.js)
-   Origen: https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js y examples/jsm/{loaders/GLTFLoader.js, utils/BufferGeometryUtils.js, environments/RoomEnvironment.js}
-   Licencia: MIT. Copyright (c) 2010-2024 three.js authors. Texto completo en three/LICENSE.
-   Los tres archivos de examples solo tienen reescrita la importacion 'three' a ./three.module.min.js y la de BufferGeometryUtils a ruta relativa del mismo origen; sin otros cambios.
-   No se usan decodificadores Draco ni Meshopt: requieren WebAssembly y el CSP estricto previsto no permite wasm-unsafe-eval. Los GLB se optimizan con cuantizacion y texturas webp.
+
+Nota de licencia GSAP, revisada el 2026-10-28: la licencia estandar sin cargo permite uso comercial, incluido un sitio de marketing de un producto de pago. Restringe ofrecer a terceros una herramienta visual de animacion que compita con Webflow o similares; Rovaq AI no lo es. Si el criterio cambia, la escena funciona sin GSAP: el progreso lo escribe un observador con centinelas y los revelados caen al estado final.

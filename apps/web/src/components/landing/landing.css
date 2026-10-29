@@ -8,10 +8,10 @@ main:has(.landing){max-width:none;padding:0;margin:0}
 body:has(.landing)>.site-header,body:has(.landing)>.site-footer{display:none}
 .landing{--l-bg:#f1f1f2;--l-surf:#ffffff;--l-soft:#e9e9eb;--l-line:#d6d6d9;--l-line2:#c4c4c8;--l-ink:#0e0e10;--l-muted:#5a5a61;--l-red:#e8241c;--l-hov:#2a2a2f;--l-hdr:56px;
   --h0:#ececee;--h1:#c9c9cd;--h2:#98989f;--h3:#5a5a61;--h4:#0e0e10;--l-expo:cubic-bezier(.16,1,.3,1);--l-ease:cubic-bezier(.22,1,.36,1);
-  --l-cond:'Barlow Condensed','Hanken Grotesk',system-ui,sans-serif;
+  --n-sombra:#0e0e10;--n-luz:#8c8c93;--l-cond:'Barlow Condensed','Hanken Grotesk',system-ui,sans-serif;
   background:var(--l-bg);color:var(--l-ink);font:400 16px/1.5 var(--font-ui);overflow-x:clip;position:relative}
-:root[data-theme=dark] .landing{--l-bg:#0e0e10;--l-surf:#17171a;--l-soft:#17171a;--l-line:#2a2a2f;--l-line2:#3a3a41;--l-ink:#f4f4f5;--l-muted:#a3a3ab;--l-hov:#ffffff;--h0:#2a2a2f;--h1:#3e3e45;--h2:#62626a;--h3:#9a9aa2;--h4:#f4f4f5}
-@media(prefers-color-scheme:dark){:root:not([data-theme]) .landing{--l-bg:#0e0e10;--l-surf:#17171a;--l-soft:#17171a;--l-line:#2a2a2f;--l-line2:#3a3a41;--l-ink:#f4f4f5;--l-muted:#a3a3ab;--l-hov:#ffffff;--h0:#2a2a2f;--h1:#3e3e45;--h2:#62626a;--h3:#9a9aa2;--h4:#f4f4f5}}
+:root[data-theme=dark] .landing{--n-sombra:#3a3a40;--n-luz:#f4f4f5;--l-bg:#0e0e10;--l-surf:#17171a;--l-soft:#17171a;--l-line:#2a2a2f;--l-line2:#3a3a41;--l-ink:#f4f4f5;--l-muted:#a3a3ab;--l-hov:#ffffff;--h0:#2a2a2f;--h1:#3e3e45;--h2:#62626a;--h3:#9a9aa2;--h4:#f4f4f5}
+@media(prefers-color-scheme:dark){:root:not([data-theme]) .landing{--n-sombra:#3a3a40;--n-luz:#f4f4f5;--l-bg:#0e0e10;--l-surf:#17171a;--l-soft:#17171a;--l-line:#2a2a2f;--l-line2:#3a3a41;--l-ink:#f4f4f5;--l-muted:#a3a3ab;--l-hov:#ffffff;--h0:#2a2a2f;--h1:#3e3e45;--h2:#62626a;--h3:#9a9aa2;--h4:#f4f4f5}}
 .landing *{box-sizing:border-box}
 .landing :where(h1,h2,h3,p,ul,ol,dl,dd,figure,blockquote){margin:0;padding:0}
 .landing :where(ul,ol){list-style:none}
@@ -82,8 +82,8 @@ body:has(.landing)>.site-header,body:has(.landing)>.site-footer{display:none}
 .visor{position:relative;aspect-ratio:1/1;background-color:var(--l-bg);background-image:radial-gradient(var(--l-line2) 1px,transparent 1.2px);background-size:14px 14px;overflow:hidden}
 .visor .obj{position:absolute;inset:3%;width:94%;height:94%;object-fit:contain}
 .esc3d{position:absolute;inset:0;width:100%;height:100%;opacity:0;z-index:1;transition:opacity .6s}
-.esc3d[data-listo]{opacity:1}
-.visor:has(.esc3d[data-listo]) .obj{opacity:0!important}
+.esc3d[data-estado=activa],.esc3d[data-estado=pausada]{opacity:1}
+.visor:has(.esc3d[data-estado=activa]) .obj,.visor:has(.esc3d[data-estado=pausada]) .obj{opacity:0!important}
 .e{position:absolute;width:14px;height:14px;border:0 solid var(--l-ink);z-index:2}
 .e1{top:14px;left:14px;border-width:1px 0 0 1px}.e2{top:14px;right:14px;border-width:1px 1px 0 0}.e3{bottom:14px;left:14px;border-width:0 0 1px 1px}.e4{bottom:14px;right:14px;border-width:0 1px 1px 0}
 .hero-visor{aspect-ratio:1/1}
@@ -291,3 +291,21 @@ body:has(.landing)>.site-header,body:has(.landing)>.site-footer{display:none}
 .lista-seg{display:grid;gap:0;margin-top:18px}
 .lista-seg li{padding:14px 0;border-top:1px solid var(--l-line);font:400 14px/1.5 var(--font-ui)}
 .c-ruta .lista-seg li{color:var(--l-muted)}
+
+/* Móvil: la escena fija pone el objeto arriba (42 svh), los sellos en una sola fila compacta y la nube más grande */
+@media(max-width:759px){
+  .sellos{left:30px;right:30px;top:30px;gap:4px;flex-wrap:nowrap}
+  .sellos .etq{padding:4px 7px;font-size:11px;letter-spacing:.02em;white-space:nowrap}
+  .visor-rotulo{display:none}
+}
+
+/* Barra de segmentos de la escena: cuatro tramos, el del paso activo y los anteriores se rellenan */
+.segmentos{position:absolute;left:14px;top:60px;bottom:60px;width:2px;display:grid;grid-template-rows:repeat(4,1fr);gap:8px;z-index:2}
+.segmentos li{background:var(--l-line2)}
+@media(prefers-reduced-motion:no-preference){
+  .segmentos li{transition:background .4s var(--l-ease)}
+  [data-activo='1'] .segmentos [data-seg='1'],[data-activo='2'] .segmentos :is([data-seg='1'],[data-seg='2']),[data-activo='3'] .segmentos :is([data-seg='1'],[data-seg='2'],[data-seg='3']),[data-activo='4'] .segmentos li{background:var(--l-ink)}
+}
+.fw-visor .segmentos{display:none}
+@media(prefers-reduced-motion:no-preference){.fw-visor .segmentos{display:grid}}
+@media(max-width:759px){.fw-visor .segmentos{display:none}}

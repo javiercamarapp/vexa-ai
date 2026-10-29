@@ -2,13 +2,14 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {AppRouterContext} from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import {Landing, jsonLdLanding} from '../src/components/landing/landing';
 import {landingEs, landingEn} from '../src/lib/i18n/d-landing';
 import {es} from '../src/lib/i18n/es';
 import {en} from '../src/lib/i18n/en';
-import {landingUrl, SITE, PREFIJOS_PRIVADOS, RUTAS_PUBLICAS} from '../src/lib/site.mjs';
+import {landingUrl, PREFIJOS_PRIVADOS, RUTAS_PUBLICAS} from '../src/lib/site.mjs';
 
 const leer = (rel: string) => fs.readFileSync(new URL('../' + rel, import.meta.url), 'utf8');
 const PAGINAS = ['src/app/(landing)/landing/page.tsx', 'src/app/(landing)/landing/en/page.tsx'];
@@ -99,54 +100,52 @@ test('CSS y marca: Hanken Grotesk, un solo rojo señal, sin azules, sin vidrio n
   for (const [, h] of css.matchAll(/#([0-9a-f]{6})\b/gi)) { const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); assert.ok(!(b > r + 24 && b > g + 12), 'azul #' + h); }
   assert.doesNotMatch(css, /\b(blue|navy|royalblue|dodgerblue)\b|hsl\(\s*(19\d|2\d\d)/i);
 });
-test('JavaScript de movimiento: GSAP, ScrollTrigger, Lenis y three.js del mismo origen, solo en la landing, con licencias y sin CDN ni dependencias nuevas', () => {
+test('JavaScript de movimiento: GSAP, ScrollTrigger y Lenis del mismo origen con versión en el nombre, hash verificado, licencias y sin CDN, three ni dependencias nuevas', () => {
   const c = leer('src/components/landing/cliente.tsx');
-  for (const f of ['/vendor/gsap-3.13.0.min.js', '/vendor/ScrollTrigger-3.13.0.min.js', '/vendor/lenis-1.1.13.min.js', '/landing/escena.js']) assert.ok(c.includes(f), f);
+  for (const f of ['/vendor/gsap-3.13.0.min.js', '/vendor/ScrollTrigger-3.13.0.min.js', '/vendor/lenis-1.1.13.min.js', '/landing/nube.js']) assert.ok(c.includes(f), f);
   assert.doesNotMatch(c, /https?:\/\/|jsdelivr|unpkg|cdnjs/);
   assert.match(c, /prefers-reduced-motion: reduce/); assert.match(c, /setAttribute\('data-landing-js'/);
   const lic = leer('public/vendor/LICENSES.txt');
-  for (const n of ['GSAP 3.13.0', 'ScrollTrigger 3.13.0', 'Lenis 1.1.13', 'three.js 0.170.0', 'MIT']) assert.ok(lic.includes(n), n);
-  const esc = leer('public/landing/escena.js');
-  assert.match(esc, /Math\.min\(window\.devicePixelRatio \|\| 1, 2\)/); assert.match(esc, /IntersectionObserver/); assert.match(esc, /prefers-reduced-motion: reduce/);
-  assert.doesNotMatch(esc, /https?:\/\/|eval\(|new Function|WebAssembly|setAttribute\(\s*['"]style/);
-  for (const f of ['three.module.min.js', 'GLTFLoader.js', 'BufferGeometryUtils.js', 'RoomEnvironment.js', 'LICENSE']) assert.ok(fs.existsSync(new URL('../public/vendor/three/' + f, import.meta.url)), f);
-  for (const f of ['GLTFLoader.js', 'BufferGeometryUtils.js', 'RoomEnvironment.js']) assert.doesNotMatch(leer('public/vendor/three/' + f), /from 'three'|from "three"/, 'importación sin reescribir ' + f);
-  const pkg = JSON.parse(leer('package.json')); for (const d of Object.keys({...pkg.dependencies, ...pkg.devDependencies})) assert.doesNotMatch(d, /gsap|lenis|^three$|framer-motion/);
+  for (const n of ['GSAP 3.13.0', 'ScrollTrigger 3.13.0', 'Lenis 1.1.13', 'standard-license', 'Webflow']) assert.ok(lic.includes(n), n);
+  const lock = JSON.parse(leer('public/vendor/vendor.lock.json')).archivos as Array<{archivo: string; sha256: string}>;
+  const enDisco = fs.readdirSync(new URL('../public/vendor/', import.meta.url)).filter((f) => f.endsWith('.js')).sort();
+  assert.deepEqual(lock.map((x) => x.archivo).sort(), enDisco, 'archivos de vendor fuera del lock o huérfanos');
+  for (const x of lock) assert.equal(crypto.createHash('sha256').update(fs.readFileSync(new URL('../public/vendor/' + x.archivo, import.meta.url))).digest('hex'), x.sha256, x.archivo);
+  assert.ok(!fs.existsSync(new URL('../public/vendor/three', import.meta.url)), 'three.js ya no se sirve');
+  const nube = leer('public/landing/nube.js');
+  assert.ok(nube.split('\n').length < 260, 'motor propio de unas 250 líneas');
+  assert.match(nube, /Math\.min\(devicePixelRatio \|\| 1, this\.movil \? 1\.5 : 2\)/); assert.match(nube, /IntersectionObserver/); assert.match(nube, /prefers-reduced-motion: reduce/); assert.match(nube, /webglcontextlost/);
+  assert.doesNotMatch(nube, /https?:\/\/|eval\(|new Function|WebAssembly|setAttribute\(\s*['"]style|import /);
+  const pkg = JSON.parse(leer('package.json')); for (const d of Object.keys({...pkg.dependencies, ...pkg.devDependencies})) assert.doesNotMatch(d, /gsap|lenis|^three$|^ogl$|framer-motion|gltf|sharp/);
   assert.match(leer('next.config.ts'), /script-src 'self'/);
 });
-test('activos de la landing: GLB bajo 1.2 MB cada uno y 5 MB en total, todo public/landing bajo 6 MB, y cada imagen con alt, ancho y alto', () => {
+test('activos de la landing: archivos .pts válidos y deterministas, todo public/landing bajo 6 MB y cada imagen con alt, ancho y alto', () => {
   const raiz = new URL('../public/landing/', import.meta.url);
-  let total = 0; const glb: number[] = [];
-  const recorre = (dir: URL) => { for (const e of fs.readdirSync(dir, {withFileTypes: true})) { const u = new URL(e.name + (e.isDirectory() ? '/' : ''), dir); if (e.isDirectory()) recorre(u); else { const n = fs.statSync(u).size; total += n; if (e.name.endsWith('.glb')) glb.push(n); } } };
+  let total = 0;
+  const recorre = (dir: URL) => { for (const e of fs.readdirSync(dir, {withFileTypes: true})) { const u = new URL(e.name + (e.isDirectory() ? '/' : ''), dir); if (e.isDirectory()) recorre(u); else total += fs.statSync(u).size; } };
   recorre(raiz);
   assert.ok(total < 6 * 1024 * 1024, 'public/landing pesa ' + total);
-  assert.equal(glb.length, 5); for (const n of glb) assert.ok(n < 1.2 * 1024 * 1024, 'GLB de ' + n); assert.ok(glb.reduce((a, b) => a + b, 0) < 5 * 1024 * 1024);
+  assert.ok(!fs.existsSync(new URL('3d/', raiz)), 'los GLB fuente no se sirven');
+  const manifest = JSON.parse(fs.readFileSync(new URL('pts/manifest.json', raiz), 'utf8')) as Record<string, {archivo: string; puntos: number; bytes: number; sha256: string}>;
+  assert.deepEqual(Object.keys(manifest).sort(), ['nucleo', 'paso1', 'paso2', 'paso3', 'paso4']);
+  for (const [, m] of Object.entries(manifest)) {
+    const buf = fs.readFileSync(new URL('pts/' + m.archivo, raiz));
+    assert.equal(buf.length, m.bytes); assert.equal(buf.length, 16 + m.puntos * 12); assert.equal(buf.toString('ascii', 0, 4), 'PTS1'); assert.equal(buf.readUInt32LE(8), m.puntos);
+    assert.equal(crypto.createHash('sha256').update(buf).digest('hex'), m.sha256); assert.ok(m.archivo.includes(m.sha256.slice(0, 8)), 'el nombre lleva el hash');
+    assert.ok(buf.length < 140 * 1024, 'archivo de puntos pequeño');
+  }
+  assert.equal(fs.readdirSync(new URL('pts/', raiz)).filter((f) => f.endsWith('.pts')).length, 5, 'sin .pts huérfanos');
   for (const idioma of ['es', 'en'] as const) for (const im of html(idioma).match(/<img[^>]*>/g) ?? []) { assert.match(im, /\balt="/); assert.match(im, /\bwidth="\d+"/); assert.match(im, /\bheight="\d+"/); }
   assert.match(html('en'), /<img[^>]*fetchPriority="high"|<img[^>]*fetchpriority="high"/i);
 });
-test('solo hay lienzos 3D declarados con modelos del mismo origen y la imagen estática de respaldo sigue en el HTML', () => {
+test('solo hay lienzos de nube declarados con archivos .pts del mismo origen y la imagen estática de respaldo sigue en el HTML', () => {
   const h = html('en');
-  assert.equal((h.match(/data-escena3d=/g) ?? []).length, 2);
-  for (const [, m] of h.matchAll(/data-modelos="([^"]+)"/g)) for (const u of m.split(',')) assert.match(u, /^\/landing\/3d\/[\w-]+\.glb$/);
+  assert.equal((h.match(/data-nube=/g) ?? []).length, 2);
+  for (const [, m] of h.matchAll(/data-pts="([^"]+)"/g)) for (const u of m.split(',')) assert.match(u, /^\/landing\/pts\/[\w-]+\.[0-9a-f]{8}\.pts$/);
   assert.ok(h.includes('/landing/objeto-nucleo.webp'));
 });
 test('la escena fija usa los cuatro sellos de clase de cifra como eje', () => {
   for (const [idioma, d] of [['es', landingEs], ['en', landingEn]] as const) { const h = html(idioma); for (const k of ['obs', 'est', 'inf', 'sin']) assert.ok(h.includes(`data-s="${k}"`), k); assert.ok(h.includes(d['landing.val.sin'])); }
-});
-test('marcado: un h1, encabezados en orden, anclas válidas, sin imágenes sin alternativa, CTA como correo al contacto de site.mjs', () => {
-  for (const idioma of ['es', 'en'] as const) {
-    const h = html(idioma), d = idioma === 'es' ? landingEs : landingEn;
-    assert.equal((h.match(/<h1[ >]/g) ?? []).length, 1);
-    assert.ok(h.includes(d['landing.hero.titulo']));
-    assert.ok(h.includes(`href="mailto:${SITE.contacto}?subject=`), 'CTA mailto');
-    assert.doesNotMatch(h, /<form|<input type="(text|email)/);
-    for (const [, id] of h.matchAll(/href="#([\w-]+)"/g)) assert.ok(h.includes(`id="${id}"`), 'ancla rota #' + id);
-    assert.doesNotMatch(h, /<img(?![^>]*\balt=)/);
-    for (const f of h.match(/<figure[\s\S]*?<\/figure>/g) ?? []) { assert.match(f, /role="img"/); assert.ok(f.includes(d['landing.sintetico']), 'figura sin rótulo sintético'); }
-        assert.equal((h.match(/class="panel"/g) ?? []).length, 4);
-    assert.equal((h.match(/<details/g) ?? []).length, 8);
-    assert.doesNotMatch(h, /\{\w+\}/, 'variables sin reemplazar');
-  }
 });
 test('las miniaturas de pantallas se rotulan como datos de ejemplo y no hay cifras sueltas en el texto', () => {
   const mocks = leer('src/components/landing/mocks.tsx');

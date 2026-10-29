@@ -535,6 +535,20 @@ function nodosParaVerificar(html) {
   return nodosDeTexto(sinTicks);
 }
 
+// La excepción de la regla 12 está acotada: solo vale dentro de la ilustración de ejemplo (figure.s-ventana). El mismo porcentaje en texto normal, o en una
+// figura distinta, sigue disparando la regla.
+describe('excepción de porcentajes de la regla 12: acotada a las ilustraciones de ejemplo', () => {
+  const regla12 = PROHIBIDAS.afirmaciones.find((a) => a.n === 12);
+  const dispara = (html) => nodosParaVerificar(html).some((t) => regla12.patrones.some((p) => compilar(p).test(t)));
+  test('un porcentaje dentro de figure.s-ventana no dispara; fuera de ella sí', () => {
+    assert.equal(dispara('<figure class="s-ventana"><svg><text>umbral 5.0 %</text><text>100 %</text></svg></figure>'), false);
+    assert.equal(dispara('<p>Cubrimos el 80 % de tus pedidos.</p>'), true);
+    assert.equal(dispara('<p>Cubrimos 63 por ciento de los pedidos.</p>'), true);
+    assert.equal(dispara('<figure class="s-otra"><p>100 %</p></figure>'), true);
+    assert.equal(dispara('<figure class="s-ventana"><p>x</p></figure><p>Recuperas el 37 %</p>'), true);
+  });
+});
+
 describe('afirmaciones prohibidas sobre el HTML renderizado (prohibidas.json de T11)', () => {
   for (const lang of IDIOMAS) {
     const nodos = () => nodosParaVerificar(portada(lang));

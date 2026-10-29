@@ -54,17 +54,28 @@ export function CapaFoco({innerRef,scrim}:{innerRef?:Ref<HTMLDivElement>;scrim?:
 export function BannerPantalla({t,pantalla}:{t:Traductor;pantalla:string}){
  return <p className="onb-entrada" aria-hidden="true" key={pantalla}>{t('onb.tour.entrada',{pantalla})}</p>;
 }
-export function InvitacionRecorrido({t,saltar,empezar}:{t:Traductor;saltar:()=>void;empezar:()=>void}){
+/** Con `corto` (hay versión reducida) se elige al empezar: «Recorrido corto» (pasos esenciales del rol) o «Recorrido completo». Sin `corto` queda el botón único. */
+export interface OpcionesRecorrido {corto:number;completo:number}
+export function InvitacionRecorrido({t,saltar,empezar,opciones}:{t:Traductor;saltar:()=>void;empezar:(modo?:'corto'|'completo')=>void;opciones?:OpcionesRecorrido}){
  return <section className="onb-invitacion" aria-labelledby="onb-inv-titulo">
-  <h2 id="onb-inv-titulo">{t('onb.ui.invitacionTitulo')}</h2><p>{t('onb.ui.invitacionCuerpo')}</p>
-  <div className="onb-acciones"><button type="button" className="onb-btn-sec" onClick={saltar}>{t('onb.ui.saltar')}</button><button type="button" className="onb-btn" onClick={empezar}>{t('onb.ui.empezar')}</button></div>
+  <h2 id="onb-inv-titulo">{t('onb.ui.invitacionTitulo')}</h2><p>{opciones?t('onb.ui.invitacionElige'):t('onb.ui.invitacionCuerpo')}</p>
+  <div className="onb-acciones">
+   <button type="button" className="onb-btn-sec" onClick={saltar}>{t('onb.ui.saltar')}</button>
+   {opciones?<>
+    <button type="button" className="onb-btn-sec" data-onb-modo="completo" onClick={()=>empezar('completo')}>{t('onb.ui.recorridoCompleto',{n:opciones.completo})}</button>
+    <button type="button" className="onb-btn" data-onb-modo="corto" onClick={()=>empezar('corto')}>{t('onb.ui.recorridoCorto',{n:opciones.corto})}</button>
+   </>:<button type="button" className="onb-btn" onClick={()=>empezar()}>{t('onb.ui.empezar')}</button>}
+  </div>
  </section>;
 }
 export interface PantallaMenu {href:string;nombre:string;actual:boolean}
-export function MenuGuia({t,innerRef,contexto,tienePaso,mostrarChecklistOpcion,descartado,iniciar,retomar,mostrarChecklist,abrirSetup,noVolver,cerrar,pantallas,irAPantalla}:{t:Traductor;innerRef?:Ref<HTMLDivElement>;contexto:string;tienePaso:boolean;mostrarChecklistOpcion:boolean;descartado:boolean;iniciar:()=>void;retomar:()=>void;mostrarChecklist:()=>void;abrirSetup?:()=>void;noVolver:()=>void;cerrar:()=>void;pantallas?:PantallaMenu[];irAPantalla?:(href:string)=>void}){
+export function MenuGuia({t,innerRef,contexto,tienePaso,mostrarChecklistOpcion,descartado,iniciar,opciones,retomar,mostrarChecklist,abrirSetup,noVolver,cerrar,pantallas,irAPantalla}:{t:Traductor;innerRef?:Ref<HTMLDivElement>;contexto:string;tienePaso:boolean;mostrarChecklistOpcion:boolean;descartado:boolean;iniciar:(modo?:'corto'|'completo')=>void;opciones?:OpcionesRecorrido;retomar:()=>void;mostrarChecklist:()=>void;abrirSetup?:()=>void;noVolver:()=>void;cerrar:()=>void;pantallas?:PantallaMenu[];irAPantalla?:(href:string)=>void}){
  return <div ref={innerRef} id="onb-menu" className="onb-menu" role="group" aria-label={t('onb.ui.menuGuia')} onKeyDown={e=>{if(e.key==='Escape'){e.preventDefault();cerrar();}}}>
   <p className="onb-menu-ctx">{contexto}</p>
-  <button type="button" onClick={iniciar}>{t('onb.ui.reabrir')}</button>
+  {opciones?<>
+   <button type="button" data-onb-modo="corto" onClick={()=>iniciar('corto')}>{t('onb.ui.recorridoCorto',{n:opciones.corto})}</button>
+   <button type="button" data-onb-modo="completo" onClick={()=>iniciar('completo')}>{t('onb.ui.recorridoCompleto',{n:opciones.completo})}</button>
+  </>:<button type="button" onClick={()=>iniciar()}>{t('onb.ui.reabrir')}</button>}
   {tienePaso&&<button type="button" onClick={retomar}>{t('onb.ui.retomar')}</button>}
   {pantallas&&pantallas.length>0&&irAPantalla&&<div className="onb-menu-pantallas" role="group" aria-label={t('onb.tour.menu.pantallasAria')}>
    <p className="onb-menu-sub">{t('onb.tour.menu.pantallas')}</p>

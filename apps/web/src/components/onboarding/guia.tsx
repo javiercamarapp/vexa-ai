@@ -101,6 +101,7 @@ export function GuiaPaneles(){
   const item=todosLosItems().find(x=>x.item.href===href)?.item;if(item)return etiquetaItem(t,item);
   const p=pasosDe('plataforma').find(x=>x.href===href);return p?t(p.textos.titulo as Clave):href;
  };
+ const opciones=c.hayModoCorto?{corto:c.pasosCorto,completo:c.pasosCompleto}:undefined;
  const nombres=c.pantallas.map(g=>nombrePantalla(g.href)),total=c.pasos.length,n=c.rec.indice+1;
  let tarjetaUi=null,etiquetaUi=null,bannerUi=null;
  if(abierto&&paso){
@@ -116,9 +117,9 @@ export function GuiaPaneles(){
  }
  return <>
   {c.menuAbierto&&<MenuGuia t={t} innerRef={menu} contexto={t('onb.ui.rolOrg',{organizacion:c.datos.organizacion,rol:c.datos.rolEtiqueta})} tienePaso={c.pasos.some(p=>p.id===c.local.paso)} mostrarChecklistOpcion={c.tieneChecklist} descartado={c.local.descartado}
-   iniciar={()=>c.iniciar('inicio')} retomar={()=>c.iniciar('retomar')} mostrarChecklist={c.mostrarChecklist} abrirSetup={c.abrirSetup} noVolver={c.noVolver} cerrar={()=>{c.cerrarMenu();c.enfocarBoton();}}
+   iniciar={m=>c.iniciar('inicio',m)} opciones={opciones} retomar={()=>c.iniciar('retomar')} mostrarChecklist={c.mostrarChecklist} abrirSetup={c.abrirSetup} noVolver={c.noVolver} cerrar={()=>{c.cerrarMenu();c.enfocarBoton();}}
    pantallas={c.pantallas.map((g,i)=>({href:g.href,nombre:nombres[i],actual:abierto&&paso?.grupo===g.grupo}))} irAPantalla={c.irAPantalla}/>}
-  {c.invitacionVisible&&<InvitacionRecorrido t={t} saltar={c.saltarInvitacion} empezar={()=>c.iniciar('inicio')}/>}
+  {c.invitacionVisible&&<InvitacionRecorrido t={t} saltar={c.saltarInvitacion} empezar={m=>c.iniciar('inicio',m)} opciones={opciones}/>}
   {abierto&&paso&&<CapaFoco innerRef={capa} scrim={paso.tipo==='cierre'||el===null}/>}
   {etiquetaUi}{tarjetaUi}{bannerUi}
  </>;

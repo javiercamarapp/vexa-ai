@@ -15,6 +15,7 @@
 --   una exposición inferida no es pérdida; sin tiempo real (los insight_* se refrescan por lotes).
 -- Seguridad: todas son SECURITY INVOKER con search_path vacío; leen bajo la RLS del llamador (rol vexa_backend) Y filtran por el tenant de la sesión (vexa.tenant_id).
 --   EXECUTE solo para vexa_backend. Sin SQL dinámico, sin texto libre hacia SQL (dim es un enumerado validado).
+--   Cliente piloto: el prefijo de su retailer propio NO está escrito aquí; la aplicación lo fija por sesión (set_config vexa.tienda_propia_prefijo, en minúsculas). Vacío o ausente = ninguna fila se clasifica como propia.
 -- Orden: requiere 0018 (libro), 0052 (Tracker), 20261104000000 (insights_engine) y 20261110000000 (insight_gaps). Idempotente (create or replace).
 -- Reversa: packages/workspace-service/tests/20261201000000_insight_cco.down.sql
 begin;
@@ -111,6 +112,8 @@ create or replace function public.insight_cco_tracker_filas() returns table(
  sheet text,sheet_type text,sku_base text,retailer_class text,defect_class text,warehouse text,latency_class text,reason_class text,has_address boolean)
 language sql stable set search_path='' as $$
  with t as (select nullif(current_setting('vexa.tenant_id',true),'')::uuid as id),
+ -- Prefijo del cliente piloto (minúsculas): lo fija la aplicación por sesión (vexa.tienda_propia_prefijo); vacío o ausente = nada es propio. Nunca va escrito aquí.
+ pp as (select nullif(lower(regexp_replace(btrim(coalesce(current_setting('vexa.tienda_propia_prefijo',true),'')),'\s+',' ','g')),'') as v),
  hdr as (select distinct h.connection_id,h.sheet_name,(c->>'col')::int as col,lower(regexp_replace(btrim(c->>'v'),'[\s_]+',' ','g')) as name
    from public.tracker_row_heads h join t on h.tenant_id=t.id cross join lateral jsonb_array_elements(h.cells) c
    where h.ticket_state='header' and h.sheet_name not in('WTR','WPR') and c->>'col' ~ '^[0-9]+$'),
@@ -135,10 +138,10 @@ language sql stable set search_path='' as $$
          when sla ~ '[0-9]+\s*(horas?|hours?|hrs?)\M' then (substring(sla from '([0-9]+)\s*(?:horas?|hours?|hrs?)\M'))::numeric
          when sla ~ '[0-9]+\s*(d[ií]as?|days?)\M' then (substring(sla from '([0-9]+)\s*(?:d[ií]as?|days?)'))::numeric*24 end as sla_h from f where any_v)
  select n.sheet_name,n.st,n.skub,
-  case when coalesce(rt,'')='' then 'sin_retailer' when rt like 'amazon%' then case when rt like '%fulfilled by clientex%' then 'amazon_cumplido_por_clientex' when rt like '%fulfilled by amazon%' then 'amazon_cumplido_por_amazon'
+  case when coalesce(rt,'')='' then 'sin_retailer' when rt like 'amazon%' then case when pp.v is not null and strpos(rt,'fulfilled by '||pp.v)>0 then 'amazon_cumplido_por_piloto' when rt like '%fulfilled by amazon%' then 'amazon_cumplido_por_amazon'
      when rt like '%amazon.com%' then 'amazon_com' else 'amazon_sin_subcanal' end
-   when rt like 'walmart%' then case when rt like '%fulfilled by clientex%' then 'walmart_cumplido_por_clientex' when rt like '%fulfilled by walmart%' then 'walmart_cumplido_por_walmart' else 'walmart_sin_subcanal' end
-   when rt like 'best buy%' then 'bestbuy' when rt like 'clientex%' then 'tienda' when rt like 'lowe%' then 'lowes' when rt like 'home depot%' then 'homedepot' when rt='pending' then 'pendiente' else 'otro' end,
+   when rt like 'walmart%' then case when pp.v is not null and strpos(rt,'fulfilled by '||pp.v)>0 then 'walmart_cumplido_por_piloto' when rt like '%fulfilled by walmart%' then 'walmart_cumplido_por_walmart' else 'walmart_sin_subcanal' end
+   when rt like 'best buy%' then 'bestbuy' when pp.v is not null and left(rt,length(pp.v))=pp.v then 'tienda' when rt like 'lowe%' then 'lowes' when rt like 'home depot%' then 'homedepot' when rt='pending' then 'pendiente' else 'otro' end,
   case when rs='defective' then 'defectuoso' when sub like 'damaged%' then 'danado' when rs='missing parts' or sub like 'missing parts%' then 'faltan_piezas'
    when sub='wrong item received' or rs='wrong item was sent' then 'articulo_equivocado' end,
   case when coalesce(wh,'')='' then null when wh like 'BODEGAB-%' then regexp_replace(wh,'\s+','','g') when wh like 'BODEGAA%' then 'BODEGAA USA Inc' when wh like 'BODEGAC%' then 'Bodegac'
@@ -147,7 +150,7 @@ language sql stable set search_path='' as $$
   case when coalesce(rs,'')='' then 'sin_motivo' when rs in('defective','order','warranty','return','shipping','not as expected','change mind','price match','missing parts','package lost','never shipped',
      'wrong item was sent','bought by mistake','inaccurate website description','item arrived too late','incompatible or not useful') then replace(rs,' ','_') else 'otro' end,
   coalesce(n.addr,false)
- from n
+ from n cross join pp
 $$;
 
 -- 6) Casos del Tracker por SKU y tipo de defecto, SKU y tipo de hoja, o subcanal de retailer. dim es un enumerado; k-anonimato mínimo 5 (nunca menor, aunque se pida 1).

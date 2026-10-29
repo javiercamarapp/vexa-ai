@@ -4,8 +4,8 @@
 import { faltanTexto, BODEGAS, LATENCIAS } from '../workspace-service/cco.mjs';
 
 const NOMBRE_CANAL = { amazon: 'Amazon', walmart: 'Walmart', bestbuy: 'Best Buy', shopify: 'Shopify' };
-const SUBCANAL_ES = { amazon_cumplido_por_clientex: 'Amazon cumplido por CLIENTEX', amazon_cumplido_por_amazon: 'Amazon cumplido por Amazon', amazon_com: 'Amazon.com', amazon_sin_subcanal: 'Amazon sin subcanal',
-  walmart_cumplido_por_clientex: 'Walmart cumplido por CLIENTEX', walmart_cumplido_por_walmart: 'Walmart cumplido por Walmart', walmart_sin_subcanal: 'Walmart sin subcanal' };
+const SUBCANAL_ES = { amazon_cumplido_por_piloto: 'Amazon cumplido por el cliente piloto', amazon_cumplido_por_amazon: 'Amazon cumplido por Amazon', amazon_com: 'Amazon.com', amazon_sin_subcanal: 'Amazon sin subcanal',
+  walmart_cumplido_por_piloto: 'Walmart cumplido por el cliente piloto', walmart_cumplido_por_walmart: 'Walmart cumplido por Walmart', walmart_sin_subcanal: 'Walmart sin subcanal' };
 const LAT_ES = { menos_de_1_dia: 'Menos de 1 día', '1_dia': '1 día', '2_dias': '2 días', '3_o_mas_dias': '3 días o más', sin_dato: 'Sin SLA registrado' };
 const TIPO_GRUPOS = { garantia: ['Garantía de herramientas', 'Garantía de piezas'], reembolso: ['Reembolsos', 'Solicitudes de reembolso'], etiqueta_devolucion: ['Etiquetas de devolución'] };
 const mes = (iso) => String(iso ?? '').slice(0, 7);

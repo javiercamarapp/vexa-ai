@@ -9,7 +9,7 @@ export {K_MIN};
 export const CCO_VERSION = 1;
 export const CCO_BUDGET_MS = Object.freeze({total: 14000, geo: 12000});
 export const CANALES = Object.freeze(['amazon', 'walmart', 'bestbuy', 'shopify']);
-export const SUBCANALES = Object.freeze(['amazon_cumplido_por_clientex', 'amazon_cumplido_por_amazon', 'amazon_com', 'amazon_sin_subcanal', 'walmart_cumplido_por_clientex', 'walmart_cumplido_por_walmart', 'walmart_sin_subcanal',
+export const SUBCANALES = Object.freeze(['amazon_cumplido_por_piloto', 'amazon_cumplido_por_amazon', 'amazon_com', 'amazon_sin_subcanal', 'walmart_cumplido_por_piloto', 'walmart_cumplido_por_walmart', 'walmart_sin_subcanal',
   'bestbuy', 'tienda', 'lowes', 'homedepot', 'pendiente', 'otro', 'sin_retailer']);
 export const BODEGAS = Object.freeze(['BODEGAA USA Inc', 'BODEGAB-USTX', 'BODEGAB-USGA', 'BODEGAB-USWC5', 'BODEGAB-USNJ2', 'Bodegac', 'Bodegad', 'Bodegae Canada', 'otra']);
 export const LATENCIAS = Object.freeze(['menos_de_1_dia', '1_dia', '2_dias', '3_o_mas_dias', 'sin_dato']);
@@ -18,14 +18,19 @@ export const HOJAS = Object.freeze(['garantia', 'reembolso', 'etiqueta_devolucio
 
 // ---- espejo en JS de los catálogos cerrados de la migración (una prueba verifica que SQL y JS dan lo mismo) ----
 const lim = (s) => String(s ?? '').normalize('NFC').toLowerCase().replace(/\s+/g, ' ').trim();
-/** Retailer del Tracker -> subcanal de cumplimiento. El clasificador viejo (retailerDe) colapsa Amazon y Walmart; este conserva el cumplimiento. */
-export function subcanalDe(raw) {
-  const k = lim(raw);
+/** Prefijo (minúsculas) del retailer propio del cliente piloto: se configura por entorno (VEXA_TIENDA_PROPIA_PREFIJO), nunca en el repo.
+ *  Vacío por defecto: sin configuración nada se clasifica como propio. Se lee en cada llamada (las pruebas lo fijan antes de usarlo).
+ *  `globalThis.process` evita romper en el navegador, donde no hay `process`. */
+export const prefijoPropio = (env = globalThis.process?.env) => lim(env?.VEXA_TIENDA_PROPIA_PREFIJO);
+/** Retailer del Tracker -> subcanal de cumplimiento. El clasificador viejo (retailerDe) colapsa Amazon y Walmart; este conserva el cumplimiento.
+ *  `prefijo` identifica al cliente piloto («cumplido por <prefijo>» y retailer que empieza por <prefijo>); vacío = nada es propio. */
+export function subcanalDe(raw, prefijo = prefijoPropio()) {
+  const k = lim(raw), p = lim(prefijo), cumple = (x) => k.includes('fulfilled by ' + x);
   if (!k) return 'sin_retailer';
-  if (k.startsWith('amazon')) return k.includes('fulfilled by clientex') ? 'amazon_cumplido_por_clientex' : k.includes('fulfilled by amazon') ? 'amazon_cumplido_por_amazon' : k.includes('amazon.com') ? 'amazon_com' : 'amazon_sin_subcanal';
-  if (k.startsWith('walmart')) return k.includes('fulfilled by clientex') ? 'walmart_cumplido_por_clientex' : k.includes('fulfilled by walmart') ? 'walmart_cumplido_por_walmart' : 'walmart_sin_subcanal';
+  if (k.startsWith('amazon')) return p && cumple(p) ? 'amazon_cumplido_por_piloto' : cumple('amazon') ? 'amazon_cumplido_por_amazon' : k.includes('amazon.com') ? 'amazon_com' : 'amazon_sin_subcanal';
+  if (k.startsWith('walmart')) return p && cumple(p) ? 'walmart_cumplido_por_piloto' : cumple('walmart') ? 'walmart_cumplido_por_walmart' : 'walmart_sin_subcanal';
   if (k.startsWith('best buy')) return 'bestbuy';
-  if (k.startsWith('clientex')) return 'tienda';
+  if (p && k.startsWith(p)) return 'tienda';
   if (k.startsWith('lowe')) return 'lowes';
   if (k.startsWith('home depot')) return 'homedepot';
   if (k === 'pending') return 'pendiente';
@@ -112,6 +117,8 @@ const celda = (r) => ({d1: r.d1, d2: r.d2, n: Number(r.n), otros: Boolean(r.es_o
 
 /** Lectura cruda de los agregados. Cada parte es {rows}|{error}. */
 export async function leerAgregadosCco(s, {deadline}) {
+  // El prefijo del cliente piloto llega a las funciones SQL por la configuración de sesión (local a la transacción); vacío = nada es propio.
+  await s.query("SELECT set_config('vexa.tienda_propia_prefijo',$1,true)", [prefijoPropio()]);
   const q = (name, sql, params) => leer(s, deadline, name, sql, params);
   const [ventanas, skuCanal, sinVenta, defecto, hoja, subcanal, bodLat, bodMot, cob] = [
     await q('cco_v', 'SELECT * FROM public.insight_cco_ventanas()'),
@@ -219,7 +226,7 @@ export function tarjetaE(raw) {
   const base = {id: 'E', clase: 'observed', fuente: 'tracker', estado: 'falta', faltan: faltanDe('E'), salvedades: ['sesgoCasos', 'sinDenominadorVentas'], subcanales: []};
   if (raw.subcanal.error) return {...base, indisponible: raw.subcanal.error};
   const cs = raw.subcanal.rows.map(celda);
-  return {...base, subcanales: cs.filter((x) => !x.otros && ['amazon_cumplido_por_clientex', 'amazon_cumplido_por_amazon', 'amazon_com', 'amazon_sin_subcanal', 'walmart_cumplido_por_clientex', 'walmart_cumplido_por_walmart', 'walmart_sin_subcanal'].includes(x.d1)).map((x) => ({subcanal: x.d1, n: x.n})).sort((a, b) => b.n - a.n),
+  return {...base, subcanales: cs.filter((x) => !x.otros && ['amazon_cumplido_por_piloto', 'amazon_cumplido_por_amazon', 'amazon_com', 'amazon_sin_subcanal', 'walmart_cumplido_por_piloto', 'walmart_cumplido_por_walmart', 'walmart_sin_subcanal'].includes(x.d1)).map((x) => ({subcanal: x.d1, n: x.n})).sort((a, b) => b.n - a.n),
     corte: raw.cob.error ? null : (raw.cob.rows[0]?.cutoff ? dia(raw.cob.rows[0].cutoff) : null)};
 }
 /** Tarjeta F: desde dónde enviar. Siempre falta dato; nada que sostenga una decisión. */

@@ -121,7 +121,7 @@ function ccoRaw(tenantId) {
     skuCanal: ok([row('amazon', sku, 4800, 51200000, 310, 40, '3310000'), row('amazon', B ? 'ZZ-OTRA-2' : 'SYN-AX2', 2100, 18800000, 90, 90, null), row('walmart', sku, 900, 8100000, 22, 0, '198000'), row('bestbuy', '', 300, 2100000, null, null, null)]),
     sinVenta: ok([sinV(B ? 'ZZ-VIEJO' : 'SYN-OLD1', '2026-05-01', 4, 12, ['amazon']), sinV('SYN-OLD2', '2026-06-01', 3, 30, ['amazon', 'walmart']), sinV('SYN-OLD3', '2026-02-01', 7, 3, ['walmart'])]),
     defecto: ok([cell(sku, 'defectuoso', 11), cell(sku, 'danado', 6)]), hoja: ok([cell(sku, 'garantia', 12), cell(sku, 'reembolso', 7)]),
-    subcanal: ok([cell('amazon_cumplido_por_clientex', null, 485), cell('walmart_cumplido_por_clientex', null, 359), cell('amazon_com', null, 110), cell('walmart_cumplido_por_walmart', null, 82), cell('amazon_cumplido_por_amazon', null, 48), cell('lowes', null, 153)]),
+    subcanal: ok([cell('amazon_cumplido_por_piloto', null, 485), cell('walmart_cumplido_por_piloto', null, 359), cell('amazon_com', null, 110), cell('walmart_cumplido_por_walmart', null, 82), cell('amazon_cumplido_por_amazon', null, 48), cell('lowes', null, 153)]),
     bodLat: ok([cell('BODEGAB-USTX', '2_dias', 120), cell('BODEGAB-USTX', '1_dia', 80), cell('BODEGAA USA Inc', '3_o_mas_dias', 60), cell('BODEGAA USA Inc', '2_dias', 140), cell('Bodegac', 'sin_dato', 56), cell(null, null, 9, true)]),
     bodMot: ok([cell('BODEGAB-USTX', 'defectuoso', 90), cell('BODEGAA USA Inc', 'faltan_piezas', 70)]),
     cob: ok([{ rows_total: 2317, with_retailer: 2299, with_sku: 2299, with_warehouse: 1244, with_latency: 1153, with_address: 2017, sheets: 6, cutoff: '2026-10-05T00:00:00Z' }]),

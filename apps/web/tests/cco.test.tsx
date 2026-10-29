@@ -99,7 +99,7 @@ const raw=()=>({
     {channel:'amazon',sku_base:'',currency:'USD',exponent:2,order_lines:5,order_gross_minor:'1000',refund_n:0,refund_n_unknown_amount:0,refund_amount_minor:'0',refunds_per_100_lines:0},
     {channel:'bestbuy',sku_base:'',currency:'USD',exponent:2,order_lines:30,order_gross_minor:'90000',refund_n:null,refund_n_unknown_amount:null,refund_amount_minor:null,refunds_per_100_lines:null}]),
   sinVenta:ok([{sku_base:'SYN-OLD',first_sale_month:'2025-10-01',last_sale_month:'2026-05-01',months_without_sale:4,lines_last_3m:0,lines_last_6m:0,lines_last_9m:12,channels:['amazon'],skus_with_sales:40,reference_month:'2026-09-01',data_through:'2026-10-02'}]),
-  defecto:ok([]),hoja:ok([]),subcanal:ok([cel('amazon_cumplido_por_clientex',null,15)]),
+  defecto:ok([]),hoja:ok([]),subcanal:ok([cel('amazon_cumplido_por_piloto',null,15)]),
   bodLat:ok([cel('BODEGAB-USTX','2_dias',9),cel(null,null,6,true)]),bodMot:ok([]),
   cob:ok([{rows_total:40,with_retailer:30,with_sku:30,with_warehouse:20,with_latency:9,with_address:10,sheets:3,cutoff:'2026-10-05T00:00:00Z'}]),
 });

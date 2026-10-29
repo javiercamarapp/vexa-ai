@@ -3,6 +3,7 @@ import {after} from 'next/server';
 import {headers} from 'next/headers';
 import type {SqlPool} from '@vexa/platform/db';
 import {instalarEscritor,registrarEventoSeguridad,type EventoSeguridad} from './eventos';
+import {crearGuardia} from './concurrencia';
 
 /** Escritor real: public.record_security_event bajo vexa_backend con el pool del servidor (mismo patrón que el límite del enlace de acceso). */
 export function escritorSobrePool(obtenerPool:()=>SqlPool){
@@ -21,6 +22,7 @@ let instalado=false;
 export function instalar(obtenerPool:()=>SqlPool){
   if(instalado)return;instalado=true;
   instalarEscritor(async carga=>escritorSobrePool(obtenerPool)(carga));
+  (globalThis as {__vexaConcurrency?:unknown}).__vexaConcurrency=crearGuardia(obtenerPool);
   (globalThis as {__vexaSecuritySink?:unknown}).__vexaSecuritySink=(e:EventoSeguridad)=>void registrar(e);
 }
 /** Completa ruta, método, IP y agente desde la petición en curso cuando quien llama no los trae (sesión, base, CSRF). */

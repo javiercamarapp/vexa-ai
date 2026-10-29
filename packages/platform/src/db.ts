@@ -53,6 +53,12 @@ function databaseError(error: unknown): AccessError {
   if (['22P02','22003'].includes(code ?? '')) return new AccessError(400,'database_input_invalid');
   return new AccessError(503,'database_unavailable');
 }
+/** Guardia de concurrencia que publica la aplicación (lib/security/concurrencia.ts): devuelve la función de liberación, o null si la organización ya tiene el máximo en curso. */
+async function acquireHeavy(tenantId: string, action: string): Promise<(() => void) | null> {
+  const guard = (globalThis as {__vexaConcurrency?: (tenant: string, action: string) => Promise<(() => void) | null>}).__vexaConcurrency;
+  if (!guard) return () => {};
+  try { return await guard(tenantId, action); } catch { return () => {}; }
+}
 /** selectedTenant is the server session selector, not a body tenant. Membership is revalidated per call. */
 export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool; selectedTenant?: string}) {
   if (typeof window !== 'undefined') throw new AccessError(503,'database_server_only');
@@ -72,6 +78,7 @@ export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool;
       if (!pool) throw new AccessError(503,'database_not_configured');
       let connection: SqlConnection | undefined;
       let open = false;
+      let releaseHeavy: (() => void) | undefined;
       try {
         const session = await resolveSession(identity,selectedTenant);
         const userId=session.user.id, tenantId=session.active.tenant_id;
@@ -80,6 +87,12 @@ export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool;
         if (session.support && action !== 'read') throw reportAccess(new AccessError(403,'support_read_only'));
         // 'export' es una lectura para la base (READ ONLY y vexa.action='read'): solo la capa de aplicación la distingue.
         const sqlAction: DatabaseAction = action === 'export' ? 'read' : action;
+        // H-01: tope de concurrencia por organización para acciones pesadas (exportar, importar, materializar). Falla abierto si la base de arrendamientos no responde.
+        if (action === 'export' || action === 'import' || action === 'materialize') {
+          const lease = await acquireHeavy(tenantId, action);
+          if (!lease) throw new AccessError(429,'org_busy');
+          releaseHeavy = lease;
+        }
         connection = await pool.connect();
         await connection.query(sqlAction === 'read' ? 'BEGIN READ ONLY' : 'BEGIN'); open = true;
         await connection.query('SET LOCAL ROLE vexa_backend');
@@ -118,7 +131,7 @@ export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool;
         if (sanitized.status === 503) console.warn('db-fallo ' + JSON.stringify({accion: action, clase: failureClass(error), ms: Date.now() - started}));
         if (connectionLost(error)) lost.add(sanitized);
         throw sanitized;
-      } finally { if(connection) { try { connection.release(); } catch { /* Never expose driver details during cleanup. */ } } }
+      } finally { try { releaseHeavy?.(); } catch { /* best effort */ } if(connection) { try { connection.release(); } catch { /* Never expose driver details during cleanup. */ } } }
     },
   };
   return Object.freeze({transaction: api.transaction});

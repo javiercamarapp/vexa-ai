@@ -271,3 +271,35 @@ test('security_events: solo inserción, sin PII, muestreo, aislamiento por rol, 
  });
  }finally{await pg.stop();}
 });
+
+test('H-01: contadores de peticiones y arrendamientos de concurrencia compartidos, solo huellas y solo vexa_backend',async t=>{
+ const pg=await startLocalPg({label:'sec29f'});try{
+ const db='s29f';pg.createDb(db);pg.applySchema(db,{upTo:BASE});seedTenants(pg,db);pg.file(db,mig('20261205000500_api_rate_limit.sql'));
+ const bk=(sql,role='vexa_backend')=>pg.sql(db,`begin; set local role ${role}; ${sql}; commit;`).split('\n').filter(l=>l&&!['BEGIN','COMMIT','SET'].includes(l)).join('|');
+ await t.test('suma por lotes en la misma ventana, por clase y por huella; otra huella y otra clase no se mezclan',()=>{
+  assert.equal(bk(`select public.api_rate_add('read','${h(1)}',5)`),'5');assert.equal(bk(`select public.api_rate_add('read','${h(1)}',7)`),'12');
+  assert.equal(bk(`select public.api_rate_add('read','${h(2)}',1)`),'1');assert.equal(bk(`select public.api_rate_add('write','${h(1)}',2)`),'2');
+ });
+ await t.test('la ventana siguiente reinicia y la poda quita ventanas de más de 10 minutos',()=>{
+  pg.sql(db,`insert into public.api_rate_counters(class,key_hash,window_start,hits) values ('read','${h(9)}',date_trunc('minute',clock_timestamp())-interval '30 minutes',99),('read','${h(1)}',date_trunc('minute',clock_timestamp())-interval '1 minute',500)`);
+  assert.equal(bk(`select public.api_rate_add('read','${h(1)}',1)`),'13','la ventana anterior no cuenta');
+  assert.equal(pg.sql(db,`select count(*) from public.api_rate_counters where window_start<clock_timestamp()-interval '10 minutes'`),'0');
+ });
+ await t.test('entradas inválidas y permisos: sin huella hex, n fuera de rango; anon/authenticated/service_role no ejecutan ni leen',()=>{
+  for(const q of [`select public.api_rate_add('read','1.2.3.4',1)`,`select public.api_rate_add('READ','${h(1)}',1)`,`select public.api_rate_add('read','${h(1)}',0)`,`select public.api_rate_add('read','${h(1)}',10001)`])assert.throws(()=>bk(q),/api_rate_input_invalid/,q);
+  for(const role of ['anon','authenticated','service_role'])assert.throws(()=>bk(`select public.api_rate_add('read','${h(1)}',1)`,role),/permission denied/,role);
+  assert.throws(()=>bk(`select * from public.api_rate_counters`),/permission denied/);assert.throws(()=>bk(`select * from public.api_concurrency_leases`,'authenticated'),/permission denied/);
+  assert.equal(pg.sql(db,`select count(*) from public.api_rate_counters where key_hash !~ '^[a-f0-9]{64}$'`),'0');
+ });
+ await t.test('concurrencia por organización: el tope se respeta, otra organización no se ve afectada, liberar y caducar devuelven cupo',()=>{
+  const get=(tenant,max=2)=>bk(`select coalesce(public.api_concurrency_acquire('${tenant}','workspace',${max},60)::text,'NULL')`);
+  const l1=get(A),l2=get(A);assert.match(l1,/^[0-9a-f-]{36}$/);assert.match(l2,/^[0-9a-f-]{36}$/);
+  assert.equal(get(A),'NULL','tercera simultánea rechazada');assert.match(get(B),/^[0-9a-f-]{36}$/,'otra organización con su propio cupo');
+  bk(`select public.api_concurrency_release('${l1}')`);assert.match(get(A),/^[0-9a-f-]{36}$/,'liberar devuelve cupo');
+  pg.sql(db,`update public.api_concurrency_leases set expires_at=clock_timestamp()-interval '1 second' where tenant_id='${A}'`);
+  assert.match(get(A),/^[0-9a-f-]{36}$/,'un arrendamiento caducado (instancia muerta) no bloquea para siempre');
+  assert.throws(()=>bk(`select public.api_concurrency_acquire('${A}','workspace',0,60)`),/api_concurrency_input_invalid/);
+  assert.throws(()=>bk(`select public.api_concurrency_acquire('${A}','workspace',2,60)`,'authenticated'),/permission denied/);
+ });
+ }finally{await pg.stop();}
+});

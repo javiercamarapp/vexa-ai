@@ -4,6 +4,7 @@ import { supportMarkActive, supportVerdict } from './lib/support-guard';
 import { failure, localRedirect, requestAuth } from './lib/auth-http';
 import { decidirHost, rutaConAutenticacion } from './lib/host-routing.mjs';
 import { registrar } from './lib/security/registro';
+import { evaluarLimite } from './lib/security/limite-servidor';
 function authLinkHeaders(request:NextRequest,response:NextResponse) {
   if (/^\/auth\/(?:invitations|email)(?:\/|$)/.test(request.nextUrl.pathname)) response.headers.set('Referrer-Policy','no-referrer');
   return response;
@@ -14,6 +15,12 @@ export async function middleware(request:NextRequest) {
     const path=request.nextUrl.pathname;
     // Ruta y método para el registro de seguridad aguas abajo (sin consulta). La IP y el agente se leen de las cabeceras originales.
     try{request.headers.set('x-vexa-route',request.method+' '+path);}catch{/* cabecera inmutable: el registro pierde la ruta, nada más */}
+    // H-01: límite general por clase de endpoint, por IP y por sesión (contador compartido en la base). Va antes de leer cuerpos ni validar firmas (M-01, B-07).
+    const exceso=evaluarLimite(request,path,request.nextUrl.search);
+    if(exceso){
+      void registrar({kind:'rate_limited',route:path,method:request.method,ipRaw:request.headers.get('x-forwarded-for'),ua:request.headers.get('user-agent'),detail:{class:exceso.clase,scope:exceso.por}});
+      return NextResponse.json({error:{code:'rate_limited',message:'Demasiadas solicitudes. Intenta de nuevo en unos segundos.',retryable:true}},{status:429,headers:{...PRIVATE_HEADERS,'Retry-After':String(exceso.reintentarEn)}});
+    }
     // Host primero (decisión pura y probada en host-routing.mjs). Con las reglas por host de next.config (Fase A) rovaq.ai y www.rovaq.ai ya no llegan aquí: el matcher los excluye.
     // Lo que sigue sirve a app.rovaq.ai y a los hosts antiguos, y es también el respaldo (Fase B) si rovaq.ai volviera a pasar por el middleware.
     const decision=decidirHost({host:request.headers.get('x-forwarded-host')??request.headers.get('host')??request.nextUrl.host,pathname:path,search:request.nextUrl.search,produccion:process.env.VERCEL_ENV==='production'});

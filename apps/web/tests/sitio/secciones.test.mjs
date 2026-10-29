@@ -107,7 +107,7 @@ describe('diez secciones S1 a S10, en orden', () => {
       }
     });
 
-    test(`${lang}: sin costuras ni fondos propios por sección: el tema es global (data-escena)`, () => {
+    test(`${lang}: sin costuras ni fondos propios por sección: el tema es global (data-ambiente)`, () => {
       const abre = (id) => /^<[^>]+>/.exec(seccion(portada(lang), id))[0];
       for (const id of ['inicio', 'problema', 'valor', 'modulos', 'pantallas', 'puestos', 'seguridad', 'integraciones', 'cierre']) {
         assert.doesNotMatch(abre(id), /\bs-costura\b|s-seccion--alterna|s-seccion--corte/, id);

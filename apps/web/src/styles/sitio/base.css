@@ -146,7 +146,7 @@ button {
 }
 
 /* Sin JavaScript no hay escena global: cada sección pinta su propio fondo (sin costura que animar). Con JavaScript el fondo es el de la página. */
-html:not([data-escena]) .s-seccion {
+html:not([data-ambiente]) .s-seccion {
   background: var(--s-fondo);
 }
 
@@ -240,10 +240,10 @@ html:not([data-escena]) .s-seccion {
 
 /* Variante según el tema del contenedor: negativo sobre oscuro, positivo sobre claro */
 .s-logo__positivo { opacity: 0; }
-html[data-escena="claro"] .s-logo__positivo,
-html:not([data-escena]) [data-tema="claro"] .s-logo__positivo { opacity: 1; }
-html[data-escena="claro"] .s-logo__negativo,
-html:not([data-escena]) [data-tema="claro"] .s-logo__negativo { opacity: 0; }
+html[data-ambiente="claro"] .s-logo__positivo,
+html:not([data-ambiente]) [data-tema="claro"] .s-logo__positivo { opacity: 1; }
+html[data-ambiente="claro"] .s-logo__negativo,
+html:not([data-ambiente]) [data-tema="claro"] .s-logo__negativo { opacity: 0; }
 
 .s-logo__punto {
   fill: var(--s-acento);

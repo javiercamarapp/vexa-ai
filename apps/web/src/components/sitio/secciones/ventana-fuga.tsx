@@ -29,6 +29,15 @@ export function VentanaFuga({lang}: {lang: Lang}) {
         <span className="s-mock-ruta">{ui.rutas.m2}</span>
         <span className="s-mock-org">{t.organizacion}</span>
       </div>
+      <p className="s-ov-cifra">
+          <span className="s-ov-cifra__linea">
+            <span className="s-solo-lector">{`${fmt(REEMBOLSOS)} USD ${ui.captura.devueltos}. `}</span>
+            <span className="s-ov-cifra__n" data-cuenta={REEMBOLSOS} aria-hidden="true">{fmt(REEMBOLSOS)}</span>
+            <span aria-hidden="true"> USD {ui.captura.devueltos}</span>
+          </span>
+          <span className="s-ov-cifra__sub">{`${fmt(INGRESO_BRUTO)} USD ${ui.captura.ingreso}`}</span>
+          <span className="s-sello s-sello--observado s-ov-cifra__sello"><span className="s-sello__icono" aria-hidden="true" />{obs}</span>
+      </p>
       <div className="s-ventana__cuerpo">
         <div className="s-ventana__lienzo">
         <Captura nombre="fuga" tema="oscuro" lang={lang} tamanos="(max-width: 1100px) 100vw, 1040px" prioridad clase="s-ventana__img" />
@@ -39,8 +48,8 @@ export function VentanaFuga({lang}: {lang: Lang}) {
               <rect className="s-ov__pista" x={X0} y={f.y} width={ANCHO_PISTA} height={ALTO_BARRA} rx={ALTO_BARRA / 2} />
               <rect className="s-ov__barra" x={X0} y={f.y} width={f.w} height={ALTO_BARRA} rx={ALTO_BARRA / 2} />
               <g className="s-ov__tip" aria-hidden="true">
-                <rect x={X0 + 8} y={f.y - 66} width={410} height={44} rx={9} />
-                <text x={X0 + 26} y={f.y - 37}>{`${f.sku} · ${usd(f.v)} · ${obs.toUpperCase()}`}</text>
+                <rect x={X0 + 8} y={f.y - 70} width={470} height={46} rx={9} />
+                <text x={X0 + 26} y={f.y - 40}>{`${f.sku} · ${usd(f.v)} · ${obs.toUpperCase()}`}</text>
               </g>
             </g>
           ))}
@@ -53,15 +62,6 @@ export function VentanaFuga({lang}: {lang: Lang}) {
         </svg>
         <span className="s-punto s-ov-punto" aria-hidden="true" />
         </div>
-        <p className="s-ov-cifra">
-          <span className="s-ov-cifra__linea">
-            <span className="s-solo-lector">{`${fmt(REEMBOLSOS)} USD ${ui.captura.devueltos}. `}</span>
-            <span className="s-ov-cifra__n" data-cuenta={REEMBOLSOS} aria-hidden="true">{fmt(REEMBOLSOS)}</span>
-            <span aria-hidden="true"> USD {ui.captura.devueltos}</span>
-          </span>
-          <span className="s-ov-cifra__sub">{`${fmt(INGRESO_BRUTO)} USD ${ui.captura.ingreso}`}</span>
-          <span className="s-sello s-sello--observado s-ov-cifra__sello"><span className="s-sello__icono" aria-hidden="true" />{obs}</span>
-        </p>
       </div>
       <p className="s-rotulo-ejemplo s-ventana__rotulo">{lang === 'en' ? `${t.rotulo} ${ui.captura.enEs}` : t.rotulo}</p>
     </figure>

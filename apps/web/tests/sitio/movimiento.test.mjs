@@ -58,8 +58,8 @@ test('sin cargador bloqueante ni Lenis: scroll nativo y héroe legible desde el 
 
 test('escena de tema global: un atributo en html, histéresis 42 por ciento al bajar y 58 al subir, transición solo tras el primer cuadro', () => {
   assert.match(SITIO, /innerHeight \* \(bajando \? 0\.42 : 0\.58\)/);
-  assert.match(SITIO, /H\.setAttribute\('data-escena', t\)/);
-  assert.match(SITIO, /data-escena-anim/);
+  assert.match(SITIO, /H\.setAttribute\('data-ambiente', t\)/);
+  assert.match(SITIO, /data-ambiente-anim/);
   assert.match(SITIO, /addEventListener\('scroll', pedir, \{passive: true\}\)/);
 });
 

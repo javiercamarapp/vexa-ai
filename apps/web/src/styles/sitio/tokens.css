@@ -135,7 +135,7 @@
   --s-e96: 96px;
   --s-e112: 112px;
   --s-e144: 144px;
-  --s-seccion-v: clamp(44px, 4.4vw, 64px);
+  --s-seccion-v: clamp(44px, 4.2vw, 60px);
 
   /* ---- Rejilla ---- */
   --s-contenedor: 1152px;
@@ -215,8 +215,8 @@
 
 /* ==================== Tema oscuro, valor por defecto ==================== */
 :root,
-html[data-escena="oscuro"],
-html:not([data-escena]) [data-tema="oscuro"] {
+html[data-ambiente="oscuro"],
+html:not([data-ambiente]) [data-tema="oscuro"] {
   --s-fondo: var(--s-c-tinta);
   --s-fondo-alt: var(--s-c-grafito);
   --s-superficie: var(--s-c-pizarra);
@@ -254,8 +254,8 @@ html:not([data-escena]) [data-tema="oscuro"] {
 }
 
 /* ==================== Tema claro ==================== */
-html[data-escena="claro"],
-html:not([data-escena]) [data-tema="claro"] {
+html[data-ambiente="claro"],
+html:not([data-ambiente]) [data-tema="claro"] {
   --s-fondo: var(--s-c-hueso);
   --s-fondo-alt: var(--s-c-hueso-2);
   --s-superficie: var(--s-c-blanco);
@@ -291,8 +291,8 @@ html:not([data-escena]) [data-tema="claro"] {
 
 /* Mapa de calor de mockups: sin verde, ámbar, azul ni lima. Se invierte en oscuro. */
 :root,
-html[data-escena="oscuro"],
-html:not([data-escena]) [data-tema="oscuro"] {
+html[data-ambiente="oscuro"],
+html:not([data-ambiente]) [data-tema="oscuro"] {
   --s-calor-1: #0E0E10;
   --s-calor-2: #5A5A61;
   --s-calor-3: #98989F;
@@ -300,8 +300,8 @@ html:not([data-escena]) [data-tema="oscuro"] {
   --s-calor-5: #ECECEE;
 }
 
-html[data-escena="claro"],
-html:not([data-escena]) [data-tema="claro"] {
+html[data-ambiente="claro"],
+html:not([data-ambiente]) [data-tema="claro"] {
   --s-calor-1: #ECECEE;
   --s-calor-2: #C9C9CD;
   --s-calor-3: #98989F;
@@ -345,10 +345,10 @@ html:not([data-escena]) [data-tema="claro"] {
 }
 
 /* ==================== Escena de tema global ====================
- * Un solo mecanismo: sitio.js escribe html[data-escena="oscuro|claro"] cuando el borde superior de la sección siguiente cruza el 42 por ciento
+ * Un solo mecanismo: sitio.js escribe html[data-ambiente="oscuro|claro"] cuando el borde superior de la sección siguiente cruza el 42 por ciento
  * de la ventana (58 al subir). Las variables semánticas de color están registradas como <color>, así que transicionan juntas 700 ms con ease:
  * fondo, texto, bordes, píldora de la cabecera y botones cambian en el mismo instante y con la misma curva. Las secciones no pintan fondo propio.
- * Sin JavaScript no existe data-escena y cada sección conserva su tema local (primer selector de cada bloque de arriba).
+ * Sin JavaScript no existe data-ambiente y cada sección conserva su tema local (primer selector de cada bloque de arriba).
  */
 @property --s-fondo {
   syntax: "<color>";
@@ -502,7 +502,7 @@ html:not([data-escena]) [data-tema="claro"] {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  html[data-escena-anim] {
+  html[data-ambiente-anim] {
     transition:
       --s-fondo var(--s-d-tema) ease,
       --s-fondo-alt var(--s-d-tema) ease,

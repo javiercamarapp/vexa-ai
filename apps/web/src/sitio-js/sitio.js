@@ -104,7 +104,7 @@ function cabecera() {
 }
 
 /* ---------- escena de tema global ----------
- * Un solo atributo en <html> (data-escena) cambia las variables semánticas de fondo, texto, bordes y cabecera con una transición de 700 ms
+ * Un solo atributo en <html> (data-ambiente) cambia las variables semánticas de fondo, texto, bordes y cabecera con una transición de 700 ms
  * (tokens.css). Se dispara cuando el borde superior de la sección siguiente cruza el 42 % del alto de la ventana al bajar y el 58 % al subir:
  * la histéresis evita parpadeos con scroll rápido o hacia atrás. Las secciones no tienen fondo propio, así que no hay costuras. */
 function tema() {
@@ -119,13 +119,13 @@ function tema() {
     const linea = innerHeight * (bajando ? 0.42 : 0.58);
     let t = secs[0].dataset.tema;
     for (const s of secs) if (s.getBoundingClientRect().top <= linea) t = s.dataset.tema; else break;
-    if (t !== escena) { escena = t; H.setAttribute('data-escena', t); if (cab) cab.dataset.tema = t; }
+    if (t !== escena) { escena = t; H.setAttribute('data-ambiente', t); if (cab) cab.dataset.tema = t; }
   };
   const pedir = () => { if (libre) { libre = false; requestAnimationFrame(aplicar); } };
   addEventListener('scroll', pedir, {passive: true});
   addEventListener('resize', pedir, {passive: true});
   aplicar();
-  requestAnimationFrame(() => requestAnimationFrame(() => H.setAttribute('data-escena-anim', '')));
+  requestAnimationFrame(() => requestAnimationFrame(() => H.setAttribute('data-ambiente-anim', '')));
 }
 
 /* ---------- héroe: conteo de la cifra (el resto de la entrada es CSS) ---------- */

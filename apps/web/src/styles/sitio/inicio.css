@@ -4,7 +4,7 @@
  *
  * CONTRATO DE ESTADOS Y GANCHOS (lo escriben sitio.js e inicio.js con setAttribute o classList; nunca style)
  *   html[data-js]                 JavaScript arrancó. Todo diseño fijado o con estado oculto lo exige.
- *   html[data-escena]             escena de tema global (oscuro o claro); html[data-escena-anim] activa su transición.
+ *   html[data-ambiente]             escena de tema global (oscuro o claro); html[data-ambiente-anim] activa su transición.
  *   html[data-eco]                vigilante de rendimiento: apaga blur y deriva.
  *   header[data-compacta]         píldora tras 60 px.
  *   .s-visto                      revelado una vez por IntersectionObserver sobre [data-reveal].
@@ -101,7 +101,7 @@
 }
 
 .s-hero__sub {
-  max-width: 640px;
+  max-width: 840px;
   color: var(--s-apagado);
 }
 
@@ -146,6 +146,7 @@
   --s-sutil: var(--s-vp-apagado);
   border-radius: var(--s-r-tarjeta);
   overflow: visible;
+  container-type: inline-size;
 }
 
 .s-ventana--producto .s-ventana__barra {
@@ -157,12 +158,16 @@
   padding: 0;
   overflow: hidden;
   border-radius: 0 0 var(--s-r-tarjeta) var(--s-r-tarjeta);
-  container-type: inline-size;
   background: var(--s-vp-fondo);
 }
 
 .s-ventana__lienzo {
   position: relative;
+}
+
+/* En el héroe la ventana se recorta por arriba (25.5 por ciento de la captura: título y frase) para que las tarjetas y las primeras barras entren en el primer pliegue */
+[data-ventana="fuga"] .s-ventana__lienzo {
+  margin-top: -15.94%;
 }
 
 .s-ventana__img {
@@ -191,7 +196,7 @@
 .s-ov__barra { fill: var(--s-vp-barra-color); transform-box: fill-box; transform-origin: left center; }
 .s-ov__tip { opacity: 0; pointer-events: none; transition: opacity var(--s-d-hover) var(--s-e-ui); }
 .s-ov__tip rect { fill: var(--s-vp-pista); stroke: var(--s-vp-borde); stroke-width: 1.5; }
-.s-ov__tip text { fill: var(--s-vp-texto); font: 500 22px var(--s-f-mono); letter-spacing: .04em; }
+.s-ov__tip text { fill: var(--s-vp-texto); font: 500 20px var(--s-f-mono); letter-spacing: .03em; }
 .s-ov__fila:hover .s-ov__tip,
 .s-ov__fila:focus-visible .s-ov__tip { opacity: 1; }
 .s-ov__fila:focus-visible .s-ov__zona { stroke: var(--s-vp-texto); stroke-width: 3; rx: 12; }
@@ -211,16 +216,18 @@
 /* Cifra del héroe: tarjeta en el hueco libre del encabezado de la captura; en ancho de móvil baja bajo la imagen */
 .s-ov-cifra {
   position: absolute;
-  left: 52.5%;
-  top: 6.4%;
+  right: var(--s-e24);
+  top: -34px;
+  z-index: 3;
   display: grid;
   gap: var(--s-e4);
-  width: 28%;
+  max-width: 300px;
   margin: 0;
   padding: 10px 14px;
   border: var(--s-borde) solid var(--s-vp-borde);
   border-radius: var(--s-r-fila);
   background: var(--s-vp-barra);
+  box-shadow: var(--s-vp-sombra);
   color: var(--s-vp-texto);
   font-size: 13px;
   font-weight: 500;
@@ -252,10 +259,16 @@
     margin-left: -36.2%;
   }
 
+  [data-ventana="fuga"] .s-ventana__lienzo {
+    margin-top: -31.2%;
+  }
+
   .s-ov-cifra {
     position: static;
-    width: auto;
+    max-width: none;
     margin: var(--s-e12);
+    box-shadow: none;
+    order: 3;
   }
   .s-ov__eje { display: none; }
 }
@@ -775,7 +788,7 @@
 /* Modo fijado, solo escritorio ancho con movimiento permitido y JavaScript */
 @media (prefers-reduced-motion: no-preference) and (min-width: 1101px) and (scripting: enabled) {
   html[data-js] .s-escena__pista {
-    height: 190vh;
+    height: 172vh;
     padding-block: 0;
   }
 
@@ -1442,16 +1455,20 @@
  * La portada medía 19,769 px a 1440 contra 11,617 de Handle. Se compacta sin quitar contenido: menos relleno de sección, límites y preguntas en dos
  * columnas, pista fija de los pasos más corta y el pie en el flujo. Objetivo medido: 12,500 px a 1440. */
 .s-seccion__cabeza {
-  margin-bottom: clamp(36px, 4vw, 56px);
+  gap: var(--s-e20);
+  margin-bottom: clamp(32px, 3.4vw, 48px);
 }
+
+.s-problema__cabeza { gap: var(--s-e20); }
 
 .s-hero__contenido {
   gap: var(--s-e16);
+  padding-top: clamp(96px, 12svh, 112px);
   padding-bottom: var(--s-e28);
 }
 
 .s-hero__marco {
-  width: min(920px, 100% - 2 * var(--s-pad-x));
+  width: min(880px, 100% - 2 * var(--s-pad-x));
   margin-bottom: var(--s-e28);
 }
 
@@ -1461,16 +1478,16 @@
 }
 
 .s-valor__escena {
-  max-width: 780px;
+  max-width: 700px;
   margin-bottom: var(--s-e40);
 }
 
 .s-valor__regla { margin-top: var(--s-e40); }
 .s-sellos { row-gap: var(--s-e16); }
-.s-orgs { max-width: 780px; margin-bottom: var(--s-e32); }
+.s-orgs { max-width: 640px; margin-bottom: var(--s-e32); }
 .s-seguridad__tarjetas { gap: var(--s-e24); margin-bottom: var(--s-e56); }
 .s-limites__cabeza { margin-bottom: var(--s-e40); }
-.s-puestos__arco { height: 230px; }
+.s-puestos__arco { height: 190px; }
 .s-pantalla { min-height: 0; }
 .s-mt-96 { margin-top: var(--s-e56); }
 .s-mt-80 { margin-top: var(--s-e48); }

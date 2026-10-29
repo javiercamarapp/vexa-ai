@@ -5,6 +5,7 @@ import {LANDING} from '../../../../content/sitio/landing';
 import {MarcoSitio} from '../../../../components/sitio/shell/marco';
 import {esLang} from '../../../../components/sitio/shell/datos';
 import {metadatosPagina} from '../../../../components/sitio/shell/metadatos';
+import {JsonLd} from '../../../../components/sitio/shell/jsonld';
 import {Portada} from '../../../../components/sitio/secciones/portada';
 
 export const dynamic = 'force-static';
@@ -21,8 +22,11 @@ export default async function Inicio({params}: {params: Promise<{lang: string}>}
   const {lang} = await params;
   if (!esLang(lang)) notFound();
   return (
-    <MarcoSitio lang={lang} id="inicio">
-      <Portada lang={lang} />
-    </MarcoSitio>
+    <>
+      <JsonLd id="inicio" lang={lang} />
+      <MarcoSitio lang={lang} id="inicio">
+        <Portada lang={lang} />
+      </MarcoSitio>
+    </>
   );
 }

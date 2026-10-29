@@ -10,6 +10,7 @@ import {MarcoSitio} from '../../../../../components/sitio/shell/marco';
 import {esLang, esPublicable, paginaDe} from '../../../../../components/sitio/shell/datos';
 import type {Lang} from '../../../../../components/sitio/shell/datos';
 import {metadatosPagina} from '../../../../../components/sitio/shell/metadatos';
+import {JsonLd} from '../../../../../components/sitio/shell/jsonld';
 
 export const dynamic = 'force-static';
 export const dynamicParams = false;
@@ -58,8 +59,11 @@ export default async function PaginaInterna({params}: {params: Promise<{lang: st
   const pagina = id ? paginaDe(id) : undefined;
   if (!id || !pagina || !esLang(lang)) notFound();
   return (
-    <MarcoSitio lang={lang} id={id}>
-      <CuerpoPagina pagina={pagina} lang={lang} />
-    </MarcoSitio>
+    <>
+      <JsonLd id={id} lang={lang} />
+      <MarcoSitio lang={lang} id={id}>
+        <CuerpoPagina pagina={pagina} lang={lang} />
+      </MarcoSitio>
+    </>
   );
 }

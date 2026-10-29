@@ -11,7 +11,10 @@ import '../../../../styles/sitio/inicio.css';
 import '../../../../components/sitio/shell/paginas.css';
 import {esLang, IDIOMAS_VALIDOS} from '../../../../components/sitio/shell/datos';
 import {fijarIdioma} from '../../../../components/sitio/shell/idioma-actual';
+import {viewportSitio} from '../../../../components/sitio/shell/metadatos';
 
+/** Color de la barra del navegador, claro y oscuro (T2). */
+export const viewport = viewportSitio;
 export const dynamic = 'force-static';
 export const dynamicParams = false;
 

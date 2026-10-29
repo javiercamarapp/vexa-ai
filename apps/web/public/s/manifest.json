@@ -496,13 +496,13 @@
  },
  "js": {
   "inicio.js": {
-   "brotli": 3822,
-   "bytes": 8912,
-   "fuenteBytes": 15494,
-   "hash": "6ed7480f",
+   "brotli": 3849,
+   "bytes": 8973,
+   "fuenteBytes": 15918,
+   "hash": "58c8b7e9",
    "modulo": true,
-   "sha256": "6ed7480f3a989c3bea27eeaf1d97abf9c4540ee67b66e8fc3b363a5b55f114cb",
-   "url": "/s/inicio.6ed7480f.js"
+   "sha256": "58c8b7e9d3db2bb79e4202c69923dee42a086e21f7644cbf77a625e11a6f2a28",
+   "url": "/s/inicio.58c8b7e9.js"
   },
   "lenis.js": {
    "brotli": 3357,
@@ -515,13 +515,13 @@
    "version": "1.1.13"
   },
   "nube.js": {
-   "brotli": 8430,
-   "bytes": 21298,
-   "fuenteBytes": 33203,
-   "hash": "b780dd1e",
+   "brotli": 8524,
+   "bytes": 21504,
+   "fuenteBytes": 33963,
+   "hash": "e99439f7",
    "modulo": true,
-   "sha256": "b780dd1e9433d5bf28924c1d68d6742f4c6bb031bd20592e8660008219e4917d",
-   "url": "/s/nube.b780dd1e.js"
+   "sha256": "e99439f710567e7e0dff236aae499728f3802f662309b2cad9e77818138e03e9",
+   "url": "/s/nube.e99439f7.js"
   },
   "sitio.js": {
    "brotli": 2425,

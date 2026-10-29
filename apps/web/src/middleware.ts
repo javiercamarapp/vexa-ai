@@ -32,14 +32,20 @@ export async function middleware(request:NextRequest) {
     if(decision.tipo==='reescribir'&&decision.markdown){
       // Mismo URL, representación Markdown (negociada por Accept). Las cabeceras de los archivos .md no corren para la URL original: se fijan aquí.
       const respuesta=NextResponse.rewrite(new URL(decision.destino,request.url));
-      respuesta.headers.set('Content-Type','text/markdown; charset=utf-8');respuesta.headers.set('Vary','Accept');respuesta.headers.set('X-Robots-Tag','noindex');
+      respuesta.headers.set('Content-Type','text/markdown; charset=utf-8');respuesta.headers.set('Vary','Accept');respuesta.headers.set('X-Robots-Tag','noindex');respuesta.headers.set('Cache-Control','public, max-age=0, s-maxage=3600, stale-while-revalidate=86400');
       respuesta.headers.set('Link','<'+(espejos.get(path)?.canonica??'https://rovaq.ai')+'>; rel="canonical"');
       return respuesta;
     }
     if(decision.tipo==='reescribir'){
+      // 404 con HTML completo: una ruta desconocida, o una página del registro que aún no es publicable (no tiene espejo), se sirve desde el segmento __404 con estado 404.
+      // (Con notFound() de Next el HTML sin JavaScript es el cascarón de error: sin lang, sin h1 y con el cuerpo vacío.)
+      const publicable=!decision.noEncontrada&&(path==='/'||path==='/en'||espejoDe(path)!==null);
+      if(!publicable){
+        const destino=decision.noEncontrada?decision.destino:(path==='/en'||path.startsWith('/en/')?'/sitio/en/__404':'/sitio/es/__404');
+        return NextResponse.rewrite(new URL(destino,request.url),{status:404});
+      }
       const respuesta=NextResponse.rewrite(new URL(decision.destino+request.nextUrl.search,request.url));
-      // La misma URL puede responder HTML o Markdown según Accept: las cachés deben distinguirlas.
-      if(!decision.noEncontrada&&espejoDe(path))respuesta.headers.set('Vary','Accept');
+      // Next fija su propio Vary en las páginas prerenderizadas, así que Vary: Accept no sale en el HTML; la caché no se mezcla porque el middleware corre antes de ella y el destino de la reescritura (HTML o .md) es la clave.
       return respuesta;
     }
     if(decision.tipo==='redirigir')return NextResponse.redirect(new URL(decision.url,request.url),decision.status);

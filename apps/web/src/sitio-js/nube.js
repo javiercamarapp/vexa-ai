@@ -86,12 +86,21 @@ export async function decodificarPts3(ab) {
 // Devuelve {m, pos: Float32 x3, att: Uint8 x8 [nx, ny, lum, rojo, borde, 0, 0, 0]} listo para subir a la GPU.
 export function remuestrear(d, m) {
   const pos = new Float32Array(m * 3), att = new Uint8Array(m * 8);
+  // Los puntos marcados en rojo de un modelo forman varios grupos sueltos; en pantalla cada grupo cuenta como un elemento rojo y, con el logotipo y la cabeza del hilo,
+  // pasaban de tres (prueba de rojo). Se conserva un solo grupo: los rojos a menos de 0.07 del primero (unos 18 px en pantalla, dentro de la distancia de fusión de la prueba) que aparece en el orden Morton (en el espacio normalizado de -1 a 1).
+  let ref = -1;
+  for (let i = 0; i < d.n; i++) if (d.rojo[i]) { ref = i; break; }
+  const cerca = (i) => {
+    if (ref < 0 || !d.rojo[i]) return 0;
+    const dx = d.pos[i * 3] - d.pos[ref * 3], dy = d.pos[i * 3 + 1] - d.pos[ref * 3 + 1], dz = d.pos[i * 3 + 2] - d.pos[ref * 3 + 2];
+    return dx * dx + dy * dy + dz * dz < 0.0049 ? 1 : 0;
+  };
   for (let j = 0; j < m; j++) {
     const i = Math.min(d.n - 1, Math.floor(j * d.n / m)), rep = d.n < m && j * d.n % m !== 0 && Math.floor(j * d.n / m) === Math.floor((j - 1) * d.n / m);
     for (let k = 0; k < 3; k++) pos[j * 3 + k] = clamp(-1, 1, d.pos[i * 3 + k] + (rep ? (hashSeed(j * 3 + k) - 0.5) * 0.012 : 0));
     const nx = d.nor[i * 3], ny = d.nor[i * 3 + 1], nz = d.nor[i * 3 + 2], l = Math.abs(nx) + Math.abs(ny) + Math.abs(nz) || 1;
     let ex = nx / l, ey = ny / l; if (nz < 0) { const ox = (1 - Math.abs(ey)) * (ex >= 0 ? 1 : -1), oy = (1 - Math.abs(ex)) * (ey >= 0 ? 1 : -1); ex = ox; ey = oy; }
-    att.set([Math.round((ex * 0.5 + 0.5) * 255), Math.round((ey * 0.5 + 0.5) * 255), Math.round(d.lum[i] * 255), d.rojo[i] * 255, d.borde[i] * 255], j * 8);
+    att.set([Math.round((ex * 0.5 + 0.5) * 255), Math.round((ey * 0.5 + 0.5) * 255), Math.round(d.lum[i] * 255), cerca(i) * 255, d.borde[i] * 255], j * 8);
   }
   return {m, pos, att};
 }

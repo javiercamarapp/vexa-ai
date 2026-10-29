@@ -46,9 +46,10 @@ export default async function RaizSitio({children, params}: {children: ReactNode
   datos['data-notas'] = JSON.stringify((textosPortada(lang) as unknown as {hilo?: {notas?: string[]}}).hilo?.notas ?? []);
   return (
     <html lang={lang}>
+      {/* El módulo va en <head> con blocking="render": en visitas repetidas fija data-intro-visto antes del primer pintado y el cargador no parpadea (Chromium; en los demás motores se ignora y todo sigue igual). Es deferido, así que no bloquea el análisis del HTML. */}
+      <head>{sitio ? <script type="module" src={sitio} data-sitio="" {...({blocking: 'render'} as Record<string, string>)} {...datos} /> : null}</head>
       <body>
         {children}
-        {sitio ? <script type="module" src={sitio} data-sitio="" {...datos} /> : null}
       </body>
     </html>
   );

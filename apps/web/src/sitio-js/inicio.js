@@ -261,7 +261,8 @@ function construirHilo(urls, RM) {
     ANCLAS.forEach(([sec, ref, carril], i) => {
       const s = M.secciones[sec];
       if (!s) return;
-      const y = ref === 't' ? s.top + 56 : s.top + s.alto - 56;
+      // Las notas de arranque de sección van a 96 px del borde superior: con 56 quedaban bajo la píldora de la cabecera (82 px) al llegar a la sección.
+      const y = ref === 't' ? s.top + 96 : s.top + s.alto - 56;
       const x = recto ? 20 : carril ? xd : xi;
       const tema = $(`[data-seccion="${sec}"]`)?.dataset.tema || 'claro';
       const nodo = div('s-hilo__nodo', cont);
@@ -284,7 +285,7 @@ function construirHilo(urls, RM) {
       const orbe = i === 0 ? orbes.o1 : i === 4 ? orbes.hero : null;
       if (orbe) {
         const im = div('s-hilo__orbe', cont, 'img');
-        im.src = orbe; im.alt = ''; im.width = 112; im.height = 112; im.loading = 'lazy'; im.decoding = 'async';
+        im.src = orbe; im.alt = ''; im.width = 72; im.height = 72; im.loading = 'lazy'; im.decoding = 'async';
         im.dataset.tema = tema;
         im.style.setProperty('--x', x + 'px'); im.style.setProperty('--y', y + 24 + 'px');
         nodos.push(im);
@@ -311,8 +312,10 @@ function construirHilo(urls, RM) {
       if (clave === ultimo) return;
       ultimo = clave;
       ruta.style.setProperty('stroke-dashoffset', String(1 - f.s));
-      cabeza.style.setProperty('--x', (f.x * (zona.clientWidth / M.ancho)) + 'px');
-      cabeza.style.setProperty('--y', f.y + 'px');
+      // La cabeza va sobre la curva real (getPointAtLength), no sobre la polilínea de la tabla: en los cruces diagonales la tabla se separaba hasta cientos de píxeles del trazo.
+      const q = largo && ruta.getPointAtLength ? ruta.getPointAtLength(f.s * largo) : f;
+      cabeza.style.setProperty('--x', (q.x * (zona.clientWidth / M.ancho)) + 'px');
+      cabeza.style.setProperty('--y', q.y + 'px');
       cabeza.style.opacity = Yc < 0 || Yc > M.alto || (f.y > oculto[0] && f.y < oculto[1]) ? '0' : '1';
       for (const n of nodos) n.classList.toggle('s-visto', Yc >= n._y);
     },

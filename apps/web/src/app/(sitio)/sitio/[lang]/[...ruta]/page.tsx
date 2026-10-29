@@ -11,6 +11,8 @@ import {esLang, esPublicable, paginaDe} from '../../../../../components/sitio/sh
 import type {Lang} from '../../../../../components/sitio/shell/datos';
 import {metadatosPagina} from '../../../../../components/sitio/shell/metadatos';
 import {JsonLd} from '../../../../../components/sitio/shell/jsonld';
+import {landingUrl} from '../../../../../lib/site.mjs';
+import {PaginaNoEncontrada} from '../../../../../components/sitio/shell/no-encontrada';
 
 export const dynamic = 'force-static';
 export const dynamicParams = false;
@@ -47,6 +49,7 @@ function resolver(lang: string, ruta: string[]): string | null {
 
 export async function generateMetadata({params}: {params: Promise<{lang: string; ruta: string[]}>}): Promise<Metadata> {
   const {lang, ruta} = await params;
+  if (ruta.length === 1 && ruta[0] === CENTINELA) return {metadataBase: new URL(landingUrl()), title: {absolute: 'Página no encontrada | Rovaq AI'}, robots: {index: false, follow: true}};
   const id = resolver(lang, ruta);
   const pagina = id ? paginaDe(id) : undefined;
   if (!id || !pagina || !esLang(lang)) return {};
@@ -55,6 +58,8 @@ export async function generateMetadata({params}: {params: Promise<{lang: string;
 
 export default async function PaginaInterna({params}: {params: Promise<{lang: string; ruta: string[]}>}) {
   const {lang, ruta} = await params;
+  // Centinela: página completa del 404 (no el notFound() de Next, cuyo HTML sin JavaScript es el cascarón de error sin lang ni h1). El middleware la sirve con estado 404.
+  if (esLang(lang) && ruta.length === 1 && ruta[0] === CENTINELA) return <PaginaNoEncontrada lang={lang} />;
   const id = resolver(lang, ruta);
   const pagina = id ? paginaDe(id) : undefined;
   if (!id || !pagina || !esLang(lang)) notFound();

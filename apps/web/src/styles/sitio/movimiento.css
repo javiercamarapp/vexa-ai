@@ -74,8 +74,8 @@ html[data-js] [data-puesto-panel][hidden] {
   position: absolute;
   left: var(--x, 0);
   top: var(--y, 0);
-  width: 112px;
-  height: 112px;
+  width: 72px;
+  height: 72px;
   translate: -50% 0;
   border-radius: 50%;
   pointer-events: none;

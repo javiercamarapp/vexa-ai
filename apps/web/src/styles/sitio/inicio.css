@@ -325,9 +325,24 @@
   opacity: 1;
 }
 
-.s-nube[data-estado="activa"] ~ .s-poster,
-.s-nube[data-estado="pausada"] ~ .s-poster {
+/* La nube de la escena sustituye al póster; la del héroe (modo halo) solo dibuja el polvo que orbita, y el póster del objeto va debajo y se queda visible. */
+.s-nube:not([data-modo="halo"])[data-estado="activa"] ~ .s-poster,
+.s-nube:not([data-modo="halo"])[data-estado="pausada"] ~ .s-poster {
   opacity: 0;
+}
+
+.s-nube[data-modo="halo"] {
+  z-index: 1;
+}
+
+.s-nube[data-modo="halo"] ~ .s-poster {
+  z-index: 0;
+}
+
+/* Con el polvo activo el objeto baja de intensidad para que el subtítulo y el límite, que pasan por delante, conserven contraste. */
+.s-nube[data-modo="halo"][data-estado="activa"] ~ .s-poster,
+.s-nube[data-modo="halo"][data-estado="pausada"] ~ .s-poster {
+  opacity: 0.6;
 }
 
 .s-poster {

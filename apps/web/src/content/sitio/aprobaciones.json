@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "descripcion": "Aprobaciones por campo atadas al SHA-256 del texto (es y en) y verificaciones 1 a 13 de P-D sección 5. Cambiar un texto invalida su aprobación. Se edita con tools/sitio/revision.mjs --aprobar o a mano, solo con visto bueno escrito. Nada está aprobado todavía.",
+  "condiciones": {
+    "1": {
+      "cumplida": false
+    },
+    "2": {
+      "cumplida": false
+    },
+    "3": {
+      "cumplida": false
+    },
+    "4": {
+      "cumplida": false
+    },
+    "5": {
+      "cumplida": false
+    },
+    "6": {
+      "cumplida": false
+    },
+    "7": {
+      "cumplida": false
+    },
+    "8": {
+      "cumplida": false
+    },
+    "9": {
+      "cumplida": false
+    },
+    "10": {
+      "cumplida": false
+    },
+    "11": {
+      "cumplida": false
+    },
+    "12": {
+      "cumplida": false
+    },
+    "13": {
+      "cumplida": false
+    }
+  },
+  "campos": {}
+}

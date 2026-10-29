@@ -13,7 +13,7 @@ const leer=r=>readFileSync(join(raiz,r),'utf8'),pub=r=>join(raiz,'public',r);
 const pngTam=r=>{const b=readFileSync(pub(r));assert.equal(b.subarray(1,4).toString(),'PNG',r+' no es PNG');return [b.readUInt32BE(16),b.readUInt32BE(20)];};
 
 test('dominio canónico: NEXT_PUBLIC_SITE_URL con respaldo al dominio nuevo', () => {
-  assert.equal(SITE_URL_RESPALDO,'https://app.rovaq.ai');assert.ok(!/vercel\.app/.test(SITE_URL_RESPALDO),'el respaldo no apunta al host antiguo');assert.match(readFileSync(pub('.well-known/security.txt'),'utf8'),/^Canonical: https:\/\/app\.rovaq\.ai\/\.well-known\/security\.txt$/m);
+  assert.equal(SITE_URL_RESPALDO,'https://app.rovaq.ai');assert.ok(!/vercel\.app/.test(SITE_URL_RESPALDO),'el respaldo no apunta al host antiguo');assert.ok(!existsSync(pub('.well-known/security.txt')),'security.txt se publica solo cuando haya buzón y fecha de revisión resueltos (T2 lo retiró a propósito); no debe volver con el Gmail personal');
   assert.equal(siteUrl(undefined),SITE_URL_RESPALDO);
   assert.equal(siteUrl('no es url'),SITE_URL_RESPALDO);
   assert.equal(siteUrl('http://evil.example'),SITE_URL_RESPALDO,'http fuera de localhost no se acepta');

@@ -1183,6 +1183,7 @@
 .s-mock-raiz--apoyo .s-mock-cifra:nth-child(n+3) .s-sello { display: none; }
 .s-mock-raiz--miniatura .s-mock-m6 .s-mock-principal { gap: var(--s-e8); padding-top: 10px; }
 .s-mock-raiz--miniatura .s-mock-m6 .s-mock-cab { min-height: 20px; }
+.s-mock-raiz--miniatura .s-mock-fuente__nombre { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .s-mock-raiz--miniatura .s-mock-titular { gap: 2px 10px; }
 .s-mock-raiz--miniatura .s-mock-pareto { height: 70px; margin: 0 0 6px; }
 .s-mock-raiz--miniatura .s-mock-panel { padding: 10px 12px; }

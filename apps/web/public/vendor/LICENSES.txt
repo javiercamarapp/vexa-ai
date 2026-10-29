@@ -1,0 +1,35 @@
+Bibliotecas de terceros de la landing de Rovaq (autoalojadas; ninguna se carga desde un CDN en tiempo de ejecucion).
+Descargadas el 2026-10-28 desde jsDelivr y servidas desde el mismo origen. Solo las carga la landing.
+
+1. GSAP 3.13.0  (gsap.min.js)
+   Origen: https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js
+   SHA-256: 96c01b81f44a3290e2b4532f55e2c9534b2adc43273a19f3756b2cb41f0fd0b6
+   Licencia: GreenSock "Standard no charge license" (campo license de package.json): https://gsap.com/standard-license
+   Cabecera del archivo: Copyright 2025, GreenSock. All rights reserved. Subject to the terms at https://gsap.com/standard-license.
+   Uso sin cargo, incluido el comercial, bajo esa licencia; las restricciones estan en el texto de la licencia. Se conserva la cabecera de licencia del archivo.
+
+2. ScrollTrigger 3.13.0, plugin de GSAP  (ScrollTrigger.min.js)
+   Origen: https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js
+   SHA-256: 308219390e5e3b84cda0c481e70caa9820883ae10bda44e6e9a149a81aac4b3f
+   Licencia: la misma licencia estandar de GreenSock que GSAP (https://gsap.com/standard-license).
+
+3. Lenis 1.1.13  (lenis.min.js)
+   Origen: https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js
+   SHA-256: b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8
+   Licencia: MIT. Copyright (c) 2024 darkroom.engineering
+
+   The MIT License
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Fuente de display de la landing (Barlow Condensed 800 y 900, SIL OFL 1.1): ver public/fonts/barlowcondensed-OFL.txt y public/fonts/sources.json.
+
+4. three.js 0.170.0  (three/three.module.min.js, three/GLTFLoader.js, three/BufferGeometryUtils.js, three/RoomEnvironment.js)
+   Origen: https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js y examples/jsm/{loaders/GLTFLoader.js, utils/BufferGeometryUtils.js, environments/RoomEnvironment.js}
+   Licencia: MIT. Copyright (c) 2010-2024 three.js authors. Texto completo en three/LICENSE.
+   Los tres archivos de examples solo tienen reescrita la importacion 'three' a ./three.module.min.js y la de BufferGeometryUtils a ruta relativa del mismo origen; sin otros cambios.
+   No se usan decodificadores Draco ni Meshopt: requieren WebAssembly y el CSP estricto previsto no permite wasm-unsafe-eval. Los GLB se optimizan con cuantizacion y texturas webp.

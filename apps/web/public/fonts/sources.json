@@ -1,5 +1,5 @@
 {
-  "description": "Self-hosted fonts (SIL OFL). IBM Plex Mono: 2026-09-25. Hanken Grotesk (fuente de interfaz de Rovaq): 2026-10-23 desde @fontsource/hanken-grotesk 5.3.0, subset latin con acentos y signos del espanol.",
+  "description": "Self-hosted fonts (SIL OFL). IBM Plex Mono: 2026-09-25. Hanken Grotesk (fuente de interfaz de Rovaq): 2026-10-23 desde @fontsource/hanken-grotesk 5.3.0, subset latin con acentos y signos del espanol. Barlow Condensed 800 y 900 (fuente de display de la landing): 2026-10-28 desde @fontsource/barlow-condensed 5.3.0, subset latin.",
   "sources": [
     {
       "path": "fonts/ibmplexmono-0.ttf",
@@ -40,6 +40,21 @@
       "path": "fonts/hankengrotesk-OFL.txt",
       "url": "https://cdn.jsdelivr.net/npm/@fontsource/hanken-grotesk@5.3.0/LICENSE",
       "sha256": "f45f60ca871850c58d8dc9c973bd6fcad40c137e9d037172b961e8ca68c87ef7"
+    },
+    {
+      "path": "fonts/barlowcondensed-800.woff2",
+      "url": "https://cdn.jsdelivr.net/npm/@fontsource/barlow-condensed@5.3.0/files/barlow-condensed-latin-800-normal.woff2",
+      "sha256": "2515494e8cc2ca07c86ea78766cfa104b796aa6ed5d66821c01d51dbb0b52bce"
+    },
+    {
+      "path": "fonts/barlowcondensed-900.woff2",
+      "url": "https://cdn.jsdelivr.net/npm/@fontsource/barlow-condensed@5.3.0/files/barlow-condensed-latin-900-normal.woff2",
+      "sha256": "aa01966de3f608a765a172237a3ffc6161fe4c7e3870b1a904dc6437e54c4e24"
+    },
+    {
+      "path": "fonts/barlowcondensed-OFL.txt",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/barlowcondensed/OFL.txt",
+      "sha256": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f"
     }
   ]
 }

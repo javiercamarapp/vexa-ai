@@ -43,23 +43,29 @@ test('textos visibles: sin paréntesis, sin emojis ni rayas largas, sin signos d
   }
 });
 test('afirmaciones prohibidas: sin certificaciones, porcentajes, clientes, testimonios, tiempo real ni IA que recomienda', () => {
-  const prohibidas = /SOC ?2|ISO ?27001|HIPAA|PCI|GDPR|LFPDPPP|\d+ ?%|100 ?por ciento|a prueba de|hackeo|hack-?proof|bank-?grade|tiempo real|real[- ]time|testimon|testimonial|case stud|caso de [eé]xito|trusted by|conf[ií]an en nosotros|nuestros clientes|our customers|garantiz|guarantee|SLA garant|uptime|disponibilidad|recomienda|recommends|AI-powered recommend|\bprecio|\bpricing|\$\s?\d|USD|MXN|ahorra|saves? you|ROI/i;
+  // Nunca, en ningún texto.
+  const prohibidas = /HIPAA|PCI|LFPDPPP|\d+ ?%|100 ?por ciento|(?<!\w)a prueba de|hackeo|hack-?proof|bank-?grade|testimon|case stud|caso de [eé]xito|trusted by|conf[ií]an en nosotros|nuestros clientes|our customers|garantiz|guarantee|recomienda|recommends|AI-powered recommend|\$\s?\d|ahorra|saves? you|ROI|anonimizamos|we anonymize/i;
+  // Solo como límite declarado: en las secciones de límites, seguridad honesta, integraciones, preguntas, capacidades y el contador de SLA.
+  const condicionadas = /SOC ?2|ISO ?27001|GDPR|tiempo real|real[- ]time|\bprecio|\bpricing|disponibilidad|availability|\bSLA\b|uptime/i;
+  const donde = /^landing\.(seg\.no|no|faq|int|cap|cls|val|m|hero|prob|cuentas)\./;
+  const negada = /\b(no|not|nunca|never|sin|without|todavía no|yet)\b|Does not|does not/i;
   for (const d of [landingEs, landingEn]) for (const [k, v] of Object.entries(d)) {
     if (k === 'landing.m.org') continue;
     assert.doesNotMatch(v, prohibidas, `${k}: ${v}`);
+    if (condicionadas.test(v) || /\b(?:USD|CAD|MXN)\b/.test(v)) { assert.match(k, donde, 'afirmación condicionada fuera de su sección: ' + k); if (!k.endsWith('.q') && /SOC ?2|ISO ?27001|GDPR|tiempo real|real[- ]time/i.test(v)) assert.match(v, negada, 'debe ir negada: ' + k); }
   }
   // En el marcado completo solo se permiten cifras dentro de las ilustraciones rotuladas.
   for (const idioma of ['es', 'en'] as const) {
     const h = html(idioma);
-    assert.doesNotMatch(h, /SOC ?2|ISO ?27001|tiempo real|real[- ]time|100 ?%/i);
+    assert.doesNotMatch(h, /100 ?%/i);
     assert.doesNotMatch(h, /testimon|trusted by/i);
   }
 });
 test('lo que se dice de la seguridad es honesto: certificaciones y pruebas externas figuran como hoja de ruta, no como logro', () => {
-  assert.match(landingEs['landing.seg.ruta.d'], /pruebas de penetración externas/);
-  assert.match(landingEs['landing.seg.cert'], /no tenemos certificaciones/i);
-  assert.match(landingEn['landing.seg.cert'], /no formal certifications/i);
-  assert.match(landingEn['landing.seg.ruta.d'], /external penetration testing/);
+  assert.match(landingEs['landing.seg.no.2'], /prueba de penetración externa/);
+  assert.match(landingEs['landing.seg.no.1'], /No tenemos certificación SOC 2 ni ISO 27001/);
+  assert.match(landingEn['landing.seg.no.1'], /do not hold SOC 2 or ISO 27001/);
+  assert.match(landingEn['landing.seg.no.3'], /roadmap/); assert.match(landingEs['landing.no.6'], /No trabaja en tiempo real/);
 });
 test('sin atributos style en el marcado renderizado ni en el código fuente', () => {
   for (const idioma of ['es', 'en'] as const) assert.doesNotMatch(html(idioma), /\sstyle=/i);
@@ -142,16 +148,16 @@ test('marcado: un h1, encabezados en orden, anclas válidas, sin imágenes sin a
     assert.doesNotMatch(h, /\{\w+\}/, 'variables sin reemplazar');
   }
 });
-test('cada ilustración con cifras está rotulada como datos sintéticos de demostración', () => {
+test('las miniaturas de pantallas se rotulan como datos de ejemplo y no hay cifras sueltas en el texto', () => {
   const mocks = leer('src/components/landing/mocks.tsx');
-  assert.equal((mocks.match(/<Rotulo t=\{t\}/g) ?? []).length, 5);
-  assert.match(mocks, /landing\.sintetico/);
-  assert.match(landingEs['landing.sintetico'], /Datos sintéticos de demostración/); assert.match(landingEn['landing.sintetico'], /Synthetic demo data/);
+  assert.doesNotMatch(mocks, /\bstyle\b\s*=/); assert.doesNotMatch(mocks, /Mock[A-Z]/);
+  assert.match(landingEs['landing.sintetico'], /Datos de ejemplo\. No son de un cliente\./); assert.match(landingEn['landing.sintetico'], /Example data\. Not from a customer\./);
+  for (const idioma of ['es', 'en'] as const) assert.ok(html(idioma).includes(idioma === 'es' ? landingEs['landing.sintetico'] : landingEn['landing.sintetico']));
 });
 test('inglés por omisión: la landing en inglés muestra el titular en inglés y en español cambia solo con idioma es', () => {
   assert.match(html('en'), /Know how much money you lose, and why\./);
   assert.match(html('es'), /Sabe cuánto dinero se te va, y por qué\./);
-  assert.match(html('es'), /Datos sintéticos de demostración/);
+  assert.match(html('es'), /Datos de ejemplo\. No son de un cliente\./);
 });
 test('SEO: canonical y datos estructurados propios en rovaq.ai; la app sigue noindex y la landing no está entre los prefijos privados', () => {
   assert.equal(landingUrl(undefined), 'https://rovaq.ai'); assert.equal(landingUrl('http://evil.example'), 'https://rovaq.ai'); assert.equal(landingUrl('https://staging.rovaq.ai/x'), 'https://staging.rovaq.ai');

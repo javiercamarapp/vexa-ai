@@ -64,13 +64,15 @@ export function Landing({idioma}: {idioma: Idioma}) {
           <div className="c c-titular">
             <h1 id="t-hero" className="h-gigante" data-in="0">{t('landing.hero.titulo')}</h1>
             <p className="desc" data-in="1">{t('landing.hero.sub')}</p>
+            <p className="limite mono" data-in="1">{t('landing.hero.limite')}</p>
             <div className="acciones" data-in="2">
               <a className="l-btn" href={acceso}>{t('landing.hero.cta')}<span aria-hidden="true">{' ↗'}</span></a>
               <a className="l-btn l-btn-borde" href="#como">{t('landing.hero.cta2')}</a>
             </div>
+            <p className="mono tenue micro" data-in="2">{t('landing.hero.micro')}</p>
           </div>
           <Visor clase="hero-visor">
-            {/* Imagen del LCP: prioridad alta, tamaño fijo. El lienzo con la secuencia de cuadros se superpone al cargar y avanza con el scroll. */}
+            {/* Imagen del LCP: prioridad alta, tamaño fijo. El lienzo 3D se superpone al cargar y el HTML conserva este respaldo estático. */}
             <img className="obj" src="/landing/objeto-nucleo.webp" width={900} height={900} alt={t('landing.hero.render')} fetchPriority="high" decoding="async" />
             <canvas className="esc3d" data-escena3d="nucleo" data-modelos="/landing/3d/nucleo.glb" aria-hidden="true" />
           </Visor>
@@ -86,17 +88,43 @@ export function Landing({idioma}: {idioma: Idioma}) {
         </div>
       </div>
 
+      <section className="sec" aria-labelledby="t-prob">
+        <div className="banda banda-cab">
+          <div className="c"><h2 id="t-prob" className="h-gigante h-2" data-rv>{t('landing.prob.titulo')}</h2><p className="desc" data-rv>{t('landing.prob.apoyo')}</p></div>
+          <div className="c c-def" data-rv>
+            <p className="mono def-clase">{t('landing.def.clase')}</p>
+            <p className="def-palabra">{t('landing.def.palabra')}</p>
+            <ol className="def-lista"><li>{t('landing.def.1')}</li><li>{t('landing.def.2')}</li></ol>
+            <p className="mono tenue def-nota">{t('landing.def.nota')}</p>
+          </div>
+        </div>
+        <ul className="banda banda-tres">
+          {[1, 2, 3].map((n) => <li key={n} className="c" data-rv><span className="mono l-num">{String(n).padStart(2, '0')}</span><p className="cuerpo-p">{t(`landing.prob.${n}` as 'landing.prob.1')}</p></li>)}
+        </ul>
+      </section>
+
+      <section id="producto" className="sec" aria-labelledby="t-val">
+        <Cinta pill={t('landing.cap.eyebrow')} n={3} t={t} />
+        <div className="banda banda-cab">
+          <div className="c"><h2 id="t-val" className="h-gigante h-2" data-rv>{t('landing.val.titulo')}</h2><p className="desc" data-rv>{t('landing.val.sub')}</p></div>
+          <div className="c c-vals">
+            {[1, 2].map((n) => <div key={n} data-rv><h3 className="h-medio">{t(`landing.val.c${n}.t` as 'landing.val.c1.t')}</h3><p className="desc">{t(`landing.val.c${n}.d` as 'landing.val.c1.d')}</p></div>)}
+          </div>
+        </div>
+      </section>
+
       <section id="como" className="fw" aria-labelledby="t-como">
         <div className="banda banda-cinta banda-fw">
           <div className="c"><span className="pildora">{t('landing.como.eyebrow')}</span></div>
-          <div className="c c-texto mono"><h2 id="t-como" className="mini-h">{t('landing.fw.tab')}</h2></div>
+          <div className="c c-texto mono"><h2 id="t-como" className="mini-h">{t('landing.como.titulo')}</h2></div>
           <div className="c c-der mono">{t('landing.indice', {n: '02', total: String(TOTAL).padStart(2, '0')})}</div>
         </div>
+        <p className="sr-only">{t('landing.fw.respaldo')}</p>
         <div className="fw-pista" data-escena data-activo="1">
           <div className="fw-fijo">
             <div className="fw-grid">
               <Visor clase="fw-visor">
-                {PASOS.map((n) => <React.Fragment key={n}><img className="obj" data-paso={n} src={`/landing/objeto-${n}.webp`} width={720} height={720} alt={t(`landing.fw.${n}.alt` as 'landing.fw.1.alt')} loading="lazy" decoding="async" /></React.Fragment>)}
+                {PASOS.map((n) => <img key={n} className="obj" data-paso={n} src={`/landing/objeto-${n}.webp`} width={720} height={720} alt={t(`landing.fw.${n}.alt` as 'landing.fw.1.alt')} loading="lazy" decoding="async" />)}
                 <canvas className="esc3d" data-escena3d="pasos" data-modelos="/landing/3d/paso-1.glb,/landing/3d/paso-2.glb,/landing/3d/paso-3.glb,/landing/3d/paso-4.glb" aria-hidden="true" />
                 <ol className="sellos" aria-label={t('landing.fw.sellos')}>{SELLOS.map(([k, c]) => <li key={k} data-s={k}><em className={'etq' + (k === 'sin' ? ' sin' : '')}>{t(c)}</em></li>)}</ol>
                 <span className="visor-rotulo mono">{t('landing.fw.visor')}</span>
@@ -118,71 +146,62 @@ export function Landing({idioma}: {idioma: Idioma}) {
         </div>
       </section>
 
-      <section id="producto" className="sec" aria-labelledby="t-cap">
-        <Cinta pill={t('landing.cap.eyebrow')} n={3} t={t} />
+      <section className="sec" aria-labelledby="t-cap">
         <div className="banda banda-cab">
           <div className="c"><h2 id="t-cap" className="h-gigante h-2" data-rv>{t('landing.cap.titulo')}</h2></div>
-          <div className="c c-def" data-rv>
-            <p className="mono def-clase">{t('landing.def.clase')}</p>
-            <p className="def-palabra">{t('landing.def.palabra')}</p>
-            <ol className="def-lista"><li>{t('landing.def.1')}</li><li>{t('landing.def.2')}</li></ol>
-            <p className="mono tenue def-nota">{t('landing.def.nota')}</p>
-          </div>
+          <div className="c c-sub"><p className="desc" data-rv><span className="sint">{t('landing.sintetico')}</span> {t('landing.cap.nota')}</p></div>
         </div>
         <ul className="banda banda-caps">
           {[1, 2, 3, 4, 5, 6].map((n) => <li key={n} className="c cap" data-rv><div className="cap-vis"><Miniatura n={n} t={t} /></div><h3 className="h-medio">{t(`landing.cap.${n}.t` as 'landing.cap.1.t')}</h3><p className="desc">{t(`landing.cap.${n}.d` as 'landing.cap.1.d')}</p></li>)}
         </ul>
-        <div className="banda banda-nota"><p className="c mono tenue"><span className="sint">{t('landing.sintetico')}</span> {t('landing.cap.nota')}</p></div>
-
         <div className="banda banda-cab">
-          <div className="c"><h2 id="t-val" className="h-gigante h-2" data-rv>{t('landing.val.titulo')}</h2><p className="desc" data-rv>{t('landing.val.sub')}</p></div>
+          <div className="c"><h2 id="t-cls" className="h-gigante h-2" data-rv>{t('landing.cls.titulo')}</h2><p className="desc" data-rv>{t('landing.cls.regla')}</p></div>
           <dl className="c c-etq">
             {([['obs', 'landing.val.obs', 'landing.val.obs.d'], ['est', 'landing.val.est', 'landing.val.est.d'], ['inf', 'landing.val.inf', 'landing.val.inf.d'], ['sin', 'landing.val.sin', 'landing.val.sin.d']] as const).map(([k, a, b]) =>
               <div key={k} data-rv><dt><em className={'etq' + (k === 'sin' ? ' sin' : '')}>{t(a)}</em></dt><dd>{t(b)}</dd></div>)}
           </dl>
         </div>
-        <ul className="banda banda-tres">
-          {[1, 2, 3].map((n) => <li key={n} className="c" data-rv><h3 className="h-medio">{t(`landing.val.c${n}.t` as 'landing.val.c1.t')}</h3><p className="desc">{t(`landing.val.c${n}.d` as 'landing.val.c1.d')}</p></li>)}
-        </ul>
       </section>
 
       <section className="sec" aria-labelledby="t-cuentas">
-        <div className="banda banda-cab"><div className="c"><h2 id="t-cuentas" className="h-gigante h-2" data-rv>{t('landing.cuentas.titulo')}</h2></div><div className="c c-sub"><p className="desc" data-rv>{t('landing.cuentas.sub')}</p></div></div>
+        <div className="banda banda-cab"><div className="c"><h2 id="t-cuentas" className="h-gigante h-2" data-rv>{t('landing.cuentas.titulo')}</h2></div><div className="c c-sub"><p className="desc" data-rv>{t('landing.cuentas.nota')}</p></div></div>
         <ul className="banda banda-cuatro">
           {[1, 2, 3, 4].map((n) => <li key={n} className="c" data-rv><span className="mono l-num">{String(n).padStart(2, '0')}</span><h3 className="h-medio">{t(`landing.cuentas.${n}.t` as 'landing.cuentas.1.t')}</h3><p className="desc">{t(`landing.cuentas.${n}.d` as 'landing.cuentas.1.d')}</p></li>)}
         </ul>
-        <div className="banda banda-nota"><p className="c mono tenue">{t('landing.cuentas.nota')}</p></div>
       </section>
 
       <section id="seguridad" className="sec" aria-labelledby="t-seg">
         <Cinta pill={t('landing.seg.eyebrow')} n={4} t={t} />
-        <div className="banda banda-cab">
-          <div className="c"><h2 id="t-seg" className="h-gigante h-2" data-rv>{t('landing.seg.titulo')}</h2><p className="desc" data-rv>{t('landing.seg.sub')}</p></div>
-          <aside className="c c-ruta" aria-labelledby="t-ruta" data-rv>
-            <h3 id="t-ruta" className="h-medio">{t('landing.seg.ruta.t')}</h3>
-            <p className="desc">{t('landing.seg.ruta.d')}</p>
-            <p className="mono tenue">{t('landing.seg.cert')}</p>
-          </aside>
+        <div className="banda banda-cab"><div className="c"><h2 id="t-seg" className="h-gigante h-2" data-rv>{t('landing.seg.titulo')}</h2></div></div>
+        <div className="banda banda-dos">
+          <div className="c" data-rv><h3 className="h-medio">{t('landing.seg.hoy')}</h3>
+            <ul className="lista-seg">{[1, 2, 3, 4, 5, 6, 7].map((n) => <li key={n}>{t(`landing.seg.${n}` as 'landing.seg.1')}</li>)}</ul></div>
+          <aside className="c c-ruta" aria-labelledby="t-ruta" data-rv><h3 id="t-ruta" className="h-medio">{t('landing.seg.ruta.t')}</h3>
+            <ul className="lista-seg">{[1, 2, 3, 4, 5].map((n) => <li key={n}>{t(`landing.seg.no.${n}` as 'landing.seg.no.1')}</li>)}</ul></aside>
         </div>
-        <ul className="banda banda-seis">
-          {[1, 2, 3, 4, 5, 6].map((n) => <li key={n} className="c" data-rv><span className="mono l-num">{String(n).padStart(2, '0')}</span>{t(`landing.seg.${n}` as 'landing.seg.1')}</li>)}
-        </ul>
         <div className="banda banda-cab" aria-labelledby="t-int">
           <div className="c"><h2 id="t-int" className="h-gigante h-2" data-rv>{t('landing.int.titulo')}</h2></div>
           <div className="c c-int" data-rv>
             <h3 className="mono">{t('landing.int.hoy')}</h3>
             <ul><li><b>HubSpot</b><p>{t('landing.int.hubspot')}</p></li><li><b>{t('landing.int.excel')}</b><p>{t('landing.int.excel.d')}</p></li></ul>
             <h3 className="mono">{t('landing.int.ruta')}</h3>
-            <ul><li><b>Amazon, Walmart, Shopify</b><p>{t('landing.int.ruta.d')}</p></li></ul>
+            <ul>{[1, 2, 3].map((n) => <li key={n}><p>{t(`landing.int.ruta.${n}` as 'landing.int.ruta.1')}</p></li>)}</ul>
           </div>
         </div>
+      </section>
+
+      <section className="sec" aria-labelledby="t-no">
+        <div className="banda banda-cab"><div className="c"><h2 id="t-no" className="h-gigante h-2" data-rv>{t('landing.no.titulo')}</h2></div><div className="c c-sub"><p className="desc" data-rv>{t('landing.no.sub')}</p></div></div>
+        <ol className="banda banda-seis">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => <li key={n} className="c" data-rv><span className="mono l-num">{String(n).padStart(2, '0')}</span>{t(`landing.no.${n}` as 'landing.no.1')}</li>)}
+        </ol>
       </section>
 
       <section id="faq" className="sec" aria-labelledby="t-faq">
         <div className="banda banda-cab">
           <div className="c"><h2 id="t-faq" className="h-gigante h-2" data-rv>{t('landing.faq.titulo')}</h2></div>
           <div className="c c-faq">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => <details key={n} data-rv><summary>{t(`landing.faq.${n}.q` as 'landing.faq.1.q')}</summary><p>{t(`landing.faq.${n}.a` as 'landing.faq.1.a')}</p></details>)}
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => <details key={n} data-rv><summary>{t(`landing.faq.${n}.q` as 'landing.faq.1.q')}</summary><p>{t(`landing.faq.${n}.a` as 'landing.faq.1.a', {correo: SITE.contacto})}</p></details>)}
           </div>
         </div>
       </section>

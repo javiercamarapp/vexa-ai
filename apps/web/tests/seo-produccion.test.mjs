@@ -52,10 +52,10 @@ test('páginas privadas: noindex en cada segmento y cabecera X-Robots-Tag', () =
   for (const p of ['/api','/auth','/platform','/seguridad','/sin-acceso']) assert.ok(PREFIJOS_PRIVADOS.includes(p),p);
   for (const p of RUTAS_PUBLICAS) assert.ok(!PREFIJOS_PRIVADOS.some(x=>p===x||p.startsWith(x+'/')),p+' es pública y privada a la vez');
 });
-test('robots.ts y sitemap.ts: solo lo público, con sitemap absoluto', () => {
+test('robots.ts y sitemap.ts: rovaq.ai abierto con sitemap; la app y cualquier otro host cerrados y sin sitemap (T2)', () => {
   const r=leer('src/app/robots.ts'),s=leer('src/app/sitemap.ts');
-  assert.match(r,/allow:\['\/',\.\.\.RUTAS_PUBLICAS\]/);assert.match(r,/disallow:PREFIJOS_PRIVADOS/);assert.match(r,/sitemap:`\$\{base\}\/sitemap\.xml`/);
-  assert.match(s,/lastModified/);assert.match(s,/RUTAS_PUBLICAS\.map/);
+  assert.match(r,/robotsParaHost\(/);assert.match(r,/landingUrl\(\)/);
+  assert.match(s,/entradasSitemap\(/);assert.match(s,/if\(!ES_HOST_LANDING\(.*\)\)return \[\]/,'app.rovaq.ai no lista sitemap');
   assert.deepEqual([...RUTAS_PUBLICAS],['/login']);
 });
 test('el middleware de auth no intercepta robots, sitemap, manifest, íconos ni imágenes sociales (el matcher abarca todo salvo estáticos para decidir por host; la autenticación solo corre en la lista anterior)', async () => {
@@ -66,17 +66,15 @@ test('el middleware de auth no intercepta robots, sitemap, manifest, íconos ni 
   assert.match(m,/decidirHost\(/);assert.match(m,/if\(!rutaConAutenticacion\(path\)\)return NextResponse\.next\(\)/);
   assert.match(m,/matcher:\s*\[\{\s*source:\s*'\/\(\(\?!_next\/static\|_next\/image\|fonts\/\|brand\/\|images\/\|vendor\/\|s\/\)\.\*\)'(?:,\s*missing:\s*\[\{\s*type:\s*'header',\s*key:\s*'host',\s*value:\s*'\(www\\\\\.\)\?rovaq\\\\\.ai')?/);
 });
-test('landing: robots y sitemap por host (rovaq.ai solo anuncia la landing), canonical propio y la app sigue sin listar la raíz', () => {
-  const r=leer('src/app/robots.ts'),s=leer('src/app/sitemap.ts');
-  for (const f of [r,s]) {assert.match(f,/ES_HOST_LANDING/);assert.match(f,/landingUrl\(\)/);}
-  assert.match(r,/rules:\[\{userAgent:'\*',allow:\['\/'\]\}\]/);
-  assert.match(s,/`\$\{b\}\/`,`\$\{b\}\/en`/);assert.match(s,/alternates/);
+test('landing: sitemap con fechas reales y robots de rovaq.ai con su sitemap; la raíz de la app no se lista', () => {
+  const s=leer('src/app/sitemap.ts');
+  assert.match(s,/ES_HOST_LANDING/);assert.doesNotMatch(s,/new Date\(\)/,'lastmod falso: fecha de build');
   assert.ok(!RUTAS_PUBLICAS.includes('/'),'la raíz de la app redirige y no se lista');
 });
 test('íconos: existen y tienen el tamaño declarado', () => {
   const esperados={'favicon-16x16.png':[16,16],'favicon-32x32.png':[32,32],'favicon-48x48.png':[48,48],'apple-touch-icon.png':[180,180],'icon-192.png':[192,192],'icon-512.png':[512,512],'icon-maskable-192.png':[192,192],'icon-maskable-512.png':[512,512]};
   for (const [f,t] of Object.entries(esperados)) assert.deepEqual(pngTam(f),t,f);
-  for (const f of ['favicon.ico','favicon.svg','push-icon.svg','brand/rovaq-app-icon.svg','brand/rovaq-logo-horizontal-positivo-600px.png','.well-known/security.txt','humans.txt']) assert.ok(existsSync(pub(f))&&statSync(pub(f)).size>0,f);
+  for (const f of ['favicon.ico','favicon.svg','push-icon.svg','brand/rovaq-app-icon.svg','brand/rovaq-logo-horizontal-positivo-600px.png','humans.txt']) assert.ok(existsSync(pub(f))&&statSync(pub(f)).size>0,f);
   const ico=readFileSync(pub('favicon.ico'));assert.equal(ico.readUInt16LE(2),1,'ico');assert.ok(ico.readUInt16LE(4)>=2,'ico con varias medidas');
   const layout=leer('src/app/(app)/layout.tsx');
   for (const f of ['/favicon.ico','/favicon.svg','/favicon-16x16.png','/favicon-32x32.png','/favicon-48x48.png','/icon-192.png','/icon-512.png','/apple-touch-icon.png']) assert.ok(layout.includes(f),f+' sin declarar en icons');
@@ -115,9 +113,12 @@ test('JSON-LD válido: Organization + SoftwareApplication, sin ratings ni precio
   assert.doesNotMatch(JSON.stringify(j),/aggregateRating|offers|price|review/i);
   assert.match(leer('src/app/(app)/login/layout.tsx'),/application\/ld\+json/);
 });
-test('security.txt con contacto y expiración vigente', () => {
-  const t=leer('public/.well-known/security.txt');
-  assert.match(t,/^Contact: mailto:javiercamaraportepetit@gmail\.com$/m);
+test('security.txt: no se publica hasta que existan el buzón de seguridad y la fecha de revisión; si existe, cumple RFC 9116 sin marcadores', () => {
+  const ruta='public/.well-known/security.txt';
+  if(!existsSync(pub('.well-known/security.txt')))return;
+  const t=leer(ruta);
+  assert.match(t,/^Contact: mailto:\S+$/m);assert.doesNotMatch(t,/\[(CORREO|FECHA)[A-Z_]*\]/,'marcador sin resolver');
+  assert.match(t,/^Canonical: https:\/\/rovaq\.ai\/\.well-known\/security\.txt$/m);
   const exp=/^Expires: (.+)$/m.exec(t)[1];assert.ok(new Date(exp)>new Date(),'security.txt vencido: renovar Expires');
   assert.match(t,/^Preferred-Languages: es, en$/m);
 });

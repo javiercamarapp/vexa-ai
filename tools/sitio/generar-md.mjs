@@ -82,8 +82,8 @@ function sinCorreo(texto, lang, urlAcceso) {
   const t = texto
     .replace(new RegExp(`Escríbenos a ${RE_CORREO.source}`, 'g'), `Solicita acceso en ${urlAcceso}`)
     .replace(new RegExp(`Write to us at ${RE_CORREO.source}`, 'g'), `Request access at ${urlAcceso}`)
-    .replace(new RegExp(`\\s*Si tu correo no se abre, escribe a ${RE_CORREO.source}\\.`, 'g'), '')
-    .replace(new RegExp(`\\s*If your email does not open, write to ${RE_CORREO.source}\\.`, 'g'), '');
+    .replace(new RegExp(`\\s*Si tu correo[^.]*?, escribe a ${RE_CORREO.source}\\.`, 'g'), '')
+    .replace(new RegExp(`\\s*If your email[^.]*?, write to ${RE_CORREO.source}\\.`, 'g'), '');
   return t;
 }
 

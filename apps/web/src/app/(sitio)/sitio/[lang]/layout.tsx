@@ -47,7 +47,10 @@ export default async function RaizSitio({children, params}: {children: ReactNode
   return (
     <html lang={lang}>
       {/* El módulo va en <head> con blocking="render": en visitas repetidas fija data-intro-visto antes del primer pintado y el cargador no parpadea (Chromium; en los demás motores se ignora y todo sigue igual). Es deferido, así que no bloquea el análisis del HTML. */}
-      <head>{sitio ? <script type="module" src={sitio} data-sitio="" {...({blocking: 'render'} as Record<string, string>)} {...datos} /> : null}</head>
+      <head>
+        {/* eslint-disable-next-line @next/next/no-sync-scripts -- módulo deferido (no bloquea el análisis); blocking="render" es intencional, ver arriba */}
+        {sitio ? <script type="module" src={sitio} data-sitio="" {...({blocking: 'render'} as Record<string, string>)} {...datos} /> : null}
+      </head>
       <body>
         {children}
       </body>

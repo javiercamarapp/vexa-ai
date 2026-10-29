@@ -45,6 +45,15 @@ const nextConfig: NextConfig = {
       { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()' },
       { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
     ] }, {
+      // Cierre de seguridad 29-oct: cabeceras extra SOLO para el host de la aplicación (el sitio público en rovaq.ai/www no las recibe).
+      // CORP evita que otros orígenes incrusten recursos de la app (fuentes, marca, exportaciones); el resto cierra rutas de lectura cruzada heredadas.
+      source: '/:path*', has: [{ type: 'host', value: 'app.rovaq.ai' }], headers: [
+        { key: 'Cross-Origin-Resource-Policy', value: 'same-origin' },
+        { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
+        { key: 'Origin-Agent-Cluster', value: '?1' },
+        { key: 'X-DNS-Prefetch-Control', value: 'off' },
+      ],
+    }, {
       // Espacio de trabajo, plataforma, acceso y API: nunca se indexan (segunda barrera además del metadata robots de cada segmento).
       source: `/:privado(${privado})/:path*`, headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' }],
     }, {

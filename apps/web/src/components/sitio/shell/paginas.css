@@ -1,0 +1,110 @@
+/*
+ * Piezas de las páginas internas del sitio (T7): cabeza, bloques, tarjetas, tabla y preguntas.
+ * Solo variables de tokens.css, prefijo s-, sin color propio ni bloque de movimiento reducido (vive en inicio.css).
+ * Se carga después de inicio.css. Candidato a pasar a styles/sitio si T6 lo absorbe.
+ */
+
+/* Cabeza oscura: libera la cabecera fija de 66 px y deja aire arriba */
+.s-pag-cabeza {
+  padding-top: calc(var(--s-cab-h) + var(--s-e96));
+  padding-bottom: var(--s-e80);
+}
+
+.s-pag-cabeza .s-ancho-titular {
+  max-width: 18em;
+}
+
+.s-pag-contenido {
+  display: flex;
+  flex-direction: column;
+}
+
+.s-pag-bloque {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-e24);
+  padding-block: var(--s-e48);
+  border-top: var(--s-borde) solid var(--s-linea);
+}
+
+.s-pag-bloque:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.s-pag-titulo {
+  max-width: 24em;
+}
+
+.s-columnas.s-pag-tarjetas {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: var(--s-e24);
+}
+
+.s-pag-tarjetas .s-tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-e12);
+}
+
+.s-pag-enlace {
+  color: inherit;
+}
+
+.s-pag-pregunta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-e8);
+  padding-top: var(--s-e20);
+  border-top: var(--s-borde) solid var(--s-linea);
+}
+
+/* Matriz de puestos: tabla con scroll horizontal propio en móvil */
+.s-pag-tabla-caja {
+  overflow-x: auto;
+}
+
+.s-pag-tabla {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: var(--s-t-pequeno);
+  line-height: var(--s-i-pequeno);
+}
+
+.s-pag-tabla th,
+.s-pag-tabla td {
+  padding: var(--s-e12) var(--s-e16);
+  border-top: var(--s-borde) solid var(--s-linea);
+  text-align: left;
+  vertical-align: top;
+}
+
+.s-pag-tabla thead th {
+  font-family: var(--s-f-mono);
+  font-size: var(--s-t-minimo);
+  font-weight: 400;
+  letter-spacing: var(--s-k-eyebrow);
+  text-transform: uppercase;
+  color: var(--s-apagado);
+}
+
+.s-pag-tabla tbody th {
+  font-weight: 500;
+  color: var(--s-tinta);
+}
+
+.s-pag-tabla tbody td {
+  color: var(--s-apagado);
+}
+
+/* El foco programático del salto al contenido no pinta anillo; el resto usa :focus-visible global de base.css */
+#contenido:focus {
+  outline: none;
+}
+
+/* Panel móvil con muchas entradas: que se pueda desplazar en pantallas bajas y se centre solo cuando cabe */
+.s-panel-movil {
+  overflow-y: auto;
+  justify-content: safe center;
+}

@@ -154,3 +154,46 @@ test('LIFE-02: retention_erase vacía las celdas del Tracker del ticket borrado 
  });
  }finally{await pg.stop();}
 });
+
+test('STO-01 (tipos): un miembro solo sube a vexa-private el espacio de importaciones, CSV/XLSX, hasta 20 MiB; viewer/operator nunca',async t=>{
+ const pg=await startLocalPg({label:'sec29d'});try{
+ const db='s29d',imp='80000000-0000-4000-8000-000000000001',CSV='text/csv',XLSX='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+ pg.createDb(db);pg.applySchema(db,{upTo:BASE});seedTenants(pg,db);
+ pg.sql(db,`create or replace function storage.allow_any_operation(a text[]) returns boolean language sql as $$ select false $$;
+  grant usage on schema storage to authenticated; grant select,insert on storage.objects to authenticated;
+  set session_replication_role=replica;
+  insert into public.imports(id,tenant_id,file_hash,mapping_version,idempotency_key,object_path,state) values ('${imp}','${A}','h','v','k','${A}/imports/${imp}/original','reserved');
+  insert into public.import_uploads(tenant_id,import_id,user_id,size,content_type,request_hash) values ('${A}','${imp}','${U.analyst}',100,'text/csv','r');`);
+ const put=(uid,name,meta)=>{try{pg.sql(db,`begin; set local role authenticated; set local request.jwt.claim.sub='${uid}'; insert into storage.objects(bucket_id,name,owner_id,metadata) values ('vexa-private','${name}','${uid}','${JSON.stringify(meta)}'::jsonb); rollback;`);return 'ok';}catch(e){return /row-level security|permission denied|upload size mismatch|invalid upload reservation/.test(String(e.message))?'denied':'error:'+e.message.slice(0,200);}};
+ const reserved=`${A}/imports/${imp}/original`;
+ await t.test('ANTES: un analista sube cualquier ruta y tipo bajo su prefijo (HTML, ejecutable, SVG, sin límite)',()=>{
+  assert.equal(put(U.analyst,`${A}/attachments/zz/evil.html`,{mimetype:'text/html',size:5}),'ok');
+  assert.equal(put(U.analyst,`${A}/otra/cosa.exe`,{mimetype:'application/x-msdownload',size:5}),'ok');
+ });
+ pg.file(db,mig('20261205000300_vexa_private_member_upload_types.sql'));
+ await t.test('DESPUÉS: fuera del espacio de importaciones no sube nadie por sesión de usuario',()=>{
+  for(const uid of [U.owner,U.analyst]){assert.equal(put(uid,`${A}/attachments/zz/evil.html`,{mimetype:'text/html',size:5}),'denied');assert.equal(put(uid,`${A}/otra/cosa.bin`,{mimetype:CSV,size:5}),'denied');}
+ });
+ await t.test('en importaciones: CSV y XLSX pasan; otros tipos o más de 20 MiB no (se aísla esta política desactivando el guard de reserva, que valida tipo y tamaño exactos de otra forma)',()=>{
+  pg.sql(db,`alter table storage.objects disable trigger guard_reserved_import_object`);
+  assert.equal(put(U.analyst,reserved,{mimetype:CSV,size:100}),'ok');
+  assert.equal(put(U.analyst,reserved,{mimetype:XLSX,size:100}),'ok');
+  assert.equal(put(U.analyst,reserved,{mimetype:'text/html',size:100}),'denied');
+  assert.equal(put(U.analyst,reserved,{mimetype:'application/x-msdownload',size:100}),'denied');
+  assert.equal(put(U.analyst,reserved,{mimetype:CSV,size:20971521}),'denied');
+  assert.equal(put(U.analyst,reserved,{mimetype:CSV,size:20971520}),'ok');
+  pg.sql(db,`alter table storage.objects enable trigger guard_reserved_import_object`);
+ });
+ await t.test('sin metadato de tipo o tamaño no se bloquea lo legítimo (la reserva ya fijó ambos); sigue exigiendo la reserva y el rol',()=>{
+  assert.equal(put(U.analyst,reserved,{mimetype:CSV,size:100}),'ok');
+  assert.equal(put(U.owner,reserved,{mimetype:CSV}),'denied','la reserva es del analista que la pidió');
+  assert.equal(put(U.viewer,reserved,{mimetype:CSV,size:1}),'denied');assert.equal(put(U.operator,reserved,{mimetype:CSV,size:1}),'denied');
+  assert.equal(put(U.other,reserved,{mimetype:CSV,size:1}),'denied','otro tenant');
+ });
+ await t.test('otros buckets no se afectan por la política',()=>{
+  pg.sql(db,`insert into storage.buckets(id,name) values ('otro','otro')`);
+  pg.sql(db,`begin; set local role authenticated; set local request.jwt.claim.sub='${U.analyst}'; commit;`);
+  assert.equal(pg.sql(db,`select count(*) from pg_policies where tablename='objects' and policyname='vexa_private_member_upload_types' and qual is null and with_check ~ 'vexa-private'`),'1');
+ });
+ }finally{await pg.stop();}
+});

@@ -1,0 +1,372 @@
+/*
+ * Sistema de diseño del sitio de Rovaq, contrato K4.
+ * Dueño: T6. Orden de carga: fuentes.css, tokens.css, base.css, tipografia.css, inicio.css.
+ *
+ * REGLAS DE ESTE ARCHIVO
+ * 1. Es el único archivo del sitio con colores, sombras y degradados en bruto. Los demás solo usan var(--s-*).
+ * 2. Prefijo --s- para todo. Excepción pedida por la especificación: --p, el progreso de scroll de 0 a 1.
+ * 3. Cada sección declara data-tema="oscuro|claro" en el HTML; las variables semánticas cambian con ese atributo.
+ *    La página es correcta sin JavaScript. El tema del sistema operativo no cambia nada.
+ *
+ * REGLA DE DOSIS DEL ROJO (--s-acento, #E8241C)
+ * - Máximo tres elementos rojos y 0.3 por ciento del área en cualquier captura de 1440 por 900.
+ * - Formas permitidas: punto o círculo de 6 a 36 px, línea de 1 a 2 px, indicador de 6 a 8 px en un chip,
+ *   cabeza de la línea de scroll, punto del logo y punto final del cierre.
+ * - Prohibido: relleno de sección, banda, tarjeta o botón, hover rojo, sombra o halo rojo, degradado con rojo,
+ *   texto pequeño rojo salvo un único rótulo de 11 px con --s-acento-texto, y palabra de titular en rojo.
+ * - En CSS solo estos selectores leen --s-acento (lo comprueba arnes-css/auditar.mjs):
+ *   .s-boton__circulo, .s-punto, .s-indicador, .s-hilo__cabeza, .s-red__marca, .s-cargador__punto,
+ *   .s-marca__punto, .s-logo__punto, .s-escena__cabeza, .s-linea-acento, .s-nube-punto.
+ *
+ * CONTRASTE (calculado por arnes-css/contraste.mjs, WCAG 2.x)
+ * Texto de lectura 4.5 o más; texto grande y gráficos 3 o más; --s-sutil es solo decorativo, nunca lectura.
+ */
+
+@property --p {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+:root {
+  color-scheme: dark light;
+
+  /* ---- Paleta en bruto. No usar fuera de este archivo. ---- */
+  --s-c-tinta: #0E0E10;
+  --s-c-grafito: #131316;
+  --s-c-pizarra: #17171A;
+  --s-c-pizarra-2: #1F1F23;
+  --s-c-hueso: #F7F7F8;
+  --s-c-hueso-2: #F1F1F2;
+  --s-c-blanco: #FFFFFF;
+  --s-c-gris-borde: #E6E6E8;
+  --s-c-gris-borde-2: #D6D6D9;
+  --s-c-rojo: #E8241C;
+
+  /* ---- Acento. Una sola marca de color en toda la página. ---- */
+  --s-acento: var(--s-c-rojo);
+
+  /* ---- Horizonte: único degradado de página, solo grises con tinte frío mínimo ---- */
+  --s-horizonte-degradado: linear-gradient(
+    to bottom,
+    #0E0E10 0,
+    #1B1B20 22%,
+    #3A3C46 42%,
+    #8F919C 62%,
+    #D4D4D8 80%,
+    #F1F1F2 92%,
+    #F7F7F8 100%
+  );
+  --s-horizonte-resplandor: radial-gradient(
+    ellipse 60% 40% at 50% 100%,
+    rgba(247, 247, 248, .55),
+    transparent
+  );
+  --s-horizonte-linea: rgba(14, 14, 16, .12);
+
+  /* ---- Costuras estáticas, degradado en oklab. Claro entrante: de tinta a hueso. ---- */
+  --s-costura-a-claro: linear-gradient(
+    in oklab to bottom,
+    #0E0E10 0,
+    #202022 10%,
+    #3F3F41 25%,
+    #777779 50%,
+    #B5B5B6 75%,
+    #DCDCDD 90%,
+    #F7F7F8 100%
+  );
+  --s-costura-a-oscuro: linear-gradient(
+    in oklab to top,
+    #0E0E10 0,
+    #202022 10%,
+    #3F3F41 25%,
+    #777779 50%,
+    #B5B5B6 75%,
+    #DCDCDD 90%,
+    #F7F7F8 100%
+  );
+
+  /* ---- Resplandores radiales ---- */
+  --s-resplandor-hero: radial-gradient(closest-side, rgba(247, 247, 248, .06), transparent);
+  --s-resplandor-tarjeta: radial-gradient(closest-side, rgba(247, 247, 248, .04), transparent);
+  --s-hilo-trazo: rgba(119, 119, 121, .7);
+  --s-hilo-guia: rgba(119, 119, 121, .2);
+  --s-marca-contorno: rgba(247, 247, 248, .14);
+  --s-marca-relleno: rgba(247, 247, 248, .08);
+  --s-resplandor-pie: linear-gradient(to bottom, rgba(247, 247, 248, .08), transparent 70%);
+
+  /* ---- Tipografía: familias ---- */
+  --s-f-serif: "Source Serif 4", "Source Serif 4 Fallback", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --s-f-sans: "Hanken Grotesk", "Hanken Grotesk Fallback", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --s-f-mono: "IBM Plex Mono", "IBM Plex Mono Fallback", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* ---- Tipografía: escala fluida. Anclas 390, 768 y 1440 de la especificación 2.2 ---- */
+  --s-t-hero: clamp(37px, 8.1px + 7.41vw, 107px);
+  --s-t-h2-grande: clamp(32px, 19.6px + 3.175vw, 60px);
+  --s-t-h2: clamp(28px, 21.8px + 1.587vw, 40px);
+  --s-t-h3-serif: clamp(24px, 21.9px + .529vw, 30px);
+  --s-t-h3-producto: clamp(20px, 17.9px + .529vw, 24px);
+  --s-t-lead: 17px;
+  --s-t-cuerpo: 16px;
+  --s-t-pequeno: 14px;
+  --s-t-boton: 14px;
+  --s-t-boton-hero: 15px;
+  --s-t-eyebrow: 12px;
+  --s-t-minimo: 11px;
+  --s-t-cifra: clamp(20px, 17.9px + .529vw, 28px);
+  --s-t-mock: 12px;
+
+  --s-i-hero: .98;
+  --s-i-h2-grande: 1.05;
+  --s-i-h2: 1.12;
+  --s-i-h3-serif: 1.2;
+  --s-i-h3-producto: 1.15;
+  --s-i-lead: 1.6;
+  --s-i-cuerpo: 1.6;
+  --s-i-pequeno: 1.55;
+  --s-i-eyebrow: 1.4;
+
+  --s-k-hero: -.03em;
+  --s-k-h2-grande: -.025em;
+  --s-k-h2: -.02em;
+  --s-k-h3-serif: -.015em;
+  --s-k-h3-producto: -.02em;
+  --s-k-lead: -.005em;
+  --s-k-eyebrow: .1em;
+  --s-k-sello: .08em;
+  --s-k-cifra: -.02em;
+
+  /* ---- Espacio, de 4 a 144 ---- */
+  --s-e4: 4px;
+  --s-e6: 6px;
+  --s-e8: 8px;
+  --s-e10: 10px;
+  --s-e12: 12px;
+  --s-e16: 16px;
+  --s-e20: 20px;
+  --s-e24: 24px;
+  --s-e28: 28px;
+  --s-e32: 32px;
+  --s-e40: 40px;
+  --s-e48: 48px;
+  --s-e56: 56px;
+  --s-e64: 64px;
+  --s-e80: 80px;
+  --s-e96: 96px;
+  --s-e112: 112px;
+  --s-e144: 144px;
+  --s-seccion-v: clamp(88px, 9vw, 144px);
+
+  /* ---- Rejilla ---- */
+  --s-contenedor: 1152px;
+  --s-lectura: 672px;
+  --s-lectura-corta: 560px;
+  --s-pad-x: 40px;
+  --s-gap: 24px;
+  --s-gap-4: 32px;
+
+  /* ---- Medidas de componentes ---- */
+  --s-cab-h: 66px;
+  --s-cab-w: min(1088px, 94vw);
+  --s-cab-top: 16px;
+  --s-cab-r: 33px;
+  --s-boton-h: 52px;
+  --s-boton-h-pildora: 44px;
+  --s-circulo: 36px;
+  --s-menu-w: 560px;
+  --s-horizonte-h: 520px;
+  --s-costura-h: clamp(220px, 26vh, 320px);
+  --s-pie-h: min(100svh, 760px);
+  --s-visor: 560px;
+  --s-hero-objeto: 760px;
+  --s-sello-h: 22px;
+  --s-punto: 6px;
+  --s-nodo: 6px;
+  --s-nodo-central: 14px;
+  --s-hilo-carril: 92px;
+  --s-escala-mini: .5;
+  --s-escena-col: 420px;
+
+  /* ---- Radios ---- */
+  --s-r-chip: 6px;
+  --s-r-fila: 12px;
+  --s-r-menu: 14px;
+  --s-r-ventana: 16px;
+  --s-r-tarjeta: 20px;
+  --s-r-panel: 24px;
+  --s-r-pildora: 33px;
+  --s-r-movil: 29px;
+  --s-r-total: 999px;
+
+  /* ---- Bordes ---- */
+  --s-borde: 1px;
+  --s-borde-foco: 2px;
+  --s-foco-sep: 3px;
+
+  /* ---- Movimiento. Curvas y duraciones de la especificación 3 ---- */
+  --s-e-expo: cubic-bezier(.16, 1, .3, 1);
+  --s-e-firma: cubic-bezier(.2, .7, .2, 1);
+  --s-e-io: cubic-bezier(.65, 0, .35, 1);
+  --s-e-cortina: cubic-bezier(.76, 0, .24, 1);
+  --s-e-ui: cubic-bezier(.4, 0, .2, 1);
+  --s-d-toque: 140ms;
+  --s-d-hover: 240ms;
+  --s-d-interfaz: 320ms;
+  --s-d-menu: 400ms;
+  --s-d-revelado: 900ms;
+  --s-d-seccion: 1100ms;
+  --s-d-tema: 500ms;
+  --s-escalon: 80ms;
+  --s-retardo-hero: 1450ms;
+
+  /* ---- Capas ---- */
+  --s-z-fondo: 0;
+  --s-z-contenido: 1;
+  --s-z-hilo: 2;
+  --s-z-cabecera: 100;
+  --s-z-menu: 110;
+  --s-z-cargador: 9999;
+
+  /* ---- Sombras ---- */
+  --s-sombra-ventana-claro: 0 24px 60px rgba(14, 14, 16, .12), 0 2px 6px rgba(14, 14, 16, .04);
+  --s-sombra-ventana-oscuro: 0 24px 60px rgba(0, 0, 0, .45);
+  --s-sombra-capacidad: 0 12px 32px rgba(14, 14, 16, .08);
+  --s-sombra-menu: 0 24px 60px rgba(0, 0, 0, .35);
+  --s-resalte-vidrio: inset 0 1px 0 rgba(247, 247, 248, .06);
+  --s-halo-boton: 0 0 24px rgba(247, 247, 248, .14);
+}
+
+/* ==================== Tema oscuro, valor por defecto ==================== */
+:root,
+[data-tema="oscuro"] {
+  --s-fondo: var(--s-c-tinta);
+  --s-fondo-alt: var(--s-c-grafito);
+  --s-superficie: var(--s-c-pizarra);
+  --s-vidrio: rgba(23, 23, 26, .85);
+  --s-superficie-2: var(--s-c-pizarra-2);
+  --s-linea: rgba(247, 247, 248, .10);
+  --s-linea-fuerte: rgba(247, 247, 248, .18);
+  --s-tinta: var(--s-c-hueso);
+  --s-apagado: #A6A6AC;
+  --s-sutil: #6E6E75;
+  --s-acento-texto: #FF4A40;
+
+  /* Botón primario: hueso sobre oscuro, círculo rojo de 36 px */
+  --s-boton-fondo: var(--s-c-hueso);
+  --s-boton-fondo-hover: var(--s-c-blanco);
+  --s-boton-texto: var(--s-c-tinta);
+  --s-boton-flecha: var(--s-c-hueso);
+  --s-boton-halo: var(--s-halo-boton);
+  --s-boton-borde-sec: rgba(247, 247, 248, .28);
+  --s-boton-hover-sec: rgba(247, 247, 248, .06);
+
+  /* Cabecera */
+  --s-cab-fondo: rgba(23, 23, 26, .72);
+  --s-cab-fondo-firefox: rgba(23, 23, 26, .92);
+  --s-cab-borde: rgba(247, 247, 248, .14);
+  --s-cab-sombra: 0 8px 32px rgba(0, 0, 0, .28);
+  --s-menu-fondo: rgba(23, 23, 26, .96);
+
+  /* Ventanas de mockup */
+  --s-ventana-fondo: var(--s-c-grafito);
+  --s-ventana-borde: var(--s-linea-fuerte);
+  --s-sombra-ventana: var(--s-sombra-ventana-oscuro);
+  --s-nodo-relleno: var(--s-c-tinta);
+  --s-hover-chip: rgba(247, 247, 248, .04);
+  --s-trama: none;
+}
+
+/* ==================== Tema claro ==================== */
+[data-tema="claro"] {
+  --s-fondo: var(--s-c-hueso);
+  --s-fondo-alt: var(--s-c-hueso-2);
+  --s-superficie: var(--s-c-blanco);
+  --s-vidrio: rgba(255, 255, 255, .80);
+  --s-superficie-2: var(--s-c-hueso-2);
+  --s-linea: var(--s-c-gris-borde);
+  --s-linea-fuerte: var(--s-c-gris-borde-2);
+  --s-tinta: var(--s-c-tinta);
+  --s-apagado: #5C5C62;
+  --s-sutil: #8A8A91;
+  --s-acento-texto: #C81B14;
+
+  --s-boton-fondo: var(--s-c-tinta);
+  --s-boton-fondo-hover: var(--s-c-pizarra-2);
+  --s-boton-texto: var(--s-c-hueso);
+  --s-boton-flecha: var(--s-c-hueso);
+  --s-boton-halo: none;
+  --s-boton-borde-sec: rgba(14, 14, 16, .28);
+  --s-boton-hover-sec: rgba(14, 14, 16, .05);
+
+  --s-cab-fondo: rgba(247, 247, 248, .78);
+  --s-cab-fondo-firefox: rgba(247, 247, 248, .94);
+  --s-cab-borde: rgba(14, 14, 16, .10);
+  --s-cab-sombra: 0 8px 32px rgba(14, 14, 16, .08);
+  --s-menu-fondo: rgba(255, 255, 255, .97);
+
+  --s-ventana-fondo: var(--s-c-blanco);
+  --s-ventana-borde: var(--s-c-gris-borde);
+  --s-sombra-ventana: var(--s-sombra-ventana-claro);
+  --s-nodo-relleno: var(--s-c-hueso);
+  --s-hover-chip: rgba(14, 14, 16, .04);
+  /* Trama de puntos de 1 px cada 24 px al 5 por ciento, solo en secciones claras */
+  --s-trama: radial-gradient(circle at 1px 1px, rgba(14, 14, 16, .05) 1px, transparent 1.5px);
+}
+
+/* Mapa de calor de mockups: sin verde, ámbar, azul ni lima. Se invierte en oscuro. */
+:root,
+[data-tema="oscuro"] {
+  --s-calor-1: #0E0E10;
+  --s-calor-2: #5A5A61;
+  --s-calor-3: #98989F;
+  --s-calor-4: #C9C9CD;
+  --s-calor-5: #ECECEE;
+}
+
+[data-tema="claro"] {
+  --s-calor-1: #ECECEE;
+  --s-calor-2: #C9C9CD;
+  --s-calor-3: #98989F;
+  --s-calor-4: #5A5A61;
+  --s-calor-5: #0E0E10;
+}
+
+/* ==================== Puntos de ruptura: 1100, 768 y 480 ==================== */
+@media (max-width: 1100px) {
+  :root {
+    --s-pad-x: 32px;
+    --s-gap: 20px;
+    --s-hero-objeto: 560px;
+    --s-visor: 480px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --s-cab-h: 58px;
+    --s-boton-h-pildora: 40px;
+    --s-cab-r: var(--s-r-movil);
+    --s-hero-objeto: 400px;
+    --s-t-lead: 17px;
+    --s-t-cifra: 22px;
+    --s-hilo-carril: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --s-pad-x: 20px;
+    --s-gap: 16px;
+    --s-t-eyebrow: var(--s-t-minimo);
+    --s-t-mock: var(--s-t-minimo);
+    --s-t-cifra: 20px;
+    --s-hero-objeto: 260px;
+    --s-horizonte-h: 320px;
+  }
+}
+
+@media (min-width: 1101px) {
+  :root {
+    --s-t-lead: 18px;
+  }
+}

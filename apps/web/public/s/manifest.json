@@ -1,7 +1,6 @@
 {
  "auxiliares": [
-  "fuentes/LICENCIAS.txt",
-  "pts/manifest-pts.json"
+  "fuentes/LICENCIAS.txt"
  ],
  "fuentes": {
   "display": {
@@ -72,427 +71,6 @@
   }
  },
  "img": {
-  "hero": {
-   "alt": {
-    "en": "Decorative object: a graphite ring holding a frosted glass disc with a small red bead, evoking an evidence lens.",
-    "es": "Objeto de adorno: un anillo de grafito con un disco de vidrio esmerilado y una pequeña cuenta roja, que evoca una lente de evidencia."
-   },
-   "alto": 960,
-   "ancho": 960,
-   "avif": [
-    {
-     "alto": 960,
-     "ancho": 960,
-     "bytes": 43363,
-     "sha256": "06682e69279a1f9c969c12d9de8542168fb614385dc73c78457f147560c0d462",
-     "url": "/s/img/hero-960.06682e69.avif"
-    },
-    {
-     "alto": 1440,
-     "ancho": 1440,
-     "bytes": 58978,
-     "densa": true,
-     "sha256": "e35c69497361175e9b2abd2f9ad7b4a38ab7e16cac4cdf719cd4b3adc7bb712d",
-     "url": "/s/img/hero-1440.e35c6949.avif"
-    }
-   ],
-   "bytes": 59734,
-   "fondo": "oscuro",
-   "sha256": "149e01aafd3499e9f2cc9a8ffdf42af743913fc603c32bea78b86bc096402cfc",
-   "tipo": "poster",
-   "url": "/s/img/hero-960.149e01aa.webp",
-   "variantes": [
-    {
-     "alto": 480,
-     "ancho": 480,
-     "bytes": 19954,
-     "sha256": "323a2e0939716027d78f2ed855397b8d69b3dc30f4db95af28ba1b15dbf441f2",
-     "url": "/s/img/hero-480.323a2e09.webp"
-    },
-    {
-     "alto": 960,
-     "ancho": 960,
-     "bytes": 59734,
-     "sha256": "149e01aafd3499e9f2cc9a8ffdf42af743913fc603c32bea78b86bc096402cfc",
-     "url": "/s/img/hero-960.149e01aa.webp"
-    },
-    {
-     "alto": 1440,
-     "ancho": 1440,
-     "bytes": 119220,
-     "densa": true,
-     "sha256": "bbc148ab127f96048cbc31dae546134fce7cf3df8ee4913f5018d254cc6bb14c",
-     "url": "/s/img/hero-1440.bbc148ab.webp"
-    }
-   ]
-  },
-  "hero-orbe": {
-   "alt": {
-    "en": "Decorative object: a graphite ring holding a frosted glass disc with a small red bead, evoking an evidence lens.",
-    "es": "Objeto de adorno: un anillo de grafito con un disco de vidrio esmerilado y una pequeña cuenta roja, que evoca una lente de evidencia."
-   },
-   "alto": 192,
-   "ancho": 192,
-   "bytes": 4008,
-   "fondo": "cualquiera",
-   "sha256": "759db877caebb28ed859af0ac20bac2565bb57c39592b0a64ba0f3f524c35330",
-   "tipo": "orbe",
-   "url": "/s/img/hero-orbe-192.759db877.webp",
-   "variantes": [
-    {
-     "alto": 96,
-     "ancho": 96,
-     "bytes": 1618,
-     "sha256": "775d3c67fd33963de95ac9ad20a992f2753a8bd60837d2dbbcb5c1d8a3f51d3c",
-     "url": "/s/img/hero-orbe-96.775d3c67.webp"
-    },
-    {
-     "alto": 192,
-     "ancho": 192,
-     "bytes": 4008,
-     "sha256": "759db877caebb28ed859af0ac20bac2565bb57c39592b0a64ba0f3f524c35330",
-     "url": "/s/img/hero-orbe-192.759db877.webp"
-    }
-   ]
-  },
-  "o1": {
-   "alt": {
-    "en": "Decorative object: three frosted glass plates joined by a fine thread, evoking data imported from several sources.",
-    "es": "Objeto de adorno: tres láminas de vidrio esmerilado unidas por un hilo fino, que evoca datos importados de varias fuentes."
-   },
-   "alto": 960,
-   "ancho": 960,
-   "avif": [
-    {
-     "alto": 480,
-     "ancho": 480,
-     "bytes": 11124,
-     "sha256": "8d3348189054dcc556e2fa2fe530ce761cd0abc5219efd623616d1869041ddd3",
-     "url": "/s/img/o1-480.8d334818.avif"
-    },
-    {
-     "alto": 960,
-     "ancho": 960,
-     "bytes": 19179,
-     "sha256": "b876c3b884cd5f325a584ec36ee7669cf01d3616e07835b945b88c7cd87d8da7",
-     "url": "/s/img/o1-960.b876c3b8.avif"
-    },
-    {
-     "alto": 1440,
-     "ancho": 1440,
-     "bytes": 44353,
-     "densa": true,
-     "sha256": "2e4844d822229873baa25e0c86b3550753fb9f53ce2c2b0695d188e4b966bc3e",
-     "url": "/s/img/o1-1440.2e4844d8.avif"
-    }
-   ],
-   "bytes": 49764,
-   "fondo": "oscuro",
-   "sha256": "6f8dabf9050ba22207eef3fe4023cd03b905cee7adb72e23e08e6523196ec657",
-   "tipo": "objeto",
-   "url": "/s/img/o1-960.6f8dabf9.webp",
-   "variantes": [
-    {
-     "alto": 480,
-     "ancho": 480,
-     "bytes": 19848,
-     "sha256": "4cc68a344c5fec2769430dc22e6fb0384f1945411cd03512746929f59ac8fdb4",
-     "url": "/s/img/o1-480.4cc68a34.webp"
-    },
-    {
-     "alto": 960,
-     "ancho": 960,
-     "bytes": 49764,
-     "sha256": "6f8dabf9050ba22207eef3fe4023cd03b905cee7adb72e23e08e6523196ec657",
-     "url": "/s/img/o1-960.6f8dabf9.webp"
-    },
-    {
-     "alto": 1440,
-     "ancho": 1440,
-     "bytes": 119792,
-     "densa": true,
-     "sha256": "233db029847a67f31bf7c8bb22d2016228ee495d36b30c6a2f093ad2ea3b5d2f",
-     "url": "/s/img/o1-1440.233db029.webp"
-    }
-   ]
-  },
-  "o1-orbe": {
-   "alt": {
-    "en": "Decorative object: three frosted glass plates joined by a fine thread, evoking data imported from several sources.",
-    "es": "Objeto de adorno: tres láminas de vidrio esmerilado unidas por un hilo fino, que evoca datos importados de varias fuentes."
-   },
-   "alto": 192,
-   "ancho": 192,
-   "bytes": 4108,
-   "fondo": "cualquiera",
-   "sha256": "dfd5a4297893041870bc15538785c6ae3af9276ba3bab72a795982219fbee3c2",
-   "tipo": "orbe",
-   "url": "/s/img/o1-orbe-192.dfd5a429.webp",
-   "variantes": [
-    {
-     "alto": 96,
-     "ancho": 96,
-     "bytes": 1636,
-     "sha256": "172d9880da61379c169157b7a825cf23f9dd25f446967ccc4b0a192d3cffd13e",
-     "url": "/s/img/o1-orbe-96.172d9880.webp"
-    },
-    {
-     "alto": 192,
-     "ancho": 192,
-     "bytes": 4108,
-     "sha256": "dfd5a4297893041870bc15538785c6ae3af9276ba3bab72a795982219fbee3c2",
-     "url": "/s/img/o1-orbe-192.dfd5a429.webp"
-    }
-   ]
-  },
-  "o2": {
-   "alt": {
-    "en": "Decorative object: three clusters of small glass spheres joined by fine lines, evoking data grouped into problems.",
-    "es": "Objeto de adorno: tres cúmulos de pequeñas esferas de vidrio unidos por líneas finas, que evoca datos agrupados en problemas."
-   },
-   "alto": 960,
-   "ancho": 960,
-   "avif": [
-    {
-     "alto": 960,
-     "ancho": 960,
-     "bytes": 35368,
-     "sha256": "eaa9c4c21b43db1a586bda21597a2205ec0ea12ad0be0dbd19caeed8eca8e033",
-     "url": "/s/img/o2-960.eaa9c4c2.avif"
-    },
-    {
-     "alto": 1440,
-     "ancho": 1440,
-     "bytes": 77712,
-     "densa": true,
-     "sha256": "bd339b6e05bfaa8088a6ccdb1aa2b4fab5c30e97739a5f7e073c643e57cec219",
-     "url": "/s/img/o2-1440.bd339b6e.avif"
-    }
-   ],
-   "bytes": 49944,
-   "fondo": "oscuro",
-   "sha256": "ba1371d5b967f0fb1b9f4b5acd00cf417ba369c3e73208ce9d2403e1c9fa2b7e",
-   "tipo": "objeto",
-   "url": "/s/img/o2-960.ba1371d5.webp",
-   "variantes": [
-    {
-     "alto": 480,
-     "ancho": 480,
-     "bytes": 19914,
-     "sha256": "7a6443fda7eb79bf5b5cb190aee496d8b3f1259a0331bf88cc2d2c976399c4de",
-     "url": "/s/img/o2-480.7a6443fd.webp"
-    },
-    {
-     "alto": 960,
-     "ancho": 960,
-     "bytes": 49944,
-     "sha256": "ba1371d5b967f0fb1b9f4b5acd00cf417ba369c3e73208ce9d2403e1c9fa2b7e",
-     "url": "/s/img/o2-960.ba1371d5.webp"
-    },
-    {
-     "alto": 1440,
-     "ancho": 1440,
-     "bytes": 118782,
-     "densa": true,
-     "sha256": "18cb1d2dc3cf9e58c5e480cabb86e9128c60eeaa20159f22b20d3cd3ace75c24",
-     "url": "/s/img/o2-1440.18cb1d2d.webp"
-    }
-   ]
-  },
-  "o2-orbe": {
-   "alt": {
-    "en": "Decorative object: three clusters of small glass spheres joined by fine lines, evoking data grouped into problems.",
-    "es": "Objeto de adorno: tres cúmulos de pequeñas esferas de vidrio unidos por líneas finas, que evoca datos agrupados en problemas."
-   },
-   "alto": 192,
-   "ancho": 192,
-   "bytes": 4626,
-   "fondo": "cualquiera",
-   "sha256": "af9fdadf407e1817879dadc98977a1bdc88b28b0b5de2b74b6debd7e53ebdf66",
-   "tipo": "orbe",
-   "url": "/s/img/o2-orbe-192.af9fdadf.webp",
-   "variantes": [
-    {
-     "alto": 96,
-     "ancho": 96,
-     "bytes": 1820,
-     "sha256": "4c8db344b00cf84bdf7bcb9e73d6acd61a83bb17d1deac67990159f702ea8cdd",
-     "url": "/s/img/o2-orbe-96.4c8db344.webp"
-    },
-    {
-     "alto": 192,
-     "ancho": 192,
-     "bytes": 4626,
-     "sha256": "af9fdadf407e1817879dadc98977a1bdc88b28b0b5de2b74b6debd7e53ebdf66",
-     "url": "/s/img/o2-orbe-192.af9fdadf.webp"
-    }
-   ]
-  },
-  "o3": {
-   "alt": {
-    "en": "Decorative object: a graduated glass cylinder half filled with particles and a red level mark, evoking a measured figure.",
-    "es": "Objeto de adorno: una probeta graduada de vidrio llena de partículas hasta la mitad, con una marca de nivel roja, que evoca una cifra medida."
-   },
-   "alto": 960,
-   "ancho": 960,
-   "avif": [
-    {
-     "alto": 480,
-     "ancho": 480,
-     "bytes": 10527,
-     "sha256": "5ee6e5cebc980d31752d32d7d12921cd381e65a58f559a8c343b3f3b8a31cc35",
-     "url": "/s/img/o3-480.5ee6e5ce.avif"
-    }
-   ],
-   "bytes": 49600,
-   "fondo": "oscuro",
-   "sha256": "d2f3ebea66aa3f80a17adc453ea93ac51e3d7cb90a52103041434cd4d3609ff0",
-   "tipo": "objeto",
-   "url": "/s/img/o3-960.d2f3ebea.webp",
-   "variantes": [
-    {
-     "alto": 480,
-     "ancho": 480,
-     "bytes": 19576,
-     "sha256": "f125dcd181c23e8454e49f306a353518586d7ab8b144ef21ea2c23b85011f631",
-     "url": "/s/img/o3-480.f125dcd1.webp"
-    },
-    {
-     "alto": 960,
-     "ancho": 960,
-     "bytes": 49600,
-     "sha256": "d2f3ebea66aa3f80a17adc453ea93ac51e3d7cb90a52103041434cd4d3609ff0",
-     "url": "/s/img/o3-960.d2f3ebea.webp"
-    },
-    {
-     "alto": 1440,
-     "ancho": 1440,
-     "bytes": 119730,
-     "densa": true,
-     "sha256": "cace2838f0f01e3de4c7f20f1994a5ceb43ee3590ca39743fab647a98342976f",
-     "url": "/s/img/o3-1440.cace2838.webp"
-    }
-   ]
-  },
-  "o3-orbe": {
-   "alt": {
-    "en": "Decorative object: a graduated glass cylinder half filled with particles and a red level mark, evoking a measured figure.",
-    "es": "Objeto de adorno: una probeta graduada de vidrio llena de partículas hasta la mitad, con una marca de nivel roja, que evoca una cifra medida."
-   },
-   "alto": 192,
-   "ancho": 192,
-   "bytes": 2726,
-   "fondo": "cualquiera",
-   "sha256": "c79816bf8a1beb865fdb73ba4b0ade278bdafe318d836fe396b3030708744d63",
-   "tipo": "orbe",
-   "url": "/s/img/o3-orbe-192.c79816bf.webp",
-   "variantes": [
-    {
-     "alto": 96,
-     "ancho": 96,
-     "bytes": 1156,
-     "sha256": "6d31c96ce088e6e6de34f8f6f3d96e2894164ad72b80f03a923f3c198e40eeb8",
-     "url": "/s/img/o3-orbe-96.6d31c96c.webp"
-    },
-    {
-     "alto": 192,
-     "ancho": 192,
-     "bytes": 2726,
-     "sha256": "c79816bf8a1beb865fdb73ba4b0ade278bdafe318d836fe396b3030708744d63",
-     "url": "/s/img/o3-orbe-192.c79816bf.webp"
-    }
-   ]
-  },
-  "o4": {
-   "alt": {
-    "en": "Decorative object: a graphite disc with three notches and a glass sphere in the central one, evoking a choice among three options.",
-    "es": "Objeto de adorno: un disco de grafito con tres muescas y una esfera de vidrio en la central, que evoca una decisión entre tres opciones."
-   },
-   "alto": 960,
-   "ancho": 960,
-   "avif": [
-    {
-     "alto": 480,
-     "ancho": 480,
-     "bytes": 13073,
-     "sha256": "205466c6871e2636909e0975f9fab1a00d66f8b439699431d3fde245f35d6217",
-     "url": "/s/img/o4-480.205466c6.avif"
-    },
-    {
-     "alto": 960,
-     "ancho": 960,
-     "bytes": 19434,
-     "sha256": "13b259848378557010f1c2d97baa656103ee80f62b81a11cac1f82ea670da502",
-     "url": "/s/img/o4-960.13b25984.avif"
-    },
-    {
-     "alto": 1440,
-     "ancho": 1440,
-     "bytes": 46360,
-     "densa": true,
-     "sha256": "7ab465d757b85ec61a812b0f9c325b6e38dd3dc713217bc875ffbd180491209d",
-     "url": "/s/img/o4-1440.7ab465d7.avif"
-    }
-   ],
-   "bytes": 49830,
-   "fondo": "oscuro",
-   "sha256": "1365692dc805e4aa88caef566d7806bd815d18c983f0639a28aa9b058d3c7c2d",
-   "tipo": "objeto",
-   "url": "/s/img/o4-960.1365692d.webp",
-   "variantes": [
-    {
-     "alto": 480,
-     "ancho": 480,
-     "bytes": 19914,
-     "sha256": "657db420e723714d7df66f7d7980da6429ec547c251393ee8c4bcdc2e0e58c40",
-     "url": "/s/img/o4-480.657db420.webp"
-    },
-    {
-     "alto": 960,
-     "ancho": 960,
-     "bytes": 49830,
-     "sha256": "1365692dc805e4aa88caef566d7806bd815d18c983f0639a28aa9b058d3c7c2d",
-     "url": "/s/img/o4-960.1365692d.webp"
-    },
-    {
-     "alto": 1440,
-     "ancho": 1440,
-     "bytes": 119638,
-     "densa": true,
-     "sha256": "a925eac359155fc08ed2a7a2ccdcae652a4c7f6c3fca873bf9d7cf27e7a21db5",
-     "url": "/s/img/o4-1440.a925eac3.webp"
-    }
-   ]
-  },
-  "o4-orbe": {
-   "alt": {
-    "en": "Decorative object: a graphite disc with three notches and a glass sphere in the central one, evoking a choice among three options.",
-    "es": "Objeto de adorno: un disco de grafito con tres muescas y una esfera de vidrio en la central, que evoca una decisión entre tres opciones."
-   },
-   "alto": 192,
-   "ancho": 192,
-   "bytes": 3660,
-   "fondo": "cualquiera",
-   "sha256": "af38e520737eb4efae3224ea2a1c5d20426191dbf3d6f85f5de6691feca0f702",
-   "tipo": "orbe",
-   "url": "/s/img/o4-orbe-192.af38e520.webp",
-   "variantes": [
-    {
-     "alto": 96,
-     "ancho": 96,
-     "bytes": 1536,
-     "sha256": "f735e484fc9e11ca0c70e6160667923fd69727f4aca8327ef4a67416497011fe",
-     "url": "/s/img/o4-orbe-96.f735e484.webp"
-    },
-    {
-     "alto": 192,
-     "ancho": 192,
-     "bytes": 3660,
-     "sha256": "af38e520737eb4efae3224ea2a1c5d20426191dbf3d6f85f5de6691feca0f702",
-     "url": "/s/img/o4-orbe-192.af38e520.webp"
-    }
-   ]
-  },
   "producto/caso": {
    "alt": {
     "en": "Rovaq problem record: delivery marked complete but not received, with 124 conversations, high severity, a monthly trend and an Inferred seal. Example data.",
@@ -1040,6 +618,37 @@
     }
    ]
   },
+  "producto/pantalla5": {
+   "alt": {
+    "en": "Rovaq Next best action card: prepare the claim package for a SKU, with the notice that nothing is sent. Example data.",
+    "es": "Tarjeta Siguiente mejor acción de Rovaq: preparar el paquete de reclamo de un SKU, con el aviso de que no se envía nada. Datos de ejemplo."
+   },
+   "alto": 454,
+   "ancho": 727,
+   "avif": [
+    {
+     "alto": 454,
+     "ancho": 727,
+     "bytes": 12978,
+     "sha256": "e6ee0ef67d768fe210c480c32cc0bad6279803a95c1a1967e7e6d84d850239fb",
+     "url": "/s/img/producto/pantalla5-727.e6ee0ef6.avif"
+    }
+   ],
+   "bytes": 19986,
+   "sha256": "dfc82d5effefa84c36d58b25673913cc85a7a593328bad9c2164e32c18ba65ad",
+   "tema": "claro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/pantalla5-727.dfc82d5e.webp",
+   "variantes": [
+    {
+     "alto": 454,
+     "ancho": 727,
+     "bytes": 19986,
+     "sha256": "dfc82d5effefa84c36d58b25673913cc85a7a593328bad9c2164e32c18ba65ad",
+     "url": "/s/img/producto/pantalla5-727.dfc82d5e.webp"
+    }
+   ]
+  },
   "producto/pareto": {
    "alt": {
     "en": "Ranking of refunds by SKU from HM-210 to HM-200 with bars, amount and cumulative percentage up to 100 percent. Example data.",
@@ -1104,6 +713,130 @@
      "bytes": 12660,
      "sha256": "ed9891cca3f3a922504240520b736905a775e8ee6cee399d482f52efe856658b",
      "url": "/s/img/producto/pareto.ed9891cc.svg"
+    }
+   ]
+  },
+  "producto/paso1": {
+   "alt": {
+    "en": "Rovaq connected sources: HubSpot connected and three marketplace exports uploaded by hand, each with its status. Example data.",
+    "es": "Fuentes conectadas de Rovaq: HubSpot conectada y tres exportes de marketplace cargados a mano, cada uno con su estado. Datos de ejemplo."
+   },
+   "alto": 648,
+   "ancho": 814,
+   "avif": [
+    {
+     "alto": 648,
+     "ancho": 814,
+     "bytes": 12239,
+     "sha256": "71cad456539e4c8b2ceb0c2a0cd3801aa40c67f1b8165c29bb4e73e4f25fc0de",
+     "url": "/s/img/producto/paso1-814.71cad456.avif"
+    }
+   ],
+   "bytes": 18994,
+   "sha256": "5748276db2c76d990175266aeba2c4fd998cab2b49956cf4aea72848f9e393f6",
+   "tema": "oscuro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/paso1-814.5748276d.webp",
+   "variantes": [
+    {
+     "alto": 648,
+     "ancho": 814,
+     "bytes": 18994,
+     "sha256": "5748276db2c76d990175266aeba2c4fd998cab2b49956cf4aea72848f9e393f6",
+     "url": "/s/img/producto/paso1-814.5748276d.webp"
+    }
+   ]
+  },
+  "producto/paso2": {
+   "alt": {
+    "en": "Revenue exposed per problem in Rovaq: three grouped problems, two with an inferred amount and one with no amount. Example data.",
+    "es": "Ingresos expuestos por problema en Rovaq: tres problemas agrupados, dos con importe inferido y uno sin importe. Datos de ejemplo."
+   },
+   "alto": 446,
+   "ancho": 1469,
+   "avif": [
+    {
+     "alto": 446,
+     "ancho": 1469,
+     "bytes": 13577,
+     "sha256": "d7329e03ca847a0e23cc38a412801b39c3c0dc1c6d82e81cc38dfc5a7e575bbe",
+     "url": "/s/img/producto/paso2-1469.d7329e03.avif"
+    }
+   ],
+   "bytes": 23762,
+   "sha256": "336ef0918152d8b0d876ed91e26810e4bdd3d27029d54c91d0158bd6bb12e74b",
+   "tema": "oscuro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/paso2-1469.336ef091.webp",
+   "variantes": [
+    {
+     "alto": 446,
+     "ancho": 1469,
+     "bytes": 23762,
+     "sha256": "336ef0918152d8b0d876ed91e26810e4bdd3d27029d54c91d0158bd6bb12e74b",
+     "url": "/s/img/producto/paso2-1469.336ef091.webp"
+    }
+   ]
+  },
+  "producto/paso3": {
+   "alt": {
+    "en": "Rovaq Today cards: gross revenue for October and refunds for the period, each with its Observed seal. Example data.",
+    "es": "Tarjetas de Hoy en Rovaq: ingreso bruto de octubre y reembolsos del periodo, cada una con su sello Observado. Datos de ejemplo."
+   },
+   "alto": 324,
+   "ancho": 1670,
+   "avif": [
+    {
+     "alto": 324,
+     "ancho": 1670,
+     "bytes": 24305,
+     "sha256": "d40e01abe3add1afeb1b3ee5bd45ece42e74f81ef7abf5b929aa00a37804e88b",
+     "url": "/s/img/producto/paso3-1670.d40e01ab.avif"
+    }
+   ],
+   "bytes": 36458,
+   "sha256": "e3e208b0eda52590edaeacb1e835b2d3fa4eefa27a39cb25bfeea94b9547fd1c",
+   "tema": "oscuro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/paso3-1670.e3e208b0.webp",
+   "variantes": [
+    {
+     "alto": 324,
+     "ancho": 1670,
+     "bytes": 36458,
+     "sha256": "e3e208b0eda52590edaeacb1e835b2d3fa4eefa27a39cb25bfeea94b9547fd1c",
+     "url": "/s/img/producto/paso3-1670.e3e208b0.webp"
+    }
+   ]
+  },
+  "producto/paso4": {
+   "alt": {
+    "en": "Rovaq Next best action card: prepare the claim package for a SKU, with the notice that nothing is sent. Example data.",
+    "es": "Tarjeta Siguiente mejor acción de Rovaq: preparar el paquete de reclamo de un SKU, con el aviso de que no se envía nada. Datos de ejemplo."
+   },
+   "alto": 454,
+   "ancho": 727,
+   "avif": [
+    {
+     "alto": 454,
+     "ancho": 727,
+     "bytes": 12390,
+     "sha256": "29cb66d4f5a9a92375593339d9cfaba5ef161298b542c9081edef07bd4960e54",
+     "url": "/s/img/producto/paso4-727.29cb66d4.avif"
+    }
+   ],
+   "bytes": 18596,
+   "sha256": "eb2ceba2b081fcf8ef1c61547f88f1b3d4f08b10a76574c31d353b583d6bb76d",
+   "tema": "oscuro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/paso4-727.eb2ceba2.webp",
+   "variantes": [
+    {
+     "alto": 454,
+     "ancho": 727,
+     "bytes": 18596,
+     "sha256": "eb2ceba2b081fcf8ef1c61547f88f1b3d4f08b10a76574c31d353b583d6bb76d",
+     "url": "/s/img/producto/paso4-727.eb2ceba2.webp"
     }
    ]
   },
@@ -1380,41 +1113,22 @@
  },
  "js": {
   "inicio.js": {
-   "brotli": 3849,
-   "bytes": 8973,
-   "fuenteBytes": 15918,
-   "hash": "58c8b7e9",
+   "brotli": 2791,
+   "bytes": 6385,
+   "fuenteBytes": 11379,
+   "hash": "8e7a9868",
    "modulo": true,
-   "sha256": "58c8b7e9d3db2bb79e4202c69923dee42a086e21f7644cbf77a625e11a6f2a28",
-   "url": "/s/inicio.58c8b7e9.js"
-  },
-  "lenis.js": {
-   "brotli": 3357,
-   "bytes": 13485,
-   "licencia": "MIT",
-   "modulo": false,
-   "sha256": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-   "url": "/vendor/lenis-1.1.13.min.js",
-   "vendor": true,
-   "version": "1.1.13"
-  },
-  "nube.js": {
-   "brotli": 8524,
-   "bytes": 21504,
-   "fuenteBytes": 33963,
-   "hash": "e99439f7",
-   "modulo": true,
-   "sha256": "e99439f710567e7e0dff236aae499728f3802f662309b2cad9e77818138e03e9",
-   "url": "/s/nube.e99439f7.js"
+   "sha256": "8e7a9868a1f90c19f2f2351c456b85b5528f942d1226abe24fe97ba1b599a63e",
+   "url": "/s/inicio.8e7a9868.js"
   },
   "sitio.js": {
-   "brotli": 2425,
-   "bytes": 6640,
-   "fuenteBytes": 11246,
-   "hash": "ee56346f",
+   "brotli": 2358,
+   "bytes": 6324,
+   "fuenteBytes": 11408,
+   "hash": "696665d5",
    "modulo": true,
-   "sha256": "ee56346f5277f74d5d3f799e546942a4572b208920d3264724cab21167afbab8",
-   "url": "/s/sitio.ee56346f.js"
+   "sha256": "696665d5024e1e811509d2e1afd5e39a19c3e6e3a4aedf8ff6db86c44fb4f7f8",
+   "url": "/s/sitio.696665d5.js"
   }
  },
  "md": {
@@ -1589,42 +1303,5 @@
    "url": "/s/fuentes/texto.9ed69688.woff2"
   }
  ],
- "pts": {
-  "hero": {
-   "brotli": 39987,
-   "bytes": 39983,
-   "puntos": 12000,
-   "sha256": "5044248984adc2c1fc5f96c85c15e8ce84f3bbe54c967959db19c80d607bfb39",
-   "url": "/s/pts/hero.50442489.pts"
-  },
-  "o1": {
-   "brotli": 31312,
-   "bytes": 31308,
-   "puntos": 9000,
-   "sha256": "4756b55b516c7d368122b74f864b4d43aebe6e18e795afd07fa3ed92f30593d7",
-   "url": "/s/pts/o1.4756b55b.pts"
-  },
-  "o2": {
-   "brotli": 31674,
-   "bytes": 31670,
-   "puntos": 9000,
-   "sha256": "d04f6171fbddd1e06f3cfaa5c2a2e5243ce242b33cb04e22cbe7a130b91b1557",
-   "url": "/s/pts/o2.d04f6171.pts"
-  },
-  "o3": {
-   "brotli": 27068,
-   "bytes": 27064,
-   "puntos": 9000,
-   "sha256": "6131f9c19d9e6fe2073da797bbe36843adb38348d89522b1b5291c671f98e1c7",
-   "url": "/s/pts/o3.6131f9c1.pts"
-  },
-  "o4": {
-   "brotli": 30476,
-   "bytes": 30472,
-   "puntos": 9000,
-   "sha256": "7ab8ac8deccaa46530d792b2106e89586feeb4f8edf61031bb779bc61f26e6ea",
-   "url": "/s/pts/o4.7ab8ac8d.pts"
-  }
- },
  "version": 1
 }

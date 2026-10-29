@@ -31,18 +31,12 @@ export default async function RaizSitio({children, params}: {children: ReactNode
   const {lang} = await params;
   if (!esLang(lang)) notFound();
   fijarIdioma(lang);
-  // Un solo script de módulo por página (sitio.js); inicio.js, nube.js y Lenis se piden tras reposo con las URL de estos atributos.
+  // Un solo script de módulo por página (sitio.js); inicio.js se pide tras reposo con la URL de este atributo.
   const sitio = existe('sitio.js') ? url('sitio.js') : null;
   for (const f of precargas()) preload(f.url, {as: 'font', type: f.type, crossOrigin: 'anonymous'});
   if (sitio) preloadModule(sitio, {as: 'script'});
   const datos: Record<string, string> = {};
   if (existe('inicio.js')) datos['data-inicio'] = url('inicio.js');
-  if (existe('nube.js')) datos['data-nube'] = url('nube.js');
-  if (existe('lenis.js')) datos['data-lenis'] = url('lenis.js');
-  const orbes: Record<string, string> = {};
-  if (existe('img/o1-orbe')) orbes.o1 = url('img/o1-orbe', {ancho: 192});
-  if (existe('img/hero-orbe')) orbes.hero = url('img/hero-orbe', {ancho: 192});
-  datos['data-orbes'] = JSON.stringify(orbes);
   datos['data-notas'] = JSON.stringify((textosPortada(lang) as unknown as {hilo?: {notas?: string[]}}).hilo?.notas ?? []);
   return (
     <html lang={lang}>

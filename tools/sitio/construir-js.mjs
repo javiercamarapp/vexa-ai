@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 // T13: tubería de JavaScript del sitio y ensamblado del manifest.
-//  1. Minifica con esbuild cada apps/web/src/sitio-js/{nube,sitio,inicio}.js que exista y lo escribe en
+//  1. Minifica con esbuild cada apps/web/src/sitio-js/{sitio,inicio}.js que exista y lo escribe en
 //     public/s/<nombre>.<hash8>.js (módulo ES del mismo origen, sin eval ni wasm, sin mapa de fuente).
-//  2. Registra Lenis 1.1.13 (public/vendor, con su SHA-256 del vendor.lock.json) en la sección js.
-//  3. Fusiona manifest-pts.json de T5 en la sección pts.
+//  2. Ya no hay bibliotecas vendoreadas (sin Lenis) ni nubes de puntos: scroll nativo y capturas reales del producto.
 // Contrato para T10: basta con dejar sitio.js e inicio.js en sitio-js/ y volver a correr este script; entran solos.
 // Los scripts no se importan entre sí por ruta: las URL con hash se leen del manifest (data-* o JSON en el marcado).
 //
@@ -26,7 +25,7 @@ const MANIFEST = join(PUB, 'manifest.json');
 const BUILD = process.env.SITIO_BUILD_DIR || join(homedir(), 'vexa-tools', 'sitio-build');
 const esbuild = createRequire(join(BUILD, 'package.json'))('esbuild');
 
-const SCRIPTS = ['nube', 'sitio', 'inicio'];
+const SCRIPTS = ['sitio', 'inicio'];
 const sha = (b) => createHash('sha256').update(b).digest('hex');
 const brotli = (b) => brotliCompressSync(b, {params: {[zc.BROTLI_PARAM_QUALITY]: 11}}).length;
 const PROHIBIDO = [/\beval\s*\(/, /new\s+Function\s*\(/, /WebAssembly/, /importScripts/, /document\.write\s*\(/];
@@ -61,29 +60,9 @@ async function construirScripts() {
   return {salida, clave, pendientes};
 }
 
-function lenis() {
-  const lock = JSON.parse(readFileSync(join(VENDOR, 'vendor.lock.json'), 'utf8')).archivos.find((a) => a.nombre === 'lenis');
-  if (!lock) throw new Error('VENDOR_LENIS_FALTA en vendor.lock.json');
-  const buf = readFileSync(join(VENDOR, lock.archivo));
-  if (sha(buf) !== lock.sha256) throw new Error(`VENDOR_HASH_DISTINTO ${lock.archivo}`);
-  return {'lenis.js': {url: `/vendor/${lock.archivo}`, bytes: buf.length, brotli: brotli(buf), sha256: lock.sha256, version: lock.version, licencia: lock.licencia, vendor: true, modulo: false}};
-}
-
-function puntos() {
-  const m = JSON.parse(readFileSync(join(PUB, 'pts', 'manifest-pts.json'), 'utf8'));
-  const r = {};
-  for (const [id, e] of Object.entries(m)) {
-    const buf = readFileSync(join(PUB, 'pts', e.archivo));
-    if (sha(buf) !== e.sha256) throw new Error(`PTS_HASH_DISTINTO ${e.archivo}`);
-    r[id] = {url: `/s/pts/${e.archivo}`, bytes: e.bytes, brotli: e.brotli, sha256: e.sha256, puntos: e.puntos};
-  }
-  return r;
-}
-
 async function main() {
   const {salida, clave, pendientes} = await construirScripts();
-  const js = {...clave, ...lenis()};
-  const pts = puntos();
+  const js = {...clave};
   if (process.argv.includes('--verificar')) {
     let mal = 0;
     for (const [n, buf] of salida) if (!existsSync(join(PUB, n)) || sha(readFileSync(join(PUB, n))) !== sha(buf)) { console.error('DIFIERE', n); mal++; }
@@ -98,9 +77,9 @@ async function main() {
   const man = existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, 'utf8')) : {version: 1};
   man.version = 1;
   man.js = js;
-  man.pts = pts;
+  delete man.pts;
   man.md = man.md ?? {}; // T2 llena la sección md
-  man.auxiliares = ['fuentes/LICENCIAS.txt', 'pts/manifest-pts.json']; // archivos de public/s que no se sirven por clave pero van con los activos
+  man.auxiliares = ['fuentes/LICENCIAS.txt']; // archivos de public/s que no se sirven por clave pero van con los activos
   escribirJson(MANIFEST, man);
   for (const [k, e] of Object.entries(js)) console.log(`${k.padEnd(14)} ${String(e.bytes).padStart(7)} B  brotli ${String(e.brotli).padStart(6)} B  ${e.url}`);
   if (pendientes.length) console.log(`pendientes (aún no existen en src/sitio-js): ${pendientes.join(', ')}`);

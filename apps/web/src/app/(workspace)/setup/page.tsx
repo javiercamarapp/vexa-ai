@@ -1,3 +1,4 @@
 import {SetupPantalla} from '../../../components/onboarding/setup-pantalla';
-export const metadata={title:'Configuración'};
+import {metaTitulo} from '../../../lib/i18n/titulo';
+export const generateMetadata=()=>metaTitulo('meta.titulo.setup');
 export default function Page(){return <SetupPantalla/>;}

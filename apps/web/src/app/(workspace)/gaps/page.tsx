@@ -3,7 +3,8 @@ import {Empty} from '../../../components/platform/primitives';
 import {PageHeader} from '../../../components/ui/page-header';
 import {LinkButton} from '../../../components/ui/button';
 import {allowed,cfoAccessForPage} from '../cfo/_lib/access';
-export const metadata={title:'Brechas de ingreso'};
+import {metaTitulo} from '../../../lib/i18n/titulo';
+export const generateMetadata=()=>metaTitulo('meta.titulo.gaps');
 export const dynamic='force-dynamic';
 type Search=Promise<Record<string,string|string[]|undefined>>;
 export default async function Page({searchParams}:{searchParams:Search}){

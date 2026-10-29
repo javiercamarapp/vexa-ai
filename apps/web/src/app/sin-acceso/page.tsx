@@ -7,7 +7,8 @@ import {idiomaActual} from '../../lib/i18n/servidor';
 import {traductor} from '../../lib/i18n';
 import './sin-acceso.css';
 import {ROBOTS_PRIVADO} from '../../lib/site.mjs';
-export const metadata = {title: 'Sin acceso a una organización', robots: ROBOTS_PRIVADO};
+import {metaTitulo} from '../../lib/i18n/titulo';
+export const generateMetadata=()=>metaTitulo('meta.titulo.sin-acceso',{robots: ROBOTS_PRIVADO});
 export const dynamic = 'force-dynamic';
 type Invitaciones = {pending: Invitacion[]; expired: InvitacionVencida[]};
 /**

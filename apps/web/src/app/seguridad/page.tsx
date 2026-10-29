@@ -7,7 +7,8 @@ import {LinkButton} from '../../components/ui/button';
 import {Notice} from '../../components/ui/notice';
 import './seguridad.css';
 import {ROBOTS_PRIVADO} from '../../lib/site.mjs';
-export const metadata = {title: 'Seguridad de la cuenta', robots: ROBOTS_PRIVADO};
+import {metaTitulo} from '../../lib/i18n/titulo';
+export const generateMetadata=()=>metaTitulo('meta.titulo.seguridad',{robots: ROBOTS_PRIVADO});
 export const dynamic = 'force-dynamic';
 /** Verificación en dos pasos (TOTP) de los administradores de plataforma. Fuera del layout de /platform para no bloquearse a sí misma cuando la exigencia esté encendida. */
 const FIXTURES = process.env.NODE_ENV === 'development' && process.env.VEXA_UI_FIXTURES === '1';

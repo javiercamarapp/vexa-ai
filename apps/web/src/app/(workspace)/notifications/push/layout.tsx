@@ -1,3 +1,4 @@
 import type {ReactNode} from 'react';
-export const metadata={title:'Avisos en el navegador'};
+import {metaTitulo} from '../../../../lib/i18n/titulo';
+export const generateMetadata=()=>metaTitulo('meta.titulo.notifications-push');
 export default function Layout({children}:{children:ReactNode}){return children;}

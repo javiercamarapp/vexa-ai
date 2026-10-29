@@ -5,7 +5,8 @@ import {Empty} from '../../../components/platform/primitives';
 import {PageHeader} from '../../../components/ui/page-header';
 import {LinkButton} from '../../../components/ui/button';
 import {allowed,cfoAccessForPage} from '../cfo/_lib/access';
-export const metadata={title:'Puntos de dolor'};
+import {metaTitulo} from '../../../lib/i18n/titulo';
+export const generateMetadata=()=>metaTitulo('meta.titulo.pain-points');
 export const dynamic='force-dynamic';
 type Search=Promise<Record<string,string|string[]|undefined>>;
 // Dinero: solo propietarios y analistas (igual que el menú); el servidor vuelve a comprobarlo en /api/pain-points.

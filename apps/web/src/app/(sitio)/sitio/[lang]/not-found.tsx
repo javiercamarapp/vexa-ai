@@ -7,8 +7,8 @@ export default function NoEncontrada() {
   return (
     <main>
       <h1>No encontramos esta página</h1>
-      <p><Link href="/">Ir al inicio</Link></p>
-      <p lang="en">Page not found. <Link href="/en" hrefLang="en">Go to the English site</Link>.</p>
+      <p><Link prefetch={false} href="/">Ir al inicio</Link></p>
+      <p lang="en">Page not found. <Link prefetch={false} href="/en" hrefLang="en">Go to the English site</Link>.</p>
     </main>
   );
 }

@@ -64,7 +64,7 @@ test('el middleware de auth no intercepta robots, sitemap, manifest, íconos ni 
     assert.equal(rutaConAutenticacion(ruta),false,ruta+' pasaría por el middleware de auth');
   const m=leer('src/middleware.ts');
   assert.match(m,/decidirHost\(/);assert.match(m,/if\(!rutaConAutenticacion\(path\)\)return NextResponse\.next\(\)/);
-  assert.match(m,/matcher:\s*\['\/\(\(\?!_next\/static\|_next\/image\|fonts\/\|brand\/\|images\/\|vendor\/\|landing\/\.\+\\\\\.\)\.\*\)'\]/);
+  assert.match(m,/matcher:\s*\[\{\s*source:\s*'\/\(\(\?!_next\/static\|_next\/image\|fonts\/\|brand\/\|images\/\|vendor\/\|s\/\)\.\*\)',\s*missing:\s*\[\{\s*type:\s*'header',\s*key:\s*'host',\s*value:\s*'\(www\\\\\.\)\?rovaq\\\\\.ai'/);
 });
 test('landing: robots y sitemap por host (rovaq.ai solo anuncia la landing), canonical propio y la app sigue sin listar la raíz', () => {
   const r=leer('src/app/robots.ts'),s=leer('src/app/sitemap.ts');
@@ -133,7 +133,8 @@ test('títulos de pestaña: toda pantalla del menú tiene título propio, único
   // Toda página (no solo las del menú) declara título, directo o en su layout.
   const paginas=d=>readdirSync(d).flatMap(n=>{const p=join(d,n);return statSync(p).isDirectory()?paginas(p):n==='page.tsx'?[p]:[];});
   const sin=paginas(src).filter(f=>{const s=readFileSync(f,'utf8');if(/metadata|generateMetadata/i.test(s))return false;const l=join(f,'..','layout.tsx');return !(existsSync(l)&&/metadata|metaTitulo|metadatosPublicos/.test(readFileSync(l,'utf8')));}).map(f=>f.replace(src+'/',''));
-  assert.deepEqual(sin.filter(f=>f!=='page.tsx'),[],'páginas sin título: '+sin.join(', '));
+  // El catch-all solo llama a notFound(): el título lo pone el not-found de la app.
+  assert.deepEqual(sin.filter(f=>f!=='page.tsx'&&f!=='[...rest]/page.tsx'),[],'páginas sin título: '+sin.join(', '));
 });
 test('páginas de error de marca: noindex, logo y salida a Hoy; «use client» primero', () => {
   const nf=leer('src/app/(app)/not-found.tsx'),ge=leer('src/app/global-error.tsx'),er=leer('src/app/(app)/error.tsx');

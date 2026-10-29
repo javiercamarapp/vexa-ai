@@ -1,14 +1,20 @@
-// Enrutamiento por host: decisión pura y middleware real. rovaq.ai sirve la landing, app.rovaq.ai queda igual y los hosts antiguos de Vercel redirigen en producción.
+// Enrutamiento por host: decisión pura (decidirHost) y middleware real. rovaq.ai sirve el sitio estático (español sin prefijo, inglés bajo /en), www redirige
+// al apex, rutas de la aplicación en rovaq.ai van a app.rovaq.ai, lo desconocido da 404 propio y los hosts antiguos de Vercel redirigen en producción.
+// Las reglas de configuración (reglasNext) y el matcher se prueban en host-routing-reglas.test.mjs; aquí, los casos por host.
 import {test, afterEach} from 'node:test';
 import assert from 'node:assert/strict';
 import {NextRequest} from 'next/server';
 import {middleware} from '../src/middleware';
-import {decidirHost, normalizarHost, rutaConAutenticacion, rutaSiempreAbierta, esActivoPublico, ORIGEN_APP} from '../src/lib/host-routing.mjs';
+import {decidirHost, normalizarHost, rutaConAutenticacion, rutaSiempreAbierta, esActivoPublico, rutaPublicaDeInterna, destinoInterno, RUTAS_APP, ORIGEN_APP} from '../src/lib/host-routing.mjs';
+import {PAGINAS, RUTAS} from '../src/content/sitio/registro.mjs';
 
 const guardado = {...process.env};
 afterEach(() => { for (const k of ['VERCEL_ENV', 'NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_ANON_KEY']) { if (guardado[k] === undefined) delete process.env[k]; else process.env[k] = guardado[k]; } });
 const dec = (host: string, pathname: string, search = '', produccion = false) => decidirHost({host, pathname, search, produccion});
 const pet = (host: string, ruta: string, extra: Record<string, string> = {}) => new NextRequest('https://' + host + ruta, {headers: {host, ...extra}});
+const rw = (destino: string) => ({tipo: 'reescribir', destino});
+const rd = (url: string) => ({tipo: 'redirigir', url, status: 308});
+const nf = (destino: string) => ({tipo: 'reescribir', destino, noEncontrada: true});
 
 test('normalizarHost: minúsculas, sin puerto ni punto final, primer valor de proxies', () => {
   assert.equal(normalizarHost('ROVAQ.AI:443'), 'rovaq.ai');
@@ -16,86 +22,189 @@ test('normalizarHost: minúsculas, sin puerto ni punto final, primer valor de pr
   assert.equal(normalizarHost('www.rovaq.ai, otro.example'), 'www.rovaq.ai');
   assert.equal(normalizarHost(null), '');
 });
-test('rovaq.ai y www: la raíz se reescribe a la landing; /landing vuelve a la raíz', () => {
-  for (const h of ['rovaq.ai', 'www.rovaq.ai']) {
-    assert.deepEqual(dec(h, '/'), {tipo: 'reescribir', destino: '/landing'});
-    assert.deepEqual(dec(h, '/landing', '?lang=es'), {tipo: 'redirigir', url: '/?lang=es', status: 308});
+
+// ---- rovaq.ai: tabla de casos escrita a mano (la expectativa no usa las funciones que se prueban) -----------------------------------------------
+const TABLA_SITIO: [string, string, object][] = [
+  ['/', '', rw('/sitio/es')],
+  ['/', '?utm=1', rw('/sitio/es')],
+  ['/en', '', rw('/sitio/en')],
+  ['/en/', '', rd('/en')],
+  ['/producto', '', rw('/sitio/es/producto')],
+  ['/producto/', '?a=1', rd('/producto?a=1')],
+  ['/producto/hoy', '', rw('/sitio/es/producto/hoy')],
+  ['/producto/fuga-de-reembolsos', '', rw('/sitio/es/producto/fuga-de-reembolsos')],
+  ['/en/product', '', rw('/sitio/en/product')],
+  ['/en/product/today', '', rw('/sitio/en/product/today')],
+  ['/en/product/refund-leakage', '', rw('/sitio/en/product/refund-leakage')],
+  ['/casos-de-uso', '', rw('/sitio/es/casos-de-uso')],
+  ['/casos-de-uso/lector', '', rw('/sitio/es/casos-de-uso/lector')],
+  ['/en/use-cases/viewer', '', rw('/sitio/en/use-cases/viewer')],
+  ['/seguridad-y-privacidad', '', rw('/sitio/es/seguridad-y-privacidad')],
+  ['/en/security-and-privacy', '', rw('/sitio/en/security-and-privacy')],
+  ['/blog', '', rw('/sitio/es/blog')],
+  ['/en/blog', '', rw('/sitio/en/blog')],
+  ['/blog/un-puesto-una-vista', '', rw('/sitio/es/blog/un-puesto-una-vista')],
+  ['/solicitar-acceso', '?x=1&y=dos', rw('/sitio/es/solicitar-acceso')],
+  ['/sitio/es', '', rd('/')],
+  ['/sitio/es/', '', rd('/')],
+  ['/sitio/es/producto', '?a=1', rd('/producto?a=1')],
+  ['/sitio/en', '', rd('/en')],
+  ['/sitio/en/product/today', '', rd('/en/product/today')],
+  ['/landing', '?lang=es', rd('/?lang=es')],
+  ['/landing/', '', rd('/')],
+  ['/landing/en', '?x=1', rd('/en?x=1')],
+  ['/landing/en/', '', rd('/en')],
+  ['/login', '', rd('https://app.rovaq.ai/login')],
+  ['/overview', '?periodo=30d&x=1', rd('https://app.rovaq.ai/overview?periodo=30d&x=1')],
+  ['/overview/abc', '', rd('https://app.rovaq.ai/overview/abc')],
+  ['/auth/callback', '?code=abc', rd('https://app.rovaq.ai/auth/callback?code=abc')],
+  ['/platform', '', rd('https://app.rovaq.ai/platform')],
+  ['/platform/organizaciones', '', rd('https://app.rovaq.ai/platform/organizaciones')],
+  ['/seguridad', '', rd('https://app.rovaq.ai/seguridad')],
+  ['/sin-acceso', '', rd('https://app.rovaq.ai/sin-acceso')],
+  ['/cfo/data/report', '', rd('https://app.rovaq.ai/cfo/data/report')],
+  ['/problems/12', '', rd('https://app.rovaq.ai/problems/12')],
+  ['/settings/team', '', rd('https://app.rovaq.ai/settings/team')],
+  ['/api/briefs/1/export', '', rd('https://app.rovaq.ai/api/briefs/1/export')],
+  ['/api', '', rd('https://app.rovaq.ai/api')],
+  ['/api/health', '', rd('https://app.rovaq.ai/api/health')],
+  ['/api/internals', '', rd('https://app.rovaq.ai/api/internals')],
+  ['/api/health/version/x', '', rd('https://app.rovaq.ai/api/health/version/x')],
+  ['/api/health/version', '', {tipo: 'activo'}],
+  ['/api/internal', '', {tipo: 'activo'}],
+  ['/api/internal/cron/sync', '', {tipo: 'activo'}],
+  ['/api/webhooks/hubspot', '', {tipo: 'activo'}],
+  ['/robots.txt', '', {tipo: 'activo'}],
+  ['/sitemap.xml', '', {tipo: 'activo'}],
+  ['/favicon.ico', '', {tipo: 'activo'}],
+  ['/icon-192.png', '', {tipo: 'activo'}],
+  ['/opengraph-image', '', {tipo: 'activo'}],
+  ['/s/nube.ab12cd34.js', '', {tipo: 'activo'}],
+  ['/s/pts/hero.3b1a371a.pts', '', {tipo: 'activo'}],
+  ['/vendor/lenis-1.1.13.min.js', '', {tipo: 'activo'}],
+  ['/fonts/hankengrotesk-600.woff2', '', {tipo: 'activo'}],
+  ['/.well-known/security.txt', '', {tipo: 'activo'}],
+  ['/llms.txt', '', {tipo: 'activo'}],
+  ['/en/llms.txt', '', {tipo: 'activo'}],
+  ['/blog/rss.xml', '', {tipo: 'activo'}],
+  ['/pagina-que-no-existe', '', nf('/sitio/es/pagina-que-no-existe')],
+  ['/producto/no-existe', '', nf('/sitio/es/producto/no-existe')],
+  ['/en/nope', '', nf('/sitio/en/nope')],
+  ['/en/product/nope', '', nf('/sitio/en/product/nope')],
+  ['/es', '', nf('/sitio/es/es')],
+  ['/EN', '', nf('/sitio/es/EN')],
+  ['/s', '', nf('/sitio/es/s')],
+  ['/s/', '', nf('/sitio/es/s')],
+  ['/vendor/x', '', nf('/sitio/es/vendor/x')],
+  ['/s/../login', '', nf('/sitio/es/s/../login')],
+  ['/sitio', '', nf('/sitio/es/sitio')],
+  ['/sitio/fr', '', nf('/sitio/es/sitio/fr')],
+  ['/loginx', '', nf('/sitio/es/loginx')],
+  ['/overviews', '', nf('/sitio/es/overviews')],
+];
+test(`rovaq.ai: ${TABLA_SITIO.length} casos escritos a mano (sitio, redirecciones, app, activos y 404 propio)`, () => {
+  assert.ok(TABLA_SITIO.length >= 60);
+  for (const h of ['rovaq.ai', 'ROVAQ.AI', 'rovaq.ai:443', 'rovaq.ai.'])
+    for (const [ruta, search, esperado] of TABLA_SITIO) assert.deepEqual(dec(h, ruta, search), esperado, `${h} ${ruta}${search}`);
+});
+test('rovaq.ai: las 68 rutas del registro (34 páginas por idioma) se reescriben a /sitio/<lang>/... con la expectativa escrita aparte', () => {
+  assert.equal(RUTAS.length, 68);
+  for (const p of PAGINAS) {
+    const es = p.es.ruta, en = p.en.ruta;
+    assert.deepEqual(dec('rovaq.ai', es), rw(es === '/' ? '/sitio/es' : '/sitio/es' + es), p.id + ' es');
+    assert.deepEqual(dec('rovaq.ai', en), rw(en === '/en' ? '/sitio/en' : '/sitio/en' + en.slice(3)), p.id + ' en');
+    if (es !== '/') assert.deepEqual(dec('rovaq.ai', es + '/', '?q=1'), rd(es + '?q=1'), p.id + ' barra final es');
+    assert.ok(en === '/en' || en.startsWith('/en/'), p.id + ' inglés bajo /en');
+    assert.ok(es === '/' || !es.startsWith('/en'), p.id + ' español sin prefijo');
   }
 });
-test('rovaq.ai: cualquier otra ruta redirige 308 a app.rovaq.ai con el mismo path y query', () => {
-  assert.deepEqual(dec('rovaq.ai', '/login'), {tipo: 'redirigir', url: ORIGEN_APP + '/login', status: 308});
-  assert.deepEqual(dec('www.rovaq.ai', '/overview', '?periodo=30d&x=1'), {tipo: 'redirigir', url: 'https://app.rovaq.ai/overview?periodo=30d&x=1', status: 308});
-  assert.deepEqual(dec('rovaq.ai', '/auth/callback', '?code=abc'), {tipo: 'redirigir', url: 'https://app.rovaq.ai/auth/callback?code=abc', status: 308});
-  assert.equal(dec('rovaq.ai', '/api/briefs/1/export').tipo, 'redirigir');
-});
-test('rovaq.ai: fuentes, marca, íconos, imágenes sociales, robots y sitemap se sirven sin redirigir', () => {
-  for (const r of ['/_next/static/chunks/a.js', '/_next/image', '/fonts/hankengrotesk-600.woff2', '/brand/rovaq-logo-horizontal-positivo.svg', '/images/login-hero.png', '/favicon.ico', '/favicon.svg', '/favicon-32x32.png', '/icon-192.png', '/icon-maskable-512.png', '/apple-touch-icon.png', '/site.webmanifest', '/robots.txt', '/sitemap.xml', '/opengraph-image', '/twitter-image', '/humans.txt', '/.well-known/security.txt'])
-    assert.equal(dec('rovaq.ai', r).tipo, 'activo', r);
-  assert.equal(esActivoPublico('/overview'), false);
-  assert.equal(esActivoPublico('/icon-evil.js'), false);
-});
-test('rovaq.ai: español sin prefijo e inglés bajo /en, con /landing y /landing/en redirigiendo a la URL pública', () => {
-  for (const h of ['rovaq.ai', 'www.rovaq.ai', 'ROVAQ.AI:443']) {
-    assert.deepEqual(dec(h, '/en'), {tipo: 'reescribir', destino: '/landing/en'});
-    assert.deepEqual(dec(h, '/en/'), {tipo: 'reescribir', destino: '/landing/en'});
-    assert.deepEqual(dec(h, '/landing/en', '?x=1'), {tipo: 'redirigir', url: '/en?x=1', status: 308});
-    assert.deepEqual(dec(h, '/landing/en/'), {tipo: 'redirigir', url: '/en', status: 308});
-    assert.deepEqual(dec(h, '/landing/'), {tipo: 'redirigir', url: '/', status: 308});
+test('rovaq.ai: la expectativa del 404 propio es una reescritura, nunca una redirección a la aplicación', () => {
+  for (const r of ['/xyz', '/a/b/c', '/en/xyz', '/robots', '/producto/hoy/extra', '/blog/articulo-inventado']) {
+    const d = dec('rovaq.ai', r) as {tipo: string; noEncontrada?: boolean};
+    assert.equal(d.tipo, 'reescribir', r); assert.equal(d.noEncontrada, true, r);
   }
-  for (const r of ['/EN', '/en/otra', '/en/product', '/es']) assert.equal(dec('rovaq.ai', r).tipo, 'redirigir', r);
 });
-test('rovaq.ai: /vendor y /landing/<archivo> se sirven como activos (antes redirigían 308 a la app y la escena 3D no cargaba)', () => {
-  for (const r of ['/vendor/gsap-3.13.0.min.js', '/vendor/ScrollTrigger-3.13.0.min.js', '/vendor/lenis-1.1.13.min.js', '/landing/nube.js', '/landing/escena.js', '/landing/pts/nucleo.ab12cd34.pts', '/landing/3d/nucleo.glb', '/landing/objeto-1.webp', '/landing/pts/manifest.json'])
-    for (const h of ['rovaq.ai', 'www.rovaq.ai']) assert.deepEqual(dec(h, r), {tipo: 'activo'}, h + r);
-  for (const r of ['/vendor', '/vendor/', '/vendor/x', '/landing/x', '/landing/../login', '/landing/a/../../overview.js', '/vendorx/a.js', '/landingx/a.js'])
-    assert.equal(dec('rovaq.ai', r).tipo, 'redirigir', r);
-  assert.equal(esActivoPublico('/vendor/a.js'), true); assert.equal(esActivoPublico('/landing'), false); assert.equal(esActivoPublico('/landing/en'), false);
+test('rovaq.ai: activo no depende de la autenticación; esActivoPublico rechaza rutas de la app y trucos', () => {
+  for (const r of ['/overview', '/icon-evil.js', '/vendor', '/vendor/', '/vendor/x', '/s', '/s/x', '/vendorx/a.js', '/sx/a.js', '/s/../x.js', '/landing/nube.js'])
+    assert.equal(esActivoPublico(r), false, r);
+  for (const r of ['/vendor/lenis-1.1.13.min.js', '/s/a.b.js', '/s/pts/x.pts', '/s/img/o.webp', '/favicon-32x32.png', '/icon-maskable-512.png']) assert.equal(esActivoPublico(r), true, r);
 });
-test('el matcher del middleware excluye /vendor y los archivos de /landing, pero no las páginas /landing ni /landing/en', async () => {
-  const fuente = (await import('node:fs')).readFileSync(new URL('../src/middleware.ts', import.meta.url), 'utf8');
-  const m = /matcher:\s*\['([^']+)'\]/.exec(fuente)!; const re = new RegExp('^' + m[1].replace(/\\\\/g, '\\') + '$');
-  for (const r of ['/vendor/gsap-3.13.0.min.js', '/landing/escena.js', '/landing/pts/a.pts', '/landing/3d/a.glb', '/_next/static/a.js', '/fonts/a.woff2']) assert.equal(re.test(r), false, 'excluido ' + r);
-  for (const r of ['/', '/en', '/landing', '/landing/en', '/overview', '/login', '/api/x']) assert.equal(re.test(r), true, 'pasa por middleware ' + r);
+
+// ---- www: todo redirige al apex ----------------------------------------------------------------------------------------------------------------
+test('www.rovaq.ai: 308 al apex conservando ruta y consulta, para todo (sitio, app, activos y desconocidas)', () => {
+  const rutas = [...RUTAS, '/login', '/overview', '/api/x', '/api/health/version', '/robots.txt', '/s/a.js', '/vendor/a.js', '/zzz', '/sitio/es', '/landing', '/sin-acceso'];
+  assert.ok(rutas.length >= 70);
+  for (const h of ['www.rovaq.ai', 'WWW.ROVAQ.AI:443'])
+    for (const r of rutas) {
+      assert.deepEqual(dec(h, r), rd('https://rovaq.ai' + r), h + r);
+      assert.deepEqual(dec(h, r, '?a=1&b=2'), rd('https://rovaq.ai' + r + '?a=1&b=2'), h + r + ' con consulta');
+    }
 });
-test('middleware real en rovaq.ai: /en reescribe, los activos pasan sin redirigir y lo demás va a la app', async () => {
-  const en = await middleware(pet('rovaq.ai', '/en?x=1')); assert.equal(en.status, 200); assert.match(en.headers.get('x-middleware-rewrite') ?? '', /\/landing\/en\?x=1/);
-  for (const r of ['/vendor/gsap-3.13.0.min.js', '/landing/pts/a.pts', '/landing/3d/a.glb', '/landing/escena.js']) { const x = await middleware(pet('rovaq.ai', r)); assert.equal(x.status, 200, r); assert.equal(x.headers.get('location'), null, r); }
-  const login = await middleware(pet('rovaq.ai', '/login')); assert.equal(login.status, 308); assert.equal(login.headers.get('location'), 'https://app.rovaq.ai/login');
+
+// ---- app.rovaq.ai, hosts antiguos, vistas previas y desarrollo ---------------------------------------------------------------------------------
+test('app.rovaq.ai sin cambio en cualquier ruta de la aplicación, también en producción', () => {
+  const rutas = ['/', '/login', '/overview', '/overview/x', '/problems', '/problems/1', '/customers', '/briefs/2', '/cfo', '/cfo/data/report', '/platform', '/platform/organizaciones', '/seguridad', '/sin-acceso', '/auth/callback', '/auth/logout',
+    '/api/x', '/api/health/version', '/api/internal/cron', '/api/webhooks/a', '/settings/team', '/workload', '/pain-points', '/economics', '/robots.txt', '/sitemap.xml', '/opengraph-image', '/favicon.ico', '/fonts/a.woff2', '/_next/static/a.js',
+    '/producto', '/en', '/en/product', '/landing', '/ruta-desconocida', '/s/a.js', '/vendor/a.js'];
+  assert.ok(rutas.length >= 36);
+  for (const prod of [false, true]) for (const r of rutas) assert.deepEqual(dec('app.rovaq.ai', r, '?a=1', prod), {tipo: 'pasar'}, `app ${r} produccion=${prod}`);
+});
+test('app.rovaq.ai: /sitio/... pasa en local y en vistas previas y redirige a rovaq.ai solo en producción', () => {
+  for (const r of ['/sitio/es', '/sitio/es/producto', '/sitio/en', '/sitio/en/product/today', '/sitio', '/sitio/zz']) assert.deepEqual(dec('app.rovaq.ai', r), {tipo: 'pasar'}, r);
+  assert.deepEqual(dec('app.rovaq.ai', '/sitio/es', '', true), rd('https://rovaq.ai/'));
+  assert.deepEqual(dec('app.rovaq.ai', '/sitio/es/producto', '?a=1', true), rd('https://rovaq.ai/producto?a=1'));
+  assert.deepEqual(dec('app.rovaq.ai', '/sitio/en', '', true), rd('https://rovaq.ai/en'));
+  assert.deepEqual(dec('app.rovaq.ai', '/sitio/en/product/today', '', true), rd('https://rovaq.ai/en/product/today'));
+  assert.deepEqual(dec('app.rovaq.ai', '/sitio', '', true), rd('https://rovaq.ai/'));
+  assert.deepEqual(dec('app.rovaq.ai', '/sitio/zz', '', true), rd('https://rovaq.ai/'));
+  assert.deepEqual(dec('app.rovaq.ai', '/sitiox', '', true), {tipo: 'pasar'});
 });
 test('endpoints abiertos en cualquier host: /api/health/version, /api/internal y /api/webhooks', () => {
   for (const r of ['/api/health/version', '/api/internal', '/api/internal/cron/sync', '/api/webhooks', '/api/webhooks/hubspot']) { assert.equal(rutaSiempreAbierta(r), true, r); assert.equal(dec('rovaq.ai', r).tipo, 'activo', 'rovaq.ai ' + r); assert.equal(dec('vexa-ai.vercel.app', r, '', true).tipo, 'activo', 'vexa-ai ' + r); assert.equal(dec('rovaq-ai.vercel.app', r, '', true).tipo, 'activo', 'rovaq-ai ' + r); }
   for (const r of ['/api/health', '/api/health/version/x', '/api/internals', '/api/webhooksx', '/api/auth']) assert.equal(rutaSiempreAbierta(r), false, r);
 });
 test('hosts antiguos de Vercel en producción: 308 a app.rovaq.ai conservando path y query, salvo los endpoints abiertos', () => {
-  for (const h of ['rovaq-ai.vercel.app', 'vexa-ai.vercel.app']) {
-    assert.deepEqual(dec(h, '/', '', true), {tipo: 'redirigir', url: 'https://app.rovaq.ai/', status: 308});
-    assert.deepEqual(dec(h, '/overview', '?a=1&b=dos', true), {tipo: 'redirigir', url: 'https://app.rovaq.ai/overview?a=1&b=dos', status: 308});
-    assert.deepEqual(dec(h.toUpperCase(), '/login', '', true), {tipo: 'redirigir', url: 'https://app.rovaq.ai/login', status: 308});
-    assert.equal(dec(h, '/overview', '', false).tipo, 'pasar', 'fuera de producción no redirige');
-  }
+  const rutas = ['/', '/overview', '/login', '/producto', '/en', '/sitio/es', '/problems/3', '/auth/callback', '/robots.txt', '/s/a.js', '/zzz'];
+  for (const h of ['rovaq-ai.vercel.app', 'vexa-ai.vercel.app', 'VEXA-AI.VERCEL.APP'])
+    for (const r of rutas) {
+      assert.deepEqual(dec(h, r, '?a=1&b=dos', true), rd(ORIGEN_APP + r + '?a=1&b=dos'), h + r);
+      assert.equal(dec(h, r, '', false).tipo, 'pasar', 'fuera de producción no redirige ' + h + r);
+    }
 });
-test('app.rovaq.ai, desarrollo y vistas previas: sin cambio', () => {
-  for (const h of ['app.rovaq.ai', 'localhost:3000', 'vexa-ai-git-rama-equipo.vercel.app', 'rovaq.ai.evil.example', 'notrovaq.ai'])
-    for (const r of ['/', '/login', '/overview', '/landing', '/api/x']) assert.equal(dec(h, r, '', true).tipo, 'pasar', h + r);
+test('desarrollo, vistas previas y hosts parecidos: sin cambio', () => {
+  for (const h of ['localhost:3000', '127.0.0.1:3911', 'vexa-ai-git-rama-equipo.vercel.app', 'rovaq.ai.evil.example', 'notrovaq.ai', 'rovaq.ai.mx', 'app.rovaq.ai.evil.example', 'sub.rovaq.ai', 'evilrovaq.ai', ''])
+    for (const r of ['/', '/login', '/overview', '/producto', '/landing', '/api/x', '/sitio/es']) assert.equal(dec(h, r, '', true).tipo, 'pasar', h + r);
+});
+
+// ---- contratos de las funciones auxiliares ------------------------------------------------------------------------------------------------------
+test('rutaPublicaDeInterna y destinoInterno son inversas para las rutas del registro', () => {
+  for (const r of RUTAS) assert.equal(rutaPublicaDeInterna(destinoInterno(r)), r, r);
+  assert.equal(rutaPublicaDeInterna('/sitio'), null); assert.equal(rutaPublicaDeInterna('/sitio/fr'), null); assert.equal(rutaPublicaDeInterna('/sitio/esx'), null); assert.equal(rutaPublicaDeInterna('/producto'), null);
+});
+test('RUTAS_APP: sin /api (tiene su excepción) y con /login', () => {
+  assert.ok(!RUTAS_APP.includes('/api')); assert.ok(RUTAS_APP.includes('/login')); assert.ok(RUTAS_APP.includes('/platform'));
 });
 test('rutaConAutenticacion conserva exactamente la lista anterior del matcher', () => {
   for (const r of ['/', '/seguridad', '/sin-acceso', '/login', '/api', '/api/x/y', '/platform', '/platform/z', '/cfo', '/cfo/data', '/auth', '/auth/callback', '/overview/a', '/problems', '/customers/1', '/recommendations', '/explorer', '/preguntale', '/interventions', '/briefs/2']) assert.equal(rutaConAutenticacion(r), true, r);
   for (const r of ['/landing', '/robots.txt', '/sitemap.xml', '/site.webmanifest', '/opengraph-image', '/twitter-image', '/favicon.ico', '/.well-known/security.txt', '/humans.txt', '/login/x', '/seguridad/x', '/mapa', '/settings', '/workload', '/confianza']) assert.equal(rutaConAutenticacion(r), false, r);
 });
 
-test('middleware: rovaq.ai/ reescribe a /landing conservando la consulta', async () => {
+// ---- middleware real (respaldo Fase B en rovaq.ai y comportamiento en los demás hosts) ---------------------------------------------------------------------
+test('middleware (respaldo): rovaq.ai/ reescribe a /sitio/es y /en a /sitio/en conservando la consulta, sin cabecera x-rovaq-lang', async () => {
   const r = await middleware(pet('rovaq.ai', '/?lang=es'));
-  assert.equal(r.status, 200);
-  assert.match(r.headers.get('x-middleware-rewrite') ?? '', /^https:\/\/rovaq\.ai\/landing\?lang=es$/);
+  assert.equal(r.status, 200); assert.match(r.headers.get('x-middleware-rewrite') ?? '', /^https:\/\/rovaq\.ai\/sitio\/es\?lang=es$/);
+  const en = await middleware(pet('rovaq.ai', '/en?x=1'));
+  assert.match(en.headers.get('x-middleware-rewrite') ?? '', /^https:\/\/rovaq\.ai\/sitio\/en\?x=1$/);
+  assert.ok(![...r.headers.keys()].some((k) => /x-rovaq-lang/i.test(k)));
 });
-test('middleware: rovaq.ai/overview?x=1 redirige 308 a app.rovaq.ai/overview?x=1', async () => {
-  const r = await middleware(pet('rovaq.ai', '/overview?x=1'));
-  assert.equal(r.status, 308);
-  assert.equal(r.headers.get('location'), 'https://app.rovaq.ai/overview?x=1');
+test('middleware (respaldo): /login en rovaq.ai redirige 308, una desconocida se reescribe al 404 del sitio y www redirige al apex', async () => {
+  const login = await middleware(pet('rovaq.ai', '/login')); assert.equal(login.status, 308); assert.equal(login.headers.get('location'), 'https://app.rovaq.ai/login');
+  const x = await middleware(pet('rovaq.ai', '/no-existe?a=1')); assert.equal(x.status, 200); assert.match(x.headers.get('x-middleware-rewrite') ?? '', /^https:\/\/rovaq\.ai\/sitio\/es\/no-existe\?a=1$/);
+  const w = await middleware(pet('www.rovaq.ai', '/producto?z=1')); assert.equal(w.status, 308); assert.equal(w.headers.get('location'), 'https://rovaq.ai/producto?z=1');
 });
 test('middleware: rovaq.ai sirve activos y no pide autenticación', async () => {
   process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://127.0.0.1:56321'; process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'synthetic-public-key';
-  for (const ruta of ['/robots.txt', '/sitemap.xml', '/opengraph-image', '/fonts/a.woff2', '/api/health/version']) {
+  for (const ruta of ['/robots.txt', '/sitemap.xml', '/opengraph-image', '/fonts/a.woff2', '/api/health/version', '/s/nube.ab12cd34.js', '/vendor/lenis-1.1.13.min.js']) {
     const r = await middleware(pet('rovaq.ai', ruta));
     assert.equal(r.status, 200, ruta); assert.equal(r.headers.get('location'), null, ruta); assert.equal(r.headers.get('x-middleware-rewrite'), null, ruta);
   }
@@ -114,10 +223,15 @@ test('middleware: hosts antiguos redirigen solo en producción; salud y webhooks
   assert.notEqual(p.status, 308);
 });
 test('middleware: app.rovaq.ai sigue igual (rutas fuera de la lista pasan intactas, sin cabeceras privadas nuevas)', async () => {
-  for (const ruta of ['/landing', '/robots.txt', '/opengraph-image', '/settings/team', '/workload']) {
+  for (const ruta of ['/landing', '/robots.txt', '/opengraph-image', '/settings/team', '/workload', '/sitio/es']) {
     const r = await middleware(pet('app.rovaq.ai', ruta));
     assert.equal(r.status, 200, ruta); assert.equal(r.headers.get('location'), null, ruta); assert.equal(r.headers.get('x-middleware-rewrite'), null, ruta); assert.equal(r.headers.get('cache-control'), null, ruta);
   }
   const sinConfig = await middleware(pet('app.rovaq.ai', '/overview'));
   assert.equal(sinConfig.status, 200); assert.equal(sinConfig.headers.get('location'), null);
+});
+test('middleware: en producción /sitio/es en app.rovaq.ai redirige a rovaq.ai', async () => {
+  process.env.VERCEL_ENV = 'production';
+  const r = await middleware(pet('app.rovaq.ai', '/sitio/es/producto?a=1'));
+  assert.equal(r.status, 308); assert.equal(r.headers.get('location'), 'https://rovaq.ai/producto?a=1');
 });

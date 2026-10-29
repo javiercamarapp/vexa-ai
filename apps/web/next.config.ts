@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import type { NextConfig } from "next";
 import { PREFIJOS_PRIVADOS } from './src/lib/site.mjs';
+import { reglasHost } from './config/sitio/reglas-host.mjs';
 
 // Public build identity only. Next inlines this value into the compiled route;
 // changing a runtime environment variable does not relabel an existing build.
@@ -22,6 +23,10 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // `next dev` no debe generar AGENTS.md/CLAUDE.md en el árbol del producto.
   agentRules: false,
+  // Enrutamiento por host (rovaq.ai sirve el sitio, www redirige al apex, la aplicación queda en app.rovaq.ai). Reglas derivadas de src/lib/host-routing.mjs.
+  // VERCEL_ENV=production solo existe en el build de producción: ahí los hosts antiguos de Vercel y /sitio/... en la aplicación redirigen.
+  async redirects() { return reglasHost({ produccion: process.env.VERCEL_ENV === 'production' }).redirects; },
+  async rewrites() { const { beforeFiles, afterFiles, fallback } = reglasHost({ produccion: process.env.VERCEL_ENV === 'production' }); return { beforeFiles, afterFiles, fallback }; },
   async headers() {
     const privado = PREFIJOS_PRIVADOS.map(p => p.slice(1)).join('|');
     // Plan para pasar la CSP a enforce: ver docs/SEO-Y-PUBLICACION.md (vigilar la consola 1-2 semanas con Report-Only, retirar 'unsafe-inline' con nonces y recién entonces renombrar la cabecera).
@@ -54,12 +59,10 @@ const nextConfig: NextConfig = {
       // Fuentes y marca: el nombre del archivo cambia si cambia el contenido (regla en docs/SEO-Y-PUBLICACION.md), así que se cachean un año.
       source: '/:carpeta(fonts|brand)/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
     }, {
-      // Landing: scripts vendoreados con versión en el nombre y puntos con hash se cachean un año; el resto de activos de la landing se revalidan cada hora.
-      source: '/landing/:path+', headers: [{ key: 'Cache-Control', value: 'public, max-age=3600, stale-while-revalidate=86400' }],
+      // Sitio público: los activos de /s/ llevan hash de 8 caracteres en el nombre (nube, scripts, puntos, imágenes, fuentes), así que se cachean un año.
+      source: '/s/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
     }, {
       source: '/vendor/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
-    }, {
-      source: '/landing/pts/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
     }, {
       source: '/:archivo(site.webmanifest|push-manifest.webmanifest|robots.txt|sitemap.xml|humans.txt)', headers: [{ key: 'Cache-Control', value: 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400' }],
     }, {

@@ -11,14 +11,10 @@ const protectedPathPrefix=(path:string)=>/^\/(overview|problems|customers|recomm
 export async function middleware(request:NextRequest) {
   try {
     const path=request.nextUrl.pathname;
-    // Host primero: rovaq.ai sirve la landing, los hosts antiguos de Vercel redirigen a app.rovaq.ai y app.rovaq.ai sigue exactamente como antes (decisión pura y probada en host-routing.mjs).
+    // Host primero (decisión pura y probada en host-routing.mjs). Con las reglas por host de next.config (Fase A) rovaq.ai y www.rovaq.ai ya no llegan aquí: el matcher los excluye.
+    // Lo que sigue sirve a app.rovaq.ai y a los hosts antiguos, y es también el respaldo (Fase B) si rovaq.ai volviera a pasar por el middleware.
     const decision=decidirHost({host:request.headers.get('x-forwarded-host')??request.headers.get('host')??request.nextUrl.host,pathname:path,search:request.nextUrl.search,produccion:process.env.VERCEL_ENV==='production'});
-    if(decision.tipo==='reescribir'){
-      // La landing fija su idioma por la ruta; el layout raíz lo lee de este encabezado y no de la cookie del app.
-      const reenviados=new Headers(request.headers);
-      reenviados.set('x-rovaq-lang',decision.destino.endsWith('/en')?'en':'es');
-      return NextResponse.rewrite(new URL(decision.destino+request.nextUrl.search,request.url),{request:{headers:reenviados}});
-    }
+    if(decision.tipo==='reescribir')return NextResponse.rewrite(new URL(decision.destino+request.nextUrl.search,request.url));
     if(decision.tipo==='redirigir')return NextResponse.redirect(new URL(decision.url,request.url),decision.status);
     if(decision.tipo==='activo')return NextResponse.next();
     // El matcher ahora cubre todo menos estáticos; lo que antes no pasaba por aquí sigue sin tocarse.
@@ -56,5 +52,7 @@ export async function middleware(request:NextRequest) {
     }
   } catch(error) {return authLinkHeaders(request,failure(error));}
 }
-// El matcher abarca todo salvo estáticos de Next para poder decidir por host (landing, hosts antiguos). En app.rovaq.ai, rutaConAutenticacion() conserva la lista anterior: lo demás no se toca.
-export const config = { runtime: 'nodejs', matcher: ['/((?!_next/static|_next/image|fonts/|brand/|images/|vendor/|landing/.+\\.).*)'] };
+// Matcher: todo menos estáticos y activos públicos, y sin rovaq.ai ni www.rovaq.ai (el sitio no ejecuta funciones). Next exige que sea un literal estático:
+// config/sitio/reglas-host.mjs guarda el mismo valor como MATCHER_MIDDLEWARE y una prueba los compara. Fase B (respaldo): quitar `missing` y poner MODO_ENRUTAMIENTO = 'middleware'.
+// En app.rovaq.ai, rutaConAutenticacion() conserva la lista anterior: lo demás no se toca.
+export const config = { runtime: 'nodejs', matcher: [{ source: '/((?!_next/static|_next/image|fonts/|brand/|images/|vendor/|s/).*)', missing: [{ type: 'header', key: 'host', value: '(www\\.)?rovaq\\.ai' }] }] };

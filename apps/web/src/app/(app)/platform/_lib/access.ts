@@ -13,7 +13,7 @@ type Client = ReturnType<typeof authClient>;
 export type Access = {mode: 'fixture' | 'live'; userId: string; client?: Client};
 export type PlatformState =
   | {status: 'ok'; view: PlatformView; synthetic: boolean}
-  | {status: 'partial'; reason: string; organizations: Array<{id: string; name: string; createdAt: string}>; audit: Array<{id: string; actorId: string; operation: string; tenantId: string | null; createdAt: string}>}
+  | {status: 'partial'; reason: string; reasonCode?: 'missing' | 'failed'; organizations: Array<{id: string; name: string; createdAt: string}>; audit: Array<{id: string; actorId: string; operation: string; tenantId: string | null; createdAt: string}>}
   | {status: 'denied' | 'error'};
 
 /** Administrador de plataforma verificado por la RPC (sesión viva + grant activo). El rol del JWT nunca es autoridad. */
@@ -25,7 +25,7 @@ export async function platformAccessForPage(): Promise<Access | null> {
   const grant = await client.rpc('platform_manage', {p_input: {operation: 'status'}});
   return grant.error ? null : {mode: 'live', userId: user.data.user.id, client};
 }
-/** MFA de la consola: con VEXA_PLATFORM_MFA apagado (por defecto) siempre 'ok' y sin llamadas extra. Encendido, exige AAL2 (o falla cerrado si Auth no responde). */
+/** MFA de la consola: encendida por defecto (VEXA_PLATFORM_MFA=0 la apaga y entonces siempre es 'ok' sin llamadas extra). Exige AAL2 (o falla cerrado si Auth no responde). */
 export async function platformMfaGate(access: Access): Promise<MfaVerdict> {
   if (access.mode === 'fixture' || !access.client) return 'ok';
   return mfaVerdictFor(access.client);
@@ -46,6 +46,8 @@ export const principalOf = (a: Access): Principal => ({kind: 'platform_admin', v
 export async function loadPlatform(access: Access): Promise<PlatformState> {
   if (access.mode === 'fixture') return {status: 'ok', synthetic: true, view: buildPlatformView(platformFixture())};
   const client = access.client!;
+  // M-2: la página también comprueba AAL2 (el layout no basta en navegaciones parciales).
+  if (await platformMfaGate(access) !== 'ok') return {status: 'denied'};
   const snap = await client.rpc('platform_observe', {p_input: {operation: 'snapshot'}});
   const audit = await client.rpc('platform_manage', {p_input: {operation: 'audit'}});
   if (!snap.error && snap.data) {
@@ -59,7 +61,7 @@ export async function loadPlatform(access: Access): Promise<PlatformState> {
   const list = await client.rpc('platform_manage', {p_input: {operation: 'list'}});
   if (list.error) return {status: 'error'};
   const missing = snap.error?.code === '42883' || snap.error?.code === 'PGRST202';
-  return {status: 'partial', reason: missing ? 'La función de observabilidad (platform_observe) aún no está aplicada en la base. Solo se muestran organizaciones y auditoría.' : 'La consulta de observabilidad falló o superó el tiempo permitido. Solo se muestran organizaciones y auditoría.', organizations: list.data?.items ?? [], audit: audit.data?.items ?? []};
+  return {status: 'partial', reasonCode: missing ? 'missing' : 'failed', reason: missing ? 'La función de observabilidad (platform_observe) aún no está aplicada en la base. Solo se muestran organizaciones y auditoría.' : 'La consulta de observabilidad falló o superó el tiempo permitido. Solo se muestran organizaciones y auditoría.', organizations: list.data?.items ?? [], audit: audit.data?.items ?? []};
 }
 /** Bitácora fail-closed: RPC platform_copilot_audit (propuesta). Sin ella, el copiloto no ejecuta herramientas. */
 export function platformAudit(access: Access) {

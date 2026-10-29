@@ -5,8 +5,9 @@ import {mfaVerdictFor} from '../src/lib/platform/mfa-server';
 const saved = process.env.VEXA_PLATFORM_MFA;
 afterEach(() => { if (saved === undefined) delete process.env.VEXA_PLATFORM_MFA; else process.env.VEXA_PLATFORM_MFA = saved; });
 const client = (impl: () => Promise<unknown>, calls = {n: 0}) => ({auth: {mfa: {getAuthenticatorAssuranceLevel: async () => { calls.n++; return impl(); }}}}) as never;
-test('la exigencia está APAGADA por defecto y solo "1" la enciende', () => {
-  assert.equal(mfaRequired({}), false); assert.equal(mfaRequired({VEXA_PLATFORM_MFA: '0'}), false); assert.equal(mfaRequired({VEXA_PLATFORM_MFA: 'true'}), false); assert.equal(mfaRequired({VEXA_PLATFORM_MFA: '1'}), true);
+test('la exigencia está ENCENDIDA por defecto y solo 0/off/false la apagan', () => {
+  assert.equal(mfaRequired({}), true); assert.equal(mfaRequired({VEXA_PLATFORM_MFA: '1'}), true); assert.equal(mfaRequired({VEXA_PLATFORM_MFA: 'true'}), true); assert.equal(mfaRequired({VEXA_PLATFORM_MFA: ''}), true);
+  for (const off of ['0', 'off', 'OFF', 'false', ' 0 ']) assert.equal(mfaRequired({VEXA_PLATFORM_MFA: off}), false, off);
 });
 test('decisión: apagado siempre ok (nadie se bloquea); encendido exige AAL2, distingue inscribir y retar, y falla cerrado', () => {
   for (const aal of [null, {currentLevel: 'aal1', nextLevel: 'aal1'}, {currentLevel: null, nextLevel: null}]) assert.equal(mfaDecision(false, aal), 'ok');
@@ -15,9 +16,14 @@ test('decisión: apagado siempre ok (nadie se bloquea); encendido exige AAL2, di
   assert.equal(mfaDecision(true, {currentLevel: 'aal1', nextLevel: 'aal1'}), 'enroll');
   assert.equal(mfaDecision(true, null), 'unverifiable');
 });
-test('con la exigencia apagada no hay NINGUNA llamada de red a Auth', async () => {
-  delete process.env.VEXA_PLATFORM_MFA; const calls = {n: 0};
+test('con la bandera de apagado (VEXA_PLATFORM_MFA=0) no hay NINGUNA llamada de red a Auth', async () => {
+  process.env.VEXA_PLATFORM_MFA = '0'; const calls = {n: 0};
   assert.equal(await mfaVerdictFor(client(async () => ({data: null, error: new Error('x')}), calls)), 'ok'); assert.equal(calls.n, 0);
+});
+test('sin variable (producción por defecto) y Auth caído: falla cerrado, no se entra', async () => {
+  delete process.env.VEXA_PLATFORM_MFA;
+  assert.equal(await mfaVerdictFor(client(async () => ({data: null, error: new Error('down')}))), 'unverifiable');
+  assert.equal(await mfaVerdictFor(client(async () => ({data: {currentLevel: 'aal1', nextLevel: 'aal1'}, error: null}))), 'enroll');
 });
 test('encendida: AAL2 pasa, AAL1 con factor pide retar, error o excepción de Auth falla cerrado', async () => {
   process.env.VEXA_PLATFORM_MFA = '1';

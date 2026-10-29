@@ -188,3 +188,16 @@ test('briefs: con la lista en memoria, una membresía revocada recibe 403 y no l
     assert.equal(revocada.status,403);assert.doesNotMatch(await revocada.text(),/secreto-en-cache/);
   }finally{delete process.env.VEXA_DATABASE_URL;olvidarMemoria();}
 });
+
+// AUTH-05 (cierre de seguridad 28-oct): el cierre de sesión borra vexa_support y termina la sesión de soporte en la base antes de revocar tokens.
+test('logout: borra la cookie vexa_support aunque no llegara en la petición y cierra la sesión de soporte en la base antes de revocar',async()=>{
+  setup();const paths=mockServer({support:{tenantId:C,expiresAt:new Date(Date.now()+20*60000).toISOString()}});
+  const response=await logout(request('/auth/logout',''));
+  assert.equal(response.status,303);assert.equal(response.cookies.get('vexa_support')?.value,'');
+  const fin=paths.indexOf('/rest/v1/rpc/platform_support'),rev=paths.indexOf('/auth/v1/logout');
+  assert.ok(fin>=0,'llamó platform_support end');assert.ok(rev>fin,'cerró soporte antes de revocar el token');
+});
+test('logout: si cerrar soporte falla (no administrador), el cierre de sesión sigue y borra todo',async()=>{
+  setup();mockServer();const response=await logout(request('/auth/logout',''));
+  assert.equal(response.status,303);assert.equal(response.cookies.get('vexa_support')?.value,'');assert.equal(response.cookies.get('sb-127-auth-token')?.value,'');
+});

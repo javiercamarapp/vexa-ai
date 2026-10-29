@@ -230,7 +230,8 @@ test('security_events: solo inserción, sin PII, muestreo, aislamiento por rol, 
  });
  await t.test('deduplicación: 3 primeros del minuto por huella, luego solo 10, 100…; los contadores cuentan todo',()=>{
   const ip=h(777);const before=count(`ip_hash='${ip}'`);
-  for(let i=0;i<120;i++)rec({kind:'auth_401',route:'/api/problems',method:'GET',ip_hash:ip});
+  // 120 llamadas en UNA transacción (misma cubeta de minuto aunque la máquina esté cargada).
+  pg.sql(db,`begin; set local role vexa_backend; do $$ begin for i in 1..120 loop perform public.record_security_event('{"kind":"auth_401","route":"/api/problems","method":"GET","ip_hash":"${ip}"}'::jsonb); end loop; end $$; commit;`);
   assert.equal(count(`ip_hash='${ip}'`)-before,3+2,'3 + los eventos 10 y 100');
   assert.equal(pg.sql(db,`select hits from vexa_platform.security_event_counters where kind='auth_401' and scope_hash='${ip}'`),'120');
   assert.equal(pg.sql(db,`select (detail->>'hits') from vexa_platform.security_events where ip_hash='${ip}' and detail ? 'hits' order by id desc limit 1`),'100');
@@ -319,6 +320,49 @@ test('M-03: tope de invitaciones por organización (20/h, 100/día), por organiz
   assert.equal(pg.sql(db,`select count(*) from vexa_platform.security_events where kind='invitation_sent'`),'120');
   assert.equal(pg.sql(db,`select count(*) from vexa_platform.security_events where kind='rate_limited'`),'0','el rechazo revierte la transacción; la aplicación registra el 429');
   assert.ok(!/secreto|@example/.test(pg.sql(db,`select string_agg(e::text,' ') from vexa_platform.security_events e`)));
+ });
+ }finally{await pg.stop();}
+});
+
+test('M3 + B1: privilegios por defecto cerrados para anon/authenticated, funciones de disparador sin EXECUTE público y search_path vacío',async t=>{
+ const pg=await startLocalPg({label:'sec29h'});try{
+ const db='s29h';
+ // Réplica de Supabase: roles postgres y supabase_admin con privilegios por defecto abiertos en public (el defecto de la plataforma).
+ pg.sql('postgres',`create role postgres superuser login; create role supabase_admin superuser login`);
+ pg.createDb(db);
+ pg.applySchema(db,{upTo:'20261205000600_invitation_quota.sql'});
+ pg.sql(db,`alter default privileges for role postgres in schema public grant all on tables to anon,authenticated,service_role;
+  alter default privileges for role postgres in schema public grant all on sequences to anon,authenticated,service_role;
+  alter default privileges for role postgres in schema public grant execute on functions to anon,authenticated,service_role;
+  alter default privileges for role supabase_admin in schema public grant all on tables to anon,authenticated,service_role`);
+ const crear=(rol,n)=>pg.sql(db,`set role ${rol}; create table public.${n}(a int); create function public.f_${n}() returns int language sql as $$ select 1 $$; reset role`);
+ const tiene=(n,rol,priv='SELECT')=>pg.sql(db,`select has_table_privilege('${rol}','public.${n}','${priv}')`);
+ await t.test('ANTES: una tabla nueva de postgres o supabase_admin queda abierta a anon (el defecto)',()=>{
+  crear('postgres','antes_pg');crear('supabase_admin','antes_sa');
+  assert.equal(tiene('antes_pg','anon'),'t');assert.equal(tiene('antes_sa','authenticated','DELETE'),'t');
+  assert.equal(pg.sql(db,`select has_function_privilege('anon','public.f_antes_pg()','execute')`),'t');
+  assert.equal(pg.sql(db,`select has_function_privilege('anon','public.cfo_access_log_append_only()','execute')`),'t');
+ });
+ const antes=pg.sql(db,`select string_agg(proname||'='||coalesce(proconfig::text,''),';' order by proname) from pg_proc where proname in ('ai_budget_attempt_guard','ai_budget_limit_guard','ai_budget_reconciliation_guard','ai_budget_reservation_guard')`);
+ const msg=()=>{try{pg.sql(db,`insert into public.ai_budget_limits(tenant_id) values ('${A}')`);return 'sin error';}catch(e){return /budget [a-z ]+/.exec(String(e.message))?.[0]??String(e.message).slice(0,120);}};
+ const msgAntes=msg();
+ pg.file(db,mig('20261205000700_default_privileges_and_trigger_functions.sql'));
+ await t.test('DESPUÉS: tablas, secuencias y funciones nuevas ya no se abren a anon ni authenticated; service_role conserva su acceso',()=>{
+  crear('postgres','despues_pg');crear('supabase_admin','despues_sa');
+  for(const n of ['despues_pg','despues_sa'])for(const rol of ['anon','authenticated']){assert.equal(tiene(n,rol),'f',n+' '+rol);assert.equal(tiene(n,rol,'INSERT'),'f');}
+  assert.equal(tiene('despues_pg','service_role'),'t');
+  assert.equal(pg.sql(db,`select count(*) from pg_proc p, aclexplode(p.proacl) a join pg_roles r on r.oid=a.grantee where p.proname='f_despues_pg' and r.rolname in ('anon','authenticated')`),'0','sin entradas explícitas para anon/authenticated en funciones nuevas');
+  assert.equal(pg.sql(db,`select count(*) from pg_proc p, aclexplode(p.proacl) a join pg_roles r on r.oid=a.grantee where p.proname='f_antes_pg' and r.rolname in ('anon','authenticated')`),'2','antes sí las tenía');
+  assert.equal(pg.sql(db,`select count(*) from pg_default_acl d join pg_namespace n on n.oid=d.defaclnamespace where n.nspname='public' and exists(select 1 from aclexplode(d.defaclacl) a join pg_roles r on r.oid=a.grantee where r.rolname in ('anon','authenticated'))`),'0','pg_default_acl de public ya no menciona a anon ni authenticated');
+ });
+ await t.test('B1: ninguna función de public es ejecutable por anon; las cinco de disparador tampoco por authenticated ni PUBLIC; las ai_budget_* con search_path vacío y el mismo comportamiento',()=>{
+  for(const f of ['ai_budget_attempt_guard','ai_budget_limit_guard','ai_budget_reconciliation_guard','ai_budget_reservation_guard','cfo_access_log_append_only'])
+   for(const rol of ['anon','authenticated','public'])assert.equal(pg.sql(db,`select has_function_privilege('${rol}','public.${f}()','execute')`),'f',f+' '+rol);
+  assert.equal(pg.sql(db,`select count(*) from pg_proc p where pronamespace='public'::regnamespace and prokind='f' and proname in ('ai_budget_attempt_guard','ai_budget_limit_guard','ai_budget_reconciliation_guard','ai_budget_reservation_guard') and array_to_string(proconfig,',')='search_path=""'`),'4');
+  // Vigilancia: ninguna función de public (de las migraciones del proyecto) es ejecutable por anon, ni por PUBLIC.
+  assert.equal(pg.sql(db,`select coalesce(string_agg(proname,','),'') from pg_proc p where pronamespace='public'::regnamespace and prokind='f' and proname !~ '^f_' and has_function_privilege('anon',p.oid,'execute') and not exists(select 1 from pg_depend d where d.objid=p.oid and d.deptype='e')`),'','funciones de public ejecutables por anon');
+  assert.notEqual(antes,'');assert.equal(msg(),msgAntes,'el disparador sigue evaluándose igual con search_path vacío: '+msgAntes);
+  assert.match(msgAntes,/budget/);
  });
  }finally{await pg.stop();}
 });

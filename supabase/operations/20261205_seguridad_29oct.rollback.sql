@@ -1,6 +1,14 @@
 -- Reversión de las migraciones de seguridad 20261205000000..20261205000600, en orden inverso. Cada bloque es independiente.
 -- Las tablas de contadores y de eventos solo guardan datos efímeros o de auditoría de seguridad: respaldar security_events antes si se quiere conservarla.
 begin;
+-- 0700: privilegios por defecto y funciones de disparador
+do $$ declare r text; begin foreach r in array array['postgres','supabase_admin'] loop if exists(select 1 from pg_roles where rolname=r) then
+ execute format('alter default privileges for role %I in schema public grant all on tables to anon, authenticated',r);
+ execute format('alter default privileges for role %I in schema public grant all on sequences to anon, authenticated',r);
+ execute format('alter default privileges for role %I in schema public grant execute on functions to anon, authenticated',r); end if; end loop; end $$;
+grant execute on function public.ai_budget_attempt_guard(),public.ai_budget_limit_guard(),public.ai_budget_reconciliation_guard(),public.ai_budget_reservation_guard(),public.cfo_access_log_append_only() to anon, authenticated, public;
+alter function public.ai_budget_attempt_guard() set search_path=pg_catalog,public; alter function public.ai_budget_limit_guard() set search_path=pg_catalog,public;
+alter function public.ai_budget_reconciliation_guard() set search_path=pg_catalog,public; alter function public.ai_budget_reservation_guard() set search_path=pg_catalog,public;
 drop trigger if exists team_invitation_quota on public.team_invitations; drop function if exists public.team_invitation_quota();                                   -- 0600
 drop function if exists public.api_rate_add(text,text,integer),public.api_concurrency_acquire(uuid,text,integer,integer),public.api_concurrency_release(uuid);        -- 0500
 drop table if exists public.api_rate_counters,public.api_concurrency_leases;

@@ -80,7 +80,7 @@ export async function painAiHandler(request:NextRequest,params:{id:string}){
   if(request.nextUrl.search)throw new AccessError(400,'unsupported_filter');
   if(request.method==='POST'){const c0=config();if(!c0)throw new AccessError(503,'configuration_required');assertOrigin(request.headers.get('origin'),c0.origin);if(request.headers.get('content-length')&&request.headers.get('content-length')!=='0')throw new AccessError(400,'unsupported_filter');}
   else if(request.method!=='GET')throw new AccessError(400,'unsupported_filter');
-  const c=await contexto(request,q.get('format')==='csv');finish=c.finish;
+  const c=await contexto(request);finish=c.finish;
   const resumen=()=>{const clave=c.tenant+'|'+c.role+'|pain-points';return conMemoria(clave,TTL_MS,()=>createPainPointsRepository({database:c.database}).get());};
   const id=decodeURIComponent(params.id);
   const svc=createPainAiService({store:createPainAiStore({database:c.database}),provider:proveedorIa.actual(),vista:resumen,evidencia:createPainEvidenceRepository({database:c.database,resumen})});

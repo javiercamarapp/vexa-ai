@@ -31,7 +31,7 @@ export const RUTAS_PUBLICAS = Object.freeze(['/login']);
 /** Prefijos privados: noindex + Disallow. Debe cubrir cada carpeta de src/app/(workspace) (lo verifica tests/seo-produccion.test.mjs). */
 export const PREFIJOS_PRIVADOS = Object.freeze([
   '/api', '/auth', '/platform', '/seguridad', '/sin-acceso',
-  '/analysis', '/briefs', '/cfo', '/confianza', '/connections', '/customers', '/economics', '/evaluation', '/explorer', '/gaps', '/history', '/imports',
+  '/analysis', '/briefs', '/cco', '/cfo', '/confianza', '/connections', '/customers', '/economics', '/evaluation', '/explorer', '/gaps', '/history', '/imports',
   '/interventions', '/jobs', '/map', '/migrations', '/notifications', '/overview', '/pain-points', '/preguntale', '/problems', '/recommendations', '/refunds',
   '/settings', '/setup', '/sources', '/workload',
 ]);

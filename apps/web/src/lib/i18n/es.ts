@@ -18,6 +18,7 @@ import {fugaEs} from './d-fuga';
 import {histEs} from './d-hist';
 import {intervEs} from './d-interv';
 import {mapaEs} from './d-mapa';
+import {ccoEs} from './d-cco';
 import {probEs} from './d-prob';
 import {recsEs} from './d-recs';
 import {agEs} from './d-ag';
@@ -174,6 +175,7 @@ export const es = {
   ...histEs,
   ...intervEs,
   ...mapaEs,
+  ...ccoEs,
   ...probEs,
   ...recsEs,
   ...agEs,

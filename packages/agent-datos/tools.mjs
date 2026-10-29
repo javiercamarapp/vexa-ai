@@ -6,6 +6,7 @@ import { formatMinorUnits } from '../metrics/money.mjs';
 import { lineaDatosHasta } from '../workspace-service/datos-hasta.mjs';
 import { estadoMes, estadosDeSerie, comparables, avisoMes, detalleMes, NO_COMPARABLE, mesPorDefecto } from './meses.mjs';
 import { CLASS_LABELS, LIMITS, coverageOf, toJsonSchema, validateArgs } from './contract.mjs';
+import { crearToolsCco } from './tools-cco.mjs';
 
 /** Importe en unidades menores -> unidades mayores (solo para altura/eje de gráficas; el dinero mostrado sale de money()). */
 const majorOf = (minor, exponent) => Number(BigInt(minor)) / 10 ** exponent;
@@ -59,6 +60,9 @@ const SRC = {
   evidence: { ref: 'agent:evidence', label: 'Citas verificables del problema', href: '/explorer' },
   tracker: { ref: 'agent:tracker', label: 'Tracker (Excel)', href: '/imports' },
   associations: { ref: 'agent:associations', label: 'Asociaciones ticket–contacto', href: '/history' },
+  ccoLibro: { ref: 'agent:cco-libro', label: 'CCO: libro económico por SKU y canal', href: '/cco' },
+  ccoTracker: { ref: 'agent:cco-tracker', label: 'CCO: casos del Tracker', href: '/cco' },
+  ccoGeo: { ref: 'agent:cco-geo', label: 'CCO: casos por estado del Tracker', href: '/cco' },
 };
 
 const MONTH_PROP = { type: 'string', format: 'month', description: 'Mes AAAA-MM.' };
@@ -367,6 +371,9 @@ export const TOOLS = [
     },
   },
 ];
+
+// Seis herramientas del CCO (A a F): catálogo cerrado, solo analista y propietario.
+TOOLS.push(...crearToolsCco({ fig, col, noData, unavailable, money, tag, fmtInt, monthLabel, coverageOf, SRC }));
 
 export const TOOL_INDEX = Object.freeze(Object.fromEntries(TOOLS.map((t) => [t.name, t])));
 export const toolAllowed = (tool, role) => tool.roles === 'all' ? ['viewer', 'operator', 'analyst', 'owner'].includes(role) : tool.roles.includes(role);

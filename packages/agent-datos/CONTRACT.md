@@ -14,6 +14,14 @@ Herramientas (catálogo cerrado, `tools.mjs`; esquema JSON en `catalogForModel(r
 | comparar_meses | todos | a, b (AAAA-MM) | Mixto por fila |
 | evidencias_de_problema | analyst, owner | problema (texto), limit 1–5 | Observado; citas solo-UI |
 | clientes_por_problema | analyst, owner | problema, month | Inferido + citas |
+| rendimiento_sku | analyst, owner | canal (amazon, walmart, bestbuy, shopify), orden (venta, reembolso, defectos), top 1–10 | Observado; ventana común del canal |
+| candidatos_sin_venta | analyst, owner | meses_sin_venta (3, 6, 9), top 1–10 | Inferido (no es descontinuación confirmada) |
+| eficiencia_bodegas | analyst, owner | dimension (latencia, motivo), bodega (catálogo) | Observado; k>=5; solo despacho |
+| casos_por_estado | analyst, owner | pais (US, MX), tipo_caso (catálogo) | Observado; k>=5; sin volumen por destino |
+| casos_por_subcanal | analyst, owner | retailer (todos, amazon, walmart), top 1–10 | Observado con sesgo |
+| envio_propio_vs_amazon | analyst, owner | – | siempre no_data, con la lista exacta de lo que falta y a quién pedirlo |
 Invariantes (probadas): cada cifra/bloque con clase y cobertura; respuesta `ok` con fuentes y «cómo lo calculé»; sin dato → «No tengo ese dato» + qué falta; el modelo solo recibe `modelViewOf` (cifras formateadas, sin citas ni ids); texto del modelo descartado si trae números ajenos, enlaces o citas; ≤3 herramientas y ≤2 llamadas al modelo por turno; historial ≤4; pregunta ≤600; tiempo por herramienta 8 s; presupuesto por tenant en micro-USD (reserva→liquida); turnos/día limitados.
-Puerto de datos (`port.mjs`): coverage, trends, associations, tracker, problems, problemIncidents, categoryMonthly, exposure, ledgerBySource, evidence, problemCustomers.
+Puerto de datos (`port.mjs`): coverage, trends, associations, tracker, problems, problemIncidents, categoryMonthly, exposure, ledgerBySource, evidence, problemCustomers, ccoSku, ccoSinVenta, ccoBodegas, ccoEstados, ccoSubcanal.
 Conectados con SQL de solo lectura (`port-queries.mjs`): ledgerBySource, problems, problemIncidents, categoryMonthly y exposure (esta última devuelve «desconocida» mientras no haya vínculos problema–pedido). Siguen `not_connected`: evidence y problemCustomers.
+
+CCO (`tools-cco.mjs`): las seis herramientas leen solo las funciones `insight_cco_*` (migración 20261201000000) y el mapa de estados; todo argumento es enumerado o acotado (ninguno es texto libre ni llega a SQL); se corren con reglas, sin modelo. Si la migración no está aplicada responden «no disponible», nunca ceros.

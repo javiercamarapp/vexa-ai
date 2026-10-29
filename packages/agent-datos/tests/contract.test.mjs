@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { TOOLS, catalogForModel, toolsForRole, validateArgs, toJsonSchema, contractViolations, numbersGrounded, numbersIn, LIMITS } from '../index.mjs';
 
 test('el catálogo es cerrado y cada herramienta declara descripción, lecturas, método, fuente y esquema estricto', () => {
-  assert.equal(TOOLS.length, 12);
+  assert.equal(TOOLS.length, 18);
   assert.equal(new Set(TOOLS.map((t) => t.name)).size, TOOLS.length);
   for (const t of TOOLS) {
     assert.ok(t.description.length > 20, t.name); assert.ok(t.reads.length > 0, t.name); assert.ok(t.method.length > 30, t.name); assert.ok(t.source.ref.startsWith('agent:'), t.name);
@@ -13,7 +13,7 @@ test('el catálogo es cerrado y cada herramienta declara descripción, lecturas,
 });
 test('el catálogo para el modelo depende del rol: viewer y operator no ven citas ni clientes', () => {
   for (const role of ['viewer', 'operator']) { const n = catalogForModel(role).map((t) => t.name); assert.ok(!n.includes('evidencias_de_problema') && !n.includes('clientes_por_problema')); assert.equal(n.length, 10); }
-  for (const role of ['analyst', 'owner']) assert.equal(toolsForRole(role).length, 12);
+  for (const role of ['analyst', 'owner']) assert.equal(toolsForRole(role).length, 18);
   assert.equal(toolsForRole('intruso').length, 0);
 });
 test('validateArgs: rechaza claves desconocidas, tipos, rangos, control y prototipos', () => {

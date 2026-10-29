@@ -13,6 +13,11 @@ const DATOS = guion ? guion.dataset : {};
 
 H.setAttribute('data-js', '');
 
+/* React hidrata el documento entero: tocar la estructura (quitar o añadir nodos, cambiar texto) antes de que termine provoca el
+ * error 418 y que React rehaga el documento. Atributos y clases son seguros; lo estructural espera a que el pie tenga su fibra. */
+const hidratado = () => { const f = $('.s-pie') || $('main'); return !f || Object.keys(f).some((k) => k.startsWith('__reactFiber')); };
+const listo = new Promise((res) => { let n = 0; const t = () => (hidratado() || ++n > 50 ? res() : setTimeout(t, 100)); t(); });
+
 /* ---------- motor de cuadros: un solo rAF compartido, solo vive mientras algo se mueve ---------- */
 const tareas = new Set();
 let raf = 0, vivoHasta = 0;
@@ -59,7 +64,7 @@ function cargador() {
   if (!el) return;
   let visto = false;
   try { visto = sessionStorage.getItem('rovaq-intro') === '1'; } catch { /* sin almacenamiento */ }
-  if (RM || visto) { H.setAttribute('data-intro-visto', ''); el.remove(); return; }
+  if (RM || visto) { H.setAttribute('data-intro-visto', ''); listo.then(() => el.remove()); return; }
   try { sessionStorage.setItem('rovaq-intro', '1'); } catch { /* sin almacenamiento */ }
   H.classList.add('cargando');
   let fin = false;
@@ -67,7 +72,7 @@ function cargador() {
     if (fin) return;
     fin = true;
     H.classList.remove('cargando');
-    el.remove();
+    listo.then(() => el.remove());
     for (const e of ['pointerdown', 'keydown', 'wheel', 'touchstart']) removeEventListener(e, saltar);
   };
   const saltar = () => {
@@ -176,8 +181,10 @@ function puestos() {
     sec.dataset.puesto = n;
     tabs.forEach((t) => { const on = t.dataset.puestoN === String(n); t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; if (on && foco) t.focus(); });
     paneles.forEach((p) => { p.hidden = p.dataset.puestoPanel !== String(n); });
-    if (nombre) nombre.textContent = tabs[n - 1].textContent;
+    if (nombre && hecho) nombre.textContent = tabs[n - 1].textContent;
   };
+  let hecho = false;
+  listo.then(() => { hecho = true; sel(+sec.dataset.puesto || 1); });
   tabs.forEach((t, i) => {
     t.addEventListener('click', () => sel(i + 1));
     t.addEventListener('keydown', (e) => {
@@ -207,6 +214,7 @@ function portada() {
     if (hecho) return;
     hecho = true;
     try {
+      await listo;
       const m = await import(DATOS.inicio);
       m.default({urls: DATOS, RM, NAT, motor: {tareas, despertar, barrer, rangos, lim}});
     } catch { /* la portada funciona sin inicio.js: póster, pasos apilados y estados finales */ }

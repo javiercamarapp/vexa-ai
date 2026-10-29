@@ -3,9 +3,10 @@
 // Una medida sin registros elegibles devuelve `sinCobertura`: no hay delta, ni tendencia, ni «0.00» presentado como dato.
 import {esMesCompleto,mesParcial} from '../../../../../packages/metrics/complete-months.mjs';
 import {variacion} from './insights.mjs';
-const corto=m=>new Intl.DateTimeFormat('es-MX',{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
-const largo=m=>new Intl.DateTimeFormat('es-MX',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
-const dia=d=>new Intl.DateTimeFormat('es-MX',{day:'numeric',month:'short',timeZone:'UTC'}).format(new Date(d+'T00:00:00Z')).replace('.','');
+import {LOCALES} from '../formato/idioma.mjs';
+const corto=m=>new Intl.DateTimeFormat(LOCALES.es,{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
+const largo=m=>new Intl.DateTimeFormat(LOCALES.es,{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
+const dia=d=>new Intl.DateTimeFormat(LOCALES.es,{day:'numeric',month:'short',timeZone:'UTC'}).format(new Date(d+'T00:00:00Z')).replace('.','');
 /** ¿El punto de la serie del libro tiene registros (con o sin importe) de esa medida? */
 export const ledgerConDatos=medida=>p=>!!p&&!!p[medida]&&(Number(p[medida].count)||0)+(Number(p[medida].unknownAmounts)||0)>0;
 /**

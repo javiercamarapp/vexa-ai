@@ -137,7 +137,7 @@ test('M3: el titular de Hoy no salta a la frase de ingreso mientras Fuga carga',
 
 test('M14/M17/B5/B10/B11/B12: filtros legibles, tabla de avisos centrada, conteo 0 en gris y textos sin jerga', () => {
   const f = leer('components/workspace/shared-filters.tsx');
-  assert.match(f, /<select name="basis"/); assert.match(f, /etiquetaBase\(k\)/); assert.match(f, /<details className="ov-avanzado"/); assert.ok(!/<input name="basis"/.test(f));
+  assert.match(f, /<select name="basis"/); assert.match(f, /etiquetaBase\(k(,\w+)?\)/); assert.match(f, /<details className="ov-avanzado"/); assert.ok(!/<input name="basis"/.test(f));
   assert.match(leer('components/datos/datos.css'), /\.notification-matrix thead th\[data-align=num\]/);
   assert.match(leer('components/panel-comun/tabs-linea.tsx'), /data-cero/);
   assert.ok(!/Descargar JSON de este alcance|Descargar CSV de este alcance/.test(leer('components/workspace/shared-panel.tsx')));

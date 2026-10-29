@@ -7,6 +7,11 @@ export const KINDS=Object.freeze({
  estimated:{label:'Estimado',hint:'Calculado con un modelo o escenario; no es un hecho registrado.'},
  inferred:{label:'Inferido',hint:'Vinculado por evidencia (p. ej. ingresos expuestos a un problema); no equivale a pérdida.'},
  unclassified:{label:'Sin clasificar',hint:'Este tipo de cifra aún no tiene clase asignada; no se presenta como observada.'}});
+/** Clase con su rótulo y su ayuda en el idioma del traductor `t` (opcional: sin él, español). `nodata` es «Sin datos». */
+export function kindInfo(k,t=null){
+ const base=k==='nodata'?SIN_DATOS:KINDS[k]??KINDS.unclassified,c=KINDS[k]?k:k==='nodata'?'nodata':'unclassified';
+ return t?{label:t('tr.lg.k.'+c+'.label'),hint:t('tr.lg.k.'+c+'.hint')}:base;
+}
 export function epistemicKind(metric){
  const kind=String(metric?.kind??'').toLowerCase(),status=String(metric?.status??'').toLowerCase();
  if(/scenario|model|forecast|support_model/.test(kind)||status==='modeled')return 'estimated';

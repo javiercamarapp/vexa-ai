@@ -92,5 +92,5 @@ test('Contacto repetido muestra las categorías en español (la IA las emite en 
   assert.equal(etiquetaCategoria('Warranty: Part Replacement OT'), 'Garantía: Reemplazo de pieza (OT)');
   assert.match(etiquetaCategoria('Subscription: Product Registration'), /^Suscripción: /);
   const src = readFileSync(new URL('../src/components/refunds/fuga-partes.tsx', import.meta.url), 'utf8');
-  assert.match(src, /<span>\{etiquetaCategoria\(x\.categoria\)\}<\/span>/);
+  assert.match(src, /<span>\{etiquetaCategoria\(x\.categoria(,\w+)?\)\}<\/span>/);
 });

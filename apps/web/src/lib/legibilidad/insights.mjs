@@ -6,13 +6,14 @@ import {esMesCompleto,completitud} from '../../../../../packages/metrics/complet
 import {etiquetaCategoria} from './categorias.mjs';
 import {porcentaje,variacionDecimas} from '../formato/es-mx.mjs';
 import {separarRuidoCategorias} from './ruido.mjs';
+import {LOCALES} from '../formato/idioma.mjs';
 const MAX=3;
 const entero=s=>typeof s==='string'&&/^-?\d+$/.test(s);
-const nfEs=new Intl.NumberFormat('es-MX');
-const mesLargo=(m,loc='es-MX')=>new Intl.DateTimeFormat(loc,{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
+const nfEs=new Intl.NumberFormat(LOCALES.es);
+const mesLargo=(m,loc=LOCALES.es)=>new Intl.DateTimeFormat(loc,{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
 /** Texto de interfaz: con `ctx.t` (traductor) usa el diccionario; sin él, el español original. */
 const X=(ctx,clave,es,vars)=>ctx?.t?ctx.t(clave,vars):es;
-const LOC=ctx=>ctx?.loc??'es-MX';
+const LOC=ctx=>ctx?.loc??LOCALES.es;
 const Y=ctx=>ctx?.t?' '+ctx.t('prob.y')+' ':' y ';
 /** Variación porcentual exacta con un decimal (BigInt). null si no hay base honesta (anterior ≤ 0). */
 export function variacion(actual,anterior){
@@ -28,7 +29,7 @@ export function dosMesesCompletos(series,ahora=new Date(),completitud=null){
  const completos=series.filter(s=>s&&typeof s.month==='string'&&esMesCompleto(s.month,{dataThrough,ahora}));
  return completos.length>=2?[completos[completos.length-2],completos[completos.length-1]]:null;
 }
-const diaLargo=(d,loc='es-MX')=>new Intl.DateTimeFormat(loc,{day:'numeric',month:'long',timeZone:'UTC'}).format(new Date(d+'T00:00:00Z'));
+const diaLargo=(d,loc=LOCALES.es)=>new Intl.DateTimeFormat(loc,{day:'numeric',month:'long',timeZone:'UTC'}).format(new Date(d+'T00:00:00Z'));
 /** Frase de cobertura del mes parcial excluido de la comparación, o ''. `conDatos` define si un punto de la serie tiene registros. */
 export function notaMesParcial(series,ahora,completitudPayload,conDatos,ctx=null){
  const dataThrough=completitudPayload?.dataThrough??null,c=completitud(series,{dataThrough,ahora,conDatos});
@@ -91,10 +92,10 @@ function categorias(entrada,fuente=FUENTE_CAT,ctx=null){
  const cob=[X(ctx,'res.ins.catCob',`${nfEs.format(vista.totals?.categories??filas.length)} categorías en ${nfEs.format(totalTodas)} incidencias; se cuentan incidencias, no problemas agrupados.`,{n:nfEs.format(vista.totals?.categories??filas.length),total:nfEs.format(totalTodas)})];
  if(sep.incidenciasOcultas>0)cob.push(X(ctx,'res.ins.catExcluye',`El porcentaje excluye ${nfEs.format(sep.incidenciasOcultas)} incidencias de notificaciones automáticas.`,{n:nfEs.format(sep.incidenciasOcultas)}));
  if(vista.truncated)cob.push(X(ctx,'res.ins.catRecortada','Lista recortada a las categorías con más incidencias.'));
- return {id:'categorias',texto:X(ctx,'res.ins.catTop',`La categoría con más incidencias es **${etiquetaCategoria(top.category)}**: **${nfEs.format(top.count)}** de ${nfEs.format(totalVisibles)} (${(Number(dec)/10).toLocaleString('es-MX',{minimumFractionDigits:1,maximumFractionDigits:1})} %).`,{cat:etiquetaCategoria(top.category),n:nfEs.format(top.count),total:nfEs.format(totalVisibles),pct:(Number(dec)/10).toLocaleString(LOC(ctx),{minimumFractionDigits:1,maximumFractionDigits:1})}),fuente,cobertura:cob.join(' '),clase:'inferred'};
+ return {id:'categorias',texto:X(ctx,'res.ins.catTop',`La categoría con más incidencias es **${etiquetaCategoria(top.category)}**: **${nfEs.format(top.count)}** de ${nfEs.format(totalVisibles)} (${(Number(dec)/10).toLocaleString(LOCALES.es,{minimumFractionDigits:1,maximumFractionDigits:1})} %).`,{cat:etiquetaCategoria(top.category),n:nfEs.format(top.count),total:nfEs.format(totalVisibles),pct:(Number(dec)/10).toLocaleString(LOC(ctx),{minimumFractionDigits:1,maximumFractionDigits:1})}),fuente,cobertura:cob.join(' '),clase:'inferred'};
 }
 /** Resumen: conversaciones, pedidos y categorías (máx. 3). */
-export function insightsResumen({trends=null,categorias:filas=null,ahora=new Date(),t=null,loc='es-MX'}={}){
+export function insightsResumen({trends=null,categorias:filas=null,ahora=new Date(),t=null,loc=LOCALES.es}={}){
  const ctx=t?{t,loc}:null;
  return [conversaciones(trends?.conversations,ahora,ctx),libro(trends?.ledger,ahora,ctx),categorias(filas,undefined,ctx)].slice(0,MAX);
 }
@@ -117,7 +118,7 @@ export function insightsProblemas({items=[],moneda=null,t=null}={}){
  return out.slice(0,MAX);
 }
 
-const mesCorto=m=>new Intl.DateTimeFormat('es-MX',{month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
+const mesCorto=m=>new Intl.DateTimeFormat(LOCALES.es,{month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
 /** Evolución mensual de incidencias de UN problema agrupado (máx. 3): total y mes pico, cambio entre meses completos y cobertura de fechas. */
 export function insightsProblemaSerie(vista,ahora=new Date()){
  const fuente='Incidencias de las corridas vinculadas al problema, por mes de su conversación';

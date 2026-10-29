@@ -1,6 +1,7 @@
 // Etiquetas en español de las categorías de la IA («Familia: Subcategoría», taxonomía de 45 entradas
 // del manual operativo). Una categoría desconocida (p. ej. una variante nueva) se muestra TAL CUAL.
 // Módulo puro: sin red, sin base de datos, sin React.
+import {X,idiomaDe} from './trad.mjs';
 export const FAMILIAS=Object.freeze({'Pre-sale':'Preventa','Order':'Pedido','Shipping':'Envío','Return':'Devolución','Warranty':'Garantía','Feedback':'Opinión','Subscription':'Suscripción','Dealers':'Distribuidores','Other':'Otros'});
 const T=[
  ['Pre-sale: Product Question','Preventa: Pregunta sobre un producto'],
@@ -53,10 +54,13 @@ export const CATEGORIAS=Object.freeze(Object.fromEntries(T));
 export const CATEGORIA_RUIDO='Other: Retailer notifications and system alerts';
 const norm=s=>String(s??'').normalize('NFKC').replace(/\s+/g,' ').trim().toLowerCase();
 const INDICE=new Map(T.map(([en,es])=>[norm(en),es]));
+// Inglés: la taxonomía de la IA nace en inglés («Shipping: Damaged in Transit»), así que en inglés se muestra el nombre original, sin tabla duplicada en el diccionario.
+const A_ORIGINAL=new Map(T.flatMap(([en,es])=>[[norm(en),en],[norm(es),en]]));
 const INVERSO=new Map(T.map(([en,es])=>[norm(es),en]));
-/** Etiqueta en español; si la categoría no está en la tabla se devuelve tal cual (sin inventar). */
-export function etiquetaCategoria(categoria){
- if(typeof categoria!=='string'||!categoria.trim())return 'Sin categoría';
+/** Etiqueta en español (o el nombre original en inglés si el traductor `t` es de inglés); si la categoría no está en la tabla se devuelve tal cual (sin inventar). */
+export function etiquetaCategoria(categoria,t=null){
+ if(typeof categoria!=='string'||!categoria.trim())return X(t,'tr.lg.sinCategoria','Sin categoría');
+ if(t&&idiomaDe(t)==='en')return A_ORIGINAL.get(norm(categoria))??categoria;
  return INDICE.get(norm(categoria))??categoria;
 }
 /** Nombre original en inglés de una etiqueta (o el mismo texto si no se reconoce). */

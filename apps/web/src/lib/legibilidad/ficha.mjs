@@ -1,6 +1,7 @@
 // Lógica PURA de la ficha de problema (sin red, sin React). Honestidad: lo desconocido es null y nunca se convierte en 0.
 import {etiquetaCategoria} from './categorias.mjs';
-const nf=new Intl.NumberFormat('es-MX');
+import {LOCALES} from '../formato/idioma.mjs';
+const nf=new Intl.NumberFormat(LOCALES.es);
 export const IMPACTO_NO_DISPONIBLE='Impacto económico: No disponible. Aparece cuando se conecten pedidos con clientes.';
 const INTERVENCION={draft:'Borrador',approved:'Plan aprobado',active:'En ejecución',measuring:'En medición',closed:'Medición cerrada',cancelled:'Cancelada'};
 const RECOMENDACION={proposed:'Propuesta',dismissed:'Descartada',accepted:'Aceptada',implemented:'Implementada'};

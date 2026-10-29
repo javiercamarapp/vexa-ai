@@ -42,10 +42,10 @@ export function urlBaja(appOrigin, token, idioma) {
 
 // ---------------------------------------------------------------- página de confirmación
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'})[c]);
-const CSP = "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
+const CSP = "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'";
 const CABECERAS = {'Cache-Control': 'private, no-store', 'Referrer-Policy': 'no-referrer', 'X-Robots-Tag': 'noindex, nofollow', 'X-Content-Type-Options': 'nosniff', 'Content-Security-Policy': CSP, 'Content-Type': 'text/html; charset=utf-8'};
 /** Una página sola, sin scripts ni recursos externos: tema claro/oscuro, mismo tono de la marca. */
-export function paginaBaja({tono = 'ok', titulo, texto, enlace = null, appOrigin = null, idioma}) {
+export function paginaBaja({tono = 'ok', titulo, texto, enlace = null, formulario = null, appOrigin = null, idioma}) {
   const lang = idiomaDe(idioma);
   const color = tono === 'ok' ? '#16784a' : tono === 'error' ? '#ac2440' : '#86580d';
   const inicio = appOrigin ? `<a class="s" href="${esc(appOrigin)}"${porIdioma(lang, 'Ir a Rovaq', 'Go to Rovaq')}</a>` : '';
@@ -57,7 +57,7 @@ main{width:100%;max-width:440px;background:var(--card);border:1px solid var(--bd
 .m{font:700 22px/1 system-ui,sans-serif;letter-spacing:-.02em;margin:0 0 24px}.i{width:44px;height:44px;border-radius:999px;margin:0 auto 16px;display:grid;place-items:center;border:2px solid var(--ac);color:var(--ac);font-weight:700}
 h1{font-size:20px;line-height:1.3;margin:0 0 8px}p{margin:0 0 16px;color:var(--mut)}a.b,a.s{display:inline-block;min-height:40px;line-height:40px;padding:0 16px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px}
 a.b{background:var(--btn);color:var(--btnt)}a.s{color:var(--ink);border:1px solid var(--bd)}.f{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}small{display:block;margin-top:16px;color:var(--mut);font-size:12px}
-</style></head><body><main role="main"><p class="m">rovaq</p><div class="i" aria-hidden="true">${tono === 'ok' ? '✓' : '!'}</div><h1>${esc(titulo)}</h1><p>${esc(texto)}</p><div class="f">${enlace ? `<a class="b" href="${esc(enlace.href)}">${esc(enlace.texto)}</a>` : ''}${inicio}</div><small>${porIdioma(lang, 'Rovaq nunca te pedirá tu contraseña por correo.', 'Rovaq will never ask for your password by email.')}</small></main></body></html>`;
+</style></head><body><main role="main"><p class="m">rovaq</p><div class="i" aria-hidden="true">${tono === 'ok' ? '✓' : '!'}</div><h1>${esc(titulo)}</h1><p>${esc(texto)}</p><div class="f">${formulario ? `<form method="post" action="${esc(formulario.action)}"><input type="hidden" name="confirmar" value="1"><button class="b" type="submit" style="border:0;cursor:pointer;font:inherit;min-height:40px;padding:0 16px;border-radius:8px">${esc(formulario.texto)}</button></form>` : ''}${enlace ? `<a class="b" href="${esc(enlace.href)}">${esc(enlace.texto)}</a>` : ''}${inicio}</div><small>${porIdioma(lang, 'Rovaq nunca te pedirá tu contraseña por correo.', 'Rovaq will never ask for your password by email.')}</small></main></body></html>`;
 }
 const pagina = (status, args) => new Response(paginaBaja(args), {status, headers: CABECERAS});
 const AJUSTES = {es: 'Configuración → Notificaciones', en: 'Settings → Notifications'};
@@ -73,6 +73,10 @@ export const TEXTOS_BAJA = Object.freeze({
     revertida: ['Volverás a recibir el reporte', 'Listo: el reporte semanal volverá a llegar a tu correo cada lunes.'],
     registrada: ['Listo, ya no recibirás el reporte semanal', 'No te enviaremos más el reporte semanal de este espacio. Los avisos de seguridad y de acceso a tu cuenta no se pueden desactivar.'],
     volver: 'Volver a suscribirme',
+    confirmarBaja: ['¿Dejar de recibir el reporte semanal?', 'Confirma para dejar de recibir el reporte semanal de este espacio. Puedes volver a suscribirte cuando quieras.'],
+    botonBaja: 'Sí, dejar de recibirlo',
+    confirmarAlta: ['¿Volver a recibir el reporte semanal?', 'Confirma para volver a recibir el reporte semanal cada lunes.'],
+    botonAlta: 'Sí, volver a recibirlo',
   }),
   en: Object.freeze({
     noDisponible: ['Unavailable for now', `We could not process your unsubscribe from this link. Sign in to Rovaq and adjust your notifications under ${AJUSTES.en}.`],
@@ -84,6 +88,10 @@ export const TEXTOS_BAJA = Object.freeze({
     revertida: ['You will receive the report again', 'Done: the weekly report will arrive in your inbox every Monday again.'],
     registrada: ['Done, you will no longer receive the weekly report', 'We will not send you the weekly report for this workspace again. Security and account access notices cannot be turned off.'],
     volver: 'Resubscribe',
+    confirmarBaja: ['Stop receiving the weekly report?', 'Confirm to stop receiving this workspace\'s weekly report. You can subscribe again at any time.'],
+    botonBaja: 'Yes, stop receiving it',
+    confirmarAlta: ['Receive the weekly report again?', 'Confirm to receive the weekly report every Monday again.'],
+    botonAlta: 'Yes, subscribe again',
   }),
 });
 
@@ -109,7 +117,22 @@ export function createBajaHandler({secret, aplicar, appOrigin = null, now = () =
       log('baja_token_' + v.motivo);
       return v.motivo === 'expirado' ? pg(410, 'aviso', X.expirado) : pg(400, 'error', X.modificado);
     }
-    const resub = metodo === 'GET' && url.searchParams.get('r') === '1';
+    const resub = url.searchParams.get('r') === '1';
+    // B-04: un GET (previsualizador de enlaces, antivirus, prefetch) NUNCA cambia estado: muestra una confirmación. Aplican solo el POST del formulario (confirmar=1)
+    // y el POST de un clic del cliente de correo (RFC 8058: cuerpo List-Unsubscribe=One-Click), ambos con el mismo token firmado.
+    let confirmado = false, unClic = false;
+    if (metodo === 'POST') {
+      const largo = Number(request.headers.get('content-length') ?? '0');
+      let cuerpo = '';
+      if (Number.isFinite(largo) && largo <= 1024) { try { cuerpo = await request.text(); } catch { cuerpo = ''; } }
+      confirmado = /(^|&)confirmar=1(&|$)/.test(cuerpo);
+      unClic = !confirmado;
+    }
+    if (metodo === 'GET') {
+      log('baja_confirmacion');
+      const accion = new URL(url.href); accion.searchParams.delete('r'); if (resub) accion.searchParams.set('r', '1');
+      return pg(200, 'aviso', resub ? X.confirmarAlta : X.confirmarBaja, {formulario: {action: accion.pathname + accion.search, texto: resub ? X.botonAlta : X.botonBaja}});
+    }
     let r;
     try { r = await aplicar({tenantId: v.tenantId, userId: v.userId, resubscribe: resub}); } catch { r = null; }
     if (!r || r.ok !== true) {
@@ -117,7 +140,7 @@ export function createBajaHandler({secret, aplicar, appOrigin = null, now = () =
       return r ? pg(404, 'aviso', X.desconocido) : pg(503, 'aviso', X.fallo);
     }
     log(resub ? 'baja_revertida' : 'baja_registrada');
-    if (metodo === 'POST') return new Response('ok', {status: 200, headers: {'Cache-Control': 'no-store', 'Content-Type': 'text/plain; charset=utf-8'}});
+    if (metodo === 'POST' && unClic) return new Response('ok', {status: 200, headers: {'Cache-Control': 'no-store', 'Content-Type': 'text/plain; charset=utf-8'}});
     return resub
       ? pg(200, 'ok', X.revertida)
       : pg(200, 'ok', X.registrada, {enlace: {href: urlResub(url), texto: X.volver}});

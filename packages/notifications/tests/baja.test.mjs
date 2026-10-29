@@ -41,16 +41,21 @@ const mk = (o = {}) => {
 };
 const get = (m, qs) => m.h(new Request('https://app.rovaq.ai/api/baja' + qs));
 
-test('GET del enlace: una acción, confirmación clara, sin sesión, reversible y sin PII en registros', async () => {
+const post = (m, qs, body) => m.h(new Request('https://app.rovaq.ai/api/baja' + qs, {method: 'POST', body, headers: {'content-type': 'application/x-www-form-urlencoded'}}));
+test('B-04: GET del enlace NO cambia estado (muestra confirmación); el POST del formulario aplica, es reversible y no deja PII en registros', async () => {
   const m = mk();
   const r = await get(m, '?t=' + m.token);
   assert.equal(r.status, 200); const html = await r.text();
-  assert.match(html, /ya no recibirás el reporte semanal/i); assert.match(html, /Volver a suscribirme/); assert.match(html, /<html lang="es-MX"/);
-  assert.deepEqual(m.llamadas, [{tenantId: T, userId: U, resubscribe: false}]);
-  assert.match(r.headers.get('cache-control'), /no-store/); assert.equal(r.headers.get('referrer-policy'), 'no-referrer'); assert.match(r.headers.get('content-security-policy'), /default-src 'none'/); assert.match(r.headers.get('x-robots-tag'), /noindex/);
+  assert.deepEqual(m.llamadas, [], 'un GET (previsualizador de enlaces) no da de baja a nadie');
+  assert.match(html, /<form method="post" action="\/api\/baja\?t=/); assert.match(html, /name="confirmar" value="1"/); assert.match(html, /Sí, dejar de recibirlo/);
+  assert.match(html, /<html lang="es-MX"/); assert.match(r.headers.get('cache-control'), /no-store/); assert.equal(r.headers.get('referrer-policy'), 'no-referrer'); assert.match(r.headers.get('content-security-policy'), /default-src 'none'/); assert.match(r.headers.get('x-robots-tag'), /noindex/);
   assert.doesNotMatch(html, /<script|[\w.]+@[\w.]+\.\w+/); assert.doesNotMatch(html, new RegExp(U));
-  assert.deepEqual(m.logs, ['baja_registrada']); assert.ok(m.logs.every(l => /^[a-z_]+$/.test(l)), 'solo etiquetas fijas');
-  const again = await get(m, '?t=' + m.token + '&r=1'); assert.match(await again.text(), /Volverás a recibir/); assert.equal(m.llamadas[1].resubscribe, true);
+  const ok = await post(m, '?t=' + m.token, 'confirmar=1'); const html2 = await ok.text();
+  assert.equal(ok.status, 200); assert.match(html2, /ya no recibirás el reporte semanal/i); assert.match(html2, /Volver a suscribirme/);
+  assert.deepEqual(m.llamadas, [{tenantId: T, userId: U, resubscribe: false}]);
+  assert.deepEqual(m.logs, ['baja_confirmacion', 'baja_registrada']); assert.ok(m.logs.every(l => /^[a-z_]+$/.test(l)), 'solo etiquetas fijas');
+  const again = await get(m, '?t=' + m.token + '&r=1'); assert.match(await again.text(), /Confirma para volver a recibir/); assert.equal(m.llamadas.length, 1, 'ni siquiera volver a suscribirse cambia estado por GET');
+  const alta = await post(m, '?t=' + m.token + '&r=1', 'confirmar=1'); assert.match(await alta.text(), /Volverás a recibir/); assert.equal(m.llamadas[1].resubscribe, true);
 });
 test('POST (List-Unsubscribe-Post): responde 200 simple y registra la baja', async () => {
   const m = mk();
@@ -70,9 +75,9 @@ test('enlaces inválidos, manipulados o vencidos: mensaje claro y NUNCA tocan la
 });
 test('fallas de base y destinatario desconocido: aviso honesto, no se finge que quedó dado de baja', async () => {
   const caida = mk({aplicar: async () => { throw Error('db'); }});
-  const r = await get(caida, '?t=' + caida.token); assert.equal(r.status, 503); assert.match(await r.text(), /No pudimos registrar tu baja/); assert.deepEqual(caida.logs, ['baja_fallo_base']);
+  const r = await post(caida, '?t=' + caida.token, 'confirmar=1'); assert.equal(r.status, 503); assert.match(await r.text(), /No pudimos registrar tu baja/); assert.deepEqual(caida.logs, ['baja_fallo_base']);
   const des = mk({aplicar: async () => ({ok: false, reason: 'desconocido'})});
-  assert.equal((await get(des, '?t=' + des.token)).status, 404);
+  assert.equal((await post(des, '?t=' + des.token, 'confirmar=1')).status, 404);
   const sin = createBajaHandler({secret: undefined, aplicar: async () => ({ok: true})});
   assert.equal((await sin(new Request('https://x/api/baja?t=a'))).status, 503);
 });

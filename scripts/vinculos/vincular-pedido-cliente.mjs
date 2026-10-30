@@ -20,7 +20,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {TENANT, PROJECT_REF, sha256, contextoSql, ejecutor, dentroDeTope} from './importar-vinculos.mjs';
+import {TENANT, PROJECT_REF, sha256, contextoSql, ejecutor, dentroDeTope, lineasDeSalida, textoDeSalida} from './importar-vinculos.mjs';
 
 export const VERSION = 'v1';
 export const MARCA = '[vinculo-pedido-cliente ' + VERSION;
@@ -217,7 +217,7 @@ export function soloPermitidas(sql) {
 }
 
 // ------------------------------------------------------------------------------------------------ planificacion
-const parseFilas = (out, marca) => out.split('\n').filter(l => l.startsWith(marca + ' ')).map(l => JSON.parse(l.slice(marca.length + 1)));
+const parseFilas = (out, marca) => lineasDeSalida(out).filter(l => l.startsWith(marca + ' ')).map(l => JSON.parse(l.slice(marca.length + 1)));
 export const conteo = xs => xs.reduce((o, x) => (o[x.estado] = (o[x.estado] ?? 0) + 1, o), {});
 
 export function planificar({pares, exec, dir, accion}) {
@@ -313,7 +313,7 @@ export async function main(a) {
     if (!fs.existsSync(path.join(dir, `dry-run-${accion}.json`))) throw new Error('Falta un dry-run previo de ESTE archivo y accion (recibo dry-run-' + accion + '.json).');
     resumen.atestacion_sha256 = sha256(raw);
     const f = escribir(path.join(dir, 'owner-check.sql'), `begin read only;\nselect 'VINCULO_PC_OWNER '||count(*) from public.memberships where tenant_id=${T} and user_id=${lit(owner)}::uuid and role='owner' and status='active';\nrollback;\n`);
-    const r = exec.run(f); if (r.status !== 0 || !/VINCULO_PC_OWNER 1\b/.test(r.out)) throw new Error('OWNER_NO_ACTIVO en el tenant fijado');
+    const r = exec.run(f); if (r.status !== 0 || !/VINCULO_PC_OWNER 1\b/.test(textoDeSalida(r.out))) throw new Error('OWNER_NO_ACTIVO en el tenant fijado');
   }
 
   const plan = planificar({pares, exec, dir, accion});
@@ -333,7 +333,7 @@ export async function main(a) {
     const sql = loteSql({owner, items: lote, activo: accion === 'importar', etiqueta, report, timeoutMs, setRole: !flag('sin-set-role')});
     if (!soloPermitidas(sql)) throw new Error('SQL con sentencias no permitidas');
     const f = escribir(path.join(dir, `lote-${etiqueta}.sql`), sql), t0 = Date.now();
-    const r = exec.run(f), ok = r.status === 0 && new RegExp(`VINCULO_PC_RESULT ${etiqueta} pares=${lote.length} insertados=${lote.length}`).test(r.out);
+    const r = exec.run(f), ok = r.status === 0 && new RegExp(`VINCULO_PC_RESULT ${etiqueta} pares=${lote.length} insertados=${lote.length}`).test(textoDeSalida(r.out));
     const rec = {etiqueta, pedidos: lote.length, ok, ms: Date.now() - t0, sql_sha256: sha256(sql)};
     if (!ok) rec.error = scrub(r.out.split('\n').filter(l => /ERROR|VINCULO_PC_LOTE_ABORTADO|OWNER_NO_ACTIVO|violat/.test(l)).slice(0, 2).join(' | ')).slice(0, 300);
     lotes.push(rec); escribir(path.join(dir, `recibo-${etiqueta}.json`), JSON.stringify(rec, null, 1));

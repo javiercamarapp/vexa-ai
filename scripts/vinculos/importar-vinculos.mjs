@@ -204,7 +204,29 @@ export function ejecutor({socket = null, linked = false, repo = path.join(os.hom
 export const dentroDeTope = (inicio, topeSeg, ahora = Date.now()) => (ahora - inicio) / 1000 <= topeSeg;
 const trozos = (a, n) => { const o = []; for (let i = 0; i < a.length; i += n) o.push(a.slice(i, i + n)); return o; };
 const escribir = (f, s) => { fs.writeFileSync(f, s, {mode: 0o600}); fs.chmodSync(f, 0o600); return f; };
-const parsePlan = out => out.split('\n').filter(l => l.startsWith('VINCULOS_PLAN ')).map(l => JSON.parse(l.slice(14)));
+/** Salida de `supabase db query`: v2.115+ imprime JSON {"boundary":..,"rows":[{"?column?":"MARCA {...}"}],"warning":..}; versiones/psql dan lineas crudas.
+ *  Devuelve todas las lineas utiles: las crudas mas el valor string de cada celda de rows[*] (cualquier clave). Tolera `<` escapado como \\u003c en warning. */
+export function lineasDeSalida(out) {
+  const lineas = String(out ?? '').split('\n');
+  const extra = [];
+  const tomar = o => { if (o && Array.isArray(o.rows)) for (const r of o.rows) if (r && typeof r === 'object') for (const v of Object.values(r)) if (typeof v === 'string') extra.push(...v.split('\n')); };
+  // Recorre la salida buscando objetos JSON balanceados (conscientes de cadenas) por si stderr se mezcla despues del JSON.
+  const txt = String(out ?? '');
+  for (let i = 0; i < txt.length; i++) {
+    if (txt[i] !== '{') continue;
+    let d = 0, enStr = false, j = i;
+    for (; j < txt.length; j++) {
+      const c = txt[j];
+      if (enStr) { if (c === '\\') j++; else if (c === '"') enStr = false; continue; }
+      if (c === '"') enStr = true; else if (c === '{') d++; else if (c === '}' && --d === 0) break;
+    }
+    if (d !== 0) break;
+    try { tomar(JSON.parse(txt.slice(i, j + 1))); i = j; } catch { /* no era JSON: seguir */ }
+  }
+  return [...lineas, ...extra];
+}
+export const textoDeSalida = out => lineasDeSalida(out).join('\n');
+const parsePlan = out => lineasDeSalida(out).filter(l => l.startsWith('VINCULOS_PLAN ')).map(l => JSON.parse(l.slice(14)));
 
 /** Clasifica todos los pares contra la base (solo lectura, en trozos de 2000). */
 export function planificar({pares, exec, dir, tipos, accion}) {
@@ -299,7 +321,7 @@ export async function main(a) {
   // ---- owner activo (lectura)
   if (execute) {
     const f = escribir(path.join(dir, 'owner-check.sql'), `begin read only;\nselect 'VINCULOS_OWNER '||count(*) from public.memberships where tenant_id=${T} and user_id=${lit(owner)}::uuid and role='owner' and status='active';\nrollback;\n`);
-    const r = exec.run(f); if (r.status !== 0 || !/VINCULOS_OWNER 1\b/.test(r.out)) throw new Error('OWNER_NO_ACTIVO en el tenant fijado');
+    const r = exec.run(f); if (r.status !== 0 || !/VINCULOS_OWNER 1\b/.test(textoDeSalida(r.out))) throw new Error('OWNER_NO_ACTIVO en el tenant fijado');
   }
 
   // ---- plan contra la base
@@ -328,7 +350,7 @@ export async function main(a) {
     const sql = loteSql({owner, items, activo: accion === 'importar', etiqueta, timeoutMs, setRole: !flag('sin-set-role')});
     if (!soloPermitidas(sql)) throw new Error('SQL con sentencias no permitidas');
     const f = escribir(path.join(dir, `lote-${etiqueta}.sql`), sql), t0 = Date.now();
-    const r = exec.run(f); const ok = r.status === 0 && new RegExp(`VINCULOS_RESULT ${etiqueta} pares=${items.length} insertados=${items.length}`).test(r.out);
+    const r = exec.run(f); const ok = r.status === 0 && new RegExp(`VINCULOS_RESULT ${etiqueta} pares=${items.length} insertados=${items.length}`).test(textoDeSalida(r.out));
     const rec = {etiqueta, pares: items.length, ok, ms: Date.now() - t0, sql_sha256: sha256(sql)};
     if (!ok) rec.error = scrub(r.out.split('\n').filter(l => /ERROR|VINCULOS_LOTE_ABORTADO|OWNER_NO_ACTIVO|violat/.test(l)).slice(0, 2).join(' | ')).slice(0, 300);
     lotes.push(rec); escribir(path.join(dir, `recibo-${etiqueta}.json`), JSON.stringify(rec, null, 1));

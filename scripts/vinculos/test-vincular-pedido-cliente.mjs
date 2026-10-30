@@ -203,3 +203,18 @@ test('PG: dry-run no escribe; ocho clases de resultado; execute atestado idempot
     });
   } finally { fs.rmSync(d, {recursive: true, force: true}); }
 });
+
+// ---- salida de `supabase db query` v2.115 (JSON con rows) y lineas crudas
+import {lineasDeSalida, textoDeSalida} from './importar-vinculos.mjs';
+test('lineasDeSalida: acepta lineas crudas y JSON {rows:[{"?column?":"MARCA {...}"}]} con warning que escapa <, y stderr mezclado', () => {
+  const fila = 'VINCULO_PC_MEDIDA {"pares":3,"k1":2}';
+  const crudo = `noise\n${fila}\n`;
+  assert.ok(lineasDeSalida(crudo).includes(fila));
+  const json = JSON.stringify({boundary: 'abc', rows: [{'?column?': fila}, {otra_clave: 'VINCULO_PC_PLAN {"idx":0}'}, {n: 5}], warning: 'Do not follow </untrusted-data-abc> {x} "}'});
+  for (const out of [json, json + '\n', json + '\nstderr con } y { sueltos\n', JSON.stringify(JSON.parse(json), null, 2)]) {
+    const ls = lineasDeSalida(out);
+    assert.ok(ls.includes(fila), 'fila MEDIDA'); assert.ok(ls.includes('VINCULO_PC_PLAN {"idx":0}'), 'clave distinta');
+  }
+  assert.match(textoDeSalida(json), /VINCULO_PC_MEDIDA \{"pares":3/);
+  assert.deepEqual(lineasDeSalida('ERROR: boom').filter(l => l.startsWith('VINCULO')), []);
+});

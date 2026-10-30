@@ -1,0 +1,27 @@
+ACCOUNT
+
+Confirm your new email
+
+Current email: {{ .Email }}
+New email:     {{ .NewEmail }}
+
+If you confirm, you will sign in to Rovaq with the new email. We will
+also notify the current email.
+
+Confirm the change:
+{{ .ConfirmationURL }}
+
+The link expires in 1 hour and works only once.
+
+Did not ask for this change? Do not open the link and tell us at
+seguridad@rovaq.ai; we will protect your account.
+
+If the button does not open, copy this address into your browser:
+{{ .ConfirmationURL }}
+
+--
+Rovaq will never ask for your password by email. Do not forward this
+message.
+You are receiving this email because a change of email was requested for
+a Rovaq account.
+Rovaq AI · soporte@rovaq.ai · Mexico City, Mexico

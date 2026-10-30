@@ -1,0 +1,25 @@
+ACCESS
+
+Reset your password
+
+You asked to recover access to the account {{ .Email }}. The button lets
+you choose a new password (at least 12 characters).
+
+Choose a new password:
+{{ .ConfirmationURL }}
+
+The link expires in 1 hour and works only once. If it no longer works,
+request a new one at {{ .SiteURL }}/login.
+
+Did not ask for it? Ignore this email; your current password still
+works. If you receive several, let us know at seguridad@rovaq.ai.
+
+If the button does not open, copy this address into your browser:
+{{ .ConfirmationURL }}
+
+--
+Rovaq will never ask for your password by email. Do not forward this
+message.
+You are receiving this email because access recovery was requested with
+this address.
+Rovaq AI · soporte@rovaq.ai · Mexico City, Mexico

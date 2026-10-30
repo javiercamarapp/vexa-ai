@@ -1,5 +1,5 @@
 // F1-citas (29-oct): public.refresh_problem_conversations deriva los vinculos problema-conversacion-hallazgo de la membresia REAL de los problemas.
-// Postgres LOCAL desechable con las migraciones reales 0001..0055 + la propuesta 20261206000000; mundo sintetico (ai-scale/economia-problemas/mundo.mjs: SYN*, sin datos de clientes).
+// Postgres LOCAL desechable con las migraciones reales 0001..0055 + la propuesta 20261206000500; mundo sintetico (ai-scale/economia-problemas/mundo.mjs: SYN*, sin datos de clientes).
 //   node --test supabase/tests/problem-conversations-link.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -8,7 +8,7 @@ import {fileURLToPath} from 'node:url';
 import {withPg, pgAvailable} from '../../packages/metrics/tests/pg-harness.mjs';
 import {montarMundo, TENANT_A, TENANT_B} from '../../packages/ai-scale/economia-problemas/mundo.mjs';
 
-const MIG = path.join(path.dirname(fileURLToPath(import.meta.url)), '../migrations/20261206000000_problem_conversations_link.sql');
+const MIG = path.join(path.dirname(fileURLToPath(import.meta.url)), '../migrations/20261206000500_problem_conversations_link.sql');
 const SKIP = !pgAvailable() && 'sin postgres local';
 const run = (h, t, dry = false) => JSON.parse(h.psql(`select public.refresh_problem_conversations('${t}',${dry})`).out);
 const n = (h, sql) => Number(h.psql(sql).out);
@@ -124,7 +124,7 @@ test('vinculos problema-conversacion: ensayo no escribe, la corrida real iguala 
     await t.test('reversa: borra solo lo derivado y quita la funcion', () => {
       h.psql(`insert into public.problem_conversations(tenant_id,problem_id,conversation_id,provenance) select tenant_id,problem_id,conversation_id,'{"kind":"manual"}' from public.problem_conversations where tenant_id='${TENANT_B}' and valid_until is null limit 1 on conflict do nothing`);
       // fila manual con otro valid_from para no chocar con la unica (tenant,problem,conv,valid_from)
-      const down = new URL('../../packages/workspace-service/tests/20261206000000_problem_conversations_link.down.sql', import.meta.url).pathname;
+      const down = new URL('../../packages/workspace-service/tests/20261206000500_problem_conversations_link.down.sql', import.meta.url).pathname;
       const manual = n(h, `select count(*) from public.problem_conversations where provenance->>'kind'='manual'`);
       const r = h.file(down); assert.equal(r.status, 0, String(r.stderr));
       assert.equal(n(h, `select count(*) from public.problem_conversations where provenance->>'kind'='problem-link-v1'`), 0);

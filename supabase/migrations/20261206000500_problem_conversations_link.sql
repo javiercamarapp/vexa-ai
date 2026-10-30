@@ -1,4 +1,4 @@
--- 20261206000000 (PROPUESTA, NO APLICADA): VINCULOS problema-conversacion-hallazgo (public.problem_conversations) derivados de la membresia REAL de los problemas.
+-- 20261206000500 (PROPUESTA, NO APLICADA): VINCULOS problema-conversacion-hallazgo (public.problem_conversations) derivados de la membresia REAL de los problemas.
 -- Por qué: problem_conversations (0004) existe pero NADIE la escribe ni la lee: la membresia vive en problem_embedding_members y en la instantanea de problem_versions
 --   (kind 'vector-problem-v1'). Con la tabla vacia no hay forma de consultar «que conversaciones, con que hallazgo, sostienen este problema» sin pasar por vectores, y la
 --   exposicion (problema -> conversacion -> pedido) no tiene de donde colgarse.
@@ -11,7 +11,7 @@
 -- Quien la corre: la persona con acceso de propietario de la base (supabase db query --linked), nunca la aplicacion. Se niega a correr si el rol no puede saltar RLS (si no, RLS
 --   ocultaria filas y el resultado seria un conteo falso).
 -- Orden: aplicar esta migracion, luego correr refresh_problem_conversations(tenant, true) (ensayo) y despues (tenant, false). Ver 2-vincular-problema-conversaciones-29oct.sh.
--- Reversa: packages/workspace-service/tests/20261206000000_problem_conversations_link.down.sql
+-- Reversa: packages/workspace-service/tests/20261206000500_problem_conversations_link.down.sql
 begin;
 set local lock_timeout='3s';
 do $$

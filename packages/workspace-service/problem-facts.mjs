@@ -32,6 +32,15 @@ export function resumirAdjuntos(rows, cobertura) {
   };
 }
 
+/** Vínculos problema–conversación REGISTRADOS (public.problem_conversations, vigentes) frente a las conversaciones de la agrupación. row = {linked, with_issue} o null si no se pudo leer.
+ *  none = tabla sin vínculos para este problema («sin vínculos todavía», nunca se muestran como si existieran); partial = hay menos vínculos que conversaciones; complete = al menos uno por conversación. */
+export function resumirVinculos(row, miembros) {
+  if (!row) return null;
+  const linked = Number(row.linked), withIssue = Number(row.with_issue);
+  const members = Number.isInteger(miembros) && miembros >= 0 ? miembros : null;
+  return {state: linked === 0 ? 'none' : members !== null && linked < members ? 'partial' : 'complete', linked, withIssue, members};
+}
+
 export function createProblemFactsRepository({database, now = () => new Date(), budgetMs = FACTS_BUDGET_MS}) {
   return {
     /** parts (opcional): ['themes'] = solo conversaciones y temas de las citas (la descripción automática del título); por omisión, la ficha completa. */
@@ -87,6 +96,10 @@ export function createProblemFactsRepository({database, now = () => new Date(), 
           return resumirAdjuntos(rows, cob);
         }) : null;
 
+        const vinc = solo ? null : await guarded(s, deadline(), 'facts_links', async () => (await s.query(
+          `SELECT count(*)::int AS linked, count(*) FILTER (WHERE issue_id IS NOT NULL)::int AS with_issue
+           FROM public.problem_conversations WHERE tenant_id=$1 AND problem_id=$2 AND valid_until IS NULL`, [s.tenantId, problemId])).rows[0] ?? null);
+
         return {
           problemId, generatedAt: now().toISOString(), class: 'observed',
           label: yo?.label ?? null,
@@ -99,6 +112,7 @@ export function createProblemFactsRepository({database, now = () => new Date(), 
           themes: temas,
           recommendations: recs === null ? {state: 'unavailable', items: []} : {state: 'ok', items: recs.map(r => ({id: r.id, title: r.title, status: r.status, version: Number(r.version), action: r.action, intervention: r.intervention ?? null}))},
           attachments: adj === null ? {state: 'unavailable'} : {state: 'ok', ...adj},
+          links: resumirVinculos(vinc, cids ? cids.length : yo ? yo.n : null),
           parts: {catalog: cat ? 'ok' : 'unavailable', signals: senales ? 'ok' : 'unavailable', meta: meta ? 'ok' : 'unavailable'},
           note: 'Conversaciones y citas son registros cargados del grupo; la cita se verifica al abrirla. El dinero por problema no está disponible: no hay vínculos problema–pedido.',
         };

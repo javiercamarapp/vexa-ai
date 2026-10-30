@@ -153,6 +153,7 @@ export function ProblemSheet({id,shared,captured,dinero,facts,onTitle,causa=null
    {ev.sinAlcance&&!ev.citas&&<p className="state" role="status">{t('prob.abreDesdePub')} <LinkButton href="/problems" size="sm" icon={<Arrow/>}>{t('prob.irAProblemas')}</LinkButton></p>}
    {ev.fallo&&<p className="state state-error" role="alert">{t('prob.noSePudoVerif')} <Button size="sm" icon={<Refresh/>} onClick={ev.reintentar}>{t('prob.reintentar')}</Button></p>}
    {ev.citas&&distintas.length===0&&<p className="state">{t('prob.sinCitas')}</p>}
+   {f&&<p className={s.sub} role="note" data-vinculos={f.links?.state??'unavailable'}><strong>{t('prob.vincTitulo')}</strong> {!f.links?t('prob.noDispAhoraC'):f.links.state==='none'?t('prob.vincNinguno'):f.links.state==='partial'?t('prob.vincParcial',{a:nf.format(f.links.linked),b:nf.format(f.links.members??0),h:nf.format(f.links.withIssue)}):t('prob.vincCompleto',{n:nf.format(f.links.linked),h:nf.format(f.links.withIssue)})}</p>}
    {distintas.length>0&&<>
     <p className={s.privacy} role="note"><Icon name="info" size={14}/><span>{t('prob.avisoTerceros')}</span></p>
     <div className={s.evi}>{lista.map((c,i)=><Citation key={c.messageRevisionId+':'+c.quoteHash+':'+i} quote={c.quote} role={c.role} category={c.category} source={c.source} messageRevisionId={c.messageRevisionId} times={c.veces}/>)}</div>

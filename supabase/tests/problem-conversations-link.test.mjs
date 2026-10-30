@@ -41,6 +41,9 @@ test('vinculos problema-conversacion: ensayo no escribe, la corrida real iguala 
       assert.equal(n(h, `select count(*) from public.problem_conversations l where not exists(select 1 from public.problem_embedding_members m where m.tenant_id=l.tenant_id and m.problem_id=l.problem_id and m.conversation_id=l.conversation_id)`), 0);
       assert.ok(d.with_issue > 0 && d.with_issue <= A, 'hay hallazgos vinculados (with_issue=' + d.with_issue + ')');
       assert.equal(n(h, `select count(*) from public.problem_conversations l where l.issue_id is not null and not exists(select 1 from public.issues i join public.extraction_runs r on r.tenant_id=i.tenant_id and r.id=i.extraction_run_id where i.tenant_id=l.tenant_id and i.id=l.issue_id and r.conversation_id=l.conversation_id)`), 0, 'el hallazgo es de esa conversacion');
+      // la lectura de la ficha (problem-facts.mjs) funciona sobre el esquema real y suma lo mismo que la corrida
+      const leido = h.psql(`select coalesce(sum(c),0)||'|'||coalesce(sum(w),0) from (select count(*)::int c, count(*) filter (where issue_id is not null)::int w from public.problem_conversations where tenant_id='${TENANT_A}' and valid_until is null group by problem_id) x`).out.split('|').map(Number);
+      assert.deepEqual(leido, [A, d.with_issue]);
       assert.equal(d.with_order_on_conversation, 0, 'el pedido NO se vincula aqui: las conversaciones sinteticas no traen order_id');
     });
 

@@ -1,10 +1,13 @@
 export const FACTS_BUDGET_MS:number;
 export type PartState='ok'|'unavailable';
+export type ProblemLinks={state:'none'|'partial'|'complete';linked:number;withIssue:number;members:number|null};
 export type ProblemFacts={problemId:string;generatedAt:string;class:'observed';label:string|null;grupo:{n:number;de:number}|null;conversations:number|null;citations:number|null;severity:string|null;severityMix:Record<string,number>|null;
  critical:{critical:boolean;signals:number;reason:'severity'|'category'|'both'|null}|null;themes:{category:string;count:number}[]|null;
  recommendations:{state:PartState;items:{id:string;title:string;status:string;version:number;action:string|null;intervention:string|null}[]};
  attachments:{state:'unavailable'}|{state:'ok';total:number;conversaciones:number;porClase:Record<'imagen'|'video'|'audio'|'documento'|'otro',number>;cobertura:{enlazados:number;total:number}|null};
+ links:ProblemLinks|null;
  parts:{catalog:PartState;signals:PartState;meta:PartState};note:string};
 export function posicionGrupo(filas:{id:string;label:string;n:number|null}[],id:string):{n:number;de:number}|null;
 export function resumirAdjuntos(rows:{kind:string;n:unknown;convs:unknown;is_total:unknown}[],cobertura:{linked:unknown;total:unknown}|null):{total:number;conversaciones:number;porClase:Record<'imagen'|'video'|'audio'|'documento'|'otro',number>;cobertura:{enlazados:number;total:number}|null};
 export function createProblemFactsRepository(options:{database:any;now?:()=>Date;budgetMs?:number}):{get(input:{problemId:string;parts?:['themes']|null}):Promise<ProblemFacts>};
+export function resumirVinculos(row:{linked:unknown;with_issue:unknown}|null,miembros:number|null):ProblemLinks|null;

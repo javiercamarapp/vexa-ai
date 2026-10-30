@@ -46,6 +46,8 @@ export function identity(client:ReturnType<typeof authClient>):IdentityPort {
       if(data.user){await cupoDeUsuario(data.user.id);return {id:data.user.id};}
       return null;
     },
+    /** Nivel de aseguramiento (aal1/aal2) del JWT de la sesión ya verificada por getUser. */
+    async assurance(){const {data,error}=await client.auth.mfa.getAuthenticatorAssuranceLevel();return error?null:data?.currentLevel??null;},
     async memberships(userId){const {data,error}=await client.from('memberships').select('tenant_id,user_id,role,status,permissions_version').eq('user_id',userId).eq('status','active').order('tenant_id');
       if(error) throw new AccessError(503,'membership_unavailable');
       return data as Membership[];

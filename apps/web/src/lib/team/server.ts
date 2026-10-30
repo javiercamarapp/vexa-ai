@@ -37,4 +37,4 @@ export async function handleTeam(request:NextRequest,invitationId?:string,platfo
  // A rejected invitation session must not deliver refreshed credentials.
  if(sessionExchange)finish=commitCookies;
  return finish(NextResponse.json({data,...(invitationId?{}:{viewerId:verified.data.user.id})},{headers}));
- }catch(error){const e=error as {status?:number;code?:string};const status=[400,401,403,408,409,413,429,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({error:{code:e.code?.startsWith('team_')?e.code:'team_unavailable'}},{status,headers}));}}
+ }catch(error){const e=error as {status?:number;code?:string};const status=[400,401,403,408,409,413,429,503].includes(e.status??0)?e.status!:503;return finish(NextResponse.json({error:{code:/^(?:team_|owner_mfa_required$|platform_owner_grant_requires_support$|platform_mfa_required$)/.test(e.code??'')?e.code:'team_unavailable'}},{status,headers}));}}

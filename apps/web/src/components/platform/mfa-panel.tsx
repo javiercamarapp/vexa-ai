@@ -6,7 +6,7 @@ import {CODE} from '../../lib/platform/mfa';
 import {useT} from '../i18n/proveedor';
 import type {Clave} from '../../lib/i18n';
 type State = {required: boolean; verdict: string; level: string | null; verifiedFactors: Array<{id: string; name: string | null}>; pendingFactors: Array<{id: string}>};
-const ERR: Record<string, Clave> = {mfa_code_invalid: 'tr.pl.mfaCodigo', mfa_factor_exists: 'tr.pl.mfaFactor', mfa_unavailable: 'tr.pl.mfaNoDisp'};
+const ERR: Record<string, Clave> = {mfa_code_invalid: 'tr.pl.mfaCodigo', mfa_factor_exists: 'tr.pl.mfaFactor', mfa_unavailable: 'tr.pl.mfaNoDisp', mfa_reauth_required: 'tr.seg.reauth', mfa_aal2_required: 'tr.seg.soloAal2'};
 /** Inscripción y verificación TOTP. El QR lo genera Supabase (SVG); el secreto se muestra una vez por si la app no puede escanear. */
 export function MfaPanel({state}: {state: State}) {
   const t = useT();

@@ -2,7 +2,11 @@
 export type Membership = { tenant_id: string; user_id: string; role: 'owner'|'analyst'|'operator'|'viewer'; status: 'active'|'invited'|'revoked'; permissions_version: number };
 /** Sesión de soporte («ver como»): lectura de UNA organización, con motivo y caducidad, concedida por la plataforma. NO es una membresía. */
 export interface SupportGrant { session_id:string; tenant_id:string; tenant_name?:string; expires_at:string; reason:string }
-export interface IdentityPort { getUser(): Promise<{id:string}|null>; memberships(userId:string): Promise<Membership[]>; support?(userId:string): Promise<SupportGrant|null> }
+export interface IdentityPort {
+  getUser(): Promise<{id:string}|null>; memberships(userId:string): Promise<Membership[]>; support?(userId:string): Promise<SupportGrant|null>;
+  /** Nivel de aseguramiento de la sesión ('aal1' | 'aal2'); null = no se pudo determinar. Lo usa la MFA opcional de propietarios (db.ts). */
+  assurance?(): Promise<string|null>;
+}
 export interface ResolveOptions {
   /** Navegación de páginas: si la organización elegida ya no es válida (cookie revocada), cae a la primera membresía válida en vez de 403. Las rutas de datos y escrituras NO lo usan. */
   fallback?: boolean;

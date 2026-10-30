@@ -1,3 +1,6 @@
 .mfa-panel { display: grid; gap: 12px; max-width: 520px; }
 .mfa-form { display: grid; gap: 12px; }
 .mfa-qr { background: #fff; padding: 8px; border-radius: 8px; border: 1px solid var(--ui-border); }
+.owner-mfa { display: grid; gap: 12px; max-width: 520px; margin-top: 24px; }
+.owner-mfa-org { display: grid; gap: 8px; padding: 12px 0; border-top: 1px solid var(--ui-border); }
+.owner-mfa-org h3 { margin: 0; font-size: 1rem; }

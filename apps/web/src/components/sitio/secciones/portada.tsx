@@ -25,7 +25,7 @@ export function Portada({lang}: {lang: Lang}) {
         <Valor lang={lang} t={t} />
         <Pasos lang={lang} t={t} />
         <Pantallas lang={lang} t={t} />
-        <Puestos lang={lang} t={t} />
+        <Puestos t={t} />
         <Seguridad lang={lang} t={t} />
         <Integraciones lang={lang} t={t} />
         <Cierre lang={lang} t={t} />

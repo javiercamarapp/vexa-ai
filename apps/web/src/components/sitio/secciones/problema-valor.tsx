@@ -49,7 +49,7 @@ export function Valor({lang, t}: {lang: Lang; t: TextosPortada}) {
         </div>
         <div className="s-valor__escena" data-reveal="">
           <div className="s-valor__ventana">
-            <VentanaCaptura nombre="hoy" lang={lang} ruta="m1" tamanos="(max-width: 1100px) 100vw, 1024px">
+            <VentanaCaptura nombre="hoy" lang={lang} ruta="m1" tamanos="(max-width: 760px) 100vw, 700px">
               <span className="s-cota s-valor__cota" role="img" aria-label={valor.cotaAlt} data-cota-para="ingreso-bruto" />
               <div className="s-valor__sello s-sello-expandido" data-sello-de="ingreso-bruto">
                 <b>{clases.items[0].nombre}</b>

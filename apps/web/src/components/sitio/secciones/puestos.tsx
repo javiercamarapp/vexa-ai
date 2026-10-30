@@ -4,11 +4,11 @@
 import {Icono} from '../iconos';
 import type {NombreIcono} from '../iconos';
 import {enlaceInterno} from './datos';
-import type {Lang, TextosPortada} from './datos';
+import type {TextosPortada} from './datos';
 
 const ICONOS_PUESTO: readonly NombreIcono[] = ['persona', 'pedido', 'conversacion', 'evidencia'];
 
-export function Puestos({lang, t}: {lang: Lang; t: TextosPortada}) {
+export function Puestos({t}: {t: TextosPortada}) {
   const p = t.puestos;
   const l = p.lideres;
   const hrefFin = enlaceInterno(l.finanzas.href);

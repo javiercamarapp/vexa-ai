@@ -1,8 +1,7 @@
-// Piezas comunes de las secciones de la portada (T8): palabras que se iluminan, botón con círculo, sello de cifra e imagen del manifest.
+// Piezas comunes de las secciones de la portada (T8): palabras que se iluminan, botón con círculo y sello de cifra.
 // Cero style, cero texto escrito a mano: todo texto llega por props desde el contenido tipado.
 import {Fragment} from 'react';
 import type {ReactNode} from 'react';
-import {alt, medidas, url} from '../../../lib/sitio/activos';
 
 const norma = (s: string): string => s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
 
@@ -45,24 +44,6 @@ export function Sello({clase, children}: {clase: ClaseSello; children: ReactNode
       <span className="s-sello__icono" aria-hidden="true" />
       {children}
     </span>
-  );
-}
-
-/** Imagen del manifest con srcset de 480 y 960, ancho y alto del manifest y el alt del idioma (o el que se pase). */
-export function ImagenManifest({clave, lang, clase, tamanos, prioridad = false, textoAlt}: {clave: string; lang: 'es' | 'en'; clase?: string; tamanos: string; prioridad?: boolean; textoAlt?: string}) {
-  const {ancho, alto} = medidas(clave);
-  return (
-    <img
-      className={clase}
-      src={url(clave)}
-      srcSet={`${url(clave, {ancho: 480})} 480w, ${url(clave)} ${ancho}w`}
-      sizes={tamanos}
-      width={ancho}
-      height={alto}
-      alt={textoAlt ?? alt(clave, lang)}
-      decoding="async"
-      {...(prioridad ? {fetchPriority: 'high' as const} : {loading: 'lazy' as const})}
-    />
   );
 }
 

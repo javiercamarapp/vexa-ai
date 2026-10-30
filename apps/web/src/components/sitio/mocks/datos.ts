@@ -99,6 +99,7 @@ const UI_BI = {
   sparkIngreso: {es: 'Últimos 30 días', en: 'Last 30 days'} as Bi,
   verPaquete: {es: 'Ver el paquete', en: 'See the package'} as Bi,
   captura: {
+    ejemplo: {es: 'Datos de ejemplo', en: 'Example data'} as Bi,
     devueltos: {es: 'devueltos en 90 días', en: 'returned in 90 days'} as Bi,
     ingreso: {es: 'de ingreso bruto en octubre', en: 'of gross revenue in October'} as Bi,
     ejeMarca: {es: '80 %', en: '80 %'} as Bi,
@@ -151,7 +152,7 @@ export const UI = (lang: Lang) => ({
   conMarcador: UI_BI.conMarcador[lang],
   sparkIngreso: UI_BI.sparkIngreso[lang],
   verPaquete: UI_BI.verPaquete[lang],
-  captura: {devueltos: UI_BI.captura.devueltos[lang], ingreso: UI_BI.captura.ingreso[lang], ejeMarca: UI_BI.captura.ejeMarca[lang], barras: UI_BI.captura.barras[lang], enEs: UI_BI.captura.enEs[lang],
+  captura: {ejemplo: UI_BI.captura.ejemplo[lang], devueltos: UI_BI.captura.devueltos[lang], ingreso: UI_BI.captura.ingreso[lang], ejeMarca: UI_BI.captura.ejeMarca[lang], barras: UI_BI.captura.barras[lang], enEs: UI_BI.captura.enEs[lang],
     paso1: Object.fromEntries(Object.entries(UI_BI.captura.paso1).map(([k, v]) => [k, v[lang]])) as Record<string, string>,
     paso2: Object.fromEntries(Object.entries(UI_BI.captura.paso2).map(([k, v]) => [k, v[lang]])) as Record<string, string>,
     paso3: Object.fromEntries(Object.entries(UI_BI.captura.paso3).map(([k, v]) => [k, v[lang]])) as Record<string, string>,

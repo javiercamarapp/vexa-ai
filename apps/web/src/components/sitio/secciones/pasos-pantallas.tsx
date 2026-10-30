@@ -3,6 +3,7 @@
 // Con JavaScript en escritorio ancho el CSS fija la pista y muestra el paso activo (data-paso). El visual de cada paso es un recorte de la captura
 // real del producto con una capa SVG que enseña el verbo del paso (ventana-paso.tsx); la anima .s-visto del paso.
 import {Captura} from './captura';
+import {UI} from '../mocks/datos';
 import {enlaceInterno} from './datos';
 import type {Lang, TextosPortada} from './datos';
 import {dosCifras} from './piezas';
@@ -62,6 +63,7 @@ export function Pantallas({lang, t}: {lang: Lang; t: TextosPortada}) {
                 <div className="s-pantalla__miniatura">
                   <Captura nombre={CAPTURA_PANTALLA[i]} clave={CAPTURA_PANTALLA[i] === 'pantalla5' ? 'img/producto/pantalla5' : undefined} tema="claro" lang={lang} tamanos="(max-width: 768px) 92vw, 352px" clase="s-pantalla__img" anchos={CAPTURA_PANTALLA[i] === 'pantalla5' ? [727] : [960, 1440]} />
                   <span className="s-pantalla__barrido" aria-hidden="true" />
+                  <span className="s-pantalla__ejemplo">{UI(lang).captura.ejemplo}</span>
                 </div>
                 <div className="s-pantalla__cuerpo">
                   <span className="s-mono-min">{dosCifras(i + 1)}</span>

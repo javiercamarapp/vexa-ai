@@ -926,6 +926,21 @@
   100% { top: calc(100% - 1px); opacity: 0; }
 }
 
+.s-pantalla__ejemplo {
+  position: absolute;
+  left: var(--s-e8);
+  bottom: var(--s-e8);
+  padding: 2px 8px;
+  border: var(--s-borde) solid var(--s-linea);
+  border-radius: var(--s-r-total);
+  background: var(--s-vidrio);
+  font-family: var(--s-f-mono);
+  font-size: 10px;
+  letter-spacing: var(--s-k-sello);
+  text-transform: uppercase;
+  color: var(--s-apagado);
+}
+
 .s-pantalla__cuerpo {
   position: relative;
   display: flex;

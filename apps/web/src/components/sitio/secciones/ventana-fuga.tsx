@@ -40,7 +40,7 @@ export function VentanaFuga({lang}: {lang: Lang}) {
       </p>
       <div className="s-ventana__cuerpo">
         <div className="s-ventana__lienzo">
-        <Captura nombre="fuga" tema="oscuro" lang={lang} tamanos="(max-width: 1100px) 100vw, 1040px" prioridad clase="s-ventana__img" />
+        <Captura nombre="fuga" tema="oscuro" lang={lang} tamanos="(max-width: 1000px) 100vw, 880px" prioridad clase="s-ventana__img" />
         <svg className="s-ov" viewBox="0 0 2000 1250" preserveAspectRatio="none" role="group" aria-label={ui.captura.barras} focusable="false">
           {filas.map((f, i) => (
             <g className="s-ov__fila" key={f.sku} data-i={i} tabIndex={0} role="img" aria-label={`${f.sku}, ${usd(f.v)}, ${obs}`}>

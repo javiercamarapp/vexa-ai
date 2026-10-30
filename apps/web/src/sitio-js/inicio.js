@@ -86,7 +86,6 @@ const TRIPLES = [0, 4]; // bandas que cruzan tres veces (ida, vuelta e ida)
 const RAMPA = 3, PASO_RAMPA = 26; // escalones y largo de cada uno al engrosar o afinar el trazo
 
 const f1 = (n) => n.toFixed(1);
-const suave = (u) => u * u * (3 - 2 * u);
 
 /** Intervalos libres verticales (coordenadas de la zona) entre el contenido, de al menos `min` px; las bandas no cuentan como contenido. */
 function huecos(zona, H, min) {
@@ -177,7 +176,7 @@ function construirHilo(RM, notas) {
     const ondas = (hasta) => { while (cur[1] + paso * 1.4 < hasta) { k++; sCurva(lado(s, k), cur[1] + paso); } };
     const entradas = []; // cruces de banda: puntos de entrada y salida y gap
     let nb = 0;
-    const cruces = libres.map((g, gi) => ({g, banda: deBanda.has(g) ? deBanda.get(g) : -1})).filter(({g, banda}) => banda >= 0 || (g[0] + g[1]) / 2 - 0 > 0);
+    const cruces = libres.map((g) => ({g, banda: deBanda.has(g) ? deBanda.get(g) : -1})).filter(({g, banda}) => banda >= 0 || (g[0] + g[1]) / 2 - 0 > 0);
     for (const {g: [a, b], banda} of cruces) {
       const cy = (a + b) / 2;
       if (banda < 0 && (cy - ult < corrida || cy > H - 200 || bs.some((by) => Math.abs(by - cy) < corrida * 0.55))) continue;

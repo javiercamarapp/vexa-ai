@@ -40,6 +40,13 @@ export function createFlowRepository({database, recommendations, interventions =
       [s.tenantId, e.recommendationId, e.version, e.kind, s.userId, e.ownerId ?? null, e.dueDate ?? null, e.priority ?? null, e.outcome ?? null, e.note ?? null, e.comment ?? null, e.interventionId ?? null, e.comparison ? JSON.stringify(e.comparison) : null, key]));
   }
   const insert = (e, requestKey) => tx('propose', s => insertEvent(s, e, requestKey));
+  /** Reintento con la MISMA clave tras un corte de red: si el evento ya existe se devuelve el estado actual (idempotente); la clave de OTRA recomendación es conflicto. */
+  async function replayed(kind, id, requestKey) {
+    const r = await tx('read', async s => one(s, 'SELECT recommendation_id FROM public.recommendation_flow_events WHERE tenant_id=$1 AND idempotency_key=$2', [s.tenantId, 'flow:' + kind + ':' + requestKey]));
+    if (!r) return false;
+    check(r.recommendation_id === id, 'idempotency_conflict', 409);
+    return true;
+  }
   const guard = async (id, eventsList, {needs, forbids} = {}) => {
     const kinds = new Set(eventsList.map(e => e.kind));
     for (const k of needs ?? []) check(kinds.has(k), 'flow_order_invalid', 409);
@@ -78,10 +85,9 @@ export function createFlowRepository({database, recommendations, interventions =
       strict(q, ['id', 'expectedVersion', 'action', 'rationale', 'preconditions', 'ownerId', 'priority', 'comment', 'requestKey']); rk(q.requestKey); check(uuid(q.id), 'recommendation_not_found', 404);
       problemas(validarAjuste(q));
       await requireDecider(); await requireFlow();
+      if (await replayed('adjusted', q.id, q.requestKey)) return api.get({id: q.id});
       const before = await api.get({id: q.id});
       await guard(q.id, before.flow.events, {forbids: ['approved']});
-      const replay = await tx('read', async s => one(s, 'SELECT 1 AS ok FROM public.recommendation_flow_events WHERE tenant_id=$1 AND idempotency_key=$2', [s.tenantId, 'flow:adjusted:' + q.requestKey]));
-      if (replay) return before;
       const rev = await recommendations.revise({id: q.id, expectedVersion: q.expectedVersion, action: q.action, preconditions: q.preconditions, rationale: q.rationale, ownerId: q.ownerId ?? null, reason: q.comment});
       await insert({recommendationId: q.id, version: rev.version, kind: 'adjusted', ownerId: q.ownerId ?? null, priority: q.priority ?? null, comment: q.comment}, q.requestKey);
       return api.get({id: q.id});
@@ -90,6 +96,7 @@ export function createFlowRepository({database, recommendations, interventions =
     async start(q) {
       strict(q, ['id', 'expectedVersion', 'comment', 'requestKey']); rk(q.requestKey); check(uuid(q.id), 'recommendation_not_found', 404);
       await requireDecider(); await requireFlow();
+      if (await replayed('started', q.id, q.requestKey)) return api.get({id: q.id});
       const before = await api.get({id: q.id});
       check(before.version === q.expectedVersion, 'version_conflict', 409);
       await guard(q.id, before.flow.events, {needs: ['approved'], forbids: ['started', 'resolved']});
@@ -101,6 +108,7 @@ export function createFlowRepository({database, recommendations, interventions =
       strict(q, ['id', 'expectedVersion', 'outcome', 'note', 'requestKey']); rk(q.requestKey); check(uuid(q.id), 'recommendation_not_found', 404);
       problemas(validarResultado(q));
       await requireDecider(); await requireFlow();
+      if (await replayed('resolved', q.id, q.requestKey)) return api.get({id: q.id});
       const before = await api.get({id: q.id});
       check(before.version === q.expectedVersion, 'version_conflict', 409);
       await guard(q.id, before.flow.events, {needs: ['approved'], forbids: ['resolved']});

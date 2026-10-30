@@ -15,7 +15,7 @@ function setup({bytes=salesCsv(),type=CSV,provenance={},state='reserved',expires
   if(sql.includes('FROM public.imports i JOIN'))return {rows:[row]};
   if(sql.startsWith('SELECT id FROM public.imports'))return {rows:[{id}]};
   if(sql.includes('FROM storage.objects'))return {rows:[{owner_id:user,object_bytes:String(bytes.length)}]};
-  if(sql.startsWith('UPDATE public.imports')){log.updates.push(params);row.state='uploaded';row.provenance=JSON.parse(params[2]);return {rows:[]};}
+  if(sql.startsWith('UPDATE public.imports')){log.updates.push(params);row.state='uploaded';row.provenance=JSON.parse(params[2]);return {rows:[{id}]};}
   throw new Error('unexpected sql '+sql.slice(0,70));}});}};
  const handler=createImportHandler({database,storage:{createUpload:async()=>{throw new Error('no');},read:async()=>{log.reads++;return bytes;}},confirmationSecret:secret});
  const post=async(path,body)=>{const r=await handler(new Request(`https://x.invalid/api/imports/${id}${path}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}));return {status:r.status,body:await r.json()};};
@@ -44,6 +44,21 @@ test('registro: guarda procedencia y corte en imports.provenance y pasa a upload
  // detalle: lo registrado se muestra sin releer el archivo
  const reads=t.log.reads;const detail=await t.get();
  assert.equal(detail.status,200);assert.equal(detail.body.data.preview_state,'registered');assert.equal(detail.body.data.member_file.kind,'sales_by_sku');assert.equal(t.log.reads,reads);
+});
+
+test('registro: si la fila ya no esta en reserved (carrera) o el rol no escribe, 409 y nada queda registrado',async()=>{
+ const lost=setup();
+ const handlerDb={async transaction(action,work){return work({tenantId:tenant,userId:user,role:'analyst',async query(sql){
+  if(sql.includes('FROM public.connections'))return {rows:[{id:conn}]};
+  if(sql.includes('FROM public.imports i JOIN'))return {rows:[lost.row]};
+  if(sql.startsWith('SELECT id FROM public.imports'))return {rows:[{id}]};
+  if(sql.includes('FROM storage.objects'))return {rows:[{owner_id:user,object_bytes:String(lost.row.size)}]};
+  if(sql.startsWith('UPDATE public.imports'))return {rows:[]};
+  throw new Error('unexpected');}});}};
+ const h=createImportHandler({database:handlerDb,storage:{createUpload:async()=>{throw new Error('no');},read:async()=>salesCsv()},confirmationSecret:secret});
+ const r=await h(new Request(`https://x.invalid/api/imports/${id}/member-file/register`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...good,sha256:lost.sha})}));
+ assert.equal(r.status,409);assert.equal((await r.json()).error.code,'member_file_immutable');
+ assert.equal(lost.log.updates.length,0);
 });
 
 test('registro bloqueado: hash distinto, reserva vencida, mapeo previo, trabajo existente',async()=>{

@@ -133,12 +133,13 @@ function conteo() {
   if (RM) return;
   const f = new Intl.NumberFormat('en-US');
   listo.then(() => {
-    if (performance.now() > 2500) return;
+    // La tarjeta de la cifra aparece por CSS a los 700 ms: si la hidratación llegó tarde se deja el valor final en vez de parpadear a cero
+    if (performance.now() > 1100) return;
     $$('[data-cuenta]').forEach((e) => {
-      const n = +e.dataset.cuenta, t0 = performance.now() + 750;
+      const n = +e.dataset.cuenta, t0 = performance.now();
       e.textContent = '0';
       const paso = (t) => {
-        const k = lim((t - t0) / 800);
+        const k = lim((t - t0) / 900);
         e.textContent = f.format(Math.round(n * (1 - (1 - k) ** 3)));
         if (k < 1) requestAnimationFrame(paso);
       };

@@ -1,7 +1,7 @@
 import {idiomaDePeticion,mensajeError} from '../i18n/errores-api';
 import {readRequestBytes} from '../request-body';
 import 'server-only';
-import {NextRequest,NextResponse} from 'next/server';
+import {after,NextRequest,NextResponse} from 'next/server';
 import {createClient} from '@supabase/supabase-js';
 import {AccessError,assertOrigin,config,identity,PRIVATE_HEADERS} from '../auth';
 import {requestAuth} from '../auth-http';
@@ -35,14 +35,19 @@ export async function emailAuth(request:NextRequest,operation:'request'|'session
   // Misma dirección en el último minuto: el aviso genérico es lo previsto y no revela si la cuenta existe.
   if(admitted.kind==='duplicate')return NextResponse.json(generic(request),{status:202,headers:{...headers,'Retry-After':'60'}});
   const admission=admitted.lease;
-  let unavailable=false,limitado=false;
-  try{const client=createClient(c.url,c.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,flowType:'implicit'},global:{fetch:(target,init)=>fetch(target,{...init,cache:'no-store',signal:AbortSignal.timeout(10000)})}});
-   const result=await client.auth.signInWithOtp({email:body.email.trim().toLowerCase(),options:{shouldCreateUser:false,emailRedirectTo:new URL('/auth/email/complete',c.origin).href}});
-   unavailable=Boolean(result.error&&(result.error.status===undefined||result.error.status===0||result.error.status>=500));
-   // 429 = el servicio de correo agotó su cupo por hora (no revela si la cuenta existe): se avisa en vez de fingir que se envió.
-   limitado=result.error?.status===429;
-  }catch{unavailable=true;}finally{admission.finish(unavailable||limitado);}
-  if(limitado)return NextResponse.json({error:{code:'email_auth_busy'}},{status:503,headers:{...headers,'Retry-After':'300'}});
+  // R2-06: el 202 genérico se responde SIN esperar al proveedor: el tiempo de respuesta no distingue cuentas existentes, duplicados ni un proveedor lento. El envío y el cierre del arrendamiento van en segundo plano.
+  const correo=body.email.trim().toLowerCase(),ruta=request.nextUrl.pathname,metodo=request.method,ipRaw=request.headers.get('x-forwarded-for'),ua=request.headers.get('user-agent');
+  const enviar=async()=>{
+   let unavailable=false,limitado=false;
+   try{const client=createClient(c.url,c.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,flowType:'implicit'},global:{fetch:(target,init)=>fetch(target,{...init,cache:'no-store',signal:AbortSignal.timeout(10000)})}});
+    const result=await client.auth.signInWithOtp({email:correo,options:{shouldCreateUser:false,emailRedirectTo:new URL('/auth/email/complete',c.origin).href}});
+    unavailable=Boolean(result.error&&(result.error.status===undefined||result.error.status===0||result.error.status>=500));
+    // 429 = el servicio de correo agotó su cupo por hora: ya no se le dice al visitante (la respuesta es idéntica); queda en el registro de seguridad y el circuito del proveedor se abre.
+    limitado=result.error?.status===429;
+   }catch{unavailable=true;}finally{admission.finish(unavailable||limitado);}
+   if(limitado)void registrar({kind:'rate_limited',route:ruta,method:metodo,ipRaw,ua,detail:{scope:'email_provider',code:'provider_429'}});
+  };
+  try{after(enviar);}catch{void enviar();}
   return NextResponse.json(generic(request),{status:202,headers:{...headers,'Retry-After':'60'}});
  }
  if(Object.keys(body).some(k=>!['accessToken','refreshToken'].includes(k))||typeof body.accessToken!=='string'||typeof body.refreshToken!=='string'||body.accessToken.length>8000||body.refreshToken.length>8000||!body.refreshToken)throw new AccessError(400,'email_auth_input_invalid');

@@ -10,6 +10,7 @@ import {cierre, hrefAcceso, hrefMailto, paginaPublicada, rutaPublicable} from '.
 import type {HojaPub, Lang, PaginaPublicada} from './shell/datos';
 import type {Pagina} from '../../content/sitio/tipos';
 import {VentanaCaptura} from './secciones/captura';
+import {medidas} from '../../lib/sitio/activos';
 
 type Obj = Record<string, unknown>;
 const esHoja = (x: unknown): x is HojaPub => typeof x === 'object' && x !== null && typeof (x as HojaPub).es === 'string' && typeof (x as HojaPub).en === 'string';
@@ -238,7 +239,7 @@ export function CuerpoPagina({pagina, lang, publicable = true, motivos = []}: Pr
           {esAcceso ? Boton : null}
           {captura ? (
             <div className="s-pag-visual">
-              <VentanaCaptura nombre={captura.nombre} clave={captura.clave} lang={lang} ruta={captura.ruta} tamanos="(max-width: 1000px) 100vw, 960px" anchos={captura.clave ? undefined : [960, 1440]} />
+              <VentanaCaptura nombre={captura.nombre} clave={captura.clave} lang={lang} ruta={captura.ruta} tamanos="(max-width: 1000px) 100vw, 960px" anchos={captura.clave ? [medidas(captura.clave).ancho] : [960, 1440]} />
             </div>
           ) : null}
         </div>

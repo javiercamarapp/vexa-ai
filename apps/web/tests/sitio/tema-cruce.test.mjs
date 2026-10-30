@@ -40,7 +40,8 @@ test('CSS: texto, texto atenuado y botón cambian por keyframes (no por transici
   assert.ok(lista.includes('--s-fondo '), 'el fondo sí transiciona');
   for (const k of ['claro', 'oscuro']) for (const p of ['tinta', 'apagado', 'boton-fondo', 'boton-texto']) assert.match(css, new RegExp(`@keyframes s-a-${k}-${p}`));
   // el salto del texto ocurre con el fondo en gris medio: entre 25 y 35 por ciento de los 700 ms
-  for (const m of css.matchAll(/@keyframes s-a-(?:claro|oscuro)-tinta \{\s*0%, ([\d.]+)%/g)) assert.ok(Number(m[1]) > 25 && Number(m[1]) < 35, m[0]);
+  for (const m of css.matchAll(/@keyframes s-a-(?:claro|oscuro)-tinta \{\s*0%[^}]*\}\s*([\d.]+)%/g)) assert.ok(Number(m[1]) > 25 && Number(m[1]) < 35, m[0]);
+  assert.ok(!/s-a-(?:claro|oscuro)-\w[\w-]* var\(--s-d-tema\) linear/.test(css), 'los pasos usan step-end: ningún cuadro muestra un color a medio mezclar');
 });
 
 test('JS: las animaciones del cruce no corren al cargar la página (solo en cambios reales de tema)', () => {

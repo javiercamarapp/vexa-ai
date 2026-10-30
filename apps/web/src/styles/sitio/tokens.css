@@ -542,69 +542,69 @@ html:not([data-ambiente]) [data-tema="claro"] {
 @media (prefers-reduced-motion: no-preference) {
   html[data-ambiente-anim][data-ambiente="claro"] {
     animation:
-      s-a-claro-tinta var(--s-d-tema) linear,
-      s-a-claro-apagado var(--s-d-tema) linear,
-      s-a-claro-acento var(--s-d-tema) linear,
-      s-a-claro-boton-fondo var(--s-d-tema) linear,
-      s-a-claro-boton-texto var(--s-d-tema) linear;
+      s-a-claro-tinta var(--s-d-tema) step-end,
+      s-a-claro-apagado var(--s-d-tema) step-end,
+      s-a-claro-acento var(--s-d-tema) step-end,
+      s-a-claro-boton-fondo var(--s-d-tema) step-end,
+      s-a-claro-boton-texto var(--s-d-tema) step-end;
   }
 
   html[data-ambiente-anim][data-ambiente="oscuro"] {
     animation:
-      s-a-oscuro-tinta var(--s-d-tema) linear,
-      s-a-oscuro-apagado var(--s-d-tema) linear,
-      s-a-oscuro-acento var(--s-d-tema) linear,
-      s-a-oscuro-boton-fondo var(--s-d-tema) linear,
-      s-a-oscuro-boton-texto var(--s-d-tema) linear;
+      s-a-oscuro-tinta var(--s-d-tema) step-end,
+      s-a-oscuro-apagado var(--s-d-tema) step-end,
+      s-a-oscuro-acento var(--s-d-tema) step-end,
+      s-a-oscuro-boton-fondo var(--s-d-tema) step-end,
+      s-a-oscuro-boton-texto var(--s-d-tema) step-end;
   }
 }
 
 @keyframes s-a-claro-tinta {
-  0%, 27.8% { --s-tinta: var(--s-c-hueso); }
-  27.9%, 100% { --s-tinta: var(--s-c-tinta); }
+  0% { --s-tinta: var(--s-c-hueso); }
+  28% { --s-tinta: var(--s-c-tinta); }
 }
 @keyframes s-a-claro-apagado {
   0% { --s-apagado: var(--s-c-apagado-oscuro); }
-  15%, 27.8% { --s-apagado: var(--s-c-hueso); }
-  27.9%, 42% { --s-apagado: var(--s-c-tinta); }
-  100% { --s-apagado: var(--s-c-apagado-claro); }
+  15% { --s-apagado: var(--s-c-hueso); }
+  28% { --s-apagado: var(--s-c-tinta); }
+  42% { --s-apagado: var(--s-c-apagado-claro); }
 }
 @keyframes s-a-claro-acento {
   0% { --s-acento-texto: var(--s-c-acento-texto-oscuro); }
-  15%, 27.8% { --s-acento-texto: var(--s-c-hueso); }
-  27.9%, 42% { --s-acento-texto: var(--s-c-tinta); }
-  100% { --s-acento-texto: var(--s-c-acento-texto-claro); }
+  15% { --s-acento-texto: var(--s-c-hueso); }
+  28% { --s-acento-texto: var(--s-c-tinta); }
+  42% { --s-acento-texto: var(--s-c-acento-texto-claro); }
 }
 @keyframes s-a-claro-boton-fondo {
-  0%, 27.8% { --s-boton-fondo: var(--s-c-hueso); }
-  27.9%, 100% { --s-boton-fondo: var(--s-c-tinta); }
+  0% { --s-boton-fondo: var(--s-c-hueso); }
+  28% { --s-boton-fondo: var(--s-c-tinta); }
 }
 @keyframes s-a-claro-boton-texto {
-  0%, 27.8% { --s-boton-texto: var(--s-c-tinta); }
-  27.9%, 100% { --s-boton-texto: var(--s-c-hueso); }
+  0% { --s-boton-texto: var(--s-c-tinta); }
+  28% { --s-boton-texto: var(--s-c-hueso); }
 }
 
 @keyframes s-a-oscuro-tinta {
-  0%, 30.7% { --s-tinta: var(--s-c-tinta); }
-  30.8%, 100% { --s-tinta: var(--s-c-hueso); }
+  0% { --s-tinta: var(--s-c-tinta); }
+  31% { --s-tinta: var(--s-c-hueso); }
 }
 @keyframes s-a-oscuro-apagado {
   0% { --s-apagado: var(--s-c-apagado-claro); }
-  18%, 30.7% { --s-apagado: var(--s-c-tinta); }
-  30.8%, 41% { --s-apagado: var(--s-c-hueso); }
-  100% { --s-apagado: var(--s-c-apagado-oscuro); }
+  18% { --s-apagado: var(--s-c-tinta); }
+  31% { --s-apagado: var(--s-c-hueso); }
+  41% { --s-apagado: var(--s-c-apagado-oscuro); }
 }
 @keyframes s-a-oscuro-acento {
   0% { --s-acento-texto: var(--s-c-acento-texto-claro); }
-  18%, 30.7% { --s-acento-texto: var(--s-c-tinta); }
-  30.8%, 41% { --s-acento-texto: var(--s-c-hueso); }
-  100% { --s-acento-texto: var(--s-c-acento-texto-oscuro); }
+  18% { --s-acento-texto: var(--s-c-tinta); }
+  31% { --s-acento-texto: var(--s-c-hueso); }
+  41% { --s-acento-texto: var(--s-c-acento-texto-oscuro); }
 }
 @keyframes s-a-oscuro-boton-fondo {
-  0%, 30.7% { --s-boton-fondo: var(--s-c-tinta); }
-  30.8%, 100% { --s-boton-fondo: var(--s-c-hueso); }
+  0% { --s-boton-fondo: var(--s-c-tinta); }
+  31% { --s-boton-fondo: var(--s-c-hueso); }
 }
 @keyframes s-a-oscuro-boton-texto {
-  0%, 30.7% { --s-boton-texto: var(--s-c-hueso); }
-  30.8%, 100% { --s-boton-texto: var(--s-c-tinta); }
+  0% { --s-boton-texto: var(--s-c-hueso); }
+  31% { --s-boton-texto: var(--s-c-tinta); }
 }

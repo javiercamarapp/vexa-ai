@@ -215,3 +215,43 @@ test('MFA de propietarios por organización: apagada por defecto, se enciende co
  });
  }finally{await pg.stop();}
 });
+
+test('R2-14: la retención borra solo filas viejas (por lotes, con piso de 30 días) y bearer_invalid tiene cupo propio fuera del tope global de 600/min',async t=>{
+ const pg=await startLocalPg({label:'f5ret'});try{
+ const db='f5f';pg.createDb(db);pg.applySchema(db,{upTo:BASE});
+ const rec=(kind,ip,n=1)=>pg.sql(db,`begin; set local role vexa_backend; select public.record_security_event(jsonb_build_object('kind','${kind}','ip_hash','${h(ip)}','route','/x','method','GET')) from generate_series(1,${n}); commit;`);
+ const cuenta=k=>Number(pg.sql(db,`select count(*) from vexa_platform.security_events where kind='${k}'`));
+ const inundar=(kind,total,huellas)=>pg.sql(db,`begin; set local role vexa_backend; select public.record_security_event(jsonb_build_object('kind','${kind}','ip_hash',encode(sha256((g%${huellas})::text::bytea),'hex'),'route','/x','method','GET')) from generate_series(1,${total}) g; commit;`);
+ await t.test('ANTES: 700 auth_401 de 250 huellas agotan el tope global y un bearer_invalid ya no se guarda (el defecto)',()=>{
+  inundar('auth_401',700,250);
+  assert.ok(Number(pg.sql(db,`select max(hits) from vexa_platform.security_event_counters where kind='*'`))>600,'tope global rebasado');
+  const antes=cuenta('bearer_invalid');rec('bearer_invalid',9001);
+  assert.equal(cuenta('bearer_invalid'),antes,'silenciado por el tope global');
+ });
+ pg.file(db,mig('20261206000200_security_events_retention.sql'));
+ await t.test('DESPUÉS: con el tope global agotado, bearer_invalid y webhook_signature_invalid se siguen guardando (cupo propio de 120/min)',()=>{
+  const b0=cuenta('bearer_invalid'),w0=cuenta('webhook_signature_invalid');
+  rec('bearer_invalid',9002);rec('webhook_signature_invalid',9003);
+  assert.equal(cuenta('bearer_invalid'),b0+1);assert.equal(cuenta('webhook_signature_invalid'),w0+1);
+  inundar('bearer_invalid',400,200);
+  assert.ok(cuenta('bearer_invalid')-b0<=125,'tope propio de 120 por minuto, hubo '+(cuenta('bearer_invalid')-b0));
+ });
+ await t.test('retención: borra solo filas de más de 180 días, por lotes; un periodo menor a 30 días se rechaza; UPDATE/DELETE directos siguen prohibidos',()=>{
+  pg.sql(db,`alter table vexa_platform.security_events disable trigger security_events_append_only;
+   update vexa_platform.security_events set at=clock_timestamp()-interval '200 days' where id in(select id from vexa_platform.security_events order by id limit 30);
+   update vexa_platform.security_events set at=clock_timestamp()-interval '100 days' where id in(select id from vexa_platform.security_events order by id desc limit 10);
+   alter table vexa_platform.security_events enable trigger security_events_append_only;`);
+  const total=Number(pg.sql(db,`select count(*) from vexa_platform.security_events`));
+  const r1=JSON.parse(pg.sql(db,`begin; set local role vexa_backend; select vexa_platform.security_events_retain(interval '180 days',20); commit;`).split('\n')[0]);
+  assert.equal(r1.events_deleted,20);assert.equal(r1.more,true);
+  const r2=JSON.parse(pg.sql(db,`begin; set local role vexa_backend; select vexa_platform.security_events_retain(interval '180 days',20); commit;`).split('\n')[0]);
+  assert.equal(r2.events_deleted,10);assert.equal(r2.more,false);
+  assert.equal(Number(pg.sql(db,`select count(*) from vexa_platform.security_events`)),total-30,'solo se fueron las de 200 días; las de 100 y las recientes se conservan');
+  assert.throws(()=>pg.sql(db,`begin; set local role vexa_backend; select vexa_platform.security_events_retain(interval '10 days'); commit;`),/retention_window_too_short/);
+  assert.throws(()=>pg.sql(db,`delete from vexa_platform.security_events where id=(select min(id) from vexa_platform.security_events)`),/security_events_append_only/,'DELETE directo sigue prohibido');
+  assert.throws(()=>pg.sql(db,`update vexa_platform.security_events set severity='info'`),/security_events_append_only/);
+  assert.throws(()=>pg.sql(db,`select set_config('vexa.retention','security_events:1',false); delete from vexa_platform.security_events`),/security_events_append_only/,'una variable adivinada no abre el borrado');
+  assert.throws(()=>pg.sql(db,`begin; set local role authenticated; select vexa_platform.security_events_retain(); rollback;`),/permission denied/);
+ });
+ }finally{await pg.stop();}
+});

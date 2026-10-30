@@ -187,7 +187,7 @@ const CAPTURA_DE_PAGINA: Record<string, {nombre: string; clave?: string; ruta: '
   'producto/fuga-de-reembolsos': {nombre: 'fuga', ruta: 'm2'},
   'producto/problemas': {nombre: 'problemas', ruta: 'm3'},
   'producto/pregunta-a-tus-datos': {nombre: 'preguntale', ruta: 'm4'},
-  'producto/por-decidir': {nombre: 'paso4', clave: 'img/producto/paso4', ruta: 'm5'},
+  'producto/por-decidir': {nombre: 'hoy', ruta: 'm1'},
   'producto/confianza-de-los-datos': {nombre: 'conexiones', ruta: 'm6'},
   'producto/fuentes-e-importaciones': {nombre: 'conexiones', ruta: 'm6'},
 };

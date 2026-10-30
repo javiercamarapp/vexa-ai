@@ -567,13 +567,13 @@ html:not([data-ambiente]) [data-tema="claro"] {
   0% { --s-apagado: var(--s-c-apagado-oscuro); }
   15% { --s-apagado: var(--s-c-hueso); }
   28% { --s-apagado: var(--s-c-tinta); }
-  42% { --s-apagado: var(--s-c-apagado-claro); }
+  56% { --s-apagado: var(--s-c-apagado-claro); }
 }
 @keyframes s-a-claro-acento {
   0% { --s-acento-texto: var(--s-c-acento-texto-oscuro); }
   15% { --s-acento-texto: var(--s-c-hueso); }
   28% { --s-acento-texto: var(--s-c-tinta); }
-  42% { --s-acento-texto: var(--s-c-acento-texto-claro); }
+  56% { --s-acento-texto: var(--s-c-acento-texto-claro); }
 }
 @keyframes s-a-claro-boton-fondo {
   0% { --s-boton-fondo: var(--s-c-hueso); }
@@ -592,13 +592,13 @@ html:not([data-ambiente]) [data-tema="claro"] {
   0% { --s-apagado: var(--s-c-apagado-claro); }
   18% { --s-apagado: var(--s-c-tinta); }
   31% { --s-apagado: var(--s-c-hueso); }
-  41% { --s-apagado: var(--s-c-apagado-oscuro); }
+  56% { --s-apagado: var(--s-c-apagado-oscuro); }
 }
 @keyframes s-a-oscuro-acento {
   0% { --s-acento-texto: var(--s-c-acento-texto-claro); }
   18% { --s-acento-texto: var(--s-c-tinta); }
   31% { --s-acento-texto: var(--s-c-hueso); }
-  41% { --s-acento-texto: var(--s-c-acento-texto-oscuro); }
+  56% { --s-acento-texto: var(--s-c-acento-texto-oscuro); }
 }
 @keyframes s-a-oscuro-boton-fondo {
   0% { --s-boton-fondo: var(--s-c-tinta); }

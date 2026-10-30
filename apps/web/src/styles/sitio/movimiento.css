@@ -1,7 +1,7 @@
 /*
  * Movimiento de la portada que escribe sitio.js e inicio.js (T10). Va después de inicio.css.
  * Todo estado oculto vive bajo (prefers-reduced-motion: no-preference) y (scripting: enabled); solo tokens, prefijo s-.
- * Huecos de T6 que cubre: puestos ocultos y notas del hilo.
+ * Huecos de T6 que cubre: puestos ocultos.
  */
 
 /* Puestos (S7): el panel inactivo lo oculta sitio.js con hidden */
@@ -15,49 +15,10 @@ html[data-js] [data-puesto-panel][hidden] {
     animation: s-puesto-entra 600ms var(--s-e-firma) both;
   }
 
-  /* Hilo: el progreso lo escribe inicio.js; la animación nativa de T6 se anula */
-  html[data-js] .s-hilo__trazo {
-    animation: none;
-  }
-
-  html[data-js] .s-hilo__cabeza {
-    transition: opacity 250ms var(--s-e-ui);
-  }
-
-  html[data-js] .s-hilo__nodo,
-  html[data-js] .s-hilo__nota {
-    transition: opacity 600ms var(--s-e-expo), translate 600ms var(--s-e-expo), background-color 250ms var(--s-e-ui);
-  }
-
-  html[data-js] .s-hilo__nota:not(.s-visto) {
-    opacity: 0;
-  }
-
-  html[data-js] .s-hilo__nota:not(.s-visto) {
-    translate: 8px -50%;
-  }
-
   /* Scroll rápido: el texto del paso espera 100 ms */
   html[data-rapido] .s-paso {
     transition-delay: 100ms;
   }
-}
-
-/* Notas del hilo (posición; el color lo da la escena global) */
-.s-hilo__nota {
-  translate: 16px -50%;
-  pointer-events: none;
-}
-
-.s-hilo__nota[data-lado="der"] {
-  flex-direction: row-reverse;
-  translate: calc(-100% - 16px) -50%;
-}
-
-.s-hilo__cabeza,
-.s-hilo__nodo,
-.s-hilo__nota {
-  z-index: var(--s-z-hilo);
 }
 
 @keyframes s-puesto-entra {

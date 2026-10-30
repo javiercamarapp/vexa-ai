@@ -1364,9 +1364,34 @@
   transform-origin: center;
 }
 
-/* ==================== Hilo de 1 px que se dibuja con el scroll, S3 a S10 ==================== */
+/* ==================== Hilo con carril propio, S3 a S10 ====================
+ * Un trazo vertical recto en el margen izquierdo, más grueso que el anterior (3.5 px a 1440, 2.5 a 390). Su centro es --s-hilo-x: un tercio
+ * del margen libre a la izquierda del contenido, nunca a menos de 18 px de él. Va debajo de nada y por fuera de cualquier columna. */
+@property --s-hilo-x {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 8px;
+}
+
 .s-hilo-zona {
+  --s-hilo-w: 3.5px;
+  --s-hilo-margen: calc(max(0px, (100vw - 1152px) / 2) + var(--s-pad-x));
+  --s-hilo-x: max(6px, min(calc(var(--s-hilo-margen) * .36), calc(var(--s-hilo-margen) - 18px - var(--s-hilo-w) / 2)));
   position: relative;
+}
+
+/* Pista del hilo: existe sin JavaScript y con movimiento reducido (el trazo dibujado va encima) */
+.s-hilo-zona::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--s-hilo-x) - var(--s-hilo-w) / 2);
+  z-index: var(--s-z-hilo);
+  width: var(--s-hilo-w);
+  border-radius: var(--s-hilo-w);
+  background: var(--s-linea);
+  pointer-events: none;
 }
 
 .s-hilo {
@@ -1380,35 +1405,33 @@
   fill: none;
 }
 
-.s-hilo__guia,
 .s-hilo__trazo {
   fill: none;
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-
-.s-hilo__guia {
-  stroke: var(--s-hilo-guia);
-}
-
-.s-hilo__trazo {
-  stroke: var(--s-hilo-trazo);
+  stroke: color-mix(in srgb, var(--s-tinta) 62%, transparent);
+  stroke-linecap: round;
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
 }
 
-/* Cabeza roja de 6 px con estela de 24 px; la posición la escribe inicio.js con getPointAtLength */
+/* Pulso de luz: un segmento de 170 px con degradado que termina en la cabeza y viaja con ella; el glow es el mismo segmento ancho y desenfocado */
+.s-hilo__pulso { opacity: 0; will-change: transform; }
+.s-hilo__stop { stop-color: var(--s-tinta); }
+.s-hilo__nucleo { opacity: .95; }
+.s-hilo__brillo { opacity: .35; filter: blur(5px); }
+
+/* Cabeza: único punto rojo del hilo y de la página entera fuera de logo y botón */
 .s-hilo__cabeza {
   position: absolute;
   left: 0;
   top: 0;
   z-index: var(--s-z-hilo);
-  width: var(--s-punto);
-  height: var(--s-punto);
-  margin: -3px 0 0 -3px;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
   border-radius: 50%;
   background: var(--s-acento);
   translate: var(--x, 0) var(--y, 0);
+  opacity: 0;
   pointer-events: none;
 }
 
@@ -1416,67 +1439,46 @@
   position: absolute;
   left: var(--x, 0);
   top: var(--y, 0);
-  width: var(--s-nodo);
-  height: var(--s-nodo);
-  margin: -3px 0 0 -3px;
-  border: var(--s-borde) solid var(--s-tinta);
+  z-index: var(--s-z-hilo);
+  width: 13px;
+  height: 13px;
+  margin: -6.5px 0 0 -6.5px;
+  border: 2px solid var(--s-linea-fuerte);
   border-radius: 50%;
-  background: var(--s-nodo-relleno);
-  transition: background-color 250ms var(--s-e-ui);
+  background: var(--s-fondo);
+  pointer-events: none;
 }
 
 .s-hilo__nodo.s-visto {
+  border-color: var(--s-tinta);
   background: var(--s-tinta);
 }
 
-.s-hilo__nota {
-  position: absolute;
-  left: var(--x, 0);
-  top: var(--y, 0);
-  display: flex;
-  align-items: center;
-  gap: var(--s-e8);
-  width: max-content;
-  max-width: 240px;
-  font-family: var(--s-f-mono);
-  font-size: var(--s-t-minimo);
-  line-height: 1.4;
-  letter-spacing: var(--s-k-sello);
-  text-transform: uppercase;
-  color: var(--s-apagado);
-}
-
-.s-hilo__icono {
-  flex: none;
-  width: var(--s-e16);
-  height: var(--s-e16);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.2;
-}
-
 @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
-  @supports (animation-timeline: view()) {
-    html[data-js] .s-hilo__trazo {
-      animation: s-trazo linear both;
-      animation-timeline: view();
-      animation-range: cover 40vh cover calc(100% - 60vh);
-    }
+  html[data-js] .s-hilo__nodo {
+    transition: background-color 400ms var(--s-e-ui), border-color 400ms var(--s-e-ui);
   }
 
-  @supports not (animation-timeline: view()) {
-    html[data-js] .s-hilo__trazo {
-      animation: s-trazo 1s linear paused both;
-      animation-delay: calc(var(--p, 0) * -1s);
-    }
+  /* Al llegar el trazo el nodo se enciende y emite un anillo, una sola vez */
+  html[data-js] .s-hilo__nodo.s-visto::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border: 2px solid var(--s-tinta);
+    border-radius: 50%;
+    animation: s-nodo-anillo 1000ms var(--s-e-firma) both;
   }
 }
 
-/* A 1100 px o menos el carril es único y recto a 20 px del borde; en móvil sin notas */
-@media (max-width: 1100px) {
-  .s-hilo__nota {
-    display: none;
-  }
+@keyframes s-nodo-anillo {
+  from { opacity: .6; transform: scale(1); }
+  to { opacity: 0; transform: scale(3.2); }
+}
+
+@media (max-width: 768px) {
+  .s-hilo-zona { --s-hilo-w: 2.5px; }
+  .s-hilo__cabeza { width: 8px; height: 8px; margin: -4px 0 0 -4px; }
+  .s-hilo__nodo { width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; }
 }
 
 /* ==================== Ritmo vertical (T15) ====================

@@ -69,8 +69,6 @@
   /* ---- Resplandores radiales ---- */
   --s-resplandor-hero: radial-gradient(closest-side, rgba(247, 247, 248, .06), transparent);
   --s-resplandor-tarjeta: radial-gradient(closest-side, rgba(247, 247, 248, .04), transparent);
-  --s-hilo-trazo: rgba(119, 119, 121, .7);
-  --s-hilo-guia: rgba(119, 119, 121, .2);
   --s-marca-contorno: rgba(247, 247, 248, .14);
   --s-marca-relleno: rgba(247, 247, 248, .08);
   --s-resplandor-pie: linear-gradient(to bottom, rgba(247, 247, 248, .08), transparent 70%);
@@ -160,7 +158,6 @@
   --s-punto: 6px;
   --s-nodo: 6px;
   --s-nodo-central: 14px;
-  --s-hilo-carril: 92px;
   --s-escena-col: 420px;
 
   /* ---- Radios ---- */
@@ -324,13 +321,12 @@ html:not([data-ambiente]) [data-tema="claro"] {
     --s-cab-r: var(--s-r-movil);
     --s-t-lead: 17px;
     --s-t-cifra: 22px;
-    --s-hilo-carril: 20px;
   }
 }
 
 @media (max-width: 480px) {
   :root {
-    --s-pad-x: 20px;
+    --s-pad-x: 26px;
     --s-gap: 16px;
     --s-t-eyebrow: var(--s-t-minimo);
     --s-t-mock: var(--s-t-minimo);

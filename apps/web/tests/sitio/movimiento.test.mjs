@@ -17,7 +17,6 @@ const INICIO = leer('src/sitio-js/inicio.js');
 const CSS = leer('src/styles/sitio/movimiento.css');
 const LAYOUT = leer('src/app/(sitio)/sitio/[lang]/layout.tsx');
 const manifest = JSON.parse(leer('public/s/manifest.json'));
-const G = await import(pathToFileURL(join(RAIZ, 'tools/sitio/genera-hilo.mjs')).href);
 globalThis.document ??= {}; // inicio.js toca document solo dentro de funciones
 const I = await import(pathToFileURL(join(WEB, 'src/sitio-js/inicio.js')).href);
 const brotli = (s) => brotliCompressSync(Buffer.from(s), {params: {[zc.BROTLI_PARAM_QUALITY]: 11}}).length;
@@ -93,55 +92,16 @@ test('hilo: acciones puras de inicio.js (pasoDe con histéresis)', () => {
   assert.equal(I.pasoDe(3.9, 0), 3);
 });
 
-test('hilo: genera-hilo.mjs y la copia de inicio.js dan el mismo d y la misma tabla', () => {
-  for (const m of [G.MEDIDAS_SPEC, G.leerMedidas(), {...G.leerMedidas(), ancho: 1920}]) {
-    assert.equal(I.trazar(m), G.trazar(m));
-    assert.deepEqual(I.tabla(m), G.tabla(m));
-  }
-});
-
-test('hilo: 33 fotogramas, monótono, s de 0 a 1, un solo path con siete anclas y salida determinista', () => {
-  const m = G.leerMedidas(), t = G.tabla(m);
-  assert.equal(t.length, 33);
-  assert.equal(t[0].s, 0);
-  assert.equal(t[32].s, 1);
-  for (let i = 1; i < t.length; i++) { assert.ok(t[i].s >= t[i - 1].s); assert.ok(t[i].y > t[i - 1].y); }
-  const g = G.generar(m);
-  assert.equal(g.anclas.length, 7);
-  assert.equal((g.d.match(/M/g) || []).length, 1);
-  assert.equal(JSON.stringify(G.generar(m)), JSON.stringify(g));
-  assert.equal(readFileSync(join(RAIZ, 'tools/sitio/hilo-referencia.json'), 'utf8'), JSON.stringify(g, null, 1) + '\n', 'regenerar con node tools/sitio/genera-hilo.mjs');
-});
-
-test('hilo: la tabla no es lineal en Y (los giros alargan el arco) y el path es monótono en Y', () => {
-  const {pts} = G.polilinea(G.leerMedidas());
-  for (let i = 1; i < pts.length; i++) assert.ok(pts[i][1] >= pts[i - 1][1] - 1e-9);
-  const t = G.tabla(G.leerMedidas());
-  const lineal = t.every((r) => Math.abs(r.s - r.p) < 0.002);
-  assert.ok(!lineal);
-  assert.match(G.keyframesCss(t), /@keyframes s-hilo-trazo/);
-});
-
-test('hilo: carriles a 1440 en 92 y 1348; recto a 20 px bajo 1100', () => {
-  const c = G.carriles(1440);
-  assert.equal(c.izq, 92);
-  assert.equal(c.der, 1348);
-  assert.equal(G.carriles(1000).izq, 20);
-});
-
-test('íconos del hilo de inicio.js coinciden con components/sitio/iconos', () => {
-  const src = leer('src/components/sitio/iconos/iconos.tsx');
-  const orden = ['fuentes', 'sello', 'flujo', 'conversacion', 'candado', 'evidencia', 'acceso'];
-  const bloque = INICIO.split('// BLOQUE-ICONOS-INICIO')[1].split('// BLOQUE-ICONOS-FIN')[0];
-  orden.forEach((n, i) => {
-    const cuerpo = src.split(`  ${n}: (`)[1].split('\n  ),')[0];
-    const ds = [...cuerpo.matchAll(/d="([^"]+)"/g)].map((x) => x[1]);
-    for (const d of ds) assert.ok(bloque.includes(d), `${n}: falta ${d}`);
-    assert.equal((cuerpo.match(/<(path|circle|rect)/g) || []).length, (() => {
-      const fila = bloque.split('\n').filter((l) => l.startsWith('  [['))[i];
-      return (fila.match(/\['(path|circle|rect)'/g) || []).length;
-    })(), n);
-  });
+test('hilo: carril propio en el margen (centro del CSS), núcleo de 3.5 px a 1440 y 2.5 a 390, pulso con degradado, nodos y cabeza; sin notas ni curvas que crucen columnas', () => {
+  const css = leer('src/styles/sitio/inicio.css');
+  assert.match(css, /--s-hilo-w: 3\.5px/);
+  assert.match(css, /@media \(max-width: 768px\) \{\n  \.s-hilo-zona \{ --s-hilo-w: 2\.5px; \}/);
+  assert.match(css, /--s-hilo-x: max\(6px, min\(calc\(var\(--s-hilo-margen\) \* \.36\), calc\(var\(--s-hilo-margen\) - 18px - var\(--s-hilo-w\) \/ 2\)\)\)/);
+  assert.match(css, /\.s-hilo-zona::before/, 'pista estática visible sin JavaScript');
+  assert.match(INICIO, /s-hilo__pulso/);
+  assert.match(INICIO, /linearGradient/);
+  assert.ok(!/ICONOS|nota|carriles|trazar\(/.test(INICIO), 'el hilo ya no lleva notas ni curvas entre carriles');
+  assert.match(INICIO, /if \(RM \|\| !H\) return/, 'con movimiento reducido el hilo queda dibujado y sin pulso');
 });
 
 // ---------------- Chrome real (ROVAQ_CDP_VIVO=1 y ROVAQ_URL) ----------------
@@ -174,4 +134,11 @@ test('Chrome: movimiento reducido: ninguna animación ni transición de más de 
     assert.equal(largas, 0, 'sin animaciones largas');
     assert.equal(await s.page.evaluate(() => document.querySelector('[data-cuenta]').textContent), '36,000');
   });
+});
+
+test('Chrome: el trazo grueso del hilo no toca texto, imágenes, botones ni tarjetas (barrido a 1440 y 390, margen mínimo de 16 px)', {skip: vivo ? false : motivo}, async () => {
+  const {execFileSync} = await import('node:child_process');
+  const salida = execFileSync(process.execPath, [join(RAIZ, 'tools/sitio/cdp/hilo-carril.mjs'), '--url', URL_VIVA, '--vp', '1440,390', '--margen', '16'], {encoding: 'utf8', timeout: 300000});
+  assert.match(salida, /OK +vp 1440/);
+  assert.match(salida, /OK +vp 390/);
 });

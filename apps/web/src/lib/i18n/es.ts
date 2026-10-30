@@ -9,6 +9,7 @@ import {conxaEs} from './d-conxa';
 import {conxeEs} from './d-conxe';
 import {conxiEs} from './d-conxi';
 import {conxjEs} from './d-conxj';
+import {cargadorEs} from './d-cargador';
 import {conxnEs} from './d-conxn';
 import {conxpEs} from './d-conxp';
 import {conxrEs} from './d-conxr';
@@ -166,6 +167,7 @@ export const es = {
   ...conxeEs,
   ...conxiEs,
   ...conxjEs,
+  ...cargadorEs,
   ...conxnEs,
   ...conxpEs,
   ...conxrEs,

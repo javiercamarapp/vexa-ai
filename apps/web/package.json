@@ -16,6 +16,7 @@
     "test:i18n": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/i18n.test.ts",
     "test:onboarding": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/onboarding.test.ts tests/onboarding-ui.test.tsx tests/onboarding-tour.test.tsx tests/setup.test.tsx",
     "test:auth": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/auth-http.test.ts",
+    "test:cargador": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/member-file-loader.test.tsx",
     "test:cco": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/cco.test.tsx",
     "test:sitio": "node --test \"tests/sitio/*.test.*\"",
     "presupuesto": "node ../../tools/sitio/presupuesto.mjs"

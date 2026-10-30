@@ -10,6 +10,7 @@ import {conxaEn} from './d-conxa';
 import {conxeEn} from './d-conxe';
 import {conxiEn} from './d-conxi';
 import {conxjEn} from './d-conxj';
+import {cargadorEn} from './d-cargador';
 import {conxnEn} from './d-conxn';
 import {conxpEn} from './d-conxp';
 import {conxrEn} from './d-conxr';
@@ -157,6 +158,7 @@ export const en: Record<Clave, string> = {
   ...conxeEn,
   ...conxiEn,
   ...conxjEn,
+  ...cargadorEn,
   ...conxnEn,
   ...conxpEn,
   ...conxrEn,

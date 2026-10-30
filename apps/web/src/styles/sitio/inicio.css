@@ -1375,17 +1375,17 @@
   position: relative;
 }
 
-/* Bandas de cruce: huecos deliberados entre secciones (150 px a 1440, 90 a 390; con el relleno de las secciones suman 220 a 320 y 120 a 160 px).
-   A 390 se omiten dos para no alargar el móvil. */
+/* Bandas de cruce: huecos deliberados entre secciones (150 px a 1440; con el relleno de las secciones suman 220 a 320 px).
+   A 390 la página debe quedar en 13.500 px o menos con el espaciado compacto del móvil (13.491 sin bandas): solo quedan dos bandas de 4 px y el
+   resto de los cruces usa los huecos naturales entre secciones (inicio.js, AIRE y corrida del móvil). */
 .s-banda {
   height: 150px;
   pointer-events: none;
 }
 
 @media (max-width: 768px) {
-  .s-banda { height: 88px; }
-  .s-banda[data-banda="2"],
-  .s-banda[data-banda="3"] { display: none; }
+  .s-banda { height: 4px; }
+  .s-banda:not([data-banda="0"], [data-banda="1"]) { display: none; }
 }
 
 /* Pista estática: solo sin JavaScript (con JavaScript la sustituye el trazo serpenteante) */

@@ -106,7 +106,8 @@ test('hilo serpenteante con bandas de cruce: núcleo 3.5 px (7.5 en bandas) a 14
   assert.match(INICIO, /const TRIPLES = \[0, 4\]/, 'dos bandas con triple cruce');
   assert.match(INICIO, /const RAMPA = 3, PASO_RAMPA = 26/, 'el trazo se engruesa en tres escalones');
   assert.match(INICIO, /new ResizeObserver\(medir\)/);
-  assert.match(INICIO, /const AIRE = 24/);
+  assert.match(INICIO, /let AIRE = 24;/);
+  assert.match(INICIO, /AIRE = movil \? 20 : 24;/, "el móvil usa 20 px de aire para cruzar por los huecos naturales");
   assert.match(INICIO, /const PULSO = \[\[230, 0\.1\], \[150, 0\.22\], \[90, 0\.45\], \[40, 0\.9\]\]/);
   assert.match(INICIO, /if \(RM \|\| !vivo \|\| !H\) return/, 'con movimiento reducido el hilo queda dibujado y sin pulso');
   assert.match(INICIO, /href: '#s-hilo-d'/, 'todas las capas comparten el mismo path vía <use>');

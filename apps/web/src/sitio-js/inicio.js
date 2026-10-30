@@ -78,7 +78,7 @@ const ICONOS = [
   [['path', {d: 'M4 12 12 4'}], ['path', {d: 'M5.5 4H12v6.5'}]],
 ];
 // BLOQUE-ICONOS-FIN
-const AIRE = 24; // 16 px de margen mínimo más medio núcleo de banda (3.75) y holgura
+let AIRE = 24; // (medir() lo baja a 20 en el móvil) 16 px de margen mínimo más medio núcleo de banda (3.75 a 1440, 2.1 a 390) y holgura; el móvil usa menos aire para cruzar por los huecos naturales (~88 px) sin alargar la página
 const PULSO = [[230, 0.1], [150, 0.22], [90, 0.45], [40, 0.9]]; // largo en px y opacidad de cada capa del pulso
 const ICONO_DE = [0, 1, 2, 3, 4, 0, 1]; // ícono de la nota de cada banda
 const LOOPS = [1, 3, 5]; // bandas (base 0) con rizo
@@ -152,8 +152,9 @@ function construirHilo(RM, notas) {
     const recto = xmax - xmin < 12;
     const centro = recto ? Math.min(xmax, xmin + 2) : (xmin + xmax) / 2, amp = recto ? 0 : ((xmax - xmin) / 2) * 0.9;
     const lado = (s, k) => { const x = centro + (k % 2 ? amp : -amp); return s ? W - x : x; };
-    const movil = innerWidth <= 768, corrida = movil ? 1000 : 380, paso = 260;
-    const libres = huecos(zona, H, 2 * AIRE + 16);
+    const movil = innerWidth <= 768, corrida = movil ? 500 : 380, paso = 260;
+    AIRE = movil ? 20 : 24;
+    const libres = huecos(zona, H, movil ? 2 * AIRE + 4 : 2 * AIRE + 16);
     // Bandas: el hueco libre que contiene el centro de cada .s-banda visible
     const bs = $$('[data-banda]', zona).filter((b) => b.offsetHeight).map((b) => { let y = 0, n = b; for (; n && n !== zona; n = n.offsetParent) y += n.offsetTop; return y + b.offsetHeight / 2; });
     const deBanda = new Map();

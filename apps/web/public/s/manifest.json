@@ -1146,11 +1146,11 @@
   "inicio.js": {
    "brotli": 2872,
    "bytes": 6593,
-   "fuenteBytes": 12884,
-   "hash": "3943c0f4",
+   "fuenteBytes": 12889,
+   "hash": "b38e4bfb",
    "modulo": true,
-   "sha256": "3943c0f42ca08707a511f8b14c3051e6f7278be5a0ab33c57735d5b6b728f6b5",
-   "url": "/s/inicio.3943c0f4.js"
+   "sha256": "b38e4bfb3e9a096d248f17c1c5837294914a760d9e34e9bd092cd70e5ffc1a1e",
+   "url": "/s/inicio.b38e4bfb.js"
   },
   "sitio.js": {
    "brotli": 2315,

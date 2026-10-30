@@ -128,9 +128,9 @@ function construirHilo(RM, notas) {
     const w = parseFloat(getComputedStyle(zona).getPropertyValue('--s-hilo-w')) || 3;
     const z0 = zona.getBoundingClientRect().top + scrollY;
     const margen = c0.getBoundingClientRect().left - zona.getBoundingClientRect().left + parseFloat(getComputedStyle(c0).paddingLeft);
-    // Carril dentro del margen: con margen amplio (1440) ondula en una franja de 40 px y deja el resto para las notas; con margen estrecho (390) es recto
+    // Carril dentro del margen: con margen amplio (1440) ondula en una franja de unos 58 px y deja el resto para las notas; con margen estrecho (390) es recto
     const conNotas = margen >= 160 && notas.length > 0;
-    const xmin = 4 + w / 2, xmax = Math.min(margen - 18 - w / 2, conNotas ? 56 : 1e9);
+    const xmin = 4 + w / 2, xmax = Math.min(margen - 18 - w / 2, conNotas ? 72 : 1e9);
     const centro = xmax - xmin < 12 ? xmax : (xmin + xmax) / 2, amp = xmax - xmin < 12 ? 0 : ((xmax - xmin) / 2) * 0.85;
     const lado = (s, k) => { const x = centro + (k % 2 ? amp : -amp); return s ? W - x : x; };
     // Cruces: en los huecos libres, el primero a más de `corrida` px del anterior

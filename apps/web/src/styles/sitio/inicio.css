@@ -1471,7 +1471,7 @@ html:not([data-js]) .s-hilo-zona::before {
   align-items: center;
   gap: var(--s-e8);
   width: max-content;
-  max-width: 96px;
+  max-width: 70px;
   translate: 0 -50%;
   font-family: var(--s-f-mono);
   font-size: 10.5px;

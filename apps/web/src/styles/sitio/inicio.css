@@ -216,7 +216,7 @@
 /* Cifra del héroe: tarjeta en el hueco libre del encabezado de la captura; en ancho de móvil baja bajo la imagen */
 .s-ov-cifra {
   position: absolute;
-  right: var(--s-e24);
+  left: var(--s-e24);
   top: -34px;
   z-index: 3;
   display: grid;
@@ -550,6 +550,14 @@
 .s-pv__a[data-i="6"] { --i: 6; }
 .s-pv__a[data-i="7"] { --i: 7; }
 .s-pv__a[data-i="8"] { --i: 8; }
+
+/* En ancho de móvil los rótulos de las anotaciones crecen para seguir leyéndose (la captura de fondo queda pequeña, como en cualquier pantalla reducida) */
+@container (max-width: 520px) {
+  .s-pv[data-n="1"] { --k: 1.3; }
+  .s-pv[data-n="2"] { --k: 1.9; }
+  .s-pv[data-n="3"] { --k: 2.2; }
+  .s-pv[data-n="4"] { --k: 1.5; }
+}
 
 /* Estado inicial oculto solo con JavaScript y movimiento permitido; el estado final es el de reposo y el de las capturas sin JavaScript */
 @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {

@@ -1,7 +1,7 @@
 // Visual propio de cada uno de los cuatro pasos (S5): un recorte de la captura real del producto en tema oscuro, con una capa SVG de anotaciones
 // que enseña el verbo del paso. La capa usa las mismas unidades que el recorte (unidades de 2000 por 1250 de la captura completa). Todo número
 // sale de mocks/datos.ts. Sin style: la animación de cada anotación (.s-pv__a) la dispara .s-visto del paso desde el CSS.
-import {EXPOSICION_SUBTOTAL, INGRESO_BRUTO, NOMBRE_CLASE, PROBLEMAS, REEMBOLSOS, UI, fmt, usd} from '../mocks/datos';
+import {EXPOSICION_SUBTOTAL, NOMBRE_CLASE, PROBLEMAS, REEMBOLSOS, UI, usd} from '../mocks/datos';
 import type {Lang} from '../mocks/datos';
 import {T} from '../mocks/datos';
 import {medidas} from '../../../lib/sitio/activos';
@@ -74,9 +74,9 @@ function Paso2({u}: {u: Record<string, string>}) {
           <text x={58 + i * 150} y={63}>{u.correo}</text>
         </g>
       ))}
-      <path className="s-pv__a s-pv__llave" data-i={7} d="M56 88H866M461 88V180" />
-      <text className="s-pv__mono s-pv__a" data-i={8} x={470} y={112}>{u.agrupadas}</text>
-      <text className="s-pv__cifra s-pv__a" data-i={8} x={870} y={112} textAnchor="end">{PROBLEMAS[0].casos}</text>
+      <path className="s-pv__a s-pv__llave" data-i={7} d="M40 88V96H922V88" />
+      <text className="s-pv__mono s-pv__a" data-i={8} x={40} y={114}>{u.agrupadas}</text>
+      <text className="s-pv__cifra s-pv__a" data-i={8} x={922} y={114} textAnchor="end">{PROBLEMAS[0].casos}</text>
     </g>
   );
 }
@@ -105,7 +105,6 @@ function Paso3({u, lang}: {u: Record<string, string>; lang: Lang}) {
         <text className="s-pv__cifra" x={40 + (L * EXPOSICION_SUBTOTAL) / REEMBOLSOS + 20} y={376}>{usd(EXPOSICION_SUBTOTAL)}</text>
       </g>
       <text className="s-pv__mono s-pv__a" data-i={6} x={1120} y={402} textAnchor="end">{u.nunca.toUpperCase()}</text>
-      <text className="s-pv__mono s-pv__a" data-i={6} x={40} y={402}>{`${fmt(INGRESO_BRUTO)} USD`}</text>
     </g>
   );
 }

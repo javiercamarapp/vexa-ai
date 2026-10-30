@@ -26,7 +26,16 @@ export function medirEnPagina(margen) {
     if (r.right > franja.x0 && r.left < franja.x1) choques.push({desc, x: Math.round(r.left), w: Math.round(r.width), y: Math.round(r.top + scrollY), d: Math.round(d)});
   };
   const ignorar = (e) => !e || e.closest('.s-hilo, .s-hilo__cabeza, .s-hilo__nodo, .s-cabecera, .s-solo-lector');
-  const visible = (e) => { const c = getComputedStyle(e); return c.visibility !== 'hidden' && c.display !== 'none'; };
+  // Visible de verdad: sin visibility hidden, sin display none y con opacidad efectiva mayor de .05 (lo que aún no se reveló no cuenta)
+  const visible = (e) => {
+    let op = 1;
+    for (let n = e; n && n !== document.body; n = n.parentElement) {
+      const c = getComputedStyle(n);
+      if (c.visibility === 'hidden' || c.display === 'none') return false;
+      op *= parseFloat(c.opacity);
+    }
+    return op > 0.05;
+  };
   const rec = document.createTreeWalker(zona, NodeFilter.SHOW_TEXT);
   for (let n = rec.nextNode(); n; n = rec.nextNode()) {
     const p = n.parentElement;
@@ -56,7 +65,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       let peor = null;
       for (let y = 0; y < alto; y += Number(a.paso || 450)) {
         await s.page.evaluate((yy) => scrollTo({top: yy, behavior: 'instant'}), y);
-        await dormir(150);
+        await dormir(1400); // deja terminar las entradas de 800 ms de las anotaciones de los pasos
         const m = await s.page.evaluate(`(${medirEnPagina.toString()})(${margen})`);
         if (m.error) { console.log('FALLA', vp, m.error); fallas++; break; }
         if (!peor || m.margenLibre < peor.margenLibre) peor = {...m, y};

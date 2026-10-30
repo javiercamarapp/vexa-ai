@@ -1,0 +1,35 @@
+TEAM INVITATION
+
+{{ or .Data.invita "Someone" }} invited you to
+{{ or .Data.espacio "a workspace" }}
+
+You will be able to
+{{ or .Data.rol_funcion "collaborate with your team" }}{{ if .Data.rol }},
+with the role of {{ .Data.rol }}{{ end }}.
+
+{{ if .Data.espacio }}Workspace:  {{ .Data.espacio }}{{ end }}
+{{ if .Data.rol }}Role:       {{ .Data.rol }}{{ if .Data.rol_descripcion }} ·
+            {{ .Data.rol_descripcion }}{{ end }}{{ end }}
+{{ if .Data.invita }}Invited by: {{ .Data.invita }}{{ end }}
+{{ if .Data.vence }}Expires:    {{ .Data.vence }}{{ end }}
+
+Accept invitation:
+{{ .ConfirmationURL }}
+
+If you do not have an account yet, you will create one when you accept.
+You can decline the invitation with no consequences; just ignore this
+email.
+
+Do not know {{ or .Data.invita "who is inviting you" }} or did not
+expect this? Do not open the link and tell us at soporte@rovaq.ai.
+
+If the button does not open, copy this address into your browser:
+{{ .ConfirmationURL }}
+
+--
+Rovaq will never ask for your password by email. The link is personal;
+do not forward it.
+You are receiving this email because {{ or .Data.invita "someone" }}
+typed this address when inviting people to
+{{ or .Data.espacio "their workspace" }}.
+Rovaq AI · soporte@rovaq.ai · Mexico City, Mexico

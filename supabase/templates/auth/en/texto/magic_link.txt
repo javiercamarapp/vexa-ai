@@ -1,0 +1,25 @@
+ACCESS
+
+Sign in to Rovaq with this link
+
+You asked to sign in to Rovaq with {{ .Email }}. Use the button; you do
+not need a password.
+
+Sign in to Rovaq:
+{{ .ConfirmationURL }}
+
+The link expires in 1 hour and works only once. If it no longer works,
+request a new one at {{ .SiteURL }}/login.
+
+Did not ask for this? Ignore this email; nobody can enter your account
+without the link. Do not forward this message.
+
+If the button does not open, copy this address into your browser:
+{{ .ConfirmationURL }}
+
+--
+Rovaq will never ask for your password by email. Do not share this link
+with anyone.
+You are receiving this email because a sign-in was requested with this
+address in Rovaq.
+Rovaq AI · soporte@rovaq.ai · Mexico City, Mexico

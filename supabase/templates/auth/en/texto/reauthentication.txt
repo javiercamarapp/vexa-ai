@@ -1,0 +1,19 @@
+VERIFICATION
+
+Confirm it is you
+
+Type this code on the Rovaq screen where you asked for it.
+
+    {{ .Token }}
+
+It is valid for 1 hour and can be used only once.
+
+Did not ask for it? Do nothing and change your password; someone might
+have access to your session. Not even Rovaq will ask you for this code.
+
+--
+Rovaq will never ask for your password by email. Do not share this code
+with anyone, not even with Rovaq.
+You are receiving this email because a security action on your account
+requires it.
+Rovaq AI · soporte@rovaq.ai · Mexico City, Mexico

@@ -1,0 +1,20 @@
+SECURITY NOTICE
+
+A sign-in method was unlinked
+
+{{ .Provider }} was removed as a way to sign in to your account.
+
+IF IT WAS NOT YOU
+Write to us right away at seguridad@rovaq.ai. We will review your
+account and, if needed, close open sessions.
+
+If it was you, you do not need to do anything.
+
+If you have any question, write to seguridad@rovaq.ai. Do not include
+passwords or codes in your message.
+
+--
+Rovaq will never ask for your password by email.
+We sent you this notice because a security detail of your account
+changed. It cannot be turned off.
+Rovaq AI · soporte@rovaq.ai · Mexico City, Mexico

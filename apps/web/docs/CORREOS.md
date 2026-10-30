@@ -12,6 +12,8 @@ Estado: código y pruebas listos en la rama `correos-enterprise`. **Nada de esto
 | Notificaciones de la app (digest, bienvenida, invitación, brief, acción asignada, conexión, importación) | `packages/notifications/email-template.mjs` |
 | Reporte semanal (función pura, sin cron ni envío) | `packages/notifications/email-weekly.mjs` -> `renderWeeklyReport()` |
 | Logos PNG claro y oscuro | `apps/web/public/email/` (URL pública `https://rovaq-ai.vercel.app/email/...`) |
+| Versión en inglés de las 13 plantillas de Auth (alternativa, sin aplicar) | `support/F08-auth-brand/templates-en.mjs` -> `supabase/templates/auth/en/` |
+| Verificador de solo lectura de Resend, DNS y Supabase Auth | `node scripts/correos/verificar-resend.mjs` (opciones en el encabezado) |
 | Vista previa local | `node scripts/correos/previsualizar.mjs [carpeta]` |
 | Pruebas | `cd packages/notifications && npm test`, `node --test support/F08-auth-brand/templates.test.mjs` |
 
@@ -29,7 +31,7 @@ UPDATE_SNAPSHOTS=1 node --test packages/notifications/tests/correos.test.mjs   #
 
 Todo vive en un solo objeto, `IDENTITY` de `email-system.mjs`:
 
-- `supportEmail` / `securityEmail`: hoy `soporte@rovaq.ai` y `seguridad@rovaq.ai` son marcadores. `rovaq.ai` no tiene MX; hay que crear los buzones.
+- `supportEmail` / `securityEmail`: hoy `soporte@rovaq.ai` y `seguridad@rovaq.ai` son marcadores. `rovaq.ai` ya tiene MX (`smtp.google.com`, 29-oct); falta confirmar que los buzones existen.
 - `privacyUrl`: `null`. No existe una página de aviso de privacidad; mientras sea `null` el pie la omite. Los correos que no son de seguridad la necesitan (LFPDPPP).
 - `revokeUrl`: `null`. No existe un endpoint para revocar un cambio de seguridad, así que los avisos dicen «escríbenos a seguridad@...» y no llevan botón. Al poner la URL, el botón y la redacción del documento aparecen solos.
 - `assetOrigin`: `https://rovaq-ai.vercel.app`. Los PNG de `public/email/` solo se verán cuando se despliegue esta rama (1 build de Vercel).
@@ -72,7 +74,7 @@ Responsable Javier, salvo lectura con `dig`:
 
 1. Confirmar que `rovaq.ai` es suyo y decidir el buzón de `soporte@` y `seguridad@` (GoDaddy Email, Google Workspace o reenvío). 10 min.
 2. Crear cuenta en Resend, añadir `acceso.rovaq.ai` y `avisos.rovaq.ai` (y `reportes.rovaq.ai` cuando haya reporte). Región recomendada: EE. UU. 15 min.
-3. En GoDaddy, por cada subdominio: MX de retorno de rebotes, TXT SPF (`v=spf1 include:amazonses.com ~all`), TXT DKIM `resend._domainkey.<sub>` (clave que da Resend) y TXT `_dmarc.<sub>` (`p=none` dos semanas, luego `quarantine`, luego `reject`). En la raíz, reemplazar el DMARC por defecto de GoDaddy por `v=DMARC1; p=none; rua=mailto:dmarc@rovaq.ai`. Pulsar «Verify» en Resend.
+3. En GoDaddy, por cada subdominio (Resend los entrega así): MX `send.<sub>` -> `feedback-smtp.us-east-1.amazonses.com` (prioridad 10), TXT SPF `send.<sub>` (`v=spf1 include:amazonses.com ~all`), CNAME `rsend.<sub>`, y TXT DKIM `resend._domainkey.<sub>` (clave que da Resend, pegada en UNA línea sin espacios). El DMARC propio por subdominio es opcional (hereda el de la raíz). En la raíz, reemplazar el DMARC por defecto de GoDaddy por `v=DMARC1; p=none; rua=mailto:dmarc@rovaq.ai`. Pulsar «Verify» en Resend.
 4. Crear dos claves API de Resend limitadas a su dominio («supabase-auth» y «app-notificaciones»), guardarlas en un archivo local `chmod 600`, no en el chat.
 5. Supabase -> Authentication -> SMTP Settings: host `smtp.resend.com`, puerto 465, usuario `resend`, contraseña = clave «supabase-auth», remitente `acceso@acceso.rovaq.ai`, nombre `Rovaq`.
 6. Supabase -> Rate Limits: correos por hora a 300 o más; revisar OTP 360 por hora.
@@ -85,5 +87,7 @@ Responsable Javier, salvo lectura con `dig`:
 Verificación en lectura (Claude): `dig +short TXT acceso.rovaq.ai`, `dig +short TXT resend._domainkey.acceso.rovaq.ai`, `dig +short MX acceso.rovaq.ai`, `dig +short TXT _dmarc.acceso.rovaq.ai`.
 
 ## Costos de despliegue
+
+El procedimiento completo para activar Resend, con el orden y las pruebas de entrega, vive en `~/vexa-notas-28oct/cierre-software/RESEND-ACTIVAR.md`.
 
 Este trabajo no dispara builds por sí mismo. Publicar la rama a un repo ligado a Vercel provoca 1 build, y los PNG de `public/email/` solo existen en producción tras un despliegue. Agrupar con otros cambios y avisar cuántos builds provoca antes del push.

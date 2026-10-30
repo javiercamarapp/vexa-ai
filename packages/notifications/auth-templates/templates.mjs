@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {IDENTITY, VIGENCIA, renderLayout} from '../../packages/notifications/email-system.mjs';
+import {catalogEn, renderEn, renderTextEn, managementPatchEn} from './templates-en.mjs';
 
 // Trece correos de Supabase Auth (seis acciones y siete avisos de seguridad) con el sistema de diseño de
 // CORREOS-DISENO.md. Solo variables Go documentadas por Supabase; nada de user_metadata salvo en la
@@ -147,7 +148,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const dir = path.join(root, 'supabase/templates/auth');
     fs.mkdirSync(path.join(dir, 'texto'), {recursive: true});
     for (const item of catalog) { fs.writeFileSync(path.join(dir, item.id + '.html'), render(item)); fs.writeFileSync(path.join(dir, 'texto', item.id + '.txt'), renderText(item)); }
-  } else if (process.argv[2] === '--management-patch') process.stdout.write(JSON.stringify(managementPatch(), null, 2) + '\n');
+    // Juego en ingles (alternativo; no esta referenciado por config.toml ni aplicado en Supabase).
+    fs.mkdirSync(path.join(dir, 'en', 'texto'), {recursive: true});
+    for (const item of catalogEn) { fs.writeFileSync(path.join(dir, 'en', item.id + '.html'), renderEn(item)); fs.writeFileSync(path.join(dir, 'en', 'texto', item.id + '.txt'), renderTextEn(item)); }
+  } else if (process.argv[2] === '--management-patch') process.stdout.write(JSON.stringify(process.argv[3] === '--lang=en' ? managementPatchEn() : managementPatch(), null, 2) + '\n');
   else if (process.argv[2] === '--local-config') process.stdout.write(localConfig());
-  else throw new Error('Use --write, --management-patch or --local-config. This tool never sends mail or changes remote configuration.');
+  else throw new Error('Use --write, --management-patch [--lang=en] or --local-config. This tool never sends mail or changes remote configuration.');
 }

@@ -92,16 +92,21 @@ test('hilo: acciones puras de inicio.js (pasoDe con histéresis)', () => {
   assert.equal(I.pasoDe(3.9, 0), 3);
 });
 
-test('hilo: carril propio en el margen (centro del CSS), núcleo de 3.5 px a 1440 y 2.5 a 390, pulso con degradado, nodos y cabeza; sin notas ni curvas que crucen columnas', () => {
+test('hilo serpenteante: núcleo de 3.5 px a 1440 y 2.5 a 390, recorrido calculado con las medidas reales, cruces por huecos libres, pulso de capas con glow, nodos, notas y cabeza', () => {
   const css = leer('src/styles/sitio/inicio.css');
   assert.match(css, /--s-hilo-w: 3\.5px/);
   assert.match(css, /@media \(max-width: 768px\) \{\n  \.s-hilo-zona \{ --s-hilo-w: 2\.5px; \}/);
-  assert.match(css, /--s-hilo-x: max\(6px, min\(calc\(var\(--s-hilo-margen\) \* \.36\), calc\(var\(--s-hilo-margen\) - 18px - var\(--s-hilo-w\) \/ 2\)\)\)/);
-  assert.match(css, /\.s-hilo-zona::before/, 'pista estática visible sin JavaScript');
-  assert.match(INICIO, /s-hilo__pulso/);
-  assert.match(INICIO, /linearGradient/);
-  assert.ok(!/ICONOS|nota|carriles|trazar\(/.test(INICIO), 'el hilo ya no lleva notas ni curvas entre carriles');
-  assert.match(INICIO, /if \(RM \|\| !H\) return/, 'con movimiento reducido el hilo queda dibujado y sin pulso');
+  assert.match(css, /html:not\(\[data-js\]\) \.s-hilo-zona::before/, 'pista estática solo sin JavaScript');
+  assert.match(css, /\.s-hilo__brillo \{ filter: blur\(5px\); \}/);
+  assert.match(INICIO, /function huecos\(/, 'los huecos libres salen de las cajas de maquetación reales (offsetTop, sin transformaciones de revelado)');
+  assert.match(INICIO, /new ResizeObserver\(medir\)/);
+  assert.match(INICIO, /const AIRE = 20/, 'margen mínimo de 16 px más medio núcleo y holgura');
+  assert.match(INICIO, /const PULSO = \[\[230, 0\.1\], \[150, 0\.22\], \[90, 0\.45\], \[40, 0\.9\]\]/);
+  assert.match(INICIO, /pts\.push\(\[pts\[pts\.length - 1\]\[0\], y0\]\)/, 'el cruce arranca desde el carril actual y termina en el otro');
+  assert.match(INICIO, /C\$\{x0\.toFixed\(1\)\} \$\{\(y0 \+ m\)\.toFixed\(1\)\} \$\{x1\.toFixed\(1\)\} \$\{\(y1 - m\)\.toFixed\(1\)\}/, 'curvas en S de tangentes verticales: monótonas en Y');
+  assert.match(INICIO, /if \(RM \|\| !vivo \|\| !H\) return/, 'con movimiento reducido el hilo queda dibujado y sin pulso');
+  assert.match(INICIO, /s-hilo__nota/);
+  assert.ok(!/gsap|ScrollTrigger|lenis/i.test(INICIO));
 });
 
 // ---------------- Chrome real (ROVAQ_CDP_VIVO=1 y ROVAQ_URL) ----------------
@@ -136,9 +141,9 @@ test('Chrome: movimiento reducido: ninguna animación ni transición de más de 
   });
 });
 
-test('Chrome: el trazo grueso del hilo no toca texto, imágenes, botones ni tarjetas (barrido a 1440 y 390, margen mínimo de 16 px)', {skip: vivo ? false : motivo}, async () => {
+test('Chrome: el trazo serpenteante cruza de lado a lado y no toca texto, imágenes, botones ni tarjetas (barrido a 1440 y 390, margen mínimo de 16 px)', {skip: vivo ? false : motivo}, async () => {
   const {execFileSync} = await import('node:child_process');
   const salida = execFileSync(process.execPath, [join(RAIZ, 'tools/sitio/cdp/hilo-carril.mjs'), '--url', URL_VIVA, '--vp', '1440,390', '--margen', '16'], {encoding: 'utf8', timeout: 300000});
-  assert.match(salida, /OK +vp 1440/);
+  assert.match(salida, /OK +vp 1440: grosor 3\.5 px, ([2-9]|\d\d+) cruces/);
   assert.match(salida, /OK +vp 390/);
 });

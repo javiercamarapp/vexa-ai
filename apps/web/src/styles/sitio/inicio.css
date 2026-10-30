@@ -1364,9 +1364,10 @@
   transform-origin: center;
 }
 
-/* ==================== Hilo con carril propio, S3 a S10 ====================
- * Un trazo vertical recto en el margen izquierdo, más grueso que el anterior (3.5 px a 1440, 2.5 a 390). Su centro es --s-hilo-x: un tercio
- * del margen libre a la izquierda del contenido, nunca a menos de 18 px de él. Va debajo de nada y por fuera de cualquier columna. */
+/* ==================== Hilo serpenteante, S3 a S10 ====================
+ * Un trazo grueso (3.5 px a 1440, 2.5 a 390) que baja por los márgenes y cruza de lado a lado por los huecos libres entre bloques (inicio.js lo
+ * calcula con las medidas reales). --s-hilo-x es el carril recto de respaldo sin JavaScript: un tercio del margen libre a la izquierda del
+ * contenido, nunca a menos de 18 px de él. */
 @property --s-hilo-x {
   syntax: "<length>";
   inherits: true;
@@ -1380,8 +1381,8 @@
   position: relative;
 }
 
-/* Pista del hilo: existe sin JavaScript y con movimiento reducido (el trazo dibujado va encima) */
-.s-hilo-zona::before {
+/* Pista estática: solo sin JavaScript (con JavaScript la sustituye el trazo serpenteante) */
+html:not([data-js]) .s-hilo-zona::before {
   content: "";
   position: absolute;
   top: 0;
@@ -1405,21 +1406,27 @@
   fill: none;
 }
 
-.s-hilo__trazo {
+.s-hilo__guia,
+.s-hilo__trazo,
+.s-hilo__pulso {
   fill: none;
-  stroke: color-mix(in srgb, var(--s-tinta) 62%, transparent);
   stroke-linecap: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
+  stroke-linejoin: round;
 }
 
-/* Pulso de luz: un segmento de 170 px con degradado que termina en la cabeza y viaja con ella; el glow es el mismo segmento ancho y desenfocado */
-.s-hilo__pulso { opacity: 0; will-change: transform; }
-.s-hilo__stop { stop-color: var(--s-tinta); }
-.s-hilo__nucleo { opacity: .95; }
-.s-hilo__brillo { opacity: .35; filter: blur(5px); }
+.s-hilo__guia { stroke: var(--s-linea); }
+.s-hilo__trazo { stroke: color-mix(in srgb, var(--s-tinta) 62%, transparent); }
 
-/* Cabeza: único punto rojo del hilo y de la página entera fuera de logo y botón */
+/* Pulso: cuatro capas de largo decreciente que terminan en la cabeza (gradiente de cola); la más larga, ancha y desenfocada, es el glow */
+.s-hilo__pulso {
+  stroke: var(--s-tinta);
+  visibility: hidden;
+}
+
+.s-hilo--viaja .s-hilo__pulso { visibility: visible; }
+.s-hilo__brillo { filter: blur(5px); }
+
+/* Cabeza: único punto rojo del hilo */
 .s-hilo__cabeza {
   position: absolute;
   left: 0;
@@ -1454,10 +1461,48 @@
   background: var(--s-tinta);
 }
 
+/* Notas cortas junto al trazo, solo con margen ancho; se encienden con su nodo */
+.s-hilo__nota {
+  position: absolute;
+  left: var(--x, 0);
+  top: var(--y, 0);
+  z-index: var(--s-z-hilo);
+  display: flex;
+  align-items: center;
+  gap: var(--s-e8);
+  width: max-content;
+  max-width: 96px;
+  translate: 0 -50%;
+  font-family: var(--s-f-mono);
+  font-size: 10.5px;
+  line-height: 1.3;
+  letter-spacing: var(--s-k-sello);
+  text-transform: uppercase;
+  color: var(--s-apagado);
+  opacity: .0;
+  pointer-events: none;
+}
+
+.s-hilo__nota[data-lado="der"] {
+  flex-direction: row-reverse;
+  text-align: right;
+  translate: -100% -50%;
+}
+
+.s-hilo__nota.s-visto { opacity: 1; }
+
+.s-hilo__icono {
+  flex: none;
+  width: var(--s-e16);
+  height: var(--s-e16);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+}
+
 @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
-  html[data-js] .s-hilo__nodo {
-    transition: background-color 400ms var(--s-e-ui), border-color 400ms var(--s-e-ui);
-  }
+  html[data-js] .s-hilo__nodo { transition: background-color 400ms var(--s-e-ui), border-color 400ms var(--s-e-ui); }
+  html[data-js] .s-hilo__nota { transition: opacity 600ms var(--s-e-expo); }
 
   /* Al llegar el trazo el nodo se enciende y emite un anillo, una sola vez */
   html[data-js] .s-hilo__nodo.s-visto::after {

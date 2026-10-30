@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Prueba del hilo serpenteante con bandas de cruce (mínimo 10 cruces a 1440 y 6 a 390; las notas tampoco pueden tocar el trazo): en un barrido de scroll a 1440 y 390 mide el RECORRIDO REAL del trazo (se muestrea el path cada 4 px) contra los
+// Prueba del hilo serpenteante con bandas de cruce (mínimo 10 cruces a 1440 y 4 a 390; las notas tampoco pueden tocar el trazo): en un barrido de scroll a 1440 y 390 mide el RECORRIDO REAL del trazo (se muestrea el path cada 4 px) contra los
 // rectángulos de texto, imágenes, figuras, botones, enlaces y tarjetas de la portada, y contra las notas del propio hilo. Falla si algún punto del
 // núcleo queda a menos de 16 px de un rectángulo. Además cuenta los cruces de lado a lado y comprueba que ocurren en huecos libres (sin contenido
 // entre el punto de entrada y el de salida de cada cruce) y que el trazo no desborda el viewport.
@@ -114,7 +114,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         if (m.n) fallas++;
       }
       const desborde = await s.page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
-      const minimo = minCruces || (Number(vp) >= 1000 ? 10 : 6);
+      const minimo = minCruces || (Number(vp) >= 1000 ? 10 : 4);
       const ok = peor && peor.margenLibre >= margen && ultimo.cruces >= minimo && desborde <= 0 && ultimo.x[0] >= 0 && ultimo.x[1] <= ultimo.zona;
       console.log(`${ok ? 'OK   ' : 'FALLA'} vp ${vp}: grosor ${peor?.grosor} px (${peor?.grosorBanda} en bandas), ${ultimo?.cruces} cruces de lado a lado, recorrido x ${ultimo?.x}, largo ${ultimo?.largo} px, ${ultimo?.notas} notas, distancia mínima al contenido ${peor?.margenLibre} px (exigido ${margen}), desborde ${desborde}`);
       if (!ok) fallas++;

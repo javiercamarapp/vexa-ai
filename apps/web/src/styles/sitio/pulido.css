@@ -163,8 +163,8 @@ html[data-js] .s-pantallas__selector {
 }
 
 @media (max-width: 768px) {
-  /* Sin sangrado a la izquierda: el carril del hilo (x = 7 px) queda libre; solo asoma la siguiente tarjeta por la derecha */
-  .s-pantallas { gap: var(--s-e12); margin-right: calc(-1 * var(--s-pad-x)); padding-right: var(--s-pad-x); }
+  /* Sin sangrado a ningún lado: los dos carriles del hilo (x = 7 px y x = 383 px) quedan libres; la siguiente tarjeta asoma dentro de la columna (14 por ciento) */
+  .s-pantallas { gap: var(--s-e12); }
   .s-pantalla { flex-basis: 86%; scroll-snap-align: start; }
   .s-pantalla__miniatura,
   .s-pantalla__miniatura[data-n="5"] { aspect-ratio: 326 / 300; }
@@ -174,7 +174,7 @@ html[data-js] .s-pantallas__selector {
   .s-pantalla__cuerpo { padding: var(--s-e16); grid-template-columns: auto minmax(0, 1fr) auto; }
   .s-pantalla__titulo { font-size: 20px; }
   .s-pantallas__selector { overflow-x: auto; scrollbar-width: none; }
-  html[data-js] .s-pantallas__selector { gap: var(--s-e8); margin-bottom: var(--s-e16); margin-right: calc(-1 * var(--s-pad-x)); padding-right: var(--s-pad-x); }
+  html[data-js] .s-pantallas__selector { gap: var(--s-e8); margin-bottom: var(--s-e16); }
   .s-pantallas__boton { flex: 0 0 auto; padding: var(--s-e8) var(--s-e12); }
 }
 

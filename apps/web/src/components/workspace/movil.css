@@ -3,12 +3,15 @@
    Los estilos de hoja inferior (grabber, X, 90 dvh) viven en components/ui/overlay.css. */
 
 /* ---- Selector de tema (escritorio y celular): mismo icono SVG de 16 px y mismo trazo en celdas iguales; la elegida es una píldora ajustada ---- */
-.workspace-shell .theme-selector{display:flex;justify-content:center;gap:2px;width:fit-content;max-width:100%;min-width:0;margin:0 auto 10px;padding:2px;border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-soft)}
-.workspace-shell .theme-selector label{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:32px;min-height:26px;padding:0 7px;border-radius:999px;color:var(--muted);font:500 13px/1 var(--font-ui);cursor:pointer;-webkit-tap-highlight-color:transparent}
+/* Fila de ajustes de la barra lateral: tema e idioma en la MISMA línea, dos píldoras de igual alto (32 px) con celdas circulares idénticas (26 px), iconos y banderas de 16 px. Las variables se redefinen en la hoja móvil (44 px). */
+.workspace-shell .sidebar-toggles{--toggle-pill:32px;--toggle-cell:26px;--toggle-icon:16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin:0 0 10px;min-width:0}
+.workspace-shell .theme-selector{display:flex;align-items:center;justify-content:center;gap:2px;box-sizing:border-box;width:fit-content;max-width:100%;min-width:0;height:var(--toggle-pill);margin:0;padding:2px;border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-soft)}
+.workspace-shell .theme-selector label{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;min-width:var(--toggle-cell);height:var(--toggle-cell);min-height:var(--toggle-cell);padding:0;border-radius:999px;color:var(--muted);font:500 13px/1 var(--font-ui);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .18s ease,color .18s ease,box-shadow .18s ease}
 .workspace-shell .theme-selector label:hover{color:var(--ink)}
-.workspace-shell .theme-selector svg{display:block;flex:none;width:14px;height:14px}
+.workspace-shell .theme-selector svg{display:block;flex:none;width:var(--toggle-icon);height:var(--toggle-icon)}
 .workspace-shell .theme-selector label:has(input:checked){background:var(--ui-surface);color:var(--ink);box-shadow:0 0 0 1px var(--ui-border),0 1px 2px #0e0e1014}
 .workspace-shell .theme-selector label:has(input:focus-visible){outline:2px solid var(--ui-focus);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.workspace-shell .theme-selector label{transition:none}}
 
 /* ---- Escritorio: nada de lo móvil aparece ---- */
 .header-empresa{display:none}
@@ -64,9 +67,9 @@ body .empresas .org-marca{margin-left:auto;display:inline-flex;color:var(--ink)}
  .mobile-sidebar{display:block;height:auto;padding:0;background:transparent}
  .mobile-sidebar .sidebar-navigation{overflow:visible;padding:0;background:none}
  .mobile-sidebar .sidebar-footer{max-height:none;overflow:visible;margin-top:8px;padding:12px 0 0;background:transparent;box-shadow:none;border-top:1px solid var(--ui-border)}
- .mobile-sidebar .theme-selector{width:100%;margin:8px 0 12px}
+ .mobile-sidebar .sidebar-toggles{--toggle-pill:48px;--toggle-cell:44px;flex-direction:column;align-items:stretch;gap:8px;margin:8px 0 12px}
+ .mobile-sidebar .theme-selector{width:100%}
  .mobile-sidebar .theme-selector label{flex:1 1 0;min-height:44px}
- .mobile-sidebar .theme-selector svg{width:16px;height:16px}
  /* Las reglas genéricas de etiquetas con radio dentro de una hoja (overlay.css) alinean arriba: aquí el contenido va centrado. */
  body .hoja-mas .mobile-sidebar .theme-selector label:has(input){display:flex;align-items:center;justify-content:center;gap:6px;font:500 13px/1 var(--font-ui);color:var(--muted)}
  body .hoja-mas .mobile-sidebar .theme-selector label:has(input:checked){color:var(--ink)}

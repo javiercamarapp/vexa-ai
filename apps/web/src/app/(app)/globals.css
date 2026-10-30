@@ -352,7 +352,7 @@ body:has(.workspace-shell) { height:100dvh; overflow:hidden; }
 .workspace-header { flex:none; }
 .workspace-shell .workspace-content { flex:1; min-height:0; overflow:auto; overscroll-behavior:contain; scrollbar-gutter:stable; }
 .sidebar-collapsed .workspace-sidebar .sidebar-footer { padding:8px 6px; }
-.sidebar-collapsed .workspace-sidebar .theme-selector { display:none; }
+.sidebar-collapsed .workspace-sidebar .sidebar-toggles { display:none; }
 .sidebar-collapsed .workspace-sidebar .sidebar-account { margin:0; }
 .sidebar-collapsed .workspace-sidebar .nav-group:not(:first-child) { border-top:1px solid var(--ui-border); padding-top:5px; }
 }

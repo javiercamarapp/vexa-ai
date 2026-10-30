@@ -1,14 +1,16 @@
-/* Píldora segmentada del idioma: mismo tamaño y lenguaje que .theme-selector (movil.css), justo debajo del selector de tema. Solo variables del sistema: claro y oscuro. */
-.idioma-selector{display:flex;justify-content:center;align-items:center;gap:2px;width:fit-content;max-width:100%;min-width:0;margin:0 auto 10px;padding:2px;border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-soft)}
-.idioma-selector label{position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:32px;min-height:26px;padding:0 7px;border-radius:999px;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .15s ease,box-shadow .15s ease}
-.idioma-selector label:hover{color:var(--ink)}
-.idioma-selector label:has(input:checked){background:var(--ui-surface);color:var(--ink);box-shadow:0 0 0 1px var(--ui-border),0 1px 2px #0e0e1014}
-.idioma-selector label:has(input:focus-visible){outline:2px solid var(--ui-focus);outline-offset:2px}
-.idioma-selector[aria-busy=true]{opacity:.7}
-.idioma-bandera{display:block;flex:none;width:14px;height:14px;border-radius:50%;filter:grayscale(1);opacity:.55;transition:opacity .15s ease}
-.idioma-selector label:hover .idioma-bandera,.idioma-selector label:has(input:checked) .idioma-bandera{opacity:1}
-.sidebar-collapsed .workspace-sidebar .idioma-selector{display:none}
-/* Hoja «Más» en móvil: ancho completo y celdas de 44 px, como el selector de tema. */
-.mobile-sidebar .idioma-selector{width:100%;margin:0 0 12px}
-.mobile-sidebar .idioma-selector label{flex:1 1 0;min-height:44px}
-@media (prefers-reduced-motion:reduce){.idioma-selector label{transition:none}}
+/* Píldora segmentada del idioma: idéntica en alto y en celda al selector de tema (.theme-selector, movil.css); ambas viven en .sidebar-toggles, en la misma línea. Solo variables del sistema: claro y oscuro. */
+.workspace-shell .idioma-selector{display:flex;justify-content:center;align-items:center;gap:2px;box-sizing:border-box;width:fit-content;max-width:100%;min-width:0;height:var(--toggle-pill,32px);margin:0;padding:2px;border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-soft)}
+.workspace-shell .idioma-selector label{position:relative;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-width:var(--toggle-cell,26px);height:var(--toggle-cell,26px);min-height:var(--toggle-cell,26px);padding:0;border-radius:999px;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .18s ease,box-shadow .18s ease}
+.workspace-shell .idioma-selector label:hover{color:var(--ink)}
+.workspace-shell .idioma-selector label:has(input:checked){background:var(--ui-surface);color:var(--ink);box-shadow:0 0 0 1px var(--ui-border),0 1px 2px #0e0e1014}
+.workspace-shell .idioma-selector label:has(input:focus-visible){outline:2px solid var(--ui-focus);outline-offset:2px}
+.workspace-shell .idioma-selector[aria-busy=true]{opacity:.7}
+.workspace-shell .idioma-bandera{display:block;flex:none;width:var(--toggle-icon,16px);height:var(--toggle-icon,16px);border-radius:50%;filter:grayscale(1);opacity:.55;transition:opacity .18s ease,filter .18s ease}
+.workspace-shell .idioma-selector label:hover .idioma-bandera,.workspace-shell .idioma-selector label:has(input:checked) .idioma-bandera{opacity:1}
+.workspace-shell .idioma-selector label:has(input:checked) .idioma-bandera{filter:none}
+/* Hoja «Más» en móvil: ancho completo y celdas de 44 px, como el selector de tema (la fila se apila solo ahí). */
+.workspace-shell .mobile-sidebar .idioma-selector{width:100%}
+.workspace-shell .mobile-sidebar .idioma-selector label{flex:1 1 0}
+/* Las reglas genéricas de etiquetas con radio dentro de una hoja (overlay.css) alinean arriba: aquí el contenido va centrado, como en el selector de tema. */
+body .hoja-mas .mobile-sidebar .idioma-selector label:has(input){display:flex;align-items:center;justify-content:center;flex:1 1 0;gap:0}
+@media (prefers-reduced-motion:reduce){.workspace-shell .idioma-selector label,.workspace-shell .idioma-bandera{transition:none}}

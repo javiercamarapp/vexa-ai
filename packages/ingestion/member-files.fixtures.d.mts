@@ -1,0 +1,10 @@
+export const NOW: string;
+export function toBytes(text: string): Uint8Array;
+export function salesCsv(rows?: string[][], head?: string[]): Uint8Array;
+export function salesCsvEs(): Uint8Array;
+export function ordersCsv(rows?: string[][]): Uint8Array;
+export function returnsCsv(rows?: string[][]): Uint8Array;
+export function reviewsCsv(rows?: string[][]): Uint8Array;
+export function speedshipCsv(rows?: string[][]): Uint8Array;
+export function xlsx(rows: (string | number | null)[][], sheetName?: string): Uint8Array;
+export function xlsx2(sheets: [string, (string | number | null)[][]][]): Uint8Array;

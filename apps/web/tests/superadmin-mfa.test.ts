@@ -1,6 +1,6 @@
 import {test, afterEach} from 'node:test';
 import assert from 'node:assert/strict';
-import {mfaDecision, mfaRequired, parseMfaInput} from '../src/lib/platform/mfa';
+import {mfaDecision, mfaRequired, parseMfaInput, enrollDecision, ENROLL_RECENT_MS, parseOrgSecurityInput} from '../src/lib/platform/mfa';
 import {mfaVerdictFor} from '../src/lib/platform/mfa-server';
 const saved = process.env.VEXA_PLATFORM_MFA;
 afterEach(() => { if (saved === undefined) delete process.env.VEXA_PLATFORM_MFA; else process.env.VEXA_PLATFORM_MFA = saved; });
@@ -39,4 +39,19 @@ test('entradas de MFA: solo enroll / verify con UUID y 6 dígitos / cancel con U
   for (const bad of [{operation: 'verify', factorId: F, code: '12345'}, {operation: 'verify', factorId: F, code: 'abcdef'}, {operation: 'verify', factorId: 'x', code: '123456'}, {operation: 'verify', factorId: F}, {operation: 'verify', factorId: F, code: '123456', extra: 1}, {operation: 'otra'}])
     assert.equal(parseMfaInput(bad as never), null, JSON.stringify(bad));
   assert.deepEqual(parseMfaInput({operation: 'cancel', factorId: F}), {operation: 'cancel', factorId: F});
+});
+
+test('R2-01: agregar un segundo factor exige AAL2; el primero exige haber iniciado sesión hace poco', () => {
+  const now = Date.parse('2026-10-29T12:00:00Z'), hace = (ms: number) => new Date(now - ms).toISOString();
+  assert.equal(enrollDecision({hasVerifiedFactor: true, level: 'aal1', lastSignInAt: hace(1000), now}), 'aal2_required');
+  assert.equal(enrollDecision({hasVerifiedFactor: true, level: 'aal2', lastSignInAt: hace(99 * ENROLL_RECENT_MS), now}), 'ok');
+  assert.equal(enrollDecision({hasVerifiedFactor: false, level: 'aal1', lastSignInAt: hace(60_000), now}), 'ok');
+  assert.equal(enrollDecision({hasVerifiedFactor: false, level: 'aal1', lastSignInAt: hace(ENROLL_RECENT_MS + 1), now}), 'reauth_required');
+  for (const raro of [null, undefined, 'no-es-fecha', new Date(now + 3_600_000).toISOString()]) assert.equal(enrollDecision({hasVerifiedFactor: false, level: 'aal1', lastSignInAt: raro, now}), 'reauth_required', String(raro));
+});
+test('opción de MFA de propietarios: entrada estricta (org_get / org_set con tenantId UUID y enabled booleano)', () => {
+  const T = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+  assert.deepEqual(parseOrgSecurityInput({operation: 'org_get', tenantId: T}), {operation: 'org_get', tenantId: T});
+  assert.deepEqual(parseOrgSecurityInput({operation: 'org_set', tenantId: T, enabled: true}), {operation: 'org_set', tenantId: T, enabled: true});
+  for (const malo of [{operation: 'org_set', tenantId: T}, {operation: 'org_set', tenantId: T, enabled: 'true'}, {operation: 'org_get', tenantId: 'x'}, {operation: 'org_get', tenantId: T, extra: 1}, {operation: 'otro', tenantId: T}, {}]) assert.equal(parseOrgSecurityInput(malo as never), null);
 });

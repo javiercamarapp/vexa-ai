@@ -1,7 +1,7 @@
 import {readRequestBytes} from '../request-body';
 import 'server-only';
 import {NextRequest,NextResponse} from 'next/server';
-import {AccessError,assertOrigin,config,PRIVATE_HEADERS} from '../auth';
+import {AccessError,assertOrigin,config,cupoDeUsuario,PRIVATE_HEADERS} from '../auth';
 import {requestAuth} from '../auth-http';
 import {mfaVerdictFor} from './mfa-server';
 const headers={...PRIVATE_HEADERS,'Referrer-Policy':'no-referrer',Vary:'Cookie'};
@@ -18,6 +18,7 @@ export async function handlePlatform(request:NextRequest){
   if(request.method==='POST')assertOrigin(request.headers.get('origin'),c.origin);
   const auth=requestAuth(request);finish=r=>{const response=auth.finish(r);response.headers.set('Referrer-Policy','no-referrer');return response;};
   const user=await auth.client.auth.getUser();if(user.error||!user.data.user)throw new AccessError(401,'platform_authentication_required');
+  await cupoDeUsuario(user.data.user.id);
   if(await mfaVerdictFor(auth.client)!=='ok')throw new AccessError(403,'platform_mfa_required');
   let value:Record<string,unknown>;const q=request.nextUrl.searchParams;
   if(request.method==='GET'){

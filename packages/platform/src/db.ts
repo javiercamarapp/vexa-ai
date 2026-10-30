@@ -14,7 +14,7 @@ import type { DatabaseAction } from '@vexa/platform/capabilities';
 export type { DatabaseAction } from '@vexa/platform/capabilities';
 // Las lecturas interactivas conservan 10 s. La preparación y publicación de cortes económicos (import) y la materialización recorren todo el libro (~85 mil asientos) y exceden 10 s bajo RLS; la duración total sigue acotada por maxDuration de la ruta.
 const STATEMENT_TIMEOUT_MS: Record<DatabaseAction, string> = {read:'10000',notify:'10000',materialize:'45000',import:'55000',configure:'10000',propose:'10000',approve:'10000',execute:'10000',retain:'10000',export:'10000'};
-import { DATABASE_ACTION_ROLES } from '@vexa/platform/capabilities';
+import { DATABASE_ACTION_ROLES, OWNER_STRONG_ACTIONS } from '@vexa/platform/capabilities';
 const roles = DATABASE_ACTION_ROLES;
 export interface DatabaseScope {
   readonly tenantId: string;
@@ -113,6 +113,15 @@ export function createDatabase(options: {identity: IdentityPort; pool?: SqlPool;
         }
         if (!member || member.user_id!==userId || member.tenant_id!==tenantId || member.status!=='active') throw reportAccess(new AccessError(403,'organization_not_authorized'));
         if (!roles[action].includes(member.role)) throw reportAccess(new AccessError(403,'role_insufficient'));
+        // MFA opcional de propietarios (por organización, apagada por defecto): acciones fuertes del propietario exigen AAL2. Si la migración aún no existe (42883) o la consulta falla, no se exige:
+        // la opción es opt-in y la base (team_manage, org_security) la vuelve a comprobar en sus acciones.
+        if (member.role === 'owner' && !session.support && OWNER_STRONG_ACTIONS.includes(action)) {
+          let required = false;
+          await connection.query('SAVEPOINT owner_mfa');
+          try { required = (await connection.query<{r:boolean}>('SELECT public.owner_mfa_required($1::uuid) AS r',[tenantId])).rows[0]?.r === true; await connection.query('RELEASE SAVEPOINT owner_mfa'); }
+          catch { await connection.query('ROLLBACK TO SAVEPOINT owner_mfa'); required = false; }
+          if (required && (await identity.assurance?.()) !== 'aal2') throw reportAccess(new AccessError(403,'owner_mfa_required'));
+        }
         let active = true;
         const sql = connection;
         const scope: DatabaseScope = Object.freeze({tenantId:member.tenant_id,userId:member.user_id,role:member.role,permissionsVersion:member.permissions_version,

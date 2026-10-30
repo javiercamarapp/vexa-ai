@@ -1,4 +1,5 @@
 import { readRequestText } from '../../../lib/request-body';
+import {exigirRolDeDinero} from '../../../lib/economic-roles';
 import {constrainEconomicTenant} from '../../../lib/economic-import/tenant-guard';
 import {randomUUID} from 'node:crypto';
 import {NextRequest,NextResponse} from 'next/server';
@@ -14,7 +15,7 @@ import {parseEconomicsQuery,economicErrorResponse,QueryRejected} from './query';
 export const runtime='nodejs';export const dynamic='force-dynamic';
 async function handle(request:NextRequest){let finish=(r:NextResponse)=>r;const m=mensajesDe(request);try{
  const configuration=config();if(!configuration)return NextResponse.json({contract_version:'f05-economics-v1',error:{code:'configuration_required',message:m('tr.err.cfgEconomico'),retryable:true},meta:{trace_id:randomUUID()}},{status:503,headers:PRIVATE_HEADERS});if(request.method==='POST')assertOrigin(request.headers.get('origin'),configuration.origin);
- const auth=requestAuth(request);finish=auth.finish;const database=constrainEconomicTenant(createDatabase({identity:identity(auth.client),pool:serverPool(),selectedTenant:request.cookies.get(ACTIVE_ORG)?.value}),request.method==='POST'?request.headers.get('X-Economic-Import-Tenant'):null);const repository=createEconomicRepository({database});const exposure=createExposureRepository({database});const money=createMoneyRepository({database});let data;
+ const auth=requestAuth(request);finish=auth.finish;await exigirRolDeDinero(identity(auth.client),request.cookies.get(ACTIVE_ORG)?.value);const database=constrainEconomicTenant(createDatabase({identity:identity(auth.client),pool:serverPool(),selectedTenant:request.cookies.get(ACTIVE_ORG)?.value}),request.method==='POST'?request.headers.get('X-Economic-Import-Tenant'):null);const repository=createEconomicRepository({database});const exposure=createExposureRepository({database});const money=createMoneyRepository({database});let data;
  if(request.method==='GET'){let q;try{q=parseEconomicsQuery(request.nextUrl.searchParams);}catch(e){if(e instanceof QueryRejected)throw new AccessError(e.status,e.code);throw e;}
   if(q.view==='page')data=await repository.page({...(q.limit!==undefined?{limit:q.limit}:{}),...(q.cursor!==undefined?{cursor:q.cursor}:{}),filters:q.filters});
   else if(q.view==='history')data=await repository.entityHistory({entityId:q.entityId!});

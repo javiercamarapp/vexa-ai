@@ -31,3 +31,22 @@ export function parseMfaInput(body: Record<string, unknown>): MfaInput | null {
   if (body.operation === 'cancel' && keys.length === 2 && typeof body.factorId === 'string' && UUID.test(body.factorId)) return {operation: 'cancel', factorId: body.factorId};
   return null;
 }
+
+/** Ventana de «sesión reciente» para inscribir el PRIMER factor: quien roba una sesión vieja no puede registrar su propio TOTP y volverlo permanente (R2-01, AUTH-04). */
+export const ENROLL_RECENT_MS = 30 * 60 * 1000;
+export type EnrollVerdict = 'ok' | 'reauth_required' | 'aal2_required';
+/** Decisión pura para `enroll`. Con un factor ya verificado, agregar otro exige AAL2 (si no, cualquier sesión AAL1 robada sumaría su propio factor). Sin factores, exige haber iniciado sesión hace poco. */
+export function enrollDecision(input: {hasVerifiedFactor: boolean; level: string | null; lastSignInAt: string | null | undefined; now?: number}): EnrollVerdict {
+  if (input.hasVerifiedFactor) return input.level === 'aal2' ? 'ok' : 'aal2_required';
+  const t = input.lastSignInAt ? Date.parse(input.lastSignInAt) : NaN, now = input.now ?? Date.now();
+  return Number.isFinite(t) && now - t >= 0 && now - t <= ENROLL_RECENT_MS ? 'ok' : 'reauth_required';
+}
+/** Entrada de la opción de MFA de propietarios por organización (`/seguridad/data`): leer o cambiar `require_owner_mfa`. */
+export type OrgSecurityInput = {operation: 'org_get'; tenantId: string} | {operation: 'org_set'; tenantId: string; enabled: boolean};
+export function parseOrgSecurityInput(body: Record<string, unknown>): OrgSecurityInput | null {
+  const keys = Object.keys(body), id = typeof body.tenantId === 'string' && UUID.test(body.tenantId) ? body.tenantId : null;
+  if (!id) return null;
+  if (body.operation === 'org_get') return keys.length === 2 ? {operation: 'org_get', tenantId: id} : null;
+  if (body.operation === 'org_set' && keys.length === 3 && typeof body.enabled === 'boolean') return {operation: 'org_set', tenantId: id, enabled: body.enabled};
+  return null;
+}

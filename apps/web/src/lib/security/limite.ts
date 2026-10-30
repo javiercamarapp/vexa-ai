@@ -29,26 +29,17 @@ export function claseDe(method:string,pathname:string,search=''):Clase|null{
   if(/^\/api\/agent(?:\/|$)|^\/api\/pain-points\/[^/]+\/ia\/?$|^\/api\/extraction(?:\/|$)/.test(pathname)&&m!=='GET'&&m!=='HEAD')return 'ai';
   return m==='GET'||m==='HEAD'||m==='OPTIONS'?'read':'write';
 }
-/** Huella estable de la sesión SIN verificar el JWT: se usa el refresh_token (secreto que otro no conoce), así nadie puede agotar la cubeta de otro usuario falsificando un `sub`. */
-export function huellaDeSesion(cookieHeader:string|null|undefined,clave:string|null):string|null{
-  if(!cookieHeader||!clave)return null;
-  const trozos=new Map<string,string>();
-  for(const par of cookieHeader.split(';')){const i=par.indexOf('=');if(i<0)continue;const n=par.slice(0,i).trim(),v=par.slice(i+1).trim();const m=/^(sb-[^=]*-auth-token)(?:\.(\d+))?$/.exec(n);if(m)trozos.set(m[1]+'.'+(m[2]??'0'),v);}
-  if(!trozos.size)return null;
-  const base=[...trozos.keys()][0].replace(/\.\d+$/,'');
-  let valor='';for(let i=0;i<8;i++){const c=trozos.get(base+'.'+i);if(c===undefined)break;valor+=c;}
-  try{
-    if(valor.startsWith('base64-'))valor=Buffer.from(valor.slice(7).replace(/-/g,'+').replace(/_/g,'/'),'base64').toString('utf8');
-    const refresh=(JSON.parse(decodeURIComponent(valor)) as {refresh_token?:unknown}).refresh_token;
-    return typeof refresh==='string'&&refresh.length>=8?createHmac('sha256',clave).update('sess:'+refresh).digest('hex'):null;
-  }catch{return null;}
+/** R2-13: huella del USUARIO derivada del `sub` ya VERIFICADO por Supabase Auth (getUser). Nunca de cookies sin verificar: rotar el refresh_token no cambia el sub, y falsificar un sub no pasa la verificación. */
+export function huellaDeUsuario(sub:string|null|undefined,clave:string|null):string|null{
+  return sub&&clave?createHmac('sha256',clave).update('user:'+sub).digest('hex'):null;
 }
 export const huellaIp=(ip:string|null,clave:string|null)=>ip&&clave?createHmac('sha256',clave).update('rl-ip:'+ipBucket(ip)).digest('hex'):null;
 
 type Estado={minuto:number;global:number;pend:number;sync:boolean;ult:number};
 export type Decision={permitido:true}|{permitido:false;reintentarEn:number;por:'ip'|'sesion'};
-export function crearLimitador(opciones:{sumar:(clase:string,huella:string,n:number)=>Promise<number>|null;ahora?:()=>number;syncMs?:number;maxPendiente?:number;maxClaves?:number}){
-  const {sumar,ahora=()=>Date.now(),syncMs=5000,maxPendiente=25,maxClaves=5000}=opciones;
+export function crearLimitador(opciones:{sumar:(clase:string,huella:string,n:number)=>Promise<number>|null;ahora?:()=>number;syncMs?:number;maxPendiente?:number;maxClaves?:number;maxVuelo?:number}){
+  const {sumar,ahora=()=>Date.now(),syncMs=5000,maxPendiente=25,maxClaves=5000,maxVuelo=2}=opciones;
+  let enVuelo=0;
   const estados=new Map<string,Estado>();
   function cubeta(clave:string,t:number):Estado{
     const minuto=Math.floor(t/60000);let e=estados.get(clave);
@@ -59,11 +50,12 @@ export function crearLimitador(opciones:{sumar:(clase:string,huella:string,n:num
     return e;
   }
   function volcar(clase:string,huella:string,e:Estado,t:number){
-    if(e.sync||e.pend<1)return;
-    const n=Math.min(e.pend,10000),minuto=e.minuto;e.sync=true;e.ult=t;
+    // R2-13: tope global de volcados simultáneos a la base; el excedente espera (el conteo local sigue vigente y se vuelca en la siguiente ocasión).
+    if(e.sync||e.pend<1||enVuelo>=maxVuelo)return;
+    const n=Math.min(e.pend,10000),minuto=e.minuto;e.sync=true;e.ult=t;enVuelo++;
     let p:Promise<number>|null=null;try{p=sumar(clase,huella,n);}catch{p=null;}
-    if(!p){e.sync=false;return;}
-    p.then(total=>{if(e.minuto===minuto&&Number.isFinite(total)){e.global=total;e.pend=Math.max(0,e.pend-n);}}).catch(()=>{/* falla abierto: sigue el conteo local */}).finally(()=>{e.sync=false;});
+    if(!p){e.sync=false;enVuelo--;return;}
+    p.then(total=>{if(e.minuto===minuto&&Number.isFinite(total)){e.global=total;e.pend=Math.max(0,e.pend-n);}}).catch(()=>{/* falla abierto: sigue el conteo local */}).finally(()=>{e.sync=false;enVuelo--;});
   }
   function contar(clase:Clase,huella:string|null,tope:number|null,por:'ip'|'sesion',t:number):Decision{
     if(!huella||tope===null)return {permitido:true};

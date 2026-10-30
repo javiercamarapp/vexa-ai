@@ -13,3 +13,5 @@ export const DATABASE_ACTION_ROLES: Record<DatabaseAction, readonly Role[]> = {
 export const MONEY_SCREEN_ROLES: readonly Role[] = ['owner','analyst'];
 /** Pestaña CCO (/cco): seis preguntas del director de cliente. Mezcla ingreso bruto, así que es de roles de dinero. */
 export const CCO_ROLES: readonly Role[] = MONEY_SCREEN_ROLES;
+/** Acciones del propietario con efecto fuerte (configuración, aprobaciones, retención/borrado/purga). Con la opción de organización `require_owner_mfa` activa exigen AAL2. Las lecturas nunca. */
+export const OWNER_STRONG_ACTIONS: readonly DatabaseAction[] = ['configure','approve','retain'];

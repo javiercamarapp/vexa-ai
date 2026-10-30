@@ -6,6 +6,9 @@
 -- propia credencial de servidor, que no pasa por RLS y no se ve afectado.
 -- Si el metadato `mimetype` o `size` no viene en el momento de la insercion, no se bloquea (la reserva ya fijo el tipo y el tamano): solo se rechaza
 -- lo que declara un tipo distinto o un tamano mayor. No se toca la configuracion del bucket (los adjuntos usan tipos y tamanos distintos).
+-- ALCANCE REAL (R2-05, auditoria run-2): esta politica solo acota la RUTA (imports/) y lo que el cliente DECLARE en metadata al insertar. Storage fija el tipo y el tamano reales despues de la insercion,
+-- asi que NO es un limite de bytes ni de tipo: eso lo imponen la reserva de la aplicacion (tipo y tamano acordados) y el lector de importaciones (que valida el contenido). Un limite real exige
+-- file_size_limit/allowed_mime_types en el bucket o un bucket aparte para imports/; no se fijo aqui porque los adjuntos (carga TUS de archivos grandes) comparten vexa-private y se romperian.
 -- Reversion: drop policy vexa_private_member_upload_types on storage.objects;
 begin;
 set local lock_timeout='3s'; set local statement_timeout='30s';

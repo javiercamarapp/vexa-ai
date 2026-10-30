@@ -9,10 +9,13 @@ export type AdmissionResult=
  |{kind:'ip_limited';retryAfterSeconds:number};   // demasiadas solicitudes de la misma IP: 429
 const IP_LIMIT=10,IP_WINDOW_MS=60000,IP_TABLE_MAX=4096;
 
-/** Primer salto de x-forwarded-for: en Vercel el borde sobrescribe la cabecera con la IP del cliente, así que el primer valor es confiable. */
+/** IP del cliente. R2-13: en Vercel `x-vercel-forwarded-for` y `x-real-ip` las fija el borde (no el cliente); se prefieren a `x-forwarded-for`, cuyo primer salto se usa solo de respaldo. Un valor que no es IP cae al siguiente. */
 export function clientIp(headers:{get(name:string):string|null}):string|null{
- const first=headers.get('x-forwarded-for')?.split(',')[0]?.trim();
- return first&&isIP(first)?first:null;
+ for(const nombre of ['x-vercel-forwarded-for','x-real-ip','x-forwarded-for']){
+  const v=headers.get(nombre)?.split(',')[0]?.trim();
+  if(v&&isIP(v))return v;
+ }
+ return null;
 }
 /** Cubo de límite: IPv4 exacta; IPv6 agrupada por /64 (un cliente recibe un /64 entero, así no puede fabricar miles de cubos). */
 export function ipBucket(ip:string):string{

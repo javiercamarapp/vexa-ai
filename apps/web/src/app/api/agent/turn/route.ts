@@ -2,6 +2,7 @@ import {NextRequest,NextResponse} from 'next/server';
 import {AccessError,PRIVATE_HEADERS} from '../../../../lib/auth';
 import {mensajesDe} from '../../../../lib/i18n/errores-api';
 import {agent,agentContext,failure,jsonBody,knownRole,parseDirect} from '../../../../lib/agent/server';
+import {admitirTurnoDurable} from '../../../../lib/agent/cupo-durable';
 export const runtime='nodejs';export const dynamic='force-dynamic';export const maxDuration=60;
 /** One turn as NDJSON: `paso` events while tools run, then a single `fin` with the verified answer (or `error`). */
 export async function POST(request:NextRequest){
@@ -10,6 +11,8 @@ export async function POST(request:NextRequest){
   const c=await agentContext(request,true);finish=c.finish;
   if(!knownRole(c.ctx.role))return failure(new AccessError(403,'forbidden'),finish,request);
   const body=await jsonBody(request,['question','history','directa','conversationTurns']);
+  // R2-12: cupo diario por (organización, usuario) compartido entre instancias; sin base cae al límite en memoria del agente.
+  if(await admitirTurnoDurable(c.ctx.tenantId,c.ctx.userId)==='limite')return failure(new AccessError(429,'daily_limit'),finish,request);
   const question=typeof body.question==='string'?body.question:'';
   const turns=Number.isInteger(body.conversationTurns)?Math.max(0,Math.min(1000,body.conversationTurns as number)):0;
   const directa=parseDirect(body.directa);

@@ -1,7 +1,7 @@
 import 'server-only';
 import {cookies} from 'next/headers';
 import {NextRequest} from 'next/server';
-import {AccessError, assertOrigin, authClient, config} from '../../../../lib/auth';
+import {AccessError, assertOrigin, authClient, config, cupoDeUsuario} from '../../../../lib/auth';
 import {requestAuth} from '../../../../lib/auth-http';
 import {mfaVerdictFor} from '../../../../lib/platform/mfa-server';
 import type {MfaVerdict} from '../../../../lib/platform/mfa';
@@ -36,6 +36,7 @@ export async function platformAccessForRequest(request: NextRequest): Promise<{a
   if (request.method === 'POST') assertOrigin(request.headers.get('origin'), c.origin);
   const auth = requestAuth(request), user = await auth.client.auth.getUser();
   if (user.error || !user.data.user) throw new AccessError(401, 'platform_authentication_required');
+  await cupoDeUsuario(user.data.user.id);
   const grant = await auth.client.rpc('platform_manage', {p_input: {operation: 'status'}});
   if (grant.error) throw new AccessError(403, 'platform_access_denied');
   if (await mfaVerdictFor(auth.client) !== 'ok') throw new AccessError(403, 'platform_mfa_required');

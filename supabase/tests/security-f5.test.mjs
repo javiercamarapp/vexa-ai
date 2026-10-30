@@ -288,6 +288,6 @@ test('SM-02 (F5): toda migración 20261206* con begin; fija lock_timeout y state
  const {readFileSync,readdirSync}=await import('node:fs');
  const dir=new URL('../migrations/',import.meta.url).pathname;
  const lista=readdirSync(dir).filter(f=>/^20261206[0-9]{6}_.*\.sql$/.test(f));
- assert.equal(lista.length,5);
+ assert.equal(lista.length,6);
  for(const f of lista){const s=readFileSync(dir+f,'utf8');const m=/^begin;\n(.*)\n/m.exec(s);assert.ok(m,f+': sin begin;');assert.match(m[1],/lock_timeout='3s'/,f);assert.match(m[1],/statement_timeout='/,f);assert.match(s.trim(),/commit;$/,f+': sin commit');}
 });

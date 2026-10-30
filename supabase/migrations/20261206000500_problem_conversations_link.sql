@@ -13,7 +13,7 @@
 -- Orden: aplicar esta migracion, luego correr refresh_problem_conversations(tenant, true) (ensayo) y despues (tenant, false). Ver 2-vincular-problema-conversaciones-29oct.sh.
 -- Reversa: packages/workspace-service/tests/20261206000500_problem_conversations_link.down.sql
 begin;
-set local lock_timeout='3s';
+set local lock_timeout='3s'; set local statement_timeout='15s';
 do $$
 begin
  if to_regclass('public.problem_conversations') is null or to_regclass('public.problem_embedding_members') is null or to_regclass('public.problem_versions') is null

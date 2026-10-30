@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- dobles de prueba */
 // H-01: límite general de peticiones por clase, IP y sesión, con contador compartido y sincronización por lotes; falla abierto.
 //   cd apps/web && node --require ./tests/server-only-stub.cjs --import tsx --test tests/limite-peticiones.test.ts
 import test from 'node:test';

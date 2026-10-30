@@ -31,7 +31,7 @@ export function EmailLoginComplete(){
   if(!leidos||leidos.conError||!leidos.accessToken){setError('tr.login.errCompletar');setBusy(false);}
   else if(active&&!establishment.current){setPendiente({accessToken:leidos.accessToken,refreshToken:leidos.refreshToken,correo:leidos.correo});setBusy(false);}
   return()=>{active=false;};
- },[]); // eslint-disable-line react-hooks/exhaustive-deps
+ },[]);
  function establecer(accessToken:string,refreshToken:string){
   setBusy(true);setError('');
   establishment.current=(async()=>{

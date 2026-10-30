@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- dobles de prueba */
 // MFA opcional de propietarios (apagada por defecto): con la opción de la organización activa, las acciones fuertes del propietario (configure, approve, retain) exigen AAL2 en la capa de base.
 //   cd apps/web && node --require ./tests/server-only-stub.cjs --import tsx --test tests/owner-mfa-db.test.ts
 import test from 'node:test';

@@ -1,6 +1,5 @@
 import {createHmac} from 'node:crypto';
-import {clientIp,ipBucket} from '../email-auth/admission';
-import {claveDeHuellas} from './eventos';
+import {ipBucket} from '../email-auth/admission';
 
 /**
  * Límite general de peticiones (H-01). Cubetas por CLASE de endpoint, por huella de IP y por huella de sesión, con contador compartido en la base

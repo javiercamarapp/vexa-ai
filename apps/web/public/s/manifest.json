@@ -651,8 +651,8 @@
   },
   "producto/pareto": {
    "alt": {
-    "en": "Ranking of refunds by SKU from HM-210 to HM-200 with bars, amount and cumulative percentage up to 100 percent. Example data.",
-    "es": "Ranking de reembolsos por SKU de HM-210 a HM-200 con barras, importe y porcentaje acumulado hasta 100 por ciento. Datos de ejemplo."
+    "en": "Ranking of refunds by SKU from HM-210 to HM-200 with bars, amount and a cumulative percentage line. Example data.",
+    "es": "Ranking de reembolsos por SKU de HM-210 a HM-200 con barras, importe y línea de porcentaje acumulado. Datos de ejemplo."
    },
    "alto": 1206,
    "ancho": 1472,
@@ -696,8 +696,8 @@
   },
   "producto/pareto-vector": {
    "alt": {
-    "en": "Ranking of refunds by SKU from HM-210 to HM-200 with bars, amount and cumulative percentage up to 100 percent. Vector version. Example data.",
-    "es": "Ranking de reembolsos por SKU de HM-210 a HM-200 con barras, importe y porcentaje acumulado hasta 100 por ciento. Versión vectorial. Datos de ejemplo."
+    "en": "Ranking of refunds by SKU from HM-210 to HM-200 with bars, amount and a cumulative percentage line. Vector version. Example data.",
+    "es": "Ranking de reembolsos por SKU de HM-210 a HM-200 con barras, importe y línea de porcentaje acumulado. Versión vectorial. Datos de ejemplo."
    },
    "alto": 602,
    "ancho": 736,
@@ -842,8 +842,8 @@
   },
   "producto/preguntale": {
    "alt": {
-    "en": "Ask your data: the question about which marketplace concentrates the most refunds with its answer as cards and bars, 100 percent coverage and the dropdown with the calculation steps. Example data.",
-    "es": "Pregúntale a tus datos: la pregunta sobre qué marketplace concentra más reembolsos con su respuesta en tarjetas y barras, cobertura de 100 por ciento y el desplegable con los pasos del cálculo. Datos de ejemplo."
+    "en": "Ask your data: the question about which marketplace concentrates the most refunds with its answer as cards and bars and the dropdown with the calculation steps. Example data.",
+    "es": "Pregúntale a tus datos: la pregunta sobre qué marketplace concentra más reembolsos con su respuesta en tarjetas y barras y el desplegable con los pasos del cálculo. Datos de ejemplo."
    },
    "alto": 900,
    "ancho": 1440,
@@ -887,8 +887,8 @@
   },
   "producto/preguntale-oscuro": {
    "alt": {
-    "en": "Ask your data: the question about which marketplace concentrates the most refunds with its answer as cards and bars, 100 percent coverage and the dropdown with the calculation steps. Example data.",
-    "es": "Pregúntale a tus datos: la pregunta sobre qué marketplace concentra más reembolsos con su respuesta en tarjetas y barras, cobertura de 100 por ciento y el desplegable con los pasos del cálculo. Datos de ejemplo."
+    "en": "Ask your data: the question about which marketplace concentrates the most refunds with its answer as cards and bars and the dropdown with the calculation steps. Example data.",
+    "es": "Pregúntale a tus datos: la pregunta sobre qué marketplace concentra más reembolsos con su respuesta en tarjetas y barras y el desplegable con los pasos del cálculo. Datos de ejemplo."
    },
    "alto": 900,
    "ancho": 1440,

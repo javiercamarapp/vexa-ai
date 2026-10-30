@@ -62,12 +62,13 @@ export default function iniciar({urls, RM, motor}) {
 }
 
 /* ---------- hilo serpenteante ----------
- * Un solo trazo que baja por la página y CRUZA de un lado al otro, como el de two26, pero solo por los espacios libres: en el tramo de cada sección
- * ondula dentro del margen (carril) y cruza en los huecos verticales entre bloques con una curva en S de tangentes verticales. El recorrido se
- * calcula aquí con las medidas reales del diseño (texto, imágenes, figuras, botones y tarjetas, con 24 px de aire), se recalcula con ResizeObserver
- * y es monótono en Y, así que nunca sale del hueco que le tocó. Núcleo que avanza con la lectura (dasharray), pulso de cuatro capas con glow que
- * termina en la cabeza, nodos y notas que se encienden al llegar el trazo, y la cabeza con el único punto rojo. Con movimiento reducido
- * aparece dibujado, sin pulso. */
+ * Un solo trazo que baja por la página y cruza de un lado al otro, como el de two26, pero solo por espacio libre. En el tramo de cada sección
+ * ondula dentro del margen (carril). Cruza en las BANDAS (huecos deliberados entre secciones, .s-banda) con una S grande de ±35 % de la altura
+ * del hueco, con un rizo en algunas, y en los huecos naturales entre bloques con una S de tangentes verticales. Todo se calcula aquí con las
+ * cajas de maquetación reales (offsetTop y offsetHeight, que no cambian con los revelados), se recalcula con ResizeObserver y deja 20 px de
+ * aire al contenido. En las bandas el núcleo es más grueso (capas con ramas de 3 escalones, sobre el mismo path vía <use>); el pulso de cuatro
+ * capas con glow, la cabeza con el único punto rojo, los nodos y las notas en píldora se encienden al llegar el trazo. Con movimiento
+ * reducido aparece dibujado, sin pulso. */
 // BLOQUE-ICONOS-INICIO
 const ICONOS = [
   [['rect', {x: 1.5, y: 2.5, width: 5, height: 4, rx: 0.5}], ['rect', {x: 9.5, y: 4.5, width: 5, height: 4, rx: 0.5}], ['rect', {x: 4.5, y: 9.5, width: 5, height: 4, rx: 0.5}]],
@@ -77,19 +78,21 @@ const ICONOS = [
   [['path', {d: 'M4 12 12 4'}], ['path', {d: 'M5.5 4H12v6.5'}]],
 ];
 // BLOQUE-ICONOS-FIN
-const AIRE = 20; // 16 px de margen mínimo, más medio núcleo y holgura
+const AIRE = 24; // 16 px de margen mínimo más medio núcleo de banda (3.75) y holgura
 const PULSO = [[230, 0.1], [150, 0.22], [90, 0.45], [40, 0.9]]; // largo en px y opacidad de cada capa del pulso
-/** [section, índice de nota] de las cinco notas junto al trazo. */
-const NOTAS = [['problema', 0], ['valor', 1], ['pantallas', 2], ['seguridad', 3], ['cierre', 4]];
-const ANCLAS = ['problema', 'valor', 'modulos', 'pantallas', 'puestos', 'seguridad', 'integraciones', 'cierre'];
+const ICONO_DE = [0, 1, 2, 3, 4, 0, 1]; // ícono de la nota de cada banda
+const LOOPS = [1, 3, 5]; // bandas (base 0) con rizo
+const TRIPLES = [0, 4]; // bandas que cruzan tres veces (ida, vuelta e ida)
+const RAMPA = 3, PASO_RAMPA = 26; // escalones y largo de cada uno al engrosar o afinar el trazo
 
-/** Intervalos verticales (coordenadas de la zona) que ocupa el contenido, y los huecos libres entre ellos de al menos `min` px.
- * Se miden con la caja de maquetación (offsetTop y offsetHeight), que no cambia con los translateY y scaleX de los revelados: así el resultado es
- * el mismo antes y después de que cada bloque aparezca. */
+const f1 = (n) => n.toFixed(1);
+const suave = (u) => u * u * (3 - 2 * u);
+
+/** Intervalos libres verticales (coordenadas de la zona) entre el contenido, de al menos `min` px; las bandas no cuentan como contenido. */
 function huecos(zona, H, min) {
   const ocupado = [];
   const pasos = $('#modulos', zona);
-  const ajeno = (e) => e.closest('[data-hilo], .s-solo-lector') || (pasos && pasos.contains(e));
+  const ajeno = (e) => e.closest('[data-hilo], .s-solo-lector, [data-banda]') || (pasos && pasos.contains(e));
   const MEDIA = /^(SVG|IMG|CANVAS|PICTURE|VIDEO)$/i;
   for (const e of zona.getElementsByTagName('*')) {
     if (!(e instanceof HTMLElement) || ajeno(e) || !e.offsetHeight) continue;
@@ -110,104 +113,199 @@ function huecos(zona, H, min) {
   return libres;
 }
 
+/** Puntos de la S grande de una banda, de (xa, y0) a (xb, y1): tres vaivenes de ±30 % de la altura y, si `rizo`, un rizo suave en el centro. */
+function puntosBanda(xa, y0, xb, y1, rizo, ancho, triple) {
+  const h = y1 - y0, X = (u) => xa + (xb - xa) * u, dir = xb > xa ? 1 : -1;
+  if (triple) return [[xa, y0], [X(0.55), y0 + 0.2 * h], [X(0.97), y0 + 0.38 * h], [X(0.45), y0 + 0.58 * h], [X(0.03), y0 + 0.74 * h], [X(0.6), y0 + 0.9 * h], [xb, y1]];
+  const sup = y0 + 0.2 * h, inf = y0 + 0.8 * h;
+  if (!rizo || ancho < 700) return [[xa, y0], [X(0.18), inf], [X(0.48), sup], [X(0.78), inf - 0.04 * h], [xb, y1]];
+  const b = Math.min(44, 0.16 * h), a = 0.55 * b, cx = X(0.5), cy = y0 + 0.4 * h, rz = [];
+  for (let t = -Math.PI; t <= Math.PI + 0.01; t += Math.PI / 9) rz.push([cx + dir * (a * t - b * Math.sin(t)) * 1, cy - b * Math.cos(t) * -1 * -1]);
+  return [[xa, y0], [X(0.16), inf], ...rz, [X(0.8), inf - 0.04 * h], [xb, y1]];
+}
+
 function construirHilo(RM, notas) {
   const zona = $('.s-hilo-zona'), cont = zona && $('[data-hilo]', zona);
   if (!zona || !cont || typeof ResizeObserver === 'undefined') return null;
   const svg = el('svg', {'aria-hidden': 'true', focusable: 'false'}, cont, 's-hilo');
-  const guia = el('path', {}, svg, 's-hilo__guia');
-  const trazo = el('path', {}, svg, 's-hilo__trazo');
-  const capas = PULSO.map(([, o], i) => { const c = el('path', {}, svg, 's-hilo__pulso'); c.style.setProperty('opacity', String(o)); if (i === 0) c.classList.add('s-hilo__brillo'); return c; });
+  const defs = el('defs', {}, svg);
+  const base = el('path', {id: 's-hilo-d'}, defs);
+  const usar = (clase) => { const u = el('use', {href: '#s-hilo-d'}, svg, clase); return u; };
+  const guia = usar('s-hilo__guia');
+  const trazo = usar('s-hilo__trazo');
+  const grosor = el('g', {}, svg, 's-hilo__grosor');
+  const capas = PULSO.map(([, o], i) => { const c = usar('s-hilo__pulso'); c.style.setProperty('opacity', String(o)); if (i === 0) c.classList.add('s-hilo__brillo'); return c; });
   const cabeza = div('s-hilo__cabeza', cont);
   cabeza.setAttribute('aria-hidden', 'true');
-  let H = 0, total = 0, tabla = null, nodos = [], ultimo = -1, vivo = false;
+  let H = 0, total = 0, tabla = null, nodos = [], piezas = [], bandas = [], ultimo = -1, vivo = false, w0 = 3, wb = 7;
 
   function medir() {
     H = zona.clientHeight;
     const W = zona.clientWidth, c0 = $('.s-contenedor', zona);
     if (!H || !c0) return;
-    const w = parseFloat(getComputedStyle(zona).getPropertyValue('--s-hilo-w')) || 3;
-    const z0 = zona.getBoundingClientRect().top + scrollY;
-    const margen = c0.getBoundingClientRect().left - zona.getBoundingClientRect().left + parseFloat(getComputedStyle(c0).paddingLeft);
-    // Carril dentro del margen: con margen amplio (1440) ondula en una franja de unos 58 px y deja el resto para las notas; con margen estrecho (390) es recto
-    const conNotas = margen >= 160 && notas.length > 0;
-    const xmin = 4 + w / 2, xmax = Math.min(margen - 18 - w / 2, conNotas ? 72 : 1e9);
-    const centro = xmax - xmin < 12 ? xmax : (xmin + xmax) / 2, amp = xmax - xmin < 12 ? 0 : ((xmax - xmin) / 2) * 0.85;
+    const cs = getComputedStyle(zona);
+    w0 = parseFloat(cs.getPropertyValue('--s-hilo-w')) || 3;
+    wb = parseFloat(cs.getPropertyValue('--s-hilo-wb')) || 7;
+    const zr = zona.getBoundingClientRect(), z0 = zr.top + scrollY;
+    const margen = c0.getBoundingClientRect().left - zr.left + parseFloat(getComputedStyle(c0).paddingLeft);
+    // Carril dentro del margen: con margen amplio (1440) ondula en toda la franja libre; con margen estrecho (390) es recto
+    const xmin = 4 + w0 / 2, xmax = margen - 18 - wb / 2;
+    const recto = xmax - xmin < 12;
+    const centro = recto ? Math.min(xmax, xmin + 2) : (xmin + xmax) / 2, amp = recto ? 0 : ((xmax - xmin) / 2) * 0.9;
     const lado = (s, k) => { const x = centro + (k % 2 ? amp : -amp); return s ? W - x : x; };
-    // Cruces: en los huecos libres, el primero a más de `corrida` px del anterior
-    const corrida = innerWidth <= 768 ? 1300 : 780, paso = 260;
+    const movil = innerWidth <= 768, corrida = movil ? 1000 : 380, paso = 260;
     const libres = huecos(zona, H, 2 * AIRE + 16);
-    const pts = [[lado(0, 0), 0]];
-    let s = 0, k = 0, ult = 0;
-    for (const [a, b] of libres) {
-      const centroY = (a + b) / 2;
-      if (centroY - ult < corrida || centroY > H - 200) continue;
-      const alto = Math.min(b - a - 6, 140), y0 = centroY - alto / 2, y1 = centroY + alto / 2;
-      while (pts[pts.length - 1][1] + paso * 1.4 < y0) { k++; pts.push([lado(s, k), pts[pts.length - 1][1] + paso]); }
-      pts.push([pts[pts.length - 1][0], y0]);
-      s ^= 1; k++;
-      pts.push([lado(s, k), y1]);
-      ult = y1;
+    // Bandas: el hueco libre que contiene el centro de cada .s-banda visible
+    const bs = $$('[data-banda]', zona).filter((b) => b.offsetHeight).map((b) => { let y = 0, n = b; for (; n && n !== zona; n = n.offsetParent) y += n.offsetTop; return y + b.offsetHeight / 2; });
+    const deBanda = new Map();
+    bs.forEach((cy, i) => { const g = libres.find(([a, b]) => cy > a && cy < b); if (g) deBanda.set(g, i); });
+    // Recorrido como lista de órdenes de dibujo
+    let d = '', cur = [lado(0, 0), 0], k = 0, s = 0, ult = 0;
+    d = `M${f1(cur[0])} 0`;
+    const sCurva = (x, y) => { const [x0, y0] = cur, m = (y - y0) / 2; d += `C${f1(x0)} ${f1(y0 + m)} ${f1(x)} ${f1(y - m)} ${f1(x)} ${f1(y)}`; cur = [x, y]; };
+    const catmull = (P) => {
+      const Q = [[P[0][0], P[0][1] - 80], ...P, [P.at(-1)[0], P.at(-1)[1] + 80]];
+      for (let i = 1; i < Q.length - 2; i++) {
+        const [p0, p1, p2, p3] = [Q[i - 1], Q[i], Q[i + 1], Q[i + 2]];
+        let c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+        if (i === 1) c1 = [p1[0], p1[1] + 50];
+        if (i === Q.length - 3) c2 = [p2[0], p2[1] - 50];
+        d += `C${f1(c1[0])} ${f1(c1[1])} ${f1(c2[0])} ${f1(c2[1])} ${f1(p2[0])} ${f1(p2[1])}`;
+      }
+      cur = P.at(-1);
+    };
+    const ondas = (hasta) => { while (cur[1] + paso * 1.4 < hasta) { k++; sCurva(lado(s, k), cur[1] + paso); } };
+    const entradas = []; // cruces de banda: puntos de entrada y salida y gap
+    let nb = 0;
+    const cruces = libres.map((g, gi) => ({g, banda: deBanda.has(g) ? deBanda.get(g) : -1})).filter(({g, banda}) => banda >= 0 || (g[0] + g[1]) / 2 - 0 > 0);
+    for (const {g: [a, b], banda} of cruces) {
+      const cy = (a + b) / 2;
+      if (banda < 0 && (cy - ult < corrida || cy > H - 200 || bs.some((by) => Math.abs(by - cy) < corrida * 0.55))) continue;
+      if (banda >= 0 && cy - ult < 120) continue;
+      if (banda >= 0) {
+        const y0 = a + 8, y1 = b - 8;
+        ondas(y0);
+        if (cur[1] < y0 - 1) sCurva(cur[0], y0);
+        const xa = cur[0];
+        s ^= 1; k++;
+        const xb = lado(s, k);
+        catmull(puntosBanda(xa, y0, xb, y1, LOOPS.includes(banda) && !movil, W, TRIPLES.includes(banda) && !movil));
+        entradas.push({a, b, y0, y1, xa, xb, banda: nb++});
+        ult = y1;
+      } else {
+        const alto = Math.min(b - a - 6, 140), y0 = cy - alto / 2, y1 = cy + alto / 2;
+        ondas(y0);
+        sCurva(cur[0], y0);
+        s ^= 1; k++;
+        sCurva(lado(s, k), y1);
+        ult = y1;
+      }
     }
-    while (pts[pts.length - 1][1] + paso * 1.4 < H) { k++; pts.push([lado(s, k), pts[pts.length - 1][1] + paso]); }
-    pts.push([lado(s, k + 1), H]);
-    let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
-    for (let i = 1; i < pts.length; i++) {
-      const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], m = (y1 - y0) / 2;
-      d += `C${x0.toFixed(1)} ${(y0 + m).toFixed(1)} ${x1.toFixed(1)} ${(y1 - m).toFixed(1)} ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+    ondas(H);
+    k++;
+    sCurva(lado(s, k), H);
+    base.setAttribute('d', d);
+    total = base.getTotalLength();
+    base.setAttribute('pathLength', total);
+    for (const u of [guia, trazo, ...capas]) { u.style.setProperty('stroke-dasharray', `${total} ${total}`); }
+    guia.style.setProperty('stroke-width', w0 + 'px');
+    // Tabla de arco a posición (el máximo corrido de Y permite buscar por altura aunque el trazo suba en los rizos)
+    const n = Math.ceil(total / 5) + 1;
+    tabla = {s: new Float32Array(n), x: new Float32Array(n), y: new Float32Array(n), m: new Float32Array(n)};
+    let mx = -1;
+    for (let i = 0; i < n; i++) { const L = Math.min(total, (i * total) / (n - 1)), q = base.getPointAtLength(L); tabla.s[i] = L; tabla.x[i] = q.x; tabla.y[i] = q.y; mx = Math.max(mx, q.y); tabla.m[i] = mx; }
+    // Arco de entrada y salida de cada banda y capas de grosor con rampas de tres escalones
+    grosor.replaceChildren();
+    piezas = [];
+    bandas = entradas.map((e) => {
+      const arco = (x, y) => { let mejor = 0, dm = 1e9; for (let i = 0; i < n; i++) { const dd = (tabla.x[i] - x) ** 2 + (tabla.y[i] - y) ** 2; if (dd < dm) { dm = dd; mejor = i; } } return tabla.s[mejor]; };
+      return {...e, sa: arco(e.xa, e.y0), sb: arco(e.xb, e.y1)};
+    });
+    for (const bd of bandas) {
+      const tramos = [[bd.sa, bd.sb, wb]];
+      for (let i = 0; i < RAMPA; i++) {
+        const ancho = w0 + ((wb - w0) * (i + 1)) / (RAMPA + 1);
+        tramos.push([bd.sa - PASO_RAMPA * (RAMPA - i), bd.sa - PASO_RAMPA * (RAMPA - i - 1) + 1, ancho]);
+        tramos.push([bd.sb - 1 + PASO_RAMPA * (RAMPA - i - 1), bd.sb + PASO_RAMPA * (RAMPA - i), ancho]);
+      }
+      for (const [s0, s1, ancho] of tramos) {
+        const u = el('use', {href: '#s-hilo-d'}, grosor, 's-hilo__capa');
+        u.style.setProperty('stroke-width', ancho + 'px');
+        u.style.setProperty('stroke-dasharray', `0 ${total}`);
+        u.style.setProperty('stroke-dashoffset', String(-Math.max(0, s0)));
+        piezas.push({u, s0: Math.max(0, s0), s1: Math.min(total, s1), v: -1});
+      }
     }
-    for (const p of [guia, trazo, ...capas]) { p.setAttribute('d', d); p.setAttribute('stroke-width', w); }
-    capas[0].setAttribute('stroke-width', w * 4);
-    total = trazo.getTotalLength();
-    for (const p of [trazo, ...capas]) p.setAttribute('pathLength', total);
-    // Tabla de Y a longitud de arco (el recorrido es monótono en Y)
-    const n = Math.ceil(total / 6) + 1;
-    tabla = {y: new Float32Array(n), s: new Float32Array(n), x: new Float32Array(n)};
-    for (let i = 0; i < n; i++) { const q = trazo.getPointAtLength(Math.min(total, (i * total) / (n - 1))); tabla.y[i] = q.y; tabla.s[i] = (i * total) / (n - 1); tabla.x[i] = q.x; }
-    cabeza.style.setProperty('--w', w + 'px');
-    // Nodos y notas junto al trazo, solo donde el trazo está dentro de un margen
+    cabeza.style.setProperty('--w', wb + 'px');
+    // Nodos al inicio de cada sección (donde el trazo está en un margen) y notas en píldora dentro de las bandas
     nodos.forEach((x) => x.remove());
     nodos = [];
-    ANCLAS.forEach((id) => {
+    for (const id of ['problema', 'valor', 'modulos', 'pantallas', 'puestos', 'seguridad', 'integraciones', 'cierre']) {
       const sec = $(id === 'modulos' ? '#modulos' : `[data-seccion="${id}"]`, zona);
-      if (!sec) return;
+      if (!sec) continue;
       let y = sec.getBoundingClientRect().top + scrollY - z0 + 64;
       for (let t = 0; t < 8; t++) { const q = en(y); if (q.x < margen - 10 || q.x > W - margen + 10) break; y += 48; }
-      const q = en(y);
-      const nodo = div('s-hilo__nodo', cont);
+      const q = en(y), nodo = div('s-hilo__nodo', cont);
       nodo._y = y;
       nodo.style.setProperty('--x', q.x + 'px'); nodo.style.setProperty('--y', y + 'px');
       nodos.push(nodo);
-      const j = NOTAS.findIndex(([sid]) => sid === id || (sid === 'pantallas' && id === 'pantallas'));
-      if (conNotas && j >= 0 && notas[NOTAS[j][1]] && (q.x < margen - 10 || q.x > W - margen + 10)) {
-        const derecha = q.x > W / 2, nota = div('s-hilo__nota', cont);
-        nota.dataset.lado = derecha ? 'der' : 'izq';
-        nota.style.setProperty('--x', (derecha ? W - xmax - 16 - 6 - w : xmax + 16 + 6 + w) + 'px');
-        nota.style.setProperty('--y', y + 'px');
-        const ic = el('svg', {viewBox: '0 0 16 16', 'aria-hidden': 'true'}, nota, 's-hilo__icono');
-        for (const [tag, at] of ICONOS[NOTAS[j][1]]) el(tag, at, ic);
-        const tx = D.createElement('span');
-        tx.textContent = notas[NOTAS[j][1]];
-        nota.appendChild(tx);
-        nota._y = y;
-        nodos.push(nota);
+    }
+    if (!movil) bandas.forEach((bd, i) => {
+      const txt = notas[i];
+      if (!txt) return;
+      const nota = div('s-hilo__nota', cont);
+      nota.style.setProperty('--r', (i % 2 ? 3 : -3) + 'deg');
+      const ic = el('svg', {viewBox: '0 0 16 16', 'aria-hidden': 'true'}, nota, 's-hilo__icono');
+      for (const [tag, at] of ICONOS[ICONO_DE[i]]) el(tag, at, ic);
+      const tx = D.createElement('span');
+      tx.textContent = txt;
+      nota.appendChild(tx);
+      const nw = nota.offsetWidth + 16, nh = nota.offsetHeight + 16; // con el giro de 3 grados
+      // El candidato válido más cercano al trazo, a 16 px o más de él (contando el núcleo grueso), dentro del hueco libre
+      let mejor = null;
+      const ys0 = bd.a + 4 + nh / 2, ys1 = bd.b - 4 - nh / 2;
+      const cerca = [];
+      for (let j = 0; j < n; j++) if (tabla.y[j] > bd.a - 120 && tabla.y[j] < bd.b + 120) cerca.push(j);
+      for (let cx = W * 0.14; cx < W * 0.86; cx += W * 0.03) for (let cy = ys0; cy <= ys1; cy += 10) {
+        let dmin = 1e9;
+        for (const j of cerca) { const dx = Math.max(cx - nw / 2 - tabla.x[j], 0, tabla.x[j] - cx - nw / 2), dy = Math.max(cy - nh / 2 - tabla.y[j], 0, tabla.y[j] - cy - nh / 2); const dd = Math.hypot(dx, dy); if (dd < dmin) dmin = dd; }
+        if (dmin >= 16 + wb / 2 + 6 && (!mejor || dmin < mejor.d)) mejor = {cx, cy, d: dmin};
       }
+      if (!mejor) { nota.remove(); return; }
+      nota.style.setProperty('--x', mejor.cx - nota.offsetWidth / 2 + 'px');
+      nota.style.setProperty('--y', mejor.cy - nota.offsetHeight / 2 + 'px');
+      nota._y = bd.y0 + (bd.y1 - bd.y0) * 0.35;
+      nodos.push(nota);
     });
     ultimo = -1;
     vivo = true;
     if (RM) { dibujar(H); nodos.forEach((x) => x.classList.add('s-visto')); }
   }
 
-  /** Posición del trazo a la altura y de la zona. */
+  /** Posición del trazo al llegar a la altura y de la zona (primer punto cuyo máximo de Y alcanza y). */
   function en(y) {
-    const Y = tabla.y;
-    let a = 0, b = Y.length - 1;
-    while (a < b) { const m = (a + b) >> 1; if (Y[m] < y) a = m + 1; else b = m; }
-    return {s: tabla.s[a], x: tabla.x[a], y: Y[a]};
+    const M = tabla.m;
+    let a = 0, b = M.length - 1;
+    while (a < b) { const m = (a + b) >> 1; if (M[m] < y) a = m + 1; else b = m; }
+    return {s: tabla.s[a], x: tabla.x[a], y: tabla.y[a]};
+  }
+  function anchoEn(s) {
+    let w = w0;
+    for (const bd of bandas) {
+      const rampa = RAMPA * PASO_RAMPA;
+      const t = s < bd.sa ? (s - (bd.sa - rampa)) / rampa : s > bd.sb ? ((bd.sb + rampa) - s) / rampa : 1;
+      if (t > 0) w = Math.max(w, w0 + (wb - w0) * Math.min(1, t));
+    }
+    return w;
   }
   function dibujar(cab) {
-    const q = en(cab), L = q.s;
-    trazo.style.setProperty('stroke-dasharray', `${total} ${total}`);
-    trazo.style.setProperty('stroke-dashoffset', String(total - L));
+    const q = en(cab);
+    trazo.style.setProperty('stroke-width', w0 + 'px');
+    trazo.style.setProperty('stroke-dashoffset', String(total - q.s));
+    for (const p of piezas) {
+      const v = Math.max(0, Math.min(p.s1, q.s) - p.s0);
+      if (v !== p.v) { p.v = v; p.u.style.setProperty('stroke-dasharray', `${v} ${total}`); }
+    }
     return q;
   }
 
@@ -222,14 +320,16 @@ function construirHilo(RM, notas) {
       const cab = Math.min(H, Math.max(0, 0.6 * vh - zona.getBoundingClientRect().top));
       if (Math.abs(cab - ultimo) < 0.5) return;
       ultimo = cab;
-      const q = dibujar(cab);
+      const q = dibujar(cab), ww = anchoEn(q.s);
       capas.forEach((c, i) => {
         c.style.setProperty('stroke-dasharray', `${PULSO[i][0]} ${total}`);
         c.style.setProperty('stroke-dashoffset', String(PULSO[i][0] - q.s));
+        c.style.setProperty('stroke-width', (i === 0 ? ww * 4 : ww) + 'px');
       });
       const viaja = cab > 8 && cab < H - 8;
       svg.classList.toggle('s-hilo--viaja', viaja);
       cabeza.style.setProperty('--x', q.x + 'px'); cabeza.style.setProperty('--y', q.y + 'px');
+      cabeza.style.setProperty('--d', Math.round(5 + ww * 0.75) + 'px');
       cabeza.style.opacity = viaja ? '1' : '0';
       for (const n of nodos) n.classList.toggle('s-visto', cab >= n._y);
     },

@@ -99,10 +99,12 @@ const UI_BI = {
   sparkIngreso: {es: 'Últimos 30 días', en: 'Last 30 days'} as Bi,
   verPaquete: {es: 'Ver el paquete', en: 'See the package'} as Bi,
   hilo: [
-    {es: 'Fuente', en: 'Source'},
+    {es: 'Fuente y corte', en: 'Source and cut-off'},
     {es: 'Cifra rotulada', en: 'Labeled figure'},
-    {es: 'Evidencia', en: 'Evidence'},
-    {es: 'Sin dato', en: 'No data'},
+    {es: 'Evidencia a la vista', en: 'Evidence in plain view'},
+    {es: 'Sin dato, nunca cero', en: 'No data, never zero'},
+    {es: 'Cada cifra, su origen', en: 'Every figure, its origin'},
+    {es: 'Nada se envía solo', en: 'Nothing is sent on its own'},
     {es: 'Una persona decide', en: 'A person decides'},
   ] as Bi[],
   captura: {

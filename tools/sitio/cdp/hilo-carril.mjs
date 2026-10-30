@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// Prueba del hilo serpenteante: en un barrido de scroll a 1440 y 390 mide el RECORRIDO REAL del trazo (se muestrea el path cada 4 px) contra los
+// Prueba del hilo serpenteante con bandas de cruce (mínimo 10 cruces a 1440 y 6 a 390; las notas tampoco pueden tocar el trazo): en un barrido de scroll a 1440 y 390 mide el RECORRIDO REAL del trazo (se muestrea el path cada 4 px) contra los
 // rectángulos de texto, imágenes, figuras, botones, enlaces y tarjetas de la portada, y contra las notas del propio hilo. Falla si algún punto del
 // núcleo queda a menos de 16 px de un rectángulo. Además cuenta los cruces de lado a lado y comprueba que ocurren en huecos libres (sin contenido
 // entre el punto de entrada y el de salida de cada cruce) y que el trazo no desborda el viewport.
-// Uso: node hilo-carril.mjs --url http://127.0.0.1:PUERTO/ [--vp 1440,390] [--paso 450] [--margen 16] [--minimo-cruces 2] [--js inicio.js recién construido, para iterar sin recompilar Next]
+// Uso: node hilo-carril.mjs --url http://127.0.0.1:PUERTO/ [--vp 1440,390] [--paso 450] [--margen 16] [--minimo-cruces N] [--js inicio.js recién construido, para iterar sin recompilar Next]
 import {leerArgs, lista} from './args.mjs';
 import {readFileSync} from 'node:fs';
 import {conSesion, dormir} from './navegador.mjs';
@@ -14,8 +14,10 @@ export const MARGEN_MIN = 16;
 export function medirEnPagina(margen) {
   const zona = document.querySelector('.s-hilo-zona');
   const trazo = zona && zona.querySelector('.s-hilo__trazo');
-  if (!trazo || !trazo.getAttribute('d')) return {error: 'sin trazo serpenteante (.s-hilo__trazo con d)'};
-  const w = parseFloat(trazo.getAttribute('stroke-width'));
+  const base = document.getElementById('s-hilo-d');
+  if (!trazo || !base || !base.getAttribute('d')) return {error: 'sin trazo serpenteante (.s-hilo__trazo con d)'};
+  const cz = getComputedStyle(zona);
+  const w = parseFloat(cz.getPropertyValue('--s-hilo-w')), wb = parseFloat(cz.getPropertyValue('--s-hilo-wb'));
   const z = zona.getBoundingClientRect();
   const ox = z.left + scrollX, oy = z.top + scrollY; // origen de la zona en coordenadas de documento
   const rects = [];
@@ -59,19 +61,18 @@ export function medirEnPagina(margen) {
     if (ignorar(e) || !visible(e) || e.matches('svg.s-hilo') || e.closest('.s-hilo__nota')) continue;
     sumar(e.getBoundingClientRect(), e.tagName.toLowerCase() + '.' + String(e.className?.baseVal ?? e.className).slice(0, 30), false, e);
   }
-  const L = trazo.getTotalLength();
+  const L = base.getTotalLength();
   const choques = [];
   let minimo = Infinity, cruces = 0, lado = null, xmin = Infinity, xmax = -Infinity;
   for (let s = 0; s <= L; s += 4) {
-    const q = trazo.getPointAtLength(s);
+    const q = base.getPointAtLength(s);
     xmin = Math.min(xmin, q.x); xmax = Math.max(xmax, q.x);
     const l = q.x > z.width / 2 ? 1 : 0;
     if (lado !== null && l !== lado) cruces++;
     lado = l;
     for (const r of rects) {
-      if (r.nota) continue;
       const dx = Math.max(r.x0 - q.x, 0, q.x - r.x1), dy = Math.max(r.y0 - q.y, 0, q.y - r.y1);
-      const d = Math.hypot(dx, dy) - w / 2;
+      const d = Math.hypot(dx, dy) - wb / 2; // conservador: se mide con el núcleo grueso de las bandas
       if (d < minimo) minimo = d;
       if (d < margen) { if (choques.length < 12) choques.push({desc: r.desc, y: Math.round(q.y + oy), x: Math.round(q.x), d: Math.round(d * 10) / 10}); }
     }
@@ -84,14 +85,14 @@ export function medirEnPagina(margen) {
     const d = Math.hypot(dx, dy);
     if (d < margen && choques.length < 12) choques.push({desc: 'nota ' + n.desc + ' contra ' + r.desc, y: Math.round(n.y0 + oy), x: Math.round(n.x0), d: Math.round(d * 10) / 10});
   }
-  return {grosor: w, cruces, largo: Math.round(L), x: [Math.round(xmin), Math.round(xmax)], zona: Math.round(z.width), margenLibre: Math.round(minimo * 10) / 10, notas: notas.length, choques, n: choques.length};
+  return {grosor: w, grosorBanda: wb, cruces, largo: Math.round(L), x: [Math.round(xmin), Math.round(xmax)], zona: Math.round(z.width), margenLibre: Math.round(minimo * 10) / 10, notas: notas.length, choques, n: choques.length};
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const a = leerArgs();
   const url = a.url || process.env.ROVAQ_URL;
   const margen = Number(a.margen || MARGEN_MIN);
-  const minCruces = Number(a['minimo-cruces'] || 2);
+  const minCruces = Number(a['minimo-cruces'] || 0);
   if (!url) { console.error('Falta --url'); process.exit(2); }
   let fallas = 0;
   for (const vp of lista(a.vp, ['1440', '390'])) {
@@ -113,8 +114,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         if (m.n) fallas++;
       }
       const desborde = await s.page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
-      const ok = peor && peor.margenLibre >= margen && ultimo.cruces >= minCruces && desborde <= 0 && ultimo.x[0] >= 0 && ultimo.x[1] <= ultimo.zona;
-      console.log(`${ok ? 'OK   ' : 'FALLA'} vp ${vp}: grosor ${peor?.grosor} px, ${ultimo?.cruces} cruces de lado a lado, recorrido x ${ultimo?.x}, largo ${ultimo?.largo} px, ${ultimo?.notas} notas, distancia mínima al contenido ${peor?.margenLibre} px (exigido ${margen}), desborde ${desborde}`);
+      const minimo = minCruces || (Number(vp) >= 1000 ? 10 : 6);
+      const ok = peor && peor.margenLibre >= margen && ultimo.cruces >= minimo && desborde <= 0 && ultimo.x[0] >= 0 && ultimo.x[1] <= ultimo.zona;
+      console.log(`${ok ? 'OK   ' : 'FALLA'} vp ${vp}: grosor ${peor?.grosor} px (${peor?.grosorBanda} en bandas), ${ultimo?.cruces} cruces de lado a lado, recorrido x ${ultimo?.x}, largo ${ultimo?.largo} px, ${ultimo?.notas} notas, distancia mínima al contenido ${peor?.margenLibre} px (exigido ${margen}), desborde ${desborde}`);
       if (!ok) fallas++;
     });
   }

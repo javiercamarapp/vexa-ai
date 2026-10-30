@@ -3,7 +3,7 @@ import {useId} from 'react';
 export function Bandera({idioma}: {idioma: 'es' | 'en'}) {
   const id = useId().replace(/:/g, '');
   const clip = `bandera-${id}`;
-  return <svg className="idioma-bandera" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+  return <svg className="idioma-bandera" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
     <defs><clipPath id={clip}><circle cx="8" cy="8" r="8" /></clipPath></defs>
     <g clipPath={`url(#${clip})`}>
       {idioma === 'es' ? <>
@@ -13,7 +13,7 @@ export function Bandera({idioma}: {idioma: 'es' | 'en'}) {
         <circle cx="8" cy="8" r="1.9" fill="none" stroke="#8a6a2f" strokeWidth="0.8" />
         <circle cx="8" cy="8" r="0.75" fill="#6b8e3a" />
       </> : <>
-        <rect width="14" height="14" fill="#ffffff" />
+        <rect width="16" height="16" fill="#ffffff" />
         {[0, 1, 2, 3, 4, 5, 6].map(n => <rect key={n} x="0" y={n * 2.3} width="16" height="1.15" fill="#b22234" />)}
         <rect width="8" height="9.2" fill="#3c3b6e" />
         {[[2, 2], [4, 2], [6, 2], [3, 4], [5, 4], [2, 6], [4, 6], [6, 6], [3, 8], [5, 8]].map(([x, y]) => <circle key={`${x}-${y}`} cx={x} cy={y - 0.3} r="0.38" fill="#ffffff" />)}

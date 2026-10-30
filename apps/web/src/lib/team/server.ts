@@ -2,7 +2,7 @@ import {readRequestBytes} from '../request-body';
 import 'server-only';
 import {NextRequest,NextResponse} from 'next/server';
 import {createClient} from '@supabase/supabase-js';
-import {ACTIVE_ORG,AccessError,assertOrigin,config,PRIVATE_HEADERS,resolveSession,identity} from '../auth';
+import {ACTIVE_ORG,AccessError,assertOrigin,config,cupoDeUsuario,PRIVATE_HEADERS,resolveSession,identity} from '../auth';
 import {requestAuth} from '../auth-http';
 import {mfaVerdictFor} from '../platform/mfa-server';
 import {createTeam} from '../../../../../packages/team/index.mjs';
@@ -26,6 +26,7 @@ export async function handleTeam(request:NextRequest,invitationId?:string,platfo
   const established=await auth.client.auth.refreshSession({refresh_token:input.refreshToken});if(established.error)throw new AccessError(401,'team_authentication_required');
  }
  const verified=await auth.client.auth.getUser();if(verified.error||!verified.data.user)throw new AccessError(401,'team_authentication_required');
+ await cupoDeUsuario(verified.data.user.id);
  let tenantId:string|undefined;
  if(platform){const tenant=query.get('tenantId');if(!tenant||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(tenant))throw new AccessError(400,'team_input_invalid');const check=await auth.client.rpc('platform_manage',{p_input:{operation:'status'}});if(check.error)throw new AccessError(check.error.code==='42501'?403:503,'team_access_denied');if(await mfaVerdictFor(auth.client)!=='ok')throw new AccessError(403,'team_access_denied');tenantId=tenant;}
  else if(!invitationId){const session=await resolveSession(identity(auth.client),request.cookies.get(ACTIVE_ORG)?.value);tenantId=session.active.tenant_id;}

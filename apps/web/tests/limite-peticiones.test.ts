@@ -3,7 +3,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {NextRequest} from 'next/server';
-import {claseDe,crearLimitador,huellaDeSesion,huellaIp,LIMITES} from '../src/lib/security/limite';
+import {claseDe,crearLimitador,huellaDeUsuario,huellaIp,LIMITES} from '../src/lib/security/limite';
+import {evaluarLimite,revisarUsuario} from '../src/lib/security/limite-servidor';
+import {clientIp} from '../src/lib/email-auth/admission';
 import {middleware} from '../src/middleware';
 const K='k'.repeat(32);
 test('clases por endpoint: lectura, escritura, exportación, importación, IA, auth y ganchos; salud y páginas sin límite',()=>{
@@ -23,17 +25,40 @@ test('cubeta por IP: el exceso responde con Retry-After hasta el cambio de minut
   assert.equal(lim.revisar('export',otra,null).permitido,true);assert.equal(lim.revisar('read',ip,null).permitido,true,'otra clase tiene su propia cubeta');
   t+=60_000;assert.equal(lim.revisar('export',ip,null).permitido,true,'minuto nuevo');
 });
-test('cubeta por sesión: 10 exportaciones por minuto aunque vengan de IP distintas',()=>{
-  const lim=crearLimitador({sumar:()=>null,ahora:()=>5_000_000});const s=huellaDeSesion('sb-x-auth-token=base64-'+Buffer.from(JSON.stringify({refresh_token:'refresh-secreto-1'})).toString('base64url'),K);
+test('cubeta por usuario verificado: 10 exportaciones por minuto aunque vengan de IP distintas',()=>{
+  const lim=crearLimitador({sumar:()=>null,ahora:()=>5_000_000});const s=huellaDeUsuario('11111111-1111-4111-8111-111111111111',K);
   assert.match(String(s),/^[a-f0-9]{64}$/);
   for(let i=0;i<10;i++)assert.equal(lim.revisar('export',huellaIp('203.0.113.'+i,K),s).permitido,true);
   const d=lim.revisar('export',huellaIp('203.0.113.200',K),s);assert.ok(!d.permitido&&d.por==='sesion');
 });
-test('la huella de sesión usa el refresh_token (no falsificable): cambiar el sub o el access_token no cambia ni toma la cubeta de otro',()=>{
-  const c=(o:object)=>'sb-x-auth-token=base64-'+Buffer.from(JSON.stringify(o)).toString('base64url');
-  const a=huellaDeSesion(c({access_token:'A',refresh_token:'r-victima-12345',user:{id:'v'}}),K),b=huellaDeSesion(c({access_token:'OTRO',refresh_token:'r-victima-12345'}),K),f=huellaDeSesion(c({access_token:'A',refresh_token:'r-atacante-9999',user:{id:'v'}}),K);
-  assert.equal(a,b);assert.notEqual(a,f);assert.equal(huellaDeSesion('sb-x-auth-token=basura',K),null);assert.equal(huellaDeSesion(null,K),null);assert.equal(huellaDeSesion('a=b',K),null);
-  assert.ok(!String(a).includes('r-victima'));
+test('R2-13: la huella por usuario deriva del sub verificado (HMAC), no de cookies sin verificar; no filtra el sub',()=>{
+  const a=huellaDeUsuario('sub-a',K),b=huellaDeUsuario('sub-b',K);
+  assert.notEqual(a,b);assert.equal(a,huellaDeUsuario('sub-a',K));assert.ok(!String(a).includes('sub-a'));
+  assert.equal(huellaDeUsuario('',K),null);assert.equal(huellaDeUsuario('sub-a',null),null);
+});
+test('R2-13: rotar el refresh_token de la cookie NO evade el tope: el borde ya no cuenta por cookie y el tope por usuario cuenta el mismo sub',()=>{
+  const SUB='22222222-2222-4222-8222-222222222222';let estado:ReturnType<typeof revisarUsuario>=null;let primero429=0;
+  for(let i=0;i<70;i++){
+    const cookie='sb-x-auth-token=base64-'+Buffer.from(JSON.stringify({access_token:'MISMO',refresh_token:'refresh-distinto-'+i+'-xxxxxxxx'})).toString('base64url');
+    // el borde (sin verificar) no debe aplicar tope por sesión: solo por IP, y aquí cada petición viene de una IP distinta
+    assert.equal(evaluarLimite({method:'POST',headers:{get:(n:string)=>n==='x-forwarded-for'?'203.0.113.'+(i+1):n==='cookie'?cookie:null}},'/api/interventions',''),null);
+    estado=revisarUsuario(SUB,'POST','/api/interventions');if(estado&&!primero429)primero429=i+1;
+  }
+  assert.ok(estado&&estado.clase==='write','70 POST del mismo sub verificado producen 429');assert.equal(primero429,LIMITES.write.user!+1);
+  assert.equal(revisarUsuario('33333333-3333-4333-8333-333333333333','POST','/api/interventions'),null,'otro usuario no se ve afectado');
+  assert.equal(revisarUsuario(SUB,'GET','/overview'),null,'páginas sin clase no se limitan');
+});
+test('R2-13: tope global de volcados a la base en vuelo; el excedente espera sin perder el conteo local',async()=>{
+  let vuelo=0,maxVuelo=0;const lim=crearLimitador({ahora:()=>7_000_000,maxPendiente:1,maxVuelo:2,sumar:async()=>{vuelo++;maxVuelo=Math.max(maxVuelo,vuelo);await new Promise(r=>setTimeout(r,20));vuelo--;return 1;}});
+  for(let i=0;i<30;i++)lim.revisar('read',huellaIp('198.51.100.'+i,K),null);
+  await new Promise(r=>setTimeout(r,60));assert.ok(maxVuelo<=2,'máximo 2 volcados simultáneos, hubo '+maxVuelo);
+});
+test('R2-13: la IP del cliente prefiere x-vercel-forwarded-for, luego x-real-ip y por último x-forwarded-for',()=>{
+  const h=(o:Record<string,string>)=>({get:(n:string)=>o[n]??null});
+  assert.equal(clientIp(h({'x-vercel-forwarded-for':'203.0.113.7','x-real-ip':'198.51.100.1','x-forwarded-for':'1.2.3.4, 5.6.7.8'})),'203.0.113.7');
+  assert.equal(clientIp(h({'x-real-ip':'198.51.100.1','x-forwarded-for':'1.2.3.4'})),'198.51.100.1');
+  assert.equal(clientIp(h({'x-forwarded-for':'1.2.3.4, 5.6.7.8'})),'1.2.3.4');
+  assert.equal(clientIp(h({'x-vercel-forwarded-for':'no-es-ip','x-forwarded-for':'1.2.3.4'})),'1.2.3.4','valor inválido cae al siguiente');
 });
 test('sincronización compartida: suma por lotes (no una por petición) y usa el total global de otras instancias',async()=>{
   let t=1_200_000;const llamadas:number[]=[];let globalOtros=0;

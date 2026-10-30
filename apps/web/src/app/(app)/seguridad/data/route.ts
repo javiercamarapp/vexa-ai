@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {AccessError, assertOrigin, config, PRIVATE_HEADERS} from '../../../../lib/auth';
+import {AccessError, assertOrigin, config, cupoDeUsuario, PRIVATE_HEADERS} from '../../../../lib/auth';
 import {requestAuth} from '../../../../lib/auth-http';
 import {parseMfaInput} from '../../../../lib/platform/mfa';
 import {readJson} from '../../../../components/platform/server/copilot-http';
@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
     assertOrigin(request.headers.get('origin'), c.origin);
     const auth = requestAuth(request); finish = auth.finish;
     const user = await auth.client.auth.getUser(); if (user.error || !user.data.user) return fail(401, 'authentication_required');
+    try { await cupoDeUsuario(user.data.user.id); } catch { return fail(429, 'rate_limited'); }
     // Solo administradores de plataforma (la RPC verifica el grant y la sesión viva).
     const grant = await auth.client.rpc('platform_manage', {p_input: {operation: 'status'}}); if (grant.error) return fail(403, 'platform_access_denied');
     const input = parseMfaInput(await readJson(request)); if (!input) return fail(400, 'mfa_input_invalid');

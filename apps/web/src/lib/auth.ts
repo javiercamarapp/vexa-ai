@@ -35,11 +35,16 @@ export function authClient(jar:CookieJar) {
     cookies:{getAll:()=>jar.getAll(),setAll:updates=>{for(const {name,value,options} of updates)jar.set(name,value,acotarVigencia(options));}},
   });
 }
+/** R2-13: tope por usuario con el sub ya verificado por Auth; lanza AccessError 429. Importación diferida: el módulo del límite es solo de servidor. */
+export async function cupoDeUsuario(sub:string):Promise<void>{
+  const {exigirCupoUsuario}=await import('./security/limite-servidor');await exigirCupoUsuario(sub);
+}
 export function identity(client:ReturnType<typeof authClient>):IdentityPort {
   return {
     async getUser(){const {data,error}=await client.auth.getUser();
       if(error) { if(error.status && error.status>=500) throw new AccessError(503,'auth_unavailable'); return null; }
-      return data.user ? {id:data.user.id} : null;
+      if(data.user){await cupoDeUsuario(data.user.id);return {id:data.user.id};}
+      return null;
     },
     async memberships(userId){const {data,error}=await client.from('memberships').select('tenant_id,user_id,role,status,permissions_version').eq('user_id',userId).eq('status','active').order('tenant_id');
       if(error) throw new AccessError(503,'membership_unavailable');

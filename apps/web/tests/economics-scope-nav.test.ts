@@ -17,7 +17,7 @@ test('fechas o moneda inválidas en la query no se heredan', () => {
   const s = economicInitialScope(new URLSearchParams('date_start=ayer&date_end=2026-09-21&currency=pesos&exponent=22'), new Date('2026-10-22T12:00:00Z'));
   assert.equal(s.start, '2025-11-01'); assert.equal(s.currency, 'USD'); assert.equal(s.exponent, 2);
 });
-test('/economics es vista de operador: «Datos y confianza > Preparar», solo para owner/analyst (el menú no protege la ruta; el servidor sí)', () => {
+test('/economics es vista de operador: «Datos y confianza > Preparar», solo para owner/analyst (el menú no protege la ruta; el servidor sí: ver tests/economia-por-rol.test.ts, R2-03)', () => {
   const dinero = MENU.find((e) => e.tipo === 'grupo' && e.clave === 'datos');
   assert.ok(dinero && dinero.tipo === 'grupo' && dinero.items.some((i) => i.href === '/economics'));
   const ve = (role?: string) => menuVisible({ role }).flatMap((e) => (e.tipo === 'grupo' ? e.items : [e]).map((i) => i.href));

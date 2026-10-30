@@ -37,10 +37,10 @@ export const PASOS = {
   paso3: {origen: 'hoy-oscuro-1440@2x.png', x: 400, y: 390, w: 1160, h: 225,
     es: 'Tarjetas de Hoy en Rovaq: ingreso bruto de octubre y reembolsos del periodo, cada una con su sello Observado.',
     en: 'Rovaq Today cards: gross revenue for October and refunds for the period, each with its Observed seal.'},
-  // Misma tarjeta de Hoy en tema claro para la quinta de las seis pantallas (sección clara).
-  pantalla5: {origen: 'hoy-claro-1440@2x.png', x: 1440, y: 630, w: 505, h: 315, tema: 'claro',
-    es: 'Tarjeta Siguiente mejor acción de Rovaq: preparar el paquete de reclamo de un SKU, con el aviso de que no se envía nada.',
-    en: 'Rovaq Next best action card: prepare the claim package for a SKU, with the notice that nothing is sent.'},
+  // Zona inferior de Hoy en tema claro (observado vs recuperable y siguiente mejor acción) para la quinta de las seis pantallas (sección clara).
+  pantalla5: {origen: 'hoy-claro-1440@2x.png', x: 760, y: 560, w: 1190, h: 690, ancho: 1200, tema: 'claro',
+    es: 'Tarjetas de Hoy en Rovaq: lo observado frente a lo recuperable y la tarjeta Siguiente mejor acción, que propone preparar el paquete de reclamo de un SKU con el aviso de que no se envía nada.',
+    en: 'Rovaq Today cards: observed versus recoverable, and the Next best action card, which proposes preparing the claim package for a SKU with the notice that nothing is sent.'},
   paso4: {origen: 'hoy-oscuro-1440@2x.png', x: 1440, y: 630, w: 505, h: 315,
     es: 'Tarjeta Siguiente mejor acción de Rovaq: preparar el paquete de reclamo de un SKU, con el aviso de que no se envía nada.',
     en: 'Rovaq Next best action card: prepare the claim package for a SKU, with the notice that nothing is sent.'},

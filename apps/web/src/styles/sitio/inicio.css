@@ -196,12 +196,12 @@
 .s-ov__barra { fill: var(--s-vp-barra-color); transform-box: fill-box; transform-origin: left center; }
 .s-ov__tip { opacity: 0; pointer-events: none; transition: opacity var(--s-d-hover) var(--s-e-ui); }
 .s-ov__tip rect { fill: var(--s-vp-pista); stroke: var(--s-vp-borde); stroke-width: 1.5; }
-.s-ov__tip text { fill: var(--s-vp-texto); font: 500 20px var(--s-f-mono); letter-spacing: .03em; }
+.s-ov__tip text { fill: var(--s-vp-texto); font: 500 25px var(--s-f-mono); letter-spacing: .02em; }
 .s-ov__fila:hover .s-ov__tip,
 .s-ov__fila:focus-visible .s-ov__tip { opacity: 1; }
 .s-ov__fila:focus-visible .s-ov__zona { stroke: var(--s-vp-texto); stroke-width: 3; rx: 12; }
 .s-ov__marca { stroke: var(--s-vp-apagado); stroke-width: 1.5; stroke-dasharray: 5 7; fill: none; vector-effect: non-scaling-stroke; }
-.s-ov__eje { fill: var(--s-vp-apagado); font: 500 22px var(--s-f-mono); letter-spacing: .06em; }
+.s-ov__eje { fill: var(--s-vp-apagado); font: 500 25px var(--s-f-mono); letter-spacing: .06em; }
 .s-ov__acum { fill: none; stroke: var(--s-vp-texto); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; opacity: .85; vector-effect: non-scaling-stroke; }
 .s-ov__nodo { fill: var(--s-vp-fondo); stroke: var(--s-vp-texto); stroke-width: 2.5; vector-effect: non-scaling-stroke; }
 
@@ -221,7 +221,7 @@
   background: var(--s-vp-barra);
   box-shadow: var(--s-vp-sombra);
   color: var(--s-vp-texto);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   line-height: 1.3;
 }
@@ -233,7 +233,7 @@
 .s-ov-cifra__linea { display: block; }
 .s-ov-cifra__sub {
   font-family: var(--s-f-mono);
-  font-size: 10.5px;
+  font-size: var(--s-t-minimo);
   font-weight: 400;
   letter-spacing: .02em;
   color: var(--s-vp-apagado);
@@ -418,13 +418,14 @@
 
 
 /* ==================== Visual de cada paso (S5) ==================== */
+/* --k = unidades del lienzo por píxel de la columna de 640 px (755, 1020, 1160 y 505 unidades de ancho): así el texto de las anotaciones mide 12.5 px o más en escritorio */
 .s-pv {
-  --k: 1;
+  --k: 1.2;
 }
 
-.s-pv[data-n="2"] { --k: 1.5; }
-.s-pv[data-n="3"] { --k: 1.75; }
-.s-pv[data-n="4"] { --k: 1.2; }
+.s-pv[data-n="2"] { --k: 1.53; }
+.s-pv[data-n="3"] { --k: 1.74; }
+.s-pv[data-n="4"] { --k: 0.9; }
 
 .s-pv__lienzo {
   position: relative;
@@ -461,7 +462,7 @@
 }
 
 .s-pv__mono--cota { fill: var(--s-vp-texto); }
-.s-pv__nota { font-size: calc(11px * var(--k)); letter-spacing: .04em; text-transform: none; }
+.s-pv__nota { font-size: calc(13px * var(--k)); letter-spacing: .04em; text-transform: none; }
 
 .s-pv__txt {
   font: 500 calc(13px * var(--k)) var(--s-f-sans);
@@ -504,7 +505,7 @@
 
 .s-pv__chip text,
 .s-pv__suelta text {
-  font: 500 calc(12.5px * var(--k)) var(--s-f-mono);
+  font: 500 calc(13px * var(--k)) var(--s-f-mono);
   letter-spacing: .01em;
   fill: var(--s-vp-texto);
 }
@@ -539,14 +540,6 @@
 .s-pv__a[data-i="6"] { --i: 6; }
 .s-pv__a[data-i="7"] { --i: 7; }
 .s-pv__a[data-i="8"] { --i: 8; }
-
-/* En ancho de móvil los rótulos de las anotaciones crecen para seguir leyéndose (la captura de fondo queda pequeña, como en cualquier pantalla reducida) */
-@container (max-width: 520px) {
-  .s-pv[data-n="1"] { --k: 1.3; }
-  .s-pv[data-n="2"] { --k: 1.9; }
-  .s-pv[data-n="3"] { --k: 1.9; }
-  .s-pv[data-n="4"] { --k: 1.5; }
-}
 
 /* Estado inicial oculto solo con JavaScript y movimiento permitido; el estado final es el de reposo y el de las capturas sin JavaScript */
 @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
@@ -940,7 +933,7 @@
   border-radius: var(--s-r-total);
   background: var(--s-vidrio);
   font-family: var(--s-f-mono);
-  font-size: 10px;
+  font-size: var(--s-t-minimo);
   letter-spacing: var(--s-k-sello);
   text-transform: uppercase;
   color: var(--s-apagado);
@@ -1514,7 +1507,7 @@
 
 .s-valor__regla { margin-top: var(--s-e40); }
 .s-sellos { row-gap: var(--s-e16); }
-.s-orgs { max-width: 640px; margin-bottom: var(--s-e32); }
+.s-orgs { max-width: 1072px; margin-bottom: var(--s-e32); } /* T16: escala 1:1 para que los rótulos del diagrama midan 12 px */
 .s-seguridad__tarjetas { gap: var(--s-e24); margin-bottom: var(--s-e56); }
 .s-limites__cabeza { margin-bottom: var(--s-e40); }
 .s-puestos__arco { height: 190px; }
@@ -1522,7 +1515,7 @@
 .s-mt-96 { margin-top: var(--s-e56); }
 .s-mt-80 { margin-top: var(--s-e48); }
 .s-faq__cabeza.s-mt-96 { margin-top: var(--s-e40); }
-.s-integraciones { max-width: 640px; margin-bottom: var(--s-e24); }
+.s-integraciones { max-width: 800px; margin-bottom: var(--s-e24); }
 .s-acordeon { max-width: none; }
 
 @media (min-width: 1101px) {

@@ -127,7 +127,7 @@ test('presupuestos de peso por tipo (SPEC sección 8)', () => {
   // Imágenes del recorrido: héroe y pasos (recortes) y seis pantallas claras; ninguna imagen decorativa de héroe.
   const peso = (k, w) => manifest.img[k].avif.find((v) => v.ancho === w)?.bytes ?? manifest.img[k].variantes.find((v) => v.ancho === w).bytes;
   const recorrido = peso('producto/fuga-oscuro', 1440) + [1, 2, 3, 4].reduce((a, n) => a + peso(`producto/paso${n}`, manifest.img[`producto/paso${n}`].ancho), 0)
-    + ['hoy', 'fuga', 'problemas', 'preguntale', 'conexiones'].reduce((a, k) => a + peso(`producto/${k}`, 1440), 0) + peso('producto/pantalla5', 727);
+    + ['hoy', 'fuga', 'problemas', 'preguntale', 'conexiones'].reduce((a, k) => a + peso(`producto/${k}`, 1440), 0) + peso('producto/pantalla5', manifest.img['producto/pantalla5'].ancho);
   assert.ok(recorrido <= 340 * KB, `imágenes del recorrido ${recorrido} B > 340 KB`);
 });
 

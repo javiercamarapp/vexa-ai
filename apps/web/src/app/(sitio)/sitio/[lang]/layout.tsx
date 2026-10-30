@@ -12,6 +12,7 @@ import '../../../../styles/sitio/inicio.css';
 import '../../../../styles/sitio/movimiento.css';
 import '../../../../styles/sitio/integracion.css';
 import '../../../../components/sitio/shell/paginas.css';
+import '../../../../styles/sitio/pulido.css';
 import {esLang, IDIOMAS_VALIDOS} from '../../../../components/sitio/shell/datos';
 import {fijarIdioma} from '../../../../components/sitio/shell/idioma-actual';
 import {existe, precargas, url} from '../../../../lib/sitio/activos';

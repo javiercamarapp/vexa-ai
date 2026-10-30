@@ -613,32 +613,32 @@
   },
   "producto/pantalla5": {
    "alt": {
-    "en": "Rovaq Next best action card: prepare the claim package for a SKU, with the notice that nothing is sent. Example data.",
-    "es": "Tarjeta Siguiente mejor acción de Rovaq: preparar el paquete de reclamo de un SKU, con el aviso de que no se envía nada. Datos de ejemplo."
+    "en": "Rovaq Today cards: observed versus recoverable, and the Next best action card, which proposes preparing the claim package for a SKU with the notice that nothing is sent. Example data.",
+    "es": "Tarjetas de Hoy en Rovaq: lo observado frente a lo recuperable y la tarjeta Siguiente mejor acción, que propone preparar el paquete de reclamo de un SKU con el aviso de que no se envía nada. Datos de ejemplo."
    },
-   "alto": 454,
-   "ancho": 727,
+   "alto": 696,
+   "ancho": 1200,
    "avif": [
     {
-     "alto": 454,
-     "ancho": 727,
-     "bytes": 9510,
-     "sha256": "0c8e817a63c086322a3caa3295ebdbc2f6ae3accc57317e01f28bb5f56a1c41f",
-     "url": "/s/img/producto/pantalla5-727.0c8e817a.avif"
+     "alto": 696,
+     "ancho": 1200,
+     "bytes": 29559,
+     "sha256": "af881637898ce7e9d18e97698d56a18562471b426544a8e8ed0a1e4ade94911b",
+     "url": "/s/img/producto/pantalla5-1200.af881637.avif"
     }
    ],
-   "bytes": 15640,
-   "sha256": "63ce28266d552ebbd4000ee47b89d4636da7fe2ac94d378e1741daff5a35978a",
+   "bytes": 44592,
+   "sha256": "af7924b5adad9dbcb05235ecd0622fcfba1808a0fdee34b74afa0e845ba584ba",
    "tema": "claro",
    "tipo": "recorte",
-   "url": "/s/img/producto/pantalla5-727.63ce2826.webp",
+   "url": "/s/img/producto/pantalla5-1200.af7924b5.webp",
    "variantes": [
     {
-     "alto": 454,
-     "ancho": 727,
-     "bytes": 15640,
-     "sha256": "63ce28266d552ebbd4000ee47b89d4636da7fe2ac94d378e1741daff5a35978a",
-     "url": "/s/img/producto/pantalla5-727.63ce2826.webp"
+     "alto": 696,
+     "ancho": 1200,
+     "bytes": 44592,
+     "sha256": "af7924b5adad9dbcb05235ecd0622fcfba1808a0fdee34b74afa0e845ba584ba",
+     "url": "/s/img/producto/pantalla5-1200.af7924b5.webp"
     }
    ]
   },
@@ -1131,13 +1131,13 @@
    "url": "/s/inicio.0d91c339.js"
   },
   "sitio.js": {
-   "brotli": 2315,
-   "bytes": 6244,
-   "fuenteBytes": 11529,
-   "hash": "8b6083b8",
+   "brotli": 2509,
+   "bytes": 6891,
+   "fuenteBytes": 12671,
+   "hash": "a0e01884",
    "modulo": true,
-   "sha256": "8b6083b8b53452c0af48fa25426e0b256c601dabf952269b2bd8d2e16bdee985",
-   "url": "/s/sitio.8b6083b8.js"
+   "sha256": "a0e01884c305cb2aff8fa9e0d44d86e9ebfe02b2345144fd2a0160d0fdea3c7b",
+   "url": "/s/sitio.a0e01884.js"
   }
  },
  "md": {

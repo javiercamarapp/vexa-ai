@@ -27,15 +27,16 @@ const salida = JSON.parse(
   }).toString(),
 );
 
+// T16: temas agrupados para reducir los volteos oscuro/claro a dos (oscuro hasta los pasos, claro de pantallas a integraciones, oscuro al cierre).
 const SECCIONES = [
   { clave: 'hero', id: 'inicio', tema: 'oscuro' },
   { clave: 'horizonte', id: 'horizonte', tema: null },
-  { clave: 'problema', id: 'problema', tema: 'claro' },
-  { clave: 'valor', id: 'valor', tema: 'claro' },
+  { clave: 'problema', id: 'problema', tema: 'oscuro' },
+  { clave: 'valor', id: 'valor', tema: 'oscuro' },
   { clave: 'pasos', id: 'modulos', tema: 'oscuro' },
   { clave: 'pantallas', id: 'pantallas', tema: 'claro' },
   { clave: 'puestos', id: 'puestos', tema: 'claro' },
-  { clave: 'seguridad', id: 'seguridad', tema: 'oscuro' },
+  { clave: 'seguridad', id: 'seguridad', tema: 'claro' },
   { clave: 'integraciones', id: 'integraciones', tema: 'claro' },
   { clave: 'cierre', id: 'cierre', tema: 'oscuro' },
 ];
@@ -306,12 +307,16 @@ describe('S6 Seis pantallas', () => {
       assert.equal((h.match(/class="s-pantalla__img"/g) ?? []).length, 6, 'seis capturas reales');
       assert.equal((h.match(/<source type="image\/avif"/gi) ?? []).length, 6, 'AVIF con respaldo WebP');
       assert.doesNotMatch(h, /s-mock-raiz/, 'sin mockups dibujados a mano');
-      const tarjetas = [...h.matchAll(/<(a|div) class="s-pantalla s-tarjeta( s-tarjeta--capacidad)?"/g)];
+      // T16: cada tarjeta es un div con enlace estirado dentro del título (el nombre accesible es solo el texto visible del enlace); solo las enlazadas llevan el resalte
+      const tarjetas = [...h.matchAll(/<div class="s-pantalla s-tarjeta( s-tarjeta--capacidad)?"[^>]*>([\s\S]*?)(?=<div class="s-pantalla s-tarjeta|<\/div><\/div><p class="s-mt-48"|<\/div><\/div><\/section>)/g)];
       assert.equal(tarjetas.length, 6);
-      for (const m of tarjetas) assert.equal(m[1] === 'a', Boolean(m[2]), 'solo los enlaces llevan el resalte de capacidad');
-      const enlaces = etiquetas(h, 'a').filter((x) => /s-pantalla /.test(x));
+      for (const m of tarjetas) assert.equal(/<a class="s-pantalla__enlace"/.test(m[2]), Boolean(m[1]), 'solo los enlaces llevan el resalte de capacidad');
+      const enlaces = etiquetas(h, 'a').filter((x) => /s-pantalla__enlace/.test(x));
       for (const a of enlaces) assert.ok(salida.rutasPublicables.includes(attr(a, 'href')), attr(a, 'href'));
+      assert.doesNotMatch(h, /aria-labelledby="pantalla-\d-titulo"/, 'sin nombre accesible que difiera del texto visible (axe label-content-name-mismatch)');
       assert.equal((h.match(/class="s-pantalla__miniatura"/g) ?? []).length, 6);
+      assert.equal((h.match(/data-pantalla-sel=/g) ?? []).length, 6, 'selector de las seis pantallas');
+      assert.match(h, /role="region" aria-roledescription="carrusel"[^>]*tabindex="0"/, 'carrusel enfocable');
       assert.doesNotMatch(h, /s-indicador/, 'sin rojo en las miniaturas');
     });
   }

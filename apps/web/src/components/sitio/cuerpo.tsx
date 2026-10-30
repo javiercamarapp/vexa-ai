@@ -9,6 +9,7 @@ import type {ReactNode} from 'react';
 import {cierre, hrefAcceso, hrefMailto, paginaPublicada, rutaPublicable} from './shell/datos';
 import type {HojaPub, Lang, PaginaPublicada} from './shell/datos';
 import type {Pagina} from '../../content/sitio/tipos';
+import {VentanaCaptura} from './secciones/captura';
 
 type Obj = Record<string, unknown>;
 const esHoja = (x: unknown): x is HojaPub => typeof x === 'object' && x !== null && typeof (x as HojaPub).es === 'string' && typeof (x as HojaPub).en === 'string';
@@ -179,6 +180,17 @@ function Bloque({b, lang}: {b: Obj; lang: Lang}): ReactNode {
   }
 }
 
+/** Captura real del producto (datos de ejemplo) de las páginas de pantalla del registro; las demás no llevan ventana. */
+const CAPTURA_DE_PAGINA: Record<string, {nombre: string; clave?: string; ruta: 'm1' | 'm2' | 'm3' | 'm4' | 'm5' | 'm6'}> = {
+  'producto/hoy': {nombre: 'hoy', ruta: 'm1'},
+  'producto/fuga-de-reembolsos': {nombre: 'fuga', ruta: 'm2'},
+  'producto/problemas': {nombre: 'problemas', ruta: 'm3'},
+  'producto/pregunta-a-tus-datos': {nombre: 'preguntale', ruta: 'm4'},
+  'producto/por-decidir': {nombre: 'paso4', clave: 'img/producto/paso4', ruta: 'm5'},
+  'producto/confianza-de-los-datos': {nombre: 'conexiones', ruta: 'm6'},
+  'producto/fuentes-e-importaciones': {nombre: 'conexiones', ruta: 'm6'},
+};
+
 type Props = {
   pagina: Pagina;
   lang: Lang;
@@ -200,6 +212,7 @@ export function CuerpoPagina({pagina, lang, publicable = true, motivos = []}: Pr
   const etiquetaNota = lang === 'es' ? 'Pendiente de revisión' : 'Pending review';
   const c = cierre(lang);
   const esAcceso = pagina.id === 'solicitar-acceso';
+  const captura = CAPTURA_DE_PAGINA[pagina.id];
   const botonHref = esAcceso ? (hrefMailto(lang) ?? hrefAcceso(lang)) : hrefAcceso(lang);
   const textoBoton = p.cta ? txt(p.cta, lang) : lang === 'es' ? 'Solicitar acceso' : 'Request access';
   const Boton = (
@@ -223,6 +236,11 @@ export function CuerpoPagina({pagina, lang, publicable = true, motivos = []}: Pr
           <h1 className="s-h2-grande s-ancho-titular" {...marca(p.h1)}>{txt(p.h1, lang)}</h1>
           <p className="s-lead" {...marca(p.subtitulo)}>{txt(p.subtitulo, lang)}</p>
           {esAcceso ? Boton : null}
+          {captura ? (
+            <div className="s-pag-visual">
+              <VentanaCaptura nombre={captura.nombre} clave={captura.clave} lang={lang} ruta={captura.ruta} tamanos="(max-width: 1000px) 100vw, 960px" anchos={captura.clave ? undefined : [960, 1440]} />
+            </div>
+          ) : null}
         </div>
       </section>
       <section className="s-seccion" data-tema="claro">

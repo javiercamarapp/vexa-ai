@@ -255,3 +255,31 @@ test('R2-14: la retención borra solo filas viejas (por lotes, con piso de 30 d�
  });
  }finally{await pg.stop();}
 });
+
+test('R2-12: contador durable de preguntas al agente por organización, usuario y día; atómico, solo vexa_backend',async t=>{
+ const pg=await startLocalPg({label:'f5agent'});try{
+ const db='f5g';pg.createDb(db);pg.applySchema(db,{upTo:BASE});
+ const TA='33333333-0000-4000-8000-000000000001',U1='44444444-0000-4000-8000-000000000001',U2='44444444-0000-4000-8000-000000000002';
+ pg.sql(db,`insert into public.organizations(id,name) values ('${TA}','TA')`);
+ pg.file(db,mig('20261206000400_agent_turn_counter.sql'));
+ const admit=(u,lim=3)=>JSON.parse(pg.sql(db,`begin; set local role vexa_backend; select public.agent_turn_admit('${TA}','${u}',${lim}); commit;`).split('\n')[0]);
+ await t.test('admite hasta el límite y luego niega; otro usuario tiene su propio cupo; el contador sobrevive entre conexiones',()=>{
+  for(let i=1;i<=3;i++){const r=admit(U1);assert.equal(r.ok,true);assert.equal(r.used,i);}
+  assert.equal(admit(U1).ok,false);assert.equal(admit(U1).ok,false,'sigue negando');
+  assert.equal(admit(U2).ok,true);
+  assert.equal(pg.sql(db,`select turns from public.agent_turn_counters where user_id='${U1}'`),'3','los negados no incrementan');
+ });
+ await t.test('8 solicitudes seguidas con límite 5 admiten exactamente 5 (la atomicidad la da la sentencia única INSERT ... ON CONFLICT ... WHERE)',async()=>{
+  const U3='44444444-0000-4000-8000-000000000003';
+  const ps=Array.from({length:8},()=>new Promise((res)=>{try{res(admit(U3,5).ok);}catch{res(false);}}));
+  const rs=await Promise.all(ps);assert.equal(rs.filter(Boolean).length,5);
+ });
+ await t.test('día nuevo: las filas de más de 7 días se podan y el cupo se reinicia por día; permisos cerrados; entrada inválida',()=>{
+  pg.sql(db,`insert into public.agent_turn_counters(tenant_id,user_id,day,turns) values ('${TA}','${U2}',(clock_timestamp() at time zone 'utc')::date-10,99)`);
+  admit(U2);assert.equal(pg.sql(db,`select count(*) from public.agent_turn_counters where day<(clock_timestamp() at time zone 'utc')::date-7`),'0');
+  for(const role of ['anon','authenticated'])assert.throws(()=>pg.sql(db,`begin; set local role ${role}; select public.agent_turn_admit('${TA}','${U1}',3); rollback;`),/permission denied/);
+  assert.throws(()=>pg.sql(db,`begin; set local role authenticated; select * from public.agent_turn_counters; rollback;`),/permission denied/);
+  assert.throws(()=>pg.sql(db,`begin; set local role vexa_backend; select public.agent_turn_admit('${TA}','${U1}',0); rollback;`),/agent_turn_input_invalid/);
+ });
+ }finally{await pg.stop();}
+});

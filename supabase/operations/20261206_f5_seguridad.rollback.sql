@@ -223,3 +223,9 @@ begin
  return jsonb_build_object('stored',true,'hits',n1);
 end $$;
 commit;
+
+-- 20261206000400_agent_turn_counter
+begin;
+drop function if exists public.agent_turn_admit(uuid,uuid,integer);
+drop table if exists public.agent_turn_counters;
+commit;

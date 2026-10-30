@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {previewMemberFile, memberFileProvenance, memberFileKindInfo, excelSerialToIso, normalizeHeader, MEMBER_FILE_KINDS, MAX_REPORTED_ERRORS} from './member-files.mjs';
-import {NOW, toBytes, salesCsv, salesCsvEs, ordersCsv, returnsCsv, reviewsCsv, speedshipCsv, xlsx} from './member-files.fixtures.mjs';
+import {NOW, toBytes, salesCsv, salesCsvEs, ordersCsv, returnsCsv, reviewsCsv, speedshipCsv, xlsx, xlsx2} from './member-files.fixtures.mjs';
 const CSV = 'text/csv', XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 const run = (bytes, kind, extra = {}) => previewMemberFile(bytes, {kind, contentType: CSV, observedAt: NOW, ...extra});
 const codes = p => Object.fromEntries(p.reasons.map(r => [`${r.code}:${r.field ?? ''}`, r.count]));
@@ -121,6 +121,10 @@ test('XLSX: serial de fecha, hoja unica, celdas dispersas, y varias hojas exigen
   const sparse = previewMemberFile(xlsx([['SKU', 'Date', 'Units Sold', 'Gross Sales'], ['SYN-A', 46025, 3]]), {kind: 'sales_by_sku', contentType: XLSX, observedAt: NOW, currency: 'USD'});
   assert.equal(codes(sparse)['MISSING_VALUE:amount'], 1);
   assert.throws(() => previewMemberFile(xlsx(rows), {kind: 'sales_by_sku', contentType: XLSX, observedAt: NOW, sheet: 'NoExiste'}), {code: 'SHEET_NOT_FOUND'});
+  const two = xlsx2([['Ventas', rows], ['Notas', [['x']]]]);
+  const pick = previewMemberFile(two, {kind: 'sales_by_sku', contentType: XLSX, observedAt: NOW, currency: 'USD'});
+  assert.equal(pick.blocker, 'sheet_required'); assert.deepEqual(pick.sheets, ['Ventas', 'Notas']); assert.equal(pick.can_register, false);
+  assert.equal(previewMemberFile(two, {kind: 'sales_by_sku', contentType: XLSX, observedAt: NOW, currency: 'USD', sheet: 'Ventas'}).rows.accepted, 2);
 });
 
 test('errores fatales: tipo desconocido, contenido no soportado, bytes no UTF-8, exceso de filas', () => {

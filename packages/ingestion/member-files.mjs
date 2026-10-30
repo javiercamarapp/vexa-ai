@@ -244,7 +244,14 @@ export function previewMemberFile(bytes, options = {}) {
   if (currency !== null) { try { parseMoney('0', currency); } catch (e) { if (e instanceof IngestionError) fail('INVALID_CURRENCY', 'currency'); throw e; } }
   const now = Date.parse(observedAt);
   if (!Number.isFinite(now)) fail('INVALID_TIMESTAMP', 'observedAt');
-  const parsed = inspectImport(bytes, {contentType, sheet});
+  const parsed = inspectImport(bytes, {contentType, sheet, discover: true});
+  const optionsOut = {timezone, date_format: dateFormat, currency};
+  if (!parsed.headers.length && parsed.sheets.length > 1) {
+    // varias hojas y ninguna elegida: se devuelven los nombres de hoja para que el miembro elija; no se evalua nada
+    return {parser: MEMBER_FILE_PARSER, kind, content_type: contentType, sheet: null, sheets: parsed.sheets, options: optionsOut,
+      headers: {total: 0, recognized: {}, ignored: [], ignored_count: 0, missing_required: [], ambiguous: []}, headers_ok: false,
+      rows: {read: 0, accepted: 0, rejected: 0, duplicates: 0}, reasons: [], errors: [], errors_truncated: false, aggregates: null, can_register: false, blocker: 'sheet_required'};
+  }
   const headerInfo = resolveHeaders(spec, parsed.headers);
   const errors = [], reasons = {};
   const addReason = (code, field, line) => {
@@ -255,7 +262,7 @@ export function previewMemberFile(bytes, options = {}) {
   const report = (line, field, code) => { addReason(code, field, line); if (errors.length < MAX_REPORTED_ERRORS) errors.push({line, field, code}); };
   const base = {
     parser: MEMBER_FILE_PARSER, kind, content_type: contentType, sheet: parsed.sheets.length ? (sheet ?? parsed.sheets[0]) : null, sheets: parsed.sheets,
-    options: {timezone, date_format: dateFormat, currency},
+    options: optionsOut,
     headers: {total: parsed.headers.length, recognized: headerInfo.recognized, ignored: headerInfo.ignored.slice(0, 100), ignored_count: headerInfo.ignored.length, missing_required: headerInfo.missing, ambiguous: headerInfo.ambiguous},
     headers_ok: headerInfo.missing.length === 0 && headerInfo.ambiguous.length === 0,
   };

@@ -27,13 +27,18 @@ function zip(parts) {
   return new Uint8Array(Buffer.concat([...local, cd, end]));
 }
 const esc = s => String(s).replaceAll('&', '&amp;').replaceAll('<', '&lt;');
-export function xlsx(rows, sheetName = 'Hoja1') {
-  const sheet = rows.map((r, ri) => `<row r="${ri + 1}">${r.map((v, ci) => v === null ? '' : typeof v === 'number' ? `<c r="${colName(ci)}${ri + 1}"><v>${v}</v></c>` : `<c r="${colName(ci)}${ri + 1}" t="inlineStr"><is><t>${esc(v)}</t></is></c>`).join('')}</row>`).join('');
+const sheetXml = rows => rows.map((r, ri) => `<row r="${ri + 1}">${r.map((v, ci) => v === null ? '' : typeof v === 'number' ? `<c r="${colName(ci)}${ri + 1}"><v>${v}</v></c>` : `<c r="${colName(ci)}${ri + 1}" t="inlineStr"><is><t>${esc(v)}</t></is></c>`).join('')}</row>`).join('');
+/** Libro con varias hojas: sheets = [[nombre, filas], ...]. */
+export function xlsx2(sheets) {
+  const ct = sheets.map((_, i) => `<Override PartName="/xl/worksheets/s${i}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('');
+  const book = sheets.map(([name], i) => `<sheet name="${name}" sheetId="${i + 1}" r:id="s${i}"/>`).join('');
+  const rels = sheets.map((_, i) => `<Relationship Id="s${i}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/s${i}.xml"/>`).join('');
   return zip([
-    ['[Content_Types].xml', '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>'],
+    ['[Content_Types].xml', `<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>${ct}</Types>`],
     ['_rels/.rels', '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="book" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'],
-    ['xl/workbook.xml', `<workbook xmlns="${ns}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="${sheetName}" sheetId="1" r:id="s"/></sheets></workbook>`],
-    ['xl/_rels/workbook.xml.rels', '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/s.xml"/></Relationships>'],
-    ['xl/worksheets/s.xml', `<worksheet xmlns="${ns}"><sheetData>${sheet}</sheetData></worksheet>`],
+    ['xl/workbook.xml', `<workbook xmlns="${ns}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${book}</sheets></workbook>`],
+    ['xl/_rels/workbook.xml.rels', `<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${rels}</Relationships>`],
+    ...sheets.map(([, rows], i) => [`xl/worksheets/s${i}.xml`, `<worksheet xmlns="${ns}"><sheetData>${sheetXml(rows)}</sheetData></worksheet>`]),
   ]);
 }
+export const xlsx = (rows, sheetName = 'Hoja1') => xlsx2([[sheetName, rows]]);

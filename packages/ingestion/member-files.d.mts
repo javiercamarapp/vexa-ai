@@ -15,7 +15,7 @@ export interface MemberFilePreview {
   headers: {total: number; recognized: Record<string, string>; ignored: string[]; ignored_count: number; missing_required: string[]; ambiguous: string[]};
   headers_ok: boolean; rows: {read: number; accepted: number; rejected: number; duplicates: number};
   reasons: MemberFileReason[]; errors: {line: number; field: string | null; code: string}[]; errors_truncated: boolean;
-  aggregates: MemberFileAggregates | null; can_register: boolean; blocker: 'headers' | 'currency_required' | 'no_valid_rows' | null;
+  aggregates: MemberFileAggregates | null; can_register: boolean; blocker: 'headers' | 'currency_required' | 'sheet_required' | 'no_valid_rows' | null;
 }
 export interface MemberFileKindInfo {kind: MemberFileKind; required: string[]; optional: string[]; amount_group: string | null; columns: {key: string; type: string; aliases: string[]; required: boolean}[]}
 export function normalizeHeader(header: unknown): string;

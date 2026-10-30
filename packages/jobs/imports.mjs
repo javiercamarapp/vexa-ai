@@ -116,7 +116,7 @@ export function createImportHandler({database,storage,confirmationSecret,admissi
      const bytes=await verified(s,r);
      const result=domain(()=>previewMemberFile(bytes,{...options,contentType:r.content_type,observedAt:new Date().toISOString()}));
      if(!register)return response(200,result);
-     if(!result.can_register)fail(422,result.blocker==='currency_required'?'currency_required':result.blocker==='headers'?'member_file_headers_invalid':'member_file_no_valid_rows');
+     if(!result.can_register)fail(422,result.blocker==='currency_required'?'currency_required':result.blocker==='sheet_required'?'sheet_required':result.blocker==='headers'?'member_file_headers_invalid':'member_file_no_valid_rows');
      const provenance=memberFileProvenance(result,{fileSha256:r.file_hash,size:Number(r.size),registeredBy:s.userId});
      await s.query("UPDATE public.imports SET state='uploaded',provenance=$3::jsonb,updated_at=now() WHERE tenant_id=$1 AND id=$2 AND state='reserved'",[s.tenantId,r.id,JSON.stringify({...(r.provenance??{}),member_file:provenance})]);
      return response(201,{member_file:provenance,replayed:false});

@@ -18,15 +18,17 @@ Recomendación: que cada administrador enrole su TOTP ANTES de que se despliegue
 
 Cambio adicional de código (M-2 de la auditoría 3): la carga de datos de cada página de plataforma vuelve a comprobar AAL2, no solo el layout.
 
-## 2. MFA TOTP para propietarios de organización: nota de requisitos (no construido)
+## 2. MFA TOTP para propietarios de organización (construido en F5, apagado por defecto)
 
-Objetivo: que un propietario pueda (y una organización pueda exigir) un segundo factor, porque el propietario gestiona miembros, retención y borrados.
+Estado: la opción existe y viene APAGADA. Nada cambia para nadie hasta que un propietario la encienda para su organización.
 
-Requisitos propuestos:
-- Reutilizar las piezas existentes: `src/lib/platform/mfa.ts` (decisión pura), `mfa-server.ts`, la ruta `/seguridad/data` y `parseMfaInput`. No inventar un flujo nuevo de enrolamiento.
-- Política por organización: columna o ajuste `require_owner_mfa` (por defecto falso al inicio, para no bloquear a nadie), con un aviso en la pantalla de equipo antes de encenderla.
-- Exigir AAL2 para las acciones del propietario con efecto fuerte: cambios de rol, invitaciones, políticas de retención, borrado y purga, exportación del libro de retención. Lectura normal no exige AAL2.
-- Aplicación en la base y en el servidor: en la acción de base (`createDatabase`) comparar el claim `aal` del JWT para esas acciones; no basta la interfaz.
-- Recuperación: códigos de recuperación o restablecimiento hecho por otro propietario, con registro en `team_audit`. Un único propietario sin factor no puede quedarse bloqueado: exigir al menos un segundo propietario o un procedimiento de soporte con motivo.
-- Pruebas: propietario AAL1 recibe 403 en las acciones fuertes; AAL2 pasa; Auth caído falla cerrado; la política apagada no cambia nada.
-- Pendiente de GoTrue (AUTH-04): `/seguridad/data` permite enrolar con sesión AAL1; para propietarios conviene exigir reautenticación reciente antes de enrolar.
+Qué hay:
+- Opción por organización `organization_security.require_owner_mfa` (migración `20261206000300`). Se lee y se cambia con `public.org_security`: solo propietarios activos; cambiarla (encender o apagar) exige AAL2 y, para encenderla, al menos dos propietarios activos (si no, la organización podría quedarse sin acceso).
+- Con la opción encendida la BASE exige AAL2 en `team_manage` para invitar, cambiar rol, revocar y cancelar invitaciones (`owner_mfa_required`), y la capa de base de la aplicación (`packages/platform/src/db.ts`) lo exige para las acciones `configure`, `approve` y `retain` del propietario. Leer, listar y aceptar invitaciones no exigen AAL2.
+- Inscripción TOTP guiada en `/seguridad` (antes solo administradores): los propietarios ven su propio panel y, debajo, la opción de cada organización donde son propietarios, con un aviso previo del número de propietarios que todavía no tienen segundo factor. `/seguridad/data` reutiliza `enroll`, `verify` y `cancel`.
+- R2-01 en el servidor: el primer factor exige haber iniciado sesión hace menos de 30 minutos; agregar otro con uno ya verificado exige AAL2.
+- La base también exige AAL2 a los administradores de plataforma cuando `vexa_platform.settings.mfa_required` es verdadero (migración `20261206000000`); el estado `status` de `platform_manage` sigue con AAL1 para que se pueda enrolar. NO se enciende: el interruptor sigue en falso.
+
+Cómo se usa (orden): 1) cada propietario inscribe su TOTP en `/seguridad`; 2) un propietario con sesión AAL2 abre `/seguridad` y enciende la opción de su organización; 3) para apagarla se necesita otra vez AAL2.
+
+Pendiente (no construido, decisión o dato): códigos de recuperación y restablecimiento por otro propietario con registro en `team_audit`; exigir AAL2 también a la exportación del libro de retención; aviso por correo a los demás propietarios (hoy queda en `team_audit`); AUTH-04 del lado de GoTrue (la reautenticación reciente se aplica solo en nuestra ruta).

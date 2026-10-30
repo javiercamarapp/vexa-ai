@@ -12,7 +12,7 @@ const DIAGRAMAS_PROBLEMA: readonly IdDiagrama[] = ['problema-1', 'problema-2', '
 export function Problema({lang, t}: {lang: Lang; t: TextosPortada}) {
   const p = t.problema;
   return (
-    <section className="s-seccion" id="problema" data-seccion="problema" data-tema="claro" aria-labelledby="problema-titulo">
+    <section className="s-seccion" id="problema" data-seccion="problema" data-tema="oscuro" aria-labelledby="problema-titulo">
       <div className="s-contenedor">
         <div className="s-problema__cabeza">
           <p className="s-eyebrow" data-reveal="">{p.etiqueta}</p>
@@ -42,7 +42,7 @@ export function Valor({lang, t}: {lang: Lang; t: TextosPortada}) {
   const partes = partesSello(clases.items[0].sello);
   const enlace = enlaceInterno(clases.href);
   return (
-    <section className="s-seccion" id="valor" data-seccion="valor" data-tema="claro" aria-labelledby="valor-titulo">
+    <section className="s-seccion" id="valor" data-seccion="valor" data-tema="oscuro" aria-labelledby="valor-titulo">
       <div className="s-contenedor">
         <div className="s-seccion__cabeza">
           <p className="s-eyebrow" data-reveal="">{valor.etiqueta}</p>

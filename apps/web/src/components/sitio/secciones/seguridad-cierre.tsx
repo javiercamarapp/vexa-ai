@@ -10,7 +10,7 @@ export function Seguridad({lang, t}: {lang: Lang; t: TextosPortada}) {
   const hrefSeg = enlaceInterno(s.href);
   const hrefRuta = enlaceInterno(l.href);
   return (
-    <section className="s-seccion" id="seguridad" data-seccion="seguridad" data-tema="oscuro" aria-labelledby="seguridad-titulo">
+    <section className="s-seccion" id="seguridad" data-seccion="seguridad" data-tema="claro" aria-labelledby="seguridad-titulo">
       <div className="s-contenedor">
         <div className="s-seccion__cabeza">
           <p className="s-eyebrow" data-reveal="">{s.etiqueta}</p>
@@ -21,14 +21,16 @@ export function Seguridad({lang, t}: {lang: Lang; t: TextosPortada}) {
           {s.hechos.map((h) => <li key={h}>{h}</li>)}
         </ul>
         <div className="s-seguridad__tarjetas">
-          <div className="s-tarjeta s-tarjeta--vidrio" data-reveal="">
-            <h3 className="s-h3-producto">{s.hayEtiqueta}</h3>
-            <ul className="s-lista">{s.hay.map((x) => <li key={x}>{x}</li>)}</ul>
-          </div>
-          <div className="s-tarjeta s-tarjeta--vidrio" data-reveal="">
-            <h3 className="s-h3-producto">{s.noHayEtiqueta}</h3>
-            <ul className="s-lista">{s.noHay.map((x) => <li key={x}>{x}</li>)}</ul>
-          </div>
+          {[{e: s.hayEtiqueta, l: s.hay}, {e: s.noHayEtiqueta, l: s.noHay}].map((c) => (
+            // T16: en móvil cada tarjeta es un plegable (cerrado); en escritorio queda siempre abierta (pulido.css, ::details-content).
+            <details className="s-tarjeta s-tarjeta--vidrio s-plegable" data-reveal="" key={c.e}>
+              <summary className="s-plegable__resumen">
+                <h3 className="s-h3-producto">{c.e}</h3>
+                <span className="s-acordeon__signo" aria-hidden="true" />
+              </summary>
+              <ul className="s-lista">{c.l.map((x) => <li key={x}>{x}</li>)}</ul>
+            </details>
+          ))}
         </div>
         {s.fecha ? <p className="s-seguridad__fecha s-mono-min">{s.fecha}</p> : null}
         {hrefSeg ? <p className="s-mt-32"><a className="s-enlace-flecha" href={hrefSeg}><span>{s.enlace}</span></a></p> : null}

@@ -22,7 +22,7 @@ const L = {
   // Hero
   'landing.hero.pill': ['Rovaq AI', 'Rovaq AI'],
   'landing.hero.eyebrow': ['Inteligencia de ingresos para negocios que venden por marketplaces', 'Revenue intelligence for businesses that sell on marketplaces'],
-  'landing.hero.titulo': ['Sabe cuánto dinero se te va, y por qué.', 'Know how much money you lose, and why.'],
+  'landing.hero.titulo': ['Sabe cuánto dinero se te va, y por qué.', 'Know how much money slips away, and why.'],
   'landing.hero.sub': ['Rovaq AI mide los reembolsos observados y el ingreso expuesto a cada problema, con la evidencia a la vista y cada cifra rotulada como Observada, Estimada o Inferida.', 'Rovaq AI measures observed refunds and the revenue exposed to each problem, with the evidence in plain view and every figure labeled Observed, Estimated or Inferred.'],
   'landing.hero.limite': ['Siempre ingreso bruto, nunca margen. La exposición es una cifra inferida, no una pérdida.', 'Always gross revenue, never margin. Exposure is an inferred figure, not a loss.'],
   'landing.hero.cta': ['Solicitar acceso', 'Request access'],

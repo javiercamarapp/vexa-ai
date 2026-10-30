@@ -1,0 +1,269 @@
+/*
+ * Pulido T16 (29-oct, juez T15b): correcciones de la landing que van encima de inicio.css sin tocar el hilo (su CSS vive en inicio.css).
+ * Se carga la última. Sin bloques de movimiento reducido propios (el único está en inicio.css). Todo color sale de tokens.css.
+ */
+
+/* ---------- S1 Héroe: la ventana asoma más del pliegue y la cifra ya no tapa la barra lateral ---------- */
+.s-hero__contenido {
+  gap: var(--s-e8);
+  padding-top: clamp(78px, 8.6svh, 96px);
+  padding-bottom: var(--s-e12);
+}
+
+.s-hero__titulo { margin-top: 0; line-height: .96; }
+.s-hero__acciones { margin-top: 0; }
+
+.s-hero__sub { max-width: 920px; }
+
+.s-hero__marco {
+  width: min(1040px, 100% - 2 * var(--s-pad-x));
+  margin-top: var(--s-e8);
+  margin-bottom: var(--s-e32);
+}
+
+/* La cifra cabalga el borde superior de la ventana, centrada en el hueco libre de la barra de título (entre la ruta y la organización) */
+@container (min-width: 701px) {
+  .s-ov-cifra {
+    left: 50%;
+    top: -12px;
+    width: max-content;
+    max-width: 460px;
+    grid-template-columns: auto auto;
+    column-gap: var(--s-e16);
+    align-items: center;
+    padding: 8px 14px;
+    transform: translateX(-50%);
+  }
+
+  .s-ov-cifra__linea { grid-column: 1; }
+  .s-ov-cifra__sub { grid-column: 1; grid-row: 2; }
+  .s-ov-cifra__sello { grid-column: 2; grid-row: 1 / span 2; margin-top: 0; }
+}
+
+/* ---------- S8 Seguridad: tarjetas plegables ----------
+ * Escritorio: siempre abiertas (el contenido del plegable se fuerza visible y el resumen no es interactivo).
+ * Móvil: cerradas hasta tocar el encabezado; el texto sigue en el HTML. Sin JavaScript. */
+.s-plegable__resumen {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-e16);
+  list-style: none;
+}
+
+.s-plegable__resumen::-webkit-details-marker { display: none; }
+.s-plegable__resumen .s-acordeon__signo { display: none; }
+.s-plegable::details-content { content-visibility: visible; }
+.s-plegable > summary { pointer-events: none; cursor: default; }
+
+@media (max-width: 768px) {
+  .s-plegable::details-content { content-visibility: hidden; }
+  .s-plegable[open]::details-content { content-visibility: visible; }
+  .s-plegable.s-tarjeta--vidrio { padding: var(--s-e4) var(--s-e20); }
+  .s-plegable > summary { pointer-events: auto; cursor: pointer; min-height: 56px; }
+  .s-plegable__resumen .s-acordeon__signo { display: block; }
+  .s-plegable[open] .s-acordeon__signo { transform: rotate(45deg); }
+  .s-plegable__resumen .s-h3-producto { font-size: 18px; }
+  .s-plegable[open] > .s-lista { margin-top: var(--s-e4); padding-bottom: var(--s-e12); }
+  .s-seguridad__tarjetas { gap: var(--s-e12); margin-bottom: var(--s-e40); }
+  .s-diag-angosto .s-diag-rotulo { font-size: 11.6px; letter-spacing: .02em; }
+}
+
+/* ---------- S6 Seis pantallas: carrusel de scroll-snap ----------
+ * Escritorio: una pantalla grande a todo el ancho del contenedor, selector de las seis encima. Móvil: tarjetas del 86 % con la siguiente asomando. */
+.s-pantallas {
+  display: flex;
+  gap: var(--s-e24);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--s-e8);
+  outline-offset: 4px;
+}
+
+.s-pantallas::-webkit-scrollbar { display: none; }
+
+.s-pantalla {
+  flex: 0 0 100%;
+  min-width: 0;
+  min-height: 0;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
+.s-pantalla__miniatura { aspect-ratio: 1440 / 900; }
+.s-pantalla__miniatura[data-n="5"] { aspect-ratio: 1440 / 835; }
+
+.s-pantalla__cuerpo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: baseline;
+  gap: var(--s-e8) var(--s-e24);
+  padding: var(--s-e20) var(--s-e24);
+}
+
+.s-pantalla__cuerpo > .s-mono-min { grid-column: 1; grid-row: 1; }
+.s-pantalla__titulo { grid-column: 2; grid-row: 1; font-size: 24px; }
+.s-pantalla__pregunta { grid-column: 2; grid-row: 2; max-width: 56ch; }
+.s-pantalla__ejemplo { grid-column: 3; grid-row: 1 / span 2; align-self: center; }
+.s-pantalla__flecha { position: static; grid-column: 4; grid-row: 1 / span 2; align-self: center; }
+
+/* Pie de la tarjeta, no sobre la captura: el rótulo de datos de ejemplo no tapa contenido */
+.s-pantalla__ejemplo {
+  position: static;
+  padding: 2px 10px;
+  border: var(--s-borde) solid var(--s-linea);
+  border-radius: var(--s-r-total);
+  font-family: var(--s-f-mono);
+  font-size: var(--s-t-minimo);
+  letter-spacing: var(--s-k-sello);
+  text-transform: uppercase;
+  color: var(--s-apagado);
+  white-space: nowrap;
+}
+
+/* Enlace estirado: toda la tarjeta es clicable y el nombre accesible es solo el título */
+.s-pantalla__enlace { color: inherit; }
+.s-pantalla__enlace::after { content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
+.s-pantalla__enlace:focus-visible { outline: none; }
+.s-pantalla:has(.s-pantalla__enlace:focus-visible) { outline: 2px solid var(--s-tinta); outline-offset: 3px; }
+
+/* Selector: solo con JavaScript (sin él el carrusel se recorre con el dedo o el teclado) */
+.s-pantallas__selector { display: none; }
+
+html[data-js] .s-pantallas__selector {
+  display: flex;
+  gap: var(--s-e8);
+  margin-bottom: var(--s-e24);
+}
+
+.s-pantallas__boton {
+  display: flex;
+  flex: 1 1 0;
+  align-items: baseline;
+  gap: var(--s-e8);
+  padding: var(--s-e12) var(--s-e16);
+  border: var(--s-borde) solid var(--s-linea);
+  border-radius: var(--s-r-fila);
+  color: var(--s-apagado);
+  text-align: left;
+  transition: color 200ms var(--s-e-ui), border-color 200ms var(--s-e-ui), background-color 200ms var(--s-e-ui);
+}
+
+.s-pantallas__boton-t { font-size: var(--s-t-pequeno); font-weight: 500; line-height: 1.25; }
+.s-pantallas__boton[aria-current="true"] { color: var(--s-tinta); border-color: var(--s-tinta); background: var(--s-superficie); }
+@media (hover: hover) { .s-pantallas__boton:hover { color: var(--s-tinta); border-color: var(--s-linea-fuerte); } }
+
+@media (max-width: 1100px) {
+  .s-pantalla__cuerpo { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .s-pantalla__ejemplo { grid-column: 2; grid-row: 3; justify-self: start; }
+  .s-pantalla__flecha { grid-column: 3; grid-row: 1 / span 2; }
+}
+
+@media (max-width: 768px) {
+  /* Sin sangrado a la izquierda: el carril del hilo (x = 7 px) queda libre; solo asoma la siguiente tarjeta por la derecha */
+  .s-pantallas { gap: var(--s-e12); margin-right: calc(-1 * var(--s-pad-x)); padding-right: var(--s-pad-x); }
+  .s-pantalla { flex-basis: 86%; scroll-snap-align: start; }
+  .s-pantalla__miniatura,
+  .s-pantalla__miniatura[data-n="5"] { aspect-ratio: 326 / 300; }
+  /* Acercamiento de 1.5x sin salirse de la caja: object-fit cover con el punto de enfoque en la columna principal (sin la barra lateral) */
+  .s-pantalla__img { width: 100%; height: 100%; max-width: none; margin-left: 0; object-fit: cover; object-position: 56% 0; }
+  .s-pantalla__miniatura[data-n="5"] .s-pantalla__img { object-position: 50% 0; }
+  .s-pantalla__cuerpo { padding: var(--s-e16); grid-template-columns: auto minmax(0, 1fr) auto; }
+  .s-pantalla__titulo { font-size: 20px; }
+  .s-pantallas__selector { overflow-x: auto; scrollbar-width: none; }
+  html[data-js] .s-pantallas__selector { gap: var(--s-e8); margin-bottom: var(--s-e16); margin-right: calc(-1 * var(--s-pad-x)); padding-right: var(--s-pad-x); }
+  .s-pantallas__boton { flex: 0 0 auto; padding: var(--s-e8) var(--s-e12); }
+}
+
+/* Las diapositivas fuera de la vista (desplazamiento horizontal) no pasan por el revelado de IntersectionObserver: la captura siempre se ve */
+html[data-js] .s-pantalla:not(.s-visto) .s-pantalla__img,
+html[data-js] .s-pantalla .s-pantalla__img { clip-path: none; animation: none; }
+.s-pantalla__barrido { display: none; }
+
+/* ---------- Ventanas de producto: el rótulo de datos de ejemplo es un pie dentro de la ventana, no una línea pegada al borde ---------- */
+.s-ventana--producto .s-ventana__cuerpo { border-radius: 0; }
+
+.s-ventana--producto .s-ventana__rotulo {
+  margin: 0;
+  padding: var(--s-e8) var(--s-e16);
+  border-top: var(--s-borde) solid var(--s-vp-linea);
+  border-radius: 0 0 var(--s-r-tarjeta) var(--s-r-tarjeta);
+  background: var(--s-vp-barra);
+  line-height: 1.3;
+}
+
+/* ---------- S5 Pasos en móvil: sin capa de anotaciones (decorativa, aria-hidden) y con el recorte real a todo el ancho ---------- */
+@media (max-width: 768px) {
+  .s-pv__svg { display: none; }
+  .s-pv .s-pv__lienzo { aspect-ratio: auto; }
+  .s-pv .s-pv__marco { position: static; width: 100% !important; /* gana a left/width/top por data-n de inicio.css */ }
+  .s-pv .s-pv__marco[data-n] { left: auto; top: auto; }
+  .s-escena__fijo { gap: 0; }
+  .s-paso { gap: var(--s-e16); padding-block: var(--s-e24); }
+  .s-paso__texto { gap: var(--s-e8); }
+  .s-paso__texto .s-lead { font-size: 16px; line-height: 1.5; }
+  .s-ventana--paso .s-ventana__barra { min-height: 32px; }
+  .s-ventana--producto .s-ventana__rotulo { padding-block: 6px; }
+}
+
+/* ---------- Móvil: ritmo vertical compacto (la portada medía 19,293 px a 390; objetivo 13,500) ---------- */
+@media (max-width: 768px) {
+  .s-seccion:not(.s-escena) { padding-block: var(--s-e40); }
+  .s-seccion__cabeza { gap: var(--s-e12); margin-bottom: var(--s-e24); }
+  .s-columnas { gap: var(--s-e24); }
+  .s-columna { gap: var(--s-e8); }
+  .s-columna__diagrama { max-width: 332px; aspect-ratio: 332 / 96; margin-bottom: var(--s-e4); }
+  .s-columna .s-numeral { display: none; }
+  .s-columna__titulo { font-size: 20px; }
+  .s-valor__escena { margin-bottom: var(--s-e32); }
+  .s-sellos { row-gap: var(--s-e8); }
+  .s-sello-def { padding-block: var(--s-e12); }
+  .s-limites__cabeza { margin-bottom: var(--s-e24); }
+  .s-limite { grid-template-columns: 28px minmax(0, 1fr); column-gap: var(--s-e12); min-height: 0; padding-block: var(--s-e12); }
+  .s-limite__titulo { font-size: 17px; }
+  .s-limite__texto { font-size: 14px; line-height: 1.45; }
+  .s-hechos { margin-bottom: var(--s-e32); }
+  .s-hechos > * { padding: var(--s-e12) var(--s-e12); }
+  .s-lista > li { padding-block: var(--s-e8); font-size: 14px; }
+  .s-mt-96 { margin-top: var(--s-e40); }
+  .s-chips { display: none; }
+  .s-faq__cabeza.s-mt-96 { margin-top: var(--s-e32); }
+  .s-acordeon__boton { min-height: 56px; font-size: 17px; }
+  .s-puestos__cierre { margin-top: var(--s-e24); }
+  .s-cierre__lista { gap: var(--s-e4); }
+}
+
+@media (max-width: 1100px) {
+  .s-escena__progreso { display: none; }
+}
+
+@media (max-width: 768px) {
+  /* El arco de discos es decorativo (aria-hidden) y repite el nombre del puesto que ya muestran las pestañas */
+  .s-puestos__arco { display: none; }
+}
+
+@media (max-width: 768px) {
+  .s-pie__marca { margin-top: var(--s-e8); }
+  .s-hero__contenido { padding-top: 92px; }
+  .s-cierre__lista { margin-block: var(--s-e16); }
+  .s-hero__reglas { padding-block: var(--s-e24) var(--s-e40); gap: var(--s-e20); }
+  .s-regla { padding-top: var(--s-e12); }
+}
+
+/* Los avisos al pasar el cursor del héroe (aria-hidden) no existen en pantallas táctiles: a ese ancho serían de 8 px */
+@container (max-width: 700px) {
+  .s-ov__tip { display: none; }
+}
+
+/* ---------- Páginas internas: el titular y el subtítulo no se pegan, y las páginas de pantalla llevan su captura real ---------- */
+.s-pila-24 { display: flex; flex-direction: column; }
+.s-pag-cabeza { padding-bottom: var(--s-e64); }
+.s-pag-visual { width: 100%; max-width: 960px; margin-top: var(--s-e24); }
+
+@media (max-width: 768px) {
+  .s-pag-cabeza { padding-top: calc(var(--s-cab-h) + var(--s-e48)); padding-bottom: var(--s-e40); }
+  .s-pag-visual { margin-top: var(--s-e12); }
+}

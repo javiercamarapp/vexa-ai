@@ -10,7 +10,7 @@ last_modified: 2026-10-28
 robots: noindex
 ---
 
-# Know how much money you lose, and why.
+# Know how much money slips away, and why.
 
 Post-purchase revenue intelligence for businesses that sell on marketplaces
 

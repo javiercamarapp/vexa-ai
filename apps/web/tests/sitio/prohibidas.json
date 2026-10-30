@@ -131,7 +131,7 @@
       "excepciones": [
         {
           "ruta": "^hero\\.titulo$|^hero\\.lineas\\[\\d\\]$|^seo\\.|^hero\\.titularBusqueda$",
-          "motivo": "El titular del dueño, blindado por hero.subtitulo y hero.limite (P-D alerta 1). En español no usa pierdes; en inglés Know how much money you lose."
+          "motivo": "El titular del dueño, blindado por hero.subtitulo y hero.limite (P-D alerta 1). En español no usa pierdes; en inglés Know how much money slips away, sin presentar la exposición como pérdida (juez T15b)."
         },
         {
           "ruta": "^faq\\.items\\[3\\]\\.q$",

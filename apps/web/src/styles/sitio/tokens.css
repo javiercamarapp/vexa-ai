@@ -41,9 +41,14 @@
   --s-c-blanco: #FFFFFF;
   --s-c-gris-borde: #E6E6E8;
   --s-c-gris-borde-2: #D6D6D9;
+  /* Texto atenuado y de acento de cada tema, nombrados para poder animarlos con keyframes en el cruce (ver Escena de tema global) */
+  --s-c-apagado-oscuro: #A6A6AC;
+  --s-c-apagado-claro: #5C5C62;
+  --s-c-acento-texto-oscuro: #FF4A40;
+  --s-c-acento-texto-claro: #C81B14;
   --s-c-rojo: #E8241C;
-  /* Color de las barras de la captura real del producto (ranking de SKU); no es el acento de marca. */
-  --s-c-captura-barra: #E8602B;
+  /* Color de las barras que repinta la capa SVG sobre la captura real del producto (ranking de SKU); no es el acento de marca. */
+  --s-c-captura-barra: #C9C9CD; /* T16: gris claro; las barras del héroe ya no llevan el naranja del producto (un solo acento: el rojo de Rovaq) */
 
   /* Ventana de producto del héroe: la captura es del tema oscuro del producto y se queda así en cualquier escena. */
   --s-vp-fondo: var(--s-c-pizarra);
@@ -90,7 +95,7 @@
   --s-t-boton: 14px;
   --s-t-boton-hero: 15px;
   --s-t-eyebrow: 12px;
-  --s-t-minimo: 11px;
+  --s-t-minimo: 12px; /* T16: mínimo de texto real 12 px a escritorio y 11 px a móvil (ver @media 768) */
   --s-t-cifra: clamp(20px, 17.9px + .529vw, 28px);
   --s-t-mock: 12px;
 
@@ -222,9 +227,9 @@ html:not([data-ambiente]) [data-tema="oscuro"] {
   --s-linea: rgba(247, 247, 248, .10);
   --s-linea-fuerte: rgba(247, 247, 248, .18);
   --s-tinta: var(--s-c-hueso);
-  --s-apagado: #A6A6AC;
+  --s-apagado: var(--s-c-apagado-oscuro);
   --s-sutil: #6E6E75;
-  --s-acento-texto: #FF4A40;
+  --s-acento-texto: var(--s-c-acento-texto-oscuro);
 
   /* Botón primario: hueso sobre oscuro, círculo rojo de 36 px */
   --s-boton-fondo: var(--s-c-hueso);
@@ -261,9 +266,9 @@ html:not([data-ambiente]) [data-tema="claro"] {
   --s-linea: var(--s-c-gris-borde);
   --s-linea-fuerte: var(--s-c-gris-borde-2);
   --s-tinta: var(--s-c-tinta);
-  --s-apagado: #5C5C62;
+  --s-apagado: var(--s-c-apagado-claro);
   --s-sutil: #8A8A91;
-  --s-acento-texto: #C81B14;
+  --s-acento-texto: var(--s-c-acento-texto-claro);
 
   --s-boton-fondo: var(--s-c-tinta);
   --s-boton-fondo-hover: var(--s-c-pizarra-2);
@@ -321,6 +326,7 @@ html:not([data-ambiente]) [data-tema="claro"] {
     --s-cab-r: var(--s-r-movil);
     --s-t-lead: 17px;
     --s-t-cifra: 22px;
+    --s-t-minimo: 11px;
   }
 }
 
@@ -507,14 +513,8 @@ html:not([data-ambiente]) [data-tema="claro"] {
       --s-superficie-2 var(--s-d-tema) ease,
       --s-linea var(--s-d-tema) ease,
       --s-linea-fuerte var(--s-d-tema) ease,
-      --s-tinta var(--s-d-tema) ease,
-      --s-apagado var(--s-d-tema) ease,
       --s-sutil var(--s-d-tema) ease,
-      --s-acento-texto var(--s-d-tema) ease,
-      --s-boton-fondo var(--s-d-tema) ease,
       --s-boton-fondo-hover var(--s-d-tema) ease,
-      --s-boton-texto var(--s-d-tema) ease,
-      --s-boton-flecha var(--s-d-tema) ease,
       --s-boton-borde-sec var(--s-d-tema) ease,
       --s-boton-hover-sec var(--s-d-tema) ease,
       --s-cab-fondo var(--s-d-tema) ease,
@@ -531,4 +531,80 @@ html:not([data-ambiente]) [data-tema="claro"] {
       --s-calor-4 var(--s-d-tema) ease,
       --s-calor-5 var(--s-d-tema) ease;
   }
+}
+
+/* ==================== Cruce de tema: el texto salta, el fondo se desliza ====================
+ * Fondo y texto no pueden deslizarse a la vez: se cruzan a mitad de camino con contraste 1:1. El fondo transiciona 700 ms (arriba); el texto, el
+ * texto atenuado y el par fondo/texto de los botones cambian por pasos en el instante en que el fondo está en un gris medio (luminancia 0.2, la
+ * única zona donde blanco y negro contrastan 3:1 o más con él): hacia claro a los 28 por ciento de los 700 ms, hacia oscuro a los 31 por ciento
+ * (la curva ease no es simétrica). El texto atenuado pasa antes por blanco o negro puro porque su gris no contrasta 3:1 con ningún fondo medio.
+ * Contraste mínimo medido en todo el cruce con tests/sitio/tema-cruce (arnés CDP). Sin movimiento (reduce) no hay animación: el cambio es directo. */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-ambiente-anim][data-ambiente="claro"] {
+    animation:
+      s-a-claro-tinta var(--s-d-tema) step-end,
+      s-a-claro-apagado var(--s-d-tema) step-end,
+      s-a-claro-acento var(--s-d-tema) step-end,
+      s-a-claro-boton-fondo var(--s-d-tema) step-end,
+      s-a-claro-boton-texto var(--s-d-tema) step-end;
+  }
+
+  html[data-ambiente-anim][data-ambiente="oscuro"] {
+    animation:
+      s-a-oscuro-tinta var(--s-d-tema) step-end,
+      s-a-oscuro-apagado var(--s-d-tema) step-end,
+      s-a-oscuro-acento var(--s-d-tema) step-end,
+      s-a-oscuro-boton-fondo var(--s-d-tema) step-end,
+      s-a-oscuro-boton-texto var(--s-d-tema) step-end;
+  }
+}
+
+@keyframes s-a-claro-tinta {
+  0% { --s-tinta: var(--s-c-hueso); }
+  28% { --s-tinta: var(--s-c-tinta); }
+}
+@keyframes s-a-claro-apagado {
+  0% { --s-apagado: var(--s-c-apagado-oscuro); }
+  15% { --s-apagado: var(--s-c-hueso); }
+  28% { --s-apagado: var(--s-c-tinta); }
+  56% { --s-apagado: var(--s-c-apagado-claro); }
+}
+@keyframes s-a-claro-acento {
+  0% { --s-acento-texto: var(--s-c-acento-texto-oscuro); }
+  15% { --s-acento-texto: var(--s-c-hueso); }
+  28% { --s-acento-texto: var(--s-c-tinta); }
+  56% { --s-acento-texto: var(--s-c-acento-texto-claro); }
+}
+@keyframes s-a-claro-boton-fondo {
+  0% { --s-boton-fondo: var(--s-c-hueso); }
+  28% { --s-boton-fondo: var(--s-c-tinta); }
+}
+@keyframes s-a-claro-boton-texto {
+  0% { --s-boton-texto: var(--s-c-tinta); }
+  28% { --s-boton-texto: var(--s-c-hueso); }
+}
+
+@keyframes s-a-oscuro-tinta {
+  0% { --s-tinta: var(--s-c-tinta); }
+  31% { --s-tinta: var(--s-c-hueso); }
+}
+@keyframes s-a-oscuro-apagado {
+  0% { --s-apagado: var(--s-c-apagado-claro); }
+  18% { --s-apagado: var(--s-c-tinta); }
+  31% { --s-apagado: var(--s-c-hueso); }
+  56% { --s-apagado: var(--s-c-apagado-oscuro); }
+}
+@keyframes s-a-oscuro-acento {
+  0% { --s-acento-texto: var(--s-c-acento-texto-claro); }
+  18% { --s-acento-texto: var(--s-c-tinta); }
+  31% { --s-acento-texto: var(--s-c-hueso); }
+  56% { --s-acento-texto: var(--s-c-acento-texto-oscuro); }
+}
+@keyframes s-a-oscuro-boton-fondo {
+  0% { --s-boton-fondo: var(--s-c-tinta); }
+  31% { --s-boton-fondo: var(--s-c-hueso); }
+}
+@keyframes s-a-oscuro-boton-texto {
+  0% { --s-boton-texto: var(--s-c-hueso); }
+  31% { --s-boton-texto: var(--s-c-tinta); }
 }

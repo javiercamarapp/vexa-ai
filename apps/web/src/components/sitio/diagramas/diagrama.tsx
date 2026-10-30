@@ -165,19 +165,19 @@ function Seguridad({lang}: P) {
         </Envoltura>
       </div>
       <div className="s-diag-angosto" aria-hidden="true">
-        <svg className="s-red s-diag" viewBox="0 0 340 600" focusable="false">
-          {[198, 398].map((y) => (
-            <g key={y}>
-              <Linea x1={0} y1={y} x2={340} y2={y} />
-              <Texto x={170} y={y - 8}>{t.barrera}</Texto>
-            </g>
+        {/* T16: en móvil las tres organizaciones van en una sola fila (190 px de alto en vez de 600), con la misma barrera entre ellas */}
+        <svg className="s-red s-diag" viewBox="0 0 340 196" focusable="false">
+          {[113.5, 226.5].map((x) => (
+            <Linea key={x} x1={x} y1={12} x2={x} y2={150} />
           ))}
+          <path className="s-diag-linea s-diag-linea--tenue" d="M113.5 150V160H226.5V150" />
           {[0, 1, 2].map((i) => (
             <g key={i}>
-              <Grupo cx={170} cy={78 + i * 200} r={52} pulsos={[1]} />
-              <Texto x={170} y={160 + i * 200}>{t.organizaciones[i]}</Texto>
+              <Grupo cx={57 + i * 113} cy={62} r={34} pulsos={[1]} />
+              <Texto x={57 + i * 113} y={126} clase="s-diag-rotulo s-diag-rotulo--corto">{t.organizaciones[i]}</Texto>
             </g>
           ))}
+          <Texto x={170} y={184}>{t.barrera}</Texto>
         </svg>
       </div>
     </>

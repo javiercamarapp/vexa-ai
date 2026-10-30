@@ -131,10 +131,10 @@ export const LANDING = {
   hero: {
     id: 'inicio',
     eyebrow: { es: 'Inteligencia de ingresos de posventa para negocios que venden por marketplaces', en: 'Post-purchase revenue intelligence for businesses that sell on marketplaces' }, // PUBLICO. Categoría, posicionamiento 4.3
-    titulo: m(0, 'Fuga de reembolsos y Brechas para lo observado; Problemas para lo inferido. Condición: va con subtítulo y línea de límite', { es: 'Sabe cuánto dinero se te va, y por qué.', en: 'Know how much money you lose, and why.' }, { acompana: ['hero.subtitulo','hero.limite'] }), // MATIZ. Fuga de reembolsos y Brechas para lo observado; Problemas para lo inferido. Condición: va con subtítulo y línea de límite
+    titulo: m(0, 'Fuga de reembolsos y Brechas para lo observado; Problemas para lo inferido. Condición: va con subtítulo y línea de límite', { es: 'Sabe cuánto dinero se te va, y por qué.', en: 'Know how much money slips away, and why.' }, { acompana: ['hero.subtitulo','hero.limite'] }), // MATIZ. Fuga de reembolsos y Brechas para lo observado; Problemas para lo inferido. Condición: va con subtítulo y línea de límite
     lineas: [
       { es: 'Sabe cuánto', en: 'Know how much' },
-      { es: 'dinero se te va,', en: 'money you lose,' },
+      { es: 'dinero se te va,', en: 'money slips away,' },
       { es: 'y por qué.', en: 'and why.' },
     ], // Mismo texto del titular partido en tres líneas para la revelación palabra por palabra
     subtitulo: m(7, 'Clases y sello en Hoy; exposición en Problemas solo con vínculos confirmados por un propietario', { es: 'Rovaq AI mide los reembolsos observados y el ingreso expuesto a cada problema, con la evidencia a la vista y cada cifra rotulada como Observada, Estimada o Inferida.', en: 'Rovaq AI measures observed refunds and the revenue exposed to each problem, with the evidence in plain view and every figure labeled Observed, Estimated or Inferred.' }), // MATIZ. Clases y sello en Hoy; exposición en Problemas solo con vínculos confirmados por un propietario

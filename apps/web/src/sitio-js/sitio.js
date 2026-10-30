@@ -119,13 +119,17 @@ function tema() {
     const linea = innerHeight * (bajando ? 0.42 : 0.58);
     let t = secs[0].dataset.tema;
     for (const s of secs) if (s.getBoundingClientRect().top <= linea) t = s.dataset.tema; else break;
-    if (t !== escena) { escena = t; H.setAttribute('data-ambiente', t); if (cab) cab.dataset.tema = t; }
+    if (t !== escena) {
+      const primera = escena === '';
+      escena = t; H.setAttribute('data-ambiente', t); if (cab) cab.dataset.tema = t;
+      // Las animaciones del cruce solo corren en cambios reales, no al cargar la página a media altura
+      if (!primera) H.setAttribute('data-ambiente-anim', '');
+    }
   };
   const pedir = () => { if (libre) { libre = false; requestAnimationFrame(aplicar); } };
   addEventListener('scroll', pedir, {passive: true});
   addEventListener('resize', pedir, {passive: true});
   aplicar();
-  requestAnimationFrame(() => requestAnimationFrame(() => H.setAttribute('data-ambiente-anim', '')));
 }
 
 /* ---------- héroe: conteo de la cifra (el resto de la entrada es CSS) ---------- */
@@ -202,6 +206,24 @@ function acordeon() {
   });
 }
 
+/* ---------- seis pantallas: selector del carrusel ---------- */
+function pantallas() {
+  const pista = $('[data-pantallas]'), botones = $$('[data-pantalla-sel]');
+  if (!pista || !botones.length) return;
+  const slides = $$('[data-pantalla]', pista);
+  const marcar = (n) => botones.forEach((b, i) => { if (i === n) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); });
+  botones.forEach((b) => b.addEventListener('click', () => {
+    const s = slides[+b.dataset.pantallaSel];
+    if (!s) return;
+    const x = s.offsetLeft - pista.offsetLeft - (innerWidth > 768 ? 0 : parseFloat(getComputedStyle(pista).paddingLeft));
+    pista.scrollTo({left: x, behavior: RM ? 'auto' : 'smooth'});
+    marcar(+b.dataset.pantallaSel);
+  }));
+  if (typeof IntersectionObserver === 'undefined') return;
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) marcar(slides.indexOf(e.target)); }), {root: pista, threshold: 0.6});
+  slides.forEach((s) => io.observe(s));
+}
+
 /* ---------- portada: inicio.js tras reposo (hilo, paso activo de la escena) ---------- */
 function portada() {
   if (!DATOS.inicio || !$('[data-hilo]')) return;
@@ -221,6 +243,6 @@ function portada() {
 }
 
 /* ---------- arranque: cada pieza aislada, un fallo no detiene a las demás ---------- */
-for (const f of [cabecera, tema, conteo, revelados, palabras, puestos, acordeon, portada]) {
+for (const f of [cabecera, tema, conteo, revelados, palabras, puestos, acordeon, pantallas, portada]) {
   try { f(); } catch { /* aislado */ }
 }

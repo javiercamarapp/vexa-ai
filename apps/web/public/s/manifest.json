@@ -82,37 +82,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 23448,
-     "sha256": "e30a9b88ba60e72169797bbb221df595a4a61505fe911723ab691393332f5b7d",
-     "url": "/s/img/producto/caso-960.e30a9b88.avif"
+     "bytes": 22881,
+     "sha256": "18d282544c2673afd0f51b08d9670294c7c1444013905be42481dd6335893496",
+     "url": "/s/img/producto/caso-960.18d28254.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 37152,
-     "sha256": "2dd4000e39114ee38df05c27300f88279d78065186fc50be1d408a2c10e8f0e2",
-     "url": "/s/img/producto/caso-1440.2dd4000e.avif"
+     "bytes": 36388,
+     "sha256": "821b90db877ed5a18125d730526087f2facb681595dfb45dc5c5339cab04f819",
+     "url": "/s/img/producto/caso-1440.821b90db.avif"
     }
    ],
-   "bytes": 57554,
-   "sha256": "29c0d2daa41a5c35a42f476259eea8a202e501d49e75d66e9a1d27bb9a66455d",
+   "bytes": 55318,
+   "sha256": "5ba89f22b465d8a40d5addde3ae03360a6ace0e1bb6d75fd23ffb07054989f7a",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/caso-1440.29c0d2da.webp",
+   "url": "/s/img/producto/caso-1440.5ba89f22.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 32734,
-     "sha256": "eda8bfaed994afa9fefd0eafaa801de975f6e47577c4383c4b88aa875e0e6170",
-     "url": "/s/img/producto/caso-960.eda8bfae.webp"
+     "bytes": 31308,
+     "sha256": "ffa505abdc1bdb5e01ae2fc538a35651f693be5e4f18c1f4c03bcab79ff0fc57",
+     "url": "/s/img/producto/caso-960.ffa505ab.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 57554,
-     "sha256": "29c0d2daa41a5c35a42f476259eea8a202e501d49e75d66e9a1d27bb9a66455d",
-     "url": "/s/img/producto/caso-1440.29c0d2da.webp"
+     "bytes": 55318,
+     "sha256": "5ba89f22b465d8a40d5addde3ae03360a6ace0e1bb6d75fd23ffb07054989f7a",
+     "url": "/s/img/producto/caso-1440.5ba89f22.webp"
     }
    ]
   },
@@ -127,30 +127,30 @@
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 37313,
-     "sha256": "f65c92280b2d88242701d12a53d2d4cca3870253d4413215f57ca308b163db1c",
-     "url": "/s/img/producto/caso-oscuro-1440.f65c9228.avif"
+     "bytes": 36705,
+     "sha256": "abb75fa67c5aa9da50866d6704f3bc9d939f98a1c2c8dc8d398016ef7636324f",
+     "url": "/s/img/producto/caso-oscuro-1440.abb75fa6.avif"
     }
    ],
-   "bytes": 56196,
-   "sha256": "fe6944935b5ce9512d7d679a7d1c745b124960ae1dc95a9f46ab8011020e367c",
+   "bytes": 53984,
+   "sha256": "d8d2057b24f43ee31f192fc4d4a2a9d41b1885f620a11d4066f013006f7eaab0",
    "tema": "oscuro",
    "tipo": "captura",
-   "url": "/s/img/producto/caso-oscuro-1440.fe694493.webp",
+   "url": "/s/img/producto/caso-oscuro-1440.d8d2057b.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 31840,
-     "sha256": "ad8f2fce962ff71bf748971220762ade9b2807021e9252db47f65f03b45232e5",
-     "url": "/s/img/producto/caso-oscuro-960.ad8f2fce.webp"
+     "bytes": 30572,
+     "sha256": "f38c2a84e0101125d6d65aa01e16f005d80211c98923b01b7cf7cd92bec6a6c2",
+     "url": "/s/img/producto/caso-oscuro-960.f38c2a84.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 56196,
-     "sha256": "fe6944935b5ce9512d7d679a7d1c745b124960ae1dc95a9f46ab8011020e367c",
-     "url": "/s/img/producto/caso-oscuro-1440.fe694493.webp"
+     "bytes": 53984,
+     "sha256": "d8d2057b24f43ee31f192fc4d4a2a9d41b1885f620a11d4066f013006f7eaab0",
+     "url": "/s/img/producto/caso-oscuro-1440.d8d2057b.webp"
     }
    ]
   },
@@ -165,37 +165,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 22867,
-     "sha256": "94d1fde5b5bf22326bbaf875029cbd0370c5576084c1eb3ac17a802d427627a1",
-     "url": "/s/img/producto/cco-960.94d1fde5.avif"
+     "bytes": 22447,
+     "sha256": "8ada8bdcd43bcafc7d83b4183eef6b60c089b48313a29c9bf34f26311e3e03bd",
+     "url": "/s/img/producto/cco-960.8ada8bdc.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 37018,
-     "sha256": "9744d2708faa1f7b3013be01f7b58fb33899490fa1d4cd185965847f125caba2",
-     "url": "/s/img/producto/cco-1440.9744d270.avif"
+     "bytes": 36589,
+     "sha256": "7b1875eeba406f320b93ec7bd28dac5d3c057d9162f7f8043b4bd36b56b61144",
+     "url": "/s/img/producto/cco-1440.7b1875ee.avif"
     }
    ],
-   "bytes": 57826,
-   "sha256": "dc7e52d4e91036ce77bc863bbe9fe248723f69a68822dd98ac5583861ee2fd87",
+   "bytes": 56246,
+   "sha256": "eb23a261ae5ba1a3fc3c2acf2a3c7f53a74c5ead977236fd2323d765340369b9",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/cco-1440.dc7e52d4.webp",
+   "url": "/s/img/producto/cco-1440.eb23a261.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 32310,
-     "sha256": "033cca8a91d6839392b13dcc18d0540647ea1c5084c458acb11ccfd05340ce37",
-     "url": "/s/img/producto/cco-960.033cca8a.webp"
+     "bytes": 31870,
+     "sha256": "3b98c9987faaf8cb7275f6825d7effd42e5de51c8163c07e707e76102ef97dda",
+     "url": "/s/img/producto/cco-960.3b98c998.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 57826,
-     "sha256": "dc7e52d4e91036ce77bc863bbe9fe248723f69a68822dd98ac5583861ee2fd87",
-     "url": "/s/img/producto/cco-1440.dc7e52d4.webp"
+     "bytes": 56246,
+     "sha256": "eb23a261ae5ba1a3fc3c2acf2a3c7f53a74c5ead977236fd2323d765340369b9",
+     "url": "/s/img/producto/cco-1440.eb23a261.webp"
     }
    ]
   },
@@ -210,37 +210,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 23686,
-     "sha256": "152425d1de6627d1885dfe6dbdbc52a701d4fa4086eda63017a4259be9e830a3",
-     "url": "/s/img/producto/cco-oscuro-960.152425d1.avif"
+     "bytes": 23546,
+     "sha256": "0542c3b6c4851985562b5fc641d6881e73a7e8c876a6a4d6beba968259c592e4",
+     "url": "/s/img/producto/cco-oscuro-960.0542c3b6.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 39107,
-     "sha256": "2208152a066ce86a68c9b8bae2fe699ea87524d4cd53e736886b0b304ad4a837",
-     "url": "/s/img/producto/cco-oscuro-1440.2208152a.avif"
+     "bytes": 38659,
+     "sha256": "624f466f50807d3e10dc112c9eb90c3fdbac50b0843f17b08dd7522a627bbb33",
+     "url": "/s/img/producto/cco-oscuro-1440.624f466f.avif"
     }
    ],
-   "bytes": 56990,
-   "sha256": "a0bea726e0984e38567c9c402a3db2905433fc6799c0d7a309fa12f434afb324",
+   "bytes": 56174,
+   "sha256": "ae1dcf131f5e39882643fd87c43533d91cabebc2015da24a3ce998685890bd2f",
    "tema": "oscuro",
    "tipo": "captura",
-   "url": "/s/img/producto/cco-oscuro-1440.a0bea726.webp",
+   "url": "/s/img/producto/cco-oscuro-1440.ae1dcf13.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 32004,
-     "sha256": "653f194db73f1a75d0df8b0b7ef39e98f7298bc6a8ef41e50c51be08700a3826",
-     "url": "/s/img/producto/cco-oscuro-960.653f194d.webp"
+     "bytes": 31568,
+     "sha256": "12301d89bab1b4dd1756b88f90daea36d10d0b65720d42baf090da07edd49b3c",
+     "url": "/s/img/producto/cco-oscuro-960.12301d89.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 56990,
-     "sha256": "a0bea726e0984e38567c9c402a3db2905433fc6799c0d7a309fa12f434afb324",
-     "url": "/s/img/producto/cco-oscuro-1440.a0bea726.webp"
+     "bytes": 56174,
+     "sha256": "ae1dcf131f5e39882643fd87c43533d91cabebc2015da24a3ce998685890bd2f",
+     "url": "/s/img/producto/cco-oscuro-1440.ae1dcf13.webp"
     }
    ]
   },
@@ -255,37 +255,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 21679,
-     "sha256": "c31b2ad0379378f791e0d9830285a110480bbfb285537d752388f7bfbb778b3d",
-     "url": "/s/img/producto/conexiones-960.c31b2ad0.avif"
+     "bytes": 21165,
+     "sha256": "e33d084175e3128579f717d10e1ab84544cd719b4b6fe1127b9c53e38133b43b",
+     "url": "/s/img/producto/conexiones-960.e33d0841.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 34966,
-     "sha256": "2eb8bd6a572f94e56f1d6dbd10c828cacf9f5826bbda57b3f02080c3b0ef648e",
-     "url": "/s/img/producto/conexiones-1440.2eb8bd6a.avif"
+     "bytes": 34283,
+     "sha256": "e9044b03e21bbc7d7e22f7f7208ee4e5d3e31498494977f3ba4a537cc2919796",
+     "url": "/s/img/producto/conexiones-1440.e9044b03.avif"
     }
    ],
-   "bytes": 54946,
-   "sha256": "f82c8272183b688f4c62168ea1e5170d25d58202c9d3b481954158e2e6deec25",
+   "bytes": 52518,
+   "sha256": "f6465a4272fbc365d9bd34372ccc03c6f5dfff43726af05ba680034ea17e5fc4",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/conexiones-1440.f82c8272.webp",
+   "url": "/s/img/producto/conexiones-1440.f6465a42.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 30642,
-     "sha256": "ac27328f256b7d827175989816fef10244435c58d97b6421bd78fb2121a5eb89",
-     "url": "/s/img/producto/conexiones-960.ac27328f.webp"
+     "bytes": 29478,
+     "sha256": "31eb9a627937b347bffa8c7da8a3a5bef8939b367a217e6a266ef8a594797ab8",
+     "url": "/s/img/producto/conexiones-960.31eb9a62.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 54946,
-     "sha256": "f82c8272183b688f4c62168ea1e5170d25d58202c9d3b481954158e2e6deec25",
-     "url": "/s/img/producto/conexiones-1440.f82c8272.webp"
+     "bytes": 52518,
+     "sha256": "f6465a4272fbc365d9bd34372ccc03c6f5dfff43726af05ba680034ea17e5fc4",
+     "url": "/s/img/producto/conexiones-1440.f6465a42.webp"
     }
    ]
   },
@@ -300,37 +300,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 21732,
-     "sha256": "c7f24b2e6002dbc8d417f42e52f0bab646d0d0311aec6a2df01d107620d8398b",
-     "url": "/s/img/producto/conexiones-oscuro-960.c7f24b2e.avif"
+     "bytes": 21396,
+     "sha256": "9b2de4138ec78896a15af0cd257c5ee24ec31afb12baffe8103045a4b7721a4a",
+     "url": "/s/img/producto/conexiones-oscuro-960.9b2de413.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 35198,
-     "sha256": "7bbc7ee1ee302aae85be59da7362bf91646d0c7a10714366a95e65b2559ceb58",
-     "url": "/s/img/producto/conexiones-oscuro-1440.7bbc7ee1.avif"
+     "bytes": 34792,
+     "sha256": "77ca4cea34f095ffb31886a6292c5bae2e3f3c18057068a2806ec4e085890493",
+     "url": "/s/img/producto/conexiones-oscuro-1440.77ca4cea.avif"
     }
    ],
-   "bytes": 53636,
-   "sha256": "c6f3ff9cde36cbf9a0508f7759fbde03832e1df6f102d57b515ea1e979d5b8ed",
+   "bytes": 51722,
+   "sha256": "000a559d57318174e43ea80cb73e94905a7d42ec9be8537f2234ebf1a97071e6",
    "tema": "oscuro",
    "tipo": "captura",
-   "url": "/s/img/producto/conexiones-oscuro-1440.c6f3ff9c.webp",
+   "url": "/s/img/producto/conexiones-oscuro-1440.000a559d.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 30226,
-     "sha256": "0d924e2c20e4c3993c4e695b4ce9b78a2ee3c168f17f658b667cda8b2e27b935",
-     "url": "/s/img/producto/conexiones-oscuro-960.0d924e2c.webp"
+     "bytes": 29306,
+     "sha256": "c9b0efd74c022e2f521e14e57dc9074fef6c6aecf0412a5b8ccb5a26f1ae769e",
+     "url": "/s/img/producto/conexiones-oscuro-960.c9b0efd7.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 53636,
-     "sha256": "c6f3ff9cde36cbf9a0508f7759fbde03832e1df6f102d57b515ea1e979d5b8ed",
-     "url": "/s/img/producto/conexiones-oscuro-1440.c6f3ff9c.webp"
+     "bytes": 51722,
+     "sha256": "000a559d57318174e43ea80cb73e94905a7d42ec9be8537f2234ebf1a97071e6",
+     "url": "/s/img/producto/conexiones-oscuro-1440.000a559d.webp"
     }
    ]
   },
@@ -345,37 +345,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 19967,
-     "sha256": "3bde1b6edd39780cb4ed00f4233d5c26d7731dc3c299c1a0a899d13e88870ee4",
-     "url": "/s/img/producto/evidencia-960.3bde1b6e.avif"
+     "bytes": 19386,
+     "sha256": "de5d5217cc95ec888526b1cc18bc47b0a44f84b18676b9ac085cf321fdde0271",
+     "url": "/s/img/producto/evidencia-960.de5d5217.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 31880,
-     "sha256": "ffef36f41276ac9c5e76f994bc6c28d0a489580f46526bb7d11a1c92854573c8",
-     "url": "/s/img/producto/evidencia-1440.ffef36f4.avif"
+     "bytes": 31243,
+     "sha256": "0f4a55ef2cb352cd02f4dd560105262f030dcd1c1df63b523113cdc5b486210f",
+     "url": "/s/img/producto/evidencia-1440.0f4a55ef.avif"
     }
    ],
-   "bytes": 50366,
-   "sha256": "af31ce94933f9e913f7cbce0b96eaf18672220541777795dbe5e2d39c28076d9",
+   "bytes": 47184,
+   "sha256": "274d500da852e75c623c22661a12d6935d2266235d4e6231037b7a128c00b837",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/evidencia-1440.af31ce94.webp",
+   "url": "/s/img/producto/evidencia-1440.274d500d.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 27598,
-     "sha256": "4ed5472ebe528cd10d0db7a04919c3cf0b430eacf72281b6815c20ac4d3e4d83",
-     "url": "/s/img/producto/evidencia-960.4ed5472e.webp"
+     "bytes": 26236,
+     "sha256": "3ccba532e32f5cbe08d86fc6370f2e4d64393da1e614ef18897c3ff269c07a68",
+     "url": "/s/img/producto/evidencia-960.3ccba532.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 50366,
-     "sha256": "af31ce94933f9e913f7cbce0b96eaf18672220541777795dbe5e2d39c28076d9",
-     "url": "/s/img/producto/evidencia-1440.af31ce94.webp"
+     "bytes": 47184,
+     "sha256": "274d500da852e75c623c22661a12d6935d2266235d4e6231037b7a128c00b837",
+     "url": "/s/img/producto/evidencia-1440.274d500d.webp"
     }
    ]
   },
@@ -390,37 +390,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 19754,
-     "sha256": "dc739c68930b67c828fbec7bfced69212f0b2df641c29ae038fce36e38401366",
-     "url": "/s/img/producto/evidencia-oscuro-960.dc739c68.avif"
+     "bytes": 19289,
+     "sha256": "1af0a60604fce862f50d71d05a382e9673aa14f9afe89192ad94e2944c4e43ea",
+     "url": "/s/img/producto/evidencia-oscuro-960.1af0a606.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 32575,
-     "sha256": "63f677483e821e2d99ebb691f8a884bf08fb457ebb791a3548c5307a722517ad",
-     "url": "/s/img/producto/evidencia-oscuro-1440.63f67748.avif"
+     "bytes": 31762,
+     "sha256": "e34c15856a48dd18a5d007ed22d19605daab67f92bb06aa824944e10d209ce7c",
+     "url": "/s/img/producto/evidencia-oscuro-1440.e34c1585.avif"
     }
    ],
-   "bytes": 48544,
-   "sha256": "9446844ab7968281bf1a414e291fc621ab4845542e2257da846608b55aae9e05",
+   "bytes": 46146,
+   "sha256": "e3aface6e4bfa31f80ae2723cd555d615081da136a4e4edaf23f10fcd9547bd0",
    "tema": "oscuro",
    "tipo": "captura",
-   "url": "/s/img/producto/evidencia-oscuro-1440.9446844a.webp",
+   "url": "/s/img/producto/evidencia-oscuro-1440.e3aface6.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 27178,
-     "sha256": "4c612d0aa0cab8bf7b6231df8ca4914a89cb8c48e23e03d4d5c997cc33068f35",
-     "url": "/s/img/producto/evidencia-oscuro-960.4c612d0a.webp"
+     "bytes": 26000,
+     "sha256": "fa6f3ec5e136ab0b4e43fd068876dce63dd44d4700d9e46d6b93c698543180c9",
+     "url": "/s/img/producto/evidencia-oscuro-960.fa6f3ec5.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 48544,
-     "sha256": "9446844ab7968281bf1a414e291fc621ab4845542e2257da846608b55aae9e05",
-     "url": "/s/img/producto/evidencia-oscuro-1440.9446844a.webp"
+     "bytes": 46146,
+     "sha256": "e3aface6e4bfa31f80ae2723cd555d615081da136a4e4edaf23f10fcd9547bd0",
+     "url": "/s/img/producto/evidencia-oscuro-1440.e3aface6.webp"
     }
    ]
   },
@@ -435,51 +435,51 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 27642,
-     "sha256": "69104d0ec4741a501d3aadf55b8a88ee039e467bce452af2edae464323357ca3",
-     "url": "/s/img/producto/fuga-960.69104d0e.avif"
+     "bytes": 26965,
+     "sha256": "3145c721cd159e95d299b7fa787de4b16b71963209a52fea0fe350ee7cea9f6b",
+     "url": "/s/img/producto/fuga-960.3145c721.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 44329,
-     "sha256": "13d7616a61d1a8efc02107fbd8a7679c0183edaeaa69a0583ddc34348ea97d17",
-     "url": "/s/img/producto/fuga-1440.13d7616a.avif"
+     "bytes": 43544,
+     "sha256": "b51fab393201bc97525d897d08fae36469a6444ea564cd65d2b6de6f3433e44c",
+     "url": "/s/img/producto/fuga-1440.b51fab39.avif"
     },
     {
      "alto": 1800,
      "ancho": 2880,
-     "bytes": 93910,
-     "sha256": "7d73e42c833b0f933e7b1b32be993176b996a838ef8d66ca6e0959a75748d27e",
-     "url": "/s/img/producto/fuga-2880.7d73e42c.avif"
+     "bytes": 92149,
+     "sha256": "2e95b2525d00bb46c0f71c5e89f15c0c507fab7c998fe892ed455012e328a329",
+     "url": "/s/img/producto/fuga-2880.2e95b252.avif"
     }
    ],
-   "bytes": 69414,
-   "sha256": "a5dcd2339b12755e3392c73f4e9791de059610494ea2378b130dc1b17f5ea18c",
+   "bytes": 66678,
+   "sha256": "6034b4cf31b4d42779688e92fed591c9c4e5c7488c6303219d277a483b38bb4d",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/fuga-1440.a5dcd233.webp",
+   "url": "/s/img/producto/fuga-1440.6034b4cf.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 39154,
-     "sha256": "81720fba81aa6b1847ed184266a5f8cfea2c3df7c5d849cddf33c48a5ca15e04",
-     "url": "/s/img/producto/fuga-960.81720fba.webp"
+     "bytes": 37448,
+     "sha256": "78285a7ace8a6293523757e5df6312b4cc3f71e1323679d032ce7f8c5c485956",
+     "url": "/s/img/producto/fuga-960.78285a7a.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 69414,
-     "sha256": "a5dcd2339b12755e3392c73f4e9791de059610494ea2378b130dc1b17f5ea18c",
-     "url": "/s/img/producto/fuga-1440.a5dcd233.webp"
+     "bytes": 66678,
+     "sha256": "6034b4cf31b4d42779688e92fed591c9c4e5c7488c6303219d277a483b38bb4d",
+     "url": "/s/img/producto/fuga-1440.6034b4cf.webp"
     },
     {
      "alto": 1800,
      "ancho": 2880,
-     "bytes": 158576,
-     "sha256": "610d7dfe6262e1f1112055487724dbdd8a0dc843142aaa318f0ad4b92f586c42",
-     "url": "/s/img/producto/fuga-2880.610d7dfe.webp"
+     "bytes": 153936,
+     "sha256": "449f2ca87ec5c9dd48ee50eaccca56f14a609fda88a85e2badf23420e033f07b",
+     "url": "/s/img/producto/fuga-2880.449f2ca8.webp"
     }
    ]
   },
@@ -494,37 +494,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 27515,
-     "sha256": "fd2cc2214c838f1a919d91c4482a87b89338eff9578afa90e8ec7fae1935127a",
-     "url": "/s/img/producto/fuga-oscuro-960.fd2cc221.avif"
+     "bytes": 26890,
+     "sha256": "30b1fe2c94f761240215b8b7ab2b966b07bd9880e501176fcf28d8f0b82f307d",
+     "url": "/s/img/producto/fuga-oscuro-960.30b1fe2c.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 45035,
-     "sha256": "c4262b2f9f5957ad30774a29990ba5956b403fe8a44494e05cdd6c803ed98f29",
-     "url": "/s/img/producto/fuga-oscuro-1440.c4262b2f.avif"
+     "bytes": 44044,
+     "sha256": "b77ff662e5deff4f6a996601fcf14ee62115fb1938812698fcee3a4d818b748c",
+     "url": "/s/img/producto/fuga-oscuro-1440.b77ff662.avif"
     }
    ],
-   "bytes": 67872,
-   "sha256": "44a06bc5be7dacde285a1adbcf832af250beab46d08893683b26ab7a5d9bfe78",
+   "bytes": 65486,
+   "sha256": "f1078c9d7a6e77ae37b201a502e00f9cb964b41f55e25df45d7d65659c068840",
    "tema": "oscuro",
    "tipo": "captura",
-   "url": "/s/img/producto/fuga-oscuro-1440.44a06bc5.webp",
+   "url": "/s/img/producto/fuga-oscuro-1440.f1078c9d.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 38682,
-     "sha256": "3b81d887e8ed3097ac33a21d53f5a2b8b430313c3e02d644f227dcd8780e454a",
-     "url": "/s/img/producto/fuga-oscuro-960.3b81d887.webp"
+     "bytes": 36954,
+     "sha256": "c10cab4f6029e1259436132b18b360eb91d96c678efcbdf6360805b86b7c6e10",
+     "url": "/s/img/producto/fuga-oscuro-960.c10cab4f.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 67872,
-     "sha256": "44a06bc5be7dacde285a1adbcf832af250beab46d08893683b26ab7a5d9bfe78",
-     "url": "/s/img/producto/fuga-oscuro-1440.44a06bc5.webp"
+     "bytes": 65486,
+     "sha256": "f1078c9d7a6e77ae37b201a502e00f9cb964b41f55e25df45d7d65659c068840",
+     "url": "/s/img/producto/fuga-oscuro-1440.f1078c9d.webp"
     }
    ]
   },
@@ -539,37 +539,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 33246,
-     "sha256": "b673e9a2158be8857b29117ed727adadf05c5f8d4fb90a2dcdb109f503146c3d",
-     "url": "/s/img/producto/hoy-960.b673e9a2.avif"
+     "bytes": 32495,
+     "sha256": "b1a5e3bf3b6e9eb1bc1cdbeb32e1bb5476bfb89d41d97fc10d105b9a6ecfd4fd",
+     "url": "/s/img/producto/hoy-960.b1a5e3bf.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 53699,
-     "sha256": "205f21e4bd6f1f87a5ea862c87e6f1da82de9b0142db2f21931fe7309d9ad8fe",
-     "url": "/s/img/producto/hoy-1440.205f21e4.avif"
+     "bytes": 52800,
+     "sha256": "dc2a4263377f46c099add08bbc7b6796f0f4cf310c2d988a30f7bbc83e93cc69",
+     "url": "/s/img/producto/hoy-1440.dc2a4263.avif"
     }
    ],
-   "bytes": 85046,
-   "sha256": "ab76e7ae2ef9d7074df1fec5703a0034062307c58395e050012ebb6b1729ea20",
+   "bytes": 81978,
+   "sha256": "c1bd9f90acebf4182abd713f3f9d95aaf32863743e4f778e590f8e4ca08069d0",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/hoy-1440.ab76e7ae.webp",
+   "url": "/s/img/producto/hoy-1440.c1bd9f90.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 46862,
-     "sha256": "6d688fa91baba7e339ac64597cdeeffd22f4d322ed3f06838a498fc80378b28a",
-     "url": "/s/img/producto/hoy-960.6d688fa9.webp"
+     "bytes": 45106,
+     "sha256": "c728b450e7503a7983bb7574f79b914a4e49285487a02fd0ef9496b72e472c24",
+     "url": "/s/img/producto/hoy-960.c728b450.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 85046,
-     "sha256": "ab76e7ae2ef9d7074df1fec5703a0034062307c58395e050012ebb6b1729ea20",
-     "url": "/s/img/producto/hoy-1440.ab76e7ae.webp"
+     "bytes": 81978,
+     "sha256": "c1bd9f90acebf4182abd713f3f9d95aaf32863743e4f778e590f8e4ca08069d0",
+     "url": "/s/img/producto/hoy-1440.c1bd9f90.webp"
     }
    ]
   },
@@ -582,39 +582,32 @@
    "ancho": 1440,
    "avif": [
     {
-     "alto": 600,
-     "ancho": 960,
-     "bytes": 34996,
-     "sha256": "5d5801cbb9cd579c48f4ee1d0031dbed2cac2b5ac84c21a1a538c01acf587259",
-     "url": "/s/img/producto/hoy-oscuro-960.5d5801cb.avif"
-    },
-    {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 55969,
-     "sha256": "7971655827db7cece9dc29da3324027cdf4ff7485bc8ebe8eb09a66143c0df1c",
-     "url": "/s/img/producto/hoy-oscuro-1440.79716558.avif"
+     "bytes": 55001,
+     "sha256": "454e6b881053a06291e9126716ceec8a23739bf7d5667266076024744eba3e45",
+     "url": "/s/img/producto/hoy-oscuro-1440.454e6b88.avif"
     }
    ],
-   "bytes": 83670,
-   "sha256": "f8c3da9577bf571a6b326fbe6f1a530f8f550d2a2c7029b3352c4fa6064bfdf3",
+   "bytes": 81024,
+   "sha256": "9d062193cf52271fc6695a84d3a90ccd1994095873dbe12e2b23f56b169dfe39",
    "tema": "oscuro",
    "tipo": "captura",
-   "url": "/s/img/producto/hoy-oscuro-1440.f8c3da95.webp",
+   "url": "/s/img/producto/hoy-oscuro-1440.9d062193.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 46746,
-     "sha256": "ee4ae64f6b3443f4b77ca8e1fb2618bd9451b0133064f9808bc75e70d24b99e3",
-     "url": "/s/img/producto/hoy-oscuro-960.ee4ae64f.webp"
+     "bytes": 45306,
+     "sha256": "120d0d5d14fe10ded9ea0f775dc5918ec1b1fe40e9cfdead769db4642e264175",
+     "url": "/s/img/producto/hoy-oscuro-960.120d0d5d.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 83670,
-     "sha256": "f8c3da9577bf571a6b326fbe6f1a530f8f550d2a2c7029b3352c4fa6064bfdf3",
-     "url": "/s/img/producto/hoy-oscuro-1440.f8c3da95.webp"
+     "bytes": 81024,
+     "sha256": "9d062193cf52271fc6695a84d3a90ccd1994095873dbe12e2b23f56b169dfe39",
+     "url": "/s/img/producto/hoy-oscuro-1440.9d062193.webp"
     }
    ]
   },
@@ -629,23 +622,23 @@
     {
      "alto": 454,
      "ancho": 727,
-     "bytes": 10235,
-     "sha256": "5eec4258dd31a46caf98cd4384e1b3d635c8c972a4c40e8da7bdf019c6f8ce7f",
-     "url": "/s/img/producto/pantalla5-727.5eec4258.avif"
+     "bytes": 9510,
+     "sha256": "0c8e817a63c086322a3caa3295ebdbc2f6ae3accc57317e01f28bb5f56a1c41f",
+     "url": "/s/img/producto/pantalla5-727.0c8e817a.avif"
     }
    ],
-   "bytes": 17350,
-   "sha256": "06378ae394ab7e3f6706c9fb0c0e3d144b45ab5985bfafa2360e687effca6416",
+   "bytes": 15640,
+   "sha256": "63ce28266d552ebbd4000ee47b89d4636da7fe2ac94d378e1741daff5a35978a",
    "tema": "claro",
    "tipo": "recorte",
-   "url": "/s/img/producto/pantalla5-727.06378ae3.webp",
+   "url": "/s/img/producto/pantalla5-727.63ce2826.webp",
    "variantes": [
     {
      "alto": 454,
      "ancho": 727,
-     "bytes": 17350,
-     "sha256": "06378ae394ab7e3f6706c9fb0c0e3d144b45ab5985bfafa2360e687effca6416",
-     "url": "/s/img/producto/pantalla5-727.06378ae3.webp"
+     "bytes": 15640,
+     "sha256": "63ce28266d552ebbd4000ee47b89d4636da7fe2ac94d378e1741daff5a35978a",
+     "url": "/s/img/producto/pantalla5-727.63ce2826.webp"
     }
    ]
   },
@@ -660,37 +653,37 @@
     {
      "alto": 603,
      "ancho": 736,
-     "bytes": 22404,
-     "sha256": "a72eece58673ccca3e3da348b267eeea47f5834bc58410599cfb62f6676c0980",
-     "url": "/s/img/producto/pareto-736.a72eece5.avif"
+     "bytes": 22145,
+     "sha256": "b7bb68754f5ec8a8af046987139d2d3ac30726807376c1d3170dc525fbecbdcb",
+     "url": "/s/img/producto/pareto-736.b7bb6875.avif"
     },
     {
      "alto": 1206,
      "ancho": 1472,
-     "bytes": 47531,
-     "sha256": "fa5b083fe929f896c0814d1a80bd920514a59d3a55d5263c49be2ba57de2c38f",
-     "url": "/s/img/producto/pareto-1472.fa5b083f.avif"
+     "bytes": 47078,
+     "sha256": "3dc789090811670c9950efcd9c39a1a510a9240d2855a311d0d981d05f61a349",
+     "url": "/s/img/producto/pareto-1472.3dc78909.avif"
     }
    ],
-   "bytes": 76574,
-   "sha256": "e079455271dd550ab4b8615a1e223fd61357aeb16fad2855f569d00d0b00972b",
+   "bytes": 75194,
+   "sha256": "e43e25e07f09ebdf15495b821c4ec8c47f1693bd4725098cfdf6ddc9050d6565",
    "tema": "claro",
    "tipo": "recorte",
-   "url": "/s/img/producto/pareto-1472.e0794552.webp",
+   "url": "/s/img/producto/pareto-1472.e43e25e0.webp",
    "variantes": [
     {
      "alto": 603,
      "ancho": 736,
-     "bytes": 33492,
-     "sha256": "2ef7d5d49e6d341229ec5c8048deffd608ad7ac6de2b8d67f7af7dd3f3fa5426",
-     "url": "/s/img/producto/pareto-736.2ef7d5d4.webp"
+     "bytes": 32572,
+     "sha256": "77799d11aacd6cf20e5fa38cdd9258173ebea32c6cecaeee9dd7a7f38b7189e3",
+     "url": "/s/img/producto/pareto-736.77799d11.webp"
     },
     {
      "alto": 1206,
      "ancho": 1472,
-     "bytes": 76574,
-     "sha256": "e079455271dd550ab4b8615a1e223fd61357aeb16fad2855f569d00d0b00972b",
-     "url": "/s/img/producto/pareto-1472.e0794552.webp"
+     "bytes": 75194,
+     "sha256": "e43e25e07f09ebdf15495b821c4ec8c47f1693bd4725098cfdf6ddc9050d6565",
+     "url": "/s/img/producto/pareto-1472.e43e25e0.webp"
     }
    ]
   },
@@ -701,18 +694,18 @@
    },
    "alto": 602,
    "ancho": 736,
-   "bytes": 12660,
-   "sha256": "ed9891cca3f3a922504240520b736905a775e8ee6cee399d482f52efe856658b",
+   "bytes": 12680,
+   "sha256": "9757590d8e09c2e38520debc9068085980c2edb0177240b842c5c2309c29c11e",
    "tema": "claro",
    "tipo": "recorte",
-   "url": "/s/img/producto/pareto.ed9891cc.svg",
+   "url": "/s/img/producto/pareto.9757590d.svg",
    "variantes": [
     {
      "alto": 602,
      "ancho": 736,
-     "bytes": 12660,
-     "sha256": "ed9891cca3f3a922504240520b736905a775e8ee6cee399d482f52efe856658b",
-     "url": "/s/img/producto/pareto.ed9891cc.svg"
+     "bytes": 12680,
+     "sha256": "9757590d8e09c2e38520debc9068085980c2edb0177240b842c5c2309c29c11e",
+     "url": "/s/img/producto/pareto.9757590d.svg"
     }
    ]
   },
@@ -727,23 +720,23 @@
     {
      "alto": 648,
      "ancho": 814,
-     "bytes": 10288,
-     "sha256": "e51069ca6a2cf4161f7947303857d642cdec9c3329acd7951f1deed09b5654d4",
-     "url": "/s/img/producto/paso1-814.e51069ca.avif"
+     "bytes": 9904,
+     "sha256": "b2f1d76385e9bd8fc65a7f5d90d61318de741d1cc96268de334cdbef4686877a",
+     "url": "/s/img/producto/paso1-814.b2f1d763.avif"
     }
    ],
-   "bytes": 16440,
-   "sha256": "ff93c2c941b2f5dd8c4f580c021584bef79f71534719a8ffa2038c19d246149c",
+   "bytes": 14816,
+   "sha256": "406fb371e4126198f313137d28b46fe3aed5cf4b5494f531d9198d0f1d18f6bc",
    "tema": "oscuro",
    "tipo": "recorte",
-   "url": "/s/img/producto/paso1-814.ff93c2c9.webp",
+   "url": "/s/img/producto/paso1-814.406fb371.webp",
    "variantes": [
     {
      "alto": 648,
      "ancho": 814,
-     "bytes": 16440,
-     "sha256": "ff93c2c941b2f5dd8c4f580c021584bef79f71534719a8ffa2038c19d246149c",
-     "url": "/s/img/producto/paso1-814.ff93c2c9.webp"
+     "bytes": 14816,
+     "sha256": "406fb371e4126198f313137d28b46fe3aed5cf4b5494f531d9198d0f1d18f6bc",
+     "url": "/s/img/producto/paso1-814.406fb371.webp"
     }
    ]
   },
@@ -758,23 +751,23 @@
     {
      "alto": 446,
      "ancho": 1469,
-     "bytes": 11508,
-     "sha256": "2be63922b8283359ed08ae5d9108f370e121b02320e86c134c1743d0e1f898a3",
-     "url": "/s/img/producto/paso2-1469.2be63922.avif"
+     "bytes": 11396,
+     "sha256": "b54bd2f83a7e927171a883ca9b8306f05408391dfd8875801f94e5c1bae24829",
+     "url": "/s/img/producto/paso2-1469.b54bd2f8.avif"
     }
    ],
-   "bytes": 20394,
-   "sha256": "75c4a171735f5a33b47e3493d06c2563a3ed7d09ae8e8ca829845cdd03cf0432",
+   "bytes": 19564,
+   "sha256": "74dce0c75b46cf69826e2ec7f09897e13ff7bd235dba9c56717eedebacf29786",
    "tema": "oscuro",
    "tipo": "recorte",
-   "url": "/s/img/producto/paso2-1469.75c4a171.webp",
+   "url": "/s/img/producto/paso2-1469.74dce0c7.webp",
    "variantes": [
     {
      "alto": 446,
      "ancho": 1469,
-     "bytes": 20394,
-     "sha256": "75c4a171735f5a33b47e3493d06c2563a3ed7d09ae8e8ca829845cdd03cf0432",
-     "url": "/s/img/producto/paso2-1469.75c4a171.webp"
+     "bytes": 19564,
+     "sha256": "74dce0c75b46cf69826e2ec7f09897e13ff7bd235dba9c56717eedebacf29786",
+     "url": "/s/img/producto/paso2-1469.74dce0c7.webp"
     }
    ]
   },
@@ -789,23 +782,23 @@
     {
      "alto": 324,
      "ancho": 1670,
-     "bytes": 20178,
-     "sha256": "232b85bfd75605e3f77c4272c33b54af88f2f5ca48dc8c37f1aa08ded54f6ff1",
-     "url": "/s/img/producto/paso3-1670.232b85bf.avif"
+     "bytes": 19628,
+     "sha256": "d14c27744aada2b524b3b8ede04eab149fe70d7965faac143cdb4a66708d1019",
+     "url": "/s/img/producto/paso3-1670.d14c2774.avif"
     }
    ],
-   "bytes": 31734,
-   "sha256": "c0e3b738998bb247a07c6f87b4dda42c572c4d3724c5ad23cd33059f6dadf4c3",
+   "bytes": 30326,
+   "sha256": "8f08276951c5d36b030ade5e202ea952fd281639cc656439654e1db3f492dab7",
    "tema": "oscuro",
    "tipo": "recorte",
-   "url": "/s/img/producto/paso3-1670.c0e3b738.webp",
+   "url": "/s/img/producto/paso3-1670.8f082769.webp",
    "variantes": [
     {
      "alto": 324,
      "ancho": 1670,
-     "bytes": 31734,
-     "sha256": "c0e3b738998bb247a07c6f87b4dda42c572c4d3724c5ad23cd33059f6dadf4c3",
-     "url": "/s/img/producto/paso3-1670.c0e3b738.webp"
+     "bytes": 30326,
+     "sha256": "8f08276951c5d36b030ade5e202ea952fd281639cc656439654e1db3f492dab7",
+     "url": "/s/img/producto/paso3-1670.8f082769.webp"
     }
    ]
   },
@@ -820,23 +813,23 @@
     {
      "alto": 454,
      "ancho": 727,
-     "bytes": 9947,
-     "sha256": "1150291665c8435c4f2eda3ec9216d34a4bb47cc2db55fba0577226640f172a8",
-     "url": "/s/img/producto/paso4-727.11502916.avif"
+     "bytes": 9477,
+     "sha256": "e693405f8ed58d81dd1d88057c1c3015ce41f2bc9e0b1954bb7ebada1d9799ef",
+     "url": "/s/img/producto/paso4-727.e693405f.avif"
     }
    ],
-   "bytes": 16354,
-   "sha256": "844f72ef3538722b1c7a8e579f7abc730a7a0834a77179d70e857fc27bbbc8cf",
+   "bytes": 15062,
+   "sha256": "b4a28fdb93115c67f0ce0ca835d6a571844ea6f77c857aa55004c0147d6579bb",
    "tema": "oscuro",
    "tipo": "recorte",
-   "url": "/s/img/producto/paso4-727.844f72ef.webp",
+   "url": "/s/img/producto/paso4-727.b4a28fdb.webp",
    "variantes": [
     {
      "alto": 454,
      "ancho": 727,
-     "bytes": 16354,
-     "sha256": "844f72ef3538722b1c7a8e579f7abc730a7a0834a77179d70e857fc27bbbc8cf",
-     "url": "/s/img/producto/paso4-727.844f72ef.webp"
+     "bytes": 15062,
+     "sha256": "b4a28fdb93115c67f0ce0ca835d6a571844ea6f77c857aa55004c0147d6579bb",
+     "url": "/s/img/producto/paso4-727.b4a28fdb.webp"
     }
    ]
   },
@@ -851,37 +844,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 25809,
-     "sha256": "685b1a247fe0c8ce6dcf2134a6cdf757a3fb4c3d8ba5c535659b60d2b4aaa3f9",
-     "url": "/s/img/producto/preguntale-960.685b1a24.avif"
+     "bytes": 25581,
+     "sha256": "52b8f28af8ebe862a48ca9e7aa95f9aa48baad1e4b8956726cbafe0ad945d1bc",
+     "url": "/s/img/producto/preguntale-960.52b8f28a.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 37420,
-     "sha256": "05983f22a23231027518f3ebe4b7ec294215033e023028a257ca99cb841662aa",
-     "url": "/s/img/producto/preguntale-1440.05983f22.avif"
+     "bytes": 37307,
+     "sha256": "500fad11a487a5fb7a35a7d783c1cc17a723c5ea0435c34a5d7c69011c598520",
+     "url": "/s/img/producto/preguntale-1440.500fad11.avif"
     }
    ],
-   "bytes": 64826,
-   "sha256": "5eb1d2290f3d228ebf7d7b6471219cf1a45c7552a7d5b89ba288482fd74a20b2",
+   "bytes": 64442,
+   "sha256": "a05c285f1dfa51e1d52d897bc8b443b52804b70b0cf3dcd5f6ed4271b19c565d",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/preguntale-1440.5eb1d229.webp",
+   "url": "/s/img/producto/preguntale-1440.a05c285f.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 37604,
-     "sha256": "ff3e5fe82ba3c12d64ef461deae57feb2ab14bb9e0bb388aedc9fff9bba54558",
-     "url": "/s/img/producto/preguntale-960.ff3e5fe8.webp"
+     "bytes": 37260,
+     "sha256": "03d732bf7ea56a91ed389362aac7918c6b23af44e15e09e41d4d917ea6339947",
+     "url": "/s/img/producto/preguntale-960.03d732bf.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 64826,
-     "sha256": "5eb1d2290f3d228ebf7d7b6471219cf1a45c7552a7d5b89ba288482fd74a20b2",
-     "url": "/s/img/producto/preguntale-1440.5eb1d229.webp"
+     "bytes": 64442,
+     "sha256": "a05c285f1dfa51e1d52d897bc8b443b52804b70b0cf3dcd5f6ed4271b19c565d",
+     "url": "/s/img/producto/preguntale-1440.a05c285f.webp"
     }
    ]
   },
@@ -896,37 +889,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 26084,
-     "sha256": "a88c17ce6e7e09668282dd65cff4c26f0a8a1e32a8ec0da9cbdffce3355fdd01",
-     "url": "/s/img/producto/preguntale-oscuro-960.a88c17ce.avif"
+     "bytes": 25879,
+     "sha256": "7da76e05131e2e85bfad3199119c224657927292e442487e4ba85b2ed6c66e43",
+     "url": "/s/img/producto/preguntale-oscuro-960.7da76e05.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 38824,
-     "sha256": "7cd55da03eb62fff81efc9ef8e10867d82d1aaebcfc0b169adf6602e8b12af2b",
-     "url": "/s/img/producto/preguntale-oscuro-1440.7cd55da0.avif"
+     "bytes": 38640,
+     "sha256": "15ee2ec6499ada45e8f23ec11e4dac7444f9850456b4a1c22797f4aab42ef1fb",
+     "url": "/s/img/producto/preguntale-oscuro-1440.15ee2ec6.avif"
     }
    ],
-   "bytes": 64186,
-   "sha256": "8775e08046e950b35969192b041bde6b90dcbabf8945ca08c6e6baacdb622a3d",
+   "bytes": 64090,
+   "sha256": "32a1af6b2cccc6300579f2a84895af128e45678357a00e9d70f54bb87e65c149",
    "tema": "oscuro",
    "tipo": "captura",
-   "url": "/s/img/producto/preguntale-oscuro-1440.8775e080.webp",
+   "url": "/s/img/producto/preguntale-oscuro-1440.32a1af6b.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 38024,
-     "sha256": "e5f0030a482c17e89be605ec280bf785a999a9deb9b2029152eabfc75e792c7f",
-     "url": "/s/img/producto/preguntale-oscuro-960.e5f0030a.webp"
+     "bytes": 37678,
+     "sha256": "31797c893a5d0e9e2464eb785007ff94a9c979a07c794c4bca96e06f1946b9c5",
+     "url": "/s/img/producto/preguntale-oscuro-960.31797c89.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 64186,
-     "sha256": "8775e08046e950b35969192b041bde6b90dcbabf8945ca08c6e6baacdb622a3d",
-     "url": "/s/img/producto/preguntale-oscuro-1440.8775e080.webp"
+     "bytes": 64090,
+     "sha256": "32a1af6b2cccc6300579f2a84895af128e45678357a00e9d70f54bb87e65c149",
+     "url": "/s/img/producto/preguntale-oscuro-1440.32a1af6b.webp"
     }
    ]
   },
@@ -941,37 +934,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 28047,
-     "sha256": "cbd22d17c780849c2ce904c2790ee07e45ac509fb028d1efd457b1be785b8577",
-     "url": "/s/img/producto/problemas-960.cbd22d17.avif"
+     "bytes": 27593,
+     "sha256": "4d84bb0261545600c49a0d94c963b7ff8ee9d9e0160066f088b9c222d5efb842",
+     "url": "/s/img/producto/problemas-960.4d84bb02.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 44836,
-     "sha256": "49c9247713184041f77880a9db9b50e57830019e8deedd2797edeeb86f03e6e6",
-     "url": "/s/img/producto/problemas-1440.49c92477.avif"
+     "bytes": 44294,
+     "sha256": "edb0b29606691541630424e754239b3f71a4114d5735fd932ddaf192984c9971",
+     "url": "/s/img/producto/problemas-1440.edb0b296.avif"
     }
    ],
-   "bytes": 70724,
-   "sha256": "a4a1b8550a2ff11496a804bcf370ab9d11504297351eaca9258342556c32f14e",
+   "bytes": 68886,
+   "sha256": "16d3bb2c3c36361777a3e2504dee7f424661f3543855efb3b75224d10f8e6995",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/problemas-1440.a4a1b855.webp",
+   "url": "/s/img/producto/problemas-1440.16d3bb2c.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 40300,
-     "sha256": "1e0c05608817c3efba6daabc83d1da25e85a7f1bf5127b340e39177eefd08ce3",
-     "url": "/s/img/producto/problemas-960.1e0c0560.webp"
+     "bytes": 39038,
+     "sha256": "aab0b5f60853b55fba66346531255a9892e44e8a21236d652d73dcaf0bdefada",
+     "url": "/s/img/producto/problemas-960.aab0b5f6.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 70724,
-     "sha256": "a4a1b8550a2ff11496a804bcf370ab9d11504297351eaca9258342556c32f14e",
-     "url": "/s/img/producto/problemas-1440.a4a1b855.webp"
+     "bytes": 68886,
+     "sha256": "16d3bb2c3c36361777a3e2504dee7f424661f3543855efb3b75224d10f8e6995",
+     "url": "/s/img/producto/problemas-1440.16d3bb2c.webp"
     }
    ]
   },
@@ -984,39 +977,32 @@
    "ancho": 1440,
    "avif": [
     {
-     "alto": 600,
-     "ancho": 960,
-     "bytes": 29603,
-     "sha256": "12f3dd91952051fd42823cb8eb23fc076788cd539c783c1c7efae6a2857e1811",
-     "url": "/s/img/producto/problemas-oscuro-960.12f3dd91.avif"
-    },
-    {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 46772,
-     "sha256": "5b285a251a89f4a57ab547bf7a3e652bdb926f3957898346ad4e95f0d47f9838",
-     "url": "/s/img/producto/problemas-oscuro-1440.5b285a25.avif"
+     "bytes": 46088,
+     "sha256": "8ab34e231eef8ce3871a2185aeea03a03ad6329b24103a728b41b9be31efa116",
+     "url": "/s/img/producto/problemas-oscuro-1440.8ab34e23.avif"
     }
    ],
-   "bytes": 69766,
-   "sha256": "bb85284efde940d6e8b89e5f4ff669a3b381ca978fb00d7fb7ee5882593b5611",
+   "bytes": 67766,
+   "sha256": "446befb682f97e9bf56933c4f5aa28c7be4af8d139d5108e45494716f4a7fd00",
    "tema": "oscuro",
    "tipo": "captura",
-   "url": "/s/img/producto/problemas-oscuro-1440.bb85284e.webp",
+   "url": "/s/img/producto/problemas-oscuro-1440.446befb6.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 39898,
-     "sha256": "fdec431d5654046be23228993ab1b55696e79945dc3ef65f135c53714744f5ab",
-     "url": "/s/img/producto/problemas-oscuro-960.fdec431d.webp"
+     "bytes": 38852,
+     "sha256": "bf6579a4533371e769d87c85b897a7ac5f99d24e3486cd7a0b6a171b664f3dcd",
+     "url": "/s/img/producto/problemas-oscuro-960.bf6579a4.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 69766,
-     "sha256": "bb85284efde940d6e8b89e5f4ff669a3b381ca978fb00d7fb7ee5882593b5611",
-     "url": "/s/img/producto/problemas-oscuro-1440.bb85284e.webp"
+     "bytes": 67766,
+     "sha256": "446befb682f97e9bf56933c4f5aa28c7be4af8d139d5108e45494716f4a7fd00",
+     "url": "/s/img/producto/problemas-oscuro-1440.446befb6.webp"
     }
    ]
   },
@@ -1031,37 +1017,37 @@
     {
      "alto": 125,
      "ancho": 1110,
-     "bytes": 7099,
-     "sha256": "a01c120995a7f860b81c6f578490f82c8446982cbf8bb8194ddf36b1d6eb4548",
-     "url": "/s/img/producto/tarjetas-fuga-1110.a01c1209.avif"
+     "bytes": 6774,
+     "sha256": "1290fb8aa880d2d273be9b48f8ae29127070e3336f654eddf917fb276652a1b3",
+     "url": "/s/img/producto/tarjetas-fuga-1110.1290fb8a.avif"
     },
     {
      "alto": 250,
      "ancho": 2220,
-     "bytes": 14484,
-     "sha256": "c93588384abc35aaefd2b08111f8ef8d9d7f76a691ade4b08c03816aea66e6b4",
-     "url": "/s/img/producto/tarjetas-fuga-2220.c9358838.avif"
+     "bytes": 13950,
+     "sha256": "eddb89eddd090431bbb9fbe25b4957fb87286b3a6c819ae1a9494d7d87c7cfd3",
+     "url": "/s/img/producto/tarjetas-fuga-2220.eddb89ed.avif"
     }
    ],
-   "bytes": 22884,
-   "sha256": "b5d1f7c836000db78c21216b38678cb1cc8813f1fa26909a68e8e55bd0fa7a30",
+   "bytes": 21478,
+   "sha256": "eb7a1b900e0a4c481acc982f6407ed663b48de4314b97ebfb58d773e61908af4",
    "tema": "claro",
    "tipo": "recorte",
-   "url": "/s/img/producto/tarjetas-fuga-2220.b5d1f7c8.webp",
+   "url": "/s/img/producto/tarjetas-fuga-2220.eb7a1b90.webp",
    "variantes": [
     {
      "alto": 125,
      "ancho": 1110,
-     "bytes": 10396,
-     "sha256": "8650362c7da6ffb0c13771bffdc8d80438aaa43dc2634a7d8af44b0002d43caa",
-     "url": "/s/img/producto/tarjetas-fuga-1110.8650362c.webp"
+     "bytes": 9482,
+     "sha256": "a8c98b090b5c755b3bf40a2796a50a444b2e23a6ae8ba41370d10491bd1e9a9c",
+     "url": "/s/img/producto/tarjetas-fuga-1110.a8c98b09.webp"
     },
     {
      "alto": 250,
      "ancho": 2220,
-     "bytes": 22884,
-     "sha256": "b5d1f7c836000db78c21216b38678cb1cc8813f1fa26909a68e8e55bd0fa7a30",
-     "url": "/s/img/producto/tarjetas-fuga-2220.b5d1f7c8.webp"
+     "bytes": 21478,
+     "sha256": "eb7a1b900e0a4c481acc982f6407ed663b48de4314b97ebfb58d773e61908af4",
+     "url": "/s/img/producto/tarjetas-fuga-2220.eb7a1b90.webp"
     }
    ]
   },
@@ -1076,37 +1062,37 @@
     {
      "alto": 162,
      "ancho": 1110,
-     "bytes": 13894,
-     "sha256": "3d08a8274cc3321b304c3c87ababb5bac26b074a9448cf2c1b3703f6c8d7b370",
-     "url": "/s/img/producto/tarjetas-hoy-1110.3d08a827.avif"
+     "bytes": 13540,
+     "sha256": "dfb0678275f4cb980758c1ac1210c0bc377e0dd84fef44781d18bf51d1425e49",
+     "url": "/s/img/producto/tarjetas-hoy-1110.dfb06782.avif"
     },
     {
      "alto": 324,
      "ancho": 2220,
-     "bytes": 30399,
-     "sha256": "d761fb6bfacb244a20618c963af56e6dea4f1166373456c3491e57843ca68563",
-     "url": "/s/img/producto/tarjetas-hoy-2220.d761fb6b.avif"
+     "bytes": 29812,
+     "sha256": "62e3f9892e0dd21758761a0a9c6b858debf9f9fc523f40d1acd1ae56122851d0",
+     "url": "/s/img/producto/tarjetas-hoy-2220.62e3f989.avif"
     }
    ],
-   "bytes": 47298,
-   "sha256": "7ef2ada51e317f6fd23b18574c226909da87632fb226b97533dc7fecb95bd44a",
+   "bytes": 45130,
+   "sha256": "efbc2b543db6c40608a7ccf75e3d53c66d6697755a074d9cff98298e46f306dd",
    "tema": "claro",
    "tipo": "recorte",
-   "url": "/s/img/producto/tarjetas-hoy-2220.7ef2ada5.webp",
+   "url": "/s/img/producto/tarjetas-hoy-2220.efbc2b54.webp",
    "variantes": [
     {
      "alto": 162,
      "ancho": 1110,
-     "bytes": 20806,
-     "sha256": "46f8414e83a5ebb6be1beabe3d2f322e3f0e64482fadbc878ecade5228d498c1",
-     "url": "/s/img/producto/tarjetas-hoy-1110.46f8414e.webp"
+     "bytes": 19802,
+     "sha256": "cdb7ea27d1e24ee96028c8981a4d3f59218de133a4265499f46c602edeaae7f2",
+     "url": "/s/img/producto/tarjetas-hoy-1110.cdb7ea27.webp"
     },
     {
      "alto": 324,
      "ancho": 2220,
-     "bytes": 47298,
-     "sha256": "7ef2ada51e317f6fd23b18574c226909da87632fb226b97533dc7fecb95bd44a",
-     "url": "/s/img/producto/tarjetas-hoy-2220.7ef2ada5.webp"
+     "bytes": 45130,
+     "sha256": "efbc2b543db6c40608a7ccf75e3d53c66d6697755a074d9cff98298e46f306dd",
+     "url": "/s/img/producto/tarjetas-hoy-2220.efbc2b54.webp"
     }
    ]
   },
@@ -1117,27 +1103,19 @@
    },
    "alto": 236,
    "ancho": 1560,
-   "avif": [
-    {
-     "alto": 236,
-     "ancho": 1560,
-     "bytes": 20224,
-     "sha256": "db2a0767568938a352e73c1d921768e9497ea4a0de5570dbc1ac4a2d55442405",
-     "url": "/s/img/producto/valor-1560.db2a0767.avif"
-    }
-   ],
-   "bytes": 27228,
-   "sha256": "0854b2d52e245cfcdcb9a0e8b8ce698da7cda8f49bd905e9b4a8eb5879202dc7",
+   "avif": [],
+   "bytes": 26000,
+   "sha256": "4cd0905bdddc06575b68c81323bf1fa3d3b39eb541270227ff4c45ddcf398fc8",
    "tema": "oscuro",
    "tipo": "recorte",
-   "url": "/s/img/producto/valor-1560.0854b2d5.webp",
+   "url": "/s/img/producto/valor-1560.4cd0905b.webp",
    "variantes": [
     {
      "alto": 236,
      "ancho": 1560,
-     "bytes": 27228,
-     "sha256": "0854b2d52e245cfcdcb9a0e8b8ce698da7cda8f49bd905e9b4a8eb5879202dc7",
-     "url": "/s/img/producto/valor-1560.0854b2d5.webp"
+     "bytes": 26000,
+     "sha256": "4cd0905bdddc06575b68c81323bf1fa3d3b39eb541270227ff4c45ddcf398fc8",
+     "url": "/s/img/producto/valor-1560.4cd0905b.webp"
     }
    ]
   }

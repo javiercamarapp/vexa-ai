@@ -56,11 +56,12 @@ for (const [id, p] of Object.entries(PASOS)) {
   const {width, height} = await sharp(wbuf).metadata();
   const nom = (b, ext) => `${id}-${width}.${sha(b).slice(0, 8)}.${ext}`;
   writeFileSync(join(DIR, nom(wbuf, 'webp')), wbuf);
-  writeFileSync(join(DIR, nom(abuf, 'avif')), abuf);
+  const conAvif = abuf.length <= wbuf.length * 0.75; // misma regla que imagenes-producto.mjs: AVIF solo si ahorra 25 % o más
+  if (conAvif) writeFileSync(join(DIR, nom(abuf, 'avif')), abuf);
   const v = {alto: height, ancho: width, bytes: wbuf.length, sha256: sha(wbuf), url: `/s/img/producto/${nom(wbuf, 'webp')}`};
   manifest.img[`producto/${id}`] = {
     alt: {es: `${p.es} ${DATOS.es}`, en: `${p.en} ${DATOS.en}`}, alto: height, ancho: width,
-    avif: [{alto: height, ancho: width, bytes: abuf.length, sha256: sha(abuf), url: `/s/img/producto/${nom(abuf, 'avif')}`}],
+    avif: conAvif ? [{alto: height, ancho: width, bytes: abuf.length, sha256: sha(abuf), url: `/s/img/producto/${nom(abuf, 'avif')}`}] : [],
     bytes: wbuf.length, sha256: v.sha256, tema: p.tema ?? 'oscuro', tipo: 'recorte', url: v.url, variantes: [v],
   };
   console.log(id, width, height, 'webp', wbuf.length, 'avif', abuf.length);

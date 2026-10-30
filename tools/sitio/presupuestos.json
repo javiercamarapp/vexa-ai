@@ -5,76 +5,77 @@
   "crecimientoMaxPct": 5,
   "recalibraciones": [
     "29-oct (T14a): jsPropio de 17 a 20 KB en inicial3d y recorrido. Medido: nube.js 8.4 KB + sitio.js 2.4 + inicio.js 3.8 + Lenis 3.4 = 18 KB con brotli; la tabla decía 17. El total del recorrido pasa de 693 a 696 KB (objetivo 700, techo 850) y el de inicial3d de 387 a 390 KB (objetivo 390), así que el peso total no cambia de banda.",
-    "29-oct (T15): sin nube.js, pts ni Lenis. jsPropio de 20 a 12 KB (sitio.js 2.3 + inicio.js 2.7 = 5 KB medidos; objetivo 11.6, techo 14), datos3d a 0 y imagenes del recorrido a 340 KB (héroe, cuatro recortes de paso y seis pantallas reales en AVIF). La banda de peso total del recorrido no cambia (objetivo 700, techo 850). Objetivos recalculados como suma de columnas; techo del recorrido 700 KB (pedido del dueño) y +60 KB en los demás."
+    "29-oct (T15): sin nube.js, pts ni Lenis. jsPropio de 20 a 12 KB (sitio.js 2.3 + inicio.js 2.7 = 5 KB medidos; objetivo 11.6, techo 14), datos3d a 0 y imagenes del recorrido a 340 KB (héroe, cuatro recortes de paso y seis pantallas reales en AVIF). La banda de peso total del recorrido no cambia (objetivo 700, techo 850). Objetivos recalculados como suma de columnas; techo del recorrido 700 KB (pedido del dueño) y +60 KB en los demás.",
+    "29-oct (T15, medido con presupuesto.mjs --url sobre next start): el piso de JavaScript de Next 16.3.8 con React 19.3 (hidratación y rutas) pesa 312 KB con brotli, no los 125 KB de la tabla original; imagenes del recorrido 270 KB (héroe, cuatro recortes, valor, seis pantallas). jsNext pasa a 312 en todos los escenarios y las demás columnas se ajustan a lo medido. El techo del recorrido se mantiene en 700 KB (pedido del dueño) y el objetivo queda en 694 KB."
   ],
   "escenarios": {
     "critico": {
       "descripcion": "Crítico: sin scroll (movimiento reducido y Save-Data)",
-      "objetivoKB": 328,
-      "techoKB": 388,
+      "objetivoKB": 484,
+      "techoKB": 544,
       "columnasKB": {
-        "html": 28,
-        "css": 22,
-        "jsNext": 125,
-        "jsPropio": 8,
-        "fuentes": 85,
-        "imagenes": 60,
+        "html": 32,
+        "css": 18,
+        "jsNext": 312,
+        "jsPropio": 12,
+        "fuentes": 70,
+        "imagenes": 40,
         "datos3d": 0
       }
     },
     "inicial3d": {
       "descripcion": "Inicial con la ventana de producto del héroe tras reposo, sin scroll",
-      "objetivoKB": 332,
-      "techoKB": 392,
+      "objetivoKB": 484,
+      "techoKB": 544,
       "columnasKB": {
-        "html": 28,
-        "css": 22,
-        "jsNext": 125,
+        "html": 32,
+        "css": 18,
+        "jsNext": 312,
         "jsPropio": 12,
-        "fuentes": 85,
-        "imagenes": 60,
+        "fuentes": 70,
+        "imagenes": 40,
         "datos3d": 0
       }
     },
     "recorrido": {
       "descripcion": "Recorrido completo con los 4 pasos (scroll hasta el pie)",
-      "objetivoKB": 618,
+      "objetivoKB": 694,
       "techoKB": 700,
       "columnasKB": {
-        "html": 30,
-        "css": 26,
-        "jsNext": 125,
+        "html": 32,
+        "css": 18,
+        "jsNext": 312,
         "jsPropio": 12,
-        "fuentes": 85,
-        "imagenes": 340,
+        "fuentes": 70,
+        "imagenes": 250,
         "datos3d": 0
       }
     },
     "sinWebglCritico": {
       "descripcion": "Sin animación, sin scroll",
-      "objetivoKB": 328,
-      "techoKB": 388,
+      "objetivoKB": 484,
+      "techoKB": 544,
       "columnasKB": {
-        "html": 28,
-        "css": 22,
-        "jsNext": 125,
-        "jsPropio": 8,
-        "fuentes": 85,
-        "imagenes": 60,
+        "html": 32,
+        "css": 18,
+        "jsNext": 312,
+        "jsPropio": 12,
+        "fuentes": 70,
+        "imagenes": 40,
         "datos3d": 0
       }
     },
     "sinWebglRecorrido": {
       "descripcion": "Sin animación, recorrido completo con renders apilados",
-      "objetivoKB": 474,
-      "techoKB": 534,
+      "objetivoKB": 694,
+      "techoKB": 700,
       "columnasKB": {
-        "html": 30,
-        "css": 26,
-        "jsNext": 125,
-        "jsPropio": 8,
-        "fuentes": 85,
-        "imagenes": 200,
+        "html": 32,
+        "css": 18,
+        "jsNext": 312,
+        "jsPropio": 12,
+        "fuentes": 70,
+        "imagenes": 250,
         "datos3d": 0
       }
     }

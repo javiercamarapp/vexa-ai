@@ -46,8 +46,8 @@ const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
 mkdirSync(DIR, {recursive: true});
 for (const [id, p] of Object.entries(PASOS)) {
   const base = sharp(join(entrada, p.origen)).extract({left: Math.round(p.x * K), top: Math.round(p.y * K), width: Math.round(p.w * K), height: Math.round(p.h * K)});
-  const wbuf = await base.clone().webp({quality: 82, effort: 6}).toBuffer();
-  const abuf = await base.clone().avif({quality: 55, effort: 4}).toBuffer();
+  const wbuf = await base.clone().webp({quality: 76, effort: 6}).toBuffer();
+  const abuf = await base.clone().avif({quality: 45, effort: 5}).toBuffer();
   const {width, height} = await sharp(wbuf).metadata();
   const nom = (b, ext) => `${id}-${width}.${sha(b).slice(0, 8)}.${ext}`;
   writeFileSync(join(DIR, nom(wbuf, 'webp')), wbuf);

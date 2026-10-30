@@ -14,8 +14,8 @@ const P = cargarPresupuestos();
 const KB = 1024;
 
 test('presupuestos.json trae la tabla de la sección 8', () => {
-  // Recalibrada el 29-oct (T15): sin nube, pts ni Lenis; el recorrido pasa de objetivo 700 y techo 850 a objetivo 618 y techo 700.
-  const esperado = { critico: [328, 388], inicial3d: [332, 392], recorrido: [618, 700], sinWebglCritico: [328, 388], sinWebglRecorrido: [474, 534] };
+  // Recalibrada el 29-oct (T15): sin nube, pts ni Lenis y con el piso de Next medido (312 KB); el recorrido pasa de objetivo 700 y techo 850 a objetivo 694 y techo 700.
+  const esperado = { critico: [484, 544], inicial3d: [484, 544], recorrido: [694, 700], sinWebglCritico: [484, 544], sinWebglRecorrido: [694, 700] };
   for (const [n, [obj, techo]] of Object.entries(esperado)) {
     assert.equal(P.escenarios[n].objetivoKB, obj, n);
     assert.equal(P.escenarios[n].techoKB, techo, n);
@@ -57,10 +57,10 @@ test('techo: falla por encima del techo, avisa entre objetivo y techo, pasa por 
   const pres = P.escenarios.critico;
   const med = (kb) => ({ total: kb * KB });
   assert.equal(evaluarEscenario(med(300), pres).fallas.length, 0);
-  const aviso = evaluarEscenario(med(350), pres);
+  const aviso = evaluarEscenario(med(500), pres);
   assert.equal(aviso.fallas.length, 0);
   assert.equal(aviso.avisos.length, 1);
-  assert.equal(evaluarEscenario(med(389), pres).fallas.length, 1);
+  assert.equal(evaluarEscenario(med(545), pres).fallas.length, 1);
 });
 
 test('crecimiento: más de 5 % contra la línea base falla, 5 % exacto pasa', () => {

@@ -2,7 +2,7 @@
 // Revisa orden, temas, encabezados, escáneres de T12, hojas no publicables, afirmaciones prohibidas (prohibidas.json de T11) sobre el
 // HTML renderizado, rojo, enlaces contra el registro K2, accesibilidad del acordeón y el contrato de marcado de T6.
 // El render corre en un proceso hijo con tsx (los componentes son TSX) y un cargador que trata los .css como vacíos.
-import { test, describe, before } from 'node:test';
+import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';

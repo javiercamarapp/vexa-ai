@@ -13,6 +13,7 @@ import '../../../../styles/sitio/movimiento.css';
 import '../../../../styles/sitio/integracion.css';
 import '../../../../components/sitio/shell/paginas.css';
 import '../../../../styles/sitio/pulido.css';
+import {UI} from '../../../../components/sitio/mocks/datos';
 import {esLang, IDIOMAS_VALIDOS} from '../../../../components/sitio/shell/datos';
 import {fijarIdioma} from '../../../../components/sitio/shell/idioma-actual';
 import {existe, precargas, url} from '../../../../lib/sitio/activos';
@@ -37,6 +38,7 @@ export default async function RaizSitio({children, params}: {children: ReactNode
   if (sitio) preloadModule(sitio, {as: 'script'});
   const datos: Record<string, string> = {};
   if (existe('inicio.js')) datos['data-inicio'] = url('inicio.js');
+  datos['data-notas'] = JSON.stringify(UI(lang).hilo);
   return (
     <html lang={lang}>
       {/* El módulo va en <head> con blocking="render": en visitas repetidas fija data-intro-visto antes del primer pintado y el cargador no parpadea (Chromium; en los demás motores se ignora y todo sigue igual). Es deferido, así que no bloquea el análisis del HTML. */}

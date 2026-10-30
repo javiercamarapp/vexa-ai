@@ -1122,13 +1122,13 @@
  },
  "js": {
   "inicio.js": {
-   "brotli": 1416,
-   "bytes": 3193,
-   "fuenteBytes": 6020,
-   "hash": "0d91c339",
+   "brotli": 4182,
+   "bytes": 9539,
+   "fuenteBytes": 18647,
+   "hash": "0ba5cbbb",
    "modulo": true,
-   "sha256": "0d91c339173b1a8a8e6c9ae5a7ca82a38815e2e56575d4767b6ee9df4a878406",
-   "url": "/s/inicio.0d91c339.js"
+   "sha256": "0ba5cbbb3d32843b8ded548693afc3dca88b888da94fe5e22cd53c00a9edbad4",
+   "url": "/s/inicio.0ba5cbbb.js"
   },
   "sitio.js": {
    "brotli": 2509,

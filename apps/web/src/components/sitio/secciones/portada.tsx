@@ -13,6 +13,9 @@ import {Pantallas, Pasos} from './pasos-pantallas';
 import {Puestos} from './puestos';
 import {Cierre, Integraciones, Seguridad} from './seguridad-cierre';
 
+/** Banda de cruce: hueco deliberado entre secciones por donde el hilo hace su S grande de un lado al otro. Sin contenido; inicio.js la mide. */
+const Banda = ({n}: {n: number}) => <div className="s-banda" data-banda={n} aria-hidden="true" />;
+
 export function Portada({lang}: {lang: Lang}) {
   const t = textosPortada(lang);
   return (
@@ -22,12 +25,19 @@ export function Portada({lang}: {lang: Lang}) {
         {/* Contenedor del hilo: vacío; T10 (genera-hilo) inserta aquí el svg. */}
         <div data-hilo="" aria-hidden="true" />
         <Problema lang={lang} t={t} />
+        <Banda n={1} />
         <Valor lang={lang} t={t} />
+        <Banda n={2} />
         <Pasos lang={lang} t={t} />
+        <Banda n={3} />
         <Pantallas lang={lang} t={t} />
+        <Banda n={4} />
         <Puestos t={t} />
+        <Banda n={5} />
         <Seguridad lang={lang} t={t} />
+        <Banda n={6} />
         <Integraciones lang={lang} t={t} />
+        <Banda n={7} />
         <Cierre lang={lang} t={t} />
       </div>
     </>

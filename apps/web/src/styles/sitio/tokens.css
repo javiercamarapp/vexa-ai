@@ -138,7 +138,7 @@
   --s-e96: 96px;
   --s-e112: 112px;
   --s-e144: 144px;
-  --s-seccion-v: clamp(44px, 4.2vw, 60px);
+  --s-seccion-v: clamp(44px, 4.7vw, 68px);
 
   /* ---- Rejilla ---- */
   --s-contenedor: 1152px;

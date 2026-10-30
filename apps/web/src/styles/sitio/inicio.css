@@ -1357,9 +1357,10 @@
   transform-origin: center;
 }
 
-/* ==================== Hilo con carril propio, S3 a S10 ====================
- * Un trazo vertical recto en el margen izquierdo, más grueso que el anterior (3.5 px a 1440, 2.5 a 390). Su centro es --s-hilo-x: un tercio
- * del margen libre a la izquierda del contenido, nunca a menos de 18 px de él. Va debajo de nada y por fuera de cualquier columna. */
+/* ==================== Hilo serpenteante, S3 a S10 ====================
+ * Un trazo grueso (3.5 px a 1440, 2.5 a 390) que baja por los márgenes y cruza de lado a lado por los huecos libres entre bloques (inicio.js lo
+ * calcula con las medidas reales). --s-hilo-x es el carril recto de respaldo sin JavaScript: un tercio del margen libre a la izquierda del
+ * contenido, nunca a menos de 18 px de él. */
 @property --s-hilo-x {
   syntax: "<length>";
   inherits: true;
@@ -1368,13 +1369,27 @@
 
 .s-hilo-zona {
   --s-hilo-w: 3.5px;
+  --s-hilo-wb: 7.5px;
   --s-hilo-margen: calc(max(0px, (100vw - 1152px) / 2) + var(--s-pad-x));
   --s-hilo-x: max(6px, min(calc(var(--s-hilo-margen) * .36), calc(var(--s-hilo-margen) - 18px - var(--s-hilo-w) / 2)));
   position: relative;
 }
 
-/* Pista del hilo: existe sin JavaScript y con movimiento reducido (el trazo dibujado va encima) */
-.s-hilo-zona::before {
+/* Bandas de cruce: huecos deliberados entre secciones (150 px a 1440, 90 a 390; con el relleno de las secciones suman 220 a 320 y 120 a 160 px).
+   A 390 se omiten dos para no alargar el móvil. */
+.s-banda {
+  height: 150px;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .s-banda { height: 88px; }
+  .s-banda[data-banda="2"],
+  .s-banda[data-banda="3"] { display: none; }
+}
+
+/* Pista estática: solo sin JavaScript (con JavaScript la sustituye el trazo serpenteante) */
+html:not([data-js]) .s-hilo-zona::before {
   content: "";
   position: absolute;
   top: 0;
@@ -1398,29 +1413,45 @@
   fill: none;
 }
 
-.s-hilo__trazo {
+.s-hilo__guia,
+.s-hilo__trazo,
+.s-hilo__pulso,
+.s-hilo__capa {
   fill: none;
-  stroke: color-mix(in srgb, var(--s-tinta) 62%, transparent);
-  stroke-linecap: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
+  stroke-linejoin: round;
 }
 
-/* Pulso de luz: un segmento de 170 px con degradado que termina en la cabeza y viaja con ella; el glow es el mismo segmento ancho y desenfocado */
-.s-hilo__pulso { opacity: 0; will-change: transform; }
-.s-hilo__stop { stop-color: var(--s-tinta); }
-.s-hilo__nucleo { opacity: .95; }
-.s-hilo__brillo { opacity: .35; filter: blur(5px); }
+.s-hilo__guia,
+.s-hilo__trazo,
+.s-hilo__pulso { stroke-linecap: round; }
 
-/* Cabeza: único punto rojo del hilo y de la página entera fuera de logo y botón */
+.s-hilo__capa { stroke-linecap: butt; }
+
+.s-hilo__guia { stroke: var(--s-linea); }
+
+/* Trazo y capas gruesas opacos y del mismo color: donde se superponen no se nota el empalme */
+.s-hilo__trazo,
+.s-hilo__capa { stroke: color-mix(in srgb, var(--s-tinta) 62%, var(--s-fondo)); }
+
+/* Pulso: cuatro capas de largo decreciente que terminan en la cabeza (gradiente de cola); la más larga, ancha y desenfocada, es el glow */
+.s-hilo__pulso {
+  stroke: var(--s-tinta);
+  visibility: hidden;
+}
+
+.s-hilo--viaja .s-hilo__pulso { visibility: visible; }
+.s-hilo__brillo { filter: blur(5px); }
+
+/* Cabeza: único punto rojo del hilo; crece con el grosor del trazo */
 .s-hilo__cabeza {
+  --d: 9px;
   position: absolute;
   left: 0;
   top: 0;
   z-index: var(--s-z-hilo);
-  width: 9px;
-  height: 9px;
-  margin: -4.5px 0 0 -4.5px;
+  width: var(--d);
+  height: var(--d);
+  margin: calc(var(--d) / -2) 0 0 calc(var(--d) / -2);
   border-radius: 50%;
   background: var(--s-acento);
   translate: var(--x, 0) var(--y, 0);
@@ -1447,10 +1478,45 @@
   background: var(--s-tinta);
 }
 
+/* Nota en píldora ladeada dentro de una banda (como las de two26): ícono de línea y 2 a 5 palabras; aparece cuando el trazo llega */
+.s-hilo__nota {
+  position: absolute;
+  left: var(--x, 0);
+  top: var(--y, 0);
+  z-index: var(--s-z-hilo);
+  display: flex;
+  align-items: center;
+  gap: var(--s-e8);
+  width: max-content;
+  padding: 7px 14px 7px 10px;
+  border: var(--s-borde) solid var(--s-linea-fuerte);
+  border-radius: var(--s-r-total);
+  background: var(--s-fondo);
+  font-family: var(--s-f-sans);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--s-tinta);
+  rotate: var(--r, -3deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.s-hilo__nota.s-visto { opacity: 1; }
+
+.s-hilo__icono {
+  flex: none;
+  width: var(--s-e16);
+  height: var(--s-e16);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+}
+
 @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
-  html[data-js] .s-hilo__nodo {
-    transition: background-color 400ms var(--s-e-ui), border-color 400ms var(--s-e-ui);
-  }
+  html[data-js] .s-hilo__nodo { transition: background-color 400ms var(--s-e-ui), border-color 400ms var(--s-e-ui); }
+  html[data-js] .s-hilo__nota { transition: opacity 600ms var(--s-e-expo), translate 700ms var(--s-e-firma); }
+  html[data-js] .s-hilo__nota:not(.s-visto) { translate: 0 14px; }
 
   /* Al llegar el trazo el nodo se enciende y emite un anillo, una sola vez */
   html[data-js] .s-hilo__nodo.s-visto::after {
@@ -1469,8 +1535,7 @@
 }
 
 @media (max-width: 768px) {
-  .s-hilo-zona { --s-hilo-w: 2.5px; }
-  .s-hilo__cabeza { width: 8px; height: 8px; margin: -4px 0 0 -4px; }
+  .s-hilo-zona { --s-hilo-w: 2.5px; --s-hilo-wb: 4.2px; }
   .s-hilo__nodo { width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; }
 }
 

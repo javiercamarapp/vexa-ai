@@ -98,6 +98,15 @@ const UI_BI = {
   conMarcador: {es: 'Corte de ejemplo', en: 'Example cut-off'} as Bi,
   sparkIngreso: {es: 'Últimos 30 días', en: 'Last 30 days'} as Bi,
   verPaquete: {es: 'Ver el paquete', en: 'See the package'} as Bi,
+  hilo: [
+    {es: 'Fuente y corte', en: 'Source and cut-off'},
+    {es: 'Cifra rotulada', en: 'Labeled figure'},
+    {es: 'Evidencia a la vista', en: 'Evidence in plain view'},
+    {es: 'Sin dato, nunca cero', en: 'No data, never zero'},
+    {es: 'Cada cifra, su origen', en: 'Every figure, its origin'},
+    {es: 'Nada se envía solo', en: 'Nothing is sent on its own'},
+    {es: 'Una persona decide', en: 'A person decides'},
+  ] as Bi[],
   captura: {
     ejemplo: {es: 'Datos de ejemplo', en: 'Example data'} as Bi,
     devueltos: {es: 'devueltos en 90 días', en: 'returned in 90 days'} as Bi,
@@ -152,6 +161,7 @@ export const UI = (lang: Lang) => ({
   conMarcador: UI_BI.conMarcador[lang],
   sparkIngreso: UI_BI.sparkIngreso[lang],
   verPaquete: UI_BI.verPaquete[lang],
+  hilo: UI_BI.hilo.map((x) => x[lang]),
   captura: {ejemplo: UI_BI.captura.ejemplo[lang], devueltos: UI_BI.captura.devueltos[lang], ingreso: UI_BI.captura.ingreso[lang], ejeMarca: UI_BI.captura.ejeMarca[lang], barras: UI_BI.captura.barras[lang], enEs: UI_BI.captura.enEs[lang],
     paso1: Object.fromEntries(Object.entries(UI_BI.captura.paso1).map(([k, v]) => [k, v[lang]])) as Record<string, string>,
     paso2: Object.fromEntries(Object.entries(UI_BI.captura.paso2).map(([k, v]) => [k, v[lang]])) as Record<string, string>,

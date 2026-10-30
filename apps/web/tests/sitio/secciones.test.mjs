@@ -207,8 +207,7 @@ describe('S1 Hero y reglas, S2 Horizonte', () => {
       assert.match(h, /class="s-ov__acum"[^>]*pathLength="1"/);
       assert.match(h, /data-cuenta="36000"/);
       assert.match(h, /class="s-sello s-sello--observado s-ov-cifra__sello"/);
-      assert.match(h, /class="s-punto s-ov-punto"/);
-      assert.equal((h.match(/class="s-punto/g) ?? []).length, 1, 'un solo punto rojo en el héroe');
+      assert.doesNotMatch(h, /class="s-punto/, 'el héroe no añade rojo propio: solo el punto del botón y el del logo (máximo tres elementos con la barra roja del producto)');
       assert.doesNotMatch(h, /style=/);
     });
 
@@ -260,6 +259,7 @@ describe('S4 Valor y sellos', () => {
       const h = seccion(portada(lang), 'valor');
       assert.match(h, /<figure class="s-ventana s-ventana--producto">/);
       assert.match(etiquetas(h, 'img')[0], /class="s-ventana__img"/);
+      assert.ok(h.includes('/s/img/producto/valor-'), 'recorte de las cuatro tarjetas de Hoy');
       assert.doesNotMatch(h, /s-mock-raiz|data-cifra/);
       assert.match(h, /class="s-cota s-valor__cota"[^>]*role="img"/);
       assert.match(h, /class="s-valor__sello s-sello-expandido"/);

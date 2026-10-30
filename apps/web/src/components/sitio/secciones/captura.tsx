@@ -34,7 +34,7 @@ export function Captura({nombre, tema, lang, tamanos, prioridad = false, clase, 
 }
 
 /** Ventana oscura de producto con la captura real y, encima, las anotaciones del llamador (hijos, posicionados dentro del cuerpo). */
-export function VentanaCaptura({nombre, tema = 'oscuro', lang, ruta, tamanos, children}: {nombre: string; tema?: TemaCaptura; lang: 'es' | 'en'; ruta: 'm1' | 'm2' | 'm3' | 'm4' | 'm5' | 'm6'; tamanos: string; children?: ReactNode}) {
+export function VentanaCaptura({nombre, clave, tema = 'oscuro', lang, ruta, tamanos, anchos, children}: {nombre: string; clave?: string; tema?: TemaCaptura; lang: 'es' | 'en'; ruta: 'm1' | 'm2' | 'm3' | 'm4' | 'm5' | 'm6'; tamanos: string; anchos?: number[]; children?: ReactNode}) {
   const t = T(lang);
   return (
     <figure className="s-ventana s-ventana--producto">
@@ -44,7 +44,7 @@ export function VentanaCaptura({nombre, tema = 'oscuro', lang, ruta, tamanos, ch
         <span className="s-mock-org">{t.organizacion}</span>
       </div>
       <div className="s-ventana__cuerpo">
-        <Captura nombre={nombre} tema={tema} lang={lang} tamanos={tamanos} clase="s-ventana__img" />
+        <Captura nombre={nombre} clave={clave} tema={tema} lang={lang} tamanos={tamanos} anchos={anchos} clase="s-ventana__img" />
         {children}
       </div>
       <p className="s-rotulo-ejemplo s-ventana__rotulo">{t.rotulo}</p>

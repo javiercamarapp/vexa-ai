@@ -60,7 +60,6 @@ export function VentanaFuga({lang}: {lang: Lang}) {
             {filas.map((f) => <circle className="s-ov__nodo" key={f.sku} cx={X0 + f.cum * ANCHO_PISTA} cy={f.y + ALTO_BARRA / 2} r={4.5} />)}
           </g>
         </svg>
-        <span className="s-punto s-ov-punto" aria-hidden="true" />
         </div>
       </div>
       <p className="s-rotulo-ejemplo s-ventana__rotulo">{lang === 'en' ? `${t.rotulo} ${ui.captura.enEs}` : t.rotulo}</p>

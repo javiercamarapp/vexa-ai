@@ -205,14 +205,6 @@
 .s-ov__acum { fill: none; stroke: var(--s-vp-texto); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; opacity: .85; vector-effect: non-scaling-stroke; }
 .s-ov__nodo { fill: var(--s-vp-fondo); stroke: var(--s-vp-texto); stroke-width: 2.5; vector-effect: non-scaling-stroke; }
 
-/* Punto rojo de HM-210, único rojo del héroe */
-.s-ov-punto {
-  position: absolute;
-  left: 63.8%;
-  top: 50.5%;
-  margin: -4px 0 0 -4px;
-}
-
 /* Cifra del héroe: tarjeta en el hueco libre del encabezado de la captura; en ancho de móvil baja bajo la imagen */
 .s-ov-cifra {
   position: absolute;
@@ -312,9 +304,6 @@
     animation: s-sello 260ms var(--s-e-firma) 2150ms both;
   }
 
-  .s-ov-punto {
-    animation: s-aparece 400ms var(--s-e-ui) 1500ms both;
-  }
 }
 
 @keyframes s-ventana-sube {
@@ -645,19 +634,35 @@
   text-align: center;
 }
 
-/* Anotaciones sobre la captura de Hoy: la cota sale de la fila Observado de la primera cifra y llega al sello expandido */
-.s-valor__sello {
-  position: absolute;
-  left: 57%;
-  top: 41%;
-  z-index: 2;
+/* Bajo la tira de tarjetas de Hoy: la cota baja de la primera cifra al sello expandido con clase, fuente, corte y antigüedad */
+.s-valor__pie {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: var(--s-e24);
 }
 
 .s-valor__cota {
-  position: absolute;
-  left: 35%;
-  top: 46%;
-  width: 22%;
+  width: 5px;
+  height: var(--s-e32);
+  margin-left: var(--s-e40);
+  background: linear-gradient(var(--s-linea-fuerte), var(--s-linea-fuerte)) center / var(--s-borde) 100% no-repeat;
+}
+
+.s-valor__cota::before,
+.s-valor__cota::after {
+  top: auto;
+  left: 0;
+  right: auto;
+  width: 5px;
+  height: var(--s-borde);
+}
+
+.s-valor__cota::before { top: 0; }
+.s-valor__cota::after { bottom: 0; }
+
+.s-valor__sello {
+  position: relative;
   z-index: 2;
 }
 

@@ -1109,6 +1109,37 @@
      "url": "/s/img/producto/tarjetas-hoy-2220.7ef2ada5.webp"
     }
    ]
+  },
+  "producto/valor": {
+   "alt": {
+    "en": "The four figure cards of Today in Rovaq: gross revenue, refunds, stuck money and replies over 24 hours, each with its Observed seal and source. Example data.",
+    "es": "Las cuatro tarjetas de cifras de Hoy en Rovaq: ingreso bruto, reembolsos, dinero atorado y respuestas de más de 24 horas, cada una con su sello Observado y su fuente. Datos de ejemplo."
+   },
+   "alto": 236,
+   "ancho": 1560,
+   "avif": [
+    {
+     "alto": 236,
+     "ancho": 1560,
+     "bytes": 20224,
+     "sha256": "db2a0767568938a352e73c1d921768e9497ea4a0de5570dbc1ac4a2d55442405",
+     "url": "/s/img/producto/valor-1560.db2a0767.avif"
+    }
+   ],
+   "bytes": 27228,
+   "sha256": "0854b2d52e245cfcdcb9a0e8b8ce698da7cda8f49bd905e9b4a8eb5879202dc7",
+   "tema": "oscuro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/valor-1560.0854b2d5.webp",
+   "variantes": [
+    {
+     "alto": 236,
+     "ancho": 1560,
+     "bytes": 27228,
+     "sha256": "0854b2d52e245cfcdcb9a0e8b8ce698da7cda8f49bd905e9b4a8eb5879202dc7",
+     "url": "/s/img/producto/valor-1560.0854b2d5.webp"
+    }
+   ]
   }
  },
  "js": {

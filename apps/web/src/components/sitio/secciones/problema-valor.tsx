@@ -3,6 +3,7 @@ import {Diagrama} from '../diagramas';
 import type {IdDiagrama} from '../diagramas';
 import {enlaceInterno, partesSello, sinPuntoFinal} from './datos';
 import type {Lang, TextosPortada} from './datos';
+import {medidas} from '../../../lib/sitio/activos';
 import {VentanaCaptura} from './captura';
 import {CLASES_SELLO, Palabras, Sello} from './piezas';
 
@@ -49,15 +50,16 @@ export function Valor({lang, t}: {lang: Lang; t: TextosPortada}) {
         </div>
         <div className="s-valor__escena" data-reveal="">
           <div className="s-valor__ventana">
-            <VentanaCaptura nombre="hoy" lang={lang} ruta="m1" tamanos="(max-width: 760px) 100vw, 700px">
-              <span className="s-cota s-valor__cota" role="img" aria-label={valor.cotaAlt} data-cota-para="ingreso-bruto" />
-              <div className="s-valor__sello s-sello-expandido" data-sello-de="ingreso-bruto">
-                <b>{clases.items[0].nombre}</b>
-                {partes
-                  ? partes.map((x, i) => <span key={i}>{clases.campos[i]}: {x}</span>)
-                  : <span>{sinPuntoFinal(clases.items[0].sello)}</span>}
-              </div>
-            </VentanaCaptura>
+            <VentanaCaptura nombre="valor" clave="img/producto/valor" lang={lang} ruta="m1" tamanos="(max-width: 760px) 100vw, 780px" anchos={[medidas('img/producto/valor').ancho]} />
+          </div>
+          <div className="s-valor__pie">
+            <span className="s-cota s-valor__cota" role="img" aria-label={valor.cotaAlt} data-cota-para="ingreso-bruto" />
+            <div className="s-valor__sello s-sello-expandido" data-sello-de="ingreso-bruto">
+              <b>{clases.items[0].nombre}</b>
+              {partes
+                ? partes.map((x, i) => <span key={i}>{clases.campos[i]}: {x}</span>)
+                : <span>{sinPuntoFinal(clases.items[0].sello)}</span>}
+            </div>
           </div>
         </div>
         <div className="s-sellos" data-reveal-grupo="">

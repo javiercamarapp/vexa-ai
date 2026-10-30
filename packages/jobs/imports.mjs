@@ -1,4 +1,5 @@
 import {previewImport,inspectImport,canonicalMapping,exportRowErrors} from '../ingestion/mapping.mjs';
+import {previewMemberFile,memberFileProvenance} from '../ingestion/member-files.mjs';
 import {AccessError} from '../platform/src/session.ts';
 import {createHash,createHmac,randomUUID,timingSafeEqual} from 'node:crypto';
 const VERSION='f02-durable-v1';
@@ -43,7 +44,7 @@ export function createImportHandler({database,storage,confirmationSecret,admissi
      return response(inserted.rows.length?201:200,{connection:{id:row.id,source:row.source,account_id:row.account_id},created:inserted.rows.length===1});
     });
    }
-   const match=url.pathname.match(/^\/api\/imports(?:\/([0-9a-f-]+)(\/(?:confirm|renew|preview|mapping|errors\.csv))?)?$/i);
+   const match=url.pathname.match(/^\/api\/imports(?:\/([0-9a-f-]+)(\/(?:confirm|renew|preview|mapping|errors\.csv|member-file\/preview|member-file\/register))?)?$/i);
    if(!match||match[1]&&!uuid.test(match[1])||(url.search&&(request.method!=='GET'||(match[1]?Boolean(match[2])||[...url.searchParams.keys()].some(k=>k!=='sheet'):[...url.searchParams.keys()].some(k=>!['offset','connection_offset','team_offset'].includes(k))))))fail(404,'route_not_found');
    const owned=async(s,id)=>{const r=await get(s,id);if(r.user_id!==s.userId)fail(404,'import_not_found');return r;};
    const verified=async(s,r)=>{await connection(s,r.connection_id);const owner=(await s.query("SELECT owner_id,(metadata->>'size')::bigint AS object_bytes FROM storage.objects WHERE bucket_id='vexa-private' AND name=$1",[r.object_path])).rows[0];if(!owner||owner.owner_id!==s.userId)fail(422,'object_unavailable');objectBounded(owner,r);const bytes=await storage.read({tenantId:s.tenantId,userId:s.userId},r);if(!(bytes instanceof Uint8Array)||bytes.byteLength!==Number(r.size)||hash(bytes)!==r.file_hash)fail(422,'object_bytes_invalid');return bytes;};
@@ -60,7 +61,9 @@ export function createImportHandler({database,storage,confirmationSecret,admissi
     const r=await owned(s,match[1]);
     if(match[2]==='/errors.csv'){if(!r.provenance?.mapping)fail(409,'mapping_required');const result=preview(await verified(s,r),r,r.provenance.mapping);return new Response(exportRowErrors(result.errors),{headers:{'Content-Type':'text/csv; charset=utf-8','Content-Disposition':'attachment; filename="row-errors.csv"','Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'}});}
     if(match[2])fail(405,'method_not_allowed');
+    const registered=r.provenance?.member_file;
     const data={import:{id:r.id,state:r.state,total:r.total,accepted:r.accepted,rejected:r.rejected,duplicates:r.duplicates,pending:r.pending,job_id:r.job_id,mapping_version:r.mapping_version,file_hash:r.file_hash,expires_at:r.expires_at,content_type:r.content_type},mapping:r.provenance?.mapping??null,mapping_history:r.provenance?.mapping_history??[]};
+    if(registered)return response(200,{...data,member_file:registered,preview_state:'registered'});
     const object=(await s.query("SELECT owner_id FROM storage.objects WHERE bucket_id='vexa-private' AND name=$1",[r.object_path])).rows[0];
     if(!object)return response(200,{...data,preview_state:'awaiting_upload'});
     const bytes=await verified(s,r);
@@ -94,6 +97,29 @@ export function createImportHandler({database,storage,confirmationSecret,admissi
      if(new Date(current.expires_at)<=new Date())fail(409,'reservation_expired');
      const capability=await storage.createUpload(s,current);
      return response(201,{import_id:current.id,state:current.state,object_path:current.object_path,upload_url:capability.url,upload_token:token(current),expires_at:new Date(current.expires_at).toISOString()});
+    });
+   }
+   if(match[2]==='/member-file/preview'||match[2]==='/member-file/register'){
+    const register=match[2]==='/member-file/register';
+    pick(input,register?['kind','sheet','date_format','timezone','currency','sha256']:['kind','sheet','date_format','timezone','currency']);
+    const options={kind:input.kind,sheet:input.sheet??null,dateFormat:input.date_format??'iso',timezone:input.timezone??'UTC',currency:input.currency??null};
+    if(typeof options.kind!=='string'||(options.sheet!==null&&typeof options.sheet!=='string')||typeof options.dateFormat!=='string'||typeof options.timezone!=='string'||(options.currency!==null&&typeof options.currency!=='string'))fail(400,'invalid_input');
+    if(register&&(typeof input.sha256!=='string'||!/^[0-9a-f]{64}$/.test(input.sha256)))fail(400,'invalid_metadata');
+    return await database.transaction('import',async s=>{
+     await s.query('SELECT id FROM public.imports WHERE tenant_id=$1 AND id=$2 FOR UPDATE',[s.tenantId,match[1]]);
+     const r=await owned(s,match[1]);
+     const previous=r.provenance?.member_file;
+     if(register&&previous&&previous.file_sha256===input.sha256&&previous.kind===options.kind&&JSON.stringify(previous.options)===JSON.stringify({timezone:options.timezone,date_format:options.dateFormat,currency:options.currency})&&(previous.sheet??null)===(options.sheet??previous.sheet??null))return response(200,{member_file:previous,replayed:true});
+     if(r.job_id||r.state!=='reserved'||r.provenance?.mapping||previous)fail(409,'member_file_immutable');
+     if(new Date(r.expires_at)<=new Date())fail(409,'reservation_expired');
+     if(register&&input.sha256!==r.file_hash)fail(409,'confirmation_conflict');
+     const bytes=await verified(s,r);
+     const result=domain(()=>previewMemberFile(bytes,{...options,contentType:r.content_type,observedAt:new Date().toISOString()}));
+     if(!register)return response(200,result);
+     if(!result.can_register)fail(422,result.blocker==='currency_required'?'currency_required':result.blocker==='headers'?'member_file_headers_invalid':'member_file_no_valid_rows');
+     const provenance=memberFileProvenance(result,{fileSha256:r.file_hash,size:Number(r.size),registeredBy:s.userId});
+     await s.query("UPDATE public.imports SET state='uploaded',provenance=$3::jsonb,updated_at=now() WHERE tenant_id=$1 AND id=$2 AND state='reserved'",[s.tenantId,r.id,JSON.stringify({...(r.provenance??{}),member_file:provenance})]);
+     return response(201,{member_file:provenance,replayed:false});
     });
    }
    if(match[2]==='/renew'){
@@ -133,6 +159,7 @@ export function createImportHandler({database,storage,confirmationSecret,admissi
    pick(input,['upload_token','sha256','mapping_version']);
    const prepared=await database.transaction('import',async s=>{
     const r=await get(s,match[1]);if(r.user_id!==s.userId)fail(404,'import_not_found');await connection(s,r.connection_id);
+    if(r.provenance?.member_file)fail(409,'member_file_not_confirmable');
     if(typeof input.upload_token!=='string'||input.upload_token.length!==43||!timingSafeEqual(Buffer.from(input.upload_token),Buffer.from(token(r))))fail(403,'upload_capability_invalid');
     if(input.sha256!==r.file_hash||input.mapping_version!==r.mapping_version)fail(409,'confirmation_conflict');
     if(r.job_id)return {row:r,replay:true};

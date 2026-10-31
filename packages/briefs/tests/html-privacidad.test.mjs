@@ -16,3 +16,12 @@ test('briefHtml: citas con saludo, cierre y dirección salen enmascaradas y con 
   assert.match(html, /Se ocultan patrones frecuentes de nombres y direcciones, pero el texto puede seguir conteniendo datos de terceros/);
   assert.equal(brief.document.top3[0].evidence[0].quote, original, 'el documento verificado no se modifica');
 });
+
+test('briefHtml en inglés rotula el exporte en inglés (lang="en", sin rótulos fijos en español) y en español sigue igual', async () => {
+  const {briefHtml} = await import('../build.mjs');
+  const brief = {id: 'b1', version: 1, contentHash: 'h', document: {snapshotId: 's', scopeHash: 'sc', scope: {date_start: '2026-09-01', date_end: '2026-10-01', currency: 'USD', basis: 'net', timezone: 'UTC', sku: [], source: []}, asOf: '2026-10-01', watermark: 'w', metrics: [{label: 'Revenue', amount_minor: '12345', currency: 'USD', exponent: 2, known_subtotal: null, coverage: {known_n: 5, eligible_n: 6}}], top3: [], critical: [], actions: [], comparison: {status: 'not_requested', reasons: [], metrics: []}, limits: [], forecast: {reason: 'x'}}};
+  const en = briefHtml(brief, 'en'), es = briefHtml(brief);
+  assert.match(en, /<html lang="en">/); assert.match(en, /Observed figures/); assert.match(en, /coverage 5\/6/); assert.match(en, /Not sent by email/); assert.match(en, /All/);
+  for (const t of ['Cifras observadas', 'cobertura', 'Todos', 'Generado con plantilla', 'Límites', 'Acciones capturadas']) assert.ok(!en.includes(t), t);
+  assert.match(es, /<html lang="es">/); assert.match(es, /Cifras observadas/); assert.match(es, /cobertura 5\/6/);
+});

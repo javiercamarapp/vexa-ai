@@ -9,5 +9,5 @@ export type Brief={id:string;version:number;inputHash:string;contentHash:string;
 export type ComparisonOption={snapshotId:string;scopeHash:string;query:string;start:string;end:string;asOf:string;eligible:boolean;reasons:string[]};
 export type BriefList={items:Brief[];snapshotId:string;scopeHash:string;scope:WorkspaceScope;canGenerate:boolean;expectedPreviousId:string|null;comparisonOptions:ComparisonOption[];unavailableCount:number;totalCount:number;nextCursor:string|null};
 export function buildBrief(input:{snapshotId:string;scopeHash:string;baseScopeHash:string;scope:WorkspaceScope;asOf:string;watermark:string|null;coverage:string;metrics:WorkspaceMetric[];problems:BriefProblem[];actions:BriefAction[];comparison:BriefComparison}):BriefDocument;
-export function briefHtml(brief:Brief):string;
+export function briefHtml(brief:Brief,idioma?:'es'|'en'):string;
 export function createBriefRepository(options:{database:any}):{list(input:{query:URLSearchParams}):Promise<BriefList>;get(input:{id:string}):Promise<Brief>;generate(input:{query:string;comparisonQuery?:string|null;expectedPreviousId:string|null;requestKey:string}):Promise<Brief>};

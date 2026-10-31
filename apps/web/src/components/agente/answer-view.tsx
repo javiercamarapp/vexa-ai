@@ -39,7 +39,7 @@ function CalcView({answer}:{answer:Answer}){
 }
 
 export function AnswerView({message,question,isLast,busy,labels,userContext,escribir=false,onAsk,onRegenerate,onFeedback}:{escribir?:boolean;message:ChatMessage;question:string;labels:Record<string,string>;userContext:string[];isLast:boolean;busy:boolean;onAsk:(q:string)=>void;onRegenerate:()=>void;onFeedback:(id:string,v:ChatMessage['feedback'])=>void}){
- const tx=useT();
+ const tx=useT(),idioma=useIdioma();
  const [copied,setCopied]=useState(false),[csvError,setCsvError]=useState(false),[reasonOpen,setReasonOpen]=useState(false),[fbBusy,setFbBusy]=useState(false);
  const a=message.answer;
  const reducido=useReducedMotion();
@@ -81,8 +81,8 @@ export function AnswerView({message,question,isLast,busy,labels,userContext,escr
   {listo&&a.status==='ok'&&a.text.trim()&&<div className="agente-actions" role="group" aria-label={tx('ag.accionesAria')}>
    <Ctl icon={<Icon name={copied?'check':'copy'}/>} onClick={()=>void copy()}>{copied?tx('ag.copiado'):tx('ag.copiar')}</Ctl>
    {blocksWithRows.map((b,i)=><Ctl key={b.tool+i} icon={<Icon name="sheet"/>} aria-label={blocksWithRows.length>1?tx('ag.csvDe',{t:b.title}):tx('ag.csvAria')} onClick={()=>setCsvError(!download(`rovaq-${b.tool}.csv`,blockToCsv(b),'text/csv;charset=utf-8'))}>{blocksWithRows.length>1?tx('ag.csvTit',{t:b.title}):'CSV'}</Ctl>)}
-   <Ctl icon={<Icon name="report"/>} title={tx('ag.reporteTip')} onClick={()=>{const html=answerToHtml({question,answer:a,userContext});if(!openReport(`rovaq-reporte-${message.id}.html`,html))setCsvError(true);}}>{tx('ag.reporte')}</Ctl>
-   <Ctl icon={<Icon name="download"/>} onClick={()=>download(`rovaq-respuesta-${message.id}.md`,answerToMarkdown({question,answer:a}),'text/markdown;charset=utf-8')}>{tx('ag.exportar')}</Ctl>
+   <Ctl icon={<Icon name="report"/>} title={tx('ag.reporteTip')} onClick={()=>{const html=answerToHtml({question,answer:a,userContext,idioma});if(!openReport(`rovaq-reporte-${message.id}.html`,html))setCsvError(true);}}>{tx('ag.reporte')}</Ctl>
+   <Ctl icon={<Icon name="download"/>} onClick={()=>download(`rovaq-respuesta-${message.id}.md`,answerToMarkdown({question,answer:a,idioma}),'text/markdown;charset=utf-8')}>{tx('ag.exportar')}</Ctl>
    {isLast&&<Ctl solo icon={<Icon name="refresh"/>} disabled={busy} onClick={onRegenerate}>{tx('ag.regenerar')}</Ctl>}
    <Ctl solo icon={<Icon name="up"/>} aria-pressed={message.feedback?.verdict==='up'} disabled={fbBusy} onClick={()=>void sendFeedback('up')}>{tx('ag.util')}</Ctl>
    <Ctl solo icon={<Icon name="down"/>} aria-pressed={message.feedback?.verdict==='down'} disabled={fbBusy} onClick={()=>setReasonOpen(v=>!v)}>{tx('ag.noUtil')}</Ctl>

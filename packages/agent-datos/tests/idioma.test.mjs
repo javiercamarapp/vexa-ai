@@ -106,3 +106,22 @@ test('las 21 preguntas de demostración tienen texto en inglés (cada una distin
   assert.ok(en.sugerencias.every((q) => !/[¿]/.test(q)));
   assert.ok(SYNTHETIC_NOW);
 });
+
+test('los exportes de una respuesta (Markdown y HTML) salen en el idioma pedido, con lang correcto y sin rótulos fijos en español', async () => {
+  const { answerToMarkdown, answerToHtml, chartToSvg } = await import('../index.mjs');
+  for (const idioma of ['en', 'es']) {
+    const a = await turno(idioma === 'en' ? 'How did refunds evolve month by month?' : '¿Cómo evolucionaron los reembolsos mes a mes?', { idioma });
+    assert.equal(a.status, 'ok');
+    const md = answerToMarkdown({ question: 'q', answer: a, idioma }), html = answerToHtml({ question: 'q', answer: a, idioma, userContext: ['x'] });
+    const svg = a.blocks.map((b) => chartToSvg(b, idioma)).join('');
+    if (idioma === 'en') {
+      assert.match(md, /^# q\n\n_Generated /); assert.match(md, /## How I calculated it/); assert.match(md, /## Sources/); assert.match(md, /Coverage: [\d,]+ of [\d,]+/);
+      assert.match(html, /<html lang="en">/); assert.match(html, /<h2>How I calculated it<\/h2>/); assert.match(html, /Report generated on/); assert.match(html, /To save as a PDF use Print/); assert.match(html, /Data provided by the user/);
+      const visible = (md + html).replace(/<style>[\s\S]*?<\/style>/g, '').replace(/<[^>]+>/g, ' ');
+      for (const palabra of ['Cómo lo calculé', 'Fuentes', 'Falta cargar', 'Cobertura', 'Reporte generado', 'Parámetros', 'Generado ', 'Datos aportados', 'Para guardar como PDF']) assert.ok(!visible.includes(palabra), palabra);
+      assert.ok(!/s\/d/.test(svg));
+    } else {
+      assert.match(html, /<html lang="es">/); assert.match(md, /## Cómo lo calculé/); assert.match(html, /Reporte generado el/); assert.match(md, /_Generado /);
+    }
+  }
+});

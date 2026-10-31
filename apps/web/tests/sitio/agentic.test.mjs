@@ -64,10 +64,10 @@ describe('llms.txt y llms-full.txt', () => {
       const t = lee(l === 'es' ? 'llms-full.txt' : 'en/llms-full.txt');
       assert.match(t, /^# Rovaq AI\n\n> /);
       for (const f of publicas.filter((x) => x.id !== 'inicio')) {
-        assert.ok(t.includes(`Fuente: ${urlAbsoluta(f.ruta[l])}\n`), `${l}: falta ${f.id}`);
+        assert.ok(t.includes(`${l === 'es' ? 'Fuente' : 'Source'}: ${urlAbsoluta(f.ruta[l])}\n`), `${l}: falta ${f.id}`);
         assert.ok(t.includes(f.arbol.h1[l].replace(/\s+/g, ' ')), `${l}: falta el título de ${f.id}`);
       }
-      for (const f of pendientes) assert.ok(!t.includes(`Fuente: ${urlAbsoluta(f.ruta[l])}\n`), `${l}: ${f.id} pendiente`);
+      for (const f of pendientes) assert.ok(!t.includes(`${l === 'es' ? 'Fuente' : 'Source'}: ${urlAbsoluta(f.ruta[l])}\n`), `${l}: ${f.id} pendiente`);
       assert.match(t, /Contenido actualizado: \d{4}-\d{2}-\d{2}|Content updated: \d{4}-\d{2}-\d{2}/);
     }
   });

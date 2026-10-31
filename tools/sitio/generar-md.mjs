@@ -84,8 +84,8 @@ function sinCorreo(texto, lang, urlAcceso) {
   const t = texto
     .replace(new RegExp(`Escríbenos a ${RE_CORREO.source}`, 'g'), `Solicita acceso en ${urlAcceso}`)
     .replace(new RegExp(`Write to us at ${RE_CORREO.source}`, 'g'), `Request access at ${urlAcceso}`)
-    .replace(new RegExp(`\\s*Si tu correo[^.]*?, escribe a ${RE_CORREO.source}\\.`, 'g'), '')
-    .replace(new RegExp(`\\s*If your email[^.]*?, write to ${RE_CORREO.source}\\.`, 'g'), '');
+    .replace(new RegExp(`Si tu correo[^.]*?, escribe a ${RE_CORREO.source}\\.`, 'g'), `Para escribirnos, usa el contacto de ${urlAcceso}.`)
+    .replace(new RegExp(`If your email[^.]*?, write to ${RE_CORREO.source}\\.`, 'g'), `To write to us, use the contact at ${urlAcceso}.`);
   return t;
 }
 
@@ -108,8 +108,8 @@ function crearRender(fichas, lang) {
 }
 
 const ETIQ = {
-  es: { mas: 'Más páginas de este sitio', ejemplo: 'Datos de ejemplo', actualizado: 'Contenido actualizado' },
-  en: { mas: 'More pages on this site', ejemplo: 'Example data', actualizado: 'Content updated' },
+  es: { mas: 'Más páginas de este sitio', ejemplo: 'Datos de ejemplo', actualizado: 'Contenido actualizado', fuente: 'Fuente' },
+  en: { mas: 'More pages on this site', ejemplo: 'Example data', actualizado: 'Content updated', fuente: 'Source' },
 };
 
 function item(it, r) {
@@ -309,7 +309,7 @@ export function llmsFullTxt(fichas, lang) {
   if (mod) out.push(`${ETIQ[lang].actualizado}: ${mod}.`, '');
   const inicio = publicas.find((f) => f.id === 'inicio');
   out.push('---', '', bajar(cuerpo(inicio)), '');
-  for (const f of publicas.filter((x) => x.id !== 'inicio')) out.push('---', '', `Fuente: ${r.abs(f)}`, '', bajar(cuerpo(f)), '');
+  for (const f of publicas.filter((x) => x.id !== 'inicio')) out.push('---', '', `${ETIQ[lang].fuente}: ${r.abs(f)}`, '', bajar(cuerpo(f)), '');
   return `${out.join('\n').replace(/\n{3,}/g, '\n\n').trim()}\n`;
 }
 

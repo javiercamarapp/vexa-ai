@@ -62,7 +62,7 @@ export function VentanaFuga({lang}: {lang: Lang}) {
         </svg>
         </div>
       </div>
-      <p className="s-rotulo-ejemplo s-ventana__rotulo">{lang === 'en' ? `${t.rotulo} ${ui.captura.enEs}` : t.rotulo}</p>
+      <p className="s-rotulo-ejemplo s-ventana__rotulo">{t.rotulo}</p>
     </figure>
   );
 }

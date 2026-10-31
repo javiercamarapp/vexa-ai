@@ -180,7 +180,9 @@ describe('afirmaciones prohibidas (K8)', () => {
     }
     const l = LANDING.puestos.lideres;
     assert.match(l.titulo.es, /^Finanzas y experiencia del cliente leen el mismo problema/);
-    assert.match(l.cx.salvedad.es, /rendimiento por SKU y los casos por estado/);
+    assert.match(l.cx.salvedad.es, /rendimiento por SKU, los casos por estado y los casos por modalidad/);
+    assert.match(l.cx.salvedad.es, /seis preguntas/);
+    assert.match(l.cx.salvedad.en, /All six questions/);
     assert.match(l.cx.salvedad.es, /datos adicionales/);
     assert.equal(l.cx.d.nivel, 'MATIZ');
     assert.deepEqual(l.cx.d.condicion.acompana, ['puestos.lideres.cx.salvedad']);

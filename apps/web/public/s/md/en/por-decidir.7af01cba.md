@@ -26,6 +26,6 @@ Each recommendation brings its evidence, why it is suggested and what is expecte
 
 ## Outcome record
 
-In progress shows the workspace administrator, the commitment, the stages and the drafts. Outcomes measures before and after and never presents an assumed saving.
+In progress shows the person responsible, the commitment, the stages and the drafts. Outcomes measures before and after and never presents an assumed saving.
 
 _Example data. Not from a customer._

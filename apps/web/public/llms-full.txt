@@ -189,13 +189,13 @@ Solicitar acceso: https://rovaq.ai/solicitar-acceso
 - [Solicita acceso y revisa tus cifras con su evidencia.](https://rovaq.ai/solicitar-acceso)
 - [Versión desplegada y reporte de problemas](https://rovaq.ai/estado)
 - [Blog de Rovaq AI](https://rovaq.ai/blog)
-- [Los reembolsos no son un costo fijo: son una fuga que se puede localizar](https://rovaq.ai/blog/reembolsos-fuga-que-se-puede-localizar)
-- [De dónde sale cada número: la procedencia como requisito, no como adorno](https://rovaq.ai/blog/procedencia-de-cada-numero)
+- [Los reembolsos no son un costo fijo: son una fuga localizable](https://rovaq.ai/blog/reembolsos-fuga-que-se-puede-localizar)
+- [De dónde sale cada número: la procedencia es un requisito](https://rovaq.ai/blog/procedencia-de-cada-numero)
 - [La IA clasifica y redacta; las personas deciden](https://rovaq.ai/blog/la-ia-clasifica-las-personas-deciden)
 - [Un puesto, una vista: por qué cada persona ve solo lo que le toca](https://rovaq.ai/blog/un-puesto-una-vista)
-- [Tus exportaciones de marketplace ya son datos: cómo cargarlas con procedencia](https://rovaq.ai/blog/exportes-de-marketplace-ya-son-datos)
-- [Puntos de dolor: del texto libre de las conversaciones a una prioridad con evidencia](https://rovaq.ai/blog/puntos-de-dolor-del-texto-a-la-prioridad)
-- [Una recomendación debe poder discutirse: evidencia, aprobación y resultado](https://rovaq.ai/blog/una-recomendacion-debe-poder-discutirse)
+- [Tus exportaciones de marketplace ya son datos: cárgalas con origen](https://rovaq.ai/blog/exportes-de-marketplace-ya-son-datos)
+- [Puntos de dolor: del texto libre a una prioridad con evidencia](https://rovaq.ai/blog/puntos-de-dolor-del-texto-a-la-prioridad)
+- [Una recomendación debe poder discutirse: evidencia y resultado](https://rovaq.ai/blog/una-recomendacion-debe-poder-discutirse)
 
 ---
 
@@ -484,6 +484,8 @@ El precio todavía no está publicado.
 
 ### Escríbenos
 
+Para escribirnos, usa el contacto de https://rovaq.ai/solicitar-acceso.
+
 ---
 
 Fuente: https://rovaq.ai/estado
@@ -528,13 +530,13 @@ Notas sobre reembolsos, la procedencia de las cifras, los puntos de dolor y las 
 
 ### Artículos recientes
 
-- [Los reembolsos no son un costo fijo: son una fuga que se puede localizar](https://rovaq.ai/blog/reembolsos-fuga-que-se-puede-localizar). Publicado 2026-10-31. 5 min de lectura. Un total único no dice qué atender primero. Según el canal, el producto y el mes, el dinero devuelto empieza a tener forma.
-- [De dónde sale cada número: la procedencia como requisito, no como adorno](https://rovaq.ai/blog/procedencia-de-cada-numero). Publicado 2026-10-31. 6 min de lectura. Una cifra sin origen solo se puede aceptar o rechazar. Con su fuente, su fecha de corte y sus vacíos a la vista, se puede discutir.
+- [Los reembolsos no son un costo fijo: son una fuga localizable](https://rovaq.ai/blog/reembolsos-fuga-que-se-puede-localizar). Publicado 2026-10-31. 5 min de lectura. Un total único no dice qué atender primero. Según el canal, el producto y el mes, el dinero devuelto empieza a tener forma.
+- [De dónde sale cada número: la procedencia es un requisito](https://rovaq.ai/blog/procedencia-de-cada-numero). Publicado 2026-10-31. 6 min de lectura. Una cifra sin origen solo se puede aceptar o rechazar. Con su fuente, su fecha de corte y sus vacíos a la vista, se puede discutir.
 - [La IA clasifica y redacta; las personas deciden](https://rovaq.ai/blog/la-ia-clasifica-las-personas-deciden). Publicado 2026-10-31. 5 min de lectura. Dónde conviene usar un modelo de lenguaje en un producto financiero, dónde no, y por qué las cifras no deben salir de él.
 - [Un puesto, una vista: por qué cada persona ve solo lo que le toca](https://rovaq.ai/blog/un-puesto-una-vista). Publicado 2026-10-31. 5 min de lectura. Una herramienta con todo para todos parece generosa y rinde poco. Mostrar menos protege la información y ayuda a trabajar.
-- [Tus exportaciones de marketplace ya son datos: cómo cargarlas con procedencia](https://rovaq.ai/blog/exportes-de-marketplace-ya-son-datos). Publicado 2026-10-31. 5 min de lectura. Los archivos que descargas de tus canales de venta no son un trámite pendiente. Son el historial que ya tienes, y se puede cargar con su origen a la vista.
-- [Puntos de dolor: del texto libre de las conversaciones a una prioridad con evidencia](https://rovaq.ai/blog/puntos-de-dolor-del-texto-a-la-prioridad). Publicado 2026-10-31. 5 min de lectura. Contar menciones es un comienzo. Una prioridad necesita además un tamaño, una evidencia que se pueda abrir y una lista de lo que no se sabe.
-- [Una recomendación debe poder discutirse: evidencia, aprobación y resultado](https://rovaq.ai/blog/una-recomendacion-debe-poder-discutirse). Publicado 2026-10-31. 5 min de lectura. Cuando una propuesta trae su evidencia, una persona que decide y un registro de lo que pasó, deja de ser una opinión y se vuelve un hábito.
+- [Tus exportaciones de marketplace ya son datos: cárgalas con origen](https://rovaq.ai/blog/exportes-de-marketplace-ya-son-datos). Publicado 2026-10-31. 5 min de lectura. Los archivos que descargas de tus canales de venta no son un trámite pendiente. Son el historial que ya tienes, y se puede cargar con su origen a la vista.
+- [Puntos de dolor: del texto libre a una prioridad con evidencia](https://rovaq.ai/blog/puntos-de-dolor-del-texto-a-la-prioridad). Publicado 2026-10-31. 5 min de lectura. Contar menciones es un comienzo. Una prioridad necesita además un tamaño, una evidencia que se pueda abrir y una lista de lo que no se sabe.
+- [Una recomendación debe poder discutirse: evidencia y resultado](https://rovaq.ai/blog/una-recomendacion-debe-poder-discutirse). Publicado 2026-10-31. 5 min de lectura. Cuando una propuesta trae su evidencia, una persona que decide y un registro de lo que pasó, deja de ser una opinión y se vuelve un hábito.
 
 ### Del blog al producto
 
@@ -546,7 +548,7 @@ Notas sobre reembolsos, la procedencia de las cifras, los puntos de dolor y las 
 
 Fuente: https://rovaq.ai/blog/reembolsos-fuga-que-se-puede-localizar
 
-## Los reembolsos no son un costo fijo: son una fuga que se puede localizar
+## Los reembolsos no son un costo fijo: son una fuga localizable
 
 Un total único no dice qué atender primero. Según el canal, el producto y el mes, el dinero devuelto empieza a tener forma.
 
@@ -592,7 +594,7 @@ Sin importar con qué herramienta lo armes, un paquete de evidencia útil respon
 - Los motivos registrados y, cuando existan, las conversaciones relacionadas.
 - Los supuestos con los que se estimó el alcance del reclamo, escritos por quien los eligió.
 
-En Rovaq AI, la pantalla de fuga de reembolsos genera un paquete de evidencia por producto, en HTML y CSV, y una lista de productos para el proveedor. Todo se arma en tu navegador y la pantalla confirma que no se envió nada: tú revisas el paquete y tú presentas el reclamo.
+En Rovaq AI, la pantalla de fuga de reembolsos prepara un paquete de evidencia por producto. Tú lo revisas y tú presentas el reclamo; nada se envía solo.
 
 ### Cómo empezar con lo que ya tienes
 
@@ -611,7 +613,7 @@ Después decide quién se queda con cada hallazgo. Una fuga sin responsable vuel
 
 Fuente: https://rovaq.ai/blog/procedencia-de-cada-numero
 
-## De dónde sale cada número: la procedencia como requisito, no como adorno
+## De dónde sale cada número: la procedencia es un requisito
 
 Una cifra sin origen solo se puede aceptar o rechazar. Con su fuente, su fecha de corte y sus vacíos a la vista, se puede discutir.
 
@@ -648,7 +650,7 @@ Conviene separar dos cosas que suelen confundirse. La confianza en los datos res
 
 La pantalla de [confianza de los datos](https://rovaq.ai/producto/confianza-de-los-datos) existe para lo primero. Muestra un semáforo por fuente, la frescura de cada cifra, su cobertura y una lista de lo que todavía no se sabe. Es una herramienta para el trabajo de cada día: antes de mover dinero o de escribirle a un proveedor, quien decide puede ver qué fuentes están al corriente, cuáles se quedaron atrás y qué huecos siguen abiertos.
 
-Lo segundo, la certificación, es otra conversación, y la tenemos con franqueza: Rovaq AI no cuenta hoy con certificaciones de seguridad ni de cumplimiento. Una pantalla de confianza no pretende ocupar ese lugar. Lo que sí hace es dejar a la vista el estado real de cada fuente, que es lo que un equipo necesita para trabajar con cifras sin ceguera.
+Lo segundo, la certificación, es otra conversación: la confianza en los datos no es una certificación y esta pantalla no pretende ocupar ese lugar. Lo que sí hace es dejar a la vista el estado real de cada fuente, que es lo que un equipo necesita para trabajar con cifras sin ceguera.
 
 ### Una prueba sencilla para tu propio tablero
 
@@ -664,7 +666,7 @@ Si las respuestas llegan rápido y coinciden entre sí, el tablero se gana su lu
 ### Lo que no afirmamos
 
 - No afirmamos que una cifra con procedencia sea correcta. La procedencia permite revisarla, no la vuelve cierta por sí sola.
-- No afirmamos que la pantalla de confianza de los datos sea una certificación ni que sustituya una auditoría: Rovaq AI no cuenta hoy con certificaciones de seguridad ni de cumplimiento.
+- No afirmamos que la pantalla de confianza de los datos sea una certificación ni que sustituya una auditoría.
 - No afirmamos que el sello acompañe toda cifra del producto: acompaña a las cifras importantes de las pantallas que lo muestran.
 - No prometemos que los datos estén al día en todo momento: cada cifra muestra su fecha de corte y su antigüedad.
 
@@ -690,7 +692,7 @@ Además, el daño no se reparte parejo. Una herramienta que acierta casi siempre
 
 La alternativa es separar dos trabajos que suelen mezclarse. Uno es entender texto: agrupar conversaciones parecidas, proponer una categoría, redactar un borrador. El otro es calcular dinero: sumar reembolsos, comparar periodos, medir cuánto ingreso está expuesto a un problema. El primero tolera cierta ambigüedad y se revisa leyendo. El segundo no la tolera y debe poder rehacerse.
 
-En Rovaq AI, el segundo trabajo lo hacen reglas y cálculos sobre el libro de la organización, que es de solo inserción y conserva el origen de cada registro. Cada cifra importante lleva su clase, su fuente y su fecha de corte, como explicamos en [el artículo sobre procedencia](https://rovaq.ai/blog/procedencia-de-cada-numero). Cuando algo no se sabe, el sistema dice Sin dato; no rellena el hueco con una suposición redactada con aplomo.
+En Rovaq AI, el segundo trabajo lo hacen reglas y cálculos sobre el libro de la organización, que es de solo inserción y conserva el origen de cada registro. Cada cifra importante lleva su clase, su fuente y su fecha de corte, como explicamos en [el artículo sobre procedencia](https://rovaq.ai/blog/procedencia-de-cada-numero). Cuando falta información, el sistema lo declara; no rellena el hueco con una suposición redactada con aplomo.
 
 La pantalla [Pregúntale a tus datos](https://rovaq.ai/producto/pregunta-a-tus-datos) es el ejemplo más claro. Hoy responde con reglas y con herramientas de solo lectura, sin un modelo de lenguaje, y muestra los pasos con los que calculó cada respuesta. Si no tiene el dato, lo dice. Quien la usa puede seguir el cálculo y repetirlo; no tiene que creer en una respuesta redactada. Esto describe el agente general de esa pantalla; el modo de Finanzas tiene su propio motor y no afirmamos que sea solo de reglas.
 
@@ -702,19 +704,19 @@ Decir que la IA no crea cifras no significa que no tenga trabajo. Hay tareas don
 - **Clasificar.** Cuando la IA interviene, propone una categoría para un tema repetido, para que una persona la revise.
 - **Redactar.** Cuando la IA interviene, propone el texto de un borrador, que una persona revisa antes de enviar.
 
-Y hay cosas que no hace. No produce importes. No decide qué acción tomar. No envía nada por su cuenta. No escribe en tu CRM, que en el caso de HubSpot se conecta en solo lectura. Un borrador es una propuesta de texto, no una acción realizada. Si el borrador sale mal, se corrige o se tira antes de que llegue a nadie.
+Y hay cosas que no hace. No produce importes. No decide qué acción tomar. No ejecuta acciones por sí misma. No escribe en tu CRM, que en el caso de HubSpot se conecta en solo lectura. Un borrador es una propuesta de texto, no una acción realizada. Si el borrador sale mal, se corrige o se tira antes de que llegue a nadie.
 
 #### Una persona decide cada acción
 
-El último paso es siempre humano. En la pantalla [Por decidir](https://rovaq.ai/producto/por-decidir), cada propuesta llega con su evidencia y su motivo, y la persona responsable decide qué hacer con ella. Cuando la IA interviene, sus borradores son texto que alguien revisa y envía; nada se envía solo. Cómo se discute una propuesta y cómo se registra su resultado es otra historia, que contamos en [el artículo sobre decisiones](https://rovaq.ai/blog/una-recomendacion-debe-poder-discutirse).
+El último paso es siempre humano. En la pantalla [Por decidir](https://rovaq.ai/producto/por-decidir), cada propuesta llega con su evidencia y su motivo, y la persona responsable decide qué hacer con ella. Cuando la IA interviene, sus borradores son texto que alguien revisa antes de que llegue a nadie. Cómo se discute una propuesta y cómo se registra su resultado es otra historia, que contamos en [el artículo sobre decisiones](https://rovaq.ai/blog/una-recomendacion-debe-poder-discutirse).
 
 Esta división no frena el trabajo. Un equipo lee un borrador en segundos, pero rehacer un importe mal calculado puede costar días. Repartir el trabajo así pone la rapidez del modelo donde un error es barato, en el texto, y la revisión humana donde un error es caro, en el dinero y en las acciones.
 
-### Una regla para evaluar cualquier herramienta
+### Dónde termina el trabajo del modelo
 
-Si evalúas software con inteligencia artificial para tu negocio, tres preguntas ayudan más que cualquier demostración. De dónde sale cada importe: de un registro que puedes abrir o de un texto que el modelo redactó. Qué pasa cuando falta información: si lo dice, o si la rellena con algo que suena razonable. Y quién ejecuta la acción: si una persona la aprueba o si ocurre sola.
+La división se puede comprobar en cada paso. Una cifra se abre hasta su registro, una categoría propuesta se acepta o se cambia, y un borrador se corrige o se tira. En ninguno de esos pasos el modelo tiene la última palabra, y en ninguno el resultado queda fuera de la vista de quien lo revisa.
 
-Una herramienta que responde bien a las tres puede equivocarse, como cualquiera, pero sus errores serán visibles y corregibles. Eso es lo que buscamos al separar con claridad lo que el modelo hace de lo que le queda fuera.
+Eso no vuelve infalible a la herramienta, pero sí vuelve visibles sus errores, y un error visible se corrige. Es lo que buscamos al separar con claridad lo que hace el modelo de lo que le queda fuera, y es una pregunta útil para cualquier software con inteligencia artificial: dónde exactamente termina el trabajo del modelo y empieza el de una persona.
 
 ### Lo que no afirmamos
 
@@ -781,13 +783,12 @@ Queda una pregunta que el reparto de vistas no resuelve por sí solo: cuánto fi
 
 - No afirmamos que los permisos mínimos eliminen todo riesgo: reducen lo que cada cuenta puede exponer, pero una persona con acceso aún puede equivocarse dentro de lo que su puesto le permite.
 - No describimos aquí qué datos personales ve cada puesto: este artículo cubre pantallas y acciones, no el detalle de los datos personales.
-- La verificación en dos pasos para administradores del espacio todavía no existe y hoy no se exige.
 
 ---
 
 Fuente: https://rovaq.ai/blog/exportes-de-marketplace-ya-son-datos
 
-## Tus exportaciones de marketplace ya son datos: cómo cargarlas con procedencia
+## Tus exportaciones de marketplace ya son datos: cárgalas con origen
 
 Los archivos que descargas de tus canales de venta no son un trámite pendiente. Son el historial que ya tienes, y se puede cargar con su origen a la vista.
 
@@ -832,15 +833,15 @@ Antes de pedir una carga, conviene revisar tus archivos con estas ideas en mente
 3. Separa por tipo lo que descargues: pedidos y reembolsos. Mezclarlos en una sola hoja complica la lectura. Las conversaciones no se cargan por archivo: llegan por la conexión de HubSpot.
 4. Revisa la vista previa con calma y confirma que las columnas y las fechas se leyeron como esperabas antes de aprobar la carga.
 
-Una buena forma de empezar es con un solo canal y un solo periodo completo. Si la vista previa muestra lo que esperabas, repites el proceso con el siguiente canal. Si algo no cuadra, ya sabes dónde buscar, porque el alcance de la prueba era pequeño. Ir de menos a más ahorra correcciones y construye, carga tras carga, un historial en el que puedes confiar.
+Empieza por poco: un canal y un periodo completo bastan para saber si el archivo se lee como esperas. Si la vista previa coincide, el siguiente canal se carga igual; si no, el error cabe en una sola hoja y se corrige antes de que crezca. Así el historial se vuelve confiable carga tras carga.
 
-Nada de esto exige un proyecto largo. Con un par de exportaciones recientes ya puedes responder qué canal pesa más en tus ventas y de dónde sale cada cifra que lo dice, y con eso tu historial deja de ser un trámite para convertirse en el punto de partida.
+Con un par de exportaciones recientes ya puedes responder qué canal pesa más en tus ventas y de dónde sale cada cifra que lo dice. El historial que ya tenías es el punto de partida, con su origen a la vista.
 
 ### Lo que no afirmamos
 
 - No afirmamos que existan conectores directos con Amazon, Walmart ni Shopify: hoy no están disponibles y no damos fechas.
 - No afirmamos que la carga de exportaciones de marketplaces sea de autoservicio: hoy se hace con ayuda de nuestro equipo.
-- No afirmamos que la exportación de un canal contenga todo lo necesario. Si faltan columnas, ciertas cifras no se pueden calcular, y la pantalla lo dice en lugar de mostrar un cero.
+- No afirmamos que la exportación de un canal contenga todo lo necesario. Si faltan columnas, ciertas cifras no se pueden calcular, y la pantalla lo dice.
 - No afirmamos que la lectura de HubSpot cubra todas tus conversaciones: la cobertura se limita a lo que expone su API y puede estar incompleta.
 - No afirmamos que HubSpot se actualice de forma inmediata ni que Rovaq AI escriba en él: la conexión es de solo lectura.
 
@@ -848,7 +849,7 @@ Nada de esto exige un proyecto largo. Con un par de exportaciones recientes ya p
 
 Fuente: https://rovaq.ai/blog/puntos-de-dolor-del-texto-a-la-prioridad
 
-## Puntos de dolor: del texto libre de las conversaciones a una prioridad con evidencia
+## Puntos de dolor: del texto libre a una prioridad con evidencia
 
 Contar menciones es un comienzo. Una prioridad necesita además un tamaño, una evidencia que se pueda abrir y una lista de lo que no se sabe.
 
@@ -914,7 +915,7 @@ No hace falta una herramienta nueva para probar el método. Toma las conversacio
 
 Fuente: https://rovaq.ai/blog/una-recomendacion-debe-poder-discutirse
 
-## Una recomendación debe poder discutirse: evidencia, aprobación y resultado
+## Una recomendación debe poder discutirse: evidencia y resultado
 
 Cuando una propuesta trae su evidencia, una persona que decide y un registro de lo que pasó, deja de ser una opinión y se vuelve un hábito.
 

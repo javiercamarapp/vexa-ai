@@ -443,7 +443,7 @@ export const LANDING = {
       },
       {
         t: { es: 'Lectura', en: 'Read-only' },
-        d: { es: 'Consulta en solo lectura, sin riesgo de cambiar nada.', en: 'Reads with read-only access, with no risk of changing anything.' },
+        d: { es: 'Consulta en solo lectura, sin riesgo de cambiar nada.', en: 'View access only, with no risk of changing anything.' },
         ve: { es: 'Las pantallas que le corresponden, sin poder modificar datos, conexiones ni decisiones.', en: 'The screens that apply to them, unable to modify data, connections or decisions.' },
         href: { es: '/casos-de-uso/lector', en: '/en/use-cases/viewer' },
       },
@@ -457,8 +457,8 @@ export const LANDING = {
       },
       cx: {
         t: { es: 'Experiencia del cliente', en: 'Customer experience' },
-        d: m(0, 'Va junto a su salvedad: hoy solo responde con salvedad el rendimiento por SKU y los casos por estado; lo demás requiere datos adicionales que no están cargados', { es: 'Quien responde por los problemas, los puntos de dolor y la atención ve qué motivo se repite y cuánto dinero arrastra, junto a Puntos de dolor.', en: 'Whoever answers for problems, pain points and support sees which reason repeats and how much money it carries, next to Pain points.' }, { acompana: ['puestos.lideres.cx.salvedad'] }),
-        salvedad: { es: 'Hoy responde con salvedad el rendimiento por SKU y los casos por estado. Lo demás requiere datos adicionales que todavía no están cargados.', en: 'Today it answers, with caveats, performance by SKU and cases by state. Anything else requires additional data that is not loaded yet.' },
+        d: m(0, 'Va junto a su salvedad: hoy responde con salvedad el rendimiento por SKU, los casos por estado y los casos por modalidad de venta y de envío (son casos atendidos, no ventas); lo demás requiere datos adicionales que no están cargados', { es: 'Quien responde por los problemas, los puntos de dolor y la atención ve qué motivo se repite y cuánto dinero arrastra, junto a Puntos de dolor.', en: 'Whoever answers for problems, pain points and support sees which reason repeats and how much money it carries, next to Pain points.' }, { acompana: ['puestos.lideres.cx.salvedad'] }),
+        salvedad: { es: 'Hoy responde con salvedad el rendimiento por SKU, los casos por estado y los casos por modalidad de venta y de envío. Son casos atendidos, no ventas: no dice qué modalidad conviene. Las seis preguntas se pueden hacer en Pregúntale a tus datos y al copiloto CFO, y cada respuesta dice qué le falta. Lo demás requiere datos adicionales que todavía no están cargados.', en: 'Today it answers, with caveats, performance by SKU, cases by state and cases by sales and fulfillment model. These are handled cases, not sales: it does not say which model is better. All six questions can be asked in Ask your data and the CFO copilot, and each answer says what it lacks. Anything else requires additional data that is not loaded yet.' },
         href: { es: '/producto/puntos-de-dolor', en: '/en/product/pain-points' },
       },
     },

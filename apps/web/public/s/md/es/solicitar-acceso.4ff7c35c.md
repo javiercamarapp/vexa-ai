@@ -31,3 +31,5 @@ Revisamos tu caso y te decimos qué se puede cargar o conectar hoy.
 El precio todavía no está publicado.
 
 ## Escríbenos
+
+Para escribirnos, usa el contacto de https://rovaq.ai/solicitar-acceso.

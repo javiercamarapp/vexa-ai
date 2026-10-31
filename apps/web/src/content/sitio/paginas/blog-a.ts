@@ -16,7 +16,7 @@ export const ARTICULO_A2: Articulo = articulo({
       'A dashboard without provenance forces you to believe it. With a cut-off date, a source and what is still unknown, a figure can be debated. Here is how.',
     ),
   },
-  h1: b('De dónde sale cada número: la procedencia como requisito, no como adorno', 'Where every number comes from: provenance as a requirement, not decoration'),
+  h1: b('De dónde sale cada número: la procedencia es un requisito', 'Where every number comes from: provenance is a requirement'),
   subtitulo: b(
     'Una cifra sin origen solo se puede aceptar o rechazar. Con su fuente, su fecha de corte y sus vacíos a la vista, se puede discutir.',
     'A figure without an origin can only be accepted or rejected. With its source, its cut-off date and its gaps in plain view, it can be debated.',
@@ -78,8 +78,8 @@ export const ARTICULO_A2: Articulo = articulo({
       'The {{confianza-de-los-datos|data trust}} screen exists for the first. It shows a traffic light per source, the freshness of each figure, its coverage and a list of what is still unknown. It is a tool for everyday work: before moving money or writing to a supplier, whoever decides can see which sources are up to date, which fell behind and which gaps remain open.',
     ),
     p(
-      'Lo segundo, la certificación, es otra conversación, y la tenemos con franqueza: Rovaq AI no cuenta hoy con certificaciones de seguridad ni de cumplimiento. Una pantalla de confianza no pretende ocupar ese lugar. Lo que sí hace es dejar a la vista el estado real de cada fuente, que es lo que un equipo necesita para trabajar con cifras sin ceguera.',
-      'The second, certification, is a different conversation, and we are candid about it: Rovaq AI does not hold security or compliance certifications today. A trust screen does not try to take that place. What it does is leave the real state of each source in plain view, which is what a team needs to work with figures without going blind.',
+      'Lo segundo, la certificación, es otra conversación: la confianza en los datos no es una certificación y esta pantalla no pretende ocupar ese lugar. Lo que sí hace es dejar a la vista el estado real de cada fuente, que es lo que un equipo necesita para trabajar con cifras sin ceguera.',
+      'The second, certification, is a different conversation: trust in the data is not a certification, and this screen does not try to take that place. What it does is leave the real state of each source in plain view, which is what a team needs to work with figures without going blind.',
     ),
     h2('Una prueba sencilla para tu propio tablero', 'A simple test for your own dashboard'),
     p(
@@ -98,7 +98,7 @@ export const ARTICULO_A2: Articulo = articulo({
     ),
     noAfirmamos(
       ['No afirmamos que una cifra con procedencia sea correcta. La procedencia permite revisarla, no la vuelve cierta por sí sola.', 'We do not claim that a figure with provenance is correct. Provenance makes it possible to review it; it does not make it true by itself.'],
-      ['No afirmamos que la pantalla de confianza de los datos sea una certificación ni que sustituya una auditoría: Rovaq AI no cuenta hoy con certificaciones de seguridad ni de cumplimiento.', 'We do not claim that the data trust screen is a certification or that it replaces an audit: Rovaq AI holds no security or compliance certifications today.'],
+      ['No afirmamos que la pantalla de confianza de los datos sea una certificación ni que sustituya una auditoría.', 'We do not claim that the data trust screen is a certification or that it replaces an audit.'],
       ['No afirmamos que el sello acompañe toda cifra del producto: acompaña a las cifras importantes de las pantallas que lo muestran.', 'We do not claim that the seal accompanies every figure in the product: it accompanies the important figures on the screens that show it.'],
       ['No prometemos que los datos estén al día en todo momento: cada cifra muestra su fecha de corte y su antigüedad.', 'We do not promise that data is current at every moment: every figure shows its cut-off date and its age.'],
     ),
@@ -150,8 +150,8 @@ export const ARTICULO_A3: Articulo = articulo({
       'The alternative is to separate two jobs that tend to get mixed. One is understanding text: grouping similar conversations, proposing a category, drafting a message. The other is calculating money: adding up refunds, comparing periods, measuring how much revenue is exposed to a problem. The first tolerates some ambiguity and is reviewed by reading. The second does not tolerate it and must be repeatable.',
     ),
     p(
-      'En Rovaq AI, el segundo trabajo lo hacen reglas y cálculos sobre el libro de la organización, que es de solo inserción y conserva el origen de cada registro. Cada cifra importante lleva su clase, su fuente y su fecha de corte, como explicamos en {{a2|el artículo sobre procedencia}}. Cuando algo no se sabe, el sistema dice Sin dato; no rellena el hueco con una suposición redactada con aplomo.',
-      'In Rovaq AI, the second job is done by rules and calculations over the organization ledger, which is insert-only and keeps the origin of each record. Every important figure carries its class, its source and its cut-off date, as we explain in {{a2|the article on provenance}}. When something is not known, the system says No data; it does not fill the gap with an assumption written with confidence.',
+      'En Rovaq AI, el segundo trabajo lo hacen reglas y cálculos sobre el libro de la organización, que es de solo inserción y conserva el origen de cada registro. Cada cifra importante lleva su clase, su fuente y su fecha de corte, como explicamos en {{a2|el artículo sobre procedencia}}. Cuando falta información, el sistema lo declara; no rellena el hueco con una suposición redactada con aplomo.',
+      'In Rovaq AI, the second job is done by rules and calculations over the organization ledger, which is insert-only and keeps the origin of each record. Every important figure carries its class, its source and its cut-off date, as we explain in {{a2|the article on provenance}}. When information is missing, the system declares it; it does not fill the gap with an assumption written with confidence.',
     ),
     p(
       'La pantalla {{pregunta-a-tus-datos|Pregúntale a tus datos}} es el ejemplo más claro. Hoy responde con reglas y con herramientas de solo lectura, sin un modelo de lenguaje, y muestra los pasos con los que calculó cada respuesta. Si no tiene el dato, lo dice. Quien la usa puede seguir el cálculo y repetirlo; no tiene que creer en una respuesta redactada. Esto describe el agente general de esa pantalla; el modo de Finanzas tiene su propio motor y no afirmamos que sea solo de reglas.',
@@ -168,26 +168,26 @@ export const ARTICULO_A3: Articulo = articulo({
       ['**Redactar.** Cuando la IA interviene, propone el texto de un borrador, que una persona revisa antes de enviar.', '**Drafting.** When AI is involved, it proposes the text of a draft, which a person reviews before sending.'],
     ),
     p(
-      'Y hay cosas que no hace. No produce importes. No decide qué acción tomar. No envía nada por su cuenta. No escribe en tu CRM, que en el caso de HubSpot se conecta en solo lectura. Un borrador es una propuesta de texto, no una acción realizada. Si el borrador sale mal, se corrige o se tira antes de que llegue a nadie.',
-      'And there are things it does not do. It does not produce amounts. It does not decide what action to take. It does not send anything on its own. It does not write to your CRM, which in the case of HubSpot connects read-only. A draft is a proposal of text, not an action taken. If a draft comes out poorly, it is corrected or thrown away before it reaches anyone.',
+      'Y hay cosas que no hace. No produce importes. No decide qué acción tomar. No ejecuta acciones por sí misma. No escribe en tu CRM, que en el caso de HubSpot se conecta en solo lectura. Un borrador es una propuesta de texto, no una acción realizada. Si el borrador sale mal, se corrige o se tira antes de que llegue a nadie.',
+      'And there are things it does not do. It does not produce amounts. It does not decide what action to take. It does not carry out actions on its own. It does not write to your CRM, which in the case of HubSpot connects read-only. A draft is a proposal of text, not an action taken. If a draft comes out poorly, it is corrected or thrown away before it reaches anyone.',
     ),
     h3('Una persona decide cada acción', 'A person decides every action'),
     p(
-      'El último paso es siempre humano. En la pantalla {{por-decidir|Por decidir}}, cada propuesta llega con su evidencia y su motivo, y la persona responsable decide qué hacer con ella. Cuando la IA interviene, sus borradores son texto que alguien revisa y envía; nada se envía solo. Cómo se discute una propuesta y cómo se registra su resultado es otra historia, que contamos en {{a8|el artículo sobre decisiones}}.',
-      'The last step is always human. In the {{por-decidir|To decide}} screen, each proposal arrives with its evidence and its reason, and the person in charge decides what to do with it. When AI is involved, its drafts are text that someone reviews and sends; nothing is sent on its own. How a proposal is debated and how its outcome is recorded is another story, which we tell in {{a8|the article on decisions}}.',
+      'El último paso es siempre humano. En la pantalla {{por-decidir|Por decidir}}, cada propuesta llega con su evidencia y su motivo, y la persona responsable decide qué hacer con ella. Cuando la IA interviene, sus borradores son texto que alguien revisa antes de que llegue a nadie. Cómo se discute una propuesta y cómo se registra su resultado es otra historia, que contamos en {{a8|el artículo sobre decisiones}}.',
+      'The last step is always human. In the {{por-decidir|To decide}} screen, each proposal arrives with its evidence and its reason, and the person in charge decides what to do with it. When AI is involved, its drafts are text that someone reviews before it reaches anyone. How a proposal is debated and how its outcome is recorded is another story, which we tell in {{a8|the article on decisions}}.',
     ),
     p(
       'Esta división no frena el trabajo. Un equipo lee un borrador en segundos, pero rehacer un importe mal calculado puede costar días. Repartir el trabajo así pone la rapidez del modelo donde un error es barato, en el texto, y la revisión humana donde un error es caro, en el dinero y en las acciones.',
       'This split does not slow the work down. A team reads a draft in seconds, but redoing a wrongly calculated amount can take days. Dividing the work this way puts the speed of the model where a mistake is cheap, in text, and human review where a mistake is expensive, in money and in actions.',
     ),
-    h2('Una regla para evaluar cualquier herramienta', 'A rule for evaluating any tool'),
+    h2('Dónde termina el trabajo del modelo', 'Where the work of the model ends'),
     p(
-      'Si evalúas software con inteligencia artificial para tu negocio, tres preguntas ayudan más que cualquier demostración. De dónde sale cada importe: de un registro que puedes abrir o de un texto que el modelo redactó. Qué pasa cuando falta información: si lo dice, o si la rellena con algo que suena razonable. Y quién ejecuta la acción: si una persona la aprueba o si ocurre sola.',
-      'If you are evaluating software with artificial intelligence for your business, three questions help more than any demonstration. Where each amount comes from: a record you can open or a text the model wrote. What happens when information is missing: whether it says so, or fills in the gap with something that sounds reasonable. And who carries out the action: whether a person approves it or it happens on its own.',
+      'La división se puede comprobar en cada paso. Una cifra se abre hasta su registro, una categoría propuesta se acepta o se cambia, y un borrador se corrige o se tira. En ninguno de esos pasos el modelo tiene la última palabra, y en ninguno el resultado queda fuera de la vista de quien lo revisa.',
+      'The split can be checked at every step. A figure opens down to its record, a proposed category is accepted or changed, and a draft is corrected or thrown away. At none of those steps does the model have the last word, and at none does the result stay out of sight of whoever reviews it.',
     ),
     p(
-      'Una herramienta que responde bien a las tres puede equivocarse, como cualquiera, pero sus errores serán visibles y corregibles. Eso es lo que buscamos al separar con claridad lo que el modelo hace de lo que le queda fuera.',
-      'A tool that answers all three well can still be wrong, like any other, but its errors will be visible and correctable. That is what we aim for by separating clearly what the model does from what stays outside it.',
+      'Eso no vuelve infalible a la herramienta, pero sí vuelve visibles sus errores, y un error visible se corrige. Es lo que buscamos al separar con claridad lo que hace el modelo de lo que le queda fuera, y es una pregunta útil para cualquier software con inteligencia artificial: dónde exactamente termina el trabajo del modelo y empieza el de una persona.',
+      'That does not make the tool infallible, but it does make its errors visible, and a visible error gets corrected. It is what we aim for by separating clearly what the model does from what stays outside it, and it is a useful question for any software that uses artificial intelligence: where exactly does the work of the model end and the work of a person begin.',
     ),
     noAfirmamos(
       ['No afirmamos que la IA no se equivoque. Por eso sus propuestas se leen y una persona decide qué hacer con ellas.', 'We do not claim that AI makes no mistakes. That is why its proposals are read and a person decides what to do with them.'],
@@ -207,7 +207,7 @@ export const ARTICULO_A4: Articulo = articulo({
     titulo: b('Un puesto, una vista: cada quien ve lo suyo | Rovaq AI', 'One Role, One View: Each Role Sees What Fits | Rovaq AI'),
     descripcion: b(
       'Mostrar menos da seguridad y claridad. Las vistas de administrador del espacio, analista, operador y lectura, con permisos decididos en el servidor.',
-      'Showing less aids security and clarity. How views divide among workspace administrator, analyst, operator and read-only, with access decided on the server.',
+      'Showing less aids security and clarity. Views for workspace administrator, analyst, operator and read-only roles, with access decided on the server.',
     ),
   },
   h1: b('Un puesto, una vista: por qué cada persona ve solo lo que le toca', 'One role, one view: why each role sees only what belongs to it'),
@@ -247,7 +247,7 @@ export const ARTICULO_A4: Articulo = articulo({
       ['**{{propietario|Administrador del espacio}}.** Configura, decide y aprueba. Ve las pantallas del producto y administra el equipo, los avisos y la retención de datos. Es quien da el visto bueno a las acciones que se proponen.', '**{{propietario|Workspace administrator}}.** Configures, decides and approves. Sees the product screens and manages the team, the notices and data retention. This role gives the go-ahead to the actions that are proposed.'],
       ['**{{analista|Analista}}.** Investiga, prepara y propone. Ve el dinero, los problemas, los puntos de dolor y las importaciones, e importa archivos. Propone, pero no aprueba.', '**{{analista|Analyst}}.** Investigates, prepares and proposes. Sees the money, the problems, the pain points and the imports, and imports files. Proposes, but does not approve.'],
       ['**{{operador|Operador}}.** Ejecuta las acciones que le asignan. Ve los problemas, las acciones asignadas y su evidencia, sin cifras de dinero.', '**{{operador|Operator}}.** Carries out the actions assigned to them. Sees the problems, the assigned actions and their evidence, without money figures.'],
-      ['**{{lector|Lectura}}.** Solo consulta. Ve las pantallas que le corresponden, sin poder modificar datos, conexiones ni decisiones.', '**{{lector|Read-only}}.** Looks, but cannot edit. Sees the screens that apply to it, unable to modify data, connections or decisions.'],
+      ['**{{lector|Lectura}}.** Solo consulta. Ve las pantallas que le corresponden, sin poder modificar datos, conexiones ni decisiones.', '**{{lector|Read-only}}.** Consults only and cannot edit anything. Sees the screens that apply to it, unable to modify data, connections or decisions.'],
     ),
     p(
       'La separación entre quien propone y quien aprueba merece una mención aparte. Que el analista prepare un hallazgo y el administrador del espacio lo apruebe no es burocracia: es la forma de asegurar que una persona distinta mire la evidencia antes de que algo se ponga en marcha. Y que el operador ejecute sin ver cifras de dinero significa que quien hace el trabajo cotidiano no necesita acceso a lo que no usa.',
@@ -292,7 +292,6 @@ export const ARTICULO_A4: Articulo = articulo({
     noAfirmamos(
       ['No afirmamos que los permisos mínimos eliminen todo riesgo: reducen lo que cada cuenta puede exponer, pero una persona con acceso aún puede equivocarse dentro de lo que su puesto le permite.', 'We do not claim that minimal permissions eliminate all risk: they reduce what each account can expose, but a person with access can still make a mistake within what their role allows.'],
       ['No describimos aquí qué datos personales ve cada puesto: este artículo cubre pantallas y acciones, no el detalle de los datos personales.', 'We do not describe here which personal data each role sees: this article covers screens and actions, not the detail of personal data.'],
-      ['La verificación en dos pasos para administradores del espacio todavía no existe y hoy no se exige.', 'Two-step verification for workspace administrators does not exist yet and is not required today.'],
     ),
   ],
 });
@@ -308,7 +307,7 @@ export const ARTICULO_A5: Articulo = articulo({
       'Before waiting for a direct connector, your Excel and CSV history can be loaded with a preview and keep where each row came from. This works today.',
     ),
   },
-  h1: b('Tus exportaciones de marketplace ya son datos: cómo cargarlas con procedencia', 'Your marketplace exports are already data: how to load them with provenance'),
+  h1: b('Tus exportaciones de marketplace ya son datos: cárgalas con origen', 'Your marketplace exports are already data: load them with provenance'),
   subtitulo: b(
     'Los archivos que descargas de tus canales de venta no son un trámite pendiente. Son el historial que ya tienes, y se puede cargar con su origen a la vista.',
     'The files you download from your sales channels are not a pending chore. They are the history you already have, and it can be loaded with its origin in plain view.',
@@ -380,17 +379,17 @@ export const ARTICULO_A5: Articulo = articulo({
       ['Revisa la vista previa con calma y confirma que las columnas y las fechas se leyeron como esperabas antes de aprobar la carga.', 'Go through the preview calmly and confirm that columns and dates were read as you expected before approving the import.'],
     ),
     p(
-      'Una buena forma de empezar es con un solo canal y un solo periodo completo. Si la vista previa muestra lo que esperabas, repites el proceso con el siguiente canal. Si algo no cuadra, ya sabes dónde buscar, porque el alcance de la prueba era pequeño. Ir de menos a más ahorra correcciones y construye, carga tras carga, un historial en el que puedes confiar.',
-      'A good way to start is with a single channel and a single complete period. If the preview shows what you expected, you repeat the process with the next channel. If something does not add up, you already know where to look, because the scope of the test was small. Going from less to more saves corrections and builds, import after import, a history you can rely on.',
+      'Empieza por poco: un canal y un periodo completo bastan para saber si el archivo se lee como esperas. Si la vista previa coincide, el siguiente canal se carga igual; si no, el error cabe en una sola hoja y se corrige antes de que crezca. Así el historial se vuelve confiable carga tras carga.',
+      'Start small: one channel and one complete period are enough to learn whether the file reads the way you expect. If the preview matches, the next channel loads the same way; if not, the error fits in a single sheet and is fixed before it grows. That is how the history becomes dependable, import after import.',
     ),
     p(
-      'Nada de esto exige un proyecto largo. Con un par de exportaciones recientes ya puedes responder qué canal pesa más en tus ventas y de dónde sale cada cifra que lo dice, y con eso tu historial deja de ser un trámite para convertirse en el punto de partida.',
-      'None of this requires a long project. With a couple of recent exports you can already answer which channel weighs most in your sales and where each figure that says so comes from, and with that your history stops being a chore and becomes the starting point.',
+      'Con un par de exportaciones recientes ya puedes responder qué canal pesa más en tus ventas y de dónde sale cada cifra que lo dice. El historial que ya tenías es el punto de partida, con su origen a la vista.',
+      'With a couple of recent exports you can already answer which channel weighs most in your sales and where each figure that says so comes from. The history you already had is the starting point, with its origin in plain view.',
     ),
     noAfirmamos(
       ['No afirmamos que existan conectores directos con Amazon, Walmart ni Shopify: hoy no están disponibles y no damos fechas.', 'We do not claim that direct connectors with Amazon, Walmart or Shopify exist: they are not available today and we give no dates.'],
       ['No afirmamos que la carga de exportaciones de marketplaces sea de autoservicio: hoy se hace con ayuda de nuestro equipo.', 'We do not claim that loading marketplace exports is self-service: today it is done with help from our team.'],
-      ['No afirmamos que la exportación de un canal contenga todo lo necesario. Si faltan columnas, ciertas cifras no se pueden calcular, y la pantalla lo dice en lugar de mostrar un cero.', 'We do not claim that a channel export contains everything needed. If columns are missing, certain figures cannot be calculated, and the screen says so instead of showing a zero.'],
+      ['No afirmamos que la exportación de un canal contenga todo lo necesario. Si faltan columnas, ciertas cifras no se pueden calcular, y la pantalla lo dice.', 'We do not claim that a channel export contains everything needed. If columns are missing, certain figures cannot be calculated, and the screen says so.'],
       ['No afirmamos que la lectura de HubSpot cubra todas tus conversaciones: la cobertura se limita a lo que expone su API y puede estar incompleta.', 'We do not claim that the HubSpot reading covers all your conversations: coverage is limited to what its API exposes and may be incomplete.'],
       ['No afirmamos que HubSpot se actualice de forma inmediata ni que Rovaq AI escriba en él: la conexión es de solo lectura.', 'We do not claim that HubSpot updates instantly or that Rovaq AI writes to it: the connection is read-only.'],
     ),

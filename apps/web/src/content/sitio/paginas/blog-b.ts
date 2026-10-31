@@ -19,8 +19,8 @@ export const ARTICULO_A6: Articulo = articulo({
     ),
   },
   h1: b(
-    'Puntos de dolor: del texto libre de las conversaciones a una prioridad con evidencia',
-    'Pain points: from free text in conversations to a priority backed by evidence',
+    'Puntos de dolor: del texto libre a una prioridad con evidencia',
+    'Pain points: from free text to a priority backed by evidence',
   ),
   subtitulo: b(
     'Contar menciones es un comienzo. Una prioridad necesita además un tamaño, una evidencia que se pueda abrir y una lista de lo que no se sabe.',
@@ -269,8 +269,8 @@ export const ARTICULO_A8: Articulo = articulo({
     ),
   },
   h1: b(
-    'Una recomendación debe poder discutirse: evidencia, aprobación y resultado',
-    'A recommendation must be debatable: evidence, approval and outcome',
+    'Una recomendación debe poder discutirse: evidencia y resultado',
+    'A recommendation must be debatable: evidence and outcome',
   ),
   subtitulo: b(
     'Cuando una propuesta trae su evidencia, una persona que decide y un registro de lo que pasó, deja de ser una opinión y se vuelve un hábito.',

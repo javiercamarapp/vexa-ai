@@ -25,6 +25,11 @@ export const trJEs = {
   'tr.lg.serie.corridasN': 'El problema agrupa **{n}** corridas de extracción; en total suman **{total}** incidencias.',
   'tr.lg.serie.fuenteCorr': 'Vínculos problema-corrida (agrupación por IA)',
   'tr.lg.serie.cobCorr': 'Una corrida puede traer incidencias de varias categorías; el conteo no es el número de clientes afectados.',
+  'tr.lg.cache.seg': 'hace {n} s',
+  'tr.lg.cache.base': 'Mostrando la última carga ({hace}).',
+  'tr.lg.cache.viejo': ' No se pudo actualizar ahora; se conserva este dato.',
+  'tr.lg.red.sinConexion': 'No se pudo conectar con el servicio. Se reintentará solo.',
+  'tr.lg.red.noConsulta': 'No se pudo consultar. Reintenta.',
 } as const;
 export const trJEn = {
   'tr.lg.tituloAuto.rotulo': 'Automatic description',
@@ -51,4 +56,9 @@ export const trJEn = {
   'tr.lg.serie.corridasN': 'The problem groups **{n}** extraction runs; together they add up to **{total}** incidents.',
   'tr.lg.serie.fuenteCorr': 'Problem-to-run links (AI grouping)',
   'tr.lg.serie.cobCorr': 'A run can bring incidents from several categories; the count is not the number of affected customers.',
+  'tr.lg.cache.seg': '{n} s ago',
+  'tr.lg.cache.base': 'Showing the last load ({hace}).',
+  'tr.lg.cache.viejo': ' Could not update right now; this data is kept.',
+  'tr.lg.red.sinConexion': 'Could not connect to the service. It will retry on its own.',
+  'tr.lg.red.noConsulta': 'Could not load this. Try again.',
 } as const;

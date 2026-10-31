@@ -9,7 +9,7 @@ const dormir=(ms,signal)=>new Promise((res,rej)=>{if(!ms)return res();const t=se
 export const MENSAJE_SIN_CONEXION='No se pudo conectar con el servicio. Se reintentará solo.';
 export const MENSAJE_REINTENTANDO='No se pudo conectar; reintentando…';
 export const esErrorDeRed=e=>!!e&&(e instanceof TypeError||/failed to fetch|load failed|networkerror|fetch failed|network request failed/i.test(String(e.message??e)));
-export const mensajeDeError=(e,otro)=>esErrorDeRed(e)?MENSAJE_SIN_CONEXION:(e instanceof Error&&e.message?e.message:otro);
+export const mensajeDeError=(e,otro,t=null)=>esErrorDeRed(e)?(t?t('tr.lg.red.sinConexion'):MENSAJE_SIN_CONEXION):(e instanceof Error&&e.message?e.message:otro);
 /** pedir(signal) -> {status, json?}. Devuelve {status,json,intentos} o {timedOut:true,intentos}. Si `signal` se aborta, relanza el AbortError. */
 export async function pedirConReintento(pedir,{plazos=PLAZOS_MS,onReintentando=()=>{},signal,esperaMs=ESPERA_REINTENTO_MS}={}){
  const ultimo=plazos.length-1;

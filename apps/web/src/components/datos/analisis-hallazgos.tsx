@@ -10,7 +10,8 @@ import {LinkButton,Arrow} from '../ui/button';
 import {useJson} from '../ui/use-json';
 import {Tip} from '../ui/tip';
 import {nf} from '../ui/format';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
+import {etiquetaCategoria} from '../../lib/legibilidad/categorias.mjs';
 import type {Clave} from '../../lib/i18n';
 import Link from '../workspace/navigation-lifecycle';
 import './datos.css';
@@ -22,7 +23,7 @@ type Estado={[runId:string]:ResumenEvidencia|'error'|undefined};
 
 /** Cobertura honesta («6 de N») y tabla de hallazgos: un asunto legible por análisis en vez de un identificador y seis botones iguales. */
 export function HallazgosAnalisis({jobs,fuentes,masPaginas}:{jobs:JobFila[];fuentes:Record<string,string>;masPaginas:boolean}){
- const tx=useT(),[ev,setEv]=useState<Estado>({});
+ const tx=useT(),idioma=useIdioma(),[ev,setEv]=useState<Estado>({});
  const runs=useMemo(()=>[...new Set(jobs.filter(j=>j.runId&&['succeeded','abstained'].includes(j.runStatus??'')).map(j=>j.runId as string))].slice(0,15),[jobs]);
  useEffect(()=>{
   const c=new AbortController();
@@ -48,11 +49,11 @@ export function HallazgosAnalisis({jobs,fuentes,masPaginas}:{jobs:JobFila[];fuen
     <tbody>{jobs.map(j=>{const e=j.runId?ev[j.runId]:undefined,st=ESTADO[j.state];
      const termino=j.runStatus==='succeeded';
      return <tr key={j.id}>
-      <th scope="row" className="dn-asunto">{!termino?<span className="muted">{j.state==='failed'?tx('tr.datos.anSinResultado'):j.state==='succeeded'?tx('tr.datos.anSinConcluyente'):tx('tr.datos.anPendiente')}</span>:e===undefined?<span className="muted">{tx('tr.datos.anLeyendo')}</span>:e==='error'?<span className="muted">{tx('hoy.noDisponible')}</span>:e.sinConclusion?<span className="muted">{tx('tr.datos.anSinConcluyente')}</span>:<>{e.titulo}{e.otros>0&&<small className="muted"> · {tx('tr.datos.anYMas',{n:e.otros})}</small>}<small className="muted"> · {tx(e.citas===1?'tr.datos.anCita1':'tr.datos.anCitaN',{n:nf.format(e.citas)})}</small></>}</th>
+      <th scope="row" className="dn-asunto">{!termino?<span className="muted">{j.state==='failed'?tx('tr.datos.anSinResultado'):j.state==='succeeded'?tx('tr.datos.anSinConcluyente'):tx('tr.datos.anPendiente')}</span>:e===undefined?<span className="muted">{tx('tr.datos.anLeyendo')}</span>:e==='error'?<span className="muted">{tx('hoy.noDisponible')}</span>:e.sinConclusion?<span className="muted">{tx('tr.datos.anSinConcluyente')}</span>:<>{etiquetaCategoria(e.categoria,tx)}{e.otros>0&&<small className="muted"> · {tx('tr.datos.anYMas',{n:e.otros})}</small>}<small className="muted"> · {tx(e.citas===1?'tr.datos.anCita1':'tr.datos.anCitaN',{n:nf.format(e.citas)})}</small></>}</th>
       <td>{termino&&e&&e!=='error'&&e.severidad?<StatusChip tone={tonoSeveridad(e.severidad)}>{severidadDe(e.severidad,tx)}</StatusChip>:<span className="muted">—</span>}</td>
       <td>{fuentes[j.conversationId]??tx('det.conversacion')} · <code className="dn-code">{j.conversationId.slice(0,8)}</code></td>
       <td><Tip label={tx('tr.datos.anTip')}><span className="muted">{tx('tr.datos.anSinVinculo')}</span></Tip></td>
-      <td>{fechaCorteLegible(j.createdAt,{hora:false}).replace(' (UTC)','')||tx('tr.ui.cbNoDisp')}</td>
+      <td>{fechaCorteLegible(j.createdAt,{hora:false,idioma}).replace(' (UTC)','')||tx('tr.ui.cbNoDisp')}</td>
       <td><StatusChip tone={st?st.tono:'muted'}>{st?tx(st.texto):j.state}</StatusChip></td>
       <td>{j.runId&&termino?<LinkButton href={'/analysis/'+j.runId} size="sm" icon={<Arrow/>}>{tx('tr.datos.anVerEvidencia')}</LinkButton>:null}</td>
      </tr>;})}</tbody></table>

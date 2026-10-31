@@ -21,7 +21,7 @@ function Faltan({errores}:{errores:Problema[]}){const t=useT();return errores.le
 function Campo({id,etiqueta,ayuda,children}:{id:string;etiqueta:string;ayuda?:string;children:ReactNode}){return <div className="field"><label htmlFor={id}>{etiqueta}</label>{children}{ayuda&&<small className={css.ayuda}>{ayuda}</small>}</div>;}
 const ETAPAS=['tr.recs.eAprobar','tr.recs.eBorradores','tr.recs.eEnCurso','tr.recs.eResultado'] as const;
 /** Cabecera fija del flujo: dónde está esta recomendación en el proceso y qué acción se decide (el pie solo trae la decisión). */
-function Resumen({item,paso}:{item:Recommendation;paso:number}){const t=useT();return <div className="ov-sticky"><ol className="ov-steps" aria-label={t('tr.recs.etapasAccionAria')}>{ETAPAS.map((e,i)=><li key={e} aria-current={i===paso?'step':undefined}>{i+1} · {t(e)}</li>)}</ol><p className="ov-impact" style={{marginTop:8}}>{textoLegible(item.action)}</p></div>;}
+function Resumen({item,paso}:{item:Recommendation;paso:number}){const t=useT();return <div className="ov-sticky"><ol className="ov-steps" aria-label={t('tr.recs.etapasAccionAria')}>{ETAPAS.map((e,i)=><li key={e} aria-current={i===paso?'step':undefined}>{i+1} · {t(e)}</li>)}</ol><p className="ov-impact" style={{marginTop:8}}>{textoLegible(item.action,t)}</p></div>;}
 const cancelar=(onClose:()=>void,t:Traductor)=><Button variant="ghost" onClick={onClose}>{t('tr.recs.cancelar')}</Button>;
 const opcionesMiembros=(m:Miembro[],t:Traductor)=>m.map(x=><option key={x.id} value={x.id}>{persona(x.id,m,t)}</option>);
 

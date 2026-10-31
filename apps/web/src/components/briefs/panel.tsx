@@ -1,5 +1,5 @@
 'use client';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
 import type {Traductor,Clave} from '../../lib/i18n';
 import {RovaqCargando} from '../rovaq-cargando';
 import {useAutoRefresh} from '../ui/use-auto-refresh';
@@ -52,10 +52,10 @@ const valorCifra=(metric:Metric,tx:Traductor)=>{const c=cifraBrief(metric);retur
 function Figures({metrics}:{metrics:Metric[]}){const tx=useT();return <dl className="metric-grid">{metrics.map((metric,index)=>{const c=cifraBrief(metric);return <div key={metric.kind+':'+index}><dt>{metric.label} {c.tipo==='sin_cobertura'?<KindBadge kind="nodata"/>:<KindBadge metric={metric}/>}</dt><dd>{valorCifra(metric,tx)}{c.rotulo&&c.tipo!=='exacta'&&<small>{c.rotulo}</small>}<small><SourceRef value={metric.source_ref}/></small></dd></div>;})}</dl>;}
 const safe=(href:string)=>href.startsWith('/')&&!href.startsWith('//');
 const exact=(m:Metric)=>m.amount_minor!==null&&/^-?\d+$/.test(m.amount_minor);
-const stamp=(v:string)=>fechaCorteLegible(v);
 function Problem({item}:{item:BriefProblem}){const tx=useT();const titulo=tituloEs(item.title,tx);return <article className="card problem-card" aria-label={tx('tr.brief.problemaAria',{titulo})}><div className="card-head"><div>{item.critical&&<StatusChip tone="warn">{tx('prob.revCritica')}</StatusChip>}<h3>{item.rank!==null?item.rank+'. ':''}{titulo}</h3><TituloAuto problemId={item.id} label={item.title}/></div>{safe(item.href)&&<LinkButton href={item.href} size="sm" variant="ghost" icon={<Arrow/>}>{tx('pnl.verProblema')}</LinkButton>}</div><p className="card-lead">{tx('tr.brief.probLead',{v:item.version,base:etiquetaBase(item),n:item.evidenceCount,citas:item.evidenceCount===1?tx('tr.brief.citaUna'):tx('tr.brief.citaVarias')})}</p><Figures metrics={item.metrics}/><details><summary>{tx('tr.brief.evidenciaDe',{titulo})}</summary>{item.evidence.map((e,i)=><Citation key={e.runId+':'+e.messageRevisionId+':'+i} quote={e.quote} role={e.role} category={e.category} messageRevisionId={e.messageRevisionId}/>)}</details></article>;}
 function Document({brief,busy,exportFile}:{brief:Brief;busy:boolean;exportFile:(kind:'json'|'html')=>void}){
- const tx=useT();
+ const tx=useT(),idioma=useIdioma();
+ const stamp=(v:string)=>fechaCorteLegible(v,{idioma});
  const money=(v:string|null,c:string,e:number)=>moneyDe(v,c,e,tx);
  const d=brief.document,cur=d.scope.currency;
  const tit=cifraTitular(d.metrics),acc=accionPrincipal(d.top3,d.actions),vig=resumenVigilar(d),{nuevos:criticosNuevos,repetidos:criticosYaArriba}=criticosAparte(d);
@@ -70,7 +70,7 @@ function Document({brief,busy,exportFile}:{brief:Brief;busy:boolean;exportFile:(
    <div className="card-head"><div><p className="eyebrow">{tx('brief.versionEyebrow',{n:brief.version,estado:brief.stale?tx('brief.historica'):tx('brief.vigente')})}</p><h2>{tx('brief.resumenCorte')}</h2></div><div className="btn-group" role="group" aria-label={tx('brief.exportarAria')}><Button icon={<Download/>} variant="primary" size="sm" disabled={busy} onClick={()=>exportFile('html')}>{tx('brief.descHtml')}</Button><Button icon={<Download/>} size="sm" disabled={busy} onClick={()=>exportFile('json')}>{tx('brief.descJson')}</Button></div></div>
    <p className="headline">{tit?.tipo==='exacta'?<>{tx('tr.brief.h1a')}<strong>{money(tit.c.valor,tit.m.currency,tit.m.exponent)}</strong>{tx('tr.brief.h1b',{label:tit.m.label.toLowerCase()})}</>:tit?<>{tx('tr.brief.h2a')}<strong>{money(tit.c.valor,tit.m.currency,tit.m.exponent)}</strong>{tx('tr.brief.h2b',{label:tit.m.label.toLowerCase()})}</>:<>{tx('tr.brief.h3')}</>}{d.top3.length===1?tx('tr.brief.hayUno'):tx('tr.brief.hayVarios')}<strong>{nf.format(d.top3.length)}</strong>{d.top3.length===1?tx('tr.brief.probPrioUno'):tx('tr.brief.probPrioVarios')}</p>
    <div className="meta-row"><span className="chip">{tx('tr.brief.corte',{fecha:stamp(d.asOf)})}</span><span className="chip">{tx('tr.brief.rango',{a:d.scope.date_start.slice(0,10),b:d.scope.date_end.slice(0,10)})}</span><span className="chip">{cur} · {baseLegible(d.scope.basis,tx)}</span><span className="chip">{tx('tr.brief.creado',{fecha:stamp(brief.createdAt)})}</span></div>
-   <p className="card-lead">{tx('tr.brief.cobertura',{c:d.coverage})}{d.watermark?tx('tr.brief.actualizacion',{fecha:fechaCorteLegible(d.watermark)}):''}</p>
+   <p className="card-lead">{tx('tr.brief.cobertura',{c:d.coverage})}{d.watermark?tx('tr.brief.actualizacion',{fecha:stamp(d.watermark)}):''}</p>
   </div>
   {brief.stale&&<p role="status">{tx('brief.staleNota')}</p>}
   <section aria-label={tx('brief.cifrasAria')} className="stack"><div className="ui-kpis reveal">{d.metrics.map((m,i)=>{const c=cifraBrief(m),cov=(m as {coverage?:{known_n:number;eligible_n:number}}).coverage,tono=m.kind==='refunds'?2:m.kind==='allOrders'?1:7;return <div key={m.kind+':'+i} className="ui-kpi" data-c={tono} style={{['--cat' as string]:`var(--chart-${tono})`}}><span className="ui-kpi-label">{m.label} <KindBadge kind={epistemicKindConCobertura(m,c.tipo==='sin_cobertura')}/></span><strong className="ui-kpi-value">{valorCifra(m,tx)}</strong><small className="ui-kpi-note">{c.rotulo&&c.tipo!=='exacta'&&<>{c.rotulo} </>}<SourceRef value={m.source_ref}/></small>{cov&&cov.eligible_n>0&&<span className={css.cov} role="img" aria-label={tx('tr.brief.covAria',{a:nf.format(cov.known_n),b:nf.format(cov.eligible_n)})}><span className={css.track}><span style={{inlineSize:Math.min(100,cov.known_n*100/cov.eligible_n)+'%'}}/></span><small>{tx('tr.brief.covTxt',{a:nf.format(cov.known_n),b:nf.format(cov.eligible_n)})}</small></span>}</div>;})}</div><p className={css.note}>{tx('tr.brief.notaExposicion')}</p></section>

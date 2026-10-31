@@ -1,6 +1,7 @@
 'use client';
 import {useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {claveSwr,leerSwr,pedirSwr,invalidarSwr} from '../../lib/workspace/swr.mjs';
+import {useT} from '../i18n/proveedor';
 // Antes de pintar (sin avisos de hidratación en el servidor): la primera lectura sale de la caché si la hay.
 const useAntesDePintar=typeof window==='undefined'?useEffect:useLayoutEffect;
 /**
@@ -10,6 +11,7 @@ const useAntesDePintar=typeof window==='undefined'?useEffect:useLayoutEffect;
  */
 export function useJson<T>(endpoint:string|null,accept:(json:unknown)=>T|null){
  const keep=useRef(accept);useEffect(()=>{keep.current=accept;});
+ const t=useT(),tRef=useRef(t);useEffect(()=>{tRef.current=t;},[t]);
  const [data,setData]=useState<T|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(Boolean(endpoint)),[status,setStatus]=useState(0),[edadMs,setEdadMs]=useState<number|null>(null),[viejo,setViejo]=useState(false);
  const tiene=useRef(false);
  const load=useCallback(async(signal?:AbortSignal,forzar=false)=>{
@@ -26,7 +28,7 @@ export function useJson<T>(endpoint:string|null,accept:(json:unknown)=>T|null){
   catch(e){if(!signal?.aborted){
    // Sin dato viejo que conservar: error. Con dato viejo: se queda, rotulado, y se avisa que no se pudo actualizar.
    if(tiene.current||previo){setViejo(true);setError('');}
-   else{setData(null);tiene.current=false;setError(e instanceof TypeError?'No se pudo conectar con el servicio. Se reintentará solo.':'No se pudo consultar. Reintenta.');}}}
+   else{setData(null);tiene.current=false;setError(e instanceof TypeError?tRef.current('tr.lg.red.sinConexion'):tRef.current('tr.lg.red.noConsulta'));}}}
   finally{if(!signal?.aborted)setBusy(false);}
  },[endpoint]);
  // Al cambiar de endpoint (otro alcance) lo que había era de otro alcance: no se arrastra.

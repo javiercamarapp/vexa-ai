@@ -133,5 +133,5 @@ export function precalentar(lecturas,{fetchFn=globalThis.fetch,almacen=almacenDe
 }
 export const estadoPrecalentamiento=()=>({activos,maxActivos,enCola:cola.length});
 export function reiniciarPrecalentamiento(){cola.length=0;activos=0;maxActivos=0;}
-/** «hace 20 s», «hace 3 min». */
-export function hace(ms){const s=Math.max(0,Math.round(ms/1000));return s<60?'hace '+s+' s':'hace '+Math.round(s/60)+' min';}
+/** «hace 20 s», «hace 3 min»; con el traductor `t`, «20 s ago», «3 min ago». */
+export function hace(ms,t=null){const s=Math.max(0,Math.round(ms/1000));return s<60?(t?t('tr.lg.cache.seg',{n:s}):'hace '+s+' s'):(t?t('tr.lg.hace.min',{n:Math.round(s/60)}):'hace '+Math.round(s/60)+' min');}

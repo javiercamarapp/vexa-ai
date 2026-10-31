@@ -75,7 +75,7 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
     const next=json?.data as ViewBundle;if(!next||!Array.isArray(next.items)||!next.meta||!next.meta.scope)throw Error(tRef.current('panel.err.verificar'));
     const pinned=pinWorkspaceQuery(query,next.meta);
     if(workspaceLocation()!==sourceLocation)return;resolved.current=pinned.toString();window.history.replaceState(null,'',window.location.pathname+(pinned.size?'?'+pinned.toString():'')+window.location.hash);guardarCache(claveCache(resource,query),next);guardarCache(claveCache(resource,pinned.toString()),next);setEdadCache(null);setViejo(false);setBundle(next);
-   }catch(e){if(!controller.signal.aborted&&epoch===generation.current){if(pintado){setViejo(true);return;}setBundle(null);setError(e instanceof Missing?tRef.current('panel.err.generico'):mensajeDeError(e,tRef.current('panel.err.generico')));}}
+   }catch(e){if(!controller.signal.aborted&&epoch===generation.current){if(pintado){setViejo(true);return;}setBundle(null);setError(e instanceof Missing?tRef.current('panel.err.generico'):mensajeDeError(e,tRef.current('panel.err.generico'),tRef.current));}}
    finally{if(!controller.signal.aborted&&epoch===generation.current){setBusy(false);setRetrying(false);}}
   };
   void Promise.resolve().then(load);return()=>{controller.abort();invalidate();};

@@ -43,3 +43,57 @@ test('evolución mensual: lecturas en inglés sin español, mismas cifras; sin t
     for (const t of textos(insightsProblemaSerie(caso as never, ahora, en) as Array<Record<string, unknown>>)) assert.ok(!espanol(t), 'español bajo en: ' + t);
   }
 });
+
+import fs from 'node:fs';
+import {textoCache} from '../src/lib/workspace/rotulo-cache.mjs';
+import {hace} from '../src/lib/workspace/swr.mjs';
+import {mensajeDeError, MENSAJE_SIN_CONEXION} from '../src/lib/workspace/reintento.mjs';
+import {textoLegible} from '../src/lib/legibilidad/recomendaciones-vista.mjs';
+import {fechaCorteLegible} from '../src/lib/legibilidad/fechas.mjs';
+import {resumenEvidencia} from '../src/lib/legibilidad/hallazgos.mjs';
+import {etiquetaCategoria} from '../src/lib/legibilidad/categorias.mjs';
+
+test('línea de caché: en inglés sale completa en inglés; sin traductor o en español, igual que siempre', () => {
+  assert.equal(textoCache(42000, {t: en}), 'Showing the last load (42 s ago).');
+  assert.equal(textoCache(240000, {t: en}), 'Showing the last load (4 min ago).');
+  assert.equal(textoCache(600000, {viejo: true, t: en}), 'Showing the last load (10 min ago). Could not update right now; this data is kept.');
+  assert.equal(textoCache(42000, {t: es}), 'Mostrando la última carga (hace 42 s).');
+  assert.equal(textoCache(42000), 'Mostrando la última carga (hace 42 s).');
+  assert.equal(textoCache(null, {t: en}), null);
+  assert.equal(hace(20000, en), '20 s ago'); assert.equal(hace(20000), 'hace 20 s');
+});
+test('error de red: en inglés no sale en español; un mensaje propio del error se conserva', () => {
+  const red = new TypeError('Failed to fetch');
+  assert.equal(mensajeDeError(red, 'x', en), 'Could not connect to the service. It will retry on its own.');
+  assert.equal(mensajeDeError(red, 'x', es), MENSAJE_SIN_CONEXION); assert.equal(mensajeDeError(red, 'x'), MENSAJE_SIN_CONEXION);
+  assert.equal(mensajeDeError(new Error('Access changed'), 'x', en), 'Access changed');
+});
+test('resumen de la acción: con el traductor en inglés la taxonomía guardada no se convierte a español', () => {
+  assert.equal(textoLegible('Order: Spare Parts needs review.', en), 'Order: Spare Parts needs review.');
+  assert.equal(textoLegible('Order: Spare Parts needs review.'), 'Pedido: Refacciones needs review.');
+});
+test('fechas de corte con el idioma activo y título del hallazgo traducible al pintar', () => {
+  assert.equal(fechaCorteLegible('2026-10-05T00:00:00Z', {hora: false, idioma: 'en'}), 'Oct 5, 2026 (UTC)');
+  assert.equal(fechaCorteLegible('2026-10-05T00:00:00Z', {hora: false, idioma: 'es'}), '5 oct 2026 (UTC)');
+  const r = resumenEvidencia({issues: [{category: 'Shipping: Damaged in Transit', severity: 'high', evidence: [{}]}]}, en)!;
+  assert.equal(r.titulo, 'Shipping: Damaged in Transit'); assert.equal(r.categoria, 'Shipping: Damaged in Transit');
+  assert.equal(resumenEvidencia({issues: [{category: 'Shipping: Damaged in Transit', evidence: []}]})!.titulo, 'Envío: Dañado en tránsito');
+  assert.equal(etiquetaCategoria(r.categoria, es), 'Envío: Dañado en tránsito');
+});
+
+// ---- Propagación: cada pantalla que formatea fechas, rotula la caché o resume la acción pasa el idioma/traductor (si alguien lo quita, estas fallan) ----
+const src = (rel: string) => fs.readFileSync(new URL('../src/' + rel, import.meta.url), 'utf8');
+test('propagación del idioma en la capa de presentación', () => {
+  assert.match(src('components/ui/linea-cache.tsx'), /textoCache\(edadMs,\{viejo,t:tr\}\)/);
+  assert.match(src('components/recommendations/flujo-acciones.tsx'), /textoLegible\(item\.action,t\)/);
+  assert.match(src('components/datos/analisis-hallazgos.tsx'), /fechaCorteLegible\(j\.createdAt,\{hora:false,idioma\}\)/);
+  assert.match(src('components/datos/analisis-hallazgos.tsx'), /etiquetaCategoria\(e\.categoria,tx\)/);
+  assert.match(src('components/briefs/panel.tsx'), /const stamp=\(v:string\)=>fechaCorteLegible\(v,\{idioma\}\)/);
+  assert.doesNotMatch(src('components/briefs/panel.tsx'), /fechaCorteLegible\(d\.watermark\)/);
+  assert.match(src('components/workspace/shared-panel.tsx'), /mensajeDeError\(e,tRef\.current\('panel\.err\.generico'\),tRef\.current\)/);
+  assert.match(src('components/ui/use-json.ts'), /tRef\.current\('tr\.lg\.red\.sinConexion'\)/);
+  assert.match(src('components/ui/incidence-evolution.tsx'), /insightsProblemaSerie\(v,new Date\(\),t\)/);
+  assert.match(src('components/ui/titulo-auto.tsx'), /tituloDescriptivo\(\{[^}]*t:tr\}\)/);
+  assert.match(src('components/cfo/cfo-dashboard.tsx'), /explicarVariacion\(report, moneda, \{idioma\}\)/);
+  assert.match(src('components/copiloto/briefing-cfo.mjs'), /explicarVariacion\(report, moneda, \{idioma\}\)/);
+});

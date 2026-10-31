@@ -20,9 +20,11 @@ test('el CSS crítico en línea oculta encabezado y pie y centra la carga antes 
 test('con carga de página completa no se ve contenido hermano en el área de contenido',()=>{
   assert.match(css,/\.workspace-content:has\(\.rovaq-cargando:not\(\.rovaq-cargando-compacto\)\) \*:not\(\.rovaq-cargando\)[^{]*\{\s*display:none!important/);
 });
-test('el script de arranque marca data-arranque, excluye login/auth, tiene seguro de 60 s solo sin ArranqueLimpio vivo y noscript revierte',()=>{
+test('el script de arranque marca data-arranque también en login/auth, excluye solo inicio/plataforma/landing, tiene seguro de 60 s solo sin ArranqueLimpio vivo y noscript revierte',()=>{
   assert.match(layout,/dataset\.arranque='1'/);
-  assert.match(layout,/login\|auth/);
+  const script=layout.match(/const ARRANQUE_ANTES_DEL_PINTADO = "([^\n]*)";/)?.[1]??'';
+  assert.ok(script.length>0,'script de arranque presente');
+  assert.match(script,/platform\|landing/);assert.doesNotMatch(script,/login|auth/,'login y auth también muestran solo el logo de carga: sin encabezado ni texto del sitio');
   assert.match(layout,/60000/);assert.match(layout,/__arranqueVivo/);assert.doesNotMatch(layout,/20000/);
   assert.match(layout,/<noscript>/);
   assert.match(layout,/id="arranque-logo"/);

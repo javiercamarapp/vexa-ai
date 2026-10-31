@@ -247,12 +247,13 @@
 @container (max-width: 700px) {
   /* En ancho de móvil la captura se recorta a la columna principal (sin la barra lateral) para que el texto y el Pareto se lean: la imagen y la capa SVG escalan juntas */
   .s-ventana__lienzo {
-    width: 196%;
-    margin-left: -36.2%;
+    /* Ventana de 52 por ciento del ancho de la captura (de 19.5 a 72 por ciento): nombres de SKU, barras y cifras completas, sin cortar la derecha */
+    width: 190%;
+    margin-left: -37.1%;
   }
 
   [data-ventana="fuga"] .s-ventana__lienzo {
-    margin-top: -31.2%;
+    margin-top: -30.2%;
   }
 
   .s-ov-cifra {
@@ -1504,6 +1505,11 @@ html:not([data-js]) .s-hilo-zona::before {
 /* Trazo y capas gruesas opacos y del mismo color: donde se superponen no se nota el empalme */
 .s-hilo__trazo,
 .s-hilo__capa { stroke: color-mix(in srgb, var(--s-tinta) 62%, var(--s-fondo)); }
+
+/* Tema claro: trazo más fino (60 por ciento del grosor) y de tinta, no gris; el único rojo sigue siendo la cabeza. El oscuro conserva su grosor y su gris. */
+html[data-ambiente="claro"] { --s-hilo-k: .6; }
+html[data-ambiente="claro"] .s-hilo__trazo,
+html[data-ambiente="claro"] .s-hilo__capa { stroke: var(--s-tinta); }
 
 /* Pulso: cuatro capas de largo decreciente que terminan en la cabeza (gradiente de cola); la más larga, ancha y desenfocada, es el glow */
 .s-hilo__pulso {

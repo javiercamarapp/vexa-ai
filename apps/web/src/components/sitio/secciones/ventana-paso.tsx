@@ -23,7 +23,7 @@ export function VentanaPaso({n, lang}: Props) {
         <span className="s-mock-ruta">{UI(lang).rutas[n === 2 || n === 3 ? 'm3' : n === 1 ? 'm6' : 'm5']}</span>
         <span className="s-mock-org">{t.organizacion}</span>
       </div>
-      <div className="s-ventana__cuerpo s-pv" data-n={n}>
+      <div className="s-ventana__cuerpo s-pv" data-n={n} {...(n === 2 || n === 3 ? {tabIndex: 0, role: 'group', 'aria-label': lang === 'es' ? 'Vista de la pantalla, se desplaza a los lados' : 'Screen view, scrolls sideways'} : {})}>
         <div className="s-pv__lienzo">
           <div className="s-pv__marco" data-n={n}>
             <Captura nombre={`paso${n}`} clave={clave} lang={lang} tamanos="(max-width: 1100px) 100vw, 640px" anchos={[medidas(clave).ancho]} clase="s-ventana__img" />

@@ -81,12 +81,14 @@ const ICONOS = [
 let AIRE = 24; // (medir() lo baja a 20 en el móvil) 16 px de margen mínimo más medio núcleo de banda (3.75 a 1440, 2.1 a 390) y holgura; el móvil usa menos aire para cruzar por los huecos naturales (~88 px) sin alargar la página
 const PULSO = [[230, 0.1], [150, 0.22], [90, 0.45], [40, 0.9]]; // largo en px y opacidad de cada capa del pulso
 const ICONO_DE = [0, 1, 2, 3, 4, 0, 1]; // ícono de la nota de cada banda
-const LOOPS = [1, 4]; // bandas (base 0) con rizo: solo dos, para que el lazo no se repita
+const LOOPS = [4]; // bandas (base 0) con rizo: solo una; con la triple son 2 lazos en toda la página a 1440
 const TRIPLES = [3]; // bandas que cruzan tres veces (ida, vuelta e ida): una sola; el resto son S simples de distinta forma
 const COLA = 72; // px de carril libre al final de cada banda en escritorio: con la sección anclada bajo la cabecera fija el barrido no pasa por debajo de ella
 const RAMPA = 3, PASO_RAMPA = 26; // escalones y largo de cada uno al engrosar o afinar el trazo
 
 const f1 = (n) => n.toFixed(1);
+/** Grosor de trazo escalado por --s-hilo-k: 1 en oscuro y más fino en claro (lo fija el CSS por tema, sin volver a medir). */
+const gr = (px) => `calc(${px}px * var(--s-hilo-k, 1))`;
 
 /** Intervalos libres verticales (coordenadas de la zona) entre el contenido, de al menos `min` px; las bandas no cuentan como contenido. */
 function huecos(zona, H, min) {
@@ -216,7 +218,7 @@ function construirHilo(RM, notas) {
     total = base.getTotalLength();
     base.setAttribute('pathLength', total);
     for (const u of [guia, trazo, ...capas]) { u.style.setProperty('stroke-dasharray', `${total} ${total}`); }
-    guia.style.setProperty('stroke-width', w0 + 'px');
+    guia.style.setProperty('stroke-width', gr(w0));
     // Tabla de arco a posición (el máximo corrido de Y permite buscar por altura aunque el trazo suba en los rizos)
     const n = Math.ceil(total / 5) + 1;
     tabla = {s: new Float32Array(n), x: new Float32Array(n), y: new Float32Array(n), m: new Float32Array(n)};
@@ -238,7 +240,7 @@ function construirHilo(RM, notas) {
       }
       for (const [s0, s1, ancho] of tramos) {
         const u = el('use', {href: '#s-hilo-d'}, grosor, 's-hilo__capa');
-        u.style.setProperty('stroke-width', ancho + 'px');
+        u.style.setProperty('stroke-width', gr(ancho));
         u.style.setProperty('stroke-dasharray', `0 ${total}`);
         u.style.setProperty('stroke-dashoffset', String(-Math.max(0, s0)));
         piezas.push({u, s0: Math.max(0, s0), s1: Math.min(total, s1), v: -1});
@@ -308,7 +310,7 @@ function construirHilo(RM, notas) {
   }
   function dibujar(cab) {
     const q = en(cab);
-    trazo.style.setProperty('stroke-width', w0 + 'px');
+    trazo.style.setProperty('stroke-width', gr(w0));
     trazo.style.setProperty('stroke-dashoffset', String(total - q.s));
     for (const p of piezas) {
       const v = Math.max(0, Math.min(p.s1, q.s) - p.s0);
@@ -332,7 +334,7 @@ function construirHilo(RM, notas) {
       capas.forEach((c, i) => {
         c.style.setProperty('stroke-dasharray', `${PULSO[i][0]} ${total}`);
         c.style.setProperty('stroke-dashoffset', String(PULSO[i][0] - q.s));
-        c.style.setProperty('stroke-width', (i === 0 ? ww * 4 : ww) + 'px');
+        c.style.setProperty('stroke-width', gr(i === 0 ? ww * 4 : ww));
       });
       const viaja = cab > 8 && cab < H - 8;
       svg.classList.toggle('s-hilo--viaja', viaja);

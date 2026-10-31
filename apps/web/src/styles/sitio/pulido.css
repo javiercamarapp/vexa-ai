@@ -225,6 +225,11 @@ html[data-js] .s-pantalla .s-pantalla__img { clip-path: none; animation: none; }
   .s-pv .s-pv__lienzo { aspect-ratio: auto; }
   .s-pv .s-pv__marco { position: static; width: 100% !important; /* gana a left/width/top por data-n de inicio.css */ }
   .s-pv .s-pv__marco[data-n] { left: auto; top: auto; }
+  /* Pasos 2 y 3: lienzo ancho con desplazamiento lateral (scroll-snap) para que el texto de la captura mida 9 px o más en vez de 4 a 5 px */
+  .s-pv[data-n="2"],
+  .s-pv[data-n="3"] { overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: thin; }
+  .s-pv[data-n="2"] .s-pv__lienzo { width: 520px; max-width: none; scroll-snap-align: start; }
+  .s-pv[data-n="3"] .s-pv__lienzo { width: 590px; max-width: none; scroll-snap-align: start; }
   .s-escena__fijo { gap: 0; }
   .s-paso { gap: var(--s-e16); padding-block: var(--s-e16); }
   .s-paso__texto { gap: var(--s-e8); }

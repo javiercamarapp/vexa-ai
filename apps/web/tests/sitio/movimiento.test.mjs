@@ -15,6 +15,7 @@ const leer = (r) => readFileSync(join(WEB, r), 'utf8');
 const SITIO = leer('src/sitio-js/sitio.js');
 const INICIO = leer('src/sitio-js/inicio.js');
 const CSS = leer('src/styles/sitio/movimiento.css');
+const CSS_INICIO_HILO = leer('src/styles/sitio/inicio.css');
 const LAYOUT = leer('src/app/(sitio)/sitio/[lang]/layout.tsx');
 const manifest = JSON.parse(leer('public/s/manifest.json'));
 globalThis.document ??= {}; // inicio.js toca document solo dentro de funciones
@@ -104,6 +105,9 @@ test('hilo serpenteante con bandas de cruce: núcleo 3.5 px (7.5 en bandas) a 14
   assert.match(INICIO, /function puntosBanda\(/);
   const loops = INICIO.match(/const LOOPS = \[([\d, ]*)\]/), triples = INICIO.match(/const TRIPLES = \[([\d, ]*)\]/);
   assert.ok(loops && loops[1].split(',').length <= 3, 'no más de tres bandas con rizo (el lazo no se repite)');
+  assert.ok(loops[1].split(',').filter((x) => x.trim()).length + (triples ? triples[1].split(',').filter((x) => x.trim()).length : 0) <= 2, 'máximo 2 lazos (rizos más cruces triples) en toda la página');
+  assert.match(CSS_INICIO_HILO, /html\[data-ambiente="claro"\] \{ --s-hilo-k: \.6; \}/, 'tema claro: trazo más fino');
+  assert.match(CSS_INICIO_HILO, /html\[data-ambiente="claro"\] \.s-hilo__trazo,\s*html\[data-ambiente="claro"\] \.s-hilo__capa \{ stroke: var\(--s-tinta\); \}/, 'tema claro: trazo de tinta');
   assert.ok(triples && triples[1].split(',').length <= 1, 'a lo sumo una banda con triple cruce');
   assert.match(INICIO, /const COLA = 72/, 'carril libre al final de cada banda en escritorio (nada cruza bajo la cabecera fija con la sección anclada)');
   assert.match(INICIO, /v % 3 === 1[\s\S]*v % 3 === 2/, 'las S simples varían de forma por banda');

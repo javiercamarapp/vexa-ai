@@ -19,11 +19,21 @@ export const contraste = (a, b) => {
   return (x + 0.05) / (y + 0.05);
 };
 /** Analiza el cruce: muestras = [{t, sondas: {nombre: contraste}}]; devuelve el mínimo por sonda y las que fallan. */
-export function evaluar(muestras, minimo = MINIMO) {
+export const SALTO_BARRA = 0.2;
+export function evaluar(muestras, minimo = MINIMO, saltoMax = SALTO_BARRA) {
   const peor = {};
   for (const m of muestras) for (const [k, v] of Object.entries(m.sondas)) if (!peor[k] || v < peor[k].c) peor[k] = {c: v, t: m.t};
   const fallas = Object.entries(peor).filter(([, v]) => v.c < minimo).map(([k, v]) => `${k}: ${v.c.toFixed(2)}:1 a ${Math.round(v.t)} ms`);
-  return {peor, fallas, cuadros: muestras.length};
+  // Saltos de luminancia entre cuadros consecutivos del fondo de la barra de navegación (un salto duro se ve como destello).
+  let salto = {d: 0, t: 0};
+  for (let i = 1; i < muestras.length; i++) {
+    const a = muestras[i - 1].barra, b = muestras[i].barra;
+    if (a == null || b == null) continue;
+    const d = Math.abs(b - a);
+    if (d > salto.d) salto = {d, t: muestras[i].t};
+  }
+  if (salto.d > saltoMax) fallas.push(`salto de luminancia de la barra: ${salto.d.toFixed(2)} entre cuadros a ${Math.round(salto.t)} ms (máximo ${saltoMax})`);
+  return {peor, fallas, cuadros: muestras.length, salto};
 }
 
 /** Corre dentro de la página: instala las sondas y devuelve una función que muestrea durante ms. */
@@ -46,6 +56,12 @@ export function muestrearEnPagina(ms) {
   const q = (id) => caja.querySelector(id);
   const bgDe = (e) => { for (let n = e; n; n = n.parentElement) { const c = getComputedStyle(n).backgroundColor; if (c && !/rgba\(\s*0,\s*0,\s*0,\s*0\)|transparent/.test(c)) return parse(c); } return [255, 255, 255]; };
   const reales = [...document.querySelectorAll('h2, .s-lead, .s-columna__texto, .s-paso__texto p')].filter((e) => { const r = e.getBoundingClientRect(); return r.width > 0 && r.bottom > 0 && r.top < innerHeight; }).slice(0, 4);
+  // Barra de navegación: fondo compuesto sobre el fondo de la página (su fondo es translúcido) y el color real de sus enlaces
+  const barra = document.querySelector('.s-cabecera__barra');
+  const enlaces = barra ? [...barra.querySelectorAll('.s-cabecera__enlace, .s-cabecera__idioma a, .s-boton')].filter((e) => e.offsetWidth > 0) : [];
+  const rgba = (c) => { const m = c.match(/-?[\d.]+/g) || []; const f = (i) => parseFloat(m[i]); if (c.startsWith('color(')) return [0, 1, 2].map((i) => Math.round(f(i) * 255)).concat(m[3] == null ? 1 : f(3)); return [f(0), f(1), f(2), m[3] == null ? 1 : f(3)]; };
+  const sobre = (fg, bg) => { const a = fg[3]; return [0, 1, 2].map((i) => fg[i] * a + bg[i] * (1 - a)); };
+  const fondoBarra = (pag) => { const f = rgba(getComputedStyle(barra).backgroundColor); return sobre(f, pag); };
   return new Promise((res) => {
     const out = [], t0 = performance.now();
     const paso = (t) => {
@@ -59,7 +75,18 @@ export function muestrearEnPagina(ms) {
       s['texto atenuado / tarjeta'] = con(col(q('#__sa')), sup);
       s['botón: texto / fondo'] = con(col(q('#__b')), parse(getComputedStyle(q('#__b')).backgroundColor));
       reales.forEach((e, i) => { s[`real ${i + 1} (${e.tagName.toLowerCase()}) / fondo`] = con(col(e), bgDe(e)); });
-      out.push({t: t - t0, sondas: s});
+      let lumBarra = null;
+      if (barra) {
+        const fb = fondoBarra(fondo);
+        lumBarra = lum(fb);
+        for (const e of enlaces.slice(0, 4)) {
+          const cs = getComputedStyle(e);
+          const bg = rgba(cs.backgroundColor);
+          const base = bg[3] > 0.5 ? sobre(bg, fb) : fb;
+          s[`barra: ${e.className.split(' ')[0].replace('s-cabecera__', '')} «${(e.textContent || '').trim().slice(0, 10)}» / barra`] = con(rgba(cs.color).slice(0, 3), base);
+        }
+      }
+      out.push({t: t - t0, sondas: s, barra: lumBarra});
       if (t - t0 < ms) requestAnimationFrame(paso); else { caja.remove(); res(out); }
     };
     requestAnimationFrame(paso);

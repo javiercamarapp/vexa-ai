@@ -111,7 +111,7 @@ function tema() {
   const cab = $('.s-cabecera');
   const secs = $$('section[data-tema], footer[data-tema]');
   if (!secs.length) return;
-  let ultY = scrollY, escena = '', libre = true;
+  let ultY = scrollY, escena = '', libre = true, finAnim = 0;
   const aplicar = () => {
     libre = true;
     const y = scrollY, bajando = y >= ultY;
@@ -123,7 +123,7 @@ function tema() {
       const primera = escena === '';
       escena = t; H.setAttribute('data-ambiente', t); if (cab) cab.dataset.tema = t;
       // Las animaciones del cruce solo corren en cambios reales, no al cargar la página a media altura
-      if (!primera) H.setAttribute('data-ambiente-anim', '');
+      if (!primera) { H.setAttribute('data-ambiente-anim', ''); clearTimeout(finAnim); finAnim = setTimeout(() => H.removeAttribute('data-ambiente-anim'), 900); }
     }
   };
   const pedir = () => { if (libre) { libre = false; requestAnimationFrame(aplicar); } };

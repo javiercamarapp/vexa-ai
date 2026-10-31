@@ -533,6 +533,19 @@ html:not([data-ambiente]) [data-tema="claro"] {
   }
 }
 
+/* ==================== Cruce de tema y elementos con su propia transición ====================
+ * El destello de T19 (cuadros grises con la barra ilegible): la barra de vidrio tenía transition de background-color y los enlaces y botones
+ * transition de color encima de variables que ya se deslizan o saltan por pasos. Cada elemento perseguía a su variable con retraso y, a mitad del
+ * cruce, el texto ya oscuro quedaba sobre una barra que aún era oscura (1:1 durante cientos de milisegundos). Mientras dura el cruce
+ * (sitio.js quita data-ambiente-anim a los 900 ms) los colores siguen directo a las variables; la geometría de la barra conserva su transición. */
+html[data-ambiente-anim] .s-cabecera__barra {
+  transition-property: max-width, margin-top, padding;
+}
+
+html[data-ambiente-anim] :is(.s-cabecera *, .s-boton, .s-chip, .s-enlace, .s-enlace-flecha, .s-menu__enlace, .s-acordeon__boton) {
+  transition: none;
+}
+
 /* ==================== Cruce de tema: el texto salta, el fondo se desliza ====================
  * Fondo y texto no pueden deslizarse a la vez: se cruzan a mitad de camino con contraste 1:1. El fondo transiciona 700 ms (arriba); el texto, el
  * texto atenuado y el par fondo/texto de los botones cambian por pasos en el instante en que el fondo está en un gris medio (luminancia 0.2, la

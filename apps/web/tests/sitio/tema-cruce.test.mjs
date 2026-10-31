@@ -33,6 +33,15 @@ test('evaluar: la transición lineal de T15 (texto y fondo cruzándose) falla y 
   assert.deepEqual(T.evaluar(pasos).fallas, []);
 });
 
+test('evaluar: un salto de luminancia de la barra entre cuadros consecutivos es una falla; el deslizamiento gradual pasa', () => {
+  const serie = (f) => Array.from({length: 43}, (_, i) => ({t: i * 16.7, sondas: {'barra: enlace / barra': 8}, barra: f(i / 42)}));
+  assert.deepEqual(T.evaluar(serie((p) => 0.07 + 0.86 * p)).fallas, []);
+  const duro = T.evaluar(serie((p) => (p < 0.5 ? 0.07 : 0.93)));
+  assert.equal(duro.fallas.length, 1, JSON.stringify(duro.fallas));
+  assert.match(duro.fallas[0], /salto de luminancia de la barra/);
+  assert.ok(duro.salto.d > 0.8);
+});
+
 test('CSS: texto, texto atenuado y botón cambian por keyframes (no por transición) y el fondo transiciona', () => {
   const css = leer('src/styles/sitio/tokens.css');
   const lista = css.match(/html\[data-ambiente-anim\] \{\s*transition:([\s\S]*?);\s*\}/)[1];
@@ -44,10 +53,17 @@ test('CSS: texto, texto atenuado y botón cambian por keyframes (no por transici
   assert.ok(!/s-a-(?:claro|oscuro)-\w[\w-]* var\(--s-d-tema\) linear/.test(css), 'los pasos usan step-end: ningún cuadro muestra un color a medio mezclar');
 });
 
+test('CSS: durante el cruce ni la barra ni los enlaces ni los botones persiguen sus variables con una transición propia (causa del destello de T19)', () => {
+  const css = leer('src/styles/sitio/tokens.css');
+  assert.match(css, /html\[data-ambiente-anim\] \.s-cabecera__barra \{\s*transition-property: max-width, margin-top, padding;\s*\}/);
+  assert.match(css, /html\[data-ambiente-anim\] :is\(\.s-cabecera \*, \.s-boton[^)]*\) \{\s*transition: none;\s*\}/);
+});
+
 test('JS: las animaciones del cruce no corren al cargar la página (solo en cambios reales de tema)', () => {
   const js = leer('src/sitio-js/sitio.js');
   assert.match(js, /const primera = escena === ''/);
-  assert.match(js, /if \(!primera\) H\.setAttribute\('data-ambiente-anim', ''\)/);
+  assert.match(js, /if \(!primera\) \{ H\.setAttribute\('data-ambiente-anim', ''\);/);
+  assert.match(js, /setTimeout\(\(\) => H\.removeAttribute\('data-ambiente-anim'\), 900\)/, 'el atributo se quita al terminar el cruce');
 });
 
 test('portada: solo dos cambios de tema (oscuro hasta los pasos, claro de pantallas a integraciones, oscuro al cierre)', () => {

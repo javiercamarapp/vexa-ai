@@ -127,7 +127,7 @@ export function GuiaPaneles(){
  }
  return <>
   {c.menuAbierto&&<MenuGuia t={t} innerRef={menu} contexto={t('onb.ui.rolOrg',{organizacion:c.datos.organizacion,rol:c.datos.rolEtiqueta})} tienePaso={c.pasos.some(p=>p.id===c.local.paso)} mostrarChecklistOpcion={c.tieneChecklist} descartado={c.local.descartado}
-   iniciar={m=>c.iniciar('inicio',m)} opciones={opciones} retomar={()=>c.iniciar('retomar')} mostrarChecklist={c.mostrarChecklist} abrirSetup={c.abrirSetup} noVolver={c.noVolver} cerrar={()=>{c.cerrarMenu();c.enfocarBoton();}}
+   iniciar={m=>c.iniciar('inicio',m)} opciones={opciones} retomar={()=>c.iniciar('retomar')} mostrarChecklist={c.mostrarChecklist} abrirSetup={c.pista==='plataforma'?undefined:c.abrirSetup} noVolver={c.noVolver} cerrar={()=>{c.cerrarMenu();c.enfocarBoton();}}
    pantallas={c.pantallas.map((g,i)=>({href:g.href,nombre:nombres[i],actual:abierto&&paso?.grupo===g.grupo}))} irAPantalla={c.irAPantalla}/>}
   {c.invitacionVisible&&<InvitacionRecorrido t={t} saltar={c.saltarInvitacion} empezar={m=>c.iniciar('inicio',m)} opciones={opciones}/>}
   {abierto&&paso&&<CapaFoco innerRef={capa} scrim={paso.tipo==='cierre'||el===null}/>}

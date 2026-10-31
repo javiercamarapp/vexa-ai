@@ -23,7 +23,7 @@ export default async function PlatformLayout({children}: {children: ReactNode}) 
   if (!access) return <section className="home access-flow acceso-sistema"><h1>{t('tr.pf.accesoTitulo')}</h1><Notice tone="error">{t('tr.pf.sinAcceso')}</Notice><Link prefetch={false} className="btn" href="/">{t('tr.pf.volver')}</Link></section>;
   if (await platformMfaGate(access) !== 'ok') redirect('/seguridad?requerido=1');
   // El estado local de la guía de plataforma se aísla con «plataforma» como organización; la consola aún no está traducida entera, por eso solo la guía usa el idioma activo.
-  return <IdiomaLocal idioma={idioma}><OnboardingRaiz datos={{pista: 'plataforma', userId: access.userId, tenantId: 'plataforma', organizacion: 'Rovaq', rolEtiqueta: 'Plataforma'}}><div className="workspace workspace-shell platform-shell">
+  return <IdiomaLocal idioma={idioma}><OnboardingRaiz datos={{pista: 'plataforma', userId: access.userId, tenantId: 'plataforma', organizacion: 'Rovaq', rolEtiqueta: t('tr.pf.plataforma')}}><div className="workspace workspace-shell platform-shell">
     <a className="skip-link workspace-skip" href="#platform-contenido">{t('tr.pf.saltar')}</a>
     <aside className="workspace-sidebar platform-sidebar" aria-label={t('tr.pf.plataforma')}>
       <div className="sidebar-brand"><Link prefetch={false} href="/platform" className="sidebar-logo" aria-label={t('tr.pf.brandAria')}><RovaqLogo variante="horizontal" ancho={112} espacioLibre={false} decorativo/></Link></div>

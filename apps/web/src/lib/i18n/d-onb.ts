@@ -56,10 +56,10 @@ export const onbEs = {
   'onb.lector.avisos.titulo': 'Tus avisos', 'onb.lector.avisos.cuerpo': 'Elige qué avisos recibes y por qué canal. Tus preferencias son solo tuyas.',
   // Plataforma
   'onb.plataforma.nombre': 'Recorrido de administración de plataforma',
-  'onb.plataforma.resumen.titulo': 'Resumen de salud', 'onb.plataforma.resumen.cuerpo': 'Estado de cada organización de un vistazo: fuentes, procesos y alertas.',
-  'onb.plataforma.organizaciones.titulo': 'Organizaciones y Ver como', 'onb.plataforma.organizaciones.cuerpo': 'Para entrar como una organización debes indicar un motivo y una duración. La sesión es de solo lectura y queda registrada.',
-  'onb.plataforma.costos.titulo': 'Costos de IA y procesos', 'onb.plataforma.costos.cuerpo': 'Revisa los topes de gasto y los trabajos pendientes antes de que afecten a un cliente.',
-  'onb.plataforma.auditoria.titulo': 'Auditoría y alertas', 'onb.plataforma.auditoria.cuerpo': 'Consulta quién hizo qué y qué alertas siguen abiertas.',
+  'onb.plataforma.resumen.titulo': 'Resumen', 'onb.plataforma.resumen.cuerpo': 'El estado de cada organización de un vistazo.',
+  'onb.plataforma.organizaciones.titulo': 'Organizaciones', 'onb.plataforma.organizaciones.cuerpo': 'Para entrar como una organización (Ver como) debes indicar un motivo y una duración. La sesión es de solo lectura y queda registrada.',
+  'onb.plataforma.costos.titulo': 'Costos de IA', 'onb.plataforma.costos.cuerpo': 'Revisa los topes de gasto y los trabajos pendientes antes de que afecten a un cliente.',
+  'onb.plataforma.auditoria.titulo': 'Auditoría', 'onb.plataforma.auditoria.cuerpo': 'Consulta quién hizo qué y qué alertas siguen abiertas.',
   // Soporte
   'onb.soporte.nombre': 'Sesión de soporte',
   'onb.soporte.aviso.titulo': 'Estás viendo como {organizacion}', 'onb.soporte.terminada.titulo': 'La sesión de soporte terminó', 'onb.soporte.terminada.cuerpo': 'Lo que ves ahora ya no es la vista del cliente. Si necesitas volver a verla, inicia otra sesión de soporte desde la consola.',
@@ -122,10 +122,10 @@ export const onbEn = {
   'onb.lector.avisos.titulo': 'Your alerts', 'onb.lector.avisos.cuerpo': 'Choose which alerts you get and through which channel. Your preferences are yours alone.',
   // Platform
   'onb.plataforma.nombre': 'Platform administration tour',
-  'onb.plataforma.resumen.titulo': 'Health overview', 'onb.plataforma.resumen.cuerpo': 'The state of every organization at a glance: sources, jobs and alerts.',
-  'onb.plataforma.organizaciones.titulo': 'Organizations and View as', 'onb.plataforma.organizaciones.cuerpo': 'To enter as an organization you must give a reason and a duration. The session is read-only and is recorded.',
-  'onb.plataforma.costos.titulo': 'AI costs and jobs', 'onb.plataforma.costos.cuerpo': 'Check spending caps and pending jobs before they affect a customer.',
-  'onb.plataforma.auditoria.titulo': 'Audit and alerts', 'onb.plataforma.auditoria.cuerpo': 'See who did what and which alerts are still open.',
+  'onb.plataforma.resumen.titulo': 'Overview', 'onb.plataforma.resumen.cuerpo': 'The state of every organization at a glance.',
+  'onb.plataforma.organizaciones.titulo': 'Organizations', 'onb.plataforma.organizaciones.cuerpo': 'To enter as an organization (View as) you must give a reason and a duration. The session is read-only and is recorded.',
+  'onb.plataforma.costos.titulo': 'AI costs', 'onb.plataforma.costos.cuerpo': 'Check spending caps and pending jobs before they affect a customer.',
+  'onb.plataforma.auditoria.titulo': 'Audit', 'onb.plataforma.auditoria.cuerpo': 'See who did what and which alerts are still open.',
   // Support
   'onb.soporte.nombre': 'Support session',
   'onb.soporte.aviso.titulo': 'You are viewing as {organizacion}', 'onb.soporte.terminada.titulo': 'The support session has ended', 'onb.soporte.terminada.cuerpo': 'What you see now is no longer the customer view. To see it again, start another support session from the console.',

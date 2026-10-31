@@ -249,6 +249,15 @@ test('datos que no se pueden comprobar no se escriben a mano: sin «cuatro», «
   }
   assert.match(ESP['onb.propietario.hoy.cuerpo'],/respuestas con demora/);assert.match(ING['onb.propietario.hoy.cuerpo'],/delayed replies/);
 });
+test('plataforma: los títulos de las tarjetas son los rótulos del menú de la consola, la etiqueta del rol se traduce y la guía no ofrece Configuración',()=>{
+  const nav={resumen:'Resumen',organizaciones:'Organizaciones',costos:'CostosIa',auditoria:'Auditoria'};
+  for(const [clave,dic] of [['es',ESP],['en',ING]] as const)for(const [id,n] of Object.entries(nav))assert.equal(dic[`onb.plataforma.${id}.titulo`],dic['tr.pf.n'+n],`${clave}:${id}`);
+  assert.equal(ESP['tr.pf.plataforma'],'Plataforma');assert.equal(ING['tr.pf.plataforma'],'Platform');
+  const layout=leer('src/app/(app)/platform/layout.tsx');assert.match(layout,/rolEtiqueta: t\('tr\.pf\.plataforma'\)/);assert.doesNotMatch(layout,/rolEtiqueta: 'Plataforma'/);
+  assert.match(leer('src/components/onboarding/guia.tsx'),/abrirSetup=\{c\.pista==='plataforma'\?undefined:c\.abrirSetup\}/);
+  const menu=renderToStaticMarkup(<MenuGuia t={T.es} contexto="Rovaq · Plataforma" tienePaso={false} mostrarChecklistOpcion={false} descartado={false} iniciar={noop} retomar={noop} mostrarChecklist={noop} noVolver={noop} cerrar={noop}/>);
+  assert.doesNotMatch(menu,/Ver configuración completa/);
+});
 test('ventana de la ruta: pocas pantallas alrededor de la actual con «…» a los lados',()=>{
   const nombres=['A','B','C','D','E','F','G','H'];
   assert.deepEqual(ventanaRuta(nombres,0),{items:['A','B','C','D','E'].map((nombre,i)=>({nombre,actual:i===0})),antes:false,despues:true});

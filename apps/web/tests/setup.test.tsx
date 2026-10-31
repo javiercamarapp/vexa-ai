@@ -337,7 +337,7 @@ test('menú por rol: «Configuración» (/setup) visible para los cuatro roles, 
 test('el checklist de Hoy y el botón Guía enlazan a /setup (Ver como no tiene Guía ni checklist: solo el aviso)',()=>{
   assert.match(leer('src/components/onboarding/checklist.tsx'),/<Link href="\/setup"[^>]*>\{t\('onb\.setup\.verTodo'\)\}<\/Link>/);
   assert.match(leer('src/components/onboarding/contexto.tsx'),/router\.push\('\/setup'\)/);
-  assert.match(leer('src/components/onboarding/guia.tsx'),/abrirSetup=\{c\.abrirSetup\}/);
+  assert.match(leer('src/components/onboarding/guia.tsx'),/abrirSetup=\{c\.pista==='plataforma'\?undefined:c\.abrirSetup\}/,'el menú Guía pasa abrirSetup salvo en la consola de plataforma, que no tiene Configuración');
   assert.match(leer('src/components/onboarding/paneles.tsx'),/abrirSetup&&<button type="button" onClick=\{abrirSetup\}>\{t\('onb\.setup\.verTodo'\)\}/);
   assert.equal(ESP['onb.setup.verTodo'],'Ver configuración completa');
 });

@@ -3,13 +3,17 @@
 import type {Ref} from 'react';
 import type {Traductor} from '../../lib/i18n';
 import {Ilustracion} from './ilustraciones';
+import {CUENTA_MS,TICK_MS} from '../../lib/onboarding/viaje.mjs';
+import type {FaseViaje} from '../../lib/onboarding/viaje.mjs';
 
 export type LadoEtiqueta='arriba'|'abajo'|'izq'|'der';
 export interface RutaTour {nombres:string[];actual:number}
+/** Viaje automático de un paso «ir»: fase, segundos que faltan, nombre de la pantalla y los tres botones (Quedarme aquí, Ir a …, Continuar). */
+export interface ViajeUi {fase:FaseViaje;restan:number;nombre:string;quedarme:()=>void;irManual:()=>void;continuar:()=>void}
 export interface PropsTarjeta {
  t:Traductor;innerRef?:Ref<HTMLElement>;tipo:'ir'|'info'|'cierre';titulo:string;cuerpo:string;ilu:string;
  n:number;total:number;grupoN:number;grupoTotal:number;ruta:RutaTour;hayAnterior?:boolean;
- centrada?:boolean;sinObjetivo?:boolean;mostrarSetup?:boolean;
+ centrada?:boolean;sinObjetivo?:boolean;mostrarSetup?:boolean;viaje?:ViajeUi;
  anterior:()=>void;omitir:()=>void;primario:()=>void;irSetup?:()=>void;
 }
 /** Ruta del recorrido en una ventana corta alrededor de la pantalla actual: «… · Fuentes · Problemas · Acciones · …». */
@@ -17,8 +21,8 @@ export function ventanaRuta(nombres:string[],actual:number,ancho=5){
  const desde=Math.max(0,Math.min(actual-1,nombres.length-ancho)),hasta=Math.min(nombres.length,desde+ancho);
  return {items:nombres.slice(desde,hasta).map((nombre,i)=>({nombre,actual:desde+i===actual})),antes:desde>0,despues:hasta<nombres.length};
 }
-export function TarjetaRecorrido({t,innerRef,tipo,titulo,cuerpo,ilu,n,total,grupoN,grupoTotal,ruta,centrada,sinObjetivo,mostrarSetup,hayAnterior,anterior,omitir,primario,irSetup}:PropsTarjeta){
- const v=ventanaRuta(ruta.nombres,ruta.actual),cierre=tipo==='cierre';
+export function TarjetaRecorrido({t,innerRef,tipo,titulo,cuerpo,ilu,n,total,grupoN,grupoTotal,ruta,centrada,sinObjetivo,mostrarSetup,hayAnterior,viaje,anterior,omitir,primario,irSetup}:PropsTarjeta){
+ const v=ventanaRuta(ruta.nombres,ruta.actual),cierre=tipo==='cierre',vi=tipo==='ir'?viaje:undefined,fallo=vi?.fase==='fallo';
  return <section ref={innerRef} className="onb-tarjeta" role="dialog" aria-labelledby="onb-t-titulo" aria-describedby="onb-t-cuerpo" data-tipo={tipo} data-centrada={centrada||undefined}>
   <div className="onb-ilu-marco" key={ilu}><Ilustracion tipo={ilu}/></div>
   <div className="onb-cab" aria-hidden="true"><p className="onb-contador">{t('onb.ui.paso',{n:n,total:total})}</p>{!cierre&&<p className="onb-contador">{t('onb.tour.pantalla',{n:grupoN,total:grupoTotal})}</p>}</div>
@@ -26,6 +30,10 @@ export function TarjetaRecorrido({t,innerRef,tipo,titulo,cuerpo,ilu,n,total,grup
   <h2 id="onb-t-titulo">{titulo}</h2>
   <p id="onb-t-cuerpo">{cuerpo}</p>
   {sinObjetivo&&<p className="onb-nota">{t('onb.tour.noEncontrado')}</p>}
+  {/* Cuenta regresiva visible del viaje automático. Para lectores de pantalla se anuncia UNA vez, al aparecer (región `status` con texto fijo); el contador que cambia cada segundo es solo visual. */}
+  {vi?.fase==='cuenta'&&<div className="onb-cuenta" data-onb-cuenta><p className="onb-cuenta-texto" aria-hidden="true">{t('onb.tour.ir.cuenta',{nombre:vi.nombre,n:vi.restan})}</p><progress className="onb-cuenta-barra" max={CUENTA_MS/TICK_MS} value={CUENTA_MS/TICK_MS-vi.restan} aria-hidden="true"/><p className="sr-only" role="status" aria-live="polite">{t('onb.tour.ir.anuncio',{nombre:vi.nombre})}</p></div>}
+  {vi?.fase==='viajando'&&<p className="onb-nota" role="status">{t('onb.tour.ir.abriendo',{nombre:vi.nombre})}</p>}
+  {fallo&&<p className="onb-nota onb-fallo" role="status" data-onb-fallo>{t('onb.tour.ir.fallo')}</p>}
   {ruta.nombres.length>0&&<ol className="onb-ruta" aria-label={t('onb.tour.rutaAria')}>
    {v.antes&&<li className="onb-ruta-mas" aria-hidden="true">…</li>}
    {v.items.map(i=><li key={i.nombre} aria-current={i.actual&&!cierre?'step':undefined} data-actual={i.actual&&!cierre||undefined}>{i.nombre}</li>)}
@@ -35,7 +43,9 @@ export function TarjetaRecorrido({t,innerRef,tipo,titulo,cuerpo,ilu,n,total,grup
    {!cierre&&<button type="button" className="onb-btn-sec" onClick={omitir}>{t('onb.ui.omitir')}</button>}
    {(hayAnterior??n>1)&&<button type="button" className="onb-btn-sec" onClick={anterior}>{t('onb.ui.anterior')}</button>}
    {cierre&&mostrarSetup&&irSetup&&<button type="button" className="onb-btn-sec" onClick={irSetup}>{t('onb.tour.cierre.setup')}</button>}
-   <button type="button" className="onb-btn" data-onb-primario onClick={primario}>{cierre?t('onb.ui.terminar'):t('onb.ui.siguiente')}</button>
+   {vi?.fase==='cuenta'&&<button type="button" className="onb-btn-sec" data-onb-quedarme onClick={vi.quedarme}>{t('onb.tour.ir.quedarme')}</button>}
+   {vi?.fase==='manual'&&<button type="button" className="onb-btn-sec" data-onb-manual onClick={vi.irManual}>{t('onb.tour.ir.manual',{nombre:vi.nombre})}</button>}
+   <button type="button" className="onb-btn" data-onb-primario onClick={fallo&&vi?vi.continuar:primario}>{cierre?t('onb.ui.terminar'):fallo?t('onb.tour.ir.continuar'):t('onb.ui.siguiente')}</button>
   </div>
   {/* «Paso n de N» se anuncia una sola vez por paso: la línea visible de arriba está oculta a lectores de pantalla. */}
   <p className="sr-only" role="status">{t('onb.ui.avisoPasos',{n:n,total:total,titulo:titulo})}</p>

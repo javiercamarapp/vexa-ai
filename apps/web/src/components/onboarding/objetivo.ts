@@ -1,5 +1,6 @@
 // Utilidades de DOM del recorrido: encontrar el elemento real de un paso (esperando a que exista), abrir el grupo del menú que lo esconde y medirlo.
 // Solo CSSOM y atributos: nunca estilos en línea escritos en el marcado (CSP).
+import { teclasPropias } from '../../lib/onboarding/recorrido.mjs';
 const visible = (el: Element): el is HTMLElement => el instanceof HTMLElement && el.getClientRects().length > 0;
 
 /** Primer elemento visible de los selectores (el orden manda). Un selector inválido se ignora. */
@@ -50,4 +51,23 @@ export function nombreDe(el: HTMLElement): string {
   const crudo = el.getAttribute('aria-label') || el.getAttribute('title') || el.textContent || '';
   const limpio = crudo.replace(/\s+/g, ' ').trim();
   return limpio.length > 40 ? limpio.slice(0, 39).trimEnd() + '…' : limpio;
+}
+
+/** ¿El foco está en un campo (texto, lista, pestañas, contenteditable)? Ahí el viaje automático no se arma. */
+export const enCampo = (el: Element | null): boolean => el instanceof HTMLElement && teclasPropias(el);
+/** ¿Hay en la pantalla un formulario con campos modificados respecto de su valor inicial? Un viaje solo lo perdería. */
+export function hayFormularioSucio(raiz: ParentNode = document): boolean {
+  for (const f of Array.from(raiz.querySelectorAll('form'))) {
+    for (const c of Array.from(f.elements)) {
+      if (c instanceof HTMLInputElement) {
+        if (['hidden', 'submit', 'button', 'reset', 'image', 'file'].includes(c.type)) continue;
+        if (c.type === 'checkbox' || c.type === 'radio' ? c.checked !== c.defaultChecked : c.value !== c.defaultValue) return true;
+      } else if (c instanceof HTMLTextAreaElement) {
+        if (c.value !== c.defaultValue) return true;
+      } else if (c instanceof HTMLSelectElement) {
+        if (Array.from(c.options).some((o) => o.selected !== o.defaultSelected)) return true;
+      }
+    }
+  }
+  return false;
 }

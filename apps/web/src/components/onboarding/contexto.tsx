@@ -7,6 +7,7 @@ import {pasosDe,type Pista} from '../../lib/onboarding/catalogo.mjs';
 import {estadoInicial,eventoDeTecla,reducir,teclasPropias,type EstadoRecorrido,type EventoRecorrido} from '../../lib/onboarding/recorrido.mjs';
 import {construirTour,gruposDe,type ModoTour,type PasoTour} from '../../lib/onboarding/tour.mjs';
 import {enPantalla} from '../../lib/onboarding/ruta.mjs';
+import {armadoTras,type EventoViaje} from '../../lib/onboarding/viaje.mjs';
 import {hrefConAlcance} from '../../lib/workspace/alcance.mjs';
 import {actualizarEstado,almacenDelNavegador,claveEstado,ESTADO_VACIO,leerEstado,type EstadoLocal} from '../../lib/onboarding/estado';
 import {abrirGrupoDelMenu,primerVisible} from './objetivo';
@@ -18,9 +19,13 @@ export interface Controlador {
  registrarBoton:(el:HTMLButtonElement|null)=>void;enfocarBoton:()=>void;
  alternarMenu:()=>void;cerrarMenu:()=>void;
  modo:ModoTour;hayModoCorto:boolean;pasosCorto:number;pasosCompleto:number;
- abrirSetup:()=>void;iniciar:(modo:'inicio'|'retomar',recorrido?:ModoTour)=>void;irAPantalla:(href:string)=>void;despachar:(e:EventoRecorrido)=>void;siguiente:()=>void;llevame:()=>void;viajeAutomatico:()=>boolean;terminarEIrASetup:()=>void;
+ abrirSetup:()=>void;iniciar:(modo:'inicio'|'retomar',recorrido?:ModoTour)=>void;irAPantalla:(href:string)=>void;despachar:(e:EventoRecorrido)=>void;siguiente:()=>void;llevame:()=>void;viajeAutomatico:()=>boolean;registrarViaje:(ctl:ControlViaje|null)=>void;terminarEIrASetup:()=>void;
  omitir:()=>void;noVolver:()=>void;saltarInvitacion:()=>void;mostrarChecklist:()=>void;ocultarChecklist:()=>void;
 }
+/** Conductor del viaje automático del paso «ir» (lo crea guia.tsx; el estado y las reglas viven en lib/onboarding/viaje.mjs). */
+export interface ControlViaje {enviar:(e:EventoViaje)=>unknown}
+/** Pasos que cuenta la persona: los saltos de menú («ir») no cuentan, solo las pantallas y el cierre. */
+export const contarPasos=(lista:readonly {tipo:string}[])=>lista.filter(p=>p.tipo!=='ir').length;
 const Contexto=createContext<Controlador|null>(null);
 export const useOnboarding=()=>useContext(Contexto);
 export function OnboardingRaiz({datos,children}:{datos:DatosOnboarding;children:ReactNode}){
@@ -52,18 +57,18 @@ export function OnboardingRaiz({datos,children}:{datos:DatosOnboarding;children:
  // Todo cambio del recorrido nace de una acción de la persona (o de que llegue a la pantalla a la que se le mandó): aquí se aplica y se guarda el paso.
  // Si el paso cae en otra pantalla distinta de la actual (volver atrás, retomar, saltar), se la lleva; un paso «ir» no navega: te dice qué apretar.
  // `viaje` marca que el paso actual lo alcanzó AVANZANDO por una acción de la persona (Siguiente, flecha derecha, Empezar, Retomar, elegir pantalla): solo entonces un paso «ir» la lleva solo.
- // Anterior, cerrar y un recorrido restaurado al recargar nunca viajan solos.
- const viaje=useRef(false);
+ // Anterior, cerrar, un cambio de ruta y un recorrido restaurado al recargar nunca viajan solos (armadoTras, lib/onboarding/viaje.mjs).
+ const viaje=useRef(false),viajeCtl=useRef<ControlViaje|null>(null);
  const aplicar=useCallback((sig:EstadoRecorrido,navegar:boolean,lista:PasoTour[]=pasos)=>{
   setRec(sig);
   if(sig.abierto){const p=lista[sig.indice];if(p){guardar({paso:p.id,visto:true,activo:true});if(navegar&&p.tipo!=='ir'&&p.pantalla&&!enPantalla(pathname,p.pantalla))router.push(hrefConAlcance(p.pantalla,consulta));}}
   else if(sig.terminado)guardar({paso:null,visto:true,omitido:false,activo:false});
   else guardar({activo:false});
  },[consulta,guardar,pasos,pathname,router]);
- const despachar=useCallback((e:EventoRecorrido)=>{viaje.current=e.tipo==='siguiente';aplicar(reducir(rec,e,pasos.length,pasos,pathname),e.tipo!=='clic'&&e.tipo!=='ruta');},[aplicar,rec,pasos,pathname]);
+ const despachar=useCallback((e:EventoRecorrido)=>{viaje.current=armadoTras(e.tipo);aplicar(reducir(rec,e,pasos.length,pasos,pathname),e.tipo!=='clic'&&e.tipo!=='ruta');},[aplicar,rec,pasos,pathname]);
  // Llegar a la pantalla a la que te mandaba un paso «ir» (por clic, «Llévame», atrás del navegador…) lo completa. Un cambio de ruta ajeno no abre, cierra ni mueve nada.
  useEffect(()=>{
-  const frame=requestAnimationFrame(()=>{const sig=reducir(rec,{tipo:'ruta',ruta:pathname},pasos.length,pasos,pathname);if(sig!==rec)aplicar(sig,false);});
+  const frame=requestAnimationFrame(()=>{const sig=reducir(rec,{tipo:'ruta',ruta:pathname},pasos.length,pasos,pathname);if(sig!==rec){viaje.current=armadoTras('ruta');aplicar(sig,false);}});
   return()=>cancelAnimationFrame(frame);
  // eslint-disable-next-line react-hooks/exhaustive-deps -- solo reacciona al cambio de ruta
  },[pathname]);
@@ -74,23 +79,26 @@ export function OnboardingRaiz({datos,children}:{datos:DatosOnboarding;children:
  const iniciar=useCallback((como:'inicio'|'retomar',recorrido?:ModoTour)=>{
   const elegido:ModoTour=recorrido&&(recorrido==='completo'||hayModoCorto)?recorrido:modo,lista=elegido==='corto'?corto:completo;
   const desde=como==='retomar'?lista.findIndex(p=>p.id===local.paso):-1;
-  viaje.current=true;setMenuAbierto(false);setModo(elegido);guardar({omitido:false,modo:elegido});aplicar(reducir(rec,{tipo:'abrir',indice:desde>=0?desde:0},lista.length,lista,pathname),false,lista);
+  viaje.current=armadoTras('abrir');setMenuAbierto(false);setModo(elegido);guardar({omitido:false,modo:elegido});aplicar(reducir(rec,{tipo:'abrir',indice:desde>=0?desde:0},lista.length,lista,pathname),false,lista);
  },[aplicar,completo,corto,guardar,hayModoCorto,local.paso,modo,pathname,rec]);
  const irAPantalla=useCallback((href:string)=>{
   const g=pantallas.find(x=>x.href===href);if(!g)return;
-  viaje.current=true;setMenuAbierto(false);guardar({omitido:false});aplicar(reducir(rec,{tipo:'abrir',indice:g.desde},pasos.length,pasos,pathname),false);
+  viaje.current=armadoTras('abrir');setMenuAbierto(false);guardar({omitido:false});aplicar(reducir(rec,{tipo:'abrir',indice:g.desde},pasos.length,pasos,pathname),false);
  },[aplicar,guardar,pantallas,pasos,pathname,rec]);
  const abrirSetup=useCallback(()=>{setMenuAbierto(false);router.push('/setup');},[router]);
- // Viaje de un paso «ir» (lo dispara solo la guía tras señalar el elemento, o «Siguiente» / la flecha derecha): hace el clic real en el elemento (así viaja con el alcance del menú); si no está a la vista, navega directo. En los dos casos el paso «ir» queda completo.
+ // Viaje de un paso «ir» (lo dispara el conductor del viaje: la cuenta regresiva, «Siguiente», la flecha derecha o «Ir a …»): hace el clic real en el elemento (así viaja con el alcance del menú); si no está a la vista, navega directo.
+ // El paso «ir» NO se completa aquí: se completa cuando llega la ruta (efecto de `pathname`); si no llega, el conductor lo saca por «No pude abrir esta pantalla».
  const llevame=useCallback(()=>{
   const p=rec.abierto?pasos[rec.indice]:null;
   if(!p||p.tipo!=='ir'||!p.href)return;
   abrirGrupoDelMenu(p.objetivos);
   const el=primerVisible(p.objetivos);
   if(el){el.click();return;}
-  router.push(hrefConAlcance(p.href,consulta));despachar({tipo:'clic'});
- },[consulta,despachar,pasos,rec.abierto,rec.indice,router]);
- const siguiente=useCallback(()=>{if(paso?.tipo==='ir')llevame();else despachar({tipo:'siguiente'});},[despachar,llevame,paso?.tipo]);
+  router.push(hrefConAlcance(p.href,consulta));
+ },[consulta,pasos,rec.abierto,rec.indice,router]);
+ // Siguiente en un paso «ir» pasa por el conductor: si la cuenta ya viaja o ya viajó, no dispara un segundo viaje.
+ const siguiente=useCallback(()=>{if(paso?.tipo==='ir'){if(viajeCtl.current)viajeCtl.current.enviar({tipo:'siguiente'});else llevame();}else despachar({tipo:'siguiente'});},[despachar,llevame,paso?.tipo]);
+ const registrarViaje=useCallback((ctl:ControlViaje|null)=>{viajeCtl.current=ctl;},[]);
  const terminarEIrASetup=useCallback(()=>{despachar({tipo:'siguiente'});router.push('/setup');},[despachar,router]);
  const omitir=useCallback(()=>{guardar({omitido:true,visto:true,paso:null,activo:false});setRec(reducir(rec,{tipo:'cerrar'},pasos.length,pasos,pathname));},[guardar,pasos,pathname,rec]);
  const noVolver=useCallback(()=>{setMenuAbierto(false);guardar({descartado:true,omitido:true,visto:true,paso:null,activo:false});setRec(reducir(rec,{tipo:'cerrar'},pasos.length,pasos,pathname));},[guardar,pasos,pathname,rec]);
@@ -114,7 +122,7 @@ export function OnboardingRaiz({datos,children}:{datos:DatosOnboarding;children:
   document.addEventListener('keydown',alTeclear);return()=>document.removeEventListener('keydown',alTeclear);
  },[abierto,siguiente,despachar]);
  const invitacionVisible=listo&&tieneRecorrido&&!rec.abierto&&!local.visto&&!local.omitido&&!local.descartado;
- const valor:Controlador={datos,pista,listo,local,tieneRecorrido,pasos,modo,hayModoCorto,pasosCorto:corto.length,pasosCompleto:completo.length,pantallas,tieneChecklist,rec,paso,menuAbierto,invitacionVisible,soporteTerminado,ruta:pathname,registrarBoton:setBoton,enfocarBoton:()=>boton?.focus(),
-  alternarMenu:()=>setMenuAbierto(v=>!v),cerrarMenu:()=>setMenuAbierto(false),abrirSetup,iniciar,irAPantalla,despachar,siguiente,llevame,viajeAutomatico:()=>viaje.current,terminarEIrASetup,omitir,noVolver,saltarInvitacion,mostrarChecklist,ocultarChecklist};
+ const valor:Controlador={datos,pista,listo,local,tieneRecorrido,pasos,modo,hayModoCorto,pasosCorto:contarPasos(corto),pasosCompleto:contarPasos(completo),pantallas,tieneChecklist,rec,paso,menuAbierto,invitacionVisible,soporteTerminado,ruta:pathname,registrarBoton:setBoton,enfocarBoton:()=>boton?.focus(),
+  alternarMenu:()=>setMenuAbierto(v=>!v),cerrarMenu:()=>setMenuAbierto(false),abrirSetup,iniciar,irAPantalla,despachar,siguiente,llevame,viajeAutomatico:()=>viaje.current,registrarViaje,terminarEIrASetup,omitir,noVolver,saltarInvitacion,mostrarChecklist,ocultarChecklist};
  return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }

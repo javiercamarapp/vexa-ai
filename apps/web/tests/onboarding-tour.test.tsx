@@ -202,13 +202,13 @@ test('cierre sin lista falsa: el mismo texto para corto, completo y plataforma, 
 });
 test('paso «ir»: título, cuerpo y etiqueta usan el MISMO nombre, el rótulo del menú (etiquetaItem), no el title del enlace; el cuerpo es corto y no repite el título',()=>{
   const guia=leer('src/components/onboarding/guia.tsx');
-  assert.match(guia,/t\('onb\.tour\.ir\.titulo',\{pantalla\}\)/);assert.match(guia,/t\('onb\.tour\.ir\.cuerpo',\{nombre:pantalla\}\)/);assert.match(guia,/t\('onb\.tour\.clic',\{nombre:pantalla\}\)/);
+  assert.match(guia,/t\('onb\.tour\.ir\.titulo',\{pantalla\}\)/);assert.match(guia,/'onb\.tour\.ir\.cuerpoViaja':'onb\.tour\.ir\.cuerpo',\{nombre:pantalla\}\)/);assert.match(guia,/t\('onb\.tour\.clic',\{nombre:pantalla\}\)/);
   assert.doesNotMatch(guia,/onb\.tour\.clic',\{nombre:nombreEl\}|onb\.tour\.ir\.cuerpo',\{nombre:nombreEl/,'el nombre leído del DOM (aria-label/title/texto) ya no se usa en pasos «ir»');
   assert.match(guia,/pantalla=nombrePantalla\(paso\.pantalla\)/);assert.match(guia,/etiquetaItem\(t,item\)/);
   for(const [clave,dic] of [['es',ESP],['en',ING]] as const){
-    assert.ok(dic['onb.tour.ir.cuerpo'].length<=80,clave+': cuerpo corto');
+    assert.ok(dic['onb.tour.ir.cuerpo'].length<=80&&dic['onb.tour.ir.cuerpoViaja'].length<=90,clave+': cuerpo corto');
     const t=T[clave];
-    for(const nombre of ['Hoy','Problemas'])for(const k of ['onb.tour.ir.titulo','onb.tour.ir.cuerpo','onb.tour.clic'] as const)assert.ok(t(k,{pantalla:nombre,nombre}).includes(nombre),clave+k);
+    for(const nombre of ['Hoy','Problemas'])for(const k of ['onb.tour.ir.titulo','onb.tour.ir.cuerpo','onb.tour.ir.cuerpoViaja','onb.tour.clic'] as const)assert.ok(t(k,{pantalla:nombre,nombre}).includes(nombre),clave+k);
   }
 });
 test('textos de pantalla: el cuerpo no repite el título como prefijo («Importaciones: …») y «qué es» y «elemento clave» no se repiten frase por frase',()=>{

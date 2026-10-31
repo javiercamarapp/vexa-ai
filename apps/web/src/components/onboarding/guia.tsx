@@ -7,11 +7,12 @@ import {etiquetaItem} from '../../lib/i18n/menu';
 import {todosLosItems} from '../../lib/workspace/menu.mjs';
 import {pasosDe} from '../../lib/onboarding/catalogo.mjs';
 import {enPantalla} from '../../lib/onboarding/ruta.mjs';
-import {reducir} from '../../lib/onboarding/recorrido.mjs';
+import {reducir,teclasPropias} from '../../lib/onboarding/recorrido.mjs';
+import {crearViaje,estadoViajeInicial,planearViaje,type EstadoViaje} from '../../lib/onboarding/viaje.mjs';
 import type {Clave} from '../../lib/i18n';
-import {useOnboarding} from './contexto';
+import {contarPasos,useOnboarding} from './contexto';
 import {CapaFoco,EtiquetaObjetivo,InvitacionRecorrido,MenuGuia,TarjetaRecorrido,type LadoEtiqueta} from './paneles';
-import {abrirGrupoDelMenu,esperarObjetivo,nombreDe,pantallaEstrecha,reducirMovimiento} from './objetivo';
+import {abrirGrupoDelMenu,enCampo,esperarObjetivo,hayFormularioSucio,nombreDe,pantallaEstrecha,reducirMovimiento} from './objetivo';
 import './onboarding.css';
 
 export function GuiaBoton(){
@@ -27,7 +28,7 @@ const PAD=6,GAP=10,MARGEN=8;
 const esControl=(el:HTMLElement)=>el.matches('a,button,summary,input,select,textarea,[role="button"],[role="link"]');
 export function GuiaPaneles(){
  const c=useOnboarding(),t=useT(),tarjeta=useRef<HTMLElement>(null),menu=useRef<HTMLDivElement>(null),capa=useRef<HTMLDivElement>(null),etiqueta=useRef<HTMLDivElement>(null);
- const abierto=Boolean(c?.rec.abierto),paso=c?.paso??null,ruta=c?.ruta??'',despachar=c?.despachar;
+ const abierto=Boolean(c?.rec.abierto),paso=c?.paso??null,ruta=c?.ruta??'';
  const clave=abierto&&paso&&paso.tipo!=='cierre'?paso.id+'|'+ruta:null;
  // Elemento real del paso: undefined = todavía buscando, null = no existe (la tarjeta se centra), elemento = iluminarlo. Un resultado de otro paso o de otra ruta se ignora.
  const [res,setRes]=useState<{clave:string;el:HTMLElement|null}|null>(null),[reintento,setReintento]=useState(0);
@@ -52,22 +53,40 @@ export function GuiaPaneles(){
   if(typeof el.scrollIntoView==='function')el.scrollIntoView({behavior:reducirMovimiento()?'auto':'smooth',block:estrecha?'start':'center'});
   return()=>{el.style.removeProperty('scroll-margin-top');};
  },[el,pasoId]);
- // 3) El clic real en el elemento completa un paso «ir». No se impide la acción normal (ni navegación): solo se escucha.
+ // 3) Viaje de un paso «ir». Las reglas (cuándo se arma, cuenta de 3 s, cancelar, un solo disparo, salida por fallo) viven en lib/onboarding/viaje.mjs; aquí solo se conecta con el DOM.
+ // El clic real en el elemento (el de la persona o el del propio viaje) deja el paso esperando la ruta: se completa al LLEGAR a la pantalla (contexto.tsx), no al hacer clic.
  const tipo=paso?.tipo;
- useEffect(()=>{
-  if(!el||tipo!=='ir'||!despachar)return;
-  const alClic=()=>despachar({tipo:'clic'});
-  el.addEventListener('click',alClic,true);return()=>el.removeEventListener('click',alClic,true);
- },[el,tipo,despachar]);
- // 3b) Un paso «ir» alcanzado por una acción de la persona (Siguiente, flecha derecha, Empezar) no se queda esperando otro botón: se señala el elemento
- // y, tras un instante, la guía lo pulsa sola y la lleva a la pantalla. Si el elemento no existe (menú plegado), navega directo. Un recorrido restaurado al recargar no viaja solo.
- const llevame=c?.llevame,viajeAutomatico=c?.viajeAutomatico,llevarRef=useRef(llevame),viajeRef=useRef(viajeAutomatico);
+ const llevame=c?.llevame,viajeAutomatico=c?.viajeAutomatico,registrarViaje=c?.registrarViaje,llevarRef=useRef(llevame),viajeRef=useRef(viajeAutomatico);
+ const ctlRef=useRef<ReturnType<typeof crearViaje>|null>(null),[viaje,setViaje]=useState<EstadoViaje>(estadoViajeInicial);
  useEffect(()=>{llevarRef.current=llevame;viajeRef.current=viajeAutomatico;});
  useEffect(()=>{
-  if(tipo!=='ir'||el===undefined||!viajeRef.current?.())return;
-  const id=setTimeout(()=>llevarRef.current?.(),el?1600:0);
-  return()=>clearTimeout(id);
+  const ctl=crearViaje({alCambiar:setViaje,alViajar:()=>llevarRef.current?.()});
+  ctlRef.current=ctl;registrarViaje?.(ctl);
+  return()=>{ctl.destruir();ctlRef.current=null;registrarViaje?.(null);};
+ },[registrarViaje]);
+ useEffect(()=>{
+  if(!el||tipo!=='ir')return;
+  const alClic=()=>{ctlRef.current?.enviar({tipo:'clic'});};
+  el.addEventListener('click',alClic,true);return()=>el.removeEventListener('click',alClic,true);
+ },[el,tipo]);
+ // Al cambiar de paso (o cerrar) nada del viaje anterior queda vivo: ni la cuenta ni el plazo.
+ useEffect(()=>()=>{ctlRef.current?.reiniciar();},[pasoId]);
+ // Con el elemento ya resuelto (existe, o no existe: menú plegado o cajón móvil) se decide si viaja: solo si se llegó avanzando, sin movimiento reducido, sin foco en un campo ni formulario modificado.
+ useEffect(()=>{
+  if(tipo!=='ir'||el===undefined)return;
+  ctlRef.current?.enviar({tipo:'planear',plan:planearViaje({tipo,armado:viajeRef.current?.()??false,elemento:el?'existe':'ausente',movimientoReducido:reducirMovimiento(),focoEnCampo:enCampo(document.activeElement),formularioSucio:hayFormularioSucio()})});
  },[el,tipo,pasoId]);
+ // Mientras corre la cuenta, Tab, un clic fuera de la tarjeta o tocar un campo la cancelan (Esc cierra la guía y con ella la cuenta).
+ const faseViaje=viaje.fase;
+ useEffect(()=>{
+  if(faseViaje!=='cuenta')return;
+  const cancelar=(motivo:string)=>{ctlRef.current?.enviar({tipo:'cancelar',motivo});};
+  const alTecla=(e:KeyboardEvent)=>{if(e.key==='Tab')cancelar('tab');};
+  const alPuntero=(e:PointerEvent)=>{if(!(e.target instanceof Node&&tarjeta.current?.contains(e.target)))cancelar('clic-fuera');};
+  const alCampo=(e:Event)=>{if(e.target instanceof HTMLElement&&teclasPropias(e.target))cancelar('campo');};
+  document.addEventListener('keydown',alTecla,true);document.addEventListener('pointerdown',alPuntero,true);document.addEventListener('focusin',alCampo,true);document.addEventListener('input',alCampo,true);
+  return()=>{document.removeEventListener('keydown',alTecla,true);document.removeEventListener('pointerdown',alPuntero,true);document.removeEventListener('focusin',alCampo,true);document.removeEventListener('input',alCampo,true);};
+ },[faseViaje]);
  // 4) Seguir al elemento (scroll, tamaño, animaciones): recorte, anillo y etiqueta por CSSOM. Si desaparece (cambio de pantalla) se vuelve a buscar.
  useEffect(()=>{
   const capaEl=capa.current;if(!capaEl)return;
@@ -112,15 +131,19 @@ export function GuiaPaneles(){
   const p=pasosDe('plataforma').find(x=>x.href===href);return p?t(p.textos.titulo as Clave):href;
  };
  const opciones=c.hayModoCorto?{corto:c.pasosCorto,completo:c.pasosCompleto}:undefined;
- const nombres=c.pantallas.map(g=>nombrePantalla(g.href)),total=c.pasos.length,n=c.rec.indice+1;
+ // El contador no cuenta los saltos de menú («ir»): solo las pantallas y el cierre. En un salto muestra el paso al que se va.
+ const nombres=c.pantallas.map(g=>nombrePantalla(g.href)),total=Math.max(1,contarPasos(c.pasos)),antes=contarPasos(c.pasos.slice(0,c.rec.indice+1)),n=Math.max(1,antes+(paso?.tipo==='ir'?1:0));
  let tarjetaUi=null,etiquetaUi=null;
  if(abierto&&paso){
   const cierre=paso.tipo==='cierre',pantalla=nombrePantalla(paso.pantalla),nombreEl=el?nombreDe(el):'';
   const titulo=cierre?t(paso.titulo as Clave):paso.tipo==='ir'?t('onb.tour.ir.titulo',{pantalla}):paso.titulo?t(paso.titulo as Clave):pantalla;
-  const cuerpo=cierre||paso.tipo==='info'?t(paso.cuerpo as Clave):t('onb.tour.ir.cuerpo',{nombre:pantalla});
+  // El cuerpo del paso «ir» solo promete el viaje si va a viajar (cuenta en marcha); tras recargar, con movimiento reducido o al cancelar dice cómo ir a mano.
+  const viaja=viaje.fase==='cuenta'||(viaje.fase==='inactivo'&&Boolean(c.viajeAutomatico())&&!reducirMovimiento());
+  const cuerpo=cierre||paso.tipo==='info'?t(paso.cuerpo as Clave):t(viaja?'onb.tour.ir.cuerpoViaja':'onb.tour.ir.cuerpo',{nombre:pantalla});
   const centrada=cierre||el===null;
   tarjetaUi=<TarjetaRecorrido t={t} innerRef={tarjeta} tipo={paso.tipo} titulo={titulo} cuerpo={cuerpo} ilu={paso.ilu} n={n} total={total} grupoN={Math.min(paso.grupo+1,nombres.length)} grupoTotal={nombres.length}
    hayAnterior={reducir(c.rec,{tipo:'anterior'},c.pasos.length,c.pasos,c.ruta).indice!==c.rec.indice} ruta={{nombres:cierre?[]:nombres,actual:paso.grupo}} centrada={centrada} sinObjetivo={!cierre&&paso.tipo!=='ir'&&el===null} mostrarSetup={c.pista!=='plataforma'}
+   viaje={paso.tipo==='ir'?{fase:viaje.fase,restan:viaje.restan,nombre:pantalla,quedarme:()=>ctlRef.current?.enviar({tipo:'cancelar',motivo:'quedarme'}),irManual:()=>ctlRef.current?.enviar({tipo:'manual'}),continuar:()=>c.despachar({tipo:'siguiente'})}:undefined}
    anterior={()=>c.despachar({tipo:'anterior'})} omitir={c.omitir} primario={cierre?()=>c.despachar({tipo:'siguiente'}):c.siguiente} irSetup={c.terminarEIrASetup}/>;
   // En un paso «ir» título, cuerpo y etiqueta dicen lo mismo: el rótulo del menú (etiquetaItem), nunca el title del enlace ni su texto interno.
   if(el&&((paso.tipo==='ir'&&pantalla)||(nombreEl&&esControl(el))))etiquetaUi=<EtiquetaObjetivo innerRef={etiqueta} texto={paso.tipo==='ir'?t('onb.tour.clic',{nombre:pantalla}):t('onb.tour.aqui',{nombre:nombreEl})}/>;

@@ -21,6 +21,6 @@ export async function GET(request:NextRequest) {
       let destination=safeNext(request.nextUrl.searchParams.get('next'),c.origin);
       if(destination==='/'){const grant=await client.rpc('platform_manage',{p_input:{operation:'status'}});if(grant.error&&grant.error.code!=='42501')throw new AccessError(503,'platform_unavailable');if(!grant.error&&grant.data?.administrator===true)destination='/platform';}
       return finish(localRedirect(destination));
-    } catch(error) {return finish(failure(error));}
-  } catch(error) {return failure(error);}
+    } catch(error) {return finish(failure(error,request));}
+  } catch(error) {return failure(error,request);}
 }

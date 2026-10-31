@@ -11,7 +11,7 @@ export async function POST(request:NextRequest) {
     try {await Promise.race([client.rpc('platform_support',{p_input:{operation:'end'}}),new Promise(resolve=>setTimeout(resolve,2000))]);} catch {/* El cierre de sesión no depende de esto. */}
     const {error}=await client.auth.signOut({scope:'global'});
     // Never claim logout succeeded when Auth could not revoke refresh sessions.
-    const response=finish(error ? failure(new AccessError(503,'logout_unavailable')) : localRedirect('/login'));
+    const response=finish(error ? failure(new AccessError(503,'logout_unavailable'),request) : localRedirect('/login'));
     for(const {name} of request.cookies.getAll()) {
       if(name===ACTIVE_ORG || name===SUPPORT_MARK || name==='vexa_push_device' || name.startsWith('sb-'))response.cookies.set(name,'',{httpOnly:true,secure:c.secure,sameSite:'lax',path:'/',maxAge:0});
     }
@@ -19,5 +19,5 @@ export async function POST(request:NextRequest) {
     response.cookies.set(SUPPORT_MARK,'',{httpOnly:true,secure:c.secure,sameSite:'lax',path:'/',maxAge:0});
     response.headers.set('Clear-Site-Data','"cache", "cookies", "storage"');
     return response;
-  } catch(error) {return failure(error);}
+  } catch(error) {return failure(error,request);}
 }

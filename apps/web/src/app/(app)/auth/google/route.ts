@@ -11,6 +11,6 @@ export async function POST(request:NextRequest) {
       const {data,error}=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:new URL('/auth/callback',c.origin).href,skipBrowserRedirect:true}});
       if(error || !data.url)throw new AccessError(503,'google_unavailable');
       return finish(NextResponse.redirect(data.url,303));
-    } catch(error) {return finish(failure(error));}
-  } catch(error) {return failure(error);}
+    } catch(error) {return finish(failure(error,request));}
+  } catch(error) {return failure(error,request);}
 }

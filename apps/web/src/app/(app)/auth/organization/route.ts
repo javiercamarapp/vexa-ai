@@ -16,6 +16,6 @@ export async function POST(request:NextRequest) {
       const response=localRedirect('/');
       response.cookies.set(ACTIVE_ORG,membership.tenant_id,{httpOnly:true,secure:c.secure,sameSite:'lax',path:'/',maxAge:60*60*24*30});
       return finish(response);
-    } catch(error) { return finish(failure(error)); }
-  } catch(error) {return failure(error);}
+    } catch(error) { return finish(failure(error,request)); }
+  } catch(error) {return failure(error,request);}
 }

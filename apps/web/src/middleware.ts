@@ -79,12 +79,12 @@ export async function middleware(request:NextRequest) {
       }
       return finish(NextResponse.next({request:{headers:request.headers}}));
     } catch(error) {
-      if(dataRoute&&error instanceof AccessError&&(error.status===401||error.status===403))return finish(failure(error));
+      if(dataRoute&&error instanceof AccessError&&(error.status===401||error.status===403))return finish(failure(error,request));
       if(error instanceof AccessError && error.status===401)return finish(localRedirect('/login'));
       if(error instanceof AccessError && error.status===403)return finish(localRedirect('/sin-acceso'));
-      return finish(failure(error));
+      return finish(failure(error,request));
     }
-  } catch(error) {return authLinkHeaders(request,failure(error));}
+  } catch(error) {return authLinkHeaders(request,failure(error,request));}
 }
 // Matcher (Fase B vigente): todo menos estáticos y activos públicos; rovaq.ai y www pasan por aquí y decidirHost los enruta. Fase A: añadir `missing: [{ type: 'header', key: 'host', value: '(www\\\\.)?rovaq\\\\.ai' }]`. Next exige que sea un literal estático:
 // config/sitio/reglas-host.mjs guarda el mismo valor como MATCHER_MIDDLEWARE y una prueba los compara.

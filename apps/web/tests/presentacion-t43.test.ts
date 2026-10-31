@@ -36,3 +36,29 @@ test('las tres pantallas pintan la nota con notaDe y no el texto crudo del paque
   assert.match(leer('src/components/workspace/overview-dashboard.tsx'), /\{notaDe\(t,cats\.data\)\}/);
   assert.doesNotMatch(leer('src/components/workspace/overview-dashboard.tsx'), /\{cats\.data\.note\}/);
 });
+
+test('errores de acceso del middleware y de /auth: el texto sigue la cookie de idioma; código y estado HTTP no cambian', async () => {
+  const {failure, mensajeAcceso, MENSAJES_ACCESO} = await import('../src/lib/auth-http');
+  const {AccessError} = await import('../src/lib/auth');
+  const pet = (lang?: string) => ({cookies: {get: (n: string) => (n === 'rovaq_lang' && lang ? {value: lang} : undefined)}}) as never;
+  const cuerpo = async (r: Response) => ({status: r.status, ...(await r.json() as {error: {code: string; message: string; retryable: boolean}}).error});
+  const e403 = new AccessError(403, 'forbidden'), e503 = new AccessError(503, 'auth_not_configured');
+  assert.deepEqual(await cuerpo(failure(e403, pet('es'))), {status: 403, code: 'forbidden', message: 'Acceso denegado.', retryable: false});
+  assert.deepEqual(await cuerpo(failure(e403, pet('en'))), {status: 403, code: 'forbidden', message: 'Access denied.', retryable: false});
+  assert.deepEqual(await cuerpo(failure(e503, pet('en'))), {status: 503, code: 'auth_not_configured', message: 'Could not verify access.', retryable: true});
+  assert.equal((await cuerpo(failure(e503, pet('es')))).message, 'No se pudo validar el acceso.');
+  assert.equal((await cuerpo(failure(e403, pet()))).message, 'Access denied.', 'sin cookie: idioma por omisión');
+  assert.equal((await cuerpo(failure(new Error('x'), pet('es')))).code, 'identity_unavailable');
+  assert.equal(mensajeAcceso(401, 'en'), MENSAJES_ACCESO.en.noValidado);
+  for (const k of ['denegado', 'noValidado'] as const) assert.ok(!ACENTOS.test(MENSAJES_ACCESO.en[k]));
+});
+
+test('todo llamador de failure() le pasa la petición, y import-preview ya no lleva español de respaldo', () => {
+  for (const rel of ['src/middleware.ts', 'src/app/(app)/auth/organization/route.ts', 'src/app/(app)/auth/google/route.ts', 'src/app/(app)/auth/logout/route.ts', 'src/app/(app)/auth/callback/route.ts']) {
+    const fuente = leer(rel);
+    const llamadas = fuente.match(/\bfailure\([^;]*?\)\)?[;}]/g) ?? [];
+    assert.ok(llamadas.length > 0, rel);
+    for (const l of llamadas) assert.match(l, /request/, rel + ': ' + l);
+  }
+  assert.doesNotMatch(leer('src/components/import-preview.tsx'), /No se pudo completar la solicitud de importación\.'\)|\(código \$\{r\.status\}/);
+});

@@ -11,7 +11,7 @@ const X0 = 873.6;
 const ANCHO_PISTA = 379.2;
 const ALTO_BARRA = 11.1;
 // Borde superior de cada barra visible en la captura (las nueve primeras filas; la décima queda bajo el pliegue de la imagen).
-const FILAS_Y = [627.8, 695.8, 763.9, 833.3, 901.4, 969.4, 1038.9, 1106.9, 1175.0] as const;
+const FILAS_Y = [603.5, 671.5, 739.6, 809.0, 877.1, 945.1, 1014.6, 1082.6, 1150.7] as const;
 const MAX = PARETO[0].v;
 
 export function VentanaFuga({lang}: {lang: Lang}) {
@@ -40,7 +40,7 @@ export function VentanaFuga({lang}: {lang: Lang}) {
       </p>
       <div className="s-ventana__cuerpo">
         <div className="s-ventana__lienzo">
-        <Captura nombre="fuga" tema="oscuro" lang={lang} tamanos="(max-width: 1000px) 100vw, 880px" prioridad clase="s-ventana__img" />
+        <Captura nombre="fuga" tema="oscuro" lang={lang} tamanos="(max-width: 700px) 170vw, (max-width: 1100px) 100vw, 1040px" anchos={[960, 1440, 2880]} prioridad clase="s-ventana__img" />
         <svg className="s-ov" viewBox="0 0 2000 1250" preserveAspectRatio="none" role="group" aria-label={ui.captura.barras} focusable="false">
           {filas.map((f, i) => (
             <g className="s-ov__fila" key={f.sku} data-i={i} tabIndex={0} role="img" aria-label={`${f.sku}, ${usd(f.v)}, ${obs}`}>
@@ -54,8 +54,8 @@ export function VentanaFuga({lang}: {lang: Lang}) {
             </g>
           ))}
           <g aria-hidden="true">
-            <line className="s-ov__marca" x1={x80} x2={x80} y1={606} y2={1212} />
-            <text className="s-ov__eje" x={x80 + 10} y={600}>{ui.captura.ejeMarca}</text>
+            <line className="s-ov__marca" x1={x80} x2={x80} y1={582} y2={1188} />
+            <text className="s-ov__eje" x={x80 + 10} y={576}>{ui.captura.ejeMarca}</text>
             <path className="s-ov__acum" d={linea} pathLength={1} />
             {filas.map((f) => <circle className="s-ov__nodo" key={f.sku} cx={X0 + f.cum * ANCHO_PISTA} cy={f.y + ALTO_BARRA / 2} r={4.5} />)}
           </g>

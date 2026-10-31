@@ -132,6 +132,8 @@ scripts/ ops/        Utilidades de verificación, correos y respaldo/restauraci�
 tests/ support/      Pruebas de aceptación y arneses (parte del registro histórico)
 ```
 
+Los valores que identifican al cliente piloto (catálogo de bodegas, prefijo de su tienda propia, UUID de su organización) no están en el repositorio: se cargan de variables de entorno o de configuración local; ver [`docs/operacion/09-CATALOGO-CCO-BODEGAS.md`](docs/operacion/09-CATALOGO-CCO-BODEGAS.md) y [`docs/seguridad/DATOS-DE-CLIENTE.md`](docs/seguridad/DATOS-DE-CLIENTE.md).
+
 Los identificadores técnicos conservan el nombre original del proyecto (`@vexa/*`, esquema `vexa_platform`, variables `VEXA_*`) para no romper despliegues ni datos; la marca visible es Rovaq AI.
 
 ## Pruebas

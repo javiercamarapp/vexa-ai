@@ -1,10 +1,10 @@
 # Datos de cliente en el repositorio público
 
-Estado: 29-oct-2026, rama `sanear-29oct`. Origen: auditoría 2 de seguridad (hallazgo M2).
+Estado: 31-oct-2026 (actualizado de la versión del 29-oct, rama `sanear-29oct`, que aún decía que el historial no se reescribía). Origen: auditoría 2 de seguridad (hallazgo M2).
 
 ## Contexto y decisión
 
-El repositorio `javiercamarapp/vexa-ai` es **público**. El cliente piloto autorizó usar sus datos para construir y operar el producto, pero **no** exhibirlos a terceros hasta tener autorización por escrito. El dueño decidió **mantener el repositorio público** y **no reescribir el historial de git**. Esta rama sanea el estado actual (HEAD) sin tocar el historial.
+El repositorio `javiercamarapp/vexa-ai` es **público** y lo revisará un fondo de inversión. El cliente piloto autorizó usar sus datos para construir y operar el producto, pero **no** exhibirlos a terceros. La decisión vigente (31-oct-2026) es **recrear el repositorio con un historial limpio**: el historial anterior se reescribe con `git filter-repo` (reemplazo de texto y borrado de rutas) y se publica como historia nueva. Los valores reales **viven fuera del repo**; ni el código ni los textos los contienen.
 
 ## Qué se sanitizó
 
@@ -26,29 +26,45 @@ Migraciones: solo se cambiaron **comentarios** (nombre y cifras) en las migracio
 
 ## Guarda automática
 
-`tests/seguridad/datos-de-cliente.test.mjs` (comando: `npm run test:datos-cliente`) falla si en archivos versionados, o nuevos sin ignorar, reaparece el UUID de producción, el nombre comercial del cliente, su dominio, o la huella de un archivo recibido; también revisa el texto de los PDF versionados. Los patrones se arman por partes para que el archivo no se detecte a sí mismo. La lista de **excepciones** es corta y está justificada en el propio archivo:
+`tests/seguridad/datos-de-cliente.test.mjs` (comando: `npm run test:datos-cliente`) falla si en archivos versionados, o nuevos sin ignorar, reaparece el UUID de producción, el nombre comercial del cliente, su dominio o la huella de un archivo recibido; también revisa el texto de los PDF versionados. Tiene tres capas:
+
+1. **Patrones armados por partes** (UUID, nombre comercial, huellas de archivos): el archivo no se detecta a sí mismo.
+2. **Huellas SHA-256 de palabras sueltas** (personas, bodegas, empresas, dominios y SKU reales del cliente): se compara el hash de cada palabra de cada archivo y de cada nombre de archivo. El repo no contiene ninguna de esas palabras, solo sus huellas. Es una barrera contra descuidos; la lista legible vive fuera del repo.
+3. **Archivo externo de patrones** (`VEXA_PATRONES_PROHIBIDOS` o `~/.config/vexa/patrones-prohibidos.txt`, formato en `config/patrones-externos.mjs`): reglas completas (incluidas cifras de producción y secretos) que solo existen en la máquina de quien administra el repo. Si el archivo no existe, esta capa se omite.
+
+La lista de **excepciones** vive en el propio archivo de la guarda y cada una tiene motivo:
 
 - `supabase/migrations/20261104000000_insights_engine.sql`: migración ya aplicada cuyo cuerpo (no un comentario) clasifica el retailer propio por prefijo. Editarla cambiaría el cuerpo de una función en producción. Arreglo futuro: migración nueva con prefijo configurable.
-- Cuatro JSON de evidencia inmutable de cierres previos en `tests/acceptance/support/` (solo contienen la ruta de un archivo ya retirado; reescribirlos invalida la evidencia).
-- `apps/web/tests/sitio/prohibidas.json` y `apps/web/tests/sitio/contenido.test.mjs`: usan el nombre como cadena **prohibida** en el sitio público (pertenecen al carril del sitio).
+- Cuatro JSON de evidencia inmutable de cierres previos en `tests/acceptance/support/` (solo contienen la ruta de un archivo ya retirado; la reescritura del historial los elimina).
 
-## Lo que NO cambia: el historial de git
+## Historial de git: reescrito
 
-El historial anterior **sigue conteniendo** todas estas referencias: nombre, UUID de la organización, nombres y huellas de archivos recibidos y las cifras de producción, en cientos de commits. Cualquiera puede recuperarlas con `git log -p`, con un clon o con el historial de pull requests y forks. Sanear HEAD **no** las retira de la red pública.
+Antes de esta decisión el historial público conservaba nombre, UUID, nombres y huellas de archivos recibidos y cifras de producción en cientos de commits. Se preparó una copia limpia con `git filter-repo` (reglas en una carpeta fuera del repo): sustitución de nombres y cifras, borrado de evidencias de ejecución con rutas del equipo y de PDF derivados, y normalización de correos de autoría. El repositorio público se **recrea** con esa historia; las referencias antiguas (ramas, `refs/pull/*`) dejan de existir en la nueva historia.
+
+## Valores reales fuera del repo (qué se configura y cómo)
+
+El código no trae valores reales por defecto. Sin configuración, el producto degrada a «Sin dato» / «otra» en lugar de inventar:
+
+| Qué | Dónde vive | Detalle |
+|---|---|---|
+| UUID de la organización piloto | `VEXA_TENANT_ID` o `config/cliente-piloto.local.json` | Los scripts de producción fallan si falta. |
+| Nombres y huellas de archivos recibidos, rutas privadas | `config/cliente-piloto.local.json` (ignorado por git) o `~/.config/vexa/cliente-piloto.json` | Ejemplo genérico: `config/cliente-piloto.ejemplo.json`. |
+| Prefijo de la tienda propia | `VEXA_TIENDA_PROPIA_PREFIJO` | Sin ella los registros caen en «otro». |
+| **Catálogo de bodegas** | `VEXA_CCO_CATALOGO` (JSON) | Ver [`docs/operacion/09-CATALOGO-CCO-BODEGAS.md`](../operacion/09-CATALOGO-CCO-BODEGAS.md). Sin ella toda bodega sale «otra». |
+| Tabla de modalidades de venta | `VEXA_CCO_MODALIDADES` (JSON, opcional) | Reemplaza la tabla genérica de `cco.mjs`. |
+| Patrones prohibidos completos | `VEXA_PATRONES_PROHIBIDOS` o `~/.config/vexa/patrones-prohibidos.txt` | Solo para la guarda; nunca en el repo. |
+
+Personas del cliente: los textos de interfaz y los diagnósticos usan **roles** («Pedir al responsable de operaciones del cliente», «Pedir al responsable de datos del cliente»), nunca nombres. Las bodegas y los SKU de las pruebas son sintéticos («Bodega Alfa», `SKUP-L1`).
+
+Migraciones: la lista de bodegas salió de `20261201000000_insight_cco.sql` (que ahora lee el catálogo por sesión, `vexa.cco_catalogo_bodegas`) y la migración nueva `20261208000000_insight_cco_catalogo_bodegas` actualiza las bases donde la versión anterior ya estuviera aplicada. Es la única excepción a «no editar una migración ya aplicada», porque el repositorio público no puede conservar los nombres.
 
 ## Riesgo residual
 
-- **Confidencialidad comercial (Media):** el nombre del cliente y cifras de su operación son recuperables del historial público. Mientras exista autorización de uso pero no de exhibición, esto incumple el espíritu del acuerdo.
-- Posibles copias ya hechas por terceros (clones, forks, cachés, archivos web) no se pueden retirar.
-- Quedan en HEAD estructuras derivadas de su tracker en fixtures sintéticos (nombres de hojas, tamaños de filas) y parámetros de escala de pruebas; no identifican al cliente por sí solos pero son de origen real.
-- Los PDF regenerados cambian de hash; los cierres documentados que fijaron hashes de documentos (`support/F08-closure`) deberán recalcularse en el próximo cierre.
-- Algunos valores de despliegue deben configurarse fuera del repo para conservar el comportamiento previo: `VEXA_TENANT_ID` (scripts) y `VEXA_TIENDA_PROPIA_PREFIJO` (la clasificación «tienda propia» de la fuga de reembolsos en la app; sin la variable esos registros caen en «otro»).
+- Posibles copias ya hechas por terceros (clones, forks, cachés, archivos web) del historial anterior no se pueden retirar.
+- Quedan estructuras derivadas de su tracker en fixtures sintéticos (nombres de hojas, tamaños de filas) y parámetros de escala de pruebas del libro económico (conteos redondeados donde fue posible); no identifican al cliente por sí solos pero son de origen real. Pendiente: los generadores de `packages/economics` conservan cifras de carga con estructura derivada.
+- Los documentos narrativos conservan términos del negocio (por ejemplo «Tracker» como nombre de una hoja de cálculo) y notas de negociación societaria; la reescritura del historial retira las cifras de producción y las líneas de negociación, y se recomienda revisarlos antes de mostrarlos.
+- Los PDF regenerados cambian de hash; los cierres que fijaron hashes de documentos (`support/F08-closure`) deberán recalcularse.
 
-## Recomendación
+## Regla para quien contribuya
 
-Antes de mostrar datos a terceros (inversionistas, otros clientes, prensa), hacer **una** de estas dos cosas:
-
-1. **Pasar el repositorio a privado** (cambio de configuración externa, reversible; lo hace el dueño en Settings). Es lo más barato y no destruye historia.
-2. **Reescribir el historial** con `git filter-repo` (reemplazo de texto y borrado de rutas), con fuerza de push y autorización explícita; invalida todos los clones y requiere coordinar a todos los colaboradores. Debe ir acompañado de rotar cualquier secreto que haya aparecido y de pedir a GitHub la limpieza de cachés de PR/vistas.
-
-Mientras tanto: no añadir datos reales del cliente al repo, mantener los valores en `config/cliente-piloto.local.json`, y dejar que la guarda automática detecte regresiones.
+No añada datos reales del cliente al repo: ni nombres de personas, bodegas, empresas ni SKU, ni cifras de su operación. Use roles y valores sintéticos rotulados, mantenga los reales en la configuración externa y deje que la guarda automática detecte regresiones.

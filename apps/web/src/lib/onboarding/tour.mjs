@@ -3,7 +3,7 @@
 //  - Por pantalla: un paso «ir» (te dice qué apretar en el menú; avanza solo al hacer clic), «que» (qué es; usa el texto del catálogo del rol si lo hay),
 //    «clave» (el elemento clave) y, si el rol tiene la capacidad, «accion» (la acción principal). Al final, un paso de cierre.
 import { pasosDe, ROL_DE_PISTA, rolTieneCapacidad } from './catalogo.mjs';
-import { PANTALLAS, QUE, slugDe } from './pantallas.mjs';
+import { PANTALLAS, QUE, slugDe, textoDe } from './pantallas.mjs';
 import { OBJETIVOS } from './recorrido.mjs';
 import { menuVisible } from '../workspace/menu.mjs';
 
@@ -49,9 +49,9 @@ export function construirTour(pista, modo = 'completo') {
     const def = PANTALLAS[href], slug = slugDe(href), c = delCatalogo.get(href);
     const base = { pantalla: href, grupo, href, ilu: def.ilu, catalogo: c?.id ?? null };
     pasos.push({ ...base, id: `${slug}.ir`, tipo: 'ir', clave: 'ir', objetivos: objetivoMenu(pista, href), titulo: null, cuerpo: null });
-    pasos.push({ ...base, id: `${slug}.que`, tipo: 'info', clave: 'que', objetivos: (c && OBJETIVOS[c.id]) || QUE, titulo: c ? c.textos.titulo : null, cuerpo: c ? c.textos.cuerpo : `onb.pant.${slug}.desc` });
-    pasos.push({ ...base, id: `${slug}.clave`, tipo: 'info', clave: 'clave', objetivos: def.clave, titulo: `onb.pant.${slug}.claveT`, cuerpo: `onb.pant.${slug}.claveC` });
-    if (def.accion && (!rol || rolTieneCapacidad(rol, def.accion.capacidad))) pasos.push({ ...base, id: `${slug}.accion`, tipo: 'info', clave: 'accion', objetivos: def.accion.objetivos, titulo: `onb.pant.${slug}.accionT`, cuerpo: `onb.pant.${slug}.accionC` });
+    pasos.push({ ...base, id: `${slug}.que`, tipo: 'info', clave: 'que', objetivos: (c && OBJETIVOS[c.id]) || QUE, titulo: c ? c.textos.titulo : null, cuerpo: c ? c.textos.cuerpo : textoDe(pista, href, 'desc', `onb.pant.${slug}.desc`) });
+    pasos.push({ ...base, id: `${slug}.clave`, tipo: 'info', clave: 'clave', objetivos: def.clave, titulo: textoDe(pista, href, 'claveT', `onb.pant.${slug}.claveT`), cuerpo: textoDe(pista, href, 'claveC', `onb.pant.${slug}.claveC`) });
+    if (def.accion && (!rol || rolTieneCapacidad(rol, def.accion.capacidad))) pasos.push({ ...base, id: `${slug}.accion`, tipo: 'info', clave: 'accion', objetivos: def.accion.objetivos, titulo: textoDe(pista, href, 'accionT', `onb.pant.${slug}.accionT`), cuerpo: textoDe(pista, href, 'accionC', `onb.pant.${slug}.accionC`) });
   });
   const elegidos = modo === 'corto' ? ESENCIALES[pista] : null;
   if (elegidos) {

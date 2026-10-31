@@ -41,7 +41,7 @@ export const onbEs = {
   'onb.analista.informe.titulo': 'Exportar un informe', 'onb.analista.informe.cuerpo': 'Desde Hoy puedes exportar un informe para compartirlo.',
   // Operador
   'onb.operador.nombre': 'Recorrido del operador',
-  'onb.operador.hoy.titulo': 'Hoy: lo que hay abierto', 'onb.operador.hoy.cuerpo': 'Aquí ves tus intervenciones asignadas, dónde decidir recomendaciones y los problemas abiertos. Las cifras de dinero son para propietarios y analistas.',
+  'onb.operador.hoy.titulo': 'Hoy: lo que hay abierto', 'onb.operador.hoy.cuerpo': 'Aquí ves tus intervenciones asignadas, dónde revisar recomendaciones y los problemas abiertos. Las cifras de dinero son para propietarios y analistas.',
   'onb.operador.problemas.titulo': 'Problemas y cómo leer una ficha', 'onb.operador.problemas.cuerpo': 'Cada ficha explica qué pasó y de dónde sale. Úsala para decidir qué atender primero.',
   'onb.operador.acciones.titulo': 'Acciones en curso', 'onb.operador.acciones.cuerpo': 'Trabaja las intervenciones que te asignaron, muévelas de etapa y registra su resultado. Aprobar y asignar le corresponde al propietario.',
   'onb.operador.preguntar.titulo': 'Pregúntale a tus datos', 'onb.operador.preguntar.cuerpo': 'Consulta en lenguaje natural lo que necesites para operar. Las respuestas traen totales; las citas y los clientes concretos son de propietarios y analistas.',
@@ -107,7 +107,7 @@ export const onbEn = {
   'onb.analista.informe.titulo': 'Export a report', 'onb.analista.informe.cuerpo': 'From Today you can export a report to share.',
   // Operator
   'onb.operador.nombre': 'Operator tour',
-  'onb.operador.hoy.titulo': 'Today: what is open', 'onb.operador.hoy.cuerpo': 'Here you see the interventions assigned to you, where to decide recommendations and the open problems. Money figures are for owners and analysts.',
+  'onb.operador.hoy.titulo': 'Today: what is open', 'onb.operador.hoy.cuerpo': 'Here you see the interventions assigned to you, where to review recommendations and the open problems. Money figures are for owners and analysts.',
   'onb.operador.problemas.titulo': 'Problems and how to read a card', 'onb.operador.problemas.cuerpo': 'Each card explains what happened and where it comes from. Use it to decide what to handle first.',
   'onb.operador.acciones.titulo': 'Actions in progress', 'onb.operador.acciones.cuerpo': 'Work the interventions assigned to you, move them along and record their result. Approving and assigning belongs to the owner.',
   'onb.operador.preguntar.titulo': 'Ask your data', 'onb.operador.preguntar.cuerpo': 'Ask in plain language whatever you need to operate. Answers come with totals; quotes and specific customers are for owners and analysts.',

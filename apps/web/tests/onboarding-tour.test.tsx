@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {CATALOGO,PISTAS,ROL_DE_PISTA,rolTieneCapacidad,ACCIONES_DE_ESCRITURA,CLAVES_UI,pasosDe} from '../src/lib/onboarding/catalogo.mjs';
-import {PANTALLAS,slugDe,CLAVES_PANTALLAS,clavesDePantalla} from '../src/lib/onboarding/pantallas.mjs';
+import {PANTALLAS,slugDe,CLAVES_PANTALLAS,clavesDePantalla,TEXTO_PISTA,CLAVES_TEXTO_PISTA} from '../src/lib/onboarding/pantallas.mjs';
 import {construirTour,pantallasDe,gruposDe} from '../src/lib/onboarding/tour.mjs';
 import {estadoInicial,reducir,eventoDeTecla,teclasPropias} from '../src/lib/onboarding/recorrido.mjs';
 import {enPantalla} from '../src/lib/onboarding/ruta.mjs';
@@ -228,6 +228,19 @@ test('textos de pantalla: el cuerpo no repite el título como prefijo («Importa
       }
     }
   }
+});
+test('texto por rol: operador y lector no leen periodos ni conciliación, nadie lee una promesa que su rol no cumple, y cada variante existe en es y en',()=>{
+  for(const k of CLAVES_TEXTO_PISTA){assert.ok(ESP[k]&&ING[k],k);assert.equal(variables(ESP[k]),variables(ING[k]),k);assert.ok((CLAVES_UI as readonly string[]).includes(k),k+' declarada en CLAVES_UI');}
+  for(const mapa of Object.values(TEXTO_PISTA))for(const pista of Object.keys(mapa))assert.ok((PISTAS as readonly string[]).includes(pista),pista);
+  const texto=(pista:(typeof PISTAS)[number],dic:Record<string,string>,filtro:(id:string)=>boolean)=>construirTour(pista).filter(p=>filtro(p.id)).flatMap(p=>[p.titulo,p.cuerpo]).filter(Boolean).map(k=>dic[k!]).join(' | ');
+  for(const dic of [ESP,ING]){
+    for(const pista of ['operador','lector'] as const)assert.doesNotMatch(texto(pista,dic,id=>id==='overview.clave'),/period|reconcil|concili|conciliar/i,pista+' overview.clave');
+    for(const pista of ['lector','analista','operador'] as const)assert.doesNotMatch(texto(pista,dic,id=>id.startsWith('recommendations.')),/decidir|decide|deciding|decidi/i,pista+' recommendations');
+    for(const pista of ['lector','analista'] as const)assert.doesNotMatch(texto(pista,dic,id=>id.startsWith('interventions.')),/lo que hiciste|what you did/i,pista+' interventions');
+    assert.doesNotMatch(texto('propietario',dic,id=>id==='interventions.accion'),/te asignaron|assigned to you/i);
+    assert.doesNotMatch(texto('operador',dic,id=>id==='operador.hoy'||id==='overview.que'),/decidir|decide /i,'operador hoy');
+  }
+  assert.match(texto('operador',ESP,id=>id==='interventions.accion'),/te asignaron/,'el operador sí trabaja intervenciones asignadas');
 });
 test('ventana de la ruta: pocas pantallas alrededor de la actual con «…» a los lados',()=>{
   const nombres=['A','B','C','D','E','F','G','H'];

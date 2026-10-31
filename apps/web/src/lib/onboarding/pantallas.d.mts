@@ -5,3 +5,6 @@ export const QUE: readonly string[];
 export const ACCIONES: readonly string[];
 export const clavesDePantalla: (href: string) => string[];
 export const CLAVES_PANTALLAS: readonly string[];
+export const TEXTO_PISTA: Readonly<Record<string, Readonly<Record<string, string>>>>;
+export const textoDe: (pista: string | null, href: string, campo: 'desc' | 'claveT' | 'claveC' | 'accionT' | 'accionC', general: string) => string;
+export const CLAVES_TEXTO_PISTA: readonly string[];

@@ -11,11 +11,13 @@ import {conSesion, dormir} from './navegador.mjs';
 
 export const PX_POR_UNIDAD = 0.72;
 export const TEXTO_ORIGINAL_PX = 11;
-// Capturas medidas y su ancho de recorte en unidades (recortes-pasos.mjs: PASOS.valor.w y PASOS.paso3.w). `selector` apunta al <img> pintado.
+// Capturas medidas y su ancho de recorte en unidades (recortes-pasos.mjs: PASOS.<clave>.w). `selector` apunta al <img> pintado.
 export const CAPTURAS = {
   valor: {unidades: 1550, tarjetas: 4, texto: 11, selector: '.s-valor__ventana img.s-ventana__img'},
+  paso1: {unidades: 565, texto: 11, selector: '[data-paso-ventana="1"] img.s-ventana__img'},
   paso2: {unidades: 1020, texto: 12, selector: '[data-paso-ventana="2"] img.s-ventana__img'},
   paso3: {unidades: 1160, tarjetas: 3, texto: 11, selector: '[data-paso-ventana="3"] img.s-ventana__img'},
+  paso4: {unidades: 505, texto: 11, selector: '[data-paso-ventana="4"] img.s-ventana__img'},
 };
 
 /** Tamaño efectivo (px) del texto mínimo de la captura cuando se pinta con `anchoPintado` px de ancho. */

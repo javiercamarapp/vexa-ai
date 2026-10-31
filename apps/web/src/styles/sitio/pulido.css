@@ -228,6 +228,12 @@ html[data-js] .s-pantalla .s-pantalla__img { clip-path: none; animation: none; }
   .s-pv .s-pv__marco[data-n] { left: auto; top: auto; }
   /* Pasos 2 y 3: lienzo ancho con desplazamiento lateral (scroll-snap) para que el texto de la captura mida 9 px o más en vez de 4 a 5 px */
   .s-pv[data-n="2"] { overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: thin; }
+  /* Pulido final: los pasos 1 (565 unidades) y 4 (505) se pintaban al ancho de la ventana (~361 px) y su texto medía ~9.8 y ~10.9 px efectivos. Se pintan a 450 y 400 px
+     (12.2 y 12.1 px con texto original de 11 px) con el mismo desplazamiento lateral del paso 2; con pantalla ancha el lienzo llena la ventana (min-width: 100%). */
+  .s-pv[data-n="1"],
+  .s-pv[data-n="4"] { overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: thin; }
+  .s-pv[data-n="1"] .s-pv__lienzo { width: 450px; min-width: 100%; max-width: none; scroll-snap-align: start; }
+  .s-pv[data-n="4"] .s-pv__lienzo { width: 400px; min-width: 100%; max-width: none; scroll-snap-align: start; }
   .s-pv[data-n="3"] { overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; }
   /* T49: 700 px (antes 600): el rótulo más pequeño de la lista (12 px en el original) queda en 11 px efectivos o más */
   .s-pv[data-n="2"] .s-pv__lienzo { width: 700px; max-width: none; scroll-snap-align: start; }

@@ -1,4 +1,4 @@
-// T49: el texto dentro de las capturas de producto (tarjetas de cifras, paso 2 y paso 3) mide 11 px efectivos o más a 390 px, sin cifras cortadas en el borde.
+// T49: el texto dentro de las capturas de producto (tarjetas de cifras y pasos 1 a 4) mide 11 px efectivos o más a 390 px, sin cifras cortadas en el borde.
 // texto-minimo.test.mjs no puede verlo: mide texto del DOM y esto es texto de imagen. Se calcula con el ancho con que se pinta la imagen y el tamaño del texto en la
 // pantalla original (ver tools/sitio/cdp/texto-captura.mjs). Sin Chrome: se resuelve el CSS de pulido.css a 360, 390 y 428 px y se exige el mínimo en cada uno.
 // Con ROVAQ_CDP_VIVO=1 y ROVAQ_URL: lo mide en Chrome real.
@@ -36,16 +36,20 @@ test('CSS: la tarjeta mide el ancho de la ventana menos 12 px, entre 280 y 360 p
   assert.match(movil, /\.s-valor__ventana \.s-ventana__cuerpo picture \{[^}]*width: calc\(4 \* var\(--s-tarjeta\)\);[^}]*scroll-snap-align: start/);
   assert.match(movil, /\.s-pv\[data-n="3"\] \.s-pv__lienzo \{ width: calc\(3 \* var\(--s-tarjeta\)\);/);
   assert.match(movil, /\.s-pv\[data-n="2"\] \.s-pv__lienzo \{ width: (\d+)px;/);
+  assert.match(movil, /\.s-pv\[data-n="1"\] \.s-pv__lienzo \{ width: (\d+)px; min-width: 100%;/);
+  assert.match(movil, /\.s-pv\[data-n="4"\] \.s-pv__lienzo \{ width: (\d+)px; min-width: 100%;/);
   assert.match(movil, /\.s-valor__ventana \.s-ventana__cuerpo \{[^}]*scroll-snap-type: x mandatory/);
   for (const i of [1, 2, 3]) assert.match(movil, new RegExp(`\\.s-snap\\[data-i="${i}"\\] \\{ left: ${i === 1 ? 'var\\(--s-tarjeta\\)' : `calc\\(${i} \\* var\\(--s-tarjeta\\)\\)`}; \\}`));
   assert.match(movil, /\.s-pv\[data-n="3"\] \.s-pv__lienzo \{[^}]*overflow: clip/, 'clip: las marcas de parada cuentan para .s-pv y no para el lienzo');
 });
 
-test('CSS: texto efectivo de 11 px o más en valor, paso 2 y paso 3 a 320, 360, 390, 428 y 700 px de pantalla', () => {
+test('CSS: texto efectivo de 11 px o más en valor y pasos 1 a 4 a 320, 360, 390, 428 y 700 px de pantalla', () => {
   const ancho2 = Number(/\.s-pv\[data-n="2"\] \.s-pv__lienzo \{ width: (\d+)px;/.exec(movil)[1]);
+  const ancho1 = Number(/\.s-pv\[data-n="1"\] \.s-pv__lienzo \{ width: (\d+)px;/.exec(movil)[1]);
+  const ancho4 = Number(/\.s-pv\[data-n="4"\] \.s-pv__lienzo \{ width: (\d+)px;/.exec(movil)[1]);
   for (const vw of [320, 360, 390, 428, 700]) {
     const t = tarjeta(vw);
-    const pintado = {valor: 4 * t, paso2: ancho2, paso3: 3 * t};
+    const pintado = {valor: 4 * t, paso1: Math.max(ancho1, ventana(vw)), paso2: ancho2, paso3: 3 * t, paso4: Math.max(ancho4, ventana(vw))};
     for (const [k, c] of Object.entries(CAPTURAS)) {
       const e = efectivo(c.unidades, pintado[k], c.texto);
       assert.ok(e >= 11, `${k} a ${vw} px: ${e.toFixed(2)} px efectivos (${Math.round(pintado[k])} px pintados)`);
@@ -67,5 +71,5 @@ const vivo = process.env.ROVAQ_CDP_VIVO === '1' && process.env.ROVAQ_URL;
 test('Chrome: texto efectivo de 11 px o más a 390 y 360 px', {skip: vivo ? false : 'PENDIENTE: corrida real de Chrome; ROVAQ_CDP_VIVO=1 y ROVAQ_URL'}, () => {
   let s = '';
   try { s = execFileSync(process.execPath, [join(RAIZ, 'tools/sitio/cdp/texto-captura.mjs'), '--url', process.env.ROVAQ_URL, '--vp', '390,360'], {encoding: 'utf8', timeout: 600000}); } catch (e) { assert.fail(e.stdout || e.message); }
-  assert.equal((s.match(/^OK /gm) || []).length, 6, s);
+  assert.equal((s.match(/^OK /gm) || []).length, 10, s);
 });

@@ -26,7 +26,8 @@ export function textoHoja(t:Traductor,h:DatosHoja):string{
  return [
   t('onb.setup.hoja.titulo'),
   `${t('onb.setup.hoja.proveedor')}: ${h.proveedor}`,
-  `${t('onb.setup.hoja.organizacion')}: ${h.organizacion} (${h.tenantId})`,
+  `${t('onb.setup.hoja.organizacion')}: ${h.organizacion}`,
+  `${t('onb.setup.hoja.idTecnico')}: ${h.tenantId}`,
   `${t('onb.setup.hoja.cuenta')}: ${h.cuenta??t('onb.setup.hoja.cuentaPendiente')}`,
   `${t('onb.setup.hoja.credencial')}: ${h.credencial}`,
   `${t('onb.setup.hoja.permisos')}: ${h.permisos.join(', ')}`,

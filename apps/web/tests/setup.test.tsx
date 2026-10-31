@@ -213,7 +213,7 @@ test('conciliación: PILOTO (85 mil pedidos del libro, 0 enlaces) → «0 de N p
   assert.deepEqual({tipo:c.tipo,ligados:c.ligados,total:c.total},{tipo:'base',ligados:0,total:85357});
   for(const idioma of ['es','en'] as const){
     const html=renderToStaticMarkup(<IndicadorConciliacion t={traductor(idioma)} c={c} fecha="27 oct 2026" formato={n=>new Intl.NumberFormat(idioma==='es'?'es-MX':'en-US').format(n)}/>);
-    assert.ok(html.includes(idioma==='es'?'0 de 85,357 pedidos del libro ligados a un cliente':'0 of 85,357 ledger orders linked to a customer'),html);
+    assert.ok(html.includes(idioma==='es'?'0 de 85,357 pedidos relacionados con un cliente':'0 of 85,357 orders matched to a customer'),html);
     assert.doesNotMatch(html,/%/);assert.ok(html.includes(traductor(idioma)('onb.setup.conc.pendiente')));
   }
 });
@@ -302,9 +302,29 @@ test('textos de /setup: ninguna promesa de MFA, push, Zendesk ni Google, y ningu
   for(const k of Object.keys(ESP).filter(x=>/^onb\./.test(x)))assert.doesNotMatch(ESP[k]+' '+ING[k],/hoja de ruta|roadmap|próximamente|coming soon|segundo factor|second[- ]factor|dos pasos|two-step|\bMFA\b/i,k);
   assert.equal(ESP['onb.propietario.mfa.titulo'],undefined);assert.equal(ING['onb.propietario.mfa.cuerpo'],undefined);
   assert.ok(!CATALOGO.some(p=>p.id==='propietario.mfa'),'el paso de MFA se quitó del catálogo');
-  assert.match(ESP['onb.propietario.avisos.cuerpo'],/solo si el servidor lo permite/);assert.match(ING['onb.propietario.avisos.cuerpo'],/only if the server allows/);
+  assert.match(ESP['onb.propietario.avisos.cuerpo'],/si están disponibles/);assert.match(ING['onb.propietario.avisos.cuerpo'],/if available/);
   assert.match(ESP['onb.propietario.crm.cuerpo'],/equipo de Rovaq/);assert.match(ESP['onb.propietario.crm.cuerpo'],/nunca se escribe/);
   for(const k of Object.keys(ESP).filter(x=>/^onb\.setup\.hoja\./.test(x)))assert.doesNotMatch(ESP[k]+ING[k],/probar ahora|test now|try now/i);
+});
+
+test('jerga fuera del recorrido y de /setup: sin «sello de procedencia», «ligados», «conciliar», «salvedad», «libro», «ledger», «token», «credencial» ni «servidor» en los textos que lee el cliente',()=>{
+  const prohibido=/sello de procedencia|provenance|ligad|conciliar|conciliaci|reconcil|libro de pedidos|\bledger\b|\btoken\b|credencial|credential|servidor|\bserver\b|mapear dimensiones|map dimensions/i;
+  const claves=Object.keys(ESP).filter(k=>/^onb\.(pant|tour|setup|check|propietario|analista|operador|lector|plataforma|tercero|soporte)\./.test(k));
+  assert.ok(claves.length>150);
+  // «salvedad» sigue existiendo como nombre de la etiqueta de la pantalla CCO (cco.estado.*), que el recorrido describe; no como texto propio del onboarding.
+  for(const k of claves)for(const [idioma,dic] of [['es',ESP],['en',ING]] as const)assert.doesNotMatch(dic[k].replace(/\{\w+\}/g,''),prohibido,`${idioma}:${k}`);
+  for(const k of claves.filter(x=>!/^onb\.pant\.cco\./.test(x)))for(const dic of [ESP,ING])assert.doesNotMatch(dic[k],/salvedad|caveat/i,k);
+});
+test('hoja para soporte: la organización va por su nombre y el identificador técnico va rotulado como dato para soporte',()=>{
+  const h=datosHojaSoporte({tenantId:TENANT,organizacion:'Org'});
+  for(const idioma of ['es','en'] as const){
+    const txt=textoHoja(traductor(idioma),h),lineas=txt.split('\n');
+    const t=traductor(idioma);
+    assert.ok(lineas.includes(`${t('onb.setup.hoja.organizacion')}: Org`),'la línea de la organización no lleva el UUID');
+    assert.ok(lineas.includes(`${t('onb.setup.hoja.idTecnico')}: ${TENANT}`));
+    assert.match(t('onb.setup.hoja.idTecnico'),idioma==='es'?/soporte/:/support/);
+    assert.ok(!lineas.some(l=>l.startsWith(t('onb.setup.hoja.organizacion'))&&l.includes(TENANT)));
+  }
 });
 
 // ---- Entradas: menú, Hoy, Guía y /confianza

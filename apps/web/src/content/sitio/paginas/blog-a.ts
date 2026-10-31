@@ -310,4 +310,103 @@ export const ARTICULO_A4: Articulo = articulo({
   ],
 });
 
-export const ARTICULOS_A: readonly Articulo[] = [ARTICULO_A2, ARTICULO_A3, ARTICULO_A4];
+export const ARTICULO_A5: Articulo = articulo({
+  id: 'a5',
+  pub: '2026-11-03',
+  etiqueta: b('Fuentes e importaciones', 'Sources and imports'),
+  seo: {
+    titulo: b('Tus exportes de marketplace ya son datos | Rovaq AI', 'Your Marketplace Exports Are Already Data | Rovaq AI'),
+    descripcion: b(
+      'Antes de esperar un conector directo, tu historial en Excel y CSV puede cargarse con vista previa y conservar el origen de cada fila. Esto sí se puede hoy.',
+      'Before waiting for a direct connector, your Excel and CSV history can be loaded with a preview and keep where each row came from. This works today.',
+    ),
+  },
+  h1: b('Tus exportes de marketplace ya son datos: cómo cargarlos con procedencia', 'Your marketplace exports are already data: how to load them with provenance'),
+  subtitulo: b(
+    'Los archivos que descargas de tus canales de venta no son un trámite pendiente. Son el historial que ya tienes, y se puede cargar con su origen a la vista.',
+    'The files you download from your sales channels are not a pending chore. They are the history you already have, and it can be loaded with its origin in plain view.',
+  ),
+  resumen: b(
+    'Muchos equipos esperan un conector directo para empezar a analizar sus ventas y reembolsos, sin notar que el historial ya está en sus exportes de Excel y CSV. Este artículo explica qué se puede cargar hoy en Rovaq AI, cómo funcionan la vista previa y la procedencia por fila, y qué queda en hoja de ruta.',
+    'Many teams wait for a direct connector before they start analyzing their sales and refunds, without noticing that the history is already in their Excel and CSV exports. This article explains what can be loaded today in Rovaq AI, how the preview and per-row provenance work, and what remains on the roadmap.',
+  ),
+  relacionados: ['fuentes-e-importaciones', 'integraciones', 'hoja-de-ruta', 'a2'],
+  bloques: [
+    p(
+      'Entre los equipos que venden por marketplaces circula una espera muy común: cuando exista la conexión directa con mi canal, empezaré a ordenar mis números. Mientras tanto, las ventas se descargan en una hoja, los reembolsos en otra, los pedidos en una tercera, y cada mes alguien las pega en un libro de cálculo que nadie más entiende del todo.',
+      'Among teams that sell through marketplaces, a very common wait circulates: when a direct connection to my channel exists, I will start putting my numbers in order. Meanwhile, sales are downloaded into one sheet, refunds into another, orders into a third, and every month someone pastes them into a workbook that nobody else fully understands.',
+    ),
+    p(
+      'La espera tiene un costo que no se nota: esos archivos ya contienen el historial. No son un paso previo a los datos; son los datos. Lo que casi siempre falta no es la fuente, sino un lugar donde cargarlos sin perder de dónde salió cada renglón.',
+      'The wait has a cost that goes unnoticed: those files already hold the history. They are not a step before the data; they are the data. What is almost always missing is not the source, but a place to load them without losing where each line came from.',
+    ),
+    h2('Qué se puede cargar hoy', 'What can be loaded today'),
+    p(
+      'Hoy Rovaq AI recibe archivos de Excel y CSV. Esa es la vía por la que entran los datos de tus canales de venta: los exportes que ya descargas desde cada plataforma, con el formato que cada una produce. Los exportes de marketplaces se cargan con ayuda de nuestro equipo, que revisa contigo cómo corresponde cada columna.',
+      'Today Rovaq AI receives Excel and CSV files. That is the way the data from your sales channels comes in: the exports you already download from each platform, in the format each one produces. Marketplace exports are loaded with help from our team, who go over with you how each column corresponds.',
+    ),
+    p(
+      'Tener acompañamiento en la carga tiene una ventaja práctica. Los exportes de cada canal nombran sus columnas a su manera, y la misma idea puede aparecer como pedido, orden o transacción según de dónde venga. Resolver esa correspondencia una vez, con alguien que ya la conoce, evita que un error de lectura contamine meses de historial.',
+      'Having support during the load has a practical advantage. Each channel exports its columns in its own way, and the same idea can show up as order, purchase or transaction depending on where it comes from. Settling that correspondence once, with someone who already knows it, keeps a reading error from contaminating months of history.',
+    ),
+    p(
+      'También existe una lectura de conversaciones desde HubSpot, y es de solo lectura: Rovaq AI no escribe en tu CRM. La conexión se configura con nuestro equipo y la sincronización es programada, no inmediata; cada pantalla muestra su fecha de corte.',
+      'There is also a reading of conversations from HubSpot, and it is read-only: Rovaq AI does not write to your CRM. The connection is set up with our team and syncing is scheduled, not immediate; each screen shows its cut-off date.',
+    ),
+    h2('Vista previa y procedencia por fila', 'Preview and per-row provenance'),
+    p(
+      'Cargar un archivo es fácil; cargarlo bien es otra cosa. Para que un exporte sea confiable, la carga debe cumplir dos condiciones.',
+      'Loading a file is easy; loading it well is another matter. For an export to be reliable, the load must meet two conditions.',
+    ),
+    h3('Primero se mira, después se carga', 'First you look, then you load'),
+    p(
+      'La carga incluye una vista previa y una validación antes de ingerir nada. Antes de que un solo renglón entre al libro de tu organización, puedes ver cómo se leyó el archivo y qué quedaría cargado, para comprobar que lo leído coincide con lo que descargaste. Es el momento barato para detectar que una fecha vino en otro formato o que una columna cambió de lugar. Descubrirlo después, con tres meses de datos encima, sale caro.',
+      'The load includes a preview and a validation before anything is ingested. Before a single line enters your organization ledger, you can see how the file was read and what would end up loaded, to check that what was read matches what you downloaded. It is the cheap moment to catch that a date came in another format or that a column changed place. Finding out later, with three months of data on top, is expensive.',
+    ),
+    h3('Cada fila recuerda de dónde viene', 'Each row remembers where it comes from'),
+    p(
+      'La segunda condición es conservar el origen. Cada fila cargada guarda de qué archivo salió y en qué carga entró, de modo que cualquier cifra pueda rastrearse hasta el renglón que la produjo. Es la misma lógica que explicamos en {{a2|el artículo sobre procedencia}}: una cifra vale lo que valga su origen, y un origen que se pierde en el pegado de una hoja a otra no se puede recuperar después.',
+      'The second condition is keeping the origin. Each loaded row stores which file it came from and which load it entered with, so that any figure can be traced back to the line that produced it. It is the same logic we explained in {{a2|the article on provenance}}: a figure is worth as much as its origin, and an origin lost in pasting from one sheet to another cannot be rebuilt later.',
+    ),
+    p(
+      'Esto cambia la conversación cuando alguien cuestiona un número. En lugar de reconstruir de memoria qué hoja se usó, se abre la fila, se ve el archivo y se resuelve.',
+      'This changes the conversation when someone questions a number. Instead of reconstructing from memory which sheet was used, you open the row, see the file and settle it.',
+    ),
+    h2('Conectores directos: hoja de ruta', 'Direct connectors: roadmap'),
+    p(
+      'Conviene ser claros sobre lo que todavía no existe. Los conectores directos para Amazon, Walmart y Shopify están en nuestra hoja de ruta. Hoy no hay una conexión que traiga esos datos automáticamente; por eso la vía es el exporte, y por eso no ponemos fechas ni compromisos sobre cuándo cambiará. Puedes ver el estado de lo que viene en la página de {{hoja-de-ruta|hoja de ruta}} y lo que se conecta hoy en {{integraciones|integraciones}}.',
+      'It is worth being clear about what does not exist yet. Direct connectors for Amazon, Walmart and Shopify are on our roadmap. Today there is no connection that brings that data in automatically; that is why the route is the export, and why we set no dates or commitments for when it will change. You can see the status of what is coming on the {{hoja-de-ruta|roadmap}} page and what connects today on {{integraciones|integrations}}.',
+    ),
+    p(
+      'Hay buenas razones para no esperar. Un conector, cuando llegue, traerá datos nuevos; pero tu historial existe ahora, y es justo el que permite mirar atrás: ver por canal, por producto y por mes dónde se concentra el dinero devuelto, como describimos en {{a1|el artículo sobre reembolsos}}. Cargar hoy el historial que ya tienes no estorba a un conector futuro. Lo que sí estorba es seguir pegando hojas a mano mientras tanto.',
+      'There are good reasons not to wait. A connector, when it arrives, will bring new data; but your history exists now, and it is exactly what lets you look back: seeing by channel, by product and by month where returned money concentrates, as we describe in {{a1|the article on refunds}}. Loading the history you already have today does not get in the way of a future connector. What does get in the way is continuing to paste sheets by hand in the meantime.',
+    ),
+    h2('Cómo preparar tus exportes', 'How to prepare your exports'),
+    p(
+      'Antes de pedir una carga, conviene revisar tus archivos con estas ideas en mente:',
+      'Before asking for a load, it helps to review your files with these ideas in mind:',
+    ),
+    pasos(
+      ['Descarga el exporte original de cada canal y guárdalo sin editarlo. El archivo tal como salió de la plataforma es la evidencia más directa de su origen.', 'Download the original export from each channel and keep it unedited. The file as it left the platform is the most direct evidence of its origin.'],
+      ['Anota el periodo que cubre cada archivo y, si lo sabes, la fecha en que lo descargaste. Esa será la fecha de corte de lo que cargues.', 'Note the period each file covers and, if you know it, the date you downloaded it. That will be the cut-off date for what you load.'],
+      ['Separa por tipo lo que descargues: pedidos, reembolsos, conversaciones. Mezclarlos en una sola hoja complica la lectura.', 'Separate what you download by type: orders, refunds, conversations. Mixing them in one sheet complicates reading.'],
+      ['Revisa la vista previa con calma y confirma que las columnas y las fechas se leyeron como esperabas antes de aprobar la carga.', 'Go through the preview calmly and confirm that columns and dates were read as you expected before approving the load.'],
+    ),
+    p(
+      'Una buena forma de empezar es con un solo canal y un solo periodo completo. Si la vista previa muestra lo que esperabas, repites el proceso con el siguiente canal. Si algo no cuadra, ya sabes dónde buscar, porque el alcance de la prueba era pequeño. Ir de menos a más ahorra correcciones y construye, carga tras carga, un historial en el que puedes confiar.',
+      'A good way to start is with a single channel and a single complete period. If the preview shows what you expected, you repeat the process with the next channel. If something does not add up, you already know where to look, because the scope of the test was small. Going from less to more saves corrections and builds, load after load, a history you can rely on.',
+    ),
+    p(
+      'Nada de esto exige un proyecto largo. Con un par de exportes recientes ya puedes responder dónde se concentra el dinero devuelto y de dónde sale cada cifra que lo dice. Para ver con más detalle qué se admite, revisa la pantalla de {{fuentes-e-importaciones|fuentes e importaciones}}.',
+      'None of this requires a long project. With a couple of recent exports you can already answer where returned money concentrates and where each figure that says so comes from. To see in more detail what is accepted, review the {{fuentes-e-importaciones|sources and imports}} screen.',
+    ),
+    noAfirmamos(
+      ['No afirmamos que existan conectores directos con Amazon, Walmart ni Shopify: están en la hoja de ruta y no damos fechas.', 'We do not claim that direct connectors with Amazon, Walmart or Shopify exist: they are on the roadmap and we give no dates.'],
+      ['No afirmamos que la carga de exportes de marketplaces sea de autoservicio: hoy se hace con ayuda de nuestro equipo.', 'We do not claim that loading marketplace exports is self-service: today it is done with help from our team.'],
+      ['No afirmamos que el exporte de un canal contenga todo lo necesario. Si faltan columnas, ciertas cifras no se pueden calcular, y la pantalla lo dice en lugar de mostrar un cero.', 'We do not claim that a channel export contains everything needed. If columns are missing, certain figures cannot be calculated, and the screen says so instead of showing a zero.'],
+      ['No afirmamos que HubSpot se actualice de forma inmediata ni que Rovaq AI escriba en él: la conexión es de solo lectura.', 'We do not claim that HubSpot updates instantly or that Rovaq AI writes to it: the connection is read-only.'],
+    ),
+  ],
+});
+
+export const ARTICULOS_A: readonly Articulo[] = [ARTICULO_A2, ARTICULO_A3, ARTICULO_A4, ARTICULO_A5];

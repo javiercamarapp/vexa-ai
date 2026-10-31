@@ -185,7 +185,7 @@ describe('S1 Hero y reglas, S2 Horizonte', () => {
 
     test(`${lang}: la ventana del héroe es la captura real de Fuga (tema oscuro) con fetchpriority alta, ancho y alto del manifest, AVIF con respaldo WebP y precarga`, () => {
       const manifest = JSON.parse(fs.readFileSync(path.join(WEB, 'public/s/manifest.json'), 'utf8'));
-      const e = manifest.img['producto/fuga-oscuro'];
+      const e = manifest.img[lang === 'en' ? 'producto/en/fuga-oscuro' : 'producto/fuga-oscuro'];
       const h = seccion(portada(lang), 'inicio');
       const img = etiquetas(h, 'img')[0];
       assert.match(img, /class="s-ventana__img"/);
@@ -260,7 +260,7 @@ describe('S4 Valor y sellos', () => {
       const h = seccion(portada(lang), 'valor');
       assert.match(h, /<figure class="s-ventana s-ventana--producto">/);
       assert.match(etiquetas(h, 'img')[0], /class="s-ventana__img"/);
-      assert.ok(h.includes('/s/img/producto/valor-'), 'recorte de las cuatro tarjetas de Hoy');
+      assert.ok(h.includes(`/s/img/producto/${lang === 'en' ? 'en-' : ''}valor-`), 'recorte de las cuatro tarjetas de Hoy, en el idioma de la página');
       assert.doesNotMatch(h, /s-mock-raiz|data-cifra/);
       assert.match(h, /class="s-cota s-valor__cota"[^>]*role="img"/);
       assert.match(h, /class="s-valor__sello s-sello-expandido"/);
@@ -286,7 +286,7 @@ describe('S5 Cuatro pasos', () => {
       assert.equal((h.match(/class="s-paso__visual"/g) ?? []).length, 4);
       assert.equal((h.match(/class="s-progreso__seg"/g) ?? []).length, 4);
       for (const k of [1, 2, 3, 4]) {
-        assert.ok(h.includes(manifest.img[`producto/paso${k}`].url), `recorte paso${k}`);
+        assert.ok(h.includes(manifest.img[`producto/${lang === 'en' ? 'en/' : ''}paso${k}`].url), `recorte paso${k}`);
         assert.ok(h.includes(`data-paso-ventana="${k}"`), `ventana del paso ${k}`);
       }
       assert.equal((h.match(/class="s-paso__etiqueta"/g) ?? []).length, 4);

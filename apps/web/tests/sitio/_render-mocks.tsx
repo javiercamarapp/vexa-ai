@@ -23,7 +23,7 @@ salida.hilo = ICONOS_HILO;
 salida.sellos = Object.fromEntries((['observado', 'estimado', 'inferido', 'sindato'] as const).map((c) => [c, renderToStaticMarkup(<Sello clase={c} lang="es" />)]));
 salida.diagramasSolo = {};
 salida.datos = {
-  INGRESO_BRUTO: D.INGRESO_BRUTO, REEMBOLSOS: D.REEMBOLSOS, PARETO: D.PARETO, CANALES: D.CANALES, PROBLEMAS: D.PROBLEMAS,
+  INGRESO_BRUTO: D.INGRESO_BRUTO, REEMBOLSOS: D.REEMBOLSOS, PARETO: D.PARETO, REEMBOLSOS_TOP10: D.REEMBOLSOS_TOP10, SKU_TOTAL: D.SKU_TOTAL, CANALES: D.CANALES, PROBLEMAS: D.PROBLEMAS,
   SERIE_INGRESO: D.SERIE_INGRESO, SERIE_REEMBOLSOS: D.SERIE_REEMBOLSOS, EXPOSICION_SUBTOTAL: D.EXPOSICION_SUBTOTAL, INGRESO_EN_JUEGO: D.INGRESO_EN_JUEGO,
   DINERO_ATORADO: D.DINERO_ATORADO, INTENSIDAD: D.INTENSIDAD,
   totalesCanal: D.CANALES.map((_, i) => D.totalCanal(i)), totalesMes: [0, 1, 2].map((j) => D.totalMes(j)),

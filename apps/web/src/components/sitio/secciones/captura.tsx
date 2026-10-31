@@ -1,5 +1,5 @@
 // Captura real del producto (datos de ejemplo) del manifest: AVIF con respaldo WebP, ancho y alto del original y el alt del idioma.
-// Las capturas están en español; en inglés se usan las mismas con el alt en inglés (el capturador no genera variante EN).
+// Hay dos juegos de capturas: español (producto/<nombre>) e inglés (producto/en/<nombre>, mismas medidas), con el fixture y la interfaz en su idioma; el alt es el del idioma.
 import type {ReactNode} from 'react';
 import {alt, medidas, url, urlAvif} from '../../../lib/sitio/activos';
 import {T, UI} from '../mocks/datos';
@@ -9,8 +9,11 @@ export type TemaCaptura = 'oscuro' | 'claro';
 /** Clave de manifest de una pantalla: producto/<nombre> en claro, producto/<nombre>-oscuro en oscuro. */
 export const claveCaptura = (nombre: string, tema: TemaCaptura): string => `img/producto/${nombre}${tema === 'oscuro' ? '-oscuro' : ''}`;
 
+/** En inglés la misma clave vive bajo producto/en/: img/producto/hoy pasa a img/producto/en/hoy. */
+export const claveIdioma = (clave: string, lang: 'es' | 'en'): string => (lang === 'en' ? clave.replace('img/producto/', 'img/producto/en/') : clave);
+
 export function Captura({nombre, tema, lang, tamanos, prioridad = false, clase, anchos, clave: claveFija}: {nombre: string; tema?: TemaCaptura; lang: 'es' | 'en'; tamanos: string; prioridad?: boolean; clase?: string; anchos?: number[]; clave?: string}) {
-  const clave = claveFija ?? claveCaptura(nombre, tema ?? 'oscuro');
+  const clave = claveIdioma(claveFija ?? claveCaptura(nombre, tema ?? 'oscuro'), lang);
   const {ancho, alto} = medidas(clave);
   const lista = anchos ?? [960, 1440];
   const srcset = (f: (a: number) => string | undefined) => lista.flatMap((a) => { const u = f(a); return u ? [`${u} ${a}w`] : []; }).join(', ');

@@ -134,7 +134,7 @@ test('críticos: el aviso, la frase y la fecha del brief se arman con las cuenta
   const meta = {critical_notice: avisoCriticos({grupos: 53, senales: 120}), critical_counts: {groups: 53, signals: 120}};
   assert.equal(avisoDeMeta(es, meta), meta.critical_notice, 'en español: idéntico al del paquete');
   assert.equal(avisoDeMeta(null, meta), meta.critical_notice);
-  assert.equal(avisoDeMeta(en, meta), '53 problem groups with critical review (120 critical signals, pieces of evidence). They are always counted: they do not depend on the filters or the amount.');
+  assert.equal(avisoDeMeta(en, meta), '53 problem groups with critical review (120 critical signals). They are always counted: they do not depend on the filters or the amount.');
   assert.equal(avisoDeMeta(en, {critical_notice: 'Texto viejo'}), 'Texto viejo', 'respuesta sin cuentas: se conserva');
   assert.equal(fraseCriticosT(en, {grupos: 1}), '1 problem group with critical review'); assert.equal(fraseCriticosT(es, {grupos: 1, senales: 1}), fraseCriticos({grupos: 1, senales: 1}));
   assert.equal(avisoCriticosT(en, {grupos: 2}), '2 problem groups with critical review. They are always counted: they do not depend on the filters or the amount.');

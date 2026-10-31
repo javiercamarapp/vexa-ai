@@ -362,7 +362,7 @@ export const PRODUCTO_POR_DECIDIR: Pagina = pantalla({
       titulo: b('Registro del resultado', 'Outcome record'),
       texto: b(
         'En curso muestra el responsable, el compromiso, las etapas y los borradores. Resultados mide antes y después y nunca presenta un ahorro supuesto.',
-        'In progress shows the workspace administrator, the commitment, the stages and the drafts. Outcomes measures before and after and never presents an assumed saving.',
+        'In progress shows the person responsible, the commitment, the stages and the drafts. Outcomes measures before and after and never presents an assumed saving.',
       ),
     },
   ],

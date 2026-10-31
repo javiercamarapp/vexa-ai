@@ -87,3 +87,14 @@ test('las pantallas de fuga y mapa traducen los rótulos al pintar', () => {
   const mapa = leer('src/components/map/mapa-pantalla.tsx');
   for (const f of ['tipoCasoEtiqueta', 'motivoEtiqueta', 'retailerEtiqueta']) assert.match(mapa, new RegExp('rotulo=\\{r=>' + f + '\\(r,t\\)\\}'));
 });
+
+test('Hoy en inglés: sin los calcos que T41 señaló (carry an amount, does not declare, not the whole ledger, does not mean zero)', async () => {
+  const {textos} = await import('../src/components/hoy/hoy-textos.mjs');
+  const x = textos('en') as Record<string, any>, plano = JSON.stringify(x, (_k, v) => (typeof v === 'function' ? v('A', 'B') : v));
+  assert.equal(x.atorado.cobertura(3, 10), '3 of 10 requests have an amount.');
+  assert.ok(x.atorado.noSabemos.includes('The Tracker amount has no currency: USD is assumed.'));
+  assert.ok(x.reembolsos.noSabemos.includes('Export windows are partial: the ledger does not cover the same period for every channel.'));
+  assert.equal(x.ingresoNoDisp, 'Not available right now. That is not the same as zero.');
+  for (const calco of [/carry an amount/, /does not declare/, /not the whole ledger/, /It does not mean zero/]) assert.doesNotMatch(plano, calco);
+  assert.match(JSON.stringify(textos('es'), (_k, v) => (typeof v === 'function' ? v('A', 'B') : v)), /Todavía no hay datos suficientes/);
+});

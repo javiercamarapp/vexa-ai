@@ -30,3 +30,14 @@ export const ESTADOS = Object.freeze(['listo', 'salvedad', 'falta']);
 export const tonoDeEstado = (e) => (e === 'listo' ? 'ok' : e === 'salvedad' ? 'warn' : 'bad');
 /** Cantidad de un conteo que puede venir oculto por k-anonimato (null): «Menos de 5». */
 export const conteoOculto = (n) => (n === null || n === undefined);
+/** Una tabla de moneda sin ventas reales: todas sus filas con 0 líneas e ingreso 0 (solo traen casos de defecto del Tracker). Con una sola fila con ventas, o con un importe ilegible, no aplica. */
+export function monedaSinVentas(moneda) {
+  const filas = moneda?.top;
+  if (!Array.isArray(filas) || filas.length === 0) return false;
+  return filas.every((f) => {
+    if (f.lineas !== 0) return false;
+    try { return BigInt(f.brutoMinor ?? 'x') === 0n; } catch { return false; }
+  });
+}
+/** SKU de una tabla sin ventas que sí traen casos de defecto del Tracker. */
+export const skusConDefectos = (moneda) => (moneda?.top ?? []).filter((f) => typeof f.defectos === 'number' && f.defectos > 0).length;

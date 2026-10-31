@@ -9,7 +9,7 @@ import {SegmentedControl} from '../ui/segmented';
 type Column<T>={key:string;header:ReactNode;render:(row:T)=>ReactNode;align?:'start'|'num'};
 import '../confianza/confianza.css';
 import type {Cobertura,Faltan,CardBase,TarjetaAv,TarjetaBv,TarjetaCv,TarjetaDv,TarjetaEv,TarjetaFv,CanalA,FilaSku,EstadoCco,SubcanalMod,SkuMod} from '../../../../../packages/workspace-service/cco.mjs';
-import {mayor,mesTxt,diaTxt,selloCco,tonoDeEstado} from './cco-modelo.mjs';
+import {monedaSinVentas,skusConDefectos,mayor,mesTxt,diaTxt,selloCco,tonoDeEstado} from './cco-modelo.mjs';
 import './cco.css';
 
 /** Tabla del sistema (mismas clases que DataTable) sin atributos style: la altura no se limita porque cada tabla trae pocas filas. */
@@ -67,6 +67,13 @@ export function Marco({card,minimo,consultado,children}:{card:CardBase;minimo:nu
 }
 
 // ---- A: rendimiento por SKU, dentro de la ventana común del canal ----
+/** Moneda sin ventas reales: una línea honesta y el detalle plegado (las filas siguen ahí, sin cambiar ni ocultar cifras). Con ventas, la tabla de siempre. */
+function MonedaA({canal,moneda,trackerOk}:{canal:CanalA;moneda:CanalA['monedas'][number];trackerOk:boolean}){
+ const t=useT(),idioma=useIdioma();
+ if(!monedaSinVentas(moneda))return <TablaSkus canal={canal} moneda={moneda} trackerOk={trackerOk}/>;
+ const n=skusConDefectos(moneda);
+ return <details className="cco-plegable"><summary>{n>0?t('cco.sinVentasMoneda',{n:numero(idioma,n)}):t('cco.sinVentasMonedaSolo')}</summary><TablaSkus canal={canal} moneda={moneda} trackerOk={trackerOk}/></details>;
+}
 function TablaSkus({canal,moneda,trackerOk}:{canal:CanalA;moneda:CanalA['monedas'][number];trackerOk:boolean}){
  const t=useT(),idioma=useIdioma(),locale=LOCALE_INTL[idioma];
  const dinero=(minor:string|null,exp:number)=>{const v=mayor(minor,exp);return v===null?<SinDato/>:new Intl.NumberFormat(locale,{style:'currency',currency:moneda.moneda,maximumFractionDigits:exp>0?2:0}).format(v);};
@@ -93,7 +100,7 @@ export function TarjetaA({card,minimo,consultado}:{card:TarjetaAv;minimo:number;
    <p className="cco-ventana">{t('cco.ventana',ventana(canal))}</p>
    {!canal.devolucionesDisponibles&&<Notice tone="info">{t('cco.devNoDisp')}</Notice>}
    {canal.monedas.length===0&&<p className="cco-vacio">{t('cco.sinFilas')}</p>}
-   {canal.monedas.map(m=><div key={m.moneda} className="cco-tabla"><p className="cco-moneda">{t('cco.moneda',{moneda:m.moneda})}</p><TablaSkus canal={canal} moneda={m} trackerOk={card.trackerDisponible!==false}/></div>)}
+   {canal.monedas.map(m=><div key={m.moneda} className="cco-tabla"><p className="cco-moneda">{t('cco.moneda',{moneda:m.moneda})}</p><MonedaA canal={canal} moneda={m} trackerOk={card.trackerDisponible!==false}/></div>)}
   </div>}
   {card.ventanasDistintas&&<p className="cco-nota">{t('cco.ventanasDistintas')}</p>}
   {card.sinVentana&&card.sinVentana.length>0&&<p className="cco-nota">{t('cco.sinVentana',{canales:card.sinVentana.map(c=>NOMBRE_CANAL[c]??c).join(', ')})}</p>}

@@ -7,3 +7,5 @@ export function selloCco(tr: Traductor, locale: string, o: {clase: string; fuent
 export const ESTADOS: readonly ['listo', 'salvedad', 'falta'];
 export function tonoDeEstado(e: string): 'ok' | 'warn' | 'bad';
 export function conteoOculto(n: number | null | undefined): boolean;
+export function monedaSinVentas(moneda: {top?: {lineas: number; brutoMinor?: string | null}[]} | null | undefined): boolean;
+export function skusConDefectos(moneda: {top?: {defectos: number | null}[]} | null | undefined): number;

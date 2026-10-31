@@ -22,3 +22,8 @@
 .cco-quien{flex:0 1 38%;min-width:0;text-align:right;font-weight:600;font-size:var(--t-small);color:var(--ink);overflow-wrap:anywhere}
 .cco-card[data-estado=falta]{border-style:dashed}
 @media(max-width:700px){.cco-faltan li{flex-direction:column;gap:4px}}
+
+.cco-plegable{display:grid;gap:var(--sp-2);min-width:0}
+.cco-plegable>summary{cursor:pointer;font-size:var(--t-small);color:var(--ui-secondary);max-width:80ch}
+.cco-plegable>summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.cco-plegable[open]>summary{margin-bottom:var(--sp-2)}

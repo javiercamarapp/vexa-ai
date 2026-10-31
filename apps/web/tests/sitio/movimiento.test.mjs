@@ -102,12 +102,16 @@ test('hilo serpenteante con bandas de cruce: núcleo 3.5 px (7.5 en bandas) a 14
   assert.match(css, /\.s-hilo__nota \{[\s\S]*rotate: var\(--r, -3deg\)/, 'píldora ladeada');
   assert.match(INICIO, /function huecos\(/);
   assert.match(INICIO, /function puntosBanda\(/);
-  assert.match(INICIO, /const LOOPS = \[1, 3, 5\]/, 'tres bandas con rizo');
-  assert.match(INICIO, /const TRIPLES = \[0, 4\]/, 'dos bandas con triple cruce');
+  const loops = INICIO.match(/const LOOPS = \[([\d, ]*)\]/), triples = INICIO.match(/const TRIPLES = \[([\d, ]*)\]/);
+  assert.ok(loops && loops[1].split(',').length <= 3, 'no más de tres bandas con rizo (el lazo no se repite)');
+  assert.ok(triples && triples[1].split(',').length <= 1, 'a lo sumo una banda con triple cruce');
+  assert.match(INICIO, /const COLA = 72/, 'carril libre al final de cada banda en escritorio (nada cruza bajo la cabecera fija con la sección anclada)');
+  assert.match(INICIO, /v % 3 === 1[\s\S]*v % 3 === 2/, 'las S simples varían de forma por banda');
   assert.match(INICIO, /const RAMPA = 3, PASO_RAMPA = 26/, 'el trazo se engruesa en tres escalones');
   assert.match(INICIO, /new ResizeObserver\(medir\)/);
   assert.match(INICIO, /let AIRE = 24;/);
-  assert.match(INICIO, /AIRE = movil \? 20 : 24;/, "el móvil usa 20 px de aire para cruzar por los huecos naturales");
+  assert.match(INICIO, /AIRE = movil \? 18\.5 : 24;/, "el móvil usa 18.5 px de aire (16 de margen más medio núcleo de 2.1)");
+  assert.match(INICIO, /movil0 \? 10 :/, 'el riel móvil queda a 10 px del borde, no pegado a él');
   assert.match(INICIO, /const PULSO = \[\[230, 0\.1\], \[150, 0\.22\], \[90, 0\.45\], \[40, 0\.9\]\]/);
   assert.match(INICIO, /if \(RM \|\| !vivo \|\| !H\) return/, 'con movimiento reducido el hilo queda dibujado y sin pulso');
   assert.match(INICIO, /href: '#s-hilo-d'/, 'todas las capas comparten el mismo path vía <use>');
@@ -136,12 +140,12 @@ test('Chrome: la portada no pide nube, pts ni Lenis, no hay canvas y el CSP no r
   });
 });
 
-test('Chrome: movimiento reducido: ninguna animación ni transición de más de 150 ms y estado final del héroe', {skip: vivo ? false : motivo}, async () => {
+test('Chrome: movimiento reducido: cero animaciones y cero transiciones en curso y estado final del héroe', {skip: vivo ? false : motivo}, async () => {
   await sesion({vp: 1440, movimiento: 'reduce', etiqueta: 'mov-reducido'}, async (s) => {
     await s.page.goto(URL_VIVA, {waitUntil: 'load'});
     await dormir(5000);
-    const largas = await s.page.evaluate(() => document.getAnimations().filter((a) => a.effect?.getTiming().duration > 150).length);
-    assert.equal(largas, 0, 'sin animaciones largas');
+    const en = await s.page.evaluate(() => document.getAnimations().map((a) => `${a.constructor.name}:${a.animationName || a.transitionProperty}:${a.effect?.target?.className?.baseVal ?? a.effect?.target?.className}`));
+    assert.deepEqual(en, [], 'document.getAnimations() debe estar vacío con movimiento reducido');
     assert.equal(await s.page.evaluate(() => document.querySelector('[data-cuenta]').textContent), '36,000');
   });
 });

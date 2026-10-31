@@ -202,7 +202,7 @@ html[data-js] .s-pantalla .s-pantalla__img { clip-path: none; animation: none; }
   .s-pv .s-pv__marco { position: static; width: 100% !important; /* gana a left/width/top por data-n de inicio.css */ }
   .s-pv .s-pv__marco[data-n] { left: auto; top: auto; }
   .s-escena__fijo { gap: 0; }
-  .s-paso { gap: var(--s-e16); padding-block: var(--s-e24); }
+  .s-paso { gap: var(--s-e16); padding-block: var(--s-e16); }
   .s-paso__texto { gap: var(--s-e8); }
   .s-paso__texto .s-lead { font-size: 16px; line-height: 1.5; }
   .s-ventana--paso .s-ventana__barra { min-height: 32px; }
@@ -211,17 +211,19 @@ html[data-js] .s-pantalla .s-pantalla__img { clip-path: none; animation: none; }
 
 /* ---------- Móvil: ritmo vertical compacto (la portada medía 19,293 px a 390; objetivo 13,500) ---------- */
 @media (max-width: 768px) {
-  .s-seccion:not(.s-escena) { padding-block: var(--s-e40); }
+  .s-seccion:not(.s-escena) { padding-block: var(--s-e32); }
   .s-seccion__cabeza { gap: var(--s-e12); margin-bottom: var(--s-e24); }
-  .s-columnas { gap: var(--s-e24); }
+  .s-columnas { gap: var(--s-e20); }
+  .s-problema__cabeza { margin-bottom: var(--s-e48); }
   .s-columna { gap: var(--s-e8); }
-  .s-columna__diagrama { max-width: 332px; aspect-ratio: 332 / 96; margin-bottom: var(--s-e4); }
+  /* La caja sigue la proporción del dibujo (244 por 124): una proporción menor la dejaba más baja que el SVG, que desbordaba sobre el titular. */
+  .s-columna__diagrama { max-width: 250px; aspect-ratio: 244 / 124; margin-bottom: var(--s-e4); }
   .s-columna .s-numeral { display: none; }
   .s-columna__titulo { font-size: 20px; }
-  .s-valor__escena { margin-bottom: var(--s-e32); }
+  .s-valor__escena { margin-bottom: var(--s-e24); }
   .s-sellos { row-gap: var(--s-e8); }
   .s-sello-def { padding-block: var(--s-e12); }
-  .s-limites__cabeza { margin-bottom: var(--s-e24); }
+  .s-limites__cabeza { margin-bottom: var(--s-e16); }
   .s-limite { grid-template-columns: 28px minmax(0, 1fr); column-gap: var(--s-e12); min-height: 0; padding-block: var(--s-e12); }
   .s-limite__titulo { font-size: 17px; }
   .s-limite__texto { font-size: 14px; line-height: 1.45; }
@@ -230,9 +232,9 @@ html[data-js] .s-pantalla .s-pantalla__img { clip-path: none; animation: none; }
   .s-lista > li { padding-block: var(--s-e8); font-size: 14px; }
   .s-mt-96 { margin-top: var(--s-e40); }
   .s-chips { display: none; }
-  .s-faq__cabeza.s-mt-96 { margin-top: var(--s-e32); }
+  .s-faq__cabeza.s-mt-96 { margin-top: var(--s-e24); }
   .s-acordeon__boton { min-height: 56px; font-size: 17px; }
-  .s-puestos__cierre { margin-top: var(--s-e24); }
+  .s-puestos__cierre { margin-top: var(--s-e16); }
   .s-cierre__lista { gap: var(--s-e4); }
 }
 
@@ -246,7 +248,7 @@ html[data-js] .s-pantalla .s-pantalla__img { clip-path: none; animation: none; }
 }
 
 @media (max-width: 768px) {
-  .s-pie__marca { margin-top: var(--s-e8); }
+  .s-pie__marca { margin-top: 0; }
   .s-hero__contenido { padding-top: 92px; }
   .s-cierre__lista { margin-block: var(--s-e16); }
   .s-hero__reglas { padding-block: var(--s-e24) var(--s-e40); gap: var(--s-e20); }

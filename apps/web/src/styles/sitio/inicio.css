@@ -594,7 +594,7 @@
 
 .s-columna__diagrama {
   width: 100%;
-  aspect-ratio: 244 / 160;
+  aspect-ratio: 244 / 124;
   margin-bottom: var(--s-e16);
 }
 
@@ -1371,7 +1371,7 @@
   --s-hilo-w: 3.5px;
   --s-hilo-wb: 7.5px;
   --s-hilo-margen: calc(max(0px, (100vw - 1152px) / 2) + var(--s-pad-x));
-  --s-hilo-x: max(6px, min(calc(var(--s-hilo-margen) * .36), calc(var(--s-hilo-margen) - 18px - var(--s-hilo-w) / 2)));
+  --s-hilo-x: max(10px, min(calc(var(--s-hilo-margen) * .36), calc(var(--s-hilo-margen) - 18px - var(--s-hilo-w) / 2)));
   position: relative;
 }
 
@@ -1384,8 +1384,9 @@
 }
 
 @media (max-width: 768px) {
-  .s-banda { height: 4px; }
-  .s-banda:not([data-banda="0"], [data-banda="1"]) { display: none; }
+  /* Cuatro bandas de 16 px: con el relleno compacto de las secciones (32 + 32) el hueco queda en 80 px, justo el que pide un cruce con 18.5 px de aire */
+  .s-banda { height: 16px; }
+  .s-banda:not([data-banda="1"], [data-banda="2"], [data-banda="3"], [data-banda="4"]) { display: none; }
 }
 
 /* Pista estática: solo sin JavaScript (con JavaScript la sustituye el trazo serpenteante) */
@@ -1742,11 +1743,6 @@ html:not([data-js]) .s-hilo-zona::before {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .s-columna__diagrama {
-    max-width: 332px;
-    aspect-ratio: 332 / 140;
-  }
-
   .s-pantalla {
     min-height: 0;
   }
@@ -1783,7 +1779,7 @@ html:not([data-js]) .s-hilo-zona::before {
 
 /* ==================== Movimiento reducido: UN solo bloque, estado final ====================
  * Con prefers-reduced-motion: reduce no hay sticky, barrido ni deriva. Todo se ve en su estado
- * final y el pie es un pie normal con la marca rellena. Solo se permiten cambios de color y opacidad de 150 ms.
+ * final y el pie es un pie normal con la marca rellena. Sin transiciones ni animaciones de ningún tipo.
  * Los estados ocultos y las animaciones viven en (no-preference), por eso aquí solo se neutraliza lo que queda.
  */
 @media (prefers-reduced-motion: reduce) {
@@ -1791,7 +1787,8 @@ html:not([data-js]) .s-hilo-zona::before {
     scroll-behavior: auto;
   }
 
-  /* Justificado: gana a cualquier transición de componente, que tiene más especificidad que un selector universal */
+  /* Justificado: gana a cualquier transición o animación de componente, que tiene más especificidad que un selector universal. Ninguna transición
+     ni animación: las 47 «en curso» que medía document.getAnimations() eran transiciones de color de 150 ms de los nodos del hilo. */
   *,
   *::before,
   *::after {

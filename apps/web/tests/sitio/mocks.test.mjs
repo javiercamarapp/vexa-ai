@@ -209,7 +209,7 @@ for (const [k, html] of diag) {
     assert.ok(!/\b(fill|stroke)="(?!none|currentColor)[^"]*"/.test(html), 'fill o stroke en bruto');
     const svgs = html.split('<svg').length - 1;
     assert.ok(svgs === 1 || svgs === 2, 'un SVG, o dos con la variante angosta');
-    const m = /<svg class="s-red s-diag[^"]*" viewBox="0 0 (\d+) (\d+)" role="img" aria-labelledby="(s-diag-[a-z0-9-]+-t) (s-diag-[a-z0-9-]+-d)"/.exec(html);
+    const m = /<svg class="s-red s-diag[^"]*" viewBox="0 (?:\d+) (\d+) (\d+)" role="img" aria-labelledby="(s-diag-[a-z0-9-]+-t) (s-diag-[a-z0-9-]+-d)"/.exec(html);
     assert.ok(m, 'svg principal con role img y aria-labelledby');
     assert.match(html, new RegExp(`<title id="${m[3]}">[^<]{4,}</title><desc id="${m[4]}">[^<]{30,}</desc>`));
     const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((x) => x[1]);
@@ -227,7 +227,7 @@ for (const [k, html] of diag) {
       assert.match(html, /class="s-diag-ancho"/);
       assert.match(html, /class="s-diag-angosto" aria-hidden="true"/);
     }
-    if (id.startsWith('problema')) assert.ok(m[1] === '244' && m[2] === '160', '244 por 160');
+    if (id.startsWith('problema')) { assert.ok(m[1] === '244' && m[2] === '124', '244 por 124'); assert.match(html, /viewBox="0 24 244 124"/, 'recorte de 24 a 148'); }
     if (id === 'seguridad') assert.ok(m[1] === '1072' && m[2] === '380');
     if (id === 'integraciones') assert.ok(m[1] === '800' && m[2] === '280');
   });

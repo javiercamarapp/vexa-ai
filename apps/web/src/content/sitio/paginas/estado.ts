@@ -1,21 +1,26 @@
-// Estado (T24). Fuente: SEO 02-PLAN-POR-URL-DETALLE fila 23. La página es estática: no lee la versión en vivo.
+// Estado (T24, corregida en T28). Fuente: SEO 02-PLAN-POR-URL-DETALLE fila 23. La página es estática: no lee la versión en vivo.
 // Decisión: /api/health/version solo atestigua la identidad de la compilación (meta.state build-identity-only), no que el servicio funcione, y mostrar
 // su valor exigiría JavaScript de cliente en una página estática sin poder verificarlo en navegador aquí. Por eso la página explica qué se publica
-// y dónde consultarlo, y no renderiza el valor. El correo de reportes sale de [CORREO_DE_CONTACTO], la misma configuración que usa solicitar-acceso.
+// y dónde consultarlo, y no renderiza el valor.
+// PENDIENTE DE REVISION (T28): no se publica hasta que Javier confirme un canal de contacto que reciba correo (la condición 1 de P-D sigue sin cumplirse).
+// El contenido está escrito y listo: para publicarla basta cambiar `estado` a 'publicable' (y quitar `pendiente`). Mientras tanto es 404 y no aparece
+// en sitemap, RSS, llms, espejos ni enlaces. El texto de contacto no lleva ningún correo: manda a la página de solicitud de acceso, así el HTML y el
+// espejo Markdown dicen exactamente lo mismo.
 import type { Pagina } from '../tipos.ts';
 import { b } from '../ayudas.ts';
 
 export const ESTADO: Pagina = {
   id: 'estado',
-  estado: 'publicable',
+  estado: 'pendiente-de-revision',
+  pendiente: 'Javier debe confirmar primero un canal de contacto que reciba correo (condición 1 de P-D sin cumplir; el contacto actual es el de solicitar acceso y no se ha probado con un mensaje real). Con eso, cambiar estado a publicable.',
   seo: {
-    titulo: b('Estado del servicio | Versión y reporte de problemas', 'Service Status | Deployed Version and Problem Reports'),
+    titulo: b('Versión desplegada y reporte de problemas | Rovaq AI', 'Deployed Version and How to Report a Problem | Rovaq AI'),
     descripcion: b(
       'Cómo identificar la versión desplegada de Rovaq AI y cómo reportar un problema. No es un acuerdo de nivel de servicio ni una promesa de disponibilidad.',
       'How to identify the deployed version of Rovaq AI and how to report a problem. This page is not an availability commitment or a service level agreement.',
     ),
   },
-  h1: b('Estado del servicio', 'Service status'),
+  h1: b('Versión desplegada y reporte de problemas', 'Deployed version and problem reports'),
   subtitulo: b(
     'Cómo saber qué versión está desplegada y cómo reportar un problema. No es un compromiso de disponibilidad.',
     'How to tell which version is deployed and how to report a problem. It is not an availability commitment.',
@@ -25,8 +30,8 @@ export const ESTADO: Pagina = {
       tipo: 'texto',
       titulo: b('Qué publicamos aquí', 'What we publish here'),
       texto: b(
-        'El servicio expone un identificador público de la versión desplegada: el número de versión y el identificador de la compilación. Se consulta en la dirección rovaq.ai/api/health/version. Esta página es estática y no muestra ese valor en vivo; el identificador solo dice qué compilación está en uso y no dice si cada parte del servicio está funcionando.',
-        'The service exposes a public identifier of the deployed version: the version number and the build identifier. You can read it at rovaq.ai/api/health/version. This page is static and does not show that value live; the identifier only says which build is in use and does not say whether each part of the service is working.',
+        'El servicio expone un identificador público de la versión desplegada: el número de versión y el identificador de la compilación. Se consulta en la dirección rovaq.ai/api/health/version. Esta página es estática y no muestra ese valor en vivo; el identificador solo dice qué compilación está en uso y no dice si cada parte del servicio está funcionando. La respuesta trae además un campo llamado status con el valor ok: no mide el funcionamiento del servicio y no debe leerse como un indicador de salud.',
+        'The service exposes a public identifier of the deployed version: the version number and the build identifier. You can read it at rovaq.ai/api/health/version. This page is static and does not show that value live; the identifier only says which build is in use and does not say whether each part of the service is working. The response also carries a field named status with the value ok: it does not measure how the service is performing and should not be read as a health indicator.',
       ),
     },
     {
@@ -42,8 +47,8 @@ export const ESTADO: Pagina = {
       tipo: 'texto',
       titulo: b('Cómo reportar un problema', 'How to report a problem'),
       texto: b(
-        'Para reportar un problema, escribe a [CORREO_DE_CONTACTO]. Esta página no fija un tiempo de respuesta.',
-        'To report a problem, write to [CONTACT_EMAIL]. This page does not set a response time.',
+        'Para reportar un problema, usa el contacto de la página de solicitud de acceso, que aparece al final de esta página. Esta página no fija un tiempo de respuesta.',
+        'To report a problem, use the contact on the request access page, linked at the end of this page. This page does not set a response time.',
       ),
     },
     {
@@ -54,6 +59,14 @@ export const ESTADO: Pagina = {
         b('Lo que pasó en su lugar, con la hora aproximada y tu zona horaria.', 'What happened instead, with the approximate time and your time zone.'),
         b('La versión que muestra rovaq.ai/api/health/version, si la consultaste.', 'The version shown at rovaq.ai/api/health/version, if you checked it.'),
         b('Ninguna contraseña ni datos personales de tus clientes: no los necesitamos para entender el problema.', 'No passwords and no personal data of your customers: we do not need them to understand the problem.'),
+      ],
+    },
+    {
+      tipo: 'enlaces',
+      titulo: b('Dónde seguir', 'Where to go next'),
+      items: [
+        { t: b('Solicitar acceso', 'Request access'), d: b('El contacto para reportar un problema.', 'The contact for reporting a problem.'), href: { es: '/solicitar-acceso', en: '/en/request-access' } },
+        { t: b('Confianza de los datos', 'Data trust'), d: b('Hasta qué fecha llegan tus datos y qué no se sabe.', 'What date your data reaches and what is not known.'), href: { es: '/producto/confianza-de-los-datos', en: '/en/product/data-trust' } },
       ],
     },
   ],

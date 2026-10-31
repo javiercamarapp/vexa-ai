@@ -16,6 +16,7 @@
 -- Seguridad: todas son SECURITY INVOKER con search_path vacío; leen bajo la RLS del llamador (rol vexa_backend) Y filtran por el tenant de la sesión (vexa.tenant_id).
 --   EXECUTE solo para vexa_backend. Sin SQL dinámico, sin texto libre hacia SQL (dim es un enumerado validado).
 --   Cliente piloto: el prefijo de su retailer propio NO está escrito aquí; la aplicación lo fija por sesión (set_config vexa.tienda_propia_prefijo, en minúsculas). Vacío o ausente = ninguna fila se clasifica como propia.
+--   Bodegas: el catálogo (prefijos y etiquetas) tampoco está escrito aquí; la aplicación lo fija por sesión (set_config vexa.cco_catalogo_bodegas, JSON [{p,e,l}] ya validado, de VEXA_CCO_CATALOGO). Sin catálogo toda bodega con valor sale 'otra'.
 -- Orden: requiere 0018 (libro), 0052 (Tracker), 20261104000000 (insights_engine) y 20261110000000 (insight_gaps). Idempotente (create or replace).
 -- Reversa: packages/workspace-service/tests/20261201000000_insight_cco.down.sql
 begin;
@@ -114,6 +115,9 @@ language sql stable set search_path='' as $$
  with t as (select nullif(current_setting('vexa.tenant_id',true),'')::uuid as id),
  -- Prefijo del cliente piloto (minúsculas): lo fija la aplicación por sesión (vexa.tienda_propia_prefijo); vacío o ausente = nada es propio. Nunca va escrito aquí.
  pp as (select nullif(lower(regexp_replace(btrim(coalesce(current_setting('vexa.tienda_propia_prefijo',true),'')),'\s+',' ','g')),'') as v),
+ -- Catálogo de bodegas del cliente (configuración externa VEXA_CCO_CATALOGO, ya validada por la aplicación): JSON [{"p": prefijo en mayúsculas, "e": etiqueta, "l": sufijo libre}], por sesión (vexa.cco_catalogo_bodegas).
+ -- Vacío o ausente = '[]': toda bodega con valor sale 'otra'. Los nombres reales de las bodegas nunca van escritos aquí.
+ bc as (select case when coalesce(current_setting('vexa.cco_catalogo_bodegas',true),'') ~ '^\s*\[' then current_setting('vexa.cco_catalogo_bodegas',true)::jsonb else '[]'::jsonb end as v),
  hdr as (select distinct h.connection_id,h.sheet_name,(c->>'col')::int as col,lower(regexp_replace(btrim(c->>'v'),'[\s_]+',' ','g')) as name
    from public.tracker_row_heads h join t on h.tenant_id=t.id cross join lateral jsonb_array_elements(h.cells) c
    where h.ticket_state='header' and h.sheet_name not in('WTR','WPR') and c->>'col' ~ '^[0-9]+$'),
@@ -144,8 +148,8 @@ language sql stable set search_path='' as $$
    when rt like 'best buy%' then 'bestbuy' when pp.v is not null and left(rt,length(pp.v))=pp.v then 'tienda' when rt like 'lowe%' then 'lowes' when rt like 'home depot%' then 'homedepot' when rt='pending' then 'pendiente' else 'otro' end,
   case when rs='defective' then 'defectuoso' when sub like 'damaged%' then 'danado' when rs='missing parts' or sub like 'missing parts%' then 'faltan_piezas'
    when sub='wrong item received' or rs='wrong item was sent' then 'articulo_equivocado' end,
-  case when coalesce(wh,'')='' then null when wh like 'BODEGAB-%' then regexp_replace(wh,'\s+','','g') when wh like 'BODEGAA%' then 'BODEGAA USA Inc' when wh like 'BODEGAC%' then 'Bodegac'
-   when wh like 'BODEGAD%' then 'Bodegad' when wh like 'BODEGAE%' then 'Bodegae Canada' else 'otra' end,
+  case when coalesce(wh,'')='' then null else coalesce((select case when b.e->>'l'='true' then regexp_replace(wh,'\s+','','g') else b.e->>'e' end
+     from bc cross join lateral jsonb_array_elements(bc.v) with ordinality as b(e,i) where left(wh,length(b.e->>'p'))=b.e->>'p' order by b.i limit 1),'otra') end,
   case when coalesce(wh,'')='' then null when sla_h is null then 'sin_dato' when sla_h<24 then 'menos_de_1_dia' when sla_h<48 then '1_dia' when sla_h<72 then '2_dias' else '3_o_mas_dias' end,
   case when coalesce(rs,'')='' then 'sin_motivo' when rs in('defective','order','warranty','return','shipping','not as expected','change mind','price match','missing parts','package lost','never shipped',
      'wrong item was sent','bought by mistake','inaccurate website description','item arrived too late','incompatible or not useful') then replace(rs,' ','_') else 'otro' end,

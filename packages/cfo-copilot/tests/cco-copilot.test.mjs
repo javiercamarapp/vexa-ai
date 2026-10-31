@@ -17,7 +17,7 @@ const raw = sku => ({
   sinVenta: ok([{sku_base: sku + '-OLD', first_sale_month: '2025-10-01', last_sale_month: '2026-05-01', months_without_sale: 4, lines_last_3m: 0, lines_last_6m: 0, lines_last_9m: 12, channels: ['amazon'], skus_with_sales: 40, reference_month: '2026-09-01', data_through: '2026-10-02'}]),
   defecto: ok([cel(sku, 'defectuoso', 11)]), hoja: ok([]),
   subcanal: ok([cel('amazon_cumplido_por_piloto', null, 40), cel('amazon_com', null, 20), cel('walmart_cumplido_por_walmart', null, 9), cel('amazon_nuevo_futuro', null, 7), cel('lowes', null, 25), cel(null, null, 8, true)]),
-  bodLat: ok([cel('BODEGAB-USTX', '2_dias', 9), cel('BODEGAA USA Inc', '3_o_mas_dias', 12), cel(null, null, 6, true)]), bodMot: ok([cel('BODEGAB-USTX', 'defectuoso', 9)]),
+  bodLat: ok([cel('DEMO-N1', '2_dias', 9), cel('Bodega Alfa', '3_o_mas_dias', 12), cel(null, null, 6, true)]), bodMot: ok([cel('DEMO-N1', 'defectuoso', 9)]),
   cob: ok([{rows_total: 200, with_retailer: 190, with_sku: 190, with_warehouse: 40, with_latency: 30, with_address: 100, sheets: 4, cutoff: '2026-10-05T00:00:00Z'}]),
   modalidad: ok([dm('subcanal_tipo', 'amazon_cumplido_por_piloto', 'reembolso', 14), dm('subcanal_defecto', 'amazon_cumplido_por_piloto', 'defectuoso', 9), dm('sku_subcanal', sku, 'amazon_cumplido_por_piloto', 18), dm('sku_subcanal', sku, 'amazon_com', 8),
     dm('sku_subcanal_tipo', sku, 'amazon_cumplido_por_piloto|reembolso', 7)]),
@@ -48,13 +48,13 @@ test('roles: viewer, operator y sin verificar no pueden usar ninguna herramienta
 });
 test('cada respuesta trae tabla, estado, procedencia (clase, fuente, corte) y lo que falta con a quién pedirlo', async () => {
   const s = setup();
-  const esperado = {cco_rendimiento_sku: /A\. Rendimiento por SKU · Amazon · USD[\s\S]*SKU · Líneas · Ingreso bruto[\s\S]*SYN-T1 · 100/, cco_sin_venta: /SKU · Último mes con venta[\s\S]*SYN-T1-OLD/, cco_bodegas: /Bodega · Menos de 1 día[\s\S]*BODEGAB-USTX/, cco_estados: /Estado · Casos\nTexas · 12/,
+  const esperado = {cco_rendimiento_sku: /A\. Rendimiento por SKU · Amazon · USD[\s\S]*SKU · Líneas · Ingreso bruto[\s\S]*SYN-T1 · 100/, cco_sin_venta: /SKU · Último mes con venta[\s\S]*SYN-T1-OLD/, cco_bodegas: /Bodega · Menos de 1 día[\s\S]*DEMO-N1/, cco_estados: /Estado · Casos\nTexas · 12/,
     cco_modalidad_venta: /Subcanal · Quién vende · Marketplace · Casos[\s\S]*Amazon cumplido por el cliente piloto · La empresa · Amazon · 40/, cco_modalidad_envio: /Subcanal · Bodega de origen · Marketplace[\s\S]*Amazon\.com · El marketplace · Amazon · 20/};
   const fuente = {cco_rendimiento_sku: 'Libro económico', cco_sin_venta: 'Libro económico', cco_bodegas: 'Tracker de Excel', cco_estados: 'Tracker de Excel', cco_modalidad_venta: 'Tracker de Excel', cco_modalidad_envio: 'Tracker de Excel'};
   for (const t of CCO_TOOLS) {
     const {step, answer} = await direct(s, t.name); assert.equal(step.status, 'ok', t.name); assert.match(answer, esperado[t.name], t.name);
     assert.match(answer, /Estado: Con salvedad\./, t.name); assert.ok(answer.includes(`Procedencia: ${t.name === 'cco_sin_venta' ? 'Inferido' : 'Observado'} · ${fuente[t.name]} · hasta `), t.name + ' sello');
-    assert.match(answer, /Qué falta:\n- .+Pedir a (Responsable A|Responsable B)\./, t.name); assert.equal(r0(answer), false, 'ningún texto crudo');
+    assert.match(answer, /Qué falta:\n- .+Pedir al responsable de (operaciones|datos) del cliente\./, t.name); assert.equal(r0(answer), false, 'ningún texto crudo');
   }
   const res = await s.copilot.ask({principal: principal(), tool: 'cco_modalidad_venta', args: {}, ctx: s.ctx});
   assert.ok(res.figures.length >= 3 && res.figures.every(f => f.kind === 'observed' && typeof f.coverage === 'string' && f.display)); assert.deepEqual(res.citations, [{label: 'Pestaña CCO', href: '/cco', kind: 'pantalla'}]);
@@ -71,7 +71,7 @@ test('E y F: casos, no ventas; nunca recomiendan; dicen qué falta para decidir;
   for (const [tool, quien, cierre, falta] of [['cco_modalidad_venta', 'Vende la empresa', /no puedo decir qué SKU conviene vender/, /el costo de cumplimiento, las tarifas del marketplace y el margen/], ['cco_modalidad_envio', 'Sale de la bodega de la empresa', /no puedo decir desde dónde conviene enviar cada SKU/, /el costo de envío propio, el costo de cumplimiento del marketplace y el margen/]]) {
     const {answer} = await direct(s, tool); assert.ok(answer.includes(quien), tool); assert.match(answer, cierre); assert.match(answer, falta); assert.match(answer, /Son casos atendidos con sesgo, no ventas/);
     assert.match(answer, /amazon nuevo futuro · Sin dato · Sin dato/, 'un subcanal desconocido no se asigna a ninguna modalidad'); assert.doesNotMatch(answer, /te recomiendo|la mejor (opción|modalidad)/i);
-    assert.match(answer, /no el tiempo de resolución del caso/); assert.match(answer, /Pedir a Responsable B/); assert.match(answer, /Pedir a Responsable A/);
+    assert.match(answer, /no el tiempo de resolución del caso/); assert.match(answer, /Pedir al responsable de datos del cliente/); assert.match(answer, /Pedir al responsable de operaciones del cliente/);
     assert.match(answer, /Reembolsos · Garantías · Defectos/); assert.match(answer, /· Menos de 5 ·/, 'celda sin dato visible: oculta, no 0');
   }
   const sku = (await direct(s, 'cco_modalidad_venta', {vista: 'sku'})).answer; assert.match(sku, /SYN-T1 · 18 \(reembolsos 7, defectos Menos de 5\) · 8 \(reembolsos Menos de 5, defectos Menos de 5\)/);
@@ -82,7 +82,7 @@ test('E y F: sin celdas visibles o sin detalle, la respuesta dice «no tengo el 
   const sinDet = armarCco({...raw('SYN-T1'), modalidad: {error: 'not_installed'}}, geo, {now: new Date()});
   const noInst = armarCco(Object.fromEntries(Object.keys(raw('x')).map(k => [k, {error: 'not_installed'}])), null, {now: new Date()});
   const mk = cco => setup({data: {async cco() { return {status: 'ok', cco}; }, async report() { return {status: 'empty'}; }}});
-  const a = await direct(mk(solo), 'cco_modalidad_envio'); assert.equal(a.step.status, 'no_data'); assert.match(a.answer, /no tengo nada que comparar por modalidad/); assert.match(a.answer, /Estado: Falta dato\./); assert.match(a.answer, /Pedir a Responsable B/);
+  const a = await direct(mk(solo), 'cco_modalidad_envio'); assert.equal(a.step.status, 'no_data'); assert.match(a.answer, /no tengo nada que comparar por modalidad/); assert.match(a.answer, /Estado: Falta dato\./); assert.match(a.answer, /Pedir al responsable de datos del cliente/);
   const b = await direct(mk(sinDet), 'cco_modalidad_venta'); assert.equal(b.step.status, 'ok'); assert.match(b.answer, /todavía no está instalado/); assert.match(b.answer, /· Sin dato · Sin dato · Sin dato ·/);
   assert.equal((await direct(mk(sinDet), 'cco_modalidad_venta', {vista: 'sku'})).step.status, 'no_data');
   for (const t of CCO_TOOLS) { const c = await direct(mk(noInst), t.name); assert.equal(c.step.status, 'no_data', t.name); assert.match(c.answer, /todavía no están instalados/); }

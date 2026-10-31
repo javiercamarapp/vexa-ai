@@ -66,7 +66,7 @@ test('i18n: las claves que arma el código por familia existen (estado, tarjetas
   for(const c of SUBCANALES)assert.ok(ES[`cco.sub.${c}`]&&EN[`cco.sub.${c}`],c);
   for(const c of LATENCIAS)assert.ok(ES[`cco.lat.${c}`]&&EN[`cco.lat.${c}`],c);
   for(const c of HOJAS)assert.ok(ES[`cco.hoja.${c}`]&&EN[`cco.hoja.${c}`],c);
-  for(const [id,lista] of Object.entries(FALTAN))for(const x of lista){assert.ok(ES[`cco.falta.${x.clave}`]&&EN[`cco.falta.${x.clave}`],id+x.clave);assert.ok(['responsable_a','responsable_b'].includes(x.quien));assert.ok(ES[`cco.pedirA.${x.quien}`]);}
+  for(const [id,lista] of Object.entries(FALTAN))for(const x of lista){assert.ok(ES[`cco.falta.${x.clave}`]&&EN[`cco.falta.${x.clave}`],id+x.clave);assert.ok(['operaciones','datos'].includes(x.quien));assert.ok(ES[`cco.pedirA.${x.quien}`]);}
   const motor=leer('../../packages/workspace-service/cco.mjs');
   for(const m of motor.matchAll(/salvedades: \[([^\]]*)\]/g))for(const s of m[1].matchAll(/'(\w+)'/g))assert.ok(ES[`cco.salv.${s[1]}`]&&EN[`cco.salv.${s[1]}`],s[1]);
   for(const m of motor.matchAll(/clave: '(\w+)', conocido/g))assert.ok(ES[`cco.cob.${m[1]}`]&&EN[`cco.cob.${m[1]}`],m[1]);
@@ -74,7 +74,7 @@ test('i18n: las claves que arma el código por familia existen (estado, tarjetas
 test('los textos de «lo que falta» del agente (español) son idénticos a los de la interfaz',()=>{
   for(const [k,v] of Object.entries(FALTAN_ES))assert.equal(v,ES[`cco.falta.${k}`],k);
   assert.equal(Object.keys(FALTAN_ES).sort().join(),[...new Set(Object.values(FALTAN).flat().map(x=>x.clave))].sort().join(),'ningún dato sobra ni falta');
-  assert.ok(faltanTexto('F').every(x=>/Pedir a (Responsable A|Responsable B)\.$/.test(x)));
+  assert.ok(faltanTexto('F').every(x=>/Pedir al responsable de (operaciones|datos) del cliente\.$/.test(x)));
 });
 test('título de pestaña: meta.titulo.cco existe en ambos idiomas y se resuelve con el idioma activo',()=>{
   assert.equal(traducir('es','meta.titulo.cco' as never),'CCO');assert.equal(traducir('en','meta.titulo.cco' as never),'CCO');
@@ -103,7 +103,7 @@ const raw=()=>({
   sinVenta:ok([{sku_base:'SYN-OLD',first_sale_month:'2025-10-01',last_sale_month:'2026-05-01',months_without_sale:4,lines_last_3m:0,lines_last_6m:0,lines_last_9m:12,channels:['amazon'],skus_with_sales:40,reference_month:'2026-09-01',data_through:'2026-10-02'}]),
   defecto:ok([]),hoja:ok([]),subcanal:ok([cel('amazon_cumplido_por_piloto',null,15),cel('amazon_com',null,8),cel('walmart_cumplido_por_walmart',null,6),cel('lowes',null,9)]),
   modalidad:ok([{dim:'subcanal_tipo',d1:'amazon_cumplido_por_piloto',d2:'reembolso',n:7,es_otros:false},{dim:'subcanal_defecto',d1:'amazon_cumplido_por_piloto',d2:'defectuoso',n:5,es_otros:false},{dim:'sku_subcanal',d1:'SYN-A',d2:'amazon_cumplido_por_piloto',n:9,es_otros:false},{dim:'sku_subcanal',d1:'SYN-A',d2:'amazon_com',n:5,es_otros:false}]),
-  bodLat:ok([cel('BODEGAB-USTX','2_dias',9),cel(null,null,6,true)]),bodMot:ok([]),
+  bodLat:ok([cel('DEMO-N1','2_dias',9),cel(null,null,6,true)]),bodMot:ok([]),
   cob:ok([{rows_total:40,with_retailer:30,with_sku:30,with_warehouse:20,with_latency:9,with_address:10,sheets:3,cutoff:'2026-10-05T00:00:00Z'}]),
 });
 const geo=()=>({status:'ok',generatedAt:'2026-10-28T12:00:00.000Z',minimoPorCelda:5,cobertura:{filas:100,conDireccion:50,interpretables:45,pctInterpretablesDeDireccion:90,pais:{US:45,MX:0}},
@@ -119,14 +119,14 @@ test('marcado en español: insignias, sello, ventana, «Sin dato» donde no se s
   const v=vista();const c=v.cards,m=v.generatedAt;
   const html=[render('es',<TarjetaA card={c.A} minimo={5} consultado={m}/>),render('es',<TarjetaB card={c.B} minimo={5} consultado={m}/>),render('es',<TarjetaC card={c.C} minimo={5} consultado={m}/>),render('es',<TarjetaD card={c.D} minimo={5} consultado={m}/>),render('es',<TarjetaE card={c.E} minimo={5} consultado={m}/>),render('es',<TarjetaF card={c.F} minimo={5} consultado={m}/>)];
   const todo=html.join('\n');
-  for(const x of ['Con salvedad','Observado','Inferido','Libro económico','Tracker de Excel','Pedir a Responsable A','Pedir a Responsable B','Sin dato','ventana común','Menos de 5'])assert.ok(todo.includes(x),'falta «'+x+'»');
+  for(const x of ['Con salvedad','Observado','Inferido','Libro económico','Tracker de Excel','Pedir al responsable de operaciones del cliente','Pedir al responsable de datos del cliente','Sin dato','ventana común','Menos de 5'])assert.ok(todo.includes(x),'falta «'+x+'»');
   assert.doesNotMatch(todo,/NaN|undefined|\[object|cco\.[a-zA-Z]+\.|>null</,'sin valores crudos ni claves sin traducir');
   assert.doesNotMatch(todo,/ style=/,'sin atributos style en las tarjetas');
   assert.ok(!html[5].includes('Sin dato: no hay costo de envío'),'F con casos reales ya no dice que no hay nada');assert.ok(!/<td[^>]*>\s*0\s*<\/td>/.test(html[0]),'ningún desconocido pintado como 0');
 });
 test('marcado en inglés: sin claves ni español colado',()=>{
   const v=vista();const todo=[render('en',<TarjetaA card={v.cards.A} minimo={5} consultado={v.generatedAt}/>),render('en',<TarjetaF card={v.cards.F} minimo={5} consultado={v.generatedAt}/>),render('en',<TarjetaE card={v.cards.E} minimo={5} consultado={v.generatedAt}/>)].join('\n');
-  for(const x of ['With caveats','Ask Responsable A','Ask Responsable B','No data','common window'])assert.ok(todo.includes(x),'falta «'+x+'»');
+  for(const x of ['With caveats','Ask the client operations lead','Ask the client data lead','No data','common window'])assert.ok(todo.includes(x),'falta «'+x+'»');
   assert.doesNotMatch(todo,/Con salvedad|Falta dato|Pedir a|Sin dato|cco\./);
 });
 test('estados vacíos honestos: sin datos o sin migración no hay cifras, y se dice',()=>{
@@ -147,8 +147,8 @@ test('diseño: los componentes CCO no usan atributos style ni colores fijos; el 
 // ---- E y F: modalidad (T33) ----
 test('E y F en español: ejes, «La empresa» y «El marketplace», conteos ocultos como «Menos de 5», y nunca una recomendación ni un cero inventado',()=>{
   const v=vista();const e=render('es',<TarjetaE card={v.cards.E} minimo={5} consultado={v.generatedAt}/>),f=render('es',<TarjetaF card={v.cards.F} minimo={5} consultado={v.generatedAt}/>);
-  for(const x of ['Quién vende','Marketplace','La empresa','El marketplace','Vende la empresa','Vende el marketplace','Menos de 5','Pedir a Responsable B','Pedir a Responsable A','Con salvedad','Tracker de Excel','No se puede decir','SYN-A'])assert.ok(e.includes(x),'E falta «'+x+'»');
-  for(const x of ['Bodega de origen','Sale de la bodega de la empresa','Sale de la bodega del marketplace','Walmart no compra producto','Pedir a Responsable A'])assert.ok(f.includes(x),'F falta «'+x+'»');
+  for(const x of ['Quién vende','Marketplace','La empresa','El marketplace','Vende la empresa','Vende el marketplace','Menos de 5','Pedir al responsable de datos del cliente','Pedir al responsable de operaciones del cliente','Con salvedad','Tracker de Excel','No se puede decir','SYN-A'])assert.ok(e.includes(x),'E falta «'+x+'»');
+  for(const x of ['Bodega de origen','Sale de la bodega de la empresa','Sale de la bodega del marketplace','Walmart no compra producto','Pedir al responsable de operaciones del cliente'])assert.ok(f.includes(x),'F falta «'+x+'»');
   for(const html of [e,f]){
     assert.doesNotMatch(html,/NaN|undefined|\[object|cco\.[a-zA-Z]+\.|>null</);assert.doesNotMatch(html,/ style=/);
     assert.doesNotMatch(html,/\bSe recomienda\b|Recomendamos|\bConviene (vender|enviar)/,'ninguna recomendación sin venta ni costo');
@@ -168,7 +168,7 @@ test('E y F: sin el detalle instalado se avisa y los conteos de detalle son «Si
 });
 test('E y F en inglés: sin español colado ni claves sin traducir',()=>{
   const v=vista();const todo=[render('en',<TarjetaE card={v.cards.E} minimo={5} consultado={v.generatedAt}/>),render('en',<TarjetaF card={v.cards.F} minimo={5} consultado={v.generatedAt}/>)].join('\n');
-  for(const x of ['Who sells','Origin warehouse','The company','The marketplace','Fewer than 5','Ask Responsable B','Ask Responsable A','With caveats','Excel Tracker'])assert.ok(todo.includes(x),'falta «'+x+'»');
+  for(const x of ['Who sells','Origin warehouse','The company','The marketplace','Fewer than 5','Ask the client data lead','Ask the client operations lead','With caveats','Excel Tracker'])assert.ok(todo.includes(x),'falta «'+x+'»');
   assert.doesNotMatch(todo,/Quién vende|Bodega de origen|La empresa|Menos de|Pedir a|cco\.[a-zA-Z]+\./);
 });
 test('i18n de la modalidad: cada valor de cada eje, cada salvedad y cada dato que falta de E y F existe en ambos idiomas',()=>{

@@ -1,7 +1,7 @@
 // Seis herramientas de catálogo cerrado para las preguntas del CCO (A a F). Solo lectura de los agregados insight_cco_* a través del puerto de datos.
 // Sin SQL ni texto libre: todo argumento es enumerado o acotado (validateArgs). Se corren con reglas, sin modelo de lenguaje.
 // Reglas de verdad: ingreso bruto; lo desconocido no es cero; monedas sin sumar; tasas solo en la ventana común del canal; exposición inferida no es pérdida.
-import { faltanTexto, BODEGAS, LATENCIAS } from '../workspace-service/cco.mjs';
+import { faltanTexto, bodegasConocidas, LATENCIAS } from '../workspace-service/cco.mjs';
 
 const NOMBRE_CANAL = { amazon: 'Amazon', walmart: 'Walmart', bestbuy: 'Best Buy', shopify: 'Shopify' };
 const SUBCANAL_ES = { amazon_cumplido_por_piloto: 'Amazon cumplido por el cliente piloto', amazon_cumplido_por_amazon: 'Amazon cumplido por Amazon', amazon_com: 'Amazon.com', amazon_sin_subcanal: 'Amazon sin subcanal',
@@ -137,7 +137,7 @@ export function crearToolsCco(h) {
     },
     {
       name: 'eficiencia_bodegas', label: 'Revisando el despacho por bodega', roles: ['analyst', 'owner'], restricted: true,
-      parameters: { properties: { dimension: { type: 'string', enum: ['latencia', 'motivo'], default: 'latencia', description: 'Tiempo de despacho o motivo del caso.' }, bodega: { type: 'string', enum: [...BODEGAS], description: 'Una bodega del catálogo cargado.' } } },
+      parameters: { properties: { dimension: { type: 'string', enum: ['latencia', 'motivo'], default: 'latencia', description: 'Tiempo de despacho o motivo del caso.' }, bodega: { type: 'string', enum: bodegasConocidas(), description: 'Una bodega del catálogo cargado (configuración externa VEXA_CCO_CATALOGO, leída al iniciar). Las familias de sufijo libre no se enumeran: sin este argumento salen todas.' } } },
       description: 'Casos del Tracker por bodega: latencia de despacho de reposiciones de garantía y etiquetas de devolución, o motivo del caso. No hay transportista ni total de envíos.',
       reads: ['tracker_row_heads (WH, SLA Status, Contact_reason; k>=5)'],
       method: 'Cuenta filas del Tracker con bodega por clase de tiempo hasta que salió el rastreo; celdas con menos de 5 casos se ocultan. Es despacho, no entrega, y no hay denominador de envíos.', source: SRC.ccoTracker,

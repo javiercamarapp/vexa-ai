@@ -1,4 +1,5 @@
 // Las seis herramientas del CCO: catálogo cerrado, argumentos enumerados, solo analista y propietario, cifras con clase y cobertura, E y F por modalidad sin recomendar jamás, sin SQL ni texto libre.
+import '../../workspace-service/tests/cco-catalogo-env.mjs'; // catálogo de bodegas SINTÉTICO: debe cargarse antes que el catálogo de herramientas
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { TOOLS, TOOL_INDEX, executeTool, catalogForModel, toolsForRole, validateArgs, toJsonSchema, contractViolations, planByRules, SYNTHETIC_TENANTS, assertPort, PORT_METHODS, buildSuggestions, DEMO_QUESTIONS } from '../index.mjs';
@@ -53,14 +54,14 @@ test('A: Walmart usa su propia ventana común y no mezcla canales', async () => 
 test('B: SKU sin venta es siempre Inferido y dice que no hay inventario', async () => {
   const r = await run('candidatos_sin_venta', { meses_sin_venta: '3', top: 10 });
   assert.equal(r.status, 'ok'); assert.ok(r.figures.every((f) => f.class === 'inferred')); assert.equal(r.blocks[0].class, 'inferred'); assert.match(r.summary, /señal inferida/); assert.match(r.blocks[0].note, /No es una lista de descontinuados confirmados/);
-  assert.ok(r.missing.some((m) => /Existencias/.test(m)) && r.missing.some((m) => /Pedir a Responsable A/.test(m)));
+  assert.ok(r.missing.some((m) => /Existencias/.test(m)) && r.missing.some((m) => /Pedir al responsable de operaciones del cliente/.test(m)));
   const nueve = await run('candidatos_sin_venta', { meses_sin_venta: '9' }); assert.equal(nueve.status, 'ok'); assert.match(nueve.summary, /0 de/);
 });
 test('C: bodegas muestra latencia de despacho, oculta celdas pequeñas y no inventa transportista ni tasas', async () => {
   const r = await run('eficiencia_bodegas'); assert.equal(r.status, 'ok'); assert.match(r.blocks[0].note, /no tiempo de entrega/); assert.match(r.summary, /no puedo decir qué transportista/);
   assert.ok(r.missing.some((m) => /Transportista/.test(m)));
-  const una = await run('eficiencia_bodegas', { bodega: 'Bodegac', dimension: 'motivo' }); assert.equal(una.blocks?.[0]?.rows.length ?? 0, una.status === 'ok' ? 1 : 0);
-  const ninguna = await run('eficiencia_bodegas', { bodega: 'Bodegae Canada' }); assert.equal(ninguna.status, 'no_data');
+  const una = await run('eficiencia_bodegas', { bodega: 'Bodega Beta', dimension: 'motivo' }); assert.equal(una.blocks?.[0]?.rows.length ?? 0, una.status === 'ok' ? 1 : 0);
+  const ninguna = await run('eficiencia_bodegas', { bodega: 'Bodega Delta' }); assert.equal(ninguna.status, 'no_data');
 });
 test('D: casos por estado con cobertura de direcciones, mínimo de 5 y sin volumen por destino', async () => {
   const r = await run('casos_por_estado', { pais: 'US' }); assert.equal(r.status, 'ok'); assert.match(r.summary, /no hay volumen ni venta por estado/);
@@ -71,7 +72,7 @@ test('D: casos por estado con cobertura de direcciones, mínimo de 5 y sin volum
 test('E: modalidad de venta (quién vende) con aviso de sesgo; no decide qué vender', async () => {
   const r = await run('casos_por_subcanal', { retailer: 'amazon' }); assert.equal(r.status, 'ok');
   assert.ok(r.blocks[0].rows.every((x) => /Amazon/.test(x.subcanal))); assert.match(r.blocks[0].note, /Sesgo/); assert.match(r.summary, /no puedo decir qué SKU conviene vender/);
-  assert.ok(r.missing.some((m) => /Retailer/.test(m)) && r.missing.some((m) => /Pedir a Responsable A/.test(m)));
+  assert.ok(r.missing.some((m) => /Retailer/.test(m)) && r.missing.some((m) => /Pedir al responsable de operaciones del cliente/.test(m)));
   assert.deepEqual(r.blocks[0].columns.map((c) => c.key), ['subcanal', 'quien', 'marketplace', 'casos', 'reembolsos', 'garantias', 'defectos', 'despacho3']);
   const piloto = r.blocks[0].rows.find((x) => /cliente piloto/.test(x.subcanal)); assert.equal(piloto.quien, 'La empresa'); assert.equal(piloto.marketplace, 'Amazon'); assert.equal(piloto.casos, 485);
   const com = r.blocks[0].rows.find((x) => x.subcanal === 'Amazon.com'); assert.equal(com.quien, 'El marketplace');
@@ -94,7 +95,7 @@ test('F: modalidad de envío (de qué bodega sale) con la misma evidencia; ya no
     assert.ok(r.notes.some((n) => /Walmart no compra producto/.test(n))); assert.doesNotMatch(ALL_TEXT(r), /te recomiendo|la mejor (opción|modalidad)/i);
   }
   const sku = await run('envio_propio_vs_amazon', { vista: 'sku' }); assert.deepEqual(sku.blocks[0].columns.map((c) => c.key), ['sku', 'g_empresa', 'g_marketplace']); assert.match(sku.blocks[0].columns[1].label, /bodega de la empresa/);
-  assert.ok(FALTAN.F.every((x) => ['responsable_a', 'responsable_b'].includes(x.quien)));
+  assert.ok(FALTAN.F.every((x) => ['operaciones', 'datos'].includes(x.quien)));
   const a = await ask('¿Qué SKU conviene enviar desde medios propios y cuáles con el cumplimiento de Amazon?'); assert.equal(a.status, 'ok'); assert.match(a.text, /no puedo decir desde dónde conviene enviar/); assert.ok(a.missing.length >= 4);
   assert.deepEqual(contractViolations(a), []); assert.equal(a.usage.mode, 'deterministic'); assert.equal(a.usage.costMinor, '0');
 });

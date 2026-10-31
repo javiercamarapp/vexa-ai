@@ -72,7 +72,7 @@ const raw = (extra = {}) => ({
     dm('subcanal_tipo', 'amazon_cumplido_por_piloto', 'reembolso', 14), dm('subcanal_tipo', 'amazon_cumplido_por_piloto', 'garantia', 22), dm('subcanal_tipo', 'amazon_com', 'reembolso', 6), dm('subcanal_tipo', 'walmart_cumplido_por_piloto', 'garantia', 18),
     dm('subcanal_defecto', 'amazon_cumplido_por_piloto', 'defectuoso', 9), dm('subcanal_defecto', 'amazon_cumplido_por_piloto', 'danado', 5),
     dm('subcanal_despacho', 'amazon_cumplido_por_piloto', '2_dias', 8), dm('subcanal_despacho', 'amazon_cumplido_por_piloto', '3_o_mas_dias', 6), dm('subcanal_despacho', 'amazon_cumplido_por_piloto', 'sin_dato', 5),
-    dm('subcanal_bodega', 'amazon_cumplido_por_piloto', 'BODEGAB-USTX', 12), dm('subcanal_bodega', 'amazon_cumplido_por_piloto', 'BODEGAA USA Inc', 7),
+    dm('subcanal_bodega', 'amazon_cumplido_por_piloto', 'DEMO-N1', 12), dm('subcanal_bodega', 'amazon_cumplido_por_piloto', 'Bodega Alfa', 7),
     dm('sku_subcanal', 'SYN-1', 'amazon_cumplido_por_piloto', 18), dm('sku_subcanal', 'SYN-1', 'amazon_com', 8), dm('sku_subcanal', 'SYN-1', 'amazon_cumplido_por_amazon', 5), dm('sku_subcanal', 'SYN-2', 'walmart_cumplido_por_piloto', 12), dm('sku_subcanal', 'SYN-3', 'amazon_nuevo_futuro', 6),
     dm('sku_subcanal_tipo', 'SYN-1', 'amazon_cumplido_por_piloto|reembolso', 7), dm('sku_subcanal_tipo', 'SYN-1', 'amazon_com|reembolso', 5),
     dm('sku_subcanal_defecto', 'SYN-1', 'amazon_cumplido_por_piloto|defectuoso', 6)]),
@@ -86,7 +86,7 @@ test('E: quién vende. Con casos reales queda «Con salvedad»; solo cuenta Amaz
   const ap = c.subcanales[0];
   assert.deepEqual([ap.vende, ap.bodega, ap.marketplace, ap.casos, ap.reembolsos, ap.garantias, ap.defectos], ['empresa', 'empresa', 'amazon', 40, 14, 22, 14]);
   assert.deepEqual(ap.despacho, {legibles: 14, tresODias: 6}, 'sin_dato no cuenta como tiempo legible');
-  assert.deepEqual(ap.bodegas, [{bodega: 'BODEGAB-USTX', n: 12}, {bodega: 'BODEGAA USA Inc', n: 7}]);
+  assert.deepEqual(ap.bodegas, [{bodega: 'DEMO-N1', n: 12}, {bodega: 'Bodega Alfa', n: 7}]);
   const wp = c.subcanales.find((x) => x.subcanal === 'walmart_cumplido_por_piloto'); assert.equal(wp.reembolsos, null, 'sin celda visible: null («Menos de 5»), jamás 0'); assert.equal(wp.defectos, null); assert.equal(wp.despacho.legibles, null);
   assert.deepEqual(c.ejes, [{valor: 'empresa', casos: 40 + 12 + 9 + 30 + 6}, {valor: 'marketplace', casos: 20}, {valor: SIN_DATO, casos: 7}]);
   assert.equal(c.subcanales.find((x) => x.subcanal === 'amazon_nuevo_futuro').conocida, false);
@@ -110,11 +110,11 @@ test('honestidad: nunca hay recomendación; E y F dicen qué falta para decidir 
     assert.equal(c.puedeRecomendar, false);
     for (const s of ['sesgoCasos', 'sinDenominadorVentas', 'sinRecomendacion', 'sinTiempoResolucion', 'modalidadSinDato', 'celdasMinimo', 'sumaMinimo']) assert.ok(c.salvedades.includes(s), `${c.id} ${s}`);
     for (const k of ['ventaPorModalidad', 'costoCumplimiento', 'cumplimientoPedido', 'tiempoResolucion', 'propiedadRetailer']) assert.ok(c.faltan.some((x) => x.clave === k), `${c.id} falta ${k}`);
-    assert.ok(c.faltan.every((x) => ['responsable_a', 'responsable_b'].includes(x.quien)));
-    assert.deepEqual(c.faltanTextos.length, c.faltan.length); assert.ok(c.faltanTextos.every((x) => /Pedir a (Responsable A|Responsable B)\.$/.test(x)));
+    assert.ok(c.faltan.every((x) => ['operaciones', 'datos'].includes(x.quien)));
+    assert.deepEqual(c.faltanTextos.length, c.faltan.length); assert.ok(c.faltanTextos.every((x) => /Pedir al responsable de (operaciones|datos) del cliente\.$/.test(x)));
     assert.doesNotMatch(JSON.stringify(c), /conviene|recomend[oa]r?:|mejor modalidad/i, 'la tarjeta no trae ninguna recomendación en datos');
   }
-  assert.ok(tarjetaE(raw()).faltan.some((x) => x.clave === 'costoSku' && x.quien === 'responsable_a') && tarjetaE(raw()).faltan.some((x) => x.clave === 'proveedorDirecto'));
+  assert.ok(tarjetaE(raw()).faltan.some((x) => x.clave === 'costoSku' && x.quien === 'operaciones') && tarjetaE(raw()).faltan.some((x) => x.clave === 'proveedorDirecto'));
   assert.ok(tarjetaF(raw()).faltan.some((x) => x.clave === 'facturasTransportista') && tarjetaF(raw()).salvedades.includes('walmartSoloBodega'));
   for (const id of ['E', 'F']) for (const x of FALTAN[id]) assert.ok(FALTAN_ES[x.clave], x.clave);
 });

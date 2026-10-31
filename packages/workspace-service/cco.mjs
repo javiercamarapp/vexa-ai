@@ -11,7 +11,6 @@ export const CCO_BUDGET_MS = Object.freeze({total: 14000, geo: 12000});
 export const CANALES = Object.freeze(['amazon', 'walmart', 'bestbuy', 'shopify']);
 export const SUBCANALES = Object.freeze(['amazon_cumplido_por_piloto', 'amazon_cumplido_por_amazon', 'amazon_com', 'amazon_sin_subcanal', 'walmart_cumplido_por_piloto', 'walmart_cumplido_por_walmart', 'walmart_sin_subcanal',
   'bestbuy', 'tienda', 'lowes', 'homedepot', 'pendiente', 'otro', 'sin_retailer']);
-export const BODEGAS = Object.freeze(['BODEGAA USA Inc', 'BODEGAB-USTX', 'BODEGAB-USGA', 'BODEGAB-USWC5', 'BODEGAB-USNJ2', 'Bodegac', 'Bodegad', 'Bodegae Canada', 'otra']);
 export const LATENCIAS = Object.freeze(['menos_de_1_dia', '1_dia', '2_dias', '3_o_mas_dias', 'sin_dato']);
 export const DEFECTOS = Object.freeze(['defectuoso', 'danado', 'faltan_piezas', 'articulo_equivocado']);
 export const HOJAS = Object.freeze(['garantia', 'reembolso', 'etiqueta_devolucion', 'lista_espera', 'otro']);
@@ -38,15 +37,49 @@ export function subcanalDe(raw, prefijo = prefijoPropio()) {
 }
 /** Retailer base de un subcanal (para comparar con retailerDe: «pendiente» equivale a «otro» ahí). */
 export const baseDeSubcanal = (c) => (c.startsWith('amazon') ? 'amazon' : c.startsWith('walmart') ? 'walmart' : c === 'sin_retailer' ? null : c === 'pendiente' ? 'otro' : c);
-export function bodegaDe(raw) {
+// ---- catálogo de bodegas: configuración externa (nunca en el repo) ----
+// Los nombres reales de las bodegas del cliente NO viven aquí. Se cargan de VEXA_CCO_CATALOGO, un JSON {"bodegas": [{"prefijo", "etiqueta", "sufijoLibre"}]}:
+//   prefijo      texto con el que empieza el valor de la columna de bodega (se compara en mayúsculas, sin distinguir mayúsculas de minúsculas); ASCII A-Z 0-9 espacio _ . -, de 2 a 40 caracteres.
+//   etiqueta     nombre con el que se muestra la bodega (hasta 60 caracteres). Obligatoria salvo con sufijoLibre.
+//   sufijoLibre  true = la bodega conserva el valor completo del Tracker sin espacios (p. ej. una familia de bodegas «PREFIJO-XXXX» donde cada sufijo es una bodega distinta); no lleva etiqueta.
+// Gana la primera entrada que coincide. Una entrada inválida se ignora entera; JSON roto o sin la variable = catálogo vacío. Con catálogo vacío todo valor distinto de vacío sale «otra»: jamás se asigna en silencio.
+export const BODEGA_OTRA = 'otra';
+const MAX_BODEGAS = 50;
+const PREFIJO_OK = /^[A-Z0-9 _.\-]{2,40}$/;
+const ETIQUETA_OK = /^[^\u0000-\u001f\u007f]{1,60}$/u;
+let cacheCatalogo = {crudo: undefined, valor: Object.freeze([])};
+/** Catálogo vigente (lista inmutable de {prefijo, etiqueta, sufijoLibre}). Se relee de VEXA_CCO_CATALOGO en cada llamada (las pruebas lo fijan antes de usarlo); el análisis se reutiliza mientras el texto no cambie. */
+export function catalogoBodegas(env = globalThis.process?.env) {
+  const crudo = env?.VEXA_CCO_CATALOGO;
+  if (crudo === cacheCatalogo.crudo) return cacheCatalogo.valor;
+  const lista = [];
+  let j = null;
+  if (typeof crudo === 'string' && crudo.trim()) { try { j = JSON.parse(crudo); } catch { j = null; } }
+  const entradas = j && typeof j === 'object' && !Array.isArray(j) && Array.isArray(j.bodegas) ? j.bodegas.slice(0, MAX_BODEGAS * 2) : [];
+  for (const e of entradas) {
+    if (lista.length >= MAX_BODEGAS) break;
+    if (!e || typeof e !== 'object' || Array.isArray(e) || typeof e.prefijo !== 'string') continue;
+    const prefijo = e.prefijo.trim().toUpperCase();
+    if (!PREFIJO_OK.test(prefijo) || lista.some((x) => x.prefijo === prefijo)) continue;
+    const sufijoLibre = e.sufijoLibre === true;
+    if (e.sufijoLibre !== undefined && typeof e.sufijoLibre !== 'boolean') continue;
+    let etiqueta = null;
+    if (!sufijoLibre) { if (typeof e.etiqueta !== 'string' || !ETIQUETA_OK.test(e.etiqueta.trim()) || !e.etiqueta.trim() || e.etiqueta.trim().toLowerCase() === BODEGA_OTRA) continue; etiqueta = e.etiqueta.trim(); }
+    lista.push(Object.freeze({prefijo, etiqueta, sufijoLibre}));
+  }
+  cacheCatalogo = {crudo, valor: Object.freeze(lista)};
+  return cacheCatalogo.valor;
+}
+/** Catálogo ya validado, en la forma compacta que leen las funciones SQL por sesión (vexa.cco_catalogo_bodegas): [{"p": prefijo, "e": etiqueta|null, "l": sufijoLibre}]. «[]» si está vacío. */
+export const catalogoBodegasJson = (env = globalThis.process?.env) => JSON.stringify(catalogoBodegas(env).map((b) => ({p: b.prefijo, e: b.etiqueta, l: b.sufijoLibre})));
+/** Etiquetas cerradas que puede devolver bodegaDe con el catálogo vigente (más «otra»). Las entradas de sufijo libre no se enumeran: su valor sale del Tracker. */
+export const bodegasConocidas = (env = globalThis.process?.env) => [...catalogoBodegas(env).filter((b) => !b.sufijoLibre).map((b) => b.etiqueta), BODEGA_OTRA];
+/** Bodega de la columna WH/Warehouse del Tracker: null si está vacía, la etiqueta del catálogo si coincide, «otra» si no (sin catálogo, siempre «otra»). */
+export function bodegaDe(raw, catalogo = catalogoBodegas()) {
   const w = String(raw ?? '').trim().toUpperCase();
   if (!w) return null;
-  if (w.startsWith('BODEGAB-')) return w.replace(/\s+/g, '');
-  if (w.startsWith('BODEGAA')) return 'BODEGAA USA Inc';
-  if (w.startsWith('BODEGAC')) return 'Bodegac';
-  if (w.startsWith('BODEGAD')) return 'Bodegad';
-  if (w.startsWith('BODEGAE')) return 'Bodegae Canada';
-  return 'otra';
+  for (const b of catalogo) if (w.startsWith(b.prefijo)) return b.sufijoLibre ? w.replace(/\s+/g, '') : b.etiqueta;
+  return BODEGA_OTRA;
 }
 /** Latencia de DESPACHO (cuánto tardó en salir el rastreo) desde el texto de «SLA Status». Sin número legible = sin_dato (nunca cero). */
 export function latenciaDe(raw, bodega = 'x') {
@@ -113,14 +146,14 @@ export function modalidadDeSubcanal(sub, tabla = tablaModalidades()) {
 export const modalidadDe = (raw, prefijo = prefijoPropio(), tabla = tablaModalidades()) => modalidadDeSubcanal(subcanalDe(raw, prefijo), tabla);
 const esMarketplaceSub = (c) => typeof c === 'string' && (c.startsWith('amazon') || c.startsWith('walmart'));
 
-// ---- lo que falta, con a quién pedirlo (Responsable A = director de cliente; Responsable B = reportes y exportaciones) ----
+// ---- lo que falta, con a quién pedirlo (operaciones = responsable de operaciones del cliente; datos = responsable de datos del cliente: reportes y exportaciones). Roles, nunca nombres de personas. ----
 export const FALTAN = Object.freeze({
-  A: [{clave: 'unidades', quien: 'responsable_b'}, {clave: 'resenas', quien: 'responsable_b'}, {clave: 'skuBestBuyShopify', quien: 'responsable_b'}],
-  B: [{clave: 'inventario', quien: 'responsable_a'}, {clave: 'estadoProducto', quien: 'responsable_a'}, {clave: 'recurrencia', quien: 'responsable_a'}],
-  C: [{clave: 'transportista', quien: 'responsable_b'}, {clave: 'entregaFecha', quien: 'responsable_b'}, {clave: 'denominadorEnvios', quien: 'responsable_b'}, {clave: 'vinculoQuejaEnvio', quien: 'responsable_a'}],
-  D: [{clave: 'destinoPedido', quien: 'responsable_b'}, {clave: 'bodegaEstado', quien: 'responsable_a'}],
-  E: [{clave: 'propiedadRetailer', quien: 'responsable_a'}, {clave: 'ventaPorModalidad', quien: 'responsable_b'}, {clave: 'cumplimientoPedido', quien: 'responsable_b'}, {clave: 'proveedorDirecto', quien: 'responsable_a'}, {clave: 'tarifasAmazon', quien: 'responsable_a'}, {clave: 'costoCumplimiento', quien: 'responsable_a'}, {clave: 'costoSku', quien: 'responsable_a'}, {clave: 'tiempoResolucion', quien: 'responsable_b'}],
-  F: [{clave: 'propiedadRetailer', quien: 'responsable_a'}, {clave: 'ventaPorModalidad', quien: 'responsable_b'}, {clave: 'cumplimientoPedido', quien: 'responsable_b'}, {clave: 'facturasTransportista', quien: 'responsable_a'}, {clave: 'costoCumplimiento', quien: 'responsable_a'}, {clave: 'tarifasAmazon', quien: 'responsable_a'}, {clave: 'bodegaOrigen', quien: 'responsable_b'}, {clave: 'tiempoResolucion', quien: 'responsable_b'}],
+  A: [{clave: 'unidades', quien: 'datos'}, {clave: 'resenas', quien: 'datos'}, {clave: 'skuBestBuyShopify', quien: 'datos'}],
+  B: [{clave: 'inventario', quien: 'operaciones'}, {clave: 'estadoProducto', quien: 'operaciones'}, {clave: 'recurrencia', quien: 'operaciones'}],
+  C: [{clave: 'transportista', quien: 'datos'}, {clave: 'entregaFecha', quien: 'datos'}, {clave: 'denominadorEnvios', quien: 'datos'}, {clave: 'vinculoQuejaEnvio', quien: 'operaciones'}],
+  D: [{clave: 'destinoPedido', quien: 'datos'}, {clave: 'bodegaEstado', quien: 'operaciones'}],
+  E: [{clave: 'propiedadRetailer', quien: 'operaciones'}, {clave: 'ventaPorModalidad', quien: 'datos'}, {clave: 'cumplimientoPedido', quien: 'datos'}, {clave: 'proveedorDirecto', quien: 'operaciones'}, {clave: 'tarifasAmazon', quien: 'operaciones'}, {clave: 'costoCumplimiento', quien: 'operaciones'}, {clave: 'costoSku', quien: 'operaciones'}, {clave: 'tiempoResolucion', quien: 'datos'}],
+  F: [{clave: 'propiedadRetailer', quien: 'operaciones'}, {clave: 'ventaPorModalidad', quien: 'datos'}, {clave: 'cumplimientoPedido', quien: 'datos'}, {clave: 'facturasTransportista', quien: 'operaciones'}, {clave: 'costoCumplimiento', quien: 'operaciones'}, {clave: 'tarifasAmazon', quien: 'operaciones'}, {clave: 'bodegaOrigen', quien: 'datos'}, {clave: 'tiempoResolucion', quien: 'datos'}],
 });
 /** Mismos textos que `cco.falta.*` en español de la interfaz (una prueba verifica que no se desalinean). El agente responde en español. */
 export const FALTAN_ES = Object.freeze({
@@ -133,9 +166,9 @@ export const FALTAN_ES = Object.freeze({
   ventaPorModalidad: 'Venta por SKU y por modalidad: pedidos de Amazon y Walmart con quién vende y de qué bodega sale.', costoCumplimiento: 'Costo de cumplimiento por unidad: tarifas del marketplace y costo de operar la bodega propia.',
   costoSku: 'Costo por SKU, para poder calcular el margen de cada modalidad.', tiempoResolucion: 'Fechas de creación y de cierre de cada ticket, para medir el tiempo de resolución por modalidad.',
 });
-export const QUIEN_ES = Object.freeze({responsable_a: 'Responsable A', responsable_b: 'Responsable B'});
-/** «Texto. Pedir a Responsable A.» para cada dato que falta de una pregunta. */
-export const faltanTexto = (id) => FALTAN[id].map((x) => `${FALTAN_ES[x.clave]} Pedir a ${QUIEN_ES[x.quien]}.`);
+export const QUIEN_ES = Object.freeze({operaciones: 'al responsable de operaciones del cliente', datos: 'al responsable de datos del cliente'});
+/** «Texto. Pedir al responsable de operaciones del cliente.» para cada dato que falta de una pregunta. */
+export const faltanTexto = (id) => FALTAN[id].map((x) => `${FALTAN_ES[x.clave]} Pedir ${QUIEN_ES[x.quien]}.`);
 export const faltanDe = (id) => FALTAN[id].map((x) => ({...x}));
 /** Lo que falta de una pregunta, en datos (claves y a quién) y en texto español listo para el agente; mismo contenido, una sola fuente. */
 const faltanBase = (id) => ({faltan: faltanDe(id), faltanTextos: faltanTexto(id)});
@@ -168,6 +201,8 @@ const celda = (r) => ({d1: r.d1, d2: r.d2, n: Number(r.n), otros: Boolean(r.es_o
 export async function leerAgregadosCco(s, {deadline}) {
   // El prefijo del cliente piloto llega a las funciones SQL por la configuración de sesión (local a la transacción); vacío = nada es propio.
   await s.query("SELECT set_config('vexa.tienda_propia_prefijo',$1,true)", [prefijoPropio()]);
+  // Ídem el catálogo de bodegas (VEXA_CCO_CATALOGO, ya validado): sin él, toda bodega con valor sale «otra».
+  await s.query("SELECT set_config('vexa.cco_catalogo_bodegas',$1,true)", [catalogoBodegasJson()]);
   const q = (name, sql, params) => leer(s, deadline, name, sql, params);
   const [ventanas, skuCanal, sinVenta, defecto, hoja, subcanal, bodLat, bodMot, cob, modalidad] = [
     await q('cco_v', 'SELECT * FROM public.insight_cco_ventanas()'),

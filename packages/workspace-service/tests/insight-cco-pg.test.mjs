@@ -15,11 +15,15 @@ import {retailerDe} from '../fuga-reembolsos.mjs';
 import {baseDeSubcanal, armarCco, createCcoRepository, modalidadDeSubcanal} from '../cco.mjs';
 import {crearBaseDatos} from '../../ai-scale/economia-problemas/snapshot.mjs';
 import {createRequire} from 'node:module';
+import {usarCatalogoSintetico} from './cco-catalogo-sintetico.mjs';
+import {catalogoBodegasJson} from '../cco.mjs';
 
 // Prefijo SINTÉTICO del retailer propio: en producción sale de VEXA_TIENDA_PROPIA_PREFIJO (fuera del repo). El JS lo lee del entorno y el SQL de la sesión.
 let UC_PARIDAD = null; // organización del ensayo de paridad (la usa la prueba de prefijo vacío)
 const PREFIJO = 'tienda-piloto';
 process.env.VEXA_TIENDA_PROPIA_PREFIJO = PREFIJO;
+// Catálogo SINTÉTICO de bodegas: en producción sale de VEXA_CCO_CATALOGO (fuera del repo). El JS lo lee del entorno y el SQL de la sesión (vexa.cco_catalogo_bodegas).
+usarCatalogoSintetico();
 
 const SKIP = !pgAvailable() && 'sin postgres local';
 const MIG = (f) => path.join(HERE, '../../../supabase/migrations', f);
@@ -75,14 +79,14 @@ function sembrarLibro(h, tenant, actor, libro, fuentes, tag) {
 const R = (n, v) => Array.from({length: n}, () => ({...v}));
 const HOJAS_A = {
   'Warranty Parts': {cols: ['Retailer', 'Part SKU', 'Contact_reason', 'Subreason', 'WH', 'SLA Status', 'Customer_address'], filas: [
-    ...R(6, {Retailer: 'Amazon :: fulfilled by Tienda-Piloto', 'Part SKU': 'ps-1-WM2', Contact_reason: 'Defective', WH: 'BODEGAB-USTX', 'SLA Status': 'tracking enviado después de 2 días', Customer_address: 'x'}),
-    ...R(3, {Retailer: 'Walmart :: fulfilled by Walmart', 'Part SKU': 'PS-2', Contact_reason: 'Defective', WH: 'Bodegacc', 'SLA Status': ''}),
-    ...R(2, {Retailer: 'Amazon :: Amazon.com', 'Part SKU': 'PS-3', Contact_reason: 'Warranty', Subreason: 'Damaged', WH: 'BODEGAB-USTX', 'SLA Status': '5 hours'}),
-    {Retailer: 'Pending', 'Part SKU': 'PENDING', Contact_reason: 'Warranty', WH: 'Bodegae Canada', 'SLA Status': 'tracking enviado después de 1 día'}]},
+    ...R(6, {Retailer: 'Amazon :: fulfilled by Tienda-Piloto', 'Part SKU': 'ps-1-WM2', Contact_reason: 'Defective', WH: 'DEMO-N1', 'SLA Status': 'tracking enviado después de 2 días', Customer_address: 'x'}),
+    ...R(3, {Retailer: 'Walmart :: fulfilled by Walmart', 'Part SKU': 'PS-2', Contact_reason: 'Defective', WH: 'Betta', 'SLA Status': ''}),
+    ...R(2, {Retailer: 'Amazon :: Amazon.com', 'Part SKU': 'PS-3', Contact_reason: 'Warranty', Subreason: 'Damaged', WH: 'DEMO-N1', 'SLA Status': '5 hours'}),
+    {Retailer: 'Pending', 'Part SKU': 'PENDING', Contact_reason: 'Warranty', WH: 'Delta Canada', 'SLA Status': 'tracking enviado después de 1 día'}]},
   'Warranty Tools': {cols: ['Retailer', 'Tool SKU', 'Contact_reason', 'WH', 'SLA Status'], filas: [
-    ...R(4, {Retailer: 'Amazon :: fulfilled by Tienda-Piloto', 'Tool SKU': 'PS-3', Contact_reason: 'Defective', WH: 'BODEGAB-USGA', 'SLA Status': '3 days'}),
-    {Retailer: 'Lowes', 'Tool SKU': 'PS-3', Contact_reason: 'Defective', WH: 'Bodegac'}]},
-  WPR: {cols: ['Retailer', 'Part SKU', 'Contact_reason', 'WH', 'SLA Status'], filas: R(20, {Retailer: 'Amazon :: fulfilled by Tienda-Piloto', 'Part SKU': 'ps-1', Contact_reason: 'Defective', WH: 'BODEGAB-USTX', 'SLA Status': '2 days'})},
+    ...R(4, {Retailer: 'Amazon :: fulfilled by Tienda-Piloto', 'Tool SKU': 'PS-3', Contact_reason: 'Defective', WH: 'DEMO-N2', 'SLA Status': '3 days'}),
+    {Retailer: 'Lowes', 'Tool SKU': 'PS-3', Contact_reason: 'Defective', WH: 'Beta Sur'}]},
+  WPR: {cols: ['Retailer', 'Part SKU', 'Contact_reason', 'WH', 'SLA Status'], filas: R(20, {Retailer: 'Amazon :: fulfilled by Tienda-Piloto', 'Part SKU': 'ps-1', Contact_reason: 'Defective', WH: 'DEMO-N1', 'SLA Status': '2 days'})},
   'Return Labels': {cols: ['Retailer', 'Part SKU', 'Customer_address'], filas: [
     ...R(7, {Retailer: 'Walmart :: fulfilled by Tienda-Piloto', 'Part SKU': 'PS-4', Customer_address: '1 Main St, Austin, TX 78701'}),
     ...R(2, {Retailer: 'Walmart :: fulfilled by Tienda-Piloto', 'Part SKU': 'PS-4', Customer_address: 'Calle 5, Guadalajara, Jalisco, México'}), {Retailer: 'Walmart :: fulfilled by Tienda-Piloto', 'Part SKU': 'PS-4', Customer_address: 'dirección ilegible'}]},
@@ -114,8 +118,8 @@ function sembrarTracker(h, tenant, conn, hojas, {v1Override = null, tag}) {
 }
 
 // ---- cliente SQL bajo el rol y la sesión reales de la aplicación ----
-function asBackend(h, user, tenant, sql, action = 'read', prefijo = PREFIJO) {
-  const input = `set role vexa_backend;\nselect set_config('vexa.tienda_propia_prefijo','${prefijo}',false) \\gset\nselect set_config('request.jwt.claim.sub','${user}',false) \\gset\nselect set_config('vexa.tenant_id','${tenant}',false) \\gset\nselect set_config('vexa.action','${action}',false) \\gset\n${sql}`;
+function asBackend(h, user, tenant, sql, action = 'read', prefijo = PREFIJO, catalogo = catalogoBodegasJson()) {
+  const input = `set role vexa_backend;\nselect set_config('vexa.tienda_propia_prefijo','${prefijo}',false) \\gset\nselect set_config('vexa.cco_catalogo_bodegas','${catalogo.replace(/'/g, "''")}',false) \\gset\nselect set_config('request.jwt.claim.sub','${user}',false) \\gset\nselect set_config('vexa.tenant_id','${tenant}',false) \\gset\nselect set_config('vexa.action','${action}',false) \\gset\n${sql}`;
   const r = spawnSync('psql', ['-h', h.sock, '-U', 'postgres', '-d', 't', '-At', '-q', '-v', 'ON_ERROR_STOP=1', '-f', '-'], {input, encoding: 'utf8'});
   return {ok: r.status === 0, out: r.stdout.trim(), err: r.stderr.trim()};
 }
@@ -157,6 +161,8 @@ test('insight_cco_*: aislamiento, k>=5, NULL no cero, sumas y ventana común', {
       assert.equal(r.ok, false); assert.match(r.err, /insight_cco_modalidad_casos/);
     });
     const mm = h.file(MIG('20261207000000_insight_cco_modalidad.sql')); assert.equal(mm.status, 0, String(mm.stderr).slice(0, 600));
+    const mc = h.file(MIG('20261208000000_insight_cco_catalogo_bodegas.sql')); assert.equal(mc.status, 0, String(mc.stderr).slice(0, 600));
+    assert.equal(h.file(MIG('20261208000000_insight_cco_catalogo_bodegas.sql')).status, 0, 'catálogo de bodegas: idempotente');
     assert.equal(h.file(MIG('20261207000000_insight_cco_modalidad.sql')).status, 0, 'modalidad: idempotente');
 
     await t.test('ventana común: meses completos dentro de las ventanas declaradas; Best Buy sin devoluciones', () => {
@@ -278,7 +284,7 @@ test('insight_cco_*: aislamiento, k>=5, NULL no cero, sumas y ventana común', {
       const lat = rows(h, OWNER.A, TENANT_A, "public.insight_cco_bodega('latencia',5)"); const conB = filas.filter((x) => bodegaDe(x.o.WH));
       const exp = cuenta(conB, (x) => bodegaDe(x.o.WH) + '|' + latenciaDe(x.o['SLA Status'], bodegaDe(x.o.WH)));
       assert.deepEqual(Object.fromEntries(lat.filter((x) => !x.es_otros).map((x) => [x.d1 + '|' + x.d2, Number(x.n)])), plegar(exp).vis);
-      assert.equal(exp['BODEGAB-USTX|2_dias'], 6); assert.equal(exp['Bodegac|sin_dato'], 4); assert.ok(!Object.keys(exp).some((k) => /Bodegacc/.test(k)));
+      assert.equal(exp['DEMO-N1|2_dias'], 6); assert.equal(exp['Bodega Beta|sin_dato'], 4); assert.ok(!Object.keys(exp).some((k) => /Betta/.test(k)));
       assert.equal(Number(lat.find((x) => x.es_otros).n), plegar(exp).otros);
       const mot = rows(h, OWNER.A, TENANT_A, "public.insight_cco_bodega('motivo',5)"); assert.ok(mot.every((x) => Number(x.n) >= 5));
     });
@@ -288,11 +294,11 @@ test('insight_cco_*: aislamiento, k>=5, NULL no cero, sumas y ventana común', {
       assert.equal(Number(c.with_sku), filas.filter((x) => sku(x.o)).length, 'PENDING no cuenta como SKU'); assert.equal(Number(c.sheets), 4, 'cuatro hojas con contenido; la espejo WPR no cuenta');
     });
     await t.test('paridad SQL-JS de los catálogos cerrados (retailer, bodega, latencia, defecto, SKU)', () => {
-      const entradas = [['Amazon :: fulfilled by Tienda-Piloto', 'Part SKU', 'Defective', '', 'bodegab-ustx', '1 hour'], ['Amazon :: Amazon.com'], ['Amazon :: Amazon'], ['Amazon'], ['Walmart :: fulfilled by Walmart'], ['Walmart'], ['Best Buy :: USA'], ['Tienda-Piloto.example :: Shopify'], ['Shopify'], ['Lowes'], ['Pending'], ['Home Depot'], ['Menards'], ['']];
+      const entradas = [['Amazon :: fulfilled by Tienda-Piloto', 'Part SKU', 'Defective', '', 'demo-n1', '1 hour'], ['Amazon :: Amazon.com'], ['Amazon :: Amazon'], ['Amazon'], ['Walmart :: fulfilled by Walmart'], ['Walmart'], ['Best Buy :: USA'], ['Tienda-Piloto.example :: Shopify'], ['Shopify'], ['Lowes'], ['Pending'], ['Home Depot'], ['Menards'], ['']];
       for (const [rt] of entradas) assert.equal(baseDeSubcanal(subcanalDe(rt)), rt === '' ? null : retailerDe(rt), `la base de «${rt}» coincide con el clasificador anterior`);
       const hdr = ['Retailer', 'Part SKU', 'Contact_reason', 'Subreason', 'WH', 'SLA Status'];
-      const casos = [['Amazon :: fulfilled by Tienda-Piloto', 'ab-1-NEW', 'Defective', '', 'bodegaa usa inc', 'tracking enviado después de 1 día'], ['Amazon :: fulfilled by Amazon', 'x-9', 'Warranty', 'Damaged', 'Bodegab-USNJ2', '30 horas'], ['Walmart :: fulfilled by Tienda-Piloto', 'q', 'Missing Parts', '', 'bodegad', 'same day'],
-        ['Amazon :: Amazon.com', 'z-001A-001', 'Order', 'Wrong Item Received', 'Almacén raro', '4 days'], ['Menards', '', 'Return', '', 'bodegac', 'sin numero'], ['Pending', 'PENDING', '', '', 'bodegae canada', '2 hrs']];
+      const casos = [['Amazon :: fulfilled by Tienda-Piloto', 'ab-1-NEW', 'Defective', '', 'alfa usa inc', 'tracking enviado después de 1 día'], ['Amazon :: fulfilled by Amazon', 'x-9', 'Warranty', 'Damaged', 'Demo-USNJ2', '30 horas'], ['Walmart :: fulfilled by Tienda-Piloto', 'q', 'Missing Parts', '', 'gamma', 'same day'],
+        ['Amazon :: Amazon.com', 'z-001A-001', 'Order', 'Wrong Item Received', 'Almacén raro', '4 days'], ['Menards', '', 'Return', '', 'beta', 'sin numero'], ['Pending', 'PENDING', '', '', 'delta canada', '2 hrs']];
       // Cinco copias de cada caso para superar el mínimo y poder compararlos por SQL, en una organización aparte.
       const fil = casos.flatMap((c) => R(5, Object.fromEntries(hdr.map((k, i) => [k, c[i]]))));
       const TC = 'cccccccc-0000-4000-8000-000000000003', UC = U(9100); UC_PARIDAD = {u: UC, t: TC};
@@ -314,6 +320,16 @@ test('insight_cco_*: aislamiento, k>=5, NULL no cero, sumas y ventana común', {
       assert.equal(subcanalDe('Amazon :: fulfilled by Tienda-Piloto', 'tienda-piloto'), 'amazon_cumplido_por_piloto');
     });
 
+    await t.test('sin catálogo de bodegas configurado (valor por defecto vacío) toda bodega con valor sale «otra», en SQL y en JS; con catálogo, SQL y JS coinciden', () => {
+      const sql = "select coalesce(json_agg(t),'[]'::json) from (select * from public.insight_cco_bodega('latencia',5)) t;";
+      const vacio = asBackend(h, UC_PARIDAD.u, UC_PARIDAD.t, sql, 'read', PREFIJO, '[]');
+      assert.ok(vacio.ok, vacio.err); const filasV = JSON.parse(vacio.out).filter((x) => !x.es_otros);
+      assert.ok(filasV.length > 0 && filasV.every((x) => x.d1 === 'otra'), 'sin catálogo: solo «otra»: ' + JSON.stringify(filasV.map((x) => x.d1)));
+      assert.equal(bodegaDe('alfa usa inc', []), 'otra'); assert.equal(bodegaDe('', []), null); assert.equal(bodegaDe('  ', []), null);
+      const conCat = asBackend(h, UC_PARIDAD.u, UC_PARIDAD.t, sql);
+      assert.ok(conCat.ok, conCat.err); assert.ok(JSON.parse(conCat.out).some((x) => x.d1 === 'Bodega Alfa'), 'con catálogo sale la etiqueta');
+    });
+
     await t.test('repositorio CCO de punta a punta (sesión y RLS reales): seis tarjetas con insignia, cobertura y lo que falta', async () => {
       const pg = createRequire(import.meta.url)('pg'); const pool = new pg.Pool({host: h.sock, user: 'postgres', database: 't', max: 3}); t.after(() => pool.end());
       const v = await createCcoRepository({database: crearBaseDatos({pool, tenantId: TENANT_A, userId: OWNER.A, statementTimeoutMs: 20000}), now: () => new Date('2026-10-28T12:00:00Z')}).get();
@@ -328,7 +344,7 @@ test('insight_cco_*: aislamiento, k>=5, NULL no cero, sumas y ventana común', {
       const d = v.cards.D; assert.equal(d.estados.length, 1); assert.equal(d.estados[0].clave, 'US-TX'); assert.equal(d.estados[0].n, 7); assert.equal(d.ocultos.estados, 1); assert.equal(d.minimo, 5);
       const e15 = v.cards.E.subcanales.find((x) => x.subcanal === 'amazon_cumplido_por_piloto'); assert.equal(e15.casos, 15); assert.equal(e15.vende, 'empresa'); assert.equal(e15.bodega, 'empresa'); assert.equal(e15.marketplace, 'amazon');
       assert.equal(e15.reembolsos, 5, 'cinco filas de la hoja Refunds de ese subcanal'); assert.ok(v.cards.E.faltan.length >= 4); assert.equal(v.cards.E.puedeRecomendar, false); assert.equal(v.cards.E.detalleIndisponible, false);
-      assert.equal(v.cards.F.eje, 'bodega'); assert.equal(v.cards.F.puedeRecomendar, false); assert.ok(v.cards.F.faltan.every((x) => ['responsable_a', 'responsable_b'].includes(x.quien)));
+      assert.equal(v.cards.F.eje, 'bodega'); assert.equal(v.cards.F.puedeRecomendar, false); assert.ok(v.cards.F.faltan.every((x) => ['operaciones', 'datos'].includes(x.quien)));
       assert.doesNotMatch(JSON.stringify(v), /Main St|Calle 5|Guadalajara|Austin|dirección ilegible/, 'ninguna dirección sale del proceso');
       const b = await createCcoRepository({database: crearBaseDatos({pool, tenantId: TENANT_B, userId: OWNER.B, statementTimeoutMs: 20000})}).get();
       assert.ok(!JSON.stringify(b).includes('"S1"') && !JSON.stringify(b).includes('PS-3'), 'la otra organización no ve datos de A');

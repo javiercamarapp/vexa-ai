@@ -3,7 +3,7 @@ import {RovaqLogo} from "../../components/rovaq-logo";
 import {ArranqueLimpio} from "../../components/arranque-limpio";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import {siteDe,siteUrl} from "../../lib/site.mjs";
+import {imagenSocial,siteDe,siteUrl} from "../../lib/site.mjs";
 import {traductor} from "../../lib/i18n";
 import {idiomaActual} from "../../lib/i18n/servidor";
 import "./fonts.css";
@@ -28,8 +28,8 @@ export async function generateMetadata(): Promise<Metadata> {
   alternates: {canonical:"/"},
   // Por defecto las páginas públicas se indexan; el espacio de trabajo, /platform, /auth, /seguridad y /sin-acceso declaran noindex en su propio segmento y por cabecera X-Robots-Tag (next.config.ts).
   robots: {index:true,follow:true,googleBot:{index:true,follow:true,"max-image-preview":"large","max-snippet":-1}},
-  openGraph: {type:"website",locale:SITE.locale,siteName:SITE.nombre,title:SITE.titulo,description:SITE.descripcion,url:"/",images:[{url:"/opengraph-image",width:SITE.og.ancho,height:SITE.og.alto,alt:SITE.og.alt,type:"image/png"}]},
-  twitter: {card:"summary_large_image",title:SITE.titulo,description:SITE.descripcion,images:[{url:"/twitter-image",width:SITE.og.ancho,height:SITE.og.alto,alt:SITE.og.alt}]},
+  openGraph: {type:"website",locale:SITE.locale,siteName:SITE.nombre,title:SITE.titulo,description:SITE.descripcion,url:"/",images:[{...imagenSocial(idioma),type:"image/png"}]},
+  twitter: {card:"summary_large_image",title:SITE.titulo,description:SITE.descripcion,images:[imagenSocial(idioma)]},
   // Kit de logotipo de Rovaq: favicon completo + manifiesto (public/). El ícono SVG ya trae el fondo negro de marca, así que sirve igual en pestañas claras y oscuras.
   icons: {
     icon: [

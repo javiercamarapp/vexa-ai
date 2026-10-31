@@ -45,6 +45,12 @@ export const PREFIJOS_PRIVADOS = Object.freeze([
   '/interventions', '/jobs', '/map', '/migrations', '/notifications', '/overview', '/pain-points', '/preguntale', '/problems', '/recommendations', '/refunds',
   '/settings', '/setup', '/sources', '/workload',
 ]);
+/** Imagen social del idioma activo (/og/es.png o /og/en.png, estáticas del build) con su alt en ese idioma. Solo la usa el layout de la app. */
+export function imagenSocial(idioma = 'es') {
+  const SITE = siteDe(idioma);
+  const archivo = idioma === 'en' ? 'en.png' : 'es.png';
+  return { url: `/og/${archivo}`, width: SITE.og.ancho, height: SITE.og.alto, alt: SITE.og.alt };
+}
 /** Metadatos de una página pública: canonical + Open Graph + Twitter coherentes (un `openGraph` hijo reemplaza al del layout, por eso se arma completo). */
 export function metadatosPublicos({ titulo, descripcion, ruta, idioma = 'es' }) {
   const SITE = siteDe(idioma);

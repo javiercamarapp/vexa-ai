@@ -3,7 +3,7 @@
 // (carpeta de capturas de capturar-producto.mjs), recorta una región en unidades de 2000 por 1250 y la guarda en AVIF y WebP al ancho nativo.
 // Registra solo las claves producto/valor, paso1..4 y pantalla5 en public/s/manifest.json; no toca las demás entradas ni borra archivos.
 //
-// Uso: node tools/sitio/recortes-pasos.mjs <carpeta de capturas>
+// Uso: node tools/sitio/recortes-pasos.mjs <carpeta de capturas> [--idioma en]   (con --idioma en: claves producto/en/…, archivos en-…)
 import {createHash} from 'node:crypto';
 import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
@@ -17,6 +17,8 @@ const DIR = join(PUB, 'img', 'producto');
 const MANIFEST = join(PUB, 'manifest.json');
 const BUILD = process.env.SITIO_BUILD_DIR || join(homedir(), 'vexa-tools', 'sitio-build');
 const sharp = createRequire(join(BUILD, 'package.json'))('sharp');
+const IDIOMA = process.argv.includes('--idioma') ? process.argv[process.argv.indexOf('--idioma') + 1] : 'es';
+const P = IDIOMA === 'en' ? 'en/' : '', PF = IDIOMA === 'en' ? 'en-' : '';
 const entrada = resolve(process.argv[2] ?? '');
 if (!process.argv[2] || !existsSync(entrada)) { console.error('Uso: recortes-pasos.mjs <carpeta de capturas>'); process.exit(2); }
 
@@ -38,7 +40,7 @@ export const PASOS = {
     es: 'Tarjetas de Hoy en Rovaq: ingreso bruto de octubre y reembolsos del periodo, cada una con su sello Observado.',
     en: 'Rovaq Today cards: gross revenue for October and refunds for the period, each with its Observed seal.'},
   // Zona inferior de Hoy en tema claro (observado vs recuperable y siguiente mejor acción) para la quinta de las seis pantallas (sección clara).
-  pantalla5: {origen: 'hoy-claro-1440@2x.png', x: 760, y: 560, w: 1190, h: 690, ancho: 1200, tema: 'claro',
+  pantalla5: {origen: 'hoy-claro-1440@2x.png', x: 905, y: 575, w: 1040, h: 603, ancho: 1200, tema: 'claro',
     es: 'Tarjetas de Hoy en Rovaq: lo observado frente a lo recuperable y la tarjeta Siguiente mejor acción, que propone preparar el paquete de reclamo de un SKU con el aviso de que no se envía nada.',
     en: 'Rovaq Today cards: observed versus recoverable, and the Next best action card, which proposes preparing the claim package for a SKU with the notice that nothing is sent.'},
   paso4: {origen: 'hoy-oscuro-1440@2x.png', x: 1440, y: 630, w: 505, h: 315,
@@ -54,12 +56,12 @@ for (const [id, p] of Object.entries(PASOS)) {
   const wbuf = await dim.clone().webp({quality: 76, effort: 6}).toBuffer();
   const abuf = await dim.clone().avif({quality: 45, effort: 5}).toBuffer();
   const {width, height} = await sharp(wbuf).metadata();
-  const nom = (b, ext) => `${id}-${width}.${sha(b).slice(0, 8)}.${ext}`;
+  const nom = (b, ext) => `${PF}${id}-${width}.${sha(b).slice(0, 8)}.${ext}`;
   writeFileSync(join(DIR, nom(wbuf, 'webp')), wbuf);
   const conAvif = abuf.length <= wbuf.length * 0.75; // misma regla que imagenes-producto.mjs: AVIF solo si ahorra 25 % o más
   if (conAvif) writeFileSync(join(DIR, nom(abuf, 'avif')), abuf);
   const v = {alto: height, ancho: width, bytes: wbuf.length, sha256: sha(wbuf), url: `/s/img/producto/${nom(wbuf, 'webp')}`};
-  manifest.img[`producto/${id}`] = {
+  manifest.img[`producto/${P}${id}`] = {
     alt: {es: `${p.es} ${DATOS.es}`, en: `${p.en} ${DATOS.en}`}, alto: height, ancho: width,
     avif: conAvif ? [{alto: height, ancho: width, bytes: abuf.length, sha256: sha(abuf), url: `/s/img/producto/${nom(abuf, 'avif')}`}] : [],
     bytes: wbuf.length, sha256: v.sha256, tema: p.tema ?? 'oscuro', tipo: 'recorte', url: v.url, variantes: [v],

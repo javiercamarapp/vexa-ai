@@ -81,6 +81,14 @@ async function ocultarTarjetas(page, patrones) {
     for (const h of document.querySelectorAll('h2,h3,h4')) if (res.some(r => r.test(h.textContent))) { const c = h.closest('.card, section, article') ?? h.parentElement; if (c) c.style.display = 'none'; }
   }, {p: patrones});
 }
+/** Oculta el elemento más pequeño cuyo texto empieza así (p. ej. un rótulo de estado que el ancho de la ventana deja cortado con puntos suspensivos). */
+async function ocultarPorTexto(page, patron) {
+  await page.evaluate(({p}) => {
+    const re = new RegExp(p, 'i'); let mejor = null;
+    for (const e of document.querySelectorAll('span,p,div,small')) { const t = (e.textContent ?? '').trim(); if (re.test(t) && t.length < 140 && (!mejor || t.length < mejor.textContent.trim().length)) mejor = e; }
+    if (mejor) mejor.style.display = 'none';
+  }, {p: patron});
+}
 async function cerrarRuido(page) {
   for (const nombre of [/^Saltar$|^Skip$/, /^Ocultar lista$|^Hide list$/]) {
     const b = page.getByRole('button', {name: nombre}).first();
@@ -151,6 +159,7 @@ for (const tema of temas) {
       await page.mouse.move(900, 500); await page.mouse.wheel(0, -3000); await page.waitForTimeout(800);
     }
     await page.waitForTimeout(800);
+    if (nombre === 'hoy') await ocultarPorTexto(page, '^(Estado de los datos|Data status):');
     if (nombre === 'problemas') await ocultarTarjetas(page, ['^Estado de la cobertura$', '^Coverage status$']);
     await sanear(page); await page.waitForTimeout(600); await sanear(page);
     if (nombre !== 'preguntale') await page.mouse.move(2, 2);
@@ -158,12 +167,14 @@ for (const tema of temas) {
     const archivo = `${nombre}-${tema}-1440@2x.png`;
     await page.screenshot({path: join(OUT, archivo)});
     const texto = (await page.locator('body').innerText()).slice(0, 20000), mal = texto.match(MARCAS_PROHIBIDAS);
+    const malos = [...texto.matchAll(/\b100(?:[.,]0)? ?%|Cobertura completa|Complete coverage|\bNeto\b|· Net\b|\b(\d[\d,.]*) (?:de|of) \1\b|últimos 12 meses|last 12 months(?! ·)/gi)].map(m => m[0]);
+    if (malos.length) console.log('   AFIRMACION DUDOSA:', JSON.stringify([...new Set(malos)]));
     const raros = texto.split('\n').filter(l => (IDIOMA === 'en' ? /[áéíóúñ¿¡]|\b(sin|con|del|los|las|una|para|por|hace|desde|entre|ejemplo)\b/i : /\b(the|and|with|from|for|your|of the|no data)\b/i).test(l)).slice(0, 8);
     if (raros.length) console.log('   REVISAR idioma:', JSON.stringify(raros));
     informe.push({archivo, ms: Date.now() - t0, marcaProhibida: mal ? mal[0] : null, errores});
     console.log(archivo, Date.now() - t0, 'ms', mal ? 'MARCA: ' + mal[0] : 'sin marcas', errores.length ? 'errores: ' + errores.slice(0, 2).join(' | ') : '');
     if (conRecortes && nombre === 'fuga' && tema === 'claro') {
-      const sel = await page.evaluate(() => { const h = [...document.querySelectorAll('h2,h3')].find(x => /Dónde se fuga/.test(x.textContent)); let c = h; while (c && c.getBoundingClientRect().height < 500) c = c.parentElement; if (!c) return null; c.setAttribute('data-recorte', 'pareto'); return '[data-recorte="pareto"]'; });
+      const sel = await page.evaluate(() => { const h = [...document.querySelectorAll('h2,h3')].find(x => /Dónde se fuga|Where it leaks/.test(x.textContent)); let c = h; while (c && c.getBoundingClientRect().height < 500) c = c.parentElement; if (!c) return null; c.setAttribute('data-recorte', 'pareto'); return '[data-recorte="pareto"]'; });
       if (sel) { await page.locator(sel).screenshot({path: join(OUT, 'recortes', 'pareto@2x.png')}); const svg = await domASvg(page, sel); if (svg) writeFileSync(join(OUT, 'recortes', 'pareto.svg'), svg); }
       const kp = page.locator('.fuga-kpis, [class*=kpis]').first();
       if (await kp.count()) await kp.screenshot({path: join(OUT, 'recortes', 'tarjetas-fuga@2x.png')}).catch(() => {});

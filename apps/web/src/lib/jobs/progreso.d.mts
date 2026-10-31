@@ -9,4 +9,4 @@ export function reintentable(tipo:string):boolean;
 
 export function hayErroresParaDescargar(rechazadas:unknown):boolean;
 
-export const TXT:Readonly<Record<'es'|'en',Record<string,any>>>;
+export const TXT:Readonly<Record<'es'|'en',Record<string,unknown>>>;

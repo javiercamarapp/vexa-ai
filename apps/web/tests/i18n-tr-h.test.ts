@@ -12,7 +12,7 @@ import {kindInfo} from '../src/lib/epistemic.mjs';
 
 const ES = trHEs as Record<string, string>, EN = trHEn as Record<string, string>;
 const variables = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join(',');
-const t = traductor('en') as any;
+const t = traductor('en') as unknown as (clave: string, vars?: Record<string, string | number>) => string;
 
 test('d-tr-h: claves idénticas, sin vacíos, mismas variables, incorporadas en en.ts', () => {
   assert.deepEqual(Object.keys(ES).sort(), Object.keys(EN).sort());

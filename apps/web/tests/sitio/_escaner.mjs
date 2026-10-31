@@ -10,7 +10,8 @@ export function listarArchivos(dir, exts, { omitir = /(^|\/)node_modules(\/|$)/ 
     for (const n of readdirSync(d)) {
       const p = join(d, n);
       if (omitir.test(p)) continue;
-      statSync(p).isDirectory() ? rec(p) : exts.some((e) => n.endsWith(e)) && out.push(p);
+      if (statSync(p).isDirectory()) rec(p);
+      else if (exts.some((e) => n.endsWith(e))) out.push(p);
     }
   };
   rec(dir);

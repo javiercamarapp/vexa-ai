@@ -9,7 +9,7 @@ import path from 'node:path';
 import { LANDING, CONDICIONES, PORTADA, RETIRADAS_DE_PORTADA, proyectar } from '../../src/content/sitio/landing.ts';
 import { PAGINAS_INTERNAS } from '../../src/content/sitio/paginas/index.ts';
 import {
-  hojas, recorrer, hojaEn, hashTexto, aprobar, marcarCondicion, aprobacionesVacias, contextoPorDefecto, resolverMarcadores, marcadoresEn,
+  hojas, hojaEn, hashTexto, aprobar, marcarCondicion, aprobacionesVacias, contextoPorDefecto, resolverMarcadores, marcadoresEn,
   estadoPublicacion, estadoPagina, publicar, proyectarArbol, construirMailto,
 } from '../../src/lib/sitio/marcadores.mjs';
 import { SITE } from '../../src/lib/site.mjs';
@@ -586,7 +586,7 @@ describe('reglas de contenido de la portada', () => {
   });
 
   test('la cifra de 5 minutos solo vive en hojas con la verificación 5 y la palabra insight, en hojas con revisor', () => {
-    const malas = todasLasHojas().filter(({ ruta, hoja }) => (/\b5 (minutos|minutes)\b/.test(hoja.es) || /insight/i.test(hoja.es)) && !(hoja.req?.length) && hoja.verifica !== 5);
+    const malas = todasLasHojas().filter(({ hoja }) => (/\b5 (minutos|minutes)\b/.test(hoja.es) || /insight/i.test(hoja.es)) && !(hoja.req?.length) && hoja.verifica !== 5);
     assert.deepEqual(malas.map((m) => m.ruta), []);
   });
 });

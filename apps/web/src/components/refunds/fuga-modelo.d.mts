@@ -22,4 +22,4 @@ export const formulaA: (a: {baseUsd: number; pctProveedor: number; pctRecuperabl
 export const formulaB: (b: {tickets: number; costo: number; pctEvitable: number}) => string;
 export const usdNum: (v: number) => string;
 
-export const TXT: Record<'es' | 'en', Record<string, any>>;
+export const TXT: Record<'es' | 'en', Record<string, unknown>>;

@@ -67,7 +67,6 @@ export function filasReembolsos() {
   }));
   return out;
 }
-const nReembolsos = (filter = () => true) => filasReembolsos().filter(filter).reduce((a, r) => a + r.n, 0);
 const LINEAS_MES = {amazon: [2400, 2550, 2700], walmart: [1500, 1580, 1650], bestbuy: [820, 860, 900]};
 export function filasPedidos() {
   const rows = filasReembolsos(), out = [];
@@ -83,7 +82,7 @@ export function filasPedidos() {
   });
   return out;
 }
-const VENTANAS = Object.entries(ETIQUETA_CANAL).flatMap(([ch, nom], i) => ['order_export', 'payment_ledger'].map(t => ({name: 'Marketplace ' + ['Amazon', 'Walmart', 'Best Buy'][i] + (t === 'order_export' ? ' · Pedidos' : ' · Devoluciones'),
+const VENTANAS = Object.keys(ETIQUETA_CANAL).flatMap((_canal, i) => ['order_export', 'payment_ledger'].map(t => ({name: 'Marketplace ' + ['Amazon', 'Walmart', 'Best Buy'][i] + (t === 'order_export' ? ' · Pedidos' : ' · Devoluciones'),
   evidence_type: t, complete: false, window_start: '2026-08-01', window_end: '2026-11-02', watermark: '2026-11-03'})));
 const ESTADOS_NEG = ['Older than 180 days', 'Can Not Refund', 'Rejected'];
 export function filasTracker() {
@@ -366,7 +365,7 @@ export async function respond(url, method, bodyText) {
     return [st, clone];
   }
   if (/^\/api\/trends\/incidences/.test(p) && clone.data) {
-    const i = Math.max(0, [0, 1, 2].findIndex(k => PID(k) === q.get('problem'))), esc = [0.6, 0.45, 0.25][i];
+    const i = Math.max(0, [0, 1, 2].findIndex(k => PID(k) === q.get('problem')));
     // Conversaciones por mes del problema: ago-oct suman EXACTAMENTE las del problema (los 90 días del recorrido); los meses previos van creciendo.
     const nP = PROB[i].n, previos = [0.03, 0.04, 0.045, 0.055, 0.065, 0.075, 0.085, 0.095, 0.11], ult = [Math.round(nP * 0.3), Math.round(nP * 0.4)]; ult.push(nP - ult[0] - ult[1]);
     const cuenta = [...previos.map(f => Math.max(1, Math.round(nP * f))), ...ult];

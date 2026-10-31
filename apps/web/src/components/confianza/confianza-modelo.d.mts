@@ -1,7 +1,7 @@
 import type {Tr} from '../../lib/legibilidad/trad.mjs';
 export type Nivel = 'alerta' | 'atrasada' | 'ok' | 'manual' | 'pausa' | 'sin_datos';
 export const FACTOR_ALERTA: number;
-export const TXT: Record<'es' | 'en', Record<string, any>>;
+export const TXT: Record<'es' | 'en', Record<string, unknown>>;
 export const NIVEL_TXT: Readonly<Record<Nivel, string>>;
 export function nivelFuente(s: unknown, ahora?: number): Nivel;
 export function bloqueFuentes(f: unknown, ahora?: number, idioma?: string, t?: Tr | null): {disponible: boolean; filas: Array<{clave: string; nombre: string; metodo: string; nivel: Nivel; estado: string; exito: string | null; siguiente: string | null; nuevos: number | null; hasta: string | null; error: string | null}>};

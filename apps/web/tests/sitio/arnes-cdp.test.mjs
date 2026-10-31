@@ -7,7 +7,7 @@ import { tmpdir, homedir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
-import { spawnSync, spawn } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { evaluarCandado, adquirir } from '../../../../tools/sitio/cdp/candado.mjs';
 import { parsearUptime, parsearSwap, cargaAlta } from '../../../../tools/sitio/cdp/carga-mac.mjs';
 import { evaluarMetricas, resumirCuadros } from '../../../../tools/sitio/cdp/metricas.mjs';

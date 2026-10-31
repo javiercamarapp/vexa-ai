@@ -7,7 +7,6 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 const root=path.resolve(import.meta.dirname,'../../..');
-const roots=['apps/web/src','packages'];
 const files=[];
 (function walk(d){for(const e of fs.readdirSync(d,{withFileTypes:true})){if(['node_modules','.next','tests'].includes(e.name))continue;const f=path.join(d,e.name);if(e.isDirectory())walk(f);else if(/\.(ts|tsx|mjs)$/.test(e.name)&&!/\.test\./.test(e.name)&&!f.includes('/sitio'))files.push(f);}}).call(null,path.join(root,'apps/web/src'));
 (function walk(d){for(const e of fs.readdirSync(d,{withFileTypes:true})){if(['node_modules','.next','tests'].includes(e.name))continue;const f=path.join(d,e.name);if(e.isDirectory())walk(f);else if(/\.(ts|tsx|mjs)$/.test(e.name)&&!/\.test\./.test(e.name))files.push(f);}}).call(null,path.join(root,'packages'));

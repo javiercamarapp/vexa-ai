@@ -7,5 +7,6 @@ export default defineConfig([
   ...nextTypeScript,
   // Con las rutas bajo el grupo (app) esta regla empezó a marcar los <a> de navegación completa (login, cierre de sesión, salida de raíz); antes del movimiento no detectaba esas páginas. Los enlaces entre las dos raíces deben ser <a>.
   {rules: {"@next/next/no-html-link-for-pages": "off"}},
-  globalIgnores([".next/**", "next-env.d.ts", "public/vendor/**", "public/landing/**"]),
+  // public/s/** son bundles minificados generados por tools/sitio/construir-js.mjs (no se editan a mano).
+  globalIgnores([".next/**", "next-env.d.ts", "public/vendor/**", "public/landing/**", "public/s/**"]),
 ]);

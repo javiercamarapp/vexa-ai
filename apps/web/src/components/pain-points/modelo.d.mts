@@ -1,6 +1,6 @@
 import type {PainVista, PuntoPP, DineroPP, VolumenPP} from '../../../../../packages/workspace-service/pain-points.d.mts';
 export const SIN_DATO: string;
-export const TXT: Record<'es' | 'en', Record<string, any>>;
+export const TXT: Record<'es' | 'en', Record<string, unknown>>;
 export const CLASE_KIND: Record<'O' | 'E' | 'I', 'observed' | 'estimated' | 'inferred'>;
 export const CLASE_NOMBRE: Record<'O' | 'E' | 'I', string>;
 export function usd(minor: string, idioma?: string): string;

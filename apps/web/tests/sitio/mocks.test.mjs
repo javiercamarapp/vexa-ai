@@ -204,7 +204,7 @@ test('los cuatro sellos existen y se distinguen por patrón: relleno, rayado, pu
 const diag = Object.entries(R.diagramas);
 const NOMBRES_OK = /\b(HubSpot|Excel|CSV|Amazon|Walmart|Shopify)\b/;
 for (const [k, html] of diag) {
-  const [id, lang] = k.split(':');
+  const [id] = k.split(':');
   test(`diagrama ${k}: sin style, con title y desc enlazados, accesible, currentColor y sin color en bruto`, () => {
     assert.ok(!/\sstyle\s*=/.test(html) && !/<script|\sinert\b|<image|<img|<foreignObject/.test(html));
     assert.ok(!/#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(/.test(html), 'color en bruto');

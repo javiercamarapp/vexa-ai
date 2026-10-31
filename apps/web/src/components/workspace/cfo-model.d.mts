@@ -8,4 +8,4 @@ export function buildCfoModel(items:RecordView[],idioma?:string):{rows:CfoRow[];
 
 export function kpiHeadline(row:CfoRow,idioma?:string):{value:string;label:string|null;note:string};
 
-export const TXT:Record<'es'|'en',Record<string,any>>;
+export const TXT:Record<'es'|'en',Record<string,unknown>>;

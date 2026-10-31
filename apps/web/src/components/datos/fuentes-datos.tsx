@@ -28,11 +28,13 @@ const TONO={ok:'ok',warn:'warn',bad:'bad',muted:'off',neutral:'off',info:'info'}
 const Estado=({tono,children}:{tono:string;children:React.ReactNode})=><span className="pc-estado" data-tono={TONO[tono as keyof typeof TONO]??'off'}>{children}</span>;
 
 /** «Cobertura de datos»: qué tan completo es el dato, hasta cuándo llega cada fuente y cuánto del cliente ya está identificado. Nada se estima: lo que no responde se dice. */
+/** Reloj aparte: la antigüedad se calcula una vez por lectura de /api/freshness (useMemo), no en cada render. */
+const ahora=()=>Date.now();
 export function FuentesDatos(){
  const tx=useT(),idioma=useIdioma(),cov=useJson<CoverageView>('/api/coverage',acceptCoverage),tr=useJson<TrendsView>('/api/trends',acceptTrends),fr=useJson('/api/freshness',acceptFresh);
  const t=useMemo(()=>tarjetasFuentes(cov.data,tr.data,tx),[cov.data,tr.data,tx]);
  const id=useMemo(()=>identidad(cov.data?.sources.find(s=>s.key==='associations')),[cov.data]);
- const sync=useMemo(()=>filasSincronizacion(fr.data,Date.now(),tx),[fr.data,tx]);
+ const sync=useMemo(()=>filasSincronizacion(fr.data,ahora(),tx),[fr.data,tx]);
  const cargadas=t.filter(x=>x.estado==='cargada'),conCorte=cargadas.filter(x=>x.datosHasta).length,impo=cargadas.reduce((a,x)=>a+x.importaciones,0),abiertas=cargadas.reduce((a,x)=>a+x.abiertas,0),agr=agregadoImportaciones(cov.data?.sources);
  const cargando=cov.busy&&!cov.data,notas=t.filter(x=>x.estado==='cargada'&&(x.nota||x.rangoNota)).map(x=>({clave:x.clave,nombre:x.nombre,texto:[x.nota,x.rangoNota].filter(Boolean).join(' ')}));
  const kpis=[

@@ -9,7 +9,7 @@ import {startLocalPg, migrationsDir, root} from '../../ops/lib/localpg.mjs';
 
 const MIG = '20261209000000_user_preferences_idioma.sql';
 const ROLLBACK = root + '/supabase/operations/20261209000000_user_preferences_idioma.rollback.sql';
-const U1 = '11111111-1111-4111-8111-111111111111', U2 = '22222222-2222-4222-8222-222222222222';
+const U1 = '11111111-1111-4111-8111-111111111111', U2 = '22222222-2222-4222-8222-222222222222', U3 = '33333333-3333-4333-8333-333333333333';
 
 test('esquema: la migración nueva es la última, con prefijo único', () => {
   const todas = fs.readdirSync(migrationsDir).filter(n => n.endsWith('.sql')).sort();
@@ -25,7 +25,7 @@ test('user_preferences: RLS por persona, lectura de servicio, trigger, check y r
     // Como una sesión de la API: rol + sub del JWT.
     const como = (rol, uid, sql, opt = {}) => pg.psql('d', ['-At', '-c', `set role ${rol}; ${uid ? `select set_config('request.jwt.claim.sub','${uid}',false);` : ''} ${sql}`], opt);
     const falla = (rol, uid, sql, patron) => { const r = como(rol, uid, sql, {allowFail: true}); assert.notEqual(r.status, 0, 'debía fallar: ' + sql); assert.match(r.stderr, patron, sql); };
-    q(`insert into auth.users(id,email) values('${U1}','a@example.test'),('${U2}','b@example.test')`);
+    q(`insert into auth.users(id,email) values('${U1}','a@example.test'),('${U2}','b@example.test'),('${U3}','c@example.test')`);
 
     assert.equal(q(`select relrowsecurity and relforcerowsecurity from pg_class where oid='public.user_preferences'::regclass`), 't');
     assert.equal(q(`select count(*) from pg_policies where schemaname='public' and tablename='user_preferences'`), '4');
@@ -38,8 +38,10 @@ test('user_preferences: RLS por persona, lectura de servicio, trigger, check y r
     como('authenticated', U2, `insert into public.user_preferences(user_id,idioma) values('${U2}','en')`);
 
     // No puede escribir por otra persona, ni mover su fila, ni salirse del check.
-    falla('authenticated', U1, `insert into public.user_preferences(user_id,idioma) values('${U2}','es')`, /row-level security|violates/);
-    falla('authenticated', U1, `update public.user_preferences set user_id='${U2}' where user_id='${U1}'`, /row-level security|violates|duplicate/);
+    // U3 es una persona real SIN fila: así el rechazo solo puede venir de la política (with check), no de una llave duplicada.
+    falla('authenticated', U1, `insert into public.user_preferences(user_id,idioma) values('${U3}','es')`, /row-level security/);
+    falla('authenticated', U1, `update public.user_preferences set user_id='${U3}' where user_id='${U1}'`, /row-level security/);
+    assert.equal(q(`select count(*) from public.user_preferences where user_id='${U3}'`), '0');
     falla('authenticated', U1, `update public.user_preferences set idioma='fr' where user_id='${U1}'`, /check constraint/);
     assert.equal(q(`select idioma from public.user_preferences where user_id='${U2}'`), 'en', 'la fila ajena no cambia');
     // update de la fila ajena: 0 filas (RLS la oculta), sin error.
@@ -51,6 +53,9 @@ test('user_preferences: RLS por persona, lectura de servicio, trigger, check y r
     falla('authenticated', U1, `delete from public.user_preferences where user_id='${U1}'`, /permission denied/);
     falla('authenticated', U1, `update public.user_preferences set updated_at=now() where user_id='${U1}'`, /permission denied/);
     // anon: nada.
+    // Sin ningún privilegio (ni siquiera de columna) para anon, service_role ni public: con RLS un select permitido daría 0 filas sin error, así que se mira el ACL.
+    for (const rol of ['anon', 'service_role']) assert.equal(q(`select has_any_column_privilege('${rol}','public.user_preferences','select,insert,update,references')`), 'f', rol);
+    assert.equal(q(`select count(*) from information_schema.role_table_grants where table_name='user_preferences' and grantee='PUBLIC'`), '0');
     falla('anon', null, `select * from public.user_preferences`, /permission denied/);
     falla('anon', null, `insert into public.user_preferences(user_id,idioma) values('${U1}','es')`, /permission denied/);
     falla('service_role', null, `select * from public.user_preferences`, /permission denied/);

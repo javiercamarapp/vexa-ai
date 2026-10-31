@@ -2,17 +2,14 @@
 // Decisión: /api/health/version solo atestigua la identidad de la compilación (meta.state build-identity-only), no que el servicio funcione, y mostrar
 // su valor exigiría JavaScript de cliente en una página estática sin poder verificarlo en navegador aquí. Por eso la página explica qué se publica
 // y dónde consultarlo, y no renderiza el valor.
-// PENDIENTE DE REVISION (T28): no se publica hasta que Javier confirme un canal de contacto que reciba correo (la condición 1 de P-D sigue sin cumplirse).
-// El contenido está escrito y listo: para publicarla basta cambiar `estado` a 'publicable' (y quitar `pendiente`). Mientras tanto es 404 y no aparece
-// en sitemap, RSS, llms, espejos ni enlaces. El texto de contacto no lleva ningún correo: manda a la página de solicitud de acceso, así el HTML y el
-// espejo Markdown dicen exactamente lo mismo.
+// PUBLICABLE (T32-Y): Javier decidió publicar con el contacto de la página de solicitar acceso, tal como está. El texto de contacto no lleva
+// ningún correo: manda a esa página, así el HTML y el espejo Markdown dicen exactamente lo mismo.
 import type { Pagina } from '../tipos.ts';
 import { b } from '../ayudas.ts';
 
 export const ESTADO: Pagina = {
   id: 'estado',
-  estado: 'pendiente-de-revision',
-  pendiente: 'Javier debe confirmar primero un canal de contacto que reciba correo (condición 1 de P-D sin cumplir; el contacto actual es el de solicitar acceso y no se ha probado con un mensaje real). Con eso, cambiar estado a publicable.',
+  estado: 'publicable',
   seo: {
     titulo: b('Versión desplegada y reporte de problemas | Rovaq AI', 'Deployed Version and How to Report a Problem | Rovaq AI'),
     descripcion: b(

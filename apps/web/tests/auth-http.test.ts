@@ -21,7 +21,7 @@ const encode=(v:unknown)=>Buffer.from(JSON.stringify(v)).toString('base64url');
 function session(){const exp=Math.floor(Date.now()/1000)+3600;return {access_token:`${encode({alg:'HS256',typ:'JWT'})}.${encode({sub:userId,exp,session_id:'synthetic-session'})}.synthetic-signature`,refresh_token:'synthetic-refresh',expires_at:exp,expires_in:3600,token_type:'bearer',user};}
 function cookies(){return `sb-127-auth-token=base64-${encode(session())}; ${ACTIVE_ORG}=${A}`;}
 function request(path:string,body?:string,requestOrigin:string|null=origin){return new NextRequest(origin+path,{method:body===undefined?'GET':'POST',headers:{cookie:cookies(),...(requestOrigin?{origin:requestOrigin}:{}),...(body===undefined?{}:{'content-type':'application/x-www-form-urlencoded'})},...(body===undefined?{}:{body})});}
-function mockServer(options:{tenants?:string[]; support?:{tenantId:string;expiresAt:string}; revoked?:boolean; dbError?:boolean; invalid?:boolean; logoutError?:boolean; platform?:'granted'|'denied'|'unavailable'; role?:string}={}) {
+function mockServer(options:{idioma?:'es'|'en'|'ninguno'|'sin_tabla'; tenants?:string[]; support?:{tenantId:string;expiresAt:string}; revoked?:boolean; dbError?:boolean; invalid?:boolean; logoutError?:boolean; platform?:'granted'|'denied'|'unavailable'; role?:string}={}) {
   const paths:string[]=[];
   globalThis.fetch=async(input)=>{
     const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);paths.push(url.pathname);
@@ -31,6 +31,11 @@ function mockServer(options:{tenants?:string[]; support?:{tenantId:string;expire
     if(url.pathname==='/auth/v1/logout')return options.logoutError?json({msg:'unavailable'},503):new Response(null,{status:204});
     if(url.pathname==='/rest/v1/rpc/platform_manage')return options.platform==='granted'?json({administrator:true}):options.platform==='unavailable'?json({code:'PGRST000',message:'unavailable'},503):json({code:'42501',message:'platform_access_denied'},403);
     if(url.pathname==='/rest/v1/rpc/platform_support')return options.support?json({active:true,session:{id:'ssssssss-ssss-4sss-8sss-ssssssssssss',tenantId:options.support.tenantId,tenantName:'Cliente',reason:'revisar carga de HubSpot',expiresAt:options.support.expiresAt}}):json({code:'42501',message:'platform_access_denied'},403);
+    if(url.pathname==='/rest/v1/user_preferences'){
+      if(options.idioma==='es'||options.idioma==='en')return json({idioma:options.idioma});
+      if(options.idioma==='sin_tabla')return json({code:'PGRST205',message:"Could not find the table 'public.user_preferences' in the schema cache"},404);
+      return json({code:'PGRST116',message:'JSON object requested, multiple (or no) rows returned',details:'The result contains 0 rows'},406);
+    }
     if(url.pathname==='/rest/v1/memberships')return options.dbError?json({message:'unavailable'},503):json(options.revoked?[]:(options.tenants??[A,B]).map(tenant_id=>({tenant_id,user_id:userId,role:options.role??'owner',status:'active',permissions_version:1})));
     throw new Error(`unexpected mocked network path ${url.pathname}`);
   };return paths;
@@ -228,4 +233,33 @@ test('cookies de sesión que escribe el cliente de Auth: HttpOnly, SameSite=Lax,
   const s=session();await client.auth.setSession({access_token:s.access_token,refresh_token:s.refresh_token});
   assert.equal(SESSION_COOKIE_MAX_AGE,2592000);assert.ok(guardadas.length>0,'se escribió la cookie de sesión');
   for(const g of guardadas){assert.equal(g.options.httpOnly,true,g.name);assert.equal(g.options.sameSite,'lax');assert.equal(g.options.path,'/');const m=g.options.maxAge as number;assert.ok(m>0&&m<=2592000,g.name+' '+m);}
+});
+
+// Cookie rovaq_lang: dispositivo nuevo con preferencia guardada. Orden ?lang= > cookie > preferencia > Accept-Language > en.
+const conCookie=(path:string,extra:string)=>{const r=request(path);const h=new Headers(r.headers);h.set('cookie',h.get('cookie')+'; '+extra);return new NextRequest(r.url,{headers:h});};
+const lecturasDePreferencia=(paths:string[])=>paths.filter(p=>p==='/rest/v1/user_preferences').length;
+test('dispositivo nuevo con preferencia guardada: la cookie rovaq_lang se siembra en el servidor con una sola lectura',async()=>{
+  setup();const paths=mockServer({idioma:'es'});const respuesta=await middleware(request('/overview'));
+  assert.equal(respuesta.status,200);assert.equal(respuesta.cookies.get('rovaq_lang')?.value,'es');assert.equal(lecturasDePreferencia(paths),1);
+  assert.equal(respuesta.cookies.get('rovaq_lang_sin_pref'),undefined);assert.match(String(respuesta.headers.get('set-cookie')),/rovaq_lang=es;.*Max-Age=31536000/i);
+});
+test('con cookie válida no se lee la base ni se toca la cookie (la cookie manda sobre la preferencia)',async()=>{
+  setup();const paths=mockServer({idioma:'es'});const respuesta=await middleware(conCookie('/overview','rovaq_lang=en'));
+  assert.equal(respuesta.status,200);assert.equal(lecturasDePreferencia(paths),0);assert.equal(respuesta.cookies.get('rovaq_lang'),undefined);
+});
+test('una cookie inválida cuenta como ausente y se siembra la preferencia',async()=>{
+  setup();const paths=mockServer({idioma:'en'});const respuesta=await middleware(conCookie('/overview','rovaq_lang=fr'));
+  assert.equal(respuesta.cookies.get('rovaq_lang')?.value,'en');assert.equal(lecturasDePreferencia(paths),1);
+});
+test('?lang= explícito gana: no se lee la preferencia ni se siembra nada',async()=>{
+  setup();const paths=mockServer({idioma:'es'});const respuesta=await middleware(request('/overview?lang=en'));
+  assert.equal(respuesta.status,200);assert.equal(lecturasDePreferencia(paths),0);assert.equal(respuesta.cookies.get('rovaq_lang'),undefined);
+});
+test('sin preferencia o sin tabla: la navegación sigue, no se siembra cookie y una marca evita repetir la lectura',async()=>{
+  for(const idioma of ['ninguno','sin_tabla'] as const){
+    setup();const paths=mockServer({idioma});const primera=await middleware(request('/overview'));
+    assert.equal(primera.status,200,idioma);assert.equal(primera.cookies.get('rovaq_lang'),undefined);assert.equal(primera.cookies.get('rovaq_lang_sin_pref')?.value,'1');assert.equal(lecturasDePreferencia(paths),1);
+    const segunda=await middleware(conCookie('/overview','rovaq_lang_sin_pref=1'));
+    assert.equal(segunda.status,200);assert.equal(lecturasDePreferencia(paths),1,'con la marca no hay segunda lectura');
+  }
 });

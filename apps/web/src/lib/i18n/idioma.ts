@@ -23,10 +23,17 @@ export function idiomaDeAcceptLanguage(cabecera: string | null | undefined): Idi
   for (const c of candidatos) { const v = idiomaValido(c.base); if (v) return v; }
   return null;
 }
-/** Orden de decisión: ?lang= válido, cookie rovaq_lang válida, idioma del navegador (Accept-Language: es* → es, en* → en, cualquier otro → en) y, sin nada de eso, inglés.
- *  La cookie, cuando existe y es válida, SIEMPRE manda sobre el navegador (la persona ya eligió en el selector). Una cookie inválida cuenta como ausente. */
-export function resolverIdioma({parametro, cookie, acceptLanguage}: {parametro?: unknown; cookie?: unknown; acceptLanguage?: string | null}): Idioma {
-  return idiomaValido(parametro) ?? idiomaValido(cookie) ?? idiomaDeAcceptLanguage(acceptLanguage) ?? IDIOMA_POR_OMISION;
+/** Orden de decisión: ?lang= válido, cookie rovaq_lang válida, preferencia guardada de la persona (user_preferences; solo la conoce quien ya leyó la base, p. ej. el middleware),
+ *  idioma del navegador (Accept-Language: es* → es, en* → en, cualquier otro → en) y, sin nada de eso, inglés.
+ *  La cookie, cuando existe y es válida, SIEMPRE manda sobre lo demás (la persona ya eligió en el selector). Una cookie inválida cuenta como ausente. */
+export function resolverIdioma({parametro, cookie, preferencia, acceptLanguage}: {parametro?: unknown; cookie?: unknown; preferencia?: unknown; acceptLanguage?: string | null}): Idioma {
+  return idiomaValido(parametro) ?? idiomaValido(cookie) ?? idiomaValido(preferencia) ?? idiomaDeAcceptLanguage(acceptLanguage) ?? IDIOMA_POR_OMISION;
+}
+/** Marca (cookie de corta vida) que dice «ya se consultó la preferencia y no hay ninguna»: evita repetir la lectura a la base en cada navegación. */
+export const COOKIE_SIN_PREFERENCIA = 'rovaq_lang_sin_pref';
+/** ¿Vale la pena leer la preferencia guardada para sembrar la cookie? Solo con una persona autenticada, sin ?lang= explícito, sin cookie válida y sin la marca de «no hay preferencia». */
+export function debeSembrarIdioma({parametro, cookie, marca}: {parametro?: unknown; cookie?: unknown; marca?: unknown}): boolean {
+  return idiomaValido(parametro) === null && idiomaValido(cookie) === null && !marca;
 }
 /** Idioma de una petición (middleware, rutas, páginas): cookie rovaq_lang y cabecera Accept-Language, sin tocar nada más. `parametro` es el ?lang= si la ruta lo admite. */
 export function idiomaDeSolicitud(solicitud: {cookies: {get(nombre: string): {value: string} | undefined}; headers?: {get(nombre: string): string | null} | null}, parametro?: unknown): Idioma {

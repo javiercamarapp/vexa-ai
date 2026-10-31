@@ -6,6 +6,8 @@ import { decidirHost, rutaConAutenticacion } from './lib/host-routing.mjs';
 import { registrar } from './lib/security/registro';
 import { evaluarLimite } from './lib/security/limite-servidor';
 import { espejoDeRuta, mapaEspejos } from './lib/sitio/espejos.mjs';
+import { COOKIE_IDIOMA, COOKIE_SIN_PREFERENCIA, debeSembrarIdioma } from './lib/i18n/idioma';
+import { leerIdiomaDePersona, type ClienteLecturaPreferencias } from './lib/i18n/preferencia-idioma';
 import manifestSitio from '../public/s/manifest.json';
 // Espejos Markdown del sitio por ruta pública (negociación Accept: text/markdown en rovaq.ai). Se arma una vez al cargar el módulo.
 const espejos=mapaEspejos((manifestSitio as {md?:Record<string,{url:string}>}).md??{});
@@ -73,7 +75,16 @@ export async function middleware(request:NextRequest) {
         const session=await resolveSession(identity(client),request.cookies.get(ACTIVE_ORG)?.value,{fallback:true});
         // La petición en curso ya ve la organización reparada (así las lecturas del servidor no fallan una vez), y el navegador la recibe para las siguientes.
         if(session.fellBack)request.cookies.set(ACTIVE_ORG,session.active.tenant_id);
+        // Dispositivo nuevo: sin cookie rovaq_lang pero con preferencia guardada, se siembra la cookie en el servidor (una lectura por clave primaria, solo una vez por dispositivo)
+        // y la petición en curso ya la ve. Orden: ?lang= > cookie > preferencia > Accept-Language > en. Sin preferencia se deja una marca de una hora para no repetir la lectura.
+        let idiomaSembrado:string|null=null,sinPreferencia=false;
+        if(debeSembrarIdioma({parametro:request.nextUrl.searchParams.get('lang'),cookie:request.cookies.get(COOKIE_IDIOMA)?.value,marca:request.cookies.get(COOKIE_SIN_PREFERENCIA)?.value})){
+          idiomaSembrado=await leerIdiomaDePersona(client as unknown as ClienteLecturaPreferencias,session.user.id);
+          if(idiomaSembrado)request.cookies.set(COOKIE_IDIOMA,idiomaSembrado);else sinPreferencia=true;
+        }
         const response=finish(NextResponse.next({request:{headers:request.headers}}));
+        if(idiomaSembrado)response.cookies.set(COOKIE_IDIOMA,idiomaSembrado,{httpOnly:false,secure:c.secure,sameSite:'lax',path:'/',maxAge:60*60*24*365});
+        if(sinPreferencia)response.cookies.set(COOKIE_SIN_PREFERENCIA,'1',{httpOnly:true,secure:c.secure,sameSite:'lax',path:'/',maxAge:60*60});
         if(session.fellBack)response.cookies.set(ACTIVE_ORG,session.active.tenant_id,{httpOnly:true,secure:c.secure,sameSite:'lax',path:'/',maxAge:60*60*24*30});
         return response;
       }

@@ -27,7 +27,7 @@ Notes for anyone citing this site. Gross revenue, never margin. What is unknown 
 
 ## Company and contact
 
-- [Request access and review your figures with their evidence.](https://rovaq.ai/s/md/en/solicitar-acceso.391e4d24.md): Write to us with your role and the tools you use. We tell you what can be loaded today and what is still on the roadmap. Pricing is not published yet.
+- [Request access and review your figures with their evidence.](https://rovaq.ai/s/md/en/solicitar-acceso.59daf494.md): Write to us with your role and the tools you use. We tell you what can be loaded today and what is still on the roadmap. Pricing is not published yet.
 - [Deployed version and problem reports](https://rovaq.ai/s/md/en/estado.3d4685f6.md): How to identify the deployed version of Rovaq AI and how to report a problem. This page is not an availability commitment or a service level agreement.
 
 ## Blog

@@ -65,7 +65,7 @@ Walk through the product with example data. No data is from a customer.
 
 ### Each role sees what belongs to it.
 
-- Workspace administrator. Configures, decides and approves. Manages team, notices and retention. All screens, the team, notices and retention.
+- Workspace administrator. Configures, decides and approves. Manages team, notifications and retention. All screens, the team, notifications and retention.
 - Analyst. Investigates, prepares and proposes. Sees money and imports files. Money, problems, pain points and imports. Proposes and does not approve.
 - Operator. Carries out the actions assigned to them. Sees problems and actions, without money figures. Problems, assigned actions and evidence. No money figures.
 - Read-only. View access only, with no risk of changing anything. The screens that apply to them, unable to modify data, connections or decisions.

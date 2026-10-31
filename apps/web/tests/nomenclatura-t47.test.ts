@@ -35,7 +35,7 @@ test('avisos: el rótulo canónico del menú (menu.mjs) y el título de la bande
  assert.equal(en['nav.item.settings-notifications'],en['nav.titulo.notifications'],'menú EN = título EN de la bandeja');
 });
 test('avisos: ninguna clave en inglés dice «alert» donde el español dice «aviso» (alerta queda para umbrales y plataforma)',()=>{
- const permitidas=new Set(['landing.cuentas.1.d','landing.val.c2.d']); // texto del sitio público: no se toca aquí; ver notas T47
+ const permitidas=new Set<string>(); // sin excepciones: el sitio público ya dice Notifications
  const malas:string[]=[];
  for(const k of Object.keys(es)){
   if(permitidas.has(k))continue;

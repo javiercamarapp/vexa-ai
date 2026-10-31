@@ -55,7 +55,7 @@ const L = {
   'landing.val.c1.t': ['Reembolsos con evidencia para reclamar', 'Refunds with evidence to claim'],
   'landing.val.c1.d': ['Ve dónde se concentra el dinero devuelto por canal y producto, y descarga un paquete de evidencia. Tú lo revisas y lo presentas.', 'See where returned money concentrates by channel and product, and download an evidence package. You review it and you file it.'],
   'landing.val.c2.t': ['De la conversación a la acción registrada', 'From conversation to recorded action'],
-  'landing.val.c2.d': ['Agrupa conversaciones en problemas con casos concretos y lleva cada recomendación del aviso a la decisión y al resultado registrado.', 'Groups conversations into problems with concrete cases and carries each recommendation from alert to decision and recorded outcome.'],
+  'landing.val.c2.d': ['Agrupa conversaciones en problemas con casos concretos y lleva cada recomendación del aviso a la decisión y al resultado registrado.', 'Groups conversations into problems with concrete cases and carries each recommendation from notification to decision and recorded outcome.'],
   'landing.cls.titulo': ['Cuatro clases de cifra y una sola regla.', 'Four classes of figure and a single rule.'],
   'landing.val.obs': ['Observado', 'Observed'],
   'landing.val.est': ['Estimado', 'Estimated'],
@@ -113,7 +113,7 @@ const L = {
   // Puestos
   'landing.cuentas.titulo': ['Cada puesto ve lo que le corresponde.', 'Each role sees what belongs to it.'],
   'landing.cuentas.1.t': ['Administrador del espacio', 'Workspace administrator'],
-  'landing.cuentas.1.d': ['Configura, decide y aprueba. Administra equipo, avisos y retención.', 'Configures, decides and approves. Manages team, notices and retention.'],
+  'landing.cuentas.1.d': ['Configura, decide y aprueba. Administra equipo, avisos y retención.', 'Configures, decides and approves. Manages team, notifications and retention.'],
   'landing.cuentas.2.t': ['Analista', 'Analyst'],
   'landing.cuentas.2.d': ['Investiga, prepara y propone. Ve dinero e importa archivos.', 'Investigates, prepares and proposes. Sees money and imports files.'],
   'landing.cuentas.3.t': ['Operador', 'Operator'],

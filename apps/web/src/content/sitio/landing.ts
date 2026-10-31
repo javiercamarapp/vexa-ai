@@ -425,8 +425,8 @@ export const LANDING = {
     items: [
       {
         t: { es: 'Administrador del espacio', en: 'Workspace administrator' },
-        d: { es: 'Configura, decide y aprueba. Administra equipo, avisos y retención.', en: 'Configures, decides and approves. Manages team, notices and retention.' },
-        ve: { es: 'Todas las pantallas, el equipo, los avisos y la retención.', en: 'All screens, the team, notices and retention.' },
+        d: { es: 'Configura, decide y aprueba. Administra equipo, avisos y retención.', en: 'Configures, decides and approves. Manages team, notifications and retention.' },
+        ve: { es: 'Todas las pantallas, el equipo, los avisos y la retención.', en: 'All screens, the team, notifications and retention.' },
         href: { es: '/casos-de-uso/propietario', en: '/en/use-cases/owner' },
       },
       {

@@ -27,7 +27,7 @@ Notas para quien cite este sitio. Ingreso bruto, nunca margen. Lo desconocido di
 
 ## Empresa y contacto
 
-- [Solicita acceso y revisa tus cifras con su evidencia.](https://rovaq.ai/s/md/es/solicitar-acceso.4ff7c35c.md): Escríbenos con tu puesto y las herramientas que usas. Te decimos qué se puede cargar hoy y qué sigue en hoja de ruta. El precio todavía no está publicado.
+- [Solicita acceso y revisa tus cifras con su evidencia.](https://rovaq.ai/s/md/es/solicitar-acceso.605621f8.md): Escríbenos con tu puesto y las herramientas que usas. Te decimos qué se puede cargar hoy y qué sigue en hoja de ruta. El precio todavía no está publicado.
 - [Versión desplegada y reporte de problemas](https://rovaq.ai/s/md/es/estado.7474ed99.md): Cómo identificar la versión desplegada de Rovaq AI y cómo reportar un problema. No es un acuerdo de nivel de servicio ni una promesa de disponibilidad.
 
 ## Blog

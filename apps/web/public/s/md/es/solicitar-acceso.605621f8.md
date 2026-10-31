@@ -6,7 +6,7 @@ canonical_url: https://rovaq.ai/solicitar-acceso
 alternate_language_url: https://rovaq.ai/en/request-access
 language: es-MX
 type: contacto
-last_modified: 2026-10-28
+last_modified: 2026-10-31
 robots: noindex
 ---
 

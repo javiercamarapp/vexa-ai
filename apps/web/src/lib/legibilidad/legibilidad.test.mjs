@@ -1,5 +1,7 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {readFileSync,readdirSync} from 'node:fs';
+// Los textos visibles viven en los diccionarios i18n: se comprueba la clave en el componente y el texto en el diccionario ES.
+const dic=readdirSync(new URL('../i18n/',import.meta.url)).filter(f=>/^(es|d-.*)\.ts$/.test(f)).map(f=>readFileSync(new URL('../i18n/'+f,import.meta.url),'utf8')).join('\n');
 import {CATEGORIAS,CATEGORIA_RUIDO,TOTAL_CATEGORIAS,etiquetaCategoria,categoriaOriginal,esCategoriaRuido} from './categorias.mjs';
 import {esRuido,separarRuido,separarRuidoCategorias} from './ruido.mjs';
 import {GUIAS,IDS_GUIA,guia} from './guias.mjs';
@@ -162,7 +164,7 @@ test('tarjeta Órdenes: octubre parcial (5 días) NO se compara; se compara sep 
  assert.equal(c.sinCobertura,false);assert.equal(c.parcial.month,'2026-10');
  assert.equal(c.meses.at(-1).month,'2026-09','la línea de la tarjeta termina en el último mes completo');
  assert.ok(!c.meses.some(m=>m.month==='2026-10'));
- assert.equal(c.delta.dir,'up');assert.equal(c.delta.value,'11.0 %','104500000 frente a 94100000 (sep vs ago), no la caída de ~97 % contra octubre');
+ assert.equal(c.delta.dir,'up');assert.equal(c.delta.value,'11.1 %','104500000 frente a 94100000 (sep vs ago), no la caída de ~97 % contra octubre');
  assert.match(c.rotulo,/^sep vs ago/);assert.match(c.rotulo,/oct \(parcial, datos hasta 5 oct\) no comparado/);
 });
 test('sin marca de datos, el criterio cae al mes calendario y no inventa parcialidad',()=>{
@@ -213,14 +215,16 @@ test('textos de espera: dicen qué se verifica y que puede tardar, sin prometer 
 test('las vistas con espera larga usan WaitStatus y el aviso de señales críticas es neutro',()=>{
  const leer=r=>readFileSync(new URL('../../components/'+r,import.meta.url),'utf8');
  for(const f of ['recommendations/panel.tsx','explorer/panel.tsx','briefs/panel.tsx','workspace/shared-panel.tsx','problems-panel.tsx'])assert.match(leer(f),/<WaitStatus /);
- const wait=leer('ui/wait-status.tsx');assert.match(wait,/role="status"/);assert.match(wait,/aria-live="polite"/);
- const brief=leer('briefs/panel.tsx');assert.match(brief,/Puede tardar 2–3 minutos; no cierres esta pestaña/);assert.match(brief,/disabled=\{busy\|\|locked\}/);
+ const wait=leer('ui/wait-status.tsx'),carga=leer('rovaq-cargando.tsx');assert.match(wait,/<RovaqCargando /);assert.match(carga,/role="status"/);assert.match(carga,/aria-live="polite"/,'la espera es un estado anunciado: WaitStatus delega en el logo animado de RovaqCargando');
+ const brief=leer('briefs/panel.tsx');assert.match(brief,/tx\('brief\.tarda'\)/);assert.match(dic,/'brief\.tarda': 'Puede tardar 2–3 minutos; no cierres esta pestaña\.'/);assert.match(brief,/disabled=\{busy\|\|locked\}/);
  const sp=leer('workspace/shared-panel.tsx');
- assert.match(sp,/Aún no se calcularon las señales críticas en esta carga; no significa que no existan\./);assert.match(sp,/Volver a calcular/,'el aviso trae su botón de reintento');assert.match(sp,/DEFINICION\.grupo/);
+ assert.match(sp,/t\('panel\.criticoPendiente'\)/);assert.match(dic,/'panel\.criticoPendiente': 'Señales críticas pendientes'/);assert.match(sp,/t\('panel\.criticoNoCalculadas'\)/);assert.match(dic,/'panel\.criticoNoCalculadas': 'Aún no se calcularon en esta carga; no significa que no existan\.'/);
+ // La definición de «grupo» ya no se repite dentro del aviso (la constante DEFINICION desapareció): el aviso es neutro y solo ofrece reintento.
+ assert.match(sp,/t\('panel\.recalcular'\)/,'el aviso trae su botón de reintento');assert.match(dic,/'panel\.recalcular': 'Volver a calcular'/);
  assert.doesNotMatch(sp,/No alcanzaron a calcularse/);assert.match(sp,/critical_notice_state==='unavailable'/);
 });
 test('contraste no textual (WCAG 1.4.11): las barras de las gráficas de columnas (inactivas, estimadas, inferidas, plena y seleccionada) quedan a >= 3:1 del fondo en claro y oscuro',()=>{
- const css=readFileSync(new URL('../../app/ui.css',import.meta.url),'utf8'),glob=readFileSync(new URL('../../app/globals.css',import.meta.url),'utf8');
+ const css=readFileSync(new URL('../../app/(app)/ui.css',import.meta.url),'utf8'),glob=readFileSync(new URL('../../app/(app)/globals.css',import.meta.url),'utf8');
  const bloques=(txt,re)=>[...txt.matchAll(re)].map(m=>m[1]).join(';');
  const tok=(b,n)=>{const m=new RegExp('--'+n+':\\s*(#[0-9a-fA-F]{6})').exec(b);assert.ok(m,'token '+n);return m[1];};
  const rgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),lin=v=>{v/=255;return v<=0.03928?v/12.92:((v+0.055)/1.055)**2.4;},L=c=>0.2126*lin(c[0])+0.7152*lin(c[1])+0.0722*lin(c[2]);

@@ -80,7 +80,7 @@ export const metaEn = {
   'meta.titulo.map': 'Problem map',
   'meta.titulo.history': 'History and identity',
   'meta.titulo.pain-points': 'Pain points',
-  'meta.titulo.economics': 'Published cuts',
+  'meta.titulo.economics': 'Published snapshots',
   'meta.titulo.sources': 'Data coverage',
   'meta.titulo.evaluation': 'Historical evaluation',
   'meta.titulo.evaluation-candidates': 'Evaluated candidates',

@@ -107,7 +107,7 @@ export const brechasEn: Record<keyof typeof brechasEs, string> = {
   'brechas.aplica': 'Applies to the monthly chart and to "By channel"',
   'brechas.cIngresoMes': 'Gross revenue by month and channel',
   'brechas.cIngresoMesD': 'One color per channel; partial data is hatched',
-  'brechas.sinPedidos': 'There are no orders in the ledger yet. The owner can upload the Amazon or Walmart export under Published cuts.',
+  'brechas.sinPedidos': 'There are no orders in the ledger yet. The owner can upload the Amazon or Walmart export under Published snapshots.',
   'brechas.cPorCanal': 'By channel',
   'brechas.cPorCanalD': 'Gross revenue, excluding cancelled',
   'brechas.sinCanales': 'No channels with orders.',

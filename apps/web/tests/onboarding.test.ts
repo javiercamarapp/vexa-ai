@@ -182,10 +182,10 @@ test('onb.*: los textos de pistas de rol no prometen lo que el rol no puede hace
 test('analista: el paso del corte espera al propietario (no cuenta como tarea suya) y su texto no promete preparar ni publicar', () => {
   const corte = pasosDe('analista').find((p) => p.id === 'analista.corte')!;
   assert.equal(corte.espera, 'propietario'); assert.equal(corte.superficie, 'checklist');
-  assert.match(ESP['onb.analista.corte.cuerpo'], /propietario/i); assert.match(ING['onb.analista.corte.cuerpo'], /owner/i);
-  assert.match(ESP['onb.analista.corte.cuerpo'], /lo hace el propietario/); assert.match(ING['onb.analista.corte.cuerpo'], /owner prepares and publishes/);
+  assert.match(ESP['onb.analista.corte.cuerpo'], /administrador del espacio/i); assert.match(ING['onb.analista.corte.cuerpo'], /workspace administrator/i);
+  assert.match(ESP['onb.analista.corte.cuerpo'], /lo hace el administrador del espacio/); assert.match(ING['onb.analista.corte.cuerpo'], /workspace administrator prepares and publishes/);
   assert.ok(!pasosDe('analista').some((p) => p.accion === 'configure' || /pedidos|orders/i.test(p.id)), 'el analista no carga pedidos ni configura');
-  assert.match(ESP['onb.analista.importar.cuerpo'], /propietario/); assert.match(ING['onb.analista.importar.cuerpo'], /owner/);
+  assert.match(ESP['onb.analista.importar.cuerpo'], /administrador del espacio/); assert.match(ING['onb.analista.importar.cuerpo'], /workspace administrator/);
 });
 test('operador y lector tienen paso de avisos propios (notify) y llegan a él desde su menú', () => {
   for (const pista of ['operador', 'lector'] as const) {

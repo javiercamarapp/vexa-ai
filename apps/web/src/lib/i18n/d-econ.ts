@@ -70,7 +70,7 @@ export const econEs = {
 export const econEn: Record<keyof typeof econEs, string> = {
   'econ.noDisp': 'Not available',
   'econ.eyebrow': 'Data and trust',
-  'econ.titulo': 'Published cuts',
+  'econ.titulo': 'Published snapshots',
   'econ.desc': 'What is published, how complete it is and what is missing before publishing a new cut.',
   'econ.cCorte': 'Published cut',
   'econ.cCorteD': 'What the Overview and the Executive brief read today',

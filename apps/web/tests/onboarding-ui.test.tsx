@@ -85,13 +85,13 @@ test('tarjeta: en el primer paso no hay «Anterior»; en el último el primario 
   const ultimo=renderToStaticMarkup(<TarjetaRecorrido t={t} titulo={t('onb.lector.confianza.titulo')} cuerpo={t('onb.lector.confianza.cuerpo')} n={3} total={3} omitir={noop} ruta={{nombres:['Hoy','Fuentes'],actual:1}} tipo="cierre" ilu="nodos" grupoN={2} grupoTotal={2} anterior={noop} primario={noop}/>);
   assert.match(ultimo,/>Finish</);
 });
-test('invitación y menú Guía: sin style=, saltar/«No volver a mostrar»/«Retomar» presentes según el caso',()=>{
+test('invitación y menú Guía: sin style=, omitir/«Omitir y no volver a mostrar»/«Retomar» presentes según el caso',()=>{
   const t=T.en;
   const inv=renderToStaticMarkup(<InvitacionRecorrido t={t} saltar={noop} empezar={noop}/>);
   assert.match(inv,/Skip/);assert.match(inv,/Start tour/);assert.doesNotMatch(inv,/\bstyle=|role="dialog"/);
   const menu=(paso:boolean,descartado:boolean)=>renderToStaticMarkup(<MenuGuia t={t} contexto="Org · Owner" tienePaso={paso} mostrarChecklistOpcion descartado={descartado} iniciar={noop} retomar={noop} mostrarChecklist={noop} noVolver={noop} cerrar={noop}/>);
   assert.match(menu(true,false),/Resume where I left off/);assert.doesNotMatch(menu(false,false),/Resume where/);
-  assert.match(menu(false,false),/Don&#x27;t show again/);assert.doesNotMatch(menu(false,true),/Don&#x27;t show again/);assert.match(menu(false,true),/Show the getting started list/);
+  assert.match(menu(false,false),/Skip and don’t show again/);assert.doesNotMatch(menu(false,true),/Skip and don’t show again/);assert.match(menu(false,true),/Show the getting started list/);
   assert.match(menu(false,false),/Org · Owner/);assert.doesNotMatch(menu(true,true),/\bstyle=/);
 });
 

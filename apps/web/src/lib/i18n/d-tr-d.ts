@@ -793,7 +793,7 @@ export const trDEn = {
   'tr.pl.sgInvEntregaN': '{n} invitations with delivery problems.',
   'tr.pl.sgSinAsientos': 'It has no ledger entries loaded yet.',
   'tr.pl.sgLibroAtrasado': 'The ledger has received no entries for more than {dias} days.',
-  'tr.pl.sgSinCortes': 'No published cuts.',
+  'tr.pl.sgSinCortes': 'No published snapshots.',
   'tr.pl.modoDirecta': 'Direct query · no AI',
   'tr.pl.modoIa': 'Answer from a simulated model',
   'tr.pl.modoRechazada': 'Request rejected',

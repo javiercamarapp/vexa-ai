@@ -56,6 +56,6 @@ test('A1 (auditoría 24-oct): la propuesta de Proceder nunca muestra la taxonom�
  assert.match(r,/Distribuidores: Alianza comercial, Distribuidores: Garantía, Opinión: Negativa, Pedido: Cancelación, aún sin enviar/);
  const {readFileSync}=await import('node:fs');
  const src=readFileSync(new URL('../../components/recommendations/flujo-acciones.tsx',import.meta.url),'utf8');
- assert.match(src,/\{textoLegible\(item\.action\)\}/);
+ assert.match(src,/\{textoLegible\(item\.action,t\)\}/);//T42: con el traductor del idioma activo
  assert.ok(!/<p[^>]*>\{item\.action\}<\/p>/.test(src));
 });

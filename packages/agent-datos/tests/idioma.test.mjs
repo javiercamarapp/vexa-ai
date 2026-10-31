@@ -125,3 +125,50 @@ test('los exportes de una respuesta (Markdown y HTML) salen en el idioma pedido,
     }
   }
 });
+
+// ---- T42: detección diferencial (es contra en, hoja por hoja) y palabras que SOLAS son español, para que no se repita lo de cobertura_datos ----
+const SOLO_ESPANOL = /\b(Observado|Estimado|Inferido|Adjuntos|Cargada|Sin cargar|incompleto|Falta cargar|Mostrando|mes incompleto)\b/;
+const IGNORA = /(^|\.)(id|ref|tool|code|status|estado|idioma|role|key|type|slug|url|class|unit|month|from|to|kind|name|quote|text)$/;
+function hojas(x, ruta = '', out = []) {
+  if (typeof x === 'string') out.push([ruta, x]);
+  else if (Array.isArray(x)) x.forEach((v, i) => hojas(v, `${ruta}.${i}`, out));
+  else if (x && typeof x === 'object') for (const [k, v] of Object.entries(x)) hojas(v, ruta ? `${ruta}.${k}` : k, out);
+  return out;
+}
+test('las 21 preguntas x 3 roles: ninguna hoja de texto del inglés queda idéntica al español ni lleva palabras que solo son español', async () => {
+  const agent = createAgent(), malas = [];
+  for (const role of ['owner', 'analyst', 'viewer']) {
+    for (const d of DEMO_QUESTIONS) {
+      const run = (idioma) => agent.answer({ ctx: ctxFor(role), port: portFor(), question: d.q, directa: d.direct ? { tool: d.tool, args: d.args } : undefined, idioma });
+      const [es, en] = [await run('es'), await run('en')];
+      const mapEs = new Map(hojas(es).map(([r, t]) => [r, sinDatos(t)]));
+      for (const [r, t0] of hojas(en)) {
+        const t = sinDatos(t0);
+        if (IGNORA.test(r) || /^(sources|citations)\.\d+\.ref$/.test(r) || !t) continue;
+        const palabras = (t.match(/[A-Za-zÁÉÍÓÚáéíóúñ]{3,}/g) ?? []).length;
+        const ident = mapEs.get(r) === t && palabras >= 2 && !/^[\p{L} .]+ · [A-Z]{3}$/u.test(t) && !/^[\w.()>=, ;-]+$/.test(t.replace(/\b(public|tracker_row_heads|WH|SLA Status|Contact_reason)\b/g, ''));
+        if (ident || SOLO_ESPANOL.test(t)) malas.push(`${role}/${d.tool ?? d.q}: ${r} = ${t.slice(0, 80)}`);
+      }
+    }
+  }
+  assert.deepEqual([...new Set(malas)], []);
+});
+test('cobertura_datos en inglés: nombres de fuente, columna Clase, lista de lo que falta y mes incompleto salen en inglés', async () => {
+  const a = await turno('What does my data cover and what is missing?');
+  const bloque = a.blocks.find((b) => b.tool === 'cobertura_datos');
+  const filas = bloque.rows.map((r) => `${r.fuente}|${r.clase}`).join(';');
+  assert.doesNotMatch(filas, /Observado|Estimado|Inferido|Adjuntos|Archivos|conversaciones/);
+  assert.match(filas, /Attachments \(files\)\|Observed/);
+  assert.ok(a.missing.every((m) => !SOLO_ESPANOL.test(m) && !espanol(m)), a.missing.join(' / '));
+  const es = await turno('¿Qué cubre y qué falta de mi información?', { idioma: 'es' });
+  assert.match(es.blocks.find((b) => b.tool === 'cobertura_datos').rows.map((r) => r.fuente).join(';'), /Adjuntos \(archivos\)/);
+  const tend = await turno('How are conversations going per month?');
+  assert.doesNotMatch(JSON.stringify(tend), /mes incompleto/);
+});
+test('la traza de verificación pluraliza bien (1 figure and 1 block) en ambos idiomas', async () => {
+  const detalle = (a) => a.trace.find((t) => t.kind === 'verify')?.detail ?? '';
+  const todas = [];
+  for (const idioma of ['en', 'es']) for (const d of DEMO_QUESTIONS) { const a = await createAgent().answer({ ctx: ctxFor('owner'), port: portFor(), question: d.q, directa: d.direct ? { tool: d.tool, args: d.args } : undefined, idioma }); todas.push(detalle(a)); }
+  for (const t of todas.filter(Boolean)) { assert.doesNotMatch(t, /\b1 (figures|blocks|cifras|bloques)\b/, t); assert.doesNotMatch(t, /\b[02-9]\d* (figure|block|cifra|bloque)\b(?!s)/, t); }
+  assert.ok(todas.some((t) => /\b1 figure and 1 block\b/.test(t)) || todas.some((t) => /\b\d+ figures\b/.test(t)), 'se ejercita al menos un plural');
+});

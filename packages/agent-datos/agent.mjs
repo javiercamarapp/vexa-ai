@@ -125,7 +125,7 @@ export function createAgent({ model = createRuleModel(), budget, limiter, estima
         const bad = contractViolations(answerObj);
         if (bad.length) return base('unavailable', L('No pude verificar la clase y la cobertura de las cifras, así que no las muestro. Reintenta o revisa la cobertura de tus datos.', "I couldn't verify the class and coverage of the figures, so I'm not showing them. Try again or check the coverage of your data."), { violations: bad });
       } else if (!answerObj.calc.length) return base('unavailable', text);
-      note({ id: 'verify', kind: 'verify', label: L('Verifiqué clase y cobertura', 'I verified class and coverage'), estado: 'ok', ms: 0, detail: L(`${answerObj.figures.length} cifras y ${answerObj.blocks.length} bloques con clase y cobertura; las cifras salen de las consultas, no del modelo.`, `${answerObj.figures.length} figures and ${answerObj.blocks.length} blocks with class and coverage; the figures come from the queries, not from the model.`) });
+      note({ id: 'verify', kind: 'verify', label: L('Verifiqué clase y cobertura', 'I verified class and coverage'), estado: 'ok', ms: 0, detail: ((nf, nb) => L(`${nf} ${nf === 1 ? 'cifra' : 'cifras'} y ${nb} ${nb === 1 ? 'bloque' : 'bloques'} con clase y cobertura; las cifras salen de las consultas, no del modelo.`, `${nf} ${nf === 1 ? 'figure' : 'figures'} and ${nb} ${nb === 1 ? 'block' : 'blocks'} with class and coverage; the figures come from the queries, not from the model.`))(answerObj.figures.length, answerObj.blocks.length) });
       answerObj.usage = { ...usage, durationMs: Date.now() - started };
       return answerObj;
     } catch (e) {

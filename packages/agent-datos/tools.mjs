@@ -131,14 +131,14 @@ export const TOOLS = [
       const { idioma, locale, L, fmtInt, monthLabel, monthShort, fmtPct, signed, nd, tag, money, clase, fuenteEtq, NO_COMPARABLE, ALCANCE_PEDIDOS, ALCANCE_CONV, avisoMes, mesPorDefecto, lineaDatosHasta, avisoCoberturaVariable } = ayudas(ctx);
       const cv = await port.coverage(); const all = cv.sources ?? [];
       const loaded = all.filter((s) => s.loaded), missing = all.filter((s) => !s.loaded);
-      if (!loaded.length) return noData(L('Todavía no hay información cargada en este espacio de trabajo.', `No data has been loaded in this workspace yet.`), missing.map((s) => s.label));
+      if (!loaded.length) return noData(L('Todavía no hay información cargada en este espacio de trabajo.', `No data has been loaded in this workspace yet.`), missing.map((s) => fuenteEtq(s.label)));
       const f = fig('cobertura_datos', L('Fuentes con datos cargados', `Sources with data loaded`), L(`${loaded.length} de ${all.length}`, `${loaded.length} of ${all.length}`), loaded.length, 'observed', coverageOf(loaded.length, all.length));
-      const rows = all.map((s) => ({ fuente: s.label, estado: s.loaded ? L('Cargada', `Loaded`) : L('Sin cargar', `Not loaded`), incorporadas: s.loaded ? s.incorporated : null, rechazadas: s.loaded ? s.rejected : null, pendientes: s.loaded ? s.pending : null, clase: CLASS_LABELS[s.class] }));
+      const rows = all.map((s) => ({ fuente: fuenteEtq(s.label), estado: s.loaded ? L('Cargada', `Loaded`) : L('Sin cargar', `Not loaded`), incorporadas: s.loaded ? s.incorporated : null, rechazadas: s.loaded ? s.rejected : null, pendientes: s.loaded ? s.pending : null, clase: clase(s.class) }));
       return {
         status: 'ok', figures: [f],
         blocks: [{ tool: 'cobertura_datos', title: L('Cobertura por fuente', `Coverage by source`), columns: [col('fuente', L('Fuente', `Source`)), col('estado', L('Estado', `Status`)), col('incorporadas', L('Incorporadas', `Incorporated`), 'integer'), col('rechazadas', L('Rechazadas', `Rejected`), 'integer'), col('pendientes', L('Pendientes', `Pending`), 'integer'), col('clase', L('Clase', `Class`))], rows, chart: { kind: 'donut', additive: true, unit: L('fuentes', `sources`), series: [{ key: 'cargadas', label: L('Cargadas', `Loaded`), value: loaded.length, display: fmtInt(loaded.length) }, { key: 'sin_cargar', label: L('Sin cargar', `Not loaded`), value: missing.length, display: fmtInt(missing.length) }].filter((x) => x.value > 0) }, class: 'mixed', coverage: f.coverage, truncated: false, note: L('Las fuentes marcadas «Estimado» vienen de una muestra rotulada.', `Sources marked “Estimated” come from a labeled sample.`) }],
         summary: L(`Hay datos de ${loaded.length} de ${all.length} fuentes ${tag(f)}. Cargadas: ${loaded.map((s) => s.label).join('; ')}.${missing.length ? ` Falta cargar: ${missing.map((s) => s.label).join('; ')}; su tamaño no se estima.` : ''}`, `There is data from ${loaded.length} of ${all.length} sources ${tag(f)}. Loaded: ${loaded.map((s) => fuenteEtq(s.label)).join('; ')}.${missing.length ? ` Still to load: ${missing.map((s) => fuenteEtq(s.label)).join('; ')}; their size is not estimated.` : ''}`),
-        missing: missing.map((s) => s.label), notes: [],
+        missing: missing.map((s) => fuenteEtq(s.label)), notes: [],
       };
     },
   },
@@ -194,7 +194,7 @@ export const TOOLS = [
       if (!last) return noData(L('No hay conversaciones con datos en la ventana.', `There are no conversations with data in the window.`), [L('Conversaciones importadas (HubSpot o CSV)', `Imported conversations (HubSpot or CSV)`)]);
       const avisos = s.map((x) => avisoMes(monthLabel(x.month), x.st)).filter(Boolean);
       const cov = coverageOf(sum, (c.total ?? sum) + (c.undated ?? 0));
-      const lastParcial = last.st.estado === 'parcial', lastDisplay = !lastParcial ? fmtInt(last.count) : last.count > 0 ? `${fmtInt(last.count)} (mes incompleto)` : L('sin datos completos', `no complete data`);
+      const lastParcial = last.st.estado === 'parcial', lastDisplay = !lastParcial ? fmtInt(last.count) : last.count > 0 ? L(`${fmtInt(last.count)} (mes incompleto)`, `${fmtInt(last.count)} (incomplete month)`) : L('sin datos completos', `no complete data`);
       const f = fig('tendencia_conversaciones', L(`Conversaciones en ${monthLabel(last.month)}${lastParcial ? L(' (mes incompleto)', ` (incomplete month)`) : ''}`, `Conversations in ${monthLabel(last.month)}${lastParcial ? ' (incomplete month)' : ''}`), lastDisplay, lastParcial ? null : last.count, c.class, cov);
       const f2 = fig('tendencia_conversaciones', L(`Conversaciones en ${dato.length} meses`, `Conversations in ${dato.length} months`), fmtInt(sum), sum, c.class, cov);
       const cell = (x) => (x.st.estado === 'sin_datos' ? L('No disponible', `Not available`) : x.st.estado === 'parcial' ? `${fmtInt(x.count)}*` : x.count);
@@ -305,7 +305,7 @@ export const TOOLS = [
         if (!hit.length) {
           const cv = await port.coverage(); const src = (cv.sources ?? []).find((s) => normalize(s.label).includes(q) || normalize(s.key).includes(q));
           const label = src?.label ?? fuente;
-          return noData(L(`No tengo ${noun} de «${label}». ${src && !src.loaded ? `${label} no está cargado.` : 'No hay registros de esa fuente en el periodo.'}`, `I don't have ${noun} from "${label}". ${src && !src.loaded ? `${label} is not loaded.` : 'There are no records from that source in the period.'}`), [L(`${label} (aún no cargado)`, `${label} (not loaded yet)`)]);
+          return noData(L(`No tengo ${noun} de «${label}». ${src && !src.loaded ? `${label} no está cargado.` : 'No hay registros de esa fuente en el periodo.'}`, `I don't have ${noun} from "${fuenteEtq(label)}". ${src && !src.loaded ? `${fuenteEtq(label)} is not loaded.` : 'There are no records from that source in the period.'}`), [L(`${label} (aún no cargado)`, `${fuenteEtq(label)} (not loaded yet)`)]);
         }
         rows = hit;
       }
@@ -366,7 +366,7 @@ export const TOOLS = [
       const add = (label, cls, va, vb, cov, sta, stb, fmt = fmtInt) => {
         const ok = comparables(sta, stb), d = vb - va;
         const cambio = ok ? `${signed(d)} (${fmtPct(pct(va, vb))})` : NO_COMPARABLE;
-        rows.push({ medida: label, [a]: shown(sta, va, fmt), [b]: shown(stb, vb, fmt), cambio, clase: CLASS_LABELS[cls] });
+        rows.push({ medida: label, [a]: shown(sta, va, fmt), [b]: shown(stb, vb, fmt), cambio, clase: clase(cls) });
         figs.push(fig('comparar_meses', label, cambio, ok ? d : null, cls, cov));
       };
       add(L('Conversaciones (todas las fuentes, con fecha)', `Conversations (all sources, dated)`), t.conversations.class, conv(a), conv(b), covC, sc.a, sc.b);

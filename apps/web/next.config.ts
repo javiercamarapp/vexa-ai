@@ -22,6 +22,8 @@ const extractionCode = Object.fromEntries(extractionPaths.map(name => {
 }));
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Cierre de seguridad 31-oct (GHSA-2464-fhr4-w9xw, RCE en la API de optimizacion de imagenes con SVG): el proyecto no usa next/image; se apaga el endpoint /_next/image y dangerouslyAllowSVG queda en su valor por defecto (false).
+  images: { unoptimized: true },
   // `next dev` no debe generar AGENTS.md/CLAUDE.md en el árbol del producto.
   agentRules: false,
   // Enrutamiento por host (rovaq.ai sirve el sitio, www redirige al apex, la aplicación queda en app.rovaq.ai). Reglas derivadas de src/lib/host-routing.mjs.

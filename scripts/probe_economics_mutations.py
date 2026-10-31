@@ -15,7 +15,7 @@ def main():
  gate=ROOT/'tests/acceptance/economics.test.mjs'
  base=subprocess.run(['node','--test',str(gate)],cwd=ROOT,capture_output=True,text=True,timeout=20)
  if base.returncode:raise SystemExit('Baseline fails; no mutation conclusion allowed')
- result=[];logdir=ROOT/'private/logs';logdir.mkdir(parents=True,exist_ok=True)
+ result=[];logdir=ROOT/'.runtime/logs';logdir.mkdir(parents=True,exist_ok=True)
  for id,old,new in MUTANTS:
   if text.count(old)!=1:raise SystemExit('Mutation no longer matches exactly: '+id)
   with tempfile.TemporaryDirectory(prefix='vexa-mutation-') as tmp:
@@ -29,7 +29,7 @@ def main():
    result.append({'id':id,'status':status,'exit':r.returncode,'log_sha256':hashlib.sha256(log.encode()).hexdigest()})
  assert source.read_bytes()==before,'Baseline changed'
  data={'scope':'five hand-picked arithmetic mutations; not whole-product mutation score','baseline_sha256':hashlib.sha256(before).hexdigest(),'gate_sha256':hashlib.sha256(gate.read_bytes()).hexdigest(),'baseline_exit':base.returncode,'results':result,'killed':sum(x['status']=='killed' for x in result),'total':len(result),'baseline_unchanged':True}
- out=ROOT/'construccion/RESULTADO-MUTACION.json'
+ out=ROOT/'.runtime/RESULTADO-MUTACION.json';out.parent.mkdir(parents=True,exist_ok=True)
  if out.exists() and not out.read_bytes():raise SystemExit('Refusing empty/placeholder output')
  out.write_text(json.dumps(data,indent=2)+'\n');print(json.dumps(data,indent=2))
  raise SystemExit(0 if data['killed']==data['total'] else 1)

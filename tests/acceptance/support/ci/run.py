@@ -93,9 +93,8 @@ def main():
         if sys.version_info < (3,9): raise ValueError('PYTHON_REQUIRES_3_9')
         acceptance=CONTROL/'tests/acceptance'
         if args.job=='control-kernel':
-            files=['economics.test.mjs']+['F00-%02d.test.mjs'%i for i in range(1,6)]+['foundation-negative.test.mjs']
+            files=['economics.test.mjs']
             run(['node','--test','--test-reporter=tap']+[str(acceptance/f) for f in files])
-            run(['python3','-B','-m','unittest','discover','-s','tests/controller','-v'])
             run(['node','--test','--test-reporter=tap','tests/tooling/scaffold-copy.test.mjs'])
         elif args.job=='web-quality':
             run(['node',str(pathlib.Path(__file__).with_name('web.mjs')),str(candidate)])

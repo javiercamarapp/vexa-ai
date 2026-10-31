@@ -19,7 +19,8 @@
     "test:cargador": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/member-file-loader.test.tsx",
     "test:cco": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/cco.test.tsx",
     "test:sitio": "node --test \"tests/sitio/*.test.*\"",
-    "presupuesto": "node ../../tools/sitio/presupuesto.mjs"
+    "presupuesto": "node ../../tools/sitio/presupuesto.mjs",
+    "test:web-ui": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/cco.test.tsx tests/setup.test.tsx tests/agente/agente-ui.test.tsx tests/i18n.test.ts"
   },
   "dependencies": {
     "next": "16.3.8",

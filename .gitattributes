@@ -1,8 +1,3 @@
 # Generated documentation; sources remain included in language statistics.
-# scripts/guide.py
-/construccion/GUIA-COMPLETA.html linguist-generated=true
-/00-ABRE-CONSTRUCCION.html linguist-generated=true
-# scripts/render_business_report.py
-/negocio/INFORME-VEXA.html linguist-generated=true
 # Licensed, provenance-pinned upstream XML dependencies; handwritten ingestion stays included.
 /packages/ingestion/vendor/** linguist-vendored=true

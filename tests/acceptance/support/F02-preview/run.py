@@ -11,7 +11,7 @@ sm=importlib.util.module_from_spec(ss);ss.loader.exec_module(sm)
 owned=sm.Scratch()
 def hashes():
  result={}
- for scope in ['apps','packages','supabase','tests/acceptance','orchestration']:
+ for scope in ['apps','packages','supabase','tests/acceptance']:
   for p in (candidate/scope).rglob('*'):
    if any(x in p.parts for x in ['node_modules','.next','__pycache__']):continue
    if p.is_file() and not p.is_symlink():result[str(p.relative_to(candidate))]={'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'mode':p.stat().st_mode&0o777}

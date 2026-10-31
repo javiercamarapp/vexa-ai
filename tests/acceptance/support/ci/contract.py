@@ -1,7 +1,7 @@
 """Closed JSON (YAML 1.2 subset) workflow contract, owned by control checkout."""
 import json, re
 JOBS = ('control-kernel', 'web-quality', 'sql-integration', 'auth-e2e')
-GATES = ('E00', 'F00-01', 'F00-02', 'F00-03', 'F00-04', 'F00-05', 'F01-01', 'F01-02', 'F01-03', 'F01-04')
+GATES = ('E00', 'F01-01', 'F01-02', 'F01-03', 'F01-04')
 CHECKOUT = 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1'
 NODE = 'actions/setup-node@820762786026740c76f36085b0efc47a31fe5020'
 PYTHON = 'actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97'

@@ -14,7 +14,7 @@ export const CASOS_INDICE: Pagina = {
   seo: {
     titulo: b('Casos de uso por puesto y por situación | Rovaq AI', 'Use Cases for Every Role and Every Situation | Rovaq AI'),
     descripcion: b(
-      'Cada puesto ve solo lo que necesita: el administrador del espacio decide, el analista investiga, el operador ejecuta y la lectura solo consulta.',
+      'Cada puesto ve solo lo que necesita: el administrador del espacio decide, el analista investiga, el operador ejecuta y el puesto de lectura solo consulta.',
       'Each role sees only what it needs: the workspace administrator decides, the analyst investigates, the operator executes and read-only roles only look.',
     ),
   },
@@ -214,14 +214,14 @@ export const CASO_LECTOR: Pagina = rol({
   id: 'casos-de-uso/lector',
   estado: 'publicable',
   seo: {
-    titulo: b('Lectura | Consulta sin riesgo de cambiar nada | Rovaq AI', 'Read-only | Reads Without Any Risk of Changing Anything'),
+    titulo: b('Lectura | Consulta sin riesgo de cambiar nada | Rovaq AI', 'Read-only | Look Without Risk of Changing Data | Rovaq AI'),
     descripcion: b(
       'El puesto de lectura consulta las pantallas que le corresponden sin poder modificar datos, conexiones ni decisiones. Útil para dirección y finanzas.',
       'The read-only role reads the screens that apply to it and cannot modify data, connections or decisions. Useful for leadership and finance teams.',
     ),
   },
   h1: b('Lectura: consulta sin riesgo de cambiar nada', 'Read-only: read without any risk of changing anything'),
-  subtitulo: b('Consulta en solo lectura.', 'Reads with read-only access.'),
+  subtitulo: b('Consulta en solo lectura.', 'View access only.'),
   bloques: [
     {
       tipo: 'lista',

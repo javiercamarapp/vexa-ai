@@ -43,7 +43,7 @@
 }
 
 @media (min-width: 765px) {
-  .s-hero__marco { margin-top: 56px; }
+  .s-hero__marco { margin-top: 52px; }
 }
 
 /* ---------- S8 Seguridad: tarjetas plegables ----------
@@ -278,11 +278,11 @@ html[data-js] .s-pantalla .s-pantalla__img { clip-path: none; animation: none; }
 
 /* ---------- Héroe a 765 px o más: el titular y el aire se ajustan a la altura de la ventana del navegador para compensar los 56 px que reserva la cifra sobre la ventana ---------- */
 @media (min-width: 765px) {
-  .s-hero__titulo { font-size: min(var(--s-t-hero), 10.2svh); }
+  .s-hero__titulo { font-size: min(var(--s-t-hero), 9.4svh); }
 
   .s-hero__contenido {
     gap: var(--s-e8);
-    padding-top: clamp(70px, 7.8svh, 84px);
+    padding-top: clamp(66px, 7.4svh, 84px);
     padding-bottom: var(--s-e8);
   }
 }

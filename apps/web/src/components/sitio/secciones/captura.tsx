@@ -25,7 +25,7 @@ export function Captura({nombre, tema, lang, tamanos, prioridad = false, clase, 
       <source type="image/webp" srcSet={webp} sizes={tamanos} />
       <img
         className={clase}
-        src={url(clave, {ancho: lista[lista.length - 1]})}
+        src={url(clave, {ancho: lista.includes(1440) ? 1440 : lista[lista.length - 1]})}
         width={ancho}
         height={alto}
         alt={alt(clave, lang)}

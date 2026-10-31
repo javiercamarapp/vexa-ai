@@ -129,7 +129,7 @@ export const trEEn = {
   'tr.err.econVersion': 'The version, identity or source needs review.',
   'tr.err.econCampos': 'Check the fields, dates and currency units.',
   'tr.err.econFallo': 'The economic query could not be completed.',
-  'tr.err.cfgSnapshots': 'The snapshot server configuration is not available.',
+  'tr.err.cfgSnapshots': 'The cut server configuration is not available.',
   'tr.err.corteRevision': 'The cut, its scope or its sources need review.',
   'tr.err.corteFallo': 'The cut could not be loaded or published.',
   'tr.err.cfgDetalle': 'The detail server configuration is not available.',

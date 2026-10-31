@@ -20,7 +20,7 @@ export const onbEs = {
   'onb.tercero.crm': 'el equipo de Rovaq (conexión del CRM)', 'onb.tercero.propietario': 'el administrador del espacio',
   // Propietario
   'onb.propietario.hoy.titulo': 'Hoy: tus cifras principales', 'onb.propietario.hoy.cuerpo': 'Ingreso, reembolsos, dinero atorado y respuestas con demora, cada una con su periodo. Si aún no se relacionan todos los pedidos con sus clientes, la cifra lo dice en lugar de aparentar estar completa.',
-  'onb.propietario.datos.titulo': 'Datos: fuentes e importaciones', 'onb.propietario.datos.cuerpo': 'Aquí ves qué está conectado y qué se importó, con el estado de cada fuente.',
+  'onb.propietario.datos.titulo': 'Fuentes conectadas', 'onb.propietario.datos.cuerpo': 'Aquí ves qué fuentes están conectadas y el estado de cada una.',
   'onb.propietario.confianza.titulo': 'Confianza y cobertura', 'onb.propietario.confianza.cuerpo': 'Qué fuentes están al día, qué cobertura hay y qué todavía no se sabe.',
   'onb.propietario.problema.titulo': 'Abre un problema con evidencia', 'onb.propietario.problema.cuerpo': 'Cada problema muestra de dónde sale: las conversaciones y los pedidos relacionados. Empieza por uno con dinero expuesto.',
   'onb.propietario.acciones.titulo': 'Decide la primera acción', 'onb.propietario.acciones.cuerpo': 'Solo el administrador del espacio aprueba. Revisa lo propuesto, apruébalo y después sigue su resultado en Acciones.',
@@ -45,7 +45,7 @@ export const onbEs = {
   'onb.operador.avisos.titulo': 'Tus avisos', 'onb.operador.avisos.cuerpo': 'Elige qué avisos recibes y por qué canal, por ejemplo cuando te asignen una intervención. Son tuyos: no cambian los de nadie más.',
   'onb.operador.resultado.titulo': 'Registrar un resultado', 'onb.operador.resultado.cuerpo': 'Cuando cierres una intervención que te asignaron, anota qué pasó para medir si funcionó.',
   // Lector
-  'onb.lector.hoy.titulo': 'Hoy: problemas y evidencia', 'onb.lector.hoy.cuerpo': 'Hoy te muestra los problemas abiertos y cuánta evidencia hay detrás de cada uno. Tu acceso es de lectura: puedes mirar, pero no cambiar los datos de la organización. Las cifras de dinero son de administradores del espacio y analistas.',
+  'onb.lector.hoy.titulo': 'Hoy: problemas y evidencia', 'onb.lector.hoy.cuerpo': 'Hoy muestra los problemas abiertos y su evidencia. Tu acceso es de lectura: puedes mirar, pero no cambiar los datos de la organización.',
   'onb.lector.problemas.titulo': 'Problemas y su evidencia', 'onb.lector.problemas.cuerpo': 'Abre un problema para leer su evidencia. Los datos personales de terceros aparecen enmascarados.',
   'onb.lector.confianza.titulo': 'Cuánto fiarte de cada cifra', 'onb.lector.confianza.cuerpo': 'Confianza explica qué tan completos están los datos y cuánto fiarte de lo que ves.',
   'onb.lector.avisos.titulo': 'Tus avisos', 'onb.lector.avisos.cuerpo': 'Elige qué avisos recibes y por qué canal. Tus preferencias son solo tuyas.',
@@ -79,12 +79,12 @@ export const onbEn = {
   'onb.tercero.crm': 'the Rovaq team (CRM connection)', 'onb.tercero.propietario': 'the workspace administrator',
   // Owner
   'onb.propietario.hoy.titulo': 'Today: your main numbers', 'onb.propietario.hoy.cuerpo': 'Revenue, refunds, stuck money and delayed replies, each with its period. If not every order is matched to its customer yet, the number says so instead of looking complete.',
-  'onb.propietario.datos.titulo': 'Data: sources and imports', 'onb.propietario.datos.cuerpo': 'See what is connected and what was imported, with the state of each source.',
+  'onb.propietario.datos.titulo': 'Connected sources', 'onb.propietario.datos.cuerpo': 'See which sources are connected and the state of each one.',
   'onb.propietario.confianza.titulo': 'Trust and coverage', 'onb.propietario.confianza.cuerpo': 'Which sources are up to date, what coverage there is and what is still unknown.',
   'onb.propietario.problema.titulo': 'Open a problem with evidence', 'onb.propietario.problema.cuerpo': 'Every problem shows where it comes from: the conversations and the related orders. Start with one that has money at stake.',
   'onb.propietario.acciones.titulo': 'Decide the first action', 'onb.propietario.acciones.cuerpo': 'Only the workspace administrator approves. Review what was proposed, approve it, then follow its result under Actions.',
   'onb.propietario.historial.titulo': 'Import the history', 'onb.propietario.historial.cuerpo': 'Upload the history from a file so Rovaq has context from day one.',
-  'onb.propietario.corte.titulo': 'Publish and review the snapshot', 'onb.propietario.corte.cuerpo': 'Prepare the economic snapshot and review it before publishing; partial numbers are labeled as such.',
+  'onb.propietario.corte.titulo': 'Publish and review the cut', 'onb.propietario.corte.cuerpo': 'Prepare the economic cut and review it before publishing; partial numbers are labeled as such.',
   'onb.propietario.equipo.titulo': 'Invite your team', 'onb.propietario.equipo.cuerpo': 'Invite people as Analyst, Operator or Read-only. It is marked as done once at least one other person has access to the organization.',
   'onb.propietario.retencion.titulo': 'Review retention', 'onb.propietario.retencion.cuerpo': 'Set how long registered copies are kept and review what a deletion removes.',
   // Analyst
@@ -93,7 +93,7 @@ export const onbEn = {
   'onb.analista.dinero.titulo': 'Money: CFO and gaps', 'onb.analista.dinero.cuerpo': 'Read the numbers with their notices: each currency is shown separately and anything incomplete is flagged.',
   'onb.analista.importar.titulo': 'Import history from a file', 'onb.analista.importar.cuerpo': 'You can upload history under Imports. Connecting the CRM and loading orders is up to the workspace administrator.',
   'onb.analista.preguntar.titulo': 'Ask your data', 'onb.analista.preguntar.cuerpo': 'Ask a question in plain language and check the evidence behind the answer.',
-  'onb.analista.corte.titulo': 'Published snapshots', 'onb.analista.corte.cuerpo': 'The workspace administrator prepares and publishes snapshots. Meanwhile you can review the snapshots already published and the figures they feed.',
+  'onb.analista.corte.titulo': 'Published cuts', 'onb.analista.corte.cuerpo': 'The workspace administrator prepares and publishes cuts. Meanwhile you can review the cuts already published and the figures they feed.',
   'onb.analista.informe.titulo': 'Export a report', 'onb.analista.informe.cuerpo': 'From Today you can export a report to share.',
   // Operator
   'onb.operador.hoy.titulo': 'Today: what is open', 'onb.operador.hoy.cuerpo': 'Here you see the interventions assigned to you, where to review recommendations and the open problems. Money figures are for workspace administrators and analysts.',
@@ -104,7 +104,7 @@ export const onbEn = {
   'onb.operador.avisos.titulo': 'Your alerts', 'onb.operador.avisos.cuerpo': 'Choose which alerts you get and through which channel, for example when an intervention is assigned to you. They are yours: they do not change anyone else’s.',
   'onb.operador.resultado.titulo': 'Record a result', 'onb.operador.resultado.cuerpo': 'When you close an intervention assigned to you, note what happened so we can tell whether it worked.',
   // Viewer
-  'onb.lector.hoy.titulo': 'Today: problems and evidence', 'onb.lector.hoy.cuerpo': 'Today shows the open problems and how much evidence stands behind each one. Your access is read-only: you can look, but not change the organization’s data. Money figures are for workspace administrators and analysts.',
+  'onb.lector.hoy.titulo': 'Today: problems and evidence', 'onb.lector.hoy.cuerpo': 'Today shows the open problems and their evidence. Your access is read-only: you can look, but not change the organization’s data.',
   'onb.lector.problemas.titulo': 'Problems and their evidence', 'onb.lector.problemas.cuerpo': 'Open a problem to read its evidence. Third-party personal data appears masked.',
   'onb.lector.confianza.titulo': 'How much to trust each number', 'onb.lector.confianza.cuerpo': 'Trust explains how complete the data is and how far to rely on what you see.',
   'onb.lector.avisos.titulo': 'Your alerts', 'onb.lector.avisos.cuerpo': 'Choose which alerts you get and through which channel. Your preferences are yours alone.',

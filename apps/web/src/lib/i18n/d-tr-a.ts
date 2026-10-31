@@ -1082,7 +1082,7 @@ export const trAEn = {
   'tr.ws.afProponer': 'Propose intervention',
   'tr.ws.afRazon': 'Reason / hypothesis',
   'tr.ws.afRefMed': 'Measurement reference, required to close',
-  'tr.ws.afResp': 'Owner, member ID',
+  'tr.ws.afResp': 'Assignee, member ID',
   'tr.ws.afResultado': 'Outcome to measure',
   'tr.ws.afSinConf': 'The result could not be confirmed. Keep this page and try again with the same key.',
   'tr.ws.afTransicion': 'Request transition',

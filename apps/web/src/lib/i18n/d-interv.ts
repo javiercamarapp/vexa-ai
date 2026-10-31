@@ -71,7 +71,7 @@ export const intervEn: Record<keyof typeof intervEs, string> = {
   'interv.thInterv': 'Intervention',
   'interv.thEstado': 'Status',
   'interv.thEtapa': 'Stage',
-  'interv.thResp': 'Owner',
+  'interv.thResp': 'Assignee',
   'interv.thMed': 'Measurements',
   'interv.thAccion': 'Action',
 };

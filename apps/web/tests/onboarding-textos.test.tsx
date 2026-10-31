@@ -37,10 +37,10 @@ test('rol: el operador propone (no decide) y el lector no aprueba ni queda sin p
   const lector=construirTour('lector').filter(p=>p.cuerpo).map(p=>ESP[p.cuerpo!]).join(' ');
   assert.doesNotMatch(lector,/decidir|decide/i);
 });
-test('inglés: «alerts» (como el menú) en vez de «notifications», «Published snapshots» en vez de «cuts», sin «Tick»',()=>{
-  assert.equal(ING['nav.item.settings-notifications'],'Alerts');assert.equal(ING['nav.item.economics'],'Published snapshots');
+test('inglés: «alerts» (como el menú) en vez de «notifications», «Published cuts» (como la pantalla) en vez de «snapshots», sin «Tick»',()=>{
+  assert.equal(ING['nav.item.settings-notifications'],'Alerts');assert.equal(ING['nav.item.economics'],'Published cuts');assert.equal(ING['econ.titulo'],ING['nav.item.economics'],'menú y título de la pantalla dicen lo mismo');assert.equal(ING['meta.titulo.economics'],ING['nav.item.economics']);
   const onb=Object.entries(ING).filter(([k])=>/^onb\./.test(k)).map(([,v])=>v).join('\n');
-  assert.doesNotMatch(onb,/notification|\bTick\b|published cuts|Published cuts/i);
+  assert.doesNotMatch(onb,/notification|\bTick\b|snapshot/i);
   assert.doesNotMatch(onb,/(?<![A-Za-z])'(?![A-Za-z])|n't/,'comillas y apóstrofos curvos en el inglés del onboarding');
 });
 test('verbos para descartar unificados: Omitir en la tarjeta, la invitación y el menú',()=>{

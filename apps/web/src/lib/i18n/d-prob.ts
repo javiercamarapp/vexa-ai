@@ -438,7 +438,7 @@ export const probEn: Record<keyof typeof probEs, string> = {
   'prob.st.stale': 'Previous cut',
   'prob.subtotal': 'Known subtotal: {v}; it is not the total.',
   'prob.tabGestionar': 'Manage',
-  'prob.tabGestionarHint': 'Status, owner and follow-up',
+  'prob.tabGestionarHint': 'Status, assignee and follow-up',
   'prob.tabla': 'Problems table',
   'prob.tabPrioridades': 'Priorities',
   'prob.tabPrioridadesHint': 'What weighs most, with its evidence',

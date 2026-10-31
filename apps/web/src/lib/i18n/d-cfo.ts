@@ -131,7 +131,7 @@ export const cfoEn: Record<keyof typeof cfoEs, string> = {
   'cfo.esperaInforme': 'the business report',
   'cfo.timeout': 'The scoped ledger query took too long. That does not mean there is no data: try again in a moment.',
   'cfo.vacioTitulo': 'No records in the economic ledger',
-  'cfo.vacioCuerpo': 'There are no orders or refunds recorded in the last 12 months yet. The workspace administrator can load a source under Published snapshots to see the financial panel.',
+  'cfo.vacioCuerpo': 'There are no orders or refunds recorded in the last 12 months yet. The workspace administrator can load a source under Published cuts to see the financial panel.',
   'cfo.irPreparar': 'Go to Money › Prepare',
   'cfo.tab.tendencia': 'Trend',
   'cfo.tab.alertas': 'Alerts',

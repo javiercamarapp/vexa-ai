@@ -3,7 +3,9 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+// @ts-expect-error -- fixture .mjs de pruebas, sin archivo de declaración
 import {vistaSintetica as fugaSintetica} from './ui/fuga-sintetico.mjs';
+// @ts-expect-error -- fixture .mjs de pruebas, sin archivo de declaración
 import {entradasSinteticas} from './ui/brechas-sintetico.mjs';
 import {armarVista} from '../../../packages/workspace-service/brechas.mjs';
 import * as F from '../src/components/refunds/fuga-archivos.mjs';
@@ -19,8 +21,10 @@ const ACENTOS = /[áéíóúñÁÉÍÓÚÑ¿¡]/;
 const PALABRAS_ES = /\b(reembolsos?|para|del|los|las|con|sin|hola|gracias|periodo|proveedor|resumen|ingreso|bruto|fuente|libro|pedidos?|líneas|motivo)\b/i;
 const sinEspanol = (t: string, que: string) => { const x = sinEstilo(t); assert.doesNotMatch(x, ACENTOS, que + ': acentos o signos del español'); assert.doesNotMatch(x, PALABRAS_ES, que + ': palabras del español'); };
 
-let memo: Promise<{v: Awaited<ReturnType<typeof fugaSintetica>>; sku: string}> | null = null;
-const datos = () => (memo ??= fugaSintetica().then(v => ({v, sku: v.skus.top[0].sku as string})));
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- la vista sintética no tiene tipos
+type Vista = any;
+let memo: Promise<{v: Vista; sku: string}> | null = null;
+const datos = () => (memo ??= (fugaSintetica() as Promise<Vista>).then((v: Vista) => ({v, sku: v.skus.top[0].sku as string})));
 const REGLAS = rotulosDeDocumento('en');
 
 test('el idioma del documento es independiente del de la pantalla: sin idioma = español de siempre (byte a byte)', async () => {

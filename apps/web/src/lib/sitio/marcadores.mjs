@@ -13,6 +13,7 @@
 
 import { createHash } from 'node:crypto';
 import { SITE } from '../site.mjs';
+import { esFechaIso } from './articulos.mjs';
 
 const RE_MARCADOR = /\[[A-Z][A-Z0-9_]*\]/g;
 
@@ -243,10 +244,18 @@ export function construirMailto({ contacto, asunto, cuerpo }) {
   return `mailto:${contacto.trim()}${partes.length ? `?${partes.join('&')}` : ''}`;
 }
 
-/** Estado de publicación de una página interna: pendiente si lo declara o si alguna hoja requerida no se publica. */
-export function estadoPagina(pagina, { aprobaciones = aprobacionesVacias(), ctx = contextoPorDefecto() } = {}) {
+/** Estado de publicación de una página interna: pendiente si lo declara o si alguna hoja requerida no se publica. `tipo` es el del registro K2 (articulo exige fecha, resumen, cuerpo y autor organización). */
+export function estadoPagina(pagina, { aprobaciones = aprobacionesVacias(), ctx = contextoPorDefecto(), tipo } = {}) {
   const motivos = [];
   if (pagina.estado === 'pendiente-de-revision') motivos.push(pagina.pendiente ?? 'pendiente de revisión');
+  // Un artículo (tipo del registro K2) solo se publica con fecha real, resumen, cuerpo y la organización como autor.
+  if (tipo === 'articulo') {
+    if (!esFechaIso(pagina.pub)) motivos.push('artículo sin fecha de publicación válida');
+    if (pagina.mod !== undefined && !esFechaIso(pagina.mod)) motivos.push('artículo con fecha de modificación inválida');
+    if (!pagina.resumen) motivos.push('artículo sin resumen');
+    if (!Array.isArray(pagina.bloques) || pagina.bloques.length === 0) motivos.push('artículo sin cuerpo');
+    if (pagina.autor !== 'organizacion') motivos.push('el autor de un artículo es la organización');
+  }
   const hojasDePagina = estadoPublicacion(pagina, { aprobaciones, ctx, prefijo: `paginas.${pagina.id}` });
   const huecos = hojasDePagina.filter((h) => !h.publicable);
   for (const h of huecos) motivos.push(`${h.ruta}: ${h.motivos.join(', ')}`);

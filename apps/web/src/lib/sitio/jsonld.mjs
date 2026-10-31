@@ -4,6 +4,7 @@
 // El texto de cada pregunta del FAQPage es idéntico al visible en la página: una pregunta cuya respuesta lleva una dirección de correo no entra al grafo.
 import { landingUrl } from '../site.mjs';
 import { HREFLANG, NOMBRE, urlAbsoluta, urlSocial } from './metadatos.mjs';
+import { etiquetaDe } from './articulos.mjs';
 
 /** Serialización segura para un script ld+json: escapa < para que ningún texto cierre la etiqueta. */
 export const serializar = (obj) => JSON.stringify(obj).replace(/</g, '\\u003c');
@@ -110,7 +111,9 @@ export function articulo(ficha, lang, base = landingUrl()) {
     image: urlSocial(lang, base),
     author: { '@id': ids(base).org },
     publisher: { '@id': ids(base).org },
-    ...(ficha.etiqueta ? { articleSection: ficha.etiqueta } : {}),
+    ...(etiquetaDe(ficha, lang) ? { articleSection: etiquetaDe(ficha, lang) } : {}),
+    ...(ficha.palabras?.[lang] ? { wordCount: ficha.palabras[lang] } : {}),
+    ...(ficha.lectura?.[lang] ? { timeRequired: `PT${ficha.lectura[lang]}M` } : {}),
   };
 }
 

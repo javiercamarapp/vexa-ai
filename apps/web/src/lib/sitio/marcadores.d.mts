@@ -7,5 +7,5 @@ export function publicar<T>(arbol: T, opciones?: OpcionesPublicacion): {arbol: T
 export function proyectarArbol(nodo: unknown, lang: 'es' | 'en'): unknown;
 export function resolverMarcadores(texto: string, ctx?: CtxMarcadores): {texto: string; sinResolver: string[]};
 export function construirMailto(a: {contacto: string; asunto?: string; cuerpo?: string}): string | null;
-export function estadoPagina(pagina: unknown, opciones?: {aprobaciones?: Aprobaciones; ctx?: CtxMarcadores}): {id: string; publicable: boolean; motivos: string[]; hojas: unknown[]};
+export function estadoPagina(pagina: unknown, opciones?: {aprobaciones?: Aprobaciones; ctx?: CtxMarcadores; tipo?: string}): {id: string; publicable: boolean; motivos: string[]; hojas: unknown[]};
 export function aprobacionesVacias(): Aprobaciones;

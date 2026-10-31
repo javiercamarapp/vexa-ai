@@ -1,0 +1,22 @@
+// Tipos de lib/sitio/articulos.mjs (T24). Solo declara; la lógica vive en el .mjs.
+export type Bi = {es: string; en: string};
+export type BloqueArticuloPlano = {tipo: string; texto?: Bi | string; items?: readonly (Bi | string)[]};
+export type SeccionArticulo = {id: string; texto: string; nivel: 2 | 3; indice: number};
+export const PALABRAS_POR_MINUTO: number;
+export function textosDeBloque(bloque: BloqueArticuloPlano, lang: 'es' | 'en'): string[];
+export function textoPlano(bloques: readonly BloqueArticuloPlano[], lang: 'es' | 'en'): string;
+export function contarPalabras(texto: string): number;
+export function palabrasDeArticulo(bloques: readonly BloqueArticuloPlano[], lang: 'es' | 'en'): number;
+export function minutosDeLectura(bloques: readonly BloqueArticuloPlano[], lang: 'es' | 'en'): number;
+export function slug(texto: string): string;
+export function seccionesDe(bloques: readonly BloqueArticuloPlano[], lang: 'es' | 'en'): SeccionArticulo[];
+export const ANCLA_NO_AFIRMAMOS: Readonly<Bi>;
+export const ROTULO_NO_AFIRMAMOS: Readonly<Bi>;
+export function fechaLegible(iso: string, lang: 'es' | 'en'): string;
+export function etiquetaDe(ficha: {etiqueta?: string | Bi | null} | null | undefined, lang: 'es' | 'en'): string | null;
+export function rotuloLectura(minutos: number, lang: 'es' | 'en'): string;
+export function esFechaIso(x: unknown): boolean;
+export const RE_ENLACE: RegExp;
+export function partirEnlaces(texto: string): ({texto: string; id?: undefined} | {texto: string; id: string})[];
+export function idsEnlazados(texto: string): string[];
+export function sinEnlaces(texto: string): string;

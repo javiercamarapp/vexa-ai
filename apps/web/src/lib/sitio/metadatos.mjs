@@ -5,6 +5,7 @@
 import { landingUrl } from '../site.mjs';
 import { PAGINAS, porId } from '../../content/sitio/registro.mjs';
 import { contextoPorDefecto, estadoPagina, publicar } from './marcadores.mjs';
+import { minutosDeLectura, palabrasDeArticulo } from './articulos.mjs';
 
 export const NOMBRE = 'Rovaq AI';
 export const IDIOMAS = Object.freeze(['es', 'en']);
@@ -69,7 +70,7 @@ const bi = (h) => ({ es: h?.es ?? '', en: h?.en ?? '' });
 /**
  * Ficha de cada página del registro. Una página es publicable si su contenido existe y estadoPagina() lo permite; la portada siempre.
  * Parámetros: landing (LANDING), paginas (PAGINAS_INTERNAS), aprobaciones (aprobaciones.json), fechas ({ id: 'AAAA-MM-DD' }, de config/sitio/fechas.json).
- * Devuelve [{ id, tipo, padre, publicable, motivos, indexable, ruta, titulo, descripcion, h1, mod, pub?, etiqueta?, arbol }].
+ * Devuelve [{ id, tipo, padre, publicable, motivos, indexable, ruta, titulo, descripcion, h1, mod, pub?, etiqueta?, arbol }]; los artículos añaden resumen, relacionados, palabras y lectura (minutos) por idioma.
  * `arbol` es el contenido ya publicado (marcadores resueltos, alternos aplicados, lo no publicable omitido), aún bilingüe; sirve a los espejos Markdown.
  */
 export function construirFichas({ landing, paginas, aprobaciones, fechas = {}, ctx = contextoPorDefecto() }) {
@@ -85,8 +86,9 @@ export function construirFichas({ landing, paginas, aprobaciones, fechas = {}, c
     if (!contenido) {
       return { ...base, publicable: false, motivos: ['sin contenido escrito'], indexable: false, titulo: { es: '', en: '' }, descripcion: { es: '', en: '' }, h1: { es: '', en: '' }, arbol: null };
     }
-    const e = estadoPagina(contenido, { aprobaciones, ctx });
+    const e = estadoPagina(contenido, { aprobaciones, ctx, tipo: reg.tipo });
     const arbol = e.publicable ? publicar(contenido, { aprobaciones, ctx, prefijo: `paginas.${contenido.id}` }).arbol : null;
+    const esArticulo = reg.tipo === 'articulo';
     return {
       ...base,
       publicable: e.publicable,
@@ -96,8 +98,17 @@ export function construirFichas({ landing, paginas, aprobaciones, fechas = {}, c
       descripcion: bi(contenido.seo.descripcion),
       h1: bi(contenido.h1),
       pub: contenido.pub ?? null,
-      mod: contenido.mod ?? base.mod,
+      // Un artículo nunca se modifica antes de publicarse: sin `mod` propio, la modificación es la publicación.
+      mod: contenido.mod ?? (esArticulo ? (contenido.pub ?? base.mod) : base.mod),
       etiqueta: contenido.etiqueta ?? null,
+      ...(esArticulo
+        ? {
+            resumen: bi(contenido.resumen),
+            relacionados: [...(contenido.relacionados ?? [])],
+            palabras: { es: palabrasDeArticulo(contenido.bloques, 'es'), en: palabrasDeArticulo(contenido.bloques, 'en') },
+            lectura: { es: minutosDeLectura(contenido.bloques, 'es'), en: minutosDeLectura(contenido.bloques, 'en') },
+          }
+        : {}),
       arbol,
     };
   });
@@ -127,9 +138,9 @@ const ROBOTS_PENDIENTE = Object.freeze({ index: false, follow: false, nocache: t
 /**
  * Metadata de Next para una página del sitio. Acepta la ficha completa o solo { id, lang, titulo, descripcion, indexable }, que es lo que
  * conocen los componentes de página. Título absoluto, canonical absoluto, hreflang recíproco, Open Graph y Twitter por idioma con imagen de 1200 por 630.
- * `espejo` es la ruta de su espejo Markdown (rutaEspejo); sin ella no se anuncia. Una página no indexable lleva solo canonical y robots noindex: no declara hreflang hacia una página que no se indexa.
+ * `espejo` es la ruta de su espejo Markdown (rutaEspejo); sin ella no se anuncia. `publicado` y `modificado` (AAAA-MM-DD) solo se usan en artículos: article:published_time y modified_time de Open Graph. Una página no indexable lleva solo canonical y robots noindex: no declara hreflang hacia una página que no se indexa.
  */
-export function metadatosSitio({ id, lang, titulo, descripcion, indexable = true, base = landingUrl(), espejo = null }) {
+export function metadatosSitio({ id, lang, titulo, descripcion, indexable = true, base = landingUrl(), espejo = null, publicado = null, modificado = null }) {
   const reg = porId(id);
   if (!reg) throw new Error(`Página desconocida en el registro: ${id}`);
   if (!IDIOMAS.includes(lang)) throw new Error(`Idioma desconocido: ${lang}`);
@@ -152,6 +163,7 @@ export function metadatosSitio({ id, lang, titulo, descripcion, indexable = true
     },
     openGraph: {
       type: reg.tipo === 'articulo' ? 'article' : 'website',
+      ...(reg.tipo === 'articulo' && publicado ? { publishedTime: publicado, modifiedTime: modificado ?? publicado } : {}),
       siteName: NOMBRE,
       locale: LOCALE_OG[lang],
       alternateLocale: [LOCALE_OG[OTRO[lang]]],

@@ -1,7 +1,8 @@
 // RSS 2.0 del blog, uno por idioma (T2). Vacío hasta que haya artículos publicados: un canal sin items es válido y no rompe a los lectores.
-// Solo entran artículos indexables y con fecha real de publicación. El canal lleva el resumen, no el cuerpo.
+// Solo entran artículos indexables (publicables) y con fecha real de publicación. El canal lleva el resumen del artículo (o su descripción SEO si no trae), no el cuerpo.
 import { landingUrl } from '../site.mjs';
 import { HREFLANG, rutaRss, urlAbsoluta } from './metadatos.mjs';
+import { etiquetaDe } from './articulos.mjs';
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 const rfc822 = (iso) => new Date(`${iso}T00:00:00Z`).toUTCString();
@@ -21,8 +22,8 @@ export function rssXml({ lang, fichas, base = landingUrl() }) {
       <title>${esc(a.h1[lang])}</title>
       <link>${esc(urlAbsoluta(a.ruta[lang], base))}</link>
       <guid isPermaLink="true">${esc(urlAbsoluta(a.ruta[lang], base))}</guid>
-      <pubDate>${rfc822(a.pub)}</pubDate>${a.etiqueta ? `\n      <category>${esc(a.etiqueta)}</category>` : ''}
-      <description>${esc(a.descripcion[lang])}</description>
+      <pubDate>${rfc822(a.pub)}</pubDate>${etiquetaDe(a, lang) ? `\n      <category>${esc(etiquetaDe(a, lang))}</category>` : ''}
+      <description>${esc(a.resumen?.[lang] || a.descripcion[lang])}</description>
     </item>`).join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">

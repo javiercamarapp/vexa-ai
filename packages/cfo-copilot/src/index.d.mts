@@ -16,9 +16,9 @@ export interface CfoReport {
   quality: {totalRows: number; figs: Record<string, Figure>; nonRecorded: Record<string, number>; byChannel: Array<{channel: string; label: string; rows: number; noCurrency: number; ordersNoAmount: number; refundsNoAmount: number; completenessBps: number | null; hasRefundSource: boolean}>; unaccounted: Array<{currency: string; exponent: number; orderRows: number; refundRows: number; orderMinor: string; refundMinor: string; orderFig: Figure; refundFig: Figure}>; notEstimable: {rows: number; reason: string}};
   projections: Projection[]; alerts: CfoAlert[];
   exposure: {state: 'ok' | 'sin_atestar'; attestedLinks: number; kind: Kind; message?: string; note?: string; additive?: boolean; coverageComplete?: boolean; cta?: {label: string; href: string}; rows: Array<Figure & {problemId: string; title: string; currency: string; linkedOrders: number}>};
-  glossary: Array<{term: string; body: string}>; rule: string;
+  glossary: Array<{term: string; body: string}>; rule: string; idioma?: 'es' | 'en';
 }
-export function buildCfoReport(rows: unknown[], options?: {watermark?: string | null; exposure?: unknown; now?: Date; complete?: boolean}): CfoReport;
+export function buildCfoReport(rows: unknown[], options?: {watermark?: string | null; exposure?: unknown; now?: Date; complete?: boolean; idioma?: 'es' | 'en'}): CfoReport;
 export function serializeReport(report: CfoReport): CfoReport;
 export function monthMetrics(report: CfoReport, currency: string, month: string): {partial: boolean; metrics: Metric[]} | null;
 export function reportRows(report: CfoReport): Array<{section: string; id: string; label: string; scope: string; value: string; kind: Kind; coverage: string; how: string}>;

@@ -3,6 +3,7 @@ import {NextRequest} from 'next/server';
 import {createDatabase} from '@vexa/platform/db';
 import {forDownloadAuditado as forDownload} from '../../../../../lib/security/descargas';
 import {AccessError, ACTIVE_ORG, assertOrigin, config, identity, resolveSession} from '../../../../../lib/auth';
+import type {Idioma} from '../../../../../lib/i18n/idioma';
 import {requestAuth} from '../../../../../lib/auth-http';
 import {serverPool} from '../../../../../lib/imports/server';
 import {workspaceSession} from '../../../../../lib/workspace/server';
@@ -41,13 +42,13 @@ export async function cfoAccessForRequest(request: NextRequest, options: {downlo
 export const principalOf = (a: CfoAccess): Principal => ({kind: 'tenant_member', verified: true, userId: a.userId, tenantId: a.tenantId, role: a.role});
 
 export type ReportResult = {status: 'ok'; report: CfoReport; synthetic: boolean; exposureStatus: string} | {status: 'empty' | 'timeout'; synthetic: boolean; summary?: SummaryMeta};
-export async function loadReport(access: CfoAccess): Promise<ReportResult> {
-  if (access.mode === 'fixture') return {status: 'ok', synthetic: true, exposureStatus: 'ok', report: buildCfoReport(ledgerMonthlyFixture(), {watermark: FIXTURE_WATERMARK, now: new Date('2026-10-20T14:00:00Z'), exposure: exposureFixture({attested: access.demo === 'vinculos'})})};
+export async function loadReport(access: CfoAccess, idioma: Idioma = 'es'): Promise<ReportResult> {
+  if (access.mode === 'fixture') return {status: 'ok', synthetic: true, exposureStatus: 'ok', report: buildCfoReport(ledgerMonthlyFixture(), {watermark: FIXTURE_WATERMARK, now: new Date('2026-10-20T14:00:00Z'), idioma, exposure: exposureFixture({attested: access.demo === 'vinculos'})})};
   const repo = createCfoRepository({database: access.database!});
   const led = await repo.ledgerMonthly();
   if (led.status !== 'ok') return {status: led.status, synthetic: false, summary: led.summary};
   const exp = await repo.exposure(); // una exposición que expira se informa como «sin atestar»; nunca se inventa
-  return {status: 'ok', synthetic: false, exposureStatus: exp.status, report: {...buildCfoReport(led.rows, {watermark: led.watermark, exposure: exp.status === 'ok' ? exp : undefined, complete: led.complete}), summary: led.summary}};
+  return {status: 'ok', synthetic: false, exposureStatus: exp.status, report: {...buildCfoReport(led.rows, {idioma, watermark: led.watermark, exposure: exp.status === 'ok' ? exp : undefined, complete: led.complete}), summary: led.summary}};
 }
 export const publicReport = (r: ReportResult) => r.status === 'ok' ? {...r, report: serializeReport(r.report)} : r;
 

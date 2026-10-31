@@ -1,3 +1,4 @@
+import {idiomaDePeticion} from '../../../../../../lib/i18n/errores-api';
 import {NextRequest, NextResponse} from 'next/server';
 import {CFO_TOOLS, createBudget, createCopilot, createSimulatedModel} from '../../../../../../../../../packages/cfo-copilot/src/index.mjs';
 import {createCcoRepository} from '../../../../../../../../../packages/workspace-service/cco.mjs';
@@ -28,7 +29,7 @@ export async function POST(request: NextRequest) {
     const r = await cfoAccessForRequest(request); finish = r.finish;
     const access = r.access; let memo: ReturnType<typeof loadReport> | null = null, memoCco: Promise<unknown> | null = null;
     // el informe se calcula una vez por turno; la organización sale SIEMPRE de la sesión, nunca del cuerpo
-    const data = {async report(tenantId: string) { if (tenantId !== access.tenantId) throw new Error('tenant_mismatch'); const res = await (memo ??= loadReport(access)); return res.status === 'ok' ? {status: 'ok', report: res.report} : {status: res.status}; }};
+    const data = {async report(tenantId: string) { if (tenantId !== access.tenantId) throw new Error('tenant_mismatch'); const res = await (memo ??= loadReport(access, idiomaDePeticion(request))); return res.status === 'ok' ? {status: 'ok', report: res.report} : {status: res.status}; }};
     // CCO (preguntas A a F): la misma lectura de solo lectura que /api/cco, bajo la sesión y la RLS del usuario; una vez por turno. Sin base (fixtures) no hay datos.
     const cco = {async cco(tenantId: string) { if (tenantId !== access.tenantId) throw new Error('tenant_mismatch'); if (!access.database) return {status: 'empty'}; try { return {status: 'ok', cco: await (memoCco ??= createCcoRepository({database: access.database}).get())}; } catch { return {status: 'timeout'}; } }};
     return finish(await copilotTurn(copilotFor(access), principalOf(access), request, {data: {...data, ...cco}}));

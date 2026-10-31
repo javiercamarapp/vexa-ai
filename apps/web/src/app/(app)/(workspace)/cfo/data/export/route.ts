@@ -1,3 +1,4 @@
+import {idiomaDePeticion} from '../../../../../../lib/i18n/errores-api';
 import {NextRequest, NextResponse} from 'next/server';
 import {AccessError} from '../../../../../../lib/auth';
 import {HEADERS} from '../../../../../../components/platform/server/copilot-http';
@@ -12,7 +13,7 @@ export async function GET(request: NextRequest) {
     if (format !== 'csv' && format !== 'pdf') throw new AccessError(400, 'unsupported_format');
     const r = await cfoAccessForRequest(request, {download: true}); finish = r.finish;
     if (!allowed(r.access.role)) throw new AccessError(403, 'cfo_role_required');
-    const result = await loadReport(r.access);
+    const result = await loadReport(r.access, idiomaDePeticion(request));
     if (result.status !== 'ok') return finish(NextResponse.json({error: {code: 'cfo_no_data', status: result.status}}, {status: 409, headers: HEADERS}));
     const stamp = result.report.generatedAt.slice(0, 10), name = `informe-cfo-${stamp}.${format}`;
     const body = format === 'csv' ? toCsv(result.report, {synthetic: result.synthetic}) : new Uint8Array(toPdf(result.report, {synthetic: result.synthetic}));

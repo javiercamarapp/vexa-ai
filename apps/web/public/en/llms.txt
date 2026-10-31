@@ -32,7 +32,7 @@ Notes for anyone citing this site. Gross revenue, never margin. What is unknown 
 
 ## Blog
 
-- [Rovaq AI blog](https://rovaq.ai/s/md/en/blog.c939ff4d.md): Articles on reading refunds, the provenance of figures, pain points and evidence-based decisions for businesses that sell through marketplaces.
+- [Rovaq AI blog](https://rovaq.ai/s/md/en/blog.7cb1b065.md): Articles on reading refunds, the provenance of figures, pain points and evidence-based decisions for businesses that sell through marketplaces.
 - [Refunds are not a fixed cost: they are a leak you can locate](https://rovaq.ai/s/md/en/a1.03e81355.md): A single refund total does not say what to tackle first. Learn to read returned money by channel, product and month, and what an evidence package holds.
 
 ## Full reference

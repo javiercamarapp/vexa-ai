@@ -517,7 +517,7 @@ Notes on refunds, the provenance of figures, pain points and decisions backed by
 
 ### Recent articles
 
-- [Refunds are not a fixed cost: they are a leak you can locate](https://rovaq.ai/en/blog/refund-leak-you-can-locate) (2026-11-03, 6 min read): A refund total mixes things that are not alike. This article explains how to split returned money by channel, product and month, how to read a Pareto without asking more of it than it gives, and what an evidence package should hold so a claim can be reviewed.
+- [Refunds are not a fixed cost: they are a leak you can locate](https://rovaq.ai/en/blog/refund-leak-you-can-locate). Published 2026-11-03. 6 min read. A refund total mixes things that are not alike. This article explains how to split returned money by channel, product and month, how to read a Pareto without asking more of it than it gives, and what an evidence package should hold so a claim can be reviewed.
 
 ### Topics
 

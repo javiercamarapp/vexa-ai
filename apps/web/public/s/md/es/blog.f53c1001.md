@@ -16,7 +16,7 @@ Notas sobre reembolsos, la procedencia de las cifras, los puntos de dolor y las 
 
 ## Artículos recientes
 
-- [Los reembolsos no son un costo fijo: son una fuga que se puede localizar](https://rovaq.ai/blog/reembolsos-fuga-que-se-puede-localizar) (2026-11-03, 6 min de lectura): Un total de reembolsos mezcla cosas que no se parecen. Este artículo explica cómo separar el dinero devuelto por canal, producto y mes, cómo leer un Pareto sin pedirle más de lo que da y qué debe llevar un paquete de evidencia para que un reclamo se pueda revisar.
+- [Los reembolsos no son un costo fijo: son una fuga que se puede localizar](https://rovaq.ai/blog/reembolsos-fuga-que-se-puede-localizar). Publicado 2026-11-03. 6 min de lectura. Un total de reembolsos mezcla cosas que no se parecen. Este artículo explica cómo separar el dinero devuelto por canal, producto y mes, cómo leer un Pareto sin pedirle más de lo que da y qué debe llevar un paquete de evidencia para que un reclamo se pueda revisar.
 
 ## Temas
 

@@ -32,8 +32,8 @@ Notas para quien cite este sitio. Ingreso bruto, nunca margen. Lo desconocido di
 
 ## Blog
 
-- [Blog de Rovaq AI](https://rovaq.ai/s/md/es/blog.21903a0f.md): Artículos sobre cómo leer reembolsos, procedencia de cifras, puntos de dolor y decisiones con evidencia en negocios que venden por marketplaces.
-- [Los reembolsos no son un costo fijo: son una fuga que se puede localizar](https://rovaq.ai/s/md/es/a1.b1948a4e.md): Un total único de reembolsos no dice qué atender primero. Aprende a leer el dinero devuelto por canal, producto y mes, y qué lleva un paquete de evidencia.
+- [Blog de Rovaq AI](https://rovaq.ai/s/md/es/blog.f53c1001.md): Artículos sobre cómo leer reembolsos, procedencia de cifras, puntos de dolor y decisiones con evidencia en negocios que venden por marketplaces.
+- [Los reembolsos no son un costo fijo: son una fuga que se puede localizar](https://rovaq.ai/s/md/es/a1.692232c1.md): Un total único de reembolsos no dice qué atender primero. Aprende a leer el dinero devuelto por canal, producto y mes, y qué lleva un paquete de evidencia.
 
 ## Referencia completa
 

@@ -53,7 +53,7 @@ export const ARTICULO_A1: Articulo = articulo({
   },
   h1: b('Los reembolsos no son un costo fijo: son una fuga que se puede localizar', 'Refunds are not a fixed cost: they are a leak you can locate'),
   subtitulo: b(
-    'Un total único no dice qué atender primero. Por canal, por producto y por mes, el dinero devuelto empieza a tener forma.',
+    'Un total único no dice qué atender primero. Según el canal, el producto y el mes, el dinero devuelto empieza a tener forma.',
     'A single total does not say what to tackle first. By channel, by product and by month, returned money starts to take shape.',
   ),
   resumen: b(
@@ -99,7 +99,7 @@ export const ARTICULO_A1: Articulo = articulo({
     ul(
       ['Por canal. Muestra si el problema vive en un lugar de venta concreto o si es general. Si un canal concentra el movimiento, la conversación es con ese canal y con sus reglas, no con todo el negocio.', 'By channel. It shows whether the problem lives in one particular place of sale or is widespread. If one channel concentrates the movement, the conversation is with that channel and its rules, not with the whole business.'],
       ['Por producto. Señala qué artículos suman más dinero devuelto. Un producto en la cima puede ser un asunto de descripción, de empaque o de proveedor; el corte no lo dice, pero te dice a quién preguntar.', 'By product. It points to which items add up to the most returned money. A product at the top may be a matter of description, packaging or supplier; the cut does not say which, but it tells you whom to ask.'],
-      ['Por mes. Muestra si el movimiento es estable, si tiene un pico o si crece. Un pico aislado y un crecimiento sostenido piden respuestas distintas.', 'By month. It shows whether the movement is steady, has a spike or is growing. An isolated spike and a sustained climb call for different answers.'],
+      ['Mes a mes. Muestra si el movimiento es estable, si tiene un pico o si crece. Un pico aislado y un crecimiento sostenido piden respuestas distintas.', 'By month. It shows whether the movement is steady, has a spike or is growing. An isolated spike and a sustained climb call for different answers.'],
     ),
     p(
       'Después cruza los cortes entre sí. Un producto que domina en un solo canal cuenta una historia distinta a la de uno que domina en todos. Y mira también el contacto repetido: los clientes que escriben más de una vez por el mismo asunto suelen señalar algo que el primer mensaje no resolvió.',

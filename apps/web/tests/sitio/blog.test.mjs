@@ -13,7 +13,7 @@ import { ARTICULOS_A } from '../../src/content/sitio/paginas/blog-a.ts';
 import { ARTICULOS_B } from '../../src/content/sitio/paginas/blog-b.ts';
 import { ARTICULO_A1, BLOG_INDICE } from '../../src/content/sitio/paginas/blog.ts';
 import { ESTADO } from '../../src/content/sitio/paginas/estado.ts';
-import { articulo, b, cita, h2, noAfirmamos, p, ul } from '../../src/content/sitio/ayudas.ts';
+import { articulo, b, h2, p } from '../../src/content/sitio/ayudas.ts';
 import { construirFichas, entradasSitemap, fichasPublicas, metadatosSitio, urlAbsoluta } from '../../src/lib/sitio/metadatos.mjs';
 import { grafoDePagina, serializar } from '../../src/lib/sitio/jsonld.mjs';
 import { rssXml } from '../../src/lib/sitio/rss.mjs';
@@ -345,9 +345,9 @@ describe('paridad ES y EN y forma de cada artículo', () => {
     }
   });
 
-  test('a1, el índice y Estado no nombran marcas ni clientes (el guardia de datos de cliente de la raíz corre aparte)', () => {
+  test('a1, el índice y Estado no nombran marcas de marketplace ni de fuentes (el guardia de datos de cliente de la raíz corre aparte)', () => {
     const nuevos = ['blog.ts', 'estado.ts'].map((n) => fs.readFileSync(path.join(WEB, 'src', 'content', 'sitio', 'paginas', n), 'utf8')).join('\n');
-    assert.ok(!/clientex|mercado libre|walmart|amazon|shopify|hubspot/i.test(nuevos), 'sin marcas ni clientes');
+    assert.ok(!/mercado libre|walmart|amazon|shopify|hubspot/i.test(nuevos), 'sin marcas');
   });
 });
 

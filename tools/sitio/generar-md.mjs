@@ -213,7 +213,7 @@ function cuerpoPagina(f, r) {
       if (tit) out.push(`## ${tit}`, '');
       const arts = r.fichas.filter((x) => x.tipo === 'articulo' && x.indexable).sort((x, y) => String(y.pub).localeCompare(String(x.pub)) || x.id.localeCompare(y.id));
       if (arts.length === 0) out.push(t(b.vacio), '');
-      for (const x of arts) out.push(`- [${t(x.h1)}](${r.abs(x)}) (${x.pub}, ${r.lang === 'es' ? `${x.lectura[r.lang]} min de lectura` : `${x.lectura[r.lang]} min read`}): ${t(x.resumen)}`);
+      for (const x of arts) out.push(`- [${t(x.h1)}](${r.abs(x)}). ${r.lang === 'es' ? 'Publicado' : 'Published'} ${x.pub}. ${r.lang === 'es' ? `${x.lectura[r.lang]} min de lectura` : `${x.lectura[r.lang]} min read`}. ${t(x.resumen)}`);
       if (arts.length) out.push('');
     } else if (b.tipo === 'enlaces') {
       const filas = lista(b.items).map((it) => ({ it, l: r.enlace(it.href) })).filter((x) => x.l);

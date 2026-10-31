@@ -252,4 +252,127 @@ export const ARTICULO_A7: Articulo = articulo({
   ],
 });
 
-export const ARTICULOS_B: readonly Articulo[] = [ARTICULO_A6, ARTICULO_A7];
+// a8. Fuente de hechos: pantalla producto/por-decidir. Condición 4: migración aplicada pero 0 eventos; se describe solo lo que el producto permite, sin resultados ni casos.
+// En inglés se usa Dismiss, que es el término de la pantalla, aunque el plan SEO sugería Discard.
+export const ARTICULO_A8: Articulo = articulo({
+  id: 'a8',
+  pub: '2026-11-03',
+  etiqueta: b('Decisiones', 'Decisions'),
+  seo: {
+    titulo: b('Una recomendación debe poder discutirse | Rovaq AI', 'A Recommendation Must Be Open to Debate | Rovaq AI'),
+    descripcion: b(
+      'Una sugerencia sin evidencia se ignora. Con evidencia, responsable y registro del resultado se vuelve hábito del equipo: propuesta, decisión y resultado.',
+      'A suggestion without evidence gets ignored. With evidence, an owner and a recorded outcome it becomes a team habit: proposal, decision and outcome.',
+    ),
+  },
+  h1: b(
+    'Una recomendación debe poder discutirse: evidencia, aprobación y resultado',
+    'A recommendation must be debatable: evidence, approval and outcome',
+  ),
+  subtitulo: b(
+    'Cuando una propuesta trae su evidencia, una persona que decide y un registro de lo que pasó, deja de ser una opinión y se vuelve un hábito.',
+    'When a proposal brings its evidence, a person who decides and a record of what happened, it stops being an opinion and becomes a habit.',
+  ),
+  resumen: b(
+    'Una recomendación sin evidencia se ignora o se obedece a ciegas. Este artículo explica qué debe traer una propuesta para poder discutirse, por qué conviene un vocabulario de decisión pequeño y una persona que aprueba, y cómo registrar el resultado midiendo antes y después solo con dato observado.',
+    'A recommendation without evidence is either ignored or obeyed blindly. This article explains what a proposal must carry in order to be debated, why a small decision vocabulary and a person who approves are worth having, and how to record the outcome by measuring before and after using observed data only.',
+  ),
+  relacionados: ['por-decidir', 'a1', 'problemas'],
+  bloques: [
+    p(
+      'En muchos equipos las recomendaciones mueren de la misma manera: alguien las escribe en un documento o las dice en una reunión, nadie las discute con datos y a las pocas semanas ya no se sabe quién iba a hacer qué. La sugerencia no era mala; simplemente no tenía forma de ser discutida.',
+      'In many teams recommendations die the same way: someone writes them in a document or says them in a meeting, nobody debates them with data and a few weeks later nobody remembers who was going to do what. The suggestion was not bad; it simply had no way of being debated.',
+    ),
+    p(
+      'Este artículo sostiene que una recomendación solo se vuelve útil cuando se puede cuestionar: cuando trae su evidencia a la vista, tiene una persona que decide y deja un registro de lo que pasó después. Con eso, una sugerencia deja de ser una opinión y pasa a ser un hábito del equipo.',
+      'This article argues that a recommendation becomes useful only when it can be questioned: when it brings its evidence into view, has a person who decides and leaves a record of what happened afterward. With that, a suggestion stops being an opinion and becomes a team habit.',
+    ),
+    h2('Sin evidencia se ignora', 'Without evidence it is ignored'),
+    p(
+      'Una recomendación sin respaldo obliga a quien la recibe a elegir entre confiar en quien la escribió o desconfiar. Ninguna de las dos posturas es una discusión. Confiar sin ver es delegar a ciegas, y desconfiar sin ver es descartar sin criterio. En los dos casos el costo lo paga el negocio.',
+      'A recommendation without support forces the reader to choose between trusting whoever wrote it or distrusting it. Neither stance is a discussion. Trusting without seeing is delegating blindly, and distrusting without seeing is dismissing without criteria. In both cases the business pays the cost.',
+    ),
+    p(
+      'Con evidencia cambia la conversación. Si la propuesta dice qué observó, de dónde viene cada cifra, por qué se sugiere esa acción y qué se espera lograr, quien decide puede estar en desacuerdo con algo específico: la fuente, el periodo, el supuesto o la expectativa. Ese desacuerdo es justo lo que una recomendación debería provocar.',
+      'With evidence the conversation changes. If the proposal states what it observed, where each figure comes from, why that action is suggested and what is expected, the decision maker can disagree with something specific: the source, the period, the assumption or the expectation. That disagreement is exactly what a recommendation should provoke.',
+    ),
+    p(
+      'Imagina que un analista propone revisar la descripción de un producto porque encabeza el dinero devuelto de un canal. Si la propuesta trae el periodo, la fuente y los pedidos de origen, quien lleva el catálogo puede objetar que el periodo es corto o que la causa es el empaque y no la descripción. La objeción mejora la decisión. Sin esos datos solo queda la opinión de uno contra la del otro.',
+      'Imagine an analyst proposes reviewing a product description because the product leads the returned money in a channel. If the proposal brings the period, the source and the originating orders, whoever runs the catalog can object that the period is short or that the cause is the packaging and not the description. The objection improves the decision. Without that data, all that remains is one opinion against another.',
+    ),
+    p(
+      'Una propuesta discutible responde cuatro preguntas:',
+      'A debatable proposal answers four questions:',
+    ),
+    ul(
+      ['Qué se observó, con la fuente y la fecha de corte de cada cifra.', 'What was observed, with the source and the cut-off date of each figure.'],
+      ['Por qué se sugiere esta acción y no otra.', 'Why this action is suggested and not another.'],
+      ['Qué se espera lograr, dicho de modo que después pueda medirse.', 'What is expected to be achieved, stated so that it can be measured afterward.'],
+      ['Quién se hará responsable si se decide avanzar.', 'Who will be responsible if the decision is to go ahead.'],
+    ),
+    cita(
+      'Una recomendación que no puede discutirse solo puede obedecerse o ignorarse.',
+      'A recommendation that cannot be debated can only be obeyed or ignored.',
+    ),
+    h2('Proceder, Ajustar o Descartar', 'Proceed, Adjust or Dismiss'),
+    p(
+      'La decisión necesita un vocabulario pequeño y claro. En la pantalla {{por-decidir|Por decidir}} de Rovaq AI, una persona elige entre tres respuestas, y cada una tiene consecuencias definidas.',
+      'The decision needs a small, clear vocabulary. On the {{por-decidir|To decide}} screen in Rovaq AI, a person chooses among three answers, and each has defined consequences.',
+    ),
+    ul(
+      ['Proceder crea la intervención y los borradores que una persona revisa y envía. Nada se envía solo.', 'Proceed creates the intervention and the drafts that a person reviews and sends. Nothing is sent automatically.'],
+      ['Ajustar pide una razón, que queda registrada.', 'Adjust asks for a reason, which is recorded.'],
+      ['Descartar pide una razón, que queda registrada. Reabrir una propuesta descartada crea un evento nuevo y no borra nada.', 'Dismiss asks for a reason, which is recorded. Reopening a dismissed proposal creates a new event and deletes nothing.'],
+    ),
+    p(
+      'Pedir la razón no es un trámite. Una propuesta descartada con motivo le enseña al equipo qué criterios pesan, y evita que la misma idea vuelva a empezar de cero cada vez que alguien la propone.',
+      'Asking for the reason is not red tape. A dismissed proposal with a stated reason teaches the team which criteria carry weight, and keeps the same idea from starting from zero each time someone proposes it.',
+    ),
+    p(
+      'También importa quién puede hacer qué. Proponer pueden el propietario, el analista y el operador; aprobar, solo el propietario; ejecutar, el propietario y el operador. Separar proponer de aprobar permite que cualquiera con una buena observación la ponga sobre la mesa sin que eso la convierta en una orden.',
+      'Who can do what also matters. The owner, the analyst and the operator can propose; only the owner can approve; the owner and the operator can carry out. Separating proposing from approving lets anyone with a good observation put it on the table without that turning it into an order.',
+    ),
+    h2('Registrar el resultado', 'Record the outcome'),
+    p(
+      'Decidir no termina el ciclo. Sin un registro de lo que ocurrió, el equipo no aprende y la siguiente recomendación vuelve a empezar desde la opinión. Por eso el producto muestra, mientras una propuesta está en curso, quién es el responsable, cuál fue el compromiso, en qué etapa va y qué borradores existen.',
+      'Deciding does not end the cycle. Without a record of what happened, the team does not learn and the next recommendation starts again from opinion. That is why the product shows, while a proposal is in progress, who is responsible, what the commitment was, what stage it is in and which drafts exist.',
+    ),
+    p(
+      'Cuando hay un resultado, se mide antes y después, y solo con dato observado. Esa medición nunca presenta un beneficio supuesto: si no hay dato, el resultado dice que no lo hay en lugar de rellenar el hueco con una estimación optimista. Esa disciplina es incómoda, pero es la que hace que el registro valga la pena.',
+      'When there is an outcome, it is measured before and after, and only with observed data. That measurement never presents an assumed benefit: if there is no data, the outcome says there is none instead of filling the gap with an optimistic estimate. That discipline is uncomfortable, but it is what makes the record worth keeping.',
+    ),
+    p(
+      'Un registro útil también protege a quien propuso. Si el resultado no fue el esperado, la pregunta deja de ser quién se equivocó y pasa a ser qué supuesto no se cumplió, que es una pregunta que el equipo sí puede responder y de la que puede aprender.',
+      'A useful record also protects whoever made the proposal. If the outcome was not the one expected, the question stops being who got it wrong and becomes which assumption did not hold, which is a question the team can answer and learn from.',
+    ),
+    p(
+      'Conviene ser claros sobre lo que aquí se cuenta. Describimos lo que el producto permite hacer, no resultados obtenidos con él.',
+      'It is worth being clear about what is told here. We describe what the product allows you to do, not results obtained with it.',
+    ),
+    h2('Cómo llevarlo a tu equipo', 'How to bring it to your team'),
+    p(
+      'El método no depende de una herramienta. Puedes empezar con una hoja compartida y estos pasos:',
+      'The method does not depend on a tool. You can start with a shared sheet and these steps:',
+    ),
+    pasos(
+      ['Escribe cada recomendación con las cuatro respuestas: qué se observó, por qué, qué se espera y quién responde.', 'Write each recommendation with the four answers: what was observed, why, what is expected and who answers for it.'],
+      ['Decide en una reunión corta con una sola de tres salidas, avanzar, ajustar o descartar, y anota la razón.', 'Decide in a short meeting with one of three outcomes, proceed, adjust or dismiss, and write down the reason.'],
+      ['Fija desde el inicio cómo se medirá el resultado, con qué dato y en qué periodo.', 'Set from the start how the outcome will be measured, with what data and over what period.'],
+      ['Mide antes y después con lo observado, y escribe lo que no se pudo medir como no medido.', 'Measure before and after with what was observed, and write what could not be measured as not measured.'],
+      ['Revisa de vez en cuando las propuestas descartadas: algunas merecen reabrirse, y reabrir no borra lo anterior.', 'Review dismissed proposals from time to time: some deserve to be reopened, and reopening does not erase what came before.'],
+    ),
+    p(
+      'Una buena primera propuesta suele nacer de un hallazgo concreto, como el producto que encabeza el dinero devuelto de un canal, que se explica en {{a1|el artículo sobre reembolsos}}.',
+      'A good first proposal usually comes from a concrete finding, such as the product that leads the returned money in a channel, which is explained in {{a1|the article on refunds}}.',
+    ),
+    noAfirmamos(
+      ['No afirmamos que seguir una recomendación mejore los resultados: el producto registra lo que pasó, no lo garantiza.', 'We do not claim that following a recommendation improves results: the product records what happened, it does not guarantee it.'],
+      ['No mostramos casos ni resultados de clientes; este artículo describe lo que el producto permite.', 'We show no cases or customer results; this article describes what the product allows.'],
+      ['No prometemos ningún beneficio económico: el resultado se mide con dato observado y, sin dato, se dice que no lo hay.', 'We do not promise any financial benefit: the outcome is measured with observed data and, without data, the screen says there is none.'],
+      ['No decimos que una propuesta descartada sea un error: puede ser la decisión correcta y debe quedar registrada.', 'We do not say that a dismissed proposal is a mistake: it may be the right decision and it should be recorded.'],
+      ['Cuando la inteligencia artificial interviene, clasifica y redacta; no crea cifras, y nada se envía ni se ejecuta sin una persona.', 'When artificial intelligence is involved, it classifies and drafts; it does not create figures, and nothing is sent or carried out without a person.'],
+    ),
+  ],
+});
+
+export const ARTICULOS_B: readonly Articulo[] = [ARTICULO_A6, ARTICULO_A7, ARTICULO_A8];

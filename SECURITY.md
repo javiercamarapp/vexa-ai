@@ -16,4 +16,4 @@ Se confirma la recepción, se evalúa la gravedad y se corrige primero lo que af
 
 ## Principios del producto
 
-Aislamiento por organización con RLS, secretos sólo en servidor, auditoría de operaciones de plataforma y exportes sin datos personales. Los pendientes de seguridad (MFA para administradores de plataforma, CSP estricta) se declaran en el [README](README.md#seguridad-y-privacidad).
+Aislamiento por organización con RLS, secretos sólo en servidor, auditoría de operaciones de plataforma y exportes sin datos personales. Los pendientes de seguridad (MFA para administradores de plataforma, CSP estricta) se declaran en el [README](README.md#estado-del-producto-honesto).

@@ -12,7 +12,6 @@ Pruebas con fixtures exclusivamente SYN y consultas en memoria:
 
 ```sh
 node --test packages/workspace-service/tests/initial-publication/run.mjs
-VEXA_CANDIDATE="$PWD" node --test support/F06-workspace/independent.test.mjs
 npm run lint --workspace @vexa/web
 npm run typecheck --workspace @vexa/web
 npm run build --workspace @vexa/web

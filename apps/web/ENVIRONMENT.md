@@ -1,6 +1,6 @@
 # Entorno de Rovaq
 
-Auth, permisos, importación durable, conectores, análisis y workspace están implementados. Sin configuración la aplicación muestra servicios no disponibles; no fabrica sesiones ni datos. Consulte PROGRESO.md y los recibos para distinguir lo aceptado de las propuestas locales. Las notas históricas de implementación no sustituyen ese estado.
+Auth, permisos, importación durable, conectores, análisis y workspace están implementados. Sin configuración la aplicación muestra servicios no disponibles; no fabrica sesiones ni datos. Las variables marcadas como propuesta describen capacidades construidas pero no activadas en todos los entornos.
 
 | Servicio | Variables | Condición |
 |---|---|---|
@@ -41,7 +41,7 @@ Para una release autorizada, tomar git rev-parse HEAD del checkout limpio y sumi
 
 Migraciones cloud, Vault, extensiones, cron y despliegues conservan sus permisos específicos. El frontend no instala cron ni mantiene workers por sí solo. Proveer secretos mediante el gestor del entorno, nunca en NEXT_PUBLIC_*, Git, capturas o logs. Coordinar rotación en proveedor y consumidores y verificar revocación. Originales privados y datos del cliente no forman parte del build.
 
-Guías de entrega: docs/entrega/. Esta configuración no significa que únicamente falten claves mientras existan revisiones técnicas pendientes.
+Guías de operación: docs/operacion/. Tener esta configuración no implica que no haya pendientes técnicos; ver el README.
 
 La clave privada `VEXA_EVALUATION_SIGNING_KEY` pertenece sólo al CLI externo del custodio; nunca al servidor web ni al worker. Véase `packages/intelligence/candidates/README.md`. `VEXA_COMPILED_EXTRACTION_CODE` se deriva de los archivos en next.config.ts y queda incorporado al build; no es una variable que deba pegar el operador. Cambiar el código evaluado obliga a una nueva evaluación compatible antes de seleccionar o ejecutar ese candidato.
 

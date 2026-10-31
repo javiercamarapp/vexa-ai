@@ -33,7 +33,7 @@ o reinicio de la máquina. Sus logs no sustituyen alertas operativas.
 Regresión CLI local (servidores loopback y procesos propios):
 
 ```sh
-node support/F08-deploy/scheduler-cli.mjs packages/jobs/durable/scheduler.mjs
+# (el arnés interno support/F08-deploy ya no se versiona) packages/jobs/durable/scheduler.mjs
 ```
 
 Estos controles se mantienen fuera de los exámenes de aceptación congelados. No prueban DB, proveedores, servicio

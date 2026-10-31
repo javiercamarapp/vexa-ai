@@ -43,7 +43,7 @@ para aislar la suma USD/EUR con el mismo exponente, sin modificar el producto.
 
 Revisión independiente311:6/6 controles en Node22 y26 y cinco mutantes
 propios detectados en cada runtime. La evidencia de autor permanece intacta en
-`docs/blueprint/mutation-report.json`; su estado describe ese corte anterior.
+el informe de mutaciones de un corte anterior (ya no se versiona).
 Los cinco módulos examinados conservan sus hashes en esta integración.
 
 Pendiente: aceptación formal de F07-02 y su dependencia F07-01. Los cambios

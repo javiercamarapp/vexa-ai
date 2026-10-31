@@ -27,7 +27,7 @@ Los relojes monotónicos sólo se comparan dentro del mismo proceso. Los timesta
 Las pruebas del observador usan un runtime sintético limitado a comprobar IPC, retorno, error y limpieza; no miden persistencia ni capacidad. Se ejecutan con:
 
 ```sh
-VEXA_OBSERVER_WORKER="$PWD/packages/jobs/load/worker.mjs" node --test support/F07-load/worker-observation.test.mjs
+# (la prueba de observación support/F07-load ya no se versiona) VEXA_OBSERVER_WORKER="$PWD/packages/jobs/load/worker.mjs"
 ```
 
 Cambiar el worker cambia su hash de benchmark. Un informe anterior sigue ligado a su implementación original y no habilita escalamiento con el worker nuevo. La instrumentación no amplía plazos ni convierte una carga fallida en aprobada.

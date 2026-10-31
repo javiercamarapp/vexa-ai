@@ -21,7 +21,7 @@ export const onbEs = {
   'onb.tercero.crm': 'el equipo de Rovaq (conexión del CRM)', 'onb.tercero.correo': 'la configuración del correo de acceso', 'onb.tercero.propietario': 'el propietario de la organización',
   // Propietario
   'onb.propietario.nombre': 'Recorrido del propietario',
-  'onb.propietario.hoy.titulo': 'Hoy: tus cuatro cifras', 'onb.propietario.hoy.cuerpo': 'Ingreso, reembolsos, dinero atorado y respuestas en las últimas veinticuatro horas, cada una con su periodo. Si falta conciliar pedidos con clientes, la cifra lo dice en lugar de aparentar estar completa.',
+  'onb.propietario.hoy.titulo': 'Hoy: tus cifras principales', 'onb.propietario.hoy.cuerpo': 'Ingreso, reembolsos, dinero atorado y respuestas con demora, cada una con su periodo. Si aún no se relacionan todos los pedidos con sus clientes, la cifra lo dice en lugar de aparentar estar completa.',
   'onb.propietario.datos.titulo': 'Datos: fuentes e importaciones', 'onb.propietario.datos.cuerpo': 'Aquí ves qué está conectado y qué se importó. Conectar el CRM lo hace el equipo de Rovaq con una credencial tuya: copia la hoja para soporte y la preparamos juntos.',
   'onb.propietario.confianza.titulo': 'Confianza y cobertura', 'onb.propietario.confianza.cuerpo': 'Qué datos están cargados, cuáles faltan y cómo se calculó cada cifra.',
   'onb.propietario.problema.titulo': 'Abre un problema con evidencia', 'onb.propietario.problema.cuerpo': 'Cada problema muestra de dónde sale: las conversaciones, los pedidos ligados y el sello de procedencia. Empieza por uno con dinero expuesto.',
@@ -87,7 +87,7 @@ export const onbEn = {
   'onb.tercero.crm': 'the Rovaq team (CRM connection)', 'onb.tercero.correo': 'sign-in email setup', 'onb.tercero.propietario': 'the organization owner',
   // Owner
   'onb.propietario.nombre': 'Owner tour',
-  'onb.propietario.hoy.titulo': 'Today: your four numbers', 'onb.propietario.hoy.cuerpo': 'Revenue, refunds, stuck money and replies within the last twenty-four hours, each with its period. If orders are not yet matched to customers, the number says so instead of looking complete.',
+  'onb.propietario.hoy.titulo': 'Today: your main numbers', 'onb.propietario.hoy.cuerpo': 'Revenue, refunds, stuck money and delayed replies, each with its period. If not every order is matched to its customer yet, the number says so instead of looking complete.',
   'onb.propietario.datos.titulo': 'Data: sources and imports', 'onb.propietario.datos.cuerpo': 'See what is connected and what was imported. The Rovaq team connects the CRM using a credential from you: copy the support sheet and we set it up together.',
   'onb.propietario.confianza.titulo': 'Trust and coverage', 'onb.propietario.confianza.cuerpo': 'Which data is loaded, what is missing and how each number was calculated.',
   'onb.propietario.problema.titulo': 'Open a problem with evidence', 'onb.propietario.problema.cuerpo': 'Every problem shows where it comes from: the conversations, the linked orders and the provenance stamp. Start with one that has money at stake.',

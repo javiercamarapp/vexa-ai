@@ -242,6 +242,13 @@ test('texto por rol: operador y lector no leen periodos ni conciliación, nadie 
   }
   assert.match(texto('operador',ESP,id=>id==='interventions.accion'),/te asignaron/,'el operador sí trabaja intervenciones asignadas');
 });
+test('datos que no se pueden comprobar no se escriben a mano: sin «cuatro», «veinticuatro horas» ni «seis» en Hoy ni en CCO',()=>{
+  for(const [clave,dic] of [['es',ESP],['en',ING]] as const){
+    const hoy=dic['onb.propietario.hoy.titulo']+' '+dic['onb.propietario.hoy.cuerpo']+' '+dic['onb.pant.cco.desc'];
+    assert.doesNotMatch(hoy,/cuatro|veinticuatro|seis|\bfour\b|twenty|\bsix\b|24/i,clave);
+  }
+  assert.match(ESP['onb.propietario.hoy.cuerpo'],/respuestas con demora/);assert.match(ING['onb.propietario.hoy.cuerpo'],/delayed replies/);
+});
 test('ventana de la ruta: pocas pantallas alrededor de la actual con «…» a los lados',()=>{
   const nombres=['A','B','C','D','E','F','G','H'];
   assert.deepEqual(ventanaRuta(nombres,0),{items:['A','B','C','D','E'].map((nombre,i)=>({nombre,actual:i===0})),antes:false,despues:true});

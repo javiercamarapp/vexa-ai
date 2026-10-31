@@ -1,7 +1,7 @@
 // Modelo de «Datos y confianza»: 4 bloques con datos que YA existen en el código (frescura y cobertura reales), sin inventar cifras.
 //  1 fuentes conectadas · 2 frescura por cifra con alerta · 3 cobertura con ventanas · 4 «qué no sabemos» como lista de tareas.
 // Regla de alerta: una fuente con cadencia esperada se marca ALERTA si pasó más de 3 veces su cadencia sin éxito (o tiene error); entre 2 y 3 veces está «atrasada».
-import {FUENTES, METODOS, nombreCalculo, textoError, dentroDe} from '../../lib/legibilidad/sincronizacion.mjs';
+import {nombreFuente, nombreMetodo, nombreCalculo, textoError, dentroDe} from '../../lib/legibilidad/sincronizacion.mjs';
 import {diaTxt, haceDeIso} from '../../lib/confianza/sello.mjs';
 import {lineaVentanas, NOMBRE, num, pct} from '../refunds/fuga-modelo.mjs';
 
@@ -53,34 +53,35 @@ const T = idioma => TXT[idioma === 'en' ? 'en' : 'es'];
 export const NIVEL_TXT = Object.freeze(TXT.es.nivel);
 
 /** Bloque 1. @returns {disponible, filas:[{clave,nombre,metodo,nivel,estado,exito,siguiente,nuevos,hasta,error}]} */
-export function bloqueFuentes(f, ahora = Date.now(), idioma) {
+/** El traductor `t` (el de useT) rotula fuentes, métodos, errores, antigüedades y fechas; sin él, español canónico. */
+export function bloqueFuentes(f, ahora = Date.now(), idioma, t = null) {
   const x = T(idioma);
   if (!disponible(f)) return {disponible: false, filas: []};
   return {disponible: true, filas: f.sources.map(s => { const nivel = nivelFuente(s, ahora);
-    return {clave: s.key, nombre: FUENTES[s.key] ?? s.key, metodo: METODOS[s.method] ?? s.method, nivel, estado: x.nivel[nivel],
-      exito: s.lastSuccessAt ? haceDeIso(s.lastSuccessAt, ahora) : x.nunca, siguiente: nivel === 'pausa' || s.method === 'manual_upload' ? null : dentroDe(s.nextRunAt, ahora),
-      nuevos: s.lastNewRecords, hasta: diaTxt(s.dataWatermark), error: textoError(s.errorCode)}; })};
+    return {clave: s.key, nombre: nombreFuente(s.key, t), metodo: nombreMetodo(s.method, t), nivel, estado: x.nivel[nivel],
+      exito: s.lastSuccessAt ? haceDeIso(s.lastSuccessAt, ahora, t) : x.nunca, siguiente: nivel === 'pausa' || s.method === 'manual_upload' ? null : dentroDe(s.nextRunAt, ahora, t),
+      nuevos: s.lastNewRecords, hasta: diaTxt(s.dataWatermark, t), error: textoError(s.errorCode, t)}; })};
 }
 /** Bloque 2: un renglón por cálculo precalculado (cifra), con su corte y su estado. */
-export function bloqueFrescura(f, ahora = Date.now(), idioma) {
+export function bloqueFrescura(f, ahora = Date.now(), idioma, t = null) {
   const x = T(idioma);
   if (!disponible(f)) return {disponible: false, filas: []};
   const filas = f.insights.map(i => { const nivel = i.status === 'failed' ? 'alerta' : i.status === 'partial' || i.status === 'skipped' ? 'atrasada' : 'ok';
-    return {clave: i.insight, nombre: nombreCalculo(i.insight), nivel, estado: i.status === 'ready' ? x.fresca.ready : i.status === 'partial' ? x.fresca.partial : i.status === 'skipped' ? x.fresca.skipped : x.fresca.failed,
-      actualizado: i.refreshedAt ? haceDeIso(i.refreshedAt, ahora) : x.nunca, corte: diaTxt(i.sourceWatermark), filas: i.rows, pendientes: i.pending}; });
+    return {clave: i.insight, nombre: nombreCalculo(i.insight, t), nivel, estado: i.status === 'ready' ? x.fresca.ready : i.status === 'partial' ? x.fresca.partial : i.status === 'skipped' ? x.fresca.skipped : x.fresca.failed,
+      actualizado: i.refreshedAt ? haceDeIso(i.refreshedAt, ahora, t) : x.nunca, corte: diaTxt(i.sourceWatermark, t), filas: i.rows, pendientes: i.pending}; });
   const alertas = filas.filter(x => x.nivel === 'alerta').length + f.sources.filter(s => nivelFuente(s, ahora) === 'alerta').length;
   return {disponible: true, filas, alertas};
 }
 /** Bloque 3: ventanas de exportación por canal (de Fuga) en una línea y en filas. */
-export function bloqueVentanas(fuga, idioma) {
+export function bloqueVentanas(fuga, idioma, t = null) {
   const x = T(idioma);
   const v = fuga?.ventanas;
   if (!Array.isArray(v)) return {disponible: false, linea: '', filas: []};
-  return {disponible: true, linea: lineaVentanas(fuga, idioma), filas: v.map(w => ({canal: NOMBRE[w.canal] ?? w.canal, tipo: w.tipo === 'refund' ? x.reembolsos : x.pedidos, completa: w.completa, desde: diaTxt(w.inicio), hasta: diaTxt(w.fin), corte: diaTxt(w.corte), inicioIso: w.inicio ?? null, finIso: w.fin ?? null, corteIso: w.corte ?? null}))};
+  return {disponible: true, linea: lineaVentanas(fuga, idioma), filas: v.map(w => ({canal: t && (w.canal === 'tienda' || w.canal === 'otro') ? t('tr.ret.' + w.canal) : NOMBRE[w.canal] ?? w.canal, tipo: w.tipo === 'refund' ? x.reembolsos : x.pedidos, completa: w.completa, desde: diaTxt(w.inicio, t), hasta: diaTxt(w.fin, t), corte: diaTxt(w.corte, t), inicioIso: w.inicio ?? null, finIso: w.fin ?? null, corteIso: w.corte ?? null}))};
 }
 
 /** Bloque 4: «qué no sabemos» como lista de tareas. Cada fila sale de un dato real (conteo o estado); las limitaciones fijas citan la nota del código que las documenta. */
-export function queNoSabemos({fuga = null, carga = null, cobertura = null, frescura = null, ahora = Date.now(), idioma} = {}) {
+export function queNoSabemos({fuga = null, carga = null, cobertura = null, frescura = null, ahora = Date.now(), idioma, t: tr = null} = {}) {
   const x = T(idioma), t = [], OBS = x.observado, FIJA = x.notaFija;
   const add = (clave, titulo, afecta, cierra, base) => t.push({clave, titulo, afecta, cierra, base});
   if (fuga) {
@@ -101,6 +102,6 @@ export function queNoSabemos({fuga = null, carga = null, cobertura = null, fresc
     add('zendesk', x.zendesk, x.zendeskA, x.zendeskC, FIJA);
   }
   for (const s of cobertura?.sources ?? []) if (s.loaded === false && s.status !== 'timeout') add('sin-cargar-' + s.key, x.sinCargar(s.label), x.sinCargarA, x.sinCargarC, OBS);
-  for (const s of frescura?.sources ?? []) if (nivelFuente(s, ahora) === 'alerta') add('alerta-' + s.key, x.atraso(FUENTES[s.key] ?? s.key, FACTOR_ALERTA), x.atrasoA, x.atrasoC, OBS);
+  for (const s of frescura?.sources ?? []) if (nivelFuente(s, ahora) === 'alerta') add('alerta-' + s.key, x.atraso(nombreFuente(s.key, tr), FACTOR_ALERTA), x.atrasoA, x.atrasoC, OBS);
   return t;
 }

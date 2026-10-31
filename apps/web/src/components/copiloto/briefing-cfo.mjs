@@ -84,7 +84,7 @@ function siguientesPreguntas(report, moneda, caida, idioma) {
 export function briefingCfo(report, monedaPedida, idioma) {
   const x = T(idioma), moneda = monedaElegida(report, monedaPedida);
   if (!report || !moneda) return null;
-  const kpis = kpisDe(report, moneda), caida = explicarVariacion(report, moneda);
+  const kpis = kpisDe(report, moneda), caida = explicarVariacion(report, moneda, {idioma});
   const alertas = report.alerts.filter(a => a.severity !== 'info').sort((a, b) => ORDEN[a.severity] - ORDEN[b.severity]);
   const parcial = report.partialMonths?.length ? x.incompleto(report.partialMonths.map(monthLabel).join(', ')) : null;
   const calidad = report.quality;

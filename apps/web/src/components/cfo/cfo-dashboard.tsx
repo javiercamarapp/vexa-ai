@@ -182,7 +182,8 @@ function Projections({report, block}: {report: CfoReport; block: CurrencyBlock})
 
 /** Explica una caída mes contra mes solo con lo verificable: meses completos, aporte por canal y ticket. Sin causa verificable: «Causa no determinada». */
 function CaidaExplicada({report, moneda}: {report: CfoReport; moneda: string}) {
-  const x = explicarVariacion(report, moneda);
+  const idioma = useIdioma();
+  const x = explicarVariacion(report, moneda, {idioma});
   if (!x) return null;
   return <Notice tone="warn" title={x.titulo}>
     <ul style={{margin: '4px 0', paddingLeft: 18}}>{x.lineas.map((l, i) => <li key={i}>{l}</li>)}</ul>

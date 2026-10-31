@@ -28,3 +28,25 @@ test('con los datos de demostración devuelve algo coherente o null, nunca lanza
   const x = explicarVariacion(r, 'USD');
   if (x) assert.ok(x.lineas.length >= 2 && /^Causa no determinada/.test(x.causa));
 });
+
+test('en inglés la explicación sale completa en inglés, con cifras idénticas y sin español', async () => {
+  const {causaDe, CAUSA_EN} = await import('../src/lib/legibilidad/caida.mjs');
+  const rows = [fila('2026-08', 'amazon', 800, 800 * 3000), fila('2026-08', 'walmart', 200, 200 * 4000), fila('2026-09', 'amazon', 400, 400 * 3000), fila('2026-09', 'walmart', 0, 0), fila('2026-10', 'amazon', 50, 150000)];
+  const r = mk(rows), es = explicarVariacion(r, 'USD', {idioma: 'es'}), en = explicarVariacion(r, 'USD', {idioma: 'en'});
+  assert.ok(en, 'debe haber explicación');
+  const txt = [en.titulo, ...en.lineas, en.causa].join('\n');
+  assert.match(txt, /What the data says about the drop \(USD\)/);
+  assert.match(txt, /August 2026 and September 2026 are complete months/);
+  assert.match(txt, /Orders: 1,000 → 400 \(−60\.0%\)/);
+  assert.match(txt, /Amazon −400 orders \(67% of the drop\)/);
+  assert.match(txt, /Walmart has no records in September 2026 and had 200/);
+  assert.match(txt, /October 2026 is incomplete/);
+  assert.equal(en.causa, CAUSA_EN); assert.equal(causaDe('en'), CAUSA_EN); assert.match(en.causa, /^Cause not determined/);
+  assert.doesNotMatch(txt, /[áéíóúñ¿¡]|\b(Pedidos|caída|canal|meses|Causa|datos)\b/);
+  // El traductor decide el idioma si no se pasa `idioma`.
+  const tEn = (k) => (k === 'tr.lg.idioma' ? 'en' : k);
+  assert.deepEqual(explicarVariacion(r, 'USD', {t: tEn}), en);
+  // Mismas cifras en ambos idiomas.
+  const cifras = (x) => (x.lineas.join(' ').match(/\d(?:[\d,.]*\d)?/g) ?? []).join('|');
+  assert.equal(cifras(en), cifras(es));
+});

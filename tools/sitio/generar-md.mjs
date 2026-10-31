@@ -20,6 +20,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { brotliCompressSync, constants as zc } from 'node:zlib';
 import { plantillaSecurityTxt } from '../../apps/web/config/sitio/agentic.mjs';
 import { RE_ENLACE } from '../../apps/web/src/lib/sitio/articulos.mjs';
+import { FECHA_CONTENIDO } from '../../apps/web/src/content/sitio/fecha-contenido.mjs';
 
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const WEB = join(REPO, 'apps', 'web');
@@ -84,10 +85,7 @@ function sinCorreo(texto, lang, urlAcceso) {
     .replace(new RegExp(`Escríbenos a ${RE_CORREO.source}`, 'g'), `Solicita acceso en ${urlAcceso}`)
     .replace(new RegExp(`Write to us at ${RE_CORREO.source}`, 'g'), `Request access at ${urlAcceso}`)
     .replace(new RegExp(`\\s*Si tu correo[^.]*?, escribe a ${RE_CORREO.source}\\.`, 'g'), '')
-    .replace(new RegExp(`\\s*If your email[^.]*?, write to ${RE_CORREO.source}\\.`, 'g'), '')
-    // Estado: el buzón de reportes es el mismo de contacto y tampoco se repite en los archivos para agentes.
-    .replace(new RegExp(`Para reportar un problema, escribe a ${RE_CORREO.source}`, 'g'), `Para reportar un problema, usa el contacto de ${urlAcceso}`)
-    .replace(new RegExp(`To report a problem, write to ${RE_CORREO.source}`, 'g'), `To report a problem, use the contact on ${urlAcceso}`);
+    .replace(new RegExp(`\\s*If your email[^.]*?, write to ${RE_CORREO.source}\\.`, 'g'), '');
   return t;
 }
 
@@ -211,9 +209,9 @@ function cuerpoPagina(f, r) {
     } else if (b.tipo === 'articulos') {
       // Índice del blog: los artículos publicables, del más reciente al más antiguo (el mismo orden del HTML).
       if (tit) out.push(`## ${tit}`, '');
-      const arts = r.fichas.filter((x) => x.tipo === 'articulo' && x.indexable).sort((x, y) => String(y.pub).localeCompare(String(x.pub)) || x.id.localeCompare(y.id));
+      const arts = r.fichas.filter((x) => x.tipo === 'articulo' && x.indexable && String(x.pub) <= FECHA_CONTENIDO).sort((x, y) => String(y.pub).localeCompare(String(x.pub)) || x.id.localeCompare(y.id));
       if (arts.length === 0) out.push(t(b.vacio), '');
-      for (const x of arts) out.push(`- [${t(x.h1)}](${r.abs(x)}). ${r.lang === 'es' ? 'Publicado' : 'Published'} ${x.pub}. ${r.lang === 'es' ? `${x.lectura[r.lang]} min de lectura` : `${x.lectura[r.lang]} min read`}. ${t(x.resumen)}`);
+      for (const x of arts) out.push(`- [${t(x.h1)}](${r.abs(x)}). ${r.lang === 'es' ? 'Publicado' : 'Published'} ${x.pub}. ${r.lang === 'es' ? `${x.lectura[r.lang]} min de lectura` : `${x.lectura[r.lang]} min read`}. ${t(x.subtitulo)}`);
       if (arts.length) out.push('');
     } else if (b.tipo === 'enlaces') {
       const filas = lista(b.items).map((it) => ({ it, l: r.enlace(it.href) })).filter((x) => x.l);

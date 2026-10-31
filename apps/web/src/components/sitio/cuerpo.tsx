@@ -198,7 +198,7 @@ function Bloque({b, lang}: {b: Obj; lang: Lang}): ReactNode {
                   <h3 className="s-h3-serif s-art-indice__titulo">
                     <a className="s-enlace" href={a.href}>{a.titulo}</a>
                   </h3>
-                  <p className="s-cuerpo">{a.resumen}</p>
+                  <p className="s-cuerpo">{a.bajada}</p>
                 </li>
               ))}
             </ol>

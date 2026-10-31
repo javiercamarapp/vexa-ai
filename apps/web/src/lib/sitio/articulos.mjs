@@ -31,6 +31,25 @@ export const idsEnlazados = (texto) => [...String(texto).matchAll(RE_ENLACE)].ma
 /** El texto sin la sintaxis de enlace: solo la parte visible. */
 export const sinEnlaces = (texto) => String(texto).replace(RE_ENLACE, '$2');
 
+/** Énfasis de rótulo dentro de un texto: **rótulo**. Es Markdown válido, así que el espejo lo conserva tal cual. */
+export const RE_NEGRITA = /\*\*([^*]+)\*\*/g;
+
+/** Partes de un texto con énfasis: [{ texto, negrita }] en orden. El texto de cada parte puede traer enlaces internos. */
+export function partirNegrita(texto) {
+  const partes = [];
+  let ultimo = 0;
+  for (const m of String(texto).matchAll(RE_NEGRITA)) {
+    if (m.index > ultimo) partes.push({ texto: texto.slice(ultimo, m.index), negrita: false });
+    partes.push({ texto: m[1], negrita: true });
+    ultimo = m.index + m[0].length;
+  }
+  if (ultimo < texto.length) partes.push({ texto: texto.slice(ultimo), negrita: false });
+  return partes;
+}
+
+/** El texto sin la sintaxis de énfasis. */
+export const sinNegrita = (texto) => String(texto).replace(RE_NEGRITA, '$1');
+
 /** Textos de un bloque de artículo, en un idioma, como lista de cadenas. */
 export function textosDeBloque(bloque, lang) {
   if (!bloque) return [];
@@ -40,7 +59,7 @@ export function textosDeBloque(bloque, lang) {
 
 /** Texto plano del cuerpo de un artículo (todos los bloques), separado por saltos de línea. */
 export function textoPlano(bloques, lang) {
-  return (bloques ?? []).flatMap((b) => textosDeBloque(b, lang)).map(sinEnlaces).join('\n');
+  return (bloques ?? []).flatMap((b) => textosDeBloque(b, lang)).map(sinEnlaces).map(sinNegrita).join('\n');
 }
 
 /** Cantidad de palabras de un texto (secuencias separadas por espacio; sin contar signos sueltos). */

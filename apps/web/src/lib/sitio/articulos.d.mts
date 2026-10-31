@@ -20,3 +20,6 @@ export const RE_ENLACE: RegExp;
 export function partirEnlaces(texto: string): ({texto: string; id?: undefined} | {texto: string; id: string})[];
 export function idsEnlazados(texto: string): string[];
 export function sinEnlaces(texto: string): string;
+export const RE_NEGRITA: RegExp;
+export function partirNegrita(texto: string): {texto: string; negrita: boolean}[];
+export function sinNegrita(texto: string): string;

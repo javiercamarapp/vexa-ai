@@ -104,6 +104,7 @@ export function construirFichas({ landing, paginas, aprobaciones, fechas = {}, c
       ...(esArticulo
         ? {
             resumen: bi(contenido.resumen),
+            subtitulo: bi(contenido.subtitulo),
             relacionados: [...(contenido.relacionados ?? [])],
             palabras: { es: palabrasDeArticulo(contenido.bloques, 'es'), en: palabrasDeArticulo(contenido.bloques, 'en') },
             lectura: { es: minutosDeLectura(contenido.bloques, 'es'), en: minutosDeLectura(contenido.bloques, 'en') },

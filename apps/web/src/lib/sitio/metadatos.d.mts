@@ -17,6 +17,7 @@ export type FichaPagina = {
   pub?: string | null;
   etiqueta?: string | Bi | null;
   resumen?: Bi;
+  subtitulo?: Bi;
   relacionados?: string[];
   palabras?: {es: number; en: number};
   lectura?: {es: number; en: number};

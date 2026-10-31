@@ -10,6 +10,7 @@ import aprobaciones from '../../../content/sitio/aprobaciones.json';
 import {construirMailto, contextoPorDefecto, estadoPagina, proyectarArbol, publicar} from '../../../lib/sitio/marcadores.mjs';
 import type {Aprobaciones} from '../../../lib/sitio/marcadores.mjs';
 import {etiquetaDe, minutosDeLectura} from '../../../lib/sitio/articulos.mjs';
+import {FECHA_CONTENIDO} from '../../../content/sitio/fecha-contenido.mjs';
 
 export type Lang = IdiomaSitio;
 export const IDIOMAS_VALIDOS: readonly Lang[] = ['es', 'en'];
@@ -171,15 +172,19 @@ export type PaginaPublicada = {
   rotulo?: HojaPub;
 };
 
-export type FichaArticulo = {id: string; href: string; titulo: string; resumen: string; pub: string; minutos: number; etiqueta: string | null};
+export type FichaArticulo = {id: string; href: string; titulo: string; bajada: string; pub: string; minutos: number; etiqueta: string | null};
 
-/** Artículos publicables, del más reciente al más antiguo (desempata el id). Un artículo sin contenido o no publicable no aparece. */
+/**
+ * Artículos del índice del blog, del más reciente al más antiguo (desempata el id). Un artículo sin contenido o no publicable no aparece,
+ * ni uno con fecha posterior a FECHA_CONTENIDO. La tarjeta lleva el subtítulo (corto), no el resumen largo de RSS y metadatos.
+ */
 export function articulosPublicados(lang: Lang): FichaArticulo[] {
   return PAGINAS.filter((p) => p.tipo === 'articulo' && esPublicable(p.id))
     .map((p) => {
       const a = PAGINA_DE_REGISTRO.get(p.id) as Articulo;
-      return {id: p.id, href: hrefDe(p.id, lang), titulo: a.h1[lang], resumen: a.resumen[lang], pub: a.pub, minutos: minutosDeLectura(a.bloques, lang), etiqueta: etiquetaDe(a, lang)};
+      return {id: p.id, href: hrefDe(p.id, lang), titulo: a.h1[lang], bajada: a.subtitulo[lang], pub: a.pub, minutos: minutosDeLectura(a.bloques, lang), etiqueta: etiquetaDe(a, lang)};
     })
+    .filter((a) => a.pub <= FECHA_CONTENIDO)
     .sort((x, y) => y.pub.localeCompare(x.pub) || x.id.localeCompare(y.id));
 }
 

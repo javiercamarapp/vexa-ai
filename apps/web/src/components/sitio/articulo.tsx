@@ -8,7 +8,7 @@ import {esPublicable, hrefDe, paginaPublicada, relacionadosDe} from './shell/dat
 import type {HojaPub, Lang} from './shell/datos';
 import type {Articulo} from '../../content/sitio/tipos';
 import {porId} from '../../content/sitio/registro.mjs';
-import {ANCLA_NO_AFIRMAMOS, ROTULO_NO_AFIRMAMOS, fechaLegible, minutosDeLectura, partirEnlaces, rotuloLectura, seccionesDe} from '../../lib/sitio/articulos.mjs';
+import {ANCLA_NO_AFIRMAMOS, ROTULO_NO_AFIRMAMOS, fechaLegible, minutosDeLectura, partirEnlaces, partirNegrita, rotuloLectura, seccionesDe} from '../../lib/sitio/articulos.mjs';
 
 type Obj = Record<string, unknown>;
 const esHoja = (x: unknown): x is HojaPub => typeof x === 'object' && x !== null && typeof (x as HojaPub).es === 'string' && typeof (x as HojaPub).en === 'string';
@@ -32,14 +32,20 @@ const TEXTO = {
   },
 } as const;
 
-/** Texto con enlaces internos {{id|texto}}: enlaza solo las páginas que se publican; las demás quedan como texto. Un id fuera del registro rompe el build. */
+/**
+ * Texto con enlaces internos {{id|texto}} y rótulos en negrita **texto**: enlaza solo las páginas que se publican; las demás quedan como texto.
+ * Un id fuera del registro rompe el build. El rótulo usa la etiqueta strong, sin color nuevo.
+ */
 function Rico({t, lang}: {t: string; lang: Lang}) {
   return (
     <>
-      {partirEnlaces(t).map((x, i) => {
-        if (x.id === undefined) return <Fragment key={i}>{x.texto}</Fragment>;
-        if (!porId(x.id)) throw new Error(`ENLACE_SIN_REGISTRO: ${x.id}`);
-        return esPublicable(x.id) ? <a className="s-enlace" href={hrefDe(x.id, lang)} key={i}>{x.texto}</a> : <Fragment key={i}>{x.texto}</Fragment>;
+      {partirNegrita(t).map((parte, k) => {
+        const hijos = partirEnlaces(parte.texto).map((x, i) => {
+          if (x.id === undefined) return <Fragment key={i}>{x.texto}</Fragment>;
+          if (!porId(x.id)) throw new Error(`ENLACE_SIN_REGISTRO: ${x.id}`);
+          return esPublicable(x.id) ? <a className="s-enlace" href={hrefDe(x.id, lang)} key={i}>{x.texto}</a> : <Fragment key={i}>{x.texto}</Fragment>;
+        });
+        return parte.negrita ? <strong className="s-art__rotulo" key={k}>{hijos}</strong> : <Fragment key={k}>{hijos}</Fragment>;
       })}
     </>
   );

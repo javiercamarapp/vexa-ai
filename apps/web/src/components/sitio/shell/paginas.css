@@ -200,6 +200,11 @@
   padding-left: var(--s-e24);
 }
 
+.s-art__rotulo {
+  font-weight: 600;
+  color: var(--s-tinta);
+}
+
 .s-art__lista--num {
   list-style: decimal;
 }

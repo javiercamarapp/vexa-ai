@@ -4,7 +4,7 @@ import type {Role} from '@vexa/platform/capabilities';
 export type EstadoAsistente = EstadoPaso | 'otro';
 export interface ContextoAsistente { senales?: Senales | null; consultadas?: readonly string[]; push?: {configurado: boolean | null; dispositivos: number | null} | null }
 export interface ItemAsistente { id: string; textos: {titulo: string; cuerpo: string}; href: string | null; accion: string; min: number; mixto: boolean; quien: Role[]; estado: EstadoAsistente; cuenta: boolean; esperaA: string | null; nota: string | null; puede: boolean }
-export interface EntradaAsistente { id: string; min: number; mixto?: boolean; pre?: 'push'; fijo?: 'no_disponible' }
+export interface EntradaAsistente { id: string; min: number; mixto?: boolean; pre?: 'push' }
 export const ASISTENTE: Readonly<Record<'propietario' | 'analista' | 'operador' | 'lector', readonly EntradaAsistente[]>>;
 export function rolesQueLoHacen(accion: string): Role[];
 export function estadoAsistente(pista: Pista, entrada: EntradaAsistente, ctx?: ContextoAsistente): {estado: EstadoAsistente; cuenta: boolean; esperaA: string | null; nota: string | null; puede: boolean};

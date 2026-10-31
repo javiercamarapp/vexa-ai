@@ -88,10 +88,10 @@ test('propietario: estados honestos con datos de PILOTO (conexión activa, histo
   assert.equal(por.corte.estado,'salvedad');
   assert.equal(por.equipo.estado,'esperando');assert.equal(por.equipo.esperaA,'onb.tercero.correo');assert.equal(por.equipo.cuenta,false);
   assert.equal(por.avisos.estado,'esperando');assert.equal(por.avisos.esperaA,'onb.tercero.push');assert.equal(por.avisos.cuenta,false);
-  assert.equal(por.mfa.estado,'pendiente');assert.equal(por.mfa.cuenta,false,'MFA no existe para propietarios: pendiente, fuera del progreso');assert.equal(por.mfa.href,null);
+  assert.equal(por.mfa,undefined,'no hay paso de verificación en dos pasos: no se promete ni se simula');
   assert.equal(por.retencion.estado,'informativo');
   assert.equal(l.siguiente,'propietario.conciliar','el siguiente es el primer paso propio pendiente; nunca uno de tercero');
-  assert.deepEqual(l.progreso,{hechos:3,total:4},'cuentan historial, pedidos, conciliar y corte (3 de 4 hechos, el corte con salvedad); nada de terceros, MFA ni informativos');
+  assert.deepEqual(l.progreso,{hechos:3,total:4},'cuentan historial, pedidos, conciliar y corte (3 de 4 hechos, el corte con salvedad); nada de terceros ni informativos');
 });
 test('propietario: el push solo se ofrece (pendiente y con enlace) si el servidor dice configured=true; con dispositivos queda hecho',()=>{
   const base={senales:SENALES_PILOTO,consultadas:consultadasDe('owner')};
@@ -297,10 +297,11 @@ test('textos de /setup: sin cifras, porcentajes, RLS, respaldos, SLA, certificac
   const prohibido=/\d|%|\bRLS\b|SOC\s?2|ISO\s?27|respaldo|backup|\bSLA\b|pruebas cruzadas|certific|cross-tenant/i;
   for(const k of NUEVAS)for(const [idioma,dic] of [['es',ESP],['en',ING]] as const)assert.doesNotMatch(dic[k],prohibido,`${idioma}:${k}`);
 });
-test('textos de /setup: ninguna promesa de MFA, push, Zendesk ni Google; MFA dice «hoja de ruta»; push solo si el servidor lo permite',()=>{
+test('textos de /setup: ninguna promesa de MFA, push, Zendesk ni Google, y ninguna frase de «hoja de ruta»; push solo si el servidor lo permite',()=>{
   for(const k of NUEVAS)for(const dic of [ESP,ING])assert.doesNotMatch(dic[k],/zendesk|google|oauth/i,k);
-  assert.match(ESP['onb.propietario.mfa.cuerpo'],/hoja de ruta/);assert.match(ING['onb.propietario.mfa.cuerpo'],/roadmap/);
-  assert.doesNotMatch(ESP['onb.propietario.mfa.cuerpo']+ING['onb.propietario.mfa.cuerpo'],/activa tu|turn on your|enable|habilita|próximamente|coming soon|pronto/i);
+  for(const k of Object.keys(ESP).filter(x=>/^onb\./.test(x)))assert.doesNotMatch(ESP[k]+' '+ING[k],/hoja de ruta|roadmap|próximamente|coming soon|segundo factor|second[- ]factor|dos pasos|two-step|\bMFA\b/i,k);
+  assert.equal(ESP['onb.propietario.mfa.titulo'],undefined);assert.equal(ING['onb.propietario.mfa.cuerpo'],undefined);
+  assert.ok(!CATALOGO.some(p=>p.id==='propietario.mfa'),'el paso de MFA se quitó del catálogo');
   assert.match(ESP['onb.propietario.avisos.cuerpo'],/solo si el servidor lo permite/);assert.match(ING['onb.propietario.avisos.cuerpo'],/only if the server allows/);
   assert.match(ESP['onb.propietario.crm.cuerpo'],/equipo de Rovaq/);assert.match(ESP['onb.propietario.crm.cuerpo'],/nunca se escribe/);
   for(const k of Object.keys(ESP).filter(x=>/^onb\.setup\.hoja\./.test(x)))assert.doesNotMatch(ESP[k]+ING[k],/probar ahora|test now|try now/i);

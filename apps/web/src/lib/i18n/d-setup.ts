@@ -1,6 +1,6 @@
 // Textos de la pantalla /setup (Configuración) y de los pasos que solo viven ahí. es.ts y en.ts los incorporan; test:i18n exige las mismas claves y {variables}.
 // Mismas reglas que d-onb.ts: ninguna cifra escrita a mano (los números entran por {variable}), nada de RLS, respaldos, SLA ni certificaciones,
-// y ninguna promesa de MFA, push, Zendesk ni Google: lo que no existe se dice como «no disponible» o «en la hoja de ruta».
+// y ninguna promesa de MFA, push, Zendesk ni Google: lo que no existe no se menciona (no hay frases de «hoja de ruta»).
 export const setupEs = {
   'onb.tercero.push': 'la configuración de avisos del servidor',
   // Pasos propios del asistente (el resto reutiliza los textos del recorrido y del checklist)
@@ -10,7 +10,6 @@ export const setupEs = {
   'onb.propietario.dimensiones.titulo': 'Mapear dimensiones', 'onb.propietario.dimensiones.cuerpo': 'Asigna cada producto a su categoría en Cortes publicados para que el dinero se pueda desglosar. Rovaq no sabe desde aquí si ya terminaste: confírmalo en esa pantalla.',
   'onb.propietario.conciliar.titulo': 'Conciliar pedidos con clientes', 'onb.propietario.conciliar.cuerpo': 'Liga cada pedido a un cliente con un identificador exacto. Mientras falten ligas, las cifras de dinero por cliente son parciales.',
   'onb.propietario.avisos.titulo': 'Activar avisos en este dispositivo', 'onb.propietario.avisos.cuerpo': 'Elige qué avisos recibes y, solo si el servidor lo permite, actívalos en este navegador.',
-  'onb.propietario.mfa.titulo': 'Verificación en dos pasos (MFA)', 'onb.propietario.mfa.cuerpo': 'Todavía no se puede activar para propietarios: está en la hoja de ruta. No hay nada que hacer aquí por ahora.',
   'onb.analista.idioma.titulo': 'Idioma de la interfaz', 'onb.analista.idioma.cuerpo': 'Rovaq usa el idioma que elijas con el selector del encabezado.',
   'onb.analista.avisos.titulo': 'Activar avisos en este dispositivo', 'onb.analista.avisos.cuerpo': 'Elige qué avisos recibes y, solo si el servidor lo permite, actívalos en este navegador.',
   'onb.operador.idioma.titulo': 'Idioma de la interfaz', 'onb.operador.idioma.cuerpo': 'Rovaq usa el idioma que elijas con el selector del encabezado.',
@@ -44,7 +43,6 @@ export const setupEn: Record<keyof typeof setupEs, string> = {
   'onb.propietario.dimensiones.titulo': 'Map dimensions', 'onb.propietario.dimensiones.cuerpo': 'Assign each product to its category in Published cuts so money can be broken down. Rovaq cannot tell from here whether you are done: confirm it on that screen.',
   'onb.propietario.conciliar.titulo': 'Reconcile orders with customers', 'onb.propietario.conciliar.cuerpo': 'Link each order to a customer with an exact identifier. While links are missing, money figures per customer are partial.',
   'onb.propietario.avisos.titulo': 'Turn on notifications on this device', 'onb.propietario.avisos.cuerpo': 'Choose which notifications you receive and, only if the server allows it, turn them on in this browser.',
-  'onb.propietario.mfa.titulo': 'Two-step verification (MFA)', 'onb.propietario.mfa.cuerpo': 'It cannot be turned on for owners yet: it is on the roadmap. There is nothing to do here for now.',
   'onb.analista.idioma.titulo': 'Interface language', 'onb.analista.idioma.cuerpo': 'Rovaq uses the language you pick with the selector in the header.',
   'onb.analista.avisos.titulo': 'Turn on notifications on this device', 'onb.analista.avisos.cuerpo': 'Choose which notifications you receive and, only if the server allows it, turn them on in this browser.',
   'onb.operador.idioma.titulo': 'Interface language', 'onb.operador.idioma.cuerpo': 'Rovaq uses the language you pick with the selector in the header.',

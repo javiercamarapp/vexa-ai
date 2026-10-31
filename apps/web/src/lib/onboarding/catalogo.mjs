@@ -48,7 +48,6 @@ export const CATALOGO = Object.freeze([
   paso('propietario', 'dimensiones', 'configure', '/economics', 'setup'),
   paso('propietario', 'conciliar', 'configure', '/economics', 'setup', 'pedidos_ligados'),
   paso('propietario', 'avisos', 'notify', '/settings/notifications', 'setup'),
-  paso('propietario', 'mfa', 'configure', null, 'setup'),
   // Analista: lee, propone e importa historial; no aprueba ni configura.
   paso('analista', 'hoy', 'read', '/overview'),
   paso('analista', 'problemas', 'read', '/problems'),

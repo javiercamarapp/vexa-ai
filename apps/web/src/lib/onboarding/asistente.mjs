@@ -10,7 +10,7 @@ const ORDEN_ROLES = Object.freeze(['owner', 'analyst', 'operator', 'viewer']);
 
 /**
  * Entradas por pista: `min` = minutos estimados; `mixto` = paso compartido con el equipo de Rovaq (hoja para soporte);
- * `pre` = prerrequisito propio del asistente cuando el paso del catálogo no lo declara; `fijo` = estado que no se puede derivar.
+ * `pre` = prerrequisito propio del asistente cuando el paso del catálogo no lo declara.
  */
 export const ASISTENTE = Object.freeze({
   propietario: Object.freeze([
@@ -23,7 +23,6 @@ export const ASISTENTE = Object.freeze({
     { id: 'propietario.corte', min: 5 },
     { id: 'propietario.equipo', min: 5 },
     { id: 'propietario.avisos', min: 2, pre: 'push' },
-    { id: 'propietario.mfa', min: 5, fijo: 'no_disponible' },
     { id: 'propietario.retencion', min: 3 },
   ]),
   analista: Object.freeze([
@@ -64,7 +63,6 @@ export function estadoAsistente(pista, entrada, ctx = {}) {
   const puede = Boolean(rol) && rolTieneCapacidad(rol, paso.accion) && !paso.espera;
   // Lo que el rol no puede hacer no es suyo: no cuenta en su progreso ni en su «siguiente recomendado».
   if (!puede) return { estado: 'otro', cuenta: false, esperaA: null, nota: null, puede };
-  if (entrada.fijo === 'no_disponible') return { estado: 'pendiente', cuenta: false, esperaA: null, nota: null, puede };
   const { senales = null, push = null } = ctx;
   if (entrada.pre === 'push') {
     if (!push || push.configurado == null) return { estado: 'desconocido', cuenta: false, esperaA: null, nota: null, puede };

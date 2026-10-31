@@ -81,8 +81,8 @@ const ICONOS = [
 let AIRE = 24; // (medir() lo baja a 20 en el móvil) 16 px de margen mínimo más medio núcleo de banda (3.75 a 1440, 2.1 a 390) y holgura; el móvil usa menos aire para cruzar por los huecos naturales (~88 px) sin alargar la página
 const PULSO = [[230, 0.1], [150, 0.22], [90, 0.45], [40, 0.9]]; // largo en px y opacidad de cada capa del pulso
 const ICONO_DE = [0, 1, 2, 3, 4, 0, 1]; // ícono de la nota de cada banda
-const LOOPS = [4]; // bandas (base 0) con rizo: solo una; con la triple son 2 lazos en toda la página a 1440
-const TRIPLES = []; // sin cruces triples (ida, vuelta e ida): a 1440 se leían como lazos repetidos y barrían todo el ancho bajo la barra; queda un solo rizo (LOOPS)
+const LOOPS = [1, 4]; // bandas (base 0) con rizo: solo dos en toda la página (hilo-carril exige 10 cruces a 1440 y cada rizo suma uno)
+const TRIPLES = [3]; // una sola banda cruza tres veces (ida, vuelta e ida), sin rizo
 const COLA = 72; // px de carril libre al final de cada banda en escritorio: con la sección anclada bajo la cabecera fija el barrido no pasa por debajo de ella
 const RAMPA = 3, PASO_RAMPA = 26; // escalones y largo de cada uno al engrosar o afinar el trazo
 
@@ -94,7 +94,8 @@ const gr = (px) => `calc(${px}px * var(--s-hilo-k, 1))`;
 function huecos(zona, H, min) {
   const ocupado = [];
   const pasos = $('#modulos', zona);
-  const ajeno = (e) => e.closest('[data-hilo], .s-solo-lector, [data-banda]') || (pasos && pasos.contains(e));
+  // .s-pantalla__img es el recorte ampliado de móvil: su caja sobrepasa a la miniatura que la recorta, que sí cuenta como contenido
+  const ajeno = (e) => e.closest('[data-hilo], .s-solo-lector, [data-banda]') || (pasos && pasos.contains(e)) || e.classList.contains('s-pantalla__img');
   const MEDIA = /^(SVG|IMG|CANVAS|PICTURE|VIDEO)$/i;
   for (const e of zona.getElementsByTagName('*')) {
     if (!(e instanceof HTMLElement) || ajeno(e) || !e.offsetHeight) continue;

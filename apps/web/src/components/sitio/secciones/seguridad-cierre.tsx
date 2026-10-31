@@ -62,7 +62,6 @@ export function Seguridad({lang, t}: {lang: Lang; t: TextosPortada}) {
 
 export function Integraciones({lang, t}: {lang: Lang; t: TextosPortada}) {
   const g = t.integraciones;
-  const e = t.micro.etiquetas;
   const hrefInt = enlaceInterno(g.href);
   const hrefRuta = enlaceInterno(g.hrefRuta);
   const preguntas = t.faq.items.filter((x): x is {q: string; a: string} => Boolean(x.q && x.a));

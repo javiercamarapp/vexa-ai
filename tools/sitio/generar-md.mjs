@@ -19,6 +19,7 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { brotliCompressSync, constants as zc } from 'node:zlib';
 import { plantillaSecurityTxt } from '../../apps/web/config/sitio/agentic.mjs';
+import { RE_ENLACE } from '../../apps/web/src/lib/sitio/articulos.mjs';
 
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const WEB = join(REPO, 'apps', 'web');
@@ -83,7 +84,10 @@ function sinCorreo(texto, lang, urlAcceso) {
     .replace(new RegExp(`Escríbenos a ${RE_CORREO.source}`, 'g'), `Solicita acceso en ${urlAcceso}`)
     .replace(new RegExp(`Write to us at ${RE_CORREO.source}`, 'g'), `Request access at ${urlAcceso}`)
     .replace(new RegExp(`\\s*Si tu correo[^.]*?, escribe a ${RE_CORREO.source}\\.`, 'g'), '')
-    .replace(new RegExp(`\\s*If your email[^.]*?, write to ${RE_CORREO.source}\\.`, 'g'), '');
+    .replace(new RegExp(`\\s*If your email[^.]*?, write to ${RE_CORREO.source}\\.`, 'g'), '')
+    // Estado: el buzón de reportes es el mismo de contacto y tampoco se repite en los archivos para agentes.
+    .replace(new RegExp(`Para reportar un problema, escribe a ${RE_CORREO.source}`, 'g'), `Para reportar un problema, usa el contacto de ${urlAcceso}`)
+    .replace(new RegExp(`To report a problem, write to ${RE_CORREO.source}`, 'g'), `To report a problem, use the contact on ${urlAcceso}`);
   return t;
 }
 
@@ -100,7 +104,9 @@ function crearRender(fichas, lang) {
     const f = porRutaEs.get(hoja(href, 'es'));
     return f?.indexable ? { f, url: abs(f) } : null;
   };
-  return { lang, porId, abs, t, enlace, urlAcceso };
+  /** Enlaces internos de un artículo, {{id|texto}}: Markdown si la página se publica; si no, solo el texto. */
+  const enlazar = (texto) => texto.replace(RE_ENLACE, (_, id, visible) => (porId.get(id)?.indexable ? `[${visible}](${abs(porId.get(id))})` : visible));
+  return { lang, porId, abs, t, enlace, urlAcceso, enlazar, fichas };
 }
 
 const ETIQ = {
@@ -166,8 +172,27 @@ function cuerpoPortada(f, r) {
   return out;
 }
 
+const ROTULO_NO_AFIRMAMOS = { es: 'Lo que no afirmamos', en: 'What we do not claim' };
+
+/** Cuerpo Markdown de un artículo del blog: bloques de artículo (p, h2, h3, lista, pasos, cita, no-afirmamos) con sus enlaces internos. */
+function cuerpoArticulo(f, r) {
+  const a = f.arbol, t = (h) => r.enlazar(r.t(h)), out = [`# ${r.t(a.h1)}`, '', r.t(a.subtitulo), ''];
+  for (const b of lista(a.bloques)) {
+    if (b.tipo === 'p') out.push(t(b.texto), '');
+    else if (b.tipo === 'h2') out.push(`## ${t(b.texto)}`, '');
+    else if (b.tipo === 'h3') out.push(`### ${t(b.texto)}`, '');
+    else if (b.tipo === 'lista') { for (const it of lista(b.items)) out.push(`- ${t(it)}`); out.push(''); }
+    else if (b.tipo === 'pasos') { lista(b.items).forEach((it, i) => out.push(`${i + 1}. ${t(it)}`)); out.push(''); }
+    else if (b.tipo === 'cita') out.push(`> ${t(b.texto)}`, '');
+    else if (b.tipo === 'no-afirmamos') { out.push(`## ${ROTULO_NO_AFIRMAMOS[r.lang]}`, ''); for (const it of lista(b.items)) out.push(`- ${t(it)}`); out.push(''); }
+    else throw new Error(`BLOQUE_DE_ARTICULO_DESCONOCIDO_EN_MD: ${b.tipo} (${f.id})`);
+  }
+  return out;
+}
+
 /** Cuerpo Markdown de una página interna, desde su árbol publicado. */
 function cuerpoPagina(f, r) {
+  if (f.tipo === 'articulo') return cuerpoArticulo(f, r);
   const a = f.arbol, t = r.t, out = [`# ${t(a.h1)}`, '', t(a.subtitulo), ''];
   for (const b of lista(a.bloques)) {
     const tit = b.titulo ? t(b.titulo) : '';
@@ -183,6 +208,13 @@ function cuerpoPagina(f, r) {
       out.push(`| | ${cols.join(' | ')} |`, `| --- | ${cols.map(() => '---').join(' | ')} |`);
       for (const fila of lista(b.filas)) out.push(`| ${t(fila.t)} | ${lista(fila.celdas).map((c) => t(c)).join(' | ')} |`);
       out.push('');
+    } else if (b.tipo === 'articulos') {
+      // Índice del blog: los artículos publicables, del más reciente al más antiguo (el mismo orden del HTML).
+      if (tit) out.push(`## ${tit}`, '');
+      const arts = r.fichas.filter((x) => x.tipo === 'articulo' && x.indexable).sort((x, y) => String(y.pub).localeCompare(String(x.pub)) || x.id.localeCompare(y.id));
+      if (arts.length === 0) out.push(t(b.vacio), '');
+      for (const x of arts) out.push(`- [${t(x.h1)}](${r.abs(x)}) (${x.pub}, ${r.lang === 'es' ? `${x.lectura[r.lang]} min de lectura` : `${x.lectura[r.lang]} min read`}): ${t(x.resumen)}`);
+      if (arts.length) out.push('');
     } else if (b.tipo === 'enlaces') {
       const filas = lista(b.items).map((it) => ({ it, l: r.enlace(it.href) })).filter((x) => x.l);
       if (filas.length === 0) continue;
@@ -224,7 +256,8 @@ export function espejoMd(f, lang, fichas) {
   const cuerpo = f.id === 'inicio' ? cuerpoPortada(f, r) : cuerpoPagina(f, r);
   const otras = fichas.filter((x) => x.indexable && x.id !== f.id && x.id !== 'inicio');
   const mas = f.id === 'inicio' && otras.length ? ['', `## ${ETIQ[lang].mas}`, '', ...otras.map((x) => `- [${x.h1[lang]}](${r.abs(x)})`), ''] : [];
-  return `${frente(f, lang, r)}\n${[...cuerpo, ...mas].join('\n').replace(/\n{3,}/g, '\n\n').trim()}\n`;
+  const extra = f.tipo === 'articulo' ? { published: f.pub, author: 'Rovaq AI', reading_time_minutes: f.lectura[lang] } : {};
+  return `${frente(f, lang, r, extra)}\n${[...cuerpo, ...mas].join('\n').replace(/\n{3,}/g, '\n\n').trim()}\n`;
 }
 
 // ---------------------------------------------------------------- llms.txt y llms-full.txt

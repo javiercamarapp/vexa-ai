@@ -101,13 +101,13 @@ export const onbEn = {
   'onb.operador.acciones.titulo': 'Actions in progress', 'onb.operador.acciones.cuerpo': 'Work the interventions assigned to you, move them along and record their result. Approving and assigning belongs to the workspace administrator.',
   'onb.operador.preguntar.titulo': 'Ask your data', 'onb.operador.preguntar.cuerpo': 'Ask in plain language whatever you need to operate. Answers come with totals; quotes and specific customers are for workspace administrators and analysts.',
   'onb.operador.propuesta.titulo': 'Propose an action', 'onb.operador.propuesta.cuerpo': 'Review what is recommended and propose an intervention with its evidence.',
-  'onb.operador.avisos.titulo': 'Your alerts', 'onb.operador.avisos.cuerpo': 'Choose which alerts you get and through which channel, for example when an intervention is assigned to you. They are yours: they do not change anyone else’s.',
+  'onb.operador.avisos.titulo': 'Your notifications', 'onb.operador.avisos.cuerpo': 'Choose which notifications you get and through which channel, for example when an intervention is assigned to you. They are yours: they do not change anyone else’s.',
   'onb.operador.resultado.titulo': 'Record a result', 'onb.operador.resultado.cuerpo': 'When you close an intervention assigned to you, note what happened so we can tell whether it worked.',
   // Viewer
   'onb.lector.hoy.titulo': 'Today: problems and evidence', 'onb.lector.hoy.cuerpo': 'Today shows the open problems and their evidence. Your access is read-only: you can look, but not change the organization’s data.',
   'onb.lector.problemas.titulo': 'Problems and their evidence', 'onb.lector.problemas.cuerpo': 'Open a problem to read its evidence. Third-party personal data appears masked.',
   'onb.lector.confianza.titulo': 'How much to trust each number', 'onb.lector.confianza.cuerpo': 'Trust explains how complete the data is and how far to rely on what you see.',
-  'onb.lector.avisos.titulo': 'Your alerts', 'onb.lector.avisos.cuerpo': 'Choose which alerts you get and through which channel. Your preferences are yours alone.',
+  'onb.lector.avisos.titulo': 'Your notifications', 'onb.lector.avisos.cuerpo': 'Choose which notifications you get and through which channel. Your preferences are yours alone.',
   // Platform
   'onb.plataforma.resumen.titulo': 'Overview', 'onb.plataforma.resumen.cuerpo': 'The state of every organization at a glance.',
   'onb.plataforma.organizaciones.titulo': 'Organizations', 'onb.plataforma.organizaciones.cuerpo': 'To enter as an organization (View as) you must give a reason and a duration. The session is read-only and is recorded.',

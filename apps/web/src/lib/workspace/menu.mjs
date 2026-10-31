@@ -63,7 +63,7 @@ export const MENU = Object.freeze([
 ]);
 /** Pantallas sin ítem propio (se llega por la campana o por otra pantalla): solo aportan título e icono. */
 const SIN_ITEM = Object.freeze([
-  { href: '/notifications', etiqueta: 'Notificaciones', icono: 'notifications' },
+  { href: '/notifications', etiqueta: 'Avisos', icono: 'notifications' },
   { href: '/briefs', etiqueta: 'Informe ejecutivo', icono: 'briefs' },
   { href: '/customers', etiqueta: 'Historial del cliente', icono: 'customers' },
 ]);

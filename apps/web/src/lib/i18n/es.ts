@@ -58,7 +58,7 @@ export const es = {
   'shell.tema': 'Tema de la interfaz', 'shell.temaClaro': 'Claro', 'shell.temaSistema': 'Sistema', 'shell.temaOscuro': 'Oscuro',
   'shell.rol.owner': 'Administrador del espacio', 'shell.rol.analyst': 'Analista', 'shell.rol.operator': 'Operador', 'shell.rol.viewer': 'Lectura',
   'shell.navPrincipal': 'Navegación principal', 'shell.navMovil': 'Navegación móvil', 'shell.paginaActual': 'Página actual',
-  'shell.notificaciones': 'Notificaciones', 'shell.avisosSinLeer': '{n} avisos sin leer',
+  'shell.notificaciones': 'Avisos', 'shell.avisosSinLeer': '{n} avisos sin leer',
   // Barra inferior (celular)
   'movil.inicio': 'Inicio', 'movil.dinero': 'Dinero', 'movil.datos': 'Datos', 'movil.clientes': 'Clientes', 'movil.acciones': 'Acciones', 'movil.preguntar': 'Preguntar',
   'movil.empresaActual': 'Empresa: {nombre}. Cambiar de empresa', 'movil.cambiarEmpresa': 'Cambiar de empresa', 'movil.cambiarEmpresaSub': 'Elige el espacio que quieres ver',
@@ -75,7 +75,7 @@ export const es = {
   'nav.item.settings-retention': 'Retención', 'nav.item.evaluation': 'Evaluación histórica', 'nav.item.evaluation-candidates': 'Candidatos evaluados', 'nav.item.migrations': 'Comparación de migración',
   'nav.titulo.recommendations': 'Acciones · Por decidir', 'nav.titulo.interventions': 'Acciones', 'nav.titulo.confianza': 'Datos y confianza', 'nav.titulo.analysis': 'Análisis de conversaciones',
   'nav.titulo.settings-notifications': 'Preferencias de avisos', 'nav.titulo.settings-retention': 'Retención y borrado',
-  'nav.titulo.notifications': 'Notificaciones', 'nav.titulo.briefs': 'Informe ejecutivo', 'nav.titulo.customers': 'Historial del cliente', 'nav.titulo.defecto': 'Espacio de trabajo',
+  'nav.titulo.notifications': 'Avisos', 'nav.titulo.briefs': 'Informe ejecutivo', 'nav.titulo.customers': 'Historial del cliente', 'nav.titulo.defecto': 'Espacio de trabajo',
   // Alcance, filtros y cajones
   'alcance.barra': 'Periodo y filtros', 'alcance.periodo': 'Periodo', 'alcance.esteMes': 'Este mes', 'alcance.30d': '30 días', 'alcance.90d': '90 días', 'alcance.12m': '12 meses', 'alcance.personalizado': 'Personalizado',
   'alcance.ultima': 'Última publicación', 'alcance.filtros': 'Filtros', 'alcance.filtrosActivos': 'Filtros activos', 'alcance.nActivos': '{n} activos',

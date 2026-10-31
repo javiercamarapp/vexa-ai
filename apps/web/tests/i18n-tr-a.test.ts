@@ -91,7 +91,7 @@ const PROHIBIDOS: Record<string, string[]> = {
   'src/components/workspace/detail-hero.tsx': ['Cobertura completa', 'Resumen del detalle', 'Sin causa identificada'],
   'src/components/workspace/filters.tsx': ['Aplicar alcance', 'Filtros compartidos'],
   'src/components/explorer/panel.tsx': ['No hay citas disponibles', 'No se pudo verificar el alcance'],
-  'src/components/notifications/push-preferences.tsx': ['Notificaciones en este dispositivo', 'Activar avisos en este dispositivo'],
+  'src/components/notifications/push-preferences.tsx': ['Avisos en este dispositivo', 'Activar avisos en este dispositivo'],
   'src/components/agente/attachment-card.tsx': ['Resumen de columnas numéricas', 'El agente no lee este archivo'],
   'src/components/agente/blocks.tsx': ['Hay más filas en el sistema', 'Cifras de la respuesta'],
   'src/components/agente/sugerencias.tsx': ['Preguntas por tema'],

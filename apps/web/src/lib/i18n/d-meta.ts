@@ -33,7 +33,7 @@ export const metaEs = {
   'meta.titulo.jobs-setup': 'Proceso en segundo plano',
   'meta.titulo.jobs-id': 'Detalle del proceso',
   'meta.titulo.overview': 'Hoy',
-  'meta.titulo.notifications': 'Notificaciones',
+  'meta.titulo.notifications': 'Avisos',
   'meta.titulo.notifications-push': 'Avisos en el navegador',
   'meta.titulo.briefs': 'Informe ejecutivo',
   'meta.titulo.briefs-id': 'Detalle del informe ejecutivo',
@@ -57,7 +57,7 @@ export const metaEs = {
 
 export const metaEn = {
   'meta.titulo.settings-team': 'Team',
-  'meta.titulo.settings-notifications': 'Alert preferences',
+  'meta.titulo.settings-notifications': 'Notification preferences',
   'meta.titulo.migrations': 'Migration comparison',
   'meta.titulo.customers-id': 'Customer history',
   'meta.titulo.not-found': 'Page not found',
@@ -66,7 +66,7 @@ export const metaEn = {
   'meta.titulo.settings-retention': 'Retention and deletion',
   'meta.titulo.gaps': 'Revenue gaps',
   'meta.titulo.customers': 'Customers',
-  'meta.titulo.settings-notification-delivery': 'Alert delivery',
+  'meta.titulo.settings-notification-delivery': 'Notification delivery',
   'meta.titulo.preguntale': 'Ask your data',
   'meta.titulo.setup': 'Setup',
   'meta.titulo.problems': 'Business problems',
@@ -90,7 +90,7 @@ export const metaEn = {
   'meta.titulo.jobs-id': 'Process detail',
   'meta.titulo.overview': 'Today',
   'meta.titulo.notifications': 'Notifications',
-  'meta.titulo.notifications-push': 'Browser alerts',
+  'meta.titulo.notifications-push': 'Browser notifications',
   'meta.titulo.briefs': 'Executive brief',
   'meta.titulo.briefs-id': 'Executive brief detail',
   'meta.titulo.interventions': 'Actions',
@@ -107,6 +107,6 @@ export const metaEn = {
   'meta.titulo.platform-fuentes': 'Sources and loads',
   'meta.titulo.platform-costos-ia': 'AI costs',
   'meta.titulo.platform-auditoria': 'Audit',
-  'meta.titulo.notifications-push-device': 'Device alerts',
+  'meta.titulo.notifications-push-device': 'Device notifications',
   'meta.titulo.login': 'Sign in',
 } as const;

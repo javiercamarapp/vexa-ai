@@ -650,11 +650,11 @@ describe('títulos de pestaña y descripciones', () => {
 
 // ------------------------------------------------------------------ 8. páginas internas
 describe('páginas internas', () => {
-  test('hay veinticuatro páginas con identificador único y los ids del mapa (veintiuna del sitio, Estado, el índice del blog y el artículo a1)', () => {
+  test('hay veintiocho páginas con identificador único y los ids del mapa (veintiuna del sitio, Estado, el índice del blog y los artículos a1 a a5)', () => {
     const ids = PAGINAS_INTERNAS.map((p) => p.id);
-    assert.equal(ids.length, 24);
-    assert.equal(new Set(ids).size, 24);
-    for (const esperado of ['estado', 'blog', 'a1', 'producto', 'producto/hoy', 'producto/fuga-de-reembolsos', 'producto/problemas', 'producto/puntos-de-dolor', 'producto/pregunta-a-tus-datos', 'producto/por-decidir', 'producto/carga-y-sla', 'producto/confianza-de-los-datos', 'producto/fuentes-e-importaciones', 'producto/finanzas', 'casos-de-uso', 'casos-de-uso/propietario', 'casos-de-uso/analista', 'casos-de-uso/operador', 'casos-de-uso/lector', 'seguridad-y-privacidad', 'integraciones', 'hoja-de-ruta', 'acerca', 'solicitar-acceso']) assert.ok(ids.includes(esperado), esperado);
+    assert.equal(ids.length, 28);
+    assert.equal(new Set(ids).size, 28);
+    for (const esperado of ['estado', 'blog', 'a1', 'a2', 'a3', 'a4', 'a5', 'producto', 'producto/hoy', 'producto/fuga-de-reembolsos', 'producto/problemas', 'producto/puntos-de-dolor', 'producto/pregunta-a-tus-datos', 'producto/por-decidir', 'producto/carga-y-sla', 'producto/confianza-de-los-datos', 'producto/fuentes-e-importaciones', 'producto/finanzas', 'casos-de-uso', 'casos-de-uso/propietario', 'casos-de-uso/analista', 'casos-de-uso/operador', 'casos-de-uso/lector', 'seguridad-y-privacidad', 'integraciones', 'hoja-de-ruta', 'acerca', 'solicitar-acceso']) assert.ok(ids.includes(esperado), esperado);
   });
 
   test('cada página trae SEO, h1, subtítulo y bloques, y una pendiente trae el motivo', () => {

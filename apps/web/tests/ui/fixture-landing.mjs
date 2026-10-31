@@ -247,6 +247,8 @@ const DICC_EN = [
   ['Redacté la respuesta', 'I wrote the answer'], ['Resumen determinista de lo que devolvieron las consultas.', 'Deterministic summary of what the queries returned.'],
   ['Verifiqué clase y cobertura', 'I checked class and coverage'],
   [' cifras y ', ' figures and '], [' bloques con clase y cobertura; las cifras salen de las consultas, no del modelo.', ' blocks with class and coverage; the figures come from the queries, not from a model.'],
+  // El agente real distingue singular y plural en ambos idiomas; el traductor del fixture debe cubrir también «1 cifra y 1 bloque».
+  [' cifra y ', ' figure and '], [' bloque con clase y cobertura; las cifras salen de las consultas, no del modelo.', ' block with class and coverage; the figures come from the queries, not from a model.'],
   ['"Fuente"', '"Source"'], ['"Moneda"', '"Currency"'], ['"Registros"', '"Records"'], ['"Importe"', '"Amount"'], ['"Sin importe"', '"Without amount"'],
   ['importe en USD', 'amount in USD'],
   ['"Cobertura"', '"Coverage"'], ['"Dinero"', '"Money"'], ['"Problemas y clientes"', '"Problems and customers"'],

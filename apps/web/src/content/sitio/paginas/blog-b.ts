@@ -121,4 +121,135 @@ export const ARTICULO_A6: Articulo = articulo({
   ],
 });
 
-export const ARTICULOS_B: readonly Articulo[] = [ARTICULO_A6];
+// a7. El más delicado. Solo PUBLICO de LANDING.seguridad (hay, noHay), el texto de retención y la hoja de ruta de seguridad.ts.
+// Fuera a propósito (para revisión de Responsable A): conexiones de solo lectura (MATIZ 9), versión redactada de las conversaciones (m 11, requiere Responsable A y abogado),
+// IA detrás de banderas (MATIZ 3), fecha de revisión y buzón de seguridad (marcadores sin resolver).
+export const ARTICULO_A7: Articulo = articulo({
+  id: 'a7',
+  pub: '2026-11-03',
+  etiqueta: b('Seguridad', 'Security'),
+  seo: {
+    titulo: b('Qué afirmamos y qué no afirmamos sobre seguridad | Rovaq AI', 'What We Claim and Do Not Claim on Security | Rovaq AI'),
+    descripcion: b(
+      'Para un comprador vale más una lista honesta de prácticas y brechas que una promesa de seguridad total. Qué hacemos, qué no y por qué lo decimos.',
+      'For a buyer, an honest list of practices and gaps beats a promise of total security. What we do, what we do not yet do and why we say so openly.',
+    ),
+  },
+  h1: b('Qué afirmamos y qué no afirmamos sobre seguridad', 'What we claim and what we do not claim about security'),
+  subtitulo: b(
+    'Una lista corta de prácticas, otra de brechas y las razones para publicar las dos.',
+    'A short list of practices, another of gaps and the reasons for publishing both.',
+  ),
+  resumen: b(
+    'Una página de seguridad útil separa hechos de adjetivos y declara lo que falta. Este artículo explica qué prácticas de seguridad describimos y puede señalar cualquiera en el producto, qué brechas declaramos, por qué publicarlas sirve más a un comprador que una promesa de seguridad total y qué preguntas hacer a cualquier proveedor.',
+    'A useful security page separates facts from adjectives and states what is missing. This article explains which security practices we describe and anyone can point to in the product, which gaps we declare, why publishing them serves a buyer better than a promise of total security and which questions to ask any vendor.',
+  ),
+  relacionados: ['seguridad-y-privacidad', 'confianza-de-los-datos'],
+  bloques: [
+    p(
+      'Una página de seguridad suele ser lo primero que revisa una persona de finanzas o de tecnología antes de aceptar una herramienta nueva. También es donde más abundan las frases que nadie puede comprobar, escritas con adjetivos en lugar de hechos.',
+      'A security page is usually the first thing a finance or technology person reviews before accepting a new tool. It is also where statements nobody can verify are most abundant, written with adjectives instead of facts.',
+    ),
+    p(
+      'Rovaq AI trabaja con conversaciones de soporte y con datos de ingreso de un negocio, y eso nos obliga a una postura concreta: decir lo que existe, decir lo que no existe y no llenar el espacio entre ambos con adjetivos. Este artículo explica esa postura y por qué creemos que sirve más a un comprador que una promesa de seguridad total.',
+      'Rovaq AI works with support conversations and revenue data from a business, and that obliges us to a specific stance: say what exists, say what does not exist and not fill the space between them with adjectives. This article explains that stance and why we believe it serves a buyer better than a promise of total security.',
+    ),
+    h2('Prácticas verificadas', 'Verified practices'),
+    p(
+      'Solo describimos prácticas que podemos señalar en el producto. Hoy son estas:',
+      'We only describe practices that we can point to in the product. Today they are these:',
+    ),
+    ul(
+      ['Cada organización queda separada de las demás por reglas en la base de datos, no solo por la aplicación.', 'Each organization is kept apart from the others by rules in the database, not only by the application.'],
+      ['Hay cuatro roles con permisos mínimos. El permiso de administración de plataforma es independiente y no da lectura de los datos de negocio de otras organizaciones.', 'There are four roles with least-privilege permissions. The platform administration permission is separate and does not grant read access to the business data of other organizations.'],
+      ['La entrada es por un enlace enviado al correo, con confirmación de correo, y las sesiones usan cookies protegidas.', 'Sign-in is by a link sent to your email, with email confirmation, and sessions use protected cookies.'],
+      ['Los exportes de puntos de dolor y de reclamos se generan sin datos personales.', 'Pain-point and claim exports are generated without personal data.'],
+      ['Quedan registradas las operaciones de administración, los cambios de equipo y los borrados por retención.', 'Administration operations, team changes and retention deletions are recorded.'],
+      ['Cada organización puede definir políticas de retención. Antes de borrar, la pantalla muestra el alcance exacto y no borra nada todavía.', 'Each organization can define retention policies. Before deleting, the screen shows the exact scope and deletes nothing yet.'],
+    ),
+    p(
+      'Cada punto está escrito para poder comprobarse. Decir que la autorización se decide en el servidor significa, por ejemplo, que ocultar un elemento del menú no protege una pantalla: lo que protege es la regla que se aplica antes de entregar los datos.',
+      'Each point is written so that it can be checked. Saying that authorization is decided on the server means, for example, that hiding a menu item does not protect a screen: what protects it is the rule applied before the data is handed over.',
+    ),
+    p(
+      'Verificada quiere decir que alguien puede ir al producto y comprobarla, y que la frase se escribió después de comprobarla, no antes. Una práctica que solo existe en una presentación comercial no entra en esta lista, por atractiva que suene.',
+      'Verified means that someone can go to the product and check it, and that the sentence was written after checking, not before. A practice that exists only in a sales presentation does not make it onto this list, however attractive it sounds.',
+    ),
+    p(
+      'Hay además una regla sobre la inteligencia artificial. Cuando interviene, clasifica y redacta; no crea cifras, y una persona decide cada acción. Nada se envía ni se ejecuta solo.',
+      'There is also a rule about artificial intelligence. When it is involved, it classifies and drafts; it does not create figures, and a person decides every action. Nothing is sent or carried out on its own.',
+    ),
+    h2('Brechas declaradas', 'Declared gaps'),
+    p(
+      'La segunda lista pesa tanto como la primera. Lo que todavía no existe es esto:',
+      'The second list weighs as much as the first. What does not exist yet is this:',
+    ),
+    ul(
+      ['No tenemos certificación SOC 2 ni ISO 27001, y no afirmamos cumplimiento de GDPR.', 'We do not hold SOC 2 or ISO 27001 certification, and we do not claim GDPR compliance.'],
+      ['No se ha hecho una prueba de penetración externa.', 'No external penetration test has been performed.'],
+      ['La verificación en dos pasos para propietarios está en nuestra hoja de ruta. Hoy no se exige.', 'Two-step verification for owners is on our roadmap. It is not required today.'],
+      ['No ofrecemos inicio de sesión único ni una vista de auditoría para el cliente.', 'We do not offer single sign-on or a customer-facing audit view.'],
+      ['Hay respaldos diarios de nuestro proveedor, sin recuperación a un punto en el tiempo, y no ofrecemos compromisos de disponibilidad.', 'There are daily provider backups, without point-in-time recovery, and we make no availability commitments.'],
+    ),
+    p(
+      'Otras mejoras están en la hoja de ruta, como una política de contenido estricta que seguimos endureciendo y una vista de auditoría planeada. No publicamos fechas hasta que podamos cumplirlas.',
+      'Other improvements are on the roadmap, such as a strict content security policy that we are still hardening and a planned audit view. We do not publish dates until we can meet them.',
+    ),
+    p(
+      'Leer una lista de brechas exige distinguir tres cosas: lo que no existe, lo que está planeado y lo que no sabemos. Lo planeado está en la hoja de ruta y no lleva fecha publicada. Lo que no sabemos se dice como tal y no se cuenta a nuestro favor.',
+      'Reading a list of gaps requires telling three things apart: what does not exist, what is planned and what we do not know. What is planned sits on the roadmap and carries no published date. What we do not know is said as such and is not counted in our favor.',
+    ),
+    p(
+      'El borrado tiene también un límite que conviene decir: no elimina el origen de los datos en tu herramienta ni las copias que mantengas fuera de Rovaq.',
+      'Deletion also has a limit worth stating: it does not remove the source data in your tool or copies you keep outside Rovaq.',
+    ),
+    h2('Por qué publicamos las brechas', 'Why we publish the gaps'),
+    p(
+      'Hay cuatro razones, y ninguna es de imagen.',
+      'There are four reasons, and none is about image.',
+    ),
+    ul(
+      ['Un comprador necesita dimensionar el riesgo antes de firmar. Ocultar una brecha solo traslada el descubrimiento a un momento peor.', 'A buyer needs to size the risk before signing. Hiding a gap only moves the discovery to a worse moment.'],
+      ['Una afirmación sin límites no se puede comprobar. Un límite sí: cualquiera puede verificar que existe o que no.', 'A claim without limits cannot be checked. A limit can: anyone can verify whether it exists or not.'],
+      ['Nos disciplina. Cada frase de la primera lista tiene que sobrevivir a la lectura de la segunda, y eso desalienta el adjetivo fácil.', 'It disciplines us. Every sentence in the first list has to survive reading the second, and that discourages the easy adjective.'],
+      ['Permite una conversación adulta. Si un requisito del comprador depende de algo que hoy no tenemos, la respuesta correcta es decirlo, no argumentar.', 'It allows an adult conversation. If a buyer requirement depends on something we do not have today, the right answer is to say so, not to argue.'],
+    ),
+    p(
+      'Tampoco afirmamos que lo que existe sea suficiente para cada negocio. Una brecha que a un equipo le es indiferente puede ser decisiva para otro, por ejemplo cuando una política interna exige algo que hoy no tenemos. En ese caso la decisión corresponde a quien compra, y nuestro trabajo es darle la información exacta para tomarla.',
+      'Nor do we claim that what exists is enough for every business. A gap that a team does not care about can be decisive for another, for example when an internal policy requires something we do not have today. In that case the decision belongs to the buyer, and our job is to give the exact information needed to make it.',
+    ),
+    p(
+      'Hay un efecto secundario útil. Cuando una brecha se cierre, el cambio podrá leerse sobre una base clara: antes la lista decía esto y ahora dice aquello. Una página que solo suma frases positivas no permite ver qué cambió ni cuándo.',
+      'There is a useful side effect. When a gap is closed, the change can be read against a clear baseline: the list used to say this and now says that. A page that only adds positive sentences does not let you see what changed or when.',
+    ),
+    cita(
+      'Una promesa de seguridad total no se puede verificar. Una lista de prácticas y de brechas sí.',
+      'A promise of total security cannot be verified. A list of practices and gaps can.',
+    ),
+    h2('Cómo leer una página de seguridad', 'How to read a security page'),
+    p(
+      'Más allá de Rovaq AI, estas preguntas sirven con cualquier proveedor:',
+      'Beyond Rovaq AI, these questions work with any vendor:',
+    ),
+    ul(
+      ['Hechos o adjetivos: cada afirmación debería poder señalarse en el producto o en un documento, y no solo describirse con un calificativo.', 'Facts or adjectives: every claim should be something you can point to in the product or in a document, not just describe with a qualifier.'],
+      ['Qué falta: una página que no declara ninguna brecha rara vez significa que no hay ninguna.', 'What is missing: a page that declares no gap rarely means there is none.'],
+      ['Alcance y fecha: una práctica sin fecha de revisión puede describir un estado que ya cambió.', 'Scope and date: a practice without a review date may describe a state that has already changed.'],
+      ['Qué no cubre: las copias que mantienes fuera de la herramienta quedan fuera del alcance de cualquier borrado del proveedor.', 'What it does not cover: copies you keep outside the tool are outside the scope of any deletion by the vendor.'],
+    ),
+    p(
+      'La lista completa vive en la página de {{seguridad-y-privacidad|seguridad y privacidad}}. Este artículo describe el estado al momento de su publicación, y esa página es la referencia vigente.',
+      'The full list lives on the {{seguridad-y-privacidad|security and privacy}} page. This article describes the state at the time of publication, and that page is the current reference.',
+    ),
+    noAfirmamos(
+      ['No afirmamos seguridad total ni ausencia de riesgo: ningún proveedor puede garantizarlas.', 'We do not claim total security or the absence of risk: no vendor can guarantee them.'],
+      ['No afirmamos certificaciones, cumplimiento regulatorio ni auditorías externas, porque no los tenemos.', 'We do not claim certifications, regulatory compliance or external audits, because we do not have them.'],
+      ['No afirmamos que los datos estén anonimizados.', 'We do not claim that data is anonymized.'],
+      ['No afirmamos que se registre cada lectura de los datos: se registran las operaciones de administración, los cambios de equipo y los borrados por retención.', 'We do not claim that each read of the data is logged: administration operations, team changes and retention deletions are recorded.'],
+      ['No prometemos disponibilidad ni fechas de producto.', 'We do not promise availability or product dates.'],
+      ['No presentamos las prácticas como suficientes para todo negocio: esa valoración le corresponde a quien compra.', 'We do not present the practices as sufficient for every business: that assessment belongs to the buyer.'],
+    ),
+  ],
+});
+
+export const ARTICULOS_B: readonly Articulo[] = [ARTICULO_A6, ARTICULO_A7];

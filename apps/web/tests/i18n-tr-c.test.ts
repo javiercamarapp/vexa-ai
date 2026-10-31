@@ -52,7 +52,7 @@ const PROHIBIDOS: Record<string, string[]> = {
   'src/components/migration-aliases.tsx': ['Aliases de conversaciones', 'Preparar propuesta', 'Confirmar alias', 'Deshacer alias'],
   'src/components/economic-panel.tsx': ['Registro económico y componentes separados', 'Consultar libro de registros', 'Guardar registro económico', 'Escenarios futuros, no pronósticos calibrados'],
   'src/components/economic-exposure-panel.tsx': ['Exposición por problemas', 'Clientes únicos vinculados', 'Guardar equivalencia de órdenes', 'Guardar revisión de cobertura'],
-  'src/components/economic-snapshot-panel.tsx': ['Snapshots publicados', 'Preparar snapshot', 'Sí, publicar', 'Descargar JSON'],
+  'src/components/economic-snapshot-panel.tsx': ['Cortes publicados', 'Preparar snapshot', 'Sí, publicar', 'Descargar JSON'],
   'src/components/economic-import-panel.tsx': ['Cargar órdenes y reembolsos', 'Archivo económico JSON', 'Pausar carga', 'Confirmar este archivo'],
   'src/components/economic-money-panel.tsx': ['Monedas originales y conversión explícita', 'Guardar moneda', 'Guardar tipo de cambio', 'Catálogo monetario aprobado'],
   'src/components/economic-priority-panel.tsx': ['Prioridad explicable', 'Política versionada', 'Calcular prioridad', 'Registrar accionabilidad'],

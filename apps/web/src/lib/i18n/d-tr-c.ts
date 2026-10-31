@@ -1186,7 +1186,7 @@ export const trCEs = {
   'tr.sn.siPublicar': 'Sí, publicar',
   'tr.sn.sinCorte': 'No hay un corte publicado para este alcance.',
   'tr.sn.sinFuentes': 'Sin fuentes',
-  'tr.sn.titulo': 'Snapshots publicados',
+  'tr.sn.titulo': 'Cortes publicados',
   'tr.sn.verResumen': 'Ver esta publicación en el resumen ejecutivo',
   'tr.sn.versionInt': 'Versión: {v} · Integridad: {h}',
 } as const;

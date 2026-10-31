@@ -5,6 +5,7 @@ import {IDIOMAS, guardarIdiomaEnNavegador, type Idioma} from '../../lib/i18n';
 import {useIdioma, useT} from './proveedor';
 import {Bandera} from './banderas';
 import {fijarIdioma} from '../../lib/workspace/swr.mjs';
+import {persistirIdioma} from '../../lib/i18n/persistir-idioma';
 import './selector-idioma.css';
 /** Selector ES / EN del encabezado: la misma píldora segmentada que el selector de tema (dos celdas, la elegida resaltada). Fija la cookie rovaq_lang (SameSite=Lax, sin datos personales) y refresca para que el servidor renderice en el idioma elegido. */
 export function SelectorIdioma() {
@@ -14,6 +15,8 @@ export function SelectorIdioma() {
     guardarIdiomaEnNavegador(idioma);
     // La caché de lecturas distingue por idioma (nada del idioma anterior se sirve); las vistas con datos ya pintados los releen en el idioma nuevo.
     fijarIdioma(idioma);
+    // Recuerda la elección por persona (reporte semanal, avisos, push). Mejor esfuerzo y silencioso: sin sesión o sin la tabla, la cookie ya basta.
+    void persistirIdioma(idioma);
     iniciar(() => { router.refresh(); window.dispatchEvent(new Event('vexa:refresh')); });
   }
   return <fieldset className="idioma-selector" aria-busy={pendiente || undefined}>

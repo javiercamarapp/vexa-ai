@@ -12,7 +12,7 @@ import {enPantalla} from '../src/lib/onboarding/ruta.mjs';
 import {calcularChecklist,normalizarSenales} from '../src/lib/onboarding/prerrequisitos.mjs';
 import {actualizarEstado,leerEstado,claveEstado,ESTADO_VACIO,type Almacen} from '../src/lib/onboarding/estado';
 import {menuVisible} from '../src/lib/workspace/menu.mjs';
-import {TarjetaRecorrido,EtiquetaObjetivo,CapaFoco,BannerPantalla,MenuGuia,ventanaRuta} from '../src/components/onboarding/paneles';
+import {TarjetaRecorrido,EtiquetaObjetivo,CapaFoco,MenuGuia,ventanaRuta} from '../src/components/onboarding/paneles';
 import {Ilustracion,TIPOS_ILUSTRACION} from '../src/components/onboarding/ilustraciones';
 import {traductor} from '../src/lib/i18n';
 import {es} from '../src/lib/i18n/es';
@@ -211,17 +211,35 @@ test('paso «ir»: título, cuerpo y etiqueta usan el MISMO nombre, el rótulo d
     for(const nombre of ['Hoy','Problemas'])for(const k of ['onb.tour.ir.titulo','onb.tour.ir.cuerpo','onb.tour.clic'] as const)assert.ok(t(k,{pantalla:nombre,nombre}).includes(nombre),clave+k);
   }
 });
+test('textos de pantalla: el cuerpo no repite el título como prefijo («Importaciones: …») y «qué es» y «elemento clave» no se repiten frase por frase',()=>{
+  const frases=(x:string)=>x.split(/[.;:]\s+|[.;:]$/).map(f=>f.trim().toLowerCase()).filter(f=>f.length>=25);
+  for(const [clave,dic] of [['es',ESP],['en',ING]] as const){
+    for(const pista of PISTAS){
+      for(const modo of ['completo'] as const){
+        const pasos=construirTour(pista,modo),porPantalla=new Map<string,Record<string,string>>();
+        for(const p of pasos){
+          if(p.tipo!=='info'||!p.cuerpo)continue;
+          const cuerpo=dic[p.cuerpo],titulo=p.titulo?dic[p.titulo]:'';
+          if(titulo)assert.ok(!cuerpo.toLowerCase().startsWith(titulo.toLowerCase()+':'),`${clave}:${pista}:${p.id} repite su título como prefijo`);
+          for(const nombre of [dic['nav.item.'+slugDe(p.pantalla!)],dic['tr.pf.n'+({platform:'Resumen','platform-organizaciones':'Organizaciones','platform-costos-ia':'CostosIa','platform-auditoria':'Auditoria'} as Record<string,string>)[slugDe(p.pantalla!)]]].filter(Boolean))assert.ok(!cuerpo.toLowerCase().startsWith(nombre.toLowerCase()+':'),`${clave}:${pista}:${p.id} empieza con el nombre del menú «${nombre}: »`);
+          const g=porPantalla.get(p.pantalla!)??{};g[p.clave]=cuerpo;porPantalla.set(p.pantalla!,g);
+        }
+        for(const [href,g] of porPantalla)if(g.que&&g.clave){const a=new Set(frases(g.que));assert.deepEqual(frases(g.clave).filter(f=>a.has(f)),[],`${clave}:${pista}:${href} repite una frase entre «qué es» y «clave»`);assert.notEqual(g.que,g.clave);}
+      }
+    }
+  }
+});
 test('ventana de la ruta: pocas pantallas alrededor de la actual con «…» a los lados',()=>{
   const nombres=['A','B','C','D','E','F','G','H'];
   assert.deepEqual(ventanaRuta(nombres,0),{items:['A','B','C','D','E'].map((nombre,i)=>({nombre,actual:i===0})),antes:false,despues:true});
   const medio=ventanaRuta(nombres,3);assert.equal(medio.items.length,5);assert.ok(medio.antes&&medio.despues&&medio.items.some(i=>i.actual&&i.nombre==='D'));
   const fin=ventanaRuta(nombres,7);assert.equal(fin.items.at(-1)!.nombre,'H');assert.equal(fin.despues,false);assert.equal(ventanaRuta(['A','B'],1).antes,false);
 });
-test('etiqueta, capa de foco y aviso de pantalla: decorativos para lectores de pantalla, sin style=; la etiqueta dice qué apretar con el nombre real',()=>{
+test('etiqueta y capa de foco: decorativos para lectores de pantalla, sin style=; la etiqueta dice qué apretar con el nombre real',()=>{
   const t=T.es,etq=renderToStaticMarkup(<EtiquetaObjetivo texto={t('onb.tour.clic',{nombre:'Problemas'})}/>);
   assert.match(etq,/aria-hidden="true"/);assert.match(etq,/Haz clic aquí: Problemas/);assert.doesNotMatch(etq,/\bstyle=/);assert.match(etq,/<svg/);
   const capa=renderToStaticMarkup(<CapaFoco scrim/>);assert.match(capa,/aria-hidden="true"/);assert.match(capa,/data-sin-foco/);assert.doesNotMatch(capa,/\bstyle=|<button|<a /);
-  const banner=renderToStaticMarkup(<BannerPantalla t={t} pantalla="Fuentes conectadas"/>);assert.match(banner,/aria-hidden="true"/);assert.match(banner,/Ahora: Fuentes conectadas/);
+  assert.equal(ESP['onb.tour.entrada'],undefined,'el aviso «Ahora: X» repetía el título y se retiró');assert.doesNotMatch(leer('src/components/onboarding/guia.tsx'),/BannerPantalla|onb\.tour\.entrada/);
   assert.match(renderToStaticMarkup(<EtiquetaObjetivo texto={T.en('onb.tour.clic',{nombre:'Problems'})}/>),/Click here: Problems/);
 });
 test('menú Guía: repetir, retomar y saltar a una pantalla concreta (lista con la actual marcada)',()=>{
@@ -260,13 +278,13 @@ test('CSS: capa sin eventos de puntero (no bloquea el objetivo ni la salida), an
   const fuera=css.replace(/@media \(prefers-reduced-motion:no-preference\) \{[\s\S]*?\n\}\n/,'');
   assert.doesNotMatch(fuera,/animation\s*:|animation-delay|transition\s*:|@keyframes/,'ningún movimiento fuera de no-preference');
   assert.equal((css.match(/@media \(prefers-reduced-motion/g)??[]).length,1);assert.doesNotMatch(css,/reduced-motion:\s*reduce/);
-  for(const clase of ['.onb-capa','.onb-etiqueta','.onb-entrada'])assert.match(css,new RegExp(clase.replace('.','\\.')+' \\{[^}]*pointer-events:none'),clase);
+  for(const clase of ['.onb-capa','.onb-etiqueta'])assert.match(css,new RegExp(clase.replace('.','\\.')+' \\{[^}]*pointer-events:none'),clase);
   assert.match(css,/\.onb-capa\[data-animar\] \.onb-foco \{ transition:transform 380ms/);assert.match(css,/\.onb-foco::after \{ animation:onb-pulso/);assert.match(css,/@keyframes onb-pulso/);
   assert.match(css,/box-shadow:0 0 0 2px #fff, 0 0 0 4px var\(--onb-resalte\), 0 0 0 9999px/,'recorte con sombra gigante + anillo de contraste');
   assert.match(css,/@media \(forced-colors:active\)[\s\S]*\.onb-foco \{ box-shadow:none; outline:3px solid Highlight/);
   assert.match(css,/@media \(max-width:767px\)[\s\S]*bottom:calc\(var\(--nav-total, 0px\) \+ 12px\)/);
   assert.match(css,/stroke-dashoffset/);assert.match(css,/@keyframes onb-barra/);assert.match(css,/@keyframes onb-arco/);assert.match(css,/@keyframes onb-pop/);
-  assert.match(css,/\.onb-entrada \{ display:none;/);assert.match(css,/\.onb-entrada \{ display:block; animation:onb-banner/);
+  assert.doesNotMatch(css,/onb-entrada|onb-banner/,'sin estilos del aviso retirado');
 });
 test('botón Guía compacto: ~26 px, texto 12 px, sin bloque oscuro, punto de acento, área táctil ≥ 36 px solo en pantallas táctiles, claro y oscuro con tokens',()=>{
   const css=leer('src/components/onboarding/onboarding.css'),linea=css.split('\n').find(l=>l.startsWith('.workspace-header .onb-boton, .onb-boton {'))!;

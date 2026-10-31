@@ -50,9 +50,6 @@ export function EtiquetaObjetivo({texto,innerRef}:{texto:string;innerRef?:Ref<HT
 export function CapaFoco({innerRef,scrim}:{innerRef?:Ref<HTMLDivElement>;scrim?:boolean}){
  return <div ref={innerRef} className="onb-capa" aria-hidden="true" data-sin-foco="" data-scrim={scrim||undefined}><div className="onb-foco"/></div>;
 }
-export function BannerPantalla({t,pantalla}:{t:Traductor;pantalla:string}){
- return <p className="onb-entrada" aria-hidden="true" key={pantalla}>{t('onb.tour.entrada',{pantalla})}</p>;
-}
 /** Con `corto` (hay versión reducida) se elige al empezar: «Recorrido corto» (pasos esenciales del rol) o «Recorrido completo». Sin `corto` queda el botón único. */
 export interface OpcionesRecorrido {corto:number;completo:number}
 export function InvitacionRecorrido({t,saltar,empezar,opciones}:{t:Traductor;saltar:()=>void;empezar:(modo?:'corto'|'completo')=>void;opciones?:OpcionesRecorrido}){

@@ -10,7 +10,7 @@ import {enPantalla} from '../../lib/onboarding/ruta.mjs';
 import {reducir} from '../../lib/onboarding/recorrido.mjs';
 import type {Clave} from '../../lib/i18n';
 import {useOnboarding} from './contexto';
-import {BannerPantalla,CapaFoco,EtiquetaObjetivo,InvitacionRecorrido,MenuGuia,TarjetaRecorrido,type LadoEtiqueta} from './paneles';
+import {CapaFoco,EtiquetaObjetivo,InvitacionRecorrido,MenuGuia,TarjetaRecorrido,type LadoEtiqueta} from './paneles';
 import {abrirGrupoDelMenu,esperarObjetivo,nombreDe,pantallaEstrecha,reducirMovimiento} from './objetivo';
 import './onboarding.css';
 
@@ -113,7 +113,7 @@ export function GuiaPaneles(){
  };
  const opciones=c.hayModoCorto?{corto:c.pasosCorto,completo:c.pasosCompleto}:undefined;
  const nombres=c.pantallas.map(g=>nombrePantalla(g.href)),total=c.pasos.length,n=c.rec.indice+1;
- let tarjetaUi=null,etiquetaUi=null,bannerUi=null;
+ let tarjetaUi=null,etiquetaUi=null;
  if(abierto&&paso){
   const cierre=paso.tipo==='cierre',pantalla=nombrePantalla(paso.pantalla),nombreEl=el?nombreDe(el):'';
   const titulo=cierre?t(paso.titulo as Clave):paso.tipo==='ir'?t('onb.tour.ir.titulo',{pantalla}):paso.titulo?t(paso.titulo as Clave):pantalla;
@@ -124,7 +124,6 @@ export function GuiaPaneles(){
    anterior={()=>c.despachar({tipo:'anterior'})} omitir={c.omitir} primario={cierre?()=>c.despachar({tipo:'siguiente'}):c.siguiente} irSetup={c.terminarEIrASetup}/>;
   // En un paso «ir» título, cuerpo y etiqueta dicen lo mismo: el rótulo del menú (etiquetaItem), nunca el title del enlace ni su texto interno.
   if(el&&((paso.tipo==='ir'&&pantalla)||(nombreEl&&esControl(el))))etiquetaUi=<EtiquetaObjetivo innerRef={etiqueta} texto={paso.tipo==='ir'?t('onb.tour.clic',{nombre:pantalla}):t('onb.tour.aqui',{nombre:nombreEl})}/>;
-  if(paso.clave==='que')bannerUi=<BannerPantalla t={t} pantalla={pantalla}/>;
  }
  return <>
   {c.menuAbierto&&<MenuGuia t={t} innerRef={menu} contexto={t('onb.ui.rolOrg',{organizacion:c.datos.organizacion,rol:c.datos.rolEtiqueta})} tienePaso={c.pasos.some(p=>p.id===c.local.paso)} mostrarChecklistOpcion={c.tieneChecklist} descartado={c.local.descartado}
@@ -132,6 +131,6 @@ export function GuiaPaneles(){
    pantallas={c.pantallas.map((g,i)=>({href:g.href,nombre:nombres[i],actual:abierto&&paso?.grupo===g.grupo}))} irAPantalla={c.irAPantalla}/>}
   {c.invitacionVisible&&<InvitacionRecorrido t={t} saltar={c.saltarInvitacion} empezar={m=>c.iniciar('inicio',m)} opciones={opciones}/>}
   {abierto&&paso&&<CapaFoco innerRef={capa} scrim={paso.tipo==='cierre'||el===null}/>}
-  {etiquetaUi}{tarjetaUi}{bannerUi}
+  {etiquetaUi}{tarjetaUi}
  </>;
 }

@@ -181,8 +181,8 @@ test('Chrome: la altura de la página con movimiento reducido es la misma que co
   assert.ok((sinJs - normal) / normal <= 0.09, `sin JS ${sinJs} contra ${normal}: solo los paneles de puestos y las respuestas de preguntas frecuentes pueden quedar abiertos`);
 });
 
-test('Chrome: héroe: la ventana asoma 400 px a 1440 por 900 y 300 px a 390 por 844, y la tarjeta de la cifra no cubre la ruta, la organización ni la captura', {skip: vivo ? false : motivo}, async () => {
-  for (const [vp, minimo] of [[1440, 400], [390, 300]]) {
+test('Chrome: héroe: la ventana asoma 400 px a 1440 por 900 y 170 px a 390 por 844 (T22: en móvil la ventana es la barra, la tarjeta de la cifra y el rótulo, sin captura de 4-5 px), y la tarjeta de la cifra no cubre la ruta, la organización ni la captura', {skip: vivo ? false : motivo}, async () => {
+  for (const [vp, minimo] of [[1440, 400], [390, 170]]) {
     await sesion({vp, etiqueta: 'mov-heroe'}, async (s) => {
       await s.page.goto(URL_VIVA, {waitUntil: 'load'});
       await dormir(6000);

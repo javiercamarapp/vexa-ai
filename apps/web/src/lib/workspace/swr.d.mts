@@ -1,6 +1,8 @@
 export const FRESCO_MS:number;export const VIDA_MS:number;export const PREFIJO:string;export const TOPE_PREFETCH:number;
 type Opc={ahora?:number;almacen?:Storage|null};
-export function claveSwr(recursoOUrl:string,consulta?:string,opciones?:{tenant?:string}):string;
+export function claveSwr(recursoOUrl:string,consulta?:string,opciones?:{tenant?:string;idioma?:string}):string;
+export function fijarIdioma(idioma:string):void;
+export function idiomaFijado():string;
 export function tenantFijado():string;
 export function fijarTenant(id:string,opciones?:{almacen?:Storage|null}):void;
 export function limpiarTodo(opciones?:{almacen?:Storage|null}):void;

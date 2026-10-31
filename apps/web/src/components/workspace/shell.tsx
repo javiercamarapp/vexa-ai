@@ -6,7 +6,7 @@ import {BarraInferior,Monograma,SelectorEmpresa,SelectorTema,useTeclado,type The
 import {RovaqLogo} from '../rovaq-logo';
 import {usePathname} from 'next/navigation';
 import {Navigation,tituloTraducido,workspaceIconName} from './navigation';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
 import {SelectorIdioma} from '../i18n/selector-idioma';
 import {WorkspaceIcon} from './icon';
 import {NotificationNavigationLink} from '../notifications/navigation-link';
@@ -15,7 +15,7 @@ import {RestaurarVista} from './restaurar-vista';
 import {DatosNuevos} from './datos-nuevos';
 import './encabezado.css';
 import {esRutaCopiloto} from '../../lib/copiloto/modos.mjs';
-import {fijarTenant,limpiarTodo} from '../../lib/workspace/swr.mjs';
+import {fijarIdioma,fijarTenant,limpiarTodo} from '../../lib/workspace/swr.mjs';
 import {OnboardingRaiz} from '../onboarding/contexto';
 import {GuiaBoton,GuiaPaneles} from '../onboarding/guia';
 import {almacenDelNavegador,limpiarEstadoOnboarding} from '../../lib/onboarding/estado';
@@ -25,6 +25,9 @@ const ROLES=['owner','analyst','operator','viewer'] as const;
 export function WorkspaceShell({children,brand,organizations,tenant,role,platformAccess=false,onboarding}:{children:ReactNode;brand:ReactNode;organizations:Organization[];tenant:string;role:string;platformAccess?:boolean;onboarding?:{pista:Pista|null;userId:string};today?:{iso:string;label:string}}){
  // La caché de lecturas se aísla por organización: fijarla antes de que los hijos lean (purga lo de otra organización).
  fijarTenant(tenant);
+ const idioma=useIdioma();
+ // El idioma va en la clave de la caché de lecturas: un dato traducido por el servidor no se sirve en el otro idioma.
+ fijarIdioma(idioma);
  const t=useT();
  const rol=(ROLES as readonly string[]).includes(role)?t(('shell.rol.'+role) as 'shell.rol.owner'):role;
  const pathname=usePathname();

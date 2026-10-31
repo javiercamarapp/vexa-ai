@@ -5,6 +5,8 @@
 //    el último dato bueno, rotulado con su antigüedad, y se revalida en segundo plano;
 //  - si la revalidación falla el dato viejo se conserva (el llamador lo rotula); «Actualizar» solo lo marca obsoleto, no lo borra;
 //  - de-duplicación de peticiones en vuelo por clave y precalentamiento (prefetch) con tope de concurrencia 2;
+//  - el idioma activo va en la clave: las respuestas de las rutas ya viajan traducidas por el servidor (cookie rovaq_lang), así que un dato
+//    cacheado en un idioma NUNCA se sirve en el otro (cambiar de idioma no reutiliza entradas del idioma anterior);
 //  - aislamiento por tenant: la clave lo incluye y al fijar otro tenant (o cerrar sesión) se purga todo lo ajeno.
 import {fetchCupo} from './cupo.mjs';
 export const FRESCO_MS=5*60*1000;
@@ -14,15 +16,19 @@ export const TOPE_PREFETCH=2;
 const memoria=new Map();
 const enVuelo=new Map();
 let tenantActual='';
+let idiomaActual='es';
 const almacenDe=()=>{try{return globalThis.sessionStorage??null;}catch{return null;}};
 const claves=(almacen)=>{const r=[];try{if(almacen)for(let i=0;i<almacen.length;i++){const k=almacen.key(i);if(k?.startsWith(PREFIJO))r.push(k);}}catch{/* sin almacenamiento */}return r;};
 /** URL o (recurso, consulta) -> clave estable. Con un solo argumento se normaliza «/ruta?b=2&a=1». */
-export function claveSwr(recursoOUrl,consulta,{tenant=tenantActual}={}){
+export function claveSwr(recursoOUrl,consulta,{tenant=tenantActual,idioma=idiomaActual}={}){
  let ruta=recursoOUrl,q=consulta;
  if(q===undefined){const i=String(recursoOUrl).indexOf('?');ruta=i<0?recursoOUrl:recursoOUrl.slice(0,i);q=i<0?'':recursoOUrl.slice(i+1);}
  const p=new URLSearchParams(q);p.sort();
- return PREFIJO+tenant+'|'+ruta+'?'+p.toString();
+ return PREFIJO+tenant+'|'+ruta+'?'+p.toString()+'|'+(idioma==='en'?'en':'es');
 }
+export function idiomaFijado(){return idiomaActual;}
+/** Fija el idioma activo de la caché (el de la interfaz). Las claves nuevas llevan ese idioma; las del otro idioma quedan aparte y no se sirven. */
+export function fijarIdioma(idioma){idiomaActual=idioma==='en'?'en':'es';}
 export function tenantFijado(){return tenantActual;}
 /** Fija el tenant activo. Si cambia (otra organización) purga lo de los demás; '' = sin sesión: purga todo. */
 export function fijarTenant(id,{almacen=almacenDe()}={}){

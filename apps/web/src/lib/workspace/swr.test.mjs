@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {leerConCache,claveSwr,fijarTenant,limpiarTodo,guardarSwr,leerSwr,invalidarSwr,olvidarMemoriaSwr,pedirSwr,enVueloN,precalentar,estadoPrecalentamiento,reiniciarPrecalentamiento,FRESCO_MS,VIDA_MS,hace} from './swr.mjs';
+import {leerConCache,claveSwr,fijarTenant,limpiarTodo,guardarSwr,leerSwr,invalidarSwr,olvidarMemoriaSwr,pedirSwr,enVueloN,precalentar,estadoPrecalentamiento,reiniciarPrecalentamiento,FRESCO_MS,VIDA_MS,hace,fijarIdioma,idiomaFijado} from './swr.mjs';
 const almacenFalso=()=>{const m=new Map();return {get length(){return m.size;},key:i=>[...m.keys()][i]??null,getItem:k=>m.has(k)?m.get(k):null,setItem:(k,v)=>m.set(k,v),removeItem:k=>m.delete(k),m};};
 const nuevo=(t='T1')=>{olvidarMemoriaSwr();reiniciarPrecalentamiento();const a=almacenFalso();fijarTenant(t,{almacen:a});return a;};
 test('la clave incluye tenant, ignora el orden de parámetros y distingue recurso y alcance',()=>{
@@ -77,4 +77,22 @@ test('leerConCache: sin dato previo la red que falla lanza; soloFresca no pinta 
  const a=nuevo();await assert.rejects(leerConCache('/api/sin',{fetchFn:async()=>{throw new TypeError('x');},almacen:a}),TypeError);
  guardarSwr(claveSwr('/api/p'),{data:1},{ahora:1,almacen:a});let n=0;
  await leerConCache('/api/p',{fetchFn:resp(200,{data:2}),almacen:a,ahora:1+FRESCO_MS+10,soloFresca:true,onCache:()=>n++});assert.equal(n,0);
+});
+
+test('el idioma va en la clave: la misma petición en es y en no comparte entrada y cambiar de idioma no sirve datos del anterior',()=>{
+ const a=nuevo();fijarIdioma('es');const kEs=claveSwr('/api/pain-points');
+ guardarSwr(kEs,{nombre:'Entrega tardía'},{ahora:1000,almacen:a});
+ fijarIdioma('en');const kEn=claveSwr('/api/pain-points');
+ assert.notEqual(kEs,kEn);assert.ok(kEn.endsWith('|en'));assert.ok(kEs.endsWith('|es'));
+ assert.equal(leerSwr(kEn,{ahora:2000,almacen:a}),null,'la entrada en español no se sirve en inglés');
+ guardarSwr(kEn,{nombre:'Late delivery'},{ahora:2000,almacen:a});
+ fijarIdioma('es');assert.equal(leerSwr(claveSwr('/api/pain-points'),{ahora:3000,almacen:a}).datos.nombre,'Entrega tardía');
+ fijarIdioma('en');assert.equal(leerSwr(claveSwr('/api/pain-points'),{ahora:3000,almacen:a}).datos.nombre,'Late delivery');
+ assert.notEqual(claveSwr('/api/x',undefined,{idioma:'en'}),claveSwr('/api/x',undefined,{idioma:'es'}));
+ fijarIdioma('es');assert.equal(idiomaFijado(),'es');
+});
+test('invalidar por prefijo alcanza ambos idiomas y el aislamiento por tenant se conserva',()=>{
+ const a=nuevo('A');fijarIdioma('en');const k=claveSwr('/api/x?a=1');guardarSwr(k,{n:1},{ahora:10,almacen:a});
+ invalidarSwr({almacen:a,prefijo:'/api/x'});assert.equal(leerSwr(k,{ahora:20,almacen:a}).fresca,false);
+ fijarTenant('B',{almacen:a});assert.equal(leerSwr(k,{ahora:20,almacen:a}),null);fijarIdioma('es');
 });

@@ -1,6 +1,7 @@
 // Lógica PURA de la ficha de problema (sin red, sin React). Honestidad: lo desconocido es null y nunca se convierte en 0.
 import {etiquetaCategoria} from './categorias.mjs';
 import {LOCALES} from '../formato/idioma.mjs';
+import {X} from './trad.mjs';
 const nf=new Intl.NumberFormat(LOCALES.es);
 export const IMPACTO_NO_DISPONIBLE='Impacto económico: No disponible. Aparece cuando se conecten pedidos con clientes.';
 const INTERVENCION={draft:'Borrador',approved:'Plan aprobado',active:'En ejecución',measuring:'En medición',closed:'Medición cerrada',cancelled:'Cancelada'};
@@ -38,9 +39,9 @@ export function cambioMensual(serie){
  return {de:a,a:b,pct:Math.round((b.value-a.value)*1000/a.value)/10};
 }
 /** Encabezado: categoría en español, grupo, severidad y motivo de la revisión crítica. */
-export function encabezadoFicha(f,etiquetaMotivo){
+export function encabezadoFicha(f,etiquetaMotivo,t=null){
  if(!f)return null;
- const cat=etiquetaCategoria(f.label),g=f.grupo&&f.grupo.de>1?`Grupo ${f.grupo.n} de ${f.grupo.de}`:f.grupo?'Único grupo':null;
+ const cat=etiquetaCategoria(f.label,t),g=f.grupo&&f.grupo.de>1?X(t,'prob.grupoNDeM',`Grupo ${f.grupo.n} de ${f.grupo.de}`,{n:f.grupo.n,de:f.grupo.de}):f.grupo?X(t,'prob.grupoUnico','Único grupo'):null;
  return {categoria:cat,grupo:g,
   critico:f.critical==null?null:f.critical.critical,
   motivo:f.critical?.critical?etiquetaMotivo?.(f.critical.reason)??null:null,

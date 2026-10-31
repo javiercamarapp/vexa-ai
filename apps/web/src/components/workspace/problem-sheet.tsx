@@ -75,7 +75,7 @@ export function ProblemSheet({id,shared,captured,dinero,facts,onTitle,causa=null
  const trend=useJson<MonthlyIncidencesView>('/api/trends/incidences?problem='+encodeURIComponent(id),acceptTrend);
  const ev=useEvidencia(id,shared,captured);
  const [todas,setTodas]=useState(false),[intentos,setIntentos]=useState(0);
- const f=facts.data,head=encabezadoFicha(f,(m:string)=>motivoT(t,m)),grupoTxt=f?.grupo?(f.grupo.de>1?t('prob.grupoNDeM',{n:f.grupo.n,de:f.grupo.de}):t('prob.grupoUnico')):null;
+ const f=facts.data,head=encabezadoFicha(f,(m:string)=>motivoT(t,m),t),grupoTxt=head?.grupo??null;
  useEffect(()=>{onTitle?.(head?.categoria??null);},[head?.categoria,onTitle]);
  const serie=serieConversaciones(trend.data),cambio=cambioMensual(serie);
  const tendenciaCaida=!serie&&!trend.busy&&(!!trend.error||trend.data?.status==='timeout');

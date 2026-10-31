@@ -1,3 +1,4 @@
+import type {Tr} from './trad.mjs';
 export const IMPACTO_NO_DISPONIBLE:string;
 export function etiquetaIntervencion(s:string|null|undefined):string|null;
 export function etiquetaRecomendacion(s:string|null|undefined):string;
@@ -6,4 +7,4 @@ export function resumenAdjuntos(att:unknown):{valor:number|null;detalle:string;n
 export type PuntoSerie={month:string;value:number|null;partial:boolean;sinDatos?:boolean};
 export function serieConversaciones(vista:unknown,ahora?:Date):PuntoSerie[]|null;
 export function cambioMensual(serie:PuntoSerie[]|null):{de:PuntoSerie;a:PuntoSerie;pct:number|null}|null;
-export function encabezadoFicha(f:unknown,etiquetaMotivo?:(m:never)=>string|null):{categoria:string;grupo:string|null;critico:boolean|null;motivo:string|null;senales:number|null}|null;
+export function encabezadoFicha(f:unknown,etiquetaMotivo?:(m:never)=>string|null,t?:Tr|null):{categoria:string;grupo:string|null;critico:boolean|null;motivo:string|null;senales:number|null}|null;

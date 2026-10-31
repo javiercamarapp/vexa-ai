@@ -3,6 +3,7 @@
 import {coberturaIncorporacion,coberturaAnalisisIA} from '../../../../../packages/workspace-service/cifras-cobertura.mjs';
 import {esMesCompleto} from '../../../../../packages/metrics/complete-months.mjs';
 import {variacion} from './insights.mjs';
+import {idiomaDe} from './trad.mjs';
 import {estadosDeSerie} from '../../../../../packages/agent-datos/meses.mjs';
 import {filasDesdeItems,numerarGrupos,ordenarFilas} from './problemas-catalogo.mjs';
 import {diaCorte} from '../../../../../packages/workspace-service/datos-hasta.mjs';
@@ -37,7 +38,7 @@ export function kpiConversaciones(conv,ahora=new Date(),{t=null,loc=LOCALES.es}=
  const prev=completos.at(-2)??null,bajos=[prev,ult].filter(p=>p&&baja.has(p.month)).map(p=>nombreMes(p.month,loc));
  const estimado=conv.class==='estimated'||!!conv.sampled,spark=completos.filter(p=>!baja.has(p.month)).map(p=>p.count);
  if(bajos.length)return {valor:ult.count,mes:ult.month,delta:null,coberturaBaja:bajos,rotulo:t?t('res.kpiBaja',{meses:unir(bajos,t)}):`Cobertura baja en ${bajos.join(' y ')} (carga de HubSpot parcial); sin comparación`,estimado,spark};
- const v=prev?variacion(String(ult.count),String(prev.count)):null;
+ const v=prev?variacion(String(ult.count),String(prev.count),idiomaDe(t)):null;
  return {valor:ult.count,mes:ult.month,delta:v?{value:v.texto,dir:dir(v)}:null,
   rotulo:t?`${largo(ult.month,loc)}${prev?' '+t('res.vs')+' '+corto(prev.month,loc):''}${v||!prev?'':' '+t('res.kpiSinBase')}`:`${largo(ult.month)}${prev?` vs ${corto(prev.month)}`:''}${v||!prev?'':' (sin base de comparación)'}`,estimado,spark};
 }

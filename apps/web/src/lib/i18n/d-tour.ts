@@ -2,9 +2,9 @@
 // Regla (igual que d-onb.ts): ninguna cifra escrita a mano ni afirmaciones de seguridad/cumplimiento. Lo que lleve un número entra por {variable}.
 // Los textos de pantalla son los mismos para todos los roles que la ven: no prometen acciones; las que dependen de la capacidad del rol salen en un paso «accion» que solo existe si el rol la tiene.
 export const tourEs = {
-  'onb.tour.ir.titulo': 'Vamos a {pantalla}', 'onb.tour.ir.cuerpo': 'Te señalo «{nombre}» en el menú y te llevo ahí en un momento. Si prefieres, haz clic tú.',
+  'onb.tour.ir.titulo': 'Vamos a {pantalla}', 'onb.tour.ir.cuerpo': 'Haz clic en «{nombre}» en el menú o espera un momento y te llevo.',
   'onb.tour.clic': 'Haz clic aquí: {nombre}', 'onb.tour.aqui': 'Aquí: {nombre}', 'onb.tour.pantalla': 'Pantalla {n} de {total}', 'onb.tour.rutaAria': 'Ruta del recorrido', 'onb.tour.progresoAria': 'Avance del recorrido',
-  'onb.tour.entrada': 'Ahora: {pantalla}', 'onb.tour.noEncontrado': 'No veo este elemento en la pantalla ahora; sigue la explicación de aquí.',
+  'onb.tour.entrada': 'Ahora: {pantalla}', 'onb.tour.noEncontrado': 'Esta parte de la pantalla aún no está disponible; sigue la explicación de aquí.',
   'onb.tour.cierre.titulo': 'Terminaste el recorrido', 'onb.tour.cierre.cuerpo': 'Puedes repetirlo o saltar a cualquier pantalla desde Guía.',
   'onb.tour.cierre.setup': 'Ir a Configuración',
   'onb.tour.menu.pantallas': 'Saltar a una pantalla', 'onb.tour.menu.pantallasAria': 'Pantallas del recorrido',
@@ -74,9 +74,9 @@ export const tourEs = {
   'onb.pant.platform-auditoria.claveT': 'El registro', 'onb.pant.platform-auditoria.claveC': 'Cada acción queda con su autor y su momento; las alertas abiertas aparecen primero.',
 } as const;
 export const tourEn: Record<keyof typeof tourEs, string> = {
-  'onb.tour.ir.titulo': 'Next: {pantalla}', 'onb.tour.ir.cuerpo': 'I will point at “{nombre}” in the menu and take you there in a moment. Or click it yourself.',
+  'onb.tour.ir.titulo': 'Next: {pantalla}', 'onb.tour.ir.cuerpo': 'Click “{nombre}” in the menu, or wait a moment and I will take you there.',
   'onb.tour.clic': 'Click here: {nombre}', 'onb.tour.aqui': 'Here: {nombre}', 'onb.tour.pantalla': 'Screen {n} of {total}', 'onb.tour.rutaAria': 'Tour route', 'onb.tour.progresoAria': 'Tour progress',
-  'onb.tour.entrada': 'Now: {pantalla}', 'onb.tour.noEncontrado': 'I cannot see this element on the screen right now; follow the explanation here.',
+  'onb.tour.entrada': 'Now: {pantalla}', 'onb.tour.noEncontrado': 'This part of the screen is not available yet; follow the explanation here.',
   'onb.tour.cierre.titulo': 'You finished the tour', 'onb.tour.cierre.cuerpo': 'You can repeat it or jump to any screen from Guide.',
   'onb.tour.cierre.setup': 'Go to Setup',
   'onb.tour.menu.pantallas': 'Jump to a screen', 'onb.tour.menu.pantallasAria': 'Tour screens',

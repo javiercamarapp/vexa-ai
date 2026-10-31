@@ -188,7 +188,7 @@ test('tarjeta: paso informativo usa «Siguiente»; el cierre no lista pantallas,
   assert.doesNotMatch(cierre,/Pantalla \d+ de/);assert.doesNotMatch(cierre,/aria-current="step"/,'en el cierre ninguna pantalla queda marcada como actual');assert.match(cierre,/ilu-grueso/,'checkmark que se dibuja');
   assert.doesNotMatch(renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="cierre" titulo="x" cuerpo="y" {...baseTarjeta} mostrarSetup={false}/>),/Ir a Configuración/,'la consola de plataforma no tiene Configuración');
   assert.doesNotMatch(renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="info" titulo="x" cuerpo="y" {...baseTarjeta} n={1}/>),/>Anterior</,'sin «Anterior» en el primer paso');
-  assert.match(renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="info" titulo="x" cuerpo="y" sinObjetivo centrada {...baseTarjeta}/>),/data-centrada="true"[\s\S]*No veo este elemento/,'destino ausente: tarjeta centrada con aviso');
+  assert.match(renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="info" titulo="x" cuerpo="y" sinObjetivo centrada {...baseTarjeta}/>),/data-centrada="true"[\s\S]*Esta parte de la pantalla aún no está disponible/,'destino ausente: tarjeta centrada con aviso');
 });
 test('cierre sin lista falsa: el mismo texto para corto, completo y plataforma, sin «tu rol», sin número a mano y sin ruta de pantallas',()=>{
   for(const [clave,dic] of [['es',ESP],['en',ING]] as const){
@@ -199,6 +199,17 @@ test('cierre sin lista falsa: el mismo texto para corto, completo y plataforma, 
   assert.equal(ESP['onb.tour.cierre.titulo'],'Terminaste el recorrido');assert.equal(ING['onb.tour.cierre.titulo'],'You finished the tour');
   assert.match(leer('src/components/onboarding/guia.tsx'),/ruta=\{\{nombres:cierre\?\[\]:nombres,/,'en el cierre no se pinta la ruta de pantallas');
   assert.doesNotMatch(leer('src/components/onboarding/guia.tsx'),/onb\.tour\.cierre\.resumen/);
+});
+test('paso «ir»: título, cuerpo y etiqueta usan el MISMO nombre, el rótulo del menú (etiquetaItem), no el title del enlace; el cuerpo es corto y no repite el título',()=>{
+  const guia=leer('src/components/onboarding/guia.tsx');
+  assert.match(guia,/t\('onb\.tour\.ir\.titulo',\{pantalla\}\)/);assert.match(guia,/t\('onb\.tour\.ir\.cuerpo',\{nombre:pantalla\}\)/);assert.match(guia,/t\('onb\.tour\.clic',\{nombre:pantalla\}\)/);
+  assert.doesNotMatch(guia,/onb\.tour\.clic',\{nombre:nombreEl\}|onb\.tour\.ir\.cuerpo',\{nombre:nombreEl/,'el nombre leído del DOM (aria-label/title/texto) ya no se usa en pasos «ir»');
+  assert.match(guia,/pantalla=nombrePantalla\(paso\.pantalla\)/);assert.match(guia,/etiquetaItem\(t,item\)/);
+  for(const [clave,dic] of [['es',ESP],['en',ING]] as const){
+    assert.ok(dic['onb.tour.ir.cuerpo'].length<=80,clave+': cuerpo corto');
+    const t=T[clave];
+    for(const nombre of ['Hoy','Problemas'])for(const k of ['onb.tour.ir.titulo','onb.tour.ir.cuerpo','onb.tour.clic'] as const)assert.ok(t(k,{pantalla:nombre,nombre}).includes(nombre),clave+k);
+  }
 });
 test('ventana de la ruta: pocas pantallas alrededor de la actual con «…» a los lados',()=>{
   const nombres=['A','B','C','D','E','F','G','H'];

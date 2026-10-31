@@ -117,12 +117,13 @@ export function GuiaPaneles(){
  if(abierto&&paso){
   const cierre=paso.tipo==='cierre',pantalla=nombrePantalla(paso.pantalla),nombreEl=el?nombreDe(el):'';
   const titulo=cierre?t(paso.titulo as Clave):paso.tipo==='ir'?t('onb.tour.ir.titulo',{pantalla}):paso.titulo?t(paso.titulo as Clave):pantalla;
-  const cuerpo=cierre||paso.tipo==='info'?t(paso.cuerpo as Clave):t('onb.tour.ir.cuerpo',{nombre:nombreEl||pantalla});
+  const cuerpo=cierre||paso.tipo==='info'?t(paso.cuerpo as Clave):t('onb.tour.ir.cuerpo',{nombre:pantalla});
   const centrada=cierre||el===null;
   tarjetaUi=<TarjetaRecorrido t={t} innerRef={tarjeta} tipo={paso.tipo} titulo={titulo} cuerpo={cuerpo} ilu={paso.ilu} n={n} total={total} grupoN={Math.min(paso.grupo+1,nombres.length)} grupoTotal={nombres.length}
    hayAnterior={reducir(c.rec,{tipo:'anterior'},c.pasos.length,c.pasos,c.ruta).indice!==c.rec.indice} ruta={{nombres:cierre?[]:nombres,actual:paso.grupo}} centrada={centrada} sinObjetivo={!cierre&&paso.tipo!=='ir'&&el===null} mostrarSetup={c.pista!=='plataforma'}
    anterior={()=>c.despachar({tipo:'anterior'})} omitir={c.omitir} primario={cierre?()=>c.despachar({tipo:'siguiente'}):c.siguiente} irSetup={c.terminarEIrASetup}/>;
-  if(el&&nombreEl&&(paso.tipo==='ir'||esControl(el)))etiquetaUi=<EtiquetaObjetivo innerRef={etiqueta} texto={paso.tipo==='ir'?t('onb.tour.clic',{nombre:nombreEl}):t('onb.tour.aqui',{nombre:nombreEl})}/>;
+  // En un paso «ir» título, cuerpo y etiqueta dicen lo mismo: el rótulo del menú (etiquetaItem), nunca el title del enlace ni su texto interno.
+  if(el&&((paso.tipo==='ir'&&pantalla)||(nombreEl&&esControl(el))))etiquetaUi=<EtiquetaObjetivo innerRef={etiqueta} texto={paso.tipo==='ir'?t('onb.tour.clic',{nombre:pantalla}):t('onb.tour.aqui',{nombre:nombreEl})}/>;
   if(paso.clave==='que')bannerUi=<BannerPantalla t={t} pantalla={pantalla}/>;
  }
  return <>

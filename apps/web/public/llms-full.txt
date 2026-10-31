@@ -187,12 +187,11 @@ Solicitar acceso: https://rovaq.ai/solicitar-acceso
 - [Operador: ejecuta las acciones que le asignan](https://rovaq.ai/casos-de-uso/operador)
 - [Lector: consulta sin riesgo de cambiar nada](https://rovaq.ai/casos-de-uso/lector)
 - [Solicita acceso y revisa tus cifras con su evidencia.](https://rovaq.ai/solicitar-acceso)
-- [Estado del servicio](https://rovaq.ai/estado)
 - [Blog de Rovaq AI](https://rovaq.ai/blog)
 - [Los reembolsos no son un costo fijo: son una fuga que se puede localizar](https://rovaq.ai/blog/reembolsos-fuga-que-se-puede-localizar)
 - [De dónde sale cada número: la procedencia como requisito, no como adorno](https://rovaq.ai/blog/procedencia-de-cada-numero)
 - [La IA clasifica y redacta; las personas deciden](https://rovaq.ai/blog/la-ia-clasifica-las-personas-deciden)
-- [Un puesto, una vista: por qué cada rol ve solo lo que le toca](https://rovaq.ai/blog/un-puesto-una-vista)
+- [Un puesto, una vista: por qué cada persona ve solo lo que le toca](https://rovaq.ai/blog/un-puesto-una-vista)
 - [Tus exportes de marketplace ya son datos: cómo cargarlos con procedencia](https://rovaq.ai/blog/exportes-de-marketplace-ya-son-datos)
 - [Puntos de dolor: del texto libre de las conversaciones a una prioridad con evidencia](https://rovaq.ai/blog/puntos-de-dolor-del-texto-a-la-prioridad)
 - [Qué afirmamos y qué no afirmamos sobre seguridad](https://rovaq.ai/blog/que-afirmamos-sobre-seguridad)
@@ -487,35 +486,6 @@ El precio todavía no está publicado.
 
 ---
 
-Fuente: https://rovaq.ai/estado
-
-## Estado del servicio
-
-Cómo saber qué versión está desplegada y cómo reportar un problema. No es un compromiso de disponibilidad.
-
-### Qué publicamos aquí
-
-El servicio expone un identificador público de la versión desplegada: el número de versión y el identificador de la compilación. Se consulta en la dirección rovaq.ai/api/health/version. Esta página es estática y no muestra ese valor en vivo; el identificador solo dice qué compilación está en uso y no dice si cada parte del servicio está funcionando.
-
-### Qué no es esta página
-
-- No es un acuerdo de nivel de servicio ni un compromiso de disponibilidad.
-- No es un monitor en vivo ni un historial de incidentes. No publicamos porcentajes de disponibilidad ni tiempos de respuesta.
-- No sustituye la pantalla de Confianza de los datos, que dentro del producto dice hasta qué fecha llegan tus datos, qué cubren y qué no se sabe.
-
-### Cómo reportar un problema
-
-Para reportar un problema, usa el contacto de https://rovaq.ai/solicitar-acceso Esta página no fija un tiempo de respuesta.
-
-### Qué incluir en el reporte
-
-- La pantalla donde ocurrió y qué esperabas ver.
-- Lo que pasó en su lugar, con la hora aproximada y tu zona horaria.
-- La versión que muestra rovaq.ai/api/health/version, si la consultaste.
-- Ninguna contraseña ni datos personales de tus clientes: no los necesitamos para entender el problema.
-
----
-
 Fuente: https://rovaq.ai/blog
 
 ## Blog de Rovaq AI
@@ -524,14 +494,14 @@ Notas sobre reembolsos, la procedencia de las cifras, los puntos de dolor y las 
 
 ### Artículos recientes
 
-- [Los reembolsos no son un costo fijo: son una fuga que se puede localizar](https://rovaq.ai/blog/reembolsos-fuga-que-se-puede-localizar). Publicado 2026-11-03. 6 min de lectura. Un total de reembolsos mezcla cosas que no se parecen. Este artículo explica cómo separar el dinero devuelto por canal, producto y mes, cómo leer un Pareto sin pedirle más de lo que da y qué debe llevar un paquete de evidencia para que un reclamo se pueda revisar.
-- [De dónde sale cada número: la procedencia como requisito, no como adorno](https://rovaq.ai/blog/procedencia-de-cada-numero). Publicado 2026-11-03. 6 min de lectura. Un tablero que no explica de dónde viene cada cifra obliga a creerle. Este artículo describe qué debe acompañar a un número para que se pueda discutir: su clase, su fuente, su fecha de corte y lo que todavía no se sabe, y por qué eso no equivale a una certificación.
-- [La IA clasifica y redacta; las personas deciden](https://rovaq.ai/blog/la-ia-clasifica-las-personas-deciden). Publicado 2026-11-03. 5 min de lectura. Una herramienta que inventa importes pierde la confianza en el primer reporte. Este artículo explica el principio con el que diseñamos Rovaq AI: la IA ayuda a clasificar y a redactar, las cifras salen de registros verificables y una persona decide cada acción.
-- [Un puesto, una vista: por qué cada rol ve solo lo que le toca](https://rovaq.ai/blog/un-puesto-una-vista). Publicado 2026-11-03. 5 min de lectura. Una herramienta que muestra todo a todos es más difícil de usar y más difícil de proteger. Este artículo explica cómo se reparten las vistas entre propietario, analista, operador y lector en Rovaq AI, por qué los permisos mínimos ayudan a la claridad y qué significa que la autorización se decida en el servidor.
-- [Tus exportes de marketplace ya son datos: cómo cargarlos con procedencia](https://rovaq.ai/blog/exportes-de-marketplace-ya-son-datos). Publicado 2026-11-03. 5 min de lectura. Muchos equipos esperan un conector directo para empezar a analizar sus ventas y reembolsos, sin notar que el historial ya está en sus exportes de Excel y CSV. Este artículo explica qué se puede cargar hoy en Rovaq AI, cómo funcionan la vista previa y la procedencia por fila, y qué queda en hoja de ruta.
-- [Puntos de dolor: del texto libre de las conversaciones a una prioridad con evidencia](https://rovaq.ai/blog/puntos-de-dolor-del-texto-a-la-prioridad). Publicado 2026-11-03. 6 min de lectura. Un tema que se repite en las conversaciones de soporte es una pista, no una prioridad. Este artículo explica por qué el conteo de menciones engaña, cómo medir un motivo en volumen y en dinero sin mezclar las dos unidades, por qué un dato que falta no vale cero y cómo compartir la evidencia sin datos personales.
-- [Qué afirmamos y qué no afirmamos sobre seguridad](https://rovaq.ai/blog/que-afirmamos-sobre-seguridad). Publicado 2026-11-03. 5 min de lectura. Una página de seguridad útil separa hechos de adjetivos y declara lo que falta. Este artículo explica qué prácticas de seguridad describimos y puede señalar cualquiera en el producto, qué brechas declaramos, por qué publicarlas sirve más a un comprador que una promesa de seguridad total y qué preguntas hacer a cualquier proveedor.
-- [Una recomendación debe poder discutirse: evidencia, aprobación y resultado](https://rovaq.ai/blog/una-recomendacion-debe-poder-discutirse). Publicado 2026-11-03. 5 min de lectura. Una recomendación sin evidencia se ignora o se obedece a ciegas. Este artículo explica qué debe traer una propuesta para poder discutirse, por qué conviene un vocabulario de decisión pequeño y una persona que aprueba, y cómo registrar el resultado midiendo antes y después solo con dato observado.
+- [Los reembolsos no son un costo fijo: son una fuga que se puede localizar](https://rovaq.ai/blog/reembolsos-fuga-que-se-puede-localizar). Publicado 2026-11-03. 5 min de lectura. Un total único no dice qué atender primero. Según el canal, el producto y el mes, el dinero devuelto empieza a tener forma.
+- [De dónde sale cada número: la procedencia como requisito, no como adorno](https://rovaq.ai/blog/procedencia-de-cada-numero). Publicado 2026-11-03. 6 min de lectura. Una cifra sin origen solo se puede aceptar o rechazar. Con su fuente, su fecha de corte y sus vacíos a la vista, se puede discutir.
+- [La IA clasifica y redacta; las personas deciden](https://rovaq.ai/blog/la-ia-clasifica-las-personas-deciden). Publicado 2026-11-03. 5 min de lectura. Dónde conviene usar un modelo de lenguaje en un producto financiero, dónde no, y por qué las cifras no deben salir de él.
+- [Un puesto, una vista: por qué cada persona ve solo lo que le toca](https://rovaq.ai/blog/un-puesto-una-vista). Publicado 2026-11-03. 5 min de lectura. Una herramienta con todo para todos parece generosa y rinde poco. Mostrar menos protege la información y ayuda a trabajar.
+- [Tus exportes de marketplace ya son datos: cómo cargarlos con procedencia](https://rovaq.ai/blog/exportes-de-marketplace-ya-son-datos). Publicado 2026-11-03. 5 min de lectura. Los archivos que descargas de tus canales de venta no son un trámite pendiente. Son el historial que ya tienes, y se puede cargar con su origen a la vista.
+- [Puntos de dolor: del texto libre de las conversaciones a una prioridad con evidencia](https://rovaq.ai/blog/puntos-de-dolor-del-texto-a-la-prioridad). Publicado 2026-11-03. 5 min de lectura. Contar menciones es un comienzo. Una prioridad necesita además un tamaño, una evidencia que se pueda abrir y una lista de lo que no se sabe.
+- [Qué afirmamos y qué no afirmamos sobre seguridad](https://rovaq.ai/blog/que-afirmamos-sobre-seguridad). Publicado 2026-11-03. 6 min de lectura. Una lista corta de prácticas, otra de brechas y las razones para publicar las dos.
+- [Una recomendación debe poder discutirse: evidencia, aprobación y resultado](https://rovaq.ai/blog/una-recomendacion-debe-poder-discutirse). Publicado 2026-11-03. 5 min de lectura. Cuando una propuesta trae su evidencia, una persona que decide y un registro de lo que pasó, deja de ser una opinión y se vuelve un hábito.
 
 ### Temas
 
@@ -539,6 +509,10 @@ Notas sobre reembolsos, la procedencia de las cifras, los puntos de dolor y las 
 - Procedencia: la fuente, la fecha de corte y lo que todavía no se sabe de cada cifra.
 - Puntos de dolor: cómo pasar del texto libre de las conversaciones a una prioridad con tamaño y evidencia.
 - Decisiones: propuestas con evidencia, una persona que decide y un resultado que queda registrado.
+- Inteligencia artificial: qué trabajo conviene darle a un modelo, por qué los importes no salen de él y quién decide cada acción.
+- Puestos: por qué cada persona ve solo lo que le toca y dónde se decide el acceso.
+- Fuentes: cómo cargar tus exportes de Excel y CSV con vista previa y con el origen de cada fila.
+- Seguridad: qué prácticas describimos, qué brechas declaramos y cómo leer una página de seguridad.
 
 ---
 
@@ -550,7 +524,7 @@ Un total único no dice qué atender primero. Según el canal, el producto y el 
 
 Muchos equipos de comercio electrónico tratan los reembolsos como un costo de operar: un porcentaje que se acepta, se presupuesta y se revisa una vez al mes. El total sube o baja, alguien pregunta por qué y la conversación termina en una explicación general sobre la temporada, las devoluciones o los clientes exigentes.
 
-Esa lectura tiene un problema. Un número único mezcla cosas que no se parecen, y lo que no se separa no se puede atender. Este artículo propone otra postura: tratar el dinero devuelto como una fuga, es decir, algo que tiene un lugar, una forma y, con trabajo, un responsable.
+Esa lectura tiene un problema. Un número único mezcla cosas que no se parecen, y lo que no se separa no se puede atender. Conviene cambiar de postura: tratar el dinero devuelto como una fuga, es decir, algo que tiene un lugar, una forma y, con trabajo, un responsable.
 
 ### Por qué un total único no sirve
 
@@ -568,9 +542,9 @@ Un Pareto es una gráfica sencilla: ordena las categorías de mayor a menor y mu
 
 Conviene leerlo en tres cortes, uno a la vez:
 
-- Por canal. Muestra si el problema vive en un lugar de venta concreto o si es general. Si un canal concentra el movimiento, la conversación es con ese canal y con sus reglas, no con todo el negocio.
-- Por producto. Señala qué artículos suman más dinero devuelto. Un producto en la cima puede ser un asunto de descripción, de empaque o de proveedor; el corte no lo dice, pero te dice a quién preguntar.
-- Mes a mes. Muestra si el movimiento es estable, si tiene un pico o si crece. Un pico aislado y un crecimiento sostenido piden respuestas distintas.
+- **Por canal.** Muestra si el problema vive en un lugar de venta concreto o si es general. Si un canal concentra el movimiento, la conversación es con ese canal y con sus reglas, no con todo el negocio.
+- **Por producto.** Señala qué artículos suman más dinero devuelto. Un producto en la cima puede ser un asunto de descripción, de empaque o de proveedor; el corte no lo dice, pero te dice a quién preguntar.
+- **Mes a mes.** Muestra si el movimiento es estable, si tiene un pico o si crece. Un pico aislado y un crecimiento sostenido piden respuestas distintas.
 
 Después cruza los cortes entre sí. Un producto que domina en un solo canal cuenta una historia distinta a la de uno que domina en todos. Y mira también el contacto repetido: los clientes que escriben más de una vez por el mismo asunto suelen señalar algo que el primer mensaje no resolvió.
 
@@ -603,7 +577,6 @@ Después decide quién se queda con cada hallazgo. Una fuga sin responsable vuel
 - No afirmamos que todo reembolso sea una fuga. Muchos son devoluciones legítimas y deben seguir siéndolo.
 - No prometemos ningún monto. Cualquier estimación del alcance de un reclamo depende de los supuestos que escribas tú.
 - No calculamos la tasa de reembolso por producto, el margen, la pérdida neta ni la causa raíz con los datos de un exporte, porque faltan datos para hacerlo.
-- No tratamos un dato desconocido como si fuera cero: si falta información, la pantalla lo dice.
 - Nada se envía solo: el reclamo lo presenta una persona.
 
 ---
@@ -616,7 +589,7 @@ Una cifra sin origen solo se puede aceptar o rechazar. Con su fuente, su fecha d
 
 Casi todos los equipos han vivido la misma escena. Alguien abre un tablero, ve una cifra que no esperaba y pregunta de dónde sale. Nadie lo sabe con certeza. Se revisan las fórmulas, se busca al autor del reporte, se compara contra una hoja de cálculo y, al final, la reunión se gasta en averiguar si el número es cierto en lugar de decidir qué hacer con él.
 
-Este artículo defiende una idea sencilla: la procedencia no es un adorno que se agrega al final para dar buena impresión, sino un requisito que se cumple antes de mostrar una cifra. Un número que no puede explicar su origen no es un dato, es una opinión con formato.
+La idea cabe en una frase: la procedencia no es un adorno que se agrega al final para dar buena impresión, sino un requisito que se cumple antes de mostrar una cifra. Un número que no puede explicar su origen no es un dato, es una opinión con formato.
 
 ### Un tablero que obliga a creer
 
@@ -628,18 +601,18 @@ Cuando faltan esas respuestas, el lector tiene dos opciones, y las dos son malas
 
 ### Fecha de corte, fuente y vacíos
 
-Para que una cifra se pueda discutir hacen falta cuatro cosas que viajen con ella. En Rovaq AI las llamamos el sello de la cifra, y aparece bajo cada número importante.
+Para que una cifra se pueda discutir hacen falta cuatro cosas que viajen con ella. En Rovaq AI las llamamos el sello de la cifra, y acompaña a las cifras importantes de las pantallas que lo muestran.
 
-- La clase. Una cifra puede ser observada, es decir, un hecho registrado; estimada, calculada con un modelo o con supuestos que defines tú; inferida, derivada de otras relaciones; o puede ser Sin dato. Mezclar esas clases en una misma columna es la forma más común de engañarse sin querer.
-- La fuente. De qué archivo, de qué sistema o de qué carga viene el registro, de modo que quien dude pueda ir a verlo.
-- La fecha de corte. Hasta qué día llegan los datos. Una cifra correcta hasta el día quince y una correcta hasta el día treinta no son la misma cifra, aunque se llamen igual.
-- La antigüedad. Cuánto tiempo ha pasado desde la última actualización, para que nadie tome una foto vieja por la situación de hoy.
+- **La clase.** Una cifra puede ser observada, es decir, un hecho registrado; estimada, calculada con un modelo o con supuestos que defines tú; inferida, derivada de otras relaciones; o puede ser Sin dato. Mezclar esas clases en una misma columna es la forma más común de engañarse sin querer.
+- **La fuente.** De qué archivo, de qué sistema o de qué carga viene el registro, de modo que quien dude pueda ir a verlo.
+- **La fecha de corte.** Hasta qué día llegan los datos. Una cifra correcta hasta el día quince y una correcta hasta el día treinta no son la misma cifra, aunque se llamen igual.
+- **La antigüedad.** Cuánto tiempo ha pasado desde la última actualización, para que nadie tome una foto vieja por la situación de hoy.
 
-La regla que sostiene todo lo demás es esta: si no se sabe la fecha de corte, el sello lo dice. Y lo mismo vale para cualquier dato ausente. Lo desconocido se muestra como Sin dato, nunca como cero. Un cero afirma que se midió y no hubo nada; un Sin dato admite que no se sabe. La diferencia parece pequeña hasta que alguien toma una decisión creyendo que una categoría no tiene movimiento cuando, en realidad, nadie cargó sus registros.
+La regla que sostiene todo lo demás es esta: si no se sabe la fecha de corte, el sello lo dice. Y lo mismo vale para cualquier dato ausente. Lo desconocido se muestra como Sin dato, nunca como cero. Un cero afirma que se midió y no hubo nada; un dato faltante admite que no se sabe. La diferencia parece pequeña hasta que alguien toma una decisión creyendo que una categoría no tiene movimiento cuando, en realidad, nadie cargó sus registros.
 
-#### El libro que no borra
+#### El libro que conserva las correcciones
 
-La procedencia también depende de cómo se guarda el dato. En Rovaq AI cada organización tiene un libro de solo inserción: cuando algo se corrige, se agrega una revisión y no se borra la versión anterior. Así, una corrección deja rastro en lugar de reescribir la historia en silencio, y quien revisa puede ver que hubo un cambio y cuándo se hizo.
+La procedencia también depende de cómo se guarda el dato. En Rovaq AI cada organización tiene un libro de solo inserción: cuando algo se corrige, se agrega una revisión y no se borra la versión anterior. Así, una corrección deja rastro en lugar de reescribir la historia en silencio, y quien revisa puede ver que hubo un cambio y cuándo se hizo. La excepción es la retención: la política que define cada organización sí puede borrar datos, y ese borrado queda registrado.
 
 ### Confianza de los datos frente a un aval externo
 
@@ -647,7 +620,7 @@ Conviene separar dos cosas que suelen confundirse. La confianza en los datos res
 
 La pantalla de [confianza de los datos](https://rovaq.ai/producto/confianza-de-los-datos) existe para lo primero. Muestra un semáforo por fuente, la frescura de cada cifra, su cobertura y una lista de lo que todavía no se sabe. Es una herramienta para el trabajo de cada día: antes de mover dinero o de escribirle a un proveedor, quien decide puede ver qué fuentes están al corriente, cuáles se quedaron atrás y qué huecos siguen abiertos.
 
-Lo segundo, la certificación, es otra conversación, y la tenemos con franqueza: Rovaq AI no cuenta hoy con certificaciones de seguridad ni de cumplimiento, y no decimos lo contrario en ninguna parte. Una pantalla de confianza no pretende ocupar ese lugar. Lo que sí hace es dejar a la vista el estado real de cada fuente, que es lo que un equipo necesita para trabajar con cifras sin ceguera.
+Lo segundo, la certificación, es otra conversación, y la tenemos con franqueza: Rovaq AI no cuenta hoy con certificaciones de seguridad ni de cumplimiento. Una pantalla de confianza no pretende ocupar ese lugar. Lo que sí hace es dejar a la vista el estado real de cada fuente, que es lo que un equipo necesita para trabajar con cifras sin ceguera.
 
 ### Una prueba sencilla para tu propio tablero
 
@@ -678,15 +651,13 @@ Dónde conviene usar un modelo de lenguaje en un producto financiero, dónde no,
 
 Hay una promesa que se repite en casi todos los productos que incorporan inteligencia artificial: hará el trabajo por ti. Se dice de los resúmenes, de las recomendaciones, de las respuestas a preguntas de negocio. La promesa es atractiva y, en tareas de texto, a menudo se cumple. El problema aparece cuando se extiende, sin más, al dinero.
 
-Este artículo explica el principio con el que diseñamos Rovaq AI y por qué lo consideramos una condición de confianza y no una limitación: la IA ayuda a ordenar y a redactar; las cifras salen de registros que se pueden verificar; y una persona decide cada acción.
+El principio con el que diseñamos Rovaq AI cabe en tres cláusulas, y lo consideramos una condición de confianza y no una limitación: la IA ayuda a ordenar y a redactar; las cifras salen de registros que se pueden verificar; y una persona decide cada acción.
 
 ### El riesgo de una IA que inventa importes
 
 Un modelo de lenguaje produce texto verosímil. Esa es su fortaleza y también su riesgo: una frase puede sonar exacta sin serlo. Si le pides que resuma una conversación, un error menor casi no importa. Si le pides un importe, la misma clase de error cambia una decisión.
 
 Además, el daño no se reparte parejo. Una herramienta que acierta casi siempre, pero que de vez en cuando inventa un importe, tiene un costo peor que una que falla seguido: con la segunda sabes que debes verificar todo; con la primera dejas de verificar y el error pasa. La confianza se pierde en el primer reporte donde alguien descubre que una cifra no tenía de dónde salir, y recuperarla es lento.
-
-> La IA puede ayudar a leer y a escribir. Los importes no se le piden.
 
 ### Las cifras salen del libro verificable
 
@@ -700,17 +671,17 @@ La pantalla [Pregúntale a tus datos](https://rovaq.ai/producto/pregunta-a-tus-d
 
 Decir que la IA no crea cifras no significa que no tenga trabajo. Hay tareas donde un modelo es útil precisamente porque su salida se puede leer y corregir:
 
-- Agrupar conversaciones en problemas. La agrupación con modelos de IA se habilita por organización, y cada grupo conserva sus citas para que alguien pueda comprobar que de verdad pertenecen ahí.
-- Clasificar. Proponer una categoría para un tema repetido, para que una persona la revise.
-- Redactar. Preparar el borrador de un mensaje a un proveedor o de una nota interna, que una persona revisa antes de enviar.
+- **Agrupar conversaciones en problemas.** La agrupación con modelos de IA se habilita por organización, y cada grupo conserva sus citas para que alguien pueda comprobar que de verdad pertenecen ahí.
+- **Clasificar.** Proponer una categoría para un tema repetido, para que una persona la revise.
+- **Redactar.** Preparar el borrador de un mensaje a un proveedor o de una nota interna, que una persona revisa antes de enviar.
 
-Y hay cosas que no hace. No produce importes. No decide qué acción tomar. No envía nada por su cuenta. No escribe en tu CRM, que en el caso de HubSpot se conecta en solo lectura. Un borrador es una propuesta de texto, no una acción realizada.
+Y hay cosas que no hace. No produce importes. No decide qué acción tomar. No envía nada por su cuenta. No escribe en tu CRM, que en el caso de HubSpot se conecta en solo lectura. Un borrador es una propuesta de texto, no una acción realizada. Si el borrador sale mal, se corrige o se tira antes de que llegue a nadie.
 
 #### Una persona decide cada acción
 
-El último paso es siempre humano. En la pantalla [Por decidir](https://rovaq.ai/producto/por-decidir), cada propuesta llega con su evidencia y su motivo, y la persona responsable elige entre Proceder, Ajustar o Descartar. Proceder crea la intervención y los borradores que alguien revisa y envía. Nada se envía solo, y el resultado queda registrado.
+El último paso es siempre humano. En la pantalla [Por decidir](https://rovaq.ai/producto/por-decidir), cada propuesta llega con su evidencia y su motivo, y la persona responsable decide qué hacer con ella. Los borradores que prepara la IA son texto que alguien revisa y envía; nada se envía solo. Cómo se discute una propuesta y cómo se registra su resultado es otra historia, que contamos en [el artículo sobre decisiones](https://rovaq.ai/blog/una-recomendacion-debe-poder-discutirse).
 
-Registrar el resultado cumple dos funciones. La primera es de memoria: dentro de seis meses, alguien puede saber por qué se actuó o no se actuó. La segunda es de aprendizaje: un equipo que anota qué decidió y qué pasó después puede mejorar sus propios criterios, sin atribuirle a una máquina un juicio que no le corresponde.
+Esta división no es un freno. Un equipo lee un borrador en segundos, pero rehacer un importe mal calculado puede costar días. Repartir el trabajo así pone la rapidez del modelo donde un error es barato, en el texto, y la revisión humana donde un error es caro, en el dinero y en las acciones.
 
 ### Una regla para evaluar cualquier herramienta
 
@@ -720,7 +691,7 @@ Si evalúas software con inteligencia artificial para tu negocio, hay tres pregu
 2. Qué pasa cuando falta información: si lo dice, o si la rellena con algo que suena razonable.
 3. Quién ejecuta la acción: si una persona la aprueba o si ocurre sola.
 
-Una herramienta que responde bien a las tres puede equivocarse, como cualquiera, pero sus errores serán visibles y corregibles. Eso es lo que buscamos al separar con claridad lo que el modelo hace de lo que le queda fuera. Si quieres ver cómo se aplica a un caso concreto, revisa cómo se agrupan las conversaciones en la pantalla de Problemas.
+Una herramienta que responde bien a las tres puede equivocarse, como cualquiera, pero sus errores serán visibles y corregibles. Eso es lo que buscamos al separar con claridad lo que el modelo hace de lo que le queda fuera.
 
 ### Lo que no afirmamos
 
@@ -734,30 +705,28 @@ Una herramienta que responde bien a las tres puede equivocarse, como cualquiera,
 
 Fuente: https://rovaq.ai/blog/un-puesto-una-vista
 
-## Un puesto, una vista: por qué cada rol ve solo lo que le toca
+## Un puesto, una vista: por qué cada persona ve solo lo que le toca
 
 Una herramienta con todo para todos parece generosa y rinde poco. Mostrar menos protege la información y ayuda a trabajar.
 
 Cuando un equipo adopta una herramienta nueva, la primera pregunta suele ser qué puede hacer. La segunda, que casi nunca se hace a tiempo, es quién debería poder hacer qué. Cuando esa segunda pregunta se pospone, el resultado es una aplicación donde todos ven todo: la persona que ejecuta una tarea tropieza con pantallas que no le conciernen y quien revisa el dinero convive con controles que no necesita.
 
-Este artículo defiende lo contrario. Mostrar menos a cada persona no es una restricción incómoda sino una decisión de diseño con dos beneficios: la información está más protegida y el trabajo es más claro.
+La tesis es la contraria. Mostrar menos a cada persona no es una restricción incómoda sino una decisión de diseño con dos beneficios: la información está más protegida y el trabajo es más claro.
 
 ### Menos pantallas, más claridad
 
-Una pantalla sobrante tiene un costo que no se ve en las demostraciones. Cada opción adicional es algo que hay que entender, ignorar o evitar tocar por error. Un operador que debe resolver acciones asignadas no gana nada con ver los reportes financieros de la empresa; en cambio, pierde tiempo buscando entre elementos que no son suyos.
+Una pantalla sobrante tiene un costo que no se ve en las demostraciones. Cada opción adicional es algo que hay que entender, ignorar o evitar tocar por error. Un operador que debe resolver acciones asignadas no gana nada con ver los reportes financieros de la empresa; en cambio, pierde tiempo buscando entre elementos que no son suyos. Menos opciones también significan menos que aprender: una persona nueva empieza por lo que de verdad va a usar.
 
 Por eso conviene pensar las vistas desde el trabajo y no desde el menú. La pregunta no es qué pantallas existen, sino qué necesita ver quien ocupa cada puesto para hacer bien lo suyo. Lo demás, no aparece.
 
-> Una vista bien pensada es la que le quita a cada persona todo lo que no necesita para su trabajo.
+### Cuatro puestos con permisos mínimos
 
-### Cuatro roles con permisos mínimos
+Rovaq AI trabaja con cuatro puestos. Cada uno recibe lo necesario para su función, y nada más. Una vista bien pensada es la que le quita a cada persona todo lo que no necesita para su trabajo.
 
-Rovaq AI trabaja con cuatro puestos. Cada uno recibe lo necesario para su función, y nada más.
-
-- [Propietario](https://rovaq.ai/casos-de-uso/propietario). Configura, decide y aprueba. Ve todas las pantallas y administra el equipo, los avisos y la retención de datos. Es quien da el visto bueno a las acciones que se proponen.
-- [Analista](https://rovaq.ai/casos-de-uso/analista). Investiga, prepara y propone. Ve el dinero, los problemas, los puntos de dolor y las importaciones, e importa archivos. Propone, pero no aprueba.
-- [Operador](https://rovaq.ai/casos-de-uso/operador). Ejecuta las acciones que le asignan. Ve los problemas, las acciones asignadas y su evidencia, sin cifras de dinero.
-- [Lector](https://rovaq.ai/casos-de-uso/lector). Consulta en solo lectura. Ve las pantallas que le corresponden, sin poder modificar datos, conexiones ni decisiones.
+- **[Propietario](https://rovaq.ai/casos-de-uso/propietario).** Configura, decide y aprueba. Ve todas las pantallas y administra el equipo, los avisos y la retención de datos. Es quien da el visto bueno a las acciones que se proponen.
+- **[Analista](https://rovaq.ai/casos-de-uso/analista).** Investiga, prepara y propone. Ve el dinero, los problemas, los puntos de dolor y las importaciones, e importa archivos. Propone, pero no aprueba.
+- **[Operador](https://rovaq.ai/casos-de-uso/operador).** Ejecuta las acciones que le asignan. Ve los problemas, las acciones asignadas y su evidencia, sin cifras de dinero.
+- **[Lector](https://rovaq.ai/casos-de-uso/lector).** Consulta en solo lectura. Ve las pantallas que le corresponden, sin poder modificar datos, conexiones ni decisiones.
 
 La separación entre quien propone y quien aprueba merece una mención aparte. Que el analista prepare un hallazgo y el propietario lo apruebe no es burocracia: es la forma de asegurar que una persona distinta mire la evidencia antes de que algo se ponga en marcha. Y que el operador ejecute sin ver cifras de dinero significa que quien hace el trabajo cotidiano no necesita acceso a lo que no usa.
 
@@ -765,7 +734,7 @@ Este reparto sigue un principio conocido como permisos mínimos: cada persona re
 
 #### Un recorrido de ejemplo
 
-Imagina un hallazgo cualquiera: un producto concentra buena parte del dinero devuelto. El analista lo investiga, reúne la evidencia y propone una acción. El propietario ve la propuesta con su evidencia y decide si procede, si se ajusta o si se descarta. Si procede, el operador recibe la acción asignada y la ejecuta, con los problemas y la evidencia a la vista pero sin las cifras de dinero que no necesita. Y el lector, si el equipo tiene uno, puede seguir el avance sin riesgo de cambiar nada.
+Imagina un problema de envío: varios pedidos de una misma ruta llegan tarde. El analista lo investiga, reúne la evidencia y propone hablar con el transportista. El propietario ve la propuesta con su evidencia y decide si la acepta, la cambia o la rechaza. Si la acepta, el operador recibe la acción asignada y la ejecuta, con el problema y la evidencia a la vista pero sin las cifras de dinero que no necesita. Y el lector, si el equipo tiene uno, puede seguir el avance sin riesgo de cambiar nada.
 
 Cada persona ve una parte distinta del mismo hecho y, sin embargo, nadie necesita una vista completa para cumplir su función. Esa es la prueba más sencilla de que el reparto está bien hecho: nadie echa de menos lo que no ve, porque no le hacía falta para trabajar.
 
@@ -773,23 +742,23 @@ Cada persona ve una parte distinta del mismo hecho y, sin embargo, nadie necesit
 
 Hay una diferencia importante entre ocultar y proteger. Muchas aplicaciones esconden de la interfaz las opciones que un usuario no debería usar, y con eso consideran resuelto el tema. Pero un elemento que no aparece en el menú sigue existiendo si alguien conoce la dirección de la pantalla o la forma de pedir el dato.
 
-En Rovaq AI la autorización se decide en el servidor. Ocultar un elemento del menú es una comodidad de lectura; no es lo que protege una pantalla. La decisión de si una persona puede ver un dato o realizar una acción se toma del lado que el usuario no controla, cada vez que se pide.
+En Rovaq AI la autorización se decide en el servidor. Ocultar un elemento del menú es una comodidad de lectura; no es lo que protege una pantalla. Lo que afirmamos y lo que no sobre seguridad está en [el artículo sobre seguridad](https://rovaq.ai/blog/que-afirmamos-sobre-seguridad). La decisión de si una persona puede ver un dato o realizar una acción se toma del lado que el usuario no controla: siempre en el servidor.
 
 #### Qué preguntar al evaluar una herramienta
 
 Si estás comparando software para tu equipo, hay tres preguntas que revelan mucho sobre cómo trata los permisos:
 
-1. Qué ve cada puesto, por escrito. Una tabla clara de capacidades vale más que una frase general sobre seguridad.
-2. Quién aprueba. Si quien propone también puede aprobar, la revisión depende de la buena voluntad y no del diseño.
-3. Dónde se decide el acceso. Si solo se oculta en la interfaz, la protección es débil; si se decide en el servidor, resiste mejor.
+1. **Qué ve cada puesto, por escrito.** Una tabla clara de capacidades vale más que una frase general sobre seguridad.
+2. **Quién aprueba.** Si quien propone también puede aprobar, la revisión depende de la buena voluntad y no del diseño.
+3. **Dónde se decide el acceso.** Si solo se oculta en la interfaz, la protección es débil; si se decide en el servidor, resiste mejor.
 
-Para ver cómo se aplica a cada función, puedes revisar la página de casos de uso, que describe qué ve y qué hace cada puesto. Y para saber cuánto fiarte de lo que cada rol lee, vale la pena recordar lo que explicamos sobre [la procedencia de cada número](https://rovaq.ai/blog/procedencia-de-cada-numero): ver menos no debería significar saber menos sobre el origen de lo que se ve.
+Queda una pregunta que el reparto de vistas no resuelve por sí solo: cuánto fiarse de lo que cada puesto lee. Para eso sirve lo que explicamos sobre [la procedencia de cada número](https://rovaq.ai/blog/procedencia-de-cada-numero): ver menos no debería significar saber menos sobre el origen de lo que se ve.
 
 ### Lo que no afirmamos
 
 - No afirmamos que los permisos mínimos eliminen todo riesgo. Reducen lo que cada cuenta puede exponer, pero no sustituyen otras prácticas de seguridad.
-- No afirmamos qué datos personales de terceros ve el lector, porque esa parte sigue en revisión.
-- No tenemos certificaciones de seguridad ni de cumplimiento, y la verificación en dos pasos para propietarios está en nuestra hoja de ruta; hoy no se exige.
+- No afirmamos que un puesto garantice el buen uso: una persona con acceso puede equivocarse dentro de lo que su puesto le permite.
+- No tenemos certificaciones de seguridad ni de cumplimiento, y la verificación en dos pasos para propietarios está planeada; hoy no se exige.
 
 ---
 
@@ -799,17 +768,17 @@ Fuente: https://rovaq.ai/blog/exportes-de-marketplace-ya-son-datos
 
 Los archivos que descargas de tus canales de venta no son un trámite pendiente. Son el historial que ya tienes, y se puede cargar con su origen a la vista.
 
-Entre los equipos que venden por marketplaces circula una espera muy común: cuando exista la conexión directa con mi canal, empezaré a ordenar mis números. Mientras tanto, las ventas se descargan en una hoja, los reembolsos en otra, los pedidos en una tercera, y cada mes alguien las pega en un libro de cálculo que nadie más entiende del todo.
+Entre los equipos que venden por marketplaces circula una creencia común: cuando exista la conexión directa con mi canal, empezaré a ordenar mis números. Mientras tanto, las ventas se descargan en una hoja, los reembolsos en otra, los pedidos en una tercera, y cada mes alguien las pega en un archivo de Excel que nadie más entiende del todo.
 
 La espera tiene un costo que no se nota: esos archivos ya contienen el historial. No son un paso previo a los datos; son los datos. Lo que casi siempre falta no es la fuente, sino un lugar donde cargarlos sin perder de dónde salió cada renglón.
 
 ### Qué se puede cargar hoy
 
-Hoy Rovaq AI recibe archivos de Excel y CSV. Esa es la vía por la que entran los datos de tus canales de venta: los exportes que ya descargas desde cada plataforma, con el formato que cada una produce. Los exportes de marketplaces se cargan con ayuda de nuestro equipo, que revisa contigo cómo corresponde cada columna.
+Hoy Rovaq AI recibe archivos de Excel y CSV. Esa es la vía por la que entran los datos de tus canales de venta: los exportes que ya descargas desde cada plataforma, con el formato que cada una produce. Las exportaciones de marketplaces se cargan con ayuda de nuestro equipo, que revisa contigo cómo corresponde cada columna.
 
-Tener acompañamiento en la carga tiene una ventaja práctica. Los exportes de cada canal nombran sus columnas a su manera, y la misma idea puede aparecer como pedido, orden o transacción según de dónde venga. Resolver esa correspondencia una vez, con alguien que ya la conoce, evita que un error de lectura contamine meses de historial.
+Tener acompañamiento en la carga tiene una ventaja práctica. Los exportes de cada canal nombran sus columnas a su manera, y la misma idea puede aparecer como pedido, compra o transacción según de dónde venga. Resolver esa correspondencia una vez, con alguien que ya la conoce, evita que un error de lectura contamine meses de historial.
 
-También existe una lectura de conversaciones desde HubSpot, y es de solo lectura: Rovaq AI no escribe en tu CRM. La conexión se configura con nuestro equipo y la sincronización es programada, no inmediata; cada pantalla muestra su fecha de corte.
+También existe una lectura de conversaciones desde HubSpot, y es de solo lectura: Rovaq AI no escribe en tu CRM. La conexión se configura con nuestro equipo y la sincronización es programada, no inmediata. Además, la cobertura se limita a lo que expone la API de HubSpot y puede estar incompleta, así que conviene leer esas cifras con su fecha de corte y con ese límite presente.
 
 ### Vista previa y procedencia por fila
 
@@ -825,9 +794,9 @@ La segunda condición es conservar el origen. Cada fila cargada guarda de qué a
 
 Esto cambia la conversación cuando alguien cuestiona un número. En lugar de reconstruir de memoria qué hoja se usó, se abre la fila, se ve el archivo y se resuelve.
 
-### Conectores directos: hoja de ruta
+### Conectores directos: lo que todavía no existe
 
-Conviene ser claros sobre lo que todavía no existe. Los conectores directos para Amazon, Walmart y Shopify están en nuestra hoja de ruta. Hoy no hay una conexión que traiga esos datos automáticamente; por eso la vía es el exporte, y por eso no ponemos fechas ni compromisos sobre cuándo cambiará. Puedes ver el estado de lo que viene en la página de hoja de ruta y lo que se conecta hoy en integraciones.
+Conviene ser claros sobre lo que todavía no existe. Los conectores directos para Amazon, Walmart y Shopify están planeados, pero hoy no hay una conexión que traiga esos datos automáticamente; por eso la vía es el exporte, y por eso no ponemos fechas ni compromisos sobre cuándo cambiará.
 
 Hay buenas razones para no esperar. Un conector, cuando llegue, traerá datos nuevos; pero tu historial existe ahora, y es justo el que permite mirar atrás: ver por canal, por producto y mes a mes dónde se concentra el dinero devuelto, como describimos en [el artículo sobre reembolsos](https://rovaq.ai/blog/reembolsos-fuga-que-se-puede-localizar). Cargar hoy el historial que ya tienes no estorba a un conector futuro. Lo que sí estorba es seguir pegando hojas a mano mientras tanto.
 
@@ -842,13 +811,14 @@ Antes de pedir una carga, conviene revisar tus archivos con estas ideas en mente
 
 Una buena forma de empezar es con un solo canal y un solo periodo completo. Si la vista previa muestra lo que esperabas, repites el proceso con el siguiente canal. Si algo no cuadra, ya sabes dónde buscar, porque el alcance de la prueba era pequeño. Ir de menos a más ahorra correcciones y construye, carga tras carga, un historial en el que puedes confiar.
 
-Nada de esto exige un proyecto largo. Con un par de exportes recientes ya puedes responder dónde se concentra el dinero devuelto y de dónde sale cada cifra que lo dice. Para ver con más detalle qué se admite, revisa la pantalla de fuentes e importaciones.
+Nada de esto exige un proyecto largo. Con un par de exportaciones recientes ya puedes responder qué canal pesa más en tus ventas y de dónde sale cada cifra que lo dice, y con eso tu historial deja de ser un trámite para convertirse en el punto de partida.
 
 ### Lo que no afirmamos
 
-- No afirmamos que existan conectores directos con Amazon, Walmart ni Shopify: están en la hoja de ruta y no damos fechas.
+- No afirmamos que existan conectores directos con Amazon, Walmart ni Shopify: están planeados y no damos fechas.
 - No afirmamos que la carga de exportes de marketplaces sea de autoservicio: hoy se hace con ayuda de nuestro equipo.
 - No afirmamos que el exporte de un canal contenga todo lo necesario. Si faltan columnas, ciertas cifras no se pueden calcular, y la pantalla lo dice en lugar de mostrar un cero.
+- No afirmamos que la lectura de HubSpot cubra todas tus conversaciones: la cobertura se limita a lo que expone su API y puede estar incompleta.
 - No afirmamos que HubSpot se actualice de forma inmediata ni que Rovaq AI escriba en él: la conexión es de solo lectura.
 
 ---
@@ -861,7 +831,7 @@ Contar menciones es un comienzo. Una prioridad necesita además un tamaño, una 
 
 En casi cualquier operación de atención al cliente llega un momento en que alguien lee cien conversaciones y concluye que el problema es el envío. Lo concluye porque la palabra aparece mucho. Es una lectura razonable y es también la forma más común de equivocarse de prioridad.
 
-Este artículo defiende una idea sencilla: un tema que se repite en el texto libre de las conversaciones es una pista, no una prioridad. Para convertirlo en prioridad hace falta un tamaño, una evidencia y una lista honesta de lo que todavía no se sabe.
+Un tema que se repite en el texto libre de las conversaciones es una pista, no una prioridad. Para convertirlo en prioridad hace falta un tamaño, una evidencia y una lista honesta de lo que todavía no se sabe.
 
 ### Repetido no es importante
 
@@ -869,9 +839,9 @@ Contar menciones es lo primero que se intenta y tiene un atractivo evidente: es 
 
 Hay al menos tres razones por las que el conteo engaña:
 
-- El lenguaje del cliente no es el de tu catálogo. Dos personas describen el mismo defecto con palabras distintas y una misma palabra sirve para asuntos que no se parecen. Sin una agrupación cuidadosa, el conteo reparte un problema entre varias filas o junta varios en una.
-- La frecuencia no es el costo. Un motivo muy mencionado y de bajo impacto puede quedar por encima de uno raro y caro si lo único que miras es el volumen.
-- Lo que más se escribe es lo que más se facilita escribir. Los canales y los formularios condicionan de qué se queja la gente y cómo, de modo que parte del patrón viene de la herramienta y no del cliente.
+- **El lenguaje del cliente no es el de tu catálogo.** Dos personas describen el mismo defecto con palabras distintas y una misma palabra sirve para asuntos que no se parecen. Sin una agrupación cuidadosa, el conteo reparte un problema entre varias filas o junta varios en una.
+- **La frecuencia no es el costo.** Un motivo muy mencionado y de bajo impacto puede quedar por encima de uno raro y caro si lo único que miras es el volumen.
+- **Lo que más se escribe es lo que más se facilita escribir.** Los canales y los formularios condicionan de qué se queja la gente y cómo, de modo que parte del patrón viene de la herramienta y no del cliente.
 
 Nada de esto invalida el texto libre. Al contrario, es la fuente más rica que tiene la mayoría de los equipos. Lo que cambia es el papel que se le da: sirve para formular hipótesis, no para cerrarlas.
 
@@ -891,9 +861,7 @@ Esa última parte es la que convierte un mapa en una herramienta de trabajo. Una
 
 #### Lo que no se sabe no vale cero
 
-Hay un error silencioso en casi todos los tableros: cuando falta un dato aparece un cero. Un cero se lee como una buena noticia y por eso es el error más caro de los que no se notan. Si una fuente no respondió, o si no existe una liga confiable entre un motivo y el dinero, lo correcto es decir exactamente eso.
-
-La pantalla sigue esa regla. Lo que no se sabe dice Sin dato y nunca cero, y si una fuente no respondió, esos puntos salen como No disponible ahora. Por eso conviene revisar primero la [confianza de los datos](https://rovaq.ai/producto/confianza-de-los-datos) y leer cada número con su fuente y su fecha de corte.
+En esta pantalla la regla tiene una consecuencia concreta: lo que no se sabe dice Sin dato y nunca cero, y si una fuente no respondió, esos puntos salen como No disponible ahora. Un motivo sin una liga confiable con el dinero no es un motivo barato, es un motivo sin medir. Por qué la diferencia importa tanto se explica en [el artículo sobre procedencia](https://rovaq.ai/blog/procedencia-de-cada-numero); aquí basta revisar primero la [confianza de los datos](https://rovaq.ai/producto/confianza-de-los-datos) y leer cada número con su fuente y su fecha de corte.
 
 ### Exportar sin datos personales
 
@@ -901,7 +869,7 @@ Priorizar rara vez es una decisión de una sola persona. Casi siempre hay que ll
 
 La salida es separar las dos cosas. La exportación de evidencia en CSV por punto de dolor se genera sin datos personales, de modo que puede compartirse con quien necesita ver el patrón sin que viaje información de quien escribió. Compartir la evidencia no debería exigir compartir a las personas.
 
-### Cómo empezar con lo que ya tienes
+### Cómo probar el método con tus conversaciones
 
 No hace falta una herramienta nueva para probar el método. Toma las conversaciones de un periodo completo y sigue estos pasos:
 
@@ -916,9 +884,8 @@ No hace falta una herramienta nueva para probar el método. Toma las conversacio
 
 - No afirmamos que un tema repetido sea un tema que cuesta: la pantalla pone al lado el dinero que arrastra solo cuando existe.
 - No prometemos que cada punto de dolor tenga una cifra de dinero: sin vínculos confirmados entre motivos y pedidos, el dato no está disponible y se dice así.
-- No tratamos un dato desconocido como si fuera cero.
 - No determinamos la causa de un problema: el mapa ordena y muestra evidencia, y la causa la establece quien la revisa.
-- Cuando la inteligencia artificial interviene, clasifica y redacta; no crea cifras, y una persona decide cada acción.
+- No afirmamos que el mapa muestre todos los puntos de dolor: en la gráfica aparecen los ocho mayores.
 
 ---
 
@@ -930,14 +897,14 @@ Una lista corta de prácticas, otra de brechas y las razones para publicar las d
 
 Una página de seguridad suele ser lo primero que revisa una persona de finanzas o de tecnología antes de aceptar una herramienta nueva. También es donde más abundan las frases que nadie puede comprobar, escritas con adjetivos en lugar de hechos.
 
-Rovaq AI trabaja con conversaciones de soporte y con datos de ingreso de un negocio, y eso nos obliga a una postura concreta: decir lo que existe, decir lo que no existe y no llenar el espacio entre ambos con adjetivos. Este artículo explica esa postura y por qué creemos que sirve más a un comprador que una promesa de seguridad total.
+Rovaq AI trabaja con conversaciones de soporte y con datos de ingreso de un negocio, y eso nos obliga a una postura concreta: decir lo que existe, decir lo que no existe y no llenar el espacio entre ambos con adjetivos. Aquí se explica esa postura y por qué creemos que sirve más a un comprador que una promesa de seguridad total.
 
-### Prácticas verificadas
+### Prácticas que describimos
 
 Solo describimos prácticas que podemos señalar en el producto. Hoy son estas:
 
 - Cada organización queda separada de las demás por reglas en la base de datos, no solo por la aplicación.
-- Hay cuatro roles con permisos mínimos. El permiso de administración de plataforma es independiente y no da lectura de los datos de negocio de otras organizaciones.
+- Hay cuatro puestos con permisos mínimos. El permiso de administración de plataforma es independiente y no da lectura de los datos de negocio de otras organizaciones.
 - La entrada es por un enlace enviado al correo, con confirmación de correo, y las sesiones usan cookies protegidas.
 - Los exportes de puntos de dolor y de reclamos se generan sin datos personales.
 - Quedan registradas las operaciones de administración, los cambios de equipo y los borrados por retención.
@@ -945,9 +912,9 @@ Solo describimos prácticas que podemos señalar en el producto. Hoy son estas:
 
 Cada punto está escrito para poder comprobarse. Decir que la autorización se decide en el servidor significa, por ejemplo, que ocultar un elemento del menú no protege una pantalla: lo que protege es la regla que se aplica antes de entregar los datos.
 
-Verificada quiere decir que alguien puede ir al producto y comprobarla, y que la frase se escribió después de comprobarla, no antes. Una práctica que solo existe en una presentación comercial no entra en esta lista, por atractiva que suene.
+Describir una práctica quiere decir que alguien puede ir al producto y comprobarla, y que la frase se escribió pensando en esa comprobación y no en una presentación comercial. Una práctica que solo existe en una presentación no entra en esta lista, por atractiva que suene. Ninguna auditoría externa la ha revisado: léela como una descripción nuestra, no como un aval.
 
-Hay además una regla sobre la inteligencia artificial. Cuando interviene, clasifica y redacta; no crea cifras, y una persona decide cada acción. Nada se envía ni se ejecuta solo.
+Hay además una regla sobre la inteligencia artificial: sus salidas son propuestas que una persona revisa, y nada se envía ni se ejecuta sin esa persona. Dónde pasa la línea entre lo que hace el modelo y lo que no se explica en [el artículo sobre inteligencia artificial](https://rovaq.ai/blog/la-ia-clasifica-las-personas-deciden).
 
 ### Brechas declaradas
 
@@ -955,13 +922,15 @@ La segunda lista pesa tanto como la primera. Lo que todavía no existe es esto:
 
 - No tenemos certificación SOC 2 ni ISO 27001, y no afirmamos cumplimiento de GDPR.
 - No se ha hecho una prueba de penetración externa.
-- La verificación en dos pasos para propietarios está en nuestra hoja de ruta. Hoy no se exige.
+- La verificación en dos pasos para propietarios está planeada. Hoy no se exige.
 - No ofrecemos inicio de sesión único ni una vista de auditoría para el cliente.
 - Hay respaldos diarios de nuestro proveedor, sin recuperación a un punto en el tiempo, y no ofrecemos compromisos de disponibilidad.
 
-Otras mejoras están en la hoja de ruta, como una política de contenido estricta que seguimos endureciendo y una vista de auditoría planeada. No publicamos fechas hasta que podamos cumplirlas.
+Otras mejoras están planeadas, como una política de contenido estricta que seguimos endureciendo y una vista de auditoría. No publicamos fechas hasta que podamos cumplirlas.
 
-Leer una lista de brechas exige distinguir tres cosas: lo que no existe, lo que está planeado y lo que no sabemos. Lo planeado está en la hoja de ruta y no lleva fecha publicada. Lo que no sabemos se dice como tal y no se cuenta a nuestro favor.
+Leer una lista de brechas exige distinguir tres cosas: lo que no existe, lo que está planeado y lo que no sabemos. Lo planeado no lleva fecha publicada. Lo que no sabemos se dice como tal y no se cuenta a nuestro favor.
+
+Un ejemplo de lo último: todavía no hemos terminado de comprobar en producción cada uno de los encabezados de seguridad de las respuestas, y por eso no afirmamos que la configuración real coincida en todo con la prevista. Mientras esa comprobación siga abierta, es un desconocido y se dice así.
 
 El borrado tiene también un límite que conviene decir: no elimina el origen de los datos en tu herramienta ni las copias que mantengas fuera de Rovaq.
 
@@ -984,18 +953,19 @@ Hay un efecto secundario útil. Cuando una brecha se cierre, el cambio podrá le
 
 Más allá de Rovaq AI, estas preguntas sirven con cualquier proveedor:
 
-- Hechos o adjetivos: cada afirmación debería poder señalarse en el producto o en un documento, y no solo describirse con un calificativo.
-- Qué falta: una página que no declara ninguna brecha rara vez significa que no hay ninguna.
-- Alcance y fecha: una práctica sin fecha de revisión puede describir un estado que ya cambió.
-- Qué no cubre: las copias que mantienes fuera de la herramienta quedan fuera del alcance de cualquier borrado del proveedor.
+- **Hechos o adjetivos:** cada afirmación debería poder señalarse en el producto o en un documento, y no solo describirse con un calificativo.
+- **Qué falta:** una página que no declara ninguna brecha rara vez significa que no hay ninguna.
+- **Alcance y fecha:** una práctica sin fecha de revisión puede describir un estado que ya cambió.
+- **Qué no cubre:** las copias que mantienes fuera de la herramienta quedan fuera del alcance de cualquier borrado del proveedor.
 
-La lista completa vive en la página de seguridad y privacidad. Este artículo describe el estado al momento de su publicación, y esa página es la referencia vigente.
+Lo descrito aquí corresponde al estado al momento de su publicación, la fecha que aparece arriba, y no se actualiza solo: si algo cambia después, este texto puede quedar atrás.
 
 ### Lo que no afirmamos
 
 - No afirmamos seguridad total ni ausencia de riesgo: ningún proveedor puede garantizarlas.
 - No afirmamos certificaciones, cumplimiento regulatorio ni auditorías externas, porque no los tenemos.
 - No afirmamos que los datos estén anonimizados.
+- No afirmamos que la configuración de seguridad de producción esté comprobada de punta a punta: esa comprobación sigue abierta.
 - No afirmamos que se registre cada lectura de los datos: se registran las operaciones de administración, los cambios de equipo y los borrados por retención.
 - No prometemos disponibilidad ni fechas de producto.
 - No presentamos las prácticas como suficientes para todo negocio: esa valoración le corresponde a quien compra.
@@ -1010,7 +980,7 @@ Cuando una propuesta trae su evidencia, una persona que decide y un registro de 
 
 En muchos equipos las recomendaciones mueren de la misma manera: alguien las escribe en un documento o las dice en una reunión, nadie las discute con datos y a las pocas semanas ya no se sabe quién iba a hacer qué. La sugerencia no era mala; simplemente no tenía forma de ser discutida.
 
-Este artículo sostiene que una recomendación solo se vuelve útil cuando se puede cuestionar: cuando trae su evidencia a la vista, tiene una persona que decide y deja un registro de lo que pasó después. Con eso, una sugerencia deja de ser una opinión y pasa a ser un hábito del equipo.
+Una recomendación solo se vuelve útil cuando se puede cuestionar: cuando trae su evidencia a la vista, tiene una persona que decide y deja un registro de lo que pasó después. Con eso, una sugerencia deja de ser una opinión y pasa a ser un hábito del equipo.
 
 ### Sin evidencia se ignora
 
@@ -1018,7 +988,7 @@ Una recomendación sin respaldo obliga a quien la recibe a elegir entre confiar 
 
 Con evidencia cambia la conversación. Si la propuesta dice qué observó, de dónde viene cada cifra, por qué se sugiere esa acción y qué se espera lograr, quien decide puede estar en desacuerdo con algo específico: la fuente, el periodo, el supuesto o la expectativa. Ese desacuerdo es justo lo que una recomendación debería provocar.
 
-Imagina que un analista propone revisar la descripción de un producto porque encabeza el dinero devuelto de un canal. Si la propuesta trae el periodo, la fuente y los pedidos de origen, quien lleva el catálogo puede objetar que el periodo es corto o que la causa es el empaque y no la descripción. La objeción mejora la decisión. Sin esos datos solo queda la opinión de uno contra la del otro.
+Imagina que un analista propone agregar una guía de tallas a una categoría porque las conversaciones de esa categoría repiten el mismo motivo de cambio. Si la propuesta trae el periodo, la fuente y las conversaciones de origen, quien lleva el catálogo puede objetar que el periodo es corto o que el motivo es el material y no la talla. La objeción mejora la decisión. Sin esos datos solo queda la opinión de uno contra la del otro.
 
 Una propuesta discutible responde cuatro preguntas:
 
@@ -1033,9 +1003,9 @@ Una propuesta discutible responde cuatro preguntas:
 
 La decisión necesita un vocabulario pequeño y claro. En la pantalla [Por decidir](https://rovaq.ai/producto/por-decidir) de Rovaq AI, una persona elige entre tres respuestas, y cada una tiene consecuencias definidas.
 
-- Proceder crea la intervención y los borradores que una persona revisa y envía. Nada se envía solo.
-- Ajustar pide una razón, que queda registrada.
-- Descartar pide una razón, que queda registrada. Reabrir una propuesta descartada crea un evento nuevo y no borra nada.
+- **Proceder** crea la intervención y los borradores que una persona revisa y envía. Nada se envía solo.
+- **Ajustar** pide una razón, que queda registrada.
+- **Descartar** pide una razón, que queda registrada. Reabrir una propuesta descartada crea un evento nuevo y no borra nada.
 
 Pedir la razón no es un trámite. Una propuesta descartada con motivo le enseña al equipo qué criterios pesan, y evita que la misma idea vuelva a empezar de cero cada vez que alguien la propone.
 
@@ -1061,7 +1031,7 @@ El método no depende de una herramienta. Puedes empezar con una hoja compartida
 4. Mide antes y después con lo observado, y escribe lo que no se pudo medir como no medido.
 5. Revisa de vez en cuando las propuestas descartadas: algunas merecen reabrirse, y reabrir no borra lo anterior.
 
-Una buena primera propuesta suele nacer de un hallazgo concreto, como el producto que encabeza el dinero devuelto de un canal, que se explica en [el artículo sobre reembolsos](https://rovaq.ai/blog/reembolsos-fuga-que-se-puede-localizar).
+Una buena primera propuesta suele nacer de un hallazgo concreto, de los que se describen en [el artículo sobre reembolsos](https://rovaq.ai/blog/reembolsos-fuga-que-se-puede-localizar) y en [el de puntos de dolor](https://rovaq.ai/blog/puntos-de-dolor-del-texto-a-la-prioridad), y no de una corazonada.
 
 ### Lo que no afirmamos
 
@@ -1069,4 +1039,4 @@ Una buena primera propuesta suele nacer de un hallazgo concreto, como el product
 - No mostramos casos ni resultados de clientes; este artículo describe lo que el producto permite.
 - No prometemos ningún beneficio económico: el resultado se mide con dato observado y, sin dato, se dice que no lo hay.
 - No decimos que una propuesta descartada sea un error: puede ser la decisión correcta y debe quedar registrada.
-- Cuando la inteligencia artificial interviene, clasifica y redacta; no crea cifras, y nada se envía ni se ejecuta sin una persona.
+- No afirmamos que el producto decida por el equipo: la elección entre Proceder, Ajustar y Descartar la hace una persona, y nada se envía ni se ejecuta sin ella.

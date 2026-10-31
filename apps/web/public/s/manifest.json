@@ -2225,60 +2225,60 @@
  },
  "md": {
   "en/a1": {
-   "brotli": 2155,
-   "bytes": 6450,
-   "hash": "03e81355",
-   "sha256": "03e81355a780fc2f60603fe2f30ffb63f26d59dfb782c06a6d8a0ad7b6093333",
-   "url": "/s/md/en/a1.03e81355.md"
+   "brotli": 2128,
+   "bytes": 6348,
+   "hash": "abfa2620",
+   "sha256": "abfa2620d93016a89b22e6a258bfb2d7160855d39fa8ec215e47cd6db7d6b33b",
+   "url": "/s/md/en/a1.abfa2620.md"
   },
   "en/a2": {
-   "brotli": 2203,
-   "bytes": 6682,
-   "hash": "378b659c",
-   "sha256": "378b659cf3a14605e7fbded6fe57c177a5497d53ebc97f5c29b44b4aef37529d",
-   "url": "/s/md/en/a2.378b659c.md"
+   "brotli": 2246,
+   "bytes": 6809,
+   "hash": "f3122a7c",
+   "sha256": "f3122a7cf6cb47b9a8b3c717e0bf14a1083286786dc1f82773724c71a74ec5f1",
+   "url": "/s/md/en/a2.f3122a7c.md"
   },
   "en/a3": {
-   "brotli": 2079,
-   "bytes": 6335,
-   "hash": "59e387df",
-   "sha256": "59e387df57bcc91ac0c1fcff4748c29c3d38af2d7d1fefd224ac5016f13856da",
-   "url": "/s/md/en/a3.59e387df.md"
+   "brotli": 2089,
+   "bytes": 6334,
+   "hash": "446048ed",
+   "sha256": "446048ed5d475b16315ee94262aea747ab38326c264973aec4404d659fec77fd",
+   "url": "/s/md/en/a3.446048ed.md"
   },
   "en/a4": {
-   "brotli": 2127,
-   "bytes": 6365,
-   "hash": "759392f5",
-   "sha256": "759392f529b4cf7812a82414a46546622300de3de3f19fb7ca754d6abc0adc08",
-   "url": "/s/md/en/a4.759392f5.md"
+   "brotli": 2183,
+   "bytes": 6570,
+   "hash": "174edd42",
+   "sha256": "174edd42c877b21a0da387c2bae661b20fed53a944e6a3ec49e8c390805cb2f2",
+   "url": "/s/md/en/a4.174edd42.md"
   },
   "en/a5": {
-   "brotli": 2104,
-   "bytes": 6305,
-   "hash": "11df9684",
-   "sha256": "11df96841e64aca2082dd72b8de53dcf1b965caf239046ce395246059426a5ba",
-   "url": "/s/md/en/a5.11df9684.md"
+   "brotli": 2133,
+   "bytes": 6486,
+   "hash": "3acc9eff",
+   "sha256": "3acc9effe0d0c0e55560ed288cf61587ccc33c8d2dc3625312a7d126e1d38c4b",
+   "url": "/s/md/en/a5.3acc9eff.md"
   },
   "en/a6": {
-   "brotli": 2206,
-   "bytes": 6684,
-   "hash": "dd6d76d3",
-   "sha256": "dd6d76d3ff6ac72b82d90e5698552b4c8a62832baeb7e65a334ec8a5a79bc409",
-   "url": "/s/md/en/a6.dd6d76d3.md"
+   "brotli": 2143,
+   "bytes": 6508,
+   "hash": "30a90b4f",
+   "sha256": "30a90b4f3d746e4911fdf4a271bfce2d48c3c0d4a5fe9aa9dfc4d12a8e0e2289",
+   "url": "/s/md/en/a6.30a90b4f.md"
   },
   "en/a7": {
-   "brotli": 1995,
-   "bytes": 6193,
-   "hash": "7262e3b4",
-   "sha256": "7262e3b4616591b74b46d6f133f7fcd93f29dccb318e291c8f118c1ea16147e3",
-   "url": "/s/md/en/a7.7262e3b4.md"
+   "brotli": 2191,
+   "bytes": 6839,
+   "hash": "21d4ad3d",
+   "sha256": "21d4ad3de39a44f7ade3748a2b295cb0ce5259879d9aacd022ede86a9b54e6a2",
+   "url": "/s/md/en/a7.21d4ad3d.md"
   },
   "en/a8": {
-   "brotli": 1992,
-   "bytes": 6391,
-   "hash": "1e80b0ea",
-   "sha256": "1e80b0ea35fbcacd0e5d70a2123f4b7d574e2cdad578c825ce86b8c7084ebce3",
-   "url": "/s/md/en/a8.1e80b0ea.md"
+   "brotli": 2034,
+   "bytes": 6474,
+   "hash": "87bd47c8",
+   "sha256": "87bd47c82f948838d51a05421fed8c9c002161971ecb7b9e7af80e577068c686",
+   "url": "/s/md/en/a8.87bd47c8.md"
   },
   "en/analista": {
    "brotli": 467,
@@ -2288,11 +2288,11 @@
    "url": "/s/md/en/analista.45c3f66f.md"
   },
   "en/blog": {
-   "brotli": 1375,
-   "bytes": 4456,
-   "hash": "915f4a30",
-   "sha256": "915f4a30af73f19366250ec329f36e88b2728b7942d1075587b4a01b395f8d5c",
-   "url": "/s/md/en/blog.915f4a30.md"
+   "brotli": 1129,
+   "bytes": 3609,
+   "hash": "7df77b84",
+   "sha256": "7df77b8492b59ed8e6215494785d2e35143fb0a68dacb18bc0bbbbbf61185c3c",
+   "url": "/s/md/en/blog.7df77b84.md"
   },
   "en/confianza-de-los-datos": {
    "brotli": 506,
@@ -2300,13 +2300,6 @@
    "hash": "7a65c5e4",
    "sha256": "7a65c5e4aa44e4351eedc73cd5c3e2d1e5e9e8852820c50aa05519baac32d083",
    "url": "/s/md/en/confianza-de-los-datos.7a65c5e4.md"
-  },
-  "en/estado": {
-   "brotli": 585,
-   "bytes": 1738,
-   "hash": "a39ddff2",
-   "sha256": "a39ddff261931e413341c365730088f0dc8d1cd667c23556c541403ded4b86a7",
-   "url": "/s/md/en/estado.a39ddff2.md"
   },
   "en/finanzas": {
    "brotli": 626,
@@ -2372,60 +2365,60 @@
    "url": "/s/md/en/solicitar-acceso.c899afd8.md"
   },
   "es/a1": {
-   "brotli": 2506,
-   "bytes": 6692,
-   "hash": "692232c1",
-   "sha256": "692232c1554fd63d05f054b10dcd46fd36e2448f9e72a2ecfbe0afc8574090a8",
-   "url": "/s/md/es/a1.692232c1.md"
+   "brotli": 2481,
+   "bytes": 6598,
+   "hash": "120cd22c",
+   "sha256": "120cd22c8d09105e900b84b436bf61e75cec7e8d4404c039cccd8deff24fbc00",
+   "url": "/s/md/es/a1.120cd22c.md"
   },
   "es/a2": {
-   "brotli": 2616,
-   "bytes": 6973,
-   "hash": "e7d49fff",
-   "sha256": "e7d49fff0e68164da4c204f4c2d855b406ad9a8dd60bdfa48f3e0ae3917dc506",
-   "url": "/s/md/es/a2.e7d49fff.md"
+   "brotli": 2680,
+   "bytes": 7113,
+   "hash": "9356cd43",
+   "sha256": "9356cd43422874da7859bd19f870f4c5b38bb18d97724ef858d5d9751e4321da",
+   "url": "/s/md/es/a2.9356cd43.md"
   },
   "es/a3": {
-   "brotli": 2449,
-   "bytes": 6433,
-   "hash": "cc874be7",
-   "sha256": "cc874be7ae905869dc9a2f8f8fa768d08ba250a4955ecdb2dae51e1882691239",
-   "url": "/s/md/es/a3.cc874be7.md"
+   "brotli": 2426,
+   "bytes": 6422,
+   "hash": "6d2906c7",
+   "sha256": "6d2906c7600a15339cb54f17e9579ea7df035306ea6f7b4ef031a857572662de",
+   "url": "/s/md/es/a3.6d2906c7.md"
   },
   "es/a4": {
-   "brotli": 2406,
-   "bytes": 6436,
-   "hash": "ebb7d041",
-   "sha256": "ebb7d0416169fc1ff2fedd9b6d778590d01b62eca38fc799c84e0e9649df6923",
-   "url": "/s/md/es/a4.ebb7d041.md"
+   "brotli": 2471,
+   "bytes": 6645,
+   "hash": "eb04995c",
+   "sha256": "eb04995c47cde71ff31d59e39fab78623daeb820d177a855a6b47b8552430329",
+   "url": "/s/md/es/a4.eb04995c.md"
   },
   "es/a5": {
-   "brotli": 2448,
-   "bytes": 6482,
-   "hash": "4ca605f0",
-   "sha256": "4ca605f0cd8b86f50cb7d4a8c7d3527cb9291bfc03e990c680631c6edc373b56",
-   "url": "/s/md/es/a5.4ca605f0.md"
+   "brotli": 2495,
+   "bytes": 6652,
+   "hash": "04f88a67",
+   "sha256": "04f88a67ea09c8f8fcc17e95e0d89d46907557e9b1f24c1dcce18baef5778942",
+   "url": "/s/md/es/a5.04f88a67.md"
   },
   "es/a6": {
-   "brotli": 2561,
-   "bytes": 6923,
-   "hash": "a7c016b0",
-   "sha256": "a7c016b0907600c355423a2bdf84c423ea9d1c3b6f198e25f82f52b1a35a7dd9",
-   "url": "/s/md/es/a6.a7c016b0.md"
+   "brotli": 2492,
+   "bytes": 6774,
+   "hash": "0f3cac9c",
+   "sha256": "0f3cac9c7bae42e1efc053df2de13e60d1265d81f8aaa3e26ee0c637e531e00a",
+   "url": "/s/md/es/a6.0f3cac9c.md"
   },
   "es/a7": {
-   "brotli": 2417,
-   "bytes": 6632,
-   "hash": "faa32e9e",
-   "sha256": "faa32e9e6d495d5133b6901918d13bd63bfc6d692e90b20e51b5f329ac0d93e6",
-   "url": "/s/md/es/a7.faa32e9e.md"
+   "brotli": 2640,
+   "bytes": 7323,
+   "hash": "a53f5c58",
+   "sha256": "a53f5c58a972dc6398b4fa0abc159c333218d1b72ddccc183f8bfc54812cba36",
+   "url": "/s/md/es/a7.a53f5c58.md"
   },
   "es/a8": {
-   "brotli": 2355,
-   "bytes": 6448,
-   "hash": "03b374ff",
-   "sha256": "03b374ffc40167ce17165279d6021610be3b572a0441f4cf6e1df4462b803ba3",
-   "url": "/s/md/es/a8.03b374ff.md"
+   "brotli": 2388,
+   "bytes": 6566,
+   "hash": "b2f0820b",
+   "sha256": "b2f0820b48d4f3f8151f4d16bc58091d1fa8b6e7d60e37ea02458ebb4f7a0d66",
+   "url": "/s/md/es/a8.b2f0820b.md"
   },
   "es/analista": {
    "brotli": 530,
@@ -2435,11 +2428,11 @@
    "url": "/s/md/es/analista.d945dc72.md"
   },
   "es/blog": {
-   "brotli": 1621,
-   "bytes": 4761,
-   "hash": "2865276d",
-   "sha256": "2865276d3e0b42759d32d0e3b225df1568a3c122caaa4779d5afe103a9179a93",
-   "url": "/s/md/es/blog.2865276d.md"
+   "brotli": 1334,
+   "bytes": 3818,
+   "hash": "bdd5b420",
+   "sha256": "bdd5b420ab6c7bf98a9c5103468f3e539e2e757671b6ed5cf3156cb04f78b996",
+   "url": "/s/md/es/blog.bdd5b420.md"
   },
   "es/confianza-de-los-datos": {
    "brotli": 586,
@@ -2447,13 +2440,6 @@
    "hash": "2eeb26be",
    "sha256": "2eeb26bea6f15e6b28e5d447af6b35a1ecfde2929fa5f2d672a13b180c68e7c1",
    "url": "/s/md/es/confianza-de-los-datos.2eeb26be.md"
-  },
-  "es/estado": {
-   "brotli": 695,
-   "bytes": 1831,
-   "hash": "c01b952b",
-   "sha256": "c01b952be0bae366c07138b35f017c5eeffafbf04947da3e2d82b8447b60d3be",
-   "url": "/s/md/es/estado.c01b952b.md"
   },
   "es/finanzas": {
    "brotli": 732,

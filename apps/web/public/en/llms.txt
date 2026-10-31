@@ -28,19 +28,18 @@ Notes for anyone citing this site. Gross revenue, never margin. What is unknown 
 ## Company and contact
 
 - [Request access and review your figures with their evidence.](https://rovaq.ai/s/md/en/solicitar-acceso.c899afd8.md): Write to us with your role and the tools you use. We tell you what can be loaded today and what is still on the roadmap. Pricing is not published yet.
-- [Service status](https://rovaq.ai/s/md/en/estado.a39ddff2.md): How to identify the deployed version of Rovaq AI and how to report a problem. This page is not an availability commitment or a service level agreement.
 
 ## Blog
 
-- [Rovaq AI blog](https://rovaq.ai/s/md/en/blog.915f4a30.md): Articles on reading refunds, the provenance of figures, pain points and evidence-based decisions for businesses that sell through marketplaces.
-- [Refunds are not a fixed cost: they are a leak you can locate](https://rovaq.ai/s/md/en/a1.03e81355.md): A single refund total does not say what to tackle first. Learn to read returned money by channel, product and month, and what an evidence package holds.
-- [Where every number comes from: provenance as a requirement, not decoration](https://rovaq.ai/s/md/en/a2.378b659c.md): A dashboard without provenance forces you to believe it. With a cut-off date, a source and what is still unknown, a figure can be debated. Here is how.
-- [AI classifies and drafts; people decide](https://rovaq.ai/s/md/en/a3.59e387df.md): A tool that invents amounts loses trust at the first report. We explain the principle that AI never creates figures and that a person decides every action.
-- [One role, one view: why each role sees only what belongs to it](https://rovaq.ai/s/md/en/a4.759392f5.md): Showing less is a security and clarity feature. How views are split among owner, analyst, operator and viewer, with access decided on the server.
-- [Your marketplace exports are already data: how to load them with provenance](https://rovaq.ai/s/md/en/a5.11df9684.md): Before waiting for a direct connector, your Excel and CSV history can be loaded with a preview and keep where each row came from. This works today.
-- [Pain points: from free text in conversations to a priority backed by evidence](https://rovaq.ai/s/md/en/a6.dd6d76d3.md): A topic repeated in conversations is not a topic that matters. How to go from free text in your tickets to a priority with size, evidence and gaps.
-- [What we claim and what we do not claim about security](https://rovaq.ai/s/md/en/a7.7262e3b4.md): For a buyer, an honest list of practices and gaps beats a promise of total security. What we do, what we do not yet do and why we say so openly.
-- [A recommendation must be debatable: evidence, approval and outcome](https://rovaq.ai/s/md/en/a8.1e80b0ea.md): A suggestion without evidence gets ignored. With evidence, an owner and a recorded outcome it becomes a team habit: proposal, decision and outcome.
+- [Rovaq AI blog](https://rovaq.ai/s/md/en/blog.7df77b84.md): Articles on reading refunds, the provenance of figures, pain points and evidence-based decisions for businesses that sell through marketplaces.
+- [Refunds are not a fixed cost: they are a leak you can locate](https://rovaq.ai/s/md/en/a1.abfa2620.md): A single refund total does not say what to tackle first. Learn to read returned money by channel, product and month, and what an evidence package holds.
+- [Where every number comes from: provenance as a requirement, not decoration](https://rovaq.ai/s/md/en/a2.f3122a7c.md): A dashboard without provenance forces you to believe it. With a cut-off date, a source and what is still unknown, a figure can be debated. Here is how.
+- [AI classifies and drafts; people decide](https://rovaq.ai/s/md/en/a3.446048ed.md): A tool that invents amounts loses trust at the first report. We explain the principle that AI never creates figures and that a person decides every action.
+- [One role, one view: why each role sees only what belongs to it](https://rovaq.ai/s/md/en/a4.174edd42.md): Showing less is a security and clarity feature. How views are split among owner, analyst, operator and viewer, with access decided on the server.
+- [Your marketplace exports are already data: how to load them with provenance](https://rovaq.ai/s/md/en/a5.3acc9eff.md): Before waiting for a direct connector, your Excel and CSV history can be loaded with a preview and keep where each row came from. This works today.
+- [Pain points: from free text in conversations to a priority backed by evidence](https://rovaq.ai/s/md/en/a6.30a90b4f.md): A topic repeated in conversations is not a topic that matters. How to go from free text in your tickets to a priority with size, evidence and gaps.
+- [What we claim and what we do not claim about security](https://rovaq.ai/s/md/en/a7.21d4ad3d.md): For a buyer, an honest list of practices and gaps beats a promise of total security. What we do, what we do not yet do and why we say so openly.
+- [A recommendation must be debatable: evidence, approval and outcome](https://rovaq.ai/s/md/en/a8.87bd47c8.md): A suggestion without evidence gets ignored. With evidence, an owner and a recorded outcome it becomes a team habit: proposal, decision and outcome.
 
 ## Full reference
 

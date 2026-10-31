@@ -124,7 +124,7 @@ const EN = en as Record<string, string>;
 const sinVars = (t: string) => t.replace(/\{\w+\}/g, '');
 const SUELTAS_ES = ['Cancelar', 'Copiar', 'Copiado', 'Leyenda', 'Filtros', 'Tendencia', 'Quitar', 'Cargando', 'Guardar', 'Cerrar', 'Buscar', 'Eliminar', 'Editar', 'Aceptar', 'Continuar', 'Volver', 'Siguiente', 'Anterior', 'Aplicar', 'Enviar', 'Limpiar', 'Todos', 'Todas', 'Ninguno', 'Ninguna', 'Detalle', 'Fecha', 'Estado', 'Acciones', 'Opciones', 'Confirmar', 'Salir', 'Reintentar', 'Aviso', 'Alerta', 'Cobertura', 'Ingresos', 'Reembolsos', 'Pedidos', 'Ventas', 'Clientes', 'Problemas'];
 test('inglés: ningún valor es una palabra suelta en español ni lleva comillas angulares «» (solo el autónimo «Español»)', () => {
-  const sueltas = Object.entries(EN).filter(([k, v]) => SUELTAS_ES.includes(v.trim())).map(([k, v]) => `${k}=${v}`);
+  const sueltas = Object.entries(EN).filter(([, v]) => SUELTAS_ES.includes(v.trim())).map(([k, v]) => `${k}=${v}`);
   assert.deepEqual(sueltas, [], 'palabra suelta en español en el diccionario inglés');
   assert.deepEqual(Object.entries(EN).filter(([, v]) => /[«»]/.test(v)).map(([k]) => k), [], 'comillas angulares en inglés: usa “…”');
   assert.equal(EN['idioma.es'], 'Español');

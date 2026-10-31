@@ -73,7 +73,7 @@ test('el origen del sitio es rovaq.ai por omisión y solo se sobreescribe con ht
 });
 test('robots y sitemap siguen decidiendo por host y el layout de la app conserva el arranque limpio sin pantalla de carga en rutas públicas', () => {
   assert.match(leer('src/app/robots.ts'), /robotsParaHost\(.*host/s); assert.match(leer('src/app/sitemap.ts'), /ES_HOST_LANDING/);
-  assert.match(leer('src/app/(app)/layout.tsx'), /login\|auth\|platform\|landing/);
+  assert.match(leer('src/app/(app)/layout.tsx'), /\^\\\\\/\(platform\|landing\)/);
 });
 test('dos raíces: no hay app/layout.tsx; la app lee la cookie de idioma y el sitio fija lang por la ruta, ambos sin cabecera x-rovaq-lang', () => {
   assert.ok(!existsSync(join(import.meta.dirname, '../src/app/layout.tsx')));

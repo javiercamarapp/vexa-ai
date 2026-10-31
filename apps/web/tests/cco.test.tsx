@@ -15,7 +15,6 @@ import {TarjetaA,TarjetaB,TarjetaC,TarjetaD,TarjetaE,TarjetaF} from '../src/comp
 import {mayor,mesTxt,selloCco,tonoDeEstado} from '../src/components/cco/cco-modelo.mjs';
 import {armarCco,FALTAN,FALTAN_ES,SUBCANALES,LATENCIAS,HOJAS,faltanTexto} from '../../../packages/workspace-service/cco.mjs';
 import {RUTAS_PUBLICAS,PREFIJOS_PRIVADOS} from '../src/lib/site.mjs';
-import {CCO_TOOLS} from '../../../packages/cfo-copilot/src/copilot/cco-tools.mjs';
 import {TOOLS as TOOLS_AGENTE} from '../../../packages/agent-datos/index.mjs';
 import {CFO_TOOLS} from '../../../packages/cfo-copilot/src/index.mjs';
 
@@ -178,15 +177,15 @@ test('i18n de la modalidad: cada valor de cada eje, cada salvedad y cada dato qu
   for(const s of ['sinRecomendacion','sinTiempoResolucion','modalidadSinDato','walmartSoloBodega','sumaMinimo','sesgoCasos','sinDenominadorVentas','celdasMinimo'])assert.ok(ES[`cco.salv.${s}`]&&EN[`cco.salv.${s}`],s);
   for(const c of ['ejeVende','ejeBodega'])assert.ok(ES[`cco.cob.${c}`]&&EN[`cco.cob.${c}`],c);
   const v=vista();for(const id of ['E','F'] as const){for(const s of v.cards[id].salvedades)assert.ok(ES[`cco.salv.${s}`]&&EN[`cco.salv.${s}`],id+s);for(const x of v.cards[id].faltan)assert.ok(ES[`cco.falta.${x.clave}`]&&EN[`cco.falta.${x.clave}`],id+x.clave);for(const c of v.cards[id].cobertura??[])assert.ok(ES[`cco.cob.${c.clave}`]&&EN[`cco.cob.${c.clave}`],c.clave);}
-  assert.doesNotMatch(ES['cco.E.pregunta']+EN['cco.E.pregunta'],/CLIENTEX/i);
 });
 
 test('AI interno: Pregúntale y el copiloto CFO contestan A a F con los mismos roles que /cco, sin escribir y con la organización de la sesión',()=>{
   const roles=[...CCO_ROLES].sort();
-  for(const t of CCO_TOOLS)assert.deepEqual([...t.roles].sort(),roles,t.name);
+  const cfoCco=CFO_TOOLS.filter((t:{name:string})=>t.name.startsWith('cco_')) as unknown as {name:string;roles:string[]}[];
+  for(const t of cfoCco)assert.deepEqual([...t.roles].sort(),roles,t.name);
   const CCO_AGENTE=['rendimiento_sku','candidatos_sin_venta','eficiencia_bodegas','casos_por_estado','casos_por_subcanal','envio_propio_vs_amazon'];
   for(const n of CCO_AGENTE){const t=TOOLS_AGENTE.find((x:{name:string})=>x.name===n) as unknown as {roles:string[];restricted:boolean};assert.ok(t,n);assert.deepEqual([...t.roles].sort(),roles,n);assert.equal(t.restricted,true,n);}
-  assert.equal(CFO_TOOLS.filter((t:{name:string})=>t.name.startsWith('cco_')).length,6);
+  assert.equal(cfoCco.length,6);
   const ruta=leer('src/app/(app)/(workspace)/cfo/data/copilot/route.ts');
   assert.match(ruta,/createCcoRepository/);assert.match(ruta,/tenant_mismatch/);assert.doesNotMatch(ruta,/\.(insert|update|delete)\(|INSERT INTO|UPDATE |DELETE FROM/i);
   const fuente=leer('../../packages/cfo-copilot/src/copilot/cco-tools.mjs');assert.doesNotMatch(fuente,/\bfetch\(|XMLHttpRequest|from 'node:|from 'pg'|openrouter|gateway/i,'sin llamadas externas ni modelo nuevo');

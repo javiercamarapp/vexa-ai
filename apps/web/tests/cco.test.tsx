@@ -15,6 +15,8 @@ import {TarjetaA,TarjetaB,TarjetaC,TarjetaD,TarjetaE,TarjetaF} from '../src/comp
 import {mayor,mesTxt,selloCco,tonoDeEstado} from '../src/components/cco/cco-modelo.mjs';
 import {armarCco,FALTAN,FALTAN_ES,SUBCANALES,LATENCIAS,HOJAS,faltanTexto} from '../../../packages/workspace-service/cco.mjs';
 import {RUTAS_PUBLICAS,PREFIJOS_PRIVADOS} from '../src/lib/site.mjs';
+import {TOOLS as TOOLS_AGENTE} from '../../../packages/agent-datos/index.mjs';
+import {CFO_TOOLS} from '../../../packages/cfo-copilot/src/index.mjs';
 
 const leer=(rel:string)=>fs.readFileSync(new URL('../'+rel,import.meta.url),'utf8');
 const ES=es as Record<string,string>,EN=en as Record<string,string>;
@@ -99,7 +101,8 @@ const raw=()=>({
     {channel:'amazon',sku_base:'',currency:'USD',exponent:2,order_lines:5,order_gross_minor:'1000',refund_n:0,refund_n_unknown_amount:0,refund_amount_minor:'0',refunds_per_100_lines:0},
     {channel:'bestbuy',sku_base:'',currency:'USD',exponent:2,order_lines:30,order_gross_minor:'90000',refund_n:null,refund_n_unknown_amount:null,refund_amount_minor:null,refunds_per_100_lines:null}]),
   sinVenta:ok([{sku_base:'SYN-OLD',first_sale_month:'2025-10-01',last_sale_month:'2026-05-01',months_without_sale:4,lines_last_3m:0,lines_last_6m:0,lines_last_9m:12,channels:['amazon'],skus_with_sales:40,reference_month:'2026-09-01',data_through:'2026-10-02'}]),
-  defecto:ok([]),hoja:ok([]),subcanal:ok([cel('amazon_cumplido_por_piloto',null,15)]),
+  defecto:ok([]),hoja:ok([]),subcanal:ok([cel('amazon_cumplido_por_piloto',null,15),cel('amazon_com',null,8),cel('walmart_cumplido_por_walmart',null,6),cel('lowes',null,9)]),
+  modalidad:ok([{dim:'subcanal_tipo',d1:'amazon_cumplido_por_piloto',d2:'reembolso',n:7,es_otros:false},{dim:'subcanal_defecto',d1:'amazon_cumplido_por_piloto',d2:'defectuoso',n:5,es_otros:false},{dim:'sku_subcanal',d1:'SYN-A',d2:'amazon_cumplido_por_piloto',n:9,es_otros:false},{dim:'sku_subcanal',d1:'SYN-A',d2:'amazon_com',n:5,es_otros:false}]),
   bodLat:ok([cel('BODEGAB-USTX','2_dias',9),cel(null,null,6,true)]),bodMot:ok([]),
   cob:ok([{rows_total:40,with_retailer:30,with_sku:30,with_warehouse:20,with_latency:9,with_address:10,sheets:3,cutoff:'2026-10-05T00:00:00Z'}]),
 });
@@ -108,22 +111,22 @@ const geo=()=>({status:'ok',generatedAt:'2026-10-28T12:00:00.000Z',minimoPorCeld
 const render=(idioma:'es'|'en',nodo:React.ReactElement)=>renderToStaticMarkup(<IdiomaProvider idioma={idioma}>{nodo}</IdiomaProvider>);
 const vista=()=>armarCco(raw(),geo(),{now:new Date('2026-10-28T12:00:00Z')});
 
-test('las seis tarjetas llevan su insignia: A a D con salvedad, E y F falta dato; ninguna Lista porque a ninguna le sobran datos',()=>{
-  const v=vista();assert.deepEqual(Object.values(v.cards).map(c=>c.estado),['salvedad','salvedad','salvedad','salvedad','falta','falta']);
-  assert.deepEqual(v.resumen,{listo:0,salvedad:4,falta:2});
+test('las seis tarjetas llevan su insignia: las seis con salvedad (E y F ya miden casos por modalidad); ninguna Lista porque a ninguna le sobran datos',()=>{
+  const v=vista();assert.deepEqual(Object.values(v.cards).map(c=>c.estado),['salvedad','salvedad','salvedad','salvedad','salvedad','salvedad']);
+  assert.deepEqual(v.resumen,{listo:0,salvedad:6,falta:0});
 });
 test('marcado en español: insignias, sello, ventana, «Sin dato» donde no se sabe y a quién pedir lo que falta',()=>{
   const v=vista();const c=v.cards,m=v.generatedAt;
   const html=[render('es',<TarjetaA card={c.A} minimo={5} consultado={m}/>),render('es',<TarjetaB card={c.B} minimo={5} consultado={m}/>),render('es',<TarjetaC card={c.C} minimo={5} consultado={m}/>),render('es',<TarjetaD card={c.D} minimo={5} consultado={m}/>),render('es',<TarjetaE card={c.E} minimo={5} consultado={m}/>),render('es',<TarjetaF card={c.F} minimo={5} consultado={m}/>)];
   const todo=html.join('\n');
-  for(const x of ['Con salvedad','Falta dato','Observado','Inferido','Libro económico','Tracker de Excel','Pedir a Responsable A','Pedir a Responsable B','Sin dato','ventana común','Menos de 5'])assert.ok(todo.includes(x),'falta «'+x+'»');
+  for(const x of ['Con salvedad','Observado','Inferido','Libro económico','Tracker de Excel','Pedir a Responsable A','Pedir a Responsable B','Sin dato','ventana común','Menos de 5'])assert.ok(todo.includes(x),'falta «'+x+'»');
   assert.doesNotMatch(todo,/NaN|undefined|\[object|cco\.[a-zA-Z]+\.|>null</,'sin valores crudos ni claves sin traducir');
   assert.doesNotMatch(todo,/ style=/,'sin atributos style en las tarjetas');
-  assert.ok(html[5].includes('Sin dato: no hay costo de envío'),'F siempre sin dato');assert.ok(!/<td[^>]*>\s*0\s*<\/td>/.test(html[0]),'ningún desconocido pintado como 0');
+  assert.ok(!html[5].includes('Sin dato: no hay costo de envío'),'F con casos reales ya no dice que no hay nada');assert.ok(!/<td[^>]*>\s*0\s*<\/td>/.test(html[0]),'ningún desconocido pintado como 0');
 });
 test('marcado en inglés: sin claves ni español colado',()=>{
   const v=vista();const todo=[render('en',<TarjetaA card={v.cards.A} minimo={5} consultado={v.generatedAt}/>),render('en',<TarjetaF card={v.cards.F} minimo={5} consultado={v.generatedAt}/>),render('en',<TarjetaE card={v.cards.E} minimo={5} consultado={v.generatedAt}/>)].join('\n');
-  for(const x of ['With caveats','Missing data','Ask Responsable A','Ask Responsable B','No data','common window'])assert.ok(todo.includes(x),'falta «'+x+'»');
+  for(const x of ['With caveats','Ask Responsable A','Ask Responsable B','No data','common window'])assert.ok(todo.includes(x),'falta «'+x+'»');
   assert.doesNotMatch(todo,/Con salvedad|Falta dato|Pedir a|Sin dato|cco\./);
 });
 test('estados vacíos honestos: sin datos o sin migración no hay cifras, y se dice',()=>{
@@ -139,4 +142,51 @@ test('diseño: los componentes CCO no usan atributos style ni colores fijos; el 
   const css=leer('src/components/cco/cco.css');assert.doesNotMatch(css,/#[0-9a-f]{3,8}\b/i,'sin colores fijos');
   for(const m of css.matchAll(/border-radius:\s*([^;}]+)/g))assert.match(m[1].trim(),/^(0|8px|12px|999px|50%|inherit|var\(--ui-radius(?:-sm)?\))$/);
   for(const m of css.matchAll(/font(?:-size)?:\s*(?:[a-z0-9 ]*?\s)?(\d+)px/g))assert.ok(+m[1]>=12,'texto menor de 12 px: '+m[0]);
+});
+
+// ---- E y F: modalidad (T33) ----
+test('E y F en español: ejes, «La empresa» y «El marketplace», conteos ocultos como «Menos de 5», y nunca una recomendación ni un cero inventado',()=>{
+  const v=vista();const e=render('es',<TarjetaE card={v.cards.E} minimo={5} consultado={v.generatedAt}/>),f=render('es',<TarjetaF card={v.cards.F} minimo={5} consultado={v.generatedAt}/>);
+  for(const x of ['Quién vende','Marketplace','La empresa','El marketplace','Vende la empresa','Vende el marketplace','Menos de 5','Pedir a Responsable B','Pedir a Responsable A','Con salvedad','Tracker de Excel','No se puede decir','SYN-A'])assert.ok(e.includes(x),'E falta «'+x+'»');
+  for(const x of ['Bodega de origen','Sale de la bodega de la empresa','Sale de la bodega del marketplace','Walmart no compra producto','Pedir a Responsable A'])assert.ok(f.includes(x),'F falta «'+x+'»');
+  for(const html of [e,f]){
+    assert.doesNotMatch(html,/NaN|undefined|\[object|cco\.[a-zA-Z]+\.|>null</);assert.doesNotMatch(html,/ style=/);
+    assert.doesNotMatch(html,/\bSe recomienda\b|Recomendamos|\bConviene (vender|enviar)/,'ninguna recomendación sin venta ni costo');
+    assert.ok(!/<td[^>]*>\s*0\s*<\/td>/.test(html),'un conteo oculto no se pinta como 0');
+  }
+});
+test('E y F: sin el detalle instalado se avisa y los conteos de detalle son «Sin dato»; sin casos de Amazon ni Walmart, «Falta dato» con el motivo',()=>{
+  const sinDet=armarCco({...raw(),modalidad:{error:'not_installed'}} as never,geo(),{now:new Date('2026-10-28T12:00:00Z')});
+  assert.equal(sinDet.cards.E.estado,'salvedad');assert.equal(sinDet.cards.E.detalleIndisponible,true);
+  const html=render('es',<TarjetaE card={sinDet.cards.E} minimo={5} consultado={sinDet.generatedAt}/>);
+  assert.match(html,/Falta aplicar la migración del detalle por modalidad/);assert.ok(html.includes('Sin dato'));assert.doesNotMatch(html,/SYN-A/,'sin detalle no hay tabla por SKU');
+  const vacio={...raw(),subcanal:ok([cel('lowes',null,9)])};const falta=armarCco(vacio as never,geo(),{now:new Date('2026-10-28T12:00:00Z')});
+  assert.equal(falta.cards.E.estado,'falta');assert.equal(falta.cards.F.estado,'falta');
+  assert.ok(render('es',<TarjetaF card={falta.cards.F} minimo={5} consultado={falta.generatedAt}/>).includes('Sin dato: no hay costo de envío'));
+  assert.ok(render('es',<TarjetaE card={falta.cards.E} minimo={5} consultado={falta.generatedAt}/>).includes('Falta dato'));assert.ok(render('en',<TarjetaE card={falta.cards.E} minimo={5} consultado={falta.generatedAt}/>).includes('Missing data'));
+  const caido=armarCco({...raw(),subcanal:{error:'unavailable'}} as never,geo(),{now:new Date()});assert.equal(caido.cards.E.estado,'falta');assert.match(render('es',<TarjetaE card={caido.cards.E} minimo={5} consultado={caido.generatedAt}/>),/No disponible ahora. No es cero/);
+});
+test('E y F en inglés: sin español colado ni claves sin traducir',()=>{
+  const v=vista();const todo=[render('en',<TarjetaE card={v.cards.E} minimo={5} consultado={v.generatedAt}/>),render('en',<TarjetaF card={v.cards.F} minimo={5} consultado={v.generatedAt}/>)].join('\n');
+  for(const x of ['Who sells','Origin warehouse','The company','The marketplace','Fewer than 5','Ask Responsable B','Ask Responsable A','With caveats','Excel Tracker'])assert.ok(todo.includes(x),'falta «'+x+'»');
+  assert.doesNotMatch(todo,/Quién vende|Bodega de origen|La empresa|Menos de|Pedir a|cco\.[a-zA-Z]+\./);
+});
+test('i18n de la modalidad: cada valor de cada eje, cada salvedad y cada dato que falta de E y F existe en ambos idiomas',()=>{
+  for(const v of ['empresa','marketplace','amazon','walmart','sin_dato'])assert.ok(ES[`cco.mod.val.${v}`]&&EN[`cco.mod.val.${v}`],v);
+  for(const v of ['empresa','marketplace','sin_dato'])for(const eje of ['vende','bodega'])assert.ok(ES[`cco.mod.${eje}.${v}`]&&EN[`cco.mod.${eje}.${v}`],eje+v);
+  for(const s of ['sinRecomendacion','sinTiempoResolucion','modalidadSinDato','walmartSoloBodega','sumaMinimo','sesgoCasos','sinDenominadorVentas','celdasMinimo'])assert.ok(ES[`cco.salv.${s}`]&&EN[`cco.salv.${s}`],s);
+  for(const c of ['ejeVende','ejeBodega'])assert.ok(ES[`cco.cob.${c}`]&&EN[`cco.cob.${c}`],c);
+  const v=vista();for(const id of ['E','F'] as const){for(const s of v.cards[id].salvedades)assert.ok(ES[`cco.salv.${s}`]&&EN[`cco.salv.${s}`],id+s);for(const x of v.cards[id].faltan)assert.ok(ES[`cco.falta.${x.clave}`]&&EN[`cco.falta.${x.clave}`],id+x.clave);for(const c of v.cards[id].cobertura??[])assert.ok(ES[`cco.cob.${c.clave}`]&&EN[`cco.cob.${c.clave}`],c.clave);}
+});
+
+test('AI interno: Pregúntale y el copiloto CFO contestan A a F con los mismos roles que /cco, sin escribir y con la organización de la sesión',()=>{
+  const roles=[...CCO_ROLES].sort();
+  const cfoCco=CFO_TOOLS.filter((t:{name:string})=>t.name.startsWith('cco_')) as unknown as {name:string;roles:string[]}[];
+  for(const t of cfoCco)assert.deepEqual([...t.roles].sort(),roles,t.name);
+  const CCO_AGENTE=['rendimiento_sku','candidatos_sin_venta','eficiencia_bodegas','casos_por_estado','casos_por_subcanal','envio_propio_vs_amazon'];
+  for(const n of CCO_AGENTE){const t=TOOLS_AGENTE.find((x:{name:string})=>x.name===n) as unknown as {roles:string[];restricted:boolean};assert.ok(t,n);assert.deepEqual([...t.roles].sort(),roles,n);assert.equal(t.restricted,true,n);}
+  assert.equal(cfoCco.length,6);
+  const ruta=leer('src/app/(app)/(workspace)/cfo/data/copilot/route.ts');
+  assert.match(ruta,/createCcoRepository/);assert.match(ruta,/tenant_mismatch/);assert.doesNotMatch(ruta,/\.(insert|update|delete)\(|INSERT INTO|UPDATE |DELETE FROM/i);
+  const fuente=leer('../../packages/cfo-copilot/src/copilot/cco-tools.mjs');assert.doesNotMatch(fuente,/\bfetch\(|XMLHttpRequest|from 'node:|from 'pg'|openrouter|gateway/i,'sin llamadas externas ni modelo nuevo');
 });

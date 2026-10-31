@@ -12,7 +12,7 @@ import {sourcesSql} from '../../economics/emit-sql.mjs';
 import {HERE} from '../../metrics/tests/world.mjs';
 import {subcanalDe, bodegaDe, latenciaDe, defectoDe, skuBaseDe, hojaDeTracker} from '../cco.mjs';
 import {retailerDe} from '../fuga-reembolsos.mjs';
-import {baseDeSubcanal, armarCco, createCcoRepository} from '../cco.mjs';
+import {baseDeSubcanal, armarCco, createCcoRepository, modalidadDeSubcanal} from '../cco.mjs';
 import {crearBaseDatos} from '../../ai-scale/economia-problemas/snapshot.mjs';
 import {createRequire} from 'node:module';
 
@@ -152,6 +152,12 @@ test('insight_cco_*: aislamiento, k>=5, NULL no cero, sumas y ventana común', {
     });
     const m = h.file(MIG('20261201000000_insight_cco.sql')); assert.equal(m.status, 0, String(m.stderr).slice(0, 600));
     assert.equal(h.file(MIG('20261201000000_insight_cco.sql')).status, 0, 'idempotente: aplicar dos veces no falla');
+    await t.test('sin la migración de modalidad: la función no existe (E y F degradan a casos por subcanal, nunca ceros)', () => {
+      const r = asBackend(h, OWNER.A, TENANT_A, 'select * from public.insight_cco_modalidad_casos(5);');
+      assert.equal(r.ok, false); assert.match(r.err, /insight_cco_modalidad_casos/);
+    });
+    const mm = h.file(MIG('20261207000000_insight_cco_modalidad.sql')); assert.equal(mm.status, 0, String(mm.stderr).slice(0, 600));
+    assert.equal(h.file(MIG('20261207000000_insight_cco_modalidad.sql')).status, 0, 'modalidad: idempotente');
 
     await t.test('ventana común: meses completos dentro de las ventanas declaradas; Best Buy sin devoluciones', () => {
       const v = Object.fromEntries(rows(h, OWNER.A, TENANT_A, 'public.insight_cco_ventanas()').map((x) => [x.channel, x]));
@@ -231,6 +237,43 @@ test('insight_cco_*: aislamiento, k>=5, NULL no cero, sumas y ventana común', {
       const eh = cuenta(filas, (x) => (sku(x.o) ? sku(x.o) + '|' + hojaDeTracker(x.sheet) : null));
       assert.deepEqual(Object.fromEntries(hoja.map((x) => [x.d1 + '|' + x.d2, Number(x.n)])), plegar(eh).vis, 'con pliegue: el resto oculto suma 3 (<5), así que la celda visible más pequeña también se oculta');
     });
+    await t.test('modalidad: los siete cruces coinciden con la verdad en JS, con k>=5 y pliegue; lo desconocido queda fuera, no en cero', () => {
+      const got = rows(h, OWNER.A, TENANT_A, 'public.insight_cco_modalidad_casos(5)');
+      const mkt = filas.filter((x) => /^(amazon|walmart)/.test(subcanalDe(x.o.Retailer)));
+      const sub = (x) => subcanalDe(x.o.Retailer), bod = (x) => bodegaDe(x.o.WH);
+      const visibles = (dim) => Object.fromEntries(got.filter((x) => x.dim === dim && !x.es_otros).map((x) => [x.d1 + '|' + x.d2, Number(x.n)]));
+      const verdad = (f) => plegar(cuenta(mkt, f));
+      const casos = {
+        subcanal_tipo: (x) => sub(x) + '|' + hojaDeTracker(x.sheet),
+        subcanal_defecto: (x) => (defectoDe(x.o.Contact_reason, x.o.Subreason) ? sub(x) + '|' + defectoDe(x.o.Contact_reason, x.o.Subreason) : null),
+        subcanal_despacho: (x) => (bod(x) ? sub(x) + '|' + latenciaDe(x.o['SLA Status'], bod(x)) : null),
+        subcanal_bodega: (x) => (bod(x) ? sub(x) + '|' + bod(x) : null),
+        sku_subcanal: (x) => (sku(x.o) ? sku(x.o) + '|' + sub(x) : null),
+        sku_subcanal_tipo: (x) => (sku(x.o) ? sku(x.o) + '|' + sub(x) + '|' + hojaDeTracker(x.sheet) : null),
+        sku_subcanal_defecto: (x) => (sku(x.o) && defectoDe(x.o.Contact_reason, x.o.Subreason) ? sku(x.o) + '|' + sub(x) + '|' + defectoDe(x.o.Contact_reason, x.o.Subreason) : null),
+      };
+      for (const [dim, f] of Object.entries(casos)) {
+        const v = verdad(f);
+        // d1|d2 en SQL: para los cruces con SKU, d2 = «subcanal|tipo»; la clave concatenada coincide con la de la verdad.
+        assert.deepEqual(visibles(dim), v.vis, dim);
+        assert.equal(got.find((x) => x.dim === dim && x.es_otros) ? Number(got.find((x) => x.dim === dim && x.es_otros).n) : null, v.otros, dim + ': lo oculto suma a «otros»');
+      }
+      for (const d of Object.keys(casos)) assert.ok(Object.keys(visibles(d)).length >= 1, d + ': la comparación no es vacía');
+      assert.ok(got.every((x) => Number(x.n) >= 5), 'ninguna celda con menos de 5 casos');
+      assert.ok(!got.some((x) => !String(x.d1 ?? '').length && !x.es_otros), 'ningún d1 vacío salvo «otros»');
+      assert.ok(!got.some((x) => x.dim.startsWith('subcanal') && x.d1 && !/^(amazon|walmart)/.test(x.d1)), 'solo Amazon y Walmart; Lowes y Pending no entran');
+      assert.ok(!got.some((x) => /PENDING/i.test(String(x.d1))), 'un SKU PENDING no es SKU');
+      // la tabla de modalidad cubre todo subcanal que el SQL puede devolver para Amazon y Walmart
+      for (const x of got.filter((y) => y.dim === 'subcanal_tipo' && !y.es_otros)) assert.equal(modalidadDeSubcanal(x.d1).conocida, true, x.d1);
+    });
+    await t.test('modalidad: aislamiento; el usuario de otra organización no ve nada y la otra organización no ve a A', () => {
+      assert.deepEqual(rows(h, OWNER.B, TENANT_A, 'public.insight_cco_modalidad_casos(5)'), []);
+      const b = rows(h, OWNER.B, TENANT_B, 'public.insight_cco_modalidad_casos(5)').filter((x) => !x.es_otros);
+      assert.ok(b.every((x) => x.d1 !== 'PS-3' && Number(x.n) >= 5));
+      assert.equal(asBackend(h, OWNER.A, TENANT_A, "select * from public.insight_cco_modalidad_casos(5,'otro-tenant');").ok, false, 'no hay argumento de tenant');
+      assert.deepEqual(rows(h, OWNER.A, TENANT_A, 'public.insight_cco_modalidad_casos(1)').filter((x) => !x.es_otros && Number(x.n) < 5), [], 'p_min=1 no baja el piso de 5');
+      for (const role of ['anon', 'authenticated', 'service_role']) assert.equal(h.psql(`set role ${role}; select * from public.insight_cco_modalidad_casos(5);`).ok, false, role);
+    });
     await t.test('bodegas: latencia de despacho y motivo; bodega mal escrita se normaliza; sin SLA es sin_dato (no cero)', () => {
       const lat = rows(h, OWNER.A, TENANT_A, "public.insight_cco_bodega('latencia',5)"); const conB = filas.filter((x) => bodegaDe(x.o.WH));
       const exp = cuenta(conB, (x) => bodegaDe(x.o.WH) + '|' + latenciaDe(x.o['SLA Status'], bodegaDe(x.o.WH)));
@@ -275,7 +318,7 @@ test('insight_cco_*: aislamiento, k>=5, NULL no cero, sumas y ventana común', {
       const pg = createRequire(import.meta.url)('pg'); const pool = new pg.Pool({host: h.sock, user: 'postgres', database: 't', max: 3}); t.after(() => pool.end());
       const v = await createCcoRepository({database: crearBaseDatos({pool, tenantId: TENANT_A, userId: OWNER.A, statementTimeoutMs: 20000}), now: () => new Date('2026-10-28T12:00:00Z')}).get();
       assert.equal(v.status, 'ok'); assert.deepEqual(Object.keys(v.cards), ['A', 'B', 'C', 'D', 'E', 'F']);
-      assert.deepEqual(Object.fromEntries(Object.values(v.cards).map((c) => [c.id, c.estado])), {A: 'salvedad', B: 'salvedad', C: 'salvedad', D: 'salvedad', E: 'falta', F: 'falta'});
+      assert.deepEqual(Object.fromEntries(Object.values(v.cards).map((c) => [c.id, c.estado])), {A: 'salvedad', B: 'salvedad', C: 'salvedad', D: 'salvedad', E: 'salvedad', F: 'salvedad'});
       const a = v.cards.A, am = a.canales.find((c) => c.canal === 'amazon'), wa = a.canales.find((c) => c.canal === 'walmart'), bb = a.canales.find((c) => c.canal === 'bestbuy');
       assert.equal(am.ventana.meses, 12); assert.equal(wa.ventana.meses, 2); assert.equal(am.ventana.completa, false); assert.equal(a.ventanasDistintas, true);
       assert.equal(am.monedas.find((m) => m.moneda === 'USD').top[0].sku, 'S1', 'ordenado por ingreso bruto'); assert.equal(bb.devoluciones, null, 'Best Buy: devoluciones desconocidas, no cero'); assert.equal(bb.devolucionesDisponibles, false);
@@ -283,8 +326,9 @@ test('insight_cco_*: aislamiento, k>=5, NULL no cero, sumas y ventana común', {
       assert.equal(v.cards.B.umbrales.map((u) => u.skus).join(), '2,1,0'); assert.equal(v.cards.B.total, 5); assert.equal(v.cards.B.clase, 'inferred');
       assert.ok(v.cards.C.bodegas.length >= 1 && v.cards.C.cobertura[0].elegible > 0);
       const d = v.cards.D; assert.equal(d.estados.length, 1); assert.equal(d.estados[0].clave, 'US-TX'); assert.equal(d.estados[0].n, 7); assert.equal(d.ocultos.estados, 1); assert.equal(d.minimo, 5);
-      assert.ok(v.cards.E.subcanales.some((x) => x.subcanal === 'amazon_cumplido_por_piloto' && x.n === 15)); assert.ok(v.cards.E.faltan.length >= 4);
-      assert.equal(v.cards.F.noData, true); assert.ok(v.cards.F.faltan.every((x) => ['responsable_a', 'responsable_b'].includes(x.quien)));
+      const e15 = v.cards.E.subcanales.find((x) => x.subcanal === 'amazon_cumplido_por_piloto'); assert.equal(e15.casos, 15); assert.equal(e15.vende, 'empresa'); assert.equal(e15.bodega, 'empresa'); assert.equal(e15.marketplace, 'amazon');
+      assert.equal(e15.reembolsos, 5, 'cinco filas de la hoja Refunds de ese subcanal'); assert.ok(v.cards.E.faltan.length >= 4); assert.equal(v.cards.E.puedeRecomendar, false); assert.equal(v.cards.E.detalleIndisponible, false);
+      assert.equal(v.cards.F.eje, 'bodega'); assert.equal(v.cards.F.puedeRecomendar, false); assert.ok(v.cards.F.faltan.every((x) => ['responsable_a', 'responsable_b'].includes(x.quien)));
       assert.doesNotMatch(JSON.stringify(v), /Main St|Calle 5|Guadalajara|Austin|dirección ilegible/, 'ninguna dirección sale del proceso');
       const b = await createCcoRepository({database: crearBaseDatos({pool, tenantId: TENANT_B, userId: OWNER.B, statementTimeoutMs: 20000})}).get();
       assert.ok(!JSON.stringify(b).includes('"S1"') && !JSON.stringify(b).includes('PS-3'), 'la otra organización no ve datos de A');

@@ -68,14 +68,59 @@ export function defectoDe(reason, sub) {
 export const skuBaseDe = normalizarSku;
 export const hojaDeTracker = (sheet) => (['Warranty Tools', 'Warranty Parts'].includes(sheet) ? 'garantia' : ['Refunds', 'Refunds Requests'].includes(sheet) ? 'reembolso' : sheet === 'Return Labels' ? 'etiqueta_devolucion' : sheet === 'Waitlist' ? 'lista_espera' : 'otro');
 
+// ---- modalidad (preguntas E y F): quién vende, de qué bodega sale y qué marketplace, derivada del campo Retailer ----
+// Tres ejes. «vende»: la empresa (vende a través del marketplace) o el marketplace (compra a la empresa y vende como vendedor). «bodega»: de dónde sale la mercancía, empresa o marketplace.
+// «marketplace»: Amazon o Walmart. Walmart no compra producto de la empresa: solo se vende a través de Walmart, así que su eje «vende» siempre es la empresa y solo varía la bodega.
+// La tabla de equivalencias es genérica (sin marcas): el subcanal «cumplido por piloto» ya sale de la configuración externa del prefijo de la marca (VEXA_TIENDA_PROPIA_PREFIJO).
+// Se puede reemplazar sin tocar el repo con VEXA_CCO_MODALIDADES, un JSON {subcanal: {vende, bodega, marketplace}}; una entrada inválida se ignora entera.
+// Un valor que la tabla no conoce NUNCA se asigna en silencio: sale «sin_dato» en los tres ejes.
+export const SIN_DATO = 'sin_dato';
+export const EJES_MODALIDAD = Object.freeze(['vende', 'bodega', 'marketplace']);
+export const VALORES_EJE = Object.freeze({vende: ['empresa', 'marketplace'], bodega: ['empresa', 'marketplace'], marketplace: ['amazon', 'walmart']});
+export const MODALIDADES_BASE = Object.freeze({
+  amazon_cumplido_por_piloto: Object.freeze({vende: 'empresa', bodega: 'empresa', marketplace: 'amazon'}),
+  amazon_cumplido_por_amazon: Object.freeze({vende: 'empresa', bodega: 'marketplace', marketplace: 'amazon'}),
+  amazon_com: Object.freeze({vende: 'marketplace', bodega: 'marketplace', marketplace: 'amazon'}),
+  amazon_sin_subcanal: Object.freeze({vende: null, bodega: null, marketplace: 'amazon'}),
+  walmart_cumplido_por_piloto: Object.freeze({vende: 'empresa', bodega: 'empresa', marketplace: 'walmart'}),
+  walmart_cumplido_por_walmart: Object.freeze({vende: 'empresa', bodega: 'marketplace', marketplace: 'walmart'}),
+  walmart_sin_subcanal: Object.freeze({vende: 'empresa', bodega: null, marketplace: 'walmart'}),
+});
+const tiene = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+/** Tabla vigente: la base más la anulación externa válida. Una entrada con un subcanal ajeno al catálogo, o con un valor fuera de su eje, se descarta completa. */
+export function tablaModalidades(env = globalThis.process?.env) {
+  const tabla = {...MODALIDADES_BASE}, crudo = env?.VEXA_CCO_MODALIDADES;
+  if (!crudo) return tabla;
+  let j;
+  try { j = JSON.parse(crudo); } catch { return tabla; }
+  if (!j || typeof j !== 'object' || Array.isArray(j)) return tabla;
+  for (const [sub, m] of Object.entries(j)) {
+    if (!tiene(MODALIDADES_BASE, sub) || !SUBCANALES.includes(sub) || !m || typeof m !== 'object' || Array.isArray(m)) continue;
+    const fila = {};
+    let valida = true;
+    for (const eje of EJES_MODALIDAD) { const v = m[eje]; if (v === undefined || v === null || v === SIN_DATO) fila[eje] = null; else if (VALORES_EJE[eje].includes(v)) fila[eje] = v; else valida = false; }
+    if (valida) tabla[sub] = Object.freeze(fila);
+  }
+  return tabla;
+}
+/** Modalidad de un subcanal. Subcanal fuera de la tabla -> sin_dato en los tres ejes y `conocida:false`. */
+export function modalidadDeSubcanal(sub, tabla = tablaModalidades()) {
+  const f = typeof sub === 'string' && tiene(tabla, sub) ? tabla[sub] : null;
+  if (!f) return {vende: SIN_DATO, bodega: SIN_DATO, marketplace: SIN_DATO, conocida: false};
+  return {vende: f.vende ?? SIN_DATO, bodega: f.bodega ?? SIN_DATO, marketplace: f.marketplace ?? SIN_DATO, conocida: true};
+}
+/** Modalidad directa desde el texto del campo Retailer (tracker o propiedad de ticket). */
+export const modalidadDe = (raw, prefijo = prefijoPropio(), tabla = tablaModalidades()) => modalidadDeSubcanal(subcanalDe(raw, prefijo), tabla);
+const esMarketplaceSub = (c) => typeof c === 'string' && (c.startsWith('amazon') || c.startsWith('walmart'));
+
 // ---- lo que falta, con a quién pedirlo (Responsable A = director de cliente; Responsable B = reportes y exportaciones) ----
 export const FALTAN = Object.freeze({
   A: [{clave: 'unidades', quien: 'responsable_b'}, {clave: 'resenas', quien: 'responsable_b'}, {clave: 'skuBestBuyShopify', quien: 'responsable_b'}],
   B: [{clave: 'inventario', quien: 'responsable_a'}, {clave: 'estadoProducto', quien: 'responsable_a'}, {clave: 'recurrencia', quien: 'responsable_a'}],
   C: [{clave: 'transportista', quien: 'responsable_b'}, {clave: 'entregaFecha', quien: 'responsable_b'}, {clave: 'denominadorEnvios', quien: 'responsable_b'}, {clave: 'vinculoQuejaEnvio', quien: 'responsable_a'}],
   D: [{clave: 'destinoPedido', quien: 'responsable_b'}, {clave: 'bodegaEstado', quien: 'responsable_a'}],
-  E: [{clave: 'propiedadRetailer', quien: 'responsable_a'}, {clave: 'cumplimientoPedido', quien: 'responsable_b'}, {clave: 'proveedorDirecto', quien: 'responsable_a'}, {clave: 'tarifasAmazon', quien: 'responsable_a'}],
-  F: [{clave: 'propiedadRetailer', quien: 'responsable_a'}, {clave: 'cumplimientoPedido', quien: 'responsable_b'}, {clave: 'facturasTransportista', quien: 'responsable_a'}, {clave: 'tarifasAmazon', quien: 'responsable_a'}, {clave: 'bodegaOrigen', quien: 'responsable_b'}],
+  E: [{clave: 'propiedadRetailer', quien: 'responsable_a'}, {clave: 'ventaPorModalidad', quien: 'responsable_b'}, {clave: 'cumplimientoPedido', quien: 'responsable_b'}, {clave: 'proveedorDirecto', quien: 'responsable_a'}, {clave: 'tarifasAmazon', quien: 'responsable_a'}, {clave: 'costoCumplimiento', quien: 'responsable_a'}, {clave: 'costoSku', quien: 'responsable_a'}, {clave: 'tiempoResolucion', quien: 'responsable_b'}],
+  F: [{clave: 'propiedadRetailer', quien: 'responsable_a'}, {clave: 'ventaPorModalidad', quien: 'responsable_b'}, {clave: 'cumplimientoPedido', quien: 'responsable_b'}, {clave: 'facturasTransportista', quien: 'responsable_a'}, {clave: 'costoCumplimiento', quien: 'responsable_a'}, {clave: 'tarifasAmazon', quien: 'responsable_a'}, {clave: 'bodegaOrigen', quien: 'responsable_b'}, {clave: 'tiempoResolucion', quien: 'responsable_b'}],
 });
 /** Mismos textos que `cco.falta.*` en español de la interfaz (una prueba verifica que no se desalinean). El agente responde en español. */
 export const FALTAN_ES = Object.freeze({
@@ -85,11 +130,15 @@ export const FALTAN_ES = Object.freeze({
   vinculoQuejaEnvio: 'Vínculo entre cada queja y el envío al que pertenece.', destinoPedido: 'Estado y código postal de destino de cada pedido de Amazon, Walmart, Best Buy y Shopify.', bodegaEstado: 'Tabla de bodega a estado, confirmada por el cliente.',
   propiedadRetailer: 'Propiedad Retailer de los tickets de HubSpot, con permiso de lectura de tickets.', cumplimientoPedido: 'Tipo de cumplimiento de cada pedido, propio o de Amazon.', proveedorDirecto: 'Ventas de Amazon como proveedor directo, desde el portal de proveedor.',
   tarifasAmazon: 'Reporte de tarifas, comisiones y cumplimiento de Amazon.', facturasTransportista: 'Facturas o tarifas de FedEx y UPS.', bodegaOrigen: 'Bodega de origen de cada pedido de venta.',
+  ventaPorModalidad: 'Venta por SKU y por modalidad: pedidos de Amazon y Walmart con quién vende y de qué bodega sale.', costoCumplimiento: 'Costo de cumplimiento por unidad: tarifas del marketplace y costo de operar la bodega propia.',
+  costoSku: 'Costo por SKU, para poder calcular el margen de cada modalidad.', tiempoResolucion: 'Fechas de creación y de cierre de cada ticket, para medir el tiempo de resolución por modalidad.',
 });
 export const QUIEN_ES = Object.freeze({responsable_a: 'Responsable A', responsable_b: 'Responsable B'});
 /** «Texto. Pedir a Responsable A.» para cada dato que falta de una pregunta. */
 export const faltanTexto = (id) => FALTAN[id].map((x) => `${FALTAN_ES[x.clave]} Pedir a ${QUIEN_ES[x.quien]}.`);
 export const faltanDe = (id) => FALTAN[id].map((x) => ({...x}));
+/** Lo que falta de una pregunta, en datos (claves y a quién) y en texto español listo para el agente; mismo contenido, una sola fuente. */
+const faltanBase = (id) => ({faltan: faltanDe(id), faltanTextos: faltanTexto(id)});
 
 // ---- lectura acotada ----
 const num = (x) => (x === null || x === undefined ? null : Number(x));
@@ -120,7 +169,7 @@ export async function leerAgregadosCco(s, {deadline}) {
   // El prefijo del cliente piloto llega a las funciones SQL por la configuración de sesión (local a la transacción); vacío = nada es propio.
   await s.query("SELECT set_config('vexa.tienda_propia_prefijo',$1,true)", [prefijoPropio()]);
   const q = (name, sql, params) => leer(s, deadline, name, sql, params);
-  const [ventanas, skuCanal, sinVenta, defecto, hoja, subcanal, bodLat, bodMot, cob] = [
+  const [ventanas, skuCanal, sinVenta, defecto, hoja, subcanal, bodLat, bodMot, cob, modalidad] = [
     await q('cco_v', 'SELECT * FROM public.insight_cco_ventanas()'),
     await q('cco_s', 'SELECT * FROM public.insight_cco_sku_canal(NULL)'),
     await q('cco_n', 'SELECT * FROM public.insight_cco_sin_venta()'),
@@ -130,8 +179,9 @@ export async function leerAgregadosCco(s, {deadline}) {
     await q('cco_b1', "SELECT * FROM public.insight_cco_bodega('latencia',5)"),
     await q('cco_b2', "SELECT * FROM public.insight_cco_bodega('motivo',5)"),
     await q('cco_c', 'SELECT * FROM public.insight_cco_cobertura()'),
+    await q('cco_m', 'SELECT * FROM public.insight_cco_modalidad_casos(5)'),
   ];
-  return {ventanas, skuCanal, sinVenta, defecto, hoja, subcanal, bodLat, bodMot, cob};
+  return {ventanas, skuCanal, sinVenta, defecto, hoja, subcanal, bodLat, bodMot, cob, modalidad};
 }
 
 const estadoDe = (ok, sal) => (!ok ? 'falta' : sal ? 'salvedad' : 'listo');
@@ -140,7 +190,7 @@ const mesesDe = (v) => ({desde: dia(v.month_from ?? v.desde), hasta: v.hasta ?? 
 
 /** Tarjeta A: rendimiento por SKU y canal dentro de la ventana común. */
 export function tarjetaA(raw) {
-  const base = {id: 'A', clase: 'observed', fuente: 'libro', faltan: faltanDe('A'), salvedades: ['sinUnidades', 'sinResenas', 'defectosMuestra']};
+  const base = {id: 'A', clase: 'observed', fuente: 'libro', ...faltanBase('A'), salvedades: ['sinUnidades', 'sinResenas', 'defectosMuestra']};
   if (raw.skuCanal.error || raw.ventanas.error) return {...base, estado: 'falta', indisponible: raw.skuCanal.error ?? raw.ventanas.error, canales: [], cobertura: []};
   const vent = raw.ventanas.rows, filas = raw.skuCanal.rows;
   const defectoPorSku = new Map(), hojaPorSku = new Map();
@@ -180,7 +230,7 @@ export function tarjetaA(raw) {
 
 /** Tarjeta B: señal inferida de SKU sin venta reciente (sin inventario, sin estado de descontinuado). */
 export function tarjetaB(raw) {
-  const base = {id: 'B', clase: 'inferred', fuente: 'libro', faltan: faltanDe('B'), salvedades: ['soloAmazonWalmart', 'otroCanalPuedeVender', 'sinInventario']};
+  const base = {id: 'B', clase: 'inferred', fuente: 'libro', ...faltanBase('B'), salvedades: ['soloAmazonWalmart', 'otroCanalPuedeVender', 'sinInventario']};
   if (raw.sinVenta.error) return {...base, estado: 'falta', indisponible: raw.sinVenta.error, umbrales: [], top: []};
   const filas = raw.sinVenta.rows;
   if (!filas.length) return {...base, estado: 'falta', umbrales: [], top: [], total: 0};
@@ -194,7 +244,7 @@ export function tarjetaB(raw) {
 
 /** Tarjeta C: bodegas. Solo latencia de despacho de reposiciones de garantía y etiquetas de devolución; sin transportista y sin denominador. */
 export function tarjetaC(raw) {
-  const base = {id: 'C', clase: 'observed', fuente: 'tracker', faltan: faltanDe('C'), salvedades: ['soloDespacho', 'sinTransportista', 'sinDenominador', 'celdasMinimo']};
+  const base = {id: 'C', clase: 'observed', fuente: 'tracker', ...faltanBase('C'), salvedades: ['soloDespacho', 'sinTransportista', 'sinDenominador', 'celdasMinimo']};
   if (raw.bodLat.error || raw.cob.error) return {...base, estado: 'falta', indisponible: raw.bodLat.error ?? raw.cob.error, bodegas: []};
   const lat = raw.bodLat.rows.map(celda), mot = raw.bodMot.error ? [] : raw.bodMot.rows.map(celda);
   const c = raw.cob.rows[0];
@@ -211,7 +261,7 @@ export function tarjetaC(raw) {
 
 /** Tarjeta D: casos por estado desde las direcciones del Tracker (mapa). Sin volumen ni venta por destino. */
 export function tarjetaD(geo) {
-  const base = {id: 'D', clase: 'observed', fuente: 'tracker', faltan: faltanDe('D'), salvedades: ['sinVolumenDestino', 'sesgoCasos', 'celdasMinimo', 'sinDireccionTexto']};
+  const base = {id: 'D', clase: 'observed', fuente: 'tracker', ...faltanBase('D'), salvedades: ['sinVolumenDestino', 'sesgoCasos', 'celdasMinimo', 'sinDireccionTexto']};
   if (!geo || geo.status === 'unavailable') return {...base, estado: 'falta', indisponible: 'unavailable', estados: []};
   if (geo.status === 'empty' || !geo.cobertura) return {...base, estado: 'falta', estados: [], vacio: true};
   const c = geo.cobertura;
@@ -221,20 +271,62 @@ export function tarjetaD(geo) {
     pais: c.pais};
 }
 
-/** Tarjeta E: vender como vendedor de Amazon o directo. Falta dato; se muestra solo lo parcial (casos por subcanal) con el aviso de sesgo. */
-export function tarjetaE(raw) {
-  const base = {id: 'E', clase: 'observed', fuente: 'tracker', estado: 'falta', faltan: faltanDe('E'), salvedades: ['sesgoCasos', 'sinDenominadorVentas'], subcanales: []};
-  if (raw.subcanal.error) return {...base, indisponible: raw.subcanal.error};
-  const cs = raw.subcanal.rows.map(celda);
-  return {...base, subcanales: cs.filter((x) => !x.otros && ['amazon_cumplido_por_piloto', 'amazon_cumplido_por_amazon', 'amazon_com', 'amazon_sin_subcanal', 'walmart_cumplido_por_piloto', 'walmart_cumplido_por_walmart', 'walmart_sin_subcanal'].includes(x.d1)).map((x) => ({subcanal: x.d1, n: x.n})).sort((a, b) => b.n - a.n),
-    corte: raw.cob.error ? null : (raw.cob.rows[0]?.cutoff ? dia(raw.cob.rows[0].cutoff) : null)};
+const celdaM = (r) => ({dim: r.dim, d1: r.d1, d2: r.d2, n: Number(r.n), otros: Boolean(r.es_otros)});
+const suma = (xs) => (xs.length ? xs.reduce((a, x) => a + x, 0) : null);
+const TOP_SKU = 15;
+/**
+ * Tarjetas E y F: la modalidad de venta (E, eje «vende») y la de envío (F, eje «bodega») sobre los mismos datos.
+ * Lo que SÍ se mide son CASOS del Tracker (reembolsos, garantías, defectos y tiempo de despacho) por subcanal y por SKU: no son ventas, así que nunca hay un «conviene X».
+ * Un conteo que no sale (celda con menos de 5 casos, o detalle no instalado) es null: «Menos de 5» o «Sin dato», jamás 0. Las sumas por SKU cuentan solo celdas visibles: son un mínimo.
+ */
+export function tarjetaModalidad(raw, id, {tabla = tablaModalidades()} = {}) {
+  const eje = id === 'E' ? 'vende' : 'bodega';
+  const base = {id, clase: 'observed', fuente: 'tracker', ...faltanBase(id), eje, puedeRecomendar: false, subcanales: [], ejes: [], skus: [],
+    salvedades: id === 'E' ? ['sesgoCasos', 'sinDenominadorVentas', 'sinRecomendacion', 'sinTiempoResolucion', 'modalidadSinDato', 'celdasMinimo', 'sumaMinimo']
+      : ['sesgoCasos', 'sinDenominadorVentas', 'sinRecomendacion', 'sinTiempoResolucion', 'walmartSoloBodega', 'modalidadSinDato', 'celdasMinimo', 'sumaMinimo']};
+  if (!raw.subcanal || raw.subcanal.error) return {...base, estado: 'falta', indisponible: raw.subcanal?.error ?? 'unavailable'};
+  const corte = raw.cob && !raw.cob.error && raw.cob.rows?.[0]?.cutoff ? dia(raw.cob.rows[0].cutoff) : null;
+  const totales = raw.subcanal.rows.map(celda);
+  const visibles = totales.filter((x) => !x.otros && esMarketplaceSub(x.d1)).sort((a, b) => b.n - a.n || a.d1.localeCompare(b.d1));
+  if (!visibles.length) return {...base, estado: 'falta', corte, ocultos: totales.filter((x) => x.otros).reduce((a, x) => a + x.n, 0)};
+  const det = raw.modalidad && !raw.modalidad.error ? raw.modalidad.rows.map(celdaM).filter((c) => !c.otros) : null;
+  const dim = (d) => (det ? det.filter((c) => c.dim === d) : null);
+  const tipo = dim('subcanal_tipo'), defecto = dim('subcanal_defecto'), despacho = dim('subcanal_despacho'), bodega = dim('subcanal_bodega');
+  const subcanales = visibles.map((x) => {
+    const m = modalidadDeSubcanal(x.d1, tabla), de = (celdas) => (celdas ? celdas.filter((c) => c.d1 === x.d1) : null);
+    const t = de(tipo), df = de(defecto), ds = de(despacho), bd = de(bodega);
+    const del = (hoja) => (t ? (t.find((c) => c.d2 === hoja)?.n ?? null) : null);
+    const legibles = ds ? suma(ds.filter((c) => c.d2 !== 'sin_dato').map((c) => c.n)) : null;
+    return {subcanal: x.d1, vende: m.vende, bodega: m.bodega, marketplace: m.marketplace, conocida: m.conocida, casos: x.n,
+      reembolsos: del('reembolso'), garantias: del('garantia'), etiquetas: del('etiqueta_devolucion'), defectos: df ? suma(df.map((c) => c.n)) : null,
+      despacho: ds ? {legibles, tresODias: ds.find((c) => c.d2 === '3_o_mas_dias')?.n ?? null} : null,
+      bodegas: bd ? bd.map((c) => ({bodega: c.d2, n: c.n})).sort((a, b) => b.n - a.n || a.bodega.localeCompare(b.bodega)) : null};
+  });
+  const valores = [...VALORES_EJE[eje], SIN_DATO];
+  const ejes = valores.map((v) => ({valor: v, casos: subcanales.filter((x) => x[eje] === v).reduce((a, x) => a + x.casos, 0)}));
+  // Por SKU: cada celda (SKU, subcanal) cae en el grupo que dice su modalidad en este eje; lo desconocido va a sin_dato.
+  const porSku = new Map();
+  const grupo = (sku, v) => { const m = porSku.get(sku) ?? new Map(); porSku.set(sku, m); const g = m.get(v) ?? {casos: 0, reembolsos: null, defectos: null}; m.set(v, g); return g; };
+  const skuSub = dim('sku_subcanal');
+  if (skuSub) {
+    for (const c of skuSub) if (esMarketplaceSub(c.d2)) grupo(c.d1, modalidadDeSubcanal(c.d2, tabla)[eje]).casos += c.n;
+    for (const c of dim('sku_subcanal_tipo') ?? []) { const [sub, hoja] = String(c.d2).split('|'); if (hoja === 'reembolso' && esMarketplaceSub(sub)) { const g = grupo(c.d1, modalidadDeSubcanal(sub, tabla)[eje]); g.reembolsos = (g.reembolsos ?? 0) + c.n; } }
+    for (const c of dim('sku_subcanal_defecto') ?? []) { const [sub] = String(c.d2).split('|'); if (esMarketplaceSub(sub)) { const g = grupo(c.d1, modalidadDeSubcanal(sub, tabla)[eje]); g.defectos = (g.defectos ?? 0) + c.n; } }
+  }
+  const skus = [...porSku.entries()].map(([sku, m]) => ({sku, grupos: Object.fromEntries(valores.map((v) => [v, m.get(v) ?? null])), casos: [...m.values()].reduce((a, g) => a + g.casos, 0)}))
+    .sort((a, b) => b.casos - a.casos || a.sku.localeCompare(b.sku)).slice(0, TOP_SKU).map(({casos, ...r}) => r);
+  const total = subcanales.reduce((a, x) => a + x.casos, 0), conocido = subcanales.filter((x) => x[eje] !== SIN_DATO).reduce((a, x) => a + x.casos, 0);
+  const cobertura = [id === 'E' ? {clave: 'ejeVende', conocido, elegible: total, pct: pct(conocido, total)} : {clave: 'ejeBodega', conocido, elegible: total, pct: pct(conocido, total)}];
+  return {...base, estado: 'salvedad', subcanales, ejes, skus, corte, cobertura, detalleIndisponible: det === null, ocultos: totales.filter((x) => x.otros).reduce((a, x) => a + x.n, 0), totalCasos: total};
 }
-/** Tarjeta F: desde dónde enviar. Siempre falta dato; nada que sostenga una decisión. */
-export const tarjetaF = () => ({id: 'F', estado: 'falta', clase: null, fuente: null, faltan: faltanDe('F'), salvedades: [], noData: true});
+/** Tarjeta E: vender a través del marketplace o venderle al marketplace (quién vende). Con casos reales «Con salvedad»; sin celdas visibles «Falta dato». */
+export const tarjetaE = (raw, opciones) => tarjetaModalidad(raw, 'E', opciones);
+/** Tarjeta F: enviar con medios propios o con el cumplimiento del marketplace (de qué bodega sale). */
+export const tarjetaF = (raw, opciones) => tarjetaModalidad(raw, 'F', opciones);
 
 export function armarCco(raw, geo, {now = new Date()} = {}) {
   const todoCaido = [raw.ventanas, raw.skuCanal, raw.sinVenta, raw.bodLat, raw.cob].every((p) => p.error === 'not_installed');
-  const cards = {A: tarjetaA(raw), B: tarjetaB(raw), C: tarjetaC(raw), D: tarjetaD(geo), E: tarjetaE(raw), F: tarjetaF()};
+  const cards = {A: tarjetaA(raw), B: tarjetaB(raw), C: tarjetaC(raw), D: tarjetaD(geo), E: tarjetaE(raw), F: tarjetaF(raw)};
   return {version: CCO_VERSION, generatedAt: now.toISOString(), class: 'observed', status: todoCaido ? 'not_installed' : 'ok', cards, minimoPorCelda: K_MIN,
     resumen: {listo: Object.values(cards).filter((c) => c.estado === 'listo').length, salvedad: Object.values(cards).filter((c) => c.estado === 'salvedad').length, falta: Object.values(cards).filter((c) => c.estado === 'falta').length}};
 }

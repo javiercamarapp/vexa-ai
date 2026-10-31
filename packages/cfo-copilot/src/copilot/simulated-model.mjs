@@ -5,6 +5,18 @@ const MONTHS = {enero: '01', febrero: '02', marzo: '03', abril: '04', mayo: '05'
 const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 const currencyOf = q => (/\busd\b|dolar(es)?\s+(americano|estadounidense)|dolares/.test(q) ? 'USD' : /\bcad\b|canadi/.test(q) ? 'CAD' : /\bmxn\b|pesos?\b/.test(q) ? 'MXN' : undefined);
 const monthOf = q => { const m = q.match(/\b(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre)\s+(?:de\s+)?(20\d\d)\b/); return m ? `${m[2]}-${MONTHS[m[1]]}` : undefined; };
+// CCO (preguntas A a F, español e inglés): una sola ruta por pregunta; F antes que E porque sus frases son más específicas. Devuelve [herramienta, argumentos] o null.
+const ccoRuta = q => {
+  const mk = /\bwalmart\b/.test(q) && /\bamazon\b/.test(q) ? undefined : /\bwalmart\b/.test(q) ? 'walmart' : /\bamazon\b/.test(q) ? 'amazon' : undefined;
+  const mod = () => ({...(mk ? {retailer: mk} : {}), ...(/(que sku|cuales sku|cada sku|por sku|which skus?|each sku|per sku|by sku)/.test(q) ? {vista: 'sku'} : {})});
+  if (/(desde donde enviar|donde enviar|medios propios|envios? propios?|cumplimiento (de|del) (amazon|walmart|marketplace)|fulfilled by (amazon|walmart)|(amazon|walmart|marketplace) fulfillment|\bfba\b|\bwfs\b|de que bodega sale|desde que bodega|bodega (de|del) (amazon|walmart|marketplace)|modalidad de envio|enviar (con|por|desde|al cliente)|ship (from|with|using)|where to ship)/.test(q)) return ['cco_modalidad_envio', mod()];
+  if (/(vendedor de amazon|amazon seller|seller de amazon|vender directo|vender directamente|proveedor directo|subcanal|consigna|a credito|vender a traves|vende a traves|a traves de (amazon|walmart|el marketplace|marketplace)|modalidades? de venta|modalidad|\bretailer\b|sell (through|via|as)|sold through)/.test(q)) return ['cco_modalidad_venta', mod()];
+  if (/(descontinu|sin venta|dejaron de venderse|dejar de vender|inventario adicional|discontinued|no sales|stopped selling)/.test(q)) { const m = q.match(/\b(3|6|9)\s*(meses|months)/); return ['cco_sin_venta', m ? {meses: m[1]} : {}]; }
+  if (/(por estado|en que estados|que estados|cuales estados|mapa de estados|bodegas? (grandes?|pequenas?)|which states|cases by state)/.test(q)) return ['cco_estados', /\b(mexico|mexicanos?)\b/.test(q) ? {pais: 'MX'} : {}];
+  if (/(bodegas?|almacen|almacenes|transportista|despacho|warehouses?|carriers?)/.test(q)) return ['cco_bodegas', /motivo|problema|reason/.test(q) ? {dimension: 'motivo'} : {}];
+  if (/\bskus?\b/.test(q) && /(rendimiento|desempeno|rinde|rinden|devoluc|reembols|defect|resena|performance|returns?|refunds?|reviews?|venta|ventas|sales)/.test(q)) return ['cco_rendimiento_sku', {canal: /best ?buy/.test(q) ? 'bestbuy' : /walmart/.test(q) ? 'walmart' : /shopify/.test(q) ? 'shopify' : 'amazon', orden: /defect/.test(q) ? 'defectos' : /devoluc|reembols|refund|return/.test(q) ? 'reembolso' : 'venta'}];
+  return null;
+};
 const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
 
 export function createSimulatedModel({scope, costMicroPerTurn = 0} = {}) {
@@ -25,6 +37,8 @@ export function createSimulatedModel({scope, costMicroPerTurn = 0} = {}) {
         if (/alerta|timeout|cron|disco/.test(q)) add('alertas_operativas');
         if (/bitacora|auditor|se hizo/.test(q)) add('bitacora', {limit: 10});
         if (!calls.length) add('organizaciones');
+      } else if (ccoRuta(q)) {
+        const [tool, args] = ccoRuta(q); add(tool, args);
       } else {
         const currency = currencyOf(q), month = monthOf(q);
         if (/como se calcul|que significa|glosario|define|definicion/.test(q)) add('explicar_cifra', {term: /base/.test(q) ? 'Base económica' : /cobertura/.test(q) ? 'Cobertura' : /tasa/.test(q) ? 'Tasa de reembolso' : /exposicion/.test(q) ? 'Exposición' : 'Observado'});

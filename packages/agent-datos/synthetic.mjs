@@ -1,7 +1,7 @@
 // Datos SINTÉTICOS (claramente falsos) con la misma forma y coherencia interna que los reales: la suma de los marketplaces en USD
 // coincide con la serie mensual del libro; los problemas suman a las categorías; la cobertura dice qué falta (Zendesk, adjuntos).
 // Sirven para pruebas, para la auditoría UI y para el modo `VEXA_UI_FIXTURES=1`. No hay red, ni base, ni clientes reales.
-import { tarjetaA, tarjetaB, tarjetaC, tarjetaE } from '../workspace-service/cco.mjs';
+import { tarjetaA, tarjetaB, tarjetaC, tarjetaE, tarjetaF } from '../workspace-service/cco.mjs';
 const u = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 export const SYNTHETIC_TENANTS = Object.freeze({ A: '00000000-0000-4000-8000-000000000001', B: '00000000-0000-4000-8000-0000000000b2' });
 export const SYNTHETIC_NOW = '2026-10-19T12:00:00.000Z';
@@ -124,6 +124,16 @@ function ccoRaw(tenantId) {
     subcanal: ok([cell('amazon_cumplido_por_piloto', null, 485), cell('walmart_cumplido_por_piloto', null, 359), cell('amazon_com', null, 110), cell('walmart_cumplido_por_walmart', null, 82), cell('amazon_cumplido_por_amazon', null, 48), cell('lowes', null, 153)]),
     bodLat: ok([cell('BODEGAB-USTX', '2_dias', 120), cell('BODEGAB-USTX', '1_dia', 80), cell('BODEGAA USA Inc', '3_o_mas_dias', 60), cell('BODEGAA USA Inc', '2_dias', 140), cell('Bodegac', 'sin_dato', 56), cell(null, null, 9, true)]),
     bodMot: ok([cell('BODEGAB-USTX', 'defectuoso', 90), cell('BODEGAA USA Inc', 'faltan_piezas', 70)]),
+    modalidad: ok([
+      ['subcanal_tipo', 'amazon_cumplido_por_piloto', 'reembolso', 120], ['subcanal_tipo', 'amazon_cumplido_por_piloto', 'garantia', 260], ['subcanal_tipo', 'walmart_cumplido_por_piloto', 'garantia', 200], ['subcanal_tipo', 'walmart_cumplido_por_piloto', 'reembolso', 40],
+      ['subcanal_tipo', 'amazon_com', 'reembolso', 30], ['subcanal_tipo', 'amazon_com', 'garantia', 38], ['subcanal_tipo', 'walmart_cumplido_por_walmart', 'garantia', 44], ['subcanal_tipo', 'amazon_cumplido_por_amazon', 'reembolso', 20],
+      ['subcanal_defecto', 'amazon_cumplido_por_piloto', 'defectuoso', 80], ['subcanal_defecto', 'amazon_cumplido_por_piloto', 'danado', 25], ['subcanal_defecto', 'walmart_cumplido_por_piloto', 'defectuoso', 40], ['subcanal_defecto', 'amazon_com', 'defectuoso', 12],
+      ['subcanal_despacho', 'amazon_cumplido_por_piloto', '1_dia', 150], ['subcanal_despacho', 'amazon_cumplido_por_piloto', '2_dias', 120], ['subcanal_despacho', 'amazon_cumplido_por_piloto', '3_o_mas_dias', 60], ['subcanal_despacho', 'amazon_cumplido_por_piloto', 'sin_dato', 30], ['subcanal_despacho', 'walmart_cumplido_por_piloto', '2_dias', 90],
+      ['subcanal_bodega', 'amazon_cumplido_por_piloto', 'BODEGAB-USTX', 140], ['subcanal_bodega', 'amazon_cumplido_por_piloto', 'BODEGAA USA Inc', 110], ['subcanal_bodega', 'walmart_cumplido_por_piloto', 'BODEGAB-USGA', 70],
+      ['sku_subcanal', sku, 'amazon_cumplido_por_piloto', 90], ['sku_subcanal', sku, 'amazon_com', 30], ['sku_subcanal', sku, 'amazon_cumplido_por_amazon', 8], ['sku_subcanal', B ? 'ZZ-OTRA-2' : 'SYN-AX2', 'amazon_cumplido_por_piloto', 60], ['sku_subcanal', B ? 'ZZ-OTRA-2' : 'SYN-AX2', 'walmart_cumplido_por_piloto', 45],
+      ['sku_subcanal_tipo', sku, 'amazon_cumplido_por_piloto|reembolso', 25], ['sku_subcanal_tipo', sku, 'amazon_com|reembolso', 9], ['sku_subcanal_tipo', B ? 'ZZ-OTRA-2' : 'SYN-AX2', 'walmart_cumplido_por_piloto|reembolso', 11],
+      ['sku_subcanal_defecto', sku, 'amazon_cumplido_por_piloto|defectuoso', 20],
+    ].map(([dim, d1, d2, n]) => ({ dim, d1, d2, n, es_otros: false }))),
     cob: ok([{ rows_total: 2317, with_retailer: 2299, with_sku: 2299, with_warehouse: 1244, with_latency: 1153, with_address: 2017, sheets: 6, cutoff: '2026-10-05T00:00:00Z' }]),
   };
 }
@@ -164,6 +174,7 @@ export function createSyntheticPort(store, { tenantId, delayMs = 0, failOn = [],
     ccoSinVenta: () => run('ccoSinVenta', (d) => ({ status: 'ok', card: tarjetaB(ccoRaw(tenantId)) })),
     ccoBodegas: () => run('ccoBodegas', (d) => ({ status: 'ok', card: tarjetaC(ccoRaw(tenantId)) })),
     ccoSubcanal: () => run('ccoSubcanal', (d) => ({ status: 'ok', card: tarjetaE(ccoRaw(tenantId)) })),
+    ccoEnvio: () => run('ccoEnvio', (d) => ({ status: 'ok', card: tarjetaF(ccoRaw(tenantId)) })),
     ccoEstados: () => run('ccoEstados', (d) => ({ status: 'ok', vista: ccoGeoSintetico() })),
     exposure: ({ limit }) => run('exposure', (d) => ({ status: 'ok', ...d.exposure, rows: d.exposure.rows.slice(0, limit) })),
     ledgerBySource: ({ kind, month, months }) => run('ledgerBySource', (d) => {

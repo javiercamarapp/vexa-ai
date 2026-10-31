@@ -3,10 +3,10 @@
 // adaptador al servicio del espacio de trabajo (abajo), que cubre lo que ya existe y declara «no conectado» lo que falta construir.
 import { createProvenanceRepository } from '../workspace-service/provenance.mjs';
 import { createTrendsRepository } from '../workspace-service/trends.mjs';
-import { createCcoRepository, tarjetaA, tarjetaB, tarjetaC, tarjetaE } from '../workspace-service/cco.mjs';
+import { createCcoRepository, tarjetaA, tarjetaB, tarjetaC, tarjetaE, tarjetaF } from '../workspace-service/cco.mjs';
 import { readLedgerBySource, readProblems, readProblemMonthly, problemIncidentsFor, readCategoryMonthly, readExposure } from './port-queries.mjs';
 
-export const PORT_METHODS = Object.freeze(['coverage', 'trends', 'associations', 'tracker', 'problems', 'problemIncidents', 'categoryMonthly', 'exposure', 'ledgerBySource', 'evidence', 'problemCustomers', 'ccoSku', 'ccoSinVenta', 'ccoBodegas', 'ccoEstados', 'ccoSubcanal']);
+export const PORT_METHODS = Object.freeze(['coverage', 'trends', 'associations', 'tracker', 'problems', 'problemIncidents', 'categoryMonthly', 'exposure', 'ledgerBySource', 'evidence', 'problemCustomers', 'ccoSku', 'ccoSinVenta', 'ccoBodegas', 'ccoEstados', 'ccoSubcanal', 'ccoEnvio']);
 export function assertPort(port) {
   for (const m of PORT_METHODS) if (typeof port?.[m] !== 'function') throw new Error(`port_incomplete:${m}`);
   return port;
@@ -51,7 +51,7 @@ export function createWorkspacePort({ database, tenantId, now = () => new Date()
     problemIncidents: async ({ month }) => problemIncidentsFor(await problemMonthly(), month),
     categoryMonthly: ({ months }) => read((s) => readCategoryMonthly(s, now(), { months })),
     exposure: () => read((s) => readExposure(s)),
-    ccoSku: conTarjeta(tarjetaA), ccoSinVenta: conTarjeta(tarjetaB), ccoBodegas: conTarjeta(tarjetaC), ccoSubcanal: conTarjeta(tarjetaE),
+    ccoSku: conTarjeta(tarjetaA), ccoSinVenta: conTarjeta(tarjetaB), ccoBodegas: conTarjeta(tarjetaC), ccoSubcanal: conTarjeta(tarjetaE), ccoEnvio: conTarjeta(tarjetaF),
     ccoEstados: async () => ({ status: 'ok', vista: await ccoGeo(), generatedAt: now().toISOString() }),
     // Siguen sin conectar: citas de clientes (evidence) y clientes distintos por problema (problemCustomers) exigen verificación de evidencia por corrida y vínculos
     // conversación–cliente aprobados (hoy 0 vínculos problema–pedido); no caben en una consulta acotada de solo lectura. El agente responde «no tengo ese dato».

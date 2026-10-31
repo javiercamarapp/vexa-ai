@@ -14,13 +14,13 @@ export const DEMO_QUESTIONS = Object.freeze([
   { q: '¿Cuántos pedidos tuvimos por marketplace en septiembre?', tool: 'ledger_por_fuente', args: { kind: 'order', month: '2026-09' }, direct: false, need: 'ledger' },
   { q: '¿Cómo evolucionaron los reembolsos mes a mes?', tool: 'ledger_por_mes', args: { kind: 'refund' }, direct: true, need: 'ledger' },
   { q: '¿Cuántos reembolsos tuvimos en Zendesk?', tool: 'ledger_por_fuente', args: { kind: 'refund', fuente: 'zendesk' }, direct: false, need: null, expect: 'no_data' },
-  // CCO: las seis preguntas del director de cliente. F no se ofrece como sugerencia (expect no_data) pero se prueba con la misma regla.
+  // CCO: las seis preguntas del director de cliente. E y F miden casos por modalidad según el campo Retailer (nunca recomiendan: faltan venta, costos y margen).
   { q: '¿Cómo rinde cada SKU en Amazon según venta, devoluciones y defectos?', tool: 'rendimiento_sku', args: { canal: 'amazon' }, direct: true, need: 'ledger', roles: ['analyst', 'owner'] },
   { q: '¿Qué SKU parecen descontinuados porque llevan 3 meses sin venta?', tool: 'candidatos_sin_venta', args: { meses_sin_venta: '3' }, direct: true, need: 'ledger', roles: ['analyst', 'owner'] },
   { q: '¿Qué bodega tarda más en despachar las reposiciones de garantía?', tool: 'eficiencia_bodegas', args: {}, direct: true, need: 'excel', roles: ['analyst', 'owner'] },
   { q: '¿En qué estados se concentran los casos?', tool: 'casos_por_estado', args: { pais: 'US' }, direct: true, need: 'excel', roles: ['analyst', 'owner'] },
   { q: '¿Qué SKU conviene vender como vendedor de Amazon y cuáles directo?', tool: 'casos_por_subcanal', args: { retailer: 'amazon' }, direct: true, need: 'excel', roles: ['analyst', 'owner'] },
-  { q: '¿Qué SKU conviene enviar desde medios propios y cuáles con el cumplimiento de Amazon?', tool: 'envio_propio_vs_amazon', args: {}, direct: false, need: null, expect: 'no_data', roles: ['analyst', 'owner'] },
+  { q: '¿Qué SKU conviene enviar desde medios propios y cuáles con el cumplimiento de Amazon?', tool: 'envio_propio_vs_amazon', args: {}, direct: true, need: 'excel', roles: ['analyst', 'owner'] },
   { q: '¿Cuánto voy a vender el próximo trimestre?', tool: null, args: {}, direct: false, need: null, expect: 'out_of_catalog' },
 ]);
 
@@ -38,9 +38,37 @@ export function buildSuggestions(coverage, role = 'viewer') {
   const categorias = [
     { titulo: 'Cobertura', preguntas: pick(['cobertura_datos', 'estado_tracker', 'estado_asociaciones']) },
     { titulo: 'Dinero', preguntas: pick(['ledger_por_fuente', 'ledger_por_mes', 'exposicion_por_problema']) },
-    { titulo: 'CCO', preguntas: pick(['rendimiento_sku', 'candidatos_sin_venta', 'eficiencia_bodegas', 'casos_por_estado', 'casos_por_subcanal']) },
+    { titulo: 'CCO', preguntas: pick(['rendimiento_sku', 'candidatos_sin_venta', 'eficiencia_bodegas', 'casos_por_estado', 'casos_por_subcanal', 'envio_propio_vs_amazon']) },
     { titulo: 'Problemas y clientes', preguntas: pick(['problemas_top', 'comparar_meses', 'categorias_por_mes', 'clientes_por_problema']) },
   ].filter((c) => c.preguntas.length).map((c) => ({ ...c, preguntas: c.preguntas.slice(0, 3) }));
   const directas = Object.fromEntries(DEMO_QUESTIONS.filter((d) => d.direct && d.tool).map((d) => [d.q, { tool: d.tool, args: d.args }]));
   return { loaded: loaded.size, total, empty: loaded.size === 0, sugerencias: first.slice(0, 5), categorias, directas };
 }
+
+/** Frases de ejemplo de las seis preguntas del CCO, en español e inglés. El enrutador por reglas (model.mjs) debe llevar cada una a su herramienta; una prueba lo exige. */
+export const CCO_EJEMPLOS = Object.freeze({
+  rendimiento_sku: Object.freeze({
+    es: ['¿Cómo rinde cada SKU según venta, devoluciones, defectos y reseñas positivas?', '¿Qué SKU tienen más devoluciones en Amazon?'],
+    en: ['How does each SKU perform on sales, returns, defects and positive reviews?', 'Which SKUs have the most refunds on Amazon?'],
+  }),
+  candidatos_sin_venta: Object.freeze({
+    es: ['¿Qué productos descontinuados necesitan inventario adicional?', '¿Qué SKU llevan 6 meses sin venta?'],
+    en: ['Which discontinued products need additional inventory?', 'Which SKUs have had no sales for 6 months?'],
+  }),
+  eficiencia_bodegas: Object.freeze({
+    es: ['¿Cuáles bodegas y transportistas son más eficientes?', '¿Qué bodega da más problemas de logística?'],
+    en: ['Which warehouses and carriers are the most efficient?', 'Which warehouse causes the most logistics problems?'],
+  }),
+  casos_por_estado: Object.freeze({
+    es: ['¿En qué estados conviene tener bodegas grandes o pequeñas?', '¿Qué estados concentran más casos?'],
+    en: ['In which states should we have bigger or smaller warehouses?', 'Which states have the most cases?'],
+  }),
+  casos_por_subcanal: Object.freeze({
+    es: ['¿Qué SKU conviene vender a través de Amazon y cuáles venderle a Amazon como proveedor directo?', '¿Qué SKU vendo como vendedor de Walmart según el Retailer?'],
+    en: ['Which SKUs should we sell through Amazon and which sell to Amazon as a direct supplier?', 'Which SKUs do we sell as a Walmart seller by Retailer?'],
+  }),
+  envio_propio_vs_amazon: Object.freeze({
+    es: ['¿Qué SKU conviene enviar con medios propios y cuáles con el cumplimiento de Amazon?', '¿De qué bodega sale mejor cada SKU en Walmart, la propia o Walmart Fulfillment?'],
+    en: ['Which SKUs should we ship with our own means and which with Amazon fulfillment?', 'Which warehouse should each SKU ship from on Walmart, our own or Walmart fulfillment?'],
+  }),
+});

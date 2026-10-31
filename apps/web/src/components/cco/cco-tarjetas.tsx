@@ -8,7 +8,7 @@ import {Notice} from '../ui/notice';
 import {SegmentedControl} from '../ui/segmented';
 type Column<T>={key:string;header:ReactNode;render:(row:T)=>ReactNode;align?:'start'|'num'};
 import '../confianza/confianza.css';
-import type {Cobertura,Faltan,CardBase,TarjetaAv,TarjetaBv,TarjetaCv,TarjetaDv,TarjetaEv,TarjetaFv,CanalA,FilaSku,EstadoCco} from '../../../../../packages/workspace-service/cco.mjs';
+import type {Cobertura,Faltan,CardBase,TarjetaAv,TarjetaBv,TarjetaCv,TarjetaDv,TarjetaEv,TarjetaFv,CanalA,FilaSku,EstadoCco,SubcanalMod,SkuMod} from '../../../../../packages/workspace-service/cco.mjs';
 import {mayor,mesTxt,diaTxt,selloCco,tonoDeEstado} from './cco-modelo.mjs';
 import './cco.css';
 
@@ -153,20 +153,39 @@ export function TarjetaD({card,minimo,consultado}:{card:TarjetaDv;minimo:number;
  </Marco>;
 }
 
-// ---- E: casos del Tracker por subcanal (parcial y con sesgo) ----
-export function TarjetaE({card,minimo,consultado}:{card:TarjetaEv;minimo:number;consultado:string}){
- const t=useT(),idioma=useIdioma();
- const cols:Column<TarjetaEv['subcanales'][number]>[]=[{key:'s',header:t('cco.th.subcanal'),render:r=>t(k(`cco.sub.${r.subcanal}`))},{key:'n',header:t('cco.th.casos'),align:'num',render:r=>numero(idioma,r.n)}];
+// ---- E y F: modalidad de venta (quién vende) y de envío (de qué bodega sale). Casos del Tracker, nunca ventas ni una recomendación ----
+function TarjetaModalidad({card,minimo,consultado}:{card:TarjetaEv|TarjetaFv;minimo:number;consultado:string}){
+ const t=useT(),idioma=useIdioma(),id=card.id,eje=card.eje;
+ const conteo=(n:number|null)=>n===null?<Oculto n={minimo}/>:numero(idioma,n);
+ const detalle=(n:number|null)=>card.detalleIndisponible?<SinDato/>:conteo(n);
+ const valorEje=(r:SubcanalMod)=>eje==='vende'?r.vende:r.bodega;
+ const cols:Column<SubcanalMod>[]=[
+  {key:'s',header:t('cco.th.subcanal'),render:r=>t(k(`cco.sub.${r.subcanal}`))},
+  {key:'v',header:t(eje==='vende'?'cco.th.vende':'cco.th.sale'),render:r=>t(k(`cco.mod.val.${valorEje(r)}`))},
+  {key:'m',header:t('cco.th.mkt'),render:r=>t(k(`cco.mod.val.${r.marketplace}`))},
+  {key:'n',header:t('cco.th.casos'),align:'num',render:r=>numero(idioma,r.casos)},
+  {key:'r',header:t('cco.th.reembolsos'),align:'num',render:r=>detalle(r.reembolsos)},
+  {key:'g',header:t('cco.th.garantias'),align:'num',render:r=>detalle(r.garantias)},
+  {key:'d',header:t('cco.th.defectos'),align:'num',render:r=>detalle(r.defectos)},
+  {key:'t',header:t('cco.th.despacho3'),align:'num',render:r=>r.despacho===null?<SinDato/>:r.despacho.legibles===null?<Oculto n={minimo}/>:t('cco.mod.despacho3',{tres:r.despacho.tresODias===null?t('cco.menosDe',{n:minimo}):numero(idioma,r.despacho.tresODias),legibles:numero(idioma,r.despacho.legibles)})},
+ ];
+ const valores=card.ejes.filter(e=>e.valor!=='sin_dato'||card.skus.some(x=>x.grupos.sin_dato)).map(e=>e.valor);
+ const celdaGrupo=(g:SkuMod['grupos'][string])=>g===null||g===undefined?<Oculto n={minimo}/>:<>{numero(idioma,g.casos)}<small className="cco-sub"> {t('cco.mod.detalle',{reemb:g.reembolsos===null?t('cco.menosDe',{n:minimo}):numero(idioma,g.reembolsos),def:g.defectos===null?t('cco.menosDe',{n:minimo}):numero(idioma,g.defectos)})}</small></>;
+ const colsSku:Column<SkuMod>[]=[{key:'sku',header:t('cco.th.sku'),render:r=><code>{r.sku}</code>},
+  ...valores.map(v=>({key:v,header:t(k(`cco.mod.${eje}.${v}`)),align:'num' as const,render:(r:SkuMod)=>celdaGrupo(r.grupos[v])}))];
  return <Marco card={card} minimo={minimo} consultado={consultado}>
-  <div className="cco-bloque"><h3>{t('cco.E.subtitulo')}</h3>
-   <DataTable columns={cols} rows={card.subcanales} rowKey={r=>r.subcanal} caption={t('cco.E.subtitulo')} maxHeight="none" empty={<p className="cco-vacio">{t('cco.E.sinFilas')}</p>}/></div>
+  {card.estado==='falta'?<Notice tone="info">{t(id==='F'?'cco.F.nodata':'cco.E.sinFilas')}</Notice>:<>
+   {card.detalleIndisponible&&<Notice tone="warn">{t('cco.mod.detalleNoInstalado')}</Notice>}
+   <div className="cco-bloque"><h3>{t(id==='F'?'cco.F.subtitulo':'cco.E.subtitulo')}</h3>
+    <ul className="cco-lista">{card.ejes.map(e=><li key={e.valor}>{t('cco.mod.ejeResumen',{valor:t(k(`cco.mod.${eje}.${e.valor}`)),casos:numero(idioma,e.casos)})}</li>)}</ul>
+    <DataTable columns={cols} rows={card.subcanales} rowKey={r=>r.subcanal} caption={t(id==='F'?'cco.F.subtitulo':'cco.E.subtitulo')} maxHeight="none" empty={<p className="cco-vacio">{t(id==='F'?'cco.F.sinFilas':'cco.E.sinFilas')}</p>}/></div>
+   {!card.detalleIndisponible&&<div className="cco-bloque"><h3>{t(id==='F'?'cco.F.skuSubtitulo':'cco.E.skuSubtitulo')}</h3>
+    <DataTable columns={colsSku} rows={card.skus} rowKey={r=>r.sku} caption={t(id==='F'?'cco.F.skuSubtitulo':'cco.E.skuSubtitulo')} maxHeight="none" empty={<p className="cco-vacio">{t('cco.sinSku')}</p>}/></div>}
+  </>}
  </Marco>;
 }
+export const TarjetaE=TarjetaModalidad;
+export const TarjetaF=TarjetaModalidad;
 
-// ---- F: siempre sin dato ----
-export function TarjetaF({card,minimo,consultado}:{card:TarjetaFv;minimo:number;consultado:string}){
- const t=useT();
- return <Marco card={card} minimo={minimo} consultado={consultado}><Notice tone="info">{t('cco.F.nodata')}</Notice></Marco>;
-}
 export type {Traductor};
 export {diaTxt};

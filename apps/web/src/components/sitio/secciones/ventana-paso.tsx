@@ -28,6 +28,8 @@ export function VentanaPaso({n, lang}: Props) {
           <div className="s-pv__marco" data-n={n}>
             <Captura nombre={`paso${n}`} clave={clave} lang={lang} tamanos="(max-width: 1100px) 100vw, 640px" anchos={[medidas(clave).ancho]} clase="s-ventana__img" />
           </div>
+          {/* T49: paso 3 en móvil, una tarjeta por vez; marcas de parada vacías (solo móvil) */}
+          {n === 3 ? [1, 2].map((i) => <span className="s-snap" data-i={i} key={i} aria-hidden="true" />) : null}
           <svg className="s-pv__svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
             {n === 1 ? <Paso1 u={ui.paso1} /> : null}
             {n === 2 ? <Paso2 u={ui.paso2} /> : null}

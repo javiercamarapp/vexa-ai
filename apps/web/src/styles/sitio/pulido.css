@@ -227,11 +227,26 @@ html[data-js] .s-pantalla .s-pantalla__img { clip-path: none; animation: none; }
   .s-pv .s-pv__marco { position: static; width: 100% !important; /* gana a left/width/top por data-n de inicio.css */ }
   .s-pv .s-pv__marco[data-n] { left: auto; top: auto; }
   /* Pasos 2 y 3: lienzo ancho con desplazamiento lateral (scroll-snap) para que el texto de la captura mida 9 px o más en vez de 4 a 5 px */
-  .s-pv[data-n="2"],
-  .s-pv[data-n="3"] { overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: thin; }
-  .s-pv[data-n="2"] .s-pv__lienzo { width: 600px; max-width: none; scroll-snap-align: start; }
-  /* Paso 3: la capa de anotaciones (que ocupaba la mitad inferior) no existe en móvil; se recorta el vacío de abajo para no alargar la página */
-  .s-pv[data-n="3"] .s-pv__lienzo { width: 680px; max-width: none; height: 160px; overflow: hidden; scroll-snap-align: start; }
+  .s-pv[data-n="2"] { overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: thin; }
+  .s-pv[data-n="3"] { overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; }
+  /* T49: 700 px (antes 600): el rótulo más pequeño de la lista (12 px en el original) queda en 11 px efectivos o más */
+  .s-pv[data-n="2"] .s-pv__lienzo { width: 700px; max-width: none; scroll-snap-align: start; }
+  /* T49: las tarjetas de cifras (paso 3 y tira de «Cada cifra dice de dónde viene») se leían a 4 a 6 px y la cifra US$36,000 quedaba cortada en el borde.
+     Ahora la captura se amplía hasta que una tarjeta mide el ancho de la ventana menos 12 px (--s-tarjeta; entre 280 y 360 px) y el texto de la captura
+     (11 px en el original, ver tests/sitio/texto-captura.test.mjs) queda en 11 px efectivos o más. Se desplaza a los lados con paradas de una tarjeta; los
+     12 px que asoman de la siguiente son solo su borde y su relleno, nunca letras cortadas. */
+  /* cqw sale del figure (contenedor de tamaño en línea); la variable va en el cuerpo, que es su hijo */
+  .s-ventana--producto .s-ventana__cuerpo { --s-tarjeta: clamp(280px, calc(100cqw - 12px), 360px); }
+  .s-snap { display: block; position: absolute; top: 0; bottom: 0; width: 1px; scroll-snap-align: start; pointer-events: none; }
+  .s-snap[data-i="1"] { left: var(--s-tarjeta); }
+  .s-snap[data-i="2"] { left: calc(2 * var(--s-tarjeta)); }
+  .s-snap[data-i="3"] { left: calc(3 * var(--s-tarjeta)); }
+  /* Paso 3: tres tarjetas en 1160 unidades de captura; sin la capa de anotaciones la altura es la de la imagen */
+  .s-pv[data-n="3"] .s-pv__lienzo { width: calc(3 * var(--s-tarjeta)); max-width: none; height: auto; overflow: clip; scroll-snap-align: start; /* clip no crea contenedor de desplazamiento: las marcas de parada cuentan para .s-pv */ }
+  /* Valor: cuatro tarjetas en 1550 unidades de captura */
+  .s-valor__ventana .s-ventana__cuerpo { overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: thin; }
+  .s-valor__ventana .s-ventana__cuerpo picture { display: block; width: calc(4 * var(--s-tarjeta)); scroll-snap-align: start; }
+  .s-valor__ventana .s-ventana__img { width: 100%; max-width: none; }
   .s-ventana--paso .s-ventana__barra { display: none; }
   .s-ventana--paso .s-ventana__cuerpo { border-radius: var(--s-r-tarjeta) var(--s-r-tarjeta) 0 0; }
   .s-escena__fijo { gap: 0; }

@@ -1,6 +1,6 @@
 // Captura real del producto (datos de ejemplo) del manifest: AVIF con respaldo WebP, ancho y alto del original y el alt del idioma.
 // Hay dos juegos de capturas: español (producto/<nombre>) e inglés (producto/en/<nombre>, mismas medidas), con el fixture y la interfaz en su idioma; el alt es el del idioma.
-import type {ReactNode} from 'react';
+import type {HTMLAttributes, ReactNode} from 'react';
 import {alt, medidas, url, urlAvif} from '../../../lib/sitio/activos';
 import {T, UI} from '../mocks/datos';
 
@@ -42,7 +42,7 @@ export function Captura({nombre, tema, lang, tamanos, prioridad = false, clase, 
 }
 
 /** Ventana oscura de producto con la captura real y, encima, las anotaciones del llamador (hijos, posicionados dentro del cuerpo). */
-export function VentanaCaptura({nombre, clave, tema = 'oscuro', lang, ruta, tamanos, anchos, children}: {nombre: string; clave?: string; tema?: TemaCaptura; lang: 'es' | 'en'; ruta: 'm1' | 'm2' | 'm3' | 'm4' | 'm5' | 'm6'; tamanos: string; anchos?: number[]; children?: ReactNode}) {
+export function VentanaCaptura({nombre, clave, tema = 'oscuro', lang, ruta, tamanos, anchos, children, cuerpo}: {nombre: string; clave?: string; tema?: TemaCaptura; lang: 'es' | 'en'; ruta: 'm1' | 'm2' | 'm3' | 'm4' | 'm5' | 'm6'; tamanos: string; anchos?: number[]; children?: ReactNode; cuerpo?: HTMLAttributes<HTMLDivElement>}) {
   const t = T(lang);
   return (
     <figure className="s-ventana s-ventana--producto">
@@ -51,7 +51,7 @@ export function VentanaCaptura({nombre, clave, tema = 'oscuro', lang, ruta, tama
         <span className="s-mock-ruta">{UI(lang).rutas[ruta]}</span>
         <span className="s-mock-org">{t.organizacion}</span>
       </div>
-      <div className="s-ventana__cuerpo">
+      <div className="s-ventana__cuerpo" {...cuerpo}>
         <Captura nombre={nombre} clave={clave} tema={tema} lang={lang} tamanos={tamanos} anchos={anchos} clase="s-ventana__img" />
         {children}
       </div>

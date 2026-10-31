@@ -22,10 +22,24 @@ function limpiar(fuente: string): string {
   s = s.replace(PAR, '$1()'); // par bilingüe inline L(es,en)
   return s;
 }
+/** Sustituye cada `${…}` (con llaves anidadas) por un espacio: la plantilla se revisa por el texto que la rodea, no se descarta por llevar interpolación (T42). */
+export function sinInterpolaciones(plantilla: string): string {
+  let out = '', i = 0;
+  while (i < plantilla.length) {
+    if (plantilla[i] === '$' && plantilla[i + 1] === '{') {
+      let depth = 1, j = i + 2;
+      while (j < plantilla.length && depth > 0) { if (plantilla[j] === '{') depth++; else if (plantilla[j] === '}') depth--; j++; }
+      out += ' '; i = j;
+    } else out += plantilla[i++];
+  }
+  return out.replace(/ {2,}/g, ' ').trim();
+}
 export function hallazgos(fuente: string): string[] {
   const s = limpiar(fuente), out: string[] = [];
   for (const m of s.matchAll(/'([^'\n\\]{4,})'|"([^"\n\\]{4,})"|`([^`\n]{4,})`|(?<![=-])>([^<>{}=;\n]{4,})</g)) {
-    const t = m[1] ?? m[2] ?? m[3] ?? m[4];
+    // Las plantillas con ${…} se revisan por su texto fijo (antes se descartaban enteras por llevar llaves: 108 plantillas con español pasaban en verde).
+    const t = m[3] !== undefined ? sinInterpolaciones(m[3]) : (m[1] ?? m[2] ?? m[4]);
+    if (t.length < 4) continue;
     if (/^[\w./@:#?&=%-]+$/.test(t) || (!ACENTOS.test(t) && t.split(' ').every((w) => /[-_]/.test(w))) || /[{};]|=>|\)\s*\(/.test(t) || /^[\w-]+( [\w-]+)+$/.test(t) && !ACENTOS.test(t) && (t.match(ES_PALABRAS) || []).length < 2) continue;
     const n = (t.match(ES_PALABRAS) || []).length;
     if ((ACENTOS.test(t) && (n >= 1 || t.includes(' '))) || n >= 2) out.push(t);
@@ -53,26 +67,28 @@ const EXCEPCIONES_TSX: Record<string, string> = {
   'components/platform/platform-views.tsx': 'las 7 preguntas del copiloto de plataforma son claves de búsqueda de su traducción (PLATFORM_SHORTCUTS), no texto que se pinta',
   'app/(app)/sin-acceso/page.tsx': 'nombres de empresa sintéticos del modo de pruebas',
 };
-/** Tope de español canónico en módulos de datos de pantalla (archivo → máximo de hallazgos). Se genera con UPDATE_TOPES=1 y solo debe bajar.
+/** Tope de español canónico en módulos de datos de pantalla (archivo → máximo de hallazgos). Se genera con UPDATE_TOPES=1 TOPES_DIR=<carpeta> y solo debe bajar.
+ *  T42: el detector ahora revisa también las plantillas con interpolación (backtick ... dólar-llave ... backtick), que antes se descartaban enteras; los topes se re-fijaron UNA vez con ese conteo
+ *  (deuda que ya existía y estaba oculta: 64 módulos de pantalla y 90 de paquetes más, casi todo español base con su inglés en una tabla aparte o mensajes internos de contrato). Desde aquí solo bajan.
  *  Justificación de las subidas de T40: lib/copiloto/modos.mjs +15 (las preguntas de los chips en español son el IDENTIFICADOR de cada consulta directa; su inglés vive en PREGUNTA_EN),
  *  lib/history/historico.mjs +1 (rama inglesa nueva en el mismo módulo), y hoy-textos.mjs +1 / recomendaciones-vista.mjs +1 que ya estaban por encima del tope antes de este cambio. */
 const TOPE_MODULOS: Record<string, number> = {
  'components/agente/attachments.ts': 1,
  'components/agente/store.ts': 2,
  'components/agente/use-agente.ts': 1,
- 'components/confianza/confianza-modelo.mjs': 29,
+ 'components/confianza/confianza-modelo.mjs': 35,
  'components/copiloto/adaptador-cfo.mjs': 1,
- 'components/copiloto/briefing-cfo.mjs': 9,
- 'components/gaps/gaps-archivos.mjs': 7,
- 'components/gaps/gaps-modelo.mjs': 7,
- 'components/hoy/hoy-textos.mjs': 39,
+ 'components/copiloto/briefing-cfo.mjs': 14,
+ 'components/gaps/gaps-archivos.mjs': 11,
+ 'components/gaps/gaps-modelo.mjs': 18,
+ 'components/hoy/hoy-textos.mjs': 48,
  'components/map/geo/generar-geo.mjs': 1,
- 'components/map/mapa-modelo.mjs': 2,
+ 'components/map/mapa-modelo.mjs': 4,
  'components/pain-points/burbujas-modelo.mjs': 7,
- 'components/pain-points/modelo.mjs': 2,
- 'components/refunds/fuga-archivos.mjs': 16,
- 'components/refunds/fuga-modelo.mjs': 11,
- 'components/ui/use-json.ts': 2,
+ 'components/pain-points/modelo.mjs': 3,
+ 'components/refunds/fuga-archivos.mjs': 19,
+ 'components/refunds/fuga-modelo.mjs': 19,
+ 'components/workload/carga-modelo.mjs': 1,
  'components/workspace/cfo-model.mjs': 4,
  'lib/auth-http.ts': 1,
  'lib/connections/estado.mjs': 5,
@@ -82,31 +98,31 @@ const TOPE_MODULOS: Record<string, number> = {
  'lib/history/historico.mjs': 17,
  'lib/imports/connection-options.ts': 1,
  'lib/jobs/progreso.mjs': 5,
- 'lib/legibilidad/brief.mjs': 3,
- 'lib/legibilidad/caida.mjs': 1,
+ 'lib/legibilidad/brief.mjs': 4,
+ 'lib/legibilidad/caida.mjs': 2,
  'lib/legibilidad/categorias.mjs': 37,
  'lib/legibilidad/dinero.mjs': 2,
  'lib/legibilidad/espera.mjs': 7,
  'lib/legibilidad/explorador.mjs': 2,
  'lib/legibilidad/ficha.mjs': 7,
  'lib/legibilidad/fuentes.mjs': 2,
- 'lib/legibilidad/guias.mjs': 24,
- 'lib/legibilidad/insights.mjs': 7,
+ 'lib/legibilidad/guias.mjs': 25,
+ 'lib/legibilidad/insights.mjs': 11,
  'lib/legibilidad/jerga.mjs': 4,
- 'lib/legibilidad/meses.mjs': 1,
+ 'lib/legibilidad/meses.mjs': 2,
  'lib/legibilidad/problemas-catalogo.mjs': 1,
  'lib/legibilidad/recomendaciones-vista.mjs': 14,
- 'lib/legibilidad/resumen-ejecutivo.mjs': 7,
+ 'lib/legibilidad/resumen-ejecutivo.mjs': 8,
  'lib/legibilidad/sincronizacion.mjs': 19,
  'lib/legibilidad/titulo-descriptivo.mjs': 1,
- 'lib/legibilidad/unidades.mjs': 1,
+ 'lib/legibilidad/unidades.mjs': 4,
  'lib/notifications/avisos.mjs': 7,
  'lib/notifications/duracion.mjs': 1,
- 'lib/onboarding/catalogo.mjs': 1,
+ 'lib/onboarding/catalogo.mjs': 4,
  'lib/platform/clients.ts': 3,
  'lib/platform/ficha-model.ts': 1,
  'lib/platform/palette.ts': 1,
- 'lib/recovery/retencion.mjs': 1,
+ 'lib/recovery/retencion.mjs': 2,
  'lib/site.mjs': 5,
  'lib/workspace/alcance.mjs': 3,
  'lib/workspace/data.ts': 2,
@@ -138,7 +154,7 @@ test('el español canónico de módulos .mjs/.ts de pantallas no crece (TOPE_MOD
     const n = hallazgos(fs.readFileSync(RAIZ + '/' + rel, 'utf8')).length;
     if (n) actual[rel] = n;
   }
-  if (process.env.UPDATE_TOPES === '1') { fs.writeFileSync('/tmp/topes-modulos.json', JSON.stringify(actual, null, 1)); return; }
+  if (process.env.UPDATE_TOPES === '1') { fs.writeFileSync((process.env.TOPES_DIR ?? '/tmp') + '/topes-modulos.json', JSON.stringify(actual, null, 1)); return; }
   const crecen = Object.entries(actual).filter(([rel, n]) => n > (TOPE_MODULOS[rel] ?? 0)).map(([rel, n]) => `${rel}: ${n} > tope ${TOPE_MODULOS[rel] ?? 0}`);
   assert.deepEqual(crecen, [], 'más español fijo que el tope; traduce o justifica');
 });
@@ -197,27 +213,27 @@ function archivosPaquete(dir: string, acc: string[] = []): string[] {
 /** Tope de español sin par inglés en paquetes (archivo → máximo). Los pares L(es,en) / E / par no cuentan. Lo que sigue aquí es deuda documentada: copiloto de plataforma (platform-tools), lectura de IA de puntos de dolor, fuga de reembolsos, y las claves en español de las preguntas del agente. */
 const TOPE_PAQUETES: Record<string, number> = {
  'agent-datos/agent.mjs': 3,
- 'agent-datos/contract.mjs': 4,
- 'agent-datos/meses.mjs': 2,
+ 'agent-datos/contract.mjs': 10,
+ 'agent-datos/meses.mjs': 6,
  'agent-datos/model.mjs': 4,
- 'agent-datos/port-queries.mjs': 1,
- 'agent-datos/suggestions.mjs': 61,
- 'agent-datos/synthetic.mjs': 13,
+ 'agent-datos/port-queries.mjs': 2,
+ 'agent-datos/suggestions.mjs': 62,
+ 'agent-datos/synthetic.mjs': 14,
  'agent-datos/tools-cco.mjs': 33,
- 'agent-datos/tools.mjs': 38,
+ 'agent-datos/tools.mjs': 49,
  'briefs/build.mjs': 8,
  'cfo-copilot/src/cfo-export.mjs': 1,
- 'cfo-copilot/src/cfo-model.mjs': 15,
+ 'cfo-copilot/src/cfo-model.mjs': 16,
  'cfo-copilot/src/cfo-repository.mjs': 1,
- 'cfo-copilot/src/copilot/cco-tools.mjs': 21,
+ 'cfo-copilot/src/copilot/cco-tools.mjs': 22,
  'cfo-copilot/src/copilot/cfo-tools.mjs': 46,
  'cfo-copilot/src/copilot/guards.mjs': 3,
- 'cfo-copilot/src/copilot/platform-tools.mjs': 38,
- 'cfo-copilot/src/copilot/runtime.mjs': 7,
+ 'cfo-copilot/src/copilot/platform-tools.mjs': 43,
+ 'cfo-copilot/src/copilot/runtime.mjs': 8,
  'cfo-copilot/src/copilot/simulated-model.mjs': 1,
  'cfo-copilot/src/fixtures.mjs': 1,
  'cfo-copilot/src/platform-fixtures.mjs': 9,
- 'cfo-copilot/src/platform-model.mjs': 5,
+ 'cfo-copilot/src/platform-model.mjs': 10,
  'intelligence/api.mjs': 1,
  'intelligence/history-tests/browser.mjs': 2,
  'jobs/imports.mjs': 2,
@@ -226,25 +242,26 @@ const TOPE_PAQUETES: Record<string, number> = {
  'metrics/money-repository.mjs': 2,
  'metrics/overview.mjs': 2,
  'metrics/snapshots.mjs': 1,
- 'notifications/baja-semanal.mjs': 20,
+ 'notifications/baja-semanal.mjs': 23,
  'notifications/catalog.mjs': 7,
- 'notifications/email-system.mjs': 3,
- 'notifications/email-template.mjs': 46,
- 'notifications/email-weekly.mjs': 6,
+ 'notifications/email-system.mjs': 4,
+ 'notifications/email-template.mjs': 53,
+ 'notifications/email-weekly.mjs': 14,
  'problems/causality.mjs': 2,
  'problems/repository.mjs': 1,
- 'recommendations/borradores.mjs': 6,
+ 'recommendations/borradores.mjs': 9,
  'recommendations/explorer.mjs': 3,
  'recommendations/flow.mjs': 1,
- 'recommendations/flujo.mjs': 19,
- 'recommendations/generate.mjs': 3,
- 'recommendations/ia.mjs': 7,
+ 'recommendations/flujo.mjs': 22,
+ 'recommendations/generate.mjs': 9,
+ 'recommendations/ia.mjs': 8,
+ 'recommendations/index.mjs': 1,
  'workspace-service/brechas.mjs': 4,
  'workspace-service/carga-sla.mjs': 2,
  'workspace-service/cco.mjs': 24,
- 'workspace-service/cifras-cobertura.mjs': 2,
+ 'workspace-service/cifras-cobertura.mjs': 4,
  'workspace-service/cifras-libro.mjs': 2,
- 'workspace-service/critico.mjs': 9,
+ 'workspace-service/critico.mjs': 12,
  'workspace-service/datos-hasta.mjs': 2,
  'workspace-service/detail.mjs': 3,
  'workspace-service/enmascarar-terceros.mjs': 3,
@@ -252,13 +269,15 @@ const TOPE_PAQUETES: Record<string, number> = {
  'workspace-service/geo-estado.mjs': 5,
  'workspace-service/incidences.mjs': 3,
  'workspace-service/index.mjs': 7,
- 'workspace-service/mapa-problemas.mjs': 4,
+ 'workspace-service/mapa-problemas.mjs': 5,
  'workspace-service/pain-points-catalogo.mjs': 2,
  'workspace-service/pain-points-evidencia.mjs': 4,
- 'workspace-service/pain-points-ia.mjs': 22,
- 'workspace-service/pain-points-semanal.mjs': 6,
+ 'workspace-service/pain-points-ia.mjs': 25,
+ 'workspace-service/pain-points-semanal.mjs': 8,
  'workspace-service/pain-points.mjs': 1,
- 'workspace-service/provenance.mjs': 5
+ 'workspace-service/provenance.mjs': 11,
+ 'workspace-service/summaries.mjs': 2,
+ 'workspace-service/trends.mjs': 1
 };
 test('el español sin par inglés de los paquetes no crece (TOPE_PAQUETES): un literal nuevo debe ir como par L(es, en) o con su traducción', () => {
   const actual: Record<string, number> = {};
@@ -267,7 +286,7 @@ test('el español sin par inglés de los paquetes no crece (TOPE_PAQUETES): un l
     const n = hallazgos(fs.readFileSync(PAQUETES + '/' + rel, 'utf8')).length;
     if (n) actual[rel] = n;
   }
-  if (process.env.UPDATE_TOPES === '1') { fs.writeFileSync('/tmp/topes-paquetes.json', JSON.stringify(actual, null, 1)); return; }
+  if (process.env.UPDATE_TOPES === '1') { fs.writeFileSync((process.env.TOPES_DIR ?? '/tmp') + '/topes-paquetes.json', JSON.stringify(actual, null, 1)); return; }
   const crecen = Object.entries(actual).filter(([rel, n]) => n > (TOPE_PAQUETES[rel] ?? 0)).map(([rel, n]) => `${rel}: ${n} > tope ${TOPE_PAQUETES[rel] ?? 0}`);
   assert.deepEqual(crecen, [], 'más español sin par inglés que el tope; usa L(es, en) o justifica');
 });
@@ -275,4 +294,22 @@ test('los pares bilingües inline L(es, en) no cuentan como español fijo y un l
   assert.deepEqual(hallazgos("const a = L('Sin datos para este periodo', `No data for this period`);"), []);
   assert.deepEqual(hallazgos("const a = L(`Hay ${n} pedidos sin importe`, `There are ${n} orders without an amount`);"), []);
   assert.deepEqual(hallazgos("const a = 'Sin datos para este periodo';"), ['Sin datos para este periodo']);
+});
+
+// ---- T42: plantillas con interpolación ----
+test('el detector revisa las plantillas con ${…} (antes quedaban fuera) y sigue ignorando las bilingües, las de código y las de identificadores', () => {
+  assert.deepEqual(hallazgos('const a = `Hay ${n} pedidos sin importe`;'), ['Hay pedidos sin importe']);
+  assert.deepEqual(hallazgos('const a = `${mes(prev)} y ${mes(last)} son meses completos`;'), ['y son meses completos']);
+  assert.deepEqual(hallazgos('const a = `Pedidos: ${f(a.n)} → ${f(z.n)} (${p})`;'), []);
+  assert.deepEqual(hallazgos('const a = `${f({k: 1}, g(2))} está incompleto`;'), ['está incompleto']);
+  assert.deepEqual(hallazgos('const a = `There are ${n} orders without an amount`;'), []);
+  assert.deepEqual(hallazgos('const k = `tr.lg.hace.${unidad}`; const u = `/api/x/${id}/y`;'), []);
+  assert.deepEqual(hallazgos("const a = L(`Hay ${n} pedidos`, `There are ${n} orders`);"), []);
+  assert.equal(sinInterpolaciones('a ${b({c: {d: 1}})} d ${e}'), 'a d');
+});
+test('los topes solo bajan: ninguna entrada de TOPE_MODULOS / TOPE_PAQUETES apunta a un archivo inexistente y todo tope tiene español que lo justifique', () => {
+  for (const rel of Object.keys(TOPE_MODULOS)) assert.ok(fs.existsSync(RAIZ + '/' + rel), 'no existe: ' + rel);
+  for (const rel of Object.keys(TOPE_PAQUETES)) assert.ok(fs.existsSync(PAQUETES + '/' + rel), 'no existe: ' + rel);
+  for (const [rel, tope] of Object.entries(TOPE_MODULOS)) assert.ok(hallazgos(fs.readFileSync(RAIZ + '/' + rel, 'utf8')).length === tope, `tope holgado (bájalo a lo real): ${rel}`);
+  for (const [rel, tope] of Object.entries(TOPE_PAQUETES)) assert.ok(hallazgos(fs.readFileSync(PAQUETES + '/' + rel, 'utf8')).length === tope, `tope holgado (bájalo a lo real): ${rel}`);
 });

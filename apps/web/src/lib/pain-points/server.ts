@@ -32,6 +32,8 @@ function falla(error:unknown,finish:(r:NextResponse)=>NextResponse,base:string){
  const code=status===503?base+'_unavailable':status===404?'resource_not_found':e.code&&/^(pain_point_invalid|pain_point_not_found|cursor_invalid|cursor_scope_conflict)$/.test(e.code)?e.code:'request_rejected';
  return finish(NextResponse.json({error:{code}},{status,headers:PRIVATE_HEADERS}));
 }
+/** Clave del memo del resumen de puntos de dolor: el inglés lleva su propia entrada (el texto sale ya traducido; nunca se comparte con el español). */
+export const claveMemoPuntos=(tenant:string,role:string,idioma:string)=>tenant+'|'+role+'|pain-points'+(idioma==='en'?'|en':'');
 /** GET /api/pain-points: puntos de dolor del tenant activo (dinero bruto, monedas separadas, `sinDato` explícito, jamás 0). Solo lectura bajo la sesión y la RLS del usuario; sin PII. */
 export async function painPointsHandler(request:NextRequest){
  let finish=(r:NextResponse)=>r;
@@ -39,7 +41,7 @@ export async function painPointsHandler(request:NextRequest){
   if([...request.nextUrl.searchParams.keys()].length)throw new AccessError(400,'unsupported_filter');
   const c=await contexto(request);finish=c.finish;
   const idioma=idiomaDePeticion(request);
-  const clave=c.tenant+'|'+c.role+'|pain-points'+(idioma==='en'?'|en':'');
+  const clave=claveMemoPuntos(c.tenant,c.role,idioma);
   const data=olvidarSiDegradada(clave,await conMemoria(clave,TTL_MS,()=>createPainPointsRepository({database:c.database}).get({idioma})));
   return finish(NextResponse.json({data},{headers:{...PRIVATE_HEADERS,Vary:'Cookie'}}));
  }catch(error){return falla(error,finish,'pain_points');}

@@ -2,9 +2,9 @@
 import {useEffect,useState} from 'react';
 import {useRecuperacionChunk} from '../components/ui/recuperar-chunk';
 import {COOKIE_IDIOMA,IDIOMA_POR_OMISION,resolverIdioma,traducir,type Idioma} from '../lib/i18n';
-/** Idioma en el navegador cuando no hay proveedor (falló el layout raíz): ?lang= o cookie rovaq_lang, como en el resto de la app. */
+/** Idioma en el navegador cuando no hay proveedor (falló el layout raíz): ?lang=, cookie rovaq_lang o idioma del navegador, como en el resto de la app. */
 function idiomaDelNavegador():Idioma{
- try{const cookie=document.cookie.split('; ').find(c=>c.startsWith(COOKIE_IDIOMA+'='))?.slice(COOKIE_IDIOMA.length+1);return resolverIdioma({parametro:new URLSearchParams(window.location.search).get('lang'),cookie});}
+ try{const cookie=document.cookie.split('; ').find(c=>c.startsWith(COOKIE_IDIOMA+'='))?.slice(COOKIE_IDIOMA.length+1);return resolverIdioma({parametro:new URLSearchParams(window.location.search).get('lang'),cookie,acceptLanguage:(navigator.languages?.length?navigator.languages.join(','):navigator.language)||null});}
  catch{return IDIOMA_POR_OMISION;}
 }
 /** Último recurso (falla el layout raíz): misma recuperación de ChunkLoadError, sin depender de estilos ni de componentes del layout (logo como imagen estática). */

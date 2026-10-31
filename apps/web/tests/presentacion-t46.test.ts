@@ -231,7 +231,7 @@ test('middleware.ts: el 429 y el modo soporte salen de la tabla mínima por cook
   assert.match(mw, /message:MENSAJES_ACCESO\[idiomaDelMiddleware\(request\)\]\.soporte,retryable:false\}\},\{status:403/);
   assert.doesNotMatch(mw.replace(/\/\/.*$/gm, ''), /Demasiadas|solo lectura/);
   const auth = leer('src/lib/auth-http.ts');
-  assert.match(auth, /export const idiomaDelMiddleware=\(request:Pick<NextRequest,'cookies'>\):Idioma=>resolverIdioma\(\{cookie:request\.cookies\.get\(COOKIE_IDIOMA\)\?\.value\}\)/);
+  assert.match(auth, /export const idiomaDelMiddleware=\(request:Pick<NextRequest,'cookies'>&Partial<Pick<NextRequest,'headers'>>\):Idioma=>idiomaDeSolicitud\(request\)/);
   const pet = (lang?: string) => ({cookies: {get: (n: string) => (n === 'rovaq_lang' && lang ? {value: lang} : undefined)}}) as never;
   const {idiomaDelMiddleware} = await import('../src/lib/auth-http');
   assert.equal(idiomaDelMiddleware(pet('en')), 'en'); assert.equal(idiomaDelMiddleware(pet('es')), 'es');

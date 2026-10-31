@@ -14,7 +14,7 @@ export function idiomaValido(valor: unknown): Idioma | null {
 /** Primer idioma soportado de un Accept-Language («en-US,en;q=0.9,es;q=0.8» → en), respetando el orden de q. Sin coincidencia: null. */
 export function idiomaDeAcceptLanguage(cabecera: string | null | undefined): Idioma | null {
   if (!cabecera) return null;
-  const candidatos = cabecera.split(',').map((parte, orden) => {
+  const candidatos = cabecera.slice(0, 512).split(',').map((parte, orden) => {
     const [etiqueta, ...params] = parte.trim().split(';');
     const q = params.map((p) => /^\s*q\s*=\s*([\d.]+)\s*$/.exec(p)?.[1]).find((v) => v !== undefined);
     return {base: etiqueta.trim().toLowerCase().split('-')[0], q: q === undefined ? 1 : Number(q), orden};
@@ -23,9 +23,14 @@ export function idiomaDeAcceptLanguage(cabecera: string | null | undefined): Idi
   for (const c of candidatos) { const v = idiomaValido(c.base); if (v) return v; }
   return null;
 }
-/** Orden de decisión: ?lang= válido, cookie rovaq_lang válida, inglés. El idioma del navegador (Accept-Language) ya NO decide: el español solo llega por selector, cookie o ?lang=es. */
-export function resolverIdioma({parametro, cookie}: {parametro?: unknown; cookie?: unknown; acceptLanguage?: string | null}): Idioma {
-  return idiomaValido(parametro) ?? idiomaValido(cookie) ?? IDIOMA_POR_OMISION;
+/** Orden de decisión: ?lang= válido, cookie rovaq_lang válida, idioma del navegador (Accept-Language: es* → es, en* → en, cualquier otro → en) y, sin nada de eso, inglés.
+ *  La cookie, cuando existe y es válida, SIEMPRE manda sobre el navegador (la persona ya eligió en el selector). Una cookie inválida cuenta como ausente. */
+export function resolverIdioma({parametro, cookie, acceptLanguage}: {parametro?: unknown; cookie?: unknown; acceptLanguage?: string | null}): Idioma {
+  return idiomaValido(parametro) ?? idiomaValido(cookie) ?? idiomaDeAcceptLanguage(acceptLanguage) ?? IDIOMA_POR_OMISION;
+}
+/** Idioma de una petición (middleware, rutas, páginas): cookie rovaq_lang y cabecera Accept-Language, sin tocar nada más. `parametro` es el ?lang= si la ruta lo admite. */
+export function idiomaDeSolicitud(solicitud: {cookies: {get(nombre: string): {value: string} | undefined}; headers?: {get(nombre: string): string | null} | null}, parametro?: unknown): Idioma {
+  return resolverIdioma({parametro, cookie: solicitud.cookies.get(COOKIE_IDIOMA)?.value, acceptLanguage: solicitud.headers?.get('accept-language') ?? null});
 }
 /** Guarda la preferencia en el navegador (cookie rovaq_lang) y alinea <html lang>. Solo cliente. */
 export function guardarIdiomaEnNavegador(idioma: Idioma): void {

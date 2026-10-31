@@ -11,12 +11,13 @@ const handler=createBajaHandler({
  appOrigin:process.env.VEXA_APP_ORIGIN||null,
  aplicar:args=>crearAplicarBaja({pool:serverPool()})(args),
  log:etiqueta=>console.info('baja '+etiqueta),
- // Idioma de la página: ?lang= (el enlace del correo lo trae si el correo salió en inglés), luego la cookie rovaq_lang (resolverIdioma). Sin ninguno de los dos
- // se queda en español: hoy todos los correos de baja salen en español y el valor por omisión de la interfaz (inglés) no aplica a un enlace de correo sin sesión.
+ // Idioma de la página: ?lang= (el enlace del correo lo trae: el idioma con que salió el correo, que es la preferencia de la persona), luego la cookie rovaq_lang y luego el
+ // Accept-Language del navegador (resolverIdioma). Sin ninguno de los tres (p. ej. el POST de List-Unsubscribe que hace el servidor de correo) se queda en español.
  idioma:(request:Request)=>{
   const parametro=new URL(request.url).searchParams.get('lang');
   const cookie=new RegExp('(?:^|;\\s*)'+COOKIE_IDIOMA+'=([^;]*)').exec(request.headers.get('cookie')??'')?.[1];
-  return parametro===null&&cookie===undefined?'es':resolverIdioma({parametro,cookie});
+  const acceptLanguage=request.headers.get('accept-language');
+  return parametro===null&&cookie===undefined&&!acceptLanguage?'es':resolverIdioma({parametro,cookie,acceptLanguage});
  },
 });
 export const GET=handler;

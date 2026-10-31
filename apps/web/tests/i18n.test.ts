@@ -22,29 +22,41 @@ test('es.ts y en.ts tienen exactamente las mismas claves, sin textos vacíos', (
 test('cada clave conserva las mismas {variables} en los dos idiomas', () => {
   for (const k of Object.keys(es)) assert.equal(variables((en as Record<string, string>)[k]), variables((es as Record<string, string>)[k]), k);
 });
-test('inglés por omisión: sin cookie válida ni ?lang= es en; Accept-Language ya no decide; solo cookie o ?lang= dan español', () => {
+test('idioma por omisión: ?lang= > cookie válida > Accept-Language (es* → es, en* → en, otro → en) > inglés; la cookie siempre manda sobre el navegador', () => {
   assert.equal(IDIOMA_POR_OMISION, 'en');
   assert.equal(resolverIdioma({}), 'en');
   assert.equal(resolverIdioma({cookie: 'fr'}), 'en');
   assert.equal(resolverIdioma({cookie: 'EN'}), 'en');
   assert.equal(resolverIdioma({cookie: '<script>'}), 'en');
   assert.equal(resolverIdioma({cookie: ''}), 'en');
-  assert.equal(resolverIdioma({cookie: 'fr', acceptLanguage: 'es-MX,es;q=0.9'}), 'en', 'cookie inválida + navegador en español: inglés');
-  assert.equal(resolverIdioma({acceptLanguage: 'es-MX,es;q=0.9'}), 'en', 'el navegador en español no cambia el idioma');
+  // Sin cookie: decide el navegador.
+  assert.equal(resolverIdioma({acceptLanguage: 'es-MX,es;q=0.9'}), 'es', 'navegador en español sin cookie: es');
+  assert.equal(resolverIdioma({acceptLanguage: 'en-US'}), 'en');
+  assert.equal(resolverIdioma({acceptLanguage: 'fr'}), 'en', 'idioma no soportado: en');
   assert.equal(resolverIdioma({acceptLanguage: 'de-DE,de;q=0.9'}), 'en');
+  assert.equal(resolverIdioma({acceptLanguage: '*'}), 'en');
+  assert.equal(resolverIdioma({acceptLanguage: null}), 'en');
+  assert.equal(resolverIdioma({acceptLanguage: 'es-MX;q=0.4,en;q=0.9'}), 'en', 'respeta q');
+  // La cookie, cuando existe y es válida, manda.
+  assert.equal(resolverIdioma({cookie: 'en', acceptLanguage: 'es-MX,es;q=0.9'}), 'en', 'cookie en + navegador es: en');
+  assert.equal(resolverIdioma({cookie: 'es', acceptLanguage: 'en-US'}), 'es', 'cookie es + navegador en: es');
   assert.equal(resolverIdioma({cookie: 'es'}), 'es');
-  assert.equal(resolverIdioma({cookie: 'en', acceptLanguage: 'es'}), 'en');
-  assert.equal(resolverIdioma({cookie: 'es', acceptLanguage: 'en-US'}), 'es');
+  // Cookie inválida = ausente: decide el navegador.
+  assert.equal(resolverIdioma({cookie: 'fr', acceptLanguage: 'es-MX,es;q=0.9'}), 'es');
   assert.equal(resolverIdioma({parametro: 'es'}), 'es', '?lang=es sin cookie');
-  assert.equal(resolverIdioma({parametro: 'en', cookie: 'es'}), 'en', '?lang= válido manda sobre la cookie');
+  assert.equal(resolverIdioma({parametro: 'en', cookie: 'es', acceptLanguage: 'es'}), 'en', '?lang= válido manda sobre la cookie');
   assert.equal(resolverIdioma({parametro: 'xx', cookie: 'es'}), 'es', '?lang= inválido se ignora');
   assert.equal(resolverIdioma({parametro: 'xx'}), 'en');
+  assert.equal(resolverIdioma({parametro: 'xx', acceptLanguage: 'es'}), 'es');
 });
-test('el idioma de la petición no lee Accept-Language y <html lang> sigue al idioma activo', () => {
-  assert.doesNotMatch(leer('src/lib/i18n/servidor.ts'), /headers\(\)|\.get\('accept-language'\)/i);
+
+test('el idioma de la petición del servidor lee cookie y Accept-Language, y <html lang> sigue al idioma activo', () => {
+  assert.match(leer('src/lib/i18n/servidor.ts'), /headers\(\)/);
+  assert.match(leer('src/lib/i18n/servidor.ts'), /acceptLanguage: cabeceras\.get\('accept-language'\)/);
   assert.match(leer('src/app/(app)/layout.tsx'), /<html lang=\{idioma\}/);
   assert.match(leer('src/app/(app)/layout.tsx'), /await idiomaActual\(\)/);
 });
+
 test('Accept-Language respeta q y el orden; idiomaValido solo acepta es|en exactos', () => {
   assert.equal(idiomaDeAcceptLanguage('es-MX;q=0.5,en;q=0.9'), 'en');
   assert.equal(idiomaDeAcceptLanguage('es-MX,en;q=0.9'), 'es');

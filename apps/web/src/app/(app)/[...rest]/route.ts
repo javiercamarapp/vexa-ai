@@ -3,14 +3,14 @@
 // 404 real para cualquier método: HTML con el texto de not-found (idioma por cookie) a quien navega y JSON a quien consume la API.
 import type {NextRequest} from 'next/server';
 import {traductor} from '../../../lib/i18n';
-import {COOKIE_IDIOMA, resolverIdioma} from '../../../lib/i18n/idioma';
+import {idiomaDeSolicitud} from '../../../lib/i18n/idioma';
 
 const escapar = (s: string) => s.replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c] as string));
 const CABECERAS = {'cache-control': 'private, no-store, max-age=0, must-revalidate', 'x-robots-tag': 'noindex, nofollow, noarchive'};
 
 function noEncontrada(request: NextRequest) {
   const quiereHtml = !request.nextUrl.pathname.startsWith('/api/') && (request.headers.get('accept') ?? '').includes('text/html');
-  const idioma = resolverIdioma({cookie: request.cookies.get(COOKIE_IDIOMA)?.value});
+  const idioma = idiomaDeSolicitud(request);
   const t = traductor(idioma);
   if (!quiereHtml) return Response.json({error: {code: 'not_found', message: t('tr.nf.titulo'), retryable: false}}, {status: 404, headers: CABECERAS});
   const html = `<!DOCTYPE html><html lang="${idioma}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>404 · Rovaq AI</title>`

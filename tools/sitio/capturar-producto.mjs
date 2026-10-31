@@ -37,6 +37,7 @@ const REEMPLAZOS = [[/ sin monto \(Amazon\)/g, ' sin monto'], [/ (with no|withou
     [/Organización de demostración \((?:sintética|datos sintéticos)\)/g, 'Example organization'], [/Organización de demostración/g, 'Example organization'], [/Segunda empresa de demostración \(sintética\)/g, 'Second example organization'],
     [/Synthetic demo data/gi, 'Example data'], [/Excel Tracker/g, 'Spreadsheet Tracker'], [/Tracker \(Excel\)/g, 'Tracker (spreadsheet)'], [/\bExcel\b/g, 'spreadsheet'],
     [/envío: entrega no recibida/g, 'shipping: delivery not received'], [/Descripción automática/g, 'Automatic description'], [/Empaque insuficiente en el tramo final\./g, 'Insufficient packaging on the final leg.'], [/Hipótesis inicial a partir de reclamos/g, 'Initial hypothesis based on claims'],
+    [/^\s*entrega\s*$/g, 'delivery'], [/^\s*reembolso\s*$/g, 'refund'], [/^\s*garantía\s*$/gi, 'warranty'],
     [/Ask Responsable A/g, 'Ask the data owner'], [/Ask Responsable B/g, 'Ask whoever exports the reports'], [/Fulfilled by pilot/gi, 'Fulfilled by the seller'], [/USD · gross/gi, 'USD · Gross'],
   ] : [
     [/Organización de demostración \((?:sintética|datos sintéticos)\)/g, 'Organización de ejemplo'], [/Organización de demostración/g, 'Organización de ejemplo'], [/Segunda empresa de demostración \(sintética\)/g, 'Segunda organización de ejemplo'],

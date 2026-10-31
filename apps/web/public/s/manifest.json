@@ -615,37 +615,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 18484,
-     "sha256": "b2ce569b7ceda4eda6c4adf4fc5f8dd63e810e2388ad3090c1cb038be1941ee6",
-     "url": "/s/img/producto/en-evidencia-960.b2ce569b.avif"
+     "bytes": 18421,
+     "sha256": "3a0b26268074f58f0a8e9e357471188e40ceb1be4c765b1ab2df61070255d5e5",
+     "url": "/s/img/producto/en-evidencia-960.3a0b2626.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 30707,
-     "sha256": "bc63eef5e76dce24022f687f170031c4098e0a242f1f84e79df9cbf30429716e",
-     "url": "/s/img/producto/en-evidencia-1440.bc63eef5.avif"
+     "bytes": 30708,
+     "sha256": "30edc9026c7df5f3dc2b5bed8b46f0f8178280e8320f1aba8318180b2c5e27e6",
+     "url": "/s/img/producto/en-evidencia-1440.30edc902.avif"
     }
    ],
-   "bytes": 47586,
-   "sha256": "b8702d132374810141bcbcc1c42c7a6aa5940c1aea9bf23c22c3650646fca28a",
+   "bytes": 47952,
+   "sha256": "5a9a2c250e1ed1c383daa6a0f297b8e9b1fe97a8646c1eec16e540b69e6d1513",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/en-evidencia-1440.b8702d13.webp",
+   "url": "/s/img/producto/en-evidencia-1440.5a9a2c25.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 26292,
-     "sha256": "41947b631edb2dad544caaf8f4ff9f0c644ff328de310fd418ebb6e236f88f97",
-     "url": "/s/img/producto/en-evidencia-960.41947b63.webp"
+     "bytes": 26212,
+     "sha256": "2150bb1352ecaf81218677e8768a95576cd631a5d9d6a55a9c65f5a6632b1fc1",
+     "url": "/s/img/producto/en-evidencia-960.2150bb13.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 47586,
-     "sha256": "b8702d132374810141bcbcc1c42c7a6aa5940c1aea9bf23c22c3650646fca28a",
-     "url": "/s/img/producto/en-evidencia-1440.b8702d13.webp"
+     "bytes": 47952,
+     "sha256": "5a9a2c250e1ed1c383daa6a0f297b8e9b1fe97a8646c1eec16e540b69e6d1513",
+     "url": "/s/img/producto/en-evidencia-1440.5a9a2c25.webp"
     }
    ]
   },
@@ -660,37 +660,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 18516,
-     "sha256": "75dcd35db26e99ca1af9ea6f0062aacee83572defee14d422d0c15fda33cb787",
-     "url": "/s/img/producto/en-evidencia-oscuro-960.75dcd35d.avif"
+     "bytes": 18441,
+     "sha256": "32c8a6d5d8eb66748fd78248d061cc74625b88e893ca5e021843a429f564eb7d",
+     "url": "/s/img/producto/en-evidencia-oscuro-960.32c8a6d5.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 31294,
-     "sha256": "a19fbd92af123479684b18586a66c8edfbad575559f48925d0477af063cdda20",
-     "url": "/s/img/producto/en-evidencia-oscuro-1440.a19fbd92.avif"
+     "bytes": 31162,
+     "sha256": "b2872729220a0eacefb033aa5735eeaec2cc314f03b210c288e50520fb51434f",
+     "url": "/s/img/producto/en-evidencia-oscuro-1440.b2872729.avif"
     }
    ],
-   "bytes": 46372,
-   "sha256": "30230885f86435b1cd1afd9fdd0d7c0f3fa40b18850126cb08cca52e336edb40",
+   "bytes": 46284,
+   "sha256": "f57b4d941fb3d8e83be60dd3ebcd45169812292f3623e5b67a1eb7e1cd927b26",
    "tema": "oscuro",
    "tipo": "captura",
-   "url": "/s/img/producto/en-evidencia-oscuro-1440.30230885.webp",
+   "url": "/s/img/producto/en-evidencia-oscuro-1440.f57b4d94.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 26256,
-     "sha256": "c00828e1a95613577257d32bef1db4c09d48cf8d784470b5e0c0311e3c083cb8",
-     "url": "/s/img/producto/en-evidencia-oscuro-960.c00828e1.webp"
+     "bytes": 26274,
+     "sha256": "51c004c86b4b1be7f79f0cfaf9ab26835babb498a814f89455821410c372e00f",
+     "url": "/s/img/producto/en-evidencia-oscuro-960.51c004c8.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 46372,
-     "sha256": "30230885f86435b1cd1afd9fdd0d7c0f3fa40b18850126cb08cca52e336edb40",
-     "url": "/s/img/producto/en-evidencia-oscuro-1440.30230885.webp"
+     "bytes": 46284,
+     "sha256": "f57b4d941fb3d8e83be60dd3ebcd45169812292f3623e5b67a1eb7e1cd927b26",
+     "url": "/s/img/producto/en-evidencia-oscuro-1440.f57b4d94.webp"
     }
    ]
   },
